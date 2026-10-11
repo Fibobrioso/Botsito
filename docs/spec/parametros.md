@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.6` · hash `2313e2d2ec07…`
+`spec_version 15.9.7` · hash `f0c480dc16fb…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -17,7 +17,7 @@
 | `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
 | `caja_bloque` | `r6` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-001550-82e5cffc` | que velas dan el 1 de la caja de la orden stop |
-| `caja_se_fija` | `al_verse_el_punto` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0064` | cuando se fija el 1 de la caja de la orden stop |
+| `caja_se_fija` | `en_cada_cierre_m1` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0074` | cuando se fija el 1 de la caja de la orden stop |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
 | `cartuchos_reinicio` | `siguiente_liquidez_m15` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-e3eedcaa` | cuando se pone a cero el contador |
@@ -123,7 +123,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 
 - `anclaje_h4` → F15
 - `caja_bloque` → ADR-0064
-- `caja_se_fija` → ADR-0064
+- `caja_se_fija` → ADR-0064, ADR-0074
 - `cierre_pendientes` → ADR-0068
 - `cuenta_objetivo` → F33
 - `cuenta_pruebas` → F17, F33
@@ -219,7 +219,7 @@ Opciones: `r6`, `r4`, `r1`.
 
 ### `caja_se_fija`
 
-cuando se calcula el 1 de la caja de cada orden stop (ADR-0064, decision 5, y su sensibilidad pedida por el consultor el 2026-09-30). `al_verse_el_punto`: una vez, la primera vez que se ve el punto, y no cambia hasta el punto siguiente. `en_cada_cierre_m1`: en cada cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: el valor es el de la decision 5 de ADR-0064, la lectura mas conservadora. Lo lee el productor (engine/zonas.py), no una regla
+cuando se calcula el 1 de la caja de cada orden stop (ADR-0064, decision 5, y su sensibilidad pedida por el consultor el 2026-09-30). `al_verse_el_punto`: una vez, la primera vez que se ve el punto, y no cambia hasta el punto siguiente. `en_cada_cierre_m1`: en cada cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: hasta el 2026-10-11 el valor era el de la decision 5 de ADR-0064, la lectura mas conservadora. DESDE ADR-0074 (2026-10-11, sesion 4, S-4: «si ocurre una vela verde, otra vela verde, pues simplemente lo vamos actualizando la caja, mientras no se desarrolle otro punto breaker», ev-v10-004945-59ebac47) el valor es `en_cada_cierre_m1`, por decision; sigue DEFAULT_AMBIGUOUS bajo A-49 porque A-49 (la caja con la vela cerrada o en formacion) sigue ABIERTA y es el unico estado que admite ambiguedad_id. Lo lee el productor (engine/zonas.py), no una regla
 
 Opciones: `al_verse_el_punto`, `en_cada_cierre_m1`.
 

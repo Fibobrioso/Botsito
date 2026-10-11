@@ -16,7 +16,7 @@ trabajo/activar-sesion-04
 11a63ad · merge: entorno de Claude Code: skills, agentes, hook de arranque, make rapido y guardias del paquete (R0.2) · tag stable/F37l-entorno-code
 
 ## Tests Currently Passing
-1503 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1506 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

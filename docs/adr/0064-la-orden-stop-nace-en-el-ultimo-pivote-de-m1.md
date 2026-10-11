@@ -94,6 +94,10 @@ conservadora):
    el tope) sigue en pie. Los dos pueden prohibir, y prohibir es lo conservador.
 5. **La caja se fija la primera vez que se ve el punto.** Si un gate retrasa la colocación, la caja
    no se recalcula hasta el punto siguiente.
+   > **Enmendada por ADR-0074 (2026-10-11, `trabajo/activar-sesion-04`).** El trader lo dijo en la
+   > sesión 4 (S-4): con la orden sin llenar, el 1 se expande al máximo nuevo mientras no se forme
+   > otro punto de breaker, y la distancia no importa. `caja_se_fija` pasa a `en_cada_cierre_m1`, la
+   > sensibilidad de §5, por decisión y con A-49 todavía ABIERTA (S-1 y S-2 van a la sesión 5).
 6. **La ventana de M1 es la del productor**: desde 240 minutos antes de la toma
    (`LOOKBACK_M1`). En CAJA-77 era de 90 antes de T. El último pivote es el mismo mientras esté
    dentro de las dos.

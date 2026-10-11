@@ -673,16 +673,21 @@ parametros:
       cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo
       que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso
       o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un
-      mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: el valor es
-      el de la decision 5 de ADR-0064, la lectura mas conservadora. Lo lee el productor
-      (engine/zonas.py), no una regla
-    consumido_por: [ADR-0064]
+      mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: hasta el
+      2026-10-11 el valor era el de la decision 5 de ADR-0064, la lectura mas conservadora. DESDE
+      ADR-0074 (2026-10-11, sesion 4, S-4: «si ocurre una vela verde, otra vela verde, pues
+      simplemente lo vamos actualizando la caja, mientras no se desarrolle otro punto breaker»,
+      ev-v10-004945-59ebac47) el valor es `en_cada_cierre_m1`, por decision; sigue
+      DEFAULT_AMBIGUOUS bajo A-49 porque A-49 (la caja con la vela cerrada o en formacion) sigue
+      ABIERTA y es el unico estado que admite ambiguedad_id. Lo lee el productor (engine/zonas.py),
+      no una regla
+    consumido_por: [ADR-0064, ADR-0074]
     estado: DEFAULT_AMBIGUOUS
-    valor: al_verse_el_punto
+    valor: en_cada_cierre_m1
     ambiguedad_id: A-49
     fuente:
       tipo: decision
-      id: ADR-0064
+      id: ADR-0074
   - nombre: toma_antes_de_la_ventana
     categoria: estrategia
     tipo: enum

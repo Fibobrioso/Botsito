@@ -510,6 +510,189 @@ Verificado en la sesión lo que cambia el trabajo. Lo que importa:
 
 **Espero tu respuesta a la PARADA.** Hasta entonces no se toca spec, knowledge ni código.
 
+## Respuesta del consultor a la PARADA (2026-10-11)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-04 (2026-10-11). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). Si al aplicar algo medido lo contradice, PARADA 2.
+>
+> 0. A-18 y A-33 frente a ADR-0040: opción (a), escrita así para no chocar.
+>    - ADR-0073 (comprueba que el número sigue libre): cierra A-18 y A-33 como RESUELTAS con registros RESOLVE_UNKNOWN de S-3 y S-12 (ningún valor cambia).
+>    - El mismo ADR ENMIENDA ADR-0040: recuadro en 0040 y su fila de docs/adr/README.md como «ACTIVE (con enmienda de ADR-0073)», como 0064/0066 y 0063/0069. Lo que 0040 llama «refutada» pasa a ser «la regla dicha por el trader, contradicha por el material». Ningún dato de 0040 se toca.
+>    - La contradicción pasa a una ambigüedad NUEVA, A-56 (comprueba que está libre): clase medicion, bloqueante: false (un bloqueante no se cierra como DECIDIDA y una medición nunca va al trader), resuelve_en [F26], con fuentes_documentales a ADR-0040. Su texto dice que la fila de agosto de ADR-0040 sale del xlsx y que en S-16 el trader da por bueno el backtest del vídeo.
+>    - Se abre por sus sitios (AMBIGUEDADES.md: el yaml y la tabla de Known Ambiguities), con spec docs --escribir y test_kit.py en el mismo commit.
+>    - A-33 lleva en sus notas la reserva literal de S-12 («no vamos a dejar correr nada por ahora»), y la de las ganadoras por debajo de 3R pasa a A-56.
+>    - Líneas para el cierre: la deuda de PROJECT_STATE «F26 NO PUEDE PUNTUAR EL OBJETIVO HASTA QUE A-18 ESTE CERRADA», la G y R5.1 (Refs, texto y «Depende de») se reapuntan a A-56; sale el heredado 15 y R1.1 pierde HER:15 en sus Refs. V5-INSTANTES.md §95-104 queda superada: se dice, no se edita.
+> 1. S-13: (a), en la rama de motor (punto 11). Reserva escrita en el ADR: lo dijo con sesgo previo alcista. La confirmación del caso bajista va a la lista de la sesión 5.
+> 2. S-4: (a), por su régimen completo. ADR-0074 (comprueba que está libre) enmienda la decisión 5 de ADR-0064, con recuadro en 0064 y fila del índice: nunca uno sin el otro. caja_se_fija pasa a en_cada_cierre_m1 a mano, con fuente decision ADR-0074; su estado, el que el repo exija para un parámetro de ejecución bajo A-49 ABIERTA (dilo). El testimonio de S-4 va como registro sobre A-49 sin cerrarla. A-49 sigue ABIERTA y S-1 y S-2 van a la sesión 5. Sobre el freno de peticiones: ADR-0067 midió con la lectura de antes. El ADR-0074 da la cota con un test sintético (peticiones por M1 con el 1 expandiéndose; no dispara el bucle porque cambia el contenido), y la medida real queda para R3.1, dicho. Aquí sin arnés.
+> 3. A-21: (a) sin_alternancia_de_colores (ningún cambio de color de una M1 a la siguiente en el retroceso, desde el fin del bloque de origen hasta la vela que rompe, excluida), y se SUMA al enum. Una vela sin cuerpo no cuenta como cambio de color: se salta, coherente con RN-007 (fuente fb-2026-09-29-sesion-03-ffab23dc). Es decisión del consultor y va en el ADR de la rama de motor, aparte del cierre de A-21, que es el RESOLVE_UNKNOWN del trader. Todo en la rama de motor.
+> 4. A-30 y A-39: (a) aquí, solo spec. La rama ventana_fin de RN-035 (b) va a la rama de motor.
+> 5. A-36: (a). Cierre con --supersede fb-2026-09-29-sesion-03-f3caeb2d, título intacto, nota de que vale para la orden stop (A-47) y test que congela el precio de la orden. C6 sigue anotada.
+> 6. A-51: (a). Los cuatro parámetros, RN-036 aparte de RN-020 y un ADR, en la rama de motor. La nota §4.8 (las 9 pérdidas vienen de la cuenta con un 0,5 %) entra en la descripción de racha_perdidas_max: el bot también arriesga un 0,5 %.
+> 7. --diagnostico-a21: (a), retirarlo en el commit de A-21 de la rama de motor. Línea para el cierre: --diagnostico-a47 (A-47 RESUELTA) y --diagnostico-a27 (A-27 DECIDIDA) siguen en la CLI sin deuda que los recoja; entran en G.2 de la hoja de ruta.
+> 8. S-14: (a). Aleks lo lee en su propia terminal con --crudo, nunca con «!» en esta sesión, y te dirá «1 o 2» o «12». Si llega antes de la entrega, va al informe; si no, queda como pendiente de Aleks en las líneas del cierre. En los dos casos, S-14 va a la sesión 5 y H se queda.
+> 9. A-43: (a), declarado como DESVIACIÓN de la regla de E («las en parte van a la sesión 5»), porque el valor provisional dice lo contrario de lo firme. CORRECT sobre toma_antes_de_la_ventana a cuenta, con ev-v10-014613-6cf002b2; la lista de A-43 gana el parámetro; A-43 sigue ABIERTA y la segunda parte va a la sesión 5. El informe y el commit lo dicen con esa palabra.
+> 10. Activar S-5 (A-30, A-39) y S-13 con sus reservas en las notas de la regla. S-17 y S-21 siguen en la sesión 5. cartuchos_max no se toca.
+> 11. Partir: (a). Esta rama: los commits 2 a 7 de §0.f, más ADR-0073 (punto 0) y ADR-0074 (punto 2). La rama de motor, trabajo/activar-sesion-04-motor, lleva A-21, S-13, A-51 y la rama ventana_fin de RN-035; su encargo lo escribo yo tras el cierre de esta.
+> 12. E: (a), viva y reescrita, con F apuntando a la rama de motor. I, R2.1 y R5.4 no cambian.
+> 13. S-16 (b.4): aquí no cambia nada, porque feedback new no tiene objetivo para E-1. Se registra en el informe y en ADR-0073 (por la fila de agosto). Línea para el cierre, nueva entrada de la Next Action: «el trader da por bueno el backtest de agosto grabado en vídeo (S-16); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan». Lo mismo dijo el trader de julio, que ya está en S.
+>
+> LA LISTA PARA LA SESIÓN 5 (§0.e): vale con estos cambios:
+> - quita el 10 (S-6: la spec ya dice un punto, y él se corrigió a un punto) y el 12;
+> - el 11 queda solo para A-21 si la rama de motor no la cierra;
+> - añade la confirmación bajista de S-13;
+> - el fotograma de v4 del 8 no se abre sin decisión mía en R4.1.
+>
+> LÍNEAS DEL CIERRE: además de las de §0.g.2, las de los puntos 0, 7, 8 y 13, y la tabla de Known Ambiguities con A-56.
+>
+> Sigue lo que manda el encargo: un commit por respuesta, knowledge validate antes de make check, Fuente: en el cuerpo, CI de Linux por fix/activar-sesion-04 con su número de run, revisor (opus) con los dos alcances del encargo más un tercero (cada ADR enmendado tiene su recuadro y su fila del índice) y su informe pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+## 1. La respuesta aplicada, punto por punto
+
+Un commit por respuesta activada, en el orden de §0.f y con los pasos del paso 3 de
+`activar-sesion`. Cada uno con `knowledge validate` en verde antes de `make check`, su sello y su
+trailer `Fuente:`. Los registros de feedback son todos de `2026-10-04-sesion-04`, `medio: video`,
+sobre la grabación de v10, con `t0`/`t1` de la cita y `procedencia: trader_grabado` salvo donde se
+dice. `feedback apply --sesion 2026-10-04-sesion-04 --check` propuso en cada commit solo los
+parámetros de esa respuesta (su salida va en cada punto).
+
+### 1.1 Punto 11 · A-52 (S-20) · commit 89df2f4
+
+- Registros: `fb-2026-10-04-sesion-04-f0e58d1f` (RESOLVE_UNKNOWN sobre A-52, 1:56:40–1:56:55) y
+  `fb-2026-10-04-sesion-04-7ad9753b` (CONFIRM sobre `max_escenarios_por_sesion`, 1:54:49–1:55:04).
+  `apply --check`: `~ max_escenarios_por_sesion 'sin_limite'`, 1 cambia, 0 ya estaban.
+- `max_escenarios_por_sesion`: DEFAULT_AMBIGUOUS → CONFIRMED, mismo valor `sin_limite`; A-52
+  RESUELTA; fila fuera de Known Ambiguities; `test_kit.py`; la hoja de la sesión 02 no la llevaba.
+  `spec_version` 15.9.1 → 15.9.2.
+- La copia de la respuesta del consultor no pudo ir en este commit: cita ADR-0073 y ADR-0074 y
+  `knowledge validate` exige que los ids citados existan («id citado que no existe»). Se apartó con
+  `git stash` y entra en el commit de ADR-0074 (§1.6). Es la trampa conocida de los ids futuros.
+
+### 1.2 Punto 0 · ADR-0073: A-18 (S-3) y A-33 (S-12) RESUELTAS, A-56 abierta, ADR-0040 enmendado · commit 10a3922
+
+- `docs/adr/0073-*.md` (número comprobado libre), recuadro de ENMIENDA al principio de ADR-0040 y
+  su fila del índice «ACTIVE (con enmienda de ADR-0073)». Ningún dato de ADR-0040 se toca.
+- Registros: `fb-2026-10-04-sesion-04-87ccb0ee` (A-18, 0:39:27–0:39:48) y
+  `fb-2026-10-04-sesion-04-df162e6e` (A-33, 1:29:02–1:29:21). Ningún parámetro cambia (`apply
+  --check`: 0 cambian). A-33 lleva en sus notas la reserva literal «no vamos a dejar correr nada por
+  ahora», y las ganadoras por debajo de 3R pasan a A-56.
+- A-56 nueva: clase `medicion`, `bloqueante: false`, `resuelve_en` [F26], `evidencia: []` y dos
+  fuentes documentales a ADR-0040 (anclas «Decision» e «Impacto», literales dentro de la sección,
+  comprobados por `knowledge validate`). Su texto dice que la fila de agosto de ADR-0040 sale del
+  xlsx y que en S-16 el trader da por bueno el backtest del vídeo. Abierta por sus dos sitios (el
+  yaml y la tabla de Known Ambiguities), `spec docs --escribir` y `test_kit.py` en el mismo commit.
+- Notas de RN-011 y RN-015 y descripción de `base_calculo_objetivo`; la hoja de la sesión 02 y su
+  test pierden A-18 y A-33; `spec_version` 15.9.2 → 15.9.3.
+- Adelantado del plan (commit 7 de §0.f): `tests/unit/test_en_parte_no_se_cierra.py`: lo que la
+  ÚLTIMA sesión da solo como «en parte» (o «resuelve en parte») no puede estar RESUELTA. La última
+  sesión manda sobre la anterior: A-44 fue «resuelve con lectura nueva» en la 3 y es «en parte» en
+  la 4, así que queda protegida. Demostrado por mutación en el propio test con un YAML sintético
+  (A-13 RESUELTA → `["A-13 (RESUELTA)"]`).
+- Su primer `make check` salió con 3 `MemoryError` de `lzma` en `tests/unit/test_ticks.py`
+  (memoria libre del sistema, no la rama: los tres pasan solos y el `make check` repetido dio 2570
+  passed). No es el recorte de procesos de Claude Code: el proceso terminó. Se relanzó.
+
+### 1.3 Punto 11 · A-25 (S-18) · commit 1dc89d2
+
+- Registros: `fb-2026-10-04-sesion-04-b3c218ce` (A-25, 1:54:21–1:54:34),
+  `fb-2026-10-04-sesion-04-9f3e9dda` (CONFIRM `intentos_tras_toma_nueva`, 1:51:52–1:52:09) y la
+  ratificación de `cartuchos_reinicio` (1:52:27–1:52:47), que tuvo dos formas: la primera,
+  `fb-…-c145d9cc`, llevaba `--valor` y `knowledge validate` la negó («cartuchos_reinicio tiene 2
+  registros vigentes que fijan su valor; uno debe superseder al otro»: la sesión 1 ya lo fija con
+  `fb-2026-09-09-sesion-01-e3eedcaa`); la supersede `fb-2026-10-04-sesion-04-e0173b1b`
+  (`reexpresion_consultor`, CONFIRM sin valor), que `feedback pending` cuenta como «confirmación de
+  valor ya fijado». La fuente del parámetro sigue siendo la de la sesión 1. Lección: un CONFIRM de
+  un valor que ya fija otro registro va SIN `--valor`, como los de la sesión 3.
+- `intentos_tras_toma_nueva`: DEFAULT_AMBIGUOUS → CONFIRMED, mismo valor; A-25 RESUELTA y su lista
+  gana el parámetro (hallazgo del auditor); notas de RN-004 y RN-016; la hoja pierde A-25;
+  `spec_version` 15.9.3 → 15.9.4. `cartuchos_max` no se toca (el «se iría por una cuarta» queda en
+  las notas).
+
+### 1.4 Puntos 4 y 10 · A-30 y A-39 (S-5) · commit 0e18293
+
+- Registros: `fb-2026-10-04-sesion-04-766c8d2e` (A-30, 0:54:27–0:54:51),
+  `fb-2026-10-04-sesion-04-dd888b55` (A-39, 0:56:03–0:56:15) y `fb-2026-10-04-sesion-04-45e624c5`
+  (CONFIRM `orden_pendiente_al_abrir_sesion`). `apply --check`: `~ orden_pendiente_al_abrir_sesion
+  'se_retira'`, 1 cambia.
+- `orden_pendiente_al_abrir_sesion`: DEFAULT_AMBIGUOUS → CONFIRMED, mismo valor; RN-035 deja de ser
+  PROVISIONAL en su título y notas; A-30 y A-39 RESUELTAS y sus listas ganan el parámetro; la nota
+  de RN-002 («LO QUE NO HACE») y la descripción de `retirar_orden_limite` se reescriben; el
+  docstring de `engine/motor.py` deja de decir que al cambiar de sesión no se retira nada (comentario,
+  sin cambio de comportamiento). La retirada a `ventana_fin` sigue siendo el cableado (ADR-0053 §6),
+  sin regla: la rama `ventana_fin` de RN-035 va a `trabajo/activar-sesion-04-motor` (punto 4, opción
+  (a)). Reservas en las notas: pregunta dirigida; «un minuto antes» es frase del consultor.
+- `tests/unit/test_spec_fidelidad.py` cambia de sentido a propósito: la pendiente a las 15 ya no es
+  una ambigüedad declarada sino un valor CONFIRMED, y A-30 sale del cuestionario. La hoja pierde
+  A-30 y A-39 (y el bloque «Para terminar», que quedaba vacío). `spec_version` 15.9.4 → 15.9.5.
+
+### 1.5 Punto 5 · A-36 (S-22) · commit b5a12e3
+
+- Registro: `fb-2026-10-04-sesion-04-bbfb5c98` (RESOLVE_UNKNOWN sobre A-36, 1:02:14–1:02:37) con
+  `--supersede fb-2026-09-29-sesion-03-f3caeb2d`, el REOPEN activo; la cadena queda 626c4dc7 ←
+  a0b61bc9 ← f3caeb2d ← bbfb5c98. Título intacto; la nota dice que la respuesta vale para la orden
+  stop (A-47). C6 sigue anotada.
+- Sin parámetro. **No falta código**, al revés de lo que decía R1.1:
+  `tests/unit/test_orden_en_el_0_con_mecha.py` congela que el 0 es el extremo con mecha del pivote
+  (`punto.nivel == minima < cuerpo`), que `zona_del_punto` pone la entrada ahí y que la STOP se coloca
+  a ese precio con un mercado con spread sin sumarlo. Pasa también en `main`: se escribe para que
+  nadie lo mueva sin decirlo. `tests/unit/test_reabrir_y_fuente_documental.py` cambia de sentido a
+  propósito (A-36 vuelve a RESUELTA y el REOPEN deja de estar activo). Nota en RN-011;
+  `spec_version` 15.9.5 → 15.9.6. El primer `make check` cayó en el lint por una línea de comentario
+  de 101 caracteres en `test_kit.py`; acortada y relanzado.
+
+### 1.6 Punto 2 · ADR-0074: `caja_se_fija` = `en_cada_cierre_m1` (S-4); respuesta copiada
+
+- `docs/adr/0074-*.md` (número comprobado libre), recuadro «Enmendada por ADR-0074» en la decisión 5
+  de ADR-0064 y su fila del índice: los tres en el mismo commit.
+- `caja_se_fija` pasa a `en_cada_cierre_m1` A MANO, con `fuente: {tipo: decision, id: ADR-0074}`:
+  es de categoría `ejecucion` y `feedback apply` lo rechaza (`feedback/aplicar.py:187`). **Su estado
+  queda en DEFAULT_AMBIGUOUS bajo A-49**, que es lo que el repo exige: `config/registro.py` solo
+  admite `ambiguedad_id` con DEFAULT_AMBIGUOUS, y `tests/contract/test_provisional_cuelga_de_abierta.py`
+  exige que esa ambigüedad esté ABIERTA (lo está: S-1 y S-2 van a la sesión 5). Cuando A-49 se
+  cierre, pasará a CONFIRMED con esta misma fuente, como `reloj_sesiones` con ADR-0069.
+- `tests/unit/test_caja_hasta_el_llenado.py`: (1) el registro dice `en_cada_cierre_m1` bajo A-49 con
+  fuente ADR-0074 (falla en `main`); (2) con velas que suben el máximo una a una, una zona distinta
+  del mismo punto por cada máximo nuevo, el 0 quieto y el 1 solo sube; (3) la cota de peticiones:
+  dos por zona menos una, todas admitidas por el freno de ADR-0067 sin ningún corte, frente al
+  mismo número de colocaciones con la MISMA firma, que sí dispara `freno_bucle`. Sin arnés: la
+  medida real es R3.1; lo que F35 midió en DIAGNÓSTICO (hasta 14 peticiones al día y 59 en 42 días
+  con esta lectura) se cita en el ADR. `tests/unit/test_orden_stop_pivote.py` cambia de sentido a
+  propósito: la caja fija deja de ser el registro real y pasa a pedirse expresamente.
+- `spec_version` 15.9.6 → 15.9.7. Entra la copia de la respuesta del consultor al final del encargo y
+  de este informe (§1.1).
+- **El testimonio de S-4 como registro sobre A-49 es la PARADA 2 (abajo).**
+
+## PARADA 2 · La forma del registro de S-4 sobre A-49 (punto 2)
+
+El punto 2 dice «el testimonio de S-4 va como registro sobre A-49 sin cerrarla». Medido:
+
+- Un registro con `objetivo: ambiguedad` solo admite `RESOLVE_UNKNOWN` o `REOPEN`
+  (`knowledge/feedback/README.md`, coherencia exigida; `feedback/modelo.py`). `CONFIRM`, `CORRECT` y
+  `REJECT` van sobre evidencia, regla o parámetro.
+- Un `RESOLVE_UNKNOWN` activo sobre una ambigüedad ABIERTA no lo niega `knowledge validate`
+  (`problemas_de_cierre` solo exige que una RESUELTA tenga uno y que un REOPEN activo tenga ABIERTA),
+  pero `feedback pending` lo cuenta como **pendiente** mientras A-49 siga ABIERTA (`cli.py:2029-2041`:
+  «A-49 esta ABIERTA»), y la skill exige que `feedback pending` no liste nada de lo activado.
+- Un `CORRECT` sobre el parámetro `caja_se_fija` hace fallar `feedback apply --check` de toda la
+  sesión («es de categoria ejecucion y solo se cambia por decision (ADR)»): rompería los commits
+  siguientes.
+
+Opciones: (a) `RESOLVE_UNKNOWN` sobre A-49 con `valor` «caja_se_fija = en_cada_cierre_m1; A-49 sigue
+ABIERTA (S-1 y S-2)», aceptando que `feedback pending` lo liste como pendiente hasta que la sesión 5
+cierre A-49 (entonces ese registro será uno de los que la cierran); (b) `CONFIRM` sobre la evidencia
+`ev-v10-004945-59ebac47` («confirma el ítem»), que `pending` lista como «sin forma mecánica de
+comprobarlo», igual que los nueve de la sesión 1; (c) sin registro: el testimonio queda en el ADR y
+en la descripción del parámetro, que ya citan los tres ítems. Recomiendo (b): es un registro del
+trader sobre lo que dijo, no cierra nada y no deja un pendiente falso. Coste de (a): un pendiente
+que nadie puede reflejar hasta la sesión 5. Coste de (c): el testimonio no entra en
+`knowledge/feedback/`.
+
+**Espero tu respuesta a la PARADA 2** para el registro; todo lo demás del punto 2 está en el commit.
+
 ## Estado
 
-FASE 0 HECHA, en PARADA (2026-10-11). Nada activado todavía.
+FASE 0 HECHA; respuesta del consultor recibida el 2026-10-11 y en aplicación.

@@ -67,7 +67,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0061 | El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior | ACTIVE (enmienda ADR-0029 §3 para el redondeo del stop) |
 | 0062 | La toma de la liquidez de M15 la hace una vela de M1, y lo que eso destapa en el productor | ACTIVE |
 | 0063 | El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` | ACTIVE |
-| 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29) |
+| 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29; decisión 5 enmendada por ADR-0074) |
 | 0065 | El break even de RN-014 se pone al tick que pasa el nivel, no al cierre de la M1 | ACTIVE (PROVISIONAL hasta la demo de MetaTrader) |
 | 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (PROVISIONAL en tres parámetros, hasta las preguntas 5, 15 y 18 de la sesión 4) |
 | 0067 | El freno de peticiones vive en el puerto del broker: aviso, corte y bucle, y lo que protege la cuenta pasa siempre | ACTIVE (PROVISIONAL en sus cuatro umbrales, hasta A-54 en la demo de FTMO) |
@@ -77,4 +77,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0071 | Lo que fija la ejecución 1 de la demo de FTMO: la ficha de EURUSD, el stops level 0 y el volumen máximo 50; A-27 DECIDIDA | ACTIVE |
 | 0072 | Quién lee la columna de fechas de un backtest (Aleks, para todo backtest) y los tres papeles: Aleks, el consultor y la sesión | ACTIVE |
 | 0073 | La base del objetivo y el stop los fija el testimonio del trader; lo que el material contradice es una medición abierta (A-56), y ADR-0040 queda enmendado | ACTIVE (enmienda ADR-0040) |
+| 0074 | El 1 de la caja de la orden stop se recalcula en cada cierre de M1 hasta el llenado: `caja_se_fija` = `en_cada_cierre_m1` | ACTIVE (enmienda la decisión 5 de ADR-0064; DEFAULT_AMBIGUOUS bajo A-49) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |
