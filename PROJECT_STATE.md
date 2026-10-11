@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-04
 
 ## Current Feature
-`main` en `stable/F37l-entorno-code` (11a63ad): el entorno de trabajo de Claude Code (skills, agentes, hook de arranque, `make rapido`) está en main; R0.2 HECHA. Sin ramas abiertas; manda la Next Action (F: E es lo siguiente). Informe docs/validation/ENTORNO-CODE.md.
+`trabajo/activar-sesion-04` EN CURSO (abierta el 2026-10-11 desde 11df2c4): activar la sesión 4 (R1.1 de la hoja de ruta, E de la Next Action): cada «resuelve» de SESION-04-EXTRACCION.md §5 RESUELTA en la spec y, si hace falta, en el motor con su test; las «en parte», a la sesión 5. Encargo docs/encargos/trabajo-activar-sesion-04.md; informe docs/validation/ACTIVAR-SESION-04.md.
 
 ## Stable Main State
 11a63ad · merge de `trabajo/entorno-code` (tag `stable/F37l-entorno-code`): las skills fase-cero, activar-sesion, comparar-con-main, entregar-rama y retomar-rama, el agente auditor-encargo y el revisor en opus; el hook de arranque `.claude/hooks/estado_sesion.py`; `abrir-rama` comprueba la base entera; `solo_lectura.py` ampliado; `make rapido` sin sellar; knowledge validate compartido en cuatro tests (make check de 1209 a 952 s). Sobre `stable/F37k-hoja-de-ruta` (7823568). Informe docs/validation/ENTORNO-CODE.md; el registro del cierre, al final de HISTORIA.
@@ -182,8 +182,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 28 (2026-10-10).
+— ninguna desde el Archivo 29 (2026-10-11).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 28 (2026-10-10).
+— ninguna desde el Archivo 29 (2026-10-11).
