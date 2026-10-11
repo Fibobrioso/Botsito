@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/entorno-code
+main
 
 ## Current Feature
-`trabajo/entorno-code` EN CURSO (R0.2, entrada F): el entorno de trabajo de Claude Code (skills, agente, hook de arranque, E1-E7). Encargo docs/encargos/trabajo-entorno-code.md; informe docs/validation/ENTORNO-CODE.md.
+`main` en `stable/F37l-entorno-code` (11a63ad): el entorno de trabajo de Claude Code (skills, agentes, hook de arranque, `make rapido`) está en main; R0.2 HECHA. Sin ramas abiertas; manda la Next Action (F: E es lo siguiente). Informe docs/validation/ENTORNO-CODE.md.
 
 ## Stable Main State
-7823568 · merge de `trabajo/hoja-de-ruta` (tag `stable/F37k-hoja-de-ruta`): la hoja de ruta y tests/unit/test_hoja_de_ruta.py; el campo `tramo` del contrato, obligatorio desde la rama siguiente; RITUAL y las skills la actualizan en el cierre; ADR-0072 (la columna de fechas la lee Aleks; los tres papeles). Sobre `stable/F37j-cases-rejilla` (f472e06). Informe docs/validation/HOJA-DE-RUTA.md; el registro del cierre, al final de HISTORIA.
+11a63ad · merge de `trabajo/entorno-code` (tag `stable/F37l-entorno-code`): las skills fase-cero, activar-sesion, comparar-con-main, entregar-rama y retomar-rama, el agente auditor-encargo y el revisor en opus; el hook de arranque `.claude/hooks/estado_sesion.py`; `abrir-rama` comprueba la base entera; `solo_lectura.py` ampliado; `make rapido` sin sellar; knowledge validate compartido en cuatro tests (make check de 1209 a 952 s). Sobre `stable/F37k-hoja-de-ruta` (7823568). Informe docs/validation/ENTORNO-CODE.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-7823568 · merge: la hoja de ruta viva y su test, el tramo del contrato y ADR-0072 (HOJA-DE-RUTA.md) · tag stable/F37k-hoja-de-ruta
+11a63ad · merge: entorno de Claude Code: skills, agentes, hook de arranque, make rapido y guardias del paquete (R0.2) · tag stable/F37l-entorno-code
 
 ## Tests Currently Passing
 1498 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
