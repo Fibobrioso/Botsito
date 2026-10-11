@@ -557,6 +557,13 @@ ambiguedades:
     pregunta: >-
       Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o
       bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-18, v10 1:51:52-1:54:34): la marca del alto viejo
+      se descarta y pasa al nuevo («el más reciente es lo que importa [...] Paso al nuevo»), que
+      es lo que ADR-0045 ya decidio (A-24: el pivote mas reciente ya formado); y la toma de otra
+      liquidez reinicia los tres intentos («para nuevamente pues reiniciar los tres intentos»):
+      intentos_tras_toma_nueva queda CONFIRMED en vuelven_a_cartuchos_max, el mismo valor, y
+      cartuchos_reinicio ratificado (fb-2026-10-04-sesion-04-b3c218ce). El trader dice que el «se
+      iria por una cuarta» pero lo deja en 3: cartuchos_max no se toca.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "ya has marcado la liquidez de M15 y el precio todavia no la ha tomado, o la ha tomado y
@@ -573,9 +580,9 @@ ambiguedades:
       - ev-v4-010921-31dd762d
       - ev-v3-005110-d10dd043
       - ev-v6-003227-c4efcf49
-    parametros: [cartuchos_reinicio]
+    parametros: [cartuchos_reinicio, intentos_tras_toma_nueva]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

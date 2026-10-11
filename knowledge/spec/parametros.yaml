@@ -713,17 +713,18 @@ parametros:
       cuando el precio toma una liquidez NUEVA y el escenario vigente sigue vivo -sin ganadora y
       con intentos- (RN-004, `abrir_escenario`; ADR-0066). `vuelven_a_cartuchos_max`: abre un
       escenario nuevo con los intentos enteros; `siguen_los_que_quedan`: el mismo escenario sigue
-      sobre la toma nueva con los intentos que le quedaban. PROVISIONAL hasta la pregunta 18 de la
-      sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba,
-      ¿empiezas de nuevo con tres?», A-25). El valor es el de «serían tres intentos por liquidez [...]
-      no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una liquidez nueva
-      abre otro siempre
-    estado: DEFAULT_AMBIGUOUS
+      sobre la toma nueva con los intentos que le quedaban. Fue PROVISIONAL hasta la pregunta 18
+      de la sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más
+      arriba, ¿empiezas de nuevo con tres?», A-25). El valor era el de «serían tres intentos por
+      liquidez [...] no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una
+      liquidez nueva abre otro siempre. CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-18,
+      v10 1:51:52): la toma de otra liquidez es «para nuevamente pues reiniciar los tres intentos»
+      (ev-v10-015152-6dad6eb3). A-25 RESUELTA
+    estado: CONFIRMED
     valor: vuelven_a_cartuchos_max
-    ambiguedad_id: A-25
     fuente:
-      tipo: evidence
-      id: ev-v9-013054-d49a544e
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-9f3e9dda
   - nombre: max_escenarios_por_sesion
     categoria: estrategia
     tipo: enum
@@ -1181,7 +1182,11 @@ parametros:
     tipo: enum
     unidad: cuando se pone a cero el contador
     opciones: [siguiente_liquidez_m15, fin_de_dia, nunca]
-    descripcion: cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia)
+    descripcion: >-
+      cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia). Ratificado por el
+      trader el 2026-10-04 (sesion 4, S-18: «detenemos esperamos la siguiente toma de liquidez y
+      nuevamente operamos allí», fb-2026-10-04-sesion-04-e0173b1b); la fuente sigue siendo la de la
+      sesion 1
     estado: CONFIRMED
     valor: siguiente_liquidez_m15
     fuente:

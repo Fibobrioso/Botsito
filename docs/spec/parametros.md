@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.3` · hash `6cee5cb2b55e…`
+`spec_version 15.9.4` · hash `6bf4d1931ecb…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -58,7 +58,7 @@
 | `instrumento_lote_minimo` | `0.01` | CONFIRMED | instrumento | `ADR-0071` | lotes |
 | `instrumento_lote_paso` | `0.01` | CONFIRMED | instrumento | `ADR-0071` | lotes |
 | `instrumento_stops_level` | `0` | CONFIRMED | instrumento | `ADR-0071` | puntos de distancia minima a mercado |
-| `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | DEFAULT_AMBIGUOUS · en revision por A-25 | estrategia | `ev-v9-013054-d49a544e` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
+| `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-9f3e9dda` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
@@ -235,7 +235,7 @@ numero maximo de intentos por barrido de liquidez (2 o 3; A-2)
 
 ### `cartuchos_reinicio`
 
-cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia)
+cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia). Ratificado por el trader el 2026-10-04 (sesion 4, S-18: «detenemos esperamos la siguiente toma de liquidez y nuevamente operamos allí», fb-2026-10-04-sesion-04-e0173b1b); la fuente sigue siendo la de la sesion 1
 
 Opciones: `siguiente_liquidez_m15`, `fin_de_dia`, `nunca`.
 
@@ -415,7 +415,7 @@ distancia minima a la que el broker admite un stop o un limite. Si la spec pide 
 
 ### `intentos_tras_toma_nueva`
 
-cuando el precio toma una liquidez NUEVA y el escenario vigente sigue vivo -sin ganadora y con intentos- (RN-004, `abrir_escenario`; ADR-0066). `vuelven_a_cartuchos_max`: abre un escenario nuevo con los intentos enteros; `siguen_los_que_quedan`: el mismo escenario sigue sobre la toma nueva con los intentos que le quedaban. PROVISIONAL hasta la pregunta 18 de la sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba, ¿empiezas de nuevo con tres?», A-25). El valor es el de «serían tres intentos por liquidez [...] no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una liquidez nueva abre otro siempre
+cuando el precio toma una liquidez NUEVA y el escenario vigente sigue vivo -sin ganadora y con intentos- (RN-004, `abrir_escenario`; ADR-0066). `vuelven_a_cartuchos_max`: abre un escenario nuevo con los intentos enteros; `siguen_los_que_quedan`: el mismo escenario sigue sobre la toma nueva con los intentos que le quedaban. Fue PROVISIONAL hasta la pregunta 18 de la sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba, ¿empiezas de nuevo con tres?», A-25). El valor era el de «serían tres intentos por liquidez [...] no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una liquidez nueva abre otro siempre. CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-18, v10 1:51:52): la toma de otra liquidez es «para nuevamente pues reiniciar los tres intentos» (ev-v10-015152-6dad6eb3). A-25 RESUELTA
 
 Opciones: `vuelven_a_cartuchos_max`, `siguen_los_que_quedan`.
 

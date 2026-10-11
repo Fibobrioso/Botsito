@@ -1058,8 +1058,10 @@ reglas:
       (docs/validation/ESCENARIOS-POR-SESION.md §0.2). Y cada toma de una liquidez nueva abre un
       ESCENARIO (`abrir_escenario`): RN-004 fija el hecho en cada M1 que cierra pasada la linea,
       asi que la misma liquidez no abre nada; una toma con el escenario vigente vivo la decide
-      intentos_tras_toma_nueva, PROVISIONAL hasta la pregunta 18. Abrir un escenario es el
-      reinicio de los cartuchos (cartuchos_reinicio = siguiente_liquidez_m15)
+      intentos_tras_toma_nueva, CONFIRMADO en la sesion 4 (S-18, A-25 RESUELTA el 2026-10-04:
+      la toma de otra liquidez reinicia los tres intentos, fb-2026-10-04-sesion-04-9f3e9dda). Abrir
+      un escenario es el reinicio de los cartuchos (cartuchos_reinicio = siguiente_liquidez_m15,
+      ratificado en S-18, fb-2026-10-04-sesion-04-e0173b1b)
     forma:
       cuando:
         todos_de:
@@ -1572,7 +1574,8 @@ reglas:
       vigente de la sesion -la liquidez tomada y sus zonas- en vez de ser un hueco, y
       detenido_por_cartuchos lo apaga `abrir_escenario` con la siguiente liquidez de M15, que es
       cartuchos_reinicio. Si una toma nueva con el escenario vivo empieza con los intentos enteros
-      lo decide intentos_tras_toma_nueva (A-25), PROVISIONAL.
+      lo decide intentos_tras_toma_nueva (A-25, RESUELTA el 2026-10-04 en la sesion 4, S-18: con
+      la toma nueva vuelven los tres intentos, fb-2026-10-04-sesion-04-9f3e9dda).
     forma:
       cuando:
         cualquiera_de:

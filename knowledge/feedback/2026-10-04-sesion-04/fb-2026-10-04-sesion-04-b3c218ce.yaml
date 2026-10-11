@@ -1,0 +1,22 @@
+id: fb-2026-10-04-sesion-04-b3c218ce
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-25
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Y si el alto se va descartando O sea, el más reciente es lo que importa O sea, la liquidez
+  más reciente es lo que importa Y si la marca del alto viejo la sigues usando Paso al nuevo
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:54:21'
+t1: '1:54:34'
+valor_resultante: la marca pasa al pivote mas reciente; la toma de otra liquidez reinicia los tres intentos
+notas: 'S-18 (pregunta 18 y su subpregunta): la marca del alto viejo se descarta y pasa al nuevo (ev-v10-015421-44b43053),
+  que es ADR-0045 (A-24 DECIDIDA: el pivote mas reciente ya formado); la toma de otra liquidez reinicia
+  los tres intentos (ev-v10-015152-6dad6eb3, ev-v10-015227-b360ebf1). Para el consultor: el trader dice
+  que el «se iria por una cuarta», pero lo deja en 3; cartuchos_max no se toca'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado
