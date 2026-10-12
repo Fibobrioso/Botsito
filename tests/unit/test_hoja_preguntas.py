@@ -25,10 +25,9 @@ RAIZ = Path(__file__).resolve().parents[2]
 # (rama trabajo/activacion-a42, ADR-0069) sale A-42, RESUELTA por S-7 y por escrito.
 ORDEN = [
     "A-35", "A-21", "A-44", "A-43", "A-24",
-    "A-25", "A-32",
-    "A-36", "A-30", "A-48", "A-49",
-    "A-18", "A-13", "A-33",
-    "A-39",
+    "A-32",
+    "A-48", "A-49",
+    "A-13",
 ]  # fmt: skip
 
 

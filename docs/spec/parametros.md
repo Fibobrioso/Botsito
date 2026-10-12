@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.1` · hash `b00cbf2459a6…`
+`spec_version 15.9.9` · hash `02d62f94511f…`
 
 103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -17,7 +17,7 @@
 | `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
 | `caja_bloque` | `r6` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-001550-82e5cffc` | que velas dan el 1 de la caja de la orden stop |
-| `caja_se_fija` | `al_verse_el_punto` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0064` | cuando se fija el 1 de la caja de la orden stop |
+| `caja_se_fija` | `en_cada_cierre_m1` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0074` | cuando se fija el 1 de la caja de la orden stop |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
 | `cartuchos_reinicio` | `siguiente_liquidez_m15` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-e3eedcaa` | cuando se pone a cero el contador |
@@ -58,19 +58,19 @@
 | `instrumento_lote_minimo` | `0.01` | CONFIRMED | instrumento | `ADR-0071` | lotes |
 | `instrumento_lote_paso` | `0.01` | CONFIRMED | instrumento | `ADR-0071` | lotes |
 | `instrumento_stops_level` | `0` | CONFIRMED | instrumento | `ADR-0071` | puntos de distancia minima a mercado |
-| `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | DEFAULT_AMBIGUOUS · en revision por A-25 | estrategia | `ev-v9-013054-d49a544e` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
+| `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-9f3e9dda` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
 | `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
-| `max_escenarios_por_sesion` | `sin_limite` | DEFAULT_AMBIGUOUS · en revision por A-52 | estrategia | `ev-v9-003318-c0503fe5` | escenarios que puede abrir una sesion como maximo |
+| `max_escenarios_por_sesion` | `sin_limite` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-7ad9753b` | escenarios que puede abrir una sesion como maximo |
 | `modelo_llenado` | `al_tocar` | CONFIRMED | ejecucion | `ADR-0012` | como se decide que una orden limite se ha llenado |
 | `objetivo_extension_activa` | `False` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9c259e06` | se aplica o no |
 | `objetivo_rr` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7fbbb2e7` | multiplo de la distancia que declara base_calculo_objetivo |
 | `operaciones_simultaneas_max` | `1` | CONFIRMED | estrategia | `ev-v4-003710-c753f3d3` | operaciones abiertas a la vez |
 | `orden_limite_nace` | `al_aparecer_punto_de_breaker` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-755c534e` | cuando se coloca por primera vez la orden limite de una zona |
 | `orden_pendiente_al_abrir_escenario` | `se_mueve` | DEFAULT_AMBIGUOUS · en revision por A-53 | estrategia | `fb-2026-09-29-sesion-03-c7fa3068` | que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro |
-| `orden_pendiente_al_abrir_sesion` | `se_retira` | DEFAULT_AMBIGUOUS · en revision por A-30 | estrategia | `fb-2026-09-29-sesion-03-5021677e` | que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente |
+| `orden_pendiente_al_abrir_sesion` | `se_retira` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-45e624c5` | que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente |
 | `orden_stop_punto` | `ultimo_pivote_m1` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-002201-2b2f20aa` | el posible punto de breaker en el que nace la orden stop |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
@@ -89,7 +89,7 @@
 | `stop_en_orden_pendiente` | `en_la_orden` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-76fd91ba` | en_la_orden/tras_el_llenado |
 | `stop_fraccion_caja` | `0.8 (fraccion)` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-d34a0222` | fraccion de la distancia completa nivel 0 -> nivel 1 |
 | `stop_fraccion_redondeo` | `alejandose_de_la_entrada` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-11910e0a` | hacia donde se redondea el nivel de stop_fraccion_caja cuando no cae en un punto exacto |
-| `toma_antes_de_la_ventana` | `no_cuenta` | DEFAULT_AMBIGUOUS · en revision por A-43 | estrategia | `ev-v9-004533-d075b080` | si una toma de liquidez anterior a la primera sesion del dia cuenta |
+| `toma_antes_de_la_ventana` | `cuenta` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-c3d0c855` | si una toma de liquidez anterior a la primera sesion del dia cuenta |
 | `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora NOMINAL, en el reloj que dice reloj_sesiones |
 | `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora NOMINAL, en el reloj que dice reloj_sesiones |
 | `zona_control_criterio_completada` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a456bc3f` | que hace falta para dar una zona de control por completada |
@@ -123,7 +123,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 
 - `anclaje_h4` → F15
 - `caja_bloque` → ADR-0064
-- `caja_se_fija` → ADR-0064
+- `caja_se_fija` → ADR-0064, ADR-0074
 - `cierre_pendientes` → ADR-0068
 - `cuenta_objetivo` → F33
 - `cuenta_pruebas` → F17, F33
@@ -161,7 +161,7 @@ donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion d
 
 ### `base_calculo_objetivo`
 
-distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve, viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015). CONFIRMADO POR EL TRADER el 2026-09-29 (sesion 3, v9 1:02:32; fb-2026-09-29-sesion-03-f572f1a0, ev-v9-010232-4b049a1e): el objetivo se traza «desde el punto 0 al punto 1», y es «1, 3». Es la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1
+distancia sobre la que se mide el objetivo. `caja_completa` es la distancia nivel 0 -> nivel 1; `riesgo_real` seria la distancia hasta stop_fraccion_caja. Hasta el 2026-09-11 esta descripcion anadia que la caja completa es "la misma que dimensiona el lote": desde ADR-0020 ya NO lo es, el lote se dimensiona hasta stop_fraccion_caja y solo el objetivo se mide sobre la caja entera. El RR realizado no es 1:3 sino objetivo_rr / stop_fraccion_caja, y es a proposito (RN-012). OJO (2026-09-16): esta descripcion justificaba el valor con que "el objetivo se traza CON la orden, antes de que el stop se mueva, asi que la unica distancia que existe en ese instante es la caja completa". Esa premisa esta revocada -el stop no se mueve, viaja en la orden desde el principio (A-11)-, asi que el argumento ya no discrimina. El valor NO se cambia: la decision queda para el consultor (A-18, nota en ADR-0014 y en RN-015). CONFIRMADO POR EL TRADER el 2026-09-29 (sesion 3, v9 1:02:32; fb-2026-09-29-sesion-03-f572f1a0, ev-v9-010232-4b049a1e): el objetivo se traza «desde el punto 0 al punto 1», y es «1, 3». Es la caja completa, y el valor no cambia. Hasta el 2026-09-30 la fuente era ev-v2-003256-0197f4e1. RATIFICADO el 2026-10-04 (sesion 4, S-3, v10 0:39:27: «se usa de 0 a 1 para el cálculo de 1 a 3»): A-18 RESUELTA por ADR-0073 (fb-2026-10-04-sesion-04-87ccb0ee); lo que el material contradice (ADR-0040, enmendado) es A-56, una medicion para F26
 
 Opciones: `caja_completa`, `riesgo_real`.
 
@@ -219,7 +219,7 @@ Opciones: `r6`, `r4`, `r1`.
 
 ### `caja_se_fija`
 
-cuando se calcula el 1 de la caja de cada orden stop (ADR-0064, decision 5, y su sensibilidad pedida por el consultor el 2026-09-30). `al_verse_el_punto`: una vez, la primera vez que se ve el punto, y no cambia hasta el punto siguiente. `en_cada_cierre_m1`: en cada cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: el valor es el de la decision 5 de ADR-0064, la lectura mas conservadora. Lo lee el productor (engine/zonas.py), no una regla
+cuando se calcula el 1 de la caja de cada orden stop (ADR-0064, decision 5, y su sensibilidad pedida por el consultor el 2026-09-30). `al_verse_el_punto`: una vez, la primera vez que se ve el punto, y no cambia hasta el punto siguiente. `en_cada_cierre_m1`: en cada cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: hasta el 2026-10-11 el valor era el de la decision 5 de ADR-0064, la lectura mas conservadora. DESDE ADR-0074 (2026-10-11, sesion 4, S-4: «si ocurre una vela verde, otra vela verde, pues simplemente lo vamos actualizando la caja, mientras no se desarrolle otro punto breaker», ev-v10-004945-59ebac47) el valor es `en_cada_cierre_m1`, por decision; sigue DEFAULT_AMBIGUOUS bajo A-49 porque A-49 (la caja con la vela cerrada o en formacion) sigue ABIERTA y es el unico estado que admite ambiguedad_id. Lo lee el productor (engine/zonas.py), no una regla
 
 Opciones: `al_verse_el_punto`, `en_cada_cierre_m1`.
 
@@ -235,7 +235,7 @@ numero maximo de intentos por barrido de liquidez (2 o 3; A-2)
 
 ### `cartuchos_reinicio`
 
-cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia)
+cuando vuelve a operar tras agotar los cartuchos (no es por fin de dia). Ratificado por el trader el 2026-10-04 (sesion 4, S-18: «detenemos esperamos la siguiente toma de liquidez y nuevamente operamos allí», fb-2026-10-04-sesion-04-e0173b1b); la fuente sigue siendo la de la sesion 1
 
 Opciones: `siguiente_liquidez_m15`, `fin_de_dia`, `nunca`.
 
@@ -415,7 +415,7 @@ distancia minima a la que el broker admite un stop o un limite. Si la spec pide 
 
 ### `intentos_tras_toma_nueva`
 
-cuando el precio toma una liquidez NUEVA y el escenario vigente sigue vivo -sin ganadora y con intentos- (RN-004, `abrir_escenario`; ADR-0066). `vuelven_a_cartuchos_max`: abre un escenario nuevo con los intentos enteros; `siguen_los_que_quedan`: el mismo escenario sigue sobre la toma nueva con los intentos que le quedaban. PROVISIONAL hasta la pregunta 18 de la sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba, ¿empiezas de nuevo con tres?», A-25). El valor es el de «serían tres intentos por liquidez [...] no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una liquidez nueva abre otro siempre
+cuando el precio toma una liquidez NUEVA y el escenario vigente sigue vivo -sin ganadora y con intentos- (RN-004, `abrir_escenario`; ADR-0066). `vuelven_a_cartuchos_max`: abre un escenario nuevo con los intentos enteros; `siguen_los_que_quedan`: el mismo escenario sigue sobre la toma nueva con los intentos que le quedaban. Fue PROVISIONAL hasta la pregunta 18 de la sesion 4 («Si el precio toma un alto, gastas dos intentos, y luego toma otro alto más arriba, ¿empiezas de nuevo con tres?», A-25). El valor era el de «serían tres intentos por liquidez [...] no, no, por liquidez» (ev-v9-013054-d49a544e). Con el escenario terminado, una liquidez nueva abre otro siempre. CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-18, v10 1:51:52): la toma de otra liquidez es «para nuevamente pues reiniciar los tres intentos» (ev-v10-015152-6dad6eb3). A-25 RESUELTA
 
 Opciones: `vuelven_a_cartuchos_max`, `siguen_los_que_quedan`.
 
@@ -449,7 +449,7 @@ Opciones: `order_block_mayor`, `otra`.
 
 ### `max_escenarios_por_sesion`
 
-cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro. PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-52: la subpregunta de A-46 que quedo sin numero). El valor `sin_limite` es el de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02
+cuantos escenarios -liquidez de M15 tomadas dentro de la sesion- puede abrir una misma sesion (`abrir_escenario`, RN-004; ADR-0066). Con el tope alcanzado, una toma nueva no abre otro. Fue PROVISIONAL hasta la pregunta 20 de la sesion 4 («En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada?», A-52: la subpregunta de A-46 que quedo sin numero). El valor `sin_limite` era el de la sesion 3: «Pues, eso no lo podemos definir. [...] en todas estas 4 se va a dar una operación» (ev-v9-003318-c0503fe5), que no da un numero; antes habia dicho «como máximo dos entradas por día» (ev-v4-003350-acb03ee7). Decision del consultor del 2026-10-02. CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-20, v10 1:54:49-1:55:04 y 1:56:40-1:56:55): sin maximo, «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión» hasta que salta el tope de perdida (ev-v10-015449-8a41513d, ev-v10-015640-d35c5552). A-52 RESUELTA
 
 Opciones: `sin_limite`, `1`, `2`, `3`, `4`, `5`.
 
@@ -489,7 +489,7 @@ Opciones: `se_mueve`, `se_retira`.
 
 ### `orden_pendiente_al_abrir_sesion`
 
-la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066). `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor sale de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA)
+la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066). `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). Fue PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor salia de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA). CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-5, v10 0:54:27): «sí, se quita, porque siempre se va a ir actualizando la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin sigue siendo el cableado al terminar el dia (ADR-0053 §6), sin regla: rama de motor
 
 Opciones: `se_retira`, `sigue_hasta_ventana_fin`.
 
@@ -645,7 +645,7 @@ UNKNOWN A PROPOSITO desde la auditoria del 2026-09-10 (A-7 sigue resuelta): no h
 
 ### `toma_antes_de_la_ventana`
 
-si una liquidez de M15 que el precio ya tomo antes de la primera sesion del dia -antes de ventana_inicio- vale para operar dentro de ella (RN-004, `la_toma_es_de_la_sesion`; ADR-0066). PROVISIONAL hasta la pregunta 15 de la sesion 4 («Si el precio toma esa liquidez a las 6:45, antes de tu horario, ¿la usas para operar a partir de las 7?», A-43). El valor es `no_cuenta` por lo que el trader dijo de la liquidez formada antes de las 7: vale si el precio «la toma ya dentro» (ev-v9-004533-d075b080). `cuenta` es lo que hacia el motor hasta el 2026-10-01: la M1 que cerraba en la apertura, o cualquiera despues con el precio todavia pasado, daba la toma. Una toma en una sesion ANTERIOR del dia no la decide este parametro: no cuenta nunca (A-46 RESUELTA)
+si una liquidez de M15 que el precio ya tomo antes de la primera sesion del dia -antes de ventana_inicio- vale para operar dentro de ella (RN-004, `la_toma_es_de_la_sesion`; ADR-0066). Fue PROVISIONAL `no_cuenta` hasta la pregunta 15 de la sesion 4 («Si el precio toma esa liquidez a las 6:45, antes de tu horario, ¿la usas para operar a partir de las 7?», A-43), por lo que el trader dijo de la liquidez formada antes de las 7: vale si el precio «la toma ya dentro» (ev-v9-004533-d075b080). `cuenta` es lo que hacia el motor hasta el 2026-10-01: la M1 que cerraba en la apertura, o cualquiera despues con el precio todavia pasado, daba la toma. CORREGIDO POR EL TRADER el 2026-10-04 (sesion 4, S-15, v10 1:46:13): «¿lo usas para operar a partir de las 7? Sí.» (ev-v10-014613-6cf002b2): el valor es `cuenta`, activado el 2026-10-11 como DESVIACION declarada de «las en parte van a la sesion 5» porque el valor provisional decia lo contrario de lo firme; A-43 sigue ABIERTA por su segunda parte (la toma de las 6:45 y la de las 7:20). Una toma en una sesion ANTERIOR del dia no la decide este parametro: no cuenta nunca (A-46 RESUELTA)
 
 Opciones: `no_cuenta`, `cuenta`.
 

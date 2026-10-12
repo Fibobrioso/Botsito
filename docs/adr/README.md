@@ -43,7 +43,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0036 | El material ya visto se reparte por su propio camino, con nombres propios y con puerta | ACTIVE |
 | 0038 | Un fotograma se abre por instante localizado, nunca por muestreo | ACTIVE |
 | 0039 | Ningun libro se lee sin su formato y su huso declarados | ACTIVE |
-| 0040 | La combinacion CONFIRMED del objetivo es falsa, y los dos supervivientes siguen abiertos | ACTIVE |
+| 0040 | La combinacion CONFIRMED del objetivo es falsa, y los dos supervivientes siguen abiertos | ACTIVE (con enmienda de ADR-0073) |
 | 0041 | Un dia reservado expuesto sale del holdout y no se sustituye | ACTIVE |
 | 0042 | Material ya visto entra por un reparto dev-visto, sin sorteo y sin holdout | ACTIVE |
 | 0043 | Criterio de fidelidad en desarrollo | ACTIVE |
@@ -67,13 +67,15 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0061 | El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior | ACTIVE (enmienda ADR-0029 §3 para el redondeo del stop) |
 | 0062 | La toma de la liquidez de M15 la hace una vela de M1, y lo que eso destapa en el productor | ACTIVE |
 | 0063 | El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` | ACTIVE |
-| 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29) |
+| 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29; decisión 5 enmendada por ADR-0074) |
 | 0065 | El break even de RN-014 se pone al tick que pasa el nivel, no al cierre de la M1 | ACTIVE (PROVISIONAL hasta la demo de MetaTrader) |
-| 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (PROVISIONAL en tres parámetros, hasta las preguntas 5, 15 y 18 de la sesión 4) |
+| 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (sus parámetros PROVISIONAL de las preguntas 5, 15, 18 y 20 de la sesión 4 son CONFIRMED desde `trabajo/activar-sesion-04`; queda el de la 21, `orden_pendiente_al_abrir_escenario`, bajo A-53) |
 | 0067 | El freno de peticiones vive en el puerto del broker: aviso, corte y bucle, y lo que protege la cuenta pasa siempre | ACTIVE (PROVISIONAL en sus cuatro umbrales, hasta A-54 en la demo de FTMO) |
 | 0068 | La ventana prohibida antes de un cierre de mercado largo vive en el puerto del broker, con un calendario versionado por perfil | ACTIVE (PROVISIONAL en `cierre_pendientes`, hasta A-55 con el soporte de FTMO) |
 | 0069 | A-42 RESUELTA: las dos sesiones son las velas H4 de la rejilla de `anclaje_h4` (H2b); deja superado ADR-0059 | ACTIVE |
 | 0070 | Mayo solo se mide cuando una corrida del arnés sobre construcción, solo con las opciones de una lista cerrada, llega al umbral de ADR-0043 | ACTIVE |
 | 0071 | Lo que fija la ejecución 1 de la demo de FTMO: la ficha de EURUSD, el stops level 0 y el volumen máximo 50; A-27 DECIDIDA | ACTIVE |
 | 0072 | Quién lee la columna de fechas de un backtest (Aleks, para todo backtest) y los tres papeles: Aleks, el consultor y la sesión | ACTIVE |
+| 0073 | La base del objetivo y el stop los fija el testimonio del trader; lo que el material contradice es una medición abierta (A-56), y ADR-0040 queda enmendado | ACTIVE (enmienda ADR-0040) |
+| 0074 | El 1 de la caja de la orden stop se recalcula en cada cierre de M1 hasta el llenado: `caja_se_fija` = `en_cada_cierre_m1` | ACTIVE (enmienda la decisión 5 de ADR-0064; DEFAULT_AMBIGUOUS bajo A-49) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

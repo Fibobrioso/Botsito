@@ -215,9 +215,21 @@ def test_a36_esta_migrada_y_pending_ya_no_la_cuenta() -> None:
     assert (reapertura.fecha, reapertura.recibido_el) == ("2026-09-29", "2026-10-02")
     ambs = cargar_ambiguedades(REPO / FICHERO_AMBIGUEDADES)
     estados = {a.id: a.estado for a in ambs}
-    assert estados["A-36"] == "ABIERTA"
-    ctx = ContextoPendiente({}, estados, {}, frozenset(), "")
-    assert situacion_de(ctx, reapertura)[0] == "reflejado"
+    # Cambia de sentido A PROPOSITO el 2026-10-11 (trabajo/activar-sesion-04): el trader contesto
+    # A-36 en la sesion 4 (S-22) y el RESOLVE_UNKNOWN nuevo supersede al REOPEN, que deja de estar
+    # activo; A-36 vuelve a RESUELTA. Mientras estuvo ABIERTA, el REOPEN activo contaba como
+    # «reflejado» y no como respuesta pendiente.
+    cierre = [
+        r
+        for r in regs
+        if r.objetivo.id == "A-36"
+        and r.accion == "RESOLVE_UNKNOWN"
+        and r.supersede == "fb-2026-09-29-sesion-03-f3caeb2d"
+    ]
+    assert len(cierre) == 1 and cierre[0].sesion == "2026-10-04-sesion-04"
+    assert estados["A-36"] == "RESUELTA"
+    ctx = ContextoPendiente({}, {"A-36": "ABIERTA"}, {}, frozenset(), "")
+    assert situacion_de(ctx, reapertura)[0] == "reflejado"  # lo que valia mientras estuvo abierta
     assert problemas_de_cierre(ambs, regs) == []
 
 

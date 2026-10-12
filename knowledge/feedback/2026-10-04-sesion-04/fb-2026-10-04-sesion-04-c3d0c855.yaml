@@ -1,0 +1,24 @@
+id: fb-2026-10-04-sesion-04-c3d0c855
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: toma_antes_de_la_ventana
+accion: CORRECT
+respuesta_literal: si el precio toma ese liquidez antes de tu horario, ¿lo usas para operar a partir de
+  las 7? Sí.
+registrado_por: 'Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04, punto 9: DESVIACION declarada de
+  la regla «las en parte van a la sesion 5»)'
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:46:13'
+t1: '1:46:20'
+valor_resultante: cuenta
+notas: 'S-15 (pregunta 15), primera parte, FIRME: una liquidez tomada antes de las 7 si la usa, siempre
+  que la operacion se de desde las 7 (ev-v10-014613-6cf002b2, ev-v10-014705-718c5f4e: «la operativa se
+  tiene que dar dentro de la zona horaria, a partir de las 7»). Corrige el valor PROVISIONAL no_cuenta
+  (ADR-0066 §1), que decia lo contrario. A-43 SIGUE ABIERTA: la segunda parte (la toma de las 6:45 y la
+  de las 7:20) no la eligio y va a la sesion 5'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

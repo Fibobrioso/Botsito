@@ -331,6 +331,14 @@ ambiguedades:
     pregunta: >-
       ¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop
       en dos tiempos: ¿cómo funciona eso?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-3, v10 0:35:59-0:39:48; ADR-0073): el stop va ya en
+      el 0,8 al poner la orden («Sería directamente a 0.8»); el 1 «se usa al comienzo pero no de
+      ejecución, sino como planteamiento»; el objetivo se mide del 0 al 1 y el lote del 0 al 0,8
+      («se usa de 0 a 1 para el cálculo de 1 a 3 [...] para la toma de la operativa se usa de 0 a
+      0,8»). No hay stop en dos tiempos en la ejecucion. Ningun valor cambia: base_calculo_objetivo,
+      objetivo_rr, stop_fraccion_caja y lotaje_base ya estaban CONFIRMED con lo mismo desde la
+      sesion 3. Lo que el material contradice (ADR-0040, enmendado por ADR-0073) es una medicion y
+      va en A-56 (fb-2026-10-04-sesion-04-87ccb0ee).
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "Cuando trazas el objetivo de una operación, ¿qué distancia tomas como referencia para
@@ -363,7 +371,7 @@ ambiguedades:
       - ev-v3-003142-607674c3
     parametros: [base_calculo_objetivo, objetivo_rr]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -549,6 +557,13 @@ ambiguedades:
     pregunta: >-
       Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o
       bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-18, v10 1:51:52-1:54:34): la marca del alto viejo
+      se descarta y pasa al nuevo («el más reciente es lo que importa [...] Paso al nuevo»), que
+      es lo que ADR-0045 ya decidio (A-24: el pivote mas reciente ya formado); y la toma de otra
+      liquidez reinicia los tres intentos («para nuevamente pues reiniciar los tres intentos»):
+      intentos_tras_toma_nueva queda CONFIRMED en vuelven_a_cartuchos_max, el mismo valor, y
+      cartuchos_reinicio ratificado (fb-2026-10-04-sesion-04-b3c218ce). El trader dice que el «se
+      iria por una cuarta» pero lo deja en 3: cartuchos_max no se toca.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "ya has marcado la liquidez de M15 y el precio todavia no la ha tomado, o la ha tomado y
@@ -565,9 +580,9 @@ ambiguedades:
       - ev-v4-010921-31dd762d
       - ev-v3-005110-d10dd043
       - ev-v6-003227-c4efcf49
-    parametros: [cartuchos_reinicio]
+    parametros: [cartuchos_reinicio, intentos_tras_toma_nueva]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -753,6 +768,14 @@ ambiguedades:
     pregunta: >-
       Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha
       llenado, ¿qué haces con ella?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:54:27-0:54:51): se quita, a las 11 y a las
+      3, «porque siempre se va a ir actualizando la orden [...] no va a haber órdenes que a lo
+      mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e).
+      orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de
+      ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que
+      sostiene el cierre es la razon del trader. «Un minuto antes» es frase del consultor y no se
+      fija. A ventana_fin la retirada la hace hoy el cableado al terminar el dia (ADR-0053 §6) sin
+      regla de la spec: la rama ventana_fin de RN-035 va a trabajo/activar-sesion-04-motor.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la
@@ -764,9 +787,9 @@ ambiguedades:
     resuelve_en: [F22, F23]
     evidencia:
       - ev-v4-011514-fe34ac7e
-    parametros: []
+    parametros: [orden_pendiente_al_abrir_sesion]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -836,6 +859,13 @@ ambiguedades:
     titulo: tres ganadoras que cierran por debajo de 3R
     pregunta: >-
       ¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-12, v10 1:27:04-1:27:36 y 1:29:02-1:29:21; ADR-0073): nunca; «todo es
+      13 o sea fijo es 13 la regla es esa [...] respecto al 1 de la caja», sin parciales y sin
+      dejar correr. RESERVA LITERAL del trader: «no vamos a dejar correr nada por ahora»
+      (ev-v10-012704-d3facd31): lo de los primeros videos queda de lado, no negado. Las ganadoras
+      del material que cierran por debajo de 3R, que esta respuesta no explica, pasan a A-56
+      (medicion). Ningun valor cambia: parciales, objetivo_rr y base_calculo_objetivo ya estaban
+      CONFIRMED (fb-2026-10-04-sesion-04-df162e6e).
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "En tu material hay algunas operaciones ganadoras que se cerraron antes de llegar al objetivo.
@@ -865,7 +895,7 @@ ambiguedades:
       - ev-v4-011112-17178b38
     parametros: [parciales, objetivo_rr]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -945,6 +975,16 @@ ambiguedades:
     titulo: en qué punto de la mecha va la orden límite
     pregunta: >-
       Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-22, v10 1:02:14-1:02:37): «exactamente en el 0
+      contando la mecha [...] No depende de nada, siempre es la mecha», y sin tener en cuenta el
+      spread («No, no tengo en cuenta el split al ponerla»). La pregunta hablaba de orden LIMITE;
+      desde A-47 la entrada es con orden STOP, y la respuesta vale para esa orden, que es la que
+      el trader pone hoy. El motor ya lo hace: el 0 de la caja es el extremo con mecha del ultimo
+      pivote de M1 (ADR-0064 §2) y la stop se coloca en ese precio sin sumar el spread
+      (tests/unit/test_orden_en_el_0_con_mecha.py lo congela). Registro
+      fb-2026-10-04-sesion-04-bbfb5c98, que supersede al REOPEN fb-2026-09-29-sesion-03-f3caeb2d.
+      C6 (v7 n.o 3, la orden 2 puntos mas alla del 0) sigue sin explicar, anotada en las
+      candidatas sin abrir.
     resuelve_en: [F20, F22]
     # CERRADA Y REABIERTA EL 2026-10-02 (rama trabajo/cerrar-a29-a36). Se cerro con «Mecha
     # incluida, siempre» (v9 1:17:14-1:17:21, ev-v9-011714-08536830; fb-2026-09-29-sesion-03-626c4dc7)
@@ -966,7 +1006,7 @@ ambiguedades:
       - ev-v9-011714-08536830
     parametros: []
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1036,6 +1076,13 @@ ambiguedades:
     pregunta: >-
       Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de
       la primera, ya sea una orden puesta o una operación abierta?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:56:03-0:56:15): la orden puesta se quita
+      al abrir la segunda sesion, cambie o no el sesgo («Sí, se quita»;
+      fb-2026-10-04-sesion-04-dd888b55; orden_pendiente_al_abrir_sesion = se_retira, CONFIRMED,
+      RN-035); la operacion ABIERTA ya la cerraba RN-002 un minuto antes del fin de su vela H4
+      (sesion 3, S-1, ADR-0060). RESERVA: pregunta dirigida («Se quita, ¿verdad?»); coincide con
+      la regla general de 54:38 y con la independencia de las sesiones (A-46). Lo que el corte de
+      audio de v9 0:28:49-0:29:53 dejo sin oir queda contestado aqui.
     resuelve_en: [F22, F23]
     # NACE EL 2026-09-25 (rama trabajo/sesion-02, decision del consultor) del candidato C-05 de
     # docs/validation/SESION-02-INVENTARIO.md §4.3. La busqueda no dio ningun RESPONDE
@@ -1047,9 +1094,9 @@ ambiguedades:
     # para escribirse
     evidencia:
       - ev-v3-010304-4468cc20
-    parametros: []
+    parametros: [orden_pendiente_al_abrir_sesion]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1180,6 +1227,15 @@ ambiguedades:
       ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de
       hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la
       sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma.
+      LO FIRME, ACTIVADO el 2026-10-11 (sesion 4, S-15, v10 1:46:13-1:47:16) como DESVIACION
+      declarada de la regla «las en parte van a la sesion 5» (decision del consultor, punto 9):
+      una liquidez tomada antes de las 7 SI la usa, siempre que la operacion se de desde las 7
+      («si el precio toma ese liquidez antes de tu horario, ¿lo usas para operar a partir de las 7?
+      Sí.», ev-v10-014613-6cf002b2): toma_antes_de_la_ventana pasa de no_cuenta (PROVISIONAL,
+      que decia lo contrario) a cuenta, CONFIRMED (fb-2026-10-04-sesion-04-c3d0c855). SIGUE ABIERTA
+      por la segunda parte: si a las 6:45 la toma, el precio vuelve por encima y a las 7:20 la
+      vuelve a tomar, no eligio entre «la de las 7:20 vale» y «esa liquidez ya esta gastada»;
+      contesto que la liquidez se va actualizando y se toma «la más reciente». Va a la sesion 5.
     resuelve_en: [F19, F20]
     # NACE EL 2026-09-25 (rama trabajo/huecos-motor, ADR-0049 H2, decision del consultor). El motor
     # solo tiene eventos entre ventana_inicio y ventana_fin (ADR-0048; las sesiones salen de
@@ -1199,7 +1255,7 @@ ambiguedades:
     evidencia:
       - ev-v3-000138-567dc5d7
       - ev-v3-000157-b26147c7
-    parametros: []
+    parametros: [toma_antes_de_la_ventana]
     contradiccion: null
     estado: ABIERTA
     decision: null
@@ -1481,6 +1537,10 @@ ambiguedades:
       En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar
       entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión,
       ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md.
+      RESUELTA el 2026-10-04 en la sesion 4 (S-20, v10 1:54:49-1:55:04 y 1:56:40-1:56:55): opcion (a), sin maximo;
+      «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión», hasta que
+      salta el tope de perdida (fb-2026-10-04-sesion-04-f0e58d1f; max_escenarios_por_sesion queda
+      CONFIRMED en sin_limite, el mismo valor). Las «dos entradas por dia» de v4 quedan descartadas.
     resuelve_en: [F19, F20]
     # NACE el 2026-10-02 (rama feature/escenarios-por-sesion, cuarta orden del consultor: todo
     # parametro PROVISIONAL cuelga de una ambiguedad ABIERTA). Es la subpregunta de A-46 que quedo
@@ -1495,7 +1555,7 @@ ambiguedades:
       - ev-v4-003350-acb03ee7
     parametros: [max_escenarios_por_sesion]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1607,6 +1667,42 @@ ambiguedades:
         literal: "within two hours before a relevant market closes for at least two hours"
     parametros:
       - cierre_pendientes
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: medicion
+    bloqueante: false
+  - id: A-56
+    titulo: la regla del objetivo dicha por el trader frente a lo que mide su material
+    pregunta: >-
+      El trader dice, tres veces, que el stop va en el 0,8 y que el objetivo es 3 veces la
+      distancia del 0 al 1 (A-18 y A-33, RESUELTAS por ADR-0073). Con esa combinacion el RR
+      implicito de sus ganadoras sobre entrada-stop tendria que caer fuera de [3,00, 3,75), y en
+      tres meses de sus libros cae dentro en 26 filas de 38 (ADR-0040). ¿Que explica la
+      diferencia: donde queda el stop en sus backtests, como redondea FX Replay, otra cosa? Y las
+      ganadoras de esos libros que cierran por debajo de 3R (una en agosto, dos en abril, una en
+      mayo), que «nunca cierro antes del objetivo» no explica. NO SE LE PREGUNTA AL TRADER: ya
+      contesto; se MIDE. La fila de agosto de ADR-0040 sale del xlsx del backtest de agosto, y en
+      S-16 (sesion 4, v10 1:48:23-1:48:53) el trader da por bueno «el último» de sus dos backtests
+      de agosto, el grabado en video, «porque incluye los break even» (que el xlsx sea el otro es
+      lectura de la sesion, no su frase); sin agosto la region sigue poblada con abril y mayo. Lo que la
+      resolveria lo dice ADR-0040 §2: un material que traiga la caja; y un libro de agosto que sea
+      el que el trader da por bueno. F26 lee la diferencia como conocida.
+    resuelve_en: [F26]
+    # NACE el 2026-10-11 (rama trabajo/activar-sesion-04, ADR-0073, decision del consultor): es la
+    # contradiccion que ADR-0040 llamaba «refutacion» y que mantenia A-18 abierta. Clase medicion y
+    # NO bloqueante: una medicion nunca va al trader y un bloqueante no se cierra como DECIDIDA.
+    # Sus fuentes son documentales (ADR-0040), como las de A-54 y A-55.
+    evidencia: []
+    fuentes_documentales:
+      - documento: docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md
+        ancla: "Decision"
+        literal: "Una fila dentro basta, y hay 26 en 38."
+      - documento: docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md
+        ancla: "Impacto"
+        literal: "Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00."
+    parametros: [base_calculo_objetivo, objetivo_rr, stop_fraccion_caja]
     contradiccion: null
     estado: ABIERTA
     decision: null

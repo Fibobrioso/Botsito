@@ -426,9 +426,12 @@ acciones:
     descripcion: >-
       cancela en el broker la orden limite pendiente `de`, si `segun` lo dice. Hasta el 2026-10-01
       estaba DECLARADA Y SIN REGLA que la usara: que se hace con una orden pendiente al llegar
-      ventana_fin no lo dice el corpus ni lo cierra ninguna ambiguedad (A-30). Desde entonces la
+      ventana_fin no lo decia el corpus ni lo cerraba ninguna ambiguedad (A-30). Desde entonces la
       usa RN-035 al abrir una sesion, con `segun` = orden_pendiente_al_abrir_sesion, PROVISIONAL
-      hasta la pregunta 5 de la sesion 4 (ADR-0066)
+      hasta la pregunta 5 de la sesion 4 (ADR-0066) y CONFIRMADO desde el 2026-10-04 (S-5: la
+      orden sin llenar se quita a las 11 y a las 3; A-30 y A-39 RESUELTAS). A ventana_fin la
+      retirada sigue siendo del cableado (ADR-0053 §6): la rama de RN-035 que la escriba es de
+      trabajo/activar-sesion-04-motor
     argumentos: [de, segun]
   abrir_escenario:
     descripcion: >-
@@ -855,9 +858,11 @@ reglas:
       ventana-, y tambien en el propio limite, para que nada llenado en el ultimo minuto cruce a
       la vela siguiente. No se toca ventana_fin, que tambien decide que sesiones se operan, y su
       cierre en punto se conserva como segunda rama. El interruptor es el mismo
-      cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela;
-      A-39, de donde sale esto, sigue ABIERTA por el corte de audio de v9 0:28:49-0:29:53 y por
-      la orden pendiente (A-30). DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
+      cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela.
+      Eso lo hace RN-035 al abrir la sesion siguiente (A-30 y A-39, RESUELTAS el 2026-10-04 en la
+      sesion 4, S-5: la orden sin llenar se quita a las 11 y a las 3, cambie o no el sesgo;
+      fb-2026-10-04-sesion-04-766c8d2e, fb-2026-10-04-sesion-04-dd888b55) y, a ventana_fin, el
+      cableado al terminar el dia (ADR-0053 §6), sin regla de la spec todavia. DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
       dos ramas caen sobre el mismo limite: ventana_fin es el fin de la segunda vela H4 de la
       ventana, en la misma rejilla de anclaje_h4, y "las 3pm" son las de su grafico casi todo el
       año (las 2pm las semanas del cambio). `alcanza_hora` lee la hora nominal por la puerta de
@@ -878,7 +883,7 @@ reglas:
     estado: VIGENTE
 
   - id: RN-035
-    titulo: la orden que sigue pendiente al abrir otra sesion se retira (PROVISIONAL)
+    titulo: la orden que sigue pendiente al abrir otra sesion se retira
     cuando: abre una sesion operativa y queda una orden de la sesion anterior sin llenar
     entonces: >-
       se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario
@@ -897,7 +902,16 @@ reglas:
       motor hasta hoy (DECISION 3 de ADR-0064): la orden de la manana no se reubicaba con los
       puntos de la tarde y, como RN-011 no coloca con una orden pendiente, dejaba la tarde sin
       operar. Una posicion ABIERTA no entra aqui: la cierra RN-002. La opcion de la pregunta 5 «la
-      dejo y la sigo moviendo en la sesión siguiente» no se escribe hasta que el trader la elija
+      dejo y la sigo moviendo en la sesión siguiente» no se escribe hasta que el trader la elija.
+      DESDE EL 2026-10-04 (sesion 4, S-5; activada el 2026-10-11, trabajo/activar-sesion-04) YA NO
+      ES PROVISIONAL: el trader dice que la orden sin llenar se quita a las 11 y a las 3, «porque
+      siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5,
+      ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39,
+      fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida
+      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija. LO QUE
+      ESTA REGLA NO HACE TODAVIA: retirar la orden a ventana_fin (las 3): eso lo hace el cableado al
+      terminar el dia (ADR-0053 §6) sin regla; la rama ventana_fin de esta regla va a
+      trabajo/activar-sesion-04-motor (respuesta del consultor del 2026-10-11, punto 4)
     forma:
       cuando:
         todos_de:
@@ -1052,14 +1066,18 @@ reglas:
       ADR-0066) la toma tiene que ser DE LA SESION (`la_toma_es_de_la_sesion`): una liquidez que
       ya estaba tomada al abrirla no cuenta si se tomo en una sesion anterior del dia (A-46: cada
       sesion es «un mundo diferente», fb-2026-09-29-sesion-03-5021677e), y si se tomo antes de la
-      primera sesion lo decide toma_antes_de_la_ventana, PROVISIONAL hasta la pregunta 15 de la
-      sesion 4. Medido: sin esta condicion, RN-004 volvia a fijar la toma de la manana en la
+      primera sesion lo decide toma_antes_de_la_ventana, PROVISIONAL no_cuenta hasta la pregunta 15
+      de la sesion 4 y `cuenta` desde el 2026-10-11 (S-15: una liquidez tomada antes de las 7 SI la
+      usa, con la operativa desde las 7; fb-2026-10-04-sesion-04-c3d0c855; A-43 sigue ABIERTA por su
+      segunda parte). Medido: sin esta condicion, RN-004 volvia a fijar la toma de la manana en la
       apertura de la tarde sobre el mismo pivote si el precio seguia pasado
       (docs/validation/ESCENARIOS-POR-SESION.md §0.2). Y cada toma de una liquidez nueva abre un
       ESCENARIO (`abrir_escenario`): RN-004 fija el hecho en cada M1 que cierra pasada la linea,
       asi que la misma liquidez no abre nada; una toma con el escenario vigente vivo la decide
-      intentos_tras_toma_nueva, PROVISIONAL hasta la pregunta 18. Abrir un escenario es el
-      reinicio de los cartuchos (cartuchos_reinicio = siguiente_liquidez_m15)
+      intentos_tras_toma_nueva, CONFIRMADO en la sesion 4 (S-18, A-25 RESUELTA el 2026-10-04:
+      la toma de otra liquidez reinicia los tres intentos, fb-2026-10-04-sesion-04-9f3e9dda). Abrir
+      un escenario es el reinicio de los cartuchos (cartuchos_reinicio = siguiente_liquidez_m15,
+      ratificado en S-18, fb-2026-10-04-sesion-04-e0173b1b)
     forma:
       cuando:
         todos_de:
@@ -1342,7 +1360,13 @@ reglas:
       fb-2026-09-29-sesion-03-11910e0a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct,
       ADR-0061, ACEPTADO) LA FORMA NOMBRA stop_fraccion_redondeo y el motor lo lee: la distancia
       de la entrada al stop se redondea al punto entero siguiente, el stop queda un poco mas
-      lejos y el lote, que sale de esa distancia, un poco menor.
+      lejos y el lote, que sale de esa distancia, un poco menor. DESDE EL 2026-10-04 (sesion 4,
+      S-3; ADR-0073, 2026-10-11) A-18 ESTA RESUELTA: el stop va ya en el 0,8 al poner la orden,
+      el 1 solo plantea el RR y no hay stop en dos tiempos en la ejecucion
+      (fb-2026-10-04-sesion-04-87ccb0ee); lo que el material contradice es A-56, una medicion.
+      Y A-36 RESUELTA (sesion 4, S-22, fb-2026-10-04-sesion-04-bbfb5c98): la orden de entrada va
+      exactamente en el 0 de la caja, contando la mecha y sin sumar el spread, que es donde
+      `zona_del_punto` ya la pone (ADR-0064 §2; tests/unit/test_orden_en_el_0_con_mecha.py).
     decision: ADR-0020
     forma:
       cuando:
@@ -1494,7 +1518,10 @@ reglas:
       leer esa diferencia como un fallo del bot: es la mecanica. ev-v4-011951 empuja al otro
       lado -el trader dice que un ganador cubre "2 o 3" perdidas, que cuadra mejor con medir
       sobre el riesgo real-, pero es una estimacion redonda hablando de margenes, no una
-      descripcion del calculo; A-18 lo deja a la vista hasta ratificarlo. LA BASE, ANOTADA Y NO
+      descripcion del calculo; A-18 lo dejo a la vista hasta ratificarlo, y el trader lo ratifico
+      en la sesion 4 (S-3 y S-12: fijo, 3 veces respecto al 1 de la caja, sin dejar correr «por
+      ahora»; A-18 y A-33 RESUELTAS por ADR-0073, fb-2026-10-04-sesion-04-87ccb0ee y
+      fb-2026-10-04-sesion-04-df162e6e; la diferencia con el material es A-56). LA BASE, ANOTADA Y NO
       CAMBIADA (2026-09-16): las dos premisas con las que ADR-0014 eligio la caja completa estan
       revocadas -que el stop se mueve tras el llenado (A-11) y que el lote se dimensiona sobre la caja
       (ADR-0020)-, asi que el argumento "en el instante de trazar la orden solo existe la caja
@@ -1566,7 +1593,8 @@ reglas:
       vigente de la sesion -la liquidez tomada y sus zonas- en vez de ser un hueco, y
       detenido_por_cartuchos lo apaga `abrir_escenario` con la siguiente liquidez de M15, que es
       cartuchos_reinicio. Si una toma nueva con el escenario vivo empieza con los intentos enteros
-      lo decide intentos_tras_toma_nueva (A-25), PROVISIONAL.
+      lo decide intentos_tras_toma_nueva (A-25, RESUELTA el 2026-10-04 en la sesion 4, S-18: con
+      la toma nueva vuelven los tres intentos, fb-2026-10-04-sesion-04-9f3e9dda).
     forma:
       cuando:
         cualquiera_de:

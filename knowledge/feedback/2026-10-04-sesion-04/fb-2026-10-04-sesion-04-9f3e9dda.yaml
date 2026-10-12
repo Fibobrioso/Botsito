@@ -1,0 +1,20 @@
+id: fb-2026-10-04-sesion-04-9f3e9dda
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: intentos_tras_toma_nueva
+accion: CONFIRM
+respuesta_literal: ya la tercera como hemos dicho pues paramos y esperamos el desarrollo rollo de otra
+  zona de liquidez o la toma de otra zona de liquidez para nuevamente pues reiniciar los tres intentos
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:51:52'
+t1: '1:52:09'
+valor_resultante: vuelven_a_cartuchos_max
+notas: 'S-18: el valor PROVISIONAL vuelven_a_cartuchos_max (ADR-0066 §2) lo confirma el trader: la toma
+  de otra liquidez reinicia los tres intentos; ev-v10-015152-6dad6eb3'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

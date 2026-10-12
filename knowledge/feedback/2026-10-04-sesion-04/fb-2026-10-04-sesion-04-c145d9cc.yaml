@@ -1,0 +1,21 @@
+id: fb-2026-10-04-sesion-04-c145d9cc
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: cartuchos_reinicio
+accion: CONFIRM
+respuesta_literal: pero claro lo ha definido con 3 bueno, hay que dejarlo así con 3, o sea no influye
+  mucho [...] pérdida 1, pérdida 2 pérdida 3, detenemos esperamos la siguiente toma de liquidez y nuevamente
+  operamos allí
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:52:27'
+t1: '1:52:47'
+valor_resultante: siguiente_liquidez_m15
+notas: 'S-18: ratifica cartuchos_reinicio = siguiente_liquidez_m15 (sesion 1) y deja cartuchos_max en
+  3 aunque el «se iria por una cuarta»; ev-v10-015227-b360ebf1'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

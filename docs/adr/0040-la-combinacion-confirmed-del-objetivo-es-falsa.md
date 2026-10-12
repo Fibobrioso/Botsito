@@ -6,6 +6,17 @@ phase: post-F14 (rama `trabajo/mayo-dev-ingerido`)
 
 # 0040 · La combinación CONFIRMED del objetivo es falsa, y los dos supervivientes siguen abiertos
 
+> **ENMIENDA (2026-10-11, rama `trabajo/activar-sesion-04`, ADR-0073).** Lo que este ADR llama
+> «refutada» pasa a ser «la regla dicha por el trader, contradicha por el material»: en la sesión
+> 4 (S-3, S-12) el trader repitió que el stop va en el 0,8 y que el objetivo es 3 veces el 0→1, y
+> A-18 y A-33 quedan RESUELTAS por ADR-0073 (la decisión 3 de abajo queda enmendada). Ningún dato
+> de este ADR se toca: la región medida sigue poblada, los dos supervivientes siguen siendo las
+> lecturas del material y ningún parámetro cambia (decisión 4). La contradicción entre la regla y
+> el material es desde hoy A-56, clase medición, para F26; y la fila de agosto de la tabla sale del
+> xlsx, mientras que en S-16 el trader da por bueno «el último» de sus dos backtests de agosto, el
+> grabado en vídeo, «porque incluye los break even» (que el xlsx sea el otro es una lectura de la
+> sesión, no su frase).
+
 ## Decision
 
 1. **La combinación `(base_calculo_objetivo = caja_completa, stop_fraccion_caja = 0,8)` queda

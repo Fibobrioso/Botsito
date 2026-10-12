@@ -1,0 +1,25 @@
+id: fb-2026-10-04-sesion-04-766c8d2e
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-30
+accion: RESOLVE_UNKNOWN
+respuesta_literal: a ver si a las 11 tienes la orden puesta que no se ha llenado [...] claro, se quita
+  [...] sí, se quita, porque siempre se va a ir actualizando la orden, como te digo o sea, no va a haber
+  órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04, punto 10 de su respuesta)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: 0:54:27
+t1: 0:54:51
+valor_resultante: la orden sin llenar se quita al acabar la sesion (a las 11) y al acabar la ventana (a
+  las 3)
+notas: 'S-5 (pregunta 5): opcion (a), se quita a las 11 y a las 3 (ev-v10-005427-1a0867af). RESERVA: la
+  pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6, A8: «se quita, ¿no?»); lo que sostiene la respuesta
+  es la razon del trader a 54:38, «porque siempre se va a ir actualizando la orden». «Un minuto antes»
+  es frase del consultor y no se fija. El motor ya lo hace: RN-035 (se_retira) al abrir la sesion siguiente
+  y el cableado al terminar el dia (ADR-0053 §6)'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

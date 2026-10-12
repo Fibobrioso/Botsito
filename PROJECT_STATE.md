@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-04
 
 ## Current Feature
-`main` en `stable/F37l-entorno-code` (11a63ad): el entorno de trabajo de Claude Code (skills, agentes, hook de arranque, `make rapido`) está en main; R0.2 HECHA. Sin ramas abiertas; manda la Next Action (F: E es lo siguiente). Informe docs/validation/ENTORNO-CODE.md.
+`trabajo/activar-sesion-04` EN CURSO (abierta el 2026-10-11 desde 11df2c4): activar la sesión 4 (R1.1 de la hoja de ruta, E de la Next Action): cada «resuelve» de SESION-04-EXTRACCION.md §5 RESUELTA en la spec y, si hace falta, en el motor con su test; las «en parte», a la sesión 5. Encargo docs/encargos/trabajo-activar-sesion-04.md; informe docs/validation/ACTIVAR-SESION-04.md.
 
 ## Stable Main State
 11a63ad · merge de `trabajo/entorno-code` (tag `stable/F37l-entorno-code`): las skills fase-cero, activar-sesion, comparar-con-main, entregar-rama y retomar-rama, el agente auditor-encargo y el revisor en opus; el hook de arranque `.claude/hooks/estado_sesion.py`; `abrir-rama` comprueba la base entera; `solo_lectura.py` ampliado; `make rapido` sin sellar; knowledge validate compartido en cuatro tests (make check de 1209 a 952 s). Sobre `stable/F37k-hoja-de-ruta` (7823568). Informe docs/validation/ENTORNO-CODE.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ main
 11a63ad · merge: entorno de Claude Code: skills, agentes, hook de arranque, make rapido y guardias del paquete (R0.2) · tag stable/F37l-entorno-code
 
 ## Tests Currently Passing
-1498 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1506 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -32,11 +32,11 @@ D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que
 
 X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-F. Orden de trabajo: E (R1.1 de la hoja de ruta) es lo siguiente; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
+F. Orden de trabajo: lo siguiente es `trabajo/activar-sesion-04-motor` (E); la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
 
-E. Activar la sesión 4: 17 ambigüedades con respuesta en SESION-04-EXTRACCION.md §5 («resuelve» o «en parte») siguen ABIERTA; varias ya tienen parámetro con valor (A-52, A-30, A-25, A-18, A-33, A-13) y falta código en A-21, A-51, A-36 y A-49. Se activan las «resuelve»; las «en parte» van a la sesión 5. Va después de F. <!-- cifra-congelada: las 17 son el recuento de SESION-04-EXTRACCION.md §5, informe cerrado -->
+E. Activar la sesión 4. HECHO en `trabajo/activar-sesion-04`: A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56 abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`); `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta (DESVIACIÓN declarada). QUEDA para `trabajo/activar-sesion-04-motor` (encargo del consultor): A-21 con la opción `sin_alternancia_de_colores` y la retirada de `--diagnostico-a21`; S-13 (ADR que enmienda ADR-0060 §2: la H4 neutra mantiene el sesgo); A-51 (cuatro parámetros, RN-036 y ADR); la rama `ventana_fin` de RN-035; y, como su primer commit, el CONFIRM sobre la evidencia ev-v10-004945-59ebac47 de S-4 (PARADA 2, opción b). Las «en parte» (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) van a la hoja de la sesión 5 (R4.1), con las preguntas de ACTIVAR-SESION-04.md §0.e y §5.
 
-G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-18) y A-16.
+G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-56, la regla del objetivo frente al material, ADR-0073) y A-16.
 
 I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de X, S y E, y de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
 
@@ -48,7 +48,9 @@ O. Para Aleks, con FTMO: P-D1 (DEMO-EJECUCION-1.md §0.c), enviada a support@ftm
 
 K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos.
 
-H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; se decide en la activación.
+H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; si el literal de 1:44:49 es «1 o 2» o «12» lo lee Aleks con `--crudo` en su terminal (punto 8 de la respuesta del consultor del 2026-10-11); S-14 va a la sesión 5 (R4.1).
+
+Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Lo mismo dijo el trader de julio, que ya está en S.
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -68,7 +70,6 @@ criterio de salida: `docs/state/README.md`.
 - 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`…
 - 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).
 - 12. **MARZO, AL LLEGAR, ENTRA POR SU PROPIA RAMA**: declaracion en `knowledge/corpus/libros.yaml` con formato…
-- 15. A-18: S-3 de la sesion 4 contesta el stop y el objetivo; sale cuando E cierre A-18.
 - 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): A-21 es la zona…
 - 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.
 - 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor…
@@ -83,26 +84,20 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 |---|---|---|---|---|
 | A-13 | break even al toque o con cuerpo | pregunta | no | F11, F23, F26 |
 | A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | medicion | no | F26 |
-| A-18 | base sobre la que se mide el objetivo 1:3 | pregunta | no | F11, F26 |
 | A-21 | que es una zona de control limpia, sin ruido | pregunta | si | F12, F20, F26 |
-| A-25 | la vida de la marca de liquidez de M15 | pregunta | no | F19, F20 |
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
-| A-30 | la orden limite pendiente al llegar el fin de la ventana | pregunta | no | F22, F23 |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
-| A-33 | tres ganadoras que cierran por debajo de 3R | pregunta | no | F20, F24, F26 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
-| A-36 | en qué punto de la mecha va la orden límite | pregunta | no | F20, F22 |
-| A-39 | qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo | pregunta | no | F22, F23 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
 | A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |
 | A-49 | si la caja se traza con la vela del bloque cerrada o en formación | pregunta | no | F20, F21 |
 | A-50 | para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera | pregunta | no | F19, F20 |
 | A-51 | qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar | pregunta | si | F11, F18 |
-| A-52 | cuántos escenarios puede abrir una misma sesión como máximo | pregunta | no | F19, F20 |
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
 | A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |
+| A-56 | la regla del objetivo dicha por el trader frente a lo que mide su material | medicion | no | F26 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
@@ -125,7 +120,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - `fecha_grabacion` TIENE QUE SER UN EJE DE PRIMERA CLASE, Y EL DETECTOR DE CONTRADICCIONES TIENE QUE ORDENAR POR ELLA (2026-09-21, deuda con nombre puesta por el consultor).
 - CUARTA APARICION DEL PUNTO CIEGO DEL DETECTOR, CON DIMENSION NUEVA: LA RECENCIA (2026-09-21).
 - LA PRIMERA MEDIDA DE A-18 SALE DEL MATERIAL, NO DE LA SESION, Y SE REPITE SOBRE MAYO (2026-09-21, rama F14a, informe §4).
-- F26 NO PUEDE PUNTUAR EL OBJETIVO HASTA QUE A-18 ESTE CERRADA (2026-09-21).
+- F26 lee la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073, ADR-0040).
 - `idealTP`: UNA COLUMNA DEL MATERIAL QUE NO SABEMOS QUE ES Y NO USAMOS (2026-09-21, rama F14a, ADR-0037 §7).
 - BUSCAR EN EL CORPUS ANTES DE REDACTAR CUALQUIER AMBIGUEDAD, Y ESCRIBIR QUE SE BUSCO (2026-09-21, rama F14a).
 - EL DIA QUE UN CAMINO GUARDE MATERIAL EN `knowledge/cases/<camino>/`, NECESITA LECTOR GUARDADO ANTES DE QUE ESE FICHERO SE COMMITEE (2026-09-21, rama de la puerta por pregunta; enmienda de ADR-0033, informe §5).
@@ -182,8 +177,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 28 (2026-10-10).
+— ninguna desde el Archivo 29 (2026-10-11).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 28 (2026-10-10).
+— ninguna desde el Archivo 29 (2026-10-11).

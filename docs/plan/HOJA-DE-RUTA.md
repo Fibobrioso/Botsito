@@ -40,7 +40,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R1 · Activar la sesión 4
 
 ### R1.1 · Las respuestas de la sesión 4 entran en la spec
-- **Refs:** NA:F · NA:E · HER:15 · ID:A-13 · ID:A-18 · ID:A-21 · ID:A-25 · ID:A-30 · ID:A-32 · ID:A-33 ·
+- **Refs:** NA:F · NA:E · ID:A-13 · ID:A-18 · ID:A-21 · ID:A-25 · ID:A-30 · ID:A-32 · ID:A-33 ·
   ID:A-35 · ID:A-36 · ID:A-39 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 · ID:A-51 · ID:A-52 ·
   ID:A-53 · NA:H · ID:RN-007
 - **Qué es:** las ambigüedades que SESION-04-EXTRACCION.md §5 (y SESION-03-EXTRACCION.md §5) dan
@@ -55,6 +55,10 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión, con el encargo del consultor; cada cierre toca los cinco sitios de
   `docs/runbooks/AMBIGUEDADES.md`.
 - **Hecho cuando:** cada «resuelve» está RESUELTA y cada «en parte» está en la hoja de la sesión 5.
+- **Estado:** EN CURSO. Hecha la parte de spec en `trabajo/activar-sesion-04`
+  (`stable/F37m-activar-sesion-04`; ACTIVAR-SESION-04.md); queda `trabajo/activar-sesion-04-motor`
+  (A-21, S-13, A-51, RN-035 `ventana_fin`). HECHA cuando la rama de motor cierre y cada «en parte»
+  esté en la hoja de la sesión 5.
 
 ## R2 · Material de construcción
 
@@ -75,6 +79,16 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión, en la rama que baje ticks de un mes de invierno.
 - **Hecho cuando:** la ventana de ticks sale de la rejilla, con su test.
 
+### R2.3 · Agosto: el backtest grabado en vídeo
+- **Refs:** NA:Q · ID:A-56
+- **Qué es:** en S-16 el trader da por bueno el backtest de agosto grabado en vídeo y no el xlsx
+  del que salen hoy los casos dev de agosto. Aleks le pide su exportación; al llegar, entra por su
+  propia rama (libros.yaml solo se amplía) y se revisan ADR-0040 y A-56.
+- **Depende de:** la exportación del trader (carril de Aleks, A.3).
+- **Quién:** Aleks la pide; la rama, la sesión con encargo del consultor.
+- **Hecho cuando:** la exportación está declarada en libros.yaml y los casos dev de agosto dicen de
+  qué libro salen.
+
 ## R3 · Una corrida del arnés sobre toda la construcción
 
 ### R3.1 · La corrida de ADR-0070 y las diferencias clasificadas
@@ -93,8 +107,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-21 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · NA:J
-- **Qué es:** las «en parte» de la sesión 4, y lo que salga de R3, con la hoja de preguntas. La hoja
+  ID:A-53 · ID:RN-007 · NA:J
+- **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43, S-14 y la confirmación
+  del caso bajista de S-13), y lo que salga de R3, con la hoja de preguntas. La hoja
   Word necesita antes que `kit hoja` funcione con un paquete nuevo (NA:J).
 - **Depende de:** R1.1, R3.1 y la copia de seguridad del carril de Aleks.
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
@@ -103,12 +118,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R5 · Fidelidad
 
 ### R5.1 · Las condiciones previas de F26
-- **Refs:** NA:G · F:F26 · ID:A-16 · ID:A-18 · ID:ADR-0021 · ID:ADR-0033
+- **Refs:** NA:G · F:F26 · ID:A-16 · ID:A-56 · ID:ADR-0021 · ID:ADR-0033
 - **Qué es:** rellenar PREREGISTRO.md (métrica, umbral, partición, autorización); arreglar que una
   pregunta abre N particiones (rama de código en la puerta); decidir qué conjunto es el universo
-  (los dos días de la sesión 1 sin partición); A-18 cerrada para puntuar el objetivo; A-16 (Oanda
-  frente a Dukascopy).
-- **Depende de:** R1.1 (A-18) y la decisión del consultor sobre cuántos días reservados necesita F26.
+  (los dos días de la sesión 1 sin partición); A-56 medida, o declarada conocida, para puntuar el
+  objetivo; A-16 (Oanda frente a Dukascopy).
+- **Depende de:** la decisión del consultor sobre cuántos días reservados necesita F26.
 - **Quién:** el consultor decide; Aleks autoriza la apertura (ADR-0021 §3); la sesión ejecuta.
 - **Hecho cuando:** PREREGISTRO está relleno y commiteado, y la puerta abre una sola partición.
 
@@ -231,7 +246,11 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** la revisión de `ev-v7-001550-82e5cffc` (L); `kit hoja` roto para un paquete nuevo
   (J, antes de R4); el calendario de cierres por condición (N); y, del Next Action viejo: febrero no
   se toca (6), junio y la guardia (7), el brief de los `dev` de septiembre (8) y re-descargar un mes
-  rompe `kit build` (9).
+  rompe `kit build` (9). Y, desde `trabajo/activar-sesion-04`: `--diagnostico-a47` (A-47 RESUELTA)
+  y `--diagnostico-a27` (A-27 DECIDIDA) siguen en la CLI sin deuda que los recoja, y se retiran con
+  `--diagnostico-a21` o en G.1; dos `make check` de esa rama dieron `MemoryError` de `lzma` en
+  `tests/unit/test_ticks.py`, ajenos a la rama: la decisión de `pytest-xdist` (G.4) necesita la RAM
+  de la máquina, que dará Aleks.
 - **Depende de:** nada (J, antes de R4.1).
 - **Quién:** el consultor (L, 6 y la decisión de 7 y 8); la sesión, en ramas propias.
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.

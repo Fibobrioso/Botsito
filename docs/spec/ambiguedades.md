@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 15.9.9` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (22)
+## ABIERTA (16)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -18,23 +18,11 @@ Afecta a: `break_even_criterio_ruptura`.
 
 ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23
 
-### A-18 · base sobre la que se mide el objetivo 1:3 · pregunta
-
-¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop en dos tiempos: ¿cómo funciona eso?
-
-Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
-
 ### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
 
 Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 1:19:57), NO activada: zona limpia = sin alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo.
 
 Afecta a: `zona_control_limpia`.
-
-### A-25 · la vida de la marca de liquidez de M15 · pregunta
-
-Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías?
-
-Afecta a: `cartuchos_reinicio`.
 
 ### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
 
@@ -46,21 +34,11 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
 
-### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
-
-Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella?
-
 ### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
 
 En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada.
 
 Afecta a: `breaker_m1_criterio_ruptura`.
-
-### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
-
-¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos?
-
-Afecta a: `parciales`, `objetivo_rr`.
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
@@ -68,17 +46,11 @@ Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das p
 
 Afecta a: `liquidez_m15_pivote_formado`.
 
-### A-36 · en qué punto de la mecha va la orden límite · pregunta
-
-Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas?
-
-### A-39 · qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo · pregunta
-
-Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de la primera, ya sea una orden puesta o una operación abierta?
-
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
-Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma.
+Si el precio toma una liquidez antes de las 7, cuando todavía no ha empezado tu horario, ¿la tienes en cuenta para operar después? Nota medida: hoy el motor ya responde de hecho, y solo para una vela: la M15 que cierra a las 07:00 cuenta como toma dentro de la sesión; en construcción, la toma del bot es esa en 7 de los 40 días con toma. LO FIRME, ACTIVADO el 2026-10-11 (sesion 4, S-15, v10 1:46:13-1:47:16) como DESVIACION declarada de la regla «las en parte van a la sesion 5» (decision del consultor, punto 9): una liquidez tomada antes de las 7 SI la usa, siempre que la operacion se de desde las 7 («si el precio toma ese liquidez antes de tu horario, ¿lo usas para operar a partir de las 7? Sí.», ev-v10-014613-6cf002b2): toma_antes_de_la_ventana pasa de no_cuenta (PROVISIONAL, que decia lo contrario) a cuenta, CONFIRMED (fb-2026-10-04-sesion-04-c3d0c855). SIGUE ABIERTA por la segunda parte: si a las 6:45 la toma, el precio vuelve por encima y a las 7:20 la vuelve a tomar, no eligio entre «la de las 7:20 vale» y «esa liquidez ya esta gastada»; contesto que la liquidez se va actualizando y se toma «la más reciente». Va a la sesion 5.
+
+Afecta a: `toma_antes_de_la_ventana`.
 
 ### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) · **BLOQUEANTE** · pregunta
 
@@ -106,12 +78,6 @@ Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta so
 
 Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
 
-### A-52 · cuántos escenarios puede abrir una misma sesión como máximo · pregunta
-
-En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión, ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md.
-
-Afecta a: `max_escenarios_por_sesion`.
-
 ### A-53 · la orden sin llenar cuando el precio toma otra liquidez de M15 · pregunta
 
 Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden? (a) la quito en ese momento y espero el punto de la liquidez nueva; (b) la dejo, y la muevo cuando aparezca el punto de la liquidez nueva; (c) otra, ¿cuál? Es la pregunta 21 de docs/sesion-4/PREGUNTAS.md.
@@ -135,6 +101,16 @@ Afecta a: `cierre_pendientes`.
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R15: «two hours or less before a relevant financial market is closed for at least two hours».
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente»: «within two hours before a relevant market closes for at least two hours».
+
+### A-56 · la regla del objetivo dicha por el trader frente a lo que mide su material · medicion
+
+El trader dice, tres veces, que el stop va en el 0,8 y que el objetivo es 3 veces la distancia del 0 al 1 (A-18 y A-33, RESUELTAS por ADR-0073). Con esa combinacion el RR implicito de sus ganadoras sobre entrada-stop tendria que caer fuera de [3,00, 3,75), y en tres meses de sus libros cae dentro en 26 filas de 38 (ADR-0040). ¿Que explica la diferencia: donde queda el stop en sus backtests, como redondea FX Replay, otra cosa? Y las ganadoras de esos libros que cierran por debajo de 3R (una en agosto, dos en abril, una en mayo), que «nunca cierro antes del objetivo» no explica. NO SE LE PREGUNTA AL TRADER: ya contesto; se MIDE. La fila de agosto de ADR-0040 sale del xlsx del backtest de agosto, y en S-16 (sesion 4, v10 1:48:23-1:48:53) el trader da por bueno «el último» de sus dos backtests de agosto, el grabado en video, «porque incluye los break even» (que el xlsx sea el otro es lectura de la sesion, no su frase); sin agosto la region sigue poblada con abril y mayo. Lo que la resolveria lo dice ADR-0040 §2: un material que traiga la caja; y un libro de agosto que sea el que el trader da por bueno. F26 lee la diferencia como conocida.
+
+Afecta a: `base_calculo_objetivo`, `objetivo_rr`, `stop_fraccion_caja`.
+
+Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Decision»: «Una fila dentro basta, y hay 26 en 38.».
+
+Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Impacto»: «Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00.».
 
 ## DECIDIDA (7)
 
@@ -178,7 +154,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (26)
+## RESUELTA (33)
 
 ### A-1 · sesgo H4
 
@@ -258,11 +234,23 @@ del 8 al 28 de marzo y del 25 al 31 de octubre, la UE y EE.UU. no cambian la hor
 
 Afecta a: `ventana_inicio`, `ventana_fin`.
 
+### A-18 · base sobre la que se mide el objetivo 1:3 · pregunta
+
+¿Cómo decides dónde va el stop y dónde va el objetivo? En algún vídeo hablas de poner el stop en dos tiempos: ¿cómo funciona eso? RESUELTA el 2026-10-04 en la sesion 4 (S-3, v10 0:35:59-0:39:48; ADR-0073): el stop va ya en el 0,8 al poner la orden («Sería directamente a 0.8»); el 1 «se usa al comienzo pero no de ejecución, sino como planteamiento»; el objetivo se mide del 0 al 1 y el lote del 0 al 0,8 («se usa de 0 a 1 para el cálculo de 1 a 3 [...] para la toma de la operativa se usa de 0 a 0,8»). No hay stop en dos tiempos en la ejecucion. Ningun valor cambia: base_calculo_objetivo, objetivo_rr, stop_fraccion_caja y lotaje_base ya estaban CONFIRMED con lo mismo desde la sesion 3. Lo que el material contradice (ADR-0040, enmendado por ADR-0073) es una medicion y va en A-56 (fb-2026-10-04-sesion-04-87ccb0ee).
+
+Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
+
 ### A-20 · cuantas zonas de control invalidan un esquema
 
 RN-009 afirma que con mas de una zona de control no hay trade, pero el literal que la sostiene dice "por lo general solo buscamos uno", que no es una prohibicion dura. ¿es regla o es tendencia? ¿dos zonas invalidan SIEMPRE el esquema, o hay casos en que opera igual? El valor 1 es un default nuestro hasta que lo diga. RESPONDIDA por escrito el 2026-09-11: es REGLA -"solo 1 zona control bro. si hay 2 se descarta"- y ratifica tambien el descarte, no solo el numero (fb-2026-09-09-sesion-01-1b2203b0)
 
 Afecta a: `zonas_control_max_por_esquema`.
+
+### A-25 · la vida de la marca de liquidez de M15 · pregunta
+
+Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías? RESUELTA el 2026-10-04 en la sesion 4 (S-18, v10 1:51:52-1:54:34): la marca del alto viejo se descarta y pasa al nuevo («el más reciente es lo que importa [...] Paso al nuevo»), que es lo que ADR-0045 ya decidio (A-24: el pivote mas reciente ya formado); y la toma de otra liquidez reinicia los tres intentos («para nuevamente pues reiniciar los tres intentos»): intentos_tras_toma_nueva queda CONFIRMED en vuelven_a_cartuchos_max, el mismo valor, y cartuchos_reinicio ratificado (fb-2026-10-04-sesion-04-b3c218ce). El trader dice que el «se iria por una cuarta» pero lo deja en 3: cartuchos_max no se toca.
+
+Afecta a: `cartuchos_reinicio`, `intentos_tras_toma_nueva`.
 
 ### A-26 · el flujo de M15 cuando va contra el sesgo de H4 · pregunta
 
@@ -274,13 +262,29 @@ A veces el sesgo de H4 va en un sentido y el flujo que ves en M15 va en el contr
 
 Afecta a: `orden_limite_nace`.
 
+### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
+
+Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:54:27-0:54:51): se quita, a las 11 y a las 3, «porque siempre se va a ir actualizando la orden [...] no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e). orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que sostiene el cierre es la razon del trader. «Un minuto antes» es frase del consultor y no se fija. A ventana_fin la retirada la hace hoy el cableado al terminar el dia (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035 va a trabajo/activar-sesion-04-motor.
+
+Afecta a: `orden_pendiente_al_abrir_sesion`.
+
 ### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
 
 Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera como un loss … gastaría un intento»: la lectura de RN-016 era la del trader (fb-2026-09-29-sesion-03-d36ba0d2).
 
+### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
+
+¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos? RESUELTA el 2026-10-04 en la sesion 4 (S-12, v10 1:27:04-1:27:36 y 1:29:02-1:29:21; ADR-0073): nunca; «todo es 13 o sea fijo es 13 la regla es esa [...] respecto al 1 de la caja», sin parciales y sin dejar correr. RESERVA LITERAL del trader: «no vamos a dejar correr nada por ahora» (ev-v10-012704-d3facd31): lo de los primeros videos queda de lado, no negado. Las ganadoras del material que cierran por debajo de 3R, que esta respuesta no explica, pasan a A-56 (medicion). Ningun valor cambia: parciales, objetivo_rr y base_calculo_objetivo ya estaban CONFIRMED (fb-2026-10-04-sesion-04-df162e6e).
+
+Afecta a: `parciales`, `objetivo_rr`.
+
 ### A-34 · vela H4 previa que rompe ambos extremos · pregunta
 
 Si la vela de H4 anterior rompe los dos extremos de la vela que tenía antes, ¿qué sesgo tomas para la sesión? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:16:19): «si rompe por los dos, como te digo, importa el color de la vela»: con la doble ruptura el sesgo lo decide el color con que cierra la vela (fb-2026-09-29-sesion-03-617f496a).
+
+### A-36 · en qué punto de la mecha va la orden límite · pregunta
+
+Dijiste que la orden límite siempre va en la mecha. ¿En qué punto de la mecha la colocas? RESUELTA el 2026-10-04 en la sesion 4 (S-22, v10 1:02:14-1:02:37): «exactamente en el 0 contando la mecha [...] No depende de nada, siempre es la mecha», y sin tener en cuenta el spread («No, no tengo en cuenta el split al ponerla»). La pregunta hablaba de orden LIMITE; desde A-47 la entrada es con orden STOP, y la respuesta vale para esa orden, que es la que el trader pone hoy. El motor ya lo hace: el 0 de la caja es el extremo con mecha del ultimo pivote de M1 (ADR-0064 §2) y la stop se coloca en ese precio sin sumar el spread (tests/unit/test_orden_en_el_0_con_mecha.py lo congela). Registro fb-2026-10-04-sesion-04-bbfb5c98, que supersede al REOPEN fb-2026-09-29-sesion-03-f3caeb2d. C6 (v7 n.o 3, la orden 2 puntos mas alla del 0) sigue sin explicar, anotada en las candidatas sin abrir.
 
 ### A-37 · en qué temporalidad se busca la vela contraria de la que sale el stop · pregunta
 
@@ -289,6 +293,12 @@ Dijiste que el stop se define desde el punto más bajo donde se genera la vela c
 ### A-38 · cuándo se da por anulada una orden límite que el precio deja sin llenar · pregunta
 
 Si pones una orden límite y el precio se aleja sin llenarla, ¿cuándo la das por anulada? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:32:07): «sigue vivo hasta que se desarrolle otro posible punto de breaker», y entonces la orden se actualiza; que el precio se aleje no la anula (fb-2026-09-29-sesion-03-c7fa3068).
+
+### A-39 · qué pasa con lo que viene de la primera sesión cuando la segunda cambia el sesgo · pregunta
+
+Cuando empieza la segunda sesión y el sesgo de H4 ha cambiado, ¿qué haces con lo que traes de la primera, ya sea una orden puesta o una operación abierta? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:56:03-0:56:15): la orden puesta se quita al abrir la segunda sesion, cambie o no el sesgo («Sí, se quita»; fb-2026-10-04-sesion-04-dd888b55; orden_pendiente_al_abrir_sesion = se_retira, CONFIRMED, RN-035); la operacion ABIERTA ya la cerraba RN-002 un minuto antes del fin de su vela H4 (sesion 3, S-1, ADR-0060). RESERVA: pregunta dirigida («Se quita, ¿verdad?»); coincide con la regla general de 54:38 y con la independencia de las sesiones (A-46). Lo que el corte de audio de v9 0:28:49-0:29:53 dejo sin oir queda contestado aqui.
+
+Afecta a: `orden_pendiente_al_abrir_sesion`.
 
 ### A-40 · qué se hace con el stop después del break even · pregunta
 
@@ -319,3 +329,9 @@ Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en l
 Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:01:24): «aquí queda confirmado que se entra siempre por stop» / «Sí, exacto»: la orden de entrada es una STOP en la ruptura (entrada_tipo_orden = stop_en_ruptura) (fb-2026-09-29-sesion-03-92a38105).
 
 Afecta a: `entrada_tipo_orden`.
+
+### A-52 · cuántos escenarios puede abrir una misma sesión como máximo · pregunta
+
+En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión, ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md. RESUELTA el 2026-10-04 en la sesion 4 (S-20, v10 1:54:49-1:55:04 y 1:56:40-1:56:55): opcion (a), sin maximo; «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión», hasta que salta el tope de perdida (fb-2026-10-04-sesion-04-f0e58d1f; max_escenarios_por_sesion queda CONFIRMED en sin_limite, el mismo valor). Las «dos entradas por dia» de v4 quedan descartadas.
+
+Afecta a: `max_escenarios_por_sesion`.
