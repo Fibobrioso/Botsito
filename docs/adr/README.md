@@ -63,7 +63,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0057 | Órdenes stop y rechazo de pendientes en el bróker simulado (PROVISIONAL hasta la demo de FTMO) | ACTIVE (desde el 2026-10-09, ADR-0071: §3 y §5 MEDIDOS en la ejecución 1 de la demo; §1 coincide con una observación; §2 sigue PROVISIONAL) |
 | 0058 | El selector de A-47 en la rama 2: la orden stop en el instante de la límite, para medirla (PROVISIONAL) | ACTIVE |
 | 0059 | A-42, PROVISIONAL: la ventana va en el reloj del gráfico, UTC+2 fijo, todo el año | SUPERSEDED por ADR-0069 |
-| 0060 | El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4 | ACTIVE |
+| 0060 | El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4 | ACTIVE (con enmienda de ADR-0075: la H4 neutra no fija el sesgo) |
 | 0061 | El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior | ACTIVE (enmienda ADR-0029 §3 para el redondeo del stop) |
 | 0062 | La toma de la liquidez de M15 la hace una vela de M1, y lo que eso destapa en el productor | ACTIVE |
 | 0063 | El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` | ACTIVE |
@@ -78,4 +78,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0072 | Quién lee la columna de fechas de un backtest (Aleks, para todo backtest) y los tres papeles: Aleks, el consultor y la sesión | ACTIVE |
 | 0073 | La base del objetivo y el stop los fija el testimonio del trader; lo que el material contradice es una medición abierta (A-56), y ADR-0040 queda enmendado | ACTIVE (enmienda ADR-0040) |
 | 0074 | El 1 de la caja de la orden stop se recalcula en cada cierre de M1 hasta el llenado: `caja_se_fija` = `en_cada_cierre_m1` | ACTIVE (enmienda la decisión 5 de ADR-0064; DEFAULT_AMBIGUOUS bajo A-49) |
+| 0075 | Una H4 neutra con doble ruptura no decide el sesgo: se mantiene el anterior | ACTIVE (enmienda ADR-0060 §1 y §2) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

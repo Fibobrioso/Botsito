@@ -5,7 +5,6 @@ declara los ids que el encargo cita y que todavía no existen, como exige `knowl
 cada uno sale de aquí en el commit que lo crea):
 
 ```ids-inexistentes
-ADR-0075 — el ADR de S-13 que este encargo manda escribir (decisión 2); no existe hasta su commit
 ADR-0076 — el ADR de A-21 que este encargo manda escribir (decisión 3); no existe hasta su commit
 ADR-0077 — el ADR de A-51 que este encargo manda escribir (decisión 4); no existe hasta su commit
 ```

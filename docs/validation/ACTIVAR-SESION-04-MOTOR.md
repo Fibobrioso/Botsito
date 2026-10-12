@@ -9,7 +9,6 @@ Los ids que este informe cita y todavía no existen (los ADR que el encargo mand
 sale de aquí en el commit que lo crea):
 
 ```ids-inexistentes
-ADR-0075 — el ADR de S-13 (decisión 2 del encargo); no existe hasta su commit
 ADR-0076 — el ADR de A-21 (decisión 3 del encargo); no existe hasta su commit
 ADR-0077 — el ADR de A-51 (decisión 4 del encargo); no existe hasta su commit
 ```
@@ -267,7 +266,12 @@ con el precedente o la guardia que la fuerza. Si el consultor quiere otra, se ca
 1. **RN-003 cita el CORRECT nuevo** (decisión 2), con su `literal` sacado de la respuesta del trader
    en S-13; `fb-2026-09-29-sesion-03-31fb311f` queda en las notas. Precedente: ADR-0060 §6
    (decidido por el consultor el 2026-09-30: «RN-002 y RN-003 pasan a citar sus CORRECT de la
-   sesión 3»). Sin eso, el CORRECT es un pendiente que la skill prohíbe dejar.
+   sesión 3»). Sin eso, el CORRECT es un pendiente que la skill prohíbe dejar. MEDIDO AL HACERLO
+   (§1.2): una regla cita UN registro, así que al citar el de S-13 el CORRECT de la sesión 3
+   (`fb-2026-09-29-sesion-03-31fb311f`) pasa a salir en `feedback pending` como «RN-003 no lo cita
+   todavía»; con la otra opción saldría el de S-13. Uno de los dos sale siempre: es una limitación
+   de `pending` (un CORRECT por regla), no un trabajo que falte; va a las líneas del cierre como
+   deuda, y el consultor puede preferir la otra cita (PARADA, punto 4).
 2. **La fila de A-51 (y la de A-21, tras la PARADA) sale de Known Ambiguities en su commit**, no en
    el cierre: `test_kit.py:414-423` (a4).
 3. **A-51 lleva su RESOLVE_UNKNOWN** además de los cuatro registros de parámetro (m12).
@@ -353,8 +357,18 @@ reservados listada. `HOLDOUT-EXPOSICIONES.md` no cambia.
    citaba» no existe y se dice; cambian además la descripción de `zona_control_limpia` («ABIERTA y
    BLOQUEANTE de RN-008», `parametros.yaml:898-908`) y el texto de A-21 (`ambiguedades.yaml:425-428`).
    No es una decisión: lo apunto para que la respuesta lo dé por bueno o lo corrija.
+4. **La `cita` de RN-003 tras el CORRECT de S-13** (hecho en la decisión 2, §1.2, revisable): una
+   regla cita UN registro y `feedback pending` da por pendiente todo CORRECT sobre ella que no sea
+   el citado (`cli.py:2064-2075`). Opciones: (a) RN-003 cita el CORRECT de S-13
+   (`fb-2026-10-04-sesion-04-ca0afae6`, lo hecho, por el precedente de ADR-0060 §6) y el de la
+   sesión 3 (`fb-2026-09-29-sesion-03-31fb311f`, el color con doble ruptura) sale como pendiente
+   aunque la regla siga haciéndolo y sus notas lo citen; (b) RN-003 vuelve a citar el de la sesión
+   3 y el de S-13 sale como pendiente. Recomiendo (a): la cita es la última palabra del trader
+   sobre la regla, como en ADR-0060 §6; y que `pending` no sepa de una regla con dos CORRECT vivos
+   va a las líneas del cierre como deuda. Coste de (b): un registro de la sesión 4 pendiente, que la
+   skill prohíbe dejar.
 
-**Espero tu respuesta a la PARADA** para la decisión 3. Las decisiones 1, 2, 4 y 5 siguen esta
+**Espero tu respuesta a la PARADA** para la decisión 3 (y el punto 4 si prefieres (b)). Las decisiones 1, 2, 4 y 5 siguen esta
 noche, cada una en su commit, con lo de §0.8 declarado.
 
 ## 1. Las decisiones, una por commit
@@ -388,6 +402,77 @@ noche, cada una en su commit, con lo de §0.8 declarado.
   CONFIRM sobre el ítem. `tests/unit/test_en_parte_no_se_cierra.py` no cubría A-49 porque la
   clasifica como MEZCLADA (§0.7, a5). 1507 funciones de test (`PROJECT_STATE.md`).
 - Sin `Fuente:` en el commit: no toca `knowledge/spec/` ni `knowledge/cases/`.
+
+### 1.2 Decisión 2 · S-13: una H4 neutra no decide el sesgo (ADR-0075, enmienda ADR-0060 §1 y §2)
+
+- **ADR-0075** (`docs/adr/0075-una-h4-neutra-con-doble-ruptura-no-decide-el-sesgo.md`, número
+  comprobado libre en §0.2, con la plantilla): la vela que rompe los dos extremos y cierra sin
+  cuerpo no fija el sesgo; la búsqueda hacia atrás la salta. Las dos reservas (sesgo previo
+  alcista; «suponiendo que no haya otro rango mayor») y el «no hay umbral en H4» (uno o dos puntos
+  de cuerpo ya cuentan) están en el ADR y en las notas de RN-003. **Recuadro de ENMIENDA** al
+  principio de ADR-0060 y su fila del índice: «ACTIVE (con enmienda de ADR-0075: la H4 neutra no
+  fija el sesgo)»; fila nueva para 0075. Sale `ADR-0075` del bloque `ids-inexistentes` del encargo
+  y de este informe (ya existe).
+- **Registro:** `fb-2026-10-04-sesion-04-ca0afae6`, CORRECT sobre la regla RN-003 (v10
+  1:40:05–1:40:40, `ev-v10-014005-7e2228f4`), con todas las opciones obligatorias; `--valor` dice
+  lo que queda. `feedback apply --check`: «4 parametros; 0 cambian, 4 ya estaban» (un CORRECT sobre
+  una regla no toca el registro de parámetros). `feedback pending --todos`: `(ok)
+  fb-2026-10-04-sesion-04-ca0afae6 regla:RN-003 - aplicado: la regla lo cita`; y, como efecto de
+  citar este, `fb-2026-09-29-sesion-03-31fb311f CORRECT regla:RN-003 - RN-003 no lo cita todavia`
+  pasa a pendiente (§0.8.1 y PARADA, punto 4: una regla cita un registro y `pending` no sabe de dos
+  CORRECT vivos; deuda para las líneas del cierre).
+- **Spec** (`knowledge/spec/strategy_spec.yaml`, con `spec docs --escribir` en el mismo commit):
+  RN-003: `entonces` («si cierra sin cuerpo -neutra, sin color- no decide y manda la H4 anterior
+  que rompió con lado»), `cita` y `literal` (el CORRECT de S-13; el de la sesión 3 queda en las
+  notas, que cuentan el relevo), notas; RN-033: notas («queda SOLO para `insuficiente`»; su forma
+  y su cita no cambian); descripciones de `sesgo_h4_al_abrir`, del token `sentido_de_la_ruptura`,
+  del token `ambiguo` («DESDE ADR-0075 EL MOTOR NO LO PRODUCE … retirarlo es deuda») y del hecho
+  `sesgo`. `spec_version` **15.9.9 → 16.0.0**, a mano (una regla cambia de sentido), y `spec
+  manifest --escribir` (hash `8b1bf95f9853…`).
+- **Motor:** `src/botsito/domain/sesgo.py`: la rama de la doble ruptura sin cuerpo pasa de
+  `return ResultadoSesgo(Sesgo.AMBIGUO, …)` a `continue`; docstring del módulo, de `Sesgo.AMBIGUO`
+  («declarado y SIN PRODUCTOR desde ADR-0075») y de `ResultadoSesgo`. Nada más en `src/`.
+- **Tests que cambian de sentido A PROPÓSITO** (dicho en su docstring):
+  `tests/unit/test_sesgo_h4.py::test_doble_ruptura_sin_cuerpo_es_ambiguo` →
+  `test_doble_ruptura_sin_cuerpo_no_decide_y_sin_nada_detras_es_insuficiente`;
+  `tests/unit/test_huecos_motor.py`: `test_una_sesion_ambigua_fija_sesgo_ambiguo_y_rn033_prohibe` →
+  `test_una_h4_neutra_no_decide_y_sin_nada_detras_es_insuficiente`,
+  `test_una_segunda_sesion_ambigua_no_hereda_el_sesgo_de_la_primera` →
+  `test_una_h4_neutra_en_la_segunda_sesion_mantiene_el_sesgo_de_la_primera`,
+  `test_una_sesion_no_ambigua_tras_una_ambigua_no_hereda_la_prohibicion` →
+  `test_una_sesion_con_lado_tras_una_insuficiente_no_hereda_la_prohibicion` (su `EstadoDia` a mano
+  pasa de `ambiguo` a `insuficiente`), y el docstring H1 del módulo. **Nuevos:**
+  `test_una_neutra_mantiene_el_sesgo_anterior_alcista_y_bajista` (los dos que pide el encargo: la
+  neutra tras sesgo alcista y tras bajista), `test_dos_neutras_seguidas_mantienen_el_sesgo` (y el
+  tope cuenta las neutras saltadas), `test_con_un_cuerpo_de_un_punto_la_doble_ruptura_ya_decide`
+  (sin umbral), y `test_rn033_sigue_prohibiendo_con_sesgo_ambiguo_puesto_a_mano` (la guardia que
+  queda: el token sigue en la forma). `:305` y `:341` de `test_huecos_motor.py` no cambian (§0.3).
+  1511 funciones de test.
+- **Con el código de `main`** (skill `comparar-con-main`: clon `git worktree add --detach
+  C:/cm/main main`, los dos ficheros de test de la rama copiados dentro, `uv run pytest
+  tests/unit/test_sesgo_h4.py tests/unit/test_huecos_motor.py -q -p no:cacheprovider`; después
+  `git checkout -- tests/...` en el clon, que vuelve a pasar sus propios tests, 36 passed 1
+  skipped). Salida recortada a lo que demuestra:
+
+  ```
+  E         At index 0 diff: 'ambiguo' != 'insuficiente'
+  tests\unit\test_huecos_motor.py:212: AssertionError
+  SKIPPED [1] tests\unit\test_huecos_motor.py:316: sin las velas de construccion: falta en disco: ...
+  FAILED tests/unit/test_sesgo_h4.py::test_doble_ruptura_sin_cuerpo_no_decide_y_sin_nada_detras_es_insuficiente
+  FAILED tests/unit/test_sesgo_h4.py::test_una_neutra_mantiene_el_sesgo_anterior_alcista_y_bajista
+  FAILED tests/unit/test_sesgo_h4.py::test_dos_neutras_seguidas_mantienen_el_sesgo
+  FAILED tests/unit/test_huecos_motor.py::test_una_h4_neutra_no_decide_y_sin_nada_detras_es_insuficiente
+  FAILED tests/unit/test_huecos_motor.py::test_una_h4_neutra_en_la_segunda_sesion_mantiene_el_sesgo_de_la_primera
+  FAILED tests/unit/test_huecos_motor.py::test_una_sesion_con_lado_tras_una_insuficiente_no_hereda_la_prohibicion
+  ```
+
+  Los seis fallan en `main` (dan `ambiguo` donde la rama da el sesgo anterior o `insuficiente`) y
+  pasan en la rama (40 passed, el de `data/` saltado). Los otros dos nuevos
+  (`test_con_un_cuerpo_de_un_punto…` y `test_rn033_sigue_prohibiendo…`) pasan en los dos lados: no
+  cambian de sentido, congelan lo que no cambia.
+- **Guardias:** `uv run botsito knowledge validate` OK (35 reglas, hash del manifiesto al día, 452
+  documentos); `ruff check` y `ruff format --check` limpios sobre `src tests scripts .claude/hooks`.
+- `Fuente: fb-2026-10-04-sesion-04-ca0afae6 ADR-0075` en el cuerpo del commit.
 
 ## Estado
 

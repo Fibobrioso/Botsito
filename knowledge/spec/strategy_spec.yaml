@@ -65,7 +65,8 @@ predicados:
       apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como
       mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o
       bajista-. Si la vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro
-      (sesion 3, A-34 RESUELTA; ADR-0060), y solo si cerro sin cuerpo ata `ambiguo`. Si ninguna
+      (sesion 3, A-34 RESUELTA; ADR-0060); si cerro sin cuerpo -neutra- no decide y la busqueda
+      sigue hacia atras (sesion 4, S-13; ADR-0075: hasta entonces ataba `ambiguo`). Si ninguna
       rompio dentro del tope, ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003
       fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1)
     argumentos: [que, contra, criterio, tope]
@@ -502,8 +503,8 @@ tokens:
   sentido_de_la_ruptura:
     descripcion: >-
       el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`. Lo ata
-      `sesgo_h4_al_abrir`, que cuando no hay lado ata en su lugar `ambiguo` o `insuficiente`
-      (ADR-0049)
+      `sesgo_h4_al_abrir`, que cuando no hay lado ata en su lugar `insuficiente` (ADR-0049;
+      `ambiguo` no se produce desde ADR-0075)
   # `alcista` y `bajista` NO son tokens a proposito: si lo fueran, `sentido: alcista` volveria a
   # pasar la guardia de argumentos, que es justo la puerta que la auditoria de F13 cerro. Solo viven
   # como claves de `lado_de_ruido`, contra una lista fija del codigo. `ambiguo` e `insuficiente` SI
@@ -511,10 +512,12 @@ tokens:
   # porque la guardia exige una LIGADURA en el `sentido` de un predicado con `lado_de_ruido`.
   ambiguo:
     descripcion: >-
-      valor de `sesgo` cuando la H4 que lo fija rompio LOS DOS extremos de su anterior y cerro
-      SIN CUERPO, sin color que decida (ADR-0044 §1, ADR-0060): no hay lado, y RN-033 prohibe
-      operar. Con cuerpo, la doble ruptura toma el lado del color (A-34 RESUELTA) y no es
-      `ambiguo`
+      valor de `sesgo` que daba la H4 que rompia LOS DOS extremos de su anterior y cerraba SIN
+      CUERPO, sin color que decida (ADR-0044 §1, ADR-0060 §2). DESDE ADR-0075 (sesion 4, S-13) EL
+      MOTOR NO LO PRODUCE: la neutra no decide y manda la H4 anterior que rompio con lado; con
+      cuerpo, la doble ruptura toma el lado del color (A-34 RESUELTA). Sigue declarado porque la
+      forma de RN-033 lo nombra con `vale`, igual que los scripts de diagnostico y el visor;
+      retirarlo es deuda (G.2 de la hoja de ruta)
   insuficiente:
     descripcion: >-
       valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su
@@ -628,8 +631,9 @@ hechos:
   # solo para `sesgo`.
   sesgo:
     descripcion: >-
-      el sentido en el que se busca entrada, o que no lo hay: `ambiguo` e `insuficiente`
-      (ADR-0044) son valores del hecho desde ADR-0049, y con ellos RN-033 prohibe operar. Lo fija
+      el sentido en el que se busca entrada, o que no lo hay: `insuficiente` (ADR-0044) y
+      `ambiguo` -que desde ADR-0075 ninguna vela produce- son valores del hecho desde ADR-0049, y
+      con ellos RN-033 prohibe operar. Lo fija
       RN-003 en CADA apertura de sesion y CADUCA al abrir: sin la caducidad, la primera pasada
       del evento de apertura evaluaba los gates con el sesgo de la sesion anterior todavia vivo y
       RN-033 disparaba una vez sobre el (medido el 2026-09-25 sobre construccion: en 24 sesiones
@@ -932,14 +936,26 @@ reglas:
       rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia. Se fija
       AL ABRIR la sesion con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro
       de ella; romper es superar el extremo, por poco que sea, e igualarlo no rompe. Si la vela
-      rompe los dos extremos, decide el color con que cierra -verde, alcista; roja, bajista-, y
-      solo si cierra sin cuerpo el sesgo es AMBIGUO; si ninguna de las ultimas
-      sesgo_h4_tope_velas rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
+      rompe los dos extremos, decide el color con que cierra -verde, alcista; roja, bajista-; si
+      cierra sin cuerpo -neutra, sin color- no decide y manda la H4 anterior que rompio con lado;
+      si ninguna de las ultimas sesgo_h4_tope_velas rompio, es INSUFICIENTE y no se opera
     parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas]
-    cita: fb-2026-09-29-sesion-03-31fb311f
-    literal: si rompe por los dos, como te digo, importa el color de importa el color de la vela.
+    cita: fb-2026-10-04-sesion-04-ca0afae6
+    literal: >-
+      si esta es una vela neutra, no tiene ningún color, nosotros seguiríamos operando alcistas
     notas: >-
-      LA CITA ES EL CORRECT DE LA SESION 3 DESDE EL 2026-09-30 (decision del consultor al aceptar
+      LA CITA ES EL CORRECT DE LA SESION 4 (S-13) DESDE EL 2026-10-12 (ADR-0075, como ADR-0060 §6
+      hizo con el de la sesion 3): la vela que rompe los dos extremos y cierra SIN CUERPO -neutra-
+      NO DECIDE, «si esta es una vela neutra, no tiene ningún color, nosotros seguiríamos operando
+      alcistas» (fb-2026-10-04-sesion-04-ca0afae6, ev-v10-014005-7e2228f4); la busqueda hacia
+      atras la salta y manda la H4 anterior que rompio con lado, y `ambiguo` deja de producirse.
+      Neutra es cierre igual a apertura, exacto: con un cuerpo de uno o dos puntos ya cuenta el
+      color (v10 1:41:01-1:41:29), no hay umbral en H4. DOS RESERVAS: lo dijo con sesgo previo
+      ALCISTA y el caso bajista se deduce (su confirmacion va a la sesion 5); y «suponiendo que no
+      haya otro rango mayor» (SESION-04-EXTRACCION.md §3.14). Hasta entonces la cita era
+      fb-2026-09-29-sesion-03-31fb311f, el CORRECT de la sesion 3 («si rompe por los dos, como te
+      digo, importa el color de la vela»), que sigue sosteniendo el color con doble ruptura.
+      LA CITA FUE EL CORRECT DE LA SESION 3 DESDE EL 2026-09-30 (decision del consultor al aceptar
       ADR-0060). Hasta entonces era fb-2026-09-09-sesion-01-8eccf5c0, que sigue sosteniendo la
       ruptura de un extremo: «si no genera un rompimiento por encima, o sea, al menos por un pip o
       una milésima de pip, entonces seguiríamos operando bajista». Con un solo extremo roto, el
@@ -962,7 +978,7 @@ reglas:
       mecha (ev-v9-001312-19e45e4a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060,
       ACEPTADO) EL MOTOR LO HACE: con la doble ruptura sesgo_h4_al_abrir ata el lado del color,
       y `ambiguo` queda solo para la vela que rompe los dos extremos y cierra sin cuerpo, que el
-      trader no describio.
+      trader no describio -hasta la sesion 4: desde ADR-0075 esa vela no decide (arriba).
     forma:
       cuando:
         todos_de:
@@ -1014,6 +1030,11 @@ reglas:
       sesgo_h4_tope_velas (`insuficiente`, ADR-0044 §2 y ADR-0060 §3)-, con la lectura mas
       conservadora donde el no habla (ADR-0044 §1). Por eso no cita el CORRECT de la sesion 3
       (fb-2026-09-29-sesion-03-1168f036), que dice que siempre hay sesgo, ni cambia de forma.
+      DESDE EL 2026-10-12 (ADR-0075; sesion 4, S-13) LA NEUTRA YA NO DA `ambiguo`: ninguna vela lo
+      produce, y esta regla queda SOLO para `insuficiente`. La rama `vale: ambiguo` de la forma se
+      conserva como guardia -el token sigue declarado y lo nombran los scripts de diagnostico y el
+      visor-, y retirarla es deuda (G.2). La prohibicion de operar sin lado sigue saliendo de
+      ADR-0044 §1 y ADR-0049.
     decision: ADR-0049
     forma:
       cuando:

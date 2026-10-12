@@ -77,11 +77,48 @@ def test_rompe_ambos_extremos_y_decide_el_color_de_la_vela() -> None:
     assert r.sesgo is Sesgo.BAJISTA and r.ruptura_puntos == 1 and r.doble_ruptura
 
 
-def test_doble_ruptura_sin_cuerpo_es_ambiguo() -> None:
-    """Sin cuerpo no hay color que decida, y el trader no describio ese caso (ADR-0060)."""
+def test_doble_ruptura_sin_cuerpo_no_decide_y_sin_nada_detras_es_insuficiente() -> None:
+    """Cambia de sentido A PROPOSITO (sesion 4, S-13; ADR-0075, enmienda ADR-0060 §2): hasta
+    entonces daba AMBIGUO. Sin cuerpo no hay color y la vela no fija nada: se sigue hacia atras, y
+    si no hay nada detras, INSUFICIENTE."""
     velas = [h4(0, 110, 100), h4(1, 112, 99, abierta=105, cierre=105)]
     r = sesgo_h4(velas, MinutoUtc(2 * H4), TOPE, MECHA)
-    assert r.sesgo is Sesgo.AMBIGUO and r.ruptura_puntos == 1 and r.doble_ruptura
+    assert r.sesgo is Sesgo.INSUFICIENTE and r.ruptura_puntos is None and r.velas_miradas == 1
+    assert not r.doble_ruptura
+
+
+def test_una_neutra_mantiene_el_sesgo_anterior_alcista_y_bajista() -> None:
+    """S-13: «si esta es una vela neutra, no tiene ningún color, nosotros seguiríamos operando
+    alcistas» (ev-v10-014005-7e2228f4). El trader lo dijo con sesgo previo alcista; el caso bajista
+    se deduce y su confirmacion va a la sesion 5 (ADR-0075)."""
+    alcista = [h4(0, 110, 100), h4(1, 112, 101), h4(2, 115, 96, abierta=105, cierre=105)]
+    r = sesgo_h4(alcista, MinutoUtc(3 * H4), TOPE, MECHA)
+    assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 2 and r.velas_miradas == 2
+    assert not r.doble_ruptura  # la que fija es la de un solo extremo, no la neutra
+    bajista = [h4(0, 110, 100), h4(1, 108, 98), h4(2, 115, 96, abierta=105, cierre=105)]
+    r = sesgo_h4(bajista, MinutoUtc(3 * H4), TOPE, MECHA)
+    assert r.sesgo is Sesgo.BAJISTA and r.ruptura_puntos == 2 and r.velas_miradas == 2
+
+
+def test_dos_neutras_seguidas_mantienen_el_sesgo() -> None:
+    velas = [
+        h4(0, 110, 100),
+        h4(1, 112, 101),
+        h4(2, 115, 98, abierta=105, cierre=105),
+        h4(3, 118, 95, abierta=106, cierre=106),
+    ]
+    r = sesgo_h4(velas, MinutoUtc(4 * H4), TOPE, MECHA)
+    assert r.sesgo is Sesgo.ALCISTA and r.velas_miradas == 3
+    # y el tope cuenta las neutras saltadas: con tope 2 no se llega a la que rompio
+    assert sesgo_h4(velas, MinutoUtc(4 * H4), 2, MECHA).sesgo is Sesgo.INSUFICIENTE
+
+
+def test_con_un_cuerpo_de_un_punto_la_doble_ruptura_ya_decide() -> None:
+    """No hay umbral en H4: con un cuerpo de un punto la doble ruptura toma su color
+    (S-13, v10 1:41:01-1:41:29; ADR-0075)."""
+    velas = [h4(0, 110, 100), h4(1, 108, 98), h4(2, 115, 96, abierta=105, cierre=106)]
+    r = sesgo_h4(velas, MinutoUtc(3 * H4), TOPE, MECHA)
+    assert r.sesgo is Sesgo.ALCISTA and r.doble_ruptura and r.velas_miradas == 1
 
 
 def test_la_doble_ruptura_fija_el_sesgo_y_no_se_sigue_mirando_hacia_atras() -> None:

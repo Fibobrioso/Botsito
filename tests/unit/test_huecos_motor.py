@@ -1,11 +1,12 @@
 """Los huecos del arnes (ADR-0049) sobre H4 SINTETICAS y la spec real.
 
-H1: una sesion ambigua -desde ADR-0060, solo la doble ruptura de una vela SIN CUERPO; con cuerpo
-decide el color- fija `sesgo` a `ambiguo` y RN-033 prohibe; una segunda sesion ambigua no
-hereda el sesgo de la primera, ni una no ambigua la prohibicion de una ambigua -el hecho caduca al
-abrir-; insuficiente prohibe; y, cuando `data/` esta en la maquina, la forma y la primitiva
-coinciden en todas las sesiones de construccion. Mas las guardias nuevas: `vale`, `caduca`, los
-`valores` de un hecho como tokens y `sentido` como ligadura.
+H1: una sesion con la H4 previa INSUFICIENTE fija `sesgo` a `insuficiente` y RN-033 prohibe; una
+H4 NEUTRA con doble ruptura no decide y RN-003 vuelve a fijar el sesgo de la H4 anterior que rompio
+(sesion 4, S-13; ADR-0075: hasta entonces era `ambiguo`); ninguna sesion hereda el sesgo ni la
+prohibicion de la anterior -el hecho caduca al abrir-; RN-033 sigue prohibiendo con `ambiguo` puesto
+a mano, que es lo que su forma congela; y, cuando `data/` esta en la maquina, la forma y la
+primitiva coinciden en todas las sesiones de construccion. Mas las guardias nuevas: `vale`,
+`caduca`, los `valores` de un hecho como tokens y `sentido` como ligadura.
 
 H2: las sesiones de `kit/config.yaml` cubren exactamente [ventana_inicio, ventana_fin). H3: la
 misma traza con el orden de cada clase invertido, y el aviso cuando dos reglas de la misma clase
@@ -164,46 +165,72 @@ def _sesgo_de(traza: TrazaSesion) -> list[str]:
 # ------------------------------------------------------------------------------------- H1
 
 
-def test_una_sesion_ambigua_fija_sesgo_ambiguo_y_rn033_prohibe(motor: MotorSpec) -> None:
+def test_una_h4_neutra_no_decide_y_sin_nada_detras_es_insuficiente(motor: MotorSpec) -> None:
+    """Cambia de sentido A PROPOSITO (sesion 4, S-13; ADR-0075): la doble ruptura sin cuerpo daba
+    `ambiguo`; ahora no decide, y con una sola H4 detras no hay nada que rompa: `insuficiente`."""
     velas = _velas("ambos_sin_cuerpo", "arriba")
     estado = EstadoDia()
     ev = motor.interprete.evento(motor.reglas, _apertura("07-11", velas), estado)
-    assert ("RN-003", "sesgo", "ambiguo") in ev.fijados
-    assert estado.hechos["sesgo"] == "ambiguo"
+    assert ("RN-003", "sesgo", "insuficiente") in ev.fijados
+    assert estado.hechos["sesgo"] == "insuficiente"
     assert "RN-033" in ev.disparadas and ev.prohibidos >= PROHIBE_RN033
     r = motor.correr_dia(_dia(velas))
-    assert _sesgo_de(r.sesiones["07-11"]) == ["ambiguo"]
-    assert "RN-033" in r.sesiones["07-11"].disparadas
-    assert r.sesiones["07-11"].anotaciones["sesgo_h4"] == "ambiguo"
+    assert _sesgo_de(r.sesiones["07-11"]) == ["insuficiente"]
+    assert r.sesiones["07-11"].anotaciones["sesgo_h4"] == "insuficiente"
+    assert ANOTACION_DOBLE_RUPTURA not in r.sesiones["07-11"].anotaciones
+    assert "ambiguo" not in {v for _, _, h, v in r.sesiones["07-11"].fijados if h == "sesgo"}
 
 
-def test_una_segunda_sesion_ambigua_no_hereda_el_sesgo_de_la_primera(motor: MotorSpec) -> None:
+def test_una_h4_neutra_en_la_segunda_sesion_mantiene_el_sesgo_de_la_primera(
+    motor: MotorSpec,
+) -> None:
+    """S-13: «seguiríamos operando alcistas». La segunda sesion NO hereda el hecho: caduca al abrir
+    y RN-003 lo vuelve a fijar con la H4 anterior que rompio. Hasta ADR-0075 esta sesion daba
+    `ambiguo` y RN-033 prohibia."""
     velas = _velas("arriba", "ambos_sin_cuerpo")
     r = motor.correr_dia(_dia(velas))
     assert _sesgo_de(r.sesiones["07-11"]) == ["alcista"]
-    assert _sesgo_de(r.sesiones["11-15"]) == ["ambiguo"]
-    assert "RN-033" not in r.sesiones["07-11"].disparadas
-    assert "RN-033" in r.sesiones["11-15"].disparadas
-    # Con el sesgo de la primera sesion en pie, la apertura de la segunda lo caduca ANTES de la
-    # primera pasada y fija el suyo: el estado acaba en `ambiguo`, no en `alcista`.
-    estado = EstadoDia(hechos={"sesgo": "alcista"})
+    assert _sesgo_de(r.sesiones["11-15"]) == ["alcista"]
+    for sesion in ("07-11", "11-15"):
+        assert "RN-033" not in r.sesiones[sesion].disparadas
+    # Con otro sesgo en pie, la apertura de la segunda lo caduca ANTES de la primera pasada y fija
+    # el suyo: el estado acaba en `alcista` porque RN-003 lo fija, no porque se herede.
+    estado = EstadoDia(hechos={"sesgo": "bajista"})
     ev = motor.interprete.evento(motor.reglas, _apertura("11-15", velas), estado)
     assert ev.caducados == ["sesgo"]
-    assert estado.hechos["sesgo"] == "ambiguo" and "RN-033" in ev.disparadas
+    assert estado.hechos["sesgo"] == "alcista" and "RN-033" not in ev.disparadas
 
 
-def test_una_sesion_no_ambigua_tras_una_ambigua_no_hereda_la_prohibicion(motor: MotorSpec) -> None:
+def test_una_sesion_con_lado_tras_una_insuficiente_no_hereda_la_prohibicion(
+    motor: MotorSpec,
+) -> None:
     """Medido el 2026-09-25 antes de la caducidad: RN-033 disparaba en la apertura de la segunda
-    sesion sobre el sesgo de la primera (24 sesiones de 84 en construccion, y solo 15 ambiguas)."""
+    sesion sobre el sesgo de la primera (24 sesiones de 84 en construccion, y solo 15 ambiguas).
+    Desde ADR-0075 la primera sesion de este escenario es `insuficiente`, no `ambiguo`."""
     velas = _velas("ambos_sin_cuerpo", "arriba")
     r = motor.correr_dia(_dia(velas))
+    assert _sesgo_de(r.sesiones["07-11"]) == ["insuficiente"]
     assert _sesgo_de(r.sesiones["11-15"]) == ["alcista"]
     assert "RN-033" not in r.sesiones["11-15"].disparadas
-    estado = EstadoDia(hechos={"sesgo": "ambiguo"})
+    estado = EstadoDia(hechos={"sesgo": "insuficiente"})
     ev = motor.interprete.evento(motor.reglas, _apertura("11-15", velas), estado)
     assert ev.caducados == ["sesgo"]
     assert "RN-033" not in ev.disparadas and not (PROHIBE_RN033 & ev.prohibidos)
     assert estado.hechos["sesgo"] == "alcista"
+
+
+def test_rn033_sigue_prohibiendo_con_sesgo_ambiguo_puesto_a_mano(motor: MotorSpec) -> None:
+    """El token `ambiguo` sigue en la forma de RN-033 y en los valores del hecho (ADR-0075: el motor
+    ya no lo produce; retirarlo es deuda). Dentro de la sesion -sin apertura, para que RN-003 no lo
+    vuelva a fijar- un `sesgo` en `ambiguo` sigue prohibiendo."""
+    velas = _velas("arriba", "arriba")
+    estado = EstadoDia(hechos={"sesgo": "ambiguo"})
+    dentro = Momento(
+        MinutoUtc(a_minuto(APERTURA["07-11"]) + 5), "07-11", False, DatosMercado(velas)
+    )
+    ev = motor.interprete.evento(motor.reglas, dentro, estado)
+    assert ev.caducados == [] and estado.hechos["sesgo"] == "ambiguo"
+    assert "RN-033" in ev.disparadas and ev.prohibidos >= PROHIBE_RN033
 
 
 def test_la_doble_ruptura_toma_el_color_de_la_vela_y_rn033_no_prohibe(motor: MotorSpec) -> None:
