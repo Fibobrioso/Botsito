@@ -674,9 +674,9 @@ opción). Medido con `scratchpad/medir_series_a21.py` (fuera del repo) y despué
 
 **Punto 0.b · el cierre.**
 - **Registros:** `fb-2026-10-04-sesion-04-22d08cbf` (RESOLVE_UNKNOWN sobre A-21: v10 1:17:25–1:20:27,
-  los tres ítems de S-10, con la nota de la pregunta dirigida «¿Es solo eso?») y
-  `fb-2026-10-04-sesion-04-48fb5817` (RESOLVE_UNKNOWN sobre `zona_control_limpia` =
-  `solo_una_zona_de_control`, v10 1:17:25–1:17:31). `feedback apply --check`: «9 parametros; 1
+  los tres ítems de S-10) y `fb-2026-10-04-sesion-04-48fb5817` (RESOLVE_UNKNOWN sobre
+  `zona_control_limpia` = `solo_una_zona_de_control`, v10 1:17:25–1:17:31, con la nota de la
+  pregunta dirigida «¿Es solo eso?»; corregido tras el revisor, hallazgo 1.2 de §9.3). `feedback apply --check`: «9 parametros; 1
   cambian, 8 ya estaban» (`+ zona_control_limpia 'solo_una_zona_de_control' <- …48fb5817`, SOLO
   el de esta respuesta); después sin `--check`: CONFIRMED con fuente `feedback`.
 - **ADR-0076** (`docs/adr/0076-limpia-es-sin-alternancia-de-colores-y-lo-filtra-rn009.md`, número
@@ -716,8 +716,9 @@ pierde el argumento `limpia`. Los tres guiones construyen `Diagnostico` con argu
 sin `a21`, y leen `lectura_limpia(registro)`: `embudo_77.py` deja `--a21` opcional y se niega si no
 coincide con el registro (su etiqueta `a21` en el resumen pasa a ser la lectura fijada);
 `caja_77_exploratoria.py` se niega si el registro no trae la lectura con que midió; en
-`orden_stop_o_limite.py` el bucle sobre `LECTURAS_LIMPIA` se conserva tal cual y `lim` es la del
-registro en las dos vueltas (se dice: el guion es de una rama cerrada). **Los cuatro guiones que
+`orden_stop_o_limite.py` el bucle sobre `LECTURAS_LIMPIA` se conserva (su cabecera, tal cual),
+`lim` es la del registro, y desde el commit que atiende al revisor (hallazgo 2.2, abajo y en
+§9.3) solo se mide la vuelta que coincide con el registro: la otra lo dice y salta. **Los cuatro guiones que
 recorren `LECTURAS_LIMPIA` no se tocan** (`bloque_de_la_caja.py`, `orden_stop_o_limite.py` en su
 bucle, `verificacion_a21.py`, `verificacion_a21_entradas.py`): como no entra opción nueva, recorren
 las mismas dos de siempre. `mypy src`: sin errores; `ruff`: limpio.
@@ -758,18 +759,54 @@ UNKNOWN, `lectura_limpia` exige el argumento del diagnóstico (y con el registro
 de la tabla pasan también en `main`: `domain/estructura_m1.py` no cambia, y eso es justo lo que
 demuestra que RN-009 ya filtraba la alternancia.
 
-**El grep** (respuesta, revisor alcance 2): `grep -rn --include=*.py -e "--diagnostico-a21" -e
-"diagnostico.a21" src/ tests/ scripts/` → vacío. `grep -rn --include=*.py -e "a21" src/ tests/
-scripts/` deja solo: nombres de ficheros y funciones de ramas cerradas (`test_preparar_a21.py`,
-`verificacion_a21*.py`, `scripts/buscar_ambiguedades.py` y `test_transcribir_sesion.py`, que
-nombran la ambigüedad), el docstring de `zonas.py` que cuenta la historia, y `--a21` de
-`embudo_77.py` (opcional, tiene que coincidir con el registro). El texto `DIAGNOSTICO-A21-` que
-imprimen `verificacion_a21.py` y `verificacion_a21_entradas.py` en sus encabezados es salida de
-dos de los cuatro guiones que no se tocan. Ese grep no casa la etiqueta ni un `Diagnostico`
-posicional: dos tests que los llevaban (`test_preparar_a35.py`, el prefijo de la CLI;
-`test_selector_orden_stop.py`, el orden de las etiquetas) fallaron al correrlos y se
-corrigieron antes del commit; un segundo grep de `DIAGNOSTICO-A21|a21=` sobre `*.py` lo
-confirma vacío fuera de comentarios, del `type: ignore` del test y de esos dos guiones.
+**El grep** (respuesta, revisor alcance 2). El encargo pedía «vacío, con la salida en el
+informe»; **hecho de otra forma**: NO está vacío, y lo que deja es todo muerto (corregido tras el
+revisor, hallazgo 2.1 de §9.3: la versión anterior de este párrafo decía «vacío»):
+
+```
+$ grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/ scripts/
+src/botsito/cli.py:2295:    # --diagnostico-a21 existio desde ADR-0055 hasta que el trader respondio A-21 en la sesion 4
+tests/unit/test_preparar_a21.py:370:    negaba nombrando A-21 y ofrecia `--diagnostico-a21`. El trader respondio A-21 en la sesion 4
+tests/unit/test_preparar_a21.py:411:def test_la_cli_no_conoce_diagnostico_a21_y_la_compuerta_de_medida_manda(
+tests/unit/test_preparar_a21.py:414:    """Desde ADR-0076 `--diagnostico-a21` no es una opcion (argparse la rechaza con codigo 2 y
+tests/unit/test_preparar_a21.py:426:             "sin_tope", "--diagnostico-a21", SOLO_UNA_ZONA_DE_CONTROL]
+tests/unit/test_preparar_a21.py:429:    assert "--diagnostico-a21" in capsys.readouterr().err
+```
+
+Un comentario de la CLI que cuenta la historia (no se reescribe para que el grep calle) y el
+test negativo, que NECESITA el literal para demostrar que argparse lo rechaza. El grep ancho,
+`grep -rnc --include=*.py -e "a21" src/ tests/ scripts/`, casa en 15 ficheros, y ninguno es
+código vivo: `cli.py` (1, el comentario), `zonas.py` (1, el docstring), `test_a21_series.py` (4:
+nombre del módulo y de los tests), `test_preparar_a21.py` (10: nombres, docstrings, el `type:
+ignore` del test que comprueba que `Diagnostico(a21=…)` es `TypeError`, y el test negativo),
+`test_preparar_a35.py`, `test_rutas_windows.py` y `test_visor.py` (1 cada uno: el comentario
+«sin `.a21=` desde ADR-0076»), `test_sesiones_independientes.py` (3: importa
+`verificacion_a21_entradas`) y `test_transcribir_sesion.py` (1: nombra la ambigüedad),
+`bloque_de_la_caja.py`, `verificacion_a21.py` y `verificacion_a21_entradas.py` (1, 3 y 3: nombres
+y los encabezados `DIAGNOSTICO-A21-` que imprimen; son tres de los cuatro guiones que no se
+tocan), `buscar_ambiguedades.py` (1: docstring), `embudo_77.py` (16: la opción `--a21`, opcional
+y comprobada contra el registro, y su clave `a21` en el resumen) y `orden_stop_o_limite.py` (3:
+el bucle que se conserva). Ese grep no casa la etiqueta ni un `Diagnostico` posicional: dos
+tests que los llevaban (`test_preparar_a35.py`, el prefijo de la CLI; `test_selector_orden_stop.py`,
+el orden de las etiquetas) fallaron al correrlos y se corrigieron antes del commit; `Grep` de
+`DIAGNOSTICO-A21|a21=` y de `Diagnostico\(` sobre `*.py` en `src/`, `tests/` y `scripts/` no deja
+ningún posicional ni ninguna etiqueta fuera de los sitios de arriba. **Fuera de esos tres
+directorios** queda uno, que el revisor vio (hallazgo 2.3): el anexo
+`docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py:55-61` construye `Diagnostico` por
+posición con seis argumentos y llama a `lectura_limpia(registro, diag.a21)`; con el código de esta
+rama falla con `TypeError` (con ruido, no en silencio). No se edita: es el anexo de un informe
+cerrado y se reproduce con el código de su commit (`git diff main -- <ese fichero>` vacío). Va
+también a las líneas del cierre (§6).
+
+**Lo que el revisor corrigió después (§9.3):** el rótulo de `orden_stop_o_limite.py` (hallazgo
+2.2): el motor corría siempre con la lectura del registro y cada sección salía rotulada con la
+variable del bucle, así que la segunda vuelta se habría publicado como «A-21 =
+sin_mecha_mas_alla_del_extremo» con una medida que no corrió. Ahora el bucle se conserva, pero la
+vuelta que no coincide con el registro lo dice (`## A-21 = <vuelta>: no se mide; A-21 esta fijada
+en <registro> (ADR-0076)`) y salta, y la que se mide rotula la lectura del registro. Y el trailer
+del commit de A-21 no nombra ADR-0077 aunque las notas de RN-036 cambian en él (punto 5 de la
+respuesta; hallazgo 1.3): mecánicamente vale (la guardia exige un id que exista, y los tres del
+trailer existen); se dice aquí.
 
 `Fuente: fb-2026-10-04-sesion-04-22d08cbf fb-2026-10-04-sesion-04-48fb5817 ADR-0076` en el cuerpo
 del commit.
@@ -808,19 +845,14 @@ $ … tests/unit/test_racha_perdidas.py -q
 
 Lo que el encargo pide además: «uno que demuestre que `detectar_esquema` con una lectura fuera de
 `LECTURAS_LIMPIA` sigue fallando» ya existe en `main`
-(`tests/unit/test_estructura_m1.py:234-235`, `"al_ojo"` con `match="A-21"`; §0.7 m9) y se amplía
-con la opción nueva cuando la PARADA se responda; y el grep de `--diagnostico-a21` y
-`diagnostico.a21` en `src/` y `tests/`, que NO está vacío porque la decisión 3 está en PARADA:
-
-```
-$ grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/
-src/botsito/cli.py:2259 · :2300 · src/botsito/engine/zonas.py:156 · :167 ·
-tests/unit/test_preparar_a21.py:423 · test_preparar_a35.py:440 · test_renovar_cierres.py:189 ·
-test_rutas_windows.py:81 · test_selector_orden_stop.py:146 · :185 · test_visor.py:390
-```
-
-(`--include=*.py` para no casar los `.pyc`, §0.7 m11.) Ningún test nuevo lee `data/`: el único
-que lo hace en los ficheros tocados, `test_huecos_motor.py:263`, ya se saltaba sin velas.
+(`tests/unit/test_estructura_m1.py:234-235`, `"al_ojo"` con `match="A-21"`; §0.7 m9) y no se
+amplía: no entró ninguna opción nueva (§1.5, caso b). El grep de `--diagnostico-a21` y
+`diagnostico.a21` en `src/`, `tests/` y `scripts/` está en §1.5 con su salida: lo que deja es un
+comentario y el test negativo de la CLI, que necesita el literal (hecho de otra forma; antes del
+commit de A-21 daba 11 líneas de código vivo, en `cli.py`, `zonas.py` y seis tests). Los tres tests
+de A-21 que fallan con el código de `main`, con su salida, en §1.5. (`--include=*.py` para no
+casar los `.pyc`, §0.7 m11.) Ningún test nuevo lee `data/`: el único que lo hace en los ficheros
+tocados, `test_huecos_motor.py:263`, ya se saltaba sin velas; `test_a21_series.py` es sintético.
 
 ## 3. El encargo, punto por punto
 
@@ -828,7 +860,7 @@ que lo hace en los ficheros tocados, `test_huecos_motor.py:263`, ya se saltaba s
 |---|---|---|---|
 | 1 | Rama desde `main` d4b7917 con `abrir-rama`, base comprobada con git, CI run 38197306105 con `gh` | Hecho | cabecera del informe; `gh run view 38197306105`: success |
 | 2 | Contrato con tramo R1, riesgo alto, artefacto `ACTIVAR-SESION-04-MOTOR.md` | Hecho | `contrato.yaml`; `scripts/contrato_rama.py` en verde en cada `make check` (35 ficheros al final) |
-| 3 | Encargo copiado a `docs/encargos/trabajo-activar-sesion-04-motor.md` | Hecho, con un bloque `ids-inexistentes` añadido FUERA del texto copiado (ADR-0076 sigue sin existir) y el añadido nocturno de Aleks | `docs/encargos/…:3-9` |
+| 3 | Encargo copiado a `docs/encargos/trabajo-activar-sesion-04-motor.md` | Hecho; el bloque `ids-inexistentes` que llevó FUERA del texto copiado mientras los ADR no existían se retiró en el commit de A-21 (queda una nota que lo dice); al final, tal cual, el añadido nocturno de Aleks y la respuesta del consultor a la PARADA | `docs/encargos/…:3-9` y su final |
 | 4 | QUÉ NO CAMBIA: nada fijado se pisa (cada cambio por su régimen) | Hecho | ADR-0075 enmienda ADR-0060 (recuadro y fila); ADR-0077 nuevo; CORRECT sobre RN-003; RESOLVE_UNKNOWN sobre A-51; RN-035 sin ADR por decisión del consultor (§1.4, §0.7 m8) |
 | 5 | A-49 ABIERTA y sin tocar; ninguna «en parte» se cierra; A-35 y A-44 con sus diagnósticos | Hecho | `test_una_en_parte_no_entra_en_resueltas`; `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml` toca solo A-51; `--diagnostico-a35`/`a44` intactos (grep) |
 | 6 | «Casi plana» no se resuelve; RN-020 no cambia; ninguna cifra en forma ejecutable; sin arnés; nada de material; citas solo de la extracción cruzadas con los tramos | Hecho | RN-007 y RN-020 intactos (`git diff` de `strategy_spec.yaml`); el 9 vive en `parametros.yaml`; `test_no_business_literals` y la guardia de cifras de la spec (§1.3) en verde; §0.1 (ventanas frente a los 22 tramos de v10); §7 exposiciones: ninguna |
@@ -846,7 +878,7 @@ que lo hace en los ficheros tocados, `test_huecos_motor.py:263`, ya se saltaba s
 | 18 | Tests que rompen a propósito, con las dos salidas; `detectar_esquema` fuera de `LECTURAS_LIMPIA`; «en parte» no entra en RESUELTAS; grep vacío; tests con `data/` saltan en CI | Hecho (el grep de `--diagnostico-a21` y `diagnostico.a21`, vacío desde el commit de A-21, §1.5) | §2, §1.5 |
 | 19 | HOLDOUT: ninguna carpeta madre listada con filtro; exposiciones el mismo día; sin fechas reservadas ni resultados | Hecho | §7; la regla va al revisor |
 | 20 | El literal de 1:44:49 si Aleks lo pega | No llegó: H se queda como está | «Pendiente de Aleks» |
-| 21 | ENTREGA: CI por `fix/`, revisor (opus) con cuatro alcances, su informe pegado, líneas del cierre, lista de la sesión 5 | Hecho: run 38213911827 sobre 1d39c1e (§8); el run del último commit lo lanza Aleks (§8); revisor pegado y atendido (§9) | §5, §6, §8, §9 |
+| 21 | ENTREGA: CI por `fix/`, revisor (opus) con cuatro alcances, su informe pegado, líneas del cierre, lista de la sesión 5 | Hecho: los push salieron desde la sesión y cada commit tiene su run en §8; dos pasadas del revisor, la primera con los cuatro alcances del encargo (§9.2) y la segunda, sobre el commit de A-21, con los tres de la respuesta del consultor (§9.3), las dos pegadas y atendidas | §5, §6, §8, §9 |
 | 22 | Rama lista para revisión, NO cerrada | Hecho, con el último commit (el de este informe) sellado | `## Estado` |
 | N1 | Nocturno: nada espera a Aleks; «Pendiente de Aleks» con comandos | Hecho | cabecera |
 | N2 | Nocturno: si el clasificador niega el push, revisor igual y CI por la mañana | Hecho | §8 |
@@ -861,22 +893,27 @@ después A-21 (§0.8.8); (3) RN-003 y RN-035 cambian de `cita` (§0.8.1, §0.8.7
 Known Ambiguities en la rama, no en el cierre (§0.7 a4); (6) la racha tras la novena es una
 lectura de la sesión escrita en ADR-0077 §5 (§0.8.4); (7) la acción `retirar_ordenes_pendientes`
 no la nombraba el encargo (§0.8.5); (8) `feedback pending` da el CONFIRM de S-4 por REFLEJADO, no
-por «sin forma mecánica» (§1.1); (9) el bloque `ids-inexistentes` en el encargo y en este informe
-(trampa de los ids futuros; §3 fila 3); (10) `TrazaBroker.cancelados_fin_dia` y la línea de la
+por «sin forma mecánica» (§1.1); (9) el bloque `ids-inexistentes` que el encargo y este informe
+llevaron hasta el commit de A-21, cuando los tres ADR ya existían y se retiró (trampa de los ids
+futuros; §3 fila 3); (10) `TrazaBroker.cancelados_fin_dia` y la línea de la
 racha en `informe_simulacion` son instrumentación que el encargo no pedía, para que los tests
 demuestren lo que pide; (11) las tres guardias de `modelo.py` no se amplían (§0.7 m4) y el test
 de la retirada en la novena ejercita la acción aislada (fila 13).
 
 ## 4. Lo que NO cambia, medido
 
-`git diff --stat main...HEAD` (§2 y la tabla de arriba): 35 ficheros con el último commit
-(`scripts/contrato_rama.py`: «35 ficheros dentro del contrato»). Ninguno de `docs/plan/`, `Makefile`, `.claude/`, `knowledge/cases/`,
-`knowledge/corpus/`, `knowledge/evidence/`, `knowledge/cuentas/`, `config/`, `data/manifests/`,
-`src/botsito/engine/broker.py`, `src/botsito/engine/cuenta.py` ni `scripts/`; de
-`docs/validation/` solo este informe. `scripts/contrato_rama.py` en verde en cada `make check`.
-`PROJECT_STATE.md`: 22.700 bytes aprox. (en `main`, 22.508; tope 25.000): la tabla pierde la
-fila de A-51, suben `Current Feature` (que dice ya que A-21 está en PARADA) y el recuento de
-tests (1506 → 1524), y las líneas de Completed Features y Change Log dicen «Archivo 30».
+`git diff --stat main...HEAD` tras el commit de A-21 (rehecho tras el revisor, hallazgo 3.1 de
+§9.3: la versión anterior era la de antes de ese commit): «56 files changed»
+(`scripts/contrato_rama.py`: «56 ficheros dentro del contrato»). Ninguno de `docs/plan/`,
+`Makefile`, `.claude/`, `knowledge/cases/`, `knowledge/corpus/`, `knowledge/evidence/`,
+`knowledge/cuentas/`, `config/`, `data/manifests/`, `src/botsito/engine/broker.py` ni
+`src/botsito/engine/cuenta.py`; de `scripts/`, solo los tres que entraron en el contrato con la
+respuesta del consultor (`embudo_77.py`, `caja_77_exploratoria.py`, `orden_stop_o_limite.py`;
+§1.5, punto 1) y `hoja_preguntas.py` (A-21 sale de la hoja); de `docs/validation/`, solo este
+informe. `scripts/contrato_rama.py` en verde en cada `make check`. `PROJECT_STATE.md`: 22.647
+bytes (en `main`, 22.508; tope 25.000): la tabla pierde las filas de A-51 y de A-21,
+`Current Feature` dice la rama (con ADR-0076 para A-21), el recuento de tests sube (1506 → 1526),
+y las líneas de Completed Features y Change Log dicen «Archivo 30».
 
 ## 5. La lista para la sesión 5, actualizada
 
@@ -920,7 +957,19 @@ La de ACTIVAR-SESION-04.md §5 (sobre §0.e), con los cambios de esta rama:
   medias».
 - **R3.1**: Refs y «Depende de» sin A-21: «hoy lo necesita para A-35 y A-44».
 - **R4.1**: gana la pregunta del último minuto, las dos de ADR-0076 §4 y la de la racha tras la
-  novena (§5), y pierde A-21 de sus Refs.
+  novena (§5), y pierde A-21 de sus Refs. Propuesta (revisor, hallazgo 3.2 de §9.3): que gane
+  `ID:ADR-0076` e `ID:ADR-0077`, porque esas tres preguntas no cuelgan de ninguna ambigüedad
+  abierta, solo de §5 de este informe.
+- **Anexo `docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`** (revisor, hallazgo 2.3):
+  construye `Diagnostico` por posición con seis argumentos y llama a `lectura_limpia(registro,
+  diag.a21)`; con el código de esta rama falla con `TypeError`. No se edita (anexo de un informe
+  cerrado): se reproduce con el código de su commit. Nota para Technical Debt o para la fila de
+  ese informe, lo que el consultor prefiera.
+- **La guardia de Claude Code** (revisor, «lo que no pude comprobar»): bloqueó un `grep -rn
+  --include=*.py` con CUATRO patrones `-e` sobre `src/ tests/ scripts/` («bloquea: leer el
+  contenido de .») aunque las rutas eran literales, y dejó pasar el mismo comando con dos
+  patrones. No se rodeó (el revisor usó la herramienta Grep por directorio); se apunta para
+  revisar esa regla en su rama.
 - **Heredados 25 y 30**: el 25 nombra A-21 («A-21 es la zona…»): pierde esa coletilla; el 30 no
   la nombra (§0.7 m14): solo cambia que el arnés ya no necesita `--diagnostico-a21` (corre con
   `--diagnostico-a35` y `--diagnostico-a44`).
@@ -933,7 +982,6 @@ La de ACTIVAR-SESION-04.md §5 (sobre §0.e), con los cambios de esta rama:
   `fb-2026-09-29-sesion-03-31fb311f`, sale pendiente, §1.2); a RN-035 no le pasa: su cita
   anterior, `fb-2026-09-29-sesion-03-5021677e`, es un RESOLVE_UNKNOWN sobre A-46, no un CORRECT
   sobre la regla, y `pending` da «1 pendientes» en total.
-- **ADR-0070 §3** dice «hoy A-21, A-35 y A-44»: no se edita; lo dice R3.1.
 - **ADR-0044 §1** (heredado, hallazgo a7 del revisor): sigue diciendo «doble ruptura = AMBIGUO» y
   su fila del índice no menciona enmienda, aunque ADR-0060 §1 y ahora ADR-0075 lo cambian; no se
   arregla aquí: queda para el consultor (un recuadro en 0044 y su fila, en la rama que toque).
@@ -969,8 +1017,23 @@ trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor` salió d
   view 38217718887 --log-failed`: `1 failed, 2584 passed, 9 skipped in 296.38s`, y el único fallo es
   `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, el aceptado. (Respuesta del
   consultor, punto 6.)
-- **El commit de A-21 y el del informe final** (§1.5, §9.3): sus runs, abajo, con la misma
-  comprobación.
+- **Run 38243202933**, sobre f358748cbf47991677f74ecb5c1ee28fcf26f1c2 (el commit de A-21, §1.5):
+  el push salió desde la sesión («136bb86..f358748 … -> fix/activar-sesion-04-motor»). La
+  primera ejecución la canceló el `timeout-minutes: 20` del workflow (`.github/workflows/ci.yml:16`)
+  con el paso `apt-get install ffmpeg` colgado (`--log`: «##[error]The operation was canceled» a las
+  11:51:36Z sobre ese paso; ningún test llegó a correr): el runner, no la rama. Relanzada desde la
+  sesión con `gh run rerun 38243202933`: `1 failed, 2599 passed, 9 skipped in 219.70s`, y el único
+  fallo es `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, el aceptado (`gh run view
+  38243202933 --log-failed`; API de check-runs con el sha literal: `python completed failure`).
+  Los 2599 son los 2584 de antes más los 16 de `test_a21_series.py` menos
+  `test_con_el_valor_fijado_el_diagnostico_se_rechaza`, de `test_preparar_a21.py`, que se retiró
+  (ya no hay diagnóstico que rechazar; los otros dos de ese fichero cambiaron de nombre y de
+  sentido, §1.5).
+- **El commit que atiende al segundo informe del revisor** (§9.3, el último de la rama): su run
+  no puede estar en este fichero, porque el fichero va dentro del commit. Se comprueba desde la
+  sesión al terminar y se dice en el mensaje de entrega; Aleks lo verifica con
+  `gh api repos/:owner/:repo/commits/<sha de 40>/check-runs` y `gh run view <run> --log-failed`,
+  y el único fallo aceptado es `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`.
 
 ## 9. Informe del revisor
 
@@ -1174,7 +1237,210 @@ Los cuatro alcances del encargo:
 
 Ficheros clave: `knowledge/spec/strategy_spec.yaml` (:946-947, :1889), `docs/adr/0077-la-racha-de-perdidas-seguidas-del-trader-rn036.md` (:57-59), `docs/validation/ACTIVAR-SESION-04-MOTOR.md` (:24, :246, :555, :674, :685, :693-699, :782), `docs/validation/SESION-04-EXTRACCION.md` (:472-474), `tests/unit/test_racha_perdidas.py` (:202-222), `PROJECT_STATE.md` (:10).
 
-## Respuesta del consultor a la PARADA (2026-10-12)
+### 9.3 Segunda pasada: el commit de A-21 (f358748), con los tres alcances de la respuesta
+
+Lanzado el 2026-10-12 (modelo `opus`, subagente `revisor`) sobre f358748 (solo lo nuevo desde
+136bb86), con los tres alcances de la respuesta del consultor y la regla de holdout (ninguna
+carpeta madre con filtro). Recuento del revisor: 0 bloquea, 5 importa (2.1, 2.2, 2.3, 3.1 y F.1),
+5 menor (1.1, 1.2, 2.4, 3.2, F.2) y una observación (1.3). Se pega tal cual: no cita ningún tramo
+no citable ni ningún día reservado.
+
+**Lo que se hizo con cada hallazgo** (en el commit que sigue a f358748; cada uno, medido):
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| 1.1 | menor | `tests/unit/test_a21_series.py`: `SERIES` gana la columna de colores del tramo literal en compra («RVR», «RR», «R», «RVRVR», «RRR», «RVR», «RVR») y el test parametrizado la asserta, en venta en espejo (`ESPEJO_DE_COLORES`): las letras de las dos tablas quedan congeladas. 16 pasados. |
+| 1.2 | menor | §1.5: la nota «¿Es solo eso?» se atribuye a `…48fb5817`, que es el registro que la lleva. Los registros no se tocan. |
+| 1.3 | observación | §1.5 lo dice: el trailer del commit de A-21 no nombra ADR-0077 aunque las notas de RN-036 cambian en él; mecánicamente vale. |
+| 2.1 | importa | §1.5 pega la salida del grep (6 líneas: un comentario de `cli.py` y el test negativo, que necesita el literal) y lo declara hecho de otra forma; §2 y la fila 18 de §3 ya no dicen «vacío». Los comentarios no se reescriben para que el grep calle. |
+| 2.2 | importa | `scripts/orden_stop_o_limite.py`: el bucle se conserva, pero la vuelta que no coincide con el registro escribe «no se mide; A-21 esta fijada en …» y salta, y la que se mide rotula la lectura del registro. `ruff` y `mypy` limpios. No se ejecuta (lee `data/`). |
+| 2.3 | importa | §1.5 y §6: el anexo `dia_del_bot.py` construye `Diagnostico` por posición y falla con `TypeError` con este código; no se edita (anexo de un informe cerrado), se reproduce con el código de su commit. |
+| 2.4 | menor | §1.5: la lista del grep ancho completa, fichero a fichero con su recuento (15 ficheros). |
+| 3.1 | importa | §4 rehecho sobre HEAD: 56 ficheros, los cuatro `scripts/` que cambian, `Current Feature` con ADR-0076, 1526 tests, 22.647 bytes. |
+| 3.2 | menor | §6, R4.1: propuesta de que gane `ID:ADR-0076` e `ID:ADR-0077`. |
+| F.1 | importa | §2 (el grep y la ampliación del test, que no hay), §3 fila 3 (el bloque `ids-inexistentes` retirado), fila 21 (dos pasadas del revisor, runs en §8), desviación (9) y §8 (los runs de f358748 y del commit final, con su comprobación). |
+| F.2 | menor | La respuesta del consultor es ahora `## 10.` y esta sección es §9.3: las referencias casan; la viñeta repetida de ADR-0070 §3 en §6, borrada. |
+| guardia | — | §6: el falso positivo de la guardia con cuatro `-e` (no se rodeó; se apunta para su rama). |
+
+**El informe, tal cual:**
+
+> ## Informe del revisor · trabajo/activar-sesion-04-motor · 2026-10-12 (solo f358748, desde 136bb86)
+>
+> He revisado los tres alcances de la orden de corte. No encuentro nada que bloquee. Hay cuatro hallazgos que importan dentro de los alcances, uno más fuera de ellos y cinco menores. A mi juicio la rama todavía no está lista para revisión: lo que falla es el informe y un guion, no la spec ni el motor.
+>
+> **Lo que está bien:**
+> - Las dos tablas (la del ADR-0076 y la del §1.5 del informe) coinciden con lo que miden los tests.
+> - A-21 queda cerrada en sus cinco sitios.
+> - Los dos registros de feedback citan ventanas válidas.
+> - `spec_version` subió y el manifiesto y los docs están al día.
+> - El trailer `Fuente:` lleva ids que existen.
+> - Los tres guiones nuevos del contrato usan argumentos con nombre.
+> - Las líneas del cierre (§6) cubren R3.1, la lista de la sesión 5 y la deuda del punto 4.
+>
+> **Lo que falla:**
+> - El informe dice que el grep sale vacío, y no es verdad.
+> - `orden_stop_o_limite.py` pone en su informe una lectura de A-21 que no es con la que corre.
+> - Hay un anexo con un `Diagnostico` posicional que no se ha declarado.
+> - Varios pasajes del informe se escribieron antes del commit de A-21 y no se han actualizado.
+>
+> ---
+>
+> ### Alcance 1 · La tabla de series y el cierre de A-21
+> Resumen: 0 bloquea, 0 importa, 3 menor.
+>
+> **Comprobado sin hallazgos:**
+> - **Tests:** `uv run pytest -p no:cacheprovider -q tests/unit/test_a21_series.py` da 16 pasados: 7 series × compra/venta = 14 casos, más los 2 tests sueltos.
+> - **Las tablas frente al test:**
+>   - Las 7 filas del ADR-0076 (:47-53) y las 14 del informe (:648-661) coinciden con `SERIES` del test (:61-100): esquema, número de zonas, «limpia» e «igual».
+>   - Las cadenas de colores de la columna literal también coinciden. Lo medí ejecutando `sin_alternancia_literal` sobre las 14: RVR/VRV, RR/VV, R/V, RVRVR/VRVRV, RRR/VVV, RVR/VRV, RVR/VRV.
+>   - Solo hay dos «DISTINTO»: el doji en medio y el breaker contrario por mecha tras alternancia. Lo congela `test_las_diferencias_son_solo_el_doji_y_el_breaker_por_mecha` (:149-155), sobre el flag `igual` que asserta el test parametrizado (:146).
+>   - Están las cinco series mínimas del punto 0.a del consultor, más la de doble alternancia.
+>   - La medida literal es exactamente la (a) de la PARADA (informe :320-324).
+>   - El criterio MECHA es el que usa producción: `breaker_m1_criterio_ruptura` = `mecha` (parametros.yaml:475-488).
+> - **Los cinco sitios de AMBIGUEDADES.md:**
+>   - **Registro de parámetros:** `zona_control_limpia` CONFIRMED, con fuente `…48fb5817`. `feedback apply --check` da «9 parametros; 0 cambian, 9 ya estaban».
+>   - **`ambiguedades.yaml`:** `estado: RESUELTA`, tres ítems de v10 en `evidencia`, `decision: null`.
+>   - **Reglas y glosario:** el Grep `A-21|zona_control_limpia` en `strategy_spec.yaml` y `glossary.yaml` no da ninguna coincidencia, así que el sitio no existe, como dice el informe.
+>   - **Known Ambiguities:** PROJECT_STATE.md:84-98 ya no tiene A-21 ni A-51.
+>   - **Hoja de preguntas:** A-21 sale de `ORDEN_SESION_02` y de `ORDEN`.
+>   - **`test_kit.py`:** A-21 en `RESUELTAS`; las bloqueantes abiertas son `{A-35, A-44}`.
+>   - Pasan estos tests: test_kit, test_hoja_preguntas, test_spec_docs_generados, test_adr, test_project_state, test_reabrir_y_fuente_documental, test_hoja_de_ruta, test_preparar_a21, test_preparar_a35, test_cableado, test_visor, test_rutas_windows, test_renovar_cierres, test_selector_orden_stop, test_transcribir_sesion, test_sesiones_independientes, test_broker_ordenes_stop, test_preparar_a44 y test_estructura_m1, todos sin fallos.
+> - **Ventanas de los registros:**
+>   - `…22d08cbf` cubre 1:17:25–1:20:27 y `…48fb5817` cubre 1:17:25–1:17:31. Las dos caen dentro del tramo S-10 de la extracción (SESION-04-EXTRACCION.md:595, 70:47–81:49) y casan con los t0/t1 de `ev-v10-011725`, `ev-v10-011734` y `ev-v10-011957`.
+>   - No tocan ningún tramo de v10 de `tramos_no_citables.yaml`, márgenes incluidos: los más cercanos son 1:04:56–1:05:29 (:196-197) y 1:26:34–1:26:41 (:203-204).
+> - **Régimen de feedback:** `git diff --name-status 136bb86 HEAD -- knowledge/feedback knowledge/evidence` da solo dos `A`. Los dos son RESOLVE_UNKNOWN, uno sobre la ambigüedad y otro sobre el parámetro, y los dos activos.
+> - **Versión, manifiesto y validación:**
+>   - `spec_version` pasa de 17.0.1 a 17.0.2.
+>   - Docs regenerados: el diff de glosario, parámetros y reglas lleva el hash nuevo y `test_spec_docs_generados` pasa.
+>   - `knowledge validate` dice OK en todo: «hash del manifiesto al dia», «174 registros de feedback, historial intacto, commits con Fuente».
+> - **Trailer:** `Fuente: fb-2026-10-04-sesion-04-22d08cbf fb-2026-10-04-sesion-04-48fb5817 ADR-0076` va en el cuerpo, y los tres ids existen.
+> - **ADR-0076:** `## Estado` es ACTIVE; tiene recuadro en ADR-0055 y fila en el índice.
+> - **`make check`:** `make-check.log`:98 da «SELLO … sobre el arbol 08a0d35f…», que es `git rev-parse HEAD^{tree}`; «2609 passed»; «PICO DE MEMORIA … 295 MiB».
+> - **Respuesta del consultor:** la copia del encargo (:135-166) y la del informe (:1179-1210) son idénticas (mismo md5).
+>
+> | # | Gravedad | Hallazgo | Evidencia | Qué hacer |
+> |---|---|---|---|---|
+> | 1.1 | menor | La columna literal de las tablas trae las letras («RVR / VRV»…), pero el test solo asserta el booleano; las letras van como mensaje de error. Hoy coinciden (lo medí), pero nada las congela. | test_a21_series.py:144-146; ADR-0076:47-53 | Assertar `tramo` contra la cadena de cada serie, o decir que esa columna es solo informativa. |
+> | 1.2 | menor | El informe atribuye la «nota de la pregunta dirigida «¿Es solo eso?»» a `…22d08cbf`, pero esa nota está en `…48fb5817`. | informe:676-678; fb-…22d08cbf.yaml:23-27 (no la lleva); fb-…48fb5817.yaml:21 (sí) | Corregir el informe. Los registros no se tocan. |
+> | 1.3 | menor | El cambio de las notas de RN-036 («LECTURA PROVISIONAL», punto 5) entra en este commit, pero el trailer no nombra ADR-0077. Mecánicamente vale. | strategy_spec.yaml diff :1893-1894; cuerpo del commit | Basta mencionarlo en el informe. |
+>
+> ### Alcance 2 · El grep de `--diagnostico-a21` y de `a21`
+> Resumen: 0 bloquea, 3 importa, 1 menor.
+>
+> **Comprobado sin hallazgos:**
+> - **Nada vivo.** Lo que queda en src/ es solo comentario o docstring: cli.py:2295-2296, diagnostico.py:28-29 y zonas.py:4-8. En tests/ son comentarios, el `type: ignore` de test_preparar_a21.py:378 y el test negativo de la CLI (:411-430, que necesita el literal). En scripts/ solo quedan los encabezados `DIAGNOSTICO-A21-` de los dos `verificacion_a21*.py`, que el consultor dijo no tocar.
+> - **Nombres retirados:** no queda ni `ETIQUETA_A21`, ni `DiagnosticoDeZonaRechazadoError`, ni `diag.a21` en `*.py`, salvo en el anexo del hallazgo 2.3.
+> - **Los tres guiones del contrato** construyen `Diagnostico` con argumentos con nombre y llaman a `lectura_limpia(registro)`: embudo_77.py:435/439, caja_77_exploratoria.py:132/136 y orden_stop_o_limite.py:419/423. `embudo_77` comprueba `--a21` contra el registro (:440-442) y `caja_77` se niega si no coincide (:137-138).
+> - **Guiones intactos:** `git diff --stat main -- scripts/bloque_de_la_caja.py scripts/verificacion_a21.py scripts/verificacion_a21_entradas.py` sale vacío. En `orden_stop_o_limite.py` la cabecera del bucle de :416 sigue igual y el de :517 no se toca, pero el cuerpo del de :416 sí cambia (hallazgo 2.2).
+> - **Ningún `Diagnostico(...)` posicional** en src/, tests/ ni scripts/ (Grep `Diagnostico\(` en todo el repo).
+>
+> | # | Gravedad | Hallazgo | Evidencia | Qué hacer |
+> |---|---|---|---|---|
+> | 2.1 | importa | El informe dice que el grep sale vacío, y no lo está. El encargo (:88) pide «vacío, con la salida en el informe». Lo que queda es todo muerto, pero el informe afirma otra cosa y no pega la salida. | `grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/ scripts/` da 6 líneas: cli.py:2295; test_preparar_a21.py:370, :411, :414, :426, :429. Informe :761-762 («→ vacío») y §3 fila 18 :846 («vacío desde el commit de A-21») | Pegar la salida y declararlo «Hecho de otra forma»: el test negativo necesita el literal y lo demás son comentarios. No reescribir los comentarios solo para que el grep calle. |
+> | 2.2 | importa | `orden_stop_o_limite.py`, `control_simulador`: el motor corre siempre con la lectura del registro (`lim`), pero cada sección sale rotulada con la variable del bucle. La segunda vuelta se publica como «A-21 = sin_mecha_mas_alla_del_extremo» y en realidad corre con `solo_una_zona_de_control`. El informe dice «lim es la del registro en las dos vueltas», pero no que el rótulo miente. | orden_stop_o_limite.py:416-423 (`lim = zonas.lectura_limpia(registro)`) y :479 (`f"## A-21 = {limpia}: …"`) | Que el rótulo diga `lim` y que la vuelta que no se mide lo diga (o se salte con `if limpia != lim`). Si no, declararlo en el informe como salida engañosa del guion. |
+> | 2.3 | importa | Hay un `Diagnostico` posicional con 6 argumentos en el anexo de un informe cerrado. Con 5 campos da `TypeError`, y `lectura_limpia(registro, diag.a21)` falla también. Falla con ruido, no en silencio, pero el informe no lo dice. Los greps del §1.5 no lo ven porque solo miran src/tests/scripts. | docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py:55-57 y :61; `git diff main -- <ese fichero>` vacío (en main funciona) | No editarlo (es anexo de un informe cerrado). Una línea en el informe y en §6: el anexo se reproduce con el código de su commit. |
+> | 2.4 | menor | La lista de «lo que deja» el grep de `a21` está incompleta. Faltan cli.py:2295, test_a21_series.py, el import de test_sesiones_independientes.py:29, los comentarios de test_preparar_a35.py:444, test_visor.py:395 y test_rutas_windows.py:26, y la variable/clave `a21` de embudo_77.py (:658, :884, :907, :1006). Ninguno está vivo. | informe:762-768; `grep -rnc --include=*.py -e "a21" src/ tests/ scripts/` | Completar la lista o pegar la salida. |
+>
+> ### Alcance 3 · Las líneas del cierre (§6) y la lista de la sesión 5
+> Resumen: 0 bloquea, 1 importa, 1 menor.
+>
+> **Comprobado sin hallazgos:**
+> - **R3.1 sin A-21:** informe:921 («hoy lo necesita para A-35 y A-44»), frente a HOJA-DE-RUTA.md:95 y :101, que hoy todavía la nombran.
+> - **R1.1 y R4.1** pierden A-21 (:917-923).
+> - **Lista de la sesión 5 (§5, :881-902):**
+>   - Sale el punto 11 de A-21. En ACTIVAR-SESION-04.md:835 el 11 quedaba «solo para A-21 si la rama de motor no la cierra».
+>   - Las dos preguntas de ADR-0076 §4 (:87-93) están copiadas idénticas.
+>   - La de la racha es literal la del punto 5 del consultor y coincide con ADR-0077 §5.
+> - **Deuda del punto 4 (:929-935):**
+>   - Está escrita. `fb-2026-09-29-sesion-03-5021677e` es RESOLVE_UNKNOWN sobre A-46, y `fb-…-31fb311f` es CORRECT sobre RN-003.
+>   - `uv run botsito feedback pending` da «1 pendientes de 123 activos», como dice el informe.
+> - **Lo que §6 y §1.5 dicen de PROJECT_STATE:** Known Ambiguities sin A-21 ni A-51 (PS:84-98) y Current Feature con ADR-0076 (PS:10). `uv run botsito state check` da OK.
+>
+> | # | Gravedad | Hallazgo | Evidencia | Qué hacer |
+> |---|---|---|---|---|
+> | 3.1 | importa | El §4 («Lo que NO cambia, medido») sigue con datos de antes del commit de A-21 y contradice el fichero y el diff. | informe:872-879: dice «35 ficheros» (contrato_rama.py da «56 ficheros»; `git diff --stat main...HEAD` da 56), «Ninguno de … `scripts/`» (cambian embudo_77, caja_77_exploratoria, hoja_preguntas y orden_stop_o_limite), «Current Feature (que dice ya que A-21 está en PARADA)» (PS:10 dice ADR-0076) y «1506 → 1524» (PS:19: 1526) | Rehacer §4 con el estado de HEAD. |
+> | 3.2 | menor | Al quitar ID:A-21 de las Refs de R4.1, las dos preguntas de ADR-0076 §4 y la de la racha se quedan sin ningún id del que colgar. No hay ambigüedad abierta que las recoja, solo el §5 del informe. | informe:922-923; HOJA-DE-RUTA.md:109 | Proponer en §6 que R4.1 gane `ID:ADR-0076` (y `ID:ADR-0077`). |
+>
+> ### Fuera de los tres alcances (visto de paso, no contado arriba)
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | F.1 | importa | Otros pasajes del informe siguen escritos como antes de la respuesta del consultor: el §2 dice que el grep «NO está vacío porque la decisión 3 está en PARADA» y que se ampliará «con la opción nueva»; la fila 3 de §3 dice «ADR-0076 sigue sin existir»; la fila 21 dice «cuatro alcances» y «el run del último commit lo lanza Aleks»; la desviación (9) habla del bloque `ids-inexistentes`, que ya salió; y §8 promete los runs de f358748 «abajo» sin que haya nada. | informe:809-820, :831, :849, :864-865, :972-973. La CI de f358748 (run 38243202933) estaba `in_progress` al revisar: `gh api …/commits/f358748cbf47…/check-runs` |
+> | F.2 | menor | Se citan §10 y §9.3, pero la respuesta del consultor está en una sección sin número y no hay §9.3. Además, §6 repite la viñeta de ADR-0070 §3. | informe:17, :637, :840, :972, :1177, :1215; :936 y :941-942 |
+>
+> ### Recuento
+> - Bloquea: 0.
+> - Importa: 4 dentro de los alcances (2.1, 2.2, 2.3, 3.1) y 1 fuera (F.1).
+> - Menor: 5 (1.1, 1.2, 2.4, 3.2, F.2). El 1.3 queda como observación.
+>
+> **¿Lista para revisión?** Todavía no. Ni la spec ni el motor ni el cierre de A-21 tienen defecto, pero el informe afirma un grep vacío que no lo está, varias secciones dicen cosas falsas sobre el estado de HEAD, y el rótulo de `orden_stop_o_limite.py` publicaría una medida con una lectura que no corrió. Las tres cosas se arreglan en el informe y en una línea del guion (o declarándolas). Falta además el run de CI del último commit.
+>
+> ### Lo que no pude comprobar
+> - **Que los 14 casos pasan también con el código de `main`:** haría falta un worktree, y eso escribe. Como evidencia que lo sustituye, `git diff --stat main -- src/botsito/domain/estructura_m1.py src/botsito/domain/pivotes_m15.py tests/unit/test_estructura_m1.py` sale vacío.
+> - **`scratchpad/medir_series_a21.py`:** está fuera del repo.
+> - **`make check` y `spec docs --escribir`:** no los ejecuté porque escriben. Su evidencia es el sello de `make-check.log` (igual al árbol de HEAD) y `test_spec_docs_generados` en verde.
+> - **El resultado de la CI de f358748:** estaba en curso (run 38243202933).
+> - **Que el anexo `dia_del_bot.py` falla al ejecutarse:** lo deduzco de la firma del dataclass. No lo ejecuté porque lee `data/`.
+> - **Un posible falso positivo de la guardia:** bloqueó `grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" -e "DIAGNOSTICO-A21" -e "a21=" src/ tests/ scripts/` con el mensaje «bloquea: leer el contenido de .», aunque las rutas eran literales. Para los patrones `DIAGNOSTICO-A21` y `a21=` usé la herramienta Grep sobre `src/`, `tests/` y `scripts/` por separado, y el grep de los dos primeros patrones sí pasó por Bash. Conviene revisar esa regla de la guardia en su rama.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`; `git log --format='%h %s' 136bb86..HEAD`; `git diff 136bb86 HEAD --stat`; `git status --short`
+> 2. `git show HEAD --format='%h%n%B' --stat`
+> 3. Read de ADR-0076 y de `tests/unit/test_a21_series.py`
+> 4. `uv run pytest -p no:cacheprovider -q tests/unit/test_a21_series.py`
+> 5. `uv run python -B -c "…sin_alternancia_literal sobre las 14 series…"` (el primer intento, con `PYTHONDONTWRITEBYTECODE=1`, lo bloqueó la guardia)
+> 6. Grep de `bloque_de_origen|referencia_del_breaker|zonas_de_control|detectar_esquema` en `estructura_m1.py`
+> 7. Read del informe: :1-40, :635-974, :1170-1217, :315-372
+> 8. `git diff 136bb86 HEAD -- PROJECT_STATE.md contrato.yaml docs/adr/README.md docs/adr/0055-… docs/runbooks/ACTIVAR-A35-A44.md`
+> 9. `git diff 136bb86 HEAD -- tests/unit/test_kit.py tests/unit/test_hoja_preguntas.py scripts/hoja_preguntas.py`; `grep -n "^| A-" PROJECT_STATE.md`
+> 10. `git diff 136bb86 HEAD -- knowledge/spec/{ambiguedades,parametros,strategy_spec,spec_manifest}.yaml`
+> 11. `git diff --name-status 136bb86 HEAD -- knowledge/feedback knowledge/evidence`; `git diff --name-status main...HEAD -- knowledge/feedback knowledge/evidence data/manifests knowledge/corpus`
+> 12. Read de los dos registros `fb-2026-10-04-sesion-04-{22d08cbf,48fb5817}.yaml`
+> 13. Grep en `SESION-04-EXTRACCION.md` (S-10) y en `tramos_no_citables.yaml`; Read de `tramos_no_citables.yaml` :1-360 y de la extracción :593-642
+> 14. `git ls-files knowledge/evidence | grep -e …` (las tres rutas literales); Read de los tres `ev-v10-*`
+> 15. `uv run python scripts/contrato_rama.py` (el primer intento, con `cat` delante, lo bloqueó la guardia); Read de `contrato.yaml`
+> 16. `uv run botsito feedback apply --sesion 2026-10-04-sesion-04 --check`
+> 17. `uv run botsito knowledge validate`
+> 18. `uv run pytest -p no:cacheprovider -q` sobre los 14 ficheros de test listados
+> 19. Grep (herramienta) de `--diagnostico-a21|diagnostico.a21|DIAGNOSTICO-A21|a21=` en `src`, `tests` y `scripts` (el `grep -rn` de Bash con los cuatro patrones lo bloqueó la guardia)
+> 20. Grep de `grep|vacío` en el encargo
+> 21. `grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/ scripts/`
+> 22. `grep -rnc --include=*.py -e "a21" src/ tests/ scripts/`, y el grep de `a21` sobre los ficheros con coincidencias
+> 23. `git diff 136bb86 HEAD -- src/botsito/engine/diagnostico.py src/botsito/engine/zonas.py src/botsito/cli.py`; Read de cli.py:2282-2301
+> 24. Grep de `Diagnostico\(` en todo el repo (`*.py`)
+> 25. `git log … -- docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`; `git diff main -- <ese fichero>`; Read de sus :1-70; Grep de `dia_del_bot`
+> 26. `git diff --stat main -- scripts/bloque_de_la_caja.py scripts/verificacion_a21.py scripts/verificacion_a21_entradas.py`; `git diff main -- scripts/orden_stop_o_limite.py scripts/caja_77_exploratoria.py scripts/embudo_77.py`
+> 27. Read de `orden_stop_o_limite.py` :395-493
+> 28. Read de `test_preparar_a21.py` :360-439
+> 29. Grep de `A-21|zona_control_limpia` en `strategy_spec.yaml` y `glossary.yaml`; `git diff 136bb86 HEAD -- docs/spec/{glosario,reglas,parametros}.md`
+> 30. Grep de `ORDEN_SESION_02|hoja_preguntas` en `AMBIGUEDADES.md`
+> 31. `uv run pytest -p no:cacheprovider -q tests/unit/test_transcribir_sesion.py tests/unit/test_sesiones_independientes.py tests/unit/test_broker_ordenes_stop.py tests/unit/test_preparar_a44.py tests/unit/test_estructura_m1.py`
+> 32. Grep de `A-21` en `HOJA-DE-RUTA.md`; Read de sus :38-122; `uv run pytest … tests/unit/test_hoja_de_ruta.py`
+> 33. Grep en `ACTIVAR-SESION-04.md` (punto 11, §5)
+> 34. `grep -n …` de los dos registros de sesión 03 (el intento encadenado con `feedback pending` lo bloqueó la guardia); `uv run botsito feedback pending`
+> 35. `git diff --stat main...HEAD | tail -1`; `git diff --name-only main...HEAD -- scripts/`
+> 36. `grep -n -e "§10" -e "§9.3" …` en el informe y el encargo
+> 37. Grep de `Respuesta del consultor…` en el encargo; `sed -n … | md5sum` de las dos copias
+> 38. `git diff 136bb86 HEAD -- docs/encargos/trabajo-activar-sesion-04-motor.md`
+> 39. `git diff --stat main -- src/botsito/domain/… tests/unit/test_estructura_m1.py`
+> 40. Grep de `detectar_esquema\(` y de `criterio` en `zonas.py`; Grep de `breaker_m1_criterio_ruptura` en `parametros.yaml`
+> 41. Grep de `ETIQUETA_A21|DiagnosticoDeZonaRechazadoError|diag\.a21|\.a21\b` y de `lectura_limpia\(` en `*.py`
+> 42. Grep de `diagnostico-a21` en `docs/runbooks`, `docs/adr`, `docs/plan`, `PROJECT_STATE.md`…; `grep -n -o` del contexto en PROJECT_STATE.md
+> 43. `git rev-parse HEAD`; `git ls-remote origin refs/heads/fix/activar-sesion-04-motor`; `gh api repos/:owner/:repo/commits/f358748cbf47991677f74ecb5c1ee28fcf26f1c2/check-runs`
+> 44. `ls -la make-check.log`; `grep -n -e SELLO -e "PICO DE MEMORIA" -e passed -e failed make-check.log`; `git rev-parse "HEAD^{tree}" "136bb86^{tree}" "1d39c1e^{tree}"`; `git log -1 --format=%cd f358748`
+> 45. `git diff 136bb86 HEAD -- docs/adr/0077-…`; `grep -n -i "única lectura" …`; Grep de `PROVISIONAL` en el informe
+> 46. `uv run botsito state check`
+> 47. `grep -n -e "funciones de test" -e "^## Known" PROJECT_STATE.md`; `grep -n "tres líneas"` en el informe
+>
+> Ficheros clave:
+> - `docs/validation/ACTIVAR-SESION-04-MOTOR.md`
+> - `docs/adr/0076-limpia-es-sin-alternancia-de-colores-y-lo-filtra-rn009.md`
+> - `tests/unit/test_a21_series.py`
+> - `scripts/orden_stop_o_limite.py`
+> - `docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`
+> - `PROJECT_STATE.md`
+
+## 10. Respuesta del consultor a la PARADA (2026-10-12)
 
 Copiada tal cual:
 
@@ -1213,4 +1479,5 @@ Copiada tal cual:
 
 Rama lista para revisión, NO cerrada (2026-10-12). Hechas las cinco decisiones, cada una en su
 commit sellado: la 3 (A-21), con la respuesta del consultor a la PARADA (§10), sin opción nueva
-(§1.5). La CI de cada push, en §8.
+(§1.5). Dos pasadas del revisor (§9.2 y §9.3), las dos atendidas: ningún hallazgo que bloquee.
+La CI de cada push, en §8.

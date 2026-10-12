@@ -57,47 +57,49 @@ def _espejo(pasos: list[Paso]) -> list[Paso]:
     return salida
 
 
-# (nombre, pasos tras la toma en compra, esquema esperado o None, zonas, literal limpia, igual)
-SERIES: list[tuple[str, list[Paso], str, int, bool, bool]] = [
+# (nombre, pasos tras la toma en compra, esquema esperado o None, zonas, literal limpia,
+#  colores del tramo literal en compra -en venta, los mismos en espejo-, igual)
+SERIES: list[tuple[str, list[Paso], str, int, bool, str, bool]] = [
     (
         "S-10: V, R, V, R y breaker V",
         [(990, 1040), (1040, 1020), (1020, 1050), (1050, 1030), (1030, 1119, None, 1125)],
-        NONE, 2, False, True,
+        NONE, 2, False, "RVR", True,
     ),
     (
         "retroceso limpio de un solo bloque (R, R) y breaker V",
         [(990, 1040), (1040, 1020), (1020, 1010, 1005, None), (1010, 1060),
          (1060, 1119, None, 1125)],
-        SEGUNDO_ESQUEMA, 1, True, True,
+        SEGUNDO_ESQUEMA, 1, True, "RR", True,
     ),
     (
         "una zona de control y el ultimo tramo limpio (V, R, V, breaker V)",
         [(990, 1040), (1040, 1020), (1020, 1060), (1060, 1119, None, 1125)],
-        SEGUNDO_ESQUEMA, 1, True, True,
+        SEGUNDO_ESQUEMA, 1, True, "R", True,
     ),
     (
         "doble alternancia (V, R, V, R, V, R) y breaker V",
         [(990, 1040), (1040, 1020), (1020, 1050), (1050, 1030), (1030, 1060), (1060, 1040),
          (1040, 1119, None, 1125)],
-        NONE, 3, False, True,
+        NONE, 3, False, "RVRVR", True,
     ),
     (
         "breaker contrario (R) que rompe con mecha, retroceso limpio (R, R)",
         [(990, 1040), (1040, 1020), (1020, 1010), (1010, 1005, None, 1125)],
-        PRIMER_ESQUEMA, 0, True, True,
+        PRIMER_ESQUEMA, 0, True, "RRR", True,
     ),
     (
         "alternancia con cuerpo cero en medio (R, doji, V, R) y breaker V",
         [(990, 1040), (1040, 1020), (1020, 1020), (1020, 1050), (1050, 1030),
          (1030, 1119, None, 1125)],
-        SEGUNDO_ESQUEMA, 1, False, False,  # el doji corta la racha y no forma pivote
+        SEGUNDO_ESQUEMA, 1, False, "RVR", False,  # el doji corta la racha y no forma pivote
     ),
     (
         "breaker contrario (R) que rompe con mecha tras alternancia (R, V)",
         [(990, 1040), (1040, 1020), (1020, 1050), (1050, 1030, None, 1125)],
-        SEGUNDO_ESQUEMA, 1, False, False,  # el bloque de origen es el propio breaker
+        SEGUNDO_ESQUEMA, 1, False, "RVR", False,  # el bloque de origen es el propio breaker
     ),
 ]  # fmt: skip
+ESPEJO_DE_COLORES = str.maketrans("VR", "RV")
 
 
 def sin_alternancia_literal(
@@ -131,10 +133,19 @@ def sin_alternancia_literal(
     return all(c == colores[0] for c in colores), letras
 
 
-@pytest.mark.parametrize(("nombre", "pasos", "esquema", "zonas", "limpia", "igual"), SERIES)
+@pytest.mark.parametrize(
+    ("nombre", "pasos", "esquema", "zonas", "limpia", "letras", "igual"), SERIES
+)
 @pytest.mark.parametrize("lado", [COMPRA, VENTA])
 def test_la_tabla_de_series_de_a21(
-    nombre: str, pasos: list[Paso], esquema: str, zonas: int, limpia: bool, igual: bool, lado: str
+    nombre: str,
+    pasos: list[Paso],
+    esquema: str,
+    zonas: int,
+    limpia: bool,
+    letras: str,
+    igual: bool,
+    lado: str,
 ) -> None:
     previo = PREVIO if lado == COMPRA else PREVIO_VENTA
     m1 = _serie([*previo, *(pasos if lado == COMPRA else _espejo(pasos))])
@@ -142,6 +153,7 @@ def test_la_tabla_de_series_de_a21(
     assert zonas_de_control(m1, TOMA, len(m1) - 1, lado) == zonas, nombre
     assert (NONE if e is None else e.cual) == esquema, nombre
     literal, tramo = sin_alternancia_literal(m1, TOMA, lado, MECHA)
+    assert tramo == (letras if lado == COMPRA else letras.translate(ESPEJO_DE_COLORES)), nombre
     assert literal is limpia, (nombre, tramo)
     assert ((e is not None) == literal) is igual, (nombre, tramo)
 
