@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/entrada-julio
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/activar-sesion-04-motor` cerrada en `main` el 2026-10-12 (`stable/F37n-activar-sesion-04-motor`); R1.1 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/entrada-julio` EN CURSO (R2.1, entrada S; abierta el 2026-10-12 sobre `stable/F37n-activar-sesion-04-motor`): julio de 2026 entra como material de construcción por decisión del consultor del 2026-10-12 (guardia, un ADR que lo añade a `construccion`, libro, reparto dev-visto, ingesta y ticks), el vídeo de julio al inventario, y aparte la respuesta de FTMO a P-D1. Encargo docs/encargos/trabajo-entrada-julio.md; informe docs/validation/ENTRADA-JULIO.md.
 
 ## Stable Main State
 79e74b2 · merge de `trabajo/activar-sesion-04-motor` (tag `stable/F37n-activar-sesion-04-motor`): S-13 con ADR-0075 (una H4 neutra no decide el sesgo; enmienda ADR-0060 §1 y §2); A-21 RESUELTA con `solo_una_zona_de_control` y sin opción nueva (ADR-0076; sale `--diagnostico-a21`); A-51 RESUELTA con ADR-0077 y RN-036 (la racha de pérdidas seguidas); RN-035 retira la orden pendiente también al llegar `ventana_fin`; el CONFIRM de S-4; spec_version 17.0.2. Sobre `stable/F37m-activar-sesion-04` (cbe8e09). Informe docs/validation/ACTIVAR-SESION-04-MOTOR.md; el registro del cierre, al final de HISTORIA.
@@ -173,8 +173,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 30 (2026-10-11).
+— ninguna desde el Archivo 31 (2026-10-12).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 30 (2026-10-11).
+— ninguna desde el Archivo 31 (2026-10-12).

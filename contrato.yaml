@@ -1,0 +1,53 @@
+rama: trabajo/entrada-julio
+riesgo: alto  # abre material nuevo (el libro de julio), toca la guardia de Claude Code (.claude/) y la lista `construccion` de criterio_fidelidad.yaml con su ADR; ni motor ni spec
+artefacto: docs/validation/ENTRADA-JULIO.md
+tramo: R2
+rutas_permitidas:
+  - docs/validation/ENTRADA-JULIO.md
+  - docs/validation/FTMO-P-D1.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/adr/0078-*.md
+  - .claude/hooks/guardia.py
+  - tests/unit/test_guardia_claude.py
+  - CLAUDE.md
+  - docs/runbooks/MIRAR-EL-MATERIAL.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - knowledge/cases/criterio_fidelidad.yaml
+  - knowledge/cases/kit/config.yaml
+  - knowledge/cases/visto/
+  - knowledge/cases/dev/
+  - knowledge/corpus/libros.yaml
+  - knowledge/corpus/manifest.yaml
+  - knowledge/corpus/fuentes.yaml
+  - data/manifests/ticks/
+  - src/botsito/cli.py
+  - tests/unit/test_inventario.py
+  - tests/unit/test_cuarentena.py
+  - tests/unit/test_cuarentena_por_condicion.py
+  - tests/unit/test_criterio_fidelidad.py
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - src/botsito/engine/
+  - src/botsito/domain/
+  - knowledge/spec/
+  - knowledge/cases/holdout/
+  - knowledge/cases/meses_reservados.yaml
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cuentas/
+  - knowledge/corpus/transcripciones/
+  - knowledge/corpus/fotogramas/
+  - config/
+  - docs/plan/
+  - docs/validation/RESPUESTAS-FTMO.md
+  - docs/adr/0000-template.md
+comprobaciones:
+  - uv run python scripts/contrato_rama.py
+  - uv run pytest tests/unit/test_guardia_claude.py -q
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito casos check
+  - uv run botsito data check-ticks --dataset <id de julio> --hashes
+  - make check > make-check.log 2>&1
