@@ -357,6 +357,38 @@ reservados listada. `HOLDOUT-EXPOSICIONES.md` no cambia.
 **Espero tu respuesta a la PARADA** para la decisión 3. Las decisiones 1, 2, 4 y 5 siguen esta
 noche, cada una en su commit, con lo de §0.8 declarado.
 
+## 1. Las decisiones, una por commit
+
+### 1.1 Decisión 1 · CONFIRM de S-4 sobre `ev-v10-004945-59ebac47` (PARADA 2, opción b)
+
+- **Registro:** `knowledge/feedback/2026-10-04-sesion-04/fb-2026-10-04-sesion-04-35a080e2.yaml`,
+  creado con `uv run botsito feedback new --sesion 2026-10-04-sesion-04 --fecha 2026-10-04
+  --recibido-el 2026-10-04 --procedencia trader_grabado --medio video --grabacion "Grabación de
+  pantalla 2026-10-04 105617.mp4" --t0 0:49:45 --t1 0:50:10 --objetivo-tipo evidence --objetivo-id
+  ev-v10-004945-59ebac47 --accion CONFIRM --respuesta "<la cita literal del ítem>" --registrado-por
+  … --notas …` (todas las opciones obligatorias de la plantilla, `knowledge/feedback/README.md`;
+  `--recibido-el` y `--procedencia` por la guardia). La respuesta literal es la `cita_literal` del
+  ítem (v10 0:49:45–0:50:10, fuera de todo tramo no citable); las notas dicen que no cierra A-49.
+- **A-49 sigue ABIERTA**, sin registro sobre ella: `uv run botsito feedback trace
+  ev-v10-004945-59ebac47` da el ítem y este único registro, activo.
+- **`feedback pending`** NO lo lista como «sin forma mecánica de comprobarlo», al revés de lo que
+  decía el encargo (y la PARADA 2 de la rama anterior): `cli.py:2049-2051` da un CONFIRM sobre
+  evidencia por REFLEJADO («un CONFIRM confirma un item que ya vive: no deja trabajo»); con
+  `--todos` sale como `(ok) fb-2026-10-04-sesion-04-35a080e2 evidence:ev-v10-004945-59ebac47 - un
+  CONFIRM confirma un item que ya vive: no deja trabajo`. «Sin forma mecánica» es lo que `pending`
+  dice de los CORRECT y REJECT sobre evidencia de la sesión 1 (`:2052-2055`). Mejor para la
+  skill: no deja pendiente.
+- **`feedback apply --check`:** «4 parametros; 0 cambian, 4 ya estaban; --check: no se ha escrito
+  nada» (un CONFIRM sobre evidencia no toca el registro).
+- **Test** (el que pide el encargo: «una «en parte» (A-49) no puede entrar en RESUELTAS»):
+  `tests/unit/test_kit.py::test_una_en_parte_no_entra_en_resueltas`. El conjunto RESUELTAS que
+  congelaba `test_ambiguedades_reales_y_esquema` pasa a la constante de módulo `RESUELTAS`, y
+  `EN_PARTE_SESION_4` (A-13, A-32, A-35, A-43, A-44, A-49, A-50, A-53) no la toca; cada una está
+  ABIERTA en el YAML; no hay ningún registro con objetivo `ambiguedad: A-49`; y el de S-4 es un
+  CONFIRM sobre el ítem. `tests/unit/test_en_parte_no_se_cierra.py` no cubría A-49 porque la
+  clasifica como MEZCLADA (§0.7, a5). 1507 funciones de test (`PROJECT_STATE.md`).
+- Sin `Fuente:` en el commit: no toca `knowledge/spec/` ni `knowledge/cases/`.
+
 ## Estado
 
 EN CURSO (abierta el 2026-10-11).

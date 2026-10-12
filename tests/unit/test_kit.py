@@ -272,6 +272,41 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 # de la liquidez de M15 creo A-24, A-25 y A-26, el test fallo y obligo a vaciar la lista. Se deja
 # vacia a proposito, con el mecanismo intacto para la proxima reserva.
 IDS_RESERVADOS: dict[str, str] = {}
+# Las RESUELTAS, congeladas: las doce de la sesion 1, A-14 y A-20 (por escrito), las diez de la
+# sesion 3, A-29 y A-36 (trabajo/cerrar-a29-a36), A-42 (ADR-0069) y las siete de la sesion 4
+# (trabajo/activar-sesion-04). El comentario de `test_ambiguedades_reales_y_esquema` cuenta la
+# historia de cada una. Una «en parte» NUNCA entra aqui (`test_una_en_parte_no_entra_en_resueltas`).
+RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
+    {
+        "A-14",
+        "A-18",
+        "A-20",
+        "A-25",
+        "A-26",
+        "A-29",
+        "A-30",
+        "A-31",
+        "A-33",
+        "A-34",
+        "A-36",
+        "A-37",
+        "A-38",
+        "A-39",
+        "A-40",
+        "A-41",
+        "A-42",
+        "A-45",
+        "A-46",
+        "A-47",
+        "A-52",
+    }
+)
+# Las que la sesion 4 dejo «en parte» (SESION-04-EXTRACCION.md §5; ACTIVAR-SESION-04.md §0.e y §5)
+# y van a la hoja de la sesion 5 sin cerrarse. A-49 es MEZCLADA -S-4 resuelve, S-1 y S-2 en parte-
+# y por eso `tests/unit/test_en_parte_no_se_cierra.py` no la vigila como «solo en parte»: el
+# consultor la dejo ABIERTA (PARADA 2 de trabajo/activar-sesion-04, opcion b: el testimonio de S-4
+# entra como CONFIRM sobre su item, fb-2026-10-04-sesion-04-35a080e2, sin cerrarla).
+EN_PARTE_SESION_4 = frozenset({"A-13", "A-32", "A-35", "A-43", "A-44", "A-49", "A-50", "A-53"})
 
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
@@ -332,29 +367,7 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # al pivote mas reciente y la toma nueva reinicia los tres intentos); A-30 y A-39 (S-5, la orden
     # sin llenar se quita a las 11 y a las 3, cambie o no el sesgo); A-36 (S-22, la orden
     # exactamente en el 0 con mecha y sin spread), que vuelve a cerrarse superseding su REOPEN.
-    assert {a.id for a in ambs if a.estado == "RESUELTA"} == {f"A-{i}" for i in range(1, 13)} | {
-        "A-14",
-        "A-18",
-        "A-20",
-        "A-25",
-        "A-26",
-        "A-29",
-        "A-30",
-        "A-31",
-        "A-33",
-        "A-34",
-        "A-36",
-        "A-37",
-        "A-38",
-        "A-39",
-        "A-40",
-        "A-41",
-        "A-42",
-        "A-45",
-        "A-46",
-        "A-47",
-        "A-52",
-    }
+    assert {a.id for a in ambs if a.estado == "RESUELTA"} == RESUELTAS
     # DECIDIDA nace con ADR-0022 (A-22, no operar noticias) y ADR-0024 le suma las dos que
     # llevaban decididas y abiertas desde el 2026-09-09: A-15 (la ventana no se amplia a Nueva
     # York) y A-23, la decision de metodo que estaba MEZCLADA dentro de A-16. A-16 se queda solo
@@ -409,6 +422,30 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     problemas = validar_contra_contexto(ambs2, {"ev-v1-000010-aaaaaaaa"}, {"cartuchos_max"}, set())
     assert any("ev-v1-000100-bbbbbbbb no existe" in p for p in problemas)
     assert any("break_even_condicion no esta" in p for p in problemas)
+
+
+def test_una_en_parte_no_entra_en_resueltas() -> None:
+    """Una respuesta «en parte» no cierra una ambiguedad (skill activar-sesion): ninguna de las de
+    la sesion 4 esta en RESUELTAS ni RESUELTA en el YAML, y A-49 -la mezclada, que
+    `test_en_parte_no_se_cierra.py` no vigila- sigue ABIERTA con su CONFIRM de S-4 registrado
+    sobre el item y no sobre ella (trabajo/activar-sesion-04-motor, decision 1)."""
+    assert not (EN_PARTE_SESION_4 & RESUELTAS), sorted(EN_PARTE_SESION_4 & RESUELTAS)
+    estados = {
+        a.id: a.estado
+        for a in cargar_ambiguedades(REPO / "knowledge" / "spec" / "ambiguedades.yaml")
+    }
+    assert all(estados[aid] == "ABIERTA" for aid in EN_PARTE_SESION_4), estados
+    registros = cargar_feedback(REPO / "knowledge" / "feedback")
+    sobre_a49 = [
+        r for r in registros if r.objetivo.tipo == "ambiguedad" and r.objetivo.id == "A-49"
+    ]
+    assert sobre_a49 == [], [r.id for r in sobre_a49]
+    confirm = next(r for r in registros if r.id == "fb-2026-10-04-sesion-04-35a080e2")
+    assert (confirm.objetivo.tipo, confirm.objetivo.id, confirm.accion) == (
+        "evidence",
+        "ev-v10-004945-59ebac47",
+        "CONFIRM",
+    )
 
 
 def test_project_state_refleja_las_ambiguedades_abiertas() -> None:
