@@ -56,30 +56,39 @@ def test_cada_maximo_nuevo_es_otra_zona_del_mismo_punto_y_el_0_no_se_mueve() -> 
 
 def test_la_cota_de_peticiones_con_el_1_expandiendose_no_dispara_el_freno() -> None:
     """Cada 1 nuevo cuesta cancelar y colocar (ADR-0056 §7); la primera colocacion no cancela nada.
-    Las colocaciones llevan precios y stops distintos, asi que el freno de bucles (ADR-0067) no
-    las ve iguales; las mismas colocaciones con una sola firma si lo disparan."""
+    El precio (el 0) es el mismo en todas; el stop, el objetivo y el lote salen del 1 y cambian,
+    asi que el freno de bucles (ADR-0067) no las ve iguales; las mismas colocaciones con una sola
+    firma si lo disparan. La firma se arma aqui con la forma del broker, no con su codigo: la
+    cadena entera por el cableado real es de la rama de motor (ADR-0074 §3)."""
     vistas = _zonas_vistas()
     distintas = sorted({z.id: z for z in vistas}.values(), key=lambda z: z.extremo)
     limites = limites_freno_de(REGISTRO)
     freno = FrenoPeticiones(limites)
     t = M0 * MS_POR_MINUTO
     admitidas = 0
+    firmas: list[tuple[object, ...]] = []
     for k, z in enumerate(distintas):
         t += MS_POR_MINUTO
         if k > 0:
             assert freno.admitir(DIA, t, PETICION_CANCELAR, f"o{k - 1}", None, True) is None
             admitidas += 1
+        # la forma de la firma del broker (engine/broker.py, `colocar`): el precio es el 0, que
+        # no se mueve; el stop y el objetivo salen del 1 y el lote de la distancia, y son los que
+        # cambian de una colocacion a la siguiente
+        altura = z.extremo - z.entrada
         firma = (
             PETICION_COLOCAR,
             "stop",
             "venta",
             z.entrada,
-            z.extremo,
-            z.entrada - 60,
-            Decimal(1),
+            z.entrada + altura * 4 // 5,
+            z.entrada - 3 * altura,
+            (Decimal(600) / Decimal(altura)).quantize(Decimal("0.01")),
         )
+        firmas.append(firma)
         assert freno.admitir(DIA, t, PETICION_COLOCAR, f"o{k}", firma, False) is None
         admitidas += 1
+    assert len({f[3] for f in firmas}) == 1 and len({f[4] for f in firmas}) == len(firmas)
     assert admitidas == 2 * len(distintas) - 1 == freno.total() and freno.cortado() is None
     # el contraste: las mismas colocaciones con la MISMA firma son un bucle, y el freno corta
     igual = FrenoPeticiones(limites)

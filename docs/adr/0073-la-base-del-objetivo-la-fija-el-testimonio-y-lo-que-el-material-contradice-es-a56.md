@@ -23,7 +23,8 @@ phase: post-F14 (rama `trabajo/activar-sesion-04`, R1.1 de la hoja de ruta)
   `fb-2026-09-29-sesion-03-f572f1a0` y `fb-2026-09-29-sesion-03-d62c788a`; v7 0:06:07). No hay
   stop en dos tiempos en la ejecución: la candidata C4 de `DISENO-ENTRADA-RUPTURA.md` §2.8 queda
   contestada en eso (la orden sin stop de v8 n.º 1, no).
-- **A-33** («¿alguna vez cierras una ganadora antes del objetivo?»): S-12, v10 1:27:04–1:29:21.
+- **A-33** («¿alguna vez cierras una ganadora antes del objetivo?»): S-12, v10 1:27:04–1:27:36 y
+  1:29:02–1:29:21 (las ventanas de sus dos ítems; entre ellas hay un tramo de precaución).
   Nunca: «todo es 13 o sea fijo es 13 la regla es esa [...] respecto al 1 de la caja»
   (`ev-v10-012902-257afe4b`), con la reserva literal «no vamos a dejar correr nada por ahora»
   (`ev-v10-012704-d3facd31`), que queda en sus notas.
@@ -49,8 +50,10 @@ Clase `medicion`, no bloqueante (un bloqueante no se cierra como DECIDIDA, y una
 trader), `resuelve_en` [F26], con fuentes documentales a ADR-0040. Recoge: (a) la región poblada de
 ADR-0040; (b) que su fila de agosto sale del xlsx `backtesting-analytics AGOSTO 2026.xlsx` y que en
 S-16 (v10 1:48:23–1:48:53, `ev-v10-014823-64248489`, `ev-v10-014853-76602fb4`) el trader da por
-bueno el backtest de agosto grabado en vídeo, «porque incluye los break even», y no el del xlsx; sin
-agosto la región sigue poblada con abril (7 de 15) y mayo (4 de 5); (c) las ganadoras del material
+bueno «el último» de sus dos backtests de agosto, el grabado en vídeo, «porque incluye los break
+even» (que el xlsx sea el otro, el que «no lo incluía», es una lectura de la sesión y no su frase:
+E-1 de la sesión 3 ya preguntaba por «tus dos backtests de los mismos días»); sin agosto la región
+sigue poblada con abril (7 de 15) y mayo (4 de 5); (c) las ganadoras del material
 por debajo de 3R (cuatro en tres meses, listadas en las notas de A-33 y en `MAYO-DEV.md`), que
 hasta hoy vivían en A-33 y que «nunca cierro antes» no explica. Lo que la resolvería lo dice ADR-0040
 §2: un material que traiga la caja; y, desde S-16, un libro de agosto que sea el que el trader da por
@@ -105,7 +108,8 @@ pendiente tiene su sitio: una ambigüedad de clase `medicion`, como A-16 y A-28.
 - `scripts/hoja_preguntas.py` y su test: salen A-18 y A-33.
 - `docs/adr/0040-*.md`: recuadro de enmienda; `docs/adr/README.md`: «ACTIVE (con enmienda de
   ADR-0073)».
-- Ningún parámetro, ninguna regla, ningún código.
+- Ningún valor de parámetro ni ninguna forma ejecutable cambia; solo las notas de RN-011 y RN-015 y
+  la descripción de `base_calculo_objetivo` dicen que A-18 y A-33 están RESUELTAS. Ningún código.
 - Líneas del cierre (commit del contrato): la deuda de F26, la G y R5.1 a A-56; HER:15 sale; R1.1
   pierde HER:15; entrada nueva de la Next Action por S-16.
 

@@ -13,7 +13,9 @@ phase: post-F14 (rama `trabajo/mayo-dev-ingerido`)
 > de este ADR se toca: la región medida sigue poblada, los dos supervivientes siguen siendo las
 > lecturas del material y ningún parámetro cambia (decisión 4). La contradicción entre la regla y
 > el material es desde hoy A-56, clase medición, para F26; y la fila de agosto de la tabla sale del
-> xlsx que en S-16 el trader ya no da por bueno (vale el backtest grabado en vídeo).
+> xlsx, mientras que en S-16 el trader da por bueno «el último» de sus dos backtests de agosto, el
+> grabado en vídeo, «porque incluye los break even» (que el xlsx sea el otro es una lectura de la
+> sesión, no su frase).
 
 ## Decision
 

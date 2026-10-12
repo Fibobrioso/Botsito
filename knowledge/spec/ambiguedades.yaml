@@ -859,7 +859,7 @@ ambiguedades:
     titulo: tres ganadoras que cierran por debajo de 3R
     pregunta: >-
       ¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos?
-      RESUELTA el 2026-10-04 en la sesion 4 (S-12, v10 1:27:04-1:29:21; ADR-0073): nunca; «todo es
+      RESUELTA el 2026-10-04 en la sesion 4 (S-12, v10 1:27:04-1:27:36 y 1:29:02-1:29:21; ADR-0073): nunca; «todo es
       13 o sea fijo es 13 la regla es esa [...] respecto al 1 de la caja», sin parciales y sin
       dejar correr. RESERVA LITERAL del trader: «no vamos a dejar correr nada por ahora»
       (ev-v10-012704-d3facd31): lo de los primeros videos queda de lado, no negado. Las ganadoras
@@ -1230,8 +1230,8 @@ ambiguedades:
       LO FIRME, ACTIVADO el 2026-10-11 (sesion 4, S-15, v10 1:46:13-1:47:16) como DESVIACION
       declarada de la regla «las en parte van a la sesion 5» (decision del consultor, punto 9):
       una liquidez tomada antes de las 7 SI la usa, siempre que la operacion se de desde las 7
-      («¿lo usas para operar a partir de las 7? Sí.»; «la operativa se tiene que dar dentro de la
-      zona horaria, a partir de las 7»): toma_antes_de_la_ventana pasa de no_cuenta (PROVISIONAL,
+      («si el precio toma ese liquidez antes de tu horario, ¿lo usas para operar a partir de las 7?
+      Sí.», ev-v10-014613-6cf002b2): toma_antes_de_la_ventana pasa de no_cuenta (PROVISIONAL,
       que decia lo contrario) a cuenta, CONFIRMED (fb-2026-10-04-sesion-04-c3d0c855). SIGUE ABIERTA
       por la segunda parte: si a las 6:45 la toma, el precio vuelve por encima y a las 7:20 la
       vuelve a tomar, no eligio entre «la de las 7:20 vale» y «esa liquidez ya esta gastada»;
@@ -1537,7 +1537,7 @@ ambiguedades:
       En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar
       entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión,
       ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md.
-      RESUELTA el 2026-10-04 en la sesion 4 (S-20, v10 1:54:49-1:56:55): opcion (a), sin maximo;
+      RESUELTA el 2026-10-04 en la sesion 4 (S-20, v10 1:54:49-1:55:04 y 1:56:40-1:56:55): opcion (a), sin maximo;
       «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión», hasta que
       salta el tope de perdida (fb-2026-10-04-sesion-04-f0e58d1f; max_escenarios_por_sesion queda
       CONFIRMED en sin_limite, el mismo valor). Las «dos entradas por dia» de v4 quedan descartadas.
@@ -1684,8 +1684,9 @@ ambiguedades:
       ganadoras de esos libros que cierran por debajo de 3R (una en agosto, dos en abril, una en
       mayo), que «nunca cierro antes del objetivo» no explica. NO SE LE PREGUNTA AL TRADER: ya
       contesto; se MIDE. La fila de agosto de ADR-0040 sale del xlsx del backtest de agosto, y en
-      S-16 (sesion 4, v10 1:48:23-1:48:53) el trader da por bueno el backtest de agosto grabado en
-      video, no ese xlsx; sin agosto la region sigue poblada con abril y mayo. Lo que la
+      S-16 (sesion 4, v10 1:48:23-1:48:53) el trader da por bueno «el último» de sus dos backtests
+      de agosto, el grabado en video, «porque incluye los break even» (que el xlsx sea el otro es
+      lectura de la sesion, no su frase); sin agosto la region sigue poblada con abril y mayo. Lo que la
       resolveria lo dice ADR-0040 §2: un material que traiga la caja; y un libro de agosto que sea
       el que el trader da por bueno. F26 lee la diferencia como conocida.
     resuelve_en: [F26]

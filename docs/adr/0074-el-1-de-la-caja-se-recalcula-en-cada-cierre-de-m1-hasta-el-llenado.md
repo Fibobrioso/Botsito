@@ -44,14 +44,20 @@ cerrarla; la forma de ese registro es la PARADA 2 del informe.
 Con el 1 expandiéndose, cada cierre de M1 que sube el 1 cuesta dos peticiones (cancelar y colocar,
 ADR-0056 §7): la cota es 2 × (M1 que mueven el 1 mientras la orden sigue sin llenar) por vida de
 orden, menos una (la primera colocación no cancela nada). El freno de bucles de ADR-0067 no se
-dispara, porque cada colocación lleva otro precio, otro stop y otro lote, y «igual» es la misma
-firma sin el id (`engine/freno.py`); el corte del día cuenta el total como cualquier otra petición.
-Lo fija `tests/unit/test_caja_hasta_el_llenado.py`: con velas que suben el máximo, una zona distinta
-del mismo punto por cada máximo nuevo, y todas las peticiones admitidas sin ningún corte, frente al
-mismo número de colocaciones iguales, que sí lo dispara. ADR-0067 midió sus umbrales con la lectura
-de antes; en `F35-ORDEN-STOP-PIVOTE.md` §4.3, en DIAGNÓSTICO, esta lectura dio hasta 14 peticiones
-al día y 59 en 42 días (frente a 7 y 35), lejos del límite. La medida real es la corrida de R3.1;
-aquí no corre el arnés.
+dispara, porque cada colocación lleva otro stop, otro objetivo y otro lote (el precio, el 0, no se
+mueve), y «igual» es la misma firma sin el id, `(colocar, tipo, lado, precio, stop, objetivo,
+lotes)` (`engine/freno.py`, `engine/broker.py`); el corte del día cuenta el total como cualquier
+otra petición. Lo fija `tests/unit/test_caja_hasta_el_llenado.py`: con velas que suben el máximo,
+una zona distinta del mismo punto por cada máximo nuevo, y todas las peticiones admitidas sin ningún
+corte, frente al mismo número de colocaciones iguales, que sí lo dispara. El test arma la firma con
+la forma del broker a partir de cada zona (el stop y el objetivo salen del 1, el lote de la
+distancia), no con el código de producción: la cadena entera por el cableado real es de la rama de
+motor y de R3.1. ADR-0067 midió sus umbrales con la lectura de antes; en `F35-ORDEN-STOP-PIVOTE.md`
+§4.3, en DIAGNÓSTICO, esta lectura dio hasta 14 peticiones al día y 59 en 42 días (frente a 7 y 35),
+lejos del límite, **y una coincidencia de 77 frente a dos con la caja fija**: F35 concluyó que «con
+esta medida no hay razón para cambiar la decisión 5». Lo que la cambia hoy no es esa medida -que
+era de construcción y en diagnóstico- sino el testimonio del trader (S-4); la medida que cuenta es
+la corrida de R3.1. Aquí no corre el arnés.
 
 ### 4. Lo que no cambia
 
@@ -79,8 +85,8 @@ La 2 deja al bot fijando la caja al verse el punto, que no es lo suyo.
 ## Impacto
 
 - `knowledge/spec/parametros.yaml`: `caja_se_fija` = `en_cada_cierre_m1`, fuente ADR-0074.
-- `docs/adr/0064-*.md`: recuadro en la decisión 5; `docs/adr/README.md`: «ACTIVE (con enmienda de
-  ADR-0074)».
+- `docs/adr/0064-*.md`: recuadro en la decisión 5; `docs/adr/README.md`: su fila añade «decisión 5
+  enmendada por ADR-0074».
 - `tests/unit/test_caja_hasta_el_llenado.py`: el valor del registro (falla en `main`) y la cota;
   `tests/unit/test_orden_stop_pivote.py` cambia de sentido a propósito en lo que daba por fija la
   caja.

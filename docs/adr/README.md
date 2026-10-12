@@ -69,7 +69,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0063 | El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` | ACTIVE |
 | 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29; decisión 5 enmendada por ADR-0074) |
 | 0065 | El break even de RN-014 se pone al tick que pasa el nivel, no al cierre de la M1 | ACTIVE (PROVISIONAL hasta la demo de MetaTrader) |
-| 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (PROVISIONAL en tres parámetros, hasta las preguntas 5, 15 y 18 de la sesión 4) |
+| 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (sus parámetros PROVISIONAL de las preguntas 5, 15, 18 y 20 de la sesión 4 son CONFIRMED desde `trabajo/activar-sesion-04`; queda el de la 21, `orden_pendiente_al_abrir_escenario`, bajo A-53) |
 | 0067 | El freno de peticiones vive en el puerto del broker: aviso, corte y bucle, y lo que protege la cuenta pasa siempre | ACTIVE (PROVISIONAL en sus cuatro umbrales, hasta A-54 en la demo de FTMO) |
 | 0068 | La ventana prohibida antes de un cierre de mercado largo vive en el puerto del broker, con un calendario versionado por perfil | ACTIVE (PROVISIONAL en `cierre_pendientes`, hasta A-55 con el soporte de FTMO) |
 | 0069 | A-42 RESUELTA: las dos sesiones son las velas H4 de la rejilla de `anclaje_h4` (H2b); deja superado ADR-0059 | ACTIVE |

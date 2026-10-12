@@ -40,7 +40,7 @@ y `casos_ocultos`). **Exposiciones: ninguna.**
 Una fila por código de la tabla final (§5). «Registro que hoy la cierra» es `feedback trace`:
 **ninguna de las 17 tiene registro** salvo A-36 (su cadena de REOPEN) y A-42 (RESUELTA). La hoja de
 ruta (R1.1) la esperan todas; el detalle de quién más, en §0.c. Las citas son las de la extracción,
-cruzadas con los 21 tramos de v10 de `tramos_no_citables.yaml`, márgenes incluidos (el final de
+cruzadas con los 22 tramos de v10 de `tramos_no_citables.yaml`, márgenes incluidos (el final de
 cada tramo es exclusivo y va un segundo más allá del bloque).
 
 | Código | Amb. | Lo que dijo (resumen fiel; tramo mm:ss) | Parámetro hoy (estado, valor) | Premisa vigente | Reloj | Qué falta | Destino |
@@ -51,7 +51,7 @@ cada tramo es exclusivo y va un segundo más allá del bloque).
 | S-3 | A-18 | stop ya en el 0,8 al poner la orden; el 1 solo plantea el RR; objetivo = 3 × (0→1); lote 0→0,8 (28:26–44:44; `ev-v10-003559-211855b7`, `ev-v10-003706-5b7055a2`, `ev-v10-003927-2f6d9f48`) | `base_calculo_objetivo` = `caja_completa`, `objetivo_rr` = 3, `stop_fraccion_caja` = 0,8, `lotaje_base` = `hasta_stop_fraccion`, todos CONFIRMED desde la sesión 3 o antes; sin registro sobre A-18 | sí (regla, repetida tres veces) | n/a | solo spec (el motor ya lo hace: RN-011 y RN-015); **choca con ADR-0040** | **PARADA b.1** |
 | S-4 | A-49 | con la orden sin llenar, el 1 se expande al máximo nuevo «mientras no se desarrolle otro punto breaker»; el 0 y el punto se quedan; la distancia no importa (46:41–51:42; `ev-v10-004945-59ebac47`, `ev-v10-005056-1a55d5b4`, `ev-v10-005116-2a9ff066`) | `caja_se_fija` = `al_verse_el_punto` (DEFAULT_AMBIGUOUS, A-49); la otra opción `en_cada_cierre_m1` ya existe (`zonas.py:87`, `:395-399`) | sí | n/a | cambiar el VALOR de un parámetro de categoría `ejecucion`: `feedback apply` lo rechaza (`feedback/aplicar.py:187`: «solo se cambia por decision (ADR)») | **PARADA b.3** |
 | S-5 | A-30, A-39 | la orden sin llenar se quita a las 11 y a las 3; si a las 11 cambia el sesgo de H4, también se quita (51:45–56:18; `ev-v10-005427-1a0867af`, `ev-v10-005603-6a62fca7`) | `orden_pendiente_al_abrir_sesion` = `se_retira`, DEFAULT_AMBIGUOUS (ambiguedad_id A-30); A-30 y A-39 llevan `parametros: []` | sí; **pregunta dirigida** (§3.6, A8) | «un minuto antes» es frase del consultor: no se fija | solo spec, más el docstring de `motor.py:4-6`, que ya no es verdad (§0.c) | activar |
-| S-6 | ADR-0061 §2 | hacia fuera, «un pip» varias veces y, con la cuenta hecha, «un punto» (56:21–61:52; `ev-v10-005847-b4097030`, `ev-v10-010110-8d6830a9`) | `stop_fraccion_redondeo` = `alejandose_de_la_entrada`, CONFIRMED; el punto es la decisión nocturna de ADR-0061 §2 | sí | n/a | nada que cambiar: la spec ya dice un punto hacia fuera | sesión 5 solo si el consultor quiere oírlo sin corrección |
+| S-6 | ADR-0061 §2 | hacia fuera, «un pip» varias veces y, con la cuenta hecha, «un punto» (56:21–61:52; `ev-v10-005847-b4097030`; la cuenta de 61:10 es sobre un ejemplo de su replay de julio y no se cita, hallazgo b2 del revisor) | `stop_fraccion_redondeo` = `alejandose_de_la_entrada`, CONFIRMED; el punto es la decisión nocturna de ADR-0061 §2 | sí | n/a | nada que cambiar: la spec ya dice un punto hacia fuera | sesión 5 solo si el consultor quiere oírlo sin corrección |
 | S-22 | A-36 | exactamente en el 0 contando la mecha, siempre; sin tener en cuenta el spread (61:54–62:54; `ev-v10-010214-23a7fc0c`, `ev-v10-010228-868271ee`) | sin parámetro; **REOPEN activo** `fb-2026-09-29-sesion-03-f3caeb2d` (cadena 626c4dc7 ← a0b61bc9 ← f3caeb2d) | sí; la pregunta decía «orden límite» y la entrada es stop (A-47) | n/a | solo spec; el motor ya lo hace (§0.c); C6 queda sin explicar | activar, con `--supersede f3caeb2d` |
 | S-8 | A-51 | un break even no corta la racha; tras la novena vuelve al día siguiente; la racha sigue de un día a otro y de una semana a otra (65:32–68:18; `ev-v10-010653-81316808`, `ev-v10-010715-fae17215`, `ev-v10-010804-5b6ad1a3`) | **sin parámetro**; `perdida_trader_*` UNKNOWN (A-44) | sí (regla con un ejemplo) | n/a | parámetros nuevos, regla nueva y código (`tope_trader.py` no tiene ningún acumulador de racha) | **PARADA** (parámetro, §0.c) → código |
 | S-9 | A-44 | 9 seguidas y 4,5 % del día se complementan; el 9 % semanal «es un error» y luego «no recuerdo» (68:18–70:44) | `perdida_maxima_diaria` = 4,5 y `perdida_maxima_semanal` = 9, CONFIRMED (sesión 1); `perdida_trader_*` UNKNOWN | sí, con dudas | n/a | contradice un CONFIRMED (b.5); el motor sigue sin correr sin `--diagnostico-a44` | sesión 5 |
@@ -60,7 +60,7 @@ cada tramo es exclusivo y va un segundo más allá del bloque).
 | S-12 | A-33 | nunca deja correr; el objetivo es fijo, 3 respecto al 1 de la caja; lo de los primeros vídeos queda de lado «por ahora» (85:40–89:21; `ev-v10-012704-d3facd31`, `ev-v10-012902-257afe4b`) | `parciales` = no, `objetivo_rr` = 3, `base_calculo_objetivo` = `caja_completa`, CONFIRMED | sí | n/a | solo spec (RN-015 ya lo hace); **la pregunta de A-33 son las ganadoras del material por debajo de 3R, que esta respuesta no explica**; choca con ADR-0040 | **PARADA b.1** |
 | S-13 | ADR-0060 §2 | una H4 neutra, sin color, mantiene el sesgo que había; con 1 o 2 puntos de cuerpo ya cuenta su color (89:29–101:49; `ev-v10-014005-7e2228f4`, `ev-v10-014040-fb7a153b`) | sin parámetro; `domain/sesgo.py:88-91` devuelve AMBIGUO y RN-033 prohíbe | sí; dicho solo con sesgo previo alcista | n/a | ADR (enmienda de ADR-0060 §2), CORRECT sobre RN-003, RN-033 y el token `ambiguo`, código y tests | **PARADA b.2** → código |
 | S-14 | RN-007 | la vela que abre y cierra en el mismo precio no cuenta; sobre 1 o 2 puntos, dos versiones; el literal de 104:49 es «12» (101:49–105:50; `ev-v10-014310-2296423b`, `ev-v10-014438-95464201`, confianza baja) | sin parámetro de umbral; RN-007 DESALINEADA con el motor (`strategy_spec.yaml:1187-1188`) | sí | n/a | el umbral; y oír el minuto (§0.d) | sesión 5 (y Aleks, §0.d) |
-| S-15 | A-43 | una liquidez tomada antes de las 7 sí la usa, siempre que la operación se dé desde las 7; la segunda parte (6:45 y 7:20) no la elige (105:51–108:05; `ev-v10-014613-6cf002b2`, `ev-v10-014705-718c5f4e`) | `toma_antes_de_la_ventana` = `no_cuenta`, DEFAULT_AMBIGUOUS (A-43); A-43 lleva `parametros: []` | sí | horas del trader, en su gráfico (ADR-0069) | **lo firme contradice el valor PROVISIONAL**: `no_cuenta` es lo contrario de lo que dijo | sesión 5; decisión sobre lo firme (§0.c) |
+| S-15 | A-43 | una liquidez tomada antes de las 7 sí la usa, siempre que la operación se dé desde las 7; la segunda parte (6:45 y 7:20) no la elige (105:51–108:05; `ev-v10-014613-6cf002b2`; el ítem de 107:05 es un ejemplo de su replay entre sesiones, de mes sin identificar, y no se cita en la spec: hallazgo b2 del revisor) | `toma_antes_de_la_ventana` = `no_cuenta`, DEFAULT_AMBIGUOUS (A-43); A-43 lleva `parametros: []` | sí | horas del trader, en su gráfico (ADR-0069) | **lo firme contradice el valor PROVISIONAL**: `no_cuenta` es lo contrario de lo que dijo | sesión 5; decisión sobre lo firme (§0.c) |
 | S-16 | E-1 | vale el backtest de agosto del vídeo, «grabado en vivo», porque incluye los break even; el primero no (108:05–109:08; `ev-v10-014823-64248489`, `ev-v10-014853-76602fb4`) | no es ambigüedad; recuento en b.4 | **no**: al revés de `PREGUNTAS.md` 16 | n/a | decisión sobre el material (b.4) | **PARADA b.4**; nada cambia aquí |
 | S-17 | A-50 | no descarta la entrada si la caja queda «a nivel» del nivel tomado; con «creo» y sobre pregunta reformulada (109:10–110:19; `ev-v10-015003-dd8ab1bf`, confianza baja) | sin parámetro; el motor mira solo el 0 (`zonas.py`, `se_desarrolla_en_el_lado_de_ruido`) | reformulada | n/a | «creo»; confirmación débil de v9 0:51:08 | sesión 5 |
 | S-18 | A-25 | la toma de otra liquidez reinicia los tres intentos; la marca del alto viejo se descarta y pasa al nuevo; él «se iría por una cuarta» pero lo deja en 3 (110:26–114:36; `ev-v10-015152-6dad6eb3`, `ev-v10-015227-b360ebf1`, `ev-v10-015421-44b43053`) | `cartuchos_reinicio` = `siguiente_liquidez_m15` CONFIRMED; `intentos_tras_toma_nueva` = `vuelven_a_cartuchos_max`, DEFAULT_AMBIGUOUS (A-25) **y no está en la lista de A-25**; la marca al pivote más reciente es ADR-0045 (A-24 DECIDIDA) | sí | n/a | solo spec: confirmar `intentos_tras_toma_nueva` con el mismo valor | activar |
@@ -665,6 +665,12 @@ parámetros de esa respuesta (su salida va en cada punto).
 - `spec_version` 15.9.6 → 15.9.7. Entra la copia de la respuesta del consultor al final del encargo y
   de este informe (§1.1).
 - **El testimonio de S-4 como registro sobre A-49 es la PARADA 2 (abajo).** Commit 490b97a.
+- Tras el revisor (a2, a3): el ADR dice ahora que lo que cambia entre colocaciones es el stop, el
+  objetivo y el lote (el 0 no se mueve), que el test arma la firma con la forma del broker y no con
+  su código, y que la misma tabla de F35 §4.3 que da las peticiones da **una coincidencia de 77
+  frente a dos** con la caja fija y concluyó «no hay razón para cambiar la decisión 5». La
+  recomendación (a) de la PARADA dijo «está medido» sin esa cifra: lo que cambia el valor es el
+  testimonio del trader, no la medida, y así queda escrito.
 
 ### 1.7 Punto 9 · DESVIACIÓN declarada: `toma_antes_de_la_ventana` → `cuenta` con A-43 ABIERTA (S-15)
 
@@ -719,9 +725,9 @@ deja solo el repo real y el `wt-ci` de otra sesión, que no se toca.
 
 | Test | Con `main` | Con la rama |
 |---|---|---|
-| `tests/unit/test_caja_hasta_el_llenado.py` (ADR-0074) | 3 failed: `assert 'al_verse_el_punto' == 'en_cada_cierre_m1'` (:30); `len(set(extremos)) > 1` falso, todos los extremos iguales (:52); `1 >= 5` falso, una sola zona (:...) | 3 passed |
+| `tests/unit/test_caja_hasta_el_llenado.py` (ADR-0074) | 3 failed: `assert 'al_verse_el_punto' == 'en_cada_cierre_m1'` (:30); `len(set(extremos)) > 1` falso, todos los extremos iguales (:52); `1 >= 5` falso, una sola zona (:87) | 3 passed |
 | `tests/unit/test_escenarios_por_sesion.py::test_la_toma_antes_de_la_ventana_la_decide_el_parametro` (S-15) | failed: `assert cabeza.count(actuales[nombre]) == 1` → `toma_antes_de_la_ventana`, `0 == 1` (la línea `valor: cuenta` no existe en el registro de `main`) | passed |
-| `tests/unit/test_en_parte_no_se_cierra.py` | pasa también en `main` (nada estaba RESUELTA de más): su rotura es la mutación sintética del propio fichero | 4 passed |
+| `tests/unit/test_en_parte_no_se_cierra.py` | pasa también en `main` (nada estaba RESUELTA de más): su rotura es la mutación sintética del propio fichero | 3 passed |
 | `tests/unit/test_orden_en_el_0_con_mecha.py` (A-36) | pasa también en `main`: congela lo que el motor ya hacía, y se dice | 2 passed |
 
 Los que cambian de sentido a propósito (ya existían en `main` con el otro sentido): `test_kit.py`
@@ -741,7 +747,7 @@ Ningún test de esta rama necesita `data/`: ninguno se salta en la CI de Linux.
 | 5 | Ninguna «en parte» se cierra | Hecho, con una DESVIACIÓN declarada | `test_en_parte_no_se_cierra.py`; A-43 sigue ABIERTA y solo cambia su parámetro (punto 9 del consultor, §1.7) |
 | 6 | Ninguna cifra en forma ejecutable (ADR-0002) | Hecho | la rama no toca ninguna forma; `test_no_business_literals` en verde en cada `make check` |
 | 7 | Sin arnés ni medidas agregadas sobre material; tests sintéticos | Hecho | ningún `motor arnes`; los tests nuevos son sintéticos de 2030 |
-| 8 | Nada de material; citas solo las citables, cruzadas con los tramos | Hecho | §0 («Exposiciones: ninguna»); cada cita con su ítem `ev-v10-*` fuera de los 21 tramos; la de 116:20 se evitó (§0.a) |
+| 8 | Nada de material; citas solo las citables, ninguna de un ejemplo del replay de julio o de enero, cruzadas con los tramos | Hecho tras el revisor | §0 («Exposiciones: ninguna»); cada cita con su ítem `ev-v10-*` fuera de los 22 tramos; la de 116:20 se evitó (§0.a); los dos ítems de ejemplos de replay (b2) salieron de la spec y del informe (§9.1) |
 | 9 | Next Action y hoja de ruta sin tocar en la rama | Hecho | `git diff main --stat`: ni `docs/plan/` ni la Next Action de `PROJECT_STATE.md` (solo la tabla de Known Ambiguities, `Current Branch`/`Current Feature` y el recuento de tests) |
 | 10 | Makefile, `.claude/` y la guardia sin tocar | Hecho | `git diff main --stat`; `contrato.yaml` los protege |
 | 11 | FASE 0 a–f y PARADA | Hecho | §0 y «Lo que necesito que decidas» (13 puntos) |
@@ -847,11 +853,171 @@ Ambiguities pierde siete filas y gana una, y suben `Current Feature` y el recuen
 
 ## 8. CI de Linux
 
-PENDIENTE_CI
+El clasificador de Claude Code negó el push desde la sesión («Out-of-Place Publication»); lo lanzó
+Aleks desde su terminal con `git push origin trabajo/activar-sesion-04:refs/heads/fix/activar-sesion-04`
+(2026-10-12), sin rodear nada.
+
+- **Run 38186381208**, sobre 5e9782a (el informe completo): `1 failed, 2565 passed, 9 skipped`. El
+  único fallo es el aceptado, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (la rama
+  no es `main` ni lleva tag). Los 9 saltados son los que necesitan `data/`, como siempre; ninguno
+  es de esta rama.
+- El commit que recoge el informe del revisor (§9) tiene su propia CI; su run se da en el terminal
+  y, si cambia algo, aquí.
 
 ## 9. Informe del revisor
 
-PENDIENTE_REVISOR
+Lanzado el 2026-10-11 (modelo `opus`) con el informe terminado salvo §8 y §9, sobre 5e9782a. El
+primer intento murió por el límite de uso de la cuenta (HTTP 429) y se relanzó íntegro. Se pega tal
+cual (no cita ningún tramo no citable; su propia salvedad sobre `HOLDOUT-EXPOSICIONES.md` no
+reproduce cifras).
+
+### 9.1 Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado.** El recuadro de ADR-0040, ADR-0073 §3 y el texto de A-56 dicen ahora lo que dijo el trader («el último», el grabado, «porque incluye los break even») y que leer el xlsx como «el otro» es una lectura de la sesión, no su frase. |
+| a2 | importa | **Arreglado.** ADR-0074 §3 dice que lo que cambia es el stop, el objetivo y el lote (el 0 no se mueve) y que el test arma la firma con la FORMA del broker, no con su código; el test deriva ahora el stop y el objetivo del 1 y el lote de la distancia, y comprueba que el precio es el mismo en todas las firmas y el stop distinto. La cadena por el cableado real queda para la rama de motor y R3.1 (declarado en el ADR). |
+| a3 | importa | **Arreglado.** ADR-0074 §3 y §1.6 de este informe citan la cobertura de F35 §4.3 (una coincidencia de 77 frente a dos) y su conclusión, y dicen que lo que cambia el valor es el testimonio de S-4, no la medida. **Para el consultor:** la recomendación (a) de la PARADA no llevaba esa cifra; la decisión 2 se tomó sin ella. Si cambia su decisión, el valor vuelve con otro recuadro. |
+| a4 | menor | **Arreglado.** Los rangos de la spec y del ADR son ahora las ventanas de los ítems (1:27:04–1:27:36 y 1:29:02–1:29:21; 1:54:49–1:55:04 y 1:56:40–1:56:55). |
+| a5 | menor | **Arreglado.** El Impacto de ADR-0074 describe la fila real de 0064; el de ADR-0073 dice que cambian notas y una descripción; la fila de 0066 dice qué parámetros siguen PROVISIONAL. |
+| a6 | menor | **Arreglado.** 22 tramos, en los dos sitios. |
+| b1 | importa | **Se contesta.** La PARADA 2 la manda la propia respuesta del consultor («si al aplicar algo medido lo contradice, PARADA 2»); el encargo termina en «lista para revisión, NO cerrada» y la PARADA es parte de lo que el consultor revisa. Si prefiere que no se declare lista con una PARADA abierta, lo dice y el registro entra en un commit más. |
+| b2 | importa | **Arreglado en lo editable, declarado en lo inmutable.** `ev-v10-010110-8d6830a9` (la cuenta de «1,3 pips» sobre un ejemplo del replay de julio) sale de §0.a; `ev-v10-014705-718c5f4e` (un ejemplo de su replay entre sesiones, de mes sin identificar) sale de la descripción de `toma_antes_de_la_ventana` y del texto de A-43, que se quedan con la regla general (`ev-v10-014613-6cf002b2`). Las `notas` del registro `fb-2026-10-04-sesion-04-c3d0c855` lo citan como apoyo y son inmutables: no se supersede un registro por una nota, y su `respuesta_literal` es la regla general. **Para el consultor:** decidir si esa nota basta o si se reexpresa el registro. El ítem `ev-v10-011957-7ebb3453` (S-10, A-21) que el revisor señala como posible ejemplo de enero es de la rama de motor. |
+| b3 | menor | **Arreglado.** 3 passed y la línea `:87`. |
+| b4 | menor | **Se contesta.** El «creo» de S-12 es sobre lo que dijo en vídeos anteriores (la línea cae en un tramo y no se cita, §3.13 de la extracción) y el de S-1 es sobre ejemplos, no sobre la regla; los dos están en la columna «creo»/«qué falta» de la tabla §0.a. El punto 10 de la PARADA nombró los que tocaban una activación. No se reescribe la PARADA ya respondida. |
+
+### 9.2 El informe, tal cual
+
+**Informe del revisor · trabajo/activar-sesion-04 · 2026-10-11**
+
+Base `main` 11df2c4 (`git merge-base main HEAD`), HEAD 5e9782a, diez commits, árbol limpio. Encargo: `docs/encargos/trabajo-activar-sesion-04.md`. Contrato: `contrato.yaml` (tramo R1, riesgo alto). Informe: `docs/validation/ACTIVAR-SESION-04.md`. Sus §8 (CI) y §9 (este informe) siguen pendientes, como dijiste. La CI la reviso como si no existiera todavía.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 3 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | La rama dice que el trader «ya no da por bueno» el xlsx de agosto, o «no ese xlsx». Ni la cita ni la respuesta del consultor lo sostienen. Las citas dicen que vale «el último», el grabado, y que «el primer mes de agosto no lo incluía» (los break even). Que el xlsx sea «el primero» es una inferencia que no se declara. El propio informe recoge en b.4 que E-1 es ambiguo («¿el último o el completo?»). El consultor escribió solo «en S-16 el trader da por bueno el backtest del vídeo». | `docs/adr/0040-…md:15-16` («sale del xlsx que en S-16 el trader ya no da por bueno»); `docs/adr/0073-…md:51-53` («y no el del xlsx»); `knowledge/spec/ambiguedades.yaml:1688` («no ese xlsx»); cuerpo de 10a3922. Las citas: `knowledge/evidence/v10/ev-v10-014823-64248489.yaml:7-8` y `ev-v10-014853-76602fb4.yaml:7`. Lo que pidió el consultor: `docs/encargos/trabajo-activar-sesion-04.md:82`. Lo que admite el informe: `ACTIVAR-SESION-04.md:158-160` |
+| a2 | importa | ADR-0074 §3 dice que el freno no se dispara «porque cada colocación lleva otro precio, otro stop y otro lote». Pero el precio de entrada (el 0) no se mueve, como dicen el propio §1 y el test. Además, el test no arma la firma con el código de producción. La escribe a mano, mete `z.extremo` en el hueco del stop y deja fijos el objetivo (`z.entrada - 60`) y el lote (`Decimal(1)`). Así solo prueba que el freno admite firmas distintas, no que las firmas reales lo sean. La firma real es `(colocar, tipo, lado, precio, stop, objetivo, lotes)` y la calcula el broker. | `docs/adr/0074-…md:46-48` frente a `:20` («El 0 y el punto no se mueven»); `tests/unit/test_caja_hasta_el_llenado.py:50` (entrada constante) y `:72-80` (firma sintética); `src/botsito/engine/broker.py:411` |
+| a3 | importa | ADR-0074 da el mecanismo por «medido» en F35 §4.3, y de esa tabla cita solo las peticiones (14 al día, 59 en 42 días). Calla que la misma tabla da cobertura 1/77 frente a 2/77 con la caja recalculada, y que F35 concluyó «Con esta medida no hay razón para cambiar la decisión 5». La recomendación (a) de la PARADA usó el mismo «está medido» sin dar esa cifra. Es una decisión no declarada del todo al consultor. | `docs/adr/0074-…md:27-28, :51-53, :73`; `docs/validation/F35-ORDEN-STOP-PIVOTE.md:221-223` (filas fija 2/77 frente a recalculada 1/77) y `:228-230`; `ACTIVAR-SESION-04.md:454-455` |
+| a4 | menor | Algunas marcas de la spec y de un ADR son rangos que abarcan tramos no citables de v10. La cita literal queda fuera de los tramos, pero el rango se lee como ventana de la cita. Lo exacto serían las ventanas de los ítems: 1:27:04–1:27:36 y 1:29:02–1:29:21 en S-12; 1:54:49–1:55:04 y 1:56:40–1:56:55 en S-20. | `ambiguedades.yaml:862` y `docs/adr/0073-…md:26` (1:27:04-1:29:21 contiene el tramo 1:27:44–1:28:19); `ambiguedades.yaml:1540` y `parametros.yaml:751` (1:54:49-1:56:55 contiene los tramos de 1:55:09 a 1:56:19). Tramos: `knowledge/corpus/tramos_no_citables.yaml:259-260, 217-218, 273-274, 280-281, 350-351` |
+| a5 | menor | Hay textos de Impacto que no casan con lo commiteado. (1) ADR-0074 describe la fila de 0064 como «ACTIVE (con enmienda de ADR-0074)», pero la fila real dice otra cosa. (2) ADR-0073 dice «Ningún parámetro, ninguna regla, ningún código», y su commit cambia las notas de RN-011 y RN-015 y la descripción de `base_calculo_objetivo`. (3) La fila de 0066 sigue diciendo «PROVISIONAL en tres parámetros, hasta las preguntas 5, 15 y 18», y los cuatro parámetros de esas preguntas son hoy CONFIRMED. | `docs/adr/0074-…md:82-83` frente a `docs/adr/README.md:70`; `docs/adr/0073-…md:108` frente a `git log --stat 10a3922` (toca `strategy_spec.yaml` y `parametros.yaml`); `docs/adr/README.md:72` |
+| a6 | menor | El informe habla de «21 tramos» de v10 y hay 22: falta el 1:55:27–1:55:34. Ninguna marca cae en él. | `ACTIVAR-SESION-04.md:43, :744`; Grep `video_id: v10$` cuenta 22; `tramos_no_citables.yaml:349-351` |
+
+Comprobado sin hallazgos:
+- **Contrato.** `scripts/contrato_rama.py`: «CONTRATO: 42 ficheros dentro del contrato … tramo 'R1', 5 comprobaciones», exit 0.
+- **`feedback apply --check`.** 4 parámetros, «0 cambian, 4 ya estaban», «no se ha escrito nada».
+- **`knowledge validate`** (sin redirigir a fichero): todo OK. «56 ambiguedades», «165 registros de feedback, historial intacto, commits con Fuente».
+- **`spec docs`** (sin `--escribir`): «OK: docs/spec coincide con knowledge/spec/».
+- **`make check`.** `make-check.log`: «2575 passed», «SELLO: make check en verde sobre el arbol 6ef58fec…», que es igual a `git rev-parse HEAD^{tree}`. «PICO DE MEMORIA … 294 MiB».
+- **Trailers `Fuente:`.** Los siete commits que tocan `knowledge/spec` lo llevan en el cuerpo, con ids que existen (13 `fb-*` nuevos, ADR-0073, ADR-0074).
+- **Regímenes de cambio.** `knowledge/feedback/` solo trae `A` (13 ficheros). No se tocan `knowledge/evidence/`, `data/manifests/`, `knowledge/corpus/` (`libros.yaml` incluido) ni `knowledge/cases/`.
+- **CORRECT frente a RESOLVE.**
+  - c3d0c855 es un CORRECT sobre un parámetro cuyo valor no fijaba el trader, sino ADR-0066.
+  - Los cierres son RESOLVE_UNKNOWN sobre la ambigüedad y activos.
+  - A-36 se vuelve a cerrar con `supersede` a su REOPEN f3caeb2d.
+  - e0173b1b supersede a c145d9cc, de la misma rama.
+  - `feedback pending`: «0 pendientes de 114 activos».
+- **Ambigüedades.** Cada commit que toca `ambiguedades.yaml` toca también `docs/spec/ambiguedades.md`. La tabla de Known Ambiguities pierde las 7 cerradas y gana A-56 en el mismo commit. A-56 es `medicion` con `fuentes_documentales`, con literales dentro de «Decision» (ADR-0040:33) e «Impacto» (:124-125).
+- **ADR.** El `## Estado` de 0073 y 0074 es ACTIVE (`test_adr.py` pasa). Las enmiendas de 0040 y 0064 solo añaden líneas (numstat 9/0 y 4/0).
+- **Informes.** La rama no toca ningún informe cerrado. `docs/state/HISTORIA.md` solo añade líneas (192/0).
+- **Spec y cifras.** No se añade ningún sitio con `cita` ni ninguna forma ejecutable (el diff de `strategy_spec.yaml` es de notas y de un título). No hay ítems de evidencia nuevos.
+- **`spec_version`.** Sube 15.9.1 → 15.9.8, una vez por commit de spec.
+- **Tres citas del informe**, conformes: `feedback/aplicar.py:187-190`, `engine/zonas.py:395-399` y `config/registro.py:444-447`.
+- **Tramos no citables (tu alcance 2).** Ninguna marca del informe y ningún t0/t1 de los 13 registros nuevos cae dentro de un tramo de v10, con márgenes y con el final exclusivo.
+  - Las más justas: 0:46:41 y 1:05:29, justo en el final exclusivo de sus tramos, y 1:56:20 / 1:56:40 tras el 1:56:19.
+  - Los rangos de §0.a que tocan 126:42 (S-24, S-19) son los de la tabla final de la extracción, ya revisada: localizan, no citan.
+  - Ningún ítem `ev-v10-*` citado cae en un tramo.
+  - `HOLDOUT-EXPOSICIONES.md` no cambia en la rama.
+- **ADR enmendados (tu alcance 3).** 0040 lleva recuadro y fila «ACTIVE (con enmienda de ADR-0073)» (`README.md:46`). 0064 lleva recuadro en la decisión 5 y fila (`:70`). 0073 y 0074 están en el índice como ACTIVE (`:79-80`).
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 27 hechos (uno de otra forma, declarado), 1 parcial, 1 no hecho; 1 no aplica; 2 pendientes de la entrega (CI y revisor).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con abrir-rama: base, contrato R1, riesgo alto, artefacto | Hecho | `contrato.yaml:1-4`; `ACTIVAR-SESION-04.md:8-18` |
+| 2 | OBJETIVO: cada «resuelve» RESUELTA | Hecho de otra forma (declarado) | 7 de 9; A-21 y A-51 van a la rama de motor por el punto 11; `ACTIVAR-SESION-04.md:739` |
+| 3 | Nada fijado se pisa; un choque va a PARADA y a su régimen | Hecho | b.1 → ADR-0073; b.3 → ADR-0074; A-43 por el punto 9 |
+| 4 | Ninguna «en parte» se cierra | Hecho | `test_en_parte_no_se_cierra.py` pasa; A-43 sigue ABIERTA (`ambiguedades.yaml:1258`) |
+| 5 | Ninguna cifra en forma ejecutable | Hecho | sin cambios de `forma`; make check en verde |
+| 6 | Sin arnés; tests sintéticos | Hecho | tests de 2030; ningún `motor arnes` |
+| 7 | Citas: solo las citables, ninguna de un ejemplo del replay de julio o enero, cruzadas con los tramos | Parcial | tramos, conforme; la condición del replay no se comprueba (hallazgo b2) |
+| 8 | Next Action y hoja de ruta sin tocar | Hecho | `git diff --name-status`: nada en `docs/plan/`; en `PROJECT_STATE.md` solo la tabla, Current Branch/Feature y el recuento |
+| 9 | Makefile, `.claude/` y la guardia sin tocar | Hecho | `git diff --name-status main...HEAD` |
+| 10 | Fase 0 a (tabla con S-6, S-13, S-14, S-16, S-19 y S-7; cuadre; motor fichero:línea; test) | Hecho | §0.a, `:46-90` |
+| 11 | Fase 0 b.1–b.5 | Hecho | §0.b, `:92-168` |
+| 12 | Fase 0 c (A-36, A-21, A-51, A-30/A-39, hoja, quién espera) | Hecho | §0.c, `:170-242` |
+| 13 | Fase 0 d (herencias, S-14, §4, C1/C4/C6, sesión 3) | Hecho | §0.d. La CLI filtrada la negó la guardia; se declara y queda el comando para Aleks (`:255-263`) |
+| 14 | Fase 0 e (lista para la sesión 5) | Hecho | §0.e y §5 |
+| 15 | Fase 0 f (plan de commits y partición) | Hecho | §0.f |
+| 16 | «Lo que necesito que decidas» con los mínimos | Hecho (con un hallazgo menor, b4) | `:433-509` |
+| 17 | Respuesta copiada tal cual al final del encargo y del informe | Hecho | `diff` de encargo `:75-110` con informe `:517-552`: IGUALES; entró en 490b97a (declarado, `:571-573`) |
+| 18 | Paso 3 de activar-sesion en cada commit (registros, `--supersede`, cinco sitios, test_kit, spec_version, docs, Fuente) | Hecho | `git log --stat`: 89df2f4, 10a3922, 1dc89d2, 0e18293, b5a12e3, a6f1d55 |
+| 19 | Registro de S-4 sobre A-49 sin cerrarla (punto 2) | No hecho: PARADA 2 | `ACTIVAR-SESION-04.md:685-710` |
+| 20 | `caja_se_fija` a mano con fuente ADR-0074 y su estado dicho | Hecho | `parametros.yaml` (DEFAULT_AMBIGUOUS, A-49, ADR-0074); `ACTIVAR-SESION-04.md:651-656` |
+| 21 | Los tests que congelaban «sin fijar» cambian de sentido y se dice | Hecho | diffs de `test_spec_fidelidad`, `test_reabrir…`, `test_orden_stop_pivote` y `test_escenarios_por_sesion`, con «A PROPOSITO» |
+| 22 | ADR nuevos: plantilla, número libre, índice | Hecho | encabezados iguales a `0000-template.md`; `README.md:79-80` |
+| 23 | Recuadro y fila de cada ADR enmendado | Hecho | `0040:9-16`, `0064:97-100`, `README.md:46, :70` |
+| 24 | Un test que falla en `main` por cada cambio de motor, con las dos salidas | Hecho (no lo reejecuté) | §2, `:720-725` |
+| 25 | Un test de que una «en parte» no entra en RESUELTAS | Hecho | 3 tests pasan (`pytest -rA`) |
+| 26 | Los tests con `data/` se saltan en la CI | No aplica | ningún test nuevo lee `data/` |
+| 27 | HOLDOUT: listados con ruta literal, exposiciones, sin fechas reservadas ni resultados | Hecho | `:33-36`; «ninguna exposición»; A-56 copia recuentos ya en `main` (ADR-0040; comentario de A-33), sobre días `dev` |
+| 28 | CI de Linux con número de run | Pendiente | §8 «PENDIENTE_CI» |
+| 29 | Revisor pegado al final | Pendiente | §9 |
+| 30 | Líneas del cierre (E, F, H, S, I, G, nueva entrada S-16, heredados 15 y 37, Technical Debt, R1.1, R4.1, R5.1, R2.1/R5.4, R0.1, G.2) | Hecho | §4, `:769-824` |
+| 31 | Lista para la sesión 5 con los cambios del consultor | Hecho | §5 |
+| 32 | «Rama lista para revisión, NO cerrada» | Hecho | `## Estado`, con la PARADA 2 abierta |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | Falta un requisito explícito del punto 2: el registro del testimonio de S-4 sobre A-49. Queda en una PARADA 2 y la rama se declara lista con ella abierta. La medida de la PARADA 2 es correcta. Lo dejo en importa y no en bloquea porque la propia respuesta del consultor manda una PARADA 2 si la medida contradice. Si el consultor entiende que no se revisa con una PARADA abierta, sube a bloquea. | `ACTIVAR-SESION-04.md:685-710, :860-861`. La medida: `cli.py:2029-2041` (un RESOLVE_UNKNOWN sobre una ABIERTA cuenta como pendiente); `feedback/aplicar.py:187-190` |
+| b2 | importa | El encargo prohíbe citar ejemplos del replay de julio o de enero. El informe solo acredita el cruce con los tramos (requisito 8 de su §3), no esta segunda condición. Hay dos ítems en riesgo: (1) `ev-v10-014705-718c5f4e`, que la extracción da como «un ejemplo de su replay entre sesiones», sin mes identificado, y que se cita en la spec, en el parámetro y en el registro CORRECT; (2) `ev-v10-010110-8d6830a9`, de S-6, en la cuenta de «1,3 pips» de un ejemplo que la extracción sitúa en el replay de julio (57:08; «tomando este ejemplo», 61:41), citado en §0.a. | Extracción: `SESION-04-EXTRACCION.md:725, :1151` y `:510-515`. Dónde se cita: `parametros.yaml:706`, `ambiguedades.yaml:1233-1234`, `fb-2026-10-04-sesion-04-c3d0c855.yaml:19-20`, `ACTIVAR-SESION-04.md:54, :63, :744` |
+| b3 | menor | En §2, el informe atribuye «4 passed» a `test_en_parte_no_se_cierra.py`, que tiene 3 tests. Y una salida de `main` deja la línea sin número: «(:...)». | `ACTIVAR-SESION-04.md:722, :724`; `pytest -rA`: 3 PASSED |
+| b4 | menor | La lista de «creo» de la PARADA (punto 10) omite el «creo» de S-12 («sobre lo de antes») y el de S-1 («sí sobre ejemplos»), que trae la tabla final de la extracción. El encargo pedía «cada respuesta dada con «creo»». | `SESION-04-EXTRACCION.md` tabla final (filas S-1 y S-12); `ACTIVAR-SESION-04.md:495-500` |
+
+#### Lo que no pude comprobar
+- **La CI de Linux:** todavía no existe (§8).
+- **Los tests contra `main` (§2):** reproducirlos exige un clon con `git worktree add`, que escribe. La evidencia que lo sustituye son las salidas pegadas en el informe.
+- **`make check`:** no lo ejecuté. Lo sustituye `make-check.log` (SELLO sobre el árbol de HEAD, 2575 passed, pico 294 MiB).
+- **La secuencia histórica de cada commit** (`apply --check`, y después `knowledge validate` y `make check`): solo puedo ver el estado final.
+- **El mes de los ejemplos del replay (b2)** y si `ev-v10-011957-7ebb3453` (S-10, cerca del ejemplo de enero a 74:42) es parte de un ejemplo. Exigiría la cruda de v10 (cuarentena) o fotogramas.
+- **La cita de S-3 a 0:37:27** que usa ADR-0074 §1: no tiene ítem de evidencia. La extracción la deja citable (`SESION-04-EXTRACCION.md:423-424, :462-463`), pero no puedo cotejarla con la cruda.
+- **Sobre qué ficheros se ejecutó `grep -l 33a01f1d…`** (informe `:146-147`): el informe no lo dice.
+- **Que el Archivo 29 de `HISTORIA.md` sea idéntico al `PROJECT_STATE.md` de `main`:** no lo comparé. Lo cubre `test_historia.py` dentro de `make check`.
+- **La lectura de S-14 por Aleks** («1 o 2» o «12»): sigue pendiente.
+- **Lo que vi sin quererlo:** para comprobar qué declara `HOLDOUT-EXPOSICIONES.md` del tramo 1:56:07–1:56:19, leí fragmentos de sus líneas 40-42, que incluyen cifras ya declaradas de tramos de precaución. No son una exposición nueva. No las reproduzco y no las uso.
+
+#### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Read: el encargo, `contrato.yaml` y `ACTIVAR-SESION-04.md` (entero)
+3. `uv run python scripts/contrato_rama.py`
+4. `git diff --name-status main...HEAD`
+5. `ls -la make-check.log knowledge-validate.log; grep -n "SELLO\|PICO DE MEMORIA\|passed\|failed" make-check.log`
+6. `git rev-parse HEAD^{tree} && git log -1 --format='%h %ci' HEAD && sed -n 60,99p make-check.log`
+7. `uv run botsito feedback apply --sesion 2026-10-04-sesion-04 --check`
+8. `uv run botsito spec docs --help`; `uv run botsito spec docs`
+9. `uv run botsito knowledge validate`
+10. `git log --format='=== %h%n%B' main..HEAD -- knowledge/spec knowledge/cases`
+11. `grep -n "v10" knowledge/corpus/tramos_no_citables.yaml`; Read de ese fichero (1-30, 139-168, 251-286, 340-362); Grep de los t0/t1 de todos los tramos
+12. Un comando con `paste`: lo negó la guardia y no se rodeó; se rehízo con Grep
+13. `grep`/`cat` de los 13 registros `fb-2026-10-04-sesion-04-*`
+14. Read de `ev-v10-020715`, `ev-v10-014823`, `ev-v10-014853`, `ev-v10-010110`, `ev-v10-005847`; Grep de t0/t1 en `knowledge/evidence/v10`; `grep -A2 cita_literal` de seis ítems
+15. Grep y Read de `SESION-04-EXTRACCION.md` (126:42, S-15, S-6, S-10, S-24/S-19, 37:27, replay/julio/enero, tabla final)
+16. `grep -n "" docs/runbooks/AMBIGUEDADES.md | head -120`
+17. `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml`; `git show main:knowledge/spec/ambiguedades.yaml | sed -n 836,880p`
+18. `git diff main...HEAD --` de los ADR 0040 y 0064, de `README.md`, de `PROJECT_STATE.md`, de `strategy_spec.yaml`, `spec_manifest.yaml`, `parametros.yaml`, `hoja_preguntas.py`, sus tests, `test_kit.py`, `motor.py` y los cuatro tests que cambian de sentido
+19. Read de ADR-0040, ADR-0073 y ADR-0074; Grep de ADR-0066; Read de `cli.py:2005-2054`; Grep de `knowledge/feedback/README.md`
+20. `git log --stat --format=… main..HEAD -- . ':!docs/state/HISTORIA.md'`
+21. `uv run pytest -p no:cacheprovider -q` sobre nueve ficheros de test (todo verde); después `-rA` sobre los tres nuevos (8 PASSED)
+22. Read de `test_en_parte_no_se_cierra.py`, `test_caja_hasta_el_llenado.py` y `test_orden_en_el_0_con_mecha.py`; Grep de `firma` en `src/botsito/engine`
+23. `git diff --numstat` de HISTORIA y de los ADR enmendados; `diff <(sed …encargo) <(sed …informe)`: IGUALES; `git diff --numstat d77938c HEAD` y `c858bad HEAD`
+24. Comprobación de citas: `sed` de `aplicar.py:183-190`, de `registro.py`, de `zonas.py:385-402`, `grep "F26 NO PUEDE" PROJECT_STATE.md` y `sed` de `test_hoja_de_ruta.py:140-148`; `sed -n 440,452p registro.py`
+25. Read de `F35-ORDEN-STOP-PIVOTE.md:210-234`; Grep en `docs/adr/0000-template.md` y en los encabezados de 0073 y 0074
+26. `uv run botsito feedback pending | tail -30`
+27. `git diff main...HEAD | grep "^+" | grep -o "ev-v10-…" | sort | uniq -c`
+28. Grep en `HOLDOUT-EXPOSICIONES.md` (1:56:07); conteo `video_id: v10$` (22); Grep de las líneas del índice de ADR y de las marcas de a4 y b2
+29. `grep -n "A-18\|…" PROJECT_STATE.md`
 
 ## Estado
 
