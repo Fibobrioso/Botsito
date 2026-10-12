@@ -783,11 +783,13 @@ parametros:
   - nombre: orden_pendiente_al_abrir_sesion
     categoria: estrategia
     tipo: enum
-    unidad: que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente
+    unidad: que pasa con una orden sin llenar al abrir la sesion siguiente y al llegar ventana_fin
     opciones: [se_retira, sigue_hasta_ventana_fin]
     descripcion: >-
-      la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066).
-      `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero.
+      la orden de entrada que sigue pendiente cuando abre la sesion siguiente o cuando llega
+      ventana_fin (RN-035; ADR-0066). `se_retira`: se cancela en la apertura -y, desde el
+      2026-10-12, tambien al llegar ventana_fin por la propia regla- y la sesion nueva empieza de
+      cero.
       `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta
       el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de
       ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). Fue PROVISIONAL hasta la
@@ -795,8 +797,9 @@ parametros:
       llenado, ¿qué haces con ella?», A-30 y A-39). El valor salia de que cada sesion es «un mundo
       diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA). CONFIRMADO POR EL TRADER el
       2026-10-04 (sesion 4, S-5, v10 0:54:27): «sí, se quita, porque siempre se va a ir actualizando
-      la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin sigue
-      siendo el cableado al terminar el dia (ADR-0053 §6), sin regla: rama de motor
+      la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin la hace
+      RN-035 desde el 2026-10-12 (trabajo/activar-sesion-04-motor); la cancelacion del cableado al
+      terminar el dia (ADR-0053 §6) queda como red de seguridad. El nombre del parametro no cambia
     estado: CONFIRMED
     valor: se_retira
     fuente:
@@ -895,19 +898,28 @@ parametros:
     opciones: [solo_una_zona_de_control, sin_mecha_mas_alla_del_extremo]
     descripcion: >-
       la condicion que el trader mira para dar por limpia la zona de control antes de entrar
-      (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Es A-21,
-      ABIERTA y BLOQUEANTE de RN-008, y la responde el trader: este parametro NO le pone valor, solo
-      cierra el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la
+      (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Fue A-21,
+      ABIERTA y BLOQUEANTE de RN-008 hasta el 2026-10-12: este parametro no le ponia valor, solo
+      cerraba el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la
       busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md):
       `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona
       de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la
       entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna
-      mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. Ninguna
-      de las dos DEFINE «limpia»: son las dos candidatas, y otra respuesta PARA
-      (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega salvo en diagnostico
-      etiquetado. Lo lee quien construye las primitivas, no una regla (engine/zonas.py)
-    estado: UNKNOWN
+      mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque.
+      RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si
+      no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto»
+      (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa
+      (ev-v10-011734-fedd3f8e). Eso es `solo_una_zona_de_control`: cada paso de vela contraria a
+      vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1
+      rechaza, medido con series sinteticas en compra y en venta (ADR-0076); no entra ninguna
+      opcion nueva. Lo lee quien construye las primitivas, no una regla (engine/zonas.py); con el
+      valor fijado, --diagnostico-a21 ya no existe
     consumido_por: [F20]
+    estado: CONFIRMED
+    valor: solo_una_zona_de_control
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-48fb5817
   - nombre: zonas_control_max_por_esquema
     categoria: estrategia
     tipo: entero
@@ -1203,6 +1215,78 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-e3eedcaa
+  - nombre: racha_perdidas_max
+    categoria: estrategia
+    tipo: entero
+    unidad: perdidas seguidas tras las que no se opera mas ese dia
+    descripcion: >-
+      la racha de perdidas seguidas del trader tras la que deja de operar en ese dia de operativa
+      (RN-036, A-51; ADR-0077): «como máximo una racha de pérdidas, una racha de nueve pérdidas,
+      como máximo. Esto es por la condicional que nos da la cuenta de fondeo» (sesion 4, S-8, v10
+      1:06:53, ev-v10-010653-81316808; ya en la sesion 3, v9 1:11:28, ev-v9-011128-a267338b). Las
+      9 vienen de una cuenta con un 0,5 % de riesgo por operacion -9 x 0,5 % = 4,5 %, el tope del
+      dia de S-9 (SESION-04-EXTRACCION.md §4.8)-, y el bot tambien arriesga un 0,5 %
+      (riesgo_por_operacion); con menos riesgo el trader dijo que «podríamos extender». Lo que
+      cuenta como perdida es lo que gasta un cartucho en RN-016 (cartucho_criterio)
+    minimo: 1
+    maximo: 50
+    estado: CONFIRMED
+    valor: 9
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-b7040095
+  - nombre: racha_perdidas_corte
+    categoria: estrategia
+    tipo: enum
+    unidad: que cierre pone la racha a cero
+    opciones: [ganadora, ganadora_o_break_even]
+    descripcion: >-
+      lo que corta la racha de perdidas de RN-036 (A-51; ADR-0077). `ganadora`: solo una
+      operacion que cierra en positivo; un break even no la corta ni suma, «un break even no se
+      cuenta como cartucho [...] no corta la racha como tal o sea que luego si se sigue la
+      siguiente operación después de break even es una pérdida pues ahí nuevamente lo contamos
+      como otra» (sesion 4, S-8, v10 1:07:15, ev-v10-010715-fae17215). `ganadora_o_break_even`
+      esta declarada y sin contrato en el motor. La lee engine/racha.py por su nombre
+    consumido_por: [ADR-0077]
+    estado: CONFIRMED
+    valor: ganadora
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-ecdd0572
+  - nombre: racha_perdidas_reinicio
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando se pone a cero la racha por calendario
+    opciones: [nunca, fin_de_dia, fin_de_semana]
+    descripcion: >-
+      si la racha de RN-036 se reinicia con el calendario (A-51; ADR-0077). `nunca`: «la racha
+      sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04,
+      ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte. Las otras dos
+      opciones estan declaradas y sin contrato en el motor
+    estado: CONFIRMED
+    valor: nunca
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-d1792021
+  - nombre: racha_perdidas_reanudacion
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando se vuelve a operar tras la racha
+    opciones: [dia_siguiente, semana_siguiente, sin_fecha]
+    descripcion: >-
+      cuando vuelve a operar el trader tras la racha de racha_perdidas_max (A-51; ADR-0077).
+      `dia_siguiente`: «sería el día siguiente operaría ya es al día siguiente» (sesion 4, S-8,
+      v10 1:08:04, ev-v10-010804-5b6ad1a3); el dia es el OPERATIVO del reloj de las sesiones
+      (reloj_sesiones, ADR-0063 y ADR-0069): tras la novena no se opera mas en ese dia y se vuelve
+      en la primera sesion del siguiente. Que vale la racha al reanudar es la lectura de la
+      sesion de ADR-0077 §5. Las otras dos opciones estan declaradas y sin contrato en el motor.
+      La lee engine/racha.py por su nombre
+    consumido_por: [ADR-0077]
+    estado: CONFIRMED
+    valor: dia_siguiente
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-fa5ef0f6
   - nombre: base_calculo_riesgo
     categoria: estrategia
     tipo: enum

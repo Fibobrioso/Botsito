@@ -102,10 +102,9 @@ def test_la_etiqueta_de_a47() -> None:
     )
     with pytest.raises(ValueError, match="A-47"):
         Diagnostico(a47="mercado")
-    # detras de A-21 y delante de A-27, siempre en el mismo orden
-    todo = Diagnostico(None, None, "solo_una_zona_de_control", 0, LIMITE_EN_RETROCESO)
+    # delante de A-27, siempre en el mismo orden (la de A-21 iba antes hasta ADR-0076)
+    todo = Diagnostico(a27=0, a47=LIMITE_EN_RETROCESO)
     assert todo.etiquetas == (
-        "DIAGNOSTICO-A21-solo_una_zona_de_control",
         "DIAGNOSTICO-A47-limite_en_retroceso",
         "DIAGNOSTICO-A27-0",
     )
@@ -143,7 +142,7 @@ def test_la_cli_con_simular_se_niega_sin_a47_antes_de_leer_velas(
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", real.construccion[0],
          "--salida", str(salida), "--diagnostico-a35", "cierre_vela_contraria",
-         "--diagnostico-a44", "sin_tope", "--diagnostico-a21", "solo_una_zona_de_control"]
+         "--diagnostico-a44", "sin_tope"]
     )  # fmt: skip
     err = capsys.readouterr().err
     assert codigo == 2 and "A-47" in err and PARAMETRO_A47 in err
@@ -182,7 +181,7 @@ def test_la_cli_con_a47_fijada_pasa_a_pedir_a27(
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", real.construccion[0],
          "--salida", str(salida), "--diagnostico-a35", "cierre_vela_contraria",
-         "--diagnostico-a44", "sin_tope", "--diagnostico-a21", "solo_una_zona_de_control"]
+         "--diagnostico-a44", "sin_tope"]
     )  # fmt: skip
     err = capsys.readouterr().err
     if codigo == 2 and "falta en disco" in err:

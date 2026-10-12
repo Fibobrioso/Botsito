@@ -63,6 +63,7 @@ from botsito.engine.primitivas_broker import (
     clasificar_cierre,
     primitivas_cableadas,
 )
+from botsito.engine.racha import SeguidorRacha, seguidor_del_registro
 from botsito.engine.simulacion import MercadoDia, mercado_de_construccion, reglas_broker_de
 from botsito.engine.simulador_config import FICHERO_LLENADO, cargar_config_llenado
 from botsito.engine.tope_trader import (
@@ -102,6 +103,9 @@ class TrazaBroker:
     equity_fin: Decimal = Decimal(0)
     saldo_fin: Decimal = Decimal(0)
     depuracion: bool = False
+    # ordenes pendientes que cancelo la red de seguridad al terminar el dia (ADR-0053 §6): lo que
+    # RN-035 (a ventana_fin) y RN-036 (la racha) no retiraron antes
+    cancelados_fin_dia: int = 0
 
 
 @dataclass
@@ -133,6 +137,9 @@ class MotorCableado:
     cuenta_diaria: bool = False
     cuenta: CuentaViva | None = None
     seguidor: SeguidorTope | None = None
+    # la racha de perdidas seguidas del trader (RN-036, A-51; ADR-0077): persiste entre dias como
+    # la cuenta y el seguidor del tope, y se reinicia con `cuenta_diaria` como ellos
+    racha: SeguidorRacha | None = None
     # el primer limite que se toco en toda la corrida: (origen, cual, instante ms)
     primero_en_tocar: tuple[str, str, int] | None = None
     trazas_broker: dict[str, TrazaBroker] = field(default_factory=dict)
@@ -156,9 +163,11 @@ class MotorCableado:
         primero = min(d for _, d, _ in limites)
         ultimo = max(h for _, _, h in limites)
         if self.cuenta_diaria:
-            self.cuenta, self.seguidor = None, None
+            self.cuenta, self.seguidor, self.racha = None, None, None
         if self.cuenta is None:
             self.cuenta = CuentaViva(self.reglas_fase, self.contrato, primero * MS_POR_MINUTO - 1)
+        if self.racha is None:
+            self.racha = seguidor_del_registro(self.registro)
         broker = Broker(
             self.reglas_broker,
             self.config_llenado,
@@ -171,7 +180,9 @@ class MotorCableado:
             self.seguidor = SeguidorTope(
                 self.tope, _instante(primero * MS_POR_MINUTO - 1), self.cuenta.saldo
             )
-        ctx = ContextoDia(broker, self.cuenta, self.contrato, md.escala, tope=self.tope)
+        ctx = ContextoDia(
+            broker, self.cuenta, self.contrato, md.escala, tope=self.tope, racha=self.racha
+        )
         if self.zonas_de is not None:
             ctx.zonas.update(self.zonas_de(md))
         primitivas = primitivas_cableadas(self.registro, ctx, self.limpia, self.tipo_orden)
@@ -234,6 +245,7 @@ class MotorCableado:
         for o in list(broker.ordenes.values()):
             if o.estado in ("colocada", "modificada"):
                 broker.cancelar(o.id, fin_ms)
+                tb.cancelados_fin_dia += 1
         nuevos = broker.avanzar(fin_ms)
         self._a_la_cuenta(broker, ctx, tb, nuevos, vistos, fin_ms)
         tb.huecos |= ctx.huecos
@@ -316,6 +328,9 @@ class MotorCableado:
                 ctx.eventos.append(EventoBroker(ms, tipo, id, por, resultado))
                 # para los intentos de cada escenario (acumulador `cartuchos`, ADR-0066)
                 ctx.cierres.append((p.orden_id, resultado, por))
+                # y para la racha de perdidas del trader, que cruza los dias (RN-036, ADR-0077)
+                if self.racha is not None:
+                    self.racha.registrar(ms, resultado, por)
             else:
                 ctx.eventos.append(EventoBroker(ms, tipo, id))
         vistos = len(eventos)
@@ -607,6 +622,8 @@ def informe_simulacion(motor: MotorCableado) -> str:
         f"DIAS CORRIDOS: {len(dias)}",
         "TOPE DEL TRADER (RN-020, A-44): "
         + (motor.tope.descripcion() if motor.tope is not None else "sin fijar: hueco con nombre"),
+        "RACHA DE PERDIDAS (RN-036, A-51): "
+        + (motor.racha.descripcion() if motor.racha is not None else "sin dias corridos"),
         "PRIMERO EN TOCAR UN LIMITE: " + _primero_en_tocar(motor),
     ]
     if motor.cuenta_diaria:

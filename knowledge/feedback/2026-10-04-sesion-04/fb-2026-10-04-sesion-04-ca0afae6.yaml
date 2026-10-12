@@ -1,0 +1,26 @@
+id: fb-2026-10-04-sesion-04-ca0afae6
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-003
+accion: CORRECT
+respuesta_literal: si esta es una vela neutra, si esta es una vela neutra, no tiene ningún color, nosotros
+  seguiríamos operando alcistas esto es con la única condición con la condicional de si éste es una vela
+  neutra o sea no tiene color
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04-motor, decision 2; punto 1 de su respuesta
+  a la PARADA de trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:40:05'
+t1: '1:40:40'
+valor_resultante: 'una H4 que rompe los dos extremos y cierra sin color (neutra: cierre igual a apertura)
+  no fija el sesgo: se mantiene el que habia, el de la ultima H4 anterior que rompio con lado; con color,
+  decide el color'
+notas: 'S-13 (ADR-0060 §2, enmendado por ADR-0075): ev-v10-014005-7e2228f4 (la neutra mantiene el sesgo)
+  y ev-v10-014040-fb7a153b (con color, el color). RESERVAS: lo dijo con sesgo previo ALCISTA, la confirmacion
+  del caso bajista va a la sesion 5; y «suponiendo que no haya otro rango mayor». Con un cuerpo de uno
+  o dos puntos ya cuenta el color (v10 1:41:01-1:41:29): no hay umbral en H4'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

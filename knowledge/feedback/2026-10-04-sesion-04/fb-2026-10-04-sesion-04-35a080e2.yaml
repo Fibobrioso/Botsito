@@ -1,0 +1,23 @@
+id: fb-2026-10-04-sesion-04-35a080e2
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: evidence
+  id: ev-v10-004945-59ebac47
+accion: CONFIRM
+respuesta_literal: Ahora, si ocurre una vela verde, otra vela verde Pues simplemente lo vamos actualizando
+  la caja Mientras no se desarrolle otro punto breaker Posible punto breaker Pues... nosotros vamos actualizando
+  o sea expandiendo pues el 1 conforme vaya subiendo y aquí en este caso pues mantendríamos nuestro punto
+  breaker aquí y nuestro 0 aquí
+registrado_por: 'Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04-motor, decision 1: la PARADA 2 de
+  trabajo/activar-sesion-04, opcion b)'
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: 0:49:45
+t1: 0:50:10
+notas: 'S-4 (A-49): el testimonio de la caja que se expande hasta el llenado entra como CONFIRM sobre
+  el item, sin cerrar A-49, que sigue ABIERTA (S-1 y S-2 van a la sesion 5); caja_se_fija ya vale en_cada_cierre_m1
+  por ADR-0074 (decision del consultor, PARADA 2 opcion b)'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

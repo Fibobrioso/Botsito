@@ -65,7 +65,8 @@ predicados:
       apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como
       mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o
       bajista-. Si la vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro
-      (sesion 3, A-34 RESUELTA; ADR-0060), y solo si cerro sin cuerpo ata `ambiguo`. Si ninguna
+      (sesion 3, A-34 RESUELTA; ADR-0060); si cerro sin cuerpo -neutra- no decide y la busqueda
+      sigue hacia atras (sesion 4, S-13; ADR-0075: hasta entonces ataba `ambiguo`). Si ninguna
       rompio dentro del tope, ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003
       fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1)
     argumentos: [que, contra, criterio, tope]
@@ -429,10 +430,17 @@ acciones:
       ventana_fin no lo decia el corpus ni lo cerraba ninguna ambiguedad (A-30). Desde entonces la
       usa RN-035 al abrir una sesion, con `segun` = orden_pendiente_al_abrir_sesion, PROVISIONAL
       hasta la pregunta 5 de la sesion 4 (ADR-0066) y CONFIRMADO desde el 2026-10-04 (S-5: la
-      orden sin llenar se quita a las 11 y a las 3; A-30 y A-39 RESUELTAS). A ventana_fin la
-      retirada sigue siendo del cableado (ADR-0053 §6): la rama de RN-035 que la escriba es de
-      trabajo/activar-sesion-04-motor
+      orden sin llenar se quita a las 11 y a las 3; A-30 y A-39 RESUELTAS). Desde el 2026-10-12
+      (trabajo/activar-sesion-04-motor) RN-035 la usa tambien al llegar ventana_fin; la cancelacion
+      del cableado al terminar el dia (ADR-0053 §6) queda como red de seguridad
     argumentos: [de, segun]
+  retirar_ordenes_pendientes:
+    descripcion: >-
+      cancela en el broker toda orden de entrada pendiente, haya una o ninguna (idempotente). La usa
+      RN-036 al alcanzarse la racha de perdidas (ADR-0077 §3, decision del consultor): el trader
+      deja de operar ese dia y una orden viva la llenaria el broker por ticks. Va aparte de
+      `retirar_orden_limite`, que exige exactamente una pendiente ligada y un selector
+    argumentos: []
   abrir_escenario:
     descripcion: >-
       la toma que RN-004 acaba de dar abre un escenario si es de una liquidez NUEVA -otro pivote
@@ -502,8 +510,8 @@ tokens:
   sentido_de_la_ruptura:
     descripcion: >-
       el lado hacia el que rompio la referencia; es lo que fija el hecho `sesgo`. Lo ata
-      `sesgo_h4_al_abrir`, que cuando no hay lado ata en su lugar `ambiguo` o `insuficiente`
-      (ADR-0049)
+      `sesgo_h4_al_abrir`, que cuando no hay lado ata en su lugar `insuficiente` (ADR-0049;
+      `ambiguo` no se produce desde ADR-0075)
   # `alcista` y `bajista` NO son tokens a proposito: si lo fueran, `sentido: alcista` volveria a
   # pasar la guardia de argumentos, que es justo la puerta que la auditoria de F13 cerro. Solo viven
   # como claves de `lado_de_ruido`, contra una lista fija del codigo. `ambiguo` e `insuficiente` SI
@@ -511,10 +519,12 @@ tokens:
   # porque la guardia exige una LIGADURA en el `sentido` de un predicado con `lado_de_ruido`.
   ambiguo:
     descripcion: >-
-      valor de `sesgo` cuando la H4 que lo fija rompio LOS DOS extremos de su anterior y cerro
-      SIN CUERPO, sin color que decida (ADR-0044 §1, ADR-0060): no hay lado, y RN-033 prohibe
-      operar. Con cuerpo, la doble ruptura toma el lado del color (A-34 RESUELTA) y no es
-      `ambiguo`
+      valor de `sesgo` que daba la H4 que rompia LOS DOS extremos de su anterior y cerraba SIN
+      CUERPO, sin color que decida (ADR-0044 §1, ADR-0060 §2). DESDE ADR-0075 (sesion 4, S-13) EL
+      MOTOR NO LO PRODUCE: la neutra no decide y manda la H4 anterior que rompio con lado; con
+      cuerpo, la doble ruptura toma el lado del color (A-34 RESUELTA). Sigue declarado porque la
+      forma de RN-033 lo nombra con `vale`, igual que los scripts de diagnostico y el visor;
+      retirarlo es deuda (G.2 de la hoja de ruta)
   insuficiente:
     descripcion: >-
       valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su
@@ -535,6 +545,12 @@ tokens:
     clase: duracion
   hasta_el_corte_siguiente:
     descripcion: la detencion dura hasta el siguiente corte del dia o de la semana de riesgo
+    clase: duracion
+  hasta_el_dia_siguiente:
+    descripcion: >-
+      la detencion dura lo que queda del dia OPERATIVO -el del reloj de las sesiones, ADR-0063- en
+      que cayo la perdida que alcanzo la racha; se vuelve en la primera sesion del dia siguiente
+      (racha_perdidas_reanudacion, ADR-0077)
     clase: duracion
   permanente:
     descripcion: >-
@@ -628,8 +644,9 @@ hechos:
   # solo para `sesgo`.
   sesgo:
     descripcion: >-
-      el sentido en el que se busca entrada, o que no lo hay: `ambiguo` e `insuficiente`
-      (ADR-0044) son valores del hecho desde ADR-0049, y con ellos RN-033 prohibe operar. Lo fija
+      el sentido en el que se busca entrada, o que no lo hay: `insuficiente` (ADR-0044) y
+      `ambiguo` -que desde ADR-0075 ninguna vela produce- son valores del hecho desde ADR-0049, y
+      con ellos RN-033 prohibe operar. Lo fija
       RN-003 en CADA apertura de sesion y CADUCA al abrir: sin la caducidad, la primera pasada
       del evento de apertura evaluaba los gates con el sesgo de la sesion anterior todavia vivo y
       RN-033 disparaba una vez sobre el (medido el 2026-09-25 sobre construccion: en 24 sesiones
@@ -702,6 +719,17 @@ hechos:
     valores: [hasta_cartuchos_reinicio]
     produce: [RN-016]
     consume: [RN-001, RN-016]
+  detenido_por_racha:
+    descripcion: >-
+      la racha de perdidas seguidas del trader ha llegado a racha_perdidas_max y no se abre mas en
+      este dia operativo (RN-036, A-51; ADR-0077). Dura lo que queda del dia: el estado de
+      estrategia nace de cero cada dia (ADR-0053 §6) y el acumulador `racha_perdidas`, que
+      persiste, lo vuelve a decir mientras dure la detencion. Aparte de `detenido_por_tope` (el tope
+      porcentual, A-44) y de `detenido_por_cartuchos` (los intentos de una liquidez)
+    origen: regla
+    valores: [hasta_el_dia_siguiente]
+    produce: [RN-036]
+    consume: [RN-036]
   liquidez_tomada:
     descripcion: >-
       la liquidez de M15 marcada ya se ha tomado con cuerpo (RN-004). Es la PRECONDICION de los
@@ -772,6 +800,17 @@ acumuladores:
     base: cartucho_criterio
     reinicia_con: cartuchos_reinicio
     cita: fb-2026-09-09-sesion-01-e3eedcaa
+  racha_perdidas:
+    descripcion: >-
+      perdidas seguidas del trader desde la ultima ganadora, contando en TODOS los dias de la
+      corrida: la lleva `engine/racha.py` junto a la cuenta, nunca en el estado del dia (ADR-0077
+      §3). Una perdida es lo mismo que gasta un cartucho en RN-016 (la base, cartucho_criterio); un
+      break even no suma ni corta; solo una ganadora la pone a cero (racha_perdidas_corte); el
+      calendario no la reinicia (racha_perdidas_reinicio = nunca). Da SI contra racha_perdidas_max
+      solo en el dia operativo en que cayo la perdida que la alcanzo (ADR-0077 §5)
+    base: cartucho_criterio
+    reinicia_con: racha_perdidas_reinicio
+    cita: fb-2026-10-04-sesion-04-8e2d728a
 
 reglas:
   # ---------------------------------------------------------------- marco y sesgo
@@ -861,8 +900,9 @@ reglas:
       cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela.
       Eso lo hace RN-035 al abrir la sesion siguiente (A-30 y A-39, RESUELTAS el 2026-10-04 en la
       sesion 4, S-5: la orden sin llenar se quita a las 11 y a las 3, cambie o no el sesgo;
-      fb-2026-10-04-sesion-04-766c8d2e, fb-2026-10-04-sesion-04-dd888b55) y, a ventana_fin, el
-      cableado al terminar el dia (ADR-0053 §6), sin regla de la spec todavia. DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
+      fb-2026-10-04-sesion-04-766c8d2e, fb-2026-10-04-sesion-04-dd888b55) y, a ventana_fin,
+      tambien RN-035 desde el 2026-10-12 (trabajo/activar-sesion-04-motor); la cancelacion del
+      cableado al terminar el dia (ADR-0053 §6) queda como red de seguridad. DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
       dos ramas caen sobre el mismo limite: ventana_fin es el fin de la segunda vela H4 de la
       ventana, en la misma rejilla de anclaje_h4, y "las 3pm" son las de su grafico casi todo el
       año (las 2pm las semanas del cambio). `alcanza_hora` lee la hora nominal por la puerta de
@@ -883,17 +923,36 @@ reglas:
     estado: VIGENTE
 
   - id: RN-035
-    titulo: la orden que sigue pendiente al abrir otra sesion se retira
-    cuando: abre una sesion operativa y queda una orden de la sesion anterior sin llenar
+    titulo: la orden que sigue pendiente al abrir otra sesion, o al llegar ventana_fin, se retira
+    cuando: >-
+      abre una sesion operativa y queda una orden de la sesion anterior sin llenar, o la hora de
+      pared, en el reloj que dice reloj_sesiones, alcanza ventana_fin con una orden sin llenar
     entonces: >-
-      se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario
-    parametros: [orden_pendiente_al_abrir_sesion]
-    cita: fb-2026-09-29-sesion-03-5021677e
+      se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario, y
+      al fin de la ventana no queda ninguna orden viva
+    parametros: [orden_pendiente_al_abrir_sesion, ventana_fin, reloj_sesiones]
+    cita: fb-2026-10-04-sesion-04-45e624c5
     literal: >-
-      tú básicamente distingues ambas sesiones. O sea, cada uno es un mundo diferente. Claro,
-      exacto.
+      sí, se quita, porque siempre se va a ir actualizando la orden, como te digo o sea, no va a
+      haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario
     decision: ADR-0066
     notas: >-
+      LA CITA ES EL REGISTRO DE S-5 DESDE EL 2026-10-12 (trabajo/activar-sesion-04-motor,
+      decision 5 del consultor; mismo precedente que ADR-0060 §6): la regla hace en sus dos ramas
+      lo que el trader dijo. Hasta entonces era fb-2026-09-29-sesion-03-5021677e, la independencia
+      de las sesiones («cada uno es un mundo diferente», A-46 RESUELTA), que sostenia el valor
+      provisional y sigue en las notas.
+      DESDE EL 2026-10-12 LA REGLA TAMBIEN RETIRA A ventana_fin: `alcanza_hora` sobre
+      reloj_sesiones, la misma puerta que la segunda rama de RN-002, en el instante que el trader
+      confirmo: sus palabras son «no va a haber órdenes que a lo mejor se pueden tomar a las 3 o
+      fuera de horario» (la cita), y «se quita tanto a las 11 como a las 3» es la frase del
+      consultor a la que contesto «Exacto» (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es
+      frase del consultor y no se fija. La cancelacion del cableado al terminar el dia (ADR-0053 §6) se queda como red de
+      seguridad y no encuentra nada (tests/unit/test_rn035_ventana_fin.py). HUECO QUE NO SE
+      ARREGLA AQUI, congelado con un test: una orden pendiente puede llenarse en el ultimo minuto
+      de la H4 [fin-1, fin), despues de que RN-002 cierre en el evento fin-1, tanto a las 11 como a
+      ventana_fin; entonces se cierra en el evento del limite (ADR-0060 §5). La pregunta va a la
+      sesion 5.
       NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066), PROVISIONAL: que hace el
       trader con una orden sin llenar al acabar la sesion no lo dijo -el corte de audio de v9
       0:28:49-0:29:53 cae en esa respuesta- y es la pregunta 5 de la sesion 4 (A-30 y A-39). La
@@ -908,14 +967,13 @@ reglas:
       siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5,
       ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39,
       fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida
-      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija. LO QUE
-      ESTA REGLA NO HACE TODAVIA: retirar la orden a ventana_fin (las 3): eso lo hace el cableado al
-      terminar el dia (ADR-0053 §6) sin regla; la rama ventana_fin de esta regla va a
-      trabajo/activar-sesion-04-motor (respuesta del consultor del 2026-10-11, punto 4)
+      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija.
     forma:
       cuando:
         todos_de:
-          - abre_sesion_operativa: {}
+          - cualquiera_de:
+              - abre_sesion_operativa: {}
+              - alcanza_hora: {hora: ventana_fin, reloj: reloj_sesiones}
           - hecho: orden_limite_pendiente
             liga: ORDEN
       entonces:
@@ -932,14 +990,26 @@ reglas:
       rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia. Se fija
       AL ABRIR la sesion con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro
       de ella; romper es superar el extremo, por poco que sea, e igualarlo no rompe. Si la vela
-      rompe los dos extremos, decide el color con que cierra -verde, alcista; roja, bajista-, y
-      solo si cierra sin cuerpo el sesgo es AMBIGUO; si ninguna de las ultimas
-      sesgo_h4_tope_velas rompio, es INSUFICIENTE; con cualquiera de los dos no se opera
+      rompe los dos extremos, decide el color con que cierra -verde, alcista; roja, bajista-; si
+      cierra sin cuerpo -neutra, sin color- no decide y manda la H4 anterior que rompio con lado;
+      si ninguna de las ultimas sesgo_h4_tope_velas rompio, es INSUFICIENTE y no se opera
     parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas]
-    cita: fb-2026-09-29-sesion-03-31fb311f
-    literal: si rompe por los dos, como te digo, importa el color de importa el color de la vela.
+    cita: fb-2026-10-04-sesion-04-ca0afae6
+    literal: >-
+      si esta es una vela neutra, no tiene ningún color, nosotros seguiríamos operando alcistas
     notas: >-
-      LA CITA ES EL CORRECT DE LA SESION 3 DESDE EL 2026-09-30 (decision del consultor al aceptar
+      LA CITA ES EL CORRECT DE LA SESION 4 (S-13) DESDE EL 2026-10-12 (ADR-0075, como ADR-0060 §6
+      hizo con el de la sesion 3): la vela que rompe los dos extremos y cierra SIN CUERPO -neutra-
+      NO DECIDE, «si esta es una vela neutra, no tiene ningún color, nosotros seguiríamos operando
+      alcistas» (fb-2026-10-04-sesion-04-ca0afae6, ev-v10-014005-7e2228f4); la busqueda hacia
+      atras la salta y manda la H4 anterior que rompio con lado, y `ambiguo` deja de producirse.
+      Neutra es cierre igual a apertura, exacto: con un cuerpo de uno o dos puntos ya cuenta el
+      color (v10 1:41:01-1:41:29), no hay umbral en H4. DOS RESERVAS: lo dijo con sesgo previo
+      ALCISTA y el caso bajista se deduce (su confirmacion va a la sesion 5); y «suponiendo que no
+      haya otro rango mayor» (SESION-04-EXTRACCION.md §3.14). Hasta entonces la cita era
+      fb-2026-09-29-sesion-03-31fb311f, el CORRECT de la sesion 3 («si rompe por los dos, como te
+      digo, importa el color de la vela»), que sigue sosteniendo el color con doble ruptura.
+      LA CITA FUE EL CORRECT DE LA SESION 3 DESDE EL 2026-09-30 (decision del consultor al aceptar
       ADR-0060). Hasta entonces era fb-2026-09-09-sesion-01-8eccf5c0, que sigue sosteniendo la
       ruptura de un extremo: «si no genera un rompimiento por encima, o sea, al menos por un pip o
       una milésima de pip, entonces seguiríamos operando bajista». Con un solo extremo roto, el
@@ -962,7 +1032,7 @@ reglas:
       mecha (ev-v9-001312-19e45e4a). DESDE EL 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060,
       ACEPTADO) EL MOTOR LO HACE: con la doble ruptura sesgo_h4_al_abrir ata el lado del color,
       y `ambiguo` queda solo para la vela que rompe los dos extremos y cierra sin cuerpo, que el
-      trader no describio.
+      trader no describio -hasta la sesion 4: desde ADR-0075 esa vela no decide (arriba).
     forma:
       cuando:
         todos_de:
@@ -1014,6 +1084,11 @@ reglas:
       sesgo_h4_tope_velas (`insuficiente`, ADR-0044 §2 y ADR-0060 §3)-, con la lectura mas
       conservadora donde el no habla (ADR-0044 §1). Por eso no cita el CORRECT de la sesion 3
       (fb-2026-09-29-sesion-03-1168f036), que dice que siempre hay sesgo, ni cambia de forma.
+      DESDE EL 2026-10-12 (ADR-0075; sesion 4, S-13) LA NEUTRA YA NO DA `ambiguo`: ninguna vela lo
+      produce, y esta regla queda SOLO para `insuficiente`. La rama `vale: ambiguo` de la forma se
+      conserva como guardia -el token sigue declarado y lo nombran los scripts de diagnostico y el
+      visor-, y retirarla es deuda (G.2). La prohibicion de operar sin lado sigue saliendo de
+      ADR-0044 §1 y ADR-0049.
     decision: ADR-0049
     forma:
       cuando:
@@ -1779,6 +1854,55 @@ reglas:
         prohibe: [abrir_operacion]
         hace:
           - fijar: {hecho: detenido_por_tope, a: hasta_el_corte_siguiente}
+    clase: gate
+    estado: VIGENTE
+
+  - id: RN-036
+    titulo: tras la racha de perdidas seguidas del trader no se opera mas ese dia
+    cuando: >-
+      la racha de perdidas seguidas -las que gastan cartucho segun cartucho_criterio; el break
+      even no la corta- llega a racha_perdidas_max, o el dia ya esta detenido por ella
+    entonces: >-
+      se prohibe abrir operacion lo que queda del dia operativo (reloj_sesiones) y se retira la
+      orden pendiente que quede; se vuelve en la primera sesion del dia siguiente
+      (racha_perdidas_reanudacion) con la racha intacta (racha_perdidas_reinicio = nunca), que solo
+      una ganadora pone a cero (racha_perdidas_corte)
+    parametros:
+      - racha_perdidas_max
+      - racha_perdidas_corte
+      - racha_perdidas_reinicio
+      - racha_perdidas_reanudacion
+      - cartucho_criterio
+      - reloj_sesiones
+    cita: fb-2026-10-04-sesion-04-b7040095
+    literal: >-
+      como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo
+    decision: ADR-0077
+    notas: >-
+      NACE el 2026-10-12 (rama trabajo/activar-sesion-04-motor, ADR-0077) con la respuesta de la
+      sesion 4 a A-51 (S-8, v10 1:06:53-1:08:28; fb-2026-10-04-sesion-04-8e2d728a): el tope del
+      trader son 9 perdidas SEGUIDAS -ya lo dijo en la sesion 3 al responder A-44,
+      ev-v9-011128-a267338b-, un break even no la corta (ev-v10-010715-fae17215), la racha sigue de
+      un dia a otro y de una semana a otra, y tras la novena vuelve al dia siguiente
+      (ev-v10-010804-5b6ad1a3). Va APARTE de RN-020, que es el tope porcentual (A-44, ABIERTA) y no
+      cambia: la racha no lee nada de A-44 y corre sin --diagnostico-a44. El acumulador persiste
+      entre dias (ADR-0053 §6 no lo deja en el estado del dia). Que se retire la orden pendiente es
+      DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec RN-011 solo coloca sin orden
+      pendiente ni posicion viva (su `ninguno_de`), asi que en el cierre de M1 en que cae la
+      novena no queda ninguna pendiente y la retirada es la red de seguridad. Que vale la racha tras la
+      novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA PROVISIONAL DE LA SESION
+      (ADR-0077 §5; la pregunta va a la sesion 5). Las 9 vienen de un 0,5 % de riesgo por
+      operacion, como el del bot (racha_perdidas_max)
+    forma:
+      cuando:
+        cualquiera_de:
+          - alcanza_tope: {acumulador: racha_perdidas, tope: racha_perdidas_max}
+          - hecho: detenido_por_racha
+      entonces:
+        prohibe: [abrir_operacion]
+        hace:
+          - fijar: {hecho: detenido_por_racha, a: hasta_el_dia_siguiente}
+          - retirar_ordenes_pendientes: {}
     clase: gate
     estado: VIGENTE
 

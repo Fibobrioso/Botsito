@@ -426,6 +426,18 @@ ambiguedades:
       alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una
       bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum
       obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo.
+      RESUELTA el 2026-10-04 en la sesion 4 (S-10, v10 1:17:25–1:17:31, 1:17:34–1:17:46 y
+      1:19:57–1:20:27): «¿una zona se limpia si hay velas verdes y rojas o terrenos rojos? ¿Es solo
+      eso? Claro, exacto.»; el numero de velas del retroceso «es indiferente, no importa»; y si se
+      alternan antes de la ruptura del posible punto de breaker «quedaría invalidado»
+      (fb-2026-10-04-sesion-04-22d08cbf). Activada el 2026-10-12 en trabajo/activar-sesion-04-motor
+      (ADR-0076): «sin alternancia de colores» es lo que RN-009 ya filtra, porque cada paso de
+      vela contraria a vela del color de la entrada forma una zona de control que
+      zonas_control_max_por_esquema = 1 rechaza (medido con series sinteticas en compra y en
+      venta), asi que zona_control_limpia = solo_una_zona_de_control, la opcion que ya existia, sin
+      sumar ninguna al enum. Dos casos en que la lectura literal y el motor no coinciden van a la
+      sesion 5: una vela sin cuerpo en medio del retroceso y el breaker contrario que rompe con
+      mecha.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "el trader condiciona la entrada a que la zona de control "no haga mucho ruido, o sea, sea una
@@ -445,9 +457,12 @@ ambiguedades:
       - ev-v9-011704-b5ddc3e3
       - ev-v9-011714-08536830
       - ev-v9-011957-4250c2b4
-    # El selector de la respuesta, SIN VALOR (UNKNOWN) desde la rama trabajo/preparar-a21: sus
-    # opciones son las dos condiciones de validez que el corpus enuncia; activar RN-008/RN-011 es
-    # escribirle la que diga el trader, y otra respuesta PARA (docs/runbooks/ACTIVAR-A35-A44.md)
+      - ev-v10-011725-3741e266
+      - ev-v10-011734-fedd3f8e
+      - ev-v10-011957-7ebb3453
+    # El selector de la respuesta, SIN VALOR (UNKNOWN) desde la rama trabajo/preparar-a21 hasta el
+    # 2026-10-12: sus opciones son las dos condiciones de validez que el corpus enuncia, y la
+    # respuesta del trader (S-10) calza en la primera (ADR-0076)
     parametros: [zona_control_limpia]
     contradiccion: null
     # BUSQUEDA EN TRANSCRIPCIONES SIN RESPUESTA (2026-09-24, rama `trabajo/a24-a21-a26-a34`):
@@ -455,7 +470,7 @@ ambiguedades:
     # docs/validation/A24-A21-A26-A34-CLASIFICACION.md
     # Lo mas cercano es una regla que ya es RN-009 -mas de una zona de control invalida, v3 #624- y
     # una negativa -"es indiferente el numero de velas", v4 #1078-; ninguna define "limpia"
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1515,6 +1530,12 @@ ambiguedades:
     pregunta: >-
       Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la
       racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-8, v10 1:06:53–1:07:08, 1:07:15–1:07:41 y
+      1:08:04–1:08:28): un break even no corta la racha -«no corta la racha como tal»-, solo una
+      ganadora; tras la novena vuelve «al día siguiente», y «la racha sigue de un día a otro y una
+      semana otra» (fb-2026-10-04-sesion-04-8e2d728a; racha_perdidas_max = 9, racha_perdidas_corte
+      = ganadora, racha_perdidas_reinicio = nunca, racha_perdidas_reanudacion = dia_siguiente;
+      RN-036, ADR-0077). Activada el 2026-10-12 en trabajo/activar-sesion-04-motor.
     resuelve_en: [F11, F18]
     # NACE el 2026-09-29 (rama trabajo/activar-sesion-03, orden del consultor) de la respuesta de
     # A-44 en la sesion 3: el tope del trader son 9 perdidas SEGUIDAS, no un porcentaje. Para
@@ -1524,9 +1545,16 @@ ambiguedades:
     evidencia:
       - ev-v9-011128-a267338b
       - ev-v9-011139-a26a5b11
-    parametros: []
+      - ev-v10-010653-81316808
+      - ev-v10-010715-fae17215
+      - ev-v10-010804-5b6ad1a3
+    parametros:
+      - racha_perdidas_max
+      - racha_perdidas_corte
+      - racha_perdidas_reinicio
+      - racha_perdidas_reanudacion
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

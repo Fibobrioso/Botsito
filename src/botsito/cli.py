@@ -2254,16 +2254,15 @@ def _diagnostico_de(args: argparse.Namespace) -> Any:
             "--diagnostico-a27 es el stops level del broker simulado: va con --simular"
         )
     return Diagnostico(
-        getattr(args, "diagnostico_a35", None),
-        getattr(args, "diagnostico_a44", None),
-        getattr(args, "diagnostico_a21", None),
-        getattr(args, "diagnostico_a27", None),
-        getattr(args, "diagnostico_a47", None),
-        bool(getattr(args, "diagnostico_cuenta_diaria", False)),
+        a35=getattr(args, "diagnostico_a35", None),
+        a44=getattr(args, "diagnostico_a44", None),
+        a27=getattr(args, "diagnostico_a27", None),
+        a47=getattr(args, "diagnostico_a47", None),
+        cuenta_diaria=bool(getattr(args, "diagnostico_cuenta_diaria", False)),
     )
 
 
-def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any, limpia: str | None = None) -> str:
+def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any) -> str:
     """Las primeras lineas de un informe en diagnostico: que hipotesis corre y que NO vale."""
     lineas = [
         "# DIAGNOSTICO: corrida en HIPOTESIS, sin valor para ninguna medida de fidelidad ni",
@@ -2273,8 +2272,6 @@ def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any, limpia: str | None
         lineas.append(f"# A-35 en hipotesis: liquidez_m15_pivote_formado = {lectura}")
     if diag.a44 is not None:
         lineas.append(f"# A-44 en hipotesis: {tope.descripcion()}")
-    if diag.a21 is not None:
-        lineas.append(f"# A-21 en hipotesis: zona_control_limpia = {limpia}")
     if diag.a47 is not None:
         lineas.append(f"# A-47 en hipotesis: entrada_tipo_orden = {diag.a47}")
     if diag.a27 is not None:
@@ -2284,7 +2281,6 @@ def _cabecera_diagnostico(diag: Any, lectura: str, tope: Any, limpia: str | None
 
 def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
     """El modo diagnostico de A-35 y A-44: correr con un valor hipotetico, todo etiquetado."""
-    from botsito.domain.estructura_m1 import LECTURAS_LIMPIA
     from botsito.domain.pivotes_m15 import LECTURAS
     from botsito.engine.diagnostico import MODOS_A44
     from botsito.engine.entrada import LECTURAS_A47
@@ -2296,13 +2292,8 @@ def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
         help="A-35 sin fijar: corre con esta lectura de «formado» EN HIPOTESIS; cada linea, "
         "fichero y pagina lleva la etiqueta DIAGNOSTICO-A35-<lectura> y no cuenta para nada",
     )
-    parser.add_argument(
-        "--diagnostico-a21",
-        choices=LECTURAS_LIMPIA,
-        default=None,
-        help="A-21 sin fijar: corre con esta lectura de «zona limpia» EN HIPOTESIS, etiquetado "
-        "DIAGNOSTICO-A21-<lectura>; no cuenta para nada",
-    )
+    # --diagnostico-a21 existio desde ADR-0055 hasta que el trader respondio A-21 en la sesion 4
+    # (ADR-0076, 2026-10-12): zona_control_limpia esta fijado y el motor corre con el
     parser.add_argument(
         "--diagnostico-a44",
         choices=MODOS_A44,
@@ -2405,8 +2396,8 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
         # A-44: el tope propio del trader, fijado o en diagnostico; si no, se niega
         perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
-        # A-21: la lectura de «limpia» de la zona de entrada, fijada o en diagnostico
-        limpia = zonas.lectura_limpia(registro, diag.a21)
+        # A-21: la lectura de «limpia» de la zona de entrada, fijada por el trader (ADR-0076)
+        limpia = zonas.lectura_limpia(registro)
         # A-47: el tipo de la orden de entrada, solo con el broker simulado (ADR-0056 §1)
         tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47) if args.simular else None
         # la ruta de salida, con su rotulo, cabe en Windows: se comprueba ANTES de leer velas
@@ -2463,7 +2454,7 @@ def motor_arnes(repo: Path, args: argparse.Namespace) -> int:
             texto += cableado.informe_simulacion(motor)  # type: ignore[arg-type]
         if diag.activo:
             texto = diagnostico.etiquetar(
-                _cabecera_diagnostico(diag, lectura, tope, limpia) + texto, diag.etiquetas
+                _cabecera_diagnostico(diag, lectura, tope) + texto, diag.etiquetas
             )
     except (arnes.ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
         tracemalloc.stop()
@@ -2528,7 +2519,7 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
         lectura = diagnostico.lectura_pivote(registro, diag)
         perfil_cuenta = cableado.perfil_del_repo(repo, args.perfil)
         tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
-        limpia = zonas.lectura_limpia(registro, diag.a21)
+        limpia = zonas.lectura_limpia(registro)
         # A-47: el tipo de la orden de entrada, solo con el broker simulado (ADR-0056 §1)
         tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47) if args.simular else None
         # cada ruta que se va a escribir, con su rotulo, cabe en Windows: ANTES de leer velas

@@ -1,0 +1,20 @@
+id: fb-2026-10-04-sesion-04-d1792021
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: racha_perdidas_reinicio
+accion: RESOLVE_UNKNOWN
+respuesta_literal: sería el día siguiente operaría ya es al día siguiente aunque las rachas sigue de un
+  día a otro y una semana otra la racha sigue de un día a otro
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04-motor, decision 4)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:08:04'
+t1: '1:08:28'
+valor_resultante: nunca
+notas: 'S-8 (A-51): ev-v10-010804-5b6ad1a3 (la linea mezcla la lectura del consultor y la respuesta).
+  La racha no se reinicia con el calendario: sigue de un dia a otro y de una semana a otra'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

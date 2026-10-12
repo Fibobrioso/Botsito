@@ -1,0 +1,22 @@
+id: fb-2026-10-04-sesion-04-ecdd0572
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: racha_perdidas_corte
+accion: RESOLVE_UNKNOWN
+respuesta_literal: un break even no se cuenta como cartucho como lo habíamos comentado con anterioridad
+  [...] por ejemplo tenemos vamos por el séptimo trade en pérdida luego nos sigue un break even no corta
+  la racha como tal o sea que luego si se sigue la siguiente operación después de break even es una pérdida
+  pues ahí nuevamente lo contamos como otra
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04-motor, decision 4)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:07:15'
+t1: '1:07:41'
+valor_resultante: ganadora
+notas: 'S-8 (A-51): ev-v10-010715-fae17215. Un break even no corta la racha ni suma; la corta una ganadora,
+  como RN-034 termina el escenario con ella'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

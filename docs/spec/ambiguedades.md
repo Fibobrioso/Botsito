@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 15.9.9` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 17.0.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (16)
+## ABIERTA (14)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -17,12 +17,6 @@ Afecta a: `break_even_criterio_ruptura`.
 ### A-16 · cuanto se separan las velas de Oanda de las de Dukascopy · medicion
 
 ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23
-
-### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
-
-Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 1:19:57), NO activada: zona limpia = sin alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo.
-
-Afecta a: `zona_control_limpia`.
 
 ### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
 
@@ -73,10 +67,6 @@ Afecta a: `caja_se_fija`.
 ### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
 
 Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa», y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al punto mas alto y que todo tiene que desarrollarse mas alla del nivel.
-
-### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
-
-Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
 
 ### A-53 · la orden sin llenar cuando el precio toma otra liquidez de M15 · pregunta
 
@@ -154,7 +144,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (33)
+## RESUELTA (35)
 
 ### A-1 · sesgo H4
 
@@ -246,6 +236,12 @@ RN-009 afirma que con mas de una zona de control no hay trade, pero el literal q
 
 Afecta a: `zonas_control_max_por_esquema`.
 
+### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
+
+Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 1:19:57), NO activada: zona limpia = sin alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo. RESUELTA el 2026-10-04 en la sesion 4 (S-10, v10 1:17:25–1:17:31, 1:17:34–1:17:46 y 1:19:57–1:20:27): «¿una zona se limpia si hay velas verdes y rojas o terrenos rojos? ¿Es solo eso? Claro, exacto.»; el numero de velas del retroceso «es indiferente, no importa»; y si se alternan antes de la ruptura del posible punto de breaker «quedaría invalidado» (fb-2026-10-04-sesion-04-22d08cbf). Activada el 2026-10-12 en trabajo/activar-sesion-04-motor (ADR-0076): «sin alternancia de colores» es lo que RN-009 ya filtra, porque cada paso de vela contraria a vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1 rechaza (medido con series sinteticas en compra y en venta), asi que zona_control_limpia = solo_una_zona_de_control, la opcion que ya existia, sin sumar ninguna al enum. Dos casos en que la lectura literal y el motor no coinciden van a la sesion 5: una vela sin cuerpo en medio del retroceso y el breaker contrario que rompe con mecha.
+
+Afecta a: `zona_control_limpia`.
+
 ### A-25 · la vida de la marca de liquidez de M15 · pregunta
 
 Una vez que tienes marcada la liquidez en M15, a veces el precio forma después otro alto o bajo por ese mismo lado. ¿Qué haces entonces con la marca que ya tenías? RESUELTA el 2026-10-04 en la sesion 4 (S-18, v10 1:51:52-1:54:34): la marca del alto viejo se descarta y pasa al nuevo («el más reciente es lo que importa [...] Paso al nuevo»), que es lo que ADR-0045 ya decidio (A-24: el pivote mas reciente ya formado); y la toma de otra liquidez reinicia los tres intentos («para nuevamente pues reiniciar los tres intentos»): intentos_tras_toma_nueva queda CONFIRMED en vuelven_a_cartuchos_max, el mismo valor, y cartuchos_reinicio ratificado (fb-2026-10-04-sesion-04-b3c218ce). El trader dice que el «se iria por una cuarta» pero lo deja en 3: cartuchos_max no se toca.
@@ -329,6 +325,12 @@ Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en l
 Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:01:24): «aquí queda confirmado que se entra siempre por stop» / «Sí, exacto»: la orden de entrada es una STOP en la ruptura (entrada_tipo_orden = stop_en_ruptura) (fb-2026-09-29-sesion-03-92a38105).
 
 Afecta a: `entrada_tipo_orden`.
+
+### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
+
+Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar? RESUELTA el 2026-10-04 en la sesion 4 (S-8, v10 1:06:53–1:07:08, 1:07:15–1:07:41 y 1:08:04–1:08:28): un break even no corta la racha -«no corta la racha como tal»-, solo una ganadora; tras la novena vuelve «al día siguiente», y «la racha sigue de un día a otro y una semana otra» (fb-2026-10-04-sesion-04-8e2d728a; racha_perdidas_max = 9, racha_perdidas_corte = ganadora, racha_perdidas_reinicio = nunca, racha_perdidas_reanudacion = dia_siguiente; RN-036, ADR-0077). Activada el 2026-10-12 en trabajo/activar-sesion-04-motor.
+
+Afecta a: `racha_perdidas_max`, `racha_perdidas_corte`, `racha_perdidas_reinicio`, `racha_perdidas_reanudacion`.
 
 ### A-52 · cuántos escenarios puede abrir una misma sesión como máximo · pregunta
 

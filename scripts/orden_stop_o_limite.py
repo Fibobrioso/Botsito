@@ -414,11 +414,17 @@ def control_simulador(
         "cierre_vela_contraria, A-44 sin_tope; con ticks)",
     ]
     for limpia in LECTURAS_LIMPIA:
-        diag = Diagnostico(CIERRE_VELA_CONTRARIA, A44_SIN_TOPE, limpia)
+        # A-21 ya no va en el diagnostico (ADR-0076): `lectura_limpia` da la lectura fijada en el
+        # registro; el bucle se conserva como estaba, pero solo se mide la vuelta que coincide
+        # con el registro, y la otra lo dice en vez de rotular una medida que no corrio
+        lim = zonas.lectura_limpia(registro)
+        if limpia != lim:
+            out += ["", f"## A-21 = {limpia}: no se mide; A-21 esta fijada en {lim} (ADR-0076)"]
+            continue
+        diag = Diagnostico(a35=CIERRE_VELA_CONTRARIA, a44=A44_SIN_TOPE)
         lectura = diagnostico.lectura_pivote(registro, diag)
         perfil = cableado.perfil_del_repo(RAIZ, None)
         tope = tope_trader.tope_del_registro(registro, perfil.huso_corte(), diag)
-        lim = zonas.lectura_limpia(registro, diag.a21)
         mercado = arnes.dias_de_mercado(
             RAIZ, carpeta, config, registro, dias, registro.texto("huso_operativa"), lectura
         )
@@ -474,7 +480,8 @@ def control_simulador(
                 )
         out += [
             "",
-            f"## A-21 = {limpia}: posiciones del bot {len(filas)}; excluidas {excluidas}; "
+            f"## A-21 = {lim} (fijada en el registro): posiciones del bot {len(filas)}; "
+            f"excluidas {excluidas}; "
             f"clasificacion {dict(clasif)}",
             "| dia | llenado UTC | dir. | entrada | traza del broker | precio al colocar - L "
             "(bid venta / ask compra, puntos) | Fase 2 | lado · fuente · ventana |",

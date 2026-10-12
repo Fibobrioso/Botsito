@@ -193,6 +193,12 @@ sigue siendo lo esperado hasta que la geometría exista: **no es un fallo de la 
 
 ## 6. A-21 · «¿qué miras para decidir que una zona está limpia?» (RN-011, `zona_control_limpia`)
 
+> **NOTA (2026-10-12, `trabajo/activar-sesion-04-motor`).** A-21 está RESUELTA: el trader dijo en
+> la sesión 4 (S-10) que una zona está limpia si no hay velas verdes y rojas alternándose, y eso es
+> lo que RN-009 ya filtra, así que `zona_control_limpia` = `solo_una_zona_de_control`, sin opción
+> nueva (ADR-0076). `--diagnostico-a21` ya no existe: el motor corre con el valor fijado. El resto
+> de esta sección es histórico.
+
 Desde `trabajo/preparar-a21` (2026-09-26) la geometría de la zona de entrada está construida
 (`domain/estructura_m1.py`, `engine/zonas.py`; `docs/validation/PREPARACION-A21.md`) y RN-011 la
 liga en el cierre del breaker. Lo único que falta es **la condición de «limpia»**, que el corpus no

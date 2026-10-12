@@ -39,7 +39,6 @@ from botsito.engine.simulacion import MercadoDia, reglas_broker_de
 from botsito.engine.tope_trader import tope_del_registro
 from botsito.engine.zonas import (
     PARAMETRO_A21,
-    DiagnosticoDeZonaRechazadoError,
     SinLecturaDeZonaError,
     lectura_limpia,
 )
@@ -363,24 +362,21 @@ def test_por_el_cableado_la_zona_llega_al_broker_como_una_orden_limite(
 # ------------------------------------------------------------------------- el diagnostico
 
 
-def test_sin_fijar_el_motor_se_niega_nombrando_a21_y_el_diagnostico_corre(
-    registro: Registro,
+def test_con_a21_fijada_el_motor_corre_sin_diagnostico_y_sin_valor_se_niega(
+    registro: Registro, tmp_path: Path
 ) -> None:
-    with pytest.raises(SinLecturaDeZonaError, match="A-21") as exc:
-        lectura_limpia(registro, None)
-    assert PARAMETRO_A21 in str(exc.value) and "diagnostico" in str(exc.value)
-    assert (
-        lectura_limpia(registro, SIN_MECHA_MAS_ALLA_DEL_EXTREMO) == SIN_MECHA_MAS_ALLA_DEL_EXTREMO
-    )
-    with pytest.raises(ValueError, match="A-21"):
-        lectura_limpia(registro, "al_ojo")
-    d = Diagnostico(a21=SOLO_UNA_ZONA_DE_CONTROL)
-    assert d.etiquetas == ("DIAGNOSTICO-A21-solo_una_zona_de_control",)
-    with pytest.raises(ValueError, match="A-21"):
-        Diagnostico(a21="limpia_a_ojo")
-
-
-def test_con_el_valor_fijado_el_diagnostico_se_rechaza(tmp_path: Path) -> None:
+    """Cambia de sentido A PROPOSITO el 2026-10-12 (trabajo/activar-sesion-04-motor, ADR-0076):
+    hasta entonces el registro real tenia `zona_control_limpia` UNKNOWN, `lectura_limpia` se
+    negaba nombrando A-21 y ofrecia `--diagnostico-a21`. El trader respondio A-21 en la sesion 4
+    (S-10): la lectura es la del registro, `solo_una_zona_de_control`, y el diagnostico de A-21 ya
+    no existe (`Diagnostico` no tiene `a21`). Con `main` falla: alli `lectura_limpia` levanta
+    `SinLecturaDeZonaError`. Sin valor en un registro sintetico sigue negandose, sin ofrecer
+    ningun diagnostico."""
+    assert lectura_limpia(registro) == SOLO_UNA_ZONA_DE_CONTROL
+    assert registro.parametros[PARAMETRO_A21].estado.value == "CONFIRMED"
+    with pytest.raises(TypeError):
+        Diagnostico(a21=SOLO_UNA_ZONA_DE_CONTROL)  # type: ignore[call-arg]
+    assert not any("A21" in e for e in Diagnostico(a35="inicio_vela_contraria").etiquetas)
     contenido = f"""
 parametros:
   - nombre: {PARAMETRO_A21}
@@ -388,39 +384,53 @@ parametros:
     tipo: enum
     unidad: que la hace limpia
     opciones: [solo_una_zona_de_control, sin_mecha_mas_alla_del_extremo]
-    descripcion: el selector, ya respondido en este registro de prueba
-    estado: CONFIRMED
-    valor: solo_una_zona_de_control
-    fuente: {{tipo: feedback, id: fb-2030-01-16-sesion-02-1a2b3c4d}}
+    descripcion: el selector, sin valor en este registro de prueba
+    estado: UNKNOWN
 """
     ruta = tmp_path / "parametros.yaml"
     ruta.write_text(contenido, encoding="utf-8")
-    fijado = cargar_registro(ruta)
-    assert lectura_limpia(fijado, None) == SOLO_UNA_ZONA_DE_CONTROL
-    with pytest.raises(DiagnosticoDeZonaRechazadoError, match="ya esta fijado"):
-        lectura_limpia(fijado, SIN_MECHA_MAS_ALLA_DEL_EXTREMO)
+    sin_valor = cargar_registro(ruta)
+    with pytest.raises(SinLecturaDeZonaError, match=PARAMETRO_A21) as exc:
+        lectura_limpia(sin_valor)
+    assert "--diagnostico" not in str(exc.value)
+    # y una lectura que el motor no conoce se niega con nombre, aunque el registro la admita
+    contenido_otra = contenido.replace(
+        "opciones: [solo_una_zona_de_control, sin_mecha_mas_alla_del_extremo]",
+        "opciones: [solo_una_zona_de_control, sin_mecha_mas_alla_del_extremo, al_ojo]",
+    ).replace(
+        "estado: UNKNOWN",
+        "estado: CONFIRMED\n    valor: al_ojo\n"
+        "    fuente: {tipo: feedback, id: fb-2030-01-16-sesion-02-1a2b3c4d}",
+    )
+    otra = tmp_path / "otra.yaml"
+    otra.write_text(contenido_otra, encoding="utf-8")
+    with pytest.raises(ValueError, match="A-21"):
+        lectura_limpia(cargar_registro(otra))
 
 
-def test_la_cli_se_niega_sin_a21_aunque_a35_y_a44_vayan_en_diagnostico(
+def test_la_cli_no_conoce_diagnostico_a21_y_la_compuerta_de_medida_manda(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    """Desde ADR-0076 `--diagnostico-a21` no es una opcion (argparse la rechaza con codigo 2 y
+    sin escribir nada), y con A-35 y A-44 en diagnostico la compuerta de construccion sigue
+    mandando primero: un mes de medida se niega."""
     from botsito import cli
     from botsito.cases.criterio_fidelidad import cargar_criterio
 
     real = cargar_criterio(RAIZ)
     salida = tmp_path / "informe.txt"
-    codigo = cli.main(
-        ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.construccion[0], "--salida",
-         str(salida), "--diagnostico-a35", "inicio_vela_contraria", "--diagnostico-a44", "sin_tope"]
-    )  # fmt: skip
-    err = capsys.readouterr().err
-    assert codigo == 2 and "A-21" in err and PARAMETRO_A21 in err
+    with pytest.raises(SystemExit) as salida_argparse:
+        cli.main(
+            ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.construccion[0], "--salida",
+             str(salida), "--diagnostico-a35", "inicio_vela_contraria", "--diagnostico-a44",
+             "sin_tope", "--diagnostico-a21", SOLO_UNA_ZONA_DE_CONTROL]
+        )  # fmt: skip
+    assert salida_argparse.value.code == 2
+    assert "--diagnostico-a21" in capsys.readouterr().err
     assert not list(tmp_path.iterdir())
-    # y la compuerta de construccion sigue mandando primero
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.medida[0], "--salida", str(salida),
-         "--diagnostico-a35", "inicio_vela_contraria", "--diagnostico-a44", "sin_tope",
-         "--diagnostico-a21", SOLO_UNA_ZONA_DE_CONTROL]
+         "--diagnostico-a35", "inicio_vela_contraria", "--diagnostico-a44", "sin_tope"]
     )  # fmt: skip
     assert codigo == 2 and "MEDIDA" in capsys.readouterr().err and not list(tmp_path.iterdir())
 

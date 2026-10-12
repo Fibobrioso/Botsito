@@ -1,0 +1,22 @@
+id: fb-2026-10-04-sesion-04-b7040095
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: racha_perdidas_max
+accion: RESOLVE_UNKNOWN
+respuesta_literal: como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo. Esto es
+  por la condicional que nos da la cuenta de fondeo.
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04-motor, decision 4)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:06:53'
+t1: '1:07:08'
+valor_resultante: '9'
+notas: 'S-8 (A-51): ev-v10-010653-81316808; ya en la sesion 3, ev-v9-011128-a267338b (A-44). Las 9 vienen
+  de un 0,5 % de riesgo por operacion -9 x 0,5 % = 4,5 %, el tope del dia de S-9- y el bot tambien arriesga
+  un 0,5 % (riesgo_por_operacion); con menos riesgo dijo que «podríamos extender» (SESION-04-EXTRACCION.md
+  §4.8)'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

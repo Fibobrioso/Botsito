@@ -205,15 +205,16 @@ def test_una_accion_que_provoca_un_hecho_del_broker_declara_su_efecto(spec: Any)
     )
 
 
-def test_la_pendiente_al_abrir_sesion_la_dijo_el_trader_y_la_de_las_15_sigue_sin_regla(
+def test_la_pendiente_al_abrir_sesion_y_a_ventana_fin_la_dijo_el_trader(
     spec: Any,
 ) -> None:
     """Cambia de sentido A PROPOSITO el 2026-10-11 (trabajo/activar-sesion-04): hasta entonces
     exigia que la retirada fuera una ambiguedad declarada (DEFAULT_AMBIGUOUS, A-30) y no un valor
     supuesto. En la sesion 4 (S-5) el trader la contesto -se quita a las 11 y a las 3- y A-30 y
-    A-39 quedaron RESUELTAS: el parametro es CONFIRMED con un registro de la sesion 4. Lo que sigue
-    sin regla es la retirada a ventana_fin, que hace el cableado (ADR-0053 §6): solo RN-035 usa la
-    accion, y RN-002 no la lleva (la rama de motor la escribira)."""
+    A-39 quedaron RESUELTAS: el parametro es CONFIRMED con un registro de la sesion 4. Desde el
+    2026-10-12 (trabajo/activar-sesion-04-motor) la retirada a ventana_fin tambien es de RN-035,
+    con el mismo selector: sigue siendo la unica regla que usa la accion, y RN-002 no la lleva (el
+    cableado cancela al terminar el dia solo como red de seguridad, ADR-0053 §6)."""
     from botsito.cases.ambiguedades import FICHERO_AMBIGUEDADES, cargar_ambiguedades
     from botsito.config.registro import cargar_registro
 

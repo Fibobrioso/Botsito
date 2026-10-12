@@ -1,0 +1,23 @@
+id: fb-2026-10-04-sesion-04-48fb5817
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: zona_control_limpia
+accion: RESOLVE_UNKNOWN
+respuesta_literal: ¿una zona se limpia si hay velas verdes y rojas o terrenos rojos? ¿Es solo eso? Claro,
+  exacto.
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-12 (trabajo/activar-sesion-04-motor, respuesta a la PARADA, punto
+  0.b)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:17:25'
+t1: '1:17:31'
+valor_resultante: solo_una_zona_de_control
+notas: 'S-10 (A-21): ev-v10-011725-3741e266. «Sin alternancia de colores» es lo que RN-009 ya filtra con
+  zonas_control_max_por_esquema = 1, porque cada paso de contraria a color de la entrada forma una zona
+  de control (medido con series sinteticas en ADR-0076): la opcion que ya existia, sin sumar ninguna al
+  enum. La pregunta fue dirigida («¿Es solo eso?»)'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

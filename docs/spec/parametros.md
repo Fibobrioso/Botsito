@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 15.9.9` · hash `02d62f94511f…`
+`spec_version 17.0.2` · hash `59f028d8e30d…`
 
-103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+107 en total: 91 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -70,11 +70,15 @@
 | `operaciones_simultaneas_max` | `1` | CONFIRMED | estrategia | `ev-v4-003710-c753f3d3` | operaciones abiertas a la vez |
 | `orden_limite_nace` | `al_aparecer_punto_de_breaker` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-755c534e` | cuando se coloca por primera vez la orden limite de una zona |
 | `orden_pendiente_al_abrir_escenario` | `se_mueve` | DEFAULT_AMBIGUOUS · en revision por A-53 | estrategia | `fb-2026-09-29-sesion-03-c7fa3068` | que pasa con una orden sin llenar del escenario anterior cuando la sesion abre otro |
-| `orden_pendiente_al_abrir_sesion` | `se_retira` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-45e624c5` | que pasa con una orden sin llenar de la sesion anterior al abrir la siguiente |
+| `orden_pendiente_al_abrir_sesion` | `se_retira` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-45e624c5` | que pasa con una orden sin llenar al abrir la sesion siguiente y al llegar ventana_fin |
 | `orden_stop_punto` | `ultimo_pivote_m1` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-002201-2b2f20aa` | el posible punto de breaker en el que nace la orden stop |
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
+| `racha_perdidas_corte` | `ganadora` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-ecdd0572` | que cierre pone la racha a cero |
+| `racha_perdidas_max` | `9` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-b7040095` | perdidas seguidas tras las que no se opera mas ese dia |
+| `racha_perdidas_reanudacion` | `dia_siguiente` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-fa5ef0f6` | cuando se vuelve a operar tras la racha |
+| `racha_perdidas_reinicio` | `nunca` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-d1792021` | cuando se pone a cero la racha por calendario |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
 | `reloj_dia_riesgo` | `civil_operativa` | CONFIRMED | prop_firm | `ADR-0027` | que reloj marca el corte del dia (y de la semana) de riesgo |
 | `reloj_sesiones` | `rejilla_h4` | CONFIRMED | ejecucion | `ADR-0069` | con que reloj del registro se cuentan la ventana operativa y sus sesiones |
@@ -93,6 +97,7 @@
 | `ventana_fin` | `15:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-951b7a79` | hora NOMINAL, en el reloj que dice reloj_sesiones |
 | `ventana_inicio` | `07:00 Europe/Madrid` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8741c388` | hora NOMINAL, en el reloj que dice reloj_sesiones |
 | `zona_control_criterio_completada` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a456bc3f` | que hace falta para dar una zona de control por completada |
+| `zona_control_limpia` | `solo_una_zona_de_control` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-48fb5817` | que hace limpia, sin ruido, una zona de control (A-21) |
 | `zonas_control_max_por_esquema` | `1` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1b2203b0` | zonas de control admitidas dentro de un mismo esquema |
 
 ## Sin valor, y leerlos FALLA a proposito
@@ -115,7 +120,6 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 - **`stop_reduccion_fraccion`** (estrategia) — nivel al que se reduce el stop cuando la vela avanza (A-12)
 - **`stop_reduccion_umbral_vela`** (estrategia) — parte de la vela a partir de la cual se baja el stop (40 o 50; A-12)
 - **`stop_segundo_esquema`** (estrategia) — UNKNOWN A PROPOSITO desde la auditoria del 2026-09-10 (A-7 sigue resuelta): no hay un stop del segundo esquema distinto del primero. El trader dijo que es el MISMO en los dos, asi que un parametro aparte con el mismo valor son dos puertas para el mismo numero -lo que RN-012 prohibe expresamente para stop_proteccion_capital y ADR-0002 para todo-. Hay un unico esquema de stop y vive en stop_fraccion_caja. Leerlo falla, que es lo que debe pasar
-- **`zona_control_limpia`** (estrategia) — la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Es A-21, ABIERTA y BLOQUEANTE de RN-008, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. Ninguna de las dos DEFINE «limpia»: son las dos candidatas, y otra respuesta PARA (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega salvo en diagnostico etiquetado. Lo lee quien construye las primitivas, no una regla (engine/zonas.py)
 
 ## Quien lee cada valor
 
@@ -147,11 +151,14 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `latencia_ms` → F24, F27
 - `modelo_llenado` → F24, F27
 - `orden_stop_punto` → ADR-0064
+- `racha_perdidas_corte` → ADR-0077
+- `racha_perdidas_reanudacion` → ADR-0077
 - `saldo_inicial_cuenta` → F24, F33
 - `sesgo_h4_regla` → ADR-0019
 - `sesgo_h4_tope_velas` → F18
 - `sesiones_primera_vela_h4` → ADR-0069
 - `stop_fraccion_redondeo` → F21
+- `zona_control_limpia` → F20
 
 ## Que dice cada uno
 
@@ -489,7 +496,7 @@ Opciones: `se_mueve`, `se_retira`.
 
 ### `orden_pendiente_al_abrir_sesion`
 
-la orden de entrada que sigue pendiente cuando abre la sesion siguiente (RN-035; ADR-0066). `se_retira`: se cancela en la apertura y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). Fue PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor salia de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA). CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-5, v10 0:54:27): «sí, se quita, porque siempre se va a ir actualizando la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin sigue siendo el cableado al terminar el dia (ADR-0053 §6), sin regla: rama de motor
+la orden de entrada que sigue pendiente cuando abre la sesion siguiente o cuando llega ventana_fin (RN-035; ADR-0066). `se_retira`: se cancela en la apertura -y, desde el 2026-10-12, tambien al llegar ventana_fin por la propia regla- y la sesion nueva empieza de cero. `sigue_hasta_ventana_fin`: sigue viva, sin reubicarse con los puntos de la sesion nueva, hasta el llenado o la ventana, que es lo que hacia el motor hasta el 2026-10-01 (DECISION 3 de ADR-0064) y deja la sesion nueva sin poder colocar (RN-011). Fue PROVISIONAL hasta la pregunta 5 de la sesion 4 («Si a las 11 o a las 3 tienes una orden stop puesta que no se ha llenado, ¿qué haces con ella?», A-30 y A-39). El valor salia de que cada sesion es «un mundo diferente» (fb-2026-09-29-sesion-03-5021677e, A-46 RESUELTA). CONFIRMADO POR EL TRADER el 2026-10-04 (sesion 4, S-5, v10 0:54:27): «sí, se quita, porque siempre se va a ir actualizando la orden» (ev-v10-005427-1a0867af). A-30 y A-39 RESUELTAS. La retirada a ventana_fin la hace RN-035 desde el 2026-10-12 (trabajo/activar-sesion-04-motor); la cancelacion del cableado al terminar el dia (ADR-0053 §6) queda como red de seguridad. El nombre del parametro no cambia
 
 Opciones: `se_retira`, `sigue_hasta_ventana_fin`.
 
@@ -542,6 +549,28 @@ el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trade
 si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
 
 Opciones: `porcentaje`, `usd`.
+
+### `racha_perdidas_corte`
+
+lo que corta la racha de perdidas de RN-036 (A-51; ADR-0077). `ganadora`: solo una operacion que cierra en positivo; un break even no la corta ni suma, «un break even no se cuenta como cartucho [...] no corta la racha como tal o sea que luego si se sigue la siguiente operación después de break even es una pérdida pues ahí nuevamente lo contamos como otra» (sesion 4, S-8, v10 1:07:15, ev-v10-010715-fae17215). `ganadora_o_break_even` esta declarada y sin contrato en el motor. La lee engine/racha.py por su nombre
+
+Opciones: `ganadora`, `ganadora_o_break_even`.
+
+### `racha_perdidas_max`
+
+la racha de perdidas seguidas del trader tras la que deja de operar en ese dia de operativa (RN-036, A-51; ADR-0077): «como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo. Esto es por la condicional que nos da la cuenta de fondeo» (sesion 4, S-8, v10 1:06:53, ev-v10-010653-81316808; ya en la sesion 3, v9 1:11:28, ev-v9-011128-a267338b). Las 9 vienen de una cuenta con un 0,5 % de riesgo por operacion -9 x 0,5 % = 4,5 %, el tope del dia de S-9 (SESION-04-EXTRACCION.md §4.8)-, y el bot tambien arriesga un 0,5 % (riesgo_por_operacion); con menos riesgo el trader dijo que «podríamos extender». Lo que cuenta como perdida es lo que gasta un cartucho en RN-016 (cartucho_criterio)
+
+### `racha_perdidas_reanudacion`
+
+cuando vuelve a operar el trader tras la racha de racha_perdidas_max (A-51; ADR-0077). `dia_siguiente`: «sería el día siguiente operaría ya es al día siguiente» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3); el dia es el OPERATIVO del reloj de las sesiones (reloj_sesiones, ADR-0063 y ADR-0069): tras la novena no se opera mas en ese dia y se vuelve en la primera sesion del siguiente. Que vale la racha al reanudar es la lectura de la sesion de ADR-0077 §5. Las otras dos opciones estan declaradas y sin contrato en el motor. La lee engine/racha.py por su nombre
+
+Opciones: `dia_siguiente`, `semana_siguiente`, `sin_fecha`.
+
+### `racha_perdidas_reinicio`
+
+si la racha de RN-036 se reinicia con el calendario (A-51; ADR-0077). `nunca`: «la racha sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte. Las otras dos opciones estan declaradas y sin contrato en el motor
+
+Opciones: `nunca`, `fin_de_dia`, `fin_de_semana`.
 
 ### `reentrada_tras_equal`
 
@@ -665,7 +694,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `zona_control_limpia`
 
-la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Es A-21, ABIERTA y BLOQUEANTE de RN-008, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. Ninguna de las dos DEFINE «limpia»: son las dos candidatas, y otra respuesta PARA (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega salvo en diagnostico etiquetado. Lo lee quien construye las primitivas, no una regla (engine/zonas.py)
+la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Fue A-21, ABIERTA y BLOQUEANTE de RN-008 hasta el 2026-10-12: este parametro no le ponia valor, solo cerraba el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto» (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa (ev-v10-011734-fedd3f8e). Eso es `solo_una_zona_de_control`: cada paso de vela contraria a vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1 rechaza, medido con series sinteticas en compra y en venta (ADR-0076); no entra ninguna opcion nueva. Lo lee quien construye las primitivas, no una regla (engine/zonas.py); con el valor fijado, --diagnostico-a21 ya no existe
 
 Opciones: `solo_una_zona_de_control`, `sin_mecha_mas_alla_del_extremo`.
 

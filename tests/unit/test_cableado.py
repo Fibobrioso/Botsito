@@ -771,13 +771,14 @@ def test_con_la_cuenta_diaria_cada_dia_empieza_con_el_capital(
 def test_la_etiqueta_de_la_cuenta_diaria() -> None:
     from botsito.engine.diagnostico import Diagnostico, nombre_etiquetado
 
-    d = Diagnostico(a21="solo_una_zona_de_control", cuenta_diaria=True)
+    # con A-35 en vez de A-21 desde ADR-0076 (A-21 fijada, sin etiqueta)
+    d = Diagnostico(a35="cierre_vela_contraria", cuenta_diaria=True)
     assert d.etiquetas == (
-        "DIAGNOSTICO-A21-solo_una_zona_de_control",
+        "DIAGNOSTICO-A35-cierre_vela_contraria",
         "DIAGNOSTICO-CUENTA-diaria",
     )
     assert nombre_etiquetado(Path("x.txt"), d.etiquetas).name == (
-        "x.DIAGNOSTICO.a21=solo_una_zona_de_control.cuenta=diaria.txt"
+        "x.DIAGNOSTICO.a35=cierre_vela_contraria.cuenta=diaria.txt"
     )
 
 

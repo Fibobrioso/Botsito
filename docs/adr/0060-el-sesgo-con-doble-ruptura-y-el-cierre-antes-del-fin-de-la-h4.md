@@ -6,6 +6,15 @@ phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 
 # 0060 · El sesgo con doble ruptura lo decide el color, y toda operación se cierra antes del fin de su vela H4
 
+> **ENMIENDA (2026-10-12, rama `trabajo/activar-sesion-04-motor`, ADR-0075).** La doble ruptura de
+> una vela SIN CUERPO ya no es `ambiguo` ni fija el sesgo: en la sesión 4 (S-13) el trader dijo que
+> con una H4 neutra «seguiríamos operando alcistas» (`ev-v10-014005-7e2228f4`), así que la búsqueda
+> hacia atrás de ADR-0044 §2 la salta y manda la H4 anterior que rompió con lado. En §1, «la vela con
+> doble ruptura fija el sesgo: la búsqueda hacia atrás … para en ella» vale solo con color; §2 queda
+> sustituida, y su alternativa 1 («seguir buscando hacia atrás»), descartada aquí porque «inventa un
+> sesgo que ninguna vela dio», es hoy lo que dijo el trader. El token `ambiguo` sigue declarado y el
+> motor ya no lo produce; RN-033 queda para `insuficiente`. Lo demás de este ADR no cambia.
+
 ## Decision
 
 ### 1. Con doble ruptura, el sesgo es el del color con que cierra la vela
