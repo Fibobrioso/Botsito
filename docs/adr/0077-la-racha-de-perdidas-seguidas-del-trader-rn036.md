@@ -54,11 +54,11 @@ cero (`racha_perdidas_corte`).
   `hasta_el_dia_siguiente` y **retira la orden pendiente que quede** (`retirar_ordenes_pendientes`,
   acción nueva sin argumentos, idempotente: cancela lo que haya, cero o una). **Decisión del
   consultor:** se retira porque el broker la llenaría por ticks mientras el trader ya ha dejado de
-  operar. Medido: dentro de la spec una orden pendiente nunca convive con una posición viva
-  (RN-011 no coloca con una pendiente, RN-013 no coloca con una posición abierta), así que en el
-  cierre de M1 en que cae la novena no suele quedar ninguna; la acción es la red de seguridad que
-  el consultor pidió, y `tests/unit/test_racha_perdidas.py` la ejercita directamente sobre un
-  broker con una pendiente.
+  operar. Medido: dentro de la spec RN-011 solo coloca sin orden pendiente ni posición viva (el
+  `ninguno_de` de su `cuando`, `strategy_spec.yaml`), así que una pendiente no convive con una
+  posición y en el cierre de M1 en que cae la novena no queda ninguna; la acción es la red de
+  seguridad que el consultor pidió, y `tests/unit/test_racha_perdidas.py` la ejercita directamente
+  sobre un broker con una pendiente.
 - **`detenido_por_racha`** (hecho de origen regla, valores `[hasta_el_dia_siguiente]`, producido y
   consumido por RN-036) dura lo que queda del día: `EstadoDia` muere con el día, y el acumulador
   vuelve a decir lo mismo mientras dure la detención.

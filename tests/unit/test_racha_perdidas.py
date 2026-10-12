@@ -199,10 +199,12 @@ def _contexto(registro: Registro) -> tuple[ContextoDia, Broker]:
     return ctx, broker
 
 
-def test_la_orden_pendiente_se_retira_en_la_novena(registro: Registro) -> None:
-    """La accion de RN-036 (`retirar_ordenes_pendientes`, decision del consultor, ADR-0077 §3):
-    con una limite pendiente la cancela y refresca los hechos del broker; sin ninguna, no hace
-    nada (idempotente)."""
+def test_la_accion_de_rn036_retira_la_orden_pendiente_que_quede(registro: Registro) -> None:
+    """La accion de RN-036 (`retirar_ordenes_pendientes`, decision del consultor, ADR-0077 §3),
+    aislada sobre un broker: con una limite pendiente la cancela y refresca los hechos del broker;
+    sin ninguna, no hace nada (idempotente). Dentro de la spec no puede quedar una pendiente en el
+    cierre de M1 de la novena (RN-011 no coloca con pendiente ni posicion viva), asi que el
+    noveno dia del test del cableado la ejercita sin nada que retirar."""
     ctx, broker = _contexto(registro)
     ms = tc.MINUTO_ZONA * MS_POR_MINUTO - 1
     o = broker.colocar_limite("o1", "compra", tc.ENTRADA, Decimal("0.1"), tc.EXTREMO + 4,

@@ -21,7 +21,13 @@ depende de él va aquí con su comando exacto.
    consultor; hasta entonces A-21 no se toca y `--diagnostico-a21` sigue.
 2. **El literal de v10 1:44:49** («1 o 2» o «12»), si lo lee con `--crudo` en su terminal: va al
    informe y a las líneas de H; si no llega, H se queda como está.
-3. (Se añaden según avance la rama: el push a `fix/`, un `make check` que el reaper corte, …)
+3. **La CI del último commit** (§8): el clasificador dejó salir el push de 1d39c1e (run
+   38213911827, solo el fallo aceptado); el commit final (este informe con el revisor) necesita su
+   run: `git push origin trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor`
+   y `gh api repos/:owner/:repo/commits/<sha de 40 caracteres>/check-runs`. Lo intento también
+   desde la sesión; si el clasificador lo niega, queda aquí.
+4. **El punto 4 de la PARADA** (la `cita` de RN-003): hecho como (a); si prefiere (b), es un
+   commit.
 
 ## Base comprobada al abrir (skill `abrir-rama`, paso 1)
 
@@ -243,7 +249,7 @@ matiz; 14 herencias) sin escribir nada. Lo que cambia lo que se pide, medido des
 | m6 | La racha: `reinicio` = `nunca`, `corte` = `ganadora`, y tras la novena «se vuelve en la primera sesión del día siguiente» | Con un acumulador «≥ tope» y sin reinicio, al día siguiente la racha sigue en 9 y RN-036 prohibiría para siempre hasta una ganadora | La detención es DEL DÍA OPERATIVO en que cayó la pérdida que alcanza el tope; la racha sigue contando; una pérdida más (la décima) vuelve a detener su día (§0.8) |
 | m7 | RN-035 «según `orden_pendiente_al_abrir_sesion`» a `ventana_fin` | El parámetro se define «al abrir la siguiente» (`parametros.yaml:786`) y el título de RN-035 habla de la apertura (`strategy_spec.yaml:886-887`) | Cambian el título de RN-035 y la descripción del parámetro (no su nombre); §0.8 |
 | m8 | La decisión 5 cambia RN-035 (ADR-0066 §4) y el reparto de ADR-0053 §6 sin ADR | ADR-0066 escribió RN-035 al abrir la sesión con valor PROVISIONAL; ADR-0053 §6 deja la cancelación de fin de día, que SE QUEDA | No contradice ninguno de los dos: es la activación de S-5 que el consultor decidió (punto 4 de su respuesta); `decision: ADR-0066` se conserva y las notas lo dicen |
-| m9 | «Un test que demuestre que `detectar_esquema` con una lectura fuera de LECTURAS_LIMPIA sigue fallando» | Ya existe: `tests/unit/test_estructura_m1.py:236-237` (`"al_ojo"`, `match="A-21"`) | Se cita; con la opción nueva se amplía (PARADA) |
+| m9 | «Un test que demuestre que `detectar_esquema` con una lectura fuera de LECTURAS_LIMPIA sigue fallando» | Ya existe: `tests/unit/test_estructura_m1.py:234-235` (`"al_ojo"`, `match="A-21"`) | Se cita; con la opción nueva se amplía (PARADA) |
 | m10 | El hueco del último minuto | ADR-0060 §5 ya decidió que `vence_vela_h4` da SÍ en el propio límite: lo que se llene en el último minuto se cierra en el evento del límite | El test lo congela citando ADR-0060 §5 |
 | m11 | `grep -rn` de `--diagnostico-a21` en `src/` y `tests/` «vacío» | Casa con los `__pycache__/*.pyc` («Binary file … matches») | El grep se hace con `--include=*.py` |
 | m12 | «A-51 … CONFIRMED vía feedback apply» | Cerrar A-51 RESUELTA exige un RESOLVE_UNKNOWN ACTIVO sobre la ambigüedad (README.md:83-87; AMBIGUEDADES.md:36-37); y `feedback new` sobre un parámetro exige que el parámetro exista (README.md:59-61) | Los cuatro parámetros entran UNKNOWN en `parametros.yaml` ANTES de los registros; un RESOLVE_UNKNOWN sobre A-51 y uno por parámetro |
@@ -336,7 +342,7 @@ reservados listada. `HOLDOUT-EXPOSICIONES.md` no cambia.
    En cualquiera de (a) o (b), el test que «falla con `main`» será semántico: una serie con
    alternancia en el retroceso da `None` con la opción nueva y un `Esquema` con
    `solo_una_zona_de_control`; en `main` la opción no existe y `detectar_esquema` la rechaza con
-   `EstructuraError` (la guardia de `test_estructura_m1.py:236-237`, m9).
+   `EstructuraError` (la guardia de `test_estructura_m1.py:234-235`, m9).
 1. **Quitar `Diagnostico.a21` rompe fuera del contrato** (a2): `scripts/embudo_77.py:429`,
    `scripts/caja_77_exploratoria.py:131` y `scripts/orden_stop_o_limite.py:417` construyen
    `Diagnostico` por posición con `a21` en tercer lugar. Opciones: (a) ampliar `rutas_permitidas`
@@ -552,7 +558,7 @@ Hecha antes que la decisión 3, que está en PARADA (§0.8.8).
   queda nada que la red de fin de día cancele (`cancelados_fin_dia == 0`), el décimo vuelve a
   operar con la racha en 9 y su pérdida -la décima- vuelve a detener; con `cuenta_diaria` la racha
   empieza de cero cada día. Medido de paso: dentro de la spec una orden pendiente no convive con
-  una posición viva (RN-011 no coloca con pendiente, RN-013 con posición abierta), así que en el
+  una posición viva (RN-011 solo coloca sin pendiente ni posición viva, su `ninguno_de`), así que en el
   cierre de M1 de la novena nunca queda una pendiente y la retirada de RN-036 es la red de
   seguridad que pidió el consultor (ADR-0077 §3).
 - **Con el código de `main`** (clon `C:/cm/main`, los ficheros de test de la rama copiados
@@ -632,6 +638,391 @@ Hecha antes que la decisión 3, que está en PARADA (§0.8.8).
   orden se llena en ese último minuto, la operación nace y muere dentro de él.
 - `Fuente: fb-2026-10-04-sesion-04-45e624c5` en el cuerpo del commit.
 
+## 2. Tests que rompen a propósito, con el código de `main`
+
+Skill `comparar-con-main`: un clon `git worktree add --detach C:/cm/main main` (ruta corta, por
+`test_rutas_windows`), los ficheros de test de la rama copiados dentro, `uv run pytest … -q -p
+no:cacheprovider` allí, y después `git checkout -- …` (o borrado del fichero nuevo) hasta dejar el
+clon limpio; `git worktree remove C:/cm/main` y `git worktree prune` al terminar (§7). Nunca un
+checkout en el repo real. Resumen (la salida de cada uno está en su §1.x):
+
+| Decisión | Test | En `main` | En la rama |
+|---|---|---|---|
+| 2 (S-13) | `test_sesgo_h4.py`: `test_doble_ruptura_sin_cuerpo_no_decide_y_sin_nada_detras_es_insuficiente`, `test_una_neutra_mantiene_el_sesgo_anterior_alcista_y_bajista`, `test_dos_neutras_seguidas_mantienen_el_sesgo`; `test_huecos_motor.py`: `test_una_h4_neutra_no_decide_y_sin_nada_detras_es_insuficiente`, `test_una_h4_neutra_en_la_segunda_sesion_mantiene_el_sesgo_de_la_primera`, `test_una_sesion_con_lado_tras_una_insuficiente_no_hereda_la_prohibicion` | 6 FAILED («'ambiguo' != 'insuficiente'») | pasan |
+| 4 (A-51) | `test_racha_perdidas.py` (11) | no importa: «cannot import name 'racha' from 'botsito.engine'» | pasan |
+| 4 (A-51) | `test_kit.py::test_ambiguedades_reales_y_esquema` | FAILED (`abiertas == {"A-21", "A-35", "A-44"}`: A-51 sigue ABIERTA allí) | pasa |
+| 5 (RN-035) | `test_rn035_ventana_fin.py::test_rn035_retira_la_pendiente_a_ventana_fin_y_el_cableado_no_encuentra_nada` | FAILED (`'RN-035' in {'RN-001', 'RN-003', 'RN-011', 'RN-015'}`) | pasa |
+| 5 (hueco) | `test_rn035_ventana_fin.py::test_hueco_la_orden_que_se_llena_en_el_ultimo_minuto_se_cierra_en_el_limite` (×2) | falla solo por `cancelados_fin_dia`, que no existe en `main`: congela el mismo comportamiento | pasan |
+| 1 (A-49) | `test_kit.py::test_una_en_parte_no_entra_en_resueltas` | pasa también en `main` (A-49 ya estaba ABIERTA): es una guardia, no un cambio | pasa |
+| 3 (A-21) | — | en PARADA: no hay test | — |
+
+Las salidas del lado de la rama (`uv run pytest <ficheros> -q -p no:cacheprovider`, 2026-10-12,
+sobre 1d39c1e más el nombre nuevo del test de b4):
+
+```
+$ … tests/unit/test_sesgo_h4.py tests/unit/test_huecos_motor.py -q -rs
+........................................                                 [100%]   (40)
+$ … tests/unit/test_racha_perdidas.py tests/unit/test_kit.py tests/unit/test_rn035_ventana_fin.py -q
+.......................................................                  [100%]   (55)
+$ … tests/unit/test_racha_perdidas.py -q
+...........                                                              [100%]   (11)
+```
+
+(Y el revisor corrió los 8 ficheros tocados o afectados: «129 passed», §9.)
+
+Lo que el encargo pide además: «uno que demuestre que `detectar_esquema` con una lectura fuera de
+`LECTURAS_LIMPIA` sigue fallando» ya existe en `main`
+(`tests/unit/test_estructura_m1.py:234-235`, `"al_ojo"` con `match="A-21"`; §0.7 m9) y se amplía
+con la opción nueva cuando la PARADA se responda; y el grep de `--diagnostico-a21` y
+`diagnostico.a21` en `src/` y `tests/`, que NO está vacío porque la decisión 3 está en PARADA:
+
+```
+$ grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/
+src/botsito/cli.py:2259 · :2300 · src/botsito/engine/zonas.py:156 · :167 ·
+tests/unit/test_preparar_a21.py:423 · test_preparar_a35.py:440 · test_renovar_cierres.py:189 ·
+test_rutas_windows.py:81 · test_selector_orden_stop.py:146 · :185 · test_visor.py:390
+```
+
+(`--include=*.py` para no casar los `.pyc`, §0.7 m11.) Ningún test nuevo lee `data/`: el único
+que lo hace en los ficheros tocados, `test_huecos_motor.py:263`, ya se saltaba sin velas.
+
+## 3. El encargo, punto por punto
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde `main` d4b7917 con `abrir-rama`, base comprobada con git, CI run 38197306105 con `gh` | Hecho | cabecera del informe; `gh run view 38197306105`: success |
+| 2 | Contrato con tramo R1, riesgo alto, artefacto `ACTIVAR-SESION-04-MOTOR.md` | Hecho | `contrato.yaml`; `scripts/contrato_rama.py` en verde en cada `make check` (35 ficheros al final) |
+| 3 | Encargo copiado a `docs/encargos/trabajo-activar-sesion-04-motor.md` | Hecho, con un bloque `ids-inexistentes` añadido FUERA del texto copiado (ADR-0076 sigue sin existir) y el añadido nocturno de Aleks | `docs/encargos/…:3-9` |
+| 4 | QUÉ NO CAMBIA: nada fijado se pisa (cada cambio por su régimen) | Hecho | ADR-0075 enmienda ADR-0060 (recuadro y fila); ADR-0077 nuevo; CORRECT sobre RN-003; RESOLVE_UNKNOWN sobre A-51; RN-035 sin ADR por decisión del consultor (§1.4, §0.7 m8) |
+| 5 | A-49 ABIERTA y sin tocar; ninguna «en parte» se cierra; A-35 y A-44 con sus diagnósticos | Hecho | `test_una_en_parte_no_entra_en_resueltas`; `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml` toca solo A-51; `--diagnostico-a35`/`a44` intactos (grep) |
+| 6 | «Casi plana» no se resuelve; RN-020 no cambia; ninguna cifra en forma ejecutable; sin arnés; nada de material; citas solo de la extracción cruzadas con los tramos | Hecho | RN-007 y RN-020 intactos (`git diff` de `strategy_spec.yaml`); el 9 vive en `parametros.yaml`; `test_no_business_literals` y la guardia de cifras de la spec (§1.3) en verde; §0.1 (ventanas frente a los 22 tramos de v10); §7 exposiciones: ninguna |
+| 7 | Next Action y hoja de ruta sin tocar; Makefile, `.claude/` y la guardia sin tocar; informes cerrados con `--diagnostico-a21` sin editar | Hecho | `git diff --stat main...HEAD`: ni `docs/plan/`, ni `Makefile`, ni `.claude/`, ni ningún otro `docs/validation/*.md` que este; `PROJECT_STATE.md` solo cambia `Current Branch`/`Current Feature`, el recuento de tests, la fila de A-51 y las dos líneas «ninguna desde el Archivo 30» de Completed Features y Change Log (la apertura) |
+| 8 | FASE 0, puntos 1-5, con fichero:línea | Hecho | §0.1-§0.5 |
+| 9 | PARADA solo si lo medido contradice una decisión / `ambiguo` sale de otro sitio / toca «QUÉ NO CAMBIA» | PARADA en la decisión 3 (lo medido la contradice); las otras siguen | §0 (intro), §0.7 a1, «Lo que necesito que decidas» |
+| 10 | Decisión 1: CONFIRM de S-4, primer commit, opciones obligatorias; `pending` «sin forma mecánica» | Hecho (el primer commit de decisión; `pending` lo da REFLEJADO, medido y dicho) | §1.1, commit 12b6684 |
+| 11 | Decisión 2: ADR-0075, enmienda ADR-0060 §1-§2 con recuadro y fila; neutra = cierre == apertura; reserva alcista; CORRECT sobre RN-003 con `ev-v10-014005`; notas de RN-033; token `ambiguo` declarado y descrito; `spec_version` mayor a mano + manifest + docs; motor y tests (los que cambian de sentido, dos neutras, neutra tras bajista) | Hecho (y la segunda reserva «sin otro rango mayor»; RN-003 cita el CORRECT: §0.8.1, PARADA punto 4) | §1.2, commit 272f59f |
+| 12 | Decisión 3: A-21, `sin_alternancia_de_colores`, retirada de `--diagnostico-a21`, ADR-0076 enmienda ADR-0055, cinco sitios, runbook §6 | **No hecho: PARADA** (el tramo del encargo no filtra; `Diagnostico.a21` rompe tres scripts fuera del contrato; el runbook) | «Lo que necesito que decidas», puntos 0-3 |
+| 13 | Decisión 4: ADR-0077 y RN-036 aparte de RN-020; cuatro parámetros CONFIRMED vía `apply`; pérdida = la de RN-016; acumulador persistente fuera de `EstadoDia` y con `cuenta_diaria`; «día siguiente» con `reloj_sesiones`; retira la pendiente; sin A-44 ni `--diagnostico-a44` (si no, PARADA); tres guardias; cinco sitios (A-51 no está en la hoja); los cuatro tests | Hecho, y DE OTRA FORMA en dos puntos: las tres guardias no se amplían porque ya recorren reglas y acumuladores (§0.7 m4), y «la orden pendiente se retira en la novena» se demuestra con la acción aislada más el noveno día sin pendiente, porque dentro de la spec no puede quedar una (§1.3). Más el RESOLVE_UNKNOWN sobre A-51 (§0.8.3), la racha tras la novena como lectura de la sesión (§0.8.4) y la acción nueva (§0.8.5) | §1.3, commit 5df5bd5 |
+| 14 | Decisión 5: RN-035 gana la rama `ventana_fin` según `orden_pendiente_al_abrir_sesion`; «un minuto antes» no se fija; notas sin «LO QUE … NO HACE TODAVÍA»; cableado como red de seguridad con test; hueco del último minuto congelado y pregunta para la sesión 5 | Hecho (RN-035 cita el registro de S-5, §0.8.7) | §1.4 |
+| 15 | Por cada commit, el paso 3 de `activar-sesion` entero (registros, `apply --check` solo de esa respuesta y luego `apply`, cinco sitios, `test_kit`, `spec_version` + manifest + docs, código con test, `knowledge validate`, `Fuente:`) | Hecho en 1, 2, 4 y 5 (en 1 y 5 no hay `Fuente:`/`apply` que escriba: se dice) | §1.1-§1.4; `git log --format=%B main..HEAD` |
+| 16 | ADR nuevos con `0000-template.md` y en el índice | Hecho | `docs/adr/README.md:81-82` |
+| 17 | `MemoryError` de `lzma`: repetir una vez; si se repite, el comando a Aleks | No se dio: cinco `make check` en verde a la primera (1078 s, 1012 s, 887 s, 854 s, 846 s; picos 294 MiB) | `make-check.log` de cada commit |
+| 18 | Tests que rompen a propósito, con las dos salidas; `detectar_esquema` fuera de `LECTURAS_LIMPIA`; «en parte» no entra en RESUELTAS; grep vacío; tests con `data/` saltan en CI | Hecho salvo el grep (PARADA) | §2 |
+| 19 | HOLDOUT: ninguna carpeta madre listada con filtro; exposiciones el mismo día; sin fechas reservadas ni resultados | Hecho | §7; la regla va al revisor |
+| 20 | El literal de 1:44:49 si Aleks lo pega | No llegó: H se queda como está | «Pendiente de Aleks» |
+| 21 | ENTREGA: CI por `fix/`, revisor (opus) con cuatro alcances, su informe pegado, líneas del cierre, lista de la sesión 5 | Hecho: run 38213911827 sobre 1d39c1e (§8); el run del último commit lo lanza Aleks (§8); revisor pegado y atendido (§9) | §5, §6, §8, §9 |
+| 22 | Rama lista para revisión, NO cerrada | Hecho, con el último commit (el de este informe) sellado | `## Estado` |
+| N1 | Nocturno: nada espera a Aleks; «Pendiente de Aleks» con comandos | Hecho | cabecera |
+| N2 | Nocturno: si el clasificador niega el push, revisor igual y CI por la mañana | Hecho | §8 |
+| N3 | Nocturno: PARADA entera en el informe, commiteado lo que no depende (mínimo el CONFIRM de S-4), «no decidas por mí» | Hecho: decisiones 1, 2, 4 y 5 commiteadas; la 3 en PARADA; lo que la sesión aplicó sin decidir, declarado en §0.8 | §0.8, «Lo que necesito que decidas» |
+| N4 | Nocturno: `MemoryError` → `knowledge validate` y tests de los ficheros tocados | No se dio | — |
+| N5 | Nocturno: todo commiteado en local; la rama no se cierra | Hecho con el último commit (este informe, sellado) | `git status --short` vacío tras él; sin merge, sin tag |
+
+**Desviaciones declaradas:** (1) la decisión 3 no se hizo: PARADA; (2) el orden de los commits es
+1, 2, 4, 5 (§0.8.8); (3) RN-003 y RN-035 cambian de `cita` (§0.8.1, §0.8.7; PARADA punto 4);
+(4) A-51 lleva un RESOLVE_UNKNOWN que el encargo no nombraba (§0.8.3); (5) la fila de A-51 sale de
+Known Ambiguities en la rama, no en el cierre (§0.7 a4); (6) la racha tras la novena es una
+lectura de la sesión escrita en ADR-0077 §5 (§0.8.4); (7) la acción `retirar_ordenes_pendientes`
+no la nombraba el encargo (§0.8.5); (8) `feedback pending` da el CONFIRM de S-4 por REFLEJADO, no
+por «sin forma mecánica» (§1.1); (9) el bloque `ids-inexistentes` en el encargo y en este informe
+(trampa de los ids futuros; §3 fila 3); (10) `TrazaBroker.cancelados_fin_dia` y la línea de la
+racha en `informe_simulacion` son instrumentación que el encargo no pedía, para que los tests
+demuestren lo que pide; (11) las tres guardias de `modelo.py` no se amplían (§0.7 m4) y el test
+de la retirada en la novena ejercita la acción aislada (fila 13).
+
+## 4. Lo que NO cambia, medido
+
+`git diff --stat main...HEAD` (§2 y la tabla de arriba): 35 ficheros con el último commit
+(`scripts/contrato_rama.py`: «35 ficheros dentro del contrato»). Ninguno de `docs/plan/`, `Makefile`, `.claude/`, `knowledge/cases/`,
+`knowledge/corpus/`, `knowledge/evidence/`, `knowledge/cuentas/`, `config/`, `data/manifests/`,
+`src/botsito/engine/broker.py`, `src/botsito/engine/cuenta.py` ni `scripts/`; de
+`docs/validation/` solo este informe. `scripts/contrato_rama.py` en verde en cada `make check`.
+`PROJECT_STATE.md`: 22.700 bytes aprox. (en `main`, 22.508; tope 25.000): la tabla pierde la
+fila de A-51, suben `Current Feature` (que dice ya que A-21 está en PARADA) y el recuento de
+tests (1506 → 1524), y las líneas de Completed Features y Change Log dicen «Archivo 30».
+
+## 5. La lista para la sesión 5, actualizada
+
+La de ACTIVAR-SESION-04.md §5 (sobre §0.e), con los cambios de esta rama:
+
+- **Sale el punto 11 (A-21)** SOLO si la PARADA se responde y A-21 se cierra en esta rama; con
+  la PARADA abierta, sigue («el 11 queda solo para A-21 si la rama de motor no la cierra»).
+- **La confirmación bajista de S-13** ya estaba (ACTIVAR-SESION-04.md §5): «Si la vela de 4 horas
+  sin color viene con un sesgo bajista, ¿también se mantiene el bajista?».
+- **Entra la pregunta del último minuto** (§1.4): «Cuando llega la hora de cerrar -las 11 o las 3
+  en punto- y tienes una orden puesta que no se ha llenado, ¿en qué momento la quitas? (a) a las
+  11 y a las 3 en punto, justo cuando cambia la vela; (b) un minuto antes, cuando cierras la
+  operación que tengas abierta; (c) otra, ¿cuál?».
+- **Entra, solo si el consultor la quiere** (ADR-0077 §5): «Después de la novena pérdida paras el
+  día. Al día siguiente, si la primera operación también pierde, ¿paras otra vez ese día, o la
+  racha empieza de cero al volver? (a) paro otra vez; (b) empiezo de cero; (c) otra, ¿cuál?».
+
+## 6. Líneas preparadas para el commit del contrato del cierre
+
+(`RITUAL.md`, puntos 3 y 4; en la rama no se tocan la Next Action ni la hoja de ruta.)
+
+- **E**: si la PARADA se responde y A-21 entra en esta rama, E sale a HISTORIA como HECHA
+  («Activar la sesión 4. HECHO en trabajo/activar-sesion-04 (spec) y trabajo/activar-sesion-04-motor
+  (motor): …»). Si la rama se cierra con la PARADA abierta, E se queda con una sola línea: «QUEDA
+  A-21 (decisión 3 del encargo de trabajo/activar-sesion-04-motor, en PARADA: la opción
+  `sin_alternancia_de_colores` con el tramo del retroceso, y la retirada de `--diagnostico-a21`)».
+- **F**: propongo «Orden de trabajo: lo siguiente es la rama que responda la PARADA de A-21 si el
+  consultor la responde; después, S (R2.1, julio): el consultor decide antes si es construcción o
+  reservado». La hoja de ruta manda: R2.1 depende de R1.1 y R3.1 de R1.1 y R2.
+- **R1.1**: «Estado: la parte de motor HECHA en trabajo/activar-sesion-04-motor (S-13, A-51, RN-035
+  ventana_fin); A-21 en PARADA [o HECHA]; queda que las «en parte» entren en la hoja de la sesión 5
+  (R4.1)». Su «Qué es» pierde «A-51» de «Falta código».
+- **R3.1**: Refs y «Depende de» sin A-21 [solo si A-21 se cierra aquí]: «hoy lo necesita para A-35 y
+  A-44». Con la PARADA abierta no cambia.
+- **R4.1**: gana la pregunta del último minuto (§5) y pierde A-21 de sus Refs [solo si A-21 se
+  cierra aquí].
+- **Heredados 25 y 30**: el 25 nombra A-21 («A-21 es la zona…»): pierde esa coletilla si A-21 se
+  cierra; el 30 no la nombra (§0.7 m14): solo cambia que el arnés ya no necesitará
+  `--diagnostico-a21`.
+- **Heredado 35** (nota): RN-020 tampoco retira la orden pendiente al llegar a su tope; para cuando
+  se active A-44, lo que hace RN-036 (`retirar_ordenes_pendientes`) es el modelo.
+- **G.2**: `--diagnostico-a47` y `--diagnostico-a27` siguen en la CLI (el encargo lo decide; G.2
+  decía que se retiraban con `--diagnostico-a21`); el token `ambiguo` sin productor es deuda
+  (ADR-0075); `feedback pending` no sabe de una regla con dos CORRECT vivos (RN-003, §1.2).
+- **ADR-0070 §3** dice «hoy A-21, A-35 y A-44»: no se edita; lo dice R3.1.
+- **ADR-0044 §1** (heredado, hallazgo a7 del revisor): sigue diciendo «doble ruptura = AMBIGUO» y
+  su fila del índice no menciona enmienda, aunque ADR-0060 §1 y ahora ADR-0075 lo cambian; no se
+  arregla aquí: queda para el consultor (un recuadro en 0044 y su fila, en la rama que toque).
+- **Known Ambiguities**: A-51 ya está fuera (en la rama); A-21 saldrá en su commit si la PARADA se
+  responde.
+- **Technical Debt**: nada nuevo que no esté en G.2.
+- **Pendiente de Aleks** que sigue: el literal de 1:44:49 (H se queda); la CI de `fix/` (§8).
+
+## 7. Exposiciones
+
+Ninguna. Lo leído: el repositorio, los ítems `ev-v10-*` y `ev-v9-*` ya citables (§0.1) y los
+registros de feedback. Ningún material, ninguna cruda, ningún fotograma; ninguna carpeta de meses
+reservados listada (ni con filtro ni sin él); las rutas de cada comando, literales.
+`HOLDOUT-EXPOSICIONES.md` no cambia. El clon `C:/cm/main` se usó solo para correr tests
+sintéticos de la rama con el código de `main`, sin `data/` (los tests que la necesitan se
+saltaron), y se retira al terminar (`git worktree remove`; `git worktree prune`).
+
+## 8. CI de Linux
+
+El clasificador de Claude Code NO negó el push esta vez: `git push origin
+trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor` salió desde la sesión el
+2026-10-12 («[new branch] … -> fix/activar-sesion-04-motor»), sin rodear nada.
+
+- **Run 38213911827**, sobre 1d39c1ee460fa0d0176ce1c5a9db02d820ecfcc7 (la decisión 5, el último
+  commit de código): `1 failed, 2584 passed, 9 skipped in 218.21s`. El único fallo es el
+  aceptado, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (la rama no es `main` ni
+  lleva tag); los 9 saltados son los que necesitan `data/`, ninguno de esta rama (API de
+  check-runs con el sha literal: `python completed failure`; `gh run view 38213911827 --log-failed`).
+- **El run que cuenta es el del ÚLTIMO commit** (el de este informe con el revisor, que no toca
+  código salvo el nombre de un test): el push lo intento desde la sesión al commitear y, si el
+  clasificador lo niega, lo lanza Aleks («Pendiente de Aleks», punto 3) con
+  `git push origin trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor` y lo
+  lee con `gh api repos/:owner/:repo/commits/<sha de 40 caracteres>/check-runs`.
+
+## 9. Informe del revisor
+
+Lanzado el 2026-10-12 (modelo `opus`, subagente `revisor`) con el informe terminado salvo §8 y §9,
+sobre 1d39c1e más §2-§7 sin commitear, con los cuatro alcances del encargo y la regla de holdout
+(ninguna carpeta madre con filtro). Se pega tal cual: no cita ningún tramo no citable (0
+retiradas).
+
+### 9.1 Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado.** Las notas de RN-035 dicen ahora que las palabras del trader son «no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (la cita) y que «se quita tanto a las 11 como a las 3» es la frase del consultor a la que contestó «Exacto» (SESION-04-EXTRACCION.md §3.6); `spec docs --escribir`. El cuerpo del commit 1d39c1e no se reescribe. Con a2, las dos notas cambian el hash de la spec y `knowledge validate` exige subir la versión: `spec_version` 17.0.0 → **17.0.1** (parche: solo redacción), `spec manifest --escribir`. |
+| a2 | importa | **Arreglado.** ADR-0077 §3, las notas de RN-036 y §1.3 dicen que la exclusión es del `ninguno_de` de RN-011 (sin orden pendiente ni posición viva), no de RN-013 (DESCARTADA); y «no convive … no queda ninguna», sin el «no suele». |
+| a3 | importa | **Arreglado.** §8, §9, `## Estado` y el punto 3 de «Pendiente de Aleks» están; el informe entra en el último commit con su `make check` sellado sobre su árbol. |
+| a4 | menor | **Arreglado.** `test_estructura_m1.py:234-235` en los tres sitios. |
+| a5 | menor | **Arreglado.** 35 ficheros, y las dos líneas «Archivo 30» de `PROJECT_STATE.md` nombradas (§3 fila 7, §4). |
+| a6 | menor | **Arreglado.** `Current Feature` dice que A-21 está EN PARADA. |
+| a7 | menor | **A las líneas del cierre** (§6): ADR-0044 §1 y su fila son heredados; no se tocan aquí. |
+| b1 | importa | **Arreglado.** §2 lleva las salidas del lado de la rama (los `........ [100%]` con su recuento), además de las de `main`. |
+| b2 | importa | **Arreglado.** Las filas 21, 22 y N5 de §3 dicen lo que es verdad con el último commit. |
+| b3 | menor | **Arreglado.** La fila 13 dice «de otra forma» en los dos puntos y la desviación 11 los recoge. |
+| b4 | menor | **Arreglado.** El test se llama `test_la_accion_de_rn036_retira_la_orden_pendiente_que_quede` y su docstring dice por qué es la acción aislada. |
+
+### 9.2 El informe, tal cual
+
+**Informe del revisor · trabajo/activar-sesion-04-motor · 2026-10-12**
+
+Base: `git merge-base main HEAD` = d4b7917. HEAD = 1d39c1e, seis commits, más `docs/validation/ACTIVAR-SESION-04-MOTOR.md` modificado sin commitear (145 líneas añadidas a partir de la 632). Como pediste, reviso la CI de `fix/` como si todavía no existiera.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 3 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | Las notas de RN-035 ponen en boca del trader una frase que dijo el consultor. Dicen «en el instante que dijo el trader («se quita tanto a las 11 como a las 3»)», pero según la extracción esa frase es del consultor y del trader solo es el «Exacto». El instante sí lo sostiene el trader con sus propias palabras («a las 3 o fuera de horario», la `respuesta_literal` de fb-…-45e624c5). Lo que falla es a quién se atribuyen las comillas. | `knowledge/spec/strategy_spec.yaml:946-947` (y su generado `docs/spec/reglas.md:1242`; también el cuerpo del commit 1d39c1e). `docs/validation/SESION-04-EXTRACCION.md:472-474`: «Entonces se quita tanto a las 11 / como a las 3, perfecto. Exacto.» (`ev-v10-005427-1a0867af`; «la última frase es del consultor y el «Exacto» del trader»). |
+| a2 | importa | La afirmación «una pendiente no convive con una posición viva» se apoya en RN-013, que no dice eso. RN-013 trata del esquema único de stop y está DESCARTADA. La condición «ni orden limite pendiente ni posicion viva» es del `cuando` de RN-011, y solo de RN-011. | `docs/adr/0077-…-rn036.md:58` («RN-013 no coloca con una posición abierta»), `knowledge/spec/strategy_spec.yaml:1889` (notas de RN-036, «(RN-011, RN-013)»), `docs/validation/ACTIVAR-SESION-04-MOTOR.md:555`. Frente a `strategy_spec.yaml:1505-1524` (RN-013, «hay un unico esquema de stop…», `estado: DESCARTADA`) y `:1386-1387` (RN-011). Además ADR-0077:57-59 dice «nunca convive» y, en la misma frase, «no suele quedar ninguna». |
+| a3 | importa | El informe todavía no está en su estado final ni commiteado. El sello de `make check` es del árbol de HEAD, así que el commit del informe necesita otro `make check`. | `ACTIVAR-SESION-04-MOTOR.md:780-782` («EN CURSO»); `git status --short` → ` M docs/validation/ACTIVAR-SESION-04-MOTOR.md`; `:24` (punto 3 de «Pendiente de Aleks» sigue como plantilla, sin el comando del push); faltan §8 (CI) y §9 (revisor). `make-check.log:98` «SELLO: … arbol cb42872d…» = `git rev-parse 1d39c1e^{tree}` → cb42872d7db1…: el sello no cubre los cambios sin commitear. |
+| a4 | menor | Una cita con las líneas desplazadas. El test de la guardia de `detectar_esquema` está en :234-235, no en :236-237. | `ACTIVAR-SESION-04-MOTOR.md:246, :339, :655`; `tests/unit/test_estructura_m1.py:234-235` (`with pytest.raises(EstructuraError, match="A-21")` / `detectar_esquema(…, "al_ojo")`). |
+| a5 | menor | Dos recuentos que se quedaron atrás. El informe dice «33 ficheros», pero el contrato da 35. Y dice que de `PROJECT_STATE.md` solo cambian Current Branch/Feature, los tests y la fila de A-51; no menciona las líneas de Completed Features y Change Log («Archivo 29» → «Archivo 30»). | `ACTIVAR-SESION-04-MOTOR.md:674, :679, :714`; `uv run python scripts/contrato_rama.py` → «CONTRATO: 35 ficheros…»; `git diff main...HEAD -- PROJECT_STATE.md` (hunk @@ -177). |
+| a6 | menor | `PROJECT_STATE.md` («solo presente») describe A-21 como parte de la rama («un ADR con `sin_alternancia_de_colores`; sale `--diagnostico-a21`») y no dice que está en PARADA. | `PROJECT_STATE.md:10`. |
+| a7 | menor | Heredado, no es de esta rama. ADR-0044 §1 sigue diciendo «doble ruptura = AMBIGUO» y su fila del índice es «ACTIVE» sin mención de enmienda, aunque ADR-0060 y ahora ADR-0075 cambian eso. Va a las líneas del cierre, no se arregla aquí. | `docs/adr/0044-…md:15-17`; `docs/adr/README.md:50` («\| 0044 \| … \| ACTIVE \|»). |
+
+Comprobado sin hallazgos:
+- **Contrato.** `contrato_rama.py` sale con exit 0 («35 ficheros dentro del contrato … tramo 'R1', 6 comprobaciones»).
+  - `feedback apply --check` da «8 parametros; 0 cambian, 8 ya estaban; --check: no se ha escrito nada».
+  - `knowledge validate` (sin redirigir a fichero) sale todo OK: «36 reglas de spec (31 vigentes…), hash del manifiesto al dia», «172 registros de feedback, historial intacto, commits con Fuente», «453 documentos: todo id citado existe».
+  - El grep `--include=*.py` de `--diagnostico-a21` da las 11 líneas que pega el informe (§2), porque la decisión 3 está en PARADA.
+  - `make check`: `make-check.log` tiene «2594 passed», SELLO sobre el árbol de HEAD y «PICO DE MEMORIA … 293 MiB».
+  - No ejecuté `spec docs --escribir` ni `make check` porque escriben.
+- **Tests.** Los 8 ficheros tocados o afectados (test_racha_perdidas, test_rn035_ventana_fin, test_sesgo_h4, test_huecos_motor, test_kit, test_spec_fidelidad, test_estructura_m1, test_adr) dan **129 passed**.
+- **`Fuente:`.** Los tres commits que tocan `knowledge/spec` (272f59f, 5df5bd5, 1d39c1e) lo llevan en el cuerpo. Todos los ids existen: 7 `fb-*` añadidos (A), ADR-0075 y ADR-0077.
+- **Regímenes de cambio.** En `knowledge/feedback/` solo hay `A` (7 ficheros). Nada en `knowledge/evidence/`, `data/manifests/`, `knowledge/corpus/` ni `knowledge/cases/`. `HISTORIA.md` solo suma (187/0).
+- **Acciones del feedback.** CORRECT sobre la regla RN-003, sin supersede, porque el de la sesión 3 sigue vigente para el color. RESOLVE_UNKNOWN activo sobre la ambigüedad A-51. Cuatro RESOLVE_UNKNOWN sobre parámetros que estaban UNKNOWN. CONFIRM sobre evidencia para S-4.
+- **Ambigüedades.** El diff de `ambiguedades.yaml` solo toca A-51. Va en el mismo commit (5df5bd5) que `docs/spec/ambiguedades.md`, la fila quitada de Known Ambiguities y `test_kit.py`. Ninguna regla citaba A-51 y la hoja no la lleva (`scripts/hoja_preguntas.py:54`).
+- **ADR.** El `## Estado` de 0075 y 0077 es «ACTIVE». ADR-0060 lleva su recuadro (diff, líneas 9-16) y su fila del índice. ADR-0055 no se toca. Ningún informe cerrado se edita (de `docs/validation/` solo cambia este). Next Action, `docs/plan/`, Makefile, `.claude/` y `scripts/` sin cambios.
+- **Las tres guardias de `modelo.py`.** Ya recorren `acumuladores` y las reglas (`modelo.py:382, :415, :879`). Que no se amplíen está declarado (§0.7 m4).
+- **Cifras.** Las formas de RN-036 y RN-035 nombran parámetros, sin números.
+- **`feedback pending`.** Sale «1 pendientes»: `fb-2026-09-29-sesion-03-31fb311f … RN-003 no lo cita todavia`. Es efecto de citar el CORRECT de S-13; está declarado en §0.8.1 y en el punto 4 de la PARADA, y no es «lo activado».
+- **Citas del informe que comprobé.** `sesgo.py:90` en main (el `return … AMBIGUO`), `test_kit.py:316` en main (`{"A-21","A-35","A-44","A-51"}`), `0053-…md:141-147` (§6 «Estado entre días») y `cableado.py:228-236` en main: las cuatro casan. La premisa de la PARADA a1 también se sostiene: `estructura_m1.py:128-138` deja entre el bloque y el breaker solo velas del color de la entrada o sin cuerpo.
+- **Evidencia nueva.** Ningún ítem añadido, así que el punto 10 no aplica.
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 38 hechos (4 de ellos «de otra forma», declarados), 3 parciales, 6 no hechos (3 por la PARADA o por el literal que no llegó, todos declarados; 3 de entrega aún pendientes).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde main d4b7917 con `abrir-rama`, base y CI comprobadas | Hecho | merge-base d4b7917; informe:26-38 |
+| 2 | Contrato con tramo R1, riesgo alto y artefacto | Hecho | `contrato.yaml:1-4` |
+| 3 | Encargo copiado en `docs/encargos/` | Hecho | `docs/encargos/trabajo-activar-sesion-04-motor.md` (135/0), con el añadido nocturno |
+| 4 | Nada fijado se pisa (cada cambio por su régimen) | Hecho | ADR-0075 con recuadro en 0060 y fila; CORRECT sobre RN-003; RESOLVE_UNKNOWN sobre A-51 |
+| 5 | A-49 ABIERTA y sin tocar; ninguna «en parte» se cierra; A-35 y A-44 intactas | Hecho | diff de `ambiguedades.yaml` solo en A-51; `test_kit.py`: RESUELTAS solo gana A-51; `cli.py` sin cambios |
+| 6 | «Casi plana» (RN-007) no se resuelve | Hecho | RN-007 no aparece en el diff de `strategy_spec.yaml` |
+| 7 | RN-020 no cambia | Hecho | no aparece en el diff |
+| 8 | El 9 vive en `parametros.yaml`, no en la forma | Hecho | `parametros.yaml` (racha_perdidas_max, valor 9); forma de RN-036 por nombre |
+| 9 | Sin arnés; tests sintéticos | Hecho | tests con días de 2030 (`test_rn035_ventana_fin.py:6`) |
+| 10 | Nada de material; citas cruzadas con los tramos | Hecho | ver alcance (4) abajo |
+| 11 | Next Action y hoja de ruta sin tocar | Hecho | `docs/plan/` sin diff; Next Action de PS sin cambios |
+| 12 | Makefile, `.claude/` y la guardia sin tocar | Hecho | sin diff |
+| 13 | Informes cerrados con `--diagnostico-a21` sin editar | Hecho | solo cambia ACTIVAR-SESION-04-MOTOR.md |
+| 14 | FASE 0, puntos 1-5 con fichero:línea | Hecho | informe §0.1-§0.5 |
+| 15 | PARADA solo si lo medido contradice una decisión | Hecho | PARADA de la decisión 3, justificada (`estructura_m1.py:128-138`) |
+| 16 | Decisión 1: CONFIRM de S-4 con sus opciones; qué dice `pending` | Hecho | `fb-…-35a080e2`; `pending` lo da por REFLEJADO, medido y dicho (§1.1) |
+| 17 | Decisión 2: ADR-0075, recuadro en 0060 y fila «ACTIVE (con enmienda de ADR-0075…)» | Hecho | ADR-0060 diff; `docs/adr/README.md` (filas 0060 y 0075) |
+| 18 | Decisión 2: neutra = cierre == apertura; reserva alcista; CORRECT de RN-003; notas de RN-033; token `ambiguo` declarado; spec_version mayor | Hecho | `sesgo.py` (`continue`); `strategy_spec.yaml` (RN-003, RN-033, token); manifest 15.9.9 → 16.0.0 |
+| 19 | Decisión 2: tests que cambian de sentido, dos neutras seguidas, neutra tras bajista | Hecho | `test_sesgo_h4.py:80-121`; `test_huecos_motor.py:168-233` |
+| 20 | Decisión 3 (A-21, ADR-0076, retirada de `--diagnostico-a21`, cinco sitios, runbook) | No hecho (PARADA, declarada) | «Lo que necesito que decidas»; `ambiguedades.yaml` y ADR-0055 sin diff |
+| 21 | Decisión 4: ADR-0077 y RN-036 aparte de RN-020; cuatro parámetros CONFIRMED vía apply | Hecho | `parametros.yaml` (los cuatro, fuente feedback); `apply --check` «8 ya estaban» |
+| 22 | Pérdida = cartucho de RN-016, una sola definición | Hecho | `racha.py:66-75`; `primitivas_broker.py` (`_cuenta_como_intento` delega) |
+| 23 | Acumulador persistente fuera de EstadoDia, con `cuenta_diaria` | Hecho | `cableado.py` (`MotorCableado.racha`, reinicio con cuenta_diaria) |
+| 24 | «Día siguiente» con `reloj_sesiones` | Hecho | `racha.py:104-105` |
+| 25 | RN-036 prohíbe y retira la pendiente | Hecho | forma de RN-036 (`retirar_ordenes_pendientes: {}`); `primitivas_broker.py` |
+| 26 | RN-036 sin A-44 ni `--diagnostico-a44` | Hecho | `test_racha_perdidas.py:300` (`motor.tope is None`) |
+| 27 | Las tres guardias en el mismo commit | Hecho de otra forma (declarado §0.7 m4 y §1.3) | `modelo.py:382,415,879` ya recorren `acumuladores` y reglas |
+| 28 | Cinco sitios de A-51 | Hecho | 5df5bd5: yaml, docs, PS, test_kit; la hoja no la lleva |
+| 29 | Tests: 9 pérdidas con BE; ganadora a la octava; fin de semana | Hecho | `test_racha_perdidas.py:117, :142, :154` |
+| 30 | Test: la orden pendiente se retira en la novena | Hecho de otra forma (declarado §1.3) | `test_racha_perdidas.py:202-222` (la acción, aislada); `:290-342` (el noveno día RN-036 dispara sin pendiente) |
+| 31 | Decisión 5: RN-035 gana la rama `ventana_fin` | Hecho | forma de RN-035 (`cualquiera_de […, alcanza_hora {ventana_fin}]`) |
+| 32 | Las notas de RN-035 pierden «LO QUE … NO HACE TODAVIA» | Hecho | diff de `strategy_spec.yaml` (hunk @@ -908) |
+| 33 | Test: RN-035 retira a `ventana_fin` y el cableado no encuentra nada | Hecho | `test_rn035_ventana_fin.py:41-62` |
+| 34 | Hueco del último minuto congelado + pregunta para la sesión 5 | Hecho | `test_rn035_ventana_fin.py:65-92`; informe:627-632 |
+| 35 | Paso 3 de `activar-sesion` en cada commit | Hecho | `Fuente:` en los cuerpos; `apply --check` por respuesta; sello en HEAD |
+| 36 | ADR con plantilla y en el índice | Hecho | 0075 y 0077 con todas las secciones; README |
+| 37 | Tests que rompen con main, «con las dos salidas en el informe» | Parcial | salidas de main: pegadas para las decisiones 2 y 4, citada en línea para la 5. De la rama no se pega ninguna salida: solo «pasan» y «40 passed» (informe:468-469, :645-650) |
+| 38 | `detectar_esquema` con una lectura fuera de LECTURAS_LIMPIA sigue fallando | Hecho (test que ya existía) | `test_estructura_m1.py:234-235` |
+| 39 | Una «en parte» no puede entrar en RESUELTAS | Hecho | `test_kit.py::test_una_en_parte_no_entra_en_resueltas` |
+| 40 | grep de `--diagnostico-a21` vacío | No hecho (PARADA, declarada) | informe:659-664; mi grep da las mismas 11 líneas |
+| 41 | Holdout: sin filtros, exposiciones, sin fechas reservadas | Hecho | HOLDOUT-EXPOSICIONES.md sin diff; las fechas del informe son ids de sesión o de registro |
+| 42 | El literal de 1:44:49 | No hecho (no llegó; declarado) | informe:22-23 |
+| 43 | CI de Linux por `fix/` con el número de run | No hecho (pendiente) | falta §8 |
+| 44 | Informe del revisor pegado al final | No hecho (pendiente) | falta §9 |
+| 45 | Líneas del cierre y lista de la sesión 5 | Hecho (condicionadas a la PARADA) | informe §5 y §6 |
+| 46 | «Rama lista para revisión, NO cerrada» | Parcial | `## Estado` = «EN CURSO» (informe:782) |
+| N1-N5 | Régimen nocturno | Parcial (N5: el informe está sin commitear) | `git status --short` → ` M docs/validation/ACTIVAR-SESION-04-MOTOR.md` |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | El encargo pide «con las dos salidas en el informe» y solo están las de main. Del lado de la rama no hay ninguna salida pegada. | informe:450-471 (decisión 2: solo «40 passed»), :558-572 (decisión 4), :609-611 (decisión 5: la de main citada en línea), tabla :643-651 («pasan»). |
+| b2 | importa | La tabla «El encargo, punto por punto» da por hechas cosas que hoy no lo son. | informe:694 (fila 22, «Hecho», remite a `## Estado`, que dice EN CURSO en :782); :699 (N5, «`git status --short` vacío»), cuando el informe está modificado sin commitear; :693 y :696 remiten a §8 y §9, que no existen. |
+| b3 | menor | La fila 13 de la tabla dice «Hecho» para «tres guardias» y «los cuatro tests», y no «Hecho de otra forma». La explicación está en §0.7 m4 y en §1.3, pero no en la fila ni entre las 10 desviaciones declaradas. | informe:685, :701-710. |
+| b4 | menor | El nombre del test promete «en la novena», pero el test no registra ninguna pérdida: ejerce la acción aislada. El docstring sí es honesto. | `tests/unit/test_racha_perdidas.py:202-222`. |
+
+Los cuatro alcances del encargo:
+- **(1) A-21 y A-51.**
+  - A-51 tiene sus cinco sitios en el commit 5df5bd5: yaml en RESUELTA con 4 parámetros y 3 ítems, `docs/spec/ambiguedades.md`, su fila fuera de PS, `test_kit` (bloqueantes `{"A-21","A-35","A-44"}`) y la hoja, que no la llevaba. Tiene su test (`test_racha_perdidas.py`, 11 funciones) y su `Fuente:`, con 5 `fb-*` y ADR-0077.
+  - A-21 no se tocó: no hay diff en `ambiguedades.yaml` fuera de A-51, ni en `zonas.py`, `diagnostico.py`, `cli.py`, `hoja_preguntas.py` ni ADR-0055.
+  - Ninguna «en parte» se cerró: RESUELTAS solo gana A-51, y `EN_PARTE_SESION_4` siguen ABIERTAS.
+  - A-49 sigue ABIERTA y ningún registro tiene objetivo A-49.
+- **(2) ADR-0060, ADR-0055 y si algo contradice un ADR.**
+  - ADR-0060 lleva su recuadro y su fila. ADR-0055 no se enmienda, coherente con la PARADA.
+  - **ADR-0077 frente a ADR-0053 §6:** no lo contradice. §6 habla del estado de `EstadoDia`, y la racha vive fuera, como ya vivía el `SeguidorTope`.
+  - **ADR-0077 frente a ADR-0063:** suma un lector del reloj de las sesiones, y lo declara.
+  - **Decisión 5 frente a ADR-0066 §4:** amplía RN-035 y no contradice nada; `decision: ADR-0066` se conserva.
+  - **Decisión 5 frente a ADR-0053 §6:** la cancelación del cableado sigue como red de seguridad.
+  - Observación sin gravedad: ADR-0066 §4 no lleva ninguna nota de la segunda rama; la traza vive en la spec y en el encargo.
+  - Hallazgos de este alcance: a2 (cita de RN-013) y a7 (ADR-0044, heredado).
+- **(3) Cada test de motor falla con main.**
+  - Los tests existen y dicen lo que el informe dice: 6 tests de sesgo que cambian de sentido, `test_racha_perdidas.py`, que importa `racha` y por tanto no puede importarse en main, y `test_rn035…`, que exige «RN-035» en `disparadas` de 11-15.
+  - Por el código de main (`sesgo.py:90` daba AMBIGUO; `racha.py` no existe; `cancelados_fin_dia` no existe en main), las salidas pegadas son coherentes.
+  - No recreé el clon.
+- **(4) Ninguna cita cae en un tramo no citable, márgenes incluidos.** Crucé contra los 22 tramos de v10 y los de v9 de `tramos_no_citables.yaml`:
+  - v10 0:49:45-0:50:10 y 0:54:27-0:54:51: fuera (lo más cercano es 0:45:05-0:46:41).
+  - v10 1:06:19-1:06:24 y 1:06:53-1:08:28: el tramo 1:04:56-1:05:29 acaba antes.
+  - v10 1:17:25-1:20:27 y 1:14:42: fuera.
+  - v10 1:40:05-1:41:01 y 1:41:01-1:41:29: entre 1:39:08-1:39:42 y 1:43:42-1:44:21.
+  - 1:44:49 solo se nombra, no se cita: queda 28 s después de 1:44:21.
+  - v9 1:11:28-1:11:37 y 1:19:57: entre 1:07:45-1:07:52 y 1:13:04-1:14:16.
+  - HOLDOUT-EXPOSICIONES.md no cambia.
+  - Ninguna cae dentro.
+
+#### Lo que no pude comprobar
+- Las salidas con el código de main (§1.2, §1.3, §1.4): el clon `C:/cm/main` ya no existe y, como pediste, no lo recreé. Juzgo por lo pegado y por el código de main que leí con `git show`. Ya no está en `.git/worktrees`; solo queda `wt-ci`, del 29-09, ajeno a esta rama.
+- Los `make check` de los commits anteriores: solo existe `make-check.log` del último, cuyo SELLO casa con el árbol de HEAD. Los anteriores los garantizan los hooks, pero no los vi.
+- `spec docs --escribir`, `make check` y `knowledge validate > fichero` escriben: no los ejecuté. Lo que los sustituye es `knowledge validate` a stdout (todo OK), el sello y que `test_spec_docs_generados` está dentro del verde sellado.
+- `git worktree list` lo bloquea el hook de solo lectura; en su lugar leí `.git/worktrees/`.
+- La CI de `fix/activar-sesion-04-motor` (pediste tratarla como si no existiera) y que los tests con `data/` se salten en Linux.
+- El literal de v10 1:44:49 y la cruda de v10: no se abren.
+
+#### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Read del encargo, de `contrato.yaml` y del informe (entero, en dos tramos)
+3. `uv run python scripts/contrato_rama.py`
+4. `git log --format='%h%n%B----' main..HEAD`
+5. (bloqueado por la guardia: un `for`) → `git log --format='%h %s' main..HEAD -- knowledge/spec knowledge/cases`
+6. `git diff --name-status main...HEAD -- knowledge/evidence/ knowledge/feedback/ data/manifests/ knowledge/corpus/ knowledge/cases/`
+7. `git log --name-status --format='== %h %s' main..HEAD`
+8. `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml PROJECT_STATE.md docs/adr/README.md`
+9. `grep -n … docs/runbooks/AMBIGUEDADES.md`; Read de AMBIGUEDADES.md:1-40
+10. Grep de `A-51|A-21` en `scripts/hoja_preguntas.py`; `git diff main...HEAD -- tests/unit/test_kit.py`
+11. `uv run botsito feedback apply --sesion 2026-10-04-sesion-04 --check`
+12. `grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/`
+13. `uv run botsito knowledge validate 2>&1 | tail -30`
+14. `ls -la make-check.log && grep -n -E "SELLO|PICO DE MEMORIA|passed|failed|error" make-check.log | tail -15`
+15. `git rev-parse "1d39c1e^{tree}" && git log -1 --format='%ci' 1d39c1e`
+16. `git diff main...HEAD -- docs/adr/0060-…md`; Read de ADR-0075 y ADR-0077
+17. Grep en `knowledge/corpus/tramos_no_citables.yaml` (video_id, t0, t1); Grep de «margen» en `docs/runbooks/SESION-DE-PREGUNTAS.md`
+18. `ls docs/adr | grep …` y `grep -n "" docs/adr/0053-*.md | sed -n …`; `grep -n … docs/adr/0066-…md`; Read de ADR-0066:75-109
+19. `git diff main...HEAD -- knowledge/spec/parametros.yaml knowledge/spec/spec_manifest.yaml`
+20. Read de `ev-v10-010804-5b6ad1a3`, `ev-v10-010715-fae17215`, `ev-v10-010653-81316808`, `ev-v10-014005-7e2228f4`
+21. Grep en `SESION-04-EXTRACCION.md` (encabezados, «extender|0,5|4,5»); Read de :466-498 y :541-710
+22. `git diff main...HEAD -- knowledge/spec/strategy_spec.yaml`
+23. `cat` de `fb-…-45e624c5.yaml` y `grep -rn "tanto a las 11" …`; Grep de «tanto a las 11» en spec, docs, src y tests
+24. `git diff main...HEAD -- src/botsito/domain/sesgo.py src/botsito/engine/primitivas.py src/botsito/engine/cableado.py`; Read de `src/botsito/engine/racha.py`; `git diff main...HEAD -- src/botsito/engine/primitivas_broker.py`
+25. `grep -n -E "^def test_|…" tests/unit/test_racha_perdidas.py tests/unit/test_rn035_ventana_fin.py tests/unit/test_sesgo_h4.py tests/unit/test_huecos_motor.py`
+26. (bloqueado por la guardia: `PYTHONDONTWRITEBYTECODE=`) → `uv run pytest <8 ficheros> -q -p no:cacheprovider`; luego `… -p no:cacheprovider -rs | tail -8` → «129 passed»
+27. Read de `tests/unit/test_rn035_ventana_fin.py`; `git diff main...HEAD -- tests/unit/test_spec_fidelidad.py tests/unit/test_sesgo_h4.py`; Read de `test_huecos_motor.py:160-234`
+28. `git diff main...HEAD --numstat -- docs/state/HISTORIA.md docs/encargos/…` y recuento de líneas quitadas (0)
+29. `cat` de `fb-…-8e2d728a`, `fb-…-ca0afae6` y `fb-…-35a080e2`; Grep de accion, id, t0 y t1 en `fb-…-{b7040095,ecdd0572,d1792021,fa5ef0f6}`
+30. `grep -n … src/botsito/spec/modelo.py`
+31. `git diff --stat` y hunks del informe sin commitear
+32. `git show main:src/botsito/domain/sesgo.py | sed -n '83,91p'`, `git show main:tests/unit/test_kit.py | sed -n '314,318p'`, `git show main:src/botsito/engine/cableado.py | sed -n '228,236p'`
+33. `sed -n '232,238p' tests/unit/test_estructura_m1.py`; `git diff main...HEAD --stat -- <rutas que no deben cambiar>` (vacío)
+34. `sed -n '128,168p' src/botsito/engine/llenado.py | grep …`
+35. Grep de RN-011 y RN-013 en `strategy_spec.yaml`; Read de :1383-1394 y :1505-1544; Grep de «posicion viva»; Grep de «RN-013» en la spec, ADR-0077, el informe y `reglas.md`
+36. `sed -n '1,30p' docs/adr/0044-…md; grep -n "^| 0044" docs/adr/README.md`
+37. `grep -n … docs/adr/0063-…md`; Read de ADR-0063:42-73
+38. `uv run botsito feedback pending 2>&1 | tail -20`; Grep de «pending» en `.claude/skills/activar-sesion`
+39. Read de `src/botsito/domain/estructura_m1.py:120-164`
+40. Grep de 1:19:57 en `ambiguedades.yaml`; Grep de fechas `20(26|25)-\d\d-\d\d` en el informe
+41. (bloqueado por solo_lectura: `git worktree list`) → `git branch --list && ls .git/worktrees`; `cat .git/worktrees/wt-ci/gitdir …`
+
+Ficheros clave: `knowledge/spec/strategy_spec.yaml` (:946-947, :1889), `docs/adr/0077-la-racha-de-perdidas-seguidas-del-trader-rn036.md` (:57-59), `docs/validation/ACTIVAR-SESION-04-MOTOR.md` (:24, :246, :555, :674, :685, :693-699, :782), `docs/validation/SESION-04-EXTRACCION.md` (:472-474), `tests/unit/test_racha_perdidas.py` (:202-222), `PROJECT_STATE.md` (:10).
+
 ## Estado
 
-EN CURSO (abierta el 2026-10-11).
+Rama lista para revisión, NO cerrada (2026-10-12). Hechas las decisiones 1, 2, 4 y 5, cada una en
+su commit sellado; la decisión 3 (A-21) en PARADA, con sus opciones en «Lo que necesito que
+decidas»; la CI del último commit, pendiente del push de Aleks (§8).

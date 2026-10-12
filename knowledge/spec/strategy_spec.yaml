@@ -943,9 +943,11 @@ reglas:
       de las sesiones («cada uno es un mundo diferente», A-46 RESUELTA), que sostenia el valor
       provisional y sigue en las notas.
       DESDE EL 2026-10-12 LA REGLA TAMBIEN RETIRA A ventana_fin: `alcanza_hora` sobre
-      reloj_sesiones, la misma puerta que la segunda rama de RN-002, en el instante que dijo el
-      trader («se quita tanto a las 11 como a las 3»); «un minuto antes» es frase del consultor y
-      no se fija. La cancelacion del cableado al terminar el dia (ADR-0053 §6) se queda como red de
+      reloj_sesiones, la misma puerta que la segunda rama de RN-002, en el instante que el trader
+      confirmo: sus palabras son «no va a haber órdenes que a lo mejor se pueden tomar a las 3 o
+      fuera de horario» (la cita), y «se quita tanto a las 11 como a las 3» es la frase del
+      consultor a la que contesto «Exacto» (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es
+      frase del consultor y no se fija. La cancelacion del cableado al terminar el dia (ADR-0053 §6) se queda como red de
       seguridad y no encuentra nada (tests/unit/test_rn035_ventana_fin.py). HUECO QUE NO SE
       ARREGLA AQUI, congelado con un test: una orden pendiente puede llenarse en el ultimo minuto
       de la H4 [fin-1, fin), despues de que RN-002 cierre en el evento fin-1, tanto a las 11 como a
@@ -1885,8 +1887,9 @@ reglas:
       (ev-v10-010804-5b6ad1a3). Va APARTE de RN-020, que es el tope porcentual (A-44, ABIERTA) y no
       cambia: la racha no lee nada de A-44 y corre sin --diagnostico-a44. El acumulador persiste
       entre dias (ADR-0053 §6 no lo deja en el estado del dia). Que se retire la orden pendiente es
-      DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec una pendiente no convive con una
-      posicion viva (RN-011, RN-013), asi que es la red de seguridad. Que vale la racha tras la
+      DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec RN-011 solo coloca sin orden
+      pendiente ni posicion viva (su `ninguno_de`), asi que en el cierre de M1 en que cae la
+      novena no queda ninguna pendiente y la retirada es la red de seguridad. Que vale la racha tras la
       novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA DE LA SESION (ADR-0077
       §5), la unica en que caben las tres cosas que dijo. Las 9 vienen de un 0,5 % de riesgo por
       operacion, como el del bot (racha_perdidas_max)

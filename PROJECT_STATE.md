@@ -7,7 +7,7 @@
 trabajo/activar-sesion-04-motor
 
 ## Current Feature
-`trabajo/activar-sesion-04-motor` EN CURSO (R1.1, entrada E; abierta el 2026-10-11 sobre `stable/F37m-activar-sesion-04`): lo que la sesión 4 dejó para el motor: CONFIRM de S-4, S-13 (un ADR que enmienda ADR-0060: la H4 neutra mantiene el sesgo), A-21 (un ADR con `sin_alternancia_de_colores`; sale `--diagnostico-a21`), A-51 (un ADR, RN-036 y cuatro parámetros de la racha de pérdidas) y el tramo `ventana_fin` de RN-035. Encargo docs/encargos/trabajo-activar-sesion-04-motor.md; informe docs/validation/ACTIVAR-SESION-04-MOTOR.md.
+`trabajo/activar-sesion-04-motor` EN CURSO (R1.1, entrada E; abierta el 2026-10-11 sobre `stable/F37m-activar-sesion-04`): lo que la sesión 4 dejó para el motor: CONFIRM de S-4, S-13 (un ADR que enmienda ADR-0060: la H4 neutra mantiene el sesgo), A-21 (un ADR con `sin_alternancia_de_colores` y la salida de `--diagnostico-a21`: EN PARADA, la opción del encargo no filtra), A-51 (un ADR, RN-036 y cuatro parámetros de la racha de pérdidas) y el tramo `ventana_fin` de RN-035. Encargo docs/encargos/trabajo-activar-sesion-04-motor.md; informe docs/validation/ACTIVAR-SESION-04-MOTOR.md.
 
 ## Stable Main State
 cbe8e09 · merge de `trabajo/activar-sesion-04` (tag `stable/F37m-activar-sesion-04`): A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56 abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`, enmienda la decisión 5 de ADR-0064); `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta; spec_version 15.9.9. Sobre `stable/F37l-entorno-code` (11a63ad). Informe docs/validation/ACTIVAR-SESION-04.md; el registro del cierre, al final de HISTORIA.
