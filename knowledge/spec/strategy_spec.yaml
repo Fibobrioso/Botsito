@@ -1890,8 +1890,8 @@ reglas:
       DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec RN-011 solo coloca sin orden
       pendiente ni posicion viva (su `ninguno_de`), asi que en el cierre de M1 en que cae la
       novena no queda ninguna pendiente y la retirada es la red de seguridad. Que vale la racha tras la
-      novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA DE LA SESION (ADR-0077
-      §5), la unica en que caben las tres cosas que dijo. Las 9 vienen de un 0,5 % de riesgo por
+      novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA PROVISIONAL DE LA SESION
+      (ADR-0077 §5; la pregunta va a la sesion 5). Las 9 vienen de un 0,5 % de riesgo por
       operacion, como el del bot (racha_perdidas_max)
     forma:
       cuando:

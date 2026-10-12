@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 17.0.1` · hash `769c692ea0e7…`
+`spec_version 17.0.2` · hash `59f028d8e30d…`
 
 31 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -1287,7 +1287,7 @@
 - **Parametros**: `racha_perdidas_max`, `racha_perdidas_corte`, `racha_perdidas_reinicio`, `racha_perdidas_reanudacion`, `cartucho_criterio`, `reloj_sesiones`
 - **Cita**: `fb-2026-10-04-sesion-04-b7040095` — *«como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo»*
 - **Decision**: `ADR-0077` — dice mas que su cita, y lo declara
-- **Notas**: NACE el 2026-10-12 (rama trabajo/activar-sesion-04-motor, ADR-0077) con la respuesta de la sesion 4 a A-51 (S-8, v10 1:06:53-1:08:28; fb-2026-10-04-sesion-04-8e2d728a): el tope del trader son 9 perdidas SEGUIDAS -ya lo dijo en la sesion 3 al responder A-44, ev-v9-011128-a267338b-, un break even no la corta (ev-v10-010715-fae17215), la racha sigue de un dia a otro y de una semana a otra, y tras la novena vuelve al dia siguiente (ev-v10-010804-5b6ad1a3). Va APARTE de RN-020, que es el tope porcentual (A-44, ABIERTA) y no cambia: la racha no lee nada de A-44 y corre sin --diagnostico-a44. El acumulador persiste entre dias (ADR-0053 §6 no lo deja en el estado del dia). Que se retire la orden pendiente es DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec RN-011 solo coloca sin orden pendiente ni posicion viva (su `ninguno_de`), asi que en el cierre de M1 en que cae la novena no queda ninguna pendiente y la retirada es la red de seguridad. Que vale la racha tras la novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA DE LA SESION (ADR-0077 §5), la unica en que caben las tres cosas que dijo. Las 9 vienen de un 0,5 % de riesgo por operacion, como el del bot (racha_perdidas_max)
+- **Notas**: NACE el 2026-10-12 (rama trabajo/activar-sesion-04-motor, ADR-0077) con la respuesta de la sesion 4 a A-51 (S-8, v10 1:06:53-1:08:28; fb-2026-10-04-sesion-04-8e2d728a): el tope del trader son 9 perdidas SEGUIDAS -ya lo dijo en la sesion 3 al responder A-44, ev-v9-011128-a267338b-, un break even no la corta (ev-v10-010715-fae17215), la racha sigue de un dia a otro y de una semana a otra, y tras la novena vuelve al dia siguiente (ev-v10-010804-5b6ad1a3). Va APARTE de RN-020, que es el tope porcentual (A-44, ABIERTA) y no cambia: la racha no lee nada de A-44 y corre sin --diagnostico-a44. El acumulador persiste entre dias (ADR-0053 §6 no lo deja en el estado del dia). Que se retire la orden pendiente es DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec RN-011 solo coloca sin orden pendiente ni posicion viva (su `ninguno_de`), asi que en el cierre de M1 en que cae la novena no queda ninguna pendiente y la retirada es la red de seguridad. Que vale la racha tras la novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA PROVISIONAL DE LA SESION (ADR-0077 §5; la pregunta va a la sesion 5). Las 9 vienen de un 0,5 % de riesgo por operacion, como el del bot (racha_perdidas_max)
 
 **Forma ejecutable**, tal cual la lee el motor:
 

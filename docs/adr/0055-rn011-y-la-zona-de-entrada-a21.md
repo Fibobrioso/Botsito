@@ -9,6 +9,13 @@ phase: post-F14 (rama `trabajo/preparar-a21`)
 > **ACEPTADO** por el consultor en la orden de cierre de `trabajo/preparar-a21`, tras revisar
 > `docs/validation/PREPARACION-A21.md` y `docs/validation/VERIFICACION-A21.md` (commit `b007abd`).
 
+> **ENMIENDA (2026-10-12, rama `trabajo/activar-sesion-04-motor`, ADR-0076).** A-21 está RESUELTA:
+> el trader dijo en la sesión 4 (S-10) que «limpia» es «sin alternancia de colores», y eso es lo
+> que RN-009 ya filtra (medido con series sintéticas), así que el selector de §2 deja de ser
+> PROVISIONAL con `solo_una_zona_de_control`, sin opción nueva, y la respuesta calzó en una de las
+> dos. **§5 y el Impacto**: `--diagnostico-a21` y el rótulo `.a21=` se retiran; `comprobar_ruta` y
+> la forma compacta del nombre siguen para A-35 y A-44. Lo demás de este ADR no cambia.
+
 ## Decision
 
 ### 1. Los predicados del motor son puros

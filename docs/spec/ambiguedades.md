@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 17.0.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 17.0.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (15)
+## ABIERTA (14)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -17,12 +17,6 @@ Afecta a: `break_even_criterio_ruptura`.
 ### A-16 · cuanto se separan las velas de Oanda de las de Dukascopy · medicion
 
 ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23
-
-### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
-
-Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 1:19:57), NO activada: zona limpia = sin alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo.
-
-Afecta a: `zona_control_limpia`.
 
 ### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
 
@@ -150,7 +144,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (34)
+## RESUELTA (35)
 
 ### A-1 · sesgo H4
 
@@ -241,6 +235,12 @@ Afecta a: `base_calculo_objetivo`, `objetivo_rr`.
 RN-009 afirma que con mas de una zona de control no hay trade, pero el literal que la sostiene dice "por lo general solo buscamos uno", que no es una prohibicion dura. ¿es regla o es tendencia? ¿dos zonas invalidan SIEMPRE el esquema, o hay casos en que opera igual? El valor 1 es un default nuestro hasta que lo diga. RESPONDIDA por escrito el 2026-09-11: es REGLA -"solo 1 zona control bro. si hay 2 se descarta"- y ratifica tambien el descarte, no solo el numero (fb-2026-09-09-sesion-01-1b2203b0)
 
 Afecta a: `zonas_control_max_por_esquema`.
+
+### A-21 · que es una zona de control limpia, sin ruido · **BLOQUEANTE** · pregunta
+
+Antes de entrar dices que la zona de control tiene que ser limpia, sin mucho ruido. ¿Qué miras para decidir que una zona está limpia? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 1:19:57), NO activada: zona limpia = sin alternancia de colores («que no haya una vela verde, una vela bajista, una vela verde, una bajista»). No es ninguna de las dos opciones de zona_control_limpia; anadirla al enum obliga a tocar LECTURAS_LIMPIA del motor, que es rama de codigo. RESUELTA el 2026-10-04 en la sesion 4 (S-10, v10 1:17:25–1:17:31, 1:17:34–1:17:46 y 1:19:57–1:20:27): «¿una zona se limpia si hay velas verdes y rojas o terrenos rojos? ¿Es solo eso? Claro, exacto.»; el numero de velas del retroceso «es indiferente, no importa»; y si se alternan antes de la ruptura del posible punto de breaker «quedaría invalidado» (fb-2026-10-04-sesion-04-22d08cbf). Activada el 2026-10-12 en trabajo/activar-sesion-04-motor (ADR-0076): «sin alternancia de colores» es lo que RN-009 ya filtra, porque cada paso de vela contraria a vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1 rechaza (medido con series sinteticas en compra y en venta), asi que zona_control_limpia = solo_una_zona_de_control, la opcion que ya existia, sin sumar ninguna al enum. Dos casos en que la lectura literal y el motor no coinciden van a la sesion 5: una vela sin cuerpo en medio del retroceso y el breaker contrario que rompe con mecha.
+
+Afecta a: `zona_control_limpia`.
 
 ### A-25 · la vida de la marca de liquidez de M15 · pregunta
 

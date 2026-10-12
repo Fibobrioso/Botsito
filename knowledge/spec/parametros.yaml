@@ -898,19 +898,28 @@ parametros:
     opciones: [solo_una_zona_de_control, sin_mecha_mas_alla_del_extremo]
     descripcion: >-
       la condicion que el trader mira para dar por limpia la zona de control antes de entrar
-      (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Es A-21,
-      ABIERTA y BLOQUEANTE de RN-008, y la responde el trader: este parametro NO le pone valor, solo
-      cierra el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la
+      (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Fue A-21,
+      ABIERTA y BLOQUEANTE de RN-008 hasta el 2026-10-12: este parametro no le ponia valor, solo
+      cerraba el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la
       busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md):
       `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona
       de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la
       entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna
-      mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. Ninguna
-      de las dos DEFINE «limpia»: son las dos candidatas, y otra respuesta PARA
-      (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega salvo en diagnostico
-      etiquetado. Lo lee quien construye las primitivas, no una regla (engine/zonas.py)
-    estado: UNKNOWN
+      mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque.
+      RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si
+      no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto»
+      (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa
+      (ev-v10-011734-fedd3f8e). Eso es `solo_una_zona_de_control`: cada paso de vela contraria a
+      vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1
+      rechaza, medido con series sinteticas en compra y en venta (ADR-0076); no entra ninguna
+      opcion nueva. Lo lee quien construye las primitivas, no una regla (engine/zonas.py); con el
+      valor fijado, --diagnostico-a21 ya no existe
     consumido_por: [F20]
+    estado: CONFIRMED
+    valor: solo_una_zona_de_control
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-48fb5817
   - nombre: zonas_control_max_por_esquema
     categoria: estrategia
     tipo: entero

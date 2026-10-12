@@ -128,11 +128,14 @@ def tomas_del_productor(raiz: Path) -> dict[tuple[str, str], dict[str, Any]]:
     except ParametroDesconocidoError:
         fijado = None
     a47 = None if fijado is not None else entrada.STOP_EN_RUPTURA
-    diag = Diagnostico(CIERRE_VELA_CONTRARIA, A44_SIN_TOPE, A21, 0, a47)
+    # A-21 ya no va en el diagnostico (ADR-0076): la lectura de «limpia» es la del registro
+    diag = Diagnostico(a35=CIERRE_VELA_CONTRARIA, a44=A44_SIN_TOPE, a27=0, a47=a47)
     lectura = diagnostico.lectura_pivote(registro, diag)
     perfil = cableado.perfil_del_repo(raiz, None)
     tope = tope_trader.tope_del_registro(registro, perfil.huso_corte(), diag)
-    limpia = zonas.lectura_limpia(registro, diag.a21)
+    limpia = zonas.lectura_limpia(registro)
+    if limpia != A21:
+        raise SystemExit(f"zona_control_limpia = {limpia}: este guion midio con {A21}")
     tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47)
     carpeta = carpeta_datos(raiz)
     mercado = arnes.dias_de_mercado(

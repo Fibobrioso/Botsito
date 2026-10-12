@@ -8,7 +8,6 @@ from pathlib import Path
 import pytest
 
 from botsito.cases.criterio_fidelidad import cargar_criterio
-from botsito.domain.estructura_m1 import LECTURAS_LIMPIA
 from botsito.domain.pivotes_m15 import LECTURAS as LECTURAS_FORMADO
 from botsito.engine import visor
 from botsito.engine.diagnostico import (
@@ -24,11 +23,8 @@ RAIZ = Path(__file__).resolve().parents[2]
 
 
 def _mas_largas() -> Diagnostico:
-    return Diagnostico(
-        a35=max(LECTURAS_FORMADO, key=len),
-        a44=A44_MARCADOR_CERO,
-        a21=max(LECTURAS_LIMPIA, key=len),
-    )
+    # sin `a21` desde ADR-0076 (A-21 fijada): el rotulo mas largo son las dos etiquetas que quedan
+    return Diagnostico(a35=max(LECTURAS_FORMADO, key=len), a44=A44_MARCADOR_CERO)
 
 
 def test_el_nombre_lleva_la_forma_compacta_y_sigue_siendo_inconfundible() -> None:
@@ -39,7 +35,7 @@ def test_el_nombre_lleva_la_forma_compacta_y_sigue_siendo_inconfundible() -> Non
     assert nombre_etiquetado(Path("a/informe.txt"), ()) == Path("a/informe.txt")
     nombre = nombre_etiquetado(Path("x.html"), _mas_largas().etiquetas).name
     assert nombre.startswith("x.DIAGNOSTICO.") and nombre.endswith(".html")
-    for valor in (_mas_largas().a35, _mas_largas().a44, _mas_largas().a21):
+    for valor in (_mas_largas().a35, _mas_largas().a44):
         assert str(valor) in nombre  # el valor de cada ambiguedad sigue legible en el nombre
     with pytest.raises(ValueError, match="forma esperada"):
         nombre_etiquetado(Path("x.txt"), ("OTRA-COSA",))
@@ -77,10 +73,7 @@ def test_la_cli_se_niega_ante_una_ruta_larga_antes_de_leer_nada(
 
     real = cargar_criterio(RAIZ)
     d = _mas_largas()
-    diag = [
-        "--diagnostico-a35", str(d.a35), "--diagnostico-a44", str(d.a44), "--diagnostico-a21",
-        str(d.a21),
-    ]  # fmt: skip
+    diag = ["--diagnostico-a35", str(d.a35), "--diagnostico-a44", str(d.a44)]
     carpeta = tmp_path / ("c" * max(1, LIMITE_RUTA_WINDOWS - len(str(tmp_path)) - 40))
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.construccion[0], "--salida",

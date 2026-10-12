@@ -2,9 +2,10 @@
 `domain/estructura_m1.py`, con el selector de A-21 como puerta.
 
 Rama `trabajo/preparar-a21`, 2026-09-27. Mismo patron que A-35 y A-44 (ADR-0054): el selector
-`zona_control_limpia` vive en el registro como UNKNOWN hasta que el trader responda A-21; sin fijar
-el motor se niega a correr, salvo en modo diagnostico etiquetado `DIAGNOSTICO-A21-<lectura>`, cuyas
-salidas no cuentan para nada. Con el valor fijado, el diagnostico se rechaza.
+`zona_control_limpia` vivio en el registro como UNKNOWN hasta que el trader respondio A-21 (sesion
+4, S-10; ADR-0076, 2026-10-12): `solo_una_zona_de_control`. Sin fijar el motor se niega a correr;
+el modo diagnostico etiquetado `DIAGNOSTICO-A21-<lectura>` que existio hasta entonces se retiro
+con la respuesta (ADR-0076 enmienda ADR-0055 en esa parte).
 
 El estado del productor vive en `EstadoDia.memoria` (nace y muere con el dia, ADR-0048 §3).
 **Cada sesion es un escenario propio** (A-46 RESUELTA en la sesion 3, «cada uno es un mundo
@@ -72,7 +73,6 @@ from botsito.engine.interprete import (
 )
 
 PARAMETRO_A21 = "zona_control_limpia"
-ETIQUETA_A21 = "DIAGNOSTICO-A21"
 HECHO_LIQUIDEZ_TOMADA = "liquidez_tomada"
 HECHO_SESGO = "sesgo"
 AL_DARSE_EL_ESQUEMA = "al_darse_el_esquema"
@@ -110,11 +110,7 @@ LADO_PIVOTE = {"alcista": BAJO, "bajista": ALTO}
 
 
 class SinLecturaDeZonaError(ValueError):
-    """A-21 sin responder: el motor se niega a correr y lo dice."""
-
-
-class DiagnosticoDeZonaRechazadoError(ValueError):
-    """Se pidio el diagnostico de A-21 con el selector fijado: la corrida cuenta, sin etiqueta."""
+    """`zona_control_limpia` sin valor en el registro: el motor se niega a correr y lo dice."""
 
 
 class DatosDeZona(Protocol):
@@ -142,31 +138,23 @@ class Zona:
         return abs(self.entrada - self.extremo)
 
 
-def lectura_limpia(registro: Registro, a21: str | None) -> str:
-    """La lectura de «limpia» con la que corre el motor: la del registro si el trader la fijo; si
-    no, la del diagnostico pedido; y sin ninguna, la negativa que nombra A-21."""
+def lectura_limpia(registro: Registro) -> str:
+    """La lectura de «limpia» con la que corre el motor: la del registro, que el trader fijo en la
+    sesion 4 (A-21 RESUELTA, ADR-0076). Sin valor, la negativa que lo nombra: desde ADR-0076 no
+    hay modo diagnostico para A-21."""
     try:
         fijada: str | None = registro.opcion(PARAMETRO_A21)
     except ParametroDesconocidoError:
         fijada = None
-    if fijada is not None:
-        if a21 is not None:
-            raise DiagnosticoDeZonaRechazadoError(
-                f"{PARAMETRO_A21} ya esta fijado en {fijada!r} (A-21 respondida): la corrida "
-                "cuenta y no admite --diagnostico-a21"
-            )
-        return fijada
-    if a21 is not None:
-        if a21 not in LECTURAS_LIMPIA:
-            raise ValueError(f"lectura de A-21 {a21!r} no esta en {LECTURAS_LIMPIA}")
-        return a21
-    raise SinLecturaDeZonaError(
-        f"A-21 sin fijar: `{PARAMETRO_A21}` es UNKNOWN en knowledge/spec/parametros.yaml y la spec "
-        "no define que hace limpia una zona de control; el motor se niega a correr. La responde el "
-        "trader (docs/runbooks/ACTIVAR-A35-A44.md). Para ver el embudo en hipotesis, "
-        f"--diagnostico-a21 <{'|'.join(LECTURAS_LIMPIA)}>: corre ETIQUETADO y sin valor para "
-        "ninguna medida"
-    )
+    if fijada is None:
+        raise SinLecturaDeZonaError(
+            f"`{PARAMETRO_A21}` sin valor en knowledge/spec/parametros.yaml: la spec no dice que "
+            "hace limpia una zona de control y el motor se niega a correr (A-21 esta RESUELTA "
+            "desde ADR-0076 con solo_una_zona_de_control; este registro no lo trae)"
+        )
+    if fijada not in LECTURAS_LIMPIA:
+        raise ValueError(f"lectura de A-21 {fijada!r} no esta en {LECTURAS_LIMPIA}")
+    return fijada
 
 
 def _memoria(estado: EstadoDia) -> dict[str, Any]:
@@ -565,7 +553,6 @@ __all__ = [
     "terminar",
     "AL_APARECER_PUNTO_DE_BREAKER",
     "AL_DARSE_EL_ESQUEMA",
-    "ETIQUETA_A21",
     "LADO_ENTRADA",
     "PARAMETRO_A21",
     "EN_CADA_CIERRE_M1",
@@ -576,7 +563,6 @@ __all__ = [
     "PARAMETRO_PUNTO",
     "REFERENCIA_DE_LA_TOMA",
     "ULTIMO_PIVOTE_M1",
-    "DiagnosticoDeZonaRechazadoError",
     "SinLecturaDeZonaError",
     "Zona",
     "lectura_limpia",

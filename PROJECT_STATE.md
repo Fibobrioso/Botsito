@@ -7,7 +7,7 @@
 trabajo/activar-sesion-04-motor
 
 ## Current Feature
-`trabajo/activar-sesion-04-motor` EN CURSO (R1.1, entrada E; abierta el 2026-10-11 sobre `stable/F37m-activar-sesion-04`): lo que la sesión 4 dejó para el motor: CONFIRM de S-4, S-13 (un ADR que enmienda ADR-0060: la H4 neutra mantiene el sesgo), A-21 (un ADR con `sin_alternancia_de_colores` y la salida de `--diagnostico-a21`: EN PARADA, la opción del encargo no filtra), A-51 (un ADR, RN-036 y cuatro parámetros de la racha de pérdidas) y el tramo `ventana_fin` de RN-035. Encargo docs/encargos/trabajo-activar-sesion-04-motor.md; informe docs/validation/ACTIVAR-SESION-04-MOTOR.md.
+`trabajo/activar-sesion-04-motor` EN CURSO (R1.1, entrada E; abierta el 2026-10-11 sobre `stable/F37m-activar-sesion-04`): lo que la sesión 4 dejó para el motor: CONFIRM de S-4, S-13 (un ADR que enmienda ADR-0060: la H4 neutra mantiene el sesgo), A-21 (ADR-0076: «sin alternancia de colores» es lo que RN-009 ya filtra, `solo_una_zona_de_control`, sin opción nueva; sale `--diagnostico-a21`), A-51 (un ADR, RN-036 y cuatro parámetros de la racha de pérdidas) y el tramo `ventana_fin` de RN-035. Encargo docs/encargos/trabajo-activar-sesion-04-motor.md; informe docs/validation/ACTIVAR-SESION-04-MOTOR.md.
 
 ## Stable Main State
 cbe8e09 · merge de `trabajo/activar-sesion-04` (tag `stable/F37m-activar-sesion-04`): A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56 abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`, enmienda la decisión 5 de ADR-0064); `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta; spec_version 15.9.9. Sobre `stable/F37l-entorno-code` (11a63ad). Informe docs/validation/ACTIVAR-SESION-04.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ cbe8e09 · merge de `trabajo/activar-sesion-04` (tag `stable/F37m-activar-sesion
 cbe8e09 · merge: la sesion 4 entra en la spec: siete ambiguedades RESUELTAS, ADR-0073 (A-56) y ADR-0074 (R1.1, parte de spec) · tag stable/F37m-activar-sesion-04
 
 ## Tests Currently Passing
-1524 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1526 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -84,7 +84,6 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 |---|---|---|---|---|
 | A-13 | break even al toque o con cuerpo | pregunta | no | F11, F23, F26 |
 | A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | medicion | no | F26 |
-| A-21 | que es una zona de control limpia, sin ruido | pregunta | si | F12, F20, F26 |
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
 | A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |

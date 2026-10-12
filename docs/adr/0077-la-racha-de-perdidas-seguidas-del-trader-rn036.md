@@ -89,10 +89,13 @@ una ganadora. La lectura que las hace valer a la vez, y que escribe `SeguidorRac
 - la **siguiente pérdida -la décima- vuelve a detener** el día en que caiga, y así hasta que una
   ganadora ponga la racha a cero.
 
-No es lo que el trader dijo palabra por palabra: es la única lectura en que lo que dijo cabe
-entero. Si el consultor o el trader prefieren otra (que la décima no detenga, o que la racha se
-ponga a cero al reanudar), es un parámetro más o un valor distinto de `racha_perdidas_reinicio`,
-con su registro; la pregunta va a la lista de la sesión 5 solo si el consultor la quiere.
+No es lo que el trader dijo palabra por palabra: es una lectura PROVISIONAL de la sesión, la que
+hace caber a la vez las tres cosas que dijo. Hay otras (que la décima no detenga, o que la racha
+se ponga a cero al reanudar): cada una es un parámetro más o un valor distinto de
+`racha_perdidas_reinicio`, con su registro. La pregunta va a la lista de la sesión 5 (decisión
+del consultor del 2026-10-12): «Después de parar por 9 pérdidas seguidas, cuando vuelves al día
+siguiente: (a) empiezas a contar de cero; (b) sigues en 9 y una pérdida más te vuelve a parar ese
+día; (c) otra, ¿cuál?».
 
 ### 6. Lo que no cambia
 

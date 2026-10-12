@@ -38,7 +38,11 @@ llenado y en el cierre, medido en los ticks.
 Solo construccion (abril y agosto), por la compuerta del arnes. Lee el repositorio en --raiz (por
 defecto, el de este script) y escribe SOLO en --salida (.txt y .json).
 
-    uv run python scripts/embudo_77.py --a21 <lectura> --salida <fichero> [--a27 0] [--raiz <repo>]
+    uv run python scripts/embudo_77.py --salida <fichero> [--a21 <lectura>] [--a27 0] \
+        [--raiz <repo>]
+
+Desde ADR-0076 (2026-10-12) la lectura de «limpia» es la fijada en el registro
+(zona_control_limpia); --a21 es opcional y, si se da, tiene que coincidir con ella.
 """
 
 from __future__ import annotations
@@ -372,7 +376,7 @@ def _sin_orden(ev: Any, prohiben: Mapping[str, frozenset[str]], en_sesion: bool)
 
 
 def medir(
-    raiz: Path, a21: str, a27: int, cuenta_diaria: bool = False
+    raiz: Path, a21: str | None, a27: int, cuenta_diaria: bool = False
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     from botsito.cases.criterio_fidelidad import cargar_criterio, compatibles, emparejar
     from botsito.cases.holdout import casos_ocultos
@@ -426,11 +430,16 @@ def medir(
     if fijado not in (None, entrada.STOP_EN_RUPTURA):
         raise SystemExit(f"{entrada.PARAMETRO_A47} = {fijado}: el embudo mide la orden stop")
     a47 = None if fijado is not None else entrada.STOP_EN_RUPTURA
-    diag = Diagnostico(CIERRE_VELA_CONTRARIA, A44_SIN_TOPE, a21, a27, a47)
+    # A-21 ya no va en el diagnostico (ADR-0076): la lectura de «limpia» es la del registro, y
+    # `--a21`, si se da, tiene que coincidir con ella
+    diag = Diagnostico(a35=CIERRE_VELA_CONTRARIA, a44=A44_SIN_TOPE, a27=a27, a47=a47)
     lectura = diagnostico.lectura_pivote(registro, diag)
     perfil = cableado.perfil_del_repo(raiz, None)
     tope = tope_trader.tope_del_registro(registro, perfil.huso_corte(), diag)
-    limpia = zonas.lectura_limpia(registro, diag.a21)
+    limpia = zonas.lectura_limpia(registro)
+    if a21 not in (None, limpia):
+        raise SystemExit(f"--a21 {a21}: zona_control_limpia esta fijado en {limpia} (ADR-0076)")
+    a21 = limpia
     tipo_orden = entrada.lectura_tipo_orden(registro, diag.a47)
     carpeta = carpeta_datos(raiz)
     mercado = arnes.dias_de_mercado(
@@ -1055,7 +1064,12 @@ def informe(filas: Sequence[Mapping[str, Any]], resumen: Mapping[str, Any]) -> s
 
 def main(argv: Sequence[str] | None = None) -> int:
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    p.add_argument("--a21", required=True)
+    p.add_argument(
+        "--a21",
+        default=None,
+        help="la lectura de «limpia»: desde ADR-0076 la fija el registro; si se da, tiene que "
+        "coincidir",
+    )
     p.add_argument("--a27", type=int, default=0)
     p.add_argument("--raiz", type=Path, default=RAIZ_SCRIPT)
     p.add_argument("--salida", type=Path, required=True)

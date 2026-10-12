@@ -1,12 +1,8 @@
 # Encargo · trabajo/activar-sesion-04-motor
 
-Dado por Aleks (consultor) el 2026-10-11. Copiado tal cual (el bloque de abajo no es del encargo:
-declara los ids que el encargo cita y que todavía no existen, como exige `knowledge validate`;
-cada uno sale de aquí en el commit que lo crea):
-
-```ids-inexistentes
-ADR-0076 — el ADR de A-21 que este encargo manda escribir (decisión 3); no existe hasta su commit
-```
+Dado por Aleks (consultor) el 2026-10-11. Copiado tal cual (hasta que existieron, los tres ADR que
+el encargo manda escribir iban declarados aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; cada uno salió del bloque en el commit que lo creó):
 
 > Modelo: Fable 5.1 · Esfuerzo: alto
 >
@@ -133,3 +129,38 @@ Llegó mientras se comprobaba la base (paso 1 de `abrir-rama`). Copiado tal cual
 > - Si la fase 0 da una PARADA, escríbela entera en el informe, deja commiteado lo que no dependa de ella (como mínimo el CONFIRM de S-4) y para ahí: no decidas por mí.
 > - Si el MemoryError de test_ticks se repite, apúntalo con la salida y sigue con knowledge validate y los tests de los ficheros tocados; el make check completo lo lanzo yo por la mañana.
 > - Todo commiteado en la rama local antes de terminar. Nunca se cierra la rama.
+
+## Respuesta del consultor a la PARADA (2026-10-12)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-04-motor (2026-10-12). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). El régimen nocturno ya no rige: si algo medido contradice esta respuesta, PARADA 2.
+>
+> 0. A-21, el tramo de sin_alternancia_de_colores. Error del consultor, dicho con nombre: el tramo del encargo («del fin del bloque de origen a la vela que rompe») no filtra nada, porque bloque_de_origen toma la última vela contraria. Pero tampoco elijo tu (a). El auditor del consultor mide en estructura_m1.py y pivotes_m15.py que cada paso de roja a verde después de primer_impulso forma una zona de control que zonas_de_control cuenta (incluida la que forma un breaker verde). Por eso la alternancia verde-roja-verde-roja antes de la ruptura ya la rechaza zonas_control_max_por_esquema = 1 (RN-009). Tu (a) descartaría todo esquema con dos zonas o más, y el tramo acotado a la última zona queda vacío en el caso típico. Decisión: se mide antes de añadir nada.
+>    a. En el informe, una tabla de series sintéticas, en compra y en venta. Como mínimo:
+>       - el ejemplo de S-10 (verde, roja, verde, roja antes de la ruptura);
+>       - un retroceso limpio de un solo bloque;
+>       - un esquema con una zona de control y el último tramo limpio;
+>       - la alternancia con una vela de cuerpo cero en medio (R, doji, V, R);
+>       - un breaker contrario que rompe con mecha (criterio MECHA).
+>       Por cada serie: lo que da detectar_esquema con solo_una_zona_de_control y el tope de RN-009, y lo que daría una comprobación literal de «ningún cambio de color en el retroceso» (tu (a), solo como medida, sin entrar al enum).
+>    b. Si la única diferencia sale de las series con cuerpo cero o con breaker por mecha: A-21 se cierra con un RESOLVE_UNKNOWN de S-10 con valor solo_una_zona_de_control, la opción que ya existe. No se suma ninguna opción al enum.
+>       - ADR-0076 dice: el trader define «limpia» como «sin alternancia de colores», y eso es lo que RN-009 ya filtra, porque cada alternancia forma una zona de control (con las series de la tabla como prueba). Y deja escrito que el consultor retira la opción nueva y la regla de la vela sin cuerpo que decidió el 2026-10-11.
+>       - Dos preguntas van a la lista de la sesión 5, en el lenguaje del trader, con opciones y «otra, ¿cuál?»: si una vela sin cuerpo en medio del retroceso corta o no el retroceso, y el caso del breaker que rompe con mecha si la tabla lo distingue.
+>    c. Si alguna serie sin cuerpo cero ni mecha da distinto: PARADA 2 con esa serie y no cierres A-21.
+>    En los dos casos, el test que falla con main es semántico: con zona_control_limpia fijada, el motor corre sin --diagnostico-a21; en main, SinLecturaDeZonaError. Las series de la tabla quedan como tests.
+> 1. Diagnostico.a21: (a). Se amplía rutas_permitidas de contrato.yaml con scripts/embudo_77.py, scripts/caja_77_exploratoria.py y scripts/orden_stop_o_limite.py, y se pasan a argumentos con nombre, sin a21. Los cuatro scripts que recorren LECTURAS_LIMPIA no se tocan; dilo. Si al final no entra opción nueva, recorren las mismas dos de siempre.
+> 2. ACTIVAR-A35-A44.md §6: (a), una nota de tres líneas al principio (A-21 RESUELTA con su opción y su ADR, --diagnostico-a21 retirado, el resto de §6 es histórico). La tabla solo gana fila si entra una opción nueva.
+> 3. Los sitios de A-21: dado por bueno. No hay regla que la cite, y se dice; cambian la descripción de zona_control_limpia y el texto de A-21 en ambiguedades.yaml.
+> 4. La cita de RN-003: (a), hecho. Que feedback pending no admita dos CORRECT vivos sobre una regla va a las líneas del cierre como deuda (G.2). Lo mismo para RN-035 si le pasa igual: dilo.
+> 5. §0.8, puntos 1 a 7: aceptados. El 4 (la racha tras la novena) queda como lectura provisional, tal como dice ADR-0077 §5. Corrige en el informe «es la única lectura»: el propio ADR da alternativas. Añade a la lista de la sesión 5: «Después de parar por 9 pérdidas seguidas, cuando vuelves al día siguiente: (a) empiezas a contar de cero; (b) sigues en 9 y una pérdida más te vuelve a parar ese día; (c) otra, ¿cuál?».
+> 6. §8: añade el run 38217718887 sobre 136bb86 (el que la sesión dio al terminar) y comprueba con gh que es de ese sha y que solo falla test_state_check_ok_on_real_repo; si no puedes comprobarlo, dilo. Sale del «Pendiente de Aleks».
+>
+> Después: el commit de A-21, con el paso 3 de activar-sesion entero (registros, feedback apply --check y sin --check, cinco sitios, test_kit.py, spec_version a mano + manifest y docs --escribir, knowledge validate antes de make check, Fuente: en el cuerpo). Luego:
+> - push a fix/activar-sesion-04-motor y el número de run;
+> - revisor (opus) solo sobre lo nuevo, con tres alcances: la tabla de series y el cierre de A-21; el grep de --diagnostico-a21 y de a21 en src/, tests/ y scripts/; y que las líneas del cierre de §6 recogen R3.1 sin A-21, la lista de la sesión 5 actualizada y la deuda del punto 4.
+> Su informe, pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.

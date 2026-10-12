@@ -19,14 +19,14 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from botsito.config.registro import ParametroDesconocidoError, Registro
-from botsito.domain.estructura_m1 import LECTURAS_LIMPIA
 from botsito.domain.pivotes_m15 import LECTURAS
 from botsito.engine.entrada import LECTURAS_A47
 
 PARAMETRO_A35 = "liquidez_m15_pivote_formado"
 ETIQUETA_A35 = "DIAGNOSTICO-A35"
 ETIQUETA_A44 = "DIAGNOSTICO-A44"
-ETIQUETA_A21 = "DIAGNOSTICO-A21"
+# A-21 tuvo su etiqueta (`DIAGNOSTICO-A21-<lectura>`, ADR-0055) hasta que el trader la respondio
+# en la sesion 4 (ADR-0076, 2026-10-12): `zona_control_limpia` esta fijado y no hay diagnostico
 # A-27 (rama trabajo/broker-ordenes-stop, ADR-0057): el stops level del broker, UNKNOWN en el
 # perfil hasta medirlo en la demo de FTMO; en diagnostico, unos puntos hipoteticos
 ETIQUETA_A27 = "DIAGNOSTICO-A27"
@@ -58,11 +58,12 @@ class DiagnosticoRechazadoError(ValueError):
 
 @dataclass(frozen=True)
 class Diagnostico:
-    """Lo que se pidio correr en hipotesis: la lectura de A-35 y el modo de A-44, o nada."""
+    """Lo que se pidio correr en hipotesis: la lectura de A-35, el modo de A-44, el stops level
+    de A-27, el tipo de orden de A-47 y la cuenta diaria, o nada. A-21 ya no va aqui
+    (ADR-0076)."""
 
     a35: str | None = None
     a44: str | None = None
-    a21: str | None = None
     a27: int | None = None  # el stops level hipotetico del broker, en puntos
     a47: str | None = None  # el tipo de la orden de entrada
     cuenta_diaria: bool = False  # la cuenta simulada empieza de cero cada dia
@@ -72,8 +73,6 @@ class Diagnostico:
             raise ValueError(f"lectura de A-35 {self.a35!r} no esta en {LECTURAS}")
         if self.a44 is not None and self.a44 not in MODOS_A44:
             raise ValueError(f"modo de A-44 {self.a44!r} no esta en {MODOS_A44}")
-        if self.a21 is not None and self.a21 not in LECTURAS_LIMPIA:
-            raise ValueError(f"lectura de A-21 {self.a21!r} no esta en {LECTURAS_LIMPIA}")
         if self.a47 is not None and self.a47 not in LECTURAS_A47:
             raise ValueError(f"lectura de A-47 {self.a47!r} no esta en {LECTURAS_A47}")
         if self.a27 is not None and self.a27 < 0:
@@ -86,8 +85,6 @@ class Diagnostico:
             salida.append(f"{ETIQUETA_A35}-{self.a35}")
         if self.a44 is not None:
             salida.append(f"{ETIQUETA_A44}-{self.a44}")
-        if self.a21 is not None:
-            salida.append(f"{ETIQUETA_A21}-{self.a21}")
         if self.a47 is not None:
             salida.append(f"{ETIQUETA_A47}-{self.a47}")
         if self.a27 is not None:
@@ -202,7 +199,6 @@ def comprobar_ruta(ruta: Path) -> Path:
 
 
 __all__ = [
-    "ETIQUETA_A21",
     "A44_MARCADOR",
     "A44_MARCADOR_CERO",
     "A44_SIN_TOPE",

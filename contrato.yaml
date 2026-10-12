@@ -14,6 +14,9 @@ rutas_permitidas:
   - src/botsito/spec/
   - src/botsito/cli.py
   - scripts/hoja_preguntas.py
+  - scripts/embudo_77.py
+  - scripts/caja_77_exploratoria.py
+  - scripts/orden_stop_o_limite.py
   - tests/unit/
   - tests/contract/
   - docs/runbooks/ACTIVAR-A35-A44.md

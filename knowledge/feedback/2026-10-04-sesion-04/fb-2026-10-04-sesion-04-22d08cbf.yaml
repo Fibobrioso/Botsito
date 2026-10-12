@@ -1,0 +1,29 @@
+id: fb-2026-10-04-sesion-04-22d08cbf
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-21
+accion: RESOLVE_UNKNOWN
+respuesta_literal: ¿una zona se limpia si hay velas verdes y rojas o terrenos rojos? ¿Es solo eso? Claro,
+  exacto. [...] Para precisar, en el esquema 2, ¿cuántas velas puede tener como máximo el retroceso? ¿Una,
+  dos, tres, no importa, u otra? Eso es indiferente, no importa [...] se alterna de una vela verde a una
+  vela roja, entonces ya allí ya quedaría invalidado ya, o sea quedaría invalidado porque lo está haciendo
+  antes de la ruptura del posible punto de breaker
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-12 (trabajo/activar-sesion-04-motor, respuesta a la PARADA, punto
+  0.b)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:17:25'
+t1: '1:20:27'
+valor_resultante: 'una zona esta limpia si no hay velas verdes y rojas alternandose antes de la ruptura
+  del posible punto de breaker, y es solo eso; el numero de velas del retroceso no importa. En el motor
+  es solo_una_zona_de_control: cada alternancia forma una zona de control y RN-009 ya la rechaza (ADR-0076)'
+notas: 'S-10 (A-21): ev-v10-011725-3741e266 (sin alternancia, «es solo eso»), ev-v10-011734-fedd3f8e (el
+  numero de velas no importa) y ev-v10-011957-7ebb3453 (la alternancia antes de la ruptura invalida).
+  Lo dijo tambien en la sesion 3 (v9 1:19:57, la lectura candidata de la pregunta). Medido en ADR-0076:
+  la alternancia la filtra ya zonas_control_max_por_esquema = 1 (RN-009); las series con una vela sin
+  cuerpo en medio y el breaker contrario con mecha son las dos preguntas de la sesion 5'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

@@ -274,7 +274,8 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 IDS_RESERVADOS: dict[str, str] = {}
 # Las RESUELTAS, congeladas: las doce de la sesion 1, A-14 y A-20 (por escrito), las diez de la
 # sesion 3, A-29 y A-36 (trabajo/cerrar-a29-a36), A-42 (ADR-0069), las siete de la sesion 4
-# (trabajo/activar-sesion-04) y A-51 (trabajo/activar-sesion-04-motor, ADR-0077). El comentario
+# (trabajo/activar-sesion-04), A-51 (trabajo/activar-sesion-04-motor, ADR-0077) y A-21 (la misma
+# rama, ADR-0076). El comentario
 # de `test_ambiguedades_reales_y_esquema` cuenta la
 # historia de cada una. Una «en parte» NUNCA entra aqui (`test_una_en_parte_no_entra_en_resueltas`).
 RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
@@ -282,6 +283,7 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
         "A-14",
         "A-18",
         "A-20",
+        "A-21",
         "A-25",
         "A-26",
         "A-29",
@@ -345,16 +347,17 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # RESUELTA; y nace A-51, que corta la racha de 9 perdidas seguidas con que el trader contesto
     # A-44: BLOQUEANTE de RN-020 como ella. El 2026-10-12 (rama trabajo/activar-sesion-04-motor,
     # ADR-0077) A-51 queda RESUELTA con la respuesta de la sesion 4 (S-8): RN-036, aparte de
-    # RN-020, y sus cuatro parametros; A-44 sigue ABIERTA y bloqueante.
+    # RN-020, y sus cuatro parametros; A-44 sigue ABIERTA y bloqueante. Y el mismo dia, con la
+    # respuesta del consultor a la PARADA (ADR-0076), A-21 queda RESUELTA por S-10: «limpia» es
+    # «sin alternancia de colores», que RN-009 ya filtra (zona_control_limpia =
+    # solo_una_zona_de_control). Quedan A-35 y A-44.
     bloqueantes = [a for a in ambs if a.bloqueante]
     assert len(bloqueantes) >= 3
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
     # El 2026-10-06 (rama trabajo/activacion-a42, ADR-0069) A-42 queda RESUELTA: las sesiones
     # son las velas H4 de la rejilla de anclaje_h4, y su bloqueo de los meses de invierno pasa a
     # cases/ (la rama de entrada de marzo).
-    assert abiertas == {"A-21", "A-35", "A-44"}, (
-        f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
-    )
+    assert abiertas == {"A-35", "A-44"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
     # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
     # Las doce de la sesion 1, mas A-20 (el trader, por escrito, 2026-09-11) y A-14 (respondida

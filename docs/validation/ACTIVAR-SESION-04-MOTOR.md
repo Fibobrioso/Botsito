@@ -5,29 +5,22 @@ estado sobre el merge cbe8e09, tag `stable/F37m-activar-sesion-04`). Encargo:
 `docs/encargos/trabajo-activar-sesion-04-motor.md` (con el añadido del régimen nocturno de Aleks).
 Tramo: R1 (R1.1 de `docs/plan/HOJA-DE-RUTA.md`; E de la Next Action).
 
-Los ids que este informe cita y todavía no existen (los ADR que el encargo manda escribir; cada uno
-sale de aquí en el commit que lo crea):
-
-```ids-inexistentes
-ADR-0076 — el ADR de A-21 (decisión 3 del encargo); no existe hasta su commit
-```
+(Hasta que existieron, los tres ADR que el encargo manda escribir iban declarados aquí en un
+bloque `ids-inexistentes`, como exige `knowledge validate`; el último, ADR-0076, salió con el
+commit de A-21.)
 
 ## Pendiente de Aleks
 
 Régimen nocturno (añadido de Aleks del 2026-10-11, copiado en el encargo): nada espera; lo que
 depende de él va aquí con su comando exacto.
 
-1. **La PARADA de la decisión 3 (A-21)**, abajo en «Lo que necesito que decidas»: la responde el
-   consultor; hasta entonces A-21 no se toca y `--diagnostico-a21` sigue.
+1. ~~La PARADA de la decisión 3 (A-21)~~: respondida el 2026-10-12 (§10) y aplicada (§1.5).
 2. **El literal de v10 1:44:49** («1 o 2» o «12»), si lo lee con `--crudo` en su terminal: va al
    informe y a las líneas de H; si no llega, H se queda como está.
-3. **La CI del último commit** (§8): el clasificador dejó salir el push de 1d39c1e (run
-   38213911827, solo el fallo aceptado); el commit final (este informe con el revisor) necesita su
-   run: `git push origin trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor`
-   y `gh api repos/:owner/:repo/commits/<sha de 40 caracteres>/check-runs`. Lo intento también
-   desde la sesión; si el clasificador lo niega, queda aquí.
-4. **El punto 4 de la PARADA** (la `cita` de RN-003): hecho como (a); si prefiere (b), es un
-   commit.
+3. ~~La CI del último commit~~: los dos push salieron desde la sesión y sus runs están en §8; el
+   del commit de A-21 y el del informe final, también (§8). Si un push se niega, el comando es
+   `git push origin trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor`.
+4. ~~El punto 4 de la PARADA~~ (la `cita` de RN-003): (a), confirmado por el consultor.
 
 ## Base comprobada al abrir (skill `abrir-rama`, paso 1)
 
@@ -284,9 +277,10 @@ con el precedente o la guardia que la fuerza. Si el consultor quiere otra, se ca
    cuando la racha es ≥ tope Y la pérdida que la puso ahí cayó en el día operativo en curso (el de
    `reloj_sesiones`); al día siguiente la racha sigue en 9 (`reinicio = nunca`) pero la detención
    ha caducado (`reanudacion = dia_siguiente`), y la siguiente pérdida -la décima- vuelve a
-   detener el día en que caiga. Es la única lectura en la que las tres cosas del encargo («tras la
-   novena no se opera más en ese día», «se vuelve … el día siguiente», «la racha sigue de un día a
-   otro») valen a la vez; va escrita en ADR-0077 como lectura de la sesión.
+   detener el día en que caiga. Es una lectura PROVISIONAL de la sesión, la que hace valer a la vez
+   las tres cosas del encargo («tras la novena no se opera más en ese día», «se vuelve … el día
+   siguiente», «la racha sigue de un día a otro»); ADR-0077 §5 da las alternativas y la pregunta
+   va a la sesión 5 (respuesta del consultor del 2026-10-12, punto 5).
 5. **La retirada de RN-036** la hace una acción nueva del vocabulario, `retirar_ordenes_pendientes`
    (sin argumentos: cancela lo que haya pendiente, cero o una, y es idempotente), porque
    `retirar_orden_limite` exige exactamente una pendiente ligada y un `segun`
@@ -638,6 +632,148 @@ Hecha antes que la decisión 3, que está en PARADA (§0.8.8).
   orden se llena en ese último minuto, la operación nace y muere dentro de él.
 - `Fuente: fb-2026-10-04-sesion-04-45e624c5` en el cuerpo del commit.
 
+### 1.5 Decisión 3 · A-21 RESUELTA con la opción que ya existía (ADR-0076, enmienda ADR-0055 §2 y §5)
+
+Aplicación de la respuesta del consultor a la PARADA (§10), punto por punto.
+
+**Punto 0 · la tabla de series, medida antes de tocar nada.** Series sintéticas sobre el tramo
+previo de `test_estructura_m1.py` (la referencia del breaker en 1120 para la compra; para la
+venta, la misma serie en espejo, p → 2100 − p, con el BAJO en 980), `detectar_esquema(…, MECHA,
+tope 1, solo_una_zona_de_control)` frente a la lectura literal «ningún cambio de color en el
+retroceso» (desde la primera vela contraria posterior al primer impulso hasta el bloque de origen
+incluido, saltando las de cuerpo cero; solo como medida):
+
+| serie (tras la toma) | lado | `detectar_esquema`, `solo_una_zona_de_control`, tope 1 | literal «sin alternancia» | |
+|---|---|---|---|---|
+| S-10: V, R, V, R y breaker V | compra | None (2 zonas) | NO limpia (RVR) | igual |
+| S-10: V, R, V, R y breaker V | venta | None (2 zonas) | NO limpia (VRV) | igual |
+| retroceso limpio de un solo bloque (R, R) y breaker V | compra | segundo esquema (1 zona) | limpia (RR) | igual |
+| retroceso limpio de un solo bloque (R, R) y breaker V | venta | segundo esquema (1 zona) | limpia (VV) | igual |
+| una zona de control y el último tramo limpio (V, R, V, breaker V) | compra | segundo esquema (1 zona) | limpia (R) | igual |
+| una zona de control y el último tramo limpio (V, R, V, breaker V) | venta | segundo esquema (1 zona) | limpia (V) | igual |
+| doble alternancia (V, R, V, R, V, R) y breaker V | compra | None (3 zonas) | NO limpia (RVRVR) | igual |
+| doble alternancia (V, R, V, R, V, R) y breaker V | venta | None (3 zonas) | NO limpia (VRVRV) | igual |
+| breaker contrario (R) que rompe con mecha, retroceso limpio (R, R) | compra | primer esquema (0 zonas) | limpia (RRR) | igual |
+| breaker contrario (R) que rompe con mecha, retroceso limpio (R, R) | venta | primer esquema (0 zonas) | limpia (VVV) | igual |
+| alternancia con cuerpo cero en medio (R, doji, V, R) y breaker V | compra | segundo esquema (1 zona) | NO limpia (RVR) | **DISTINTO** |
+| alternancia con cuerpo cero en medio (R, doji, V, R) y breaker V | venta | segundo esquema (1 zona) | NO limpia (VRV) | **DISTINTO** |
+| breaker contrario (R) que rompe con mecha tras alternancia (R, V) | compra | segundo esquema (1 zona) | NO limpia (RVR) | **DISTINTO** |
+| breaker contrario (R) que rompe con mecha tras alternancia (R, V) | venta | segundo esquema (1 zona) | NO limpia (VRV) | **DISTINTO** |
+
+Lo que confirma: cada paso de vela contraria a vela del color de la entrada después del primer
+impulso forma un pivote de M1 en el sentido de la entrada (`pivotes_formados` con
+`CIERRE_VELA_CONTRARIA`) que `zonas_de_control` cuenta, incluido el que forma un breaker del color
+de la entrada; verde-roja-verde-roja son dos zonas o más y `zonas_control_max_por_esquema` = 1
+(RN-009) las rechaza. **Las únicas diferencias salen del doji** (no es de ningún color, no es
+contraria y corta la racha: no forma pivote, `pivotes_m15.py`) **y del breaker contrario que rompe
+con la mecha** (el bloque de origen es el propio breaker, y la zona de la alternancia anterior
+queda dentro del tope). Es el **caso (b)** de la respuesta: no hay PARADA 2. Las series viven en
+`tests/unit/test_a21_series.py` (14 casos parametrizados, compra y venta, con la medida literal al
+lado, más el test de que las diferencias son exactamente esas dos y el de que el enum no gana
+opción). Medido con `scratchpad/medir_series_a21.py` (fuera del repo) y después con los tests.
+
+**Punto 0.b · el cierre.**
+- **Registros:** `fb-2026-10-04-sesion-04-22d08cbf` (RESOLVE_UNKNOWN sobre A-21: v10 1:17:25–1:20:27,
+  los tres ítems de S-10, con la nota de la pregunta dirigida «¿Es solo eso?») y
+  `fb-2026-10-04-sesion-04-48fb5817` (RESOLVE_UNKNOWN sobre `zona_control_limpia` =
+  `solo_una_zona_de_control`, v10 1:17:25–1:17:31). `feedback apply --check`: «9 parametros; 1
+  cambian, 8 ya estaban» (`+ zona_control_limpia 'solo_una_zona_de_control' <- …48fb5817`, SOLO
+  el de esta respuesta); después sin `--check`: CONFIRMED con fuente `feedback`.
+- **ADR-0076** (`docs/adr/0076-limpia-es-sin-alternancia-de-colores-y-lo-filtra-rn009.md`, número
+  comprobado libre en §0.2; plantilla; fila del índice): el trader define «limpia» como «sin
+  alternancia de colores» y eso es lo que RN-009 ya filtra, con la tabla como prueba; deja escrito
+  que el consultor retira la opción nueva y la regla de la vela sin cuerpo del 2026-10-11; enmienda
+  ADR-0055 §2 (el selector deja de ser PROVISIONAL; la respuesta calzó) y §5 (el rótulo `.a21=` y
+  `--diagnostico-a21` se retiran): recuadro en ADR-0055 y su fila «ACTIVE (con enmienda de
+  ADR-0076: A-21 RESUELTA, `--diagnostico-a21` retirado)». Sale `ADR-0076` de los bloques
+  `ids-inexistentes` del encargo y de este informe (ya no queda ninguno: los bloques se retiran y
+  se dice).
+- **Las dos preguntas de la sesión 5** (ADR-0076 §4; §5 de este informe): la vela sin cuerpo en
+  medio del retroceso, y el breaker contrario que rompe con mecha.
+- **Spec:** `zona_control_limpia` CONFIRMED (`apply`), con la descripción nueva (fue A-21 hasta el
+  2026-10-12; lo que dijo el trader; por qué es `solo_una_zona_de_control`; `--diagnostico-a21` ya no
+  existe); A-21 RESUELTA en `ambiguedades.yaml` (párrafo RESUELTA con las tres ventanas y el
+  registro; `evidencia` gana los tres ítems de v10; el comentario del selector, en pasado).
+  `spec_version` **17.0.1 → 17.0.2** (cambia un valor), `spec manifest --escribir`, `spec docs
+  --escribir`.
+- **Cinco sitios** (`AMBIGUEDADES.md`; respuesta, punto 3): el registro de parámetros (`apply`);
+  `ambiguedades.yaml`; **ninguna regla ni término del glosario citaba A-21** (grep vacío en
+  `strategy_spec.yaml` y `glossary.yaml`: ese sitio no existe, y se dice); la tabla de Known
+  Ambiguities de `PROJECT_STATE.md` pierde su fila (`test_kit`), y `Current Feature` lo dice; la
+  hoja de preguntas: A-21 sale de `ORDEN_SESION_02` (`scripts/hoja_preguntas.py`) y de `ORDEN`
+  (`tests/unit/test_hoja_preguntas.py`); `tests/unit/test_kit.py`: A-21 en `RESUELTAS` y las
+  bloqueantes ABIERTAS quedan `{A-35, A-44}`.
+
+**Punto 1 · `Diagnostico.a21` se retira, con los tres guiones.** `contrato.yaml` gana
+`scripts/embudo_77.py`, `scripts/caja_77_exploratoria.py` y `scripts/orden_stop_o_limite.py` en
+`rutas_permitidas` (ampliado a mitad de rama, en este commit, como manda `abrir-rama`). Lo que
+sale: la opción `--diagnostico-a21` de la CLI (`cli.py`, `_opciones_diagnostico`), la línea de la
+cabecera «A-21 en hipótesis», el campo `a21` de `Diagnostico` y su etiqueta (`engine/diagnostico.py`,
+que deja de importar `LECTURAS_LIMPIA`), la rama hipotética de `lectura_limpia` (`engine/zonas.py`:
+ahora `lectura_limpia(registro)` lee el registro y, sin valor, se niega nombrando el parámetro sin
+ofrecer ningún diagnóstico), `ETIQUETA_A21` y `DiagnosticoDeZonaRechazadoError`; `_cabecera_diagnostico`
+pierde el argumento `limpia`. Los tres guiones construyen `Diagnostico` con argumentos con nombre y
+sin `a21`, y leen `lectura_limpia(registro)`: `embudo_77.py` deja `--a21` opcional y se niega si no
+coincide con el registro (su etiqueta `a21` en el resumen pasa a ser la lectura fijada);
+`caja_77_exploratoria.py` se niega si el registro no trae la lectura con que midió; en
+`orden_stop_o_limite.py` el bucle sobre `LECTURAS_LIMPIA` se conserva tal cual y `lim` es la del
+registro en las dos vueltas (se dice: el guion es de una rama cerrada). **Los cuatro guiones que
+recorren `LECTURAS_LIMPIA` no se tocan** (`bloque_de_la_caja.py`, `orden_stop_o_limite.py` en su
+bucle, `verificacion_a21.py`, `verificacion_a21_entradas.py`): como no entra opción nueva, recorren
+las mismas dos de siempre. `mypy src`: sin errores; `ruff`: limpio.
+
+**Punto 2 · el runbook.** `docs/runbooks/ACTIVAR-A35-A44.md` §6 empieza con la nota de tres líneas
+(A-21 RESUELTA con `solo_una_zona_de_control` y ADR-0076; `--diagnostico-a21` retirado; el resto
+de §6 es histórico). La tabla no gana fila: no entró opción nueva.
+
+**Punto 3 · los sitios:** arriba. **Punto 4:** la deuda de `pending` va a las líneas del cierre
+(§6); a RN-035 no le pasa (su cita anterior era un RESOLVE_UNKNOWN sobre A-46, no un CORRECT sobre
+la regla). **Punto 5:** §0.8.4, ADR-0077 §5 y las notas de RN-036 dicen «lectura provisional» y la
+pregunta está en §5 (la racha tras la novena). **Punto 6:** §8.
+
+**Tests.** Cambian de sentido A PROPÓSITO: `test_preparar_a21.py` (el que congelaba «sin fijar»
+y el diagnóstico pasa a `test_con_a21_fijada_el_motor_corre_sin_diagnostico_y_sin_valor_se_niega`:
+`lectura_limpia(registro)` da `solo_una_zona_de_control` con el registro real, `Diagnostico(a21=…)`
+es `TypeError`, y un registro sintético sin valor sigue negándose sin ofrecer diagnóstico; el de la
+CLI pasa a `test_la_cli_no_conoce_diagnostico_a21_y_la_compuerta_de_medida_manda`: argparse rechaza
+`--diagnostico-a21` con código 2 sin escribir nada, y un mes de medida se niega con A-35 y A-44 en
+diagnóstico). Pierden la opción o el rótulo `.a21=`: `test_preparar_a35.py`, `test_visor.py`,
+`test_renovar_cierres.py`, `test_rutas_windows.py` (`_mas_largas` con dos etiquetas),
+`test_selector_orden_stop.py`, `test_cableado.py` (la etiqueta de la cuenta diaria, con A-35).
+Nuevo: `tests/unit/test_a21_series.py`. 1526 funciones de test. **Con el código de `main`** (clon
+`C:/cm/main`, los dos ficheros copiados dentro; después restaurado y el clon retirado):
+
+```
+FAILED tests/unit/test_a21_series.py::test_a21_queda_cerrada_con_la_opcion_que_ya_existia
+E       AssertionError: assert ('UNKNOWN' == 'CONFIRMED'
+FAILED tests/unit/test_preparar_a21.py::test_con_a21_fijada_el_motor_corre_sin_diagnostico_y_sin_valor_se_niega
+E       TypeError: lectura_limpia() missing 1 required positional argument: 'a21'
+FAILED tests/unit/test_preparar_a21.py::test_la_cli_no_conoce_diagnostico_a21_y_la_compuerta_de_medida_manda
+E       Failed: DID NOT RAISE SystemExit
+```
+
+Los tres fallan en `main` por lo semántico que pide la respuesta: allí `zona_control_limpia` es
+UNKNOWN, `lectura_limpia` exige el argumento del diagnóstico (y con el registro real levantaba
+`SinLecturaDeZonaError`, que era el test anterior) y la CLI acepta `--diagnostico-a21`. Los 14 casos
+de la tabla pasan también en `main`: `domain/estructura_m1.py` no cambia, y eso es justo lo que
+demuestra que RN-009 ya filtraba la alternancia.
+
+**El grep** (respuesta, revisor alcance 2): `grep -rn --include=*.py -e "--diagnostico-a21" -e
+"diagnostico.a21" src/ tests/ scripts/` → vacío. `grep -rn --include=*.py -e "a21" src/ tests/
+scripts/` deja solo: nombres de ficheros y funciones de ramas cerradas (`test_preparar_a21.py`,
+`verificacion_a21*.py`, `scripts/buscar_ambiguedades.py` y `test_transcribir_sesion.py`, que
+nombran la ambigüedad), el docstring de `zonas.py` que cuenta la historia, y `--a21` de
+`embudo_77.py` (opcional, tiene que coincidir con el registro). El texto `DIAGNOSTICO-A21-` que
+imprimen `verificacion_a21.py` y `verificacion_a21_entradas.py` en sus encabezados es salida de
+dos de los cuatro guiones que no se tocan. Ese grep no casa la etiqueta ni un `Diagnostico`
+posicional: dos tests que los llevaban (`test_preparar_a35.py`, el prefijo de la CLI;
+`test_selector_orden_stop.py`, el orden de las etiquetas) fallaron al correrlos y se
+corrigieron antes del commit; un segundo grep de `DIAGNOSTICO-A21|a21=` sobre `*.py` lo
+confirma vacío fuera de comentarios, del `type: ignore` del test y de esos dos guiones.
+
+`Fuente: fb-2026-10-04-sesion-04-22d08cbf fb-2026-10-04-sesion-04-48fb5817 ADR-0076` en el cuerpo
+del commit.
+
 ## 2. Tests que rompen a propósito, con el código de `main`
 
 Skill `comparar-con-main`: un clon `git worktree add --detach C:/cm/main main` (ruta corta, por
@@ -654,7 +790,7 @@ checkout en el repo real. Resumen (la salida de cada uno está en su §1.x):
 | 5 (RN-035) | `test_rn035_ventana_fin.py::test_rn035_retira_la_pendiente_a_ventana_fin_y_el_cableado_no_encuentra_nada` | FAILED (`'RN-035' in {'RN-001', 'RN-003', 'RN-011', 'RN-015'}`) | pasa |
 | 5 (hueco) | `test_rn035_ventana_fin.py::test_hueco_la_orden_que_se_llena_en_el_ultimo_minuto_se_cierra_en_el_limite` (×2) | falla solo por `cancelados_fin_dia`, que no existe en `main`: congela el mismo comportamiento | pasan |
 | 1 (A-49) | `test_kit.py::test_una_en_parte_no_entra_en_resueltas` | pasa también en `main` (A-49 ya estaba ABIERTA): es una guardia, no un cambio | pasa |
-| 3 (A-21) | — | en PARADA: no hay test | — |
+| 3 (A-21) | `test_preparar_a21.py::test_con_a21_fijada_el_motor_corre_sin_diagnostico_y_sin_valor_se_niega`; `test_a21_series.py` (la tabla, 14 casos + 2) | `lectura_limpia(registro)` levanta `SinLecturaDeZonaError` (A-21 UNKNOWN en `main`) y `Diagnostico(a21=…)` existe; `test_a21_series` falla en el registro (UNKNOWN) y en A-21 (ABIERTA) | pasan (§1.5) |
 
 Las salidas del lado de la rama (`uv run pytest <ficheros> -q -p no:cacheprovider`, 2026-10-12,
 sobre 1d39c1e más el nombre nuevo del test de b4):
@@ -701,13 +837,13 @@ que lo hace en los ficheros tocados, `test_huecos_motor.py:263`, ya se saltaba s
 | 9 | PARADA solo si lo medido contradice una decisión / `ambiguo` sale de otro sitio / toca «QUÉ NO CAMBIA» | PARADA en la decisión 3 (lo medido la contradice); las otras siguen | §0 (intro), §0.7 a1, «Lo que necesito que decidas» |
 | 10 | Decisión 1: CONFIRM de S-4, primer commit, opciones obligatorias; `pending` «sin forma mecánica» | Hecho (el primer commit de decisión; `pending` lo da REFLEJADO, medido y dicho) | §1.1, commit 12b6684 |
 | 11 | Decisión 2: ADR-0075, enmienda ADR-0060 §1-§2 con recuadro y fila; neutra = cierre == apertura; reserva alcista; CORRECT sobre RN-003 con `ev-v10-014005`; notas de RN-033; token `ambiguo` declarado y descrito; `spec_version` mayor a mano + manifest + docs; motor y tests (los que cambian de sentido, dos neutras, neutra tras bajista) | Hecho (y la segunda reserva «sin otro rango mayor»; RN-003 cita el CORRECT: §0.8.1, PARADA punto 4) | §1.2, commit 272f59f |
-| 12 | Decisión 3: A-21, `sin_alternancia_de_colores`, retirada de `--diagnostico-a21`, ADR-0076 enmienda ADR-0055, cinco sitios, runbook §6 | **No hecho: PARADA** (el tramo del encargo no filtra; `Diagnostico.a21` rompe tres scripts fuera del contrato; el runbook) | «Lo que necesito que decidas», puntos 0-3 |
+| 12 | Decisión 3: A-21, `sin_alternancia_de_colores`, retirada de `--diagnostico-a21`, ADR-0076 enmienda ADR-0055, cinco sitios, runbook §6 | Hecho DE OTRA FORMA, por la respuesta del consultor a la PARADA (§10, punto 0): sin opción nueva, A-21 RESUELTA con `solo_una_zona_de_control` tras medir la tabla de series (caso b); `--diagnostico-a21` retirado; ADR-0076 enmienda ADR-0055 §2 y §5; cinco sitios; nota en el runbook | §1.5, commit de A-21 |
 | 13 | Decisión 4: ADR-0077 y RN-036 aparte de RN-020; cuatro parámetros CONFIRMED vía `apply`; pérdida = la de RN-016; acumulador persistente fuera de `EstadoDia` y con `cuenta_diaria`; «día siguiente» con `reloj_sesiones`; retira la pendiente; sin A-44 ni `--diagnostico-a44` (si no, PARADA); tres guardias; cinco sitios (A-51 no está en la hoja); los cuatro tests | Hecho, y DE OTRA FORMA en dos puntos: las tres guardias no se amplían porque ya recorren reglas y acumuladores (§0.7 m4), y «la orden pendiente se retira en la novena» se demuestra con la acción aislada más el noveno día sin pendiente, porque dentro de la spec no puede quedar una (§1.3). Más el RESOLVE_UNKNOWN sobre A-51 (§0.8.3), la racha tras la novena como lectura de la sesión (§0.8.4) y la acción nueva (§0.8.5) | §1.3, commit 5df5bd5 |
 | 14 | Decisión 5: RN-035 gana la rama `ventana_fin` según `orden_pendiente_al_abrir_sesion`; «un minuto antes» no se fija; notas sin «LO QUE … NO HACE TODAVÍA»; cableado como red de seguridad con test; hueco del último minuto congelado y pregunta para la sesión 5 | Hecho (RN-035 cita el registro de S-5, §0.8.7) | §1.4 |
 | 15 | Por cada commit, el paso 3 de `activar-sesion` entero (registros, `apply --check` solo de esa respuesta y luego `apply`, cinco sitios, `test_kit`, `spec_version` + manifest + docs, código con test, `knowledge validate`, `Fuente:`) | Hecho en 1, 2, 4 y 5 (en 1 y 5 no hay `Fuente:`/`apply` que escriba: se dice) | §1.1-§1.4; `git log --format=%B main..HEAD` |
 | 16 | ADR nuevos con `0000-template.md` y en el índice | Hecho | `docs/adr/README.md:81-82` |
 | 17 | `MemoryError` de `lzma`: repetir una vez; si se repite, el comando a Aleks | No se dio: cinco `make check` en verde a la primera (1078 s, 1012 s, 887 s, 854 s, 846 s; picos 294 MiB) | `make-check.log` de cada commit |
-| 18 | Tests que rompen a propósito, con las dos salidas; `detectar_esquema` fuera de `LECTURAS_LIMPIA`; «en parte» no entra en RESUELTAS; grep vacío; tests con `data/` saltan en CI | Hecho salvo el grep (PARADA) | §2 |
+| 18 | Tests que rompen a propósito, con las dos salidas; `detectar_esquema` fuera de `LECTURAS_LIMPIA`; «en parte» no entra en RESUELTAS; grep vacío; tests con `data/` saltan en CI | Hecho (el grep de `--diagnostico-a21` y `diagnostico.a21`, vacío desde el commit de A-21, §1.5) | §2, §1.5 |
 | 19 | HOLDOUT: ninguna carpeta madre listada con filtro; exposiciones el mismo día; sin fechas reservadas ni resultados | Hecho | §7; la regla va al revisor |
 | 20 | El literal de 1:44:49 si Aleks lo pega | No llegó: H se queda como está | «Pendiente de Aleks» |
 | 21 | ENTREGA: CI por `fix/`, revisor (opus) con cuatro alcances, su informe pegado, líneas del cierre, lista de la sesión 5 | Hecho: run 38213911827 sobre 1d39c1e (§8); el run del último commit lo lanza Aleks (§8); revisor pegado y atendido (§9) | §5, §6, §8, §9 |
@@ -718,8 +854,9 @@ que lo hace en los ficheros tocados, `test_huecos_motor.py:263`, ya se saltaba s
 | N4 | Nocturno: `MemoryError` → `knowledge validate` y tests de los ficheros tocados | No se dio | — |
 | N5 | Nocturno: todo commiteado en local; la rama no se cierra | Hecho con el último commit (este informe, sellado) | `git status --short` vacío tras él; sin merge, sin tag |
 
-**Desviaciones declaradas:** (1) la decisión 3 no se hizo: PARADA; (2) el orden de los commits es
-1, 2, 4, 5 (§0.8.8); (3) RN-003 y RN-035 cambian de `cita` (§0.8.1, §0.8.7; PARADA punto 4);
+**Desviaciones declaradas:** (1) la decisión 3 se hizo de otra forma, por la respuesta del
+consultor a la PARADA (sin opción nueva; §1.5); (2) el orden de los commits es 1, 2, 4, 5 y
+después A-21 (§0.8.8); (3) RN-003 y RN-035 cambian de `cita` (§0.8.1, §0.8.7; PARADA punto 4);
 (4) A-51 lleva un RESOLVE_UNKNOWN que el encargo no nombraba (§0.8.3); (5) la fila de A-51 sale de
 Known Ambiguities en la rama, no en el cierre (§0.7 a4); (6) la racha tras la novena es una
 lectura de la sesión escrita en ADR-0077 §5 (§0.8.4); (7) la acción `retirar_ordenes_pendientes`
@@ -745,51 +882,64 @@ tests (1506 → 1524), y las líneas de Completed Features y Change Log dicen «
 
 La de ACTIVAR-SESION-04.md §5 (sobre §0.e), con los cambios de esta rama:
 
-- **Sale el punto 11 (A-21)** SOLO si la PARADA se responde y A-21 se cierra en esta rama; con
-  la PARADA abierta, sigue («el 11 queda solo para A-21 si la rama de motor no la cierra»).
+- **Sale el punto 11 (A-21)**: A-21 está RESUELTA en esta rama (§1.5, ADR-0076).
+- **Entran las dos preguntas de ADR-0076 §4** (las series en que la lectura literal y el motor
+  no coinciden): «En el retroceso antes de romper el punto de breaker, si en medio hay una vela
+  sin cuerpo (abre y cierra en el mismo precio) entre una verde y una roja, ¿eso cuenta como
+  alternancia y te invalida la entrada, o la vela sin cuerpo no cuenta y sigues? (a) cuenta como
+  alternancia e invalida; (b) no cuenta, sigo como si no estuviera; (c) otra, ¿cuál?»; y «Si la
+  vela que rompe el punto de breaker es una vela contraria que lo pasa solo con la mecha, y antes
+  hubo una verde y una roja alternadas, ¿la entrada vale o queda invalidada? (a) vale, la mecha
+  rompe; (b) queda invalidada por la alternancia; (c) otra, ¿cuál?».
+- **Entra la pregunta de la racha tras la novena** (respuesta del consultor, punto 5): «Después
+  de parar por 9 pérdidas seguidas, cuando vuelves al día siguiente: (a) empiezas a contar de
+  cero; (b) sigues en 9 y una pérdida más te vuelve a parar ese día; (c) otra, ¿cuál?».
 - **La confirmación bajista de S-13** ya estaba (ACTIVAR-SESION-04.md §5): «Si la vela de 4 horas
   sin color viene con un sesgo bajista, ¿también se mantiene el bajista?».
 - **Entra la pregunta del último minuto** (§1.4): «Cuando llega la hora de cerrar -las 11 o las 3
   en punto- y tienes una orden puesta que no se ha llenado, ¿en qué momento la quitas? (a) a las
   11 y a las 3 en punto, justo cuando cambia la vela; (b) un minuto antes, cuando cierras la
   operación que tengas abierta; (c) otra, ¿cuál?».
-- **Entra, solo si el consultor la quiere** (ADR-0077 §5): «Después de la novena pérdida paras el
-  día. Al día siguiente, si la primera operación también pierde, ¿paras otra vez ese día, o la
-  racha empieza de cero al volver? (a) paro otra vez; (b) empiezo de cero; (c) otra, ¿cuál?».
 
 ## 6. Líneas preparadas para el commit del contrato del cierre
 
 (`RITUAL.md`, puntos 3 y 4; en la rama no se tocan la Next Action ni la hoja de ruta.)
 
-- **E**: si la PARADA se responde y A-21 entra en esta rama, E sale a HISTORIA como HECHA
-  («Activar la sesión 4. HECHO en trabajo/activar-sesion-04 (spec) y trabajo/activar-sesion-04-motor
-  (motor): …»). Si la rama se cierra con la PARADA abierta, E se queda con una sola línea: «QUEDA
-  A-21 (decisión 3 del encargo de trabajo/activar-sesion-04-motor, en PARADA: la opción
-  `sin_alternancia_de_colores` con el tramo del retroceso, y la retirada de `--diagnostico-a21`)».
-- **F**: propongo «Orden de trabajo: lo siguiente es la rama que responda la PARADA de A-21 si el
-  consultor la responde; después, S (R2.1, julio): el consultor decide antes si es construcción o
-  reservado». La hoja de ruta manda: R2.1 depende de R1.1 y R3.1 de R1.1 y R2.
-- **R1.1**: «Estado: la parte de motor HECHA en trabajo/activar-sesion-04-motor (S-13, A-51, RN-035
-  ventana_fin); A-21 en PARADA [o HECHA]; queda que las «en parte» entren en la hoja de la sesión 5
-  (R4.1)». Su «Qué es» pierde «A-51» de «Falta código».
-- **R3.1**: Refs y «Depende de» sin A-21 [solo si A-21 se cierra aquí]: «hoy lo necesita para A-35 y
-  A-44». Con la PARADA abierta no cambia.
-- **R4.1**: gana la pregunta del último minuto (§5) y pierde A-21 de sus Refs [solo si A-21 se
-  cierra aquí].
-- **Heredados 25 y 30**: el 25 nombra A-21 («A-21 es la zona…»): pierde esa coletilla si A-21 se
-  cierra; el 30 no la nombra (§0.7 m14): solo cambia que el arnés ya no necesitará
-  `--diagnostico-a21`.
+- **E** sale a HISTORIA como HECHA: «Activar la sesión 4. HECHO en trabajo/activar-sesion-04 (la
+  spec: A-18, A-25, A-30, A-33, A-36, A-39, A-52; ADR-0073, ADR-0074) y en
+  trabajo/activar-sesion-04-motor (el motor: S-13 con ADR-0075; A-21 con ADR-0076; A-51 con
+  ADR-0077 y RN-036; la rama ventana_fin de RN-035; el CONFIRM de S-4). Las «en parte» (A-13,
+  A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) van a la hoja de la sesión
+  5 (R4.1), con las preguntas de ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5».
+- **F**: propongo «Orden de trabajo: lo siguiente es S (R2.1, julio): el consultor decide antes si
+  es construcción o reservado y lo comprueba en el repo; la hoja de ruta manda el orden». La hoja
+  de ruta manda: R2.1 depende de R1.1 y R3.1 de R1.1 y R2.
+- **R1.1**: «Estado: HECHA la parte de spec en trabajo/activar-sesion-04 y la de motor en
+  trabajo/activar-sesion-04-motor (S-13, A-21, A-51, RN-035 ventana_fin); queda que las «en parte»
+  entren en la hoja de la sesión 5 (R4.1)». Su «Qué es» pierde «A-51» de «Falta código» y «A-21 a
+  medias».
+- **R3.1**: Refs y «Depende de» sin A-21: «hoy lo necesita para A-35 y A-44».
+- **R4.1**: gana la pregunta del último minuto, las dos de ADR-0076 §4 y la de la racha tras la
+  novena (§5), y pierde A-21 de sus Refs.
+- **Heredados 25 y 30**: el 25 nombra A-21 («A-21 es la zona…»): pierde esa coletilla; el 30 no
+  la nombra (§0.7 m14): solo cambia que el arnés ya no necesita `--diagnostico-a21` (corre con
+  `--diagnostico-a35` y `--diagnostico-a44`).
 - **Heredado 35** (nota): RN-020 tampoco retira la orden pendiente al llegar a su tope; para cuando
   se active A-44, lo que hace RN-036 (`retirar_ordenes_pendientes`) es el modelo.
 - **G.2**: `--diagnostico-a47` y `--diagnostico-a27` siguen en la CLI (el encargo lo decide; G.2
-  decía que se retiraban con `--diagnostico-a21`); el token `ambiguo` sin productor es deuda
-  (ADR-0075); `feedback pending` no sabe de una regla con dos CORRECT vivos (RN-003, §1.2).
+  decía que se retiraban con `--diagnostico-a21`, que ya salió); el token `ambiguo` sin productor
+  es deuda (ADR-0075); **deuda nueva (respuesta del consultor, punto 4)**: `feedback pending` no
+  admite dos CORRECT vivos sobre una regla (RN-003 cita el de S-13 y el de la sesión 3,
+  `fb-2026-09-29-sesion-03-31fb311f`, sale pendiente, §1.2); a RN-035 no le pasa: su cita
+  anterior, `fb-2026-09-29-sesion-03-5021677e`, es un RESOLVE_UNKNOWN sobre A-46, no un CORRECT
+  sobre la regla, y `pending` da «1 pendientes» en total.
 - **ADR-0070 §3** dice «hoy A-21, A-35 y A-44»: no se edita; lo dice R3.1.
 - **ADR-0044 §1** (heredado, hallazgo a7 del revisor): sigue diciendo «doble ruptura = AMBIGUO» y
   su fila del índice no menciona enmienda, aunque ADR-0060 §1 y ahora ADR-0075 lo cambian; no se
   arregla aquí: queda para el consultor (un recuadro en 0044 y su fila, en la rama que toque).
-- **Known Ambiguities**: A-51 ya está fuera (en la rama); A-21 saldrá en su commit si la PARADA se
-  responde.
+- **Known Ambiguities**: A-21 y A-51 ya están fuera (en la rama; lo exige `test_kit`).
+- **ADR-0070 §3** sigue diciendo «hoy A-21, A-35 y A-44»: desde esta rama la corrida necesita
+  diagnóstico solo para A-35 y A-44; lo dice R3.1, no se edita el ADR.
 - **Technical Debt**: nada nuevo que no esté en G.2.
 - **Pendiente de Aleks** que sigue: el literal de 1:44:49 (H se queda); la CI de `fix/` (§8).
 
@@ -813,11 +963,14 @@ trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor` salió d
   aceptado, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (la rama no es `main` ni
   lleva tag); los 9 saltados son los que necesitan `data/`, ninguno de esta rama (API de
   check-runs con el sha literal: `python completed failure`; `gh run view 38213911827 --log-failed`).
-- **El run que cuenta es el del ÚLTIMO commit** (el de este informe con el revisor, que no toca
-  código salvo el nombre de un test): el push lo intento desde la sesión al commitear y, si el
-  clasificador lo niega, lo lanza Aleks («Pendiente de Aleks», punto 3) con
-  `git push origin trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor` y lo
-  lee con `gh api repos/:owner/:repo/commits/<sha de 40 caracteres>/check-runs`.
+- **Run 38217718887**, sobre 136bb8648b7b9fb1894eca94b3e0d881e530e792 (el informe con el revisor,
+  el commit con que la sesión terminó el 2026-10-12): comprobado con `gh api
+  repos/:owner/:repo/commits/136bb864…/check-runs` (`python completed failure`, ese sha) y `gh run
+  view 38217718887 --log-failed`: `1 failed, 2584 passed, 9 skipped in 296.38s`, y el único fallo es
+  `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, el aceptado. (Respuesta del
+  consultor, punto 6.)
+- **El commit de A-21 y el del informe final** (§1.5, §9.3): sus runs, abajo, con la misma
+  comprobación.
 
 ## 9. Informe del revisor
 
@@ -1021,8 +1174,43 @@ Los cuatro alcances del encargo:
 
 Ficheros clave: `knowledge/spec/strategy_spec.yaml` (:946-947, :1889), `docs/adr/0077-la-racha-de-perdidas-seguidas-del-trader-rn036.md` (:57-59), `docs/validation/ACTIVAR-SESION-04-MOTOR.md` (:24, :246, :555, :674, :685, :693-699, :782), `docs/validation/SESION-04-EXTRACCION.md` (:472-474), `tests/unit/test_racha_perdidas.py` (:202-222), `PROJECT_STATE.md` (:10).
 
+## Respuesta del consultor a la PARADA (2026-10-12)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-04-motor (2026-10-12). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). El régimen nocturno ya no rige: si algo medido contradice esta respuesta, PARADA 2.
+>
+> 0. A-21, el tramo de sin_alternancia_de_colores. Error del consultor, dicho con nombre: el tramo del encargo («del fin del bloque de origen a la vela que rompe») no filtra nada, porque bloque_de_origen toma la última vela contraria. Pero tampoco elijo tu (a). El auditor del consultor mide en estructura_m1.py y pivotes_m15.py que cada paso de roja a verde después de primer_impulso forma una zona de control que zonas_de_control cuenta (incluida la que forma un breaker verde). Por eso la alternancia verde-roja-verde-roja antes de la ruptura ya la rechaza zonas_control_max_por_esquema = 1 (RN-009). Tu (a) descartaría todo esquema con dos zonas o más, y el tramo acotado a la última zona queda vacío en el caso típico. Decisión: se mide antes de añadir nada.
+>    a. En el informe, una tabla de series sintéticas, en compra y en venta. Como mínimo:
+>       - el ejemplo de S-10 (verde, roja, verde, roja antes de la ruptura);
+>       - un retroceso limpio de un solo bloque;
+>       - un esquema con una zona de control y el último tramo limpio;
+>       - la alternancia con una vela de cuerpo cero en medio (R, doji, V, R);
+>       - un breaker contrario que rompe con mecha (criterio MECHA).
+>       Por cada serie: lo que da detectar_esquema con solo_una_zona_de_control y el tope de RN-009, y lo que daría una comprobación literal de «ningún cambio de color en el retroceso» (tu (a), solo como medida, sin entrar al enum).
+>    b. Si la única diferencia sale de las series con cuerpo cero o con breaker por mecha: A-21 se cierra con un RESOLVE_UNKNOWN de S-10 con valor solo_una_zona_de_control, la opción que ya existe. No se suma ninguna opción al enum.
+>       - ADR-0076 dice: el trader define «limpia» como «sin alternancia de colores», y eso es lo que RN-009 ya filtra, porque cada alternancia forma una zona de control (con las series de la tabla como prueba). Y deja escrito que el consultor retira la opción nueva y la regla de la vela sin cuerpo que decidió el 2026-10-11.
+>       - Dos preguntas van a la lista de la sesión 5, en el lenguaje del trader, con opciones y «otra, ¿cuál?»: si una vela sin cuerpo en medio del retroceso corta o no el retroceso, y el caso del breaker que rompe con mecha si la tabla lo distingue.
+>    c. Si alguna serie sin cuerpo cero ni mecha da distinto: PARADA 2 con esa serie y no cierres A-21.
+>    En los dos casos, el test que falla con main es semántico: con zona_control_limpia fijada, el motor corre sin --diagnostico-a21; en main, SinLecturaDeZonaError. Las series de la tabla quedan como tests.
+> 1. Diagnostico.a21: (a). Se amplía rutas_permitidas de contrato.yaml con scripts/embudo_77.py, scripts/caja_77_exploratoria.py y scripts/orden_stop_o_limite.py, y se pasan a argumentos con nombre, sin a21. Los cuatro scripts que recorren LECTURAS_LIMPIA no se tocan; dilo. Si al final no entra opción nueva, recorren las mismas dos de siempre.
+> 2. ACTIVAR-A35-A44.md §6: (a), una nota de tres líneas al principio (A-21 RESUELTA con su opción y su ADR, --diagnostico-a21 retirado, el resto de §6 es histórico). La tabla solo gana fila si entra una opción nueva.
+> 3. Los sitios de A-21: dado por bueno. No hay regla que la cite, y se dice; cambian la descripción de zona_control_limpia y el texto de A-21 en ambiguedades.yaml.
+> 4. La cita de RN-003: (a), hecho. Que feedback pending no admita dos CORRECT vivos sobre una regla va a las líneas del cierre como deuda (G.2). Lo mismo para RN-035 si le pasa igual: dilo.
+> 5. §0.8, puntos 1 a 7: aceptados. El 4 (la racha tras la novena) queda como lectura provisional, tal como dice ADR-0077 §5. Corrige en el informe «es la única lectura»: el propio ADR da alternativas. Añade a la lista de la sesión 5: «Después de parar por 9 pérdidas seguidas, cuando vuelves al día siguiente: (a) empiezas a contar de cero; (b) sigues en 9 y una pérdida más te vuelve a parar ese día; (c) otra, ¿cuál?».
+> 6. §8: añade el run 38217718887 sobre 136bb86 (el que la sesión dio al terminar) y comprueba con gh que es de ese sha y que solo falla test_state_check_ok_on_real_repo; si no puedes comprobarlo, dilo. Sale del «Pendiente de Aleks».
+>
+> Después: el commit de A-21, con el paso 3 de activar-sesion entero (registros, feedback apply --check y sin --check, cinco sitios, test_kit.py, spec_version a mano + manifest y docs --escribir, knowledge validate antes de make check, Fuente: en el cuerpo). Luego:
+> - push a fix/activar-sesion-04-motor y el número de run;
+> - revisor (opus) solo sobre lo nuevo, con tres alcances: la tabla de series y el cierre de A-21; el grep de --diagnostico-a21 y de a21 en src/, tests/ y scripts/; y que las líneas del cierre de §6 recogen R3.1 sin A-21, la lista de la sesión 5 actualizada y la deuda del punto 4.
+> Su informe, pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
 ## Estado
 
-Rama lista para revisión, NO cerrada (2026-10-12). Hechas las decisiones 1, 2, 4 y 5, cada una en
-su commit sellado; la decisión 3 (A-21) en PARADA, con sus opciones en «Lo que necesito que
-decidas»; la CI del último commit, pendiente del push de Aleks (§8).
+Rama lista para revisión, NO cerrada (2026-10-12). Hechas las cinco decisiones, cada una en su
+commit sellado: la 3 (A-21), con la respuesta del consultor a la PARADA (§10), sin opción nueva
+(§1.5). La CI de cada push, en §8.
