@@ -434,6 +434,13 @@ acciones:
       retirada sigue siendo del cableado (ADR-0053 §6): la rama de RN-035 que la escriba es de
       trabajo/activar-sesion-04-motor
     argumentos: [de, segun]
+  retirar_ordenes_pendientes:
+    descripcion: >-
+      cancela en el broker toda orden de entrada pendiente, haya una o ninguna (idempotente). La usa
+      RN-036 al alcanzarse la racha de perdidas (ADR-0077 §3, decision del consultor): el trader
+      deja de operar ese dia y una orden viva la llenaria el broker por ticks. Va aparte de
+      `retirar_orden_limite`, que exige exactamente una pendiente ligada y un selector
+    argumentos: []
   abrir_escenario:
     descripcion: >-
       la toma que RN-004 acaba de dar abre un escenario si es de una liquidez NUEVA -otro pivote
@@ -538,6 +545,12 @@ tokens:
     clase: duracion
   hasta_el_corte_siguiente:
     descripcion: la detencion dura hasta el siguiente corte del dia o de la semana de riesgo
+    clase: duracion
+  hasta_el_dia_siguiente:
+    descripcion: >-
+      la detencion dura lo que queda del dia OPERATIVO -el del reloj de las sesiones, ADR-0063- en
+      que cayo la perdida que alcanzo la racha; se vuelve en la primera sesion del dia siguiente
+      (racha_perdidas_reanudacion, ADR-0077)
     clase: duracion
   permanente:
     descripcion: >-
@@ -706,6 +719,17 @@ hechos:
     valores: [hasta_cartuchos_reinicio]
     produce: [RN-016]
     consume: [RN-001, RN-016]
+  detenido_por_racha:
+    descripcion: >-
+      la racha de perdidas seguidas del trader ha llegado a racha_perdidas_max y no se abre mas en
+      este dia operativo (RN-036, A-51; ADR-0077). Dura lo que queda del dia: el estado de
+      estrategia nace de cero cada dia (ADR-0053 §6) y el acumulador `racha_perdidas`, que
+      persiste, lo vuelve a decir mientras dure la detencion. Aparte de `detenido_por_tope` (el tope
+      porcentual, A-44) y de `detenido_por_cartuchos` (los intentos de una liquidez)
+    origen: regla
+    valores: [hasta_el_dia_siguiente]
+    produce: [RN-036]
+    consume: [RN-036]
   liquidez_tomada:
     descripcion: >-
       la liquidez de M15 marcada ya se ha tomado con cuerpo (RN-004). Es la PRECONDICION de los
@@ -776,6 +800,17 @@ acumuladores:
     base: cartucho_criterio
     reinicia_con: cartuchos_reinicio
     cita: fb-2026-09-09-sesion-01-e3eedcaa
+  racha_perdidas:
+    descripcion: >-
+      perdidas seguidas del trader desde la ultima ganadora, contando en TODOS los dias de la
+      corrida: la lleva `engine/racha.py` junto a la cuenta, nunca en el estado del dia (ADR-0077
+      §3). Una perdida es lo mismo que gasta un cartucho en RN-016 (la base, cartucho_criterio); un
+      break even no suma ni corta; solo una ganadora la pone a cero (racha_perdidas_corte); el
+      calendario no la reinicia (racha_perdidas_reinicio = nunca). Da SI contra racha_perdidas_max
+      solo en el dia operativo en que cayo la perdida que la alcanzo (ADR-0077 §5)
+    base: cartucho_criterio
+    reinicia_con: racha_perdidas_reinicio
+    cita: fb-2026-10-04-sesion-04-8e2d728a
 
 reglas:
   # ---------------------------------------------------------------- marco y sesgo
@@ -1800,6 +1835,54 @@ reglas:
         prohibe: [abrir_operacion]
         hace:
           - fijar: {hecho: detenido_por_tope, a: hasta_el_corte_siguiente}
+    clase: gate
+    estado: VIGENTE
+
+  - id: RN-036
+    titulo: tras la racha de perdidas seguidas del trader no se opera mas ese dia
+    cuando: >-
+      la racha de perdidas seguidas -las que gastan cartucho segun cartucho_criterio; el break
+      even no la corta- llega a racha_perdidas_max, o el dia ya esta detenido por ella
+    entonces: >-
+      se prohibe abrir operacion lo que queda del dia operativo (reloj_sesiones) y se retira la
+      orden pendiente que quede; se vuelve en la primera sesion del dia siguiente
+      (racha_perdidas_reanudacion) con la racha intacta (racha_perdidas_reinicio = nunca), que solo
+      una ganadora pone a cero (racha_perdidas_corte)
+    parametros:
+      - racha_perdidas_max
+      - racha_perdidas_corte
+      - racha_perdidas_reinicio
+      - racha_perdidas_reanudacion
+      - cartucho_criterio
+      - reloj_sesiones
+    cita: fb-2026-10-04-sesion-04-b7040095
+    literal: >-
+      como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo
+    decision: ADR-0077
+    notas: >-
+      NACE el 2026-10-12 (rama trabajo/activar-sesion-04-motor, ADR-0077) con la respuesta de la
+      sesion 4 a A-51 (S-8, v10 1:06:53-1:08:28; fb-2026-10-04-sesion-04-8e2d728a): el tope del
+      trader son 9 perdidas SEGUIDAS -ya lo dijo en la sesion 3 al responder A-44,
+      ev-v9-011128-a267338b-, un break even no la corta (ev-v10-010715-fae17215), la racha sigue de
+      un dia a otro y de una semana a otra, y tras la novena vuelve al dia siguiente
+      (ev-v10-010804-5b6ad1a3). Va APARTE de RN-020, que es el tope porcentual (A-44, ABIERTA) y no
+      cambia: la racha no lee nada de A-44 y corre sin --diagnostico-a44. El acumulador persiste
+      entre dias (ADR-0053 §6 no lo deja en el estado del dia). Que se retire la orden pendiente es
+      DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec una pendiente no convive con una
+      posicion viva (RN-011, RN-013), asi que es la red de seguridad. Que vale la racha tras la
+      novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA DE LA SESION (ADR-0077
+      §5), la unica en que caben las tres cosas que dijo. Las 9 vienen de un 0,5 % de riesgo por
+      operacion, como el del bot (racha_perdidas_max)
+    forma:
+      cuando:
+        cualquiera_de:
+          - alcanza_tope: {acumulador: racha_perdidas, tope: racha_perdidas_max}
+          - hecho: detenido_por_racha
+      entonces:
+        prohibe: [abrir_operacion]
+        hace:
+          - fijar: {hecho: detenido_por_racha, a: hasta_el_dia_siguiente}
+          - retirar_ordenes_pendientes: {}
     clase: gate
     estado: VIGENTE
 

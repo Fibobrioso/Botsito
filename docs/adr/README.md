@@ -79,4 +79,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0073 | La base del objetivo y el stop los fija el testimonio del trader; lo que el material contradice es una medición abierta (A-56), y ADR-0040 queda enmendado | ACTIVE (enmienda ADR-0040) |
 | 0074 | El 1 de la caja de la orden stop se recalcula en cada cierre de M1 hasta el llenado: `caja_se_fija` = `en_cada_cierre_m1` | ACTIVE (enmienda la decisión 5 de ADR-0064; DEFAULT_AMBIGUOUS bajo A-49) |
 | 0075 | Una H4 neutra con doble ruptura no decide el sesgo: se mantiene el anterior | ACTIVE (enmienda ADR-0060 §1 y §2) |
+| 0077 | La racha de pérdidas seguidas del trader: RN-036, aparte de RN-020, con cuatro parámetros; A-51 RESUELTA | ACTIVE (la lectura de la sesión sobre la racha tras la novena, §5) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

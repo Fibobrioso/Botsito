@@ -2,9 +2,9 @@
 
 # Reglas de la operativa
 
-`spec_version 16.0.0` · hash `8b1bf95f9853…`
+`spec_version 16.1.0` · hash `f99acee2528a…`
 
-30 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
+31 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
 ## Vigentes
 
@@ -1269,6 +1269,52 @@
 }
 ```
 
+### RN-036 · tras la racha de perdidas seguidas del trader no se opera mas ese dia
+
+- **Clase**: `gate`
+- **Cuando**: la racha de perdidas seguidas -las que gastan cartucho segun cartucho_criterio; el break even no la corta- llega a racha_perdidas_max, o el dia ya esta detenido por ella
+- **Entonces**: se prohibe abrir operacion lo que queda del dia operativo (reloj_sesiones) y se retira la orden pendiente que quede; se vuelve en la primera sesion del dia siguiente (racha_perdidas_reanudacion) con la racha intacta (racha_perdidas_reinicio = nunca), que solo una ganadora pone a cero (racha_perdidas_corte)
+- **Parametros**: `racha_perdidas_max`, `racha_perdidas_corte`, `racha_perdidas_reinicio`, `racha_perdidas_reanudacion`, `cartucho_criterio`, `reloj_sesiones`
+- **Cita**: `fb-2026-10-04-sesion-04-b7040095` — *«como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo»*
+- **Decision**: `ADR-0077` — dice mas que su cita, y lo declara
+- **Notas**: NACE el 2026-10-12 (rama trabajo/activar-sesion-04-motor, ADR-0077) con la respuesta de la sesion 4 a A-51 (S-8, v10 1:06:53-1:08:28; fb-2026-10-04-sesion-04-8e2d728a): el tope del trader son 9 perdidas SEGUIDAS -ya lo dijo en la sesion 3 al responder A-44, ev-v9-011128-a267338b-, un break even no la corta (ev-v10-010715-fae17215), la racha sigue de un dia a otro y de una semana a otra, y tras la novena vuelve al dia siguiente (ev-v10-010804-5b6ad1a3). Va APARTE de RN-020, que es el tope porcentual (A-44, ABIERTA) y no cambia: la racha no lee nada de A-44 y corre sin --diagnostico-a44. El acumulador persiste entre dias (ADR-0053 §6 no lo deja en el estado del dia). Que se retire la orden pendiente es DECISION DEL CONSULTOR (ADR-0077 §3): dentro de la spec una pendiente no convive con una posicion viva (RN-011, RN-013), asi que es la red de seguridad. Que vale la racha tras la novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA DE LA SESION (ADR-0077 §5), la unica en que caben las tres cosas que dijo. Las 9 vienen de un 0,5 % de riesgo por operacion, como el del bot (racha_perdidas_max)
+
+**Forma ejecutable**, tal cual la lee el motor:
+
+```json
+{
+  "cuando": {
+    "cualquiera_de": [
+      {
+        "alcanza_tope": {
+          "acumulador": "racha_perdidas",
+          "tope": "racha_perdidas_max"
+        }
+      },
+      {
+        "hecho": "detenido_por_racha"
+      }
+    ]
+  },
+  "entonces": {
+    "hace": [
+      {
+        "fijar": {
+          "a": "hasta_el_dia_siguiente",
+          "hecho": "detenido_por_racha"
+        }
+      },
+      {
+        "retirar_ordenes_pendientes": {}
+      }
+    ],
+    "prohibe": [
+      "abrir_operacion"
+    ]
+  }
+}
+```
+
 ## Descartadas
 
 ### RN-013 · hay un unico esquema de stop, y vale para cualquier esquema de entrada
@@ -1348,7 +1394,7 @@
 - **`vence_vela_h4`** — a la vela H4 que contiene el minuto que acaba de cerrar le queda `antelacion` o menos para terminar, en la rejilla H4 que fija `anclaje` -la del sesgo, la que construye la agregacion de velas- y no en la de la ventana operativa. Vale tambien en el propio limite: lo que se llene en el ultimo minuto de la vela se cierra antes de que empiece la siguiente (ADR-0060) Argumentos: `anclaje`, `antelacion`. Fuente: `reloj`. Cita `fb-2026-09-29-sesion-03-c38c4aef`: *«siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas»*.
 - **`zonas_desarrolladas_superan`** — el esquema desarrolla mas zonas de control de las admitidas Argumentos: `tope`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-1b2203b0`: *«solo 1 zona control bro. si hay 2 se descarta»*.
 
-### acciones (17)
+### acciones (18)
 
 - **`abrir_escenario`** — la toma que RN-004 acaba de dar abre un escenario si es de una liquidez NUEVA -otro pivote que el de la toma del escenario vigente- y el vigente ha terminado; con el vigente vivo, lo decide `intentos` (A-25). Con la misma liquidez, que RN-004 vuelve a fijar en cada M1 pasada la linea, no hace nada. Abrir un escenario es el reinicio de los cartuchos (`reinicio`): apaga detenido_por_cartuchos. No abre mas de `maximo` escenarios por sesion (A-46). Y si al abrirlo queda una orden pendiente del escenario anterior, `orden_pendiente` dice si se retira en ese momento o sigue hasta el primer punto de la liquidez nueva, donde la reubica RN-006 (ADR-0066) Argumentos: `intentos`, `reinicio`, `maximo`, `orden_pendiente`.
 - **`abstenerse`** — no operar, sin aproximar ni buscar nada adicional Argumentos: `segun`.
@@ -1365,6 +1411,7 @@
 - **`redondear_lote`** — ajusta el lote al escalon del broker Argumentos: `a_la_baja`, `paso`, `minimo`, `contrato`.
 - **`reentrar`** — habilita volver a entrar tras cerrar una operacion activada sin ruptura, sin sumar al contador. NO envia nada por si misma: la orden se vuelve a colocar por la via de todas (RN-011 y RN-015), con su lote, su stop, su objetivo y los gates delante. Hasta el 2026-09-16 decia "vuelve a colocar la orden", y habria sido una segunda puerta al broker sin ninguno de los tres ni ventana para los gates Argumentos: `segun`, `cuenta_como`.
 - **`retirar_orden_limite`** — cancela en el broker la orden limite pendiente `de`, si `segun` lo dice. Hasta el 2026-10-01 estaba DECLARADA Y SIN REGLA que la usara: que se hace con una orden pendiente al llegar ventana_fin no lo decia el corpus ni lo cerraba ninguna ambiguedad (A-30). Desde entonces la usa RN-035 al abrir una sesion, con `segun` = orden_pendiente_al_abrir_sesion, PROVISIONAL hasta la pregunta 5 de la sesion 4 (ADR-0066) y CONFIRMADO desde el 2026-10-04 (S-5: la orden sin llenar se quita a las 11 y a las 3; A-30 y A-39 RESUELTAS). A ventana_fin la retirada sigue siendo del cableado (ADR-0053 §6): la rama de RN-035 que la escriba es de trabajo/activar-sesion-04-motor Argumentos: `de`, `segun`.
+- **`retirar_ordenes_pendientes`** — cancela en el broker toda orden de entrada pendiente, haya una o ninguna (idempotente). La usa RN-036 al alcanzarse la racha de perdidas (ADR-0077 §3, decision del consultor): el trader deja de operar ese dia y una orden viva la llenaria el broker por ticks. Va aparte de `retirar_orden_limite`, que exige exactamente una pendiente ligada y un selector
 - **`reubicar_orden_limite`** — mueve la orden pendiente a otra zona Argumentos: `a`, `cadencia`.
 - **`terminar_escenario`** — el escenario de la operacion que se cerro no da mas entradas, y se espera otra liquidez de M15 (RN-034, ADR-0066)
 
@@ -1373,9 +1420,10 @@
 - **`abrir_operacion`** — colocar una orden o abrir una posicion nueva
 - **`buscar_entradas`** — mirar M1 en busca de un esquema de entrada
 
-### hechos (8)
+### hechos (9)
 
 - **`detenido_por_cartuchos`** — los cartuchos estan agotados y no se opera hasta cartuchos_reinicio. Va aparte del tope porque su reinicio es OTRO: la siguiente liquidez de M15, no el corte del dia. Desde el 2026-10-01 (ADR-0066) lo apaga `abrir_escenario`, la accion de RN-004, cuando una toma de una liquidez nueva abre otro escenario: hasta entonces nadie lo apagaba, y si RN-016 hubiera podido disparar habria parado el resto del dia Origen: `regla`. Lo produce: RN-016. Lo consume: RN-001, RN-016. Valores: `hasta_cartuchos_reinicio`.
+- **`detenido_por_racha`** — la racha de perdidas seguidas del trader ha llegado a racha_perdidas_max y no se abre mas en este dia operativo (RN-036, A-51; ADR-0077). Dura lo que queda del dia: el estado de estrategia nace de cero cada dia (ADR-0053 §6) y el acumulador `racha_perdidas`, que persiste, lo vuelve a decir mientras dure la detencion. Aparte de `detenido_por_tope` (el tope porcentual, A-44) y de `detenido_por_cartuchos` (los intentos de una liquidez) Origen: `regla`. Lo produce: RN-036. Lo consume: RN-036. Valores: `hasta_el_dia_siguiente`.
 - **`detenido_por_tope`** — un tope porcentual esta alcanzado -el diario o el semanal del trader (RN-020), o el diario de la firma (RN-029)- y no se abre hasta el corte siguiente. Es un HECHO que dura, no un instante: sin el, la prohibicion solo valia en el tick del evento y nada impedia abrir en el siguiente. Lo leen RN-001, que es el gate maestro, y las dos reglas que lo fijan. El limite TOTAL de la firma ya no lo fija: su detencion no caduca y va en `detenido_por_tope_total` Origen: `regla`. Lo produce: RN-020, RN-029. Lo consume: RN-001, RN-020, RN-029. Valores: `hasta_el_corte_siguiente`.
 - **`detenido_por_tope_total`** — el limite TOTAL de la firma esta alcanzado (RN-031): la cuenta esta perdida y ningun corte la devuelve. Hasta el 2026-09-16 lo fijaba RN-029 en `detenido_por_tope` con `hasta_el_corte_siguiente`, y funcionaba por accidente -tras el corte la regla volvia a disparar porque el acumulador no se reinicia-. Va en un hecho aparte y no como otro valor del mismo: RN-020 y RN-029 leen `detenido_por_tope` sin mirar su valor y lo reescriben en cada evento, asi que machacarian el permanente Origen: `regla`. Lo produce: RN-031. Lo consume: RN-001, RN-031. Valores: `permanente`.
 - **`liquidez_tomada`** — la liquidez de M15 marcada ya se ha tomado con cuerpo (RN-004). Es la PRECONDICION de los dos esquemas de entrada y de colocar la orden: sin ella no se mira M1. Hasta el 2026-09-11 esta condicion vivia solo en la prosa de `se_da_esquema`, y RN-004 fijaba un hecho que ninguna forma leia: un motor que implementara `forma` habria entrado sin esperar la toma. Lo consumen los predicados `se_da_esquema` y `toca_colocar_orden_limite` (`depende_de`), no una regla. CADUCA AL ABRIR CADA SESION desde el 2026-09-30 (rama trabajo/nocturno-01oct): para el trader cada sesion es un escenario propio -«cada uno es un mundo diferente», A-46 RESUELTA, fb-2026-09-29-sesion-03-5021677e-, asi que una toma de la primera sesion no vale en la segunda. Era la deuda de ADR-0055 §4: con la toma de la manana viva, RN-008 y RN-009 leian esa toma en la segunda sesion y RN-011 no podia disparar, porque su breaker ya habia pasado. DESDE EL 2026-10-01 (ADR-0066) la caducidad no basta sola: RN-004 tampoco lo vuelve a fijar sobre una liquidez que ya estaba tomada al abrir la sesion (`la_toma_es_de_la_sesion`), y cada toma de una liquidez nueva abre un ESCENARIO de la sesion (`abrir_escenario`): el hecho dice que hay toma en la sesion, y el escenario, cual es y cuantos intentos le quedan Origen: `regla`. Lo produce: RN-004. Lo consume: predicado se_da_esquema, predicado toca_colocar_orden_limite. Valores: `si`.
@@ -1384,15 +1432,16 @@
 - **`orden_limite_pendiente`** — hay una orden colocada y todavia sin llenar Origen: `broker`. Lo decide ADR-0028. Lo provoca la accion: colocar_orden_limite. Lo consume: RN-006, RN-011, RN-035.
 - **`sesgo`** — el sentido en el que se busca entrada, o que no lo hay: `insuficiente` (ADR-0044) y `ambiguo` -que desde ADR-0075 ninguna vela produce- son valores del hecho desde ADR-0049, y con ellos RN-033 prohibe operar. Lo fija RN-003 en CADA apertura de sesion y CADUCA al abrir: sin la caducidad, la primera pasada del evento de apertura evaluaba los gates con el sesgo de la sesion anterior todavia vivo y RN-033 disparaba una vez sobre el (medido el 2026-09-25 sobre construccion: en 24 sesiones de 84, y solo 15 eran ambiguas). Asi nunca se hereda de la sesion anterior, ni el valor ni la prohibicion Origen: `regla`. Lo produce: RN-003. Lo consume: RN-005, RN-033. Valores: `sentido_de_la_ruptura`, `ambiguo`, `insuficiente`.
 
-### acumuladores (5)
+### acumuladores (6)
 
 - **`cartuchos`** — perdidas que cuentan como intento, en el escenario vigente de la sesion: los cierres de las ordenes de sus zonas que nombran las dos ramas de RN-016. Como cada liquidez nueva abre otro escenario (`abrir_escenario`), el contador vuelve a empezar con la siguiente liquidez de M15 sin que nadie lo ponga a cero (ADR-0066); hasta el 2026-10-01 era un hueco con nombre y RN-016 no podia disparar Base: `cartucho_criterio`. Se reinicia con: `cartuchos_reinicio`. Cita `fb-2026-09-09-sesion-01-e3eedcaa`: *«»*.
 - **`perdida_dia`** — perdida acumulada desde el corte del dia de riesgo Base: `base_calculo_perdida_diaria`. Se reinicia con: `reloj_dia_riesgo`. Cita `fb-2026-09-09-sesion-01-462134c7`: *«»*.
 - **`perdida_dia_firma`** — caida de la magnitud vigilada (equity) por debajo del saldo al corte diario; ese corte lo marca reloj_dia_riesgo y la base la declara firma_base_perdida_diaria. El tope es un porcentaje del capital INICIAL, no del saldo del corte (ADR-0026) Base: `firma_base_perdida_diaria`. Se reinicia con: `reloj_dia_riesgo`. Magnitud vigilada: `firma_magnitud_vigilada`.
 - **`perdida_semana`** — perdida acumulada desde el corte de la semana Base: `base_calculo_perdida_semanal`. Se reinicia con: `reloj_dia_riesgo`. Cita `fb-2026-09-09-sesion-01-a85b6bc7`: *«»*.
 - **`perdida_total_firma`** — caida de la magnitud vigilada (equity) por debajo del capital inicial (saldo_inicial_cuenta). No se reinicia nunca, y la base no sigue al maximo mientras firma_perdida_total_arrastra valga false, que es lo que dice el programa 2-Step (ADR-0026) Base: `saldo_inicial_cuenta`. Se reinicia con: `nunca`. Magnitud vigilada: `firma_magnitud_vigilada`. La base sigue al maximo segun: `firma_perdida_total_arrastra`.
+- **`racha_perdidas`** — perdidas seguidas del trader desde la ultima ganadora, contando en TODOS los dias de la corrida: la lleva `engine/racha.py` junto a la cuenta, nunca en el estado del dia (ADR-0077 §3). Una perdida es lo mismo que gasta un cartucho en RN-016 (la base, cartucho_criterio); un break even no suma ni corta; solo una ganadora la pone a cero (racha_perdidas_corte); el calendario no la reinicia (racha_perdidas_reinicio = nunca). Da SI contra racha_perdidas_max solo en el dia operativo en que cayo la perdida que la alcanzo (ADR-0077 §5) Base: `cartucho_criterio`. Se reinicia con: `racha_perdidas_reinicio`. Cita `fb-2026-10-04-sesion-04-8e2d728a`: *«»*.
 
-### tokens (31)
+### tokens (32)
 
 - **`OP`** — la operacion en curso; sus campos se nombran con punto (`OP.precio_entrada`)
 - **`ORDEN`** — la orden pendiente, ligada al hecho orden_limite_pendiente (RN-035, ADR-0066); como OP, se liga al valor del hecho y la accion la busca en el broker, donde solo puede haber una
@@ -1406,6 +1455,7 @@
 - **`ganancia`** — la operacion cerro en positivo sin que la cerrara ningun stop
 - **`hasta_cartuchos_reinicio`** — la detencion dura hasta el reinicio que diga `cartuchos_reinicio` Clase: `duracion`.
 - **`hasta_el_corte_siguiente`** — la detencion dura hasta el siguiente corte del dia o de la semana de riesgo Clase: `duracion`.
+- **`hasta_el_dia_siguiente`** — la detencion dura lo que queda del dia OPERATIVO -el del reloj de las sesiones, ADR-0063- en que cayo la perdida que alcanzo la racha; se vuelve en la primera sesion del dia siguiente (racha_perdidas_reanudacion, ADR-0077) Clase: `duracion`.
 - **`instante_entrada`** — campo de OP, el momento en que se lleno la orden
 - **`insuficiente`** — valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su anterior (ADR-0044 §2): no hay lado, y RN-033 prohibe operar
 - **`liquidez_m15`** — la liquidez marcada en M15 que hay que tomar antes de mirar M1. ES UN NIVEL, no una banda: medido en pantalla el 2026-09-20 (v4 0:57:06, fr-v4-9ad0ebb8/3426000) lo que queda dibujado es una LINEA horizontal etiquetada "15 lq"; el trader dice que le es indiferente desde cual de los puntos anteriores la marque porque considera liquidez todo lo que hay entre ellos (ev-v4-005644-e06ef304), pero lo que deja en el grafico es un nivel, que es lo que `alcanza_nivel` y `cruza` necesitan. LA MARCA LA PONE UNA PERSONA: ninguna regla de esta spec produce este token -no hay `fijar` que lo escriba- y por eso RN-004 no puede dispararse. Que pivote se marca lo decide A-24, DECIDIDA por ADR-0045: el MAS RECIENTE YA FORMADO. Cuando esta formado es A-35, y hasta que se responda la regla no se escribe: escribir aqui una inventada seria hacer pasar por metodo del trader lo que decide el plan. La vela que lo marca es contraria al FLUJO DE M15, no al sesgo de H4 (ev-v3-001204-889179d2, ev-v4-003451-d750e553, ev-v6-003701-7613b381, ev-v3-011147-fa2e6984: "seria solo M15, M15 y ya"); que pasa cuando ese flujo va contra el sesgo de H4 es A-26

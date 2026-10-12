@@ -1203,6 +1203,78 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-09-09-sesion-01-e3eedcaa
+  - nombre: racha_perdidas_max
+    categoria: estrategia
+    tipo: entero
+    unidad: perdidas seguidas tras las que no se opera mas ese dia
+    descripcion: >-
+      la racha de perdidas seguidas del trader tras la que deja de operar en ese dia de operativa
+      (RN-036, A-51; ADR-0077): «como máximo una racha de pérdidas, una racha de nueve pérdidas,
+      como máximo. Esto es por la condicional que nos da la cuenta de fondeo» (sesion 4, S-8, v10
+      1:06:53, ev-v10-010653-81316808; ya en la sesion 3, v9 1:11:28, ev-v9-011128-a267338b). Las
+      9 vienen de una cuenta con un 0,5 % de riesgo por operacion -9 x 0,5 % = 4,5 %, el tope del
+      dia de S-9 (SESION-04-EXTRACCION.md §4.8)-, y el bot tambien arriesga un 0,5 %
+      (riesgo_por_operacion); con menos riesgo el trader dijo que «podríamos extender». Lo que
+      cuenta como perdida es lo que gasta un cartucho en RN-016 (cartucho_criterio)
+    minimo: 1
+    maximo: 50
+    estado: CONFIRMED
+    valor: 9
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-b7040095
+  - nombre: racha_perdidas_corte
+    categoria: estrategia
+    tipo: enum
+    unidad: que cierre pone la racha a cero
+    opciones: [ganadora, ganadora_o_break_even]
+    descripcion: >-
+      lo que corta la racha de perdidas de RN-036 (A-51; ADR-0077). `ganadora`: solo una
+      operacion que cierra en positivo; un break even no la corta ni suma, «un break even no se
+      cuenta como cartucho [...] no corta la racha como tal o sea que luego si se sigue la
+      siguiente operación después de break even es una pérdida pues ahí nuevamente lo contamos
+      como otra» (sesion 4, S-8, v10 1:07:15, ev-v10-010715-fae17215). `ganadora_o_break_even`
+      esta declarada y sin contrato en el motor. La lee engine/racha.py por su nombre
+    consumido_por: [ADR-0077]
+    estado: CONFIRMED
+    valor: ganadora
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-ecdd0572
+  - nombre: racha_perdidas_reinicio
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando se pone a cero la racha por calendario
+    opciones: [nunca, fin_de_dia, fin_de_semana]
+    descripcion: >-
+      si la racha de RN-036 se reinicia con el calendario (A-51; ADR-0077). `nunca`: «la racha
+      sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04,
+      ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte. Las otras dos
+      opciones estan declaradas y sin contrato en el motor
+    estado: CONFIRMED
+    valor: nunca
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-d1792021
+  - nombre: racha_perdidas_reanudacion
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando se vuelve a operar tras la racha
+    opciones: [dia_siguiente, semana_siguiente, sin_fecha]
+    descripcion: >-
+      cuando vuelve a operar el trader tras la racha de racha_perdidas_max (A-51; ADR-0077).
+      `dia_siguiente`: «sería el día siguiente operaría ya es al día siguiente» (sesion 4, S-8,
+      v10 1:08:04, ev-v10-010804-5b6ad1a3); el dia es el OPERATIVO del reloj de las sesiones
+      (reloj_sesiones, ADR-0063 y ADR-0069): tras la novena no se opera mas en ese dia y se vuelve
+      en la primera sesion del siguiente. Que vale la racha al reanudar es la lectura de la
+      sesion de ADR-0077 §5. Las otras dos opciones estan declaradas y sin contrato en el motor.
+      La lee engine/racha.py por su nombre
+    consumido_por: [ADR-0077]
+    estado: CONFIRMED
+    valor: dia_siguiente
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-04-sesion-04-fa5ef0f6
   - nombre: base_calculo_riesgo
     categoria: estrategia
     tipo: enum

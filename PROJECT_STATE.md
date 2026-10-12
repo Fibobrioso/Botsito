@@ -16,7 +16,7 @@ cbe8e09 · merge de `trabajo/activar-sesion-04` (tag `stable/F37m-activar-sesion
 cbe8e09 · merge: la sesion 4 entra en la spec: siete ambiguedades RESUELTAS, ADR-0073 (A-56) y ADR-0074 (R1.1, parte de spec) · tag stable/F37m-activar-sesion-04
 
 ## Tests Currently Passing
-1511 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1522 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -93,7 +93,6 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |
 | A-49 | si la caja se traza con la vela del bloque cerrada o en formación | pregunta | no | F20, F21 |
 | A-50 | para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera | pregunta | no | F19, F20 |
-| A-51 | qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar | pregunta | si | F11, F18 |
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
 | A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |

@@ -39,6 +39,7 @@ from botsito.engine.interprete import (
 )
 from botsito.engine.llenado import OBJETIVO, STOP, Lado
 from botsito.engine.primitivas import primitivas_escritas
+from botsito.engine.racha import ACUMULADOR_RACHA, RachaError, SeguidorRacha, cuenta_como_perdida
 from botsito.engine.tope_trader import (
     ACUMULADOR_DIA,
     ACUMULADOR_SEMANA,
@@ -134,6 +135,9 @@ class ContextoDia:
     instante_ms: int = 0  # el instante del evento del interprete (exclusivo para el broker)
     huecos: set[str] = field(default_factory=set)
     tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
+    # la racha de perdidas seguidas del trader (RN-036, A-51; ADR-0077): la lleva el cableado
+    # entre dias y la alimenta con cada cierre; sin ella, el acumulador es hueco con nombre
+    racha: SeguidorRacha | None = None
     # el nivel que la proxima M1 tendria que pasar para el break even de RN-014, visto en ESTE
     # cierre de M1: (posicion, nivel). Lo deja el predicado, que no toca el broker; el cableado lo
     # vigila al tick si `break_even_condicion` es `tocar` (ADR-0065). Se limpia cada minuto
@@ -344,13 +348,13 @@ def primitivas_cableadas(
     def _cuenta_como_intento(resultado: str | None, por: str | None) -> bool:
         """Lo mismo que nombran las dos ramas de RN-016: un cierre en que salto el stop, se
         activara como se activara, o una perdida de una operacion que vino de un esquema
-        (`cartucho_criterio` = `solo_perdida`); con `todo_intento`, cualquier cierre."""
-        criterio = registro.opcion(PARAMETRO_CARTUCHO_CRITERIO)
-        if criterio == TODO_INTENTO:
-            return True
-        if criterio != SOLO_PERDIDA:
-            raise CableadoError(f"{PARAMETRO_CARTUCHO_CRITERIO} = {criterio!r}: sin contrato")
-        return resultado == SALTO_EL_STOP or (resultado == PERDIDA and por in ESQUEMAS)
+        (`cartucho_criterio` = `solo_perdida`); con `todo_intento`, cualquier cierre. La
+        definicion es UNA, `cuenta_como_perdida` (`engine/racha.py`), y la racha de perdidas del
+        trader (RN-036) cuenta exactamente lo mismo (ADR-0077 §2)."""
+        try:
+            return cuenta_como_perdida(registro.opcion(PARAMETRO_CARTUCHO_CRITERIO), resultado, por)
+        except RachaError as exc:
+            raise CableadoError(str(exc)) from exc
 
     def cartuchos(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -369,6 +373,19 @@ def primitivas_cableadas(
             and _cuenta_como_intento(resultado, por)
         )
         return _tri(gastados >= registro.entero(str(args["tope"])))
+
+    def racha_perdidas(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        """`racha_perdidas` contra `racha_perdidas_max` (RN-036, A-51; ADR-0077): SI si la racha
+        del seguidor esta en el tope o por encima Y la perdida que la dejo ahi cayo en el dia
+        operativo de este evento (ADR-0077 §5). El tope lo nombra la forma (ADR-0019 §1). Sin
+        seguidor -un contexto sin cableado-, hueco con nombre."""
+        if ctx.racha is None:
+            ctx.huecos.add(f"acumulador:{ACUMULADOR_RACHA}")
+            return NoImplementada(f"acumulador:{ACUMULADOR_RACHA}")
+        tope = registro.entero(str(args["tope"]))
+        return _tri(ctx.racha.detenido(int(momento.instante) * MS_POR_MINUTO, tope))
 
     def hueco(id: str) -> Any:
         def falta(
@@ -554,6 +571,18 @@ def primitivas_cableadas(
         estado.broker = ctx.broker.hechos()
         return []
 
+    def retirar_ordenes_pendientes(
+        args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
+    ) -> list[tuple[str, str]]:
+        """RN-036 (ADR-0077 §3, decision del consultor): al alcanzarse la racha de perdidas se
+        retira lo que quede pendiente, haya una orden o ninguna -el broker la llenaria por ticks
+        mientras el trader ya no opera-. Idempotente, sin selector, y refresca los hechos del
+        broker."""
+        for o in _pendientes():
+            ctx.broker.cancelar(o.id, ctx.instante_ms)
+        estado.broker = ctx.broker.hechos()
+        return []
+
     def abrir_escenario(
         args: Mapping[str, Any], ligaduras: Mapping[str, str], momento: Momento, estado: EstadoDia
     ) -> list[tuple[str, str]]:
@@ -655,6 +684,7 @@ def primitivas_cableadas(
             "colocar_orden_limite": colocar_orden_limite,
             "cerrar_a_mercado": cerrar_a_mercado,
             "retirar_orden_limite": retirar_orden_limite,
+            "retirar_ordenes_pendientes": retirar_ordenes_pendientes,
             "terminar_escenario": terminar_escenario,
             "abrir_escenario": abrir_escenario,
             "reubicar_orden_limite": reubicar_orden_limite,
@@ -667,6 +697,7 @@ def primitivas_cableadas(
     for nombre in ACUMULADORES_DEL_TRADER:
         acumuladores[nombre] = acumulador_del_trader(nombre)
     acumuladores[ACUMULADOR_CARTUCHOS] = cartuchos
+    acumuladores[ACUMULADOR_RACHA] = racha_perdidas
     for id in HUECOS:
         acumuladores[id.split(":", 1)[1]] = hueco(id)
     return Primitivas(predicados=predicados, acciones=acciones, acumuladores=acumuladores)

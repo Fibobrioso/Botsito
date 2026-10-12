@@ -10,7 +10,6 @@ sale de aquí en el commit que lo crea):
 
 ```ids-inexistentes
 ADR-0076 — el ADR de A-21 (decisión 3 del encargo); no existe hasta su commit
-ADR-0077 — el ADR de A-51 (decisión 4 del encargo); no existe hasta su commit
 ```
 
 ## Pendiente de Aleks
@@ -473,6 +472,106 @@ noche, cada una en su commit, con lo de §0.8 declarado.
 - **Guardias:** `uv run botsito knowledge validate` OK (35 reglas, hash del manifiesto al día, 452
   documentos); `ruff check` y `ruff format --check` limpios sobre `src tests scripts .claude/hooks`.
 - `Fuente: fb-2026-10-04-sesion-04-ca0afae6 ADR-0075` en el cuerpo del commit.
+
+### 1.3 Decisión 4 · A-51: RN-036, la racha de pérdidas seguidas del trader (ADR-0077)
+
+Hecha antes que la decisión 3, que está en PARADA (§0.8.8).
+
+- **Registros** (los cinco con todas las opciones obligatorias; v10 1:06:53–1:08:28, fuera de
+  todo tramo no citable):
+  `fb-2026-10-04-sesion-04-8e2d728a` (RESOLVE_UNKNOWN sobre A-51, el que la cierra);
+  `fb-2026-10-04-sesion-04-b7040095` (`racha_perdidas_max` = 9, `ev-v10-010653-81316808`);
+  `fb-2026-10-04-sesion-04-ecdd0572` (`racha_perdidas_corte` = `ganadora`,
+  `ev-v10-010715-fae17215`); `fb-2026-10-04-sesion-04-d1792021` (`racha_perdidas_reinicio` =
+  `nunca`) y `fb-2026-10-04-sesion-04-fa5ef0f6` (`racha_perdidas_reanudacion` = `dia_siguiente`),
+  los dos sobre `ev-v10-010804-5b6ad1a3`. Los cuatro parámetros entraron antes en
+  `parametros.yaml` como UNKNOWN (categoría `estrategia`; `feedback new` exige que existan,
+  §0.7 m12), con la nota de §4.8 en la descripción de `racha_perdidas_max` (las 9 vienen de un
+  0,5 % de riesgo, como el del bot). `feedback apply --check`: «8 parametros; 4 cambian, 4 ya
+  estaban», SOLO los cuatro de esta respuesta (`+ racha_perdidas_corte 'ganadora' <- …ecdd0572`,
+  `+ racha_perdidas_max 9 <- …b7040095`, `+ racha_perdidas_reanudacion 'dia_siguiente' <-
+  …fa5ef0f6`, `+ racha_perdidas_reinicio 'nunca' <- …d1792021`); después sin `--check`: los cuatro
+  CONFIRMED con fuente `feedback`. `feedback pending` no lista ninguno de los cinco.
+- **ADR-0077** (`docs/adr/0077-la-racha-de-perdidas-seguidas-del-trader-rn036.md`, número
+  comprobado libre en §0.2, con la plantilla; fila nueva en el índice; sale `ADR-0077` de los
+  bloques `ids-inexistentes`): los cuatro parámetros (§1), la pérdida como la de RN-016 (§2),
+  RN-036 aparte de RN-020 con su acumulador persistente, su hecho y la retirada de la orden
+  pendiente -decisión del consultor- (§3), el día operativo del reloj de las sesiones con el
+  porqué (§4), y la **lectura de la sesión** sobre qué vale la racha tras la novena (§5; §0.8.4):
+  la detención es del día operativo de la pérdida que alcanza el tope, la racha sigue en 9 al día
+  siguiente y la décima vuelve a detener su día.
+- **Spec** (`spec docs --escribir` en el mismo commit): RN-036 (gate; `cuando`: `alcanza_tope
+  {acumulador: racha_perdidas, tope: racha_perdidas_max}` o `hecho: detenido_por_racha`;
+  `entonces`: prohíbe `abrir_operacion`, fija `detenido_por_racha` a `hasta_el_dia_siguiente` y
+  `retirar_ordenes_pendientes: {}`; `cita` el registro de `racha_perdidas_max`, `literal` «como
+  máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo»; `decision: ADR-0077`;
+  `parametros` los cuatro más `cartucho_criterio` y `reloj_sesiones`); el acumulador
+  `racha_perdidas` (`base: cartucho_criterio`, `reinicia_con: racha_perdidas_reinicio`, `cita`
+  el RESOLVE_UNKNOWN de A-51); el hecho `detenido_por_racha` (origen regla, producido y consumido
+  por RN-036); el token `hasta_el_dia_siguiente` (clase duración); la acción
+  `retirar_ordenes_pendientes` (sin argumentos). `racha_perdidas_corte` y
+  `racha_perdidas_reanudacion` no los lee ninguna forma (los lee el código por su nombre) y
+  declaran `consumido_por: [ADR-0077]`, como `huso_operativa` con sus ADR (§0.7: una regla
+  vigente que no los nombre en su forma no vale como consumidor). RN-020 no cambia. La guardia de
+  cifras de negocio rechazó «un cartucho» en el `cuando` de RN-036 (`_cifra_de_negocio`): se
+  reescribió sin número. `spec_version` **16.0.0 → 16.1.0** (una regla y cuatro parámetros
+  nuevos), `spec manifest --escribir` (hash `f99acee2528a…`).
+- **Las tres guardias de `modelo.py`** no se amplían (§0.7 m4): RN-036 es una regla y
+  `racha_perdidas` un acumulador, dos clases de sitio que `comprobar_contra`, `comprobar_literales`
+  y `comprobar_citas_revocadas` ya recorren; `knowledge validate` las pasa («36 reglas de spec (31
+  vigentes, 31 con forma ejecutable), hash del manifiesto al dia»).
+- **Motor:** `src/botsito/engine/racha.py` (nuevo: `cuenta_como_perdida`, `SeguidorRacha` con
+  `registrar`, `detenido(instante, tope)` y `dia_operativo` por `RelojSesiones.lectura`,
+  `seguidor_del_registro`; las opciones sin contrato se niegan con `RachaError`);
+  `engine/cableado.py` (`MotorCableado.racha`, creado una vez y reiniciado solo con
+  `cuenta_diaria`, como `seguidor`; alimentado en `_a_la_cuenta` con cada cierre; pasado al
+  `ContextoDia`; `TrazaBroker.cancelados_fin_dia` cuenta lo que cancela la red de seguridad de
+  fin de día; la línea `RACHA DE PERDIDAS (RN-036, A-51): …` en `informe_simulacion`);
+  `engine/primitivas_broker.py` (`ContextoDia.racha`; el acumulador `racha_perdidas`, hueco con
+  nombre sin seguidor; la acción `retirar_ordenes_pendientes`; `_cuenta_como_intento` de
+  `cartuchos` delega en `cuenta_como_perdida`: una sola definición); `engine/primitivas.py` (en el
+  motor de la spec, sin broker, `racha_perdidas` da NO: no opera, no pierde). `mypy src`: sin
+  errores. RN-036 no lee ningún parámetro de A-44 y no necesita `--diagnostico-a44`: el test del
+  cableado corre con `motor.tope is None`.
+- **Cinco sitios:** `ambiguedades.yaml` (A-51 RESUELTA, `parametros` los cuatro, `evidencia` gana
+  los tres ítems de v10, la `pregunta` lleva el párrafo RESUELTA); su fila sale de Known
+  Ambiguities de `PROJECT_STATE.md` (§0.7 a4); `test_kit.py` (A-51 en `RESUELTAS`; bloqueantes
+  ABIERTAS `{A-21, A-35, A-44}`); ninguna regla citaba A-51 (grep vacío en `strategy_spec.yaml`), y
+  la hoja de preguntas no la llevaba (`ORDEN_SESION_02`), como dice el encargo: nada que quitar.
+- **Tests** (`tests/unit/test_racha_perdidas.py`, nuevo, 11 funciones; 1522 en total): los cuatro
+  parámetros CONFIRMED con fuente feedback; la pérdida es la de RN-016 (y `todo_intento` cuenta
+  cualquier cierre, como `cartuchos`); las opciones sin contrato se niegan; **nueve pérdidas con
+  un break even en medio detienen hasta el día siguiente** (y la décima vuelve a detener el suyo);
+  **una ganadora a la octava la pone a cero**; **la racha cruza un fin de semana** (viernes 18 y
+  lunes 21 de enero de 2030, sintéticos); el día de la detención es el operativo de la rejilla; el
+  acumulador lee el seguidor y sin él es hueco; **la orden pendiente se retira** (la acción sobre
+  un broker con una limite pendiente: cancelada, hechos refrescados, idempotente); y el cableado
+  **nueve días seguidos** con `tope=None` (RUTA_STOP, una pérdida al día, con una segunda zona
+  lejos que los ocho primeros días colocan y RN-035 retira al abrir la tarde): el noveno RN-036
+  dispara, fija `detenido_por_racha`, la segunda colocación queda `prohibida:abrir_operacion`, no
+  queda nada que la red de fin de día cancele (`cancelados_fin_dia == 0`), el décimo vuelve a
+  operar con la racha en 9 y su pérdida -la décima- vuelve a detener; con `cuenta_diaria` la racha
+  empieza de cero cada día. Medido de paso: dentro de la spec una orden pendiente no convive con
+  una posición viva (RN-011 no coloca con pendiente, RN-013 con posición abierta), así que en el
+  cierre de M1 de la novena nunca queda una pendiente y la retirada de RN-036 es la red de
+  seguridad que pidió el consultor (ADR-0077 §3).
+- **Con el código de `main`** (clon `C:/cm/main`, los ficheros de test de la rama copiados
+  dentro): `tests/unit/test_racha_perdidas.py` no llega a correr -«ImportError: cannot import name
+  'racha' from 'botsito.engine'»: el módulo no existe en `main`-, y `tests/unit/test_kit.py`
+  falla en `test_ambiguedades_reales_y_esquema` (A-51 sigue ABIERTA y bloqueante en el YAML de
+  `main`; salida abajo). Después, `git checkout -- tests/…` y el fichero nuevo borrado en el clon.
+
+  ```
+  ERROR collecting tests/unit/test_racha_perdidas.py
+  tests\unit\test_racha_perdidas.py:21: in <module>
+      from botsito.engine import cableado, racha
+  E   ImportError: cannot import name 'racha' from 'botsito.engine' (C:\cm\main\src\botsito\engine\__init__.py)
+  ---
+  >       assert abiertas == {"A-21", "A-35", "A-44"}, (
+  FAILED tests/unit/test_kit.py::test_ambiguedades_reales_y_esquema - Assertion...
+  ```
+
+- `Fuente:` en el cuerpo del commit con los cinco `fb-*` y ADR-0077.
 
 ## Estado
 

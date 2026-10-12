@@ -1515,6 +1515,12 @@ ambiguedades:
     pregunta: >-
       Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la
       racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
+      RESUELTA el 2026-10-04 en la sesion 4 (S-8, v10 1:06:53–1:07:08, 1:07:15–1:07:41 y
+      1:08:04–1:08:28): un break even no corta la racha -«no corta la racha como tal»-, solo una
+      ganadora; tras la novena vuelve «al día siguiente», y «la racha sigue de un día a otro y una
+      semana otra» (fb-2026-10-04-sesion-04-8e2d728a; racha_perdidas_max = 9, racha_perdidas_corte
+      = ganadora, racha_perdidas_reinicio = nunca, racha_perdidas_reanudacion = dia_siguiente;
+      RN-036, ADR-0077). Activada el 2026-10-12 en trabajo/activar-sesion-04-motor.
     resuelve_en: [F11, F18]
     # NACE el 2026-09-29 (rama trabajo/activar-sesion-03, orden del consultor) de la respuesta de
     # A-44 en la sesion 3: el tope del trader son 9 perdidas SEGUIDAS, no un porcentaje. Para
@@ -1524,9 +1530,16 @@ ambiguedades:
     evidencia:
       - ev-v9-011128-a267338b
       - ev-v9-011139-a26a5b11
-    parametros: []
+      - ev-v10-010653-81316808
+      - ev-v10-010715-fae17215
+      - ev-v10-010804-5b6ad1a3
+    parametros:
+      - racha_perdidas_max
+      - racha_perdidas_corte
+      - racha_perdidas_reinicio
+      - racha_perdidas_reanudacion
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

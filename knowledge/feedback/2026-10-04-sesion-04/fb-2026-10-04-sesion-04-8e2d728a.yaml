@@ -1,0 +1,30 @@
+id: fb-2026-10-04-sesion-04-8e2d728a
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-51
+accion: RESOLVE_UNKNOWN
+respuesta_literal: como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo. Esto es
+  por la condicional que nos da la cuenta de fondeo [...] un break even no se cuenta como cartucho como
+  lo habíamos comentado con anterioridad [...] no corta la racha como tal o sea que luego si se sigue
+  la siguiente operación después de break even es una pérdida pues ahí nuevamente lo contamos como otra
+  [...] sería el día siguiente operaría ya es al día siguiente aunque las rachas sigue de un día a otro
+  y una semana otra la racha sigue de un día a otro
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04-motor, decision 4; punto 6 de su respuesta
+  a la PARADA de trabajo/activar-sesion-04)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:06:53'
+t1: '1:08:28'
+valor_resultante: un break even no corta la racha, solo una ganadora la pone a cero; tras la novena se
+  vuelve al dia siguiente; la racha sigue de un dia a otro y de una semana a otra (racha_perdidas_max
+  9, racha_perdidas_corte ganadora, racha_perdidas_reinicio nunca, racha_perdidas_reanudacion dia_siguiente;
+  RN-036, ADR-0077)
+notas: 'S-8 (A-51): ev-v10-010653-81316808 (las nueve, por la condicional de la cuenta de fondeo), ev-v10-010715-fae17215
+  (el break even no corta) y ev-v10-010804-5b6ad1a3 (al dia siguiente; la racha sigue de un dia a otro;
+  la linea mezcla la lectura del consultor y la respuesta). Las 9 vienen de un 0,5 % de riesgo por operacion,
+  como el del bot (SESION-04-EXTRACCION.md §4.8). El dia es el operativo del reloj de las sesiones (ADR-0077)'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

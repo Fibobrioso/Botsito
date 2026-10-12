@@ -40,6 +40,7 @@ from botsito.engine.interprete import (
     Resultado,
     Tri,
 )
+from botsito.engine.racha import ACUMULADOR_RACHA
 from botsito.engine.relojes import (
     PARAMETRO_RELOJ_SESIONES,
     RelojError,
@@ -311,7 +312,15 @@ def primitivas_escritas(
 
         return leer
 
-    acumuladores: dict[str, Any] = {}
+    def racha_sin_broker(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        # RN-036 (ADR-0077): el motor de la spec no coloca ninguna orden, asi que no pierde nada
+        # y la racha de perdidas es cero; el tope lo nombra la forma y se lee igual
+        registro.entero(str(args["tope"]))
+        return Resultado(Tri.NO)
+
+    acumuladores: dict[str, Any] = {ACUMULADOR_RACHA: racha_sin_broker}
     if tope is not None:
         for nombre in (ACUMULADOR_DIA, ACUMULADOR_SEMANA):
             acumuladores[nombre] = acumulador_sin_cuenta(nombre)

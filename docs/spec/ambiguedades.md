@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 16.0.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 16.1.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (16)
+## ABIERTA (15)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -73,10 +73,6 @@ Afecta a: `caja_se_fija`.
 ### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
 
 Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa», y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al punto mas alto y que todo tiene que desarrollarse mas alla del nivel.
-
-### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
-
-Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar?
 
 ### A-53 · la orden sin llenar cuando el precio toma otra liquidez de M15 · pregunta
 
@@ -154,7 +150,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (33)
+## RESUELTA (34)
 
 ### A-1 · sesgo H4
 
@@ -329,6 +325,12 @@ Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en l
 Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:01:24): «aquí queda confirmado que se entra siempre por stop» / «Sí, exacto»: la orden de entrada es una STOP en la ruptura (entrada_tipo_orden = stop_en_ruptura) (fb-2026-09-29-sesion-03-92a38105).
 
 Afecta a: `entrada_tipo_orden`.
+
+### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
+
+Dijiste que paras tras 9 pérdidas seguidas, sin importar el día ni la semana. ¿Qué corta la racha: una ganadora, un break even? Y después de la novena, ¿cuándo vuelves a operar? RESUELTA el 2026-10-04 en la sesion 4 (S-8, v10 1:06:53–1:07:08, 1:07:15–1:07:41 y 1:08:04–1:08:28): un break even no corta la racha -«no corta la racha como tal»-, solo una ganadora; tras la novena vuelve «al día siguiente», y «la racha sigue de un día a otro y una semana otra» (fb-2026-10-04-sesion-04-8e2d728a; racha_perdidas_max = 9, racha_perdidas_corte = ganadora, racha_perdidas_reinicio = nunca, racha_perdidas_reanudacion = dia_siguiente; RN-036, ADR-0077). Activada el 2026-10-12 en trabajo/activar-sesion-04-motor.
+
+Afecta a: `racha_perdidas_max`, `racha_perdidas_corte`, `racha_perdidas_reinicio`, `racha_perdidas_reanudacion`.
 
 ### A-52 · cuántos escenarios puede abrir una misma sesión como máximo · pregunta
 

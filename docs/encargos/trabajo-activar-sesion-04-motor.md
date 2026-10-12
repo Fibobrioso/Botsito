@@ -6,7 +6,6 @@ cada uno sale de aquí en el commit que lo crea):
 
 ```ids-inexistentes
 ADR-0076 — el ADR de A-21 que este encargo manda escribir (decisión 3); no existe hasta su commit
-ADR-0077 — el ADR de A-51 que este encargo manda escribir (decisión 4); no existe hasta su commit
 ```
 
 > Modelo: Fable 5.1 · Esfuerzo: alto

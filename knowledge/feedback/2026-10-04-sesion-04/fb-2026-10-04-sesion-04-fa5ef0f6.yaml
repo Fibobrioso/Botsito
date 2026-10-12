@@ -1,0 +1,22 @@
+id: fb-2026-10-04-sesion-04-fa5ef0f6
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: racha_perdidas_reanudacion
+accion: RESOLVE_UNKNOWN
+respuesta_literal: sería el día siguiente operaría ya es al día siguiente aunque las rachas sigue de un
+  día a otro y una semana otra la racha sigue de un día a otro
+registrado_por: Aleks · grabacion de la sesion 4 (v10), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-11 (trabajo/activar-sesion-04-motor, decision 4)
+grabacion: Grabación de pantalla 2026-10-04 105617.mp4
+t0: '1:08:04'
+t1: '1:08:28'
+valor_resultante: dia_siguiente
+notas: 'S-8 (A-51): ev-v10-010804-5b6ad1a3. Tras la racha se vuelve al dia siguiente: el dia OPERATIVO
+  del reloj de las sesiones (reloj_sesiones, ADR-0063 y ADR-0069), porque la ventana entera cae dentro
+  de un dia civil (ADR-0077 §4). Que vale la racha al reanudar es la lectura de la sesion de ADR-0077
+  §5'
+recibido_el: '2026-10-04'
+procedencia: trader_grabado

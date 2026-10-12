@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 16.0.0` · hash `8b1bf95f9853…`
+`spec_version 16.1.0` · hash `f99acee2528a…`
 
-103 en total: 86 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+107 en total: 90 con valor y 17 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -75,6 +75,10 @@
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
+| `racha_perdidas_corte` | `ganadora` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-ecdd0572` | que cierre pone la racha a cero |
+| `racha_perdidas_max` | `9` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-b7040095` | perdidas seguidas tras las que no se opera mas ese dia |
+| `racha_perdidas_reanudacion` | `dia_siguiente` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-fa5ef0f6` | cuando se vuelve a operar tras la racha |
+| `racha_perdidas_reinicio` | `nunca` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-d1792021` | cuando se pone a cero la racha por calendario |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
 | `reloj_dia_riesgo` | `civil_operativa` | CONFIRMED | prop_firm | `ADR-0027` | que reloj marca el corte del dia (y de la semana) de riesgo |
 | `reloj_sesiones` | `rejilla_h4` | CONFIRMED | ejecucion | `ADR-0069` | con que reloj del registro se cuentan la ventana operativa y sus sesiones |
@@ -147,6 +151,8 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `latencia_ms` → F24, F27
 - `modelo_llenado` → F24, F27
 - `orden_stop_punto` → ADR-0064
+- `racha_perdidas_corte` → ADR-0077
+- `racha_perdidas_reanudacion` → ADR-0077
 - `saldo_inicial_cuenta` → F24, F33
 - `sesgo_h4_regla` → ADR-0019
 - `sesgo_h4_tope_velas` → F18
@@ -542,6 +548,28 @@ el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trade
 si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
 
 Opciones: `porcentaje`, `usd`.
+
+### `racha_perdidas_corte`
+
+lo que corta la racha de perdidas de RN-036 (A-51; ADR-0077). `ganadora`: solo una operacion que cierra en positivo; un break even no la corta ni suma, «un break even no se cuenta como cartucho [...] no corta la racha como tal o sea que luego si se sigue la siguiente operación después de break even es una pérdida pues ahí nuevamente lo contamos como otra» (sesion 4, S-8, v10 1:07:15, ev-v10-010715-fae17215). `ganadora_o_break_even` esta declarada y sin contrato en el motor. La lee engine/racha.py por su nombre
+
+Opciones: `ganadora`, `ganadora_o_break_even`.
+
+### `racha_perdidas_max`
+
+la racha de perdidas seguidas del trader tras la que deja de operar en ese dia de operativa (RN-036, A-51; ADR-0077): «como máximo una racha de pérdidas, una racha de nueve pérdidas, como máximo. Esto es por la condicional que nos da la cuenta de fondeo» (sesion 4, S-8, v10 1:06:53, ev-v10-010653-81316808; ya en la sesion 3, v9 1:11:28, ev-v9-011128-a267338b). Las 9 vienen de una cuenta con un 0,5 % de riesgo por operacion -9 x 0,5 % = 4,5 %, el tope del dia de S-9 (SESION-04-EXTRACCION.md §4.8)-, y el bot tambien arriesga un 0,5 % (riesgo_por_operacion); con menos riesgo el trader dijo que «podríamos extender». Lo que cuenta como perdida es lo que gasta un cartucho en RN-016 (cartucho_criterio)
+
+### `racha_perdidas_reanudacion`
+
+cuando vuelve a operar el trader tras la racha de racha_perdidas_max (A-51; ADR-0077). `dia_siguiente`: «sería el día siguiente operaría ya es al día siguiente» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3); el dia es el OPERATIVO del reloj de las sesiones (reloj_sesiones, ADR-0063 y ADR-0069): tras la novena no se opera mas en ese dia y se vuelve en la primera sesion del siguiente. Que vale la racha al reanudar es la lectura de la sesion de ADR-0077 §5. Las otras dos opciones estan declaradas y sin contrato en el motor. La lee engine/racha.py por su nombre
+
+Opciones: `dia_siguiente`, `semana_siguiente`, `sin_fecha`.
+
+### `racha_perdidas_reinicio`
+
+si la racha de RN-036 se reinicia con el calendario (A-51; ADR-0077). `nunca`: «la racha sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte. Las otras dos opciones estan declaradas y sin contrato en el motor
+
+Opciones: `nunca`, `fin_de_dia`, `fin_de_semana`.
 
 ### `reentrada_tras_equal`
 
