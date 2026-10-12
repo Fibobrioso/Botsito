@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/activar-sesion-04
+main
 
 ## Current Feature
-`trabajo/activar-sesion-04` EN CURSO (abierta el 2026-10-11 desde 11df2c4): activar la sesión 4 (R1.1 de la hoja de ruta, E de la Next Action): cada «resuelve» de SESION-04-EXTRACCION.md §5 RESUELTA en la spec y, si hace falta, en el motor con su test; las «en parte», a la sesión 5. Encargo docs/encargos/trabajo-activar-sesion-04.md; informe docs/validation/ACTIVAR-SESION-04.md.
+`main` en `stable/F37m-activar-sesion-04` (cbe8e09): la parte de spec de la sesión 4 está en main (R1.1 sigue EN CURSO). Sin ramas abiertas; manda la Next Action (F: lo siguiente es `trabajo/activar-sesion-04-motor`, con encargo del consultor). Informe docs/validation/ACTIVAR-SESION-04.md.
 
 ## Stable Main State
-11a63ad · merge de `trabajo/entorno-code` (tag `stable/F37l-entorno-code`): las skills fase-cero, activar-sesion, comparar-con-main, entregar-rama y retomar-rama, el agente auditor-encargo y el revisor en opus; el hook de arranque `.claude/hooks/estado_sesion.py`; `abrir-rama` comprueba la base entera; `solo_lectura.py` ampliado; `make rapido` sin sellar; knowledge validate compartido en cuatro tests (make check de 1209 a 952 s). Sobre `stable/F37k-hoja-de-ruta` (7823568). Informe docs/validation/ENTORNO-CODE.md; el registro del cierre, al final de HISTORIA.
+cbe8e09 · merge de `trabajo/activar-sesion-04` (tag `stable/F37m-activar-sesion-04`): A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56 abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`, enmienda la decisión 5 de ADR-0064); `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta; spec_version 15.9.9. Sobre `stable/F37l-entorno-code` (11a63ad). Informe docs/validation/ACTIVAR-SESION-04.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-11a63ad · merge: entorno de Claude Code: skills, agentes, hook de arranque, make rapido y guardias del paquete (R0.2) · tag stable/F37l-entorno-code
+cbe8e09 · merge: la sesion 4 entra en la spec: siete ambiguedades RESUELTAS, ADR-0073 (A-56) y ADR-0074 (R1.1, parte de spec) · tag stable/F37m-activar-sesion-04
 
 ## Tests Currently Passing
 1506 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
