@@ -8652,3 +8652,64 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 29 (2026-10-11).
+
+# Next Action HECHA · E · sale de PROJECT_STATE.md en trabajo/activar-sesion-04-motor (2026-10-12)
+
+E. Activar la sesión 4. HECHO en `trabajo/activar-sesion-04`: A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56 abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`); `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta (DESVIACIÓN declarada). QUEDA para `trabajo/activar-sesion-04-motor` (encargo del consultor): A-21 con la opción `sin_alternancia_de_colores` y la retirada de `--diagnostico-a21`; S-13 (ADR que enmienda ADR-0060 §2: la H4 neutra mantiene el sesgo); A-51 (cuatro parámetros, RN-036 y ADR); la rama `ventana_fin` de RN-035; y, como su primer commit, el CONFIRM sobre la evidencia ev-v10-004945-59ebac47 de S-4 (PARADA 2, opción b). Las «en parte» (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) van a la hoja de la sesión 5 (R4.1), con las preguntas de ACTIVAR-SESION-04.md §0.e y §5.
+
+Activar la sesión 4. HECHO en trabajo/activar-sesion-04 (la spec: A-18, A-25, A-30, A-33, A-36,
+A-39, A-52; ADR-0073, ADR-0074) y en trabajo/activar-sesion-04-motor (el motor: S-13 con ADR-0075;
+A-21 con ADR-0076; A-51 con ADR-0077 y RN-036; la rama ventana_fin de RN-035; el CONFIRM de S-4).
+Las «en parte» (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) van a la
+hoja de la sesión 5 (R4.1), con las preguntas de ACTIVAR-SESION-04.md §5 y
+ACTIVAR-SESION-04-MOTOR.md §5. (A-21 se cerró DE OTRA FORMA que la que pedía la E: sin la opción
+`sin_alternancia_de_colores`, con la que ya existía, `solo_una_zona_de_control`, por la respuesta
+del consultor a la PARADA del 2026-10-12; ADR-0076.)
+
+# Registro de cierre · `trabajo/activar-sesion-04-motor` (2026-10-12)
+
+- Orden de cierre del consultor del 2026-10-12 (copiada en el informe, §11), confirmada por Aleks
+  en la conversación y ejecutada siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por
+  Aleks. Rama lista para revisión tras dos pasadas del revisor (`model: opus`): la primera con los
+  cuatro alcances del encargo (§9.2), la segunda sobre el commit de A-21 con los tres alcances de
+  la respuesta a la PARADA (§9.3: 0 bloquea, 5 importa, 5 menor, todos atendidos). Una PARADA en
+  la decisión 3 (A-21), respondida por el consultor el 2026-10-12 (§10). Nunca se cerró sin la
+  orden.
+- **Lo que entra** (R1.1 de la hoja de ruta, parte de motor; E de la Next Action):
+  - el CONFIRM de S-4 sobre `ev-v10-004945-59ebac47` (fb-2026-10-04-sesion-04-35a080e2);
+  - ADR-0075 (S-13: una H4 neutra no decide el sesgo; enmienda ADR-0060 §1 y §2), con el CORRECT
+    sobre RN-003 (fb-2026-10-04-sesion-04-ca0afae6);
+  - ADR-0076 (A-21 RESUELTA con `solo_una_zona_de_control`, sin opción nueva: la tabla de series
+    sintéticas de `tests/unit/test_a21_series.py` demostró que RN-009 ya filtra la alternancia;
+    enmienda ADR-0055 §2 y §5; sale `--diagnostico-a21` y `Diagnostico.a21`);
+  - ADR-0077 (A-51 RESUELTA: RN-036, la racha de 9 pérdidas seguidas, con cuatro parámetros,
+    `engine/racha.py` y la acción `retirar_ordenes_pendientes`; la racha tras la novena es una
+    lectura PROVISIONAL que va a la sesión 5);
+  - RN-035 retira la orden pendiente también al llegar `ventana_fin` (S-5);
+  - `spec_version` 15.9.9 -> 17.0.2; tests nuevos `test_racha_perdidas.py`,
+    `test_rn035_ventana_fin.py` y `test_a21_series.py`; 1526 funciones de test;
+  - en este commit: la E sale aquí como HECHA, la F apunta a S (R2.1, julio), la S y la I dejan de
+    depender de E, los heredados 25, 30 y 35 con sus notas; en la hoja de ruta, R1.1 HECHA (con su
+    «Hecho cuando» reescrito, sin NA:E, NA:F ni NA:H: la F ya estaba en G.4 y la H pasa a R4.1,
+    porque una entrada HECHA no puede nombrar una letra viva), R2.1 y R5.4 sin NA:E, R3.1 sin A-21,
+    R4.1 con ADR-0076, ADR-0077, NA:H y las preguntas de ACTIVAR-SESION-04-MOTOR.md §5, G.1 con el
+    falso positivo de los cuatro `-e`, y G.2 con el token `ambiguo` sin productor, los dos CORRECT
+    vivos sobre RN-003 en `feedback pending`, el recuadro de ADR-0044 §1 y el anexo `dia_del_bot.py`.
+- Letras: sale la E (HECHA, arriba); ninguna nueva.
+- Letra del tag: la última cerrada era la m de F37 (`stable/F37m-activar-sesion-04`);
+  `stable/F37n-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37n-activar-sesion-04-motor`. El merge es `git rev-parse "stable/F37n-activar-sesion-04-motor^{commit}"`.
+- Commits de la rama: `0bcd202` (apertura), `baf04b0` (fase 0 y PARADA de A-21), `12b6684`
+  (decisión 1, CONFIRM de S-4), `272f59f` (decisión 2, ADR-0075), `5df5bd5` (decisión 4,
+  ADR-0077 y RN-036), `1d39c1e` (decisión 5, RN-035 `ventana_fin`), `136bb86` (informe y primera
+  pasada del revisor), `f358748` (decisión 3, A-21 con ADR-0076), `a598597` (segunda pasada del
+  revisor) y el de este registro.
+- CI de Linux por `fix/activar-sesion-04-motor` (los push salieron desde la sesión): run
+  38213911827 (1d39c1e), run 38217718887 (136bb86), run 38243202933 (f358748: la primera
+  ejecución la canceló el timeout de 20 min del workflow con `apt-get install ffmpeg` colgado;
+  relanzada con `gh run rerun`) y run 38247668329 (a598597). Todos con un solo fallo, el esperado
+  de `state check` por el nombre `fix/`; los dos últimos, 2599 pasados y 9 saltados. La CI de
+  `main` corre tras el push.
+- Ninguna exposición. Nadie ejecutó `uv run botsito motor arnes` en esta rama.
+- Informe: `docs/validation/ACTIVAR-SESION-04-MOTOR.md`. Encargo:
+  `docs/encargos/trabajo-activar-sesion-04-motor.md`.

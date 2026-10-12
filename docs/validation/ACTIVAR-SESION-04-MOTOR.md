@@ -1029,11 +1029,11 @@ trabajo/activar-sesion-04-motor:refs/heads/fix/activar-sesion-04-motor` salió d
   `test_con_el_valor_fijado_el_diagnostico_se_rechaza`, de `test_preparar_a21.py`, que se retiró
   (ya no hay diagnóstico que rechazar; los otros dos de ese fichero cambiaron de nombre y de
   sentido, §1.5).
-- **El commit que atiende al segundo informe del revisor** (§9.3, el último de la rama): su run
-  no puede estar en este fichero, porque el fichero va dentro del commit. Se comprueba desde la
-  sesión al terminar y se dice en el mensaje de entrega; Aleks lo verifica con
-  `gh api repos/:owner/:repo/commits/<sha de 40>/check-runs` y `gh run view <run> --log-failed`,
-  y el único fallo aceptado es `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`.
+- **Run 38247668329**, sobre a5985975936bed483c667f4c828e72edde70afb1 (la segunda pasada del
+  revisor, §9.3): `1 failed, 2599 passed, 9 skipped in 182.62s`, y el único fallo es
+  `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, el aceptado (API de check-runs con
+  el sha literal: `python completed failure`; `gh run view 38247668329 --log-failed`). Entra aquí
+  en el commit del contrato, por la orden de cierre (§11).
 
 ## 9. Informe del revisor
 
@@ -1475,9 +1475,54 @@ Copiada tal cual:
 >
 > Rama lista para revisión, NO cerrada.
 
+## 11. Orden de cierre (consultor, 2026-10-12)
+
+Copiada tal cual; Aleks la confirmó como su orden de cierre en la conversación del 2026-10-12 y
+lanzó `/cerrar-rama trabajo/activar-sesion-04-motor`.
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/activar-sesion-04-motor (consultor, 2026-10-12). Cópiala al informe ACTIVAR-SESION-04-MOTOR.md, sección «Orden de cierre», con su fecha. El ritual lo manda RITUAL.md y lo recorre la skill cerrar-rama.
+>
+> ANTES DE NADA
+> - La CI de a598597 es el run 38247668329 (solo test_state_check_ok_on_real_repo): entra en §8 del informe en el commit del contrato, junto a los de f358748 (38243202933, con la reejecución) y 1d39c1e (38213911827). Compruébalo con gh; si falla otra cosa, PARA.
+>
+> TAG: stable/F37n-activar-sesion-04-motor. Comprueba en HISTORIA que el último es stable/F37m-activar-sesion-04 y que F37n no existe; si no es así, usa la siguiente libre y dímelo.
+>
+> COMMIT DEL CONTRATO (en la rama, un solo commit, como manda RITUAL.md): sale contrato.yaml; entran el registro del cierre en HISTORIA, la fila de la rama en ERRORES-RECURRENTES.md, el run de §8 y TODO lo que sigue de Next Action y hoja de ruta.
+>
+> Next Action: las líneas de §6 del informe, con estos cambios:
+> - E sale a HISTORIA como HECHA, con el texto de §6 y bajo «# Next Action HECHA · E · …».
+> - F: «Orden de trabajo: lo siguiente es S (R2.1, julio). Antes de su rama, el consultor decide si es construcción o reservado y lo comprueba en el repo; la hoja de ruta manda el orden.»
+> - S pierde «DESPUÉS de la activación de la sesión 4 (E)» (cumplido); I pierde la «E» de «después de X, S y E». Ninguna letra viva puede depender de E: el cuadre de la hoja de ruta lo comprueba.
+> - Heredados 25, 30 y 35: como dice §6.
+> - G.2 (hoja de ruta) gana: el token ambiguo sin productor (ADR-0075); feedback pending con dos CORRECT vivos sobre una regla (RN-003); el recuadro que le falta a ADR-0044 §1 y su fila del índice; y el anexo dia_del_bot.py de ESCENARIOS-POR-SESION, que no corre con el código de hoy (no se edita: se reproduce con el código de su commit). Nada de esto va a Technical Debt de PROJECT_STATE.
+> - G.1 (hoja de ruta) gana el falso positivo de la guardia: grep -rn --include=*.py con cuatro -e sobre rutas literales se bloquea y con dos pasa.
+>
+> Hoja de ruta:
+> - R1.1: Estado HECHA. La parte de spec en trabajo/activar-sesion-04 y la de motor en esta rama. Las «en parte» quedan escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5, y pasan a R4.1. «Hecho cuando» se reescribe así: cada «resuelve» está RESUELTA y cada «en parte» está escrita en la lista de la sesión 5 de esos informes. Si no se dice así, R2.1 (julio) quedaría colgada de R4.1 a través de J.
+> - Las referencias NA:E salen de R1.1, R2.1 y R5.4; donde haya «R1.1 (NA:E)» queda «R1.1».
+> - R3.1: Refs y «Depende de» sin A-21 («hoy lo necesita para A-35 y A-44»).
+> - R4.1: gana ID:ADR-0076 e ID:ADR-0077, pierde ID:A-21, y su «Qué es» suma las preguntas de §5 (último minuto, vela sin cuerpo, breaker con mecha, racha tras la novena, confirmación bajista de S-13).
+> - Pasa el test de la hoja de ruta y la salida del cuadre va al informe final.
+>
+> HALLAZGOS DEL CONSULTOR (para la fila de ERRORES-RECURRENTES.md)
+> - Importa (del consultor): el encargo definía sin_alternancia_de_colores sobre un tramo en el que nunca hay cambios de color (bloque_de_origen toma la última contraria), y la opción era redundante con RN-009: cada alternancia ya forma una zona de control. Lo vio primero la sesión en su PARADA; la redundancia, el auditor del consultor; la tabla de series lo confirmó. Lección para el consultor y el revisor: una opción nueva de un enum se mide antes con series sintéticas contra lo que el motor ya filtra, y no se decide sobre la prosa.
+> - Menor: el informe afirmaba «grep vacío» cuando quedaban un comentario y un test; lo vio el revisor. Lección: lo que dice el informe se pega con la salida, no se resume.
+> - Menor: §0.8.4 llamaba «la única lectura» a lo que ADR-0077 §5 da con alternativas. Lección: una lectura de la sesión se presenta como una de varias, con las demás nombradas.
+> - Dato, sin lección: la primera CI de f358748 se canceló por el timeout del workflow con apt-get install ffmpeg colgado; con la reejecución pasó. Si se repite, rama propia para el workflow.
+>
+> EL RITUAL: merge a main; tag; commit de estado que solo reemplaza Current Branch, Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en el commit del contrato; nada a Completed Features ni al Change Log); make check sellado; push atómico de main y el tag en un solo comando (si el clasificador lo niega, dame el comando exacto y lo lanzo yo con «!»); CI de main en verde; luego se borran la rama local y la remota fix/activar-sesion-04-motor. Ningún worktree de otra sesión se toca.
+>
+> INFORME FINAL: sha de main, tag, run de la CI de main, ramas que quedan (locales y remotas), tamaño de PROJECT_STATE.md y la salida del cuadre de test_hoja_de_ruta.
+
 ## Estado
 
 Rama lista para revisión, NO cerrada (2026-10-12). Hechas las cinco decisiones, cada una en su
 commit sellado: la 3 (A-21), con la respuesta del consultor a la PARADA (§10), sin opción nueva
 (§1.5). Dos pasadas del revisor (§9.2 y §9.3), las dos atendidas: ningún hallazgo que bloquee.
-La CI de cada push, en §8.
+La CI de cada push, en §8. Orden de cierre del consultor del 2026-10-12 (§11), confirmada por
+Aleks: el commit del contrato saca `contrato.yaml` y trae el registro en HISTORIA, la fila de
+ERRORES-RECURRENTES, la Next Action y la hoja de ruta. Al hacerlo, R1.1 HECHA no podía seguir
+nombrando las letras vivas F y H (`test_hoja_de_ruta.py`, «esta HECHA y la letra sigue viva»):
+F ya estaba en G.4 y H pasa a R4.1, donde va S-14; dicho en el registro de HISTORIA.

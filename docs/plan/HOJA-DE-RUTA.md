@@ -40,25 +40,25 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R1 · Activar la sesión 4
 
 ### R1.1 · Las respuestas de la sesión 4 entran en la spec
-- **Refs:** NA:F · NA:E · ID:A-13 · ID:A-18 · ID:A-21 · ID:A-25 · ID:A-30 · ID:A-32 · ID:A-33 ·
+- **Refs:** ID:A-13 · ID:A-18 · ID:A-21 · ID:A-25 · ID:A-30 · ID:A-32 · ID:A-33 ·
   ID:A-35 · ID:A-36 · ID:A-39 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 · ID:A-51 · ID:A-52 ·
-  ID:A-53 · NA:H · ID:RN-007
+  ID:A-53 · ID:RN-007 · ID:ADR-0073 · ID:ADR-0074 · ID:ADR-0075 · ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** las ambigüedades que SESION-04-EXTRACCION.md §5 (y SESION-03-EXTRACCION.md §5) dan
   como «resuelve» o «en parte» y siguen ABIERTA. Se activan las «resuelve»; las «en parte» van a la
-  sesión 5 (R4). Con parámetro que ya lleva valor: A-13, A-18, A-25, A-32, A-33 (CONFIRMED), A-30,
-  A-43, A-52, A-53 (DEFAULT_AMBIGUOUS). Falta código: A-36, A-49, A-51; A-21 a medias (falta la
-  opción que da la respuesta). A-35 y A-44 tienen el código y les falta el valor. RN-007 (NA:H)
-  espera el umbral de «casi plana» (S-14, en parte). El heredado 15 (la pregunta de A-18) sale
-  cuando se cierre A-18. El refiltrado de las filtradas v7–v10 que E citaba está HECHO
-  (ACTIVACION-A42.md §2.2).
+  sesión 5 (R4.1). La parte de spec (A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073
+  y ADR-0074) y la de motor (S-13 con ADR-0075; A-21 con ADR-0076; A-51 con ADR-0077 y RN-036; la
+  rama `ventana_fin` de RN-035; el CONFIRM de S-4). RN-007 espera el umbral de «casi plana» (S-14,
+  en parte), que pasa a R4.1.
 - **Depende de:** R0.2.
 - **Quién:** la sesión, con el encargo del consultor; cada cierre toca los cinco sitios de
   `docs/runbooks/AMBIGUEDADES.md`.
-- **Hecho cuando:** cada «resuelve» está RESUELTA y cada «en parte» está en la hoja de la sesión 5.
-- **Estado:** EN CURSO. Hecha la parte de spec en `trabajo/activar-sesion-04`
-  (`stable/F37m-activar-sesion-04`; ACTIVAR-SESION-04.md); queda `trabajo/activar-sesion-04-motor`
-  (A-21, S-13, A-51, RN-035 `ventana_fin`). HECHA cuando la rama de motor cierre y cada «en parte»
-  esté en la hoja de la sesión 5.
+- **Hecho cuando:** cada «resuelve» está RESUELTA y cada «en parte» está escrita en la lista de la
+  sesión 5 de ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5.
+- **Estado:** HECHA. La parte de spec en `trabajo/activar-sesion-04` (`stable/F37m-activar-sesion-04`;
+  ACTIVAR-SESION-04.md) y la de motor en `trabajo/activar-sesion-04-motor`
+  (`stable/F37n-activar-sesion-04-motor`; ACTIVAR-SESION-04-MOTOR.md). Las «en parte» (A-13, A-32,
+  A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) quedan escritas en el §5 de esos
+  dos informes y pasan a R4.1.
 
 ## R2 · Material de construcción
 
@@ -66,7 +66,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Refs:** NA:S
 - **Qué es:** el backtest de julio (xlsx, vídeo y fotos), sin abrir; el consultor decide antes si es
   construcción o reservado, y se baja con sus ticks (ADR-0051 §8: sin ticks no cuenta).
-- **Depende de:** R1.1 (NA:E).
+- **Depende de:** R1.1.
 - **Quién:** la decisión, el consultor; la columna de fechas, Aleks (ADR-0072); la rama, la sesión.
 - **Hecho cuando:** julio está ingerido o declarado reservado, con sus ticks si cuenta.
 
@@ -92,13 +92,13 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R3 · Una corrida del arnés sobre toda la construcción
 
 ### R3.1 · La corrida de ADR-0070 y las diferencias clasificadas
-- **Refs:** ID:ADR-0070 · ID:ADR-0043 · HER:25 · HER:30 · HER:35 · ID:A-21 · ID:A-35 ·
+- **Refs:** ID:ADR-0070 · ID:ADR-0043 · HER:25 · HER:30 · HER:35 · ID:A-35 ·
   ID:A-44 · ID:RN-004 · ID:RN-020
 - **Qué es:** una corrida del arnés sobre la construcción simulada, con las opciones de la lista
   cerrada de ADR-0070, y la clasificación de las diferencias por el consultor. RN-004 está bloqueada
   por A-35 (heredados 25 y 30) y RN-020 por A-44 (heredado 35).
 - **Depende de:** R1.1 y R2; y, para que la corrida CUENTE (ADR-0070 §3), que el motor corra sin
-  ningún `--diagnostico-*`: hoy lo necesita para A-21, A-35 y A-44, y sus valores van a R1.1 o, si
+  ningún `--diagnostico-*`: hoy lo necesita para A-35 y A-44, y sus valores van a R1.1 o, si
   la sesión 4 no basta, a R4.1. Hasta entonces la corrida es diagnóstico y no habilita R5.2.
 - **Quién:** la corrida, la sesión; la clasificación, el consultor.
 - **Hecho cuando:** la corrida está en un informe y cada diferencia tiene su clase.
@@ -106,10 +106,14 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
-- **Refs:** ID:A-13 · ID:A-21 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:RN-007 · NA:J
-- **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43, S-14 y la confirmación
-  del caso bajista de S-13), y lo que salga de R3, con la hoja de preguntas. La hoja
+- **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
+  ID:A-53 · ID:RN-007 · NA:H · NA:J · ID:ADR-0076 · ID:ADR-0077
+- **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
+  la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
+  preguntas de ACTIVAR-SESION-04-MOTOR.md §5: el último minuto (cuándo se retira una orden
+  pendiente a la hora de cerrar), la vela sin cuerpo en medio del retroceso y el breaker contrario
+  que rompe con mecha (ADR-0076 §4), la racha tras la novena pérdida (ADR-0077 §5) y la
+  confirmación del caso bajista de S-13; y lo que salga de R3, con la hoja de preguntas. La hoja
   Word necesita antes que `kit hoja` funcione con un paquete nuevo (NA:J).
 - **Depende de:** R1.1, R3.1 y la copia de seguridad del carril de Aleks.
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
@@ -150,7 +154,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** el backtest de diciembre (sin vídeo), sin abrir; antes, renovar hacia atrás el
   calendario de cierres (RENOVAR-CIERRES.md, condición 1) y que el consultor decida si es
   construcción o reservado.
-- **Depende de:** R2.2 (NA:X), R2.1 (NA:S) y R1.1 (NA:E).
+- **Depende de:** R2.2 (NA:X), R2.1 (NA:S) y R1.1.
 - **Quién:** el consultor decide; Aleks lee la columna de fechas (ADR-0072); la sesión ejecuta.
 - **Hecho cuando:** diciembre está ingerido o declarado reservado.
 
@@ -237,6 +241,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
     `comparar-con-main`, no sirve para esos tests.
   - Que `cerrar-rama` diga que, si la rama cambia el `Makefile`, los `make check` en la rama los
     lanza Aleks con «!» (§6, aviso para el cierre).
+  - Desde `trabajo/activar-sesion-04-motor` (ACTIVAR-SESION-04-MOTOR.md §6 y §9.3): un falso
+    positivo. `grep -rn --include=*.py` con cuatro `-e` sobre rutas literales (`src/ tests/
+    scripts/`) se bloquea («leer el contenido de .») y el mismo comando con dos `-e` pasa.
 - **Depende de:** nada.
 - **Quién:** la sesión, en ramas propias.
 - **Hecho cuando:** cada una con su test que la rompe a propósito.
@@ -247,10 +254,17 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   (J, antes de R4); el calendario de cierres por condición (N); y, del Next Action viejo: febrero no
   se toca (6), junio y la guardia (7), el brief de los `dev` de septiembre (8) y re-descargar un mes
   rompe `kit build` (9). Y, desde `trabajo/activar-sesion-04`: `--diagnostico-a47` (A-47 RESUELTA)
-  y `--diagnostico-a27` (A-27 DECIDIDA) siguen en la CLI sin deuda que los recoja, y se retiran con
-  `--diagnostico-a21` o en G.1; dos `make check` de esa rama dieron `MemoryError` de `lzma` en
-  `tests/unit/test_ticks.py`, ajenos a la rama: la decisión de `pytest-xdist` (G.4) necesita la RAM
-  de la máquina, que dará Aleks.
+  y `--diagnostico-a27` (A-27 DECIDIDA) siguen en la CLI sin deuda que los recoja (`--diagnostico-a21`
+  ya salió, ADR-0076), y se retiran en G.1 o en rama propia; dos `make check` de esa rama dieron
+  `MemoryError` de `lzma` en `tests/unit/test_ticks.py`, ajenos a la rama: la decisión de
+  `pytest-xdist` (G.4) necesita la RAM de la máquina, que dará Aleks. Y, desde
+  `trabajo/activar-sesion-04-motor` (ACTIVAR-SESION-04-MOTOR.md §6): el token `ambiguo` del sesgo
+  sin productor (ADR-0075); `feedback pending` no admite dos CORRECT vivos sobre una regla (RN-003
+  cita el de S-13 y el de la sesión 3, y el segundo sale pendiente); el recuadro que le falta a
+  ADR-0044 §1 («doble ruptura = AMBIGUO», enmendado por ADR-0060 §1 y ADR-0075) y su fila del
+  índice; y el anexo `docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`, que no corre
+  con el código de hoy (`Diagnostico` por posición): no se edita, se reproduce con el código de su
+  commit.
 - **Depende de:** nada (J, antes de R4.1).
 - **Quién:** el consultor (L, 6 y la decisión de 7 y 8); la sesión, en ramas propias.
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.

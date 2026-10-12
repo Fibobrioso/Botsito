@@ -22,7 +22,7 @@ cbe8e09 · merge: la sesion 4 entra en la spec: siete ambiguedades RESUELTAS, AD
 
 **AHORA** (2026-10-08). El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende.
 
-S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama DESPUÉS de la activación de la sesión 4 (E). Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
+S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
 
 B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.
 
@@ -32,13 +32,11 @@ D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que
 
 X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-F. Orden de trabajo: lo siguiente es `trabajo/activar-sesion-04-motor` (E); la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
-
-E. Activar la sesión 4. HECHO en `trabajo/activar-sesion-04`: A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56 abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`); `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta (DESVIACIÓN declarada). QUEDA para `trabajo/activar-sesion-04-motor` (encargo del consultor): A-21 con la opción `sin_alternancia_de_colores` y la retirada de `--diagnostico-a21`; S-13 (ADR que enmienda ADR-0060 §2: la H4 neutra mantiene el sesgo); A-51 (cuatro parámetros, RN-036 y ADR); la rama `ventana_fin` de RN-035; y, como su primer commit, el CONFIRM sobre la evidencia ev-v10-004945-59ebac47 de S-4 (PARADA 2, opción b). Las «en parte» (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) van a la hoja de la sesión 5 (R4.1), con las preguntas de ACTIVAR-SESION-04.md §0.e y §5.
+F. Orden de trabajo: lo siguiente es S (R2.1, julio). Antes de su rama, el consultor decide si es construcción o reservado y lo comprueba en el repo; la hoja de ruta (docs/plan/HOJA-DE-RUTA.md) manda el orden.
 
 G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-56, la regla del objetivo frente al material, ADR-0073) y A-16.
 
-I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de X, S y E, y de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
+I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de X y S, y de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
 
 J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
 
@@ -70,11 +68,11 @@ criterio de salida: `docs/state/README.md`.
 - 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`…
 - 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).
 - 12. **MARZO, AL LLEGAR, ENTRA POR SU PROPIA RAMA**: declaracion en `knowledge/corpus/libros.yaml` con formato…
-- 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): A-21 es la zona…
+- 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): con A-35 respondida se escribe el productor de `liquidez_m15`…
 - 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.
-- 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor…
+- 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor… · Desde ADR-0076 (2026-10-12) el arnes ya no necesita `--diagnostico-a21`: corre con `--diagnostico-a35` y `--diagnostico-a44`.
 - 34. Ticks: la ventana de invierno por la rejilla es X; el deslizamiento y el swap, las ejecuciones 2 y 3 (A).
-- 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje…
+- 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje… · RN-020 tampoco retira la orden pendiente al llegar a su tope; cuando se active A-44, el modelo es lo que hace RN-036 (`retirar_ordenes_pendientes`, ADR-0077).
 - 37. **PENDIENTE: LOS RECHAZOS POR VOLUMEN MAXIMO, EN LA RAMA DE STOP Y LOTE (A-18)** (2026-09-28, orden de… · Desde ADR-0071 (2026-10-09) el maximo es 50 lotes, no 100: con riesgo_por_operacion (0,5 %) sobre 100.000 y 10 USD por lote y pip, corta todo stop de menos de 1 pip (ADR-0071 §2).
 
 ## Known Ambiguities
