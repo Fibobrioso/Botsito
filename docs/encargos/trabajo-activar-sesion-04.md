@@ -108,3 +108,10 @@ Copiada tal cual:
 > Sigue lo que manda el encargo: un commit por respuesta, knowledge validate antes de make check, Fuente: en el cuerpo, CI de Linux por fix/activar-sesion-04 con su número de run, revisor (opus) con los dos alcances del encargo más un tercero (cada ADR enmendado tiene su recuadro y su fila del índice) y su informe pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-11)
+
+Viene en la orden de cierre del 2026-10-11 (copiada entera en `docs/validation/ACTIVAR-SESION-04.md`, «Orden de cierre»). Tal cual:
+
+> - Respuesta a la PARADA 2: opción (b). CONFIRM sobre la evidencia ev-v10-004945-59ebac47, sin tocar A-49, que sigue ABIERTA. No entra en esta rama: es el primer commit de trabajo/activar-sesion-04-motor. Cópiala al final del informe y del encargo.
+> - Revisor, b2: el registro fb-2026-10-04-sesion-04-c3d0c855 se queda como está. Ninguna regla limita las notas al tramo t0–t1 (knowledge/feedback/README.md: notas es texto libre), ev-v10-014705-718c5f4e existe y 1:47:05 no cae en ningún tramo no citable. El feedback solo se amplía; una reexpresión sería un registro de más para nada.

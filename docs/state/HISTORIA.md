@@ -8415,3 +8415,53 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 28 (2026-10-10).
+
+# Pendiente heredado SALE · 15 · sale de PROJECT_STATE.md en trabajo/activar-sesion-04 (2026-10-11)
+
+Texto literal en PROJECT_STATE.md hasta este cierre:
+
+- 15. A-18: S-3 de la sesion 4 contesta el stop y el objetivo; sale cuando E cierre A-18.
+
+**HECHO:** A-18 RESUELTA por ADR-0073 con `fb-2026-10-04-sesion-04-87ccb0ee` (S-3), sin cambiar ningún valor; lo que el material contradice es A-56 (medicion, para F26). La pregunta de reserva de A-18 de `docs/validation/V5-INSTANTES.md` («Pregunta al trader (RESERVA)») queda superada y no se edita. Orden de cierre del consultor del 2026-10-11 (docs/validation/ACTIVAR-SESION-04.md, «Orden de cierre»).
+
+# Registro de cierre · `trabajo/activar-sesion-04` (2026-10-11)
+
+- Orden de cierre del consultor del 2026-10-11, ejecutada siguiendo `RITUAL.md` con la skill
+  `cerrar-rama`, lanzada por Aleks. Rama lista para revision tras una pasada del revisor
+  (`model: opus`; el primer intento murio por el limite de uso y se relanzo entero); nunca se
+  cerro sin la orden.
+- **Lo que entra** (R1.1 de la hoja de ruta, parte de spec; E de la Next Action):
+  - A-18 y A-33 RESUELTAS por el testimonio de S-3 y S-12 (ADR-0073), sin cambiar ningun valor;
+    ADR-0073 enmienda ADR-0040 («refutada» pasa a «la regla dicha por el trader, contradicha por el
+    material») y abre A-56, clase medicion, para F26;
+  - A-52 (S-20), A-25 (S-18), A-30 y A-39 (S-5) y A-36 (S-22, con `--supersede` de su REOPEN)
+    RESUELTAS, con sus parametros PROVISIONAL pasados a CONFIRMED con el mismo valor;
+  - ADR-0074: `caja_se_fija` = `en_cada_cierre_m1` (S-4), por decision y DEFAULT_AMBIGUOUS bajo
+    A-49, que sigue ABIERTA; enmienda la decision 5 de ADR-0064;
+  - DESVIACION declarada (punto 9 de la respuesta): `toma_antes_de_la_ventana` = `cuenta` (S-15),
+    con A-43 ABIERTA por su segunda parte;
+  - tests nuevos: `test_en_parte_no_se_cierra.py`, `test_orden_en_el_0_con_mecha.py` y
+    `test_caja_hasta_el_llenado.py`; seis tests cambian de sentido a proposito; `spec_version`
+    15.9.1 -> 15.9.9;
+  - en este commit: la E reescrita (queda `trabajo/activar-sesion-04-motor`: A-21, S-13, A-51,
+    RN-035 `ventana_fin` y, como su primer commit, el CONFIRM de S-4 sobre
+    `ev-v10-004945-59ebac47`, PARADA 2 opcion b), la F apuntando a la rama de motor, la G y la
+    deuda de F26 a A-56, la H con su nota, la Q nueva (el backtest de agosto grabado en video,
+    S-16) y el heredado 15 fuera; en la hoja de ruta, R1.1 sin HER:15 y EN CURSO, R2.3 nueva
+    (NA:Q), R4.1 con RN-007, R5.1 a A-56 y G.2 con los `--diagnostico-*` sueltos y el dato del
+    `MemoryError` de `lzma`.
+- Letras: entra la Q; ninguna HECHA (E sigue viva). `PROJECT_STATE.md` queda en 22.693 bytes antes
+  de este commit (tope 25.000).
+- Letra del tag: la ultima cerrada era la l de F37 (`stable/F37l-entorno-code`);
+  `stable/F37m-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37m-activar-sesion-04`. El merge es `git rev-parse "stable/F37m-activar-sesion-04^{commit}"`.
+- Commits de la rama: `d77938c` (apertura), `c858bad` (fase 0 y PARADA), `89df2f4` (A-52),
+  `10a3922` (ADR-0073: A-18, A-33, A-56), `1dc89d2` (A-25), `0e18293` (A-30 y A-39), `b5a12e3`
+  (A-36), `490b97a` (ADR-0074 y la respuesta copiada), `a6f1d55` (A-43, DESVIACION), `5e9782a`
+  (informe completo), `864d90f` (revisor pegado y hallazgos atendidos) y el de este registro.
+- CI de Linux por `fix/activar-sesion-04` (los dos push los lanzo Aleks con «!», porque el
+  clasificador los nego): run 38186381208 (5e9782a) y run 38191152202 (864d90f), los dos con un
+  solo fallo, el esperado de `state check` por el nombre `fix/`; 2565 pasados y 9 saltados. La CI
+  de `main` corre tras el push.
+- Ninguna exposicion. Nadie ejecuto `uv run botsito motor arnes` en esta rama.
+- Informe: `docs/validation/ACTIVAR-SESION-04.md`. Encargo: `docs/encargos/trabajo-activar-sesion-04.md`.

@@ -861,8 +861,9 @@ Aleks desde su terminal con `git push origin trabajo/activar-sesion-04:refs/head
   único fallo es el aceptado, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (la rama
   no es `main` ni lleva tag). Los 9 saltados son los que necesitan `data/`, como siempre; ninguno
   es de esta rama.
-- El commit que recoge el informe del revisor (§9) tiene su propia CI; su run se da en el terminal
-  y, si cambia algo, aquí.
+- **Run 38191152202**, sobre 864d90f (el informe del revisor y sus arreglos, el último commit antes
+  del cierre; push de Aleks con «!»): `1 failed, 2565 passed, 9 skipped`, el mismo único fallo
+  aceptado.
 
 ## 9. Informe del revisor
 
@@ -1019,10 +1020,69 @@ Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 27 hechos (uno de otra forma
 28. Grep en `HOLDOUT-EXPOSICIONES.md` (1:56:07); conteo `video_id: v10$` (22); Grep de las líneas del índice de ADR y de las marcas de a4 y b2
 29. `grep -n "A-18\|…" PROJECT_STATE.md`
 
+## Respuesta del consultor a la PARADA 2 (2026-10-11)
+
+Viene dentro de la orden de cierre (abajo), copiada tal cual:
+
+> - Respuesta a la PARADA 2: opción (b). CONFIRM sobre la evidencia ev-v10-004945-59ebac47, sin tocar A-49, que sigue ABIERTA. No entra en esta rama: es el primer commit de trabajo/activar-sesion-04-motor. Cópiala al final del informe y del encargo.
+> - Revisor, b2: el registro fb-2026-10-04-sesion-04-c3d0c855 se queda como está. Ninguna regla limita las notas al tramo t0–t1 (knowledge/feedback/README.md: notas es texto libre), ev-v10-014705-718c5f4e existe y 1:47:05 no cae en ningún tramo no citable. El feedback solo se amplía; una reexpresión sería un registro de más para nada.
+
+Aplicada: el CONFIRM no entra aquí y queda como primer commit de la rama de motor, en la E de la
+Next Action; `fb-2026-10-04-sesion-04-c3d0c855` no se toca.
+
+## Orden de cierre (2026-10-11)
+
+Orden de cierre del consultor del 2026-10-11, copiada tal cual:
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/activar-sesion-04 (consultor, 2026-10-11). Cópiala al informe ACTIVAR-SESION-04.md, sección «Orden de cierre», con su fecha. El ritual lo manda RITUAL.md y lo recorre la skill cerrar-rama.
+>
+> ANTES DE NADA
+> - La CI de Linux de fix/activar-sesion-04 sobre 864d90f (el push lo lanzo yo con «!»): solo puede fallar test_state_check_ok_on_real_repo. Pon el número de run en §8, junto al de 5e9782a (38186381208). Si falta o falla otra cosa, PARA.
+> - Respuesta a la PARADA 2: opción (b). CONFIRM sobre la evidencia ev-v10-004945-59ebac47, sin tocar A-49, que sigue ABIERTA. No entra en esta rama: es el primer commit de trabajo/activar-sesion-04-motor. Cópiala al final del informe y del encargo.
+> - Revisor, b2: el registro fb-2026-10-04-sesion-04-c3d0c855 se queda como está. Ninguna regla limita las notas al tramo t0–t1 (knowledge/feedback/README.md: notas es texto libre), ev-v10-014705-718c5f4e existe y 1:47:05 no cae en ningún tramo no citable. El feedback solo se amplía; una reexpresión sería un registro de más para nada.
+>
+> TAG: stable/F37m-activar-sesion-04. Comprueba en HISTORIA que el último es stable/F37l-entorno-code y que F37m no existe. Si no es así, usa la siguiente libre y dímelo.
+>
+> COMMIT DEL CONTRATO (en la rama, un solo commit, como manda RITUAL.md): sale contrato.yaml; entran el registro del cierre en HISTORIA, la fila de la rama en ERRORES-RECURRENTES.md y TODO lo que sigue de Next Action y hoja de ruta.
+>
+> Next Action: las líneas de §4 del informe, tal cual, con estos cambios:
+> - En E, «y el registro de S-4 sobre A-49 según la PARADA 2» pasa a «y, como su primer commit, el CONFIRM sobre la evidencia ev-v10-004945-59ebac47 de S-4 (PARADA 2, opción b)».
+> - La entrada nueva del punto 13 lleva la letra Q.
+> - H: si te he dicho antes del cierre lo que oí en 1:44:49, entra en H; si no, H queda con la nota de §4.
+> - Sale el heredado 15 a HISTORIA con su texto literal, bajo «# Next Action HECHA» o como mande RITUAL para los heredados.
+>
+> Hoja de ruta: las líneas de §4, más una entrada NUEVA en el tramo R2, que §4 no traía y sin la que test_hoja_de_ruta rompe por la Q:
+> ### R2.3 · Agosto: el backtest grabado en vídeo
+> - **Refs:** NA:Q · ID:A-56
+> - **Qué es:** en S-16 el trader da por bueno el backtest de agosto grabado en vídeo y no el xlsx del que salen hoy los casos dev de agosto. Aleks le pide su exportación; al llegar, entra por su propia rama (libros.yaml solo se amplía) y se revisan ADR-0040 y A-56.
+> - **Depende de:** la exportación del trader (carril de Aleks, A.3).
+> - **Quién:** Aleks la pide; la rama, la sesión con encargo del consultor.
+> - **Hecho cuando:** la exportación está declarada en libros.yaml y los casos dev de agosto dicen de qué libro salen.
+> Si el formato de las entradas de la hoja pide otro campo, ajústalo al de R2.1 y dilo.
+>
+> HALLAZGOS DEL CONSULTOR (para la fila de ERRORES-RECURRENTES.md)
+> - Importa: la E y R1.1 de la hoja de ruta (trabajo/hoja-de-ruta) no citaban ADR-0040, ADR-0060 §2 ni la decisión 5 de ADR-0064, aunque tres respuestas «resuelve» los contradecían (S-3/S-12, S-13, S-4). Lo encontró el auditor del consultor antes del encargo. Lección para el revisor: en una rama que escribe una entrada de activación o de la hoja de ruta, cada ambigüedad se cruza con los ADR que fijan sus parámetros y sus reglas (grep del id del parámetro y de la regla en docs/adr).
+> - Menor: R1.1 decía que a A-36 le faltaba código y el motor ya lo hacía (§0.c). Lección: «falta código» se mide en el motor, no se deduce de que la ambigüedad siga ABIERTA.
+> - Menor: §4 proponía una letra nueva (Q) sin su NA:Q en la hoja de ruta, que test_hoja_de_ruta exige; lo vio el auditor del consultor. Lección para el revisor: cada letra nueva de las líneas del cierre tiene su entrada en la hoja en el mismo commit.
+> - Dato, sin lección: dos make check de la rama dieron MemoryError de lzma en tests/unit/test_ticks.py, ajenos a la rama. Va a G.2: la decisión de xdist necesita la RAM de la máquina, que dará Aleks.
+>
+> EL RITUAL: merge a main; tag; commit de estado que solo reemplaza Current Branch, Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en el commit del contrato; nada a Completed Features ni al Change Log); make check sellado; push atómico de main y el tag en un solo comando (si el clasificador lo niega, dame el comando exacto y lo lanzo yo con «!»); CI de main en verde; luego se borran la rama local y la remota fix/activar-sesion-04. El worktree wt-ci de otra sesión no se toca.
+>
+> INFORME FINAL: sha de main, tag, run de la CI de main, ramas que quedan (locales y remotas), tamaño de PROJECT_STATE.md y la salida del cuadre de test_hoja_de_ruta.
+
+Comprobado antes del commit del contrato: la CI de 864d90f es la de §8 (run 38191152202, solo el
+fallo aceptado); el último tag de HISTORIA es `stable/F37l-entorno-code` y `stable/F37m-*` no
+existe en local ni en `origin`. R2.3 lleva los cinco campos de R2.1, sin ninguno de más. H se queda
+con la nota de §4: la lectura de 1:44:49 no llegó antes del cierre. El dato del `MemoryError` va a
+G.2 junto a la línea de `--diagnostico-a47` y `--diagnostico-a27`. Esta orden y la respuesta a la
+PARADA 2 entran en el mismo commit del contrato.
+
 ## Estado
 
 Activación de la sesión 4, parte de spec: HECHA. Siete ambigüedades RESUELTAS (A-18, A-25, A-30,
 A-33, A-36, A-39, A-52), A-56 abierta, ADR-0073 y ADR-0074 escritos con sus enmiendas, `caja_se_fija`
-y `toma_antes_de_la_ventana` cambiados por decisión. Pendiente del consultor: la PARADA 2 (el
-registro de S-4 sobre A-49). Lo demás de la respuesta, en `trabajo/activar-sesion-04-motor`.
-**Rama lista para revisión, NO cerrada.**
+y `toma_antes_de_la_ventana` cambiados por decisión. La PARADA 2 está respondida: opción (b), como
+primer commit de `trabajo/activar-sesion-04-motor`, igual que lo demás de la respuesta. CERRADA por
+orden del consultor del 2026-10-11 con el tag `stable/F37m-activar-sesion-04`.
