@@ -573,6 +573,65 @@ Hecha antes que la decisión 3, que está en PARADA (§0.8.8).
 
 - `Fuente:` en el cuerpo del commit con los cinco `fb-*` y ADR-0077.
 
+### 1.4 Decisión 5 · RN-035, tramo `ventana_fin` (S-5)
+
+- **Spec** (`strategy_spec.yaml`, con `spec docs --escribir`): la forma de RN-035 gana la rama:
+  `cuando: todos_de [cualquiera_de [abre_sesion_operativa, alcanza_hora {hora: ventana_fin,
+  reloj: reloj_sesiones}], hecho: orden_limite_pendiente liga ORDEN]`, el mismo `entonces`
+  (`retirar_orden_limite {de: ORDEN, segun: orden_pendiente_al_abrir_sesion}`); `alcanza_hora`
+  sobre `reloj_sesiones` es la misma puerta que la segunda rama de RN-002 (ADR-0063, ADR-0069):
+  da SÍ solo en el evento de `ventana_fin` (medido: NO en 07:00, 09:00, 10:59, 11:00 y 14:59
+  nominales, SÍ en 15:00). Título, `cuando` y `entonces` en prosa, `parametros` (gana
+  `ventana_fin` y `reloj_sesiones`). **`cita`** pasa al registro de S-5
+  (`fb-2026-10-04-sesion-04-45e624c5`, `literal` «sí, se quita, porque siempre se va a ir
+  actualizando la orden, como te digo o sea, no va a haber órdenes que a lo mejor se pueden tomar a
+  las 3 o fuera de horario»), que es lo que la regla hace en sus dos ramas, por el precedente de
+  ADR-0060 §6 (§0.8.7); el de la sesión 3 queda en las notas. Las notas pierden «LO QUE ESTA REGLA
+  NO HACE TODAVIA» y ganan el tramo, «un minuto antes» como frase del consultor que no se fija, la
+  red de seguridad y el hueco. También: las notas de RN-002 («a `ventana_fin`, también RN-035 …
+  el cableado queda como red de seguridad»), la descripción de `retirar_orden_limite` y la de
+  `orden_pendiente_al_abrir_sesion` (unidad y descripción: «al abrir la sesión siguiente y al
+  llegar `ventana_fin`»; su nombre no cambia, §0.7 m7). Sin registro nuevo: el de S-5 existe y
+  el parámetro ya estaba CONFIRMED por él; `feedback pending` sigue sin listarlo. `spec_version`
+  **16.1.0 → 17.0.0**: RN-035 cambia de sentido (dispara también a `ventana_fin`); `spec
+  manifest --escribir` (hash `db91e51ecae2…`). Sin ADR nuevo: lo decidió el consultor (decisión 5),
+  no contradice ADR-0066 §4 (que escribió la rama de la apertura) ni ADR-0053 §6 (cuya cancelación
+  se queda), y `decision: ADR-0066` se conserva (§0.7 m8).
+- **Motor:** nada nuevo en `src/`: `alcanza_hora`, `retirar_orden_limite` y el refresco de los
+  hechos del broker ya existían; el contador `TrazaBroker.cancelados_fin_dia` entró en la
+  decisión 4. La cancelación del cableado al terminar el día (ADR-0053 §6, `cableado.py`) se queda
+  como red de seguridad.
+- **Tests** (`tests/unit/test_rn035_ventana_fin.py`, nuevo; 1524 funciones de test):
+  - `test_rn035_retira_la_pendiente_a_ventana_fin_y_el_cableado_no_encuentra_nada`: una orden
+    colocada a las 12:00 UTC (dentro de la sesión 11-15) que no se llena; a `ventana_fin` RN-035
+    está en `disparadas` de 11-15 (el motivo, en la traza del motor), la orden queda `cancelada`
+    en el instante del evento de `ventana_fin`, `cancelados_fin_dia == 0` (la red no encontró
+    nada) y las peticiones son exactamente `colocar o1` y `cancelar o1`. **Con el código de
+    `main`** falla en `assert "RN-035" in r.sesiones["11-15"].disparadas` («assert 'RN-035' in
+    {'RN-001', 'RN-003', 'RN-011', 'RN-015'}»): allí la cancela el cableado sin regla.
+  - `test_hueco_la_orden_que_se_llena_en_el_ultimo_minuto_se_cierra_en_el_limite`, parametrizado
+    a las 11 (`FIN_H4`) y a `ventana_fin`: **congela lo que pasa hoy** (no lo arregla): el BID baja
+    en el último minuto `[fin−1, fin)` (10 puntos: el bróker llena una límite de compra solo cuando
+    el ASK -BID más el spread de 3- queda estrictamente por debajo de la entrada, medido en
+    `llenado.py:131-167`; por eso RUTA_STOP de `test_cableado` llena en +6 y no en +3), la límite
+    se llena en el tick de los 40 s después de que RN-002 ya cerrara en el evento `fin−1`, y la
+    posición se cierra a mercado en el evento del propio límite (ADR-0060 §5: `vence_vela_h4` vale
+    en el límite), con RN-002 en `disparadas` de 11-15 y sin RN-035 (ya no estaba pendiente). En
+    `main` solo falla por `cancelados_fin_dia`, que no existe allí: el comportamiento es el mismo.
+  - `tests/unit/test_spec_fidelidad.py`: el test que congelaba «la de las 15 sigue sin regla»
+    cambia de nombre y docstring (`test_la_pendiente_al_abrir_sesion_y_a_ventana_fin_la_dijo_el_trader`);
+    sus asserts no cambian (RN-035 sigue siendo la única regla que usa `retirar_orden_limite`).
+    `test_escenarios_por_sesion.py` pasa sin tocarlo: con `sigue_hasta_ventana_fin` RN-035 dispara
+    a `ventana_fin` y la acción no retira (`segun`), así que el cableado cancela en el mismo
+    instante, como antes.
+- **Pregunta para la sesión 5** (en el lenguaje del trader, con opciones; va a §3 y a las líneas
+  del cierre, R4.1): «Cuando llega la hora de cerrar -las 11 o las 3 en punto- y tienes una orden
+  puesta que no se ha llenado, ¿en qué momento la quitas? (a) a las 11 y a las 3 en punto, justo
+  cuando cambia la vela; (b) un minuto antes, cuando cierras la operación que tengas abierta; (c)
+  otra, ¿cuál?». Hoy el bot hace (a) para la orden y cierra la operación un minuto antes: si la
+  orden se llena en ese último minuto, la operación nace y muere dentro de él.
+- `Fuente: fb-2026-10-04-sesion-04-45e624c5` en el cuerpo del commit.
+
 ## Estado
 
 EN CURSO (abierta el 2026-10-11).

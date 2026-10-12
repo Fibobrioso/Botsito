@@ -430,9 +430,9 @@ acciones:
       ventana_fin no lo decia el corpus ni lo cerraba ninguna ambiguedad (A-30). Desde entonces la
       usa RN-035 al abrir una sesion, con `segun` = orden_pendiente_al_abrir_sesion, PROVISIONAL
       hasta la pregunta 5 de la sesion 4 (ADR-0066) y CONFIRMADO desde el 2026-10-04 (S-5: la
-      orden sin llenar se quita a las 11 y a las 3; A-30 y A-39 RESUELTAS). A ventana_fin la
-      retirada sigue siendo del cableado (ADR-0053 §6): la rama de RN-035 que la escriba es de
-      trabajo/activar-sesion-04-motor
+      orden sin llenar se quita a las 11 y a las 3; A-30 y A-39 RESUELTAS). Desde el 2026-10-12
+      (trabajo/activar-sesion-04-motor) RN-035 la usa tambien al llegar ventana_fin; la cancelacion
+      del cableado al terminar el dia (ADR-0053 §6) queda como red de seguridad
     argumentos: [de, segun]
   retirar_ordenes_pendientes:
     descripcion: >-
@@ -900,8 +900,9 @@ reglas:
       cierre_forzoso_fin_ventana. LO QUE NO HACE: retirar la orden pendiente al vencer la vela.
       Eso lo hace RN-035 al abrir la sesion siguiente (A-30 y A-39, RESUELTAS el 2026-10-04 en la
       sesion 4, S-5: la orden sin llenar se quita a las 11 y a las 3, cambie o no el sesgo;
-      fb-2026-10-04-sesion-04-766c8d2e, fb-2026-10-04-sesion-04-dd888b55) y, a ventana_fin, el
-      cableado al terminar el dia (ADR-0053 §6), sin regla de la spec todavia. DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
+      fb-2026-10-04-sesion-04-766c8d2e, fb-2026-10-04-sesion-04-dd888b55) y, a ventana_fin,
+      tambien RN-035 desde el 2026-10-12 (trabajo/activar-sesion-04-motor); la cancelacion del
+      cableado al terminar el dia (ADR-0053 §6) queda como red de seguridad. DESDE EL 2026-10-06 (ADR-0069, reloj_sesiones = rejilla_h4) las
       dos ramas caen sobre el mismo limite: ventana_fin es el fin de la segunda vela H4 de la
       ventana, en la misma rejilla de anclaje_h4, y "las 3pm" son las de su grafico casi todo el
       año (las 2pm las semanas del cambio). `alcanza_hora` lee la hora nominal por la puerta de
@@ -922,17 +923,34 @@ reglas:
     estado: VIGENTE
 
   - id: RN-035
-    titulo: la orden que sigue pendiente al abrir otra sesion se retira
-    cuando: abre una sesion operativa y queda una orden de la sesion anterior sin llenar
+    titulo: la orden que sigue pendiente al abrir otra sesion, o al llegar ventana_fin, se retira
+    cuando: >-
+      abre una sesion operativa y queda una orden de la sesion anterior sin llenar, o la hora de
+      pared, en el reloj que dice reloj_sesiones, alcanza ventana_fin con una orden sin llenar
     entonces: >-
-      se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario
-    parametros: [orden_pendiente_al_abrir_sesion]
-    cita: fb-2026-09-29-sesion-03-5021677e
+      se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario, y
+      al fin de la ventana no queda ninguna orden viva
+    parametros: [orden_pendiente_al_abrir_sesion, ventana_fin, reloj_sesiones]
+    cita: fb-2026-10-04-sesion-04-45e624c5
     literal: >-
-      tú básicamente distingues ambas sesiones. O sea, cada uno es un mundo diferente. Claro,
-      exacto.
+      sí, se quita, porque siempre se va a ir actualizando la orden, como te digo o sea, no va a
+      haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario
     decision: ADR-0066
     notas: >-
+      LA CITA ES EL REGISTRO DE S-5 DESDE EL 2026-10-12 (trabajo/activar-sesion-04-motor,
+      decision 5 del consultor; mismo precedente que ADR-0060 §6): la regla hace en sus dos ramas
+      lo que el trader dijo. Hasta entonces era fb-2026-09-29-sesion-03-5021677e, la independencia
+      de las sesiones («cada uno es un mundo diferente», A-46 RESUELTA), que sostenia el valor
+      provisional y sigue en las notas.
+      DESDE EL 2026-10-12 LA REGLA TAMBIEN RETIRA A ventana_fin: `alcanza_hora` sobre
+      reloj_sesiones, la misma puerta que la segunda rama de RN-002, en el instante que dijo el
+      trader («se quita tanto a las 11 como a las 3»); «un minuto antes» es frase del consultor y
+      no se fija. La cancelacion del cableado al terminar el dia (ADR-0053 §6) se queda como red de
+      seguridad y no encuentra nada (tests/unit/test_rn035_ventana_fin.py). HUECO QUE NO SE
+      ARREGLA AQUI, congelado con un test: una orden pendiente puede llenarse en el ultimo minuto
+      de la H4 [fin-1, fin), despues de que RN-002 cierre en el evento fin-1, tanto a las 11 como a
+      ventana_fin; entonces se cierra en el evento del limite (ADR-0060 §5). La pregunta va a la
+      sesion 5.
       NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066), PROVISIONAL: que hace el
       trader con una orden sin llenar al acabar la sesion no lo dijo -el corte de audio de v9
       0:28:49-0:29:53 cae en esa respuesta- y es la pregunta 5 de la sesion 4 (A-30 y A-39). La
@@ -947,14 +965,13 @@ reglas:
       siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5,
       ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39,
       fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida
-      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija. LO QUE
-      ESTA REGLA NO HACE TODAVIA: retirar la orden a ventana_fin (las 3): eso lo hace el cableado al
-      terminar el dia (ADR-0053 §6) sin regla; la rama ventana_fin de esta regla va a
-      trabajo/activar-sesion-04-motor (respuesta del consultor del 2026-10-11, punto 4)
+      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija.
     forma:
       cuando:
         todos_de:
-          - abre_sesion_operativa: {}
+          - cualquiera_de:
+              - abre_sesion_operativa: {}
+              - alcanza_hora: {hora: ventana_fin, reloj: reloj_sesiones}
           - hecho: orden_limite_pendiente
             liga: ORDEN
       entonces:
