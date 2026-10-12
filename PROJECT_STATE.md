@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/activar-sesion-04-motor
+main
 
 ## Current Feature
-`trabajo/activar-sesion-04-motor` EN CURSO (R1.1, entrada E; abierta el 2026-10-11 sobre `stable/F37m-activar-sesion-04`): lo que la sesión 4 dejó para el motor: CONFIRM de S-4, S-13 (un ADR que enmienda ADR-0060: la H4 neutra mantiene el sesgo), A-21 (ADR-0076: «sin alternancia de colores» es lo que RN-009 ya filtra, `solo_una_zona_de_control`, sin opción nueva; sale `--diagnostico-a21`), A-51 (un ADR, RN-036 y cuatro parámetros de la racha de pérdidas) y el tramo `ventana_fin` de RN-035. Encargo docs/encargos/trabajo-activar-sesion-04-motor.md; informe docs/validation/ACTIVAR-SESION-04-MOTOR.md.
+Ninguna rama abierta. `trabajo/activar-sesion-04-motor` cerrada en `main` el 2026-10-12 (`stable/F37n-activar-sesion-04-motor`); R1.1 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-cbe8e09 · merge de `trabajo/activar-sesion-04` (tag `stable/F37m-activar-sesion-04`): A-18, A-25, A-30, A-33, A-36, A-39 y A-52 RESUELTAS; ADR-0073 (A-56 abierta, ADR-0040 enmendado) y ADR-0074 (`caja_se_fija` = `en_cada_cierre_m1`, enmienda la decisión 5 de ADR-0064); `toma_antes_de_la_ventana` = `cuenta` con A-43 abierta; spec_version 15.9.9. Sobre `stable/F37l-entorno-code` (11a63ad). Informe docs/validation/ACTIVAR-SESION-04.md; el registro del cierre, al final de HISTORIA.
+79e74b2 · merge de `trabajo/activar-sesion-04-motor` (tag `stable/F37n-activar-sesion-04-motor`): S-13 con ADR-0075 (una H4 neutra no decide el sesgo; enmienda ADR-0060 §1 y §2); A-21 RESUELTA con `solo_una_zona_de_control` y sin opción nueva (ADR-0076; sale `--diagnostico-a21`); A-51 RESUELTA con ADR-0077 y RN-036 (la racha de pérdidas seguidas); RN-035 retira la orden pendiente también al llegar `ventana_fin`; el CONFIRM de S-4; spec_version 17.0.2. Sobre `stable/F37m-activar-sesion-04` (cbe8e09). Informe docs/validation/ACTIVAR-SESION-04-MOTOR.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-cbe8e09 · merge: la sesion 4 entra en la spec: siete ambiguedades RESUELTAS, ADR-0073 (A-56) y ADR-0074 (R1.1, parte de spec) · tag stable/F37m-activar-sesion-04
+79e74b2 · merge: la sesion 4 entra en el motor: S-13 (ADR-0075), A-21 sin opcion nueva (ADR-0076), RN-036 la racha de perdidas (ADR-0077), RN-035 ventana_fin y el CONFIRM de S-4 (R1.1, parte de motor) · tag stable/F37n-activar-sesion-04-motor
 
 ## Tests Currently Passing
 1526 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
