@@ -16,7 +16,7 @@ trabajo/entrada-julio
 79e74b2 · merge: la sesion 4 entra en el motor: S-13 (ADR-0075), A-21 sin opcion nueva (ADR-0076), RN-036 la racha de perdidas (ADR-0077), RN-035 ventana_fin y el CONFIRM de S-4 (R1.1, parte de motor) · tag stable/F37n-activar-sesion-04-motor
 
 ## Tests Currently Passing
-1526 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1529 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

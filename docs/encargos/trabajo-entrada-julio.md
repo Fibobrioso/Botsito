@@ -116,3 +116,29 @@ ADR-0078 — el ADR de la fase 2 que este encargo manda escribir (julio entra en
 > - Skill entregar-rama: el subagente revisor, con su informe pegado al final del tuyo.
 > - Que mire en especial la comparación caso a caso de la guardia, que no se haya abierto ninguna foto y que ninguna fecha reservada aparezca en nada commiteado.
 > - Termina con: «Rama lista para revisión, NO cerrada.»
+
+## Respuesta del consultor a la PARADA (2026-10-12)
+
+Copiada tal cual:
+
+> Respuesta a la PARADA de trabajo/entrada-julio (consultor, 2026-10-12). Copia esta respuesta tal cual en el informe y aplícala punto por punto.
+>
+> 0. Ruta: (a), corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/. Es la raíz del corpus, la que protege la guardia y la que inventaría corpus inventory; la ruta del encargo era un error del consultor.
+> 1. Las fotos: ______ (Aleks). Sea lo que sea, en esta rama no se abren: solo se hashean.
+> 2. Columna de fechas del xlsx, leída por Aleks una sola vez hoy (ADR-0072): mínima ____-__-__, máxima ____-__-__. Declárala hoy en HOLDOUT-EXPOSICIONES.
+> 3. ¿El xlsx es la exportación del backtest del vídeo?: ______ (Aleks). Si es «no» o «no lo sé», sigue igual con el xlsx y apúntalo para la rama del vídeo y para el cuestionario de la sesión 5.
+> 4. El vídeo: (a). Aleks lo subió a Drive, a la carpeta de v5; enlace: ______. Entra como v11 con su drive_id y la naturaleza «backtest de julio del trader, material de desarrollo». Es el único camino que no toca código. La transcripción y los fotogramas, en su rama propia.
+> 5. El orden: (a). Fase 1 → 3.a-e (inventario, huso, libros.yaml, exposición, cobertura, reparto y ancla) → fase 2 en su propio commit (ADR-0078, construccion y test_criterio_fidelidad.py:108) → 3.f → fase 4 → fase 5 → fase 6. Así cada commit se sella y la decisión sigue siendo anterior a cualquier corrida con julio.
+> 6. El huso: (a). Un anexo huso_julio.py que repite el de enero con las funciones de main, comprobando dentro 0 ocultos y 0 reservados, y con el control de agosto por la herramienta de main. Es el procedimiento ya revisado. Amplía el contrato con docs/validation/anexos/ENTRADA-JULIO/.
+> 7. El inventario: (a). Aleks copió solo julio. Mira el diff de manifest.yaml y PARA si entra cualquier cosa que no sea de julio.
+> 8. Los textos: (a). Corrige R_SIN_ABRIR, R_LIBRO y el docstring de la guardia en la fase 1; y ARNES-MOTOR.md, SESION-DE-PREGUNTAS.md y una NOTA en ADR-0043 en el commit de ADR-0078. Amplía el contrato. Lo que un commit deja falso se corrige en ese commit.
+> 9. Las fechas antes del libro: (a). ADR-0078 extiende a julio la excepción de ADR-0039 §1, con una NOTA en ADR-0039 §1 que apunte a ADR-0078. La excepción se ve donde está la regla.
+> 10. La fase 6: (a). FTMO-P-D1.md cita ADR-0026 «Impacto» como origen; no es un hallazgo nuevo, y así lo corrige el consultor. Declara que es falso lo que dicen el perfil («Lo consume el broker simulado») y parametros.yaml («F21 lo comprueba»). Propón para el cierre una línea de Technical Debt (que el simulador compruebe el margen, con su rama) y el texto nuevo del heredado 37. No toques el perfil ni la spec.
+>
+> Además:
+> - Las «en parte» son 9 elementos (8 ambigüedades y S-14). La entrada de R4.1 que propongas para el cierre nombra también las preguntas de los §5 (la confirmación bajista de S-13, el último minuto, las dos de ADR-0076 §4 y la racha tras la novena).
+> - R0.1 y NA:P: de acuerdo, no hay nada que corregir. Retiro esa propuesta.
+> - O va a un fichero nuevo porque RESPUESTAS-FTMO es un informe cerrado: declárala como desviación de la letra de O, aceptada por el consultor.
+> - La consecuencia de 0.c (make check corre el sesgo H4 sobre las velas de julio) queda aceptada: solo lee velas y no mide nada.
+>
+> Sigue con la fase 1. Si la rama cambia el Makefile o el clasificador niega un push, para y dame el comando con «!». Al terminar, revisor, CI de fix/entrada-julio con los números de run, y «Rama lista para revisión, NO cerrada».

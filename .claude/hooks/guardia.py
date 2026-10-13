@@ -10,9 +10,9 @@ Dos familias de reglas:
 1. EL CONTENIDO PROTEGIDO no se lee (CLAUDE.md, «Que se puede mirar y que no», punto 3). Se puede
    listar, medir y hashear -stat, tamano, sha256, `botsito corpus inventory`-, pero no abrir:
    - `knowledge/cases/holdout/{1,2,3}/`, salvo su README;
-   - los libros del trader (xlsx, csv...) de un mes que no sea de DESARROLLO legible -enero, abril
-     y agosto, y solo mientras ninguno tenga un dia reservado-; por mes, porque un agregado no se
-     trocea por dia (ADR-0037);
+   - los libros del trader (xlsx, csv...) de un mes que no sea de DESARROLLO legible -enero, abril,
+     julio y agosto, y solo mientras ninguno tenga un dia reservado-; por mes, porque un agregado
+     no se trocea por dia (ADR-0037);
    - toda imagen del material adicional: puede ser una captura de Analytics (ADR-0038);
    - todo lo que haya en una carpeta `Backtest <mes> <ano>` de un mes no legible (marzo, recibido
      SIN ABRIR: docs/validation/REGISTRO-MARZO.md);
@@ -74,12 +74,13 @@ R_HOLDOUT = (
 R_LIBRO = (
     "CLAUDE.md, «Que se puede mirar y que no», punto 3: el detalle por operacion de los dias "
     "reservados y todo AGREGADO sobre un rango con un dia reservado no se leen (ADR-0021 §1, "
-    "ADR-0037); solo enero, abril y agosto son material de DESARROLLO. Las filas `dev` se leen "
-    "por el codigo (`botsito casos ingerir`, `scripts/huso_por_velas.py`), no abriendo el libro"
+    "ADR-0037); solo enero, abril, julio y agosto son material de DESARROLLO. Las filas `dev` se "
+    "leen por el codigo (`botsito casos ingerir`, `scripts/huso_por_velas.py`), no abriendo el "
+    "libro"
 )
 R_SIN_ABRIR = (
-    "CLAUDE.md, «Lo minimo para fijar el universo»: la columna de fechas la lee el CONSULTOR, una "
-    "vez y antes del sorteo; un mes sin sortear no lo abre la sesion "
+    "CLAUDE.md, «Lo minimo para fijar el universo»: la columna de fechas la lee Aleks (ADR-0072), "
+    "una vez y antes del sorteo; un mes sin sortear no lo abre la sesion "
     "(docs/runbooks/ENTRADA-MARZO.md, PARADAS 0 y A; docs/validation/REGISTRO-MARZO.md)"
 )
 R_CAPTURA = (
@@ -204,7 +205,10 @@ DIRECTORIOS_DE_REPARTO = (
     "knowledge/cases/visto",
 )
 # Material de DESARROLLO (CLAUDE.md): legible solo mientras ninguno de sus dias este reservado.
-MESES_DE_DESARROLLO = ("2026-01", "2026-04", "2026-08")
+# Julio, desde `trabajo/entrada-julio` (decision del consultor del 2026-10-12): material de
+# construccion, visto y sin ningun dia en una particion. Sus imagenes siguen sin abrirse
+# (R_CAPTURA).
+MESES_DE_DESARROLLO = ("2026-01", "2026-04", "2026-07", "2026-08")
 # Sesiones con el trader (drive_id: null en fuentes.yaml) cuya cruda SI se lee: v6 se transcribio
 # y se leyo antes de que existiera la cuarentena, y su dia reservado esta RETIRADO del holdout
 # (ADR-0041, docs/validation/V6-FUERA-DEL-HOLDOUT.md). Desde v7 la cruda no se lee.

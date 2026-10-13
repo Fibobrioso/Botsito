@@ -7,6 +7,12 @@ rutas_permitidas:
   - docs/validation/FTMO-P-D1.md
   - docs/validation/HOLDOUT-EXPOSICIONES.md
   - docs/adr/0078-*.md
+  # ampliado el 2026-10-12 por la respuesta del consultor a la PARADA (puntos 6, 8 y 9)
+  - docs/adr/0043-*.md
+  - docs/adr/0039-*.md
+  - docs/validation/anexos/ENTRADA-JULIO/
+  - docs/runbooks/ARNES-MOTOR.md
+  - docs/runbooks/SESION-DE-PREGUNTAS.md
   - .claude/hooks/guardia.py
   - tests/unit/test_guardia_claude.py
   - CLAUDE.md

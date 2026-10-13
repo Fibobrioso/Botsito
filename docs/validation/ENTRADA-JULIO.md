@@ -292,6 +292,97 @@ porque habría entrado en `corpus/`; se repitió sobre `scripts/` y `docs/`.
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta del consultor a la PARADA (2026-10-12)
+
+Copiada tal cual (los huecos `______` son de Aleks y llegan aparte; en §0.d, cada uno con su fecha):
+
+> Respuesta a la PARADA de trabajo/entrada-julio (consultor, 2026-10-12). Copia esta respuesta tal cual en el informe y aplícala punto por punto.
+>
+> 0. Ruta: (a), corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/. Es la raíz del corpus, la que protege la guardia y la que inventaría corpus inventory; la ruta del encargo era un error del consultor.
+> 1. Las fotos: ______ (Aleks). Sea lo que sea, en esta rama no se abren: solo se hashean.
+> 2. Columna de fechas del xlsx, leída por Aleks una sola vez hoy (ADR-0072): mínima ____-__-__, máxima ____-__-__. Declárala hoy en HOLDOUT-EXPOSICIONES.
+> 3. ¿El xlsx es la exportación del backtest del vídeo?: ______ (Aleks). Si es «no» o «no lo sé», sigue igual con el xlsx y apúntalo para la rama del vídeo y para el cuestionario de la sesión 5.
+> 4. El vídeo: (a). Aleks lo subió a Drive, a la carpeta de v5; enlace: ______. Entra como v11 con su drive_id y la naturaleza «backtest de julio del trader, material de desarrollo». Es el único camino que no toca código. La transcripción y los fotogramas, en su rama propia.
+> 5. El orden: (a). Fase 1 → 3.a-e (inventario, huso, libros.yaml, exposición, cobertura, reparto y ancla) → fase 2 en su propio commit (ADR-0078, construccion y test_criterio_fidelidad.py:108) → 3.f → fase 4 → fase 5 → fase 6. Así cada commit se sella y la decisión sigue siendo anterior a cualquier corrida con julio.
+> 6. El huso: (a). Un anexo huso_julio.py que repite el de enero con las funciones de main, comprobando dentro 0 ocultos y 0 reservados, y con el control de agosto por la herramienta de main. Es el procedimiento ya revisado. Amplía el contrato con docs/validation/anexos/ENTRADA-JULIO/.
+> 7. El inventario: (a). Aleks copió solo julio. Mira el diff de manifest.yaml y PARA si entra cualquier cosa que no sea de julio.
+> 8. Los textos: (a). Corrige R_SIN_ABRIR, R_LIBRO y el docstring de la guardia en la fase 1; y ARNES-MOTOR.md, SESION-DE-PREGUNTAS.md y una NOTA en ADR-0043 en el commit de ADR-0078. Amplía el contrato. Lo que un commit deja falso se corrige en ese commit.
+> 9. Las fechas antes del libro: (a). ADR-0078 extiende a julio la excepción de ADR-0039 §1, con una NOTA en ADR-0039 §1 que apunte a ADR-0078. La excepción se ve donde está la regla.
+> 10. La fase 6: (a). FTMO-P-D1.md cita ADR-0026 «Impacto» como origen; no es un hallazgo nuevo, y así lo corrige el consultor. Declara que es falso lo que dicen el perfil («Lo consume el broker simulado») y parametros.yaml («F21 lo comprueba»). Propón para el cierre una línea de Technical Debt (que el simulador compruebe el margen, con su rama) y el texto nuevo del heredado 37. No toques el perfil ni la spec.
+>
+> Además:
+> - Las «en parte» son 9 elementos (8 ambigüedades y S-14). La entrada de R4.1 que propongas para el cierre nombra también las preguntas de los §5 (la confirmación bajista de S-13, el último minuto, las dos de ADR-0076 §4 y la racha tras la novena).
+> - R0.1 y NA:P: de acuerdo, no hay nada que corregir. Retiro esa propuesta.
+> - O va a un fichero nuevo porque RESPUESTAS-FTMO es un informe cerrado: declárala como desviación de la letra de O, aceptada por el consultor.
+> - La consecuencia de 0.c (make check corre el sesgo H4 sobre las velas de julio) queda aceptada: solo lee velas y no mide nada.
+>
+> Sigue con la fase 1. Si la rama cambia el Makefile o el clasificador niega un push, para y dame el comando con «!». Al terminar, revisor, CI de fix/entrada-julio con los números de run, y «Rama lista para revisión, NO cerrada».
+
+### Cómo se aplica, punto por punto
+
+| Punto | Estado |
+|---|---|
+| 0 | aplicado: la ruta es la de la raíz del corpus. **La carpeta todavía no está en la máquina** (`ls` de esa carpeta y solo de ella, 2026-10-12, después de la respuesta: «No such file or directory»), aunque la respuesta diga «Aleks copió solo julio»: se le pide al terminar la fase 1 |
+| 1, 2, 3 y el enlace de 4 | huecos de Aleks: se le piden al terminar la fase 1; van a §0.d con su fecha |
+| 4, 5, 6, 7, 9, 10 | se aplican en su fase, en el orden del punto 5 |
+| 8 | la parte de la guardia, en la fase 1 (§1); la de ADR-0078, en su commit |
+| Además | las propuestas del cierre, al final; R0.1 retirada; la desviación de O, en la fase 6; la consecuencia de 0.c, aceptada |
+
+## 1. Fase 1 · la guardia y los textos (2026-10-12)
+
+**`.claude/hooks/guardia.py`** (`git diff main --numstat -- .claude/hooks/guardia.py`: 12 líneas más, 8 menos, todas de estas tres cosas):
+- `MESES_DE_DESARROLLO = ("2026-01", "2026-04", "2026-07", "2026-08")`, con su comentario
+  (decisión del consultor del 2026-10-12; las imágenes siguen en `R_CAPTURA`).
+- `R_SIN_ABRIR`: «la columna de fechas la lee Aleks (ADR-0072)», donde decía «el CONSULTOR».
+- `R_LIBRO` y el docstring: «enero, abril, julio y agosto».
+
+**Tests** (`tests/unit/test_guardia_claude.py`):
+- `meses_legibles` con julio, en el repo sintético y en el real.
+- `test_julio_se_lee_y_lo_demas_sigue_cerrado`, los dos sentidos y los dos rotos a propósito: el
+  libro y el vídeo de julio se leen; dos imágenes de su carpeta (`.jpeg` y `.png`) dan
+  `R_CAPTURA` y se pueden hashear; los libros de febrero, marzo y diciembre de 2025 dan
+  `R_SIN_ABRIR`. Roto (1): sin 2026-07 en la lista (`monkeypatch`), el libro y el vídeo de julio
+  vuelven a `R_SIN_ABRIR`. Roto (2): con un día de julio en una partición reservada, el libro da
+  `R_LIBRO`.
+- `test_cada_bloqueo_cita_su_regla_en_el_repo_real`: tres casos más (una foto de julio, el libro de
+  febrero y el de diciembre de 2025), por la ruta y en la CI.
+- `test_el_libro_de_julio_se_lee_en_el_repo_real`, con los repartos reales.
+- **`test_la_guardia_frente_a_la_de_main_caso_a_caso`**: carga la guardia de `main`
+  (`git show main:.claude/hooks/guardia.py`) y decide con las dos, por el NOMBRE de la regla y con
+  los repartos reales, una matriz de 100 rutas sintéticas (ninguna se abre): de cada mes de
+  diciembre de 2025 a diciembre de 2026, el libro, una `.jpeg`, una `.png`, un vídeo y un texto
+  en su carpeta `Backtest`, el libro suelto en el material y el libro fuera del corpus; y nueve
+  rutas sin mes (mensajes del trader, hojas de sesión, crudas en cuarentena, holdout, una
+  `CRUDA-NO-LEER`, un caso dev). Exige que lo único que cambie sea el material de julio que no es
+  imagen. Sin `main` en el clon, se salta.
+
+**La comparación caso a caso** (anexo `docs/validation/anexos/ENTRADA-JULIO/guardia_caso_a_caso.txt`,
+la salida del test con `-s`): **100 casos, 5 cambian**, y los cinco son de julio y pasan de
+`R_SIN_ABRIR` a legibles: el libro en su carpeta, el vídeo, un texto de la carpeta, el libro suelto
+en el material y el libro fuera del corpus. Los otros 95 deciden lo mismo con las dos guardias:
+las 26 imágenes (las dos de cada mes) dan `R_CAPTURA` también en julio; febrero, marzo, octubre,
+noviembre y diciembre (de 2025 y de 2026) siguen en `R_SIN_ABRIR`; mayo, junio y septiembre en
+`R_LIBRO`; enero, abril y agosto, legibles, como en `main`. **Ningún caso que `main` bloqueaba deja
+de bloquearse, salvo el material de julio que no es imagen.**
+
+`uv run pytest tests/unit/test_guardia_claude.py -q`: todo en verde (dentro de `make check`, abajo).
+
+**Los textos** (punto 8 y fase 1 del encargo):
+- `CLAUDE.md`, «Material de DESARROLLO»: «enero, abril, julio y agosto de 2026», con la rama y la
+  decisión; y «Sus imagenes no se abren».
+- `knowledge/cases/kit/config.yaml`, el comentario sobre los meses de desarrollo: la columna la lee
+  Aleks (ADR-0072), y ya no dice que abril y agosto no se declaran (lo están desde ADR-0042). Solo
+  comentario: ningún valor cambia.
+- `docs/runbooks/MIRAR-EL-MATERIAL.md`: un recuadro de CORRECCIÓN fechado junto al pasaje de julio,
+  sin tocar el cuerpo.
+- `knowledge/corpus/libros.yaml`: **no se toca.** Es de SOLO AÑADIR (ADR-0039, y su cabecera lo
+  dice); su línea 15 («NO ESTAN enero ni septiembre») es falsa desde el 2026-10-06 y queda así.
+  La validación compara solo las entradas, pero el régimen es del fichero.
+
+**El contrato**, ampliado en este commit por los puntos 6, 8 y 9 de la respuesta:
+`docs/validation/anexos/ENTRADA-JULIO/`, `docs/runbooks/ARNES-MOTOR.md`,
+`docs/runbooks/SESION-DE-PREGUNTAS.md`, `docs/adr/0043-*.md` y `docs/adr/0039-*.md`.
+
 ## Estado
 
-EN CURSO: fase 0 entregada, en la PARADA; espera la respuesta de Aleks.
+EN CURSO: fase 1 hecha; esperan los huecos de Aleks (puntos 1 a 4) y la copia del material.
