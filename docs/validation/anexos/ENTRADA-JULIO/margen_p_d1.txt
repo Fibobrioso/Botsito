@@ -1,0 +1,4 @@
+PARAMETROS: saldo 100000 USD; riesgo_por_operacion 0.5 % = 500.0 USD; instrumento_contrato 100000; paso 0.01; firma_apalancamiento 1:30; firma_volumen_max_lotes 50; valor del pip 10.0000 USD por lote
+TOPE DE VOLUMEN (50 lotes): stop minimo 1.00 pips
+PRECIO 1.10: margen de 1,00 lote 3666.67 USD; lote maximo con todo el saldo como margen 27.27; stop minimo para el 0.5 % 1.83 pips
+PRECIO 1.20: margen de 1,00 lote 4000.00 USD; lote maximo con todo el saldo como margen 25.00; stop minimo para el 0.5 % 2.00 pips

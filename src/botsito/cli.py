@@ -1623,9 +1623,9 @@ DIRECTORIO_DEV_TXT = "knowledge/cases/dev"
 def casos_ingerir(repo: Path, args: argparse.Namespace) -> int:
     """Ingiere el detalle por operacion de los dias INGERIBLES (F14a, ADR-0037).
 
-    No hay `--dias`: el conjunto se deriva de los repartos commiteados DEL KIT menos los
-    reservados, y de ahi SOLO los del mes que el libro declara ser por su sha (2026-09-22). Un
-    humano no puede ampliarlo.
+    No hay `--dias`: el conjunto se deriva de los repartos commiteados DEL KIT y DEL REPARTO
+    DEV-VISTO (ADR-0042; `cases.ingesta.dias_ingeribles`) menos los ocultos, y de ahi SOLO los del
+    mes que el libro declara ser por su sha (2026-09-22). Un humano no puede ampliarlo.
 
     Con `--artefacto <id>` (ADR-0046 §7) el conjunto son los `fidelidad-dev` de ese artefacto
     -sorteado, anclado y commiteado- menos los ocultos, con el config del camino de fidelidad.

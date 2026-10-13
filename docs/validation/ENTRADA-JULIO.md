@@ -545,6 +545,155 @@ corrida del arnés que incluya julio: no se ha corrido ninguna en esta rama.
   corre ahora el sesgo H4 sobre las velas de los 13 días de julio, y pasa (ejecutado aparte con
   `-rs`: sin saltar).
 
+## 3.f-g La ingesta (2026-10-13)
+
+`uv run botsito casos ingerir --material "corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/backtesting-analytics_JULIO_2026.xlsx" --fecha 2026-10-13`:
+
+```
+INGESTA: 4 dias del camino de FIDELIDAD no los toma este comando sin `--artefacto` [...] No se han leido ni escrito
+INGESTA: 2026-09: hay material declarado y ningun libro atado por su sha. Este comando no lee ningun dia de ese mes, con ningun libro
+INGESTA: 10 dias de 2026-06 NO son ingeribles: 2026-06 esta declarado con CERO tramos [...]
+INGESTA: 5 filas SIN `initialSL` no produjeron caso: una fila sin stop no es una decision completa. [...]
+INGESTA: 13 casos escritos de 13 dias ingeribles; 72 filas leidas; 0 pestanas de agregado abiertas
+OK: knowledge/cases/dev/ con 13 casos. Commitealos con `Fuente:`
+```
+
+- **13 casos nuevos**, `knowledge/cases/dev/caso-eurusd-2026-07-{01..17}.yaml` (los laborables), y
+  ninguno de los que ya había cambia (`git status`: solo los 13 nuevos, sin seguir). Las tres
+  primeras líneas son los avisos de siempre, de otros caminos y meses, sin leer nada.
+- **5 de las 72 filas no tienen `initialSL`** y no producen caso, como en los otros libros: una fila
+  sin stop no es una decisión completa. Se cuentan, no se nombran.
+- **La conversión de la hora con Europe/Madrid, comprobada en un caso** (`caso-eurusd-2026-07-01`):
+  las entradas de las 06:15:55 y 07:33:05 UTC caen en la sesión `07-11` (08:15 y 09:33 en Madrid)
+  y la de las 10:59:05 UTC en la `11-15` (12:59 en Madrid).
+- `uv run botsito casos check`: `OK: los casos de la biblioteca tienen la forma declarada y ninguno
+  esta reservado`.
+- **3.g**: el docstring de `casos_ingerir` (`src/botsito/cli.py:1626`) decía «de los repartos
+  commiteados DEL KIT»; ahora nombra también el reparto dev-visto (ADR-0042) y dice «menos los
+  ocultos», que es lo que hace `dias_ingeribles`. Solo el docstring: ningún código cambia.
+
+## 4. Fase 4 · los ticks de julio (2026-10-13)
+
+Con el símbolo, la escala y las horas de agosto (`eurusd-ticks-2026-08-75bd3a08`: EURUSD, escala
+100.000, horas 05-13 UTC) y `--solo-dias-dev`, que toma los días de `dias_de_construccion` (por eso
+va detrás de la fase 2):
+
+`uv run botsito data download-ticks --dataset eurusd-ticks-2026-07 --simbolo EURUSD --escala 100000 --desde 2026-07-01 --hasta 2026-07-31 --solo-dias-dev --horas 05-13 --pausa 2`
+
+```
+OK: data/manifests/ticks/eurusd-ticks-2026-07-6e7dc7cd.yaml (eurusd-ticks-2026-07-6e7dc7cd)
+  373014 ticks en 13 ficheros; horas presentes 114, ausentes (404) 0, vacias 0, PERDIDAS 3; cotizaciones cruzadas 0
+  SELECCION: 13 dias y horas UTC 05-13; el resto del rango no esta en este dataset
+```
+
+`uv run botsito data check-ticks --dataset eurusd-ticks-2026-07-6e7dc7cd --hashes`: `OK:
+eurusd-ticks-2026-07-6e7dc7cd coincide con el disco (hashes)`.
+
+- **Los 13 días son los del reparto dev-visto** (07-01 a 07-03, 07-06 a 07-10, 07-13 a 07-17), y
+  ninguno del 20 al 31: `--hasta 2026-07-31` no trae más porque la selección sale de
+  `dias_de_construccion`, que solo ve la partición.
+- **Faltan 3 de 117 horas** (13 × 9), listadas en el manifiesto: **2026-07-10 05h, 2026-07-14 12h y
+  2026-07-16 11h** UTC, perdidas tras 5 intentos cada una (no son 404 ni horas vacías). Las cubre el
+  respaldo M1 del modelo de llenado, como las 7 de abril y las 3 de agosto (`TICKS-LLENADO.md`).
+- **Fue la segunda pasada, como en abril y agosto.** La primera (sin `--pausa`) dio el dataset
+  `eurusd-ticks-2026-07-7a52cf6d`, con 21 horas perdidas y 321.108 ticks, verificado también con
+  `--hashes`; se descartó sin commitear (manifiesto y carpeta borrados antes de estadiar, tras
+  comprobar que git no lo seguía), igual que las primeras pasadas de abril y agosto, con 28 horas
+  perdidas cada una. La segunda reanuda por la caché cruda y solo vuelve a pedir lo que faltaba.
+- Ninguna cotización cruzada. El manifiesto es inmutable desde su commit (`CLAUDE.md`).
+
+## 5. Fase 5 · el vídeo
+
+Hecha dentro de la fase 3 (desviación declarada en §3): v11 a v14 en `fuentes.yaml` con su
+`drive_id`, sus bytes (iguales a los de Drive) y su `naturaleza` («backtest de julio del trader en
+FX Replay, material de desarrollo», y que la correspondencia con el xlsx es lo que dice el trader,
+probable por el orden de grabación pero sin comprobar); en `manifest.yaml` por `corpus inventory`,
+con su sha256, duración y audio (§0.d); y en los tests que listan vídeos. No son sesiones: ni
+`SESIONES_EN_CUARENTENA` ni `EXCEPCIONES` cambian, y la guardia no los pone en cuarentena (tienen
+`drive_id`). La cuarentena por condición del texto se les aplica igual que a todos cuando se
+transcriban. **Sin transcripción ni fotogramas en esta rama.**
+
+**La rama que propongo para ellos** (`trabajo/video-julio`): transcribir v11 a v14 (2 h 38 min, los
+cuatro con audio) con el guion de `main` y su cuarentena; extraer fotogramas SOLO por instantes
+localizados en la transcripción (ADR-0038; las capturas de resumen siguen sin abrirse); comprobar
+qué días de julio cubre cada vídeo (lo que dice el trader: v11-v13 del 1 al 17, v14 desde el 20);
+comparar el vídeo con el xlsx en los días 1 a 17 (fecha, dirección, entrada y stop de cada
+operación que se vea en pantalla, contra el caso); comparar las horas del replay con las del libro,
+que es el primero en Europe/Madrid (§3.b); y dejar al consultor la decisión de si se sacan casos del
+vídeo para los días 20 a 31 (ADR-0078 §3).
+
+## 6. Fase 6 · la respuesta de FTMO a P-D1
+
+En un fichero nuevo, `docs/validation/FTMO-P-D1.md`, porque RESPUESTAS-FTMO.md es un informe
+cerrado (**desviación de la letra de O, aceptada por el consultor**). Paráfrasis, nunca el texto del
+correo. En resumen:
+- **Hedging** en todas las cuentas de FTMO Global, y **50 lotes** en EURUSD: confirman el perfil.
+- **El tope sumado: sin respuesta directa**; una pauta de gestión del riesgo que no es regla.
+- **El margen, ya escrito en ADR-0026 «Impacto»**, medido de nuevo: `firma_apalancamiento` no lo
+  lee ningún código y el simulador no comprueba el margen; son falsas las descripciones del perfil
+  («Lo consume el broker simulado») y de `parametros.yaml` («F21 lo comprueba»). Con todo el saldo
+  como margen caben 27,27 lotes a 1,10 y 25,00 a 1,20, y el 0,5 % deja de cumplirse con stops de
+  menos de 1,83 y 2,00 pips (anexo `margen_p_d1.py`, que lee el registro y el perfil). **Partir en
+  varias órdenes no lo arregla**: la documentación de MT5 dice que en cobertura los volúmenes del
+  mismo lado se suman.
+- **La prueba**: el CSV de la ejecución 2 ya trae el margen de 1,00 lote (`MargenAlcanza`, script
+  1.1); la fórmula predice 100.000 × ask / 30.
+- Ningún código ni parámetro cambia.
+
+## 7. Las exposiciones de la rama
+
+- **2026-10-12**: ninguna (fase 0 y fase 1: no se abrió ni se listó nada de julio ni de ningún mes
+  reservado; la búsqueda de `MargenAlcanza` que habría entrado en `corpus/` la paró la guardia).
+- **2026-10-13**: una fila en `HOLDOUT-EXPOSICIONES.md`: julio, leído entero, en este orden: la
+  columna de fechas por Aleks (mínima, máxima y la hora de esas dos filas); el listado y el hash de
+  la carpeta `Backtest Julio 2026` (seis capturas de resumen SIN abrir); `dateStart` y `entryPrice`
+  de las 72 filas por el anexo del huso; y el detalle por operación de las 72 filas por
+  `casos ingerir`. Ninguna partición: julio no tiene ningún día en ninguna.
+- **Ninguna foto se abrió**, ni de julio ni de otro mes, ni miniatura; tampoco ningún fotograma ni
+  ninguna transcripción de v11 a v14.
+
+## 8. Propuestas para la orden de cierre
+
+Una por línea, para el commit del contrato del cierre (`RITUAL.md`):
+
+- **S sale de la Next Action, HECHA** (a HISTORIA como «Next Action HECHA · S»: lo exige
+  `test_hoja_de_ruta.py`, porque R2.1 cita NA:S): «Julio de 2026 entra como material de construcción
+  (ADR-0078): libro declarado en Europe/Madrid, reparto dev-visto de los 13 laborables del 1 al 17,
+  13 casos, ticks; v11 a v14 en el inventario. Los días 20 a 31 quedan solo en v14».
+- **F apunta a lo siguiente según la hoja de ruta**: «Orden de trabajo: lo siguiente es X (R2.2:
+  los ticks de invierno por la rejilla, para que enero cuente), que no depende de nada; R2.3 (Q,
+  agosto) espera la exportación del trader, y R3.1 depende de R2 entera».
+- **R2.1 pasa a HECHA en HOJA-DE-RUTA.md en lo del libro**: «HECHA (`trabajo/entrada-julio`;
+  ENTRADA-JULIO.md, ADR-0078): julio es construcción del 1 al 17, con sus ticks; del 20 al 31 no
+  hay libro: va a la entrada nueva de abajo».
+- **Entrada nueva de la Next Action** (y de la hoja de ruta, en R2): «Julio 20-31: solo en vídeo
+  (v14); decidir si se extraen casos del vídeo, tras transcribir v11-v14».
+- **Entrada nueva de la Next Action para la rama del vídeo**: «Transcribir v11 a v14 (backtest de
+  julio en vídeo, 2 h 38 min, con audio), comprobar qué días cubre cada uno, compararlos con el xlsx
+  en los días 1 a 17 y con las horas del libro (el primero en Europe/Madrid); en su rama
+  (ENTRADA-JULIO.md §5)». Va antes de la de los días 20-31, que depende de ella.
+- **O sale por P-D1** (a HISTORIA como «Next Action HECHA · O»: A.2 de la hoja de ruta cita NA:O):
+  «Respondida por FTMO el 2026-10-12 (ticket JSP-CPQRQ-197): hedging y 50 lotes; el tope sumado, sin
+  respuesta directa. Registrada en paráfrasis en docs/validation/FTMO-P-D1.md».
+- **El texto nuevo del heredado 37**: el de `FTMO-P-D1.md` §4 (el margen corta antes que el volumen:
+  1,83 y 2,00 pips a 1,10 y 1,20; partir en órdenes no lo arregla; la ejecución 2 lo comprueba con
+  `MargenAlcanza`).
+- **Una línea de Technical Debt**: la de `FTMO-P-D1.md` §4 (el simulador no comprueba el margen;
+  `firma_apalancamiento` no lo lee nadie; dos descripciones falsas; rama propia con su test).
+- **La entrada nueva de la Next Action «Preparar, celebrar y activar la sesión 5 (R4.1)»**, con
+  una letra nueva que R4.1 lleve en sus `Refs` (`test_hoja_de_ruta.py`, test a): las 9 «en parte»,
+  verificadas contra ACTIVAR-SESION-04.md §0.e/§5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 -A-13, A-32,
+  A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14 (la casi plana de RN-007, NA:H)-, y
+  las preguntas de los §5: la confirmación bajista de S-13, el último minuto (cuándo se retira una
+  orden pendiente a la hora de cerrar), las dos de ADR-0076 §4 (la vela sin cuerpo en el retroceso y
+  el breaker contrario que rompe con mecha) y la racha tras la novena pérdida. Y ahora también, de
+  esta rama: si el xlsx de julio es la exportación de v11 a v13 (punto 3 de los datos de la fase 3).
+  Depende de R1.1, de R3.1 y de que `kit hoja` funcione con un paquete nuevo (NA:J).
+- **La guardia y `ffprobe`** (§0.d): junto a K, que `ffprobe` y `ffmpeg -i` sobre un vídeo lean y no
+  ejecuten, con un test de los dos sentidos.
+- **R0.1 y NA:P**: retirada por el consultor (respuesta, «Además»); nada que corregir.
+
 ## Estado
 
-EN CURSO: fases 1 y 3.a-e hechas; siguen la fase 2 (ADR-0078), 3.f, 4, 5 y 6.
+EN CURSO: fases 0 a 6 hechas, en el orden aprobado (1 → 3.a-e → 2 → 3.f-g → 4 → 5 → 6); faltan
+la CI de `fix/entrada-julio` y el revisor.
