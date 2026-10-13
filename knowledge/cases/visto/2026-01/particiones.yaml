@@ -1,0 +1,26 @@
+artefacto: 2026-01
+asignacion:
+  caso-eurusd-2026-01-02: dev
+  caso-eurusd-2026-01-05: dev
+  caso-eurusd-2026-01-06: dev
+  caso-eurusd-2026-01-07: dev
+  caso-eurusd-2026-01-08: dev
+  caso-eurusd-2026-01-09: dev
+  caso-eurusd-2026-01-12: dev
+  caso-eurusd-2026-01-13: dev
+  caso-eurusd-2026-01-14: dev
+  caso-eurusd-2026-01-15: dev
+  caso-eurusd-2026-01-16: dev
+  caso-eurusd-2026-01-19: dev
+  caso-eurusd-2026-01-20: dev
+  caso-eurusd-2026-01-21: dev
+  caso-eurusd-2026-01-22: dev
+  caso-eurusd-2026-01-23: dev
+  caso-eurusd-2026-01-26: dev
+  caso-eurusd-2026-01-27: dev
+  caso-eurusd-2026-01-28: dev
+  caso-eurusd-2026-01-29: dev
+  caso-eurusd-2026-01-30: dev
+cupos:
+  dev: 21
+material_sha256: ee4ade46094c73c1f1de0043acc5345cf7fa42c729b71a4b57d781002554ab86

@@ -55,6 +55,17 @@ etiquetas: [compra, venta, no_trade]
 # que enero, abril, julio y agosto no se declaraban -abril y agosto lo estan desde ADR-0042- y que
 # la columna la leia el consultor; ADR-0072 dice que la lee Aleks.)
 cobertura_material:
+  # ENERO: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
+  # 2026-10-13; rama `trabajo/entrada-enero`). El tramo es la fecha MINIMA y la MAXIMA de la columna
+  # de fechas del libro, leidas UNA vez el 2026-10-13 por Aleks (ADR-0072), y nada mas (la sesion
+  # ya habia leido esa columna el 2026-10-06, antes de ADR-0072: ENTRADA-ENERO.md §0.b). Es un
+  # LIMITE INFERIOR de la cobertura real: un dia del borde sin operaciones no se distingue de uno no
+  # cubierto. El 1 de enero no entra. El sha, copiado del manifiesto del corpus.
+  "2026-01":
+    - desde: "2026-01-02"
+      hasta: "2026-01-30"
+      fuente: [ADR-0042]
+      material_sha256: "ee4ade46094c73c1f1de0043acc5345cf7fa42c729b71a4b57d781002554ab86"
   # ABRIL: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
   # 2026-09-21). El tramo es la fecha MINIMA y la MAXIMA de la columna de fechas del libro, leidas
   # UNA vez el 2026-09-23 por orden del consultor y con el formato y el huso de libros.yaml, y nada

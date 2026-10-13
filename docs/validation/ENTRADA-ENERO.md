@@ -420,6 +420,32 @@ VENTANA**; todas las cifras iguales. Contar por la rejilla no cambia nada de lo 
 abril y agosto (su `fuente`), y así se queda. La corrida con los cuatro meses va después de la fase
 4, a un anexo.
 
+## 2. Fase 2 · enero: lectura declarada, tramo y reparto
+
+Todo en un commit, con `Fuente: ADR-0042, ADR-0072` (ADR-0079 aún no existe), y en este orden
+dentro de él:
+
+- **2.a** `anexos/ENTRADA-ENERO/medidas_enero.py`, repetido en 7bc7fa3 (el commit sobre el que se
+  escribe éste), antes de leer nada: `casos_reservados: 34 en total; en 2026-01: 0`,
+  `casos_ocultos: 34 en total; en 2026-01: 0`, `meses_reservados.yaml: '2026-01' aparece 0 veces`.
+- **2.b** Fila nueva en `HOLDOUT-EXPOSICIONES.md`, hoy y antes de ingerir: la lectura completa del
+  libro de enero por `casos ingerir`, con el nombre del fichero (`backtesting-analytics ENERO
+  2026.xlsx`) y sus cuatro columnas (`dateStart`, `side`, `entryPrice`, `initialSL`,
+  `src/botsito/cases/ingesta.py:103`) de las filas de los 21 días dev, que son el libro entero. Es
+  la que cumple de verdad la condición 2 de ADR-0042 §2 (punto 6 de la respuesta); la fila dice
+  además que la columna de fechas ya la leyó la sesión el 2026-10-06 y que la lectura de Aleks de
+  hoy es la que fija el tramo según ADR-0072, sin ser una exposición nueva («Además» 1).
+- **2.c** Tramo de 2026-01 en `cobertura_material` (`knowledge/cases/kit/config.yaml`): del
+  2026-01-02 al 2026-01-30, `fuente: [ADR-0042]`, `material_sha256` copiado del manifiesto del
+  corpus (`knowledge/corpus/manifest.yaml:273`, `ee4ade46…ab86`), con su comentario: límite
+  inferior, como abril y julio; el 1 de enero no entra.
+- **`tests/contract/test_mes_del_material.py:252`** ampliado con `2026-01` en este mismo commit,
+  que es donde rompe (punto 1).
+- **2.d** `uv run botsito casos visto --mes 2026-01`:
+  `OK: knowledge/cases/visto/2026-01/particiones.yaml: 21 dias laborables, todos `dev`, sin sorteo;
+  anclado en knowledge/cases/visto/anclas.yaml`. Ancla `2026-01: particiones.yaml: 5061655b…`.
+  `material_sha256` del reparto, el del libro.
+
 ## Estado
 
-EN CURSO: fase 1 hecha; sigue la fase 2.
+EN CURSO: fases 1 y 2 hechas; sigue la fase 3 (ADR-0079).
