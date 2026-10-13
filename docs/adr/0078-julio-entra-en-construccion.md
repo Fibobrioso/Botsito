@@ -88,7 +88,9 @@ de 42 a 55 días `dev` antes de la corrida de R3.1.
 - La corrida de ADR-0070 (R3.1) cubre ya los tres meses: «la construcción vigente».
 - **El spread supuesto del respaldo sin ticks** (ADR-0051 §6, `knowledge/simulador/llenado.yaml`)
   está medido sobre los ticks de abril y agosto y NO se rehace aquí: con ticks de julio, los días
-  de julio no lo usan. Si una rama lo remide, julio es construcción y puede entrar.
+  de julio no lo usan, salvo en las horas perdidas de su dataset (3 de 117 en
+  `eurusd-ticks-2026-07-6e7dc7cd`), que van por el respaldo M1 con ese spread supuesto, como las
+  de abril y agosto. Si una rama lo remide, julio es construcción y puede entrar.
 - Notas, sin reescribir cuerpos: ADR-0043 («construcción = abril y agosto») y ADR-0039 §1 (la
   excepción de la lectura de fechas). Los runbooks `ARNES-MOTOR.md` y `SESION-DE-PREGUNTAS.md`,
   corregidos en el mismo commit.

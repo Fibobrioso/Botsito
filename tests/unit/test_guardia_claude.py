@@ -202,9 +202,10 @@ def test_julio_se_lee_y_lo_demas_sigue_cerrado(
     g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """`trabajo/entrada-julio` (decision del consultor del 2026-10-12): julio pasa a material de
-    DESARROLLO. Los dos sentidos, y los dos rotos a proposito: sin julio en la lista su libro
-    vuelve a cerrarse, y con un dia de julio reservado tambien; febrero, marzo y diciembre siguen
-    cerrados, y las imagenes de la carpeta de julio no se abren nunca (R_CAPTURA, ADR-0038)."""
+    DESARROLLO. Los dos sentidos, y cada uno roto a proposito: julio se lee (sin julio en la
+    lista su libro vuelve a cerrarse, y con un dia de julio reservado tambien); febrero, marzo y
+    diciembre siguen cerrados (con ellos en la lista se abririan), y las imagenes de la carpeta
+    de julio no se abren nunca (R_CAPTURA, ADR-0038; sin su extension se abririan)."""
     libro = f"{JULIO}/backtesting-analytics JULIO 2026.xlsx"
     video = f"{JULIO}/backtest julio.mp4"
     fotos = (f"{JULIO}/WhatsApp Image 2026-10-04 at 1.00.00 PM.jpeg", f"{JULIO}/captura.png")
@@ -225,7 +226,20 @@ def test_julio_se_lee_y_lo_demas_sigue_cerrado(
     for rel in (libro, video):
         assert _regla(g, repo, rel) == g.R_SIN_ABRIR, rel
     monkeypatch.undo()
-    # Roto a proposito (2): un dia de julio en una particion reservada cierra el mes entero.
+    # Roto a proposito (2), el otro sentido: con febrero, marzo y diciembre en la lista, sus
+    # libros se abririan; la comprobacion de arriba lo veria.
+    monkeypatch.setattr(
+        g, "MESES_DE_DESARROLLO", (*g.MESES_DE_DESARROLLO, "2026-02", "2026-03", "2025-12")
+    )
+    for rel in OTROS_MESES:
+        assert _regla(g, repo, rel) is None, rel
+    monkeypatch.undo()
+    # Roto a proposito (3): sin sus extensiones en EXT_IMAGEN, las fotos de julio se abririan.
+    monkeypatch.setattr(g, "EXT_IMAGEN", (".gif",))
+    for rel in fotos:
+        assert _regla(g, repo, rel) is None, rel
+    monkeypatch.undo()
+    # Roto a proposito (4): un dia de julio en una particion reservada cierra el mes entero.
     _escribir(
         repo,
         "knowledge/cases/visto/2026-07/particiones.yaml",
@@ -372,6 +386,12 @@ def _matriz_de_material() -> list[tuple[str, str]]:
             "notas.txt",
         ):
             filas.append((mes, f"{carpeta}/{nombre}"))
+        # la grafia de julio en el disco: carpeta con mayuscula, libro con guiones bajos, .mkv
+        carpeta = f"{MATERIAL}/Backtest {min_.capitalize()} {ano}"
+        for nombre in (f"backtesting-analytics_{may}_{ano}.xlsx", "grabacion.mkv", "foto.jpeg"):
+            filas.append((mes, f"{carpeta}/{nombre}"))
+        # un libro suelto sin «backtesting-analytics» en el nombre: solo lo ve el mes del nombre
+        filas.append((mes, f"{MATERIAL}/operaciones {min_} {ano}.csv"))
         filas.append((mes, f"{MATERIAL}/backtesting-analytics {may} {ano}.xlsx"))
         filas.append((mes, f"para-revisar/backtesting-analytics {may} {ano}.xlsx"))
     for rel in (
@@ -401,17 +421,21 @@ def test_la_guardia_frente_a_la_de_main_caso_a_caso(g: ModuleType, tmp_path: Pat
     """`trabajo/entrada-julio`: con los repartos REALES, la guardia de la rama decide cada ruta de
     la matriz igual que la de `main`, por el NOMBRE de la regla (el texto de R_SIN_ABRIR y R_LIBRO
     cambio a proposito), salvo el material de julio que no es imagen, que pasa de R_SIN_ABRIR a
-    legible. Sin `main` en el clon (una CI superficial) se salta, no se finge."""
-    proc = subprocess.run(
-        ["git", "show", "main:.claude/hooks/guardia.py"],
-        cwd=RAIZ,
-        capture_output=True,
-        text=True,
-        encoding="utf-8",
-        check=False,
-    )
-    if proc.returncode != 0:
-        pytest.skip("sin la rama main en este clon")
+    legible. `main` o, en la CI (que no crea la rama local), `origin/main`; sin ninguna de las
+    dos (una CI superficial) se salta, no se finge."""
+    for ref in ("main", "origin/main"):
+        proc = subprocess.run(
+            ["git", "show", f"{ref}:.claude/hooks/guardia.py"],
+            cwd=RAIZ,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+        if proc.returncode == 0:
+            break
+    else:
+        pytest.skip("sin main ni origin/main en este clon")
     fichero = tmp_path / "guardia_de_main.py"
     fichero.write_text(proc.stdout, encoding="utf-8")
     spec = importlib.util.spec_from_file_location("guardia_de_main", fichero)

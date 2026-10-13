@@ -39,9 +39,11 @@ la cuenta con un stop por debajo de 1,67 × P pips (1,95 pips con P = 1,17). F21
 distribución real de cajas». Lo que el consultor ha visto, y lo que se mide aquí, es que **nada lo
 comprueba**.
 
-**Medido el 2026-10-13** (búsquedas sobre `src/`, `scripts/` y el perfil):
-- `firma_apalancamiento` (30) **no lo lee ningún código**: aparece solo en
-  `knowledge/spec/parametros.yaml:1821` y en `knowledge/cuentas/ftmo-2step-swing-100k.yaml:270`.
+**Medido el 2026-10-13** (búsquedas sobre `src/`, `scripts/`, `tools/` y el perfil):
+- `firma_apalancamiento` (30) **no lo lee ningún código del bot** (`src/`, `scripts/`, `tools/`):
+  fuera de ellos aparece en `knowledge/spec/parametros.yaml:1821` y en
+  `knowledge/cuentas/ftmo-2step-swing-100k.yaml:270`, y lo lee solo el anexo de esta medida
+  (`anexos/ENTRADA-JULIO/margen_p_d1.py`), que no es del bot.
 - **El simulador no comprueba el margen.** En `src/botsito/engine/` la palabra «margen» solo sale
   como el margen de minutos antes de un cierre largo (`broker.py:329`, `:696`, `:739`;
   `simulacion.py:108-115`), como un porcentaje sobre los topes de pérdida
@@ -100,11 +102,11 @@ no son los supuestos, y el apartado 2 se rehace con el valor medido. No hace fal
   > el saldo como margen da 27,27 lotes a 1,10 y 25,00 a 1,20, y el 0,5 % deja de cumplirse con un
   > stop de menos de 1,83 y 2,00 pips (el tope de 50 lotes corta en 1 pip). Partir en varias
   > órdenes no lo arregla: MT5 suma el margen de las posiciones del mismo lado. El simulador no
-  > comprueba el margen y `firma_apalancamiento` no lo lee ningún código (deuda abajo). La
+  > comprueba el margen y `firma_apalancamiento` no lo lee ningún código del bot (deuda abajo). La
   > ejecución 2 de la demo comprueba la fórmula con el margen de 1,00 lote que ya escribe el
   > script 1.1 (`MargenAlcanza`).
 - **Una línea de Technical Debt:**
-  > El simulador no comprueba el margen: `firma_apalancamiento` no lo lee ningún código, y el perfil
+  > El simulador no comprueba el margen: `firma_apalancamiento` no lo lee ningún código del bot, y el perfil
   > («Lo consume el broker simulado») y `parametros.yaml` («F21 lo comprueba») dicen lo contrario
   > (`docs/validation/FTMO-P-D1.md` §2). Rama propia: que el broker simulado rechace la orden cuyo
   > margen (lotes × instrumento_contrato × precio / firma_apalancamiento) pase del margen libre, con
