@@ -1,0 +1,8 @@
+casos_reservados: 34 en total; en 2026-01: 0
+casos_ocultos: 34 en total; en 2026-01: 0
+casos_reservados por particion (todas, recuento): {'holdout-1': 8, 'holdout-3': 8, 'holdout-2': 8, 'fidelidad-1': 10}
+meses_reservados.yaml: '2026-01' aparece 0 veces
+vistos.yaml: 2026-01 visto_el 2026-08-30, fuente ['ev-v4-000243-a1067c1c', 'ev-v4-001027-1b74d1a6']
+criterio_fidelidad construccion: ['2026-04', '2026-07', '2026-08']
+knowledge/cases/dev: casos de 2026-01: 0
+knowledge/cases/visto/2026-01: no existe

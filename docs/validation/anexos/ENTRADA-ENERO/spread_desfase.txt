@@ -1,0 +1,29 @@
+llenado.yaml: huso Europe/Madrid; tabla {7: 5, 8: 5, 9: 5, 10: 5, 11: 5, 12: 4, 13: 4, 14: 5}; fuera 4
+
+== 2026-10-22
+04:30Z pared 06 -> 4 | rejilla 06 -> 4
+05:30Z pared 07 -> 5 | rejilla 07 -> 5
+06:30Z pared 08 -> 5 | rejilla 08 -> 5
+07:30Z pared 09 -> 5 | rejilla 09 -> 5
+08:30Z pared 10 -> 5 | rejilla 10 -> 5
+09:30Z pared 11 -> 5 | rejilla 11 -> 5
+10:30Z pared 12 -> 4 | rejilla 12 -> 4
+11:30Z pared 13 -> 4 | rejilla 13 -> 4
+12:30Z pared 14 -> 5 | rejilla 14 -> 5
+13:30Z pared 15 -> 4 | rejilla 15 -> 4
+14:30Z pared 16 -> 4 | rejilla 16 -> 4
+horas con spread distinto: 0
+
+== 2026-10-27
+04:30Z pared 05 -> 4 | rejilla 06 -> 4
+05:30Z pared 06 -> 4 | rejilla 07 -> 5  DISTINTO
+06:30Z pared 07 -> 5 | rejilla 08 -> 5
+07:30Z pared 08 -> 5 | rejilla 09 -> 5
+08:30Z pared 09 -> 5 | rejilla 10 -> 5
+09:30Z pared 10 -> 5 | rejilla 11 -> 5
+10:30Z pared 11 -> 5 | rejilla 12 -> 4  DISTINTO
+11:30Z pared 12 -> 4 | rejilla 13 -> 4
+12:30Z pared 13 -> 4 | rejilla 14 -> 5  DISTINTO
+13:30Z pared 14 -> 5 | rejilla 15 -> 4  DISTINTO
+14:30Z pared 15 -> 4 | rejilla 16 -> 4
+horas con spread distinto: 4

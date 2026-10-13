@@ -1,0 +1,76 @@
+reloj rejilla_h4; ancla 17:00 America/New_York; vela 3; ventana nominal 07-15; huso_operativa Europe/Madrid
+
+== enero 2026
+2026-01-01 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-02 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-05 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-06 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-07 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-08 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-09 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-12 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-13 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-14 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-15 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-16 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-19 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-20 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-21 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-22 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-23 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-26 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-27 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-28 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-29 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-01-30 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+union de horas UTC: [6, 7, 8, 9, 10, 11, 12, 13]
+
+== julio 2026 (1-17)
+2026-07-01 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-02 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-03 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-06 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-07 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-08 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-09 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-10 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-13 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-14 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-15 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-16 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-07-17 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+union de horas UTC: [5, 6, 7, 8, 9, 10, 11, 12]
+
+== marzo 2026 (desfase de primavera)
+2026-03-06 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-03-09 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-10 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-11 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-12 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-13 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-16 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-17 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-18 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-19 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-20 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-23 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-24 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-25 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-26 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-27 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-03-30 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-03-31 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+union de horas UTC: [5, 6, 7, 8, 9, 10, 11, 12, 13]
+
+== octubre-noviembre 2026 (desfase de otono)
+2026-10-22 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-10-23 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 05:00Z
+2026-10-26 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-10-27 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-10-28 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-10-29 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-10-30 rejilla 05:00-13:00Z horas 05-12 | huso_operativa 06:00Z  DESFASE
+2026-11-02 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-11-03 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+2026-11-04 rejilla 06:00-14:00Z horas 06-13 | huso_operativa 06:00Z
+union de horas UTC: [5, 6, 7, 8, 9, 10, 11, 12, 13]
