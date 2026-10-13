@@ -31,6 +31,9 @@ rutas_permitidas:
   - tests/unit/test_cuarentena.py
   - tests/unit/test_cuarentena_por_condicion.py
   - tests/unit/test_criterio_fidelidad.py
+  # ampliado el 2026-10-13: los dos tests de contrato que fijan los libros y los meses con material
+  - tests/contract/test_libros.py
+  - tests/contract/test_mes_del_material.py
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md

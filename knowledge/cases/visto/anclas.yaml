@@ -13,5 +13,7 @@
 # EXPLICITO (`--reanclar`) y su diff se ve aqui, no como efecto colateral de regenerar nada.
 2026-04:
   particiones.yaml: 7b04c5fc34428376bfd940ebe01138bb0e1a4be5
+2026-07:
+  particiones.yaml: ee78cc0c22c697ca1be137748b9fd55f4fca3548
 2026-08:
   particiones.yaml: 0bb09b84b7d7a718603865ee79dda731c0e2ae52

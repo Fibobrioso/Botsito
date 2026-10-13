@@ -82,6 +82,18 @@ cobertura_material:
   # justo la combinacion que hasta hoy no se podia expresar. Sin esto, sus 10 dias `dev` del
   # reparto de la sesion 1 siguen siendo ingeribles y un `kit build` nuevo volveria a sortearlo.
   "2026-06": []
+  # JULIO: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
+  # 2026-10-13; rama `trabajo/entrada-julio`). El tramo es la fecha MINIMA y la MAXIMA de la columna
+  # de fechas del libro, leidas UNA vez el 2026-10-13 por Aleks (ADR-0072), y nada mas. Es un
+  # LIMITE INFERIOR de la cobertura real: un dia del borde sin operaciones no se distingue de uno no
+  # cubierto. Los dias del 20 al 31 NO tienen libro (el trader no exporto ese tramo y ya no puede):
+  # quedan solo en el video v14 y no entran aqui (decision del consultor del 2026-10-13, ADR-0042
+  # §2). El sha, copiado del manifiesto del corpus.
+  "2026-07":
+    - desde: "2026-07-01"
+      hasta: "2026-07-17"
+      fuente: [ADR-0042]
+      material_sha256: "a8cb4ef47faaccee4d0f35adb13da9001abd241a10a3ab810acc33986b41f49f"
   # AGOSTO: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
   # 2026-09-21). El tramo es la fecha MINIMA y la MAXIMA de la columna de fechas del libro, leidas
   # UNA vez el 2026-09-23 por orden del consultor y con el formato y el huso de libros.yaml, y nada

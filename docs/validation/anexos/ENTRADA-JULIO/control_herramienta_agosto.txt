@@ -1,0 +1,9 @@
+LIBRO: 33a01f1d8124... formato 'AAAA/MM/DD HH:MM:SS'
+CRITERIO: knowledge/corpus/criterio_huso.yaml (margen 2 puntos; decide >= 0.90 y el otro <= 0.50)
+DATASETS: eurusd-m1-2026-08-0d42230e
+DIAS dev: 21
+FILAS comparables: 47; sin entrada numerica: 0; descartadas por frontera de dia: no
+UTC: 47/47 = 100.0 %
+Europe/Madrid: 1/47 = 2.1 %
+== VEREDICTO (ADR-0039 §5): UTC
+== CONTROL: declarado UTC -> COINCIDE

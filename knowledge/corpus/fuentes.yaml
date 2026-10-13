@@ -109,6 +109,51 @@ videos:
       operaciones concretas comentadas en voz, y CUATRO CORTES de audio de cero digital, de 45:05 a 46:41, de 1:30:51 a 1:35:48, de
       1:36:37 a 1:38:58 y de 1:39:08 a 1:39:42, en los que no se oye nada
 
+  # EL BACKTEST DE JULIO DE 2026 GRABADO EN VIDEO (`trabajo/entrada-julio`, datos de Aleks del
+  # 2026-10-13): cuatro grabaciones del trader en FX Replay, en la carpeta «backtest Julio 2026» del
+  # Drive de Aleks (1W0KQ12C-TKCQDTlYmekWgUmYQoCxj2Jq) y en local en «Material adicional de su
+  # operativa/Backtest Julio 2026». Numeradas por orden de grabacion, que es el de su nombre.
+  # Segun el trader (de palabra a Aleks el 2026-10-13), v11 a v13 son el backtest del 1 al 17 de
+  # julio que exporta el xlsx del mes, y v14 el tramo final, desde el 20 de julio, sin xlsx. El
+  # orden de grabacion lo hace PROBABLE pero no lo prueba: lo comprueba la rama que los transcriba.
+  - video_id: v11
+    fichero: "Material adicional de su operativa/Backtest Julio 2026/2026-10-02 20-18-00.mkv"
+    drive_id: "13v1eZMhVq-g9ao17hqqv-hQwjC6xTb1T"
+    bytes: 419918585
+    fecha_grabacion: "2026-10-02"
+    naturaleza: >-
+      backtest de julio del trader en FX Replay, material de desarrollo; primera de cuatro
+      grabaciones: segun el trader, parte del backtest del 1 al 17 de julio que exporta el xlsx del
+      mes (no comprobado: lo comprueba la rama que lo transcriba)
+  - video_id: v12
+    fichero: "Material adicional de su operativa/Backtest Julio 2026/2026-10-02 20-53-08.mkv"
+    drive_id: "1C7lZOtYZ0J12IjzdpWnCEo-CPzwchCz_"
+    bytes: 739623714
+    fecha_grabacion: "2026-10-02"
+    naturaleza: >-
+      backtest de julio del trader en FX Replay, material de desarrollo; segunda de cuatro
+      grabaciones: segun el trader, parte del backtest del 1 al 17 de julio que exporta el xlsx del
+      mes (no comprobado: lo comprueba la rama que lo transcriba)
+  - video_id: v13
+    fichero: "Material adicional de su operativa/Backtest Julio 2026/2026-10-04 09-45-43.mkv"
+    drive_id: "1w0zlVCMFt1e_TjMOUbNpzPxtQ7-_pYwT"
+    bytes: 815725885
+    fecha_grabacion: "2026-10-04"
+    naturaleza: >-
+      backtest de julio del trader en FX Replay, material de desarrollo; tercera de cuatro
+      grabaciones: segun el trader, parte del backtest del 1 al 17 de julio que exporta el xlsx del
+      mes (no comprobado: lo comprueba la rama que lo transcriba)
+  - video_id: v14
+    fichero: "Material adicional de su operativa/Backtest Julio 2026/2026-10-04 12-40-14.mkv"
+    drive_id: "19yHqjeekIllhB0zV9Ks_78M3jKZrubU6"
+    bytes: 1194821502
+    fecha_grabacion: "2026-10-04"
+    naturaleza: >-
+      backtest de julio del trader en FX Replay, material de desarrollo; cuarta de cuatro
+      grabaciones: segun el trader, el tramo final del mes, desde el 20 de julio, del que no
+      exporto xlsx y ya no puede (borro el backtest); esos dias no tienen libro ni casos (no
+      comprobado: lo comprueba la rama que lo transcriba)
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2
@@ -128,6 +173,11 @@ carpetas:
       (`knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml`) y 13 de sus 19 dias son
       holdout, asi que este material NO puede usarse para elegir ningun parametro: es entrada de
       F14 (biblioteca de casos) y F26 (fidelidad), con el regimen de holdout que les toque.
+      Subcarpeta "Backtest Julio 2026" (entregada a Aleks y copiada aqui el 2026-10-13, rama
+      `trabajo/entrada-julio`): el xlsx del mes, que segun Aleks cubre del 1 al 17 de julio; las
+      cuatro grabaciones v11 a v14 (arriba); y seis capturas de RESUMEN del mes, estadistica del
+      mes entero, que se tratan como Analytics y no se abren nunca (ADR-0038). Julio es material
+      de DESARROLLO desde esa rama (decision del consultor del 2026-10-12).
       Subcarpeta "Mensajes del trader": capturas de respuestas suyas por escrito, fuera de sesion.
       Son sus palabras, no una sintesis del consultor, y por eso el registro de feedback que las
       recoge puede llevarlas como `respuesta_literal`. La primera cierra A-20 (una sola zona de

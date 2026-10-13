@@ -328,6 +328,35 @@ Copiada tal cual (los huecos `______` son de Aleks y llegan aparte; en §0.d, ca
 | 8 | la parte de la guardia, en la fase 1 (§1); la de ADR-0078, en su commit |
 | Además | las propuestas del cierre, al final; R0.1 retirada; la desviación de O, en la fase 6; la consecuencia de 0.c, aceptada |
 
+## Datos para la fase 3 (Aleks y consultor, 2026-10-13)
+
+Copiados tal cual. Rellenan los huecos de los puntos 1 a 4 de la respuesta (lo que se mide con ellos, en §0.d):
+
+> Datos para la fase 3 (Aleks y consultor, 2026-10-13). Si recibiste antes un mensaje que recortaba la rama porque no había xlsx, queda ANULADO: el Excel llegó y sigue el plan completo de la respuesta a la PARADA (decisiones 0 a 10, con el orden de la decisión 5).
+>
+> 1. Material copiado a corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/: el xlsx de julio (nombre tal como lo exportó FX Replay), 4 vídeos de julio y fotos de resumen. Nada de otros meses.
+> 2. Las fotos son capturas de resumen (estadística del mes): se tratan como Analytics y no se abren nunca. Solo nombre, tamaño y sha256.
+> 3. Columna de fechas del xlsx, leída por mí una sola vez hoy (ADR-0072): mínima 2026-07-01, máxima 2026-07-17. Al leerla vi también la hora de esas dos filas, y nada más. Declárala hoy en HOLDOUT-EXPOSICIONES.
+> 4. Lo que dice el trader, de palabra a Aleks el 2026-10-13: el xlsx es la exportación de los 3 primeros vídeos. El 4.º termina el mes (desde el 20 de julio), pero de esos días no exportó el Excel, y ya no puede porque borró el backtest. Así que del 1 al 17 hay vídeo y Excel; del 20 al 31, solo vídeo y las fotos de resumen.
+> 5. Vídeos: 4, en Drive de Aleks (carpeta «backtest Julio 2026», 1W0KQ12C-TKCQDTlYmekWgUmYQoCxj2Jq). Entran por orden de grabación, que es el de su nombre:
+>    - v11: «2026-10-02 20-18-00.mkv», drive_id 13v1eZMhVq-g9ao17hqqv-hQwjC6xTb1T, 419918585 bytes en Drive
+>    - v12: «2026-10-02 20-53-08.mkv», drive_id 1C7lZOtYZ0J12IjzdpWnCEo-CPzwchCz_, 739623714 bytes
+>    - v13: «2026-10-04 09-45-43.mkv», drive_id 1w0zlVCMFt1e_TjMOUbNpzPxtQ7-_pYwT, 815725885 bytes
+>    - v14: «2026-10-04 12-40-14.mkv», drive_id 19yHqjeekIllhB0zV9Ks_78M3jKZrubU6, 1194821502 bytes
+>    Comprueba que los bytes en disco coinciden con los de Drive. Si alguno no coincide, PARA.
+>    Naturaleza: «backtest de julio del trader en FX Replay, material de desarrollo». Que v11 a v13 son los del xlsx (1 a 17 de julio) y v14 el del tramo final sin xlsx es lo que dice el trader; como el orden de grabación lo hace probable pero no lo prueba, escríbelo así en fuentes.yaml y en el informe, y lo comprueba la rama de transcripción.
+>    De cada uno, con ffprobe y sin abrir fotogramas: duración y si tiene pista de audio, al informe.
+>
+> DECISIÓN DEL CONSULTOR SOBRE EL TRAMO
+> - El tramo de 2026-07 en cobertura_material es 2026-07-01 a 2026-07-17, con el material_sha256 del xlsx. Igual que abril, es un LÍMITE INFERIOR de lo que cubre el libro: un día del borde sin operaciones no se distingue de uno no cubierto.
+> - Los días del 20 al 31 de julio NO entran en el reparto dev-visto ni en los casos: no hay libro que los cubra (ADR-0042 §2). Quedan solo en v14.
+> - Las fotos tampoco sirven para ellos: son un agregado del mes entero.
+> - En el informe y en ADR-0078 queda escrito por qué julio entra en construcción solo del 1 al 17, y que la decisión de sacar casos del vídeo para el resto va después de la rama que transcriba v11-v14.
+> - Ticks: download-ticks con --solo-dias-dev bajará solo los días del reparto (1 al 17). Compruébalo en su salida.
+> - Propuesta para la orden de cierre: R2.1 pasa a HECHA en lo del libro, y entra una entrada nueva, «Julio 20-31: solo en vídeo (v14); decidir si se extraen casos del vídeo, tras transcribir v11-v14».
+>
+> Sigue con la fase 3 y el resto, en el orden aprobado. Si el diff de manifest.yaml trae cualquier cosa que no sea de Backtest julio 2026, PARA. Si el Makefile cambia o el clasificador niega un push, para y dame el comando con «!». Al terminar: revisor, CI de fix/entrada-julio con los números de run, y «Rama lista para revisión, NO cerrada».
+
 ## 1. Fase 1 · la guardia y los textos (2026-10-12)
 
 **`.claude/hooks/guardia.py`** (`git diff main --numstat -- .claude/hooks/guardia.py`: 12 líneas más, 8 menos, todas de estas tres cosas):
@@ -383,6 +412,120 @@ de bloquearse, salvo el material de julio que no es imagen.**
 `docs/validation/anexos/ENTRADA-JULIO/`, `docs/runbooks/ARNES-MOTOR.md`,
 `docs/runbooks/SESION-DE-PREGUNTAS.md`, `docs/adr/0043-*.md` y `docs/adr/0039-*.md`.
 
+## 0.d Los datos de Aleks y el material de julio (2026-10-13)
+
+Los huecos de la respuesta, rellenos por los «Datos para la fase 3» (copiados arriba):
+- **Fotos** (punto 1): capturas de RESUMEN, estadística del mes entero: se tratan como Analytics y
+  **no se abrió ninguna, ni miniatura**. Solo nombre, tamaño y sha256.
+- **Fechas** (punto 2): mínima 2026-07-01, máxima 2026-07-17, leídas por Aleks una vez el
+  2026-10-13 (ADR-0072), con la hora de esas dos filas y nada más. Declarado el mismo día en
+  `HOLDOUT-EXPOSICIONES.md` (fila del 2026-10-13).
+- **El xlsx** (punto 3): según el trader, exporta los tres primeros vídeos; el cuarto, desde el 20
+  de julio, no tiene xlsx. Va a la rama del vídeo y al cuestionario de la sesión 5.
+- **Vídeos** (punto 4): cuatro, v11 a v14, con su `drive_id`.
+
+**La carpeta** (`ls -la` de `corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/`
+y solo de ella; su nombre real lleva **J mayúscula**) y los sha256 (`sha256sum` en la carpeta, sin
+abrir nada):
+
+| Fichero | Bytes | sha256 | Qué es |
+|---|---|---|---|
+| `2026-10-02 20-18-00.mkv` | 419918585 | `5732fe442ae416b736f7027c28aab438f291f5184b74d78027ee6145e8ba299f` | v11 |
+| `2026-10-02 20-53-08.mkv` | 739623714 | `a045ec0bec87d6e6d899e6b5bd4fb585d5f261e1ec5873378d868984243f01a3` | v12 |
+| `2026-10-04 09-45-43.mkv` | 815725885 | `8dc7efa12e264f64652179d6cfce1be8f84c3626baccf77576f8541d62b0c1ff` | v13 |
+| `2026-10-04 12-40-14.mkv` | 1194821502 | `e13e4e4df1ffcc2aad90d3d07d138e217d6c0aa871178cb90f766a17203961d6` | v14 |
+| `444444.jpeg` | 111816 | `0090a516f2d4031fc6dc7855f525ddea09fd8562adf892136c02d875ce6a26df` | captura de resumen, no se abre |
+| `55125.jpeg` | 120215 | `585198ad997ae9eb3db0ea75cdfe548dfe0348822f4d1bdc157dcda719346bf9` | captura de resumen, no se abre |
+| `66235.jpeg` | 96554 | `a9fe580bd254aca8b97c963e6e91104e09591a99e81c0db1181b00e2c391ac62` | captura de resumen, no se abre |
+| `76543.jpeg` | 65071 | `b9aacda3d6273ee2375e109b8b121700e3ad14c9345c6b0c2e67a04f870c84f4` | captura de resumen, no se abre |
+| `WhatsApp Image 2026-10-04 at 11.51.57 AM.jpeg` | 107323 | `8fae379fa3a73b19896a73da5c0de4a662bf46f399accc7886779476049b712a` | captura de resumen, no se abre |
+| `WhatsApp Image 2026-10-04 at 11.51.57 AM4214.jpeg` | 93727 | `40507f5ff5987c78fc6929f295475482b9cc63e846e0e1ffd499303545d51fa9` | captura de resumen, no se abre |
+| `backtesting-analytics_JULIO_2026.xlsx` | 13265 | `a8cb4ef47faaccee4d0f35adb13da9001abd241a10a3ab810acc33986b41f49f` | el libro |
+
+- **Bytes frente a Drive**: los cuatro vídeos coinciden byte a byte con los que dio Aleks; no
+  hace falta parar. Nada de otros meses en la carpeta.
+- **El libro**: su nombre lleva guiones bajos (`backtesting-analytics_JULIO_2026.xlsx`); la guardia
+  lo reconoce igual como libro de julio (`_MES` admite hasta tres no-dígitos entre mes y año).
+- **Duración y audio** (de `knowledge/corpus/manifest.yaml`, por `corpus inventory`, que llama a
+  ffprobe): v11 1260,9 s (21:01), v12 2220,8 s (37:01), v13 2449,3 s (40:49), v14 3587,5 s
+  (59:47); los cuatro **con pista de audio**, 1280×720 a 30 fps. Total, 2 h 38 min.
+- **HALLAZGO (importa): la guardia niega `ffprobe` sobre un vídeo.** `ffprobe -v error ... "<.mkv>"`
+  se bloqueó con «la guardia no sabe con que se ejecuta ... (ni extension ni `#!`)»: trata el
+  fichero como un guion que se ejecuta. No se rodeó: la duración salió por `corpus inventory`, la
+  vía revisada. Propuesta para la Next Action (junto a K, el otro falso positivo de la guardia):
+  que `ffprobe` y `ffmpeg -i` lean y no ejecuten, con un test que rompa los dos sentidos.
+
+## 3. Fase 3.a-e · el libro, su lectura y su reparto (2026-10-13)
+
+**Desviación declarada: v11 a v14 entran en `fuentes.yaml` aquí y no en la fase 5.** `corpus
+inventory` regenera `manifest.yaml` desde el disco y solo clasifica como vídeo lo que está en
+`fuentes.yaml`: sin ellos, los cuatro `.mkv` entrarían como material suelto y la fase 5 tendría que
+rehacer el manifiesto. Con ellos entran los dos tests que listan vídeos (`test_inventario.py`, ahora
+v1 a v14; `test_cuarentena.py`, el ejemplo sintético de sesión sin listar pasa de v11 a v15). Los
+cuatro tienen `drive_id`: no son sesiones, no van a `SESIONES_EN_CUARENTENA` y la guardia no los
+pone en cuarentena (decisión 4).
+
+**3.a, otra vez antes de leer** (`recuento_julio.py`, el mismo guion de la fase 0):
+`2026-07: casos_reservados 0; casos_ocultos 0`. El anexo del huso lo comprueba otra vez dentro
+antes de abrir el libro.
+
+**El inventario** (`uv run botsito corpus inventory`, decisión 7). La primera pasada salió con los
+`.mkv` contados dos veces, como vídeos y como material: `fuentes.yaml` decía «Backtest julio 2026» y
+la carpeta es «Backtest **J**ulio 2026» (Windows no distingue, el inventario sí). Corregida la
+grafía (en `fuentes.yaml` y en el anexo), la segunda pasada da el diff limpio: **solo entran
+ficheros de `Backtest Julio 2026`**, 7 como material (las seis capturas y el libro: 59 → 66) y 4
+como vídeo (10 → 14). Nada de otros meses: no hay que parar.
+
+**3.b El huso, por velas** (decisión 6; anexo `anexos/ENTRADA-JULIO/huso_julio.py`, que repite el
+de enero con las funciones de `scripts/huso_por_velas.py` de `main` y comprueba dentro 0 ocultos, 0
+reservados y que julio no está en `meses_reservados.yaml`; salida en `huso_julio.txt`):
+
+```
+== 2026-07: libro a8cb4ef47faa... formato 'AAAA-MM-DD HH:MM:SS'; declarado: NO (sin entrada en libros.yaml)
+FILAS comparables: 72; sin entrada numerica: 0; descartadas por frontera de dia: no
+UTC: 5/72 = 6.9 %
+Europe/Madrid: 71/72 = 98.6 %
+VEREDICTO (ADR-0039 §5, entre UTC y Europe/Madrid): Europe/Madrid
+
+== 2026-08: libro 33a01f1d8124... formato 'AAAA/MM/DD HH:MM:SS'; declarado: UTC
+UTC: 47/47 = 100.0 %   Europe/Madrid: 1/47 = 2.1 %   CONTROL: declarado UTC -> COINCIDE
+```
+
+Y el control con la herramienta de `main` tal cual sobre los 21 días `dev` de agosto
+(`control_herramienta_agosto.txt`): UTC 47/47, Europe/Madrid 1/47, COINCIDE.
+
+**Concluyente: Europe/Madrid** (98,6 % ≥ 90 % y 6,9 % ≤ 50 %). **Es el primer libro del trader
+que no viene en UTC**: enero, abril, mayo y agosto vienen en UTC, y el formato es también distinto
+del de enero, abril y agosto (es el de mayo, con guiones). No se interpreta por qué (otra versión de
+la exportación de FX Replay, otro ajuste de la cuenta del trader); queda como dato para la rama del
+vídeo, que puede comparar las horas del replay con las del libro. El procedimiento no se cambió para
+llegar a este veredicto: es el de enero, con el umbral del criterio.
+
+**3.c El libro** en `knowledge/corpus/libros.yaml` (entrada nueva al final, solo añadir):
+formato `AAAA-MM-DD HH:MM:SS`, huso `Europe/Madrid`, con la medida y el control. **La exposición**,
+en `HOLDOUT-EXPOSICIONES.md`, fila del 2026-10-13, con el nombre del fichero (lo que `visto.requisitos`
+comprueba), declarada ANTES de la ingesta, que la completa hoy.
+
+**3.d El tramo** en `cobertura_material` (`knowledge/cases/kit/config.yaml`): `2026-07-01` a
+`2026-07-17`, con el `material_sha256` copiado del manifiesto. Los días del 20 al 31 no entran
+(decisión del consultor del 2026-10-13).
+
+**3.e El reparto**: `visto.requisitos(repo, "2026-07")` → `[]`; y
+`uv run botsito casos visto --mes 2026-07` → `OK: knowledge/cases/visto/2026-07/particiones.yaml: 13
+dias laborables, todos dev, sin sorteo; anclado en knowledge/cases/visto/anclas.yaml` (blob
+`ee78cc0c22c697ca1be137748b9fd55f4fca3548`). Los 13 laborables del 1 al 17.
+
+**Dos tests de contrato que fijan la lista a propósito**, ampliados con julio (fallaron en un
+`make check` que se paró al verlos): `tests/contract/test_libros.py`, el registro real declara
+enero, abril, mayo, julio y agosto, y el de julio es `AAAA-MM-DD HH:MM:SS` en Europe/Madrid (el mes
+se lee ahora de la palabra en mayúsculas del NOMBRE del fichero, porque el de julio lleva guiones
+bajos); y `tests/contract/test_mes_del_material.py`, los meses con `material_sha256` son abril, mayo,
+julio y agosto. El contrato de la rama se amplía con los dos.
+
+`uv run botsito knowledge validate`: `OK: manifiesto del corpus coherente con 14 videos esperados`,
+`OK: 5 libros declarados con formato y huso, solo-anadir intacto, cruzados con cobertura_material`,
+`... 3 repartos dev-visto`.
+
 ## Estado
 
-EN CURSO: fase 1 hecha; esperan los huecos de Aleks (puntos 1 a 4) y la copia del material.
+EN CURSO: fases 1 y 3.a-e hechas; siguen la fase 2 (ADR-0078), 3.f, 4, 5 y 6.

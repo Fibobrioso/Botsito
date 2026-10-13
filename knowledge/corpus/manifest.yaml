@@ -1,6 +1,34 @@
 # GENERADO por `botsito corpus inventory`. No editar a mano. Ver fuentes.yaml.
 ffprobe: 9.0.1
 ficheros:
+- bytes: 111816
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest Julio 2026/444444.jpeg
+  sha256: 0090a516f2d4031fc6dc7855f525ddea09fd8562adf892136c02d875ce6a26df
+- bytes: 120215
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest Julio 2026/55125.jpeg
+  sha256: 585198ad997ae9eb3db0ea75cdfe548dfe0348822f4d1bdc157dcda719346bf9
+- bytes: 96554
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest Julio 2026/66235.jpeg
+  sha256: a9fe580bd254aca8b97c963e6e91104e09591a99e81c0db1181b00e2c391ac62
+- bytes: 65071
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest Julio 2026/76543.jpeg
+  sha256: b9aacda3d6273ee2375e109b8b121700e3ad14c9345c6b0c2e67a04f870c84f4
+- bytes: 107323
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest Julio 2026/WhatsApp Image 2026-10-04 at 11.51.57 AM.jpeg
+  sha256: 8fae379fa3a73b19896a73da5c0de4a662bf46f399accc7886779476049b712a
+- bytes: 93727
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest Julio 2026/WhatsApp Image 2026-10-04 at 11.51.57 AM4214.jpeg
+  sha256: 40507f5ff5987c78fc6929f295475482b9cc63e846e0e1ffd499303545d51fa9
+- bytes: 13265
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Backtest Julio 2026/backtesting-analytics_JULIO_2026.xlsx
+  sha256: a8cb4ef47faaccee4d0f35adb13da9001abd241a10a3ab810acc33986b41f49f
 - bytes: 96567
   papel: material_adicional
   ruta: Material adicional de su operativa/Backtest marzo 2026/aaaaa.jpeg
@@ -2214,11 +2242,11 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 5585715
-    ficheros: 59
+    bytes: 6193686
+    ficheros: 66
   video_original:
-    bytes: 51538675469
-    ficheros: 10
+    bytes: 54708765155
+    ficheros: 14
 umbral_hueco_segundos: 180
 version: 1
 videos:
@@ -2332,3 +2360,47 @@ videos:
   fps: 30/1
   sha256: 12dff8999ed0f7f3bda28dc7a45f8985a70787d780a4a8ba7a55b3212e474b6b
   video_id: v10
+- alto: 720
+  ancho: 1280
+  audio: true
+  bytes: 419918585
+  drive_id: 13v1eZMhVq-g9ao17hqqv-hQwjC6xTb1T
+  duracion_s: 1260.9
+  fecha_grabacion: '2026-10-02'
+  fichero: Material adicional de su operativa/Backtest Julio 2026/2026-10-02 20-18-00.mkv
+  fps: 30/1
+  sha256: 5732fe442ae416b736f7027c28aab438f291f5184b74d78027ee6145e8ba299f
+  video_id: v11
+- alto: 720
+  ancho: 1280
+  audio: true
+  bytes: 739623714
+  drive_id: 1C7lZOtYZ0J12IjzdpWnCEo-CPzwchCz_
+  duracion_s: 2220.766
+  fecha_grabacion: '2026-10-02'
+  fichero: Material adicional de su operativa/Backtest Julio 2026/2026-10-02 20-53-08.mkv
+  fps: 30/1
+  sha256: a045ec0bec87d6e6d899e6b5bd4fb585d5f261e1ec5873378d868984243f01a3
+  video_id: v12
+- alto: 720
+  ancho: 1280
+  audio: true
+  bytes: 815725885
+  drive_id: 1w0zlVCMFt1e_TjMOUbNpzPxtQ7-_pYwT
+  duracion_s: 2449.266
+  fecha_grabacion: '2026-10-04'
+  fichero: Material adicional de su operativa/Backtest Julio 2026/2026-10-04 09-45-43.mkv
+  fps: 30/1
+  sha256: 8dc7efa12e264f64652179d6cfce1be8f84c3626baccf77576f8541d62b0c1ff
+  video_id: v13
+- alto: 720
+  ancho: 1280
+  audio: true
+  bytes: 1194821502
+  drive_id: 19yHqjeekIllhB0zV9Ks_78M3jKZrubU6
+  duracion_s: 3587.466
+  fecha_grabacion: '2026-10-04'
+  fichero: Material adicional de su operativa/Backtest Julio 2026/2026-10-04 12-40-14.mkv
+  fps: 30/1
+  sha256: e13e4e4df1ffcc2aad90d3d07d138e217d6c0aa871178cb90f766a17203961d6
+  video_id: v14

@@ -142,3 +142,32 @@ Copiada tal cual:
 > - La consecuencia de 0.c (make check corre el sesgo H4 sobre las velas de julio) queda aceptada: solo lee velas y no mide nada.
 >
 > Sigue con la fase 1. Si la rama cambia el Makefile o el clasificador niega un push, para y dame el comando con «!». Al terminar, revisor, CI de fix/entrada-julio con los números de run, y «Rama lista para revisión, NO cerrada».
+
+## Datos para la fase 3 (Aleks y consultor, 2026-10-13)
+
+Copiados tal cual:
+
+> Datos para la fase 3 (Aleks y consultor, 2026-10-13). Si recibiste antes un mensaje que recortaba la rama porque no había xlsx, queda ANULADO: el Excel llegó y sigue el plan completo de la respuesta a la PARADA (decisiones 0 a 10, con el orden de la decisión 5).
+>
+> 1. Material copiado a corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/: el xlsx de julio (nombre tal como lo exportó FX Replay), 4 vídeos de julio y fotos de resumen. Nada de otros meses.
+> 2. Las fotos son capturas de resumen (estadística del mes): se tratan como Analytics y no se abren nunca. Solo nombre, tamaño y sha256.
+> 3. Columna de fechas del xlsx, leída por mí una sola vez hoy (ADR-0072): mínima 2026-07-01, máxima 2026-07-17. Al leerla vi también la hora de esas dos filas, y nada más. Declárala hoy en HOLDOUT-EXPOSICIONES.
+> 4. Lo que dice el trader, de palabra a Aleks el 2026-10-13: el xlsx es la exportación de los 3 primeros vídeos. El 4.º termina el mes (desde el 20 de julio), pero de esos días no exportó el Excel, y ya no puede porque borró el backtest. Así que del 1 al 17 hay vídeo y Excel; del 20 al 31, solo vídeo y las fotos de resumen.
+> 5. Vídeos: 4, en Drive de Aleks (carpeta «backtest Julio 2026», 1W0KQ12C-TKCQDTlYmekWgUmYQoCxj2Jq). Entran por orden de grabación, que es el de su nombre:
+>    - v11: «2026-10-02 20-18-00.mkv», drive_id 13v1eZMhVq-g9ao17hqqv-hQwjC6xTb1T, 419918585 bytes en Drive
+>    - v12: «2026-10-02 20-53-08.mkv», drive_id 1C7lZOtYZ0J12IjzdpWnCEo-CPzwchCz_, 739623714 bytes
+>    - v13: «2026-10-04 09-45-43.mkv», drive_id 1w0zlVCMFt1e_TjMOUbNpzPxtQ7-_pYwT, 815725885 bytes
+>    - v14: «2026-10-04 12-40-14.mkv», drive_id 19yHqjeekIllhB0zV9Ks_78M3jKZrubU6, 1194821502 bytes
+>    Comprueba que los bytes en disco coinciden con los de Drive. Si alguno no coincide, PARA.
+>    Naturaleza: «backtest de julio del trader en FX Replay, material de desarrollo». Que v11 a v13 son los del xlsx (1 a 17 de julio) y v14 el del tramo final sin xlsx es lo que dice el trader; como el orden de grabación lo hace probable pero no lo prueba, escríbelo así en fuentes.yaml y en el informe, y lo comprueba la rama de transcripción.
+>    De cada uno, con ffprobe y sin abrir fotogramas: duración y si tiene pista de audio, al informe.
+>
+> DECISIÓN DEL CONSULTOR SOBRE EL TRAMO
+> - El tramo de 2026-07 en cobertura_material es 2026-07-01 a 2026-07-17, con el material_sha256 del xlsx. Igual que abril, es un LÍMITE INFERIOR de lo que cubre el libro: un día del borde sin operaciones no se distingue de uno no cubierto.
+> - Los días del 20 al 31 de julio NO entran en el reparto dev-visto ni en los casos: no hay libro que los cubra (ADR-0042 §2). Quedan solo en v14.
+> - Las fotos tampoco sirven para ellos: son un agregado del mes entero.
+> - En el informe y en ADR-0078 queda escrito por qué julio entra en construcción solo del 1 al 17, y que la decisión de sacar casos del vídeo para el resto va después de la rama que transcriba v11-v14.
+> - Ticks: download-ticks con --solo-dias-dev bajará solo los días del reparto (1 al 17). Compruébalo en su salida.
+> - Propuesta para la orden de cierre: R2.1 pasa a HECHA en lo del libro, y entra una entrada nueva, «Julio 20-31: solo en vídeo (v14); decidir si se extraen casos del vídeo, tras transcribir v11-v14».
+>
+> Sigue con la fase 3 y el resto, en el orden aprobado. Si el diff de manifest.yaml trae cualquier cosa que no sea de Backtest julio 2026, PARA. Si el Makefile cambia o el clasificador niega un push, para y dame el comando con «!». Al terminar: revisor, CI de fix/entrada-julio con los números de run, y «Rama lista para revisión, NO cerrada».

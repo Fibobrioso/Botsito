@@ -247,7 +247,9 @@ def test_el_config_real_ata_mayo_por_su_sha_y_septiembre_no() -> None:
         (REAL / "knowledge/corpus/manifest.yaml").read_text(encoding="utf-8")
     )
     por_sha = {f["sha256"]: f["ruta"] for f in manifiesto["ficheros"]}
-    assert sorted(materiales.values()) == ["2026-04", "2026-05", "2026-08"]
+    # Julio desde `trabajo/entrada-julio` (2026-10-13): como abril y agosto, por el reparto
+    # dev-visto, del 1 al 17 (lo que cubre su libro).
+    assert sorted(materiales.values()) == ["2026-04", "2026-05", "2026-07", "2026-08"]
     assert "2026-09" not in materiales.values(), "septiembre sin sha hasta su brief y su medida"
     for sha, mes in materiales.items():
         assert sha in por_sha, f"{mes}: su sha no esta en el manifiesto del corpus"
