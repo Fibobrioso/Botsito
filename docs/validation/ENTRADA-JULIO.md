@@ -5,12 +5,8 @@ sobre el merge 79e74b2, tag `stable/F37n-activar-sesion-04-motor`). Encargo:
 `docs/encargos/trabajo-entrada-julio.md`. Tramo: R2 (R2.1 de `docs/plan/HOJA-DE-RUTA.md`; S de
 la Next Action).
 
-(El bloque de abajo declara el ADR que el encargo manda escribir y que aún no existe, como exige `knowledge validate`;
-sale de aquí en el commit que lo crea.)
-
-```ids-inexistentes
-ADR-0078 — el ADR de la fase 2 (julio entra en construcción); no existe hasta su commit
-```
+(Hasta que existió, ADR-0078 iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió con el commit de la fase 2, que lo crea.)
 
 ## Base, comprobada con git al abrir
 
@@ -525,6 +521,29 @@ julio y agosto. El contrato de la rama se amplía con los dos.
 `uv run botsito knowledge validate`: `OK: manifiesto del corpus coherente con 14 videos esperados`,
 `OK: 5 libros declarados con formato y huso, solo-anadir intacto, cruzados con cobertura_material`,
 `... 3 repartos dev-visto`.
+
+## 2. Fase 2 · ADR-0078: julio entra en construcción (2026-10-13)
+
+En su propio commit, DESPUÉS del reparto dev-visto de julio (decisión 5) y ANTES de cualquier
+corrida del arnés que incluya julio: no se ha corrido ninguna en esta rama.
+- **ADR-0078** (`docs/adr/0078-julio-entra-en-construccion.md`; 0077 era el último): 2026-07 se
+  añade a `construccion`, solo del 1 al 17; los días 20 a 31 quedan fuera (sin libro, ADR-0042 §2)
+  y lo que se haga con ellos se decide tras la rama que transcriba v11-v14; extiende a julio la
+  excepción de ADR-0039 §1 (decisión 9); cita la decisión del consultor, ADR-0043, ADR-0070 §2 y
+  ADR-0042; **ningún umbral cambia**. Declara también que el spread supuesto de ADR-0051 §6 sigue
+  medido solo sobre abril y agosto, y los guiones de medidas cerradas que fijan
+  `("2026-04", "2026-08")` y no se tocan.
+- `knowledge/cases/criterio_fidelidad.yaml`: `construccion: ["2026-04", "2026-07", "2026-08"]`, con
+  un comentario; `medida` y los cuatro umbrales, iguales. `tests/unit/test_criterio_fidelidad.py:108`
+  lo afirma.
+- Lo que el commit deja falso, corregido en él (decisión 8): una NOTA en ADR-0043 («construcción =
+  abril y agosto») y otra en ADR-0039 §1, sin reescribir sus cuerpos; `docs/runbooks/ARNES-MOTOR.md`
+  y `docs/runbooks/SESION-DE-PREGUNTAS.md`.
+- ADR-0078 sale de los bloques `ids-inexistentes` del encargo y de este informe, y entra en el
+  índice `docs/adr/README.md` (lo exige `tests/unit/test_adr.py`; el contrato se amplía con él).
+- La consecuencia aceptada: `test_huecos_motor.py::test_la_forma_y_la_primitiva_coinciden_en_todas_las_sesiones_de_construccion`
+  corre ahora el sesgo H4 sobre las velas de los 13 días de julio, y pasa (ejecutado aparte con
+  `-rs`: sin saltar).
 
 ## Estado
 

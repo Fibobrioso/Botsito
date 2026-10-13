@@ -18,7 +18,8 @@ precondición de ceguera.
 1. **Se graba, con permiso del trader, y sin grabación no hay registro.** El permiso se pide al
    empezar y su «sí» queda dentro de la grabación. Lo que no esté grabado no entra como respuesta
    del trader ni cierra ninguna ambigüedad.
-2. **Solo se enseñan gráficos de días de CONSTRUCCIÓN** (abril y agosto, comprobados con
+2. **Solo se enseñan gráficos de días de CONSTRUCCIÓN** (abril, julio del 1 al 17 y agosto, desde
+   ADR-0078, comprobados con
    `casos_reservados`), cortados ANTES de la colocación de la orden, sin la operación, sin el
    resultado y sin la fecha visible. Nunca un día de medición, holdout o retirado. Primero se
    hace la pregunta en abstracto y después se enseña el gráfico.

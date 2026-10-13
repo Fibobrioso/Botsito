@@ -1,12 +1,8 @@
 # Encargo · trabajo/entrada-julio
 
-Dado por Aleks (consultor) el 2026-10-12. Copiado tal cual (el bloque de abajo no es del encargo:
-declara los ids que el encargo cita y que todavía no existen, como exige `knowledge validate`;
-cada uno sale de aquí en el commit que lo crea):
-
-```ids-inexistentes
-ADR-0078 — el ADR de la fase 2 que este encargo manda escribir (julio entra en construcción); no existe hasta su commit
-```
+Dado por Aleks (consultor) el 2026-10-12. Copiado tal cual (hasta que existió, el ADR que el
+encargo manda escribir iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió del bloque en el commit que lo creó):
 
 > Modelo: Opus · Esfuerzo: alto
 >

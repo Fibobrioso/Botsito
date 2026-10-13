@@ -32,5 +32,7 @@ perfil_para_medir: ftmo-2step-swing-100k
 # spec cambia despues de ver el resultado de mayo, mayo pasa a construccion y queda escrito.
 # Marzo entra en medida cuando llegue, y SOLO con su parte `fidelidad-dev` (ADR-0046): entra por
 # el camino de fidelidad, y lo que caiga en `fidelidad-2` y `fidelidad-3` queda oculto.
-construccion: ["2026-04", "2026-08"]
+# Julio, del 1 al 17 (lo que cubre su libro), desde ADR-0078 (2026-10-13): decidido ANTES de
+# cualquier corrida del arnes que lo incluya; ningun umbral cambia.
+construccion: ["2026-04", "2026-07", "2026-08"]
 medida: ["2026-05"]

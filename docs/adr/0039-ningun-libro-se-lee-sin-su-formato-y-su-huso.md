@@ -30,6 +30,12 @@ phase: post-F14 (rama `trabajo/mayo-dev-ingerido`)
    > Resuelve la circularidad entre el §5 -el huso se mide con filas `dev`- y el sorteo, que necesita
    > el tramo de cobertura antes de que exista ningún `dev`.
 
+   > **NOTA del 2026-10-13 (ADR-0078, no reescribe el cuerpo).** La excepción de arriba se
+   > extiende al libro de JULIO de 2026: Aleks leyó solo su columna de fechas, una vez y antes
+   > del reparto dev-visto y de declarar el libro (ADR-0072), y lo declaró el mismo día. Julio
+   > no se sortea: el tramo hace falta para el reparto dev-visto (ADR-0042), que también exige
+   > el libro declarado.
+
 2. **Los formatos salen de un vocabulario cerrado** (`corpus.libros.FORMATOS`), hoy de dos:
    `AAAA/MM/DD HH:MM:SS` y `AAAA-MM-DD HH:MM:SS`. No hay DD/MM ni MM/DD: el orden de un formato con
    día y mes intercambiables no se ha demostrado en ningún libro. Un formato nuevo entra en el
