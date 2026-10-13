@@ -12,6 +12,11 @@ rutas_permitidas:
   - docs/runbooks/ARNES-MOTOR.md
   - docs/runbooks/SESION-DE-PREGUNTAS.md
   - docs/runbooks/ERRORES-RECURRENTES.md
+  # ampliado el 2026-10-13 por la respuesta del consultor a la PARADA (punto 5): NOTAS en
+  # ADR-0069 §5 y ADR-0051 DN-5 y la linea 9 de VISOR-DIAS.md, en el commit de ADR-0079
+  - docs/adr/0069-*.md
+  - docs/adr/0051-*.md
+  - docs/runbooks/VISOR-DIAS.md
   - scripts/ticks_spread.py
   - tests/unit/test_ticks_spread.py
   - tests/unit/test_criterio_fidelidad.py

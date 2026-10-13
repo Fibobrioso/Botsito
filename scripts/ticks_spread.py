@@ -1,11 +1,20 @@
 """El spread de los ticks de construccion por hora de la ventana del trader (ADR-0051 §6, Fase 2).
 
-Para cada hora local de `huso_operativa` entre `ventana_inicio` y `ventana_fin` (07:00-15:00 hoy,
-leidas del registro), sobre TODOS los ticks de los datasets de construccion: numero de ticks,
-media, percentiles 50, 90 y 99 del spread (ASK - BID, en puntos), por mes y en total; y lo mismo
-fuera de la ventana. El percentil 90 por hora es lo que `knowledge/simulador/llenado.yaml` toma
-como spread supuesto sin ticks (DECISION NOCTURNA 4, conservadora). Se niega a cualquier mes que
-no sea de construccion. Imprime recuentos y puntos; nada de operaciones.
+Para cada hora NOMINAL de la ventana, de `ventana_inicio` a `ventana_fin` (07:00-15:00 hoy, leidas
+del registro), sobre TODOS los ticks de los datasets de construccion: numero de ticks, media,
+percentiles 50, 90 y 99 del spread (ASK - BID, en puntos), por mes y en total; y lo mismo fuera de
+la ventana. El percentil 90 por hora es lo que `knowledge/simulador/llenado.yaml` toma como spread
+supuesto sin ticks (DECISION NOCTURNA 4, conservadora). Recorre los meses de `construccion` de
+`criterio_fidelidad.yaml` y ninguno mas, y exige los ticks de cada uno: si a un mes le falta su
+manifiesto, sale con 2 nombrandolo, sin medir nada. Imprime recuentos y puntos; nada de operaciones.
+
+**LA HORA SALE DEL RELOJ DE LAS SESIONES** (ADR-0069 §5; `trabajo/entrada-enero`, X): cada tick se
+lee con `reloj_de_las_sesiones` -con `rejilla_h4`, la hora nominal que marca la rejilla H4 de
+`anclaje_h4`-, la misma puerta con que el motor y `cases/` cuentan la ventana. Hasta esa rama se
+leia la hora de pared de `huso_operativa`, que coincide con la rejilla salvo los dias en que Europa
+y EE. UU. no han cambiado la hora a la vez (en 2026, del 9 al 27 de marzo y del 26 al 30 de
+octubre): esos dias la hora salia corrida una hora. `tests/unit/test_ticks_spread.py` lo rompe a
+proposito con un dia de desfase.
 
   `uv run python scripts/ticks_spread.py --salida <fichero>`
 """
@@ -14,11 +23,20 @@ from __future__ import annotations
 
 import sys
 from collections import defaultdict
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
+from typing import Protocol
 
 RAIZ = Path(__file__).resolve().parents[1]
 FUERA = "fuera"
+MS_POR_MINUTO = 60_000
+MINUTOS_POR_HORA = 60
+
+
+class Reloj(Protocol):
+    """Lo que se le pide al reloj de las sesiones: de un minuto UTC a (dia, minutos nominales)."""
+
+    def lectura(self, instante: int) -> tuple[object, int]: ...
 
 
 def percentil(valores: Sequence[int], p: float) -> int:
@@ -48,48 +66,77 @@ def linea(etiqueta: str, r: dict[str, float | int]) -> str:
     )
 
 
-def main(argv: list[str]) -> int:
+def clave_de_hora(reloj: Reloj, inicio: int, fin: int) -> Callable[[int], str]:
+    """De un instante en milisegundos UTC a su clave: la hora nominal «HH» que marca `reloj` si
+    cae en [`inicio`, `fin`), y `FUERA` si no. La lectura se guarda por minuto: todos los ticks de
+    un minuto caen en la misma hora, y asi la rejilla se calcula una vez por minuto, no por tick."""
+    por_minuto: dict[int, str] = {}
+
+    def clave(instante_ms: int) -> str:
+        minuto = instante_ms // MS_POR_MINUTO
+        if minuto not in por_minuto:
+            _, minutos = reloj.lectura(minuto)
+            hora = minutos // MINUTOS_POR_HORA
+            por_minuto[minuto] = f"{hora:02d}" if inicio <= hora < fin else FUERA
+        return por_minuto[minuto]
+
+    return clave
+
+
+def main(argv: list[str], raiz: Path = RAIZ) -> int:
     if len(argv) != 2 or argv[0] != "--salida":
         print("uso: ticks_spread.py --salida <fichero>", file=sys.stderr)
         return 2
     sys.path.insert(0, str(RAIZ / "src"))
-    from datetime import UTC, datetime, timedelta
-
     from botsito.cases.criterio_fidelidad import cargar_criterio
-    from botsito.comun.husos import huso_canonico
     from botsito.config.ajustes import carpeta_datos
     from botsito.config.registro import cargar_registro
-    from botsito.data.ticks import buscar_manifiesto_ticks, cargar_manifiesto_ticks, cargar_ticks
+    from botsito.data.ticks import (
+        TicksError,
+        buscar_manifiesto_ticks,
+        cargar_manifiesto_ticks,
+        cargar_ticks,
+    )
+    from botsito.engine.relojes import reloj_de_las_sesiones
 
-    datos = carpeta_datos(RAIZ)
-    criterio = cargar_criterio(RAIZ)
-    registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
-    huso = huso_canonico(registro.texto("huso_operativa"))
-    inicio = registro.hora("ventana_inicio").minutos_del_dia // 60
-    fin = registro.hora("ventana_fin").minutos_del_dia // 60
-    epoca = datetime(1970, 1, 1, tzinfo=UTC)
+    criterio = cargar_criterio(raiz)
+    manifiestos: dict[str, Path] = {}
+    for mes in criterio.construccion:
+        try:
+            manifiestos[mes] = buscar_manifiesto_ticks(raiz, f"eurusd-ticks-{mes}")
+        except TicksError as exc:
+            print(
+                f"ERROR: {mes} es de construccion y no tiene ticks ({exc}); no se mide nada",
+                file=sys.stderr,
+            )
+            return 2
+    datos = carpeta_datos(raiz)
+    registro = cargar_registro(raiz / "knowledge" / "spec" / "parametros.yaml")
+    reloj = reloj_de_las_sesiones(registro)
+    inicio = registro.hora("ventana_inicio").minutos_del_dia // MINUTOS_POR_HORA
+    fin = registro.hora("ventana_fin").minutos_del_dia // MINUTOS_POR_HORA
     por_hora: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
     salida = [
-        f"VENTANA: horas locales [{inicio:02d}, {fin:02d}) en {registro.texto('huso_operativa')}; "
-        f"spread = ASK - BID en puntos; percentiles por rango mas cercano",
+        f"VENTANA: horas nominales [{inicio:02d}, {fin:02d}) del reloj de las sesiones "
+        f"({reloj.opcion}, ADR-0069 §5); spread = ASK - BID en puntos; percentiles por rango "
+        f"mas cercano",
         f"MESES: construccion {', '.join(criterio.construccion)} (solo estos)",
     ]
     for mes in criterio.construccion:
-        mt = cargar_manifiesto_ticks(buscar_manifiesto_ticks(RAIZ, f"eurusd-ticks-{mes}"))
-        serie = cargar_ticks(mt, datos)
+        serie = cargar_ticks(cargar_manifiesto_ticks(manifiestos[mes]), datos)
         salida.append(f"DATASET {mes}: {serie.origen}; ticks {len(serie.ticks)}")
+        clave = clave_de_hora(reloj, inicio, fin)
         for t in serie.ticks:
-            local = (epoca + timedelta(milliseconds=t.instante)).astimezone(huso)
-            clave = f"{local.hour:02d}" if inicio <= local.hour < fin else FUERA
-            por_hora[mes][clave].append(t.spread)
-            por_hora["total"][clave].append(t.spread)
+            k = clave(t.instante)
+            por_hora[mes][k].append(t.spread)
+            por_hora["total"][k].append(t.spread)
     for mes in (*criterio.construccion, "total"):
-        for clave in sorted(por_hora[mes]):
-            etiqueta = f"{mes} {clave}" if clave == FUERA else f"{mes} {clave}:00"
-            salida.append(linea(etiqueta, resumen(por_hora[mes][clave])))
+        for k in sorted(por_hora[mes]):
+            etiqueta = f"{mes} {k}" if k == FUERA else f"{mes} {k}:00"
+            salida.append(linea(etiqueta, resumen(por_hora[mes][k])))
     salida.append("P90 POR HORA (total), para knowledge/simulador/llenado.yaml:")
-    for clave in sorted(por_hora["total"]):
-        salida.append(f"  {clave}: {resumen(por_hora['total'][clave])['p90']}")
+    for k in sorted(por_hora["total"]):
+        salida.append(f"  {k}: {resumen(por_hora['total'][k])['p90']}")
     Path(argv[1]).write_text("\n".join(salida) + "\n", encoding="utf-8", newline="\n")
     print("\n".join(salida))
     return 0

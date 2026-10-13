@@ -77,3 +77,24 @@ ADR-0079 — el ADR de la fase 3 que este encargo manda escribir (enero entra en
 > - Skill entregar-rama, con el revisor y su informe pegado al final del tuyo.
 > - Que mire en especial el orden de los commits, la fila de exposición antes de ingerir y el test del día de desfase.
 > - Termina con: «Rama lista para revisión, NO cerrada».
+
+## Respuesta del consultor a la PARADA (2026-10-13)
+
+Copiada tal cual:
+
+> Respuesta a la PARADA de trabajo/entrada-enero (consultor, 2026-10-13). Cópiala tal cual en el informe y aplícala punto por punto.
+>
+> 0. Orden de construccion: aceptado, enero al final: ["2026-04","2026-07","2026-08","2026-01"]. Siete ficheros de tests usan construccion[0] y cinco corren el arnés; así ninguno cambia y el commit del ADR no corre el arnés sobre enero. Que ADR-0079 diga que el orden de la lista importa y por qué.
+> 1. test_mes_del_material.py:252: aceptado, en el commit de la fase 2, como en julio. test_criterio_fidelidad.py:108, en la fase 3. Es el orden en que cada uno rompe.
+> 2. Ticks de enero con --horas 06-14: aceptado. Es la ventana de la rejilla más una hora, el mismo criterio que abril, julio y agosto, y lo mediste.
+> 3. Fase 1: aceptado. ticks_spread.py sigue recorriendo construccion, con su test sintético del día de desfase. La corrida real con los cuatro meses va después de la fase 4, a un anexo, sin tocar llenado.yaml.
+> 4. test_huecos_motor correrá el sesgo sobre enero: aceptado y declarado en ADR-0079, como con julio. Lee solo velas; no mide nada.
+> 5. NOTAS en ADR-0069 §5 y ADR-0051 DN-5, y corregir VISOR-DIAS.md:9, en el commit de ADR-0079: aceptado. Amplía el contrato a esos tres ficheros. Lo que un commit deja falso se corrige en ese commit.
+> 6. Falso positivo de visto.py: aceptado, solo como Technical Debt. Anota que el mecanismo por nombre lo fija ADR-0042 §2, así que arreglarlo pide una NOTA o un ADR nuevo, no solo código. En esta rama, la fila nueva de HOLDOUT-EXPOSICIONES (fase 2.b) es la que cumple de verdad la condición 2.
+> 7. simulador_config.py: aceptado como Technical Debt, con la medida (2026-10-27: 4 de 11 horas, 1 punto de spread distinto). Añade a la línea que importará cuando se mida un mes con días de desfase: marzo, del 9 al 27, y octubre.
+>
+> Además:
+> - La lectura de fechas de enero: declara que la sesión ya leyó la columna el 2026-10-06, antes de ADR-0072, y que la de Aleks de hoy es la que fija el tramo según ADR-0072. No es una exposición nueva: enero no tiene ningún día en ninguna partición.
+> - Para la orden de cierre, en §8: el heredado 34 frente a R2.2 HECHA, y R5.4 sin NA:X. Propón el texto exacto de los dos cambios para que test_hoja_de_ruta.py pase.
+>
+> Sigue con la fase 1. Si el Makefile cambia o el clasificador niega un push, para y dame el comando con «!». Al terminar: revisor, y «Rama lista para revisión, NO cerrada».

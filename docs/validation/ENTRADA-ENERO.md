@@ -343,6 +343,83 @@ Declarado en `HOLDOUT-EXPOSICIONES.md`, fila del 2026-10-13 de esta rama. Ningun
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta del consultor a la PARADA (2026-10-13)
+
+Copiada tal cual:
+
+> Respuesta a la PARADA de trabajo/entrada-enero (consultor, 2026-10-13). Cópiala tal cual en el informe y aplícala punto por punto.
+>
+> 0. Orden de construccion: aceptado, enero al final: ["2026-04","2026-07","2026-08","2026-01"]. Siete ficheros de tests usan construccion[0] y cinco corren el arnés; así ninguno cambia y el commit del ADR no corre el arnés sobre enero. Que ADR-0079 diga que el orden de la lista importa y por qué.
+> 1. test_mes_del_material.py:252: aceptado, en el commit de la fase 2, como en julio. test_criterio_fidelidad.py:108, en la fase 3. Es el orden en que cada uno rompe.
+> 2. Ticks de enero con --horas 06-14: aceptado. Es la ventana de la rejilla más una hora, el mismo criterio que abril, julio y agosto, y lo mediste.
+> 3. Fase 1: aceptado. ticks_spread.py sigue recorriendo construccion, con su test sintético del día de desfase. La corrida real con los cuatro meses va después de la fase 4, a un anexo, sin tocar llenado.yaml.
+> 4. test_huecos_motor correrá el sesgo sobre enero: aceptado y declarado en ADR-0079, como con julio. Lee solo velas; no mide nada.
+> 5. NOTAS en ADR-0069 §5 y ADR-0051 DN-5, y corregir VISOR-DIAS.md:9, en el commit de ADR-0079: aceptado. Amplía el contrato a esos tres ficheros. Lo que un commit deja falso se corrige en ese commit.
+> 6. Falso positivo de visto.py: aceptado, solo como Technical Debt. Anota que el mecanismo por nombre lo fija ADR-0042 §2, así que arreglarlo pide una NOTA o un ADR nuevo, no solo código. En esta rama, la fila nueva de HOLDOUT-EXPOSICIONES (fase 2.b) es la que cumple de verdad la condición 2.
+> 7. simulador_config.py: aceptado como Technical Debt, con la medida (2026-10-27: 4 de 11 horas, 1 punto de spread distinto). Añade a la línea que importará cuando se mida un mes con días de desfase: marzo, del 9 al 27, y octubre.
+>
+> Además:
+> - La lectura de fechas de enero: declara que la sesión ya leyó la columna el 2026-10-06, antes de ADR-0072, y que la de Aleks de hoy es la que fija el tramo según ADR-0072. No es una exposición nueva: enero no tiene ningún día en ninguna partición.
+> - Para la orden de cierre, en §8: el heredado 34 frente a R2.2 HECHA, y R5.4 sin NA:X. Propón el texto exacto de los dos cambios para que test_hoja_de_ruta.py pase.
+>
+> Sigue con la fase 1. Si el Makefile cambia o el clasificador niega un push, para y dame el comando con «!». Al terminar: revisor, y «Rama lista para revisión, NO cerrada».
+
+### Cómo se aplica, punto por punto
+
+| Punto | Dónde | Estado |
+|---|---|---|
+| 0 | fase 3: `construccion: ["2026-04", "2026-07", "2026-08", "2026-01"]`; ADR-0079 dice por qué importa el orden | en su fase |
+| 1 | fase 2: `test_mes_del_material.py:252`; fase 3: `test_criterio_fidelidad.py:108` | en su fase |
+| 2 | fase 4: `--horas 06-14` | en su fase |
+| 3 | fase 1 (§1): `ticks_spread.py` por la rejilla con su test; corrida real tras la fase 4, a un anexo | §1 |
+| 4 | fase 3: ADR-0079 lo declara | en su fase |
+| 5 | contrato ampliado en el commit de la fase 1 con `docs/adr/0069-*.md`, `docs/adr/0051-*.md` y `docs/runbooks/VISOR-DIAS.md`; las NOTAS y la corrección, en el commit de ADR-0079 | contrato hecho; resto en su fase |
+| 6 | §8, propuesta de Technical Debt con la observación sobre ADR-0042 §2; la fila de la fase 2.b cumple la condición 2 | en su fase |
+| 7 | §8, propuesta de Technical Debt con la medida y los meses en que importa | en su fase |
+| Además 1 | 0.b ya lo dice; se repite en la fila de la fase 2.b y en ADR-0079 | en su fase |
+| Además 2 | §8, texto exacto de los dos cambios de la hoja de ruta | en su fase |
+
+## 1. Fase 1 · X: `scripts/ticks_spread.py` por la rejilla
+
+**El cambio** (`scripts/ticks_spread.py`):
+- La hora de cada tick sale de `reloj_de_las_sesiones` (importado de `botsito.engine.relojes`, el
+  nombre que da ADR-0069 §2 y §5; es el mismo objeto que `cases/relojes.py`), no de
+  `astimezone(huso_operativa)`. La función nueva `clave_de_hora(reloj, inicio, fin)` lee cada tick
+  con `reloj.lectura(minuto)` y devuelve la hora NOMINAL «HH» si cae en
+  [`ventana_inicio`, `ventana_fin`) y `fuera` si no. La lectura se guarda por minuto: la rejilla
+  se calcula una vez por minuto, no por tick (el coste que el auditor dejó sin medir; no lo he
+  cronometrado: la regresión de abajo, con los dos guiones sobre 1.603.424 ticks cada uno, terminó en
+  una sola llamada sin acercarse al límite de 10 minutos).
+- Sigue recorriendo `criterio.construccion` y ninguna otra cosa (punto 3), y ahora comprueba ANTES
+  de medir que cada mes tenga su manifiesto de ticks: si falta uno, sale con 2 nombrando el mes y
+  no escribe la salida. `main` acepta la raíz del repo como argumento para que el test lo ejerza.
+- La cabecera de la salida dice «horas nominales [07, 15) del reloj de las sesiones (rejilla_h4,
+  ADR-0069 §5)» en lugar de «horas locales … en Europe/Madrid».
+
+**El test** (`tests/unit/test_ticks_spread.py`, 6 casos, con el registro real):
+- **Rompe a propósito con un día de desfase, el 2026-10-27**: hora a hora de 04:30Z a 14:30Z, la
+  rejilla da `fuera, 07, 08, … 14, fuera, fuera` y la pared de `huso_operativa` (el método de
+  antes, reproducido con `RelojSesiones.de_pared`) da `fuera, fuera, 07, … 14, fuera`: la hora
+  sale corrida una. El tick de las 05:30Z, la primera hora de la sesión, cae DENTRO (07) por la
+  rejilla y FUERA por la pared.
+- **Sin desfase dan lo mismo**: el 2026-01-15 (invierno) y el 2026-07-15 (verano), minuto a
+  minuto de 03:00Z a 16:00Z, las dos claves son iguales; y la ventana abre a las 06:00Z en enero y
+  a las 05:00Z en julio (el minuto anterior, `fuera`).
+- Un mes de construcción sin ticks se niega nombrándolo (repo temporal con el criterio y el
+  registro reales y sin manifiestos: exit 2, «2026-04 es de construccion y no tiene ticks»).
+- Un test de guarda: si cambian `reloj_sesiones`, `huso_operativa` o la ventana, cae y los días de
+  arriba se rehacen.
+
+**Regresión contra `main`** (`anexos/ENTRADA-ENERO/regresion_ticks_spread.py` y `.txt`): los dos
+guiones, el de `main` copiado sin cambiar una línea, sobre los ticks de construcción de hoy (abril,
+julio y agosto, sin días de desfase): 51 líneas cada uno y **una sola distinta, la cabecera
+VENTANA**; todas las cifras iguales. Contar por la rejilla no cambia nada de lo ya medido.
+
+**Un dato, sin tocar nada** (punto 3 y «Qué no cambia»): con julio en la cuenta, el p90 de la hora
+11 sale 4 (`regresion_ticks_spread.txt`, línea 98); `llenado.yaml` dice 5 porque se midió solo sobre
+abril y agosto (su `fuente`), y así se queda. La corrida con los cuatro meses va después de la fase
+4, a un anexo.
+
 ## Estado
 
-EN CURSO: fase 0 entregada; PARADA, a la espera de la respuesta del consultor.
+EN CURSO: fase 1 hecha; sigue la fase 2.
