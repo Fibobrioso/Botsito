@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/entrada-julio
+main
 
 ## Current Feature
-`trabajo/entrada-julio` EN CURSO (R2.1, entrada S; abierta el 2026-10-12 sobre `stable/F37n-activar-sesion-04-motor`): julio de 2026 entra como material de construcción por decisión del consultor del 2026-10-12 (guardia, un ADR que lo añade a `construccion`, libro, reparto dev-visto, ingesta y ticks), el vídeo de julio al inventario, y aparte la respuesta de FTMO a P-D1. Encargo docs/encargos/trabajo-entrada-julio.md; informe docs/validation/ENTRADA-JULIO.md.
+Ninguna rama abierta. `trabajo/entrada-julio` cerrada en `main` el 2026-10-13 (`stable/F37o-entrada-julio`); R2.1 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-79e74b2 · merge de `trabajo/activar-sesion-04-motor` (tag `stable/F37n-activar-sesion-04-motor`): S-13 con ADR-0075 (una H4 neutra no decide el sesgo; enmienda ADR-0060 §1 y §2); A-21 RESUELTA con `solo_una_zona_de_control` y sin opción nueva (ADR-0076; sale `--diagnostico-a21`); A-51 RESUELTA con ADR-0077 y RN-036 (la racha de pérdidas seguidas); RN-035 retira la orden pendiente también al llegar `ventana_fin`; el CONFIRM de S-4; spec_version 17.0.2. Sobre `stable/F37m-activar-sesion-04` (cbe8e09). Informe docs/validation/ACTIVAR-SESION-04-MOTOR.md; el registro del cierre, al final de HISTORIA.
+a4e4fa6 · merge de `trabajo/entrada-julio` (tag `stable/F37o-entrada-julio`): julio de 2026 entra en construcción del 1 al 17 (ADR-0078): la guardia lo lee (sus imágenes no), su libro declarado en Europe/Madrid, reparto dev-visto de los 13 laborables, 13 casos dev y el dataset de ticks `eurusd-ticks-2026-07-6e7dc7cd`; v11 a v14 al inventario; la respuesta de FTMO a P-D1 en docs/validation/FTMO-P-D1.md. Sobre `stable/F37n-activar-sesion-04-motor` (79e74b2). Informe docs/validation/ENTRADA-JULIO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-79e74b2 · merge: la sesion 4 entra en el motor: S-13 (ADR-0075), A-21 sin opcion nueva (ADR-0076), RN-036 la racha de perdidas (ADR-0077), RN-035 ventana_fin y el CONFIRM de S-4 (R1.1, parte de motor) · tag stable/F37n-activar-sesion-04-motor
+a4e4fa6 · merge: julio entra en construccion del 1 al 17 (ADR-0078): guardia, libro en Europe/Madrid, reparto dev-visto, 13 casos y ticks; v11-v14 al inventario; FTMO-P-D1 (R2.1) · tag stable/F37o-entrada-julio
 
 ## Tests Currently Passing
 1529 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
