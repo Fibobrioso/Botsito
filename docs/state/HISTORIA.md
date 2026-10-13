@@ -8896,3 +8896,63 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 30 (2026-10-11).
+
+# Next Action HECHA · S · sale de PROJECT_STATE.md en trabajo/entrada-julio (2026-10-13)
+
+S. Backtest de JULIO recibido el 2026-10-04 (xlsx, vídeo y fotos del trader), SIN ABRIR y fuera del repo. Entra por su propia rama. Antes de esa rama, el consultor decide si es material de construcción o reservado, y lo comprueba en el repo (año del mes, casos_ocultos, casos_reservados, meses_reservados.yaml). En el v10 el trader ya comentó en pantalla operaciones de julio (HOLDOUT-EXPOSICIONES, fila del 2026-10-04). Nadie abre nada hasta entonces, ni miniaturas de las fotos.
+
+Julio de 2026 entra como material de construcción (ADR-0078): libro declarado en Europe/Madrid, reparto dev-visto de los 13 laborables del 1 al 17, 13 casos, ticks; v11 a v14 en el inventario. Los días 20 a 31 quedan solo en v14 (Next Action T y U; hoja de ruta, R2.4).
+
+# Next Action HECHA · O · sale de PROJECT_STATE.md en trabajo/entrada-julio (2026-10-13)
+
+O. Para Aleks, con FTMO: P-D1 (DEMO-EJECUCION-1.md §0.c), enviada a support@ftmo.com el 2026-10-09 con un punto 3: si la cuenta 2-Step Swing real es hedging, si su volumen máximo en EURUSD es 50 o 100 lotes y si hay tope de volumen sumado entre varias órdenes. La respuesta se registra parafraseada (RESPUESTAS-FTMO) y decide el heredado 37: recortar a 50, partir en varias órdenes o no operar.
+
+Respondida por FTMO el 2026-10-12 (ticket JSP-CPQRQ-197): hedging y 50 lotes; el tope sumado, sin respuesta directa. Registrada en paráfrasis en docs/validation/FTMO-P-D1.md.
+
+# Registro de cierre · `trabajo/entrada-julio` (2026-10-13)
+
+- Orden de cierre del consultor del 2026-10-13, pegada por Aleks en la conversación y ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama
+  lista para revisión tras una pasada del revisor (ENTRADA-JULIO.md §14: 0 bloquea, 5 importa, 5
+  menor; arreglados 7 y declarados 3, §14.1). Una PARADA en la fase 0, respondida por el consultor
+  el 2026-10-12, y los datos de la fase 3 de Aleks y el consultor del 2026-10-13. Nunca se cerró
+  sin la orden.
+- **Lo que entra** (R2.1 de la hoja de ruta; S y O de la Next Action):
+  - la guardia de Claude Code: 2026-07 en `MESES_DE_DESARROLLO` (sus imágenes siguen en
+    `R_CAPTURA`), con el test de los dos sentidos y la comparación caso a caso con la de `main`
+    (152 casos, 8 cambian, todos de julio y ninguno imagen); CLAUDE.md, la cabecera de
+    `kit/config.yaml` y el recuadro de MIRAR-EL-MATERIAL.md;
+  - el libro de julio en `libros.yaml` (Europe/Madrid, medido por velas: 71/72 frente a 5/72 en
+    UTC, con control de agosto), la lectura declarada en HOLDOUT-EXPOSICIONES el 2026-10-13, el
+    tramo de cobertura del 1 al 17 con su `material_sha256` y el reparto dev-visto de los 13
+    laborables;
+  - ADR-0078 (julio entra en `construccion` del 1 al 17; ningún umbral cambia; extiende la
+    excepción de ADR-0039 §1), con NOTAS en ADR-0043 y ADR-0039 y los runbooks ARNES-MOTOR y
+    SESION-DE-PREGUNTAS;
+  - 13 casos dev de julio por `casos ingerir` y el docstring de `casos_ingerir`;
+  - el dataset de ticks `eurusd-ticks-2026-07-6e7dc7cd` (13 días, horas 05-13 UTC, 3 horas
+    perdidas de 117, segunda pasada; la primera se descartó sin commitear);
+  - v11 a v14 en `fuentes.yaml` y `manifest.yaml`, sin transcripción ni fotogramas;
+  - `docs/validation/FTMO-P-D1.md`: la respuesta de FTMO a P-D1 en paráfrasis y el margen medido;
+  - en este commit: S y O salen HECHAS (arriba); F apunta a X (R2.2); I y Q sin S; K con los dos
+    arreglos de la guardia de ENTRADA-JULIO.md §8; entran T (transcribir v11-v14), U (julio
+    20-31, depende de T) y V (la sesión 5, R4.1); el heredado 37 con el texto de FTMO-P-D1.md §4 y
+    una línea de Technical Debt (el simulador no comprueba el margen). En la hoja de ruta: R2.1
+    HECHA, R2.4 nueva (NA:T y NA:U), R4.1 con NA:V, A.2 sin NA:O y R5.4 sin NA:S.
+- Letras: salen S y O (HECHAS, arriba); entran T, U y V, que ninguna entrada HECHA de la hoja de
+  ruta cita (todas las letras estaban usadas alguna vez; S no se reutiliza).
+- Letra del tag: la última cerrada era la n de F37 (`stable/F37n-activar-sesion-04-motor`);
+  `stable/F37o-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37o-entrada-julio`. El merge es `git rev-parse "stable/F37o-entrada-julio^{commit}"`.
+- Commits de la rama: `c17f3ed` (apertura), `e2d2430` (fase 0 y PARADA), `10002d9` (fase 1, la
+  guardia y los textos), `79549c7` (fase 3.a-e: el libro, su lectura y su reparto), `80e7a78`
+  (fase 2, ADR-0078), `e959c88` (los 13 casos, los ticks y FTMO-P-D1), `8d3a3e5` (informe
+  completo, revisor y sus arreglos) y el de este registro.
+- CI de Linux por `fix/entrada-julio` (los push salieron desde la sesión): run 38325750041
+  (10002d9), run 38444066133 (e959c88) y run 38450475560 (8d3a3e5: 2605 pasados, 9 saltados; la
+  comparación caso a caso ya corre con `origin/main`). Los tres con un solo fallo, el esperado de
+  `state check` por el nombre `fix/`. La CI de `main` corre tras el push.
+- Exposición: una, declarada el 2026-10-13 en HOLDOUT-EXPOSICIONES (julio leído entero; seis
+  capturas de resumen SIN abrir). Nadie ejecutó `uv run botsito motor arnes` en esta rama.
+- El worktree `wt-ci` (e7df30b, sin rama) es de otra sesión: no se tocó.
+- Informe: `docs/validation/ENTRADA-JULIO.md`. Encargo: `docs/encargos/trabajo-entrada-julio.md`.

@@ -69,6 +69,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R1.1.
 - **Quién:** la decisión, el consultor; la columna de fechas, Aleks (ADR-0072); la rama, la sesión.
 - **Hecho cuando:** julio está ingerido o declarado reservado, con sus ticks si cuenta.
+- **Estado:** HECHA (`trabajo/entrada-julio`, `stable/F37o-entrada-julio`; ENTRADA-JULIO.md,
+  ADR-0078): julio es construcción del 1 al 17, con sus ticks; del 20 al 31 no hay libro: va a
+  R2.4.
 
 ### R2.2 · Enero cuenta: los ticks de invierno por la rejilla
 - **Refs:** NA:X · HER:34 · ID:ADR-0069 · ID:ADR-0051
@@ -89,6 +92,18 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la exportación está declarada en libros.yaml y los casos dev de agosto dicen de
   qué libro salen.
 
+### R2.4 · Julio en vídeo
+- **Refs:** NA:T · NA:U · ID:ADR-0078
+- **Qué es:** transcribir v11 a v14 (el backtest de julio en vídeo), comprobar qué días cubre cada
+  uno y compararlos con el xlsx en los días 1 a 17 y con las horas del libro (NA:T); y, tras eso,
+  decidir si se extraen casos del vídeo para los días 20 a 31, que solo están en v14 (NA:U;
+  ADR-0078 §3).
+- **Depende de:** R2.1 (HECHA); NA:U depende de NA:T.
+- **Quién:** la transcripción y la comparación, la sesión con encargo del consultor; la decisión
+  de los días 20 a 31, el consultor.
+- **Hecho cuando:** v11 a v14 están transcritos y comparados con el xlsx, y los días 20 a 31 tienen
+  decisión escrita.
+
 ## R3 · Una corrida del arnés sobre toda la construcción
 
 ### R3.1 · La corrida de ADR-0070 y las diferencias clasificadas
@@ -107,7 +122,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:RN-007 · NA:H · NA:J · ID:ADR-0076 · ID:ADR-0077
+  ID:A-53 · ID:RN-007 · NA:H · NA:J · NA:V · ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
   la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
   preguntas de ACTIVAR-SESION-04-MOTOR.md §5: el último minuto (cuándo se retira una orden
@@ -154,7 +169,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** el backtest de diciembre (sin vídeo), sin abrir; antes, renovar hacia atrás el
   calendario de cierres (RENOVAR-CIERRES.md, condición 1) y que el consultor decida si es
   construcción o reservado.
-- **Depende de:** R2.2 (NA:X), R2.1 (NA:S) y R1.1.
+- **Depende de:** R2.2 (NA:X) y R2.1 (HECHA) y R1.1.
 - **Quién:** el consultor decide; Aleks lee la columna de fechas (ADR-0072); la sesión ejecuta.
 - **Hecho cuando:** diciembre está ingerido o declarado reservado.
 
@@ -199,7 +214,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
 
 ### A.2 · Las preguntas a FTMO
-- **Refs:** NA:O · HER:27 · HER:37 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
+- **Refs:** HER:27 · HER:37 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
 - **Qué es:** P-D1 (hedging, volumen máximo, tope sumado; decide el heredado 37); lo que queda del
   heredado 27: la «maximum capital allocation rule» y el asterisco de «USD/LOT*»; y lo que FTMO
   no contestó del ticket: la pregunta 6 (A-55, sin respuesta) y las respondidas solo en parte
