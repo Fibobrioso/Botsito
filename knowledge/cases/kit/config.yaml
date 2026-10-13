@@ -47,11 +47,13 @@ etiquetas: [compra, venta, no_trade]
 # aparece aqui queda SIN ACOTAR, no excluido (`solo_con_cobertura` sigue en False): asi un mes
 # legitimo que nadie haya declarado todavia no se niega solo.
 #
-# NO SE DECLARAN enero, abril, julio ni agosto, y el motivo es de proceso y no de olvido: sus
-# tramos saldrian de leer la columna de fechas de sus backtests, y eso lo hace EL CONSULTOR una
-# sola vez antes del sorteo y lo declara el mismo dia (ADR-0021 §1, CLAUDE.md). Los cuatro estan
-# en `vistos.yaml`, asi que ningun paquete ciego los sortea; el dia que hagan falta aqui, se
-# declaran con su lectura y su exposicion.
+# UN MES DE DESARROLLO SE DECLARA AQUI SOLO CUANDO HACE FALTA, con su lectura y su exposicion: su
+# tramo sale de la fecha minima y la maxima de la columna de fechas de su backtest, que lee ALEKS
+# una sola vez antes del sorteo y que se declara el mismo dia (ADR-0072, ADR-0021 §1, CLAUDE.md).
+# Los declarados estan abajo, cada uno con su comentario. Los meses vistos estan en `vistos.yaml`,
+# asi que ningun paquete ciego los sortea. (Corregido el 2026-10-12, `trabajo/entrada-julio`: decia
+# que enero, abril, julio y agosto no se declaraban -abril y agosto lo estan desde ADR-0042- y que
+# la columna la leia el consultor; ADR-0072 dice que la lee Aleks.)
 cobertura_material:
   # ABRIL: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
   # 2026-09-21). El tramo es la fecha MINIMA y la MAXIMA de la columna de fechas del libro, leidas
@@ -80,6 +82,18 @@ cobertura_material:
   # justo la combinacion que hasta hoy no se podia expresar. Sin esto, sus 10 dias `dev` del
   # reparto de la sesion 1 siguen siendo ingeribles y un `kit build` nuevo volveria a sortearlo.
   "2026-06": []
+  # JULIO: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
+  # 2026-10-13; rama `trabajo/entrada-julio`). El tramo es la fecha MINIMA y la MAXIMA de la columna
+  # de fechas del libro, leidas UNA vez el 2026-10-13 por Aleks (ADR-0072), y nada mas. Es un
+  # LIMITE INFERIOR de la cobertura real: un dia del borde sin operaciones no se distingue de uno no
+  # cubierto. Los dias del 20 al 31 NO tienen libro (el trader no exporto ese tramo y ya no puede):
+  # quedan solo en el video v14 y no entran aqui (decision del consultor del 2026-10-13, ADR-0042
+  # §2). El sha, copiado del manifiesto del corpus.
+  "2026-07":
+    - desde: "2026-07-01"
+      hasta: "2026-07-17"
+      fuente: [ADR-0042]
+      material_sha256: "a8cb4ef47faaccee4d0f35adb13da9001abd241a10a3ab810acc33986b41f49f"
   # AGOSTO: material de DESARROLLO ya visto (vistos.yaml) y leido entero (HOLDOUT-EXPOSICIONES,
   # 2026-09-21). El tramo es la fecha MINIMA y la MAXIMA de la columna de fechas del libro, leidas
   # UNA vez el 2026-09-23 por orden del consultor y con el formato y el huso de libros.yaml, y nada

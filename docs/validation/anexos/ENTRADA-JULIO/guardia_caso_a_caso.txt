@@ -1,0 +1,158 @@
+# La guardia de la rama frente a la de main, caso a caso (trabajo/entrada-julio, 2026-10-12;
+# matriz ampliada el 2026-10-13 por el revisor, b5: la grafia real de julio y un libro suelto
+# sin «backtesting-analytics»).
+# Salida de `uv run pytest tests/unit/test_guardia_claude.py -q -s -k caso_a_caso`: cada ruta
+# de la matriz (sintetica: ninguna se abre), decidida por `Politica(RAIZ).motivo_fichero` con
+# los repartos REALES, y el NOMBRE de la regla que cita cada guardia. None = se lee.
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2025/backtesting-analytics DICIEMBRE 2025.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2025/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2025/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2025/video.mp4 | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2025/notas.txt | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Diciembre 2025/backtesting-analytics_DICIEMBRE_2025.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Diciembre 2025/grabacion.mkv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Diciembre 2025/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones diciembre 2025.csv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics DICIEMBRE 2025.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+para-revisar/backtesting-analytics DICIEMBRE 2025.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest enero 2026/backtesting-analytics ENERO 2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest enero 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest enero 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest enero 2026/video.mp4 | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest enero 2026/notas.txt | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Enero 2026/backtesting-analytics_ENERO_2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Enero 2026/grabacion.mkv | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Enero 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones enero 2026.csv | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics ENERO 2026.xlsx | main None | rama None
+para-revisar/backtesting-analytics ENERO 2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest febrero 2026/backtesting-analytics FEBRERO 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest febrero 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest febrero 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest febrero 2026/video.mp4 | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest febrero 2026/notas.txt | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Febrero 2026/backtesting-analytics_FEBRERO_2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Febrero 2026/grabacion.mkv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Febrero 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones febrero 2026.csv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics FEBRERO 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+para-revisar/backtesting-analytics FEBRERO 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/backtesting-analytics MARZO 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/video.mp4 | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/notas.txt | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Marzo 2026/backtesting-analytics_MARZO_2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Marzo 2026/grabacion.mkv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Marzo 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones marzo 2026.csv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics MARZO 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+para-revisar/backtesting-analytics MARZO 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest abril 2026/backtesting-analytics ABRIL 2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest abril 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest abril 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest abril 2026/video.mp4 | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest abril 2026/notas.txt | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Abril 2026/backtesting-analytics_ABRIL_2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Abril 2026/grabacion.mkv | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Abril 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones abril 2026.csv | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics ABRIL 2026.xlsx | main None | rama None
+para-revisar/backtesting-analytics ABRIL 2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest mayo 2026/backtesting-analytics MAYO 2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest mayo 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest mayo 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest mayo 2026/video.mp4 | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest mayo 2026/notas.txt | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Mayo 2026/backtesting-analytics_MAYO_2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Mayo 2026/grabacion.mkv | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Mayo 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones mayo 2026.csv | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics MAYO 2026.xlsx | main R_LIBRO | rama R_LIBRO
+para-revisar/backtesting-analytics MAYO 2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest junio 2026/backtesting-analytics JUNIO 2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest junio 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest junio 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest junio 2026/video.mp4 | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest junio 2026/notas.txt | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Junio 2026/backtesting-analytics_JUNIO_2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Junio 2026/grabacion.mkv | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Junio 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones junio 2026.csv | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics JUNIO 2026.xlsx | main R_LIBRO | rama R_LIBRO
+para-revisar/backtesting-analytics JUNIO 2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/backtesting-analytics JULIO 2026.xlsx | main R_SIN_ABRIR | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/video.mp4 | main R_SIN_ABRIR | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest julio 2026/notas.txt | main R_SIN_ABRIR | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/backtesting-analytics_JULIO_2026.xlsx | main R_SIN_ABRIR | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/grabacion.mkv | main R_SIN_ABRIR | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones julio 2026.csv | main R_SIN_ABRIR | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics JULIO 2026.xlsx | main R_SIN_ABRIR | rama None
+para-revisar/backtesting-analytics JULIO 2026.xlsx | main R_SIN_ABRIR | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest agosto 2026/backtesting-analytics AGOSTO 2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest agosto 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest agosto 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest agosto 2026/video.mp4 | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest agosto 2026/notas.txt | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Agosto 2026/backtesting-analytics_AGOSTO_2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Agosto 2026/grabacion.mkv | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Agosto 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones agosto 2026.csv | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics AGOSTO 2026.xlsx | main None | rama None
+para-revisar/backtesting-analytics AGOSTO 2026.xlsx | main None | rama None
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest septiembre 2026/backtesting-analytics SEPTIEMBRE 2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest septiembre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest septiembre 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest septiembre 2026/video.mp4 | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest septiembre 2026/notas.txt | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Septiembre 2026/backtesting-analytics_SEPTIEMBRE_2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Septiembre 2026/grabacion.mkv | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Septiembre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones septiembre 2026.csv | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics SEPTIEMBRE 2026.xlsx | main R_LIBRO | rama R_LIBRO
+para-revisar/backtesting-analytics SEPTIEMBRE 2026.xlsx | main R_LIBRO | rama R_LIBRO
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest octubre 2026/backtesting-analytics OCTUBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest octubre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest octubre 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest octubre 2026/video.mp4 | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest octubre 2026/notas.txt | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Octubre 2026/backtesting-analytics_OCTUBRE_2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Octubre 2026/grabacion.mkv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Octubre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones octubre 2026.csv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics OCTUBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+para-revisar/backtesting-analytics OCTUBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest noviembre 2026/backtesting-analytics NOVIEMBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest noviembre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest noviembre 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest noviembre 2026/video.mp4 | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest noviembre 2026/notas.txt | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Noviembre 2026/backtesting-analytics_NOVIEMBRE_2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Noviembre 2026/grabacion.mkv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Noviembre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones noviembre 2026.csv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics NOVIEMBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+para-revisar/backtesting-analytics NOVIEMBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2026/backtesting-analytics DICIEMBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2026/captura.png | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2026/video.mp4 | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest diciembre 2026/notas.txt | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Diciembre 2026/backtesting-analytics_DICIEMBRE_2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Diciembre 2026/grabacion.mkv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Backtest Diciembre 2026/foto.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/operaciones diciembre 2026.csv | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics DICIEMBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+para-revisar/backtesting-analytics DICIEMBRE 2026.xlsx | main R_SIN_ABRIR | rama R_SIN_ABRIR
+corpus/Estrategia del trader/Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp.jpeg | main R_CAPTURA | rama R_CAPTURA
+corpus/Estrategia del trader/Material adicional de su operativa/Mensajes del trader/mensaje.txt | main None | rama None
+corpus/Estrategia del trader/Sesiones/s1/hoja RELLENADA.docx | main R_HOJA | rama R_HOJA
+data/transcripciones/v7/large-v3/cruda.jsonl | main R_CUARENTENA | rama R_CUARENTENA
+data/transcripciones/v10/large-v3/cruda.txt | main R_CUARENTENA | rama R_CUARENTENA
+knowledge/cases/holdout/1/etiquetas.yaml | main R_HOLDOUT | rama R_HOLDOUT
+knowledge/cases/holdout/2/README.md | main None | rama None
+SONDA.CRUDA-NO-LEER.txt | main R_CUARENTENA | rama R_CUARENTENA
+knowledge/cases/dev/caso-eurusd-2026-04-01.yaml | main None | rama None

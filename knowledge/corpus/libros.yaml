@@ -65,3 +65,19 @@ libros:
       sobre sus dias dev, iguales.
     declarado_el: "2026-10-06"
     fuente: [ADR-0039]
+  "a8cb4ef47faaccee4d0f35adb13da9001abd241a10a3ab810acc33986b41f49f":
+    fichero: "Material adicional de su operativa/Backtest Julio 2026/backtesting-analytics_JULIO_2026.xlsx"
+    lecturas:
+      - formato: "AAAA-MM-DD HH:MM:SS"
+        huso: Europe/Madrid
+    medida: >-
+      Velas, 2026-10-13 (ENTRADA-JULIO §3.b, anexo huso_julio.py, que repite el de enero), sobre
+      TODAS las filas del mes, porque julio no tiene ningun dia en ninguna particion (casos_ocultos
+      y casos_reservados, 0, medido ese mismo dia) y la herramienta, que solo mide dias dev de
+      repartos, no tenia nada que medir: entrada dentro de la M1 +-2 puntos, Europe/Madrid 71 de 72
+      (98,6 %), UTC 5 de 72 (6,9 %). ES EL PRIMER LIBRO EN Europe/Madrid: enero, abril, mayo y
+      agosto vienen en UTC. El formato es el unico del vocabulario que casa con todas las filas.
+      Control con el mismo metodo y umbral: agosto (UTC 100 % / Europe/Madrid 2 %), y con la
+      herramienta de main sobre sus dias dev, igual.
+    declarado_el: "2026-10-13"
+    fuente: [ADR-0039]

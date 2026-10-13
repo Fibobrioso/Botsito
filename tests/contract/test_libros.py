@@ -8,6 +8,7 @@ y que se cruza con `cobertura_material`.
 
 from __future__ import annotations
 
+import re
 import subprocess
 from pathlib import Path
 
@@ -157,20 +158,28 @@ def test_cobertura_y_libros_se_cruzan(tmp_path: Path) -> None:
 
 
 @pytest.mark.contract
-def test_el_registro_real_declara_enero_mayo_agosto_y_abril_y_nada_mas() -> None:
+def test_el_registro_real_declara_enero_mayo_julio_agosto_y_abril_y_nada_mas() -> None:
     """Septiembre fuera, y es lo correcto: nadie ha medido como se lee (ADR-0039). Enero entra el
     2026-10-06, medido por velas (docs/validation/RELOJ-INVIERNO.md, M1): UTC, en el formato de
-    agosto y abril."""
+    agosto y abril. Julio entra el 2026-10-13 (docs/validation/ENTRADA-JULIO.md §3.b): el primer
+    libro en Europe/Madrid, con el formato de mayo. Su fichero se llama con guiones bajos, asi que
+    el mes se lee del NOMBRE del fichero, la palabra en mayusculas."""
     libros = cargar_libros(REAL)
     manifiesto = yaml.safe_load(
         (REAL / "knowledge/corpus/manifest.yaml").read_text(encoding="utf-8")
     )
     por_sha = {f["sha256"]: f["ruta"] for f in manifiesto["ficheros"]}
-    meses = sorted(por_sha[s].rsplit(" ", 2)[-2] for s in libros)
-    assert meses == ["ABRIL", "AGOSTO", "ENERO", "MAYO"]
-    formatos = {por_sha[s].rsplit(" ", 2)[-2]: d.lecturas for s, d in libros.items()}
+
+    def mes(sha: str) -> str:
+        m = re.search(r"[A-Z]{4,}", Path(por_sha[sha]).name)
+        assert m is not None, por_sha[sha]
+        return m.group(0)
+
+    assert sorted(mes(s) for s in libros) == ["ABRIL", "AGOSTO", "ENERO", "JULIO", "MAYO"]
+    formatos = {mes(s): d.lecturas for s, d in libros.items()}
     assert [(le.formato, le.huso) for le in formatos["MAYO"]] == [(NUEVO, "UTC")]
     assert [(le.formato, le.huso) for le in formatos["ENERO"]] == [("AAAA/MM/DD HH:MM:SS", "UTC")]
+    assert [(le.formato, le.huso) for le in formatos["JULIO"]] == [(NUEVO, "Europe/Madrid")]
 
 
 @pytest.mark.contract

@@ -50,6 +50,13 @@ cifras listadas y ninguna se usa (ADR-0021 §2, ADR-0038 §2). Medido el 2026-09
 se abrio la pestana Analytics de agosto; el mismo muestreo sobre v1 o v2 habria caido sobre mayo
 o julio, que SI tienen dias reservados.
 
+> **CORRECCIÓN (2026-10-12, rama `trabajo/entrada-julio`).** **Julio NO tiene días reservados**:
+> `casos_reservados` y `casos_ocultos` dan 0 para 2026-07 (medido el 2026-10-12,
+> `docs/validation/ENTRADA-JULIO.md` §0.a), y desde esa rama es material de DESARROLLO
+> (decisión del consultor del 2026-10-12). Mayo sí los tiene. El procedimiento de arriba no cambia:
+> un fotograma se abre por un instante localizado, y una captura de Analytics de cualquier mes,
+> también de julio, no se abre.
+
 > **CORRECCIÓN (2026-10-06, rama `trabajo/activacion-a42`, ADR-0069).** **El reloj de los graficos de FX Replay NO es UTC+2 fijo: es Europe/Madrid, con su
 > cambio de hora** (UTC+1 en invierno, UTC+2 en verano). Lo de abajo leyo el reloj del pie, que
 > va con el replay y ensena el desfase de hoy; el EJE de enero casa con Dukascopy con UTC+1

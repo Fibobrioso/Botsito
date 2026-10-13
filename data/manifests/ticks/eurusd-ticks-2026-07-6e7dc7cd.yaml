@@ -1,0 +1,129 @@
+# GENERADO por `botsito data download-ticks`. INMUTABLE: no editar; un cambio es otro dataset.
+dataset_id: eurusd-ticks-2026-07-6e7dc7cd
+decodificador_version: 1
+descargado_el: '2026-10-13'
+desde: '2026-07-01'
+escala: 100000
+escala_volumen: 1000
+ficheros:
+- bytes: 1505953
+  filas: 31483
+  primera: '2026-07-01T05:00:01.717Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-01.csv
+  sha256: 1e6f26e3e0a569f706a9822cc74881a4d4084f3c7068b5016ca36e25a113429a
+  ultima: '2026-07-01T13:59:59.851Z'
+- bytes: 2326156
+  filas: 48598
+  primera: '2026-07-02T05:00:00.296Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-02.csv
+  sha256: 57e5cd2ee474df064a332a1e5a3de1bfc001978757afb5b84382ca095fef4aff
+  ultima: '2026-07-02T13:59:59.970Z'
+- bytes: 959311
+  filas: 20043
+  primera: '2026-07-03T05:00:00.991Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-03.csv
+  sha256: c8c6f2750f2d66739e34b147e1525f2ef9f97b387155e3b8227f22965e015751
+  ultima: '2026-07-03T13:59:59.359Z'
+- bytes: 1016554
+  filas: 21224
+  primera: '2026-07-06T05:00:00.098Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-06.csv
+  sha256: c6473dcd75a22e30f23552dcf2f3a6f3e14a50155638fa2614ebcb28c14deed0
+  ultima: '2026-07-06T13:59:59.986Z'
+- bytes: 1058156
+  filas: 22083
+  primera: '2026-07-07T05:00:00.085Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-07.csv
+  sha256: 38de2a1f1ec43e7e3b5e458ba624be9f745f16e9e30d94f8dda35f08678fe86b
+  ultima: '2026-07-07T13:59:59.585Z'
+- bytes: 1893725
+  filas: 39577
+  primera: '2026-07-08T05:00:00.112Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-08.csv
+  sha256: d781fb7868f3dc7823e3c48893b0ca08d9f7de4f91a12eba31318b2f20c7c8b1
+  ultima: '2026-07-08T13:59:58.928Z'
+- bytes: 1089541
+  filas: 22752
+  primera: '2026-07-09T05:00:04.113Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-09.csv
+  sha256: df8871336390d1e13fbaba8c535295c22fcfcb2611fa8ecaf4188a525d8e614a
+  ultima: '2026-07-09T13:59:57.179Z'
+- bytes: 1127674
+  filas: 23540
+  primera: '2026-07-10T06:00:00.063Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-10.csv
+  sha256: 7a7d60b5fedf6a8da942666be345daa06fbacdacc2831653a1a24a0cf6b9acd6
+  ultima: '2026-07-10T13:59:58.538Z'
+- bytes: 1619814
+  filas: 33852
+  primera: '2026-07-13T05:00:00.071Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-13.csv
+  sha256: 1900216396a3e8d721a00c6a10e94c1714d3b6ebab28cd9201fdaeaf07d60177
+  ultima: '2026-07-13T13:59:59.114Z'
+- bytes: 1446996
+  filas: 30245
+  primera: '2026-07-14T05:00:00.740Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-14.csv
+  sha256: 01a22b28de33e0aaa7d33bdca756ae907a67b846dc61bbcb60743f452d1a2f6a
+  ultima: '2026-07-14T13:59:59.769Z'
+- bytes: 1377785
+  filas: 28774
+  primera: '2026-07-15T05:00:00.111Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-15.csv
+  sha256: ae3aace36a94c5ea64133a7c94cd1322d04d1fe35ab5dbbcdd8ae259c9e6cf10
+  ultima: '2026-07-15T13:59:59.956Z'
+- bytes: 1171362
+  filas: 24467
+  primera: '2026-07-16T05:00:00.130Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-16.csv
+  sha256: e94ff433459d41a42200fd9324e292cf5ecd4fe667fbd18dc19a8ef366f18088
+  ultima: '2026-07-16T13:59:59.625Z'
+- bytes: 1263766
+  filas: 26376
+  primera: '2026-07-17T05:00:03.205Z'
+  ruta: ticks/eurusd-ticks-2026-07-6e7dc7cd/EURUSD_TICKS_2026-07-17.csv
+  sha256: b66a3e9046bfec9b668368fbfa6b02fb445ed2cf0274352ebe1d49f161b75545
+  ultima: '2026-07-17T13:59:59.953Z'
+generado_por: 80e7a78
+hasta: '2026-07-31'
+horas:
+  ausentes_404: 0
+  perdidas:
+  - 2026-07-10T05Z
+  - 2026-07-14T12Z
+  - 2026-07-16T11Z
+  presentes: 114
+  vacias: 0
+huso_datos: UTC
+proveedor: dukascopy
+schema_ticks: 1
+seleccion:
+  completa: false
+  dias:
+  - '2026-07-01'
+  - '2026-07-02'
+  - '2026-07-03'
+  - '2026-07-06'
+  - '2026-07-07'
+  - '2026-07-08'
+  - '2026-07-09'
+  - '2026-07-10'
+  - '2026-07-13'
+  - '2026-07-14'
+  - '2026-07-15'
+  - '2026-07-16'
+  - '2026-07-17'
+  horas_utc:
+  - 5
+  - 6
+  - 7
+  - 8
+  - 9
+  - 10
+  - 11
+  - 12
+  - 13
+simbolo: EURUSD
+ticks:
+  cruzados_ask_menor_que_bid: 0
+  total: 373014

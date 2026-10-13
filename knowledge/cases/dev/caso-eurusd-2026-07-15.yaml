@@ -1,0 +1,39 @@
+dia: '2026-07-15'
+fuente:
+  fichero: corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/backtesting-analytics_JULIO_2026.xlsx
+  ingerido_el: '2026-10-13'
+  sha256: a8cb4ef47faaccee4d0f35adb13da9001abd241a10a3ab810acc33986b41f49f
+  tipo: backtest_xlsx
+id: caso-eurusd-2026-07-15
+operaciones:
+- direccion: compra
+  entrada: '1.14368'
+  instante_utc: '2026-07-15T05:06:55+00:00'
+  sesion: 07-11
+  stop: '1.14353'
+- direccion: compra
+  entrada: '1.1431'
+  instante_utc: '2026-07-15T07:12:25+00:00'
+  sesion: 07-11
+  stop: '1.14268'
+- direccion: compra
+  entrada: '1.1418'
+  instante_utc: '2026-07-15T10:05:50+00:00'
+  sesion: 11-15
+  stop: '1.1416'
+- direccion: compra
+  entrada: '1.14142'
+  instante_utc: '2026-07-15T10:45:45+00:00'
+  sesion: 11-15
+  stop: '1.14108'
+- direccion: compra
+  entrada: '1.14146'
+  instante_utc: '2026-07-15T12:00:55+00:00'
+  sesion: 11-15
+  stop: '1.14112'
+- direccion: compra
+  entrada: '1.14092'
+  instante_utc: '2026-07-15T12:14:10+00:00'
+  sesion: 11-15
+  stop: '1.1406'
+simbolo: EURUSD

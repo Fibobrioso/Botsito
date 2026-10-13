@@ -142,7 +142,7 @@ def test_la_politica_lee_los_repartos_las_sesiones_y_los_meses(g: ModuleType, re
         "caso-eurusd-2026-09-02": "fidelidad-1",
     }
     assert p.sesiones_en_cuarentena == {"v7", "v9"}  # v6 queda fuera: leida antes, dia retirado
-    assert p.meses_legibles == {"2026-01", "2026-04", "2026-08"}
+    assert p.meses_legibles == {"2026-01", "2026-04", "2026-07", "2026-08"}
 
 
 def test_contra_el_repo_real_ve_lo_mismo_que_el_codigo(g: ModuleType) -> None:
@@ -150,7 +150,7 @@ def test_contra_el_repo_real_ve_lo_mismo_que_el_codigo(g: ModuleType) -> None:
     assert p.reservados == casos_reservados(RAIZ)
     assert set(g.PARTICIONES_RESERVADAS) == set(RESERVADAS)
     assert p.sesiones_en_cuarentena == {"v7", "v8", "v9", "v10"}
-    assert p.meses_legibles == {"2026-01", "2026-04", "2026-08"}
+    assert p.meses_legibles == {"2026-01", "2026-04", "2026-07", "2026-08"}
     assert p.meses_reservados >= {"2026-05", "2026-09"}
 
 
@@ -182,6 +182,70 @@ def test_un_mes_de_desarrollo_con_un_dia_reservado_deja_de_ser_legible(
     )
     libro = f"{MATERIAL}/backtesting-analytics ABRIL 2026.xlsx"
     assert _decide(g, repo, "Read", file_path=str(repo / libro)) is not None
+
+
+def _regla(g: ModuleType, repo: Path, rel: str) -> str | None:
+    """La regla que cita la guardia para leer `rel`, sin el envoltorio del mensaje."""
+    motivo: str | None = g.Politica(repo).motivo_fichero(str(repo / rel))
+    return motivo
+
+
+JULIO = f"{MATERIAL}/Backtest julio 2026"
+OTROS_MESES = (
+    f"{MATERIAL}/Backtest febrero 2026/backtesting-analytics FEBRERO 2026.xlsx",
+    f"{MATERIAL}/Backtest marzo 2026/backtesting-analytics MARZO 2026.xlsx",
+    f"{MATERIAL}/Backtest diciembre 2025/backtesting-analytics DICIEMBRE 2025.xlsx",
+)
+
+
+def test_julio_se_lee_y_lo_demas_sigue_cerrado(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`trabajo/entrada-julio` (decision del consultor del 2026-10-12): julio pasa a material de
+    DESARROLLO. Los dos sentidos, y cada uno roto a proposito: julio se lee (sin julio en la
+    lista su libro vuelve a cerrarse, y con un dia de julio reservado tambien); febrero, marzo y
+    diciembre siguen cerrados (con ellos en la lista se abririan), y las imagenes de la carpeta
+    de julio no se abren nunca (R_CAPTURA, ADR-0038; sin su extension se abririan)."""
+    libro = f"{JULIO}/backtesting-analytics JULIO 2026.xlsx"
+    video = f"{JULIO}/backtest julio.mp4"
+    fotos = (f"{JULIO}/WhatsApp Image 2026-10-04 at 1.00.00 PM.jpeg", f"{JULIO}/captura.png")
+    for rel in (libro, video, *fotos, *OTROS_MESES):
+        _escribir(repo, rel)
+    for rel in (libro, video):
+        assert _decide(g, repo, "Read", file_path=str(repo / rel)) is None, rel
+        assert _bash(g, repo, f'cat "{rel}"') is None, rel
+    for rel in fotos:
+        assert _regla(g, repo, rel) == g.R_CAPTURA, rel
+        assert _bash(g, repo, f'cat "{rel}"') is not None, rel
+        assert _bash(g, repo, f'sha256sum "{rel}"') is None, rel
+    for rel in OTROS_MESES:
+        assert _regla(g, repo, rel) == g.R_SIN_ABRIR, rel
+        assert _bash(g, repo, f'cat "{rel}"') is not None, rel
+    # Roto a proposito (1): sin 2026-07 en la lista, el libro y el video vuelven a cerrarse.
+    monkeypatch.setattr(g, "MESES_DE_DESARROLLO", ("2026-01", "2026-04", "2026-08"))
+    for rel in (libro, video):
+        assert _regla(g, repo, rel) == g.R_SIN_ABRIR, rel
+    monkeypatch.undo()
+    # Roto a proposito (2), el otro sentido: con febrero, marzo y diciembre en la lista, sus
+    # libros se abririan; la comprobacion de arriba lo veria.
+    monkeypatch.setattr(
+        g, "MESES_DE_DESARROLLO", (*g.MESES_DE_DESARROLLO, "2026-02", "2026-03", "2025-12")
+    )
+    for rel in OTROS_MESES:
+        assert _regla(g, repo, rel) is None, rel
+    monkeypatch.undo()
+    # Roto a proposito (3): sin sus extensiones en EXT_IMAGEN, las fotos de julio se abririan.
+    monkeypatch.setattr(g, "EXT_IMAGEN", (".gif",))
+    for rel in fotos:
+        assert _regla(g, repo, rel) is None, rel
+    monkeypatch.undo()
+    # Roto a proposito (4): un dia de julio en una particion reservada cierra el mes entero.
+    _escribir(
+        repo,
+        "knowledge/cases/visto/2026-07/particiones.yaml",
+        "asignacion:\n  caso-eurusd-2026-07-07: holdout-2\n",
+    )
+    assert _regla(g, repo, libro) == g.R_LIBRO
 
 
 # ------------------------------------------------------------ Fase 4: lo que pide el encargo
@@ -265,6 +329,15 @@ def test_lo_indecidible_que_no_puede_leer_nada_pasa(g: ModuleType, repo: Path) -
         ),
         ("data/transcripciones/v9/large-v3-int8-float16/cruda.txt", "R_CUARENTENA"),
         ("knowledge/cases/holdout/1/etiquetas.yaml", "R_HOLDOUT"),
+        (f"{MATERIAL}/Backtest julio 2026/foto.jpeg", "R_CAPTURA"),
+        (
+            f"{MATERIAL}/Backtest febrero 2026/backtesting-analytics FEBRERO 2026.xlsx",
+            "R_SIN_ABRIR",
+        ),
+        (
+            f"{MATERIAL}/Backtest diciembre 2025/backtesting-analytics DICIEMBRE 2025.xlsx",
+            "R_SIN_ABRIR",
+        ),
     ],
 )
 def test_cada_bloqueo_cita_su_regla_en_el_repo_real(g: ModuleType, rel: str, regla: str) -> None:
@@ -272,6 +345,131 @@ def test_cada_bloqueo_cita_su_regla_en_el_repo_real(g: ModuleType, rel: str, reg
     motivo = g.Politica(RAIZ).motivo_fichero(str(RAIZ / rel))
     assert motivo == getattr(g, regla)
     assert motivo.startswith("CLAUDE.md")
+
+
+_NOMBRES_DE_MES = {
+    "2025-12": ("diciembre", "DICIEMBRE", "2025"),
+    **{
+        f"2026-{n:02d}": (m, m.upper(), "2026")
+        for n, m in enumerate(
+            (
+                "enero",
+                "febrero",
+                "marzo",
+                "abril",
+                "mayo",
+                "junio",
+                "julio",
+                "agosto",
+                "septiembre",
+                "octubre",
+                "noviembre",
+                "diciembre",
+            ),
+            start=1,
+        )
+    },
+}
+
+
+def _matriz_de_material() -> list[tuple[str, str]]:
+    """`(mes, ruta)`: cada mes, en su carpeta `Backtest`, suelto en el material y fuera de el, con
+    un libro, imagenes, un video y un texto; y lo que no es de ningun mes."""
+    filas: list[tuple[str, str]] = []
+    for mes, (min_, may, ano) in _NOMBRES_DE_MES.items():
+        carpeta = f"{MATERIAL}/Backtest {min_} {ano}"
+        for nombre in (
+            f"backtesting-analytics {may} {ano}.xlsx",
+            "foto.jpeg",
+            "captura.png",
+            "video.mp4",
+            "notas.txt",
+        ):
+            filas.append((mes, f"{carpeta}/{nombre}"))
+        # la grafia de julio en el disco: carpeta con mayuscula, libro con guiones bajos, .mkv
+        carpeta = f"{MATERIAL}/Backtest {min_.capitalize()} {ano}"
+        for nombre in (f"backtesting-analytics_{may}_{ano}.xlsx", "grabacion.mkv", "foto.jpeg"):
+            filas.append((mes, f"{carpeta}/{nombre}"))
+        # un libro suelto sin «backtesting-analytics» en el nombre: solo lo ve el mes del nombre
+        filas.append((mes, f"{MATERIAL}/operaciones {min_} {ano}.csv"))
+        filas.append((mes, f"{MATERIAL}/backtesting-analytics {may} {ano}.xlsx"))
+        filas.append((mes, f"para-revisar/backtesting-analytics {may} {ano}.xlsx"))
+    for rel in (
+        f"{MATERIAL}/Mensajes del trader/mensaje-whatsapp.jpeg",
+        f"{MATERIAL}/Mensajes del trader/mensaje.txt",
+        "corpus/Estrategia del trader/Sesiones/s1/hoja RELLENADA.docx",
+        "data/transcripciones/v7/large-v3/cruda.jsonl",
+        "data/transcripciones/v10/large-v3/cruda.txt",
+        "knowledge/cases/holdout/1/etiquetas.yaml",
+        "knowledge/cases/holdout/2/README.md",
+        "SONDA.CRUDA-NO-LEER.txt",
+        "knowledge/cases/dev/caso-eurusd-2026-04-01.yaml",
+    ):
+        filas.append(("", rel))
+    return filas
+
+
+def _nombre_de_regla(modulo: ModuleType, motivo: str | None) -> str | None:
+    if motivo is None:
+        return None
+    nombres = [n for n in dir(modulo) if n.startswith("R_") and getattr(modulo, n) == motivo]
+    assert len(nombres) == 1, motivo
+    return nombres[0]
+
+
+def test_la_guardia_frente_a_la_de_main_caso_a_caso(g: ModuleType, tmp_path: Path) -> None:
+    """`trabajo/entrada-julio`: con los repartos REALES, la guardia de la rama decide cada ruta de
+    la matriz igual que la de `main`, por el NOMBRE de la regla (el texto de R_SIN_ABRIR y R_LIBRO
+    cambio a proposito), salvo el material de julio que no es imagen, que pasa de R_SIN_ABRIR a
+    legible. `main` o, en la CI (que no crea la rama local), `origin/main`; sin ninguna de las
+    dos (una CI superficial) se salta, no se finge."""
+    for ref in ("main", "origin/main"):
+        proc = subprocess.run(
+            ["git", "show", f"{ref}:.claude/hooks/guardia.py"],
+            cwd=RAIZ,
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+            check=False,
+        )
+        if proc.returncode == 0:
+            break
+    else:
+        pytest.skip("sin main ni origin/main en este clon")
+    fichero = tmp_path / "guardia_de_main.py"
+    fichero.write_text(proc.stdout, encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("guardia_de_main", fichero)
+    assert spec is not None and spec.loader is not None
+    de_main = importlib.util.module_from_spec(spec)
+    sys.modules["guardia_de_main"] = de_main
+    try:
+        spec.loader.exec_module(de_main)
+    finally:
+        del sys.modules["guardia_de_main"]
+    ahora, antes = g.Politica(RAIZ), de_main.Politica(RAIZ)
+    cambios = []
+    for mes, rel in _matriz_de_material():
+        ruta = str(RAIZ / rel)
+        r_rama = _nombre_de_regla(g, ahora.motivo_fichero(ruta))
+        r_main = _nombre_de_regla(de_main, antes.motivo_fichero(ruta))
+        print(f"{rel} | main {r_main} | rama {r_rama}")  # la tabla del informe, con -s
+        if r_rama != r_main:
+            cambios.append((mes, rel, r_main, r_rama))
+    esperados = [
+        (mes, rel, "R_SIN_ABRIR", None)
+        for mes, rel in _matriz_de_material()
+        if mes == "2026-07" and not rel.endswith((".jpeg", ".png"))
+    ]
+    if g.MESES_DE_DESARROLLO == de_main.MESES_DE_DESARROLLO:
+        esperados = []  # ya en main: las dos guardias son la misma
+    assert cambios == esperados
+
+
+def test_el_libro_de_julio_se_lee_en_el_repo_real(g: ModuleType) -> None:
+    """Con los repartos REALES: julio no tiene ningun dia reservado (`trabajo/entrada-julio`)."""
+    p = g.Politica(RAIZ)
+    julio = f"{MATERIAL}/Backtest julio 2026/backtesting-analytics JULIO 2026.xlsx"
+    assert p.motivo_fichero(str(RAIZ / julio)) is None
 
 
 def test_pytest_sobre_codigo_suelto_se_lee_como_un_guion(

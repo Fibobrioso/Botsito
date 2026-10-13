@@ -105,4 +105,4 @@ def test_el_fichero_del_criterio_dice_lo_que_dice_adr_0043() -> None:
     c = cargar_criterio(REPO)
     assert (c.tolerancias.entrada_puntos, c.tolerancias.instante_min) == (3, 15)
     assert (c.umbral_cobertura, c.umbral_precision) == (Fraction(7, 10), Fraction(6, 10))
-    assert c.construccion == ("2026-04", "2026-08") and c.medida == ("2026-05",)
+    assert c.construccion == ("2026-04", "2026-07", "2026-08") and c.medida == ("2026-05",)
