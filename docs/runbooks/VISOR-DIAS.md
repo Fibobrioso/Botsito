@@ -6,7 +6,7 @@ visor enseña UN día de un vistazo.
 
 ## Qué hace
 
-Para un día `dev` de un mes de CONSTRUCCIÓN (hoy abril y agosto de 2026), genera una página HTML
+Para un día `dev` de un mes de CONSTRUCCIÓN (hoy abril, julio -del 1 al 17-, agosto y enero -del 2 al 30- de 2026; ADR-0078 y ADR-0079), genera una página HTML
 autocontenida —sin JavaScript ni librerías— con:
 - las **M1 de la ventana del día** (00:00-15:00 del trader), con una casilla para ver **M15**;
 - las **H4 de contexto**: la previa y las que miró el sesgo, con la que rompió resaltada por sesión;

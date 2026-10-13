@@ -6,7 +6,7 @@ la rama `trabajo/arnes-motor`.
 ## Qué hace
 
 Toma los días `dev` de los meses de construcción de `knowledge/cases/criterio_fidelidad.yaml` (hoy
-abril, julio -del 1 al 17- y agosto de 2026; julio desde ADR-0078) y hace pasar cada uno por el motor. El motor es el intérprete del árbol
+abril, julio -del 1 al 17-, agosto y enero -del 2 al 30- de 2026; julio desde ADR-0078 y enero desde ADR-0079) y hace pasar cada uno por el motor. El motor es el intérprete del árbol
 genérico de ADR-0030, con las primitivas que haya escritas. Después compara las operaciones del
 bot con las del trader usando el criterio de ADR-0043, y escribe un informe con:
 - **cobertura y precisión**, y las operaciones del bot en días sin operaciones del trader;

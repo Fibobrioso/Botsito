@@ -1,12 +1,8 @@
 # Encargo · trabajo/entrada-enero
 
-Dado por Aleks (consultor) el 2026-10-13. Copiado tal cual (hasta que exista, el ADR que el
-encargo manda escribir va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale del bloque en el commit que lo crea):
-
-```ids-inexistentes
-ADR-0079 — el ADR de la fase 3 que este encargo manda escribir (enero entra en construcción); no existe hasta su commit
-```
+Dado por Aleks (consultor) el 2026-10-13. Copiado tal cual (hasta que existió, el ADR que el
+encargo manda escribir iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió del bloque en el commit que lo creó):
 
 > Modelo: Opus · Esfuerzo: alto
 >

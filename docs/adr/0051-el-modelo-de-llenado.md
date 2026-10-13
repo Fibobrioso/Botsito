@@ -98,6 +98,11 @@ es BID más el spread supuesto.
 - **DN-5** (ticks solo de los días dev de construcción y las horas 05-13 UTC, Fase 2 de la rama):
   **ACEPTADA PARA VERANO**. La ventana de ticks de invierno (06:00-14:00 UTC, cuando el trader
   está en CET) queda PENDIENTE y ligada a A-42, que decide con qué reloj cuenta la sesión.
+  > **NOTA del 2026-10-13 (ADR-0079, no reescribe el cuerpo).** Ya no está pendiente: A-42 quedó
+  > RESUELTA por la rejilla H4 (ADR-0069), y desde `trabajo/entrada-enero` la ventana de ticks se
+  > cuenta por ella (`scripts/ticks_spread.py` lee cada tick con `reloj_de_las_sesiones`). En
+  > invierno es 06:00-14:00 UTC, y los ticks de enero de 2026 se bajan con `--horas 06-14` (la
+  > ventana más una hora, el mismo criterio que las 05-13 de verano).
 - **DN-6** (el swap se cobra en cada medianoche del huso del perfil, ADR-0052 §3): **PROVISIONAL
   hasta medir el corte real en la plataforma** (A-28).
 - **DN-7** (quitar de este ADR la declaración de ADR-0052 como id inexistente): **ACEPTADA**.

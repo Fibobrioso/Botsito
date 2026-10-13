@@ -82,4 +82,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0076 | «Limpia» es «sin alternancia de colores», y eso ya lo filtra RN-009: A-21 RESUELTA con `solo_una_zona_de_control`, sin opción nueva | ACTIVE (enmienda ADR-0055 §2 y §5) |
 | 0077 | La racha de pérdidas seguidas del trader: RN-036, aparte de RN-020, con cuatro parámetros; A-51 RESUELTA | ACTIVE (la lectura de la sesión sobre la racha tras la novena, §5) |
 | 0078 | Julio de 2026 entra en construcción, del 1 al 17 (lo que cubre su libro) | ACTIVE (notas en ADR-0043 y ADR-0039 §1) |
+| 0079 | Enero de 2026 entra en construcción, del 2 al 30 (lo que cubre su libro), al final de la lista | ACTIVE (notas en ADR-0043, ADR-0051 DN-5 y ADR-0069 §5) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

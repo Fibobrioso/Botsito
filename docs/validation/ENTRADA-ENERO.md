@@ -5,12 +5,8 @@ sobre el merge a4e4fa6, tag `stable/F37o-entrada-julio`). Encargo:
 `docs/encargos/trabajo-entrada-enero.md`. Tramo: R2 (R2.2 de `docs/plan/HOJA-DE-RUTA.md`; X de
 la Next Action).
 
-(Hasta que exista, ADR-0079 va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale con el commit de la fase 3, que lo crea.)
-
-```ids-inexistentes
-ADR-0079 — el ADR de la fase 3 que el encargo manda escribir (enero entra en construcción); no existe hasta su commit
-```
+(Hasta que existió, ADR-0079 iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió con el commit de la fase 3, que lo crea.)
 
 ## Base, comprobada con git al abrir
 
@@ -446,6 +442,29 @@ dentro de él:
   anclado en knowledge/cases/visto/anclas.yaml`. Ancla `2026-01: particiones.yaml: 5061655b…`.
   `material_sha256` del reparto, el del libro.
 
+## 3. Fase 3 · ADR-0079, en su propio commit
+
+`docs/adr/0079-enero-entra-en-construccion.md`, con `Fuente: ADR-0079`. En el mismo commit:
+
+- `knowledge/cases/criterio_fidelidad.yaml`: `construccion: ["2026-04", "2026-07", "2026-08",
+  "2026-01"]`, enero AL FINAL (punto 0), con un comentario que dice por qué importa el orden.
+  ADR-0079 §2 lo explica: siete ficheros de tests toman `construccion[0]`, cinco corren el arnés.
+- `tests/unit/test_criterio_fidelidad.py:108`, que rompe aquí (punto 1).
+- ADR-0079 dice lo que pidió el consultor: la decisión 2 (diciembre no, medida: 0 INSUFICIENTE, y
+  ningún sesgo cambiaría con diciembre; horizonte recortado hasta el 15), que `llenado.yaml` sigue
+  medido sobre abril y agosto, lo que cambió la fase 1, `test_huecos_motor` sobre enero (punto 4),
+  la lectura de fechas de la sesión del 2026-10-06 («Además» 1) y la deuda de
+  `simulador_config.py`.
+- **Un matiz al punto 4**: `test_huecos_motor` toma los días del REPARTO dev-visto
+  (`engine/arnes.py:dias_de_construccion`, `:142-146`), no de los casos, así que corre el sesgo H4
+  sobre los 21 días de enero desde ESTE commit, antes de la ingesta (un día sin caso entra sin
+  operaciones). Solo lee velas; ADR-0079 lo dice así.
+- NOTAS sin reescribir el cuerpo (punto 5): ADR-0043 (la construcción), ADR-0051 DN-5 (la ventana
+  de invierno ya no está pendiente) y ADR-0069 §5 (`ticks_spread.py` ya cuenta por la rejilla).
+  Corregidos `ARNES-MOTOR.md:9`, `SESION-DE-PREGUNTAS.md:21` y `VISOR-DIAS.md:9`, y la fila 0079
+  en el índice `docs/adr/README.md`.
+- ADR-0079 sale de los bloques `ids-inexistentes` del encargo y de este informe.
+
 ## Estado
 
-EN CURSO: fases 1 y 2 hechas; sigue la fase 3 (ADR-0079).
+EN CURSO: fases 1 a 3 hechas; sigue la fase 4 (casos y ticks).
