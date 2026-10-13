@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/entrada-enero
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/entrada-julio` cerrada en `main` el 2026-10-13 (`stable/F37o-entrada-julio`); R2.1 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/entrada-enero` EN CURSO (abierta el 2026-10-13 desde `main` 6fb483b): X (scripts/ticks_spread.py cuenta la ventana de ticks por la rejilla) y enero de 2026 entra en construcción (R2.2). Encargo docs/encargos/trabajo-entrada-enero.md; informe docs/validation/ENTRADA-ENERO.md.
 
 ## Stable Main State
 a4e4fa6 · merge de `trabajo/entrada-julio` (tag `stable/F37o-entrada-julio`): julio de 2026 entra en construcción del 1 al 17 (ADR-0078): la guardia lo lee (sus imágenes no), su libro declarado en Europe/Madrid, reparto dev-visto de los 13 laborables, 13 casos dev y el dataset de ticks `eurusd-ticks-2026-07-6e7dc7cd`; v11 a v14 al inventario; la respuesta de FTMO a P-D1 en docs/validation/FTMO-P-D1.md. Sobre `stable/F37n-activar-sesion-04-motor` (79e74b2). Informe docs/validation/ENTRADA-JULIO.md; el registro del cierre, al final de HISTORIA.
@@ -176,8 +176,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 31 (2026-10-12).
+— ninguna desde el Archivo 32 (2026-10-13).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 31 (2026-10-12).
+— ninguna desde el Archivo 32 (2026-10-13).
