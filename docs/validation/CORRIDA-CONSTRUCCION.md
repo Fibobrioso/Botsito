@@ -1216,11 +1216,12 @@ ticks perdida llevan además «posible M» (`horas_perdidas.txt`), sin cambiar d
 | P7 entradas repetidas | 3 | R | V, pregunta 3 | la misma que P5, del otro lado: entradas repetidas del trader en el mismo nivel que el bot toma una vez |
 | P2 entrada | 18 | R, más una comprobación E | V, pregunta 4, junto a A-48 y A-49; visor en tres días que el consultor elegirá (rama de comprobaciones en el visor) | ¿qué velas forman la caja? (la Δ de cada fila, en `patrones.txt`: de 4 a 52 puntos, 15 de las 18 entre 6 y 21; el consultor escribió «de 4 a 54»: 54 es la Δ de la operación del bot MÁS CERCANA EN TIEMPO que la tabla imprime para 2026-01-29 11-15, y 52 la Δ mínima entre las del mismo lado a menos de 15 minutos, que es lo que mide `patrones.py`; mismas filas) |
 | P3 otra zona | 42 | R | V, pregunta 5, junto a A-43, A-50 y A-53 | ¿qué liquidez y qué zona elige el trader? |
-| P4 sin orden, con todas las órdenes rechazadas o rechazos y reubicaciones sin llenado por `volumen_max_lotes` | 17 sesiones de 38 (10 + 7; `p4_ordenes.txt`) | E + R | la rama del margen (E) y V, pregunta 2 (R) | E: qué hace el bot cuando el lote del 0,5 % no cabe en 50 lotes (decisión por ADR, con el margen a 1:30, HER:37). R: qué hace el trader en su cuenta real cuando el stop es tan pequeño que el lote no cabe |
-| P4 sin orden, reubicaciones sin llenarse | 4 sesiones | R | V, pregunta 6 | ¿hasta cuándo mueve el trader la orden con la caja (ADR-0074, S-4) y cuándo la deja quieta o la quita? |
-| P4 sin orden, rechazos por `precio_invalido` | 3 sesiones: 2026-04-16 07-11, 2026-07-08 11-15, 2026-07-13 11-15 (`p4_ordenes.txt`) | E + R (PARADA 4, punto 3) | E: la rama de comprobaciones en el visor; R: V | E: comprobar en el visor dónde colocó el bot la orden frente al precio (ADR-0057). R: si el precio ya pasó el 0 cuando se forma la caja, ¿el trader entra o no? |
-| P4 sin orden, sin ninguna orden colocada: RN-015 quiso colocar y `abrir_operacion` estaba prohibido (gates disparados RN-005 y RN-009; y RN-001 en 7 sesiones 11-15) | 15 sesiones (§4.6) | R, más una comprobación E (PARADA 4, punto 1; la regla de 4.d queda ampliada así, 2026-10-14) | R: V; E: la rama de comprobaciones en el visor | R: ¿entra el trader cuando la zona se desarrolla en el lado de ruido, o con más zonas de control de las admitidas? E: que RN-005, RN-009 y el minuto de `ventana_fin` de RN-001 están bien aplicados en esas sesiones |
-| P4 sin orden, sin bloqueo y sin `orden_dimensionada` | 2 sesiones: 2026-01-08 11-15, 2026-08-14 07-11 | E candidata (PARADA 4, punto 2) | la rama de comprobaciones en el visor | que RN-011 no dimensione con los hechos del camino producidos apunta a nuestro código, no a una regla del trader |
+| **P4 sin orden: 75 filas en 38 sesiones**, partidas por lo que dice `p4_ordenes.txt` (sobre la salida corregida de §4.9) en cinco grupos que no se solapan y suman 38 | 75 filas, 38 sesiones | las de abajo | | *(corregido tras el revisor, b1-b3)* |
+| P4 · todas las órdenes rechazadas, o rechazos y reubicaciones sin llenado, **con algún rechazo por `volumen_max_lotes`** | 17 sesiones: 9 con todas rechazadas (2026-01-14 07-11, 2026-01-21 07-11, 2026-04-16 07-11, 2026-04-22 07-11, 2026-07-02 11-15, 2026-08-17 07-11, 2026-08-25 11-15, 2026-08-28 11-15, 2026-08-31 07-11) y 8 con rechazos y reubicaciones (2026-01-02 11-15, 2026-01-15 07-11, 2026-04-23 07-11, 2026-07-13 11-15, 2026-08-07 11-15, 2026-08-13 07-11, 2026-08-26 07-11 y 11-15). Dos de ellas, 2026-04-16 07-11 y 2026-07-13 11-15, tienen además un rechazo por `precio_invalido` y cuentan también en la fila de abajo | E + R | la rama del margen (E) y V, pregunta 2 (R) | E: qué hace el bot cuando el lote del 0,5 % no cabe en 50 lotes (decisión por ADR, con el margen a 1:30, HER:37). R: qué hace el trader en su cuenta real cuando el stop es tan pequeño que el lote no cabe |
+| P4 · rechazos por `precio_invalido` | 3 sesiones: 2026-04-16 07-11 y 2026-07-13 11-15 (también en la fila de volumen) y 2026-07-08 11-15 (solo `precio_invalido`: 1 sesión propia del reparto) | E + R (PARADA 4, punto 3) | E: la rama de comprobaciones en el visor; R: V, pregunta 9 | E: comprobar en el visor dónde colocó el bot la orden frente al precio (ADR-0057). R: si el precio ya pasó el 0 cuando se forma la caja, ¿el trader entra o no? |
+| P4 · reubicaciones sin llenarse (4 sesiones), «y las de las 7 mixtas que no son por volumen» | 4 sesiones (2026-01-19 11-15, 2026-04-06 07-11, 2026-04-21 07-11, 2026-08-06 07-11) **más 0**: las mixtas (8 tras la corrección de b1) tienen todas algún rechazo por volumen, así que ninguna entra aquí por esa cláusula | R | V, pregunta 6 | ¿hasta cuándo mueve el trader la orden con la caja (ADR-0074, S-4) y cuándo la deja quieta o la quita? |
+| P4 · sin ninguna orden colocada: RN-015 quiso colocar y `abrir_operacion` estaba prohibido (gates disparados RN-005 y RN-009; y RN-001 en 7 sesiones 11-15) | 14 sesiones (§4.6; eran 15 antes de corregir b1: 2026-08-17 07-11 tenía una orden rechazada por volumen) | R, más una comprobación E (PARADA 4, punto 1; la regla de 4.d queda ampliada así, 2026-10-14) | R: V, pregunta 8; E: la rama de comprobaciones en el visor | R: ¿entra el trader cuando la zona se desarrolla en el lado de ruido, o con más zonas de control de las admitidas? E: que RN-005, RN-009 y el minuto de `ventana_fin` de RN-001 están bien aplicados en esas sesiones |
+| P4 · sin ninguna orden y sin `orden_dimensionada` | 2 sesiones: 2026-01-08 11-15, 2026-08-14 07-11 | E candidata (PARADA 4, punto 2) | la rama de comprobaciones en el visor | que RN-011 no dimensione con los hechos del camino producidos apunta a nuestro código, no a una regla del trader |
 | P5 de más, mismo lado | 47 | R | V, pregunta 3 | ¿cuántas veces reentra el trader en la misma zona tras un stop? (el bot se para en uno o dos minutos y vuelve a entrar; en la corrida 2, 93 stops frente a 12 objetivos) |
 | P5 de más, otro lado | 14 | R | siguen a P1 | la pregunta 1 |
 | P6 donde el trader no operó | 33 (21 en sesión, 12 en día) | R; las de agosto, además posible M | V, pregunta 7 | ¿qué le hace no operar ese día o esa sesión? (la deuda «el no_trade por ausencia no está decidido»); agosto: su xlsx no es el que el trader da por bueno (S-16, NA:Q) |
@@ -1242,7 +1243,7 @@ las ampliaciones de la PARADA 4):
 6. Hasta cuándo mueve la orden con la caja, y cuándo la deja quieta o la quita (ADR-0074, S-4).
 7. Qué le hace no operar un día o una sesión (P6).
 8. (PARADA 4, punto 1) ¿Entra el trader cuando la zona se desarrolla en el lado de ruido de la
-   liquidez de M15, o cuando hay más zonas de control de las admitidas? (las 15 sesiones de §4.6).
+   liquidez de M15, o cuando hay más zonas de control de las admitidas? (las 14 sesiones de §4.6).
 9. (PARADA 4, punto 3) Si el precio ya pasó el 0 cuando se forma la caja, ¿entra o no? (las 3
    sesiones con `precio_invalido`).
 
@@ -1257,10 +1258,10 @@ las ampliaciones de la PARADA 4):
     de entre los de P2 (2026-01-02 07-11, 2026-01-05 07-11 y 11-15, 2026-01-08 07-11, 2026-01-13
     11-15, 2026-01-20 11-15, 2026-01-26 07-11, 2026-01-29 11-15, 2026-04-01 11-15, 2026-04-16
     11-15, 2026-07-03 07-11, 2026-07-09 11-15, 2026-08-03 11-15, 2026-08-20 11-15; `patrones.txt`);
-  - que RN-005, RN-009 y el minuto de `ventana_fin` de RN-001 están bien aplicados en las 15
+  - que RN-005, RN-009 y el minuto de `ventana_fin` de RN-001 están bien aplicados en las 14
     sesiones de §4.6: 2026-01-30 07-11, 2026-04-17 07-11, 2026-04-27 11-15, 2026-07-01 11-15,
     2026-07-09 07-11, 2026-07-14 07-11 y 11-15, 2026-07-16 11-15, 2026-08-03 07-11, 2026-08-11
-    07-11, 2026-08-17 07-11, 2026-08-19 11-15, 2026-08-21 11-15, 2026-08-25 07-11, 2026-08-27 11-15;
+    07-11, 2026-08-19 11-15, 2026-08-21 11-15, 2026-08-25 07-11, 2026-08-27 11-15;
   - por qué RN-011 no dimensionó con los hechos del camino producidos en 2026-01-08 11-15 y
     2026-08-14 07-11 (E candidata);
   - dónde colocó el bot la orden frente al precio (ADR-0057) en los tres rechazos por
@@ -1272,18 +1273,21 @@ Con la salida repetida de §4.1, `p4_ordenes.py` cruza para cada una el campo `b
 reglas que dispararon en la sesión y las que `prohibe`n ese efecto en la spec
 (`anexos/CORRIDA-CONSTRUCCION/p4_ordenes.txt`, al final). Lo que sale:
 
-- **15 sesiones con `RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion`**: el motor
-  dimensionó (RN-011) y RN-015 no pudo colocar porque `abrir_operacion` estaba prohibido en ese
-  cierre. Los gates que dispararon en la sesión y prohíben `abrir_operacion` son, en las 15,
+- **14 sesiones con `RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion`** (eran 15 en
+  la salida de eab1fc3; el revisor vio -b1- que 2026-08-17 07-11 tenía una orden rechazada por
+  volumen en el primer cierre de la sesión, que «### Ordenes» ponía en la sesión «-»; corregido en
+  7cf8901 y repetidas las corridas, §4.9): el motor dimensionó (RN-011) y RN-015 no pudo colocar
+  porque `abrir_operacion` estaba prohibido en ese cierre. Los gates que dispararon en la sesión y
+  prohíben `abrir_operacion` son, en las 14,
   **RN-005** («lo que se desarrolla en el lado de ruido de la liquidez de M15 no es entrada») y
   **RN-009** («más zonas de control de las admitidas invalidan el esquema»), y en 7 de ellas
   -todas sesiones 11-15:
   2026-04-27, 2026-07-01, 2026-07-14, 2026-07-16, 2026-08-19, 2026-08-21 y 2026-08-27- también
   **RN-001** (el gate maestro: dispara fuera de la ventana -`ninguno_de en_ventana`, su forma- o
   con un `detenido_por_*`; con `sin_tope`, sin cartuchos agotados y 0 `detenido_por_*` en las 104
-  sesiones, lo que dispara en una sesión 11-15 es el minuto de `ventana_fin`). Las otras 8 son
+  sesiones, lo que dispara en una sesión 11-15 es el minuto de `ventana_fin`). Las otras 7 son
   2026-01-30 07-11, 2026-04-17 07-11, 2026-07-09 07-11, 2026-07-14 07-11, 2026-08-03 07-11,
-  2026-08-11 07-11, 2026-08-17 07-11 y 2026-08-25 07-11. **Por la regla de 4.d esto es PARADA**:
+  2026-08-11 07-11 y 2026-08-25 07-11. **Por la regla de 4.d esto es PARADA**:
   RN-005 y RN-009 son reglas de la estrategia pero no están entre las que el consultor enumeró
   (cartuchos, racha, ventana), y la traza no dice cuál de las dos prohibió en el cierre en que
   RN-015 pidió colocar (el campo es por sesión, y el autor de la prohibición no se guarda:
@@ -1341,6 +1345,31 @@ con `--simular`, con una línea que dice por qué (la línea base contra la que 
 con `--simular`). `knowledge validate` en verde antes del `make check` (2642 passed, sello
 `ce3a270a…`).
 
+### 4.9 Las corridas repetidas sobre 7cf8901, tras el revisor (b1)
+
+Los mismos tres comandos y el cuarto, una corrida cada vez, sobre el commit que corrige la sesión
+de la orden en «### Ordenes» (§10, b1). Las salidas sustituyen a las de §4.1 en el mismo commit.
+1. `arrastrada`: `TIEMPO: 342.7 s; MEMORIA: pico del proceso de 631.3 MiB`.
+2. `diaria`: `TIEMPO: 328.4 s; MEMORIA: pico del proceso de 633.0 MiB`.
+3. `a35-inicio`: `TIEMPO: 295.0 s; MEMORIA: pico del proceso de 631.3 MiB`.
+4. La repetición de la 2 fuera del repo: `TIEMPO: 304.9 s; MEMORIA: pico del proceso de 632.5
+   MiB`; `diff` vacío con la salida de la 2, mismo blob `4e4ed2539525f1a93e4d060b3b5366caef005e43`;
+   la copia se borró después.
+
+Lo que cambia y lo que no: **ninguna cifra del criterio, de la cuenta, de las peticiones, de los
+rechazos ni de las cancelaciones cambia** (1/198 y 1/38; 12/198 y 12/94 en la 2 y la 3; órdenes
+156, 439 y 429; la 3 frente a la 2 sigue sin cambiar ninguna operación ni pareja). Lo único que
+cambia es el campo `sesion` de «### Ordenes» en las órdenes colocadas en el primer cierre de una
+sesión, que antes salían en «-» (11 en la corrida 2) y ahora llevan su sesión: `grep -c '| - | o'`
+da 0 en las tres salidas. Con eso, `p4_ordenes.txt` (regenerado) reparte las 38 sesiones de P4
+así: sin ninguna orden colocada 16 (14 con RN-015 bloqueada, 2 sin dimensionar), todas rechazadas
+10, rechazos y reubicaciones sin llenado 8, reubicaciones sin llenarse 4; 2026-08-17 07-11 pasa de
+«sin ninguna orden» a «todas rechazadas» (una por `volumen_max_lotes` en el cierre de apertura) y
+2026-08-13 07-11 de «todas rechazadas» a «rechazos y reubicaciones» (su reubicación era del cierre
+de apertura). `patrones.txt`, `horas_perdidas.txt`, `sesgo_p1.txt`, `sesgo_2x2.txt` y
+`comparar_corridas.txt` regenerados sin diferencias de contenido (las filas por operación no
+cambian), salvo `sesgo_p1.txt`, que ya no imprime la H4 de junio (§3.14).
+
 ## 5 · Líneas propuestas para el cierre
 
 Textos exactos; la Next Action, la hoja de ruta y el Technical Debt los edita el cierre, no la
@@ -1365,7 +1394,7 @@ HECHAS en otras ramas); el cierre puede elegir otras.
   Debt («El simulador no comprueba el margen…»), que se retira al abrirla.»
 - **O, entrada nueva** (antes de V): «O. Comprobaciones en el visor de R3.1 (CORRIDA-CONSTRUCCION.md
   §4.5, «Ramas candidatas»): el 0 de la caja en tres días de P2 que elige el consultor; RN-005,
-  RN-009 y el minuto de ventana_fin de RN-001 en las 15 sesiones sin orden; por qué RN-011 no
+  RN-009 y el minuto de ventana_fin de RN-001 en las 14 sesiones sin orden; por qué RN-011 no
   dimensionó en 2026-01-08 11-15 y 2026-08-14 07-11; y dónde colocó el bot la orden frente al
   precio en los tres rechazos por precio_invalido. El cuestionario de V necesita esos gráficos.»
 - **V**: se añade al final «Lleva la lista «Para el cuestionario de la sesión 5» de
@@ -1538,8 +1567,180 @@ Sin CI: la rama no toca la plataforma. `git diff --stat main...HEAD` (29 fichero
 
 ## 10 · El revisor
 
-(Se lanza con el informe terminado, sobre el commit de la entrega; su informe se pega aquí tal
-cual, y debajo, «Lo que se hizo con los hallazgos del revisor».)
+Lanzado sobre el commit de la entrega (3cf2756), modelo `opus`, con los dos alcances del encargo
+y el tercero de la PARADA 4. Su informe, tal cual (ninguna cita de un tramo no citable; ninguna
+retirada):
+
+### Informe del revisor · trabajo/corrida-construccion · 2026-10-14
+
+HEAD 3cf2756, base 23316c8. 29 ficheros. `git status --short` vacío. Rutas base: `C:\Users\USER\Desktop\Bot v3\`.
+
+**Lo que hay que saber primero:** encuentro 1 hallazgo que bloquea, en el eje (b). El campo `sesion` de «### Ordenes» va desplazado un minuto. Por eso la sesión 2026-08-17 07-11 cuenta como «sin ninguna orden colocada» y cae entre las 15 sesiones de RN-005/RN-009, cuando en realidad el bróker le rechazó una orden por `volumen_max_lotes`. Las cifras que el consultor cerró en la PARADA 4 se apoyan en ese dato.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 3 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | Un texto commiteado lleva la fecha y los precios OHLC de una vela H4 de **junio**, un mes con 11 días reservados. El informe dice lo contrario: «Solo velas de construcción» (§3.14). Además, `sesgo_p1.py` y `sesgo_2x2.py` leen el M1 de marzo y de junio (llaman a `arnes.dias_de_mercado`, que calienta con el mes anterior). La fila del 2026-10-14 en HOLDOUT-EXPOSICIONES solo declara «lo que leerán las tres corridas de `motor arnes`», no estos dos guiones. Si el 2026-06-30 estuviera en una partición, este hallazgo bloquearía: lo impide la regla del encargo («Ningún texto commiteado lleva fechas de días reservados») y CLAUDE.md, punto 2 («ningún precio»). | `docs/validation/anexos/CORRIDA-CONSTRUCCION/sesgo_p1.txt:56`: `H4 2026-06-30T21:00Z o 1.14205 h 1.14227 l 1.14084 c 1.14093`. `sesgo_p1.py:88` y `sesgo_2x2.py:89`: `arnes.dias_de_mercado(...)`. `CORRIDA-CONSTRUCCION.md:984` y la fila nueva de `HOLDOUT-EXPOSICIONES.md`. |
+| a2 | importa | El informe atribuye la cancelación en `ventana_fin` a RN-035, pero la salida no lo sostiene. §3.12 dice «222: 220 reubicaciones, **1 por RN-035 en `ventana_fin`**». En la salida, en ese cierre no disparó RN-035. Además `p4_ordenes.py` la cuenta como reubicación, porque están RN-006, RN-011 y RN-015. | `diaria…txt:1613`: `2026-08-26 \| 11-15 \| o9 \| … \| cancelada \| en ventana_fin; reglas disparadas en ese cierre: RN-001, RN-004, RN-006, RN-011, RN-015, RN-027`. `p4_ordenes.py:116` (`all(r in motivo for r in REUBICACION)`). `p4_ordenes.txt:36` («reubicaciones 1»). |
+| a3 | importa | §3.15 dice «10 sesiones con todas las órdenes rechazadas (**9 solo por `volumen_max_lotes`, 1 por `precio_invalido`**)». Su fuente dice otra cosa: 8 solo por volumen, 1 solo por `precio_invalido` (2026-07-08 11-15) y 1 mixta (2026-04-16 07-11, `precio_invalido 1, volumen_max_lotes 1`). | `p4_ordenes.txt:4,7,10,13,17,18,28,34,38,39`. `CORRIDA-CONSTRUCCION.md:1003-1004`. |
+| a4 | menor | §3.11 dice «`test_vida_de_la_orden.py`, 7»; son 6 funciones. El recuento de PROJECT_STATE (1555 = 1535 + 14 + 6) sí está bien. | `grep -c "^def test_"` → 14 y 6. `CORRIDA-CONSTRUCCION.md:883`. |
+| a5 | menor | `## Estado` declara «LISTA PARA REVISIÓN… el informe del revisor en §10», pero §10 sigue vacío. CLAUDE.md pide pegar el informe del revisor antes de declararla lista. Hay que corregirlo al pegar este informe. | `CORRIDA-CONSTRUCCION.md:1507-1517`. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `contrato_rama.py` → `CONTRATO: 29 ficheros dentro del contrato … tramo 'R3', 4 comprobaciones`, exit 0.
+- **Tests del contrato.** El pytest de los cuatro ficheros da `53 passed`, exit 0.
+- **`make check` (no lo ejecuté).** `make-check.log` trae `2642 passed`, `SELLO … arbol 421acd04…` (igual a `git rev-parse HEAD^{tree}`), `PICO DE MEMORIA … 295 MiB` y `OK: 503 items de evidencia, 0 contradicciones abiertas, historial intacto`.
+- **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases`: no hacen falta.
+- **Holdout y regímenes.** La rama no toca `knowledge/`, `data/manifests/` ni el corpus. HOLDOUT-EXPOSICIONES y HISTORIA solo ganan líneas.
+- **Ambigüedades y citas.** Nada cambia en `ambiguedades.yaml`, ni hay sitios nuevos con `cita`, ni evidencia nueva.
+- **ADR-0070.** Solo se añade la NOTA bajo el punto 3. `## Estado` sigue en `ACTIVE`; `test_adr.py` pasa.
+- **Runbook ACTIVAR-A35-A44.** Lleva las tres marcas «(ya no existe, ADR-0076)» y `--simular` en el §5.
+- **Tres citas del informe, comprobadas contra su fuente:**
+  - el fb-…-8eccf5c0 y su supersedido ff7fb765 (v6, 1:03:01-1:04:30);
+  - las fechas de entrada de los M1: 04f1ed9 2026-09-24, bf9471c 2026-09-08, cce490c 2026-09-04;
+  - `arnes.py:195-199`, que carga el mes anterior.
+- **Ensayo de los tests contra `main`.** Se hizo en un `git worktree` (§8), no en copias sueltas.
+
+#### Eje (b) · Encargo
+Resumen: 1 bloquea, 3 importa, 2 menor. Requisitos: 19 hechos, 3 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base 23316c8, abrir con la skill, encargo, contrato y Archivo | Hecho | §0; e06a71c |
+| 2 | Ningún parámetro, regla, decisión del motor, bróker, cuenta ni freno | Hecho | Alcance 2, abajo |
+| 3 | Nada de mayo, de meses reservados ni del corpus | Hecho, con el matiz de a1 | §1.j, §3.8 |
+| 4 | Fase 0 a)-g) con fichero:línea y PARADA, «Lo que necesito que decidas» | Hecho | §1.a-§1.k; `CORRIDA-CONSTRUCCION.md:428` |
+| 5 | Fase 1: tabla por operación (pareja, más cercana con Δ, «ninguna» y primer hecho, bot sin pareja, orden por construcción, determinista) | Hecho | `arnes.py` `diferencias_por_operacion`; alcance 1 |
+| 6 | Tests sintéticos en los dos sentidos (pareja, 4 puntos y 16 minutos, «ninguna», bot en día sin trader) y opciones iguales | Hecho | `test_diferencias_por_operacion.py:92-358` |
+| 7 | README de la carpeta con los tres comandos y el cuarto | Hecho | `anexos/CORRIDA-CONSTRUCCION/README.md:17,21,24,28` |
+| 8 | Tres corridas, TIEMPO y MEMORIA, repetición de la 2 con `diff` | Hecho (no reproducible por mí) | §3.1, §3.12, §4.1 |
+| 9 | Por corrida y por mes, con el veredicto de ADR-0070 tal cual | Hecho | `diaria…txt:18`, `:587-590`; §3.2 |
+| 10 | Corrida 1: veredicto, **día y regla del corte**, peticiones y freno | **Parcial** | b4 |
+| 11 | La 3 frente a la 2, sin elegir lectura | Hecho | §3.4; `comparar_corridas.txt` |
+| 12 | Embudo por mes; horas perdidas y filas, cruzadas con un guion | Hecho | `diaria…txt:591-603`; §3.6 |
+| 13 | BE-AL-TICK como contexto, sin ajustar nada | Hecho | §3.7 |
+| 14 | PARADA 2: «Ordenes», una línea por orden **con su sesión**, resultado y motivo; «Rechazos por motivo» | **Parcial** | b1 |
+| 15 | PARADA 2: primer hecho del camino, sin frenos que no se produjeron | Hecho | `arnes.py` `primer_hecho_que_falta`; test `:193` |
+| 16 | PARADA 2/3: `patrones.py`, P7, `sesgo_p1.py`, `sesgo_2x2.py`, `bloqueadas` | Hecho | §3.13-§4.4 |
+| 17 | PARADA 3/4: tabla «Clasificación del consultor» y lista del cuestionario, exactas y con recuentos | **Parcial** | b2, b3, b1 |
+| 18 | Ramas candidatas (margen; comprobaciones en el visor, con sus días) | Hecho | `CORRIDA-CONSTRUCCION.md:1225-1243` |
+| 19 | NOTA de ADR-0070 y runbook en un commit propio | Hecho | 74e8ef0 |
+| 20 | Líneas del cierre (F, E, O, V, hoja de ruta, Technical Debt, G.1, G.2, ERRORES, HER) | Hecho | §5; las letras E y O están libres en `PROJECT_STATE.md` |
+| 21 | Las cuatro respuestas copiadas tal cual en el informe y en el encargo | Hecho | `diff` vacío en las cuatro (comandos abajo) |
+| 22 | «El encargo, punto por punto» | Hecho | §7 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | **bloquea** | **«### Ordenes» pone mal la sesión de la orden colocada en el primer cierre de una sesión.**<br>• El fallo: `vida_de_las_ordenes` la calcula con `_sesion_de(o.colocada_ms // MS_POR_MINUTO, …)`. Pero `colocada_ms = instante*60000 - 1`, y el motor asigna la sesión por `instante` (`_sesion`, `cableado.py:443-450`). Una orden del cierre de apertura sale con sesión «-» o con la sesión anterior.<br>• Alcance: 11 órdenes de la corrida 2 salen con «-».<br>• Consecuencia: `p4_ordenes.py` agrupa por sesión. La sesión 2026-08-17 07-11 (abre a las 05:00Z) tiene una orden rechazada por `volumen_max_lotes`, y aun así sale como «ninguna orden» y se clasifica entre las 15 de RN-005/RN-009.<br>• Recuentos corregidos: sin ninguna orden, 16 (14 + 2) y no 17; las 15 del punto 1 de la PARADA 4 son 14; el grupo de volumen gana una sesión. 2026-08-13 07-11 cambia de subgrupo, aunque sigue en el de volumen.<br>• Los tests no cubren una orden colocada en el cierre de apertura. | `diaria…txt:1561`: `2026-08-17 \| - \| o1 \| 2026-08-17T04:59:59.999000+00:00 \| … \| rechazada \| volumen_max_lotes`. `p4_ordenes.txt:30` (`2026-08-17 07-11 \| … \| ninguna orden`) y `:60`. `CORRIDA-CONSTRUCCION.md:1198, 1237-1239, 1261-1262`. Las otras órdenes con «-»: `diaria…txt:1179, 1198, 1204, 1232, 1240, 1320, 1406, 1420, 1430, 1552` |
+| b2 | importa | **La fila de volumen de P4 en §4.5 no cuadra.**<br>• Dice «17 sesiones de 38 (10 + 7)» por `volumen_max_lotes`, pero incluye 2026-07-08 11-15, que solo tiene `precio_invalido`. El consultor puso la condición «cuando el motivo es volumen_max_lotes».<br>• 2026-04-16 07-11 y 2026-07-13 11-15 salen en esta fila y en la de `precio_invalido`. Las subfilas suman 17+4+3+15+2 = 41, no 38.<br>• La tabla nunca dice «P4: 75 filas», que es uno de los recuentos que pide el alcance 3; solo está en §4.2. | `p4_ordenes.txt:10,18,20`. `CORRIDA-CONSTRUCCION.md:1195-1199` y `:1102` |
+| b3 | importa | Falta una cláusula del consultor. En la PARADA 3 (4.d) dijo «las reubicaciones sin llenarse (4 sesiones, **y las de las 7 mixtas que no son por volumen**): R». La fila de §4.5 solo dice «4 sesiones» y no explica la cláusula que falta. Según `p4_ordenes.txt`, las 7 mixtas tienen rechazos por volumen, así que serían 0, pero el informe no lo dice. | `CORRIDA-CONSTRUCCION.md:1196` frente a `:1042`; `p4_ordenes.txt:2,5,14,20,26,35,36` |
+| b4 | importa | **El día y la regla del corte (corrida 1) no se sostienen.** §3.3 cita «La fila del día y la regla: `2026-04-08 07-11 \| … \| disparadas … RN-032`». Esa fila no existe: el 2026-04-08 no tiene caso dev, así que no tiene línea en «Por sesion», y su única línea dice `disparador RN-004, RN-011`. Además RN-032 ya dispara el 2026-04-07 11-15. | `arrastrada…txt:217` (`- 2026-04-08 07-11: disparador RN-004, RN-011`). `arrastrada…txt:210-216` (`2026-04-07 11-15: gate … RN-032`). `ls knowledge/cases/dev \| grep -c 2026-04-08` → 0. `CORRIDA-CONSTRUCCION.md:633-640` |
+| b5 | menor | La fila de P2 dice «Δ de 4 a 52 puntos» y el consultor escribió «de 4 a 54». El 52 es la Δ mínima de `patrones.py` y el 54 la Δ del más cercano en la tabla. No se dice por qué difieren. | `patrones.txt:304`; `CORRIDA-CONSTRUCCION.md:1193` |
+| b6 | menor | El consultor pidió el resultado «viva al cerrar la sesión»; la salida pone «viva al cerrar el dia» (la red de seguridad del fin de día). La diferencia no se declara. | `cableado.py`, `RESULTADO_VIVA`; §3.10, punto 1.b |
+
+**Alcance 1 (la tabla frente a ADR-0043, a mano).** Contrasté contra `knowledge/cases/dev/caso-eurusd-<día>.yaml` y contra «Eventos» y «Ordenes» de la misma salida (los instantes de llenado coinciden). La regla de `criterio_fidelidad.py:103-132`: mismo día, sesión y lado; |Δentrada| ≤ 3 y |Δt| ≤ 900 s; voraz por |Δt|, luego |Δentrada|, luego el más temprano; uno a uno. Las filas revisadas cumplen todas esa regla:
+- **Abril:**
+  - 04-14 07-11: pareja (Δ −1, −3 s).
+  - 04-16 11-15: sin pareja (Δ +10).
+  - 04-29: dos filas a −4 puntos y −41 min sin pareja; en la 11-15, pareja justo en el límite (Δ −3).
+- **Julio:**
+  - 07-03 07-11: sin pareja (Δ −11 y +15).
+  - 07-10 07-11: pareja con la de las 07:10:50; la de las 07:17:40 queda a 3 puntos sin pareja por el uno a uno.
+  - 07-10 11-15: pareja con la de las 10:58:40; las de 10:55:30 y 10:56:25 sin pareja.
+- **Agosto:**
+  - 08-03 11-15: pareja con Δ +3; las de Δ +9 y Δ −4 sin pareja.
+  - 08-07: el más cercano es del otro lado (Δ −54, +180 min 15 s).
+  - 08-10: Δ +20, −41 min 3 s.
+- **Enero:**
+  - 01-09: pareja (Δ −2).
+  - 01-13 11-15: sin pareja (Δ −8 a −20 s).
+  - 01-29 07-11: sin pareja (Δ +7 a −15 min 5 s).
+
+Archivos: `diaria…txt:633, 641, 662-667, 679-682, 704-714, 748-753, 756, 761-765, 835, 841, 887-891`.
+
+**Alcance 2 (ninguna decisión cambia).** `git diff main...HEAD -- src/` solo toca `engine/arnes.py` (salida: `bloqueadas_de`, la sección nueva y el campo de «Por sesion») y `engine/cableado.py`. En `cableado.py`:
+- `TrazaBroker` gana los campos `cancelaciones` y `limites`;
+- en cada cierre se lee `broker.traza().peticiones`, que es un getter puro (`broker.py:907-913`);
+- se añaden entradas a `tb.cancelaciones`;
+- el informe gana `_informe_ordenes`.
+
+No cambian `cli.py`, `broker.py`, `motor.py`, `cuenta.py` ni `freno.py`. `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` no está en el diff, y `test_la_seccion_no_anade_ninguna_opcion_al_comando` pasa. Sin hallazgos.
+
+**Alcance 3 (la clasificación).**
+- Las cuatro respuestas copiadas son idénticas en el encargo y en el informe.
+- Los recuentos casan con `patrones.txt`: T0 12, P1 48 (25 sesiones), P2 18, P3 42, P4 75, P5 61 (47 + 14), P6 33 (21 + 12), P7 3.
+- Las 13 sesiones de mecha casan con `sesgo_2x2.txt:13-25`. Las 15 sesiones y las 7 con RN-001 casan con `p4_ordenes.txt:49-64`. Los 3 `precio_invalido` y las 2 sin dimensionar, también.
+- 93 stops y 12 objetivos, medidos en la salida.
+- El orden de las preguntas 1-7, más la 8 y la 9 de la PARADA 4, es el correcto.
+- Lo que falla: b1, b2 y b3.
+
+#### Lo que no pude comprobar
+- **Si el 2026-06-30 es un día reservado** (a1). Para saberlo habría que mirar las particiones del holdout, que están protegidas.
+- **`make check` y `knowledge validate`.** Escriben, así que no los ejecuté. La evidencia es `make-check.log` (SELLO sobre el árbol de HEAD).
+- **Las corridas del arnés y su determinismo.** No pude correrlas (`solo_lectura.py`). No verifiqué los blobs `8ec5ca38…` ni que se borraran las copias de fuera del repo.
+- **Las 256 peticiones del tramo** (no las sumé) y el reparto exacto de «RN-032: 101 de 152» por sesión.
+
+#### Comandos ejecutados
+1. `git branch --show-current; git merge-base main HEAD; git log --format='%h %s' main..HEAD; git diff --stat main...HEAD; git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `git diff main...HEAD -- PROJECT_STATE.md`
+4. `git diff --name-status main...HEAD`
+5. `uv run pytest tests/unit/test_arnes_motor.py tests/unit/test_diferencias_por_operacion.py tests/unit/test_vida_de_la_orden.py tests/unit/test_cableado.py -p no:cacheprovider` (lo lancé tres veces; las dos primeras no me dieron la línea de resumen)
+6. `grep … make-check.log; tail -5 make-check.log`
+7. `git rev-parse HEAD^{tree} 74e8ef0^{tree} cb3b353^{tree}` (antes lo intenté con un bucle `for` y la guardia lo bloqueó)
+8. `git diff main...HEAD -- src/botsito/engine/cableado.py` y `-- src/botsito/engine/arnes.py`
+9. `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases; git diff --name-status main...HEAD -- knowledge/ data/manifests/ knowledge/corpus/ docs/adr/; git diff main...HEAD -- docs/adr/0070-…md`
+10. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md docs/runbooks/ACTIVAR-A35-A44.md; git diff --numstat … HISTORIA.md ARNES-MOTOR.md`
+11. `ls knowledge/cases/dev/ | grep …`
+12. `grep -c "^def test_" …` (los dos ficheros de tests nuevos)
+13. `git diff main...HEAD -- docs/runbooks/ARNES-MOTOR.md | grep "^[-+]"`
+14. `grep -nE … PROJECT_STATE.md; grep -nE "NA:E|NA:O" docs/plan/HOJA-DE-RUTA.md`
+15. `diff <(sed -n …encargo) <(sed -n …informe)`, cuatro veces (PARADA 0, 2, 3 y 4) → idénticos
+16. `uv run pytest tests/unit/test_adr.py -q -p no:cacheprovider; grep -n -A1 "^## Estado" …0070…`
+17. `cat` de `fb-2026-09-09-sesion-01-8eccf5c0.yaml` y grep de `…ff7fb765.yaml`
+18. `git log --diff-filter=A --format='%h %ad' -- data/manifests/eurusd-m1-2026-0{3,6,7}-*.yaml; git ls-files data/manifests/ | grep …`
+19. `grep -n "RN-032" arrastrada…txt | cut -c1-200`
+20. `grep -n "2026-04-08 07-11" arrastrada…txt; ls knowledge/cases/dev/ | grep -c 2026-04-08`
+21. Read y Grep (solo lectura) sobre el informe, el encargo, `contrato.yaml`, las tres salidas, `patrones.txt`, `p4_ordenes.txt`/`.py`, `sesgo_p1.txt`/`.py`, `sesgo_2x2.txt`/`.py`, el README de anexos, `criterio_fidelidad.py`, `broker.py`, `cableado.py`, `arnes.py`, ADR-0070 y los casos dev 2026-04-14/16/28/29, 07-03/10, 08-03/07/10 y 01-09/13/29.
+
+### Lo que se hizo con los hallazgos del revisor
+
+Todo lo que bloquea o importa, arreglado en los commits 7cf8901 (el código, los guiones, el
+informe y la exposición) y el siguiente (las corridas repetidas y los recuentos); lo menor,
+también:
+- **b1 (bloquea), arreglado**: `cableado._sesion_de` toma ahora `colocada_ms` y asigna la sesión
+  por el CIERRE en que se colocó la orden, con `_sesion`, igual que el motor
+  (`(colocada_ms + 1) // MS_POR_MINUTO`); test nuevo en los dos sentidos
+  (`test_la_sesion_de_una_orden_es_la_del_cierre_en_que_se_coloco`: el cierre de apertura, el que
+  abre la tarde, `ventana_fin`, fuera de la ventana, y que con el minuto a secas la de apertura
+  salía fuera). Las tres corridas y la cuarta repetidas sobre 7cf8901 (§4.9); `p4_ordenes.txt`
+  regenerado y los recuentos de §4.5 y §4.6 corregidos: 16 sesiones sin ninguna orden (14 por
+  RN-005/RN-009 y 2 sin dimensionar), 2026-08-17 07-11 pasa al grupo de `volumen_max_lotes`.
+- **a1 (importa; con el día reservado, bloquearía), arreglado y declarado**: comprobado por
+  pertenencia que ese día de junio ESTÁ en una partición (holdout-3); `sesgo_p1.py` y
+  `sesgo_2x2.py` ya no imprimen ninguna H4 que empiece fuera de un mes de construcción; anexo
+  regenerado; fila nueva en HOLDOUT-EXPOSICIONES (2026-10-14) que declara la lectura de marzo y
+  junio por los dos guiones y la vela expuesta en cinco commits, que la historia conserva (§3.14,
+  §6).
+- **a2, arreglado**: §3.12 dice ahora que la cancelación en `ventana_fin` de 2026-08-26 11-15 es
+  una reubicación en el último cierre (RN-001, RN-006, RN-011, RN-015), no RN-035: 221
+  reubicaciones y 1 por RN-035, en la 2; 211 y 1 en la 3.
+- **a3, arreglado**: §3.15, «8 solo por volumen, 1 solo por `precio_invalido`, 1 con los dos».
+- **a4, arreglado**: «6 al escribirse y 7 tras el revisor».
+- **a5, arreglado**: este §10 y el `## Estado`.
+- **b2 y b3, arreglados** en §4.5: la fila de P4 encabeza con «75 filas en 38 sesiones», las
+  subfilas parten las 38 sesiones sin solaparse y suman 38, la condición «cuando el motivo es
+  `volumen_max_lotes`» se aplica tal cual (una sesión con los dos motivos cuenta en volumen y se
+  dice), y la cláusula «y las de las 7 mixtas que no son por volumen» queda escrita con su
+  resultado: 0, porque las 7 mixtas tienen algún rechazo por volumen.
+- **b4, arreglado**: §3.3 cita el día y la regla reales (2026-04-07 11-15, RN-031 y RN-032 en los
+  avisos H3; RN-032 en cada sesión desde el 2026-04-09).
+- **b5, arreglado**: la fila de P2 explica 52 frente a 54.
+- **b6, arreglado**: §3.11 declara «viva al cerrar el dia» frente a «la sesión» y por qué.
+- Lo que el revisor no pudo comprobar (las corridas, los blobs, las copias borradas) lo cubre
+  §3.1, §3.12, §4.1 y §4.9 con los hashes, y `git status` limpio tras cada borrado.
 
 ## Estado
 
