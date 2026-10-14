@@ -9142,3 +9142,51 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 31 (2026-10-12).
+
+# Next Action HECHA · X · sale de PROJECT_STATE.md en trabajo/entrada-enero (2026-10-13)
+
+X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
+
+`scripts/ticks_spread.py` cuenta la ventana por `reloj_de_las_sesiones` (rejilla_h4), con su test del día de desfase (2026-10-27) que corre el guion entero; y enero de 2026 entra en construcción del 2 al 30 con sus ticks de invierno, 06-14 UTC (ADR-0079; ENTRADA-ENERO.md).
+
+# Registro de cierre · `trabajo/entrada-enero` (2026-10-13)
+
+- Orden de cierre del consultor del 2026-10-13, pegada por Aleks en la conversación y ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama
+  lista para revisión tras una pasada del revisor (ENTRADA-ENERO.md §11: 1 bloquea, 2 importa, 1
+  menor; los cuatro arreglados en 5d99e58). Una PARADA en la fase 0, respondida por el consultor
+  el 2026-10-13. Nunca se cerró sin la orden.
+- **Lo que entra** (R2.2 de la hoja de ruta; X de la Next Action):
+  - `scripts/ticks_spread.py` por la rejilla (ADR-0069 §5), exigiendo los ticks de cada mes de
+    construcción, con `tests/unit/test_ticks_spread.py` (7 casos: el día de desfase, los días sin
+    desfase de invierno y verano, el mes sin ticks y el guion entero con ticks sintéticos);
+  - la lectura completa del libro de enero declarada en HOLDOUT-EXPOSICIONES antes de ingerir, el
+    tramo de cobertura del 2 al 30 con su `material_sha256` y el reparto dev-visto de los 21
+    laborables;
+  - ADR-0079 (enero entra en `construccion`, al final de la lista; ningún umbral cambia; diciembre
+    no se baja), con NOTAS en ADR-0043, ADR-0051 DN-5 y ADR-0069 §5 y los runbooks ARNES-MOTOR,
+    SESION-DE-PREGUNTAS y VISOR-DIAS;
+  - 21 casos dev de enero (54 operaciones) por `casos ingerir`;
+  - el dataset de ticks `eurusd-ticks-2026-01-1ce59681` (21 días, horas 06-14 UTC, 5 horas
+    perdidas de 189, segunda pasada; la primera, con 31, se descartó sin commitear);
+  - la corrida de `ticks_spread.py` con los cuatro meses, a un anexo: `llenado.yaml` no cambia;
+  - en este commit: X sale HECHA (arriba); F apunta a R3.1 (decisión del consultor, que cambia la
+    propuesta de ENTRADA-ENERO.md §8.1); I sin X; el heredado 34 sin la parte a; A condensada; dos
+    líneas de Technical Debt (el falso positivo de `visto.py` y `simulador_config.py` por la hora
+    de pared). En la hoja de ruta: R2.2 HECHA, sin HER:34 ni NA:A en su bloque; R5.4 sin NA:X; R3.1
+    depende de R2.1 y R2.2, y R2.3 y R2.4 la amplían sin bloquearla.
+- Letras: sale X (HECHA, arriba); no entra ninguna.
+- Letra del tag: la última cerrada era la o de F37 (`stable/F37o-entrada-julio`);
+  `stable/F37p-*` no existe ni en local ni en `origin` (comprobado antes de este commit).
+- Tag: `stable/F37p-entrada-enero`. El merge es `git rev-parse "stable/F37p-entrada-enero^{commit}"`.
+- Commits de la rama: `5be95f0` (apertura), `72c7848` (fase 0 y PARADA), `7bc7fa3` (fase 1,
+  `ticks_spread.py` por la rejilla), `04e9d5b` (fase 2: la lectura, el tramo y el reparto),
+  `e803b39` (fase 3, ADR-0079), `490c820` (los 21 casos y los ticks), `5d99e58` (informe
+  completo, revisor y sus arreglos) y el de este registro.
+- CI de rama: ninguna. No toca `.claude/` ni código de plataforma (ENTRADA-ENERO.md §10; la orden
+  de cierre lo confirma). La CI de `main` corre tras el push.
+- Exposiciones: las del 2026-10-13 en HOLDOUT-EXPOSICIONES (la columna de fechas leída por Aleks
+  en la fase 0; el libro de enero leído entero en la fase 2.b). Nadie ejecutó
+  `uv run botsito motor arnes` en esta rama.
+- El worktree `wt-ci` (e7df30b, sin rama) es de otra sesión: no se tocó.
+- Informe: `docs/validation/ENTRADA-ENERO.md`. Encargo: `docs/encargos/trabajo-entrada-enero.md`.
