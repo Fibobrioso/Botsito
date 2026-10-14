@@ -1,0 +1,64 @@
+diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt: 75 filas P4 en 38 sesiones
+2026-01-02 11-15 | trader 5 | ordenes 9: cancelada 8; rechazada 1; rechazos: volumen_max_lotes 1; reubicaciones 8 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-01-08 11-15 | trader 1 | ninguna orden | orden_dimensionada[productoras sin cumplirse] | sin ninguna orden colocada
+2026-01-14 07-11 | trader 1 | ordenes 5: rechazada 5; rechazos: volumen_max_lotes 5 | todos los hechos del camino producidos | todas rechazadas
+2026-01-15 07-11 | trader 1 | ordenes 3: cancelada 2; rechazada 1; rechazos: volumen_max_lotes 1; reubicaciones 2 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-01-19 11-15 | trader 3 | ordenes 4: cancelada 4; reubicaciones 4 | todos los hechos del camino producidos | todas canceladas sin llenarse
+2026-01-21 07-11 | trader 2 | ordenes 1: rechazada 1; rechazos: volumen_max_lotes 1 | todos los hechos del camino producidos | todas rechazadas
+2026-01-30 07-11 | trader 1 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-04-06 07-11 | trader 1 | ordenes 1: cancelada 1; reubicaciones 1 | todos los hechos del camino producidos | todas canceladas sin llenarse
+2026-04-16 07-11 | trader 1 | ordenes 2: rechazada 2; rechazos: precio_invalido 1, volumen_max_lotes 1 | todos los hechos del camino producidos | todas rechazadas
+2026-04-17 07-11 | trader 2 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-04-21 07-11 | trader 1 | ordenes 2: cancelada 2; reubicaciones 2 | todos los hechos del camino producidos | todas canceladas sin llenarse
+2026-04-22 07-11 | trader 2 | ordenes 2: rechazada 2; rechazos: volumen_max_lotes 2 | todos los hechos del camino producidos | todas rechazadas
+2026-04-23 07-11 | trader 3 | ordenes 4: cancelada 1; rechazada 3; rechazos: volumen_max_lotes 3; reubicaciones 1 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-04-27 11-15 | trader 2 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-07-01 11-15 | trader 1 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-07-02 11-15 | trader 6 | ordenes 2: rechazada 2; rechazos: volumen_max_lotes 2 | todos los hechos del camino producidos | todas rechazadas
+2026-07-08 11-15 | trader 1 | ordenes 1: rechazada 1; rechazos: precio_invalido 1 | todos los hechos del camino producidos | todas rechazadas
+2026-07-09 07-11 | trader 1 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-07-13 11-15 | trader 3 | ordenes 3: cancelada 1; rechazada 2; rechazos: precio_invalido 1, volumen_max_lotes 1; reubicaciones 1 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-07-14 07-11 | trader 2 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-07-14 11-15 | trader 6 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-07-16 11-15 | trader 3 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-08-03 07-11 | trader 2 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-08-06 07-11 | trader 1 | ordenes 1: cancelada 1; reubicaciones 1 | todos los hechos del camino producidos | todas canceladas sin llenarse
+2026-08-07 11-15 | trader 3 | ordenes 8: cancelada 7; rechazada 1; rechazos: volumen_max_lotes 1; reubicaciones 7 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-08-11 07-11 | trader 1 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-08-13 07-11 | trader 2 | ordenes 3: cancelada 1; rechazada 2; rechazos: volumen_max_lotes 2; reubicaciones 1 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-08-14 07-11 | trader 1 | ninguna orden | orden_dimensionada[productoras sin cumplirse] | sin ninguna orden colocada
+2026-08-17 07-11 | trader 1 | ordenes 1: rechazada 1; rechazos: volumen_max_lotes 1 | todos los hechos del camino producidos | todas rechazadas
+2026-08-19 11-15 | trader 2 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-08-21 11-15 | trader 1 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-08-25 07-11 | trader 3 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-08-25 11-15 | trader 1 | ordenes 1: rechazada 1; rechazos: volumen_max_lotes 1 | todos los hechos del camino producidos | todas rechazadas
+2026-08-26 07-11 | trader 3 | ordenes 6: cancelada 3; rechazada 3; rechazos: volumen_max_lotes 3; reubicaciones 3 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-08-26 11-15 | trader 1 | ordenes 3: cancelada 1; rechazada 2; rechazos: volumen_max_lotes 2; reubicaciones 1 | todos los hechos del camino producidos | rechazadas y canceladas, ninguna llenada
+2026-08-27 11-15 | trader 1 | ninguna orden | todos los hechos del camino producidos | sin ninguna orden colocada
+2026-08-28 11-15 | trader 1 | ordenes 1: rechazada 1; rechazos: volumen_max_lotes 1 | todos los hechos del camino producidos | todas rechazadas
+2026-08-31 07-11 | trader 2 | ordenes 1: rechazada 1; rechazos: volumen_max_lotes 1 | todos los hechos del camino producidos | todas rechazadas
+-- sesiones P4 por clase y mes
+2026-01 | rechazadas y canceladas, ninguna llenada 2; sin ninguna orden colocada 2; todas canceladas sin llenarse 1; todas rechazadas 2
+2026-04 | rechazadas y canceladas, ninguna llenada 1; sin ninguna orden colocada 2; todas canceladas sin llenarse 2; todas rechazadas 2
+2026-07 | rechazadas y canceladas, ninguna llenada 1; sin ninguna orden colocada 5; todas rechazadas 2
+2026-08 | rechazadas y canceladas, ninguna llenada 4; sin ninguna orden colocada 7; todas canceladas sin llenarse 1; todas rechazadas 4
+total | rechazadas y canceladas, ninguna llenada 8; sin ninguna orden colocada 16; todas canceladas sin llenarse 4; todas rechazadas 10
+-- las sesiones sin ninguna orden colocada: que bloqueo (regla que pedia, accion,
+   efecto) y que gates disparados prohiben ese efecto; clase provisional por 4.d
+2026-01-08 11-15 | bloqueadas ninguna | gates candidatos - | sin bloqueo registrado
+2026-01-30 07-11 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-04-17 07-11 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-04-27 11-15 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-001, RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-001 (la ventana operativa y los detenido_por_* (gate maestro)); RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-07-01 11-15 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-001, RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-001 (la ventana operativa y los detenido_por_* (gate maestro)); RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-07-09 07-11 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-07-14 07-11 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-07-14 11-15 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-001, RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-001 (la ventana operativa y los detenido_por_* (gate maestro)); RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-07-16 11-15 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-001, RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-001 (la ventana operativa y los detenido_por_* (gate maestro)); RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-08-03 07-11 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-08-11 07-11 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-08-14 07-11 | bloqueadas ninguna | gates candidatos - | sin bloqueo registrado
+2026-08-19 11-15 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-001, RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-001 (la ventana operativa y los detenido_por_* (gate maestro)); RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-08-21 11-15 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-001, RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-001 (la ventana operativa y los detenido_por_* (gate maestro)); RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-08-25 07-11 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+2026-08-27 11-15 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion | gates candidatos RN-001, RN-005, RN-009 | PARADA: bloquea otra cosa (o varias): RN-001 (la ventana operativa y los detenido_por_* (gate maestro)); RN-005 (lo que se desarrolla en el lado de ruido de la liquidez no es entrada); RN-009 (sin titulo aqui)
+gates candidatos por sesion: - 2; RN-001, RN-005, RN-009 7; RN-005, RN-009 7

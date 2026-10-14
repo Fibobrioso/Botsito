@@ -18,6 +18,7 @@ entonces toda la salida lo dice. SOLO CONSTRUCCION, por la compuerta del arnes (
 
 from __future__ import annotations
 
+from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time
@@ -36,8 +37,12 @@ from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import MinutoUtc
 from botsito.engine.arnes import DiaTrader
 from botsito.engine.broker import (
+    CANCELADA,
     LLENADA,
     MANUAL,
+    PETICION_CANCELAR,
+    PETICION_COLOCAR,
+    RECHAZADA,
     TIPOS_PETICION,
     Broker,
     Peticion,
@@ -106,6 +111,31 @@ class TrazaBroker:
     # ordenes pendientes que cancelo la red de seguridad al terminar el dia (ADR-0053 §6): lo que
     # RN-035 (a ventana_fin) y RN-036 (la racha) no retiraron antes
     cancelados_fin_dia: int = 0
+    # la vida de la orden, SOLO para el informe (rama trabajo/corrida-construccion, respuesta del
+    # consultor a la PARADA 2, punto 1.b): por cada peticion de cancelar, (instante ms, id de la
+    # orden, motivo), donde el motivo es lo que el cableado puede leer sin decidir nada: las reglas
+    # que dispararon en ese cierre de M1 y donde cayo el cierre (al abrir otra sesion, en
+    # ventana_fin), o la red de seguridad del fin del dia
+    cancelaciones: list[tuple[int, str, str]] = field(default_factory=list)
+    limites: tuple[tuple[str, int, int], ...] = ()  # (sesion, desde, hasta) en minutos UTC
+
+
+MOTIVO_FIN_DIA = "viva al cerrar el dia: cancelada por la red de seguridad (ADR-0053 §6)"
+MOTIVO_SIN_REGLA = "sin regla disparada en ese cierre"
+
+
+def _motivo_de_cancelacion(
+    instante: int, limites: Sequence[tuple[str, int, int]], disparadas: Sequence[str]
+) -> str:
+    """Donde cayo el cierre de M1 que cancelo y que reglas dispararon en el: es lo que la traza
+    deja leer. `instante` es el minuto UTC del cierre."""
+    donde = ""
+    if any(instante == desde for _, desde, _ in limites[1:]):
+        donde = "al abrir otra sesion; "
+    elif limites and instante == max(hasta for _, _, hasta in limites):
+        donde = "en ventana_fin; "
+    reglas = ", ".join(sorted(set(disparadas))) or MOTIVO_SIN_REGLA
+    return f"{donde}reglas disparadas en ese cierre: {reglas}"
 
 
 @dataclass
@@ -196,8 +226,9 @@ class MotorCableado:
         estado = EstadoDia()
         self.estados[clave] = estado
         trazas = {nombre: TrazaSesion() for nombre, _, _ in limites}
-        tb = TrazaBroker(depuracion=self.depuracion or not md.origen_ticks)
+        tb = TrazaBroker(depuracion=self.depuracion or not md.origen_ticks, limites=tuple(limites))
         vistos = 0
+        peticiones_vistas = 0  # para anotar las cancelaciones de cada cierre (solo el informe)
         instante = primero
         while instante <= ultimo:
             hasta_ms = instante * MS_POR_MINUTO - 1
@@ -235,6 +266,14 @@ class MotorCableado:
                 traza.bloqueadas |= evento.bloqueadas
                 traza.disparadas |= set(evento.disparadas)
                 traza.empates |= set(evento.empates)
+            # la vida de la orden, para el informe: que cancelaciones pidio este cierre y que
+            # reglas dispararon en el (lectura de la traza; no decide nada)
+            peticiones = broker.traza().peticiones
+            for pet in peticiones[peticiones_vistas:]:
+                if pet.tipo == PETICION_CANCELAR:
+                    motivo = _motivo_de_cancelacion(instante, limites, evento.disparadas)
+                    tb.cancelaciones.append((pet.instante_ms, pet.id, motivo))
+            peticiones_vistas = len(peticiones)
             ctx.eventos = []
             instante += 1
         # fin del dia: lo que quede vivo o pendiente se cierra y se cuenta (§6)
@@ -246,6 +285,7 @@ class MotorCableado:
             if o.estado in ("colocada", "modificada"):
                 broker.cancelar(o.id, fin_ms)
                 tb.cancelados_fin_dia += 1
+                tb.cancelaciones.append((fin_ms, o.id, MOTIVO_FIN_DIA))
         nuevos = broker.avanzar(fin_ms)
         self._a_la_cuenta(broker, ctx, tb, nuevos, vistos, fin_ms)
         tb.huecos |= ctx.huecos
@@ -675,7 +715,115 @@ def informe_simulacion(motor: MotorCableado) -> str:
         "huecos con nombre (primitivas sin contrato que se pidieron): "
         + (", ".join(sorted(huecos)) if huecos else "ninguno"),
     ]
-    return "\n".join(lineas + _informe_peticiones(motor)) + "\n"
+    return "\n".join(lineas + _informe_ordenes(motor) + _informe_peticiones(motor)) + "\n"
+
+
+# ------------------------------------------- la vida de la orden (R3.1, PARADA 2, punto 1.b)
+#
+# Una linea por orden que el bot intento colocar, con su resultado y el motivo que da el broker
+# (un rechazo: precio_invalido, stops_level, ...) o el cableado (una cancelacion: las reglas que
+# dispararon en ese cierre y donde cayo; la red de seguridad del fin del dia). Solo LEE la traza:
+# `broker.ordenes`, `broker.traza().rechazos` y `TrazaBroker.cancelaciones`. Determinista.
+
+CABECERA_ORDENES = (
+    "### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del "
+    "resultado)"
+)
+RESULTADO_LLENADA = "llenada"
+RESULTADO_RECHAZADA = "rechazada"
+RESULTADO_CANCELADA = "cancelada"
+RESULTADO_VIVA = "viva al cerrar el dia"
+
+
+def _sesion_de(colocada_ms: int, limites: Sequence[tuple[str, int, int]]) -> str:
+    """La sesion de una orden, por el CIERRE de M1 en que se coloco: el motor la coloca en
+    `instante * MS_POR_MINUTO - 1` y asigna la sesion por `instante` (`_sesion`, el cierre), asi
+    que el minuto de la orden es `(colocada_ms + 1) // MS_POR_MINUTO`. Con `colocada_ms //
+    MS_POR_MINUTO` la orden del primer cierre de una sesion salia en la anterior o en «-»
+    (revisor de trabajo/corrida-construccion, b1). Fuera de las sesiones, «-»."""
+    sesion, _ = _sesion(limites, (colocada_ms + 1) // MS_POR_MINUTO)
+    return sesion or "-"
+
+
+def vida_de_las_ordenes(
+    motor: MotorCableado,
+) -> list[tuple[str, str, str, datetime, Decimal, str, str, datetime | None]]:
+    """(dia, sesion, id, colocada, precio, resultado, motivo, instante del resultado) por orden,
+    por dia y por instante de colocacion."""
+    salida: list[tuple[str, str, str, datetime, Decimal, str, str, datetime | None]] = []
+    for dia in sorted(motor.trazas_broker):
+        broker = motor.brokers.get(dia)
+        tb = motor.trazas_broker[dia]
+        if broker is None:
+            continue
+        rechazo_de = {r.orden_id: r for r in broker.traza().rechazos}
+        cancelacion_de = {id: (ms, motivo) for ms, id, motivo in tb.cancelaciones}
+        llenada_en = {p.orden_id: p.abierta_ms for p in broker.posiciones.values()}
+        for o in sorted(broker.ordenes.values(), key=lambda o: (o.colocada_ms, o.id)):
+            sesion = _sesion_de(o.colocada_ms, tb.limites)
+            cuando: int | None = None
+            if o.estado == RECHAZADA:
+                r = rechazo_de.get(o.id)
+                resultado, motivo = RESULTADO_RECHAZADA, r.motivo if r else "sin motivo en la traza"
+                cuando = r.instante_ms if r else o.colocada_ms
+            elif o.estado == LLENADA or o.id in llenada_en:
+                resultado, motivo = RESULTADO_LLENADA, "-"
+                cuando = llenada_en.get(o.id, o.ultimo_cambio_ms)
+            elif o.estado == CANCELADA:
+                ms, motivo = cancelacion_de.get(
+                    o.id, (o.ultimo_cambio_ms, "sin motivo en la traza")
+                )
+                resultado = RESULTADO_VIVA if motivo == MOTIVO_FIN_DIA else RESULTADO_CANCELADA
+                cuando = ms
+            else:
+                resultado, motivo, cuando = o.estado, "-", o.ultimo_cambio_ms
+            salida.append(
+                (
+                    dia,
+                    sesion,
+                    o.id,
+                    _instante(o.colocada_ms),
+                    _precio(o.precio, broker.escala),
+                    resultado,
+                    motivo,
+                    _instante(cuando) if cuando is not None else None,
+                )
+            )
+    return salida
+
+
+def _informe_ordenes(motor: MotorCableado) -> list[str]:
+    lineas = ["", CABECERA_ORDENES]
+    filas = vida_de_las_ordenes(motor)
+    for dia, sesion, id, colocada, precio, resultado, motivo, cuando in filas:
+        lineas.append(
+            f"{dia} | {sesion} | {id} | {colocada.isoformat()} | {precio} | {resultado} | "
+            f"{motivo} | {cuando.isoformat() if cuando is not None else '-'}"
+        )
+    if not filas:
+        lineas.append("ninguna")
+    resumen = Counter(resultado for _, _, _, _, _, resultado, _, _ in filas)
+    lineas.append(
+        "ordenes: " + (", ".join(f"{k} {v}" for k, v in sorted(resumen.items())) if filas else "0")
+    )
+    # los rechazos del broker por motivo y por mes: los de colocar (la orden nace rechazada) y los
+    # de modificar (la orden sigue como estaba), por separado
+    por_motivo: Counter[tuple[str, str, str]] = Counter()
+    for dia in sorted(motor.trazas_broker):
+        broker = motor.brokers.get(dia)
+        if broker is None:
+            continue
+        for r in broker.traza().rechazos:
+            o = broker.ordenes.get(r.orden_id)
+            tipo = PETICION_COLOCAR if o is not None and o.estado == RECHAZADA else "modificar"
+            por_motivo[(dia[:7], r.motivo, tipo)] += 1
+    lineas += ["", "### Rechazos por motivo (mes | motivo | peticion | rechazos)"]
+    lineas += [
+        f"{mes} | {motivo} | {tipo} | {n}" for (mes, motivo, tipo), n in sorted(por_motivo.items())
+    ]
+    if not por_motivo:
+        lineas.append("ninguno")
+    return lineas
 
 
 def _informe_peticiones(motor: MotorCableado) -> list[str]:

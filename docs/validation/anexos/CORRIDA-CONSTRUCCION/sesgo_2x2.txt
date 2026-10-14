@@ -1,0 +1,25 @@
+diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt: 104 sesiones con operaciones del trader; 25 de P1
+tope 60, criterio mecha
+-- tabla 2x2 (sesiones con el sesgo fijado por la ultima H4 cerrada, ruptura simple):
+ruptura | a favor | en contra | mixta | total
+ruptura solo con mecha (cierre dentro) | 19 | 13 | 0 | 32
+ruptura con cierre fuera | 40 | 6 | 0 | 46
+-- aparte:
+decidida en la segunda vela o mas atras | a favor | 7
+decidida en la segunda vela o mas atras | en contra | 2
+doble ruptura decidida por el color | a favor | 13
+doble ruptura decidida por el color | en contra | 4
+-- sesiones de P1 con ruptura solo de mecha: 13 de 25
+2026-01-07 07-11 | H4 2026-01-07T02:00Z | alcista
+2026-01-16 07-11 | H4 2026-01-16T02:00Z | alcista
+2026-01-22 11-15 | H4 2026-01-22T06:00Z | alcista
+2026-01-23 07-11 | H4 2026-01-23T02:00Z | bajista
+2026-01-28 07-11 | H4 2026-01-28T02:00Z | bajista
+2026-01-30 11-15 | H4 2026-01-30T06:00Z | alcista
+2026-04-09 07-11 | H4 2026-04-09T01:00Z | alcista
+2026-07-01 07-11 | H4 2026-07-01T01:00Z | bajista
+2026-07-06 07-11 | H4 2026-07-06T01:00Z | bajista
+2026-07-17 11-15 | H4 2026-07-17T05:00Z | alcista
+2026-08-04 11-15 | H4 2026-08-04T05:00Z | alcista
+2026-08-07 07-11 | H4 2026-08-07T01:00Z | alcista
+2026-08-27 07-11 | H4 2026-08-27T01:00Z | alcista

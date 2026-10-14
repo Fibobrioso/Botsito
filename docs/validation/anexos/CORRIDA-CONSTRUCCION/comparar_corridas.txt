@@ -1,0 +1,1 @@
+A = diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt; B = a35-inicio.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.cuenta=diaria.txt; sesiones con alguna diferencia: 0; operaciones del bot A 106, B 106; parejas A 12, B 12

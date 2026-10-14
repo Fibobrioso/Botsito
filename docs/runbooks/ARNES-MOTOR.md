@@ -13,7 +13,12 @@ bot con las del trader usando el criterio de ADR-0043, y escribe un informe con:
 - **el embudo sobre el grafo de hechos**: cuántas sesiones con operaciones del trader producen cada
   hecho, y cuántas se paran en cada primitiva `NO_IMPLEMENTADA`;
 - **RN-003 al abrir la sesión**, por sesión y por operación del trader;
-- **una línea por sesión** con lo que se produjo y dónde se paró cada hecho que faltó.
+- **una línea por sesión** con lo que se produjo y dónde se paró cada hecho que faltó;
+- **las diferencias por operación** (desde `trabajo/corrida-construccion`, R3.1, 2026-10-14), la
+  última sección del informe del arnés: el resumen por mes (en el orden de `construccion`), el
+  embudo por mes y una fila por operación del trader y por operación del bot sin pareja. Es el
+  MISMO emparejamiento del criterio partido por mes, para que el consultor clasifique cada
+  diferencia; no añade ninguna opción al comando. Cómo se lee, abajo.
 
 ## Cómo se corre
 
@@ -51,6 +56,15 @@ peticiones que el bot emite al servidor: colocar, modificar, cancelar y cerrar, 
 rechazadas. Da también el máximo diario junto a `firma_mensajes_dia_max` (R13). Solo mide, nada
 frena (`docs/validation/CONTADOR-PETICIONES.md`).
 
+Desde `trabajo/corrida-construccion` (2026-10-14), entre los eventos y las peticiones van **la vida
+de la orden**: «Ordenes» (`dia | sesion | id | colocada UTC | precio | resultado | motivo | instante
+del resultado`, una línea por orden que el bot intentó colocar; el resultado es `llenada`,
+`rechazada`, `cancelada` o `viva al cerrar el dia`, y el motivo lo da el bróker en un rechazo
+-`precio_invalido`, `stops_level`…- o el cableado en una cancelación: dónde cayó el cierre de M1
+-«al abrir otra sesion», «en ventana_fin»- y las reglas que dispararon en él, o la red de
+seguridad del fin del día) y «Rechazos por motivo» (`mes | motivo | peticion | rechazos`). Es
+lectura de la traza del bróker: nada decide.
+
 ## Cuándo se niega
 
 - **Un mes de medida** (hoy mayo) o **cualquier mes que no sea de construcción** (marzo, septiembre,
@@ -72,6 +86,31 @@ frena (`docs/validation/CONTADOR-PETICIONES.md`).
 Una primitiva `NO_IMPLEMENTADA` vale DESCONOCIDO y no decide: ni deja pasar ni prohíbe (ADR-0048
 §2). Hasta que exista el bróker simulado, el motor real no produce ninguna operación y la cobertura
 es 0.
+
+## Cómo leer «Diferencias por operacion»
+
+Tres bloques, todos deterministas y con los campos separados por ` | `:
+
+- **Resumen por mes**: `mes | dias | trader | bot puntuables | bot en dias sin trader | parejas |
+  cobertura | precision`. Son las cifras del criterio (ADR-0043) partidas por mes: una pareja exige
+  el mismo día, así que la partición es idéntica a medir cada mes aparte. Los meses van en el orden
+  de `construccion`, no por fecha.
+- **Embudo por mes**: para las sesiones con operaciones del trader y SIN operación del bot, el
+  primer hecho DEL CAMINO (origen `regla`, en el orden de la spec, sin los frenos
+  `detenido_por_*`) que la sesión no produjo, con las primitivas `NO_IMPLEMENTADA` en que se
+  pararon sus productoras, o `productoras sin cumplirse`; `todos los hechos del camino producidos`
+  si no faltó ninguno (lo que faltó está en la vida de la orden: «Ordenes», abajo). Un freno se
+  nombra aparte (`; frenos producidos: …`) solo si se produjo: uno que no se produjo no faltó.
+- **Por operación**: `quien | dia | sesion | lado | instante UTC | entrada | resultado`, por mes de
+  construcción y por día; en cada día, el trader primero y después el bot sin pareja. Para el
+  trader, `PAREJA bot <instante> <entrada> (Δentrada, Δinstante)` o `SIN PAREJA; bot mas cercano en
+  la sesion: …` o `SIN PAREJA; ninguna operacion del bot en la sesion`, seguido del primer hecho que
+  faltó en esa sesión. Para el bot sin pareja, lo mismo del otro lado (`trader mas cercano en la
+  sesion`, `ninguna operacion del trader en la sesion` o `… en el dia`). Los Δ llevan signo (lo
+  nombrado menos la fila: bot − trader en una fila del trader) y «más cercano» sigue el orden del
+  criterio -menor |Δinstante|, luego menor |Δentrada|, luego el más temprano- sin exigir el lado.
+  Una operación del bot emparejada no sale aparte: está en la fila de su trader. Con `--simular`,
+  la sección queda antes de la cola «Simulacion» que pega el comando.
 
 ## Lo que no hace
 

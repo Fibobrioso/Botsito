@@ -182,10 +182,13 @@ Lo mismo si el trader responde a medias, con un ejemplo o en dos sentidos (`SESI
 ## 5. Después de activar: lo que se mide y lo que se mira
 
 ```
-uv run botsito motor arnes --salida arnes-activado.txt
+uv run botsito motor arnes --simular --salida arnes-activado.txt
 diff docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt arnes-activado.txt
 uv run botsito motor visor --caso <caso dev de construccion>
 ```
+(`--simular` desde `trabajo/corrida-construccion`, 2026-10-14: la línea base contra la que se
+compara se escribió con `--simular` (CABLEADO-SIMULADOR.md §6), así que sin la opción el `diff`
+compara dos cosas distintas.)
 Con A-35 fijada RN-004 dispara y `liquidez_tomada` aparece en el embudo; lo que sigue parando el
 embudo es la geometría de la entrada (`toca_colocar_orden_limite`, A-21 y las demás) y los
 cartuchos (`PREPARACION-A35-A44.md` §3). Con A-44 fijada, RN-020 deja de ser hueco. Cobertura 0
@@ -215,7 +218,7 @@ uv run botsito motor arnes --meses 2026-04 --salida /tmp/x.txt \
 ```
 → Tiene que salir `ERROR: A-21 sin fijar: zona_control_limpia ...` y código 2, sin escribir nada:
 la compuerta de A-21 es la tercera y va después de las de A-35 y A-44. Con
-`--diagnostico-a21 <lectura>` corre etiquetado `DIAGNOSTICO-A21-<lectura>` y no cuenta para nada.
+`--diagnostico-a21 <lectura>` (ya no existe, ADR-0076) corre etiquetado `DIAGNOSTICO-A21-<lectura>` y no cuenta para nada.
 
 | lo que dice el trader, en sustancia | valor que se escribe | dónde |
 |---|---|---|
@@ -243,7 +246,7 @@ uv run botsito feedback new --sesion <AAAA-MM-DD-sesion-02> --fecha <AAAA-MM-DD>
 
 Después, el mismo §2: `feedback apply --check`, `feedback apply`, **subir `spec_version`**
 (`13.3.0` → `13.3.1`), `spec manifest --escribir`, `spec docs --escribir`, y el arnés a secas
-—sin `--diagnostico-a21`— tiene que CORRER (con A-35 y A-44 ya fijadas; si no, se fijan antes:
+—sin `--diagnostico-a21` (ya no existe, ADR-0076)— tiene que CORRER (con A-35 y A-44 ya fijadas; si no, se fijan antes:
 la compuerta de A-21 es la última). Los tests que tienen que pasar:
 
 | respuesta | tests |
@@ -257,7 +260,7 @@ la compuerta de A-21 es la última). Los tests que tienen que pasar:
   rechazo del diagnóstico. Se reescribe con ese sentido y se dice en el commit.
 - `tests/unit/test_visor.py::test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos` y
   `tests/unit/test_preparar_a35.py::test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos`
-  corren hoy con `--diagnostico-a21 solo_una_zona_de_control` porque a secas se niegan; con A-21
+  corren hoy con `--diagnostico-a21 solo_una_zona_de_control` (ya no existe, ADR-0076) porque a secas se niegan; con A-21
   fijada esa opción se RECHAZA («ya esta fijado ... no admite --diagnostico»): se quita de la
   llamada y de los nombres esperados (`DIAGNOSTICO-A21-...` desaparece del fichero y de la página).
 - `tests/unit/test_kit.py::test_ambiguedades_reales_y_esquema` (el conjunto de bloqueantes ABIERTAS
