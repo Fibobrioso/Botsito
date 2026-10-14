@@ -242,6 +242,14 @@ def hechos_de_regla(vocabulario: Mapping[str, Mapping[str, Any]]) -> list[tuple[
     ]
 
 
+def bloqueadas_de(traza: TrazaSesion) -> str:
+    """Las acciones que un gate bloqueo en la sesion, con la regla que las pedia y el motivo
+    (`Evento.bloqueadas`: regla, accion, motivo), para la linea «Por sesion» (respuesta del
+    consultor a la PARADA 3 de trabajo/corrida-construccion, 2026-10-14, punto 1). Solo salida: la
+    traza ya lo guardaba. `ninguna` si no hubo."""
+    return ", ".join(f"{r}:{a}:{m}" for r, a, m in sorted(traza.bloqueadas)) or "ninguna"
+
+
 def medida_de(corrida: Corrida, criterio: Criterio) -> Medida:
     trader = [op for d in corrida.dias for op in d.operaciones]
     bot = [op for r in corrida.resultados for op in r.operaciones]
@@ -301,7 +309,8 @@ def informe(
         filas.append(
             f"{clave[0]} {clave[1]} | trader {trader_por_sesion[clave]} | bot "
             f"{bot_por_sesion[clave]} | rn003 {anotado} | {' '.join(partes)} | disparadas "
-            f"{', '.join(sorted(traza.disparadas)) or 'ninguna'}"
+            f"{', '.join(sorted(traza.disparadas)) or 'ninguna'} | bloqueadas "
+            f"{bloqueadas_de(traza)}"
         )
 
     # Que reglas dispararon, sobre TODAS las sesiones corridas y sobre las del trader (ADR-0049,
@@ -629,6 +638,7 @@ __all__ = [
     "ConjuntoError",
     "Corrida",
     "DiaTrader",
+    "bloqueadas_de",
     "correr",
     "dias_de_construccion",
     "dias_de_mercado",

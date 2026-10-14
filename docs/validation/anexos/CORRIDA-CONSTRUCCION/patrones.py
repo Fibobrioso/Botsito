@@ -9,6 +9,9 @@ Reglas, para cada fila (el sesgo es el rn003 de la linea «Por sesion» de su se
 compra con alcista o venta con bajista):
 - T0 pareja: filas del trader con PAREJA.
 - P1 sesgo: filas del trader sin pareja y contra el sesgo del bot.
+- P7 entradas repetidas (respuesta a la PARADA 3, punto 2; va ANTES de P2): filas del trader sin
+  pareja cuya operacion del bot mas cercana esta a 3 puntos o menos y a menos de 15 minutos, pero
+  ya emparejada con otra operacion del trader.
 - P2 entrada: filas del trader sin pareja, a favor del sesgo, con una operacion del bot del mismo
   lado a menos de 15 minutos y a mas de 3 puntos.
 - P3 otra zona: filas del trader sin pareja, a favor del sesgo, con el bot del mismo lado en la
@@ -110,7 +113,14 @@ def clasificar(
             e = Decimal(entrada)
             mismo_lado = [b for b in bot.get(clave, []) if b[0] == lado]
             cerca = [b for b in mismo_lado if abs((b[1] - t).total_seconds()) <= TOL_SEGUNDOS]
-            if cerca:
+            # P7 (respuesta a la PARADA 3, punto 2), ANTES de P2: la del bot mas cercana esta a
+            # 3 puntos o menos y a menos de 15 minutos, pero ya emparejada con otra del trader
+            repetidas = [b for b in cerca if abs((b[2] - e) * ESCALA) <= TOL_PUNTOS]
+            if repetidas:
+                deltas = sorted(abs((b[2] - e) * ESCALA) for b in repetidas)
+                detalle = f"Δentrada {int(deltas[0])} puntos, bot ya emparejado"
+                salida.append(("P7 entradas repetidas", detalle, marca, " | ".join(fila)))
+            elif cerca:
                 deltas = sorted(abs((b[2] - e) * ESCALA) for b in cerca)
                 salida.append(
                     (

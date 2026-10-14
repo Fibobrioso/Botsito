@@ -11,6 +11,7 @@ Uso: uv run python docs/validation/anexos/CORRIDA-CONSTRUCCION/p4_ordenes.py <sa
 
 from __future__ import annotations
 
+import re
 import sys
 from collections import Counter, defaultdict
 from pathlib import Path
@@ -19,6 +20,64 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from patrones import clasificar, leer  # noqa: E402
 
 REUBICACION = ("RN-006", "RN-011", "RN-015")
+# Desde la respuesta del consultor a la PARADA 3 (punto 1), «Por sesion» lleva `bloqueadas`: la
+# regla que PEDIA la accion, la accion y `prohibida:<efecto>` (o `gate desconocido:<efecto>`). El
+# gate que prohibio no lo guarda la traza: se deduce cruzando las reglas que dispararon en la
+# sesion con las que `prohibe` ese efecto en la spec. Y la regla del consultor para las 17
+# sesiones sin orden (4.d), que la sesion aplica y el consultor confirma.
+FIRMA_O_CUENTA = {"RN-029", "RN-030", "RN-031", "RN-032"}  # el tope diario, el total, el cierre
+ESTRATEGIA = {"RN-016", "RN-035", "RN-036"}  # cartuchos, ventana, racha
+POR_SESION = re.compile(
+    r"^(\d{4}-\d{2}-\d{2}) (\S+) \| trader \d+ \| bot \d+ \| .* \| disparadas (?P<disp>[^|]*)"
+    r"(?: \| bloqueadas (?P<bloq>.*))?$"
+)
+
+
+def reglas_que_prohiben(spec: Path) -> dict[str, set[str]]:
+    """efecto -> reglas que lo prohiben, leido del texto de strategy_spec.yaml (cada regla
+    empieza en `  - id: RN-` y su `prohibe: [...]` va dentro de su bloque)."""
+    salida: dict[str, set[str]] = defaultdict(set)
+    regla = ""
+    for ln in spec.read_text(encoding="utf-8").splitlines():
+        m = re.match(r"^  - id: (RN-\d+)", ln)
+        if m:
+            regla = m.group(1)
+        m = re.search(r"prohibe: \[([^\]]*)\]", ln)
+        if m and regla:
+            for efecto in m.group(1).split(","):
+                salida[efecto.strip()].add(regla)
+    return salida
+
+
+def bloqueos_por_sesion(ruta: Path) -> dict[tuple[str, str], tuple[set[str], str]]:
+    """(reglas disparadas, texto de bloqueadas) por sesion, de «Por sesion»."""
+    salida: dict[tuple[str, str], tuple[set[str], str]] = {}
+    for ln in ruta.read_text(encoding="utf-8").splitlines():
+        m = POR_SESION.match(ln.split("] ", 1)[-1])
+        if m:
+            disparadas = {
+                r.strip() for r in m.group("disp").split(",") if r.strip().startswith("RN")
+            }
+            salida[(m.group(1), m.group(2))] = (disparadas, m.group("bloq") or "sin campo")
+    return salida
+
+
+def gate_que_bloqueo(
+    bloqueadas: str, disparadas: set[str], prohiben: dict[str, set[str]]
+) -> tuple[list[str], str]:
+    """Los gates candidatos (dispararon en la sesion y prohiben el efecto bloqueado) y la clase
+    provisional por la regla del consultor (4.d)."""
+    efectos = set(re.findall(r"prohibida:([a-z_]+)", bloqueadas))
+    if not efectos:
+        return [], "sin bloqueo registrado"
+    candidatos = sorted({g for e in efectos for g in prohiben.get(e, set()) if g in disparadas})
+    if not candidatos:
+        return [], "PARADA: ningun gate disparado prohibe ese efecto"
+    if all(g in FIRMA_O_CUENTA for g in candidatos):
+        return candidatos, "firma o cuenta: M o E segun si la regla esta bien aplicada ese dia"
+    if all(g in ESTRATEGIA for g in candidatos):
+        return candidatos, "estrategia: R, destino V"
+    return candidatos, "PARADA: bloquea otra cosa (o varias)"
 
 
 def ordenes_por_sesion(ruta: Path) -> dict[tuple[str, str], list[list[str]]]:
@@ -60,11 +119,16 @@ def main(ruta: Path) -> int:
     sys.stdout.reconfigure(encoding="utf-8")
     filas, sesgo = leer(ruta)
     ordenes = ordenes_por_sesion(ruta)
+    bloqueos = bloqueos_por_sesion(ruta)
+    spec = Path(__file__).resolve().parents[3] / "knowledge" / "spec" / "strategy_spec.yaml"
+    prohiben = reglas_que_prohiben(spec) if spec.exists() else {}
     p4 = [f for p, _, _, f in clasificar(filas, sesgo) if p == "P4 sin orden"]
     sesiones = sorted({tuple(f.split(" | ")[1:3]) for f in p4})
     print(f"{ruta.name}: {len(p4)} filas P4 en {len(sesiones)} sesiones")
     clases: Counter[str] = Counter()
     por_mes: dict[str, Counter[str]] = defaultdict(Counter)
+    sin_orden: list[str] = []
+    gates: Counter[str] = Counter()
     for dia, ses in sesiones:
         ops = ordenes.get((dia, ses), [])
         n_trader = sum(1 for f in p4 if f.split(" | ")[1:3] == [dia, ses])
@@ -86,10 +150,23 @@ def main(ruta: Path) -> int:
         clases[clase] += 1
         por_mes[dia[:7]][clase] += 1
         print(f"{dia} {ses} | trader {n_trader} | {resumen(ops)} | {hecho} | {clase}")
+        if not ops:
+            disparadas, bloqueadas = bloqueos.get((dia, ses), (set(), "sin linea"))
+            candidatos, provisional = gate_que_bloqueo(bloqueadas, disparadas, prohiben)
+            gates[", ".join(candidatos) or "-"] += 1
+            sin_orden.append(
+                f"{dia} {ses} | bloqueadas {bloqueadas} | gates candidatos "
+                f"{', '.join(candidatos) or '-'} | {provisional}"
+            )
     print("-- sesiones P4 por clase y mes")
     for mes in sorted(por_mes):
         print(f"{mes} | " + "; ".join(f"{k} {v}" for k, v in sorted(por_mes[mes].items())))
     print("total | " + "; ".join(f"{k} {v}" for k, v in sorted(clases.items())))
+    print("-- las sesiones sin ninguna orden colocada: que bloqueo (regla que pedia, accion,")
+    print("   efecto) y que gates disparados prohiben ese efecto; clase provisional por 4.d")
+    for ln in sin_orden:
+        print(ln)
+    print("gates candidatos por sesion: " + "; ".join(f"{k} {v}" for k, v in sorted(gates.items())))
     return 0
 
 

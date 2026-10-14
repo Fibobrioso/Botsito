@@ -143,3 +143,38 @@ Copiada tal cual:
 > Lo que sigue: el punto 1 (código de salida, tests y make check), las tres corridas repetidas, patrones.py con su recuento, el punto 5, y PARADA 3 con todo commiteado. Las mismas reglas: las corridas nunca a la vez que make check, y si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanza Aleks con «!».
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 3 (2026-10-14)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 3 de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, como §3.17 «Respuesta del consultor a la PARADA 3», con la fecha. Esta es la clasificación DEFINITIVA de los patrones (fase 3), salvo las 17 sesiones del punto 4.d, que se cierran en la PARADA 4.
+>
+> 1. Decisión 1: sí. Añade bloqueadas (TrazaSesion.bloqueadas, con la regla que bloqueó) a la línea «Por sesion», con el mismo régimen: solo salida, ningún cambio de decisión, test sintético en los dos sentidos, make check y las tres corridas repetidas con sus mismos comandos y la repetición de la 2 para el diff. Si las cifras de parejas, cobertura o precisión cambiaran, PARADA.
+> 2. Decisión 2: las tres filas de 2026-07-10 forman un patrón propio. Añade a patrones.py, ANTES de P2, la regla P7: fila del trader sin pareja cuya operación del bot más cercana está a 3 puntos o menos y a menos de 15 minutos, pero ya emparejada con otra operación del trader. Son entradas repetidas del trader en el mismo nivel que el bot solo toma una vez. Recalcula y pega el recuento (P2 y P3 deberían quedar en 18 y 42).
+> 3. Decisión 3: los rechazos por volumen_max_lotes son una restricción impuesta (FTMO: 50 lotes, FTMO-P-D1.md), no un error de código. Clase E+R: E porque falta una decisión nuestra, por ADR, de qué hace el bot cuando el lote del 0,5 % no cabe (limitar el lote y arriesgar menos, o no operar), y esa decisión va a la rama del margen, junto al margen a 1:30, que corta antes (Technical Debt, HER:37); R porque se le pregunta al trader qué hace en su cuenta real cuando el stop es tan pequeño que el lote no cabe. En esta rama no se cambia nada.
+> 4. La clasificación definitiva por patrón (la clase, el destino y por qué):
+>    a) T0 pareja (12): sin diferencia.
+>    b) P1 sesgo (48 filas, 25 sesiones): R, la primera pregunta de la sesión 5. Destino: V. La mayoría de esas sesiones abre tras una H4 que rompió el extremo de la anterior solo con la mecha y cerró dentro, y el parámetro sesgo_h4_criterio_ruptura = mecha sale de fb-2026-09-09-sesion-01-8eccf5c0 con el nombre vela_anterior_cierre_mecha, que admite dos lecturas. El parámetro NO se cambia por esto (los parámetros no se optimizan contra resultados). Para armar la pregunta quiero, en el informe:
+>       - el texto literal del feedback fb-2026-09-09-sesion-01-8eccf5c0 sobre el sesgo, y la evidencia que cita, sin abrir nada en cuarentena (si la cita lleva a una transcripción v7 o posterior, dilo y no la abras);
+>       - un guion en anexos (amplía sesgo_p1.py o uno nuevo, sin nombrar carpetas de data/ si la guardia lo niega; si lo niega, PARADA) que, sobre las 104 sesiones con operaciones del trader de la corrida 2, cuente la tabla 2×2: ruptura de la última H4 solo con mecha (cierre dentro) o con cierre fuera, frente a trader a favor o en contra del sesgo del bot, y aparte las decididas por doble ruptura o en la segunda vela. Es un diagnóstico para la pregunta, no una medida que decida el parámetro: el informe lo dice así;
+>       - la lista de las sesiones de P1 con ruptura solo de mecha, con día, sesión y hora de la H4, para llevarlas a la sesión 5.
+>    c) P2 entrada (18): R. Destino: V, junto a A-48 y A-49 (qué velas forman la caja), con la Δ de cada fila. Además una comprobación E en el visor, en tres días que elegiré después de la PARADA 4.
+>    d) P4 sin orden (75), por lo que dice p4_ordenes.txt:
+>       - las sesiones con todas sus órdenes rechazadas, o con rechazos y reubicaciones sin llenado, cuando el motivo es volumen_max_lotes: E+R, como el punto 3, con destino a la rama del margen y a V;
+>       - las reubicaciones sin llenarse (4 sesiones, y las de las 7 mixtas que no son por volumen): R, destino V. La pregunta: ¿hasta cuándo mueve el trader la orden con la caja (ADR-0074, S-4) y cuándo la deja quieta o la quita?;
+>       - los rechazos por otro motivo: lístalos con su motivo; los clasifico en la PARADA 4;
+>       - las 17 sin ninguna orden colocada: PENDIENTES hasta que la salida nombre la regla que bloqueó (punto 1). Regla para cuando la veas, que aplicas tú y yo confirmo: si bloquea una regla de la firma o de la cuenta (RN-032, cierres de mercado ADR-0068, freno), M o E según si la regla está bien aplicada en ese día; si bloquea una regla de la estrategia (cartuchos, racha RN-036, ventana RN-035), R con destino V; si bloquea otra cosa, PARADA.
+>    e) P3 otra zona (42): R. Destino: V, junto a A-43, A-50 y A-53 (qué liquidez y qué zona elige el trader).
+>    f) P5 de más (61): las 47 del mismo lado, R con destino V: ¿cuántas veces reentra el trader en la misma zona tras un stop? (el bot se para en uno o dos minutos y vuelve a entrar; en la corrida 2 hay 93 stops frente a 12 objetivos). Las 14 del otro lado siguen a P1.
+>    g) P6 donde el trader no operó (33): R, destino V, ¿qué le hace no operar ese día o esa sesión? (enlaza con la deuda «el no_trade por ausencia no está decidido»). Las de agosto, además, posible M: su xlsx no es el que el trader da por bueno (S-16, NA:Q).
+>    h) P7 entradas repetidas (3, tras el punto 2): R, la misma pregunta que P5, del otro lado.
+>    i) Las 16 filas que tocan una hora perdida: posible M, sin cambiar de patrón.
+> 5. En el informe, una tabla «Clasificación del consultor (2026-10-14)» con patrón, filas, clase, destino y pregunta, y la lista «Para el cuestionario de la sesión 5», en este orden de prioridad: (1) el sesgo de H4, mecha o cierre, con los días de P1; (2) el lote que no cabe; (3) las reentradas (P5 y P7); (4) qué velas forman la caja (P2); (5) qué zona elige (P3); (6) hasta cuándo mueve la orden; (7) qué le hace no operar (P6). Las E van en la lista «Ramas candidatas»: la decisión del lote en la rama del margen (su prioridad sube: va antes de V) y la comprobación del 0 de la caja en el visor.
+> 6. Líneas para el cierre, además de las de §1.k: la rama del margen deja de ser deuda sin fecha. Pasa a la Next Action como entrada propia, antes de V, con dos medidas: la que ya pedía Aleks (qué parte de las operaciones tiene un stop de menos de unos 2 pips y cuántas caen a ±2 minutos de una noticia) y cuántas órdenes de esta corrida rechaza el volumen y cuántas rechazaría el margen a 1:30.
+>
+> Lo que sigue: los puntos 1 y 2, el 4.b (texto literal, la tabla 2×2 y la lista), el 5 hasta donde llegue sin las 17, y PARADA 4 con todo commiteado. Las mismas reglas de siempre.
+>
+> Rama lista para revisión, NO cerrada.

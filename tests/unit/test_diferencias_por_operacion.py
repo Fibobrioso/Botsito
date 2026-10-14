@@ -313,6 +313,31 @@ def test_la_seccion_es_la_ultima_del_informe_y_el_informe_sigue_determinista() -
     assert "cobertura: 1/1 (100.0 %)" in uno and "2030-01 | 1 | 1 | 1 | 0 | 1 |" in uno
 
 
+def test_la_linea_por_sesion_dice_que_bloqueo_un_gate_y_ninguna_si_no_hubo() -> None:
+    """Respuesta del consultor a la PARADA 3, punto 1: `bloqueadas` de la traza, en «Por sesion»,
+    con la regla, la accion y el motivo; «ninguna» si no hubo. Solo salida."""
+    dia = "2030-01-07"
+    traza = _traza("sesgo", "liquidez")
+    traza.bloqueadas = {
+        ("RN-015", "accion:colocar_orden_limite", "prohibida:abrir_operacion"),
+        ("RN-011", "accion:dimensionar", "gate desconocido:abrir_operacion"),
+    }
+    corrida = _corrida({dia: (_op(dia, 7, 30),)}, {}, {dia: traza})
+    texto = arnes.informe(corrida, CRITERIO, VOCABULARIO, opciones=(), simulacion=None)
+    (linea,) = [ln for ln in texto.splitlines() if ln.startswith(f"{dia} {SESION} | trader")]
+    assert linea.endswith(
+        "| bloqueadas RN-011:accion:dimensionar:gate desconocido:abrir_operacion, "
+        "RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion"
+    )
+    assert "| disparadas ninguna | bloqueadas " in linea
+    # y sin bloqueadas, «ninguna»: la traza vacia de una sesion normal
+    sin = _corrida({dia: (_op(dia, 7, 30),)}, {}, {dia: _traza("sesgo", "liquidez")})
+    texto = arnes.informe(sin, CRITERIO, VOCABULARIO, opciones=(), simulacion=None)
+    (linea,) = [ln for ln in texto.splitlines() if ln.startswith(f"{dia} {SESION} | trader")]
+    assert linea.endswith("| bloqueadas ninguna")
+    assert arnes.bloqueadas_de(TrazaSesion()) == "ninguna"
+
+
 def test_la_seccion_no_anade_ninguna_opcion_al_comando() -> None:
     """ADR-0070: la lista cerrada sigue igual y el subparser de `motor arnes` tiene exactamente las
     opciones de antes de esta rama (leidas del parser, no de --help)."""
