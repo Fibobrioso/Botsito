@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/corrida-construccion
+main
 
 ## Current Feature
-`trabajo/corrida-construccion` EN CURSO (abierta el 2026-10-14 desde 23316c8): R3.1, la corrida del arnés sobre la construcción vigente y la tabla de diferencias por operación para clasificar (F de la Next Action). Encargo `docs/encargos/trabajo-corrida-construccion.md`; informe `docs/validation/CORRIDA-CONSTRUCCION.md`.
+Ninguna rama abierta. `trabajo/corrida-construccion` cerrada en `main` el 2026-10-14 (`stable/F37q-corrida-construccion`); R3.1 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-87391b7 · merge de `trabajo/entrada-enero` (tag `stable/F37p-entrada-enero`): `scripts/ticks_spread.py` cuenta la ventana por la rejilla (ADR-0069 §5), con su test del día de desfase; enero de 2026 entra en construcción del 2 al 30 (ADR-0079), al final de la lista: lectura declarada, tramo, reparto dev-visto de los 21 laborables, 21 casos dev y el dataset de ticks `eurusd-ticks-2026-01-1ce59681` (06-14 UTC). Sobre `stable/F37o-entrada-julio` (a4e4fa6). Informe docs/validation/ENTRADA-ENERO.md; el registro del cierre, al final de HISTORIA.
+fa15a84 · merge de `trabajo/corrida-construccion` (tag `stable/F37q-corrida-construccion`): la corrida del arnés en diagnóstico (A-35, A-44) sobre los 76 días dev de construcción; el informe del arnés gana «Diferencias por operacion», `bloqueadas` y la vida de la orden; la clasificación del consultor y el cuestionario de la sesión 5; NOTA en ADR-0070 §3; un día de holdout-3 retirado por ADR-0041. Sobre `stable/F37p-entrada-enero` (87391b7). Informe docs/validation/CORRIDA-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-87391b7 · merge: ticks_spread por la rejilla (X) y enero entra en construccion del 2 al 30 (R2.2, ADR-0079) · tag stable/F37p-entrada-enero
+fa15a84 · merge: la corrida del arnes sobre la construccion y la clasificacion de sus diferencias (R3.1) · tag stable/F37q-corrida-construccion
 
 ## Tests Currently Passing
 1556 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
