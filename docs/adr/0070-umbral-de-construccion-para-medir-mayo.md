@@ -68,6 +68,16 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
      real, `perfil_para_medir`, y la primera fase que ese perfil declara. Otro perfil da «no»
      («perfil <nombre>: solo cuenta <perfil_para_medir>»), y otra fase también («fase <nombre>:
      solo cuenta la primera del perfil, <primera>»).
+
+   > **NOTA del 2026-10-14 (`trabajo/corrida-construccion`, no reescribe el cuerpo).** Desde
+   > ADR-0076 (2026-10-12) A-21 está fijada y `--diagnostico-a21` no existe: el motor necesita
+   > diagnóstico solo para A-35 y A-44. La corrida de R3.1 (`docs/validation/CORRIDA-CONSTRUCCION.md`
+   > §3) corrió con los dos sobre toda la construcción (76 días dev, 198 operaciones del trader) y
+   > dio «no», como dice este punto: con la cuenta arrastrada, `no (opción fuera de la lista:
+   > --diagnostico-a35; opción fuera de la lista: --diagnostico-a44; cobertura 0.5 % por debajo de
+   > 70.0 %; precision 2.6 % por debajo de 60.0 %)`; con la cuenta reiniciada cada día, cobertura
+   > 6.1 % y precisión 12.8 %, también «no».
+
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
 5. **Dónde viven las cifras y quién lo dice.** Tres campos nuevos en `criterio_fidelidad.yaml`,

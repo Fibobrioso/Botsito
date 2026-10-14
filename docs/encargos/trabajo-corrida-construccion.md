@@ -178,3 +178,31 @@ Copiada tal cual:
 > Lo que sigue: los puntos 1 y 2, el 4.b (texto literal, la tabla 2×2 y la lista), el 5 hasta donde llegue sin las 17, y PARADA 4 con todo commiteado. Las mismas reglas de siempre.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 4 (2026-10-14)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 4 de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, como §4.7 «Respuesta del consultor a la PARADA 4», con la fecha. Con esto la clasificación queda cerrada y la rama sigue hasta su entrega.
+>
+> 1. Las 15 sesiones sin orden en las que RN-015 quiso colocar y abrir_operacion estaba prohibido por RN-005 y RN-009 (y además RN-001 en 7 sesiones 11-15): R, con destino V (¿entra el trader cuando la zona se desarrolla en el lado de ruido, o con más zonas de control de las admitidas?), y una comprobación E en el visor de que RN-005, RN-009 y el minuto de ventana_fin de RN-001 están bien aplicados en esas sesiones. Mi regla de la PARADA 3 no las nombraba; queda ampliada así, con fecha de hoy.
+> 2. Las 2 sesiones sin bloqueo y sin orden_dimensionada (2026-01-08 11-15 y 2026-08-14 07-11): E candidata. Que RN-011 no dimensione con los hechos del camino producidos apunta a nuestro código, no a una regla del trader. Destino: la comprobación en el visor.
+> 3. Los 3 rechazos por precio_invalido (2026-04-16 07-11, 2026-07-08 11-15, 2026-07-13 11-15): E+R. E: comprobar en el visor dónde colocó el bot la orden frente al precio (ADR-0057). R: si el precio ya pasó el 0 cuando se forma la caja, ¿el trader entra o no? Destino: V.
+> 4. P1, sobre lo que mediste en §4.3 y §4.4:
+>    a) El literal del trader en fb-2026-09-09-sesion-01-8eccf5c0 («al menos por un pip o una milésima de pip») no dice mecha ni cierre; «mecha incluida» fue una re-expresión del consultor en F11. Línea para ERRORES-RECURRENTES en el cierre: el consultor convirtió en criterio de una regla algo que el literal no decía (mecha), y quedó CONFIRMED sin pregunta; lo destapó R3.1 un mes después. Lección: una re-expresión canónica que añade un criterio que el literal no trae se marca DEFAULT_AMBIGUOUS y se pregunta; nunca entra como CONFIRMED.
+>    b) La tabla 2×2 queda como diagnóstico para la pregunta, no como medida: el parámetro sesgo_h4_criterio_ruptura NO se toca en esta rama ni por este dato. Su estado tampoco cambia aquí; si hay que bajarlo de CONFIRMED, lo decido en la rama que active la respuesta del trader.
+>    c) La pregunta 1 del cuestionario de la sesión 5 lleva las 13 sesiones de P1 con ruptura solo de mecha, tal como las listaste.
+> 5. El visor NO se abre en esta rama. Todas las comprobaciones E (P2, el 0 de la caja; los puntos 1, 2 y 3 de esta respuesta) van a una rama candidata nueva, «comprobaciones en el visor de R3.1», que va antes de V porque el cuestionario necesita esos gráficos. Escríbela así en «Ramas candidatas», con sus días.
+> 6. Termina la fase 3: la NOTA de ADR-0070 y el runbook ACTIVAR-A35-A44.md en su commit propio (punto 12 de mi respuesta a la PARADA de la fase 0). Después, las líneas propuestas para el cierre, que recogen todo lo que mandé en las tres respuestas:
+>    - la Next Action: F apunta, por este orden, a la rama del margen (entrada nueva, antes de V, con sus dos medidas del punto 6 de la PARADA 3), a la rama de comprobaciones en el visor (entrada nueva, antes de V) y a V, que depende además de J y de A.4;
+>    - V lleva la lista «Para el cuestionario de la sesión 5» de §4.5, con las ampliaciones de hoy;
+>    - la hoja de ruta: R3.1 HECHA; las Refs de R3.1 con ID:ADR-0074 · ID:ADR-0067; R4.1 con las dos ramas nuevas como dependencias;
+>    - Technical Debt: la línea de la lectura del M1 de marzo y junio para calentar (punto 11 de la fase 0), y la del margen pasa a la entrada nueva de la Next Action;
+>    - G.1 y G.2 con las propuestas de la guardia y de la línea LECTURA:;
+>    - ERRORES-RECURRENTES: mi premisa falsa sobre el M1 de julio (PARADA 0, punto 8) y la re-expresión «mecha» de F11 (punto 4.a de hoy);
+>    - HER:25, HER:30 y HER:35 siguen vivos, con lo que la corrida dice de ellos.
+> 7. Revisor (opus), con los dos alcances del encargo y uno más: que la tabla «Clasificación del consultor» y la lista del cuestionario dicen exactamente lo de mis cuatro respuestas, con sus recuentos (T0 12, P1 48, P2 18, P3 42, P4 75, P5 61, P6 33, P7 3). Su informe, pegado al final. Arregla lo que encuentre que bloquee o importe, o dime por qué no.
+>
+> Rama lista para revisión, NO cerrada.
