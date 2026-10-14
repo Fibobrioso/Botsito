@@ -1819,8 +1819,8 @@ Copiada tal cual (también al final de `docs/encargos/trabajo-corrida-construcci
 
 ## Estado
 
-PARADA del cierre (paso 0, §11): lo commiteado permite deducir un día reservado de junio. Antes,
-LISTA PARA REVISIÓN. R3.1 hecha: la corrida en diagnóstico sobre los 76 días dev de construcción,
+CERRADA por la orden de cierre del 2026-10-14 (`stable/F37q-corrida-construccion`), tras la PARADA
+del paso 0 (§11) y la retirada del día de holdout-3 por ADR-0041 (7f8322a, §11.2). R3.1 hecha: la corrida en diagnóstico sobre los 76 días dev de construcción,
 la tabla por operación con la vida de la orden, y la clasificación del consultor (§4.5) con la
 lista para el cuestionario de la sesión 5 y las dos ramas candidatas; las líneas del cierre en §5;
 el informe del revisor en §10. No habilita mayo; ningún valor cambió.

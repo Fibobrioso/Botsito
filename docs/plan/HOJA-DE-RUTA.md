@@ -60,6 +60,19 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14) quedan escritas en el §5 de esos
   dos informes y pasan a R4.1.
 
+### R1.2 · El sesgo de H4 que el trader respondió por WhatsApp
+- **Refs:** NA:W · ID:ADR-0060 · ID:RN-003
+- **Qué es:** activar la regla que el trader respondió el 2026-10-14 a la pregunta P1 de R3.1
+  (CORRIDA-CONSTRUCCION.md §4.4): el sesgo cambia solo si la H4 rompe el extremo de la anterior
+  (con mecha o con cuerpo) y cierra del color de esa ruptura. Amplía ADR-0060 y sustituye la
+  re-expresión `sesgo_h4_criterio_ruptura = mecha` por su feedback nuevo. Las capturas y los
+  gráficos están fuera de git (`corpus/whatsapp-sesgo-h4-2026-10-14/`).
+- **Depende de:** R3.1 (HECHA).
+- **Quién:** la sesión, en rama de motor propia con ADR; la entrada del material, como decida la
+  rama.
+- **Hecho cuando:** la regla está en la spec y en el motor, con su feedback y su ADR, y el arnés
+  se ha vuelto a correr con los tres comandos de R3.1.
+
 ## R2 · Material de construcción
 
 ### R2.1 · Julio
@@ -110,31 +123,60 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R3 · Una corrida del arnés sobre toda la construcción
 
 ### R3.1 · La corrida de ADR-0070 y las diferencias clasificadas
-- **Refs:** ID:ADR-0070 · ID:ADR-0043 · HER:25 · HER:30 · HER:35 · ID:A-35 ·
-  ID:A-44 · ID:RN-004 · ID:RN-020
+- **Refs:** ID:ADR-0070 · ID:ADR-0043 · ID:ADR-0074 · ID:ADR-0067 · ID:A-35 · ID:A-44 ·
+  ID:RN-004 · ID:RN-020
 - **Qué es:** una corrida del arnés sobre la construcción simulada, con las opciones de la lista
-  cerrada de ADR-0070, y la clasificación de las diferencias por el consultor. RN-004 está bloqueada
-  por A-35 (heredados 25 y 30) y RN-020 por A-44 (heredado 35).
+  cerrada de ADR-0070, y la clasificación de las diferencias por el consultor; y la medida de
+  peticiones por día con la caja recalculada (ADR-0074 §3) frente al freno de ADR-0067. RN-004 está
+  bloqueada por A-35 y RN-020 por A-44 (los heredados de los dos siguen vivos en R4.1).
 - **Depende de:** R1.1 y R2.1 y R2.2 (HECHAS); R2.3 y R2.4 la amplían cuando lleguen, sin
   bloquearla; y, para que la corrida CUENTE (ADR-0070 §3), que el motor corra sin
   ningún `--diagnostico-*`: hoy lo necesita para A-35 y A-44, y sus valores van a R1.1 o, si
   la sesión 4 no basta, a R4.1. Hasta entonces la corrida es diagnóstico y no habilita R5.2.
 - **Quién:** la corrida, la sesión; la clasificación, el consultor.
 - **Hecho cuando:** la corrida está en un informe y cada diferencia tiene su clase.
+- **Estado:** HECHA (`trabajo/corrida-construccion`, `stable/F37q-corrida-construccion`;
+  CORRIDA-CONSTRUCCION.md): la corrida sobre los 76 días dev de construcción en diagnóstico (A-35 y
+  A-44), su tabla por operación con la vida de la orden, y la clasificación del consultor (§4.5).
+  No habilita R5.2 (ADR-0070 §3). De ella salen R1.2, R3.2 y R3.3.
+
+### R3.2 · Comprobaciones en el visor de R3.1
+- **Refs:** NA:O · ID:ADR-0057 · ID:RN-005 · ID:RN-009 · ID:RN-011
+- **Qué es:** las comprobaciones E de la clasificación de R3.1, con sus días
+  (CORRIDA-CONSTRUCCION.md §4.5, «Ramas candidatas»): el 0 de la caja en tres días de P2; RN-005,
+  RN-009 y el minuto de `ventana_fin` de RN-001 en las sesiones sin orden; por qué RN-011 no
+  dimensionó en dos sesiones; y dónde colocó el bot la orden en los rechazos por `precio_invalido`.
+- **Depende de:** R3.1 (HECHA); los tres días de P2 los elige el consultor.
+- **Quién:** la sesión, con el visor y el encargo del consultor.
+- **Hecho cuando:** cada comprobación tiene su gráfico y su conclusión (E o R) en un informe.
+
+### R3.3 · La rama del margen
+- **Refs:** NA:E · HER:37 · ID:A-18
+- **Qué es:** la decisión, por ADR, de qué hace el bot cuando el lote del 0,5 % no cabe en los 50
+  lotes de la firma (limitar el lote o no operar), con el margen a 1:30, que corta antes, y el
+  simulador que lo compruebe; con las dos medidas de la orden de cierre de R3.1 (stops de menos
+  de unos 2 pips y noticias; rechazos por volumen y por margen en la corrida de R3.1).
+- **Depende de:** R3.1 (HECHA).
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el ADR está escrito y el simulador rechaza lo que FTMO rechazaría.
 
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:RN-007 · NA:H · NA:J · NA:V · ID:ADR-0076 · ID:ADR-0077
+  ID:A-53 · ID:RN-007 · NA:H · NA:J · NA:V · NA:W · NA:E · NA:O · HER:25 · HER:30 · HER:35 ·
+  ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
   la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
   preguntas de ACTIVAR-SESION-04-MOTOR.md §5: el último minuto (cuándo se retira una orden
   pendiente a la hora de cerrar), la vela sin cuerpo en medio del retroceso y el breaker contrario
   que rompe con mecha (ADR-0076 §4), la racha tras la novena pérdida (ADR-0077 §5) y la
-  confirmación del caso bajista de S-13; y lo que salga de R3, con la hoja de preguntas. La hoja
-  Word necesita antes que `kit hoja` funcione con un paquete nuevo (NA:J).
-- **Depende de:** R1.1, R3.1 y la copia de seguridad del carril de Aleks.
+  confirmación del caso bajista de S-13; y lo que salga de R3, con la hoja de preguntas: la lista
+  «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5, sin su pregunta 1 (el
+  sesgo, respondida: R1.2). La hoja Word necesita antes que `kit hoja` funcione con un paquete
+  nuevo (NA:J).
+- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (NA:W), R3.2 (NA:O), R3.3 (NA:E) y la copia de
+  seguridad del carril de Aleks.
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.
 
@@ -263,6 +305,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   - Desde `trabajo/activar-sesion-04-motor` (ACTIVAR-SESION-04-MOTOR.md §6 y §9.3): un falso
     positivo. `grep -rn --include=*.py` con cuatro `-e` sobre rutas literales (`src/ tests/
     scripts/`) se bloquea («leer el contenido de .») y el mismo comando con dos `-e` pasa.
+  - Desde `trabajo/corrida-construccion` (CORRIDA-CONSTRUCCION.md §1.j): la guardia niega un
+    guion de la carpeta de trabajo que nombre `data/manifests/ticks/<manifiesto>.yaml` de un mes de
+    construcción, aunque Read deja abrir esos manifiestos; que admita esas rutas literales.
 - **Depende de:** nada.
 - **Quién:** la sesión, en ramas propias.
 - **Hecho cuando:** cada una con su test que la rompe a propósito.
@@ -283,7 +328,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   ADR-0044 §1 («doble ruptura = AMBIGUO», enmendado por ADR-0060 §1 y ADR-0075) y su fila del
   índice; y el anexo `docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`, que no corre
   con el código de hoy (`Diagnostico` por posición): no se edita, se reproduce con el código de su
-  commit.
+  commit. Y, desde `trabajo/corrida-construccion` (CORRIDA-CONSTRUCCION.md §1.c): que
+  `arnes.dias_de_mercado` imprima una línea `LECTURA:` por recuento de los días reservados cuyas
+  velas lee para calentar, como `kit check` (ADR-0033 §4); hoy lo cubre HOLDOUT-EXPOSICIONES.
 - **Depende de:** nada (J, antes de R4.1).
 - **Quién:** el consultor (L, 6 y la decisión de 7 y 8); la sesión, en ramas propias.
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.

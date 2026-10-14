@@ -9377,3 +9377,54 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 32 (2026-10-13).
+
+# Registro de cierre · `trabajo/corrida-construccion` (2026-10-14)
+
+- Orden de cierre del consultor del 2026-10-14, pegada por Aleks en la conversación y ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama
+  lista para revisión tras una pasada del revisor (CORRIDA-CONSTRUCCION.md §10: 1 bloquea, 6
+  importa, 4 menor; todos arreglados en 7cf8901 y ef15027). Cuatro PARADAS en la rama (fase 0,
+  PARADA 2, 3 y 4), respondidas por el consultor el 2026-10-14. El paso 0 de la orden de cierre
+  dio PARADA (§11: lo commiteado dejaba deducir un día reservado de holdout-3); el consultor
+  respondió el mismo día y el día salió del holdout por ADR-0041 en 7f8322a, antes del merge y
+  del push. Nunca se cerró sin la orden.
+- **Lo que entra** (R3.1 de la hoja de ruta; F de la Next Action):
+  - en `engine/arnes.py`, la sección «Diferencias por operacion» al final del informe del arnés
+    (resumen y embudo por mes; una fila por operación del trader y por operación del bot sin
+    pareja; el primer hecho DEL CAMINO que falta, con los frenos solo si se produjeron) y el campo
+    `bloqueadas` de «Por sesion»; en `engine/cableado.py`, la vida de la orden («### Ordenes» y
+    «### Rechazos por motivo»), solo lectura de la traza del bróker. Ninguna decisión del motor,
+    ninguna opción nueva; 21 tests sintéticos nuevos;
+  - las tres corridas de R3.1 en diagnóstico (A-35, A-44) sobre 76 días dev, con sus guiones de
+    anexo (`patrones.py`, `p4_ordenes.py`, `sesgo_p1.py`, `sesgo_2x2.py`, `horas_perdidas.py`,
+    `comparar_corridas.py`) y la clasificación del consultor (§4.5);
+  - la NOTA de ADR-0070 §3 y el runbook ACTIVAR-A35-A44 sin `--diagnostico-a21` (74e8ef0);
+  - la retirada del holdout de un día de holdout-3 por ADR-0041 (7f8322a): holdout-3 queda con 8
+    reservados, 7 medidos, 1 retirado y 8 ocultos;
+  - en este commit: F reescrita (W, E, O, la re-corrida y V); entran W (el sesgo de H4 que el
+    trader respondió por WhatsApp; S no estaba libre: R2.1, HECHA, cita `NA:S`), E (la rama del
+    margen) y O (comprobaciones en el visor); V sin la pregunta del sesgo y dependiendo de W, E y
+    O; G con el día medido menos de holdout-3; A condensada; el heredado 37 condensado (va a E; el
+    texto entero, en el Archivo 33); notas de R3.1 en los heredados 25, 30 y 35; Technical Debt:
+    sale la línea del margen (va a E) y entra la del M1 de calentamiento. En la hoja de ruta: R3.1
+    HECHA con ID:ADR-0074 e ID:ADR-0067 (los heredados 25, 30 y 35 pasan a R4.1, porque una
+    entrada HECHA no puede citar heredados vivos); entran R1.2 (W), R3.2 (O) y R3.3 (E); R4.1
+    depende de las tres; G.1 y G.2 con las propuestas de la guardia y de la línea `LECTURA:`.
+- Letras: sale ninguna; entran W, E y O.
+- Letra del tag: la última cerrada era la p de F37 (`stable/F37p-entrada-enero`).
+- Tag: `stable/F37q-corrida-construccion`. El merge es
+  `git rev-parse "stable/F37q-corrida-construccion^{commit}"`.
+- Commits de la rama: `e06a71c` (apertura), `97d94ed` (fase 0), `d63b30f` (la sección),
+  `883d391` (fase 2, PARADA 2), `1b90d23` (el hecho del camino y la vida de la orden), `82b9cc7`
+  (PARADA 3), `eab1fc3` (fase 3: clasificación, `bloqueadas`, P7), `cb3b353` (PARADA 4),
+  `74e8ef0` (NOTA y runbook), `3cf2756` (entrega), `7cf8901` (arreglos del revisor), `ef15027`
+  (corridas repetidas e informe del revisor), `fdb1b43` (paso 0, PARADA), `7f8322a` (la
+  retirada) y el de este registro.
+- CI de rama: ninguna. No toca `.claude/`, hooks ni código de plataforma (CORRIDA-CONSTRUCCION.md
+  §9). La CI de `main` corre tras el push.
+- Exposiciones: las del 2026-10-14 en HOLDOUT-EXPOSICIONES (la fase 0 y la lectura del M1 de
+  marzo y junio para calentar; el hallazgo a1, con su consecuencia). `uv run botsito motor arnes`
+  se ejecutó solo con los comandos autorizados.
+- El worktree `wt-ci` (e7df30b, sin rama) es de otra sesión: no se tocó.
+- Informe: `docs/validation/CORRIDA-CONSTRUCCION.md`. Encargo:
+  `docs/encargos/trabajo-corrida-construccion.md`.
