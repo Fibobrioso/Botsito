@@ -364,16 +364,16 @@ Copiada tal cual:
 
 | Punto | Dónde | Estado |
 |---|---|---|
-| 0 | fase 3: `construccion: ["2026-04", "2026-07", "2026-08", "2026-01"]`; ADR-0079 dice por qué importa el orden | en su fase |
-| 1 | fase 2: `test_mes_del_material.py:252`; fase 3: `test_criterio_fidelidad.py:108` | en su fase |
-| 2 | fase 4: `--horas 06-14` | en su fase |
-| 3 | fase 1 (§1): `ticks_spread.py` por la rejilla con su test; corrida real tras la fase 4, a un anexo | §1 |
-| 4 | fase 3: ADR-0079 lo declara | en su fase |
-| 5 | contrato ampliado en el commit de la fase 1 con `docs/adr/0069-*.md`, `docs/adr/0051-*.md` y `docs/runbooks/VISOR-DIAS.md`; las NOTAS y la corrección, en el commit de ADR-0079 | contrato hecho; resto en su fase |
-| 6 | §8, propuesta de Technical Debt con la observación sobre ADR-0042 §2; la fila de la fase 2.b cumple la condición 2 | en su fase |
-| 7 | §8, propuesta de Technical Debt con la medida y los meses en que importa | en su fase |
-| Además 1 | 0.b ya lo dice; se repite en la fila de la fase 2.b y en ADR-0079 | en su fase |
-| Además 2 | §8, texto exacto de los dos cambios de la hoja de ruta | en su fase |
+| 0 | fase 3: `construccion: ["2026-04", "2026-07", "2026-08", "2026-01"]`; ADR-0079 dice por qué importa el orden | hecho, e803b39 (§3) |
+| 1 | fase 2: `test_mes_del_material.py:252`; fase 3: `test_criterio_fidelidad.py:108` | hecho, 04e9d5b y e803b39 |
+| 2 | fase 4: `--horas 06-14` | hecho (§4) |
+| 3 | fase 1 (§1): `ticks_spread.py` por la rejilla con su test; corrida real tras la fase 4, a un anexo | hecho, 7bc7fa3 (§1); corrida en §4 |
+| 4 | fase 3: ADR-0079 lo declara | hecho, e803b39 (§3) |
+| 5 | contrato ampliado en el commit de la fase 1 con `docs/adr/0069-*.md`, `docs/adr/0051-*.md` y `docs/runbooks/VISOR-DIAS.md`; las NOTAS y la corrección, en el commit de ADR-0079 | hecho, 7bc7fa3 y e803b39 |
+| 6 | §8, propuesta de Technical Debt con la observación sobre ADR-0042 §2; la fila de la fase 2.b cumple la condición 2 | hecho (§8.3; fila en 04e9d5b) |
+| 7 | §8, propuesta de Technical Debt con la medida y los meses en que importa | hecho (§8.3) |
+| Además 1 | 0.b ya lo dice; se repite en la fila de la fase 2.b y en ADR-0079 | hecho, 04e9d5b y e803b39 |
+| Además 2 | §8, texto exacto de los dos cambios de la hoja de ruta | hecho (§8.2) |
 
 ## 1. Fase 1 · X: `scripts/ticks_spread.py` por la rejilla
 
@@ -465,6 +465,127 @@ dentro de él:
   en el índice `docs/adr/README.md`.
 - ADR-0079 sale de los bloques `ids-inexistentes` del encargo y de este informe.
 
+## 4. Fase 4 · casos y ticks (2026-10-13)
+
+**Casos.** Sobre e803b39 (ADR-0079 ya commiteado, y la fila 2.b de `HOLDOUT-EXPOSICIONES.md`
+commiteada antes, en 04e9d5b):
+
+`uv run botsito casos ingerir --material "corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics ENERO 2026.xlsx" --fecha 2026-10-13`
+
+```
+INGESTA: 4 filas SIN `initialSL` no produjeron caso: una fila sin stop no es una decision completa. Se cuentan aqui para que no desaparezcan en silencio
+INGESTA: 21 casos escritos de 21 dias ingeribles; 58 filas leidas; 0 pestanas de agregado abiertas
+OK: knowledge/cases/dev/ con 21 casos. Commitealos con `Fuente:`
+```
+
+(Las otras líneas `INGESTA:` de la salida hablan de junio, septiembre y los días de fidelidad, que
+el comando no lee: las mismas que en julio.) Los 21 casos son los 21 días del reparto dev-visto, del
+2 al 30, y suman **54 operaciones** (58 filas menos las 4 sin `initialSL`; contadas en los
+ficheros, `^- direccion:`). `uv run botsito casos check`: `OK: los casos de la biblioteca tienen
+la forma declarada y ninguno esta reservado`.
+
+**Ticks.** Con las horas de invierno del punto 2 (06-14 UTC: la ventana de la rejilla, 06:00-14:00Z
+en enero, más una hora, §0.e) y `--solo-dias-dev`:
+
+`uv run botsito data download-ticks --dataset eurusd-ticks-2026-01 --simbolo EURUSD --escala 100000 --desde 2026-01-01 --hasta 2026-01-31 --solo-dias-dev --horas 06-14 --pausa 2`
+
+```
+OK: data/manifests/ticks/eurusd-ticks-2026-01-1ce59681.yaml (eurusd-ticks-2026-01-1ce59681)
+  672356 ticks en 21 ficheros; horas presentes 184, ausentes (404) 0, vacias 0, PERDIDAS 5; cotizaciones cruzadas 0
+  SELECCION: 21 dias y horas UTC 06-14; el resto del rango no esta en este dataset
+```
+
+`uv run botsito data check-ticks --dataset eurusd-ticks-2026-01-1ce59681 --hashes`: `OK:
+eurusd-ticks-2026-01-1ce59681 coincide con el disco (hashes)`.
+
+- **Los 21 días son los del reparto dev-visto** (del 2 al 30); el 1 y el 31 de enero no entran
+  porque la selección sale de `dias_de_construccion`.
+- **Se perdieron 5 de 189 horas** (21 × 9), listadas en el manifiesto: **2026-01-05 10h,
+  2026-01-14 07h, 2026-01-20 11h, 2026-01-23 11h y 2026-01-29 11h** UTC, perdidas tras 5 intentos
+  cada una (no son 404 ni horas vacías). Las cubre el respaldo M1 del modelo de llenado con el
+  spread supuesto, como las 7 de abril, las 3 de agosto y las 3 de julio.
+- **Fue la segunda pasada, como en abril, agosto y julio.** La primera (el mismo comando sin
+  `--pausa`, que por defecto ya es 2 s, `cli.py:3281`) dio `eurusd-ticks-2026-01-dc8e286c`, con
+  **31 horas perdidas** de 189 y 569.979 ticks, verificado también con `--hashes` (OK). Se descartó
+  sin commitear: comprobé que git no seguía el manifiesto (`git ls-files --error-unmatch` falla) y
+  borré el manifiesto y su carpeta de `data/ticks/` antes de relanzar. La segunda reanuda por la
+  caché cruda (`con_cache_horas`) y solo vuelve a pedir lo que faltaba.
+- Ninguna cotización cruzada. El manifiesto es inmutable desde su commit (`CLAUDE.md`).
+
+**La corrida de `ticks_spread.py` con los cuatro meses** (punto 3: después de la fase 4, a un anexo,
+sin tocar `llenado.yaml`): `uv run python scripts/ticks_spread.py --salida
+docs/validation/anexos/ENTRADA-ENERO/ticks_spread_cuatro_meses.txt`. Recorre la construcción en su
+orden (`2026-04, 2026-07, 2026-08, 2026-01`), con un dataset por mes, y cuenta la ventana por la
+rejilla. El p90 total por hora contra `llenado.yaml` (`spread.por_hora_local`, medido sobre abril y
+agosto):
+
+| Hora nominal | 07 | 08 | 09 | 10 | 11 | 12 | 13 | 14 | fuera |
+|---|---|---|---|---|---|---|---|---|---|
+| Cuatro meses (anexo) | 5 | 5 | 5 | 5 | 5 | 4 | 4 | 5 | 5 |
+| `llenado.yaml` | 5 | 5 | 5 | 5 | 5 | 4 | 4 | 5 | 4 |
+
+Iguales de 07 a 14. Solo cambia `fuera` (5 frente a los 4 de `fuera_de_ventana`). Y la hora 11, que con abril, julio y agosto salía 4 (§1), vuelve a 5 con
+enero. **No he tocado `llenado.yaml`** (lo dice el encargo y lo declara ADR-0079). Si el spread
+supuesto se vuelve a medir sobre los cuatro meses, es una decisión con su ADR, no de esta rama.
+
+## 8. Propuestas para la orden de cierre
+
+Textos exactos. La hoja de ruta (`docs/plan/`) y la Next Action los edita el cierre, no la rama
+(`docs/plan/` está en `rutas_protegidas`). Comprobado contra las reglas de
+`tests/unit/test_hoja_de_ruta.py` (a: todo vivo tiene su `Refs:`; b: una entrada HECHA no cita una
+letra ni un heredado vivos, y una no HECHA no cita una letra muerta, en todo su bloque; c: ninguna
+entrada de la Next Action depende de una letra muerta).
+
+**8.1 Next Action** (PROJECT_STATE.md):
+- **X sale, HECHA** (registro `# Next Action HECHA · X ·` en HISTORIA, como manda el ritual).
+- **F**, sustituida entera: «F. Orden de trabajo: lo siguiente es T (R2.4: transcribir v11 a v14 y
+  compararlos con el xlsx de julio). R2.3 (Q, agosto) espera la exportación del trader, y R3.1
+  depende de R2 entera.» (R2.4 es la única entrada de R2 sin hacer que no espera a nadie: «Depende
+  de: R2.1 (HECHA)».)
+- **I**: «… Entra por su propia rama después de X y de renovar hacia atrás …» pasa a «… Entra por
+  su propia rama después de renovar hacia atrás …» (sin X; si no, `problemas_c` falla: I dependería
+  de una letra muerta).
+- **Heredado 34**, sustituido: «- 34. Ticks: el deslizamiento y el swap, las ejecuciones 2 y 3
+  (A).» (la parte a, la ventana de invierno, es X y queda hecha; las partes b y c siguen vivas y ya
+  las cita la entrada de la demo, `HOJA-DE-RUTA.md:208`, `HER:34`).
+
+**8.2 Hoja de ruta** (`docs/plan/HOJA-DE-RUTA.md`), los dos cambios que pide el consultor:
+- **R2.2 HECHA sin el heredado 34** (`:77`): la línea de Refs pasa de
+  `- **Refs:** NA:X · HER:34 · ID:ADR-0069 · ID:ADR-0051` a
+  `- **Refs:** NA:X · ID:ADR-0069 · ID:ADR-0051 · ID:ADR-0079`
+  y se añade al final de la entrada:
+  `- **Estado:** HECHA (`trabajo/entrada-enero`, `stable/F37p-entrada-enero`; ENTRADA-ENERO.md,
+  ADR-0079): la ventana de ticks sale de la rejilla, con su test; enero es construcción del 2 al
+  30, con sus ticks. Las partes b y c del heredado 34 siguen en el carril de Aleks (NA:A).`
+  Con eso, `HER:34` sigue en el `Refs:` de la demo (regla a) y ya no en una entrada HECHA (regla
+  b). OJO: la frase del «Qué es» de R2.2 que nombra «(carril de Aleks, NA:A)» sigue siendo válida,
+  porque A está viva.
+- **R5.4 sin NA:X** (`:172`): `- **Depende de:** R2.2 (NA:X) y R2.1 (HECHA) y R1.1.` pasa a
+  `- **Depende de:** R2.2 (HECHA) y R2.1 (HECHA) y R1.1.` (si no, la regla b la marca: «NA:X no es
+  una letra viva»).
+- El tag que cito, `stable/F37p-entrada-enero`, es el siguiente de la serie (el último es
+  F37o); lo fija el cierre.
+
+**8.3 Technical Debt**, dos líneas nuevas:
+- «La condición 2 de ADR-0042 §2 (la lectura COMPLETA del libro, declarada) se comprueba buscando
+  el NOMBRE del fichero en HOLDOUT-EXPOSICIONES (`cases/visto.py:requisitos`): una fila que lo
+  nombra sin declarar la lectura completa la da por cumplida (falso positivo medido con enero,
+  ENTRADA-ENERO.md §0.b). El mecanismo por nombre lo fija ADR-0042 §2: arreglarlo pide una NOTA o
+  un ADR nuevo, no solo código.»
+- «`engine/simulador_config.py` busca el spread supuesto de `llenado.yaml` por la hora de PARED de
+  Europe/Madrid, no por la rejilla: los días de desfase sale corrido una hora (2026-10-27: 4 de 11
+  horas, 1 punto de spread distinto; ENTRADA-ENERO.md §0.c). Importará cuando se mida un mes con
+  días de desfase: marzo, del 9 al 27, y octubre.»
+
+**8.4 Tamaño de PROJECT_STATE.** Hoy, en la rama, 23.406 bytes (tope del test, 25.000). Las
+propuestas suman unos +600 bytes de Technical Debt y quitan unos −250 (X, 181 bytes, y la cola de
+I y del heredado 34); con el cambio de `Current Feature` y `Stable Main State` del cierre, quedaría
+hacia 23,8 KB. No pasa del tope, pero el margen se queda en ~1,2 KB. Si hace falta, propongo
+condensar **A** (la demo, 987 bytes, la entrada más larga de la Next Action): dejar la fecha de
+cada ejecución, el script 1.1 y qué mide cada una, y remitir el resto a
+`docs/runbooks/DEMO-FTMO.md`, que ya lo dice entero. (La línea 7 de la hoja de ruta cita `NA:X`
+como ejemplo, fuera de las entradas: con X registrada HECHA en HISTORIA, la regla b la admite.)
+
 ## Estado
 
-EN CURSO: fases 1 a 3 hechas; sigue la fase 4 (casos y ticks).
+EN CURSO: fases 1 a 4 hechas; sigue la entrega (revisor).
