@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/entrada-enero
+main
 
 ## Current Feature
-`trabajo/entrada-enero` EN CURSO (abierta el 2026-10-13 desde `main` 6fb483b): X (scripts/ticks_spread.py cuenta la ventana de ticks por la rejilla) y enero de 2026 entra en construcción (R2.2). Encargo docs/encargos/trabajo-entrada-enero.md; informe docs/validation/ENTRADA-ENERO.md.
+Ninguna rama abierta. `trabajo/entrada-enero` cerrada en `main` el 2026-10-13 (`stable/F37p-entrada-enero`); R2.2 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-a4e4fa6 · merge de `trabajo/entrada-julio` (tag `stable/F37o-entrada-julio`): julio de 2026 entra en construcción del 1 al 17 (ADR-0078): la guardia lo lee (sus imágenes no), su libro declarado en Europe/Madrid, reparto dev-visto de los 13 laborables, 13 casos dev y el dataset de ticks `eurusd-ticks-2026-07-6e7dc7cd`; v11 a v14 al inventario; la respuesta de FTMO a P-D1 en docs/validation/FTMO-P-D1.md. Sobre `stable/F37n-activar-sesion-04-motor` (79e74b2). Informe docs/validation/ENTRADA-JULIO.md; el registro del cierre, al final de HISTORIA.
+87391b7 · merge de `trabajo/entrada-enero` (tag `stable/F37p-entrada-enero`): `scripts/ticks_spread.py` cuenta la ventana por la rejilla (ADR-0069 §5), con su test del día de desfase; enero de 2026 entra en construcción del 2 al 30 (ADR-0079), al final de la lista: lectura declarada, tramo, reparto dev-visto de los 21 laborables, 21 casos dev y el dataset de ticks `eurusd-ticks-2026-01-1ce59681` (06-14 UTC). Sobre `stable/F37o-entrada-julio` (a4e4fa6). Informe docs/validation/ENTRADA-ENERO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-a4e4fa6 · merge: julio entra en construccion del 1 al 17 (ADR-0078): guardia, libro en Europe/Madrid, reparto dev-visto, 13 casos y ticks; v11-v14 al inventario; FTMO-P-D1 (R2.1) · tag stable/F37o-entrada-julio
+87391b7 · merge: ticks_spread por la rejilla (X) y enero entra en construccion del 2 al 30 (R2.2, ADR-0079) · tag stable/F37p-entrada-enero
 
 ## Tests Currently Passing
 1535 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
