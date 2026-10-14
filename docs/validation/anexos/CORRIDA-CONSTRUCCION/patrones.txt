@@ -1,19 +1,22 @@
 diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt: 292 filas, 104 sesiones con rn003
-mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de mas | P6 donde el trader no opero | T0 pareja
-2026-01 | 13 | 9 | 17 | 14 | 28 | 8 | 1
-2026-04 | 9 | 2 | 8 | 12 | 11 | 16 | 4
-2026-07 | 20 | 6 | 13 | 23 | 9 | 2 | 5
-2026-08 | 6 | 4 | 4 | 26 | 13 | 7 | 2
-total | 48 | 21 | 42 | 75 | 61 | 33 | 12
+mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de mas | P6 donde el trader no opero | P7 entradas repetidas | T0 pareja
+2026-01 | 13 | 9 | 17 | 14 | 28 | 8 | 0 | 1
+2026-04 | 9 | 2 | 8 | 12 | 11 | 16 | 0 | 4
+2026-07 | 20 | 3 | 13 | 23 | 9 | 2 | 3 | 5
+2026-08 | 6 | 4 | 4 | 26 | 13 | 7 | 0 | 2
+total | 48 | 18 | 42 | 75 | 61 | 33 | 3 | 12
 P1 sesgo: 48 filas en 25 sesiones
   P1 sesgo · sesgo alcista: 16
   P1 sesgo · sesgo bajista: 32
-  P2 entrada · Δentrada: 21
+  P2 entrada · Δentrada: 18
   P3 otra zona · otra entrada: 42
   P5 de mas · mismo lado: 47
   P5 de mas · otro lado: 14
   P6 donde el trader no opero · en dia: 12
   P6 donde el trader no opero · en sesion: 21
+  P7 entradas repetidas · Δentrada 0 puntos, bot ya emparejado: 1
+  P7 entradas repetidas · Δentrada 1 puntos, bot ya emparejado: 1
+  P7 entradas repetidas · Δentrada 3 puntos, bot ya emparejado: 1
 filas marcadas posible M (hora perdida): 16
 -- filas
 P2 entrada [Δentrada minima 7 puntos]: trader | 2026-04-01 | 11-15 | compra | 2026-04-01T12:30:20+00:00 | 1.1597 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-04-01T12:30:23.864000+00:00 1.15977 (Δentrada +7 puntos, Δinstante +0 min 3 s); primer hecho que falto: todos los hechos del camino producidos
@@ -117,13 +120,13 @@ P5 de mas [mismo lado]: bot | 2026-07-09 | 11-15 | compra | 2026-07-09T10:59:01.
 P3 otra zona [otra entrada] [posible M (hora perdida 2026-07-10T05Z)]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T05:36:35+00:00 | 1.14382 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +17 puntos, Δinstante +88 min 44 s); primer hecho que falto: todos los hechos del camino producidos
 P3 otra zona [otra entrada] [posible M (hora perdida 2026-07-10T05Z)]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T05:45:20+00:00 | 1.14382 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +17 puntos, Δinstante +79 min 59 s); primer hecho que falto: todos los hechos del camino producidos
 T0 pareja: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T07:10:50+00:00 | 1.14398 | PAREJA bot 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +1 puntos, Δinstante -5 min 30 s)
-P2 entrada [Δentrada minima 3 puntos]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T07:17:40+00:00 | 1.14396 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +3 puntos, Δinstante -12 min 20 s); primer hecho que falto: todos los hechos del camino producidos
+P7 entradas repetidas [Δentrada 3 puntos, bot ya emparejado]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T07:17:40+00:00 | 1.14396 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +3 puntos, Δinstante -12 min 20 s); primer hecho que falto: todos los hechos del camino producidos
 P3 otra zona [otra entrada]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T07:50:15+00:00 | 1.14406 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada -7 puntos, Δinstante -44 min 55 s); primer hecho que falto: todos los hechos del camino producidos
 P3 otra zona [otra entrada]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T08:01:25+00:00 | 1.14378 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +21 puntos, Δinstante -56 min 5 s); primer hecho que falto: todos los hechos del camino producidos
 P3 otra zona [otra entrada]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T08:28:15+00:00 | 1.14342 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +57 puntos, Δinstante -82 min 55 s); primer hecho que falto: todos los hechos del camino producidos
 P3 otra zona [otra entrada]: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T08:42:50+00:00 | 1.14331 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +68 puntos, Δinstante -97 min 30 s); primer hecho que falto: todos los hechos del camino producidos
-P2 entrada [Δentrada minima 1 puntos]: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:55:30+00:00 | 1.14339 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-07-10T10:58:43.421000+00:00 1.14338 (Δentrada -1 puntos, Δinstante +3 min 13 s); primer hecho que falto: todos los hechos del camino producidos
-P2 entrada [Δentrada minima 0 puntos]: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:56:25+00:00 | 1.14338 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-07-10T10:58:43.421000+00:00 1.14338 (Δentrada +0 puntos, Δinstante +2 min 18 s); primer hecho que falto: todos los hechos del camino producidos
+P7 entradas repetidas [Δentrada 1 puntos, bot ya emparejado]: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:55:30+00:00 | 1.14339 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-07-10T10:58:43.421000+00:00 1.14338 (Δentrada -1 puntos, Δinstante +3 min 13 s); primer hecho que falto: todos los hechos del camino producidos
+P7 entradas repetidas [Δentrada 0 puntos, bot ya emparejado]: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:56:25+00:00 | 1.14338 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-07-10T10:58:43.421000+00:00 1.14338 (Δentrada +0 puntos, Δinstante +2 min 18 s); primer hecho que falto: todos los hechos del camino producidos
 T0 pareja: trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:58:40+00:00 | 1.14338 | PAREJA bot 2026-07-10T10:58:43.421000+00:00 1.14338 (Δentrada +0 puntos, Δinstante +0 min 3 s)
 P3 otra zona [otra entrada]: trader | 2026-07-13 | 07-11 | venta | 2026-07-13T05:17:55+00:00 | 1.14066 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-07-13T07:13:34.661000+00:00 1.14076 (Δentrada +10 puntos, Δinstante +115 min 39 s); primer hecho que falto: todos los hechos del camino producidos
 P4 sin orden: trader | 2026-07-13 | 11-15 | compra | 2026-07-13T09:44:05+00:00 | 1.14295 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos

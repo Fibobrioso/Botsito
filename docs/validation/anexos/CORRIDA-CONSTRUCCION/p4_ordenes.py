@@ -27,6 +27,13 @@ REUBICACION = ("RN-006", "RN-011", "RN-015")
 # sesiones sin orden (4.d), que la sesion aplica y el consultor confirma.
 FIRMA_O_CUENTA = {"RN-029", "RN-030", "RN-031", "RN-032"}  # el tope diario, el total, el cierre
 ESTRATEGIA = {"RN-016", "RN-035", "RN-036"}  # cartuchos, ventana, racha
+# los demas gates que prohiben abrir_operacion, con su titulo corto, para que la PARADA lo diga
+TITULOS = {
+    "RN-001": "la ventana operativa y los detenido_por_* (gate maestro)",
+    "RN-005": "lo que se desarrolla en el lado de ruido de la liquidez no es entrada",
+    "RN-033": "con sesgo ambiguo o insuficiente no se opera",
+    "RN-020": "el tope porcentual del trader (RN-020, A-44)",
+}
 POR_SESION = re.compile(
     r"^(\d{4}-\d{2}-\d{2}) (\S+) \| trader \d+ \| bot \d+ \| .* \| disparadas (?P<disp>[^|]*)"
     r"(?: \| bloqueadas (?P<bloq>.*))?$"
@@ -77,7 +84,8 @@ def gate_que_bloqueo(
         return candidatos, "firma o cuenta: M o E segun si la regla esta bien aplicada ese dia"
     if all(g in ESTRATEGIA for g in candidatos):
         return candidatos, "estrategia: R, destino V"
-    return candidatos, "PARADA: bloquea otra cosa (o varias)"
+    nombres = "; ".join(f"{g} ({TITULOS.get(g, 'sin titulo aqui')})" for g in candidatos)
+    return candidatos, f"PARADA: bloquea otra cosa (o varias): {nombres}"
 
 
 def ordenes_por_sesion(ruta: Path) -> dict[tuple[str, str], list[list[str]]]:
@@ -120,8 +128,11 @@ def main(ruta: Path) -> int:
     filas, sesgo = leer(ruta)
     ordenes = ordenes_por_sesion(ruta)
     bloqueos = bloqueos_por_sesion(ruta)
-    spec = Path(__file__).resolve().parents[3] / "knowledge" / "spec" / "strategy_spec.yaml"
-    prohiben = reglas_que_prohiben(spec) if spec.exists() else {}
+    # docs/validation/anexos/CORRIDA-CONSTRUCCION/p4_ordenes.py -> la raiz es parents[4]
+    spec = Path(__file__).resolve().parents[4] / "knowledge" / "spec" / "strategy_spec.yaml"
+    if not spec.exists():
+        raise SystemExit(f"no encuentro la spec en {spec}: el cruce de gates no se puede hacer")
+    prohiben = reglas_que_prohiben(spec)
     p4 = [f for p, _, _, f in clasificar(filas, sesgo) if p == "P4 sin orden"]
     sesiones = sorted({tuple(f.split(" | ")[1:3]) for f in p4})
     print(f"{ruta.name}: {len(p4)} filas P4 en {len(sesiones)} sesiones")

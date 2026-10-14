@@ -1070,7 +1070,23 @@ Copiada tal cual (también al final de `docs/encargos/trabajo-corrida-construcci
   campo `disparadas`) con las que `prohibe` ese efecto en la spec, y eso lo hace `p4_ordenes.py`
   (`reglas_que_prohiben`, `gate_que_bloqueo`). Guardar el autor exigiría tocar `interprete.py`
   (protegido): no se hace; si el cruce diera más de un candidato, lo dice y es PARADA.
-- Las corridas repetidas sobre este commit: PENDIENTE_RERUN2
+- **Las corridas repetidas sobre este commit (eab1fc3), los mismos tres comandos y el cuarto:**
+  1. `arrastrada`: `TIEMPO: 402.7 s; MEMORIA: pico del proceso de 623.2 MiB`.
+  2. `diaria`: `TIEMPO: 357.2 s; MEMORIA: pico del proceso de 632.9 MiB`.
+  3. `a35-inicio`: `TIEMPO: 318.1 s; MEMORIA: pico del proceso de 631.9 MiB`.
+  4. La repetición de la 2 fuera del repo: `TIEMPO: 341.0 s; MEMORIA: pico del proceso de 632.8
+     MiB`; `diff` vacío con la salida de la 2, mismo blob `8ec5ca3836a000a7c40dc09e2abaf2c010bbfc33`;
+     la copia se borró después.
+  **Las cifras de parejas, cobertura y precisión no cambian** (1/198 y 1/38; 12/198 y 12/94 en la
+  2 y la 3; máximo diario 32 en la 1), ni el resto del informe: lo único nuevo es el campo
+  `bloqueadas` de «Por sesion». Sus valores, en las 104 sesiones con operaciones del trader de la
+  corrida 2: `RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion` en 98 y `ninguna` en 6
+  (y lo mismo, 98 y 6, en la 1). Es decir: en casi todas las sesiones hubo algún cierre de M1 en
+  que RN-015 quiso colocar y un gate lo prohibió, también en las sesiones donde después sí
+  colocó; el campo es por sesión, no por cierre. Los anexos de los guiones se regeneraron sobre
+  estas salidas (`patrones.txt`, `p4_ordenes.txt`, `horas_perdidas.txt`, `sesgo_p1.txt`,
+  `sesgo_2x2.txt`, `comparar_corridas.txt`); solo cambia lo que lee el campo nuevo
+  (`p4_ordenes.txt`, §4.6). La 3 frente a la 2: sigue sin cambiar ninguna operación ni pareja.
 
 ### 4.2 Punto 2: P7 en `patrones.py`, y el recuento
 
@@ -1204,13 +1220,40 @@ ticks perdida llevan además «posible M» (`horas_perdidas.txt`), sin cambiar d
 - La comprobación del 0 de la caja en el visor (P2), en tres días que el consultor elegirá tras la
   PARADA 4.
 
-### 4.6 Las 17 sesiones sin ninguna orden colocada (PARADA 4)
+### 4.6 Las 17 sesiones sin ninguna orden colocada, con `bloqueadas` (PARADA 4)
 
-PENDIENTE_17
+Con la salida repetida de §4.1, `p4_ordenes.py` cruza para cada una el campo `bloqueadas` con las
+reglas que dispararon en la sesión y las que `prohibe`n ese efecto en la spec
+(`anexos/CORRIDA-CONSTRUCCION/p4_ordenes.txt`, al final). Lo que sale:
+
+- **15 sesiones con `RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion`**: el motor
+  dimensionó (RN-011) y RN-015 no pudo colocar porque `abrir_operacion` estaba prohibido en ese
+  cierre. Los gates que dispararon en la sesión y prohíben `abrir_operacion` son, en las 15,
+  **RN-005** («lo que se desarrolla en el lado de ruido de la liquidez de M15 no es entrada») y
+  **RN-009** («más zonas de control de las admitidas invalidan el esquema»), y en 7 de ellas
+  -todas sesiones 11-15:
+  2026-04-27, 2026-07-01, 2026-07-14, 2026-07-16, 2026-08-19, 2026-08-21 y 2026-08-27- también
+  **RN-001** (el gate maestro: dispara fuera de la ventana -`ninguno_de en_ventana`, su forma- o
+  con un `detenido_por_*`; con `sin_tope`, sin cartuchos agotados y 0 `detenido_por_*` en las 104
+  sesiones, lo que dispara en una sesión 11-15 es el minuto de `ventana_fin`). Las otras 8 son
+  2026-01-30 07-11, 2026-04-17 07-11, 2026-07-09 07-11, 2026-07-14 07-11, 2026-08-03 07-11,
+  2026-08-11 07-11, 2026-08-17 07-11 y 2026-08-25 07-11. **Por la regla de 4.d esto es PARADA**:
+  RN-005 y RN-009 son reglas de la estrategia pero no están entre las que el consultor enumeró
+  (cartuchos, racha, ventana), y la traza no dice cuál de las dos prohibió en el cierre en que
+  RN-015 pidió colocar (el campo es por sesión, y el autor de la prohibición no se guarda:
+  §4.1). Propuesta: R con destino V si el consultor da RN-005 y RN-009 por «estrategia» (la
+  pregunta: ¿entra el trader cuando la zona se desarrolla en el lado de ruido, o cuando hay más de
+  una zona de control?), y E si quiere comprobar en el visor que RN-005 o RN-009 están bien
+  aplicadas en esos días.
+- **2 sesiones sin ningún bloqueo** y con `orden_dimensionada[productoras sin cumplirse]`:
+  2026-01-08 11-15 y 2026-08-14 07-11. No hubo orden porque RN-011 no dimensionó (sus productoras
+  no se cumplieron): no se produjo un hecho del camino, y la regla de 4.d dice «según cuál»: la
+  clasifica el consultor en la PARADA 4 (candidata R: qué hace que no haya entrada tras la toma).
 
 ## Estado
 
 EN CURSO. Fase 0, fase 1 y fase 2 hechas y respondidas; la clasificación definitiva del consultor
-(PARADA 3) está en §4.5; las corridas repetidas con `bloqueadas` y las 17 sesiones de §4.6 en curso
-para la PARADA 4. Pendientes después: la NOTA de ADR-0070 y el runbook (fase 3), el revisor y las
-líneas del cierre.
+(PARADA 3) está en §4.5; las corridas repetidas con `bloqueadas` (§4.1) y las 17 sesiones (§4.6)
+entregadas: **PARADA 4, esperando al consultor** (las 15 sesiones bloqueadas por RN-005 y RN-009,
+las 2 sin orden dimensionada y los tres rechazos por `precio_invalido`). Pendientes después: la
+NOTA de ADR-0070 y el runbook (fase 3), el revisor y las líneas del cierre.
