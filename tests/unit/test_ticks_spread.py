@@ -15,7 +15,7 @@ import shutil
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
-from types import ModuleType
+from types import ModuleType, SimpleNamespace
 
 import pytest
 
@@ -132,3 +132,44 @@ def test_un_mes_de_construccion_sin_ticks_se_niega_nombrandolo(
     err = capsys.readouterr().err
     assert "2026-04 es de construccion y no tiene ticks" in err
     assert not salida.exists()
+
+
+def test_el_guion_entero_cuenta_el_dia_de_desfase_por_la_rejilla(
+    m: ModuleType, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """`main` de punta a punta con tres ticks sinteticos del 2026-10-27: protege el RELOJ que elige
+    el guion, no solo `clave_de_hora` (hallazgo b2 del revisor). Si `main` volviera a la pared de
+    `huso_operativa`, el tick de las 05:30Z caeria fuera, el de las 12:30Z en la hora 13 y el de las
+    13:30Z en la 14, y esto cae. Los manifiestos son ficheros vacios y la carga de ticks se
+    sustituye: no se lee ningun dato."""
+    import botsito.data.ticks as ticks
+
+    for rel in ("knowledge/cases/criterio_fidelidad.yaml", "knowledge/spec/parametros.yaml"):
+        (tmp_path / rel).parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(RAIZ / rel, tmp_path / rel)
+    carpeta = tmp_path / ticks.DIRECTORIO_MANIFIESTOS_TICKS
+    carpeta.mkdir(parents=True)
+    for mes in ("2026-04", "2026-07", "2026-08", "2026-01"):
+        (carpeta / f"eurusd-ticks-{mes}-sintetico.yaml").write_text("", encoding="utf-8")
+    dia = datetime(2026, 10, 27, tzinfo=UTC)
+    del_dia = [
+        SimpleNamespace(instante=_ms(dia.replace(hour=h, minute=30)), spread=s)
+        for h, s in ((5, 9), (12, 2), (13, 1))
+    ]
+
+    def cargar(ruta: Path, _datos: Path) -> SimpleNamespace:
+        uno = ruta.stem == "eurusd-ticks-2026-04-sintetico"
+        return SimpleNamespace(origen=ruta.stem, ticks=del_dia if uno else [])
+
+    monkeypatch.setattr(ticks, "cargar_manifiesto_ticks", lambda ruta: ruta)
+    monkeypatch.setattr(ticks, "cargar_ticks", cargar)
+    salida = tmp_path / "salida.txt"
+    assert m.main(["--salida", str(salida)], raiz=tmp_path) == 0
+    lineas = salida.read_text(encoding="utf-8").splitlines()
+    del_mes = [x for x in lineas if x.startswith("2026-04 ")]
+    assert del_mes == [
+        "2026-04 07:00: n 1, media 9.00, p50 9, p90 9, p99 9, max 9",
+        "2026-04 14:00: n 1, media 2.00, p50 2, p90 2, p99 2, max 2",
+        "2026-04 fuera: n 1, media 1.00, p50 1, p90 1, p99 1, max 1",
+    ]
+    assert "(rejilla_h4, ADR-0069 §5)" in lineas[0]

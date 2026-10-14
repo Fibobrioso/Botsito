@@ -16,7 +16,7 @@ a4e4fa6 · merge de `trabajo/entrada-julio` (tag `stable/F37o-entrada-julio`): j
 a4e4fa6 · merge: julio entra en construccion del 1 al 17 (ADR-0078): guardia, libro en Europe/Madrid, reparto dev-visto, 13 casos y ticks; v11-v14 al inventario; FTMO-P-D1 (R2.1) · tag stable/F37o-entrada-julio
 
 ## Tests Currently Passing
-1534 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1535 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

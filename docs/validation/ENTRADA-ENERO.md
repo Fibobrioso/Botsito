@@ -392,7 +392,8 @@ Copiada tal cual:
 - La cabecera de la salida dice «horas nominales [07, 15) del reloj de las sesiones (rejilla_h4,
   ADR-0069 §5)» en lugar de «horas locales … en Europe/Madrid».
 
-**El test** (`tests/unit/test_ticks_spread.py`, 6 casos, con el registro real):
+**El test** (`tests/unit/test_ticks_spread.py`, con el registro real; 6 casos en 7bc7fa3 y 7 desde
+el séptimo que añadió la entrega por el hallazgo b2 del revisor, §5):
 - **Rompe a propósito con un día de desfase, el 2026-10-27**: hora a hora de 04:30Z a 14:30Z, la
   rejilla da `fuera, 07, 08, … 14, fuera, fuera` y la pared de `huso_operativa` (el método de
   antes, reproducido con `RelojSesiones.de_pared`) da `fuera, fuera, 07, … 14, fuera`: la hora
@@ -410,6 +411,31 @@ Copiada tal cual:
 guiones, el de `main` copiado sin cambiar una línea, sobre los ticks de construcción de hoy (abril,
 julio y agosto, sin días de desfase): 51 líneas cada uno y **una sola distinta, la cabecera
 VENTANA**; todas las cifras iguales. Contar por la rejilla no cambia nada de lo ya medido.
+
+**Rehecha en clones desechables tras el revisor (a1).** Ese anexo cargaba una COPIA SUELTA del
+guion de `main` en la carpeta de trabajo y le cambiaba la global `RAIZ`. Así, el `sys.path` del
+guion de `main` cargaba el `src/` de la rama. Ese método no es el que pide «Ensayos aislados»
+(`CLAUDE.md`, punto 1). Las cifras valían porque la rama no toca `src/`, pero el método no era el
+de la regla. No consta en qué carpeta escribió sus dos salidas: fue la carpeta de trabajo de la
+sesión, fuera del repo. Rehecha con la skill `comparar-con-main`:
+- clones `git worktree add --detach C:/cm/main 6fb483b` y `C:/cm/rama 7bc7fa3` (el commit de la
+  fase 1, con la construcción de entonces: abril, julio y agosto);
+- cada uno con su `config/settings.local.toml` apuntando al `data/` real, que solo se lee:
+  `cargar_ticks`, `data/ticks.py:607` en adelante, no escribe; las escrituras de ese módulo son de
+  la descarga;
+- en cada clon, `uv run python scripts/ticks_spread.py --salida <clon>/salida_<lado>.txt`, exit 0
+  en los dos.
+
+| Fichero | sha256 | Líneas |
+|---|---|---|
+| `regresion_clon_main.txt` (main) | `2a97b9f1…a694ec` | 51 |
+| `regresion_clon_7bc7fa3.txt` (rama) | `1d34a181…6712ec` | 51 |
+| las dos sin la línea 1 (`tail -n +2`) | `942368bf…29725b` en las dos | 50 |
+
+`diff`: una sola línea, la 1 (VENTANA, «horas locales [07, 15) en Europe/Madrid» frente a «horas
+nominales [07, 15) del reloj de las sesiones (rejilla_h4, ADR-0069 §5)»). Es lo mismo que dio el
+anexo de la copia suelta. Después, `git worktree remove --force` de los dos clones (por el `.venv`
+sin seguir que deja `uv run`), `git worktree prune`, y `C:\cm` vacío.
 
 **Un dato, sin tocar nada** (punto 3 y «Qué no cambia»): con julio en la cuenta, el p90 de la hora
 11 sale 4 (`regresion_ticks_spread.txt`, línea 98); `llenado.yaml` dice 5 porque se midió solo sobre
@@ -528,6 +554,111 @@ Iguales de 07 a 14. Solo cambia `fuera` (5 frente a los 4 de `fuera_de_ventana`)
 enero. **No he tocado `llenado.yaml`** (lo dice el encargo y lo declara ADR-0079). Si el spread
 supuesto se vuelve a medir sobre los cuatro meses, es una decisión con su ADR, no de esta rama.
 
+## 5. El test del día de desfase, con el código de `main`
+
+Con la skill `comparar-con-main` («Para probar un test con el codigo de main»): clon desechable
+`git worktree add --detach C:/cm/main main` (6fb483b), con `tests/unit/test_ticks_spread.py` de la
+rama copiado dentro, y `uv run pytest tests/unit/test_ticks_spread.py -q -p no:cacheprovider` allí:
+
+```
+.FFFFF                                                                   [100%]
+E       AttributeError: module 'ticks_spread' has no attribute 'clave_de_hora'
+tests\unit\test_ticks_spread.py:63: AttributeError
+>       assert m.clave_de_hora(reloj_de_las_sesiones(registro), inicio, fin)(tick) == "07"
+E       AttributeError: module 'ticks_spread' has no attribute 'clave_de_hora'
+...
+>       assert m.main(["--salida", str(salida)], raiz=tmp_path) == 2
+E       TypeError: main() got an unexpected keyword argument 'raiz'
+FAILED tests/unit/test_ticks_spread.py::test_un_dia_de_desfase_rompe_la_hora_de_pared_y_no_la_rejilla
+FAILED tests/unit/test_ticks_spread.py::test_la_primera_hora_de_la_ventana_del_dia_de_desfase
+FAILED tests/unit/test_ticks_spread.py::test_sin_desfase_la_rejilla_y_la_pared_dan_lo_mismo_minuto_a_minuto[invierno]
+FAILED tests/unit/test_ticks_spread.py::test_sin_desfase_la_rejilla_y_la_pared_dan_lo_mismo_minuto_a_minuto[verano]
+FAILED tests/unit/test_ticks_spread.py::test_un_mes_de_construccion_sin_ticks_se_niega_nombrandolo
+```
+
+En la rama, en 490c820: `......` (6 pasan). Con `main` solo pasa el de guarda del registro.
+(Con los seis de entonces; el séptimo, abajo.)
+
+**Lo que esto demuestra y lo que no.** Con el código de `main` el test falla por ESTRUCTURA: el
+guion de `main` no tiene clave de hora ni acepta la raíz. No llega a comparar horas. La prueba de
+que el método de `main` corre la hora un día de desfase está DENTRO del test:
+`RelojSesiones.de_pared(huso_operativa)` reproduce `astimezone(Europe/Madrid)`, que es lo que
+hacía `main` (`scripts/ticks_spread.py` de 6fb483b), y el test afirma que el 2026-10-27 da
+`fuera, fuera, 07, …` donde la rejilla da `fuera, 07, …`, y que el tick de las 05:30Z cae FUERA por
+la pared y en la hora 07 por la rejilla. Es la medida de la fase 0
+(`anexos/ENTRADA-ENERO/ventana_rejilla.txt`).
+
+**Lo que faltaba, tras el revisor (b2).** Esos tests protegían `clave_de_hora`, no el reloj que
+elige `main()`: si `main` volviera a la pared, los seis seguirían en verde. Por eso hay un séptimo,
+`test_el_guion_entero_cuenta_el_dia_de_desfase_por_la_rejilla`, que corre `main` de punta a punta
+en un repo temporal:
+- el criterio y el registro reales, cuatro manifiestos vacíos (uno por mes de construcción), y
+  `cargar_manifiesto_ticks` y `cargar_ticks` sustituidos con `monkeypatch`, así que no lee ningún
+  dato;
+- tres ticks sintéticos del 2026-10-27, a las 05:30Z, 12:30Z y 13:30Z, con spread 9, 2 y 1;
+- exige las líneas de abril `07:00` (n 1, 9), `14:00` (n 1, 2) y `fuera` (n 1, 1), y la cabecera
+  `rejilla_h4`.
+
+**Comprobado con un mutante**, en un clon desechable de 490c820 (`C:/cm/mutante`), con el test
+nuevo copiado dentro y la línea 115 del guion cambiada a
+`RelojSesiones.de_pared(registro.texto("huso_operativa"))` con `sed`:
+
+```
+......F                                                                  [100%]
+E         At index 0 diff: '2026-04 13:00: n 1, media 2.00, p50 2, p90 2, p99 2, max 2' != '2026-04 07:00: n 1, media 9.00, p50 9, p90 9, p99 9, max 9'
+FAILED tests/unit/test_ticks_spread.py::test_el_guion_entero_cuenta_el_dia_de_desfase_por_la_rejilla
+```
+
+Con la pared, el tick de las 12:30Z cae en la hora 13 y el de las 05:30Z fuera: el test lo caza.
+En la rama, `.......` (7 pasan). El clon se quitó igual que los otros (`--force` por el `.venv`;
+`prune`).
+
+El clon se quitó con `git worktree remove --force`, porque `uv run` dejó dentro su `.venv` sin
+seguir (la skill pide decirlo), y después `git worktree prune`. Al terminar, `git status --short`
+vacío y `git branch --list` = `main` y `trabajo/entrada-enero`, como antes. No se creó ninguna rama
+ni ningún tag. (`git worktree list` enseña además un worktree desacoplado de otra sesión,
+`.../2ea2c3d2-.../scratchpad/wt-ci` en e7df30b: no es de esta rama y no lo he tocado.)
+
+## 6. Desviaciones declaradas
+
+- **El segundo `download-ticks` lleva `--pausa 2`**, que el comando del encargo no trae. Es el
+  valor por defecto (`cli.py:3281`), así que no cambia nada: lo puse explícito como en el comando de
+  julio. La primera pasada usó el comando sin él.
+- **Una primera pasada de ticks descartada** (31 horas perdidas), como piden el encargo y los
+  precedentes (§4).
+- **`ticks_spread.py` hace dos cosas además de la rejilla**: niega con exit 2 un mes de construcción
+  sin manifiesto de ticks, sin escribir la salida (el encargo pide que «exija sus ticks»; el guion de
+  `main` salía con un `TicksError` sin capturar, `data/ticks.py:573`, al llegar al mes que faltaba), y `main` acepta la raíz del repo para que el test lo ejerza (§1).
+- **`test_mes_del_material.py` se tocó en la fase 2 y no en la 3**, como pedía la respuesta del
+  consultor (punto 1), y `test_huecos_motor` corre el sesgo sobre enero desde el commit de la fase
+  3, no desde la ingesta (matiz al punto 4, §3; ADR-0079 lo dice).
+- **El contrato se amplió en el commit de la fase 1** con `docs/adr/0069-*.md`, `docs/adr/0051-*.md`
+  y `docs/runbooks/VISOR-DIAS.md` (punto 5).
+- **Los guiones de medida de la fase 0 viven en `anexos/ENTRADA-ENERO/`** con su salida, como en
+  julio. Ninguno escribe en el repo.
+- **La regresión de la fase 1 se hizo primero con una copia suelta del guion de `main`**, no en un
+  clon desechable. No lo declaré entonces; lo vio el revisor (a1). Rehecha en clones en la
+  entrega, con el mismo resultado (§1). El anexo de la copia suelta se queda como estaba, porque
+  es lo que se hizo.
+- **La entrega añade un test y dos anexos de comprobación** por los hallazgos del revisor: el
+  séptimo test (b2, §5) y `simular_cierre.py` con su salida (b1, §8.2).
+- **La guardia de Claude Code me bloqueó varias veces** por encadenar en un solo comando `git add`,
+  `cat` o `git status` con `uv run` o `make`. No eran bloqueos ilegítimos: la regla es de
+  `trabajo/guion-mismo-comando`. Cada vez repetí el comando partido en llamadas separadas, como la
+  guardia indica. Ninguna medida dejó de hacerse por ella.
+
+## 7. Exposiciones del día, fases 1 a 4
+
+Las de la fase 0 están en su apartado. En las fases 1 a 4:
+- **Fase 2.b** (04e9d5b), declarada hoy y antes de ingerir: la lectura completa del libro de enero
+  por `casos ingerir` (`HOLDOUT-EXPOSICIONES.md`, tercera fila del 2026-10-13). La lectura se
+  hizo en la fase 4: 58 filas, 4 columnas, solo días dev (§4).
+- **Fase 4**: además de esa lectura, los 21 casos que escribe la ingesta (de ellos solo conté las
+  operaciones, `^- direccion:`) y los ticks de enero, que son datos de mercado de días dev y no
+  etiquetas. Ninguna imagen, ningún fotograma, ninguna transcripción, ningún mes reservado,
+  ninguna partición. `casos check` lo confirma: «ninguno esta reservado».
+- **Fases 1 y 3**: ticks de abril, julio y agosto (construcción) y el registro; nada protegido.
+
 ## 8. Propuestas para la orden de cierre
 
 Textos exactos. La hoja de ruta (`docs/plan/`) y la Next Action los edita el cierre, no la rama
@@ -553,18 +684,27 @@ entrada de la Next Action depende de una letra muerta).
 - **R2.2 HECHA sin el heredado 34** (`:77`): la línea de Refs pasa de
   `- **Refs:** NA:X · HER:34 · ID:ADR-0069 · ID:ADR-0051` a
   `- **Refs:** NA:X · ID:ADR-0069 · ID:ADR-0051 · ID:ADR-0079`
-  y se añade al final de la entrada:
+  en el «Qué es» (`:80`), `(carril de Aleks, NA:A).` pasa a `(carril de Aleks, R7.1).`,
+  y se añade al final de la entrada, tras `- **Hecho cuando:**`:
   `- **Estado:** HECHA (`trabajo/entrada-enero`, `stable/F37p-entrada-enero`; ENTRADA-ENERO.md,
   ADR-0079): la ventana de ticks sale de la rejilla, con su test; enero es construcción del 2 al
-  30, con sus ticks. Las partes b y c del heredado 34 siguen en el carril de Aleks (NA:A).`
-  Con eso, `HER:34` sigue en el `Refs:` de la demo (regla a) y ya no en una entrada HECHA (regla
-  b). OJO: la frase del «Qué es» de R2.2 que nombra «(carril de Aleks, NA:A)» sigue siendo válida,
-  porque A está viva.
+  30, con sus ticks. Las partes b y c del heredado 34 siguen en R7.1.`
+  Con eso, `HER:34` y `NA:A` siguen en el `Refs:` de la demo (R7.1, `:208`; regla a) y ya no en
+  ningún punto del bloque de una entrada HECHA (regla b mira el bloque ENTERO,
+  `test_hoja_de_ruta.py:141`). **Corregido tras el revisor (b1):** la primera versión de este
+  texto dejaba `NA:A` en el «Qué es» y en el `Estado`, y decía que eso valía «porque A está viva».
+  Es al revés: por estar viva, la regla b lo niega.
 - **R5.4 sin NA:X** (`:172`): `- **Depende de:** R2.2 (NA:X) y R2.1 (HECHA) y R1.1.` pasa a
   `- **Depende de:** R2.2 (HECHA) y R2.1 (HECHA) y R1.1.` (si no, la regla b la marca: «NA:X no es
   una letra viva»).
 - El tag que cito, `stable/F37p-entrada-enero`, es el siguiente de la serie (el último es
   F37o); lo fija el cierre.
+- **Comprobado en memoria, sin escribir nada** (`anexos/ENTRADA-ENERO/simular_cierre.py`, que
+  aplica §8.1 y §8.2 como sustituciones exactas sobre los ficheros de la rama, añade a HISTORIA
+  un registro `# Next Action HECHA · X ·` y corre las funciones del test):
+  `uv run python docs/validation/anexos/ENTRADA-ENERO/simular_cierre.py .` →
+  `a: []`, `b: []`, `c: []`, `PROJECT_STATE simulado: 23171 bytes`
+  (`anexos/ENTRADA-ENERO/simular_cierre.txt`).
 
 **8.3 Technical Debt**, dos líneas nuevas:
 - «La condición 2 de ADR-0042 §2 (la lectura COMPLETA del libro, declarada) se comprueba buscando
@@ -586,6 +726,267 @@ cada ejecución, el script 1.1 y qué mide cada una, y remitir el resto a
 `docs/runbooks/DEMO-FTMO.md`, que ya lo dice entero. (La línea 7 de la hoja de ruta cita `NA:X`
 como ejemplo, fuera de las entradas: con X registrada HECHA en HISTORIA, la regla b la admite.)
 
+## 9. El encargo, punto por punto
+
+Los puntos de la respuesta del consultor (0 a 7 y los dos «Además») van en «Cómo se aplica, punto
+por punto», tras la respuesta: los diez están hechos.
+
+| # | Requisito del encargo | Estado | Evidencia |
+|---|---|---|---|
+| 1 | BASE: rama desde main 6fb483b (tag F37o, merge a4e4fa6), CI 38463152743, ninguna otra rama; skill abrir-rama | Hecho | 5be95f0; «Base, comprobada con git al abrir» |
+| 2 | No cambian el motor, la spec ni los umbrales; de `criterio_fidelidad.yaml`, solo `construccion` | Hecho | `git diff --stat main...HEAD`: nada en `src/botsito/engine/`, `src/botsito/domain/` ni `knowledge/spec/`; el diff de `criterio_fidelidad.yaml` es la lista y su comentario |
+| 3 | `llenado.yaml` no cambia, y se declara | Hecho | fuera del diff; ADR-0079 (Impacto) y §4 |
+| 4 | Ni diciembre ni ningún mes reservado | Hecho | ningún manifiesto ni caso de 2025-12; `casos_reservados` 0 en enero (§0.a, §2.a); `casos check` OK |
+| 5 | No se corre el arnés ni se mide cobertura ni precisión | Hecho | ningún `motor arnes` en la rama. Los tests de `make check` que ya corrían el arnés siguen sobre `construccion[0]` = abril (punto 0); `test_huecos_motor` lee velas de enero (punto 4) |
+| 6 | Decisión 1: las tres medidas en la fase 0 | Hecho | §0.a |
+| 7 | Decisión 2: diciembre no se baja; días afectados e INSUFICIENTE medidos | Hecho | §0.f, `anexos/ENTRADA-ENERO/sesgo_enero.txt`; ADR-0079, decisión 5 |
+| 8 | Decisión 3: ADR-0079, el siguiente número libre | Hecho | §0; e803b39 |
+| 9 | Fase 0.a: base y medidas por recuento, sin ids | Hecho | 72c7848, §0.a |
+| 10 | Fase 0.b: la fila del 2026-10-06 y el falso positivo de `visto.py` | Hecho | §0.b, `falso_positivo_visto.txt` |
+| 11 | Fase 0.c: `ticks_spread.py`, `reloj_de_las_sesiones`, sin test; `simulador_config.py` | Hecho | §0.c, `spread_desfase.txt` |
+| 12 | Fase 0.d: tests y textos que rompen | Hecho | §0.d |
+| 13 | Fase 0.e: julio 05-13 frente a enero 06-14, medido con el reloj | Hecho | §0.e, `ventana_rejilla.txt` |
+| 14 | Fase 0.f: velas M1 de enero e INSUFICIENTE sin diciembre | Hecho | §0.f: 0 INSUFICIENTE |
+| 15 | Fase 0.g: PARADA, columna de fechas de Aleks copiada y declarada | Hecho | §0.g; `HOLDOUT-EXPOSICIONES.md` (segunda fila del 2026-10-13) |
+| 16 | Fase 1: la ventana sale de `reloj_de_las_sesiones` | Hecho | 7bc7fa3, §1 |
+| 17 | Fase 1: recorre toda la construcción, julio y enero incluidos, y exige sus ticks | Hecho | §1; la corrida de §4 lee los cuatro meses |
+| 18 | Fase 1: test que rompe con un día de desfase sintético | Hecho (completado en la entrega) | `test_un_dia_de_desfase_rompe_la_hora_de_pared_y_no_la_rejilla` y el de la primera hora, 2026-10-27; tras el revisor (b2), `test_el_guion_entero_cuenta_el_dia_de_desfase_por_la_rejilla`, que corre `main` y cae con el mutante de pared (§5) |
+| 19 | Fase 1: test de que sin desfase dan lo mismo | Hecho | `test_sin_desfase_…[invierno]` y `[verano]` |
+| 20 | Fase 1: `simulador_config.py` no se toca; Technical Debt | Hecho | fuera del diff; §8.3 |
+| 21 | Fase 2.a: `casos_reservados` y `casos_ocultos` 0 en el commit en que se lee | Hecho | §2.a (sobre 7bc7fa3) |
+| 22 | Fase 2.b: fila de exposición hoy y ANTES de ingerir | Hecho | fila en 04e9d5b; ingesta en 490c820 |
+| 23 | Fase 2.c: tramo 2026-01-02 a 2026-01-30 con el `material_sha256` | Hecho | 04e9d5b, §2.c |
+| 24 | Fase 2.d: `casos visto` y commit del reparto y su ancla antes de ingerir | Hecho | 04e9d5b, §2.d |
+| 25 | Fase 2: `Fuente: ADR-0042` (o 0039/0072) | Hecho | 04e9d5b: `Fuente: ADR-0042, ADR-0072` |
+| 26 | Fase 3: ADR-0079 en su propio commit, con tests, textos vivos e índice; `Fuente: ADR-0079` | Hecho de otra forma | e803b39. `test_mes_del_material` fue a la fase 2 (punto 1 de la respuesta); se añadieron las NOTAS de ADR-0069 y ADR-0051 y `VISOR-DIAS.md` (punto 5) |
+| 27 | Fase 3: el ADR dice la decisión 2, `llenado.yaml` y lo que cambió la fase 1 | Hecho | ADR-0079, decisión 5 e Impacto |
+| 28 | Fase 4: `casos ingerir` y `casos check` | Hecho | 490c820, §4 |
+| 29 | Fase 4: ticks de invierno, `check-ticks --hashes`, horas perdidas, repetir si son muchas | Hecho | §4: 5 de 189 en la segunda pasada; la primera, 31, descartada |
+| 30 | Informe: fase 0, PARADA y respuesta literal, evidencia, desviaciones y exposiciones | Hecho | §0, respuesta, §1-§7 |
+| 31 | Propuestas de cierre: X y R2.2 HECHAS, F, I, Technical Debt, tamaño de PS | Hecho (corregido en la entrega) | §8; el texto de R2.2 se corrigió por el hallazgo b1 y pasa las reglas a, b y c en memoria (`simular_cierre.txt`) |
+| 32 | `make check` con sello antes de cada commit; nunca `--no-verify` | Hecho | los seis commits pasaron por el hook `pre-commit`, que exige el sello del árbol estadiado |
+| 33 | Makefile o push negado: parar y dar el comando con «!» | No aplica | el Makefile no cambia; no hay push (§10) |
+| 34 | `fix/` solo si se toca `.claude/` o código de plataforma | No aplica | §10 |
+| 35 | Skill entregar-rama, revisor con su informe pegado y foco en orden de commits, fila antes de ingerir y test de desfase | Hecho | §11: el informe del revisor tal cual y lo que se hizo con cada hallazgo |
+| 36 | Terminar con «Rama lista para revisión, NO cerrada» | Hecho | Estado, en el último commit |
+
+`uv run python scripts/contrato_rama.py`: `CONTRATO: 57 ficheros dentro del contrato de
+trabajo/entrada-enero (riesgo alto, artefacto docs/validation/ENTRADA-ENERO.md, tramo 'R2', 6
+comprobaciones para el revisor)`. `PROJECT_STATE.md`: 23.406 bytes (tope 25.000; §8.4).
+
+## 10. CI de Linux
+
+Sin CI de `fix/`: la rama no toca `.claude/` ni código que dependa de la plataforma. Así lo pide
+el encargo («No hace falta fix/ salvo que toques .claude/ o código que dependa de la plataforma»).
+Lo único cercano es `zoneinfo`: el test nuevo lee husos (Europe/Madrid, America/New_York) a través
+de `cases/relojes.py`, que no cambia y que la CI de `main` ya ejerce (`test_cases_rejilla.py`,
+`test_sesiones_rejilla_h4.py` y `test_dos_relojes.py`; run 38463152743 de 6fb483b, en verde, la
+base de la rama). El test de la ruta temporal usa `tmp_path` de pytest.
+Si el consultor quiere la CI de Linux de todos modos, el comando es
+`git push origin trabajo/entrada-enero:refs/heads/fix/entrada-enero`.
+
+## 11. El revisor
+
+Lanzado con el informe terminado (salvo esta sección), sobre los seis commits y la versión en disco
+del informe, con el foco del encargo. Su informe, tal cual (no cita ningún tramo no citable: 0
+retiradas):
+
+### Informe del revisor · trabajo/entrada-enero · 2026-10-13
+
+Revisado: los seis commits sobre `main` 6fb483b (5be95f0, 72c7848, 7bc7fa3, 04e9d5b, e803b39, 490c820) y la versión SIN commitear de `docs/validation/ENTRADA-ENERO.md` que está en disco (724 líneas; `git diff --stat`: +133 −1).
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 0 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **La regresión de la fase 1 se hizo con una copia suelta del guion de `main`, no en un clon desechable.** El informe no lo declara en §6. `ticks_spread.py` escribe ficheros (`--salida`), y la regla «Ensayos aislados», punto 1, dice que un script que escribe se ensaya en un clon `git worktree` y «no con copias sueltas de ficheros». La skill `comparar-con-main` es la vía para una regresión contra `main`, y la rama sí la usó en §5. Hay además un efecto lateral: el anexo cambia `viejo.RAIZ = raiz`, así que el `sys.path.insert(0, RAIZ/"src")` del guion de `main` cargó el `src/` de la RAMA, no el de `main`. La comparación solo vale porque la rama no toca `src/`. No puedo enseñar dónde escribió (la carpeta de salida no consta). Por eso lo pongo en importa y no en bloquea, aunque una lectura literal de la regla daría bloquea. | `docs/validation/anexos/ENTRADA-ENERO/regresion_ticks_spread.py:3-4` («copiado con `git show main:scripts/ticks_spread.py` a la carpeta de trabajo») y `:28-29` (`viejo = cargar(...)`, `viejo.RAIZ = raiz`). `CLAUDE.md`, «Ensayos aislados», punto 1. `git diff --name-status main...HEAD -- src` sale vacío, y por eso las cifras siguen valiendo. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` → `CONTRATO: 57 ficheros dentro del contrato de trabajo/entrada-enero (riesgo alto, artefacto docs/validation/ENTRADA-ENERO.md, tramo 'R2', 6 comprobaciones para el revisor)`, exit 0.
+- **Comprobaciones del contrato que no escriben:**
+  - `uv run pytest tests/unit/test_ticks_spread.py -q -p no:cacheprovider` → `......`, exit 0.
+  - `uv run botsito casos check` → `OK: los casos de la biblioteca tienen la forma declarada y ninguno esta reservado`.
+  - `uv run botsito data check-ticks --dataset eurusd-ticks-2026-01-1ce59681 --hashes` → `OK: ... coincide con el disco (hashes)`.
+  - `uv run botsito knowledge validate` (a la pantalla, sin redirigir al log) → exit 0. Todas las líneas son OK o los AVISO conocidos; `4 repartos dev-visto`, `8 manifiestos de datos validos, historial intacto`.
+- **`make check`, por su log.** `make-check.log` (21:54): `2621 passed`, `SELLO: make check en verde sobre el arbol 99ef679935469d1b8c19d6d68a1dcd9f407e5843`, `PICO DE MEMORIA ... 294 MiB`. `git rev-parse 490c820^{tree}` = 99ef679…, el mismo árbol. El informe modificado en disco necesitará otro `make check` antes del último commit.
+- **Trailers `Fuente:`.** Los tres commits que tocan `knowledge/cases/` (`git log --format='%h' main..HEAD -- knowledge/spec knowledge/cases` → 490c820, e803b39, 04e9d5b) llevan `Fuente:` en el cuerpo:
+  - 04e9d5b: `ADR-0042, ADR-0072`;
+  - e803b39: `ADR-0079`;
+  - 490c820: `ADR-0079, ADR-0042, ADR-0051`.
+
+  Los cuatro ADR existen en `docs/adr/`. 5be95f0, 72c7848 y 7bc7fa3 no tocan ni spec ni cases.
+- **Holdout y material.**
+  - `git diff --name-status main...HEAD` sobre evidence, feedback, corpus, spec, holdout, `meses_reservados.yaml`, `src`, `.claude` y `Makefile`: solo `A data/manifests/ticks/eurusd-ticks-2026-01-1ce59681.yaml`.
+  - Las filas del día en `HOLDOUT-EXPOSICIONES.md` (fase 0 y fase 2.b) solo añaden líneas (numstat 2/0).
+  - Repetí `medidas_enero.py` en HEAD: `casos_reservados: 34 en total; en 2026-01: 0`, `casos_ocultos: ... en 2026-01: 0`, `meses_reservados.yaml: '2026-01' aparece 0 veces`.
+- **Regímenes de cambio.** HISTORIA solo crece (+186/−0, Archivo 32). Ningún registro de feedback ni item de evidencia nuevo. `libros.yaml` no se toca.
+- **Ambigüedades:** sin cambios.
+- **ADR.** ADR-0079 tiene `## Estado` = `ACTIVE`. ADR-0043, 0051 y 0069 llevan NOTAS solo añadidas (3/0, 5/0, 5/0) y el cuerpo no cambia.
+- **Informes cerrados:** ninguno se toca.
+- **Tres guardias de una `cita`:** no aplica (la spec no se toca).
+- **Citas del informe contra su fuente, todas sostienen lo que dicen:**
+  - `data/ticks.py:572-573` (`raise TicksError`);
+  - `cli.py:3279` (`--horas` «inclusivas») y `:3281` (`--pausa` por defecto 2.0);
+  - `cases/ingesta.py:103` (las cuatro `COLUMNAS`);
+  - `engine/arnes.py:142-146` (los días salen del reparto) y `:194-198` (sin el mes anterior, el calentamiento empieza en el mes);
+  - `HOLDOUT-EXPOSICIONES.md:43` en `main` («SOLO las columnas `dateStart` y `entryPrice`», «NO se lee ninguna otra columna»);
+  - `knowledge/corpus/manifest.yaml:273` (sha `ee4ade46…ab86`).
+- **Afirmaciones medidas, contra sus anexos:**
+  - p90 de los cuatro meses (`ticks_spread_cuatro_meses.txt`) frente a `llenado.yaml:19-28`;
+  - `11: 4` en la línea 98 de `regresion_ticks_spread.txt`;
+  - 5/7/3/3 horas perdidas (enero, abril, julio, agosto) en sus manifiestos;
+  - 54 operaciones (Grep `^- direccion:` → 54 en 21 ficheros);
+  - 21 días `dev` y el ancla `5061655b…`, igual a `git rev-parse HEAD:knowledge/cases/visto/2026-01/particiones.yaml`;
+  - de 55 a 76 días dev (21+13+21+21);
+  - `PROJECT_STATE.md` en 23.406 bytes (`wc -c`).
+- **Evidencia nueva (punto 10):** ninguna.
+
+#### Eje (b) · Encargo
+Resumen: 1 bloquea, 1 importa, 1 menor. Requisitos: 39 hechos, 3 parciales, 1 no hecho (todavía, es la entrega) y 1 hecho de otra forma (declarado).
+
+**Lo que pediste mirar en especial:**
+
+1. **Orden de los commits: correcto.**
+   - Sigue el de julio (`ENTRADA-JULIO.md:254-260`, decisión 5; los commits de julio fueron e2d2430 → 10002d9 → 79549c7 reparto → 80e7a78 ADR → e959c88 casos+ticks). Enero: 72c7848 PARADA → 7bc7fa3 fase 1 → 04e9d5b lectura/tramo/reparto/ancla → e803b39 ADR-0079 → 490c820 casos+ticks.
+   - `test_mes_del_material.py` va en 04e9d5b y `test_criterio_fidelidad.py` en e803b39 (`git log --name-status`).
+   - ADR-0079 tiene su propio commit.
+   - El reparto y el ancla son anteriores a la ingesta.
+   - Las `Fuente:` son correctas (eje a).
+2. **La fila 2.b va antes de la ingesta: correcto.**
+   - La fila de la lectura completa entra en 04e9d5b (`git show 04e9d5b -- docs/validation/HOLDOUT-EXPOSICIONES.md`: una línea `+`, con `backtesting-analytics ENERO 2026.xlsx`, `leido ENTERO` y las cuatro columnas). 04e9d5b es de las 17:36:56 −0500.
+   - Los casos los trae 490c820, y sus ficheros tienen mtime 17:59:17, 9 s después de e803b39 (17:59:08). El manifiesto de ticks dice `generado_por: e803b39`.
+   - Dentro de la fase 2, los mtimes dan el orden fila (17:15:34) → tramo (17:15:43) → test (17:15:49) → `casos visto` (17:15:55). La fila se escribió antes de que `casos visto` comprobara la condición 2.
+3. **El test del día de desfase: rompe de verdad, con un matiz (b2).**
+   - `RelojSesiones.de_pared` lee igual que el método de `main` (`cases/relojes.py:185-187`, `astimezone(zona)` y `hour*60+minute`).
+   - Recalculé el método de `main` para el 2026-10-27, de 04:30Z a 14:30Z: horas de Madrid `[5, 6, 7, …, 15]`, es decir `fuera, fuera, 07…14, fuera`. Es exactamente lo que afirma el test en `:84`.
+   - La rejilla abre a las 05:00Z (`ventana_rejilla.txt:69`), lo que afirma `:83`. Sin desfase (enero y julio) los dos coinciden minuto a minuto (`:100-119`).
+   - §5 dice la verdad sobre `main`: allí falla por ESTRUCTURA (no existe `clave_de_hora` ni el parámetro `raiz`), no comparando horas.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | BASE y skill abrir-rama (encargo, contrato, Archivo) | Hecho | 5be95f0: A contrato.yaml, A encargo, M HISTORIA (Archivo 32) |
+| 2 | Ni motor ni spec ni umbrales; solo `construccion` | Hecho | diff vacío en `src`/`knowledge/spec`; `criterio_fidelidad.yaml`: solo la lista y su comentario |
+| 3 | `llenado.yaml` no cambia, y se declara | Hecho | fuera del diff; ADR-0079:107-110 |
+| 4 | Ni diciembre ni meses reservados | Hecho | ningún manifiesto de 2025-12; recuento 0 en HEAD |
+| 5 | No se corre el arnés ni se mide cobertura o precisión | Hecho (por lo que se ve) | ninguna salida del arnés en la rama; los tests siguen en `construccion[0]` = abril (`criterio_fidelidad.yaml`, enero al final) |
+| 6 | Decisión 1: las tres medidas | Hecho | §0.a; repetidas por mí en HEAD |
+| 7 | Decisión 2: días afectados e INSUFICIENTE | Hecho | `sesgo_enero.txt:26-27` (`INSUFICIENTE: 0`) |
+| 8 | Decisión 3: 0079 es el siguiente libre | Hecho | §0.a; `docs/adr/0079-…` |
+| 9-15 | Fase 0.a a 0.g | Hecho | §0.a-§0.g; anexos de 72c7848; fila de la fase 0 en 72c7848 |
+| 16 | F1: la ventana sale de `reloj_de_las_sesiones` | Hecho | `scripts/ticks_spread.py:115` |
+| 17 | F1: recorre la construcción y exige los ticks | Hecho | `ticks_spread.py:105-112`; anexo, líneas 2-6 (cuatro DATASET) |
+| 18 | F1: un test que rompa con el día de desfase | Parcial | ver b2 |
+| 19 | F1: sin desfase dan lo mismo | Hecho | `test_ticks_spread.py:100-119` |
+| 20 | F1: `simulador_config.py` no se toca; deuda | Hecho | fuera del diff; §8.3 |
+| 21 | F2.a: recuento 0 en el commit en que se lee | Hecho | §2.a (sobre 7bc7fa3; no se guardó la salida de esa repetición: la repetí yo en HEAD) |
+| 22 | F2.b: fila hoy y antes de ingerir, con el nombre y la lectura completa | Hecho | ver el punto 2 de arriba |
+| 23 | F2.c: tramo del 02 al 30 con el `material_sha256` | Hecho | `kit/config.yaml` (diff); `manifest.yaml:273` |
+| 24 | F2.d: `casos visto`; reparto y ancla antes de ingerir | Hecho | 04e9d5b; el ancla coincide con el blob |
+| 25 | F2: `Fuente: ADR-0042/0072` | Hecho | cuerpo de 04e9d5b |
+| 26 | F3: ADR en su propio commit, con tests, textos, índice y `Fuente: ADR-0079` | Hecho de otra forma (declarado en §9 #26) | e803b39; `test_mes_del_material` fue a la fase 2 por el punto 1 de la respuesta |
+| 27 | F3: el ADR dice la decisión 2, lo de `llenado.yaml` y lo que cambió la fase 1 | Hecho | ADR-0079:39-47, 93-110 |
+| 28 | F4: `casos ingerir` y `casos check` | Hecho | 490c820; `casos check` OK, repetido |
+| 29 | F4: ticks `--horas 06-14`, `--hashes` y horas perdidas | Hecho | manifiesto: `horas_utc` del 6 al 14, `perdidas` 5, `presentes: 184`; `check-ticks` OK, repetido |
+| 30 | Informe: PARADA, respuesta literal, desviaciones, exposiciones | Hecho | §0-§7; la respuesta es idéntica en encargo e informe (`diff` → IGUALES) |
+| 31 | Propuestas de cierre (X, R2.2, F, I, Technical Debt, tamaño de PS) | Parcial | el texto de R2.2 no deja pasar el test (b1) |
+| 32 | `make check` sellado antes de cada commit | Hecho | log: el árbol del sello es el de 490c820 |
+| 33 | Resp. 0: enero al final, y el ADR dice por qué | Hecho | `criterio_fidelidad.yaml` (comentario); ADR-0079:19-27 |
+| 34 | Resp. 1: el orden de los dos tests | Hecho | 04e9d5b / e803b39 |
+| 35 | Resp. 2: `--horas 06-14` | Hecho | manifiesto, `horas_utc` |
+| 36 | Resp. 3: corrida con los cuatro meses, a un anexo, sin tocar `llenado.yaml` | Hecho | `ticks_spread_cuatro_meses.txt` (490c820) |
+| 37 | Resp. 4: `test_huecos_motor` declarado | Hecho | ADR-0079:101-104 |
+| 38 | Resp. 5: NOTAS, VISOR-DIAS y contrato ampliado | Hecho | contrato en 7bc7fa3; NOTAS en e803b39 |
+| 39 | Resp. 6: deuda de `visto.py` con ADR-0042 §2 | Hecho | §8.3 |
+| 40 | Resp. 7: deuda de `simulador_config` con la medida, marzo del 9 al 27 y octubre | Hecho | §8.3 |
+| 41 | Además 1: la lectura de fechas de 10-06 frente a la de Aleks | Hecho | fila 2.b; ADR-0079 §4 |
+| 42 | Además 2: texto exacto de R2.2 y R5.4 para que `test_hoja_de_ruta.py` pase | Parcial | b1 |
+| 43 | Revisor pegado y «Rama lista para revisión, NO cerrada» | No hecho (todavía; es este paso) | Estado: «EN CURSO: entrega; falta el revisor (§11)» |
+| 44 | E5: «El encargo, punto por punto» | Hecho | §9 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | **bloquea** | **El texto exacto que §8.2 propone para R2.2 hace fallar `test_hoja_de_ruta.py`, y la respuesta pedía expresamente el texto con el que pasa.** La regla b mira el bloque ENTERO de una entrada HECHA, y el bloque de R2.2 cita `NA:A`, una letra viva, dos veces: ya en su «Qué es» (`HOJA-DE-RUTA.md`, línea siguiente a `:77`: «(carril de Aleks, NA:A)») y otra en el `Estado:` propuesto («…siguen en el carril de Aleks (NA:A).»). Además, el «OJO» de §8.2 afirma lo contrario: «sigue siendo válida, porque A está viva». Es justo al revés: por estar viva, rompe la regla b que el propio §8 enuncia («una entrada HECHA no cita una letra ni un heredado vivos … en todo su bloque»). | Simulación en memoria, sin escribir nada: las funciones del test sobre la hoja y PROJECT_STATE de la rama con los cambios de §8.1 y §8.2 aplicados (X fuera, el 34 nuevo, I sin X, el Refs y el Estado de R2.2, R5.4, y X HECHA en HISTORIA) dan `a: []`, `c: []` y `b: ['R2 «R2.2 · Enero cuenta: los ticks de invierno por la rejilla»: NA:A esta HECHA y la letra sigue viva']`. `tests/unit/test_hoja_de_ruta.py:143-145` (la regla) y `:141` (`referencias(bloque)`, el bloque entero). |
+| b2 | importa | **Ningún test ejerce la elección de reloj que hace `main()`.** Si la línea `reloj = reloj_de_las_sesiones(registro)` volviera a la pared (`RelojSesiones.de_pared(huso_operativa)`), los 6 tests seguirían en verde. Los tests de desfase prueban que `clave_de_hora` da horas distintas según el reloj que se le pasa, y ese reloj lo pone el propio test. La única llamada a `main()` (el mes sin ticks) sale antes de construir el reloj. §1, §9 #18 y la NOTA de ADR-0069 («lo rompe a propósito») dicen más de lo que el test cubre: el test protege la función, no el guion. | `tests/unit/test_ticks_spread.py:131`, la única llamada a `m.main` (Grep en `tests/`). `scripts/ticks_spread.py:112` (`return 2`) va antes de `:115` (`reloj = reloj_de_las_sesiones(registro)`). Las claves de los dos relojes se construyen en el test: `:80-81`, `:95-97`, `:111-112`. |
+| b3 | menor | En §9, los requisitos #35 («revisor con su informe pegado») y #36 («Terminar con “Rama lista…”») van como «Hecho», pero §11 todavía no existe y el Estado dice «EN CURSO». Hay que dejarlos al día al pegar este informe. | `ENTRADA-ENERO.md:703-704` frente a `:721-723` |
+
+Lo que la rama hace y el encargo no pide, y está justificado en el informe:
+- `main(argv, raiz=…)` y la salida con 2 si falta un mes (§6).
+- El anexo de regresión de la fase 1 (§1). Su método es el hallazgo a1.
+- La línea de tests de PROJECT_STATE (1529 → 1534, cinco funciones nuevas).
+
+Lo que el encargo dice que no se toca, comprobado con el diff: el motor, la spec, `llenado.yaml`, `simulador_config.py`, el Makefile y `.claude/` no cambian.
+
+#### Lo que no pude comprobar
+- **Las comprobaciones que escriben.** `make check` no lo ejecuté: uso `make-check.log` y que el árbol del sello coincide con el de 490c820. `knowledge validate > knowledge-validate.log` lo ejecuté sin redirigir. `git hash-object` y `git worktree list` los bloqueó `solo_lectura.py`: los sustituí por `git rev-parse HEAD:<ruta>` y por `ls .git/worktrees` (solo `wt-ci`, de otra sesión, como dice §5). `git tag --list` también lo bloqueó: `git for-each-ref` da solo `main` y `trabajo/entrada-enero`, y ningún `stable/F37p*`.
+- **Que no se corrió `motor arnes`.** Es una ausencia: no hay salida suya en la rama, pero no puedo probar que no se ejecutó.
+- **La columna de fechas de Aleks** (mínima 2026-01-02, máxima 2026-01-30) y **que las filas de los 21 días dev sean el libro entero**: no abro el xlsx. Las 58 filas leídas y las 4 sin `initialSL` son la salida de la ingesta que cita el informe.
+- **Dónde escribió la regresión de la fase 1** (a1): el anexo recibe la carpeta de salida por argumento y el informe no dice cuál fue.
+- **La hora a la que llegó la respuesta del consultor** frente al inicio de la fase 1. `scripts/ticks_spread.py` tiene mtime 16:52, nueve minutos después de 72c7848 (16:43). La respuesta solo entra en git con 7bc7fa3.
+- **El orden dentro de 04e9d5b** solo lo puedo apoyar en los mtimes, no en git.
+
+#### Comandos ejecutados
+1. `git branch --show-current; git merge-base main HEAD; git log --format='%h %s' main..HEAD; git status --short; git diff --stat main...HEAD`
+2. Read `docs/encargos/trabajo-entrada-enero.md`, `contrato.yaml`, `docs/validation/ENTRADA-ENERO.md` (en dos tramos)
+3. `uv run python scripts/contrato_rama.py`
+4. `uv run pytest tests/unit/test_ticks_spread.py -q -p no:cacheprovider`
+5. `git log --format='=== %h %ad %s%n%b' --date=iso main..HEAD`
+6. (`for c in …; git show --name-status` → lo bloqueó la guardia) `git log --name-status --format='=== %h %s' main..HEAD`
+7. `git diff main...HEAD -- PROJECT_STATE.md knowledge/cases/kit/config.yaml knowledge/cases/criterio_fidelidad.yaml knowledge/cases/visto/anclas.yaml tests/contract/test_mes_del_material.py tests/unit/test_criterio_fidelidad.py docs/validation/HOLDOUT-EXPOSICIONES.md`
+8. `git show --format= 04e9d5b -- docs/validation/HOLDOUT-EXPOSICIONES.md | cut -c1-300`; lo mismo para 72c7848
+9. `stat -c '%y %n'` de los casos de enero, del manifiesto de ticks, de `particiones.yaml` y del anexo; después, de `config.yaml`, HOLDOUT, `anclas.yaml`, `test_mes_del_material.py`, `ticks_spread.py`, `test_ticks_spread.py`, `criterio_fidelidad.yaml` y ADR-0079
+10. `sed -n 60,140p src/botsito/cases/visto.py`
+11. `git diff main...HEAD -- scripts/ticks_spread.py`; Read `tests/unit/test_ticks_spread.py`
+12. Grep y Read de `src/botsito/cases/relojes.py` (líneas 40-224)
+13. Read `docs/validation/anexos/ENTRADA-ENERO/ventana_rejilla.txt`
+14. `uv run python -c` con la hora de Madrid por `astimezone`, del 2026-10-27 de 04:30Z a 14:30Z
+15. Grep de la decisión 5 en `ENTRADA-JULIO.md`; `git log --format='%h %s' a4e4fa6^1..a4e4fa6^2`
+16. `git log --format='%h' main..HEAD -- knowledge/spec knowledge/cases`; `ls docs/adr | grep -E '^00(42|51|72|79)-'`
+17. Read `docs/adr/0079-enero-entra-en-construccion.md`
+18. `cat knowledge/cases/visto/2026-01/particiones.yaml; ls knowledge/cases/visto/`
+19. (`git hash-object` → lo bloqueó `solo_lectura`) `grep -c ": dev$"` de los cuatro repartos; `git rev-parse HEAD:knowledge/cases/visto/2026-01/particiones.yaml`; Grep de `ee4ade46` en `knowledge/corpus/manifest.yaml`
+20. Grep de `^- direccion:` en los casos de enero; Read de `caso-eurusd-2026-01-02.yaml`
+21. grep y Read del manifiesto `eurusd-ticks-2026-01-1ce59681.yaml`
+22. `uv run botsito casos check`
+23. `uv run botsito data check-ticks --dataset eurusd-ticks-2026-01-1ce59681 --hashes`
+24. `uv run botsito knowledge validate 2>&1 | tail -15`
+25. `ls -la make-check.log`; grep de SELLO, PICO, passed y failed; `git rev-parse "490c820^{tree}"`; `sed -n 60,100p make-check.log`
+26. `git diff main...HEAD` de las NOTAS de ADR-0043, 0051 y 0069, del README de ADR y de los runbooks ARNES-MOTOR, SESION-DE-PREGUNTAS y VISOR-DIAS
+27. head y tail de `ticks_spread_cuatro_meses.txt`; `sed` de `regresion_ticks_spread.txt`; grep de `llenado.yaml`
+28. Read de `regresion_ticks_spread.py`; grep en `.claude/skills/comparar-con-main/SKILL.md`; Grep de `git show main:scripts` en `docs/validation`
+29. Read de `medidas_enero.py`; `uv run python docs/validation/anexos/ENTRADA-ENERO/medidas_enero.py "C:/Users/USER/Desktop/Bot v3"`
+30. `git show main:scripts/ticks_spread.py | sed -n 67,85p`; `sed` de `data/ticks.py:570-574`, `cli.py:3276-3283`, `cases/ingesta.py:100-105` y `engine/arnes.py:140-147,192-199`
+31. `git diff --numstat main...HEAD` de HISTORIA, HOLDOUT y `docs/adr/`; grep de líneas borradas en HISTORIA (0)
+32. `diff <(sed -n 81,96p encargo) <(sed -n 346,361p informe)` → IGUALES
+33. `git diff 5be95f0 HEAD -- docs/encargos/trabajo-entrada-enero.md`
+34. `sed` de `HOJA-DE-RUTA.md:70-80,168-174`; grep de `HER:34` y `NA:X`
+35. grep y Read de `tests/unit/test_hoja_de_ruta.py` (líneas 41-58, 60-169)
+36. `uv run python -c`: referencias del bloque R2.2 y si A está viva
+37. `uv run python -c`: simulación en memoria de §8.1 y §8.2 contra `problemas_a`, `problemas_b` y `problemas_c`
+38. `uv run python -c`: el cambio de I contra `problemas_c`
+39. grep de las letras F, I, T, Q y A en PROJECT_STATE; grep de las entradas y dependencias de la hoja
+40. `wc -c PROJECT_STATE.md`; `git diff --stat` del informe en disco
+41. `git diff --name-status main...HEAD` sobre las rutas de régimen protegido
+42. Grep de bucles sobre `construccion` en `tests/`; Read de `tests/unit/test_rutas_windows.py:50-94`
+43. Grep de `ticks_spread|m\.main\(` en `tests/`; Grep de `return 2|reloj =|def main|def clave_de_hora` en `scripts/ticks_spread.py`
+44. grep de los manifiestos de ticks de abril, julio y agosto (horas perdidas)
+45. (`git worktree list` y `git tag --list` → los bloqueó `solo_lectura`) `git for-each-ref --format='%(refname)' refs/heads refs/tags/stable/F37p; ls .git/worktrees`
+
+Ficheros clave: `C:\Users\USER\Desktop\Bot v3\docs\validation\ENTRADA-ENERO.md` (§8.2 y §9), `C:\Users\USER\Desktop\Bot v3\tests\unit\test_ticks_spread.py`, `C:\Users\USER\Desktop\Bot v3\scripts\ticks_spread.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\ENTRADA-ENERO\regresion_ticks_spread.py`, `C:\Users\USER\Desktop\Bot v3\docs\plan\HOJA-DE-RUTA.md` y `C:\Users\USER\Desktop\Bot v3\tests\unit\test_hoja_de_ruta.py`.
+
+### Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| b1 | bloquea | **Arreglado.** §8.2 propone ahora quitar `NA:A` del bloque entero de R2.2: el «Qué es» dice `(carril de Aleks, R7.1)` y el `Estado` dice «siguen en R7.1». `NA:A` y `HER:34` quedan en el `Refs:` de R7.1. Retirado el «OJO», que afirmaba lo contrario de la regla. Comprobado en memoria con las funciones del test: `a: []`, `b: []`, `c: []` (`anexos/ENTRADA-ENERO/simular_cierre.py` y `.txt`). |
+| b2 | importa | **Arreglado.** Test nuevo, `test_el_guion_entero_cuenta_el_dia_de_desfase_por_la_rejilla`, que corre `main` de punta a punta con tres ticks sintéticos del 2026-10-27. Comprobado con un mutante de pared en un clon desechable: cae, con `13:00` donde la rejilla da `07:00` (§5). Con él, la NOTA de ADR-0069 («lo rompe a propósito») y §1 dicen lo que el test cubre; no las reescribo. |
+| a1 | importa | **Arreglado y declarado.** La regresión de la fase 1 está rehecha en dos clones `--detach` (main 6fb483b y 7bc7fa3) con la skill `comparar-con-main`: 51 líneas cada uno, solo la cabecera distinta, y el resto con el mismo sha256 en los dos lados (§1; `regresion_clon_main.txt` y `regresion_clon_7bc7fa3.txt`). §6 declara el método de la primera. El anexo viejo se queda, porque es lo que se hizo. |
+| b3 | menor | **Arreglado.** §9 #35 y #36 al día; Estado final abajo. |
+
 ## Estado
 
-EN CURSO: fases 1 a 4 hechas; sigue la entrega (revisor).
+TERMINADA en la rama, con 7 commits sellados: fases 0 a 4 y la entrega con los arreglos del
+revisor. Pendiente de la revisión del consultor y de la orden de cierre de Aleks (§8 tiene los
+textos para el commit del contrato).
+
+Rama lista para revisión, NO cerrada.
