@@ -1742,8 +1742,38 @@ también:
 - Lo que el revisor no pudo comprobar (las corridas, los blobs, las copias borradas) lo cubre
   §3.1, §3.12, §4.1 y §4.9 con los hashes, y `git status` limpio tras cada borrado.
 
+## 11 · Paso 0 de la orden de cierre (2026-10-14): la vela H4 de junio
+
+Medido con un guion de la carpeta de trabajo que no imprime ninguna fecha del mes anterior (solo
+relaciones y particiones), sobre `reloj_de_las_sesiones` (ADR-0069) y `casos_reservados` /
+`casos_ocultos`:
+
+```
+la H4 empieza en el mes anterior al de la sesion: True
+por la rejilla, la H4 pertenece al dia operativo: el 1 de julio
+   posicion en su dia de rejilla: vela 1 de 6
+dia operativo 1 de julio: reservado=no, oculto=no
+dia de calendario de las M1 de la vela: reservado=holdout-3, oculto=holdout-3
+```
+
+- **a)** Por la rejilla, la vela es la primera de las seis del día operativo del 1 de julio, no del
+  día de junio.
+- **b)** El día operativo del 1 de julio no está en ninguna partición. Pero las M1 de esa vela son
+  del día de CALENDARIO anterior, y ese día sí está en una partición: holdout-3 (reservado y
+  oculto).
+- **c) Sí.** Lo ya commiteado en la rama deja deducir qué día de junio es el reservado: la fila del
+  2026-10-14 de HOLDOUT-EXPOSICIONES (hallazgo a1) dice que la vela empieza a una hora dada «del
+  último día de junio» y que ese día está en holdout-3; §3.14 y §6 de este informe dicen lo mismo;
+  el informe del revisor pegado en §10 (a1 y «Lo que no pude comprobar») lleva la fecha literal y la
+  línea de precios; el mensaje de 7cf8901 dice «una H4 que empieza en un dia reservado de junio (la
+  primera del dia de rejilla del 1 de julio)»; y `sesgo_p1.txt` de 82b9cc7 a 3cf2756 lleva la fecha.
+- **Por la orden de cierre, esto es PARADA y la rama NO se cierra**: el consultor responderá con el
+  precedente de ADR-0041 (retirar el día de su partición, por ADR, en rama propia, antes del push).
+  No se ha hecho el commit del contrato, ni merge, ni tag, ni push.
+
 ## Estado
 
+PARADA del cierre (paso 0, §11): lo commiteado permite deducir un día reservado de junio. Antes,
 LISTA PARA REVISIÓN. R3.1 hecha: la corrida en diagnóstico sobre los 76 días dev de construcción,
 la tabla por operación con la vida de la orden, y la clasificación del consultor (§4.5) con la
 lista para el cuestionario de la sesión 5 y las dos ramas candidatas; las líneas del cierre en §5;
