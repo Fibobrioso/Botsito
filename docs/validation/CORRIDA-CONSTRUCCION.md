@@ -411,6 +411,13 @@ la cuenta; (5) V depende de J y A.4; (6) y (7) cifras por mes y horas perdidas (
 5. **Nuevo:** F de la Next Action, al cerrar: «lo siguiente es V (sesión 5) con la lista de (R)
    de CORRIDA-CONSTRUCCION.md §…; antes, J (`kit hoja` con un paquete nuevo), del que V depende, y
    la copia de seguridad A.4 antes de grabar» (auditor, 54).
+6. **Fila propuesta para `docs/runbooks/ERRORES-RECURRENTES.md`** (respuesta del consultor,
+   punto 8): «`trabajo/corrida-construccion` · El consultor y su auditor dieron por cierto que la
+   llegada del M1 de julio cambiaba el calentamiento de agosto respecto a BE-AL-TICK, sin mirar
+   cuándo entró el manifiesto (cce490c, 2026-09-04, antes de F35 y de BE-AL-TICK). Lo vio el
+   auditor del encargo en la fase 0 (afirmación 28). Lección: un «antes no estaba» se comprueba
+   con la fecha de entrada del fichero en git (`git log --format=%ad -1 -- <fichero>`), no con la
+   memoria de cuándo se usó». Se escribe en la fase de entrega, con las demás filas de la rama.
 
 ## Lo que necesito que decidas
 
@@ -455,7 +462,95 @@ Lo que NO pregunto porque el encargo ya lo fija y el repo lo sostiene: los tres 
 de A-35 de la corrida principal (`cierre_vela_contraria`, fijada antes de correr), y la declaración
 de hoy en HOLDOUT-EXPOSICIONES (hecha).
 
+### 1.l Respuesta del consultor a la PARADA (2026-10-14)
+
+Copiada tal cual (también al final de `docs/encargos/trabajo-corrida-construccion.md`):
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, §1, bajo «Respuesta del consultor», con la fecha.
+>
+> 1. Decisión 0: (a). La sección «## Diferencias por operacion» es la última de arnes.informe; con --simular queda antes de la cola «## Simulacion», y cli.py no se toca. Porque nada del comando ni de la lista cerrada de ADR-0070 se mueve, y se encuentra por su encabezado.
+> 2. Decisión 1: (a). El resumen y el embudo por mes van en la sección, calculados en arnes.py a partir de la misma Medida partida por mes, con tests sintéticos. Porque las cifras escritas a mano no tienen test.
+> 3. Decisión 2: (a). La tabla no marca las horas perdidas; el informe lista las filas que caen en una de las 17 horas que caen dentro de las sesiones (y dice que la 18.ª queda fuera). Haz el cruce con un comando o guion que quede escrito en el informe, no a ojo, y pega su salida. Porque tocar cli.py para esto no compensa, pero el cruce tiene que poder repetirse.
+> 4. Decisión 3: (a). La fase 1 commitea docs/validation/anexos/CORRIDA-CONSTRUCCION/README.md con qué es cada fichero y los tres comandos literales. Porque así la carpeta existe en git antes de correr.
+> 5. Decisión 4: (a). Las salidas son diagnóstico etiquetado y no son una línea base; HER:30 y HER:35 siguen apuntando a CABLEADO-SIMULADOR-LINEA-BASE.txt hasta que A-35 y A-44 tengan valor. Porque una línea base no puede llevar nombre de diagnóstico.
+> 6. Decisión 5: (a). Por mes en el orden de construccion (04, 07, 08, 01). Porque lo pide el encargo.
+> 7. tramo: R3 en el contrato vale (scripts/contrato_rama.py lo acepta como equivalente).
+> 8. La afirmación 28 del encargo era INCORRECTA y el error es mío: dije que el M1 de julio cambiaba el calentamiento de agosto sin mirar la fecha del manifiesto. En el informe, sustituye esa comparación por lo que mediste: lo que separa esta corrida de BE-AL-TICK es el motor desde ADR-0066 (con 0067, 0068, 0069, 0071, 0073 a 0077 y cases por la rejilla) y que la cuenta arrastrada recorre ahora enero, abril, julio y agosto. Propón en §1.k la fila para ERRORES-RECURRENTES: consultor y auditor del consultor dieron por cierto un cambio de calentamiento sin mirar cuándo entró el manifiesto. Lección: un «antes no estaba» se comprueba con la fecha de entrada del fichero en git.
+> 9. Corrida 1 (cuenta arrastrada): se corre tal cual, sin cambiar el orden ni partir el tramo. El informe dice que el tramo no es continuo (enero, y luego de abril a agosto con huecos), que su veredicto de cuenta y su curva son indicativos, y que la clasificación se hace sobre la corrida 2. Junto al veredicto, la nota del margen que propones: el simulador no comprueba el margen (HER:37), así que puede llenar operaciones que FTMO rechazaría.
+> 10. Agosto: sus casos dev salen de un xlsx que el trader no da por bueno (S-16, ADR-0073; NA:Q). En la tabla no se marca nada; en el informe, una línea que lo recuerda junto al resumen de agosto. Yo decido al clasificar si alguna diferencia de agosto es (M).
+> 11. La lectura del M1 de marzo y junio para calentar: queda bien declarada la de hoy. Lo permanente (cada make check por test_huecos_motor.py:290-337 y cada corrida del arnés) va a las líneas del cierre como una línea de Technical Debt nueva y una fila única en HOLDOUT-EXPOSICIONES que la declare como exposición permanente por recuento. La propuesta de que dias_de_mercado imprima una línea LECTURA: va a G.2, en esa misma línea. No se cambia código para esto en esta rama.
+> 12. Hallazgo 1.k.2 (ADR-0070) y 1.k.3 (runbook ACTIVAR-A35-A44.md): entran en ESTA rama, en la fase 3 y en un commit propio. Amplía el contrato con docs/adr/0070-umbral-de-construccion-para-medir-mayo.md (solo para añadir la NOTA, que es lo que permite el régimen de los ADR; el cuerpo no se edita) y docs/runbooks/ACTIVAR-A35-A44.md. La NOTA es la que propones en 1.k.2, añadiendo al final la cifra del veredicto que dé la corrida. En el runbook: las tres menciones de --diagnostico-a21 se marcan como «(ya no existe, ADR-0076)», y el comando del §5 lleva --simular para que se compare con una línea base escrita con --simular. Porque los dos llevan dos ramas pendientes y son texto.
+> 13. Hallazgos 1.k.1 (Refs de R3.1 con ID:ADR-0074 · ID:ADR-0067 y la frase de las peticiones) y 1.k.5 (F apunta a V; antes, J y A.4): van a las líneas del cierre tal como los propones.
+> 14. La guardia que bloqueó tu guion por nombrar data/manifests/ticks: bien declarado y bien no rodeado. Tu propuesta para G.1 va a las líneas del cierre como texto de G.1; no se toca .claude/ en esta rama.
+> 15. La repetición de la corrida 2 con --salida fuera del repo, para el diff, queda autorizada como cuarto comando. Escríbelo literal en el README y en el informe, y borra la copia después.
+>
+> Sigue con la fase 1. Recuerda: make check en verde antes de cada commit, las corridas nunca a la vez que make check, y si la guardia o el clasificador niegan un comando, PARADA con el comando exacto y lo lanza Aleks con «!». Después, la fase 2 y la PARADA 2.
+>
+> Rama lista para revisión, NO cerrada.
+
+**Aplicación, punto por punto:** 1 a 6, en la fase 1 (§2); 7, nada que hacer; 8, §1.c ya dice lo
+medido y §1.k.6 trae la fila propuesta; 9 y 10, en el informe de la fase 2 (§3); 11, 13 y 14, en
+las líneas del cierre (§5); 12, en la fase 3 con el contrato ampliado (`docs/adr/0070-*.md` y
+`docs/runbooks/ACTIVAR-A35-A44.md`, ampliados en el commit de la fase 1, que es el primero tras la
+respuesta); 15, el cuarto comando literal en el README y en §3.
+
+## 2 · Fase 1 · La sección «Diferencias por operacion» (2026-10-14)
+
+Con las decisiones 0 a 5 en (a). Ningún parámetro, ninguna regla, ninguna decisión del motor, ni
+el broker, ni la cuenta, ni el freno, ni `criterio_fidelidad.yaml`, ni `cli.py` cambian: el diff
+de `src/` es solo `src/botsito/engine/arnes.py`, y en él **0 líneas quitadas o cambiadas**
+(`git diff HEAD -- src/botsito/engine/arnes.py | grep -c '^-[^-]'` → 0): se añade.
+
+- **El código** (`src/botsito/engine/arnes.py`): `informe` termina ahora con
+  `*diferencias_por_operacion(corrida, criterio, vocabulario, medida=medida)` tras «## Por
+  sesion» (:389-393), pasándole la MISMA `Medida` que acaba de imprimir en el criterio.
+  `diferencias_por_operacion` (:480-) escribe los tres bloques de §1.d con las tolerancias del
+  criterio en la cabecera (ninguna cifra en el código, `test_no_business_literals`):
+  - el resumen por mes, con los meses en el orden de `criterio.construccion`
+    (`_meses_en_orden`, :414-419) y las cifras partidas por mes de la misma `Medida`;
+  - el embudo por mes, con `primer_hecho_que_falta` (:462-470: el primer hecho de origen `regla`,
+    en el orden de `hechos_de_regla`, que la traza no produjo, con las primitivas
+    `NO_IMPLEMENTADA` de sus productoras, como «Por sesion»);
+  - una fila por operación del trader (pareja, o la del bot más cercana en la sesión con
+    `_mas_cercana`, :445-459, el orden del criterio sin exigir el lado, o «ninguna», más el primer
+    hecho que faltó) y una por operación del bot sin pareja. Las parejas se buscan por identidad
+    de objeto (`medir` devuelve los mismos objetos que recibe), los Δ llevan signo
+    (`_delta_con_signo`, :422-426) y el formato es `Δentrada +n puntos, Δinstante +m min s s`.
+- **Tests** (`tests/unit/test_diferencias_por_operacion.py`, 12, todos sintéticos: `arnes.Corrida`,
+  `ResultadoDia` y `TrazaSesion` escritos a mano, ninguno corre el arnés ni lee velas): los cuatro
+  que pide el encargo en los dos sentidos -emparejada con su Δ (+1 punto, +30 s); a 4 puntos SIN
+  PAREJA con «Δentrada +4 puntos» y a 3 PAREJA; a 16 minutos SIN PAREJA con «Δinstante +16 min 0
+  s» y a 15 PAREJA; una sesión sin operación del bot que dice «ninguna operacion del bot en la
+  sesion; primer hecho que falto: liquidez[predicado:alcanza_nivel]» y lo cuenta en el embudo del
+  mes; una operación del bot en un día sin trader que sale «SIN PAREJA; ninguna operacion del
+  trader en el dia» y cuenta como «bot en dias sin trader»-, más el «más cercano» por el orden del
+  criterio sin exigir lado, el primer hecho que falta en el orden de la spec, dos sesiones del
+  mismo día (una pareja y una sin bot), el bot en otra sesión del día del trader, el orden por
+  `construccion` (una lista a propósito NO cronológica, `("2030-03", "2030-01")`), que la sección es
+  la última del informe y el informe sigue determinista byte a byte, y **que la sección no añade
+  ninguna opción**: `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` es la de la enmienda y las opciones largas
+  del subparser `motor arnes` son exactamente las 13 de §1.a. Sin la sección, cada test que llama
+  a `_seccion` falla en su primera aserción (`texto.count("## Diferencias por operacion") == 1`).
+- **Lo que depende del formato, comprobado**: `test_arnes_motor.py`, `test_umbral_mayo.py`,
+  `test_huecos_motor.py`, `test_cableado.py` (94 tests), `test_preparar_a35.py` y
+  `test_rutas_windows.py` (los que corren el arnés real sobre `construccion[0]`) en verde con la
+  sección; `ruff check`, `ruff format --check` y `mypy` limpios sobre los dos ficheros.
+- **La carpeta de salida** (decisión 3): `docs/validation/anexos/CORRIDA-CONSTRUCCION/README.md`,
+  con qué es cada fichero, los tres comandos literales y el cuarto (la repetición de la 2 fuera
+  del repo, punto 15 de la respuesta).
+- **Runbook**: `docs/runbooks/ARNES-MOTOR.md` describe la sección en «Qué hace» y en «Cómo leer
+  “Diferencias por operacion”».
+- **Contrato ampliado** (punto 12 de la respuesta): entran `docs/adr/0070-umbral-de-construccion-para-medir-mayo.md`
+  (solo la NOTA) y `docs/runbooks/ACTIVAR-A35-A44.md`, para la fase 3; `docs/adr/` deja de estar
+  protegida entera (solo 0070 está permitida, así que cualquier otro ADR sigue fuera).
+- **Desviación declarada**: `PROJECT_STATE.md` cambia en una cifra, «Tests Currently Passing» 1535
+  → 1547, porque `state check` lo exige al final de `make check` con los 12 tests nuevos
+  (CONTRATO-DE-RAMA.md: «anadir tests cambia el recuento»); el encargo decía que esta rama no lo
+  toca, y no se toca nada más (23.773 bytes).
+
 ## Estado
 
-EN CURSO. Fase 0 entregada el 2026-10-14; PARADA: esperando la respuesta del consultor a «Lo que
-necesito que decidas». No se ha escrito código ni se ha corrido el arnés.
+EN CURSO. Fase 0 entregada y respondida el 2026-10-14; fase 1 hecha; fase 2 (las corridas)
+pendiente.

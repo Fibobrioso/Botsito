@@ -8,6 +8,10 @@ rutas_permitidas:
   - docs/validation/HOLDOUT-EXPOSICIONES.md
   - docs/runbooks/ERRORES-RECURRENTES.md
   - docs/runbooks/ARNES-MOTOR.md
+  # ampliado el 2026-10-14 por la respuesta del consultor a la PARADA (punto 12): la NOTA de
+  # ADR-0070 §3 (solo anadir, el cuerpo no se edita) y el runbook de A-35/A-44, en la fase 3
+  - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
+  - docs/runbooks/ACTIVAR-A35-A44.md
   - src/botsito/engine/arnes.py
   - tests/unit/test_arnes_motor.py
   - tests/unit/test_diferencias_por_operacion.py
@@ -31,7 +35,9 @@ rutas_protegidas:
   - config/
   - data/manifests/
   - docs/plan/
-  - docs/adr/
+  # docs/adr/ dejo de estar protegida entera el 2026-10-14 (punto 12 de la respuesta): solo
+  # 0070 esta en rutas_permitidas, asi que cualquier otro ADR sigue fuera del contrato
+  - docs/adr/0000-template.md
   - tests/unit/test_umbral_mayo.py
   - tests/unit/test_cableado.py
   - tests/unit/test_huecos_motor.py
