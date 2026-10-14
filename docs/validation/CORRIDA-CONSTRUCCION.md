@@ -1771,6 +1771,52 @@ dia de calendario de las M1 de la vela: reservado=holdout-3, oculto=holdout-3
   precedente de ADR-0041 (retirar el día de su partición, por ADR, en rama propia, antes del push).
   No se ha hecho el commit del contrato, ni merge, ni tag, ni push.
 
+### 11.1 Respuesta del consultor (2026-10-14)
+
+Copiada tal cual (también al final de `docs/encargos/trabajo-corrida-construccion.md`):
+
+> Modelo: el que tengas · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA del paso 0 de la orden de cierre de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, §11, bajo «Respuesta del consultor», con la fecha.
+>
+> 1. Decisión: el día reservado de junio de holdout-3 cuya identidad se deduce de lo commiteado en esta rama SALE DEL HOLDOUT por ADR-0041 §1 («un día reservado cuya exposición no se puede descartar sale del holdout»), no se sustituye (§2) y sigue oculto para siempre: sus etiquetas no se leen nunca. Porque la rama no se puede reescribir (ni rebase ni squash) y el push publicaría su identidad; es el precedente de v6 (cdcf58e), que salió por lo mismo. Que el bot no viera nada del trader de ese día (la vela es del día operativo del 1 de julio, y solo son velas de mercado) no cambia la decisión: conocer qué día está reservado ya basta para no poder descartar que influya en una decisión futura.
+> 2. Se hace en ESTA rama, antes del merge y del push, en un commit propio (feat(holdout): retirar el dia de holdout-3 expuesto en la rama, ADR-0041). Corrijo mi orden anterior, que decía «en rama propia»: una rama propia saldría de main después del merge, y el push publicaría la exposición sin su retirada.
+>    a) Amplía el contrato a knowledge/cases/retirados.yaml y a lo que exija knowledge validate (nada más; ningún reparto, ningún particiones.yaml ni ningún caso se toca: ADR-0041 §5).
+>    b) Una entrada nueva en retirados.yaml (solo añadir), por la HUELLA del id del caso (sha256), nunca por su id ni por su fecha, con motivo («identidad deducible de textos commiteados en trabajo/corrida-construccion: sesgo_p1.txt, el informe y su revisor, y un mensaje de commit; la vela leída es del día operativo siguiente, sin etiquetas»), exposicion (la fila del 2026-10-14 de HOLDOUT-EXPOSICIONES), adr: ADR-0041 y retirado_el: 2026-10-14.
+>    c) knowledge validate y make check en verde; comprueba con los tests que ya existen que el día deja de contar en casos_medidos y sigue en casos_ocultos, y escribe en el informe los recuentos de holdout-3 antes y después, por recuento, sin ids ni fechas.
+>    d) La fila del 2026-10-14 de HOLDOUT-EXPOSICIONES gana al final, sin fecha: «Consecuencia: el día sale del holdout por ADR-0041 (retirados.yaml, commit <sha>)».
+> 3. En el commit del contrato, además de todo lo de mi orden de cierre:
+>    a) la línea de la sesión en ERRORES-RECURRENTES sube de MENOR a IMPORTA, con esta lección: un guion o un informe que imprime velas del calentamiento imprime el mes anterior, que puede tener días reservados; las fechas del calentamiento no se imprimen, o se recortan a los días de construcción. Y para el revisor: comprobar que ningún texto commiteado (ficheros, informe, informe del revisor, mensajes de commit) lleva una fecha que caiga en un mes con días reservados;
+>    b) G (PREREGISTRO) gana una frase: holdout-3 tiene un día medido menos desde el 2026-10-14 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta.
+> 4. Después, el cierre sigue tal cual lo mandé: el commit del contrato, merge --no-ff, el tag stable/F37q-corrida-construccion, el commit de estado, make check sellado, push atómico, CI de main en verde y borrar la rama local. En el informe final añade el sha del commit de la retirada y los recuentos de holdout-3 antes y después.
+>
+> Si para retirar el día hiciera falta tocar algo más que retirados.yaml (un test que fije el número de retirados, por ejemplo), dilo y hazlo en el mismo commit solo si es un recuento esperado; si es otra cosa, PARADA.
+
+### 11.2 La retirada (ADR-0041)
+
+- `knowledge/cases/retirados.yaml`: una entrada nueva, solo añadida, por la huella sha256 del id
+  del caso (`holdout.huella_de_caso`), con el motivo, la exposición, `adr: ADR-0041` y
+  `retirado_el: "2026-10-14"`. Ningún reparto, `particiones.yaml` ni caso se toca.
+- Hizo falta tocar algo más, y es un recuento esperado: `tests/unit/test_retirados.py`,
+  `test_el_repo_real_retira_uno_y_ninguna_salida_lo_nombra`, fijaba 1 retirado y 33 medidos; pasa
+  a 2 retirados, 32 medidos, comprueba que los retirados siguen en `casos_ocultos` y que ninguna
+  salida de los comandos que recorren casos imprime el id de ninguno de los dos.
+- `contrato.yaml`: se permiten `retirados.yaml` y `test_retirados.py`; `knowledge/` deja de estar
+  protegida entera y se protege carpeta a carpeta todo lo demás.
+- `knowledge validate`: `OK: 2 dias retirados del holdout, cada uno de un reservado, solo-anadir
+  intacto`. `tests/unit/test_retirados.py`: 6 passed.
+- **Recuentos, sin ids ni fechas** (guion de la carpeta de trabajo sobre `casos_reservados`,
+  `casos_medidos`, `casos_retirados` y `casos_ocultos`):
+
+| | Antes | Después |
+|---|---|---|
+| holdout-3 reservados | 8 | 8 |
+| holdout-3 medidos | 8 | **7** |
+| holdout-3 retirados | 0 | **1** |
+| holdout-3 ocultos | 8 | 8 |
+| total medidos (todas las particiones) | 33 | 32 |
+| total retirados | 1 (fidelidad-1) | 2 (fidelidad-1 1, holdout-3 1) |
+
 ## Estado
 
 PARADA del cierre (paso 0, §11): lo commiteado permite deducir un día reservado de junio. Antes,

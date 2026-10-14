@@ -22,6 +22,11 @@ rutas_permitidas:
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
+  # ampliado el 2026-10-14 por la respuesta del consultor a la PARADA del paso 0 de la orden de
+  # cierre (punto 2.a): retirar del holdout, por ADR-0041, el dia de holdout-3 cuya identidad se
+  # deduce de lo commiteado en la rama; y el recuento esperado del test del repo real
+  - knowledge/cases/retirados.yaml
+  - tests/unit/test_retirados.py
 rutas_protegidas:
   - Makefile
   - .claude/
@@ -35,7 +40,25 @@ rutas_protegidas:
   - src/botsito/engine/simulacion.py
   - src/botsito/domain/
   - src/botsito/cases/
-  - knowledge/
+  # knowledge/ entera hasta el 2026-10-14; desde entonces, todo menos retirados.yaml (ADR-0041 §5:
+  # ningun reparto, ningun particiones.yaml ni ningun caso se toca)
+  - knowledge/README.md
+  - knowledge/_proposals/
+  - knowledge/corpus/
+  - knowledge/cuentas/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/simulador/
+  - knowledge/spec/
+  - knowledge/cases/README.md
+  - knowledge/cases/criterio_fidelidad.yaml
+  - knowledge/cases/dev/
+  - knowledge/cases/fidelidad/
+  - knowledge/cases/fixtures/
+  - knowledge/cases/holdout/
+  - knowledge/cases/kit/
+  - knowledge/cases/meses_reservados.yaml
+  - knowledge/cases/visto/
   - config/
   - data/manifests/
   - docs/plan/

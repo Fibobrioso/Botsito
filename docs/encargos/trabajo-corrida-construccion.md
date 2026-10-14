@@ -206,3 +206,22 @@ Copiada tal cual:
 > 7. Revisor (opus), con los dos alcances del encargo y uno más: que la tabla «Clasificación del consultor» y la lista del cuestionario dicen exactamente lo de mis cuatro respuestas, con sus recuentos (T0 12, P1 48, P2 18, P3 42, P4 75, P5 61, P6 33, P7 3). Su informe, pegado al final. Arregla lo que encuentre que bloquee o importe, o dime por qué no.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA del paso 0 de la orden de cierre (2026-10-14)
+
+Copiada tal cual (la orden de cierre y esta respuesta, en `CORRIDA-CONSTRUCCION.md` §11):
+
+> Respuesta del consultor a la PARADA del paso 0 de la orden de cierre de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, §11, bajo «Respuesta del consultor», con la fecha.
+>
+> 1. Decisión: el día reservado de junio de holdout-3 cuya identidad se deduce de lo commiteado en esta rama SALE DEL HOLDOUT por ADR-0041 §1 («un día reservado cuya exposición no se puede descartar sale del holdout»), no se sustituye (§2) y sigue oculto para siempre: sus etiquetas no se leen nunca. Porque la rama no se puede reescribir (ni rebase ni squash) y el push publicaría su identidad; es el precedente de v6 (cdcf58e), que salió por lo mismo. Que el bot no viera nada del trader de ese día (la vela es del día operativo del 1 de julio, y solo son velas de mercado) no cambia la decisión: conocer qué día está reservado ya basta para no poder descartar que influya en una decisión futura.
+> 2. Se hace en ESTA rama, antes del merge y del push, en un commit propio (feat(holdout): retirar el dia de holdout-3 expuesto en la rama, ADR-0041). Corrijo mi orden anterior, que decía «en rama propia»: una rama propia saldría de main después del merge, y el push publicaría la exposición sin su retirada.
+>    a) Amplía el contrato a knowledge/cases/retirados.yaml y a lo que exija knowledge validate (nada más; ningún reparto, ningún particiones.yaml ni ningún caso se toca: ADR-0041 §5).
+>    b) Una entrada nueva en retirados.yaml (solo añadir), por la HUELLA del id del caso (sha256), nunca por su id ni por su fecha, con motivo («identidad deducible de textos commiteados en trabajo/corrida-construccion: sesgo_p1.txt, el informe y su revisor, y un mensaje de commit; la vela leída es del día operativo siguiente, sin etiquetas»), exposicion (la fila del 2026-10-14 de HOLDOUT-EXPOSICIONES), adr: ADR-0041 y retirado_el: 2026-10-14.
+>    c) knowledge validate y make check en verde; comprueba con los tests que ya existen que el día deja de contar en casos_medidos y sigue en casos_ocultos, y escribe en el informe los recuentos de holdout-3 antes y después, por recuento, sin ids ni fechas.
+>    d) La fila del 2026-10-14 de HOLDOUT-EXPOSICIONES gana al final, sin fecha: «Consecuencia: el día sale del holdout por ADR-0041 (retirados.yaml, commit <sha>)».
+> 3. En el commit del contrato, además de todo lo de mi orden de cierre:
+>    a) la línea de la sesión en ERRORES-RECURRENTES sube de MENOR a IMPORTA, con esta lección: un guion o un informe que imprime velas del calentamiento imprime el mes anterior, que puede tener días reservados; las fechas del calentamiento no se imprimen, o se recortan a los días de construcción. Y para el revisor: comprobar que ningún texto commiteado (ficheros, informe, informe del revisor, mensajes de commit) lleva una fecha que caiga en un mes con días reservados;
+>    b) G (PREREGISTRO) gana una frase: holdout-3 tiene un día medido menos desde el 2026-10-14 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta.
+> 4. Después, el cierre sigue tal cual lo mandé: el commit del contrato, merge --no-ff, el tag stable/F37q-corrida-construccion, el commit de estado, make check sellado, push atómico, CI de main en verde y borrar la rama local. En el informe final añade el sha del commit de la retirada y los recuentos de holdout-3 antes y después.
+>
+> Si para retirar el día hiciera falta tocar algo más que retirados.yaml (un test que fije el número de retirados, por ejemplo), dilo y hazlo en el mismo commit solo si es un recuento esperado; si es otra cosa, PARADA.
