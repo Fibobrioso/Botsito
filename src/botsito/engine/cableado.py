@@ -735,8 +735,14 @@ RESULTADO_CANCELADA = "cancelada"
 RESULTADO_VIVA = "viva al cerrar el dia"
 
 
-def _sesion_de(minuto: int, limites: Sequence[tuple[str, int, int]]) -> str:
-    return next((n for n, d, h in limites if d <= minuto < h), "-")
+def _sesion_de(colocada_ms: int, limites: Sequence[tuple[str, int, int]]) -> str:
+    """La sesion de una orden, por el CIERRE de M1 en que se coloco: el motor la coloca en
+    `instante * MS_POR_MINUTO - 1` y asigna la sesion por `instante` (`_sesion`, el cierre), asi
+    que el minuto de la orden es `(colocada_ms + 1) // MS_POR_MINUTO`. Con `colocada_ms //
+    MS_POR_MINUTO` la orden del primer cierre de una sesion salia en la anterior o en «-»
+    (revisor de trabajo/corrida-construccion, b1). Fuera de las sesiones, «-»."""
+    sesion, _ = _sesion(limites, (colocada_ms + 1) // MS_POR_MINUTO)
+    return sesion or "-"
 
 
 def vida_de_las_ordenes(
@@ -754,7 +760,7 @@ def vida_de_las_ordenes(
         cancelacion_de = {id: (ms, motivo) for ms, id, motivo in tb.cancelaciones}
         llenada_en = {p.orden_id: p.abierta_ms for p in broker.posiciones.values()}
         for o in sorted(broker.ordenes.values(), key=lambda o: (o.colocada_ms, o.id)):
-            sesion = _sesion_de(o.colocada_ms // MS_POR_MINUTO, tb.limites)
+            sesion = _sesion_de(o.colocada_ms, tb.limites)
             cuando: int | None = None
             if o.estado == RECHAZADA:
                 r = rechazo_de.get(o.id)

@@ -631,13 +631,21 @@ diferencia de agosto es (M).
   infringido`, `PRIMERO EN TOCAR UN LIMITE: ninguno`; saldo y equity finales 90.571,27 (−9,43 %
   sobre 100.000); `dias de trading: 22`; `RACHA DE PERDIDAS (RN-036, A-51): 4 seguidas; la ultima
   el 2026-04-07`. **La cuenta no corta el tramo por un límite, pero lo deja sin operar desde el
-  2026-04-08**: el saldo baja a 90.571,27 al cierre del 2026-04-07 (curva de equity) y desde la
-  sesión 07-11 del 2026-04-08 **RN-032** («no se abre una operacion cuyo riesgo no cabe antes del
-  limite de la firma»: `firma_perdida_total_max` 10 % menos `firma_margen_seguridad` 0,5 %) dispara
-  en todas las sesiones -101 de las 152 corridas- y el bot no coloca nada más: 0 operaciones del
-  bot en abril desde el 8, en julio y en agosto (§3.2). Es el mismo mecanismo que F35 §4.4 vio «el
-  22 de abril»; ahora llega antes porque el tramo empieza en enero y entra en abril con 92.905
-  (−7,1 %). La fila del día y la regla: `2026-04-08 07-11 | … | disparadas … RN-032`.
+  2026-04-07 por la tarde**: el saldo baja a 90.571,27 y la equity mínima a 90.369,11 el 2026-04-07
+  (curva de equity), por debajo del límite total menos el margen de seguridad (100.000 −
+  `firma_perdida_total_max` 10 % + `firma_margen_seguridad` 0,5 % = 90.500). **El día y la regla:
+  en la sesión 2026-04-07 11-15 disparan RN-031** (el freno total de la firma, que no se levanta
+  nunca) **y RN-032** («no se abre una operacion cuyo riesgo no cabe antes del limite de la
+  firma»); no hay línea «Por sesion» de ese día (sin operaciones del trader), pero sí sus avisos
+  H3 en la salida: `2026-04-07 11-15: gate RN-001, RN-005, RN-009, RN-031, RN-032` (y seis más
+  con RN-031 y RN-032). Como el estado de estrategia nace de cero cada día (ADR-0053 §6) y el
+  acumulador persiste, desde el 2026-04-09 es RN-032 la que dispara en cada sesión (`2026-04-09
+  07-11 | … | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032`; 101 de
+  las 152 sesiones corridas en total) y el bot no coloca nada más: 0 operaciones del bot en abril
+  desde el 8, en julio y en agosto (§3.2). Es el mismo mecanismo que F35 §4.4 vio «el 22 de abril»;
+  ahora llega antes porque el tramo empieza en enero y entra en abril con 92.905 (−7,1 %).
+  *(Corregido tras el revisor, b4: la primera versión citaba una fila «2026-04-08 07-11» que no
+  existe.)*
 - **Nota del margen (HER:37, respuesta punto 9)**: el simulador no comprueba el margen, así que en
   esta corrida pueden salir llenadas operaciones que FTMO rechazaría por margen; el veredicto de
   la cuenta no lo tiene en cuenta.
@@ -880,8 +888,13 @@ opción nueva (test: las 13 opciones del subparser siguen iguales y la lista de 
   de `TrazaBroker`, para pasarle `limites`, y la cola del informe, para encadenar la sección);
   `cli.py` y `primitivas_broker.py` (protegido) intactos. Lo único que se añade al bucle de
   `correr_dia` es leer `broker.traza().peticiones` después de cada evento: lectura, sin efecto.
-- **Tests** (`tests/unit/test_vida_de_la_orden.py`, 7, sobre el cableado real y la spec real con los
-  días de 2030 de `test_cableado`): llenada (fila completa con el instante del llenado); rechazada
+- **Un nombre que no es el del consultor, declarado** (revisor, b6): pidió el resultado «viva al
+  cerrar la sesión» y la salida dice `viva al cerrar el dia`, porque lo único que puede dejar una
+  orden viva es la red de seguridad del FIN DEL DÍA (ADR-0053 §6); al cerrar una sesión, RN-035 la
+  retira y eso sale como `cancelada` con su motivo. Con la spec de hoy no sale ninguna «viva».
+- **Tests** (`tests/unit/test_vida_de_la_orden.py`, 6 al escribirse y 7 tras el revisor, sobre el
+  cableado real y la spec real con los días de 2030 de `test_cableado`): llenada (fila completa
+  con el instante del llenado); rechazada
   con su motivo (`precio_invalido`, la compra STOP del lado equivocado de ADR-0058) y su recuento
   por motivo; cancelada en `ventana_fin` por RN-035 (la orden de la tarde que no se llena, como
   `test_rn035_ventana_fin`); cancelada «al abrir otra sesion» (la de la mañana); el motivo de una
@@ -915,8 +928,8 @@ ficheros es el campo nuevo y las dos subsecciones nuevas.
 | Corrida | Órdenes intentadas | Llenadas | Rechazadas (motivo) | Canceladas (motivo) |
 |---|---|---|---|---|
 | 1 arrastrada | 156 | 43 | 33: `volumen_max_lotes` 29 (enero 24, abril 5), `precio_invalido` 4 (enero 3, abril 1) | 80: 79 reubicaciones (RN-006 con RN-011 y RN-015 en el mismo cierre: la caja recalculada de ADR-0074, cancelar y volver a colocar), 1 por RN-035 al abrir otra sesión |
-| 2 diaria | 439 | 106 | 111: `volumen_max_lotes` 100 (enero 21, abril 24, julio 20, agosto 35), `precio_invalido` 11 (3, 4, 2, 2) | 222: 220 reubicaciones, 1 por RN-035 en `ventana_fin`, 1 por RN-035 al abrir otra sesión |
-| 3 a35-inicio | 429 | 106 | 111: los mismos 100 y 11 | 212: 210 reubicaciones (10 menos que la 2: 4 en 2026-01-19 11-15 y 6 en 2026-08-13 11-15, las dos sesiones cuyas peticiones bajan en §3.4), 1 en `ventana_fin`, 1 al abrir otra sesión |
+| 2 diaria | 439 | 106 | 111: `volumen_max_lotes` 100 (enero 21, abril 24, julio 20, agosto 35), `precio_invalido` 11 (3, 4, 2, 2) | 222: 221 reubicaciones (una de ellas en el cierre de `ventana_fin` de 2026-08-26 11-15, con RN-001, RN-006, RN-011 y RN-015 y SIN RN-035: una reubicación en el último cierre, no una retirada; corregido tras el revisor, a2) y 1 por RN-035 al abrir otra sesión |
+| 3 a35-inicio | 429 | 106 | 111: los mismos 100 y 11 | 212: 211 reubicaciones (10 menos que la 2: 4 en 2026-01-19 11-15 y 6 en 2026-08-13 11-15, las dos sesiones cuyas peticiones bajan en §3.4; una en el cierre de `ventana_fin`, como en la 2) y 1 por RN-035 al abrir otra sesión |
 
 Ninguna orden queda «viva al cerrar el dia»: RN-035 llega antes que la red de seguridad.
 **Hallazgo (importa):** 100 de los 111 rechazos de la corrida 2 son por `volumen_max_lotes`: el
@@ -981,8 +994,17 @@ en la sesión anterior de 2026-04-24 11-15 y 2026-07-17 11-15), ninguna de una n
 hay rupturas de 2 puntos (2026-01-22 11-15, alcista) y de 6 (2026-04-03 07-11): la zona de A-16.
 10 de las 25 son sesiones 11-15 con una 07-11 delante; en 5 de ellas el sesgo de la mañana era el
 contrario (2026-01-30, 2026-04-13, 2026-04-24, 2026-07-15, 2026-07-17): el cambio de sesgo a las
-11:00 que el consultor señala. Solo velas de construcción (ADR-0021 §1); ningún día abierto en el
-visor.
+11:00 que el consultor señala. Ningún día abierto en el visor. **Una exposición, declarada
+(revisor, a1):** las velas se cargan como el arnés, con el M1 del mes anterior para calentar, así
+que el guion LEE el M1 entero de marzo y de junio (lo mismo que las corridas, §1.c); y la primera
+versión de `sesgo_p1.txt` (commits 82b9cc7 a 3cf2756) imprimía, para la sesión 2026-07-01 07-11, la
+fecha y los cuatro precios de una H4 que empieza a las 21:00Z del último día de junio -la primera
+H4 del día de rejilla del 1 de julio-, y ese día de junio está en una partición reservada
+(comprobado por pertenencia, sin imprimir ninguna lista: holdout-3, 1 día). El guion ya no imprime
+ninguna H4 que empiece fuera de un mes de construcción («no se imprime»), el anexo se regeneró, la
+historia de git no se reescribe, y la fila del 2026-10-14 de HOLDOUT-EXPOSICIONES lo declara.
+`sesgo_2x2.py` tiene la misma guarda para la hora de la H4 de su lista (ninguna de las 13 la
+necesitaba).
 
 ### 3.15 P4 frente a la vida de la orden (`p4_ordenes.py`)
 
@@ -1000,8 +1022,10 @@ total | rechazadas y canceladas, ninguna llenada 7; sin ninguna orden colocada 1
   RN-015 apaga `orden_dimensionada` aunque un gate prohíba colocar). Cuál, no está en la salida:
   `TrazaSesion.bloqueadas` lo guarda como `(regla, accion, prohibida:<efecto>)` pero «Por sesion»
   no lo imprime. Hallazgo 1 de §3.16.
-- **10 sesiones con todas las órdenes rechazadas** (9 solo por `volumen_max_lotes`, 1 por
-  `precio_invalido`), y 7 con rechazos y reubicaciones sin ningún llenado: la cadena de HER:37.
+- **10 sesiones con todas las órdenes rechazadas** (8 solo por `volumen_max_lotes`, 1 solo por
+  `precio_invalido` -2026-07-08 11-15- y 1 con los dos motivos -2026-04-16 07-11-; corregido tras
+  el revisor, a3), y 7 con rechazos y reubicaciones sin ningún llenado (las 7 con algún rechazo
+  por volumen): la cadena de HER:37.
 - **4 sesiones con todas canceladas sin llenarse** (solo reubicaciones): la orden se reubicó con
   cada caja nueva y nunca se llenó antes de retirarse.
 
@@ -1190,7 +1214,7 @@ ticks perdida llevan además «posible M» (`horas_perdidas.txt`), sin cambiar d
 | T0 pareja | 12 | sin diferencia | — | — |
 | P1 sesgo | 48 (25 sesiones) | R | V (sesión 5), pregunta 1 | ¿el sesgo lo fija la ruptura solo con la mecha o hace falta el cierre fuera? (`sesgo_h4_criterio_ruptura` = `mecha`, de fb-…-8eccf5c0, admite dos lecturas; §4.3 y §4.4). No se cambia el parámetro |
 | P7 entradas repetidas | 3 | R | V, pregunta 3 | la misma que P5, del otro lado: entradas repetidas del trader en el mismo nivel que el bot toma una vez |
-| P2 entrada | 18 | R, más una comprobación E | V, pregunta 4, junto a A-48 y A-49; visor en tres días que el consultor elegirá tras la PARADA 4 | ¿qué velas forman la caja? (la Δ de cada fila, en `patrones.txt`: de 4 a 52 puntos, 15 de las 18 entre 6 y 21) |
+| P2 entrada | 18 | R, más una comprobación E | V, pregunta 4, junto a A-48 y A-49; visor en tres días que el consultor elegirá (rama de comprobaciones en el visor) | ¿qué velas forman la caja? (la Δ de cada fila, en `patrones.txt`: de 4 a 52 puntos, 15 de las 18 entre 6 y 21; el consultor escribió «de 4 a 54»: 54 es la Δ de la operación del bot MÁS CERCANA EN TIEMPO que la tabla imprime para 2026-01-29 11-15, y 52 la Δ mínima entre las del mismo lado a menos de 15 minutos, que es lo que mide `patrones.py`; mismas filas) |
 | P3 otra zona | 42 | R | V, pregunta 5, junto a A-43, A-50 y A-53 | ¿qué liquidez y qué zona elige el trader? |
 | P4 sin orden, con todas las órdenes rechazadas o rechazos y reubicaciones sin llenado por `volumen_max_lotes` | 17 sesiones de 38 (10 + 7; `p4_ordenes.txt`) | E + R | la rama del margen (E) y V, pregunta 2 (R) | E: qué hace el bot cuando el lote del 0,5 % no cabe en 50 lotes (decisión por ADR, con el margen a 1:30, HER:37). R: qué hace el trader en su cuenta real cuando el stop es tan pequeño que el lote no cabe |
 | P4 sin orden, reubicaciones sin llenarse | 4 sesiones | R | V, pregunta 6 | ¿hasta cuándo mueve el trader la orden con la caja (ADR-0074, S-4) y cuándo la deja quieta o la quita? |
@@ -1446,6 +1470,14 @@ proponía ENTRADA-ENERO.md §8.4, y escribir E y O con la mitad de texto remitie
   motor ?» en `sesgo_p1.txt` (2026-01-22 y 2026-08-04), con el sesgo recalculado al lado.
 - **Un worktree ajeno** (`…/2ea2c3d2…/scratchpad/wt-ci`, `e7df30b`, detached) aparece en
   `git worktree list` desde antes de esta rama; no es de esta sesión y no se tocó.
+- **Una exposición en un anexo commiteado** (§3.14, revisor a1): una H4 de un día reservado de
+  junio, con fecha y precios, en `sesgo_p1.txt` de cinco commits de la rama; corregida en el guion,
+  regenerado el anexo y declarada en HOLDOUT-EXPOSICIONES el mismo día. La historia de git no se
+  reescribe.
+- **La sesión de una orden salía desplazada un minuto** en «### Ordenes» para la orden del primer
+  cierre de una sesión (revisor, b1, bloquea): corregido en `cableado.py` (`_sesion_de` por el
+  cierre, como `_sesion`), con test en los dos sentidos, y las tres corridas repetidas otra vez
+  (§4.9).
 
 ## 7 · El encargo, punto por punto
 

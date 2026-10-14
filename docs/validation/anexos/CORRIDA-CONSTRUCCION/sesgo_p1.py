@@ -58,7 +58,16 @@ def _regla(velas: Sequence[Vela], apertura: MinutoUtc, tope: int, criterio: str)
     return base
 
 
-def _ohlc(v: Vela, escala: int) -> str:
+FUERA = "anterior al mes de construccion (empieza en un dia de otro mes): no se imprime"
+
+
+def _ohlc(v: Vela, escala: int, meses: Sequence[str]) -> str:
+    """La H4 con sus precios SOLO si empieza en un mes de construccion: la primera H4 del dia de
+    rejilla del dia 1 de un mes empieza en el mes anterior, que puede tener dias reservados, y ni
+    su fecha ni sus precios van a un texto commiteado (revisor de la rama, a1)."""
+    if f"{a_datetime(v.inicio):%Y-%m}" not in meses:
+        return FUERA
+
     def p(x: int) -> str:
         return str(Decimal(x) / escala)
 
@@ -103,7 +112,7 @@ def main(repo: Path, salida: Path) -> int:
         abre = f"{a_datetime(apertura):%H:%M}Z"
         print(f"{dia} {sesion} (abre {abre}): sesgo del motor {anotado}; {regla}")
         for v in ultimas:
-            print(f"    H4 {_ohlc(v, escala)}")
+            print(f"    H4 {_ohlc(v, escala, criterio.construccion)}")
         i = orden.index(sesion)
         if i > 0:
             previa = orden[i - 1]

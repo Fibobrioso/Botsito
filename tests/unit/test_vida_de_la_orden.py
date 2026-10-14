@@ -168,6 +168,22 @@ def test_el_motivo_de_una_cancelacion_dice_donde_cayo_y_que_disparo() -> None:
     assert cableado._motivo_de_cancelacion(100, limites, ["RN-035"]).startswith("reglas ")
 
 
+def test_la_sesion_de_una_orden_es_la_del_cierre_en_que_se_coloco() -> None:
+    """Revisor de la rama (b1): la orden del PRIMER cierre de una sesion se coloca en
+    `desde * MS - 1`, y su sesion es la que abre, no la anterior ni «-». Y la del ultimo cierre
+    (ventana_fin) es la sesion que termina."""
+    limites = (("07-11", 100, 340), ("11-15", 340, 580))
+    ms = MS_POR_MINUTO
+    assert cableado._sesion_de(100 * ms - 1, limites) == "07-11"  # el cierre de apertura
+    assert cableado._sesion_de(340 * ms - 1, limites) == "11-15"  # el cierre que abre la tarde
+    assert cableado._sesion_de(339 * ms - 1, limites) == "07-11"  # el cierre anterior
+    assert cableado._sesion_de(580 * ms - 1, limites) == "11-15"  # ventana_fin
+    assert cableado._sesion_de(99 * ms - 1, limites) == "-"  # antes de la ventana
+    assert cableado._sesion_de(581 * ms - 1, limites) == "-"  # despues
+    # en los dos sentidos: con el minuto de `colocada_ms` a secas, la de apertura saldria fuera
+    assert cableado._sesion(limites, (100 * ms - 1) // ms)[0] is None
+
+
 # ------------------------------------------------------------------ viva al cerrar el dia
 
 

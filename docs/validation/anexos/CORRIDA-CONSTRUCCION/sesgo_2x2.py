@@ -105,7 +105,10 @@ def main(repo: Path, salida: Path) -> int:
         else:
             aparte[(clase, lado)] += 1
         if (dia, sesion) in p1 and clase == SOLO_MECHA and vela is not None:
+            # la fecha de la H4 solo si empieza en un mes de construccion (revisor, a1)
             h4 = f"{a_datetime(vela.inicio):%Y-%m-%dT%H:%MZ}"
+            if f"{a_datetime(vela.inicio):%Y-%m}" not in criterio.construccion:
+                h4 = "empieza en el mes anterior: no se imprime"
             p1_mecha.append(f"{dia} {sesion} | H4 {h4} | {sesgo_motor.get((dia, sesion))}")
     print("-- tabla 2x2 (sesiones con el sesgo fijado por la ultima H4 cerrada, ruptura simple):")
     print("ruptura | a favor | en contra | mixta | total")

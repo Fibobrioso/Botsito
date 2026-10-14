@@ -53,7 +53,7 @@ tope 60, criterio mecha; sesiones {'07-11': '07:00', '11-15': '11:00'}
     H4 2026-04-24T05:00Z o 1.16789 h 1.16957 l 1.1676 c 1.16898
     sesion anterior 07-11: sesgo del motor bajista; bajista por doble ruptura decidida por el color (ADR-0060 §1), 61 puntos
 2026-07-01 07-11 (abre 05:00Z): sesgo del motor bajista; bajista por RN-003, ruptura simple de 68 puntos
-    H4 2026-06-30T21:00Z o 1.14205 h 1.14227 l 1.14084 c 1.14093
+    H4 anterior al mes de construccion (empieza en un dia de otro mes): no se imprime
     H4 2026-07-01T01:00Z o 1.14093 h 1.14107 l 1.14016 c 1.14084
     sesion anterior del mismo dia: ninguna (es la primera)
 2026-07-06 07-11 (abre 05:00Z): sesgo del motor bajista; bajista por RN-003, ruptura simple de 46 puntos
