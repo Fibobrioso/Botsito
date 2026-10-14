@@ -11,6 +11,8 @@
 #
 # GENERADO por `botsito kit anclar --sesion <s>`. Re-anclar un paquete que cambio es un acto
 # EXPLICITO (`--reanclar`) y su diff se ve aqui, no como efecto colateral de regenerar nada.
+2026-01:
+  particiones.yaml: 5061655b436f10efa481ef2f50527168ec3740d4
 2026-04:
   particiones.yaml: 7b04c5fc34428376bfd940ebe01138bb0e1a4be5
 2026-07:

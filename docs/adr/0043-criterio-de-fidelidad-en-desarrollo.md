@@ -31,6 +31,9 @@ se fija AQUÍ, antes de escribir una línea del motor. Texto literal del consult
     > **NOTA del 2026-10-13 (ADR-0078, no reescribe el cuerpo).** Desde ADR-0078 la
     > construcción es abril, julio (del 1 al 17, lo que cubre su libro) y agosto. Ningún umbral
     > cambia.
+    >
+    > **NOTA del 2026-10-13 (ADR-0079, no reescribe el cuerpo).** Desde ADR-0079 entra también
+    > enero (del 2 al 30, lo que cubre su libro), al final de la lista. Ningún umbral cambia.
   - medida = mayo (y marzo cuando entre);
     > **NOTA del 2026-09-24 (ADR-0046, no reescribe el cuerpo).** «Marzo cuando entre» significa
     > SOLO su parte `fidelidad-dev`: marzo entra por el camino de fidelidad (ADR-0036), y lo que caiga

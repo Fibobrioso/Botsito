@@ -1,0 +1,2 @@
+hoy, sin tramo: ['2026-01: cobertura_material no le da un tramo con UN `material_sha256`: sin el libro del mes declarado no se sabe que material entra']
+con el tramo de la fase 2 en memoria y SIN fila nueva: NINGUNO: pasa

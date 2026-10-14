@@ -125,6 +125,11 @@ como él las ve.
   `scripts/ticks_spread.py` sigue contando esa ventana en `huso_operativa` (fuera de las rutas de
   esta rama): **pendiente con dueño, la rama que baje ticks de un mes de invierno**, por la puerta
   de `engine/relojes.py`.
+  > **NOTA del 2026-10-13 (ADR-0079, no reescribe el cuerpo).** Hecho en `trabajo/entrada-enero`
+  > (NA:X): `scripts/ticks_spread.py` lee cada tick con `reloj_de_las_sesiones`, importado de
+  > `engine/relojes.py`, y `tests/unit/test_ticks_spread.py` lo rompe a propósito con el
+  > 2026-10-27. Queda fuera `engine/simulador_config.py`, que busca el spread supuesto por la hora
+  > de pared de Madrid: deuda declarada en ENTRADA-ENERO.md §8.
 
 ## Problema que resuelve
 

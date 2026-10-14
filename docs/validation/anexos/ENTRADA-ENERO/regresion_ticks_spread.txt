@@ -1,0 +1,105 @@
+VENTANA: horas locales [07, 15) en Europe/Madrid; spread = ASK - BID en puntos; percentiles por rango mas cercano
+MESES: construccion 2026-04, 2026-07, 2026-08 (solo estos)
+DATASET 2026-04: eurusd-ticks-2026-04-1d189bdd; ticks 746375
+DATASET 2026-07: eurusd-ticks-2026-07-6e7dc7cd; ticks 373014
+DATASET 2026-08: eurusd-ticks-2026-08-75bd3a08; ticks 484035
+2026-04 07:00: n 45172, media 3.49, p50 3, p90 5, p99 6, max 22
+2026-04 08:00: n 75513, media 3.02, p50 3, p90 5, p99 6, max 10
+2026-04 09:00: n 85370, media 3.03, p50 3, p90 5, p99 6, max 14
+2026-04 10:00: n 83824, media 3.03, p50 3, p90 5, p99 6, max 15
+2026-04 11:00: n 72985, media 2.88, p50 3, p90 5, p99 6, max 15
+2026-04 12:00: n 53003, media 2.85, p50 3, p90 5, p99 6, max 12
+2026-04 13:00: n 77255, media 2.84, p50 3, p90 5, p99 6, max 10
+2026-04 14:00: n 116266, media 3.03, p50 3, p90 5, p99 8, max 121
+2026-04 fuera: n 136987, media 2.81, p50 3, p90 5, p99 6, max 20
+2026-07 07:00: n 23854, media 3.26, p50 3, p90 5, p99 6, max 11
+2026-07 08:00: n 39879, media 2.83, p50 3, p90 4, p99 5, max 8
+2026-07 09:00: n 41511, media 2.84, p50 3, p90 4, p99 5, max 7
+2026-07 10:00: n 46767, media 2.83, p50 3, p90 4, p99 5, max 9
+2026-07 11:00: n 35529, media 2.81, p50 3, p90 4, p99 5, max 8
+2026-07 12:00: n 29045, media 2.75, p50 3, p90 4, p99 5, max 7
+2026-07 13:00: n 31183, media 2.71, p50 3, p90 4, p99 5, max 11
+2026-07 14:00: n 51528, media 2.85, p50 3, p90 5, p99 7, max 24
+2026-07 fuera: n 73718, media 2.80, p50 3, p90 4, p99 6, max 17
+2026-08 07:00: n 26310, media 3.30, p50 3, p90 5, p99 6, max 7
+2026-08 08:00: n 44721, media 2.82, p50 3, p90 4, p99 5, max 8
+2026-08 09:00: n 48068, media 2.80, p50 3, p90 4, p99 6, max 14
+2026-08 10:00: n 50375, media 2.76, p50 3, p90 4, p99 5, max 10
+2026-08 11:00: n 46440, media 2.80, p50 3, p90 4, p99 5, max 14
+2026-08 12:00: n 40914, media 2.70, p50 3, p90 4, p99 5, max 12
+2026-08 13:00: n 47869, media 2.72, p50 3, p90 4, p99 5, max 12
+2026-08 14:00: n 85232, media 2.84, p50 3, p90 4, p99 7, max 70
+2026-08 fuera: n 94106, media 2.70, p50 3, p90 4, p99 5, max 13
+total 07:00: n 95336, media 3.38, p50 3, p90 5, p99 6, max 22
+total 08:00: n 160113, media 2.92, p50 3, p90 5, p99 6, max 10
+total 09:00: n 174949, media 2.92, p50 3, p90 5, p99 6, max 14
+total 10:00: n 180966, media 2.90, p50 3, p90 5, p99 6, max 15
+total 11:00: n 154954, media 2.84, p50 3, p90 4, p99 6, max 15
+total 12:00: n 122962, media 2.78, p50 3, p90 4, p99 5, max 12
+total 13:00: n 156307, media 2.78, p50 3, p90 4, p99 6, max 12
+total 14:00: n 253026, media 2.93, p50 3, p90 5, p99 7, max 121
+total fuera: n 304811, media 2.78, p50 3, p90 4, p99 6, max 20
+P90 POR HORA (total), para knowledge/simulador/llenado.yaml:
+  07: 5
+  08: 5
+  09: 5
+  10: 5
+  11: 4
+  12: 4
+  13: 4
+  14: 5
+  fuera: 4
+VENTANA: horas nominales [07, 15) del reloj de las sesiones (rejilla_h4, ADR-0069 §5); spread = ASK - BID en puntos; percentiles por rango mas cercano
+MESES: construccion 2026-04, 2026-07, 2026-08 (solo estos)
+DATASET 2026-04: eurusd-ticks-2026-04-1d189bdd; ticks 746375
+DATASET 2026-07: eurusd-ticks-2026-07-6e7dc7cd; ticks 373014
+DATASET 2026-08: eurusd-ticks-2026-08-75bd3a08; ticks 484035
+2026-04 07:00: n 45172, media 3.49, p50 3, p90 5, p99 6, max 22
+2026-04 08:00: n 75513, media 3.02, p50 3, p90 5, p99 6, max 10
+2026-04 09:00: n 85370, media 3.03, p50 3, p90 5, p99 6, max 14
+2026-04 10:00: n 83824, media 3.03, p50 3, p90 5, p99 6, max 15
+2026-04 11:00: n 72985, media 2.88, p50 3, p90 5, p99 6, max 15
+2026-04 12:00: n 53003, media 2.85, p50 3, p90 5, p99 6, max 12
+2026-04 13:00: n 77255, media 2.84, p50 3, p90 5, p99 6, max 10
+2026-04 14:00: n 116266, media 3.03, p50 3, p90 5, p99 8, max 121
+2026-04 fuera: n 136987, media 2.81, p50 3, p90 5, p99 6, max 20
+2026-07 07:00: n 23854, media 3.26, p50 3, p90 5, p99 6, max 11
+2026-07 08:00: n 39879, media 2.83, p50 3, p90 4, p99 5, max 8
+2026-07 09:00: n 41511, media 2.84, p50 3, p90 4, p99 5, max 7
+2026-07 10:00: n 46767, media 2.83, p50 3, p90 4, p99 5, max 9
+2026-07 11:00: n 35529, media 2.81, p50 3, p90 4, p99 5, max 8
+2026-07 12:00: n 29045, media 2.75, p50 3, p90 4, p99 5, max 7
+2026-07 13:00: n 31183, media 2.71, p50 3, p90 4, p99 5, max 11
+2026-07 14:00: n 51528, media 2.85, p50 3, p90 5, p99 7, max 24
+2026-07 fuera: n 73718, media 2.80, p50 3, p90 4, p99 6, max 17
+2026-08 07:00: n 26310, media 3.30, p50 3, p90 5, p99 6, max 7
+2026-08 08:00: n 44721, media 2.82, p50 3, p90 4, p99 5, max 8
+2026-08 09:00: n 48068, media 2.80, p50 3, p90 4, p99 6, max 14
+2026-08 10:00: n 50375, media 2.76, p50 3, p90 4, p99 5, max 10
+2026-08 11:00: n 46440, media 2.80, p50 3, p90 4, p99 5, max 14
+2026-08 12:00: n 40914, media 2.70, p50 3, p90 4, p99 5, max 12
+2026-08 13:00: n 47869, media 2.72, p50 3, p90 4, p99 5, max 12
+2026-08 14:00: n 85232, media 2.84, p50 3, p90 4, p99 7, max 70
+2026-08 fuera: n 94106, media 2.70, p50 3, p90 4, p99 5, max 13
+total 07:00: n 95336, media 3.38, p50 3, p90 5, p99 6, max 22
+total 08:00: n 160113, media 2.92, p50 3, p90 5, p99 6, max 10
+total 09:00: n 174949, media 2.92, p50 3, p90 5, p99 6, max 14
+total 10:00: n 180966, media 2.90, p50 3, p90 5, p99 6, max 15
+total 11:00: n 154954, media 2.84, p50 3, p90 4, p99 6, max 15
+total 12:00: n 122962, media 2.78, p50 3, p90 4, p99 5, max 12
+total 13:00: n 156307, media 2.78, p50 3, p90 4, p99 6, max 12
+total 14:00: n 253026, media 2.93, p50 3, p90 5, p99 7, max 121
+total fuera: n 304811, media 2.78, p50 3, p90 4, p99 6, max 20
+P90 POR HORA (total), para knowledge/simulador/llenado.yaml:
+  07: 5
+  08: 5
+  09: 5
+  10: 5
+  11: 4
+  12: 4
+  13: 4
+  14: 5
+  fuera: 4
+lineas: main 51, rama 51; distintas 1
+- main: VENTANA: horas locales [07, 15) en Europe/Madrid; spread = ASK - BID en puntos; percentiles por rango mas cercano
++ rama: VENTANA: horas nominales [07, 15) del reloj de las sesiones (rejilla_h4, ADR-0069 §5); spread = ASK - BID en puntos; percentiles por rango mas cercano

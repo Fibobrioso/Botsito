@@ -1,0 +1,25 @@
+dia: '2026-01-22'
+fuente:
+  fichero: corpus/Estrategia del trader/Material adicional de su operativa/backtesting-analytics ENERO
+    2026.xlsx
+  ingerido_el: '2026-10-13'
+  sha256: ee4ade46094c73c1f1de0043acc5345cf7fa42c729b71a4b57d781002554ab86
+  tipo: backtest_xlsx
+id: caso-eurusd-2026-01-22
+operaciones:
+- direccion: venta
+  entrada: '1.16968'
+  instante_utc: '2026-01-22T11:13:50+00:00'
+  sesion: 11-15
+  stop: '1.1698'
+- direccion: venta
+  entrada: '1.17026'
+  instante_utc: '2026-01-22T11:51:30+00:00'
+  sesion: 11-15
+  stop: '1.17035'
+- direccion: venta
+  entrada: '1.17082'
+  instante_utc: '2026-01-22T12:27:45+00:00'
+  sesion: 11-15
+  stop: '1.17092'
+simbolo: EURUSD

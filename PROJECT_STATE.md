@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/entrada-enero
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/entrada-julio` cerrada en `main` el 2026-10-13 (`stable/F37o-entrada-julio`); R2.1 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/entrada-enero` EN CURSO (abierta el 2026-10-13 desde `main` 6fb483b): X (scripts/ticks_spread.py cuenta la ventana de ticks por la rejilla) y enero de 2026 entra en construcción (R2.2). Encargo docs/encargos/trabajo-entrada-enero.md; informe docs/validation/ENTRADA-ENERO.md.
 
 ## Stable Main State
 a4e4fa6 · merge de `trabajo/entrada-julio` (tag `stable/F37o-entrada-julio`): julio de 2026 entra en construcción del 1 al 17 (ADR-0078): la guardia lo lee (sus imágenes no), su libro declarado en Europe/Madrid, reparto dev-visto de los 13 laborables, 13 casos dev y el dataset de ticks `eurusd-ticks-2026-07-6e7dc7cd`; v11 a v14 al inventario; la respuesta de FTMO a P-D1 en docs/validation/FTMO-P-D1.md. Sobre `stable/F37n-activar-sesion-04-motor` (79e74b2). Informe docs/validation/ENTRADA-JULIO.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ a4e4fa6 · merge de `trabajo/entrada-julio` (tag `stable/F37o-entrada-julio`): j
 a4e4fa6 · merge: julio entra en construccion del 1 al 17 (ADR-0078): guardia, libro en Europe/Madrid, reparto dev-visto, 13 casos y ticks; v11-v14 al inventario; FTMO-P-D1 (R2.1) · tag stable/F37o-entrada-julio
 
 ## Tests Currently Passing
-1529 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1535 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -28,9 +28,8 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
-X. La rama que baje ticks de un mes de invierno pasa scripts/ticks_spread.py a la rejilla: hoy cuenta la ventana de ticks en huso_operativa (ACTIVACION-A42.md §6.2, ADR-0069 §5).
 
-F. Orden de trabajo: lo siguiente es X (R2.2: los ticks de invierno por la rejilla, para que enero cuente). R2.3 (Q, agosto) espera la exportación del trader, y R3.1 depende de R2 entera.
+F. Orden de trabajo: lo siguiente es R3.1, una corrida del arnés sobre la construcción vigente (abril, julio, agosto y enero) y la clasificación de sus diferencias por el consultor, para armar el cuestionario de V (sesión 5). Correrá con los diagnósticos que el motor aún necesita (A-35, A-44), así que no habilita mayo (ADR-0070 §3). T (vídeo de julio) y Q (agosto) la amplían cuando lleguen, sin bloquearla.
 
 T. Transcribir v11 a v14 (backtest de julio en vídeo, 2 h 38 min, con audio), comprobar qué días cubre cada uno, compararlos con el xlsx en los días 1 a 17 y con las horas del libro (el primero en Europe/Madrid); en su rama (ENTRADA-JULIO.md §5).
 
@@ -38,11 +37,11 @@ U. Julio 20-31: solo en vídeo (v14); decidir si se extraen casos del vídeo, tr
 
 G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-56, la regla del objetivo frente al material, ADR-0073) y A-16.
 
-I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de X y de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1); julio ya entró (ADR-0078). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
+I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1); julio ya entró (ADR-0078). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
 
 J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
 
-A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (las hace Aleks; docs/runbooks/DEMO-FTMO.md). La ejecución 1 se hizo el 2026-10-09 en la prueba gratuita del 2026-10-08 y fijó lo que no depende de la fecha (ADR-0071, docs/validation/DEMO-EJECUCION-1.md; A-27 DECIDIDA). Las 2 y 3, en una segunda prueba creada el 26 de octubre desde el mismo registro, con el script 1.1: antes de la ejecución 2 Aleks copia y compila el script 1.1 (F7, 0 errors), y el CSV de la ejecución 2 tiene que decir 1.1. La 2 entre el 26 y el 30 de octubre, la 3 después del 1 de noviembre. Miden A-28 (el desfase en invierno y el calendario del servidor: 180 min el 2026-10-09), repiten el nivel exacto de ADR-0057 §2 (filas 39-42), los deslizamientos (DN-3) y los swaps, y la 2 mide la comisión con 1,00 lote (ADR-0071 §3). Con cada CSV, rama para congelarlo y fijar lo que mida; si la ficha de EURUSD difiere, A-27 se reabre con otro ADR. La prueba del 2026-10-08 vence hacia el 2026-10-22.
+A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (las hace Aleks; el detalle, en docs/runbooks/DEMO-FTMO.md). La 1 (2026-10-09; ADR-0071, A-27 DECIDIDA) fijó lo que no depende de la fecha. La prueba del 2026-10-08 vence hacia el 2026-10-22; la nueva se crea el 26 de octubre. Antes de la 2, Aleks compila el script 1.1, y su CSV tiene que decir 1.1. La 2, entre el 26 y el 30 de octubre; la 3, después del 1 de noviembre. Miden A-28 (desfase en invierno y calendario del servidor), el nivel exacto de ADR-0057 §2, los deslizamientos (DN-3) y los swaps; la 2, además, la comisión con 1,00 lote (ADR-0071 §3).
 
 K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, los dos arreglos de ENTRADA-JULIO.md §8: que `ffprobe` y `ffmpeg -i` sobre un vídeo lean y no ejecuten; y que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`); cada uno con su test de los dos sentidos.
 
@@ -73,7 +72,7 @@ criterio de salida: `docs/state/README.md`.
 - 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): con A-35 respondida se escribe el productor de `liquidez_m15`…
 - 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.
 - 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor… · Desde ADR-0076 (2026-10-12) el arnes ya no necesita `--diagnostico-a21`: corre con `--diagnostico-a35` y `--diagnostico-a44`.
-- 34. Ticks: la ventana de invierno por la rejilla es X; el deslizamiento y el swap, las ejecuciones 2 y 3 (A).
+- 34. Ticks: el deslizamiento y el swap, las ejecuciones 2 y 3 (A).
 - 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje… · RN-020 tampoco retira la orden pendiente al llegar a su tope; cuando se active A-44, el modelo es lo que hace RN-036 (`retirar_ordenes_pendientes`, ADR-0077).
 - 37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN, EN LA RAMA DE STOP Y LOTE (A-18).** FTMO confirma 50 lotes en EURUSD y cuenta de cobertura (P-D1, `docs/validation/FTMO-P-D1.md`, 2026-10-12). Pero antes que el volumen corta el MARGEN (ADR-0026, Impacto): con `firma_apalancamiento` 1:30, todo el saldo como margen da 27,27 lotes a 1,10 y 25,00 a 1,20, y el 0,5 % deja de cumplirse con un stop de menos de 1,83 y 2,00 pips (el tope de 50 lotes corta en 1 pip). Partir en varias órdenes no lo arregla: MT5 suma el margen de las posiciones del mismo lado. El simulador no comprueba el margen y `firma_apalancamiento` no lo lee ningún código del bot (deuda abajo). La ejecución 2 de la demo comprueba la fórmula con el margen de 1,00 lote que ya escribe el script 1.1 (`MargenAlcanza`).
 
@@ -107,6 +106,8 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - La ingesta asigna la sesión con el reloj del registro y no con el congelado del artefacto; hoy son el mismo. Antes de cambiar reloj_sesiones en el registro, la ingesta pasa a leer el congelado (CASES-REJILLA.md).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
 - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
+- La condición 2 de ADR-0042 §2 (la lectura COMPLETA del libro, declarada) se comprueba buscando el NOMBRE del fichero en HOLDOUT-EXPOSICIONES (`cases/visto.py:requisitos`): una fila que lo nombra sin declarar la lectura completa la da por cumplida (falso positivo medido con enero, ENTRADA-ENERO.md §0.b). El mecanismo por nombre lo fija ADR-0042 §2: arreglarlo pide una NOTA o un ADR nuevo, no solo código.
+- `engine/simulador_config.py` busca el spread supuesto de `llenado.yaml` por la hora de PARED de Europe/Madrid, no por la rejilla: los días de desfase sale corrido una hora (2026-10-27: 4 de 11 horas, 1 punto de spread distinto; ENTRADA-ENERO.md §0.c). Importará cuando se mida un mes con días de desfase: marzo, del 9 al 27, y octubre.
 - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
 - `cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT (2026-09-25, medido con git 2.55 en docs/validation/BLINDAJE.md §2):
 - `scripts/v5_criterio.py` SOLO RECONOCE CAJAS DE VENTA (2026-09-23):
@@ -176,8 +177,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 31 (2026-10-12).
+— ninguna desde el Archivo 32 (2026-10-13).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 31 (2026-10-12).
+— ninguna desde el Archivo 32 (2026-10-13).

@@ -34,5 +34,8 @@ perfil_para_medir: ftmo-2step-swing-100k
 # el camino de fidelidad, y lo que caiga en `fidelidad-2` y `fidelidad-3` queda oculto.
 # Julio, del 1 al 17 (lo que cubre su libro), desde ADR-0078 (2026-10-13): decidido ANTES de
 # cualquier corrida del arnes que lo incluya; ningun umbral cambia.
-construccion: ["2026-04", "2026-07", "2026-08"]
+# Enero, del 2 al 30 (lo que cubre su libro), desde ADR-0079 (2026-10-13), igual. VA AL FINAL A
+# PROPOSITO: el orden importa, porque siete ficheros de tests toman `construccion[0]` como el mes
+# sobre el que trabajar (cinco corren el arnes); quien reordene la lista los mueve a la vez.
+construccion: ["2026-04", "2026-07", "2026-08", "2026-01"]
 medida: ["2026-05"]

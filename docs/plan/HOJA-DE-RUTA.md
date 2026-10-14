@@ -74,13 +74,16 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   R2.4.
 
 ### R2.2 · Enero cuenta: los ticks de invierno por la rejilla
-- **Refs:** NA:X · HER:34 · ID:ADR-0069 · ID:ADR-0051
+- **Refs:** NA:X · ID:ADR-0069 · ID:ADR-0051 · ID:ADR-0079
 - **Qué es:** `scripts/ticks_spread.py` cuenta la ventana de ticks por la rejilla (ADR-0069 §5), y
   la rama que baje ticks de un mes de invierno los baja así (heredado 34, parte a). Las partes b
-  (deslizamiento) y c (swap) las miden las ejecuciones de la demo (carril de Aleks, NA:A).
+  (deslizamiento) y c (swap) las miden las ejecuciones de la demo (carril de Aleks, R7.1).
 - **Depende de:** nada.
 - **Quién:** la sesión, en la rama que baje ticks de un mes de invierno.
 - **Hecho cuando:** la ventana de ticks sale de la rejilla, con su test.
+- **Estado:** HECHA (`trabajo/entrada-enero`, `stable/F37p-entrada-enero`; ENTRADA-ENERO.md,
+  ADR-0079): la ventana de ticks sale de la rejilla, con su test; enero es construcción del 2 al
+  30, con sus ticks. Las partes b y c del heredado 34 siguen en R7.1.
 
 ### R2.3 · Agosto: el backtest grabado en vídeo
 - **Refs:** NA:Q · ID:A-56
@@ -112,7 +115,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** una corrida del arnés sobre la construcción simulada, con las opciones de la lista
   cerrada de ADR-0070, y la clasificación de las diferencias por el consultor. RN-004 está bloqueada
   por A-35 (heredados 25 y 30) y RN-020 por A-44 (heredado 35).
-- **Depende de:** R1.1 y R2; y, para que la corrida CUENTE (ADR-0070 §3), que el motor corra sin
+- **Depende de:** R1.1 y R2.1 y R2.2 (HECHAS); R2.3 y R2.4 la amplían cuando lleguen, sin
+  bloquearla; y, para que la corrida CUENTE (ADR-0070 §3), que el motor corra sin
   ningún `--diagnostico-*`: hoy lo necesita para A-35 y A-44, y sus valores van a R1.1 o, si
   la sesión 4 no basta, a R4.1. Hasta entonces la corrida es diagnóstico y no habilita R5.2.
 - **Quién:** la corrida, la sesión; la clasificación, el consultor.
@@ -169,7 +173,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** el backtest de diciembre (sin vídeo), sin abrir; antes, renovar hacia atrás el
   calendario de cierres (RENOVAR-CIERRES.md, condición 1) y que el consultor decida si es
   construcción o reservado.
-- **Depende de:** R2.2 (NA:X) y R2.1 (HECHA) y R1.1.
+- **Depende de:** R2.2 (HECHA) y R2.1 (HECHA) y R1.1.
 - **Quién:** el consultor decide; Aleks lee la columna de fechas (ADR-0072); la sesión ejecuta.
 - **Hecho cuando:** diciembre está ingerido o declarado reservado.
 
