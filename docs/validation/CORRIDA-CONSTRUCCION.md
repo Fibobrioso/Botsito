@@ -675,7 +675,11 @@ salidas sin su prefijo, 96 líneas):
   RN-014, RN-011, RN-012 o RN-006 en sesiones de los cuatro meses), porque RN-004 dispara en 2
   sesiones menos.
 Sin elegir lectura: esto NO decide A-35. Los días para preguntarle al trader, si el consultor los
-quiere: 2026-08-19 (sesión 11-15), 2026-01-19 y 2026-08-13.
+quiere: 2026-08-19 (sesión 11-15), 2026-01-19 y 2026-08-13. *(Con las salidas repetidas de §3.12,
+lo mismo: 0 sesiones con alguna diferencia, salida del guion en
+`anexos/CORRIDA-CONSTRUCCION/comparar_corridas.txt`; y la vida de la orden lo explica: con
+`inicio` hay 10 reubicaciones menos, 4 en 2026-01-19 11-15 y 6 en 2026-08-13 11-15, que son las
+peticiones que bajan.)*
 
 ### 3.5 El embudo agregado, por mes (corrida 2) y lo que (no) dice
 
@@ -817,10 +821,208 @@ cuenta: 7 → 6 es efecto del motor.
 4. **(menor) La memoria del estimador**: §1.e2 extrapoló por días; la memoria escala con los
    ticks y las M1 cargadas, no con los días corridos.
 
+### 3.10 Respuesta del consultor a la PARADA 2 (2026-10-14)
+
+Copiada tal cual (también al final de `docs/encargos/trabajo-corrida-construccion.md`):
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, como §3.10 «Respuesta del consultor a la PARADA 2», con la fecha.
+>
+> Antes de clasificar fila a fila hace falta saber qué pasó con cada orden. Con la tabla de hoy, 75 operaciones del trader a favor del sesgo del bot caen en sesiones donde el bot no llena nada, y hay 111 rechazos del bróker sin motivo listado: clasificar eso sería adivinar. Así que hoy dejo una clasificación PROVISIONAL por patrones, y la definitiva va en una PARADA 3, después de un cambio de salida y de repetir las corridas.
+>
+> 1. Hallazgo 1 de §3.9: (b) y (c) en ESTA rama, como cambios de SALIDA y nada más.
+>    a) En la sección «Diferencias por operacion», el último campo pasa a ser «el primer hecho DEL CAMINO que falta» (sgo, liquidez_tomada, orden_dimensionada, en el orden de la spec), sin los detenido_por_*; estos se añaden aparte solo si se produjeron. Si se produjeron los tres: «todos los hechos del camino producidos».
+>    b) En la cola de simulación (cableado.informe_simulacion), una subsección nueva «### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado)»: una línea por orden que el bot intentó colocar, con su resultado (llenada, rechazada, cancelada, viva al cerrar la sesión) y el motivo tal como lo da el bróker o el cableado (precio ya roto, volumen, ventana_fin, caja nueva, el que sea). Y otra, «### Rechazos por motivo», con el recuento por motivo y por mes.
+>    Amplía el contrato a src/botsito/engine/cableado.py SOLO para informe_simulacion y lo que necesite leer de la traza del bróker. No cambia ninguna decisión del bróker, del motor ni de la cuenta, ni ninguna opción del comando (la lista de ADR-0070 sigue igual). Si para listar la vida de la orden hiciera falta tocar algo que decide, PARADA.
+>    Tests sintéticos en los dos sentidos: una orden llenada, una rechazada con su motivo, una cancelada a ventana_fin y una viva al cierre; que el nuevo último campo no nombra nunca un detenido_por_* que no se produjo; y que las opciones del comando siguen siendo las mismas.
+>    Después, make check en verde y las tres corridas otra vez, con los mismos tres comandos y la repetición de la 2 fuera del repo para el diff. Las salidas nuevas sustituyen a las de hoy en el mismo commit (son anexos de una rama abierta, no evidencia inmutable), y el informe dice que se repitieron y por qué.
+> 2. Hallazgo 2 de §3.9: queda cubierto por el punto 1.b.
+> 3. Hallazgos 3 y 4 (memoria): solo se declaran. 631 MiB por corrida no bloquea nada.
+> 4. Clasificación PROVISIONAL por patrones (2026-10-14), sobre la tabla de la corrida 2 de hoy. Calcula la asignación de cada fila a su patrón con un guion en anexos/CORRIDA-CONSTRUCCION/ (patrones.py) que aplique estas reglas literales, y pega su recuento por mes. Si tu recuento no coincide con el mío, dilo en la PARADA 3: no ajustes ni las reglas ni las cifras.
+>    Reglas, para cada fila (el sesgo es el rn003 de la línea «Por sesion» de su sesión; «a favor» = compra con alcista o venta con bajista):
+>    - T0 pareja: filas del trader con PAREJA. Recuento mío: 12.
+>    - P1 sesgo: filas del trader sin pareja y contra el sesgo del bot. Recuento: 48, en 25 sesiones. Clase provisional: E o R, por decidir en el visor. Destino: rama de código si nuestro sesgo está mal (en 9 de esas 17 sesiones con dos sesiones el mismo día, el sesgo de la otra sesión sí coincidía con el trader: el cambio de sesgo a las 11:00 es el primer sospechoso), o pregunta de la sesión 5 si el trader opera contra su propio sesgo.
+>    - P2 entrada: filas del trader sin pareja, a favor del sesgo, con una operación del bot del mismo lado a menos de 15 minutos y a más de 3 puntos. Recuento: 18 (Δ de 4 a 54 puntos, casi todas entre 6 y 21). Clase provisional: R (qué velas forman la caja, A-48 y A-49 ya van a la sesión 5), con una comprobación E en el visor de que el 0 de la caja sale de la vela que dice la spec.
+>    - P3 otra zona: filas del trader sin pareja, a favor del sesgo, con el bot del mismo lado en la sesión pero a más de 15 minutos. Recuento: 45 (42 a otra entrada y 3 a la misma entrada pero a otra hora). Clase provisional: R (qué liquidez y qué zona escoge el trader: A-43, A-50, A-53).
+>    - P4 sin orden: filas del trader sin pareja, a favor del sesgo, sin ninguna operación del bot en la sesión. Recuento: 75. Clase: PENDIENTE de la lista de órdenes del punto 1.b (si son rechazos por precio ya roto, E o R según el motivo; si no se produjo un hecho del camino, según cuál).
+>    - P5 de más: filas del bot sin pareja en una sesión con operaciones del trader. Recuento: 61 (47 del mismo lado y 14 del otro). Clase provisional: R (cuántas veces reentra el trader tras un stop en la misma zona; los cartuchos), salvo las del otro lado, que siguen a P1.
+>    - P6 donde el trader no operó: filas del bot en una sesión o un día sin operaciones del trader. Recuento: 33 (21 en sesión y 12 en día). Clase provisional: R (qué le hace no operar; enlaza con la deuda «el no_trade por ausencia no está decidido»), o M en agosto si el xlsx que el trader no da por bueno (S-16) no trae ese día.
+>    Marca además, sin cambiar el patrón, las 16 filas que tocan una hora perdida (las de §3.6) como posible M.
+> 5. Para la PARADA 3 quiero también, sin abrir el visor todavía, la lista de las 25 sesiones de P1 con: la hora UTC de las dos últimas H4 cerradas antes de la sesión, su apertura, máximo, mínimo y cierre en nuestras velas, el sesgo de la sesión anterior del mismo día y la regla que lo decidió (RN-003, doble ruptura, ADR-0060 o ADR-0075). Son velas de construcción: se leen sin puerta. Con eso decido qué días pido en el visor.
+> 6. Agosto: recuerda en el resumen de agosto que sus casos salen del xlsx que el trader no da por bueno (S-16). Lo tengo en cuenta en P6 y al clasificar.
+>
+> Lo que sigue: el punto 1 (código de salida, tests y make check), las tres corridas repetidas, patrones.py con su recuento, el punto 5, y PARADA 3 con todo commiteado. Las mismas reglas: las corridas nunca a la vez que make check, y si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanza Aleks con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+### 3.11 El punto 1, hecho: el primer hecho del camino y la vida de la orden (commit 1b90d23)
+
+Cambios de SALIDA y nada más; ninguna decisión del bróker, del motor ni de la cuenta, ninguna
+opción nueva (test: las 13 opciones del subparser siguen iguales y la lista de ADR-0070 también).
+- **1.a** (`src/botsito/engine/arnes.py`, `primer_hecho_que_falta`, `PREFIJO_FRENO =
+  "detenido_por_"`): el último campo mira el camino -los hechos de origen `regla` que no empiezan
+  por `detenido_por_`, en el orden de la spec: `sesgo`, `orden_dimensionada`, `liquidez_tomada`-
+  y nombra un freno aparte (`; frenos producidos: …`) solo si se produjo; si no falta ninguno:
+  `todos los hechos del camino producidos`. La cabecera del embudo por mes lo dice. El criterio es
+  el prefijo del nombre, porque la spec no marca los frenos con ningún atributo (sus cuatro
+  entradas comparten solo el nombre y que se producen «cuando algo para al bot»).
+- **1.b** (`src/botsito/engine/cableado.py`): `TrazaBroker` guarda `cancelaciones` (instante, id,
+  motivo) y `limites`; `correr_dia` anota, tras cada cierre de M1, las peticiones de cancelar que
+  ese cierre pidió con las reglas que dispararon en él y dónde cayó («al abrir otra sesion», «en
+  ventana_fin»), y las de la red de seguridad del fin del día con su motivo propio
+  (`MOTIVO_FIN_DIA`); `vida_de_las_ordenes` lee `broker.ordenes`, `broker.traza().rechazos` y esa
+  lista, y `_informe_ordenes` escribe «### Ordenes (dia | sesion | id | colocada UTC | precio |
+  resultado | motivo | instante del resultado)» -resultado `llenada`, `rechazada` (motivo del
+  bróker: `precio_invalido`, `stops_level`), `cancelada` (motivo del cableado) o `viva al cerrar el
+  dia`- más `ordenes: …` y «### Rechazos por motivo (mes | motivo | peticion | rechazos)», entre los
+  eventos y las peticiones. De las líneas existentes de `cableado.py` cambian dos (la construcción
+  de `TrazaBroker`, para pasarle `limites`, y la cola del informe, para encadenar la sección);
+  `cli.py` y `primitivas_broker.py` (protegido) intactos. Lo único que se añade al bucle de
+  `correr_dia` es leer `broker.traza().peticiones` después de cada evento: lectura, sin efecto.
+- **Tests** (`tests/unit/test_vida_de_la_orden.py`, 7, sobre el cableado real y la spec real con los
+  días de 2030 de `test_cableado`): llenada (fila completa con el instante del llenado); rechazada
+  con su motivo (`precio_invalido`, la compra STOP del lado equivocado de ADR-0058) y su recuento
+  por motivo; cancelada en `ventana_fin` por RN-035 (la orden de la tarde que no se llena, como
+  `test_rn035_ventana_fin`); cancelada «al abrir otra sesion» (la de la mañana); el motivo de una
+  cancelación en los tres sitios y sin regla; y viva al cerrar el día (con un bróker y una traza
+  escritos a mano, porque con la spec de hoy RN-035 llega antes que la red de seguridad). En
+  `test_diferencias_por_operacion.py`, uno más: un `detenido_por_*` que no se produjo no se nombra
+  nunca, y uno que sí se produjo sale aparte. `make check`: 2641 passed, sello `e4989239…`.
+- **Runbook**: `docs/runbooks/ARNES-MOTOR.md` describe el campo nuevo y las dos subsecciones.
+- **Anexos nuevos**: `patrones.py` (las reglas literales del punto 4, §3.13) y `sesgo_p1.py` (el
+  punto 5, §3.14). `PROJECT_STATE.md`: «Tests Currently Passing» 1547 → 1554.
+
+### 3.12 Las tres corridas repetidas sobre 1b90d23 (2026-10-14), y por qué
+
+Se repitieron porque el punto 1 cambió la SALIDA (el último campo de la tabla y la vida de la
+orden) y el consultor pidió que las salidas nuevas sustituyeran a las de §3.1 en el mismo commit.
+Los mismos tres comandos, uno cada vez, y el cuarto para el `diff`; nada más cambió entre las dos
+tandas (ningún parámetro, ninguna regla, ningún dato). **Todas las cifras del criterio, del
+embudo global, de la cuenta y de las peticiones son las mismas que en §3.2-§3.7** (comprobado
+línea a línea con el guion de resumen y con `patrones.py`, §3.13): lo único que cambia en los
+ficheros es el campo nuevo y las dos subsecciones nuevas.
+
+1. `arrastrada`: `TIEMPO: 395.5 s; MEMORIA: pico del proceso de 630.9 MiB`.
+2. `diaria`: `TIEMPO: 370.2 s; MEMORIA: pico del proceso de 632.7 MiB`.
+3. `a35-inicio`: `TIEMPO: 373.1 s; MEMORIA: pico del proceso de 632.0 MiB`.
+4. La repetición de la 2 fuera del repo: `TIEMPO: 360.4 s; MEMORIA: pico del proceso de 632.8
+   MiB`; `diff` con la salida de la 2 vacío, mismo blob `8861d40319fd2e81896d1d48dfe21b6dd94aecd1`
+   (`git hash-object`); la copia se borró después.
+
+**La vida de la orden, lo que dice** (de «### Ordenes» y «### Rechazos por motivo»):
+
+| Corrida | Órdenes intentadas | Llenadas | Rechazadas (motivo) | Canceladas (motivo) |
+|---|---|---|---|---|
+| 1 arrastrada | 156 | 43 | 33: `volumen_max_lotes` 29 (enero 24, abril 5), `precio_invalido` 4 (enero 3, abril 1) | 80: 79 reubicaciones (RN-006 con RN-011 y RN-015 en el mismo cierre: la caja recalculada de ADR-0074, cancelar y volver a colocar), 1 por RN-035 al abrir otra sesión |
+| 2 diaria | 439 | 106 | 111: `volumen_max_lotes` 100 (enero 21, abril 24, julio 20, agosto 35), `precio_invalido` 11 (3, 4, 2, 2) | 222: 220 reubicaciones, 1 por RN-035 en `ventana_fin`, 1 por RN-035 al abrir otra sesión |
+| 3 a35-inicio | 429 | 106 | 111: los mismos 100 y 11 | 212: 210 reubicaciones (10 menos que la 2: 4 en 2026-01-19 11-15 y 6 en 2026-08-13 11-15, las dos sesiones cuyas peticiones bajan en §3.4), 1 en `ventana_fin`, 1 al abrir otra sesión |
+
+Ninguna orden queda «viva al cerrar el dia»: RN-035 llega antes que la red de seguridad.
+**Hallazgo (importa):** 100 de los 111 rechazos de la corrida 2 son por `volumen_max_lotes`: el
+lote que dimensiona RN-011 (0,5 % del saldo sobre el stop) supera los 50 lotes del perfil
+(`firma_volumen_max_lotes`, ADR-0071) y el bróker simulado no coloca la orden (`broker.py:857`).
+Es la cadena de HER:37 («los rechazos por volumen y por margen, en la rama de stop y lote»): con
+100.000 de saldo, 0,5 % son 500 USD, y 500 / 50 lotes = 10 puntos: **todo stop de menos de 10
+puntos da más de 50 lotes y se rechaza**. No se ajusta nada; va a la clasificación (E o R) y a
+las líneas del cierre.
+
+### 3.13 La clasificación provisional por patrones (punto 4), calculada con `patrones.py`
+
+`uv run python docs/validation/anexos/CORRIDA-CONSTRUCCION/patrones.py <salida 2> --filas`, con
+las reglas literales del consultor (la docstring del guion las repite, y declara las dos cosas
+que las reglas no dicen: un sesgo que no es alcista ni bajista cuenta como «contra», y «del mismo
+lado» se mira sobre todas las operaciones del bot de la sesión, incluidas las emparejadas). Salida
+completa, fila a fila, en `anexos/CORRIDA-CONSTRUCCION/patrones.txt`; el recuento:
+
+```
+mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de mas | P6 donde el trader no opero | T0 pareja
+2026-01 | 13 | 9 | 17 | 14 | 28 | 8 | 1
+2026-04 | 9 | 2 | 8 | 12 | 11 | 16 | 4
+2026-07 | 20 | 6 | 13 | 23 | 9 | 2 | 5
+2026-08 | 6 | 4 | 4 | 26 | 13 | 7 | 2
+total | 48 | 21 | 42 | 75 | 61 | 33 | 12
+P1 sesgo: 48 filas en 25 sesiones
+  P1 sesgo · sesgo alcista: 16
+  P1 sesgo · sesgo bajista: 32
+  P2 entrada · Δentrada: 21
+  P3 otra zona · otra entrada: 42
+  P5 de mas · mismo lado: 47
+  P5 de mas · otro lado: 14
+  P6 donde el trader no opero · en dia: 12
+  P6 donde el trader no opero · en sesion: 21
+filas marcadas posible M (hora perdida): 16
+```
+
+Las 292 filas caben en los siete patrones (ninguna queda fuera). **Frente al recuento del
+consultor**: T0 12 = 12; P1 48 en 25 sesiones = 48 en 25; P4 75 = 75; P5 61 (47 y 14) = 61 (47 y
+14); P6 33 (21 y 12) = 33 (21 y 12); 16 marcadas = 16. **No coincide P2/P3: 21 y 42 frente a 18 y
+45.** Las tres filas de diferencia son las que tienen una operación del bot del mismo lado a
+menos de 15 minutos Y a 3 puntos o menos -2026-07-10 07-11 (Δ 3 puntos) y 2026-07-10 11-15 (Δ 1 y
+Δ 0)-, que no son pareja porque esa operación del bot ya está emparejada con otra del trader (el
+criterio es uno a uno): la regla literal de P2 dice «a más de 3 puntos», así que ni P2 ni P3 las
+describen; el guion las deja en P2 por el tiempo (a menos de 15 minutos), y el consultor las puso
+en P3 («3 a la misma entrada pero a otra hora»). Son las mismas tres filas en los dos recuentos;
+no se ajusta ni la regla ni la cifra: lo decide el consultor en la PARADA 3.
+
+### 3.14 El punto 5: las 25 sesiones de P1, con sus H4 y la regla del sesgo
+
+`uv run python docs/validation/anexos/CORRIDA-CONSTRUCCION/sesgo_p1.py <raiz> <salida 2>`, que
+carga las velas como `arnes.dias_de_mercado` (el mismo calentamiento, §1.c) y, por cada sesión P1,
+da las dos últimas H4 cerradas antes de la apertura (inicio UTC, apertura, máximo, mínimo,
+cierre), el sesgo que anotó el motor, la regla que lo decidió -recalculada con
+`domain.sesgo.sesgo_h4` sobre esas velas: RN-003 por ruptura simple, la doble ruptura decidida
+por el color (ADR-0060 §1), o una neutra con doble ruptura saltada (ADR-0075)- y lo mismo de la
+sesión anterior del mismo día. Salida completa en `anexos/CORRIDA-CONSTRUCCION/sesgo_p1.txt`
+(102 líneas). Lo que se ve de una pasada: de las 25 sesiones, 6 sesgos salen de una doble ruptura
+decidida por el color (2026-01-27 07-11, 2026-04-13 11-15, 2026-07-15 11-15, 2026-08-20 07-11, y
+en la sesión anterior de 2026-04-24 11-15 y 2026-07-17 11-15), ninguna de una neutra saltada
+(ADR-0075), 2 se deciden en la segunda vela hacia atrás (2026-04-03 y 2026-04-10, ambas 07-11), y
+hay rupturas de 2 puntos (2026-01-22 11-15, alcista) y de 6 (2026-04-03 07-11): la zona de A-16.
+10 de las 25 son sesiones 11-15 con una 07-11 delante; en 5 de ellas el sesgo de la mañana era el
+contrario (2026-01-30, 2026-04-13, 2026-04-24, 2026-07-15, 2026-07-17): el cambio de sesgo a las
+11:00 que el consultor señala. Solo velas de construcción (ADR-0021 §1); ningún día abierto en el
+visor.
+
+### 3.15 P4 frente a la vida de la orden (`p4_ordenes.py`)
+
+`uv run python docs/validation/anexos/CORRIDA-CONSTRUCCION/p4_ordenes.py <salida 2>` cruza las 38
+sesiones de P4 (75 filas) con «### Ordenes» de la misma salida (completo en
+`anexos/CORRIDA-CONSTRUCCION/p4_ordenes.txt`):
+
+```
+total | rechazadas y canceladas, ninguna llenada 7; sin ninguna orden colocada 17; todas canceladas sin llenarse 4; todas rechazadas 10
+```
+
+- **17 sesiones sin ninguna orden colocada** aunque en 15 de ellas la tabla dice «todos los
+  hechos del camino producidos» (y en 2, `orden_dimensionada[productoras sin cumplirse]`): el
+  motor dimensionó y no colocó, es decir, un `gate` prohibió `colocar_orden_limite` (ADR-0032:
+  RN-015 apaga `orden_dimensionada` aunque un gate prohíba colocar). Cuál, no está en la salida:
+  `TrazaSesion.bloqueadas` lo guarda como `(regla, accion, prohibida:<efecto>)` pero «Por sesion»
+  no lo imprime. Hallazgo 1 de §3.16.
+- **10 sesiones con todas las órdenes rechazadas** (9 solo por `volumen_max_lotes`, 1 por
+  `precio_invalido`), y 7 con rechazos y reubicaciones sin ningún llenado: la cadena de HER:37.
+- **4 sesiones con todas canceladas sin llenarse** (solo reubicaciones): la orden se reubicó con
+  cada caja nueva y nunca se llenó antes de retirarse.
+
+### 3.16 Hallazgos para la PARADA 3
+
+1. **(importa) Para 17 de las 38 sesiones de P4 falta el dato que decide la clase:** qué gate
+   prohibió colocar. Propuesta, del mismo régimen que el punto 1 (salida y nada más): añadir a la
+   línea de «Por sesion» un campo `bloqueadas` con `(regla, accion, motivo)` de la traza, y en
+   `p4_ordenes.py` cruzarlo. Exige otro `make check` y repetir las corridas (unos 25 minutos).
+2. **(importa) 100 de 111 rechazos por `volumen_max_lotes`** (§3.12): con 0,5 % de 100.000 y el
+   tope de 50 lotes, cualquier stop de menos de 10 puntos no se coloca. Es HER:37; la clase (E, R
+   o D) la decide el consultor; aquí no se ajusta nada.
+3. **(menor) P2/P3: tres filas** que la regla literal no describe (§3.13).
+4. **(menor) Las dos sesiones de P1 cuya sesión anterior no tiene línea «Por sesion»** (sin
+   operaciones del trader en ella) salen con «sesgo del motor ?» y el sesgo recalculado al lado:
+   2026-01-22 y 2026-08-04 (§3.14).
+
 ## Estado
 
-EN CURSO. Fase 0 entregada y respondida el 2026-10-14; fase 1 hecha; fase 2 hecha el 2026-10-14:
-**PARADA 2, entrega para clasificar** (la tabla de la corrida 2 en
-`docs/validation/anexos/CORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt`,
-sección «## Diferencias por operacion»). Pendientes: la clasificación del consultor (fase 3), la
-NOTA de ADR-0070 y el runbook (fase 3), el revisor y las líneas del cierre.
+EN CURSO. Fase 0 entregada y respondida el 2026-10-14; fase 1 hecha; fase 2 hecha y respondida
+(PARADA 2); el punto 1 de la respuesta hecho (commit 1b90d23) y las corridas repetidas sobre él:
+**PARADA 3, esperando la clasificación definitiva del consultor** (fase 3) y su decisión sobre
+§3.16. Pendientes después: la fase 3 (clasificación en el informe, NOTA de ADR-0070 y runbook), el
+revisor y las líneas del cierre.
