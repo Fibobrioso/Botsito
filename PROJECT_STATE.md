@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/corrida-construccion
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/entrada-enero` cerrada en `main` el 2026-10-13 (`stable/F37p-entrada-enero`); R2.2 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/corrida-construccion` EN CURSO (abierta el 2026-10-14 desde 23316c8): R3.1, la corrida del arnés sobre la construcción vigente y la tabla de diferencias por operación para clasificar (F de la Next Action). Encargo `docs/encargos/trabajo-corrida-construccion.md`; informe `docs/validation/CORRIDA-CONSTRUCCION.md`.
 
 ## Stable Main State
 87391b7 · merge de `trabajo/entrada-enero` (tag `stable/F37p-entrada-enero`): `scripts/ticks_spread.py` cuenta la ventana por la rejilla (ADR-0069 §5), con su test del día de desfase; enero de 2026 entra en construcción del 2 al 30 (ADR-0079), al final de la lista: lectura declarada, tramo, reparto dev-visto de los 21 laborables, 21 casos dev y el dataset de ticks `eurusd-ticks-2026-01-1ce59681` (06-14 UTC). Sobre `stable/F37o-entrada-julio` (a4e4fa6). Informe docs/validation/ENTRADA-ENERO.md; el registro del cierre, al final de HISTORIA.
@@ -177,8 +177,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 32 (2026-10-13).
+— ninguna desde el Archivo 33 (2026-10-14).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 32 (2026-10-13).
+— ninguna desde el Archivo 33 (2026-10-14).
