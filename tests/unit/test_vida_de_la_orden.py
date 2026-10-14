@@ -1,0 +1,219 @@
+"""La vida de la orden en la cola de simulacion (rama `trabajo/corrida-construccion`, respuesta del
+consultor a la PARADA 2, punto 1.b): «### Ordenes» (una linea por orden que el bot intento colocar,
+con su resultado y su motivo) y «### Rechazos por motivo». Todo sintetico, sobre el cableado real
+y la spec real, con los dias de 2030 de `test_cableado`: una llenada, una rechazada con su motivo,
+una cancelada a ventana_fin, una cancelada al abrir otra sesion y una viva al cerrar el dia. Nada
+de esto decide: solo lee la traza del broker, y las opciones del comando siguen siendo las mismas.
+"""
+
+from __future__ import annotations
+
+from decimal import Decimal
+from types import SimpleNamespace
+from typing import Any
+
+import pytest
+
+from botsito.config.registro import Registro, cargar_registro
+from botsito.domain.ticks import MS_POR_MINUTO
+from botsito.engine import cableado
+from botsito.engine.broker import (
+    CANCELADA,
+    MOTIVO_PRECIO_INVALIDO,
+    PETICION_CANCELAR,
+    Broker,
+    Rechazo,
+)
+from botsito.engine.entrada import STOP_EN_RUPTURA
+from botsito.engine.llenado import Configuracion
+from botsito.engine.perfil_cuenta import cargar_perfil
+from botsito.engine.simulacion import reglas_broker_de
+from botsito.spec.modelo import cargar_vocabulario
+from tests.unit import test_cableado as tc
+
+DIA = tc.DIA.isoformat()
+ZONA_TARDE = tc.MINUTO_ZONA + 240  # 12:00 UTC, dentro de la sesion 11-15
+PRECIO = Decimal(tc.ENTRADA) / tc.ESCALA  # 1.09995
+
+
+@pytest.fixture(scope="module")
+def registro() -> Registro:
+    return cargar_registro(tc.RAIZ / "knowledge" / "spec" / "parametros.yaml")
+
+
+@pytest.fixture(scope="module")
+def vocabulario() -> dict[str, dict[str, Any]]:
+    return cargar_vocabulario(tc.SPEC)
+
+
+def _lineas_de_ordenes(motor: Any) -> list[str]:
+    texto = cableado.informe_simulacion(motor)
+    assert texto.count(cableado.CABECERA_ORDENES) == 1
+    seccion = texto.split("### Ordenes", 1)[1].split("### Rechazos por motivo", 1)[0]
+    return [ln for ln in seccion.splitlines() if ln.startswith(f"{DIA} | ")]
+
+
+def _rechazos(motor: Any) -> list[str]:
+    texto = cableado.informe_simulacion(motor)
+    seccion = texto.split("### Rechazos por motivo (mes | motivo | peticion | rechazos)", 1)[1]
+    seccion = seccion.split("### Peticiones al servidor", 1)[0]
+    return [ln for ln in seccion.splitlines() if ln.strip()]
+
+
+# ------------------------------------------------------------------------------ llenada
+
+
+def test_una_orden_llenada_sale_llenada_con_el_instante_del_llenado(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    motor = tc._motor(registro, vocabulario, tc._mercado(tc.RUTA_STOP))
+    motor.correr_dia(tc._dia())
+    broker = motor.brokers[DIA]
+    p = next(iter(broker.posiciones.values()))
+    (fila,) = _lineas_de_ordenes(motor)
+    colocada = cableado._instante(broker.ordenes["o1"].colocada_ms).isoformat()
+    assert fila == (
+        f"{DIA} | 07-11 | o1 | {colocada} | {PRECIO} | llenada | - | "
+        f"{cableado._instante(p.abierta_ms).isoformat()}"
+    )
+    assert "ordenes: llenada 1" in cableado.informe_simulacion(motor)
+    assert _rechazos(motor) == ["ninguno"]
+
+
+# ---------------------------------------------------------------------------- rechazada
+
+
+def test_una_orden_rechazada_sale_con_el_motivo_del_broker_y_cuenta_por_motivo(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """En RUTA_STOP el precio esta por encima de la entrada cuando se coloca: una compra STOP alli
+    queda del lado equivocado y el broker la rechaza (ADR-0057, `test_cableado`)."""
+    motor = tc._motor(registro, vocabulario, tc._mercado(tc.RUTA_STOP))
+    motor.tipo_orden = STOP_EN_RUPTURA
+    motor.correr_dia(tc._dia())
+    broker = motor.brokers[DIA]
+    assert not broker.posiciones
+    filas = _lineas_de_ordenes(motor)
+    assert filas and all(f" | rechazada | {MOTIVO_PRECIO_INVALIDO} | " in f for f in filas), filas
+    rechazos = _rechazos(motor)
+    assert rechazos == [f"2030-01 | {MOTIVO_PRECIO_INVALIDO} | colocar | {len(filas)}"]
+    assert f"rechazos del broker: {len(filas)}" in cableado.informe_simulacion(motor)
+
+
+# ------------------------------------------------------- cancelada: ventana_fin, otra sesion
+
+
+def _motor_con_zona(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], zona: int, ruta: Any
+) -> Any:
+    motor = tc._motor(registro, vocabulario, tc._mercado(ruta))
+    predicados, acumuladores = tc._sinteticas(zona)
+    motor.primitivas_extra = predicados
+    motor.acumuladores_extra = acumuladores
+    return motor
+
+
+def test_la_pendiente_de_la_tarde_sale_cancelada_en_ventana_fin_por_rn035(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """Como `test_rn035_ventana_fin`: la orden de la tarde no se llena y RN-035 la retira a
+    ventana_fin; la fila dice donde cayo el cierre y que reglas dispararon."""
+    motor = _motor_con_zona(registro, vocabulario, ZONA_TARDE, {})
+    motor.correr_dia(tc._dia())
+    tb = motor.trazas_broker[DIA]
+    assert tb.cancelados_fin_dia == 0
+    assert [(ms, id) for ms, id, _ in tb.cancelaciones] == [
+        (tc.MINUTO_FIN * MS_POR_MINUTO - 1, "o1")
+    ]
+    (fila,) = _lineas_de_ordenes(motor)
+    campos = fila.split(" | ")
+    assert campos[1:3] == ["11-15", "o1"] and campos[5] == "cancelada"
+    assert campos[6].startswith("en ventana_fin; reglas disparadas en ese cierre: ")
+    assert "RN-035" in campos[6] and "viva" not in fila
+    assert campos[7] == cableado._instante(tc.MINUTO_FIN * MS_POR_MINUTO - 1).isoformat()
+
+
+def test_la_pendiente_de_la_manana_sale_cancelada_al_abrir_otra_sesion(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    motor = _motor_con_zona(registro, vocabulario, tc.MINUTO_ZONA, {})
+    motor.correr_dia(tc._dia())
+    tb = motor.trazas_broker[DIA]
+    apertura_tarde = next(d for n, d, _ in tb.limites if n == "11-15")
+    assert [(ms, id) for ms, id, _ in tb.cancelaciones] == [
+        (apertura_tarde * MS_POR_MINUTO - 1, "o1")
+    ]
+    (fila,) = _lineas_de_ordenes(motor)
+    campos = fila.split(" | ")
+    assert campos[1:3] == ["07-11", "o1"] and campos[5] == "cancelada"
+    assert campos[6].startswith("al abrir otra sesion; reglas disparadas en ese cierre: ")
+    assert "RN-035" in campos[6]
+
+
+def test_el_motivo_de_una_cancelacion_dice_donde_cayo_y_que_disparo() -> None:
+    limites = (("07-11", 100, 340), ("11-15", 340, 580))
+    assert cableado._motivo_de_cancelacion(340, limites, ["RN-035", "RN-003"]) == (
+        "al abrir otra sesion; reglas disparadas en ese cierre: RN-003, RN-035"
+    )
+    assert cableado._motivo_de_cancelacion(580, limites, ["RN-035"]) == (
+        "en ventana_fin; reglas disparadas en ese cierre: RN-035"
+    )
+    assert cableado._motivo_de_cancelacion(200, limites, ["RN-004", "RN-006"]) == (
+        "reglas disparadas en ese cierre: RN-004, RN-006"
+    )
+    assert cableado._motivo_de_cancelacion(200, limites, []) == (
+        f"reglas disparadas en ese cierre: {cableado.MOTIVO_SIN_REGLA}"
+    )
+    # la apertura de la PRIMERA sesion no es «abrir otra sesion»
+    assert cableado._motivo_de_cancelacion(100, limites, ["RN-035"]).startswith("reglas ")
+
+
+# ------------------------------------------------------------------ viva al cerrar el dia
+
+
+def test_una_orden_que_la_red_de_seguridad_cancela_sale_viva_al_cerrar_el_dia(
+    registro: Registro,
+) -> None:
+    """La red de seguridad de ADR-0053 §6 no encuentra nada con la spec de hoy (RN-035 llega
+    antes), asi que se ejercita la lectura de la traza con un broker y una traza escritos a mano:
+    la cancelacion del fin del dia lleva su motivo propio y el resultado es «viva»."""
+    perfil = cargar_perfil(tc.PERFIL)
+    md = tc._mercado({})
+    fin_ms = tc.MINUTO_FIN * MS_POR_MINUTO - 1
+    broker = Broker(
+        reglas_broker_de(perfil, registro),
+        Configuracion(False, 0, lambda _m: tc.SPREAD),
+        md.mercado(),
+        registro.decimal("instrumento_contrato"),
+        md.escala,
+    )
+    ms = tc.MINUTO_ZONA * MS_POR_MINUTO - 1
+    o = broker.colocar_limite("o1", "compra", tc.ENTRADA, Decimal("0.1"), tc.EXTREMO + 4,
+                              tc.ENTRADA + 60, ms)  # fmt: skip
+    assert not isinstance(o, Rechazo)
+    broker.avanzar(fin_ms)
+    broker.cancelar("o1", fin_ms)
+    assert broker.ordenes["o1"].estado == CANCELADA
+    tb = cableado.TrazaBroker(
+        limites=(("07-11", tc.MINUTO_INI, tc.FIN_H4), ("11-15", tc.FIN_H4, tc.MINUTO_FIN))
+    )
+    tb.cancelados_fin_dia = 1
+    tb.cancelaciones.append((fin_ms, "o1", cableado.MOTIVO_FIN_DIA))
+    tb.peticiones = [p for p in broker.traza().peticiones if p.tipo == PETICION_CANCELAR]
+    motor = SimpleNamespace(trazas_broker={DIA: tb}, brokers={DIA: broker})
+    filas = cableado.vida_de_las_ordenes(motor)  # type: ignore[arg-type]
+    assert len(filas) == 1
+    dia, sesion, id, colocada, precio, resultado, motivo, cuando = filas[0]
+    assert (dia, sesion, id, precio, resultado) == (
+        DIA,
+        "07-11",
+        "o1",
+        PRECIO,
+        "viva al cerrar el dia",
+    )
+    assert motivo == cableado.MOTIVO_FIN_DIA
+    assert cuando is not None and cuando == cableado._instante(fin_ms)
+    assert colocada == cableado._instante(ms)
+    # y en el texto, en los dos sentidos: viva, no cancelada
+    linea = cableado._informe_ordenes(motor)[2]  # type: ignore[arg-type]
+    assert " | viva al cerrar el dia | " in linea and " | cancelada | " not in linea

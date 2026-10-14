@@ -16,7 +16,7 @@ trabajo/corrida-construccion
 87391b7 · merge: ticks_spread por la rejilla (X) y enero entra en construccion del 2 al 30 (R2.2, ADR-0079) · tag stable/F37p-entrada-enero
 
 ## Tests Currently Passing
-1547 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1554 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

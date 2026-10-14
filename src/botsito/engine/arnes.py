@@ -407,8 +407,13 @@ def informe(
 
 PAREJA = "PAREJA"
 SIN_PAREJA = "SIN PAREJA"
-TODOS_LOS_HECHOS = "todos los hechos producidos"
+TODOS_LOS_HECHOS = "todos los hechos del camino producidos"
 SIN_PRODUCTORA_PARADA = "productoras sin cumplirse"
+# Los hechos de origen `regla` que son FRENOS (un tope, el limite total, los cartuchos, la racha)
+# solo se producen cuando algo para al bot: no son el camino hacia la operacion (sesgo,
+# orden_dimensionada, liquidez_tomada). El ultimo campo de la tabla mira el camino y nombra un
+# freno solo si se produjo (respuesta del consultor a la PARADA 2, 2026-10-14, punto 1.a).
+PREFIJO_FRENO = "detenido_por_"
 
 
 def _meses_en_orden(criterio: Criterio, corrida: Corrida) -> tuple[str, ...]:
@@ -460,14 +465,22 @@ def _mas_cercana(
 
 
 def primer_hecho_que_falta(traza: TrazaSesion, hechos: Sequence[tuple[str, list[str]]]) -> str:
-    """El primer hecho de origen `regla`, en el orden de la spec, que la sesion no produjo, con
-    las primitivas NO_IMPLEMENTADA en que se pararon sus productoras (como «Por sesion»)."""
+    """El primer hecho DEL CAMINO (origen `regla`, sin los frenos `detenido_por_*`), en el orden
+    de la spec, que la sesion no produjo, con las primitivas NO_IMPLEMENTADA en que se pararon sus
+    productoras (como «Por sesion»); si se produjeron todos, lo dice. Los frenos se nombran aparte
+    SOLO si se produjeron: uno que no se produjo no es un hecho que falto."""
+    producidos = traza.hechos_producidos
+    texto = TODOS_LOS_HECHOS
     for hecho, productoras in hechos:
-        if hecho in traza.hechos_producidos:
+        if hecho.startswith(PREFIJO_FRENO) or hecho in producidos:
             continue
         prim = sorted({p for r, p in traza.no_implementadas if r in productoras})
-        return f"{hecho}[{', '.join(prim) if prim else SIN_PRODUCTORA_PARADA}]"
-    return TODOS_LOS_HECHOS
+        texto = f"{hecho}[{', '.join(prim) if prim else SIN_PRODUCTORA_PARADA}]"
+        break
+    frenos = [h for h, _ in hechos if h.startswith(PREFIJO_FRENO) and h in producidos]
+    if frenos:
+        texto += f"; frenos producidos: {', '.join(frenos)}"
+    return texto
 
 
 def _fila(quien: str, op: Operacion, resultado: str) -> str:
@@ -537,8 +550,8 @@ def diferencias_por_operacion(
         )
 
     lineas += [
-        "### Embudo por mes: primer hecho que falta en las sesiones con operaciones del trader y "
-        "sin operacion del bot",
+        "### Embudo por mes: primer hecho del camino que falta en las sesiones con operaciones "
+        "del trader y sin operacion del bot (los frenos detenido_por_*, solo si se produjeron)",
         "mes | hecho[primitivas NO_IMPLEMENTADA] | sesiones",
     ]
     for mes in meses:

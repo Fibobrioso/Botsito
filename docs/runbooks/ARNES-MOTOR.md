@@ -56,6 +56,15 @@ peticiones que el bot emite al servidor: colocar, modificar, cancelar y cerrar, 
 rechazadas. Da también el máximo diario junto a `firma_mensajes_dia_max` (R13). Solo mide, nada
 frena (`docs/validation/CONTADOR-PETICIONES.md`).
 
+Desde `trabajo/corrida-construccion` (2026-10-14), entre los eventos y las peticiones van **la vida
+de la orden**: «Ordenes» (`dia | sesion | id | colocada UTC | precio | resultado | motivo | instante
+del resultado`, una línea por orden que el bot intentó colocar; el resultado es `llenada`,
+`rechazada`, `cancelada` o `viva al cerrar el dia`, y el motivo lo da el bróker en un rechazo
+-`precio_invalido`, `stops_level`…- o el cableado en una cancelación: dónde cayó el cierre de M1
+-«al abrir otra sesion», «en ventana_fin»- y las reglas que dispararon en él, o la red de
+seguridad del fin del día) y «Rechazos por motivo» (`mes | motivo | peticion | rechazos`). Es
+lectura de la traza del bróker: nada decide.
+
 ## Cuándo se niega
 
 - **Un mes de medida** (hoy mayo) o **cualquier mes que no sea de construcción** (marzo, septiembre,
@@ -87,9 +96,11 @@ Tres bloques, todos deterministas y con los campos separados por ` | `:
   el mismo día, así que la partición es idéntica a medir cada mes aparte. Los meses van en el orden
   de `construccion`, no por fecha.
 - **Embudo por mes**: para las sesiones con operaciones del trader y SIN operación del bot, el
-  primer hecho de origen `regla` (en el orden de la spec) que la sesión no produjo, con las
-  primitivas `NO_IMPLEMENTADA` en que se pararon sus productoras, o `productoras sin cumplirse`;
-  `todos los hechos producidos` si no faltó ninguno (la orden no llegó a llenarse).
+  primer hecho DEL CAMINO (origen `regla`, en el orden de la spec, sin los frenos
+  `detenido_por_*`) que la sesión no produjo, con las primitivas `NO_IMPLEMENTADA` en que se
+  pararon sus productoras, o `productoras sin cumplirse`; `todos los hechos del camino producidos`
+  si no faltó ninguno (lo que faltó está en la vida de la orden: «Ordenes», abajo). Un freno se
+  nombra aparte (`; frenos producidos: …`) solo si se produjo: uno que no se produjo no faltó.
 - **Por operación**: `quien | dia | sesion | lado | instante UTC | entrada | resultado`, por mes de
   construcción y por día; en cada día, el trader primero y después el bot sin pareja. Para el
   trader, `PAREJA bot <instante> <entrada> (Δentrada, Δinstante)` o `SIN PAREJA; bot mas cercano en

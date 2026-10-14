@@ -184,10 +184,48 @@ def test_el_primer_hecho_que_falta_sigue_el_orden_de_la_spec() -> None:
         "liquidez[productoras sin cumplirse]"
     )
     assert arnes.primer_hecho_que_falta(_traza("sesgo", "liquidez"), hechos) == (
-        "todos los hechos producidos"
+        "todos los hechos del camino producidos"
     )
     with_parada = _traza(paradas={("RN-A", "predicado:x"), ("RN-A", "accion:y")})
     assert arnes.primer_hecho_que_falta(with_parada, hechos) == "sesgo[accion:y, predicado:x]"
+
+
+def test_un_freno_detenido_por_no_se_nombra_si_no_se_produjo_y_si_cuando_se_produjo() -> None:
+    """Respuesta del consultor a la PARADA 2, punto 1.a: el ultimo campo mira el CAMINO (sin los
+    detenido_por_*) y nombra un freno solo si se produjo. Con la spec real, el freno iba antes que
+    liquidez_tomada y salia como «primer hecho que falta» en 47 de 53 sesiones (§3.5)."""
+    vocabulario: dict[str, dict[str, object]] = {
+        "hechos": {
+            "sesgo": {"produce": ["RN-A"]},
+            "detenido_por_tope": {"produce": ["RN-T"]},
+            "detenido_por_racha": {"produce": ["RN-R"]},
+            "liquidez": {"produce": ["RN-B"]},
+        }
+    }
+    hechos = arnes.hechos_de_regla(vocabulario)
+    # el freno no se produjo: ni se nombra, y el primer hecho que falta es el del camino
+    assert arnes.primer_hecho_que_falta(_traza("sesgo"), hechos) == (
+        "liquidez[productoras sin cumplirse]"
+    )
+    assert arnes.primer_hecho_que_falta(_traza("sesgo", "liquidez"), hechos) == (
+        "todos los hechos del camino producidos"
+    )
+    # el freno se produjo: se nombra aparte, y el camino se sigue mirando igual
+    assert arnes.primer_hecho_que_falta(_traza("sesgo", "detenido_por_racha"), hechos) == (
+        "liquidez[productoras sin cumplirse]; frenos producidos: detenido_por_racha"
+    )
+    assert arnes.primer_hecho_que_falta(
+        _traza("sesgo", "liquidez", "detenido_por_tope", "detenido_por_racha"), hechos
+    ) == ("todos los hechos del camino producidos; frenos producidos: detenido_por_tope, "
+          "detenido_por_racha")  # fmt: skip
+    # y en la tabla: una sesion con sesgo y sin bot nunca dice detenido_por_tope
+    trader = _op("2030-01-07", 7, 30)
+    corrida = _corrida({"2030-01-07": (trader,)}, {}, {"2030-01-07": _traza("sesgo")})
+    texto = arnes.informe(corrida, CRITERIO, vocabulario, opciones=(), simulacion=None)
+    seccion = texto.split("## Diferencias por operacion", 1)[1]
+    assert "detenido_por" not in seccion.split("### Por operacion", 1)[1]
+    assert "primer hecho que falto: liquidez[productoras sin cumplirse]" in seccion
+    assert "2030-01 | liquidez[productoras sin cumplirse] | 1" in seccion
 
 
 def test_una_sesion_con_pareja_y_otra_sin_bot_en_el_mismo_dia() -> None:

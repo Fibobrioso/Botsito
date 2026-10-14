@@ -13,8 +13,12 @@ rutas_permitidas:
   - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
   - docs/runbooks/ACTIVAR-A35-A44.md
   - src/botsito/engine/arnes.py
+  # ampliado el 2026-10-14 por la respuesta del consultor a la PARADA 2 (punto 1.b): cableado.py
+  # SOLO para informe_simulacion y lo que necesite leer de la traza del broker; ninguna decision
+  - src/botsito/engine/cableado.py
   - tests/unit/test_arnes_motor.py
   - tests/unit/test_diferencias_por_operacion.py
+  - tests/unit/test_vida_de_la_orden.py
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
@@ -26,7 +30,7 @@ rutas_protegidas:
   - src/botsito/engine/cuenta.py
   - src/botsito/engine/freno.py
   - src/botsito/engine/motor.py
-  - src/botsito/engine/cableado.py
+  - src/botsito/engine/primitivas_broker.py
   - src/botsito/engine/diagnostico.py
   - src/botsito/engine/simulacion.py
   - src/botsito/domain/
@@ -44,6 +48,6 @@ rutas_protegidas:
   - tests/golden/
 comprobaciones:
   - uv run python scripts/contrato_rama.py
-  - uv run pytest tests/unit/test_arnes_motor.py tests/unit/test_diferencias_por_operacion.py -q
+  - uv run pytest tests/unit/test_arnes_motor.py tests/unit/test_diferencias_por_operacion.py tests/unit/test_vida_de_la_orden.py tests/unit/test_cableado.py -q
   - uv run botsito knowledge validate > knowledge-validate.log 2>&1
   - make check > make-check.log 2>&1

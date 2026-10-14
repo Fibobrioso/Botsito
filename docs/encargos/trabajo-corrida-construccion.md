@@ -108,3 +108,38 @@ Copiada tal cual:
 > Sigue con la fase 1. Recuerda: make check en verde antes de cada commit, las corridas nunca a la vez que make check, y si la guardia o el clasificador niegan un comando, PARADA con el comando exacto y lo lanza Aleks con «!». Después, la fase 2 y la PARADA 2.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-14)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, como §3.10 «Respuesta del consultor a la PARADA 2», con la fecha.
+>
+> Antes de clasificar fila a fila hace falta saber qué pasó con cada orden. Con la tabla de hoy, 75 operaciones del trader a favor del sesgo del bot caen en sesiones donde el bot no llena nada, y hay 111 rechazos del bróker sin motivo listado: clasificar eso sería adivinar. Así que hoy dejo una clasificación PROVISIONAL por patrones, y la definitiva va en una PARADA 3, después de un cambio de salida y de repetir las corridas.
+>
+> 1. Hallazgo 1 de §3.9: (b) y (c) en ESTA rama, como cambios de SALIDA y nada más.
+>    a) En la sección «Diferencias por operacion», el último campo pasa a ser «el primer hecho DEL CAMINO que falta» (sgo, liquidez_tomada, orden_dimensionada, en el orden de la spec), sin los detenido_por_*; estos se añaden aparte solo si se produjeron. Si se produjeron los tres: «todos los hechos del camino producidos».
+>    b) En la cola de simulación (cableado.informe_simulacion), una subsección nueva «### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado)»: una línea por orden que el bot intentó colocar, con su resultado (llenada, rechazada, cancelada, viva al cerrar la sesión) y el motivo tal como lo da el bróker o el cableado (precio ya roto, volumen, ventana_fin, caja nueva, el que sea). Y otra, «### Rechazos por motivo», con el recuento por motivo y por mes.
+>    Amplía el contrato a src/botsito/engine/cableado.py SOLO para informe_simulacion y lo que necesite leer de la traza del bróker. No cambia ninguna decisión del bróker, del motor ni de la cuenta, ni ninguna opción del comando (la lista de ADR-0070 sigue igual). Si para listar la vida de la orden hiciera falta tocar algo que decide, PARADA.
+>    Tests sintéticos en los dos sentidos: una orden llenada, una rechazada con su motivo, una cancelada a ventana_fin y una viva al cierre; que el nuevo último campo no nombra nunca un detenido_por_* que no se produjo; y que las opciones del comando siguen siendo las mismas.
+>    Después, make check en verde y las tres corridas otra vez, con los mismos tres comandos y la repetición de la 2 fuera del repo para el diff. Las salidas nuevas sustituyen a las de hoy en el mismo commit (son anexos de una rama abierta, no evidencia inmutable), y el informe dice que se repitieron y por qué.
+> 2. Hallazgo 2 de §3.9: queda cubierto por el punto 1.b.
+> 3. Hallazgos 3 y 4 (memoria): solo se declaran. 631 MiB por corrida no bloquea nada.
+> 4. Clasificación PROVISIONAL por patrones (2026-10-14), sobre la tabla de la corrida 2 de hoy. Calcula la asignación de cada fila a su patrón con un guion en anexos/CORRIDA-CONSTRUCCION/ (patrones.py) que aplique estas reglas literales, y pega su recuento por mes. Si tu recuento no coincide con el mío, dilo en la PARADA 3: no ajustes ni las reglas ni las cifras.
+>    Reglas, para cada fila (el sesgo es el rn003 de la línea «Por sesion» de su sesión; «a favor» = compra con alcista o venta con bajista):
+>    - T0 pareja: filas del trader con PAREJA. Recuento mío: 12.
+>    - P1 sesgo: filas del trader sin pareja y contra el sesgo del bot. Recuento: 48, en 25 sesiones. Clase provisional: E o R, por decidir en el visor. Destino: rama de código si nuestro sesgo está mal (en 9 de esas 17 sesiones con dos sesiones el mismo día, el sesgo de la otra sesión sí coincidía con el trader: el cambio de sesgo a las 11:00 es el primer sospechoso), o pregunta de la sesión 5 si el trader opera contra su propio sesgo.
+>    - P2 entrada: filas del trader sin pareja, a favor del sesgo, con una operación del bot del mismo lado a menos de 15 minutos y a más de 3 puntos. Recuento: 18 (Δ de 4 a 54 puntos, casi todas entre 6 y 21). Clase provisional: R (qué velas forman la caja, A-48 y A-49 ya van a la sesión 5), con una comprobación E en el visor de que el 0 de la caja sale de la vela que dice la spec.
+>    - P3 otra zona: filas del trader sin pareja, a favor del sesgo, con el bot del mismo lado en la sesión pero a más de 15 minutos. Recuento: 45 (42 a otra entrada y 3 a la misma entrada pero a otra hora). Clase provisional: R (qué liquidez y qué zona escoge el trader: A-43, A-50, A-53).
+>    - P4 sin orden: filas del trader sin pareja, a favor del sesgo, sin ninguna operación del bot en la sesión. Recuento: 75. Clase: PENDIENTE de la lista de órdenes del punto 1.b (si son rechazos por precio ya roto, E o R según el motivo; si no se produjo un hecho del camino, según cuál).
+>    - P5 de más: filas del bot sin pareja en una sesión con operaciones del trader. Recuento: 61 (47 del mismo lado y 14 del otro). Clase provisional: R (cuántas veces reentra el trader tras un stop en la misma zona; los cartuchos), salvo las del otro lado, que siguen a P1.
+>    - P6 donde el trader no operó: filas del bot en una sesión o un día sin operaciones del trader. Recuento: 33 (21 en sesión y 12 en día). Clase provisional: R (qué le hace no operar; enlaza con la deuda «el no_trade por ausencia no está decidido»), o M en agosto si el xlsx que el trader no da por bueno (S-16) no trae ese día.
+>    Marca además, sin cambiar el patrón, las 16 filas que tocan una hora perdida (las de §3.6) como posible M.
+> 5. Para la PARADA 3 quiero también, sin abrir el visor todavía, la lista de las 25 sesiones de P1 con: la hora UTC de las dos últimas H4 cerradas antes de la sesión, su apertura, máximo, mínimo y cierre en nuestras velas, el sesgo de la sesión anterior del mismo día y la regla que lo decidió (RN-003, doble ruptura, ADR-0060 o ADR-0075). Son velas de construcción: se leen sin puerta. Con eso decido qué días pido en el visor.
+> 6. Agosto: recuerda en el resumen de agosto que sus casos salen del xlsx que el trader no da por bueno (S-16). Lo tengo en cuenta en P6 y al clasificar.
+>
+> Lo que sigue: el punto 1 (código de salida, tests y make check), las tres corridas repetidas, patrones.py con su recuento, el punto 5, y PARADA 3 con todo commiteado. Las mismas reglas: las corridas nunca a la vez que make check, y si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanza Aleks con «!».
+>
+> Rama lista para revisión, NO cerrada.
