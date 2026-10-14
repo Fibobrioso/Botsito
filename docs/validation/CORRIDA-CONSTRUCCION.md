@@ -1194,17 +1194,21 @@ ticks perdida llevan además «posible M» (`horas_perdidas.txt`), sin cambiar d
 | P3 otra zona | 42 | R | V, pregunta 5, junto a A-43, A-50 y A-53 | ¿qué liquidez y qué zona elige el trader? |
 | P4 sin orden, con todas las órdenes rechazadas o rechazos y reubicaciones sin llenado por `volumen_max_lotes` | 17 sesiones de 38 (10 + 7; `p4_ordenes.txt`) | E + R | la rama del margen (E) y V, pregunta 2 (R) | E: qué hace el bot cuando el lote del 0,5 % no cabe en 50 lotes (decisión por ADR, con el margen a 1:30, HER:37). R: qué hace el trader en su cuenta real cuando el stop es tan pequeño que el lote no cabe |
 | P4 sin orden, reubicaciones sin llenarse | 4 sesiones | R | V, pregunta 6 | ¿hasta cuándo mueve el trader la orden con la caja (ADR-0074, S-4) y cuándo la deja quieta o la quita? |
-| P4 sin orden, rechazos por otro motivo | `precio_invalido` en 2026-04-16 07-11, 2026-07-08 11-15 y 2026-07-13 11-15 (`p4_ordenes.txt`) | PENDIENTE | PARADA 4 | el consultor los clasifica |
-| P4 sin orden, sin ninguna orden colocada | 17 sesiones | PENDIENTE | PARADA 4, con la regla de 4.d | §4.6, cuando la salida diga qué bloqueó |
+| P4 sin orden, rechazos por `precio_invalido` | 3 sesiones: 2026-04-16 07-11, 2026-07-08 11-15, 2026-07-13 11-15 (`p4_ordenes.txt`) | E + R (PARADA 4, punto 3) | E: la rama de comprobaciones en el visor; R: V | E: comprobar en el visor dónde colocó el bot la orden frente al precio (ADR-0057). R: si el precio ya pasó el 0 cuando se forma la caja, ¿el trader entra o no? |
+| P4 sin orden, sin ninguna orden colocada: RN-015 quiso colocar y `abrir_operacion` estaba prohibido (gates disparados RN-005 y RN-009; y RN-001 en 7 sesiones 11-15) | 15 sesiones (§4.6) | R, más una comprobación E (PARADA 4, punto 1; la regla de 4.d queda ampliada así, 2026-10-14) | R: V; E: la rama de comprobaciones en el visor | R: ¿entra el trader cuando la zona se desarrolla en el lado de ruido, o con más zonas de control de las admitidas? E: que RN-005, RN-009 y el minuto de `ventana_fin` de RN-001 están bien aplicados en esas sesiones |
+| P4 sin orden, sin bloqueo y sin `orden_dimensionada` | 2 sesiones: 2026-01-08 11-15, 2026-08-14 07-11 | E candidata (PARADA 4, punto 2) | la rama de comprobaciones en el visor | que RN-011 no dimensione con los hechos del camino producidos apunta a nuestro código, no a una regla del trader |
 | P5 de más, mismo lado | 47 | R | V, pregunta 3 | ¿cuántas veces reentra el trader en la misma zona tras un stop? (el bot se para en uno o dos minutos y vuelve a entrar; en la corrida 2, 93 stops frente a 12 objetivos) |
 | P5 de más, otro lado | 14 | R | siguen a P1 | la pregunta 1 |
 | P6 donde el trader no operó | 33 (21 en sesión, 12 en día) | R; las de agosto, además posible M | V, pregunta 7 | ¿qué le hace no operar ese día o esa sesión? (la deuda «el no_trade por ausencia no está decidido»); agosto: su xlsx no es el que el trader da por bueno (S-16, NA:Q) |
 | las 16 filas en una hora perdida | 16 | posible M | — | sin cambiar de patrón |
 
-**Para el cuestionario de la sesión 5** (en el orden de prioridad del consultor; lo leerá V):
+**Para el cuestionario de la sesión 5** (en el orden de prioridad del consultor; lo leerá V; con
+las ampliaciones de la PARADA 4):
 1. El sesgo de H4: ¿rompe el extremo de la H4 anterior solo la mecha, o hace falta que el cierre
-   quede fuera? Con los 13 días y sesiones de §4.4 (P1 con ruptura solo de mecha) y los 12 restantes
-   de P1 (§3.14).
+   quede fuera? Con las 13 sesiones de P1 con ruptura solo de mecha, tal como están en §4.4
+   (2026-01-07 07-11, 2026-01-16 07-11, 2026-01-22 11-15, 2026-01-23 07-11, 2026-01-28 07-11,
+   2026-01-30 11-15, 2026-04-09 07-11, 2026-07-01 07-11, 2026-07-06 07-11, 2026-07-17 11-15,
+   2026-08-04 11-15, 2026-08-07 07-11, 2026-08-27 07-11), y los 12 restantes de P1 (§3.14).
 2. El lote que no cabe: ¿qué hace el trader en su cuenta real cuando el stop es tan pequeño que el
    lote del 0,5 % pasa del máximo de la firma (50 lotes)?
 3. Las reentradas (P5 y P7): ¿cuántas veces reentra en la misma zona tras un stop, y cuándo
@@ -1213,12 +1217,30 @@ ticks perdida llevan además «posible M» (`horas_perdidas.txt`), sin cambiar d
 5. Qué liquidez y qué zona elige (P3, con A-43, A-50 y A-53).
 6. Hasta cuándo mueve la orden con la caja, y cuándo la deja quieta o la quita (ADR-0074, S-4).
 7. Qué le hace no operar un día o una sesión (P6).
+8. (PARADA 4, punto 1) ¿Entra el trader cuando la zona se desarrolla en el lado de ruido de la
+   liquidez de M15, o cuando hay más zonas de control de las admitidas? (las 15 sesiones de §4.6).
+9. (PARADA 4, punto 3) Si el precio ya pasó el 0 cuando se forma la caja, ¿entra o no? (las 3
+   sesiones con `precio_invalido`).
 
 **Ramas candidatas (las E):**
-- La decisión del lote que no cabe, en la rama del margen (su prioridad sube: va ANTES de V), con
-  las dos medidas del punto 6 de la respuesta (§5).
-- La comprobación del 0 de la caja en el visor (P2), en tres días que el consultor elegirá tras la
-  PARADA 4.
+- **La rama del margen** (su prioridad sube: va ANTES de V): la decisión, por ADR, de qué hace el
+  bot cuando el lote del 0,5 % no cabe en los 50 lotes de la firma (limitar el lote y arriesgar
+  menos, o no operar), junto al margen a 1:30, que corta antes (HER:37); con las dos medidas del
+  punto 6 de la PARADA 3 (§5).
+- **«Comprobaciones en el visor de R3.1»** (antes de V, porque el cuestionario necesita esos
+  gráficos; el visor NO se abre en esta rama, PARADA 4 punto 5). Lo que comprueba, con sus días:
+  - P2, que el 0 de la caja sale de la vela que dice la spec, en tres días que el consultor elegirá
+    de entre los de P2 (2026-01-02 07-11, 2026-01-05 07-11 y 11-15, 2026-01-08 07-11, 2026-01-13
+    11-15, 2026-01-20 11-15, 2026-01-26 07-11, 2026-01-29 11-15, 2026-04-01 11-15, 2026-04-16
+    11-15, 2026-07-03 07-11, 2026-07-09 11-15, 2026-08-03 11-15, 2026-08-20 11-15; `patrones.txt`);
+  - que RN-005, RN-009 y el minuto de `ventana_fin` de RN-001 están bien aplicados en las 15
+    sesiones de §4.6: 2026-01-30 07-11, 2026-04-17 07-11, 2026-04-27 11-15, 2026-07-01 11-15,
+    2026-07-09 07-11, 2026-07-14 07-11 y 11-15, 2026-07-16 11-15, 2026-08-03 07-11, 2026-08-11
+    07-11, 2026-08-17 07-11, 2026-08-19 11-15, 2026-08-21 11-15, 2026-08-25 07-11, 2026-08-27 11-15;
+  - por qué RN-011 no dimensionó con los hechos del camino producidos en 2026-01-08 11-15 y
+    2026-08-14 07-11 (E candidata);
+  - dónde colocó el bot la orden frente al precio (ADR-0057) en los tres rechazos por
+    `precio_invalido`: 2026-04-16 07-11, 2026-07-08 11-15 y 2026-07-13 11-15.
 
 ### 4.6 Las 17 sesiones sin ninguna orden colocada, con `bloqueadas` (PARADA 4)
 
@@ -1250,10 +1272,248 @@ reglas que dispararon en la sesión y las que `prohibe`n ese efecto en la spec
   no se cumplieron): no se produjo un hecho del camino, y la regla de 4.d dice «según cuál»: la
   clasifica el consultor en la PARADA 4 (candidata R: qué hace que no haya entrada tras la toma).
 
+### 4.7 Respuesta del consultor a la PARADA 4 (2026-10-14)
+
+Copiada tal cual (también al final de `docs/encargos/trabajo-corrida-construccion.md`):
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 4 de trabajo/corrida-construccion (2026-10-14). Cópiala literal al informe, como §4.7 «Respuesta del consultor a la PARADA 4», con la fecha. Con esto la clasificación queda cerrada y la rama sigue hasta su entrega.
+>
+> 1. Las 15 sesiones sin orden en las que RN-015 quiso colocar y abrir_operacion estaba prohibido por RN-005 y RN-009 (y además RN-001 en 7 sesiones 11-15): R, con destino V (¿entra el trader cuando la zona se desarrolla en el lado de ruido, o con más zonas de control de las admitidas?), y una comprobación E en el visor de que RN-005, RN-009 y el minuto de ventana_fin de RN-001 están bien aplicados en esas sesiones. Mi regla de la PARADA 3 no las nombraba; queda ampliada así, con fecha de hoy.
+> 2. Las 2 sesiones sin bloqueo y sin orden_dimensionada (2026-01-08 11-15 y 2026-08-14 07-11): E candidata. Que RN-011 no dimensione con los hechos del camino producidos apunta a nuestro código, no a una regla del trader. Destino: la comprobación en el visor.
+> 3. Los 3 rechazos por precio_invalido (2026-04-16 07-11, 2026-07-08 11-15, 2026-07-13 11-15): E+R. E: comprobar en el visor dónde colocó el bot la orden frente al precio (ADR-0057). R: si el precio ya pasó el 0 cuando se forma la caja, ¿el trader entra o no? Destino: V.
+> 4. P1, sobre lo que mediste en §4.3 y §4.4:
+>    a) El literal del trader en fb-2026-09-09-sesion-01-8eccf5c0 («al menos por un pip o una milésima de pip») no dice mecha ni cierre; «mecha incluida» fue una re-expresión del consultor en F11. Línea para ERRORES-RECURRENTES en el cierre: el consultor convirtió en criterio de una regla algo que el literal no decía (mecha), y quedó CONFIRMED sin pregunta; lo destapó R3.1 un mes después. Lección: una re-expresión canónica que añade un criterio que el literal no trae se marca DEFAULT_AMBIGUOUS y se pregunta; nunca entra como CONFIRMED.
+>    b) La tabla 2×2 queda como diagnóstico para la pregunta, no como medida: el parámetro sesgo_h4_criterio_ruptura NO se toca en esta rama ni por este dato. Su estado tampoco cambia aquí; si hay que bajarlo de CONFIRMED, lo decido en la rama que active la respuesta del trader.
+>    c) La pregunta 1 del cuestionario de la sesión 5 lleva las 13 sesiones de P1 con ruptura solo de mecha, tal como las listaste.
+> 5. El visor NO se abre en esta rama. Todas las comprobaciones E (P2, el 0 de la caja; los puntos 1, 2 y 3 de esta respuesta) van a una rama candidata nueva, «comprobaciones en el visor de R3.1», que va antes de V porque el cuestionario necesita esos gráficos. Escríbela así en «Ramas candidatas», con sus días.
+> 6. Termina la fase 3: la NOTA de ADR-0070 y el runbook ACTIVAR-A35-A44.md en su commit propio (punto 12 de mi respuesta a la PARADA de la fase 0). Después, las líneas propuestas para el cierre, que recogen todo lo que mandé en las tres respuestas:
+>    - la Next Action: F apunta, por este orden, a la rama del margen (entrada nueva, antes de V, con sus dos medidas del punto 6 de la PARADA 3), a la rama de comprobaciones en el visor (entrada nueva, antes de V) y a V, que depende además de J y de A.4;
+>    - V lleva la lista «Para el cuestionario de la sesión 5» de §4.5, con las ampliaciones de hoy;
+>    - la hoja de ruta: R3.1 HECHA; las Refs de R3.1 con ID:ADR-0074 · ID:ADR-0067; R4.1 con las dos ramas nuevas como dependencias;
+>    - Technical Debt: la línea de la lectura del M1 de marzo y junio para calentar (punto 11 de la fase 0), y la del margen pasa a la entrada nueva de la Next Action;
+>    - G.1 y G.2 con las propuestas de la guardia y de la línea LECTURA:;
+>    - ERRORES-RECURRENTES: mi premisa falsa sobre el M1 de julio (PARADA 0, punto 8) y la re-expresión «mecha» de F11 (punto 4.a de hoy);
+>    - HER:25, HER:30 y HER:35 siguen vivos, con lo que la corrida dice de ellos.
+> 7. Revisor (opus), con los dos alcances del encargo y uno más: que la tabla «Clasificación del consultor» y la lista del cuestionario dicen exactamente lo de mis cuatro respuestas, con sus recuentos (T0 12, P1 48, P2 18, P3 42, P4 75, P5 61, P6 33, P7 3). Su informe, pegado al final. Arregla lo que encuentre que bloquee o importe, o dime por qué no.
+>
+> Rama lista para revisión, NO cerrada.
+
+**Aplicación:** 1, 2 y 3 en la tabla de §4.5 (filas de P4) y en las ramas candidatas; 4.a en
+§5.6; 4.b, nada se toca (`sesgo_h4_criterio_ruptura` sigue CONFIRMED en `mecha`); 4.c en la
+pregunta 1 de §4.5; 5 en «Ramas candidatas» de §4.5 (el visor no se abrió); 6 en el commit 74e8ef0
+(§4.8) y en §5; 7 en §10.
+
+### 4.8 El commit propio de la fase 3: la NOTA de ADR-0070 y el runbook (74e8ef0)
+
+Lo que mandó la respuesta a la PARADA de la fase 0, punto 12: en
+`docs/adr/0070-umbral-de-construccion-para-medir-mayo.md`, una NOTA fechada bajo el punto 3 de la
+Decision -A-21 fijada desde ADR-0076, el motor necesita diagnóstico solo para A-35 y A-44, y el
+veredicto «no» de esta corrida con sus cifras- sin reescribir el cuerpo (lo que permite el régimen
+de los ADR; el resto del ADR, intacto); y en `docs/runbooks/ACTIVAR-A35-A44.md`, las tres menciones
+de `--diagnostico-a21` (:218, :246, :260) marcadas «(ya no existe, ADR-0076)» y el comando del §5
+con `--simular`, con una línea que dice por qué (la línea base contra la que compara se escribió
+con `--simular`). `knowledge validate` en verde antes del `make check` (2642 passed, sello
+`ce3a270a…`).
+
+## 5 · Líneas propuestas para el cierre
+
+Textos exactos; la Next Action, la hoja de ruta y el Technical Debt los edita el cierre, no la
+rama (`docs/plan/` está en `rutas_protegidas`; PROJECT_STATE solo cambió aquí en lo que exige
+`abrir-rama` y el recuento de tests). Las letras nuevas, E y O, están libres hoy (ninguna entrada
+de la hoja de ruta cita `NA:E` ni `NA:O`, y las dos ya se reutilizaron antes: HISTORIA las registra
+HECHAS en otras ramas); el cierre puede elegir otras.
+
+**5.1 Next Action** (PROJECT_STATE.md):
+- **F**, sustituida entera: «F. Orden de trabajo: lo siguiente es, por este orden, E (la rama del
+  margen, con sus dos medidas), O (comprobaciones en el visor de R3.1) y V (la sesión 5, con la
+  lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5), que depende además
+  de J y de A.4. R3.1 está HECHA (CORRIDA-CONSTRUCCION.md): la corrida fue diagnóstico (A-35 y
+  A-44) y no habilita mayo (ADR-0070 §3).»
+- **E, entrada nueva** (antes de V): «E. La rama del margen: decidir por ADR qué hace el bot cuando
+  el lote del 0,5 % no cabe en `firma_volumen_max_lotes` (50; FTMO-P-D1.md) -limitar el lote y
+  arriesgar menos, o no operar- junto al margen a 1:30, que corta antes (heredado 37), y que el
+  simulador lo compruebe. Con dos medidas: (1) la que ya pedía Aleks, qué parte de las operaciones
+  del trader tiene un stop de menos de unos 2 pips y cuántas caen a ±2 minutos de una noticia;
+  (2) cuántas órdenes de la corrida de R3.1 rechaza el volumen (100 de 111 rechazos en la corrida
+  diaria, CORRIDA-CONSTRUCCION.md §3.12) y cuántas rechazaría el margen a 1:30. Sale de Technical
+  Debt («El simulador no comprueba el margen…»), que se retira al abrirla.»
+- **O, entrada nueva** (antes de V): «O. Comprobaciones en el visor de R3.1 (CORRIDA-CONSTRUCCION.md
+  §4.5, «Ramas candidatas»): el 0 de la caja en tres días de P2 que elige el consultor; RN-005,
+  RN-009 y el minuto de ventana_fin de RN-001 en las 15 sesiones sin orden; por qué RN-011 no
+  dimensionó en 2026-01-08 11-15 y 2026-08-14 07-11; y dónde colocó el bot la orden frente al
+  precio en los tres rechazos por precio_invalido. El cuestionario de V necesita esos gráficos.»
+- **V**: se añade al final «Lleva la lista «Para el cuestionario de la sesión 5» de
+  CORRIDA-CONSTRUCCION.md §4.5 (nueve preguntas, en ese orden; la primera, el sesgo de H4 con las
+  13 sesiones de P1 con ruptura solo de mecha). Depende de E y de O.»; «Depende de R1.1, de R3.1
+  y de que kit hoja funcione…» pasa a «Depende de R1.1, de R3.1 (HECHA), de E, de O, de que kit
+  hoja funcione con un paquete nuevo (J) y de la copia de seguridad (A.4).»
+- **Heredados 25, 30 y 35**: siguen vivos, tal cual; con lo que la corrida dice de ellos, al final
+  de cada uno: 25 y 30: «R3.1 (CORRIDA-CONSTRUCCION.md §3.4): con `cierre_vela_contraria` RN-004
+  produce `liquidez_tomada` en 98 de 104 sesiones y con `inicio_vela_contraria` en 97; ninguna
+  operación ni pareja cambia entre las dos lecturas; sigue sin fijar.» 35: «R3.1 (§3.5): con
+  `sin_tope`, `detenido_por_tope` no se produce en ninguna de las 104 sesiones; RN-020 sigue
+  hueco con nombre.»
+
+**5.2 Hoja de ruta** (`docs/plan/HOJA-DE-RUTA.md`):
+- **R3.1**, Refs: `- **Refs:** ID:ADR-0070 · ID:ADR-0043 · ID:ADR-0074 · ID:ADR-0067 · HER:25 ·
+  HER:30 · HER:35 · ID:A-35 · ID:A-44 · ID:RN-004 · ID:RN-020`; en «Qué es», al final: «y la
+  medida de peticiones por día con la caja recalculada (ADR-0074 §3) frente al freno de ADR-0067»;
+  y al final del bloque: `- **Estado:** HECHA (`trabajo/corrida-construccion`,
+  `stable/F37q-corrida-construccion`; CORRIDA-CONSTRUCCION.md): la corrida sobre los 76 días dev
+  de construcción en diagnóstico (A-35 y A-44), su tabla por operación y la clasificación del
+  consultor; no habilita R5.2 (ADR-0070 §3).` Sin ninguna letra viva en su bloque (regla b):
+  «Depende de» pasa a «R1.1 y R2.1 y R2.2 (HECHAS); R2.3 y R2.4 la amplían cuando lleguen.» (sale
+  la frase de «para que la corrida CUENTE…», que ya cumple ADR-0070 §3 como NOTA).
+- **R4.1**, «Depende de»: «R1.1, R3.1 (HECHA), las dos ramas nuevas de la Next Action (NA:E, la
+  del margen, y NA:O, las comprobaciones en el visor) y la copia de seguridad del carril de
+  Aleks.»; y en Refs se añaden `NA:E · NA:O`.
+- El tag que cito, `stable/F37q-corrida-construccion`, es el siguiente de la serie (el último es
+  F37p); lo fija el cierre.
+
+**5.3 Technical Debt**, una línea nueva y una que sale:
+- Nueva: «`engine/arnes.py:dias_de_mercado` carga el M1 entero del mes anterior si existe su
+  dataset: hoy, el de marzo (mes reservado entero, sin sortear) para abril y el de junio (11 días
+  reservados) para julio, en cada corrida del arnés y en cada `make check`
+  (`tests/unit/test_huecos_motor.py:290-337`), sin declararlo (ADR-0033 §4 solo se lo pide a kit
+  build/check). Declarado como exposición permanente en HOLDOUT-EXPOSICIONES (fila del
+  2026-10-14); que `dias_de_mercado` imprima una línea `LECTURA:` por recuento va a G.2
+  (CORRIDA-CONSTRUCCION.md §1.c).»
+- Sale: «El simulador no comprueba el margen…» (pasa a la entrada E de la Next Action, 5.1).
+
+**5.4 Hoja de ruta, carril de guardias y deuda:**
+- **G.1**: «Desde `trabajo/corrida-construccion` (CORRIDA-CONSTRUCCION.md §1.j): la guardia niega
+  un guion de la carpeta de trabajo que nombre `data/manifests/ticks/<manifiesto>.yaml` de un mes
+  de construcción para cruzar sus ficheros con los días dev, aunque Read deja abrir esos
+  manifiestos; que admita rutas literales de manifiestos de construcción.»
+- **G.2**: «Desde `trabajo/corrida-construccion` (§1.c): que `arnes.dias_de_mercado` imprima una
+  línea `LECTURA:` por recuento de días reservados cuyas velas lee, como `kit check` (ADR-0033 §4),
+  o que `test_huecos_motor.py:290-337` lo diga; hoy lo cubre la fila permanente de
+  HOLDOUT-EXPOSICIONES.»
+
+**5.5 HOLDOUT-EXPOSICIONES**: una fila única que declare como exposición permanente, por
+recuento, la lectura del M1 de marzo (mes entero) y de junio (11 días reservados) en cada corrida
+del arnés y en cada `make check` (respuesta de la fase 0, punto 11). La fila del 2026-10-14 de esta
+rama ya lo dice en su punto (3); el cierre decide si la desdobla.
+
+**5.6 ERRORES-RECURRENTES** (las escribe `cerrar-rama`):
+- La fila de la rama, con lo del revisor (§10).
+- Patrón nuevo: «**Un «antes no estaba» que no se comprobó con git.** Medido el 2026-10-14
+  (`trabajo/corrida-construccion`, fase 0): el consultor y su auditor dieron por cierto que el M1
+  de julio cambiaba el calentamiento de agosto respecto a BE-AL-TICK; el manifiesto entró en
+  cce490c (2026-09-04), antes de F35 y de BE-AL-TICK. Señal: una afirmación de que un fichero
+  «no estaba» en una corrida anterior. Qué hacer: `git log --format=%ad -1 -- <fichero>` antes de
+  escribirla.»
+- Patrón nuevo: «**Una re-expresión canónica que añade un criterio que el literal no trae.**
+  Medido el 2026-10-14 (CORRIDA-CONSTRUCCION.md §4.3): el consultor convirtió en criterio de una
+  regla algo que el literal no decía («mecha incluida» sobre «al menos por un pip»,
+  fb-2026-09-09-sesion-01-8eccf5c0, F11), y quedó CONFIRMED sin pregunta; lo destapó R3.1 un mes
+  después (13 de 25 sesiones de P1 abren tras una ruptura solo de mecha). Lección: una
+  re-expresión que añade un criterio se marca DEFAULT_AMBIGUOUS y se pregunta; nunca entra como
+  CONFIRMED.»
+
+**5.7 Tamaño de PROJECT_STATE.** Hoy 23.773 bytes (tope 25.000). 5.1 añade dos entradas largas
+(unos +1.300 bytes) y una F más larga (+250), y quita la línea del margen de Technical Debt (−300)
+y la frase vieja de F: quedaría hacia 25,0 KB, **al límite**. Propuesta para no pasarlo: condensar
+A (la demo, la entrada más larga, 987 bytes) remitiendo a `docs/runbooks/DEMO-FTMO.md`, como ya
+proponía ENTRADA-ENERO.md §8.4, y escribir E y O con la mitad de texto remitiendo a §4.5.
+
+## 6 · Desviaciones declaradas
+
+- **PROJECT_STATE.md cambió** en lo que exige `abrir-rama` (Current Branch, Current Feature,
+  Archivo 33) y en «Tests Currently Passing» (1535 → 1555) porque `state check` lo exige; el
+  encargo decía que esta rama no lo toca. Tamaño: 23.773 bytes.
+- **La sección vive dentro de `arnes.informe`** y con `--simular` queda antes de la cola
+  «## Simulacion» (decisión 0 de la fase 0, (a)), no al final del fichero.
+- **El cuarto comando** (la repetición de la 2 fuera del repo) no era uno de los «tres escritos
+  exactamente así»; lo pide el propio encargo y lo autorizó la respuesta a la fase 0 (punto 15).
+  Se corrió tres veces (una por tanda), y la copia se borró cada vez.
+- **Las corridas se repitieron dos veces** después de la primera tanda (sobre 1b90d23 y sobre
+  eab1fc3), porque las respuestas a las PARADAS 2 y 3 cambiaron la salida; las salidas de cada
+  tanda sustituyeron a las anteriores en el mismo commit, como pidió el consultor. Ninguna cifra
+  del criterio cambió entre tandas.
+- **`cableado.py` cambia** en dos líneas existentes y en lo que añade (§3.11), con el contrato
+  ampliado por la respuesta a la PARADA 2; `primitivas_broker.py` pasó a `rutas_protegidas` en su
+  lugar.
+- **El gate que prohibió no está en la traza**: `bloqueadas` lleva la regla que pedía la acción y
+  el efecto, y el gate se deduce en `p4_ordenes.py` (§4.1); guardarlo exigiría `interprete.py`.
+- **Un guion escrito en el repo durante un `make check`** y sacado en el acto (§3.8).
+- **`horas_perdidas.py`** lleva las 18 horas escritas en el guion, porque un guion que nombre
+  `data/manifests/ticks` lo niega la guardia (§1.j).
+- **El pico de memoria** de cada corrida es de 623 a 633 MiB, el doble de lo estimado en §1.e2.
+- **Dos sesiones de P1 cuya sesión anterior no tiene línea «Por sesion»** salen con «sesgo del
+  motor ?» en `sesgo_p1.txt` (2026-01-22 y 2026-08-04), con el sesgo recalculado al lado.
+- **Un worktree ajeno** (`…/2ea2c3d2…/scratchpad/wt-ci`, `e7df30b`, detached) aparece en
+  `git worktree list` desde antes de esta rama; no es de esta sesión y no se tocó.
+
+## 7 · El encargo, punto por punto
+
+| # | Requisito (encargo y respuestas) | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base: main en 23316c8, CI en verde, abrir con `abrir-rama`, encargo literal, contrato con tramo R3, Archivo en HISTORIA | Hecho | §0; e06a71c; `tramo: R3` (equivalente, respuesta fase 0 punto 7) |
+| 2 | `/model`: Fable 5.1, esfuerzo alto | Hecho | cabecera del informe |
+| 3 | No cambia ningún parámetro, regla, decisión del motor, broker, cuenta, freno; `criterio_fidelidad.yaml` intacto | Hecho | `git diff --stat main...HEAD` (§9): ni `knowledge/`, ni `config/`, ni `broker.py`, `cuenta.py`, `freno.py`, `motor.py`, `cli.py`, `primitivas_broker.py`; `contrato_rama.py` en verde |
+| 4 | Nada de mayo ni de meses reservados ni del corpus; solo casos dev | Hecho | §1.j, §3.8; el arnés se niega a mayo (`validar_meses`) y no se rodeó |
+| 5 | No habilita mayo; no es fidelidad; A-35 `cierre_vela_contraria` fijada antes; la corrida 3 no decide A-35 | Hecho | §3.2 (veredicto «no» ×3), §3.4 («sin elegir lectura») |
+| 6 | El margen a 1:30 no entra | Hecho | solo como línea del cierre (§5.1, E) |
+| 7 | Solo los tres comandos del arnés, literales; ninguna otra corrida ni visor | Hecho (y el 4.º, autorizado) | §3.1, §3.12, §4.1; el visor no se abrió (PARADA 4, punto 5) |
+| 8 | Fase 0 a) a g), con `fichero:línea`, y PARADA | Hecho | §1.a-§1.g, §1.h (auditor), PARADA respondida (§1.l) |
+| 9 | Fase 1: la tabla por operación (pareja; más cercana con Δ; «ninguna» y el primer hecho; bot sin pareja; orden; determinista) | Hecho | §2; `arnes.py` (`diferencias_por_operacion`); §3.8 determinismo |
+| 10 | Tests que rompen a propósito en los dos sentidos, sintéticos, y uno de que no se añade opción | Hecho | `test_diferencias_por_operacion.py` (14); §8 contra `main` |
+| 11 | Fase 2: tres corridas, sin `--meses`, a la carpeta, TIEMPO y MEMORIA copiados, repetición de la 2 fuera del repo con `diff` y borrado | Hecho (tres tandas) | §3.1, §3.12, §4.1 |
+| 12 | Informe: por corrida y mes; veredicto tal cual; corrida 1 (cuenta, día y regla, peticiones y freno); 3 frente a 2; embudo por mes; horas perdidas y filas; BE-AL-TICK como contexto | Hecho | §3.2-§3.7 |
+| 13 | Si una corrida falla o pide días fuera: PARADA; no `--depuracion` | Hecho (ninguna falló) | §3.1 exit 0 ×4 |
+| 14 | PARADA 2: commitear y parar | Hecho | 883d391 |
+| 15 | Fase 3: la clasificación literal, filas con clase y destino, lista para la sesión 5, ramas candidatas (E), sin cambiar código | Hecho | §4.5-§4.8; las respuestas del consultor copiadas tal cual (§1.l, §3.10, §3.17, §4.7) |
+| 16 | Makefile intacto; rutas del corpus no abiertas; tests del informe buscados antes de tocarlo; sin fechas de días reservados; exposiciones el mismo día | Hecho | `git diff --stat` sin Makefile; §1.d; HOLDOUT-EXPOSICIONES fila 2026-10-14 |
+| 17 | PROJECT_STATE: la rama no lo toca | Hecho de otra forma | §6: solo lo de `abrir-rama` y el recuento de tests |
+| 18 | CI de Linux: no toca `.claude/`, hooks ni plataforma | Hecho | §9 |
+| 19 | Hallazgos para el cierre: Refs de R3.1 sin ADR-0074; ADR-0070 §3; ACTIVAR-A35-A44 | Hecho | §1.k; 5.2; la NOTA y el runbook en 74e8ef0 (§4.8) |
+| 20 | Informe con encargo frente a hecho, desviaciones, comandos, exposiciones, líneas del cierre (F→V, R3.1 HECHA, HER:25/30/35) | Hecho | §7, §6, §3.1, §1.j, §5 |
+| 21 | Revisor (opus) con los dos alcances del encargo y el tercero de la PARADA 4; informe pegado | Hecho | §10 |
+| 22 | Respuesta fase 0, puntos 1-15 | Hecho | §1.l «Aplicación»; punto 12 en 74e8ef0; punto 14 en 5.4 |
+| 23 | Respuesta PARADA 2, puntos 1-6 (salida: hecho del camino, vida de la orden; patrones; punto 5; agosto S-16) | Hecho | §3.11-§3.16; agosto en §3.2 |
+| 24 | Respuesta PARADA 3, puntos 1-7 (bloqueadas; P7; feedback literal; 2×2; lista; clasificación; cierre; revisor) | Hecho | §4.1-§4.6, §5, §10 |
+| 25 | Respuesta PARADA 4, puntos 1-7 | Hecho | §4.5 (tabla y ramas candidatas), §4.8, §5, §10 |
+
+## 8 · Los tests nuevos contra el código de `main`
+
+Como pide `entregar-rama` (paso 3), en un clon desechable `git worktree add --detach C:/cm/main
+main`, con los dos ficheros de tests de la rama copiados dentro y ejecutados allí (nunca un
+checkout en el repo real; el clon se borró después con `git worktree remove --force` y `prune`;
+`git status --short`, `git branch --list` y `git ls-remote --heads origin "fix/*"` iguales antes y
+después):
+
+```
+uv run pytest tests/unit/test_diferencias_por_operacion.py tests/unit/test_vida_de_la_orden.py -q -rA -p no:cacheprovider
+     19 FAILED
+      1 PASSED
+```
+
+De los 20 tests, 19 fallan con el código de `main` (la sección, `primer_hecho_que_falta`,
+`bloqueadas_de`, `vida_de_las_ordenes`, `_motivo_de_cancelacion` y `CABECERA_ORDENES` no existen
+allí) y pasa 1, `test_la_seccion_no_anade_ninguna_opcion_al_comando`, que es el que TIENE que pasar
+en los dos lados: las 13 opciones del subparser y la lista de ADR-0070 son las mismas en `main` y
+en la rama. Con el código de la rama pasan los 20 (`make check`, 2642 passed).
+
+## 9 · CI de Linux
+
+Sin CI: la rama no toca la plataforma. `git diff --stat main...HEAD` (29 ficheros): `src/` solo
+`engine/arnes.py` y `engine/cableado.py` (texto del informe y lectura de la traza, sin rutas, sin
+`os`, sin zoneinfo nuevo), `tests/unit/` dos ficheros nuevos sintéticos, y el resto `docs/`,
+`contrato.yaml`, `PROJECT_STATE.md`. Ni `.claude/`, ni hooks, ni `Makefile`, ni `scripts/`.
+
+## 10 · El revisor
+
+(Se lanza con el informe terminado, sobre el commit de la entrega; su informe se pega aquí tal
+cual, y debajo, «Lo que se hizo con los hallazgos del revisor».)
+
 ## Estado
 
-EN CURSO. Fase 0, fase 1 y fase 2 hechas y respondidas; la clasificación definitiva del consultor
-(PARADA 3) está en §4.5; las corridas repetidas con `bloqueadas` (§4.1) y las 17 sesiones (§4.6)
-entregadas: **PARADA 4, esperando al consultor** (las 15 sesiones bloqueadas por RN-005 y RN-009,
-las 2 sin orden dimensionada y los tres rechazos por `precio_invalido`). Pendientes después: la
-NOTA de ADR-0070 y el runbook (fase 3), el revisor y las líneas del cierre.
+LISTA PARA REVISIÓN. R3.1 hecha: la corrida en diagnóstico sobre los 76 días dev de construcción,
+la tabla por operación con la vida de la orden, y la clasificación del consultor (§4.5) con la
+lista para el cuestionario de la sesión 5 y las dos ramas candidatas; las líneas del cierre en §5;
+el informe del revisor en §10. No habilita mayo; ningún valor cambió.
+
+Rama lista para revisión, NO cerrada.
