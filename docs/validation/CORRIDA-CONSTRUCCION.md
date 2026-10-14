@@ -418,6 +418,12 @@ la cuenta; (5) V depende de J y A.4; (6) y (7) cifras por mes y horas perdidas (
    auditor del encargo en la fase 0 (afirmación 28). Lección: un «antes no estaba» se comprueba
    con la fecha de entrada del fichero en git (`git log --format=%ad -1 -- <fichero>`), no con la
    memoria de cuándo se usó». Se escribe en la fase de entrega, con las demás filas de la rama.
+7. **Segunda fila propuesta para ERRORES-RECURRENTES** (§3.8): «`trabajo/corrida-construccion` ·
+   La sesión escribió un fichero nuevo dentro del repositorio mientras corría `make check` (un
+   guion de anexo) y lo sacó en el acto; el sello no se rompió porque la huella se toma al empezar
+   y al sellar, pero la regla es «nada escribe mientras corre `make check`», también lo que no está
+   seguido. Señal: un Write a una ruta del repositorio con un `make check` en segundo plano. Qué
+   hacer: escribir en la carpeta de trabajo y copiar al repositorio cuando llegue el sello».
 
 ## Lo que necesito que decidas
 
@@ -550,7 +556,271 @@ de `src/` es solo `src/botsito/engine/arnes.py`, y en él **0 líneas quitadas o
   (CONTRATO-DE-RAMA.md: «anadir tests cambia el recuento»); el encargo decía que esta rama no lo
   toca, y no se toca nada más (23.773 bytes).
 
+## 3 · Fase 2 · Las tres corridas (2026-10-14)
+
+Sobre el código de la fase 1 commiteado (d63b30f), sin `--meses`, una corrida cada vez y ninguna a
+la vez que `make check`. **Todo es DIAGNÓSTICO etiquetado: no es fidelidad, no habilita mayo
+(ADR-0070 §3) y ninguna cifra de aquí fija ni cambia ningún valor.** La lectura de A-35 de la
+corrida principal, `cierre_vela_contraria`, quedó fijada antes de correr (§1.a). Ni la guardia ni
+el clasificador negaron ninguno de los cuatro comandos. Las salidas están en
+`docs/validation/anexos/CORRIDA-CONSTRUCCION/` con el rótulo que les puso `nombre_etiquetado`; sus
+líneas `TIEMPO` y `MEMORIA` salieron por pantalla y se copian aquí tal cual.
+
+### 3.1 Los comandos literales y lo que escribieron
+
+1. `uv run botsito motor arnes --simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope --salida docs/validation/anexos/CORRIDA-CONSTRUCCION/arrastrada.txt`
+   → `arrastrada.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.txt` (974 líneas; exit 0).
+   `TIEMPO: 367.3 s; MEMORIA: pico del proceso de 631.3 MiB`.
+2. `uv run botsito motor arnes --simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope --diagnostico-cuenta-diaria --salida docs/validation/anexos/CORRIDA-CONSTRUCCION/diaria.txt`
+   → `diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt` (exit 0).
+   `TIEMPO: 353.5 s; MEMORIA: pico del proceso de 631.8 MiB`.
+3. `uv run botsito motor arnes --simular --diagnostico-a35 inicio_vela_contraria --diagnostico-a44 sin_tope --diagnostico-cuenta-diaria --salida docs/validation/anexos/CORRIDA-CONSTRUCCION/a35-inicio.txt`
+   → `a35-inicio.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.cuenta=diaria.txt` (exit 0).
+   `TIEMPO: 306.8 s; MEMORIA: pico del proceso de 631.2 MiB`.
+4. La repetición de la 2 fuera del repo (punto 15 de la respuesta), para el determinismo:
+   `uv run botsito motor arnes --simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope --diagnostico-cuenta-diaria --salida <carpeta temporal de la sesión>/diaria.txt`
+   → `<carpeta temporal>/diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt`
+   (exit 0). `TIEMPO: 319.9 s; MEMORIA: pico del proceso de 632.1 MiB`. `diff` con la salida de
+   la 2: idénticos (`git hash-object` de los dos: `f8f0f5992774671dcafd6eff3bef526136c42c38`);
+   la copia se borró después.
+
+**Tiempo y memoria frente a lo estimado (§1.e2):** el tiempo cuadra (5 a 6 minutos por corrida);
+la memoria no: 631 MiB de pico frente a los «menos de 300» estimados a partir de 42 días. El
+proceso carga los ticks de los 76 días y las M1 de siete meses (los cuatro de construcción y los
+tres de calentamiento); ningún informe anterior había medido cuatro meses. Queda medido para la
+próxima estimación, y es lo que hay que tener en cuenta con el recorte de procesos en segundo plano
+de Claude Code (CLAUDE.md, «Trampas medidas»): ninguna corrida murió.
+
+### 3.2 Por corrida y por mes
+
+Del «Resumen por mes» de cada salida (la misma `Medida` del criterio, partida por mes) y de su
+sección del criterio. Abril y agosto son los meses de BE-AL-TICK; julio y enero son nuevos.
+
+| Corrida | Mes | Días | Trader | Bot puntuables | Bot en días sin trader | Parejas | Cobertura | Precisión |
+|---|---|---|---|---|---|---|---|---|
+| 1 arrastrada | 2026-04 | 21 | 35 | 3 | 5 | 0 | 0/35 (0.0 %) | 0/3 (0.0 %) |
+| 1 arrastrada | 2026-07 | 13 | 67 | 0 | 0 | 0 | 0/67 (0.0 %) | sin definir |
+| 1 arrastrada | 2026-08 | 21 | 42 | 0 | 0 | 0 | 0/42 (0.0 %) | sin definir |
+| 1 arrastrada | 2026-01 | 21 | 54 | 35 | 0 | 1 | 1/54 (1.9 %) | 1/35 (2.9 %) |
+| 1 arrastrada | **total** | 76 | 198 | 38 | 5 | 1 | 1/198 (0.5 %) | 1/38 (2.6 %) |
+| 2 diaria | 2026-04 | 21 | 35 | 20 | 11 | 4 | 4/35 (11.4 %) | 4/20 (20.0 %) |
+| 2 diaria | 2026-07 | 13 | 67 | 16 | 0 | 5 | 5/67 (7.5 %) | 5/16 (31.2 %) |
+| 2 diaria | 2026-08 | 21 | 42 | 21 | 1 | 2 | 2/42 (4.8 %) | 2/21 (9.5 %) |
+| 2 diaria | 2026-01 | 21 | 54 | 37 | 0 | 1 | 1/54 (1.9 %) | 1/37 (2.7 %) |
+| 2 diaria | **total** | 76 | 198 | 94 | 12 | 12 | 12/198 (6.1 %) | 12/94 (12.8 %) |
+| 3 a35-inicio | los cuatro | 76 | 198 | 94 | 12 | 12 | 12/198 (6.1 %) | 12/94 (12.8 %) |
+
+La corrida 3 da, mes a mes, las mismas cuatro filas que la 2 (§3.4: ninguna operación del bot ni
+ninguna pareja cambia). Parejas en el mismo minuto: 1 (corrida 1), 7 (2 y 3).
+
+**La línea de veredicto de ADR-0070, tal cual** (todas dicen «no», como estaba previsto):
+- corrida 1: `habilita medir el conjunto de medida (2026-05) (ADR-0070): no (opción fuera de la lista: --diagnostico-a35; opción fuera de la lista: --diagnostico-a44; cobertura 0.5 % por debajo de 70.0 %; precision 2.6 % por debajo de 60.0 %)`
+- corrida 2: `habilita medir el conjunto de medida (2026-05) (ADR-0070): no (opción fuera de la lista: --diagnostico-a35; opción fuera de la lista: --diagnostico-a44; opción fuera de la lista: --diagnostico-cuenta-diaria; cobertura 6.1 % por debajo de 70.0 %; precision 12.8 % por debajo de 60.0 %)`
+- corrida 3: la misma que la 2.
+
+**Agosto** (punto 10 de la respuesta): sus 19 casos dev salen de un xlsx que el trader no da por
+bueno (S-16, ADR-0073; NA:Q); la tabla no lo marca y el consultor decide al clasificar si alguna
+diferencia de agosto es (M).
+
+### 3.3 La corrida 1: la cuenta sobre el tramo, y las peticiones (ADR-0074 §3)
+
+- **El tramo no es continuo**: la cuenta arrastrada recorre los días por fecha, enero (21 días) y
+  después abril, julio y agosto (con los huecos de febrero, marzo, mayo y junio entre medias;
+  §1.c). Su veredicto y su curva son INDICATIVOS; la clasificación se hace sobre la corrida 2.
+- **Veredicto de la cuenta**: `estado: EN_CURSO`, `motivo: sin objetivo alcanzado ni limite
+  infringido`, `PRIMERO EN TOCAR UN LIMITE: ninguno`; saldo y equity finales 90.571,27 (−9,43 %
+  sobre 100.000); `dias de trading: 22`; `RACHA DE PERDIDAS (RN-036, A-51): 4 seguidas; la ultima
+  el 2026-04-07`. **La cuenta no corta el tramo por un límite, pero lo deja sin operar desde el
+  2026-04-08**: el saldo baja a 90.571,27 al cierre del 2026-04-07 (curva de equity) y desde la
+  sesión 07-11 del 2026-04-08 **RN-032** («no se abre una operacion cuyo riesgo no cabe antes del
+  limite de la firma»: `firma_perdida_total_max` 10 % menos `firma_margen_seguridad` 0,5 %) dispara
+  en todas las sesiones -101 de las 152 corridas- y el bot no coloca nada más: 0 operaciones del
+  bot en abril desde el 8, en julio y en agosto (§3.2). Es el mismo mecanismo que F35 §4.4 vio «el
+  22 de abril»; ahora llega antes porque el tramo empieza en enero y entra en abril con 92.905
+  (−7,1 %). La fila del día y la regla: `2026-04-08 07-11 | … | disparadas … RN-032`.
+- **Nota del margen (HER:37, respuesta punto 9)**: el simulador no comprueba el margen, así que en
+  esta corrida pueden salir llenadas operaciones que FTMO rechazaría por margen; el veredicto de
+  la cuenta no lo tiene en cuenta.
+- **Peticiones al servidor** (la medida que hereda ADR-0074 §3, con `caja_se_fija =
+  en_cada_cierre_m1` por el cableado real): **256 en el tramo** (suma de la tabla por día de la
+  firma, 76 días), **máximo diario 32** (el 2026-01-02 y el 2026-04-07) frente a
+  `firma_mensajes_dia_max` 2000; **el freno de ADR-0067 no saltó**: `umbrales: aviso 1000, corte
+  1500, bucle 5 iguales en 1 min` y `ningun aviso ni ninguna peticion negada`; cierres de mercado
+  (ADR-0068): `ninguna peticion negada ni ninguna pendiente cancelada`. Rechazos del broker: 33;
+  eventos 104 (ticks 95, respaldo_m1 9). Como contexto, F35 §4.3 midió en diagnóstico hasta 14 al
+  día y 59 en 42 días con esta lectura de la caja; aquí, con 76 días y el tramo desde enero, 32 y
+  256. Lejos de los umbrales en los dos casos.
+- La corrida 2 (cuenta reiniciada cada día) da 703 peticiones en el tramo, máximo diario 34
+  (2026-04-15), sin aviso ni corte, 111 rechazos del broker y 253 eventos (ticks 239,
+  respaldo_m1 14); la 3, 683 y el mismo máximo.
+
+### 3.4 La corrida 3 frente a la 2: qué cambia con `inicio_vela_contraria`
+
+`uv run python docs/validation/anexos/CORRIDA-CONSTRUCCION/comparar_corridas.py <salida 2>
+<salida 3>` (lee solo las filas de «Diferencias por operacion» de los dos ficheros commiteados):
+
+```
+A = diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt; B = a35-inicio.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.cuenta=diaria.txt; sesiones con alguna diferencia: 0; operaciones del bot A 106, B 106; parejas A 12, B 12
+```
+
+**Ninguna operación del bot y ninguna pareja cambian** entre las dos lecturas de A-35: las 106
+operaciones del bot y las 12 parejas son las mismas, día a día. Lo que sí cambia (diff de las dos
+salidas sin su prefijo, 96 líneas):
+- **2026-08-19 11-15**: con `inicio_vela_contraria` la sesión no produce `orden_dimensionada` ni
+  `liquidez_tomada` (con `cierre`, sí); en las dos el bot no opera y el trader tiene 2 operaciones.
+  Es la única sesión cuya traza de hechos cambia: `liquidez_tomada` pasa de 98 a 97 de 104.
+- **Las peticiones**: 703 → 683; en dos días, 2026-01-19 (21 → 13) y 2026-08-13 (16 → 4), sin que
+  cambie ninguna operación.
+- **Los avisos de orden de ADR-0049 (H3)**: 25 avisos menos con `inicio` (RN-004 empatando con
+  RN-014, RN-011, RN-012 o RN-006 en sesiones de los cuatro meses), porque RN-004 dispara en 2
+  sesiones menos.
+Sin elegir lectura: esto NO decide A-35. Los días para preguntarle al trader, si el consultor los
+quiere: 2026-08-19 (sesión 11-15), 2026-01-19 y 2026-08-13.
+
+### 3.5 El embudo agregado, por mes (corrida 2) y lo que (no) dice
+
+Del «Embudo por mes» de la salida 2 (sesiones con operaciones del trader y sin operación del bot,
+y el primer hecho de origen `regla` que falta, en el orden de la spec):
+
+| Mes | Sesiones con trader | Sin operación del bot | `detenido_por_tope[productoras sin cumplirse]` | `orden_dimensionada[productoras sin cumplirse]` |
+|---|---|---|---|---|
+| 2026-04 | 23 | 11 | 10 | 1 |
+| 2026-07 | 25 | 13 | 13 | 0 |
+| 2026-08 | 26 | 18 | 16 | 2 |
+| 2026-01 | 30 | 11 | 8 | 3 |
+| total | 104 | 53 | 47 | 6 |
+
+Global (sección del embudo de la salida 2): sesgo 104 de 104, orden_dimensionada 98, liquidez_tomada
+98, los cuatro `detenido_por_*` 0, operación del bot 51 de 104; ninguna primitiva NO_IMPLEMENTADA.
+
+**Hallazgo (importa, para la PARADA 2): con la definición del encargo, «el primer hecho que no se
+produjo» es casi siempre `detenido_por_tope`, y eso no dice dónde se para la sesión.** Los hechos
+de origen `regla` van en la spec en este orden: `sesgo`, `orden_dimensionada`, `detenido_por_tope`,
+`detenido_por_tope_total`, `detenido_por_cartuchos`, `detenido_por_racha`, `liquidez_tomada`
+(`strategy_spec.yaml`, `hechos:`). Los cuatro `detenido_por_*` son FRENOS: solo se producen cuando
+un tope para al bot, y con `sin_tope` el primero no se produce nunca. Así que en cuanto una sesión
+produce `sesgo` y `orden_dimensionada`, el «primer hecho que falta» es `detenido_por_tope`, que no
+faltó: no tocaba. Medido aparte, saltando los frenos (un guion de la carpeta de trabajo sobre las
+líneas «Por sesion» de la salida 2; salida pegada tal cual):
+
+```
+2026-01 | todos los del camino | 8
+2026-01 | orden_dimensionada:no[productoras sin cumplirse] | 3
+2026-04 | todos los del camino | 10
+2026-04 | orden_dimensionada:no[productoras sin cumplirse] | 1
+2026-07 | todos los del camino | 13
+2026-08 | todos los del camino | 16
+2026-08 | orden_dimensionada:no[productoras sin cumplirse] | 2
+```
+
+En 47 de las 53 sesiones sin operación del bot se produjeron los tres hechos del camino (`sesgo`,
+`orden_dimensionada`, `liquidez_tomada`): el bot llegó a dimensionar y a colocar, y lo que faltó
+está DESPUÉS del grafo de hechos, en la vida de la orden -el broker la rechazó (111 rechazos en la
+corrida 2, que el informe cuenta pero no lista), no se llenó antes de retirarse (RN-035 a
+`ventana_fin`, la red de seguridad del fin de día) o se llenó en otra sesión-, que es el embudo de
+F35 §4.4 (nace, punto, bróker, reubica, llenado) y no el de ADR-0048 §5. En las otras 6, falta
+`orden_dimensionada` (RN-011 o RN-015 no se cumplieron). La tabla por operación sigue siendo
+válida para clasificar (pareja, más cercana, Δ), pero su último campo no ayuda. Propuesta en §3.9.
+
+### 3.6 Las 18 horas sobre respaldo M1 y qué filas caen en ellas
+
+`uv run python docs/validation/anexos/CORRIDA-CONSTRUCCION/horas_perdidas.py <salida>` (las 18
+horas de §1.e escritas en el guion; una fila cae si el instante del trader, del bot emparejado o
+del más cercano está dentro de la hora UTC; la 18.ª, 2026-04-22T13Z, queda fuera de las sesiones y
+el guion lo marca si saliera: no sale en ninguna corrida). Sobre la corrida 2 (la que se
+clasifica), salida tal cual:
+
+```
+diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt: 292 filas por operacion
+- 2026-04-06T10Z: bot | 2026-04-06 | 11-15 | compra | 2026-04-06T10:01:00+00:00 | 1.15509 | SIN PAREJA; ninguna operacion del trader en la sesion
+- 2026-04-07T10Z: bot | 2026-04-07 | 11-15 | compra | 2026-04-07T10:32:00+00:00 | 1.15564 | SIN PAREJA; ninguna operacion del trader en el dia
+- 2026-04-23T05Z: trader | 2026-04-23 | 07-11 | venta | 2026-04-23T05:30:00+00:00 | 1.17018 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-04-23T05Z: trader | 2026-04-23 | 07-11 | venta | 2026-04-23T05:53:30+00:00 | 1.17038 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-07-10T05Z: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T05:36:35+00:00 | 1.14382 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +17 puntos, Δinstante +88 min 44 s); primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-07-10T05Z: trader | 2026-07-10 | 07-11 | compra | 2026-07-10T05:45:20+00:00 | 1.14382 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-07-10T07:05:19.163000+00:00 1.14399 (Δentrada +17 puntos, Δinstante +79 min 59 s); primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-07-16T11Z: trader | 2026-07-16 | 11-15 | compra | 2026-07-16T11:19:40+00:00 | 1.1462 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-07-16T11Z: trader | 2026-07-16 | 11-15 | compra | 2026-07-16T11:55:40+00:00 | 1.1467 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-08-20T07Z: bot | 2026-08-20 | 07-11 | venta | 2026-08-20T07:02:00+00:00 | 1.16847 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-08-20T05:47:10+00:00 1.16709 (Δentrada -138 puntos, Δinstante -74 min 50 s)
+- 2026-08-20T07Z: bot | 2026-08-20 | 07-11 | venta | 2026-08-20T07:45:00+00:00 | 1.16896 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-08-20T05:47:10+00:00 1.16709 (Δentrada -187 puntos, Δinstante -117 min 50 s)
+- 2026-01-05T10Z: trader | 2026-01-05 | 11-15 | venta | 2026-01-05T10:57:45+00:00 | 1.1687 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T10:54:00+00:00 1.16877 (Δentrada +7 puntos, Δinstante -3 min 45 s); primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-01-05T10Z: trader | 2026-01-05 | 11-15 | venta | 2026-01-05T11:04:15+00:00 | 1.16889 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T10:54:00+00:00 1.16877 (Δentrada -12 puntos, Δinstante -10 min 15 s); primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-01-05T10Z: bot | 2026-01-05 | 11-15 | venta | 2026-01-05T10:54:00+00:00 | 1.16877 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-05T10:57:45+00:00 1.1687 (Δentrada -7 puntos, Δinstante +3 min 45 s)
+- 2026-01-23T11Z: trader | 2026-01-23 | 11-15 | venta | 2026-01-23T11:52:10+00:00 | 1.17382 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-23T11:04:00+00:00 1.17331 (Δentrada -51 puntos, Δinstante -48 min 10 s); primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-01-23T11Z: trader | 2026-01-23 | 11-15 | venta | 2026-01-23T12:55:35+00:00 | 1.17428 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-23T11:04:00+00:00 1.17331 (Δentrada -97 puntos, Δinstante -111 min 35 s); primer hecho que falto: detenido_por_tope[productoras sin cumplirse]
+- 2026-01-23T11Z: bot | 2026-01-23 | 11-15 | venta | 2026-01-23T11:04:00+00:00 | 1.17331 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-23T11:52:10+00:00 1.17382 (Δentrada +51 puntos, Δinstante +48 min 10 s)
+filas con algun instante en una hora perdida: 16 de 292
+```
+
+Sobre la corrida 1: 14 de 240 filas (las mismas horas; julio y agosto sin filas del bot); sobre
+la 3: las mismas 16 de 292 que la 2. **Dato para (M):** las seis operaciones del bot con instante
+en segundo `:00` exacto (2026-04-06 10:01:00, 2026-04-07 10:32:00, 2026-08-20 07:02:00 y 07:45:00,
+2026-01-05 10:54:00 y 2026-01-23 11:04:00) son llenados sobre el respaldo M1 -la M1 llena al cierre
+del minuto, `llenado.py:166`- dentro de una hora sin ticks: la corrida 2 tiene 14 eventos de fuente
+`respaldo_m1`. Ninguna de las 12 parejas cae en una hora perdida.
+
+### 3.7 Contexto, no referencia: BE-AL-TICK §2 frente a abril y agosto de esta corrida
+
+BE-AL-TICK §2 (2026-10-01, 42 días dev, 77 operaciones, motor `stable/F36h`) dio 2 de 77 con la
+cuenta arrastrada y 7 de 77 con la cuenta diaria. Hoy, sobre los mismos 42 días y 77 operaciones
+(dentro de una corrida de 76 días):
+
+| | BE-AL-TICK | Esta corrida |
+|---|---|---|
+| arrastrada, abril + agosto | 2 de 77 | **0 de 77** (0/35 y 0/42; el bot no opera desde el 2026-04-08, §3.3) |
+| diaria, abril + agosto | 7 de 77 | **6 de 77** (4/35 y 2/42) |
+
+Qué los separa, sin ajustar nada para acercarlos: (1) **el motor** desde ADR-0066 (cartuchos),
+ADR-0067 (freno), ADR-0068 (cierres de mercado y la ventana de R15), ADR-0069 (las sesiones por la
+rejilla H4, con el reloj de invierno), ADR-0071 (stops level 0 medido, sin diagnóstico A-27),
+ADR-0073, ADR-0074 (la caja se recalcula en cada cierre de M1 hasta el llenado: en F35 esa lectura
+dio 1 de 77 frente a 2 con la caja fija), ADR-0075 (el sesgo ambiguo), ADR-0076 (A-21 fijada en vez
+del diagnóstico `solo_una_zona_de_control`), ADR-0077 (RN-036, la racha) y los casos por la rejilla
+(`trabajo/cases-rejilla`); (2) **el calentamiento no cambia** (§1.c: julio y marzo ya estaban);
+(3) **en la arrastrada, el camino de la cuenta**: el tramo empieza ahora en enero y entra en abril
+con 92.905, así que RN-032 cierra el grifo el 8 de abril y no el 22. En la diaria no hay camino de
+cuenta: 7 → 6 es efecto del motor.
+
+### 3.8 Determinismo y lo que se leyó
+
+- Dos corridas iguales, mismo fichero byte a byte: la corrida 2 y su repetición fuera del repo
+  (§3.1, comando 4) dan el mismo blob, `f8f0f599…`, con `diff` vacío.
+- Las corridas leyeron lo declarado el 2026-10-14 en HOLDOUT-EXPOSICIONES (§1.j): las velas M1 de
+  marzo y junio para calentar, además de julio y de los cuatro meses de construcción, y los ticks
+  de los 76 días dev. Ninguna etiqueta nueva, ningún libro, nada de mayo. No hay exposición nueva.
+- Un desliz de la sesión, declarado: mientras corría el `make check` de la fase 1 escribí
+  `horas_perdidas.py` dentro de `docs/validation/anexos/CORRIDA-CONSTRUCCION/` y lo saqué del repo
+  en el acto, antes del sello; la huella de `make check` cuenta los ficheros sin seguir
+  (`scripts/sello_make_check.py:100`) y el sello salió en verde porque el fichero no existía ni al
+  empezar ni al sellar. Fila propuesta para ERRORES-RECURRENTES en §1.k.6, junto a la otra.
+
+### 3.9 Hallazgos de la fase 2 para la PARADA 2
+
+1. **(importa) El «primer hecho que falta» no sirve para clasificar** (§3.5): con la definición
+   del encargo da `detenido_por_tope` en 47 de 53 sesiones. Opciones: (a) dejar la sección como
+   está y leer, para cada fila, su línea de «Por sesion» (que trae los siete hechos) y el embudo de
+   la vida de la orden a mano; (b) un commit más en esta rama que cambie el último campo por «el
+   primer hecho DEL CAMINO que falta» (sin los `detenido_por_*`, que se listan aparte solo si se
+   produjeron) y, cuando se produjeron los tres, `todos los hechos del camino producidos`; exige
+   repetir las tres corridas (unos 20 minutos) y otro `make check`; (c) además de (b), que la fila
+   diga qué pasó con la orden (colocada, rechazada, cancelada a `ventana_fin`, llenada en otra
+   sesión), que es lo que de verdad falta, pero eso vive en el broker (`TrazaBroker`,
+   `cableado.py`, protegido) y no llega a `arnes.informe` sin tocar `cli.py` o `cableado.py`.
+   Recomiendo (b) ahora y (c) como rama de código si el consultor la quiere; coste de (a): la
+   clasificación tiene que mirar dos sitios por fila.
+2. **(importa) 111 rechazos del broker en la corrida 2** (33 en la 1), que el informe cuenta pero
+   no lista por día ni por motivo (`cableado.py:655-674`, solo el total; el visor sí los enseña
+   por día). Para clasificar las sesiones con «todos los hechos del camino» y sin operación del bot
+   hace falta saber si la orden se rechazó (ADR-0057/0058: precio ya roto, volumen) o se canceló.
+   Propuesta: que la cola de simulación liste los rechazos por día con su motivo (rama de código,
+   `cableado.py`), o que el consultor pida por el visor los días que quiera (no abiertos aquí).
+3. **(menor) 631 MiB de pico** por corrida de cuatro meses, el doble de lo estimado (§3.1).
+4. **(menor) La memoria del estimador**: §1.e2 extrapoló por días; la memoria escala con los
+   ticks y las M1 cargadas, no con los días corridos.
+
 ## Estado
 
-EN CURSO. Fase 0 entregada y respondida el 2026-10-14; fase 1 hecha; fase 2 (las corridas)
-pendiente.
+EN CURSO. Fase 0 entregada y respondida el 2026-10-14; fase 1 hecha; fase 2 hecha el 2026-10-14:
+**PARADA 2, entrega para clasificar** (la tabla de la corrida 2 en
+`docs/validation/anexos/CORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt`,
+sección «## Diferencias por operacion»). Pendientes: la clasificación del consultor (fase 3), la
+NOTA de ADR-0070 y el runbook (fase 3), el revisor y las líneas del cierre.
