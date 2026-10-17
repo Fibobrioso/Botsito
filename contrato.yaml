@@ -12,6 +12,9 @@ rutas_permitidas:
   - docs/adr/0044-el-sesgo-h4-ambiguo-insuficiente-y-fijado-al-abrir-la-sesion.md
   - docs/adr/0060-el-sesgo-con-doble-ruptura-y-el-cierre-antes-del-fin-de-la-h4.md
   - docs/adr/0075-una-h4-neutra-con-doble-ruptura-no-decide-el-sesgo.md
+  # ampliado el 2026-10-17 en el commit de la fase 0 (SESGO-H4-COLOR.md §1.k): el indice exige la
+  # fila de 0080 y las enmiendas de 0044, 0060 y 0075 (tests/unit/test_adr.py:38-42)
+  - docs/adr/README.md
   - docs/spec/
   - knowledge/spec/
   - knowledge/evidence/
