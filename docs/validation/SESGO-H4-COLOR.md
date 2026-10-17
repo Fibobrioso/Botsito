@@ -725,8 +725,15 @@ de v6: punto 0 y 0bis).
   añade) con los seis ficheros, que los dos gráficos son esquemas del consultor, los literales
   releídos el 2026-10-17, la nota de voz y los dos mensajes que no se registran.
 
-Lo que espera a los `mv` de Aleks (§1.e): `botsito corpus inventory` (seis entradas nuevas en
-`manifest.yaml`, con los sha256 de §1.e) y su commit.
+### 2.3 El inventario, tras los `mv` de Aleks (2026-10-17, después del revisor)
+
+Aleks lanzó los seis `mv` de §1.e con «!», uno por línea; `ls` del destino enseña los seis
+nombres nuevos con sus tamaños (80.269, 122.285, 111.552, 18.092, 95.456 y 198.285 bytes) y en
+`corpus/whatsapp-sesgo-h4-2026-10-14/` quedan solo `LEEME.md` y `ws/`, que no entran. `uv run
+botsito corpus inventory`: `manifest.yaml` gana exactamente seis entradas (`papel:
+material_adicional`, ruta en «Mensajes del trader») cuyos sha256 son los seis de §1.e, y el total
+pasa de 66 a 72 ficheros; ninguna línea se quita ni cambia salvo los totales. Con esto la fase 1
+queda entera y el hallazgo b1 del revisor, resuelto.
 
 ## 3 · Fases 2 y 3 · Tests primero, el motor, la spec y el ADR (2026-10-17)
 
@@ -1022,8 +1029,8 @@ lee `PROJECT_STATE.md`, la hoja y HISTORIA, aplica las sustituciones y corre a, 
     `mv`** (revisor, a2): `fuentes.yaml` describe los seis ficheros como entrados, el ADR dice que
     las capturas «están en el corpus» y `registrado_por` de R1 y R2 apunta a las rutas de destino.
     El encargo ponía `fuentes.yaml` después de los `mv`; se escribió antes para no bloquear la
-    rama, y es verdad en cuanto Aleks lance los seis `mv` de §1.e y entre el commit del inventario
-    (b1). Los registros son inmutables: si los `mv` no llegaran, las rutas que citan no existirían.
+    rama; es verdad desde que Aleks lanzó los seis `mv` de §1.e y entró el commit del inventario
+    (§2.3).
 12. **El `registrado_por` de R1 lleva solo la captura de las 14:55 con su sha256 entero** (revisor,
     b5); §1.d proponía las cuatro. Las otras tres van en `notas` con el hash recortado a ocho
     caracteres, y los seis sha256 enteros están en §1.e y entrarán en `manifest.yaml`.
@@ -1041,7 +1048,7 @@ lee `PROJECT_STATE.md`, la hoja y HISTORIA, aplica las sustituciones y corre a, 
 | 0.3 | Apertura con `abrir-rama`: encargo, contrato, Archivo 34, tramo R1 | Hecho | c24c50b |
 | 0.4 | Informe y anexos en sus rutas | Hecho | este fichero; `anexos/SESGO-H4-COLOR/` |
 | 0.5 | Skills: fase-cero con auditor-encargo; activar-sesion; entregar-rama | Hecho | §1 (auditor en §1.h), §2-§3, §8-§9 |
-| 1 | La regla del WhatsApp en la spec y en el motor, con ADR, feedback y evidencia, y re-corrida | Parcial | fd5d40d, 0365d5c, §4; la evidencia entra como capturas en el corpus (`fuentes.yaml` hecho; inventario pendiente de los `mv`, b1 del revisor); ningún ítem de evidencia (opción (b), §2.1) |
+| 1 | La regla del WhatsApp en la spec y en el motor, con ADR, feedback y evidencia, y re-corrida | Hecho | fd5d40d, 0365d5c, §4; la evidencia entra como capturas en el corpus (`fuentes.yaml` y el inventario, §2.3); ningún ítem de evidencia (opción (b), §2.1, decisión del consultor) |
 | D1 | Color contrario: no decide, la búsqueda sigue | Hecho | `domain/sesgo.py`; ADR-0080 §2; tests caso 3 y 4 |
 | D2 | Doble ruptura sin cambios | Hecho | `test_la_doble_ruptura_no_cambia_con_la_regla_nueva`; ADR-0080 §3 |
 | D3 | Neutra simple: no decide; decisión del consultor; pregunta a la sesión 5 | Hecho | ADR-0080 §4; §4.4 |
@@ -1060,7 +1067,7 @@ lee `PROJECT_STATE.md`, la hoja y HISTORIA, aplica las sustituciones y corre a, 
 | 4.e | Seis ficheros listados con sha256; `mv` preparados; nota de voz dicha | Hecho | §1.e; corregido en §1.m (está arriba de la captura de las 15:18) |
 | 4.f | Campo nuevo en `ResultadoSesgo` y anotación; el arnés cuenta | Hecho | tres campos y tres anotaciones (punto 4 de la respuesta, (b)) |
 | 4.g | Lectura declarada el mismo día y antes de correr | Hecho | HOLDOUT-EXPOSICIONES, segunda fila del 2026-10-17 |
-| F1 | Tras los `mv`: inventory, `fuentes.yaml`, manifest; registros con `feedback new`, `apply --check`, `knowledge validate` | Parcial | todo hecho (0365d5c) salvo `corpus inventory` y `manifest.yaml`, que esperan a los `mv` de Aleks |
+| F1 | Tras los `mv`: inventory, `fuentes.yaml`, manifest; registros con `feedback new`, `apply --check`, `knowledge validate` | Hecho | 0365d5c (registros, apply, `fuentes.yaml`) y el commit del inventario (§2.3), tras los `mv` de Aleks |
 | F2 | Tests primero, en rojo sobre `main`, con el recuento de FAILED; la lista del encargo; los siete rehechos | Hecho | §3.1: 16 FAILED |
 | F3 | Motor, spec, ADR, `spec_version`, manifest y docs en el mismo commit, guardias si hay sitio nuevo, `Fuente:` | Hecho | fd5d40d; sin sitio nuevo con cita |
 | F4 | Fila de HOLDOUT antes; los tres comandos tal cual; comparación con R3.1 (sesiones, regla, INSUFICIENTE, T0 y P1-P7 con `patrones.py`); sin fecha ni precio de la H4; diagnóstico | Hecho | §4 |
@@ -1244,9 +1251,9 @@ citable; ninguna retirada):
   nombre base de los dos ficheros, que coincide; no se toca el guion ni el anexo; el informe (§4.2)
   dice cuál es cuál.
 - **a7 (menor)**: la frase de §4.2, reescrita.
-- **b1 (bloquea)**: no se puede resolver desde la sesión: los seis `mv` los lanza Aleks con «!»
-  (respuesta del consultor, «Además»). En cuanto estén, `botsito corpus inventory` y su commit
-  sellado cierran la fase 1; el Estado lo dice.
+- **b1 (bloquea)**: resuelto después del revisor: Aleks lanzó los seis `mv` con «!», `corpus
+  inventory` añadió las seis entradas con los sha256 de §1.e y el commit del inventario cierra la
+  fase 1 (§2.3).
 - **b2 (importa)**: el requisito 1 de §7 pasa a Parcial; 0.5 y 6.4 remiten a este §9, que ya
   existe.
 - **b3 y b4 (importa)**: la pregunta 2 de §4.4 reescrita: solo el esquema de dos velas y la
@@ -1264,6 +1271,7 @@ citable; ninguna retirada):
 
 ## Estado
 
-LISTA PARA REVISIÓN SALVO EL INVENTARIO: fases 0 a 4 hechas y selladas; el revisor pasado y
-atendido (§9.1). Queda el commit del inventario del corpus (`botsito corpus inventory` tras los
-seis `mv` de §1.e, que lanza Aleks con «!»), el hallazgo b1 del revisor. Rama NO cerrada.
+Fases 0 a 4 hechas y selladas; el revisor pasado y atendido (§9.1); el inventario del corpus
+entró tras los `mv` de Aleks (§2.3, hallazgo b1 resuelto). Quedan para el consultor, en la orden
+de cierre: el hallazgo a1 del revisor (§6.13) y si la pregunta 2 de la sesión 5 lleva el literal
+de la sesión 1 (§4.4). Rama lista para revisión, NO cerrada.
