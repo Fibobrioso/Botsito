@@ -801,7 +801,262 @@ con `tests/unit/test_huecos_motor.py` (dicho en §1.f).
 - `knowledge validate` en verde (36 reglas, hash al día); `test_adr`, `test_spec_docs_generados`,
   `test_kit`, `test_hoja_preguntas`, `test_no_business_literals` y `test_cuarentena` en verde.
 
+## 4 · Fase 4 · La re-corrida del arnés con los tres comandos de R3.1 (2026-10-17)
+
+Declarada ANTES de correr en `HOLDOUT-EXPOSICIONES.md` (segunda fila del 2026-10-17: el M1
+entero de marzo y de junio para calentar, como R3.1). Los tres comandos de `CORRIDA-CONSTRUCCION.md`
+§3.1 tal cual, con la carpeta de `--salida` de esta rama (README de los anexos), uno detrás de
+otro, sobre fd5d40d (el commit del motor):
+
+| # | Comando (`uv run botsito motor arnes --simular --diagnostico-a44 sin_tope …`) | Fichero escrito (`docs/validation/anexos/SESGO-H4-COLOR/`) | Tiempo, memoria, exit |
+|---|---|---|---|
+| 1 | `--diagnostico-a35 cierre_vela_contraria --salida …/arrastrada.txt` | `arrastrada.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.txt` | 315,8 s; 630,9 MiB; 0 |
+| 2 | `--diagnostico-a35 cierre_vela_contraria --diagnostico-cuenta-diaria --salida …/diaria.txt` | `diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt` | 278,6 s; 632,7 MiB; 0 |
+| 3 | `--diagnostico-a35 inicio_vela_contraria --diagnostico-cuenta-diaria --salida …/a35-inicio.txt` | `a35-inicio.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.cuenta=diaria.txt` | 253,4 s; 632,2 MiB; 0 |
+
+Es diagnóstico (ADR-0070 §3), como R3.1: no decide ningún parámetro, no habilita mayo y no se
+mide cobertura contra ningún umbral. Ninguna salida ni este informe imprime la fecha ni el precio
+de una H4 que fije un sesgo (la única fecha fuera de los meses de construcción en las tres salidas
+es la cobertura del calendario de cierres, la misma línea que en R3.1). El clasificador y la
+guardia no negaron ningún comando.
+
+### 4.1 En cuántas sesiones cambió el sesgo, y por qué regla
+
+Sección «## RN-003 al abrir la sesion» de las salidas (igual en las tres corridas; el sesgo no
+depende de la cuenta ni de A-35), frente a la de R3.1 (sus salidas commiteadas de §4.9; D5):
+
+| | R3.1 (7cf8901) | Esta rama (fd5d40d) |
+|---|---|---|
+| por sesión (las 104 con operaciones del trader) | alcista 53; bajista 51 | alcista 51; bajista 52; **insuficiente 1** |
+| de ellas con doble ruptura, que decide el color (ADR-0060) | 17 | 22 |
+| sesiones con alguna H4 saltada por color contrario (D1) | — | **21 (29 velas)** |
+| sesiones con alguna H4 saltada por neutra simple (D3) | — | 0 (0 velas) |
+| sesiones con alguna H4 saltada por neutra con doble ruptura (ADR-0075) | — | 0 (0 velas) |
+| por operación del trader | a favor 150; en contra 48 | a favor 154; en contra 42; insuficiente 2 |
+| RN-033 disparada | 0 | 1 de 152 sesiones corridas; 1 de 104 |
+
+**En 8 de las 104 sesiones cambió el sesgo**, todas por D1 (la H4 que antes lo fijaba rompía un
+extremo y cerraba del color contrario; ninguna por D3 ni por una neutra doble, que no aparecen en
+construcción): 4 de alcista a bajista, 3 de bajista a alcista y 1 de alcista a INSUFICIENTE
+(`comparar_rn003.py` del scratchpad, que solo lee las filas `rn003` de las dos salidas; misma salida
+sobre las corridas 1 y 2). Por día dev de construcción y sesión (son días de desarrollo; ninguna
+H4):
+
+```
+2026-01-02 07-11: alcista -> insuficiente (trader 2, bot antes 2, ahora 0)
+2026-01-07 07-11: alcista -> bajista     (trader 1, bot antes 0, ahora 1)
+2026-01-16 07-11: alcista -> bajista     (trader 1, bot antes 0, ahora 0)
+2026-01-23 07-11: bajista -> alcista     (trader 3, bot antes 0, ahora 2)
+2026-01-28 07-11: bajista -> alcista     (trader 1, bot antes 1, ahora 2)
+2026-01-30 11-15: alcista -> bajista     (trader 2, bot antes 1, ahora 1)
+2026-08-04 11-15: alcista -> bajista     (trader 1, bot antes 0, ahora 0)
+2026-08-07 11-15: bajista -> alcista     (trader 3, bot antes 0, ahora 0)
+```
+
+Seis de las ocho (2026-01-07 07-11, 01-16 07-11, 01-23 07-11, 01-28 07-11, 01-30 11-15 y 08-04
+11-15) están entre las 13 sesiones de P1 «con ruptura solo de mecha» que R3.1 dejó para la
+pregunta 1 de la sesión 5 (`CORRIDA-CONSTRUCCION.md` §4.4); las otras dos no eran P1. Las 21
+sesiones con alguna saltada son más que las 8 que cambian porque en 13 la búsqueda, tras saltar,
+vuelve a dar el mismo lado (otra H4 anterior, a veces una doble ruptura: por eso suben de 17 a 22).
+**Pasan a INSUFICIENTE: 1** (2026-01-02 07-11; RN-033 prohíbe, y el bot deja de hacer sus 2
+operaciones de esa sesión).
+
+### 4.2 Las cifras de cabecera y la tabla por operación
+
+| | R3.1 · corrida 1 | rama · corrida 1 | R3.1 · corrida 2 | rama · corrida 2 | R3.1 · corrida 3 | rama · corrida 3 |
+|---|---|---|---|---|---|---|
+| cobertura | 1/198 (0,5 %) | 1/198 (0,5 %) | 12/198 (6,1 %) | 12/198 (6,1 %) | 12/198 (6,1 %) | 12/198 (6,1 %) |
+| precisión | 1/38 (2,6 %) | 1/32 (3,1 %) | 12/94 (12,8 %) | 12/94 (12,8 %) | 12/94 (12,8 %) | 12/94 (12,8 %) |
+| sesiones con operación del bot (de 104) | 19 | 19 | 51 | 53 | 51 | 53 |
+
+Resumen por mes de la corrida 2 (`### Resumen por mes`): solo cambian agosto (bot puntuables 21 →
+22, precisión 2/21 → 2/22) y enero (37 → 36, 1/37 → 1/36); abril y julio, iguales. La corrida 3
+frente a la 2 de esta rama, con `comparar_corridas.py` de R3.1: **0 sesiones con alguna
+diferencia** (operaciones del bot 106 y 106, parejas 12 y 12), lo mismo que R3.1 midió entre sus
+corridas 2 y 3.
+
+La corrida 2 de R3.1 frente a la de esta rama, con el mismo guion
+(`anexos/SESGO-H4-COLOR/comparar_corridas.txt`; en su pie A es la de R3.1 y B la de esta rama,
+los dos ficheros se llaman igual): **7 sesiones con alguna diferencia** en las operaciones del bot
+(2026-01-02 07-11, 01-07 07-11, 01-22 07-11, 01-23 07-11, 01-28 07-11, 01-30 11-15 y 08-04
+11-15), 106 operaciones del bot en las dos, 12 parejas en las dos. Siete de las ocho sesiones de
+§4.1 menos 01-16 07-11 y 08-07 11-15 (donde el bot no operaba ni opera), más 2026-01-22 07-11, una
+sesión sin operaciones del trader cuyo sesgo cambió y donde el bot deja de hacer tres compras.
+
+### 4.3 La tabla T0 y P1-P7, con `patrones.py` de R3.1
+
+`uv run python docs/validation/anexos/CORRIDA-CONSTRUCCION/patrones.py <corrida 2 de esta rama>
+--filas` (el guion no se copia ni se toca; lee la ruta por argumento), salida completa en
+`anexos/SESGO-H4-COLOR/patrones.txt` (292 filas, 104 sesiones con rn003, como R3.1):
+
+| mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de más | P6 trader no operó | P7 repetidas | T0 pareja |
+|---|---|---|---|---|---|---|---|---|
+| 2026-01 | 7 (13) | 9 (9) | 22 (17) | 15 (14) | 30 (28) | 5 (8) | 0 (0) | 1 (1) |
+| 2026-04 | 9 (9) | 2 (2) | 8 (8) | 12 (12) | 11 (11) | 16 (16) | 0 (0) | 4 (4) |
+| 2026-07 | 20 (20) | 3 (3) | 13 (13) | 23 (23) | 9 (9) | 2 (2) | 3 (3) | 5 (5) |
+| 2026-08 | 8 (6) | 4 (4) | 5 (4) | 23 (26) | 14 (13) | 7 (7) | 0 (0) | 2 (2) |
+| **total** | **44 (48)** | 18 (18) | **48 (42)** | **73 (75)** | **64 (61)** | **30 (33)** | 3 (3) | 12 (12) |
+
+(entre paréntesis, R3.1, `anexos/CORRIDA-CONSTRUCCION/patrones.txt`). P1 pasa de 48 filas en 25
+sesiones a **44 filas en 21 sesiones** (alcista 14, bajista 28, insuficiente 2; antes 16 y 32);
+P5 «de más, mismo lado» 52 (47) y «otro lado» 12 (14); P6 en día 12 (12) y en sesión 18 (21). Las
+parejas (T0) no cambian: la regla del sesgo no acerca ninguna entrada al trader, mueve filas de P1
+a P3/P5 (el bot opera en el lado del trader pero en otra zona) y de P4/P6 a P5. Filas marcadas
+«posible M», 16 (16).
+
+### 4.4 Para el cuestionario de la sesión 5
+
+En el orden del consultor, para V (R4.1); sustituyen a la pregunta 1 de
+`CORRIDA-CONSTRUCCION.md` §4.5, que el WhatsApp respondió. Sin fechas de días reservados ni
+resultados de holdout; las dos se preguntan con un esquema dibujado, nunca con los fotogramas de
+v6 ni con los instantes de ese gráfico (respuesta del consultor, puntos 0 y 0bis):
+
+1. **La ruptura simple sin cuerpo (D3, decisión del consultor en ADR-0080 §4):** una H4 rompe el
+   extremo de la anterior (con la mecha) y cierra exactamente donde abrió. ¿Cambia el sesgo por el
+   lado de la ruptura, o no decide y sigue el sesgo que había (como la neutra de doble ruptura de
+   S-13)? Hoy el motor hace lo segundo. En construcción no aparece ninguna (§4.1).
+2. **La contradicción con la sesión 1 (ADR-0080 §9):** con el sesgo bajista, una H4 rompe por
+   encima con la mecha y cierra ROJA. En la sesión 1 dijo «la siguiente operativa es alcista …
+   aunque fue roja la vela, pues es indiferente»; en el WhatsApp del 2026-10-14 confirmó el caso 3
+   del esquema (no cambia, sigue bajista). ¿Cuál vale? Si es la del WhatsApp, ¿qué era distinto en
+   el caso que explicó en la sesión 1? (sobre un esquema de dos velas dibujado; hoy el motor hace
+   lo del WhatsApp).
+
+## 5 · Líneas preparadas para el commit del contrato de la orden de cierre
+
+Medidas en memoria con `anexos/SESGO-H4-COLOR/simular_cierre.py` (como `trabajo/entrada-enero`;
+lee `PROJECT_STATE.md`, la hoja y HISTORIA, aplica las sustituciones y corre a, b y c de
+`test_hoja_de_ruta.py`); salida en `simular_cierre.txt`: `a: []`, `b: []`, `c: []`,
+`PROJECT_STATE hoy: 24568 bytes`, `PROJECT_STATE simulado: 23250 bytes`. En la rama no se tocan
+(solo `Tests Currently Passing`, 1556 → 1570, por `state check`).
+
+### 5.1 `PROJECT_STATE.md`
+
+- **W sale entera** de la Next Action a `docs/state/HISTORIA.md` con su texto literal, bajo el
+  título `# Next Action HECHA · W · el sesgo de H4 por el color · sale de PROJECT_STATE.md en
+  trabajo/sesgo-h4-color (2026-10-17)` (distinto del `… · W · sale de PROJECT_STATE.md en
+  trabajo/cases-rejilla (2026-10-10)` de HISTORIA:7638; el test solo exige el prefijo
+  `# Next Action HECHA · W ·`, `test_hoja_de_ruta.py:61`, y acepta letras repetidas: E está en
+  :5881 y :8656), seguido de «La hace `trabajo/sesgo-h4-color` (docs/validation/SESGO-H4-COLOR.md,
+  ADR-0080).»
+- **F queda:** «F. E → O → V. La re-corrida de R3.1 con el sesgo nuevo ya está hecha
+  (SESGO-H4-COLOR.md §4); si E cambia lo que simula, su encargo decide si hace falta otra.» (el
+  texto del encargo, con «tras el sesgo la hizo W» reescrito: «tras» + «W» rompía el test c,
+  §1.k).
+- **V deja de nombrar W:** «… de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las
+  dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción
+  con la sesión 1, con un esquema dibujado), en su orden. Depende de R1.1, de R3.1, de E y O, de J
+  (kit hoja) y de la copia de seguridad (A.4).»
+- Tamaño que resulta: **23.250 bytes** (hoy 24.568; en `main`, 24.359): baja del de hoy, como pide
+  el encargo. El commit de estado del cierre añade lo suyo sobre esa base.
+
+### 5.2 `docs/plan/HOJA-DE-RUTA.md`
+
+- **R1.2** gana `ID:ADR-0080` en sus Refs y la línea «**Estado:** HECHA (`trabajo/sesgo-h4-color`,
+  `stable/F37r-sesgo-h4-color`; SESGO-H4-COLOR.md, ADR-0080): la regla del color en la spec y en
+  el motor, dos registros de feedback, el arnés vuelto a correr con los tres comandos de R3.1
+  (§4). La contradicción con la sesión 1 y la ruptura simple sin cuerpo van a la sesión 5 (R4.1).»
+  (el tag es el siguiente libre tras `F37q`; si el cierre le da otro nombre, se cambia ahí).
+- **R4.1**: en :167, `NA:W` sale de las Refs; en :176, «sin su pregunta 1 (el sesgo, respondida:
+  R1.2)» pasa a «con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura
+  simple sin cuerpo y la contradicción con la sesión 1; R1.2)»; en :178, «R1.2 (NA:W)» pasa a
+  «R1.2 (HECHA)».
+
+### 5.3 Para `ERRORES-RECURRENTES.md` (la escribe `cerrar-rama`) y para el cierre
+
+- Hallazgo para el cierre, no para la rama (respuesta del consultor, 0bis): antes de abrir un
+  fotograma de un gráfico EN DIRECTO, se mira qué días enseña por la fecha de grabación del vídeo
+  y se comprueba con `casos_reservados` si alguno es reservado (§1.j: los tres fotogramas de v6
+  enseñaban cuatro días de `fidelidad-1`).
+- Lo que el auditor del encargo vio antes de empezar (§1.h): la línea F propuesta rompía el test c
+  de la hoja; la fase 1 ya cambiaba el hash de la spec; `--check` no aplica; v9 sí está en
+  cuarentena; el índice de ADR no estaba en el contrato.
+
+## 6 · Desviaciones declaradas
+
+1. **El contrato se amplió dos veces** en la rama: `docs/adr/README.md` (fase 0, §1.k) y
+   `tests/unit/test_huecos_motor.py` (fase 2, §3.1). Las dos están dichas en el commit que las
+   trae.
+2. **La fase 1 subió `spec_version` (17.0.3) y regeneró manifest y docs**, que el encargo dejaba
+   para la fase 3: `feedback apply` cambia la fuente de un parámetro y el hash de la spec la cubre
+   (auditor, punto 3; aceptado por el consultor). La fase 3 la subió otra vez (18.0.0).
+3. **`feedback apply` se ejecutó sin `--check` después del `--check`**: el encargo decía «aplicado
+   con feedback apply --check», que no escribe (auditor, #25; aceptado).
+4. **La fase 1 quedó en dos commits**: 0365d5c (registros, apply, spec, `fuentes.yaml`, README de
+   anexos) y el del inventario, que espera a los `mv` de Aleks; las fases 2 y 3 (fd5d40d) y la 4
+   no esperaron a él porque no dependen del inventario.
+5. **El punto 0 de la respuesta se quedó en su opción (b)** -sin ítems de evidencia- porque
+   supersedir `ev-v3-011045` rompe G1 en A-1 (medido, §2.1), como la propia respuesta preveía.
+6. **Los siete tests de 4.b**: el primero no se «rehízo» con el mismo nombre: pasó a
+   `test_rompe_arriba_y_cierra_verde_es_alcista` y su vela roja es ahora el caso 3 (§3.1); los
+   otros seis conservan nombre y asserts, con el color explícito.
+7. **El escenario `abajo` de `test_huecos_motor.py` cierra ahora roja** (del color de su ruptura),
+   para que siga significando «rompe abajo y decide»; sus tests anteriores no cambiaron de
+   resultado.
+8. **`entonces` de RN-003 no puede nombrar «ADR-0080»** (la guardia de cifras, `spec/modelo.py:270`):
+   dice «el ADR del color» y las notas llevan el id.
+9. **El informe nombra dos ids sintéticos** de una medida en memoria (§2.1), declarados en su bloque
+   `ids-inexistentes`; ADR-0080 estuvo declarado en el informe y en el encargo hasta que existió.
+10. **`sesgo_h4_diagnostico.py`, `sesgo_p1.py` y `sesgo_2x2.py` no se corrieron** con el motor nuevo
+    (§1.k): el encargo no lo pedía y cada uno lee el M1 de marzo o de junio para calentar. Sus
+    salidas cerradas no dicen lo que daría el motor de hoy (p. ej. `sesgo_p1.txt` «ninguna
+    neutra saltada» y «6 de doble ruptura» son del motor de R3.1).
+
+## 7 · El encargo, punto por punto
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 0.1 | Base 59c8ae7 verificada con git, origin, tag; ninguna otra rama | Hecho | §0 |
+| 0.2 | CI de main con `gh`, nunca curl ni guion | Hecho | §0, `gh run view 38656985715` |
+| 0.3 | Apertura con `abrir-rama`: encargo, contrato, Archivo 34, tramo R1 | Hecho | c24c50b |
+| 0.4 | Informe y anexos en sus rutas | Hecho | este fichero; `anexos/SESGO-H4-COLOR/` |
+| 0.5 | Skills: fase-cero con auditor-encargo; activar-sesion; entregar-rama | Hecho | §1 (auditor en §1.h), §2-§3, §8-§9 |
+| 1 | La regla del WhatsApp en la spec y en el motor, con ADR, feedback y evidencia, y re-corrida | Hecho | fd5d40d, 0365d5c, §4; la evidencia entra como capturas en el corpus (inventario pendiente de los `mv`) |
+| D1 | Color contrario: no decide, la búsqueda sigue | Hecho | `domain/sesgo.py`; ADR-0080 §2; tests caso 3 y 4 |
+| D2 | Doble ruptura sin cambios | Hecho | `test_la_doble_ruptura_no_cambia_con_la_regla_nueva`; ADR-0080 §3 |
+| D3 | Neutra simple: no decide; decisión del consultor; pregunta a la sesión 5 | Hecho | ADR-0080 §4; §4.4 |
+| D4 | `sesgo_h4_criterio_ruptura` = mecha, CONFIRMED, con 41f46b21, ev-v9-001312 (y ev-v9-000902) verificados; la lección de ERRORES-RECURRENTES:84 | Hecho | §1.c; ADR-0080 §5; fuente R2 |
+| D5 | Ni parámetro ni interruptor; comparación contra las salidas de R3.1 | Hecho | §4; ADR-0080 §6 |
+| D6 | ADR-0080 (siguiente libre, verificado); recuadros en 0044 §2 (y nota de §1), 0060 §1, 0075 §3; ningún otro ADR contradice | Hecho | §1.a; `docs/adr/0080-*.md`, README |
+| D7 | Dos registros, ninguno supersede 8eccf5c0; CORRECT RN-003 y CONFIRM mecha aplicado; procedencia, medio, recibido_el; carpeta propuesta en la PARADA; `sesgo_h4_regla` solo descripción | Hecho | §2.2; decisión 1 de la PARADA → (a) |
+| 3.1 | Ningún otro parámetro ni cifra; tope 60 | Hecho | `git diff main -- knowledge/spec/parametros.yaml`: solo la fuente de `sesgo_h4_criterio_ruptura` y la descripción de `sesgo_h4_regla` |
+| 3.2 | Simulador, cuenta, bróker y arnés intactos salvo 4.f | Hecho | `git diff main --name-only`: de `src/` solo `domain/sesgo.py`, `engine/primitivas.py`, `engine/arnes.py` |
+| 3.3 | Anexos e informes cerrados no se editan | Hecho | ninguno en el diff; guiones cerrados no corridos (§6.10) |
+| 3.4 | Guardias, `.claude/` y Makefile intactos | Hecho | no están en el diff |
+| 3.5 | PROJECT_STATE: solo lo del ritual, no engorda | Hecho de otra forma | 24.359 → 24.568 bytes por `Tests Currently Passing` (1556 → 1570, lo exige `state check`); el cierre lo deja en 23.250 (§5) |
+| 4.a-g | Fase 0 completa y PARADA | Hecho | §1 |
+| 4.b | Los siete tests verificados y rehechos sin rebajar | Hecho | §1.b, §3.1, §6.6 |
+| 4.c | Evidencias leídas; contradicción → PARADA, detector y sesión 5 | Hecho | §1.c; punto 0 de la respuesta; §2.1 (detector: (b), medido) |
+| 4.e | Seis ficheros listados con sha256; `mv` preparados; nota de voz dicha | Hecho | §1.e; corregido en §1.m (está arriba de la captura de las 15:18) |
+| 4.f | Campo nuevo en `ResultadoSesgo` y anotación; el arnés cuenta | Hecho | tres campos y tres anotaciones (punto 4 de la respuesta, (b)) |
+| 4.g | Lectura declarada el mismo día y antes de correr | Hecho | HOLDOUT-EXPOSICIONES, segunda fila del 2026-10-17 |
+| F1 | Tras los `mv`: inventory, `fuentes.yaml`, manifest; registros con `feedback new`, `apply --check`, `knowledge validate` | Parcial | todo hecho (0365d5c) salvo `corpus inventory` y `manifest.yaml`, que esperan a los `mv` de Aleks |
+| F2 | Tests primero, en rojo sobre `main`, con el recuento de FAILED; la lista del encargo; los siete rehechos | Hecho | §3.1: 16 FAILED |
+| F3 | Motor, spec, ADR, `spec_version`, manifest y docs en el mismo commit, guardias si hay sitio nuevo, `Fuente:` | Hecho | fd5d40d; sin sitio nuevo con cita |
+| F4 | Fila de HOLDOUT antes; los tres comandos tal cual; comparación con R3.1 (sesiones, regla, INSUFICIENTE, T0 y P1-P7 con `patrones.py`); sin fecha ni precio de la H4; diagnóstico | Hecho | §4 |
+| 6.1 | Informe con encargo punto por punto, desviaciones, salidas de la fase 4 y la lista de la sesión 5 con D3 | Hecho | §4.4, §6, §7 |
+| 6.2 | Líneas del cierre medidas en bytes (W, F, V, hoja, tamaño) | Hecho | §5 |
+| 6.3 | CI de Linux si toca la plataforma; si no, el diff de nombres | Hecho | §8 |
+| 6.4 | Revisor (opus) con dos alcances; que ninguna consulta de CI fuera con curl o guion | Hecho | §9 |
+| R0 | Respuesta del consultor copiada tal cual y aplicada punto por punto | Hecho | §1.l; puntos 0-7 y «Además» en §2-§5 |
+
+## 8 · CI de Linux
+
+No se empuja `fix/sesgo-h4-color`: la rama no toca hooks, rutas, el sistema de archivos ni guiones
+que dependan de la plataforma (`RITUAL.md`, «Antes del merge: la CI de Linux»). El diff de nombres
+contra `main` (`git diff main --name-only`, más los ficheros de la fase 4): `PROJECT_STATE.md`,
+`contrato.yaml`, `docs/adr/{0044,0060,0075,0080}-*.md`, `docs/adr/README.md`,
+`docs/encargos/trabajo-sesgo-h4-color.md`, `docs/spec/*.md`, `docs/state/HISTORIA.md`,
+`docs/validation/HOLDOUT-EXPOSICIONES.md`, `docs/validation/SESGO-H4-COLOR.md`,
+`docs/validation/anexos/SESGO-H4-COLOR/*`, `knowledge/corpus/fuentes.yaml`,
+`knowledge/feedback/2026-10-04-sesion-04/fb-…-{6e7da456,d2e84172}.yaml`,
+`knowledge/spec/{glossary,parametros,spec_manifest,strategy_spec}.yaml`,
+`src/botsito/domain/sesgo.py`, `src/botsito/engine/{primitivas,arnes}.py`,
+`tests/unit/test_{sesgo_h4,huecos_motor,arnes_motor}.py`. Nada de `scripts/git-hooks/`,
+`.claude/hooks/`, rutas del sistema de archivos ni zoneinfo; `simular_cierre.py` lee tres ficheros
+por `Path` relativo a la raíz que recibe.
+
 ## Estado
 
-EN CURSO. Fase 1 en marcha: registros, `apply`, spec y `fuentes.yaml` hechos; `corpus inventory`
-espera a los `mv`.
+EN CURSO. Fases 0 a 4 hechas; falta el commit del inventario (tras los `mv`), el revisor y su
+respuesta.

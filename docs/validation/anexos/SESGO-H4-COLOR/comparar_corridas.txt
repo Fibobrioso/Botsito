@@ -1,0 +1,22 @@
+2026-01-02 07-11:
+  bot solo en A: compra 2026-01-02T08:23:59.314000+00:00 1.17282
+  bot solo en A: compra 2026-01-02T08:25:18.838000+00:00 1.1728
+2026-01-07 07-11:
+  bot solo en B: venta 2026-01-07T06:55:07.894000+00:00 1.16976
+2026-01-22 07-11:
+  bot solo en A: compra 2026-01-22T06:14:12.778000+00:00 1.16863
+  bot solo en A: compra 2026-01-22T08:37:04.039000+00:00 1.16863
+  bot solo en A: compra 2026-01-22T08:39:38.077000+00:00 1.16863
+2026-01-23 07-11:
+  bot solo en B: compra 2026-01-23T06:17:57.133000+00:00 1.17478
+  bot solo en B: compra 2026-01-23T06:22:40.618000+00:00 1.17475
+2026-01-28 07-11:
+  bot solo en A: venta 2026-01-28T07:22:02.428000+00:00 1.20107
+  bot solo en B: compra 2026-01-28T07:54:45.601000+00:00 1.19889
+  bot solo en B: compra 2026-01-28T08:55:32.924000+00:00 1.19781
+2026-01-30 11-15:
+  bot solo en A: compra 2026-01-30T13:55:13.384000+00:00 1.1908
+  bot solo en B: venta 2026-01-30T10:54:26.493000+00:00 1.19215
+2026-08-04 11-15:
+  bot solo en B: venta 2026-08-04T10:54:04.293000+00:00 1.15136
+A = diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt; B = diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt; sesiones con alguna diferencia: 7; operaciones del bot A 106, B 106; parejas A 12, B 12
