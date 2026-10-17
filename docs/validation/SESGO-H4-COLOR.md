@@ -229,12 +229,19 @@ decide aquí** (decisión 0).
 Para localizar qué señalaba, se abrieron tres fotogramas de v6 por instante localizado en la
 transcripción (ADR-0038; `corpus frames show --video v6 --t 1:04:41 | 1:05:10 | 1:05:31 --n 1`,
 `fr-v6-22982c02/3881000`, `/3910000`, `/3931000`). Los tres enseñan el gráfico H4 de EURUSD de
-TradingView EN DIRECTO (reloj 20:53-20:54 UTC+2 del 09/09/2026, velas del 3 al 9 de septiembre de
-2026), con una línea discontinua horizontal y un trazo a mano del trader (ningún precio se copia
-aquí: cuatro de esos cinco días tienen caso reservado, §1.j). No resuelven qué vela señala ni
-dónde cerró: la pregunta queda para la sesión 5 con esos instantes.
-Lo visto son velas de un gráfico en directo, ninguna operación, ninguna etiqueta (declarado en
-§1.j).
+TradingView EN DIRECTO (reloj 20:53-20:54 UTC+2 del 09/09/2026, la fecha de grabación de la
+sesión 1: velas de los días laborables anteriores de septiembre de 2026), con una línea discontinua
+horizontal y un trazo a mano del trader (ningún precio se copia aquí: entre esos días hay días con
+caso reservado en `fidelidad-1`, §1.j). No resuelven qué vela señala ni dónde cerró.
+**Corrección (respuesta del consultor, puntos 0 y 0bis):** la pregunta a la sesión 5 NO se hace
+con esos instantes ni con esos fotogramas, sino con un esquema dibujado; no se abren más
+fotogramas de ese tramo ni se cruzan las velas. Lo visto son velas de un gráfico en directo,
+ninguna operación, ninguna etiqueta (declarado en §1.j). **Hallazgo a1 del revisor:** las
+versiones de este informe y de la fila de HOLDOUT-EXPOSICIONES commiteadas en 1030a4d a 37ae53f
+escribían el rango de fechas del gráfico y cuántos de esos días laborables tienen caso reservado,
+lo que acota casi del todo qué días de septiembre son reservados; se retira del texto vivo aquí y
+en la fila (la historia de git no se reescribe, como en el incidente a1 de R3.1) y se deja al
+consultor en la orden de cierre.
 
 ### 1.d El registro (D7): carpeta, registros y qué cita cada sitio después
 
@@ -348,7 +355,9 @@ corridas de `motor arnes --simular` leen, para calentar el sesgo (`arnes.py:182-
 ENTERO de marzo de 2026 (mes reservado entero, `meses_reservados.yaml`) y el de junio de 2026 (11
 días reservados medidos hoy por recuento: 2 de holdout-1, 4 de holdout-2, 5 de holdout-3; es el
 mismo recuento que la fila del 2026-10-14, anterior a la retirada de un día de holdout-3 por
-ADR-0041 en 7f8322a: `casos_reservados` lo sigue contando, y no se investigó por qué), además de
+ADR-0041 en 7f8322a: `casos_reservados` lo sigue contando porque retirar no es desreservar,
+`cases/holdout.py:374-381`: un día retirado deja de medirse pero sigue oculto, y
+`ocultos = reservados | retirados`; lo señaló el revisor, a4), además de
 los M1 de construcción. Leer velas para calentar no es abrir (ADR-0021 §1, ADR-0033 §4); las salidas no
 llevan ninguna etiqueta ni ningún precio de un día reservado, y el informe no imprimirá la fecha
 ni el precio de la H4 que fija ningún sesgo (lección a1, `ERRORES-RECURRENTES.md:84`). Se
@@ -486,10 +495,13 @@ reservados de junio hoy, medido, los mismos que antes de la retirada.
 Declaradas en `HOLDOUT-EXPOSICIONES.md` (fila del 2026-10-17). Lo que leyó la sesión: ningún
 libro, ninguna captura, ninguna hoja; las transcripciones corregidas y FILTRADAS de v3
 (1:09:46-1:11:21) y v6 (1:02:53-1:05:50), fuera de cuarentena y fuera de los tramos no citables;
-tres fotogramas de v6 (1:04:41, 1:05:10, 1:05:31) con el gráfico H4 de EURUSD en directo del 3 al
-9 de septiembre de 2026 (velas y líneas del trader; ninguna operación, ninguna etiqueta;
-septiembre de 2026 tiene 10 días reservados por recuento, y de los cinco días laborables que
-enseña el gráfico, el recuento de pertenencia está en la fila); la carpeta
+tres fotogramas de v6 (1:04:41, 1:05:10, 1:05:31) con el gráfico H4 de EURUSD en directo de la
+fecha de grabación de la sesión 1 (velas de días laborables de septiembre de 2026 y líneas del
+trader; ninguna operación, ninguna etiqueta; septiembre de 2026 tiene 10 días reservados por
+recuento, y entre los días que enseña el gráfico hay días con caso reservado en `fidelidad-1`,
+medido por pertenencia sin imprimir cuáles; el rango y el recuento exacto, que las versiones
+anteriores de este informe y de la fila escribían, se retiran del texto vivo por el hallazgo a1
+del revisor); la carpeta
 `corpus/whatsapp-sesgo-h4-2026-10-14/` por nombre, tamaño y hash; los repartos solo por recuento
 (§1.g). Ninguna cifra del bot ni ninguna etiqueta sobre ningún día reservado: no quema.
 
@@ -838,9 +850,11 @@ depende de la cuenta ni de A-35), frente a la de R3.1 (sus salidas commiteadas d
 **En 8 de las 104 sesiones cambió el sesgo**, todas por D1 (la H4 que antes lo fijaba rompía un
 extremo y cerraba del color contrario; ninguna por D3 ni por una neutra doble, que no aparecen en
 construcción): 4 de alcista a bajista, 3 de bajista a alcista y 1 de alcista a INSUFICIENTE
-(`comparar_rn003.py` del scratchpad, que solo lee las filas `rn003` de las dos salidas; misma salida
-sobre las corridas 1 y 2). Por día dev de construcción y sesión (son días de desarrollo; ninguna
-H4):
+(`comparar_rn003.py` del scratchpad, que solo lee las filas `rn003` de las dos salidas; lista
+tomada de la corrida 2, la que clasifica `patrones.py`; en la corrida 1 cambian las mismas ocho
+sesiones en el mismo sentido y solo difiere el recuento del bot de 2026-08-04 11-15, que allí es
+0 antes y 0 ahora; revisor, a3). Por día dev de construcción y sesión (son días de desarrollo;
+ninguna H4):
 
 ```
 2026-01-02 07-11: alcista -> insuficiente (trader 2, bot antes 2, ahora 0)
@@ -849,7 +863,7 @@ H4):
 2026-01-23 07-11: bajista -> alcista     (trader 3, bot antes 0, ahora 2)
 2026-01-28 07-11: bajista -> alcista     (trader 1, bot antes 1, ahora 2)
 2026-01-30 11-15: alcista -> bajista     (trader 2, bot antes 1, ahora 1)
-2026-08-04 11-15: alcista -> bajista     (trader 1, bot antes 0, ahora 0)
+2026-08-04 11-15: alcista -> bajista     (trader 1, bot antes 0, ahora 1)
 2026-08-07 11-15: bajista -> alcista     (trader 3, bot antes 0, ahora 0)
 ```
 
@@ -879,9 +893,10 @@ La corrida 2 de R3.1 frente a la de esta rama, con el mismo guion
 (`anexos/SESGO-H4-COLOR/comparar_corridas.txt`; en su pie A es la de R3.1 y B la de esta rama,
 los dos ficheros se llaman igual): **7 sesiones con alguna diferencia** en las operaciones del bot
 (2026-01-02 07-11, 01-07 07-11, 01-22 07-11, 01-23 07-11, 01-28 07-11, 01-30 11-15 y 08-04
-11-15), 106 operaciones del bot en las dos, 12 parejas en las dos. Siete de las ocho sesiones de
-§4.1 menos 01-16 07-11 y 08-07 11-15 (donde el bot no operaba ni opera), más 2026-01-22 07-11, una
-sesión sin operaciones del trader cuyo sesgo cambió y donde el bot deja de hacer tres compras.
+11-15), 106 operaciones del bot en las dos, 12 parejas en las dos. Son seis de las ocho sesiones
+de §4.1 (todas menos 01-16 07-11 y 08-07 11-15, donde el bot no operaba ni opera) más 2026-01-22
+07-11, una sesión sin operaciones del trader -por eso no tiene fila `rn003`- cuyo sesgo cambió y
+donde el bot deja de hacer tres compras.
 
 ### 4.3 La tabla T0 y P1-P7, con `patrones.py` de R3.1
 
@@ -915,12 +930,14 @@ v6 ni con los instantes de ese gráfico (respuesta del consultor, puntos 0 y 0bi
    extremo de la anterior (con la mecha) y cierra exactamente donde abrió. ¿Cambia el sesgo por el
    lado de la ruptura, o no decide y sigue el sesgo que había (como la neutra de doble ruptura de
    S-13)? Hoy el motor hace lo segundo. En construcción no aparece ninguna (§4.1).
-2. **La contradicción con la sesión 1 (ADR-0080 §9):** con el sesgo bajista, una H4 rompe por
-   encima con la mecha y cierra ROJA. En la sesión 1 dijo «la siguiente operativa es alcista …
-   aunque fue roja la vela, pues es indiferente»; en el WhatsApp del 2026-10-14 confirmó el caso 3
-   del esquema (no cambia, sigue bajista). ¿Cuál vale? Si es la del WhatsApp, ¿qué era distinto en
-   el caso que explicó en la sesión 1? (sobre un esquema de dos velas dibujado; hoy el motor hace
-   lo del WhatsApp).
+2. **La contradicción con la sesión 1 (ADR-0080 §9), sobre un esquema de dos velas dibujado:**
+   con el sesgo bajista, una H4 rompe por encima con la mecha y cierra ROJA. ¿Cambia el sesgo a
+   alcista, o sigue bajista? Es el caso 3 del esquema que confirmó por WhatsApp el 2026-10-14
+   (sigue bajista), y hoy el motor hace eso. Para el consultor, no para el trader: en la sesión 1
+   (v6 1:04:30-1:05:35) dijo lo contrario de una vela de su gráfico en directo; la pregunta no le
+   recuerda ese caso ni le pide reconstruirlo (puntos 0 y 0bis de la respuesta; hallazgos b3 y b4
+   del revisor: si el consultor quiere que la pregunta lleve el literal de la sesión 1, lo decide
+   él al escribir el cuestionario).
 
 ## 5 · Líneas preparadas para el commit del contrato de la orden de cierre
 
@@ -1001,6 +1018,19 @@ lee `PROJECT_STATE.md`, la hoja y HISTORIA, aplica las sustituciones y corre a, 
     (§1.k): el encargo no lo pedía y cada uno lee el M1 de marzo o de junio para calentar. Sus
     salidas cerradas no dicen lo que daría el motor de hoy (p. ej. `sesgo_p1.txt` «ninguna
     neutra saltada» y «6 de doble ruptura» son del motor de R3.1).
+11. **`fuentes.yaml`, ADR-0080 y los dos registros de feedback dan por hecho lo que espera a los
+    `mv`** (revisor, a2): `fuentes.yaml` describe los seis ficheros como entrados, el ADR dice que
+    las capturas «están en el corpus» y `registrado_por` de R1 y R2 apunta a las rutas de destino.
+    El encargo ponía `fuentes.yaml` después de los `mv`; se escribió antes para no bloquear la
+    rama, y es verdad en cuanto Aleks lance los seis `mv` de §1.e y entre el commit del inventario
+    (b1). Los registros son inmutables: si los `mv` no llegaran, las rutas que citan no existirían.
+12. **El `registrado_por` de R1 lleva solo la captura de las 14:55 con su sha256 entero** (revisor,
+    b5); §1.d proponía las cuatro. Las otras tres van en `notas` con el hash recortado a ocho
+    caracteres, y los seis sha256 enteros están en §1.e y entrarán en `manifest.yaml`.
+13. **El rango de fechas del gráfico de v6 y el recuento de sus días reservados se retiran del
+    texto vivo** del informe y de la fila de HOLDOUT-EXPOSICIONES (revisor, a1): acotaban casi del
+    todo qué días de septiembre son reservados. Quedan en la historia de git (1030a4d a 37ae53f),
+    que no se reescribe; lo decide el consultor en la orden de cierre.
 
 ## 7 · El encargo, punto por punto
 
@@ -1011,7 +1041,7 @@ lee `PROJECT_STATE.md`, la hoja y HISTORIA, aplica las sustituciones y corre a, 
 | 0.3 | Apertura con `abrir-rama`: encargo, contrato, Archivo 34, tramo R1 | Hecho | c24c50b |
 | 0.4 | Informe y anexos en sus rutas | Hecho | este fichero; `anexos/SESGO-H4-COLOR/` |
 | 0.5 | Skills: fase-cero con auditor-encargo; activar-sesion; entregar-rama | Hecho | §1 (auditor en §1.h), §2-§3, §8-§9 |
-| 1 | La regla del WhatsApp en la spec y en el motor, con ADR, feedback y evidencia, y re-corrida | Hecho | fd5d40d, 0365d5c, §4; la evidencia entra como capturas en el corpus (inventario pendiente de los `mv`) |
+| 1 | La regla del WhatsApp en la spec y en el motor, con ADR, feedback y evidencia, y re-corrida | Parcial | fd5d40d, 0365d5c, §4; la evidencia entra como capturas en el corpus (`fuentes.yaml` hecho; inventario pendiente de los `mv`, b1 del revisor); ningún ítem de evidencia (opción (b), §2.1) |
 | D1 | Color contrario: no decide, la búsqueda sigue | Hecho | `domain/sesgo.py`; ADR-0080 §2; tests caso 3 y 4 |
 | D2 | Doble ruptura sin cambios | Hecho | `test_la_doble_ruptura_no_cambia_con_la_regla_nueva`; ADR-0080 §3 |
 | D3 | Neutra simple: no decide; decisión del consultor; pregunta a la sesión 5 | Hecho | ADR-0080 §4; §4.4 |
@@ -1056,7 +1086,184 @@ contra `main` (`git diff main --name-only`, más los ficheros de la fase 4): `PR
 `.claude/hooks/`, rutas del sistema de archivos ni zoneinfo; `simular_cierre.py` lee tres ficheros
 por `Path` relativo a la raíz que recibe.
 
+## 9 · El revisor
+
+Subagente `revisor` (`model: opus`), una pasada sobre 37ae53f con los dos alcances del encargo
+(reglas de la casa; el encargo y la respuesta del consultor punto por punto) y la comprobación de
+que ninguna consulta de CI se hizo con curl o guion. Su informe, tal cual (nada cita un tramo no
+citable; ninguna retirada):
+
+> ## Informe del revisor · trabajo/sesgo-h4-color · 2026-10-17
+>
+> La rama no está lista para revisión. Hay un hallazgo que bloquea, en el eje (b): falta el commit del inventario, que espera a los `mv` de Aleks. Las reglas de la casa se cumplen: el contrato pasa, el sello de `make-check.log` es el árbol de HEAD, los `Fuente:` están, los regímenes de cambio se respetan y no hay precios de días reservados. Quedan tres puntos que importan en el eje (a) y cuatro en el (b), todos con su evidencia abajo.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 3 importa, 4 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | **Fechas de un rango con días reservados.** El informe y la fila de exposiciones dan el rango del gráfico de v6 («velas del 3 al 9 de septiembre de 2026») junto con que «4 de esos 5 días laborables tienen caso reservado, los 4 de fidelidad-1». Ningún precio se copia, pero esto acota casi del todo qué días de septiembre son reservados. La propia fila dice «sin imprimir cuáles», y el rango lo deja casi dicho. El consultor ya lo vio en la PARADA (1030a4d) y repitió «cuatro días de fidelidad-1» sin objetar. Le toca a él decir si lo acepta o si pide un recuadro que quite el rango. | `docs/validation/SESGO-H4-COLOR.md:232-234` («reloj 20:53-20:54 UTC+2 del 09/09/2026, velas del 3 al 9 de septiembre de 2026 … cuatro de esos cinco días tienen caso reservado»); `:489-492`; `docs/validation/HOLDOUT-EXPOSICIONES.md`, fila 1 del 2026-10-17 («las velas H4 del 3 al 9 de septiembre de 2026 … de los 5 dias laborables que ensena el grafico, 4 tienen caso reservado, los 4 de `fidelidad-1`») |
+> | a2 | importa | **Tres ficheros commiteados dan por hecho lo que espera a los `mv`.** ADR-0080 dice que las capturas «están en el corpus», y `fuentes.yaml` dice que «entran SEIS ficheros». Los dos registros de feedback apuntan en `registrado_por` a `Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-14-*.png`. Hoy esos ficheros siguen en la carpeta de origen y `manifest.yaml` no los tiene. Además el encargo ponía `fuentes.yaml` DESPUÉS de los `mv`, y la desviación §6.4 no dice que se escribió antes. Si los `mv` no llegan antes del cierre, las tres afirmaciones son falsas. | `docs/adr/0080-…md:29-30`; `knowledge/corpus/fuentes.yaml` (diff, +195-210); `fb-2026-10-04-sesion-04-6e7da456.yaml:11-12`; `fb-…-d2e84172.yaml:11-12`. `ls -la corpus/whatsapp-sesgo-h4-2026-10-14/` → los seis `.png` siguen allí con los nombres viejos. `git diff --name-status main...HEAD -- knowledge/corpus/manifest.yaml` → vacío |
+> | a3 | importa | **§4.1 dice algo que la corrida 2 no sostiene.** El informe da la lista de las 8 sesiones que cambian como «misma salida sobre las corridas 1 y 2». No es así en 2026-08-04 11-15: el informe pone «bot antes 0, ahora 0», y en la corrida 2 el bot pasa de 0 a 1. La lista casa con la corrida 1, no con la 2. Y choca con §4.2, que pone 08-04 entre las 7 sesiones con diferencias en la corrida 2. | `SESGO-H4-COLOR.md:852` («2026-08-04 11-15: alcista -> bajista (trader 1, bot antes 0, ahora 0)») y `:841-842`. Comparé las filas `rn003` de las dos corridas 2: `< 2026-08-04 11-15 \| trader 1 \| bot 0 \| rn003 alcista` / `> … \| bot 1 \| rn003 bajista`. En la corrida 1, `bot 0` en las dos. `anexos/SESGO-H4-COLOR/comparar_corridas.txt`: «2026-08-04 11-15: bot solo en B: venta» |
+> | a4 | menor | §1.g deja abierto por qué `casos_reservados` sigue contando el día retirado de holdout-3. La respuesta está en el código: retirar no es desreservar. | `SESGO-H4-COLOR.md:350-351` («no se investigó por qué»); `src/botsito/cases/holdout.py:376-381` («Retirar no es desreservar … ocultos = reservados \| retirados») |
+> | a5 | menor | §1.c sigue diciendo que la pregunta va a la sesión 5 «con esos instantes». La respuesta del consultor (punto 0 y 0bis) lo prohíbe, y no hay una nota de corrección como la que §1.m pone a la nota de voz. | `SESGO-H4-COLOR.md:235`; contra `:613` |
+> | a6 | menor | El pie de `comparar_corridas.txt` llama igual a A y a B. Solo por el anexo no se sabe cuál es R3.1 y cuál la rama; lo dice el informe. | `anexos/SESGO-H4-COLOR/comparar_corridas.txt:22`; `SESGO-H4-COLOR.md:879-880` |
+> | a7 | menor | Una frase de §4.2 se entiende mal: «Siete de las ocho sesiones de §4.1 menos 01-16 … y 08-07 …, más 2026-01-22». Además, 08-04 sí cambia de operaciones en la corrida 2 (a3). | `SESGO-H4-COLOR.md:883-884` |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `contrato_rama.py` → «CONTRATO: 36 ficheros dentro del contrato … tramo 'R1', 5 comprobaciones», exit 0.
+> - **pytest de los tres ficheros del contrato** → `62 passed in 34.33s`.
+> - **`knowledge validate`** (sin redirigir) → todo OK, entre ello «176 registros de feedback, historial intacto, commits con Fuente», «503 items de evidencia, 0 contradicciones abiertas» y «36 reglas de spec … hash del manifiesto al dia».
+> - **`spec docs`** sin `--escribir` → «OK: docs/spec coincide con knowledge/spec/».
+> - **`make check`.** No lo ejecuté: escribe el log y el sello. Lo sustituye `make-check.log`: «2657 passed», `SELLO: make check en verde sobre el arbol 8182f0d8…`, que es el árbol de 37ae53f (HEAD), y «PICO DE MEMORIA … 295 MiB». c24c50b tiene el árbol dc99c115, el que el informe declara sellado.
+> - **Trailer `Fuente:`.** 0365d5c y fd5d40d lo llevan en el cuerpo, con ids que existen (los dos fb nuevos y ADR-0080).
+> - **Regímenes de cambio.** En evidence, feedback, manifests, transcripciones, fotogramas, `libros.yaml` y `cases/` solo hay dos `A` en feedback. `fuentes.yaml` solo añade líneas.
+> - **CORRECT/CONFIRM.** R1 es CORRECT sobre una regla, con `valor_resultante`. R2 es CONFIRM sobre un parámetro, con el valor de antes. Ninguno supersede.
+> - **Ambigüedades.** `ambiguedades.yaml` no cambia; `ambiguedades.md` solo cambia la versión.
+> - **ADR.** El Estado de ADR-0080 es `ACTIVE`. Los recuadros de 0044, 0060 y 0075 solo añaden líneas (numstat 12/0, 7/0, 7/0). El índice tiene la fila de 0080.
+> - **Informes cerrados.** Ninguno se edita. HOLDOUT-EXPOSICIONES solo añade dos filas. HISTORIA añade 193 líneas y no quita ninguna.
+> - **Tres guardias de `cita`.** No hacen falta: no nace ningún sitio con cita. RN-003 y `sesgo_h4_al_abrir` cambian de cita, y `equal` conserva la suya.
+> - **Cifras.** Ninguna nueva en la forma; `sesgo_h4_tope_velas` sigue en 60.
+> - **Lo que imprimen la rama y sus anexos.** Ninguna fecha de H4 ni ningún precio fuera de los meses de construcción. La única fecha ajena es la línea del calendario de cierres (2025-12-04…), igual que en R3.1. 2026-03-10 y 2026-10-27 son parámetros de un test que ya existía. No hay cifras con forma de precio en el informe, el ADR, los fb ni HOLDOUT.
+> - **Fila de la fase 4 antes de correr.** Entró en el mismo commit que las salidas, pero las horas de los ficheros lo sostienen: HOLDOUT se modificó por última vez a las 15:32:39, fd5d40d es de las 15:32:01 y la corrida 1 acabó a las 15:37:56 tras 315,8 s.
+> - **Material.** Los sha256 y tamaños de los seis ficheros casan con §1.e (los recalculé sin abrir nada). Los tres fotogramas se abrieron por instante localizado en la transcripción y están declarados el mismo día.
+> - **Citas del informe comprobadas contra su fuente:** `ev-v3-011045-a185d2ba` («terminado por encima … y el color verde»), `ev-v9-000902-25db5bf5` («con mecha o con cuerpo por debajo»), las notas de `fb-…-41f46b21` («El criterio es la ruptura del extremo, no el color ni el cierre») y `CORRIDA-CONSTRUCCION.md:1316` (4.b, «lo decido en la rama que active la respuesta del trader»). Las cuatro dicen lo que el informe les atribuye.
+> - **Cifras de la fase 4.** Las cuatro líneas de RN-003 y las seis de cobertura y precisión casan con las salidas commiteadas. P1, 44 filas en 21 sesiones, casa con `patrones.txt`. Las 8 sesiones que cambian de sesgo casan con la comparación de filas `rn003` (salvo el recuento del bot de a3). «Seis de las ocho están entre las 13 de P1» casa con `CORRIDA-CONSTRUCCION.md:1233-1236`.
+> - **`simular_cierre.py`.** Solo lee (`read_text`) y toma la raíz de `sys.argv[1]`.
+> - **Ítems de evidencia nuevos (punto 10).** No hay: la rama se quedó en la opción (b).
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 4 importa, 1 menor. Requisitos: 38 hechos, 1 parcial, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base 59c8ae7 comprobada con main, origin, el tag; ninguna otra rama | Hecho | informe §0 |
+> | 2 | CI de main con `gh`, nunca curl ni guion | Hecho | `gh run view 38656985715` hoy → `conclusion success, headSha 59c8ae72…, headBranch main`; en el diff no hay `curl`, `api.github` ni `check-runs` |
+> | 3 | Abrir con abrir-rama: encargo, contrato, Archivo 34, tramo R1 | Hecho | c24c50b; `contrato.yaml:4` |
+> | 4 | Informe y anexos en sus rutas | Hecho | están |
+> | 5 | Fase 0: inventario a-g y PARADA antes de código | Hecho | 1030a4d solo toca el informe, HOLDOUT y el contrato |
+> | 6 | 4.a: sitios con fichero:línea | Hecho | §1.a |
+> | 7 | 4.b: los siete tests comprobados y cómo rehacerlos | Hecho | §1.b |
+> | 8 | 4.c: evidencias leídas; la contradicción va a PARADA | Hecho | §1.c, «Lo que necesito que decidas» 0 |
+> | 9 | 4.d: carpeta, acción, valor y citas; `rompe` se queda | Hecho | §1.d |
+> | 10 | 4.e: seis ficheros con sha256 y los `mv` preparados | Hecho | §1.e:291-310 (los sha casan); los nombres coinciden con el encargo |
+> | 11 | 4.f: campos y anotaciones para el arnés | Hecho | §1.f |
+> | 12 | 4.g: lectura de la re-corrida, declarada | Hecho | §1.g; HOLDOUT, fila 2 del 2026-10-17 |
+> | 13 | D1: color contrario, no decide | Hecho | `domain/sesgo.py` (diff, rama `elif`); test caso 3/4 |
+> | 14 | D2: la doble ruptura no cambia | Hecho | `test_la_doble_ruptura_no_cambia_con_la_regla_nueva` |
+> | 15 | D3: neutra simple, no decide; marcada como decisión del consultor; pregunta a la sesión 5 | Hecho | ADR-0080 §4; §4.4 pregunta 1 |
+> | 16 | D4: mecha, CONFIRMED; 41f46b21, ev-v9-001312 (y 000902); por qué no aplica la lección de ERRORES-RECURRENTES:84 | Hecho | ADR-0080 §5:56-71 |
+> | 17 | D5: sin parámetro ni interruptor; comparación con R3.1 | Hecho | ADR-0080 §6; §4 |
+> | 18 | D6: 0080 es el siguiente libre; tres recuadros | Hecho | diffs de 0044, 0060 y 0075 |
+> | 19 | D7: dos registros, ninguno supersede a 8eccf5c0; `trader_escrito`, escrito, 2026-10-14; `sesgo_h4_regla` solo descripción | Hecho | los dos yaml; `parametros.yaml` (diff) |
+> | 20 | §3: ninguna otra cifra ni parámetro | Hecho | diff de `parametros.yaml`: solo la fuente y la descripción |
+> | 21 | §3: simulador, cuenta y bróker intactos; arnés solo con 4.f | Hecho | diff de `src/`: solo `sesgo.py`, `primitivas.py`, `arnes.py` (contadores) |
+> | 22 | §3: anexos e informes cerrados intactos | Hecho | contrato OK; ninguno en el diff |
+> | 23 | §3: guardias, `.claude/` y Makefile intactos | Hecho | no están en el diff |
+> | 24 | §3: PROJECT_STATE no engorda | Hecho de otra forma (declarado) | 24.359 → 24.568 por el ritual; el cierre simulado lo deja en 23.250 (`simular_cierre.txt`) |
+> | 25 | Fase 1: inventory, `fuentes.yaml` y manifest tras los `mv`; los dos registros; `feedback apply`; `knowledge validate` | **Parcial** | `manifest.yaml` sin cambios; los `mv` sin hacer (ver b1) |
+> | 26 | Fase 1 con spec_version, manifest, docs y Fuente (aceptado en «Además») | Hecho | 0365d5c (stat) |
+> | 27 | Fase 2: tests en rojo sobre main con el recuento | Hecho (no reproducido, ver abajo) | §3.1: 16 FAILED |
+> | 28 | Fase 2: la lista de casos (los 4 en los dos sentidos, D3, sin nada detrás, varias seguidas, doble, cuerpo, sin futuro) y los 7 rehechos | Hecho | diff de `test_sesgo_h4.py` |
+> | 29 | Fase 3: motor, spec, ADR, spec_version, manifest y docs en el mismo commit; Fuente | Hecho | fd5d40d (stat); `spec docs` OK |
+> | 30 | Fase 4: fila antes; los tres comandos; comparación (sesiones, regla, INSUFICIENTE, T0 y P1-P7); sin fecha ni precio de H4 | Hecho | §4; las horas de los ficheros (eje a); salvo a3 |
+> | 31 | §6: informe punto por punto, desviaciones y lista de la sesión 5 sin fechas reservadas | Hecho | §4.4, §6, §7 |
+> | 32 | §6: líneas del cierre medidas (W, F, V, hoja, tamaño) | Hecho | §5; `simular_cierre.txt` a/b/c vacíos |
+> | 33 | §6: CI de Linux, o el diff de nombres | Hecho | §8 |
+> | 34 | §6: revisor con dos alcances; ninguna CI con curl o guion | Hecho con este informe | ver #2 |
+> | 35 | R-0: (a) con ítems; si rompe, (b) dicho | Hecho | §2.1 (medido en memoria); §6.5 |
+> | 36 | R-0bis: fila ampliada, «Para F26», hallazgo para el cierre | Hecho | HOLDOUT fila 1; `SESGO-H4-COLOR.md:653-663`; §5.3 |
+> | 37 | R-1 a R-4 (carpeta, `equal`, RN-033 y token, tres campos del arnés) | Hecho | fb yaml; `glossary.yaml`; `strategy_spec.yaml` (diff); `sesgo.py` |
+> | 38 | R-5 (literal unido; nota de voz corregida; dos mensajes como contexto) | Hecho | `fb-…-6e7da456.yaml:9-10, 28-35`; §1.m; `fuentes.yaml` |
+> | 39 | R-6, R-7 y «Además» (A-1 sin reabrir; un solo recuadro en 0044; 000902 citado; ERRORES-RECURRENTES y CORRIDA intactos; guiones cerrados sin correr) | Hecho | ADR-0080 §9; recuadro de 0044; el diff |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | **bloquea** | **Falta el commit del inventario.** La fase 1 pide `corpus inventory` y `manifest.yaml` con los seis sha256, y no están. No es culpa de la sesión: los `mv` los lanza Aleks, y el informe lo declara (F1 «Parcial», Estado «EN CURSO»). Pero lo que el encargo pide de forma explícita falta, y la rama no está lista hasta que entre. | `git diff --name-status main...HEAD -- knowledge/corpus/manifest.yaml` → vacío; `ls corpus/whatsapp-sesgo-h4-2026-10-14/` → los seis siguen allí; `SESGO-H4-COLOR.md:1033`, `:1061-1062` |
+> | b2 | importa | **La tabla §7 marca Hecho cosas que no lo están.** El requisito «1» (la regla con ADR, feedback y **evidencia**) va como Hecho, cuando la evidencia ni entró como ítems (opción (b)) ni está aún inventariada en el corpus. Debería ir Parcial. Y 0.5 (entregar-rama) y 6.4 (revisor) dicen Hecho remitiendo a «§9», que no existe. | `SESGO-H4-COLOR.md:1013-1014`, `:1040`; el informe acaba en `## 8` y `## Estado` (`:1043-1062`) |
+> | b3 | importa | **La pregunta 2 de la sesión 5 se acerca a lo que el consultor prohibió.** Pide «¿qué era distinto en el caso que explicó en la sesión 1?». Eso invita al trader a reconstruir el caso del gráfico en directo de v6, que son velas de días de fidelidad-1. El punto 0 dice: «enseñárselo y que lo explique sería pedirle una etiqueta de esos días». El esquema dibujado está; la subpregunta va en sentido contrario. Que decida el consultor. | `SESGO-H4-COLOR.md:921-923`; contra `:613` y `:615` |
+> | b4 | importa | **El literal de v6 se cita en la pregunta al trader.** La pregunta 2 le recuerda lo que dijo («la siguiente operativa es alcista … aunque fue roja la vela, pues es indiferente»), que es justo su comentario sobre el gráfico en directo. No es un fotograma ni un instante, que es lo que el punto 0 prohíbe; aun así conviene que el consultor confirme que el literal puede ir en la pregunta. | `SESGO-H4-COLOR.md:919-921` |
+> | b5 | menor | El `registrado_por` de R1 lleva solo la captura de las 14:55. §1.d proponía «la ruta y el sha256 de las cuatro capturas»; las otras tres van en `notas` con el hash recortado, y el cambio no se declara. | `SESGO-H4-COLOR.md:262`; `fb-…-6e7da456.yaml:11-12, 24-31` |
+>
+> Lo que hace la rama sin que el encargo lo pida, todo justificado: la tercera anotación (neutra doble, R-4 (b)); la segunda pregunta de la sesión 5 (R-0); el contrato ampliado dos veces (§6.1); spec_version en la fase 1 (aceptado). Lo que el encargo dice que no se toca (Makefile, `.claude/`, `scripts/`, `docs/plan/`, CORRIDA, el visor) no aparece en el diff, y `contrato_rama.py` está en verde.
+>
+> ### Lo que no pude comprobar
+> - **Los 16 FAILED de la fase 2 sobre main y los 7 de §1.b.** Para reproducirlos hace falta un `git worktree add`, y eso escribe.
+> - **La medida en memoria de §2.1** (que G1 falla y que el detector abre 1 contradicción). El guion vivía en el scratchpad y no está commiteado; solo tengo su salida pegada.
+> - **El sello de los commits intermedios** (1030a4d, 0365d5c, fd5d40d). Solo se ve el de HEAD en `make-check.log`; el hook `pre-commit` exige sello, y ningún mensaje lleva rastro de `--no-verify`.
+> - **Si alguna consulta de CI se intentó con curl o guion y no dejó rastro en el repo.** No veo la conversación de la sesión. Lo que sí veo: en lo commiteado no hay ningún curl, y el run se consultó con `gh`.
+> - **Los literales del WhatsApp contra las capturas, y lo que enseñan los fotogramas de v6.** Son imágenes, y además lo prohíbe el encargo.
+> - **Que no se abrieran más fotogramas de ese tramo después del 0bis.** No hay registro de la sesión que lo diga; HOLDOUT no tiene ninguna fila más.
+> - **`spec docs --escribir` y la redirección de `knowledge validate` a un log**, tal como los pide el contrato. Escriben; ejecuté las variantes que solo leen.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. Read del encargo, `contrato.yaml`, `SESGO-H4-COLOR.md` (entero, en cuatro tramos), los dos fb, ADR-0080 y `simular_cierre.py`
+> 3. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md docs/adr/README.md`
+> 4. `uv run python scripts/contrato_rama.py`
+> 5. `ls -la make-check.log knowledge-validate.log; tail -5 make-check.log; grep -n "SELLO\|PICO DE MEMORIA\|failed\|passed" make-check.log`
+> 6. `git log --format='%h %T %s' main..HEAD` (un primer intento con `for` lo bloqueó la guardia)
+> 7. `uv run pytest tests/unit/test_sesgo_h4.py tests/unit/test_arnes_motor.py tests/unit/test_cierre_vela_h4.py -p no:cacheprovider` (dos veces, la segunda para la línea del resumen)
+> 8. `uv run botsito knowledge validate`
+> 9. `uv run botsito spec docs --help` y `uv run botsito spec docs`
+> 10. `git log --format='==== %h%n%B' main..HEAD -- knowledge/spec knowledge/cases`
+> 11. `git diff --name-status main...HEAD -- knowledge/evidence knowledge/feedback data/manifests knowledge/corpus/transcripciones knowledge/corpus/fotogramas knowledge/corpus/libros.yaml knowledge/cases knowledge/corpus/manifest.yaml` y `git diff main...HEAD -- knowledge/corpus/fuentes.yaml`
+> 12. `ls -la corpus/whatsapp-sesgo-h4-2026-10-14/` y `sha256sum` de los seis `.png`
+> 13. `grep` de la entrada W en `PROJECT_STATE.md`
+> 14. `git diff main...HEAD -- knowledge/spec/`, de los tres ADR enmendados, de `src/`, de los tres ficheros de tests, de `docs/spec/ambiguedades.md` y de `knowledge/spec/ambiguedades.yaml`
+> 15. `ls` de las dos carpetas de anexos y `cat` del README de anexos, de `comparar_corridas.txt`, de `simular_cierre.txt` y de las primeras líneas de `patrones.txt`
+> 16. `diff <(grep -o … rn003 …) <(…)` entre las corridas 2 y entre las corridas 1 de R3.1 y de la rama
+> 17. `grep -n -A8 "RN-003 al abrir"` en las dos corridas 2; `grep` de cobertura y precisión en las seis salidas; `head -12` de la corrida 1 y su diff con la de R3.1
+> 18. `grep -ohE "20[0-9]{2}-…"` de las fechas fuera de los meses de construcción; `grep` de precios y de marcas de H4
+> 19. `diff` de la respuesta del consultor entre el encargo (:80-116) y el informe (:606-642) → IGUALES
+> 20. `git log -p main..HEAD -- docs/encargos/trabajo-sesgo-h4-color.md`
+> 21. `git diff main...HEAD | grep -niE "curl|api\.github|check-runs|gh run|gh api"`
+> 22. `gh run view 38656985715 --json status,conclusion,headSha,headBranch,event,workflowName,createdAt`
+> 23. `git show --stat` de 0365d5c, 37ae53f, 1030a4d y fd5d40d; `git log --format='%h %ci' main..HEAD`; `git diff --numstat main...HEAD -- docs/…`
+> 24. `ls -la --time-style=full-iso` de HOLDOUT, de los anexos y del informe; `ls` de `CORRIDA-CONSTRUCCION/__pycache__` (ignorado por git) y `grep` de los imports de `patrones.py` y `comparar_corridas.py`
+> 25. `grep -rniE` de «color … no decide» en `docs/adr`, `docs/runbooks`, `knowledge/spec`, `CLAUDE.md` y `src/botsito`
+> 26. Grep de «retirad» en `src/botsito/cases/holdout.py`; grep de «solo de mecha» en `CORRIDA-CONSTRUCCION.md`; `sed -n '1312,1318p'` de `CORRIDA-CONSTRUCCION.md`
+> 27. `grep` de `cita_literal`, `afirmacion` y `tema` en `ev-v3-011045-a185d2ba.yaml` y `ev-v9-000902-25db5bf5.yaml`; `grep` de las notas de `fb-…-41f46b21.yaml`
+
+### 9.1 Lo que se hizo con los hallazgos del revisor
+
+- **a1 (importa)**: el rango de fechas del gráfico de v6 y el recuento de sus días reservados se
+  retiran del texto vivo del informe (§1.c, §1.j) y de la primera fila del 2026-10-17 de
+  HOLDOUT-EXPOSICIONES, que lo declara; la historia de git (1030a4d a 37ae53f) no se reescribe;
+  lo decide el consultor en la orden de cierre (§6.13).
+- **a2 (importa)**: declarado como desviación §6.11 (`fuentes.yaml`, ADR-0080 y los dos registros
+  nombran las rutas de destino antes de los `mv`); se vuelve verdad con los `mv` y el commit del
+  inventario (b1).
+- **a3 (importa)**: §4.1 medido otra vez sobre la corrida 2: las mismas ocho sesiones cambian en el
+  mismo sentido; la lista lleva ahora los recuentos del bot de la corrida 2 (2026-08-04 11-15, bot
+  0 → 1) y dice que en la corrida 1 ese recuento es 0 → 0. §4.2 reescrito (a7).
+- **a4 (menor)**: §1.g dice por qué (`cases/holdout.py:374-381`, retirar no es desreservar).
+- **a5 (menor)**: §1.c lleva la corrección (la pregunta se hace con un esquema, no con esos
+  instantes).
+- **a6 (menor)**: el pie de `comparar_corridas.txt` lo imprime el guion cerrado de R3.1 con el
+  nombre base de los dos ficheros, que coincide; no se toca el guion ni el anexo; el informe (§4.2)
+  dice cuál es cuál.
+- **a7 (menor)**: la frase de §4.2, reescrita.
+- **b1 (bloquea)**: no se puede resolver desde la sesión: los seis `mv` los lanza Aleks con «!»
+  (respuesta del consultor, «Además»). En cuanto estén, `botsito corpus inventory` y su commit
+  sellado cierran la fase 1; el Estado lo dice.
+- **b2 (importa)**: el requisito 1 de §7 pasa a Parcial; 0.5 y 6.4 remiten a este §9, que ya
+  existe.
+- **b3 y b4 (importa)**: la pregunta 2 de §4.4 reescrita: solo el esquema de dos velas y la
+  pregunta («¿cambia a alcista o sigue bajista?»), sin pedirle al trader que reconstruya el caso
+  de la sesión 1 ni citarle su literal; el literal queda como nota para el consultor, que decide
+  si va en el cuestionario.
+- **b5 (menor)**: declarado como desviación §6.12.
+- Lo que el revisor no pudo comprobar: los 16 FAILED (§3.1) y los 7 de §1.b se midieron en clones
+  desechables borrados después; la medida de §2.1 vivió en el scratchpad y su salida está pegada;
+  el sello de cada commit intermedio lo exigió el hook `pre-commit` (c24c50b sobre dc99c115,
+  1030a4d sobre e83964d4, 0365d5c sobre 119985f2, fd5d40d sobre cc754288, 37ae53f sobre 8182f0d8,
+  cada uno con su `make-check.log` en verde); ninguna consulta de CI se hizo con curl ni con un
+  guion (la única fue `gh run view 38656985715`, §0); no se abrió ningún fotograma más de v6 tras
+  el 0bis.
+
 ## Estado
 
-EN CURSO. Fases 0 a 4 hechas; falta el commit del inventario (tras los `mv`), el revisor y su
-respuesta.
+LISTA PARA REVISIÓN SALVO EL INVENTARIO: fases 0 a 4 hechas y selladas; el revisor pasado y
+atendido (§9.1). Queda el commit del inventario del corpus (`botsito corpus inventory` tras los
+seis `mv` de §1.e, que lanza Aleks con «!»), el hallazgo b1 del revisor. Rama NO cerrada.
