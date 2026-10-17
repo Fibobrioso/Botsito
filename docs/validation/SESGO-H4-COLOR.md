@@ -39,6 +39,8 @@ citados de `knowledge validate` lo exige declarado:
 
 ```ids-inexistentes
 ADR-0080 — el ADR de esta rama (D6 del encargo), que se escribe en la fase 3; hasta entonces se cita aquí como el siguiente libre
+ev-v3-011045-00000001 — id sintético de la medida en memoria de §2.1 (un ítem que supersedería a ev-v3-011045-a185d2ba); nunca se escribió
+ev-v6-010430-00000002 — id sintético de la misma medida (un ítem de v6 1:04:30-1:05:35); nunca se escribió
 ```
 
 ### 1.a Todo lo que lee, nombra o contradice la regla, y qué cambia
@@ -599,6 +601,122 @@ siendo verdad -el literal de `8eccf5c0` no dice mecha y entró CONFIRMED sin pre
 ADR añade es que el trader sí lo había dicho en otros sitios (`41f46b21`, `ev-v9-001312`,
 `ev-v9-000902`), y eso no corrige ninguna de las dos líneas.
 
+### 1.l Respuesta del consultor a la PARADA (2026-10-17), tal cual
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/sesgo-h4-color (2026-10-17). Cópiala tal cual en el informe, como manda fase-cero, y aplícala punto por punto.
+>
+> 0. La contradicción con v6 1:04:30-1:05:35: (a), con dos cambios.
+>    - Se activa la regla del WhatsApp. Porqué: es la respuesta escrita a la pregunta exacta, cinco semanas posterior a la sesión 1, y el trader confirmó el caso 3 a propósito («sobre todo el 3 y el 4»). La contradicción queda ABIERTA y a la vista; el ADR, las notas de RN-003 y las de R1 lo cuentan.
+>    - Los ítems de evidencia, con el tema de ev-v3-011045-a185d2ba en los dos, porque la guardia exige que el que supersede conserve el tema y el detector solo compara ítems del mismo tema con valor: uno que supersede a ev-v3-011045 con la misma cita y la misma afirmación, que solo añade valor (exige_color_de_la_ruptura), y uno nuevo de v6 1:04:30-1:05:35 con valor color_indiferente. Ninguno nombra el día ni el gráfico del que habla el trader. ev-v3-011045 está citado en la lista de A-1 de ambiguedades.yaml: mide antes si supersederlo rompe knowledge validate o pide tocar A-1. Si lo rompe, si evidence contradictions no abre la contradicción con eso, o si hace falta forzar algo más, se queda en (b) y se dice.
+>    - La pregunta para la sesión 5 se hace con un esquema dibujado (como el caso 3), NUNCA con los fotogramas de v6 ni con los instantes de ese gráfico. Porqué: lo que el trader enseña ahí es su sesgo sobre velas en directo de días de fidelidad-1; enseñárselo y que lo explique sería pedirle una etiqueta de esos días.
+>
+> 0bis. La exposición de §1.j (decisión del consultor, para la fila de hoy de HOLDOUT-EXPOSICIONES). No quema: lo visto son velas y unas líneas del trader, no una operación ni una cifra del bot, y no se sabe qué vela señala. Pero ese pasaje de v6 trae el sesgo que el trader dio en directo sobre un gráfico con cuatro días de fidelidad-1, y eso se acerca a una etiqueta. Por eso:
+>    - No se abren más fotogramas de ese tramo ni se cruzan las velas para averiguar qué vela señalaba. Si alguna guardia, guion o test lo hiciera, PARADA.
+>    - Amplía la fila del 2026-10-17 con una línea que lo diga, y añade al informe una sección «Para F26»: el pasaje v6 1:03:48-1:05:35 (ya citado por 41f46b21 desde la sesión 1) da el sesgo del trader sobre velas en directo de cuatro días de fidelidad-1; la vela no está identificada y esta rama prohíbe identificarla. Lo decide F26 al rellenar el PREREGISTRO.
+>    - Hallazgo para el cierre, no para la rama: antes de abrir un fotograma de un gráfico en directo, se mira qué días enseña por la fecha de grabación del vídeo y se comprueba con casos_reservados si alguno es reservado.
+>
+> 1. Carpeta de sesión de R1 y R2: (a), 2026-10-04-sesion-04, fecha 2026-10-04, recibido_el 2026-10-14. Porqué: es el precedente de A-42 y no inventa una sesión 5.
+>
+> 2. La cita del término equal: (a). Conserva 8eccf5c0, y la definición gana «y cerrar del color de esa ruptura (el ADR de esta rama)». Porqué: nada cita más de lo que su literal sostiene.
+>
+> 3. RN-033 e insuficiente: (a). Una línea en las notas de RN-033 y en la descripción del token; la forma, la cita y el cuándo no cambian. Porqué: es lo medido en §1.b, y la spec no puede decir algo que ya no es verdad.
+>
+> 4. El arnés: (b). También la neutra de doble ruptura de ADR-0075, en su propio campo y su propia anotación. Porqué: cuesta una línea y la fase 4 cuenta todos los saltos.
+>
+> 5. El literal de R1: (a), las dos burbujas de las 14:55 unidas. Los cuatro literales de la entrada W son exactos: el consultor los releyó hoy contra las capturas. Tres correcciones a mi encargo:
+>    - La nota de voz de 0:21 de las 14:56 no está en la captura de las 14:55: se ve arriba de la de las 15:18 (6-whatsapp-1518-confirma.png). Corrígelo donde lo copiaste.
+>    - La captura de las 14:55 trae dos mensajes más del trader que no se registran ni se interpretan: una risa a las 14:55 y, a las 14:56, una petición de que le manden el planteamiento con un gráfico. Se mencionan en las notas de R1 como contexto, sin copiarlos.
+>    - Nota de voz: Aleks la escuchó el 2026-10-17 y no añade nada a la regla. No se registra.
+>
+> 6. A-1: (a), no se reabre. Porqué: es el precedente de ADR-0060 y ADR-0075, y reabrirla quitaría a 41f46b21, que sostiene mecha. El ADR dice que las notas de 41f46b21 («el criterio es la ruptura del extremo, no el color ni el cierre») quedan contradichas por el WhatsApp y que eso es la contradicción abierta del punto 0.
+>
+> 7. El recuadro de ADR-0044: (a), uno solo que cubre §2, su alternativa descartada y la nota de §1 (deuda G.2). Porqué: es el mismo fichero y la misma fila del índice.
+>
+> Además:
+> - Se aceptan los hallazgos de §1.k: el contrato con docs/adr/README.md; la fase 1 con spec_version, spec manifest --escribir, spec docs --escribir y Fuente:; --check y después apply; el README de los anexos; ADR-0080 sin citar hasta que exista; el texto alternativo de F; R4.1 en :167, :176 y :178; feedback pending con G.2; y no volver a correr guiones cerrados.
+> - D4: el ADR cita también ev-v9-000902-25db5bf5 («con mecha o con cuerpo»). ERRORES-RECURRENTES.md:84 y CORRIDA-CONSTRUCCION.md:1315 no se tocan, como dices.
+> - Sigue con la fase 1. Los mv de §1.e los lanzo yo con «!» cuando me los pidas, cada uno en su línea.
+>
+> Rama lista para revisión, NO cerrada, al terminar la fase 4 y el revisor.
+
+### 1.m Corrección al §1.d (punto 5 de la respuesta)
+
+La nota de voz de 0:21 de las 14:56 NO está en la captura de las 14:55: se ve arriba de la de las
+15:18 (`6-whatsapp-1518-confirma.png`). Aleks la escuchó el 2026-10-17 y no añade nada a la regla;
+no se registra. La captura de las 14:55 trae además dos mensajes del trader que no se registran ni
+se interpretan (una risa a las 14:55 y, a las 14:56, una petición de que le manden el
+planteamiento con un gráfico): las notas de R1 los mencionan como contexto, sin copiarlos. Donde
+§1.d dice «la nota de voz de 0:21 de las 14:56 visible en la captura de las 14:55» vale esto.
+
+### Para F26
+
+El pasaje v6 1:03:48-1:05:35 (sesión 1, 2026-09-09; ya citado por
+`fb-2026-09-09-sesion-01-41f46b21` desde la sesión 1) da el sesgo del trader, en directo, sobre
+un gráfico H4 que enseña velas de cuatro días de `fidelidad-1` (§1.j, fila del 2026-10-17 de
+HOLDOUT-EXPOSICIONES). La vela que señala no está identificada y esta rama prohíbe identificarla:
+no se abren más fotogramas de ese tramo ni se cruzan las velas (decisión 0bis del consultor; si
+alguna guardia, guion o test lo hiciera, PARADA). Lo que eso vale para la fidelidad lo decide F26
+al rellenar el PREREGISTRO. Hallazgo para el cierre (no para esta rama): antes de abrir un
+fotograma de un gráfico en directo, se mira qué días enseña por la fecha de grabación del vídeo y
+se comprueba con `casos_reservados` si alguno es reservado.
+
+## 2 · Fase 1 · Evidencia y feedback (2026-10-17)
+
+### 2.1 El punto 0 de la respuesta, medido: los ítems de evidencia se quedan en (b)
+
+Antes de crear nada, un guion del scratchpad cargó la evidencia en memoria y añadió dos ítems
+sintéticos: uno que supersede a `ev-v3-011045-a185d2ba` (mismo tema, `sesgo.h4.cambio_exige_cierre_encima`,
+`valor: exige_color_de_la_ruptura`) y uno de v6 1:04:30-1:05:35 con `valor: color_indiferente`.
+Salida:
+
+```
+tema del viejo: sesgo.h4.cambio_exige_cierre_encima ; valor: None
+G1 con el supersede, fallos: 1
+  - knowledge/spec/ambiguedades.yaml:26: nombra ev-v3-011045-a185d2ba, supersedido por ev-v3-011045-00000001; un supersedido solo aparece en el mismo valor o la misma linea de comentario que su sustituto
+detector con los dos items nuevos, contradicciones abiertas: 1
+  - sesgo.h4.cambio_exige_cierre_encima ['color_indiferente', 'exige_color_de_la_ruptura'] ['ev-v3-011045-00000001', 'ev-v6-010430-00000002']
+detector solo con el item de v6, contradicciones abiertas: 0
+```
+
+El detector sí abriría la contradicción con los dos ítems, pero supersedir `ev-v3-011045` rompe
+`knowledge validate` (G1) en la lista de evidencia de A-1 (`ambiguedades.yaml:26`): habría que
+tocar A-1 para sustituir el id, que es justo lo que el punto 0 no quiere. Y el ítem de v6 solo no
+abre nada, porque el viejo no tiene `valor`. **Como manda la respuesta, se queda en (b):** ningún
+ítem nuevo; la contradicción queda escrita en el ADR, en las notas de RN-003 y en las de R1, y en
+la lista «Para el cuestionario de la sesión 5» (con un esquema dibujado, nunca con los fotogramas
+de v6: punto 0 y 0bis).
+
+### 2.2 Los dos registros, `feedback apply` y la spec
+
+- **R1** `fb-2026-10-04-sesion-04-6e7da456`: CORRECT sobre RN-003, `medio escrito`,
+  `procedencia trader_escrito`, `fecha 2026-10-04`, `recibido_el 2026-10-14`; literal, las dos
+  burbujas de las 14:55 unidas (punto 5 de la respuesta); `registrado_por` con la fórmula de A-42
+  (ruta y sha256 entero de la captura de las 14:55); notas con la conversación entera (14:45,
+  14:48, el esquema de dos casos, 14:55 con los dos mensajes que no se registran, 15:18 y el
+  esquema de cuatro casos, la nota de voz de las 14:56 arriba de la captura de las 15:18 que Aleks
+  escuchó y no se registra), la contradicción abierta con v6 1:04:30-1:05:35 y la decisión D3.
+- **R2** `fb-2026-10-04-sesion-04-d2e84172`: CONFIRM sobre `sesgo_h4_criterio_ruptura`, valor
+  `mecha`, literal el mensaje de las 14:45; notas con por qué pasa a ser la fuente y lo que el
+  trader ya había dicho de la mecha (`41f46b21`, `ev-v9-001312`, `ev-v9-000902`).
+- `feedback apply --sesion 2026-10-04-sesion-04 --check` → `~ sesgo_h4_criterio_ruptura 'mecha'
+  <- fb-2026-10-04-sesion-04-d2e84172`, `10 parametros; 1 cambian, 9 ya estaban`. Después, sin
+  `--check`: `parametros.yaml` escrito; el diff es la `fuente` del parámetro (de `8eccf5c0` a R2)
+  y el serializador deja `valor: mecha` sin comillas. Valor y estado iguales.
+- `spec_version` 17.0.2 → 17.0.3 (parche: solo cambia una fuente), `spec manifest --escribir`
+  (hash `66c57331…`) y `spec docs --escribir` (`glosario.md`, `parametros.md`, `reglas.md`;
+  `ambiguedades.md` también cambia porque lleva la versión).
+- `knowledge validate` en verde tras los dos registros (salida en el commit).
+- `docs/validation/anexos/SESGO-H4-COLOR/README.md` escrito antes de correr nada (§1.k).
+- `fuentes.yaml`: un párrafo nuevo al final de la descripción de «Mensajes del trader» (solo se
+  añade) con los seis ficheros, que los dos gráficos son esquemas del consultor, los literales
+  releídos el 2026-10-17, la nota de voz y los dos mensajes que no se registran.
+
+Lo que espera a los `mv` de Aleks (§1.e): `botsito corpus inventory` (seis entradas nuevas en
+`manifest.yaml`, con los sha256 de §1.e) y su commit.
+
 ## Estado
 
-EN CURSO. Fase 0 entregada; PARADA a la espera de la respuesta del consultor.
+EN CURSO. Fase 1 en marcha: registros, `apply`, spec y `fuentes.yaml` hechos; `corpus inventory`
+espera a los `mv`.

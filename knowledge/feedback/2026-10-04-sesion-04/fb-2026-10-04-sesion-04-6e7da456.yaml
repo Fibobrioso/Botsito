@@ -1,0 +1,46 @@
+id: fb-2026-10-04-sesion-04-6e7da456
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: escrito
+objetivo:
+  tipo: regla
+  id: RN-003
+accion: CORRECT
+respuesta_literal: Para el cambio de sesgo, por ejemplo en el caso 1 la vela roja debe de haber roto con
+  cuerpo o con mecha el bajo de la vela alcista Y terminar al cierre bajista
+registrado_por: literal transcrito por el consultor de la captura Material adicional de su operativa/Mensajes
+  del trader/mensaje-whatsapp-2026-10-14-1455-regla.png (sha256 dffb4be4da7072b1e2b0e9368e9a757928b88876542a5a7b8dc28cb276111870);
+  la sesion no la abrio porque la guardia lo impide (ADR-0038). Son las dos burbujas de las 14:55 (hora
+  de Lima) del 2026-10-14, unidas; el consultor las volvio a leer contra la captura el 2026-10-17. El
+  trader, desde su numero; ningun nombre ni numero entra al repositorio. Registrado por Claude Code en
+  la rama trabajo/sesgo-h4-color
+valor_resultante: 'una H4 cambia el sesgo solo si rompe el extremo de la anterior (con mecha o con cuerpo)
+  y cierra del color de esa ruptura: rompe el bajo y cierra roja, bajista; rompe el maximo y cierra verde,
+  alcista; si rompe un extremo y cierra del color contrario no cambia, sigue el sesgo que habia'
+notas: 'Respuesta por WhatsApp (hora de Lima) del 2026-10-14 a la pregunta P1 de R3.1 (CORRIDA-CONSTRUCCION.md
+  §4.5: ¿rompe el extremo de la H4 anterior solo la mecha, o hace falta que el cierre quede fuera?). La
+  conversacion, con sus capturas en Material adicional de su operativa/Mensajes del trader/: 14:45, primera
+  respuesta («Dependerá de si cierra alcista o bajista si lo hace con mecha o con cuerpo es válido para
+  un cambio de sesgo»; mensaje-whatsapp-2026-10-14-1445-primera-respuesta.png, sha256 3ebe6904…), registrada
+  aparte como CONFIRM de sesgo_h4_criterio_ruptura; 14:48, el trader pide un grafico (mensaje-whatsapp-2026-10-14-1448-pide-grafico.png,
+  sha256 1f398563…) sobre el esquema de dos casos dibujado por el consultor (grafico-consultor-2026-10-14-pregunta-dos-casos.png,
+  sha256 74272a09…; no son dias reales); 14:55, la regla, las dos burbujas de este registro (mensaje-whatsapp-2026-10-14-1455-regla.png,
+  sha256 dffb4be4…), con dos mensajes mas del trader en la misma captura que no se registran ni se interpretan
+  (una risa a las 14:55 y, a las 14:56, una peticion de que le manden el planteamiento con un grafico);
+  15:18, «Si, esta bien bro» (mensaje-whatsapp-2026-10-14-1518-confirma.png, sha256 f9c4f0aa…) confirmando
+  el esquema de cuatro casos dibujado por el consultor (grafico-consultor-2026-10-14-regla-cuatro-casos.png,
+  sha256 390bbdac…): 1 rompe el bajo y cierra roja, bajista; 2 rompe el maximo y cierra verde, alcista;
+  3 y 4 rompen un extremo y cierran del color contrario, sigue el sesgo que habia. Arriba de la captura
+  de las 15:18 se ve una nota de voz de 0:21 de las 14:56, que Aleks escucho el 2026-10-17 y no anade
+  nada a la regla: no se registra. Amplia ADR-0060 §1 (el color ya decidia con doble ruptura) y ADR-0075
+  (la neutra de doble ruptura no decide): la ruptura simple con color contrario tampoco decide y la busqueda
+  hacia atras sigue. La ruptura simple de una vela SIN cuerpo no la describio: decision del consultor,
+  no decide y la busqueda sigue; su confirmacion va a la sesion 5. CONTRADICCION ABIERTA, para la sesion
+  5 (se pregunta con un esquema dibujado): en la sesion 1 (v6 1:04:30-1:05:35) el trader dijo de una H4
+  que rompio por encima con la mecha y cerro roja «la siguiente operativa es alcista … aunque fue roja
+  la vela, pues es indiferente» (es lo que recogen las notas de fb-2026-09-09-sesion-01-41f46b21 y de
+  RN-003 hasta hoy); esta regla dice que esa vela no cambia el sesgo. Se activa esta, la escrita y mas
+  reciente, por decision del consultor del 2026-10-17 (SESGO-H4-COLOR.md §1.l). El ADR de esta rama lo
+  recoge; RN-003 y el predicado sesgo_h4_al_abrir pasan a citar este registro'
+recibido_el: '2026-10-14'
+procedencia: trader_escrito

@@ -192,6 +192,22 @@ carpetas:
       la captura queda aqui con su hash para verificarlos. Los tres mensajes sobre el stop (13:46,
       la segunda frase de las 15:36 y la parte «2-c» de las 15:44) NO se registran contra A-11 ni
       contra ningun parametro y no se interpretan: son contexto para el punto U de la Next Action.
+      El 2026-10-17 (rama trabajo/sesgo-h4-color, docs/validation/SESGO-H4-COLOR.md) entran SEIS
+      ficheros mas de la conversacion por WhatsApp del 2026-10-14 (hora de Lima) sobre el cambio
+      de sesgo de H4, la respuesta a la pregunta P1 de R3.1: cuatro capturas de mensajes del
+      trader (`mensaje-whatsapp-2026-10-14-*`: 14:45 primera respuesta, 14:48 pide el grafico,
+      14:55 la regla, 15:18 «Si, esta bien bro») y dos graficos `grafico-consultor-2026-10-14-*`
+      que son ESQUEMAS dibujados por el consultor -el de dos casos con el que pregunto y el de
+      cuatro casos que el trader confirmo a las 15:18-, no dias reales ni velas de ningun mes.
+      Los literales los transcribio el consultor y los volvio a leer contra las capturas el
+      2026-10-17; la sesion no abre ninguna (ADR-0038): cada captura queda con su hash para
+      verificarlos. Ningun nombre ni numero del trader entra al repositorio. La captura de las
+      14:55 trae ademas dos mensajes del trader que no se registran ni se interpretan (una risa a
+      las 14:55 y, a las 14:56, una peticion de que le manden el planteamiento con un grafico), y
+      arriba de la de las 15:18 se ve una nota de voz de 0:21 de las 14:56, que Aleks escucho el
+      2026-10-17 y no anade nada a la regla: no se registra ni se interpreta. Entrada de los dos
+      registros de feedback de esa fecha (CORRECT sobre RN-003 y CONFIRM sobre
+      sesgo_h4_criterio_ruptura) y del ADR de esa rama.
 
   - ruta: "Sesiones"
     papel: material_adicional

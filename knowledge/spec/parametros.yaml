@@ -421,10 +421,10 @@ parametros:
       criterio; la forma ejecutable de F12 lo separa porque el criterio es un ARGUMENTO del
       predicado `rompe`, y escribirlo a pelo seria un valor de negocio en un campo ejecutable
     estado: CONFIRMED
-    valor: "mecha"
+    valor: mecha
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-8eccf5c0
+      id: fb-2026-10-04-sesion-04-d2e84172
   - nombre: sesgo_h4_tope_velas
     categoria: ejecucion
     tipo: entero

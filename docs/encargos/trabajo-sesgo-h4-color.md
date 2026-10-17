@@ -72,3 +72,52 @@ Dado por Aleks (consultor) el 2026-10-17. Copiado tal cual:
 > - Revisor (opus) con dos alcances: reglas del repo y este encargo punto por punto; su informe pegado al final. Que mire también que ninguna consulta de CI se haya hecho con curl o con un guion cuando el clasificador negó gh.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-10-17)
+
+La respuesta nombra el ADR nuevo de la rama antes de que exista (entra en la fase 3); la guardia
+de ids citados lo exige declarado:
+
+```ids-inexistentes
+ADR-0080 — el ADR de esta rama, que se escribe en la fase 3; la respuesta del consultor lo nombra como el siguiente libre
+```
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/sesgo-h4-color (2026-10-17). Cópiala tal cual en el informe, como manda fase-cero, y aplícala punto por punto.
+>
+> 0. La contradicción con v6 1:04:30-1:05:35: (a), con dos cambios.
+>    - Se activa la regla del WhatsApp. Porqué: es la respuesta escrita a la pregunta exacta, cinco semanas posterior a la sesión 1, y el trader confirmó el caso 3 a propósito («sobre todo el 3 y el 4»). La contradicción queda ABIERTA y a la vista; el ADR, las notas de RN-003 y las de R1 lo cuentan.
+>    - Los ítems de evidencia, con el tema de ev-v3-011045-a185d2ba en los dos, porque la guardia exige que el que supersede conserve el tema y el detector solo compara ítems del mismo tema con valor: uno que supersede a ev-v3-011045 con la misma cita y la misma afirmación, que solo añade valor (exige_color_de_la_ruptura), y uno nuevo de v6 1:04:30-1:05:35 con valor color_indiferente. Ninguno nombra el día ni el gráfico del que habla el trader. ev-v3-011045 está citado en la lista de A-1 de ambiguedades.yaml: mide antes si supersederlo rompe knowledge validate o pide tocar A-1. Si lo rompe, si evidence contradictions no abre la contradicción con eso, o si hace falta forzar algo más, se queda en (b) y se dice.
+>    - La pregunta para la sesión 5 se hace con un esquema dibujado (como el caso 3), NUNCA con los fotogramas de v6 ni con los instantes de ese gráfico. Porqué: lo que el trader enseña ahí es su sesgo sobre velas en directo de días de fidelidad-1; enseñárselo y que lo explique sería pedirle una etiqueta de esos días.
+>
+> 0bis. La exposición de §1.j (decisión del consultor, para la fila de hoy de HOLDOUT-EXPOSICIONES). No quema: lo visto son velas y unas líneas del trader, no una operación ni una cifra del bot, y no se sabe qué vela señala. Pero ese pasaje de v6 trae el sesgo que el trader dio en directo sobre un gráfico con cuatro días de fidelidad-1, y eso se acerca a una etiqueta. Por eso:
+>    - No se abren más fotogramas de ese tramo ni se cruzan las velas para averiguar qué vela señalaba. Si alguna guardia, guion o test lo hiciera, PARADA.
+>    - Amplía la fila del 2026-10-17 con una línea que lo diga, y añade al informe una sección «Para F26»: el pasaje v6 1:03:48-1:05:35 (ya citado por 41f46b21 desde la sesión 1) da el sesgo del trader sobre velas en directo de cuatro días de fidelidad-1; la vela no está identificada y esta rama prohíbe identificarla. Lo decide F26 al rellenar el PREREGISTRO.
+>    - Hallazgo para el cierre, no para la rama: antes de abrir un fotograma de un gráfico en directo, se mira qué días enseña por la fecha de grabación del vídeo y se comprueba con casos_reservados si alguno es reservado.
+>
+> 1. Carpeta de sesión de R1 y R2: (a), 2026-10-04-sesion-04, fecha 2026-10-04, recibido_el 2026-10-14. Porqué: es el precedente de A-42 y no inventa una sesión 5.
+>
+> 2. La cita del término equal: (a). Conserva 8eccf5c0, y la definición gana «y cerrar del color de esa ruptura (el ADR de esta rama)». Porqué: nada cita más de lo que su literal sostiene.
+>
+> 3. RN-033 e insuficiente: (a). Una línea en las notas de RN-033 y en la descripción del token; la forma, la cita y el cuándo no cambian. Porqué: es lo medido en §1.b, y la spec no puede decir algo que ya no es verdad.
+>
+> 4. El arnés: (b). También la neutra de doble ruptura de ADR-0075, en su propio campo y su propia anotación. Porqué: cuesta una línea y la fase 4 cuenta todos los saltos.
+>
+> 5. El literal de R1: (a), las dos burbujas de las 14:55 unidas. Los cuatro literales de la entrada W son exactos: el consultor los releyó hoy contra las capturas. Tres correcciones a mi encargo:
+>    - La nota de voz de 0:21 de las 14:56 no está en la captura de las 14:55: se ve arriba de la de las 15:18 (6-whatsapp-1518-confirma.png). Corrígelo donde lo copiaste.
+>    - La captura de las 14:55 trae dos mensajes más del trader que no se registran ni se interpretan: una risa a las 14:55 y, a las 14:56, una petición de que le manden el planteamiento con un gráfico. Se mencionan en las notas de R1 como contexto, sin copiarlos.
+>    - Nota de voz: Aleks la escuchó el 2026-10-17 y no añade nada a la regla. No se registra.
+>
+> 6. A-1: (a), no se reabre. Porqué: es el precedente de ADR-0060 y ADR-0075, y reabrirla quitaría a 41f46b21, que sostiene mecha. El ADR dice que las notas de 41f46b21 («el criterio es la ruptura del extremo, no el color ni el cierre») quedan contradichas por el WhatsApp y que eso es la contradicción abierta del punto 0.
+>
+> 7. El recuadro de ADR-0044: (a), uno solo que cubre §2, su alternativa descartada y la nota de §1 (deuda G.2). Porqué: es el mismo fichero y la misma fila del índice.
+>
+> Además:
+> - Se aceptan los hallazgos de §1.k: el contrato con docs/adr/README.md; la fase 1 con spec_version, spec manifest --escribir, spec docs --escribir y Fuente:; --check y después apply; el README de los anexos; ADR-0080 sin citar hasta que exista; el texto alternativo de F; R4.1 en :167, :176 y :178; feedback pending con G.2; y no volver a correr guiones cerrados.
+> - D4: el ADR cita también ev-v9-000902-25db5bf5 («con mecha o con cuerpo»). ERRORES-RECURRENTES.md:84 y CORRIDA-CONSTRUCCION.md:1315 no se tocan, como dices.
+> - Sigue con la fase 1. Los mv de §1.e los lanzo yo con «!» cuando me los pidas, cada uno en su línea.
+>
+> Rama lista para revisión, NO cerrada, al terminar la fase 4 y el revisor.
