@@ -32,6 +32,11 @@ rutas_permitidas:
   # ampliado el 2026-10-17 en la fase 2 (SESGO-H4-COLOR.md §1.f): la corrida sintetica que anota
   # y cuenta las H4 saltadas vive junto a la de la doble ruptura (test_huecos_motor.py:244-247)
   - tests/unit/test_huecos_motor.py
+  # ampliado el 2026-10-17 por la orden de cierre del consultor (paso 0, SESGO-H4-COLOR.md §10):
+  # retirar del holdout, por ADR-0041, los dias de fidelidad-1 cuya identidad quedo deducible de
+  # los textos commiteados en la rama; y el recuento esperado del test del repo real
+  - knowledge/cases/retirados.yaml
+  - tests/unit/test_retirados.py
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
@@ -57,7 +62,17 @@ rutas_protegidas:
   - src/botsito/engine/cableado.py
   - src/botsito/engine/visor.py
   - src/botsito/cases/
-  - knowledge/cases/
+  # knowledge/cases/ entera hasta el paso 0 de la orden de cierre (2026-10-17); desde entonces,
+  # todo menos retirados.yaml (ADR-0041 §5: ningun reparto ni ningun caso se toca), como en 7f8322a
+  - knowledge/cases/README.md
+  - knowledge/cases/criterio_fidelidad.yaml
+  - knowledge/cases/dev/
+  - knowledge/cases/fidelidad/
+  - knowledge/cases/fixtures/
+  - knowledge/cases/holdout/
+  - knowledge/cases/kit/
+  - knowledge/cases/meses_reservados.yaml
+  - knowledge/cases/visto/
   - knowledge/corpus/libros.yaml
   - knowledge/corpus/transcripciones/
   - knowledge/corpus/fotogramas/

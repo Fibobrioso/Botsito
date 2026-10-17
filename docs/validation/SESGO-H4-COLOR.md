@@ -666,7 +666,7 @@ planteamiento con un gráfico): las notas de R1 los mencionan como contexto, sin
 
 El pasaje v6 1:03:48-1:05:35 (sesión 1, 2026-09-09; ya citado por
 `fb-2026-09-09-sesion-01-41f46b21` desde la sesión 1) da el sesgo del trader, en directo, sobre
-un gráfico H4 que enseña velas de cuatro días de `fidelidad-1` (§1.j, fila del 2026-10-17 de
+un gráfico H4 que enseña velas de días de `fidelidad-1` (§1.j, fila del 2026-10-17 de
 HOLDOUT-EXPOSICIONES). La vela que señala no está identificada y esta rama prohíbe identificarla:
 no se abren más fotogramas de ese tramo ni se cruzan las velas (decisión 0bis del consultor; si
 alguna guardia, guion o test lo hiciera, PARADA). Lo que eso vale para la fidelidad lo decide F26
@@ -937,14 +937,11 @@ v6 ni con los instantes de ese gráfico (respuesta del consultor, puntos 0 y 0bi
    extremo de la anterior (con la mecha) y cierra exactamente donde abrió. ¿Cambia el sesgo por el
    lado de la ruptura, o no decide y sigue el sesgo que había (como la neutra de doble ruptura de
    S-13)? Hoy el motor hace lo segundo. En construcción no aparece ninguna (§4.1).
-2. **La contradicción con la sesión 1 (ADR-0080 §9), sobre un esquema de dos velas dibujado:**
-   con el sesgo bajista, una H4 rompe por encima con la mecha y cierra ROJA. ¿Cambia el sesgo a
-   alcista, o sigue bajista? Es el caso 3 del esquema que confirmó por WhatsApp el 2026-10-14
-   (sigue bajista), y hoy el motor hace eso. Para el consultor, no para el trader: en la sesión 1
-   (v6 1:04:30-1:05:35) dijo lo contrario de una vela de su gráfico en directo; la pregunta no le
-   recuerda ese caso ni le pide reconstruirlo (puntos 0 y 0bis de la respuesta; hallazgos b3 y b4
-   del revisor: si el consultor quiere que la pregunta lleve el literal de la sesión 1, lo decide
-   él al escribir el cuestionario).
+2. **La contradicción con la sesión 1 (ADR-0080 §9), SOLO sobre un esquema de dos velas
+   dibujado:** con el sesgo bajista, una H4 rompe por encima con la mecha y cierra ROJA. ¿Cambia el
+   sesgo a alcista, o sigue bajista? Es el caso 3 del esquema que confirmó por WhatsApp el
+   2026-10-14 (sigue bajista), y hoy el motor hace eso. Sin el literal de la sesión 1 ni ninguna
+   referencia a ese caso (orden de cierre del consultor, punto 2).
 
 ## 5 · Líneas preparadas para el commit del contrato de la orden de cierre
 
@@ -991,7 +988,7 @@ lee `PROJECT_STATE.md`, la hoja y HISTORIA, aplica las sustituciones y corre a, 
 - Hallazgo para el cierre, no para la rama (respuesta del consultor, 0bis): antes de abrir un
   fotograma de un gráfico EN DIRECTO, se mira qué días enseña por la fecha de grabación del vídeo
   y se comprueba con `casos_reservados` si alguno es reservado (§1.j: los tres fotogramas de v6
-  enseñaban cuatro días de `fidelidad-1`).
+  enseñaban días de `fidelidad-1`).
 - Lo que el auditor del encargo vio antes de empezar (§1.h): la línea F propuesta rompía el test c
   de la hoja; la fase 1 ya cambiaba el hash de la spec; `--check` no aplica; v9 sí está en
   cuarentena; el índice de ADR no estaba en el contrato.
@@ -1269,9 +1266,74 @@ citable; ninguna retirada):
   guion (la única fue `gh run view 38656985715`, §0); no se abrió ningún fotograma más de v6 tras
   el 0bis.
 
+## 10 · Orden de cierre del consultor (2026-10-17)
+
+Copiada tal cual (también al final del encargo):
+
+> Modelo: Fable 5.1 (la sesión de la rama) · Esfuerzo: alto
+>
+> Orden de cierre de trabajo/sesgo-h4-color (2026-10-17), tras la revisión del consultor. Cópiala tal cual al final de docs/encargos/trabajo-sesgo-h4-color.md y a SESGO-H4-COLOR.md, §10, bajo «Orden de cierre del consultor». Después lanzo yo /cerrar-rama trabajo/sesgo-h4-color, sola en una línea.
+>
+> Veredicto: rama aceptada. La regla del color está en la spec y en el motor con ADR-0080, dos registros y su evidencia en el corpus; la re-corrida es diagnóstico y no cambia las parejas (12). Las dos decisiones que me dejas:
+>
+> 1. Paso 0, ANTES del commit del contrato: el hallazgo a1 se resuelve con una retirada (ADR-0041 §1); limpiar el texto vivo no basta.
+>    Porqué: los commits 1030a4d a 37ae53f escriben el rango de días del gráfico en directo de v6 junto con cuántos de ellos tienen caso en fidelidad-1, la historia no se reescribe y el push lo publica. Con el día de grabación de v6 ya público (cdcf58e), eso deja deducible qué días de septiembre son reservados. Es el precedente de v6 (2026-09-23) y del día de holdout-3 (7f8322a, 2026-10-14). Corrijo mi 0bis en lo que toca: lo que se VIO en los fotogramas no quemaba; lo que quedó ESCRITO en git obliga a retirar.
+>    a) Retira de su partición TODOS los días con caso reservado entre los días laborables que enseñaban los tres fotogramas de v6 (los que contó la fila del 2026-10-17 en 1030a4d), salvo el que ya esté retirado. Cuántos son, con un guion de la carpeta de trabajo sobre casos_reservados y casos_retirados que NO imprima ids ni fechas, solo recuentos por partición. Lo esperado: hasta cuatro, de los que el día de grabación de v6 quizá ya está retirado.
+>    b) Un commit propio en esta rama (feat(holdout): retirar los dias de fidelidad-1 expuestos en la rama, ADR-0041), como 7f8322a. Toca exactamente estos ficheros:
+>       - contrato.yaml: ampliado a knowledge/cases/retirados.yaml y tests/unit/test_retirados.py; si hace falta partir la protección de knowledge/ carpeta a carpeta, como en 7f8322a, se parte.
+>       - knowledge/cases/retirados.yaml: una entrada nueva por día, solo añadida, por la HUELLA, con motivo («identidad deducible de textos commiteados en trabajo/sesgo-h4-color, fases 0 a 4: el rango de días del gráfico en directo de v6 junto al recuento de sus días reservados; el trader da su sesgo sobre ese gráfico en v6 1:03:48-1:05:35, sin vela identificada»), exposicion (las filas del 2026-10-17 de HOLDOUT-EXPOSICIONES), adr: ADR-0041 y retirado_el: 2026-10-17. Y la cabecera de comentario, que dice que fidelidad-1 se mide sobre 9, pasa al recuento nuevo (ADR-0041 §5: la diferencia se documenta en el propio fichero); las entradas anteriores no se tocan.
+>       - tests/unit/test_retirados.py: test_el_repo_real_retira_uno_y_ninguna_salida_lo_nombra pasa a los totales nuevos (recuento esperado; puedes corregir su nombre y su docstring, desfasados desde el segundo retirado) y sigue comprobando que todos los retirados están en casos_ocultos y que ninguna salida los nombra.
+>       - docs/validation/HOLDOUT-EXPOSICIONES.md: la primera fila del 2026-10-17 gana al final, sin fechas: «Consecuencia: los días reservados del gráfico salen del holdout por ADR-0041 (retirados.yaml, este commit); fidelidad-1 pasa de <n> a <m> días medidos.» Y en las filas del 2026-10-17, «cuatro días de fidelidad-1» pasa a «días de fidelidad-1».
+>       - SESGO-H4-COLOR.md: «cuatro días de fidelidad-1» pasa a «días de fidelidad-1» en «Para F26» y en §5.3, y un §10.1 nuevo con la tabla de recuentos antes y después por partición (reservados, medidos, retirados, ocultos), sin ids ni fechas, y una línea: retirar todos los reservados del rango deja saber qué días del rango no lo son; ADR-0041 ya acepta que la huella no es secreta, y F26 lo tiene en cuenta.
+>       - docs/encargos/trabajo-sesgo-h4-color.md: esta orden copiada.
+>       Trailer Fuente: ADR-0041. knowledge validate y make check en verde. Si hace falta tocar cualquier otro fichero, o los recuentos no casan con lo esperado, PARADA.
+>
+> 2. La pregunta 2 de la sesión 5 (§4.4) va SOLO con el esquema de dos velas, sin el literal de la sesión 1 ni ninguna referencia a ese caso. Porqué: el literal le recordaría un gráfico en directo de días que acaban de salir del holdout por estar expuestos; la pregunta del esquema basta para resolver la contradicción.
+>
+> 3. Commit del contrato (chore(cierre): sale el contrato y entra el registro en HISTORIA), con todo lo de RITUAL y además:
+>    a) PROJECT_STATE: las líneas de §5.1 tal cual (W sale entera a HISTORIA con el título de §5.1; F y V como en §5.1). En HISTORIA, después del texto literal de W, una línea: «Corrección del consultor (2026-10-17): sesgo_h4_criterio_ruptura = mecha no era solo una re-expresión suya; el trader ya lo había dicho (fb-2026-09-09-sesion-01-41f46b21, ev-v9-001312-19e45e4a, ev-v9-000902-25db5bf5; ADR-0080).»
+>    b) G gana una frase: «fidelidad-1 tiene <k> días medidos menos desde el 2026-10-17 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta.» Con <k> el recuento del paso 0.
+>    c) La hoja de ruta, como §5.2, con el tag stable/F37r-sesgo-h4-color.
+>    d) La fila de la rama en ERRORES-RECURRENTES, con lo del revisor y estos hallazgos del consultor:
+>       - (importa, consultor) Mi respuesta a la PARADA leyó la fila de exposiciones de la fase 0, con el rango de días y el recuento de reservados, y no lo vio; lo cazó el revisor (a1). Lección para el consultor y el revisor: en todo texto que hable de días de un mes con reservados, buscar juntos un rango de fechas y un recuento de reservados: juntos identifican días aunque ninguno lo haga solo.
+>       - (importa, consultor) El encargo traía cuatro errores del consultor que cazó su auditor antes de la fase 0: que «mecha» era solo re-expresión del consultor (el trader lo había dicho), que la regla solo enmendaba ADR-0060 (también ADR-0044 §2 y ADR-0075 §3), que un registro sobre RN-003 podía ser fuente del parámetro, y una línea F que rompía test_hoja_de_ruta (c). Y uno que llegó a la rama: la nota de voz situada en la captura equivocada (§1.m). Lección: el auditor del encargo funciona; lo que cita una captura se comprueba captura a captura.
+>       - (menor) Antes de abrir un fotograma de un gráfico EN DIRECTO, se mira qué días enseña por la fecha de grabación del vídeo y se comprueba con casos_reservados si alguno es reservado (§5.3).
+>       - (menor, de la orden de cierre de corrida-construccion, que no la escribió) Allí el clasificador negó gh api y la sesión consultó la CI por otra vía (curl y un guion Python): cambiar de vía tras una negativa es rodearla. Lo que niega el clasificador lo lanza Aleks con «!».
+> 4. Después, el ritual tal cual lo mandan RITUAL.md y la skill cerrar-rama, en su orden (merge --no-ff, tag stable/F37r-sesgo-h4-color, las cuatro líneas de cabecera, state check, make check sellado, commit de estado, push atómico de main y el tag con mi «1. Yes», ls-remote, CI de main en verde y borrar la rama local). En main..trabajo/sesgo-h4-color tienen que quedar nueve commits: los siete de la rama, el de la retirada y el del contrato. La CI se consulta por la vía que escribe RITUAL; si el clasificador la niega, PARADA y la consulto yo con «!»: no se cambia de vía. Esta rama no se empujó como fix/, así que no hay rama remota que borrar.
+> 5. Informe final: sha de main, tag, run y estado de la CI de main, sha del commit de la retirada, recuentos por partición antes y después, ramas que quedan y tamaño de PROJECT_STATE.
+>
+> Si un paso del ritual falla o el clasificador niega algo, PARADA; nada de --no-verify, force, rebase ni rodeos.
+
+### 10.1 Paso 0: la retirada por ADR-0041 (2026-10-17)
+
+Un guion del scratchpad (`retirar_dias_v6.py`, sobre `casos_reservados`, `casos_retirados`,
+`casos_medidos` y `casos_ocultos`; solo imprime recuentos, nunca ids, fechas ni huellas) buscó
+los casos reservados entre los días laborables que enseñaban los tres fotogramas de v6 (los que
+contó la fila del 2026-10-17 en 1030a4d), descontó los ya retirados y añadió los demás a
+`knowledge/cases/retirados.yaml` por la huella de su id. Lo esperado por la orden (hasta cuatro,
+quizá uno ya retirado) casa con lo medido: 4 con caso reservado, 1 ya retirado (el día de
+grabación de v6, 2026-09-23) y **3 a retirar, los 3 de `fidelidad-1`**.
+
+| | reservados | medidos | retirados | ocultos |
+|---|---|---|---|---|
+| antes | 34 (fidelidad-1 10, holdout-1 8, holdout-2 8, holdout-3 8) | 32 (fidelidad-1 9, holdout-1 8, holdout-2 8, holdout-3 7) | 2 (fidelidad-1 1, holdout-3 1) | 34 (fidelidad-1 10, holdout-1 8, holdout-2 8, holdout-3 8) |
+| después | 34 (igual) | **29 (fidelidad-1 6**, holdout-1 8, holdout-2 8, holdout-3 7) | **5 (fidelidad-1 4**, holdout-3 1) | 34 (igual) |
+
+`fidelidad-1` pasa de 9 a 6 días medidos (k = 3). Retirar todos los reservados del rango deja
+saber qué días del rango no lo son; ADR-0041 ya acepta que la huella no es secreta, y F26 lo
+tiene en cuenta al rellenar el PREREGISTRO. El commit toca exactamente los ficheros de la orden:
+`contrato.yaml` (gana `retirados.yaml` y `test_retirados.py`; la protección de `knowledge/cases/`
+se parte carpeta a carpeta, como en 7f8322a), `retirados.yaml` (tres entradas añadidas y la
+cabecera, que pasa de «sobre 9» a «sobre 6»; las entradas anteriores no se tocan),
+`test_retirados.py` (`test_el_repo_real_retira_cinco_y_ninguna_salida_los_nombra`: 5 retirados,
+medidos = reservados − 5), HOLDOUT-EXPOSICIONES (la «Consecuencia» al final de la primera fila
+del 2026-10-17 y «días de fidelidad-1» en vez de «cuatro días»), este informe (§4.4 pregunta 2
+solo con el esquema, paso 2; «días de fidelidad-1» en «Para F26» y §5.3; este §10) y el encargo.
+Trailer `Fuente: ADR-0041`.
+
 ## Estado
 
 Fases 0 a 4 hechas y selladas; el revisor pasado y atendido (§9.1); el inventario del corpus
-entró tras los `mv` de Aleks (§2.3, hallazgo b1 resuelto). Quedan para el consultor, en la orden
-de cierre: el hallazgo a1 del revisor (§6.13) y si la pregunta 2 de la sesión 5 lleva el literal
-de la sesión 1 (§4.4). Rama lista para revisión, NO cerrada.
+entró tras los `mv` de Aleks (§2.3); la orden de cierre copiada (§10) y su paso 0 hecho (§10.1,
+tres días de `fidelidad-1` retirados por ADR-0041) y su paso 2 (§4.4). Lo que queda es el ritual
+de cierre, que lanza Aleks con `/cerrar-rama`. Rama aceptada por el consultor, NO cerrada.
