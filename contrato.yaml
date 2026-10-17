@@ -1,0 +1,71 @@
+rama: trabajo/sesgo-h4-color
+riesgo: alto  # cambia la spec (RN-003, un predicado, un termino, la fuente de un parametro) y el motor (domain/sesgo.py, primitivas.py), anade evidencia y feedback del trader, y vuelve a correr el arnes leyendo M1 de meses con dias reservados para calentar (declarado el mismo dia); ninguna cifra cambia
+artefacto: docs/validation/SESGO-H4-COLOR.md
+tramo: R1
+rutas_permitidas:
+  - docs/validation/SESGO-H4-COLOR.md
+  - docs/validation/anexos/SESGO-H4-COLOR/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  # el ADR nuevo (D6) y los tres enmendados con recuadro, como hizo ADR-0075
+  - docs/adr/0080-*.md
+  - docs/adr/0044-el-sesgo-h4-ambiguo-insuficiente-y-fijado-al-abrir-la-sesion.md
+  - docs/adr/0060-el-sesgo-con-doble-ruptura-y-el-cierre-antes-del-fin-de-la-h4.md
+  - docs/adr/0075-una-h4-neutra-con-doble-ruptura-no-decide-el-sesgo.md
+  - docs/spec/
+  - knowledge/spec/
+  - knowledge/evidence/
+  # la carpeta de sesion de los dos registros nuevos se propone en la PARADA; un registro ya
+  # escrito no se edita (hook pre-commit, SOLO ANADIR)
+  - knowledge/feedback/
+  - knowledge/corpus/fuentes.yaml
+  - knowledge/corpus/manifest.yaml
+  - src/botsito/domain/sesgo.py
+  - src/botsito/engine/primitivas.py
+  # arnes.py SOLO para contar por sesion las H4 saltadas por color contrario y por neutra simple (4.f)
+  - src/botsito/engine/arnes.py
+  - tests/unit/test_sesgo_h4.py
+  - tests/unit/test_arnes_motor.py
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - scripts/
+  - docs/plan/
+  - docs/validation/CORRIDA-CONSTRUCCION.md
+  - docs/validation/MOTOR-SESGO-H4.md
+  - docs/validation/SESGO-H4-DIAGNOSTICO.txt
+  - docs/validation/anexos/CORRIDA-CONSTRUCCION/
+  - docs/adr/0000-template.md
+  - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
+  - src/botsito/cli.py
+  - src/botsito/engine/broker.py
+  - src/botsito/engine/cuenta.py
+  - src/botsito/engine/freno.py
+  - src/botsito/engine/motor.py
+  - src/botsito/engine/simulacion.py
+  - src/botsito/engine/primitivas_broker.py
+  - src/botsito/engine/diagnostico.py
+  - src/botsito/engine/cableado.py
+  - src/botsito/engine/visor.py
+  - src/botsito/cases/
+  - knowledge/cases/
+  - knowledge/corpus/libros.yaml
+  - knowledge/corpus/transcripciones/
+  - knowledge/corpus/fotogramas/
+  - knowledge/corpus/tramos_no_citables.yaml
+  - knowledge/cuentas/
+  - knowledge/simulador/
+  - knowledge/feedback/2026-09-09-sesion-01/
+  - knowledge/feedback/2026-09-29-sesion-03/
+  - config/
+  - data/manifests/
+  - tests/golden/
+comprobaciones:
+  - uv run python scripts/contrato_rama.py
+  - uv run pytest tests/unit/test_sesgo_h4.py tests/unit/test_arnes_motor.py tests/unit/test_cierre_vela_h4.py -q
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito spec docs --escribir
+  - make check > make-check.log 2>&1

@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesgo-h4-color
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/corrida-construccion` cerrada en `main` el 2026-10-14 (`stable/F37q-corrida-construccion`); R3.1 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/sesgo-h4-color` EN CURSO (abierta el 2026-10-17 desde 59c8ae7): R1.2, activar en la spec y en el motor la regla del sesgo de H4 que el trader respondió por WhatsApp el 2026-10-14 (W de la Next Action), con su ADR, su feedback y su evidencia, y la re-corrida del arnés con los tres comandos de R3.1. Encargo `docs/encargos/trabajo-sesgo-h4-color.md`; informe `docs/validation/SESGO-H4-COLOR.md`.
 
 ## Stable Main State
 fa15a84 · merge de `trabajo/corrida-construccion` (tag `stable/F37q-corrida-construccion`): la corrida del arnés en diagnóstico (A-35, A-44) sobre los 76 días dev de construcción; el informe del arnés gana «Diferencias por operacion», `bloqueadas` y la vida de la orden; la clasificación del consultor y el cuestionario de la sesión 5; NOTA en ADR-0070 §3; un día de holdout-3 retirado por ADR-0041. Sobre `stable/F37p-entrada-enero` (87391b7). Informe docs/validation/CORRIDA-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
@@ -183,8 +183,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 33 (2026-10-14).
+— ninguna desde el Archivo 34 (2026-10-17).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 33 (2026-10-14).
+— ninguna desde el Archivo 34 (2026-10-17).
