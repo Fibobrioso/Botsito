@@ -6,6 +6,18 @@ phase: post-F14 (rama `trabajo/motor-sesgo-h4`)
 
 # 0044 · El sesgo H4: ambiguo, insuficiente, y fijado al abrir la sesión
 
+> **ENMIENDA (2026-10-17, rama `trabajo/sesgo-h4-color`, ADR-0080).** En §2, «la última H4 que
+> rompió un extremo de su anterior» es desde entonces la última que rompió un extremo **y cerró
+> del color de esa ruptura** (WhatsApp del trader del 2026-10-14,
+> `fb-2026-10-04-sesion-04-6e7da456`): la que rompe un extremo y cierra del color contrario, o sin
+> cuerpo, no decide y la búsqueda sigue. La alternativa descartada «ante una ruptura doble, tomar
+> el sentido del cierre», con el motivo «el color de la vela NO decide», queda enmendada: el color
+> sí cuenta, aunque no como sentido del cierre a secas sino junto a la ruptura. Y una nota que
+> faltaba (deuda G.2 de la hoja de ruta): §1, «si la vela previa rompe LOS DOS extremos … el sesgo
+> es AMBIGUO», lo enmendaron ADR-0060 §1 (decide el color con que cierra) y ADR-0075 (la neutra no
+> decide y la búsqueda sigue), sin recuadro aquí hasta hoy. Lo demás de este ADR -§3, §4, el tope y
+> `insuficiente`- no cambia.
+
 ## Decision
 
 RN-003 dice que el sesgo es el de la vela H4 previa cerrada, que cambia solo si esa vela rompió

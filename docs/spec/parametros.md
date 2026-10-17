@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 17.0.3` · hash `66c573318fe7…`
+`spec_version 18.0.0` · hash `44498dd81354…`
 
 107 en total: 91 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -618,7 +618,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `sesgo_h4_regla`
 
-que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el motor es lo otro (ADR-0019)
+que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el motor es lo otro (ADR-0019). LA REGLA VIGENTE ES LA DE ADR-0080 (WhatsApp del trader del 2026-10-14, fb-2026-10-04-sesion-04-6e7da456): la H4 cambia el sesgo solo si rompe el extremo de la anterior -con mecha o con cuerpo- Y cierra del color de esa ruptura; este valor queda como historia de la respuesta de la sesion 1, que no hablaba del color
 
 Opciones: `vela_anterior_color`, `vela_anterior_cierre_mecha`, `otra`.
 

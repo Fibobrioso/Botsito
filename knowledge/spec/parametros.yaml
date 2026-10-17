@@ -403,7 +403,10 @@ parametros:
       que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto
       y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en
       sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el
-      motor es lo otro (ADR-0019)
+      motor es lo otro (ADR-0019). LA REGLA VIGENTE ES LA DE ADR-0080 (WhatsApp del trader del
+      2026-10-14, fb-2026-10-04-sesion-04-6e7da456): la H4 cambia el sesgo solo si rompe el extremo
+      de la anterior -con mecha o con cuerpo- Y cierra del color de esa ruptura; este valor queda
+      como historia de la respuesta de la sesion 1, que no hablaba del color
     estado: CONFIRMED
     valor: "vela_anterior_cierre_mecha"
     consumido_por: [ADR-0019]

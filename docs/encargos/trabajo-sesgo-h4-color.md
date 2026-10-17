@@ -75,13 +75,6 @@ Dado por Aleks (consultor) el 2026-10-17. Copiado tal cual:
 
 ## Respuesta del consultor a la PARADA de la fase 0 (2026-10-17)
 
-La respuesta nombra el ADR nuevo de la rama antes de que exista (entra en la fase 3); la guardia
-de ids citados lo exige declarado:
-
-```ids-inexistentes
-ADR-0080 — el ADR de esta rama, que se escribe en la fase 3; la respuesta del consultor lo nombra como el siguiente libre
-```
-
 Copiada tal cual:
 
 > Modelo: Fable 5.1 · Esfuerzo: alto

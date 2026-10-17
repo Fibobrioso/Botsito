@@ -34,11 +34,11 @@ en el scratchpad, borrado después) con un parche de MEDIDA sobre `domain/sesgo.
 tests cambian (§1.b); el parche no entra en la rama. El auditor del encargo corrió en paralelo
 (§1.h).
 
-Este informe nombra el ADR nuevo antes de que exista (entra en la fase 3), y la guardia de ids
-citados de `knowledge validate` lo exige declarado:
+Este informe nombra dos ids sintéticos de una medida en memoria (§2.1), y la guardia de ids
+citados de `knowledge validate` los exige declarados (hasta la fase 3 declaraba también ADR-0080,
+que ya existe):
 
 ```ids-inexistentes
-ADR-0080 — el ADR de esta rama (D6 del encargo), que se escribe en la fase 3; hasta entonces se cita aquí como el siguiente libre
 ev-v3-011045-00000001 — id sintético de la medida en memoria de §2.1 (un ítem que supersedería a ev-v3-011045-a185d2ba); nunca se escribió
 ev-v6-010430-00000002 — id sintético de la misma medida (un ítem de v6 1:04:30-1:05:35); nunca se escribió
 ```
@@ -715,6 +715,91 @@ de v6: punto 0 y 0bis).
 
 Lo que espera a los `mv` de Aleks (§1.e): `botsito corpus inventory` (seis entradas nuevas en
 `manifest.yaml`, con los sha256 de §1.e) y su commit.
+
+## 3 · Fases 2 y 3 · Tests primero, el motor, la spec y el ADR (2026-10-17)
+
+### 3.1 Fase 2 · Los tests, en rojo sobre el código de `main`
+
+Los tests se escribieron antes que el motor y se midieron contra el código de `main` (59c8ae7)
+en un clon desechable (`git worktree add --detach … main` en el scratchpad, con los tres ficheros
+de tests de la rama copiados encima; borrado después). `uv run python -m pytest
+tests/unit/test_sesgo_h4.py tests/unit/test_huecos_motor.py tests/unit/test_arnes_motor.py -q`:
+**16 FAILED** de los 64 que recogen los tres ficheros (ningún ERROR; los otros 48 pasan en `main`
+porque no tocan la regla):
+
+```
+FAILED tests/unit/test_sesgo_h4.py::test_caso_1_rompe_el_bajo_y_cierra_roja_es_bajista
+FAILED tests/unit/test_sesgo_h4.py::test_caso_3_rompe_el_maximo_y_cierra_roja_sigue_el_sesgo_que_habia
+FAILED tests/unit/test_sesgo_h4.py::test_caso_4_rompe_el_bajo_y_cierra_verde_sigue_el_sesgo_que_habia
+FAILED tests/unit/test_sesgo_h4.py::test_los_cuatro_casos_al_reves_para_el_alcista
+FAILED tests/unit/test_sesgo_h4.py::test_ruptura_simple_sin_cuerpo_no_decide_y_la_busqueda_sigue
+FAILED tests/unit/test_sesgo_h4.py::test_color_contrario_sin_nada_detras_dentro_del_tope_es_insuficiente
+FAILED tests/unit/test_sesgo_h4.py::test_varias_seguidas_de_color_contrario_se_saltan_todas
+FAILED tests/unit/test_sesgo_h4.py::test_la_doble_ruptura_no_cambia_con_la_regla_nueva
+FAILED tests/unit/test_sesgo_h4.py::test_con_criterio_de_cuerpo_la_regla_del_color_tambien_vale
+FAILED tests/unit/test_sesgo_h4.py::test_las_saltadas_llevan_valor_por_defecto_cero
+FAILED tests/unit/test_sesgo_h4.py::test_doble_ruptura_sin_cuerpo_no_decide_y_sin_nada_detras_es_insuficiente
+FAILED tests/unit/test_sesgo_h4.py::test_dos_neutras_seguidas_mantienen_el_sesgo
+FAILED tests/unit/test_sesgo_h4.py::test_anti_look_ahead_velas_posteriores_y_la_vela_en_curso
+FAILED tests/unit/test_huecos_motor.py::test_las_anotaciones_de_las_saltadas_existen
+FAILED tests/unit/test_huecos_motor.py::test_una_h4_que_rompe_y_cierra_del_color_contrario_no_cambia_el_sesgo
+FAILED tests/unit/test_arnes_motor.py::test_el_informe_cuenta_por_sesion_las_h4_saltadas
+```
+
+Lo que cubren, por el encargo: los cuatro casos del esquema (1 y 2 deciden; 3 y 4 «sigue el
+sesgo que había», con una H4 detrás que fija el contrario para que se vea que sigue y no da
+INSUFICIENTE), los mismos al revés para el alcista, la ruptura simple neutra de D3, el color
+contrario sin nada detrás dentro del tope (INSUFICIENTE), varias seguidas de color contrario, la
+doble ruptura sin cambios (D2), con criterio `cuerpo`, y sin mirar el futuro (la vela en curso que
+rompe arriba y cierra roja, la que la regla nueva saltaría). Los siete de §1.b, rehechos como se
+dijo allí, con el color explícito: `test_rompe_arriba_es_alcista_y_el_color_no_decide` pasa a
+`test_rompe_arriba_y_cierra_verde_es_alcista` (lo que comprobaba, con el color que hace falta) y
+su vela roja es ahora el caso 3; `test_rompe_abajo_es_bajista` → `…_y_cierra_roja_es_bajista`;
+`test_un_equal_no_rompe`, `test_una_neutra_mantiene…` (la rama bajista), los dos
+`test_semana_de_desfase…` y `test_semana_normal…` cierran roja la vela que rompe abajo
+(`_m1_del_dia` gana el sentido del cuerpo por bloque: `BLOQUES["05"]` abre en su alto). Tres
+nuevos campos de `ResultadoSesgo` (§1.f, con la neutra doble por el punto 4 de la respuesta)
+tienen su test; `test_huecos_motor.py` gana los escenarios `arriba_roja`, `abajo_verde`,
+`arriba_sin_cuerpo` y `abajo_sin_cuerpo` (y `abajo` cierra ahora roja, del color de su ruptura),
+un test del motor que anota y uno que fija los nombres de las tres anotaciones;
+`test_arnes_motor.py`, un motor sintético que anota y el informe que cuenta. El contrato se amplió
+con `tests/unit/test_huecos_motor.py` (dicho en §1.f).
+
+### 3.2 Fase 3 · El motor, la spec y el ADR
+
+- **Motor**: `domain/sesgo.py` (docstring; `ResultadoSesgo` con `saltadas_color_contrario`,
+  `saltadas_neutras_simples` y `saltadas_neutras_dobles`, 0 por defecto; la ruptura simple decide
+  solo con el color de su ruptura, y con color contrario o sin cuerpo la búsqueda sigue),
+  `engine/primitivas.py` (`ANOTACION_SALTADAS_COLOR`, `…_NEUTRA_SIMPLE`, `…_NEUTRA_DOBLE`,
+  anotadas con el número solo si es mayor que cero) y `engine/arnes.py` (tres líneas más en
+  «## RN-003 al abrir la sesion», sesiones y velas por motivo). Los 64 tests de los tres ficheros
+  pasan; también `test_cableado.py`, `test_visor.py` y `test_cierre_vela_h4.py` (116 en total en
+  esa pasada). `ruff check` y `ruff format` limpios.
+- **Spec** (`knowledge/spec/`, trailer `Fuente:` con R1, R2 y ADR-0080): RN-003 (`entonces` con la
+  regla; `cita` y `literal` → R1; notas con el párrafo «DESDE EL 2026-10-17 (ADR-0080)» delante,
+  con la contradicción abierta y «Con un solo extremo roto, el color de la vela NO decide»
+  declarado SUSTITUIDO; lo anterior se conserva como historia); el predicado `sesgo_h4_al_abrir`
+  (descripción con el color; `cita` y `literal` → R1; dice que hasta hoy citaba `8eccf5c0`);
+  RN-033 (una línea en notas; forma, cita y `cuando` iguales) y el token `insuficiente` (punto 3
+  de la respuesta); `equal` (definición con «y cerrar del color de esa ruptura (ADR-0080)», cita
+  `8eccf5c0`; punto 2); `sesgo_h4_regla` (solo la descripción; D7). `rompe` no se toca. Ningún
+  sitio nuevo con `cita`: las tres guardias de `spec/modelo.py` no cambian. Una trampa medida: el
+  `entonces` de una regla no admite cifras (`modelo.py:270`, «contiene la cifra '0'»), así que no
+  puede nombrar «ADR-0080»; dice «el ADR del color» y las notas llevan el id.
+- `spec_version` 17.0.3 → **18.0.0** (una regla cambia de sentido: mayor, como ADR-0075 subió
+  15.9.9 → 16.0.0); `spec manifest --escribir` (hash `e34f5de4…` y después el definitivo del
+  commit) y `spec docs --escribir` en el mismo commit.
+- **ADR-0080** (`docs/adr/0080-el-sesgo-h4-cambia-solo-si-rompe-y-cierra-del-color-de-la-ruptura.md`):
+  D1-D7 con la fecha, la contradicción abierta y A-1 sin reabrir (puntos 0 y 6 de la respuesta),
+  el motor y el arnés. Recuadros de enmienda en ADR-0044 (§2, su alternativa descartada y la nota
+  de §1 que debía G.2: punto 7), ADR-0060 (§1) y ADR-0075 (§3), y sus filas del índice más la de
+  0080.
+- `feedback pending` tras el cambio de cita: dos CORRECT sobre RN-003 pendientes
+  (`fb-2026-09-29-sesion-03-31fb311f` y ahora `fb-2026-10-04-sesion-04-ca0afae6`, «RN-003 no lo
+  cita todavia»): es la deuda G.2 de la hoja (`feedback pending` no admite dos CORRECT vivos sobre
+  una regla), no un fallo de esta rama; R1 sale reflejado.
+- `knowledge validate` en verde (36 reglas, hash al día); `test_adr`, `test_spec_docs_generados`,
+  `test_kit`, `test_hoja_preguntas`, `test_no_business_literals` y `test_cuarentena` en verde.
 
 ## Estado
 

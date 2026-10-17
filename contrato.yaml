@@ -29,6 +29,9 @@ rutas_permitidas:
   - src/botsito/engine/arnes.py
   - tests/unit/test_sesgo_h4.py
   - tests/unit/test_arnes_motor.py
+  # ampliado el 2026-10-17 en la fase 2 (SESGO-H4-COLOR.md §1.f): la corrida sintetica que anota
+  # y cuenta las H4 saltadas vive junto a la de la doble ruptura (test_huecos_motor.py:244-247)
+  - tests/unit/test_huecos_motor.py
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md

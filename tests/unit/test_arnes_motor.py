@@ -323,6 +323,55 @@ def test_un_motor_que_copia_al_trader_da_cien_por_cien_y_embudo_completo(
     assert "cuantas se paran en cada primitiva NO_IMPLEMENTADA:\n- ninguna" in texto
 
 
+@dataclass
+class _Anota:
+    """Motor sintetico que no opera y deja en cada sesion las anotaciones que se le dan."""
+
+    anotaciones: dict[tuple[str, str], dict[str, str]]
+
+    def correr_dia(self, dia: DiaDeMercado) -> ResultadoDia:
+        clave = dia.dia.isoformat()
+        trazas = {
+            s.nombre: TrazaSesion(anotaciones=dict(self.anotaciones.get((clave, s.nombre), {})))
+            for s in dia.sesiones
+        }
+        return ResultadoDia(clave, (), trazas)
+
+
+def test_el_informe_cuenta_por_sesion_las_h4_saltadas(
+    vocabulario: dict[str, dict[str, Any]],
+) -> None:
+    """ADR-0080 (4.f del encargo): junto a la doble ruptura, el informe cuenta las sesiones con
+    alguna H4 saltada por color contrario, por neutra simple y por neutra doble, y cuantas velas
+    en total; nunca una fecha ni un precio."""
+    dias = _dias_trader()
+    motor = _Anota(
+        {
+            ("2030-01-15", "07-11"): {
+                "sesgo_h4": "bajista",
+                "sesgo_h4_saltadas_color_contrario": "2",
+                "sesgo_h4_saltadas_neutra_doble": "1",
+            },
+            ("2030-01-16", "07-11"): {"sesgo_h4": "alcista", "sesgo_h4_doble_ruptura": "si"},
+            ("2030-01-16", "11-15"): {
+                "sesgo_h4": "insuficiente",
+                "sesgo_h4_saltadas_color_contrario": "1",
+                "sesgo_h4_saltadas_neutra_simple": "1",
+            },
+        }
+    )
+    corrida = arnes.correr("anota", ("2030-01",), dias, _mercado(dias), motor)
+    texto = arnes.informe(corrida, _criterio(), vocabulario, opciones=(), simulacion=None)
+    assert "de ellas con doble ruptura, que decide el color de la vela (ADR-0060): 1" in texto
+    assert "saltada por color contrario (rompio un extremo y cerro del color contrario, " in texto
+    assert "ADR-0080 D1): 2 (3 velas)" in texto
+    assert (
+        "saltada por neutra simple (rompio un extremo y cerro sin cuerpo, ADR-0080 D3): 1 (1 velas)"
+        in texto
+    )
+    assert "saltada por neutra con doble ruptura (ADR-0075): 1 (1 velas)" in texto
+
+
 def test_un_motor_que_no_opera_da_cobertura_cero_y_precision_sin_definir(
     vocabulario: dict[str, dict[str, Any]],
 ) -> None:
