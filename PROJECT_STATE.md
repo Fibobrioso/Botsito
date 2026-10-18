@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/sesgo-h4-color
+main
 
 ## Current Feature
-`trabajo/sesgo-h4-color` EN CURSO (abierta el 2026-10-17 desde 59c8ae7): R1.2, activar en la spec y en el motor la regla del sesgo de H4 que el trader respondió por WhatsApp el 2026-10-14 (W de la Next Action), con su ADR, su feedback y su evidencia, y la re-corrida del arnés con los tres comandos de R3.1. Encargo `docs/encargos/trabajo-sesgo-h4-color.md`; informe `docs/validation/SESGO-H4-COLOR.md`.
+Ninguna rama abierta. `trabajo/sesgo-h4-color` cerrada en `main` el 2026-10-17 (`stable/F37r-sesgo-h4-color`); R1.2 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-fa15a84 · merge de `trabajo/corrida-construccion` (tag `stable/F37q-corrida-construccion`): la corrida del arnés en diagnóstico (A-35, A-44) sobre los 76 días dev de construcción; el informe del arnés gana «Diferencias por operacion», `bloqueadas` y la vida de la orden; la clasificación del consultor y el cuestionario de la sesión 5; NOTA en ADR-0070 §3; un día de holdout-3 retirado por ADR-0041. Sobre `stable/F37p-entrada-enero` (87391b7). Informe docs/validation/CORRIDA-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
+5296a31 · merge de `trabajo/sesgo-h4-color` (tag `stable/F37r-sesgo-h4-color`): el sesgo de H4 cambia solo si la vela rompe el extremo de la anterior y cierra del color de esa ruptura (WhatsApp del trader del 2026-10-14; ADR-0080, que enmienda ADR-0044 §2, ADR-0060 §1 y ADR-0075 §3); spec 18.0.0, dos registros de feedback y las capturas en el corpus; el motor cuenta las H4 saltadas; re-corrida del arnés en diagnóstico (8 de 104 sesiones cambian de sesgo, parejas iguales); la contradicción con la sesión 1 abierta, a la sesión 5; tres días de fidelidad-1 retirados por ADR-0041. Sobre `stable/F37q-corrida-construccion` (fa15a84). Informe docs/validation/SESGO-H4-COLOR.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-fa15a84 · merge: la corrida del arnes sobre la construccion y la clasificacion de sus diferencias (R3.1) · tag stable/F37q-corrida-construccion
+5296a31 · merge: trabajo/sesgo-h4-color, el sesgo de H4 cambia solo si la vela rompe el extremo y cierra del color de la ruptura (ADR-0080, R1.2) · tag stable/F37r-sesgo-h4-color
 
 ## Tests Currently Passing
 1570 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
