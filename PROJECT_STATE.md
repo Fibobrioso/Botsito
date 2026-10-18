@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/visor-construccion
+main
 
 ## Current Feature
-`trabajo/visor-construccion` EN CURSO (abierta el 2026-10-18 desde d1137eb; O de la Next Action, R3.2 de la hoja de ruta): las comprobaciones E de R3.1 en el visor, sobre el motor de hoy, con su conclusión (E, R o correcto); rama de diagnóstico, sin código. Encargo docs/encargos/trabajo-visor-construccion.md; informe docs/validation/VISOR-CONSTRUCCION.md.
+Ninguna rama abierta. `trabajo/visor-construccion` cerrada en `main` el 2026-10-18 (`stable/F37t-visor-construccion`); R3.2 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-3762429 · merge de `trabajo/margen-lote` (tag `stable/F37s-margen-lote`): cuando el lote del 0,5 % no cabe, el bot lo limita al menor de tres (el del riesgo, 50 lotes y el que cabe en 0,95 del margen libre a 1:30) y por debajo del mínimo no opera; el bróker simulado rechaza por `margen_libre` al colocar y al llenar (ADR-0081, que enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto); `lote_si_no_cabe` DEFAULT bajo A-57 (a la sesión 5) y `lote_margen_libre_fraccion`; spec 18.1.1; re-corrida del arnés en diagnóstico (0 rechazos por volumen, 339 de 504 órdenes limitadas, parejas 12 → 18). Sobre `stable/F37r-sesgo-h4-color` (5296a31). Informe docs/validation/MARGEN-LOTE.md; el registro del cierre, al final de HISTORIA.
+7d3783d · merge de `trabajo/visor-construccion` (tag `stable/F37t-visor-construccion`): las comprobaciones de R3.1 en el visor sobre 20 días, rama de diagnóstico sin código; una E (el punto de una orden ya llenada se vuelve a colocar con otra caja, contra ADR-0064, decisión 1: Y, R3.4) y el resto correcto o R, con sus preguntas para V; la lectura del M1 de marzo por `test_visor.py` declarada en HOLDOUT-EXPOSICIONES. Sobre `stable/F37s-margen-lote` (3762429). Informe docs/validation/VISOR-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-3762429 · merge: trabajo/margen-lote, el lote que no cabe se limita y el broker simulado rechaza por margen libre (ADR-0081, R3.3) · tag stable/F37s-margen-lote
+7d3783d · merge: trabajo/visor-construccion, las comprobaciones de R3.1 en el visor (R3.2): una E, el resto correcto o R · tag stable/F37t-visor-construccion
 
 ## Tests Currently Passing
 1590 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
