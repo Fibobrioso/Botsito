@@ -61,7 +61,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   dos informes y pasan a R4.1.
 
 ### R1.2 · El sesgo de H4 que el trader respondió por WhatsApp
-- **Refs:** NA:W · ID:ADR-0060 · ID:RN-003
+- **Refs:** NA:W · ID:ADR-0060 · ID:RN-003 · ID:ADR-0080
 - **Qué es:** activar la regla que el trader respondió el 2026-10-14 a la pregunta P1 de R3.1
   (CORRIDA-CONSTRUCCION.md §4.4): el sesgo cambia solo si la H4 rompe el extremo de la anterior
   (con mecha o con cuerpo) y cierra del color de esa ruptura. Amplía ADR-0060 y sustituye la
@@ -72,6 +72,10 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   rama.
 - **Hecho cuando:** la regla está en la spec y en el motor, con su feedback y su ADR, y el arnés
   se ha vuelto a correr con los tres comandos de R3.1.
+- **Estado:** HECHA (`trabajo/sesgo-h4-color`, `stable/F37r-sesgo-h4-color`; SESGO-H4-COLOR.md,
+  ADR-0080): la regla del color en la spec y en el motor, dos registros de feedback, el arnés
+  vuelto a correr con los tres comandos de R3.1 (§4). La contradicción con la sesión 1 y la
+  ruptura simple sin cuerpo van a la sesión 5 (R4.1).
 
 ## R2 · Material de construcción
 
@@ -164,7 +168,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:RN-007 · NA:H · NA:J · NA:V · NA:W · NA:E · NA:O · HER:25 · HER:30 · HER:35 ·
+  ID:A-53 · ID:RN-007 · NA:H · NA:J · NA:V · NA:E · NA:O · HER:25 · HER:30 · HER:35 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
   la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
@@ -172,10 +176,11 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   pendiente a la hora de cerrar), la vela sin cuerpo en medio del retroceso y el breaker contrario
   que rompe con mecha (ADR-0076 §4), la racha tras la novena pérdida (ADR-0077 §5) y la
   confirmación del caso bajista de S-13; y lo que salga de R3, con la hoja de preguntas: la lista
-  «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5, sin su pregunta 1 (el
-  sesgo, respondida: R1.2). La hoja Word necesita antes que `kit hoja` funcione con un paquete
+  «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5, con su pregunta 1
+  sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo y la
+  contradicción con la sesión 1; R1.2). La hoja Word necesita antes que `kit hoja` funcione con un paquete
   nuevo (NA:J).
-- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (NA:W), R3.2 (NA:O), R3.3 (NA:E) y la copia de
+- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (NA:O), R3.3 (NA:E) y la copia de
   seguridad del carril de Aleks.
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.

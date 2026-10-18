@@ -9621,3 +9621,67 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 33 (2026-10-14).
+
+# Next Action HECHA · W · el sesgo de H4 por el color · sale de PROJECT_STATE.md en trabajo/sesgo-h4-color (2026-10-17)
+
+W. Activar la regla del sesgo de H4 que el trader respondió por WhatsApp el 2026-10-14 (respuesta a P1 de R3.1, CORRIDA-CONSTRUCCION.md). Literal, 14:45: "Dependerá de si cierra alcista o bajista si lo hace con mecha o con cuerpo es válido para un cambio de sesgo"; 14:55: "Para el cambio de sesgo, por ejemplo en el caso 1 la vela roja debe de haber roto con cuerpo o con mecha el bajo de la vela alcista" y "Y terminar al cierre bajista"; 15:18, confirmando un gráfico de cuatro casos dibujado por el consultor: "Si, esta bien bro". La regla confirmada: el sesgo cambia solo si la H4 rompe el extremo de la anterior (con mecha o con cuerpo) Y cierra del color de esa ruptura; si rompe un extremo y cierra del color contrario, el sesgo no cambia. Amplía ADR-0060 (el color ya decidía en la doble ruptura). Las capturas, los dos gráficos y un LEEME están fuera de git en corpus/whatsapp-sesgo-h4-2026-10-14/; la rama de activación decide cómo entran como evidencia. sesgo_h4_criterio_ruptura = mecha (fb-2026-09-09-sesion-01-8eccf5c0) era una re-expresión del consultor: la rama la sustituye por su feedback nuevo. Rama de motor propia, con ADR, y una re-corrida del arnés con los tres comandos de R3.1.
+
+Corrección del consultor (2026-10-17): sesgo_h4_criterio_ruptura = mecha no era solo una re-expresión suya; el trader ya lo había dicho (fb-2026-09-09-sesion-01-41f46b21, ev-v9-001312-19e45e4a, ev-v9-000902-25db5bf5; ADR-0080).
+
+La hace `trabajo/sesgo-h4-color` (docs/validation/SESGO-H4-COLOR.md, ADR-0080).
+
+# Registro de cierre · `trabajo/sesgo-h4-color` (2026-10-17)
+
+- Orden de cierre del consultor del 2026-10-17, pegada por Aleks en la conversación y ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama
+  aceptada por el consultor tras una pasada del revisor (opus; SESGO-H4-COLOR.md §9: reglas 0
+  bloquea, 3 importa, 4 menor; encargo 1 bloquea, 4 importa, 1 menor; todos atendidos en §9.1, el
+  bloquea -el inventario- con fbc2c86). Una PARADA en la fase 0, respondida por el consultor el
+  2026-10-17 (§1.l). El paso 0 de la orden de cierre retiró del holdout, por ADR-0041, los tres
+  días de fidelidad-1 cuya identidad quedó deducible de los textos commiteados en la rama
+  (f360168, §10.1), antes del merge y del push. Nunca se cerró sin la orden.
+- **Lo que entra** (R1.2 de la hoja de ruta; W de la Next Action):
+  - la regla del sesgo de H4 que el trader respondió por WhatsApp el 2026-10-14: una H4 cambia el
+    sesgo solo si rompe el extremo de la anterior -con mecha o con cuerpo- Y cierra del color de
+    esa ruptura; con el color contrario o sin cuerpo no decide y la búsqueda sigue (ADR-0080, que
+    enmienda ADR-0044 §2, ADR-0060 §1 y ADR-0075 §3, con recuadro en cada uno y su fila del
+    índice); en `domain/sesgo.py`, `engine/primitivas.py` (tres anotaciones de H4 saltadas) y
+    `engine/arnes.py` (sus recuentos por sesión);
+  - dos registros `trader_escrito` en `2026-10-04-sesion-04`: el CORRECT sobre RN-003
+    (`fb-2026-10-04-sesion-04-6e7da456`) y el CONFIRM de `sesgo_h4_criterio_ruptura` = mecha
+    (`fb-2026-10-04-sesion-04-d2e84172`), que pasa a ser su fuente; RN-003 y el predicado
+    `sesgo_h4_al_abrir` citan el CORRECT; RN-033, el token `insuficiente`, `equal` y
+    `sesgo_h4_regla` solo en su texto; `spec_version` 18.0.0; las seis capturas y esquemas del
+    WhatsApp en el corpus («Mensajes del trader», `fuentes.yaml` y `manifest.yaml`);
+  - la contradicción con la sesión 1 (v6 1:04:30-1:05:35) queda ABIERTA y escrita (ADR-0080 §9,
+    RN-003, R1) sin ítems de evidencia -supersedir `ev-v3-011045` rompe G1 en A-1, medido- y va a
+    la sesión 5 con un esquema dibujado, igual que la ruptura simple sin cuerpo (D3); A-1 no se
+    reabre;
+  - la re-corrida del arnés con los tres comandos de R3.1 (diagnóstico, ADR-0070 §3): el sesgo
+    cambia en 8 de las 104 sesiones con operaciones del trader, todas por color contrario, 1 pasa
+    a INSUFICIENTE; P1 baja de 48 filas en 25 sesiones a 44 en 21; las parejas no cambian (12);
+  - la retirada por ADR-0041 de tres días de fidelidad-1 (f360168): fidelidad-1 pasa de 9 a 6
+    días medidos; 34 reservados, 29 medidos, 5 retirados, 34 ocultos;
+  - en este commit: W sale a HISTORIA con la corrección del consultor; F reescrita (E → O → V, la
+    re-corrida ya hecha); V sin W y con las dos preguntas de SESGO-H4-COLOR.md §4.4; G con los
+    tres días medidos menos de fidelidad-1. En la hoja de ruta: R1.2 HECHA con ID:ADR-0080; R4.1
+    deja de esperar a NA:W y a R1.2 y lleva las dos preguntas.
+- Letras: sale W; entra ninguna.
+- Letra del tag: la última cerrada era la q de F37 (`stable/F37q-corrida-construccion`).
+- Tag: `stable/F37r-sesgo-h4-color`. El merge es
+  `git rev-parse "stable/F37r-sesgo-h4-color^{commit}"`.
+- Commits de la rama: `c24c50b` (apertura), `1030a4d` (fase 0 y PARADA), `0365d5c` (fase 1:
+  registros, apply, spec 17.0.3, `fuentes.yaml`), `fd5d40d` (fases 2 y 3: motor, tests, spec
+  18.0.0, ADR-0080), `37ae53f` (fase 4: las tres corridas y el informe), `3c79a24` (revisor
+  atendido), `fbc2c86` (inventario del corpus tras los `mv`), `f360168` (la retirada, paso 0 de la
+  orden de cierre) y el de este registro.
+- CI de rama: ninguna. No toca `.claude/`, hooks ni código de plataforma (SESGO-H4-COLOR.md §8).
+  La CI de `main` corre tras el push. La única consulta de CI de la rama fue `gh run view
+  38656985715` al abrir.
+- Exposiciones: las dos filas del 2026-10-17 en HOLDOUT-EXPOSICIONES (la fase 0, con los tres
+  fotogramas de v6 y su consecuencia por ADR-0041; y la lectura del M1 de marzo y junio para
+  calentar la re-corrida). `uv run botsito motor arnes` se ejecutó solo con los tres comandos
+  autorizados.
+- El worktree `wt-ci` (e7df30b, sin rama) es de otra sesión: no se tocó.
+- Informe: `docs/validation/SESGO-H4-COLOR.md`. Encargo:
+  `docs/encargos/trabajo-sesgo-h4-color.md`.
