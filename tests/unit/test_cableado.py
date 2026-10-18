@@ -241,8 +241,14 @@ def test_una_estrategia_sintetica_coloca_una_limite_por_el_motor_se_llena_y_cier
     broker = motor.brokers[DIA.isoformat()]
     p = next(iter(broker.posiciones.values()))
     assert (p.entrada, p.stop, p.objetivo) == (ENTRADA, ENTRADA - 16, ENTRADA + 60)
-    # 0,5 % de 100.000 sobre 16 puntos: 500 / 16 = 31,25 lotes, ya multiplo de 0,01 (RN-027 no toca)
-    assert p.lotes == Decimal("31.25")
+    # 0,5 % de 100.000 sobre 16 puntos: 500 / 16 = 31,25 lotes, ya multiplo de 0,01 (RN-027 no
+    # toca): es el lote del RIESGO, que la traza anota. Desde ADR-0081 el que se coloca es el que
+    # cabe en el 95 % del margen libre a 1:30 (unos 25,9 lotes a este precio), y la anotacion dice
+    # que mordio el margen
+    anotacion = tb.margen_al_colocar["o1"]
+    assert anotacion[3] == Decimal("31.25") and anotacion[4] == "margen"
+    assert p.lotes < Decimal("31.25")
+    assert anotacion[0] is not None and anotacion[0] <= Decimal("0.95") * Decimal(100_000)
     assert (
         r.operaciones
         and r.operaciones[0].sesion == "07-11"
@@ -252,14 +258,14 @@ def test_una_estrategia_sintetica_coloca_una_limite_por_el_motor_se_llena_y_cier
     assert estado is EstadoCuenta.EN_CURSO
     comision = (
         motor.reglas_broker.comision_por_lote
-        * Decimal("31.25")
+        * p.lotes
         * (2 if motor.reglas_broker.comision_por_lado else 1)
     )
     # el stop se llena al precio del tick que lo cruza (ADR-0051, DN-3): un punto bajo el stop
     assert p.precio_cierre == ENTRADA - 17
     perdida = (
         Decimal(ENTRADA - p.precio_cierre) * p.lotes
-    )  # 17 puntos x 31,25 lotes, contrato 100.000/escala 100.000
+    )  # 17 puntos x el lote colocado, contrato 100.000/escala 100.000
     assert (
         motor.cuenta is not None
         and motor.cuenta.saldo == motor.reglas_fase.capital_inicial - perdida - comision
@@ -358,21 +364,25 @@ def test_el_stop_se_redondea_alejandose_de_la_entrada_y_el_lote_sale_de_esa_dist
     ALEJANDOSE de la entrada, y el lote se dimensiona sobre esa distancia. El sentido lo da
     `stop_fraccion_redondeo`, que la forma de RN-011 nombra: con el otro valor, al reves."""
 
-    def posicion(reg: Registro) -> Any:
+    def posicion(reg: Registro) -> tuple[Any, Any]:
         motor = _motor(reg, vocabulario, _mercado(RUTA_STOP))
         # caja de 21 puntos: el 0,8 cae en 16,8
         zona = cableado.zona_sintetica("zona:1", "compra", ENTRADA, ENTRADA - 21, "primer_esquema")
         motor.zonas_de = lambda md: {"zona:1": zona}
         motor.correr_dia(_dia())
-        return next(iter(motor.brokers[DIA.isoformat()].posiciones.values()))
+        p = next(iter(motor.brokers[DIA.isoformat()].posiciones.values()))
+        return p, motor.trazas_broker[DIA.isoformat()].margen_al_colocar["o1"]
 
     assert registro.opcion("stop_fraccion_redondeo") == "alejandose_de_la_entrada"
-    fuera = posicion(registro)
+    fuera, anotacion_fuera = posicion(registro)
     assert fuera.stop == ENTRADA - 17
-    # 0,5 % de 100.000 sobre 17 puntos: 29,4117..., y RN-027 lo baja al escalon
-    assert fuera.lotes == Decimal("29.41")
-    dentro = posicion(_registro_con_redondeo(tmp_path, "hacia_la_entrada"))
-    assert dentro.stop == ENTRADA - 16 and dentro.lotes == Decimal("31.25")
+    # 0,5 % de 100.000 sobre 17 puntos: 29,4117..., y RN-027 lo baja al escalon: es el lote del
+    # RIESGO (la traza lo anota). El colocado lo limita el margen a 1:30 (ADR-0081) en los dos
+    # casos y al mismo precio, asi que es el mismo y menor que los dos del riesgo
+    assert anotacion_fuera[3] == Decimal("29.41") and anotacion_fuera[4] == "margen"
+    dentro, anotacion_dentro = posicion(_registro_con_redondeo(tmp_path, "hacia_la_entrada"))
+    assert dentro.stop == ENTRADA - 16 and anotacion_dentro[3] == Decimal("31.25")
+    assert fuera.lotes == dentro.lotes < Decimal("29.41")
     # el objetivo no depende del redondeo del stop: sale de la caja completa
     assert fuera.objetivo == dentro.objetivo == ENTRADA + 63
 

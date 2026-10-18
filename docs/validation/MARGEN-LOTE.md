@@ -671,6 +671,91 @@ lectura, declarada en la fila de la fase 1): `sha256sum` de las dos salidas idé
 (`9b168d2f86b55229e22e…`); `TIEMPO: 291.7 s; MEMORIA: pico del proceso de 633.0 MiB`. La copia no
 se commitea.
 
+## 3 · Fases 2 y 3 · Los tests en rojo, y el código, la spec y A-57 (2026-10-17)
+
+### 3.a Los tests, antes del código
+
+`tests/unit/test_margen_lote.py` (17 tests), escritos antes del código y corridos sobre el de la
+fase 1 (`main` más el campo de salida): **16 FAILED, 1 passed** (el que pasa es el de la fórmula,
+`margen_requerido`, que ya existía como única función desde la fase 1). Los 16 cubren la lista de
+la fase 2 del encargo: el rechazo al colocar justo por encima y justo por debajo del margen libre;
+la posición abierta que ocupa margen; la pendiente STOP que reserva y la cancelación que libera
+(la reubicación de ADR-0074, respuesta punto 3); la compra al ask y la venta al bid; el rechazo al
+LLENAR cuando el margen libre bajó desde que se colocó (sin petición, orden `rechazada`, evento en
+la traza) y que la reserva de la propia orden no cuenta contra ella; `abrir_conocida` por margen
+tras el volumen; la función pura `limitar_lote` (cabe: no cambia; por margen; por volumen; por los
+dos; por debajo del mínimo: `None` y `minimo`); el día sintético de `test_cableado` con el lote
+limitado por margen y colocado; el mismo resultado en R con y sin límite; `no_operar`: no se envía
+y queda anotada en «### Ordenes no enviadas por el bot»; el cableado pasa siempre el saldo; y el
+rechazo al llenar contado como `llenar` en «### Rechazos por motivo». Las 17 verdes con el código
+de 3.b. Un ajuste al escribirlos: los tests sintéticos colocan sus órdenes en el segundo 0 del
+minuto y el primer tick está en el 5, así que al colocar no había precio con el que convertir el
+margen y el bróker lo niega («sin precio de mercado»); las órdenes de estos tests se colocan a
+partir del segundo 10. El cableado real coloca en el último milisegundo del cierre de M1, con los
+ticks del minuto ya presentes (la corrida «antes» midió margen en las 437 órdenes).
+
+### 3.b El código (ADR-0081)
+
+- `engine/broker.py`: `Broker(..., saldo: Callable[[], Decimal] | None)`; **con apalancamiento en
+  las reglas y sin saldo, el bróker no se construye** (respuesta punto 2); `margen_libre()` =
+  saldo() + flotante al tick − `margen_usado()`; `_margen_infringido(lotes, precio, libre_extra)`
+  → `margen_libre`; en `_colocar`, tras los límites del perfil y el precio, con el ask o el bid del
+  instante (`precio_de_conversion`); en `_aplicar(LLENADA)`, con el precio del llenado y sumando
+  al margen libre la reserva de la propia orden si es una stop (`libre_extra`); un rechazo al
+  llenar deja la orden `rechazada` (historial `colocada → rechazada`), un `Rechazo` en la traza y
+  un evento `rechazada`, sin `Peticion`; en `abrir_conocida`, con el precio del llenado conocido.
+  `lote_que_cabe` (la inversa de la fórmula) y **`limitar_lote`** (función pura: el menor de tres,
+  al paso; `None` + `minimo` por debajo del mínimo; sin apalancamiento solo mira el volumen) y las
+  constantes de los límites y de `lote_si_no_cabe`.
+- `engine/primitivas_broker.py`: `redondear_lote` ya no sube al mínimo (respuesta punto 0);
+  `colocar_orden_limite` resuelve el lote del riesgo, lo pasa por `_lote_final` (volumen del
+  perfil; margen libre del bróker × `lote_margen_libre_fraccion` con el precio de conversión del
+  instante: **el mismo margen libre y la misma función que usará el bróker al colocar**) y, si
+  `lote_si_no_cabe = no_operar` y algún límite mordió, o si queda por debajo del mínimo, **no envía**:
+  anota `(instante, zona, motivo, lote del riesgo)` en `ContextoDia.no_enviadas`, marca la zona usada
+  y su punto rechazado (como un rechazo del bróker, ADR-0064) y no lanza `CableadoError`. Es el
+  único camino «no se coloca» (respuesta punto 0). La anotación de margen gana el lote del riesgo
+  y el límite que mordió.
+- `engine/cableado.py`: el bróker nace con `saldo=lambda: cuenta.saldo`; «### Ordenes» gana dos
+  columnas más al final (`lote del riesgo | limite`); sección nueva «### Ordenes no enviadas por el
+  bot (dia | sesion | instante UTC | zona | motivo | lote del riesgo)» con su recuento; «### Rechazos
+  por motivo» distingue `colocar`, `llenar` (la orden estuvo colocada) y `modificar`.
+- Spec y knowledge: `lote_si_no_cabe` (`ejecucion`, enum, `limitar`, DEFAULT_AMBIGUOUS bajo A-57) y
+  `lote_margen_libre_fraccion` (`ejecucion`, decimal, 0,95, CONFIRMED), ambos `consumido_por:
+  [ADR-0081]` y fuente ADR-0081, detrás de `cierre_pendientes`; notas de RN-011 y RN-027; **A-57**
+  (pregunta, no bloqueante, `resuelve_en: [F24]`, evidencia `ev-v4-002457-5a2e88c6` y
+  `ev-v4-012900-8ef676ed`, con la búsqueda declarada en la propia pregunta y sin ninguna cifra de
+  VIABILIDAD-COMISION) y su fila en PROJECT_STATE; el perfil (`firma_apalancamiento`: quién lo
+  consume, `consumido_por: [ADR-0081]`; `firma_tamano_posicion_ratio_aviso`: la respuesta 10 de
+  FTMO, G.3) y `parametros.yaml` (`firma_apalancamiento`: la frase de F21 sustituida,
+  `consumido_por: [ADR-0081, F33]`); `spec_version` 18.0.0 → **18.1.0** (menor: dos parámetros,
+  ninguna regla cambia de sentido); `spec manifest --escribir` y `spec docs --escribir`;
+  `knowledge validate` sin errores.
+
+### 3.c Los tests que cambiaron, y cómo se rehicieron sin rebajar lo que comprobaban
+
+- `tests/regression/test_cuenta_7_de_agosto.py`: el primero (volumen) construye el bróker con el
+  saldo inicial del perfil (obligatorio con apalancamiento) y sigue esperando `volumen_max_lotes`
+  (el volumen se mira antes). Gana un hermano por el margen: el lote que ocupa exactamente todo el
+  saldo al precio de entrada se abre, y un paso más (0,01) se rechaza con `margen_libre`. El segundo
+  (la regresión del CORTE de la cuenta) se construye con `apalancamiento=None` explícito y su
+  docstring dice por qué (respuesta punto 2).
+- `tests/unit/test_cableado.py`: dos tests afirmaban el lote colocado (31,25 y 29,41): ahora
+  afirman el lote del RIESGO en la anotación de la traza (lo que RN-011 y RN-027 producen, que es
+  lo que comprobaban) y que el colocado es menor y cabe en el 95 % del margen libre; la comisión y
+  la pérdida se calculan con el lote colocado.
+- `tests/unit/test_vida_de_la_orden.py`: las filas esperadas ganan las dos columnas; el test con el
+  perfil real espera el lote limitado, `31.25 | margen` y `no enviadas: 0`; el de la traza a mano
+  espera `None, None` y `-`; el bróker a mano recibe el saldo.
+- `tests/unit/test_racha_perdidas.py`: el bróker a mano con el perfil real recibe `saldo=lambda:
+  cuenta.saldo` (la cuenta se crea antes).
+- Sin cambios: `test_broker.py`, `test_broker_ordenes_stop.py`, `test_be_al_tick.py`,
+  `test_peticiones.py`, `test_cierres_de_mercado.py`, `test_freno_peticiones.py`, `test_simulacion.py`
+  (reglas sintéticas sin apalancamiento), `test_huecos_motor.py`, `test_diferencias_por_operacion.py`,
+  `test_arnes_motor.py`, `test_preparar_a21.py`, `test_perfil_cuenta.py`, `test_kit.py` (la fila de
+  A-57). El contrato gana `tests/unit/test_margen_lote.py`, `test_racha_perdidas.py` y
+  `test_cableado.py` (respuesta punto 2: «amplía el contrato en ese commit y dilo»).
+
 ## Estado
 
-EN CURSO · fase 1 hecha (2026-10-17): el campo, la medida 1, la corrida «antes» y la medida 2; faltan las fases 2 a 4.
+EN CURSO · fases 1 a 3 hechas (2026-10-17); falta la fase 4 (re-corrida) y la entrega.

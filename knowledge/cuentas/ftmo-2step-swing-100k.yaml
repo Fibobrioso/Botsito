@@ -273,11 +273,15 @@ parametros:
     unidad: apalancamiento maximo en forex (1:N)
     descripcion: >-
       R9: «The Swing account type has leverage set to up to 1:30»; API «leverageSwing: 30». Igual
-      que en parametros.yaml. Lo consume el broker simulado (margen), no la capa de cuenta
+      que en parametros.yaml. Lo consume el broker simulado desde ADR-0081 (2026-10-17): el margen
+      de cada orden y posicion (lotes x contrato x precio / este numero), el rechazo `margen_libre`
+      al colocar y al llenar, y el limite del lote del bot (`reglas_broker_de` lo lee del perfil).
+      Hasta entonces esta descripcion decia que lo consumia y ningun codigo lo leia
+      (FTMO-P-D1.md §2). No lo consume la capa de cuenta
     estado: CONFIRMED
     valor: 30
     minimo: 1
-    consumido_por: [F24]
+    consumido_por: [ADR-0081]
     fuente: {tipo: decision, id: ADR-0050}
   - nombre: firma_volumen_max_lotes
     categoria: prop_firm
@@ -460,7 +464,11 @@ parametros:
     tipo: decimal
     unidad: veces la mediana de los lotes de las demas operaciones a partir de las que se avisa
     descripcion: >-
-      R17 no da ninguna cifra para «substantially larger», y si un lote que varia con el stop a
-      riesgo constante cuenta como tal esta PENDIENTE PARA ALEKS con FTMO (Next Action 27). Sin
-      valor: la guardia queda NO EVALUABLE y el resultado lo dice nombrando este parametro
+      R17 no da ninguna cifra para «substantially larger». FTMO respondio el 2026-10-05 (ticket
+      VDW-DPMWR-965, pregunta 10; FTMO-REGLAS.md, recuadro del 2026-10-05): no fija limites
+      numericos de exposicion ni de tamano ni multiplicadores; «sustancialmente mayor» depende del
+      comportamiento historico del propio trader, y recomienda un tamano consistente y consciente
+      del riesgo. Segun el consultor, el riesgo fijo del 0,5 % desde el primer dia es ese patron
+      historico (y desde ADR-0081 el lote limitado por el margen solo puede ser MENOR). Sin valor:
+      la guardia queda NO EVALUABLE y el resultado lo dice nombrando este parametro
     estado: UNKNOWN

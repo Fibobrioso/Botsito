@@ -183,17 +183,18 @@ def test_el_dia_de_la_detencion_es_el_operativo_del_reloj_de_las_sesiones(
 def _contexto(registro: Registro) -> tuple[ContextoDia, Broker]:
     perfil = cargar_perfil(tc.PERFIL)
     md = tc._mercado({})
+    cuenta = CuentaViva(
+        reglas_de_fase(perfil, "reto"),
+        registro.decimal("instrumento_contrato"),
+        tc.MINUTO_INI * MS_POR_MINUTO - 1,
+    )
     broker = Broker(
         reglas_broker_de(perfil, registro),
         Configuracion(False, 0, lambda _m: tc.SPREAD),
         md.mercado(),
         registro.decimal("instrumento_contrato"),
         md.escala,
-    )
-    cuenta = CuentaViva(
-        reglas_de_fase(perfil, "reto"),
-        registro.decimal("instrumento_contrato"),
-        tc.MINUTO_INI * MS_POR_MINUTO - 1,
+        saldo=lambda: cuenta.saldo,  # con apalancamiento en el perfil es obligatorio (ADR-0081)
     )
     ctx = ContextoDia(broker, cuenta, registro.decimal("instrumento_contrato"), md.escala)
     return ctx, broker

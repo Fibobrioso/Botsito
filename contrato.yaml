@@ -37,6 +37,12 @@ rutas_permitidas:
   - tests/unit/test_arnes_motor.py
   # el test de «### Ordenes», que gana el campo de 4.e
   - tests/unit/test_vida_de_la_orden.py
+  # ampliado el 2026-10-17 en la fase 3 (respuesta del consultor a la PARADA, punto 2): los tests
+  # nuevos del margen y del limite viven en un fichero propio, y dos tests que construyen el broker
+  # con el perfil real (saldo obligatorio con apalancamiento) o afirman el lote colocado
+  - tests/unit/test_margen_lote.py
+  - tests/unit/test_racha_perdidas.py
+  - tests/unit/test_cableado.py
   - tests/unit/test_kit.py
   - tests/regression/test_cuenta_7_de_agosto.py
   - docs/encargos/
