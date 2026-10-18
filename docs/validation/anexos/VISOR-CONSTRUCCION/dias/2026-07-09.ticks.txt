@@ -1,0 +1,3 @@
+CASO caso-eurusd-2026-07-09
+ORDENES frente a «### Ordenes» de main: iguales
+rechazos por precio_invalido del dia: 0

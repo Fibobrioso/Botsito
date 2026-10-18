@@ -1,0 +1,100 @@
+== caso-eurusd-2026-01-08
+caso-eurusd-2026-01-08: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 51; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-01-08.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (3 ordenes del dia)
+rechazos por precio_invalido del dia: 1
+== caso-eurusd-2026-01-29
+caso-eurusd-2026-01-29: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 60; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-01-29.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (19 ordenes del dia)
+rechazos por precio_invalido del dia: 3
+== caso-eurusd-2026-01-30
+caso-eurusd-2026-01-30: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 60; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-01-30.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (3 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-04-17
+caso-eurusd-2026-04-17: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 120; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-04-17.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (0 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-04-27
+caso-eurusd-2026-04-27: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 119; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-04-27.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (3 ordenes del dia)
+rechazos por precio_invalido del dia: 3
+== caso-eurusd-2026-07-01
+caso-eurusd-2026-07-01: H4 de contexto 8; antes del dia 5; del mes anterior 5; en un dia oculto o mes reservado 5 | M1 de la ventana antes de las 00:00Z 118; en un dia oculto o mes reservado 118 | PARADA
+sin pagina: su contexto pintaria un dia oculto (contexto_h4.py)
+ORDENES frente a «### Ordenes» de main: iguales (4 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-07-08
+caso-eurusd-2026-07-08: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 119; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-07-08.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (3 ordenes del dia)
+rechazos por precio_invalido del dia: 1
+== caso-eurusd-2026-07-09
+caso-eurusd-2026-07-09: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 116; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-07-09.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (3 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-07-13
+caso-eurusd-2026-07-13: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 120; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-07-13.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (14 ordenes del dia)
+rechazos por precio_invalido del dia: 1
+== caso-eurusd-2026-07-14
+caso-eurusd-2026-07-14: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 120; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-07-14.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (0 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-07-16
+caso-eurusd-2026-07-16: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 116; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-07-16.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (1 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-03
+caso-eurusd-2026-08-03: H4 de contexto 8; antes del dia 5; del mes anterior 4; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 120; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-03.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (15 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-07
+caso-eurusd-2026-08-07: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 114; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-07.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (3 ordenes del dia)
+rechazos por precio_invalido del dia: 2
+== caso-eurusd-2026-08-11
+caso-eurusd-2026-08-11: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 119; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-11.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (4 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-14
+caso-eurusd-2026-08-14: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 113; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-14.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (0 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-19
+caso-eurusd-2026-08-19: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 117; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-19.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (0 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-20
+caso-eurusd-2026-08-20: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 120; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-20.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (18 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-21
+caso-eurusd-2026-08-21: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 116; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-21.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (2 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-25
+caso-eurusd-2026-08-25: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 116; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-25.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (1 ordenes del dia)
+rechazos por precio_invalido del dia: 0
+== caso-eurusd-2026-08-27
+caso-eurusd-2026-08-27: H4 de contexto 8; antes del dia 5; del mes anterior 0; en un dia oculto o mes reservado 0 | M1 de la ventana antes de las 00:00Z 115; en un dia oculto o mes reservado 0 | ok
+pagina generada y extraida: dias/2026-08-27.pagina.txt
+ORDENES frente a «### Ordenes» de main: iguales (2 ordenes del dia)
+rechazos por precio_invalido del dia: 1

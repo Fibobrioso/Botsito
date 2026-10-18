@@ -132,3 +132,23 @@ Copiada tal cual:
 > Lo que sigue: la fase 1 (la fila de exposiciones antes de la primera página; los cuatro guiones a anexos; las comprobaciones sesión por sesión) y la fase 2, sin parar, salvo que la traza no reproduzca la corrida de main, que la guardia niegue un guion o que contexto_h4.py encuentre una H4 en un día con caso reservado. En cualquiera de esos casos, PARADA.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-18)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/visor-construccion (2026-10-18). Cópiala tal cual al final del encargo y en VISOR-CONSTRUCCION.md, y aplícala con la skill fase-cero.
+>
+> 0. La sesión 2026-07-01 11-15: (a). Se comprueba solo con traza_por_cierre.py, sin generar su página, y la traza no imprime nada anterior a las 00:00Z del 1 de julio. Por qué: la comprobación (qué gate prohíbe en cada cierre y si RN-001 corta por los cartuchos o por ventana_fin) la da la traza entera; la página solo añadiría pintar velas de un día retirado, y no se abre material oculto cuando no hace falta, aunque ya esté fuera del holdout. Que el motor lea el M1 de junio para calentar ya está declarado en la fila de la fase 1. En el informe va «sin página: su contexto pintaría un día oculto (contexto_h4.py)», y en las líneas del cierre, que V no tendrá página de esa sesión. Si V la necesita para el cuestionario, se hará con un esquema dibujado, como la contradicción del sesgo (SESGO-H4-COLOR.md §4.4).
+>
+> 1. Los otros 19 días: sigue con ellos ya, con sus páginas y los guiones, en las fases 1 y 2. contexto_h4.py se corre antes de generar CADA página, no una vez para todas. Si en alguna sale un día oculto, se trata como el punto 0, sin parar, y se dice en el informe.
+>
+> Además:
+> - Las páginas pintan entre 51 y 120 velas M1 de antes de las 00:00Z, y V las abrirá en el navegador. Que contexto_h4.py haya dado «no» para esos 19 días se escribe en la línea de Estado de R3.2, para que V sepa que esas páginas se pueden enseñar. Si un cambio posterior del visor o de la spec cambia lo que pintan, hay que volver a comprobarlas con contexto_h4.py antes de enseñarlas.
+> - Lo de esta PARADA va a la fila de ERRORES-RECURRENTES como acierto de la regla («contexto_h4.py antes de cada página»), no como error.
+>
+> Lo que sigue: las fases 1 y 2 sin parar, salvo lo que ya manda PARADA: que la traza no reproduzca la corrida de main o que la guardia niegue un guion.
+>
+> Rama lista para revisión, NO cerrada.

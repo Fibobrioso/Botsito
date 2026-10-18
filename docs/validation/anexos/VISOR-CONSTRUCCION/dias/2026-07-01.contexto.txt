@@ -1,0 +1,1 @@
+caso-eurusd-2026-07-01: H4 de contexto 8; antes del dia 5; del mes anterior 5; en un dia oculto o mes reservado 5 | M1 de la ventana antes de las 00:00Z 118; en un dia oculto o mes reservado 118 | PARADA

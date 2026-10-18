@@ -1,0 +1,40 @@
+PAGINA caso-eurusd-2026-08-14.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.html · sin graficos, sin el parentesis del sesgo, sin saldo ni equity, sin
+nada anterior a las 00:00Z de la fecha del caso
+DIAGNOSTICO-A35-cierre_vela_contraria DIAGNOSTICO-A44-sin_tope DIAGNOSTICO-CUENTA-diaria: corrida en hipotesis, sin valor para ninguna medida
+# Visor de dia: caso-eurusd-2026-08-14 · 2026-08-14
+Motor: spec vigente + broker simulado (ADR-0053) · reloj de pared: Europe/Madrid · ventana (antes del dia)-15:00 · operaciones del trader 1, del bot 0, parejas del criterio 0
+■ azul: trader■ morado: bot-- rojo: stop·· verde: objetivo DERIVADO por regla (objetivo_rr; el caso no trae objetivo, ADR-0043)— naranja: pareja del criterio▭ verde/rojo: zona de entrada que ligo el motor (compra/venta), visible desde el cierre del breaker (solo --simular)
+## Hechos del motor, en el instante en que se fijaron
+## Contexto H4: la previa y las que miro el sesgo
+## Por sesion
+### Sesion 07-11 (07:00-11:00)
+Sesgo anotado por el motor: alcista
+Embudo: sesgo:si · orden_dimensionada:no[productoras sin cumplirse] · detenido_por_tope:no[productoras sin cumplirse] · detenido_por_tope_total:no[productoras sin cumplirse] · detenido_por_cartuchos:no[productoras sin cumplirse] · detenido_por_racha:no[productoras sin cumplirse] · liquidez_tomada:no[productoras sin cumplirse] | Donde se para: orden_dimensionada:no[productoras sin cumplirse]
+Hechos fijados (en su instante; un valor `no` apaga el hecho):
+  | (2 filas de hechos fijados omitidas: las resume traza_por_cierre.py)
+Primitivas NO_IMPLEMENTADA (regla: primitiva): RN-007: predicado:se_mapea_estructura, RN-021: predicado:contexto_filtrable, RN-022: predicado:ninguna_regla_de_entrada_aplica
+Acciones bloqueadas (regla: accion, motivo): ninguna
+Reglas disparadas: RN-003
+Avisos H3 (dos reglas de la misma clase dieron SI a la vez): ninguno
+### Sesion 11-15 (11:00-15:00)
+Sesgo anotado por el motor: alcista
+Embudo: sesgo:si · orden_dimensionada:no[productoras sin cumplirse] · detenido_por_tope:no[productoras sin cumplirse] · detenido_por_tope_total:no[productoras sin cumplirse] · detenido_por_cartuchos:no[productoras sin cumplirse] · detenido_por_racha:no[productoras sin cumplirse] · liquidez_tomada:no[productoras sin cumplirse] | Donde se para: orden_dimensionada:no[productoras sin cumplirse]
+Hechos fijados (en su instante; un valor `no` apaga el hecho):
+  | (2 filas de hechos fijados omitidas: las resume traza_por_cierre.py)
+Primitivas NO_IMPLEMENTADA (regla: primitiva): RN-007: predicado:se_mapea_estructura, RN-021: predicado:contexto_filtrable, RN-022: predicado:ninguna_regla_de_entrada_aplica
+Acciones bloqueadas (regla: accion, motivo): ninguna
+Reglas disparadas: RN-001, RN-003
+Avisos H3 (dos reglas de la misma clase dieron SI a la vez): ninguno
+## Operaciones
+  | origen | sesion | direccion | llenado | entrada | stop | criterio
+  | trader | 07-11 | compra | 08:30:10 | 1.15404 | 1.15388 | -
+## Broker simulado (ADR-0053)
+ordenes 0, posiciones 0, eventos 0, rechazos 0 · (saldo y equity omitidos)
+### Zonas de entrada ligadas por el motor
+ninguna
+### Ordenes
+ninguna
+### Posiciones
+ninguna
+### Eventos
+ninguno

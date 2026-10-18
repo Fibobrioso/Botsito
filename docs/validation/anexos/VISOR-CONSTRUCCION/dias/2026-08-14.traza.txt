@@ -1,0 +1,32 @@
+CASO caso-eurusd-2026-08-14 · motor visor --simular --caso con las opciones de la corrida 2
+ORDENES frente a «### Ordenes» de main: iguales (0 ordenes del dia)
+== Sesion 07-11: de 05:00:00Z (07:00:00 del trader) a 09:00:00Z (11:00:00 del trader) ==
+  disparadas en la sesion: RN-003
+  hechos fijados: 1; solo los cambios de valor de cada hecho:
+    05:00:00Z (07:00:00 del trader) RN-003 sesgo=alcista
+  cierres, en tramos de cierres seguidos iguales (desde - hasta, n | reglas disparadas | efectos prohibidos | acciones bloqueadas):
+  RN-004, en tramos de cierres seguidos iguales (desde - hasta, n | alcanza_nivel / cruza / la_toma_es_de_la_sesion | pivote | extremo de las M1 del tramo en el lado del pivote: el minimo si es un bajo, el maximo si es un alto):
+    05:00:00Z (07:00:00 del trader) - 06:44:00Z (08:44:00 del trader), 105 | NO / - / - | bajo 1.15366, formado 04:45:00Z (06:45:00 del trader) | minimo 1.15382 en la M1 de 05:01:00Z (07:01:00 del trader)
+    06:45:00Z (08:45:00 del trader) - 08:44:00Z (10:44:00 del trader), 120 | NO / - / - | bajo 1.15387, formado 06:45:00Z (08:45:00 del trader) | minimo 1.15408 en la M1 de 06:54:00Z (08:54:00 del trader)
+    08:45:00Z (10:45:00 del trader) - 09:00:00Z (11:00:00 del trader), 16 | NO / - / - | bajo 1.15502, formado 08:45:00Z (10:45:00 del trader) | minimo 1.1552 en la M1 de 08:50:00Z (10:50:00 del trader)
+  gates, en tramos de cierres seguidos iguales (desde - hasta, n | RN-005 se_desarrolla_en_el_lado_de_ruido: valor, lado y 0 de la zona frente al nivel de la toma | RN-009 zonas_desarrolladas_superan: valor, zonas de control (tope 1) | RN-001 en_ventana: valor, hechos detenido_por_* fijados):
+    05:00:00Z (07:00:00 del trader) - 09:00:00Z (11:00:00 del trader), 241 | NO, sin zona o sin toma | NO, - | SI, ninguno
+  ordenes de la sesion:
+    ninguna
+== Sesion 11-15: de 09:00:00Z (11:00:00 del trader) a 13:00:00Z (15:00:00 del trader) ==
+  disparadas en la sesion: RN-001, RN-003
+  hechos fijados: 1; solo los cambios de valor de cada hecho:
+    09:00:00Z (11:00:00 del trader) RN-003 sesgo=alcista
+  cierres, en tramos de cierres seguidos iguales (desde - hasta, n | reglas disparadas | efectos prohibidos | acciones bloqueadas):
+    13:00:00Z (15:00:00 del trader) - 13:00:00Z (15:00:00 del trader), 1 | RN-001 | abrir_operacion, buscar_entradas | -
+  RN-004, en tramos de cierres seguidos iguales (desde - hasta, n | alcanza_nivel / cruza / la_toma_es_de_la_sesion | pivote | extremo de las M1 del tramo en el lado del pivote: el minimo si es un bajo, el maximo si es un alto):
+    09:00:00Z (11:00:00 del trader) - 09:59:00Z (11:59:00 del trader), 60 | NO / - / - | bajo 1.15502, formado 08:45:00Z (10:45:00 del trader) | minimo 1.15509 en la M1 de 09:35:00Z (11:35:00 del trader)
+    10:00:00Z (12:00:00 del trader) - 10:44:00Z (12:44:00 del trader), 45 | NO / - / - | bajo 1.15509, formado 10:00:00Z (12:00:00 del trader) | minimo 1.15519 en la M1 de 10:04:00Z (12:04:00 del trader)
+    10:45:00Z (12:45:00 del trader) - 12:29:00Z (14:29:00 del trader), 105 | NO / - / - | bajo 1.15519, formado 10:45:00Z (12:45:00 del trader) | minimo 1.15538 en la M1 de 10:44:00Z (12:44:00 del trader)
+    12:30:00Z (14:30:00 del trader) - 12:59:00Z (14:59:00 del trader), 30 | NO / - / - | bajo 1.15626, formado 12:30:00Z (14:30:00 del trader) | minimo 1.15635 en la M1 de 12:56:00Z (14:56:00 del trader)
+    13:00:00Z (15:00:00 del trader) - 13:00:00Z (15:00:00 del trader), 1 | NO / - / - | bajo 1.15659, formado 13:00:00Z (15:00:00 del trader) | minimo 1.1566 en la M1 de 12:59:00Z (14:59:00 del trader)
+  gates, en tramos de cierres seguidos iguales (desde - hasta, n | RN-005 se_desarrolla_en_el_lado_de_ruido: valor, lado y 0 de la zona frente al nivel de la toma | RN-009 zonas_desarrolladas_superan: valor, zonas de control (tope 1) | RN-001 en_ventana: valor, hechos detenido_por_* fijados):
+    09:00:00Z (11:00:00 del trader) - 12:59:00Z (14:59:00 del trader), 240 | NO, sin zona o sin toma | NO, - | SI, ninguno
+    13:00:00Z (15:00:00 del trader) - 13:00:00Z (15:00:00 del trader), 1 | NO, sin zona o sin toma | NO, - | NO, ninguno
+  ordenes de la sesion:
+    ninguna

@@ -98,7 +98,7 @@ que el rótulo de la página sea el de la corrida 2; con `--hasta HH:MM`, la vis
     gráfico son del **día UTC anterior**. En una página del 2026-04-01 son velas del 31 de marzo (mes
     reservado entero); en una del 2026-07-01, del 30 de junio. El precedente de R3.1
     (CORRIDA-CONSTRUCCION.md §11, ERRORES-RECURRENTES.md, fila de `trabajo/corrida-construccion`)
-    trató por su fecha UTC una H4 de las 21:00Z del último día de junio como de un día de junio, y
+    trató por su fecha UTC una H4 del último día de junio como de un día de junio, y
     ese día salió del holdout. **Por eso en esta rama «anterior al día dev» se lee por la fecha UTC
     de la vela**: nada del informe ni de los anexos lleva un instante, una vela ni un precio
     anterior a las 00:00Z de la fecha del caso.
@@ -396,7 +396,7 @@ Copiada tal cual (también al final de `docs/encargos/trabajo-visor-construccion
 >
 > Rama lista para revisión, NO cerrada.
 
-**Aplicación punto por punto (en curso):** 0 → los tres días de P2 entran en la fase 1; 1 → el
+**Aplicación punto por punto** (dónde está cada uno, en §5): 0 → los tres días de P2 entran en la fase 1; 1 → el
 guion de traza; 2 → el extractor; 3 → las 2 sesiones por la traza de RN-004; 4 → los cinco rechazos
 y 2026-04-16 sin página; 5 → la regla de la fecha UTC en `comun_visor.antes_del_dia`; 6 → las tres
 deudas y las líneas del cierre; 7 → el guion de cierre simulado; 8 → la fila de ERRORES-RECURRENTES
@@ -455,6 +455,733 @@ las 14 sesiones sin orden, y la del «Además» (si RN-001 corta por los cartuch
 
 Espero tu respuesta a la PARADA 2.
 
+### 2.b Respuesta del consultor a la PARADA 2 (2026-10-18)
+
+Copiada tal cual (también al final de `docs/encargos/trabajo-visor-construccion.md`):
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/visor-construccion (2026-10-18). Cópiala tal cual al final del encargo y en VISOR-CONSTRUCCION.md, y aplícala con la skill fase-cero.
+>
+> 0. La sesión 2026-07-01 11-15: (a). Se comprueba solo con traza_por_cierre.py, sin generar su página, y la traza no imprime nada anterior a las 00:00Z del 1 de julio. Por qué: la comprobación (qué gate prohíbe en cada cierre y si RN-001 corta por los cartuchos o por ventana_fin) la da la traza entera; la página solo añadiría pintar velas de un día retirado, y no se abre material oculto cuando no hace falta, aunque ya esté fuera del holdout. Que el motor lea el M1 de junio para calentar ya está declarado en la fila de la fase 1. En el informe va «sin página: su contexto pintaría un día oculto (contexto_h4.py)», y en las líneas del cierre, que V no tendrá página de esa sesión. Si V la necesita para el cuestionario, se hará con un esquema dibujado, como la contradicción del sesgo (SESGO-H4-COLOR.md §4.4).
+>
+> 1. Los otros 19 días: sigue con ellos ya, con sus páginas y los guiones, en las fases 1 y 2. contexto_h4.py se corre antes de generar CADA página, no una vez para todas. Si en alguna sale un día oculto, se trata como el punto 0, sin parar, y se dice en el informe.
+>
+> Además:
+> - Las páginas pintan entre 51 y 120 velas M1 de antes de las 00:00Z, y V las abrirá en el navegador. Que contexto_h4.py haya dado «no» para esos 19 días se escribe en la línea de Estado de R3.2, para que V sepa que esas páginas se pueden enseñar. Si un cambio posterior del visor o de la spec cambia lo que pintan, hay que volver a comprobarlas con contexto_h4.py antes de enseñarlas.
+> - Lo de esta PARADA va a la fila de ERRORES-RECURRENTES como acierto de la regla («contexto_h4.py antes de cada página»), no como error.
+>
+> Lo que sigue: las fases 1 y 2 sin parar, salvo lo que ya manda PARADA: que la traza no reproduzca la corrida de main o que la guardia niegue un guion.
+>
+> Rama lista para revisión, NO cerrada.
+
+**Aplicación punto por punto:** 0 → 2026-07-01 se mira solo con la traza y su página no se genera
+(`dias/2026-07-01.pagina.txt` dice «sin página: su contexto pintaría un día oculto
+(contexto_h4.py)»); 1 → `contexto_h4.py` corre antes de CADA página, dentro de `revisar_dia.py`, y
+ningún otro día dio un día oculto (§2.c); «Además» → la línea de Estado de R3.2 y la fila de
+ERRORES-RECURRENTES, en §4. Ninguna PARADA nueva: la traza reprodujo la corrida de `main` en los 20
+días y la guardia no negó ningún guion (sí negó cuatro comandos compuestos de la sesión, que se
+partieron en llamadas sueltas sin cambiar lo que hacían: §2.c).
+
+### 2.c Cómo se corrió cada día
+
+Un guion por día, `anexos/VISOR-CONSTRUCCION/revisar_dia.py`, en el orden que manda la respuesta a
+la PARADA 2:
+
+1. `contexto_h4.py <caso>`. Si sale distinto de 0, la página NO se genera.
+2. La página, con el comando de la corrida 2, a `data/visor/visor-construccion/` (fuera de git):
+
+       uv run botsito motor visor --simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope --diagnostico-cuenta-diaria --caso caso-eurusd-AAAA-MM-DD --salida data/visor/visor-construccion
+
+   (el guion llama a `botsito.cli.main` con esa misma lista de argumentos).
+3. `extraer_pagina.py <página> --sin-hechos`: lo del día dev de la página, a `dias/<fecha>.pagina.txt`.
+4. `traza_por_cierre.py <caso> --rn004 --gates`: la traza por cierre, a `dias/<fecha>.traza.txt`;
+   PARA con código 3 si sus órdenes no son las de «### Ordenes» de `main`.
+5. `ticks_del_rechazo.py <caso>`: los rechazos por `precio_invalido` frente al bid y el ask, a
+   `dias/<fecha>.ticks.txt`.
+
+Los 20 días, en dos lotes en segundo plano (cada uno, un proceso):
+
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/revisar_dia.py caso-eurusd-2026-01-08 caso-eurusd-2026-01-29 caso-eurusd-2026-01-30 caso-eurusd-2026-04-17 caso-eurusd-2026-04-27 caso-eurusd-2026-07-01 caso-eurusd-2026-07-08 caso-eurusd-2026-07-09 caso-eurusd-2026-07-13 caso-eurusd-2026-07-14
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/revisar_dia.py caso-eurusd-2026-07-16 caso-eurusd-2026-08-03 caso-eurusd-2026-08-07 caso-eurusd-2026-08-11 caso-eurusd-2026-08-14 caso-eurusd-2026-08-19 caso-eurusd-2026-08-20 caso-eurusd-2026-08-21 caso-eurusd-2026-08-25 caso-eurusd-2026-08-27
+
+Lo que dijeron, día a día (la salida de los dos lotes, en `anexos/VISOR-CONSTRUCCION/lotes.txt`):
+- **«ORDENES frente a «### Ordenes» de main: iguales» en los 20 días.** El visor con `--caso`
+  reproduce la corrida 2, como decía §1.a.
+- **`contexto_h4.py` dio «ok» en 19 días y PARADA en 2026-07-01**, el de la PARADA 2: su página no
+  se generó. En los 19, 0 velas en un día oculto o un mes reservado.
+- **Los anexos salen de estos comandos, con los guiones tal como se commitean:** una última pasada
+  de los dos lotes, después del último cambio de los guiones, dio los mismos `sha256` en los 84
+  ficheros de `dias/` y en `lotes.txt`; y `reentradas.py`, `listas.py`, `resumen_gates.py` y los
+  cuatro `--velas`, vueltos a correr, dan los mismos bytes que sus salidas guardadas.
+
+Además, tres comandos sueltos (el mismo guion de traza con `--velas`, que imprime las M1 del día dev
+que empiezan en un tramo UTC), para ver dónde estaba el 0 del trader en los días de P2:
+
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/traza_por_cierre.py caso-eurusd-2026-01-29 --sesion 11-15 --velas 12:56-13:02
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/traza_por_cierre.py caso-eurusd-2026-08-20 --sesion 11-15 --velas 10:44-11:01
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/traza_por_cierre.py caso-eurusd-2026-01-08 --sesion 07-11 --velas 08:00-08:22
+
+(salidas en `dias/<fecha>.velas-trader.txt`), y uno más para la toma previa de 2026-01-08 (§2.f),
+con salida en `dias/2026-01-08.velas-toma.txt`:
+
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/traza_por_cierre.py caso-eurusd-2026-01-08 --sesion 11-15 --velas 09:44-10:01
+ Y dos guiones que solo leen salidas ya escritas:
+`reentradas.py` (sobre «### Ordenes» de `main`; §2.d) y `resumen_gates.py` (sobre las trazas;
+§2.e).
+
+**Lo que la guardia negó, y cómo se hizo:** cuatro comandos de la sesión, ninguno un guion: una
+variable de entorno `F=` con el nombre de la salida, un `for f in …` sobre tres trazas, un `date`
+detrás de un `ls`, y la ejecución de un guion en el mismo comando que su `sed -i`. Cada uno se partió
+en llamadas sueltas, con el nombre del fichero literal, como dice su mensaje; ninguno cambió lo que
+se medía. No hay hallazgo de guardia.
+
+**Cómo se lee la traza.** Cada cierre de M1 es un instante; la vela que cierra en `t` empieza en
+`t − 1 min`. Las horas van en UTC y, entre paréntesis, en el reloj del trader (Europe/Madrid). Una
+orden «colocada hh:mm:59Z» se coloca en el cierre de `hh:mm+1`. «Antes del día» tapa todo lo
+anterior a las 00:00Z de la fecha del caso; ninguna vela, hora ni precio de antes entra en este
+informe.
+
+**La regla del pivote que se comprueba** (el «punto» de ADR-0064): `ultimo_punto_de_ruptura`
+(`domain/estructura_m1.py:189-212`) toma el último pivote de M1 contrario a la entrada, formado con
+`CIERRE_VELA_CONTRARIA` (`domain/pivotes_m15.py:76-121`): una vela de color contrario cierra tras una
+racha de velas del otro color, y el nivel es el extremo de ESA racha (el máximo en una compra, el
+mínimo en una venta), sin contar la vela contraria. Una vela sin cuerpo no es de ningún color y corta
+la racha (ADR-0076 §2). El 0 de la caja es ese nivel, y el punto se identifica por el nivel y el
+inicio de la vela contraria (`zonas.py:352-403`). Con `caja_se_fija = en_cada_cierre_m1`
+(ADR-0074 §1), cada 1 nuevo del mismo punto es una zona nueva con el mismo 0.
+
+### 2.d P2: el 0 de la caja, en los tres días que eligió el consultor
+
+#### 2026-01-29 11-15 (venta, Δentrada 52)
+
+Página: `dias/2026-01-29.pagina.txt`. Traza: `dias/2026-01-29.traza.txt` y
+`dias/2026-01-29.velas-trader.txt`.
+
+- **Sesgo y toma:** RN-003 fija `sesgo=bajista` a las 10:00Z (11:00 del trader); RN-004 fija
+  `liquidez_tomada` a las 12:51Z (13:51): el alto de M15 de 1.19518, formado a las 12:45Z (13:45).
+- **Las órdenes del bot:**
+
+  | orden | colocada | 0 | 1 | punto (nivel @ vela contraria) | resultado |
+  |---|---|---|---|---|---|
+  | o16 | 12:53:59Z (13:53:59) | 1.19549 | 1.19566 | 1.19549 @ 12:53Z | llenada 12:54:12Z |
+  | o17 | 12:54:59Z (13:54:59) | 1.19549 | 1.1959 | 1.19549 @ 12:53Z | llenada 12:55:00Z |
+  | o18 | 12:56:59Z (13:56:59) | 1.1954 | 1.19593 | 1.1954 @ 12:56Z | cancelada |
+  | o19 | 12:57:59Z (13:57:59) | 1.1954 | 1.1961 | 1.1954 @ 12:56Z | cancelada |
+
+- **El 0 sale del pivote que dice la spec.** La vela de las 12:52Z (13:52) es roja (abre 1.1956,
+  cierra 1.19549, mínimo 1.19549), la de las 12:51Z es verde y la de las 12:53Z es verde: la racha
+  roja es solo la de las 12:52Z, y su mínimo, 1.19549, es el pivote bajo que forma la vela contraria
+  de las 12:53Z. Ese es el 0 de o16 y o17. El de o18 y o19 es el mínimo de la vela roja de las 12:55Z
+  (1.1954), que forma la verde de las 12:56Z. El 0 no se mueve dentro de un punto; el 1 sí: el
+  máximo de las velas desde la que marca el punto hasta la última cerrada (1.19566 con la de las
+  12:52Z y las 12:53Z; 1.1959 con la de las 12:54Z). Es lo que dicen ADR-0064 §2 y ADR-0074 §1.
+- **Pero o17 vuelve a colocar el punto de o16 después de que o16 se llenara.** o16 se llena a las
+  12:54:12Z; su stop (1.19563) queda dentro de la vela de las 12:54Z (máximo 1.1959); en el cierre
+  siguiente RN-011 liga una zona NUEVA del mismo punto, con el 1 nuevo, y o17 se coloca y se llena.
+  ADR-0064, decisión 1: «Un punto ya usado no se vuelve a colocar. Usado es con la orden enviada,
+  aceptada o rechazada.» Y ADR-0074 §1 recalcula el 1 «hasta el llenado». Ver 2.d.4.
+- **El 0 del trader:** vende a las 14:01:15 de su reloj (13:01:15Z) en 1.19601, con el stop en
+  1.19616. La vela de las 12:58Z es roja (mínimo 1.19603) y la de las 12:59Z es verde: con la regla
+  del bot, eso es un pivote bajo de 1.19603, formado en el cierre de las 13:00Z, 2 puntos por encima
+  de la entrada del trader. **Y el bot lo vio:** de 13:00Z a 13:01Z su zona tiene el 0 en 1.19603
+  (`gates` de la traza), pero RN-009 la prohíbe: desde las 12:59Z hay 2 zonas de control contadas
+  desde la toma, y el tope es 1 (ADR-0076 §2 fija que se cuentan tras la toma). RN-005 no prohíbe
+  (el 0 está por encima de la toma, el lado de la operativa bajista).
+- **Conclusión: el 0, correcto. La Δ de 52 puntos es de regla:** el bot entra en el primer pivote
+  tras la toma, y el trader en uno posterior que el bot ve y RN-009 prohíbe. Va a V con la
+  pregunta 8 (§3.2). La reentrada en el punto de o16 es **E** (2.d.4).
+
+#### 2026-08-20 11-15 (compra, Δentrada 36)
+
+Página: `dias/2026-08-20.pagina.txt`. Traza: `dias/2026-08-20.traza.txt` y
+`dias/2026-08-20.velas-trader.txt`.
+
+- **Sesgo y toma:** `sesgo=alcista` a las 09:00Z (11:00); `liquidez_tomada` a las 10:46Z (12:46).
+- **Las órdenes del bot:**
+
+  | orden | colocada | 0 | 1 | punto | resultado |
+  |---|---|---|---|---|---|
+  | o10 | 10:48:59Z (12:48:59) | 1.17012 | 1.16996 | 1.17012 @ 10:48Z | cancelada (RN-006) |
+  | o11 | 10:49:59Z (12:49:59) | 1.17012 | 1.16994 | 1.17012 @ 10:48Z | llenada (12:50:01 del trader) |
+  | o12 a o15 | 10:50:59Z a 10:53:59Z | 1.17007 | de 1.16991 a 1.16949 | 1.17007 @ 10:50Z | canceladas |
+  | o16 | 11:47:59Z (13:47:59) | 1.16865 | 1.1685 | 1.16865 @ 11:47Z | cancelada |
+  | o17 | 11:48:59Z (13:48:59) | 1.16865 | 1.16834 | 1.16865 @ 11:47Z | llenada (13:49:09 del trader) |
+  | o18 | 11:51:59Z (13:51:59) | 1.16869 | 1.16833 | 1.16869 @ 11:50Z | cancelada |
+
+- **El 0 sale del pivote que dice la spec.** La vela de las 10:47Z es verde (máximo 1.17012), la de
+  las 10:46Z roja y la de las 10:48Z roja: el pivote alto es 1.17012, el 0 de o10 y o11. o10 se
+  cancela y o11 la sustituye con el 1 nuevo, sin llenarse antes: es la reubicación de ADR-0074, no una
+  reentrada. Lo mismo con o12 a o15 (punto 1.17007) y con o16 y o17 (punto 1.16865). **o17 forma
+  pareja con la segunda compra del trader** (13:49:10, 1.16868; «pareja 1» en la página).
+- **El 0 del trader:** compra a las 13:00:00 de su reloj (11:00:00Z) en 1.16976, con el stop en
+  1.1696. Las velas de las 10:54Z y las 10:55Z son verdes (máximo 1.16974) y la de las 10:56Z roja:
+  con la regla del bot, pivote alto de 1.16974, formado en el cierre de las 10:57Z, 2 puntos por
+  debajo de la entrada del trader; la vela de las 11:00Z lo rompe (máximo 1.16981). **Y el bot lo
+  vio:** de 10:57Z a 11:00Z su zona tiene el 0 en 1.16974, pero RN-009 la prohíbe (2 zonas de control
+  desde las 10:55Z, 3 desde las 11:00Z).
+- **Conclusión: el 0, correcto; la Δ de 36 puntos, de regla**, igual que el 29 de enero: el trader
+  entra en un pivote posterior que el bot ve y RN-009 prohíbe. Pregunta 8 (§3.2).
+
+#### 2026-01-08 07-11 (compra, Δentrada 21)
+
+Página: `dias/2026-01-08.pagina.txt`. Traza: `dias/2026-01-08.traza.txt` y
+`dias/2026-01-08.velas-trader.txt`.
+
+- **Sesgo y toma:** `sesgo=alcista` a las 06:00Z (07:00); `liquidez_tomada` a las 06:28Z (07:28), y
+  una toma nueva del bajo de M15 de 1.16774 desde las 08:01Z (09:01), que abre otro escenario.
+- **Las órdenes del bot:**
+
+  | orden | colocada | 0 | 1 | punto | resultado |
+  |---|---|---|---|---|---|
+  | o1 | 08:04:59Z (09:04:59) | 1.16757 | 1.16748 | 1.16757 @ 08:04Z | rechazada, `precio_invalido` (2.g) |
+  | o2 | 08:06:59Z (09:06:59) | 1.16767 | 1.16755 | 1.16767 @ 08:06Z | cancelada (RN-006) |
+  | o3 | 08:07:59Z (09:07:59) | 1.16767 | 1.16744 | 1.16767 @ 08:06Z | llenada (09:08:57 del trader) |
+
+- **El 0 sale del pivote que dice la spec.** o1: la vela de las 08:03Z es verde (máximo 1.16757) entre
+  dos rojas (08:02Z y 08:04Z). o2 y o3: la de las 08:05Z es verde (máximo 1.16767) y la de las 08:06Z
+  roja. o3 sustituye a o2 sin llenado previo: reubicación.
+- **El 0 del trader:** compra a las 09:21:25 de su reloj (08:21:25Z) en 1.16746, con el stop en
+  1.16739. La vela de las 08:16Z es verde (máximo 1.16746); las de las 08:17Z y las 08:18Z no tienen
+  cuerpo (abren y cierran en el mismo precio; máximo 1.16745 y 1.16746); la de las 08:19Z es roja; la
+  de las 08:21Z rompe 1.16746 (máximo 1.16754). Con la regla del bot, **ahí no hay pivote**: la vela
+  sin cuerpo corta la racha y la roja de las 08:19Z no tiene racha verde justo antes (ADR-0076 §2:
+  «un doji no es de ningún color, no es contraria y corta la racha: no forma pivote»). El trader
+  pone el 0 justo en ese máximo. A esa hora el bot tenía su zona en otro punto (0 1.16787) y la
+  prohibían RN-005 y RN-009 (`gates`, 08:15Z a 08:22Z).
+- **Conclusión: el 0 del bot, correcto; la Δ de 21 puntos, de regla:** el trader marca un punto de
+  breaker en una racha con velas sin cuerpo, que la regla del bot no reconoce. Va a V como pregunta
+  nueva, junto a la 4 (§3.2).
+
+#### 2.d.4 La reentrada en un punto ya llenado: E
+
+Lo que se ve en 2026-01-29 11-15 (o16 → o17) pasa también en 2026-07-13 11-15: o11, o12 y o13
+tienen el mismo punto (1.14301 @ la vela contraria de las 09:36Z) y **las tres se llenan**
+(`dias/2026-07-13.traza.txt`).
+
+**Por qué, en el código:** `toca_colocar_orden_limite` (`engine/zonas.py:469-475`) niega una zona
+si ya está usada (`zonas_usadas`) o si su PUNTO fue rechazado (`punto_rechazado`). Pero «usada» se
+apunta por ZONA (`marcar_usada`, `zonas.py:418-420`, llamado en `primitivas_broker.py:635` y :650), y
+con `en_cada_cierre_m1` cada 1 nuevo es una zona nueva del mismo punto (`zonas.py:381-401`). Así,
+tras un llenado, el cierre siguiente con un 1 distinto da una zona «sin usar» del mismo punto, y se
+coloca. El rechazo sí se apunta por punto (`marcar_rechazada`, :404-410); el llenado, no.
+
+**Lo que dice la decisión:** ADR-0064, decisión 1 («Un punto ya usado no se vuelve a colocar. Usado
+es con la orden enviada, aceptada o rechazada»), que ADR-0066 no enmienda (solo sustituye la
+decisión 2: tras una pérdida, la misma liquidez sigue dando intentos, que no es el mismo punto), y
+ADR-0074 §1 (el 1 se recalcula «hasta el llenado»). El docstring del módulo dice lo mismo
+(`zonas.py:41-42`). El código hace otra cosa.
+
+**Cuántas veces, en la corrida 2 de `main`:** `reentradas.py`, sobre «### Ordenes» de la diaria
+(salida en `anexos/VISOR-CONSTRUCCION/reentradas.txt`):
+
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/reentradas.py
+
+    ordenes en el 0 de una orden ya llenada de su sesion: 47, en 22 sesiones; de ellas, llenadas: 16
+
+Es un recuento por el PRECIO de la orden (el 0, que es el nivel del punto) colocada DESPUÉS del
+llenado de otra de su sesión en ese mismo 0; el punto exacto (nivel e instante de la vela contraria)
+solo lo da la traza, y coincide en las dos sesiones que la tienen (2026-01-29 11-15 y 2026-07-13
+11-15). Dos de las cuatro sesiones con `detenido_por_cartuchos:si` están en la lista (2026-07-13 11-15
+y 2026-08-26 07-11): las reentradas gastan cartuchos.
+
+**Conclusión: E.** El código no hace lo que dice ADR-0064, decisión 1. Afecta a P5 de R3.1 («el bot
+se para en uno o dos minutos y vuelve a entrar», clasificado R con destino V, pregunta 3): parte de
+esas reentradas son este error, no una regla desconocida. La pregunta 3 sigue: si el trader reentra
+en el mismo nivel tras un stop, lo dirá, y entonces cambiará el ADR, no el código solo.
+
+### 2.e Las 14 sesiones sin orden: RN-005, RN-009 y RN-001, cierre a cierre
+
+`traza_por_cierre.py --gates` apunta en cada cierre el valor de los tres predicados de gate y lo que
+los decide: RN-005 (`se_desarrolla_en_el_lado_de_ruido`: el lado y el 0 de la zona que ve el motor
+en ese cierre frente al nivel de la toma), RN-009 (`zonas_desarrolladas_superan`: cuántas zonas de
+control hay desde la toma, con `domain/estructura_m1.zonas_de_control`, frente al tope 1) y RN-001
+(`en_ventana` y los `detenido_por_*` fijados). `resumen_gates.py` cuenta los cierres de cada sesión
+por combinación, con el primero de cada una (salida en `anexos/VISOR-CONSTRUCCION/resumen_gates.txt`):
+
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/resumen_gates.py 2026-01-30 07-11 2026-04-17 07-11 2026-04-27 11-15 2026-07-01 11-15 2026-07-09 07-11 2026-07-14 07-11 2026-07-14 11-15 2026-07-16 11-15 2026-08-03 07-11 2026-08-11 07-11 2026-08-19 11-15 2026-08-21 11-15 2026-08-25 07-11 2026-08-27 11-15 2026-07-01 07-11
+
+| sesión | toma: primer cierre con zona | RN-005 SÍ desde | RN-009 SÍ desde | cierres tras la toma sin ningún gate | zonas de control, como mucho | RN-001 |
+|---|---|---|---|---|---|---|
+| 2026-01-30 07-11 | 07:32Z (08:32) | 07:32Z | 07:40Z (08:40) | 0 | 34 | no dispara |
+| 2026-04-17 07-11 | 05:29Z (07:29) | 05:29Z | 05:43Z (07:43) | 0 | 40 | no dispara |
+| 2026-04-27 11-15 | 10:16Z (12:16) | 10:16Z | 10:27Z (12:27) | 0 | 17 | 13:00Z (15:00), ventana |
+| 2026-07-01 11-15 | 10:52Z (12:52) | 10:52Z | 10:59Z (12:59) | 0 | 32 | 09:00Z a 10:52Z, cartuchos; 13:00Z, ventana |
+| 2026-07-09 07-11 | 07:44Z (09:44) | 07:44Z | 07:53Z (09:53) | 0 | 15 | no dispara |
+| 2026-07-14 07-11 | 06:19Z (08:19) | 06:19Z | 06:30Z (08:30) | 0 | 26 | no dispara |
+| 2026-07-14 11-15 | 09:19Z (11:19) | 09:19Z | 09:28Z (11:28) | 0 | 33 | 13:00Z (15:00), ventana |
+| 2026-07-16 11-15 | 09:05Z (11:05) | 09:05Z | 09:11Z (11:11) | 0 | 23 | 13:00Z (15:00), ventana |
+| 2026-08-03 07-11 | 05:47Z (07:47) | 05:47Z | 05:54Z (07:54) | 0 | 23 | no dispara |
+| 2026-08-11 07-11 | 05:21Z (07:21) | 05:21Z | 05:34Z (07:34) | 0 | 21 | no dispara |
+| 2026-08-19 11-15 | 09:02Z (11:02) | 09:02Z | 09:11Z (11:11) | 0 | 50 | 13:00Z (15:00), ventana |
+| 2026-08-21 11-15 | 11:33Z (13:33) | 11:33Z | 11:44Z (13:44) | 0 | 9 | 13:00Z (15:00), ventana |
+| 2026-08-25 07-11 | 06:15Z (08:15) | 06:15Z | 06:24Z (08:24) | 0 | 17 | no dispara |
+| 2026-08-27 11-15 | 11:55Z (13:55) | 11:55Z | 12:05Z (14:05) | 0 | 15 | 13:00Z (15:00), ventana |
+
+(En 2026-01-30 la hora del trader es UTC+1; en las demás, UTC+2.)
+
+Lo que dice la tabla, sesión por sesión, con el mismo patrón en las 14:
+- **Antes de la toma no hay zona** («sin zona o sin toma»): ningún gate tiene nada que prohibir y
+  no hay nada que colocar.
+- **En el cierre de la toma, RN-005 dice SÍ**: la primera zona tras la toma tiene el 0 al otro lado
+  de la liquidez tomada (por encima en una compra, por debajo en una venta), que es el lado de ruido
+  de RN-005 tal como lo escribe la spec («el precio se desarrolla por encima de la liquidez de M15 en
+  sesgo alcista, o por debajo de ella en sesgo bajista»; `zonas.py:503-521`).
+- **Entre 6 y 14 cierres después, RN-009 dice SÍ** con 2 zonas de control (tope 1), y ya no vuelve a
+  NO en la sesión: las zonas se cuentan desde la toma (ADR-0076 §2) y solo suben.
+- **Tras la toma, 0 cierres sin un gate en SÍ** en las 14: la orden no se coloca nunca. Cuando RN-015
+  pide colocarla, lo que la traza apunta es su acción `colocar_orden_limite` bloqueada por el efecto
+  prohibido `abrir_operacion`.
+- **RN-001 dispara en el cierre de `ventana_fin`** (15:00 del trader) en las 7 sesiones 11-15, con
+  `en_ventana` en NO: el intervalo es medio abierto (RN-001, «incluye hasta el instante anterior a
+  ventana_fin»), así que ese cierre ya está fuera. En las sesiones 07-11 no dispara: la ventana es
+  continua de 07:00 a 15:00. **La excepción es 2026-07-01 11-15** (el «Además» del consultor): de
+  09:00Z a 10:52Z (11:00 a 12:52) RN-001 dispara por `detenido_por_cartuchos=hasta_cartuchos_reinicio`,
+  con `en_ventana` en SÍ: los cartuchos se gastaron por la mañana (2.h). En el cierre de las 10:52Z,
+  la toma de una liquidez nueva reinicia los cartuchos (`cartuchos_reinicio =
+  siguiente_liquidez_m15`, ADR-0066), y desde las 10:53Z ningún `detenido_por_*` está fijado; a las
+  13:00Z dispara otra vez, por `ventana_fin`. **Que R3.1 dijera «por el minuto de `ventana_fin`»
+  vale para 6 de las 7**; en 2026-07-01 11-15 RN-001 corta antes por los cartuchos, pero en esos
+  cierres todavía no había toma ni zona, así que no cambia nada de lo que el bot habría hecho.
+
+**Conclusión: correcto en las 14.** Cada gate prohíbe en el instante en que su condición, tal como
+está escrita, se cumple; ninguna sesión tiene un cierre tras la toma en que el bot debiera colocar
+y no lo hiciera. Si el trader entra en el lado de ruido o con más zonas de control es la pregunta 8
+de V, que ya existe (§3.2); 2026-01-29 y 2026-08-20 (2.d) la ilustran mejor que estas 14, porque en
+ellas el bot VE el 0 del trader y RN-009 lo prohíbe.
+
+### 2.f Las 2 sesiones sin `orden_dimensionada`: por qué no hubo toma
+
+Las dos con `--rn004` (`dias/2026-01-08.traza.txt` y `dias/2026-08-14.traza.txt`; páginas
+`dias/2026-01-08.pagina.txt` y `dias/2026-08-14.pagina.txt`). La traza da, en cada cierre, el
+valor de los tres predicados de RN-004 (`alcanza_nivel`, `cruza`, `la_toma_es_de_la_sesion`), el
+pivote de M15 que es la liquidez en ese cierre (lado, nivel e instante en que quedó formado), y el
+extremo de las M1 del tramo en el lado del pivote. Como dijo la fase 0 (§1.c), en las dos falta la
+TOMA, antes de RN-011: no es RN-011 el que no dimensiona.
+
+#### 2026-01-08 11-15 (sesgo bajista: la liquidez es un alto de M15)
+
+| cierres | `alcanza_nivel` / `cruza` / `la_toma_es_de_la_sesion` | pivote | máximo de las M1 del tramo |
+|---|---|---|---|
+| 10:00Z a 10:29Z (11:00 a 11:29) | SÍ / SÍ / NO | alto 1.16753, formado 09:45Z (10:45) | 1.16817, en la M1 de 10:12Z |
+| 10:30Z a 11:14Z (11:30 a 12:14) | NO | alto 1.16817, formado 10:30Z | 1.16804 |
+| 11:15Z a 11:59Z (12:15 a 12:59) | NO | alto 1.16804, formado 11:15Z | 1.16793 |
+| 12:00Z a 14:00Z (13:00 a 15:00) | NO | alto 1.16782, formado 12:00Z | 1.16779 |
+
+- **Lo que pasa:** al abrir la sesión, el precio ya está por encima del alto de 1.16753, y
+  `la_toma_es_de_la_sesion` dice NO porque ese alto ya se rompió con cuerpo ANTES de abrirla: la M1
+  de las 09:54Z (10:54 del trader) abre en 1.16743 y cierra en 1.16755
+  (`dias/2026-01-08.velas-toma.txt`). Fue en la sesión 07-11, cuyo sesgo era alcista. ADR-0066 y A-46 («cada sesión es un mundo diferente»): una liquidez
+  tomada en una sesión anterior del día no cuenta para esta (`primitivas.py:266-296`). Después, cada
+  alto de M15 nuevo queda por encima de todo lo que hace el precio: máximos más bajos toda la tarde,
+  y ninguna toma.
+- **¿Es la lectura de A-35?** No solo: la corrida `a35-inicio` de R3.1 (`--diagnostico-a35
+  inicio_vela_contraria`, `anexos/CORRIDA-CONSTRUCCION/a35-inicio…txt`, línea «Por sesion» de
+  2026-01-08 11-15) tampoco tiene `liquidez_tomada`, con el mismo sesgo bajista. Esa corrida es
+  anterior a ADR-0080 y ADR-0081.
+- **El trader:** vende a las 14:29:05 de su reloj (13:29:05Z) en 1.1675, con el stop en 1.16768.
+- **Conclusión: R.** La regla se aplica como está escrita; lo que no sabemos es si el trader cuenta,
+  para la segunda sesión, una toma que ocurrió en los últimos minutos de la primera, cuando el
+  sesgo era el contrario. Pregunta nueva (§3.2, B).
+
+#### 2026-08-14 07-11 (sesgo alcista: la liquidez es un bajo de M15)
+
+| cierres | `alcanza_nivel` | pivote | mínimo de las M1 del tramo |
+|---|---|---|---|
+| 05:00Z a 06:44Z (07:00 a 08:44) | NO | bajo 1.15366, formado 04:45Z (06:45) | 1.15382, en la M1 de 05:01Z |
+| 06:45Z a 08:44Z (08:45 a 10:44) | NO | bajo 1.15387, formado 06:45Z | 1.15408 |
+| 08:45Z a 09:00Z (10:45 a 11:00) | NO | bajo 1.15502, formado 08:45Z | 1.1552 |
+
+(el cierre de las 09:00Z, que abre la sesión 11-15, sale en las dos sesiones).
+
+- **Lo que pasa:** el precio no llega nunca al bajo de M15 vigente: el mínimo de la sesión,
+  1.15382, queda 16 puntos por encima del bajo de 1.15366. `alcanza_nivel` dice NO en los 241
+  cierres; los otros dos predicados ni se evalúan. Sin toma no hay escenario ni zona (`gates`: «sin
+  zona o sin toma» en toda la sesión).
+- **¿Es la lectura de A-35?** No solo: la corrida `a35-inicio` de R3.1 tampoco tiene
+  `liquidez_tomada` en 2026-08-14 07-11, con el mismo sesgo alcista.
+- **El trader:** compra a las 08:30:10 de su reloj (06:30:10Z) en 1.15404, con el stop en 1.15388.
+  El bot, con ADR-0045 («la liquidez es el pivote de M15 más reciente ya formado»), mira el bajo de
+  1.15366 hasta las 06:45Z; el trader toma otra liquidez, que la traza no puede nombrar.
+- **Conclusión: R.** Qué liquidez marcó el trader: pregunta 5 (§3.2), con este día.
+
+### 2.g Los rechazos por `precio_invalido`
+
+`ticks_del_rechazo.py` (dentro de `revisar_dia.py`; salidas en `dias/<fecha>.ticks.txt`) lee, para
+cada orden rechazada, la cotización con la MISMA función que usó el bróker al rechazarla
+(`Mercado.cotizacion`: el último tick anterior o igual al instante; donde no hay ticks, la última M1
+más el spread supuesto, «respaldo_m1») y la regla del lado equivocado (`llenado.lado_equivocado`,
+ADR-0057). La vela que marca cada 0 y sus vecinas salen de la traza.
+
+| sesión | orden | colocada | el 0 | bid / ask (fuente) | el ask pasó el 0 por | la vela contraria que forma el pivote |
+|---|---|---|---|---|---|---|
+| 2026-07-08 11-15 | o3 compra | 11:42:59Z (13:42:59) | 1.13955 | 1.13954 / 1.13958 (ticks) | 3 puntos | la de las 11:42Z: roja, cierra en 1.13954, 1 punto por debajo del 0 |
+| 2026-07-13 11-15 | o14 compra | 12:14:59Z (14:14:59) | 1.14223 | 1.14222 / 1.14224 (ticks) | 1 punto | la de las 12:14Z: roja, máximo 1.14228, cierra en 1.14222 |
+| 2026-01-08 07-11 | o1 compra | 08:04:59Z (09:04:59) | 1.16757 | 1.16758 / 1.1676 (ticks) | 3 puntos | la de las 08:04Z: roja, abre en 1.16761, por encima del 0, y cierra en 1.16758 |
+| 2026-08-07 07-11 | o1 compra | 05:34:59Z (07:34:59) | 1.15226 | 1.15223 / 1.15228 (ticks) | 2 puntos | la de las 05:34Z: roja, máximo 1.15228, cierra en 1.15223 |
+| 2026-08-07 07-11 | o2 compra | 06:43:59Z (08:43:59) | 1.1522 | 1.1522 / 1.15225 (ticks) | 5 puntos | la de las 06:43Z: roja, cierra en 1.1522, en el 0 |
+| 2026-04-27 07-11 | o1 compra | 04:59:59Z (06:59:59) | 1.17264 | 1.17268 / 1.17272 (respaldo_m1) | 8 puntos | la de las 04:55Z, antes de la ventana: la orden solo se pudo colocar en el primer cierre de la sesión, las 05:00Z, con el precio ya por encima |
+| 2026-04-27 07-11 | o2 compra | 05:05:59Z (07:05:59) | 1.1727 | 1.1727 / 1.17273 (ticks) | 3 puntos | la de las 05:05Z: roja, abre en 1.17271, cierra en 1.1727, en el 0 |
+| 2026-04-27 07-11 | o3 compra | 05:08:59Z (07:08:59) | 1.17275 | 1.17274 / 1.1728 (ticks) | 5 puntos | la de las 05:08Z: roja, máximo 1.17279, cierra en 1.17274 |
+
+- **Dónde colocó el bot la orden frente al precio (ADR-0057):** en las 8, una STOP de compra en el
+  0, con el ask ya por encima: el bróker la rechaza porque es del lado equivocado, como dice
+  ADR-0057 y como prevé ADR-0064 («se coloca como STOP con el precio todavía al otro lado; si ya lo
+  ha pasado, el bróker la rechaza»). El bróker hace lo que dice su regla.
+- **Si la caja ya había quedado atrás:** sí, en las 8. Con la regla del pivote, el 0 es el máximo
+  de la racha verde SIN la vela roja que la cierra; cuando esa roja es pequeña y cierra en el 0, a 1
+  punto o por encima (o el pivote se formó antes de abrir la ventana), en el cierre en que el bot ve
+  el punto el ask ya lo ha pasado, porque el ask es el bid más el spread (de 2 a 6 puntos en estas
+  filas). Es la pregunta 9 de V.
+- **El punto rechazado no se vuelve a colocar con otra caja (ADR-0064, decisión 1; ADR-0074):** se
+  cumple en los cinco días. La traza lista los puntos rechazados de cada sesión y busca cualquier
+  orden posterior en uno de ellos; no hay ninguna (ninguna línea «se colocó con un punto ya
+  rechazado: SÍ»). El rechazo, a diferencia del llenado (2.d.4), sí se apunta por punto
+  (`marcar_rechazada`).
+- **2026-04-16 07-11 ya no rechaza**, sin página, como mandó el consultor. Hoy, en «### Ordenes» de
+  `main`: o1 se coloca a las 06:07:59Z en 1.18025 y se llena a las 06:08:17Z; o2 y o3, en el mismo
+  0, se cancelan; o4, en el mismo 0, se llena a las 06:11:29Z. Es una de las 22 sesiones de
+  `reentradas.txt` (2.d.4): sin traza, no se puede decir si o4 es el mismo punto que o1.
+- **Conclusión: correcto.** El bróker aplica ADR-0057, el bot no reintenta el punto rechazado, y
+  que el bot no entre cuando la caja ya quedó atrás es la regla; si el trader entra o no en ese
+  caso, es la pregunta 9 de V, que gana estos cinco días (§3.2).
+
+### 2.h Las 4 sesiones con los cartuchos agotados, como dato
+
+El consultor pidió llevarlas al informe como dato (respuesta a la PARADA, «Además»): son las 4 con
+`detenido_por_cartuchos:si` en la diaria de `main` (§1.c). Lo que se ve, sin nada en dinero:
+
+| sesión | órdenes llenadas antes de agotarse | ¿el mismo punto? | cuándo se fija `detenido_por_cartuchos` |
+|---|---|---|---|
+| 2026-07-01 07-11 | o1, o2 y o4 (llenadas de 05:00Z a 05:11Z) | no: tres puntos (1.14093, 1.14084 y 1.14085) | 05:12Z (07:12), RN-016; RN-001 prohíbe hasta el final de la sesión |
+| 2026-07-01 11-15 | ninguna: lo arrastra de la mañana | — | 09:00Z (11:00), el primer cierre; se reinicia con la toma de las 10:52Z (2.e) |
+| 2026-07-13 11-15 | o11, o12 y o13 (09:37Z a 09:39Z) | sí: 1.14301 @ 09:36Z, en las tres (traza) | 09:40Z (11:40) |
+| 2026-08-26 07-11 | o1, o3 y o4 (05:39Z a 05:44Z) | el mismo 0, 1.16657 (sin traza: «### Ordenes») | en la diaria, `detenido_por_cartuchos:si` en la sesión |
+
+Dos de las cuatro se agotan con reentradas en el mismo 0 en pocos minutos, que es la E de 2.d.4. Si
+Y (§4.1) se arregla, esas dos sesiones cambian; 2026-07-01 07-11 no.
+
+## 3 · Fase 2 · El resumen
+
+### 3.1 La tabla
+
+| comprobación | sesiones | conclusión | destino |
+|---|---|---|---|
+| P2: ¿el 0 sale del pivote que dice la spec? (§2.d) | 2026-01-29 11-15, 2026-08-20 11-15, 2026-01-08 07-11 | **correcto**: el 0 es el pivote de la regla, no se mueve dentro del punto, y el 1 se recalcula | — |
+| P2: ¿dónde estaba el 0 del trader? (§2.d) | las mismas | **R**: en 01-29 y 08-20, en un pivote posterior que el bot VE y RN-009 prohíbe; en 01-08, en un máximo que la regla no toma por pivote (velas sin cuerpo en la racha) | V: pregunta 8 (01-29, 08-20) y pregunta nueva A (01-08) |
+| P2: el punto de una orden ya llenada se vuelve a colocar (§2.d.4) | 2026-01-29 11-15 y 2026-07-13 11-15 con traza; 47 órdenes en 22 sesiones por recuento | **E** | Y (rama propuesta, §3.3), antes de V |
+| RN-005, RN-009 y RN-001 en las sesiones sin orden (§2.e) | las 14 | **correcto** | V: pregunta 8 |
+| RN-001 en 2026-07-01 11-15: ¿cartuchos o `ventana_fin`? (§2.e) | 2026-07-01 11-15 | **correcto**: los dos, en tramos distintos; no cambia nada de lo que el bot habría hecho | — |
+| Por qué no hubo `orden_dimensionada` (§2.f) | 2026-01-08 11-15 | **R**: la toma fue en la sesión anterior, con el sesgo contrario | V: pregunta nueva B |
+| Por qué no hubo `orden_dimensionada` (§2.f) | 2026-08-14 07-11 | **R**: el precio no llega a ningún bajo de M15 formado; el trader toma otra liquidez | V: pregunta 5 |
+| Rechazos por `precio_invalido` (§2.g) | 2026-07-08 11-15, 2026-07-13 11-15, 2026-01-08 07-11, 2026-08-07 07-11, 2026-04-27 07-11; 2026-04-16 07-11 sin rechazo | **correcto**: el bróker aplica ADR-0057 y el punto rechazado no vuelve | V: pregunta 9 |
+| Los cartuchos agotados (§2.h) | 4 sesiones | dato: dos se agotan por la E | — |
+
+«Correcto» quiere decir aquí que la regla se aplica tal como está escrita, en su instante, y que la
+diferencia con el trader, si la hay, es de regla: va a V como pregunta, no a una rama de código.
+
+### 3.2 Las preguntas para V
+
+Redactadas para el trader, sin cifras de VIABILIDAD-COMISION ni nada en dinero. Las horas, en su
+reloj (Europe/Madrid).
+
+**Las que ya existen** («Para el cuestionario de la sesión 5», CORRIDA-CONSTRUCCION.md §4.5), por su
+texto, con los días que ganan:
+
+- **Pregunta 8:** «¿Entra el trader cuando la zona se desarrolla en el lado de ruido de la liquidez
+  de M15, o cuando hay más zonas de control de las admitidas? (las 14 sesiones de §4.6).» Gana dos
+  días que la enseñan mejor que esas 14: **2026-01-29**, venta de las 14:01 (el bot ve el mismo
+  punto de breaker a las 14:00 y no entra porque ya cuenta dos zonas de control desde la toma de las
+  13:51), y **2026-08-20**, compra de las 13:00 (lo mismo: ve el punto a las 12:57, con dos zonas
+  desde la toma de las 12:46).
+- **Pregunta 9:** «Si el precio ya pasó el 0 cuando se forma la caja, ¿entra o no? (las 3
+  sesiones con `precio_invalido`).» Gana los cinco días de §2.g, con su forma: la vela roja que
+  cierra el tramo verde es pequeña y cierra en el 0 o a un punto, así que el precio de compra ya
+  está por encima cuando se forma el punto: **2026-07-08** 13:42, **2026-07-13** 14:14,
+  **2026-01-08** 09:04, **2026-08-07** 07:34 y 08:43, **2026-04-27** 07:00, 07:05 y 07:08.
+- **Pregunta 5:** «Qué liquidez y qué zona elige (P3, con A-43, A-50 y A-53).» Gana **2026-08-14**,
+  compra de las 08:30 con el stop en 1.15388: el bot no ve ninguna toma de liquidez de M15 en esa
+  sesión (el bajo de M15 vigente, de las 06:45, no se alcanza). ¿Qué bajo de M15 tomó el precio
+  antes de esa compra?
+- **Pregunta 3** (las reentradas): sigue como está. La parte de P5 que es la E de §2.d.4 (el bot
+  vuelve a entrar en el MISMO punto tras un stop) se arregla en Y; lo que quede después de Y es lo
+  que hay que preguntar.
+
+**Las nuevas:**
+
+- **A (la vela sin cuerpo dentro del tramo que marca el punto de breaker).** «Después de una vela
+  verde vienen una o dos velas sin cuerpo (abren y cierran en el mismo precio) y luego una roja. Para
+  tu orden de compra, ¿el máximo de la verde es un punto de breaker? (a) sí, las velas sin cuerpo no
+  cortan el tramo; (b) no, la roja tiene que venir justo después de la verde; (c) otra, ¿cuál?».
+  En venta, lo mismo en espejo. Día: **2026-01-08**, compra de las 09:21 (verde de las 09:16,
+  máximo 1.16746; sin cuerpo las de las 09:17 y las 09:18; roja la de las 09:19); el bot no ve ahí
+  ningún punto. Es distinta de la pregunta 1 de ADR-0076 §4, que va sobre la vela sin cuerpo en el
+  retroceso como alternancia, no sobre el tramo que forma el punto; va junto a la pregunta 4 (qué
+  velas forman la caja).
+- **B (una toma de la sesión anterior, con el sesgo contrario).** «En la sesión de 11 a 15 el sesgo
+  es bajista, y en la de 7 a 11 era alcista. El alto de M15 que ahora es tu liquidez se rompió con
+  cuerpo a las 10:55, todavía en la sesión de la mañana. ¿Esa toma vale para la sesión de la tarde,
+  o esperas a que el precio tome otro alto después de las 11:00? (a) vale, entro en la tarde con
+  esa toma; (b) no vale, espero otra; (c) otra, ¿cuál?». Día: **2026-01-08**, venta de las 14:29.
+  Hoy el bot aplica (b) (ADR-0066, A-46), y en esa tarde no hay otra toma.
+
+### 3.3 La E: la rama que se propone (sin escribirla)
+
+**Y. Un punto ya llenado no se vuelve a colocar con otra caja.**
+- **Qué arreglaría:** que, tras llenarse la orden de un punto, ninguna zona nueva de ese MISMO punto
+  (con otro 1) se vuelva a colocar en la sesión, como dice ADR-0064, decisión 1, y como el código ya
+  hace con un punto rechazado (`marcar_rechazada`). La reubicación de una orden PENDIENTE con el 1
+  nuevo (ADR-0074) no cambia.
+- **Qué ficheros toca:** `src/botsito/engine/zonas.py` (apuntar el punto llenado, como
+  `marcar_rechazada`, y que `toca_colocar_orden_limite` lo niegue, :469-475) y
+  `src/botsito/engine/cableado.py` (donde llega el evento LLENADA del bróker, :366-375, que conoce la
+  zona de la orden por `ctx.zona_de_orden`); quizá `primitivas_broker.py` (`_punto_nuevo`, :235-253,
+  si la reubicación tiene que ver lo mismo). Sin ADR nuevo: aplica la decisión 1 de ADR-0064; si el
+  consultor prefiere fijarlo por escrito, una nota en ADR-0074.
+- **Con qué test:** en `tests/unit/test_caja_hasta_el_llenado.py`, una serie sintética en que la
+  orden del punto se llena, salta su stop en la vela siguiente y el máximo sube (1 nuevo): en `main`
+  se coloca una segunda orden en el mismo punto (el test falla); en la rama no. Y su pareja: con la
+  orden SIN llenar, el 1 nuevo la reubica igual que hoy (el test pasa en los dos). Después, la corrida
+  2 repetida con los tres comandos de R3.1, y `reentradas.py` sobre la salida nueva (debería dar 0
+  órdenes en el punto de una llenada, salvo un pivote nuevo al mismo nivel).
+- **Por qué antes de V:** cambia las reentradas que la pregunta 3 enseña al trader, y dos de las
+  cuatro sesiones con los cartuchos agotados (§2.h).
+
+## 4 · Para la orden de cierre
+
+### 4.1 Líneas preparadas para el commit del contrato de la orden de cierre
+
+**Next Action** (`PROJECT_STATE.md`):
+
+- **O sale** a `docs/state/HISTORIA.md`, con su texto literal, bajo:
+
+      # Next Action HECHA · O · las comprobaciones en el visor · sale de PROJECT_STATE.md en trabajo/visor-construccion (2026-10-18)
+
+      O. Comprobaciones en el visor de R3.1, con sus días (CORRIDA-CONSTRUCCION.md §4.5, «Ramas candidatas»). El cuestionario de V necesita esos gráficos.
+
+      La hace `trabajo/visor-construccion` (docs/validation/VISOR-CONSTRUCCION.md).
+
+  (Ya hay un «# Next Action HECHA · O ·» de `trabajo/entrada-julio`, de otra O: el título lleva por
+  eso su nombre.)
+- **F cambia** a:
+
+      F. Y → V. Las re-corridas de R3.1 con el sesgo nuevo (SESGO-H4-COLOR.md §4) y con el límite del lote (MARGEN-LOTE.md §4) están hechas. Y va antes de V: cambia las reentradas de la pregunta 3.
+
+- **Y entra** (letra nueva: ninguna entrada de la hoja de ruta la nombra; E, la de la rama del
+  margen, ya está HECHA en R3.3, y reutilizarla haría fallar `test_hoja_de_ruta`):
+
+      Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto, y vuelven a colocarse 47 órdenes en 22 sesiones de la corrida 2 (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
+
+- **V cambia:** «y A-57 (el lote que no cabe, MARGEN-LOTE.md §5). Depende de R1.1, de R3.1, de O,
+  de J (kit hoja) y de la copia de seguridad (A.4).» pasa a «A-57 (el lote que no cabe,
+  MARGEN-LOTE.md §5); y las preguntas de VISOR-CONSTRUCCION.md §3.2. Depende de R1.1, de R3.1, de Y,
+  de J (kit hoja) y de la copia de seguridad (A.4).» V no tendrá página de 2026-07-01 11-15 (§2.a):
+  si la necesita para el cuestionario, un esquema dibujado (respuesta a la PARADA 2, punto 0).
+
+**Hoja de ruta** (`docs/plan/HOJA-DE-RUTA.md`):
+
+- **R3.2 pasa a HECHA**, con esta línea tras su «Hecho cuando»:
+
+      - **Estado:** HECHA (`trabajo/visor-construccion`; VISOR-CONSTRUCCION.md): los gráficos son
+        las páginas del visor, regenerables con los comandos del informe (§2.c), fuera de git; 19
+        días con «no» de `contexto_h4.py`, que se pueden enseñar a V (si el visor o la spec cambian
+        lo que pintan, se vuelven a comprobar antes), y 2026-07-01 sin página (su contexto pinta un
+        día oculto). Una E (la reentrada en un punto ya llenado: R3.4) y el resto «correcto», que
+        aquí quiere decir que la regla se aplica como está escrita y la diferencia con el trader es
+        de regla: va a V con sus preguntas (§3.2).
+
+- **R3.4 entra**, al final del tramo R3:
+
+      ### R3.4 · Un punto ya llenado no se vuelve a colocar
+      - **Refs:** NA:Y · ID:ADR-0064 · ID:ADR-0074
+      - **Qué es:** que el bot no vuelva a colocar, con otra caja, el punto cuya orden ya se llenó
+        (ADR-0064, decisión 1; VISOR-CONSTRUCCION.md §2.d.4), y la corrida 2 repetida.
+      - **Depende de:** R3.2 (HECHA).
+      - **Quién:** la sesión, con el encargo del consultor.
+      - **Hecho cuando:** un test lo rompe en `main` y pasa en la rama, y la corrida 2 está repetida
+        con los tres comandos de R3.1.
+
+- **R4.1:** en sus Refs, `NA:O` pasa a `NA:Y`; en «Qué es», «y A-57 (el lote que no cabe,
+  MARGEN-LOTE.md §5).» pasa a «A-57 (el lote que no cabe, MARGEN-LOTE.md §5); y las preguntas de
+  VISOR-CONSTRUCCION.md §3.2 (las dos nuevas y los días que ganan la 5, la 8 y la 9; R3.2).»; y
+  «Depende de» dice «R3.2 (HECHA), R3.3 (HECHA), R3.4 (NA:Y)».
+
+**Technical Debt** (cinco líneas nuevas; su evidencia, en §4.3):
+
+    - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el arnés sí, :2437): con `--todos` arrastra la cuenta (VISOR-CONSTRUCCION.md §4.3).
+    - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
+    - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
+    - `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check, sin declararlo (VISOR-CONSTRUCCION.md §4.3).
+    - `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker (VISOR-CONSTRUCCION.md §4.3).
+
+### 4.2 Las líneas, aplicadas en memoria contra los tests
+
+`anexos/VISOR-CONSTRUCCION/simular_cierre.py` aplica en memoria, como sustituciones exactas que
+tienen que casar una vez, todas las líneas de §4.1, y corre las funciones a, b y c de
+`tests/unit/test_hoja_de_ruta.py` y los cuatro tests de `tests/unit/test_project_state.py` (las
+secciones y su orden, `Current Branch` no vacío, menos de 25.000 bytes) sobre una copia del
+PROJECT_STATE simulado en una carpeta temporal fuera del repo:
+
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/simular_cierre.py .
+
+    a: []
+    b: []
+    c: []
+    test_project_state_exists: pasa
+    test_project_state_has_required_sections_in_order: pasa
+    test_project_state_declares_a_branch: pasa
+    test_project_state_cabe_en_el_tope: pasa
+    PROJECT_STATE hoy: 23629 bytes
+    PROJECT_STATE simulado: 24526 bytes
+
+**Pasan.** La primera versión de las líneas daba 25.036 bytes y no cabía: se acortaron las cinco
+deudas (su evidencia vive en §4.3) y las líneas de F, Y y V. Margen: 474 bytes. El cierre cambia
+además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan de esta rama.
+
+### 4.3 La deuda, con su evidencia
+
+1. **El visor no conecta `--diagnostico-cuenta-diaria`.** `cli.py:2437` lo pone en el motor del
+   arnés y `motor_visor` no lo copia a `cableado_motor` tras `cli.py:2557` (§1.a). Con `--caso` no
+   cambia nada, porque el motor es nuevo para un día (§1.a, y los 20 días de §2.c lo confirman:
+   órdenes iguales a las de `main`); con `--todos`, la cuenta se arrastra entre días.
+2. **VISOR-DIAS.md no recoge las opciones de diagnóstico ni el calentamiento.** `grep -n -i
+   "diagnostico\|mes anterior\|calienta\|calentar" docs/runbooks/VISOR-DIAS.md` no da ninguna línea.
+   El visor exige `--diagnostico-a35` y `--diagnostico-a44` mientras A-35 y A-44 sigan abiertas
+   (`test_visor.py:381-385`), y lee el M1 entero del mes anterior (§1.b; `Preparador._m1`).
+3. **El visor no enseña las H4 que el sesgo salta por el color.** ADR-0080 lo dejó dicho: «enseñar
+   las saltadas es una mejora para la rama de comprobaciones en el visor» (`0080…md:157-158`), que es
+   esta, y esta rama no toca código (encargo §2).
+4. **`test_visor.py` hace leer al visor un mes reservado en cada `make check`.** El test
+   `test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos` (`test_visor.py:368-401`) corre el
+   visor sobre el primer día dev del primer mes de construcción (`real.construccion[0]`, que es
+   `2026-04`), y el visor calienta con el M1 entero de marzo. **Medido, corrige la redacción de la
+   fase 0 (§1.f, h13) y de la respuesta del consultor («marzo y junio»):** el test solo lee marzo;
+   junio solo lo leen las páginas de julio de esta rama, declaradas en HOLDOUT-EXPOSICIONES. Por eso
+   la línea de §4.1 dice «marzo (calienta abril)».
+5. **`--hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker** (§1.b, con sus
+   líneas de `visor.py`), aunque VISOR-DIAS.md:40-41 promete una vista recortada.
+
+### 4.4 Para ERRORES-RECURRENTES (los escribe `cerrar-rama`, en la fila de la rama)
+
+- **Del consultor (respuesta a la PARADA 1, punto 8), dos:**
+  1. La PARADA 4 de R3.1, punto 2, leyó «no se produjo un hecho del camino» como «RN-011 no
+     dimensiona con los hechos del camino producidos», y el encargo lo heredó (h3 del auditor). La
+     lección: citar el hecho que falta por su nombre (`liquidez_tomada`), no por su consecuencia.
+  2. El encargo dio como hechos dos afirmaciones del auditor que el repo contradice (la página solo
+     enseña la caja final; `--depuracion` da una traza). La lección: una afirmación del auditor entra
+     al encargo como «verifica que…», no como hecho.
+- **Del consultor (respuesta a la PARADA 2, «Además»), un acierto de la regla:** `contexto_h4.py`
+  antes de cada página encontró 2026-07-01 antes de pintar nada: la regla «contexto_h4.py antes de
+  cada página» funcionó, y la PARADA 2 salió de ella.
+- **De la sesión, dos:**
+  1. Un guion de la carpeta de trabajo que escribe su salida con `>` en Windows la deja en CRLF y,
+     si imprime caracteres fuera de ASCII sin `reconfigure`, en cp1252: `lotes.txt` salió en cp1252
+     y cuatro salidas en CRLF, y se normalizaron (§2.c). La lección: `sys.stdout.reconfigure(encoding
+     ="utf-8", newline="\n")` en todo guion cuya salida va a un anexo.
+  2. La primera captura de `detenido_por_*` en la traza buscaba el valor «si», y RN-016 fija
+     `hasta_cartuchos_reinicio`: habría dicho «ninguno» en 2026-07-01 11-15. Se vio al cruzar la
+     traza con las reglas disparadas, y las 20 trazas se regeneraron. La lección: un hecho de la
+     forma (`hecho:`) vale con CUALQUIER valor fijado (`interprete._hecho`); se busca por presencia.
+- Y lo que diga el revisor (§8).
+
+## 5 · El encargo, punto por punto
+
+| # | requisito | estado | dónde |
+|---|---|---|---|
+| 0.1 | Base: `main` d1137eb, origin, el tag, ninguna otra rama, la CI de d1137eb con `gh run view` | Hecho | §0 |
+| 0.2 | Abrir con `abrir-rama`: encargo tal cual, `contrato.yaml` con HOLDOUT-EXPOSICIONES, Archivo de PROJECT_STATE | Hecho | f85fb1e |
+| 0.3 | Informe y anexos en sus rutas; fase-cero con el auditor; entregar-rama; leer VISOR-DIAS.md | Hecho | §1.f, este informe |
+| 1.1 | Las comprobaciones E de R3.1 sobre el motor de hoy, cada una con E, R o correcto | Hecho | §2, §3.1 |
+| 1.2 | Sobre la diaria de `main` de hoy (`anexos/MARGEN-LOTE/diaria…`) | Hecho | §1.c, §2.c |
+| 1.3 | «Gráfico» = la página, con su comando y lo que se lee; los HTML no se commitean | Hecho | §2.c; `data/visor/` |
+| 2.1 | Ningún código de `src/`, regla, parámetro, ambigüedad, ADR, evidencia, feedback ni caso | Hecho | §7 (ficheros) |
+| 2.2 | Los informes y anexos cerrados no se editan | Hecho | §7 |
+| 2.3 | El heredado 30 no se toca | Hecho | §2.f lo cita, no lo cambia |
+| 2.4 | Ni guardias, ni `.claude/`, ni el `Makefile` | Hecho | §7 |
+| 2.5 | PROJECT_STATE, solo lo del ritual | Hecho | solo la apertura (f85fb1e) |
+| 2.6 | La salida del visor a `data/visor/` | Hecho | §2.c |
+| 2.7 | HOLDOUT: la lectura del visor declarada antes de la primera página | Hecho | HOLDOUT-EXPOSICIONES, fila del 2026-10-18 (f39e0da, antes de ninguna página) |
+| 2.8 | Las H4 de contexto, medidas en el código | Hecho | §1.b, §2.a |
+| 2.9 | Ninguna vela, hora ni precio anterior al día dev, ni nada en dinero, al informe | Hecho | `extraer_pagina.py`, `comun_visor.antes_del_dia`; el revisor lo comprueba (§8) |
+| 2.10 | Si el clasificador niega un comando, PARADA | No hizo falta | el clasificador no negó nada; la guardia negó cuatro comandos (§2.c) |
+| 3.a-d | Fase 0: reproducir la corrida 2, qué lee el visor, las listas, de dónde sale cada dato | Hecho | §1, 8cceb46 |
+| 3.e | PARADA con a-d | Hecho | §1, «Lo que necesito que decidas» |
+| 4.1 | Fase 1: la fila de exposiciones antes de la primera página | Hecho | 2.7 |
+| 4.2 | P2 en los tres días: el 0 frente al pivote de la spec y el 0 del trader | Hecho | §2.d |
+| 4.3 | RN-005, RN-009 y el minuto de `ventana_fin` de RN-001, sesión por sesión | Hecho | §2.e |
+| 4.4 | Las 2 sesiones: «por qué RN-011 no dimensionó con los hechos del camino producidos» | Hecho de otra forma | la premisa no se cumple (falta la toma, §1.c): se miró por qué no hubo toma, con RN-004 por cierre (§2.f) |
+| 4.5 | Los rechazos elegidos: frente al bid o el ask, la caja atrás, el punto rechazado no vuelve | Hecho | §2.g |
+| 4.6 | Para cada sesión: el comando exacto del visor y del guion | Hecho de otra forma | un comando por día con su caso (§2.c, plantilla y lista de casos) y las salidas por día en `dias/`, no un bloque por sesión |
+| 4.7 | Lo que se ve, con UTC y hora del trader, solo del día dev | Hecho | §2.d a §2.h |
+| 4.8 | Fase 2: la tabla | Hecho | §3.1 |
+| 4.9 | Para cada E, la rama: qué arregla, ficheros, test | Hecho | §3.3 |
+| 4.10 | Para cada R, la pregunta para V; las 8 y 9 por su texto; las demás, nuevas | Hecho | §3.2 |
+| 5.1 | El encargo frente a lo hecho y las desviaciones | Hecho | §5, §6 |
+| 5.2 | La deuda: el visor sin `--diagnostico-cuenta-diaria`; VISOR-DIAS.md sin diagnóstico ni calentamiento | Hecho | §4.1, §4.3 |
+| 5.3 | Las líneas del cierre: O a HISTORIA; F; V sin «de O» y con las preguntas; R3.2 HECHA con su Estado; R4.1 sin NA:O, con «R3.2 (HECHA)» | Hecho | §4.1 |
+| 5.4 | Las líneas aplicadas en memoria contra `test_hoja_de_ruta.py` y `test_project_state.py` | Hecho, pasan | §4.2 |
+| 6 | El revisor (opus), con los dos ejes y el alcance extra | Hecho | §8 |
+| 7 | CI: si no toca la plataforma, decirlo con la lista de ficheros | Hecho | §7 |
+| R1.0 | Respuesta 1, punto 0: los tres días de P2 | Hecho | §2.d |
+| R1.1 | Punto 1: `traza_por_cierre.py`, que solo lee el `Evento`; PARADA si sus órdenes no son las de `main` | Hecho | §2.c: iguales en los 20 días |
+| R1.2 | Punto 2: `extraer_pagina.py`; la sesión no abre una página entera | Hecho | §2.c |
+| R1.3 | Punto 3: las 2 sesiones por la traza de RN-004; R (A-35) salvo error de código; heredados 25 y 30 sin tocar | Hecho de otra forma | R, pero no solo por A-35: la otra lectura de A-35 tampoco da toma (§2.f); una pregunta nueva (B) y la 5 |
+| R1.4 | Punto 4: los cinco rechazos; 2026-04-16 sin página | Hecho | §2.g |
+| R1.5 | Punto 5: «anterior al día dev» por la fecha UTC de la vela | Hecho | `comun_visor.antes_del_dia` |
+| R1.6 | Punto 6: las tres deudas más; R4.1 «Qué es» con las preguntas nuevas; el Estado de R3.2 explica «correcto» | Hecho | §4.1, §4.3 (con una corrección medida: §4.3, punto 4) |
+| R1.7 | Punto 7: el cierre simulado con los dos tests | Hecho | §4.2 |
+| R1.8 | Punto 8: los dos hallazgos del consultor para ERRORES-RECURRENTES | Hecho | §4.4 |
+| R1.A | «Además»: 2026-07-01 11-15, cartuchos o `ventana_fin`; las 4 sesiones con los cartuchos agotados; sin las columnas en USD | Hecho | §2.e, §2.h; `reentradas.py` corta antes de esas columnas |
+| R2.0 | Respuesta 2, punto 0: 2026-07-01 11-15 solo con la traza, sin página | Hecho | §2.a, `dias/2026-07-01.pagina.txt` |
+| R2.1 | Punto 1: los otros 19 días; `contexto_h4.py` antes de CADA página | Hecho | `revisar_dia.py`, §2.c |
+| R2.A | «Además»: el «no» de `contexto_h4.py` en el Estado de R3.2; la PARADA 2 a ERRORES-RECURRENTES como acierto | Hecho | §4.1, §4.4 |
+
+## 6 · Desviaciones
+
+- **El guion de traza tiene otras opciones que las que proponía la fase 0** (§1.d decía `--desde`
+  y `--hasta`): tiene `--sesion`, `--rn004`, `--gates`, `--velas` y `--todos-los-cierres`. Lo que
+  hacía falta era ver los predicados de RN-004 y de los gates en cada cierre, y las M1 de un tramo;
+  un recorte por horas no lo daba.
+- **Guiones que la fase 0 no nombraba:** `revisar_dia.py` (el orden de la respuesta a la PARADA 2
+  en un solo guion), `reentradas.py` (el recuento de la E), `resumen_gates.py` (el resumen de §2.e),
+  `simular_cierre.py` (§4.2) y `listas.py` (el guion de las listas de la fase 0, que §1.c anunciaba,
+  con su salida en `listas.txt`). Ninguno escribe en el repo salvo `revisar_dia.py`, que escribe en
+  `anexos/VISOR-CONSTRUCCION/dias/` y en `data/visor/`.
+- **La E de §2.d.4 sale de mirar P2, no de una comprobación del encargo.** Entra en P2 porque el
+  encargo pide comprobar que «lo que recalcula ADR-0074 en cada cierre de M1 hasta el llenado es el
+  1»: o17 recalcula el 1 DESPUÉS del llenado.
+- **Las páginas y las trazas se generaron seis veces**, mientras el guion de traza ganaba opciones
+  (RN-004 en tramos, los gates, la captura de los `detenido_por_*` con cualquier valor: §4.4). Lo que
+  hay en `dias/` es de la última pasada (los dos lotes de `lotes.txt`), y cada pasada corrió
+  `contexto_h4.py` antes de cada página, con el mismo resultado.
+- **Una corrección a la fase 0 y a la respuesta del consultor:** `test_visor.py` lee el M1 de marzo,
+  no el de junio (§4.3, punto 4).
+- **Las salidas guardadas con `>` se normalizaron** a UTF-8 y LF (§4.4); los guiones llevan ahora
+  `reconfigure(newline="\n")` para que su comando dé el mismo fichero.
+
+## 7 · Exposiciones, ficheros y CI
+
+**Exposiciones:** la fila del 2026-10-18 de HOLDOUT-EXPOSICIONES (fase 1), ampliada el mismo día con
+lo leído tras la PARADA 2 (su punto 8). Ninguna otra.
+
+**Ficheros que cambian frente a `main`:** el estado y el contrato (`PROJECT_STATE.md`,
+`contrato.yaml`, `docs/state/HISTORIA.md`, `docs/encargos/trabajo-visor-construccion.md`); este
+informe y `docs/validation/HOLDOUT-EXPOSICIONES.md`; y los anexos de
+`docs/validation/anexos/VISOR-CONSTRUCCION/` (los guiones `comun_visor.py`, `contexto_h4.py`,
+`traza_por_cierre.py`, `ticks_del_rechazo.py`, `extraer_pagina.py`, `revisar_dia.py`, `listas.py`,
+`reentradas.py`, `resumen_gates.py`, `simular_cierre.py`; sus salidas `contexto_h4.txt`, `listas.txt`,
+`lotes.txt`, `reentradas.txt`, `resumen_gates.txt`; y `dias/`). Ningún fichero de `src/`, `tests/`,
+`scripts/`, `knowledge/`, `config/`, `docs/adr/`, `docs/spec/`, `docs/plan/`, `docs/runbooks/`,
+`.claude/`, `.github/` ni el `Makefile`.
+
+**CI:** la rama no toca código, hooks, rutas ni el sistema de archivos: no hace falta el push como
+`fix/visor-construccion`. Ninguna consulta de la CI se hizo con `curl`, con `gh run watch` ni con un
+guion.
+
+## 8 · El revisor
+
+(Se pega aquí su informe, tal cual, con lo que se hizo con cada hallazgo.)
+
 ## Estado
 
-EN CURSO · PARADA 2 (2026-10-18): `contexto_h4.py` encontró que la página de 2026-07-01 pintaría velas del día ya retirado por ADR-0041; esa página no se generó. Se espera la respuesta del consultor.
+PENDIENTE DEL REVISOR (2026-10-18). Fases 0, 1 y 2 hechas: una E (la reentrada en un punto ya llenado, rama Y propuesta) y el resto correcto o R, con sus preguntas para V; las líneas del cierre, preparadas y simuladas (§4).

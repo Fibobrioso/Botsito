@@ -1,0 +1,296 @@
+CASO caso-eurusd-2026-08-27 · motor visor --simular --caso con las opciones de la corrida 2
+ORDENES frente a «### Ordenes» de main: iguales (2 ordenes del dia)
+== Sesion 07-11: de 05:00:00Z (07:00:00 del trader) a 09:00:00Z (11:00:00 del trader) ==
+  disparadas en la sesion: RN-003, RN-004, RN-005, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027
+  hechos fijados: 488; solo los cambios de valor de cada hecho:
+    05:00:00Z (07:00:00 del trader) RN-003 sesgo=alcista
+    05:19:00Z (07:19:00 del trader) RN-004 liquidez_tomada=si
+    orden_dimensionada: fijado 438 veces (RN-011 liga una zona, RN-015 lo apaga), de 05:19:00Z (07:19:00 del trader) a 08:59:00Z (10:59:00 del trader); zonas distintas 102
+  cierres, en tramos de cierres seguidos iguales (desde - hasta, n | reglas disparadas | efectos prohibidos | acciones bloqueadas):
+    05:19:00Z (07:19:00 del trader) - 05:19:00Z (07:19:00 del trader), 1 | RN-004, RN-005, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:20:00Z (07:20:00 del trader) - 05:21:00Z (07:21:00 del trader), 2 | RN-005, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:22:00Z (07:22:00 del trader) - 05:29:00Z (07:29:00 del trader), 8 | RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:30:00Z (07:30:00 del trader) - 05:35:00Z (07:35:00 del trader), 6 | RN-005, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:36:00Z (07:36:00 del trader) - 05:36:00Z (07:36:00 del trader), 1 | RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:37:00Z (07:37:00 del trader) - 05:39:00Z (07:39:00 del trader), 3 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:40:00Z (07:40:00 del trader) - 05:48:00Z (07:48:00 del trader), 9 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:49:00Z (07:49:00 del trader) - 05:49:00Z (07:49:00 del trader), 1 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:50:00Z (07:50:00 del trader) - 05:52:00Z (07:52:00 del trader), 3 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:53:00Z (07:53:00 del trader) - 05:58:00Z (07:58:00 del trader), 6 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    05:59:00Z (07:59:00 del trader) - 06:00:00Z (08:00:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:01:00Z (08:01:00 del trader) - 06:03:00Z (08:03:00 del trader), 3 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:04:00Z (08:04:00 del trader) - 06:04:00Z (08:04:00 del trader), 1 | RN-004, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:05:00Z (08:05:00 del trader) - 06:06:00Z (08:06:00 del trader), 2 | RN-004, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:07:00Z (08:07:00 del trader) - 06:07:00Z (08:07:00 del trader), 1 | RN-004, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:08:00Z (08:08:00 del trader) - 06:13:00Z (08:13:00 del trader), 6 | RN-004, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:14:00Z (08:14:00 del trader) - 06:14:00Z (08:14:00 del trader), 1 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:15:00Z (08:15:00 del trader) - 06:15:00Z (08:15:00 del trader), 1 | RN-004, RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:16:00Z (08:16:00 del trader) - 06:16:00Z (08:16:00 del trader), 1 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:17:00Z (08:17:00 del trader) - 06:21:00Z (08:21:00 del trader), 5 | RN-004, RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:22:00Z (08:22:00 del trader) - 06:26:00Z (08:26:00 del trader), 5 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:27:00Z (08:27:00 del trader) - 06:32:00Z (08:32:00 del trader), 6 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:33:00Z (08:33:00 del trader) - 06:34:00Z (08:34:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:35:00Z (08:35:00 del trader) - 06:35:00Z (08:35:00 del trader), 1 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:36:00Z (08:36:00 del trader) - 06:37:00Z (08:37:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:38:00Z (08:38:00 del trader) - 06:39:00Z (08:39:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:40:00Z (08:40:00 del trader) - 06:47:00Z (08:47:00 del trader), 8 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:48:00Z (08:48:00 del trader) - 06:51:00Z (08:51:00 del trader), 4 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:52:00Z (08:52:00 del trader) - 06:56:00Z (08:56:00 del trader), 5 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    06:57:00Z (08:57:00 del trader) - 07:03:00Z (09:03:00 del trader), 7 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:04:00Z (09:04:00 del trader) - 07:07:00Z (09:07:00 del trader), 4 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:08:00Z (09:08:00 del trader) - 07:14:00Z (09:14:00 del trader), 7 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:15:00Z (09:15:00 del trader) - 07:21:00Z (09:21:00 del trader), 7 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:22:00Z (09:22:00 del trader) - 07:23:00Z (09:23:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:24:00Z (09:24:00 del trader) - 07:25:00Z (09:25:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:26:00Z (09:26:00 del trader) - 07:26:00Z (09:26:00 del trader), 1 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:27:00Z (09:27:00 del trader) - 07:28:00Z (09:28:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:29:00Z (09:29:00 del trader) - 07:29:00Z (09:29:00 del trader), 1 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:30:00Z (09:30:00 del trader) - 07:30:00Z (09:30:00 del trader), 1 | RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:31:00Z (09:31:00 del trader) - 07:37:00Z (09:37:00 del trader), 7 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:38:00Z (09:38:00 del trader) - 07:41:00Z (09:41:00 del trader), 4 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:42:00Z (09:42:00 del trader) - 07:47:00Z (09:47:00 del trader), 6 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    07:48:00Z (09:48:00 del trader) - 08:16:00Z (10:16:00 del trader), 29 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:17:00Z (10:17:00 del trader) - 08:19:00Z (10:19:00 del trader), 3 | RN-005, RN-009, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:20:00Z (10:20:00 del trader) - 08:22:00Z (10:22:00 del trader), 3 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:23:00Z (10:23:00 del trader) - 08:23:00Z (10:23:00 del trader), 1 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:24:00Z (10:24:00 del trader) - 08:25:00Z (10:25:00 del trader), 2 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:26:00Z (10:26:00 del trader) - 08:26:00Z (10:26:00 del trader), 1 | RN-004, RN-011, RN-015, RN-027 | - | -
+    08:28:00Z (10:28:00 del trader) - 08:28:00Z (10:28:00 del trader), 1 | RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:29:00Z (10:29:00 del trader) - 08:29:00Z (10:29:00 del trader), 1 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:30:00Z (10:30:00 del trader) - 08:32:00Z (10:32:00 del trader), 3 | RN-004, RN-005, RN-011, RN-015 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:33:00Z (10:33:00 del trader) - 08:33:00Z (10:33:00 del trader), 1 | RN-004, RN-011, RN-015, RN-027 | - | -
+    08:34:00Z (10:34:00 del trader) - 08:34:00Z (10:34:00 del trader), 1 | RN-004, RN-009, RN-018 | abrir_operacion | -
+    08:35:00Z (10:35:00 del trader) - 08:35:00Z (10:35:00 del trader), 1 | RN-004, RN-009, RN-011, RN-012, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:36:00Z (10:36:00 del trader) - 08:44:00Z (10:44:00 del trader), 9 | RN-004, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:45:00Z (10:45:00 del trader) - 08:47:00Z (10:47:00 del trader), 3 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:48:00Z (10:48:00 del trader) - 08:52:00Z (10:52:00 del trader), 5 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:53:00Z (10:53:00 del trader) - 08:57:00Z (10:57:00 del trader), 5 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:58:00Z (10:58:00 del trader) - 08:58:00Z (10:58:00 del trader), 1 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    08:59:00Z (10:59:00 del trader) - 08:59:00Z (10:59:00 del trader), 1 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+  RN-004, en tramos de cierres seguidos iguales (desde - hasta, n | alcanza_nivel / cruza / la_toma_es_de_la_sesion | pivote | extremo de las M1 del tramo en el lado del pivote: el minimo si es un bajo, el maximo si es un alto):
+    05:00:00Z (07:00:00 del trader) - 05:18:00Z (07:18:00 del trader), 19 | NO / - / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16544 en la M1 de 05:03:00Z (07:03:00 del trader)
+    05:19:00Z (07:19:00 del trader) - 05:19:00Z (07:19:00 del trader), 1 | SI / SI / SI | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16538 en la M1 de 05:18:00Z (07:18:00 del trader)
+    05:20:00Z (07:20:00 del trader) - 05:20:00Z (07:20:00 del trader), 1 | SI / NO / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16539 en la M1 de 05:19:00Z (07:19:00 del trader)
+    05:21:00Z (07:21:00 del trader) - 05:52:00Z (07:52:00 del trader), 32 | NO / - / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16548 en la M1 de 05:20:00Z (07:20:00 del trader)
+    05:53:00Z (07:53:00 del trader) - 05:58:00Z (07:58:00 del trader), 6 | SI / SI / SI | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16518 en la M1 de 05:52:00Z (07:52:00 del trader)
+    05:59:00Z (07:59:00 del trader) - 06:00:00Z (08:00:00 del trader), 2 | SI / NO / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16532 en la M1 de 05:58:00Z (07:58:00 del trader)
+    06:01:00Z (08:01:00 del trader) - 06:13:00Z (08:13:00 del trader), 13 | SI / SI / SI | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16519 en la M1 de 06:04:00Z (08:04:00 del trader)
+    06:14:00Z (08:14:00 del trader) - 06:14:00Z (08:14:00 del trader), 1 | SI / NO / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16536 en la M1 de 06:13:00Z (08:13:00 del trader)
+    06:15:00Z (08:15:00 del trader) - 06:21:00Z (08:21:00 del trader), 7 | SI / SI / SI | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16525 en la M1 de 06:16:00Z (08:16:00 del trader)
+    06:22:00Z (08:22:00 del trader) - 06:24:00Z (08:24:00 del trader), 3 | SI / NO / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16537 en la M1 de 06:21:00Z (08:21:00 del trader)
+    06:25:00Z (08:25:00 del trader) - 06:27:00Z (08:27:00 del trader), 3 | NO / - / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16544 en la M1 de 06:24:00Z (08:24:00 del trader)
+    06:28:00Z (08:28:00 del trader) - 06:28:00Z (08:28:00 del trader), 1 | SI / NO / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16539 en la M1 de 06:27:00Z (08:27:00 del trader)
+    06:29:00Z (08:29:00 del trader) - 06:29:00Z (08:29:00 del trader), 1 | NO / - / - | bajo 1.1654, formado 05:00:00Z (07:00:00 del trader) | minimo 1.16543 en la M1 de 06:28:00Z (08:28:00 del trader)
+    06:30:00Z (08:30:00 del trader) - 06:51:00Z (08:51:00 del trader), 22 | NO / - / - | bajo 1.16518, formado 06:30:00Z (08:30:00 del trader) | minimo 1.16519 en la M1 de 06:50:00Z (08:50:00 del trader)
+    06:52:00Z (08:52:00 del trader) - 06:52:00Z (08:52:00 del trader), 1 | SI / NO / - | bajo 1.16518, formado 06:30:00Z (08:30:00 del trader) | minimo 1.16518 en la M1 de 06:51:00Z (08:51:00 del trader)
+    06:53:00Z (08:53:00 del trader) - 07:14:00Z (09:14:00 del trader), 22 | NO / - / - | bajo 1.16518, formado 06:30:00Z (08:30:00 del trader) | minimo 1.16519 en la M1 de 06:52:00Z (08:52:00 del trader)
+    07:15:00Z (09:15:00 del trader) - 07:29:00Z (09:29:00 del trader), 15 | NO / - / - | bajo 1.16518, formado 07:15:00Z (09:15:00 del trader) | minimo 1.16521 en la M1 de 07:28:00Z (09:28:00 del trader)
+    07:30:00Z (09:30:00 del trader) - 07:31:00Z (09:31:00 del trader), 2 | SI / NO / - | bajo 1.16518, formado 07:15:00Z (09:15:00 del trader) | minimo 1.16516 en la M1 de 07:30:00Z (09:30:00 del trader)
+    07:32:00Z (09:32:00 del trader) - 07:32:00Z (09:32:00 del trader), 1 | NO / - / - | bajo 1.16518, formado 07:15:00Z (09:15:00 del trader) | minimo 1.16519 en la M1 de 07:31:00Z (09:31:00 del trader)
+    07:33:00Z (09:33:00 del trader) - 07:35:00Z (09:35:00 del trader), 3 | SI / NO / - | bajo 1.16518, formado 07:15:00Z (09:15:00 del trader) | minimo 1.16517 en la M1 de 07:32:00Z (09:32:00 del trader)
+    07:36:00Z (09:36:00 del trader) - 07:44:00Z (09:44:00 del trader), 9 | NO / - / - | bajo 1.16518, formado 07:15:00Z (09:15:00 del trader) | minimo 1.1652 en la M1 de 07:35:00Z (09:35:00 del trader)
+    07:45:00Z (09:45:00 del trader) - 08:21:00Z (10:21:00 del trader), 37 | NO / - / - | bajo 1.16517, formado 07:45:00Z (09:45:00 del trader) | minimo 1.16518 en la M1 de 07:51:00Z (09:51:00 del trader)
+    08:22:00Z (10:22:00 del trader) - 08:22:00Z (10:22:00 del trader), 1 | SI / NO / - | bajo 1.16517, formado 07:45:00Z (09:45:00 del trader) | minimo 1.16517 en la M1 de 08:21:00Z (10:21:00 del trader)
+    08:23:00Z (10:23:00 del trader) - 08:26:00Z (10:26:00 del trader), 4 | SI / SI / SI | bajo 1.16517, formado 07:45:00Z (09:45:00 del trader) | minimo 1.1651 en la M1 de 08:23:00Z (10:23:00 del trader)
+    08:27:00Z (10:27:00 del trader) - 08:27:00Z (10:27:00 del trader), 1 | SI / NO / - | bajo 1.16517, formado 07:45:00Z (09:45:00 del trader) | minimo 1.16515 en la M1 de 08:26:00Z (10:26:00 del trader)
+    08:28:00Z (10:28:00 del trader) - 08:28:00Z (10:28:00 del trader), 1 | NO / - / - | bajo 1.16517, formado 07:45:00Z (09:45:00 del trader) | minimo 1.1652 en la M1 de 08:27:00Z (10:27:00 del trader)
+    08:29:00Z (10:29:00 del trader) - 08:44:00Z (10:44:00 del trader), 16 | SI / SI / SI | bajo 1.16517, formado 07:45:00Z (09:45:00 del trader) | minimo 1.16475 en la M1 de 08:36:00Z (10:36:00 del trader)
+    08:45:00Z (10:45:00 del trader) - 08:56:00Z (10:56:00 del trader), 12 | NO / - / - | bajo 1.16498, formado 08:45:00Z (10:45:00 del trader) | minimo 1.16499 en la M1 de 08:49:00Z (10:49:00 del trader)
+    08:57:00Z (10:57:00 del trader) - 08:57:00Z (10:57:00 del trader), 1 | SI / NO / - | bajo 1.16498, formado 08:45:00Z (10:45:00 del trader) | minimo 1.16496 en la M1 de 08:56:00Z (10:56:00 del trader)
+    08:58:00Z (10:58:00 del trader) - 08:59:00Z (10:59:00 del trader), 2 | SI / SI / SI | bajo 1.16498, formado 08:45:00Z (10:45:00 del trader) | minimo 1.16489 en la M1 de 08:58:00Z (10:58:00 del trader)
+    09:00:00Z (11:00:00 del trader) - 09:00:00Z (11:00:00 del trader), 1 | NO / - / - | alto 1.16519, formado 09:00:00Z (11:00:00 del trader) | maximo 1.1649 en la M1 de 08:59:00Z (10:59:00 del trader)
+  gates, en tramos de cierres seguidos iguales (desde - hasta, n | RN-005 se_desarrolla_en_el_lado_de_ruido: valor, lado y 0 de la zona frente al nivel de la toma | RN-009 zonas_desarrolladas_superan: valor, zonas de control (tope 1) | RN-001 en_ventana: valor, hechos detenido_por_* fijados):
+    05:00:00Z (07:00:00 del trader) - 05:18:00Z (07:18:00 del trader), 19 | NO, sin zona o sin toma | NO, - | SI, ninguno
+    05:19:00Z (07:19:00 del trader) - 05:19:00Z (07:19:00 del trader), 1 | SI, compra 0 1.16563 > toma 1.1654 | NO, - | SI, ninguno
+    05:20:00Z (07:20:00 del trader) - 05:21:00Z (07:21:00 del trader), 2 | SI, compra 0 1.16563 > toma 1.1654 | NO, 0 | SI, ninguno
+    05:22:00Z (07:22:00 del trader) - 05:22:00Z (07:22:00 del trader), 1 | SI, compra 0 1.16555 > toma 1.1654 | NO, 0 | SI, ninguno
+    05:23:00Z (07:23:00 del trader) - 05:29:00Z (07:29:00 del trader), 7 | SI, compra 0 1.16555 > toma 1.1654 | NO, 1 | SI, ninguno
+    05:30:00Z (07:30:00 del trader) - 05:36:00Z (07:36:00 del trader), 7 | SI, compra 0 1.16572 > toma 1.1654 | NO, 1 | SI, ninguno
+    05:37:00Z (07:37:00 del trader) - 05:40:00Z (07:40:00 del trader), 4 | SI, compra 0 1.16572 > toma 1.1654 | SI, 2 | SI, ninguno
+    05:41:00Z (07:41:00 del trader) - 05:44:00Z (07:44:00 del trader), 4 | SI, compra 0 1.16572 > toma 1.1654 | SI, 3 | SI, ninguno
+    05:45:00Z (07:45:00 del trader) - 05:48:00Z (07:48:00 del trader), 4 | SI, compra 0 1.16564 > toma 1.1654 | SI, 3 | SI, ninguno
+    05:49:00Z (07:49:00 del trader) - 05:49:00Z (07:49:00 del trader), 1 | SI, compra 0 1.16565 > toma 1.1654 | SI, 3 | SI, ninguno
+    05:50:00Z (07:50:00 del trader) - 05:50:00Z (07:50:00 del trader), 1 | SI, compra 0 1.16565 > toma 1.1654 | SI, 4 | SI, ninguno
+    05:51:00Z (07:51:00 del trader) - 05:53:00Z (07:53:00 del trader), 3 | SI, compra 0 1.16559 > toma 1.1654 | SI, 4 | SI, ninguno
+    05:54:00Z (07:54:00 del trader) - 05:56:00Z (07:56:00 del trader), 3 | SI, compra 0 1.16559 > toma 1.1654 | SI, 5 | SI, ninguno
+    05:57:00Z (07:57:00 del trader) - 06:02:00Z (08:02:00 del trader), 6 | SI, compra 0 1.16541 > toma 1.1654 | SI, 5 | SI, ninguno
+    06:03:00Z (08:03:00 del trader) - 06:03:00Z (08:03:00 del trader), 1 | SI, compra 0 1.16541 > toma 1.1654 | SI, 6 | SI, ninguno
+    06:04:00Z (08:04:00 del trader) - 06:04:00Z (08:04:00 del trader), 1 | NO, compra 0 1.16527 < toma 1.1654 | SI, 6 | SI, ninguno
+    06:05:00Z (08:05:00 del trader) - 06:06:00Z (08:06:00 del trader), 2 | NO, compra 0 1.16527 < toma 1.1654 | SI, 7 | SI, ninguno
+    06:07:00Z (08:07:00 del trader) - 06:09:00Z (08:09:00 del trader), 3 | NO, compra 0 1.16538 < toma 1.1654 | SI, 7 | SI, ninguno
+    06:10:00Z (08:10:00 del trader) - 06:11:00Z (08:11:00 del trader), 2 | NO, compra 0 1.16538 < toma 1.1654 | SI, 8 | SI, ninguno
+    06:12:00Z (08:12:00 del trader) - 06:12:00Z (08:12:00 del trader), 1 | NO, compra 0 1.16536 < toma 1.1654 | SI, 8 | SI, ninguno
+    06:13:00Z (08:13:00 del trader) - 06:14:00Z (08:14:00 del trader), 2 | NO, compra 0 1.16536 < toma 1.1654 | SI, 9 | SI, ninguno
+    06:15:00Z (08:15:00 del trader) - 06:18:00Z (08:18:00 del trader), 4 | SI, compra 0 1.16545 > toma 1.1654 | SI, 9 | SI, ninguno
+    06:19:00Z (08:19:00 del trader) - 06:26:00Z (08:26:00 del trader), 8 | SI, compra 0 1.16545 > toma 1.1654 | SI, 10 | SI, ninguno
+    06:27:00Z (08:27:00 del trader) - 06:27:00Z (08:27:00 del trader), 1 | SI, compra 0 1.16556 > toma 1.1654 | SI, 10 | SI, ninguno
+    06:28:00Z (08:28:00 del trader) - 06:32:00Z (08:32:00 del trader), 5 | SI, compra 0 1.16556 > toma 1.1654 | SI, 11 | SI, ninguno
+    06:33:00Z (08:33:00 del trader) - 06:34:00Z (08:34:00 del trader), 2 | SI, compra 0 1.16552 > toma 1.1654 | SI, 11 | SI, ninguno
+    06:35:00Z (08:35:00 del trader) - 06:35:00Z (08:35:00 del trader), 1 | SI, compra 0 1.16552 > toma 1.1654 | SI, 12 | SI, ninguno
+    06:36:00Z (08:36:00 del trader) - 06:36:00Z (08:36:00 del trader), 1 | SI, compra 0 1.16545 > toma 1.1654 | SI, 12 | SI, ninguno
+    06:37:00Z (08:37:00 del trader) - 06:37:00Z (08:37:00 del trader), 1 | SI, compra 0 1.16545 > toma 1.1654 | SI, 13 | SI, ninguno
+    06:38:00Z (08:38:00 del trader) - 06:40:00Z (08:40:00 del trader), 3 | SI, compra 0 1.16541 > toma 1.1654 | SI, 13 | SI, ninguno
+    06:41:00Z (08:41:00 del trader) - 06:45:00Z (08:45:00 del trader), 5 | SI, compra 0 1.16541 > toma 1.1654 | SI, 14 | SI, ninguno
+    06:46:00Z (08:46:00 del trader) - 06:47:00Z (08:47:00 del trader), 2 | SI, compra 0 1.16541 > toma 1.1654 | SI, 15 | SI, ninguno
+    06:48:00Z (08:48:00 del trader) - 06:52:00Z (08:52:00 del trader), 5 | SI, compra 0 1.16549 > toma 1.1654 | SI, 15 | SI, ninguno
+    06:53:00Z (08:53:00 del trader) - 06:56:00Z (08:56:00 del trader), 4 | SI, compra 0 1.16549 > toma 1.1654 | SI, 16 | SI, ninguno
+    06:57:00Z (08:57:00 del trader) - 07:00:00Z (09:00:00 del trader), 4 | NO, compra 0 1.16536 < toma 1.1654 | SI, 16 | SI, ninguno
+    07:01:00Z (09:01:00 del trader) - 07:03:00Z (09:03:00 del trader), 3 | NO, compra 0 1.16536 < toma 1.1654 | SI, 17 | SI, ninguno
+    07:04:00Z (09:04:00 del trader) - 07:06:00Z (09:06:00 del trader), 3 | SI, compra 0 1.16559 > toma 1.1654 | SI, 17 | SI, ninguno
+    07:07:00Z (09:07:00 del trader) - 07:07:00Z (09:07:00 del trader), 1 | SI, compra 0 1.16559 > toma 1.1654 | SI, 18 | SI, ninguno
+    07:08:00Z (09:08:00 del trader) - 07:09:00Z (09:09:00 del trader), 2 | SI, compra 0 1.16545 > toma 1.1654 | SI, 18 | SI, ninguno
+    07:10:00Z (09:10:00 del trader) - 07:11:00Z (09:11:00 del trader), 2 | SI, compra 0 1.16545 > toma 1.1654 | SI, 19 | SI, ninguno
+    07:12:00Z (09:12:00 del trader) - 07:12:00Z (09:12:00 del trader), 1 | SI, compra 0 1.16556 > toma 1.1654 | SI, 19 | SI, ninguno
+    07:13:00Z (09:13:00 del trader) - 07:14:00Z (09:14:00 del trader), 2 | SI, compra 0 1.16556 > toma 1.1654 | SI, 20 | SI, ninguno
+    07:15:00Z (09:15:00 del trader) - 07:16:00Z (09:16:00 del trader), 2 | SI, compra 0 1.1656 > toma 1.1654 | SI, 20 | SI, ninguno
+    07:17:00Z (09:17:00 del trader) - 07:17:00Z (09:17:00 del trader), 1 | SI, compra 0 1.1656 > toma 1.1654 | SI, 21 | SI, ninguno
+    07:18:00Z (09:18:00 del trader) - 07:18:00Z (09:18:00 del trader), 1 | SI, compra 0 1.16552 > toma 1.1654 | SI, 21 | SI, ninguno
+    07:19:00Z (09:19:00 del trader) - 07:20:00Z (09:20:00 del trader), 2 | SI, compra 0 1.16552 > toma 1.1654 | SI, 22 | SI, ninguno
+    07:21:00Z (09:21:00 del trader) - 07:23:00Z (09:23:00 del trader), 3 | SI, compra 0 1.16555 > toma 1.1654 | SI, 22 | SI, ninguno
+    07:24:00Z (09:24:00 del trader) - 07:24:00Z (09:24:00 del trader), 1 | SI, compra 0 1.16555 > toma 1.1654 | SI, 23 | SI, ninguno
+    07:25:00Z (09:25:00 del trader) - 07:28:00Z (09:28:00 del trader), 4 | SI, compra 0 1.16545 > toma 1.1654 | SI, 23 | SI, ninguno
+    07:29:00Z (09:29:00 del trader) - 07:32:00Z (09:32:00 del trader), 4 | NO, compra 0 1.16529 < toma 1.1654 | SI, 23 | SI, ninguno
+    07:33:00Z (09:33:00 del trader) - 07:33:00Z (09:33:00 del trader), 1 | NO, compra 0 1.16525 < toma 1.1654 | SI, 23 | SI, ninguno
+    07:34:00Z (09:34:00 del trader) - 07:37:00Z (09:37:00 del trader), 4 | NO, compra 0 1.16525 < toma 1.1654 | SI, 24 | SI, ninguno
+    07:38:00Z (09:38:00 del trader) - 07:39:00Z (09:39:00 del trader), 2 | SI, compra 0 1.16542 > toma 1.1654 | SI, 24 | SI, ninguno
+    07:40:00Z (09:40:00 del trader) - 07:41:00Z (09:41:00 del trader), 2 | SI, compra 0 1.16542 > toma 1.1654 | SI, 25 | SI, ninguno
+    07:42:00Z (09:42:00 del trader) - 07:42:00Z (09:42:00 del trader), 1 | NO, compra 0 1.1654 = toma 1.1654 | SI, 25 | SI, ninguno
+    07:43:00Z (09:43:00 del trader) - 07:47:00Z (09:47:00 del trader), 5 | NO, compra 0 1.1654 = toma 1.1654 | SI, 26 | SI, ninguno
+    07:48:00Z (09:48:00 del trader) - 07:48:00Z (09:48:00 del trader), 1 | SI, compra 0 1.16552 > toma 1.1654 | SI, 26 | SI, ninguno
+    07:49:00Z (09:49:00 del trader) - 07:53:00Z (09:53:00 del trader), 5 | SI, compra 0 1.16552 > toma 1.1654 | SI, 27 | SI, ninguno
+    07:54:00Z (09:54:00 del trader) - 07:59:00Z (09:59:00 del trader), 6 | SI, compra 0 1.16552 > toma 1.1654 | SI, 28 | SI, ninguno
+    08:00:00Z (10:00:00 del trader) - 08:00:00Z (10:00:00 del trader), 1 | SI, compra 0 1.16552 > toma 1.1654 | SI, 29 | SI, ninguno
+    08:01:00Z (10:01:00 del trader) - 08:01:00Z (10:01:00 del trader), 1 | SI, compra 0 1.16549 > toma 1.1654 | SI, 29 | SI, ninguno
+    08:02:00Z (10:02:00 del trader) - 08:02:00Z (10:02:00 del trader), 1 | SI, compra 0 1.16549 > toma 1.1654 | SI, 30 | SI, ninguno
+    08:03:00Z (10:03:00 del trader) - 08:03:00Z (10:03:00 del trader), 1 | SI, compra 0 1.1657 > toma 1.1654 | SI, 30 | SI, ninguno
+    08:04:00Z (10:04:00 del trader) - 08:04:00Z (10:04:00 del trader), 1 | SI, compra 0 1.1657 > toma 1.1654 | SI, 31 | SI, ninguno
+    08:05:00Z (10:05:00 del trader) - 08:05:00Z (10:05:00 del trader), 1 | SI, compra 0 1.16574 > toma 1.1654 | SI, 31 | SI, ninguno
+    08:06:00Z (10:06:00 del trader) - 08:06:00Z (10:06:00 del trader), 1 | SI, compra 0 1.16574 > toma 1.1654 | SI, 32 | SI, ninguno
+    08:07:00Z (10:07:00 del trader) - 08:07:00Z (10:07:00 del trader), 1 | SI, compra 0 1.16565 > toma 1.1654 | SI, 32 | SI, ninguno
+    08:08:00Z (10:08:00 del trader) - 08:09:00Z (10:09:00 del trader), 2 | SI, compra 0 1.16565 > toma 1.1654 | SI, 33 | SI, ninguno
+    08:10:00Z (10:10:00 del trader) - 08:10:00Z (10:10:00 del trader), 1 | SI, compra 0 1.1658 > toma 1.1654 | SI, 33 | SI, ninguno
+    08:11:00Z (10:11:00 del trader) - 08:11:00Z (10:11:00 del trader), 1 | SI, compra 0 1.1658 > toma 1.1654 | SI, 34 | SI, ninguno
+    08:12:00Z (10:12:00 del trader) - 08:15:00Z (10:15:00 del trader), 4 | SI, compra 0 1.16575 > toma 1.1654 | SI, 34 | SI, ninguno
+    08:16:00Z (10:16:00 del trader) - 08:16:00Z (10:16:00 del trader), 1 | SI, compra 0 1.16575 > toma 1.1654 | SI, 35 | SI, ninguno
+    08:17:00Z (10:17:00 del trader) - 08:17:00Z (10:17:00 del trader), 1 | SI, compra 0 1.16558 > toma 1.1654 | SI, 35 | SI, ninguno
+    08:18:00Z (10:18:00 del trader) - 08:18:00Z (10:18:00 del trader), 1 | SI, compra 0 1.16558 > toma 1.1654 | SI, 36 | SI, ninguno
+    08:19:00Z (10:19:00 del trader) - 08:23:00Z (10:23:00 del trader), 5 | SI, compra 0 1.16557 > toma 1.1654 | SI, 36 | SI, ninguno
+    08:24:00Z (10:24:00 del trader) - 08:25:00Z (10:25:00 del trader), 2 | SI, compra 0 1.16557 > toma 1.16517 | NO, 0 | SI, ninguno
+    08:26:00Z (10:26:00 del trader) - 08:26:00Z (10:26:00 del trader), 1 | NO, compra 0 1.16517 = toma 1.16517 | NO, 0 | SI, ninguno
+    08:27:00Z (10:27:00 del trader) - 08:27:00Z (10:27:00 del trader), 1 | NO, compra 0 1.16517 = toma 1.16517 | NO, 1 | SI, ninguno
+    08:28:00Z (10:28:00 del trader) - 08:32:00Z (10:32:00 del trader), 5 | SI, compra 0 1.16529 > toma 1.16517 | NO, 1 | SI, ninguno
+    08:33:00Z (10:33:00 del trader) - 08:33:00Z (10:33:00 del trader), 1 | NO, compra 0 1.16513 < toma 1.16517 | NO, 1 | SI, ninguno
+    08:34:00Z (10:34:00 del trader) - 08:34:00Z (10:34:00 del trader), 1 | NO, compra 0 1.16513 < toma 1.16517 | SI, 2 | SI, ninguno
+    08:35:00Z (10:35:00 del trader) - 08:36:00Z (10:36:00 del trader), 2 | NO, compra 0 1.1651 < toma 1.16517 | SI, 2 | SI, ninguno
+    08:37:00Z (10:37:00 del trader) - 08:40:00Z (10:40:00 del trader), 4 | NO, compra 0 1.1651 < toma 1.16517 | SI, 3 | SI, ninguno
+    08:41:00Z (10:41:00 del trader) - 08:43:00Z (10:43:00 del trader), 3 | NO, compra 0 1.1651 < toma 1.16517 | SI, 4 | SI, ninguno
+    08:44:00Z (10:44:00 del trader) - 08:44:00Z (10:44:00 del trader), 1 | NO, compra 0 1.16516 < toma 1.16517 | SI, 4 | SI, ninguno
+    08:45:00Z (10:45:00 del trader) - 08:47:00Z (10:47:00 del trader), 3 | NO, compra 0 1.16516 < toma 1.16517 | SI, 5 | SI, ninguno
+    08:48:00Z (10:48:00 del trader) - 08:50:00Z (10:50:00 del trader), 3 | SI, compra 0 1.1652 > toma 1.16517 | SI, 5 | SI, ninguno
+    08:51:00Z (10:51:00 del trader) - 08:52:00Z (10:52:00 del trader), 2 | SI, compra 0 1.1652 > toma 1.16517 | SI, 6 | SI, ninguno
+    08:53:00Z (10:53:00 del trader) - 08:57:00Z (10:57:00 del trader), 5 | NO, compra 0 1.16513 < toma 1.16517 | SI, 6 | SI, ninguno
+    08:58:00Z (10:58:00 del trader) - 08:58:00Z (10:58:00 del trader), 1 | SI, compra 0 1.16513 > toma 1.16498 | SI, 6 | SI, ninguno
+    08:59:00Z (10:59:00 del trader) - 08:59:00Z (10:59:00 del trader), 1 | SI, compra 0 1.16513 > toma 1.16498 | NO, 0 | SI, ninguno
+    09:00:00Z (11:00:00 del trader) - 09:00:00Z (11:00:00 del trader), 1 | NO, sin zona o sin toma | NO, - | SI, ninguno
+  ordenes de la sesion:
+    o1 stop compra | colocada 08:25:59Z (10:25:59 del trader) | 0 1.16517 stop 1.16511 objetivo 1.16538 | rechazada precio_invalido | zona zona:87 (0 1.16517, 1 1.1651, bloque desde 08:24:00Z (10:24:00 del trader), formada 08:26:00Z (10:26:00 del trader), punto 116517@29796985)
+    o2 stop compra | colocada 08:32:59Z (10:32:59 del trader) | 0 1.16513 stop 1.16501 objetivo 1.16558 | llenada - | zona zona:91 (0 1.16513, 1 1.16498, bloque desde 08:31:00Z (10:31:00 del trader), formada 08:33:00Z (10:33:00 del trader), punto 116513@29796992)
+  puntos rechazados en la sesion (ADR-0064, decision 1): ['116517@29796985']
+  la vela que marca el 0 de zona:87 y sus vecinas (dos a cada lado):
+    08:22:00Z (10:22:00 del trader) O 1.1652 H 1.1652 L 1.16511 C 1.16514
+    08:23:00Z (10:23:00 del trader) O 1.16515 H 1.16517 L 1.1651 C 1.16513
+    08:24:00Z (10:24:00 del trader) O 1.16513 H 1.16517 L 1.16511 C 1.16515 <- marca
+    08:25:00Z (10:25:00 del trader) O 1.16519 H 1.16519 L 1.1651 C 1.16516
+    08:26:00Z (10:26:00 del trader) O 1.16517 H 1.16529 L 1.16515 C 1.16523
+  la vela que marca el 0 de zona:91 y sus vecinas (dos a cada lado):
+    08:29:00Z (10:29:00 del trader) O 1.16512 H 1.16513 L 1.16498 C 1.16505
+    08:30:00Z (10:30:00 del trader) O 1.16507 H 1.16508 L 1.16503 C 1.16507
+    08:31:00Z (10:31:00 del trader) O 1.16506 H 1.16513 L 1.16505 C 1.16507 <- marca
+    08:32:00Z (10:32:00 del trader) O 1.16507 H 1.16507 L 1.16498 C 1.16499
+    08:33:00Z (10:33:00 del trader) O 1.16498 H 1.1651 L 1.16498 C 1.1651
+== Sesion 11-15: de 09:00:00Z (11:00:00 del trader) a 13:00:00Z (15:00:00 del trader) ==
+  disparadas en la sesion: RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027
+  hechos fijados: 170; solo los cambios de valor de cada hecho:
+    09:00:00Z (11:00:00 del trader) RN-003 sesgo=bajista
+    11:55:00Z (13:55:00 del trader) RN-004 liquidez_tomada=si
+    orden_dimensionada: fijado 132 veces (RN-011 liga una zona, RN-015 lo apaga), de 11:55:00Z (13:55:00 del trader) a 13:00:00Z (15:00:00 del trader); zonas distintas 31
+  cierres, en tramos de cierres seguidos iguales (desde - hasta, n | reglas disparadas | efectos prohibidos | acciones bloqueadas):
+    11:55:00Z (13:55:00 del trader) - 11:55:00Z (13:55:00 del trader), 1 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:56:00Z (13:56:00 del trader) - 11:56:00Z (13:56:00 del trader), 1 | RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:57:00Z (13:57:00 del trader) - 11:58:00Z (13:58:00 del trader), 2 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:59:00Z (13:59:00 del trader) - 12:01:00Z (14:01:00 del trader), 3 | RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:02:00Z (14:02:00 del trader) - 12:04:00Z (14:04:00 del trader), 3 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:05:00Z (14:05:00 del trader) - 12:07:00Z (14:07:00 del trader), 3 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:08:00Z (14:08:00 del trader) - 12:14:00Z (14:14:00 del trader), 7 | RN-004, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:15:00Z (14:15:00 del trader) - 12:15:00Z (14:15:00 del trader), 1 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:16:00Z (14:16:00 del trader) - 12:16:00Z (14:16:00 del trader), 1 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:17:00Z (14:17:00 del trader) - 12:21:00Z (14:21:00 del trader), 5 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:22:00Z (14:22:00 del trader) - 12:31:00Z (14:31:00 del trader), 10 | RN-004, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:32:00Z (14:32:00 del trader) - 12:32:00Z (14:32:00 del trader), 1 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:33:00Z (14:33:00 del trader) - 12:34:00Z (14:34:00 del trader), 2 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:35:00Z (14:35:00 del trader) - 12:41:00Z (14:41:00 del trader), 7 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:42:00Z (14:42:00 del trader) - 12:44:00Z (14:44:00 del trader), 3 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:45:00Z (14:45:00 del trader) - 12:46:00Z (14:46:00 del trader), 2 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:47:00Z (14:47:00 del trader) - 12:51:00Z (14:51:00 del trader), 5 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:52:00Z (14:52:00 del trader) - 12:59:00Z (14:59:00 del trader), 8 | RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    13:00:00Z (15:00:00 del trader) - 13:00:00Z (15:00:00 del trader), 1 | RN-001, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion, buscar_entradas | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+  RN-004, en tramos de cierres seguidos iguales (desde - hasta, n | alcanza_nivel / cruza / la_toma_es_de_la_sesion | pivote | extremo de las M1 del tramo en el lado del pivote: el minimo si es un bajo, el maximo si es un alto):
+    09:00:00Z (11:00:00 del trader) - 10:44:00Z (12:44:00 del trader), 105 | NO / - / - | alto 1.16519, formado 09:00:00Z (11:00:00 del trader) | maximo 1.1649 en la M1 de 08:59:00Z (10:59:00 del trader)
+    10:45:00Z (12:45:00 del trader) - 11:44:00Z (13:44:00 del trader), 60 | NO / - / - | alto 1.16481, formado 10:45:00Z (12:45:00 del trader) | maximo 1.16442 en la M1 de 11:31:00Z (13:31:00 del trader)
+    11:45:00Z (13:45:00 del trader) - 11:54:00Z (13:54:00 del trader), 10 | NO / - / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16406 en la M1 de 11:46:00Z (13:46:00 del trader)
+    11:55:00Z (13:55:00 del trader) - 11:55:00Z (13:55:00 del trader), 1 | SI / SI / SI | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16429 en la M1 de 11:54:00Z (13:54:00 del trader)
+    11:56:00Z (13:56:00 del trader) - 11:56:00Z (13:56:00 del trader), 1 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16427 en la M1 de 11:55:00Z (13:55:00 del trader)
+    11:57:00Z (13:57:00 del trader) - 11:58:00Z (13:58:00 del trader), 2 | SI / SI / SI | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16435 en la M1 de 11:57:00Z (13:57:00 del trader)
+    11:59:00Z (13:59:00 del trader) - 11:59:00Z (13:59:00 del trader), 1 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.1643 en la M1 de 11:58:00Z (13:58:00 del trader)
+    12:00:00Z (14:00:00 del trader) - 12:00:00Z (14:00:00 del trader), 1 | NO / - / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16411 en la M1 de 11:59:00Z (13:59:00 del trader)
+    12:01:00Z (14:01:00 del trader) - 12:01:00Z (14:01:00 del trader), 1 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.1642 en la M1 de 12:00:00Z (14:00:00 del trader)
+    12:02:00Z (14:02:00 del trader) - 12:15:00Z (14:15:00 del trader), 14 | SI / SI / SI | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16457 en la M1 de 12:09:00Z (14:09:00 del trader)
+    12:16:00Z (14:16:00 del trader) - 12:16:00Z (14:16:00 del trader), 1 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16419 en la M1 de 12:15:00Z (14:15:00 del trader)
+    12:17:00Z (14:17:00 del trader) - 12:31:00Z (14:31:00 del trader), 15 | SI / SI / SI | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16449 en la M1 de 12:27:00Z (14:27:00 del trader)
+    12:32:00Z (14:32:00 del trader) - 12:32:00Z (14:32:00 del trader), 1 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16426 en la M1 de 12:31:00Z (14:31:00 del trader)
+    12:33:00Z (14:33:00 del trader) - 12:34:00Z (14:34:00 del trader), 2 | SI / SI / SI | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16423 en la M1 de 12:32:00Z (14:32:00 del trader)
+    12:35:00Z (14:35:00 del trader) - 12:35:00Z (14:35:00 del trader), 1 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16421 en la M1 de 12:34:00Z (14:34:00 del trader)
+    12:36:00Z (14:36:00 del trader) - 12:36:00Z (14:36:00 del trader), 1 | NO / - / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16413 en la M1 de 12:35:00Z (14:35:00 del trader)
+    12:37:00Z (14:37:00 del trader) - 12:38:00Z (14:38:00 del trader), 2 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16415 en la M1 de 12:36:00Z (14:36:00 del trader)
+    12:39:00Z (14:39:00 del trader) - 12:39:00Z (14:39:00 del trader), 1 | NO / - / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16413 en la M1 de 12:38:00Z (14:38:00 del trader)
+    12:40:00Z (14:40:00 del trader) - 12:41:00Z (14:41:00 del trader), 2 | SI / NO / - | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16418 en la M1 de 12:39:00Z (14:39:00 del trader)
+    12:42:00Z (14:42:00 del trader) - 12:44:00Z (14:44:00 del trader), 3 | SI / SI / SI | alto 1.16415, formado 11:45:00Z (13:45:00 del trader) | maximo 1.16435 en la M1 de 12:42:00Z (14:42:00 del trader)
+    12:45:00Z (14:45:00 del trader) - 13:00:00Z (15:00:00 del trader), 16 | NO / - / - | alto 1.16457, formado 12:45:00Z (14:45:00 del trader) | maximo 1.16437 en la M1 de 12:47:00Z (14:47:00 del trader)
+  gates, en tramos de cierres seguidos iguales (desde - hasta, n | RN-005 se_desarrolla_en_el_lado_de_ruido: valor, lado y 0 de la zona frente al nivel de la toma | RN-009 zonas_desarrolladas_superan: valor, zonas de control (tope 1) | RN-001 en_ventana: valor, hechos detenido_por_* fijados):
+    09:00:00Z (11:00:00 del trader) - 11:54:00Z (13:54:00 del trader), 175 | NO, sin zona o sin toma | NO, - | SI, ninguno
+    11:55:00Z (13:55:00 del trader) - 11:55:00Z (13:55:00 del trader), 1 | SI, venta 0 1.16368 < toma 1.16415 | NO, - | SI, ninguno
+    11:56:00Z (13:56:00 del trader) - 11:56:00Z (13:56:00 del trader), 1 | SI, venta 0 1.16368 < toma 1.16415 | NO, 0 | SI, ninguno
+    11:57:00Z (13:57:00 del trader) - 11:58:00Z (13:58:00 del trader), 2 | SI, venta 0 1.1641 < toma 1.16415 | NO, 0 | SI, ninguno
+    11:59:00Z (13:59:00 del trader) - 12:00:00Z (14:00:00 del trader), 2 | SI, venta 0 1.1641 < toma 1.16415 | NO, 1 | SI, ninguno
+    12:01:00Z (14:01:00 del trader) - 12:04:00Z (14:04:00 del trader), 4 | SI, venta 0 1.16405 < toma 1.16415 | NO, 1 | SI, ninguno
+    12:05:00Z (14:05:00 del trader) - 12:07:00Z (14:07:00 del trader), 3 | SI, venta 0 1.16405 < toma 1.16415 | SI, 2 | SI, ninguno
+    12:08:00Z (14:08:00 del trader) - 12:09:00Z (14:09:00 del trader), 2 | NO, venta 0 1.16422 > toma 1.16415 | SI, 2 | SI, ninguno
+    12:10:00Z (14:10:00 del trader) - 12:14:00Z (14:14:00 del trader), 5 | NO, venta 0 1.16422 > toma 1.16415 | SI, 3 | SI, ninguno
+    12:15:00Z (14:15:00 del trader) - 12:15:00Z (14:15:00 del trader), 1 | SI, venta 0 1.16411 < toma 1.16415 | SI, 3 | SI, ninguno
+    12:16:00Z (14:16:00 del trader) - 12:16:00Z (14:16:00 del trader), 1 | SI, venta 0 1.16411 < toma 1.16415 | SI, 4 | SI, ninguno
+    12:17:00Z (14:17:00 del trader) - 12:17:00Z (14:17:00 del trader), 1 | SI, venta 0 1.16413 < toma 1.16415 | SI, 4 | SI, ninguno
+    12:18:00Z (14:18:00 del trader) - 12:19:00Z (14:19:00 del trader), 2 | SI, venta 0 1.16413 < toma 1.16415 | SI, 5 | SI, ninguno
+    12:20:00Z (14:20:00 del trader) - 12:20:00Z (14:20:00 del trader), 1 | SI, venta 0 1.16414 < toma 1.16415 | SI, 5 | SI, ninguno
+    12:21:00Z (14:21:00 del trader) - 12:21:00Z (14:21:00 del trader), 1 | SI, venta 0 1.16414 < toma 1.16415 | SI, 6 | SI, ninguno
+    12:22:00Z (14:22:00 del trader) - 12:25:00Z (14:25:00 del trader), 4 | NO, venta 0 1.16429 > toma 1.16415 | SI, 6 | SI, ninguno
+    12:26:00Z (14:26:00 del trader) - 12:26:00Z (14:26:00 del trader), 1 | NO, venta 0 1.16429 > toma 1.16415 | SI, 7 | SI, ninguno
+    12:27:00Z (14:27:00 del trader) - 12:27:00Z (14:27:00 del trader), 1 | NO, venta 0 1.16435 > toma 1.16415 | SI, 7 | SI, ninguno
+    12:28:00Z (14:28:00 del trader) - 12:29:00Z (14:29:00 del trader), 2 | NO, venta 0 1.16435 > toma 1.16415 | SI, 8 | SI, ninguno
+    12:30:00Z (14:30:00 del trader) - 12:30:00Z (14:30:00 del trader), 1 | NO, venta 0 1.16424 > toma 1.16415 | SI, 8 | SI, ninguno
+    12:31:00Z (14:31:00 del trader) - 12:32:00Z (14:32:00 del trader), 2 | NO, venta 0 1.16424 > toma 1.16415 | SI, 9 | SI, ninguno
+    12:33:00Z (14:33:00 del trader) - 12:34:00Z (14:34:00 del trader), 2 | SI, venta 0 1.1641 < toma 1.16415 | SI, 9 | SI, ninguno
+    12:35:00Z (14:35:00 del trader) - 12:36:00Z (14:36:00 del trader), 2 | SI, venta 0 1.1641 < toma 1.16415 | SI, 10 | SI, ninguno
+    12:37:00Z (14:37:00 del trader) - 12:38:00Z (14:38:00 del trader), 2 | SI, venta 0 1.16397 < toma 1.16415 | SI, 10 | SI, ninguno
+    12:39:00Z (14:39:00 del trader) - 12:39:00Z (14:39:00 del trader), 1 | SI, venta 0 1.16397 < toma 1.16415 | SI, 11 | SI, ninguno
+    12:40:00Z (14:40:00 del trader) - 12:42:00Z (14:42:00 del trader), 3 | SI, venta 0 1.16401 < toma 1.16415 | SI, 11 | SI, ninguno
+    12:43:00Z (14:43:00 del trader) - 12:46:00Z (14:46:00 del trader), 4 | SI, venta 0 1.16401 < toma 1.16415 | SI, 12 | SI, ninguno
+    12:47:00Z (14:47:00 del trader) - 12:48:00Z (14:48:00 del trader), 2 | NO, venta 0 1.16415 = toma 1.16415 | SI, 12 | SI, ninguno
+    12:49:00Z (14:49:00 del trader) - 12:51:00Z (14:51:00 del trader), 3 | NO, venta 0 1.16415 = toma 1.16415 | SI, 13 | SI, ninguno
+    12:52:00Z (14:52:00 del trader) - 12:55:00Z (14:55:00 del trader), 4 | SI, venta 0 1.16409 < toma 1.16415 | SI, 13 | SI, ninguno
+    12:56:00Z (14:56:00 del trader) - 12:56:00Z (14:56:00 del trader), 1 | SI, venta 0 1.1641 < toma 1.16415 | SI, 13 | SI, ninguno
+    12:57:00Z (14:57:00 del trader) - 12:57:00Z (14:57:00 del trader), 1 | SI, venta 0 1.1641 < toma 1.16415 | SI, 14 | SI, ninguno
+    12:58:00Z (14:58:00 del trader) - 12:58:00Z (14:58:00 del trader), 1 | SI, venta 0 1.16398 < toma 1.16415 | SI, 14 | SI, ninguno
+    12:59:00Z (14:59:00 del trader) - 12:59:00Z (14:59:00 del trader), 1 | SI, venta 0 1.16398 < toma 1.16415 | SI, 15 | SI, ninguno
+    13:00:00Z (15:00:00 del trader) - 13:00:00Z (15:00:00 del trader), 1 | SI, venta 0 1.16398 < toma 1.16415 | SI, 15 | NO, ninguno
+  ordenes de la sesion:
+    ninguna

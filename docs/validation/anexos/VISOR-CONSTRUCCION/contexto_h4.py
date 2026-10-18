@@ -36,7 +36,7 @@ def _fecha(minuto: int) -> str:
 
 def main(casos: list[str]) -> int:
     if hasattr(sys.stdout, "reconfigure"):
-        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stdout.reconfigure(encoding="utf-8", newline="\n")
     ocultos = set(casos_ocultos(cv.RAIZ))
     meses_enteros = set(cargar_meses_reservados(cv.RAIZ))
     peor = 0

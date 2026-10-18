@@ -1,0 +1,110 @@
+CASO caso-eurusd-2026-08-20 · motor visor --simular --caso con las opciones de la corrida 2
+ORDENES frente a «### Ordenes» de main: iguales (18 ordenes del dia)
+== Sesion 11-15: de 09:00:00Z (11:00:00 del trader) a 13:00:00Z (15:00:00 del trader) ==
+  disparadas en la sesion: RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027
+  hechos fijados: 358; solo los cambios de valor de cada hecho:
+    09:00:00Z (11:00:00 del trader) RN-003 sesgo=alcista
+    10:46:00Z (12:46:00 del trader) RN-004 liquidez_tomada=si
+    orden_dimensionada: fijado 266 veces (RN-011 liga una zona, RN-015 lo apaga), de 10:46:00Z (12:46:00 del trader) a 13:00:00Z (15:00:00 del trader); zonas distintas 79
+  cierres, en tramos de cierres seguidos iguales (desde - hasta, n | reglas disparadas | efectos prohibidos | acciones bloqueadas):
+    10:46:00Z (12:46:00 del trader) - 10:48:00Z (12:48:00 del trader), 3 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    10:49:00Z (12:49:00 del trader) - 10:49:00Z (12:49:00 del trader), 1 | RN-004, RN-011, RN-015, RN-027 | - | -
+    10:50:00Z (12:50:00 del trader) - 10:50:00Z (12:50:00 del trader), 1 | RN-004, RN-006, RN-011, RN-015, RN-027 | - | -
+    10:51:00Z (12:51:00 del trader) - 10:51:00Z (12:51:00 del trader), 1 | RN-004, RN-011, RN-012, RN-015, RN-027 | - | -
+    10:52:00Z (12:52:00 del trader) - 10:54:00Z (12:54:00 del trader), 3 | RN-004, RN-006, RN-011, RN-015, RN-027 | - | -
+    10:55:00Z (12:55:00 del trader) - 10:55:00Z (12:55:00 del trader), 1 | RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    10:56:00Z (12:56:00 del trader) - 11:29:00Z (13:29:00 del trader), 34 | RN-004, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:30:00Z (13:30:00 del trader) - 11:42:00Z (13:42:00 del trader), 13 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:43:00Z (13:43:00 del trader) - 11:43:00Z (13:43:00 del trader), 1 | RN-004, RN-005, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:44:00Z (13:44:00 del trader) - 11:47:00Z (13:47:00 del trader), 4 | RN-004, RN-005, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:48:00Z (13:48:00 del trader) - 11:48:00Z (13:48:00 del trader), 1 | RN-004, RN-011, RN-015, RN-027 | - | -
+    11:49:00Z (13:49:00 del trader) - 11:49:00Z (13:49:00 del trader), 1 | RN-004, RN-006, RN-011, RN-015, RN-027 | - | -
+    11:50:00Z (13:50:00 del trader) - 11:51:00Z (13:51:00 del trader), 2 | RN-004, RN-018 | abrir_operacion | -
+    11:52:00Z (13:52:00 del trader) - 11:52:00Z (13:52:00 del trader), 1 | RN-004, RN-011, RN-012, RN-015, RN-027 | - | -
+    11:53:00Z (13:53:00 del trader) - 11:53:00Z (13:53:00 del trader), 1 | RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    11:54:00Z (13:54:00 del trader) - 12:29:00Z (14:29:00 del trader), 36 | RN-004, RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    12:30:00Z (14:30:00 del trader) - 12:59:00Z (14:59:00 del trader), 30 | RN-009, RN-011, RN-015, RN-027 | abrir_operacion | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+    13:00:00Z (15:00:00 del trader) - 13:00:00Z (15:00:00 del trader), 1 | RN-001, RN-009, RN-011, RN-015, RN-027 | abrir_operacion, buscar_entradas | RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+  ordenes de la sesion:
+    o10 stop compra | colocada 10:48:59Z (12:48:59 del trader) | 0 1.17012 stop 1.16999 objetivo 1.1706 | cancelada reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | zona zona:94 (0 1.17012, 1 1.16996, bloque desde 10:47:00Z (12:47:00 del trader), formada 10:49:00Z (12:49:00 del trader), punto 117012@29787048)
+    o11 stop compra | colocada 10:49:59Z (12:49:59 del trader) | 0 1.17012 stop 1.16997 objetivo 1.17066 | llenada - | zona zona:95 (0 1.17012, 1 1.16994, bloque desde 10:47:00Z (12:47:00 del trader), formada 10:50:00Z (12:50:00 del trader), punto 117012@29787048)
+    o12 stop compra | colocada 10:50:59Z (12:50:59 del trader) | 0 1.17007 stop 1.16994 objetivo 1.17055 | cancelada reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | zona zona:96 (0 1.17007, 1 1.16991, bloque desde 10:49:00Z (12:49:00 del trader), formada 10:51:00Z (12:51:00 del trader), punto 117007@29787050)
+    o13 stop compra | colocada 10:51:59Z (12:51:59 del trader) | 0 1.17007 stop 1.16983 objetivo 1.17097 | cancelada reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | zona zona:97 (0 1.17007, 1 1.16977, bloque desde 10:49:00Z (12:49:00 del trader), formada 10:52:00Z (12:52:00 del trader), punto 117007@29787050)
+    o14 stop compra | colocada 10:52:59Z (12:52:59 del trader) | 0 1.17007 stop 1.16972 objetivo 1.17136 | cancelada reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | zona zona:98 (0 1.17007, 1 1.16964, bloque desde 10:49:00Z (12:49:00 del trader), formada 10:53:00Z (12:53:00 del trader), punto 117007@29787050)
+    o15 stop compra | colocada 10:53:59Z (12:53:59 del trader) | 0 1.17007 stop 1.1696 objetivo 1.17181 | cancelada reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | zona zona:99 (0 1.17007, 1 1.16949, bloque desde 10:49:00Z (12:49:00 del trader), formada 10:54:00Z (12:54:00 del trader), punto 117007@29787050)
+    o16 stop compra | colocada 11:47:59Z (13:47:59 del trader) | 0 1.16865 stop 1.16853 objetivo 1.1691 | cancelada reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | zona zona:133 (0 1.16865, 1 1.1685, bloque desde 11:46:00Z (13:46:00 del trader), formada 11:48:00Z (13:48:00 del trader), punto 116865@29787107)
+    o17 stop compra | colocada 11:48:59Z (13:48:59 del trader) | 0 1.16865 stop 1.1684 objetivo 1.16958 | llenada - | zona zona:134 (0 1.16865, 1 1.16834, bloque desde 11:46:00Z (13:46:00 del trader), formada 11:49:00Z (13:49:00 del trader), punto 116865@29787107)
+    o18 stop compra | colocada 11:51:59Z (13:51:59 del trader) | 0 1.16869 stop 1.1684 objetivo 1.16977 | cancelada reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | zona zona:136 (0 1.16869, 1 1.16833, bloque desde 11:49:00Z (13:49:00 del trader), formada 11:52:00Z (13:52:00 del trader), punto 116869@29787110)
+  la vela que marca el 0 de zona:94 y sus vecinas (dos a cada lado):
+    10:45:00Z (12:45:00 del trader) O 1.17024 H 1.17026 L 1.17005 C 1.17011
+    10:46:00Z (12:46:00 del trader) O 1.17011 H 1.17015 L 1.17008 C 1.1701
+    10:47:00Z (12:47:00 del trader) O 1.17009 H 1.17012 L 1.17003 C 1.1701 <- marca
+    10:48:00Z (12:48:00 del trader) O 1.17009 H 1.17013 L 1.16996 C 1.16997
+    10:49:00Z (12:49:00 del trader) O 1.16999 H 1.17007 L 1.16994 C 1.17006
+  la vela que marca el 0 de zona:95 y sus vecinas (dos a cada lado):
+    10:45:00Z (12:45:00 del trader) O 1.17024 H 1.17026 L 1.17005 C 1.17011
+    10:46:00Z (12:46:00 del trader) O 1.17011 H 1.17015 L 1.17008 C 1.1701
+    10:47:00Z (12:47:00 del trader) O 1.17009 H 1.17012 L 1.17003 C 1.1701 <- marca
+    10:48:00Z (12:48:00 del trader) O 1.17009 H 1.17013 L 1.16996 C 1.16997
+    10:49:00Z (12:49:00 del trader) O 1.16999 H 1.17007 L 1.16994 C 1.17006
+  la vela que marca el 0 de zona:96 y sus vecinas (dos a cada lado):
+    10:47:00Z (12:47:00 del trader) O 1.17009 H 1.17012 L 1.17003 C 1.1701
+    10:48:00Z (12:48:00 del trader) O 1.17009 H 1.17013 L 1.16996 C 1.16997
+    10:49:00Z (12:49:00 del trader) O 1.16999 H 1.17007 L 1.16994 C 1.17006 <- marca
+    10:50:00Z (12:50:00 del trader) O 1.17005 H 1.17011 L 1.16991 C 1.16992
+    10:51:00Z (12:51:00 del trader) O 1.16992 H 1.16992 L 1.16977 C 1.16987
+  la vela que marca el 0 de zona:97 y sus vecinas (dos a cada lado):
+    10:47:00Z (12:47:00 del trader) O 1.17009 H 1.17012 L 1.17003 C 1.1701
+    10:48:00Z (12:48:00 del trader) O 1.17009 H 1.17013 L 1.16996 C 1.16997
+    10:49:00Z (12:49:00 del trader) O 1.16999 H 1.17007 L 1.16994 C 1.17006 <- marca
+    10:50:00Z (12:50:00 del trader) O 1.17005 H 1.17011 L 1.16991 C 1.16992
+    10:51:00Z (12:51:00 del trader) O 1.16992 H 1.16992 L 1.16977 C 1.16987
+  la vela que marca el 0 de zona:98 y sus vecinas (dos a cada lado):
+    10:47:00Z (12:47:00 del trader) O 1.17009 H 1.17012 L 1.17003 C 1.1701
+    10:48:00Z (12:48:00 del trader) O 1.17009 H 1.17013 L 1.16996 C 1.16997
+    10:49:00Z (12:49:00 del trader) O 1.16999 H 1.17007 L 1.16994 C 1.17006 <- marca
+    10:50:00Z (12:50:00 del trader) O 1.17005 H 1.17011 L 1.16991 C 1.16992
+    10:51:00Z (12:51:00 del trader) O 1.16992 H 1.16992 L 1.16977 C 1.16987
+  la vela que marca el 0 de zona:99 y sus vecinas (dos a cada lado):
+    10:47:00Z (12:47:00 del trader) O 1.17009 H 1.17012 L 1.17003 C 1.1701
+    10:48:00Z (12:48:00 del trader) O 1.17009 H 1.17013 L 1.16996 C 1.16997
+    10:49:00Z (12:49:00 del trader) O 1.16999 H 1.17007 L 1.16994 C 1.17006 <- marca
+    10:50:00Z (12:50:00 del trader) O 1.17005 H 1.17011 L 1.16991 C 1.16992
+    10:51:00Z (12:51:00 del trader) O 1.16992 H 1.16992 L 1.16977 C 1.16987
+  la vela que marca el 0 de zona:133 y sus vecinas (dos a cada lado):
+    11:44:00Z (13:44:00 del trader) O 1.16883 H 1.16887 L 1.16874 C 1.16877
+    11:45:00Z (13:45:00 del trader) O 1.16879 H 1.1688 L 1.16851 C 1.16856
+    11:46:00Z (13:46:00 del trader) O 1.16858 H 1.16865 L 1.16856 C 1.1686 <- marca
+    11:47:00Z (13:47:00 del trader) O 1.1686 H 1.16867 L 1.1685 C 1.16854
+    11:48:00Z (13:48:00 del trader) O 1.16852 H 1.16853 L 1.16834 C 1.16853
+  la vela que marca el 0 de zona:134 y sus vecinas (dos a cada lado):
+    11:44:00Z (13:44:00 del trader) O 1.16883 H 1.16887 L 1.16874 C 1.16877
+    11:45:00Z (13:45:00 del trader) O 1.16879 H 1.1688 L 1.16851 C 1.16856
+    11:46:00Z (13:46:00 del trader) O 1.16858 H 1.16865 L 1.16856 C 1.1686 <- marca
+    11:47:00Z (13:47:00 del trader) O 1.1686 H 1.16867 L 1.1685 C 1.16854
+    11:48:00Z (13:48:00 del trader) O 1.16852 H 1.16853 L 1.16834 C 1.16853
+  la vela que marca el 0 de zona:136 y sus vecinas (dos a cada lado):
+    11:47:00Z (13:47:00 del trader) O 1.1686 H 1.16867 L 1.1685 C 1.16854
+    11:48:00Z (13:48:00 del trader) O 1.16852 H 1.16853 L 1.16834 C 1.16853
+    11:49:00Z (13:49:00 del trader) O 1.16852 H 1.16869 L 1.16852 C 1.16865 <- marca
+    11:50:00Z (13:50:00 del trader) O 1.16865 H 1.16872 L 1.1685 C 1.1685
+    11:51:00Z (13:51:00 del trader) O 1.1685 H 1.16854 L 1.16833 C 1.16833
+== M1 del dia dev que empiezan de 10:44Z a 11:01Z ==
+    10:44:00Z (12:44:00 del trader) O 1.17034 H 1.17034 L 1.17021 C 1.17024
+    10:45:00Z (12:45:00 del trader) O 1.17024 H 1.17026 L 1.17005 C 1.17011
+    10:46:00Z (12:46:00 del trader) O 1.17011 H 1.17015 L 1.17008 C 1.1701
+    10:47:00Z (12:47:00 del trader) O 1.17009 H 1.17012 L 1.17003 C 1.1701
+    10:48:00Z (12:48:00 del trader) O 1.17009 H 1.17013 L 1.16996 C 1.16997
+    10:49:00Z (12:49:00 del trader) O 1.16999 H 1.17007 L 1.16994 C 1.17006
+    10:50:00Z (12:50:00 del trader) O 1.17005 H 1.17011 L 1.16991 C 1.16992
+    10:51:00Z (12:51:00 del trader) O 1.16992 H 1.16992 L 1.16977 C 1.16987
+    10:52:00Z (12:52:00 del trader) O 1.16987 H 1.16987 L 1.16964 C 1.16966
+    10:53:00Z (12:53:00 del trader) O 1.16966 H 1.16967 L 1.16949 C 1.16951
+    10:54:00Z (12:54:00 del trader) O 1.16951 H 1.16952 L 1.16945 C 1.16952
+    10:55:00Z (12:55:00 del trader) O 1.16951 H 1.16974 L 1.16948 C 1.16969
+    10:56:00Z (12:56:00 del trader) O 1.1697 H 1.1697 L 1.16962 C 1.16966
+    10:57:00Z (12:57:00 del trader) O 1.16965 H 1.16967 L 1.16949 C 1.16951
+    10:58:00Z (12:58:00 del trader) O 1.16952 H 1.16956 L 1.16941 C 1.16949
+    10:59:00Z (12:59:00 del trader) O 1.16948 H 1.16969 L 1.16947 C 1.16969
+    11:00:00Z (13:00:00 del trader) O 1.16969 H 1.16981 L 1.1696 C 1.16961
+    11:01:00Z (13:01:00 del trader) O 1.16961 H 1.16964 L 1.16953 C 1.16962
