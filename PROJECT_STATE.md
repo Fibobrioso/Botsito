@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/plataforma-adelantada
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/visor-construccion` cerrada en `main` el 2026-10-18 (`stable/F37t-visor-construccion`); R3.2 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/plataforma-adelantada` EN CURSO (abierta el 2026-10-18 desde 8642b8c; tramo R0): el ADR de la capa de MT5 que no decide operaciones antes de F26, su tramo R6a en la hoja de ruta, y PROJECT_STATE adelgazado; solo documentos. Encargo docs/encargos/trabajo-plataforma-adelantada.md; informe docs/validation/PLATAFORMA-ADELANTADA.md.
 
 ## Stable Main State
 7d3783d · merge de `trabajo/visor-construccion` (tag `stable/F37t-visor-construccion`): las comprobaciones de R3.1 en el visor sobre 20 días, rama de diagnóstico sin código; una E (el punto de una orden ya llenada se vuelve a colocar con otra caja, contra ADR-0064, decisión 1: Y, R3.4) y el resto correcto o R, con sus preguntas para V; la lectura del M1 de marzo por `test_visor.py` declarada en HOLDOUT-EXPOSICIONES. Sobre `stable/F37s-margen-lote` (3762429). Informe docs/validation/VISOR-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
@@ -186,8 +186,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 36 (2026-10-18).
+— ninguna desde el Archivo 37 (2026-10-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 36 (2026-10-18).
+— ninguna desde el Archivo 37 (2026-10-18).
