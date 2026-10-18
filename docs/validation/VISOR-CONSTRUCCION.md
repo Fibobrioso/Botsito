@@ -356,6 +356,105 @@ el repo y corrió `gh run view 39136089919`. No hace falta fila en HOLDOUT-EXPOS
 
 Espero tu respuesta a la PARADA.
 
+### 1.h Respuesta del consultor a la PARADA (2026-10-18)
+
+Copiada tal cual (también al final de `docs/encargos/trabajo-visor-construccion.md`):
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/visor-construccion (2026-10-18). Cópiala tal cual al final del encargo y en VISOR-CONSTRUCCION.md, y aplícala punto por punto con la skill fase-cero.
+>
+> 0. Los tres días de P2: los que recomiendas, 2026-01-29 11-15 (venta, 52 puntos), 2026-08-20 11-15 (compra, 36) y 2026-01-08 07-11 (compra, 21). Por qué: siguen desde R3.1, tienen la Δentrada más grande y no pintan H4 de marzo ni de junio. 2026-07-02 11-15 no entra.
+>
+> 1. La traza por cierre: (a), traza_por_cierre.py. Por qué: sin ella no se sabe qué regla prohibió en cada cierre. Condiciones: el guion solo LEE el Evento de cada cierre y no cambia ninguna decisión del motor; si sus órdenes no son las de «### Ordenes» de main para ese día, PARADA. Si la guardia lo niega por código sin revisar, PARADA: no se rodea.
+>
+> 2. Cómo se mira una página: (a), extraer_pagina.py. La sesión no abre el HTML entero. Por qué: así no ve horas ni precios de días anteriores, en lugar de depender de no copiarlos.
+>
+> 3. Las 2 sesiones sin orden_dimensionada: (a). Se mira con la traza por qué RN-004 no produjo la toma de liquidez en cada cierre (qué pivote y qué lectura de «formado»). La conclusión es R (A-35, ya en V) salvo que se vea un error de código. Los heredados 25 y 30 quedan vivos y no se tocan. La premisa de mi encargo y de mi respuesta a la PARADA 4 de R3.1 (punto 2: «RN-011 no dimensiona con los hechos del camino producidos») era falsa: el hecho que falta es liquidez_tomada. Ver punto 8.
+>
+> 4. Los rechazos por precio_invalido: (a). Se miran 2026-07-08 11-15 y 2026-07-13 11-15, que siguen de R3.1, más 2026-01-08 07-11, 2026-08-07 07-11 y 2026-04-27 07-11. 2026-04-16 07-11 se cita como «ya no rechaza», con lo que hace hoy, sin página. Las de julio pintan H4 de junio: contexto_h4.py antes de generar su página, por recuento y pertenencia, y declarado en la fila.
+>
+> 5. «Anterior al día dev»: (a), por la fecha UTC de la vela. Nada anterior a las 00:00Z de la fecha del caso entra al informe ni a los anexos, aunque sea del día operativo. Por qué: es el precedente de R3.1.
+>
+> 6. Lo que el repo pide y el encargo no decía: (a). Tres líneas más de deuda, todas como propuestas para Technical Debt, sin tocar código:
+>    - que el visor enseñe las H4 saltadas por color (ADR-0080 §10, que lo dejó para O);
+>    - que el visor también lee el M1 de marzo y junio en cada make check (test_visor.py);
+>    - que --hasta no recorta las H4, las listas por sesión ni el resumen del bróker (VISOR-DIAS.md).
+>    En las líneas de cierre, las preguntas nuevas van también a R4.1 («Qué es»), y la línea de Estado de R3.2 explica la conclusión «correcto».
+>
+> 7. El guion de cierre simulado: conforme, con test_hoja_de_ruta y test_project_state (secciones, rama y tope de 25.000 bytes) sobre el texto en memoria.
+>
+> 8. Para la fila de ERRORES-RECURRENTES de esta rama, dos hallazgos del consultor, con su lección:
+>    - Consultor, PARADA 4 de R3.1, punto 2: leí «no se produjo un hecho del camino» (§4.6) como «RN-011 no dimensiona». Lección: al clasificar, citar el hecho que falta por su nombre (el embudo lo da), no la regla que se supone detrás.
+>    - Consultor, encargo de esta rama: puse como hechos dos cosas del visor que venían de un auditor sin medirlas: que la página solo enseña la caja final y que --depuracion da una traza (h1 y h2). Lección: lo que un auditor dice de cómo funciona un mecanismo entra en el encargo como «verifica que…», nunca como hecho (regla de oro 1 del consultor).
+>
+> Además:
+> - 2026-07-01 11-15: la traza dice en qué cierre prohíbe RN-001 y si lo que corta son los cartuchos agotados (RN-016) o el minuto de ventana_fin. Las 4 sesiones con detenido_por_cartuchos:si van al informe como dato: el lote limitado de ADR-0081 gasta cartuchos que antes no se gastaban. Si eso cambia la conclusión de alguna sesión de las 14, se dice.
+> - Las dos columnas en USD de «### Ordenes» no se copian, como propones.
+>
+> Lo que sigue: la fase 1 (la fila de exposiciones antes de la primera página; los cuatro guiones a anexos; las comprobaciones sesión por sesión) y la fase 2, sin parar, salvo que la traza no reproduzca la corrida de main, que la guardia niegue un guion o que contexto_h4.py encuentre una H4 en un día con caso reservado. En cualquiera de esos casos, PARADA.
+>
+> Rama lista para revisión, NO cerrada.
+
+**Aplicación punto por punto (en curso):** 0 → los tres días de P2 entran en la fase 1; 1 → el
+guion de traza; 2 → el extractor; 3 → las 2 sesiones por la traza de RN-004; 4 → los cinco rechazos
+y 2026-04-16 sin página; 5 → la regla de la fecha UTC en `comun_visor.antes_del_dia`; 6 → las tres
+deudas y las líneas del cierre; 7 → el guion de cierre simulado; 8 → la fila de ERRORES-RECURRENTES
+en el cierre; «Además» → 2026-07-01 11-15 por la traza y las 4 sesiones con los cartuchos agotados.
+
+## 2 · Fase 1 · Las comprobaciones en el visor (2026-10-18)
+
+### 2.a Antes de la primera página: `contexto_h4.py`, y la PARADA 2
+
+La fila de exposiciones del 2026-10-18 se escribió antes de leer ninguna vela. Los dos primeros
+ficheros de `docs/validation/anexos/VISOR-CONSTRUCCION/`:
+- `comun_visor.py`: construye el motor cableado y prepara UN día exactamente como `motor visor
+  --simular --caso` con las opciones de la corrida 2 (las mismas llamadas que `cli.motor_visor`,
+  :2478-2557); y la puerta de lo que se imprime (`antes_del_dia`: nada anterior a las 00:00Z de la
+  fecha del caso; punto 5).
+- `contexto_h4.py`: antes de cada página, por recuento y por pertenencia a `casos_ocultos` y a los
+  meses reservados enteros, si las H4 de contexto o el M1 de la ventana caen en un día oculto. No
+  imprime ninguna fecha, hora ni precio.
+
+Comando, sobre los 20 días de la fase 1 (P2: 01-08, 01-29, 08-20; las 14 sin orden; las 2 sin
+`orden_dimensionada`; los cinco rechazos):
+
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/contexto_h4.py caso-eurusd-2026-01-08 caso-eurusd-2026-01-29 caso-eurusd-2026-01-30 caso-eurusd-2026-04-17 caso-eurusd-2026-04-27 caso-eurusd-2026-07-01 caso-eurusd-2026-07-08 caso-eurusd-2026-07-09 caso-eurusd-2026-07-13 caso-eurusd-2026-07-14 caso-eurusd-2026-07-16 caso-eurusd-2026-08-03 caso-eurusd-2026-08-07 caso-eurusd-2026-08-11 caso-eurusd-2026-08-14 caso-eurusd-2026-08-19 caso-eurusd-2026-08-20 caso-eurusd-2026-08-21 caso-eurusd-2026-08-25 caso-eurusd-2026-08-27
+
+Salida en `anexos/VISOR-CONSTRUCCION/contexto_h4.txt` (código de salida 2). Lo que dice:
+- **Las 20 páginas pintan 8 H4 de contexto, 5 de ellas de antes del día** (las del sesgo nunca van
+  más atrás que las 8 mínimas en estos días), **y entre 51 y 120 velas M1 de antes de las 00:00Z**
+  (la ventana empieza a las 00:00 del trader, que con la rejilla es el día UTC anterior): esto vale
+  para todos los días, no solo para los primeros del mes.
+- **19 días: 0 velas en un día oculto o en un mes reservado.** 2026-08-03 pinta 4 H4 de julio, sin
+  ningún día oculto.
+- **2026-07-01: PARADA.** Su página pintaría 5 H4 y 118 M1 del día UTC anterior, y ese día está
+  oculto. Una comprobación de pertenencia por huella (un guion de la carpeta de trabajo que solo
+  imprime «sí» o «no»: `holdout.huella_de_caso` contra `retirados.yaml`) dice que es el día que
+  HOLDOUT-EXPOSICIONES ya declaró el 2026-10-14 (hallazgo a1 del revisor de R3.1) y que salió del
+  holdout por ADR-0041 ese día: retirado, no medido. No es información nueva sobre ningún día que
+  mida. La página de 2026-07-01 no se ha generado.
+
+**PARADA 2.** La respuesta del consultor manda PARADA si `contexto_h4.py` encuentra una H4 en un día
+con caso reservado, y aquí la encuentra, aunque sea el día ya retirado. 2026-07-01 11-15 es una de
+las 14 sesiones sin orden, y la del «Además» (si RN-001 corta por los cartuchos o por `ventana_fin`).
+
+## Lo que necesito que decidas (PARADA 2)
+
+0. **2026-07-01 11-15 sin su página.** Opciones: (a) esa sesión se comprueba SOLO con
+   `traza_por_cierre.py`, que corre el mismo motor y no imprime nada anterior a las 00:00Z del 1 de
+   julio, y sin página (el «gráfico» de esa sesión queda como el comando del visor que V no debe
+   abrir sin decidirlo); (b) se genera la página igual, porque el día es el retirado y no mide, y la
+   sesión la lee solo con `extraer_pagina.py`; (c) 2026-07-01 11-15 sale de esta rama. Recomiendo
+   (a): la traza da lo que la comprobación necesita (qué regla prohíbe en cada cierre, cartuchos o
+   ventana) y no pinta nada del día retirado; ADR-0041 dice que un retirado sigue oculto. Coste de
+   (a): V no tendrá página de esa sesión para el cuestionario.
+1. **Los otros 19 días.** Opciones: (a) sigo con ellos ya (fase 1 y fase 2), con las páginas y los
+   guiones; (b) espero tu respuesta para todo. Recomiendo (a): `contexto_h4.py` los da limpios, y la
+   decisión 0 no les afecta. Coste: ninguno; si la respuesta a 0 lo pide, 07-01 se añade después.
+
+Espero tu respuesta a la PARADA 2.
+
 ## Estado
 
-EN CURSO · PARADA de la fase 0 (2026-10-18): el inventario a-d esta en §1 y las ocho decisiones en «Lo que necesito que decidas». Ni codigo, ni spec, ni knowledge tocados; ninguna pagina del visor generada, ninguna vela leida. Se espera la respuesta del consultor.
+EN CURSO · PARADA 2 (2026-10-18): `contexto_h4.py` encontró que la página de 2026-07-01 pintaría velas del día ya retirado por ADR-0041; esa página no se generó. Se espera la respuesta del consultor.

@@ -92,3 +92,43 @@ Dado por Aleks (consultor) el 2026-10-18. Copiado tal cual:
 > La rama no toca código. Si por cualquier motivo toca hooks, rutas o el sistema de archivos, PARADA. Si no, dilo con la lista de ficheros cambiados.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-10-18)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/visor-construccion (2026-10-18). Cópiala tal cual al final del encargo y en VISOR-CONSTRUCCION.md, y aplícala punto por punto con la skill fase-cero.
+>
+> 0. Los tres días de P2: los que recomiendas, 2026-01-29 11-15 (venta, 52 puntos), 2026-08-20 11-15 (compra, 36) y 2026-01-08 07-11 (compra, 21). Por qué: siguen desde R3.1, tienen la Δentrada más grande y no pintan H4 de marzo ni de junio. 2026-07-02 11-15 no entra.
+>
+> 1. La traza por cierre: (a), traza_por_cierre.py. Por qué: sin ella no se sabe qué regla prohibió en cada cierre. Condiciones: el guion solo LEE el Evento de cada cierre y no cambia ninguna decisión del motor; si sus órdenes no son las de «### Ordenes» de main para ese día, PARADA. Si la guardia lo niega por código sin revisar, PARADA: no se rodea.
+>
+> 2. Cómo se mira una página: (a), extraer_pagina.py. La sesión no abre el HTML entero. Por qué: así no ve horas ni precios de días anteriores, en lugar de depender de no copiarlos.
+>
+> 3. Las 2 sesiones sin orden_dimensionada: (a). Se mira con la traza por qué RN-004 no produjo la toma de liquidez en cada cierre (qué pivote y qué lectura de «formado»). La conclusión es R (A-35, ya en V) salvo que se vea un error de código. Los heredados 25 y 30 quedan vivos y no se tocan. La premisa de mi encargo y de mi respuesta a la PARADA 4 de R3.1 (punto 2: «RN-011 no dimensiona con los hechos del camino producidos») era falsa: el hecho que falta es liquidez_tomada. Ver punto 8.
+>
+> 4. Los rechazos por precio_invalido: (a). Se miran 2026-07-08 11-15 y 2026-07-13 11-15, que siguen de R3.1, más 2026-01-08 07-11, 2026-08-07 07-11 y 2026-04-27 07-11. 2026-04-16 07-11 se cita como «ya no rechaza», con lo que hace hoy, sin página. Las de julio pintan H4 de junio: contexto_h4.py antes de generar su página, por recuento y pertenencia, y declarado en la fila.
+>
+> 5. «Anterior al día dev»: (a), por la fecha UTC de la vela. Nada anterior a las 00:00Z de la fecha del caso entra al informe ni a los anexos, aunque sea del día operativo. Por qué: es el precedente de R3.1.
+>
+> 6. Lo que el repo pide y el encargo no decía: (a). Tres líneas más de deuda, todas como propuestas para Technical Debt, sin tocar código:
+>    - que el visor enseñe las H4 saltadas por color (ADR-0080 §10, que lo dejó para O);
+>    - que el visor también lee el M1 de marzo y junio en cada make check (test_visor.py);
+>    - que --hasta no recorta las H4, las listas por sesión ni el resumen del bróker (VISOR-DIAS.md).
+>    En las líneas de cierre, las preguntas nuevas van también a R4.1 («Qué es»), y la línea de Estado de R3.2 explica la conclusión «correcto».
+>
+> 7. El guion de cierre simulado: conforme, con test_hoja_de_ruta y test_project_state (secciones, rama y tope de 25.000 bytes) sobre el texto en memoria.
+>
+> 8. Para la fila de ERRORES-RECURRENTES de esta rama, dos hallazgos del consultor, con su lección:
+>    - Consultor, PARADA 4 de R3.1, punto 2: leí «no se produjo un hecho del camino» (§4.6) como «RN-011 no dimensiona». Lección: al clasificar, citar el hecho que falta por su nombre (el embudo lo da), no la regla que se supone detrás.
+>    - Consultor, encargo de esta rama: puse como hechos dos cosas del visor que venían de un auditor sin medirlas: que la página solo enseña la caja final y que --depuracion da una traza (h1 y h2). Lección: lo que un auditor dice de cómo funciona un mecanismo entra en el encargo como «verifica que…», nunca como hecho (regla de oro 1 del consultor).
+>
+> Además:
+> - 2026-07-01 11-15: la traza dice en qué cierre prohíbe RN-001 y si lo que corta son los cartuchos agotados (RN-016) o el minuto de ventana_fin. Las 4 sesiones con detenido_por_cartuchos:si van al informe como dato: el lote limitado de ADR-0081 gasta cartuchos que antes no se gastaban. Si eso cambia la conclusión de alguna sesión de las 14, se dice.
+> - Las dos columnas en USD de «### Ordenes» no se copian, como propones.
+>
+> Lo que sigue: la fase 1 (la fila de exposiciones antes de la primera página; los cuatro guiones a anexos; las comprobaciones sesión por sesión) y la fase 2, sin parar, salvo que la traza no reproduzca la corrida de main, que la guardia niegue un guion o que contexto_h4.py encuentre una H4 en un día con caso reservado. En cualquiera de esos casos, PARADA.
+>
+> Rama lista para revisión, NO cerrada.
