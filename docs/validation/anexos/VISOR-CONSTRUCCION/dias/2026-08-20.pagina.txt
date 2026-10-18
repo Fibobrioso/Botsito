@@ -1,0 +1,256 @@
+PAGINA caso-eurusd-2026-08-20.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.html · sin graficos, sin el parentesis del sesgo, sin saldo ni equity, sin
+nada anterior a las 00:00Z de la fecha del caso
+DIAGNOSTICO-A35-cierre_vela_contraria DIAGNOSTICO-A44-sin_tope DIAGNOSTICO-CUENTA-diaria: corrida en hipotesis, sin valor para ninguna medida
+# Visor de dia: caso-eurusd-2026-08-20 · 2026-08-20
+Motor: spec vigente + broker simulado (ADR-0053) · reloj de pared: Europe/Madrid · ventana (antes del dia)-15:00 · operaciones del trader 3, del bot 6, parejas del criterio 1
+■ azul: trader■ morado: bot-- rojo: stop·· verde: objetivo DERIVADO por regla (objetivo_rr; el caso no trae objetivo, ADR-0043)— naranja: pareja del criterio▭ verde/rojo: zona de entrada que ligo el motor (compra/venta), visible desde el cierre del breaker (solo --simular)
+## Hechos del motor, en el instante en que se fijaron
+## Contexto H4: la previa y las que miro el sesgo
+## Por sesion
+### Sesion 07-11 (07:00-11:00)
+Sesgo anotado por el motor: bajista
+Embudo: sesgo:si · orden_dimensionada:si · detenido_por_tope:no[productoras sin cumplirse] · detenido_por_tope_total:no[productoras sin cumplirse] · detenido_por_cartuchos:no[productoras sin cumplirse] · detenido_por_racha:no[productoras sin cumplirse] · liquidez_tomada:si | Donde se para: detenido_por_tope:no[productoras sin cumplirse]; bloqueado por prohibida:abrir_operacion
+Hechos fijados (en su instante; un valor `no` apaga el hecho):
+  | (350 filas de hechos fijados omitidas: las resume traza_por_cierre.py)
+Primitivas NO_IMPLEMENTADA (regla: primitiva): RN-007: predicado:se_mapea_estructura, RN-012: accion:realizar_perdida, RN-021: predicado:contexto_filtrable, RN-022: predicado:ninguna_regla_de_entrada_aplica
+Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+Reglas disparadas: RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-018, RN-027
+Avisos H3 (dos reglas de la misma clase dieron SI a la vez): disparador RN-004, RN-006; disparador RN-004, RN-011; disparador RN-004, RN-011, RN-012; disparador RN-004, RN-014; disparador RN-011, RN-012; disparador RN-012, RN-015
+### Sesion 11-15 (11:00-15:00)
+Sesgo anotado por el motor: alcista
+Embudo: sesgo:si · orden_dimensionada:si · detenido_por_tope:no[productoras sin cumplirse] · detenido_por_tope_total:no[productoras sin cumplirse] · detenido_por_cartuchos:no[productoras sin cumplirse] · detenido_por_racha:no[productoras sin cumplirse] · liquidez_tomada:si | Donde se para: detenido_por_tope:no[productoras sin cumplirse]; bloqueado por prohibida:abrir_operacion
+Hechos fijados (en su instante; un valor `no` apaga el hecho):
+  | (359 filas de hechos fijados omitidas: las resume traza_por_cierre.py)
+Primitivas NO_IMPLEMENTADA (regla: primitiva): RN-007: predicado:se_mapea_estructura, RN-012: accion:realizar_perdida, RN-021: predicado:contexto_filtrable, RN-022: predicado:ninguna_regla_de_entrada_aplica
+Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+Reglas disparadas: RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027
+Avisos H3 (dos reglas de la misma clase dieron SI a la vez): disparador RN-004, RN-006; disparador RN-004, RN-011; disparador RN-004, RN-011, RN-012; disparador RN-011, RN-012; disparador RN-012, RN-015
+## Operaciones
+  | origen | sesion | direccion | llenado | entrada | stop | criterio
+  | trader | 07-11 | compra | 07:47:10 | 1.16709 | 1.16702 | -
+  | trader | 11-15 | compra | 13:00:00 | 1.16976 | 1.1696 | -
+  | trader | 11-15 | compra | 13:49:10 | 1.16868 | 1.16853 | pareja 1
+  | bot | 07-11 | venta | 08:02:00 | 1.16758 | 1.16775 | -
+  | bot | 07-11 | venta | 09:02:00 | 1.16847 | 1.16847 | -
+  | bot | 07-11 | venta | 09:45:00 | 1.16896 | 1.16924 | -
+  | bot | 07-11 | venta | 10:47:50 | 1.16966 | 1.16984 | -
+  | bot | 11-15 | compra | 12:50:01 | 1.17012 | 1.16997 | -
+  | bot | 11-15 | compra | 13:49:09 | 1.16865 | 1.1684 | pareja 1
+## Broker simulado (ADR-0053)
+ordenes 18, posiciones 6, eventos 13, rechazos 0 · (saldo y equity omitidos)
+### Zonas de entrada ligadas por el motor
+  | id | lado | esquema | entrada | extremo | bloque desde | formada (cierre)
+  | zona:1 | venta | primer_esquema | 1.16705 | 1.16768 | 07:53:00 | 07:58:00
+  | zona:2 | venta | primer_esquema | 1.16705 | 1.16772 | 07:53:00 | 07:59:00
+  | zona:3 | venta | primer_esquema | 1.16759 | 1.16778 | 07:59:00 | 08:01:00
+  | zona:4 | venta | primer_esquema | 1.16733 | 1.16744 | 08:06:00 | 08:07:00
+  | zona:5 | venta | primer_esquema | 1.16733 | 1.1675 | 08:06:00 | 08:08:00
+  | zona:6 | venta | primer_esquema | 1.16733 | 1.16763 | 08:06:00 | 08:09:00
+  | zona:7 | venta | primer_esquema | 1.16733 | 1.16795 | 08:06:00 | 08:11:00
+  | zona:8 | venta | primer_esquema | 1.16733 | 1.16799 | 08:06:00 | 08:12:00
+  | zona:9 | venta | primer_esquema | 1.16776 | 1.16802 | 08:12:00 | 08:14:00
+  | zona:10 | venta | primer_esquema | 1.16782 | 1.16798 | 08:15:00 | 08:17:00
+  | zona:11 | venta | primer_esquema | 1.16787 | 1.16793 | 08:18:00 | 08:20:00
+  | zona:12 | venta | primer_esquema | 1.16767 | 1.16789 | 08:20:00 | 08:22:00
+  | zona:13 | venta | primer_esquema | 1.16773 | 1.16787 | 08:25:00 | 08:27:00
+  | zona:14 | venta | primer_esquema | 1.16767 | 1.16778 | 08:31:00 | 08:33:00
+  | zona:15 | venta | primer_esquema | 1.1676 | 1.16774 | 08:33:00 | 08:35:00
+  | zona:16 | venta | primer_esquema | 1.1676 | 1.1678 | 08:33:00 | 08:36:00
+  | zona:17 | venta | primer_esquema | 1.1677 | 1.16791 | 08:36:00 | 08:37:00
+  | zona:18 | venta | primer_esquema | 1.1677 | 1.16799 | 08:36:00 | 08:38:00
+  | zona:19 | venta | primer_esquema | 1.1677 | 1.168 | 08:36:00 | 08:42:00
+  | zona:20 | venta | primer_esquema | 1.1677 | 1.16801 | 08:36:00 | 08:44:00
+  | zona:21 | venta | primer_esquema | 1.1677 | 1.16865 | 08:36:00 | 08:46:00
+  | zona:22 | venta | primer_esquema | 1.1677 | 1.16869 | 08:36:00 | 08:47:00
+  | zona:23 | venta | primer_esquema | 1.1677 | 1.16874 | 08:36:00 | 08:48:00
+  | zona:24 | venta | primer_esquema | 1.16829 | 1.16848 | 08:51:00 | 08:53:00
+  | zona:25 | venta | primer_esquema | 1.16829 | 1.16853 | 08:51:00 | 08:55:00
+  | zona:26 | venta | primer_esquema | 1.16829 | 1.16859 | 08:51:00 | 08:56:00
+  | zona:27 | venta | primer_esquema | 1.16847 | 1.16866 | 08:56:00 | 08:58:00
+  | zona:28 | venta | primer_esquema | 1.16847 | 1.16873 | 08:56:00 | 08:59:00
+  | zona:29 | venta | primer_esquema | 1.16847 | 1.16882 | 08:56:00 | 09:00:00
+  | zona:30 | venta | primer_esquema | 1.16817 | 1.16834 | 09:03:00 | 09:05:00
+  | zona:31 | venta | primer_esquema | 1.16817 | 1.16836 | 09:03:00 | 09:06:00
+  | zona:32 | venta | primer_esquema | 1.16825 | 1.16836 | 09:05:00 | 09:07:00
+  | zona:33 | venta | primer_esquema | 1.1681 | 1.16829 | 09:08:00 | 09:10:00
+  | zona:34 | venta | primer_esquema | 1.16809 | 1.16822 | 09:12:00 | 09:13:00
+  | zona:35 | venta | primer_esquema | 1.16809 | 1.16827 | 09:12:00 | 09:14:00
+  | zona:36 | venta | primer_esquema | 1.16809 | 1.16834 | 09:12:00 | 09:15:00
+  | zona:37 | venta | primer_esquema | 1.168 | 1.16827 | 09:16:00 | 09:18:00
+  | zona:38 | venta | primer_esquema | 1.168 | 1.16832 | 09:16:00 | 09:20:00
+  | zona:39 | venta | primer_esquema | 1.16789 | 1.16803 | 09:23:00 | 09:25:00
+  | zona:40 | venta | primer_esquema | 1.16782 | 1.16796 | 09:28:00 | 09:30:00
+  | zona:41 | venta | primer_esquema | 1.16782 | 1.16826 | 09:28:00 | 09:31:00
+  | zona:42 | venta | primer_esquema | 1.16782 | 1.16837 | 09:28:00 | 09:32:00
+  | zona:43 | venta | primer_esquema | 1.16818 | 1.16844 | 09:32:00 | 09:34:00
+  | zona:44 | venta | primer_esquema | 1.16818 | 1.1686 | 09:32:00 | 09:35:00
+  | zona:45 | venta | primer_esquema | 1.16818 | 1.16865 | 09:32:00 | 09:36:00
+  | zona:46 | venta | primer_esquema | 1.16853 | 1.16875 | 09:35:00 | 09:37:00
+  | zona:47 | venta | primer_esquema | 1.16853 | 1.16874 | 09:37:00 | 09:39:00
+  | zona:48 | venta | primer_esquema | 1.16853 | 1.16879 | 09:37:00 | 09:40:00
+  | zona:49 | venta | primer_esquema | 1.16853 | 1.1688 | 09:37:00 | 09:41:00
+  | zona:50 | venta | primer_esquema | 1.16853 | 1.16909 | 09:37:00 | 09:42:00
+  | zona:51 | venta | primer_esquema | 1.16853 | 1.16933 | 09:37:00 | 09:43:00
+  | zona:52 | venta | primer_esquema | 1.16896 | 1.16931 | 09:43:00 | 09:45:00
+  | zona:53 | venta | primer_esquema | 1.1686 | 1.16873 | 09:51:00 | 09:53:00
+  | zona:54 | venta | primer_esquema | 1.1686 | 1.16879 | 09:51:00 | 09:54:00
+  | zona:55 | venta | primer_esquema | 1.1686 | 1.16893 | 09:51:00 | 09:55:00
+  | zona:56 | venta | primer_esquema | 1.1686 | 1.16903 | 09:51:00 | 09:56:00
+  | zona:57 | venta | primer_esquema | 1.1686 | 1.16913 | 09:51:00 | 09:57:00
+  | zona:58 | venta | primer_esquema | 1.1686 | 1.16918 | 09:51:00 | 09:58:00
+  | zona:59 | venta | primer_esquema | 1.1686 | 1.16922 | 09:51:00 | 09:59:00
+  | zona:60 | venta | primer_esquema | 1.1686 | 1.16934 | 09:51:00 | 10:00:00
+  | zona:61 | venta | primer_esquema | 1.16914 | 1.16936 | 10:00:00 | 10:02:00
+  | zona:62 | venta | primer_esquema | 1.16908 | 1.16932 | 10:02:00 | 10:04:00
+  | zona:63 | venta | primer_esquema | 1.16919 | 1.16932 | 10:06:00 | 10:08:00
+  | zona:64 | venta | primer_esquema | 1.16923 | 1.16939 | 10:08:00 | 10:10:00
+  | zona:65 | venta | primer_esquema | 1.16923 | 1.16949 | 10:08:00 | 10:11:00
+  | zona:66 | venta | primer_esquema | 1.16936 | 1.16945 | 10:13:00 | 10:15:00
+  | zona:67 | venta | primer_esquema | 1.16936 | 1.16946 | 10:13:00 | 10:17:00
+  | zona:68 | venta | primer_esquema | 1.16906 | 1.16936 | 10:19:00 | 10:21:00
+  | zona:69 | venta | primer_esquema | 1.16906 | 1.16939 | 10:19:00 | 10:22:00
+  | zona:70 | venta | primer_esquema | 1.16906 | 1.16942 | 10:19:00 | 10:23:00
+  | zona:71 | venta | primer_esquema | 1.16906 | 1.16945 | 10:19:00 | 10:25:00
+  | zona:72 | venta | primer_esquema | 1.16929 | 1.16945 | 10:24:00 | 10:26:00
+  | zona:73 | venta | primer_esquema | 1.16901 | 1.16918 | 10:28:00 | 10:30:00
+  | zona:74 | venta | primer_esquema | 1.16888 | 1.16913 | 10:30:00 | 10:32:00
+  | zona:75 | venta | primer_esquema | 1.16891 | 1.16904 | 10:32:00 | 10:34:00
+  | zona:76 | venta | primer_esquema | 1.16891 | 1.16912 | 10:32:00 | 10:35:00
+  | zona:77 | venta | primer_esquema | 1.16891 | 1.16915 | 10:32:00 | 10:36:00
+  | zona:78 | venta | primer_esquema | 1.16891 | 1.1693 | 10:32:00 | 10:37:00
+  | zona:79 | venta | primer_esquema | 1.16891 | 1.16936 | 10:32:00 | 10:38:00
+  | zona:80 | venta | primer_esquema | 1.16891 | 1.16943 | 10:32:00 | 10:39:00
+  | zona:81 | venta | primer_esquema | 1.16891 | 1.16947 | 10:32:00 | 10:41:00
+  | zona:82 | venta | primer_esquema | 1.16891 | 1.16971 | 10:32:00 | 10:42:00
+  | zona:83 | venta | primer_esquema | 1.16891 | 1.16996 | 10:32:00 | 10:43:00
+  | zona:84 | venta | primer_esquema | 1.16966 | 1.16988 | 10:43:00 | 10:45:00
+  | zona:85 | venta | primer_esquema | 1.16947 | 1.16965 | 10:48:00 | 10:50:00
+  | zona:86 | venta | primer_esquema | 1.16947 | 1.16972 | 10:48:00 | 10:51:00
+  | zona:87 | venta | primer_esquema | 1.16947 | 1.16986 | 10:48:00 | 10:52:00
+  | zona:88 | venta | primer_esquema | 1.16969 | 1.16993 | 10:51:00 | 10:53:00
+  | zona:89 | venta | primer_esquema | 1.16969 | 1.16994 | 10:51:00 | 10:54:00
+  | zona:90 | venta | primer_esquema | 1.16969 | 1.16997 | 10:51:00 | 10:56:00
+  | zona:91 | venta | primer_esquema | 1.16963 | 1.16985 | 10:56:00 | 10:58:00
+  | zona:92 | compra | primer_esquema | 1.1704 | 1.17005 | 12:42:00 | 12:46:00
+  | zona:93 | compra | primer_esquema | 1.1704 | 1.17003 | 12:42:00 | 12:48:00
+  | zona:94 | compra | primer_esquema | 1.17012 | 1.16996 | 12:47:00 | 12:49:00
+  | zona:95 | compra | primer_esquema | 1.17012 | 1.16994 | 12:47:00 | 12:50:00
+  | zona:96 | compra | primer_esquema | 1.17007 | 1.16991 | 12:49:00 | 12:51:00
+  | zona:97 | compra | primer_esquema | 1.17007 | 1.16977 | 12:49:00 | 12:52:00
+  | zona:98 | compra | primer_esquema | 1.17007 | 1.16964 | 12:49:00 | 12:53:00
+  | zona:99 | compra | primer_esquema | 1.17007 | 1.16949 | 12:49:00 | 12:54:00
+  | zona:100 | compra | primer_esquema | 1.17007 | 1.16945 | 12:49:00 | 12:55:00
+  | zona:101 | compra | primer_esquema | 1.16974 | 1.16948 | 12:55:00 | 12:57:00
+  | zona:102 | compra | primer_esquema | 1.16974 | 1.16941 | 12:55:00 | 12:59:00
+  | zona:103 | compra | primer_esquema | 1.16969 | 1.16947 | 12:59:00 | 13:01:00
+  | zona:104 | compra | primer_esquema | 1.16964 | 1.16957 | 13:02:00 | 13:04:00
+  | zona:105 | compra | primer_esquema | 1.16964 | 1.16951 | 13:02:00 | 13:05:00
+  | zona:106 | compra | primer_esquema | 1.16964 | 1.16941 | 13:02:00 | 13:06:00
+  | zona:107 | compra | primer_esquema | 1.16964 | 1.16937 | 13:02:00 | 13:07:00
+  | zona:108 | compra | primer_esquema | 1.16953 | 1.16932 | 13:06:00 | 13:08:00
+  | zona:109 | compra | primer_esquema | 1.16953 | 1.16929 | 13:06:00 | 13:09:00
+  | zona:110 | compra | primer_esquema | 1.16953 | 1.16922 | 13:06:00 | 13:10:00
+  | zona:111 | compra | primer_esquema | 1.16953 | 1.16918 | 13:06:00 | 13:11:00
+  | zona:112 | compra | primer_esquema | 1.16953 | 1.16908 | 13:06:00 | 13:12:00
+  | zona:113 | compra | primer_esquema | 1.16953 | 1.16906 | 13:06:00 | 13:13:00
+  | zona:114 | compra | primer_esquema | 1.16953 | 1.16903 | 13:06:00 | 13:14:00
+  | zona:115 | compra | primer_esquema | 1.16953 | 1.16902 | 13:06:00 | 13:15:00
+  | zona:116 | compra | primer_esquema | 1.16953 | 1.16898 | 13:06:00 | 13:16:00
+  | zona:117 | compra | primer_esquema | 1.1691 | 1.16903 | 13:16:00 | 13:17:00
+  | zona:118 | compra | primer_esquema | 1.1691 | 1.16897 | 13:16:00 | 13:18:00
+  | zona:119 | compra | primer_esquema | 1.16908 | 1.16886 | 13:17:00 | 13:19:00
+  | zona:120 | compra | primer_esquema | 1.16967 | 1.16928 | 13:26:00 | 13:28:00
+  | zona:121 | compra | primer_esquema | 1.16967 | 1.16916 | 13:26:00 | 13:29:00
+  | zona:122 | compra | primer_esquema | 1.16967 | 1.1691 | 13:26:00 | 13:30:00
+  | zona:123 | compra | primer_esquema | 1.16967 | 1.16899 | 13:26:00 | 13:31:00
+  | zona:124 | compra | primer_esquema | 1.16956 | 1.16938 | 13:35:00 | 13:37:00
+  | zona:125 | compra | primer_esquema | 1.16956 | 1.16929 | 13:35:00 | 13:38:00
+  | zona:126 | compra | primer_esquema | 1.16945 | 1.16935 | 13:38:00 | 13:39:00
+  | zona:127 | compra | primer_esquema | 1.16945 | 1.16921 | 13:38:00 | 13:41:00
+  | zona:128 | compra | primer_esquema | 1.16945 | 1.16906 | 13:38:00 | 13:42:00
+  | zona:129 | compra | primer_esquema | 1.16945 | 1.16889 | 13:38:00 | 13:43:00
+  | zona:130 | compra | primer_esquema | 1.16945 | 1.16881 | 13:38:00 | 13:44:00
+  | zona:131 | compra | primer_esquema | 1.16945 | 1.16874 | 13:38:00 | 13:45:00
+  | zona:132 | compra | primer_esquema | 1.16945 | 1.16851 | 13:38:00 | 13:46:00
+  | zona:133 | compra | primer_esquema | 1.16865 | 1.1685 | 13:46:00 | 13:48:00
+  | zona:134 | compra | primer_esquema | 1.16865 | 1.16834 | 13:46:00 | 13:49:00
+  | zona:135 | compra | primer_esquema | 1.16869 | 1.1685 | 13:49:00 | 13:51:00
+  | zona:136 | compra | primer_esquema | 1.16869 | 1.16833 | 13:49:00 | 13:52:00
+  | zona:137 | compra | primer_esquema | 1.16869 | 1.16831 | 13:49:00 | 13:53:00
+  | zona:138 | compra | primer_esquema | 1.16869 | 1.16825 | 13:49:00 | 13:54:00
+  | zona:139 | compra | primer_esquema | 1.16847 | 1.16826 | 13:54:00 | 13:56:00
+  | zona:140 | compra | primer_esquema | 1.16858 | 1.16842 | 13:57:00 | 13:59:00
+  | zona:141 | compra | primer_esquema | 1.16858 | 1.16836 | 13:57:00 | 14:00:00
+  | zona:142 | compra | primer_esquema | 1.16858 | 1.16834 | 14:00:00 | 14:02:00
+  | zona:143 | compra | primer_esquema | 1.16858 | 1.16815 | 14:00:00 | 14:03:00
+  | zona:144 | compra | primer_esquema | 1.16834 | 1.16819 | 14:03:00 | 14:05:00
+  | zona:145 | compra | primer_esquema | 1.16834 | 1.16792 | 14:03:00 | 14:06:00
+  | zona:146 | compra | primer_esquema | 1.16834 | 1.16776 | 14:03:00 | 14:07:00
+  | zona:147 | compra | primer_esquema | 1.16845 | 1.16817 | 14:11:00 | 14:13:00
+  | zona:148 | compra | primer_esquema | 1.16848 | 1.16839 | 14:14:00 | 14:15:00
+  | zona:149 | compra | primer_esquema | 1.16848 | 1.16837 | 14:14:00 | 14:16:00
+  | zona:150 | compra | primer_esquema | 1.16848 | 1.16833 | 14:14:00 | 14:17:00
+  | zona:151 | compra | primer_esquema | 1.16872 | 1.16844 | 14:17:00 | 14:19:00
+  | zona:152 | compra | primer_esquema | 1.16901 | 1.16877 | 14:23:00 | 14:25:00
+  | zona:153 | compra | primer_esquema | 1.16901 | 1.16864 | 14:23:00 | 14:26:00
+  | zona:154 | compra | primer_esquema | 1.16901 | 1.16857 | 14:23:00 | 14:27:00
+  | zona:155 | compra | primer_esquema | 1.16901 | 1.16856 | 14:23:00 | 14:29:00
+  | zona:156 | compra | primer_esquema | 1.16867 | 1.16852 | 14:28:00 | 14:30:00
+  | zona:157 | compra | primer_esquema | 1.16867 | 1.16847 | 14:28:00 | 14:31:00
+  | zona:158 | compra | primer_esquema | 1.16872 | 1.1684 | 14:30:00 | 14:32:00
+  | zona:159 | compra | primer_esquema | 1.16872 | 1.16833 | 14:30:00 | 14:33:00
+  | zona:160 | compra | primer_esquema | 1.16872 | 1.16808 | 14:30:00 | 14:34:00
+  | zona:161 | compra | primer_esquema | 1.16872 | 1.16787 | 14:30:00 | 14:35:00
+  | zona:162 | compra | primer_esquema | 1.16838 | 1.16818 | 14:39:00 | 14:41:00
+  | zona:163 | compra | primer_esquema | 1.16849 | 1.16821 | 14:41:00 | 14:43:00
+  | zona:164 | compra | primer_esquema | 1.16888 | 1.16872 | 14:44:00 | 14:46:00
+  | zona:165 | compra | primer_esquema | 1.16888 | 1.16859 | 14:44:00 | 14:47:00
+  | zona:166 | compra | primer_esquema | 1.16888 | 1.1685 | 14:44:00 | 14:49:00
+  | zona:167 | compra | primer_esquema | 1.1689 | 1.16873 | 14:51:00 | 14:53:00
+  | zona:168 | compra | primer_esquema | 1.1689 | 1.16862 | 14:51:00 | 14:54:00
+  | zona:169 | compra | primer_esquema | 1.1689 | 1.16845 | 14:51:00 | 14:55:00
+  | zona:170 | compra | primer_esquema | 1.16891 | 1.16868 | 14:56:00 | 14:58:00
+  | zona:171 | compra | primer_esquema | 1.16902 | 1.16878 | 14:58:00 | 15:00:00
+### Ordenes
+  | id | lado | precio | lotes | stop | objetivo | estado | colocada
+  | o1 | venta | 1.16759 | 24.40 | 1.16775 | 1.16702 | llenada | 08:00:59
+  | o2 | venta | 1.16829 | 24.23 | 1.16845 | 1.16772 | cancelada | 08:52:59
+  | o3 | venta | 1.16829 | 24.22 | 1.16849 | 1.16757 | cancelada | 08:54:59
+  | o4 | venta | 1.16829 | 20.69 | 1.16853 | 1.16739 | cancelada | 08:55:59
+  | o5 | venta | 1.16847 | 24.22 | 1.16863 | 1.1679 | cancelada | 08:57:59
+  | o6 | venta | 1.16847 | 23.65 | 1.16868 | 1.16769 | cancelada | 08:58:59
+  | o7 | venta | 1.16847 | 17.73 | 1.16875 | 1.16742 | llenada | 08:59:59
+  | o8 | venta | 1.16896 | 17.70 | 1.16924 | 1.16791 | llenada | 09:44:59
+  | o9 | venta | 1.16966 | 23.99 | 1.16984 | 1.169 | llenada | 10:44:59
+  | o10 | compra | 1.17012 | 23.82 | 1.16999 | 1.1706 | cancelada | 12:48:59
+  | o11 | compra | 1.17012 | 23.82 | 1.16997 | 1.17066 | llenada | 12:49:59
+  | o12 | compra | 1.17007 | 23.68 | 1.16994 | 1.17055 | cancelada | 12:50:59
+  | o13 | compra | 1.17007 | 20.25 | 1.16983 | 1.17097 | cancelada | 12:51:59
+  | o14 | compra | 1.17007 | 13.88 | 1.16972 | 1.17136 | cancelada | 12:52:59
+  | o15 | compra | 1.17007 | 10.34 | 1.1696 | 1.17181 | cancelada | 12:53:59
+  | o16 | compra | 1.16865 | 23.71 | 1.16853 | 1.1691 | cancelada | 13:47:59
+  | o17 | compra | 1.16865 | 19.44 | 1.1684 | 1.16958 | llenada | 13:48:59
+  | o18 | compra | 1.16869 | 16.64 | 1.1684 | 1.16977 | cancelada | 13:51:59
+### Posiciones
+  | id | lado | entrada | lotes | stop | objetivo | llenada | cierre | precio
+  | pos-o1 | venta | 1.16758 | 24.40 | 1.16775 | 1.16702 | 08:02:00 | stop @ 08:10:22 | 1.16775
+  | pos-o7 | venta | 1.16847 | 17.73 | 1.16847 | 1.16742 | 09:02:00 | stop @ 09:34:00 | 1.16847
+  | pos-o8 | venta | 1.16896 | 17.70 | 1.16924 | 1.16791 | 09:45:00 | stop @ 09:59:00 | 1.16924
+  | pos-o9 | venta | 1.16966 | 23.99 | 1.16984 | 1.169 | 10:47:50 | stop @ 10:51:17 | 1.16984
+  | pos-o11 | compra | 1.17012 | 23.82 | 1.16997 | 1.17066 | 12:50:01 | stop @ 12:50:38 | 1.16997
+  | pos-o17 | compra | 1.16865 | 19.44 | 1.1684 | 1.16958 | 13:49:09 | stop @ 13:51:06 | 1.1684
+### Eventos
+  | instante | tipo | id | fuente
+  | 08:02:00 | llenada | o1 | ticks
+  | 08:10:22 | stop | pos-o1 | ticks
+  | 09:02:00 | llenada | o7 | respaldo_m1
+  | 09:07:59 | stop_movido | pos-o7 | respaldo_m1
+  | 09:34:00 | stop | pos-o7 | respaldo_m1
+  | 09:45:00 | llenada | o8 | respaldo_m1
+  | 09:59:00 | stop | pos-o8 | respaldo_m1
+  | 10:47:50 | llenada | o9 | ticks
+  | 10:51:17 | stop | pos-o9 | ticks
+  | 12:50:01 | llenada | o11 | ticks
+  | 12:50:38 | stop | pos-o11 | ticks
+  | 13:49:09 | llenada | o17 | ticks
+  | 13:51:06 | stop | pos-o17 | ticks

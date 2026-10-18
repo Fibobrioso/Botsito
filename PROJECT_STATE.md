@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/visor-construccion
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/margen-lote` cerrada en `main` el 2026-10-18 (`stable/F37s-margen-lote`); R3.3 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/visor-construccion` EN CURSO (abierta el 2026-10-18 desde d1137eb; O de la Next Action, R3.2 de la hoja de ruta): las comprobaciones E de R3.1 en el visor, sobre el motor de hoy, con su conclusión (E, R o correcto); rama de diagnóstico, sin código. Encargo docs/encargos/trabajo-visor-construccion.md; informe docs/validation/VISOR-CONSTRUCCION.md.
 
 ## Stable Main State
 3762429 · merge de `trabajo/margen-lote` (tag `stable/F37s-margen-lote`): cuando el lote del 0,5 % no cabe, el bot lo limita al menor de tres (el del riesgo, 50 lotes y el que cabe en 0,95 del margen libre a 1:30) y por debajo del mínimo no opera; el bróker simulado rechaza por `margen_libre` al colocar y al llenar (ADR-0081, que enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto); `lote_si_no_cabe` DEFAULT bajo A-57 (a la sesión 5) y `lote_margen_libre_fraccion`; spec 18.1.1; re-corrida del arnés en diagnóstico (0 rechazos por volumen, 339 de 504 órdenes limitadas, parejas 12 → 18). Sobre `stable/F37r-sesgo-h4-color` (5296a31). Informe docs/validation/MARGEN-LOTE.md; el registro del cierre, al final de HISTORIA.
@@ -29,10 +29,11 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. O → V. Las re-corridas de R3.1 con el sesgo nuevo (SESGO-H4-COLOR.md §4) y con el límite del lote (MARGEN-LOTE.md §4) están hechas.
+F. Y → V. Las re-corridas de R3.1 con el sesgo nuevo (SESGO-H4-COLOR.md §4) y con el límite del lote (MARGEN-LOTE.md §4) están hechas. Y va antes de V: cambia las reentradas de la pregunta 3.
+
+Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto; en la corrida 2, hasta 47 órdenes en 22 sesiones van al 0 de una ya llenada (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
 
 
-O. Comprobaciones en el visor de R3.1, con sus días (CORRIDA-CONSTRUCCION.md §4.5, «Ramas candidatas»). El cuestionario de V necesita esos gráficos.
 
 T. Transcribir v11 a v14 (backtest de julio en vídeo, 2 h 38 min, con audio), comprobar qué días cubre cada uno, compararlos con el xlsx en los días 1 a 17 y con las horas del libro (el primero en Europe/Madrid); en su rama (ENTRADA-JULIO.md §5).
 
@@ -52,7 +53,7 @@ H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el um
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; y A-57 (el lote que no cabe, MARGEN-LOTE.md §5). Depende de R1.1, de R3.1, de O, de J (kit hoja) y de la copia de seguridad (A.4).
+V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); y las preguntas de VISOR-CONSTRUCCION.md §3.2. Depende de R1.1, de R3.1, de Y, de J (kit hoja) y de la copia de seguridad (A.4).
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -103,6 +104,12 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 
 ## Technical Debt
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
+- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el arnés sí, :2437): con `--todos` arrastra la cuenta (VISOR-CONSTRUCCION.md §4.3).
+- VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
+- El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
+- `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18; VISOR-CONSTRUCCION.md §4.3).
+- `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker (VISOR-CONSTRUCCION.md §4.3).
+- El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los ticks empiezan en ventana_inicio y la orden lleva 1 ms antes (VISOR-CONSTRUCCION.md §4.3).
 - `arnes.dias_de_mercado` lee para calentar el M1 entero de marzo y de junio (días reservados) en cada corrida del arnés y cada make check, sin declararlo; declarado en HOLDOUT-EXPOSICIONES (2026-10-14); la línea LECTURA: va a G.2 (CORRIDA-CONSTRUCCION.md §1.c).
 
 - La ingesta asigna la sesión con el reloj del registro y no con el congelado del artefacto; hoy son el mismo. Antes de cambiar reloj_sesiones en el registro, la ingesta pasa a leer el congelado (CASES-REJILLA.md).
@@ -179,8 +186,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 35 (2026-10-17).
+— ninguna desde el Archivo 36 (2026-10-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 35 (2026-10-17).
+— ninguna desde el Archivo 36 (2026-10-18).

@@ -1,0 +1,6 @@
+CASO caso-eurusd-2026-04-27
+ORDENES frente a «### Ordenes» de main: iguales
+  o1 stop compra | sesion 07-11 | colocada 04:59:59Z (06:59:59 del trader) | precio de la orden (el 0) 1.17264 | bid 1.17268 ask 1.17272 (respaldo_m1) | el precio de referencia (ask) ya paso el 0: si, por 8 puntos | lado equivocado segun el broker: si
+  o2 stop compra | sesion 07-11 | colocada 05:05:59Z (07:05:59 del trader) | precio de la orden (el 0) 1.1727 | bid 1.1727 ask 1.17273 (ticks) | el precio de referencia (ask) ya paso el 0: si, por 3 puntos | lado equivocado segun el broker: si
+  o3 stop compra | sesion 07-11 | colocada 05:08:59Z (07:08:59 del trader) | precio de la orden (el 0) 1.17275 | bid 1.17274 ask 1.1728 (ticks) | el precio de referencia (ask) ya paso el 0: si, por 5 puntos | lado equivocado segun el broker: si
+rechazos por precio_invalido del dia: 3

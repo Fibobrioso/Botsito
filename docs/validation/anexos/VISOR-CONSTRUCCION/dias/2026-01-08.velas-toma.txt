@@ -1,0 +1,29 @@
+CASO caso-eurusd-2026-01-08 · motor visor --simular --caso con las opciones de la corrida 2
+ORDENES frente a «### Ordenes» de main: iguales (3 ordenes del dia)
+== Sesion 11-15: de 10:00:00Z (11:00:00 del trader) a 14:00:00Z (15:00:00 del trader) ==
+  disparadas en la sesion: RN-001, RN-003
+  hechos fijados: 1; solo los cambios de valor de cada hecho:
+    10:00:00Z (11:00:00 del trader) RN-003 sesgo=bajista
+  cierres, en tramos de cierres seguidos iguales (desde - hasta, n | reglas disparadas | efectos prohibidos | acciones bloqueadas):
+    14:00:00Z (15:00:00 del trader) - 14:00:00Z (15:00:00 del trader), 1 | RN-001 | abrir_operacion, buscar_entradas | -
+  ordenes de la sesion:
+    ninguna
+== M1 del dia dev que empiezan de 09:44Z a 10:01Z ==
+    09:44:00Z (10:44:00 del trader) O 1.16712 H 1.16717 L 1.16709 C 1.16709
+    09:45:00Z (10:45:00 del trader) O 1.16708 H 1.1671 L 1.16697 C 1.16708
+    09:46:00Z (10:46:00 del trader) O 1.16709 H 1.1671 L 1.16704 C 1.1671
+    09:47:00Z (10:47:00 del trader) O 1.1671 H 1.1671 L 1.16701 C 1.16702
+    09:48:00Z (10:48:00 del trader) O 1.16703 H 1.16704 L 1.16697 C 1.16704
+    09:49:00Z (10:49:00 del trader) O 1.16703 H 1.1671 L 1.167 C 1.16706
+    09:50:00Z (10:50:00 del trader) O 1.16706 H 1.1672 L 1.16703 C 1.16712
+    09:51:00Z (10:51:00 del trader) O 1.16712 H 1.16737 L 1.16712 C 1.16736
+    09:52:00Z (10:52:00 del trader) O 1.16737 H 1.16747 L 1.16736 C 1.16742
+    09:53:00Z (10:53:00 del trader) O 1.16744 H 1.16755 L 1.16738 C 1.16745
+    09:54:00Z (10:54:00 del trader) O 1.16743 H 1.16758 L 1.16742 C 1.16755
+    09:55:00Z (10:55:00 del trader) O 1.16754 H 1.16763 L 1.16753 C 1.1676
+    09:56:00Z (10:56:00 del trader) O 1.16758 H 1.16761 L 1.16755 C 1.1676
+    09:57:00Z (10:57:00 del trader) O 1.1676 H 1.1676 L 1.16756 C 1.16758
+    09:58:00Z (10:58:00 del trader) O 1.16759 H 1.16769 L 1.16756 C 1.16766
+    09:59:00Z (10:59:00 del trader) O 1.16765 H 1.16767 L 1.16759 C 1.16767
+    10:00:00Z (11:00:00 del trader) O 1.16767 H 1.16786 L 1.16764 C 1.16783
+    10:01:00Z (11:01:00 del trader) O 1.16783 H 1.16787 L 1.1678 C 1.16784
