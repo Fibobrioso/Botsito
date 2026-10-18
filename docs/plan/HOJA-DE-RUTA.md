@@ -153,6 +153,13 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R3.1 (HECHA); los tres días de P2 los elige el consultor.
 - **Quién:** la sesión, con el visor y el encargo del consultor.
 - **Hecho cuando:** cada comprobación tiene su gráfico y su conclusión (E o R) en un informe.
+- **Estado:** HECHA (`trabajo/visor-construccion`; VISOR-CONSTRUCCION.md): los gráficos son
+  las páginas del visor, regenerables con los comandos del informe (§2.c), fuera de git; 19
+  días con «no» de `contexto_h4.py`, que se pueden enseñar a V (si el visor o la spec cambian
+  lo que pintan, se vuelven a comprobar antes), y 2026-07-01 sin página (su contexto pinta un
+  día oculto). Una E (la reentrada en un punto ya llenado: R3.4) y el resto «correcto», que
+  aquí quiere decir que la regla se aplica como está escrita y la diferencia con el trader es
+  de regla: va a V con sus preguntas (§3.2).
 
 ### R3.3 · La rama del margen
 - **Refs:** NA:E · HER:37 · ID:A-18
@@ -168,11 +175,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   y al llenar), A-57 abierta para la sesión 5, y las dos medidas de E (§2.b y §2.c). La re-corrida
   en diagnóstico, §4.
 
+### R3.4 · Un punto ya llenado no se vuelve a colocar
+- **Refs:** NA:Y · ID:ADR-0064 · ID:ADR-0074
+- **Qué es:** que el bot no vuelva a colocar, con otra caja, el punto cuya orden ya se llenó
+  (ADR-0064, decisión 1; VISOR-CONSTRUCCION.md §2.d.4), y la corrida 2 repetida.
+- **Depende de:** R3.2 (HECHA).
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** un test lo rompe en `main` y pasa en la rama, y la corrida 2 está repetida
+  con los tres comandos de R3.1.
+
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · NA:O · HER:25 · HER:30 · HER:35 ·
+  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · NA:Y · HER:25 · HER:30 · HER:35 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
   la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
@@ -182,9 +198,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   confirmación del caso bajista de S-13; y lo que salga de R3, con la hoja de preguntas: la lista
   «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5, con su pregunta 1
   sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo y la
-  contradicción con la sesión 1; R1.2); y A-57 (el lote que no cabe, MARGEN-LOTE.md §5). La hoja
+  contradicción con la sesión 1; R1.2); A-57 (el lote que no cabe, MARGEN-LOTE.md §5); y las
+  preguntas de VISOR-CONSTRUCCION.md §3.2 (las dos nuevas y los días que ganan la 5, la 8 y la
+  9; R3.2). La hoja
   Word necesita antes que `kit hoja` funcione con un paquete nuevo (NA:J).
-- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (NA:O), R3.3 (HECHA) y la copia de
+- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (HECHA), R3.3 (HECHA), R3.4 (NA:Y) y
+  la copia de
   seguridad del carril de Aleks.
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.

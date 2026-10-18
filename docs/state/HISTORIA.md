@@ -10127,3 +10127,44 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 35 (2026-10-17).
+
+# Next Action HECHA · O · las comprobaciones en el visor · sale de PROJECT_STATE.md en trabajo/visor-construccion (2026-10-18)
+
+O. Comprobaciones en el visor de R3.1, con sus días (CORRIDA-CONSTRUCCION.md §4.5, «Ramas candidatas»). El cuestionario de V necesita esos gráficos.
+
+La hace `trabajo/visor-construccion` (docs/validation/VISOR-CONSTRUCCION.md).
+
+# Registro de cierre · `trabajo/visor-construccion` (2026-10-18)
+
+- Orden de cierre del consultor del 2026-10-18, pegada por Aleks en la conversación y ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama
+  aceptada por el consultor tras una pasada del revisor (opus; VISOR-CONSTRUCCION.md §8: reglas 1
+  bloquea y 1 menor; encargo 4 importa y 4 menor; todos arreglados en c8ac8a7). Dos PARADAS, la de
+  la fase 0 y la PARADA 2 (`contexto_h4.py` encontró que la página de 2026-07-01 pintaría el día
+  UTC anterior, oculto y ya retirado), respondidas por el consultor el 2026-10-18 (§1.h, §2.b). El
+  punto 1 de la orden declaró en HOLDOUT-EXPOSICIONES la lectura del M1 de marzo por
+  `test_visor.py` (f0e040f). Nunca se cerró sin la orden.
+- **Lo que entra** (R3.2 de la hoja de ruta; O de la Next Action), rama de diagnóstico sin código:
+  - las comprobaciones de R3.1 en el visor sobre 20 días, con `revisar_dia.py` (contexto_h4,
+    página, extractor, traza por cierre, ticks); las órdenes de la traza, iguales a las de la
+    corrida 2 de main en los 20; 19 páginas regenerables y 2026-07-01 sin página;
+  - una E: el punto de una orden ya llenada se vuelve a colocar con otra caja, contra ADR-0064,
+    decisión 1 (hasta 47 órdenes en 22 sesiones, por precio); el resto «correcto» o R, con las
+    preguntas para V (§3.2: dos nuevas, y días nuevos para la 5, la 8 y la 9);
+  - en este commit: O sale a HISTORIA; F en «Y → V»; entra Y (R3.4); V gana las preguntas de
+    VISOR-CONSTRUCCION.md §3.2 y depende de Y; seis líneas de Technical Debt. En la hoja de ruta:
+    R3.2 HECHA con su Estado; R3.4 nueva; R4.1 con NA:Y y «R3.2 (HECHA)».
+- Letras: sale O; entra Y (HISTORIA ya tiene una Y cerrada, de `trabajo/adelgazar-estado`: su
+  título, cuando salga, llevará nombre).
+- Letra del tag: la última cerrada era la s de F37 (`stable/F37s-margen-lote`).
+- Tag: `stable/F37t-visor-construccion`. El merge es `git rev-parse "stable/F37t-visor-construccion^{commit}"`.
+- Commits de la rama: `f85fb1e` (apertura), `8cceb46` (fase 0 y PARADA), `f39e0da` (respuesta,
+  `contexto_h4.py` y PARADA 2), `304da27` (fases 1 y 2), `c8ac8a7` (revisor), `f0e040f` (orden de
+  cierre, punto 1) y el de este registro.
+- CI de rama: ninguna. No toca código, hooks, rutas ni el sistema de archivos
+  (VISOR-CONSTRUCCION.md §7). La CI de `main` corre tras el push. Ninguna consulta de CI con `curl`,
+  `gh run watch` ni un guion.
+- Exposiciones: dos filas del 2026-10-18 en HOLDOUT-EXPOSICIONES (la fase 1 con el visor, ampliada
+  tras la PARADA 2; y la lectura del M1 de marzo por `test_visor.py` en cada `make check`, desde
+  `50045c8`).
+- Informe: `docs/validation/VISOR-CONSTRUCCION.md`. Encargo: `docs/encargos/trabajo-visor-construccion.md`.
