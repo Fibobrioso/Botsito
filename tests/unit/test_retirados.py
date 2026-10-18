@@ -149,16 +149,16 @@ def test_una_entrada_mal_formada_cierra_la_puerta(tmp_path: Path) -> None:
 
 
 @pytest.mark.usefixtures("knowledge_validate_compartido")  # una ejecucion por sesion (E3)
-def test_el_repo_real_retira_uno_y_ninguna_salida_lo_nombra(
+def test_el_repo_real_retira_cinco_y_ninguna_salida_los_nombra(
     capsys: pytest.CaptureFixture[str],
 ) -> None:
-    """En el repositorio: 34 reservados, 32 medidos, 2 retirados (el de v6, 2026-09-23, y el de
-    trabajo/corrida-construccion, 2026-10-14). Y ninguna de las salidas de los comandos que
-    recorren casos imprime el id de un retirado. Los ids no se escriben en este test: se derivan de
-    las huellas."""
+    """En el repositorio: 34 reservados, 29 medidos, 5 retirados (el de v6, 2026-09-23; el de
+    trabajo/corrida-construccion, 2026-10-14; y los tres de fidelidad-1 de trabajo/sesgo-h4-color,
+    2026-10-17). Y ninguna de las salidas de los comandos que recorren casos imprime el id de un
+    retirado. Los ids no se escriben en este test: se derivan de las huellas."""
     retirados = casos_retirados(REPO)
-    assert len(retirados) == 2
-    assert len(casos_medidos(REPO)) == len(casos_reservados(REPO)) - 2
+    assert len(retirados) == 5
+    assert len(casos_medidos(REPO)) == len(casos_reservados(REPO)) - 5
     # siguen ocultos: retirar no es desreservar (ADR-0041)
     assert set(retirados) <= set(casos_ocultos(REPO))
     kit = sorted(p.parent.name for p in (REPO / "knowledge/cases/kit").glob("*/particiones.yaml"))

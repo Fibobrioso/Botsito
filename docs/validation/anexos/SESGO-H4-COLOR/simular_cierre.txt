@@ -1,0 +1,5 @@
+a: []
+b: []
+c: []
+PROJECT_STATE hoy: 24568 bytes
+PROJECT_STATE simulado: 23250 bytes

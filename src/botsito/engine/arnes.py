@@ -56,7 +56,13 @@ from botsito.engine.motor import (
     Sesion,
     TrazaSesion,
 )
-from botsito.engine.primitivas import ANOTACION_DOBLE_RUPTURA, ANOTACION_SESGO
+from botsito.engine.primitivas import (
+    ANOTACION_DOBLE_RUPTURA,
+    ANOTACION_SALTADAS_COLOR,
+    ANOTACION_SALTADAS_NEUTRA_DOBLE,
+    ANOTACION_SALTADAS_NEUTRA_SIMPLE,
+    ANOTACION_SESGO,
+)
 from botsito.engine.relojes import RelojSesiones
 
 PARTICION_DEV = "dev"
@@ -287,6 +293,13 @@ def informe(
     paradas: Counter[str] = Counter()
     sesgo_sesion: Counter[str] = Counter()
     dobles = 0  # sesiones cuyo sesgo lo decidio el color, con doble ruptura (ADR-0060)
+    # Las H4 que la busqueda salto antes de fijar el sesgo, por motivo (ADR-0080, 4.f del
+    # encargo): sesiones con alguna, y velas en total. Ninguna fecha ni precio.
+    saltadas: dict[str, list[int]] = {
+        ANOTACION_SALTADAS_COLOR: [0, 0],
+        ANOTACION_SALTADAS_NEUTRA_SIMPLE: [0, 0],
+        ANOTACION_SALTADAS_NEUTRA_DOBLE: [0, 0],
+    }
     filas: list[str] = []
     for clave in sesiones:
         traza = trazas.get(clave, TrazaSesion())
@@ -306,6 +319,10 @@ def informe(
         anotado = traza.anotaciones.get(ANOTACION_SESGO, SIN_ANOTACION)
         sesgo_sesion[anotado] += 1
         dobles += ANOTACION_DOBLE_RUPTURA in traza.anotaciones
+        for anotacion, cuenta in saltadas.items():
+            if anotacion in traza.anotaciones:
+                cuenta[0] += 1
+                cuenta[1] += int(traza.anotaciones[anotacion])
         filas.append(
             f"{clave[0]} {clave[1]} | trader {trader_por_sesion[clave]} | bot "
             f"{bot_por_sesion[clave]} | rn003 {anotado} | {' '.join(partes)} | disparadas "
@@ -392,6 +409,15 @@ def informe(
         "## RN-003 al abrir la sesion (domain/sesgo.py, anotacion del motor)",
         "por sesion: " + "; ".join(f"{k} {v}" for k, v in sorted(sesgo_sesion.items())),
         f"de ellas con doble ruptura, que decide el color de la vela (ADR-0060): {dobles}",
+        "sesiones con alguna H4 saltada por color contrario (rompio un extremo y cerro del color "
+        f"contrario, ADR-0080 D1): {saltadas[ANOTACION_SALTADAS_COLOR][0]} "
+        f"({saltadas[ANOTACION_SALTADAS_COLOR][1]} velas)",
+        "sesiones con alguna H4 saltada por neutra simple (rompio un extremo y cerro sin cuerpo, "
+        f"ADR-0080 D3): {saltadas[ANOTACION_SALTADAS_NEUTRA_SIMPLE][0]} "
+        f"({saltadas[ANOTACION_SALTADAS_NEUTRA_SIMPLE][1]} velas)",
+        "sesiones con alguna H4 saltada por neutra con doble ruptura (ADR-0075): "
+        f"{saltadas[ANOTACION_SALTADAS_NEUTRA_DOBLE][0]} "
+        f"({saltadas[ANOTACION_SALTADAS_NEUTRA_DOBLE][1]} velas)",
         "por operacion del trader: "
         + "; ".join(f"{k} {v}" for k, v in sorted(por_operacion.items())),
         "",

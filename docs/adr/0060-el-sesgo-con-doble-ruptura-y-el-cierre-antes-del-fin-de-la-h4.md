@@ -15,6 +15,13 @@ phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 > sesgo que ninguna vela dio», es hoy lo que dijo el trader. El token `ambiguo` sigue declarado y el
 > motor ya no lo produce; RN-033 queda para `insuficiente`. Lo demás de este ADR no cambia.
 
+> **ENMIENDA (2026-10-17, rama `trabajo/sesgo-h4-color`, ADR-0080).** En §1, «Con un solo extremo
+> roto, el color sigue sin decidir nada (RN-003, notas)» queda sustituido: por WhatsApp
+> (2026-10-14, `fb-2026-10-04-sesion-04-6e7da456`) el trader dijo que una H4 cambia el sesgo solo
+> si rompe el extremo de la anterior Y cierra del color de esa ruptura; con un solo extremo roto y
+> el color contrario, o sin cuerpo, no decide y la búsqueda sigue. La doble ruptura de §1 -decide
+> el color- ya es un caso de esa regla y no cambia. Lo demás de este ADR no cambia.
+
 ## Decision
 
 ### 1. Con doble ruptura, el sesgo es el del color con que cierra la vela

@@ -139,6 +139,14 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Backtest septiembre 2026/backtesting-analytics SEPTIEMBRE 2026.xlsx
   sha256: 8a37c24b841ad9d5c7058ffba93fe15d9abac32c0a1c25fcd97a8df83d3c0b3d
+- bytes: 80269
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/grafico-consultor-2026-10-14-pregunta-dos-casos.png
+  sha256: 74272a09ae6ffb773a1fb7902c370b976bed8c768b7ff596a04354f86a862ef7
+- bytes: 122285
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/grafico-consultor-2026-10-14-regla-cuatro-casos.png
+  sha256: 390bbdacd322eede7a6ce04010c03930acdb3d724f8b5ca7e17361708597acb0
 - bytes: 12417
   papel: material_adicional
   ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-0208-zonas-de-control.png
@@ -175,6 +183,22 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-06-1544-respuestas-1b-2c.png
   sha256: 0967a72522a21aef5c275d4f1d2c2e35d166f5c4aba978db0a97833064e19267
+- bytes: 111552
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-14-1445-primera-respuesta.png
+  sha256: 3ebe6904bd3f756101c4f4a1c697f3eecb4f9ee7b4225d95958fff0c1a729ef7
+- bytes: 18092
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-14-1448-pide-grafico.png
+  sha256: 1f398563bfd646dcfaf5c603ea521156e7bbe2a2c90df0f7243ecbae020eccb1
+- bytes: 95456
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-14-1455-regla.png
+  sha256: dffb4be4da7072b1e2b0e9368e9a757928b88876542a5a7b8dc28cb276111870
+- bytes: 198285
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-14-1518-confirma.png
+  sha256: f9c4f0aa3f5382ae519a1d0f6a080ebc3e6c24c6e08a237fb9eb71883178775c
 - bytes: 162226
   papel: material_adicional
   ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
@@ -2242,8 +2266,8 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 6193686
-    ficheros: 66
+    bytes: 6819625
+    ficheros: 72
   video_original:
     bytes: 54708765155
     ficheros: 14

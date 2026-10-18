@@ -62,19 +62,24 @@ predicados:
   sesgo_h4_al_abrir:
     descripcion: >-
       el sesgo H4 al abrir la sesion (ADR-0044): la ultima H4 cerrada -con fin no posterior a la
-      apertura- que supero un extremo de su anterior segun `criterio`, buscada hacia atras como
-      mucho `tope` velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o
-      bajista-. Si la vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro
-      (sesion 3, A-34 RESUELTA; ADR-0060); si cerro sin cuerpo -neutra- no decide y la busqueda
-      sigue hacia atras (sesion 4, S-13; ADR-0075: hasta entonces ataba `ambiguo`). Si ninguna
-      rompio dentro del tope, ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003
-      fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1)
+      apertura- que supero un extremo de su anterior segun `criterio` Y cerro del color de esa
+      ruptura (ADR-0080, WhatsApp del trader del 2026-10-14: rompe el maximo y cierra verde,
+      alcista; rompe el minimo y cierra roja, bajista), buscada hacia atras como mucho `tope`
+      velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o bajista-. Si la
+      vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro (sesion 3, A-34
+      RESUELTA; ADR-0060). Si rompio UN extremo y cerro del color contrario (ADR-0080 D1), o si
+      cerro sin cuerpo -neutra- con uno o con los dos extremos rotos (ADR-0080 D3; sesion 4,
+      S-13; ADR-0075: hasta entonces la neutra con doble ruptura ataba `ambiguo`), NO decide y la
+      busqueda sigue hacia atras: sigue el sesgo que habia. Si ninguna lo fijo dentro del tope,
+      ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003 fija `sesgo` en cada apertura y
+      ninguna sesion hereda el de la anterior (ADR-0049, H1). Hasta el 2026-10-17 citaba
+      fb-2026-09-09-sesion-01-8eccf5c0 (la ruptura de un extremo, sin el color)
     argumentos: [que, contra, criterio, tope]
     fuente: mercado
-    cita: fb-2026-09-09-sesion-01-8eccf5c0
+    cita: fb-2026-10-04-sesion-04-6e7da456
     literal: >-
-      si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip,
-      entonces seguiríamos operando bajista
+      la vela roja debe de haber roto con cuerpo o con mecha el bajo de la vela alcista Y
+      terminar al cierre bajista
   se_completa_zona_de_control:
     descripcion: el precio rompe el punto extremo anterior y deja la zona cerrada
     argumentos: [criterio]
@@ -527,8 +532,9 @@ tokens:
       retirarlo es deuda (G.2 de la hoja de ruta)
   insuficiente:
     descripcion: >-
-      valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 rompio un extremo de su
-      anterior (ADR-0044 §2): no hay lado, y RN-033 prohibe operar
+      valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 fijo el sesgo: ninguna
+      rompio un extremo de su anterior (ADR-0044 §2), o las que lo rompieron cerraron del color
+      contrario o sin cuerpo (ADR-0080, desde el 2026-10-17): no hay lado, y RN-033 prohibe operar
   al_abrir_sesion:
     descripcion: >-
       el hecho caduca al empezar el evento de apertura de cada sesion, antes de la primera pasada:
@@ -986,18 +992,43 @@ reglas:
     titulo: el sesgo lo fija la vela H4 previa, y solo cambia si rompe su extremo
     cuando: abre una sesion operativa
     entonces: >-
-      el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla; cambia solo si esa vela
-      rompio el extremo de la anterior, y basta con la mecha; un equal no lo cambia. Se fija
-      AL ABRIR la sesion con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro
-      de ella; romper es superar el extremo, por poco que sea, e igualarlo no rompe. Si la vela
-      rompe los dos extremos, decide el color con que cierra -verde, alcista; roja, bajista-; si
-      cierra sin cuerpo -neutra, sin color- no decide y manda la H4 anterior que rompio con lado;
-      si ninguna de las ultimas sesgo_h4_tope_velas rompio, es INSUFICIENTE y no se opera
+      el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla (la regla vigente es la
+      del ADR del color); cambia solo si esa vela rompio el extremo de la anterior -basta con la
+      mecha- Y cerro del color de esa ruptura: rompe el bajo y cierra roja, bajista; rompe el maximo y
+      cierra verde, alcista; si rompe un extremo y cierra del color contrario no cambia y sigue
+      el sesgo que habia; un equal no lo cambia. Se fija AL ABRIR la sesion con las H4 cuyo fin
+      no es posterior a la apertura, y no cambia dentro de ella; romper es superar el extremo,
+      por poco que sea, e igualarlo no rompe. Si la vela rompe los dos extremos, decide el color
+      con que cierra -verde, alcista; roja, bajista-; si cierra sin cuerpo -neutra, sin color-,
+      con uno o con los dos extremos rotos, no decide y manda la H4 anterior que rompio con su
+      color; si ninguna de las ultimas sesgo_h4_tope_velas lo hizo, es INSUFICIENTE y no se opera
     parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas]
-    cita: fb-2026-10-04-sesion-04-ca0afae6
+    cita: fb-2026-10-04-sesion-04-6e7da456
     literal: >-
-      si esta es una vela neutra, no tiene ningún color, nosotros seguiríamos operando alcistas
+      la vela roja debe de haber roto con cuerpo o con mecha el bajo de la vela alcista Y
+      terminar al cierre bajista
     notas: >-
+      LA CITA ES EL CORRECT POR WHATSAPP DEL 2026-10-14 DESDE EL 2026-10-17 (ADR-0080, rama
+      trabajo/sesgo-h4-color; fb-2026-10-04-sesion-04-6e7da456, las dos burbujas de las 14:55,
+      hora de Lima, respuesta a la pregunta P1 de R3.1): una H4 cambia el sesgo solo si rompe el
+      extremo de la anterior -con mecha o con cuerpo- Y cierra del color de esa ruptura; el
+      trader confirmo a las 15:18 («Si, esta bien bro») el esquema de cuatro casos del consultor:
+      rompe el bajo y cierra roja, bajista; rompe el maximo y cierra verde, alcista; rompe un
+      extremo y cierra del color contrario, sigue el sesgo que habia. Amplia ADR-0060 §1 (el color
+      ya decidia con doble ruptura) y ADR-0075 (la neutra no decide): con un solo extremo roto el
+      color SI decide, y la vela de color contrario no fija nada y la busqueda sigue. La ruptura
+      simple de una vela SIN cuerpo no la describio: decision del consultor (ADR-0080 D3), no
+      decide y la busqueda sigue; su confirmacion va a la sesion 5. sesgo_h4_criterio_ruptura
+      sigue en mecha y CONFIRMED, con fuente fb-2026-10-04-sesion-04-d2e84172 (14:45: «con mecha o
+      con cuerpo es válido para un cambio de sesgo»). CONTRADICCION ABIERTA, para la sesion 5 (se
+      pregunta con un esquema dibujado): en la sesion 1 (v6 1:04:30-1:05:35) el trader dijo de una
+      H4 que rompio por encima con la mecha y cerro roja «la siguiente operativa es alcista …
+      aunque fue roja la vela, pues es indiferente»; es lo que recogen las notas de
+      fb-2026-09-09-sesion-01-41f46b21 («el criterio es la ruptura del extremo, no el color ni el
+      cierre») y la frase de mas abajo «Con un solo extremo roto, el color de la vela NO decide»,
+      que QUEDA SUSTITUIDA por la respuesta escrita (SESGO-H4-COLOR.md §1.c y §1.l). Hasta
+      entonces la cita era fb-2026-10-04-sesion-04-ca0afae6, el CORRECT de la sesion 4 (S-13),
+      que sigue sosteniendo la neutra (abajo).
       LA CITA ES EL CORRECT DE LA SESION 4 (S-13) DESDE EL 2026-10-12 (ADR-0075, como ADR-0060 §6
       hizo con el de la sesion 3): la vela que rompe los dos extremos y cierra SIN CUERPO -neutra-
       NO DECIDE, «si esta es una vela neutra, no tiene ningún color, nosotros seguiríamos operando
@@ -1089,6 +1120,9 @@ reglas:
       conserva como guardia -el token sigue declarado y lo nombran los scripts de diagnostico y el
       visor-, y retirarla es deuda (G.2). La prohibicion de operar sin lado sigue saliendo de
       ADR-0044 §1 y ADR-0049.
+      DESDE EL 2026-10-17 (ADR-0080) `insuficiente` sale tambien cuando todas las H4 del tope que
+      rompieron un extremo cerraron del color contrario o sin cuerpo: ninguna fijo el sesgo.
+      Forma, cita y `cuando` no cambian.
     decision: ADR-0049
     forma:
       cuando:

@@ -1,0 +1,28 @@
+id: fb-2026-10-04-sesion-04-d2e84172
+sesion: 2026-10-04-sesion-04
+fecha: '2026-10-04'
+medio: escrito
+objetivo:
+  tipo: parametro
+  id: sesgo_h4_criterio_ruptura
+accion: CONFIRM
+respuesta_literal: Dependerá de si cierra alcista o bajista si lo hace con mecha o con cuerpo es válido
+  para un cambio de sesgo
+registrado_por: literal transcrito por el consultor de la captura Material adicional de su operativa/Mensajes
+  del trader/mensaje-whatsapp-2026-10-14-1445-primera-respuesta.png (sha256 3ebe6904bd3f756101c4f4a1c697f3eecb4f9ee7b4225d95958fff0c1a729ef7);
+  la sesion no la abrio porque la guardia lo impide (ADR-0038). Mensaje de las 14:45 (hora de Lima) del
+  2026-10-14; el consultor lo volvio a leer contra la captura el 2026-10-17. El trader, desde su numero;
+  ningun nombre ni numero entra al repositorio. Registrado por Claude Code en la rama trabajo/sesgo-h4-color
+valor_resultante: mecha
+notas: 'Primera respuesta por WhatsApp a la pregunta P1 de R3.1 (CORRIDA-CONSTRUCCION.md §4.5). «con mecha
+  o con cuerpo es válido para un cambio de sesgo»: romper el extremo de la H4 anterior con la mecha basta,
+  y con el cuerpo tambien (es un caso de la mecha), asi que sesgo_h4_criterio_ruptura sigue en mecha y
+  CONFIRMED, y este registro pasa a ser su fuente en lugar de fb-2026-09-09-sesion-01-8eccf5c0, cuyo literal
+  no decia mecha (re-expresion canonica del consultor en F11; CORRIDA-CONSTRUCCION.md §4.3 y §4.7 punto
+  4). El trader ya habia dicho la mecha en voz: fb-2026-09-09-sesion-01-41f46b21 («o bien, con una mecha»),
+  ev-v9-001312-19e45e4a («romper con mecha … inclusive con un pip») y ev-v9-000902-25db5bf5 («con mecha
+  o con cuerpo por debajo»). Lo que el WhatsApp anade -cerrar del color de la ruptura- va en el CORRECT
+  sobre RN-003 de la misma fecha (las 14:55). Captura en corpus: Material adicional de su operativa/Mensajes
+  del trader/mensaje-whatsapp-2026-10-14-1445-primera-respuesta.png. El ADR de esta rama lo recoge'
+recibido_el: '2026-10-14'
+procedencia: trader_escrito

@@ -62,6 +62,13 @@ TOKEN_SENTIDO = "sentido_de_la_ruptura"
 ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
 # la vela que fijo el sesgo rompio los dos extremos y lo decidio su color (ADR-0060)
 ANOTACION_DOBLE_RUPTURA = "sesgo_h4_doble_ruptura"
+# Cuantas H4 salto la busqueda hacia atras antes de fijar el sesgo (o hasta el tope), y por que;
+# solo se anotan cuando son mas de cero, con el numero como texto (ADR-0080, 4.f del encargo):
+# rompio un extremo y cerro del color contrario (D1), rompio un extremo y cerro sin cuerpo (D3),
+# rompio los dos y cerro sin cuerpo (ADR-0075).
+ANOTACION_SALTADAS_COLOR = "sesgo_h4_saltadas_color_contrario"
+ANOTACION_SALTADAS_NEUTRA_SIMPLE = "sesgo_h4_saltadas_neutra_simple"
+ANOTACION_SALTADAS_NEUTRA_DOBLE = "sesgo_h4_saltadas_neutra_doble"
 # La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
 # primer cierre de M1 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
 ANOTACION_LIQUIDEZ = "liquidez_m15"
@@ -183,6 +190,13 @@ def primitivas_escritas(
             anotaciones[ANOTACION_SESGO] = r.sesgo.value
             if r.doble_ruptura:
                 anotaciones[ANOTACION_DOBLE_RUPTURA] = "si"
+            for anotacion, saltadas in (
+                (ANOTACION_SALTADAS_COLOR, r.saltadas_color_contrario),
+                (ANOTACION_SALTADAS_NEUTRA_SIMPLE, r.saltadas_neutras_simples),
+                (ANOTACION_SALTADAS_NEUTRA_DOBLE, r.saltadas_neutras_dobles),
+            ):
+                if saltadas:
+                    anotaciones[anotacion] = str(saltadas)
         # Siempre SI: alcista, bajista, ambiguo o insuficiente son los cuatro valores del hecho
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})

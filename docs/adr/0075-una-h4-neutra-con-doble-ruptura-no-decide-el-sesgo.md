@@ -10,6 +10,13 @@ phase: post-F14 (rama `trabajo/activar-sesion-04-motor`, R1.1 de la hoja de ruta
 > punto 1, y encargo de `trabajo/activar-sesion-04-motor`, decisión 2). **Enmienda ADR-0060 §1 y
 > §2** (recuadro allí y fila del índice). Lo dijo el trader en la sesión 4, S-13.
 
+> **ENMIENDA (2026-10-17, rama `trabajo/sesgo-h4-color`, ADR-0080).** En §3, «con un solo extremo
+> roto el color no decide (RN-003)» queda sustituido: por WhatsApp (2026-10-14,
+> `fb-2026-10-04-sesion-04-6e7da456`) el trader dijo que una H4 cambia el sesgo solo si rompe el
+> extremo de la anterior Y cierra del color de esa ruptura; la que cierra del color contrario no
+> decide y la búsqueda sigue, igual que la neutra de este ADR. §1 y §2 no cambian; la neutra de
+> doble ruptura sigue sin decidir, y desde ADR-0080 el motor la cuenta (`saltadas_neutras_dobles`).
+
 ## Decision
 
 ### 1. La vela neutra no decide

@@ -75,7 +75,8 @@ terminos:
     alias: [equal high, equal low, igual]
     definicion: >-
       dos extremos al mismo precio. No cambia el sesgo: para cambiarlo hace falta romper el
-      extremo anterior, aunque sea por una milesima. Es GEOMETRIA: la salida que un equal provoca
+      extremo anterior, aunque sea por una milesima, y cerrar del color de esa ruptura
+      (ADR-0080). Es GEOMETRIA: la salida que un equal provoca
       tiene su propio termino, "cerrar un equal", y la spec ya no usa esta palabra como resultado de
       cierre ni como forma de activarse
     cita: fb-2026-09-09-sesion-01-8eccf5c0

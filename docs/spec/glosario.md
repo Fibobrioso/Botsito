@@ -2,7 +2,7 @@
 
 # Glosario: que es cada cosa
 
-`spec_version 17.0.2` · hash `59f028d8e30d…`
+`spec_version 18.0.0` · hash `44498dd81354…`
 
 11 terminos. Aqui se dice QUE es cada cosa, no que se hace con ella -eso son las reglas- ni con que numero -eso es el registro-.
 
@@ -42,7 +42,7 @@ Cita `fb-2026-09-09-sesion-01-060cd801`: *«Cuando el precio activa tu orden y c
 
 *Tambien: equal high, equal low, igual.*
 
-dos extremos al mismo precio. No cambia el sesgo: para cambiarlo hace falta romper el extremo anterior, aunque sea por una milesima. Es GEOMETRIA: la salida que un equal provoca tiene su propio termino, "cerrar un equal", y la spec ya no usa esta palabra como resultado de cierre ni como forma de activarse
+dos extremos al mismo precio. No cambia el sesgo: para cambiarlo hace falta romper el extremo anterior, aunque sea por una milesima, y cerrar del color de esa ruptura (ADR-0080). Es GEOMETRIA: la salida que un equal provoca tiene su propio termino, "cerrar un equal", y la spec ya no usa esta palabra como resultado de cierre ni como forma de activarse
 
 Cita `fb-2026-09-09-sesion-01-8eccf5c0`: *«si no genera un rompimiento por encima, o sea, al menos por un pip o una milésima de pip, entonces seguiríamos operando bajista»* · visto en v6 1:03:01
 

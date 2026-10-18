@@ -79,6 +79,23 @@ PROHIBE_RN033 = frozenset({"buscar_entradas", "abrir_operacion"})
 SIN_LADO = ("ambiguo", "insuficiente")
 # la vela que rompe los dos extremos: el color con que cierra (1 verde, -1 roja, 0 sin cuerpo)
 COLOR_DE_AMBOS = {"ambos": 1, "ambos_roja": -1, "ambos_sin_cuerpo": 0}
+# la vela que rompe UN extremo (ADR-0080): `arriba` cierra verde y `abajo` roja, del color de su
+# ruptura; las demas, del color contrario o sin cuerpo, y no deciden
+COLOR_DE_SIMPLE = {
+    "arriba": 1,
+    "abajo": -1,
+    "arriba_roja": -1,
+    "abajo_verde": 1,
+    "arriba_sin_cuerpo": 0,
+    "abajo_sin_cuerpo": 0,
+}
+# Las anotaciones de las H4 saltadas (ADR-0080), con su nombre literal: en `main` no existen y
+# `test_las_anotaciones_de_las_saltadas_existen` lo mide.
+ANOTACIONES_SALTADAS = (
+    "sesgo_h4_saltadas_color_contrario",
+    "sesgo_h4_saltadas_neutra_simple",
+    "sesgo_h4_saltadas_neutra_doble",
+)
 
 
 @pytest.fixture(scope="module")
@@ -125,20 +142,24 @@ def _h4(inicio: datetime, maxima: int, minima: int, color: int = 1) -> Vela:
 def _velas(*pasos: str) -> list[Vela]:
     """H4 desde las 22:00 UTC de la vispera; cada paso dice que hace la vela respecto a la previa.
 
-    `arriba` rompe solo el maximo, `abajo` solo el minimo y `dentro` ninguno. `ambos` rompe los
-    dos y cierra VERDE, `ambos_roja` cierra roja y `ambos_sin_cuerpo` cierra donde abrio. La
-    sesion 07-11 mira el primer paso (02-06 contra 22-02) y la 11-15 el segundo (06-10 contra
-    02-06).
+    `arriba` rompe solo el maximo y cierra verde, `abajo` solo el minimo y cierra roja (los dos
+    deciden, ADR-0080), `dentro` ninguno. `arriba_roja` y `abajo_verde` rompen un extremo y
+    cierran del color contrario; `arriba_sin_cuerpo` y `abajo_sin_cuerpo`, sin cuerpo: ninguna de
+    las cuatro decide. `ambos` rompe los dos y cierra VERDE, `ambos_roja` cierra roja y
+    `ambos_sin_cuerpo` cierra donde abrio. La sesion 07-11 mira el primer paso (02-06 contra
+    22-02) y la 11-15 el segundo (06-10 contra 02-06).
     """
     inicio = datetime(2030, 1, 14, 22, tzinfo=UTC)
     maxima, minima = 100_100, 99_900
     velas = [_h4(inicio, maxima, minima)]
     for i, paso in enumerate(pasos, start=1):
         color = 1
-        if paso == "arriba":
+        if paso in COLOR_DE_SIMPLE and paso.startswith("arriba"):
             maxima, minima = maxima + 50, minima + 10
-        elif paso == "abajo":
+            color = COLOR_DE_SIMPLE[paso]
+        elif paso in COLOR_DE_SIMPLE:
             maxima, minima = maxima - 10, minima - 50
+            color = COLOR_DE_SIMPLE[paso]
         elif paso in COLOR_DE_AMBOS:
             maxima, minima = maxima + 50, minima - 50
             color = COLOR_DE_AMBOS[paso]
@@ -245,6 +266,51 @@ def test_la_doble_ruptura_toma_el_color_de_la_vela_y_rn033_no_prohibe(motor: Mot
     # una ruptura de un solo extremo no deja la anotacion
     r = motor.correr_dia(_dia(_velas("arriba", "abajo")))
     assert ANOTACION_DOBLE_RUPTURA not in r.sesiones["07-11"].anotaciones
+
+
+def test_las_anotaciones_de_las_saltadas_existen() -> None:
+    from botsito.engine import primitivas
+
+    assert (
+        primitivas.ANOTACION_SALTADAS_COLOR,
+        primitivas.ANOTACION_SALTADAS_NEUTRA_SIMPLE,
+        primitivas.ANOTACION_SALTADAS_NEUTRA_DOBLE,
+    ) == ANOTACIONES_SALTADAS
+
+
+def test_una_h4_que_rompe_y_cierra_del_color_contrario_no_cambia_el_sesgo(
+    motor: MotorSpec,
+) -> None:
+    """WhatsApp del 2026-10-14 (ADR-0080, D1): la 07-11 fija BAJISTA con una H4 que rompe abajo y
+    cierra roja; la H4 siguiente rompe arriba pero cierra roja: a las 11-15 sigue bajista, RN-033
+    no prohibe, y el motor anota una H4 saltada por color contrario. Hasta ADR-0080 esa sesion
+    daba `alcista` («el color no decide»)."""
+    r = motor.correr_dia(_dia(_velas("abajo", "arriba_roja")))
+    assert _sesgo_de(r.sesiones["07-11"]) == ["bajista"]
+    assert _sesgo_de(r.sesiones["11-15"]) == ["bajista"]
+    assert "RN-033" not in r.sesiones["11-15"].disparadas
+    color, neutra_simple, neutra_doble = ANOTACIONES_SALTADAS
+    assert r.sesiones["11-15"].anotaciones[color] == "1"
+    assert color not in r.sesiones["07-11"].anotaciones
+    assert neutra_simple not in r.sesiones["11-15"].anotaciones
+    # al reves: alcista, y una H4 que rompe abajo cerrando verde
+    r = motor.correr_dia(_dia(_velas("arriba", "abajo_verde")))
+    assert _sesgo_de(r.sesiones["11-15"]) == ["alcista"]
+    assert r.sesiones["11-15"].anotaciones[color] == "1"
+    # sin nada detras que rompiera con su color: insuficiente, y RN-033 prohibe
+    r = motor.correr_dia(_dia(_velas("dentro", "arriba_roja")))
+    assert _sesgo_de(r.sesiones["11-15"]) == ["insuficiente"]
+    assert "RN-033" in r.sesiones["11-15"].disparadas
+    assert r.sesiones["11-15"].anotaciones[color] == "1"
+    # la neutra simple (D3) y la neutra doble (ADR-0075) llevan cada una su anotacion
+    r = motor.correr_dia(_dia(_velas("abajo", "arriba_sin_cuerpo")))
+    assert _sesgo_de(r.sesiones["11-15"]) == ["bajista"]
+    assert r.sesiones["11-15"].anotaciones[neutra_simple] == "1"
+    assert neutra_doble not in r.sesiones["11-15"].anotaciones
+    r = motor.correr_dia(_dia(_velas("abajo", "ambos_sin_cuerpo")))
+    assert _sesgo_de(r.sesiones["11-15"]) == ["bajista"]
+    assert r.sesiones["11-15"].anotaciones[neutra_doble] == "1"
+    assert neutra_simple not in r.sesiones["11-15"].anotaciones
 
 
 def test_insuficiente_prohibe(motor: MotorSpec) -> None:
