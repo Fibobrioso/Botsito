@@ -66,6 +66,16 @@ nada. Alternativas: 00:00 UTC; no modelar swaps hasta medir A-28.
 día del huso del perfil). Un rechazo no es un error: queda en la traza con su instante y su motivo,
 y la estrategia lo ve.
 
+> **ENMIENDA (2026-10-17, rama `trabajo/margen-lote`, ADR-0081).** Los límites del perfil ganan el
+> **margen libre**: una orden cuyo margen (lotes × contrato × precio / `firma_apalancamiento`, con
+> el ask en una compra y el bid en una venta) supera la equidad menos el margen de lo vivo
+> -posiciones abiertas y pendientes stop- se rechaza con el motivo `margen_libre`. Y el rechazo ya
+> no es solo al colocar (este §4 y el «rechazada en el acto» de §1) ni al modificar (ADR-0057):
+> **también al LLENAR**, con el precio del llenado, porque el margen libre puede haber cambiado
+> desde que se colocó; ese rechazo no es una petición al servidor (R13, ADR-0067) y la salida lo
+> cuenta con `peticion = llenar`. El bróker conoce el saldo realizado de la cuenta por un `Callable`
+> que le pasa el cableado, y con apalancamiento en el perfil ese saldo es obligatorio.
+
 ### 5. El contrato que el motor tendrá que cumplir (NO se cablea aquí)
 
 El motor de reglas sigue sin tocarse. Cuando se cablee, tendrá que:

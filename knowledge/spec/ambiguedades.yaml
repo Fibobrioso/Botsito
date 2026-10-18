@@ -1737,3 +1737,31 @@ ambiguedades:
     decidida_el: null
     clase: medicion
     bloqueante: false
+  - id: A-57
+    titulo: qué hace el trader cuando el lote de su riesgo no cabe en el margen o en el volumen máximo de la cuenta
+    pregunta: >-
+      En la cuenta a la que va el bot (FTMO Swing: 50 lotes como máximo por orden y apalancamiento
+      1:30), el lote del 0,5 % sobre la distancia al stop no cabe cuando el stop es muy corto: el
+      volumen máximo corta por debajo de 1 pip y el margen libre, con todo el saldo, por debajo de
+      unos 1,8-2 pips (FTMO-P-D1.md §2). ¿Qué haces tú en tu cuenta real cuando el stop es tan
+      pequeño que el lote de tu riesgo no cabe: reduces el lote al que cabe y entras igual, no
+      entras, u otra cosa? Hasta tu respuesta el bot LIMITA el lote y opera (lote_si_no_cabe,
+      ADR-0081, decisión provisional del consultor). Ninguna frase tuya del corpus habla de esto: se
+      buscó en la evidencia, el feedback y las transcripciones citables («apalancamiento», «lotes»,
+      «lote» junto a «cabe», «máximo», «bróker», «cuenta», «fondeo» o «FTMO»: 0 resultados;
+      «margen»: solo el margen de beneficio o del stop; «lotaje»: solo sobre qué distancia se
+      calcula). Las dos citas de abajo son lo más cercano, y son respaldo débil: dicen lo que
+      hiciste con el lote en tu prueba de fondeo (entrar sin calcularlo; un lote fijo muy bajo por
+      falta de calculadora), no qué haces cuando el lote de tu riesgo no cabe.
+    resuelve_en: [F24]
+    # NACE el 2026-10-17 (rama trabajo/margen-lote, ADR-0081 §6; respuesta del consultor a la PARADA,
+    # punto 4). Clase pregunta y NO bloqueante: el bot opera con el DEFAULT (limitar) y la respuesta
+    # del trader entra como RESOLVE_UNKNOWN sobre esta ambiguedad en la sesion 5 (R4.1).
+    evidencia: [ev-v4-002457-5a2e88c6, ev-v4-012900-8ef676ed]
+    parametros: [lote_si_no_cabe]
+    contradiccion: null
+    estado: ABIERTA
+    decision: null
+    decidida_el: null
+    clase: pregunta
+    bloqueante: false

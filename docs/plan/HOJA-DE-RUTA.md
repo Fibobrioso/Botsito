@@ -163,12 +163,16 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R3.1 (HECHA).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el ADR está escrito y el simulador rechaza lo que FTMO rechazaría.
+- **Estado:** HECHA (`trabajo/margen-lote`, `stable/F37s-margen-lote`; MARGEN-LOTE.md): ADR-0081
+  (el bot limita el lote al menor de tres; el bróker simulado rechaza por `margen_libre` al colocar
+  y al llenar), A-57 abierta para la sesión 5, y las dos medidas de E (§2.b y §2.c). La re-corrida
+  en diagnóstico, §4.
 
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:RN-007 · NA:H · NA:J · NA:V · NA:E · NA:O · HER:25 · HER:30 · HER:35 ·
+  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · NA:O · HER:25 · HER:30 · HER:35 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
   la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
@@ -178,9 +182,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   confirmación del caso bajista de S-13; y lo que salga de R3, con la hoja de preguntas: la lista
   «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5, con su pregunta 1
   sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo y la
-  contradicción con la sesión 1; R1.2). La hoja Word necesita antes que `kit hoja` funcione con un paquete
-  nuevo (NA:J).
-- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (NA:O), R3.3 (NA:E) y la copia de
+  contradicción con la sesión 1; R1.2); y A-57 (el lote que no cabe, MARGEN-LOTE.md §5). La hoja
+  Word necesita antes que `kit hoja` funcione con un paquete nuevo (NA:J).
+- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (NA:O), R3.3 (HECHA) y la copia de
   seguridad del carril de Aleks.
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.
@@ -265,15 +269,16 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
 
 ### A.2 · Las preguntas a FTMO
-- **Refs:** HER:27 · HER:37 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
-- **Qué es:** P-D1 (hedging, volumen máximo, tope sumado; decide el heredado 37); lo que queda del
+- **Refs:** HER:27 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
+- **Qué es:** P-D1 (hedging, volumen máximo, tope sumado; el heredado 37 quedó decidido en
+  ADR-0081); lo que queda del
   heredado 27: la «maximum capital allocation rule» y el asterisco de «USD/LOT*»; y lo que FTMO
   no contestó del ticket: la pregunta 6 (A-55, sin respuesta) y las respondidas solo en parte
   (A-54 y A-55; FTMO-REGLAS.md, recuadro del 2026-10-05). La comisión por lado ya está confirmada
   (ADR-0071 §3).
 - **Depende de:** la respuesta de FTMO.
 - **Quién:** Aleks pregunta; la sesión registra la respuesta parafraseada (RESPUESTAS-FTMO).
-- **Hecho cuando:** las respuestas están registradas y el heredado 37 decidido.
+- **Hecho cuando:** las respuestas están registradas.
 
 ### A.3 · La agenda con el trader
 - **Refs:** HER:2
@@ -341,13 +346,15 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.
 
 ### G.3 · El perfil de FTMO dice algo que ya no es verdad
-- **Refs:** HER:27
+- **Refs:** —
 - **Qué es:** la descripción de `firma_tamano_posicion_ratio_aviso`
   (`knowledge/cuentas/ftmo-2step-swing-100k.yaml`) dice todavía «PENDIENTE PARA ALEKS con FTMO»;
   FTMO respondió sin cifra (`docs/validation/FTMO-REGLAS.md`, respuesta 10).
 - **Depende de:** nada.
 - **Quién:** la próxima rama que toque el perfil de FTMO.
 - **Hecho cuando:** la descripción dice lo que respondió FTMO.
+- **Estado:** HECHA (`trabajo/margen-lote`, `stable/F37s-margen-lote`): la descripción de
+  `firma_tamano_posicion_ratio_aviso` dice lo que respondió FTMO (respuesta 10).
 
 ### G.4 · Las tareas repetidas que ninguna skill cubre
 - **Refs:** NA:F

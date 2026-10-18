@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.0.0` · hash `44498dd81354…`
+`spec_version 18.1.1` · hash `125ebe1b4081…`
 
-107 en total: 91 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+109 en total: 93 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -62,6 +62,8 @@
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
+| `lote_margen_libre_fraccion` | `0.95` | CONFIRMED | ejecucion | `ADR-0081` | fraccion del margen libre de la cuenta que el lote puede ocupar |
+| `lote_si_no_cabe` | `limitar` | DEFAULT_AMBIGUOUS · en revision por A-57 | ejecucion | `ADR-0081` | que hace el bot cuando el lote del riesgo no cabe en la cuenta |
 | `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `max_escenarios_por_sesion` | `sin_limite` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-7ad9753b` | escenarios que puede abrir una sesion como maximo |
 | `modelo_llenado` | `al_tocar` | CONFIRMED | ejecucion | `ADR-0012` | como se decide que una orden limite se ha llenado |
@@ -134,7 +136,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `entrada_tipo_orden` → F20, F22
 - `filtro_noticias` → F33
 - `firma` → F33
-- `firma_apalancamiento` → F21, F33
+- `firma_apalancamiento` → ADR-0081, F33
 - `firma_gap_cierre_minimo_minutos` → ADR-0068
 - `firma_gap_margen_minutos` → ADR-0068
 - `firma_mensajes_dia_max` → F23, F24, F31
@@ -149,6 +151,8 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `huso_operativa` → ADR-0027, ADR-0053, ADR-0063
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
+- `lote_margen_libre_fraccion` → ADR-0081
+- `lote_si_no_cabe` → ADR-0081
 - `modelo_llenado` → F24, F27
 - `orden_stop_punto` → ADR-0064
 - `racha_perdidas_corte` → ADR-0077
@@ -310,7 +314,7 @@ Opciones: `ftmo`, `fundednext`.
 
 ### `firma_apalancamiento`
 
-apalancamiento del tipo Swing en forex (el Standard admite mas). Limita el lote: el margen es lotes x instrumento_contrato x precio / este numero, y con riesgo_por_operacion sobre la cuenta un stop muy corto puede pedir mas margen del que hay (ADR-0026, impacto). F21 lo comprueba con la distribucion real de cajas
+apalancamiento del tipo Swing en forex (el Standard admite mas). Limita el lote: el margen es lotes x instrumento_contrato x precio / este numero, y con riesgo_por_operacion sobre la cuenta un stop muy corto pide mas margen del que hay (ADR-0026, impacto; FTMO-P-D1.md §2: con todo el saldo caben 27,27 lotes a 1,10). Lo comprueba el BROKER SIMULADO desde ADR-0081 (2026-10-17): rechazo `margen_libre` al colocar y al llenar, y el bot limita el lote al que cabe (lote_margen_libre_fraccion). Hasta entonces nadie lo comprobaba («F21 lo comprueba con la distribucion real de cajas» no era verdad). La ejecucion 2 de la demo (del 26 al 30 de octubre de 2026, entrada A de la Next Action) comprobara la formula con MargenAlcanza (FTMO-P-D1.md §3) y el pre-vuelo de F33 lo volvera a leer; el valor que lee el codigo es el del perfil, igual que este
 
 ### `firma_base_perdida_diaria`
 
@@ -447,6 +451,16 @@ Opciones: `inicio_vela_contraria`, `cierre_vela_contraria`.
 sobre que distancia se dimensiona el lote. `distancia_completa` es la caja entera, del nivel 0 al nivel 1, y deja la perdida del stop POR DEBAJO del riesgo nominal; `hasta_stop_fraccion` es la distancia del nivel 0 a stop_fraccion_caja, asi que el stop cuesta el riesgo ENTERO y el resto de la caja deja de ser presupuesto de riesgo. La segunda opcion se llamaba `desde_075` hasta el 2026-09-11: nombraba un 0,75 que A-10 habia cerrado en 0,8, y un numero de negocio en el nombre de una opcion es la clase de doble puerta que ADR-0002 prohibe. Ahora el nivel lo pone stop_fraccion_caja y solo el
 
 Opciones: `distancia_completa`, `hasta_stop_fraccion`.
+
+### `lote_margen_libre_fraccion`
+
+el bot dimensiona el lote que cabe sobre esta fraccion del margen libre (equidad menos el margen de lo vivo, ADR-0081 §4), no sobre el margen libre entero: el colchon cubre el deslizamiento del llenado y la diferencia entre el precio que convierte el margen al colocar (el ask de una compra, el bid de una venta, del cierre de M1) y al llenar (el tick que llena). El bot y el broker leen el MISMO margen libre, al tick, con la misma funcion. Decision nuestra, no del trader. Lo lee el cableado junto a lote_si_no_cabe. No es firma_margen_seguridad (ADR-0031), que es el colchon de los frenos de perdida de la firma
+
+### `lote_si_no_cabe`
+
+el lote que dimensiona RN-011 (riesgo_por_operacion sobre la distancia hasta el stop) puede no caber en firma_volumen_max_lotes ni en el margen libre a firma_apalancamiento (los stops del trader son de pips: FTMO-P-D1.md §2, MARGEN-LOTE.md §2.b). Con `limitar` el bot coloca la orden con el menor de tres lotes -el del riesgo, el tope de volumen y el que cabe en el margen libre por lote_margen_libre_fraccion-, redondeado hacia abajo al paso: la misma decision, el mismo resultado en R, menos riesgo en dinero. Con `no_operar` la orden que no cabe no se envia y queda anotada. Lo lee el cableado al preparar la orden (`colocar_orden_limite`), no una regla (patron de cierre_pendientes, ADR-0068). Por debajo de instrumento_lote_minimo no se opera con ninguna de las dos (ADR-0081 §2). DEFAULT NUESTRO en `limitar`, PROVISIONAL hasta que el trader diga que hace el en su cuenta cuando el lote no cabe: A-57, sesion 5
+
+Opciones: `limitar`, `no_operar`.
 
 ### `mapeo_dos_velas`
 

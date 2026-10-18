@@ -9685,3 +9685,256 @@ La hace `trabajo/sesgo-h4-color` (docs/validation/SESGO-H4-COLOR.md, ADR-0080).
 - El worktree `wt-ci` (e7df30b, sin rama) es de otra sesión: no se tocó.
 - Informe: `docs/validation/SESGO-H4-COLOR.md`. Encargo:
   `docs/encargos/trabajo-sesgo-h4-color.md`.
+
+# Archivo 35 · PROJECT_STATE.md de main en 9cf711e (2026-10-17), al abrir trabajo/margen-lote
+
+# PROJECT STATE
+
+> Lo que es verdad HOY. Que va aqui, que va a `docs/state/HISTORIA.md` y como se archiva:
+> `docs/state/README.md`.
+
+## Current Branch
+main
+
+## Current Feature
+Ninguna rama abierta. `trabajo/sesgo-h4-color` cerrada en `main` el 2026-10-17 (`stable/F37r-sesgo-h4-color`); R1.2 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+
+## Stable Main State
+5296a31 · merge de `trabajo/sesgo-h4-color` (tag `stable/F37r-sesgo-h4-color`): el sesgo de H4 cambia solo si la vela rompe el extremo de la anterior y cierra del color de esa ruptura (WhatsApp del trader del 2026-10-14; ADR-0080, que enmienda ADR-0044 §2, ADR-0060 §1 y ADR-0075 §3); spec 18.0.0, dos registros de feedback y las capturas en el corpus; el motor cuenta las H4 saltadas; re-corrida del arnés en diagnóstico (8 de 104 sesiones cambian de sesgo, parejas iguales); la contradicción con la sesión 1 abierta, a la sesión 5; tres días de fidelidad-1 retirados por ADR-0041. Sobre `stable/F37q-corrida-construccion` (fa15a84). Informe docs/validation/SESGO-H4-COLOR.md; el registro del cierre, al final de HISTORIA.
+
+## Last Stable Commit
+5296a31 · merge: trabajo/sesgo-h4-color, el sesgo de H4 cambia solo si la vela rompe el extremo y cierra del color de la ruptura (ADR-0080, R1.2) · tag stable/F37r-sesgo-h4-color
+
+## Tests Currently Passing
+1570 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+
+## Next Action
+
+**AHORA** (2026-10-08). El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende.
+
+B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.
+
+C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (joinpath, os.path.join, el operador /, f-strings, concatenación): analizar_codigo solo mira literales enteros y niega lo compuesto solo si el código además recorre directorios (GUION-MISMO-COMANDO.md, hallazgo 5 del consultor). Rama propia: negar por defecto un guion que nombra un fragmento sensible y compone rutas, con un test que lo rompa a propósito.
+
+D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
+
+
+F. E → O → V. La re-corrida de R3.1 con el sesgo nuevo ya está hecha (SESGO-H4-COLOR.md §4); si E cambia lo que simula, su encargo decide si hace falta otra.
+
+
+E. La rama del margen (heredado 37): ADR sobre qué hace el bot cuando el lote del 0,5 % no cabe en los 50 lotes (limitar el lote o no operar), con el margen a 1:30, que corta antes, y el simulador que lo compruebe. Medidas: la parte de operaciones del trader con stop de menos de unos 2 pips y a ±2 min de una noticia; y cuántas órdenes de R3.1 rechaza el volumen y cuántas el margen (CORRIDA-CONSTRUCCION.md §3.12).
+
+O. Comprobaciones en el visor de R3.1, con sus días (CORRIDA-CONSTRUCCION.md §4.5, «Ramas candidatas»). El cuestionario de V necesita esos gráficos.
+
+T. Transcribir v11 a v14 (backtest de julio en vídeo, 2 h 38 min, con audio), comprobar qué días cubre cada uno, compararlos con el xlsx en los días 1 a 17 y con las horas del libro (el primero en Europe/Madrid); en su rama (ENTRADA-JULIO.md §5).
+
+U. Julio 20-31: solo en vídeo (v14); decidir si se extraen casos del vídeo, tras transcribir v11-v14. Depende de T.
+
+G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-56, la regla del objetivo frente al material, ADR-0073) y A-16. Holdout-3 tiene un día medido menos desde el 2026-10-14 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta. fidelidad-1 tiene 3 días medidos menos desde el 2026-10-17 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta.
+
+I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1); julio ya entró (ADR-0078). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
+
+J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
+
+A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2 entre el 26 y el 30 de octubre, con el script 1.1 compilado antes; la 3 después del 1 de noviembre. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote.
+
+K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, los dos arreglos de ENTRADA-JULIO.md §8: que `ffprobe` y `ffmpeg -i` sobre un vídeo lean y no ejecuten; y que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`); cada uno con su test de los dos sentidos.
+
+H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; si el literal de 1:44:49 es «1 o 2» o «12» lo lee Aleks con `--crudo` en su terminal (punto 8 de la respuesta del consultor del 2026-10-11); S-14 va a la sesión 5 (R4.1).
+
+Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
+
+V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden. Depende de R1.1, de R3.1, de E y O, de J (kit hoja) y de la copia de seguridad (A.4).
+
+L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
+
+M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
+
+N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y NO se renueva cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres). Se renueva por condición, según docs/runbooks/RENOVAR-CIERRES.md: (1) cuando una simulación pida días posteriores a hasta, porque el simulador sale con exit 2 y los nombra, se renueva hacia atrás con las Trading Updates archivadas, en rama propia; (2) antes de que el bot corra en tiempo real (demo o real), la rama que lo conecte trae la lectura de SymbolInfoSessionTrade (ADR-0068 §4) o un procedimiento que cierre el hueco del jueves por la mañana, y sin una de las dos esa rama no se cierra.
+
+### Pendientes heredados (sin verificar)
+
+Del Next Action viejo, sin evidencia de estar hechos; texto entero: `docs/state/HISTORIA.md`;
+criterio de salida: `docs/state/README.md`.
+
+- 2. Marzo: faltan vistos.yaml, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y A.3).
+- 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confirmado por el trader. Bajar sus velas es…
+- 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobertura` saca junio del universo de un…
+- 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico que se puede abrir de ese material y no se…
+- 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`…
+- 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).
+- 12. **MARZO, AL LLEGAR, ENTRA POR SU PROPIA RAMA**: declaracion en `knowledge/corpus/libros.yaml` con formato…
+- 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): con A-35 respondida se escribe el productor de `liquidez_m15`… · R3.1: liquidez_tomada en 98 y 97 de 104 sesiones con cada lectura.
+- 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.
+- 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor… · Desde ADR-0076 (2026-10-12) el arnes ya no necesita `--diagnostico-a21`: corre con `--diagnostico-a35` y `--diagnostico-a44`. · R3.1 midió las dos lecturas (§3.4): ninguna operación cambia.
+- 34. Ticks: el deslizamiento y el swap, las ejecuciones 2 y 3 (A).
+- 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje… · RN-020 tampoco retira la orden pendiente al llegar a su tope; cuando se active A-44, el modelo es lo que hace RN-036 (`retirar_ordenes_pendientes`, ADR-0077). · R3.1: con sin_tope, 0 de 104.
+- 37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN (A-18).** Va a E; el texto entero, en el Archivo 33 de docs/state/HISTORIA.md.
+
+## Known Ambiguities
+Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/state/README.md`.
+
+| Id | Ambiguedad | Clase | Bloqueante | Resuelve en |
+|---|---|---|---|---|
+| A-13 | break even al toque o con cuerpo | pregunta | no | F11, F23, F26 |
+| A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | medicion | no | F26 |
+| A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
+| A-32 | el nivel que al romperse con mecha invalida la entrada | pregunta | no | F19, F20 |
+| A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
+| A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
+| A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
+| A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |
+| A-49 | si la caja se traza con la vela del bloque cerrada o en formación | pregunta | no | F20, F21 |
+| A-50 | para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera | pregunta | no | F19, F20 |
+| A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
+| A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
+| A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |
+| A-56 | la regla del objetivo dicha por el trader frente a lo que mide su material | medicion | no | F26 |
+
+Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
+- Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
+
+## Technical Debt
+Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
+- `arnes.dias_de_mercado` lee para calentar el M1 entero de marzo y de junio (días reservados) en cada corrida del arnés y cada make check, sin declararlo; declarado en HOLDOUT-EXPOSICIONES (2026-10-14); la línea LECTURA: va a G.2 (CORRIDA-CONSTRUCCION.md §1.c).
+
+- La ingesta asigna la sesión con el reloj del registro y no con el congelado del artefacto; hoy son el mismo. Antes de cambiar reloj_sesiones en el registro, la ingesta pasa a leer el congelado (CASES-REJILLA.md).
+- Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
+- RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext): las sostienen el reglamento de FTMO y ADR-0026/0031, y una regla no admite fuente documental (docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4).
+- La condición 2 de ADR-0042 §2 (la lectura COMPLETA del libro, declarada) se comprueba buscando el NOMBRE del fichero en HOLDOUT-EXPOSICIONES (`cases/visto.py:requisitos`): una fila que lo nombra sin declarar la lectura completa la da por cumplida (falso positivo medido con enero, ENTRADA-ENERO.md §0.b). El mecanismo por nombre lo fija ADR-0042 §2: arreglarlo pide una NOTA o un ADR nuevo, no solo código.
+- `engine/simulador_config.py` busca el spread supuesto de `llenado.yaml` por la hora de PARED de Europe/Madrid, no por la rejilla: los días de desfase sale corrido una hora (2026-10-27: 4 de 11 horas, 1 punto de spread distinto; ENTRADA-ENERO.md §0.c). Importará cuando se mida un mes con días de desfase: marzo, del 9 al 27, y octubre.
+- LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-0047).
+- `cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT (2026-09-25, medido con git 2.55 en docs/validation/BLINDAJE.md §2):
+- `scripts/v5_criterio.py` SOLO RECONOCE CAJAS DE VENTA (2026-09-23):
+- NADA COMPRUEBA MECANICAMENTE QUE EL CUERPO DE UN INFORME CERRADO NO CAMBIE (2026-09-22, `trabajo/guardia-ids-docs`).
+- LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY, Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO (2026-09-21, rama de abril). Sigue viva solo la parte de la serie: el reloj quedó corregido el 2026-10-06 (ADR-0069: Europe/Madrid).
+- EL FRACTAL 5/120 NO CAPTURA LO QUE EL TRADER LLAMA ESTRUCTURA (2026-09-21, informe §R2).
+- `maxTP` ES EL PRECIO DE CIERRE DE LAS GANADORAS, NO LA EXCURSION MAXIMA (2026-09-21).
+- LA GUARDIA DE `cobertura_material` EN `universo()` ES MAS ESTRICTA DE LO QUE ADR-0025 SOSTIENE (2026-09-21, y el defecto es de la rama del dia anterior).
+- EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21).
+- `fecha_grabacion` TIENE QUE SER UN EJE DE PRIMERA CLASE, Y EL DETECTOR DE CONTRADICCIONES TIENE QUE ORDENAR POR ELLA (2026-09-21, deuda con nombre puesta por el consultor).
+- CUARTA APARICION DEL PUNTO CIEGO DEL DETECTOR, CON DIMENSION NUEVA: LA RECENCIA (2026-09-21).
+- LA PRIMERA MEDIDA DE A-18 SALE DEL MATERIAL, NO DE LA SESION, Y SE REPITE SOBRE MAYO (2026-09-21, rama F14a, informe §4).
+- F26 lee la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073, ADR-0040).
+- `idealTP`: UNA COLUMNA DEL MATERIAL QUE NO SABEMOS QUE ES Y NO USAMOS (2026-09-21, rama F14a, ADR-0037 §7).
+- BUSCAR EN EL CORPUS ANTES DE REDACTAR CUALQUIER AMBIGUEDAD, Y ESCRIBIR QUE SE BUSCO (2026-09-21, rama F14a).
+- EL DIA QUE UN CAMINO GUARDE MATERIAL EN `knowledge/cases/<camino>/`, NECESITA LECTOR GUARDADO ANTES DE QUE ESE FICHERO SE COMMITEE (2026-09-21, rama de la puerta por pregunta; enmienda de ADR-0033, informe §5).
+- `lectura_de_velas` SIGUE LEYENDO EL `config.yaml` DE HOY para el prefijo del kit (2026-09-21, rama de los cupos congelados, informe §7).
+- DOS DIAS DEL UNIVERSO DE LA SESION 1 NO ESTAN EN NINGUNA PARTICION, y F26 tiene que saberlo (2026-09-20, medido en la rama del universo congelado; ADR-0035 §Impacto y docs/validation/UNIVERSO-CONGELADO.md §2b).
+- UNA PREGUNTA ABRE N PARTICIONES Y N LO DECIDE EL DATO, NO EL HUMANO. BLOQUEANTE ANTES DE LA PRIMERA AUTORIZACION (2026-09-21, medido en la rama de la puerta por pregunta; ADR-0033 enmienda §Lo que NO cierra, ADR-0036 §6).
+- EL FALLBACK DE `leer_fichero` JUZGA UNA CARPETA DESCONOCIDA BAJO LA AUTORIZACION DE `holdout-1` (2026-09-21, rama de la puerta por pregunta).
+- UN TOKEN NO PUEDE DECLARAR QUIEN LO PRODUCE, Y LOS PREDICADOS DE `fuente: mercado` NO PASAN POR COMPROBACION DE ALCANZABILIDAD (2026-09-20, rama de la liquidez de M15, informe §4).
+- UNA `pregunta` DE AMBIGUEDAD PUEDE NOMBRAR UN INSTANTE DEL CORPUS SIN ENLAZAR SU ITEM, Y NINGUNA GUARDIA SE QUEJA (2026-09-20, rama de la liquidez de M15, informe §8).
+- EL PUNTO CIEGO DEL DETECTOR DE CONTRADICCIONES, TERCERA APARICION (2026-09-20).
+- EL DETECTOR DE CONTRADICCIONES NO VE LOS TEMAS HERMANOS (2026-09-17, rama del breaker de M1, informe §5).
+- LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
+- UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
+- Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, confirmada por el usuario el 2026-09-05).
+- Copia de seguridad de las crudas activas y los WAV fuera de esta maquina: HECHA HASTA v5, INCOMPLETA desde el 2026-09-09.
+- `data/fotogramas/` (8,9 GiB los 4 videos de F05 mas 0,15 GiB de v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.
+- F07, limitacion declarada: el proponente de las 20 propuestas, el autor de la lista de referencia (golden) y el primer filtro fueron la misma sesion (`claude-fable-5-1`); no hay cliente de API de LLM (sin clave).
+- Hook local: tras cambiar `scripts/git-hooks/`, ejecutar `make hooks` (el 2026-09-07 la copia instalada no protegia `knowledge/corpus/fotogramas`; los tests de historial en CI son la garantia real).
+- `data aggregate` con una ventana fuera del dataset devuelve solo cabeceras (con AVISO en
+  stderr desde la auditoria); F14 debe tratar la ventana vacia como error del caso.
+- Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
+  checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
+  cuando el merge pase por PR.
+- F11: las reglas de `strategy_spec.yaml` son PROSA citada y validada, no codigo; que el motor haga lo que dicen lo cierra F12 (validacion semantica).
+
+## Reglas vivas
+Las que solo viven aqui (`docs/state/README.md`).
+
+### Change Regimes (must be respected), lo que CLAUDE.md no dice
+- knowledge/cases/holdout/{1,2,3}/ → tres particiones reservadas; cada una se abre una sola vez. QUE CUENTA COMO ABRIRLA, quien lo autoriza y que se hace ante una exposicion: `knowledge/cases/holdout/README.md` (ADR-0021). No se lee desde ningun sitio salvo la puerta `botsito.cases.holdout`, que se niega sin `PREREGISTRO.md` relleno y sin autorizacion commiteada por particion; la guarda de `tests/conftest.py` vigila a cualquier llamante durante los tests, y `kit build` / `kit check` declaran las velas de dias reservados que leen, que no es abrir (ADR-0021, ADR-0033).
+- data/manifests/, knowledge/corpus/transcripciones/ y knowledge/corpus/fotogramas/ → INMUTABLES tras commit (hook + historial de git; ADR-0005, ADR-0007 y ADR-0008). Corrección = manifiesto nuevo con `reemplaza_a`; exactamente una extracción de fotogramas activa por vídeo.
+
+### Things That Must Not Be Changed
+- Regimenes de cambio de knowledge/. · Pureza de domain/. · Parametros no se optimizan contra resultados.
+- La validacion de fidelidad (F26) precede a cualquier MQL5.
+- La firma y el tipo de cuenta (FTMO 2-Step Swing, ADR-0026) no se cambian sin ADR: el tipo se elige EN LA COMPRA, Standard -> Swing no existe, y con Standard vuelve la restriccion de noticias entera (calendario, RN-028, `filtro_noticias`).
+- Umbrales pre-registrados no se relajan tras ver resultados. · Un holdout abierto queda quemado (que es "abrir" lo define ADR-0021; las exposiciones se declaran en `docs/validation/HOLDOUT-EXPOSICIONES.md`).
+- Ficheros de texto siempre con LF y UTF-8 (escribir con `newline="\n"`); toda salida de git se
+  decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
+
+### Decisions and Rationale
+Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
+- 2026-09-04 · Tres particiones reservadas (holdout-1/2/3) y pre-registro de umbrales antes de F26. Problema: holdout unico se quema al abrirlo; umbral ajustable a posteriori. Alternativas: holdout unico (descartada), validacion cruzada temporal (insuficiente con pocos casos). Estado: ACTIVE.
+- 2026-09-04 · La garantia de inmutabilidad/solo-anadir es un test en CI contra el historial de git; los hooks son comodidad. Estado: ACTIVE.
+- 2026-09-04 · Sin inferencias en evidence/; todo lo importado de Bot v2 se re-cita o entra como UNKNOWN. Estado: ACTIVE.
+- 2026-09-25 · Sobre el informe SIMULADOR-CUENTA §5 (ADR-0050), al validar: `firma_huso_corte` se queda en el perfil de cuenta, vigilado por el test de las medianoches de un ano contra `huso_operativa` (no contradice ADR-0027 §alt. 3, que hablaba de la spec); la guardia de tamano de posicion sin cifra NO impide correr, porque es solo aviso; y se acepta la duplicacion de los `firma_*` comunes entre el perfil y `parametros.yaml` mientras el test que los cruza la vigile. Estado: ACTIVE.
+
+### Known Issues
+- El trailer `Fuente:` se exige por commit, no por linea: un commit que mezcle esquema y valor
+  cita ambas fuentes.
+- El hash de 8 hex en los ids de evidencia/feedback (32 bits) se considera suficiente para
+  cientos de items; desde F07 `escribir_item` distingue "mismo contenido" (idempotente) de una
+  colision real (error). 353 items sin colision.
+
+## Completed Features
+Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
+— ninguna desde el Archivo 34 (2026-10-17).
+
+## Change Log
+Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
+— ninguna desde el Archivo 34 (2026-10-17).
+
+# Next Action HECHA · E · la rama del margen · sale de PROJECT_STATE.md en trabajo/margen-lote (2026-10-18)
+
+E. La rama del margen (heredado 37): ADR sobre qué hace el bot cuando el lote del 0,5 % no cabe en los 50 lotes (limitar el lote o no operar), con el margen a 1:30, que corta antes, y el simulador que lo compruebe. Medidas: la parte de operaciones del trader con stop de menos de unos 2 pips y a ±2 min de una noticia; y cuántas órdenes de R3.1 rechaza el volumen y cuántas el margen (CORRIDA-CONSTRUCCION.md §3.12).
+
+La hace `trabajo/margen-lote` (docs/validation/MARGEN-LOTE.md, ADR-0081). La medida de noticias quedó sin fuente: va como línea opcional de A.
+
+# Pendiente heredado SALE · 37 · sale de PROJECT_STATE.md en trabajo/margen-lote (2026-10-18)
+
+Criterio (a) de `docs/state/README.md`: HECHO. Texto literal en PROJECT_STATE.md hasta este cierre (la línea corta):
+
+- 37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN (A-18).** Va a E; el texto entero, en el Archivo 33 de docs/state/HISTORIA.md.
+
+Y el texto entero (Archivo 33, línea 79 de su bloque):
+
+- 37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN, EN LA RAMA DE STOP Y LOTE (A-18).** FTMO confirma 50 lotes en EURUSD y cuenta de cobertura (P-D1, `docs/validation/FTMO-P-D1.md`, 2026-10-12). Pero antes que el volumen corta el MARGEN (ADR-0026, Impacto): con `firma_apalancamiento` 1:30, todo el saldo como margen da 27,27 lotes a 1,10 y 25,00 a 1,20, y el 0,5 % deja de cumplirse con un stop de menos de 1,83 y 2,00 pips (el tope de 50 lotes corta en 1 pip). Partir en varias órdenes no lo arregla: MT5 suma el margen de las posiciones del mismo lado. El simulador no comprueba el margen y `firma_apalancamiento` no lo lee ningún código del bot (deuda abajo). La ejecución 2 de la demo comprueba la fórmula con el margen de 1,00 lote que ya escribe el script 1.1 (`MargenAlcanza`).
+
+**HECHO:** ADR-0081 (la decisión: el bot limita el lote al menor de tres y el bróker simulado rechaza por `margen_libre` al colocar y al llenar); el rechazo `margen_libre` y `limitar_lote` en `engine/broker.py` (commit 80b0795); `reglas_broker_de` lee `firma_apalancamiento`; `tests/unit/test_margen_lote.py`. Lo que de él sigue vivo -la ejecución 2 con `MargenAlcanza`- está en la línea A de la Next Action. Orden de cierre del consultor del 2026-10-18 (MARGEN-LOTE.md §10).
+
+# Registro de cierre · `trabajo/margen-lote` (2026-10-18)
+
+- Orden de cierre del consultor del 2026-10-18, pegada por Aleks en la conversación y ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama
+  aceptada por el consultor tras una pasada del revisor (opus; MARGEN-LOTE.md §9: reglas 0 bloquea,
+  4 importa, 2 menor; encargo 0 bloquea, 4 importa, 1 menor; todos arreglados en d46e753, más la
+  duración anómala de un `make check` declarada). Una PARADA en la fase 0, respondida por el
+  consultor el 2026-10-17 (§1.k). El punto 1 de la orden de cierre corrigió la respuesta a1 del
+  informe (`spec_version`, 85d242e). Nunca se cerró sin la orden.
+- **Lo que entra** (R3.3 de la hoja de ruta; E de la Next Action; heredado 37):
+  - ADR-0081: cuando el lote del 0,5 % no cabe, el bot lo LIMITA al menor de tres -el del riesgo,
+    `firma_volumen_max_lotes` y el que cabe en `lote_margen_libre_fraccion` (0,95) del margen
+    libre-, al paso; por debajo del mínimo no se opera (enmienda ADR-0053 §1); el bróker simulado
+    rechaza por `margen_libre` al colocar (ask/bid) y al llenar (enmienda ADR-0052 §4), con el
+    saldo de la cuenta obligatorio cuando el perfil declara apalancamiento; recuadro en ADR-0026
+    (Impacto: «F21 lo comprueba» no era verdad);
+  - `lote_si_no_cabe` (DEFAULT_AMBIGUOUS bajo A-57, en `limitar`) y `lote_margen_libre_fraccion`;
+    A-57 abierta (pregunta, a la sesión 5); `spec_version` 18.1.1; el perfil de FTMO corregido en
+    `firma_apalancamiento` y en `firma_tamano_posicion_ratio_aviso` (G.3);
+  - las medidas: antes del cambio, de 437 órdenes de la corrida diaria 96 las rechaza el volumen y
+    278 las rechazaría el margen; 198 operaciones del trader, el 69 % (o el 58 %, según A-56) con
+    la distancia del lote por debajo de 1,83 pips; tras el cambio, 0 rechazos por volumen, 339 de
+    504 órdenes limitadas, parejas 12 → 18, cobertura 6,1 % → 9,1 %, precisión 12,8 % → 11,1 %
+    (diagnóstico, ADR-0070 §3); noticias sin fuente;
+  - en este commit: E y el heredado 37 salen a HISTORIA; F en «O → V»; V gana A-57 y deja de
+    depender de E; A gana la ejecución 2 con `MargenAlcanza`, la 3 con el instante del margen de
+    una pendiente y el calendario de noticias opcional. En la hoja de ruta: R3.3 y G.3 HECHAS (G.3
+    con «- **Refs:** —»); A.2 sin HER:37; R4.1 sin NA:E, con ID:A-57 y «R3.3 (HECHA)».
+- Letras: sale E; entra ninguna.
+- Letra del tag: la última cerrada era la r de F37 (`stable/F37r-sesgo-h4-color`).
+- Tag: `stable/F37s-margen-lote`. El merge es `git rev-parse "stable/F37s-margen-lote^{commit}"`.
+- Commits de la rama: `ecd88d8` (apertura), `963c773` (fase 0 y PARADA), `44f31fb` (campo de
+  salida y ADR-0081), `ddb51c6` (corrida «antes» y medidas 1 y 2), `80b0795` (código, spec 18.1.0,
+  A-57; `Fuente: ADR-0081`), `5f68f40` (fase 4: re-corrida e informe), `d46e753` (revisor; spec
+  18.1.1), `85d242e` (orden de cierre, punto 1) y el de este registro.
+- CI de rama: ninguna. No toca hooks, rutas ni el sistema de archivos (MARGEN-LOTE.md §8). La CI de
+  `main` corre tras el push. La única consulta de CI de la rama fue `gh run view 39083113877` al
+  abrir; ninguna con `curl` ni con un guion.
+- Exposiciones: tres filas del 2026-10-17 en HOLDOUT-EXPOSICIONES (la fase 0, sin material
+  reservado; la corrida «antes» y la medida 1; la re-corrida de la fase 4), las corridas con la
+  lectura del M1 de marzo y de junio para calentar.
+- Informe: `docs/validation/MARGEN-LOTE.md`. Encargo: `docs/encargos/trabajo-margen-lote.md`.

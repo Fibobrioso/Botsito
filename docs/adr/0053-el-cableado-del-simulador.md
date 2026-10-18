@@ -43,6 +43,16 @@ El contrato del bróker es `colocar_limite`, `modificar`, `cancelar`, `cerrar_a_
 | `mover_stop {de: OP, a, cuando}` (RN-014) | `Broker.mover_stop` de la posición ligada |
 | `fijar {hecho, a}` | como hasta hoy (ADR-0048) |
 
+> **ENMIENDA (2026-10-17, rama `trabajo/margen-lote`, ADR-0081 §2).** La fila de `redondear_lote`
+> decía «no por debajo del mínimo» (y el código subía el lote al mínimo): desde ADR-0081, **por
+> debajo de `instrumento_lote_minimo` NO SE OPERA**, por decisión del consultor y no por la cita de
+> RN-027, que no sostiene ni lo uno ni lo otro. Subir al mínimo arriesga más que
+> `riesgo_por_operacion`, lo contrario de limitar. Además, antes de `colocar_orden_limite`, el lote
+> se LIMITA al menor de tres (el del riesgo, `firma_volumen_max_lotes` y el que cabe en el margen
+> libre × `lote_margen_libre_fraccion`), redondeado hacia abajo al paso; con
+> `lote_si_no_cabe = no_operar`, o por debajo del mínimo, la orden no se envía y queda anotada con
+> su motivo (un solo camino, sin `CableadoError`).
+
 **1.1 DECISIÓN pendiente de validar (el lote se resuelve al colocar).** RN-011 ejecuta
 `dimensionar_lote` ANTES de `escribir_stop_en_la_orden`, y con `lotaje_base: hasta_stop_fraccion`
 (ADR-0020) el lote depende de la distancia al stop, que todavía no está escrito, y la acción no

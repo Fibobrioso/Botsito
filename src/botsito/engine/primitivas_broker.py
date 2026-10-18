@@ -26,7 +26,19 @@ from botsito.domain.estructura_m1 import (
 )
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.valores import CIEN
-from botsito.engine.broker import LLENADA, MANUAL, Broker, BrokerError, Rechazo
+from botsito.engine.broker import (
+    LLENADA,
+    LOTE_LIMITAR,
+    LOTE_NO_OPERAR,
+    MANUAL,
+    SIN_LIMITE,
+    AnotacionMargen,
+    Broker,
+    BrokerError,
+    Rechazo,
+    limitar_lote,
+    margen_requerido,
+)
 from botsito.engine.cuenta import CuentaViva
 from botsito.engine.entrada import STOP_EN_RUPTURA
 from botsito.engine.interprete import (
@@ -142,6 +154,15 @@ class ContextoDia:
     # cierre de M1: (posicion, nivel). Lo deja el predicado, que no toca el broker; el cableado lo
     # vigila al tick si `break_even_condicion` es `tocar` (ADR-0065). Se limpia cada minuto
     break_even_vigilable: tuple[str, int] | None = None
+    # SOLO SALIDA (rama trabajo/margen-lote): por orden colocada, (margen requerido en moneda,
+    # margen libre de la cuenta en ese instante, riesgo en % del saldo, lote del riesgo antes del
+    # limite, limite que mordio) en el instante de colocarla; None en cada hueco que no se pudo
+    # medir (sin apalancamiento en el perfil, sin precio). Lo lee «### Ordenes» del informe;
+    # ninguna decision lo mira
+    margen_al_colocar: dict[str, AnotacionMargen] = field(default_factory=dict)
+    # las ordenes que el bot NO envio (ADR-0081 §2 y §3): (instante ms, zona, motivo, lote del
+    # riesgo). El motivo es `minimo`, o `no_operar:` seguido de los limites que mordieron
+    no_enviadas: list[tuple[int, str, str, Decimal]] = field(default_factory=list)
 
 
 def _casa_por(pedido: str, real: str | None) -> bool:
@@ -490,8 +511,79 @@ def primitivas_cableadas(
             return []
         paso, minimo = registro.lotes(str(args["paso"])), registro.lotes(str(args["minimo"]))
         registro.decimal(str(args["contrato"]))
-        o.lote = max((lote / paso).to_integral_value(ROUND_DOWN) * paso, minimo)
+        # hacia abajo al paso (ADR-0016). Hasta ADR-0081 subia al minimo; desde ADR-0081 §2 un lote
+        # por debajo del minimo NO SE OPERA, y lo aplica `colocar_orden_limite`, que es el unico
+        # camino «no se coloca» (el minimo se sigue leyendo porque la forma lo nombra)
+        del minimo
+        o.lote = (lote / paso).to_integral_value(ROUND_DOWN) * paso
         return []
+
+    def _lote_si_no_cabe() -> str:
+        valor = registro.opcion("lote_si_no_cabe")
+        if valor not in (LOTE_LIMITAR, LOTE_NO_OPERAR):
+            raise CableadoError(f"lote_si_no_cabe = {valor!r}: el cableado no sabe hacer eso")
+        return valor
+
+    def _lote_final(lado: Lado, lote_riesgo: Decimal) -> tuple[Decimal | None, tuple[str, ...]]:
+        """ADR-0081 §2: el lote del riesgo contra el tope de volumen del perfil y el margen libre
+        del broker por `lote_margen_libre_fraccion`, con el precio que convierte el margen en este
+        instante (ask en una compra, bid en una venta): la MISMA funcion y el MISMO margen libre que
+        usara el broker al colocar, para que lo que el bot envia quepa. Sin apalancamiento en el
+        perfil solo mira el volumen (el broker tampoco mide margen)."""
+        reglas = ctx.broker.reglas
+        paso = registro.lotes("instrumento_lote_paso")
+        minimo = registro.lotes("instrumento_lote_minimo")
+        disponible: Decimal | None = None
+        precio = 0
+        if reglas.apalancamiento is not None:
+            precio, _ = ctx.broker.precio_de_conversion(lado, ctx.instante_ms)
+            disponible = ctx.broker.margen_libre() * registro.decimal("lote_margen_libre_fraccion")
+        return limitar_lote(
+            lote_riesgo,
+            reglas.volumen_max_lotes,
+            disponible,
+            precio,
+            ctx.escala,
+            ctx.contrato,
+            reglas.apalancamiento,
+            paso,
+            minimo,
+        )
+
+    def _margen_al_colocar(
+        lado: Lado,
+        entrada: int,
+        lote: Decimal,
+        stop: int,
+        lote_riesgo: Decimal,
+        limites: tuple[str, ...],
+    ) -> AnotacionMargen:
+        """SOLO SALIDA (trabajo/margen-lote): lo que la orden pide de margen, lo que el broker tiene
+        libre y el riesgo que arriesga, medidos ANTES de enviarla y con la misma funcion que usa el
+        broker (`margen_requerido`); mas el lote del riesgo (RN-011) y el limite que mordio. El
+        precio es el que convierte el margen (ask en una compra, bid en una venta) en el instante
+        del cierre de M1. Sin apalancamiento en el perfil, o sin precio en ese minuto, el hueco
+        queda en None y la salida imprime `-`. Ninguna decision lee esto."""
+        limite = "+".join(limites) if limites else SIN_LIMITE
+        riesgo = (
+            lote
+            * Decimal(abs(entrada - stop))
+            / ctx.escala
+            * ctx.contrato
+            / ctx.cuenta.saldo
+            * CIEN
+            if ctx.cuenta.saldo > 0
+            else None
+        )
+        apalancamiento = ctx.broker.reglas.apalancamiento
+        if apalancamiento is None:
+            return None, None, riesgo, lote_riesgo, limite
+        try:
+            precio, _ = ctx.broker.precio_de_conversion(lado, ctx.instante_ms)
+        except BrokerError:
+            return None, None, riesgo, lote_riesgo, limite
+        requerido = margen_requerido(lote, precio, ctx.escala, ctx.contrato, apalancamiento)
+        return requerido, ctx.broker.margen_libre(), riesgo, lote_riesgo, limite
 
     def _lote_resuelto(o: OrdenEnPreparacion) -> Decimal | None:
         if o.lote is not None:
@@ -525,14 +617,34 @@ def primitivas_cableadas(
             raise CableadoError(
                 "colocar_orden_limite: la zona ligada no es la de la orden preparada"
             )
-        lote = _lote_resuelto(o)
-        if o.stop is None or o.objetivo is None or lote is None or lote <= 0:
+        lote_riesgo = _lote_resuelto(o)
+        if o.stop is None or o.objetivo is None or lote_riesgo is None:
             raise CableadoError("colocar_orden_limite: la orden no lleva stop, objetivo y lote")
+        lado = cast(Lado, z.lado)
+        # ADR-0081 §2 y §3: el lote final es el menor de tres, al paso; y el UNICO camino «no se
+        # coloca»: por debajo del minimo, o con lote_si_no_cabe = no_operar y un limite que muerde.
+        # La zona queda usada y su punto rechazado, como con un rechazo del broker (ADR-0064)
+        lote, limites = _lote_final(lado, lote_riesgo)
+        motivo_no_envio: str | None = None
+        if lote is None:
+            motivo_no_envio = "+".join(limites)
+        elif limites and _lote_si_no_cabe() == LOTE_NO_OPERAR:
+            motivo_no_envio = f"{LOTE_NO_OPERAR}:" + "+".join(limites)
+        if motivo_no_envio is not None:
+            ctx.no_enviadas.append((ctx.instante_ms, z.id, motivo_no_envio, lote_riesgo))
+            marcar_usada(estado, momento.sesion, z.id)
+            marcar_rechazada(estado, momento.sesion, z.id)
+            ctx.orden = None
+            return []
+        assert lote is not None  # el camino «no se coloca» ya salio arriba
         id = f"o{len(ctx.broker.ordenes) + 1}"
         colocar = (
             ctx.broker.colocar_stop if tipo_orden == STOP_EN_RUPTURA else ctx.broker.colocar_limite
         )
-        r = colocar(id, cast(Lado, z.lado), z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms)
+        ctx.margen_al_colocar[id] = _margen_al_colocar(
+            lado, z.entrada, lote, o.stop, lote_riesgo, limites
+        )
+        r = colocar(id, lado, z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms)
         ctx.por_de_orden[id] = z.por
         ctx.zona_de_orden[id] = z.id
         marcar_usada(estado, momento.sesion, z.id)

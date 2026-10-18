@@ -33,7 +33,7 @@ from botsito.config.registro import cargar_registro
 from botsito.data.velas import a_minuto
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.engine import cuenta, simulacion
-from botsito.engine.broker import Broker, BrokerError
+from botsito.engine.broker import MOTIVO_MARGEN_LIBRE, Broker, BrokerError, lote_que_cabe
 from botsito.engine.perfil_cuenta import cargar_perfil
 from botsito.engine.simulador_config import FICHERO_LLENADO, cargar_config_llenado
 
@@ -89,7 +89,9 @@ def test_con_el_perfil_real_la_primera_operacion_se_rechaza_por_volumen_maximo()
     contrato = registro.decimal("instrumento_contrato")
     cfg = cargar_config_llenado(RAIZ / FICHERO_LLENADO).configuracion()
     reglas_broker = simulacion.reglas_broker_de(perfil)
-    b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala)
+    saldo = perfil.decimal("saldo_inicial_cuenta")
+    # con apalancamiento en el perfil el saldo es obligatorio (ADR-0081 §4)
+    b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala, saldo=lambda: saldo)
     assert md.operaciones_trader is not None
     lado, entrada, lotes, stop, objetivo, ms = _orden(md.operaciones_trader[0], md.escala, contrato)
     assert lotes > reglas_broker.volumen_max_lotes
@@ -97,7 +99,38 @@ def test_con_el_perfil_real_la_primera_operacion_se_rechaza_por_volumen_maximo()
         b.abrir_conocida("t1", lado, entrada, lotes, stop, objetivo, ms, "caso")
 
 
+def test_con_el_perfil_real_una_operacion_que_pasa_el_volumen_se_rechaza_por_margen() -> None:
+    """El hermano del anterior por el MARGEN (ADR-0081 §4): la misma operacion con un lote que ya
+    cabe en los 50 lotes del perfil pero pide mas margen del que tiene la cuenta (1:30 sobre
+    100.000: unos 27 lotes a 1,10, FTMO-P-D1.md §2) se rechaza con `margen_libre`; con un lote que
+    cabe en el margen, se abre."""
+    md = _mercado()
+    registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
+    perfil = cargar_perfil(RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml")
+    contrato = registro.decimal("instrumento_contrato")
+    cfg = cargar_config_llenado(RAIZ / FICHERO_LLENADO).configuracion()
+    reglas_broker = simulacion.reglas_broker_de(perfil)
+    saldo = perfil.decimal("saldo_inicial_cuenta")
+    assert reglas_broker.apalancamiento is not None
+    b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala, saldo=lambda: saldo)
+    assert md.operaciones_trader is not None
+    lado, entrada, _, stop, objetivo, ms = _orden(md.operaciones_trader[0], md.escala, contrato)
+    # el lote que ocupa exactamente todo el saldo al precio de entrada, y uno justo por encima
+    cabe = lote_que_cabe(saldo, entrada, md.escala, contrato, reglas_broker.apalancamiento)
+    cabe = cabe.quantize(Decimal("0.01"), rounding=ROUND_DOWN)
+    assert cabe < reglas_broker.volumen_max_lotes
+    with pytest.raises(BrokerError, match=MOTIVO_MARGEN_LIBRE):
+        b.abrir_conocida("t1", lado, entrada, cabe + Decimal("0.01"), stop, objetivo, ms, "caso")
+    assert b.abrir_conocida("t2", lado, entrada, cabe, stop, objetivo, ms, "caso").abierta
+
+
 def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
+    """La regresion del CORTE de la cuenta, no del volumen ni del margen: las cuatro operaciones del
+    trader se repiten con el lote del 0,5 % aunque pase de los 50 lotes (tope subido a 100, como
+    declara VOLUMEN_MAX_DE_LA_REGRESION) y aunque pida mas margen del que hay a 1:30. Por eso el
+    broker se construye con `apalancamiento=None` EXPLICITO: sin apalancamiento no mide margen
+    (ADR-0081 §4, respuesta del consultor a la PARADA, punto 2), y lo que hace el bot con ese lote
+    lo decide ADR-0081 en el cableado, no aqui."""
     md = _mercado()
     registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
     perfil = cargar_perfil(RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml")
@@ -105,7 +138,9 @@ def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
     contrato = registro.decimal("instrumento_contrato")
     cfg = cargar_config_llenado(RAIZ / FICHERO_LLENADO).configuracion()
     reglas_broker = dataclasses.replace(
-        simulacion.reglas_broker_de(perfil), volumen_max_lotes=VOLUMEN_MAX_DE_LA_REGRESION
+        simulacion.reglas_broker_de(perfil),
+        volumen_max_lotes=VOLUMEN_MAX_DE_LA_REGRESION,
+        apalancamiento=None,
     )
     b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala)
     assert md.operaciones_trader is not None and len(md.operaciones_trader) == 4

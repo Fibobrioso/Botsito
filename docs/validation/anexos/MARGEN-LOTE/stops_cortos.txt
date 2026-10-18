@@ -1,0 +1,18 @@
+PARAMETROS: saldo 100000 USD; riesgo_por_operacion 0.5 % = 500.0 USD; stop_fraccion_caja 0.8; instrumento_contrato 100000; paso 0.01; firma_apalancamiento 1:30; firma_volumen_max_lotes 50; valor del pip 10.0000 USD por lote; meses de construccion 2026-04, 2026-07, 2026-08, 2026-01; casos reservados en ellos: 0 (reservados en total 34)
+UMBRALES (stop minimo con el que el lote del riesgo todavia cabe): volumen (50 lotes): 1.00 pips; margen a 1.10 (27.27 lotes): 1.83 pips; margen a 1.20 (25.00 lotes): 2.00 pips
+OPERACIONES con stop en el caso: 198 (2026-04 35, 2026-07 67, 2026-08 42, 2026-01 54)
+LECTURA A: el stop del libro es el 1 de la caja (VIABILIDAD-COMISION): lote sobre fraccion x D
+  mes | n | mediana lote (pips) | mediana 0->1 (pips) | lote < volumen (50 lotes): 1.00 pips | lote < margen a 1.10 (27.27 lotes): 1.83 pips | lote < margen a 1.20 (25.00 lotes): 2.00 pips | lote < margen al precio de la entrada | 0->1 < volumen (50 lotes): 1.00 pips | 0->1 < margen a 1.10 (27.27 lotes): 1.83 pips | 0->1 < margen a 1.20 (25.00 lotes): 2.00 pips
+  2026-04 | 35 | 1.20 | 1.50 | 10 (29 %) | 27 (77 %) | 28 (80 %) | 28 (80 %) | 6 (17 %) | 23 (66 %) | 24 (69 %)
+  2026-07 | 67 | 1.76 | 2.20 | 9 (13 %) | 36 (54 %) | 40 (60 %) | 38 (57 %) | 3 (4 %) | 27 (40 %) | 30 (45 %)
+  2026-08 | 42 | 1.24 | 1.55 | 17 (40 %) | 35 (83 %) | 35 (83 %) | 35 (83 %) | 13 (31 %) | 30 (71 %) | 31 (74 %)
+  2026-01 | 54 | 1.28 | 1.60 | 20 (37 %) | 39 (72 %) | 42 (78 %) | 42 (78 %) | 12 (22 %) | 34 (63 %) | 34 (63 %)
+  total | 198 | 1.44 | 1.80 | 56 (28 %) | 137 (69 %) | 145 (73 %) | 143 (72 %) | 34 (17 %) | 114 (58 %) | 119 (60 %)
+LECTURA B: el stop del libro es el 0,8: lote sobre D
+  mes | n | mediana lote (pips) | mediana 0->1 (pips) | lote < volumen (50 lotes): 1.00 pips | lote < margen a 1.10 (27.27 lotes): 1.83 pips | lote < margen a 1.20 (25.00 lotes): 2.00 pips | lote < margen al precio de la entrada | 0->1 < volumen (50 lotes): 1.00 pips | 0->1 < margen a 1.10 (27.27 lotes): 1.83 pips | 0->1 < margen a 1.20 (25.00 lotes): 2.00 pips
+  2026-04 | 35 | 1.50 | 1.88 | 6 (17 %) | 23 (66 %) | 24 (69 %) | 24 (69 %) | 5 (14 %) | 16 (46 %) | 19 (54 %)
+  2026-07 | 67 | 2.20 | 2.75 | 3 (4 %) | 27 (40 %) | 30 (45 %) | 29 (43 %) | 1 (1 %) | 15 (22 %) | 18 (27 %)
+  2026-08 | 42 | 1.55 | 1.94 | 13 (31 %) | 30 (71 %) | 31 (74 %) | 31 (74 %) | 8 (19 %) | 20 (48 %) | 21 (50 %)
+  2026-01 | 54 | 1.60 | 2.00 | 12 (22 %) | 34 (63 %) | 34 (63 %) | 34 (63 %) | 8 (15 %) | 24 (44 %) | 26 (48 %)
+  total | 198 | 1.80 | 2.25 | 34 (17 %) | 114 (58 %) | 119 (60 %) | 118 (60 %) | 22 (11 %) | 75 (38 %) | 84 (42 %)
+NOTICIAS: sin calendario (no se da --noticias); la medida queda sin fuente

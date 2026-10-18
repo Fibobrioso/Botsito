@@ -38,12 +38,14 @@ from botsito.domain.velas import MinutoUtc
 from botsito.engine.arnes import DiaTrader
 from botsito.engine.broker import (
     CANCELADA,
+    COLOCADA,
     LLENADA,
     MANUAL,
     PETICION_CANCELAR,
     PETICION_COLOCAR,
     RECHAZADA,
     TIPOS_PETICION,
+    AnotacionMargen,
     Broker,
     Peticion,
     ReglasBroker,
@@ -83,6 +85,9 @@ from botsito.engine.visor import DetalleBroker, EventoVisor, OrdenVisor, ZonaVis
 from botsito.engine.zonas import zonas_del_dia
 
 DEPURACION = "DEPURACION: respaldo M1, no cuenta"
+# el «tipo de peticion» de un rechazo al LLENAR en «### Rechazos por motivo» (ADR-0081 §4): no es
+# una peticion al servidor (R13) y por eso no esta en TIPOS_PETICION; solo nombra la columna
+PETICION_LLENAR = "llenar"
 # el instante del break even de RN-014 (ADR-0065): `tocar` es al tick; `cierre`, al cierre de la M1
 PARAMETRO_BREAK_EVEN = "break_even_condicion"
 BREAK_EVEN_AL_TOCAR = "tocar"
@@ -118,6 +123,13 @@ class TrazaBroker:
     # ventana_fin), o la red de seguridad del fin del dia
     cancelaciones: list[tuple[int, str, str]] = field(default_factory=list)
     limites: tuple[tuple[str, int, int], ...] = ()  # (sesion, desde, hasta) en minutos UTC
+    # SOLO SALIDA (rama trabajo/margen-lote): por orden, (margen requerido, margen libre, riesgo en
+    # % del saldo, lote del riesgo, limite) al colocarla, lo que anota `colocar_orden_limite` en el
+    # contexto (`ContextoDia.margen_al_colocar`, el mismo diccionario). None en lo no medido
+    margen_al_colocar: dict[str, AnotacionMargen] = field(default_factory=dict)
+    # las ordenes que el bot no envio (ADR-0081 §2 y §3): (instante ms, zona, motivo, lote del
+    # riesgo); el mismo objeto que `ContextoDia.no_enviadas`
+    no_enviadas: list[tuple[int, str, str, Decimal]] = field(default_factory=list)
 
 
 MOTIVO_FIN_DIA = "viva al cerrar el dia: cancelada por la red de seguridad (ADR-0053 §6)"
@@ -198,6 +210,7 @@ class MotorCableado:
             self.cuenta = CuentaViva(self.reglas_fase, self.contrato, primero * MS_POR_MINUTO - 1)
         if self.racha is None:
             self.racha = seguidor_del_registro(self.registro)
+        cuenta = self.cuenta
         broker = Broker(
             self.reglas_broker,
             self.config_llenado,
@@ -205,6 +218,9 @@ class MotorCableado:
             self.contrato,
             md.escala,
             stops_level_diagnostico=self.stops_level_diagnostico,
+            # ADR-0081 §4: el saldo realizado de la cuenta, para el margen libre; obligatorio con
+            # apalancamiento en el perfil (el broker se niega sin el)
+            saldo=lambda: cuenta.saldo,
         )
         if self.tope is not None and self.seguidor is None:
             self.seguidor = SeguidorTope(
@@ -226,7 +242,12 @@ class MotorCableado:
         estado = EstadoDia()
         self.estados[clave] = estado
         trazas = {nombre: TrazaSesion() for nombre, _, _ in limites}
-        tb = TrazaBroker(depuracion=self.depuracion or not md.origen_ticks, limites=tuple(limites))
+        tb = TrazaBroker(
+            depuracion=self.depuracion or not md.origen_ticks,
+            limites=tuple(limites),
+            margen_al_colocar=ctx.margen_al_colocar,
+            no_enviadas=ctx.no_enviadas,
+        )
         vistos = 0
         peticiones_vistas = 0  # para anotar las cancelaciones de cada cierre (solo el informe)
         instante = primero
@@ -727,8 +748,19 @@ def informe_simulacion(motor: MotorCableado) -> str:
 
 CABECERA_ORDENES = (
     "### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del "
-    "resultado)"
+    "resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD)"
+    " | riesgo (% del saldo) | lote del riesgo | limite)"
 )
+CABECERA_NO_ENVIADAS = (
+    "### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del "
+    "riesgo)"
+)
+# las siete ultimas columnas (rama trabajo/margen-lote) son SOLO salida: el lote colocado, la
+# distancia de la orden a su stop, el margen y el riesgo medidos al colocar con la unica funcion de
+# margen (`broker.margen_requerido`), el lote del riesgo (RN-011) y el limite que mordio; `-` en lo
+# que no se pudo medir (perfil sin apalancamiento, minuto sin precio). Van al final para que lo que
+# ya leia las filas siga leyendolas
+SIN_MEDIDA = "-"
 RESULTADO_LLENADA = "llenada"
 RESULTADO_RECHAZADA = "rechazada"
 RESULTADO_CANCELADA = "cancelada"
@@ -745,12 +777,30 @@ def _sesion_de(colocada_ms: int, limites: Sequence[tuple[str, int, int]]) -> str
     return sesion or "-"
 
 
-def vida_de_las_ordenes(
-    motor: MotorCableado,
-) -> list[tuple[str, str, str, datetime, Decimal, str, str, datetime | None]]:
-    """(dia, sesion, id, colocada, precio, resultado, motivo, instante del resultado) por orden,
-    por dia y por instante de colocacion."""
-    salida: list[tuple[str, str, str, datetime, Decimal, str, str, datetime | None]] = []
+FilaOrden = tuple[
+    str,  # dia
+    str,  # sesion
+    str,  # id
+    datetime,  # colocada
+    Decimal,  # precio
+    str,  # resultado
+    str,  # motivo
+    datetime | None,  # instante del resultado
+    Decimal,  # lote pedido
+    int,  # distancia al stop, en puntos
+    Decimal | None,  # margen requerido al colocar (moneda); None si no se pudo medir
+    Decimal | None,  # margen libre de la cuenta al colocar (moneda); None si no se pudo medir
+    Decimal | None,  # riesgo al colocar, en % del saldo; None si no se pudo medir
+    Decimal | None,  # el lote del riesgo (RN-011), antes del limite; None sin anotacion
+    str,  # el limite que mordio: volumen, margen, volumen+margen, ninguno; `-` sin anotacion
+]
+
+
+def vida_de_las_ordenes(motor: MotorCableado) -> list[FilaOrden]:
+    """(dia, sesion, id, colocada, precio, resultado, motivo, instante del resultado, lote,
+    distancia, margen requerido, margen libre, riesgo) por orden, por dia y por instante de
+    colocacion. Las siete ultimas son SOLO salida (rama trabajo/margen-lote)."""
+    salida: list[FilaOrden] = []
     for dia in sorted(motor.trazas_broker):
         broker = motor.brokers.get(dia)
         tb = motor.trazas_broker[dia]
@@ -777,6 +827,10 @@ def vida_de_las_ordenes(
                 cuando = ms
             else:
                 resultado, motivo, cuando = o.estado, "-", o.ultimo_cambio_ms
+            anotacion = tb.margen_al_colocar.get(o.id)
+            requerido, libre, riesgo, lote_riesgo, limite = (
+                anotacion if anotacion is not None else (None, None, None, None, SIN_MEDIDA)
+            )
             salida.append(
                 (
                     dia,
@@ -787,25 +841,54 @@ def vida_de_las_ordenes(
                     resultado,
                     motivo,
                     _instante(cuando) if cuando is not None else None,
+                    o.lotes,
+                    abs(o.precio - o.stop),
+                    requerido,
+                    libre,
+                    riesgo,
+                    lote_riesgo,
+                    limite,
                 )
             )
     return salida
 
 
+def _moneda(valor: Decimal | None) -> str:
+    return SIN_MEDIDA if valor is None else f"{valor:.2f}"
+
+
 def _informe_ordenes(motor: MotorCableado) -> list[str]:
     lineas = ["", CABECERA_ORDENES]
     filas = vida_de_las_ordenes(motor)
-    for dia, sesion, id, colocada, precio, resultado, motivo, cuando in filas:
+    for f in filas:
+        dia, sesion, id, colocada, precio, resultado, motivo, cuando = f[:8]
+        lote, dist, req, lib, rg, lote_riesgo, limite = f[8:]
         lineas.append(
             f"{dia} | {sesion} | {id} | {colocada.isoformat()} | {precio} | {resultado} | "
-            f"{motivo} | {cuando.isoformat() if cuando is not None else '-'}"
+            f"{motivo} | {cuando.isoformat() if cuando is not None else '-'} | {lote} | {dist} | "
+            f"{_moneda(req)} | {_moneda(lib)} | {SIN_MEDIDA if rg is None else f'{rg:.3f}'} | "
+            f"{SIN_MEDIDA if lote_riesgo is None else lote_riesgo} | {limite}"
         )
     if not filas:
         lineas.append("ninguna")
-    resumen = Counter(resultado for _, _, _, _, _, resultado, _, _ in filas)
+    resumen = Counter(f[5] for f in filas)
     lineas.append(
         "ordenes: " + (", ".join(f"{k} {v}" for k, v in sorted(resumen.items())) if filas else "0")
     )
+    # las ordenes que el bot NO envio (ADR-0081 §2 y §3), por dia y por instante
+    lineas += ["", CABECERA_NO_ENVIADAS]
+    n_no_enviadas = 0
+    for dia in sorted(motor.trazas_broker):
+        tb = motor.trazas_broker[dia]
+        for ms, zona, motivo, lote_riesgo in sorted(tb.no_enviadas):
+            lineas.append(
+                f"{dia} | {_sesion_de(ms, tb.limites)} | {_instante(ms).isoformat()} | {zona} | "
+                f"{motivo} | {lote_riesgo}"
+            )
+            n_no_enviadas += 1
+    if not n_no_enviadas:
+        lineas.append("ninguna")
+    lineas.append(f"no enviadas: {n_no_enviadas}")
     # los rechazos del broker por motivo y por mes: los de colocar (la orden nace rechazada) y los
     # de modificar (la orden sigue como estaba), por separado
     por_motivo: Counter[tuple[str, str, str]] = Counter()
@@ -815,7 +898,13 @@ def _informe_ordenes(motor: MotorCableado) -> list[str]:
             continue
         for r in broker.traza().rechazos:
             o = broker.ordenes.get(r.orden_id)
-            tipo = PETICION_COLOCAR if o is not None and o.estado == RECHAZADA else "modificar"
+            # al colocar (la orden nace rechazada), al LLENAR (estuvo colocada: ADR-0081 §4, no es
+            # una peticion) o al modificar (la orden sigue como estaba)
+            if o is not None and o.estado == RECHAZADA:
+                estuvo_colocada = any(e == COLOCADA for _, e in o.historial)
+                tipo = PETICION_LLENAR if estuvo_colocada else PETICION_COLOCAR
+            else:
+                tipo = "modificar"
             por_motivo[(dia[:7], r.motivo, tipo)] += 1
     lineas += ["", "### Rechazos por motivo (mes | motivo | peticion | rechazos)"]
     lineas += [

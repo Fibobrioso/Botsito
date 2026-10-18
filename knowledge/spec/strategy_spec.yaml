@@ -1476,6 +1476,13 @@ reglas:
       Y A-36 RESUELTA (sesion 4, S-22, fb-2026-10-04-sesion-04-bbfb5c98): la orden de entrada va
       exactamente en el 0 de la caja, contando la mecha y sin sumar el spread, que es donde
       `zona_del_punto` ya la pone (ADR-0064 §2; tests/unit/test_orden_en_el_0_con_mecha.py).
+      DESDE EL 2026-10-17 (ADR-0081, rama trabajo/margen-lote): el lote que esta regla dimensiona
+      es el DEL RIESGO; el que se coloca puede quedar POR DEBAJO cuando no cabe en
+      firma_volumen_max_lotes o en el margen libre a firma_apalancamiento (los stops del trader son
+      de pips): el cableado lo limita al menor de los tres al colocar (lote_si_no_cabe = limitar,
+      DEFAULT bajo A-57; lote_margen_libre_fraccion) y por debajo de instrumento_lote_minimo no se
+      opera. Misma decision y mismo resultado en R; menos riesgo en dinero. Esta regla no cambia de
+      forma: la decision vive en ADR-0081 y en el registro, no aqui.
     decision: ADR-0020
     forma:
       cuando:
@@ -2076,7 +2083,11 @@ reglas:
       sale el lotaje, no la DIRECCION del redondeo, de la que el trader nunca hablo: eso lo
       decide ADR-0016. Citaba el registro de la sesion 1, revocado el 2026-09-11 por el acuerdo
       del lotaje (ADR-0020); ahora cita el vigente y el redondeo importa mas que antes, porque
-      el lote es un 25 % mayor sobre la misma caja
+      el lote es un 25 % mayor sobre la misma caja. DESDE EL 2026-10-17 (ADR-0081 §2): el «no se
+      opera» por debajo de instrumento_lote_minimo que esta regla ya decia lo decide ADR-0081, no la
+      cita (que tampoco sostiene lo contrario); hasta entonces el cableado SUBIA el lote al minimo
+      (ADR-0053 §1, enmendado). Lo aplica `colocar_orden_limite`, el unico camino «no se coloca»,
+      despues de limitar el lote al que cabe en el volumen y en el margen (notas de RN-011)
     decision: ADR-0016
     forma:
       cuando:

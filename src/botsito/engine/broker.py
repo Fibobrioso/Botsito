@@ -53,10 +53,10 @@ instante en que su condicion se cumple y nada posterior lo cambia.
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time, timedelta
-from decimal import Decimal
+from decimal import ROUND_DOWN, Decimal
 from zoneinfo import ZoneInfo
 
 from botsito.domain.cierres import (
@@ -102,6 +102,8 @@ HECHO_ORDEN_PENDIENTE = "orden_limite_pendiente"
 MOTIVO_PRECIO_INVALIDO = "precio_invalido"
 MOTIVO_STOPS_LEVEL = "stops_level"
 PARAMETRO_STOPS_LEVEL = "firma_stops_level_puntos"
+PARAMETRO_APALANCAMIENTO = "firma_apalancamiento"
+MOTIVO_MARGEN_LIBRE = "margen_libre"
 PETICION_COLOCAR = "colocar"
 PETICION_MODIFICAR = "modificar"
 PETICION_CANCELAR = "cancelar"
@@ -137,6 +139,83 @@ class ReglasBroker:
     freno: LimitesFreno | None = None
     # la ventana prohibida antes de un cierre de mercado largo (ADR-0068): None, sin calendario
     cierres: ReglasCierres | None = None
+    # el apalancamiento maximo del perfil (`firma_apalancamiento`, 1:N): con el, el broker calcula
+    # el margen que FTMO exige por cada orden y posicion (rama trabajo/margen-lote). None solo en
+    # un perfil que no lo declare (los sinteticos de los tests): entonces no hay margen que medir
+    apalancamiento: int | None = None
+
+
+def margen_requerido(
+    lotes: Decimal, precio_puntos: int, escala: int, contrato: Decimal, apalancamiento: int
+) -> Decimal:
+    """El margen que MT5 exige por `lotes` a `precio_puntos`, en la moneda de la cuenta (la de
+    cotizacion de EURUSD): lotes x contrato x precio / apalancamiento. Es la formula de forex de la
+    documentacion de MetaTrader 5 («Volume in lots * Contract size / Leverage», en la divisa de
+    margen, convertida con el precio: FTMO-P-D1.md §2). UNICA funcion de margen: la usan la salida
+    del arnes, el limite del lote del bot y el rechazo del broker, para que no discrepen."""
+    if apalancamiento <= 0:
+        raise BrokerError("el apalancamiento es positivo")
+    return lotes * contrato * (Decimal(precio_puntos) / escala) / apalancamiento
+
+
+def lote_que_cabe(
+    margen: Decimal, precio_puntos: int, escala: int, contrato: Decimal, apalancamiento: int
+) -> Decimal:
+    """El lote que ocupa exactamente `margen` a ese precio: la inversa de `margen_requerido`."""
+    if apalancamiento <= 0:
+        raise BrokerError("el apalancamiento es positivo")
+    if precio_puntos <= 0:
+        raise BrokerError("el precio es positivo")
+    return margen * apalancamiento / (contrato * (Decimal(precio_puntos) / escala))
+
+
+# los limites que pueden morder el lote del riesgo (ADR-0081 §2), tal como salen en la traza
+LIMITE_VOLUMEN = "volumen"
+LIMITE_MARGEN = "margen"
+LIMITE_MINIMO = "minimo"
+SIN_LIMITE = "ninguno"
+# las opciones de `lote_si_no_cabe` (ADR-0081 §3; DEFAULT_AMBIGUOUS bajo A-57)
+LOTE_LIMITAR = "limitar"
+LOTE_NO_OPERAR = "no_operar"
+# la anotacion de cada orden al colocarla (solo salida): margen requerido, margen libre, riesgo en
+# % del saldo (None si no se pudo medir), el lote del riesgo (RN-011, antes del limite) y el limite
+# que mordio (`volumen`, `margen`, `volumen+margen` o `ninguno`)
+AnotacionMargen = tuple[Decimal | None, Decimal | None, Decimal | None, Decimal, str]
+
+
+def limitar_lote(
+    lote_riesgo: Decimal,
+    volumen_max: Decimal,
+    margen_disponible: Decimal | None,
+    precio_puntos: int,
+    escala: int,
+    contrato: Decimal,
+    apalancamiento: int | None,
+    paso: Decimal,
+    minimo: Decimal,
+) -> tuple[Decimal | None, tuple[str, ...]]:
+    """ADR-0081 §2: el lote final es el menor de tres -el del riesgo (RN-011), el tope de volumen
+    de la firma y el que cabe en `margen_disponible` (el margen libre ya multiplicado por
+    `lote_margen_libre_fraccion`)-, redondeado hacia abajo al paso. Devuelve el lote y los limites
+    que MORDIERON respecto al del riesgo (`volumen`, `margen`); por debajo del minimo, None y
+    `minimo`: no se opera (decision del consultor, ADR-0081 §2). Sin apalancamiento no hay margen
+    que medir y solo mira el volumen. Funcion pura: la usa `colocar_orden_limite` y la prueban los
+    tests sin broker."""
+    limites: list[str] = []
+    lote = lote_riesgo
+    if lote_riesgo > volumen_max:
+        limites.append(LIMITE_VOLUMEN)
+        lote = min(lote, volumen_max)
+    if margen_disponible is not None and apalancamiento is not None:
+        cabe = lote_que_cabe(margen_disponible, precio_puntos, escala, contrato, apalancamiento)
+        if lote_riesgo > cabe:
+            limites.append(LIMITE_MARGEN)
+            lote = min(lote, cabe)
+    lote = (lote / paso).to_integral_value(ROUND_DOWN) * paso
+    if lote < minimo:
+        limites.append(LIMITE_MINIMO)
+        return None, tuple(limites)
+    return lote, tuple(limites)
 
 
 @dataclass
@@ -264,9 +343,19 @@ class Broker:
         contrato: Decimal,
         escala: int,
         stops_level_diagnostico: int | None = None,
+        saldo: Callable[[], Decimal] | None = None,
     ) -> None:
         if contrato <= 0 or escala <= 0:
             raise BrokerError("contrato y escala son positivos")
+        # ADR-0081 §4, negar por defecto: con apalancamiento en el perfil el saldo realizado de la
+        # cuenta es obligatorio, porque sin el no hay margen libre que medir; solo un perfil que no
+        # declara apalancamiento (los sinteticos de los tests) corre sin margen
+        if reglas.apalancamiento is not None and saldo is None:
+            raise BrokerError(
+                "el perfil declara apalancamiento, asi que el broker necesita el saldo de la "
+                "cuenta para medir el margen libre (ADR-0081): no se construye sin el"
+            )
+        self.saldo = saldo
         if stops_level_diagnostico is not None:
             if reglas.stops_level_puntos is not None:
                 raise BrokerError(
@@ -415,6 +504,11 @@ class Broker:
         motivo = self._limite_infringido(lotes, instante_ms)
         if motivo is None:
             motivo = self._precio_infringido(tipo, lado, precio, stop, objetivo, instante_ms)
+        if motivo is None and self.reglas.apalancamiento is not None:
+            # ADR-0081 §4: el margen de la orden al ask (compra) o al bid (venta) de este instante
+            # contra el margen libre; una stop colocada reserva ese margen mientras vive
+            precio_conversion, _ = self.precio_de_conversion(lado, instante_ms)
+            motivo = self._margen_infringido(lotes, precio_conversion)
         if motivo is not None:
             r = Rechazo(instante_ms, id, motivo)
             self._rechazos.append(r)
@@ -537,6 +631,9 @@ class Broker:
         if lotes <= 0:
             raise BrokerError(f"{id}: lotes no positivos")
         motivo = self._limite_infringido(lotes, instante_ms)
+        if motivo is None:
+            # ADR-0081 §4: tambien el margen; el precio de conversion es el del llenado conocido
+            motivo = self._margen_infringido(lotes, precio)
         if motivo is not None:
             raise BrokerError(f"{id}: el perfil no admite esta posicion ({motivo})")
         p = Posicion(
@@ -715,6 +812,26 @@ class Broker:
             return
         if tipo == LLENADA:
             o = self.ordenes[objeto]
+            if self.reglas.apalancamiento is not None:
+                # ADR-0081 §4: al llenar, el margen al precio del llenado contra el margen libre de
+                # ESTE instante; la reserva de la propia orden (si es una stop) pasa a ser el margen
+                # de la posicion, asi que no cuenta contra ella. Un rechazo aqui no es una peticion
+                # al servidor (R13): la orden ya estaba en el; la salida lo cuenta como `llenar`
+                reserva = (
+                    margen_requerido(
+                        o.lotes, o.precio, self.escala, self.contrato, self.reglas.apalancamiento
+                    )
+                    if o.tipo == TIPO_STOP
+                    else Decimal(0)
+                )
+                motivo = self._margen_infringido(o.lotes, evento.precio, libre_extra=reserva)
+                if motivo is not None:
+                    o.estado = RECHAZADA
+                    o.ultimo_cambio_ms = instante
+                    o.historial.append((instante, RECHAZADA))
+                    self._rechazos.append(Rechazo(instante, o.id, motivo))
+                    self._eventos.append((instante, RECHAZADA, o.id, evento.fuente))
+                    return
             o.estado = LLENADA
             o.ultimo_cambio_ms = instante
             o.historial.append((instante, LLENADA))
@@ -825,6 +942,69 @@ class Broker:
             raise BrokerError(f"sin precio de mercado en el minuto {minuto}")
         spread = self.config.spread_supuesto(MinutoUtc(minuto))
         return (int(vela.cierre) if lado == "compra" else int(vela.cierre) + spread), RESPALDO_M1
+
+    def precio_de_conversion(self, lado: Lado, instante_ms: int) -> tuple[int, str]:
+        """El precio con el que MT5 convierte el margen a la moneda de la cuenta: el ASK en una
+        compra y el BID en una venta («The Ask price is used for buy deals, and the Bid price is
+        used for sell deals»), del ultimo tick anterior al instante; con respaldo M1, el cierre mas
+        el spread supuesto en la compra y el cierre en la venta. Es la lectura inversa de
+        `_precio_de_mercado`, que da el precio al que se MARCA o cierra la posicion."""
+        minuto = instante_ms // MS_POR_MINUTO
+        ticks = self.mercado.ticks_del_minuto(minuto)
+        if ticks is not None:
+            previos = [t for t in ticks if t.instante <= instante_ms]
+            if previos:
+                t = previos[-1]
+                return (int(t.ask) if lado == "compra" else int(t.bid)), TICKS
+        vela = self.mercado.m1(minuto)
+        if vela is None:
+            raise BrokerError(f"sin precio de mercado en el minuto {minuto}")
+        spread = self.config.spread_supuesto(MinutoUtc(minuto))
+        return (int(vela.cierre) + spread if lado == "compra" else int(vela.cierre)), RESPALDO_M1
+
+    def margen_usado(self) -> Decimal:
+        """El margen que ocupa lo vivo: cada posicion abierta a su precio de entrada y cada
+        pendiente STOP a su precio de orden («the margin is summed up (charged for each order)»,
+        documentacion de MT5; la limite no reserva margen en esa pagina y aqui no se cuenta).
+        Exige apalancamiento en las reglas."""
+        apalancamiento = self.reglas.apalancamiento
+        if apalancamiento is None:
+            raise BrokerError("sin apalancamiento en el perfil no hay margen que medir")
+        total = Decimal(0)
+        for p in self.posiciones.values():
+            if p.abierta:
+                total += margen_requerido(
+                    p.lotes, p.entrada, self.escala, self.contrato, apalancamiento
+                )
+        for o in self.ordenes.values():
+            if o.estado in (COLOCADA, MODIFICADA) and o.tipo == TIPO_STOP:
+                total += margen_requerido(
+                    o.lotes, o.precio, self.escala, self.contrato, apalancamiento
+                )
+        return total
+
+    def margen_libre(self) -> Decimal:
+        """La equidad del broker -el saldo realizado de la cuenta, que el cableado le pasa, mas su
+        flotante al tick- menos el margen de lo vivo (ADR-0081 §4)."""
+        if self.saldo is None:
+            raise BrokerError("sin saldo de la cuenta no hay margen libre que medir")
+        return self.saldo() + self.flotante() - self.margen_usado()
+
+    def _margen_infringido(
+        self, lotes: Decimal, precio_puntos: int, libre_extra: Decimal = Decimal(0)
+    ) -> str | None:
+        """`margen_libre` si el margen de `lotes` a ese precio supera el margen libre (mas
+        `libre_extra`, la reserva de la propia orden cuando se llena); None si cabe o si el perfil
+        no declara apalancamiento (entonces no hay margen que medir)."""
+        apalancamiento = self.reglas.apalancamiento
+        if apalancamiento is None:
+            return None
+        requerido = margen_requerido(
+            lotes, precio_puntos, self.escala, self.contrato, apalancamiento
+        )
+        if requerido > self.margen_libre() + libre_extra:
+            return MOTIVO_MARGEN_LIBRE
+        return None
 
     def flotante(self) -> Decimal:
         """El P/L flotante de las posiciones vivas a su ultimo precio marcado, en moneda."""
