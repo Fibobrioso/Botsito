@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/margen-lote
+main
 
 ## Current Feature
-`trabajo/margen-lote` EN CURSO (abierta el 2026-10-17 desde 9cf711e; E de la Next Action, R3.3 de la hoja de ruta, heredado 37): el ADR de qué hace el bot cuando el lote del 0,5 % no cabe en el margen libre a 1:30 o en los 50 lotes, el rechazo por margen en el bróker simulado y las dos medidas de E. Encargo docs/encargos/trabajo-margen-lote.md; informe docs/validation/MARGEN-LOTE.md.
+Ninguna rama abierta. `trabajo/margen-lote` cerrada en `main` el 2026-10-18 (`stable/F37s-margen-lote`); R3.3 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-5296a31 · merge de `trabajo/sesgo-h4-color` (tag `stable/F37r-sesgo-h4-color`): el sesgo de H4 cambia solo si la vela rompe el extremo de la anterior y cierra del color de esa ruptura (WhatsApp del trader del 2026-10-14; ADR-0080, que enmienda ADR-0044 §2, ADR-0060 §1 y ADR-0075 §3); spec 18.0.0, dos registros de feedback y las capturas en el corpus; el motor cuenta las H4 saltadas; re-corrida del arnés en diagnóstico (8 de 104 sesiones cambian de sesgo, parejas iguales); la contradicción con la sesión 1 abierta, a la sesión 5; tres días de fidelidad-1 retirados por ADR-0041. Sobre `stable/F37q-corrida-construccion` (fa15a84). Informe docs/validation/SESGO-H4-COLOR.md; el registro del cierre, al final de HISTORIA.
+3762429 · merge de `trabajo/margen-lote` (tag `stable/F37s-margen-lote`): cuando el lote del 0,5 % no cabe, el bot lo limita al menor de tres (el del riesgo, 50 lotes y el que cabe en 0,95 del margen libre a 1:30) y por debajo del mínimo no opera; el bróker simulado rechaza por `margen_libre` al colocar y al llenar (ADR-0081, que enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto); `lote_si_no_cabe` DEFAULT bajo A-57 (a la sesión 5) y `lote_margen_libre_fraccion`; spec 18.1.1; re-corrida del arnés en diagnóstico (0 rechazos por volumen, 339 de 504 órdenes limitadas, parejas 12 → 18). Sobre `stable/F37r-sesgo-h4-color` (5296a31). Informe docs/validation/MARGEN-LOTE.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-5296a31 · merge: trabajo/sesgo-h4-color, el sesgo de H4 cambia solo si la vela rompe el extremo y cierra del color de la ruptura (ADR-0080, R1.2) · tag stable/F37r-sesgo-h4-color
+3762429 · merge: trabajo/margen-lote, el lote que no cabe se limita y el broker simulado rechaza por margen libre (ADR-0081, R3.3) · tag stable/F37s-margen-lote
 
 ## Tests Currently Passing
 1590 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
