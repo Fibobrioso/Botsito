@@ -72,12 +72,7 @@ criterio de salida: `docs/state/README.md`.
 - 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico que se puede abrir de ese material y no se…
 - 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`…
 - 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).
-- 12. **MARZO, AL LLEGAR, ENTRA POR SU PROPIA RAMA**: declaracion en `knowledge/corpus/libros.yaml` con formato…
-- 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): con A-35 respondida se escribe el productor de `liquidez_m15`… · R3.1: liquidez_tomada en 98 y 97 de 104 sesiones con cada lectura.
 - 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.
-- 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor… · Desde ADR-0076 (2026-10-12) el arnes ya no necesita `--diagnostico-a21`: corre con `--diagnostico-a35` y `--diagnostico-a44`. · R3.1 midió las dos lecturas (§3.4): ninguna operación cambia.
-- 34. Ticks: el deslizamiento y el swap, las ejecuciones 2 y 3 (A).
-- 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje… · RN-020 tampoco retira la orden pendiente al llegar a su tope; cuando se active A-44, el modelo es lo que hace RN-036 (`retirar_ordenes_pendientes`, ADR-0077). · R3.1: con sin_tope, 0 de 104.
 ## Known Ambiguities
 Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/state/README.md`.
 
@@ -111,6 +106,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker (VISOR-CONSTRUCCION.md §4.3).
 - El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los ticks empiezan en ventana_inicio y la orden lleva 1 ms antes (VISOR-CONSTRUCCION.md §4.3).
 - `arnes.dias_de_mercado` lee para calentar el M1 entero de marzo y de junio (días reservados) en cada corrida del arnés y cada make check, sin declararlo; declarado en HOLDOUT-EXPOSICIONES (2026-10-14); la línea LECTURA: va a G.2 (CORRIDA-CONSTRUCCION.md §1.c).
+- El docstring de `engine/freno.py:7-8` dice que el adaptador real de MetaTrader usará la misma clase; ADR-0082 lo enmienda (el EA la porta). Lo paga R6a.4 (PLATAFORMA-ADELANTADA.md).
 
 - La ingesta asigna la sesión con el reloj del registro y no con el congelado del artefacto; hoy son el mismo. Antes de cambiar reloj_sesiones en el registro, la ingesta pasa a leer el congelado (CASES-REJILLA.md).
 - Sin git callan, sin aviso, las comprobaciones que leen git fuera de validation/ y no pasan por Historial: las anclas de paquetes, fidelidad y dev-visto y la subida de spec_version (docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1).
@@ -123,12 +119,9 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - NADA COMPRUEBA MECANICAMENTE QUE EL CUERPO DE UN INFORME CERRADO NO CAMBIE (2026-09-22, `trabajo/guardia-ids-docs`).
 - LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY, Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO (2026-09-21, rama de abril). Sigue viva solo la parte de la serie: el reloj quedó corregido el 2026-10-06 (ADR-0069: Europe/Madrid).
 - EL FRACTAL 5/120 NO CAPTURA LO QUE EL TRADER LLAMA ESTRUCTURA (2026-09-21, informe §R2).
-- `maxTP` ES EL PRECIO DE CIERRE DE LAS GANADORAS, NO LA EXCURSION MAXIMA (2026-09-21).
 - LA GUARDIA DE `cobertura_material` EN `universo()` ES MAS ESTRICTA DE LO QUE ADR-0025 SOSTIENE (2026-09-21, y el defecto es de la rama del dia anterior).
 - EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21).
 - `fecha_grabacion` TIENE QUE SER UN EJE DE PRIMERA CLASE, Y EL DETECTOR DE CONTRADICCIONES TIENE QUE ORDENAR POR ELLA (2026-09-21, deuda con nombre puesta por el consultor).
-- CUARTA APARICION DEL PUNTO CIEGO DEL DETECTOR, CON DIMENSION NUEVA: LA RECENCIA (2026-09-21).
-- LA PRIMERA MEDIDA DE A-18 SALE DEL MATERIAL, NO DE LA SESION, Y SE REPITE SOBRE MAYO (2026-09-21, rama F14a, informe §4).
 - F26 lee la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073, ADR-0040).
 - `idealTP`: UNA COLUMNA DEL MATERIAL QUE NO SABEMOS QUE ES Y NO USAMOS (2026-09-21, rama F14a, ADR-0037 §7).
 - BUSCAR EN EL CORPUS ANTES DE REDACTAR CUALQUIER AMBIGUEDAD, Y ESCRIBIR QUE SE BUSCO (2026-09-21, rama F14a).
@@ -148,12 +141,9 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - `data/fotogramas/` (8,9 GiB los 4 videos de F05 mas 0,15 GiB de v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.
 - F07, limitacion declarada: el proponente de las 20 propuestas, el autor de la lista de referencia (golden) y el primer filtro fueron la misma sesion (`claude-fable-5-1`); no hay cliente de API de LLM (sin clave).
 - Hook local: tras cambiar `scripts/git-hooks/`, ejecutar `make hooks` (el 2026-09-07 la copia instalada no protegia `knowledge/corpus/fotogramas`; los tests de historial en CI son la garantia real).
-- `data aggregate` con una ventana fuera del dataset devuelve solo cabeceras (con AVISO en
-  stderr desde la auditoria); F14 debe tratar la ventana vacia como error del caso.
 - Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
   checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
   cuando el merge pase por PR.
-- F11: las reglas de `strategy_spec.yaml` son PROSA citada y validada, no codigo; que el motor haga lo que dicen lo cierra F12 (validacion semantica).
 
 ## Reglas vivas
 Las que solo viven aqui (`docs/state/README.md`).
@@ -164,9 +154,8 @@ Las que solo viven aqui (`docs/state/README.md`).
 
 ### Things That Must Not Be Changed
 - Regimenes de cambio de knowledge/. · Pureza de domain/. · Parametros no se optimizan contra resultados.
-- La validacion de fidelidad (F26) precede a cualquier MQL5.
+- La validación de fidelidad (F26) precede a todo lo que decida operaciones en vivo (F29, F30 y lo de F31-F32 que dependa de ellos); la capa de plataforma de ADR-0082, que nunca decide una operación, puede ir antes.
 - La firma y el tipo de cuenta (FTMO 2-Step Swing, ADR-0026) no se cambian sin ADR: el tipo se elige EN LA COMPRA, Standard -> Swing no existe, y con Standard vuelve la restriccion de noticias entera (calendario, RN-028, `filtro_noticias`).
-- Umbrales pre-registrados no se relajan tras ver resultados. · Un holdout abierto queda quemado (que es "abrir" lo define ADR-0021; las exposiciones se declaran en `docs/validation/HOLDOUT-EXPOSICIONES.md`).
 - Ficheros de texto siempre con LF y UTF-8 (escribir con `newline="\n"`); toda salida de git se
   decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
 
@@ -175,7 +164,6 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 - 2026-09-04 · Tres particiones reservadas (holdout-1/2/3) y pre-registro de umbrales antes de F26. Problema: holdout unico se quema al abrirlo; umbral ajustable a posteriori. Alternativas: holdout unico (descartada), validacion cruzada temporal (insuficiente con pocos casos). Estado: ACTIVE.
 - 2026-09-04 · La garantia de inmutabilidad/solo-anadir es un test en CI contra el historial de git; los hooks son comodidad. Estado: ACTIVE.
 - 2026-09-04 · Sin inferencias en evidence/; todo lo importado de Bot v2 se re-cita o entra como UNKNOWN. Estado: ACTIVE.
-- 2026-09-25 · Sobre el informe SIMULADOR-CUENTA §5 (ADR-0050), al validar: `firma_huso_corte` se queda en el perfil de cuenta, vigilado por el test de las medianoches de un ano contra `huso_operativa` (no contradice ADR-0027 §alt. 3, que hablaba de la spec); la guardia de tamano de posicion sin cifra NO impide correr, porque es solo aviso; y se acepta la duplicacion de los `firma_*` comunes entre el perfil y `parametros.yaml` mientras el test que los cruza la vigile. Estado: ACTIVE.
 
 ### Known Issues
 - El trailer `Fuente:` se exige por commit, no por linea: un commit que mezcle esquema y valor

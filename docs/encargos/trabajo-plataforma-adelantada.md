@@ -1,12 +1,8 @@
 # Encargo · trabajo/plataforma-adelantada
 
-Dado por Aleks (consultor) el 2026-10-18. Copiado tal cual (hasta que exista, el ADR que el
-encargo manda escribir va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale del bloque en el commit que lo crea):
-
-```ids-inexistentes
-ADR-0082 — el ADR que este encargo manda escribir en su fase 1; aún no existe
-```
+Dado por Aleks (consultor) el 2026-10-18. Copiado tal cual (hasta que existió, el ADR que el
+encargo manda escribir iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió del bloque en el commit que lo creó):
 
 > Modelo: Opus · Esfuerzo: medio
 >
@@ -75,3 +71,51 @@ ADR-0082 — el ADR que este encargo manda escribir en su fase 1; aún no existe
 >  - Lo que cambie la Next Action (F, N y las ramas de R6a en los huecos) va en el commit del contrato cuando yo dé la orden de cierre. No toques la Next Action antes.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-18)
+
+Dada por Aleks (consultor) el 2026-10-18. Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/plataforma-adelantada (2026-10-18). Cópiala tal cual al informe y aplícala punto por punto (skill fase-cero). Las letras (a)-(d) de tu decisión 6 las llamo «opción 6a», «opción 6b»…, y (a)-(d) a secas son las condiciones de docs/state/README.md.
+>
+> 0. D4: (a), el EA de MQL5.
+>    Porqué:
+>    - El bot final es un EA (F29-F31; ADR-0001:20-21, «exige dos implementaciones (Python y MQL5) que lean la misma fuente»), así que una capa en Python habría que tirarla al llegar F29.
+>    - research :483 da cuatro razones, escritas para FundedNext, y cada una se cita como es:
+>      · El tope de 2.000 peticiones vale igual en FTMO (FTMO-REGLAS.md:60, R13; firma_mensajes_dia_max = 2000 en el perfil). Un bucle de Python que sondea gasta presupuesto; el EA reacciona a OnTick.
+>      · El Strategy Tester con ticks reales y el VPS sin puente no tienen cita de FTMO en el repo: el ADR los da como razones de research, sin afirmarlos para FTMO, y los mide R6a.1 (D7).
+>      · La cuarta, la equivalencia entre dos implementaciones (E6), es la de F30, y sigue valiendo.
+>    - ADR-0082 responde por su nombre a la pregunta 1 de BRECHA-EN-VIVO.md §1 (:62-66):
+>      · se descarta el EA que recibe las decisiones de Python, porque exige un puente en vivo que choca con el tope de peticiones;
+>      · el dominio se porta a MQL5 en F29, después de F26;
+>      · antes de F26 solo va la capa de ADR-0082.
+>    Lo que se hace:
+>    - ADR-0082 lo decide como D4, con estas razones y sus citas.
+>    - Recuadro en ADR-0067 §1: «el adaptador real de MetaTrader usará la misma clase» queda enmendado por ADR-0082. El EA porta FrenoPeticiones a MQL5, y engine/freno.py sigue siendo la referencia y el freno del simulador. En el mismo recuadro: RN-030 es del veto de la firma (ADR-0082 D3); la frase de §1 sigue siendo cierta en lo que dice (llama a acciones del bróker), pero no la hace regla de la estrategia.
+>    - Recuadro en ADR-0068 §4: en vivo, el EA porta cierres_desde_sesiones y unir_cierres; las funciones de domain/cierres.py siguen siendo la referencia.
+>    - Los dos recuadros van en el mismo commit que crea ADR-0082, después del frontmatter y antes de «## Estado» (test_adr.py). La fila de cada uno en docs/adr/README.md pasa a «ACTIVE (… ; enmendado por ADR-0082)».
+>    - El docstring de engine/freno.py:7-8 dice lo mismo que ADR-0067 §1. Es código y esta rama no lo toca: va como deuda de una línea en Technical Debt, que apunta a PLATAFORMA-ADELANTADA.md, y la paga R6a.4.
+>    - Cada pieza portada se prueba contra los mismos casos que sus tests de Python (D4 del encargo). Eso no sustituye a F30.
+> 1. RN-032: (a). R6a.4 lleva RN-029, RN-030 y RN-031, y RN-032 espera a F26. El ADR lo escribe como consecuencia de D3, con la cita strategy_spec.yaml:2302-2356. Porqué: es lo que D3 manda, y la opción (b) tocaría la spec.
+> 2. Categoría instrumento y perfil de cuenta: (a). D3 y D5 dicen «parámetros de firma, bróker, instrumento y ejecución, y el perfil de cuenta (knowledge/cuentas/)». Porqué: ninguno es un hecho de la estrategia, y sin ellos R6a.6 no se puede hacer.
+> 3. lote_si_no_cabe: (a). Hoy su valor es limitar (ADR-0081, DEFAULT_AMBIGUOUS bajo A-57). Su opción no_operar es un veto: la capa no elige qué operar, se niega a enviar lo que no cabe, leyendo solo cuenta, símbolo y un parámetro de ejecución. R6a.6 cumple las dos opciones, con el valor que deje A-57 en la sesión 5, y lleva ID:A-57.
+> 4. Reconciliación: (a). En la capa quiere decir reconstruir el estado al arrancar (órdenes, posiciones y journal contra la cuenta), con el test «reinicio a media jornada» de §H.2 en R6a.3. La reconciliación demo-backtest sigue en F34. Porqué: el backtest es de la estrategia.
+> 5. El hash: (a). El ADR describe los dos hashes de §H.2 tal como están, y lo que la capa recibe antes de F26 lleva su propio hash, que se fija en R6a.2. Porqué: no se decide ahora lo que R6a.2 va a medir.
+> 6. PROJECT_STATE: las opciones 6a y 6b en esta rama, la 6c en la orden de cierre, y la 6d no, porque CLAUDE.md queda fuera de esta rama. El objetivo pasa a 21.500 bytes al final de la rama.
+>    - Opción 6a. El contrato se amplía a docs/runbooks/ACTIVAR-A35-A44.md y docs/runbooks/ENTRADA-MARZO.md.
+>      · Para cada heredado (2, 12, 25, 30 y 35), lo que se lleva al runbook es el texto de la línea VIVA de PROJECT_STATE, con sus añadidos (los «· R3.1: …» incluidos), más lo que esa línea remite a HISTORIA. Se toma del último Archivo que la trae, se cita de dónde sale, y se lleva como instrucción operativa de ese runbook, no como pegote de archivo.
+>      · La línea sale por la condición (b) solo si después el runbook la contiene entera.
+>      · Si algo de esa versión no puede ir al runbook, la línea se queda: por ejemplo, un hecho de marzo que ENTRADA-MARZO.md no decía, una fecha de días reservados o lo que el trader backtesteó. Niega por defecto.
+>      · El diff de ENTRADA-MARZO.md lo revisa el revisor, en su alcance, antes del commit: ni fechas de días reservados ni hechos de marzo nuevos.
+>      · Por cada heredado que salga, su HER:n sale de la hoja de ruta en el mismo commit (R4.1 para 25, 30 y 35; R5.3 para 2 y 12; A.3 para 2) y se sustituye por el puntero al runbook.
+>    - Opción 6b. Recuadro en ADR-0050 que registra la ratificación del 2026-09-25 tal como está en PROJECT_STATE.md:177, citando esa línea y su fecha; después la línea sale por la condición (d).
+>    - Si con 6a y 6b la rama no baja de 21.500, no pares: dilo en el informe con la cifra exacta.
+>
+> Lo demás de la fase 0 queda aceptado tal cual:
+> - ACCOUNT_MARGIN_MODE va en R6a.7 y en el arranque de R6a.1, y el ADR cita §H.
+> - La deuda de las citas de relleno de RN-029 a RN-032 se nombra en R6a.4.
+> - El bloque ids-inexistentes sale en el commit que crea ADR-0082.
+> - No hay entrada R0.3.
+> - NA:N se queda en las Refs de R7.1.
+>
+> Sigue con las fases 1 a 4 y el cierre del encargo. Rama lista para revisión, NO cerrada.

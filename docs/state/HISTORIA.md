@@ -10364,3 +10364,75 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 36 (2026-10-18).
+
+# Pendiente heredado SALE · 12 · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Texto literal en PROJECT_STATE.md hasta esta rama:
+
+- 12. **MARZO, AL LLEGAR, ENTRA POR SU PROPIA RAMA**: declaracion en `knowledge/corpus/libros.yaml` con formato…
+
+Condicion (b) REPETIDO: vive entero en `docs/runbooks/ENTRADA-MARZO.md`, paso 0 (ultimo punto: la declaracion en `libros.yaml` por el metodo de velas con control, ADR-0039; Aleks no abre el fichero antes, salvo la columna de fechas del paso a, ADR-0046 §6a; febrero no se toca ni se descarga; complementa la entrega), con el texto que la linea recortaba (Archivo 1). Opcion 6a de la respuesta a la PARADA. En la hoja de ruta, R5.3 apunta al runbook en vez de a `HER:12`.
+
+# Pendiente heredado SALE · 25 · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Texto literal en PROJECT_STATE.md hasta esta rama:
+
+- 25. **RN-004, bloqueada SOLO por A-35** (K-04, docs/validation/SESION-02-DECISIONES.md §1): con A-35 respondida se escribe el productor de `liquidez_m15`… · R3.1: liquidez_tomada en 98 y 97 de 104 sesiones con cada lectura.
+
+Condicion (b) REPETIDO: vive entero en `docs/runbooks/ACTIVAR-A35-A44.md` §5.1, primer punto, con lo que la linea recortaba («y RN-004 deja de estar bloqueada», Archivo 1; la frase de A-21 ya no esta en la linea viva porque A-21 esta RESUELTA, ADR-0076) y su nota de R3.1. Opcion 6a de la respuesta a la PARADA. En la hoja de ruta, R4.1 apunta al runbook (y a RN-004) en vez de a `HER:25`.
+
+# Pendiente heredado SALE · 30 · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Texto literal en PROJECT_STATE.md hasta esta rama:
+
+- 30. **DESPUES DE LA SESION 02: RN-004 TRAS A-35, medida con el arnes y mirada con el visor** (`botsito motor… · Desde ADR-0076 (2026-10-12) el arnes ya no necesita `--diagnostico-a21`: corre con `--diagnostico-a35` y `--diagnostico-a44`. · R3.1 midió las dos lecturas (§3.4): ninguna operación cambia.
+
+Condicion (b) REPETIDO: vive entero en `docs/runbooks/ACTIVAR-A35-A44.md` §5.1, segundo punto, con el texto que la linea recortaba (Archivo 1: el visor, las primitivas, la medida contra la linea base y la clausula de A-43) y sus dos notas (ADR-0076 y R3.1). Opcion 6a de la respuesta a la PARADA. En la hoja de ruta, R4.1 apunta al runbook en vez de a `HER:30`.
+
+# Pendiente heredado SALE · 34 · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Texto literal en PROJECT_STATE.md hasta esta rama:
+
+- 34. Ticks: el deslizamiento y el swap, las ejecuciones 2 y 3 (A).
+
+Condicion (b) REPETIDO: entero en la entrada A de la Next Action (`PROJECT_STATE.md`, «las ejecuciones 2 y 3 de MedirDemoFTMO … Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comision con 1,00 lote»). Lo que tenia de mas su texto entero ya salio con orden del consultor en `trabajo/hoja-de-ruta` (bloque «# Pendiente heredado SALE · 34 (en parte)», 2026-10-10) y en `trabajo/entrada-enero`. En la hoja de ruta sale `HER:34` de A.1.
+
+# Pendiente heredado SALE · 35 · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Texto literal en PROJECT_STATE.md hasta esta rama:
+
+- 35. **DESPUES DE LA SESION 02: RN-020 TRAS A-44.** Con A-44 respondida -que perdida hace que el trader deje… · RN-020 tampoco retira la orden pendiente al llegar a su tope; cuando se active A-44, el modelo es lo que hace RN-036 (`retirar_ordenes_pendientes`, ADR-0077). · R3.1: con sin_tope, 0 de 104.
+
+Condicion (b) REPETIDO: vive entero en `docs/runbooks/ACTIVAR-A35-A44.md` §5.1, tercer punto, con el texto que la linea recortaba (Archivo 1: la magnitud y el corte, el hueco del cableado, «el siguiente bloqueo del bot despues de A-35», la medida) y sus dos notas (RN-036/ADR-0077 y R3.1). Opcion 6a de la respuesta a la PARADA. En la hoja de ruta, R4.1 apunta al runbook (y a RN-020) en vez de a `HER:35`.
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Su texto literal en «Technical Debt», cada una con su condicion y su evidencia:
+
+- CUARTA APARICION DEL PUNTO CIEGO DEL DETECTOR, CON DIMENSION NUEVA: LA RECENCIA (2026-09-21).
+  Condicion (a) PAGADA: la guardia G1, `stable/F37b-guardias-citas` (merge fe37973): `src/botsito/validation/citas_supersedidas.py:3-6`, «En todo fichero bajo knowledge/spec/, un id ev-* supersedido solo puede aparecer … que nombra su sustituto», y `ambiguedades.yaml` esta bajo `knowledge/spec/`. El texto entero (Archivo 1, `HISTORIA.md:560`) pedia justo eso. La recencia como eje de orden sigue viva en la deuda de `fecha_grabacion`, que se queda.
+- LA PRIMERA MEDIDA DE A-18 SALE DEL MATERIAL, NO DE LA SESION, Y SE REPITE SOBRE MAYO (2026-09-21, rama F14a, informe §4).
+  Condicion (a) PAGADA: la repeticion sobre mayo esta hecha (`docs/adr/0040-…md:26-31`, la tabla agosto/abril/mayo, «mayo | 5 | 4 | `MAYO-DEV.md` §2»), y A-18 esta RESUELTA (ADR-0073; `knowledge/spec/ambiguedades.yaml`, `estado: RESUELTA`); lo que el material contradice es A-56.
+- `data aggregate` con una ventana fuera del dataset devuelve solo cabeceras (con AVISO en
+  stderr desde la auditoria); F14 debe tratar la ventana vacia como error del caso.
+  Condicion (a) PAGADA: el AVISO esta en `src/botsito/cli.py:2864`, y F14 excluye el caso con su motivo (`src/botsito/cases/ventanas.py:137-142`, `Excluido(…, "ventana … fuera del dataset …")`), con test en `tests/unit/test_kit.py:558`. Matiz: «excluido con motivo», no «error».
+- F11: las reglas de `strategy_spec.yaml` son PROSA citada y validada, no codigo; que el motor haga lo que dicen lo cierra F12 (validacion semantica).
+  Condicion (a) PAGADA: `stable/F12` (77c7501), `docs/validation/F12-spec-semantic-validator.md:167-168`, «reglas vigentes con forma ejecutable y ninguna en prosa» (ADR-0019).
+
+# Technical Debt RECLASIFICADA · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Su texto literal en «Technical Debt», con su condicion y su evidencia:
+
+- `maxTP` ES EL PRECIO DE CIERRE DE LAS GANADORAS, NO LA EXCURSION MAXIMA (2026-09-21).
+  Condicion (d): es un hecho, y vive literal en `docs/adr/0037-…md:96-99`, «`maxTP` es el PRECIO DE CIERRE de las ganadoras, no la excursion favorable maxima … `maxTP` == `avgClosePrice` en las 17 filas». Su consecuencia la cerro A-33 (RESUELTA, ADR-0073), y lo que queda vive en A-56.
+
+# Regla viva SUSTITUIDA · sale de PROJECT_STATE.md en trabajo/plataforma-adelantada (2026-10-18)
+
+Su texto literal en «Reglas vivas», cada una con su condicion y su evidencia. La primera es la que sustituye esta rama (ADR-0082); las otras dos salen por la condicion (d):
+
+- La validacion de fidelidad (F26) precede a cualquier MQL5.
+  Condicion (c) SUSTITUIDA: ADR-0082 la enmienda; en su sitio, en «Things That Must Not Be Changed», la regla nueva: «La validación de fidelidad (F26) precede a todo lo que decida operaciones en vivo (F29, F30 y lo de F31-F32 que dependa de ellos); la capa de plataforma de ADR-0082, que nunca decide una operación, puede ir antes.»
+- Umbrales pre-registrados no se relajan tras ver resultados. · Un holdout abierto queda quemado (que es "abrir" lo define ADR-0021; las exposiciones se declaran en `docs/validation/HOLDOUT-EXPOSICIONES.md`).
+  Condicion (d): vive literal en `knowledge/cases/holdout/README.md:29-30` («Un umbral no se relaja despues de ver el resultado: para eso se pre-registra»), `:9` («Un holdout abierto queda quemado») y `:11` (que es abrirlo, ADR-0021); y la declaracion de exposiciones, en `CLAUDE.md`: «Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre (ADR-0021 §4)».
+- 2026-09-25 · Sobre el informe SIMULADOR-CUENTA §5 (ADR-0050), al validar: `firma_huso_corte` se queda en el perfil de cuenta, vigilado por el test de las medianoches de un ano contra `huso_operativa` (no contradice ADR-0027 §alt. 3, que hablaba de la spec); la guardia de tamano de posicion sin cifra NO impide correr, porque es solo aviso; y se acepta la duplicacion de los `firma_*` comunes entre el perfil y `parametros.yaml` mientras el test que los cruza la vigile. Estado: ACTIVE.
+  Condicion (d): vive literal en el recuadro «RATIFICACION DEL CONSULTOR (2026-09-25)» de `docs/adr/0050-el-simulador-la-capa-de-cuenta.md` §4, anadido en esta rama por la opcion 6b de la respuesta del consultor a la PARADA (2026-10-18). El consultor la cito como `PROJECT_STATE.md:177`; en el arbol de la rama era la linea 178 (la 177 era la decision del 2026-09-04 sobre las inferencias en evidence/).

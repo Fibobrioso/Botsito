@@ -67,6 +67,12 @@ FTMO y API de símbolos). En vivo, el adaptador de MetaTrader convierte las sesi
 `unir_cierres`: gana la unión, y cada cierre largo que una fuente trae y la otra no va al log como
 discrepancia.
 
+> **ENMIENDA (2026-10-18, rama `trabajo/plataforma-adelantada`, ADR-0082).** En vivo no hay un
+> adaptador Python: la capa es el EA de MQL5 (ADR-0082 D4), que **porta** `cierres_desde_sesiones`
+> y `unir_cierres`; las funciones de `domain/cierres.py` siguen siendo la referencia, y lo portado
+> se prueba contra los mismos casos que sus tests. La lectura de `SymbolInfoSessionTrade` llega en
+> R6a.1 y el veto en R6a.5 (ADR-0082 D6).
+
 ### 5. Los parámetros
 
 - `firma_gap_margen_minutos` = 120 y `firma_gap_cierre_minimo_minutos` = 120: `prop_firm`,

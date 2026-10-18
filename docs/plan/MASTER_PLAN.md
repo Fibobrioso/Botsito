@@ -6,6 +6,16 @@
 > que la hoja de ruta cita como `F:Fnn` con su estado medido), y **§E queda como historia**. Desde
 > F16 los tags `stable/F16..F37` son un contador, no la funcionalidad del plan con ese número. El
 > cuerpo no se toca.
+>
+> **NOTA (2026-10-18, rama `trabajo/plataforma-adelantada`, ADR-0082).** El principio de §0
+> «Validacion de fidelidad (F26) antes de cualquier MQL5» queda enmendado: la validación de
+> fidelidad (F26) precede a todo lo que decida operaciones en vivo (F29, F30 y lo de F31-F32 que
+> dependa de ellos); la capa de plataforma de ADR-0082, que nunca decide una operación, puede ir
+> antes. Esa capa vive en el EA de MQL5 y adelanta, antes de F26: de F28, los parámetros de firma,
+> bróker, instrumento y ejecución, el perfil de cuenta y el calendario de cierres, generados (la
+> parte de estrategia espera); de F31, las órdenes idempotentes, el veto de la firma salvo RN-032,
+> el journal y la reconstrucción del estado al arrancar; y de F33, el pre-vuelo. Su orden vive en
+> el tramo R6a de `docs/plan/HOJA-DE-RUTA.md`.
 
 Version Markdown del plan (la version completa con detalle de cada funcionalidad esta en
 `MASTER_PLAN.html`, instantanea congelada del 2026-09-03; este Markdown manda cuando difieren). Deriva del informe de investigacion

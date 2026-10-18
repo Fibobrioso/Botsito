@@ -10,6 +10,9 @@ rutas_permitidas:
   - docs/adr/
   - docs/plan/MASTER_PLAN.md
   - docs/plan/HOJA-DE-RUTA.md
+  # opcion 6a de la respuesta del consultor a la PARADA (2026-10-18): heredados 2, 12, 25, 30 y 35
+  - docs/runbooks/ACTIVAR-A35-A44.md
+  - docs/runbooks/ENTRADA-MARZO.md
 rutas_protegidas:
   - src/
   - tests/

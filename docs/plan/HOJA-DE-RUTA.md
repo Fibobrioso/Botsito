@@ -188,9 +188,10 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · NA:Y · HER:25 · HER:30 · HER:35 ·
+  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · NA:Y · ID:RN-004 · ID:RN-020 ·
   ID:ADR-0076 · ID:ADR-0077
-- **Qué es:** las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
+- **Qué es:** RN-004 tras A-35 y RN-020 tras A-44, con su medida (`docs/runbooks/ACTIVAR-A35-A44.md`
+  §5.1); las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
   la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
   preguntas de ACTIVAR-SESION-04-MOTOR.md §5: el último minuto (cuándo se retira una orden
   pendiente a la hora de cerrar), la vela sin cuerpo en medio del retroceso y el breaker contrario
@@ -229,10 +230,10 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la medida de mayo está en su informe.
 
 ### R5.3 · Marzo
-- **Refs:** HER:2 · HER:12 · ID:ADR-0046 · ID:ADR-0072
+- **Refs:** HER:2 · ID:ADR-0046 · ID:ADR-0072
 - **Qué es:** la entrada de marzo por el camino de fidelidad (`docs/runbooks/ENTRADA-MARZO.md`):
-  marzo en `vistos.yaml` y la confirmación escrita del trader (heredado 2); la columna de fechas por
-  Aleks (paso a); sorteo; huso por velas; `libros.yaml` (heredado 12); ingesta de los
+  marzo en `vistos.yaml` y la confirmación escrita del trader (heredado 2; su paso 0); la columna de fechas por
+  Aleks (paso a); sorteo; huso por velas; `libros.yaml` (paso 0 y paso d); ingesta de los
   `fidelidad-dev`.
 - **Depende de:** la confirmación del trader y la lectura de Aleks.
 - **Quién:** Aleks (fechas, confirmación); la sesión (cada paso, con sus PARADAS).
@@ -254,13 +255,91 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión; la autorización de abrir, Aleks.
 - **Hecho cuando:** F26 y F27 tienen informe con su cifra contra el umbral pre-registrado.
 
+## R6a · La capa de MT5 que no decide operaciones (ADR-0082)
+
+Va en paralelo a R2-R5, en los huecos de espera (del trader, de FTMO, de la demo), sin quitarle
+turno a F. La capa vive en el EA de MQL5, solo en DEMO hasta F35, y nunca decide una operación: si
+una pieza lee un hecho o un parámetro de la estrategia, espera a F26 (ADR-0082 D3). Cada pieza que
+porta código de Python se prueba contra los mismos casos que sus tests.
+
+### R6a.1 · Conexión, reloj del servidor, sesiones del símbolo y journal
+- **Refs:** ID:ADR-0082 · F:F31 · F:F33 · F:F17 · ID:A-28 · NA:N
+- **Qué es:** el EA que se conecta y se niega fuera de una cuenta DEMO (como
+  `tools/mql5/MedirDemoFTMO.mq5`); lee el desfase del reloj del servidor (no decide A-28); lee las
+  sesiones del símbolo con `SymbolInfoSessionTrade` (condición 2 de NA:N, `RENOVAR-CIERRES.md`);
+  comprueba `ACCOUNT_MARGIN_MODE` al arrancar (MASTER_PLAN §H); y fija el formato del journal, uno
+  solo y versionado, pensando en F34. Su fase 0 mide cómo se compila y se prueba en MT5, con
+  PARADA (ADR-0082 D7).
+- **Depende de:** nada.
+- **Quién:** la sesión, con el encargo del consultor; Aleks compila y ejecuta en su máquina y en
+  la demo.
+- **Hecho cuando:** el EA conecta en la demo, escribe el journal con el desfase y las sesiones del
+  símbolo, y se niega fuera de una demo.
+
+### R6a.2 · Parámetros, perfil y calendario generados
+- **Refs:** ID:ADR-0082 · F:F28 · ID:ADR-0068
+- **Qué es:** los parámetros de firma, bróker, instrumento y ejecución, el perfil de cuenta y el
+  calendario de cierres, generados desde el repo para el EA, con su propio hash en el journal; ni
+  una cifra a mano (ADR-0082 D5). La parte de estrategia de F28 espera a F26.
+- **Depende de:** R6a.1.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** regenerar no da diff y el hash está en el journal.
+
+### R6a.3 · Órdenes stop idempotentes y reconstrucción del estado
+- **Refs:** ID:ADR-0082 · F:F31 · ID:ADR-0057
+- **Qué es:** colocar, modificar y cancelar órdenes stop sin duplicarlas nunca, con sus códigos de
+  retorno; y, al arrancar, reconstruir órdenes, posiciones y journal contra la cuenta, con el test
+  «reinicio a media jornada» (MASTER_PLAN §H.2; ADR-0082 §5). La reconciliación demo-backtest
+  sigue en F34.
+- **Depende de:** R6a.1 y R6a.2.
+- **Quién:** la sesión, con el encargo del consultor; Aleks ejecuta en la demo.
+- **Hecho cuando:** el reinicio a media jornada no duplica nada en la demo.
+
+### R6a.4 · Freno de peticiones y veto de la firma
+- **Refs:** ID:ADR-0082 · ID:ADR-0067 · ID:A-54 · ID:RN-029 · ID:RN-030 · ID:RN-031 · F:F31
+- **Qué es:** el freno de ADR-0067 portado al EA y el veto de la firma de RN-029, RN-030 y RN-031;
+  RN-032 lee parámetros de la estrategia y espera a F26 (ADR-0082 D3). Arregla el docstring de
+  `engine/freno.py` (Technical Debt) y nombra la deuda de las citas de relleno de RN-029 a RN-032.
+- **Depende de:** R6a.2 y R6a.3.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el freno y el veto portados pasan los mismos casos que sus tests de Python.
+
+### R6a.5 · Veto antes de los cierres de mercado
+- **Refs:** ID:ADR-0082 · ID:ADR-0068 · ID:A-55 · NA:N · F:F31
+- **Qué es:** el veto de ADR-0068 en el EA, con `cierres_desde_sesiones` y `unir_cierres` portados
+  y las sesiones del símbolo que lee R6a.1 unidas al calendario generado.
+- **Depende de:** R6a.1 y R6a.2.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** lo portado pasa los mismos casos que sus tests de Python y la demo veta antes de
+  un cierre largo.
+
+### R6a.6 · Tope por margen y volumen
+- **Refs:** ID:ADR-0082 · ID:ADR-0081 · ID:A-57 · F:F31
+- **Qué es:** el EA recibe un lote y lo limita por margen libre y por volumen, o no lo envía,
+  según `lote_si_no_cabe` (las dos opciones, con el valor que deje A-57); y el rechazo por margen.
+  Con la ejecución 3 de la demo, que mide cuándo comprueba MT5 el margen de una pendiente stop
+  (A.1).
+- **Depende de:** R6a.2, R6a.3 y la ejecución 3 de la demo.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el límite portado pasa los mismos casos que sus tests de Python.
+
+### R6a.7 · Pre-vuelo
+- **Refs:** ID:ADR-0082 · F:F33 · ID:A-28
+- **Qué es:** antes de operar, el EA compara el hash de la spec con el tag stable vigente, el desfase
+  del reloj con la tabla, `ACCOUNT_MARGIN_MODE`, y `SymbolInfo`/`AccountInfo` con el perfil, y aborta
+  si algo no cuadra (MASTER_PLAN §H y §H.2).
+- **Depende de:** R6a.1 a R6a.6.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el pre-vuelo aborta en la demo ante cada discrepancia provocada.
+
 ## R6 · Plataforma
 
 ### R6.1 · Del modelo a MQL5
 - **Refs:** F:F28 · F:F29 · F:F30 · F:F31 · F:F32
 - **Qué es:** parámetros y fixtures generados, dominio en MQL5, el harness Python-MQL5, el EA con
   órdenes idempotentes, y la paridad con el Strategy Tester.
-- **Depende de:** R5.5 (fidelidad antes de MQL5, MASTER_PLAN §A).
+- **Depende de:** F29, F30 y lo de F31-F32 que decide operaciones dependen de R5.5 (ADR-0082, que
+  enmienda MASTER_PLAN §0); lo demás de F31 vive en R6a.
 - **Quién:** la sesión, con los encargos del consultor.
 - **Hecho cuando:** F32 cerrada con su paridad medida.
 
@@ -268,20 +347,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R7.1 · Demo, reconciliación y decisión
 - **Refs:** F:F33 · F:F34 · F:F35 · NA:N
-- **Qué es:** pre-vuelo y despliegue en la demo, la reconciliación demo-backtest y el memorando de
-  decisión. De F33 ya existen el entorno de la demo, el calendario de cierres y el freno.
-- **Depende de:** R6.1; y la rama que conecte el bot en tiempo real (demo o real) no se cierra sin
-  la lectura de SymbolInfoSessionTrade o un procedimiento que cierre el hueco del jueves
-  (NA:N, condición 2; ADR-0068 §4).
+- **Qué es:** el despliegue en la demo, la reconciliación demo-backtest y el memorando de
+  decisión; el pre-vuelo va en R6a.7. De F33 ya existen el entorno de la demo, el calendario de
+  cierres y el freno.
+- **Depende de:** R6.1 y R6a (la lectura de SymbolInfoSessionTrade de la condición 2 de NA:N llega
+  en R6a.1 y R6a.5).
 - **Quién:** la sesión; el despliegue y la decisión, Aleks.
 - **Hecho cuando:** F35 tiene su memorando.
 
 ## Carril: lo de Aleks
 
 ### A.1 · Las ejecuciones 2 y 3 de la demo de FTMO
-- **Refs:** NA:A · NA:M · ID:A-28 · HER:10 · HER:34 · F:F17
+- **Refs:** NA:A · NA:M · ID:A-28 · HER:10 · F:F17
 - **Qué es:** las ejecuciones 2 y 3 de MedirDemoFTMO (A-28, el nivel exacto de ADR-0057, los
-  deslizamientos y los swaps; heredado 34, partes b y c); el BE de una venta que salta por el ASK
+  deslizamientos y los swaps); el BE de una venta que salta por el ASK
   (NA:M); y, del heredado 10, lo que queda: A-28 y el grabador de spread y ticks (F17, PARCIAL).
 - **Depende de:** la prueba nueva de FTMO del 26 de octubre (fechas fijas).
 - **Quién:** Aleks ejecuta; la sesión congela cada CSV en su rama.
