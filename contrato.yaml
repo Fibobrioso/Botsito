@@ -1,0 +1,34 @@
+rama: trabajo/visor-construccion
+riesgo: alto  # rama de diagnostico sin codigo, pero genera paginas del visor que calientan con el M1 entero de marzo (mes reservado) y de junio (11 dias reservados) y pintan H4 de contexto anteriores al dia dev: lectura que se declara en HOLDOUT-EXPOSICIONES el mismo dia y antes de generar
+artefacto: docs/validation/VISOR-CONSTRUCCION.md
+tramo: R3
+rutas_permitidas:
+  - docs/validation/VISOR-CONSTRUCCION.md
+  - docs/validation/anexos/VISOR-CONSTRUCCION/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - scripts/
+  - src/
+  - tests/
+  - knowledge/
+  - config/
+  - data/manifests/
+  - docs/adr/
+  - docs/spec/
+  - docs/plan/
+  - docs/runbooks/
+  - docs/validation/CORRIDA-CONSTRUCCION.md
+  - docs/validation/SESGO-H4-COLOR.md
+  - docs/validation/MARGEN-LOTE.md
+  - docs/validation/anexos/CORRIDA-CONSTRUCCION/
+  - docs/validation/anexos/SESGO-H4-COLOR/
+  - docs/validation/anexos/MARGEN-LOTE/
+comprobaciones:
+  - uv run python scripts/contrato_rama.py
+  - git diff main --name-only
+  - make check > make-check.log 2>&1

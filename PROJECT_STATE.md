@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/visor-construccion
 
 ## Current Feature
-Ninguna rama abierta. `trabajo/margen-lote` cerrada en `main` el 2026-10-18 (`stable/F37s-margen-lote`); R3.3 HECHA. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+`trabajo/visor-construccion` EN CURSO (abierta el 2026-10-18 desde d1137eb; O de la Next Action, R3.2 de la hoja de ruta): las comprobaciones E de R3.1 en el visor, sobre el motor de hoy, con su conclusión (E, R o correcto); rama de diagnóstico, sin código. Encargo docs/encargos/trabajo-visor-construccion.md; informe docs/validation/VISOR-CONSTRUCCION.md.
 
 ## Stable Main State
 3762429 · merge de `trabajo/margen-lote` (tag `stable/F37s-margen-lote`): cuando el lote del 0,5 % no cabe, el bot lo limita al menor de tres (el del riesgo, 50 lotes y el que cabe en 0,95 del margen libre a 1:30) y por debajo del mínimo no opera; el bróker simulado rechaza por `margen_libre` al colocar y al llenar (ADR-0081, que enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto); `lote_si_no_cabe` DEFAULT bajo A-57 (a la sesión 5) y `lote_margen_libre_fraccion`; spec 18.1.1; re-corrida del arnés en diagnóstico (0 rechazos por volumen, 339 de 504 órdenes limitadas, parejas 12 → 18). Sobre `stable/F37r-sesgo-h4-color` (5296a31). Informe docs/validation/MARGEN-LOTE.md; el registro del cierre, al final de HISTORIA.
@@ -179,8 +179,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 35 (2026-10-17).
+— ninguna desde el Archivo 36 (2026-10-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 35 (2026-10-17).
+— ninguna desde el Archivo 36 (2026-10-18).
