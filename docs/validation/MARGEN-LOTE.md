@@ -566,6 +566,111 @@ sus recuadros en ADR-0052 §4, ADR-0053 §1 (tabla, `redondear_lote`) y ADR-0026
 contrato gana ese fichero, respuesta punto 7) y su fila del índice. Es trabajo de la fase 3
 adelantado una fase; el código, la spec y A-57 llegan en la suya.
 
+### 2.b La medida 1: los stops cortos del trader en construcción (`stops_cortos.py`)
+
+Corrida el 2026-10-17 con la fila de exposiciones escrita antes (§1.j, fila de la fase 1): `uv run
+python docs/validation/anexos/MARGEN-LOTE/stops_cortos.py --precios 1.10 1.20 --escribir
+docs/validation/anexos/MARGEN-LOTE/stops_cortos.txt`. El guion lee por la compuerta del arnés
+(`arnes.dias_de_construccion` sobre los meses de `construccion` del criterio, y el stop de cada
+operación por `visor._stops`, como `simulacion._del_trader`), tras comprobar que `casos_reservados`
+da 0 en los cuatro meses (34 reservados en total, ninguno en construcción), e imprime solo recuentos
+y medianas por mes. Las cifras salen del registro y del perfil (0,5 % de 100.000 = 500 USD; pip =
+10 USD por lote; 50 lotes; 1:30); los precios de referencia (1,10 y 1,20, los de FTMO-P-D1.md §2)
+llegan por argumento. **198 operaciones del trader con stop** (abril 35, julio 67, agosto 42, enero
+54). Umbrales: el tope de volumen admite el lote del riesgo hasta un stop de **1,00** pips; el
+margen con todo el saldo, hasta **1,83** (a 1,10) y **2,00** (a 1,20).
+
+El caso trae entrada y stop, no la caja (§1.c), así que van las dos lecturas de A-56 (respuesta,
+punto 5). «lote» es la distancia sobre la que se dimensiona el lote (0 → 0,8); «0→1», la caja.
+
+**Lectura A: el stop del libro es el 1 de la caja** (la de VIABILIDAD-COMISION.md: lote sobre
+0,8 × D). Medianas: 1,44 pips la distancia del lote, 1,80 la caja (abril 1,20 y 1,50: las mismas
+que VIABILIDAD-COMISION.md).
+
+| mes | n | lote < 1,00 (volumen) | lote < 1,83 (margen a 1,10) | lote < 2,00 (margen a 1,20) | lote < margen al precio de la entrada | 0→1 < 1,00 | 0→1 < 1,83 | 0→1 < 2,00 |
+|---|---|---|---|---|---|---|---|---|
+| abril | 35 | 10 (29 %) | 27 (77 %) | 28 (80 %) | 28 (80 %) | 6 (17 %) | 23 (66 %) | 24 (69 %) |
+| julio (1-17) | 67 | 9 (13 %) | 36 (54 %) | 40 (60 %) | 38 (57 %) | 3 (4 %) | 27 (40 %) | 30 (45 %) |
+| agosto | 42 | 17 (40 %) | 35 (83 %) | 35 (83 %) | 35 (83 %) | 13 (31 %) | 30 (71 %) | 31 (74 %) |
+| enero | 54 | 20 (37 %) | 39 (72 %) | 42 (78 %) | 42 (78 %) | 12 (22 %) | 34 (63 %) | 34 (63 %) |
+| **total** | **198** | **56 (28 %)** | **137 (69 %)** | **145 (73 %)** | **143 (72 %)** | 34 (17 %) | 114 (58 %) | 119 (60 %) |
+
+**Lectura B: el stop del libro es el 0,8** (lote sobre D; la caja es D / 0,8). Medianas: 1,80 la
+distancia del lote, 2,25 la caja.
+
+| mes | n | lote < 1,00 | lote < 1,83 | lote < 2,00 | lote < margen al precio de la entrada | 0→1 < 1,00 | 0→1 < 1,83 | 0→1 < 2,00 |
+|---|---|---|---|---|---|---|---|---|
+| abril | 35 | 6 (17 %) | 23 (66 %) | 24 (69 %) | 24 (69 %) | 5 (14 %) | 16 (46 %) | 19 (54 %) |
+| julio (1-17) | 67 | 3 (4 %) | 27 (40 %) | 30 (45 %) | 29 (43 %) | 1 (1 %) | 15 (22 %) | 18 (27 %) |
+| agosto | 42 | 13 (31 %) | 30 (71 %) | 31 (74 %) | 31 (74 %) | 8 (19 %) | 20 (48 %) | 21 (50 %) |
+| enero | 54 | 12 (22 %) | 34 (63 %) | 34 (63 %) | 34 (63 %) | 8 (15 %) | 24 (44 %) | 26 (48 %) |
+| **total** | **198** | **34 (17 %)** | **114 (58 %)** | **119 (60 %)** | **118 (60 %)** | 22 (11 %) | 75 (38 %) | 84 (42 %) |
+
+Lo que dicen las dos: **el margen corta en la mayoría de las operaciones del trader** (entre el 58 %
+y el 73 % según la lectura de A-56 y el precio), y el volumen en una de cada cuatro o seis. Julio es
+el mes de stops más anchos; agosto y enero, los de más cortos. Agosto: sus `dev` salen del xlsx
+(PROJECT_STATE, Q); el trader da por bueno el backtest de agosto grabado en vídeo (S-16, ADR-0073
+§5), y que el xlsx sea el otro es lectura de la sesión, no su frase (ADR-0073:51-55). **Noticias:
+sin fuente.** `corpus/noticias/` no existe (`ls`), así que el guion corrió sin `--noticias` y la
+columna de ±2 minutos queda sin medir; va la línea a A («Aleks: calendario de las noticias
+restringidas de FTMO de los meses de construcción», §6). Cuando llegue el CSV, el mismo comando con
+`--noticias <csv> --ventana-min 2` la da, con su sha256 en la salida. Esta medida informa (D7): no
+recomienda nada.
+
+### 2.c La corrida «antes» y la medida 2 (`medida_2.py`)
+
+Comando (2026-10-17, fila de exposiciones escrita antes, §1.j): `uv run botsito motor arnes
+--simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope
+--diagnostico-cuenta-diaria --salida docs/validation/anexos/MARGEN-LOTE/antes-diaria.txt` →
+`antes-diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt` (1.717 líneas;
+`TIEMPO: 294.5 s; MEMORIA: pico del proceso de 633.2 MiB`, por pantalla).
+
+**Solo añade salida, medido:** un guion de la carpeta de trabajo comparó esta salida con la diaria
+commiteada de `main` (`anexos/SESGO-H4-COLOR/diaria…txt`) quitando a las filas de «### Ordenes» las
+cinco columnas nuevas: 1.717 líneas en las dos y **0 líneas distintas**. Parejas, cobertura
+(12/198, 6,1 %) y precisión (12/94, 12,8 %) son las de R1.2; «### Rechazos por motivo» es el de
+§1.e: `volumen_max_lotes` 96 (18, 24, 20, 34) y `precio_invalido` 11 (3, 4, 2, 2). Nada que
+parar. La repetición fuera del repositorio para el `diff` de determinismo, en §2.d.
+
+**La medida 2** (`uv run python docs/validation/anexos/MARGEN-LOTE/medida_2.py <salida> --fraccion
+0.95 --escribir docs/validation/anexos/MARGEN-LOTE/medida_2.txt`; la fracción llega por argumento
+porque `lote_margen_libre_fraccion` no existe todavía en el registro). Sobre las 437 órdenes de
+«### Ordenes» (todas con margen medido), con el margen requerido al ask/bid del instante y el margen
+libre de la cuenta en ese instante:
+
+| mes | órdenes | rechazadas por volumen | margen FTMO: requerido > libre | de ellas, sin rechazo por volumen | bot: requerido > 0,95 × libre |
+|---|---|---|---|---|---|
+| enero | 133 | 18 | 72 | 54 | 77 |
+| abril | 121 | 24 | 74 | 50 | 79 |
+| julio (1-17) | 65 | 20 | 44 | 24 | 45 |
+| agosto | 118 | 34 | 88 | 54 | 91 |
+| **total, por orden** | **437** | **96 (22 %)** | **278 (64 %)** | **182** | **292 (67 %)** |
+
+Por sesión (una caja se recoloca varias veces; sesiones con al menos una orden):
+
+| mes | sesiones con órdenes | con rechazo por volumen | con alguna orden que el margen rechazaría | de ellas, sin rechazo por volumen | con alguna que el bot limitaría |
+|---|---|---|---|---|---|
+| enero | 31 | 13 | 28 | 24 | 28 |
+| abril | 31 | 14 | 28 | 25 | 28 |
+| julio (1-17) | 18 | 9 | 17 | 13 | 17 |
+| agosto | 29 | 23 | 28 | 19 | 29 |
+| **total** | **109** | **59** | **101** | **81** | **102** |
+
+Lo que dice: **el margen corta casi el triple que el volumen** (278 órdenes frente a 96; 101
+sesiones de 109 frente a 59), y de las 341 órdenes que hoy el bróker coloca (437 − 96), **182
+(53 %) las rechazaría FTMO por margen**: hoy el simulador las coloca y las llena como si cupieran.
+Es la cifra que sustituye a la base de E («cuántas órdenes de R3.1 rechaza el volumen y cuántas el
+margen», CORRIDA-CONSTRUCCION.md §3.12: 100 por volumen), porque desde ADR-0080 el sesgo es otro y
+esta es la salida del código de hoy. Con el límite de ADR-0081 (fase 3) esas órdenes pasan a
+colocarse con el lote que cabe; la fase 4 mide cuántas y con qué riesgo efectivo.
+
+### 2.d Determinismo
+
+La corrida 2 repetida con `--salida` en una carpeta temporal fuera del repositorio (la misma
+lectura, declarada en la fila de la fase 1): `sha256sum` de las dos salidas idéntico
+(`9b168d2f86b55229e22e…`); `TIEMPO: 291.7 s; MEMORIA: pico del proceso de 633.0 MiB`. La copia no
+se commitea.
+
 ## Estado
 
-EN CURSO · fase 1 (2026-10-17): el campo de «### Ordenes» con su test; faltan la corrida «antes», las medidas 1 y 2 y las fases 2 a 4.
+EN CURSO · fase 1 hecha (2026-10-17): el campo, la medida 1, la corrida «antes» y la medida 2; faltan las fases 2 a 4.

@@ -1,0 +1,13 @@
+antes-diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt: 437 ordenes en «### Ordenes»; fraccion del margen libre 0.95
+POR ORDEN · mes | ordenes | rechazadas por volumen | margen FTMO: requerido > libre | margen FTMO sin rechazo por volumen | bot: requerido > fraccion x libre | sin medida de margen
+2026-01 | 133 | 18 | 72 | 54 | 77 | 0
+2026-04 | 121 | 24 | 74 | 50 | 79 | 0
+2026-07 | 65 | 20 | 44 | 24 | 45 | 0
+2026-08 | 118 | 34 | 88 | 54 | 91 | 0
+total | 437 | 96 | 278 | 182 | 292 | 0
+POR SESION · mes | ordenes | rechazadas por volumen | margen FTMO: requerido > libre | margen FTMO sin rechazo por volumen | bot: requerido > fraccion x libre
+2026-01 | 31 | 13 | 28 | 24 | 28
+2026-04 | 31 | 14 | 28 | 25 | 28
+2026-07 | 18 | 9 | 17 | 13 | 17
+2026-08 | 29 | 23 | 28 | 19 | 29
+total | 109 | 59 | 101 | 81 | 102
