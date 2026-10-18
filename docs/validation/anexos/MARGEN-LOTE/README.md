@@ -24,6 +24,8 @@ Su repetición con `--salida` fuera del repositorio, para el `diff` de determini
 - `medida_2.py <salida> --fraccion 0.95`: rechazos por `volumen_max_lotes` y órdenes que rechazaría el
   margen, por mes, por orden y por sesión; salida en `medida_2.txt`. La fracción llega por argumento
   porque `lote_margen_libre_fraccion` no existe en el registro cuando corre la medida «antes».
+- `fase4_medidas.py <salida> [--escribir <txt>]`: fase 4, sobre la corrida 2 con el limite: rechazos
+  por motivo, ordenes limitadas y por que limite, riesgo efectivo; salida en `fase4_medidas.txt`.
 - `stops_cortos.py --precios 1.10 1.20 [--noticias <csv> --ventana-min 2]`: la medida 1, sobre las
   operaciones del trader de los días dev de construcción por la compuerta del arnés, con las dos
   lecturas de A-56; salida en `stops_cortos.txt`. Su lectura de los casos dev se declara en

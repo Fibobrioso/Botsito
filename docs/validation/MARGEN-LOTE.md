@@ -756,6 +756,243 @@ ticks del minuto ya presentes (la corrida «antes» midió margen en las 437 ór
   A-57). El contrato gana `tests/unit/test_margen_lote.py`, `test_racha_perdidas.py` y
   `test_cableado.py` (respuesta punto 2: «amplía el contrato en ese commit y dilo»).
 
+## 4 · Fase 4 · La re-corrida con el límite y el rechazo por margen (2026-10-17)
+
+Hace falta porque el límite cambia lo que simula: los rechazos por volumen pasan a ser órdenes
+colocadas. Fila de exposiciones escrita antes de correr (HOLDOUT-EXPOSICIONES.md, fila de la fase
+4). Los tres comandos de R3.1 tal cual, salvo la carpeta de `--salida` (`anexos/MARGEN-LOTE/README.md`);
+son corridas con `--diagnostico-*`: no cuentan ni habilitan mayo (ADR-0070 §3), no deciden ningún
+parámetro y no se mide cobertura contra ningún umbral.
+
+| corrida | TIEMPO | MEMORIA (pico) |
+|---|---|---|
+| 1 arrastrada | 480,2 s | 631,9 MiB |
+| 2 diaria | 451,3 s | 634,6 MiB |
+| 3 a35-inicio | 415,4 s | 633,7 MiB |
+
+### 4.a Los rechazos por motivo, antes y después
+
+| corrida | antes (`main` + campo, §2.c; R1.2 para la arrastrada) | después (ADR-0081) |
+|---|---|---|
+| 2 diaria | `volumen_max_lotes` 96 (18, 24, 20, 34); `precio_invalido` 11 (3, 4, 2, 2) | `volumen_max_lotes` **0**; `precio_invalido` **26** (6, 8, 4, 8) |
+| 1 arrastrada | `volumen_max_lotes` 29 (enero 24, abril 5); `precio_invalido` 4 (3, 1) (R1.2) | `volumen_max_lotes` **0**; `precio_invalido` **2** (enero) |
+| órdenes, diaria | 437: cancelada 224, llenada 106, rechazada 107 | **504**: cancelada 299, llenada **179**, rechazada 26 |
+| órdenes, arrastrada | 126: cancelada 65, llenada 36, rechazada 25 | **124**: cancelada 76, llenada **46**, rechazada 2 |
+| no enviadas por el bot | — | **0** en las dos (ningún lote por debajo del mínimo; `lote_si_no_cabe = limitar`) |
+| `margen_libre` | — | **0** rechazos: el bot limita con el mismo margen libre que el bróker comprueba |
+
+**Por qué sube `precio_invalido` de 11 a 26 en la diaria:** el bróker mira el volumen antes que el
+precio (`broker.py`, `_colocar`), así que una orden que antes salía por `volumen_max_lotes` no
+llegaba a la comprobación del precio. De los 16 rechazos por precio nuevos, **14 están en el mismo
+día e instante que un rechazo por volumen de antes**; los otros 2, y el que desaparece (26 = 11 − 1
++ 16), son recolocaciones desplazadas porque la vida de las órdenes de la sesión cambió (una orden
+colocada y llenada donde antes había un rechazo). Nada se ajusta: es la cifra.
+
+### 4.b Las órdenes limitadas, y por qué límite (`fase4_medidas.py`, corrida 2)
+
+| mes | órdenes | `ninguno` | `volumen` | `margen` | `volumen+margen` |
+|---|---|---|---|---|---|
+| enero | 150 | 62 | 0 | 68 | 20 |
+| abril | 144 | 48 | 0 | 70 | 26 |
+| julio (1-17) | 84 | 28 | 0 | 36 | 20 |
+| agosto | 126 | 27 | 0 | 61 | 38 |
+| **total** | **504** | **165 (33 %)** | **0** | **235 (47 %)** | **104 (21 %)** |
+
+**339 órdenes de 504 (67 %) salen con el lote limitado**, en 102 sesiones de 104 con órdenes. El
+volumen nunca muerde solo: cuando el lote del riesgo pasa de 50 lotes (stop < 1 pip), el margen a
+1:30 también lo corta y más abajo (`volumen+margen`: 104); el margen solo, 235. Es lo que FTMO-P-D1.md
+§2 anticipaba («el margen manda antes que el volumen») y la medida 2 contaba antes del cambio (278
+órdenes que el margen rechazaría, §2.c; ahora son 339 limitadas porque hay más órdenes: las que
+antes se rechazaban por volumen viven y se recolocan).
+
+### 4.c El riesgo efectivo de las operaciones del bot (corrida 2)
+
+Sobre las 478 órdenes colocadas (no rechazadas), con el riesgo en % del saldo al colocar que anota la
+traza (lote × distancia × contrato / saldo):
+
+| mes | n | con el 0,5 % entero (`ninguno`) | mediana | mínimo | máximo |
+|---|---|---|---|---|---|
+| enero | 144 | 61 | 0,462 % | 0,098 % | 0,500 % |
+| abril | 136 | 48 | 0,390 % | 0,025 % | 0,500 % |
+| julio (1-17) | 80 | 28 | 0,374 % | 0,100 % | 0,500 % |
+| agosto | 118 | 27 | 0,321 % | 0,074 % | 0,500 % |
+| **total** | **478** | **164 (34 %)** | **0,390 %** | **0,025 %** | **0,500 %** |
+
+Dos de cada tres órdenes arriesgan menos del 0,5 %; la mediana queda en 0,39 % y el mínimo en
+0,025 % (una orden de abril con el stop tan corto que el margen deja un lote veinte veces menor que
+el del riesgo). Es la consecuencia que ADR-0081 §1 acepta a cambio de conservar la decisión y el
+resultado en R: la cifra va a la sesión 5 con A-57.
+
+### 4.d La tabla T0 y P1-P7 (`patrones.py` de R3.1 sobre la corrida 2), frente a SESGO-H4-COLOR.md §4.3
+
+Salida completa en `anexos/MARGEN-LOTE/patrones.txt` (359 filas, 104 sesiones con rn003; R1.2: 292
+filas, las mismas 104 sesiones).
+
+| mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de más | P6 trader no operó | P7 repetidas | T0 pareja |
+|---|---|---|---|---|---|---|---|---|
+| enero | 7 (7) | 13 (9) | 26 (22) | 6 (15) | 41 (30) | 8 (5) | 0 (0) | 2 (1) |
+| abril | 9 (9) | 4 (2) | 11 (8) | 6 (12) | 22 (11) | 20 (16) | 0 (0) | 5 (4) |
+| julio (1-17) | 20 (20) | 9 (3) | 14 (13) | 14 (23) | 24 (9) | 2 (2) | 3 (3) | 7 (5) |
+| agosto | 8 (8) | 7 (4) | 9 (5) | 14 (23) | 25 (14) | 19 (7) | 0 (0) | 4 (2) |
+| **total** | **44 (44)** | **33 (18)** | **60 (48)** | **40 (73)** | **112 (64)** | **49 (30)** | **3 (3)** | **18 (12)** |
+
+(entre paréntesis, SESGO-H4-COLOR.md §4.3.) P1 no cambia (el sesgo es el mismo: 44 filas en 21
+sesiones). Lo que cambia es lo que el bot hace cuando el lote cabe: **P4 (sin orden) baja de 73 a 40**
+y se reparte entre P2, P3 y T0; **P5 (de más) sube de 64 a 112 y P6 de 30 a 49**, porque las
+órdenes que antes se rechazaban ahora se colocan, se llenan y se reentra. **Las parejas suben de 12
+a 18; la cobertura, de 12/198 (6,1 %) a 18/198 (9,1 %); la precisión BAJA de 12/94 (12,8 %) a
+18/162 (11,1 %)** porque el bot abre 68 operaciones puntuables más y solo 6 emparejan. Como pide el
+encargo, se dice y se explica por sesión, y no se ajusta nada:
+
+- **Las 6 parejas nuevas** están en 2026-01-14 07-11, 2026-04-23 07-11, 2026-07-02 11-15,
+  2026-07-13 07-11, 2026-08-24 11-15 y 2026-08-26 07-11: **las seis sesiones tenían antes un rechazo
+  por `volumen_max_lotes`** (cuatro de ellas, 2026-01-14 07-11, 2026-04-23 07-11, 2026-07-02 11-15
+  y 2026-08-26 07-11, están en la fila P4 de CORRIDA-CONSTRUCCION.md §4.5: «todas las órdenes
+  rechazadas, o rechazos y reubicaciones sin llenado, con algún rechazo por volumen»). La orden que antes se rechazaba ahora se coloca con el lote limitado, se llena en el
+  mismo minuto que la del trader (±3 puntos, ±15 min) y empareja. **Ninguna pareja se pierde.**
+- Las 62 operaciones puntuables de más sin pareja son del mismo origen: órdenes que antes no vivían.
+  Su clasificación es la de siempre (P5 y P6, y las que el trader no operó).
+
+La medida no habilita nada (ADR-0070 §3) y no cambia ninguna decisión de ADR-0081.
+
+### 4.e La corrida 3 (a35-inicio) y el determinismo
+
+La otra lectura de A-35 con la cuenta diaria da, como en R3.1 y R1.2, **las mismas parejas, cobertura
+y precisión que la corrida 2** (18/198, 9,1 %; 18/162, 11,1 %; antes 12/198 y 12/94) y los mismos
+rechazos (`precio_invalido` 26: 6, 8, 4, 8; antes 11 + `volumen_max_lotes` 96); 179 llenadas (antes
+106) y 289 canceladas (antes 214; la diaria, 299: `inicio_vela_contraria` recoloca distinto, como ya
+decía CORRIDA-CONSTRUCCION.md §3.4). Ninguna orden no enviada; ningún rechazo por `margen_libre`.
+
+**Determinismo:** la corrida 2 repetida con `--salida` fuera del repositorio (la misma lectura,
+declarada en la fila de la fase 4): `sha256sum` idéntico (`e584077bf767818b97b3e787…`); `TIEMPO:
+424.1 s; MEMORIA: pico del proceso de 634.5 MiB`. La copia no se commitea.
+
+
+## 5 · Lo que va a la sesión 5
+
+**A-57** (`knowledge/spec/ambiguedades.yaml`; fila en PROJECT_STATE): qué hace el trader cuando el
+lote de su riesgo no cabe en el margen o en el volumen máximo de la cuenta. Clase `pregunta`, no
+bloqueante, `resuelve_en: [F24]`; `lote_si_no_cabe` es DEFAULT_AMBIGUOUS bajo ella (`limitar`). La
+pregunta se formula con la cuenta y sus límites (50 lotes, 1:30) y sin ninguna cifra ni argumento de
+VIABILIDAD-COMISION.md. **Lo que encontró la búsqueda** (§1.f): ninguna frase del trader habla del
+lote que no cabe; las dos citas (`ev-v4-002457-5a2e88c6`, `ev-v4-012900-8ef676ed`) dicen lo que hizo
+con el lote en su prueba de fondeo, y la propia pregunta lo declara como respaldo débil. Sustituye
+y amplía la pregunta 2 de la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md
+§4.5 (que solo hablaba del máximo de 50 lotes). La respuesta entra como `RESOLVE_UNKNOWN` sobre
+A-57 (ADR-0022); si el trader dice «no entro», `lote_si_no_cabe` pasa a `no_operar` por `feedback
+apply`, y el camino ya existe y está probado.
+
+## 6 · Líneas preparadas para el commit del contrato de la orden de cierre
+
+Las prepara la rama; las ejecuta el ritual (RITUAL.md, punto 3) solo con la orden de cierre de
+Aleks. Todas con la conformidad del consultor (respuesta a la PARADA, puntos 6 y 8).
+
+1. **E sale de la Next Action a HISTORIA** como HECHA: «E. La rama del margen (heredado 37): …» →
+   registro en el cierre de `docs/state/HISTORIA.md` (ADR-0081; `stable/F37s-margen-lote`).
+2. **El heredado 37 sale** con el criterio (a) de `docs/state/README.md`, bajo `# Pendiente heredado
+   SALE · sale de PROJECT_STATE.md en trabajo/margen-lote (<fecha>)`, con su texto literal (Archivo
+   33 de HISTORIA, línea 79): «37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN, EN LA RAMA DE STOP Y LOTE
+   (A-18).** FTMO confirma 50 lotes en EURUSD y cuenta de cobertura (P-D1,
+   `docs/validation/FTMO-P-D1.md`, 2026-10-12). Pero antes que el volumen corta el MARGEN (ADR-0026,
+   Impacto): con `firma_apalancamiento` 1:30, todo el saldo como margen da 27,27 lotes a 1,10 y 25,00
+   a 1,20, y el 0,5 % deja de cumplirse con un stop de menos de 1,83 y 2,00 pips (el tope de 50 lotes
+   corta en 1 pip). Partir en varias órdenes no lo arregla: MT5 suma el margen de las posiciones del
+   mismo lado. El simulador no comprueba el margen y `firma_apalancamiento` no lo lee ningún código
+   del bot (deuda abajo). La ejecución 2 de la demo comprueba la fórmula con el margen de 1,00 lote
+   que ya escribe el script 1.1 (`MargenAlcanza`).» Evidencia: ADR-0081 (la decisión), el rechazo
+   `margen_libre` y `limitar_lote` en `engine/broker.py` (commit 80b0795), `reglas_broker_de` leyendo
+   `firma_apalancamiento`, y `tests/unit/test_margen_lote.py`. Lo que de él sigue vivo (la ejecución 2
+   con `MargenAlcanza`) va en la línea de A (punto 6). En PROJECT_STATE queda también la línea corta
+   «- 37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN (A-18).** Va a E; …» (:82): sale con él.
+3. **Hoja de ruta** (`docs/plan/HOJA-DE-RUTA.md`), en el mismo commit, para que
+   `tests/unit/test_hoja_de_ruta.py` siga en verde:
+   - R3.3 pasa a HECHA: «- **Estado:** HECHA (`trabajo/margen-lote`, `stable/F37s-margen-lote`;
+     MARGEN-LOTE.md): ADR-0081 (el bot limita el lote al menor de tres; el bróker simulado rechaza por
+     `margen_libre` al colocar y al llenar), A-57 abierta para la sesión 5, y las dos medidas de E
+     (§2.b y §2.c). La re-corrida en diagnóstico, §4.»; sus Refs `NA:E · HER:37 · ID:A-18` se quedan
+     (una HECHA puede nombrar una letra HECHA en HISTORIA y un heredado que SALE en ese mismo commit:
+     comprobar con el test antes de commitear; si el heredado 37 que sale deja de ser «vivo» y la
+     entrada HECHA lo nombra, el test lo admite —«esta HECHA y el heredado sigue vivo» es el fallo
+     contrario—).
+   - A.2: quitar `HER:37` de sus Refs y, en «Qué es», «(hedging, volumen máximo, tope sumado; decide
+     el heredado 37)» → «(hedging, volumen máximo, tope sumado; el heredado 37 quedó decidido en
+     ADR-0081)»; «Hecho cuando: las respuestas están registradas y el heredado 37 decidido» → «…
+     registradas» (el 37 ya está decidido).
+   - G.3 pasa a HECHA y pierde `HER:27` de sus Refs (el 27 sigue vivo en A.2): «- **Estado:** HECHA
+     (`trabajo/margen-lote`): la descripción de `firma_tamano_posicion_ratio_aviso` dice lo que
+     respondió FTMO (respuesta 10).» Refs: `(sin heredado; HER:27 sigue en A.2)` o vacío.
+   - R4.1: quitar `NA:E` de los Refs y «R3.3 (NA:E)» → «R3.3 (HECHA)» en «Depende de»; añadir
+     `ID:A-57` a los Refs y, en «Qué es», «…; y A-57 (el lote que no cabe, MARGEN-LOTE.md §5)».
+4. **PROJECT_STATE, Next Action**: F pasa de «E → O → V» a «O → V»; en V, «Depende de R1.1, de R3.1,
+   de E y O, …» → «de O, …» y gana «A-57 (el lote que no cabe, MARGEN-LOTE.md §5)» entre lo que lleva
+   a la sesión 5.
+5. **Una línea para A**: «La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza`
+   (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4)».
+6. **Otra línea para A, porque la medida de noticias quedó sin fuente**: «Aleks: calendario de las
+   noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en
+   `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv>
+   --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b)».
+7. Nada más cambia en PROJECT_STATE salvo lo que haga el ritual (la fila de A-57 ya entró en la rama).
+
+## 7 · Encargo frente a lo hecho, punto por punto
+
+| Punto | Pide | Hecho | Dónde |
+|---|---|---|---|
+| 0 | Base, CI con `gh`, skill `abrir-rama`, tramo R3, informe y anexos, `/model` | Hecho (la fecha real es el 2026-10-17; el encargo va fechado el 18) | §0; el esfuerzo de `/model` no se puede leer desde la sesión |
+| 1 | ADR; bróker que rechaza por margen; medidas 1 y 2 sobre el código de hoy; sustituir la base de E | Hecho | ADR-0081; §2.b, §2.c (96/11 frente a 100/11 de R3.1) |
+| D1 | Limitar y operar; PROVISIONAL; la pregunta ampliada al margen | Hecho | ADR-0081 §1; A-57 |
+| D2 | Menor de tres × 0,95, al paso; el mínimo: PARADA si la cita no sostiene «no se opera» | Hecho; la cita no lo sostenía → PARADA → «no se opera» por decisión (respuesta 0), ADR-0053 enmendado | ADR-0081 §2; `limitar_lote` |
+| D3 | Fórmula; al llenar; al colocar si MT5 lo dice; recuadro ADR-0052 §4; equidad al bróker; línea para A | Hecho (al colocar y al llenar; «charged for each order») | §1.b; ADR-0081 §4; recuadro ADR-0052; §6.5 |
+| D4 | Dos parámetros, su sitio, cómo lee la spec el tope | Hecho: `ejecucion`, patrón ADR-0068; la spec no lee el tope (ReglasBroker) | §1.f; §3.b |
+| D5 | A-57, búsqueda en el corpus declarada, tabla de PROJECT_STATE | Hecho | §1.f; §5 |
+| D6 | ADR-0081 con sus citas; perfil y parametros.yaml corregidos; G.3 | Hecho; más el recuadro en ADR-0026 (respuesta 7) | ADR-0081 §5; §3.b |
+| D7 | Swing; noticias solo informan | Hecho; noticias sin fuente (línea para A) | ADR-0081 §7; §2.b |
+| 3 | Nada más cambia | Hecho: `git diff main --name-only` en §8 | §8 |
+| 4.a-g | Fase 0 y PARADA | Hecho | §1 |
+| 5 fase 1 | Campo + test + sello; corrida «antes» con su fila; medidas 1 y 2 | Hecho (44f31fb, ddb51c6) | §2 |
+| 5 fase 2 | Tests en rojo, recuento de FAILED | Hecho: 16 FAILED, 1 passed | §3.a |
+| 5 fase 3 | Código, spec, ADR, recuadros, perfil, G.3, spec_version, manifest, docs, Fuente | Hecho (80b0795, `Fuente: ADR-0081`) | §3.b |
+| 5 fase 4 | Re-corrida, tres comandos, fila antes; rechazos antes/después; limitadas y por qué; riesgo efectivo; T0 y P1-P7 | Hecho | §4 |
+| 6 | El informe con sus secciones y las líneas del cierre | Hecho | §5, §6, §7 |
+| 7 | Revisor con los dos ejes + sin curl ni guion en la CI | §9 | §9 |
+| 8 | CI: hooks, rutas o sistema de archivos → `fix/`; si no, la lista | No toca hooks, rutas ni el sistema de archivos: lista en §8 | §8 |
+
+**Desviaciones declaradas:**
+- ADR-0081 entró en el commit de la fase 1 (44f31fb), antes del código, porque `knowledge validate`
+  niega un id citado que no existe y el id va en la respuesta del consultor copiada tal cual (§2.a).
+- Las fechas: el encargo va fechado el 2026-10-18 y el reloj de la máquina dio el 2026-10-17 en toda
+  la rama; las filas de HOLDOUT-EXPOSICIONES y el informe llevan la real (h16).
+- El contrato se amplió dos veces, declarado en el propio contrato: ADR-0026 (respuesta 7) y tres
+  ficheros de tests (respuesta 2).
+- Los tests sintéticos del bróker colocan desde el segundo 10, no el 0, porque al colocar hace falta
+  un precio con el que convertir el margen (§3.a).
+- La medida de noticias quedó sin fuente (`corpus/noticias/` no existe): línea para A (§6.6).
+- «Agosto sale del xlsx que el trader ya no da por bueno» (encargo, 4.c) se escribe en el informe
+  como lo sostiene ADR-0073: el trader da por bueno el backtest en vídeo; que el xlsx sea el otro es
+  lectura de la sesión (h1).
+
+## 8 · CI de Linux
+
+La rama **no toca hooks, rutas ni el sistema de archivos** (ni `.claude/`, ni `scripts/`, ni el
+`Makefile`, ni `.github/`): no hace falta el push como `fix/margen-lote`. Lo que cambia frente a
+`main` (`git diff main --name-only`, más los anexos de la fase 4):
+
+- Estado y contrato: `PROJECT_STATE.md`, `contrato.yaml`, `docs/state/HISTORIA.md`,
+  `docs/encargos/trabajo-margen-lote.md`.
+- ADR: `docs/adr/0081-el-lote-que-no-cabe-se-limita-y-el-broker-rechaza-por-margen.md` (nuevo),
+  `0026-…` (recuadro), `0052-…` (recuadro), `0053-…` (recuadro), `docs/adr/README.md`.
+- Spec y knowledge: `knowledge/spec/parametros.yaml`, `strategy_spec.yaml`, `ambiguedades.yaml`,
+  `spec_manifest.yaml`; `docs/spec/` (los cuatro generados); `knowledge/cuentas/ftmo-2step-swing-100k.yaml`.
+- Código: `src/botsito/engine/broker.py`, `cableado.py`, `primitivas_broker.py`, `simulacion.py`.
+- Tests: `tests/unit/test_margen_lote.py` (nuevo), `test_cableado.py`, `test_vida_de_la_orden.py`,
+  `test_racha_perdidas.py`, `tests/regression/test_cuenta_7_de_agosto.py`.
+- Informe y anexos: `docs/validation/MARGEN-LOTE.md`, `HOLDOUT-EXPOSICIONES.md`,
+  `docs/validation/anexos/MARGEN-LOTE/` (README, `antes-diaria…`, `arrastrada…`, `diaria…`,
+  `a35-inicio…`, `medida_2.py/.txt`, `stops_cortos.py/.txt`, `fase4_medidas.py/.txt`, `patrones.txt`).
+
+Toda consulta de la CI de esta rama se hizo con `gh run view` (§0); ninguna con `curl` ni con un
+guion.
+
 ## Estado
 
-EN CURSO · fases 1 a 3 hechas (2026-10-17); falta la fase 4 (re-corrida) y la entrega.
+EN CURSO · fases 1 a 4 hechas (2026-10-17/18); falta el revisor (§9) y la entrega.
