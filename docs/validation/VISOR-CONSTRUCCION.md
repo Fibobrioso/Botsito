@@ -236,7 +236,7 @@ llenadas, 2 canceladas) y el bot tiene 2 operaciones. Las sesiones con más rech
 | El minuto de `ventana_fin` (RN-001) | página: los límites de sesión; salida: el motivo de cancelación «en ventana_fin» (`cableado.py:140-150`) | el guion de traza dice en qué cierre dispara RN-001 |
 | Las 2 sin `orden_dimensionada`: por qué no hubo camino | página: «Hechos fijados» con su instante (`_sesion_html`, :787-794) y el embudo | la página basta; el guion de traza da además las reglas que evaluaron SÍ/NO por cierre si hace falta |
 | `precio_invalido`: el motivo | **«### Ordenes»** (`motivo`) | la página no lo lleva (`_filas_ordenes`: solo estado). De «### Ordenes» se copian solo día, sesión, id, instante, precio, resultado, motivo, lote, distancia y límite: **las dos columnas de margen van en USD y no se copian** (encargo §2, «nada en dinero»; auditor, punto 30) |
-| `precio_invalido`: el bid o el ask del instante | ningún sitio: la página pinta M1 | **guion de ticks** (`ticks_del_rechazo.py`): lee el mercado del día dev por la compuerta (`simulacion.mercado_de_construccion`, sin nombrar `data/manifests/ticks`: la guardia niega un guion que lo nombre, G.1) y da el último tick anterior al instante de cada orden rechazada (bid, ask), junto al precio de la orden; solo el día dev. **6 de los 26 rechazos caen en una de las 18 horas sin ticks** (CORRIDA-CONSTRUCCION.md §1.e: 2026-04-06 10Z, 04-07 10Z, 04-22 10Z, 07-10 05Z dos veces, 08-17 11Z; auditor, punto 4): ahí el bróker tomó el cierre de la M1 más el spread supuesto (`llenado.py:96-112`), y el guion lo da igual y lo marca «respaldo M1» |
+| `precio_invalido`: el bid o el ask del instante | ningún sitio: la página pinta M1 | **guion de ticks** (`ticks_del_rechazo.py`): lee el mercado del día dev por la compuerta (`simulacion.mercado_de_construccion`, sin nombrar `data/manifests/ticks`: la guardia niega un guion que lo nombre, G.1) y da el último tick anterior al instante de cada orden rechazada (bid, ask), junto al precio de la orden; solo el día dev. **6 de los 26 rechazos caen en una de las 18 horas sin ticks** [corrección de la fase 1: es una cota inferior; la orden del primer cierre de la ventana también va con el respaldo M1, §2.g y §4.3 punto 6] (CORRIDA-CONSTRUCCION.md §1.e: 2026-04-06 10Z, 04-07 10Z, 04-22 10Z, 07-10 05Z dos veces, 08-17 11Z; auditor, punto 4): ahí el bróker tomó el cierre de la M1 más el spread supuesto (`llenado.py:96-112`), y el guion lo da igual y lo marca «respaldo M1» |
 | ADR-0074: el punto rechazado no se recoloca con otra caja | «### Ordenes» (precios de la sesión tras el rechazo) y `zonas.marcar_rechazada` (`zonas.py:404-410`) | el guion de traza anota los puntos rechazados de la sesión y si alguna orden posterior usa el mismo precio |
 
 **Una contradicción con el encargo (decisión 1): `--depuracion` no es una traza.** Es la opción que
@@ -502,18 +502,21 @@ la PARADA 2:
 
 Los 20 días, en dos lotes en segundo plano (cada uno, un proceso):
 
-    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/revisar_dia.py caso-eurusd-2026-01-08 caso-eurusd-2026-01-29 caso-eurusd-2026-01-30 caso-eurusd-2026-04-17 caso-eurusd-2026-04-27 caso-eurusd-2026-07-01 caso-eurusd-2026-07-08 caso-eurusd-2026-07-09 caso-eurusd-2026-07-13 caso-eurusd-2026-07-14
-    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/revisar_dia.py caso-eurusd-2026-07-16 caso-eurusd-2026-08-03 caso-eurusd-2026-08-07 caso-eurusd-2026-08-11 caso-eurusd-2026-08-14 caso-eurusd-2026-08-19 caso-eurusd-2026-08-20 caso-eurusd-2026-08-21 caso-eurusd-2026-08-25 caso-eurusd-2026-08-27
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/revisar_dia.py caso-eurusd-2026-01-08 caso-eurusd-2026-01-29 caso-eurusd-2026-01-30 caso-eurusd-2026-04-17 caso-eurusd-2026-04-27 caso-eurusd-2026-07-01 caso-eurusd-2026-07-08 caso-eurusd-2026-07-09 caso-eurusd-2026-07-13 caso-eurusd-2026-07-14 --dias docs/validation/anexos/VISOR-CONSTRUCCION/dias --paginas data/visor/visor-construccion
+    uv run python docs/validation/anexos/VISOR-CONSTRUCCION/revisar_dia.py caso-eurusd-2026-07-16 caso-eurusd-2026-08-03 caso-eurusd-2026-08-07 caso-eurusd-2026-08-11 caso-eurusd-2026-08-14 caso-eurusd-2026-08-19 caso-eurusd-2026-08-20 caso-eurusd-2026-08-21 caso-eurusd-2026-08-25 caso-eurusd-2026-08-27 --dias docs/validation/anexos/VISOR-CONSTRUCCION/dias --paginas data/visor/visor-construccion
 
 Lo que dijeron, día a día (la salida de los dos lotes, en `anexos/VISOR-CONSTRUCCION/lotes.txt`):
 - **«ORDENES frente a «### Ordenes» de main: iguales» en los 20 días.** El visor con `--caso`
   reproduce la corrida 2, como decía §1.a.
 - **`contexto_h4.py` dio «ok» en 19 días y PARADA en 2026-07-01**, el de la PARADA 2: su página no
   se generó. En los 19, 0 velas en un día oculto o un mes reservado.
-- **Los anexos salen de estos comandos, con los guiones tal como se commitean:** una última pasada
-  de los dos lotes, después del último cambio de los guiones, dio los mismos `sha256` en los 84
+- **Los anexos salen de estos comandos, con los guiones tal como se commitean:** una pasada de los
+  dos lotes, después del último cambio de los guiones de traza, dio los mismos `sha256` en los 84
   ficheros de `dias/` y en `lotes.txt`; y `reentradas.py`, `listas.py`, `resumen_gates.py` y los
-  cuatro `--velas`, vueltos a correr, dan los mismos bytes que sus salidas guardadas.
+  cuatro `--velas`, vueltos a correr, dan los mismos bytes que sus salidas guardadas. Tras el
+  hallazgo a1 del revisor (`revisar_dia.py` sacaba de su propia ruta dónde escribir), las carpetas
+  de salida llegan por `--dias` y `--paginas`, y la pasada final se hizo con las dos FUERA del
+  repositorio (en la carpeta de trabajo de la sesión): §8, lo que se hizo con a1.
 
 Además, tres comandos sueltos (el mismo guion de traza con `--velas`, que imprime las M1 del día dev
 que empiezan en un tramo UTC), para ver dónde estaba el 0 del trader en los días de P2:
@@ -667,8 +670,9 @@ tras un llenado, el cierre siguiente con un 1 distinto da una zona «sin usar» 
 coloca. El rechazo sí se apunta por punto (`marcar_rechazada`, :404-410); el llenado, no.
 
 **Lo que dice la decisión:** ADR-0064, decisión 1 («Un punto ya usado no se vuelve a colocar. Usado
-es con la orden enviada, aceptada o rechazada»), que ADR-0066 no enmienda (solo sustituye la
-decisión 2: tras una pérdida, la misma liquidez sigue dando intentos, que no es el mismo punto), y
+es con la orden enviada, aceptada o rechazada»), que ADR-0066 no enmienda (enmienda las decisiones
+2 y 3: tras una pérdida, la misma liquidez sigue dando intentos, que no es el mismo punto; y la
+orden pendiente entre sesiones), y
 ADR-0074 §1 (el 1 se recalcula «hasta el llenado»). El docstring del módulo dice lo mismo
 (`zonas.py:41-42`). El código hace otra cosa.
 
@@ -680,9 +684,13 @@ ADR-0074 §1 (el 1 se recalcula «hasta el llenado»). El docstring del módulo 
     ordenes en el 0 de una orden ya llenada de su sesion: 47, en 22 sesiones; de ellas, llenadas: 16
 
 Es un recuento por el PRECIO de la orden (el 0, que es el nivel del punto) colocada DESPUÉS del
-llenado de otra de su sesión en ese mismo 0; el punto exacto (nivel e instante de la vela contraria)
-solo lo da la traza, y coincide en las dos sesiones que la tienen (2026-01-29 11-15 y 2026-07-13
-11-15). Dos de las cuatro sesiones con `detenido_por_cartuchos:si` están en la lista (2026-07-13 11-15
+llenado de otra de su sesión en ese mismo 0, así que es una COTA SUPERIOR: un pivote nuevo al mismo
+nivel también cuenta. Hay al menos un caso que casi seguro lo es: en 2026-01-05 07-11, o5 se coloca
+a las 09:27:59Z en el 0 de o3, que se llenó a las 06:04:22Z, más de tres horas antes (hallazgo b2 del
+revisor). El punto exacto (nivel e instante de la vela contraria) solo lo da la traza, y es el mismo
+en las tres sesiones de las trazas de esta rama que aparecen en la lista: 2026-01-29 11-15 (o17 en
+el punto de o16, llenada), 2026-07-13 11-15 (o12 y o13 en el de o11, llenadas las tres) y 2026-01-29
+07-11 (o3 y o4 en el punto de o2, ya llenada; las dos canceladas por RN-006). Dos de las cuatro sesiones con `detenido_por_cartuchos:si` están en la lista (2026-07-13 11-15
 y 2026-08-26 07-11): las reentradas gastan cartuchos.
 
 **Conclusión: E.** El código no hace lo que dice ADR-0064, decisión 1. Afecta a P5 de R3.1 («el bot
@@ -727,8 +735,18 @@ Lo que dice la tabla, sesión por sesión, con el mismo patrón en las 14:
   de la liquidez tomada (por encima en una compra, por debajo en una venta), que es el lado de ruido
   de RN-005 tal como lo escribe la spec («el precio se desarrolla por encima de la liquidez de M15 en
   sesgo alcista, o por debajo de ella en sesgo bajista»; `zonas.py:503-521`).
-- **Entre 6 y 14 cierres después, RN-009 dice SÍ** con 2 zonas de control (tope 1), y ya no vuelve a
-  NO en la sesión: las zonas se cuentan desde la toma (ADR-0076 §2) y solo suben.
+- **Entre 6 y 14 cierres después, RN-009 dice SÍ** con 2 zonas de control (tope 1). Las zonas se
+  cuentan desde la toma del ESCENARIO vigente (ADR-0076 §2; `zonas.zonas_desarrolladas_superan` lee
+  `_anotar_toma`, que da la toma del último escenario abierto), y **el recuento vuelve a 0 cada vez
+  que RN-004 toma otra liquidez**, que abre un escenario nuevo (ADR-0066; la identidad de la
+  liquidez es lado, nivel e instante de formación, `zonas.py:179-203`). Pasa 14 veces en 10 de las
+  14 sesiones, y `resumen_gates.py` comprueba que **las 14 coinciden con una toma de RN-004 de otro
+  pivote** en ese cierre o en el anterior (`resumen_gates.txt`, «el recuento de RN-009 vuelve a
+  bajar»: ninguna «NINGUNA»). En 2026-08-11 07-11 el pivote nuevo tiene el MISMO nivel que el
+  anterior (bajo 1.15402) pero se formó a otra hora (05:30Z frente a 05:00Z): para el motor es otra
+  liquidez. Tras cada reinicio, ningún cierre queda sin gate: en los cierres tras la toma con RN-009
+  en NO, RN-005 está en SÍ (no hay ninguna combinación «NO | NO» tras la toma). Esto lo corrige el
+  hallazgo b1 del revisor: la primera redacción decía que el recuento «solo sube».
 - **Tras la toma, 0 cierres sin un gate en SÍ** en las 14: la orden no se coloca nunca. Cuando RN-015
   pide colocarla, lo que la traza apunta es su acción `colocar_orden_limite` bloqueada por el efecto
   prohibido `abrir_operacion`.
@@ -834,10 +852,18 @@ ADR-0057). La vela que marca cada 0 y sus vecinas salen de la traza.
   el punto el ask ya lo ha pasado, porque el ask es el bid más el spread (de 2 a 6 puntos en estas
   filas). Es la pregunta 9 de V.
 - **El punto rechazado no se vuelve a colocar con otra caja (ADR-0064, decisión 1; ADR-0074):** se
-  cumple en los cinco días. La traza lista los puntos rechazados de cada sesión y busca cualquier
-  orden posterior en uno de ellos; no hay ninguna (ninguna línea «se colocó con un punto ya
-  rechazado: SÍ»). El rechazo, a diferencia del llenado (2.d.4), sí se apunta por punto
-  (`marcar_rechazada`).
+  cumple en los cinco días. La traza lista los puntos rechazados de cada sesión y busca las órdenes
+  NO rechazadas colocadas en uno de ellos (`traza_por_cierre.py`, el filtro `f[5] != "rechazada"`):
+  no hay ninguna. Una recolocación rechazada otra vez no la vería ese filtro, pero tampoco la hay:
+  los puntos rechazados de cada sesión son todos distintos (2026-04-27: 117264, 117270 y 117275;
+  2026-08-07: 115226 y 115220; uno por sesión en los otros tres días). La primera redacción decía
+  «cualquier orden posterior», más de lo que hace el guion (hallazgo b8 del revisor). El rechazo, a
+  diferencia del llenado (2.d.4), sí se apunta por punto (`marcar_rechazada`).
+- **Uno de los ocho se decidió con el respaldo M1:** o1 de 2026-04-27 («respaldo_m1»), aunque esa
+  hora no es de las 18 sin ticks: la orden del primer cierre de la ventana lleva 1 ms antes del
+  primer tick cargado (§4.3, punto 6). Corrige lo que la fase 0 daba por hecho (§1.d y la decisión
+  4: «6 de los 26 rechazos caen en una de las 18 horas sin ticks», y 2026-04-27 como rechazo «con
+  ticks reales»): el recuento de 6 es una cota inferior (hallazgo b3 del revisor).
 - **2026-04-16 07-11 ya no rechaza**, sin página, como mandó el consultor. Hoy, en «### Ordenes» de
   `main`: o1 se coloca a las 06:07:59Z en 1.18025 y se llena a las 06:08:17Z; o2 y o3, en el mismo
   0, se cancelan; o4, en el mismo 0, se llena a las 06:11:29Z. Es una de las 22 sesiones de
@@ -869,7 +895,7 @@ Y (§4.1) se arregla, esas dos sesiones cambian; 2026-07-01 07-11 no.
 |---|---|---|---|
 | P2: ¿el 0 sale del pivote que dice la spec? (§2.d) | 2026-01-29 11-15, 2026-08-20 11-15, 2026-01-08 07-11 | **correcto**: el 0 es el pivote de la regla, no se mueve dentro del punto, y el 1 se recalcula | — |
 | P2: ¿dónde estaba el 0 del trader? (§2.d) | las mismas | **R**: en 01-29 y 08-20, en un pivote posterior que el bot VE y RN-009 prohíbe; en 01-08, en un máximo que la regla no toma por pivote (velas sin cuerpo en la racha) | V: pregunta 8 (01-29, 08-20) y pregunta nueva A (01-08) |
-| P2: el punto de una orden ya llenada se vuelve a colocar (§2.d.4) | 2026-01-29 11-15 y 2026-07-13 11-15 con traza; 47 órdenes en 22 sesiones por recuento | **E** | Y (rama propuesta, §3.3), antes de V |
+| P2: el punto de una orden ya llenada se vuelve a colocar (§2.d.4) | 2026-01-29 11-15, 2026-07-13 11-15 y 2026-01-29 07-11 con traza; hasta 47 órdenes en 22 sesiones por recuento (cota superior) | **E** | Y (rama propuesta, §3.3), antes de V |
 | RN-005, RN-009 y RN-001 en las sesiones sin orden (§2.e) | las 14 | **correcto** | V: pregunta 8 |
 | RN-001 en 2026-07-01 11-15: ¿cartuchos o `ventana_fin`? (§2.e) | 2026-07-01 11-15 | **correcto**: los dos, en tramos distintos; no cambia nada de lo que el bot habría hecho | — |
 | Por qué no hubo `orden_dimensionada` (§2.f) | 2026-01-08 11-15 | **R**: la toma fue en la sesión anterior, con el sesgo contrario | V: pregunta nueva B |
@@ -920,10 +946,14 @@ texto, con los días que ganan:
   velas forman la caja).
 - **B (una toma de la sesión anterior, con el sesgo contrario).** «En la sesión de 11 a 15 el sesgo
   es bajista, y en la de 7 a 11 era alcista. El alto de M15 que ahora es tu liquidez se rompió con
-  cuerpo a las 10:55, todavía en la sesión de la mañana. ¿Esa toma vale para la sesión de la tarde,
-  o esperas a que el precio tome otro alto después de las 11:00? (a) vale, entro en la tarde con
-  esa toma; (b) no vale, espero otra; (c) otra, ¿cuál?». Día: **2026-01-08**, venta de las 14:29.
-  Hoy el bot aplica (b) (ADR-0066, A-46), y en esa tarde no hay otra toma.
+  cuerpo en la vela de las 10:54, todavía en la sesión de la mañana. ¿Esa toma vale para la sesión
+  de la tarde, o esperas a que el precio tome otro alto después de las 11:00? (a) vale, entro en la
+  tarde con esa toma; (b) no vale, espero otra; (c) otra, ¿cuál?». Día: **2026-01-08**, venta de
+  las 14:29. Hoy el bot aplica (b) (ADR-0066). **A-46 está RESUELTA** («cada sesión es un mundo
+  diferente», sesión 3, v9 0:32:53; `ambiguedades.yaml:1355`), y B no la repite: A-46 se respondió
+  sin distinguir el sesgo, y aquí la toma de la mañana iba contra el sesgo de la mañana y a favor
+  del de la tarde. Si el trader contesta (a), A-46 se REABRE con un registro `REOPEN`
+  (docs/runbooks/AMBIGUEDADES.md), no se cambia sin más (hallazgos b4 y b5 del revisor).
 
 ### 3.3 La E: la rama que se propone (sin escribirla)
 
@@ -967,10 +997,13 @@ texto, con los días que ganan:
 
       F. Y → V. Las re-corridas de R3.1 con el sesgo nuevo (SESGO-H4-COLOR.md §4) y con el límite del lote (MARGEN-LOTE.md §4) están hechas. Y va antes de V: cambia las reentradas de la pregunta 3.
 
-- **Y entra** (letra nueva: ninguna entrada de la hoja de ruta la nombra; E, la de la rama del
-  margen, ya está HECHA en R3.3, y reutilizarla haría fallar `test_hoja_de_ruta`):
+- **Y entra** (ninguna entrada de la hoja de ruta la nombra; E, la de la rama del margen, ya está
+  HECHA en R3.3, y reutilizarla haría fallar `test_hoja_de_ruta`). HISTORIA ya tiene una «# Next
+  Action HECHA · Y ·» de `trabajo/adelgazar-estado` (HISTORIA.md:7130), como pasa con la O: cuando
+  esta Y salga, su título llevará nombre (hallazgo b7 del revisor). El consultor puede elegir otra
+  letra libre en la hoja de ruta (R o Z) y cambiarla en las tres líneas de §4.1 y en R3.4.
 
-      Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto, y vuelven a colocarse 47 órdenes en 22 sesiones de la corrida 2 (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
+      Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto; en la corrida 2, hasta 47 órdenes en 22 sesiones van al 0 de una ya llenada (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
 
 - **V cambia:** «y A-57 (el lote que no cabe, MARGEN-LOTE.md §5). Depende de R1.1, de R3.1, de O,
   de J (kit hoja) y de la copia de seguridad (A.4).» pasa a «A-57 (el lote que no cabe,
@@ -1006,13 +1039,14 @@ texto, con los días que ganan:
   VISOR-CONSTRUCCION.md §3.2 (las dos nuevas y los días que ganan la 5, la 8 y la 9; R3.2).»; y
   «Depende de» dice «R3.2 (HECHA), R3.3 (HECHA), R3.4 (NA:Y)».
 
-**Technical Debt** (cinco líneas nuevas; su evidencia, en §4.3):
+**Technical Debt** (seis líneas nuevas; su evidencia, en §4.3):
 
     - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el arnés sí, :2437): con `--todos` arrastra la cuenta (VISOR-CONSTRUCCION.md §4.3).
     - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
     - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
     - `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check, sin declararlo (VISOR-CONSTRUCCION.md §4.3).
     - `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker (VISOR-CONSTRUCCION.md §4.3).
+    - El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los ticks empiezan en ventana_inicio y la orden lleva 1 ms antes (VISOR-CONSTRUCCION.md §4.3).
 
 ### 4.2 Las líneas, aplicadas en memoria contra los tests
 
@@ -1032,10 +1066,11 @@ PROJECT_STATE simulado en una carpeta temporal fuera del repo:
     test_project_state_declares_a_branch: pasa
     test_project_state_cabe_en_el_tope: pasa
     PROJECT_STATE hoy: 23629 bytes
-    PROJECT_STATE simulado: 24526 bytes
+    PROJECT_STATE simulado: 24724 bytes
 
-**Pasan.** La primera versión de las líneas daba 25.036 bytes y no cabía: se acortaron las cinco
-deudas (su evidencia vive en §4.3) y las líneas de F, Y y V. Margen: 474 bytes. El cierre cambia
+**Pasan.** La primera versión de las líneas daba 25.036 bytes y no cabía: se acortaron las deudas
+(su evidencia vive en §4.3) y las líneas de F, Y y V. Con la sexta deuda y la línea Y corregida
+(hallazgos b2 y b3 del revisor), el margen queda en 276 bytes. El cierre cambia
 además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan de esta rama.
 
 ### 4.3 La deuda, con su evidencia
@@ -1060,6 +1095,16 @@ además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan
    la línea de §4.1 dice «marzo (calienta abril)».
 5. **`--hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker** (§1.b, con sus
    líneas de `visor.py`), aunque VISOR-DIAS.md:40-41 promete una vista recortada.
+6. **El bróker cotiza con el respaldo M1 la orden del primer cierre de la ventana** (medido en la
+   fase 1, hallazgo b3 del revisor). `simulacion.mercado_de_construccion` carga los ticks solo entre
+   `ventana_inicio` y `ventana_fin` (`simulacion.py:196-205`), y la orden que se coloca en el primer
+   cierre de la ventana lleva el instante de ese cierre menos 1 ms (en 2026-04-27, o1 «colocada
+   04:59:59Z»). `Mercado.cotizacion` (`llenado.py:93-113`) no encuentra ningún tick hasta ese
+   instante y usa la última M1 cerrada más el spread supuesto («respaldo_m1» en
+   `dias/2026-04-27.ticks.txt`). No es una de las 18 horas sin ticks de R3.1: es el borde de la
+   ventana, y toca a toda orden de la primera sesión colocada en su primer cierre. No cambia la
+   conclusión de 2026-04-27 (el bid del respaldo ya está 4 puntos por encima del 0), pero el
+   rechazo se decidió con un precio aproximado.
 
 ### 4.4 Para ERRORES-RECURRENTES (los escribe `cerrar-rama`, en la fila de la rama)
 
@@ -1144,8 +1189,8 @@ además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan
   un recorte por horas no lo daba.
 - **Guiones que la fase 0 no nombraba:** `revisar_dia.py` (el orden de la respuesta a la PARADA 2
   en un solo guion), `reentradas.py` (el recuento de la E), `resumen_gates.py` (el resumen de §2.e),
-  `simular_cierre.py` (§4.2) y `listas.py` (el guion de las listas de la fase 0, que §1.c anunciaba,
-  con su salida en `listas.txt`). Ninguno escribe en el repo salvo `revisar_dia.py`, que escribe en
+  `simular_cierre.py` (§4.2), `listas.py` (el guion de las listas de la fase 0, que §1.c anunciaba,
+  con su salida en `listas.txt`) y, tras el revisor, `pivotes_m15_del_dia.py` (§8.1). Ninguno escribe en el repo salvo `revisar_dia.py`, que escribe en
   `anexos/VISOR-CONSTRUCCION/dias/` y en `data/visor/`.
 - **La E de §2.d.4 sale de mirar P2, no de una comprobación del encargo.** Entra en P2 porque el
   encargo pide comprobar que «lo que recalcula ADR-0074 en cada cierre de M1 hasta el llenado es el
@@ -1158,6 +1203,13 @@ además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan
   no el de junio (§4.3, punto 4).
 - **Las salidas guardadas con `>` se normalizaron** a UTF-8 y LF (§4.4); los guiones llevan ahora
   `reconfigure(newline="\n")` para que su comando dé el mismo fichero.
+- **`revisar_dia.py` escribió en el repositorio real, con la raíz sacada de su propia ruta**, en
+  las seis pasadas de desarrollo y en la de verificación anterior al revisor: contra CLAUDE.md,
+  «Ensayos aislados», puntos 1 y 2 (hallazgo a1 del revisor). Escribía solo en
+  `anexos/VISOR-CONSTRUCCION/dias/` y en `data/visor/` (ignorada), nunca mientras corría `make
+  check`. Un clon con `git worktree` no tiene `data/` (fuera de git), así que el visor no habría
+  corrido ahí; lo que la regla pide en ese caso es que la salida vaya por argumento a una carpeta
+  fuera del repo, y así se hizo la pasada final (§2.c).
 
 ## 7 · Exposiciones, ficheros y CI
 
@@ -1169,10 +1221,20 @@ lo leído tras la PARADA 2 (su punto 8). Ninguna otra.
 informe y `docs/validation/HOLDOUT-EXPOSICIONES.md`; y los anexos de
 `docs/validation/anexos/VISOR-CONSTRUCCION/` (los guiones `comun_visor.py`, `contexto_h4.py`,
 `traza_por_cierre.py`, `ticks_del_rechazo.py`, `extraer_pagina.py`, `revisar_dia.py`, `listas.py`,
-`reentradas.py`, `resumen_gates.py`, `simular_cierre.py`; sus salidas `contexto_h4.txt`, `listas.txt`,
-`lotes.txt`, `reentradas.txt`, `resumen_gates.txt`; y `dias/`). Ningún fichero de `src/`, `tests/`,
+`reentradas.py`, `resumen_gates.py`, `simular_cierre.py`, `pivotes_m15_del_dia.py`; sus salidas
+`contexto_h4.txt`, `listas.txt`, `lotes.txt`, `reentradas.txt`, `resumen_gates.txt`,
+`pivotes_m15.txt`; y `dias/`). Ningún fichero de `src/`, `tests/`,
 `scripts/`, `knowledge/`, `config/`, `docs/adr/`, `docs/spec/`, `docs/plan/`, `docs/runbooks/`,
 `.claude/`, `.github/` ni el `Makefile`.
+
+**`make check` de cada commit** (sus líneas, leídas del log antes de commitear; hallazgo a2 del
+revisor, que no las encontró):
+- 304da27 (fases 1 y 2): `SELLO: make check en verde sobre el arbol
+  a78d20c50bb6412eb7f27eed1a8923c07364a7e3`; exit 0; ningún `failed`; `DURACION de make check: 930
+  s`; `PICO DE MEMORIA de make check: 295 MiB en test`.
+- El commit de los hallazgos del revisor: su `make check` sella el árbol de ese mismo commit, así
+  que sus líneas no pueden ir dentro de él; se dan en el mensaje de entrega, y el sello queda en
+  `.git/botsito-sello` igual a `git rev-parse HEAD^{tree}`.
 
 **CI:** la rama no toca código, hooks, rutas ni el sistema de archivos: no hace falta el push como
 `fix/visor-construccion`. Ninguna consulta de la CI se hizo con `curl`, con `gh run watch` ni con un
@@ -1180,8 +1242,185 @@ guion.
 
 ## 8 · El revisor
 
-(Se pega aquí su informe, tal cual, con lo que se hizo con cada hallazgo.)
+Agente `revisor` (opus) sobre la rama en 304da27, el 2026-10-18, con los dos ejes y el alcance
+extra del punto 6 del encargo. Su informe, pegado tal cual (nada cita un tramo no citable; 0
+retiradas):
+
+> ## Informe del revisor · trabajo/visor-construccion · 2026-10-18
+>
+> Base `d1137eb` (merge-base con main). Rama en `304da27` y árbol limpio. Son 4 commits y 105 ficheros, todos dentro del contrato. Ningún fichero se borra ni cambia de nombre. Solo cambian (M) `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y `docs/validation/HOLDOUT-EXPOSICIONES.md`; los demás son nuevos (A).
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 1 bloquea, 0 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | bloquea | `revisar_dia.py` escribe en el repositorio, pero la raíz no le llega por un argumento ni por una variable de entorno: la saca de `__file__`. Rompe el punto 2 de «Ensayos aislados» de CLAUDE.md («La raiz de un instalador, o de cualquier script que escriba, sale de un argumento o de una variable de entorno»). Además, el informe cuenta que el guion se ejecutó seis veces sobre el repositorio real mientras se desarrollaba, y no en un clon con `git worktree` (punto 1 de esa misma regla). El precedente de main sí la cumple: `anexos/MARGEN-LOTE/fase4_medidas.py:136` escribe en `a.escribir`, que es un argumento. | `anexos/VISOR-CONSTRUCCION/revisar_dia.py:29` `AQUI = Path(__file__).resolve().parent`, `:39` `CARPETA_PAGINAS = cv.RAIZ / "data" / "visor" / "visor-construccion"`, `:40` `CARPETA_DIAS = AQUI / "dias"`, `:61` `write_text(...)`; `comun_visor.py:21` `RAIZ = Path(__file__).resolve().parents[4]`; `VISOR-CONSTRUCCION.md:1153-1156` («Las páginas y las trazas se generaron seis veces…») |
+> | a2 | menor | El informe no deja constancia del `make check` de la rama: ni la línea `SELLO` ni la de `PICO DE MEMORIA`. Además, `make-check.log` no existe en la raíz. La única prueba de que pasó es que el sello coincide con el árbol de HEAD. | `ls make-check.log` → «No such file»; `grep -n "SELLO\|PICO" VISOR-CONSTRUCCION.md` → nada; `cat .git/botsito-sello` = `a78d20c5…a7e3` = `git rev-parse HEAD^{tree}` |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py` → «CONTRATO: 105 ficheros dentro del contrato de trabajo/visor-construccion (riesgo alto, … tramo 'R3', 3 comprobaciones para el revisor)», exit 0. `git diff main --name-only` solo da rutas permitidas.
+> - **Trailers `Fuente:`.** La rama no toca `knowledge/spec` ni `knowledge/cases`, así que no aplican.
+> - **Holdout y material.** Nada toca `knowledge/cases/holdout/`. La fila del 2026-10-18 está en HOLDOUT-EXPOSICIONES: nombra el visor, el calentamiento con marzo y junio, `contexto_h4.py`, las M1 de `--velas` y la lectura de `a35-inicio`. Ningún fotograma, libro, transcripción ni agregado.
+> - **Regímenes de cambio.** HISTORIA es +189/-0. HOLDOUT-EXPOSICIONES es +1/-0. El encargo solo crece desde f85fb1e (+60/-0). Ningún cambio en evidence, feedback, manifests ni corpus.
+> - **Ambigüedades, ADR, informes cerrados y guardias de `cita`.** No hay cambios: no aplican.
+> - **Cifras en el registro.** No hay código: no aplica.
+> - **Informe.** Existe y acaba en «## Estado», que todavía dice PENDIENTE DEL REVISOR.
+> - **Citas contra su fuente.** Comprobé que lo citado dice lo que el informe afirma en estas fuentes:
+>   - `zonas.py:41-42` (docstring);
+>   - ADR-0064, decisión 1 (`0064…md:79-81`);
+>   - ADR-0080 §10 (`0080…md:156-158`);
+>   - `VISOR-DIAS.md:40-41`;
+>   - `test_visor.py:373`, junto con `criterio_fidelidad.yaml:40` (`construccion[0]` = 2026-04, como dice §4.3, punto 4);
+>   - `cli.py:2437`/`:2557`;
+>   - `cableado.py:207-208`;
+>   - `primitivas.py:266-296`;
+>   - `primitivas_broker.py:635,650`;
+>   - `estructura_m1.py:189-212`;
+>   - `pivotes_m15.py` (`_racha_anterior`, `_pivote_de`);
+>   - RN-005 en `zonas.py:503-521` y en la spec (`lado_de_ruido: {alcista: por_encima, bajista: por_debajo}`).
+> - **Evidencia nueva.** La rama no añade ningún item a `knowledge/evidence/`.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 4 importa, 4 menor. Requisitos: 30 hechos, 2 parciales, 0 no hechos (y 3 hechos de otra forma, declarados).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base: main, origin, tag, la CI con `gh run view` y ninguna otra rama | Hecho | §0, `VISOR-CONSTRUCCION.md:13-23`. No lo pude volver a comprobar (ver abajo) |
+> | 2 | Abrir con abrir-rama: encargo, contrato con HOLDOUT-EXPOSICIONES y Archivo de PS | Hecho | f85fb1e; `contrato.yaml:8`; HISTORIA +189 |
+> | 3 | Informe y anexos en sus rutas | Hecho | diff --stat |
+> | 4 | Comprobaciones sobre la diaria de main de hoy (MARGEN-LOTE) | Hecho | `comun_visor.py:143-161` lee `anexos/MARGEN-LOTE/diaria…txt` |
+> | 5 | «Gráfico» = la página, con su comando; los HTML fuera de git | Hecho | §2.c, `:494`; ningún `.html` en el diff |
+> | 6 | No se toca src, spec, parámetros, ADR, evidencia, feedback ni casos | Hecho | `git diff --name-status`: solo docs/ y anexos |
+> | 7 | No se editan los informes ni anexos cerrados (CORRIDA, SESGO, MARGEN) | Hecho | no aparecen en el diff |
+> | 8 | Heredado 30, guardias, `.claude/` y Makefile intactos | Hecho | diff |
+> | 9 | PS, solo lo del ritual | Hecho | `git diff main...HEAD -- PROJECT_STATE.md`: rama, Feature, Completed y Change Log (apertura) |
+> | 10 | Fila de HOLDOUT antes de la primera página, nombrando el visor | Hecho (orden no verificable) | `HOLDOUT-EXPOSICIONES.md`, fila del 2026-10-18 (f39e0da) |
+> | 11 | Nada anterior a las 00:00Z del día dev ni nada en dinero (informe y anexos) | Hecho | ver la comprobación extra 2 |
+> | 12 | Fase 0.a: reproducir la corrida 2; la deuda de `cuenta_diaria` con su línea | Hecho | §1.a; `lotes.txt`: «iguales» en los 20 días |
+> | 13 | Fase 0.b: lo que lee el visor de fuera del día dev | Hecho | §1.b |
+> | 14 | Fase 0.c: listas P2, 14 sin orden, 2 sin `orden_dimensionada`, `precio_invalido` | Hecho | `listas.txt:29` «33 en 26 … 18 en 14»; `:131` «26 en 20 … 11 en 9»; tablas §1.c coinciden |
+> | 15 | Fase 0.d: de dónde sale cada dato y cómo sacarlo | Hecho | §1.d |
+> | 16 | PARADA con a-d | Hecho | `:306-357` |
+> | 17 | P2 en los tres días: el 0 frente al pivote de la spec y el 0 del trader | Hecho | comprobado vela a vela en `dias/*.velas-trader.txt` (abajo) |
+> | 18 | RN-005, RN-009 y RN-001 sesión por sesión | Parcial | tabla §2.e = `resumen_gates.txt`; la explicación de RN-009 es falsa (b1) |
+> | 19 | Las 2 sin `orden_dimensionada` | Hecho de otra forma (declarado, §5 4.4 y R1.3) | `2026-01-08.traza.txt:184-188`, `2026-08-14.traza.txt` RN-004 |
+> | 20 | Rechazos `precio_invalido`: frente al bid y el ask, la caja ya atrás, y que el punto rechazado no vuelve | Hecho | `dias/*.ticks.txt`; restas comprobadas (3,1,3,2,5,8,3,5) |
+> | 21 | Para cada sesión, el comando exacto | Hecho de otra forma (declarado, §5 4.6) | §2.c |
+> | 22 | Instantes en UTC y en hora del trader | Hecho | §2.d-2.h |
+> | 23 | Fase 2: la tabla | Hecho | §3.1 |
+> | 24 | Para cada E, la rama propuesta (qué arregla, ficheros, test) | Hecho | §3.3 |
+> | 25 | Para cada R, su pregunta; la 8 y la 9 por su texto | Hecho | §3.2; el texto coincide con `CORRIDA-CONSTRUCCION.md:1246-1249` |
+> | 26 | Deuda: el visor sin `cuenta_diaria`; VISOR-DIAS sin diagnóstico ni calentamiento | Hecho | §4.1, §4.3; `grep` sobre VISOR-DIAS → rc=1 |
+> | 27 | Líneas del cierre (O a HISTORIA, F, V, R3.2 HECHA, R4.1) | Parcial | están, pero la de Y afirma más de lo medido (b2) y la letra Y ya se usó (b7) |
+> | 28 | Simulación en memoria con los dos tests | Hecho | volví a ejecutar `simular_cierre.py .`: a/b/c `[]`, 4 tests pasan, 23629 → 24526 bytes, igual que §4.2 |
+> | 29 | Respuesta 1, puntos 0-8 y «Además» | Hecho | §5, R1.0-R1.A |
+> | 30 | Respuesta 2, punto 0: 07-01 sin página; punto 1: `contexto_h4` antes de CADA página | Hecho | `dias/2026-07-01.pagina.txt`; `revisar_dia.py:66-93` |
+> | 31 | Las respuestas copiadas tal cual en el informe y en el encargo | Hecho | md5 idéntico: encargo 100-134 = informe 363-397; encargo 140-154 = informe 462-476 |
+> | 32 | «El encargo, punto por punto» | Hecho | §5 |
+> | 33 | CI: decirlo, con la lista de ficheros | Hecho | §7 |
+> | 34 | Revisor y su informe pegado | Pendiente | §8 vacío; lo pega la sesión |
+> | 35 | «Lo que necesito que decidas» (las dos PARADAS) | Hecho | `:306`, `:442` |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | §2.e dice de RN-009: «ya no vuelve a NO en la sesión: las zonas se cuentan desde la toma (ADR-0076 §2) y solo suben». Sus propios anexos lo desmienten en 12 de las 14 sesiones. La conclusión «0 cierres sin gate» se sostiene, porque en esos tramos RN-005 está en SÍ. Pero el mecanismo que hace volver el recuento a 0, incluso con la MISMA toma, no se examina, y es justo el gate que se está comprobando: ¿«tras la toma» de ADR-0076 §2 es la primera toma o la última? | `VISOR-CONSTRUCCION.md:730-731`. `resumen_gates.txt:11`: «SI \| NO …: 25, desde 05:29», con RN-009 en SÍ desde 05:43 (14 cierres), así que hay 11 cierres SI\|NO más tarde. Lo mismo en `:18,33,40,46,54,62,69,83,91`. `dias/2026-08-11.traza.txt` (gates): «05:54:00Z - 06:02:00Z, 9 \| SI, compra 0 1.15409 > toma 1.15402 \| NO, 0», con la misma toma 1.15402 que a las 05:21Z. `dias/2026-04-17.traza.txt`: «08:35:00Z … toma 1.17844 \| NO, 0» |
+> | b2 | importa | La línea Y preparada para PS, que `simular_cierre.py:59-64` ya mete en la simulación, afirma como hecho que «vuelven a colocarse 47 órdenes en 22 sesiones». Pero §2.d.4 reconoce que es un recuento por PRECIO, no por punto, y el anexo trae al menos un caso que casi seguro es otro pivote al mismo nivel. | `VISOR-CONSTRUCCION.md:682-684` frente a `:973`. `reentradas.txt:2`: «2026-01-05 \| 07-11 \| o5 \| …T09:27:59 \| 1.16852 \| llenada \| o3 (…T06:04:22…)», más de 3 h después |
+> | b3 | importa | La fase 0 afirmó que solo «6 de los 26 rechazos» caen sin ticks, con su lista, y la PARADA propuso 2026-04-27 07-11 como un rechazo «con ticks reales, fuera de las horas sin ticks». La medida lo desmiente: o1 de 04-27 se decidió sobre el respaldo M1. Ni §1.d ni §6 lo corrigen; la tabla de §2.g solo lo etiqueta. | `VISOR-CONSTRUCCION.md:239`, `:336-337`. `dias/2026-04-27.ticks.txt`: «o1 … colocada 04:59:59Z … bid 1.17268 ask 1.17272 (respaldo_m1)» |
+> | b4 | importa | La pregunta nueva B («¿esa toma vale para la sesión de la tarde…?») cae encima de A-46, que está RESUELTA por el trader. El informe cita A-46 solo como la regla que aplica el bot. No dice que está resuelta ni por qué B es otra pregunta: el matiz es que el sesgo era el contrario en la sesión anterior. Sin eso, V puede volver a preguntar lo ya resuelto, y si el trader contesta otra cosa haría falta un REOPEN. | `VISOR-CONSTRUCCION.md:774`, `:921-926`. `knowledge/spec/ambiguedades.yaml:1355`: «RESUELTA el 2026-09-29 en la sesion 3 (v9 0:32:53): cada sesion es «un mundo diferente»» |
+> | b5 | menor | La hora del cuerpo que se le da al trader no coincide con la de §2.f. §2.f dice «la M1 de las 09:54Z (10:54 del trader)»; la pregunta B le dice «se rompió con cuerpo a las 10:55». En su gráfico, la vela de las 10:55 es la siguiente, 09:55Z. | `VISOR-CONSTRUCCION.md:773` frente a `:923`; `dias/2026-01-08.velas-toma.txt` («09:54:00Z (10:54:00 del trader) O 1.16743 … C 1.16755») |
+> | b6 | menor | Dos imprecisiones en §2.d.4. Primera: «coincide en las dos sesiones que la tienen», pero la traza también tiene 2026-01-29 07-11, que coincide (o3 y o4 en el punto de o2, ya llenada). Segunda: «ADR-0066 … solo sustituye la decisión 2», cuando el recuadro de ADR-0064 dice que ADR-0066 cambia también la decisión 3. | `VISOR-CONSTRUCCION.md:684-685`, `:670-671`. `dias/2026-01-29.traza.txt`: o2, o3 y o4 con «punto 119820@29494445». `0064…md`, recuadro bajo la decisión 3 («La decision 3 pasa a ser la opcion `sigue_hasta_ventana_fin`…») |
+> | b7 | menor | «Y entra (letra nueva…)», pero HISTORIA ya tiene una Y cerrada. Es la misma colisión que h9 detectó para O, y aquí no se menciona: el título HECHA de esta Y necesitará un descriptor. | `VISOR-CONSTRUCCION.md:970`; `docs/state/HISTORIA.md:7130` «# Next Action HECHA · Y · sale de PROJECT_STATE.md en trabajo/adelgazar-estado (2026-10-08)» |
+> | b8 | menor | §2.g dice que la traza «busca cualquier orden posterior» en un punto ya rechazado. Pero el guion excluye las órdenes que salieron rechazadas: un punto recolocado y rechazado otra vez no se imprimiría. En los cinco días los puntos rechazados son distintos (04-27: 117264, 117270 y 117275; 08-07: 115226 y 115220), así que la conclusión vale, pero la frase dice más que el guion. | `traza_por_cierre.py:363` `… and f[5] != "rechazada"`; `VISOR-CONSTRUCCION.md:837-839` |
+>
+> **Lo que pide el punto 6 del encargo:**
+>
+> 1. **Cada conclusión E, R o correcto, contra lo que cita.**
+>    - **P2, el 0 y los pivotes.** Comprobé vela a vela los 0 y los pivotes:
+>      - 01-29: 12:52Z roja 1.1956→1.19549; 12:58Z roja con mínimo 1.19603; 12:59Z verde; RN-009 «SI, 2» a las 13:00Z.
+>      - 08-20: 10:47Z verde con máximo 1.17012 entre rojas; 10:54Z y 10:55Z verdes con máximo 1.16974; 10:56Z roja; «SI, 2/3».
+>      - 01-08: 08:03Z y 08:05Z verdes; 08:17Z y 08:18Z con O=C (sin cuerpo); 08:19Z roja.
+>
+>      Coinciden con `dias/*.velas-trader.txt` y con las trazas. ADR-0076 lo dice (`0076…md:55-56`: «un doji no es de ningún color, no es contraria y corta la racha»).
+>    - **La E de la reentrada.** La sostienen tres cosas: el código, donde `marcar_usada` va por zona y `marcar_rechazada` por punto (`zonas.py:404-420`, `:469-475`); el docstring (`zonas.py:41-42`); y ADR-0064, decisión 1. Las trazas de 01-29 y de 07-13 dan el mismo punto en las tres órdenes llenadas. El recuento 47/22/16 lo volví a obtener con `reentradas.py`: 5838 bytes, iguales a los del fichero guardado.
+>    - **Las 14 «correcto».** La tabla coincide con `resumen_gates.txt`, que reproduje: 7369 bytes, iguales. La explicación está mal (b1), pero la conclusión se sostiene.
+>    - **Las dos R de §2.f.** Coinciden con las tablas RN-004 de las trazas y con `a35-inicio` (líneas «Por sesion»: `liquidez_tomada:no` en las dos).
+>    - **«Correcto» de los rechazos.** Lo confirman las restas de los `ticks.txt` y las velas marcadas, con la salvedad de b3.
+> 2. **Nada anterior al día dev ni nada en dinero.** No encontré nada; no hay hallazgo «bloquea».
+>    - Ninguna hora Z entre 16 y 23 en los anexos ni en el informe.
+>    - Ninguna hora del trader antes de las 06:00 ni después de las 15:59 en las páginas extraídas.
+>    - Ninguna fila tapada como «(antes del dia)», salvo el inicio de la ventana; ninguna «(antes del dia)» en las trazas.
+>    - Ni «rompe la H4», ni datos de H4, ni USD, saldo, equity, PnL ni margen; solo «(saldo y equity omitidos)».
+>    - El pivote de M15 más temprano que se imprime se formó a las 03:15Z.
+>
+> ### Lo que no pude comprobar
+> - **El `make check`.** `make-check.log` no existe: no hay `SELLO` ni `PICO DE MEMORIA` que leer. Lo sustituye `.git/botsito-sello` = árbol de HEAD. Que nada escribiera mientras corría no se puede comprobar.
+> - **Que la fila de HOLDOUT se escribiera antes de leer ninguna vela.** Entró en el mismo commit (f39e0da) que `contexto_h4.py` y su salida, y git no da un orden más fino.
+> - **Las páginas HTML de `data/visor/`.** No las abro, por orden. Revisé el código de `extraer_pagina.py`, pero no que su salida sea fiel a cada página. Tampoco puedo comprobar que la sesión no abriera ninguna entera.
+> - **Las órdenes «iguales a main».** No ejecuté el visor, `revisar_dia.py` ni `traza_por_cierre.py`, por orden. Me apoyo en `lotes.txt` y en el código de `comun_visor.ordenes_coinciden`, que compara las 7 primeras columnas.
+> - **Los niveles de los pivotes de M15 formados a las 03:15Z y 03:30Z.** El nivel es el extremo de su racha. No verifiqué que ninguna vela de esa racha sea anterior a las 00:00Z; para eso harían falta unas 13 M15 seguidas del mismo color.
+> - **Los cuatro comandos que negó la guardia.** No puedo comprobar que se partieran sin cambiar lo que medían.
+> - **La CI.** No la consulté. La rama no tiene CI propia.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. `uv run python scripts/contrato_rama.py; git diff main --name-only | grep -v anexos/VISOR-CONSTRUCCION/; ls -la make-check.log …`
+> 3. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md`
+> 4. Varios `grep -nE` de horas Z entre 16 y 23, de horas del trader entre 00 y 05 y entre 16 y 23, de «antes del dia», «H4», «rompe la H4» y de dinero (usd, saldo, equity, pnl, margen, …) sobre `anexos/VISOR-CONSTRUCCION/` y el informe
+> 5. `sed -n` sobre `src/botsito/engine/zonas.py`, `primitivas.py`, `cableado.py`, `cli.py`, `domain/estructura_m1.py`, `domain/pivotes_m15.py`; `docs/adr/0064*`, `0066*`, `0074*`, `0076*`, `0080*`; `CORRIDA-CONSTRUCCION.md:1230-1256`; `criterio_fidelidad.yaml:36-46`; `test_visor.py:366-402`; `VISOR-DIAS.md:38-42`
+> 6. `grep` y `sed` sobre `dias/*.traza.txt`, `*.velas-*.txt`, `*.ticks.txt`, `*.pagina.txt`; `cat` de los `ticks.txt`; `grep` sobre `anexos/CORRIDA-CONSTRUCCION/a35-inicio…txt`
+> 7. `uv run python docs/validation/anexos/VISOR-CONSTRUCCION/reentradas.py | tail -4` y `| wc -c` (5838 = el fichero)
+> 8. `uv run python docs/validation/anexos/VISOR-CONSTRUCCION/resumen_gates.py <las 15 sesiones> | wc -c` (7369 = el fichero)
+> 9. `uv run python docs/validation/anexos/VISOR-CONSTRUCCION/simular_cierre.py .`
+> 10. Comparación con `md5sum` de las respuestas del consultor en el encargo y en el informe
+> 11. `git diff f85fb1e HEAD --numstat -- docs/encargos/…`; `git show --stat f39e0da 8cceb46`; `git diff --numstat main...HEAD -- HISTORIA HOLDOUT PS`
+> 12. `cat .git/botsito-sello; git rev-parse HEAD^{tree}`
+> 13. `grep -n "^# Next Action HECHA · Y\|· O"` en HISTORIA; `grep "id: A-46"` en `ambiguedades.yaml`
+> 14. Negados por la guardia y no rodeados: un `for f in …` y una ejecución de guion seguida de otra en el mismo comando (los partí como pide su mensaje). `solo_lectura.py` me negó un `git config`.
+
+### 8.1 Lo que se hizo con los hallazgos del revisor
+
+- **a1 (bloquea): arreglado.** `revisar_dia.py` recibe las dos carpetas en que escribe por
+  argumentos obligatorios, `--dias` y `--paginas`, y ya no las saca de su ruta (`comun_visor.RAIZ`
+  sigue saliendo de la ruta del guion, pero solo para LEER el repo y los datos). La pasada final de
+  verificación se hizo con las dos carpetas FUERA del repositorio (`--dias` y `--paginas` en la
+  carpeta de trabajo de la sesión): los 80 ficheros por día que escribió dan los mismos `sha256` que
+  los de `anexos/VISOR-CONSTRUCCION/dias/` (los otros 4 son los `--velas`), y su registro, los mismos
+  bytes que `lotes.txt`. Lo que
+  pasó antes (seis pasadas de desarrollo en el repo real) va a §6 como desviación.
+- **a2 (menor): arreglado.** §7 lleva el `SELLO`, la duración y el pico de memoria del `make check`
+  de 304da27, leídos del log antes de commitear, y los del commit de estos arreglos.
+- **b1 (importa): arreglado.** §2.e explica el reinicio del recuento: las zonas se cuentan desde la
+  toma del escenario vigente, y cada toma de otra liquidez abre uno nuevo (ADR-0066). `resumen_gates.py`
+  gana una sección que comprueba los 14 reinicios: los 14 coinciden con una toma de RN-004 de otro
+  pivote (en 2026-08-11, el mismo nivel formado a otra hora). La conclusión no cambia.
+- **b2 (importa): arreglado.** §2.d.4 dice que el recuento es una cota superior, con el caso de
+  2026-01-05; la línea Y dice «hasta 47».
+- **b3 (importa): arreglado y medido.** El respaldo de o1 de 2026-04-27 no es una hora sin ticks:
+  los ticks se cargan desde `ventana_inicio` y la orden del primer cierre de la ventana lleva 1 ms
+  antes (§4.3, punto 6, con sus líneas). §1.d y §2.g lo corrigen, y va como sexta línea de Technical
+  Debt (la simulación del cierre sigue pasando: 24.724 bytes).
+- **b4 y b5: arreglados.** La pregunta B dice que A-46 está RESUELTA, por qué B no la repite y que
+  una respuesta (a) obliga a un `REOPEN`; y nombra la vela de las 10:54.
+- **b6 (menor): arreglado.** §2.d.4 cuenta las tres sesiones con traza y dice que ADR-0066 enmienda
+  las decisiones 2 y 3.
+- **b7 (menor): arreglado.** §4.1 dice que HISTORIA ya tiene una Y y que el título de esta llevará
+  nombre, o que el consultor puede elegir R o Z.
+- **b8 (menor): arreglado.** §2.g dice lo que hace el filtro del guion y por qué la conclusión vale.
+- **«Lo que no pude comprobar»:** el orden de la fila de HOLDOUT frente a la primera página no lo da
+  git (entraron en el mismo commit, f39e0da); lo atestigua el texto de la propia fila, escrito antes
+  de generar ninguna página, y §2.a. **Los pivotes de M15 formados de madrugada, medido:** el nivel
+  de un pivote es el extremo de su racha de M15, y si la racha empezara el día UTC anterior el
+  precio impreso podría ser de ese día (en 2026-07-01, el oculto). `pivotes_m15_del_dia.py` corre el
+  mismo motor que la traza, reúne los pivotes que la traza imprime y cuenta, sin imprimir horas ni
+  precios, cuántos tienen la racha o el nivel antes de las 00:00Z (salida en `pivotes_m15.txt`):
+  **0 en los 20 días**, también en 2026-07-01 y 2026-07-14, los de los pivotes formados a las 03:30Z
+  y 03:15Z; ningún pivote se quedó sin su vela contraria en las M15 del día.
+
+      uv run python docs/validation/anexos/VISOR-CONSTRUCCION/pivotes_m15_del_dia.py caso-eurusd-2026-01-08 caso-eurusd-2026-01-29 caso-eurusd-2026-01-30 caso-eurusd-2026-04-17 caso-eurusd-2026-04-27 caso-eurusd-2026-07-01 caso-eurusd-2026-07-08 caso-eurusd-2026-07-09 caso-eurusd-2026-07-13 caso-eurusd-2026-07-14 caso-eurusd-2026-07-16 caso-eurusd-2026-08-03 caso-eurusd-2026-08-07 caso-eurusd-2026-08-11 caso-eurusd-2026-08-14 caso-eurusd-2026-08-19 caso-eurusd-2026-08-20 caso-eurusd-2026-08-21 caso-eurusd-2026-08-25 caso-eurusd-2026-08-27
 
 ## Estado
 
-PENDIENTE DEL REVISOR (2026-10-18). Fases 0, 1 y 2 hechas: una E (la reentrada en un punto ya llenado, rama Y propuesta) y el resto correcto o R, con sus preguntas para V; las líneas del cierre, preparadas y simuladas (§4).
+LISTA PARA REVISION, NO CERRADA (2026-10-18). Fases 0, 1 y 2 hechas: una E (la reentrada en un punto ya llenado, rama Y propuesta) y el resto correcto o R, con sus preguntas para V (§3); las líneas del cierre, preparadas y simuladas (§4); el revisor, con 1 «bloquea», 4 «importa» y 5 «menor», todos arreglados (§8.1); sin CI de Linux porque la rama no toca la plataforma (§7). El cierre en main solo con la orden de Aleks.
+
+Rama lista para revisión, NO cerrada.

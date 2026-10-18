@@ -22,6 +22,7 @@ SESION = re.compile(r"^== Sesion (\S+):")
 INSTANTE = r"(\d\d:\d\d:\d\dZ \([^)]*\))"
 TRAMO = re.compile(rf"^    {INSTANTE} - {INSTANTE}, (\d+) \| (.*)$")
 CABECERA_GATES = "  gates, en tramos"
+CABECERA_RN004 = "  RN-004, en tramos"
 
 
 def _valor(campo: str) -> str:
@@ -33,32 +34,47 @@ def resumen(fecha: str, sesion: str) -> list[str]:
     salida = [f"== {fecha} {sesion}"]
     if not ruta.exists():
         return [*salida, "  sin traza"]
-    dentro_sesion = dentro_gates = False
+    dentro_sesion = dentro_gates = dentro_rn004 = False
     cuenta: Counter[tuple[str, str, str]] = Counter()
     primero: dict[tuple[str, str, str], str] = {}
     max_zonas = 0
+    tomas: list[tuple[int, int, str]] = []  # tramos de RN-004 en SI / SI / SI, con su pivote
+    reinicios: list[tuple[str, int, int]] = []  # el recuento de RN-009 baja: (desde, antes, ahora)
+    previo: int | None = None
     for linea in ruta.read_text(encoding="utf-8").splitlines():
         m = SESION.match(linea)
         if m:
             dentro_sesion = m.group(1) == sesion
-            dentro_gates = False
+            dentro_gates = dentro_rn004 = False
             continue
         if not dentro_sesion:
             continue
         if linea.startswith(CABECERA_GATES):
-            dentro_gates = True
+            dentro_gates, dentro_rn004 = True, False
             continue
-        if dentro_gates and not linea.startswith("    "):
-            dentro_gates = False
-        if not dentro_gates:
+        if linea.startswith(CABECERA_RN004):
+            dentro_rn004, dentro_gates = True, False
             continue
+        if not linea.startswith("    "):
+            dentro_gates = dentro_rn004 = False
         t = TRAMO.match(linea)
         if t is None:
+            continue
+        if dentro_rn004:
+            valores, pivote = (c.strip() for c in t.group(4).split(" | ")[:2])
+            if valores == "SI / SI / SI":
+                tomas.append((_minuto(t.group(1)), _minuto(t.group(2)), pivote))
+            continue
+        if not dentro_gates:
             continue
         ruido, superan, ventana = (c.strip() for c in t.group(4).split(" | "))
         partes_sup = superan.split(",")
         if len(partes_sup) > 1 and partes_sup[1].strip().isdigit():
-            max_zonas = max(max_zonas, int(partes_sup[1]))
+            n_zc = int(partes_sup[1])
+            max_zonas = max(max_zonas, n_zc)
+            if previo is not None and n_zc < previo:
+                reinicios.append((t.group(1), previo, n_zc))
+            previo = n_zc
         # «NO, sin zona o sin toma» (antes de la toma, o sin caja) no es un cierre libre de gates
         t_ruido = "sin zona" if "sin zona o sin toma" in ruido else _valor(ruido)
         clave = (t_ruido, _valor(superan), ventana)
@@ -73,7 +89,22 @@ def resumen(fecha: str, sesion: str) -> list[str]:
     for clave, n in sorted(cuenta.items(), key=lambda kv: primero[kv[0]]):
         salida.append(f"    {clave[0]} | {clave[1]} | {clave[2]}: {n}, desde {primero[clave]}")
     salida.append(f"  zonas de control, como mucho: {max_zonas}")
+    # el recuento de RN-009 empieza en la toma del escenario vigente (zonas.py, `_anotar_toma`):
+    # cada bajada, ¿coincide con una toma de RN-004 en ese cierre o en el anterior, y de que pivote?
+    salida.append(f"  el recuento de RN-009 vuelve a bajar: {len(reinicios)} veces")
+    for desde, antes, ahora in reinicios:
+        minuto = _minuto(desde)
+        toma = next((p for a, b, p in tomas if a <= minuto <= b or a <= minuto - 1 <= b), None)
+        anterior = next((p for a, b, p in reversed(tomas) if b < minuto - 1), None)
+        salida.append(
+            f"    {desde}: de {antes} a {ahora} | toma de RN-004 en ese cierre o el anterior: "
+            f"{toma or 'NINGUNA'} | la toma anterior: {anterior or '-'}"
+        )
     return salida
+
+
+def _minuto(instante: str) -> int:
+    return int(instante[:2]) * 60 + int(instante[3:5])
 
 
 def main(args: list[str]) -> int:

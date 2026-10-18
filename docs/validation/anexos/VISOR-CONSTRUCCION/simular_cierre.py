@@ -58,9 +58,9 @@ F_NUEVA = (
 ps = cambiar(ps, linea_f, F_NUEVA)
 Y_NUEVA = (
     "Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, "
-    "decisión 1): hoy se marca la zona y no el punto, y vuelven a colocarse 47 órdenes en 22 "
-    "sesiones de la corrida 2 (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la "
-    "corrida 2 repetida."
+    "decisión 1): hoy se marca la zona y no el punto; en la corrida 2, hasta 47 órdenes en 22 "
+    "sesiones van al 0 de una ya llenada (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su "
+    "test y la corrida 2 repetida."
 )
 ps = cambiar(ps, F_NUEVA + "\n", F_NUEVA + "\n\n" + Y_NUEVA + "\n")
 ps = cambiar(
@@ -130,6 +130,8 @@ DEUDAS = [
     "declararlo (VISOR-CONSTRUCCION.md §4.3).",
     "- `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker "
     "(VISOR-CONSTRUCCION.md §4.3).",
+    "- El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los "
+    "ticks empiezan en ventana_inicio y la orden lleva 1 ms antes (VISOR-CONSTRUCCION.md §4.3).",
 ]
 ps = cambiar(
     ps,

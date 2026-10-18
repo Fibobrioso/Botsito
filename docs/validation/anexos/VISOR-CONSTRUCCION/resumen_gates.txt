@@ -5,6 +5,7 @@
     SI | SI | SI, ninguno: 60, desde 07:40:00Z (08:40:00 del trader)
     NO | SI | SI, ninguno: 80, desde 07:48:00Z (08:48:00 del trader)
   zonas de control, como mucho: 34
+  el recuento de RN-009 vuelve a bajar: 0 veces
 == 2026-04-17 07-11
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 30, desde 05:00:00Z (07:00:00 del trader)
@@ -12,6 +13,8 @@
     SI | SI | SI, ninguno: 173, desde 05:43:00Z (07:43:00 del trader)
     NO | SI | SI, ninguno: 13, desde 08:47:00Z (10:47:00 del trader)
   zonas de control, como mucho: 40
+  el recuento de RN-009 vuelve a bajar: 1 veces
+    08:35:00Z (10:35:00 del trader): de 40 a 0 | toma de RN-004 en ese cierre o el anterior: alto 1.17844, formado 05:45:00Z (07:45:00 del trader) | la toma anterior: alto 1.17837, formado 05:00:00Z (07:00:00 del trader)
 == 2026-04-27 11-15
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 76, desde 09:00:00Z (11:00:00 del trader)
@@ -19,6 +22,9 @@
     SI | SI | SI, ninguno: 137, desde 10:27:00Z (12:27:00 del trader)
     SI | SI | NO, ninguno: 1, desde 13:00:00Z (15:00:00 del trader)
   zonas de control, como mucho: 17
+  el recuento de RN-009 vuelve a bajar: 2 veces
+    11:18:00Z (13:18:00 del trader): de 16 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.174, formado 10:30:00Z (12:30:00 del trader) | la toma anterior: bajo 1.17402, formado 08:30:00Z (10:30:00 del trader)
+    11:39:00Z (13:39:00 del trader): de 3 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.17405, formado 11:30:00Z (13:30:00 del trader) | la toma anterior: bajo 1.174, formado 10:30:00Z (12:30:00 del trader)
 == 2026-07-01 11-15
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, detenido_por_cartuchos=hasta_cartuchos_reinicio: 112, desde 09:00:00Z (11:00:00 del trader)
@@ -27,6 +33,7 @@
     SI | SI | SI, ninguno: 121, desde 10:59:00Z (12:59:00 del trader)
     SI | SI | NO, ninguno: 1, desde 13:00:00Z (15:00:00 del trader)
   zonas de control, como mucho: 32
+  el recuento de RN-009 vuelve a bajar: 0 veces
 == 2026-07-09 07-11
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 165, desde 05:00:00Z (07:00:00 del trader)
@@ -34,12 +41,16 @@
     SI | SI | SI, ninguno: 37, desde 07:53:00Z (09:53:00 del trader)
     NO | SI | SI, ninguno: 23, desde 07:55:00Z (09:55:00 del trader)
   zonas de control, como mucho: 15
+  el recuento de RN-009 vuelve a bajar: 1 veces
+    08:02:00Z (10:02:00 del trader): de 4 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.14346, formado 08:00:00Z (10:00:00 del trader) | la toma anterior: bajo 1.1435, formado 07:30:00Z (09:30:00 del trader)
 == 2026-07-14 07-11
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 80, desde 05:00:00Z (07:00:00 del trader)
     SI | NO | SI, ninguno: 18, desde 06:19:00Z (08:19:00 del trader)
     SI | SI | SI, ninguno: 143, desde 06:30:00Z (08:30:00 del trader)
   zonas de control, como mucho: 26
+  el recuento de RN-009 vuelve a bajar: 1 veces
+    06:51:00Z (08:51:00 del trader): de 6 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.1386, formado 06:45:00Z (08:45:00 del trader) | la toma anterior: bajo 1.13872, formado 05:15:00Z (07:15:00 del trader)
 == 2026-07-14 11-15
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 19, desde 09:00:00Z (11:00:00 del trader)
@@ -48,6 +59,8 @@
     NO | SI | SI, ninguno: 71, desde 09:30:00Z (11:30:00 del trader)
     SI | SI | NO, ninguno: 1, desde 13:00:00Z (15:00:00 del trader)
   zonas de control, como mucho: 33
+  el recuento de RN-009 vuelve a bajar: 1 veces
+    10:28:00Z (12:28:00 del trader): de 12 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.13948, formado 10:00:00Z (12:00:00 del trader) | la toma anterior: bajo 1.1399, formado 09:15:00Z (11:15:00 del trader)
 == 2026-07-16 11-15
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 5, desde 09:00:00Z (11:00:00 del trader)
@@ -56,6 +69,9 @@
     NO | SI | SI, ninguno: 47, desde 09:35:00Z (11:35:00 del trader)
     NO | SI | NO, ninguno: 1, desde 13:00:00Z (15:00:00 del trader)
   zonas de control, como mucho: 23
+  el recuento de RN-009 vuelve a bajar: 2 veces
+    10:35:00Z (12:35:00 del trader): de 19 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.14626, formado 09:45:00Z (11:45:00 del trader) | la toma anterior: bajo 1.14634, formado 08:30:00Z (10:30:00 del trader)
+    11:17:00Z (13:17:00 del trader): de 6 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.14592, formado 11:15:00Z (13:15:00 del trader) | la toma anterior: bajo 1.14626, formado 09:45:00Z (11:45:00 del trader)
 == 2026-08-03 07-11
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 48, desde 05:00:00Z (07:00:00 del trader)
@@ -63,6 +79,8 @@
     SI | SI | SI, ninguno: 159, desde 05:54:00Z (07:54:00 del trader)
     NO | SI | SI, ninguno: 11, desde 05:59:00Z (07:59:00 del trader)
   zonas de control, como mucho: 23
+  el recuento de RN-009 vuelve a bajar: 1 veces
+    07:33:00Z (09:33:00 del trader): de 23 a 0 | toma de RN-004 en ese cierre o el anterior: alto 1.15301, formado 07:30:00Z (09:30:00 del trader) | la toma anterior: alto 1.15358, formado 05:00:00Z (07:00:00 del trader)
 == 2026-08-11 07-11
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 22, desde 05:00:00Z (07:00:00 del trader)
@@ -70,6 +88,9 @@
     SI | SI | SI, ninguno: 88, desde 05:34:00Z (07:34:00 del trader)
     NO | SI | SI, ninguno: 85, desde 06:23:00Z (08:23:00 del trader)
   zonas de control, como mucho: 21
+  el recuento de RN-009 vuelve a bajar: 2 veces
+    05:54:00Z (07:54:00 del trader): de 4 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.15402, formado 05:30:00Z (07:30:00 del trader) | la toma anterior: bajo 1.15402, formado 05:00:00Z (07:00:00 del trader)
+    07:46:00Z (09:46:00 del trader): de 21 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.15328, formado 07:00:00Z (09:00:00 del trader) | la toma anterior: bajo 1.15402, formado 05:30:00Z (07:30:00 del trader)
 == 2026-08-19 11-15
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 2, desde 09:00:00Z (11:00:00 del trader)
@@ -77,6 +98,7 @@
     SI | SI | SI, ninguno: 229, desde 09:11:00Z (11:11:00 del trader)
     SI | SI | NO, ninguno: 1, desde 13:00:00Z (15:00:00 del trader)
   zonas de control, como mucho: 50
+  el recuento de RN-009 vuelve a bajar: 0 veces
 == 2026-08-21 11-15
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 153, desde 09:00:00Z (11:00:00 del trader)
@@ -85,6 +107,8 @@
     NO | SI | SI, ninguno: 46, desde 11:46:00Z (13:46:00 del trader)
     NO | SI | NO, ninguno: 1, desde 13:00:00Z (15:00:00 del trader)
   zonas de control, como mucho: 9
+  el recuento de RN-009 vuelve a bajar: 1 veces
+    12:18:00Z (14:18:00 del trader): de 7 a 0 | toma de RN-004 en ese cierre o el anterior: bajo 1.16965, formado 12:00:00Z (14:00:00 del trader) | la toma anterior: bajo 1.17003, formado 11:15:00Z (13:15:00 del trader)
 == 2026-08-25 07-11
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 76, desde 05:00:00Z (07:00:00 del trader)
@@ -92,6 +116,9 @@
     SI | SI | SI, ninguno: 84, desde 06:24:00Z (08:24:00 del trader)
     NO | SI | SI, ninguno: 58, desde 06:30:00Z (08:30:00 del trader)
   zonas de control, como mucho: 17
+  el recuento de RN-009 vuelve a bajar: 2 veces
+    07:07:00Z (09:07:00 del trader): de 9 a 0 | toma de RN-004 en ese cierre o el anterior: alto 1.16579, formado 06:45:00Z (08:45:00 del trader) | la toma anterior: alto 1.16566, formado 05:45:00Z (07:45:00 del trader)
+    07:54:00Z (09:54:00 del trader): de 9 a 0 | toma de RN-004 en ese cierre o el anterior: alto 1.16592, formado 07:30:00Z (09:30:00 del trader) | la toma anterior: alto 1.16579, formado 06:45:00Z (08:45:00 del trader)
 == 2026-08-27 11-15
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     sin zona | NO | SI, ninguno: 175, desde 09:00:00Z (11:00:00 del trader)
@@ -100,6 +127,7 @@
     NO | SI | SI, ninguno: 23, desde 12:08:00Z (14:08:00 del trader)
     SI | SI | NO, ninguno: 1, desde 13:00:00Z (15:00:00 del trader)
   zonas de control, como mucho: 15
+  el recuento de RN-009 vuelve a bajar: 0 veces
 == 2026-07-01 07-11
   cierres por (RN-005 lado de ruido | RN-009 zonas de control > tope | RN-001 en_ventana, detenidos): n, desde
     NO | NO | SI, ninguno: 7, desde 05:00:00Z (07:00:00 del trader)
@@ -109,3 +137,4 @@
     SI | SI | SI, detenido_por_cartuchos=hasta_cartuchos_reinicio: 206, desde 05:17:00Z (07:17:00 del trader)
     sin zona | NO | SI, detenido_por_cartuchos=hasta_cartuchos_reinicio: 1, desde 09:00:00Z (11:00:00 del trader)
   zonas de control, como mucho: 54
+  el recuento de RN-009 vuelve a bajar: 0 veces
