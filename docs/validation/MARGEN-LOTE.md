@@ -1159,8 +1159,10 @@ Resumen: 0 bloquea, 4 importa, 1 menor. Requisitos: 32 hechos (uno de ellos hech
   dicen que el colchón cubre una diferencia de equidad entre el bot y el bróker: los dos leen el
   MISMO margen libre (`Broker.margen_libre()`, al tick) con la misma función, y el ADR dice que la
   respuesta del consultor lo preveía como condicional y no es el caso. El colchón cubre el
-  deslizamiento y el precio entre colocar y llenar. `spec docs --escribir` regenerado (la
-  descripción no entra en el hash: `spec_version` sigue en 18.1.0).
+  deslizamiento y el precio entre colocar y llenar. La redacción nueva de esta descripción y la de
+  a4 cambió el hash de la spec, y `spec_version` subió de 18.1.0 a 18.1.1 (parche), con `spec
+  manifest --escribir` y `spec docs --escribir` (corregido el 2026-10-18 por la orden de cierre:
+  esta frase decía que la descripción no entraba en el hash y que la versión seguía en 18.1.0).
 - **a2 (importa) · arreglado.** §4.b: «102 de las 109 sesiones con órdenes» (104 eran las sesiones
   con rn003 de `patrones.txt`).
 - **a3 (importa) · arreglado.** §4.a, el «antes» de la arrastrada: `volumen_max_lotes` 24 (enero 21,
@@ -1205,3 +1207,42 @@ Resumen: 0 bloquea, 4 importa, 1 menor. Requisitos: 32 hechos (uno de ellos hech
 LISTA PARA REVISION, NO CERRADA (2026-10-18). Fases 0 a 4 hechas; el revisor con sus 8 «importa» y 3 «menor» arreglados o declarados (§9); sin CI de Linux porque la rama no toca la plataforma (§8); las lineas del cierre, preparadas en §6. El cierre en main solo con la orden de Aleks.
 
 Rama lista para revisión, NO cerrada.
+
+## 10 · Orden de cierre del consultor (2026-10-18)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> ORDEN DE CIERRE de trabajo/margen-lote (consultor, 2026-10-18). Revisada la rama entera (MARGEN-LOTE.md, ADR-0081 y el informe del revisor): se cierra. Copia esta orden tal cual al final de MARGEN-LOTE.md, en una sección «## 10 · Orden de cierre del consultor (2026-10-18)», y sigue la skill cerrar-rama (RITUAL.md) cuando Aleks escriba /cerrar-rama.
+>
+> 1. Antes del ritual, en la rama, un commit corto con make check sellado:
+>    - Hallazgo del consultor que el revisor no vio (menor): MARGEN-LOTE.md §9, «Lo que se hizo con los hallazgos del revisor», a1, dice «la descripción no entra en el hash: spec_version sigue en 18.1.0». Contradice a §3.b, a ADR-0081 (Impacto) y a spec_manifest.yaml, que dicen 18.1.1. Corrige esa frase para que diga lo que pasó (la redacción de a1 y a4 cambió el hash y la versión subió a 18.1.1) y comprueba con grep que ninguna otra mención de spec_version del informe contradice a spec_manifest.yaml.
+>    - Lección para el revisor (va a la fila de ERRORES-RECURRENTES): cuando la sesión responde a sus hallazgos cambiando la spec, comprobar que todas las menciones de spec_version del informe coinciden con spec_manifest.yaml; la respuesta a un hallazgo también puede introducir una contradicción.
+>
+> 2. Tag: stable/F37s-margen-lote (el último en HISTORIA es F37r; verifícalo).
+>
+> 3. En el commit del contrato (chore(cierre)), las líneas de §6 de MARGEN-LOTE.md tal como están, con estas precisiones:
+>    - E sale de la Next Action a HISTORIA bajo «# Next Action HECHA · E · …», con su texto literal.
+>    - El heredado 37 sale por el criterio (a), bajo «# Pendiente heredado SALE», con su texto literal y la evidencia de §6.2; y sale también su línea corta de PROJECT_STATE.
+>    - Hoja de ruta: R3.3 HECHA; A.2 sin HER:37; G.3 HECHA con «- **Refs:** —»; R4.1 sin NA:E, con ID:A-57 y «R3.3 (HECHA)». Corre test_hoja_de_ruta.py antes del commit. Si R3.3 HECHA con NA:E y HER:37 en sus Refs lo pone en rojo, deja sus Refs en «ID:A-18 · ID:ADR-0081» y dilo en el informe final.
+>    - F: «O → V. Las re-corridas de R3.1 con el sesgo nuevo (SESGO-H4-COLOR.md §4) y con el límite del lote (MARGEN-LOTE.md §4) están hechas.» V: «de E y O» pasa a «de O», y gana A-57 entre lo que lleva a la sesión 5.
+>    - A gana las dos líneas de §6.5 y §6.6 (la ejecución 2 con MargenAlcanza y la 3 con el instante del margen de una pendiente; y el calendario de noticias, opcional, de Aleks).
+>    - Fila de trabajo/margen-lote en ERRORES-RECURRENTES.md: el revisor (0 bloquea, 8 importa, 3 menor, todos arreglados o declarados, más la duración anómala del make check declarada) y el hallazgo del consultor del punto 1 con su lección.
+>
+> 4. El commit de estado tras el tag solo reemplaza Current Branch, Current Feature, Stable Main State y Last Stable Commit; la Next Action ya cambió en el punto 3.
+>
+> 5. make check sellado y push atómico de main y del tag en un solo comando; Aleks confirma la regla ask con «1. Yes». Si el clasificador niega algún comando, no cambies de vía: PARADA y lo lanza Aleks con «!».
+>
+> 6. CI de main en verde antes de borrar nada; consúltala con gh, nunca con curl ni con un guion. Si sale roja, el arreglo va por una rama corta con su propia orden de cierre, nunca directo a main. Después borra la rama local trabajo/margen-lote (no hubo fix/ remota).
+>
+> 7. Informe final: sha de main, el tag, el run de la CI de main y su resultado, las ramas que quedan (local y remota), el tamaño de PROJECT_STATE en bytes y el resultado de test_hoja_de_ruta.py con las Refs de R3.3 como quedaron.
+
+**Punto 1, hecho en la rama (2026-10-18):** la frase de a1 en §9 dice ahora lo que pasó (la
+redacción de a1 y a4 cambió el hash y `spec_version` subió a 18.1.1). Comprobado con `grep -n
+'spec_version\|18\.1\.\|18\.0\.0' docs/validation/MARGEN-LOTE.md`: quedan §3.b (18.0.0 → 18.1.0 en
+80b0795 y → 18.1.1 en el commit del revisor, que coincide con `spec_manifest.yaml:11`,
+`spec_version: "18.1.1"`), la tabla de §7 (sin cifra) y la fila 24 del informe del revisor pegado tal
+cual («`spec_version` 18.1.0 … 80b0795»), que es verdad para ese commit y no se edita. El tag
+`stable/F37s-margen-lote` no existe todavía y el último de HISTORIA es `stable/F37r-sesgo-h4-color`
+(HISTORIA.md:9671). La lección del punto 1 va a la fila de ERRORES-RECURRENTES en el ritual.
