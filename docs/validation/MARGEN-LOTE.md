@@ -503,7 +503,8 @@ tener a la vez una posición viva y una pendiente stop de otro escenario? **Sí,
 solo:** RN-018 (`operaciones_abiertas_alcanzan`, `primitivas_broker.py:181-185`) cuenta
 POSICIONES vivas y prohíbe `abrir_operacion` cuando llegan al tope, así que no mira pendientes; lo
 que impide la pendiente con posición viva es el `ninguno_de` de RN-011
-(`strategy_spec.yaml:1486-1489`: no prepara una orden si hay `orden_limite_pendiente` u
+(`strategy_spec.yaml:1493-1495` en la rama; :1486-1489 en `main`, antes de las notas nuevas: no
+prepara una orden si hay `orden_limite_pendiente` u
 `operacion_abierta`, los dos hechos del bróker). Con las dos reglas vigentes, el bot nunca tiene una
 pendiente y una posición a la vez, ni dos pendientes. Aun así, el bróker suma el margen de todo lo
 vivo (posiciones y pendientes stop), como pide el punto 3, porque hace de FTMO y no de la spec.
@@ -729,8 +730,10 @@ ticks del minuto ya presentes (la corrida «antes» midió margen en las 437 ór
   consume, `consumido_por: [ADR-0081]`; `firma_tamano_posicion_ratio_aviso`: la respuesta 10 de
   FTMO, G.3) y `parametros.yaml` (`firma_apalancamiento`: la frase de F21 sustituida,
   `consumido_por: [ADR-0081, F33]`); `spec_version` 18.0.0 → **18.1.0** (menor: dos parámetros,
-  ninguna regla cambia de sentido); `spec manifest --escribir` y `spec docs --escribir`;
-  `knowledge validate` sin errores.
+  ninguna regla cambia de sentido; 80b0795) y → **18.1.1** en el commit del revisor (parche: la
+  redacción de dos descripciones, a1 y a4, cambia el hash y `knowledge validate` exige subir la
+  versión); `spec manifest --escribir` y `spec docs --escribir` tras cada cambio; `knowledge
+  validate` sin errores.
 
 ### 3.c Los tests que cambiaron, y cómo se rehicieron sin rebajar lo que comprobaban
 
@@ -775,7 +778,7 @@ parámetro y no se mide cobertura contra ningún umbral.
 | corrida | antes (`main` + campo, §2.c; R1.2 para la arrastrada) | después (ADR-0081) |
 |---|---|---|
 | 2 diaria | `volumen_max_lotes` 96 (18, 24, 20, 34); `precio_invalido` 11 (3, 4, 2, 2) | `volumen_max_lotes` **0**; `precio_invalido` **26** (6, 8, 4, 8) |
-| 1 arrastrada | `volumen_max_lotes` 29 (enero 24, abril 5); `precio_invalido` 4 (3, 1) (R1.2) | `volumen_max_lotes` **0**; `precio_invalido` **2** (enero) |
+| 1 arrastrada | `volumen_max_lotes` 24 (enero 21, abril 3); `precio_invalido` 1 (abril) (R1.2, `anexos/SESGO-H4-COLOR/arrastrada…txt`) | `volumen_max_lotes` **0**; `precio_invalido` **2** (enero) |
 | órdenes, diaria | 437: cancelada 224, llenada 106, rechazada 107 | **504**: cancelada 299, llenada **179**, rechazada 26 |
 | órdenes, arrastrada | 126: cancelada 65, llenada 36, rechazada 25 | **124**: cancelada 76, llenada **46**, rechazada 2 |
 | no enviadas por el bot | — | **0** en las dos (ningún lote por debajo del mínimo; `lote_si_no_cabe = limitar`) |
@@ -798,7 +801,7 @@ colocada y llenada donde antes había un rechazo). Nada se ajusta: es la cifra.
 | agosto | 126 | 27 | 0 | 61 | 38 |
 | **total** | **504** | **165 (33 %)** | **0** | **235 (47 %)** | **104 (21 %)** |
 
-**339 órdenes de 504 (67 %) salen con el lote limitado**, en 102 sesiones de 104 con órdenes. El
+**339 órdenes de 504 (67 %) salen con el lote limitado**, en 102 de las 109 sesiones con órdenes. El
 volumen nunca muerde solo: cuando el lote del riesgo pasa de 50 lotes (stop < 1 pip), el margen a
 1:30 también lo corta y más abajo (`volumen+margen`: 104); el margen solo, 235. Es lo que FTMO-P-D1.md
 §2 anticipaba («el margen manda antes que el volumen») y la medida 2 contaba antes del cambio (278
@@ -855,6 +858,16 @@ encargo, se dice y se explica por sesión, y no se ajusta nada:
 
 La medida no habilita nada (ADR-0070 §3) y no cambia ninguna decisión de ADR-0081.
 
+**La corrida 1 (arrastrada) también cambia de parejas y de precisión**, y se explica igual
+(hallazgo b4 del revisor): antes 1 pareja, cobertura 1/198 (0,5 %), precisión 1/32 (3,1 %; enero
+1/29, abril 0/3); después **2 parejas**, cobertura 2/198 (1,0 %), precisión 2/44 (4,5 %; enero 2/42,
+abril 0/2). `patrones.py` sobre las dos arrastradas: la pareja de antes (2026-01-09 07-11) sigue, y
+**la nueva es 2026-01-14 07-11, la misma sesión que gana pareja en la diaria y que antes tenía su
+orden rechazada por `volumen_max_lotes`** (R1.2: enero 21 rechazos por volumen en la arrastrada).
+Las 12 operaciones puntuables de más son órdenes que antes no vivían. Con la cuenta arrastrada la
+corrida sigue cortando en enero (la cuenta se suspende y los demás meses apenas operan: 46 llenadas
+frente a 179 de la diaria), como en R3.1 y R1.2; nada de eso cambia aquí.
+
 ### 4.e La corrida 3 (a35-inicio) y el determinismo
 
 La otra lectura de A-35 con la cuenta diaria da, como en R3.1 y R1.2, **las mismas parejas, cobertura
@@ -877,8 +890,10 @@ pregunta se formula con la cuenta y sus límites (50 lotes, 1:30) y sin ninguna 
 VIABILIDAD-COMISION.md. **Lo que encontró la búsqueda** (§1.f): ninguna frase del trader habla del
 lote que no cabe; las dos citas (`ev-v4-002457-5a2e88c6`, `ev-v4-012900-8ef676ed`) dicen lo que hizo
 con el lote en su prueba de fondeo, y la propia pregunta lo declara como respaldo débil. Sustituye
-y amplía la pregunta 2 de la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md
-§4.5 (que solo hablaba del máximo de 50 lotes). La respuesta entra como `RESOLVE_UNKNOWN` sobre
+y amplía al margen la pregunta de la lista «Para el cuestionario de la sesión 5» de
+CORRIDA-CONSTRUCCION.md §4.5 que dice «El lote que no cabe: ¿qué hace el trader en su cuenta real
+cuando el stop es tan pequeño que el lote del 0,5 % pasa del máximo de la firma (50 lotes)?»
+(citada por su texto, como pide D1: solo hablaba del máximo de 50 lotes). La respuesta entra como `RESOLVE_UNKNOWN` sobre
 A-57 (ADR-0022); si el trader dice «no entro», `lote_si_no_cabe` pasa a `no_operar` por `feedback
 apply`, y el camino ya existe y está probado.
 
@@ -920,11 +935,17 @@ Aleks. Todas con la conformidad del consultor (respuesta a la PARADA, puntos 6 y
      registradas» (el 37 ya está decidido).
    - G.3 pasa a HECHA y pierde `HER:27` de sus Refs (el 27 sigue vivo en A.2): «- **Estado:** HECHA
      (`trabajo/margen-lote`): la descripción de `firma_tamano_posicion_ratio_aviso` dice lo que
-     respondió FTMO (respuesta 10).» Refs: `(sin heredado; HER:27 sigue en A.2)` o vacío.
+     respondió FTMO (respuesta 10).» Su línea de Refs queda SIN ninguna referencia (`- **Refs:** —`):
+     `test_hoja_de_ruta.py` lee todas las referencias del bloque, así que escribir «HER:27 sigue en
+     A.2» en cualquier parte del bloque lo pondría en rojo (hallazgo b1 del revisor).
    - R4.1: quitar `NA:E` de los Refs y «R3.3 (NA:E)» → «R3.3 (HECHA)» en «Depende de»; añadir
      `ID:A-57` a los Refs y, en «Qué es», «…; y A-57 (el lote que no cabe, MARGEN-LOTE.md §5)».
-4. **PROJECT_STATE, Next Action**: F pasa de «E → O → V» a «O → V»; en V, «Depende de R1.1, de R3.1,
-   de E y O, …» → «de O, …» y gana «A-57 (el lote que no cabe, MARGEN-LOTE.md §5)» entre lo que lleva
+4. **PROJECT_STATE, Next Action**: F pasa de «E → O → V. La re-corrida de R3.1 con el sesgo nuevo ya
+   está hecha (SESGO-H4-COLOR.md §4); si E cambia lo que simula, su encargo decide si hace falta
+   otra.» a «O → V. Las re-corridas de R3.1 con el sesgo nuevo (SESGO-H4-COLOR.md §4) y con el límite
+   del lote (MARGEN-LOTE.md §4) están hechas.» (la coletilla de E ya no es presente: E cambió lo que
+   simula y su re-corrida está hecha; hallazgo b2 del revisor). En V, «Depende de R1.1, de R3.1, de
+   E y O, …» → «de O, …», y gana «A-57 (el lote que no cabe, MARGEN-LOTE.md §5)» entre lo que lleva
    a la sesión 5.
 5. **Una línea para A**: «La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza`
    (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4)».
@@ -967,6 +988,13 @@ Aleks. Todas con la conformidad del consultor (respuesta a la PARADA, puntos 6 y
 - Los tests sintéticos del bróker colocan desde el segundo 10, no el 0, porque al colocar hace falta
   un precio con el que convertir el margen (§3.a).
 - La medida de noticias quedó sin fuente (`corpus/noticias/` no existe): línea para A (§6.6).
+- «Tests primero, en rojo sobre el código de main»: los 17 tests se corrieron en rojo sobre el
+  código de la fase 1 (`main` más el campo de salida, 44f31fb), no sobre `main` puro: sobre `main`
+  el módulo ni siquiera importa (`margen_requerido` nació en la fase 1) y el recuento sería un error
+  de colección, no FAILED. El recuento que vale es 16 FAILED y 1 passed (§3.a).
+- El ADR-0081 y la `## Estado` del informe: el ADR se escribió antes del código (arriba) y la fase
+  4 se corrió entre el 2026-10-17 y el 2026-10-18 según el reloj de la máquina; las filas de
+  HOLDOUT-EXPOSICIONES llevan el día en que se escribieron (todas el 2026-10-17, antes de correr).
 - «Agosto sale del xlsx que el trader ya no da por bueno» (encargo, 4.c) se escribe en el informe
   como lo sostiene ADR-0073: el trader da por bueno el backtest en vídeo; que el xlsx sea el otro es
   lectura de la sesión (h1).
@@ -993,6 +1021,187 @@ La rama **no toca hooks, rutas ni el sistema de archivos** (ni `.claude/`, ni `s
 Toda consulta de la CI de esta rama se hizo con `gh run view` (§0); ninguna con `curl` ni con un
 guion.
 
+
+## 9 · El revisor
+
+Agente `revisor` (opus) sobre la rama el 2026-10-18, con los dos ejes y el encargo del punto 7
+(ninguna consulta de la CI con `curl` ni con un guion). Se quedó parado una vez (600 s sin progreso)
+y se reanudó; su informe, pegado tal cual (nada cita un tramo no citable; 0 retiradas):
+
+### Informe del revisor · trabajo/margen-lote · 2026-10-18
+
+Revisé el árbol de trabajo tal como estaba: HEAD 80b0795, más el commit de la fase 4 estadiado. Su `make-check.log` ya trae `SELLO: make check en verde sobre el arbol cb07ea1d…` y `PICO DE MEMORIA … 295 MiB`. No he editado nada.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 4 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | ADR-0081 y la descripción de `lote_margen_libre_fraccion` dicen que el colchón de 0,95 cubre «la diferencia entre la equidad que ve el bot (la cuenta, por marcas de minuto) y la que ve el bróker (al tick)». El código no hace eso: el bot limita con el MISMO margen libre del bróker, al tick, así que esa diferencia no existe. Afirman algo que el código no sostiene. La respuesta 1 del consultor lo planteaba como condicional («Si el bot ve…»). | `docs/adr/0081-…md:49-51`; `knowledge/spec/parametros.yaml:1840-1842`; `src/botsito/engine/primitivas_broker.py:540` (`disponible = ctx.broker.margen_libre() * …`) |
+| a2 | importa | §4.b dice «339 órdenes … en 102 sesiones de **104** con órdenes». La salida da **109** sesiones con órdenes (31/31/18/29). 104 es el número de sesiones con rn003 de `patrones.txt`, otra cosa. | `docs/validation/MARGEN-LOTE.md:801`. Comando: `grep -E "^\[DIAG[^ ]* 2026-[0-9-]+ \| [0-9]{2}-[0-9]{2} \| o[0-9]+ \|" diaria…txt \| cut -d' ' -f2-4 \| sort -u \| wc -l` → `109`; por mes → `31 2026-01, 31 2026-04, 18 2026-07, 29 2026-08` |
+| a3 | importa | §4.a, el «antes» de la arrastrada: el informe pone `volumen_max_lotes 29 (enero 24, abril 5); precio_invalido 4 (3, 1) (R1.2)`. La salida de R1.2 da volumen **24** (enero 21, abril 3) y precio **1** (abril). Esas cifras sí cuadran con «rechazada 25» de la fila de abajo de la misma tabla; 29+4=33 no. | `MARGEN-LOTE.md:778`; `anexos/SESGO-H4-COLOR/arrastrada…txt`, «### Rechazos por motivo»: `2026-01 \| volumen_max_lotes \| colocar \| 21`, `2026-04 \| precio_invalido \| colocar \| 1`, `2026-04 \| volumen_max_lotes \| colocar \| 3` |
+| a4 | importa | El recuadro de ADR-0026 corrige el «F21 lo comprueba», que era falso, y cae en el mismo patrón: «la ejecución 2 de la demo **comprueba** la fórmula con `MargenAlcanza`», en presente. La ejecución 2 aún no ha ocurrido (será del 26 al 30 de octubre). Lo mismo en `parametros.yaml`. ADR-0081, Impacto, sí lo deja como «Queda para A». | `docs/adr/0026-…md:130`; `knowledge/spec/parametros.yaml:1878`; `PROJECT_STATE.md:49` |
+| a5 | menor | Comentarios que se quedaron viejos: «las cuatro ultimas columnas» y «Las cinco ultimas son SOLO salida», cuando ya son siete. Y el docstring de `fase4_medidas.py` dice «El riesgo entero se lee del registro», pero el guion no lee el registro: cuenta `limite = ninguno`. | `src/botsito/engine/cableado.py:758` y `:801`; `docs/validation/anexos/MARGEN-LOTE/fase4_medidas.py:9-12` |
+| a6 | menor | La corrección de §1.i cita el `ninguno_de` de RN-011 en `strategy_spec.yaml:1486-1489`. En el árbol de la rama está en :1493-1495; las notas nuevas de RN-011 desplazaron siete líneas. | `MARGEN-LOTE.md:506`; `knowledge/spec/strategy_spec.yaml:1493-1495` |
+
+Comprobado sin hallazgos:
+- **Contrato:** `uv run python scripts/contrato_rama.py` → `CONTRATO: 41 ficheros dentro del contrato de trabajo/margen-lote (riesgo alto, artefacto docs/validation/MARGEN-LOTE.md, tramo 'R3', 5 comprobaciones para el revisor)`, exit 0.
+- **pytest del contrato** (los seis ficheros): todo en verde, la regresión de agosto con 3 tests (hay `data/`).
+- **Más pytest:** `test_margen_lote`, `test_cableado`, `test_vida_de_la_orden`, `test_racha_perdidas`, `test_kit`, `test_hoja_de_ruta`, `test_project_state`, `test_adr` y `test_historia` → `127 passed`. `test_spec_docs_generados`, `test_perfil_cuenta`, `test_hoja_preguntas`, `test_reabrir_y_fuente_documental` y `test_no_business_literals` → `78 passed`.
+- **`knowledge validate`**, sin redirigir: todo OK o AVISO de siempre y 0 errores (`OK: 530 documentos: todo id citado existe…`, `57 ambiguedades`). `spec docs`, sin `--escribir`: `OK: docs/spec coincide con knowledge/spec/`.
+- **Lo que escribe** (`--escribir`, `make check`): no lo ejecuté.
+  - Evidencia: `make-check.log` con `SELLO … cb07ea1d…` y `PICO DE MEMORIA … 295 MiB`.
+  - Los commits ya hechos pasaron el `pre-commit`, que exige el sello.
+- **Trailer `Fuente:`:** el único commit que toca `knowledge/spec` es 80b0795, y lleva `Fuente: ADR-0081` en el cuerpo. El id existe.
+- **Holdout y regímenes de cambio:** `git diff --name-status main -- knowledge/cases knowledge/evidence knowledge/feedback data/manifests knowledge/corpus` sale vacío. No hay feedback ni evidencia nuevos, así que el punto 10 no aplica.
+- **HOLDOUT-EXPOSICIONES:** solo tres filas añadidas, fases 0, 1 y 4, cada una con el M1 entero de marzo y de junio para calentar. La fila de la fase 4 tiene mtime 23:45:18; las corridas empezaron hacia las 23:45:20 (fin menos TIEMPO).
+- **Ambigüedades:** A-57 entra en el mismo commit en `ambiguedades.yaml`, `docs/spec/ambiguedades.md` y la tabla de PROJECT_STATE. Las dos citas de relleno las decidió el consultor (respuesta 4) y la propia pregunta las declara débiles.
+- **ADR:** `## Estado` de ADR-0081 empieza por `ACTIVE`. Los recuadros de ADR-0026, 0052 y 0053 solo añaden líneas `>`, con fecha y rama.
+- **Informes cerrados:** ningún `docs/validation/*.md` cerrado cambia.
+- **Las tres guardias de una `cita`:** no aplican; no hay ningún sitio nuevo con `cita`.
+- **Cifras en la forma:** las cifras van en el registro (`lote_margen_libre_fraccion`), no en el código.
+- **PROJECT_STATE y HISTORIA:** PROJECT_STATE en 23.736 bytes (main 23.396). HISTORIA solo crece (+192, 0 líneas quitadas).
+- **Cifras del informe contra sus anexos:** coinciden `stops_cortos.txt` (las dos lecturas), `medida_2.txt`, `fase4_medidas.txt`, `patrones.txt` frente a SESGO-H4-COLOR §4.3 y los rechazos y órdenes de la diaria y de a35-inicio, antes y después.
+- **«Solo añade salida» (§2.c):** el diff entre `antes-diaria` y la diaria de SESGO solo difiere en las líneas 1180-1617 (la sección «### Ordenes»). Sin las columnas nuevas, solo cambia la cabecera.
+- **Los 16 `precio_invalido` nuevos:** 14 caen en el mismo instante que un rechazo por volumen de antes; las otras cuentas (26 = 11 − 1 + 16) también cuadran.
+- **Las 6 parejas nuevas:** las seis sesiones tenían un rechazo por volumen y no se pierde ninguna pareja (comparados los T0 de los dos `patrones.txt`).
+- **Tres citas del informe contra su fuente:** el texto literal del heredado 37 (HISTORIA:9272), la respuesta 10 de FTMO (FTMO-REGLAS.md:236) y los T0/P de SESGO §4.3.
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 4 importa, 1 menor. Requisitos: 32 hechos (uno de ellos hecho de otra forma), 4 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base, CI con `gh`, ninguna otra rama | Hecho | MARGEN-LOTE.md §0 |
+| 2 | Skill `abrir-rama`: encargo, contrato, Archivo 35 | Hecho | ecd88d8 |
+| 3 | Informe y anexos en sus rutas | Hecho | stat del diff |
+| 4 | D1: limitar y operar, PROVISIONAL, pregunta citada por su texto | Hecho | ADR-0081:18-38 |
+| 5 | El bróker rechaza por margen | Hecho | `broker.py` `_margen_infringido`, `_colocar`, `_aplicar(LLENADA)`, `abrir_conocida` |
+| 6 | Medida 1 (stops) | Hecho | stops_cortos.txt; §2.b |
+| 7 | Medida 1 (noticias) | Hecho de otra forma, declarado | sin fuente; `corpus/noticias/` no existe; línea para A (§6.6), como permite el «Además» 2 |
+| 8 | Medida 2 sobre `main`, con las dos cifras | Hecho | §1.e y §2.c |
+| 9 | D2: el menor de tres × 0,95, al paso | Hecho | `broker.py` `limitar_lote` |
+| 10 | D2: lote mínimo → PARADA → «no se opera» y recuadro en ADR-0053 | Hecho | `primitivas_broker.py` `redondear_lote`; ADR-0053, recuadro |
+| 11 | D3: fórmula, colocar y llenar, frase de MT5, recuadro en ADR-0052 | Hecho | §1.b; ADR-0052, recuadro |
+| 12 | Saldo como callable, obligatorio si hay apalancamiento (respuesta 2) | Hecho | `broker.py` (`if reglas.apalancamiento is not None and saldo is None`); `test_margen_lote.py:92-100` y `:324-331` |
+| 13 | D4: los dos parámetros (`ejecucion`) | Hecho | parametros.yaml |
+| 14 | D5: A-57, búsqueda en el corpus, tabla de PROJECT_STATE | Hecho | ambiguedades.yaml; PROJECT_STATE.md |
+| 15 | D6: ADR-0081 con sus citas | Hecho | ADR-0081 §1-§5 |
+| 16 | D6: `firma_apalancamiento` en el perfil y en parametros.yaml | Hecho (ver a4) | diff del perfil y de parametros |
+| 17 | G.3 | Hecho | perfil, `firma_tamano_posicion_ratio_aviso` |
+| 18 | D7: Swing, con fecha | Hecho | ADR-0081 §7 |
+| 19 | Lo que no cambia (geometría, script 1.1, informes cerrados, guardias, Makefile) | Hecho | diff; `contrato_rama.py` OK |
+| 20 | Fase 0, a-g, y PARADA | Hecho | §1 |
+| 21 | Fase 1: campo, test en los dos sentidos, sello, corrida «antes», fila, determinismo | Hecho | 44f31fb, ddb51c6; §2 |
+| 22 | Fase 2: tests en rojo con el recuento de FAILED | Hecho (recuento no verificado) | §3.a |
+| 23 | Respuesta 3: un test de la reubicación (cancelar libera antes del lote nuevo, en el mismo cierre) | Parcial | ver b3 |
+| 24 | Fase 3: `spec_version` 18.1.0, manifest, docs, `Fuente:` | Hecho | 80b0795 |
+| 25 | Fase 4: los tres comandos, con su fila antes | Hecho | anexos/README.md; fila de HOLDOUT |
+| 26 | Rechazos por motivo antes y después | Parcial | a3 (arrastrada) |
+| 27 | Órdenes limitadas y por qué límite | Hecho (ver a2) | §4.b |
+| 28 | Riesgo efectivo | Hecho | §4.c; fase4_medidas.txt |
+| 29 | T0 y P1-P7 frente a §4.3 | Hecho | §4.d |
+| 30 | Si cambian parejas o precisión, se dice y se explica por sesión | Parcial | ver b4 |
+| 31 | «Líneas preparadas para el commit del contrato» | Parcial | ver b1 y b2 |
+| 32 | Línea de A con el texto de la respuesta 6 | Hecho | §6.5 |
+| 33 | «Además» 1: corrección de §1.i y la respuesta sobre `operaciones_simultaneas_max` | Hecho | MARGEN-LOTE.md:499-509 |
+| 34 | «Además» 3: determinismo en las fases 1 y 4 | Hecho (no verificable) | §2.d y §4.e |
+| 35 | CI solo con `gh run view`, ni curl ni guion | Hecho | ver nota abajo |
+| 36 | Punto 8: lista de ficheros cambiados | Hecho | §8 |
+| 37 | «Lo que necesito que decidas», la respuesta copiada en los dos sitios y la tabla punto por punto | Hecho | §1 y §1.k; encargo:108-142; §7 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | La línea preparada para G.3 propone como Refs «`(sin heredado; HER:27 sigue en A.2)` o vacío». La primera opción **pone en rojo `test_hoja_de_ruta.py`**. `problemas_b` lee todas las referencias del bloque, no solo la línea Refs. `HER:27` casa con `REF`, y G.3 pasaría a HECHA con el heredado 27 vivo → «esta HECHA y el heredado sigue vivo». Con la opción «vacío» pasa. El resto de las líneas de §6 sí lo dejan en verde: R3.3 HECHA con NA:E (si HISTORIA escribe `# Next Action HECHA · E ·`) y HER:37 (fuera); A.2 sin HER:37 y con HER:27; R4.1 sin NA:E e ID:A-57 existe; no hay otro `NA:E` en la hoja. PROJECT_STATE se queda por debajo de 25.000. | `MARGEN-LOTE.md:923`; `tests/unit/test_hoja_de_ruta.py:33`, `:141`, `:150-153`; `docs/plan/HOJA-DE-RUTA.md:344` |
+| b2 | importa | §6.4 solo cambia «E → O → V» por «O → V» en F. La misma línea sigue diciendo «si E cambia lo que simula, su encargo decide si hace falta otra», y eso deja de ser presente: E ya cambió lo que simula y la re-corrida está hecha (§4). Ningún test lo caza, porque no hay palabra de dependencia. | `PROJECT_STATE.md:32`; `MARGEN-LOTE.md:926` |
+| b3 | importa | La respuesta 3 pide que un test compruebe el orden en la reubicación de ADR-0074: cancelar la orden vieja libera su margen ANTES de calcular el lote de la nueva, en el mismo cierre. El test que hay solo prueba en el bróker que cancelar libera margen, con colocar y cancelar a mano en milisegundos distintos. No pasa por `reubicar_orden_limite` ni por RN-011, y aun así su docstring dice que «es la reubicacion de ADR-0074». | `tests/unit/test_margen_lote.py:144-158`; `src/botsito/engine/primitivas_broker.py:749-755` |
+| b4 | importa | En la corrida 1 (arrastrada) cambian las parejas y la precisión, y el informe no lo dice ni lo explica por sesión, como pide la fase 4. Antes: parejas 1, precisión 1/32 (enero 1/29, abril 0/3). Después: parejas 2, precisión 2/44 (enero 2/42, abril 0/2). §4 solo explica la diaria y la a35-inicio. | «### Resumen por mes» de `anexos/SESGO-H4-COLOR/arrastrada…txt` y de `anexos/MARGEN-LOTE/arrastrada…txt`; MARGEN-LOTE.md §4.a-§4.e |
+| b5 | menor | D1 pide citar la pregunta «por su texto, no por su número». ADR-0081 lo hace por el texto, pero §5 del informe dice «Sustituye y amplía la pregunta 2 de la lista». | `MARGEN-LOTE.md:880`; ADR-0081:36-38 |
+
+**Nota sobre el punto 7 (CI):** en el informe, los anexos y los mensajes de commit de la rama, la única consulta de CI es `gh run view 39083113877`; no aparece `curl`, `check-runs` ni `api.github`. Comando: `git log --format='%B' main..HEAD | grep -niE "curl|gh run|check-runs|api.github"` y `grep` sobre `MARGEN-LOTE.md` y los anexos.
+
+#### Lo que no pude comprobar
+- **«16 FAILED, 1 passed» de la fase 2:** exige correr los tests sobre el código de la fase 1 en un clon `git worktree`, y eso escribe.
+- **Determinismo (§2.d y §4.e):** las copias de fuera del repo no están commiteadas, así que no puedo recalcular los sha256.
+- **El orden exacto «fila antes de correr» de la fase 1:** la fila se commiteó a las 22:55 y la corrida acabó a las 22:26; el mtime de HOLDOUT ya no es el de entonces. Para la fase 4 los mtimes son coherentes.
+- **Las frases de MT5 y de la FAQ de FTMO** (páginas web) y **los recuentos de `kb find`** (4.631 ocultos): no reabrí la web ni el corpus.
+- **Que la sesión no usara curl fuera de lo escrito:** solo puedo revisar el repo y el historial, no su historial de comandos.
+- **`make-check.log` marca una duración anómala:** `DURACION de make check: 28031 s; … knowledge 27263`. El sello está, pero conviene saber por qué el paso `knowledge` marca 7,5 h.
+- **El sello de cada commit anterior:** no hay registro por commit; lo garantiza el hook `pre-commit`.
+
+#### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `uv run pytest tests/unit/test_broker.py tests/unit/test_broker_ordenes_stop.py tests/unit/test_be_al_tick.py tests/unit/test_peticiones.py tests/unit/test_perfil_cuenta.py tests/regression/test_cuenta_7_de_agosto.py -q` (y en `-v`)
+4. `uv run pytest tests/unit/test_margen_lote.py tests/unit/test_cableado.py tests/unit/test_vida_de_la_orden.py tests/unit/test_racha_perdidas.py tests/unit/test_kit.py tests/unit/test_hoja_de_ruta.py tests/unit/test_project_state.py tests/unit/test_adr.py tests/unit/test_historia.py`
+5. `uv run botsito knowledge validate` (con `| head`, `| tail` y `| grep -ci error`)
+6. `uv run botsito spec docs --help` y `uv run botsito spec docs`
+7. `uv run pytest tests/contract/test_spec_docs_generados.py tests/unit/test_perfil_cuenta.py tests/unit/test_hoja_preguntas.py tests/unit/test_reabrir_y_fuente_documental.py tests/contract/test_no_business_literals.py`
+8. Read y grep de `make-check.log`
+9. `git log --format='%h%n%B----' main..HEAD -- knowledge/spec knowledge/cases`
+10. `git diff --name-status main -- knowledge/cases knowledge/evidence knowledge/feedback data/manifests knowledge/corpus`; `git diff --cached --name-status`; `git diff --name-status`
+11. `git diff main -- docs/validation/HOLDOUT-EXPOSICIONES.md`
+12. `ls -la --time-style=full-iso` de los anexos; `git log --format='%h %ad %cd %s' --date=iso main..HEAD`
+13. `cat fase4_medidas.txt medida_2.txt stops_cortos.txt`
+14. `grep` de secciones, órdenes, sesiones, rechazos y «### Resumen por mes» en las salidas de MARGEN-LOTE y de SESGO-H4-COLOR
+15. `grep -E "^T0"` en los dos `patrones.txt`
+16. `wc -l` y `diff` de las dos diarias «antes», entero y con `cut -d'|' -f1-8`
+17. `git diff main --` sobre: los ADR 0026/0052/0053 y su README; parametros, perfil, strategy_spec y manifest; ambigüedades y PROJECT_STATE; broker.py, primitivas_broker.py, simulacion.py y cableado.py; los tests rehechos
+18. `git show 44f31fb -- src/botsito/engine/primitivas_broker.py` y `git show --stat` de los commits de la rama
+19. `wc -c PROJECT_STATE.md`; `git show main:PROJECT_STATE.md | wc -c`; `git diff main -- docs/state/HISTORIA.md`
+20. Grep de `NA:E`, `HER:37` y `HER:27` en HOJA-DE-RUTA.md; grep de `curl` y `gh run` en el informe y el historial; grep de números de línea para la evidencia
+21. Read de: el encargo, el contrato, MARGEN-LOTE.md, ADR-0081, test_margen_lote.py, test_hoja_de_ruta.py, la hoja de ruta (R3.3, R4.1, A.2, G.3), PROJECT_STATE (Next Action), HISTORIA:9272, FTMO-REGLAS.md:225-245, SESGO-H4-COLOR.md §4.3, stops_cortos.py, fase4_medidas.py, el README de los anexos, primitivas_broker.py:690-770 y strategy_spec.yaml:1486-1499
+22. `git log -3`, `git status --short` y `tail -3 make-check.log` (para el sello de la fase 4)
+
+### Lo que se hizo con los hallazgos del revisor
+
+- **a1 (importa) · arreglado.** ADR-0081 §2 y la descripción de `lote_margen_libre_fraccion` ya no
+  dicen que el colchón cubre una diferencia de equidad entre el bot y el bróker: los dos leen el
+  MISMO margen libre (`Broker.margen_libre()`, al tick) con la misma función, y el ADR dice que la
+  respuesta del consultor lo preveía como condicional y no es el caso. El colchón cubre el
+  deslizamiento y el precio entre colocar y llenar. `spec docs --escribir` regenerado (la
+  descripción no entra en el hash: `spec_version` sigue en 18.1.0).
+- **a2 (importa) · arreglado.** §4.b: «102 de las 109 sesiones con órdenes» (104 eran las sesiones
+  con rn003 de `patrones.txt`).
+- **a3 (importa) · arreglado.** §4.a, el «antes» de la arrastrada: `volumen_max_lotes` 24 (enero 21,
+  abril 3) y `precio_invalido` 1 (abril), leídos de `anexos/SESGO-H4-COLOR/arrastrada…txt`; las
+  cifras que había eran las de R3.1 (CORRIDA-CONSTRUCCION.md §3.12), no las de R1.2.
+- **a4 (importa) · arreglado.** El recuadro de ADR-0026 y la descripción de `firma_apalancamiento`
+  en `parametros.yaml` dicen «comprobará» con la fecha (ejecución 2, del 26 al 30 de octubre de
+  2026, entrada A). La línea A de PROJECT_STATE (:49) no es de esta rama y ya está en futuro.
+- **a5 (menor) · arreglado.** Los dos comentarios de `cableado.py` dicen «siete» y el docstring de
+  `fase4_medidas.py` dice lo que hace (cuenta `limite = ninguno`; no lee el registro).
+- **a6 (menor) · arreglado.** §1.i cita `strategy_spec.yaml:1493-1495` en la rama (:1486-1489 en
+  `main`).
+- **b1 (importa) · arreglado.** §6.3: la línea de Refs de G.3 queda sin ninguna referencia, y se
+  dice por qué (el test lee todas las referencias del bloque).
+- **b2 (importa) · arreglado.** §6.4: la línea F entera, sin la coletilla de E.
+- **b3 (importa) · arreglado.** Test nuevo en `tests/unit/test_margen_lote.py`,
+  `test_en_la_reubicacion_la_cancelacion_libera_el_margen_antes_del_lote_nuevo_en_el_mismo_cierre`:
+  pasa por las primitivas reales (`colocar_orden_limite` con la orden stop, `reubicar_orden_limite`
+  con `orden_limite_nace = al_aparecer_punto_de_breaker`, que cancela, y `colocar_orden_limite` de
+  nuevo, todo en el MISMO `instante_ms`): la segunda orden se dimensiona con el margen libre entero
+  (la reserva de la primera ya liberada) y sale con el mismo lote que la primera; y, de control, una
+  tercera colocada con la segunda viva sale con menos margen libre y menos lote. El docstring del
+  test del bróker ya no dice que «es la reubicación»: dice que es la pieza del bróker, y remite al
+  nuevo.
+- **b4 (importa) · arreglado.** §4.d: la arrastrada también cambia (1 → 2 parejas; precisión 1/32 →
+  2/44) y la pareja nueva es 2026-01-14 07-11, la misma sesión que gana pareja en la diaria y que
+  tenía su orden rechazada por volumen.
+- **b5 (menor) · arreglado.** §5 cita la pregunta por su texto.
+- **La duración anómala de `make-check.log` (28.031 s; `knowledge` 27.263 s) · declarada, no
+  medida.** Ese `make check` (el de la fase 4) se lanzó hacia las 23:50 del 2026-10-17 y terminó a las
+  07:49 del 2026-10-18 según el reloj de la máquina; `test` tardó 765 s y `knowledge` marca 7,5 h.
+  Lo más probable es que la máquina estuviera suspendida durante la noche y el paso `knowledge`
+  cargara con el tiempo de pared; no se midió (no hay registro de la suspensión en el repo). El
+  sello es válido (verde, árbol `cb07ea1d…`); el `make check` del commit siguiente, que recoge
+  estos arreglos, da la duración normal.
+- **Lo que el revisor no pudo comprobar** queda así: el «16 FAILED, 1 passed» está en §3.a y en el
+  mensaje del commit 80b0795, medido por la sesión sobre el árbol de 44f31fb (no en un clon); los
+  sha256 del determinismo están en §2.d y §4.e; las frases de MT5 y de la FAQ en §1.b y §1.d.
+
 ## Estado
 
-EN CURSO · fases 1 a 4 hechas (2026-10-17/18); falta el revisor (§9) y la entrega.
+LISTA PARA REVISION, NO CERRADA (2026-10-18). Fases 0 a 4 hechas; el revisor con sus 8 «importa» y 3 «menor» arreglados o declarados (§9); sin CI de Linux porque la rama no toca la plataforma (§8); las lineas del cierre, preparadas en §6. El cierre en main solo con la orden de Aleks.
+
+Rama lista para revisión, NO cerrada.

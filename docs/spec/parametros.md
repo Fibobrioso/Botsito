@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.1.0` · hash `e6c08ed81a66…`
+`spec_version 18.1.1` · hash `125ebe1b4081…`
 
 109 en total: 93 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -314,7 +314,7 @@ Opciones: `ftmo`, `fundednext`.
 
 ### `firma_apalancamiento`
 
-apalancamiento del tipo Swing en forex (el Standard admite mas). Limita el lote: el margen es lotes x instrumento_contrato x precio / este numero, y con riesgo_por_operacion sobre la cuenta un stop muy corto pide mas margen del que hay (ADR-0026, impacto; FTMO-P-D1.md §2: con todo el saldo caben 27,27 lotes a 1,10). Lo comprueba el BROKER SIMULADO desde ADR-0081 (2026-10-17): rechazo `margen_libre` al colocar y al llenar, y el bot limita el lote al que cabe (lote_margen_libre_fraccion). Hasta entonces nadie lo comprobaba («F21 lo comprueba con la distribucion real de cajas» no era verdad). La ejecucion 2 de la demo comprueba la formula con MargenAlcanza (FTMO-P-D1.md §3) y el pre-vuelo de F33 lo vuelve a leer; el valor que lee el codigo es el del perfil, igual que este
+apalancamiento del tipo Swing en forex (el Standard admite mas). Limita el lote: el margen es lotes x instrumento_contrato x precio / este numero, y con riesgo_por_operacion sobre la cuenta un stop muy corto pide mas margen del que hay (ADR-0026, impacto; FTMO-P-D1.md §2: con todo el saldo caben 27,27 lotes a 1,10). Lo comprueba el BROKER SIMULADO desde ADR-0081 (2026-10-17): rechazo `margen_libre` al colocar y al llenar, y el bot limita el lote al que cabe (lote_margen_libre_fraccion). Hasta entonces nadie lo comprobaba («F21 lo comprueba con la distribucion real de cajas» no era verdad). La ejecucion 2 de la demo (del 26 al 30 de octubre de 2026, entrada A de la Next Action) comprobara la formula con MargenAlcanza (FTMO-P-D1.md §3) y el pre-vuelo de F33 lo volvera a leer; el valor que lee el codigo es el del perfil, igual que este
 
 ### `firma_base_perdida_diaria`
 
@@ -454,7 +454,7 @@ Opciones: `distancia_completa`, `hasta_stop_fraccion`.
 
 ### `lote_margen_libre_fraccion`
 
-el bot dimensiona el lote que cabe sobre esta fraccion del margen libre (equidad menos el margen de lo vivo, ADR-0081 §4), no sobre el margen libre entero: el colchon cubre el deslizamiento del llenado, la diferencia entre el precio que convierte el margen al colocar (el ask de una compra, el bid de una venta) y al llenar, y la diferencia entre la equidad que ve el bot (la cuenta, por marcas de minuto) y la que ve el broker (al tick). Decision nuestra, no del trader. Lo lee el cableado junto a lote_si_no_cabe. No es firma_margen_seguridad (ADR-0031), que es el colchon de los frenos de perdida de la firma
+el bot dimensiona el lote que cabe sobre esta fraccion del margen libre (equidad menos el margen de lo vivo, ADR-0081 §4), no sobre el margen libre entero: el colchon cubre el deslizamiento del llenado y la diferencia entre el precio que convierte el margen al colocar (el ask de una compra, el bid de una venta, del cierre de M1) y al llenar (el tick que llena). El bot y el broker leen el MISMO margen libre, al tick, con la misma funcion. Decision nuestra, no del trader. Lo lee el cableado junto a lote_si_no_cabe. No es firma_margen_seguridad (ADR-0031), que es el colchon de los frenos de perdida de la firma
 
 ### `lote_si_no_cabe`
 

@@ -46,10 +46,12 @@ lotes)?») y se amplía al margen.
 
 donde `lote_que_cabe_en(M) = M × firma_apalancamiento / (instrumento_contrato × precio)` con el
 precio de conversión del margen (§4). `lote_margen_libre_fraccion` vale **0,95**: el 5 % de colchón
-cubre el deslizamiento del llenado, la diferencia entre el precio con que se convierte el margen al
-colocar y al llenar, y la diferencia entre la equidad que ve el bot -la de la cuenta, por marcas de
-minuto (ADR-0052 §3)- y la que ve el bróker al tick (§4). Es una decisión nuestra, no del trader
-(fuente de los dos parámetros: este ADR).
+cubre el deslizamiento del llenado y la diferencia entre el precio con que se convierte el margen al
+colocar (el ask o el bid del cierre de M1) y al llenar (el precio del tick que llena). El bot y el
+bróker usan EL MISMO margen libre (`Broker.margen_libre()`, al tick, §4) y la misma función, así que
+entre los dos no hay diferencia de equidad que cubrir (la respuesta del consultor lo preveía por si
+el bot leía la equidad de la cuenta por marcas de minuto; no es el caso: hallazgo a1 del revisor).
+Es una decisión nuestra, no del trader (fuente de los dos parámetros: este ADR).
 
 **El lote por debajo del mínimo (respuesta a la PARADA, punto 0).** RN-027 decía en su prosa que
 por debajo de `instrumento_lote_minimo` «no se opera», y el código y ADR-0053 §1 (tabla,
@@ -232,7 +234,8 @@ hay apalancamiento- es la regla de la casa: la condición tiene nombre y lo dem�
   `colocar_orden_limite` y el camino «no se coloca»), `engine/cableado.py` (el saldo al bróker; las
   columnas de margen de «### Ordenes» y la fila `llenar` de «### Rechazos por motivo»).
 - Spec: `lote_si_no_cabe` y `lote_margen_libre_fraccion`; A-57; las notas de RN-011 y RN-027;
-  `spec_version` 18.0.0 → 18.1.0 (menor: parámetros nuevos, ninguna regla cambia de sentido).
+  `spec_version` 18.0.0 → 18.1.0 (menor: parámetros nuevos, ninguna regla cambia de sentido) y
+  18.1.1 tras el revisor de la rama (parche: la redacción de dos descripciones).
 - Perfil y registro: las descripciones y `consumido_por` de `firma_apalancamiento`, y G.3.
 - Tests: los del margen (justo por encima y por debajo, con una posición viva, ask/bid, pendiente
   que reserva, reubicación, `no_operar`, el lote que cabe no cambia, el mismo resultado en R con el

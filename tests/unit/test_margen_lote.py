@@ -28,10 +28,14 @@ from typing import Any
 import pytest
 
 from botsito.config.registro import Registro, cargar_registro
+from botsito.domain.ticks import MS_POR_MINUTO
+from botsito.domain.velas import MinutoUtc
 from botsito.engine import broker as broker_mod
 from botsito.engine import cableado
 from botsito.engine.broker import (
+    CANCELADA,
     COLOCADA,
+    HECHO_ORDEN_PENDIENTE,
     MOTIVO_MARGEN_LIBRE,
     PETICION_COLOCAR,
     RECHAZADA,
@@ -40,7 +44,18 @@ from botsito.engine.broker import (
     Rechazo,
     margen_requerido,
 )
-from botsito.engine.llenado import TICKS, Mercado
+from botsito.engine.cuenta import CuentaViva, reglas_de_fase
+from botsito.engine.entrada import STOP_EN_RUPTURA
+from botsito.engine.interprete import EstadoDia, Momento
+from botsito.engine.llenado import TICKS, TIPO_STOP, Configuracion, Mercado
+from botsito.engine.perfil_cuenta import cargar_perfil
+from botsito.engine.primitivas_broker import (
+    ContextoDia,
+    OrdenEnPreparacion,
+    primitivas_cableadas,
+)
+from botsito.engine.simulacion import reglas_broker_de
+from botsito.engine.zonas import orden_nace_en_el_punto
 from botsito.spec.modelo import cargar_vocabulario
 from tests.unit import test_broker as tb
 from tests.unit import test_cableado as tc
@@ -144,8 +159,9 @@ def test_una_posicion_abierta_ocupa_margen() -> None:
 def test_una_pendiente_stop_reserva_margen_y_cancelarla_lo_libera() -> None:
     """MT5: «For all other order types (Stop and Stop Limit), the margin is summed up (charged for
     each order)». Una compra STOP de 2,00 lotes en 1010 reserva 67,33 (a su precio); con saldo 100
-    la siguiente de 1,00 (33,43 al ask) no cabe. Cancelada la primera, la misma de 1,00 cabe: es la
-    reubicacion de ADR-0074, que cancela la orden vieja ANTES de calcular y colocar la nueva."""
+    la siguiente de 1,00 (33,43 al ask) no cabe. Cancelada la primera, la misma de 1,00 cabe. Es la
+    pieza del BROKER; el orden de la reubicacion de ADR-0074 por las primitivas reales, en el mismo
+    cierre, lo prueba el test de la reubicacion (`test_en_la_reubicacion_…`)."""
     b = _broker_con_margen(_ticks_planos(), _saldo("100"), stops_level_puntos=0)
     o1 = b.colocar_stop("o1", "compra", 1010, Decimal("2.00"), 1000, 1030, tb._ms(tb.M0, 10))
     assert not isinstance(o1, Rechazo)
@@ -346,3 +362,91 @@ def test_el_rechazo_al_llenar_sale_en_rechazos_por_motivo_como_llenar() -> None:
     lineas = cableado._informe_ordenes(motor)  # type: ignore[arg-type]
     assert any(f"| rechazada | {MOTIVO_MARGEN_LIBRE} |" in ln for ln in lineas)
     assert f"2030-01 | {MOTIVO_MARGEN_LIBRE} | llenar | 1" in lineas
+
+
+# ------------------------------------------------------ la reubicacion (ADR-0074), mismo cierre
+
+
+def _contexto_para_reubicar(registro: Registro) -> tuple[ContextoDia, Broker]:
+    """El cableado a mano, con el perfil real: la cuenta, el broker con su saldo y tres zonas de
+    compra en la misma entrada, sobre la ruta de `test_cableado` para una compra STOP (el precio
+    esta por debajo de la entrada cuando se coloca)."""
+    perfil = cargar_perfil(tc.PERFIL)
+    md = tc._mercado(tc.RUTA_ORDEN_STOP)
+    contrato = registro.decimal("instrumento_contrato")
+    cuenta = CuentaViva(reglas_de_fase(perfil, "reto"), contrato, tc.MINUTO_INI * MS_POR_MINUTO - 1)
+    broker = Broker(
+        reglas_broker_de(perfil, registro),
+        Configuracion(False, 0, lambda _m: tc.SPREAD),
+        md.mercado(),
+        contrato,
+        md.escala,
+        saldo=lambda: cuenta.saldo,
+    )
+    ctx = ContextoDia(broker, cuenta, contrato, md.escala)
+    for i in (1, 2, 3):
+        ctx.zonas[f"zona:{i}"] = cableado.zona_sintetica(
+            f"zona:{i}", "compra", tc.ENTRADA, tc.EXTREMO, "primer_esquema"
+        )
+    ctx.instante_ms = tc.MINUTO_ZONA * MS_POR_MINUTO - 1
+    return ctx, broker
+
+
+def _preparar(ctx: ContextoDia, zona_id: str) -> None:
+    """Lo que dejan RN-011 y RN-015 antes de colocar: la base del lotaje, el stop y el objetivo."""
+    o = ctx.orden = OrdenEnPreparacion(ctx.zonas[zona_id])
+    o.lotaje = ("hasta_stop_fraccion", Decimal("0.5"), "saldo_actual")
+    o.stop = tc.ENTRADA - 16
+    o.objetivo = tc.ENTRADA + 60
+
+
+def test_en_la_reubicacion_la_cancelacion_libera_el_margen_antes_del_lote_nuevo_en_el_mismo_cierre(
+    registro: Registro,
+) -> None:
+    """Respuesta del consultor a la PARADA, punto 3: en la reubicacion de ADR-0074 la cancelacion
+    de la orden vieja libera su margen ANTES de calcular el lote de la nueva, en el mismo cierre.
+    Por las primitivas reales y en el MISMO `instante_ms`: `colocar_orden_limite` coloca una stop
+    que reserva margen; `reubicar_orden_limite` (con `orden_limite_nace` en
+    `al_aparecer_punto_de_breaker`) la cancela y el margen usado vuelve a cero;
+    `colocar_orden_limite` coloca la nueva con el margen libre ENTERO, asi que sale con el mismo
+    lote que la primera. De control: una tercera colocada con la segunda viva ve menos margen libre
+    y sale con menos lote."""
+    assert orden_nace_en_el_punto(registro), "la reubicacion ya no cancela: el test no aplica"
+    ctx, broker = _contexto_para_reubicar(registro)
+    primitivas = primitivas_cableadas(registro, ctx, None, STOP_EN_RUPTURA)
+    colocar = primitivas.acciones["colocar_orden_limite"]
+    reubicar = primitivas.acciones["reubicar_orden_limite"]
+    momento = Momento(MinutoUtc(tc.MINUTO_ZONA), "07-11", False, None)
+    estado = EstadoDia(broker=broker.hechos())
+
+    _preparar(ctx, "zona:1")
+    colocar({"en": "Z"}, {"Z": "zona:1"}, momento, estado)
+    o1 = broker.ordenes["o1"]
+    assert o1.estado == COLOCADA and o1.tipo == TIPO_STOP
+    reserva = broker.margen_usado()
+    assert reserva > 0
+    anotacion_1 = ctx.margen_al_colocar["o1"]
+    assert anotacion_1[4] == "margen"  # el 0,5 % sobre 16 puntos no cabe a 1:30
+
+    # el mismo cierre de M1: la caja se recalcula y RN-006 reubica, que con la orden en el punto
+    # CANCELA (ADR-0074) y refresca los hechos para que RN-011 y RN-015 vuelvan a colocar
+    reubicar({"a": "Z", "cadencia": "reubicacion_cadencia"}, {"Z": "zona:2"}, momento, estado)
+    assert broker.ordenes["o1"].estado == CANCELADA
+    assert broker.margen_usado() == 0
+    assert estado.broker[HECHO_ORDEN_PENDIENTE] is False
+
+    _preparar(ctx, "zona:2")
+    colocar({"en": "Z"}, {"Z": "zona:2"}, momento, estado)
+    o2 = broker.ordenes["o2"]
+    anotacion_2 = ctx.margen_al_colocar["o2"]
+    assert o2.estado == COLOCADA
+    assert anotacion_2[1] == anotacion_1[1]  # el margen libre entero: la reserva de o1 ya no esta
+    assert o2.lotes == o1.lotes
+
+    # de control, sin cancelar: la tercera ve el margen libre menos la reserva de la segunda
+    _preparar(ctx, "zona:3")
+    colocar({"en": "Z"}, {"Z": "zona:3"}, momento, estado)
+    o3 = broker.ordenes["o3"]
+    anotacion_3 = ctx.margen_al_colocar["o3"]
+    assert anotacion_3[1] is not None and anotacion_2[1] is not None
+    assert anotacion_3[1] < anotacion_2[1] and o3.lotes < o2.lotes

@@ -125,9 +125,10 @@ Y porque el tope **estático** del 2-Step es el único que se puede modelar sin 
 > **CORRECCIÓN (2026-10-17, rama `trabajo/margen-lote`, ADR-0081).** «F21 lo comprueba con la
 > distribución real de cajas» no era verdad: hasta ADR-0081 nada comprobaba el margen y
 > `firma_apalancamiento` no lo leía ningún código del bot (FTMO-P-D1.md §2, medido el 2026-10-13).
-> Desde ADR-0081 lo comprueba el BRÓKER SIMULADO (rechazo `margen_libre` al colocar y al llenar), el
-> bot limita el lote al que cabe (`lote_margen_libre_fraccion`), y la ejecución 2 de la demo
-> comprueba la fórmula con `MargenAlcanza`. La aritmética de este punto sigue siendo correcta.
+> Desde ADR-0081 lo comprueba el BRÓKER SIMULADO (rechazo `margen_libre` al colocar y al llenar) y el
+> bot limita el lote al que cabe (`lote_margen_libre_fraccion`); la fórmula contra la plataforma la
+> comprobará la ejecución 2 de la demo (del 26 al 30 de octubre de 2026, entrada A de la Next
+> Action) con `MargenAlcanza`. La aritmética de este punto sigue siendo correcta.
 
 - **El límite de 2.000 peticiones al servidor por día** sigue siendo restricción de diseño de
   primera clase, ahora con fuente de FTMO: por encima es práctica prohibida (*«an excessive number

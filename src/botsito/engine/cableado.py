@@ -755,10 +755,11 @@ CABECERA_NO_ENVIADAS = (
     "### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del "
     "riesgo)"
 )
-# las cuatro ultimas columnas (rama trabajo/margen-lote, fase 1) son SOLO salida: el lote pedido,
-# la distancia de la orden a su stop, y el margen y el riesgo medidos al colocar con la unica
-# funcion de margen (`broker.margen_requerido`); `-` en lo que no se pudo medir (perfil sin
-# apalancamiento, minuto sin precio). Van al final para que lo que ya leia las filas siga leyendolas
+# las siete ultimas columnas (rama trabajo/margen-lote) son SOLO salida: el lote colocado, la
+# distancia de la orden a su stop, el margen y el riesgo medidos al colocar con la unica funcion de
+# margen (`broker.margen_requerido`), el lote del riesgo (RN-011) y el limite que mordio; `-` en lo
+# que no se pudo medir (perfil sin apalancamiento, minuto sin precio). Van al final para que lo que
+# ya leia las filas siga leyendolas
 SIN_MEDIDA = "-"
 RESULTADO_LLENADA = "llenada"
 RESULTADO_RECHAZADA = "rechazada"
@@ -798,7 +799,7 @@ FilaOrden = tuple[
 def vida_de_las_ordenes(motor: MotorCableado) -> list[FilaOrden]:
     """(dia, sesion, id, colocada, precio, resultado, motivo, instante del resultado, lote,
     distancia, margen requerido, margen libre, riesgo) por orden, por dia y por instante de
-    colocacion. Las cinco ultimas son SOLO salida (rama trabajo/margen-lote, fase 1)."""
+    colocacion. Las siete ultimas son SOLO salida (rama trabajo/margen-lote)."""
     salida: list[FilaOrden] = []
     for dia in sorted(motor.trazas_broker):
         broker = motor.brokers.get(dia)

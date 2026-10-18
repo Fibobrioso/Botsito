@@ -6,10 +6,9 @@ saldo). Solo lee la salida; no decide nada.
 
 Uso: uv run python docs/validation/anexos/MARGEN-LOTE/fase4_medidas.py <salida> [--escribir <txt>]
 
-El riesgo entero se lee del registro (`riesgo_por_operacion`): una orden lo arriesga «entero» si su
-columna `riesgo (% del saldo)` queda a menos de un paso de lote de el (el redondeo hacia abajo al
-paso deja el riesgo un poco por debajo incluso sin limite): aqui se cuenta como entero si el lote
-colocado es el lote del riesgo (columna `limite` = ninguno), y limitado si no.
+Una orden arriesga «el riesgo entero» (riesgo_por_operacion, hasta el redondeo al paso) si el lote
+colocado es el lote del riesgo, es decir, si su columna `limite` dice `ninguno`; limitada si no. El
+guion no lee el registro: solo la salida del arnes.
 """
 
 from __future__ import annotations
