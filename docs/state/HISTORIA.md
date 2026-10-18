@@ -9877,3 +9877,64 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 34 (2026-10-17).
+
+# Next Action HECHA · E · la rama del margen · sale de PROJECT_STATE.md en trabajo/margen-lote (2026-10-18)
+
+E. La rama del margen (heredado 37): ADR sobre qué hace el bot cuando el lote del 0,5 % no cabe en los 50 lotes (limitar el lote o no operar), con el margen a 1:30, que corta antes, y el simulador que lo compruebe. Medidas: la parte de operaciones del trader con stop de menos de unos 2 pips y a ±2 min de una noticia; y cuántas órdenes de R3.1 rechaza el volumen y cuántas el margen (CORRIDA-CONSTRUCCION.md §3.12).
+
+La hace `trabajo/margen-lote` (docs/validation/MARGEN-LOTE.md, ADR-0081). La medida de noticias quedó sin fuente: va como línea opcional de A.
+
+# Pendiente heredado SALE · 37 · sale de PROJECT_STATE.md en trabajo/margen-lote (2026-10-18)
+
+Criterio (a) de `docs/state/README.md`: HECHO. Texto literal en PROJECT_STATE.md hasta este cierre (la línea corta):
+
+- 37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN (A-18).** Va a E; el texto entero, en el Archivo 33 de docs/state/HISTORIA.md.
+
+Y el texto entero (Archivo 33, línea 79 de su bloque):
+
+- 37. **LOS RECHAZOS POR VOLUMEN Y POR MARGEN, EN LA RAMA DE STOP Y LOTE (A-18).** FTMO confirma 50 lotes en EURUSD y cuenta de cobertura (P-D1, `docs/validation/FTMO-P-D1.md`, 2026-10-12). Pero antes que el volumen corta el MARGEN (ADR-0026, Impacto): con `firma_apalancamiento` 1:30, todo el saldo como margen da 27,27 lotes a 1,10 y 25,00 a 1,20, y el 0,5 % deja de cumplirse con un stop de menos de 1,83 y 2,00 pips (el tope de 50 lotes corta en 1 pip). Partir en varias órdenes no lo arregla: MT5 suma el margen de las posiciones del mismo lado. El simulador no comprueba el margen y `firma_apalancamiento` no lo lee ningún código del bot (deuda abajo). La ejecución 2 de la demo comprueba la fórmula con el margen de 1,00 lote que ya escribe el script 1.1 (`MargenAlcanza`).
+
+**HECHO:** ADR-0081 (la decisión: el bot limita el lote al menor de tres y el bróker simulado rechaza por `margen_libre` al colocar y al llenar); el rechazo `margen_libre` y `limitar_lote` en `engine/broker.py` (commit 80b0795); `reglas_broker_de` lee `firma_apalancamiento`; `tests/unit/test_margen_lote.py`. Lo que de él sigue vivo -la ejecución 2 con `MargenAlcanza`- está en la línea A de la Next Action. Orden de cierre del consultor del 2026-10-18 (MARGEN-LOTE.md §10).
+
+# Registro de cierre · `trabajo/margen-lote` (2026-10-18)
+
+- Orden de cierre del consultor del 2026-10-18, pegada por Aleks en la conversación y ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama
+  aceptada por el consultor tras una pasada del revisor (opus; MARGEN-LOTE.md §9: reglas 0 bloquea,
+  4 importa, 2 menor; encargo 0 bloquea, 4 importa, 1 menor; todos arreglados en d46e753, más la
+  duración anómala de un `make check` declarada). Una PARADA en la fase 0, respondida por el
+  consultor el 2026-10-17 (§1.k). El punto 1 de la orden de cierre corrigió la respuesta a1 del
+  informe (`spec_version`, 85d242e). Nunca se cerró sin la orden.
+- **Lo que entra** (R3.3 de la hoja de ruta; E de la Next Action; heredado 37):
+  - ADR-0081: cuando el lote del 0,5 % no cabe, el bot lo LIMITA al menor de tres -el del riesgo,
+    `firma_volumen_max_lotes` y el que cabe en `lote_margen_libre_fraccion` (0,95) del margen
+    libre-, al paso; por debajo del mínimo no se opera (enmienda ADR-0053 §1); el bróker simulado
+    rechaza por `margen_libre` al colocar (ask/bid) y al llenar (enmienda ADR-0052 §4), con el
+    saldo de la cuenta obligatorio cuando el perfil declara apalancamiento; recuadro en ADR-0026
+    (Impacto: «F21 lo comprueba» no era verdad);
+  - `lote_si_no_cabe` (DEFAULT_AMBIGUOUS bajo A-57, en `limitar`) y `lote_margen_libre_fraccion`;
+    A-57 abierta (pregunta, a la sesión 5); `spec_version` 18.1.1; el perfil de FTMO corregido en
+    `firma_apalancamiento` y en `firma_tamano_posicion_ratio_aviso` (G.3);
+  - las medidas: antes del cambio, de 437 órdenes de la corrida diaria 96 las rechaza el volumen y
+    278 las rechazaría el margen; 198 operaciones del trader, el 69 % (o el 58 %, según A-56) con
+    la distancia del lote por debajo de 1,83 pips; tras el cambio, 0 rechazos por volumen, 339 de
+    504 órdenes limitadas, parejas 12 → 18, cobertura 6,1 % → 9,1 %, precisión 12,8 % → 11,1 %
+    (diagnóstico, ADR-0070 §3); noticias sin fuente;
+  - en este commit: E y el heredado 37 salen a HISTORIA; F en «O → V»; V gana A-57 y deja de
+    depender de E; A gana la ejecución 2 con `MargenAlcanza`, la 3 con el instante del margen de
+    una pendiente y el calendario de noticias opcional. En la hoja de ruta: R3.3 y G.3 HECHAS (G.3
+    con «- **Refs:** —»); A.2 sin HER:37; R4.1 sin NA:E, con ID:A-57 y «R3.3 (HECHA)».
+- Letras: sale E; entra ninguna.
+- Letra del tag: la última cerrada era la r de F37 (`stable/F37r-sesgo-h4-color`).
+- Tag: `stable/F37s-margen-lote`. El merge es `git rev-parse "stable/F37s-margen-lote^{commit}"`.
+- Commits de la rama: `ecd88d8` (apertura), `963c773` (fase 0 y PARADA), `44f31fb` (campo de
+  salida y ADR-0081), `ddb51c6` (corrida «antes» y medidas 1 y 2), `80b0795` (código, spec 18.1.0,
+  A-57; `Fuente: ADR-0081`), `5f68f40` (fase 4: re-corrida e informe), `d46e753` (revisor; spec
+  18.1.1), `85d242e` (orden de cierre, punto 1) y el de este registro.
+- CI de rama: ninguna. No toca hooks, rutas ni el sistema de archivos (MARGEN-LOTE.md §8). La CI de
+  `main` corre tras el push. La única consulta de CI de la rama fue `gh run view 39083113877` al
+  abrir; ninguna con `curl` ni con un guion.
+- Exposiciones: tres filas del 2026-10-17 en HOLDOUT-EXPOSICIONES (la fase 0, sin material
+  reservado; la corrida «antes» y la medida 1; la re-corrida de la fase 4), las corridas con la
+  lectura del M1 de marzo y de junio para calentar.
+- Informe: `docs/validation/MARGEN-LOTE.md`. Encargo: `docs/encargos/trabajo-margen-lote.md`.
