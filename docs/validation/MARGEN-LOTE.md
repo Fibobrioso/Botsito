@@ -298,7 +298,7 @@ cuarentena, 121 por tramo no citable, 101 por material reservado, y 2 ítems de 
 - `lotaje`: 20 ítems, todos de SOBRE QUÉ DISTANCIA se calcula (la base del lotaje, A-18 y ADR-0020).
   Los dos que hablan de su lote EN UNA CUENTA DE FONDEO: `ev-v4-002457-5a2e88c6` («he entrado sin
   lotaje o sea, han sido 3 que como tal no he entrado con el porcentaje de la cuenta») y
-  `ev-v4-012900-8ef676ed» («estaba operando con algo fijo es un lotaje fijo, muy bajo», por falta de
+  `ev-v4-012900-8ef676ed` («estaba operando con algo fijo es un lotaje fijo, muy bajo», por falta de
   calculadora). Dicen lo que hizo con el lote en la prueba de fondeo; **no dicen qué hace cuando el
   lote de su riesgo no cabe**: ninguna frase del trader habla de eso.
 - `knowledge/feedback/` y `knowledge/evidence/` por `grep`: ningún registro con «apalanc», «margen
@@ -459,6 +459,113 @@ leyó el repo (sin `botsito`, sin `gh`, sin web). Dos páginas web públicas (MT
 
 Espero tu respuesta a la PARADA.
 
+
+### 1.k Respuesta del consultor a la PARADA (2026-10-17)
+
+Copiada tal cual (también al final de `docs/encargos/trabajo-margen-lote.md`):
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/margen-lote (2026-10-17). Cópiala tal cual al final del encargo y en MARGEN-LOTE.md, y aplícala punto por punto con la skill fase-cero.
+>
+> 0. Lote por debajo del mínimo: (a). «No se opera» por DECISIÓN del consultor en ADR-0081, no por la cita de RN-027, con recuadro en ADR-0053 (tabla, línea 39). Por qué: subir al mínimo arriesga más que riesgo_por_operacion, lo contrario de limitar. El camino «no se coloca» es el mismo que usa lote_si_no_cabe = no_operar: uno solo, que anota el motivo y no lanza CableadoError.
+>
+> 1. Dónde va el límite del bot: (a), en la preparación de la orden, con los dos parámetros en parametros.yaml como ejecucion (patrón de cierre_pendientes y ADR-0068) y el tope de volumen y el apalancamiento por ReglasBroker desde el perfil. Por qué: no duplica firma_volumen_max_lotes ni inventa una cita del trader. Las notas de RN-011 y RN-027 dicen que el lote colocado puede quedar por debajo del de RN-011 por ADR-0081.
+>    Además: el margen requerido y el margen libre se calculan en UNA sola función (dominio o engine, donde no rompa import-linter), y la usan el límite del bot y el rechazo del bróker, con el mismo precio (ask en compras y bid en ventas del instante). Por qué: si cada uno calcula el suyo, pueden discrepar y el bot colocaría órdenes que el bróker rechaza por un céntimo. Si el bot ve la equidad por marcas de minuto y el bróker al tick, el colchón de 0,95 absorbe la diferencia: dilo en el ADR.
+>
+> 2. La equidad del bróker: (a) con un cambio. El saldo llega como callable (lambda: cuenta.saldo) y ReglasBroker gana apalancamiento: int | None. Pero se niega por defecto: si ReglasBroker trae apalancamiento (el perfil real), el saldo es OBLIGATORIO y construir el bróker sin él es un error; solo sin apalancamiento (tests de bróker aislado que no lo pasan) no se comprueba el margen. Nada de «margen: sin comprobar» en silencio con el perfil real. Por qué: la condición tiene nombre (la cuenta declara apalancamiento) y lo demás se niega. test_cuenta_7_de_agosto.py, segundo test, es la regresión del corte de la cuenta: se construye con apalancamiento=None explícito y su docstring lo dice. El test de que construir_motor_cableado pasa siempre el saldo, como propones. Si esto obliga a tocar ficheros de test fuera del contrato, amplía el contrato en ese commit y dilo.
+>
+> 3. El instante del margen: (a). Al colocar, con el ask o el bid del mercado; al llenar, con el precio del llenado; y la pendiente stop cuenta como margen usado mientras vive. Por qué: es lo que sostiene la frase de MT5 y el supuesto conservador de D3. Cuida el orden en la reubicación (ADR-0074): la cancelación de la orden vieja libera su margen antes de calcular el lote de la nueva, en el mismo cierre; un test lo comprueba. El rechazo al llenar no es una Peticion (R13): columna peticion = llenar, como propones.
+>
+> 4. A-57: (a). Abrirla como pregunta citando ev-v4-002457-5a2e88c6 y ev-v4-012900-8ef676ed. La propia pregunta dice que ninguna frase del trader habla del lote que no cabe y que la búsqueda se hizo (§1.f). Y la formulas sin cifras ni argumentos de VIABILIDAD-COMISION, solo con la cuenta y sus límites (50 lotes, 1:30). Por qué: deja la pregunta en la hoja de la sesión 5 y lo débil queda declarado.
+>
+> 5. Medida 1: (a), las dos lecturas de A-56 con el supuesto delante de cada tabla. Por qué: el mismo coste, y enseña cuánto depende la cifra de A-56. El guion stops_cortos.py, como lo propones; su lectura de los casos dev se declara en HOLDOUT-EXPOSICIONES el día que corra.
+>
+> 6. Heredado 37: (a). Sale entero por el criterio (a), y la línea nueva de A dice: «la ejecución 2 comprueba la fórmula del margen con MargenAlcanza, y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop». Por qué: lo que queda vivo ya está en A.
+>
+> 7. ADR-0026:123: (a), recuadro de corrección en ADR-0026, con el contrato ampliado a ese fichero. Por qué: es la misma frase falsa que se corrige en parametros.yaml, y ya hay precedente de recuadros de enmienda en ADR anteriores (ADR-0075 sobre ADR-0060).
+>
+> 8. Hoja de ruta: conforme. Entran en las «Líneas preparadas para el commit del contrato»: quitar HER:27 de G.3, HER:37 de A.2 y NA:E de R4.1 (en Refs y en «Depende de»), y «de E» en la V de PROJECT_STATE. Gracias por cazarlas antes del cierre.
+>
+> Además:
+> - §1.i dice «con firma_ordenes_simultaneas_max = 1 no hay dos posiciones vivas». Es incorrecto: firma_ordenes_simultaneas_max vale 200 (perfil, ADR-0050), y el que vale 1 es operaciones_simultaneas_max (parametros.yaml, estrategia). Corrígelo en el informe con su nombre y di si operaciones_simultaneas_max impide de verdad tener a la vez una posición viva y una pendiente stop de otro escenario. Si no lo impide, el margen sumado de las dos es justo lo que cubre el punto 3.
+> - Las noticias: el CSV lo hace Aleks a mano si quiere, y es opcional. Si está en corpus/noticias/ antes de correr la medida 1, se usa con su sha256 en el informe; si no, la medida queda sin fuente y va una línea a A («Aleks: calendario de las noticias restringidas de FTMO de los meses de construcción»). La rama no lo espera.
+> - La repetición de la corrida 2 fuera del repo para el diff de determinismo (h18): sí, en la fase 1 y en la fase 4, como R3.1.
+>
+> Lo que sigue: la fase 1 (el campo de 4.e con su test, make check sellado, la corrida «antes» con su fila de exposiciones, y las medidas 1 y 2), y luego las fases 2 a 4 sin parar, salvo que una medida contradiga lo decidido aquí o que las parejas o la precisión cambien en la corrida «antes», que solo añade salida. En ese caso, PARADA.
+>
+> Rama lista para revisión, NO cerrada.
+
+**Corrección a §1.i (punto «Además», primero).** Lo que vale 1 es `operaciones_simultaneas_max`
+(`parametros.yaml:948-952`, `estrategia`; lo lee RN-018, `strategy_spec.yaml:1785-1805`);
+`firma_ordenes_simultaneas_max` vale 200 (perfil, :307). ¿Impide `operaciones_simultaneas_max`
+tener a la vez una posición viva y una pendiente stop de otro escenario? **Sí, pero no por sí
+solo:** RN-018 (`operaciones_abiertas_alcanzan`, `primitivas_broker.py:181-185`) cuenta
+POSICIONES vivas y prohíbe `abrir_operacion` cuando llegan al tope, así que no mira pendientes; lo
+que impide la pendiente con posición viva es el `ninguno_de` de RN-011
+(`strategy_spec.yaml:1486-1489`: no prepara una orden si hay `orden_limite_pendiente` u
+`operacion_abierta`, los dos hechos del bróker). Con las dos reglas vigentes, el bot nunca tiene una
+pendiente y una posición a la vez, ni dos pendientes. Aun así, el bróker suma el margen de todo lo
+vivo (posiciones y pendientes stop), como pide el punto 3, porque hace de FTMO y no de la spec.
+
+**Aplicación punto por punto:** 0 → fase 3 (camino «no se coloca» único); 1 → fases 1 y 3 (una
+sola función de margen en `engine/broker.py`, usada por la salida de la fase 1 y por el límite y el
+rechazo de la fase 3); 2 → fase 3 (apalancamiento en `ReglasBroker` desde la fase 1 para la salida;
+el saldo obligatorio con apalancamiento, en la fase 3); 3 → fase 3, con el test de la reubicación;
+4 → fase 3 (A-57); 5 → fase 1 (`stops_cortos.py`); 6, 7 y 8 → las líneas del cierre (§6) y el
+recuadro de ADR-0026 en la fase 3 (contrato ampliado en ese commit); noticias: `corpus/noticias/`
+no existe hoy (`ls`), la medida queda sin fuente y va la línea a A; el `diff` de determinismo en las
+fases 1 y 4.
+
+## 2 · Fase 1 · Medidas antes del cambio (2026-10-17)
+
+### 2.a El campo de «### Ordenes» (4.e), solo salida
+
+Cinco columnas al FINAL de cada fila de «### Ordenes» (`engine/cableado.py`, `CABECERA_ORDENES`):
+`lote` (el pedido, ya redondeado por RN-027), `distancia (puntos)` (de la orden a su stop),
+`margen requerido (USD)`, `margen libre al colocar (USD)` y `riesgo (% del saldo)`. Las tres
+últimas las anota `colocar_orden_limite` (`engine/primitivas_broker.py`, `_margen_al_colocar`) en
+el instante de colocar, ANTES de llamar al bróker, en `ContextoDia.margen_al_colocar`, que es el
+mismo diccionario que `TrazaBroker.margen_al_colocar` lee para el informe; `-` en lo que no se pudo
+medir (perfil sin apalancamiento, minuto sin precio). Lo que hace falta para medirlas, y es lo
+único de código que entra en esta fase:
+
+- `ReglasBroker.apalancamiento: int | None` (`engine/broker.py`), que `reglas_broker_de`
+  (`engine/simulacion.py`) lee del perfil (`firma_apalancamiento`, 30 en FTMO) o deja en `None` si
+  el perfil no lo declara o no le da valor (el sintético de `tests/fixtures/cuentas/`).
+- **La única función de margen** (respuesta, punto 1): `broker.margen_requerido(lotes, precio,
+  escala, contrato, apalancamiento)` = lotes × contrato × precio / apalancamiento, en la moneda de
+  la cuenta. La usan esta salida y, en la fase 3, el límite del bot y el rechazo del bróker.
+- `Broker.precio_de_conversion(lado, instante)`: el ask en una compra y el bid en una venta del
+  último tick anterior al instante (con respaldo M1, el cierre más el spread supuesto en la compra):
+  la lectura inversa de `_precio_de_mercado`, que da el precio al que se marca la posición.
+- `Broker.margen_usado()`: el margen de cada posición abierta a su entrada y de cada pendiente STOP
+  a su precio («charged for each order», §1.b). El margen libre al colocar es `cuenta.equity −
+  margen_usado()`; la equidad de la cuenta va por marcas de minuto y el flotante del bróker al tick:
+  es la diferencia que el colchón de 0,95 absorbe (respuesta, punto 1; va al ADR).
+- El riesgo: lote × distancia × contrato / saldo, en %.
+
+**Ninguna decisión cambia**: el bróker no rechaza nada nuevo, el lote es el mismo, y lo único que
+ve el intérprete es lo de siempre. Régimen de `bloqueadas` (R3.1): el test en los dos sentidos vive
+en `tests/unit/test_vida_de_la_orden.py`: (1) con el perfil de FTMO, la fila de la orden llenada del
+día sintético de `test_cableado` acaba en `31.25 | 16 | <margen al ask> | 100000.00 | 0.500` (0,5 %
+de 100.000 sobre 16 puntos son 31,25 lotes, y a 1,10 piden unos 114.586 USD: **más margen del que
+tiene la cuenta**, el caso de la medida 2 en miniatura); (2) con `apalancamiento=None`, las dos
+columnas de margen dicen `-` y el lote, la distancia y el riesgo siguen saliendo. El test que monta
+la traza a mano (`viva al cerrar el dia`) comprueba que sin anotación las tres van en `None`.
+Las aserciones por subcadena de los demás tests no cambian; `p4_ordenes.py` y `patrones.py` de los
+anexos de R3.1 indexan las columnas por posición desde el principio y no se ven afectados.
+
+**El ADR-0081 entra en este commit, antes del código de la fase 3, y por qué.** El primer
+`make check` de esta fase salió en rojo (5 tests) porque `knowledge validate` niega todo id citado
+que no exista («id citado que no existe: … ADR-0081»), y el id está en la respuesta del consultor,
+copiada tal cual en el encargo y en §1.k. La salida que no toca la copia literal es que el ADR
+exista: `docs/adr/0081-el-lote-que-no-cabe-se-limita-y-el-broker-rechaza-por-margen.md` recoge las
+decisiones D1-D7 y las ocho respuestas de la PARADA (ya tomadas; las medidas no las cambian), con
+sus recuadros en ADR-0052 §4, ADR-0053 §1 (tabla, `redondear_lote`) y ADR-0026 (Impacto; el
+contrato gana ese fichero, respuesta punto 7) y su fila del índice. Es trabajo de la fase 3
+adelantado una fase; el código, la spec y A-57 llegan en la suya.
+
 ## Estado
 
-EN CURSO · PARADA de la fase 0 (2026-10-17): el inventario a-g esta en §1 y las ocho decisiones en «Lo que necesito que decidas». Ni codigo, ni spec, ni knowledge tocados; ningun guion corrido sobre material dev. Se espera la respuesta del consultor.
+EN CURSO · fase 1 (2026-10-17): el campo de «### Ordenes» con su test; faltan la corrida «antes», las medidas 1 y 2 y las fases 2 a 4.

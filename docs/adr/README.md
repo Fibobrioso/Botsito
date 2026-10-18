@@ -84,4 +84,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0078 | Julio de 2026 entra en construcción, del 1 al 17 (lo que cubre su libro) | ACTIVE (notas en ADR-0043 y ADR-0039 §1) |
 | 0079 | Enero de 2026 entra en construcción, del 2 al 30 (lo que cubre su libro), al final de la lista | ACTIVE (notas en ADR-0043, ADR-0051 DN-5 y ADR-0069 §5) |
 | 0080 | El sesgo de H4 cambia solo si la vela rompe el extremo de la anterior y cierra del color de esa ruptura | ACTIVE (enmienda ADR-0044 §2, ADR-0060 §1 y ADR-0075 §3) |
+| 0081 | El lote que no cabe en el margen o en el volumen se limita, y el bróker simulado rechaza por margen libre al colocar y al llenar | ACTIVE (PROVISIONAL en D1 hasta A-57; enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

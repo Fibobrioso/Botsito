@@ -26,7 +26,14 @@ from botsito.domain.estructura_m1 import (
 )
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.valores import CIEN
-from botsito.engine.broker import LLENADA, MANUAL, Broker, BrokerError, Rechazo
+from botsito.engine.broker import (
+    LLENADA,
+    MANUAL,
+    Broker,
+    BrokerError,
+    Rechazo,
+    margen_requerido,
+)
 from botsito.engine.cuenta import CuentaViva
 from botsito.engine.entrada import STOP_EN_RUPTURA
 from botsito.engine.interprete import (
@@ -142,6 +149,13 @@ class ContextoDia:
     # cierre de M1: (posicion, nivel). Lo deja el predicado, que no toca el broker; el cableado lo
     # vigila al tick si `break_even_condicion` es `tocar` (ADR-0065). Se limpia cada minuto
     break_even_vigilable: tuple[str, int] | None = None
+    # SOLO SALIDA (rama trabajo/margen-lote, fase 1): por orden colocada, (margen requerido en
+    # moneda, margen libre de la cuenta en ese instante, riesgo en % del saldo) en el instante de
+    # colocarla; None en cada hueco que no se pudo medir (sin apalancamiento en el perfil, sin
+    # precio). Lo lee «### Ordenes» del informe; ninguna decision lo mira
+    margen_al_colocar: dict[str, tuple[Decimal | None, Decimal | None, Decimal | None]] = field(
+        default_factory=dict
+    )
 
 
 def _casa_por(pedido: str, real: str | None) -> bool:
@@ -493,6 +507,37 @@ def primitivas_cableadas(
         o.lote = max((lote / paso).to_integral_value(ROUND_DOWN) * paso, minimo)
         return []
 
+    def _margen_al_colocar(
+        lado: Lado, entrada: int, lote: Decimal, stop: int
+    ) -> tuple[Decimal | None, Decimal | None, Decimal | None]:
+        """SOLO SALIDA (fase 1 de trabajo/margen-lote): lo que la orden pide de margen, lo que la
+        cuenta tiene libre y el riesgo que arriesga, medidos ANTES de enviarla y con la misma
+        funcion que usara el broker (`margen_requerido`). El precio es el que convierte el margen
+        (ask en una compra, bid en una venta) en el instante del cierre de M1; la equidad es la de
+        la cuenta por marcas de minuto, menos el margen de lo vivo en el broker. Sin apalancamiento
+        en el perfil, o sin precio en ese minuto, el hueco queda en None y la salida imprime `-`.
+        Ninguna decision lee esto."""
+        riesgo = (
+            lote
+            * Decimal(abs(entrada - stop))
+            / ctx.escala
+            * ctx.contrato
+            / ctx.cuenta.saldo
+            * CIEN
+            if ctx.cuenta.saldo > 0
+            else None
+        )
+        apalancamiento = ctx.broker.reglas.apalancamiento
+        if apalancamiento is None:
+            return None, None, riesgo
+        try:
+            precio, _ = ctx.broker.precio_de_conversion(lado, ctx.instante_ms)
+        except BrokerError:
+            return None, None, riesgo
+        requerido = margen_requerido(lote, precio, ctx.escala, ctx.contrato, apalancamiento)
+        libre = ctx.cuenta.equity - ctx.broker.margen_usado()
+        return requerido, libre, riesgo
+
     def _lote_resuelto(o: OrdenEnPreparacion) -> Decimal | None:
         if o.lote is not None:
             return o.lote
@@ -532,6 +577,7 @@ def primitivas_cableadas(
         colocar = (
             ctx.broker.colocar_stop if tipo_orden == STOP_EN_RUPTURA else ctx.broker.colocar_limite
         )
+        ctx.margen_al_colocar[id] = _margen_al_colocar(cast(Lado, z.lado), z.entrada, lote, o.stop)
         r = colocar(id, cast(Lado, z.lado), z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms)
         ctx.por_de_orden[id] = z.por
         ctx.zona_de_orden[id] = z.id

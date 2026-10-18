@@ -121,6 +121,14 @@ Y porque el tope **estático** del 2-Step es el único que se puede modelar sin 
   19.697 con P = 1,30. Cabe de sobra **con ese stop, no con cualquiera**: el margen es
   166.667 × P / d, con d el stop en pips, y supera los 100.000 de la cuenta con un stop por debajo
   de 1,67 × P pips (1,95 pips con P = 1,17). F21 lo comprueba con la distribución real de cajas.
+
+> **CORRECCIÓN (2026-10-17, rama `trabajo/margen-lote`, ADR-0081).** «F21 lo comprueba con la
+> distribución real de cajas» no era verdad: hasta ADR-0081 nada comprobaba el margen y
+> `firma_apalancamiento` no lo leía ningún código del bot (FTMO-P-D1.md §2, medido el 2026-10-13).
+> Desde ADR-0081 lo comprueba el BRÓKER SIMULADO (rechazo `margen_libre` al colocar y al llenar), el
+> bot limita el lote al que cabe (`lote_margen_libre_fraccion`), y la ejecución 2 de la demo
+> comprueba la fórmula con `MargenAlcanza`. La aritmética de este punto sigue siendo correcta.
+
 - **El límite de 2.000 peticiones al servidor por día** sigue siendo restricción de diseño de
   primera clase, ahora con fuente de FTMO: por encima es práctica prohibida (*«an excessive number
   of more than 2,000 server requests per day»*).

@@ -102,6 +102,8 @@ HECHO_ORDEN_PENDIENTE = "orden_limite_pendiente"
 MOTIVO_PRECIO_INVALIDO = "precio_invalido"
 MOTIVO_STOPS_LEVEL = "stops_level"
 PARAMETRO_STOPS_LEVEL = "firma_stops_level_puntos"
+PARAMETRO_APALANCAMIENTO = "firma_apalancamiento"
+MOTIVO_MARGEN_LIBRE = "margen_libre"
 PETICION_COLOCAR = "colocar"
 PETICION_MODIFICAR = "modificar"
 PETICION_CANCELAR = "cancelar"
@@ -137,6 +139,23 @@ class ReglasBroker:
     freno: LimitesFreno | None = None
     # la ventana prohibida antes de un cierre de mercado largo (ADR-0068): None, sin calendario
     cierres: ReglasCierres | None = None
+    # el apalancamiento maximo del perfil (`firma_apalancamiento`, 1:N): con el, el broker calcula
+    # el margen que FTMO exige por cada orden y posicion (rama trabajo/margen-lote). None solo en
+    # un perfil que no lo declare (los sinteticos de los tests): entonces no hay margen que medir
+    apalancamiento: int | None = None
+
+
+def margen_requerido(
+    lotes: Decimal, precio_puntos: int, escala: int, contrato: Decimal, apalancamiento: int
+) -> Decimal:
+    """El margen que MT5 exige por `lotes` a `precio_puntos`, en la moneda de la cuenta (la de
+    cotizacion de EURUSD): lotes x contrato x precio / apalancamiento. Es la formula de forex de la
+    documentacion de MetaTrader 5 («Volume in lots * Contract size / Leverage», en la divisa de
+    margen, convertida con el precio: FTMO-P-D1.md §2). UNICA funcion de margen: la usan la salida
+    del arnes, el limite del lote del bot y el rechazo del broker, para que no discrepen."""
+    if apalancamiento <= 0:
+        raise BrokerError("el apalancamiento es positivo")
+    return lotes * contrato * (Decimal(precio_puntos) / escala) / apalancamiento
 
 
 @dataclass
@@ -825,6 +844,46 @@ class Broker:
             raise BrokerError(f"sin precio de mercado en el minuto {minuto}")
         spread = self.config.spread_supuesto(MinutoUtc(minuto))
         return (int(vela.cierre) if lado == "compra" else int(vela.cierre) + spread), RESPALDO_M1
+
+    def precio_de_conversion(self, lado: Lado, instante_ms: int) -> tuple[int, str]:
+        """El precio con el que MT5 convierte el margen a la moneda de la cuenta: el ASK en una
+        compra y el BID en una venta («The Ask price is used for buy deals, and the Bid price is
+        used for sell deals»), del ultimo tick anterior al instante; con respaldo M1, el cierre mas
+        el spread supuesto en la compra y el cierre en la venta. Es la lectura inversa de
+        `_precio_de_mercado`, que da el precio al que se MARCA o cierra la posicion."""
+        minuto = instante_ms // MS_POR_MINUTO
+        ticks = self.mercado.ticks_del_minuto(minuto)
+        if ticks is not None:
+            previos = [t for t in ticks if t.instante <= instante_ms]
+            if previos:
+                t = previos[-1]
+                return (int(t.ask) if lado == "compra" else int(t.bid)), TICKS
+        vela = self.mercado.m1(minuto)
+        if vela is None:
+            raise BrokerError(f"sin precio de mercado en el minuto {minuto}")
+        spread = self.config.spread_supuesto(MinutoUtc(minuto))
+        return (int(vela.cierre) + spread if lado == "compra" else int(vela.cierre)), RESPALDO_M1
+
+    def margen_usado(self) -> Decimal:
+        """El margen que ocupa lo vivo: cada posicion abierta a su precio de entrada y cada
+        pendiente STOP a su precio de orden («the margin is summed up (charged for each order)»,
+        documentacion de MT5; la limite no reserva margen en esa pagina y aqui no se cuenta).
+        Exige apalancamiento en las reglas."""
+        apalancamiento = self.reglas.apalancamiento
+        if apalancamiento is None:
+            raise BrokerError("sin apalancamiento en el perfil no hay margen que medir")
+        total = Decimal(0)
+        for p in self.posiciones.values():
+            if p.abierta:
+                total += margen_requerido(
+                    p.lotes, p.entrada, self.escala, self.contrato, apalancamiento
+                )
+        for o in self.ordenes.values():
+            if o.estado in (COLOCADA, MODIFICADA) and o.tipo == TIPO_STOP:
+                total += margen_requerido(
+                    o.lotes, o.precio, self.escala, self.contrato, apalancamiento
+                )
+        return total
 
     def flotante(self) -> Decimal:
         """El P/L flotante de las posiciones vivas a su ultimo precio marcado, en moneda."""

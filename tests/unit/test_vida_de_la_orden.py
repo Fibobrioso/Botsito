@@ -8,6 +8,7 @@ de esto decide: solo lee la traza del broker, y las opciones del comando siguen 
 
 from __future__ import annotations
 
+import dataclasses
 from decimal import Decimal
 from types import SimpleNamespace
 from typing import Any
@@ -23,6 +24,7 @@ from botsito.engine.broker import (
     PETICION_CANCELAR,
     Broker,
     Rechazo,
+    margen_requerido,
 )
 from botsito.engine.entrada import STOP_EN_RUPTURA
 from botsito.engine.llenado import Configuracion
@@ -71,13 +73,39 @@ def test_una_orden_llenada_sale_llenada_con_el_instante_del_llenado(
     broker = motor.brokers[DIA]
     p = next(iter(broker.posiciones.values()))
     (fila,) = _lineas_de_ordenes(motor)
-    colocada = cableado._instante(broker.ordenes["o1"].colocada_ms).isoformat()
+    o1 = broker.ordenes["o1"]
+    colocada = cableado._instante(o1.colocada_ms).isoformat()
+    # las cinco columnas de margen (rama trabajo/margen-lote, fase 1): el lote del 0,5 % de 100.000
+    # sobre 16 puntos (31,25), la distancia, el margen que pide la orden al ask del cierre en que se
+    # coloco (la UNICA funcion de margen), el margen libre de la cuenta (100.000, sin nada vivo) y
+    # el riesgo (0,5 %). En este dia sintetico la orden pide MAS margen del que hay: es la medida 2
+    ask, _ = broker.precio_de_conversion("compra", o1.colocada_ms)
+    requerido = margen_requerido(
+        o1.lotes, ask, broker.escala, broker.contrato, broker.reglas.apalancamiento or 0
+    )
     assert fila == (
         f"{DIA} | 07-11 | o1 | {colocada} | {PRECIO} | llenada | - | "
-        f"{cableado._instante(p.abierta_ms).isoformat()}"
+        f"{cableado._instante(p.abierta_ms).isoformat()} | 31.25 | 16 | {requerido:.2f} | "
+        f"100000.00 | 0.500"
     )
+    assert requerido > Decimal(100000)
     assert "ordenes: llenada 1" in cableado.informe_simulacion(motor)
     assert _rechazos(motor) == ["ninguno"]
+
+
+def test_sin_apalancamiento_en_el_perfil_las_columnas_de_margen_dicen_sin_medida(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """El otro sentido del campo (regimen de `bloqueadas`, R3.1): un perfil sin apalancamiento no
+    tiene margen que medir, y las dos columnas de margen salen `-`; el lote, la distancia y el
+    riesgo siguen saliendo, porque no dependen del apalancamiento. Nada mas cambia."""
+    motor = tc._motor(registro, vocabulario, tc._mercado(tc.RUTA_STOP))
+    motor.reglas_broker = dataclasses.replace(motor.reglas_broker, apalancamiento=None)
+    motor.correr_dia(tc._dia())
+    (fila,) = _lineas_de_ordenes(motor)
+    assert fila.endswith(f" | 31.25 | 16 | {cableado.SIN_MEDIDA} | {cableado.SIN_MEDIDA} | 0.500")
+    assert " | llenada | - | " in fila
+    assert "ordenes: llenada 1" in cableado.informe_simulacion(motor)
 
 
 # ---------------------------------------------------------------------------- rechazada
@@ -219,7 +247,16 @@ def test_una_orden_que_la_red_de_seguridad_cancela_sale_viva_al_cerrar_el_dia(
     motor = SimpleNamespace(trazas_broker={DIA: tb}, brokers={DIA: broker})
     filas = cableado.vida_de_las_ordenes(motor)  # type: ignore[arg-type]
     assert len(filas) == 1
-    dia, sesion, id, colocada, precio, resultado, motivo, cuando = filas[0]
+    dia, sesion, id, colocada, precio, resultado, motivo, cuando = filas[0][:8]
+    # sin anotacion de margen en la traza (este test monta la traza a mano), las columnas de
+    # margen van en None; el lote y la distancia salen de la orden
+    assert filas[0][8:] == (
+        broker.ordenes["o1"].lotes,
+        abs(tc.ENTRADA - broker.ordenes["o1"].stop),
+        None,
+        None,
+        None,
+    )
     assert (dia, sesion, id, precio, resultado) == (
         DIA,
         "07-11",

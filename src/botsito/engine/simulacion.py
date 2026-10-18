@@ -38,7 +38,12 @@ from botsito.domain.cierres import CalendarioCierres, ReglasCierres
 from botsito.domain.ticks import MS_POR_MINUTO, Tick
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.arnes import DiaTrader
-from botsito.engine.broker import PARAMETRO_STOPS_LEVEL, Broker, ReglasBroker
+from botsito.engine.broker import (
+    PARAMETRO_APALANCAMIENTO,
+    PARAMETRO_STOPS_LEVEL,
+    Broker,
+    ReglasBroker,
+)
 from botsito.engine.cuenta import Operacion, ReglasFase, ResultadoFase, evaluar_fase
 from botsito.engine.freno import LimitesFreno
 from botsito.engine.llenado import Configuracion, Mercado
@@ -141,6 +146,14 @@ def reglas_broker_de(
         stops_level_puntos=perfil.puntos_o_nada(PARAMETRO_STOPS_LEVEL),
         # R13: el limite de la firma, y el freno de ultimo recurso (ADR-0067)
         mensajes_dia_max=perfil.entero("firma_mensajes_dia_max"),
+        # el apalancamiento, para el margen (rama trabajo/margen-lote): None solo si el perfil no
+        # lo declara o no le da valor (los perfiles sinteticos de los tests); el de FTMO lo trae
+        apalancamiento=(
+            perfil.entero(PARAMETRO_APALANCAMIENTO)
+            if PARAMETRO_APALANCAMIENTO in perfil.nombres()
+            and PARAMETRO_APALANCAMIENTO not in perfil.sin_valor()
+            else None
+        ),
         freno=limites_freno_de(registro) if registro is not None else None,
         cierres=(
             reglas_cierres_de(perfil, registro, calendario)

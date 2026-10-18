@@ -104,3 +104,39 @@ Dado por Aleks (consultor) el 2026-10-17; el encargo va fechado el 2026-10-18. C
 > Si la rama toca hooks, rutas o el sistema de archivos, push como fix/margen-lote y CI de Linux, con su run en el informe. Si no los toca, dilo con la lista de ficheros cambiados.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-10-17)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/margen-lote (2026-10-17). Cópiala tal cual al final del encargo y en MARGEN-LOTE.md, y aplícala punto por punto con la skill fase-cero.
+>
+> 0. Lote por debajo del mínimo: (a). «No se opera» por DECISIÓN del consultor en ADR-0081, no por la cita de RN-027, con recuadro en ADR-0053 (tabla, línea 39). Por qué: subir al mínimo arriesga más que riesgo_por_operacion, lo contrario de limitar. El camino «no se coloca» es el mismo que usa lote_si_no_cabe = no_operar: uno solo, que anota el motivo y no lanza CableadoError.
+>
+> 1. Dónde va el límite del bot: (a), en la preparación de la orden, con los dos parámetros en parametros.yaml como ejecucion (patrón de cierre_pendientes y ADR-0068) y el tope de volumen y el apalancamiento por ReglasBroker desde el perfil. Por qué: no duplica firma_volumen_max_lotes ni inventa una cita del trader. Las notas de RN-011 y RN-027 dicen que el lote colocado puede quedar por debajo del de RN-011 por ADR-0081.
+>    Además: el margen requerido y el margen libre se calculan en UNA sola función (dominio o engine, donde no rompa import-linter), y la usan el límite del bot y el rechazo del bróker, con el mismo precio (ask en compras y bid en ventas del instante). Por qué: si cada uno calcula el suyo, pueden discrepar y el bot colocaría órdenes que el bróker rechaza por un céntimo. Si el bot ve la equidad por marcas de minuto y el bróker al tick, el colchón de 0,95 absorbe la diferencia: dilo en el ADR.
+>
+> 2. La equidad del bróker: (a) con un cambio. El saldo llega como callable (lambda: cuenta.saldo) y ReglasBroker gana apalancamiento: int | None. Pero se niega por defecto: si ReglasBroker trae apalancamiento (el perfil real), el saldo es OBLIGATORIO y construir el bróker sin él es un error; solo sin apalancamiento (tests de bróker aislado que no lo pasan) no se comprueba el margen. Nada de «margen: sin comprobar» en silencio con el perfil real. Por qué: la condición tiene nombre (la cuenta declara apalancamiento) y lo demás se niega. test_cuenta_7_de_agosto.py, segundo test, es la regresión del corte de la cuenta: se construye con apalancamiento=None explícito y su docstring lo dice. El test de que construir_motor_cableado pasa siempre el saldo, como propones. Si esto obliga a tocar ficheros de test fuera del contrato, amplía el contrato en ese commit y dilo.
+>
+> 3. El instante del margen: (a). Al colocar, con el ask o el bid del mercado; al llenar, con el precio del llenado; y la pendiente stop cuenta como margen usado mientras vive. Por qué: es lo que sostiene la frase de MT5 y el supuesto conservador de D3. Cuida el orden en la reubicación (ADR-0074): la cancelación de la orden vieja libera su margen antes de calcular el lote de la nueva, en el mismo cierre; un test lo comprueba. El rechazo al llenar no es una Peticion (R13): columna peticion = llenar, como propones.
+>
+> 4. A-57: (a). Abrirla como pregunta citando ev-v4-002457-5a2e88c6 y ev-v4-012900-8ef676ed. La propia pregunta dice que ninguna frase del trader habla del lote que no cabe y que la búsqueda se hizo (§1.f). Y la formulas sin cifras ni argumentos de VIABILIDAD-COMISION, solo con la cuenta y sus límites (50 lotes, 1:30). Por qué: deja la pregunta en la hoja de la sesión 5 y lo débil queda declarado.
+>
+> 5. Medida 1: (a), las dos lecturas de A-56 con el supuesto delante de cada tabla. Por qué: el mismo coste, y enseña cuánto depende la cifra de A-56. El guion stops_cortos.py, como lo propones; su lectura de los casos dev se declara en HOLDOUT-EXPOSICIONES el día que corra.
+>
+> 6. Heredado 37: (a). Sale entero por el criterio (a), y la línea nueva de A dice: «la ejecución 2 comprueba la fórmula del margen con MargenAlcanza, y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop». Por qué: lo que queda vivo ya está en A.
+>
+> 7. ADR-0026:123: (a), recuadro de corrección en ADR-0026, con el contrato ampliado a ese fichero. Por qué: es la misma frase falsa que se corrige en parametros.yaml, y ya hay precedente de recuadros de enmienda en ADR anteriores (ADR-0075 sobre ADR-0060).
+>
+> 8. Hoja de ruta: conforme. Entran en las «Líneas preparadas para el commit del contrato»: quitar HER:27 de G.3, HER:37 de A.2 y NA:E de R4.1 (en Refs y en «Depende de»), y «de E» en la V de PROJECT_STATE. Gracias por cazarlas antes del cierre.
+>
+> Además:
+> - §1.i dice «con firma_ordenes_simultaneas_max = 1 no hay dos posiciones vivas». Es incorrecto: firma_ordenes_simultaneas_max vale 200 (perfil, ADR-0050), y el que vale 1 es operaciones_simultaneas_max (parametros.yaml, estrategia). Corrígelo en el informe con su nombre y di si operaciones_simultaneas_max impide de verdad tener a la vez una posición viva y una pendiente stop de otro escenario. Si no lo impide, el margen sumado de las dos es justo lo que cubre el punto 3.
+> - Las noticias: el CSV lo hace Aleks a mano si quiere, y es opcional. Si está en corpus/noticias/ antes de correr la medida 1, se usa con su sha256 en el informe; si no, la medida queda sin fuente y va una línea a A («Aleks: calendario de las noticias restringidas de FTMO de los meses de construcción»). La rama no lo espera.
+> - La repetición de la corrida 2 fuera del repo para el diff de determinismo (h18): sí, en la fase 1 y en la fase 4, como R3.1.
+>
+> Lo que sigue: la fase 1 (el campo de 4.e con su test, make check sellado, la corrida «antes» con su fila de exposiciones, y las medidas 1 y 2), y luego las fases 2 a 4 sin parar, salvo que una medida contradiga lo decidido aquí o que las parejas o la precisión cambien en la corrida «antes», que solo añade salida. En ese caso, PARADA.
+>
+> Rama lista para revisión, NO cerrada.

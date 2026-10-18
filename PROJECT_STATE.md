@@ -16,7 +16,7 @@ trabajo/margen-lote
 5296a31 · merge: trabajo/sesgo-h4-color, el sesgo de H4 cambia solo si la vela rompe el extremo y cierra del color de la ruptura (ADR-0080, R1.2) · tag stable/F37r-sesgo-h4-color
 
 ## Tests Currently Passing
-1570 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1571 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

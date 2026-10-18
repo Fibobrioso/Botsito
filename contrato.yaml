@@ -11,6 +11,9 @@ rutas_permitidas:
   - docs/adr/0081-*.md
   - docs/adr/0052-el-broker-simulado.md
   - docs/adr/0053-el-cableado-del-simulador.md
+  # ampliado el 2026-10-17 por la respuesta del consultor a la PARADA (punto 7): recuadro de
+  # correccion en ADR-0026, Impacto («F21 lo comprueba…» no era verdad)
+  - docs/adr/0026-la-prop-firm-es-ftmo-2-step-swing.md
   - docs/adr/README.md
   - docs/spec/
   - knowledge/spec/
@@ -55,7 +58,6 @@ rutas_protegidas:
   - docs/validation/anexos/SESGO-H4-COLOR/
   - docs/validation/anexos/ENTRADA-JULIO/
   - docs/adr/0000-template.md
-  - docs/adr/0026-la-prop-firm-es-ftmo-2-step-swing.md
   - docs/adr/0031-el-freno-de-la-firma-dispara-antes-del-limite.md
   - docs/adr/0050-el-simulador-la-capa-de-cuenta.md
   - docs/adr/0056-la-entrada-con-la-ruptura.md

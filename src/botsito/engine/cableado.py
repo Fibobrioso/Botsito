@@ -118,6 +118,12 @@ class TrazaBroker:
     # ventana_fin), o la red de seguridad del fin del dia
     cancelaciones: list[tuple[int, str, str]] = field(default_factory=list)
     limites: tuple[tuple[str, int, int], ...] = ()  # (sesion, desde, hasta) en minutos UTC
+    # SOLO SALIDA (rama trabajo/margen-lote, fase 1): por orden, (margen requerido, margen libre,
+    # riesgo en % del saldo) al colocarla, lo que anota `colocar_orden_limite` en el contexto
+    # (`ContextoDia.margen_al_colocar`, el mismo diccionario). None en lo que no se pudo medir
+    margen_al_colocar: dict[str, tuple[Decimal | None, Decimal | None, Decimal | None]] = field(
+        default_factory=dict
+    )
 
 
 MOTIVO_FIN_DIA = "viva al cerrar el dia: cancelada por la red de seguridad (ADR-0053 §6)"
@@ -226,7 +232,11 @@ class MotorCableado:
         estado = EstadoDia()
         self.estados[clave] = estado
         trazas = {nombre: TrazaSesion() for nombre, _, _ in limites}
-        tb = TrazaBroker(depuracion=self.depuracion or not md.origen_ticks, limites=tuple(limites))
+        tb = TrazaBroker(
+            depuracion=self.depuracion or not md.origen_ticks,
+            limites=tuple(limites),
+            margen_al_colocar=ctx.margen_al_colocar,
+        )
         vistos = 0
         peticiones_vistas = 0  # para anotar las cancelaciones de cada cierre (solo el informe)
         instante = primero
@@ -727,8 +737,14 @@ def informe_simulacion(motor: MotorCableado) -> str:
 
 CABECERA_ORDENES = (
     "### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del "
-    "resultado)"
+    "resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD)"
+    " | riesgo (% del saldo))"
 )
+# las cuatro ultimas columnas (rama trabajo/margen-lote, fase 1) son SOLO salida: el lote pedido,
+# la distancia de la orden a su stop, y el margen y el riesgo medidos al colocar con la unica
+# funcion de margen (`broker.margen_requerido`); `-` en lo que no se pudo medir (perfil sin
+# apalancamiento, minuto sin precio). Van al final para que lo que ya leia las filas siga leyendolas
+SIN_MEDIDA = "-"
 RESULTADO_LLENADA = "llenada"
 RESULTADO_RECHAZADA = "rechazada"
 RESULTADO_CANCELADA = "cancelada"
@@ -745,12 +761,28 @@ def _sesion_de(colocada_ms: int, limites: Sequence[tuple[str, int, int]]) -> str
     return sesion or "-"
 
 
-def vida_de_las_ordenes(
-    motor: MotorCableado,
-) -> list[tuple[str, str, str, datetime, Decimal, str, str, datetime | None]]:
-    """(dia, sesion, id, colocada, precio, resultado, motivo, instante del resultado) por orden,
-    por dia y por instante de colocacion."""
-    salida: list[tuple[str, str, str, datetime, Decimal, str, str, datetime | None]] = []
+FilaOrden = tuple[
+    str,  # dia
+    str,  # sesion
+    str,  # id
+    datetime,  # colocada
+    Decimal,  # precio
+    str,  # resultado
+    str,  # motivo
+    datetime | None,  # instante del resultado
+    Decimal,  # lote pedido
+    int,  # distancia al stop, en puntos
+    Decimal | None,  # margen requerido al colocar (moneda); None si no se pudo medir
+    Decimal | None,  # margen libre de la cuenta al colocar (moneda); None si no se pudo medir
+    Decimal | None,  # riesgo al colocar, en % del saldo; None si no se pudo medir
+]
+
+
+def vida_de_las_ordenes(motor: MotorCableado) -> list[FilaOrden]:
+    """(dia, sesion, id, colocada, precio, resultado, motivo, instante del resultado, lote,
+    distancia, margen requerido, margen libre, riesgo) por orden, por dia y por instante de
+    colocacion. Las cinco ultimas son SOLO salida (rama trabajo/margen-lote, fase 1)."""
+    salida: list[FilaOrden] = []
     for dia in sorted(motor.trazas_broker):
         broker = motor.brokers.get(dia)
         tb = motor.trazas_broker[dia]
@@ -777,6 +809,7 @@ def vida_de_las_ordenes(
                 cuando = ms
             else:
                 resultado, motivo, cuando = o.estado, "-", o.ultimo_cambio_ms
+            requerido, libre, riesgo = tb.margen_al_colocar.get(o.id, (None, None, None))
             salida.append(
                 (
                     dia,
@@ -787,22 +820,46 @@ def vida_de_las_ordenes(
                     resultado,
                     motivo,
                     _instante(cuando) if cuando is not None else None,
+                    o.lotes,
+                    abs(o.precio - o.stop),
+                    requerido,
+                    libre,
+                    riesgo,
                 )
             )
     return salida
 
 
+def _moneda(valor: Decimal | None) -> str:
+    return SIN_MEDIDA if valor is None else f"{valor:.2f}"
+
+
 def _informe_ordenes(motor: MotorCableado) -> list[str]:
     lineas = ["", CABECERA_ORDENES]
     filas = vida_de_las_ordenes(motor)
-    for dia, sesion, id, colocada, precio, resultado, motivo, cuando in filas:
+    for (
+        dia,
+        sesion,
+        id,
+        colocada,
+        precio,
+        resultado,
+        motivo,
+        cuando,
+        lote,
+        dist,
+        req,
+        lib,
+        rg,
+    ) in filas:
         lineas.append(
             f"{dia} | {sesion} | {id} | {colocada.isoformat()} | {precio} | {resultado} | "
-            f"{motivo} | {cuando.isoformat() if cuando is not None else '-'}"
+            f"{motivo} | {cuando.isoformat() if cuando is not None else '-'} | {lote} | {dist} | "
+            f"{_moneda(req)} | {_moneda(lib)} | {SIN_MEDIDA if rg is None else f'{rg:.3f}'}"
         )
     if not filas:
         lineas.append("ninguna")
-    resumen = Counter(resultado for _, _, _, _, _, resultado, _, _ in filas)
+    resumen = Counter(f[5] for f in filas)
     lineas.append(
         "ordenes: " + (", ".join(f"{k} {v}" for k, v in sorted(resumen.items())) if filas else "0")
     )
