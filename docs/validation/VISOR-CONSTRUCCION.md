@@ -1044,7 +1044,7 @@ texto, con los días que ganan:
     - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el arnés sí, :2437): con `--todos` arrastra la cuenta (VISOR-CONSTRUCCION.md §4.3).
     - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
     - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
-    - `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check, sin declararlo (VISOR-CONSTRUCCION.md §4.3).
+    - `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18; VISOR-CONSTRUCCION.md §4.3).
     - `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker (VISOR-CONSTRUCCION.md §4.3).
     - El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los ticks empiezan en ventana_inicio y la orden lleva 1 ms antes (VISOR-CONSTRUCCION.md §4.3).
 
@@ -1066,11 +1066,13 @@ PROJECT_STATE simulado en una carpeta temporal fuera del repo:
     test_project_state_declares_a_branch: pasa
     test_project_state_cabe_en_el_tope: pasa
     PROJECT_STATE hoy: 23629 bytes
-    PROJECT_STATE simulado: 24724 bytes
+    PROJECT_STATE simulado: 24742 bytes
 
 **Pasan.** La primera versión de las líneas daba 25.036 bytes y no cabía: se acortaron las deudas
 (su evidencia vive en §4.3) y las líneas de F, Y y V. Con la sexta deuda y la línea Y corregida
-(hallazgos b2 y b3 del revisor), el margen queda en 276 bytes. El cierre cambia
+(hallazgos b2 y b3 del revisor), el margen queda en 276 bytes; con la línea de `test_visor.py`
+citando la fila nueva de HOLDOUT-EXPOSICIONES (orden de cierre, punto 1), 24.742 bytes, por debajo
+de los 24.800 que fija la orden. El cierre cambia
 además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan de esta rama.
 
 ### 4.3 La deuda, con su evidencia
@@ -1128,6 +1130,12 @@ además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan
      traza con las reglas disparadas, y las 20 trazas se regeneraron. La lección: un hecho de la
      forma (`hecho:`) vale con CUALQUIER valor fijado (`interprete._hecho`); se busca por presencia.
 - Y lo que diga el revisor (§8).
+- **Del consultor (orden de cierre, punto 1), un hallazgo que el revisor no vio (importa):** §4.3,
+  punto 4, midió que `test_visor.py` hace leer al visor el M1 entero de marzo en cada `make check`,
+  y la rama lo dejó solo como deuda. Se declaró en HOLDOUT-EXPOSICIONES (fila del 2026-10-18, desde
+  `50045c8`). La lección, para el revisor: cuando una rama descubre una lectura de material
+  reservado que ya ocurre, comprobar que queda declarada en HOLDOUT-EXPOSICIONES y no solo como
+  deuda.
 
 ## 5 · El encargo, punto por punto
 
@@ -1424,3 +1432,43 @@ retiradas):
 LISTA PARA REVISION, NO CERRADA (2026-10-18). Fases 0, 1 y 2 hechas: una E (la reentrada en un punto ya llenado, rama Y propuesta) y el resto correcto o R, con sus preguntas para V (§3); las líneas del cierre, preparadas y simuladas (§4); el revisor, con 1 «bloquea», 4 «importa» y 5 «menor», todos arreglados (§8.1); sin CI de Linux porque la rama no toca la plataforma (§7). El cierre en main solo con la orden de Aleks.
 
 Rama lista para revisión, NO cerrada.
+
+## 9 · Orden de cierre del consultor (2026-10-18)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> ORDEN DE CIERRE de trabajo/visor-construccion (consultor, 2026-10-18). Revisada la rama (VISOR-CONSTRUCCION.md entero, con el informe del revisor): se cierra. Copia esta orden tal cual al final de VISOR-CONSTRUCCION.md, en una sección «## 9 · Orden de cierre del consultor (2026-10-18)», y sigue la skill cerrar-rama (RITUAL.md) cuando Aleks escriba /cerrar-rama.
+>
+> 1. Antes del ritual, en la rama, un commit corto con make check sellado:
+>    - Hallazgo del consultor que el revisor no vio (importa): §4.3, punto 4, mide que test_visor.py hace leer al visor el M1 entero de marzo (mes reservado) en cada make check, y la rama lo deja solo como deuda. Una lectura que ocurre y no está declarada se declara en HOLDOUT-EXPOSICIONES el mismo día en que se descubre, como se hizo con el calentamiento del arnés (fila del 2026-10-14). Añade una fila del 2026-10-18 que declare:
+>      · esa lectura;
+>      · desde cuándo ocurre: el commit que añadió test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos, medido con git log;
+>      · que solo calienta el sesgo, sin imprimir ninguna fecha ni ningún precio.
+>      La línea de Technical Debt de §4.1 se queda, porque el arreglo es de código, y pasa a citar esa fila.
+>    - Lección para el revisor (va a la fila de ERRORES-RECURRENTES): cuando una rama descubre una lectura de material reservado que ya ocurre, comprobar que queda declarada en HOLDOUT-EXPOSICIONES y no solo como deuda.
+>
+> 2. Tag: stable/F37t-visor-construccion (verifica que el último en HISTORIA es F37s).
+>
+> 3. En el commit del contrato (chore(cierre)), las líneas de §4.1 tal como están, con estas precisiones:
+>    - La letra Y, aceptada. Su título en HISTORIA, cuando salga, llevará nombre, como el de O.
+>    - O sale bajo «# Next Action HECHA · O · las comprobaciones en el visor · …».
+>    - F, Y, V, R3.2 HECHA con su línea de Estado, R3.4 nueva, R4.1 y las seis líneas de Technical Debt: tal como están en §4.1.
+>    - No añadas a PROJECT_STATE nada más que eso. Corre simular_cierre.py y test_hoja_de_ruta.py antes del commit. Si PROJECT_STATE pasa de 24.800 bytes, PARADA. La siguiente rama lo adelgaza.
+>    - Fila de trabajo/visor-construccion en ERRORES-RECURRENTES.md con lo de §4.4 (los dos hallazgos del consultor de la PARADA 1, el acierto de contexto_h4.py y las dos lecciones de la sesión), el revisor (1 bloquea, 4 importa y 5 menor, todos arreglados o declarados; el bloquea, revisar_dia.py escribiendo en el repo real con la raíz sacada de su propia ruta) y el hallazgo del punto 1 con su lección.
+>
+> 4. El commit de estado tras el tag solo reemplaza Current Branch, Current Feature, Stable Main State y Last Stable Commit.
+>
+> 5. make check sellado y push atómico de main y del tag en un solo comando; Aleks confirma la regla ask con «1. Yes». Si el clasificador niega algún comando, no cambies de vía: PARADA, y lo lanza Aleks con «!».
+>
+> 6. CI de main: consúltala con gh run view. Si el clasificador lo niega, PARADA y la consulta Aleks con «!». Nunca con curl, con gh run watch ni con un guion. Con la CI en verde, borra la rama local (no hubo fix/ remota). Si sale roja, el arreglo va por una rama corta con su propia orden de cierre.
+>
+> 7. Informe final: sha de main, el tag, el run de la CI de main y su resultado, las ramas que quedan, el tamaño de PROJECT_STATE en bytes, y la fila nueva de HOLDOUT-EXPOSICIONES con su commit.
+
+**Punto 1, hecho en la rama** (antes del ritual): la fila del 2026-10-18 en HOLDOUT-EXPOSICIONES
+(«El VISOR lee el M1 entero de marzo en cada `make check`», desde `50045c8`, del 2026-09-25,
+medido con `git log -S "def test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos" --
+tests/unit/test_visor.py`); la línea de Technical Debt de §4.1 la cita; la lección, en §4.4.
+`simular_cierre.py` con la línea nueva: a, b y c sin problemas, los cuatro tests de PROJECT_STATE
+pasan, 24.742 bytes simulados.

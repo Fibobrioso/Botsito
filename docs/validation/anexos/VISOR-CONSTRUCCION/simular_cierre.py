@@ -126,8 +126,8 @@ DEUDAS = [
     "mes anterior (VISOR-CONSTRUCCION.md §4.3).",
     "- El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; "
     "VISOR-CONSTRUCCION.md §4.3).",
-    "- `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check, sin "
-    "declararlo (VISOR-CONSTRUCCION.md §4.3).",
+    "- `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check "
+    "(HOLDOUT-EXPOSICIONES, 2026-10-18; VISOR-CONSTRUCCION.md §4.3).",
     "- `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker "
     "(VISOR-CONSTRUCCION.md §4.3).",
     "- El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los "
