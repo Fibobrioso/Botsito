@@ -436,9 +436,305 @@ En la rama, `test_punto_usado.py`: 13 passed.
   `spec manifest --escribir` (hash `857d0b91…`) y `spec docs --escribir` (`docs/spec/`) en el mismo
   commit; trailer `Fuente: ADR-0083`.
 
-[make check de la fase 3: pendiente de sello]
+`make check` sellado sobre ese árbol (commit 56bbf91, que lleva también los resultados de la fase 1):
+2690 passed, `SELLO`, `PICO DE MEMORIA de make check: 295 MiB en test (…; el mayor proceso,
+285 MiB)`. `knowledge validate`: 0 errores (el trailer `Fuente: ADR-0083` en el commit; ADR-0083 ya
+existe y los bloques `ids-inexistentes` salieron).
+
+## 4 · Fase 4 · La re-corrida con ADR-0083 (2026-10-18)
+
+Fila de HOLDOUT-EXPOSICIONES («Fase 4 de la rama `trabajo/punto-usado`») escrita antes de los
+comandos. Los tres de R3.1 tal cual, salvo la carpeta de `--salida` (sobre el commit 56bbf91):
+
+    uv run botsito motor arnes --simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope --salida docs/validation/anexos/PUNTO-USADO/arrastrada.txt
+    uv run botsito motor arnes --simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope --diagnostico-cuenta-diaria --salida docs/validation/anexos/PUNTO-USADO/diaria.txt
+    uv run botsito motor arnes --simular --diagnostico-a35 inicio_vela_contraria --diagnostico-a44 sin_tope --diagnostico-cuenta-diaria --salida docs/validation/anexos/PUNTO-USADO/a35-inicio.txt
+
+| corrida | TIEMPO | MEMORIA (pico) | líneas |
+|---|---|---|---|
+| 1 arrastrada | 504,3 s | 631,8 MiB | — |
+| 2 diaria | 467,0 s | 634,2 MiB | 2.177 (antes 2.144) |
+| 3 a35-inicio | 363,9 s | 634,1 MiB | — |
+
+Es una corrida con `--diagnostico-*`: no cuenta ni habilita mayo (ADR-0070 §3; la salida lo dice:
+«habilita medir el conjunto de medida (2026-05): no»), no decide ningún parámetro y no se mide
+cobertura contra ningún umbral. Las corridas 1 y 2 corrieron en paralelo; la 3 y la repetición de
+la 2, después.
+
+### 4.a El recuento de la fase 1, antes y después (`reentradas_por_punto.py` sobre la corrida 2)
+
+| | antes (§2.c) | después |
+|---|---|---|
+| órdenes en el punto exacto de una ya llenada de su sesión | 41, en 18 sesiones | **55, en 25 sesiones** |
+| con la MISMA caja (llenadas) | 0 (0) | **14 (7)** |
+| con otra caja (llenadas) | 41 (13) | 41 (13) |
+| en el punto de una ya rechazada | 0 | 0 |
+
+Salida con `--filas` en `anexos/PUNTO-USADO/reentradas_despues.txt`. Las 14 con la misma caja son
+exactamente D3a: una por sesión, colocada en el cierre siguiente al stop de la llenada anterior
+(2026-01-07 07-11, 01-14 07-11, 01-16 11-15, 01-20 11-15, 01-21 11-15, 04-03 07-11, 04-06 11-15,
+04-07 07-11, 04-24 11-15, 07-02 11-15, 07-15 07-11, 08-11 11-15, 08-21 07-11 y 08-26 07-11); 7 se
+llenan, 5 se cancelan (RN-006 las reubica con un 1 nuevo, o RN-035 a `ventana_fin`) y 2 se rechazan
+por `precio_invalido` (el precio ya había pasado el punto al colocarla: el rechazo gasta el punto,
+como antes). Las 41 con otra caja son las mismas 41 de antes. Nada tras un rechazo: el rechazo al
+llenar no ocurre en estas corridas (`margen_libre` 0, como en MARGEN-LOTE §4.a), así que D3b solo lo
+ejercita su test.
+
+### 4.b Las órdenes, las peticiones por día y los rechazos por motivo, antes y después
+
+| corrida 2 (diaria) | antes (`main` + campo, §2) | después (ADR-0083) |
+|---|---|---|
+| órdenes | 504: cancelada 299, llenada 179, rechazada 26 | **514**: cancelada 303, llenada **184**, rechazada 27 |
+| no enviadas | 0 | 0 |
+| rechazos por motivo | `precio_invalido` 26 (6, 8, 4, 8), todos al colocar | `precio_invalido` **27** (6, 8, 4, 9), todos al colocar; `margen_libre` 0 |
+| peticiones al servidor (total; colocar / modificar / cancelar / rechazadas) | 858; 504 / 55 / 299 / 26 (enero 257, abril 251, julio 142, agosto 208) | **875**; 514 / 58 / 303 / 27 (enero 262, abril 257, julio 145, agosto 211) |
+| día con más peticiones | 39 | 41 |
+| sesiones con `detenido_por_cartuchos:si` | 4 | **6** |
+| corrida 1 (arrastrada): órdenes | 124: cancelada 76, llenada 46, rechazada 2 (MARGEN-LOTE §4.a) | **120**: cancelada 74, llenada **44**, rechazada 2 (`precio_invalido`, enero) |
+| corrida 3 (a35-inicio): órdenes | 494: cancelada 289, llenada 179, rechazada 26 | **504**: cancelada 293, llenada **184**, rechazada 27 |
+
+(`anexos/PUNTO-USADO/peticiones_por_mes.py` y `sesiones_que_cambian.py`, que reciben las salidas por
+argumento.) El rechazo nuevo por `precio_invalido` es o2 de 2026-08-21 07-11: la reentrada con la
+misma caja, colocada cuando el precio ya había pasado el punto. +17 peticiones (+10 colocar, +3
+modificar, +4 cancelar) y el día más cargado pasa de 39 a 41: lejos del tope de R13.
+
+**Las 12 sesiones de la diaria cuyas órdenes cambian de recuento** (y las 2 en que cambia la caja
+de una orden sin cambiar el recuento: 2026-01-07 07-11 y 2026-01-16 11-15, donde la reentrada con la
+misma caja sustituye a la que antes iba con otra):
+
+| sesión | antes | después | qué pasa |
+|---|---|---|---|
+| 2026-01-14 07-11 | 4 llenadas, 1 cancelada, 1 rechazada | 5 llenadas | o3 vuelve al punto de o2 con la misma caja y se llena; la tercera pérdida agota los cartuchos (`detenido_por_cartuchos`, nueva) |
+| 2026-01-20 11-15 | 2 llenadas, 5 canceladas | 3 llenadas | o4 vuelve al punto de o3 (misma caja) y se llena |
+| 2026-01-21 11-15 | 3 llenadas, 8 canceladas | 3 llenadas, 9 canceladas | o8 vuelve al punto de o7 (misma caja) y RN-006 la reubica |
+| 2026-04-03 07-11 | 2 llenadas, 3 canceladas | + 1 rechazada | o4 vuelve al punto de o3 y el bróker la rechaza (`precio_invalido`): el punto queda gastado |
+| 2026-04-06 11-15 | 1 llenada, 1 rechazada | 2 llenadas | o3 vuelve al punto de o2 (misma caja) y se llena; el rechazo de antes (otra caja, con el precio pasado) ya no ocurre |
+| 2026-04-07 07-11 | 3 llenadas, 1 rechazada, 16 canceladas | + 1 cancelada | o6 vuelve al punto de o5 y RN-006 la reubica |
+| 2026-04-24 11-15 | 2 llenadas | + 1 cancelada | o11 vuelve al punto de o10 y se cancela sin llenar |
+| 2026-07-02 11-15 | 2 llenadas, 9 canceladas | 3 llenadas | o12 vuelve al punto de o11 (misma caja) y se llena; agota los cartuchos (nueva) |
+| 2026-07-15 07-11 | 3 llenadas, 12 canceladas | + 1 cancelada | o4 vuelve al punto de o3 y RN-006 la reubica |
+| 2026-08-11 11-15 | 3 llenadas, 1 cancelada | 4 llenadas | o4 vuelve al punto de o3 (misma caja) y se llena |
+| 2026-08-21 07-11 | 2 llenadas | + 1 rechazada | o2 vuelve al punto de o1 y el bróker la rechaza (`precio_invalido`) |
+| 2026-08-26 07-11 | 4 llenadas, 4 canceladas | + 1 cancelada | o2 vuelve al punto de o1 y RN-006 la reubica |
+
+### 4.c Las sesiones con `detenido_por_cartuchos`, antes y después
+
+Antes, las cuatro de VISOR-CONSTRUCCION.md §2.h: 2026-07-01 07-11, 2026-07-01 11-15, 2026-07-13
+11-15 y 2026-08-26 07-11. Después, **las mismas cuatro más dos**: 2026-01-14 07-11 y 2026-07-02
+11-15, las dos sesiones en que la reentrada con la misma caja se llena y pierde como tercer intento
+(tabla de 4.b). Las cuatro de §2.h no cambian de resultado: 2026-07-13 11-15 sigue con o11, o12 y
+o13 (tres 1 distintos: ninguna misma caja que añadir) y su rechazo o14; 2026-08-26 07-11 gana una
+reentrada con la misma caja (o2 en el punto de o1) que RN-006 reubica antes de llenarse, y se agota
+igual con sus cuatro llenadas. VISOR §2.h decía que «si Y se arregla, esas dos sesiones cambian»: no
+cambian, porque Y se hizo al revés (recuadro allí).
+
+### 4.d La tabla T0 y P1-P7 (`patrones.py` de R3.1 sobre la corrida 2), frente a MARGEN-LOTE.md §4.d
+
+Salida completa en `anexos/PUNTO-USADO/patrones.txt` (364 filas, 104 sesiones con rn003;
+MARGEN-LOTE: 359 filas, las mismas 104 sesiones).
+
+| mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de más | P6 trader no operó | P7 repetidas | T0 pareja |
+|---|---|---|---|---|---|---|---|---|
+| enero | 7 (7) | 13 (13) | 26 (26) | 6 (6) | **43** (41) | 8 (8) | 0 (0) | 2 (2) |
+| abril | 9 (9) | 4 (4) | 11 (11) | 6 (6) | 22 (22) | **21** (20) | 0 (0) | 5 (5) |
+| julio (1-17) | 20 (20) | 9 (9) | 14 (14) | 14 (14) | **25** (24) | 2 (2) | 3 (3) | 7 (7) |
+| agosto | 8 (8) | 7 (7) | 9 (9) | 14 (14) | 25 (25) | **20** (19) | 0 (0) | 4 (4) |
+| **total** | **44 (44)** | **33 (33)** | **60 (60)** | **40 (40)** | **115 (112)** | **51 (49)** | **3 (3)** | **18 (18)** |
+
+(entre paréntesis, MARGEN-LOTE.md §4.d.) **Las parejas no cambian (18) ni la cobertura (18/198,
+9,1 %); la precisión BAJA de 18/162 (11,1 %) a 18/167 (10,8 %)**: cinco operaciones puntuables más
+del bot y ninguna pareja nueva. Como pide el encargo, se dice y se explica por sesión, y no se
+ajusta nada: las cinco son las reentradas con la misma caja que se llenan en una sesión que ya
+tenía operaciones del bot (tabla de 4.b): 2026-01-14 07-11 y 2026-01-20 11-15 (P5, enero 41 → 43),
+2026-07-02 11-15 (P5, julio 24 → 25), 2026-04-06 11-15 (P6, abril 20 → 21) y 2026-08-11 11-15 (P6,
+agosto 19 → 20). Las otras dos llenadas con la misma caja (2026-01-07 07-11 y 2026-01-16 11-15)
+sustituyen a una que antes iba con otra caja y no mueven la tabla. P7 sigue en 3, P5 «mismo lado»
+pasa de 90 a 93.
+
+**P5 y P7, aparte (la pregunta 3 de V).** P7 son las 3 entradas repetidas del trader en el mismo
+nivel que el bot toma una vez (las tres de julio, CORRIDA-CONSTRUCCION.md §4.5); ADR-0083 no las
+mueve: en esas tres sesiones el bot no reentra, porque su primera orden ahí no pierde en el stop
+antes de la repetición del trader (o emparejó y ganó: RN-034). P5 «de más, mismo lado» (93) es el
+bot parándose y volviendo a entrar, y ahora incluye las reentradas con la misma caja: lo que la
+pregunta 3 tiene que preguntar es cuántas veces reentra el trader en el mismo punto tras un stop y
+con qué caja (§5). **La corrida 1 (arrastrada)** cambia también, y se explica igual: antes 2 parejas,
+cobertura 2/198 (1,0 %), precisión 2/44 (4,5 %); después las mismas 2 parejas, 2/198 y **2/44**; por
+mes, P2 13 → 12, P3 24 → 22, P4 115 → 118, P6 7 → 5 (`anexos/PUNTO-USADO/patrones-arrastrada.txt`).
+Con la cuenta arrastrada las reentradas de enero (2026-01-14, 01-20 y 01-23 ganan una llenada; 01-21
+una cancelada) adelantan las pérdidas, la cuenta se suspende antes y **cuatro sesiones que antes
+tenían órdenes se quedan sin ninguna** (2026-01-30 11-15, 04-01 11-15, 04-02 11-15 y 04-03 07-11):
+46 → 44 llenadas. Es lo que R3.1 y MARGEN-LOTE ya decían de la arrastrada (corta en enero); nada de
+eso cambia aquí.
+
+### 4.e Lo que pasa el 29 de abril en el bot (corrida 2, sesión 07-11, día dev)
+
+Igual antes y después. El trader vende dos veces en 1.17064, a las 07:55:40Z y 07:58:35Z (la
+reentrada de LA-CAJA-DEL-29-DE-ABRIL.md:236-243). El bot: o1 y o2 en 1.17048 (07:11:59Z y
+07:12:59Z, punto `117048@29624111`, reubicadas por RN-006 con un 1 nuevo), **o3 en 1.1706 (punto
+`117060@29624113`, 1 en 1.17072), llenada a las 07:14:06Z y cerrada por el stop (RN-012 dispara en
+la sesión)**, y ninguna orden más en la sesión: las dos ventas del trader quedan SIN PAREJA («bot
+más cercano en la sesión: venta 07:14:06Z 1.1706, Δentrada -4 puntos, Δinstante -41/-44 min»; P3).
+Tras el stop de o3 el bot NO reentra en su punto, ni antes ni después de ADR-0083, y tampoco en el
+nivel del trader 41 minutos más tarde: el punto de o3 queda liberado, pero `toca_colocar` no vuelve a
+dar SI en la sesión (la liquidez tomada y el último pivote contrario cambian con las velas que
+siguen; la traza por cierre es la vía para decirlo, `anexos/VISOR-CONSTRUCCION/traza_por_cierre.py`,
+y no se corre en esta rama). Así que **el ejemplo del 29 de abril no se ve en el bot como reentrada**:
+va a V con la pregunta 3 tal cual (§5), con lo que el bot hace ahora cuando sí reentra (4.a y 4.b).
+
+### 4.f La corrida 3 (a35-inicio) y el determinismo
+
+La otra lectura de A-35 con la cuenta diaria da, como en R3.1, R1.2 y MARGEN-LOTE, **las mismas
+parejas, cobertura y precisión que la corrida 2** (18/198, 9,1 %; 18/167, 10,8 %; antes 18/162), los
+mismos rechazos (`precio_invalido` 27: 6, 8, 4, 9; antes 26), las mismas 6 sesiones con
+`detenido_por_cartuchos:si`, el mismo recuento por punto (55 en 25 sesiones; 14 con la misma caja,
+7 llenadas; 41 con otra) y la misma tabla T0 y P1-P7 (`anexos/PUNTO-USADO/patrones-a35-inicio.txt`);
+184 llenadas (antes 179) y 293 canceladas (antes 289; la diaria, 303: `inicio_vela_contraria`
+recoloca distinto, como ya decía MARGEN-LOTE §4.e).
+
+**Determinismo:** la corrida 2 repetida con `--salida` fuera del repositorio (la misma lectura,
+declarada en la fila de la fase 4): `sha256sum` idéntico
+(`140e147947cdb99c7f880fb2e956320e6d98221a71fcd3824438d386194b01bf`); `TIEMPO: 370.1 s; MEMORIA:
+pico del proceso de 633.9 MiB`. La copia no se commitea.
+
+**El límite de §1.c** (una zona reutilizada en un escenario nuevo): no se mide en esta corrida
+(haría falta la traza por cierre, que no se corre en esta rama). Lo que sí dice la salida: las 14
+reentradas con la misma caja se colocan entre 21 s y 4 min 27 s después del llenado de la orden
+anterior (`reentradas_despues.txt`, «colocada» frente al instante del llenado anterior), un tramo
+corto para una toma nueva, pero no se afirma. Queda dicho en ADR-0083, Impacto; no es una deuda
+abierta mientras no se mida.
+
+## 5 · Lo que cambia para V (la sesión 5)
+
+**La pregunta 3** («cuántas veces reentra el trader en la misma zona tras un stop», CORRIDA-CONSTRUCCION.md
+§4.5) gana dos cosas: el **ejemplo del 29 de abril** (dos ventas en 1.17064 con el stop en 1.17079 a
+las 09:55 y 09:58 de su reloj, la primera perdida en el stop; «sería cuestión de poner otra reentrada
+aquí», LA-CAJA-DEL-29-DE-ABRIL.md:236-243), y **la caja de la reentrada: ¿la del primer intento o
+una nueva?** (D5: esta rama no lo decide). Y la pregunta sigue necesitando el número: ¿una vez, dos,
+hasta agotar los tres cartuchos?
+
+**Lo que hace el bot tras esta rama**, para que el cuestionario lo enseñe tal cual: tras una pérdida o
+un break even, en el cierre de M1 siguiente vuelve a colocar la orden stop en el MISMO punto, con la
+caja que diga el productor en ese cierre (la misma si el 1 no cambió, otra si cambió: ADR-0074), con
+RN-011 y RN-015 delante (sesgo, ruido de RN-005, RN-009, el margen) y con los cartuchos de RN-016; y
+así hasta tres pérdidas por liquidez. Tras una ganadora no vuelve (RN-034). Un rechazo del bróker,
+al colocar o al llenar, gasta el punto. En la construcción (corrida 2) eso son 14 reentradas con la
+misma caja en 14 sesiones (7 llenadas) además de las 41 con otra caja que ya había; dos sesiones más
+agotan los cartuchos (§4.c). El 29 de abril el bot no llega a reentrar: entra 41 minutos antes que el
+trader, en otro punto, y tras su stop no vuelve a ver un punto en la sesión (§4.e).
+
+Para la hoja de preguntas, en el reloj del trader (Europe/Madrid) y sin cifras en dinero:
+
+> Pregunta 3 (reentradas). El 29 de abril, a las 09:55 vendiste en 1.17064 con el stop en 1.17079,
+> perdiste en el stop y a las 09:58 volviste a vender exactamente en el mismo nivel con el mismo
+> stop («sería cuestión de poner otra reentrada aquí»). ¿Cuántas veces reentras en el mismo punto
+> tras un stop: una, dos, hasta agotar los tres cartuchos? ¿Y la caja de la reentrada es la del
+> primer intento (el mismo stop) o la vuelves a trazar con lo que el precio hizo desde entonces?
+
+## 6 · Líneas preparadas para el commit del contrato de la orden de cierre
+
+Simuladas con `anexos/PUNTO-USADO/simular_cierre.py <raíz>` contra `test_hoja_de_ruta.py` (a, b y c)
+y `test_project_state.py`, como VISOR-CONSTRUCCION: **a, b y c vacíos; las cuatro pruebas de
+PROJECT_STATE pasan; 22.182 bytes simulados** (hoy 22.026; tope 25.000). En el repo no escribe nada.
+
+**Next Action** (`PROJECT_STATE.md`):
+
+- **Y sale** a `docs/state/HISTORIA.md`, con su texto literal, bajo (el título lleva nombre porque ya
+  hay una «# Next Action HECHA · Y ·» de `trabajo/adelgazar-estado`, HISTORIA.md:7130):
+
+      # Next Action HECHA · Y · qué gasta un punto · sale de PROJECT_STATE.md en trabajo/punto-usado (2026-10-18)
+
+      Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto; en la corrida 2, hasta 47 órdenes en 22 sesiones van al 0 de una ya llenada (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
+
+      La hace `trabajo/punto-usado` (docs/validation/PUNTO-USADO.md; ADR-0083, que la rehizo en el sentido contrario al de esta línea: el llenado no gasta el punto).
+
+- **F queda en:**
+
+      F. J → V. Las ramas de R6a (ADR-0082) van en los huecos de espera y no le quitan turno ni a J ni a V.
+
+- **V cambia:** «y las preguntas de VISOR-CONSTRUCCION.md §3.2. Depende de R1.1, de R3.1, de Y, de J
+  (kit hoja) y de la copia de seguridad (A.4).» pasa a «las preguntas de VISOR-CONSTRUCCION.md §3.2;
+  y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende
+  de R1.1, de R3.1, de J (kit hoja) y de la copia de seguridad (A.4).»
+
+**Technical Debt** (`PROJECT_STATE.md`), dos líneas nuevas al principio de la lista:
+
+    - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
+    - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
+
+**Hoja de ruta** (`docs/plan/HOJA-DE-RUTA.md`; `docs/plan/` está protegido en el contrato, por eso
+van aquí):
+
+- **R3.4** cambia de título y de «Qué es», gana `ID:ADR-0083` en sus Refs (H4) y pasa a HECHA:
+
+      ### R3.4 · Qué gasta un punto: el rechazo y el no envío, no el llenado
+      - **Refs:** NA:Y · ID:ADR-0083 · ID:ADR-0064 · ID:ADR-0074
+      - **Qué es:** fijar por ADR qué gasta un punto (ADR-0083, que enmienda la decisión 1 de
+        ADR-0064): el rechazo del bróker -al colocar o al llenar- y el no envío lo gastan; el
+        llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar, con la
+        misma caja o con otra; el código lo cumple, con tests que rompen en `main`, y la corrida 2
+        repetida.
+      - **Depende de:** R3.2 (HECHA).
+      - **Quién:** la sesión, con el encargo del consultor.
+      - **Hecho cuando:** un test lo rompe en `main` y pasa en la rama, y la corrida 2 está repetida
+        con los tres comandos de R3.1.
+      - **Estado:** HECHA (`trabajo/punto-usado`; PUNTO-USADO.md): ADR-0083; `liberar_usada` y el
+        rechazo al llenar gasta el punto, por el cableado; 13 tests por el cableado real (4 rompen
+        en `main` por D1); la corrida 2 repetida con los tres comandos de R3.1 (§4). PROVISIONAL en
+        D1 hasta la pregunta 3 de la sesión 5 (R4.1).
+
+- **R4.1:** `NA:Y` sale de los Refs («NA:V · NA:Y · ID:RN-004» → «NA:V · ID:RN-004») y «R3.4 (NA:Y)»
+  pasa a «R3.4 (HECHA)» en «Depende de».
+- **R3.2, Estado** (H2 del auditor): «Una E (la reentrada en un punto ya llenado: R3.4)» pasa a «Una
+  E (la reentrada en un punto ya llenado: R3.4, que ADR-0083 rehízo en el sentido contrario: el
+  llenado no gasta el punto)».
+
+## 7 · El encargo frente a lo hecho, punto por punto
+
+| Punto | Hecho | Desviaciones declaradas |
+|---|---|---|
+| 0 Apertura (base, gh, abrir-rama, informe y anexos, skills, /model) | Sí (§0; `gh run view`, ni curl ni guion; tramo R3) | El primer `make check` salió en rojo por citar ADR-0083 sin bloque `ids-inexistentes` (§0, H1) |
+| 1 Por qué cambia Y (verificar las dos cosas en la fase 0) | Sí (§1.b) | — |
+| 2 D1-D5 | D1 y D4 en ADR-0083 y en los tests; D2 (ADR, recuadro, nota, docstrings, spec, versión, manifest, docs, Fuente:); D3 (dos tests que rompen en `main`); D5 (vía normal) | D1 se aplica por RESULTADO del cierre, también a un cierre MANUAL (§1.h); el «equal» es RN-019, que no dispara. La fase 0 no encontró nada que contradiga D1-D5 |
+| 3 Lo que NO cambia | Reubicación, geometría, sesgo, ventana, lote, RN-034, cartuchos: sin tocar; informes cerrados con recuadros; cases y holdout sin tocar; guardias, .claude y Makefile sin tocar; PROJECT_STATE solo lo del ritual (Current Branch/Feature y el recuento de tests: 22.026 bytes) | Once recuadros en VISOR en vez de los seis del encargo (H2); la línea del Estado de R3.2 en la hoja va al cierre (§6). Ningún comando negado por el clasificador; la guardia negó un `kb at` (§1.f) y varios comandos compuestos, que se partieron en llamadas |
+| 4 Fase 0 (a-e) | §1.b-1.f; PARADA no dada | — |
+| 5 Fase 1 | §2: el campo, el test en los dos sentidos, make check sellado, la corrida «antes» igual a MARGEN-LOTE sin el campo (0 líneas), determinismo, el guion por punto y por sesión | El campo son DOS columnas (punto y 1 de la caja): el stop no distingue dos cajas (§2.a) |
+| 5 Fase 2 | §3.a: 13 tests por el cableado real, 6 FAILED en `main` (4 por D1, 2 del campo), 7 pasan; los de 4.d sin cambiar | Dos rutas de precio corregidas antes de fijar el rojo (§3.a) |
+| 5 Fase 3 | §3.b-3.c: código, ADR-0083, recuadros, docstrings, spec 18.1.2; tests en verde; make check sellado (56bbf91) | Los resultados de la fase 1 (anexos, fila, §2) van en el mismo commit que las fases 2 y 3: el sello cubre el árbol estadiado entero y no se puede sellar una parte dejando otra sin estadiar |
+| 5 Fase 4 | §4: los tres comandos, la repetición, recuentos antes y después, cartuchos, T0 y P1-P7 frente a MARGEN-LOTE §4.d, P5 y P7 aparte, el 29 de abril; nada se ajusta | La precisión baja de 11,1 % a 10,8 % (cinco operaciones puntuables más, ninguna pareja nueva), explicado por sesión |
+| 5 PICO DE MEMORIA y test_nunca_bloquea | §8 | `test_nunca_bloquea_y_es_rapido` no falló en ningún make check |
+| 6 El informe | §1 a §8 | — |
+| 7 Revisor | §9 | — |
+| 8 CI | §8: no toca hooks, rutas ni el sistema de archivos; lista de ficheros | — |
+
+## 8 · make check, memoria y CI
+
+| make check | árbol | resultado | PICO DE MEMORIA |
+|---|---|---|---|
+| apertura, 1.º | encargo con ADR-0083 sin bloque | ROJO: 5 failed (ids), 2672 passed | — |
+| apertura, 2.º (09fe2cc) | 1f69292… | 2677 passed, SELLO | 295 MiB en `test` (el mayor proceso, 284 MiB) |
+| fase 0 (71c8d46) | 641b8a5… | 2677 passed, SELLO | 296 MiB (286 MiB) |
+| fase 1 (e55d00a) | ade5be5… | 2679 passed, SELLO | 295 MiB (285 MiB) |
+| fases 1-3 (56bbf91) | d5f7e74… | 2690 passed, SELLO | 295 MiB (285 MiB) |
+| fase 4 y el informe | [MC5] | [MC5R] | [MC5P] |
+
+`test_nunca_bloquea_y_es_rapido` no falló por tiempo en ninguno. `state check`: 1603 funciones de
+test (1590 en `main`; +2 de la fase 1, +11 de la fase 2).
+
+**CI de Linux: no hace falta.** La rama no toca hooks, rutas ni el sistema de archivos. Ficheros que
+cambia frente a `main` (`git diff --stat main...HEAD`): `PROJECT_STATE.md`, `contrato.yaml`,
+`docs/adr/0064-…`, `docs/adr/0074-…`, `docs/adr/0083-que-gasta-un-punto.md`, `docs/adr/README.md`,
+`docs/encargos/trabajo-punto-usado.md`, `docs/spec/{ambiguedades,glosario,parametros,reglas}.md`,
+`docs/state/HISTORIA.md`, `docs/validation/{HOLDOUT-EXPOSICIONES,PUNTO-USADO,VISOR-CONSTRUCCION}.md`,
+`docs/validation/anexos/PUNTO-USADO/*` (salidas, guiones y recuentos),
+`knowledge/spec/{spec_manifest,strategy_spec}.yaml`, `src/botsito/engine/{cableado,primitivas_broker,zonas}.py`,
+`tests/unit/{test_orden_stop_pivote,test_punto_usado,test_vida_de_la_orden}.py`. Ni `.claude/`, ni
+`Makefile`, ni `scripts/`, ni `config/`.
+
+**El clon de `main`** (`C:/cm/main`, `git worktree`) se retira al terminar la fase 2 con
+`git worktree remove`; el worktree ajeno de otra sesión (`…/2ea2c3d2…/scratchpad/wt-ci`, e7df30b)
+estaba antes y no se toca. Estado del repo real antes y después: `main` y `trabajo/punto-usado`,
+129 tags, nada nuevo en origin.
 
 ## Estado
 
-EN CURSO. Abierta el 2026-10-18; fase 0 entregada (§1) sin PARADA; fase 1 (§2) y fases 2 y 3 (§3)
-hechas; sigue la fase 4 (la re-corrida).
+EN CURSO. Fases 0 a 4 hechas (§1 a §4); líneas del cierre simuladas (§6); falta el revisor (§9).

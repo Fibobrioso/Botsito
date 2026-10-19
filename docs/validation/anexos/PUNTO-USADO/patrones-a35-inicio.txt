@@ -1,0 +1,21 @@
+a35-inicio.DIAGNOSTICO.a35=inicio_vela_contraria.a44=sin_tope.cuenta=diaria.txt: 364 filas, 104 sesiones con rn003
+mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de mas | P6 donde el trader no opero | P7 entradas repetidas | T0 pareja
+2026-01 | 7 | 13 | 26 | 6 | 43 | 8 | 0 | 2
+2026-04 | 9 | 4 | 11 | 6 | 22 | 21 | 0 | 5
+2026-07 | 20 | 9 | 14 | 14 | 25 | 2 | 3 | 7
+2026-08 | 8 | 7 | 9 | 14 | 25 | 20 | 0 | 4
+total | 44 | 33 | 60 | 40 | 115 | 51 | 3 | 18
+P1 sesgo: 44 filas en 21 sesiones
+  P1 sesgo · sesgo alcista: 14
+  P1 sesgo · sesgo bajista: 28
+  P1 sesgo · sesgo insuficiente: 2
+  P2 entrada · Δentrada: 33
+  P3 otra zona · otra entrada: 60
+  P5 de mas · mismo lado: 93
+  P5 de mas · otro lado: 22
+  P6 donde el trader no opero · en dia: 17
+  P6 donde el trader no opero · en sesion: 34
+  P7 entradas repetidas · Δentrada 0 puntos, bot ya emparejado: 1
+  P7 entradas repetidas · Δentrada 1 puntos, bot ya emparejado: 1
+  P7 entradas repetidas · Δentrada 3 puntos, bot ya emparejado: 1
+filas marcadas posible M (hora perdida): 19
