@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/plataforma-adelantada
+main
 
 ## Current Feature
-`trabajo/plataforma-adelantada` EN CURSO (abierta el 2026-10-18 desde 8642b8c; tramo R0): el ADR de la capa de MT5 que no decide operaciones antes de F26, su tramo R6a en la hoja de ruta, y PROJECT_STATE adelgazado; solo documentos. Encargo docs/encargos/trabajo-plataforma-adelantada.md; informe docs/validation/PLATAFORMA-ADELANTADA.md.
+Ninguna rama abierta. trabajo/plataforma-adelantada cerrada en main el 2026-10-18 (stable/F37u-plataforma-adelantada): ADR-0082 y el tramo R6a. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-7d3783d · merge de `trabajo/visor-construccion` (tag `stable/F37t-visor-construccion`): las comprobaciones de R3.1 en el visor sobre 20 días, rama de diagnóstico sin código; una E (el punto de una orden ya llenada se vuelve a colocar con otra caja, contra ADR-0064, decisión 1: Y, R3.4) y el resto correcto o R, con sus preguntas para V; la lectura del M1 de marzo por `test_visor.py` declarada en HOLDOUT-EXPOSICIONES. Sobre `stable/F37s-margen-lote` (3762429). Informe docs/validation/VISOR-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
+3ae2933 · merge de `trabajo/plataforma-adelantada` (tag `stable/F37u-plataforma-adelantada`): ADR-0082, la capa de MT5 que nunca decide una operación va antes de F26, en el EA de MQL5 (enmienda MASTER_PLAN §0, la regla de PROJECT_STATE, ADR-0067 §1 y ADR-0068 §4); el tramo R6a de la hoja de ruta; PROJECT_STATE adelgazado; solo documentos. Sobre `stable/F37t-visor-construccion` (7d3783d). Informe docs/validation/PLATAFORMA-ADELANTADA.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-7d3783d · merge: trabajo/visor-construccion, las comprobaciones de R3.1 en el visor (R3.2): una E, el resto correcto o R · tag stable/F37t-visor-construccion
+3ae2933 · merge: trabajo/plataforma-adelantada, ADR-0082 (la capa de MT5 que no decide operaciones, antes de F26), el tramo R6a y PROJECT_STATE adelgazado · tag stable/F37u-plataforma-adelantada
 
 ## Tests Currently Passing
 1590 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
