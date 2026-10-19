@@ -595,6 +595,11 @@ Página: `dias/2026-01-29.pagina.txt`. Traza: `dias/2026-01-29.traza.txt` y
   tras la toma, y el trader en uno posterior que el bot ve y RN-009 prohíbe. Va a V con la
   pregunta 8 (§3.2). La reentrada en el punto de o16 es **E** (2.d.4).
 
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** La reentrada de
+> o17 en el punto de o16 no es el error: la E de §2.d.4 se rehace (volver al punto tras un stop es lo
+> que hace el trader; el error es no volver con la misma caja y no gastar el punto con el rechazo
+> al llenar). El cuerpo queda intacto.
+
 #### 2026-08-20 11-15 (compra, Δentrada 36)
 
 Página: `dias/2026-08-20.pagina.txt`. Traza: `dias/2026-08-20.traza.txt` y
@@ -657,6 +662,13 @@ Página: `dias/2026-01-08.pagina.txt`. Traza: `dias/2026-01-08.traza.txt` y
   nueva, junto a la 4 (§3.2).
 
 #### 2.d.4 La reentrada en un punto ya llenado: E
+
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** La E se rehace:
+> volver al punto tras un stop NO es el error; el error es no volver con la MISMA caja (la zona
+> quedaba en `usadas` y solo otro 1 volvía) y no gastar el punto con el rechazo al llenar. Lo dice
+> el material del trader (LA-CAJA-DEL-29-DE-ABRIL.md:236-243, `fb-2026-09-09-sesion-01-fe4a6a5c`, v6
+> 1:23:53-1:24:07), que el consultor no buscó al aceptar esta E. Por punto exacto son 41 órdenes en
+> 18 sesiones, todas con otra caja (PUNTO-USADO.md §2). El cuerpo queda intacto.
 
 Lo que se ve en 2026-01-29 11-15 (o16 → o17) pasa también en 2026-07-13 11-15: o11, o12 y o13
 tienen el mismo punto (1.14301 @ la vela contraria de las 09:36Z) y **las tres se llenan**
@@ -859,6 +871,12 @@ ADR-0057). La vela que marca cada 0 y sus vecinas salen de la traza.
   2026-08-07: 115226 y 115220; uno por sesión en los otros tres días). La primera redacción decía
   «cualquier orden posterior», más de lo que hace el guion (hallazgo b8 del revisor). El rechazo, a
   diferencia del llenado (2.d.4), sí se apunta por punto (`marcar_rechazada`).
+
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** Que el llenado no
+> se apunte por punto es lo correcto (ADR-0083: el llenado no gasta el punto); lo que faltaba era
+> volver con la MISMA caja tras un cierre sin ganar y gastar el punto con el rechazo AL LLENAR, que
+> aquí no se miraba. El cuerpo queda intacto.
+
 - **Uno de los ocho se decidió con el respaldo M1:** o1 de 2026-04-27 («respaldo_m1»), aunque esa
   hora no es de las 18 sin ticks: la orden del primer cierre de la ventana lleva 1 ms antes del
   primer tick cargado (§4.3, punto 6). Corrige lo que la fase 0 daba por hecho (§1.d y la decisión
@@ -887,9 +905,23 @@ El consultor pidió llevarlas al informe como dato (respuesta a la PARADA, «Ade
 Dos de las cuatro se agotan con reentradas en el mismo 0 en pocos minutos, que es la E de 2.d.4. Si
 Y (§4.1) se arregla, esas dos sesiones cambian; 2026-07-01 07-11 no.
 
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** Esas reentradas en
+> el mismo 0 no son un error: la E de §2.d.4 se rehace en ADR-0083 (volver al punto tras un stop no
+> es el error; el error es no volver con la misma caja y no gastar el punto con el rechazo al
+> llenar), y lo aceptó el consultor sin buscar en el material del trader. Lo que hace Y con estas
+> cuatro sesiones lo mide PUNTO-USADO.md §4.c: las cuatro siguen igual y se suman dos. El cuerpo
+> queda intacto.
+
 ## 3 · Fase 2 · El resumen
 
 ### 3.1 La tabla
+
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** Dos filas de esta
+> tabla dan la E de §2.d.4 por buena: la de «P2: el punto de una orden ya llenada se vuelve a
+> colocar» (**E**, destino Y) y la de «Los cartuchos agotados» («dos se agotan por la E»). La E se
+> rehace en ADR-0083: volver al punto tras un stop no es el error; el error es no volver con la misma
+> caja y no gastar el punto con el rechazo al llenar; lo aceptó el consultor sin buscar en el
+> material del trader. El cuerpo queda intacto.
 
 | comprobación | sesiones | conclusión | destino |
 |---|---|---|---|
@@ -933,6 +965,12 @@ texto, con los días que ganan:
   vuelve a entrar en el MISMO punto tras un stop) se arregla en Y; lo que quede después de Y es lo
   que hay que preguntar.
 
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** Y no quita esa
+> parte de P5: volver al mismo punto tras un stop es lo que hace el trader (LA-CAJA-DEL-29-DE-ABRIL.md
+> :236-243), y con ADR-0083 el bot vuelve también con la MISMA caja. La pregunta 3 gana el ejemplo
+> del 29 de abril y la caja de la reentrada (¿la del primer intento o una nueva?): PUNTO-USADO.md
+> §5. El cuerpo queda intacto.
+
 **Las nuevas:**
 
 - **A (la vela sin cuerpo dentro del tramo que marca el punto de breaker).** «Después de una vela
@@ -956,6 +994,15 @@ texto, con los días que ganan:
   (docs/runbooks/AMBIGUEDADES.md), no se cambia sin más (hallazgos b4 y b5 del revisor).
 
 ### 3.3 La E: la rama que se propone (sin escribirla)
+
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** La E se rehace en
+> ADR-0083: volver al punto tras un stop no es el error; el error es no volver con la misma caja y
+> no gastar el punto con el rechazo al llenar; y lo aceptó el consultor sin buscar en el material
+> del trader. La rama Y se hizo por eso al revés de lo que propone esta sección: no apunta el punto
+> llenado para que no vuelva; libera la zona al cerrarse su operación sin ganar (la misma caja
+> vuelve) y gasta el punto con el rechazo al llenar. El test propuesto aquí («en `main` se coloca
+> una segunda orden en el mismo punto») habría fijado el comportamiento equivocado. El cuerpo queda
+> intacto.
 
 **Y. Un punto ya llenado no se vuelve a colocar con otra caja.**
 - **Qué arreglaría:** que, tras llenarse la orden de un punto, ninguna zona nueva de ese MISMO punto
@@ -1004,6 +1051,14 @@ texto, con los días que ganan:
   letra libre en la hoja de ruta (R o Z) y cambiarla en las tres líneas de §4.1 y en R3.4.
 
       Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto; en la corrida 2, hasta 47 órdenes en 22 sesiones van al 0 de una ya llenada (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
+
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** Esta línea Y, y
+> las líneas preparadas de R3.2 («Una E (la reentrada en un punto ya llenado: R3.4)») y de R3.4
+> («que el bot no vuelva a colocar, con otra caja, el punto cuya orden ya se llenó»), entraron en
+> `main` dando la E por buena, y lo aceptó el consultor sin buscar en el material del trader. La E
+> se rehace en ADR-0083: volver al punto tras un stop no es el error; el error es no volver con la
+> misma caja y no gastar el punto con el rechazo al llenar. R3.4 cambia de título y de «Qué es» en
+> el cierre de `trabajo/punto-usado` (PUNTO-USADO.md §6). El cuerpo queda intacto.
 
 - **V cambia:** «y A-57 (el lote que no cabe, MARGEN-LOTE.md §5). Depende de R1.1, de R3.1, de O,
   de J (kit hoja) y de la copia de seguridad (A.4).» pasa a «A-57 (el lote que no cabe,
@@ -1203,6 +1258,11 @@ además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan
 - **La E de §2.d.4 sale de mirar P2, no de una comprobación del encargo.** Entra en P2 porque el
   encargo pide comprobar que «lo que recalcula ADR-0074 en cada cierre de M1 hasta el llenado es el
   1»: o17 recalcula el 1 DESPUÉS del llenado.
+
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** La E se rehace: que
+> o17 vuelva al punto de o16 tras su stop no es el error (ADR-0083); el 1 recalculado después del
+> llenado es el de la orden SIGUIENTE, no el de la llenada. El cuerpo queda intacto.
+
 - **Las páginas y las trazas se generaron seis veces**, mientras el guion de traza ganaba opciones
   (RN-004 en tramos, los gates, la captura de los `detenido_por_*` con cualquier valor: §4.4). Lo que
   hay en `dias/` es de la última pasada (los dos lotes de `lotes.txt`), y cada pasada corrió
@@ -1430,6 +1490,11 @@ retiradas):
 ## Estado
 
 LISTA PARA REVISION, NO CERRADA (2026-10-18). Fases 0, 1 y 2 hechas: una E (la reentrada en un punto ya llenado, rama Y propuesta) y el resto correcto o R, con sus preguntas para V (§3); las líneas del cierre, preparadas y simuladas (§4); el revisor, con 1 «bloquea», 4 «importa» y 5 «menor», todos arreglados (§8.1); sin CI de Linux porque la rama no toca la plataforma (§7). El cierre en main solo con la orden de Aleks.
+
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** «Una E (la
+> reentrada en un punto ya llenado)» se rehace: la reentrada tras un stop no es el error; el error
+> era no volver con la misma caja y no gastar el punto con el rechazo al llenar, y lo aceptó el
+> consultor sin buscar en el material del trader. El cuerpo queda intacto.
 
 Rama lista para revisión, NO cerrada.
 

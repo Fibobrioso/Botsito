@@ -1,0 +1,17 @@
+arrastrada.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.txt: 240 filas, 104 sesiones con rn003
+mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de mas | P6 donde el trader no opero | T0 pareja
+2026-01 | 7 | 12 | 22 | 11 | 37 | 5 | 2
+2026-04 | 9 | 0 | 0 | 26 | 0 | 0 | 0
+2026-07 | 20 | 0 | 0 | 47 | 0 | 0 | 0
+2026-08 | 8 | 0 | 0 | 34 | 0 | 0 | 0
+total | 44 | 12 | 22 | 118 | 37 | 5 | 2
+P1 sesgo: 44 filas en 21 sesiones
+  P1 sesgo · sesgo alcista: 14
+  P1 sesgo · sesgo bajista: 28
+  P1 sesgo · sesgo insuficiente: 2
+  P2 entrada · Δentrada: 12
+  P3 otra zona · otra entrada: 22
+  P5 de mas · mismo lado: 36
+  P5 de mas · otro lado: 1
+  P6 donde el trader no opero · en sesion: 5
+filas marcadas posible M (hora perdida): 10
