@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/ea-conexion
 
 ## Current Feature
-Ninguna rama abierta. trabajo/barrido-sesion-5 cerrada en main el 2026-10-19 (stable/F37w-barrido-sesion-5): las preguntas de la sesión 5 en docs/sesion-5/PREGUNTAS.md. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/ea-conexion, EN CURSO (abierta el 2026-10-19; hoja de ruta R6a.1, tramo R6a, ADR-0082): el primer EA de la capa de MT5 que no decide operaciones -se niega fuera de DEMO, lee el reloj del servidor, las sesiones del símbolo y ACCOUNT_MARGIN_MODE y lo escribe en un journal versionado con hash encadenado-. Encargo docs/encargos/trabajo-ea-conexion.md; informe docs/validation/EA-CONEXION.md.
 
 ## Stable Main State
 ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-5`): el barrido de preguntas de la sesión 5 con el trader (R4.1), docs/sesion-5/PREGUNTAS.md: las preguntas en cuatro bloques, con lo ya dicho y su id, esquemas inventados y ningún día real; la hoja es el PDF del consultor. Solo documentos. Sobre `stable/F37v-punto-usado` (a1bb8a5). Informe docs/validation/BARRIDO-SESION-5.md; el registro del cierre, al final de HISTORIA.
@@ -175,8 +175,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 39 (2026-10-19).
+— ninguna desde el Archivo 40 (2026-10-19).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 39 (2026-10-19).
+— ninguna desde el Archivo 40 (2026-10-19).
