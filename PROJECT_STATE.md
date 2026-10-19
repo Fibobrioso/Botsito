@@ -29,7 +29,7 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Y → V. Las re-corridas de R3.1 con el sesgo nuevo (SESGO-H4-COLOR.md §4) y con el límite del lote (MARGEN-LOTE.md §4) están hechas. Y va antes de V: cambia las reentradas de la pregunta 3.
+F. Y → V. Las ramas de R6a (ADR-0082) van en los huecos de espera y no le quitan turno ni a Y ni a V.
 
 Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto; en la corrida 2, hasta 47 órdenes en 22 sesiones van al 0 de una ya llenada (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
 
@@ -59,7 +59,7 @@ L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item 
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
-N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y NO se renueva cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres). Se renueva por condición, según docs/runbooks/RENOVAR-CIERRES.md: (1) cuando una simulación pida días posteriores a hasta, porque el simulador sale con exit 2 y los nombra, se renueva hacia atrás con las Trading Updates archivadas, en rama propia; (2) antes de que el bot corra en tiempo real (demo o real), la rama que lo conecte trae la lectura de SymbolInfoSessionTrade (ADR-0068 §4) o un procedimiento que cierre el hueco del jueves por la mañana, y sin una de las dos esa rama no se cierra.
+N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y se renueva por condición, no cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres; docs/runbooks/RENOVAR-CIERRES.md). La condición 2 la cumplirá R6a.1, que trae la lectura de SymbolInfoSessionTrade, y R6a.5 la usa (ADR-0082 D6).
 
 ### Pendientes heredados (sin verificar)
 

@@ -10436,3 +10436,39 @@ Su texto literal en «Reglas vivas», cada una con su condicion y su evidencia. 
   Condicion (d): vive literal en `knowledge/cases/holdout/README.md:29-30` («Un umbral no se relaja despues de ver el resultado: para eso se pre-registra»), `:9` («Un holdout abierto queda quemado») y `:11` (que es abrirlo, ADR-0021); y la declaracion de exposiciones, en `CLAUDE.md`: «Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre (ADR-0021 §4)».
 - 2026-09-25 · Sobre el informe SIMULADOR-CUENTA §5 (ADR-0050), al validar: `firma_huso_corte` se queda en el perfil de cuenta, vigilado por el test de las medianoches de un ano contra `huso_operativa` (no contradice ADR-0027 §alt. 3, que hablaba de la spec); la guardia de tamano de posicion sin cifra NO impide correr, porque es solo aviso; y se acepta la duplicacion de los `firma_*` comunes entre el perfil y `parametros.yaml` mientras el test que los cruza la vigile. Estado: ACTIVE.
   Condicion (d): vive literal en el recuadro «RATIFICACION DEL CONSULTOR (2026-09-25)» de `docs/adr/0050-el-simulador-la-capa-de-cuenta.md` §4, anadido en esta rama por la opcion 6b de la respuesta del consultor a la PARADA (2026-10-18). El consultor la cito como `PROJECT_STATE.md:177`; en el arbol de la rama era la linea 178 (la 177 era la decision del 2026-09-04 sobre las inferencias en evidence/).
+
+# Registro de cierre · `trabajo/plataforma-adelantada` (2026-10-18)
+
+- Orden de cierre de Aleks del 2026-10-18, tras la revisión del consultor, pegada en la conversación
+  y ejecutada siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con
+  `/cerrar-rama`. Rama aceptada por el consultor tras dos pasadas del revisor (opus;
+  PLATAFORMA-ADELANTADA.md, «Informe del revisor» y «Informe del revisor sobre la respuesta a la
+  revisión») y una PARADA en la fase 0, respondida el 2026-10-18. Nunca se cerró sin la orden.
+- **Lo que entra** (tramo R0 de la hoja de ruta; solo documentos):
+  - ADR-0082: la capa de MT5 que nunca decide una operación va antes de F26, en el EA de MQL5 (D4
+    del consultor), como CONDICIÓN (D3); RN-032 queda fuera y espera a F26. Enmienda MASTER_PLAN §0
+    (NOTA nueva arriba, cuerpo intacto), la regla de PROJECT_STATE, ADR-0067 §1 y ADR-0068 §4, con
+    recuadro; notas en ADR-0050 §4 y ADR-0053 §3.2; ratificación del 2026-09-25 en ADR-0050 §4;
+  - el tramo R6a de la hoja de ruta (R6a.1 a R6a.7), R6.1 y R7.1 reescritas;
+  - PROJECT_STATE de 24.391 a 22.517 bytes en la rama (aceptado por el consultor), y 22.083 con la
+    F y la N de este commit:
+    salen los heredados 12, 25, 30, 34 y 35 (los cuatro primeros, llevados a `ENTRADA-MARZO.md` y
+    `ACTIVAR-A35-A44.md`), cinco deudas, la regla de F26 (sustituida) y las reglas 169 y 178;
+    entra la deuda del docstring de `engine/freno.py` (R6a.4);
+  - en este commit: F pasa a «Y → V», con las ramas de R6a en los huecos; N deja el texto de
+    las condiciones, que vive entero en `docs/runbooks/RENOVAR-CIERRES.md` (`:13-27` y `:34`), y
+    dice que la condición 2 la cumplirá R6a.1 y R6a.5 la usa (ADR-0082 D6). Ni F ni N pasan a
+    HECHA: su texto viejo está en el Archivo 37 de este fichero. En la hoja de ruta ninguna entrada
+    pasa a HECHA (la rama no tiene entrada propia).
+- Letras: ninguna sale ni entra; cambian F y N.
+- Letra del tag: la última cerrada era la t de F37 (`stable/F37t-visor-construccion`);
+  `stable/F37u-*` no existe ni en local ni en origin (comprobado antes del merge).
+- Tag: `stable/F37u-plataforma-adelantada`. El merge es `git rev-parse "stable/F37u-plataforma-adelantada^{commit}"`.
+- Commits de la rama: `ea60aaf` (apertura), `9192552` (fase 0 y PARADA), `8de4359` (fases 1-4 y el
+  primer revisor), `8c7ccaf` (respuesta del consultor a la revisión y el segundo revisor), `a519d06`
+  (orden de cierre: ADR-0082 nombra sus notas en ADR-0050 y ADR-0053) y el de este registro.
+- CI de rama: ninguna, sin CI de rama: la rama no toca código, hooks ni plataforma. La CI de `main`
+  corre tras el push.
+- Exposiciones: ninguna.
+- Informe: `docs/validation/PLATAFORMA-ADELANTADA.md`. Encargo:
+  `docs/encargos/trabajo-plataforma-adelantada.md`.
