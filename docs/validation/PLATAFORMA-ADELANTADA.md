@@ -765,3 +765,73 @@ Punto 7: informe `:482-485` y `HISTORIA.md:10448` dicen que era la 178 (en `main
 
 ### Comandos ejecutados
 (31 comandos de lectura: git, Read, grep, sed, `uv run pytest` de los tests del alcance y dos comparaciones por programa, todos de solo lectura; la lista entera está en el informe que devolvió el subagente.)
+
+## Respuesta del consultor a la revisión (2026-10-18)
+
+Dada por Aleks (consultor) el 2026-10-18. Copiada tal cual:
+
+> Respuesta del consultor a la revisión de trabajo/plataforma-adelantada (2026-10-18). Cópiala al informe en una sección «Respuesta del consultor a la revisión» y aplícala en un commit, con make check sellado antes.
+>
+> 1. ADR-0050 y ADR-0053: sí, cada uno lleva una nota, como ADR-0067, en un recuadro «>» justo debajo de la frase que corrige, sin tocar la frase.
+>    - En ADR-0050, debajo de «`firma_margen_seguridad` es un freno de la ESTRATEGIA (RN-029 a RN-032: …)» (en la rama, hacia la línea 145; no toques el recuadro de la opción 6b). La nota dice: «de la ESTRATEGIA» quiere decir aquí del bot y no de la cuenta simulada, y eso sigue valiendo. Desde ADR-0082 D3, RN-029, RN-030 y RN-031 son el veto de la firma, que vive en la capa, y RN-032 lee parámetros de la estrategia y espera a F26.
+>    - En ADR-0053, debajo de «los frenos de la estrategia disparan ANTES del límite» (hacia la línea 116), la misma nota.
+>    - Sus filas del índice pasan a «ACTIVE (nota de ADR-0082)», o añaden «; nota de ADR-0082» dentro del paréntesis si ya lo tienen.
+>    Porqué: es la misma contradicción de nombre que se resolvió en ADR-0067. Mi respuesta a la PARADA solo nombró ADR-0067 y ADR-0068 porque no busqué el nombre viejo en todos los ADR (hallazgo mío, va a la orden de cierre).
+> 2. R6a.7, en su «Qué es»: el pre-vuelo compara el hash de lo que el EA recibe (ADR-0082 D5) con el del repo en el tag stable vigente, y el hash de la spec solo cuando el EA la lleve (desde F29). Porqué: antes de F26 el EA no lleva la spec, y así la entrada pasa la condición de D3.
+> 3. PROJECT_STATE: se acepta en 22.517 bytes. La regla 162 y el heredado 2 se quedan, como dijo el revisor. No busques más recortes: la opción 6c va en la orden de cierre.
+>
+> Antes del commit, pasa el revisor solo sobre el diff de estos tres puntos (que cada nota quede debajo de su frase sin cambiarla, que las filas del índice estén bien y que R6a.7 cumpla D3 y D5), y pega su informe al final del tuyo.
+>
+> Rama lista para revisión, NO cerrada.
+
+### Aplicada
+
+| Punto | Qué se hizo |
+|---|---|
+| 1 | Nota en recuadro «>» en `docs/adr/0050-el-simulador-la-capa-de-cuenta.md`, debajo del párrafo «El margen de ADR-0031 NO está aquí», que contiene la frase (la frase y el recuadro de la opción 6b, sin tocar), y en `docs/adr/0053-el-cableado-del-simulador.md`, debajo del párrafo de §3.2 que contiene «los frenos de la estrategia disparan ANTES del límite». Las dos frases van dentro de un párrafo: la nota va debajo del párrafo, para no partirlo. Cada nota entrecomilla la expresión tal como la escribe su ADR («De la ESTRATEGIA» en 0050, «De la estrategia» en 0053, con mayúscula inicial por abrir la frase); el resto es la letra del consultor (revisor, hallazgo 1, menor). Filas del índice: 0050 añade «; nota de ADR-0082» dentro de su paréntesis; 0053 pasa a «ACTIVE (nota de ADR-0082)» |
+| 2 | R6a.7, «Qué es»: el hash de lo que el EA recibe (ADR-0082 D5) contra el del repo en el tag stable vigente, y el de la spec solo cuando el EA la lleve (desde F29). ADR-0082 §10 conserva la letra de D9 («el hash de la spec contra el tag stable vigente»), porque es la decisión tal cual; la hoja de ruta dice cómo se cumple antes de F29 |
+| 3 | Nada que hacer: PROJECT_STATE se queda en 22.517 bytes |
+
+Pasa el revisor solo sobre el diff de estos tres puntos; su informe, abajo.
+
+## Informe del revisor sobre la respuesta a la revisión
+
+Subagente `revisor`, solo sobre el diff estadiado de los tres puntos (sobre 8de4359), 2026-10-18.
+Su hallazgo menor quedó declarado en «Aplicada», punto 1. Su observación fuera del alcance (ADR-0082
+no nombra todavía a ADR-0050 ni a ADR-0053) va a la orden de cierre. Tal cual, salvo su lista de
+comandos, resumida:
+
+### Informe del revisor · trabajo/plataforma-adelantada (solo el diff estadiado sobre 8de4359) · 2026-10-18
+
+Alcance: los tres puntos que fija el consultor en la «Respuesta del consultor a la revisión» (docs/validation/PLATAFORMA-ADELANTADA.md, al final). Nada más.
+
+Resumen: 0 bloquea, 0 importa, 1 menor. Más una observación fuera del alcance, que dejo para la orden de cierre.
+
+#### Hallazgos
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| 1 | menor | La nota de ADR-0053 no copia la letra del consultor. Él pidió «la misma nota», que entrecomilla «de la ESTRATEGIA», y la de 0053 entrecomilla «De la estrategia» (en minúsculas, que es como lo escribe la frase de 0053). En las dos notas la primera letra va además en mayúscula («De»), por empezar la frase. Tiene sentido citar la frase tal como la escribe cada ADR, pero la tabla «Aplicada» del informe no lo dice. | `git diff --cached -- docs/adr/0053-el-cableado-del-simulador.md`: `+> **NOTA (...)** «De la estrategia» quiere`; en la respuesta copiada: «la misma nota». |
+
+#### Lo comprobado sin hallazgos
+1. **Las notas van debajo de su frase y la frase no cambia.** En los dos ADR el diff solo añade líneas (5+, 0-).
+   - ADR-0050: el recuadro va justo después del párrafo «El margen de ADR-0031 NO está aquí. `firma_margen_seguridad` es un freno de la ESTRATEGIA (RN-029 a RN-032: …)», y antes de «### 5.». El recuadro de la ratificación del 2026-09-25 (opción 6b) está más arriba y no cambia.
+   - ADR-0053: el recuadro va después del párrafo 3.2, que acaba en «(los frenos de la estrategia disparan ANTES del límite); la cuenta suspende por debajo (ADR-0050)», y antes de «**3.3 Huecos con nombre**».
+   - En las dos, la nota va debajo del párrafo y no entre dos frases, para no partirlo. El informe lo declara en «Aplicada», punto 1.
+   - El resto del texto coincide con la respuesta del consultor: «del bot y no de la cuenta simulada, y eso sigue valiendo. Desde ADR-0082 D3, RN-029, RN-030 y RN-031 son el veto de la firma, que vive en la capa, y RN-032 lee parámetros de la estrategia y espera a F26».
+   - Y lo sostiene ADR-0082 §3: «El veto de la firma entra en la capa con RN-029, RN-030 y RN-031 … RN-032 se queda fuera y espera a F26».
+2. **Las filas del índice están bien.** En docs/adr/README.md, la fila 0050 acaba en «…registrada el 2026-10-18 en §4; nota de ADR-0082)», dentro de su paréntesis, y la 0053 pasa a «ACTIVE (nota de ADR-0082)». El `## Estado` de los dos ADR no cambia (el diff no lo toca), y test_adr pasa.
+3. **R6a.7 cumple D3 y D5.** En docs/plan/HOJA-DE-RUTA.md, «Qué es» dice ahora: «el hash de lo que recibe (ADR-0082 D5) con el del repo en el tag stable vigente, y el hash de la spec solo cuando el EA la lleve (desde F29)».
+   - Cumple D5 (ADR-0082 §6): lo que la capa recibe antes de F26 lleva su propio hash, que se fija en R6a.2, y R6a.7 «Depende de: R6a.1 a R6a.6».
+   - Cumple D3: la capa no lee la spec de la estrategia.
+   - Siguen el desfase del reloj, `ACCOUNT_MARGIN_MODE`, `SymbolInfo`/`AccountInfo` y el abortar.
+   - ADR-0082 §10 (D9, línea 149) conserva la letra «el hash de la spec contra el tag stable vigente». El informe lo declara en «Aplicada», punto 2: es la decisión tal cual, y la hoja de ruta dice cómo se cumple antes de F29.
+4. **Los tests pasan.** `uv run pytest tests/unit/test_adr.py tests/unit/test_hoja_de_ruta.py tests/contract/test_documentos_vivos.py -q` sale entero en verde (`..............................  [100%]`, ningún F ni E).
+
+#### Observación fuera del alcance (para la orden de cierre, no la juzgo)
+ADR-0082 no nombra todavía a ADR-0050 ni a ADR-0053. Su «Impacto» enumera solo «los recuadros en ADR-0067 §1 y ADR-0068 §4», y su fila del índice (docs/adr/README.md:88) solo «ADR-0067 §1 y ADR-0068 §4». `grep -n "ADR-0050\|ADR-0053"` sobre el ADR-0082 no devuelve nada. Así, las dos notas nuevas apuntan a ADR-0082, pero ADR-0082 no apunta a ellas. Encaja con lo que el consultor dice que va a la orden de cierre («no busqué el nombre viejo en todos los ADR»).
+
+#### Lo que no pude comprobar
+- `make check` y su sello: no lo ejecuto, porque escribe, y el consultor lo excluye. Del diff estadiado no hay `make-check.log` que pueda tomar como evidencia.
+
+#### Comandos ejecutados
+(Ocho comandos de lectura: `git diff --cached`, `sed`, `grep`, `ls` y el `uv run pytest` de arriba; uno que unía `grep` y `pytest` lo bloqueó la guardia y lo partió en dos llamadas.)

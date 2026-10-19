@@ -53,10 +53,10 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0047 | La unidad de comparacion es la operacion tambien en el holdout | ACTIVE |
 | 0048 | El arnes del motor | ACTIVE |
 | 0049 | Los huecos del arnes: H1-H6 de ADR-0048 cerrados con las decisiones del consultor | ACTIVE |
-| 0050 | El simulador: la capa de cuenta | ACTIVE (con la ratificación del consultor del 2026-09-25, registrada el 2026-10-18 en §4) |
+| 0050 | El simulador: la capa de cuenta | ACTIVE (con la ratificación del consultor del 2026-09-25, registrada el 2026-10-18 en §4; nota de ADR-0082) |
 | 0051 | El modelo de llenado (con las decisiones nocturnas resueltas y los ticks obligatorios para simular) | ACTIVE |
 | 0052 | El broker simulado | ACTIVE |
-| 0053 | El cableado del simulador (con las decisiones resueltas por el consultor, 2.1 y 5.1 para revisar, y A-44 como siguiente bloqueo tras A-35) | ACTIVE |
+| 0053 | El cableado del simulador (con las decisiones resueltas por el consultor, 2.1 y 5.1 para revisar, y A-44 como siguiente bloqueo tras A-35) | ACTIVE (nota de ADR-0082) |
 | 0054 | RN-004 y RN-020, listas para activarse con la respuesta del trader | ACTIVE |
 | 0055 | RN-011 y la zona de entrada: preparada para A-21, con el selector de «limpia» PROVISIONAL | ACTIVE (con enmienda de ADR-0076: A-21 RESUELTA, `--diagnostico-a21` retirado) |
 | 0056 | La entrada con la ruptura: RN-011 con orden stop, preparada con selectores UNKNOWN | ACTIVE |

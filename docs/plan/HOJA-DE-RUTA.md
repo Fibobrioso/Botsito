@@ -325,8 +325,9 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 
 ### R6a.7 · Pre-vuelo
 - **Refs:** ID:ADR-0082 · F:F33 · ID:A-28
-- **Qué es:** antes de operar, el EA compara el hash de la spec con el tag stable vigente, el desfase
-  del reloj con la tabla, `ACCOUNT_MARGIN_MODE`, y `SymbolInfo`/`AccountInfo` con el perfil, y aborta
+- **Qué es:** antes de operar, el EA compara el hash de lo que recibe (ADR-0082 D5) con el del repo
+  en el tag stable vigente, y el hash de la spec solo cuando el EA la lleve (desde F29); el desfase
+  del reloj con la tabla, `ACCOUNT_MARGIN_MODE`, y `SymbolInfo`/`AccountInfo` con el perfil; y aborta
   si algo no cuadra (MASTER_PLAN §H y §H.2).
 - **Depende de:** R6a.1 a R6a.6.
 - **Quién:** la sesión, con el encargo del consultor.
