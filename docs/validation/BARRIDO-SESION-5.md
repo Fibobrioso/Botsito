@@ -374,7 +374,222 @@ y todos son de construcción. No hay fila nueva en `HOLDOUT-EXPOSICIONES.md`.
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta del consultor a la PARADA (2026-10-19)
+
+Copiada tal cual (también al final del encargo):
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/barrido-sesion-5 (2026-10-19). Cópiala tal cual en el informe y aplícala punto por punto (skill fase-cero).
+>
+> 0. (a). Las 25, en el orden de 1.c. S-25 y S-23 llevan la marca «si falta tiempo, por WhatsApp» y S-18 la de «si falta tiempo, a la sesión 6». Por qué: la estimación supera en unos 5 minutos a la sesión 4, y eso no basta para quitar nada de antemano.
+> 1. (a). Las dos subpreguntas salen, y lo que ya está registrado pasa a «Lo que nos has dicho» con su id (fb-2026-09-09-sesion-01-bff260ea para el saldo inicial del día; lo FIRME de A-13, ambiguedades.yaml). Por qué: D3 prohíbe repetir lo respondido.
+> 2. (a). S-1 es la contradicción: va sobre el esquema de dos velas y con «Lo que nos has dicho» vacío, con la frase «se pregunta sobre el esquema». S-2 es la ruptura simple sin cuerpo, y lleva el WhatsApp del 2026-10-14 como «Lo que nos has dicho». Las dos van con esquema inventado, como manda D2. Por qué: la contradicción solo se resuelve si el trader contesta sin tener delante la regla que la decide. Es una desviación del orden de SESGO-H4-COLOR.md §4.4, y el documento la declara.
+> 3. (a). hoja_preguntas.py no se toca en esta rama. La hoja de la sesión 5 es el PDF del consultor hecho con docs/sesion-5/PREGUNTAS.md, como en la sesión 4. Una línea para G recoge lo que tiene desfasado: el encabezado y la regla 2 de la sesión 2, A-24 DECIDIDA dentro del orden, A-50, A-53 y A-57 fuera, y la B, que toca A-46 (RESUELTA). Por qué: la hoja de la 5 no sale del script, y esta rama es de documentos.
+> 4. (a). Ningún gráfico de un día real: todo con esquemas inventados, y los días se quedan en el informe como clave de Aleks. Por qué: es lo que D2 pone por defecto, y así no hay que volver a pasar contexto_h4.py ni declarar exposiciones.
+> 5. (a). A-32 en abstracto, con un esquema: «¿hay alguna línea en M1 que, si el precio la rompe solo con la mecha, te quite la entrada? ¿Cuál?». Por qué: S-23 de la sesión 4 ya dio la regla general, y lo que falta saber es si existe esa clase de línea.
+> 6. (a). S-25 se pregunta. Su «Lo que nos has dicho» no es una cita: dice «nos lo comentaste de palabra el 13 de octubre, sin grabar», para que quede en la voz. Por qué: cuesta medio minuto y da la cita grabada que ENTRADA-JULIO.md no tiene.
+> 7. (a). Van a «Líneas preparadas para el commit del contrato»: G.2 nombra los dos pendientes de RN-003 (31fb311f y ca0afae6), y entra la línea para G del punto 3. Por qué: hoy G.2 dice uno y son dos.
+> 8. (b). Aviso en el encabezado de PREGUNTAS.md («antes de grabar, la copia de seguridad A.4»), y V conserva A.4 en su frase de dependencias. La línea del cierre sustituye «, de J (kit hoja) y» por « y», como propones en el matiz 57. Por qué: A.4 sigue siendo verdad, y solo sale J.
+>
+> Además:
+> - Herencia 3: las opciones de S-3 (A-35) y S-4 (A-44) se escriben de modo que cada una caiga en una lectura documentada de ACTIVAR-A35-A44.md §1. Debajo de cada opción, en el documento y no en la hoja del trader, pon la lectura en la que cae.
+> - Herencias 2, 4 y 6: se aplican como dices. Sin dinero, con las horas en Europe/Madrid, con cada premisa contrastada con la spec de hoy y sin juntar nunca un rango de fechas con un recuento de reservados.
+> - Matiz 43: es correcto. El literal de 1:44:49 lo lee Aleks en su terminal; hasta que lo diga, S-24 va con las dos lecturas.
+> - La corrección del punto 25 (dos falsos positivos, no uno) y la del matiz 31 (la guardia niega kb sobre v7-v10) van al informe como hallazgos del auditor sobre el encargo.
+>
+> Sigue con la fase 1 sin parar: PREGUNTAS.md, make check sellado (con la línea PICO DE MEMORIA), revisor, entregar-rama y «Rama lista para revisión, NO cerrada».
+
+## 2 · Fase 1 · La respuesta aplicada y `docs/sesion-5/PREGUNTAS.md` (2026-10-19)
+
+### 2.a La respuesta, punto por punto
+
+| Punto | Qué manda | Hecho | Dónde |
+|---|---|---|---|
+| 0 | Las 25 en el orden de 1.c; S-25 y S-23 «si falta tiempo, por WhatsApp»; S-18 «si falta tiempo, a la sesión 6» | Hecho | PREGUNTAS.md §1 (las marcas en sus títulos y en la entrada del §1) |
+| 1 | Las dos subpreguntas salen; lo registrado pasa a «Lo que nos has dicho» con su id | Hecho | S-4 cita `fb-2026-09-09-sesion-01-bff260ea`; S-17 cita `9f506366` y lo FIRME de A-13. Matiz: el literal de 9f506366 dice «se mantiene en M1»; «después el stop no se mueve» es la lectura registrada (`valor_resultante` y `ambiguedades.yaml:206-209`), y S-17 lo escribe así, como registrado y no entre comillas |
+| 2 | S-1 la contradicción, con «se pregunta sobre el esquema»; S-2 la ruptura sin cuerpo, con el WhatsApp; las dos con esquema; la desviación del orden declarada | Hecho | PREGUNTAS.md S-1, S-2 y la desviación 2 del encabezado. S-1 no nombra ninguna sesión anterior ni en sus líneas para Aleks |
+| 3 | `hoja_preguntas.py` no se toca; la hoja es el PDF del consultor; línea para G | Hecho | PREGUNTAS.md, encabezado; la línea, en §4 (G.2) |
+| 4 | Ningún gráfico de un día real; los días, clave de Aleks en el informe | Hecho | PREGUNTAS.md, «Cómo se leen»; la clave en §2.c |
+| 5 | A-32 en abstracto, con esquema | Hecho | S-18 |
+| 6 | S-25 con «nos lo comentaste de palabra el 13 de octubre, sin grabar» | Hecho | S-25 |
+| 7 | G.2 nombra los dos pendientes de RN-003 y entra la línea del punto 3 | Hecho | §4 |
+| 8 | Aviso de A.4 en el encabezado; V conserva A.4; «, de J (kit hoja) y» → « y» | Hecho | PREGUNTAS.md, encabezado; §4 |
+| Además · herencia 3 | Opciones de S-3 y S-4 en lecturas de ACTIVAR-A35-A44.md §1, con la lectura debajo, fuera de la hoja | Hecho | S-3: (a) `inicio_vela_contraria`, (b) `cierre_vela_contraria`. S-4: (a) `dia`, (b) `ambos`. «Otra» → PARAR. La opción vieja de §0.e.4 «(a) cuando cierra la vela que lo hace» **no caía en ninguna lectura** y se sustituyó |
+| Además · herencias 2, 4 y 6 | Sin dinero, horas de Madrid, premisas con la spec de hoy, nunca rango de fechas con recuento de reservados | Hecho | §2.b |
+| Además · matiz 43 | S-24 con las dos lecturas hasta que Aleks lea 1:44:49 | Hecho | S-24 cita los dos ítems (`ev-v10-014310-2296423b`, «1 o 2 puntos»; `ev-v10-014438-95464201`, «12 puntos») y las opciones no eligen |
+| Además · punto 25 y matiz 31 | Al informe como hallazgos del auditor sobre el encargo | Hecho | §1.f (los dos primeros) y §3 |
+
+### 2.b Cómo se comprobó el documento
+
+- **Las citas salen de lo registrado.** Cada literal de «Lo que nos has dicho» se copió del campo
+  `cita_literal` de un ítem de `knowledge/evidence/` o del `respuesta_literal` de un registro de
+  `knowledge/feedback/`, leídos con Grep sobre sus ficheros, con su id al lado. Dos excepciones,
+  declaradas: S-6 (el literal del 29 de abril no tiene ítem: sale de
+  `LA-CAJA-DEL-29-DE-ABRIL.md:242`, y su minuto, del segmento de v5 que localiza `kb find`) y S-25
+  (no es cita: lo manda el punto 6). S-13 dice, sin comillas, que en la misma respuesta dio por
+  buena la otra opción, con la tabla 0.a de ACTIVAR-SESION-04.md como fuente.
+- **Ninguna cita cae en un tramo no citable**: los t0-t1 de cada ítem citado de v6, v7, v9 y v10,
+  comparados uno a uno con los tramos de su vídeo en `tramos_no_citables.yaml`. El más cercano,
+  `ev-v10-014438-95464201` (1:44:38-1:45:04), empieza 17 s después del tramo 1:43:42-1:44:21.
+- **Ninguna «en parte» repite lo respondido.** Además de las dos subpreguntas de la decisión 1,
+  al repasar los «Para precisar» salieron siete que ya tenían respuesta registrada y se
+  cambiaron antes del commit: el caso 4 del WhatsApp (S-1), el cuerpo de uno o dos puntos en H4
+  (S-2, notas de `ca0afae6`), si cuenta lo abierto (S-4, la subpregunta que la decisión 1 quitó),
+  el 1 de la caja en el punto más alto (S-7, `ev-v9-004721`), la toma de las 6:45 sola (S-10,
+  `c3d0c855`), el M1 del break even (S-17, `9f506366`) y la ganadora y el break even en la racha
+  (S-21, `8e2d728a`). El lado de ruido de la pregunta 8 tampoco se pregunta: lo dice
+  `ev-v9-004919-c6bfb3ee` (S-15, línea para Aleks).
+- **Las premisas, con la spec de hoy** (`knowledge/spec/parametros.yaml`, leído con un guion en la
+  carpeta de trabajo): `caja_se_fija = en_cada_cierre_m1`, `caja_bloque = r6` y
+  `orden_stop_punto = ultimo_pivote_m1` (DEFAULT_AMBIGUOUS, A-49 y A-48);
+  `orden_pendiente_al_abrir_escenario = se_mueve` (DEFAULT_AMBIGUOUS, A-53); `lote_si_no_cabe =
+  limitar` (DEFAULT_AMBIGUOUS, A-57); `toma_antes_de_la_ventana = cuenta`, `break_even_* = mecha /
+  tocar`, `racha_perdidas_reinicio = nunca`, `zonas_control_max_por_esquema = 1` y
+  `perdida_maxima_semanal = 9` (CONFIRMED); `liquidez_m15_pivote_formado`,
+  `perdida_trader_alcance` y `perdida_trader_magnitud` (UNKNOWN). Cada «Para Aleks» dice lo que hace
+  hoy el bot con esos valores. Una premisa cambió desde que se escribió la lista: la tabla 0.a de
+  ACTIVAR-SESION-04.md daba `caja_se_fija = al_verse_el_punto`, y ADR-0074, en la misma rama, la
+  pasó a `en_cada_cierre_m1`; S-7 lo dice con el valor de hoy. Las de ADR-0080, ADR-0081 y ADR-0083
+  están en S-1, S-2, S-5, S-6 y S-16.
+- **Sin dinero ni VIABILIDAD-COMISION**: la única cifra de la cuenta es la de S-5 (50 lotes y
+  1:30), que MARGEN-LOTE.md §5 manda. **Horas**: las de S-6 (09:55 y 09:58) y S-11 (10:54, 11:00)
+  son de Madrid; la del WhatsApp de S-2 (14:55) se dice «hora de Lima», como su registro.
+- **Fechas**: PREGUNTAS.md nombra un solo día de mercado, el 29 de abril (S-6, por orden del
+  encargo; `casos_ocultos` → `False`). Las demás fechas son de mensajes y de sesiones (el
+  2026-10-14, el 13 de octubre, el 2026-10-19). Ningún recuento de reservados en ningún sitio.
+
+### 2.c La clave de Aleks: los días de construcción de cada caso (no se enseñan)
+
+Por la decisión 4, ninguna pregunta enseña un día real. Si en la sesión el trader pide un ejemplo,
+estos son los días en que se ve cada caso (de VISOR-CONSTRUCCION.md §3.2 y CORRIDA-CONSTRUCCION.md
+§4.5), todos con `casos_ocultos` → `False` (§1.e). **Antes de enseñar cualquiera, hay que volver a
+pasar `contexto_h4.py`**: ADR-0083 cambió el motor después de las páginas del visor.
+
+| S | Caso | Día y hora (Madrid) |
+|---|---|---|
+| S-6 | la reentrada en el mismo punto | 2026-04-29, 09:55 y 09:58 |
+| S-8 | la verde, dos velas sin cuerpo y la roja | 2026-01-08, 09:16-09:19 (compra de las 09:21) |
+| S-9 | la compra sin toma de M15 visible para el bot | 2026-08-14, 08:30 |
+| S-11 | la toma de la mañana y la venta de la tarde | 2026-01-08, 10:54 y 14:29 |
+| S-15 | dos zonas de control desde la toma | 2026-01-29 (13:51, 14:00-14:01); 2026-08-20 (12:46, 12:57-13:00) |
+| S-16 | el precio ya pasado el 0 | 2026-07-08 13:42; 2026-07-13 14:14; 2026-01-08 09:04; 2026-08-07 07:34 y 08:43; 2026-04-27 07:00, 07:05 y 07:08 (los dos de julio pintan H4 de junio) |
+| — | 2026-07-01 11-15 | no se enseña nunca: su contexto pinta un día oculto |
+
+### 2.d Desviaciones
+
+- **El orden de las dos del sesgo** (decisión 2), declarado en PREGUNTAS.md.
+- **S-6 lleva dos preguntas**, porque D2 manda el texto de PUNTO-USADO.md §5 tal cual; D3 pide
+  una. Declarado en PREGUNTAS.md.
+- **S-6 cita un literal sin ítem de evidencia** (§2.b).
+- **S-14 y S-5 tienen «Lo que nos has dicho» sin respuesta**: no hay nada registrado sobre eso
+  (S-5 lleva el respaldo débil que MARGEN-LOTE.md §5 ya nombra).
+- **`kb at` y `kb find --video` no se usaron sobre v7 a v10** (la guardia los niega): las citas de
+  esas sesiones salen de los YAML, la vía que D3 permite. No es una guardia rodeada: no se intentó
+  la vía negada.
+
+## 3 · El encargo, punto por punto
+
+| Punto | Qué pide | Hecho | Dónde |
+|---|---|---|---|
+| 0 | Base comprobada con git y con gh (sin curl); abrir con abrir-rama, tramo R4; artefacto y rutas | Hecho | §0; `contrato.yaml`; commit a70ea6e |
+| 0 | Skills fase-cero (con auditor-encargo) y entregar-rama | Hecho | §1, §1.f; §7 |
+| 1 | El barrido, como el de la sesión 4 | Hecho | §1; PREGUNTAS.md |
+| 2 D1 | Todas las fuentes, leídas ahora; lo que no entra, a «fuera» con su porqué | Hecho | §1.a (47 filas); PREGUNTAS.md §3 |
+| 2 D2 | Cerradas con «otra, ¿cuál?»; desviación declarada; esquemas; sin gráficos reales; la pregunta 3 con su texto | Hecho | PREGUNTAS.md, encabezado; S-6 |
+| 2 D3 | Las seis partes; «en parte» sin repetir; citas de lo registrado | Hecho | §2.b |
+| 2 D4 | Orden por impacto en cuatro bloques; duración de la 4 y estimación de la 5 | Hecho | §1.c; PREGUNTAS.md §1 |
+| 2 D5 | S-1 a S-n de la sesión 5, dicho, con la forma en voz | Hecho | PREGUNTAS.md, encabezado |
+| 2 D6 | «Para cerrar» sin código: diciembre, agosto, marzo (verificado qué pide) | Hecho | PREGUNTAS.md §2; §1.f (matices 39 y 41) |
+| 2 D7 | S-14 de la sesión 4 (aquí S-24) con las dos lecturas | Hecho | S-24 |
+| 3 | Rama de documentos; holdout solo de construcción, comprobado; «## 0. Qué se abrió»; PS 22.580 bytes | Hecho | PREGUNTAS.md §0; §1.h; §0 |
+| 4 a-e | Inventario y PARADA | Hecho | §1 y «Lo que necesito que decidas» |
+| 5 | PREGUNTAS.md y make check sellado con el PICO DE MEMORIA | Hecho | §5 |
+| 6 | Encargo frente a lo hecho, desviaciones, fase 0 y las líneas del cierre, con la simulación | Hecho | §2.d, §3, §4 |
+| 7 | Revisor con los cinco controles añadidos | Hecho | §7 |
+| 8 | CI: decir que no toca hooks, rutas ni sistema de archivos, con la lista | Hecho | §6 |
+
+## 4 · Líneas preparadas para el commit del contrato de la orden de cierre
+
+**La decisión del consultor del 2026-10-19 sobre J, copiada tal cual:** «J (kit hoja) NO bloquea V.
+kit hoja es la hoja Word para sesiones que etiquetan días; la sesión 5 es solo de preguntas
+(SESION-DE-PREGUNTAS.md, scripts/hoja_preguntas.py y el PDF del consultor), como la 2, la 3 y la
+4.»
+
+**`PROJECT_STATE.md`:**
+- **F** pasa a: «F. V. Las ramas de R6a (ADR-0082) van en los huecos de espera y no le quitan turno
+  a V.»
+- **V**: «Depende de R1.1, de R3.1, de J (kit hoja) y de la copia de seguridad (A.4).» pasa a
+  «Depende de R1.1, de R3.1 y de la copia de seguridad (A.4). Hoja de preguntas:
+  docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5).» (decisión 8: A.4 se queda).
+- **J** no cambia de texto: sigue viva, con NA:J en G.2.
+
+**`docs/plan/HOJA-DE-RUTA.md`:**
+- **R4.1, «Qué es»**: la frase partida de :212-213, « La hoja\n  Word necesita antes que `kit hoja`
+  funcione con un paquete nuevo (NA:J).», sale entera, y en su lugar: «; y lo que V añade: las «en
+  parte» de ACTIVAR-SESION-04.md §0.e, las líneas de ACTIVAR-SESION-04-MOTOR.md §6, si el xlsx de
+  julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8) y la pregunta 3 con el ejemplo del 29
+  de abril y la caja de la reentrada (PUNTO-USADO.md §5). Hoja de preguntas:
+  docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5).»
+- **R4.1, «Refs»**: sale `NA:J · `.
+- **G.2**: «(J, antes de R4)» y «(J, antes de R4.1)» pasan a «(J, antes de la próxima sesión que
+  etiquete días)»; J sigue en G.2 con NA:J en sus Refs.
+- **G.2, los pendientes de RN-003** (decisión 7): «(RN-003 cita el de S-13 y el de la sesión 3, y el
+  segundo sale pendiente)» pasa a «(RN-003 cita `fb-2026-10-04-sesion-04-6e7da456` desde ADR-0080, y
+  salen pendientes los dos CORRECT anteriores, `fb-2026-09-29-sesion-03-31fb311f` y
+  `fb-2026-10-04-sesion-04-ca0afae6`, BARRIDO-SESION-5.md §1.f)».
+- **G.2, la línea del script** (decisión 3) **y la del runbook** (encargo §6), al final de «Qué es»:
+  «Y, desde `trabajo/barrido-sesion-5` (BARRIDO-SESION-5.md §1.d y §4): `scripts/hoja_preguntas.py`
+  sigue con el encabezado y la regla 2 de la sesión 2, lleva A-24 (DECIDIDA) en su orden, no lleva
+  A-50, A-53 ni A-57 y no puede llevar la B de VISOR-CONSTRUCCION.md §3.2 (toca A-46, RESUELTA); y
+  el paso 6 de «Antes» de `docs/runbooks/SESION-DE-PREGUNTAS.md` dice todavía «abril o agosto», que
+  su regla 2 amplió a julio del 1 al 17 y a enero del 2 al 30.»
+
+**Simulado en memoria**, con un guion en la carpeta de trabajo (como `simular_cierre.py` de
+VISOR-CONSTRUCCION, sin commitear: el contrato no admite anexos) que aplica cada cambio como
+sustitución exacta que casa una vez y corre las funciones a, b y c de `test_hoja_de_ruta.py` y las
+cuatro de `test_project_state.py` sobre el resultado:
+
+```
+a: []
+b: []
+c: []
+test_project_state_exists: pasa
+test_project_state_has_required_sections_in_order: pasa
+test_project_state_declares_a_branch: pasa
+test_project_state_cabe_en_el_tope: pasa
+PROJECT_STATE hoy: 22694 bytes
+PROJECT_STATE simulado: 22735 bytes
+```
+
+PROJECT_STATE quedaría en **22.735 bytes** con las líneas sobre el de la rama (22.694, que es el de
+`main` más la `Current Feature` de la rama); el cierre vuelve a escribir esa sección. La función d
+de `test_hoja_de_ruta.py` (las extracciones de las sesiones) no la tocan estas líneas.
+
+## 5 · make check
+
+| Commit | Resultado | PICO DE MEMORIA |
+|---|---|---|
+| a70ea6e (apertura), primer intento | rojo: 1 failed, 2689 passed (`test_project_state_rutas`: `Current Feature` citaba `docs/sesion-5/PREGUNTAS.md` antes de existir); arreglado sin rodear nada | — |
+| a70ea6e (apertura) | 2690 passed, `SELLO` | PICO DE MEMORIA de make check: 296 MiB en test (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 286 MiB) |
+| 758552d (fase 0) | 2690 passed, `SELLO` | PICO DE MEMORIA de make check: 294 MiB en test (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 284 MiB) |
+| fase 1 (PREGUNTAS.md) | en curso al escribir esta línea; su resultado, en el commit siguiente | — |
+
+`test_nunca_bloquea_y_es_rapido` no falló en ninguno: no hace falta la línea para G.
+
+## 6 · CI de Linux
+
+La rama no toca hooks, rutas ni el sistema de archivos: no hace falta `fix/barrido-sesion-5`.
+Ficheros cambiados frente a `main` (`git diff main --name-only`):
+
+```
+PROJECT_STATE.md
+contrato.yaml
+docs/encargos/trabajo-barrido-sesion-5.md
+docs/sesion-5/PREGUNTAS.md
+docs/state/HISTORIA.md
+docs/validation/BARRIDO-SESION-5.md
+```
+
 ## Estado
 
-EN CURSO · PARADA de la fase 0 (2026-10-19): inventario de 4.a a 4.e entregado; espero la respuesta
-del consultor a «Lo que necesito que decidas». `docs/sesion-5/PREGUNTAS.md` no existe todavía.
+EN CURSO · fase 1 hecha (2026-10-19): `docs/sesion-5/PREGUNTAS.md` escrito con las decisiones
+del consultor; falta el revisor (§7) y entregar la rama.

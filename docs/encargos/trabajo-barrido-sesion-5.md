@@ -67,3 +67,27 @@ Dado por Aleks (consultor) el 2026-10-19. Copiado tal cual:
 > Si la rama no toca hooks, rutas ni el sistema de archivos, dilo con la lista de ficheros cambiados. Si toca hoja_preguntas.py, push como fix/barrido-sesion-5 y CI de Linux, con su run en el informe.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-19)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/barrido-sesion-5 (2026-10-19). Cópiala tal cual en el informe y aplícala punto por punto (skill fase-cero).
+>
+> 0. (a). Las 25, en el orden de 1.c. S-25 y S-23 llevan la marca «si falta tiempo, por WhatsApp» y S-18 la de «si falta tiempo, a la sesión 6». Por qué: la estimación supera en unos 5 minutos a la sesión 4, y eso no basta para quitar nada de antemano.
+> 1. (a). Las dos subpreguntas salen, y lo que ya está registrado pasa a «Lo que nos has dicho» con su id (fb-2026-09-09-sesion-01-bff260ea para el saldo inicial del día; lo FIRME de A-13, ambiguedades.yaml). Por qué: D3 prohíbe repetir lo respondido.
+> 2. (a). S-1 es la contradicción: va sobre el esquema de dos velas y con «Lo que nos has dicho» vacío, con la frase «se pregunta sobre el esquema». S-2 es la ruptura simple sin cuerpo, y lleva el WhatsApp del 2026-10-14 como «Lo que nos has dicho». Las dos van con esquema inventado, como manda D2. Por qué: la contradicción solo se resuelve si el trader contesta sin tener delante la regla que la decide. Es una desviación del orden de SESGO-H4-COLOR.md §4.4, y el documento la declara.
+> 3. (a). hoja_preguntas.py no se toca en esta rama. La hoja de la sesión 5 es el PDF del consultor hecho con docs/sesion-5/PREGUNTAS.md, como en la sesión 4. Una línea para G recoge lo que tiene desfasado: el encabezado y la regla 2 de la sesión 2, A-24 DECIDIDA dentro del orden, A-50, A-53 y A-57 fuera, y la B, que toca A-46 (RESUELTA). Por qué: la hoja de la 5 no sale del script, y esta rama es de documentos.
+> 4. (a). Ningún gráfico de un día real: todo con esquemas inventados, y los días se quedan en el informe como clave de Aleks. Por qué: es lo que D2 pone por defecto, y así no hay que volver a pasar contexto_h4.py ni declarar exposiciones.
+> 5. (a). A-32 en abstracto, con un esquema: «¿hay alguna línea en M1 que, si el precio la rompe solo con la mecha, te quite la entrada? ¿Cuál?». Por qué: S-23 de la sesión 4 ya dio la regla general, y lo que falta saber es si existe esa clase de línea.
+> 6. (a). S-25 se pregunta. Su «Lo que nos has dicho» no es una cita: dice «nos lo comentaste de palabra el 13 de octubre, sin grabar», para que quede en la voz. Por qué: cuesta medio minuto y da la cita grabada que ENTRADA-JULIO.md no tiene.
+> 7. (a). Van a «Líneas preparadas para el commit del contrato»: G.2 nombra los dos pendientes de RN-003 (31fb311f y ca0afae6), y entra la línea para G del punto 3. Por qué: hoy G.2 dice uno y son dos.
+> 8. (b). Aviso en el encabezado de PREGUNTAS.md («antes de grabar, la copia de seguridad A.4»), y V conserva A.4 en su frase de dependencias. La línea del cierre sustituye «, de J (kit hoja) y» por « y», como propones en el matiz 57. Por qué: A.4 sigue siendo verdad, y solo sale J.
+>
+> Además:
+> - Herencia 3: las opciones de S-3 (A-35) y S-4 (A-44) se escriben de modo que cada una caiga en una lectura documentada de ACTIVAR-A35-A44.md §1. Debajo de cada opción, en el documento y no en la hoja del trader, pon la lectura en la que cae.
+> - Herencias 2, 4 y 6: se aplican como dices. Sin dinero, con las horas en Europe/Madrid, con cada premisa contrastada con la spec de hoy y sin juntar nunca un rango de fechas con un recuento de reservados.
+> - Matiz 43: es correcto. El literal de 1:44:49 lo lee Aleks en su terminal; hasta que lo diga, S-24 va con las dos lecturas.
+> - La corrección del punto 25 (dos falsos positivos, no uno) y la del matiz 31 (la guardia niega kb sobre v7-v10) van al informe como hallazgos del auditor sobre el encargo.
+>
+> Sigue con la fase 1 sin parar: PREGUNTAS.md, make check sellado (con la línea PICO DE MEMORIA), revisor, entregar-rama y «Rama lista para revisión, NO cerrada».
