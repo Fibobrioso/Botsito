@@ -195,7 +195,10 @@ el bot (D4).
   (`MASTER_PLAN.md` §A, «3 meses en umbral») no se acortan.
 - Documentos: la NOTA nueva de `docs/plan/MASTER_PLAN.md` (el cuerpo no se toca); la regla de
   `PROJECT_STATE.md` (la vieja va a HISTORIA); el tramo R6a de `docs/plan/HOJA-DE-RUTA.md`, R6.1 y
-  R7.1; los recuadros en ADR-0067 §1 y ADR-0068 §4; y la deuda del docstring de `engine/freno.py`.
+  R7.1; los recuadros en ADR-0067 §1 y ADR-0068 §4; las notas en ADR-0050 §4 y ADR-0053 §3.2
+  («de la estrategia» quiere decir allí del bot; RN-029, RN-030 y RN-031 son el veto de la firma, y
+  RN-032 espera a F26; respuesta del consultor a la revisión, 2026-10-18); y la deuda del docstring
+  de `engine/freno.py`.
 - Lo que NO cambia: el motor, la spec, el registro, las guardias, los hooks, el Makefile, `src/`,
   `tests/`, `mql5/` y `tools/`. F29 y F30 siguen detrás de F26 (D2). Las instantáneas congeladas
   (`MASTER_PLAN.html`, el informe de investigación) siguen diciendo lo que decían.
