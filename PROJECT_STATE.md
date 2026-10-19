@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/barrido-sesion-5
+main
 
 ## Current Feature
-trabajo/barrido-sesion-5 EN CURSO (abierta el 2026-10-19 desde main e518707; V de la Next Action, R4.1): el barrido de preguntas de la sesión 5 con el trader, en docs/sesion-5/PREGUNTAS.md. Encargo: docs/encargos/trabajo-barrido-sesion-5.md. Informe: docs/validation/BARRIDO-SESION-5.md.
+Ninguna rama abierta. trabajo/barrido-sesion-5 cerrada en main el 2026-10-19 (stable/F37w-barrido-sesion-5): las preguntas de la sesión 5 en docs/sesion-5/PREGUNTAS.md. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-a1bb8a5 · merge de `trabajo/punto-usado` (tag `stable/F37v-punto-usado`): ADR-0083 enmienda la decisión 1 de ADR-0064 (gasta un punto el rechazo, al colocar o al llenar, y el no envío; el llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar con la misma caja o con otra), PROVISIONAL hasta la pregunta 3 de V; el código (`zonas.liberar_usada`, `cableado._el_punto_tras_el_evento`), «### Ordenes» con el punto y el 1 de la caja, spec 18.1.3, y la corrida de R3.1 repetida. Sobre `stable/F37u-plataforma-adelantada` (3ae2933). Informe docs/validation/PUNTO-USADO.md; el registro del cierre, al final de HISTORIA.
+ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-5`): el barrido de preguntas de la sesión 5 con el trader (R4.1), docs/sesion-5/PREGUNTAS.md: las preguntas en cuatro bloques, con lo ya dicho y su id, esquemas inventados y ningún día real; la hoja es el PDF del consultor. Solo documentos. Sobre `stable/F37v-punto-usado` (a1bb8a5). Informe docs/validation/BARRIDO-SESION-5.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-a1bb8a5 · merge: trabajo/punto-usado, ADR-0083 (que gasta un punto: el rechazo al colocar o al llenar y el no envio; el llenado no), sus tests y la corrida de R3.1 repetida · tag stable/F37v-punto-usado
+ff55b3d · merge: trabajo/barrido-sesion-5, las preguntas de la sesion 5 con el trader (docs/sesion-5/PREGUNTAS.md) y su informe · tag stable/F37w-barrido-sesion-5
 
 ## Tests Currently Passing
 1603 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
