@@ -153,6 +153,15 @@ El tramo R6a de `docs/plan/HOJA-DE-RUTA.md`:
 Las ejecuciones 2 y 3 de la demo y A-28 siguen en el carril de Aleks (A.1): R6a.1 lee el desfase
 del reloj, no lo decide.
 
+> **CORRECCIÓN (2026-10-19, rama `trabajo/ea-conexion`, respuesta del consultor a la PARADA de su
+> fase 0, punto 0).** En R6a.1, «la comprobación de `ACCOUNT_MARGIN_MODE`» al arrancar queda en
+> **leerlo y registrarlo en el journal, sin abortar**. Motivo: no hay ningún valor con fuente con el
+> que compararlo hasta que FTMO conteste si la cuenta Swing es de hedging (hoja de ruta A.2, P-D1);
+> el perfil (`knowledge/cuentas/`) y el registro no traen modo de margen, y comparar con un valor sin
+> fuente sería una cifra escrita a mano (D5). La comparación que aborta es la de R6a.7, y antes de
+> ella hay que crear el parámetro del modo de margen con su fuente (la respuesta de FTMO).
+> `docs/validation/EA-CONEXION.md`, «Respuesta del consultor a la PARADA».
+
 ## Problema que resuelve
 
 La regla «la validación de fidelidad (F26) precede a cualquier MQL5» (`MASTER_PLAN.md` §0) dejaba

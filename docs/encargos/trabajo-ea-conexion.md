@@ -84,3 +84,27 @@ Dado por Aleks (consultor) el 2026-10-19. Copiado tal cual:
 > La rama toca rutas y plataforma (mql5/, src/): push como fix/ea-conexion y CI de Linux, con su run en el informe.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA
+
+Dada por Aleks (consultor) el 2026-10-19. Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/ea-conexion (2026-10-19). Cópiala tal cual en el informe y aplícala punto por punto (skill fase-cero).
+>
+> 0. (a). R6a.1 lee y registra ACCOUNT_MARGIN_MODE sin abortar. Corrijo el motivo: no es que «llega con R6a.2», sino que no hay ningún valor con fuente hasta que FTMO conteste si la cuenta Swing es hedging (A.2, P-D1), y comparar con un valor sin fuente sería una cifra a mano (D2g). El recuadro va en ADR-0082 §10 dentro de esta rama: amplía rutas_permitidas del contrato solo con ese fichero de docs/adr/ y escribe el recuadro con fecha, rama y motivo. Prepara además una línea para R6a.7: antes de comparar, crear el parámetro del modo de margen con su fuente (la respuesta de FTMO). El error del motivo es mío y va a la orden de cierre.
+> 1. (a). La condición de MedirDemoFTMO.mq5:759 tal cual, en NegarFueraDeDemo(modo), como lo primero de OnInit. Hasta TERMINAL_CONNECTED el EA solo escribe el arranque y los latidos; al conectar vuelve a llamar a la misma función con el modo leído y, si no es DEMO, escribe el motivo y hace ExpertRemove(). El test estático cubre las dos llamadas. Por qué: cierra el hueco medido del 0 antes de conectar, y R6a.3 lo hereda.
+> 2. (a). La ruta de §0.f: compilar.py exporta del índice a una carpeta temporal, la puerta lee «Result: 0 errors» y que exista el .ex5, los logs van a los anexos en UTF-8 y LF con el sha256 del original, y las pruebas se lanzan con terminal64.exe /config. El «Quién» de R6a.1 cambia como propones, con su línea para la hoja. Si la guardia niega el módulo o el .exe, PARADA, y lo lanzo yo con «!».
+> 3. (a). JSON Lines v1 con las claves y el orden de tu tabla, las reservadas a null, h(n) = SHA-256 de los bytes UTF-8 de la línea n sin el LF, prev en la siguiente y forma canónica obligatoria. Un fichero por día del servidor, con la cadena continua entre días y reinicios, y «cadena_anterior: rota» si la última línea no valida. El script de pruebas cubre la continuación tras un reinicio y la cadena rota.
+> 4. (a). El validador va en src/botsito/mql5bridge/journal.py, con una línea de Technical Debt: cuando F23 lo necesite, el esquema baja a una capa que engine vea, en su rama y tocando pyproject.toml.
+> 5. (a). El procedimiento va en una sección nueva de docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)», escrita como el resto del runbook. Debe decir que la corrida va después de la ejecución 2 de MedirDemoFTMO, nunca a la vez, y que dura hasta pasada la medianoche del servidor.
+> 6. (a). #define LATIDO_SEG 60 y el tope de 32 del bucle de sesiones, los dos nombrados y documentados en mql5/JOURNAL.md como parte del formato v1 (cambiarlos es una versión nueva), con una línea para R6a.2 por si se quieren generar.
+> 7. (a). SymbolInfoSessionQuote se lee y se registra en «sesiones» como «quote», sin usarlo; R6a.5 decide si sirve.
+> 8. Sí. Una línea de Technical Debt para la rama que congele los CSV de las ejecuciones 2 y 3, con tu texto de §0.c.
+> 9. (b). Sin línea para A.2: la página oficial ya dice «generally allowed». Si más adelante se elige el VPS de MetaQuotes, la pregunta se hará entonces.
+>
+> Además:
+> - Herencia 5: tocar «Tests Currently Passing» en PROJECT_STATE es correcto; decláralo como dices.
+> - Herencia 10: renombrar la variable «crudo» en tu guion de medida es correcto, porque es lo que pide la deuda K. Va a la fila de la rama como un caso más del falso positivo de K.
+> - El auditor tiene razón en la incorrecta 29 y en los matices 30 y 54: escribe en el informe las rutas y nombres correctos (tests/contract/, LF y no UTF-8 en .gitattributes, el carril de guardias y deuda en lugar de «G»).
+>
+> Sigue con las fases 1 y 2 sin parar. La fase 3 espera a mi corrida en la prueba nueva del 26; cuando llegue a ella, deja la rama esperando mi journal y avísame con el procedimiento listo.

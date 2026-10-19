@@ -9,6 +9,7 @@ rutas_permitidas:
   - src/botsito/mql5bridge/
   - tests/
   - docs/runbooks/
+  - docs/adr/0082-la-capa-de-mt5-que-nunca-decide-una-operacion-va-antes-de-f26.md  # respuesta a la PARADA, punto 0: el recuadro en §10
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
@@ -26,8 +27,7 @@ rutas_protegidas:
   - src/botsito/spec/
   - src/botsito/cases/
   - docs/plan/
-  - docs/adr/
 comprobaciones:
   - uv run python scripts/contrato_rama.py
-  - uv run pytest tests/unit tests/contract -q -k "mql5 or journal or ea_conexion"
+  - uv run pytest tests/unit tests/contract -q -k "mql5 or journal or capa_mt5 or compilar"
   - make check > make-check.log 2>&1

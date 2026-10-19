@@ -524,6 +524,105 @@ el CSV de la ejecución 1 se midió por sha256 y por recuento de `\r`, sin abrir
    de MetaQuotes y alguna región, además de EE. UU., que no admita»); (b) no, porque la página oficial
    ya dice «generally allowed». Recomiendo (b) salvo que vayas a usar el VPS de MetaQuotes: entonces (a).
 
+## Respuesta del consultor a la PARADA
+
+Dada por Aleks (consultor) el 2026-10-19. Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/ea-conexion (2026-10-19). Cópiala tal cual en el informe y aplícala punto por punto (skill fase-cero).
+>
+> 0. (a). R6a.1 lee y registra ACCOUNT_MARGIN_MODE sin abortar. Corrijo el motivo: no es que «llega con R6a.2», sino que no hay ningún valor con fuente hasta que FTMO conteste si la cuenta Swing es hedging (A.2, P-D1), y comparar con un valor sin fuente sería una cifra a mano (D2g). El recuadro va en ADR-0082 §10 dentro de esta rama: amplía rutas_permitidas del contrato solo con ese fichero de docs/adr/ y escribe el recuadro con fecha, rama y motivo. Prepara además una línea para R6a.7: antes de comparar, crear el parámetro del modo de margen con su fuente (la respuesta de FTMO). El error del motivo es mío y va a la orden de cierre.
+> 1. (a). La condición de MedirDemoFTMO.mq5:759 tal cual, en NegarFueraDeDemo(modo), como lo primero de OnInit. Hasta TERMINAL_CONNECTED el EA solo escribe el arranque y los latidos; al conectar vuelve a llamar a la misma función con el modo leído y, si no es DEMO, escribe el motivo y hace ExpertRemove(). El test estático cubre las dos llamadas. Por qué: cierra el hueco medido del 0 antes de conectar, y R6a.3 lo hereda.
+> 2. (a). La ruta de §0.f: compilar.py exporta del índice a una carpeta temporal, la puerta lee «Result: 0 errors» y que exista el .ex5, los logs van a los anexos en UTF-8 y LF con el sha256 del original, y las pruebas se lanzan con terminal64.exe /config. El «Quién» de R6a.1 cambia como propones, con su línea para la hoja. Si la guardia niega el módulo o el .exe, PARADA, y lo lanzo yo con «!».
+> 3. (a). JSON Lines v1 con las claves y el orden de tu tabla, las reservadas a null, h(n) = SHA-256 de los bytes UTF-8 de la línea n sin el LF, prev en la siguiente y forma canónica obligatoria. Un fichero por día del servidor, con la cadena continua entre días y reinicios, y «cadena_anterior: rota» si la última línea no valida. El script de pruebas cubre la continuación tras un reinicio y la cadena rota.
+> 4. (a). El validador va en src/botsito/mql5bridge/journal.py, con una línea de Technical Debt: cuando F23 lo necesite, el esquema baja a una capa que engine vea, en su rama y tocando pyproject.toml.
+> 5. (a). El procedimiento va en una sección nueva de docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)», escrita como el resto del runbook. Debe decir que la corrida va después de la ejecución 2 de MedirDemoFTMO, nunca a la vez, y que dura hasta pasada la medianoche del servidor.
+> 6. (a). #define LATIDO_SEG 60 y el tope de 32 del bucle de sesiones, los dos nombrados y documentados en mql5/JOURNAL.md como parte del formato v1 (cambiarlos es una versión nueva), con una línea para R6a.2 por si se quieren generar.
+> 7. (a). SymbolInfoSessionQuote se lee y se registra en «sesiones» como «quote», sin usarlo; R6a.5 decide si sirve.
+> 8. Sí. Una línea de Technical Debt para la rama que congele los CSV de las ejecuciones 2 y 3, con tu texto de §0.c.
+> 9. (b). Sin línea para A.2: la página oficial ya dice «generally allowed». Si más adelante se elige el VPS de MetaQuotes, la pregunta se hará entonces.
+>
+> Además:
+> - Herencia 5: tocar «Tests Currently Passing» en PROJECT_STATE es correcto; decláralo como dices.
+> - Herencia 10: renombrar la variable «crudo» en tu guion de medida es correcto, porque es lo que pide la deuda K. Va a la fila de la rama como un caso más del falso positivo de K.
+> - El auditor tiene razón en la incorrecta 29 y en los matices 30 y 54: escribe en el informe las rutas y nombres correctos (tests/contract/, LF y no UTF-8 en .gitattributes, el carril de guardias y deuda en lugar de «G»).
+>
+> Sigue con las fases 1 y 2 sin parar. La fase 3 espera a mi corrida en la prueba nueva del 26; cuando llegue a ella, deja la rama esperando mi journal y avísame con el procedimiento listo.
+
+## 4. La respuesta, aplicada punto por punto
+
+| punto | qué se hizo | dónde |
+|---|---|---|
+| 0 | El contrato admite **solo** `docs/adr/0082-…-f26.md` (sale `docs/adr/` de las protegidas: lo protegido manda sobre lo permitido, y el resto de `docs/adr/` sigue fuera porque no está permitido). Recuadro **CORRECCIÓN** en ADR-0082 §10, con fecha, rama y motivo. La línea para R6a.7 va en §«Líneas preparadas». | `contrato.yaml`; ADR-0082 §10; fase 1 |
+| 1 | `NegarFueraDeDemo(modo)` con la condición de `MedirDemoFTMO.mq5:759`, lo primero de `OnInit`, y una segunda llamada al conectar con `ExpertRemove()`; el test estático cubre las dos (`comprobar_negativa`). | `tests/contract/test_capa_mt5.py` (fase 1); el EA (fase 2) |
+| 2 | `compilar.py` exporta del índice, la puerta lee `Result: 0 errors` y el `.ex5`, los logs a los anexos en UTF-8 y LF con el sha256 del original, y las pruebas con `terminal64.exe /config`. Línea del «Quién» en §«Líneas preparadas». | fase 2 |
+| 3 | JSON Lines v1 con la tabla de §0.f, la fórmula del hash, la forma canónica, un fichero por día y `cadena_anterior` (`ninguna`, `sigue`, `rota`). | `mql5/JOURNAL.md`, `journal.py`, golden (fase 1); `Journal.mqh` y el script de pruebas (fase 2) |
+| 4 | El validador en `src/botsito/mql5bridge/journal.py`; la línea de Technical Debt, en §«Líneas preparadas». | fase 1 |
+| 5 | Sección nueva «El EA de conexión (R6a.1)» en `docs/runbooks/DEMO-FTMO.md`, después de la ejecución 2 y hasta pasada la medianoche del servidor. | fase 2 |
+| 6 | `LATIDO_SEG 60` y `TOPE_SESIONES 32`, nombrados y documentados en `mql5/JOURNAL.md` («Las dos cifras del formato»); el test de D2g solo admite esos `#define` y los de la versión. Línea para R6a.2. | fase 1 (documento y test); fase 2 (EA) |
+| 7 | `SymbolInfoSessionQuote` se lee y se registra en `sesiones` como `quote`. | formato (fase 1); EA (fase 2) |
+| 8 | Línea de Technical Debt con el texto de §0.c. | §«Líneas preparadas» |
+| 9 | Sin línea para A.2. | — |
+| Además | «Tests Currently Passing» cambia con cada test nuevo (herencia 5; 1603 → 1620 en la fase 1). El caso de `crudo` va a la fila de la rama en ERRORES-RECURRENTES como un caso más de K. Las rutas correctas de la incorrecta 29 y los matices 30 y 54 están en §1 (`tests/contract/test_repository_integrity.py:98`; `.gitattributes` fija LF, no UTF-8; «el carril de guardias y deuda», no «G»). | §1; `PROJECT_STATE.md` |
+
+## 5. Fase 1 · los tests primero (2026-10-19)
+
+**El validador**, `src/botsito/mql5bridge/journal.py`: `leer(ficheros)` valida uno o varios
+ficheros en orden como una sola cadena y lanza `JournalError` con fichero, línea y motivo; `canonica`
+y `hash_linea` son la forma y el hash del formato; `main` es la línea de órdenes para Aleks. Comprueba
+los bytes (sin BOM, sin CR, la última línea con su LF), la forma canónica, las 14 claves en su orden,
+la versión, `seq` continuo, `desfase_s = srv − gmt`, las reservadas a `null`, el `prev` y la cadena
+nueva solo tras un `arranque` con `cadena_anterior: rota`, y los `datos` de cada evento con sus claves
+exactas y sus tipos (así un login o un saldo en `datos` no valida). Solo usa la biblioteca estándar.
+
+**El formato**, `mql5/JOURNAL.md`: lo adelanto de la fase 2 a la 1 porque es la definición que el
+validador comprueba; la tabla y los eventos son los de §0.f con lo que fijó la respuesta (los
+`datos` de cada evento quedan aquí cerrados, y añado el evento `negativa` del punto 1).
+
+**El golden**, `tests/golden/journal/`: dos cadenas de casos fijos, `continua/` (13 líneas en dos
+días, con un reinicio que sigue la cadena) y `rota/` (4 líneas: arranque con cadena rota, una cuenta
+REAL, la `negativa` y el `fin`). Valores de prueba, ningún dato de una cuenta; los textos llevan `"`,
+`\`, `ñ`, `ü`, un tabulador, un salto de línea y un U+0001, para que el escritor de MQL5 tenga que
+escapar como Python. Los genera `docs/validation/anexos/EA-CONEXION/fase1/generar_golden.py` (la
+carpeta de salida, por argumento) con `canonica` y `hash_linea`; **la prueba cruzada es la fase 2**:
+el script de pruebas de MQL5 tiene que escribir estos mismos bytes con el escritor del EA.
+
+**Los tests:**
+
+- `tests/unit/test_journal_mql5.py` (12): el golden valida y es una sola cadena; el hash es el de los
+  bytes sin LF; cambiar una línea (un segundo más en `srv` y `gmt`, que la deja válida por sí sola)
+  rompe el `prev` de la siguiente, y en la última, el hash final que el test fija; y cada regla en
+  los dos sentidos (BOM, CR, truncada, forma canónica, claves y su orden, reservadas, versión, seq,
+  desfase, hora, `prev`, cadena rota, `datos` con login o saldo, evento desconocido, semana sin un
+  día), más la línea de órdenes.
+- `tests/contract/test_capa_mt5.py` (5): los comprobadores estáticos de D4 (1) —trading (las 33
+  funciones de la documentación, `CTrade` y `#include <Trade\…>`), la condición de la negativa leída
+  del `MedirDemoFTMO.mq5` **real**, las dos llamadas (la primera de `OnInit` con `INIT_FAILED`, la
+  segunda con `ExpertRemove()`) y D2g (decimales, nombres de instrumento o firma y `#define` fuera de
+  la lista)— sobre fuentes de ejemplo, en los dos sentidos. **Los tests que los aplican a los ficheros
+  reales de la capa entran en la fase 2 con el EA**: en la fase 1 no hay capa, y un test que se
+  saltara sin ficheros pasaría sin comprobar nada (ERRORES-RECURRENTES, «una comprobación que no puede
+  fallar»).
+
+**Roturas a propósito del otro sentido** (el código roto tiene que hacer fallar su test), cada una
+deshecha después:
+
+| rotura | test que falla |
+|---|---|
+| el validador no mira la forma canónica | `test_la_forma_canonica_es_obligatoria`. **La primera versión del test no la cazaba**: el cambio rompía el `prev` de la línea siguiente y el test pasaba por otro motivo. Corregido: muta la última línea y exige el motivo «canonica». |
+| el validador no mira el `prev` | `test_cambiar_una_linea_rompe_la_cadena_o_el_hash_final` |
+| el validador acepta claves de más en `datos` | `test_los_datos_de_cada_evento_sin_login_ni_dinero` |
+| el validador acepta CR | `test_bom_cr_y_ultima_linea_truncada_se_rechazan` |
+| el validador no exige `null` en las reservadas | `test_las_reservadas_valen_null_en_v1` |
+| el comprobador de la negativa no mira `ExpertRemove()` | `test_la_negativa_en_los_dos_sentidos` |
+| el detector de trading no busca `OrderSend` | `test_trading_en_los_dos_sentidos` |
+| el detector de D2g no mira los decimales | `test_cifras_y_nombres_en_los_dos_sentidos` |
+
+**La guardia, dos veces más:** `python -m botsito.mql5bridge.journal` se niega («la guardia no
+resuelve qué fichero ejecuta un módulo (solo admite `-m pytest`); ejecuta el guion por su ruta»): es
+la propia guardia la que da la vía, y el uso documentado es por ruta
+(`uv run python src/botsito/mql5bridge/journal.py`), que vale igual para Aleks. Y los comandos
+encadenados con `&&` delante de un `uv run` se niegan (ya conocido): van en llamadas separadas.
+
 ## Estado
 
-EN CURSO: fase 0 entregada, **PARADA**. Espero la respuesta del consultor a «Lo que necesito que decidas».
+EN CURSO: respuesta del consultor aplicada; fase 1 hecha (tests primero). Sigue la fase 2.

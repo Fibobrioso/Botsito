@@ -16,7 +16,7 @@ ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-
 ff55b3d · merge: trabajo/barrido-sesion-5, las preguntas de la sesion 5 con el trader (docs/sesion-5/PREGUNTAS.md) y su informe · tag stable/F37w-barrido-sesion-5
 
 ## Tests Currently Passing
-1603 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1620 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
