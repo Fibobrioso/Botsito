@@ -79,6 +79,12 @@ conservadora):
 1. **Un punto ya usado no se vuelve a colocar.** Usado es con la orden enviada, aceptada o
    rechazada. Si el precio ya pasó el punto al colocarla, se rechaza una vez y no se reintenta en
    cada M1, que llenaría el contador de peticiones (R13).
+   > **Enmendada por ADR-0083 (2026-10-18, `trabajo/punto-usado`).** Gasta el punto el rechazo (al
+   > colocar o al llenar) y el no envío; el llenado no: cerrada la operación con una pérdida, un
+   > break even o un equal, el punto se vuelve a colocar, con la misma caja o con otra, con los
+   > cartuchos delante (RN-016). La razón de esta decisión (no reintentar un rechazo en cada M1) no
+   > alcanzaba a un llenado, y el código la aplicaba por zona, no por punto. PROVISIONAL hasta la
+   > pregunta 3 de la sesión 5.
 2. **Una sola vida de orden por sesión que llega a llenarse.** Tras un llenado, la sesión no coloca
    otra orden, como la zona de un solo uso que había antes. Los cartuchos siguen sin geometría.
 3. **La orden pendiente de una sesión no se reubica con los puntos de la siguiente** (A-46: cada

@@ -187,7 +187,8 @@ def test_el_productor_liga_una_zona_por_punto_y_no_repite_un_punto_usado(tmp_pat
     assert isinstance(r, Resultado) and r.valor is Tri.SI
     z1 = zonas.zonas_del_dia(estado)[r.ligaduras["Z"]]
     assert z1.lado == VENTA and z1.extremo > z1.entrada and z1.por == "primer_esquema"
-    # idempotente en el mismo instante; y una vez usada, no se vuelve a colocar
+    # idempotente en el mismo instante; y usada -su orden viva-, no se vuelve a colocar mientras
+    # nadie la libere (ADR-0083: la libera el cableado al cerrarse la operacion sin ganar)
     assert toca(args, _momento(datos, 4), estado) == r
     zonas.marcar_usada(estado, "07-11", z1.id)
     assert toca(args, _momento(datos, 5), estado) == Resultado(Tri.NO)
@@ -214,7 +215,8 @@ def test_con_la_caja_recalculada_un_1_nuevo_liga_otra_zona_del_mismo_punto(
     M1 3 y la verde de la M1 4 sube la maxima. Con la caja fija (la decision 5 de ADR-0064), la
     zona es la misma; recalculada en cada cierre de M1 (el valor desde ADR-0074, sesion 4, S-4),
     el 1 nuevo es otra zona del mismo punto. Y un punto cuya orden se rechazo no se vuelve a
-    colocar con otra caja (decision 1). Cambia de sentido A PROPOSITO el 2026-10-11: la caja fija
+    colocar con otra caja (la decision 1 de ADR-0064, que ADR-0083 conserva para el rechazo).
+    Cambia de sentido A PROPOSITO el 2026-10-11: la caja fija
     deja de ser el registro real y pasa a pedirse expresamente."""
     datos = _Datos(_serie(VENTA_DOS_BAJOS), toma=M0 + 1)
     fija = _registro(tmp_path, caja_se_fija="al_verse_el_punto")

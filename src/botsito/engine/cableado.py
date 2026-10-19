@@ -64,6 +64,7 @@ from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, Configura
 from botsito.engine.motor import DiaDeMercado, ResultadoDia, Sesion, TrazaSesion
 from botsito.engine.perfil_cuenta import PerfilCuenta, cargar_perfil
 from botsito.engine.primitivas_broker import (
+    GANANCIA,
     ContextoDia,
     EventoBroker,
     Zona,
@@ -82,7 +83,7 @@ from botsito.engine.tope_trader import (
     TopeTrader,
 )
 from botsito.engine.visor import DetalleBroker, EventoVisor, OrdenVisor, ZonaVisor
-from botsito.engine.zonas import memoria_de_sesion, zonas_del_dia
+from botsito.engine.zonas import liberar_usada, marcar_rechazada, memoria_de_sesion, zonas_del_dia
 
 DEPURACION = "DEPURACION: respaldo M1, no cuenta"
 # el «tipo de peticion» de un rechazo al LLENAR en «### Rechazos por motivo» (ADR-0081 §4): no es
@@ -134,6 +135,36 @@ class TrazaBroker:
     # `ContextoDia.zona_de_orden`. Con el `EstadoDia` del dia (`MotorCableado.estados`), «###
     # Ordenes» saca de el el punto de la orden (`punto_de_zona`) y el 1 de su caja
     zona_de_orden: dict[str, str] = field(default_factory=dict)
+
+
+def _el_punto_tras_el_evento(ctx: ContextoDia, estado: EstadoDia) -> None:
+    """Que gasta un punto (ADR-0083, D1), a partir de los hechos del broker que `_a_la_cuenta`
+    acaba de dejar en `ctx.eventos`: el RECHAZO AL LLENAR (ADR-0081 §4; el evento `rechazada`, que
+    llega sin `por`) gasta el punto de la orden como el rechazo al colocar; y un CIERRE (`stop`,
+    `objetivo` o `manual`) cuyo resultado no sea `ganancia` -perdida, break even, equal- libera la
+    zona de su orden, y el punto se vuelve a colocar con esa caja o con otra. Con `ganancia` no se
+    libera nada: RN-034 termina el escenario. La sesion y la zona de cada orden las apunto
+    `colocar_orden_limite`; una orden sin ellas (una zona sintetica, un test) no toca nada. Va aqui,
+    en el cableado, porque es el unico sitio con el broker, el contexto y el estado a la vez, y
+    porque los predicados son puros (ADR-0055 §1) y esto es mecanica, no estrategia."""
+    for e in ctx.eventos:
+        if e.tipo == RECHAZADA:
+            orden_id = e.id
+        elif e.tipo in (STOP, OBJETIVO, MANUAL) and e.resultado != GANANCIA:
+            p = ctx.broker.posiciones.get(e.id)
+            if p is None:
+                continue
+            orden_id = p.orden_id
+        else:
+            continue
+        zona_id = ctx.zona_de_orden.get(orden_id)
+        if zona_id is None or orden_id not in ctx.sesion_de_orden:
+            continue
+        sesion = ctx.sesion_de_orden[orden_id]
+        if e.tipo == RECHAZADA:
+            marcar_rechazada(estado, sesion, zona_id)
+        else:
+            liberar_usada(estado, sesion, zona_id)
 
 
 MOTIVO_FIN_DIA = "viva al cerrar el dia: cancelada por la red de seguridad (ADR-0053 §6)"
@@ -261,6 +292,8 @@ class MotorCableado:
             # 1. riesgo por tick: el broker hasta el ultimo milisegundo anterior al cierre
             nuevos = broker.avanzar(hasta_ms)
             vistos = self._a_la_cuenta(broker, ctx, tb, nuevos, vistos, hasta_ms)
+            # el punto de cada orden que termino en este tramo: gastado o liberado (ADR-0083)
+            _el_punto_tras_el_evento(ctx, estado)
             # 2. ordenes por evento del broker: hechos y eventos a la vista del interprete
             estado.broker = broker.hechos()
             # la PEOR equity del minuto y su instante, antes de que la lectura reinicie el tramo:

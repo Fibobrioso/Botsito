@@ -144,6 +144,9 @@ class ContextoDia:
     acumuladores: dict[str, Decimal] = field(default_factory=dict)
     por_de_orden: dict[str, str] = field(default_factory=dict)  # orden_id -> esquema
     zona_de_orden: dict[str, str] = field(default_factory=dict)  # orden_id -> zona_id
+    # orden_id -> la sesion en que se coloco (la misma con la que el productor marco su zona): con
+    # ella el cableado gasta el punto o libera la zona al ver el rechazo o el cierre (ADR-0083)
+    sesion_de_orden: dict[str, str | None] = field(default_factory=dict)
     instante_ms: int = 0  # el instante del evento del interprete (exclusivo para el broker)
     huecos: set[str] = field(default_factory=set)
     tope: TopeTrader | None = None  # el tope propio del trader (A-44), si esta fijado
@@ -623,7 +626,7 @@ def primitivas_cableadas(
         lado = cast(Lado, z.lado)
         # ADR-0081 §2 y §3: el lote final es el menor de tres, al paso; y el UNICO camino «no se
         # coloca»: por debajo del minimo, o con lote_si_no_cabe = no_operar y un limite que muerde.
-        # La zona queda usada y su punto rechazado, como con un rechazo del broker (ADR-0064)
+        # La zona queda usada y su punto GASTADO, como con un rechazo del broker (ADR-0083, D1)
         lote, limites = _lote_final(lado, lote_riesgo)
         motivo_no_envio: str | None = None
         if lote is None:
@@ -647,8 +650,11 @@ def primitivas_cableadas(
         r = colocar(id, lado, z.entrada, lote, o.stop, o.objetivo, ctx.instante_ms)
         ctx.por_de_orden[id] = z.por
         ctx.zona_de_orden[id] = z.id
+        ctx.sesion_de_orden[id] = momento.sesion
         marcar_usada(estado, momento.sesion, z.id)
         if isinstance(r, Rechazo):
+            # el rechazo al colocar gasta el punto (ADR-0083, D1; la decision 1 de ADR-0064); el
+            # rechazo al LLENAR lo gasta el cableado al ver el evento (`_el_punto_tras_el_evento`)
             ctx.eventos.append(EventoBroker(r.instante_ms, "rechazo", r.orden_id, z.por))
             marcar_rechazada(estado, momento.sesion, z.id)
         ctx.orden = None

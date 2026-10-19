@@ -6,12 +6,8 @@ el merge 3ae2933, tag `stable/F37u-plataforma-adelantada`). Encargo:
 Next Action). Modelo de la sesión: `claude-fable-5-1` según el entorno de la sesión; `/model` en el
 terminal de Aleks dio «Fable 5.1 … `high` effort» al empezar.
 
-(Hasta que exista, ADR-0083 va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; el bloque sale en el commit que lo cree.)
-
-```ids-inexistentes
-ADR-0083 — el ADR que el encargo manda escribir (D2); no existe hasta la fase 3 de la rama
-```
+(Hasta que existió, ADR-0083 iba declarado aquí en un bloque `ids-inexistentes`; salió en el commit
+que lo creó.)
 
 ## 0 · La base, comprobada al abrir
 
@@ -291,7 +287,158 @@ MANUAL), nunca con `ganancia`; el «equal» del encargo es RN-019, que no dispar
 la de 1.c; (4) el campo de la fase 1 lleva el punto Y el 1 de la caja (1.d: el stop no distingue dos
 cajas).
 
+## 2 · Fase 1 · El campo y la medida antes del cambio (2026-10-18)
+
+### 2.a El campo, solo salida
+
+«### Ordenes» lleva al final de cada línea DOS columnas nuevas, `punto` y `caja 1`
+(`engine/cableado.py`, `CABECERA_ORDENES`, `FilaOrden`, `_punto_y_caja`): el punto de la orden (la
+clave `nivel@inicio` de la vela contraria, la que el productor guarda en `punto_de_zona`) y el 1 de
+su caja en precio; `-` en una zona sin productor. El encargo pedía solo el punto; **el 1 va también,
+y es una desviación declarada**: el recuento que el mismo encargo pide («separando las de la misma
+caja y las de otra») no se puede hacer con lo que ya traía la fila, porque el stop no distingue dos
+cajas (§1.d: o12 y o13 de 2026-07-13 llevan el mismo stop con dos 1 distintos, por el redondeo de
+`stop_fraccion_redondeo`). `TrazaBroker` guarda la zona de cada orden (`zona_de_orden`, el mismo
+diccionario del contexto) y `vida_de_las_ordenes` lee la memoria del productor del día
+(`MotorCableado.estados`). Régimen del campo `bloqueadas` de R3.1: ninguna decisión lo lee; test
+sintético en los dos sentidos (`tests/unit/test_punto_usado.py`: con el productor real de la zona
+y `zona_del_punto` sintético, la fila termina en `punto | caja 1`; con una zona sintética del
+contexto, en `- | -`); `test_vida_de_la_orden.py` ajusta sus tres filas esperadas. Los guiones
+cerrados que leen las filas lo hacen por índice desde el principio (`reentradas.py`,
+`comun_visor.py:169`, `ticks_del_rechazo.py:49`, `traza_por_cierre.py:336`): no se desplazan.
+`make check` sellado sobre ese árbol (commit e55d00a): 2679 passed, `SELLO`, `PICO DE MEMORIA de
+make check: 295 MiB en test (…; el mayor proceso, 285 MiB)`. `state check`: 1592 funciones de test.
+
+### 2.b La corrida «antes», con su fila de exposiciones antes
+
+Fila de HOLDOUT-EXPOSICIONES del 2026-10-18 («Fase 1 de la rama `trabajo/punto-usado`»), escrita
+antes del comando (el reloj de la máquina va en UTC-5: 22:00-23:00 del 18; `generado_el` del
+manifiesto de la spec sale en UTC, ya el 19). Comando:
+
+    uv run botsito motor arnes --simular --diagnostico-a35 cierre_vela_contraria --diagnostico-a44 sin_tope --diagnostico-cuenta-diaria --salida docs/validation/anexos/PUNTO-USADO/antes-diaria.txt
+
+→ `antes-diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt` (2.144
+líneas; `TIEMPO: 356.3 s; MEMORIA: pico del proceso de 634.5 MiB`, por pantalla). sha256
+`db5a3f886ecba830ebab09a0f25716e2746a1a2b7d1ff31f123955d7d37ad557`.
+
+**Igual que la diaria de MARGEN-LOTE quitando el campo nuevo, medido:** un guion de la carpeta de
+trabajo (`comparar_sin_campo.py`, no se commitea) quita a las filas de «### Ordenes» las dos
+últimas columnas y a su cabecera sus dos nombres, y compara línea a línea con
+`anexos/MARGEN-LOTE/diaria.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.cuenta=diaria.txt`
+(sha256 `e584077bf767818b97b3e7878024925bcbf017269e3112ab0d00aba89cef55e3`, el del encargo,
+comprobado con `sha256sum`): **2.144 líneas en las dos y 0 líneas distintas**. Nada que parar.
+
+**Determinismo:** la misma corrida repetida con `--salida` en la carpeta de trabajo (fuera del
+repositorio; la misma lectura, declarada en la fila): `sha256sum` idéntico (`db5a3f88…`);
+`TIEMPO: 300.3 s; MEMORIA: pico del proceso de 634.7 MiB`. La copia no se commitea.
+
+### 2.c El recuento por punto exacto (`anexos/PUNTO-USADO/reentradas_por_punto.py`)
+
+Recibe la salida por argumento, lee solo «### Ordenes», no escribe nada y no imprime las columnas
+en USD. Por sesión: las órdenes colocadas en el punto EXACTO de una orden ya llenada de su sesión
+(después del llenado), separadas por el 1 de la caja (la misma / otra), y las colocadas en el
+punto de una ya rechazada. Salida con `--filas` en `anexos/PUNTO-USADO/reentradas_antes.txt`:
+
+    ordenes colocadas en el punto exacto de una orden ya llenada de su sesion: 41, en 18 sesiones; con la misma caja: 0 (llenadas 0); con otra caja: 41 (llenadas 13)
+    ordenes colocadas en el punto exacto de una orden ya rechazada de su sesion: 0, en 0 sesiones
+    filas sin punto (zona sin productor): 0
+
+Lo que dice de `main`: **ninguna reentrada con la misma caja y ninguna tras un rechazo**, que es
+exactamente lo que la fase 0 midió en el código (la zona queda en `usadas`; el rechazo al llenar no
+ocurre en esta corrida: «### Rechazos por motivo» solo trae `precio_invalido` al colocar, 26). Las
+41 con otra caja (13 llenadas) son la E de VISOR §2.d.4 contada por el punto y no por el precio:
+VISOR daba 47 en 22 sesiones por el 0 (cota superior); 6 órdenes en 4 sesiones eran un pivote
+nuevo al mismo nivel. 2026-07-13 11-15 trae sus dos (o12 y o13 en el punto de o11, §1.d);
+2026-04-29 07-11 no trae ninguna (el bot no reentra ahí: §4 lo mira).
+
+## 3 · Fases 2 y 3 · Los tests en rojo sobre `main`, y el código, el ADR, la spec y los recuadros (2026-10-18)
+
+### 3.a Los tests, primero en rojo (comparar-con-main)
+
+`tests/unit/test_punto_usado.py` (13 tests; los dos del campo son de la fase 1), por el cableado
+real: `MotorCableado.correr_dia` con la spec real y el productor real de la zona
+(`toca_colocar_orden_limite` de `primitivas_zona`, con `motor.limpia`, y `_punto_nuevo` real),
+RN-004 disparada en la toma por la geometría de toma sintética de `test_escenarios_por_sesion`,
+los gates de geometría que no se prueban (RN-005, RN-009, el esquema) sintéticos como en
+`test_cableado`, el acumulador `cartuchos` REAL y la orden STOP en la ruptura. Lo único sintético
+de la geometría es `zona_del_punto` (`_geometria`, sustituido con `monkeypatch` en `zonas` y en
+`primitivas_broker`): un plan «desde este cierre se ve el punto con este 1» que registra la zona
+exactamente como la real (`puntos`, `punto_de_zona`, `_ligar_al_escenario`, `zonas` del día), de
+modo que la misma caja es la misma zona y otro 1 es otra zona del mismo punto. Cada test dice en su
+docstring qué caja construye.
+
+Sobre el código de `main` (clon desechable `git worktree add --detach C:/cm/main main`, f96b581,
+con su `config/settings.local.toml`; el fichero copiado dentro y `uv run pytest
+tests/unit/test_punto_usado.py -q -p no:cacheprovider`; estado del repo real anotado antes y
+después: un worktree ajeno de otra sesión, `…/2ea2c3d2…/scratchpad/wt-ci` en e7df30b, que ya
+estaba y no se toca): **6 FAILED, 7 pasan**.
+
+| Test | La caja que construye | En `main` | Por qué falla en `main` (la aserción) |
+|---|---|---|---|
+| `test_tras_una_perdida_el_mismo_punto_se_vuelve_a_colocar_con_la_misma_caja` (D3a) | la misma todo el día | **FAILED** | `assert ['o1'] == ['o1', 'o2']`: tras el stop no hay o2 (la zona sigue en `usadas`) |
+| `test_tras_una_perdida_un_1_nuevo_coloca_otra_zona_del_mismo_punto` | otra desde el cierre siguiente al stop | pasa | — |
+| `test_tras_un_break_even_el_mismo_punto_se_vuelve_a_colocar_igual_que_tras_la_perdida` | la misma | **FAILED** | `assert ['o1'] == ['o1', 'o2']` |
+| `test_tras_una_ganadora_nada_se_vuelve_a_colocar` (RN-034) | otra desde Z+10 | pasa | — |
+| `test_los_cartuchos_cortan_la_reentrada_al_agotarse` (RN-016) | un 1 nuevo en cada reentrada | pasa | — |
+| `test_tras_un_rechazo_al_llenar_el_punto_no_se_vuelve_a_colocar_con_ninguna_caja` (D3b) | otra desde Z+6 | **FAILED** | `assert False` en `zonas.punto_rechazado(estado, "07-11", "zona:1")`: el rechazo al llenar no gastó el punto (y `main` coloca o2) |
+| `test_el_rechazo_al_colocar_sigue_gastando_el_punto` | otra desde Z+4 | pasa | — |
+| `test_el_no_envio_sigue_gastando_el_punto` | otra desde Z+4 | pasa | — |
+| `test_con_la_posicion_abierta_no_se_coloca_otra_orden` (D4) | otra con la posición abierta | pasa | — |
+| `test_con_la_orden_sin_llenar_el_1_nuevo_la_reubica_como_hoy` (RN-006) | otra en Z+2, sin llenar | pasa | — |
+| `test_punto_nuevo_sigue_reconociendo_la_orden_de_la_sesion_tras_una_perdida` | la misma tras la pérdida, otra en Z+9 | **FAILED** | las peticiones: falta `colocar o2` (y por tanto la reubicación a o3) |
+| `test_la_fila_de_ordenes_lleva_al_final_el_punto_y_el_1_de_la_caja` (fase 1) | la misma | **FAILED** | la cabecera de `main` no lleva las columnas (es el campo de la fase 1, no D1) |
+| `test_sin_productor_el_punto_y_la_caja_dicen_sin_medida` (fase 1) | zona sintética | **FAILED** | la fila de `main` no termina en `- \| -` (ídem) |
+
+Dos rutas de precio salieron mal en el primer borrador y se corrigieron ANTES de fijar el rojo (el
+objetivo de la otra caja está en +75, no en +60; el stop de la tercera caja de los cartuchos está
+en -24): los dos tests que decían «pasa en los dos» fallaban en `main` por mi ruta, no por D1. Lo
+digo porque el revisor tiene que comprobar que cada rojo lo es por la razón que dice.
+
+Los tests de 4.d (§1.e), sin tocar, siguen pasando con el código nuevo: `test_orden_stop_pivote.py`,
+`test_escenarios_por_sesion.py`, `test_margen_lote.py`, `test_cableado.py`,
+`test_vida_de_la_orden.py`, `test_caja_hasta_el_llenado.py`, `test_arnes_motor.py` y
+`test_be_al_tick.py`: 101 passed. Solo cambian dos comentarios de `test_orden_stop_pivote.py`
+(«usada -su orden viva-, no se vuelve a colocar mientras nadie la libere» y la cita de ADR-0083).
+En la rama, `test_punto_usado.py`: 13 passed.
+
+### 3.b El código (D3), por la vía de §1.c
+
+- `engine/zonas.py`: `liberar_usada` (nueva; `usadas.discard`), los docstrings del módulo
+  (:41-49), de `marcar_usada` y de `marcar_rechazada` dicen qué gasta un punto; `__all__`.
+- `engine/primitivas_broker.py`: `ContextoDia.sesion_de_orden` (orden → sesión en que se colocó),
+  escrito en `colocar_orden_limite` junto a `zona_de_orden`; el comentario del no envío cita
+  ADR-0083.
+- `engine/cableado.py`: `_el_punto_tras_el_evento(ctx, estado)`, llamada en `correr_dia` justo
+  después de `_a_la_cuenta` y antes de `estado.broker = broker.hechos()`: un evento `rechazada`
+  (el rechazo al llenar) → `marcar_rechazada`; un cierre `stop`/`objetivo`/`manual` con resultado
+  distinto de `ganancia` → `liberar_usada` de la zona de la orden de esa posición. Las órdenes sin
+  sesión ni zona apuntadas (zonas sintéticas) no tocan nada. `_a_la_cuenta` no cambia de firma.
+- `_punto_nuevo` no cambia (§1.c), y su test lo fija.
+
+### 3.c ADR-0083, los recuadros, la spec y los docstrings (D2)
+
+- `docs/adr/0083-que-gasta-un-punto.md` (D1 a D5, el material del trader en §6 -con lo que la
+  fase 0 encontró: `fb-2026-09-09-sesion-01-fe4a6a5c`, v6 1:23:53-1:24:07,
+  `ev-v5-000246-17eff9e1`-, y la respuesta a VISOR:673-675 sobre ADR-0066:51); recuadro en la
+  decisión 1 de ADR-0064; nota en ADR-0074 §4; las tres filas del índice (0064, 0074 y la nueva
+  0083, con «PROVISIONAL en D1 hasta la pregunta 3 de la sesión 5», H5). Los bloques
+  `ids-inexistentes` del encargo y de este informe salen en este mismo commit.
+- VISOR-CONSTRUCCION.md: once recuadros de corrección, con fecha y rama, junto a todo lo que da la
+  E por buena (los seis del encargo y los que el auditor añadió, H2): §2.d.4, :596 (2026-01-29
+  11-15), :861 (§2.g), §2.h (:887), antes de la tabla de §3.1 (sus dos filas), §3.2 pregunta 3,
+  §3.3, la línea Y de §4.1 (que cubre las líneas preparadas de R3.2 y R3.4), :1203 y el Estado. El
+  cuerpo queda intacto. La línea del Estado de R3.2 en la hoja de ruta va en las líneas del
+  cierre (§6), porque `docs/plan/` está protegido en el contrato.
+- `knowledge/spec/strategy_spec.yaml`: la descripción de `toca_colocar_orden_limite` pasa de «que
+  la sesion no haya usado» a decir qué gasta un punto (ADR-0083). `spec_version` 18.1.1 → **18.1.2**
+  (parche: cambia la redacción de un predicado, ninguna regla cambia de forma ni se añade un
+  parámetro; lo que cambia el bot lo fija el ADR y el código, no la forma de la spec);
+  `spec manifest --escribir` (hash `857d0b91…`) y `spec docs --escribir` (`docs/spec/`) en el mismo
+  commit; trailer `Fuente: ADR-0083`.
+
+[make check de la fase 3: pendiente de sello]
+
 ## Estado
 
-EN CURSO. Abierta el 2026-10-18; fase 0 entregada (§1) sin PARADA; sigue la fase 1 (el campo y la
-corrida «antes»).
+EN CURSO. Abierta el 2026-10-18; fase 0 entregada (§1) sin PARADA; fase 1 (§2) y fases 2 y 3 (§3)
+hechas; sigue la fase 4 (la re-corrida).

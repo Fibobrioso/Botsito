@@ -272,8 +272,12 @@ predicados:
       (se_da_esquema) y la orden se marca en su bloque de origen; o `al_tomarse_la_liquidez`, cuando
       la liquidez de M15 ya esta tomada y se completa la primera zona de control en M1, desde la que
       RN-006 la ira moviendo; o `al_aparecer_punto_de_breaker`, tras la toma, en cuanto hay un
-      posible punto de breaker con caja (orden_stop_punto, caja_bloque) que la sesion no haya
-      usado (ADR-0056 §7, ADR-0064). Ata la zona con `liga`
+      posible punto de breaker con caja (orden_stop_punto, caja_bloque) que la sesion no tenga
+      gastado ni con orden viva: gasta el punto el rechazo del broker (al colocar o al llenar) y
+      el no envio del bot; el llenado no lo gasta, y cerrada su operacion sin ganar (perdida,
+      break even, equal) el punto se vuelve a colocar, con la misma caja o con otra, con los
+      cartuchos delante (ADR-0083, que enmienda la decision 1 de ADR-0064; ADR-0056 §7). Ata la
+      zona con `liga`
     argumentos: [momento]
     fuente: mercado
     depende_de: [liquidez_tomada]

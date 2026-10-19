@@ -67,7 +67,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0061 | El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior | ACTIVE (enmienda ADR-0029 §3 para el redondeo del stop) |
 | 0062 | La toma de la liquidez de M15 la hace una vela de M1, y lo que eso destapa en el productor | ACTIVE |
 | 0063 | El reloj de las sesiones se separa del reloj del día de riesgo: el selector `reloj_sesiones` | ACTIVE |
-| 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29; decisión 5 enmendada por ADR-0074) |
+| 0064 | La orden stop nace en el último pivote de M1 y se reubica con cada pivote nuevo, con la caja de R6 | ACTIVE (aceptado en su dirección; valores DEFAULT_AMBIGUOUS bajo A-48 y A-29; decisión 5 enmendada por ADR-0074; decisión 1 enmendada por ADR-0083) |
 | 0065 | El break even de RN-014 se pone al tick que pasa el nivel, no al cierre de la M1 | ACTIVE (PROVISIONAL hasta la demo de MetaTrader) |
 | 0066 | Escenarios dentro de la sesión: la toma tiene que ser de la sesión, y cada liquidez nueva abre un escenario con sus intentos | ACTIVE (sus parámetros PROVISIONAL de las preguntas 5, 15, 18 y 20 de la sesión 4 son CONFIRMED desde `trabajo/activar-sesion-04`; queda el de la 21, `orden_pendiente_al_abrir_escenario`, bajo A-53) |
 | 0067 | El freno de peticiones vive en el puerto del broker: aviso, corte y bucle, y lo que protege la cuenta pasa siempre | ACTIVE (PROVISIONAL en sus cuatro umbrales, hasta A-54 en la demo de FTMO; enmendado por ADR-0082 en §1) |
@@ -77,7 +77,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0071 | Lo que fija la ejecución 1 de la demo de FTMO: la ficha de EURUSD, el stops level 0 y el volumen máximo 50; A-27 DECIDIDA | ACTIVE |
 | 0072 | Quién lee la columna de fechas de un backtest (Aleks, para todo backtest) y los tres papeles: Aleks, el consultor y la sesión | ACTIVE |
 | 0073 | La base del objetivo y el stop los fija el testimonio del trader; lo que el material contradice es una medición abierta (A-56), y ADR-0040 queda enmendado | ACTIVE (enmienda ADR-0040) |
-| 0074 | El 1 de la caja de la orden stop se recalcula en cada cierre de M1 hasta el llenado: `caja_se_fija` = `en_cada_cierre_m1` | ACTIVE (enmienda la decisión 5 de ADR-0064; DEFAULT_AMBIGUOUS bajo A-49) |
+| 0074 | El 1 de la caja de la orden stop se recalcula en cada cierre de M1 hasta el llenado: `caja_se_fija` = `en_cada_cierre_m1` | ACTIVE (enmienda la decisión 5 de ADR-0064; DEFAULT_AMBIGUOUS bajo A-49; nota en §4 por ADR-0083) |
 | 0075 | Una H4 neutra con doble ruptura no decide el sesgo: se mantiene el anterior | ACTIVE (enmienda ADR-0060 §1 y §2; su §3 enmendado por ADR-0080) |
 | 0076 | «Limpia» es «sin alternancia de colores», y eso ya lo filtra RN-009: A-21 RESUELTA con `solo_una_zona_de_control`, sin opción nueva | ACTIVE (enmienda ADR-0055 §2 y §5) |
 | 0077 | La racha de pérdidas seguidas del trader: RN-036, aparte de RN-020, con cuatro parámetros; A-51 RESUELTA | ACTIVE (la lectura de la sesión sobre la racha tras la novena, §5) |
@@ -86,4 +86,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0080 | El sesgo de H4 cambia solo si la vela rompe el extremo de la anterior y cierra del color de esa ruptura | ACTIVE (enmienda ADR-0044 §2, ADR-0060 §1 y ADR-0075 §3) |
 | 0081 | El lote que no cabe en el margen o en el volumen se limita, y el bróker simulado rechaza por margen libre al colocar y al llenar | ACTIVE (PROVISIONAL en D1 hasta A-57; enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto) |
 | 0082 | La capa de MT5 que nunca decide una operación va antes de F26: ejecuta, frena, veta, mide y registra, y ninguna de sus entradas es un hecho ni un parámetro de la estrategia | ACTIVE (enmienda MASTER_PLAN §0, la regla de PROJECT_STATE, ADR-0067 §1 y ADR-0068 §4; nota en ADR-0050 §4 y ADR-0053 §3.2) |
+| 0083 | Qué gasta un punto: el rechazo (al colocar o al llenar) y el no envío; el llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar, con la misma caja o con otra | ACTIVE (PROVISIONAL en D1 hasta la pregunta 3 de la sesión 5; enmienda la decisión 1 de ADR-0064; nota en ADR-0074 §4) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

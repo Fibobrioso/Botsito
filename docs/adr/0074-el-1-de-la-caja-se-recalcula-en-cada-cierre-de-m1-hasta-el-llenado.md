@@ -64,6 +64,12 @@ la corrida de R3.1. Aquí no corre el arnés.
 `caja_bloque` (R6, DEFAULT_AMBIGUOUS bajo A-48), `orden_stop_punto`, la decisión 1 de ADR-0064 y la
 vida de la orden (ADR-0066). A-49 sigue ABIERTA.
 
+> **Nota (2026-10-18, ADR-0083, `trabajo/punto-usado`):** la decisión 1 de ADR-0064 sí cambió
+> después, por ADR-0083: el llenado no gasta el punto y, tras una pérdida o un break even, el mismo
+> punto se vuelve a colocar con la misma caja o con otra; el rechazo (al colocar o al llenar) y el
+> no envío sí lo gastan. Lo que este ADR fija (el 1 se recalcula hasta el llenado, la cota de
+> peticiones) no cambia.
+
 ## Problema que resuelve
 
 La decisión 5 de ADR-0064 era «la lectura más conservadora» de algo que el trader no había dicho, y

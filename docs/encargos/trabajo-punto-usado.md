@@ -1,12 +1,8 @@
 # Encargo · trabajo/punto-usado
 
-Dado por Aleks (consultor) el 2026-10-18. Copiado tal cual (hasta que exista, el ADR que el
-encargo manda escribir va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; el bloque sale en el commit que lo cree):
-
-```ids-inexistentes
-ADR-0083 — el ADR que este encargo manda escribir (D2); no existe hasta la fase 3 de la rama
-```
+Dado por Aleks (consultor) el 2026-10-18. Copiado tal cual (hasta que existió, el ADR que el
+encargo manda escribir iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`; salió del bloque en el commit que lo creó):
 
 > Modelo: Fable 5.1 · Esfuerzo: alto
 >

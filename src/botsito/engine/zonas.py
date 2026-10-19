@@ -38,11 +38,16 @@ ADR-0064): tras la toma de la sesion, la orden nace en el posible punto de break
 `orden_stop_punto` -`ultimo_pivote_m1`, el ultimo pivote de M1 contrario a la entrada (la funcion de
 R5), o `referencia_de_la_toma`, el de `referencia_del_breaker` en la toma- con la caja que dice
 `caja_bloque` (R6, R4 o R1 de CAJA-77), y cada punto nuevo liga una zona nueva (`zona_del_punto`),
-que RN-006 usa para reubicarla. Un punto ya usado -colocado, aceptado o rechazado- no se vuelve a
-colocar (`marcar_usada`), y la sesion guarda sus zonas usadas (`zonas_usadas`). Con `caja_se_fija` =
-`en_cada_cierre_m1` (sensibilidad de ADR-0064, decision 5) el 1 de la caja se recalcula en cada
-cierre de M1 hasta el llenado: un 1 nuevo es una zona nueva del mismo punto, y RN-006 la reubica; un
-punto cuya orden se rechazo no se vuelve a colocar con otra caja (`marcar_rechazada`)."""
+que RN-006 usa para reubicarla. Que gasta un punto lo fija ADR-0083 (enmienda la decision 1 de
+ADR-0064): el rechazo del broker -al colocar o al llenar- y el no envio del bot gastan el punto,
+y ninguna caja de ese punto se vuelve a colocar en la sesion (`marcar_rechazada`,
+`punto_rechazado`); el llenado NO lo gasta: la zona queda usada mientras la orden vive
+(`marcar_usada`, `zonas_usadas`) y, cerrada su operacion sin ganar -perdida, break even o equal-,
+el cableado la libera (`liberar_usada`) y el punto se vuelve a colocar, con la misma caja o con
+otra; tras una ganadora RN-034 termina el escenario y no se coloca nada. Con `caja_se_fija` =
+`en_cada_cierre_m1`
+(sensibilidad de ADR-0064, decision 5) el 1 de la caja se recalcula en cada cierre de M1 hasta el
+llenado: un 1 nuevo es una zona nueva del mismo punto, y RN-006 la reubica."""
 
 from __future__ import annotations
 
@@ -402,8 +407,9 @@ def zona_del_punto(registro: Registro, momento: Momento, estado: EstadoDia) -> Z
 
 
 def marcar_rechazada(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
-    """El broker rechazo la orden de esta zona: su PUNTO no se vuelve a colocar, tampoco con
-    otra caja (ADR-0064, decision 1)."""
+    """El broker rechazo la orden de esta zona (al colocar o al llenar), o el bot no la envio: su
+    PUNTO esta gastado y no se vuelve a colocar en la sesion, tampoco con otra caja (ADR-0083, que
+    conserva para el rechazo la decision 1 de ADR-0064)."""
     mem = _de_la_sesion(estado, sesion)
     punto = mem.get("punto_de_zona", {}).get(zona_id)
     if punto is not None:
@@ -416,8 +422,19 @@ def punto_rechazado(estado: EstadoDia, sesion: str | None, zona_id: str) -> bool
 
 
 def marcar_usada(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
-    """La orden de esta zona ya se envio, aceptada o rechazada: su punto no se vuelve a colocar."""
+    """La orden de esta zona se envio (o no se envio por el lote, ADR-0081 §2 y §3): mientras la
+    orden viva -pendiente o con su posicion abierta- esa caja no se vuelve a colocar. No gasta el
+    punto: lo gasta `marcar_rechazada`, y `liberar_usada` devuelve la caja cuando la operacion
+    cierra sin ganar (ADR-0083)."""
     _de_la_sesion(estado, sesion).setdefault("usadas", set()).add(zona_id)
+
+
+def liberar_usada(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
+    """La operacion de la orden de esta zona cerro SIN GANAR (perdida, break even o equal): el punto
+    vuelve a estar disponible, con esta misma caja o con otra, por la via normal de colocacion y
+    con los cartuchos delante (ADR-0083, D1). Tras una ganadora no se libera nada: RN-034 termina
+    el escenario. Lo llama el cableado al ver el cierre (`cableado._el_punto_tras_el_evento`)."""
+    _de_la_sesion(estado, sesion).setdefault("usadas", set()).discard(zona_id)
 
 
 def zonas_usadas(estado: EstadoDia, sesion: str | None) -> frozenset[str]:
@@ -566,6 +583,7 @@ __all__ = [
     "SinLecturaDeZonaError",
     "Zona",
     "lectura_limpia",
+    "liberar_usada",
     "marcar_rechazada",
     "marcar_usada",
     "memoria_de_sesion",
