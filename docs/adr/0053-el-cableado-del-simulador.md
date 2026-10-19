@@ -115,6 +115,11 @@ del capital inicial (`saldo_inicial_cuenta`); el riesgo prospectivo, `riesgo_por
 `base_calculo_riesgo` (`saldo_actual` = el saldo de la cuenta). Comparación: mayor o igual (los
 frenos de la estrategia disparan ANTES del límite); la cuenta suspende por debajo (ADR-0050).
 
+> **NOTA (2026-10-18, rama `trabajo/plataforma-adelantada`, ADR-0082).** «De la estrategia» quiere
+> decir aquí del bot y no de la cuenta simulada, y eso sigue valiendo. Desde ADR-0082 D3, RN-029,
+> RN-030 y RN-031 son el veto de la firma, que vive en la capa, y RN-032 lee parámetros de la
+> estrategia y espera a F26.
+
 **3.3 Huecos con nombre (siguen NO_IMPLEMENTADA):** `perdida_dia` y `perdida_semana` (los del
 trader, RN-020) no declaran `magnitud` en la spec —saldo o equity— y no se supone; `cartuchos`
 (RN-016) depende de `cartucho_criterio` y de `se_cierra_operacion` con esquema, que es geometría.

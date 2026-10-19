@@ -29,8 +29,25 @@ Tiene que salir `1 passed`. Si no, no se empieza.
 
 ## Paso 0 · La entrega, y la primera parada
 
-Lo de la entrega esta en `PROJECT_STATE.md`, Next Action 2 y 12: el xlsx al corpus, marzo en
-`vistos.yaml` y la confirmacion del trader por escrito. Aqui solo lo que el orden necesita:
+La entrega, y lo que falta de ella. Lo que falta sigue en `PROJECT_STATE.md`, pendiente heredado 2;
+el 12 vivio alli hasta el 2026-10-18 (su texto entero, en el Archivo 1 de `docs/state/HISTORIA.md`;
+la linea viva, en el Archivo 37). El xlsx ya esta en el corpus (REGISTRO-MARZO.md §2, punto 1).
+**Faltan** `vistos.yaml`, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y
+A.3):
+
+- **Marzo a `vistos.yaml`**, con `visto_el` = la fecha en que el trader lo backtesteo, citando el
+  commit de entrega, y su `cobertura_material` declarada (paso a). Es material del CAMINO DE
+  FIDELIDAD (ADR-0036), para `fidelidad-2` y `fidelidad-3`.
+- **La confirmacion por escrito del trader** se registra en F09 como CONFIRM sobre el objetivo
+  `paquete <sesion>`: **sin sus palabras, no vale**.
+- **Marzo, al llegar, entra por su propia rama**: declaracion en `knowledge/corpus/libros.yaml`
+  con formato y huso medidos por el metodo de velas con control (ADR-0039; aqui, pasos c y d).
+  Aleks no abre el fichero antes, salvo la columna de fechas del paso a (ADR-0046 §6a). Febrero no
+  se toca ni se descarga. Esto complementa lo de arriba -la entrega: corpus, `vistos.yaml`,
+  `cobertura_material` y la confirmacion del trader-, que no cubre la declaracion de lectura del
+  libro.
+
+Aqui solo lo que el orden necesita:
 
 ```
 uv run botsito corpus inventory

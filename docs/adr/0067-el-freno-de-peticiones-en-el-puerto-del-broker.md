@@ -20,6 +20,14 @@ apuntar la petición. Las reglas de la estrategia (RN-002, RN-004, RN-006, RN-01
 RN-035) llaman a acciones, que llaman al broker: ninguna puede saltarse el freno. El freno no tiene
 IO ni reloj propio, y el adaptador real de MetaTrader usará la misma clase.
 
+> **ENMIENDA (2026-10-18, rama `trabajo/plataforma-adelantada`, ADR-0082).** «El adaptador real de
+> MetaTrader usará la misma clase» queda enmendado: en vivo, la capa es el EA de MQL5 (ADR-0082
+> D4), que **porta** `FrenoPeticiones` a MQL5; `engine/freno.py` sigue siendo la referencia y el
+> freno del simulador, y la pieza portada se prueba contra los mismos casos que sus tests. Y RN-030
+> es del veto de la firma (ADR-0082 D3), no una regla de la estrategia: la frase de arriba sigue
+> siendo cierta en lo que dice (RN-030 llama a acciones, que llaman al bróker), pero no la hace
+> regla de la estrategia.
+
 ### 2. Tres umbrales, en el registro
 
 Los cuatro parámetros son de categoría `ejecucion`, DEFAULT_AMBIGUOUS bajo A-54:

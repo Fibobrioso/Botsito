@@ -127,6 +127,17 @@ la fase desde el capital inicial. Sin IO, sin reloj de pared, sin bróker. Lo qu
    ausencia de cifra impida correr, es cambiar una línea; se deja escrito aquí para que no pase por
    silencio.
 
+> **RATIFICACIÓN DEL CONSULTOR (2026-09-25), registrada el 2026-10-18 en la rama
+> `trabajo/plataforma-adelantada`.** Vivía solo en `PROJECT_STATE.md` («Decisions and Rationale»,
+> la decisión fechada el 2026-09-25), y de allí sale a `docs/state/HISTORIA.md`. Tal cual:
+> «2026-09-25 · Sobre el informe SIMULADOR-CUENTA §5 (ADR-0050), al validar: `firma_huso_corte` se
+> queda en el perfil de cuenta, vigilado por el test de las medianoches de un ano contra
+> `huso_operativa` (no contradice ADR-0027 §alt. 3, que hablaba de la spec); la guardia de tamano
+> de posicion sin cifra NO impide correr, porque es solo aviso; y se acepta la duplicacion de los
+> `firma_*` comunes entre el perfil y `parametros.yaml` mientras el test que los cruza la vigile.
+> Estado: ACTIVE.» Cierra las dos cosas que este ADR dejaba al consultor: la de arriba (la guardia
+> sin cifra no impide correr) y la de §3 (los `firma_*` no se funden).
+
 Convenios menores, declarados para que no parezcan accidentes: a igual instante, un cierre se
 procesa antes que un cargo, una marca o una apertura; el orden de entrada de las operaciones no
 importa (la línea de tiempo se ordena por instante e id); las magnitudes son `Decimal`.
@@ -134,6 +145,11 @@ importa (la línea de tiempo se ordena por instante e id); las magnitudes son `D
 **El margen de ADR-0031 NO está aquí.** `firma_margen_seguridad` es un freno de la ESTRATEGIA
 (RN-029 a RN-032: frenar antes del límite); la capa de cuenta modela LA FIRMA, que suspende en el
 límite. Es lo que permite medir, más adelante, cuántas veces el freno habría evitado la suspensión.
+
+> **NOTA (2026-10-18, rama `trabajo/plataforma-adelantada`, ADR-0082).** «De la ESTRATEGIA» quiere
+> decir aquí del bot y no de la cuenta simulada, y eso sigue valiendo. Desde ADR-0082 D3, RN-029,
+> RN-030 y RN-031 son el veto de la firma, que vive en la capa, y RN-032 lee parámetros de la
+> estrategia y espera a F26.
 
 ### 5. Cómo se conecta con la spec, y qué queda pendiente
 

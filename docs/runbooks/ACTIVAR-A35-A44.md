@@ -194,6 +194,36 @@ embudo es la geometría de la entrada (`toca_colocar_orden_limite`, A-21 y las d
 cartuchos (`PREPARACION-A35-A44.md` §3). Con A-44 fijada, RN-020 deja de ser hueco. Cobertura 0
 sigue siendo lo esperado hasta que la geometría exista: **no es un fallo de la activación**.
 
+### 5.1 · RN-004 tras A-35 y RN-020 tras A-44: lo que queda, y cómo se mide
+
+Hasta el 2026-10-18 vivía en `PROJECT_STATE.md` como pendientes heredados 25, 30 y 35 (sale en
+`trabajo/plataforma-adelantada`). Su texto: las líneas vivas, en el Archivo 37 de
+`docs/state/HISTORIA.md`; lo que recortaban, en su Archivo 1 (los tres «DESPUES DE LA SESION 02» y
+«RN-004, bloqueada SOLO por A-35»). Sigue pendiente, en R4.1 de la hoja de ruta:
+
+- **RN-004, bloqueada SOLO por A-35** (K-04, `docs/validation/SESION-02-DECISIONES.md` §1): con
+  A-35 respondida se escribe el productor de `liquidez_m15` y RN-004 deja de estar bloqueada (el
+  productor ya está construido desde `trabajo/preparar-a35-a44`: escribirlo es fijar su valor, §1).
+  R3.1: `liquidez_tomada` en 98 y 97 de 104 sesiones con cada lectura.
+- **Después de la sesión 02: RN-004 tras A-35, medida con el arnés y mirada con el visor**
+  (`botsito motor visor`, `docs/runbooks/VISOR-DIAS.md`, desde `stable/F25-visor-dias`). Con A-35
+  respondida, se escribe el productor de `liquidez_m15` y las primitivas de RN-004
+  (`alcanza_nivel`, `cruza`), y se mide con `uv run botsito motor arnes --simular --salida
+  <fichero>` contra la línea base vigente (`docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt`),
+  con `diff` (arriba). A-43 dice si una toma anterior a las 07:00 cuenta; mientras no responda, el
+  rango de eventos empieza en la ventana. Desde ADR-0076 (2026-10-12) el arnés ya no necesita
+  `--diagnostico-a21`: corre con `--diagnostico-a35` y `--diagnostico-a44`. R3.1 midió las dos
+  lecturas (`docs/validation/CORRIDA-CONSTRUCCION.md` §3.4): ninguna operación cambia.
+- **Después de la sesión 02: RN-020 tras A-44.** Con A-44 respondida -qué pérdida hace que el
+  trader deje de operar y cuándo vuelve a contar-, la spec declara la magnitud (saldo o equity) y
+  el corte de `perdida_dia` y `perdida_semana`, el cableado deja de tener ese hueco con nombre
+  (ADR-0053 §3.3 y §9) y RN-020 pasa de DESCONOCIDO a evaluado: es el siguiente bloqueo del bot
+  después de A-35, medido en `docs/validation/CABLEADO-SIMULADOR.md` §4, y sin él la geometría
+  sola no abre ninguna operación. Se mide con `uv run botsito motor arnes --simular --salida
+  <fichero>` contra la línea base vigente, con `diff`. RN-020 tampoco retira la orden pendiente al
+  llegar a su tope; cuando se active A-44, el modelo es lo que hace RN-036
+  (`retirar_ordenes_pendientes`, ADR-0077). R3.1: con `sin_tope`, 0 de 104.
+
 ## 6. A-21 · «¿qué miras para decidir que una zona está limpia?» (RN-011, `zona_control_limpia`)
 
 > **NOTA (2026-10-12, `trabajo/activar-sesion-04-motor`).** A-21 está RESUELTA: el trader dijo en
