@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/punto-usado
+main
 
 ## Current Feature
-trabajo/punto-usado EN CURSO (abierta el 2026-10-18 desde main f96b581; Y de la Next Action, R3.4): qué gasta un punto (un ADR nuevo enmienda la decisión 1 de ADR-0064), con sus tests que rompen en main y la corrida de R3.1 repetida. Encargo: docs/encargos/trabajo-punto-usado.md. Informe: docs/validation/PUNTO-USADO.md.
+Ninguna rama abierta. trabajo/punto-usado cerrada en main el 2026-10-19 (stable/F37v-punto-usado): ADR-0083, qué gasta un punto. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-3ae2933 · merge de `trabajo/plataforma-adelantada` (tag `stable/F37u-plataforma-adelantada`): ADR-0082, la capa de MT5 que nunca decide una operación va antes de F26, en el EA de MQL5 (enmienda MASTER_PLAN §0, la regla de PROJECT_STATE, ADR-0067 §1 y ADR-0068 §4); el tramo R6a de la hoja de ruta; PROJECT_STATE adelgazado; solo documentos. Sobre `stable/F37t-visor-construccion` (7d3783d). Informe docs/validation/PLATAFORMA-ADELANTADA.md; el registro del cierre, al final de HISTORIA.
+a1bb8a5 · merge de `trabajo/punto-usado` (tag `stable/F37v-punto-usado`): ADR-0083 enmienda la decisión 1 de ADR-0064 (gasta un punto el rechazo, al colocar o al llenar, y el no envío; el llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar con la misma caja o con otra), PROVISIONAL hasta la pregunta 3 de V; el código (`zonas.liberar_usada`, `cableado._el_punto_tras_el_evento`), «### Ordenes» con el punto y el 1 de la caja, spec 18.1.3, y la corrida de R3.1 repetida. Sobre `stable/F37u-plataforma-adelantada` (3ae2933). Informe docs/validation/PUNTO-USADO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-3ae2933 · merge: trabajo/plataforma-adelantada, ADR-0082 (la capa de MT5 que no decide operaciones, antes de F26), el tramo R6a y PROJECT_STATE adelgazado · tag stable/F37u-plataforma-adelantada
+a1bb8a5 · merge: trabajo/punto-usado, ADR-0083 (que gasta un punto: el rechazo al colocar o al llenar y el no envio; el llenado no), sus tests y la corrida de R3.1 repetida · tag stable/F37v-punto-usado
 
 ## Tests Currently Passing
 1603 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
