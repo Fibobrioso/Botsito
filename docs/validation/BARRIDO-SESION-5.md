@@ -638,6 +638,14 @@ como fuente de `perdida_trader_unidad = porcentaje` y `perdida_trader_magnitud =
 active A-44, o hace falta una subpregunta en S-4?** No bloquea esta rama: es una decisión de la
 activación (R4.1), y la decisión 1 de la PARADA quitó la subpregunta.
 
+**Decisión del consultor sobre b10 (2026-10-19, en la orden de cierre):** «La confirmación final
+recoge en su voz la unidad (porcentaje) y la base (el saldo con el que empieza el día) de
+perdida_trader_magnitud y perdida_trader_unidad: decisión del consultor del 2026-10-19 sobre b10,
+porque bff260ea es un CORRECT sobre perdida_maxima_diaria y no basta como fuente.» Aplicada en S-4
+de PREGUNTAS.md: «Para confirmar al final» pasa a «Paro el día al perder un ___ % del saldo con el
+que empiezo el día, paro tras 9 pérdidas seguidas, y a la semana ______», y su línea «Para Aleks»
+dice esa frase en lugar de la que dejaba la decisión pendiente.
+
 ### 7.2 El informe del revisor, tal cual
 
 (Los títulos bajan dos niveles para caber en esta sección; el texto, sin tocar. No cita nada de un
@@ -799,8 +807,9 @@ Ficheros principales:
 Terminada el 2026-10-19. `docs/sesion-5/PREGUNTAS.md`: 25 preguntas en cuatro bloques, «Para
 cerrar» con tres peticiones y lo que va fuera de la hoja, con las decisiones del consultor a la
 PARADA aplicadas punto por punto (§2.a). El revisor: 1 bloquea, 10 importa y 4 menor; todos
-arreglados salvo a3, declarado (§7.1). Queda para el consultor, sin bloquear la rama: de dónde
-salen `perdida_trader_magnitud` y `perdida_trader_unidad` al activar A-44 (§7.1, b10). Las
+arreglados salvo a3, declarado (§7.1). De dónde salen `perdida_trader_magnitud` y
+`perdida_trader_unidad` al activar A-44 (b10) lo decidió el consultor en la orden de cierre: la
+confirmación final de S-4 los recoge en su voz (§7.1). Las
 líneas del cierre, simuladas en memoria (§4). Sin CI de Linux: no toca la plataforma (§6).
 
 Rama lista para revisión, NO cerrada.

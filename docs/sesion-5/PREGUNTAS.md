@@ -174,8 +174,8 @@ y cierra roja**
   - Si no tienes tope de semana, ¿qué era el 9 % de la semana que nos dijiste en la primera
     sesión?
   - Si tienes tope de semana y lo tocas un miércoles, ¿vuelves el lunes siguiente?
-- **Para confirmar al final:** «Paro el día al perder un 4,5 %, paro tras 9 pérdidas seguidas, y a
-  la semana ______».
+- **Para confirmar al final:** «Paro el día al perder un ___ % del saldo con el que empiezo el día,
+  paro tras 9 pérdidas seguidas, y a la semana ______».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-04.md` §0.e.3, sin su segunda subpregunta (el
   saldo inicial del día ya está respondido, decisión 1 del consultor; por eso no se le pregunta si
   cuenta lo abierto). `perdida_maxima_semanal = 9` está CONFIRMED desde la sesión 1, y en la 4 dijo
@@ -184,8 +184,10 @@ y cierra roja**
   §1: «dia, más magnitud y unidad»), que esta pregunta no pide: la unidad sale de su «un 4,5% de
   pérdida en el día» (porcentaje, `ev-v10-010913-c4949417`) y la magnitud de «basado en el saldo»
   (saldo, `fb-2026-09-09-sesion-01-bff260ea`, que es un CORRECT sobre `perdida_maxima_diaria`, no
-  sobre la magnitud). Si esas dos fuentes valen para registrarlos lo decide el consultor al
-  activar (BARRIDO-SESION-5.md §7.1); si no, A-44 no se podrá activar con S-4 sola.*
+  sobre la magnitud). La confirmación final recoge en su voz la unidad (porcentaje) y la
+  base (el saldo con el que empieza el día) de perdida_trader_magnitud y perdida_trader_unidad:
+  decisión del consultor del 2026-10-19 sobre b10, porque bff260ea es un CORRECT sobre
+  perdida_maxima_diaria y no basta como fuente.*
 
 ### Bloque 2 · La corrida de construcción (las preguntas 2 a 9)
 
