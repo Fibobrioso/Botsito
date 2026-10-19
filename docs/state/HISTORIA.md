@@ -10656,3 +10656,47 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 37 (2026-10-18).
+
+# Next Action HECHA · Y · qué gasta un punto · sale de PROJECT_STATE.md en trabajo/punto-usado (2026-10-18)
+
+Y. Que el punto de una orden ya llenada no se vuelva a colocar con otra caja (ADR-0064, decisión 1): hoy se marca la zona y no el punto; en la corrida 2, hasta 47 órdenes en 22 sesiones van al 0 de una ya llenada (VISOR-CONSTRUCCION.md §2.d.4). Rama de código, con su test y la corrida 2 repetida.
+
+La hace `trabajo/punto-usado` (docs/validation/PUNTO-USADO.md; ADR-0083, que la rehizo en el sentido contrario al de esta línea: el llenado no gasta el punto).
+
+# Registro de cierre · `trabajo/punto-usado` (2026-10-19)
+
+- Orden de cierre de Aleks del 2026-10-19, tras la revisión del consultor, pegada en la conversación
+  (copiada tal cual al final de PUNTO-USADO.md, «Orden de cierre») y ejecutada siguiendo `RITUAL.md`
+  con la skill `cerrar-rama`, lanzada por Aleks con `/cerrar-rama`. Rama aceptada por el consultor
+  tras una pasada del revisor (opus; PUNTO-USADO.md §9), sin PARADA en la fase 0. Nunca se cerró sin
+  la orden.
+- **Lo que entra** (tramo R3, R3.4 de la hoja de ruta; Y de la Next Action):
+  - ADR-0083: gasta un punto el rechazo del bróker (al colocar o al llenar) y el no envío; el llenado
+    no, y tras una pérdida o un break even el mismo punto se vuelve a colocar, con la misma caja o
+    con otra (enmienda la decisión 1 de ADR-0064, recuadro allí; nota en ADR-0074 §4). PROVISIONAL en
+    D1 hasta la pregunta 3 de la sesión 5;
+  - el código: `zonas.liberar_usada`, `ContextoDia.sesion_de_orden` y
+    `cableado._el_punto_tras_el_evento`; «### Ordenes» lleva al final el punto y el 1 de la caja
+    (solo salida); 13 tests por el cableado real (`tests/unit/test_punto_usado.py`, 6 en rojo sobre
+    `main`); spec 18.1.1 → 18.1.3 (la descripción de `toca_colocar_orden_limite`);
+  - diez recuadros de corrección en VISOR-CONSTRUCCION.md junto a todo lo que daba la E de §2.d.4
+    por buena;
+  - la corrida de R3.1 repetida con sus tres comandos (PUNTO-USADO.md §4).
+- En este commit: Y sale (arriba, «# Next Action HECHA · Y · qué gasta un punto»), F pasa a
+  «J → V», V gana la pregunta 3 con el ejemplo del 29 de abril y deja de depender de Y, y entran
+  tres deudas (RN-019 no dispara, su nota sobre A-31, la zona reutilizada en un escenario nuevo). En
+  la hoja de ruta, R3.4 pasa a HECHA con su título y su «Qué es» nuevos y `ID:ADR-0083`; R4.1 pierde
+  `NA:Y` y depende de «R3.4 (HECHA)»; el Estado de R3.2 dice que ADR-0083 rehízo la E.
+- Letras: sale Y; ninguna entra; cambian F y V.
+- Letra del tag: la última cerrada era la u de F37 (`stable/F37u-plataforma-adelantada`);
+  `stable/F37v-*` no existe ni en local ni en origin (comprobado antes del merge).
+- Tag: `stable/F37v-punto-usado`. El merge es `git rev-parse "stable/F37v-punto-usado^{commit}"`.
+- Commits de la rama: `09fe2cc` (apertura), `71c8d46` (fase 0), `e55d00a` (fase 1: el campo),
+  `56bbf91` (fases 1-3: la corrida «antes», los tests, el código, ADR-0083, los recuadros y la
+  spec), `cf994a7` (fase 4 y el informe), `5c9556e` (el revisor y sus arreglos) y el de este
+  registro.
+- CI de rama: ninguna: la rama no se empujó como `fix/` (no toca hooks, rutas ni el sistema de
+  archivos; PUNTO-USADO.md §8). La CI de `main` corre tras el push.
+- Exposiciones: las filas del 2026-10-18 de HOLDOUT-EXPOSICIONES (fase 0, fase 1 y fase 4: el M1 de
+  marzo y de junio leído para calentar, sin quemar).
+- Informe: `docs/validation/PUNTO-USADO.md`. Encargo: `docs/encargos/trabajo-punto-usado.md`.

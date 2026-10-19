@@ -157,7 +157,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   las páginas del visor, regenerables con los comandos del informe (§2.c), fuera de git; 19
   días con «no» de `contexto_h4.py`, que se pueden enseñar a V (si el visor o la spec cambian
   lo que pintan, se vuelven a comprobar antes), y 2026-07-01 sin página (su contexto pinta un
-  día oculto). Una E (la reentrada en un punto ya llenado: R3.4) y el resto «correcto», que
+  día oculto). Una E (la reentrada en un punto ya llenado: R3.4, que ADR-0083 rehízo en el
+  sentido contrario: el llenado no gasta el punto) y el resto «correcto», que
   aquí quiere decir que la regla se aplica como está escrita y la diferencia con el trader es
   de regla: va a V con sus preguntas (§3.2).
 
@@ -175,20 +176,27 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   y al llenar), A-57 abierta para la sesión 5, y las dos medidas de E (§2.b y §2.c). La re-corrida
   en diagnóstico, §4.
 
-### R3.4 · Un punto ya llenado no se vuelve a colocar
-- **Refs:** NA:Y · ID:ADR-0064 · ID:ADR-0074
-- **Qué es:** que el bot no vuelva a colocar, con otra caja, el punto cuya orden ya se llenó
-  (ADR-0064, decisión 1; VISOR-CONSTRUCCION.md §2.d.4), y la corrida 2 repetida.
+### R3.4 · Qué gasta un punto: el rechazo y el no envío, no el llenado
+- **Refs:** NA:Y · ID:ADR-0083 · ID:ADR-0064 · ID:ADR-0074
+- **Qué es:** fijar por ADR qué gasta un punto (ADR-0083, que enmienda la decisión 1 de
+  ADR-0064): el rechazo del bróker -al colocar o al llenar- y el no envío lo gastan; el
+  llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar, con la
+  misma caja o con otra; el código lo cumple, con tests que rompen en `main`, y la corrida 2
+  repetida.
 - **Depende de:** R3.2 (HECHA).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** un test lo rompe en `main` y pasa en la rama, y la corrida 2 está repetida
   con los tres comandos de R3.1.
+- **Estado:** HECHA (`trabajo/punto-usado`; PUNTO-USADO.md): ADR-0083; `liberar_usada` y el
+  rechazo al llenar gasta el punto, por el cableado; 13 tests por el cableado real (4 rompen
+  en `main` por D1); la corrida 2 repetida con los tres comandos de R3.1 (§4). PROVISIONAL en
+  D1 hasta la pregunta 3 de la sesión 5 (R4.1).
 
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · NA:Y · ID:RN-004 · ID:RN-020 ·
+  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · ID:RN-004 · ID:RN-020 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** RN-004 tras A-35 y RN-020 tras A-44, con su medida (`docs/runbooks/ACTIVAR-A35-A44.md`
   §5.1); las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
@@ -203,7 +211,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   preguntas de VISOR-CONSTRUCCION.md §3.2 (las dos nuevas y los días que ganan la 5, la 8 y la
   9; R3.2). La hoja
   Word necesita antes que `kit hoja` funcione con un paquete nuevo (NA:J).
-- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (HECHA), R3.3 (HECHA), R3.4 (NA:Y) y
+- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (HECHA), R3.3 (HECHA), R3.4 (HECHA) y
   la copia de
   seguridad del carril de Aleks.
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.

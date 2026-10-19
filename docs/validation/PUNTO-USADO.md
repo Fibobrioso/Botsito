@@ -977,3 +977,31 @@ revisor, con 0 «bloquea», 5 «importa» y 4 «menor», todos arreglados (§9);
 rama no toca la plataforma (§8). El cierre en `main` solo con la orden de Aleks.
 
 Rama lista para revisión, NO cerrada.
+
+## Orden de cierre
+
+Dada por Aleks (consultor) el 2026-10-19. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/punto-usado (consultor, 2026-10-19). Revisada: se cierra. Cópiala tal cual al final del informe (PUNTO-USADO.md, «Orden de cierre») y aplícala con la skill cerrar-rama cuando escriba /cerrar-rama trabajo/punto-usado.
+>
+> 1. Tag: stable/F37v-punto-usado (verifica en HISTORIA que el último es stable/F37u-plataforma-adelantada).
+>
+> 2. Commit del contrato (en la rama, un solo commit, como manda RITUAL.md):
+> - sale contrato.yaml;
+> - entra el registro del cierre en HISTORIA, con stable/F37v-punto-usado^{commit}, la lista de commits de la rama con su sha y su tema más este chore, y los runs de CI (ninguno: la rama no se empujó como fix/);
+> - Next Action, tal como la simuló PUNTO-USADO.md §6: Y sale a HISTORIA con el título y el texto de §6; F queda en «J → V…»; V cambia como dice §6; y las TRES líneas de Technical Debt de §6 (RN-019 no dispara, la nota de RN-019 sobre A-31, la zona reutilizada en un escenario nuevo);
+> - hoja de ruta, tal como la simuló §6: R3.4 con su título, Refs, «Qué es» y Estado HECHA; NA:Y fuera de los Refs de R4.1 y «R3.4 (HECHA)» en su «Depende de»; el Estado de R3.2 con la frase de §6;
+> - la fila de la rama en docs/runbooks/ERRORES-RECURRENTES.md: el revisor (una pasada, opus; reglas 0 bloquea, 4 importa, 2 menor; encargo 0 bloquea, 1 importa, 2 menor; todo arreglado en 5c9556e, PUNTO-USADO.md §9.2), con los importa en una frase cada uno, como las filas anteriores; y este hallazgo del consultor, que el revisor no podía ver porque es anterior a la rama:
+>   · (importa, del consultor) La E de VISOR-CONSTRUCCION.md §2.d.4 (cerrada en stable/F37t-visor-construccion) la aceptó el consultor contra la letra de la decisión 1 de ADR-0064 sin buscar si el material del trader la contradecía: LA-CAJA-DEL-29-DE-ABRIL.md:236-243, ADR-0066 y P7 de CORRIDA-CONSTRUCCION §4.5. Lo cazó el auditor del consultor al preparar este encargo, y la rama se hizo al revés (ADR-0083). Lección, para el consultor y para el revisor: antes de clasificar como E una diferencia porque contradice un ADR escrito como «la lectura más conservadora», se busca si el material del trader o un ADR posterior dice otra cosa; si lo dice, es R (pregunta) o el ADR se enmienda, no el código.
+> Las cifras del revisor de esta orden las leí en §9.1; si no coinciden con lo que ves, gana §9.1 y dilo.
+>
+> 3. Lo demás, como manda RITUAL.md, con todas sus puertas aunque esta orden no las repita: antes del merge, git log main..trabajo/punto-usado da 7 commits (09fe2cc, 71c8d46, e55d00a, 56bbf91, cf994a7, 5c9556e y el chore; si no, PARADA); antes del tag, que stable/F37v-punto-usado no existe ni en local ni en origin; uv run botsito state check donde lo pide el ritual; y git ls-remote --tags tras el push. Y además: merge a main, tag, commit de estado que solo reemplaza Current Branch, Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en el paso 2), make check sellado, push atómico de main y el tag (yo confirmo la regla ask con «1. Yes»), CI de main en verde con gh run (la skill cerrar-rama lo admite; nunca con curl ni con un guion) antes de borrar nada, y borrar la rama local. No hay fix/punto-usado remota que borrar (la rama no se empujó para CI); si existe, bórrala.
+> Si el clasificador niega un comando, no cambies de vía: PARADA, y lo lanzo yo con «!».
+>
+> 4. Informe final: sha de main, tag, run de la CI de main con su resultado, ramas que quedan (locales y remotas) y tamaño de PROJECT_STATE en bytes.
+
+Comprobado al copiarla: el último tag de HISTORIA es `stable/F37u-plataforma-adelantada`
+(HISTORIA.md:10466), y las cifras del revisor de la orden coinciden con §9.1 (reglas 0/4/2,
+encargo 0/1/2).
