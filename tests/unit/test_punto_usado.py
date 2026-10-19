@@ -427,7 +427,8 @@ def test_punto_nuevo_sigue_reconociendo_la_orden_de_la_sesion_tras_una_perdida(
     caja: CAJA; tras la perdida de o1, o2 vuelve con la misma caja (D3a) y en Z+9 aparece
     OTRA_CAJA con o2 sin llenar: RN-006 la reubica (cancelar o2, colocar o3 en el mismo cierre).
     `usadas` sigue conteniendo la zona de una orden pendiente, asi que la reubicacion ve a o2 como
-    propia. En `main` falla: o2 no existe."""
+    propia. En `main` falla: la o2 de Z+7 (la misma caja) no existe; `main` coloca su o2 en Z+9
+    con la otra caja y no hay reubicacion (colocar o1, colocar o2, cancelar o2 por RN-035)."""
     ruta = {**ANTES, Z + 3: ROMPE, Z + 6: PIERDE}
     motor, r = _correr(registro, ruta, {Z: CAJA, Z + 9: OTRA_CAJA}, monkeypatch)
     # la quinta peticion es RN-035 retirando o3, sin llenar, al abrir la tarde (`se_retira`)

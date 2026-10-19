@@ -41,10 +41,12 @@ R5), o `referencia_de_la_toma`, el de `referencia_del_breaker` en la toma- con l
 que RN-006 usa para reubicarla. Que gasta un punto lo fija ADR-0083 (enmienda la decision 1 de
 ADR-0064): el rechazo del broker -al colocar o al llenar- y el no envio del bot gastan el punto,
 y ninguna caja de ese punto se vuelve a colocar en la sesion (`marcar_rechazada`,
-`punto_rechazado`); el llenado NO lo gasta: la zona queda usada mientras la orden vive
+`punto_rechazado`); el llenado NO lo gasta: la zona queda usada desde que su orden se coloca
 (`marcar_usada`, `zonas_usadas`) y, cerrada su operacion sin ganar -perdida, break even o equal-,
 el cableado la libera (`liberar_usada`) y el punto se vuelve a colocar, con la misma caja o con
-otra; tras una ganadora RN-034 termina el escenario y no se coloca nada. Con `caja_se_fija` =
+otra; una zona cuya orden se CANCELO (RN-035, RN-036, un escenario nuevo, la ventana de ADR-0068,
+el fin del dia) sigue usada: esa caja no vuelve, otra caja del mismo punto si; tras una ganadora
+RN-034 termina el escenario y no se coloca nada. Con `caja_se_fija` =
 `en_cada_cierre_m1`
 (sensibilidad de ADR-0064, decision 5) el 1 de la caja se recalcula en cada cierre de M1 hasta el
 llenado: un 1 nuevo es una zona nueva del mismo punto, y RN-006 la reubica."""
@@ -422,10 +424,10 @@ def punto_rechazado(estado: EstadoDia, sesion: str | None, zona_id: str) -> bool
 
 
 def marcar_usada(estado: EstadoDia, sesion: str | None, zona_id: str) -> None:
-    """La orden de esta zona se envio (o no se envio por el lote, ADR-0081 §2 y §3): mientras la
-    orden viva -pendiente o con su posicion abierta- esa caja no se vuelve a colocar. No gasta el
-    punto: lo gasta `marcar_rechazada`, y `liberar_usada` devuelve la caja cuando la operacion
-    cierra sin ganar (ADR-0083)."""
+    """La orden de esta zona se envio (o no se envio por el lote, ADR-0081 §2 y §3): esa caja no se
+    vuelve a colocar mientras la orden viva -pendiente o con su posicion abierta- ni despues de
+    cancelarse (otra caja del mismo punto si). No gasta el punto: lo gasta `marcar_rechazada`, y
+    `liberar_usada` devuelve la caja solo cuando la operacion cierra sin ganar (ADR-0083)."""
     _de_la_sesion(estado, sesion).setdefault("usadas", set()).add(zona_id)
 
 

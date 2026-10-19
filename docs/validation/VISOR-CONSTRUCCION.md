@@ -876,6 +876,7 @@ ADR-0057). La vela que marca cada 0 y sus vecinas salen de la traza.
 > se apunte por punto es lo correcto (ADR-0083: el llenado no gasta el punto); lo que faltaba era
 > volver con la MISMA caja tras un cierre sin ganar y gastar el punto con el rechazo AL LLENAR, que
 > aquí no se miraba. El cuerpo queda intacto.
+
 - **Uno de los ocho se decidió con el respaldo M1:** o1 de 2026-04-27 («respaldo_m1»), aunque esa
   hora no es de las 18 sin ticks: la orden del primer cierre de la ventana lleva 1 ms antes del
   primer tick cargado (§4.3, punto 6). Corrige lo que la fase 0 daba por hecho (§1.d y la decisión
@@ -905,9 +906,11 @@ Dos de las cuatro se agotan con reentradas en el mismo 0 en pocos minutos, que e
 Y (§4.1) se arregla, esas dos sesiones cambian; 2026-07-01 07-11 no.
 
 > **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** Esas reentradas en
-> el mismo 0 no son un error: la E de §2.d.4 se rehace (el trader reentra tras el stop; el error era
-> no volver con la misma caja y no gastar el punto con el rechazo al llenar). Lo que hace Y con
-> estas cuatro sesiones lo mide PUNTO-USADO.md §4. El cuerpo queda intacto.
+> el mismo 0 no son un error: la E de §2.d.4 se rehace en ADR-0083 (volver al punto tras un stop no
+> es el error; el error es no volver con la misma caja y no gastar el punto con el rechazo al
+> llenar), y lo aceptó el consultor sin buscar en el material del trader. Lo que hace Y con estas
+> cuatro sesiones lo mide PUNTO-USADO.md §4.c: las cuatro siguen igual y se suman dos. El cuerpo
+> queda intacto.
 
 ## 3 · Fase 2 · El resumen
 
@@ -992,11 +995,14 @@ texto, con los días que ganan:
 
 ### 3.3 La E: la rama que se propone (sin escribirla)
 
-> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** La rama Y se hizo
-> al revés de lo que propone esta sección: no apunta el punto llenado para que no vuelva; libera la
-> zona al cerrarse su operación sin ganar (la misma caja vuelve) y gasta el punto con el rechazo al
-> llenar. El test propuesto aquí («en `main` se coloca una segunda orden en el mismo punto») habría
-> fijado el comportamiento equivocado. El cuerpo queda intacto.
+> **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** La E se rehace en
+> ADR-0083: volver al punto tras un stop no es el error; el error es no volver con la misma caja y
+> no gastar el punto con el rechazo al llenar; y lo aceptó el consultor sin buscar en el material
+> del trader. La rama Y se hizo por eso al revés de lo que propone esta sección: no apunta el punto
+> llenado para que no vuelva; libera la zona al cerrarse su operación sin ganar (la misma caja
+> vuelve) y gasta el punto con el rechazo al llenar. El test propuesto aquí («en `main` se coloca
+> una segunda orden en el mismo punto») habría fijado el comportamiento equivocado. El cuerpo queda
+> intacto.
 
 **Y. Un punto ya llenado no se vuelve a colocar con otra caja.**
 - **Qué arreglaría:** que, tras llenarse la orden de un punto, ninguna zona nueva de ese MISMO punto
@@ -1049,8 +1055,9 @@ texto, con los días que ganan:
 > **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** Esta línea Y, y
 > las líneas preparadas de R3.2 («Una E (la reentrada en un punto ya llenado: R3.4)») y de R3.4
 > («que el bot no vuelva a colocar, con otra caja, el punto cuya orden ya se llenó»), entraron en
-> `main` dando la E por buena. Y se hizo con el sentido contrario (ADR-0083: el llenado no gasta el
-> punto, la misma caja vuelve, el rechazo al llenar sí gasta); R3.4 cambia de título y de «Qué es» en
+> `main` dando la E por buena, y lo aceptó el consultor sin buscar en el material del trader. La E
+> se rehace en ADR-0083: volver al punto tras un stop no es el error; el error es no volver con la
+> misma caja y no gastar el punto con el rechazo al llenar. R3.4 cambia de título y de «Qué es» en
 > el cierre de `trabajo/punto-usado` (PUNTO-USADO.md §6). El cuerpo queda intacto.
 
 - **V cambia:** «y A-57 (el lote que no cabe, MARGEN-LOTE.md §5). Depende de R1.1, de R3.1, de O,
@@ -1255,6 +1262,7 @@ además las líneas de cabecera de PROJECT_STATE (rama y estado), que hoy hablan
 > **RECUADRO DE CORRECCIÓN (2026-10-18, rama `trabajo/punto-usado`, ADR-0083).** La E se rehace: que
 > o17 vuelva al punto de o16 tras su stop no es el error (ADR-0083); el 1 recalculado después del
 > llenado es el de la orden SIGUIENTE, no el de la llenada. El cuerpo queda intacto.
+
 - **Las páginas y las trazas se generaron seis veces**, mientras el guion de traza ganaba opciones
   (RN-004 en tramos, los gates, la captura de los `detenido_por_*` con cualquier valor: §4.4). Lo que
   hay en `dias/` es de la última pasada (los dos lotes de `lotes.txt`), y cada pasada corrió

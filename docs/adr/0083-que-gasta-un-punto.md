@@ -112,19 +112,26 @@ nueva: es la pregunta 3 de V, que gana el ejemplo del 29 de abril.
   `fb-2026-09-09-sesion-01-fae74396`. Apoya D1 (se reentra tras el stop) y D4.
 - **RN-018** («para que tú puedas entrar nuevamente o bien te ha tocado stop loss»,
   `ev-v4-003710-c753f3d3`).
-- **v6 1:23:53-1:24:07** (capa corregida y filtrada; fuera de los tramos no citables de v6; es el
-  pasaje del equal que RN-019 ya cita unas líneas antes): «después de un igual, si nos genera una
-  pérdida, nuevamente actualizamos a la siguiente, o sea al siguiente nivel; al mismo nivel como tal
-  mantenemos o abrimos otra orden límite para poder reentrar si se da». Sin item de evidencia propio
-  (`knowledge/evidence/` no se toca en esta rama): V puede proponerlo. Y `ev-v5-000246-17eff9e1`
-  («cuando hay un equal […] contarlo como pérdida pero reentrar nuevamente si es que el precio»).
+- **v6 1:23:45-1:24:07** (capa corregida y filtrada, `corpus transcript show`; fuera de los tramos
+  no citables de v6; es el pasaje del equal que RN-019 ya cita unas líneas antes). Tal como lo da
+  la capa: «[1:23:45] … después de un igual si [1:23:53] nos genera una pérdida nuevamente
+  actualizamos a la siguiente o sea al siguiente nivel al mismo [1:23:59] mismo nivel como tal
+  mantenemos o abrimos otro otra orden límite para poder reentrar si se da». **Lectura nuestra,
+  declarada:** el trader habla de un equal que acaba en pérdida y da dos salidas, actualizar al
+  siguiente nivel o mantener o abrir otra orden límite en el mismo nivel para reentrar; lo que D1
+  toma de ahí es que la reentrada en el MISMO nivel tras una pérdida es una de las dos, no que
+  sea la única. Sin item de evidencia propio (`knowledge/evidence/` no se toca en esta rama): V
+  puede proponerlo. Y `ev-v5-000246-17eff9e1` («cuando hay un equal […] contarlo como pérdida
+  pero reentrar nuevamente si es que el precio»).
 - **ADR-0066:51 y RN-034** (tras una pérdida, un break even o un equal, el escenario sigue con los
   intentos que le queden; `ev-v3-002405-a202dbf6`, `ev-v4-004832-6543b551`) hablan del ESCENARIO,
   no del punto: VISOR-CONSTRUCCION.md:673-675 lo señaló. Por sí solos no bastan; con lo de arriba,
   sí: ADR-0066 no fija si el intento siguiente puede ir al mismo punto, y el material dice que sí.
 - **CORRIDA-CONSTRUCCION.md §4.5**: P7 (entradas repetidas del trader en el mismo nivel que el bot
-  toma una vez) y P5 (el bot se para y vuelve a entrar) tienen destino V, pregunta 3. Este ADR
-  mueve parte de P7 y deja la pregunta 3 abierta con el ejemplo del 29 de abril.
+  toma una vez) y P5 (el bot se para y vuelve a entrar) tienen destino V, pregunta 3. Medido en la
+  fase 4 (PUNTO-USADO.md §4.d): este ADR no mueve P7 (3 filas antes y después; en esas sesiones el
+  bot no estaba en el punto cuando el trader repitió) y añade a P5 las reentradas con la misma
+  caja; deja la pregunta 3 abierta con el ejemplo del 29 de abril.
 - **En contra: nada** en `knowledge/feedback/` ni en el corpus filtrado («reentrada», «mismo nivel»,
   «equal»).
 
@@ -170,8 +177,10 @@ por zona que la decisión 1 no pedía, y deja el rechazo al llenar sin gastar el
   del Estado de R3.2 en la hoja de ruta (en el cierre).
 - La corrida de R3.1 repetida (PUNTO-USADO.md §4): cambian las reentradas que la pregunta 3 enseña al
   trader y las sesiones con los cartuchos agotados.
-- Un límite medido y no tocado: una zona reutilizada en un escenario nuevo sigue ligada al escenario
-  en que nació (PUNTO-USADO.md §1.c); se mide en la fase 4.
+- Un límite que este ADR abre y no cierra: una zona reutilizada en un escenario nuevo sigue ligada
+  al escenario en que nació, y sus cierres contarían en los cartuchos de aquel (PUNTO-USADO.md
+  §1.c). La fase 4 no lo midió (hace falta la traza por cierre; las 14 reentradas con la misma caja
+  van de 21 s a 4 min 27 s después del llenado anterior). Va a Technical Debt (PUNTO-USADO.md §6).
 
 ## Fecha / fase
 

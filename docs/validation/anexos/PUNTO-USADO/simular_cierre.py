@@ -71,6 +71,10 @@ DEUDAS = [
     "no está escrita (PUNTO-USADO.md §1.h).",
     "- La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está "
     "RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).",
+    "- Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras "
+    "una toma nueva) sigue ligada al escenario en que nació y sus cierres cuentan en los cartuchos "
+    "de aquel (zonas.py, `zona_del_punto` liga solo al crearla); ADR-0083 lo hace alcanzable y la "
+    "fase 4 no lo midió: hace falta la traza por cierre (PUNTO-USADO.md §1.c y §4.f).",
 ]
 ps = cambiar(
     ps,

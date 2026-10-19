@@ -263,12 +263,16 @@ línea de cobertura del calendario de cierres.
   o un equal el escenario sigue con sus intentos: `ev-v3-002405-a202dbf6`, `ev-v4-004832-6543b551`),
   que hablan del escenario y no del punto (M8) y por eso no bastan solos.
 - **Lo que la búsqueda en el corpus filtrado trajo** (`kb find` por «reentrada», «mismo nivel» y
-  «equal»; oculta 4.631 segmentos y 2 items, como siempre): v6 1:23:53-1:24:07, capa corregida y
-  filtrada (`corpus transcript show`, fuera de los dos tramos no citables de v6): «después de un
-  igual si nos genera una pérdida nuevamente actualizamos a la siguiente, o sea al siguiente nivel;
-  al mismo nivel como tal mantenemos o abrimos otra orden límite para poder reentrar si se da». Es
-  el pasaje del equal que RN-019 ya cita (v6 1:22:25-1:23:19) unas líneas después, y dice lo que D1
-  dice: tras la pérdida, la reentrada en el MISMO nivel. No tiene item de evidencia propio
+  «equal»; oculta 4.631 segmentos y 2 items, como siempre): v6 1:23:45-1:24:07, capa corregida y
+  filtrada (`corpus transcript show`, fuera de los dos tramos no citables de v6), tal como la da la
+  capa: «[1:23:45] … después de un igual si [1:23:53] nos genera una pérdida nuevamente
+  actualizamos a la siguiente o sea al siguiente nivel al mismo [1:23:59] mismo nivel como tal
+  mantenemos o abrimos otro otra orden límite para poder reentrar si se da». Es el pasaje del
+  equal que RN-019 ya cita (v6 1:22:25-1:23:19) unas líneas después. **Lectura nuestra, declarada**
+  (a3 del revisor: la primera redacción lo daba por literal y por lo que D1 dice): el trader habla
+  de un equal que acaba en pérdida y da dos salidas, actualizar al siguiente nivel o mantener o
+  abrir otra orden límite en el mismo nivel para reentrar; D1 toma de ahí que la reentrada en el
+  MISMO nivel tras una pérdida es una de las dos, no la única. No tiene item de evidencia propio
   (`knowledge/evidence/` está protegido en esta rama): ADR-0083 lo cita por instante, como RN-019,
   y V puede proponer el item. Y `ev-v5-000246-17eff9e1` («cuando hay un equal […] contarlo como
   pérdida pero reentrar nuevamente si es que el precio…», tema `reentrada.equal`).
@@ -385,7 +389,7 @@ estaba y no se toca): **6 FAILED, 7 pasan**.
 | `test_el_no_envio_sigue_gastando_el_punto` | otra desde Z+4 | pasa | — |
 | `test_con_la_posicion_abierta_no_se_coloca_otra_orden` (D4) | otra con la posición abierta | pasa | — |
 | `test_con_la_orden_sin_llenar_el_1_nuevo_la_reubica_como_hoy` (RN-006) | otra en Z+2, sin llenar | pasa | — |
-| `test_punto_nuevo_sigue_reconociendo_la_orden_de_la_sesion_tras_una_perdida` | la misma tras la pérdida, otra en Z+9 | **FAILED** | las peticiones: falta `colocar o2` (y por tanto la reubicación a o3) |
+| `test_punto_nuevo_sigue_reconociendo_la_orden_de_la_sesion_tras_una_perdida` | la misma tras la pérdida, otra en Z+9 | **FAILED** | las peticiones: en `main` no existe la o2 de Z+7 (la misma caja); su o2 es la otra caja en Z+9, sin reubicación: `colocar o1, colocar o2, cancelar o2` (RN-035) frente a los cinco esperados (b3 del revisor: la primera redacción decía «falta colocar o2») |
 | `test_la_fila_de_ordenes_lleva_al_final_el_punto_y_el_1_de_la_caja` (fase 1) | la misma | **FAILED** | la cabecera de `main` no lleva las columnas (es el campo de la fase 1, no D1) |
 | `test_sin_productor_el_punto_y_la_caja_dicen_sin_medida` (fase 1) | zona sintética | **FAILED** | la fila de `main` no termina en `- \| -` (ídem) |
 
@@ -423,18 +427,24 @@ En la rama, `test_punto_usado.py`: 13 passed.
   decisión 1 de ADR-0064; nota en ADR-0074 §4; las tres filas del índice (0064, 0074 y la nueva
   0083, con «PROVISIONAL en D1 hasta la pregunta 3 de la sesión 5», H5). Los bloques
   `ids-inexistentes` del encargo y de este informe salen en este mismo commit.
-- VISOR-CONSTRUCCION.md: once recuadros de corrección, con fecha y rama, junto a todo lo que da la
-  E por buena (los seis del encargo y los que el auditor añadió, H2): §2.d.4, :596 (2026-01-29
-  11-15), :861 (§2.g), §2.h (:887), antes de la tabla de §3.1 (sus dos filas), §3.2 pregunta 3,
-  §3.3, la línea Y de §4.1 (que cubre las líneas preparadas de R3.2 y R3.4), :1203 y el Estado. El
-  cuerpo queda intacto. La línea del Estado de R3.2 en la hoja de ruta va en las líneas del
+- VISOR-CONSTRUCCION.md: diez recuadros de corrección, con fecha y rama, junto a todo lo que da la
+  E por buena (los seis sitios del encargo, con uno solo antes de la tabla de §3.1 para sus dos
+  filas, y los que el auditor añadió, H2): §2.d.4, :596 (2026-01-29 11-15), :861 (§2.g), §2.h
+  (:887), antes de la tabla de §3.1, §3.2 pregunta 3, §3.3, la línea Y de §4.1 (que cubre las
+  líneas preparadas de R3.2 y R3.4), :1203 y el Estado. El cuerpo queda intacto. (El mensaje del
+  commit 56bbf91 dice «once»: a4 del revisor; son diez.) Tras el revisor (b1), los de §2.h, §3.3 y
+  la línea Y dicen también las tres cosas que pide el encargo §3. La línea del Estado de R3.2 en la hoja de ruta va en las líneas del
   cierre (§6), porque `docs/plan/` está protegido en el contrato.
 - `knowledge/spec/strategy_spec.yaml`: la descripción de `toca_colocar_orden_limite` pasa de «que
   la sesion no haya usado» a decir qué gasta un punto (ADR-0083). `spec_version` 18.1.1 → **18.1.2**
   (parche: cambia la redacción de un predicado, ninguna regla cambia de forma ni se añade un
   parámetro; lo que cambia el bot lo fija el ADR y el código, no la forma de la spec);
   `spec manifest --escribir` (hash `857d0b91…`) y `spec docs --escribir` (`docs/spec/`) en el mismo
-  commit; trailer `Fuente: ADR-0083`.
+  commit; trailer `Fuente: ADR-0083`. Tras el revisor (a1), la descripción dice también que una
+  caja CANCELADA no vuelve (otra caja del mismo punto sí), igual que el docstring del módulo y el
+  de `marcar_usada`: hash `94d004a7…`, manifest y docs regenerados, `spec_version` 18.1.2 → 18.1.3
+  (`knowledge validate` exige subirla con cada cambio del hash, también dentro de la rama), trailer
+  `Fuente: ADR-0083` en ese commit.
 
 `make check` sellado sobre ese árbol (commit 56bbf91, que lleva también los resultados de la fase 1):
 2690 passed, `SELLO`, `PICO DE MEMORIA de make check: 295 MiB en test (…; el mayor proceso,
@@ -569,10 +579,10 @@ eso cambia aquí.
 ### 4.e Lo que pasa el 29 de abril en el bot (corrida 2, sesión 07-11, día dev)
 
 Igual antes y después. El trader vende dos veces en 1.17064, a las 07:55:40Z y 07:58:35Z (la
-reentrada de LA-CAJA-DEL-29-DE-ABRIL.md:236-243). El bot: o1 y o2 en 1.17048 (07:11:59Z y
-07:12:59Z, punto `117048@29624111`, reubicadas por RN-006 con un 1 nuevo), **o3 en 1.1706 (punto
-`117060@29624113`, 1 en 1.17072), llenada a las 07:14:06Z y cerrada por el stop (RN-012 dispara en
-la sesión)**, y ninguna orden más en la sesión: las dos ventas del trader quedan SIN PAREJA («bot
+reentrada de LA-CAJA-DEL-29-DE-ABRIL.md:236-243). El bot: o1 en 1.17048 (07:11:59Z, punto
+`117048@29624111`, 1 en 1.17071), que RN-006 reubica a o2 (07:12:59Z, el mismo punto con el 1 en
+1.17072) y después a **o3 en 1.1706, OTRO punto (`117060@29624113`, 1 en 1.17072), llenada a las
+07:14:06Z y cerrada por el stop (RN-012 dispara en la sesión)**, y ninguna orden más en la sesión: las dos ventas del trader quedan SIN PAREJA («bot
 más cercano en la sesión: venta 07:14:06Z 1.1706, Δentrada -4 puntos, Δinstante -41/-44 min»; P3).
 Tras el stop de o3 el bot NO reentra en su punto, ni antes ni después de ADR-0083, y tampoco en el
 nivel del trader 41 minutos más tarde: el punto de o3 queda liberado, pero `toca_colocar` no vuelve a
@@ -600,8 +610,8 @@ pico del proceso de 633.9 MiB`. La copia no se commitea.
 (haría falta la traza por cierre, que no se corre en esta rama). Lo que sí dice la salida: las 14
 reentradas con la misma caja se colocan entre 21 s y 4 min 27 s después del llenado de la orden
 anterior (`reentradas_despues.txt`, «colocada» frente al instante del llenado anterior), un tramo
-corto para una toma nueva, pero no se afirma. Queda dicho en ADR-0083, Impacto; no es una deuda
-abierta mientras no se mida.
+corto para una toma nueva, pero no se afirma. Queda dicho en ADR-0083, Impacto, y **va a Technical
+Debt** como tercera línea de §6 (a2 del revisor: es un riesgo que D1 abre y nadie mide).
 
 ## 5 · Lo que cambia para V (la sesión 5)
 
@@ -634,7 +644,8 @@ Para la hoja de preguntas, en el reloj del trader (Europe/Madrid) y sin cifras e
 
 Simuladas con `anexos/PUNTO-USADO/simular_cierre.py <raíz>` contra `test_hoja_de_ruta.py` (a, b y c)
 y `test_project_state.py`, como VISOR-CONSTRUCCION: **a, b y c vacíos; las cuatro pruebas de
-PROJECT_STATE pasan; 22.182 bytes simulados** (hoy 22.026; tope 25.000). En el repo no escribe nada.
+PROJECT_STATE pasan; 22.546 bytes simulados** con las tres deudas (22.182 con las dos del encargo;
+hoy 22.026; tope 25.000). En el repo no escribe nada.
 
 **Next Action** (`PROJECT_STATE.md`):
 
@@ -660,6 +671,10 @@ PROJECT_STATE pasan; 22.182 bytes simulados** (hoy 22.026; tope 25.000). En el r
 
     - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
     - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
+    - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) sigue ligada al escenario en que nació y sus cierres cuentan en los cartuchos de aquel (zonas.py, `zona_del_punto` liga solo al crearla); ADR-0083 lo hace alcanzable y la fase 4 no lo midió: hace falta la traza por cierre (PUNTO-USADO.md §1.c y §4.f).
+
+(La tercera no la pedía el encargo: la trae a2 del revisor, y las tres caben: la simulación da
+22.546 bytes.)
 
 **Hoja de ruta** (`docs/plan/HOJA-DE-RUTA.md`; `docs/plan/` está protegido en el contrato, por eso
 van aquí):
@@ -688,23 +703,61 @@ van aquí):
   E (la reentrada en un punto ya llenado: R3.4, que ADR-0083 rehízo en el sentido contrario: el
   llenado no gasta el punto)».
 
-## 7 · El encargo frente a lo hecho, punto por punto
+## 7 · El encargo, punto por punto
 
-| Punto | Hecho | Desviaciones declaradas |
-|---|---|---|
-| 0 Apertura (base, gh, abrir-rama, informe y anexos, skills, /model) | Sí (§0; `gh run view`, ni curl ni guion; tramo R3) | El primer `make check` salió en rojo por citar ADR-0083 sin bloque `ids-inexistentes` (§0, H1) |
-| 1 Por qué cambia Y (verificar las dos cosas en la fase 0) | Sí (§1.b) | — |
-| 2 D1-D5 | D1 y D4 en ADR-0083 y en los tests; D2 (ADR, recuadro, nota, docstrings, spec, versión, manifest, docs, Fuente:); D3 (dos tests que rompen en `main`); D5 (vía normal) | D1 se aplica por RESULTADO del cierre, también a un cierre MANUAL (§1.h); el «equal» es RN-019, que no dispara. La fase 0 no encontró nada que contradiga D1-D5 |
-| 3 Lo que NO cambia | Reubicación, geometría, sesgo, ventana, lote, RN-034, cartuchos: sin tocar; informes cerrados con recuadros; cases y holdout sin tocar; guardias, .claude y Makefile sin tocar; PROJECT_STATE solo lo del ritual (Current Branch/Feature y el recuento de tests: 22.026 bytes) | Once recuadros en VISOR en vez de los seis del encargo (H2); la línea del Estado de R3.2 en la hoja va al cierre (§6). Ningún comando negado por el clasificador; la guardia negó un `kb at` (§1.f) y varios comandos compuestos, que se partieron en llamadas |
-| 4 Fase 0 (a-e) | §1.b-1.f; PARADA no dada | — |
-| 5 Fase 1 | §2: el campo, el test en los dos sentidos, make check sellado, la corrida «antes» igual a MARGEN-LOTE sin el campo (0 líneas), determinismo, el guion por punto y por sesión | El campo son DOS columnas (punto y 1 de la caja): el stop no distingue dos cajas (§2.a) |
-| 5 Fase 2 | §3.a: 13 tests por el cableado real, 6 FAILED en `main` (4 por D1, 2 del campo), 7 pasan; los de 4.d sin cambiar | Dos rutas de precio corregidas antes de fijar el rojo (§3.a) |
-| 5 Fase 3 | §3.b-3.c: código, ADR-0083, recuadros, docstrings, spec 18.1.2; tests en verde; make check sellado (56bbf91) | Los resultados de la fase 1 (anexos, fila, §2) van en el mismo commit que las fases 2 y 3: el sello cubre el árbol estadiado entero y no se puede sellar una parte dejando otra sin estadiar |
-| 5 Fase 4 | §4: los tres comandos, la repetición, recuentos antes y después, cartuchos, T0 y P1-P7 frente a MARGEN-LOTE §4.d, P5 y P7 aparte, el 29 de abril; nada se ajusta | La precisión baja de 11,1 % a 10,8 % (cinco operaciones puntuables más, ninguna pareja nueva), explicado por sesión |
-| 5 PICO DE MEMORIA y test_nunca_bloquea | §8 | `test_nunca_bloquea_y_es_rapido` no falló en ningún make check |
-| 6 El informe | §1 a §8 | — |
-| 7 Revisor | §9 | — |
-| 8 CI | §8: no toca hooks, rutas ni el sistema de archivos; lista de ficheros | — |
+Requisitos numerados (cada fase, cada viñeta, cada «test que rompe», cada «NO cambia»), con
+Hecho / Parcial / No hecho / Hecho de otra forma y su evidencia (b2 del revisor: la primera versión
+iba agrupada por punto del encargo).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base main f96b581, origin/main, el tag, ninguna otra rama | Hecho | §0 |
+| 2 | La CI de main con `gh`, nunca curl ni guion | Hecho | §0; el revisor lo repitió |
+| 3 | abrir-rama: encargo tal cual, contrato, Archivo en HISTORIA; tramo R3 | Hecho | 09fe2cc; Archivo 38 |
+| 4 | Informe y anexos en su ruta | Hecho | contrato.yaml |
+| 5 | Skills fase-cero (con el auditor), comparar-con-main, entregar-rama | Hecho | §1.a; §3.a; §9 |
+| 6 | /model: Fable 5.1, esfuerzo alto | Hecho | cabecera |
+| 7 | Verificar en la fase 0 las dos cosas del punto 1 | Hecho | §1.b |
+| 8 | 4.a: todos los caminos de fin de orden, con fichero:línea; PARADA si D1 cambia más que los dos de D3 | Hecho | §1.b (tabla); la PARADA no se da |
+| 9 | 4.b: la vía, y `_punto_nuevo` con su test | Hecho | §1.c; `test_punto_nuevo_sigue_reconociendo…` |
+| 10 | 4.c: la traza de 2026-07-13 11-15 | Hecho | §1.d |
+| 11 | 4.d: los tests que dependen, cuáles cambian y cómo se rehacen | Hecho | §1.e: ninguno cambia de resultado; dos comentarios |
+| 12 | 4.e: la lectura declarada el mismo día y antes de cada corrida | Hecho | filas del 2026-10-18 en HOLDOUT-EXPOSICIONES (fase 0, fase 1, fase 4) |
+| 13 | D1 en el código (gasta: rechazo al colocar o al llenar, no envío; no gastan: reubicación ni llenado; RN-034 no cambia) | Hecho | §3.b; cableado.py `_el_punto_tras_el_evento`; zonas.py `liberar_usada` |
+| 14 | D2: ADR-0083 con sus cinco citas, recuadro en ADR-0064, nota en ADR-0074 §4 | Hecho | ADR-0083 §6; diff de 0064 y 0074; índice |
+| 15 | D2: docstrings de zonas.py (:41-45 y `marcar_usada`) | Hecho | zonas.py; tras a1, también lo de las cajas canceladas |
+| 16 | D2: la descripción de `toca_colocar_orden_limite`, spec_version, manifest, docs, `Fuente: ADR-0083` | Hecho | 18.1.1 → 18.1.2 (56bbf91) → 18.1.3 (el commit del revisor, a1) |
+| 17 | D3a: test que rompe en main (misma caja tras una pérdida) | Hecho | §3.a (FAILED en main: `['o1'] == ['o1','o2']`); pasa en la rama |
+| 18 | D3b: test que rompe en main (el rechazo al llenar gasta) | Hecho | §3.a (FAILED en main en `punto_rechazado`); pasa en la rama |
+| 19 | D4: un test por el cableado | Hecho | `test_con_la_posicion_abierta_no_se_coloca_otra_orden` |
+| 20 | D5: la reentrada por la vía normal, sin decidir la caja | Hecho | sin cambios en `caja_bloque` ni `caja_se_fija` |
+| 21 | NO cambia: reubicación, geometría, sesgo, ventana, lote y límite, RN-034, cartuchos, ninguna cifra | Hecho | `git diff --name-status`: en `src/` solo cableado, primitivas_broker y zonas; ninguna cifra |
+| 22 | Recuadros en VISOR junto a todo lo que da la E por buena, diciendo las tres cosas | Hecho (de otra forma: diez sitios en vez de seis, H2; tras b1, los tres que no decían lo del consultor lo dicen) | §3.c |
+| 23 | NO tocar cases, holdout, guardias, .claude, Makefile | Hecho | diff |
+| 24 | PROJECT_STATE solo con lo del ritual (21.911 bytes en main) | Hecho | 22.026 bytes: rama, feature, recuento de tests y Archivo 38 |
+| 25 | Si el clasificador niega un comando, PARADA | Hecho (no se dio) | la guardia negó `kb at` y comandos compuestos; se partieron, no se rodearon (§1.f) |
+| 26 | Fase 1: el campo al final de «### Ordenes», solo salida, test en los dos sentidos | Hecho de otra forma (declarado) | dos columnas, `punto` y `caja 1` (§2.a) |
+| 27 | Fase 1: make check sellado | Hecho | e55d00a (§8) |
+| 28 | Fase 1: la corrida «antes» igual a la diaria de MARGEN-LOTE quitando el campo (sha256 del encargo) | Hecho | §2.b: 0 líneas distintas; sha256 de MARGEN-LOTE = e584077b…; el revisor lo repitió por su cuenta |
+| 29 | Fase 1: la repetición fuera del repo (determinismo) | Hecho | §2.b: sha idéntico db5a3f88… (la copia está en la carpeta de trabajo, no en el repo: el revisor no pudo verla) |
+| 30 | Fase 1: guion en los anexos por argumento, por punto exacto y por sesión, misma caja / otra, tras un rechazo | Hecho | `reentradas_por_punto.py`; §2.c |
+| 31 | Fase 2: tests primero, en rojo sobre main con comparar-con-main, recuento de FAILED, por el cableado real, cada test dice su caja | Hecho | §3.a: 6 FAILED de 13; clon `--detach` retirado |
+| 32 | Fase 2: las diez viñetas de tests (D3a, 1 nuevo, break even, ganadora, cartuchos, D3b, rechazo al colocar y no envío, D4, reubicación, 4.d) | Hecho | 13 tests (§3.a) |
+| 33 | Fase 3: código, ADR, recuadros, docstrings, spec; tests en verde; make check sellado | Hecho | 56bbf91 |
+| 34 | Fase 4: la fila de exposiciones antes de correr | Hecho | el revisor lo contrastó por horas de modificación (eje a) |
+| 35 | Fase 4: los tres comandos tal cual, y la repetición de la 2 fuera del repo | Hecho | §4; sha idéntico 140e1479… |
+| 36 | Fase 4: recuento de la fase 1 antes y después; órdenes, peticiones por día y rechazos; sesiones con cartuchos (las cuatro de §2.h); T0 y P1-P7 frente a MARGEN-LOTE §4.d con P5 y P7 aparte; el 29 de abril; si cambian parejas o precisión, explicar por sesión | Hecho | §4.a-4.e; la precisión baja de 11,1 % a 10,8 %, explicada por sesión; nada se ajusta |
+| 37 | PICO DE MEMORIA de cada make check; test_nunca_bloquea | Hecho | §8; no falló |
+| 38 | §6: encargo frente a lo hecho; fase 0 y medidas; lo que cambia para V; las dos deudas; líneas del cierre simuladas | Hecho (de otra forma: una tercera deuda, a2) | §1, §5, §6, §7 |
+| 39 | §7: el revisor (opus) con los dos ejes y las tres comprobaciones extra; su informe pegado con lo arreglado y lo declarado | Hecho | §9 |
+| 40 | §8: CI si toca la plataforma; si no, decirlo con la lista de ficheros | Hecho | §8: no la toca |
+| 41 | «Rama lista para revisión, NO cerrada» | Hecho | Estado |
+
+Desviaciones declaradas, en una línea cada una: (26) dos columnas en vez de una; (22) diez
+recuadros en vez de seis, y la línea de la hoja de ruta al cierre; (38) una tercera deuda; (33) los
+resultados de la fase 1 van en el commit de las fases 2 y 3, porque el sello cubre el árbol
+estadiado entero; el bloque `ids-inexistentes` desde el primer commit; las dos rutas de precio
+corregidas antes de fijar el rojo; D1 aplicada por resultado, también al cierre manual.
 
 ## 8 · make check, memoria y CI
 
@@ -715,7 +768,8 @@ van aquí):
 | fase 0 (71c8d46) | 641b8a5… | 2677 passed, SELLO | 296 MiB (286 MiB) |
 | fase 1 (e55d00a) | ade5be5… | 2679 passed, SELLO | 295 MiB (285 MiB) |
 | fases 1-3 (56bbf91) | d5f7e74… | 2690 passed, SELLO | 295 MiB (285 MiB) |
-| fase 4 y el informe | [MC5] | [MC5R] | [MC5P] |
+| fase 4 y el informe (cf994a7) | c7310ad… | 2690 passed, SELLO | 295 MiB (285 MiB) |
+| el revisor y sus arreglos (el último commit) | el árbol estadiado de ese commit | su `SELLO` y su `PICO DE MEMORIA` quedan en `make-check.log` y en el mensaje final a Aleks: el informe que sella no puede llevar la cifra de su propio sello | — |
 
 `test_nunca_bloquea_y_es_rapido` no falló por tiempo en ninguno. `state check`: 1603 funciones de
 test (1590 en `main`; +2 de la fase 1, +11 de la fase 2).
@@ -730,11 +784,196 @@ cambia frente a `main` (`git diff --stat main...HEAD`): `PROJECT_STATE.md`, `con
 `tests/unit/{test_orden_stop_pivote,test_punto_usado,test_vida_de_la_orden}.py`. Ni `.claude/`, ni
 `Makefile`, ni `scripts/`, ni `config/`.
 
-**El clon de `main`** (`C:/cm/main`, `git worktree`) se retira al terminar la fase 2 con
-`git worktree remove`; el worktree ajeno de otra sesión (`…/2ea2c3d2…/scratchpad/wt-ci`, e7df30b)
+**El clon de `main`** (`C:/cm/main`, `git worktree --detach`) se retiró con `git worktree remove
+--force` (tenía el test copiado y su `settings.local.toml`) antes de sellar la fase 4; el worktree
+ajeno de otra sesión (`…/2ea2c3d2…/scratchpad/wt-ci`, e7df30b)
 estaba antes y no se toca. Estado del repo real antes y después: `main` y `trabajo/punto-usado`,
 129 tags, nada nuevo en origin.
 
+
+## 9 · El revisor
+
+Lanzado sobre la rama con el informe terminado (commit cf994a7 más la fila de §8 sin commitear), con
+los dos ejes de siempre y las tres comprobaciones del encargo §7. Su informe, pegado tal cual (no
+cita ningún tramo no citable: ninguna retirada). Debajo, lo que se hizo con cada hallazgo.
+
+### 9.1 Informe del revisor (opus), tal cual
+
+## Informe del revisor · trabajo/punto-usado · 2026-10-19
+
+Base `main` f96b581 (merge-base). Revisé los commits 09fe2cc, 71c8d46, e55d00a, 56bbf91 y cf994a7, y también la edición sin commitear de `docs/validation/PUNTO-USADO.md` (§8: cambia `[MC5] [MC5R] [MC5P]` por la fila real de cf994a7).
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 4 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | La spec y los docstrings dicen menos de lo que hace el código. La spec dice que una caja se bloquea solo si está «gastado ni con orden viva». El docstring dice «la zona queda usada mientras la orden vive», y el comentario del test, «usada -su orden viva-». Pero una zona CANCELADA (RN-035, RN-036, `se_retira`, ventana de ADR-0068, fin de día) se queda en `usadas` para siempre: esa caja no vuelve aunque no tenga orden viva ni punto gastado. El propio ADR y el informe lo dicen bien. | `knowledge/spec/strategy_spec.yaml:275-276` («que la sesion no tenga gastado ni con orden viva»); `src/botsito/engine/zonas.py:44` y `:425-428`; `tests/unit/test_orden_stop_pivote.py:190`; en contra: `docs/adr/0083-que-gasta-un-punto.md:45-48` («deja su caja usada y su punto sin gastar […] esa caja no vuelve») y PUNTO-USADO.md:146-147 («o terminó sin liberar el punto»). `_el_punto_tras_el_evento` (`cableado.py:140-167`) solo libera la zona en un cierre sin ganancia. |
+| a2 | importa | ADR-0083 (fichero nuevo de la rama, todavía editable) afirma dos cosas que la medida de la fase 4 contradice o no hizo, y no se corrigió después de medir. (1) «Este ADR mueve parte de P7»: P7 sigue en 3 y el informe dice «ADR-0083 no las mueve». (2) «se mide en la fase 4» (el límite de una zona reutilizada en un escenario nuevo): el informe dice que no se midió, y no lo lleva a Technical Debt («no es una deuda abierta mientras no se mida»). Es un riesgo que abre el propio cambio de D1 (PUNTO-USADO.md:157: «con D1 lo es en teoría»). | `docs/adr/0083-que-gasta-un-punto.md:126-127` y `:173-174`; PUNTO-USADO.md:554-557, `:599-604`; `anexos/PUNTO-USADO/patrones.txt` «total \| … \| 3 \| 18» frente a `anexos/MARGEN-LOTE/patrones.txt:7» «… \| 3 \| 18» |
+| a3 | importa | La cita de v6 «1:23:53-1:24:07» no sostiene del todo lo que se le hace decir. (1) «después de un igual si» está en el segmento de 1:23:45.730, fuera del rango citado. (2) No es literal: la capa dice «al mismo / mismo nivel» y «otro otra orden límite». (3) El informe la resume como «dice lo que D1 dice: tras la pérdida, la reentrada en el MISMO nivel». Pero el pasaje habla de un equal y dice además «actualizamos a la siguiente, o sea al siguiente nivel». Es una LECTURA del pasaje y no se declara como tal. | `uv run botsito corpus transcript show --video v6 --t0 1:23:50 --t1 1:24:10` → `[1:23:45.730] … después de un igual si` / `[1:23:53.250] nos genera una pérdida nuevamente actualizamos a la siguiente o sea al siguiente nivel al mismo` / `[1:23:59.550] mismo nivel como tal mantenemos o abrimos otro otra orden límite para poder reentrar si se da`; PUNTO-USADO.md:265-272; ADR-0083:115-118 |
+| a4 | importa | Se dice «once recuadros» en VISOR-CONSTRUCCION y hay diez. La lista del propio informe también enumera diez. | `Grep "RECUADRO DE CORRECCIÓN \(2026-10-18"` en VISOR-CONSTRUCCION.md → líneas 598, 666, 875, 907, 916, 965, 995, 1049, 1255 y 1486 (10); PUNTO-USADO.md:426 y `:698`; cuerpo del commit 56bbf91 («once recuadros de correccion») |
+| a5 | menor | §4.e dice «o1 y o2 en 1.17048 […] reubicadas por RN-006 con un 1 nuevo». o2 no se reubica con un 1 nuevo: o3 está en OTRO punto. | diaria de la fase 4, :1858-1859: o2 `117048@29624111`, o3 `117060@29624113`; PUNTO-USADO.md:572-573 |
+| a6 | menor | Dos recuadros van dentro de una lista y la línea siguiente empieza por «- » sin línea en blanco: en el renderizado quedan pegados a la viñeta siguiente. El cuerpo sigue intacto. | VISOR-CONSTRUCCION.md:875-878 → :879 «- **Uno de los ocho…»; :1255-1258 → :1259 «- **Las páginas…» |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` → «CONTRATO: 36 ficheros dentro del contrato de trabajo/punto-usado (riesgo alto, artefacto docs/validation/PUNTO-USADO.md, tramo 'R3', 5 comprobaciones para el revisor)», exit 0.
+- **pytest de las comprobaciones del contrato.** `uv run pytest tests/unit/test_punto_usado.py tests/unit/test_orden_stop_pivote.py tests/unit/test_escenarios_por_sesion.py tests/unit/test_margen_lote.py tests/unit/test_cableado.py -p no:cacheprovider` → «84 passed». También `test_adr.py` y `test_vida_de_la_orden.py` → «13 passed», y `test_historia.py test_project_state.py test_hoja_de_ruta.py test_contrato_rama.py` → «47 passed».
+- **`make check`.** No lo lancé (escribe). `make-check.log`: «2690 passed», «SELLO: make check en verde sobre el arbol c7310ada3a8e…» y «PICO DE MEMORIA de make check: 295 MiB en `test` (…; el mayor proceso, 285 MiB)». `git rev-parse HEAD^{tree}` da c7310ada…: el sello es el de cf994a7.
+- **`knowledge validate` y `spec docs --escribir`.** No los lancé (escriben). El paso `knowledge` del mismo log trae todo OK: «657 documentos: todo id citado existe…», «hash del manifiesto al dia».
+- **Trailer `Fuente:`.** El único commit que toca `knowledge/spec` es 56bbf91: lleva `Fuente: ADR-0083` en el cuerpo y ADR-0083 existe.
+- **Regímenes.** La rama no toca evidence, feedback, manifests, transcripciones, fotogramas, libros.yaml, ambiguedades.yaml ni `knowledge/cases`. HOLDOUT-EXPOSICIONES y HISTORIA solo añaden líneas (numstat 3/0 y 184/0).
+- **ADR.** ADR-0083: `## Estado` empieza por `ACTIVE`; sus secciones y su fila del índice están; test_adr en verde. El recuadro de ADR-0064 va junto a la decisión 1. La nota de ADR-0074 va en §4, que ya nombraba «la decisión 1 de ADR-0064» entre lo que no cambia.
+- **VISOR-CONSTRUCCION.md.** `git diff -U0 main...HEAD` solo trae líneas `+>` o en blanco: el cuerpo está intacto y cada recuadro lleva fecha y rama.
+- **Holdout y material.** Hay filas de las fases 0, 1 y 4. La de la fase 4 es anterior a las corridas: HOLDOUT-EXPOSICIONES.md modificado a las 23:19:05; diaria y arrastrada terminan a las 23:27:05 y 23:27:42 tras 467,0 s y 504,3 s, es decir, empiezan hacia las 23:19:18.
+- **Fechas reservadas.** Ni el informe, ni el ADR, ni los anexos traen fechas de días reservados. Grep `2026-(02|03|05|06|09)-dd` y `2026-07-(18..31)`: solo ids de sesión y de feedback. Las únicas fechas de 2025 o posteriores a 2026-10 son la línea de cobertura del calendario.
+- **Cifras.** Ninguna cifra nueva en código.
+- **Ninguna `cita` nueva en la spec**, así que no aplican las tres guardias.
+- **Citas contrastadas contra su fuente:** LA-CAJA-DEL-29-DE-ABRIL.md:236-243, `fb-2026-09-09-sesion-01-fe4a6a5c`, `fb-…-fae74396`, `ev-v5-000246-17eff9e1`, ADR-0064:79-81, A-31 en ambiguedades.yaml:812-819, la nota de RN-019 y `operaciones_simultaneas_max`. Todas correctas.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 1 importa, 2 menor. Requisitos: 35 hechos, 1 parcial, 1 no hecho (el revisor, pendiente por diseño), 1 hecho de otra forma (declarado) y 2 que no pude comprobar.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base: main, origin/main, tag, ninguna otra rama | Hecho | PUNTO-USADO.md:18-21; `git branch --list` → main y trabajo/punto-usado |
+| 2 | CI de main con gh, nunca curl ni guion | Hecho | Repetí `gh run view 39186492700 --json …` → `"conclusion":"success","headSha":"f96b581…"`. En `git diff main...HEAD` solo aparece «curl» en el encargo y en las dos menciones «ni curl ni guion». Los guiones de los anexos no traen curl, subprocess, urllib ni requests |
+| 3 | abrir-rama: encargo, contrato y Archivo | Hecho | `A contrato.yaml`, `A docs/encargos/trabajo-punto-usado.md`, HISTORIA «# Archivo 38 · PROJECT_STATE.md de main en f96b581» |
+| 4 | Tramo R3; informe y anexos en su ruta | Hecho | contrato.yaml:3-4 |
+| 5 | Skills: fase-cero con el auditor, comparar-con-main | Hecho | §1.a y §3.a. El clon C:/cm/main ya no está: en `.git/worktrees` solo queda `wt-ci` |
+| 6 | /model | Hecho | PUNTO-USADO.md:6-7 |
+| 7 | Verificar en la fase 0 las dos cosas del punto 1 | Hecho | §1.b |
+| 8 | 4.a todos los caminos de fin de orden; sin PARADA | Hecho | §1.b, tabla :83-95 |
+| 9 | 4.b la vía y `_punto_nuevo` con su test | Hecho | §1.c; test_punto_usado.py:423-447 |
+| 10 | 4.c la traza del 2026-07-13 | Hecho | §1.d |
+| 11 | 4.d los tests que dependen, rehechos | Hecho | §1.e: ninguno cambia de resultado y solo se tocan comentarios. Declarado |
+| 12 | 4.e la lectura declarada | Hecho | Filas de HOLDOUT-EXPOSICIONES |
+| 13 | D1 en el código | Hecho | cableado.py:140-167, :296; primitivas_broker.py:147-149, :653; zonas.py `liberar_usada` |
+| 14 | D2: ADR-0083, recuadro en ADR-0064, nota en ADR-0074 §4, las cinco citas | Hecho | ADR-0083 §1 y §6; diff de 0064 y 0074 |
+| 15 | D2: docstrings de zonas.py | Hecho | Con la imprecisión de a1 |
+| 16 | D2: spec, spec_version, manifest, docs, Fuente | Hecho | 18.1.1 → 18.1.2; hash 857d0b91…; docs/spec/* |
+| 17 | D3a: test que rompe en main | Hecho (razonado) | En main, `toca_colocar_orden_limite` niega con `z.id in zonas_usadas(...)` (`git show main:src/botsito/engine/zonas.py` :473) y nada libera la zona. La aserción del test es `list(ordenes) == ["o1","o2"]` (:203) |
+| 18 | D3b: test que rompe en main | Hecho (razonado) | En main nadie llama a `marcar_rechazada` con el rechazo al llenar. La primera aserción que falla es `zonas.punto_rechazado(...)` (:333), como dice §3.a |
+| 19 | D4: un test por el cableado | Hecho | test_punto_usado.py:383-397 |
+| 20 | D5 | Hecho | Sin cambios en caja_bloque ni caja_se_fija |
+| 21 | No tocar broker.py, arnes.py, geometría, sesgo, lote ni cifras | Hecho | `git diff --name-status`: solo cableado, primitivas_broker y zonas en `src/` |
+| 22 | Recuadros en VISOR con lo que el encargo dice que «dicen» | Parcial | Ver b1 |
+| 23 | No tocar cases, holdout, .claude ni el Makefile | Hecho | diff |
+| 24 | PROJECT_STATE solo con el ritual (21.911 bytes en main) | Hecho | `git show main:PROJECT_STATE.md \| wc -c` → 21911; el diff solo cambia rama, feature, recuento y Archivo 38 |
+| 25 | Fase 1: el campo al final, solo salida, test en los dos sentidos | Hecho de otra forma (declarado) | Dos columnas en vez de una (§2.a, con su motivo); tests en :453-481 |
+| 26 | Fase 1: make check sellado | Hecho | §2.a y §8 (e55d00a) |
+| 27 | Fase 1: la corrida «antes» igual a MARGEN-LOTE quitando el campo | Hecho (lo verifiqué) | sha256 de MARGEN-LOTE = e584077b… (el del encargo); `diff` → un solo bloque «1540,2044c1540,2044» (la sección «### Ordenes»); cortando las 15 primeras columnas, las 504 filas dan el mismo sha256 (d3acc1d9…) en los dos ficheros |
+| 28 | Fase 1: la repetición fuera del repo | No comprobable | Ver abajo |
+| 29 | Fase 1: guion por argumento, por punto exacto y por sesión, misma caja y otra, tras un rechazo | Hecho | reentradas_por_punto.py; salidas «41, en 18 sesiones; misma caja 0» y «55, en 25; misma caja 14 (llenadas 7)» |
+| 30 | Fase 2: en rojo sobre main con comparar-con-main, recuento en el informe | Hecho | §3.a: 6 FAILED de 13 |
+| 31 | Fase 2: las diez viñetas de tests | Hecho | Los 13 tests cubren todas |
+| 32 | Fase 3: tests en verde y make check sellado | Hecho | 56bbf91 |
+| 33 | Fase 4: la fila antes de correr | Hecho | Horas de modificación (ver eje a) |
+| 34 | Fase 4: los tres comandos tal cual | Hecho | §4:449-451 |
+| 35 | Fase 4: la repetición de la 2 fuera del repo | No comprobable | Ver abajo |
+| 36 | Fase 4: contenido del informe (recuento, órdenes, peticiones, rechazos, cartuchos, T0/P1-P7, P5 y P7 aparte, 29 de abril) | Hecho | §4.a-4.e. Cifras contrastadas con los anexos: 55/14/41, 6 `detenido_por_cartuchos:si` (antes 4), P5 115 y «mismo lado» 93 (MARGEN-LOTE 112 y 90), T0 18 |
+| 37 | PICO DE MEMORIA de cada make check | Hecho | §8 |
+| 38 | §6: lo que cambia para V, las dos deudas verificadas, las líneas del cierre simuladas | Hecho | §5, §1.h, §6. Las sustituciones de simular_cierre.py casan una vez cada una en PROJECT_STATE y en la hoja de ruta (grep -c → 1) |
+| 39 | §7: el informe del revisor pegado | No hecho (pendiente) | §9 no existe todavía; el Estado lo dice |
+| 40 | §8: CI, con la lista de ficheros | Hecho | §8:723-731. No toca hooks, rutas ni el sistema de archivos |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | El encargo §3 pide que los recuadros «Dicen que la E se rehace en ADR-0083: volver al punto tras un stop no es el error; el error es no volver con la misma caja y no gastar el punto con el rechazo al llenar; y que lo aceptó el consultor sin buscar en el material del trader». Tres de los seis sitios que nombra el encargo no dicen lo del consultor: §2.h, §3.3 y la línea Y de §4.1. El de §3.3 tampoco dice «volver al punto tras un stop no es el error» (dice «se hizo al revés»). El informe no lo declara. Si «dicen» se lee como «cada uno», sería bloquea. | VISOR-CONSTRUCCION.md:907-910, :995-999, :1049-1054; en cambio :666-671 (§2.d.4), :916-921 (§3.1) y :1486-1489 (Estado) sí lo dicen; encargo:40 |
+| b2 | menor | La tabla «El encargo frente a lo hecho» va agrupada por punto del encargo, con columnas «Hecho / Desviaciones». No es la tabla de requisitos numerados con Hecho / Parcial / No hecho / Hecho de otra forma que pide la skill entregar-rama. | PUNTO-USADO.md:691-707; `.claude/skills/entregar-rama/SKILL.md:46-50` |
+| b3 | menor | Por qué falla en main `test_punto_nuevo_sigue_reconociendo_…`: el informe dice «falta `colocar o2`» y el docstring dice «En main falla: o2 no existe». Por el código de main, o2 SÍ existe: la otra caja en Z+9, porque zona:2 no está en `usadas`. Lo que falta es la o2 de Z+7 con la misma caja y la reubicación a o3. La lista de main sería `[colocar o1, colocar o2, cancelar o2]`. La causa (D1) es la correcta; la descripción no lo es. Lo saco por razonamiento: el test no lo ejecuté sobre main. | PUNTO-USADO.md:388; test_punto_usado.py:430-440; main zonas.py:470-474 |
+
+Las comprobaciones (1), (2) y (3) del encargo §7:
+- **(1) Los tests de la fase 2 van por el cableado real.** `_correr` usa `tc._motor` (MotorCableado) y `motor.correr_dia` con `tc.SPEC` (la spec real). Quita del juego sintético `toca_colocar_orden_limite`, `se_completa_zona_de_control` y `cartuchos`, que pasan a ser los reales. Solo sustituye `zona_del_punto`, en zonas y en primitivas_broker (:141-142), y deja sintéticos RN-004 (la toma) y los gates de geometría, como declara. Todos los símbolos privados que usa el test existen en main (`git show main:…zonas.py`: `_memoria` :160, `_de_la_sesion` :164, `_anotar_toma` :233, `_ligar_al_escenario` :248, `PREFIJO_ZONA` :89). La causa de los 4 rojos de D1 coincide con el código de main (ver b3 para la descripción de uno). Los 2 del campo fallan porque `CABECERA_ORDENES` de main no lleva `punto | caja 1`.
+- **(2) Ninguna consulta de la CI se hizo con curl ni con un guion.** Nada en el diff ni en los anexos. La consulta con gh la reproduje yo.
+- **(3) Ningún guion nuevo escribe en el repo con rutas sacadas de `__file__`.** Grep de `__file__|write|open(|mkdir|unlink` en `anexos/PUNTO-USADO/*.py`: ninguno usa `__file__`. Tres solo leen rutas recibidas por `sys.argv`. `simular_cierre.py` recibe la raíz por argumento y solo escribe en un `tempfile.TemporaryDirectory()`, fuera del repo (:137-139).
+
+### Lo que no pude comprobar
+- **Los 6 FAILED en el clon de main.** El clon está retirado y cambiar de rama o crear un worktree escribe (`git worktree` lo bloquea solo_lectura). Lo sustituye el razonamiento sobre `git show main:…` de la tabla.
+- **Las dos repeticiones fuera del repo** (sha idéntico, db5a3f88… y 140e1479…). Están en la carpeta de trabajo. Sí comprobé que los sha256 de las salidas commiteadas son esos.
+- **Que la fila de la fase 1 se escribiera antes de su corrida.** HOLDOUT-EXPOSICIONES.md se modificó otra vez después (23:19:05). La corrida «antes» terminó a las 22:45:26 tras 356,3 s, así que empezó hacia las 22:39:30, y e55d00a se commiteó a las 22:39:01. La fila tuvo que escribirse en esos ~30 s: es posible, pero no lo puedo mostrar.
+- **Guiones que no están en el repo:** `comparar_sin_campo.py` (lo sustituí con mi propia comparación, fila 27) y el del reparto de `casos_reservados`.
+- **`knowledge validate > knowledge-validate.log`, `spec docs --escribir`, `make check` y `simular_cierre.py`.** Los cuatro escriben (el último, en un temporal); no los ejecuté. Para los tres primeros, la evidencia es `make-check.log`. Para el último, que sus anclas existen una vez cada una (grep -c).
+- **La traza de VISOR del 2026-07-13 (§1.d) y las horas de cierre del 29 de abril:** no las contrasté línea a línea.
+- **Nota para la entrega:** la edición de §8 está sin commitear. El commit que la lleve (con este informe pegado) necesita su propio `make check` sellado.
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Read de `docs/encargos/trabajo-punto-usado.md`, `contrato.yaml` y `docs/validation/PUNTO-USADO.md`
+3. `git diff --name-status main...HEAD && git diff --name-status`
+4. `uv run python scripts/contrato_rama.py`
+5. `git diff -- docs/validation/PUNTO-USADO.md`
+6. `ls -la make-check.log knowledge-validate.log; grep -nE "SELLO|PICO DE MEMORIA|passed|failed" make-check.log; git rev-parse HEAD^{tree}`; Read de `make-check.log`
+7. `uv run pytest <los 5 del contrato> -p no:cacheprovider | grep …` (un primer intento con `cat -A` lo negó la guardia)
+8. `uv run pytest tests/unit/test_adr.py tests/unit/test_vida_de_la_orden.py -p no:cacheprovider`
+9. `git log --format='%h%n%B%n-----' main..HEAD -- knowledge/spec knowledge/cases`
+10. Read de ADR-0083 y ADR-0064; `git diff main...HEAD -- docs/adr/0064-… docs/adr/0074-… docs/adr/README.md`; `grep -n "^#\|no cambia"` en ADR-0074
+11. `git diff --numstat main...HEAD -- VISOR-CONSTRUCCION.md HOLDOUT-EXPOSICIONES.md HISTORIA.md` y `git diff -U0 … VISOR | grep` (añadidos que no son `>`); `git diff -U2 main...HEAD -- docs/validation/VISOR-CONSTRUCCION.md`
+12. `git diff -U0 main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md`
+13. `ls docs/validation/anexos/CORRIDA-CONSTRUCCION/; grep -nE "open\(|read_text|argv|…" …/patrones.py`
+14. `ls -la --time-style=full-iso …/CORRIDA-CONSTRUCCION/__pycache__/; git check-ignore -v …; ls -la docs/validation/anexos/PUNTO-USADO/`
+15. `git log --format='%h %ad %cd %s' --date=iso main..HEAD`
+16. `git log --format='%h' main..HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md; git show --stat cf994a7`
+17. `grep -nE "__file__|write|open\(|argv|…" docs/validation/anexos/PUNTO-USADO/*.py`; Read de los cuatro guiones
+18. `git diff main...HEAD -- src/`
+19. Grep de `ctx.eventos` en `src/botsito/engine`; Read de `cableado.py:286-435`
+20. Read de `tests/unit/test_punto_usado.py`; grep de `_sinteticas` y `_motor` en `test_cableado.py`
+21. `git show main:src/botsito/engine/zonas.py | grep …` (dos veces) y `git show main:src/botsito/engine/primitivas_broker.py | grep …`
+22. `git diff main...HEAD -- knowledge/spec/ docs/spec/`
+23. Read de `LA-CAJA-DEL-29-DE-ABRIL.md:228-247`; `sed -n` de strategy_spec, ambiguedades y parametros; `grep -n "ninguno_de" …` (rama y main) y `grep -n "activacion_sin_ruptura"`
+24. `grep -rl` de los dos registros de feedback y del item de evidencia; Read de los tres
+25. `uv run botsito corpus transcript show --video v6 --t0 1:23:50 --t1 1:24:10`
+26. Grep de fechas reservadas en el informe, el ADR y los anexos (un primer intento con `for` lo negó la guardia), y de 2025, 2026-10 a 12 y julio 18-31
+27. `tail` de reentradas_antes/despues, `cat patrones.txt`, `grep -c detenido_por_cartuchos:si`, `wc -l` de los anexos
+28. `sha256sum` de antes-diaria, de la diaria de MARGEN-LOTE y de la diaria de la fase 4
+29. `wc -l` y `diff … | grep -c "^>"`; `diff … | grep -E "^[0-9]"`; `grep -n "### Ordenes"`; `sed -n '1541,2044p' … | cut -d'|' -f1-15 | sha256sum` frente al de MARGEN-LOTE
+30. `git diff main...HEAD | grep -nE "curl|api.github|…"`; `grep -rnE "curl|subprocess|urllib|requests"` en los anexos
+31. `gh run view 39186492700 --json status,conclusion,headSha,headBranch,name`
+32. `git diff main...HEAD -- PROJECT_STATE.md; wc -c PROJECT_STATE.md; git show main:PROJECT_STATE.md | wc -c`
+33. `git diff main...HEAD -- docs/state/HISTORIA.md | grep "^+" | head`
+34. `uv run pytest tests/unit/test_historia.py tests/unit/test_project_state.py tests/unit/test_hoja_de_ruta.py tests/unit/test_contrato_rama.py -p no:cacheprovider`
+35. Grep de «punto por punto» en `.claude/skills`
+36. Grep de «RECUADRO DE CORRECCIÓN (2026-10-18» en VISOR-CONSTRUCCION.md
+37. `grep -c` de las anclas de simular_cierre.py en PROJECT_STATE.md y HOJA-DE-RUTA.md (dos llamadas)
+38. `grep -n "2026-04-29 | 07-11 | o"` en la diaria de la fase 4
+39. `git diff main...HEAD -- tests/unit/test_orden_stop_pivote.py tests/unit/test_vida_de_la_orden.py`
+40. `ls docs/validation/anexos/MARGEN-LOTE/; grep -rn "mismo lado\|^total" …/MARGEN-LOTE/*.txt`
+41. `git branch --list && ls .git/worktrees` (antes, `git worktree list` lo bloqueó solo_lectura)
+42. `ls -l --time-style=full-iso` de los anexos, de HOLDOUT-EXPOSICIONES.md y de make-check.log
+43. Grep de «ni con orden viva», «mientras la» y de las líneas del ADR para a1 y a2; grep de `broker:` y `RECHAZADA` en primitivas_broker, cableado y broker
+
+### 9.2 Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado.** La descripción de `toca_colocar_orden_limite` dice ahora «que la sesion no tenga gastado, ni con orden viva, ni con esa misma caja ya cancelada (una caja cancelada no vuelve; otra caja del mismo punto si)»; el docstring del módulo de `zonas.py` y el de `marcar_usada` dicen lo mismo; el comentario de `test_orden_stop_pivote.py:190` dice «su orden viva, o cancelada». `spec manifest --escribir` (hash `94d004a7…`) y `spec docs --escribir` en este commit, con `Fuente: ADR-0083`; `spec_version` 18.1.2 → 18.1.3 (`knowledge validate` lo exige con cada cambio del hash). ADR-0083 §1 («lo que no cambia») y §1.b del informe ya lo decían bien |
+| a2 | importa | **Arreglado.** ADR-0083 §6 dice que no mueve P7 (3 antes y después, medido en §4.d) y añade a P5 las reentradas con la misma caja; su Impacto dice que el límite de la zona reutilizada en un escenario nuevo NO se midió y va a Technical Debt. §4.f y §6 lo llevan como tercera línea de deuda (`simular_cierre.py` la lleva: a, b y c vacíos, 22.546 bytes) |
+| a3 | importa | **Arreglado.** ADR-0083 §6 y §1.i citan v6 1:23:45-1:24:07 tal como lo da la capa corregida (con las marcas y sin recomponer «al mismo / mismo nivel» ni «otro otra»), y declaran la lectura: dos salidas tras un equal perdido, el siguiente nivel o el mismo; D1 toma que la reentrada en el mismo nivel es una de las dos, no la única |
+| a4 | importa | **Arreglado.** «diez recuadros» en §3.c y §7; el mensaje del commit 56bbf91 dice «once» y no se reescribe (se declara) |
+| a5 | menor | **Arreglado.** §4.e: o1 reubicada a o2 con el 1 nuevo (el mismo punto); o3 en OTRO punto |
+| a6 | menor | **Arreglado.** Línea en blanco tras los dos recuadros que van dentro de una lista (el cuerpo sigue intacto: solo se añade una línea vacía) |
+| b1 | importa | **Arreglado.** Los recuadros de §2.h, §3.3 y la línea Y de §4.1 dicen las tres cosas del encargo §3 (la E se rehace en ADR-0083; volver al punto tras un stop no es el error, el error es no volver con la misma caja y no gastar el punto con el rechazo al llenar; y lo aceptó el consultor sin buscar en el material del trader). Declarado en §3.c |
+| b2 | menor | **Arreglado.** §7 es ahora la tabla de 41 requisitos numerados con Hecho / Parcial / No hecho / Hecho de otra forma |
+| b3 | menor | **Arreglado.** El docstring del test y la fila de §3.a dicen que en `main` o2 sí existe (la otra caja en Z+9, sin reubicación: colocar o1, colocar o2, cancelar o2 por RN-035) y que lo que falta es la o2 de Z+7 con la misma caja y la reubicación a o3 |
+
+Lo que no pudo comprobar, contestado: (1) los 6 FAILED en el clon de `main`: el log de pytest está en
+la carpeta de trabajo de la sesión y el clon se retiró como pide `comparar-con-main`; la causa de
+cada rojo la razonó él sobre `git show main:…` y coincide con §3.a (b3 corrige la descripción de
+uno). (2) Las dos repeticiones fuera del repo: las copias no se commitean por regla; los sha256 de
+las salidas commiteadas son los que dice el informe, y los de las copias coinciden (§2.b y §4.f).
+(3) La fila de la fase 1: se escribió con un Edit en la misma respuesta de la sesión que lanzó la
+corrida, justo antes del comando; la hora de modificación del fichero es la de la fila de la fase
+4, posterior. (4) Los dos guiones de la carpeta de trabajo (`comparar_sin_campo.py` y el recuento de
+`casos_reservados`) no se commitean: el primero lo reprodujo él con otro método (fila 27) y el
+segundo solo imprime recuentos por mes. (5) `knowledge validate`, `spec docs` y `make check` quedan
+en `make-check.log` de este último commit; `simular_cierre.py` escribe en un temporal.
+
 ## Estado
 
-EN CURSO. Fases 0 a 4 hechas (§1 a §4); líneas del cierre simuladas (§6); falta el revisor (§9).
+LISTA PARA REVISIÓN, NO CERRADA (2026-10-18, por el reloj de la máquina; 2026-10-19 en UTC). Fases 0
+a 4 hechas (§1 a §4): ADR-0083 enmienda la decisión 1 de ADR-0064, el código lo cumple con 13 tests
+por el cableado real (6 rompen en `main`: 4 por D1 y 2 del campo), la corrida de R3.1 repetida con
+sus tres comandos (§4); lo que cambia para V (§5) y las líneas del cierre, simuladas (§6); el
+revisor, con 0 «bloquea», 5 «importa» y 4 «menor», todos arreglados (§9); sin CI de Linux porque la
+rama no toca la plataforma (§8). El cierre en `main` solo con la orden de Aleks.
+
+Rama lista para revisión, NO cerrada.

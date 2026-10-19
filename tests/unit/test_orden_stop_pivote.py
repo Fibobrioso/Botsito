@@ -187,8 +187,9 @@ def test_el_productor_liga_una_zona_por_punto_y_no_repite_un_punto_usado(tmp_pat
     assert isinstance(r, Resultado) and r.valor is Tri.SI
     z1 = zonas.zonas_del_dia(estado)[r.ligaduras["Z"]]
     assert z1.lado == VENTA and z1.extremo > z1.entrada and z1.por == "primer_esquema"
-    # idempotente en el mismo instante; y usada -su orden viva-, no se vuelve a colocar mientras
-    # nadie la libere (ADR-0083: la libera el cableado al cerrarse la operacion sin ganar)
+    # idempotente en el mismo instante; y usada -su orden viva, o cancelada-, no se vuelve a
+    # colocar mientras nadie la libere (ADR-0083: solo la libera el cableado al cerrarse la
+    # operacion sin ganar)
     assert toca(args, _momento(datos, 4), estado) == r
     zonas.marcar_usada(estado, "07-11", z1.id)
     assert toca(args, _momento(datos, 5), estado) == Resultado(Tri.NO)
