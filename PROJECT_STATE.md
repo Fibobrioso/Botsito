@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/punto-usado
 
 ## Current Feature
-Ninguna rama abierta. trabajo/plataforma-adelantada cerrada en main el 2026-10-18 (stable/F37u-plataforma-adelantada): ADR-0082 y el tramo R6a. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/punto-usado EN CURSO (abierta el 2026-10-18 desde main f96b581; Y de la Next Action, R3.4): qué gasta un punto (un ADR nuevo enmienda la decisión 1 de ADR-0064), con sus tests que rompen en main y la corrida de R3.1 repetida. Encargo: docs/encargos/trabajo-punto-usado.md. Informe: docs/validation/PUNTO-USADO.md.
 
 ## Stable Main State
 3ae2933 · merge de `trabajo/plataforma-adelantada` (tag `stable/F37u-plataforma-adelantada`): ADR-0082, la capa de MT5 que nunca decide una operación va antes de F26, en el EA de MQL5 (enmienda MASTER_PLAN §0, la regla de PROJECT_STATE, ADR-0067 §1 y ADR-0068 §4); el tramo R6a de la hoja de ruta; PROJECT_STATE adelgazado; solo documentos. Sobre `stable/F37t-visor-construccion` (7d3783d). Informe docs/validation/PLATAFORMA-ADELANTADA.md; el registro del cierre, al final de HISTORIA.
@@ -174,8 +174,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 37 (2026-10-18).
+— ninguna desde el Archivo 38 (2026-10-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 37 (2026-10-18).
+— ninguna desde el Archivo 38 (2026-10-18).

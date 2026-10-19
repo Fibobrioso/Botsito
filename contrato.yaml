@@ -1,0 +1,72 @@
+rama: trabajo/punto-usado
+riesgo: alto  # cambia el motor (que gasta un punto: zonas.py, cableado.py, primitivas_broker.py) y la spec (la descripcion de toca_colocar_orden_limite, spec_version); ADR-0083 enmienda la decision 1 de ADR-0064; lee el M1 de meses reservados para calentar el arnes (declarado el mismo dia); ninguna cifra ni regla fuera de D1-D3 cambia
+artefacto: docs/validation/PUNTO-USADO.md
+tramo: R3
+rutas_permitidas:
+  - docs/validation/PUNTO-USADO.md
+  - docs/validation/anexos/PUNTO-USADO/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  # recuadros de correccion junto a lo que da la E por buena (encargo §3); el cuerpo queda intacto
+  - docs/validation/VISOR-CONSTRUCCION.md
+  # el ADR nuevo (D2), la decision 1 de ADR-0064 con su recuadro, la nota de ADR-0074 §4 y el indice
+  - docs/adr/0083-*.md
+  - docs/adr/0064-*.md
+  - docs/adr/0074-*.md
+  - docs/adr/README.md
+  - docs/spec/
+  - knowledge/spec/
+  # el motor: usadas y marcar_usada (zonas.py), _a_la_cuenta y «### Ordenes» (cableado.py), marcar_rechazada y _punto_nuevo (primitivas_broker.py); broker.py y arnes.py solo si la via de la fase 0 lo pide
+  - src/botsito/engine/zonas.py
+  - src/botsito/engine/cableado.py
+  - src/botsito/engine/primitivas_broker.py
+  - src/botsito/engine/broker.py
+  - src/botsito/engine/arnes.py
+  - tests/unit/test_*.py
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - scripts/
+  - docs/plan/
+  - docs/validation/CORRIDA-CONSTRUCCION.md
+  - docs/validation/MARGEN-LOTE.md
+  - docs/validation/SESGO-H4-COLOR.md
+  - docs/validation/LA-CAJA-DEL-29-DE-ABRIL.md
+  - docs/validation/anexos/CORRIDA-CONSTRUCCION/
+  - docs/validation/anexos/MARGEN-LOTE/
+  - docs/validation/anexos/VISOR-CONSTRUCCION/
+  - docs/validation/anexos/SESGO-H4-COLOR/
+  - docs/adr/0000-template.md
+  - docs/adr/0066-*.md
+  - docs/adr/0081-*.md
+  - docs/adr/0082-*.md
+  - src/botsito/domain/
+  - src/botsito/cli.py
+  - src/botsito/engine/freno.py
+  - src/botsito/engine/motor.py
+  - src/botsito/engine/primitivas.py
+  - src/botsito/engine/diagnostico.py
+  - src/botsito/engine/visor.py
+  - src/botsito/engine/cuenta.py
+  - src/botsito/engine/simulacion.py
+  - src/botsito/cases/
+  - tools/mql5/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - knowledge/cuentas/
+  - knowledge/simulador/
+  - knowledge/spec/parametros.yaml
+  - config/
+  - data/manifests/
+  - tests/golden/
+comprobaciones:
+  - uv run python scripts/contrato_rama.py
+  - uv run pytest tests/unit/test_punto_usado.py tests/unit/test_orden_stop_pivote.py tests/unit/test_escenarios_por_sesion.py tests/unit/test_margen_lote.py tests/unit/test_cableado.py -q
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito spec docs --escribir
+  - make check > make-check.log 2>&1
