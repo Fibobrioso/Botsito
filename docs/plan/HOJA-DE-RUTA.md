@@ -196,7 +196,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:J · NA:V · ID:RN-004 · ID:RN-020 ·
+  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:V · ID:RN-004 · ID:RN-020 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** RN-004 tras A-35 y RN-020 tras A-44, con su medida (`docs/runbooks/ACTIVAR-A35-A44.md`
   §5.1); las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
@@ -209,8 +209,11 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo y la
   contradicción con la sesión 1; R1.2); A-57 (el lote que no cabe, MARGEN-LOTE.md §5); y las
   preguntas de VISOR-CONSTRUCCION.md §3.2 (las dos nuevas y los días que ganan la 5, la 8 y la
-  9; R3.2). La hoja
-  Word necesita antes que `kit hoja` funcione con un paquete nuevo (NA:J).
+  9; R3.2); y lo que V añade: las «en parte» de ACTIVAR-SESION-04.md §0.e, las líneas de
+  ACTIVAR-SESION-04-MOTOR.md §6, si el xlsx de julio es la exportación de v11 a v13
+  (ENTRADA-JULIO.md §8) y la pregunta 3 con el ejemplo del 29 de abril y la caja de la
+  reentrada (PUNTO-USADO.md §5). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md
+  (trabajo/barrido-sesion-5).
 - **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (HECHA), R3.3 (HECHA), R3.4 (HECHA) y
   la copia de
   seguridad del carril de Aleks.
@@ -432,7 +435,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ### G.2 · Pendientes del consultor y del kit
 - **Refs:** NA:L · NA:J · NA:N · HER:6 · HER:7 · HER:8 · HER:9
 - **Qué es:** la revisión de `ev-v7-001550-82e5cffc` (L); `kit hoja` roto para un paquete nuevo
-  (J, antes de R4); el calendario de cierres por condición (N); y, del Next Action viejo: febrero no
+  (J, antes de la próxima sesión que etiquete días); el calendario de cierres por condición (N); y, del Next Action viejo: febrero no
   se toca (6), junio y la guardia (7), el brief de los `dev` de septiembre (8) y re-descargar un mes
   rompe `kit build` (9). Y, desde `trabajo/activar-sesion-04`: `--diagnostico-a47` (A-47 RESUELTA)
   y `--diagnostico-a27` (A-27 DECIDIDA) siguen en la CLI sin deuda que los recoja (`--diagnostico-a21`
@@ -441,14 +444,21 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   `pytest-xdist` (G.4) necesita la RAM de la máquina, que dará Aleks. Y, desde
   `trabajo/activar-sesion-04-motor` (ACTIVAR-SESION-04-MOTOR.md §6): el token `ambiguo` del sesgo
   sin productor (ADR-0075); `feedback pending` no admite dos CORRECT vivos sobre una regla (RN-003
-  cita el de S-13 y el de la sesión 3, y el segundo sale pendiente); el recuadro que le falta a
+  cita `fb-2026-10-04-sesion-04-6e7da456` desde ADR-0080, y salen pendientes los dos
+  CORRECT anteriores, `fb-2026-09-29-sesion-03-31fb311f` y `fb-2026-10-04-sesion-04-ca0afae6`,
+  BARRIDO-SESION-5.md §1.f); el recuadro que le falta a
   ADR-0044 §1 («doble ruptura = AMBIGUO», enmendado por ADR-0060 §1 y ADR-0075) y su fila del
   índice; y el anexo `docs/validation/anexos/ESCENARIOS-POR-SESION/dia_del_bot.py`, que no corre
   con el código de hoy (`Diagnostico` por posición): no se edita, se reproduce con el código de su
   commit. Y, desde `trabajo/corrida-construccion` (CORRIDA-CONSTRUCCION.md §1.c): que
   `arnes.dias_de_mercado` imprima una línea `LECTURA:` por recuento de los días reservados cuyas
   velas lee para calentar, como `kit check` (ADR-0033 §4); hoy lo cubre HOLDOUT-EXPOSICIONES.
-- **Depende de:** nada (J, antes de R4.1).
+  Y, desde `trabajo/barrido-sesion-5` (BARRIDO-SESION-5.md §1.d y §4): `scripts/hoja_preguntas.py`
+  sigue con el encabezado y la regla 2 de la sesión 2, lleva A-24 (DECIDIDA) en su orden, no
+  lleva A-50, A-53 ni A-57 y no puede llevar la B de VISOR-CONSTRUCCION.md §3.2 (toca A-46,
+  RESUELTA); y el paso 6 de «Antes» de `docs/runbooks/SESION-DE-PREGUNTAS.md` dice todavía «abril
+  o agosto», que su regla 2 amplió a julio del 1 al 17 y a enero del 2 al 30.
+- **Depende de:** nada (J, antes de la próxima sesión que etiquete días).
 - **Quién:** el consultor (L, 6 y la decisión de 7 y 8); la sesión, en ramas propias.
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.
 

@@ -10885,3 +10885,55 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 38 (2026-10-18).
+
+# Registro de cierre · `trabajo/barrido-sesion-5` (2026-10-19)
+
+- Orden de cierre de Aleks del 2026-10-19, tras la revisión del consultor, pegada en la conversación
+  y ejecutada siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con
+  `/cerrar-rama`. Su punto 1 (S-4 recoge la unidad y la base del tope del día, decisión sobre b10)
+  se hizo antes, en la rama (25d3a0d). Rama aceptada por el consultor tras la PARADA de la fase 0 y
+  una pasada del revisor (opus; BARRIDO-SESION-5.md §7). Nunca se cerró sin la orden. La orden,
+  tal cual:
+
+  > Orden de cierre de trabajo/barrido-sesion-5 (consultor, 2026-10-19). Antes de cerrar, un commit en la rama y después espera a que escriba /cerrar-rama.
+  >
+  > 1. Commit previo (make check sellado, con su PICO DE MEMORIA en el mensaje): en docs/sesion-5/PREGUNTAS.md, S-4, «Para confirmar al final» pasa a: «Paro el día al perder un ___ % del saldo con el que empiezo el día, paro tras 9 pérdidas seguidas, y a la semana ______». En su línea «Para Aleks», la frase que acaba en «si no, A-44 no se podrá activar con S-4 sola» se sustituye por: «La confirmación final recoge en su voz la unidad (porcentaje) y la base (el saldo con el que empieza el día) de perdida_trader_magnitud y perdida_trader_unidad: decisión del consultor del 2026-10-19 sobre b10, porque bff260ea es un CORRECT sobre perdida_maxima_diaria y no basta como fuente.» Añade esa decisión, con su fecha, al final del §7.1 del informe.
+  >
+  > 2. Tag: stable/F37w-barrido-sesion-5.
+  >
+  > 3. Commit del contrato: las líneas del §4 del informe tal cual (F, V, R4.1 Qué es y Refs, G.2 con J, G.2 con los dos pendientes de RN-003, y la línea del script y del runbook), sin ninguna más.
+  >
+  > 4. Hallazgos del consultor para la fila de ERRORES-RECURRENTES:
+  >    - menor (la rama): S-4 dejaba sin pedir la unidad y la base que A-44 necesita para activarse; el revisor lo vio (b10), pero lo dejó en una decisión pendiente en lugar de en la hoja. Lección para el revisor: cuando una pregunta tiene que dar varios parámetros para activar una regla, se comprueba que la pregunta o su confirmación final los recogen todos.
+  >    - Errores del consultor en el encargo, encontrados por auditor-encargo: escribí «el CORRECT de RN-003 sale pendiente» sin medir feedback pending (eran dos), y mandé citar las sesiones 2 a 4 con kb sin medir que la guardia lo niega sobre v7-v10. Lección: lo que el encargo afirma de la salida de un comando se mide antes, o se escribe como «verifica que…» (regla de oro 1 del consultor).
+  >
+  > 5. Informe final: sha de main, el tag, el run de la CI de main en verde, las ramas que quedan (solo main) y el tamaño de PROJECT_STATE.
+
+- **Lo que entra** (tramo R4, R4.1 de la hoja de ruta; V de la Next Action):
+  - `docs/sesion-5/PREGUNTAS.md`: las 25 preguntas de la sesión 5 con el trader, en cuatro bloques
+    por impacto, cada una con lo que ya dijo (citas registradas con su id), lo que falta, la
+    pregunta cerrada, «Para precisar» y «Para confirmar al final»; esquemas inventados, ningún
+    gráfico de un día real; «Para cerrar» (diciembre, agosto y marzo) y lo que va fuera de la
+    hoja. La hoja de la sesión 5 es el PDF del consultor hecho con este documento;
+  - el informe `docs/validation/BARRIDO-SESION-5.md` (inventario de 47 filas, la PARADA y su
+    respuesta, la clave de días de Aleks, el revisor) y la fila del 2026-10-19 en
+    HOLDOUT-EXPOSICIONES.
+- En este commit (las líneas del §4 del informe, tal cual): F pasa a «V. Las ramas de R6a…»; V deja
+  de depender de J y gana «Hoja de preguntas: docs/sesion-5/PREGUNTAS.md». En la hoja de ruta, R4.1
+  pierde la frase de `kit hoja` y `NA:J` de sus Refs y gana lo que V tenía y ella no; en G.2, J pasa
+  a «antes de la próxima sesión que etiquete días», los pendientes de RN-003 son dos con sus ids, y
+  entran la línea de `scripts/hoja_preguntas.py` y la del paso 6 de SESION-DE-PREGUNTAS.md.
+- Letras: ninguna sale ni entra; cambian F y V. J sigue viva (G.2, NA:J).
+- Letra del tag: la última cerrada era la v de F37 (`stable/F37v-punto-usado`); `stable/F37w-*` no
+  existe en local (comprobado antes del merge; en origin, antes del tag).
+- Tag: `stable/F37w-barrido-sesion-5`. El merge es
+  `git rev-parse "stable/F37w-barrido-sesion-5^{commit}"`.
+- Commits de la rama: `a70ea6e` (apertura), `758552d` (fase 0 y PARADA), `7300474` (PREGUNTAS.md
+  y la respuesta aplicada), `5f2ed49` (el revisor y sus arreglos), `25d3a0d` (punto 1 de la orden:
+  S-4 y b10) y el de este registro.
+- CI de rama: ninguna: la rama no se empujó como `fix/` (no toca hooks, rutas ni el sistema de
+  archivos; BARRIDO-SESION-5.md §6). La CI de `main` corre tras el push.
+- Exposiciones: la fila del 2026-10-19 de HOLDOUT-EXPOSICIONES (un `kb find` sin `--video`, ítems de
+  evidencia y feedback, diez días de construcción con `casos_ocultos`; ninguna lectura de material
+  reservado).
+- Informe: `docs/validation/BARRIDO-SESION-5.md`. Encargo: `docs/encargos/trabajo-barrido-sesion-5.md`.
