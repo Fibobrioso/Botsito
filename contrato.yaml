@@ -1,0 +1,29 @@
+rama: trabajo/barrido-sesion-5
+riesgo: bajo  # solo documentos: el barrido de preguntas de la sesion 5 (docs/sesion-5/PREGUNTAS.md) y su informe; no cambia motor, spec, ambiguedades, feedback, cases ni holdout; scripts/hoja_preguntas.py solo si la respuesta a la PARADA lo decide, y entonces se amplia en su commit
+artefacto: docs/validation/BARRIDO-SESION-5.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/BARRIDO-SESION-5.md
+  - docs/sesion-5/PREGUNTAS.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - scripts/
+  - src/
+  - tests/
+  - config/
+  - data/manifests/
+  - docs/plan/
+  - docs/adr/
+  - docs/runbooks/
+  - docs/spec/
+  - docs/sesion-4/
+  - knowledge/
+  - tools/mql5/
+comprobaciones:
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
