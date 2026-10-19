@@ -187,8 +187,9 @@ def comprobar_negativa(src_ea: str, src_includes: str, src_medir: str) -> None:
     )
     bloques = bloques_de_la_negativa(src_ea + "\n" + src_includes)
     assert len(bloques) == 2, f"{len(bloques)} llamadas a la negativa: tienen que ser dos"
-    assert bloques[0] == primera
-    assert "ExpertRemove();" in bloques[1], "la segunda llamada no hace ExpertRemove()"
+    assert primera in bloques
+    otra = bloques[1] if bloques[0] == primera else bloques[0]
+    assert "ExpertRemove();" in otra, "la segunda llamada no hace ExpertRemove()"
 
 
 def cifras_y_nombres(src: str) -> list[str]:
@@ -337,3 +338,60 @@ def test_cifras_y_nombres_en_los_dos_sentidos() -> None:
         assert cifras_y_nombres(malo), malo
     for bueno in ("// EURUSD y 0.8 en un comentario", 'string v = "1.0";', "int n = 32;"):
         assert cifras_y_nombres(bueno) == [], bueno
+
+
+def test_la_segunda_llamada_puede_ir_antes_en_el_fichero() -> None:
+    oninit, resto = EA_BUENO.split("void AlConectar()")
+    comprobar_negativa("void AlConectar()" + resto + oninit, INCLUDE_BUENO, MEDIR_EJEMPLO)
+
+
+# --- la capa de verdad ---------------------------------------------------------------------------
+
+EA = "mql5/Experts/Botsito.mq5"
+LA_CAPA = {
+    EA,
+    "mql5/Include/Botsito/Capa/Cuenta.mqh",
+    "mql5/Include/Botsito/Capa/Journal.mqh",
+    "mql5/Include/Botsito/Capa/Reloj.mqh",
+    "mql5/Include/Botsito/Capa/Sesiones.mqh",
+    "mql5/Scripts/BotsitoPruebasCapa.mq5",
+}
+
+
+def _capa() -> dict[str, str]:
+    ficheros = sorted(
+        p
+        for c in CARPETAS_DE_LA_CAPA
+        for p in (RAIZ / c).rglob("*")
+        if p.suffix.lower() in (".mq5", ".mqh")
+    )
+    return {p.relative_to(RAIZ).as_posix(): p.read_bytes().decode("utf-8") for p in ficheros}
+
+
+def test_la_capa_son_los_ficheros_de_r6a1() -> None:
+    """Si aparece otro fichero, este test lo nombra: las comprobaciones de abajo lo cubren igual,
+    pero la lista se amplia a mano, para que nadie anada capa sin mirarla."""
+    assert set(_capa()) == LA_CAPA
+
+
+def test_la_capa_no_llama_a_ninguna_funcion_de_trading() -> None:
+    for nombre, texto in _capa().items():
+        assert llamadas_de_trading(texto) == [], nombre
+
+
+def test_la_negativa_de_la_capa_es_la_de_medir_y_va_lo_primero() -> None:
+    capa = _capa()
+    includes = "\n".join(t for n, t in capa.items() if n.startswith("mql5/Include/"))
+    comprobar_negativa(capa[EA], includes, MEDIR.read_text(encoding="utf-8"))
+
+
+def test_la_capa_no_lleva_cifras_ni_nombres_a_mano() -> None:
+    for nombre, texto in _capa().items():
+        assert cifras_y_nombres(texto) == [], nombre
+
+
+def test_la_capa_es_utf8_sin_bom_y_lf() -> None:
+    """MetaEditor lee UTF-8 sin BOM (medido, EA-CONEXION.md §0.a)."""
+    for nombre in LA_CAPA:
+        b = (RAIZ / nombre).read_bytes()
+        assert not b.startswith(b"\xef\xbb\xbf") and b"\r" not in b, nombre

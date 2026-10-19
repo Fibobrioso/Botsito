@@ -623,6 +623,163 @@ la propia guardia la que da la vía, y el uso documentado es por ruta
 (`uv run python src/botsito/mql5bridge/journal.py`), que vale igual para Aleks. Y los comandos
 encadenados con `&&` delante de un `uv run` se niegan (ya conocido): van en llamadas separadas.
 
+## 6. Fase 2 · el EA, el script de pruebas, el formato y el procedimiento (2026-10-19)
+
+**La capa** (los nombres de §0.f, respuesta punto 2):
+
+| fichero | qué |
+|---|---|
+| `mql5/Experts/Botsito.mq5` | el EA. `OnInit`: lo primero, `if(NegarFueraDeDemo(AccountInfoInteger(ACCOUNT_TRADE_MODE)))` → `return(INIT_FAILED)`; después abre el journal, escribe `arranque`, pone el latido (`EventSetTimer(LATIDO_SEG)`) y llama a `AlConectar`. `AlConectar` (desde `OnInit`, `OnTimer` y `OnTick`, una vez por arranque y solo con `TERMINAL_CONNECTED`): `cuenta`, la negativa otra vez con el modo leído conectado (si no es DEMO, `negativa` y `ExpertRemove()`), `reloj` y `sesiones`. `OnTimer`: `cambio_de_dia` y `sesiones` si cambia el día del servidor, y el `latido`. `OnDeinit`: `fin` con el motivo. |
+| `mql5/Include/Botsito/Capa/Journal.mqh` | el escritor: JSON canónico (el escape de `json.dumps(…, ensure_ascii=False)`), bytes UTF-8 con `FILE_BIN`, SHA-256 con `CryptEncode`, un fichero por día del servidor, `FileFlush` por línea, y `JournalAbrir`, que sigue la cadena del journal más reciente o la da por `rota`. Si la negativa de `OnInit` corta, el journal no se abre: no se escribe nada fuera de DEMO. |
+| `mql5/Include/Botsito/Capa/Cuenta.mqh` | `NegarFueraDeDemo(const long modo)`, con la condición de `MedirDemoFTMO.mq5:759`, y la lectura de la cuenta (nombres de enum y servidor; ni login ni dinero). |
+| `mql5/Include/Botsito/Capa/Reloj.mqh` | las lecturas de `MedirReloj` más `TimeGMTOffset`, `CambioDeDia(antes, ahora)` (pura, para inyectar fechas) y los textos de `OnDeinit`. |
+| `mql5/Include/Botsito/Capa/Sesiones.mqh` | `SymbolInfoSessionTrade` y `SymbolInfoSessionQuote` por día e índice hasta `false`, con `TOPE_SESIONES`. |
+| `mql5/Scripts/BotsitoPruebasCapa.mq5` | las pruebas dinámicas de D4 (2). |
+| `src/botsito/mql5bridge/compilar.py` | la ruta del punto 2: `compilar` (exporta `mql5/` del índice a una carpeta temporal, `/include`, la puerta por `Result: 0 errors` y el `.ex5`, el log a los anexos en UTF-8 y LF con el sha256 del original, `--instalar` del `.ex5` y `--sustituir` para romper a propósito en la copia) y `pruebas` (`terminal64.exe /config`, recoge `resultado.txt` y los journals, los compara con el golden y los valida). Las rutas, por argumento. |
+| `docs/runbooks/DEMO-FTMO.md` | la sección nueva «El EA de conexión (R6a.1)» (punto 5). |
+
+Los README de `mql5/`, `Experts/`, `Include/Botsito/`, `Scripts/` y `tests/golden/` y el docstring de
+`mql5bridge` dicen qué pone R6a ahí.
+
+**La guardia** dejó ejecutar `compilar.py` por su ruta, y desde él MetaEditor y el terminal: no hubo
+PARADA. Lo que se vio de ella está en §5.
+
+**Compilación** (`uv run python src/botsito/mql5bridge/compilar.py compilar --repo . --metaeditor
+"C:/Program Files/MetaTrader 5/MetaEditor64.exe" --salida docs/validation/anexos/EA-CONEXION/compilacion
+--instalar <carpeta de datos del terminal> mql5/Experts/Botsito.mq5 mql5/Scripts/BotsitoPruebasCapa.mq5`):
+los dos **PASA, 0 errores y 0 avisos**; logs en `anexos/EA-CONEXION/compilacion/`, con el sha256 del
+fuente compilado y del log original en su cabecera. Los `.ex5` quedan instalados en
+`MQL5\Experts\Botsito\Botsito.ex5` y `MQL5\Scripts\Botsito\BotsitoPruebasCapa.ex5` de la carpeta de
+datos del terminal (es lo que usa la corrida del 26).
+
+**Pruebas dinámicas** (`compilar.py pruebas --terminal … --datos … --simbolo EURUSD --golden
+tests/golden/journal --salida docs/validation/anexos/EA-CONEXION/pruebas`): **18 OK, 0 FALLO**
+(`anexos/EA-CONEXION/pruebas/resultado.txt`):
+
+- la negativa: DEMO pasa, CONTEST y REAL se niegan (con el modo como argumento: no hace falta una
+  cuenta real);
+- el cambio de día con fechas inyectadas: 23:59 → 00:00 cambia, el mismo día no, el cambio de año
+  sí, sin día anterior no; y los datos del evento;
+- SHA-256 de `"abc"`, el vacío (falla y da texto vacío) y los escapes del JSON;
+- el escritor: la cadena `continua` (sin journal anterior → `ninguna`; tras el reinicio → `sigue`,
+  con el `seq` en 7; el cambio de día en otro fichero) y la `rota` (carpeta vacía → `ninguna`; última
+  línea sin LF → `rota`; última línea fuera del formato → `rota`, desde `seq` 0);
+- **la prueba cruzada: los tres journals que escribe MQL5 son iguales byte a byte al golden de
+  Python** (y el validador los acepta), al primer intento;
+- sin comparar, la lectura real tras esperar a la conexión: `ACCOUNT_TRADE_MODE_DEMO`,
+  `ACCOUNT_MARGIN_MODE_RETAIL_HEDGING`, servidor `FTMO-Demo`, desfase servidor−GMT **180 min**, y
+  las sesiones de EURUSD (trade y quote) de lunes a viernes `[300,86100]`, sábado y domingo vacías.
+
+El terminal, lanzado con `ShutdownTerminal=1`, devolvió 2 en estas corridas (0 en las de la fase 0):
+no es la puerta; la puerta es la línea `RESUMEN` de `resultado.txt` y la comparación con el golden.
+
+**Roturas a propósito de las pruebas dinámicas** (con `--sustituir` en la copia exportada; el repo no
+se toca; cada salida en `anexos/EA-CONEXION/roturas/`):
+
+| rotura | lo que la caza |
+|---|---|
+| r1: la negativa con `==` | 3 FALLO (las tres de la negativa) |
+| r2: el escritor no escapa `"` | 1 FALLO (escapes), los tres journals distintos del golden, y el validador: «no es JSON» |
+| r3: `UltimaLinea` no exige el LF final | **ninguna**: la extracción de la línea ya la deja fuera de formato. La comprobación es redundante (no hay caso que solo ella cace); se queda como defensa y va a Technical Debt |
+| r3b: `JournalAbrir` no mira si la última línea valida | 2 FALLO (las dos de cadena rota dan `sigue`), el golden de `rota` distinto y el validador lo rechaza |
+| r4: `CambioDeDia` siempre `false` | 2 FALLO (el cambio de día y el de año) |
+| r5: el `prev` no se encadena | los tres journals distintos del golden, y el validador: «cadena nueva sin un arranque con cadena rota» |
+| r6: un `;` de menos en el EA | la puerta: **NO PASA (2 errores)**, salida 1 de `compilar.py` |
+
+Después se recompiló y reinstaló la versión buena y se repitieron las pruebas (18 OK, golden igual).
+
+**Una prueba más, que el encargo no pedía: el EA de verdad en el Strategy Tester** (hasta aquí solo
+se había compilado). `[Tester]` con `Expert=Botsito\Botsito`, EURUSD M1, `Model=1`, del 2026-10-13 al
+2026-10-15 (`anexos/EA-CONEXION/tester-ea/tester_ea.ini`). El EA escribió dos ficheros de journal,
+uno por día del servidor, y el validador de Python los acepta como **una sola cadena de 2886
+líneas**: `arranque`, `cuenta` (DEMO, HEDGING), `reloj`, `sesiones`, 2879 `latido`, `cambio_de_dia`
+como primera línea del segundo fichero (seguido de `sesiones`) y `fin` (`REASON_REMOVE`). El desfase
+es 0 en todas, como midió la fase 0 (en el tester `TimeGMT` es la hora simulada). sha256:
+`a3983a3a…e2e2` (`journal_20261013.jsonl`) y `d54d5265…e2a3` (`journal_20261014.jsonl`), casi 1 MB
+entre los dos: no se commitean; van sus primeras líneas y la última. Lo que esto prueba del EA:
+`OnInit`, `AlConectar` en el arranque, `OnTimer`, el cambio de día con el reloj del tester, la
+rotación de fichero con la cadena entera y `OnDeinit`. Lo que no: la negativa al conectar (la cuenta
+es DEMO) y el desfase.
+
+**Tests de Python nuevos de la fase 2:** `tests/unit/test_compilar_mql5.py` (10: el log de MetaEditor
+con los de la fase 0, los avisos, la puerta, el log del anexo, exportar del índice y nada más,
+sustituir una sola vez, el `.ini`, la comparación con el golden y el `RESUMEN`, cada uno en los dos
+sentidos) y, en `tests/contract/test_capa_mt5.py`, los seis que aplican los comprobadores a la capa
+real (los ficheros de R6a.1, ninguna función de trading, la negativa, sin cifras ni nombres, UTF-8 sin
+BOM y LF, y que la segunda llamada pueda ir antes en el fichero). Roturas a propósito sobre la capa
+real, deshechas después: un `OrderSend` en `Sesiones.mqh` (cazado por
+`test_la_capa_no_llama_a_ninguna_funcion_de_trading`), algo antes de la negativa en `OnInit`
+(`test_la_negativa_de_la_capa_es_la_de_medir_y_va_lo_primero`) y un `double g_lote = 0.01;`
+(`test_la_capa_no_lleva_cifras_ni_nombres_a_mano`). El comprobador de la negativa de la fase 1
+asumía que la llamada de `OnInit` era la primera del fichero; el EA real pone `AlConectar` antes:
+se corrigió para no depender del orden, con su test.
+
+«Tests Currently Passing»: 1620 → 1636.
+
+## 7. Lo que heredan R6a.2 a R6a.7
+
+- **Todas:** compilar con `compilar.py compilar` (nunca dentro del repo ni copiando fuentes al
+  terminal) y probar con `compilar.py pruebas` y un script de pruebas como `BotsitoPruebasCapa.mq5`;
+  la puerta es `Result: 0 errors` y el `.ex5`, no el código de salida. Ampliar la capa obliga a
+  ampliar `LA_CAPA` de `tests/contract/test_capa_mt5.py`, y cualquier función de trading pasa por
+  `LECTURA_PERMITIDA` (o una lista de envío) con decisión del consultor. Los `#define` nuevos, a
+  `DEFINES_PERMITIDOS`. `python -m` no lo ejecuta la guardia: los módulos se lanzan por su ruta.
+- **El tester:** un EA corre allí por línea de órdenes (`[Tester]`; `compilar.py` todavía no tiene
+  esa orden: el `.ini` va a mano, como en `anexos/EA-CONEXION/tester-ea/`); `ACCOUNT_TRADE_MODE` es
+  DEMO con la cuenta de prueba; `SymbolInfoSessionTrade` responde; `OnTimer` funciona; FTMO-Demo da
+  ticks reales de EURUSD; **el reloj no se puede probar** (`TimeGMT` = hora simulada, desfase 0). Los
+  ficheros del EA van a la carpeta del agente (`Tester\…\Agent-127.0.0.1-3000\MQL5\Files`).
+- **R6a.2:** el campo `capa_hash` está reservado a `null` en v1: llenarlo es la versión 2 del formato
+  (con el validador). Si se decide, también `LATIDO_SEG` y `TOPE_SESIONES`.
+- **R6a.3:** hereda la doble negativa (lo primero de `OnInit` y otra vez al conectar: antes de
+  conectar, las propiedades enteras de la cuenta se leen 0 sin error, y 0 es DEMO) y el journal que
+  sigue la cadena tras un reinicio (la base del «reinicio a media jornada»); es la primera rama que
+  necesitará funciones de trading, con su decisión.
+- **R6a.4:** el `OnTimer` del latido ya existe; el freno portado se prueba en el script de pruebas
+  con los casos de sus tests de Python.
+- **R6a.5:** las sesiones leídas en la demo de FTMO (EURUSD, 2026-10-19): `trade` y `quote` iguales,
+  lunes a viernes una sola, `[300, 86100]` (00:05 a 23:55), sábado y domingo ninguna; fin de la lista
+  con el error 4307. Son una **plantilla semanal en el reloj del servidor**, sin fecha («in the
+  returned value date should be ignored»): para pasarlas a instantes (`cierres_desde_sesiones` recibe
+  instantes) hace falta una semana concreta y el desfase del servidor (A-28). `quote` se registra sin
+  usarlo: R6a.5 decide si sirve.
+- **R6a.6:** el modo de margen se lee y se registra (HEDGING en la demo conectada; NETTING es el 0
+  de antes de conectar).
+- **R6a.7:** antes de comparar `ACCOUNT_MARGIN_MODE`, el parámetro con su fuente (la respuesta de
+  FTMO, A.2); el desfase lo trae cada línea (`desfase_s`), con `gmt` del reloj del ordenador.
+
+## 8. Líneas preparadas para el commit del contrato de la orden de cierre
+
+Simuladas en memoria con `anexos/EA-CONEXION/simular_cierre.py` (como el de VISOR-CONSTRUCCION):
+`test_hoja_de_ruta.py` a, b y c sin problemas y los cuatro de `test_project_state.py` pasan;
+**PROJECT_STATE quedaría en 23.355 bytes** (hoy 22.596; tope 25.000). El simulador lleva el texto
+exacto; aquí, lo que dice:
+
+- **Hoja de ruta, R6a.1:** **HECHA**, con su línea de Estado (`trabajo/ea-conexion`,
+  `stable/F37x-ea-conexion`); su «Qué es» dice que `ACCOUNT_MARGIN_MODE` se lee y se registra al
+  arrancar, sin abortar, y que lo compara R6a.7 (ADR-0082 §10, recuadro del 2026-10-19); su «Quién»
+  cambia: la sesión compila y ejecuta las pruebas en la máquina de Aleks, y Aleks pone el EA en la
+  demo; su «Hecho cuando» dice que la negativa fuera de DEMO la prueban las pruebas estáticas de la CI
+  y las dinámicas del script de pruebas. **Y pierde su `NA:N`** (referencias y texto): el simulador lo
+  pidió, porque una entrada HECHA no nombra una letra viva y N sigue viva.
+- **Hoja, R6a.2:** si se decide, también `LATIDO_SEG` y `TOPE_SESIONES` generados.
+- **Hoja, R6a.7:** antes de comparar `ACCOUNT_MARGIN_MODE`, el parámetro del modo de margen se crea con
+  su fuente, la respuesta de FTMO sobre la cuenta Swing (A.2).
+- **Hoja, A.1:** «Aleks ejecuta; los dos CSV los congela una sola rama, tras la ejecución 3, que es la
+  que decide A-28 con los dos (EA-CONEXION.md, D6)».
+- **PROJECT_STATE, N:** «La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1
+  (EA-CONEXION.md, el journal de la demo en sus anexos), y R6a.5 la usa (ADR-0082 D6)».
+- **Technical Debt, tres líneas:** el validador en `mql5bridge`, que `engine` no ve (punto 4); el CRLF
+  del modo texto frente al LF del CSV de la ejecución 1, para la rama que congele los CSV 2 y 3 (punto
+  8, con el texto de §0.c); y la comprobación redundante del LF en `UltimaLinea` (rotura r3).
+- **Sin línea para A.2** (punto 9).
+- **ERRORES-RECURRENTES, la fila de la rama:** el falso positivo de K con la variable `crudo` de un
+  guion de medida del scratchpad (renombrada a `original`); el primer test de la forma canónica, que
+  pasaba por otro motivo (la mutación rompía el `prev` de la siguiente línea: patrón «una
+  comprobación que no puede fallar», arreglado mutando la última línea y exigiendo el motivo); y el
+  comprobador estático que dependía del orden de las funciones en el fichero.
+- **El error del motivo de D2b** es del consultor y va a la orden de cierre (respuesta, punto 0).
+
 ## Estado
 
-EN CURSO: respuesta del consultor aplicada; fase 1 hecha (tests primero). Sigue la fase 2.
+EN CURSO: fases 1 y 2 hechas. La fase 3 espera a la corrida de Aleks en la prueba nueva del 26 de octubre (docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)»), después de la ejecución 2 de MedirDemoFTMO; la rama espera su journal.

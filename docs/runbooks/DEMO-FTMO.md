@@ -138,3 +138,57 @@ de la cuenta no se escribe aquí: el repositorio es público.
   Para el simulador no cambia nada: la estrategia nunca tiene dos posiciones a la vez
   (`docs/validation/DEMO-EJECUCION-1.md` §0.c). Si la cuenta Swing de verdad es también de hedging
   no se supone: es una pregunta para FTMO (la misma sección).
+
+## El EA de conexión (R6a.1)
+
+Una sola corrida, en la **prueba nueva del 26 de octubre** (rama `trabajo/ea-conexion`; ADR-0082).
+Es el primer EA de la capa de MetaTrader que **nunca opera**: no envía, no modifica ni cancela
+ninguna orden, ni cierra ninguna posición. Lee la cuenta, el reloj del servidor y las sesiones de
+EURUSD, y lo apunta todo en un fichero, el *journal* (`mql5/JOURNAL.md`). Si la cuenta no es de
+demo, se niega y no hace nada.
+
+**Cuándo.** **Después de la ejecución 2 de MedirDemoFTMO, nunca a la vez**: primero la ejecución 2
+entera (y su CSV copiado), después esto. Con el mercado abierto (de lunes a viernes), y **hasta
+pasada la medianoche del servidor**, para que el journal recoja el cambio de día. La medianoche del
+servidor cae por la tarde en Lima: el 19 de octubre el servidor iba 3 horas por delante de GMT, y
+eran las 16:00 de Lima; desde el 25 de octubre serán las 16:00 o las 17:00 (justo lo que mide A-28).
+Para ir sobre seguro: ponlo **antes de las 15:30 de Lima y déjalo hasta las 17:15**.
+
+**No hay que copiar ni compilar nada.** La sesión deja el EA compilado en la carpeta de datos del
+terminal: **MQL5 → Experts → Botsito → Botsito.ex5**. En MetaTrader aparece en **Ver → Navegador**,
+**Asesores expertos → Botsito → Botsito**.
+
+**Los pasos:**
+
+1. **La hora de Windows, en hora.** Configuración → Hora e idioma → Fecha y hora → **Sincronizar
+   ahora**. La hora GMT del journal sale del reloj de este ordenador: si no está en hora, el desfase
+   sale mal.
+2. **La cuenta.** MetaTrader abierto con la cuenta de prueba nueva (como en «Una vez»), la conexión
+   en verde abajo a la derecha.
+3. **Un gráfico de EURUSD** (Observación del mercado → clic derecho en **EURUSD → Ventana de
+   gráfico**; el marco temporal da igual).
+4. **Ponerlo.** Arrastra **Botsito** desde el Navegador encima del gráfico y pulsa **Aceptar** sin
+   cambiar nada. El botón **Algo Trading** da igual: el EA no opera. Arriba a la derecha del gráfico
+   aparece el nombre del EA. En la caja de herramientas (**Ctrl+T**), pestaña **Expertos**, no tiene
+   que salir «la cuenta NO es DEMO».
+5. **Dejarlo puesto** hasta pasada la medianoche del servidor (hasta las 17:15 de Lima). No hace falta
+   mirar nada: cada minuto apunta una línea.
+6. **Quitarlo y volver a ponerlo.** Pasada la medianoche: clic derecho en el gráfico → **Asesores
+   expertos → Quitar** (*Expert Advisors → Remove*); y vuelve a ponerlo como en el paso 4. Déjalo **dos minutos** más (dos líneas
+   más) y quítalo otra vez. El journal tiene que seguir su cadena tras el reinicio: es lo que se
+   comprueba.
+7. **Copiar el journal.** **Archivo → Abrir carpeta de datos → MQL5 → Files → Botsito**: copia los
+   ficheros **`journal_AAAAMMDD.jsonl`** (uno por día del servidor; no la subcarpeta `pruebas`) **tal
+   cual, sin abrirlos ni renombrarlos**, a la carpeta **`data/ea_conexion/`** del repositorio (créala
+   la primera vez). Como el CSV, quedan fuera de git.
+8. **Avisar a la sesión.** Ella los valida y los congela en los anexos de la rama (el fichero tal
+   cual y su sha256). Si quieres verlos tú:
+
+       uv run python src/botsito/mql5bridge/journal.py data/ea_conexion/journal_20261026.jsonl data/ea_conexion/journal_20261027.jsonl
+
+   (los ficheros en orden de fecha). Dice «NO VALIDO» y por qué, o el resumen: cuántas líneas, el
+   desfase, la cuenta, las sesiones y el cambio de día.
+
+**Lo que no puede probar esta corrida:** que se niega en una cuenta real. Eso no se ejecuta nunca en
+una cuenta real: está probado con las pruebas estáticas de la CI y con el script de pruebas en este
+terminal (`docs/validation/EA-CONEXION.md`).
