@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/barrido-sesion-5
 
 ## Current Feature
-Ninguna rama abierta. trabajo/punto-usado cerrada en main el 2026-10-19 (stable/F37v-punto-usado): ADR-0083, qué gasta un punto. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/barrido-sesion-5 EN CURSO (abierta el 2026-10-19 desde main e518707; V de la Next Action, R4.1): el barrido de preguntas de la sesión 5 con el trader, en docs/sesion-5/PREGUNTAS.md. Encargo: docs/encargos/trabajo-barrido-sesion-5.md. Informe: docs/validation/BARRIDO-SESION-5.md.
 
 ## Stable Main State
 a1bb8a5 · merge de `trabajo/punto-usado` (tag `stable/F37v-punto-usado`): ADR-0083 enmienda la decisión 1 de ADR-0064 (gasta un punto el rechazo, al colocar o al llenar, y el no envío; el llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar con la misma caja o con otra), PROVISIONAL hasta la pregunta 3 de V; el código (`zonas.liberar_usada`, `cableado._el_punto_tras_el_evento`), «### Ordenes» con el punto y el 1 de la caja, spec 18.1.3, y la corrida de R3.1 repetida. Sobre `stable/F37u-plataforma-adelantada` (3ae2933). Informe docs/validation/PUNTO-USADO.md; el registro del cierre, al final de HISTORIA.
@@ -29,7 +29,7 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. J → V. Las ramas de R6a (ADR-0082) van en los huecos de espera y no le quitan turno ni a J ni a V.
+F. V. Las ramas de R6a (ADR-0082) van en los huecos de espera y no le quitan turno a V.
 
 
 
@@ -51,7 +51,7 @@ H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el um
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1, de J (kit hoja) y de la copia de seguridad (A.4).
+V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5).
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -175,8 +175,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 38 (2026-10-18).
+— ninguna desde el Archivo 39 (2026-10-19).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 38 (2026-10-18).
+— ninguna desde el Archivo 39 (2026-10-19).
