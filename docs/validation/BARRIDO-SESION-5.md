@@ -109,8 +109,8 @@ A-43, A-44, A-48, A-49, A-50, A-53 y A-57 ya están arriba. Las cinco de clase `
 |---|---|---|---|
 | 44 | S-6 (lo mínimo al redondear el stop) | ACTIVAR-SESION-04.md:340-341 | fuera: el consultor la sacó (§5, :833) |
 | 45 | A-21 (punto 11 de §0.e) | ACTIVAR-SESION-04.md:342-347 | fuera: RESUELTA (ADR-0076; MOTOR §5 :922) |
-| 47 | A-24 (qué pivote de M15 marca: el más reciente ya formado) | `scripts/hoja_preguntas.py:55`; `ambiguedades.yaml:528-566` | fuera: DECIDIDA por ADR-0045, no ABIERTA (D1 mira las ABIERTAS); solo pasaría a RESUELTA con un registro del trader, y lo que tiene de pregunta lo cubre la de la zona (S-9) y A-35 (S-3). La hallé por el auditor (su punto 5) |
-| 46 | «Para cerrar» (D6): diciembre con su voz, la exportación de agosto, la confirmación escrita de marzo | PROJECT_STATE.md:42 (I), :52 (Q); REGISTRO-MARZO.md:49-51 | bloque «Para cerrar», sin código. **REGISTRO-MARZO.md §2 pide** la «confirmacion escrita del trader de que es material que ya ha visto (F09)»; marzo en `vistos.yaml` es trabajo de la sesión, no del trader. **NA:I** no dice «con su voz»: dice «SIN vídeo»; preguntar si lo grabó es lo que hace falta para la decisión de construcción o reservado que NA:I deja al consultor |
+| 46 | A-24 (qué pivote de M15 marca: el más reciente ya formado) | `scripts/hoja_preguntas.py:55`; `ambiguedades.yaml:528-566` | fuera: DECIDIDA por ADR-0045, no ABIERTA (D1 mira las ABIERTAS); solo pasaría a RESUELTA con un registro del trader, y lo que tiene de pregunta lo cubre la de la zona (S-9) y A-35 (S-3). La hallé por el auditor (su punto 5) |
+| 47 | «Para cerrar» (D6): diciembre con su voz, la exportación de agosto, la confirmación escrita de marzo | PROJECT_STATE.md:42 (I), :52 (Q); REGISTRO-MARZO.md:49-51 | bloque «Para cerrar», sin código. **REGISTRO-MARZO.md §2 pide** la «confirmacion escrita del trader de que es material que ya ha visto (F09)»; marzo en `vistos.yaml` es trabajo de la sesión, no del trader. **NA:I** no dice «con su voz»: dice «SIN vídeo»; preguntar si lo grabó es lo que hace falta para la decisión de construcción o reservado que NA:I deja al consultor |
 
 ### 1.b Lo que se junta, y lo que va fuera de la hoja
 
@@ -312,6 +312,12 @@ conversación; aquí, lo que se usa):
 
 ### 1.h Exposiciones de la fase 0
 
+> **RECUADRO DE CORRECCIÓN (2026-10-19, en esta rama, hallazgo a1 del revisor).** «Ninguna» y «No
+> hay fila nueva» eran falsos: un `kb find` lee transcripción y los Read de evidencia y los
+> `casos_ocultos` también se declaran el mismo día, aunque sean de construcción (CLAUDE.md, ADR-0021
+> §4; precedente: la fila de `trabajo/punto-usado` del 2026-10-18). Están declarados en
+> `HOLDOUT-EXPOSICIONES.md`, fila del 2026-10-19. El texto de abajo queda como estaba.
+
 Ninguna. Lo leído son informes, ADR, la spec, ítems de evidencia y registros de feedback; un
 `kb find "otra reentrada"` (la CLI filtrada, sin `--video`: dos resultados de v4 y v5, y la línea
 OCULTOS); los diez días de 1.e se comprobaron con `casos_ocultos` imprimiendo solo `True`/`False`,
@@ -438,6 +444,9 @@ Copiada tal cual (también al final del encargo):
   `c3d0c855`), el M1 del break even (S-17, `9f506366`) y la ganadora y el break even en la racha
   (S-21, `8e2d728a`). El lado de ruido de la pregunta 8 tampoco se pregunta: lo dice
   `ev-v9-004919-c6bfb3ee` (S-15, línea para Aleks).
+  **Corrección tras el revisor (b2-b8):** ese repaso se quedó corto. El revisor encontró siete más
+  que su propia ficha, u otra, ya respondía (S-7, S-9, S-10, S-11, S-13, S-15 y S-22) y una
+  premisa que no era la de la spec (S-17); se arreglaron, una por una, en §7.1.
 - **Las premisas, con la spec de hoy** (`knowledge/spec/parametros.yaml`, leído con un guion en la
   carpeta de trabajo): `caja_se_fija = en_cada_cierre_m1`, `caja_bloque = r6` y
   `orden_stop_punto = ultimo_pivote_m1` (DEFAULT_AMBIGUOUS, A-49 y A-48);
@@ -491,7 +500,7 @@ pasar `contexto_h4.py`**: ADR-0083 cambió el motor después de las páginas del
 | Punto | Qué pide | Hecho | Dónde |
 |---|---|---|---|
 | 0 | Base comprobada con git y con gh (sin curl); abrir con abrir-rama, tramo R4; artefacto y rutas | Hecho | §0; `contrato.yaml`; commit a70ea6e |
-| 0 | Skills fase-cero (con auditor-encargo) y entregar-rama | Hecho | §1, §1.f; §7 |
+| 0 | Skills fase-cero (con auditor-encargo) y entregar-rama | Hecho | §1, §1.f; §3 a §7 y el Estado (entregar-rama, pasos 1 a 10) |
 | 1 | El barrido, como el de la sesión 4 | Hecho | §1; PREGUNTAS.md |
 | 2 D1 | Todas las fuentes, leídas ahora; lo que no entra, a «fuera» con su porqué | Hecho | §1.a (47 filas); PREGUNTAS.md §3 |
 | 2 D2 | Cerradas con «otra, ¿cuál?»; desviación declarada; esquemas; sin gráficos reales; la pregunta 3 con su texto | Hecho | PREGUNTAS.md, encabezado; S-6 |
@@ -502,9 +511,10 @@ pasar `contexto_h4.py`**: ADR-0083 cambió el motor después de las páginas del
 | 2 D7 | S-14 de la sesión 4 (aquí S-24) con las dos lecturas | Hecho | S-24 |
 | 3 | Rama de documentos; holdout solo de construcción, comprobado; «## 0. Qué se abrió»; PS 22.580 bytes | Hecho | PREGUNTAS.md §0; §1.h; §0 |
 | 4 a-e | Inventario y PARADA | Hecho | §1 y «Lo que necesito que decidas» |
-| 5 | PREGUNTAS.md y make check sellado con el PICO DE MEMORIA | Hecho | §5 |
+| 5 | PREGUNTAS.md y make check sellado con el PICO DE MEMORIA | Hecho | §5 (los tres primeros, en la tabla; el último, en el mensaje de su commit) |
 | 6 | Encargo frente a lo hecho, desviaciones, fase 0 y las líneas del cierre, con la simulación | Hecho | §2.d, §3, §4 |
-| 7 | Revisor con los cinco controles añadidos | Hecho | §7 |
+| 7 | Revisor con los cinco controles añadidos, pegado al final con lo arreglado y lo declarado | Hecho | §7 |
+| 3 | «Lo que se abra se declara el mismo día en HOLDOUT-EXPOSICIONES.md» | Hecho tarde, el mismo día | Fila del 2026-10-19, tras el hallazgo a1 del revisor; recuadro en §1.h |
 | 8 | CI: decir que no toca hooks, rutas ni sistema de archivos, con la lista | Hecho | §6 |
 
 ## 4 · Líneas preparadas para el commit del contrato de la orden de cierre
@@ -571,7 +581,8 @@ de `test_hoja_de_ruta.py` (las extracciones de las sesiones) no la tocan estas l
 | a70ea6e (apertura), primer intento | rojo: 1 failed, 2689 passed (`test_project_state_rutas`: `Current Feature` citaba `docs/sesion-5/PREGUNTAS.md` antes de existir); arreglado sin rodear nada | — |
 | a70ea6e (apertura) | 2690 passed, `SELLO` | PICO DE MEMORIA de make check: 296 MiB en test (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 286 MiB) |
 | 758552d (fase 0) | 2690 passed, `SELLO` | PICO DE MEMORIA de make check: 294 MiB en test (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 284 MiB) |
-| fase 1 (PREGUNTAS.md) | en curso al escribir esta línea; su resultado, en el commit siguiente | — |
+| 7300474 (fase 1, PREGUNTAS.md) | 2690 passed, `SELLO` sobre el árbol a52cbd4 | PICO DE MEMORIA de make check: 296 MiB en test (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 286 MiB) |
+| el de los arreglos del revisor (§7.1) | el último de la rama: su resultado y su PICO van en el mensaje de su commit, porque el informe es parte del árbol que sella | — |
 
 `test_nunca_bloquea_y_es_rapido` no falló en ninguno: no hace falta la línea para G.
 
@@ -587,9 +598,209 @@ docs/encargos/trabajo-barrido-sesion-5.md
 docs/sesion-5/PREGUNTAS.md
 docs/state/HISTORIA.md
 docs/validation/BARRIDO-SESION-5.md
+docs/validation/HOLDOUT-EXPOSICIONES.md
 ```
+
+Ninguno es un hook, una ruta ni código: seis documentos y el contrato.
+
+## 7 · El revisor
+
+El subagente `revisor` sobre HEAD 7300474, con los dos ejes de siempre y los cinco controles del
+§7 del encargo. Resultado: eje (a) 1 bloquea, 1 importa, 3 menor; eje (b) 1 bloquea (el mismo que
+a1), 9 importa, 1 menor.
+
+### 7.1 Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 / b1 | bloquea | **Arreglado.** Fila del 2026-10-19 en `HOLDOUT-EXPOSICIONES.md` (el `kb find`, los Read de evidencia y feedback, los diez `casos_ocultos`, la spec); recuadro de corrección en §1.h; PREGUNTAS.md §0 dice ya dónde está declarado; fila nueva en la tabla del §3. HOLDOUT-EXPOSICIONES está en `rutas_permitidas` desde la apertura |
+| a2 | importa | **Arreglado.** La tabla del §3 apunta a donde están el revisor y la entrega, y el §5 trae el make check de la fase 1 con su sello; el Estado ya no dice «falta» |
+| a3 | menor | **Declarado, sin cambio.** 2026-09-09 solo aparece dentro del id `fb-2026-09-09-sesion-01-bff260ea`, que la respuesta del consultor (punto 1) manda citar; es la fecha de la sesión 1, no un día de mercado de ningún material. Ninguna otra mención |
+| a4 | menor | **Arreglado.** `Current Feature` nombra ya `docs/sesion-5/PREGUNTAS.md` (existe: `test_project_state_rutas` pasa) |
+| a5 | menor | **Arreglado.** Las filas 46 (A-24) y 47 («Para cerrar») de §1.a, en orden |
+| b2 | importa | **Arreglado.** S-10: sale «¿y si a las 6:45 la toma solo con la mecha?» (lo responde `43e0f90e`); entra «¿cambia algo si entre las 6:45 y las 7:20 se formó un punto de breaker que no operaste?» |
+| b3 | importa | **Arreglado.** S-13: sale «¿mueves la orden a la caja nueva?»; su línea para Aleks dice que C1 lo responde `ev-v10-015716-5ea2575f` («no vamos a dejar en un punto de breaker antiguo») con ADR-0074. Quedan dos «Para precisar» |
+| b4 | importa | **Arreglado.** S-15: sale «¿cuenta como zona un retroceso de una sola vela?» (responde `22d08cbf`: el número de velas no importa); entra «¿cuántas zonas esperas, como mucho, después de la toma?» |
+| b5 | importa | **Arreglado.** S-22: «Lo que nos has dicho» lleva también el minuto antes de la operación abierta (v9 0:27:35, `ev-v9-002735-472432b8`, fuera de los tramos de v9); sale la subpregunta que lo repetía; la línea para Aleks separa la orden (el consultor) de la operación (el trader, `cierre_h4_antelacion = 1`) |
+| b6 | importa | **Arreglado.** S-11: salen las dos subpreguntas que volvían a A-46 general; entran la toma en la última M15 de la mañana y el caso al revés (mañana bajista, tarde alcista), las dos con sesgo contrario. La línea para Aleks dice que solo se pregunta el sesgo contrario |
+| b7 | importa | **Arreglado.** S-17 habla ya de la zona de control posterior a la entrada (RN-014: «NO es un nivel de precio»), con un esquema; sale «¿qué nivel?» y entra «¿cambia algo si la zona de control es de una sola vela?»; su línea para Aleks dice qué ya está fijado |
+| b8 | importa | **Arreglado.** S-7: la subpregunta de la vela abierta pregunta solo lo que falta (si actualizarla mientras avanza es siempre o a veces, y cuándo), y «Lo que todavía no sabemos» igual. S-9 va marcada «en parte» y su «Lo que todavía no sabemos» dice lo que «la más reciente» deja abierto: si vale cuando hay otro bajo más atrás, más bajo o más claro |
+| b9 | importa | **Arreglado.** §5 trae la línea PICO DE MEMORIA del make check de 7300474; la del último commit va en su mensaje |
+| b10 | importa | **Arreglado y para el consultor.** La línea para Aleks de S-4 dice que A-44 necesita también `perdida_trader_magnitud` y `perdida_trader_unidad` (UNKNOWN), de dónde saldrían (la unidad, de «un 4,5% de pérdida en el día», `ev-v10-010913-c4949417`; la magnitud, de «basado en el saldo», `bff260ea`, que es un CORRECT sobre `perdida_maxima_diaria`) y que si esas fuentes valen para registrarlos lo decide el consultor al activar. No se añade una subpregunta: la decisión 1 la quitó |
+| b11 | menor | **Arreglado.** S-4 separa la pregunta del consultor («la semana del 9%… o desde que empezó la racha de pérdidas») de lo que contestó el trader («bueno, sería desde que empezó la racha de pérdidas, ¿no?»), como dice la `afirmacion` del ítem |
+
+Lo que el revisor no pudo comprobar, contestado: los sellos de a70ea6e y 758552d están en §5 (con
+sus árboles: 97224a5 y 1c5f54e); el encargo es el prompt de Aleks copiado tal cual en a70ea6e; el
+minuto de S-6 sale del `kb find` declarado ahora en la fila del 2026-10-19.
+
+Para el consultor, de b10: **¿valen `ev-v10-010913-c4949417` y `fb-2026-09-09-sesion-01-bff260ea`
+como fuente de `perdida_trader_unidad = porcentaje` y `perdida_trader_magnitud = saldo` cuando se
+active A-44, o hace falta una subpregunta en S-4?** No bloquea esta rama: es una decisión de la
+activación (R4.1), y la decisión 1 de la PARADA quitó la subpregunta.
+
+### 7.2 El informe del revisor, tal cual
+
+(Los títulos bajan dos niveles para caber en esta sección; el texto, sin tocar. No cita nada de un
+tramo no citable: 0 retiradas.)
+
+#### Informe del revisor · trabajo/barrido-sesion-5 · 2026-10-19
+
+Revisado HEAD 7300474 sobre la base e518707. `git status` está limpio y la rama tiene tres commits: a70ea6e, 758552d y 7300474.
+
+Hay **un bloqueante**: el día 2026-10-19 no tiene fila en `HOLDOUT-EXPOSICIONES.md`, aunque la rama usó `kb find` sobre transcripciones de v4 y v5. Además, siete «Para precisar» o «Lo que todavía no sabemos» vuelven a preguntar cosas que el trader ya respondió y están registradas (lo pedido en el §7.3 del encargo), y S-4 deja sin cubrir dos parámetros de A-44.
+
+##### Eje (a) · Reglas de la casa
+Resumen: 1 bloquea, 1 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | bloquea | **Falta la fila del 2026-10-19 en `HOLDOUT-EXPOSICIONES.md`.** La rama leyó transcripción: un `kb find "otra reentrada"` (CLI filtrada, segmentos de v4 y v5) para fijar el minuto de la cita de S-6. También leyó ítems de evidencia de v4, v6, v7, v9 y v10 y comprobó diez días con `casos_ocultos`. CLAUDE.md pide declarar el mismo día «siempre» (ADR-0021 §4), y también el material de desarrollo («se declara igual el mismo día»). El precedente lo hizo así: PUNTO-USADO declaró su `kb find` y sus Read de evidencia (HOLDOUT-EXPOSICIONES.md:61). La rama dice «No hay exposición nueva». El punto 4 de la respuesta del consultor solo exime los gráficos. | `git diff --name-status main...HEAD`: `HOLDOUT-EXPOSICIONES.md` no aparece. `grep -n "2026-10-1[5-9]" HOLDOUT-EXPOSICIONES.md`: la última fila es del 2026-10-18 (:63). BARRIDO-SESION-5.md:315-318 («No hay fila nueva»). PREGUNTAS.md:55-62 |
+| a2 | importa | **La tabla «El encargo, punto por punto» da por hechas cosas que no lo están.** Pone «Hecho» al revisor y a entregar-rama, pero el §7 no existe. Pone «Hecho» al make check con PICO, pero el §5 dice «en curso». El propio Estado lo contradice. | BARRIDO-SESION-5.md:494 y :507 («Hecho \| §7»); :505 («Hecho \| §5») frente a :574 («en curso al escribir esta línea»); :594-595 («falta el revisor (§7)») |
+| a3 | menor | **Una cadena con fecha casa con un día reservado: 2026-09-09.** Es la fecha de la sesión 1 dentro del id `fb-2026-09-09-sesion-01-bff260ea`, no un día de mercado. Ese id lo manda citar la respuesta del consultor (punto 1). Lo anoto porque el chequeo da `True`. | Un `python -c` con `casos_ocultos`/`casos_reservados` que solo imprime `True`/`False`: True solo para 2026-09-09. `grep -n 2026-09-09`: PREGUNTAS.md:161 y BARRIDO:137, :384 y :408, todas dentro del id |
+| a4 | menor | La `Current Feature` de PROJECT_STATE sigue diciendo que el documento «nace en la fase 1», y ya existe. El cierre reescribe esa sección. | PROJECT_STATE.md:10 |
+| a5 | menor | En la tabla del §1.a la fila 47 va antes de la 46. | BARRIDO-SESION-5.md:112-113 |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` → `CONTRATO: 6 ficheros dentro del contrato de trabajo/barrido-sesion-5 (riesgo bajo, artefacto docs/validation/BARRIDO-SESION-5.md, tramo 'R4', 2 comprobaciones para el revisor)`, exit 0. Nada protegido tocado.
+- **make check.** No lo ejecuté (escribe). `make-check.log` (12:27:17) trae `2690 passed`, `SELLO: ... sobre el arbol a52cbd415eb07aeecfbfd2ee0472950d8498de9b` y `PICO DE MEMORIA de make check: 296 MiB en test (... el mayor proceso, 286 MiB)`. `git rev-parse 7300474^{tree}` da a52cbd4…, el árbol sellado. Ningún `failed`.
+- **Trailers `Fuente:`.** No hacen falta: ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+- **Holdout y regímenes de cambio.** No se tocan el holdout, `knowledge/evidence`, `knowledge/feedback`, `data/manifests`, transcripciones, fotogramas ni `libros.yaml`.
+- **Ambigüedades, ADR e informes cerrados.** Ni `ambiguedades.yaml`, ni ADR nuevos o cambiados, ni ningún informe cerrado cambian. Ningún sitio nuevo con `cita`. Ningún ítem de evidencia nuevo (punto 10: no aplica).
+- **HISTORIA y PROJECT_STATE.** HISTORIA solo suma (+185/−0). PROJECT_STATE solo cambia lo del ritual (Current Branch, Current Feature y dos líneas de archivo). `main` tiene 22.580 bytes y la rama 22.694.
+- **Citas del informe, comprobadas contra su fuente:** fuentes.yaml:104 (2:07:36), PUNTO-USADO.md:637-641, ambiguedades.yaml:206-209, HOJA-DE-RUTA.md:212-213, hoja_preguntas.py:36/38/41/60 y test_transcribir_sesion.py:305.
+- **Días.** Los diez días de construcción dan `False`. Ningún mes de julio aparece en la partición reservada. No hay ningún rango de fechas junto a un recuento de reservados.
+
+##### Eje (b) · Encargo
+Resumen: 1 bloquea, 9 importa, 1 menor. Requisitos: 39 hechos, 3 parciales y 3 no hechos (dos de ellos solo pendientes, porque el revisor y la entrega van ahora).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | §0 Base: main, origin, tag y ninguna otra rama | Hecho | BARRIDO:13-18; `git branch -a` |
+| 2 | §0 CI con `gh`, sin curl ni guion | Hecho | BARRIDO:17 (`gh run view 39275923817`). En la carpeta de trabajo, `grep curl\|check-runs` solo encuentra el texto del informe |
+| 3 | §0 abrir-rama (encargo, contrato, Archivo, tramo R4) | Hecho | a70ea6e; contrato.yaml:4; HISTORIA +185 |
+| 4 | §0 Artefacto y `rutas_permitidas` con PREGUNTAS y HOLDOUT-EXPOSICIONES | Hecho | contrato.yaml:3-8 |
+| 5 | §0 Skills fase-cero (con auditor) y entregar-rama | Parcial | §1.f hecho; la entrega está pendiente (Estado :594) |
+| 6 | §1 El barrido, como el de la sesión 4 | Hecho | PREGUNTAS.md |
+| 7 | D1 Las fuentes de V y de R4.1 | Hecho | BARRIDO §1.a filas 1-28 |
+| 8 | D1 RN-004 y RN-020 fuera, con su razón | Hecho | BARRIDO:77-78; PREGUNTAS:679-680 |
+| 9 | D1 Abiertas, medición, candidatas y feedback pending | Hecho | `uv run botsito feedback pending` → «2 pendientes de 125 activos» (31fb311f y ca0afae6), como dice §1.a:102-103 |
+| 10 | D1 La línea para que R4.1 tenga lo que le falta | Hecho | BARRIDO:526-531 |
+| 11 | D2 Preguntas cerradas con «otra», desviación declarada | Hecho | PREGUNTAS:27-29 |
+| 12 | D2 Esquemas rotulados, siempre en las dos del sesgo | Hecho | PREGUNTAS:77 y :103 |
+| 13 | D2 La contradicción sin literal ni referencia | Hecho | PREGUNTAS:75 y :90-91 (no nombra la sesión 1) |
+| 14 | D2 Ningún gráfico de un día real | Hecho | PREGUNTAS:38-42 |
+| 15 | D2 La pregunta 3 con el texto de PUNTO-USADO §5 | Hecho | PREGUNTAS:212-217 frente a PUNTO-USADO.md:637-641 (09:55 de Madrid = 07:55 UTC de LA-CAJA:237) |
+| 16 | D3 Las seis partes, de 2 a 4 «Para precisar» | Hecho | Contadas una a una en las 25 |
+| 17 | D3 Una «en parte» no repite lo respondido | Parcial | Hallazgos b2-b8 |
+| 18 | D3 Citas de lo registrado, sin cruda, filtrada ni tramos no citables | Hecho | 23 `cita_literal` y 14 `respuesta_literal` leídos con grep: casan con su id. Ningún t0-t1 pisa `tramos_no_citables.yaml`; el más justo es ev-v10-014310 (1:43:10-1:43:31), que acaba antes del tramo 1:43:42. Ninguno está supersedido. Las dos excepciones, declaradas (BARRIDO:426-428) |
+| 19 | D4 Orden por bloques | Hecho | PREGUNTAS §1; BARRIDO:184-186 |
+| 20 | D4 Duración de la 4 y estimación de la 5 | Hecho | fuentes.yaml:104; 25×5:19 = 2:12:55 |
+| 21 | D4 Qué se puede dejar | Hecho | PREGUNTAS:68-69 |
+| 22 | D5 Códigos de la sesión 5 y cómo se dicen en voz | Hecho | PREGUNTAS:18-24 |
+| 23 | D6 «Para cerrar» sin código y sin fechas | Hecho | PREGUNTAS:663-673 |
+| 24 | D7 S-24 con las dos lecturas | Hecho | PREGUNTAS:626-638 |
+| 25 | §3 No cambia motor, spec, feedback, cases ni script | Hecho | `git diff --name-status` |
+| 26 | §3 Solo construcción, comprobado | Hecho | Booleanos, en a3 |
+| 27 | §3 Ninguna fecha reservada ni resultado | Hecho, con la salvedad de a3 | grep de fechas |
+| 28 | §3 «Lo que se abra se declara el mismo día en HOLDOUT-EXPOSICIONES.md» | No hecho | b1 |
+| 29 | §3 «## 0. Qué se abrió» | Hecho | PREGUNTAS:49 |
+| 30 | §3 PROJECT_STATE en 22.580; guardias, `.claude/` y Makefile intactos | Hecho | `git show main:PROJECT_STATE.md \| wc -c` → 22580 |
+| 31 | §4 a-e y PARADA | Hecho | BARRIDO §1 y :320-375 |
+| 32 | §5 PREGUNTAS.md con D2-D7 | Hecho | — |
+| 33 | §5 make check sellado | Hecho | Eje (a) |
+| 34 | §5 PICO DE MEMORIA en el informe en cada make check | Parcial | b9 |
+| 35 | §5 test_nunca_bloquea | Hecho | BARRIDO:576; el log no trae ningún `failed` |
+| 36 | §6 Encargo punto por punto, desviaciones y fase 0 | Hecho (con a2) | BARRIDO §2.d y §3 |
+| 37 | §6 Decisión sobre J, tal cual | Hecho | BARRIDO:512-515 frente a encargo:56 |
+| 38 | §6 Líneas de V, F, R4.1, G.2 y SESION-DE-PREGUNTAS (respuesta 3, 7 y 8) | Hecho | BARRIDO:517-544 |
+| 39 | §6 Simulación y tamaño | Hecho | La repetí en memoria (abajo) y sale igual: `a: [] b: [] c: []`, 22735 bytes, cabe |
+| 40 | §7 Revisor, pegado al final | No hecho (pendiente) | Es esta revisión |
+| 41 | §8 CI, con la lista de ficheros | Hecho | BARRIDO:580-590 |
+| 42 | Respuesta del consultor tal cual, en encargo e informe | Hecho | `diff` de encargo:75-93 contra BARRIDO:381-399 → IGUALES. También igual a la copia de la carpeta de trabajo |
+| 43 | Respuesta puntos 0-8 y «Además» | Hecho (con b10) | S-3 (a)/(b) caen en `inicio_`/`cierre_vela_contraria` y S-4 (a)/(b) en `dia`/`ambos`, según ACTIVAR-A35-A44.md:49-50 y :81-83 |
+| 44 | «Lo que necesito que decidas» y «El encargo, punto por punto» (E5) | Hecho | BARRIDO:320 y :489 |
+| 45 | «Rama lista para revisión, NO cerrada» | No hecho (pendiente) | Estado :594 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | bloquea | El encargo pide explícitamente declarar lo abierto ese día, y no hay fila (mismo arreglo que a1). | encargo:40; ver a1 |
+| b2 | importa | **S-10 repite.** El primer «Para precisar» («Si a las 6:45 no la toma con cuerpo sino solo con la mecha, ¿cambia?») ya está respondido: para la liquidez de M15 «hace siempre falta cuerpo». Esa cita la trae la propia hoja en S-9. | PREGUNTAS:322 frente a fb-2026-09-29-sesion-03-43e0f90e (citado en PREGUNTAS:281-282) y ev-v10-012456-9dc1d221 |
+| b3 | importa | **S-13 repite.** El primer «Para precisar» («Si aparece una caja nueva…, ¿mueves la orden a la nueva?») lo responde la cita que S-13 trae en su misma ficha. El informe da C1 por cubierta por ADR-0074. | PREGUNTAS:400 frente a ev-v10-015716-5ea2575f («no vamos a dejar en un punto de breaker antiguo», en PREGUNTAS:382-383); BARRIDO:91 |
+| b4 | importa | **S-15 repite.** «¿Cuenta como zona un retroceso de una sola vela?» ya está respondido en el registro que la propia ficha cita: «¿Una, dos, tres…? Eso es indiferente, no importa»; `valor_resultante`: «el numero de velas del retroceso no importa». | PREGUNTAS:443 frente a fb-2026-10-04-sesion-04-22d08cbf (citado en :431) |
+| b5 | importa | **S-22 repite y su nota para Aleks queda corta.** El primer «Para precisar» («la operación abierta… ¿la cierras en el mismo momento?») ya está respondido: «siempre menos un minuto, antes de que cierre… la sesión de cuatro horas». De ahí sale `cierre_h4_antelacion = 1`, CONFIRMED. La nota dice que «un minuto antes lo dijo el consultor, no el trader». Eso vale para la orden, pero para la operación abierta lo dijo el trader en la sesión 3, y la opción (b) se apoya en ello. | PREGUNTAS:596 y :599-600; ev-v9-002735-472432b8; parametros.yaml:379-396; ACTIVAR-SESION-04-MOTOR.md:631 |
+| b6 | importa | **S-11 repite A-46, que está RESUELTA.** Los «Para precisar» «¿Y si el sesgo de la mañana y el de la tarde son el mismo?» y «la toma fue a las 9» vuelven a la pregunta general de A-46 (¿vale una toma de la sesión anterior?), ya respondida con «un mundo diferente». Lo nuevo es solo el caso del sesgo contrario. | PREGUNTAS:345-346; ambiguedades.yaml:1348-1357; fb-2026-09-29-sesion-03-5021677e |
+| b7 | importa | **S-17 pregunta lo ya fijado y su premisa no es la de la spec.** «¿Qué nivel es el que tiene que tocar o pasar: el del punto de breaker siguiente, u otro?» ya lo fija RN-014: el disparador es la ruptura de la zona de control posterior, «NO es un nivel de precio». La pregunta habla de «el nivel» sin decir zona de control (herencia 4). | PREGUNTAS:488-495; strategy_spec.yaml:1574-1587; ambiguedades.yaml:204 |
+| b8 | importa | **S-7 y S-9 vuelven a preguntar lo que su propia cita responde.** En S-7, «si alguna vez trazas la caja con la vela todavía abierta» lo responde la cita de 0:19:35 («o si quieres, pues lo puedes actualizar»); falta solo el «cuándo», o si es regla. S-9 no va marcada «en parte», y su opción (a) es lo que dice su propia cita («Vamos a tratar de tomar la más reciente»); no dice qué deja abierto esa frase. | PREGUNTAS:238-241 y :249; ev-v10-001935-d0f4ce50. PREGUNTAS:279-295; ev-v10-014637-70d27645 |
+| b9 | importa | Falta en el informe la línea PICO DE MEMORIA del make check de la fase 1 (encargo §5). Está en el log y en el mensaje del commit, no en el informe. | BARRIDO:574; make-check.log, última línea (296 MiB, el mayor proceso 286 MiB, árbol a52cbd4) |
+| b10 | importa | **S-4 no dice de dónde salen dos parámetros que A-44 necesita.** Para activar A-44 hacen falta `perdida_trader_magnitud` y `perdida_trader_unidad`, además del alcance: «dia, más magnitud y unidad». Los dos están UNKNOWN, y la nota para Aleks no dice de dónde saldrán. Es la consecuencia de quitar la subpregunta (decisión 1). Si el valor se va a sacar de `bff260ea`, hay que decirlo; si no, A-44 no se puede activar tras la sesión aunque conteste. | PREGUNTAS:169-171 y :178-181; parametros.yaml:1350-1371 (los dos `estado: UNKNOWN`); ACTIVAR-A35-A44.md:81 y :84-86 |
+| b11 | menor | S-4 pone en boca del trader la cita entera de ev-v10-011021, pero su `afirmacion` dice que la primera mitad («la semana del 9 %… de lunes a viernes. o desde que empezó la racha») es la pregunta del consultor. | PREGUNTAS:155-158; ev-v10-011021-02f5dcf3.yaml:9-10 |
+
+Lo que el encargo pedía comprobar expresamente (§7):
+1. **Citas:** salen todas de lo registrado y casan, salvo las dos excepciones declaradas. Ninguna en un tramo no citable.
+2. **Fechas:** ninguna fecha reservada ni resultado, salvo la salvedad de a3.
+3. **«En parte»:** no se cumple; ver b2-b8.
+4. **Las dos del sesgo:** S-1 y S-2 van solo con esquema. S-1 no lleva cita ni nombra la sesión 1. El orden está declarado (PREGUNTAS:30-33).
+5. **CI:** sin curl ni guion, hasta donde llega lo que se ve.
+
+Fuera de lo pedido, no hay nada sin justificar: los cambios que la rama hace en PROJECT_STATE y HISTORIA son los del ritual.
+
+##### Lo que no pude comprobar
+- **El historial de comandos de la sesión.** Si alguna vez se intentó curl, `kb at` o `kb find --video` sobre v7-v10 solo lo puedo afirmar por el informe y por la carpeta de trabajo, donde no hay ningún guion de curl.
+- **Los sellos de a70ea6e y 758552d.** `make-check.log` ya es el de 7300474. Los hooks exigen el sello, pero no tengo el log de esos dos.
+- **Que el encargo sea el prompt original tal cual.** No tengo el original.
+- **El minuto de la cita de S-6 (v5 0:03:35-0:04:15).** Rehacer el `kb find` sería leer transcripción, que habría que declarar (a1). No lo ejecuté: la cita casa con LA-CAJA-DEL-29-DE-ABRIL.md:242.
+- **Las cuatro pruebas de `test_project_state.py` sobre el estado simulado.** Escriben un fichero temporal y no las ejecuté. Sí repetí en memoria a, b y c de `test_hoja_de_ruta.py` y el tamaño, con el guion de la carpeta de trabajo sin su parte de escritura: `a: [] b: [] c: []`, 22735 bytes.
+- **make check.** Escribe; uso como evidencia el log.
+
+##### Comandos ejecutados
+1. `git branch --show-current; git merge-base main HEAD; git log --format='%h %s' main..HEAD; git diff --stat main...HEAD; git status --short`
+2. Read de: encargo, contrato.yaml, BARRIDO-SESION-5.md (dos trozos), PREGUNTAS.md
+3. `uv run python scripts/contrato_rama.py; git diff --name-status main...HEAD; ls/tail/grep make-check.log`
+4. Un `for` con `git rev-parse` (lo negó la guardia; no lo rodeé) → `git rev-parse a70ea6e^{tree} 758552d^{tree} 7300474^{tree}`
+5. `git log --format='%h %ci %s' main..HEAD; ls -la --time-style=full-iso make-check.log`
+6. `git diff main...HEAD -- PROJECT_STATE.md; git diff --numstat ... HISTORIA.md; wc -c PROJECT_STATE.md; git show main:PROJECT_STATE.md | wc -c`
+7. Grep de ids `ev-`/`fb-` en PREGUNTAS.md
+8. `ls` de `knowledge/evidence` y `knowledge/feedback`; Read de ev-v10-014438, ev-v10-011021 y ev-v4-005053
+9. Read de `knowledge/corpus/tramos_no_citables.yaml`
+10. `grep -A` de `t0`/`t1`/`cita_literal` en los 23 ítems citados (tres lotes)
+11. Read de ACTIVAR-SESION-04.md:290-349 y de ACTIVAR-A35-A44.md:1-185
+12. Grep de `perdida_trader_magnitud|unidad` en parametros.yaml
+13. `grep` de `respuesta_literal`/`t0`/`t1` en los 14 registros de feedback citados; Read de bff260ea, 6e7da456 y d1792021
+14. `uv run botsito feedback pending`
+15. `ls docs/adr`; Read de ADR-0077:70-104 y de ADR-0076:80-99
+16. Grep de `casos_ocultos` y de `dias_de_casos` en src
+17. `grep -ohE` de fechas ISO en los dos documentos
+18. `uv run python -c` con `casos_ocultos`/`casos_reservados`, imprimiendo solo True/False por fecha (y para julio)
+19. `grep -n 2026-09-09` en los dos documentos
+20. `grep -noiE` de fechas en texto y de rangos
+21. `find`/`grep` de LA-CAJA-DEL-29-DE-ABRIL.md; Read de :228-249; Read de PUNTO-USADO.md:612-646
+22. `grep 2026-10-1[5-9]` en HOLDOUT-EXPOSICIONES.md; Read de su línea 61
+23. `ls` de la carpeta de trabajo; Read de simular_cierre.py, dias_ocultos.py y respuesta.md
+24. `uv run python -c` que ejecuta simular_cierre.py sin su bloque de escritura (a, b, c y bytes)
+25. Grep de HOJA-DE-RUTA.md (NA:J, «antes de R4»); Read de :194-217
+26. Comparación con `diff` de las dos copias de la respuesta del consultor
+27. Read de fuentes.yaml:92-106; Grep de test_transcribir_sesion.py:305 y de hoja_preguntas.py
+28. Grep de SESION-DE-PREGUNTAS.md (regla 2 y paso 6)
+29. `git log --format='%h%n%B---' main..HEAD`; `git branch -a`
+30. Grep de A-13 (ambiguedades.yaml), RN-014 y RN-002 (strategy_spec.yaml), `cierre_h4_antelacion` (parametros.yaml); Read de ev-v9-002735; `grep` de A-30, A-39 y A-46
+31. Grep de `minuto antes` en ACTIVAR-SESION-04-MOTOR.md
+32. Grep de `supersede:` sobre los ids de feedback y de evidencia citados (ninguno está supersedido)
+33. Grep de `curl|check-runs|gh run` en la carpeta de trabajo
+
+Ficheros principales:
+- C:\Users\USER\Desktop\Bot v3\docs\sesion-5\PREGUNTAS.md
+- C:\Users\USER\Desktop\Bot v3\docs\validation\BARRIDO-SESION-5.md
+- C:\Users\USER\Desktop\Bot v3\docs\validation\HOLDOUT-EXPOSICIONES.md
+- C:\Users\USER\Desktop\Bot v3\docs\encargos\trabajo-barrido-sesion-5.md
+- C:\Users\USER\AppData\Local\Temp\claude\C--Users-USER-Desktop-Bot-v3\439e88cf-7d96-4f2a-999d-fcc741b0fd94\scratchpad\simular_cierre.py
 
 ## Estado
 
-EN CURSO · fase 1 hecha (2026-10-19): `docs/sesion-5/PREGUNTAS.md` escrito con las decisiones
-del consultor; falta el revisor (§7) y entregar la rama.
+Terminada el 2026-10-19. `docs/sesion-5/PREGUNTAS.md`: 25 preguntas en cuatro bloques, «Para
+cerrar» con tres peticiones y lo que va fuera de la hoja, con las decisiones del consultor a la
+PARADA aplicadas punto por punto (§2.a). El revisor: 1 bloquea, 10 importa y 4 menor; todos
+arreglados salvo a3, declarado (§7.1). Queda para el consultor, sin bloquear la rama: de dónde
+salen `perdida_trader_magnitud` y `perdida_trader_unidad` al activar A-44 (§7.1, b10). Las
+líneas del cierre, simuladas en memoria (§4). Sin CI de Linux: no toca la plataforma (§6).
+
+Rama lista para revisión, NO cerrada.

@@ -7,7 +7,7 @@
 trabajo/barrido-sesion-5
 
 ## Current Feature
-trabajo/barrido-sesion-5 EN CURSO (abierta el 2026-10-19 desde main e518707; V de la Next Action, R4.1): el barrido de preguntas de la sesión 5 con el trader (su documento de preguntas nace en la fase 1). Encargo: docs/encargos/trabajo-barrido-sesion-5.md. Informe: docs/validation/BARRIDO-SESION-5.md.
+trabajo/barrido-sesion-5 EN CURSO (abierta el 2026-10-19 desde main e518707; V de la Next Action, R4.1): el barrido de preguntas de la sesión 5 con el trader, en docs/sesion-5/PREGUNTAS.md. Encargo: docs/encargos/trabajo-barrido-sesion-5.md. Informe: docs/validation/BARRIDO-SESION-5.md.
 
 ## Stable Main State
 a1bb8a5 · merge de `trabajo/punto-usado` (tag `stable/F37v-punto-usado`): ADR-0083 enmienda la decisión 1 de ADR-0064 (gasta un punto el rechazo, al colocar o al llenar, y el no envío; el llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar con la misma caja o con otra), PROVISIONAL hasta la pregunta 3 de V; el código (`zonas.liberar_usada`, `cableado._el_punto_tras_el_evento`), «### Ordenes» con el punto y el 1 de la caja, spec 18.1.3, y la corrida de R3.1 repetida. Sobre `stable/F37u-plataforma-adelantada` (3ae2933). Informe docs/validation/PUNTO-USADO.md; el registro del cierre, al final de HISTORIA.

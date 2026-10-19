@@ -58,8 +58,9 @@ no aquí.
 - **Informes**: los que nombra el encargo (D1) y `LA-CAJA-DEL-29-DE-ABRIL.md`.
 - **Nada más**: ninguna transcripción cruda ni filtrada a mano, ningún fotograma, ningún libro,
   ningún caso y ningún agregado. Los días de construcción que se nombran en el informe se
-  comprobaron con `casos_ocultos` (todos `False`) y no se abrieron. **No hay exposición nueva** que
-  declarar en `HOLDOUT-EXPOSICIONES.md`.
+  comprobaron con `casos_ocultos` (todos `False`) y no se abrieron. **Todo esto está declarado** en
+  `HOLDOUT-EXPOSICIONES.md`, fila del 2026-10-19 (hallazgo a1 del revisor: la primera versión decía
+  que no había nada que declarar).
 
 ## 1. Las preguntas (25)
 
@@ -152,10 +153,10 @@ y cierra roja**
 - **Lo que nos has dicho:**
   - sesión 4: «Ah, no, aquí hay un error No sería un 9% a la semana Sería un 4,5% de pérdida en el
     día» (v10 1:09:13, `ev-v10-010913-c4949417`); «para parar en un día pues con perder el 4.5
-    paramos Hasta el día siguiente» (v10 1:09:50, `ev-v10-010950-7e5543df`); y, a si la semana es
-    de lunes a viernes: «la semana del 9% de pérdida contempla de lunes a viernes. o desde que
-    empezó la racha de pérdidas bueno, sería desde que empezó la racha de pérdidas, ¿no?» (v10
-    1:10:21, `ev-v10-011021-02f5dcf3`);
+    paramos Hasta el día siguiente» (v10 1:09:50, `ev-v10-010950-7e5543df`); y, a la pregunta
+    «la semana del 9% de pérdida contempla de lunes a viernes. o desde que empezó la racha de
+    pérdidas», contestaste «bueno, sería desde que empezó la racha de pérdidas, ¿no?» (v10 1:10:21,
+    `ev-v10-011021-02f5dcf3`);
   - sesión 3: «9 pérdidas seguidas O en un día Seguidas» (v9 1:11:39, `ev-v9-011139-a26a5b11`);
   - sesión 1, de sobre qué se mide el del día: «De la cuenta basado en el saldo, y que sea en el
     saldo inicial del día» (`fb-2026-09-09-sesion-01-bff260ea`).
@@ -178,7 +179,13 @@ y cierra roja**
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-04.md` §0.e.3, sin su segunda subpregunta (el
   saldo inicial del día ya está respondido, decisión 1 del consultor; por eso no se le pregunta si
   cuenta lo abierto). `perdida_maxima_semanal = 9` está CONFIRMED desde la sesión 1, y en la 4 dijo
-  que «es un error»: la primera de «Para precisar» es esa contradicción.*
+  que «es un error»: la primera de «Para precisar» es esa contradicción. **Para activar A-44 hacen
+  falta además `perdida_trader_magnitud` y `perdida_trader_unidad`** (UNKNOWN; `ACTIVAR-A35-A44.md`
+  §1: «dia, más magnitud y unidad»), que esta pregunta no pide: la unidad sale de su «un 4,5% de
+  pérdida en el día» (porcentaje, `ev-v10-010913-c4949417`) y la magnitud de «basado en el saldo»
+  (saldo, `fb-2026-09-09-sesion-01-bff260ea`, que es un CORRECT sobre `perdida_maxima_diaria`, no
+  sobre la magnitud). Si esas dos fuentes valen para registrarlos lo decide el consultor al
+  activar (BARRIDO-SESION-5.md §7.1); si no, A-44 no se podrá activar con S-4 sola.*
 
 ### Bloque 2 · La corrida de construcción (las preguntas 2 a 9)
 
@@ -238,7 +245,8 @@ A-49
     `ev-v10-001628-59a9a476`), y también «o si quieres, pues lo puedes actualizar, porque
     obviamente se ve el precio» (v10 0:19:35, `ev-v10-001935-d0f4ce50`).
 - **Lo que todavía no sabemos:** si el 0 es siempre la mecha del punto de breaker o a veces otra
-  vela del tramo, y si alguna vez trazas la caja con la vela todavía abierta.
+  vela del tramo, y si actualizar la caja con la vela abierta es lo que haces siempre o solo a
+  veces.
 - **Esquema inventado, no es un día real:** en M1, para una compra, un tramo de tres velas rojas
   seguidas y después la subida; el punto de breaker es el mínimo de la última roja.
 - **Pregunta:** «Para esta compra, ¿desde dónde trazas el 0 de la caja?
@@ -246,7 +254,8 @@ A-49
   - (b) desde el mínimo de todo el tramo de velas rojas;
   - (c) depende, ¿de qué?»
 - **Para precisar:**
-  - ¿Alguna vez trazas la caja con la vela todavía abierta, sin esperar a que cierre? ¿Cuándo?
+  - Dijiste que la caja «la puedes actualizar» mientras el precio avanza: ¿lo haces siempre, o solo
+    a veces? ¿Cuándo?
   - Si la última vela roja es muy pequeña, ¿pones el 0 en ella igual?
   - En una venta, ¿es lo mismo al revés?
 - **Para confirmar al final:** «El 0 de mi caja es ______, y la trazo cuando la vela ______».
@@ -276,7 +285,7 @@ A-49
 - *Para Aleks (no va a la hoja): `VISOR-CONSTRUCCION.md` §3.2, pregunta A. Hoy el bot no ve ahí
   ningún punto. Es distinta de S-19, que va sobre la vela sin cuerpo en el retroceso.*
 
-**S-9. Qué liquidez eliges cuando hay varias**
+**S-9. Qué liquidez eliges cuando hay varias** · en parte
 - **Lo que nos has dicho:**
   - «para el M1 para actualizar el punto de breaker vale la mecha y para la liquidez de M15 hace
     siempre falta cuerpo» (v9 0:42:17, `fb-2026-09-29-sesion-03-43e0f90e`);
@@ -284,8 +293,8 @@ A-49
     (v10 1:46:37, `ev-v10-014637-70d27645`);
   - «Ahora, siempre el punto breaker va a ser el más reciente, el que genere, pues, la ruptura» (v10
     0:07:42, `ev-v10-000742-cd9d76b1`).
-- **Lo que todavía no sabemos:** cuál es tu liquidez cuando en el gráfico de 15 minutos hay varios
-  altos o bajos que el precio podría ir a tomar.
+- **Lo que todavía no sabemos:** si «la más reciente» vale también cuando hay otro bajo más atrás,
+  más bajo o más claro, que el precio podría ir a tomar.
 - **Esquema inventado, no es un día real:** en M15, para una compra, tres bajos: uno de hace dos
   horas, más bajo; uno de hace una hora; y uno de hace media hora, el más alto de los tres.
 - **Pregunta:** «Aquí hay tres bajos de M15. ¿Cuál es tu liquidez para comprar?
@@ -319,7 +328,7 @@ A-49
   - (b) esa liquidez ya se gastó a las 6:45: espero otra;
   - (c) otra, ¿cuál?»
 - **Para precisar:**
-  - Si a las 6:45 no la toma con cuerpo sino solo con la mecha, ¿cambia?
+  - ¿Cambia algo si entre las 6:45 y las 7:20 se formó un punto de breaker que no operaste?
   - ¿Y si la segunda toma es a las 6:55, todavía antes de las 7?
 - **Para confirmar al final:** «Si una liquidez se toma antes de las 7 y otra vez después, mi toma
   es ______».
@@ -342,14 +351,16 @@ A-49
   - (b) no vale, espero otra;
   - (c) otra, ¿cuál?»
 - **Para precisar:**
-  - ¿Cambia algo si la toma fue a las 9 y no justo antes de las 11?
-  - ¿Y si el sesgo de la mañana y el de la tarde son el mismo?
+  - ¿Cambia algo si la toma fue en la última vela de M15 de la mañana, la que cierra a las 11:00?
+  - ¿Lo miras igual al revés, con la mañana bajista y la tarde alcista?
 - **Para confirmar al final:** «Una toma de la sesión de la mañana, con el sesgo de la tarde a su
   favor, ______ vale para la tarde».
 - *Para Aleks (no va a la hoja): `VISOR-CONSTRUCCION.md` §3.2, pregunta B (texto tal cual). Hoy el
   bot hace (b) (ADR-0066). **A-46 está RESUELTA** («un mundo diferente»), respondida sin distinguir
   el sesgo: si contesta (a), A-46 se REABRE con un registro `REOPEN`
-  (`docs/runbooks/AMBIGUEDADES.md`), no se cambia sin más. Se pregunta igual (encargo, D4).*
+  (`docs/runbooks/AMBIGUEDADES.md`), no se cambia sin más. Se pregunta igual (encargo, D4). Lo que
+  A-46 ya respondió (una toma de la mañana con el mismo sesgo) no se vuelve a preguntar: solo el
+  sesgo contrario.*
 
 **S-12. Si la caja queda a caballo del nivel tomado** · en parte · A-50
 - **Lo que nos has dicho:**
@@ -397,13 +408,14 @@ A-49
   - (b) la dejo, y la muevo cuando aparezca el punto nuevo; si se llena antes, vale;
   - (c) otra, ¿cuál?»
 - **Para precisar:**
-  - Si aparece una caja nueva con la orden puesta, ¿mueves la orden a la nueva?
   - ¿Hay un tiempo máximo que dejas una orden sin llenar, aparte del final de la sesión?
   - Si el 1 de la caja sube mucho, ¿la sigues moviendo igual?
 - **Para confirmar al final:** «Con la orden sin llenar, si el precio toma otra liquidez, la orden
   ______».
 - *Para Aleks (no va a la hoja): `CORRIDA-CONSTRUCCION.md` §4.5, pregunta 6 (ADR-0074, S-4 de la
-  sesión 4), con A-53 (`ACTIVAR-SESION-04.md` §0.e.7) y las candidatas C1 y C7. Hoy el bot hace (b)
+  sesión 4), con A-53 (`ACTIVAR-SESION-04.md` §0.e.7) y la candidata C7. C1 (la orden con una caja nueva) no se
+  pregunta: la responde su propia cita, «no vamos a dejar en un punto de breaker antiguo»
+  (`ev-v10-015716-5ea2575f`), con ADR-0074. Hoy el bot hace (b)
   (`orden_pendiente_al_abrir_escenario = se_mueve`, DEFAULT_AMBIGUOUS). La retirada a las 11 y a
   las 3 ya está respondida (S-22 pregunta solo el minuto).*
 
@@ -440,7 +452,7 @@ A-49
   - (c) otra, ¿cuál?»
 - **Para precisar:**
   - Si el primer retroceso no estaba limpio, ¿el segundo cuenta como el primero?
-  - ¿Cuenta como zona un retroceso de una sola vela?
+  - ¿Cuántas zonas esperas, como mucho, después de la toma antes de dejarla?
 - **Para confirmar al final:** «Después de la toma, entro en la zona número ______».
 - *Para Aleks (no va a la hoja): `CORRIDA-CONSTRUCCION.md` §4.5, pregunta 8 (las 14 sesiones de
   §4.6), con los dos casos de `VISOR-CONSTRUCCION.md` §3.2: el bot ve el mismo punto que el trader
@@ -483,22 +495,27 @@ A-49
     mejor entonces nosotros la entrada ya la pondríamos en break even» (v10 2:04:53,
     `ev-v10-020453-2d41dd25`), y «Pues siempre pongo exactamente en la entrada El stop» (v10
     2:04:10, `ev-v10-020410-e06f9581`).
-- **Lo que todavía no sabemos:** si basta con que el precio toque el nivel o esperas a que la vela
-  cierre pasado él.
-- **Pregunta:** «Para pasar el stop a la entrada, ¿esperas a que la vela de M1 cierre pasado el
-  nivel, o lo haces en cuanto el precio lo toca?
+- **Lo que todavía no sabemos:** cuando el precio rompe la zona de control que se forma después de
+  tu entrada, si basta con que la toque o esperas a que la vela cierre pasada ella.
+- **Esquema inventado, no es un día real:** en M1, una compra ya llenada; el precio sube, hace un
+  retroceso (la zona de control) y vuelve a subir hacia el máximo de esa zona.
+- **Pregunta:** «Después de tu entrada se forma esta zona de control. Para pasar el stop a la
+  entrada cuando el precio la rompe, ¿esperas a que la vela de M1 cierre pasada la zona, o lo haces
+  en cuanto el precio la toca?
   - (a) en cuanto toca;
-  - (b) cuando cierra la vela pasado el nivel, aunque sea con la mecha por el otro lado;
-  - (c) cuando cierra con cuerpo pasado el nivel;
+  - (b) cuando cierra la vela pasada la zona, aunque sea solo con la mecha;
+  - (c) cuando cierra con cuerpo pasada la zona;
   - (d) otra, ¿cuál?»
 - **Para precisar:**
-  - ¿Qué nivel es el que tiene que tocar o pasar: el del punto de breaker siguiente, u otro?
+  - ¿Cambia algo si la zona de control es de una sola vela?
   - ¿Es lo mismo en compra y en venta?
-- **Para confirmar al final:** «Pongo el stop en la entrada cuando el precio ______ el nivel».
+- **Para confirmar al final:** «Pongo el stop en la entrada cuando el precio ______ la zona de
+  control que se forma después de la entrada».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-04.md` §0.e.2, sin «¿lo vuelves a mover?», que
   está respondida (decisión 1 del consultor). Hoy: `break_even_criterio_ruptura = mecha` y
   `break_even_condicion = tocar`, CONFIRMED; ADR-0065, al tick. Una respuesta (b) o (c) contradice
-  un CONFIRMED.*
+  un CONFIRMED. Qué se rompe ya está fijado y no se pregunta: la zona de control posterior a la
+  entrada, no un nivel de precio (RN-014, `strategy_spec.yaml`; A-13).*
 
 **S-18. Una línea de M1 que, rota con la mecha, te quite la entrada** · en parte · A-32 · *si
 falta tiempo, a la sesión 6*
@@ -583,21 +600,27 @@ falta tiempo, a la sesión 6*
   (b)); `ACTIVAR-SESION-04-MOTOR.md` §5.*
 
 **S-22. El último minuto: a qué hora quitas la orden sin llenar**
-- **Lo que nos has dicho:** «a ver si a las 11 tienes la orden puesta que no se ha llenado [...]
-  claro, se quita [...] sí, se quita, porque siempre se va a ir actualizando la orden» (v10 0:54:27,
-  `ev-v10-005427-1a0867af`, `fb-2026-10-04-sesion-04-766c8d2e`).
-- **Lo que todavía no sabemos:** el momento exacto en que la quitas.
+- **Lo que nos has dicho:**
+  - de la orden: «a ver si a las 11 tienes la orden puesta que no se ha llenado [...] claro, se
+    quita [...] sí, se quita, porque siempre se va a ir actualizando la orden» (v10 0:54:27,
+    `ev-v10-005427-1a0867af`, `fb-2026-10-04-sesion-04-766c8d2e`);
+  - de la operación abierta: «siempre menos un minuto, antes de que cierre, pues, como tal, la
+    sesión de cuatro horas» (v9 0:27:35, `ev-v9-002735-472432b8`).
+- **Lo que todavía no sabemos:** el momento exacto en que quitas la orden sin llenar: con la
+  operación abierta, un minuto antes, o a la hora en punto.
 - **Pregunta** (texto de `ACTIVAR-SESION-04-MOTOR.md` §5): «Cuando llega la hora de cerrar -las 11 o
   las 3 en punto- y tienes una orden puesta que no se ha llenado, ¿en qué momento la quitas?
   - (a) a las 11 y a las 3 en punto, justo cuando cambia la vela;
   - (b) un minuto antes, cuando cierras la operación que tengas abierta;
   - (c) otra, ¿cuál?»
 - **Para precisar:**
-  - Y la operación abierta a esa hora, ¿la cierras en el mismo momento?
+  - Si la orden se llena en ese último minuto, ¿la dejas o la cierras en seguida?
   - ¿Pones órdenes en el último minuto antes de las 11 o de las 3?
 - **Para confirmar al final:** «A la hora de cerrar, quito la orden sin llenar a las ______».
-- *Para Aleks (no va a la hoja): RN-035, tramo `ventana_fin`; «un minuto antes» lo dijo el consultor
-  en la sesión 4, no el trader (`ACTIVAR-SESION-04.md`, tabla 0.a, S-5).*
+- *Para Aleks (no va a la hoja): RN-035, tramo `ventana_fin`. Para la ORDEN, «un minuto antes» lo
+  dijo el consultor en la sesión 4, no el trader (`ACTIVAR-SESION-04.md`, tabla 0.a, S-5); para la
+  OPERACIÓN abierta lo dijo el trader en la sesión 3 (`ev-v9-002735-472432b8`;
+  `cierre_h4_antelacion = 1`, CONFIRMED), y eso no se pregunta.*
 
 ### Bloque 4 · Confirmaciones cortas
 
