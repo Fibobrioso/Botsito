@@ -780,6 +780,24 @@ exacto; aquí, lo que dice:
   comprobador estático que dependía del orden de las funciones en el fichero.
 - **El error del motivo de D2b** es del consultor y va a la orden de cierre (respuesta, punto 0).
 
+## 9. `make check` y CI de las fases 1 y 2
+
+| commit | `make check` | PICO DE MEMORIA |
+|---|---|---|
+| `8ac24ed` (apertura) | exit 0, 2690 passed, SELLO | 296 MiB en `test` |
+| `609f700` (fase 0) | exit 0, 2690 passed, SELLO | 296 MiB en `test` |
+| `d8feec0` (fase 1) | exit 0, 2707 passed, SELLO | 295 MiB en `test` |
+| `2c83d89` (fase 2) | exit 0, 2723 passed, SELLO | 298 MiB en `test` |
+
+`test_nunca_bloquea_y_es_rapido` no falló en ninguno.
+
+**CI de Linux por `fix/ea-conexion`** (`git push origin trabajo/ea-conexion:fix/ea-conexion`; consultada
+con `gh run list` y `gh run view`, ni curl ni guion): run **39335556792** sobre `2c83d89`: 1 failed,
+2712 passed, 10 skipped. El único fallo es el aceptado,
+`tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama
+'trabajo/ea-conexion'; la rama actual es 'fix/ea-conexion'»; `docs/runbooks/RITUAL.md:107`). Los tests
+nuevos pasan en Linux, también el que exporta del índice con git en una carpeta temporal.
+
 ## Estado
 
-EN CURSO: fases 1 y 2 hechas. La fase 3 espera a la corrida de Aleks en la prueba nueva del 26 de octubre (docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)»), después de la ejecución 2 de MedirDemoFTMO; la rama espera su journal.
+EN CURSO: fases 1 y 2 hechas, con su CI de Linux. La fase 3 espera a la corrida de Aleks en la prueba nueva del 26 de octubre (docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)»), después de la ejecución 2 de MedirDemoFTMO: la rama espera su journal. Después, el revisor y la entrega.
