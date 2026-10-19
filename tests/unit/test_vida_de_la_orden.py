@@ -89,8 +89,8 @@ def test_una_orden_llenada_sale_llenada_con_el_instante_del_llenado(
     assert fila == (
         f"{DIA} | 07-11 | o1 | {colocada} | {PRECIO} | llenada | - | "
         f"{cableado._instante(p.abierta_ms).isoformat()} | {o1.lotes} | 16 | {requerido:.2f} | "
-        f"100000.00 | {riesgo:.3f} | 31.25 | margen"
-    )
+        f"100000.00 | {riesgo:.3f} | 31.25 | margen | - | -"
+    )  # las dos ultimas (rama trabajo/punto-usado): sin productor, sin punto ni caja
     assert o1.lotes < Decimal("31.25") and requerido <= Decimal("0.95") * Decimal(100_000)
     assert "ordenes: llenada 1" in cableado.informe_simulacion(motor)
     assert _rechazos(motor) == ["ninguno"]
@@ -109,6 +109,7 @@ def test_sin_apalancamiento_en_el_perfil_las_columnas_de_margen_dicen_sin_medida
     (fila,) = _lineas_de_ordenes(motor)
     assert fila.endswith(
         f" | 31.25 | 16 | {cableado.SIN_MEDIDA} | {cableado.SIN_MEDIDA} | 0.500 | 31.25 | ninguno"
+        f" | {cableado.SIN_MEDIDA} | {cableado.SIN_MEDIDA}"
     )
     assert " | llenada | - | " in fila
     assert "ordenes: llenada 1" in cableado.informe_simulacion(motor)
@@ -256,7 +257,8 @@ def test_una_orden_que_la_red_de_seguridad_cancela_sale_viva_al_cerrar_el_dia(
     assert len(filas) == 1
     dia, sesion, id, colocada, precio, resultado, motivo, cuando = filas[0][:8]
     # sin anotacion de margen en la traza (este test monta la traza a mano), las columnas de
-    # margen van en None y el limite en `-`; el lote y la distancia salen de la orden
+    # margen van en None y el limite en `-`; el lote y la distancia salen de la orden; y sin
+    # productor (un motor sin `estados`), el punto es `-` y la caja None (trabajo/punto-usado)
     assert filas[0][8:] == (
         broker.ordenes["o1"].lotes,
         abs(tc.ENTRADA - broker.ordenes["o1"].stop),
@@ -265,6 +267,8 @@ def test_una_orden_que_la_red_de_seguridad_cancela_sale_viva_al_cerrar_el_dia(
         None,
         None,
         cableado.SIN_MEDIDA,
+        cableado.SIN_MEDIDA,
+        None,
     )
     assert (dia, sesion, id, precio, resultado) == (
         DIA,
