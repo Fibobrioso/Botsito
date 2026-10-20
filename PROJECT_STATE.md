@@ -7,7 +7,7 @@
 trabajo/ea-conexion
 
 ## Current Feature
-trabajo/ea-conexion, EN CURSO (abierta el 2026-10-19; hoja de ruta R6a.1, tramo R6a, ADR-0082): el primer EA de la capa de MT5 que no decide operaciones -se niega fuera de DEMO, lee el reloj del servidor, las sesiones del símbolo y ACCOUNT_MARGIN_MODE y lo escribe en un journal versionado con hash encadenado-. Fases 0, 1 y 2 hechas; espera el journal de la corrida de Aleks en la prueba nueva del 26 de octubre (fase 3; DEMO-FTMO.md, «El EA de conexión (R6a.1)»). Encargo docs/encargos/trabajo-ea-conexion.md; informe docs/validation/EA-CONEXION.md.
+trabajo/ea-conexion, EN CURSO (abierta el 2026-10-19; hoja de ruta R6a.1, tramo R6a, ADR-0082): el primer EA de la capa de MT5 que no decide operaciones -se niega fuera de DEMO, lee el reloj del servidor, las sesiones del símbolo y ACCOUNT_MARGIN_MODE y lo escribe en un journal versionado con hash encadenado-. Fases 0, 1 y 2 hechas; la corrida del 2026-10-20 encontró un defecto (tras un cambio de símbolo el EA no releía cuenta, reloj ni sesiones), arreglado; espera el journal de la corrida de cierre de Aleks del 21 de octubre en la prueba actual (fase 3; DEMO-FTMO.md, «El EA de conexión (R6a.1)»). Encargo docs/encargos/trabajo-ea-conexion.md; informe docs/validation/EA-CONEXION.md.
 
 ## Stable Main State
 ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-5`): el barrido de preguntas de la sesión 5 con el trader (R4.1), docs/sesion-5/PREGUNTAS.md: las preguntas en cuatro bloques, con lo ya dicho y su id, esquemas inventados y ningún día real; la hoja es el PDF del consultor. Solo documentos. Sobre `stable/F37v-punto-usado` (a1bb8a5). Informe docs/validation/BARRIDO-SESION-5.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-
 ff55b3d · merge: trabajo/barrido-sesion-5, las preguntas de la sesion 5 con el trader (docs/sesion-5/PREGUNTAS.md) y su informe · tag stable/F37w-barrido-sesion-5
 
 ## Tests Currently Passing
-1636 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1638 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

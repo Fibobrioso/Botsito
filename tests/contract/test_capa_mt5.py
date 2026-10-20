@@ -14,6 +14,9 @@ MetaTrader.
   `ExpertRemove()`.
 - D2g: en el codigo de la capa no hay cifras con decimales, ni nombres de instrumento ni de firma, y
   los `#define` son solo los del formato y la version (`DEFINES_PERMITIDOS`, mql5/JOURNAL.md).
+- D2b y D2c tras un cambio de simbolo: cada global del EA y de sus includes se pone a su valor
+  inicial en `OnInit` o en una funcion a la que `OnInit` llame (`globales_sin_reiniciar`; el defecto
+  medido en la demo del 2026-10-20, EA-CONEXION.md fase 3).
 
 Cada comprobacion se rompe a proposito en los dos sentidos sobre fuentes de ejemplo; las mismas
 comprobaciones se aplican a los ficheros reales de la capa (los tests `test_la_capa_*`).
@@ -192,6 +195,74 @@ def comprobar_negativa(src_ea: str, src_includes: str, src_medir: str) -> None:
     assert "ExpertRemove();" in otra, "la segunda llamada no hace ExpertRemove()"
 
 
+TIPOS = r"(?:int|long|ulong|uint|short|ushort|char|uchar|bool|string|datetime|double|float|color)"
+
+
+def globales(src: str) -> list[str]:
+    """Las variables declaradas al principio de una linea (las globales, por el estilo de la
+    capa)."""
+    codigo = sin_textos(sin_comentarios(src))
+    return re.findall(
+        rf"^(?:static\s+)?{TIPOS}\s+(\w+)\s*(?:\[\w*\])?\s*(?:=[^;]*)?;", codigo, re.MULTILINE
+    )
+
+
+def cuerpo_de(src: str, funcion: str) -> str | None:
+    """El cuerpo de la funcion `funcion` definida en `src` (su tipo en la columna 0, como en la
+    capa), o None si no esta."""
+    codigo = sin_textos(sin_comentarios(src))
+    m = re.search(rf"^\w[\w ]*?\s+{funcion}\s*\([^;{{]*\)\s*\{{", codigo, re.MULTILINE)
+    return None if m is None else bloque(codigo, m.start())
+
+
+def sin_la_negativa(cuerpo: str) -> str:
+    """El cuerpo de `OnInit` sin el `if` de la negativa con que empieza (con bloque o sin el)."""
+    c = cuerpo.lstrip()
+    if not c.startswith("if"):
+        return cuerpo
+    a = c.index("(")
+    nivel = 0
+    for j in range(a, len(c)):
+        nivel += {"(": 1, ")": -1}.get(c[j], 0)
+        if nivel == 0:
+            break
+    resto = c[j + 1 :].lstrip()
+    if resto.startswith("{"):
+        return resto[len(bloque(resto, 0)) + 2 :]
+    return resto[resto.index(";") + 1 :]
+
+
+def tramo_recto(cuerpo: str) -> str:
+    """Lo que se ejecuta siempre: el cuerpo hasta el primer `if`, `else`, `return` o bucle."""
+    m = re.search(r"\b(?:if|else|return|while|for|do|switch)\b", cuerpo)
+    return cuerpo if m is None else cuerpo[: m.start()]
+
+
+def globales_sin_reiniciar(src_ea: str, src_includes: str) -> list[str]:
+    """Al cambiar el simbolo o el marco del grafico el EA no se recarga: el terminal llama a
+    `OnDeinit` y a `OnInit`, pero «values of global variables and static variables are not reset»
+    (<https://www.mql5.com/en/docs/runtime/running>, consultada el 2026-10-20). Medido en la demo
+    del 2026-10-20 (EA-CONEXION.md, fase 3): una global que se quedo en `true` dejo dos arranques
+    sin cuenta, reloj ni sesiones. Cada global tiene que asignarse en `OnInit` o en una funcion a
+    la que `OnInit` llame directamente, y SIN CONDICION: solo cuenta el tramo recto de cada
+    cuerpo, antes del primer `if`, `return` o bucle (en `OnInit`, despues de la negativa). La
+    primera version
+    contaba cualquier asignacion y no cazaba el defecto: el `g_cuenta_leida = true;` de
+    `AlConectar`, detras de su `if`, pasaba por reinicio."""
+    oninit = cuerpo_de(src_ea, "OnInit")
+    assert oninit is not None, "no hay OnInit"
+    cuerpos = [tramo_recto(sin_la_negativa(oninit))]
+    for llamada in set(re.findall(r"\b(\w+)\s*\(", cuerpos[0])):
+        for src in (src_ea, src_includes):
+            cuerpo = cuerpo_de(src, llamada)
+            if cuerpo is not None:
+                cuerpos.append(tramo_recto(cuerpo))
+    texto = "\n".join(cuerpos)
+    asignadas = set(re.findall(r"\b(\w+)\s*=(?!=)", texto))
+    asignadas |= set(re.findall(r"\bArray(?:Free|Resize)\(\s*(\w+)", texto))
+    return [g for g in globales(src_ea) + globales(src_includes) if g not in asignadas]
+
+
 def cifras_y_nombres(src: str) -> list[str]:
     """D2g: decimales, instrumentos o firmas en el codigo, y `#define` fuera de la lista."""
     codigo = sin_comentarios(src)
@@ -340,6 +411,90 @@ def test_cifras_y_nombres_en_los_dos_sentidos() -> None:
         assert cifras_y_nombres(bueno) == [], bueno
 
 
+EA_CON_GLOBALES = """
+datetime g_ultimo = 0;
+bool     g_leida = false;
+int OnInit()
+  {
+   if(NegarFueraDeDemo(AccountInfoInteger(ACCOUNT_TRADE_MODE)))
+      return(INIT_FAILED);
+   g_leida = false;
+   g_ultimo = 0;
+   string c = Abrir("x");
+   Conectar();
+   return(INIT_SUCCEEDED);
+  }
+void Conectar()
+  {
+   if(g_leida)
+      return;
+   g_leida = true;
+  }
+void Otra()
+  {
+   g_dia = "";
+  }
+"""
+INCLUDE_CON_GLOBALES = """
+string g_dia = "";
+long   g_seq = 0;
+uchar  g_buf[];
+string Abrir(const string carpeta)
+  {
+   g_dia = "";
+   g_seq = 0;
+   ArrayFree(g_buf);
+   g_buf[0] = 0;
+   return "ninguna";
+  }
+"""
+
+
+def test_las_globales_se_reinician_en_los_dos_sentidos() -> None:
+    assert globales(EA_CON_GLOBALES) == ["g_ultimo", "g_leida"]
+    assert globales(INCLUDE_CON_GLOBALES) == ["g_dia", "g_seq", "g_buf"]
+    assert globales_sin_reiniciar(EA_CON_GLOBALES, INCLUDE_CON_GLOBALES) == []
+    rotos = {
+        "la del EA, sin reiniciar (el defecto del 2026-10-20)": (
+            EA_CON_GLOBALES.replace("\n   g_leida = false;\n", "\n"),
+            INCLUDE_CON_GLOBALES,
+            ["g_leida"],
+        ),
+        "solo comparada, no asignada": (
+            EA_CON_GLOBALES.replace(
+                "\n   g_leida = false;\n", "\n   bool b = (g_leida == false);\n"
+            ),
+            INCLUDE_CON_GLOBALES,
+            ["g_leida"],
+        ),
+        "OnInit no llama a la funcion que reinicia": (
+            EA_CON_GLOBALES.replace('string c = Abrir("x");', ""),
+            INCLUDE_CON_GLOBALES,
+            ["g_dia", "g_seq", "g_buf"],
+        ),
+        "reiniciada solo en otra funcion": (
+            EA_CON_GLOBALES,
+            INCLUDE_CON_GLOBALES.replace('   g_dia = "";\n', ""),
+            ["g_dia"],
+        ),
+        "reiniciada detras de un if": (
+            EA_CON_GLOBALES.replace("int OnInit()", "void Q()\n  {\n  }\nint OnInit()").replace(
+                "\n   g_leida = false;\n   g_ultimo = 0;\n",
+                "\n   g_ultimo = 0;\n   if(Q())\n      g_leida = false;\n",
+            ),
+            INCLUDE_CON_GLOBALES,
+            ["g_leida", "g_dia", "g_seq", "g_buf"],
+        ),
+        "una global nueva": (
+            EA_CON_GLOBALES.replace("int OnInit()", "int g_nueva = 0;\nint OnInit()"),
+            INCLUDE_CON_GLOBALES,
+            ["g_nueva"],
+        ),
+    }
+    for motivo, (ea, inc, esperadas) in rotos.items():
+        assert globales_sin_reiniciar(ea, inc) == esperadas, motivo
+
+
 def test_la_segunda_llamada_puede_ir_antes_en_el_fichero() -> None:
     oninit, resto = EA_BUENO.split("void AlConectar()")
     comprobar_negativa("void AlConectar()" + resto + oninit, INCLUDE_BUENO, MEDIR_EJEMPLO)
@@ -383,6 +538,13 @@ def test_la_negativa_de_la_capa_es_la_de_medir_y_va_lo_primero() -> None:
     capa = _capa()
     includes = "\n".join(t for n, t in capa.items() if n.startswith("mql5/Include/"))
     comprobar_negativa(capa[EA], includes, MEDIR.read_text(encoding="utf-8"))
+
+
+def test_el_ea_reinicia_sus_globales_en_oninit() -> None:
+    capa = _capa()
+    includes = "\n".join(t for n, t in capa.items() if n.startswith("mql5/Include/"))
+    assert globales(capa[EA]), "el EA no declara globales: la comprobacion no comprobaria nada"
+    assert globales_sin_reiniciar(capa[EA], includes) == []
 
 
 def test_la_capa_no_lleva_cifras_ni_nombres_a_mano() -> None:

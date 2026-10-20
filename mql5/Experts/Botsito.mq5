@@ -57,6 +57,12 @@ int OnInit()
       Print("Botsito: la cuenta NO es DEMO: el EA no hace nada");
       return(INIT_FAILED);
      }
+   // Al cambiar el simbolo o el marco del grafico el EA no se recarga: OnDeinit y OnInit, pero «values
+   // of global variables and static variables are not reset» (docs/runtime/running). Cada global del
+   // EA se pone aqui a su valor inicial; las del journal, en JournalAbrir. Medido en la demo del
+   // 2026-10-20: sin esto, el arranque tras un cambio de simbolo no leia cuenta, reloj ni sesiones.
+   g_cuenta_leida = false;
+   g_ultimo_srv = 0;
    string cadena = JournalAbrir("Botsito");
    datetime srv = TimeTradeServer();
    JournalEscribir(srv, TimeGMT(), "arranque",

@@ -109,6 +109,10 @@ DEUDAS = [
     "comprueba el CRLF del CSV 2 en `MQL5\\Files` antes de copiarlo (EA-CONEXION.md §0.c).",
     "- La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es "
     "redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).",
+    "- Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del "
+    "2026-10-20) lo comprueban un test estático textual (`globales_sin_reiniciar`, "
+    "`tests/contract/test_capa_mt5.py`) y la corrida de la demo: el script de pruebas no puede "
+    "provocar un `REASON_CHARTCHANGE` (EA-CONEXION.md §10).",
 ]
 ps = cambiar(
     ps,

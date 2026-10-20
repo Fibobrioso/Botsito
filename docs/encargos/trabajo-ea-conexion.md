@@ -108,3 +108,27 @@ Dada por Aleks (consultor) el 2026-10-19. Copiada tal cual:
 > - El auditor tiene razón en la incorrecta 29 y en los matices 30 y 54: escribe en el informe las rutas y nombres correctos (tests/contract/, LF y no UTF-8 en .gitattributes, el carril de guardias y deuda en lugar de «G»).
 >
 > Sigue con las fases 1 y 2 sin parar. La fase 3 espera a mi corrida en la prueba nueva del 26; cuando llegue a ella, deja la rama esperando mi journal y avísame con el procedimiento listo.
+
+## Añadido de Aleks (2026-10-20): la primera corrida y la de cierre
+
+Dado por Aleks el 2026-10-20, en la sesión. Copiado tal cual, en el orden en que llegó.
+
+El mensaje con los journals:
+
+> Los journals de la corrida de hoy (2026-10-20) ya están en data/ea_conexion/. Ojo: el EA arrancó primero, por error, en un gráfico de US100.cash (de 15:37:42 a 15:39:33 de Lima) y después en EURUSD desde las 15:39:46; decláralo en el informe. La corrida cruzó la medianoche del servidor (16:00 de Lima) y a las 17:15 hice el reinicio (quitar, poner dos minutos, quitar). Sigue con la fase 3, el revisor y la entrega.
+
+Sus respuestas a las dos preguntas de la sesión (el reinicio que el journal no tenía y el defecto
+del cambio de gráfico; EA-CONEXION.md §10):
+
+> No lo volví a poner después de quitarlo a las 17:17. Hago el reinicio ahora: lo pongo en EURUSD, lo dejo dos minutos, lo quito y vuelvo a copiar los journals a data/ea_conexion/ (sobrescribiendo). Te aviso cuando esté.
+
+> Arreglar y repetir (Recomendado)
+
+(la opción decía: «OnInit pone a cero g_cuenta_leida y g_ultimo_srv, con su test estático roto a
+propósito en los dos sentidos; recompilo y repito las pruebas. Mañana 21 (la prueba vence hacia el
+22) o el 26 repites la corrida con un cambio de símbolo a propósito y el reinicio pasada la
+medianoche, y se congela ese journal.»)
+
+Y la corrección que llegó después:
+
+> Corrección: no hago el reinicio ahora. Con el defecto arreglado, repito la corrida completa mañana miércoles 21, de 15:30 a 17:15 de Lima, en la prueba actual, con el cambio de símbolo a propósito y el reinicio pasada la medianoche del servidor. El journal de hoy no se congela como corrida de cierre: guárdalo solo como medida del defecto, declarado en el informe. Puedes compilar, instalar el EA arreglado y lanzar las pruebas cuando quieras; déjame el procedimiento de mañana con el momento exacto del cambio de símbolo.

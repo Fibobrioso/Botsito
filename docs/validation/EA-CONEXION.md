@@ -724,6 +724,10 @@ se corrigió para no depender del orden, con su test.
   ampliar `LA_CAPA` de `tests/contract/test_capa_mt5.py`, y cualquier función de trading pasa por
   `LECTURA_PERMITIDA` (o una lista de envío) con decisión del consultor. Los `#define` nuevos, a
   `DEFINES_PERMITIDOS`. `python -m` no lo ejecuta la guardia: los módulos se lanzan por su ruta.
+  Un cambio de símbolo o de marco del gráfico no recarga el EA y no reinicia sus globales (§10):
+  cada global nueva se pone a su valor inicial en `OnInit`, sin condición, o en una función a la
+  que `OnInit` llame en su tramo recto, y `test_el_ea_reinicia_sus_globales_en_oninit` lo exige.
+  Compilar, instalar y lanzar las pruebas, con el EA quitado de la demo y el terminal cerrado.
 - **El tester:** un EA corre allí por línea de órdenes (`[Tester]`; `compilar.py` todavía no tiene
   esa orden: el `.ini` va a mano, como en `anexos/EA-CONEXION/tester-ea/`); `ACCOUNT_TRADE_MODE` es
   DEMO con la cuenta de prueba; `SymbolInfoSessionTrade` responde; `OnTimer` funciona; FTMO-Demo da
@@ -752,7 +756,8 @@ se corrigió para no depender del orden, con su test.
 
 Simuladas en memoria con `anexos/EA-CONEXION/simular_cierre.py` (como el de VISOR-CONSTRUCCION):
 `test_hoja_de_ruta.py` a, b y c sin problemas y los cuatro de `test_project_state.py` pasan;
-**PROJECT_STATE quedaría en 23.355 bytes** (hoy 22.596; tope 25.000). El simulador lleva el texto
+**PROJECT_STATE quedaría en 23.967 bytes** (hoy 22.895; tope 25.000; simulado de nuevo el 2026-10-20
+con la cuarta línea de Technical Debt; el 19 eran 23.355 sobre 22.596). El simulador lleva el texto
 exacto; aquí, lo que dice:
 
 - **Hoja de ruta, R6a.1:** **HECHA**, con su línea de Estado (`trabajo/ea-conexion`,
@@ -769,15 +774,21 @@ exacto; aquí, lo que dice:
   que decide A-28 con los dos (EA-CONEXION.md, D6)».
 - **PROJECT_STATE, N:** «La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1
   (EA-CONEXION.md, el journal de la demo en sus anexos), y R6a.5 la usa (ADR-0082 D6)».
-- **Technical Debt, tres líneas:** el validador en `mql5bridge`, que `engine` no ve (punto 4); el CRLF
-  del modo texto frente al LF del CSV de la ejecución 1, para la rama que congele los CSV 2 y 3 (punto
-  8, con el texto de §0.c); y la comprobación redundante del LF en `UltimaLinea` (rotura r3).
+- **Technical Debt, cuatro líneas:** el validador en `mql5bridge`, que `engine` no ve (punto 4); el
+  CRLF del modo texto frente al LF del CSV de la ejecución 1, para la rama que congele los CSV 2 y 3
+  (punto 8, con el texto de §0.c); la comprobación redundante del LF en `UltimaLinea` (rotura r3); y
+  que el reinicio de las globales tras un cambio de símbolo solo lo comprueban un test estático
+  textual y la demo, porque el script de pruebas no puede provocar un `REASON_CHARTCHANGE` (§10).
 - **Sin línea para A.2** (punto 9).
 - **ERRORES-RECURRENTES, la fila de la rama:** el falso positivo de K con la variable `crudo` de un
   guion de medida del scratchpad (renombrada a `original`); el primer test de la forma canónica, que
   pasaba por otro motivo (la mutación rompía el `prev` de la siguiente línea: patrón «una
-  comprobación que no puede fallar», arreglado mutando la última línea y exigiendo el motivo); y el
-  comprobador estático que dependía del orden de las funciones en el fichero.
+  comprobación que no puede fallar», arreglado mutando la última línea y exigiendo el motivo); el
+  comprobador estático que dependía del orden de las funciones en el fichero; el defecto de la demo
+  del 2026-10-20 (las globales del EA no se reinician con un cambio de símbolo, y ninguna prueba
+  anterior a la demo podía verlo: §10); y la primera versión de su comprobador, que contaba como
+  reinicio la asignación condicional que causaba el defecto (otra vez «una comprobación que no puede
+  fallar»; cazado al romper la capa real a propósito).
 - **El error del motivo de D2b** es del consultor y va a la orden de cierre (respuesta, punto 0).
 
 ## 9. `make check` y CI de las fases 1 y 2
@@ -791,6 +802,114 @@ exacto; aquí, lo que dice:
 
 `test_nunca_bloquea_y_es_rapido` no falló en ninguno.
 
+## 10. Fase 3 · la corrida del 2026-10-20: medida de un defecto, no la de cierre
+
+**Lo que decidió Aleks** (copiado tal cual al final del encargo, «Añadido de Aleks (2026-10-20)»):
+la corrida de hoy se hizo en la prueba actual, no en la nueva del 26, y antes de la ejecución 2 de
+MedirDemoFTMO. Al encontrarse el defecto de abajo, **no es la corrida de cierre**: se guarda solo como
+medida del defecto, y la de cierre se repite el **miércoles 21 de octubre, de 15:30 a 17:15 de Lima,
+en la prueba actual**, con el EA arreglado, un cambio de símbolo a propósito y el reinicio pasada la
+medianoche del servidor. **Desviación de D5**, decidida por Aleks: la corrida de cierre no va en la
+prueba nueva del 26 ni después de la ejecución 2 (que irá en esa prueba nueva; nunca a la vez). El
+runbook lo dice así.
+
+**Lo que declaró Aleks:** el EA arrancó primero, por error, en un gráfico de US100.cash (de 15:37:42
+a 15:39:33 de Lima) y después en EURUSD desde las 15:39:46; la corrida cruzó la medianoche del
+servidor (16:00 de Lima); y a las 17:15 hizo el reinicio. **El journal no tenía ese reinicio**
+(latidos sin hueco hasta las 17:16:48, un único `fin` a las 17:17:36 y nada después; el fichero del
+terminal era igual a la copia: 27.491 bytes, última escritura a las 17:17:36). Preguntado, Aleks
+respondió que no lo volvió a poner después de quitarlo a las 17:17.
+
+**El journal**, validado con el lector (`journal.py`, exit 0): **113 líneas en 2 ficheros, una sola
+cadena**, UTF-8, LF y sin CR; desde 2026-10-20T23:37:54 hasta 2026-10-21T01:17:36 (servidor); eventos
+`arranque` 4, `cuenta` 2, `reloj` 2, `sesiones` 3, `cambio_de_dia` 1, `latido` 97 y `fin` 4; `desfase_s`
+10800 en las 113; hash de la última línea `ff0564e9…f30f`. Lo que dice, en hora de Lima (servidor − 8 h):
+
+| seq | Lima | evento | lo que trae |
+|---|---|---|---|
+| 1-4 | 15:37:54 | `arranque` US100.cash (`ninguna`), `cuenta`, `reloj`, `sesiones` | DEMO, HEDGING, FTMO-Demo; sesiones de US100.cash `[3900, 85800]` (01:05 a 23:50) de lunes a viernes |
+| 5-6 | 15:38:34 | `fin` (`REASON_CHARTCHANGE`), `arranque` EURUSD (`sigue`) | **sin `cuenta`, `reloj` ni `sesiones`** |
+| 7-8 | 15:38:49 | `fin` (`REASON_CHARTCHANGE`), `arranque` US100.cash (`sigue`) | **sin `cuenta`, `reloj` ni `sesiones`** |
+| 9 | 15:39:33 | `fin` (`REASON_REMOVE`) | |
+| 10-13 | 15:39:48 | `arranque` EURUSD (`sigue`), `cuenta`, `reloj`, `sesiones` | DEMO, HEDGING, FTMO-Demo; desfase servidor−GMT 180 min, local−GMT −300 min, `TimeGMTOffset` 18000, sin horario de verano; sesiones de EURUSD `trade` y `quote` `[300, 86100]` de lunes a viernes, sábado y domingo vacías, sin llegar al tope |
+| 14-33 | 15:40:48 a 15:59:48 | `latido` | uno por minuto |
+| 34-35 | 16:00:48 | `cambio_de_dia` (2026-10-20 → 2026-10-21) y `sesiones` | primera línea de `journal_20261021.jsonl`; las mismas sesiones |
+| 36-112 | 16:00:48 a 17:16:48 | `latido` | uno por minuto; el de seq 37 (16:01:48) trae **`conectado: false`**: un corte de la conexión justo después de la medianoche del servidor; el siguiente, ya `true` |
+| 113 | 17:17:36 | `fin` (`REASON_REMOVE`) | |
+
+Los dos cambios de gráfico de las 15:38 no estaban en lo que declaró Aleks; los da el journal. Las
+horas de Aleks y las del journal difieren unos segundos (15:37:42 frente a 15:37:54; 15:39:46 frente
+a 15:39:48): el journal escribe al terminar `OnInit`, no al soltar el EA en el gráfico.
+
+**Lo que esta corrida sí mide**, aunque no sea la de cierre: el desfase (180 min, el de la fase 0),
+el modo de margen (HEDGING), las sesiones de EURUSD (las mismas que las pruebas del 19), el cambio de
+día **en la demo** (16:00:48, con su fichero nuevo y la cadena entera) y un quitar y poner (15:39:33 →
+15:39:48) que sigue la cadena. No mide un reinicio pasada la medianoche.
+
+**El defecto.** En los arranques que vienen de un `REASON_CHARTCHANGE` (seq 6 y 8) el EA no volvió a
+leer la cuenta, el reloj ni las sesiones del símbolo nuevo: incumple D2b y D2c («al arrancar»). La
+causa, medida y citada: al cambiar el símbolo o el marco del gráfico el EA no se recarga; el terminal
+llama a `OnDeinit` y a `OnInit`, pero *«values of global variables and static variables are not
+reset»* (<https://www.mql5.com/en/docs/runtime/running>, consultada el 2026-10-20). `g_cuenta_leida`
+se quedó en `true` y `AlConectar` volvió sin hacer nada (con `conectado: true`, es lo único que lo
+explica). En el arranque de las 15:39:48, que fue una carga nueva, sí se leyó todo. Las globales del
+journal no tenían el problema: `JournalAbrir` las pone todas a su valor inicial.
+
+**El arreglo** (respuesta de Aleks: «Arreglar y repetir»): `OnInit`, después de la negativa, pone
+`g_cuenta_leida = false` y `g_ultimo_srv = 0`, con un comentario que cita la documentación. Y un test
+estático nuevo, `globales_sin_reiniciar` en `tests/contract/test_capa_mt5.py`: cada global del EA y
+de sus includes tiene que asignarse **sin condición** en `OnInit` (después de la negativa) o en una
+función a la que `OnInit` llame en ese tramo; solo cuenta el tramo recto de cada cuerpo, antes del
+primer `if`, `else`, `return` o bucle. Dos tests: `test_las_globales_se_reinician_en_los_dos_sentidos`
+(sobre ejemplos: el defecto tal cual, una global solo comparada, `OnInit` sin la llamada que
+reinicia, el reinicio solo en otra función, detrás de un `if` y una global nueva) y
+`test_el_ea_reinicia_sus_globales_en_oninit` (la capa real; falla si el EA no declara globales, para
+que no pueda pasar sin comprobar nada).
+
+Roturas a propósito, deshechas después:
+
+| rotura | lo que pasó |
+|---|---|
+| la capa real sin `g_cuenta_leida = false;`, con la **primera versión** del comprobador | **no la cazaba**: contaba cualquier asignación de una función llamada desde `OnInit`, y el `g_cuenta_leida = true;` de `AlConectar`, detrás de su `if`, pasaba por reinicio. Es el defecto mismo. Corregido con el tramo recto, y el ejemplo lleva ahora esa forma exacta |
+| la misma, con el comprobador corregido | `test_el_ea_reinicia_sus_globales_en_oninit` falla: `['g_cuenta_leida']` |
+| `JournalAbrir` sin `g_journal_seq = 0;` | el mismo test falla: `['g_journal_seq']` (la otra asignación, `g_journal_seq = seq;`, va detrás de un `if`) |
+
+Al escribir el test, uno de los casos rotos borraba también la declaración
+(`bool     g_leida = false;` contiene `   g_leida = false;`); se ancló al salto de línea.
+
+**Compilación y pruebas del EA arreglado** (los mismos comandos de §6, con el terminal cerrado, ya
+que `--instalar` sustituye el `.ex5` y `/config` abre el terminal): los dos **PASA, 0 errores y 0
+avisos** (sha256 del fuente del EA `1404c0e9…7a01`, en la cabecera de `compilacion/Botsito.log`),
+instalados; el script de pruebas, **18 OK, 0 FALLO**, los dos golden válidos y los journals del
+script iguales byte a byte al golden (`pruebas/resultado.txt`). El cambio de símbolo **no** se puede
+provocar desde el script de pruebas: lo prueba la corrida del 21 (línea de Technical Debt en §8).
+
+**El journal del 20, guardado como medida del defecto:** `anexos/EA-CONEXION/demo-20261020-defecto/`,
+los dos ficheros tal cual (ya son UTF-8 y LF), con el sha256 del original:
+
+| fichero | bytes | sha256 |
+|---|---|---|
+| `journal_20261020.jsonl` | 12.504 | `f25ab7681b8ee53482396b53a2fbc6c65266eccd8bfe492769b360c6e2fbf0a2` |
+| `journal_20261021.jsonl` | 27.491 | `cde88c65ba2ad2085e3aba31089524daab09f363397909c65db7138a56b6a2e0` |
+
+No llevan login ni dinero (el validador rechaza claves de más en `datos`). Para que la corrida del 21
+empiece un journal nuevo —el día 21 del servidor empezó el 20 a las 16:00 de Lima, y el EA habría
+seguido escribiendo en el mismo `journal_20261021.jsonl`—, la sesión movió los dos ficheros, después
+de comprobar el sha256 de la copia, a una subcarpeta `demo-20261020-defecto` en
+`MQL5\Files\Botsito` del terminal (`JournalAbrir` solo busca en la carpeta de arriba) y en
+`data/ea_conexion/`. No se borró nada.
+
+**La corrida de cierre** queda escrita en `docs/runbooks/DEMO-FTMO.md`, «El EA de conexión (R6a.1)»,
+con la hora de Lima de cada paso: 15:30 ponerlo en EURUSD; **15:35 el cambio de símbolo a
+US100.cash** (arrastrándolo sobre el mismo gráfico); 15:37 de vuelta a EURUSD; dejarlo pasada la
+medianoche del servidor (16:00); 17:00 quitarlo, 17:01 ponerlo, 17:03 quitarlo; 17:05 copiar
+`journal_20261021.jsonl` y `journal_20261022.jsonl`. Lo que se comprobará: cuatro `arranque`, cada uno
+seguido de `cuenta`, `reloj` y `sesiones` del símbolo de ese arranque; el `cambio_de_dia` con sus
+sesiones; los dos `fin` de las 17:00 y las 17:03; y una sola cadena.
+
+**Exposiciones:** ninguna. El journal no trae velas, ticks ni material del trader; las sesiones de
+US100.cash son una lectura del bróker, no del corpus.
+
 **CI de Linux por `fix/ea-conexion`** (`git push origin trabajo/ea-conexion:fix/ea-conexion`; consultada
 con `gh run list` y `gh run view`, ni curl ni guion): run **39335556792** sobre `2c83d89`: 1 failed,
 2712 passed, 10 skipped. El único fallo es el aceptado,
@@ -800,4 +919,4 @@ nuevos pasan en Linux, también el que exporta del índice con git en una carpet
 
 ## Estado
 
-EN CURSO: fases 1 y 2 hechas, con su CI de Linux. La fase 3 espera a la corrida de Aleks en la prueba nueva del 26 de octubre (docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)»), después de la ejecución 2 de MedirDemoFTMO: la rama espera su journal. Después, el revisor y la entrega.
+EN CURSO: fases 1 y 2 hechas, con su CI de Linux. La corrida del 2026-10-20 encontró un defecto (§10), arreglado y probado; su journal se guarda solo como medida. La fase 3 espera el journal de la corrida de cierre de Aleks del miércoles 21 de octubre, de 15:30 a 17:15 de Lima, en la prueba actual (docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)»). Después, el revisor y la entrega.

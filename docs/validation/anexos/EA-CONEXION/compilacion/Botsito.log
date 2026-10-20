@@ -1,14 +1,14 @@
-# fuente: mql5/Experts/Botsito.mq5 (copia del indice de git; sha256 dbe14aff839f22597dd063aae5decea6e25af9ab3d1e8f4d6ec6df1532e1cf49)
-# log original: UTF-16LE con BOM y CRLF, sha256 2413c1da2161ee2f64bdb9caae69e60faba55212f041e71da50ebd5ad6c158e1
+# fuente: mql5/Experts/Botsito.mq5 (copia del indice de git; sha256 1404c0e9d005578dd5275c26ae205fd24dc132ace7d1e009c87cedc9530c7a01)
+# log original: UTF-16LE con BOM y CRLF, sha256 5249adaeecbaf7b2d46e953d76cc33ebbf77f4a2f04f44550ec07146ee425bee
 # codigo de salida de MetaEditor: 1 (1 con exito, 0 con error: no es la puerta)
 # puerta: PASA (0 errores, 0 avisos, .ex5 si)
 
 
-C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Experts\Botsito.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Experts\Botsito.mq5
-C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Include\Botsito\Capa\Journal.mqh
-C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Include\Botsito\Capa\Cuenta.mqh
-C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Include\Botsito\Capa\Reloj.mqh
-C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Include\Botsito\Capa\Sesiones.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Experts\Botsito.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Experts\Botsito.mq5
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Include\Botsito\Capa\Journal.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Include\Botsito\Capa\Cuenta.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Include\Botsito\Capa\Reloj.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-dkxvmzh2\mql5\Include\Botsito\Capa\Sesiones.mqh
  : information: generating code
  : information: generating code 3%
  : information: generating code 6%
@@ -44,4 +44,4 @@ C:\Users\USER\AppData\Local\Temp\botsito-mql5-k2gd7qqs\mql5\Experts\Botsito.mq5 
  : information: generating code 95%
  : information: generating code 100%
  : information: code generated
-Result: 0 errors, 0 warnings, 1283 ms elapsed, cpu='X64 Regular'
+Result: 0 errors, 0 warnings, 1372 ms elapsed, cpu='X64 Regular'
