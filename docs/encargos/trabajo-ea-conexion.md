@@ -132,3 +132,9 @@ medianoche, y se congela ese journal.»)
 Y la corrección que llegó después:
 
 > Corrección: no hago el reinicio ahora. Con el defecto arreglado, repito la corrida completa mañana miércoles 21, de 15:30 a 17:15 de Lima, en la prueba actual, con el cambio de símbolo a propósito y el reinicio pasada la medianoche del servidor. El journal de hoy no se congela como corrida de cierre: guárdalo solo como medida del defecto, declarado en el informe. Puedes compilar, instalar el EA arreglado y lanzar las pruebas cuando quieras; déjame el procedimiento de mañana con el momento exacto del cambio de símbolo.
+
+## Añadido de Aleks (2026-10-21): la corrida de cierre
+
+Dado por Aleks el 2026-10-21, en la sesión. Copiado tal cual:
+
+> Los journals de la corrida de hoy (2026-10-21) ya están en data/ea_conexion/. Seguí la tabla de DEMO-FTMO.md: EA puesto en EURUSD, cambio a US100.cash y vuelta a EURUSD, la medianoche del servidor, y después el reinicio (quitar, poner de nuevo y quitar), con algunos minutos de retraso. No apunté las horas exactas: sácalas del journal y escríbelas tú en el informe. Sigue con la validación, la fase 3, el revisor y la entrega.

@@ -79,7 +79,8 @@ firma, del bróker, del instrumento ni de la ejecución (D2g); R6a.2 puede gener
 
 `MQL5\Files\Botsito\journal_AAAAMMDD.jsonl`, uno por **día del servidor** (`srv`). Se abren con
 `FILE_READ|FILE_WRITE|FILE_BIN|FILE_SHARE_READ` y se escribe al final (`FileSeek`): nunca se
-truncan, y se pueden copiar con el EA puesto.
+truncan. `FILE_SHARE_READ` deja leerlos a otros mientras el EA los tiene abiertos, pero copiarlos con
+el EA puesto **no está medido**: las copias de la demo se hicieron con el EA quitado.
 
 - **La cadena sigue entre días y entre reinicios.** Al arrancar, el EA busca el journal más
   reciente de la carpeta y lee su última línea: si valida (acaba en LF, empieza por `{"v":1,"seq":`
