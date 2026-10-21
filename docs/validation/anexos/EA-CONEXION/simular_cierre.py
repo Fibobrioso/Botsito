@@ -69,7 +69,7 @@ hoja = cambiar(
     "  las dinámicas del script de pruebas, porque no se ejecuta en una cuenta real.\n"
     "- **Estado:** HECHA (`trabajo/ea-conexion`, `stable/F37x-ea-conexion`; EA-CONEXION.md): el EA\n"
     "  `mql5/Experts/Botsito.mq5`, el journal v1 (`mql5/JOURNAL.md`) con su validador y su golden, y\n"
-    "  la corrida en la demo con el journal congelado en los anexos.\n",
+    "  la corrida del 2026-10-21 en la demo con el journal congelado en los anexos.\n",
 )
 hoja = cambiar(
     hoja,
@@ -97,8 +97,9 @@ ps = cambiar(
     ps,
     "La condición 2 la cumplirá R6a.1, que trae la lectura de SymbolInfoSessionTrade, y R6a.5 la usa "
     "(ADR-0082 D6).",
-    "La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1 (EA-CONEXION.md, el "
-    "journal de la demo en sus anexos), y R6a.5 la usa (ADR-0082 D6).",
+    "La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1 (EA-CONEXION.md §11, "
+    "el journal de la demo del 2026-10-21 en anexos/EA-CONEXION/demo-20261021-cierre/), y R6a.5 la "
+    "usa (ADR-0082 D6).",
 )
 DEUDAS = [
     "- El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar "

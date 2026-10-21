@@ -153,6 +153,10 @@ encontró un defecto (tras un cambio de símbolo el EA no volvía a leer la cuen
 sesiones), y esta repite la corrida entera con el EA arreglado. Va antes de la ejecución 2 de
 MedirDemoFTMO, que es en la prueba nueva del 26: **nunca las dos a la vez**.
 
+**Hecha el 2026-10-21**, de 15:30 a 17:22 de Lima: el journal valida como una sola cadena y está
+congelado en los anexos de la rama, con la hora real de cada paso (`EA-CONEXION.md` §11). Lo de
+abajo se queda como el procedimiento de esa corrida.
+
 **Por qué esas horas.** La medianoche del servidor cae por la tarde en Lima: hasta el 25 de octubre
 el servidor va 3 horas por delante de GMT, y son **las 16:00 de Lima** (medido el 20: el cambio de día
 llegó a las 16:00:48). Desde el 25 serán las 16:00 o las 17:00 (justo lo que mide A-28).

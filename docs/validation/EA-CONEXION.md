@@ -738,7 +738,10 @@ se corrigió para no depender del orden, con su test.
 - **R6a.3:** hereda la doble negativa (lo primero de `OnInit` y otra vez al conectar: antes de
   conectar, las propiedades enteras de la cuenta se leen 0 sin error, y 0 es DEMO) y el journal que
   sigue la cadena tras un reinicio (la base del «reinicio a media jornada»); es la primera rama que
-  necesitará funciones de trading, con su decisión.
+  necesitará funciones de trading, con su decisión. Y una observación, sin decidir nada: en las dos
+  corridas de la demo, un latido con `conectado: false` hacia el minuto 1 del día del servidor
+  (00:01:48 el 20 y 00:01:22 el 21) y el siguiente ya `true`; con un latido por minuto no se sabe
+  cuánto dura (§11).
 - **R6a.4:** el `OnTimer` del latido ya existe; el freno portado se prueba en el script de pruebas
   con los casos de sus tests de Python.
 - **R6a.5:** las sesiones leídas en la demo de FTMO (EURUSD, 2026-10-19): `trade` y `quote` iguales,
@@ -746,7 +749,11 @@ se corrigió para no depender del orden, con su test.
   con el error 4307. Son una **plantilla semanal en el reloj del servidor**, sin fecha («in the
   returned value date should be ignored»): para pasarlas a instantes (`cierres_desde_sesiones` recibe
   instantes) hace falta una semana concreta y el desfase del servidor (A-28). `quote` se registra sin
-  usarlo: R6a.5 decide si sirve.
+  usarlo: R6a.5 decide si sirve. Las mismas en las corridas del 20 y del 21 en la demo (§10, §11), y en
+  la del 21 la hora de la última cotización (`TimeCurrent` del latido) se queda en 23:54:59 del
+  servidor desde el latido de las 23:55:22 hasta el de las 00:04:22, y en el de las 00:05:22 ya es
+  00:05:21: cuadra con el hueco de 23:55 a 00:05 de esa plantilla, pero con un latido por minuto el
+  primer tick nuevo solo se sabe entre las 00:04:22 y las 00:05:21.
 - **R6a.6:** el modo de margen se lee y se registra (HEDGING en la demo conectada; NETTING es el 0
   de antes de conectar).
 - **R6a.7:** antes de comparar `ACCOUNT_MARGIN_MODE`, el parámetro con su fuente (la respuesta de
@@ -756,8 +763,9 @@ se corrigió para no depender del orden, con su test.
 
 Simuladas en memoria con `anexos/EA-CONEXION/simular_cierre.py` (como el de VISOR-CONSTRUCCION):
 `test_hoja_de_ruta.py` a, b y c sin problemas y los cuatro de `test_project_state.py` pasan;
-**PROJECT_STATE quedaría en 23.967 bytes** (hoy 22.895; tope 25.000; simulado de nuevo el 2026-10-20
-con la cuarta línea de Technical Debt; el 19 eran 23.355 sobre 22.596). El simulador lleva el texto
+**PROJECT_STATE quedaría en 23.995 bytes** (hoy 22.873; tope 25.000; simulado de nuevo el 2026-10-21
+tras la corrida de cierre, con la fecha de la corrida en la línea de Estado de R6a.1 y el anexo en la
+de N; el 20 eran 23.967 sobre 22.895, y el 19, 23.355 sobre 22.596). El simulador lleva el texto
 exacto; aquí, lo que dice:
 
 - **Hoja de ruta, R6a.1:** **HECHA**, con su línea de Estado (`trabajo/ea-conexion`,
@@ -773,7 +781,8 @@ exacto; aquí, lo que dice:
 - **Hoja, A.1:** «Aleks ejecuta; los dos CSV los congela una sola rama, tras la ejecución 3, que es la
   que decide A-28 con los dos (EA-CONEXION.md, D6)».
 - **PROJECT_STATE, N:** «La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1
-  (EA-CONEXION.md, el journal de la demo en sus anexos), y R6a.5 la usa (ADR-0082 D6)».
+  (EA-CONEXION.md §11, el journal de la demo del 2026-10-21 en
+  anexos/EA-CONEXION/demo-20261021-cierre/), y R6a.5 la usa (ADR-0082 D6)».
 - **Technical Debt, cuatro líneas:** el validador en `mql5bridge`, que `engine` no ve (punto 4); el
   CRLF del modo texto frente al LF del CSV de la ejecución 1, para la rama que congele los CSV 2 y 3
   (punto 8, con el texto de §0.c); la comprobación redundante del LF en `UltimaLinea` (rotura r3); y
@@ -799,8 +808,11 @@ exacto; aquí, lo que dice:
 | `609f700` (fase 0) | exit 0, 2690 passed, SELLO | 296 MiB en `test` |
 | `d8feec0` (fase 1) | exit 0, 2707 passed, SELLO | 295 MiB en `test` |
 | `2c83d89` (fase 2) | exit 0, 2723 passed, SELLO | 298 MiB en `test` |
+| `5582781` (CI de la fase 2) | exit 0, 2723 passed, SELLO | 294 MiB en `test` |
+| `b282796` (fase 3, el defecto) | exit 0, 2725 passed, SELLO sobre el árbol `27f03f47` | 297 MiB en `test` |
 
-`test_nunca_bloquea_y_es_rapido` no falló en ninguno.
+`test_nunca_bloquea_y_es_rapido` no falló en ninguno. El `make check` del commit de la corrida de
+cierre va en §11.
 
 ## 10. Fase 3 · la corrida del 2026-10-20: medida de un defecto, no la de cierre
 
@@ -917,6 +929,158 @@ con `gh run list` y `gh run view`, ni curl ni guion): run **39335556792** sobre 
 'trabajo/ea-conexion'; la rama actual es 'fix/ea-conexion'»; `docs/runbooks/RITUAL.md:107`). Los tests
 nuevos pasan en Linux, también el que exporta del índice con git en una carpeta temporal.
 
+## 11. Fase 3 · la corrida de cierre del 2026-10-21
+
+**Lo que dijo Aleks** al dejar los journals (2026-10-21, en la sesión): siguió la tabla del runbook
+—el EA en EURUSD, el cambio a US100.cash y la vuelta a EURUSD, la medianoche del servidor, y después
+el reinicio (quitar, poner de nuevo y quitar)— «con algunos minutos de retraso», y no apuntó las
+horas: **las de abajo salen del journal**, no de una nota suya. En la prueba actual (la del
+2026-10-08), como decidió el 20 (§10, desviación de D5 ya declarada).
+
+**Los ficheros.** `journal_20261021.jsonl` y `journal_20261022.jsonl` en `data/ea_conexion/`, fuera de
+git. Son **iguales byte a byte a los del terminal** (`MQL5\Files\Botsito` de la carpeta de datos,
+comparados por sha256 el 2026-10-21; última escritura 15:59 y 17:22 de Lima), UTF-8 sin BOM, LF y
+ningún CR. **Congelados tal cual** en `anexos/EA-CONEXION/demo-20261021-cierre/` (D3), con el sha256
+del original:
+
+| fichero | bytes | sha256 |
+|---|---|---|
+| `journal_20261021.jsonl` | 16.443 | `cc0f2228abd7a2ed131361667ece8fdd0ab223e6cf275566e7bc5acfd82eefce` |
+| `journal_20261022.jsonl` | 30.826 | `82c0e64d199d44e2e256fbce726da663420e2b2118d7571c8b8720c55f5d29ce` |
+
+En el terminal y en `data/ea_conexion/` se quedan donde están: no se movieron ni se borraron.
+
+**El validador** (`uv run python src/botsito/mql5bridge/journal.py data/ea_conexion/journal_20261021.jsonl
+data/ea_conexion/journal_20261022.jsonl`, exit 0): **131 líneas en 2 ficheros, 1 cadena**, desde
+2026-10-21T23:30:08 hasta 2026-10-22T01:22:50 (servidor); `arranque` 4, `cuenta` 4, `reloj` 4,
+`sesiones` 5, `cambio_de_dia` 1, `latido` 109 y `fin` 4; `desfase_s` 10800 en las 131; hash de la
+última línea `d28d0a262800364fb12f5cc9536ce71c056075db77d2c864ac5338ea6a81ca58`.
+
+**Lo que dice, con la hora de Lima** (servidor − 8 h; el `reloj` da Lima = GMT − 5 sin horario de
+verano), frente a la hora prevista en el runbook:
+
+| seq | Lima | prevista | evento | lo que trae |
+|---|---|---|---|---|
+| 1-4 | 15:30:08 | 15:30 | `arranque` EURUSD (`ninguna`), `cuenta`, `reloj`, `sesiones` | DEMO, HEDGING, FTMO-Demo; desfase servidor−GMT 180 min, local−GMT −300 min, `TimeGMTOffset` 18000, horario de verano 0; EURUSD `trade` y `quote` `[300, 86100]` de lunes a viernes, sábado y domingo vacías, sin tope |
+| 5-9 | 15:31:08 a 15:35:08 | | `latido` | |
+| 10-14 | 15:35:13 | 15:35 | `fin` (`REASON_CHARTCHANGE`), `arranque` US100.cash (`sigue`), `cuenta`, `reloj`, `sesiones` | **con sus lecturas**: lo mismo de la cuenta y el reloj; US100.cash `[3900, 85800]` (01:05 a 23:50) de lunes a viernes, las del 20 |
+| 15-16 | 15:36:13 y 15:37:13 | | `latido` | |
+| 17-21 | 15:37:22 | 15:37 | `fin` (`REASON_CHARTCHANGE`), `arranque` EURUSD (`sigue`), `cuenta`, `reloj`, `sesiones` | **con sus lecturas**; EURUSD otra vez `[300, 86100]` |
+| 22-43 | 15:38:22 a 15:59:22 | | `latido` | |
+| 44-45 | 16:00:22 | hacia las 16:00 | `cambio_de_dia` (2026-10-21 → 2026-10-22), `sesiones` | primera línea de `journal_20261022.jsonl`; las mismas sesiones |
+| 46-114 | 16:00:22 a 17:08:22 | | `latido` | el de seq 47 (16:01:22) trae **`conectado: false`**; el siguiente, `true` |
+| 115 | 17:09:20 | 17:00 | `fin` (`REASON_REMOVE`) | quitarlo |
+| 116-119 | 17:11:04 | 17:01 | `arranque` EURUSD (`sigue`), `cuenta`, `reloj`, `sesiones` | ponerlo otra vez, pasada la medianoche del servidor (01:11:04) |
+| 120-130 | 17:12:04 a 17:22:04 | | `latido` | |
+| 131 | 17:22:50 | 17:03 | `fin` (`REASON_REMOVE`) | quitarlo otra vez |
+
+Ningún hueco entre latidos de más de 61 s, salvo el del reinicio (104 s, de 17:09:20 a 17:11:04).
+Los retrasos frente al runbook son los que dijo Aleks: el cambio de símbolo y la vuelta a la hora, y
+el reinicio 9 a 20 minutos tarde; el EA estuvo puesto la segunda vez 11 min 46 s, no 2. Nada de eso
+cambia lo que se comprueba: el reinicio va pasada la medianoche del servidor, que es lo que pedía.
+
+**Lo que se leyó** (fase 3 del encargo):
+
+- **El desfase:** servidor − GMT = 180 min en los cuatro `reloj` y `desfase_s` = 10800 en las 131
+  líneas, el de la fase 0 y el del 20. Con `gmt` del reloj del ordenador (D2b): el paso 1 del runbook
+  pide sincronizarlo, y la sesión no lo puede comprobar desde el journal.
+- **El modo de margen:** `ACCOUNT_MARGIN_MODE_RETAIL_HEDGING` en las cuatro `cuenta`, todas con
+  `conectado: true`. Se registra sin abortar (respuesta, punto 0).
+- **Las sesiones:** las de EURUSD, iguales en los tres arranques en EURUSD, en el cambio de día y a
+  las del 19 y el 20; las de US100.cash, las del 20. La hora de la última cotización del latido
+  cuadra con el hueco de 23:55 a 00:05 del servidor (§7, R6a.5).
+- **El cambio de día:** en la demo, a las 16:00:22 de Lima, con su fichero nuevo, sus `sesiones` y
+  la cadena entera entre los dos ficheros.
+- **El reinicio:** quitar (17:09:20) y poner (17:11:04) pasada la medianoche del servidor; el
+  arranque dice `cadena_anterior: sigue`, sigue en el mismo fichero del día y el validador encadena
+  su `prev` con la línea 115. **El journal sobrevivió al reinicio con la cadena entera.**
+- **El defecto del 20, arreglado en la demo:** los arranques que vienen de un `REASON_CHARTCHANGE`
+  (seq 11 y 18) vuelven a leer la cuenta, el reloj y las sesiones del símbolo nuevo. Es lo que el
+  script de pruebas no puede provocar (§10, línea de Technical Debt).
+- **La negativa fuera de DEMO:** no se ejecuta en una cuenta real; la prueban los dos niveles de D4
+  (§5 y §6). En la demo la cuenta es DEMO en las cuatro lecturas y no hay ningún evento `negativa`.
+
+**El corte de conexión de después de medianoche, otra vez.** Un latido con `conectado: false` hacia
+el minuto 1 del día del servidor, y el siguiente `true`, en las dos corridas: seq 37 el 20 (00:01:48
+del servidor) y seq 47 el 21 (00:01:22). Dos de dos; el journal solo ve un latido por minuto, así que
+no mide cuánto dura. No cambia nada de R6a.1 (la lectura de la cuenta es de antes y no se repite), y
+lo hereda R6a.3, que tendrá que operar a través de él: va a §7 como observación, sin decidir nada.
+
+**Un test nuevo para lo congelado**, `tests/unit/test_journal_demo_cierre.py` (4): el sha256 de los
+cuatro journals de la demo de los anexos (el de cierre y el del defecto) es el del terminal; el de
+cierre valida como una cadena de 131 líneas y tiene todo lo que el runbook manda comprobar (cada
+`arranque` seguido de `cuenta`, `reloj` y `sesiones`; `ninguna` en el primero y `sigue` en los demás;
+un cambio de símbolo; el `cambio_de_dia` con sus sesiones; un reinicio pasada la medianoche; acaba en
+`fin`); y el journal del defecto no lo tiene (le faltan las lecturas de seq 6 y 8 y el reinicio). Es
+la comprobación de este informe hecha código, para que la CI la repita sin `data/`. Roturas a
+propósito, deshechas después: la comprobación de las lecturas tras un `arranque` desactivada (fallan
+el test del defecto y el de quitar una lectura) y un segundo más en el `srv` de la última línea del
+anexo, desde una copia de respaldo y restaurado con su sha256 (fallan el del sha256, el de la cadena,
+por el `desfase_s`, y el de quitar una lectura). «Tests Currently Passing»: 1638 → 1642.
+
+**Exposiciones:** ninguna. El journal no trae velas, ticks ni material del trader.
+
+## 12. El encargo, punto por punto
+
+| # | requisito | estado | evidencia |
+|---|---|---|---|
+| 0.1 | base: main, origin, el tag, la CI de main con `gh`, ninguna otra rama | Hecho | «Apertura» |
+| 0.2 | abrir con `abrir-rama`: encargo, contrato, Archivo de PROJECT_STATE | Hecho | `8ac24ed` |
+| 0.3 | informe, anexos y `rutas_permitidas` ampliadas | Hecho | `contrato.yaml`; `scripts/contrato_rama.py`: 91 ficheros dentro |
+| 0.4 | skills `fase-cero` (con `auditor-encargo`) y `entregar-rama`; Opus en esfuerzo alto | Hecho | §0, §1; este cierre |
+| 1 | el EA que se conecta, se niega fuera de DEMO, lee y escribe en el journal; no opera | Hecho | §6, §11 |
+| D1 | dónde vive, los README ampliados, `MedirDemoFTMO.mq5` sin tocar | Hecho | §6; `git diff --name-only main` no toca `tools/` |
+| D2a | la negativa lo primero de `OnInit`, en una función con el modo como argumento, la condición de `:759`, el retorno de la documentación | Hecho, y ampliado por la respuesta (punto 1: segunda llamada al conectar) | §2 (`INIT_FAILED`, citado de la documentación y medido), §4, §6; `test_la_negativa_de_la_capa_es_la_de_medir_y_va_lo_primero` |
+| D2b | las lecturas de la cuenta y de `MedirReloj`, con `TimeGMT` del ordenador recordado en el procedimiento | Hecho | §6; §11 (`reloj` ×4); runbook, paso 1 |
+| D2b′ | `ACCOUNT_MARGIN_MODE` se lee y se registra sin abortar; el recuadro en ADR-0082 §10 | Hecho | §4 (punto 0); §11 |
+| D2c | `SymbolInfoSessionTrade` por día e índice al arrancar y al cambiar de día; `quote` registrado sin usar | Hecho | §6; §11 (5 `sesiones`) |
+| D2d | latido por minuto y `fin` con el motivo | Hecho | §11 (109 `latido`, 4 `fin` con su motivo) |
+| D2e | nunca opera; test que niega por defecto con la lista oficial (33 funciones, `CTrade`) y lectura permitida vacía | Hecho | §5, §6; `test_la_capa_no_llama_a_ninguna_funcion_de_trading` |
+| D2f | ni login ni dinero en el journal | Hecho | el validador rechaza claves de más en `datos` (§5); §11 |
+| D2g | ninguna cifra a mano; `LATIDO_SEG` y `TOPE_SESIONES` nombrados (respuesta, punto 6) | Hecho | `test_la_capa_no_lleva_cifras_ni_nombres_a_mano`; `mql5/JOURNAL.md` |
+| D3.1 | un formato único y versionado, su documento y el validador con tests en la CI de Linux | Hecho | `mql5/JOURNAL.md`; `journal.py`; §5; CI de §9 y §10 |
+| D3.2 | flush por línea y hash encadenado, verificados en la documentación | Hecho | §0.c (`CryptEncode`, `FileFlush`) |
+| D3.3 | los bytes: UTF-8 sin BOM, LF, el hash sin el fin de línea; por qué salió LF | Hecho | §0.c; §0.f; el validador |
+| D3.4 | los campos de §H.2, reservados a `null`; cómo lo leerán F23 y F34 | Hecho | §0.f |
+| D3.5 | prueba cruzada con el golden, que rompe con un byte | Hecho | §5, §6 (iguales byte a byte) |
+| D3.6 | el journal de cierre copiado por Aleks a `data/` y congelado en los anexos con su sha256 | Hecho | §11 |
+| D4.1 | la ruta de compilación con los logs en UTF-8 y LF, sha256, 0 errores y los avisos | Hecho | §6; `anexos/EA-CONEXION/compilacion/` |
+| D4.2 | pruebas estáticas en `make check` y la CI | Hecho | `tests/contract/test_capa_mt5.py` |
+| D4.3 | pruebas dinámicas en el script de pruebas, con su salida en los anexos | Hecho | §6: 18 OK; `anexos/EA-CONEXION/pruebas/` |
+| D4.4 | cada test de los dos niveles roto a propósito en los dos sentidos | Hecho | §5, §6, §10 y §11 (tablas de roturas) |
+| D4.5 | sin job de Windows en la CI | Hecho | `.github/` sin tocar |
+| D5 | la corrida en la demo con el procedimiento escrito para Aleks | **Hecho de otra forma** | en la prueba actual el 21, no en la del 26 ni después de la ejecución 2: decisión de Aleks del 2026-10-20 (§10); el reinicio, más tarde que la tabla (§11) |
+| D6 | no decide A-28, no entra F17, el CSV de la ejecución 2 no entra | Hecho | `data/demo_ftmo/` no se tocó; ninguna ruta de spec ni de F17 en el diff |
+| 3 | lo que no cambia: motor, spec, parámetros, ambigüedades, cases, holdout, `tools/mql5/`, `leer_demo_ftmo.py`, `data/manifests/`, guardias, `.claude/`, `.gitattributes`, Makefile | Hecho | `git diff --name-only main`: ninguna ruta protegida; `contrato_rama.py` en verde |
+| 3′ | PROJECT_STATE solo por el ritual y bajo 25 KB | Hecho | 22.873 bytes; solo la línea de la rama y el recuento de tests (herencia 5) |
+| 4a-f | fase 0: compilar, probar, bytes, VPS, inventario, propuestas y PARADA | Hecho | §0 a §3 y «Lo que necesito que decidas» |
+| 5.1 | fase 1, tests primero, rotos en los dos sentidos, sellada | Hecho | §5; `d8feec0` |
+| 5.2 | fase 2, EA, script, formato, procedimiento, compilación y pruebas, sellada | Hecho | §6; `2c83d89` |
+| 5.3 | fase 3: el journal copiado, validado y congelado; desfase, margen, sesiones, cambio de día y reinicio | Hecho | §11 |
+| 5.4 | la línea PICO DE MEMORIA de cada `make check`; `test_nunca_bloquea_y_es_rapido` | Hecho | §9 y §13; no falló en ninguno |
+| 6.1 | el encargo frente a lo hecho, con las desviaciones | Hecho | esta tabla |
+| 6.2 | la fase 0, las medidas, los logs y la respuesta a la PARADA | Hecho | §0, «Respuesta del consultor a la PARADA», §4 |
+| 6.3 | lo que heredan R6a.2 a R6a.7 | Hecho | §7 |
+| 6.4 | las líneas preparadas para el commit del contrato, simuladas con los tests, y el tamaño de PROJECT_STATE | Hecho | §8: 23.995 bytes |
+| R0-R9 | la respuesta a la PARADA, punto por punto, y sus «Además» | Hecho | §4 |
+| 7 | el revisor (opus), con las comprobaciones añadidas | ver §14 | |
+| 8 | CI de Linux por `fix/ea-conexion`, con su run en el informe | ver §13 | |
+
+**Desviaciones declaradas:** la corrida de cierre en la prueba actual el 21 y no en la del 26 después
+de la ejecución 2 (decisión de Aleks, §10); el reinicio de la corrida, más tarde que la tabla del
+runbook y con 11 min 46 s puesto en vez de 2 (§11); y, de más, el EA de verdad en el Strategy Tester
+(§6) y el test de los journals congelados (§11), que el encargo no pedía.
+
+## 13. `make check` y CI de la entrega
+
+| commit | `make check` | PICO DE MEMORIA | CI de Linux (`fix/ea-conexion`) |
+|---|---|---|---|
+| el de §11 (la corrida de cierre) | se apunta en el commit siguiente | | |
+
+## 14. Revisor
+
+Se lanza con el informe terminado y la CI de §13 (skill `entregar-rama`, paso 8).
+
 ## Estado
 
-EN CURSO: fases 1 y 2 hechas, con su CI de Linux. La corrida del 2026-10-20 encontró un defecto (§10), arreglado y probado; su journal se guarda solo como medida. La fase 3 espera el journal de la corrida de cierre de Aleks del miércoles 21 de octubre, de 15:30 a 17:15 de Lima, en la prueba actual (docs/runbooks/DEMO-FTMO.md, «El EA de conexión (R6a.1)»). Después, el revisor y la entrega.
+EN ENTREGA: fases 0 a 3 hechas. La corrida de cierre del 2026-10-21 valida como una sola cadena de 131 líneas, con el cambio de símbolo, el cambio de día y el reinicio pasada la medianoche, y está congelada en los anexos (§11). Faltan la CI de Linux de este commit (§13) y el revisor (§14).
