@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/hoja-sesion-05
 
 ## Current Feature
-Ninguna rama abierta. trabajo/previa-sesion-5 cerrada en main el 2026-10-21 (stable/F37y-previa-sesion-5): el repo listo para la sesión 5 con el trader. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/hoja-sesion-05 EN CURSO (abierta el 2026-10-22 desde main 7e6dec2; V de la Next Action, R4.1): la hoja de la sesión 05 en scripts/transcribir_sesion.py antes de grabar, y la regla del consultor del 2026-10-21 en docs/runbooks/DECISIONES-DE-PROCESO.md. Encargo: docs/encargos/trabajo-hoja-sesion-05.md. Informe: docs/validation/HOJA-SESION-05.md.
 
 ## Stable Main State
 e4563db · merge de `trabajo/previa-sesion-5` (tag `stable/F37y-previa-sesion-5`): recuadros de corrección en S-7, S-12, S-13 y S-15 de docs/sesion-5/PREGUNTAS.md (la caja de una compra, con el 0 arriba y el 1 abajo; S-12 pregunta primero de qué lado del nivel tomado va la caja, porque RN-005 y ev-v9-004919 se contradicen), el paso 6 de SESION-DE-PREGUNTAS.md, la fecha de la sesión 5 en A.3, y las Reglas vivas y lo que no era deuda, enteros, a docs/runbooks/DECISIONES-DE-PROCESO.md, MIRAR-EL-MATERIAL.md y RITUAL.md. Sobre `stable/F37x-ea-conexion` (e76f829). Informe docs/validation/PREVIA-SESION-5.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ e4563db · merge de `trabajo/previa-sesion-5` (tag `stable/F37y-previa-sesion-5`
 e4563db · merge: trabajo/previa-sesion-5, el repo listo para la sesion 5 (recuadros de S-7, S-12, S-13 y S-15, la fecha y PROJECT_STATE a su runbook) · tag stable/F37y-previa-sesion-5
 
 ## Tests Currently Passing
-1642 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1647 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -51,7 +51,7 @@ H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el um
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1).
+V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1). La hoja 05 está en `scripts/transcribir_sesion.py`, por defecto (trabajo/hoja-sesion-05); v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`. Si en la grabación algún código del 21 al 25 sale como "veinte y N", el detector lo abre como S-20: la ingesta revisa a mano el bloque de S-20.
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 41 (2026-10-21).
+— ninguna desde el Archivo 42 (2026-10-22).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 41 (2026-10-21).
+— ninguna desde el Archivo 42 (2026-10-22).

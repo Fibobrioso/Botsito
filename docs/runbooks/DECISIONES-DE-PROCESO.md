@@ -7,7 +7,8 @@ cambia es dónde se leen. En `PROJECT_STATE.md`, «Reglas vivas», queda una lí
 el texto literal de cada una, con su condición, en `docs/state/HISTORIA.md`
 («# Regla viva SUSTITUIDA · sale de PROJECT_STATE.md en trabajo/previa-sesion-5 (2026-10-21)»).
 Las reglas de `PROJECT_STATE.md` que no se mudaron (el régimen del holdout y las tres primeras de
-«Things That Must Not Be Changed») siguen allí.
+«Things That Must Not Be Changed») siguen allí. Desde el 2026-10-22 (`trabajo/hoja-sesion-05`)
+también lleva entradas que nacen aquí y no vienen de esa mudanza: cada una lo dice en su texto.
 
 ## Change Regimes (must be respected), lo que CLAUDE.md no dice
 
@@ -24,6 +25,7 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 - 2026-09-04 · Tres particiones reservadas (holdout-1/2/3) y pre-registro de umbrales antes de F26. Problema: holdout unico se quema al abrirlo; umbral ajustable a posteriori. Alternativas: holdout unico (descartada), validacion cruzada temporal (insuficiente con pocos casos). Estado: ACTIVE.
 - 2026-09-04 · La garantia de inmutabilidad/solo-anadir es un test en CI contra el historial de git; los hooks son comodidad. Estado: ACTIVE.
 - 2026-09-04 · Sin inferencias en evidence/; todo lo importado de Bot v2 se re-cita o entra como UNKNOWN. Estado: ACTIVE.
+- 2026-10-21 · Para los encargos, dos reglas del consultor. Esta entrada NACE AQUI, en `trabajo/hoja-sesion-05` (2026-10-22): no viene de la mudanza de PROJECT_STATE de `trabajo/previa-sesion-5`. (1) «Si la guardia o el clasificador niegan un comando, PARADA, salvo seguir la forma que la propia guardia propone en su mensaje, declarándolo en el informe.» Origen: el encargo de `trabajo/previa-sesion-5` (`docs/encargos/trabajo-previa-sesion-5.md`, «0. Apertura», «Regla del consultor desde el 2026-10-21») y `docs/validation/PREVIA-SESION-5.md` §0, que la aplicó; antecedente, `docs/validation/EA-CONEXION.md` §12, fila 3g («PARADA, sin cambiar de vía ni reescribirlo»), que la orden de cierre de esa rama corrigió a la forma de hoy (registro de cierre de `trabajo/ea-conexion` en `docs/state/HISTORIA.md`, punto 3). (2) «Ninguna consulta de la CI con un guion ni con un bucle.» Origen: el guion de espera de la CI de `docs/validation/EA-CONEXION.md` §13 (§12, fila 0/7) y su fila en `docs/runbooks/ERRORES-RECURRENTES.md`; la orden de cierre de `trabajo/sesgo-h4-color`, copiada en `docs/validation/SESGO-H4-COLOR.md` §10 (`:1301`, un hallazgo sobre el cierre de `trabajo/corrida-construccion`: «cambiar de vía tras una negativa es rodearla»); y la línea de Technical Debt de `PROJECT_STATE.md` sobre el guion que espera a la CI en bucle, que sigue abierta para el carril de guardias. Problema: tras una negativa, rodear la guardia por otra vía, y esperar a la CI con un guion que la consulta en bucle. Alternativas: «PARADA, sin reescribir» (la de EA-CONEXION, descartada: no contemplaba la vía que propone la propia guardia). Estado: ACTIVE.
 
 ## Known Issues
 
