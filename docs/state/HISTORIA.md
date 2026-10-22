@@ -11380,3 +11380,45 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 40 (2026-10-19).
+
+# Technical Debt RECLASIFICADA · sale de PROJECT_STATE.md en trabajo/previa-sesion-5 (2026-10-21)
+
+Su texto literal en «Technical Debt», con su condicion y su evidencia. Ninguna es una deuda abierta: son reglas o hechos (conjunto A de `docs/validation/PREVIA-SESION-5.md` §4; respuesta del consultor a la PARADA, punto 3, opcion (c)). Cada una va entera a un runbook, que es su destino, y sale por la condicion (b): su contenido esta vivo, entero, en ese runbook. Donde `PROJECT_STATE.md` la recortaba, el runbook lleva el texto entero del Archivo 1.
+
+- `idealTP`: UNA COLUMNA DEL MATERIAL QUE NO SABEMOS QUE ES Y NO USAMOS (2026-09-21, rama F14a, ADR-0037 §7).
+  Condicion (b): entera, con el texto del Archivo 1 (`HISTORIA.md:564`), en `docs/runbooks/MIRAR-EL-MATERIAL.md`, «Tres hechos del material que vivían en PROJECT_STATE».
+- Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, confirmada por el usuario el 2026-09-05).
+  Condicion (b): entera en `docs/runbooks/MIRAR-EL-MATERIAL.md`, la misma seccion.
+- `data/fotogramas/` (8,9 GiB los 4 videos de F05 mas 0,15 GiB de v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.
+  Condicion (b): entera en `docs/runbooks/MIRAR-EL-MATERIAL.md`, la misma seccion.
+- F07, limitacion declarada: el proponente de las 20 propuestas, el autor de la lista de referencia (golden) y el primer filtro fueron la misma sesion (`claude-fable-5-1`); no hay cliente de API de LLM (sin clave).
+  Condicion (b): entera, con el texto del Archivo 1 (`HISTORIA.md:589`, que anade el recall y el dueno), en `docs/runbooks/DECISIONES-DE-PROCESO.md`, «Limitacion declarada de F07». Su informe (`docs/validation/F07-evidence-extraction.md:168-170` y `:188`) lo dice, pero no literal: por eso no sale por (d).
+- Hook local: tras cambiar `scripts/git-hooks/`, ejecutar `make hooks` (el 2026-09-07 la copia instalada no protegia `knowledge/corpus/fotogramas`; los tests de historial en CI son la garantia real).
+  Condicion (b): entera en `docs/runbooks/RITUAL.md`, al final de «La primera vez con la puerta».
+- Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
+  checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
+  cuando el merge pase por PR.
+  Condicion (b): entera en `docs/runbooks/RITUAL.md`, la misma seccion.
+
+# Regla viva SUSTITUIDA · sale de PROJECT_STATE.md en trabajo/previa-sesion-5 (2026-10-21)
+
+Su texto literal en «Reglas vivas», con su condicion y su evidencia. No se sustituye ninguna: siguen vigentes y se mudan, enteras y en el mismo orden, a `docs/runbooks/DECISIONES-DE-PROCESO.md` (conjunto B de `docs/validation/PREVIA-SESION-5.md` §4; respuesta del consultor a la PARADA, punto 3, opcion (c)), y salen por la condicion (b). En `PROJECT_STATE.md`, la cabecera de «Reglas vivas» lleva la linea que apunta alli.
+
+- data/manifests/, knowledge/corpus/transcripciones/ y knowledge/corpus/fotogramas/ → INMUTABLES tras commit (hook + historial de git; ADR-0005, ADR-0007 y ADR-0008). Corrección = manifiesto nuevo con `reemplaza_a`; exactamente una extracción de fotogramas activa por vídeo.
+  Estaba en «Change Regimes (must be respected), lo que CLAUDE.md no dice». Condicion (b): entera en `DECISIONES-DE-PROCESO.md`, en la seccion del mismo nombre.
+- Ficheros de texto siempre con LF y UTF-8 (escribir con `newline="\n"`); toda salida de git se
+  decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
+  Estaba en «Things That Must Not Be Changed». Condicion (b): entera en `DECISIONES-DE-PROCESO.md`, en la seccion del mismo nombre.
+- «Decisions and Rationale», entero:
+  Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
+  - 2026-09-04 · Tres particiones reservadas (holdout-1/2/3) y pre-registro de umbrales antes de F26. Problema: holdout unico se quema al abrirlo; umbral ajustable a posteriori. Alternativas: holdout unico (descartada), validacion cruzada temporal (insuficiente con pocos casos). Estado: ACTIVE.
+  - 2026-09-04 · La garantia de inmutabilidad/solo-anadir es un test en CI contra el historial de git; los hooks son comodidad. Estado: ACTIVE.
+  - 2026-09-04 · Sin inferencias en evidence/; todo lo importado de Bot v2 se re-cita o entra como UNKNOWN. Estado: ACTIVE.
+  Condicion (b): entero en `DECISIONES-DE-PROCESO.md`, «Decisions and Rationale». El docstring de `tests/contract/test_tramos_fuente.py:5` la cita como «PROJECT_STATE, Decisions and Rationale, 2026-09-04»: la linea de «Reglas vivas» lleva alli (`tests/` no se toca en esta rama; PREVIA-SESION-5.md §5).
+- «Known Issues», entero:
+  - El trailer `Fuente:` se exige por commit, no por linea: un commit que mezcle esquema y valor
+    cita ambas fuentes.
+  - El hash de 8 hex en los ids de evidencia/feedback (32 bits) se considera suficiente para
+    cientos de items; desde F07 `escribir_item` distingue "mismo contenido" (idempotente) de una
+    colision real (error). 353 items sin colision.
+  Condicion (b): entero en `DECISIONES-DE-PROCESO.md`, «Known Issues».

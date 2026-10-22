@@ -364,3 +364,12 @@ make hooks
 → **Puerta:** la rama es `trabajo/blindaje`, y `make hooks` lista `pre-commit` y `pre-merge-commit`.
 Después, el ritual de siempre desde `git checkout main`. El merge pasa sin más, porque el último
 commit de la rama ya se selló al hacerse.
+
+Dos hechos de la puerta y de `main` que vivían en «Technical Debt» de `PROJECT_STATE.md` sin ser
+deuda abierta, mudados tal cual el 2026-10-21 en `trabajo/previa-sesion-5` (PREVIA-SESION-5.md §5;
+su texto y su condición, también en `docs/state/HISTORIA.md`):
+
+- Hook local: tras cambiar `scripts/git-hooks/`, ejecutar `make hooks` (el 2026-09-07 la copia instalada no protegia `knowledge/corpus/fotogramas`; los tests de historial en CI son la garantia real).
+- Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
+  checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
+  cuando el merge pase por PR.

@@ -43,3 +43,18 @@ Dado por Aleks (consultor) el 2026-10-21. Copiado tal cual:
 > - CI: si la rama no toca hooks, rutas ni código, dilo con la lista de ficheros cambiados.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-10-21)
+
+Dada por Aleks (consultor) el 2026-10-21. Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/previa-sesion-5 (2026-10-21). Cópiala tal cual en el informe y aplícala punto por punto (skill fase-cero).
+>
+> 0. (c), dentro de S-12 y sin cambiar la numeración. S-12 pasa a tener dos partes, en este orden: primero el lado («En una compra, después de que el precio toma la liquidez de M15, ¿tu caja tiene que quedar por encima o por debajo del nivel tomado? (a) por encima; (b) por debajo; (c) depende, ¿de qué?»), con un esquema neutro (el nivel tomado y una caja a cada lado, sin decir cuál vale); y después la de A-50, dicha sobre el lado que haya contestado («Y si la caja queda a caballo del nivel, con el 0 de tu lado y el 1 del otro, ¿la operas?»). En «Lo que nos has dicho» van las dos citas que se contradicen (la de RN-005, ev-v1-001306-f98e12e9, y ev-v9-004919-c6bfb3ee), sin decirle cuál sigue el bot. El «Para Aleks» corregido dice: hoy el bot sigue RN-005 (en una compra, la zona por encima del bajo tomado es ruido) y no opera ninguno de los dos dibujos del texto anterior; la respuesta a la primera parte decide si RN-005 sigue o se reabre. Por qué: el repo se contradice y solo el trader puede decidirlo; preguntar A-50 sobre un lado equivocado no cierra nada. El error del «Para Aleks» anterior («opera las dos: eso es (a)») es del consultor y va al informe y a la orden de cierre.
+>    Lo mismo afecta a S-15: su «Para Aleks» dice que el lado del ruido ya está respondido con ev-v9-004919, y no lo está. Corrígelo en su recuadro: el lado se pregunta en S-12.
+> 1. (a). El recuadro de S-7 sustituye también el esquema: el 0 arriba, en el último alto de M1 (el punto, donde va la orden de compra), y el 1 abajo, con los tres mínimos rotulados (la última roja, el tramo de rojas y todas las velas desde la que marca el punto).
+> 2. (a). Recuadro en S-13: «sube mucho» pasa a «baja mucho (la caja se hace muy grande)».
+> 3. (c). El conjunto A y las Reglas vivas, estas a un runbook nuevo, docs/runbooks/DECISIONES-DE-PROCESO.md, con el texto entero y en el mismo orden. En PROJECT_STATE se quedan los encabezados que exigen los tests, cada uno con una sola línea que apunta a su sección del runbook: un puntero, no un resumen. Cada entrada del conjunto A va entera a un destino que el informe nombra; ninguna se borra sin destino. «BUSCAR EN EL CORPUS» se queda en Technical Debt, como dice el auditor. Si al hacerlo algún test exige que un texto viva en PROJECT_STATE, PARADA. Por qué: la ingesta y las dos activaciones que vienen necesitan más de 2 KB libres.
+> 4. Además: S-9 y S-10 nombran bajos de M15 para comprar, que es lo que dice RN-005. Comprueba en el informe que sus esquemas y su texto no dan por bueno ningún lado de la caja, y di lo que encuentres. No hace falta cambiarlas si no lo dan.
+>
+> Sigue sin parar hasta la entrega, con el revisor y su comprobación añadida: que en S-7, S-12, S-13 y S-15 la caja y el lado estén bien orientados contra RN-005, orden_stop_punto y caja_bloque.

@@ -236,6 +236,41 @@ y cierra roja**
   vuelve (ADR-0083, provisional hasta esta respuesta). Las horas son de Madrid; el 29 de abril es
   de construcción.*
 
+> **RECUADRO DE CORRECCIÓN (2026-10-21, rama `trabajo/previa-sesion-5`; encargo del consultor y su
+> respuesta a la PARADA, decisión 1; `docs/validation/PREVIA-SESION-5.md` §1 y §5).** Motivo: la
+> pregunta de abajo preguntaba «desde dónde trazas el 0» con opciones que son las del 1, y su esquema
+> ponía el punto de breaker de una compra en un mínimo. En una compra el 0 es el punto, un ALTO de M1,
+> arriba, donde va la orden de compra, y el 1 el otro extremo, abajo, del lado del stop
+> (`knowledge/spec/parametros.yaml`, `orden_stop_punto`: «un BAJO en una venta»; `caja_bloque`: «el
+> extremo opuesto -la maxima en una venta-»); en una venta, al revés. **Lo que va a la hoja del
+> trader, y a `CODIGOS_DE_SESION_TEXTO["05"]` con la ingesta, es el texto de este recuadro**; lo que
+> no cambia («Lo que nos has dicho») se toma de abajo. El cuerpo de abajo queda intacto.
+> - **Título:** «Los dos extremos de la caja: dónde pones el 0 y hasta dónde llevas el 1».
+> - **Lo que todavía no sabemos:** «Hasta qué vela llevas el 1 de la caja, el extremo del lado del
+>   stop, y si actualizar la caja con la vela abierta es lo que haces siempre o solo a veces.»
+> - **Esquema inventado, no es un día real:** en M1, para una compra, un tramo de velas rojas
+>   seguidas y después la subida. El 0, arriba, en el último alto de M1: el punto, donde va la orden
+>   de compra. El 1, abajo, del lado del stop, con tres mínimos rotulados: el de la última vela roja;
+>   el de todo el tramo de rojas seguidas; y el de todas las velas desde la que marca el punto hasta
+>   que se pone la orden.
+> - **Pregunta:** «Para esta compra, el 0 va en el punto de breaker, arriba, y el 1 en el otro
+>   extremo, abajo, del lado del stop. ¿Hasta dónde llevas el 1?
+>   - (a) hasta el mínimo de la última vela roja;
+>   - (b) hasta el mínimo de todo el tramo de velas rojas seguidas;
+>   - (c) hasta el mínimo de todas las velas desde la que marca el punto hasta que pones la orden;
+>   - (d) otra, ¿cuál?»
+> - **Para precisar:**
+>   - «¿Y el 0: lo pones siempre en el último alto de M1 que se formó, o en el punto que marcaste en
+>     la vela que tomó la liquidez?»
+>   - «Dijiste que la caja "la puedes actualizar" mientras el precio avanza: ¿lo haces siempre, o
+>     solo a veces? ¿Cuándo?»
+>   - «En una venta, ¿es lo mismo al revés, con el 0 abajo y el 1 arriba?»
+> - **Para confirmar al final:** «El 0 de mi caja va en ______, el 1 llega hasta ______, y la trazo
+>   cuando la vela ______.»
+> - *Para Aleks (no va a la hoja): (a) = r1, (b) = r4, (c) = r6 (el valor de hoy de caja_bloque); la
+>   primera de «Para precisar» es orden_stop_punto (último alto de M1 = ultimo_pivote_m1, el valor de
+>   hoy; el punto de la vela de la toma = referencia_de_la_toma); la de la vela abierta es A-49.*
+
 **S-7. Qué vela pones como 0 de la caja, y si la trazas con la vela abierta** · en parte · A-48 y
 A-49
 - **Lo que nos has dicho:**
@@ -364,6 +399,58 @@ A-49
   A-46 ya respondió (una toma de la mañana con el mismo sesgo) no se vuelve a preguntar: solo el
   sesgo contrario.*
 
+> **RECUADRO DE CORRECCIÓN (2026-10-21, rama `trabajo/previa-sesion-5`; encargo del consultor y su
+> respuesta a la PARADA, decisión 0; `docs/validation/PREVIA-SESION-5.md` §1 y §5).** Motivo: el
+> segundo dibujo de abajo ponía, de una compra, «el 1 por encima y el 0 por debajo», que es imposible
+> (en una compra el 0 es el punto, arriba, y el 1 el extremo de abajo: `orden_stop_punto` y
+> `caja_bloque` de `knowledge/spec/parametros.yaml`); y la pregunta daba por bueno un lado del nivel
+> tomado («la caja entera por encima») que es el que RN-005 llama ruido. El repo se contradice en ese
+> lado y solo el trader lo puede decidir, así que S-12 pasa a tener dos partes, en este orden: el
+> lado, y después la de A-50 sobre el lado que conteste. **El «Para Aleks» de abajo estaba mal**
+> («opera el segundo dibujo solo si el 0 queda por encima», y en el encargo de esta rama «opera las
+> dos: eso es (a)»): hoy el bot no opera ninguno de los dos dibujos; el error es del consultor
+> (respuesta a la PARADA, punto 0). **Lo que va a la hoja del trader, y a
+> `CODIGOS_DE_SESION_TEXTO["05"]` con la ingesta, es el texto de este recuadro.** El cuerpo de abajo
+> queda intacto.
+> - **Título:** «De qué lado del nivel tomado va tu caja, y si la operas a caballo».
+> - **Lo que nos has dicho:**
+>   - en tus vídeos: «el precio puede o bien continuar o bien puede hacer lo que quiera, no me
+>     importa nuestra operativa tiene que estar por debajo» (v1 0:13:06, `ev-v1-001306-f98e12e9`);
+>   - sesión 3, de una compra: «no nos importa lo que haga por debajo, aquí no hay ninguna entrada,
+>     tiene que ser todo por encima» (v9 0:49:19, `ev-v9-004919-c6bfb3ee`);
+>   - sesión 4: «si la caja queda a nivel de la liquidez que se tomó, ¿descartas la entrada? Eso creo
+>     que entonces a lo mejor tiene que ver con el igual [...] y no me da igual la respuesta es la ve
+>     no me da igual» (v10 1:50:03, `ev-v10-015003-dd8ab1bf`, transcripción dudosa).
+> - **Lo que todavía no sabemos:** en una compra, de qué lado del nivel tomado tiene que quedar tu
+>   caja; y, si queda a caballo del nivel, si la operas.
+> - **Primera parte, el lado.**
+>   - **Esquema inventado, no es un día real:** para una compra, la línea del bajo de M15 que el
+>     precio tomó, y dos cajas: una entera por encima de la línea y otra entera por debajo, sin decir
+>     cuál vale.
+>   - **Pregunta:** «En una compra, después de que el precio toma la liquidez de M15, ¿tu caja tiene
+>     que quedar por encima o por debajo del nivel tomado?
+>     - (a) por encima;
+>     - (b) por debajo;
+>     - (c) depende, ¿de qué?»
+> - **Segunda parte, a caballo, sobre el lado que haya contestado.**
+>   - **Esquema inventado, no es un día real:** la misma compra, con la caja cruzando la línea: el 0
+>     arriba y el 1 abajo, uno a cada lado de la línea.
+>   - **Pregunta:** «Y si la caja queda a caballo del nivel, con el 0 de tu lado y el 1 del otro, ¿la
+>     operas?» Si contestó (b), por debajo: «Y si la caja queda a caballo del nivel, con el 1 de tu
+>     lado y el 0 del otro, ¿la operas?» (en una compra el 0 está siempre arriba, así que con la caja
+>     por debajo el lado del trader solo puede tener el 1).
+> - **Para precisar:**
+>   - ¿Y si el 0 queda justo en la línea, ni por encima ni por debajo?
+>   - En venta, lo mismo al revés: ¿es igual?
+> - **Para confirmar al final:** «En una compra, mi caja va ______ del nivel tomado, y si queda a
+>   caballo, ______».
+> - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-04.md` §0.e.6 y A-50. Hoy el bot sigue RN-005: en
+>   una compra, la zona por encima del bajo tomado es ruido (`se_desarrolla_en_el_lado_de_ruido`, que
+>   compara solo el 0: `engine/zonas.py:537-539`), y no opera ninguno de los dos dibujos del texto de
+>   abajo, que tienen el 0 por encima de la línea. La respuesta a la primera parte decide si RN-005
+>   sigue o se reabre; la segunda es A-50, y con (b) es justo la lectura de hoy (el 0 al otro lado es
+>   ruido aunque el 1 quede del lado del trader).*
+
 **S-12. Si la caja queda a caballo del nivel tomado** · en parte · A-50
 - **Lo que nos has dicho:**
   - sesión 4: «si la caja queda a nivel de la liquidez que se tomó, ¿descartas la entrada? Eso creo
@@ -387,6 +474,14 @@ A-49
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-04.md` §0.e.6. Hoy el bot mira solo el 0
   (`se_desarrolla_en_el_lado_de_ruido`, RN-005), y con eso opera el segundo dibujo solo si el 0
   queda por encima.*
+
+> **RECUADRO DE CORRECCIÓN (2026-10-21, rama `trabajo/previa-sesion-5`; respuesta del consultor a
+> la PARADA, decisión 2; `docs/validation/PREVIA-SESION-5.md` §1 y §5).** Motivo: en la segunda línea
+> de «Para precisar», de una compra, el 1 de la caja es el mínimo del bloque, abajo (`caja_bloque`,
+> `knowledge/spec/parametros.yaml`): mientras el precio baja a tomar otra liquidez, el 1 baja, no
+> sube. **En la hoja del trader, y en `CODIGOS_DE_SESION_TEXTO["05"]` con la ingesta, esa línea es:**
+> «Si el 1 de la caja baja mucho (la caja se hace muy grande), ¿la sigues moviendo igual?» El resto
+> de S-13 no cambia, y el cuerpo de abajo queda intacto.
 
 **S-13. Hasta cuándo mueves una orden sin llenar, y cuándo la quitas** · en parte · A-53
 - **Lo que nos has dicho:**
@@ -438,6 +533,16 @@ A-49
 - *Para Aleks (no va a la hoja): `CORRIDA-CONSTRUCCION.md` §4.5, pregunta 7 (P6: 33 filas, 21 en
   sesión y 12 en día; la deuda «el no_trade por ausencia no está decidido»). Las opciones dan cada
   una una causa medible; (d) es la ausencia.*
+
+> **RECUADRO DE CORRECCIÓN (2026-10-21, rama `trabajo/previa-sesion-5`; respuesta del consultor a
+> la PARADA, decisión 0; `docs/validation/PREVIA-SESION-5.md` §1 y §5).** Motivo: el «Para Aleks» de
+> abajo da el lado de ruido de RN-005 por respondido con `ev-v9-004919-c6bfb3ee`, y no lo está: esa
+> cita («tiene que ser todo por encima», de una compra) contradice a la de RN-005
+> (`ev-v1-001306-f98e12e9`, «nuestra operativa tiene que estar por debajo»), que es lo que sigue hoy el
+> bot (en una compra, por encima del bajo tomado es ruido). **Su última frase pasa a ser:** «El lado
+> de ruido (RN-005) no se pregunta aquí: se pregunta en S-12, primera parte, porque RN-005 y
+> `ev-v9-004919-c6bfb3ee` se contradicen.» Lo que va a la hoja de S-15 no cambia (el «Para Aleks» no
+> va a la hoja), y el cuerpo de abajo queda intacto.
 
 **S-15. Entrar en la segunda zona después de la toma**
 - **Lo que nos has dicho:** de la zona limpia, «¿una zona se limpia si hay velas verdes y rojas o

@@ -102,3 +102,15 @@ Es lo que mas tiempo hace perder. `knowledge/corpus/transcripciones/` solo tiene
 > su terminal: la guardia la bloquea. Los ficheros de `data/transcripciones/` NO pasan por ese
 > filtro: las crudas de v7 en adelante las bloquea la guardia, y la de v6 se lee por trozos que no
 > toquen sus tramos (`CLAUDE.md`, «Las guardias de Claude Code»).
+
+## Tres hechos del material que vivían en PROJECT_STATE
+
+Mudados tal cual de «Technical Debt» de `PROJECT_STATE.md` el 2026-10-21, en
+`trabajo/previa-sesion-5` (PREVIA-SESION-5.md §5): no eran deuda abierta, sino reglas o hechos de
+cómo se mira el material. El de `idealTP`, con su texto entero del Archivo 1 de
+`docs/state/HISTORIA.md` (`:564`), que `PROJECT_STATE.md` recortaba a su arranque. Su texto y su
+condición, también en `docs/state/HISTORIA.md`.
+
+- `idealTP`: UNA COLUMNA DEL MATERIAL QUE NO SABEMOS QUE ES Y NO USAMOS (2026-09-21, rama F14a, ADR-0037 §7). Esta en 47 de 47 filas de agosto, su RR implicito no tiene estructura (0,2 · 0,1 · -0,2 · 2,1 · 1,1 · 56,6) y en 4 de 47 cae DEL LADO DE LA PERDIDA -entre la entrada y el stop, las cuatro `sell` perdedoras-. NO se guarda en el caso y NO se le gasta al trader una pregunta por ella: no la miramos. Si algun dia hiciera falta, se pregunta con lo medido delante.
+- Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, confirmada por el usuario el 2026-09-05).
+- `data/fotogramas/` (8,9 GiB los 4 videos de F05 mas 0,15 GiB de v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.

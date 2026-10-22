@@ -10,6 +10,9 @@ Operacion en demo y real (F33): arranque, pre-vuelo, incidentes, kill-switch. Va
   lo que se puede mirar. Mudado de `CLAUDE.md` el 2026-10-01.
 - `AMBIGUEDADES.md` · que toca abrir, editar y cerrar una ambiguedad. Mudado de `CLAUDE.md` el
   2026-10-01.
+- `DECISIONES-DE-PROCESO.md` · las reglas vivas de `PROJECT_STATE.md` que solo vivian alli (Change
+  Regimes de los manifiestos, LF y UTF-8, Decisions and Rationale, Known Issues) y la limitacion
+  declarada de F07. Mudado de `PROJECT_STATE.md` el 2026-10-21 en `trabajo/previa-sesion-5`.
 - `ENTRADA-MARZO.md` · como entra el backtest de marzo por el camino de fidelidad (ADR-0046 §6):
   comandos, salida esperada y las paradas de la sesion. Ensayado en
   `tests/contract/test_ensayo_marzo.py`.
