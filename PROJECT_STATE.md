@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/previa-sesion-5
 
 ## Current Feature
-Ninguna rama abierta. trabajo/ea-conexion cerrada en main el 2026-10-21 (stable/F37x-ea-conexion): el EA de conexión de la capa de MT5 (R6a.1) y su journal v1. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/previa-sesion-5 EN CURSO (abierta el 2026-10-21 desde main 24b7cba; V de la Next Action, R4.1 y A.3): el repo listo para la sesión 5 con el trader (recuadros en S-7, S-12, S-13 y S-15 de docs/sesion-5/PREGUNTAS.md, el runbook de la sesión, la fecha y PROJECT_STATE más delgado). Encargo: docs/encargos/trabajo-previa-sesion-5.md. Informe: docs/validation/PREVIA-SESION-5.md.
 
 ## Stable Main State
 e76f829 · merge de `trabajo/ea-conexion` (tag `stable/F37x-ea-conexion`): el primer EA de la capa de MT5 (R6a.1, ADR-0082), que nunca opera: se niega fuera de DEMO, lee la cuenta (con ACCOUNT_MARGIN_MODE, sin abortar), el reloj del servidor y las sesiones del símbolo, y lo escribe en el journal v1 (mql5/JOURNAL.md), con su validador en src/botsito/mql5bridge/ y la ruta de compilación y pruebas compilar.py. La corrida de cierre del 2026-10-21 en la demo, congelada en los anexos. Sobre `stable/F37w-barrido-sesion-5` (ff55b3d). Informe docs/validation/EA-CONEXION.md; el registro del cierre, al final de HISTORIA.
@@ -51,7 +51,7 @@ H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el um
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5).
+V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1).
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -96,7 +96,7 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
 
 ## Technical Debt
-Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
+Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`. Lo que no era deuda, desde trabajo/previa-sesion-5: `docs/runbooks/MIRAR-EL-MATERIAL.md` y `RITUAL.md` (al final) y `DECISIONES-DE-PROCESO.md` (F07); tabla en PREVIA-SESION-5.md §6.
 - El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
 - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación: la rama que congele los CSV de las ejecuciones 2 y 3 comprueba el CRLF del CSV 2 en `MQL5\Files` antes de copiarlo (EA-CONEXION.md §0.c).
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
@@ -129,7 +129,6 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21).
 - `fecha_grabacion` TIENE QUE SER UN EJE DE PRIMERA CLASE, Y EL DETECTOR DE CONTRADICCIONES TIENE QUE ORDENAR POR ELLA (2026-09-21, deuda con nombre puesta por el consultor).
 - F26 lee la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073, ADR-0040).
-- `idealTP`: UNA COLUMNA DEL MATERIAL QUE NO SABEMOS QUE ES Y NO USAMOS (2026-09-21, rama F14a, ADR-0037 §7).
 - BUSCAR EN EL CORPUS ANTES DE REDACTAR CUALQUIER AMBIGUEDAD, Y ESCRIBIR QUE SE BUSCO (2026-09-21, rama F14a).
 - EL DIA QUE UN CAMINO GUARDE MATERIAL EN `knowledge/cases/<camino>/`, NECESITA LECTOR GUARDADO ANTES DE QUE ESE FICHERO SE COMMITEE (2026-09-21, rama de la puerta por pregunta; enmienda de ADR-0033, informe §5).
 - `lectura_de_velas` SIGUE LEYENDO EL `config.yaml` DE HOY para el prefijo del kit (2026-09-21, rama de los cupos congelados, informe §7).
@@ -142,46 +141,24 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - EL DETECTOR DE CONTRADICCIONES NO VE LOS TEMAS HERMANOS (2026-09-17, rama del breaker de M1, informe §5).
 - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
 - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
-- Transcripciones heredadas (Whisper tiny, `_procesado/`): se conservan como historia y NO se citan; F07 cita solo sobre la transcripcion `tr-*` activa (decision 4 del informe F04, confirmada por el usuario el 2026-09-05).
 - Copia de seguridad de las crudas activas y los WAV fuera de esta maquina: HECHA HASTA v5, INCOMPLETA desde el 2026-09-09.
-- `data/fotogramas/` (8,9 GiB los 4 videos de F05 mas 0,15 GiB de v5) no se copia a Drive: se regenera en ~10 min desde los videos; si otra build de ffmpeg decodifica distinto, `extract` lo delata y la salida es otro manifiesto con `--reemplaza-a`.
-- F07, limitacion declarada: el proponente de las 20 propuestas, el autor de la lista de referencia (golden) y el primer filtro fueron la misma sesion (`claude-fable-5-1`); no hay cliente de API de LLM (sin clave).
-- Hook local: tras cambiar `scripts/git-hooks/`, ejecutar `make hooks` (el 2026-09-07 la copia instalada no protegia `knowledge/corpus/fotogramas`; los tests de historial en CI son la garantia real).
-- Proteccion de rama en GitHub activada el 2026-09-04 (sin force-push ni borrado de `main`); no exige
-  checks previos porque el ritual hace merge local y push. Revisar si se anade `required_status_checks`
-  cuando el merge pase por PR.
+- El docstring de `tests/contract/test_tramos_fuente.py:5` cita «PROJECT_STATE, Decisions and Rationale, 2026-09-04», que vive desde trabajo/previa-sesion-5 en `docs/runbooks/DECISIONES-DE-PROCESO.md`: lo corrige la próxima rama que toque `tests/` (PREVIA-SESION-5.md §5).
 
 ## Reglas vivas
-Las que solo viven aqui (`docs/state/README.md`).
+Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
 
 ### Change Regimes (must be respected), lo que CLAUDE.md no dice
 - knowledge/cases/holdout/{1,2,3}/ → tres particiones reservadas; cada una se abre una sola vez. QUE CUENTA COMO ABRIRLA, quien lo autoriza y que se hace ante una exposicion: `knowledge/cases/holdout/README.md` (ADR-0021). No se lee desde ningun sitio salvo la puerta `botsito.cases.holdout`, que se niega sin `PREREGISTRO.md` relleno y sin autorizacion commiteada por particion; la guarda de `tests/conftest.py` vigila a cualquier llamante durante los tests, y `kit build` / `kit check` declaran las velas de dias reservados que leen, que no es abrir (ADR-0021, ADR-0033).
-- data/manifests/, knowledge/corpus/transcripciones/ y knowledge/corpus/fotogramas/ → INMUTABLES tras commit (hook + historial de git; ADR-0005, ADR-0007 y ADR-0008). Corrección = manifiesto nuevo con `reemplaza_a`; exactamente una extracción de fotogramas activa por vídeo.
 
 ### Things That Must Not Be Changed
 - Regimenes de cambio de knowledge/. · Pureza de domain/. · Parametros no se optimizan contra resultados.
 - La validación de fidelidad (F26) precede a todo lo que decida operaciones en vivo (F29, F30 y lo de F31-F32 que dependa de ellos); la capa de plataforma de ADR-0082, que nunca decide una operación, puede ir antes.
 - La firma y el tipo de cuenta (FTMO 2-Step Swing, ADR-0026) no se cambian sin ADR: el tipo se elige EN LA COMPRA, Standard -> Swing no existe, y con Standard vuelve la restriccion de noticias entera (calendario, RN-028, `filtro_noticias`).
-- Ficheros de texto siempre con LF y UTF-8 (escribir con `newline="\n"`); toda salida de git se
-  decodifica como UTF-8 con `core.quotepath=false` (la consola Windows es cp1252).
-
-### Decisions and Rationale
-Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de proceso vigentes:
-- 2026-09-04 · Tres particiones reservadas (holdout-1/2/3) y pre-registro de umbrales antes de F26. Problema: holdout unico se quema al abrirlo; umbral ajustable a posteriori. Alternativas: holdout unico (descartada), validacion cruzada temporal (insuficiente con pocos casos). Estado: ACTIVE.
-- 2026-09-04 · La garantia de inmutabilidad/solo-anadir es un test en CI contra el historial de git; los hooks son comodidad. Estado: ACTIVE.
-- 2026-09-04 · Sin inferencias en evidence/; todo lo importado de Bot v2 se re-cita o entra como UNKNOWN. Estado: ACTIVE.
-
-### Known Issues
-- El trailer `Fuente:` se exige por commit, no por linea: un commit que mezcle esquema y valor
-  cita ambas fuentes.
-- El hash de 8 hex en los ids de evidencia/feedback (32 bits) se considera suficiente para
-  cientos de items; desde F07 `escribir_item` distingue "mismo contenido" (idempotente) de una
-  colision real (error). 353 items sin colision.
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 40 (2026-10-19).
+— ninguna desde el Archivo 41 (2026-10-21).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 40 (2026-10-19).
+— ninguna desde el Archivo 41 (2026-10-21).
