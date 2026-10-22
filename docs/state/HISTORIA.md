@@ -11422,3 +11422,58 @@ Su texto literal en «Reglas vivas», con su condicion y su evidencia. No se sus
     cientos de items; desde F07 `escribir_item` distingue "mismo contenido" (idempotente) de una
     colision real (error). 353 items sin colision.
   Condicion (b): entero en `DECISIONES-DE-PROCESO.md`, «Known Issues».
+
+# Registro de cierre · `trabajo/previa-sesion-5` (2026-10-21)
+
+- Orden de cierre de Aleks del 2026-10-21, tras la revisión del consultor, pegada en la conversación
+  y ejecutada siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con
+  `/cerrar-rama`. Rama aceptada por el consultor tras la PARADA de la fase 0 y una pasada del
+  revisor (opus; PREVIA-SESION-5.md §12 y §13). Nunca se cerró sin la orden. La orden, tal cual,
+  está en PREVIA-SESION-5.md §14; sus puntos:
+  1. commit previo en la rama: el recuadro de S-12 con la forma neutra de la orden, y el «Para
+     Aleks» con la frase del error del consultor (hecho en `ffa568a`);
+  2. tag `stable/F37y-previa-sesion-5`;
+  3. commit del contrato con las líneas de §8 del informe tal cual, simuladas en memoria;
+  4. los hallazgos del consultor para la fila de ERRORES-RECURRENTES;
+  5. el informe final (sha de `main`, tag, run de la CI, ramas y tamaño de PROJECT_STATE).
+- **Error del consultor, a la orden de cierre** (respuesta a la PARADA, punto 0): el «Para Aleks» de
+  S-12 del encargo («hoy el bot mira solo el 0 (RN-005) y opera las dos: eso es (a)») era falso; en
+  una compra el bot llama ruido a todo 0 por encima del bajo tomado (`engine/zonas.py:537-539`) y
+  no operaba ninguno de los dos dibujos. Y «el 0 de tu lado y el 1 del otro», de su respuesta, no se
+  podía dibujar con la respuesta (b); lo corrige la forma neutra del punto 1 de la orden.
+- **Lo que entra** (tramo R4, R4.1 y A.3 de la hoja de ruta; V de la Next Action):
+  - `docs/sesion-5/PREGUNTAS.md`: cuatro recuadros de corrección, en S-7 (los dos extremos de la
+    caja, con el esquema del 0 arriba y el 1 abajo), S-12 (el lado del nivel tomado y la caja a
+    caballo, en forma neutra), S-13 («baja mucho») y S-15 (el lado se pregunta en S-12); el cuerpo
+    intacto;
+  - `docs/runbooks/SESION-DE-PREGUNTAS.md`: el paso 6 de «Antes» remite a la regla 2;
+  - `docs/plan/HOJA-DE-RUTA.md`: A.3 con la fecha de la sesión 5, el viernes 2026-10-23 (la línea
+    del paso 1 da `False`), sin pasar a HECHA; G.2 deja de decir que el paso 6 dice «abril o
+    agosto»;
+  - PROJECT_STATE de 24.135 a 21.910 bytes en la rama: seis entradas de Technical Debt que no eran
+    deuda, a `MIRAR-EL-MATERIAL.md`, `RITUAL.md` y `DECISIONES-DE-PROCESO.md`, y cuatro bloques de
+    Reglas vivas al runbook nuevo `docs/runbooks/DECISIONES-DE-PROCESO.md`, enteros, con su texto y
+    su condición en los bloques «# Technical Debt RECLASIFICADA» y «# Regla viva SUSTITUIDA» de esta
+    rama;
+  - `HOLDOUT-EXPOSICIONES.md`, la fila del 2026-10-21 (la consulta a `casos_ocultos` con la fecha);
+  - los anexos `comprobar_movido.py` y `simular_cierre.py`.
+- En este commit (las líneas de PREVIA-SESION-5.md §8, tal cual): en PROJECT_STATE, V dice que la
+  hoja lleva los recuadros de S-7, S-12, S-13 y S-15 y que la primera parte de S-12 decide si RN-005
+  sigue o se reabre; y entra la línea de Technical Debt del docstring de
+  `tests/contract/test_tramos_fuente.py:5`. La hoja de ruta no cambia en este commit.
+- Letras: ninguna sale ni entra; cambia V. Ningún heredado sale.
+- Las siete negativas de la guardia (seis declaradas en la entrega, PREVIA-SESION-5.md §0 y §9, y
+  una en el commit previo, §14), todas resueltas con la forma que proponía su mensaje: válidas por la
+  regla del 2026-10-21 (orden de cierre, punto 4).
+- Letra del tag: la última cerrada era la x de F37 (`stable/F37x-ea-conexion`); `stable/F37y-*`
+  no existe en local ni en origin (comprobado antes del tag).
+- Tag: `stable/F37y-previa-sesion-5`. El merge es `git rev-parse "stable/F37y-previa-sesion-5^{commit}"`.
+- Commits de la rama: `05a4eb0` (apertura), `0402698` (fase 0, el runbook, la fecha y la PARADA),
+  `45fcf82` (la respuesta a la PARADA: recuadros y PROJECT_STATE), `e9e697c` (los hallazgos del
+  revisor y los informes del auditor y del revisor), `ffa568a` (el punto 1 de la orden de cierre:
+  S-12 en forma neutra) y el de este registro.
+- CI: ninguna run de rama. La rama no toca hooks, rutas, código ni tests (PREVIA-SESION-5.md §9), y
+  no se empujó como `fix/`. La CI de `main` corre tras el push.
+- Exposiciones: la consulta a `casos_ocultos` con la fecha de la sesión, declarada en
+  HOLDOUT-EXPOSICIONES el 2026-10-21; nada reservado.
+- Informe: `docs/validation/PREVIA-SESION-5.md`. Encargo: `docs/encargos/trabajo-previa-sesion-5.md`.
