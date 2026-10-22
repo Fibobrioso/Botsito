@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/hoja-sesion-05
 
 ## Current Feature
-Ninguna rama abierta. trabajo/previa-sesion-5 cerrada en main el 2026-10-21 (stable/F37y-previa-sesion-5): el repo listo para la sesión 5 con el trader. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/hoja-sesion-05 EN CURSO (abierta el 2026-10-22 desde main 7e6dec2; V de la Next Action, R4.1): la hoja de la sesión 05 en scripts/transcribir_sesion.py antes de grabar, y la regla del consultor del 2026-10-21 en docs/runbooks/DECISIONES-DE-PROCESO.md. Encargo: docs/encargos/trabajo-hoja-sesion-05.md. Informe: docs/validation/HOJA-SESION-05.md.
 
 ## Stable Main State
 e4563db · merge de `trabajo/previa-sesion-5` (tag `stable/F37y-previa-sesion-5`): recuadros de corrección en S-7, S-12, S-13 y S-15 de docs/sesion-5/PREGUNTAS.md (la caja de una compra, con el 0 arriba y el 1 abajo; S-12 pregunta primero de qué lado del nivel tomado va la caja, porque RN-005 y ev-v9-004919 se contradicen), el paso 6 de SESION-DE-PREGUNTAS.md, la fecha de la sesión 5 en A.3, y las Reglas vivas y lo que no era deuda, enteros, a docs/runbooks/DECISIONES-DE-PROCESO.md, MIRAR-EL-MATERIAL.md y RITUAL.md. Sobre `stable/F37x-ea-conexion` (e76f829). Informe docs/validation/PREVIA-SESION-5.md; el registro del cierre, al final de HISTORIA.
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 41 (2026-10-21).
+— ninguna desde el Archivo 42 (2026-10-22).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 41 (2026-10-21).
+— ninguna desde el Archivo 42 (2026-10-22).
