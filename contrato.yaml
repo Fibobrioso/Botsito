@@ -4,6 +4,7 @@ artefacto: docs/validation/HOJA-SESION-05.md
 tramo: R4
 rutas_permitidas:
   - docs/validation/HOJA-SESION-05.md
+  - docs/validation/anexos/HOJA-SESION-05/
   - scripts/transcribir_sesion.py
   - tests/unit/test_transcribir_sesion.py
   - docs/runbooks/DECISIONES-DE-PROCESO.md

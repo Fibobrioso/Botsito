@@ -16,7 +16,7 @@ e4563db · merge de `trabajo/previa-sesion-5` (tag `stable/F37y-previa-sesion-5`
 e4563db · merge: trabajo/previa-sesion-5, el repo listo para la sesion 5 (recuadros de S-7, S-12, S-13 y S-15, la fecha y PROJECT_STATE a su runbook) · tag stable/F37y-previa-sesion-5
 
 ## Tests Currently Passing
-1642 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1647 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

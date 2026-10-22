@@ -45,11 +45,13 @@ treinta y cinco», «pregunta a 35», «pregunta A-35»...), hasta la siguiente 
 El «a N» suelto no abre nada. Solo cuentan los codigos que se preguntan (ABIERTA o DECIDIDA).
 
 Uso (un solo comando, desde la raiz del repo; un audio por ejecucion):
-    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v10 [--sesion 04]
-    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v10 --solo-filtrar
-        (rehace la filtrada desde la cruda)
+    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v15
+    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v10 --sesion 04 \
+        --solo-filtrar          (rehace la filtrada desde la cruda)
 La hoja (orden y codigos de sesion) es la de `--sesion`, por defecto la sesion en curso: cada
-sesion tiene la suya, y un mismo codigo puede significar otra cosa en otra sesion (S-1).
+sesion tiene la suya, y un mismo codigo puede significar otra cosa en otra sesion (S-1). Una
+re-filtrada de una sesion anterior lleva SIEMPRE su `--sesion`: v9 se filtra con `--sesion 03` y
+v10 con `--sesion 04`; sin ella se agruparia, sin aviso, con la hoja de la sesion en curso.
 """
 
 from __future__ import annotations
@@ -116,11 +118,24 @@ ORDEN_SESION_04 = (
     "S-7", "S-8", "S-9", "S-10", "S-11", "S-12", "S-13", "S-14", "S-15", "S-16", "S-17",
     "S-18", "S-20", "S-21", "S-23", "S-24", "S-19",
 )  # fmt: skip
+# La hoja de la sesion 05 (2026-10-23; docs/sesion-5/PREGUNTAS.md, `trabajo/barrido-sesion-5`, con
+# los recuadros de `trabajo/previa-sesion-5`): S-1 a S-25 en el orden de la hoja, que es el
+# numerico. Los codigos son los de la sesion 5, NO los de la 04: S-n es la pregunta n de
+# docs/sesion-5/PREGUNTAS.md. Si en la sesion se salta alguno, la filtrada lo lista entre los «SIN
+# codigo detectado», y el orden real y lo que no se pregunto van a docs/sesion-5/HOJA-USADA.md con
+# la ingesta.
+ORDEN_SESION_05 = (
+    "S-1", "S-2", "S-3", "S-4", "S-5", "S-6", "S-7", "S-8", "S-9",
+    "S-10", "S-11", "S-12", "S-13", "S-14", "S-15", "S-16", "S-17",
+    "S-18", "S-19", "S-20", "S-21", "S-22", "S-23", "S-24", "S-25",
+)  # fmt: skip
 # Los codigos de sesion con su texto, POR SESION: el mismo codigo vuelve con otro texto (S-1 era en
 # la 03 «como decide el sesgo del dia» y en la 04 es la pregunta 1 de PREGUNTAS.md), asi que un
 # diccionario comun se pisaria. Los de la 03 se definieron en la revision del consultor del
 # 2026-09-29 (hasta entonces E-1, E-2 y E-3 no tenian texto en ningun fichero del repositorio); los
-# de la 04 son los titulos de PREGUNTAS.md y del encargo de `trabajo/sesion-04`.
+# de la 04 son los titulos de PREGUNTAS.md y del encargo de `trabajo/sesion-04`; los de la 05, los
+# titulos de docs/sesion-5/PREGUNTAS.md (la negrita, sin «S-n. » ni lo que va detras), salvo S-7 y
+# S-12, que toman el «Titulo» de su recuadro de correccion del 2026-10-21.
 CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
     "02": {},
     "03": {
@@ -158,14 +173,45 @@ CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
         "S-23": "el nivel que, roto con mecha, anula la entrada",
         "S-24": "confirmar el break even tapado por el corte de audio de v9",
     },
+    "05": {
+        "S-1": (
+            "con el sesgo bajista, una vela de 4 horas rompe el máximo de la anterior solo con la "
+            "mecha y cierra roja"
+        ),
+        "S-2": "la vela de 4 horas que rompe con la mecha y cierra sin cuerpo",
+        "S-3": "cuándo das por formado un alto o un bajo de M15",
+        "S-4": "el tope de la semana",
+        "S-5": "el lote que no cabe",
+        "S-6": "las reentradas en el mismo punto tras un stop, y su caja",
+        "S-7": "los dos extremos de la caja: dónde pones el 0 y hasta dónde llevas el 1",
+        "S-8": "una vela sin cuerpo dentro del tramo que marca el punto de breaker",
+        "S-9": "qué liquidez eliges cuando hay varias",
+        "S-10": "la misma liquidez tomada dos veces, antes y después de las 7",
+        "S-11": "una toma de la sesión de la mañana con el sesgo contrario",
+        "S-12": "de qué lado del nivel tomado va tu caja, y si puede quedar a caballo",
+        "S-13": "hasta cuándo mueves una orden sin llenar, y cuándo la quitas",
+        "S-14": "qué te hace no operar un día o una sesión",
+        "S-15": "entrar en la segunda zona después de la toma",
+        "S-16": "el precio ya está más allá del 0 cuando se forma la caja",
+        "S-17": "cuándo pasas el stop a la entrada",
+        "S-18": "una línea de M1 que, rota con la mecha, te quite la entrada",
+        "S-19": "una vela sin cuerpo en medio del retroceso",
+        "S-20": "el punto de breaker roto solo con la mecha de una vela contraria",
+        "S-21": "la racha después de la novena pérdida",
+        "S-22": "el último minuto: a qué hora quitas la orden sin llenar",
+        "S-23": "la vela de 4 horas sin color, con el sesgo bajista",
+        "S-24": "la vela casi plana: de cuántos puntos",
+        "S-25": "el Excel de julio y los tres primeros vídeos",
+    },
 }
 # La hoja con la que se agrupa la version filtrada de cada sesion (`--sesion`).
 HOJAS: dict[str, tuple[str, ...]] = {
     "02": ORDEN_SESION_02,
     "03": ORDEN_SESION_03,
     "04": ORDEN_SESION_04,
+    "05": ORDEN_SESION_05,
 }
-SESION_EN_CURSO = "04"
+SESION_EN_CURSO = "05"
 
 
 # ------------------------------------------------------------------------------ cuarentena

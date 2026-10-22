@@ -9,6 +9,7 @@ con dia son de abril y agosto, en los casos que NO deben filtrarse."""
 from __future__ import annotations
 
 import importlib.util
+import re
 import sys
 from pathlib import Path
 from types import ModuleType
@@ -397,10 +398,10 @@ ORDEN_04 = [
 
 def test_el_orden_es_el_de_la_hoja_de_la_sesion_04(m: ModuleType) -> None:
     """El orden del encargo de `trabajo/sesion-04` (docs/sesion-4/HOJA-USADA.md), con todos los
-    S-1..S-24 y cada uno con su texto."""
+    S-1..S-24 y cada uno con su texto. La sesion en curso ya no es la 04: la fija el test de la
+    sesion 05 (`trabajo/hoja-sesion-05`)."""
     assert list(m.ORDEN_SESION_04) == ORDEN_04
     assert m.HOJAS["04"] is m.ORDEN_SESION_04
-    assert m.SESION_EN_CURSO == "04"
     assert sorted(m.ORDEN_SESION_04, key=lambda c: int(c[2:])) == [f"S-{n}" for n in range(1, 25)]
     assert set(m.CODIGOS_DE_SESION_TEXTO["04"]) == set(m.ORDEN_SESION_04)
 
@@ -446,3 +447,69 @@ def test_la_filtrada_de_la_04_agrupa_con_su_hoja(m: ModuleType) -> None:
     assert texto.index("## S-1\n") < texto.index("## S-22") < texto.index("## S-7")
     registro = "\n".join(m.registro_filtro(lineas, {}, m.codigos_validos("04"), m.HOJAS["04"]))
     assert "S-24" in registro.split("SIN codigo detectado:")[1]
+
+
+# ------------------------------------------------- la hoja de la sesion 05 (S-1 a S-25, por sesion)
+
+PREGUNTAS_05 = RAIZ / "docs" / "sesion-5" / "PREGUNTAS.md"
+# El titulo de cada pregunta: la negrita «**S-n. ...**», que en S-1 ocupa dos lineas.
+_RE_TITULO = re.compile(r"^\*\*S-(\d+)\. (.+?)\*\*", re.MULTILINE | re.DOTALL)
+# El «Titulo» de un recuadro de correccion del 2026-10-21 (S-7 y S-12).
+_RE_TITULO_RECUADRO = re.compile(r"^> - \*\*Título:\*\* «(.+?)»", re.MULTILINE)
+
+
+def _titulos_05() -> dict[str, str]:
+    """Los textos que la hoja 05 tiene que llevar, leidos de docs/sesion-5/PREGUNTAS.md: el titulo
+    de cada pregunta con la primera letra en minuscula, y el del recuadro en S-7 y S-12."""
+    texto = PREGUNTAS_05.read_text(encoding="utf-8")
+    titulos = {f"S-{n}": " ".join(t.split()) for n, t in _RE_TITULO.findall(texto)}
+    recuadros = _RE_TITULO_RECUADRO.findall(texto)
+    assert len(recuadros) == 2, recuadros
+    titulos["S-7"], titulos["S-12"] = recuadros
+    return {codigo: t[0].lower() + t[1:] for codigo, t in titulos.items()}
+
+
+def test_la_hoja_05_tiene_los_25_codigos_con_su_texto(m: ModuleType) -> None:
+    """S-1 a S-25 en el orden de la hoja, que es el numerico, y cada uno con el titulo de su
+    pregunta en docs/sesion-5/PREGUNTAS.md (S-7 y S-12, el de su recuadro de correccion)."""
+    assert list(m.ORDEN_SESION_05) == [f"S-{n}" for n in range(1, 26)]
+    titulos = _titulos_05()
+    assert list(titulos) == list(m.ORDEN_SESION_05)
+    assert m.CODIGOS_DE_SESION_TEXTO["05"] == titulos
+
+
+def test_la_sesion_en_curso_es_la_05(m: ModuleType) -> None:
+    """La hoja por defecto de `--sesion`: la de la sesion 5 (2026-10-23)."""
+    assert m.SESION_EN_CURSO == "05"
+    assert m.HOJAS["05"] is m.ORDEN_SESION_05
+
+
+def test_s25_vale_en_la_05_y_no_en_la_04(m: ModuleType) -> None:
+    v04, v05 = m.codigos_validos("04"), m.codigos_validos("05")
+    assert "S-25" in v05
+    assert "S-25" not in v04
+    assert m.codigo_en("pregunta ese veinticinco", v05) == "S-25"
+    assert m.codigo_en("pregunta ese veinticinco", v04) is None
+
+
+def test_la_03_y_la_04_no_cambian(m: ModuleType) -> None:
+    """Las hojas de las sesiones anteriores agrupan igual que antes de la 05."""
+    assert m.HOJAS["03"] is m.ORDEN_SESION_03
+    assert m.HOJAS["04"] is m.ORDEN_SESION_04
+    assert list(m.ORDEN_SESION_04) == ORDEN_04
+    assert m.CODIGOS_DE_SESION_TEXTO["04"]["S-7"] == "con qué reloj empiezas a las 7 en invierno"
+    assert m.CODIGOS_DE_SESION_TEXTO["03"]["S-1"] == "cómo decide el sesgo del día"
+    textos = ["pregunta ese uno", "uno", "pregunta ese veintidós", "dos", "pregunta ese siete", "x"]
+    lineas, _ = m.lineas_filtradas(_segs(m, textos), m.codigos_validos("04"))
+    texto = m.version_filtrada(lineas, "prueba", m.HOJAS["04"])
+    assert texto.index("## S-1\n") < texto.index("## S-22") < texto.index("## S-7")
+
+
+def test_la_filtrada_de_la_05_agrupa_con_su_hoja(m: ModuleType) -> None:
+    """Con la hoja 05, S-7 va antes que S-22 (en la 04 iba despues) y S-25 abre su pregunta."""
+    textos = [
+        "pregunta ese veintidós", "a", "pregunta ese siete", "b", "pregunta ese veinticinco", "c",
+    ]  # fmt: skip
+    lineas, _ = m.lineas_filtradas(_segs(m, textos), m.codigos_validos("05"))
+    texto = m.version_filtrada(lineas, "prueba", m.HOJAS["05"])
+    assert texto.index("## S-7\n") < texto.index("## S-22") < texto.index("## S-25")
