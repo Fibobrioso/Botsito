@@ -1,0 +1,140 @@
+| ffprobe, relativa | `ffprobe -v error -show_format -show_streams "corpus/Estrategia del trader/sesion-05.mp4"` | pasa | pasa |
+| ffprobe, absoluta con -i | `ffprobe -hide_banner -loglevel error -select_streams a:0 -show_entries stream=codec_name,channels -of json -i "{VA}"` | pasa | pasa |
+| ffprobe, -print_format | `ffprobe -v quiet -print_format json -show_format "corpus/Estrategia del trader/sesion-05.mp4"` | pasa | pasa |
+| silencios, relativa | `ffmpeg -hide_banner -nostdin -nostats -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af silencedetect=noise=-50dB:d=30 -f null - 2>&1 | grep silence_` | pasa | pasa |
+| silencios, absoluta a NUL | `ffmpeg -nostdin -i "{VA}" -vn -sn -dn -af silencedetect=noise=-30.5dB:d=0.5 -f null NUL` | pasa | pasa |
+| volumen, relativa a /dev/null | `ffmpeg -v info -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null /dev/null` | pasa | pasa |
+| volumen, absoluta | `ffmpeg -hide_banner -i "{VA}" -vn -sn -dn -af volumedetect -f null -` | pasa | pasa |
+| volumen, stderr fuera del repo | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null - 2> "{FUERA}/volumen.txt"` | pasa | pasa |
+| extraccion, salida absoluta | `ffmpeg -hide_banner -nostdin -y -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -c:a pcm_s16le "{FUERA}/sesion-05.wav"` | pasa | pasa |
+| extraccion, salida relativa | `ffmpeg -n -i "{VA}" -vn -sn -dn -acodec flac ../fuera/sesion-05.flac` | pasa | pasa |
+| extraccion, mp3 | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn "{FUERA}/sesion-05.mp3"` | pasa | pasa |
+| extraccion, m4a tras cd | `cd "{REPO}" && ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ar 44100 "{FUERA}/s.m4a"` | pasa | pasa |
+| skill: silencios | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af silencedetect=noise=-50dB:d=30 -f null - 2>&1 | grep silence_` | pasa | pasa |
+| skill: volumen | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null - 2>&1 | grep -E "mean_volume|max_volume"` | pasa | pasa |
+| skill: metadatos | `ffprobe -v error -show_format -show_streams "corpus/Estrategia del trader/sesion-05.mp4"` | pasa | pasa |
+| skill: audio fuera del repo | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/sesion-05.wav"` | pasa | pasa |
+| entrada protegida, ffprobe | `ffprobe -v error -show_format "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
+| entrada protegida, medida | `ffmpeg -i "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4" -vn -sn -dn -af volumedetect -f null -` | R_SIN_ABRIR | R_SIN_ABRIR |
+| entrada protegida, extraccion | `ffmpeg -i "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.wav"` | R_SIN_ABRIR | R_SIN_ABRIR |
+| entrada protegida, imagen | `ffprobe -show_streams "corpus/Estrategia del trader/Material adicional de su operativa/WhatsApp Image.jpeg"` | R_CAPTURA | R_CAPTURA |
+| dos -i | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -i otro.wav -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| ffprobe con dos entradas | `ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4" otro.wav` | R_FFMPEG | R_FFMPEG |
+| salida en el repo, relativa | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 audio.wav` | R_FFMPEG | R_FFMPEG |
+| salida en el repo, absoluta | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "{REPO}/data/audio.wav"` | R_FFMPEG | R_FFMPEG |
+| salida a la salida estandar | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -` | R_FFMPEG | R_FFMPEG |
+| salida pipe: | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 pipe:1` | R_FFMPEG | R_FFMPEG |
+| salida que no es audio | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.mp4"` | R_FFMPEG | R_FFMPEG |
+| medida a un fichero | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af silencedetect=noise=-50dB:d=30 -f null "{FUERA}/x.txt"` | R_FFMPEG | R_FFMPEG |
+| -f distinto de null | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f wav -` | R_FFMPEG | R_FFMPEG |
+| -f en la extraccion | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -f wav "{FUERA}/a.wav"` | R_FFMPEG | R_FFMPEG |
+| -map | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -map 0:a "{FUERA}/a.wav"` | R_FFMPEG | R_FFMPEG |
+| -filter_complex | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -filter_complex anull "{FUERA}/a.wav"` | R_FFMPEG | R_FFMPEG |
+| -af en la extraccion | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -af volumedetect "{FUERA}/a.wav"` | R_FFMPEG | R_FFMPEG |
+| -af con amovie= | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af amovie=otro.wav,volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| -af con otro filtro | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af loudnorm -f null -` | R_FFMPEG | R_FFMPEG |
+| -af con dos filtros | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect,silencedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| -report | `ffmpeg -report -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| -vstats_file | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -vstats_file "{FUERA}/v.txt" -` | R_FFMPEG | R_FFMPEG |
+| -progress | `ffmpeg -progress "{FUERA}/p.txt" -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| -dump_attachment | `ffmpeg -dump_attachment:t "" -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| -f concat antes de -i | `ffmpeg -f concat -safe 0 -i lista.txt -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| -af antes de -i | `ffmpeg -af volumedetect -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -f null -` | R_FFMPEG | R_FFMPEG |
+| protocolo concat: | `ffmpeg -i "concat:corpus/Estrategia del trader/sesion-05.mp4|otro.wav" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| protocolo subfile | `ffmpeg -i "subfile,,start,0,end,99,,:corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| protocolo file: | `ffmpeg -i "file:corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.wav"` | R_FFMPEG | R_FFMPEG |
+| protocolo en ffprobe | `ffprobe -show_format "file:corpus/Estrategia del trader/sesion-05.mp4"` | R_FFMPEG | R_FFMPEG |
+| protocolo sobre marzo | `ffprobe -show_format "file:corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_FFMPEG | R_FFMPEG |
+| letra de unidad sin barra | `ffprobe -show_format "C:x.mp4"` | R_FFMPEG | R_FFMPEG |
+| ffprobe -show_data | `ffprobe -show_data "corpus/Estrategia del trader/sesion-05.mp4"` | R_FFMPEG | R_FFMPEG |
+| ffprobe -o | `ffprobe -show_format -o "{FUERA}/f.txt" "corpus/Estrategia del trader/sesion-05.mp4"` | R_FFMPEG | R_FFMPEG |
+| ffprobe -report | `ffprobe -report -show_format "corpus/Estrategia del trader/sesion-05.mp4"` | R_FFMPEG | R_FFMPEG |
+| FFREPORT en el entorno | `FFREPORT=file=x.log ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -` | R_EJECUCION | R_EJECUCION |
+| redireccion 2> dentro del repo | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null - 2> volumen.txt` | R_FFMPEG | R_FFMPEG |
+| redireccion > dentro del repo | `ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4" > meta.json` | R_FFMPEG | R_FFMPEG |
+| ffmpeg dentro de una sustitucion | `echo "$(ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null - 2>&1)"` | R_FFMPEG | R_FFMPEG |
+| una entrada dinamica | `ffmpeg -i "$VIDEO_X" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| una entrada con glob | `ffprobe -show_format corpus/Estrategia?del?trader/*.mp4` | R_FFMPEG | R_FFMPEG |
+| una entrada con %d | `ffprobe -show_format "corpus/Estrategia del trader/img%03d.png"` | R_FFMPEG | R_FFMPEG |
+| sin -sn | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| opcion repetida | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| opcion tras la salida | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.wav" -y` | R_FFMPEG | R_FFMPEG |
+| -c:a y -acodec | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -c:a flac -acodec flac "{FUERA}/a.flac"` | R_FFMPEG | R_FFMPEG |
+| ffmpeg -version | `ffmpeg -version` | R_FFMPEG | R_FFMPEG |
+.sin la regla | ffprobe, relativa | R_EJECUCION
+sin la regla | ffprobe, absoluta con -i | R_EJECUCION
+sin la regla | ffprobe, -print_format | R_EJECUCION
+sin la regla | silencios, relativa | R_EJECUCION
+sin la regla | silencios, absoluta a NUL | R_EJECUCION
+sin la regla | volumen, relativa a /dev/null | R_EJECUCION
+sin la regla | volumen, absoluta | R_EJECUCION
+sin la regla | volumen, stderr fuera del repo | R_EJECUCION
+sin la regla | extraccion, salida absoluta | R_EJECUCION
+sin la regla | extraccion, salida relativa | R_EJECUCION
+sin la regla | extraccion, mp3 | R_EJECUCION
+sin la regla | extraccion, m4a tras cd | R_EJECUCION
+sin la regla | skill: silencios | R_EJECUCION
+sin la regla | skill: volumen | R_EJECUCION
+sin la regla | skill: metadatos | R_EJECUCION
+sin la regla | skill: audio fuera del repo | R_EJECUCION
+.con una opcion de mas | -map | pasa
+con una opcion de mas | ffprobe -report | pasa
+.| ffprobe, relativa | main R_EJECUCION | rama pasa |
+| ffprobe, absoluta con -i | main R_EJECUCION | rama pasa |
+| ffprobe, -print_format | main R_EJECUCION | rama pasa |
+| silencios, relativa | main R_EJECUCION | rama pasa |
+| silencios, absoluta a NUL | main R_EJECUCION | rama pasa |
+| volumen, relativa a /dev/null | main R_EJECUCION | rama pasa |
+| volumen, absoluta | main R_EJECUCION | rama pasa |
+| volumen, stderr fuera del repo | main R_EJECUCION | rama pasa |
+| extraccion, salida absoluta | main R_EJECUCION | rama pasa |
+| extraccion, salida relativa | main R_EJECUCION | rama pasa |
+| extraccion, mp3 | main R_EJECUCION | rama pasa |
+| extraccion, m4a tras cd | main R_EJECUCION | rama pasa |
+| skill: silencios | main R_EJECUCION | rama pasa |
+| skill: volumen | main R_EJECUCION | rama pasa |
+| skill: metadatos | main R_EJECUCION | rama pasa |
+| skill: audio fuera del repo | main R_EJECUCION | rama pasa |
+| dos -i | main R_EJECUCION | rama R_FFMPEG |
+| ffprobe con dos entradas | main R_EJECUCION | rama R_FFMPEG |
+| salida en el repo, relativa | main R_EJECUCION | rama R_FFMPEG |
+| salida en el repo, absoluta | main R_EJECUCION | rama R_FFMPEG |
+| salida a la salida estandar | main R_EJECUCION | rama R_FFMPEG |
+| salida pipe: | main R_EJECUCION | rama R_FFMPEG |
+| salida que no es audio | main R_EJECUCION | rama R_FFMPEG |
+| medida a un fichero | main R_EJECUCION | rama R_FFMPEG |
+| -f distinto de null | main R_EJECUCION | rama R_FFMPEG |
+| -f en la extraccion | main R_EJECUCION | rama R_FFMPEG |
+| -map | main R_EJECUCION | rama R_FFMPEG |
+| -filter_complex | main R_EJECUCION | rama R_FFMPEG |
+| -af en la extraccion | main R_EJECUCION | rama R_FFMPEG |
+| -af con amovie= | main R_EJECUCION | rama R_FFMPEG |
+| -af con otro filtro | main R_EJECUCION | rama R_FFMPEG |
+| -af con dos filtros | main R_EJECUCION | rama R_FFMPEG |
+| -report | main R_EJECUCION | rama R_FFMPEG |
+| -vstats_file | main R_EJECUCION | rama R_FFMPEG |
+| -progress | main R_EJECUCION | rama R_FFMPEG |
+| -dump_attachment | main R_EJECUCION | rama R_FFMPEG |
+| -f concat antes de -i | main R_EJECUCION | rama R_FFMPEG |
+| -af antes de -i | main R_EJECUCION | rama R_FFMPEG |
+| protocolo concat: | main pasa | rama R_FFMPEG |
+| protocolo subfile | main pasa | rama R_FFMPEG |
+| protocolo file: | main pasa | rama R_FFMPEG |
+| protocolo en ffprobe | main pasa | rama R_FFMPEG |
+| protocolo sobre marzo | main pasa | rama R_FFMPEG |
+| letra de unidad sin barra | main pasa | rama R_FFMPEG |
+| ffprobe -show_data | main R_EJECUCION | rama R_FFMPEG |
+| ffprobe -o | main R_EJECUCION | rama R_FFMPEG |
+| ffprobe -report | main R_EJECUCION | rama R_FFMPEG |
+| redireccion 2> dentro del repo | main R_EJECUCION | rama R_FFMPEG |
+| redireccion > dentro del repo | main R_EJECUCION | rama R_FFMPEG |
+| ffmpeg dentro de una sustitucion | main R_EJECUCION | rama R_FFMPEG |
+| una entrada dinamica | main R_EJECUCION | rama R_FFMPEG |
+| una entrada con glob | main R_EJECUCION | rama R_FFMPEG |
+| una entrada con %d | main pasa | rama R_FFMPEG |
+| sin -sn | main R_EJECUCION | rama R_FFMPEG |
+| opcion repetida | main R_EJECUCION | rama R_FFMPEG |
+| opcion tras la salida | main R_EJECUCION | rama R_FFMPEG |
+| -c:a y -acodec | main R_EJECUCION | rama R_FFMPEG |
+| ffmpeg -version | main pasa | rama R_FFMPEG |
+.
