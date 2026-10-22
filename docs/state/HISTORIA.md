@@ -11122,3 +11122,71 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 39 (2026-10-19).
+
+# Registro de cierre · `trabajo/ea-conexion` (2026-10-21)
+
+- Orden de cierre de Aleks del 2026-10-21, tras la revisión del consultor, pegada en la conversación
+  y ejecutada siguiendo `RITUAL.md` con la skill `cerrar-rama`, lanzada por Aleks con
+  `/cerrar-rama`. Rama aceptada por el consultor tras la PARADA de la fase 0 y una pasada del
+  revisor (opus; EA-CONEXION.md §14 y §15). Nunca se cerró sin la orden. La orden, tal cual:
+
+  > Orden de cierre de trabajo/ea-conexion (consultor, 2026-10-21). Ejecútala con la skill cerrar-rama cuando escriba /cerrar-rama.
+  >
+  > 1. Tag: stable/F37x-ea-conexion.
+  >
+  > 2. Commit del contrato: las líneas de §8 del informe tal cual (R6a.1 HECHA con su Estado, Qué es, Quién y Hecho cuando, y sin NA:N; R6a.2; R6a.7; A.1; N; las cuatro de Technical Debt), y además esta quinta línea de Technical Debt: «La guardia no niega un guion que espera a la CI en bucle (gh run view o gh run list repetidos): se lanzó dos veces seguidas contra la orden del consultor (cierre de trabajo/barrido-sesion-5 y entrega de trabajo/ea-conexion, EA-CONEXION.md §13), y las dos se paró sin leer su salida. Para el carril de guardias y deuda: negarlo por la condición (un bucle o una espera alrededor de una consulta de CI), con su test de los dos sentidos.» Comprueba en memoria que test_hoja_de_ruta.py y test_project_state.py siguen pasando con la línea nueva y da el tamaño de PROJECT_STATE.
+  >
+  > 3. Decisión del consultor sobre las filas 3g y 0/7 de §12, que va al registro del cierre en HISTORIA:
+  >    - Las dos reescrituras que siguieron la forma que la propia guardia propone al negar (python -m → por su ruta; el bucle for → grep -c) son válidas: seguir la vía que da la guardia no es rodearla. La regla del encargo («PARADA, sin reescribir») era más estricta que la guardia, y el error es del consultor. Desde hoy, en los encargos: «si la guardia o el clasificador niegan un comando, PARADA, salvo seguir la forma que la propia guardia propone, declarándolo en el informe».
+  >    - El guion de espera de la CI, en shell y después en Python, no es válido: servía a algo prohibido por el encargo. Queda declarado y no cambia nada de la rama, porque se paró sin leer su salida y no tocó el repo.
+  >
+  > 4. Hallazgos del consultor para la fila de ERRORES-RECURRENTES (además de los de §8):
+  >    - menor (consultor): el encargo justificó leer ACCOUNT_MARGIN_MODE sin abortar con «el valor llega con R6a.2», sin comprobarlo; ni el perfil ni R6a.2 lo traen, y el motivo real es que no hay valor con fuente hasta que FTMO conteste (A.2). Iba además contra ADR-0082 §10, que el consultor había aceptado. Lección: una desviación de un ADR propio se busca en el ADR antes de escribirla.
+  >    - menor (consultor): la regla del encargo sobre las negativas de la guardia no contemplaba la vía que la propia guardia propone (punto 3). Lección: las reglas sobre la guardia se escriben con su mensaje de negativa delante.
+  >    - importa (sesión, repetido): el guion de espera de la CI, la segunda vez en dos ramas seguidas. Lección para el revisor: comprobar en cada entrega que ninguna consulta de CI se hizo con un guion, aunque se haya parado.
+  >
+  > 5. Informe final: sha de main, el tag, el run de la CI de main en verde, las ramas que quedan (solo main, y fix/ea-conexion borrada) y el tamaño de PROJECT_STATE.
+
+- **La decisión del consultor sobre las filas 3g y 0/7** de EA-CONEXION.md §12 (punto 3 de la
+  orden): las dos reescrituras que siguieron la forma que propone la propia guardia (`python -m` →
+  por su ruta; el bucle `for` → `grep -c`) son válidas, y el error es del consultor; desde el
+  2026-10-21 los encargos dicen «si la guardia o el clasificador niegan un comando, PARADA, salvo
+  seguir la forma que la propia guardia propone, declarándolo en el informe». El guion de espera de
+  la CI (en shell y después en Python) no es válido; queda declarado y no cambia nada de la rama.
+- **Lo que entra** (tramo R6a, R6a.1 de la hoja de ruta; ADR-0082):
+  - el EA de conexión `mql5/Experts/Botsito.mq5` y la capa `mql5/Include/Botsito/Capa/` (Journal,
+    Cuenta, Reloj, Sesiones): la negativa fuera de DEMO lo primero de `OnInit` y otra vez al
+    conectar; la cuenta (con `ACCOUNT_MARGIN_MODE`, leído y registrado sin abortar), el reloj del
+    servidor y las sesiones del símbolo en el journal; ninguna función de trading;
+  - el script de pruebas `mql5/Scripts/BotsitoPruebasCapa.mq5` (18 pruebas dinámicas) y la ruta de
+    compilación y pruebas `src/botsito/mql5bridge/compilar.py`;
+  - el formato del journal v1 (`mql5/JOURNAL.md`), su validador `src/botsito/mql5bridge/journal.py`
+    y el golden `tests/golden/journal/`, escrito igual byte a byte por Python y por MQL5;
+  - los tests `tests/contract/test_capa_mt5.py`, `tests/unit/test_journal_mql5.py`,
+    `tests/unit/test_compilar_mql5.py` y `tests/unit/test_journal_demo_cierre.py`;
+  - la sección «El EA de conexión (R6a.1)» de `docs/runbooks/DEMO-FTMO.md` y el recuadro de
+    CORRECCIÓN en ADR-0082 §10;
+  - los anexos: la fase 0, la compilación, las pruebas y sus roturas, el EA en el tester, el journal
+    de la demo del 2026-10-20 (medida del defecto del cambio de símbolo, arreglado en b282796) y el
+    de la corrida de cierre del 2026-10-21 (131 líneas, una cadena, congelado con su sha256).
+- En este commit (las líneas de EA-CONEXION.md §8, tal cual, más la quinta de Technical Debt de la
+  orden): en la hoja de ruta, R6a.1 pasa a HECHA (Estado, Qué es, Quién y Hecho cuando, y pierde
+  `NA:N`); R6a.2 gana `LATIDO_SEG` y `TOPE_SESIONES`; R6a.7 gana el parámetro del modo de margen con
+  su fuente; A.1 cambia su «Quién». En PROJECT_STATE, N dice que la condición 2 la cumple la lectura
+  de R6a.1, y entran cinco líneas de Technical Debt.
+- Letras: ninguna sale ni entra; cambia N. Ningún heredado sale.
+- Letra del tag: la última cerrada era la w de F37 (`stable/F37w-barrido-sesion-5`); `stable/F37x-*`
+  no existe en local ni en origin (comprobado antes del tag).
+- Tag: `stable/F37x-ea-conexion`. El merge es `git rev-parse "stable/F37x-ea-conexion^{commit}"`.
+- Commits de la rama: `8ac24ed` (apertura), `609f700` (fase 0 y PARADA), `d8feec0` (fase 1, tests
+  primero), `2c83d89` (fase 2, el EA, el script de pruebas y la ruta de compilación), `5582781` (CI
+  de la fase 2), `b282796` (fase 3, el defecto del cambio de símbolo medido el 20 y arreglado),
+  `1220bae` (fase 3, la corrida de cierre del 21, validada y congelada), `261cf84` (el revisor y sus
+  hallazgos) y el de este registro.
+- CI de Linux por `fix/ea-conexion` (consultada con `gh` a mano; EA-CONEXION.md §10 y §13): run
+  39335556792 sobre `2c83d89` (1 failed, 2712 passed, 10 skipped), run 39692049414 sobre `1220bae`
+  y run 39696340963 sobre `261cf84` (1 failed, 2718 passed, 10 skipped cada uno); en los tres, el
+  único fallo es el aceptado, `test_state_check_ok_on_real_repo` por el nombre `fix/`. La CI de
+  `main` corre tras el push.
+- Exposiciones: ninguna (la rama no lee velas, ticks ni material del trader).
+- Informe: `docs/validation/EA-CONEXION.md`. Encargo: `docs/encargos/trabajo-ea-conexion.md`.
