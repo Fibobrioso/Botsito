@@ -23,6 +23,14 @@ código («pregunta ese uno», «pregunta ese veinticinco») y se cierra con «f
 estos códigos entran en ese script con la ingesta de la sesión (`CODIGOS_DE_SESION_TEXTO["05"]`),
 no aquí.
 
+> **RECUADRO DE CORRECCIÓN (2026-10-22, rama `trabajo/hoja-sesion-05`; orden de cierre del
+> consultor, decisión 1; `docs/validation/HOJA-SESION-05.md` §6, hallazgo b1 del revisor).** Desde
+> `trabajo/hoja-sesion-05` (2026-10-22) los textos de los códigos ya están en
+> `scripts/transcribir_sesion.py`, `CODIGOS_DE_SESION_TEXTO["05"]`, antes de grabar: S-7 y S-12 con
+> el título de su recuadro, y los demás con el suyo. Lo que dicen los recuadros sobre «con la
+> ingesta» vale ahora para trabajo/hoja-sesion-05. El párrafo de arriba y los recuadros quedan
+> intactos.
+
 **Desviaciones declaradas:**
 1. **Las preguntas van cerradas, con opciones**, y con «otra, ¿cuál?» donde las opciones pueden
    sugerir. El runbook pide abiertas («Durante», punto 2); manda el encargo (D2), como en la

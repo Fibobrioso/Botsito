@@ -11644,3 +11644,53 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 41 (2026-10-21).
+
+# Registro de cierre · `trabajo/hoja-sesion-05` (2026-10-22)
+
+- Orden de cierre de Aleks del 2026-10-22, tras la revisión del consultor de bea1a07 y del run
+  39743141877, pegada en la conversación y ejecutada siguiendo `RITUAL.md` con la skill
+  `cerrar-rama` (la orden llegó primero como texto pegado, y la sesión siguió el fichero de la
+  skill; después Aleks la lanzó con `/cerrar-rama`). Rama aceptada tras una pasada del revisor (opus; HOJA-SESION-05.md §9 y §10). Nunca
+  se cerró sin la orden. Sus puntos:
+  1. el hallazgo b1 del revisor, opción (a): un recuadro de corrección en
+     `docs/sesion-5/PREGUNTAS.md`, junto a `:22-24`, con el texto de HOJA-SESION-05.md §6
+     («vale ahora para trabajo/hoja-sesion-05»), fecha 2026-10-22 y el cuerpo intacto;
+  2. la línea de V de HOJA-SESION-05.md §6, tal cual; ninguna letra pasa a HECHA y la hoja de ruta
+     no cambia;
+  3. la observación de «veinte y cinco»: el código no se toca; Aleks dirá del 21 al 25 en una sola
+     palabra, y entra en V la línea de la revisión a mano del bloque de S-20;
+  4. el hallazgo del consultor (b1) para la fila de ERRORES-RECURRENTES;
+  5. el informe final (sha de `main`, merge, tag, run de la CI, ramas y tamaño de PROJECT_STATE).
+- **DESVIACIÓN AUTORIZADA del ritual** (orden de cierre, decisión 1; precedente: el chore(cierre)
+  43077f2, el recuadro en PUNTO-USADO.md): la puerta de `git status --short` del commit del
+  contrato da, además de `D  contrato.yaml`, `M  docs/state/HISTORIA.md`,
+  `M  docs/runbooks/ERRORES-RECURRENTES.md` y `M  PROJECT_STATE.md`, la línea
+  `M  docs/sesion-5/PREGUNTAS.md`, y nada más. `RITUAL.md` y la skill no prevén ese fichero; la
+  orden lo autoriza y la puerta se da por buena así.
+- **Lo que entra** (tramo R4, R4.1; V de la Next Action):
+  - `scripts/transcribir_sesion.py`: `ORDEN_SESION_05` (S-1 a S-25), `CODIGOS_DE_SESION_TEXTO["05"]`
+    (los títulos de PREGUNTAS.md; S-7 y S-12, los de su recuadro), `HOJAS["05"]` y
+    `SESION_EN_CURSO = "05"`; las hojas 02, 03 y 04 sin cambios; el docstring: v9 se re-filtra con
+    `--sesion 03` y v10 con `--sesion 04`;
+  - `tests/unit/test_transcribir_sesion.py`: el test de la 04 deja de fijar la sesión en curso, y
+    cinco nuevos (1642 a 1647 tests); el anexo `romper_tests.py` los rompe en los dos sentidos;
+  - `docs/runbooks/DECISIONES-DE-PROCESO.md`: la entrada del 2026-10-21 (PARADA salvo la forma que
+    propone la guardia; la CI sin guion ni bucle), que nace en esta rama;
+  - en este commit: el recuadro del punto 1 en PREGUNTAS.md y las dos líneas de V (puntos 2 y 3).
+- Letras: ninguna sale ni entra; cambia V. Ningún heredado sale. La hoja de ruta no cambia.
+- Negativas de la guardia o del clasificador: ninguna de la sesión. El revisor tuvo una (un pytest
+  encadenado) y la resolvió con la forma que propone la guardia (HOJA-SESION-05.md §9).
+- Letra del tag: la última cerrada era la y de F37 (`stable/F37y-previa-sesion-5`);
+  `stable/F37z-*` no existe en local ni en origin (comprobado antes del tag). Es la última letra de
+  F37: la rama siguiente cierra con `stable/F38a-*` (`RITUAL.md`, agotadas las letras).
+- Tag: `stable/F37z-hoja-sesion-05`. El merge es `git rev-parse "stable/F37z-hoja-sesion-05^{commit}"`.
+- Commits de la rama: `adcc76b` (apertura: encargo, contrato y Archivo 42), `aab4df3` (la hoja 05,
+  sus tests y la regla del 2026-10-21), `bea1a07` (los hallazgos del revisor y su informe) y el de
+  este registro.
+- CI de Linux por `fix/hoja-sesion-05`: run 39738216803 sobre aab4df3 y run 39743141877 sobre
+  bea1a07, los dos con solo el fallo esperado de `state check`
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`); 1 failed, 2723 passed, 10 skipped.
+  La CI de `main` corre tras el push.
+- Exposiciones: ninguna. La rama no leyó material del punto 3 de `CLAUDE.md`, ni transcripciones,
+  ni fotogramas.
+- Informe: `docs/validation/HOJA-SESION-05.md`. Encargo: `docs/encargos/trabajo-hoja-sesion-05.md`.
