@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-ffmpeg
 
 ## Current Feature
-Ninguna rama abierta. trabajo/hoja-sesion-05 cerrada en main el 2026-10-22 (stable/F37z-hoja-sesion-05): la hoja de la sesión 05 en scripts/transcribir_sesion.py antes de grabar. F37 agotada: la rama siguiente cierra con stable/F38a-*. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/guardia-ffmpeg, EN CURSO (abierta el 2026-10-22 desde main 8cfed04): la guardia de Claude Code deja cuatro formas de ffprobe y ffmpeg sobre un vídeo que no protege, por lista cerrada, para la ingesta de la sesión 5 (NA:K, la parte de ffprobe y ffmpeg; hoja de ruta G.1). Encargo: docs/encargos/trabajo-guardia-ffmpeg.md. Informe: docs/validation/GUARDIA-FFMPEG.md. F37 agotada: cierra con stable/F38a-*.
 
 ## Stable Main State
 e044b15 · merge de `trabajo/hoja-sesion-05` (tag `stable/F37z-hoja-sesion-05`): la hoja 05 en scripts/transcribir_sesion.py (ORDEN_SESION_05 S-1..S-25, sus textos de PREGUNTAS.md, SESION_EN_CURSO = "05"; v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`), la regla del 2026-10-21 en docs/runbooks/DECISIONES-DE-PROCESO.md, y un recuadro en docs/sesion-5/PREGUNTAS.md junto a :22-24. Sobre `stable/F37y-previa-sesion-5` (e4563db). Informe docs/validation/HOJA-SESION-05.md; el registro del cierre, al final de HISTORIA.
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 42 (2026-10-22).
+— ninguna desde el Archivo 43 (2026-10-22).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 42 (2026-10-22).
+— ninguna desde el Archivo 43 (2026-10-22).

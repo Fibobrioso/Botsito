@@ -1,0 +1,30 @@
+rama: trabajo/guardia-ffmpeg
+riesgo: alto  # cambia la guardia de Claude Code (.claude/hooks/guardia.py), que decide que se lee del material protegido; una regla nueva que deja pasar comandos que hoy niega; toca la plataforma de Claude Code y obliga a la CI de Linux por fix/
+artefacto: docs/validation/GUARDIA-FFMPEG.md
+tramo: "Carril: guardias y deuda"
+rutas_permitidas:
+  - docs/validation/GUARDIA-FFMPEG.md
+  - docs/validation/anexos/GUARDIA-FFMPEG/
+  - .claude/hooks/guardia.py
+  - .claude/skills/ingerir-sesion/
+  - tests/unit/test_guardia_claude.py
+  - tests/unit/test_guardia_ffmpeg.py
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - src/
+  - config/
+  - data/manifests/
+  - knowledge/
+  - docs/adr/
+  - docs/spec/
+  - scripts/
+  - tools/mql5/
+  - mql5/
+comprobaciones:
+  - uv run python scripts/contrato_rama.py
+  - uv run pytest -q tests/unit/test_guardia_claude.py tests/unit/test_guardia_ffmpeg.py
+  - make check > make-check.log 2>&1
