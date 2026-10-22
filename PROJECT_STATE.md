@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/ea-conexion
+main
 
 ## Current Feature
-trabajo/ea-conexion, EN CURSO (abierta el 2026-10-19; hoja de ruta R6a.1, tramo R6a, ADR-0082): el primer EA de la capa de MT5 que no decide operaciones -se niega fuera de DEMO, lee el reloj del servidor, las sesiones del símbolo y ACCOUNT_MARGIN_MODE y lo escribe en un journal versionado con hash encadenado-. Fases 0 a 3 hechas: la corrida del 2026-10-20 encontró un defecto (tras un cambio de símbolo el EA no releía cuenta, reloj ni sesiones), arreglado; la de cierre del 2026-10-21 lo confirma, con el journal validado y congelado en los anexos. Lista para revisión, NO cerrada. Encargo docs/encargos/trabajo-ea-conexion.md; informe docs/validation/EA-CONEXION.md.
+Ninguna rama abierta. trabajo/ea-conexion cerrada en main el 2026-10-21 (stable/F37x-ea-conexion): el EA de conexión de la capa de MT5 (R6a.1) y su journal v1. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-5`): el barrido de preguntas de la sesión 5 con el trader (R4.1), docs/sesion-5/PREGUNTAS.md: las preguntas en cuatro bloques, con lo ya dicho y su id, esquemas inventados y ningún día real; la hoja es el PDF del consultor. Solo documentos. Sobre `stable/F37v-punto-usado` (a1bb8a5). Informe docs/validation/BARRIDO-SESION-5.md; el registro del cierre, al final de HISTORIA.
+e76f829 · merge de `trabajo/ea-conexion` (tag `stable/F37x-ea-conexion`): el primer EA de la capa de MT5 (R6a.1, ADR-0082), que nunca opera: se niega fuera de DEMO, lee la cuenta (con ACCOUNT_MARGIN_MODE, sin abortar), el reloj del servidor y las sesiones del símbolo, y lo escribe en el journal v1 (mql5/JOURNAL.md), con su validador en src/botsito/mql5bridge/ y la ruta de compilación y pruebas compilar.py. La corrida de cierre del 2026-10-21 en la demo, congelada en los anexos. Sobre `stable/F37w-barrido-sesion-5` (ff55b3d). Informe docs/validation/EA-CONEXION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-ff55b3d · merge: trabajo/barrido-sesion-5, las preguntas de la sesion 5 con el trader (docs/sesion-5/PREGUNTAS.md) y su informe · tag stable/F37w-barrido-sesion-5
+e76f829 · merge: trabajo/ea-conexion, el EA de conexion de la capa de MT5 (R6a.1) con su journal v1, validado en la demo · tag stable/F37x-ea-conexion
 
 ## Tests Currently Passing
 1642 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
