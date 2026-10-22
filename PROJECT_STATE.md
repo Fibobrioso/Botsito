@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/previa-sesion-5
 
 ## Current Feature
-Ninguna rama abierta. trabajo/ea-conexion cerrada en main el 2026-10-21 (stable/F37x-ea-conexion): el EA de conexión de la capa de MT5 (R6a.1) y su journal v1. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/previa-sesion-5 EN CURSO (abierta el 2026-10-21 desde main 24b7cba; V de la Next Action, R4.1 y A.3): el repo listo para la sesión 5 con el trader (dos recuadros en docs/sesion-5/PREGUNTAS.md, el runbook de la sesión, la fecha y PROJECT_STATE más delgado). Encargo: docs/encargos/trabajo-previa-sesion-5.md. Informe: docs/validation/PREVIA-SESION-5.md.
 
 ## Stable Main State
 e76f829 · merge de `trabajo/ea-conexion` (tag `stable/F37x-ea-conexion`): el primer EA de la capa de MT5 (R6a.1, ADR-0082), que nunca opera: se niega fuera de DEMO, lee la cuenta (con ACCOUNT_MARGIN_MODE, sin abortar), el reloj del servidor y las sesiones del símbolo, y lo escribe en el journal v1 (mql5/JOURNAL.md), con su validador en src/botsito/mql5bridge/ y la ruta de compilación y pruebas compilar.py. La corrida de cierre del 2026-10-21 en la demo, congelada en los anexos. Sobre `stable/F37w-barrido-sesion-5` (ff55b3d). Informe docs/validation/EA-CONEXION.md; el registro del cierre, al final de HISTORIA.
@@ -180,8 +180,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 40 (2026-10-19).
+— ninguna desde el Archivo 41 (2026-10-21).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 40 (2026-10-19).
+— ninguna desde el Archivo 41 (2026-10-21).
