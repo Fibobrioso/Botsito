@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/ea-conexion
 
 ## Current Feature
-Ninguna rama abierta. trabajo/barrido-sesion-5 cerrada en main el 2026-10-19 (stable/F37w-barrido-sesion-5): las preguntas de la sesión 5 en docs/sesion-5/PREGUNTAS.md. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/ea-conexion, EN CURSO (abierta el 2026-10-19; hoja de ruta R6a.1, tramo R6a, ADR-0082): el primer EA de la capa de MT5 que no decide operaciones -se niega fuera de DEMO, lee el reloj del servidor, las sesiones del símbolo y ACCOUNT_MARGIN_MODE y lo escribe en un journal versionado con hash encadenado-. Fases 0 a 3 hechas: la corrida del 2026-10-20 encontró un defecto (tras un cambio de símbolo el EA no releía cuenta, reloj ni sesiones), arreglado; la de cierre del 2026-10-21 lo confirma, con el journal validado y congelado en los anexos. Lista para revisión, NO cerrada. Encargo docs/encargos/trabajo-ea-conexion.md; informe docs/validation/EA-CONEXION.md.
 
 ## Stable Main State
 ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-5`): el barrido de preguntas de la sesión 5 con el trader (R4.1), docs/sesion-5/PREGUNTAS.md: las preguntas en cuatro bloques, con lo ya dicho y su id, esquemas inventados y ningún día real; la hoja es el PDF del consultor. Solo documentos. Sobre `stable/F37v-punto-usado` (a1bb8a5). Informe docs/validation/BARRIDO-SESION-5.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ ff55b3d · merge de `trabajo/barrido-sesion-5` (tag `stable/F37w-barrido-sesion-
 ff55b3d · merge: trabajo/barrido-sesion-5, las preguntas de la sesion 5 con el trader (docs/sesion-5/PREGUNTAS.md) y su informe · tag stable/F37w-barrido-sesion-5
 
 ## Tests Currently Passing
-1603 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1642 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -57,7 +57,7 @@ L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item 
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
-N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y se renueva por condición, no cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres; docs/runbooks/RENOVAR-CIERRES.md). La condición 2 la cumplirá R6a.1, que trae la lectura de SymbolInfoSessionTrade, y R6a.5 la usa (ADR-0082 D6).
+N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y se renueva por condición, no cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres; docs/runbooks/RENOVAR-CIERRES.md). La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1 (EA-CONEXION.md §11, el journal de la demo del 2026-10-21 en anexos/EA-CONEXION/demo-20261021-cierre/), y R6a.5 la usa (ADR-0082 D6).
 
 ### Pendientes heredados (sin verificar)
 
@@ -97,6 +97,11 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 
 ## Technical Debt
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
+- El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
+- El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación: la rama que congele los CSV de las ejecuciones 2 y 3 comprueba el CRLF del CSV 2 en `MQL5\Files` antes de copiarlo (EA-CONEXION.md §0.c).
+- La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
+- Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) lo comprueban un test estático textual (`globales_sin_reiniciar`, `tests/contract/test_capa_mt5.py`) y la corrida de la demo: el script de pruebas no puede provocar un `REASON_CHARTCHANGE` (EA-CONEXION.md §10).
+- La guardia no niega un guion que espera a la CI en bucle (gh run view o gh run list repetidos): se lanzó dos veces seguidas contra la orden del consultor (cierre de trabajo/barrido-sesion-5 y entrega de trabajo/ea-conexion, EA-CONEXION.md §13), y las dos se paró sin leer su salida. Para el carril de guardias y deuda: negarlo por la condición (un bucle o una espera alrededor de una consulta de CI), con su test de los dos sentidos.
 - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
 - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) sigue ligada al escenario en que nació y sus cierres cuentan en los cartuchos de aquel (zonas.py, `zona_del_punto` liga solo al crearla); ADR-0083 lo hace alcanzable y la fase 4 no lo midió: hace falta la traza por cierre (PUNTO-USADO.md §1.c y §4.f).
@@ -175,8 +180,8 @@ Formato obligatorio por decision (ver docs/adr/0000-template.md). Decisiones de 
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 39 (2026-10-19).
+— ninguna desde el Archivo 40 (2026-10-19).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 39 (2026-10-19).
+— ninguna desde el Archivo 40 (2026-10-19).

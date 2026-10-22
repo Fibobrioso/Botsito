@@ -1,0 +1,25 @@
+PRUEBAS|BotsitoPruebasCapa|build=6230
+OK|negativa: DEMO pasa
+OK|negativa: CONTEST se niega
+OK|negativa: REAL se niega
+FALLO|dia: 23:59 -> 00:00 cambia
+OK|dia: el mismo dia no cambia
+FALLO|dia: cambio de anio
+OK|dia: sin dia anterior no cambia
+OK|dia: los datos del cambio
+OK|sha256: abc
+OK|sha256: vacio falla y devuelve texto vacio
+OK|json: escapes
+OK|continua: sin journal anterior, cadena ninguna|ninguna
+OK|continua: tras el reinicio, cadena sigue|sigue
+OK|continua: el seq sigue en 7|7
+OK|rota: carpeta vacia, cadena ninguna|ninguna
+OK|rota: ultima linea sin LF, cadena rota|rota
+OK|rota: ultima linea fuera del formato, cadena rota|rota
+OK|rota: la cadena nueva empieza en 0|0
+LECTURA|conectado_al_empezar=false
+LECTURA|conectado=true
+LECTURA|cuenta={"trade_mode":"ACCOUNT_TRADE_MODE_DEMO","margin_mode":"ACCOUNT_MARGIN_MODE_RETAIL_HEDGING","servidor":"FTMO-Demo","conectado":true}
+LECTURA|reloj={"time_current":"2026-10-20T01:10:41","time_trade_server":"2026-10-20T01:10:42","time_gmt":"2026-10-19T22:10:42","time_local":"2026-10-19T17:10:42","desfase_servidor_gmt_min":180,"desfase_local_gmt_min":-300,"time_gmt_offset_seg":18000,"horario_verano_local_seg":0}
+LECTURA|sesiones={"trade":{"SUNDAY":[],"MONDAY":[[300,86100]],"TUESDAY":[[300,86100]],"WEDNESDAY":[[300,86100]],"THURSDAY":[[300,86100]],"FRIDAY":[[300,86100]],"SATURDAY":[]},"quote":{"SUNDAY":[],"MONDAY":[[300,86100]],"TUESDAY":[[300,86100]],"WEDNESDAY":[[300,86100]],"THURSDAY":[[300,86100]],"FRIDAY":[[300,86100]],"SATURDAY":[]},"tope_alcanzado":false}
+RESUMEN|ok=16|fallos=2

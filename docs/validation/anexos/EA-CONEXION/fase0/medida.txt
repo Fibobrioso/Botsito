@@ -1,0 +1,49 @@
+medida|MedirFase0|2
+terminal_build|6230
+antes_de_esperar|connected=0|margin_mode=ACCOUNT_MARGIN_MODE_RETAIL_NETTING|desfase_seg=0
+espera_conexion_ms|4297
+terminal_connected|1
+mql_tester|0
+account_trade_mode|ACCOUNT_TRADE_MODE_DEMO
+account_margin_mode|ACCOUNT_MARGIN_MODE_RETAIL_HEDGING
+account_server|FTMO-Demo
+symbol|EURUSD
+time_trade_server|2026.10.19 23:25:21
+time_current|2026.10.19 23:25:20
+time_gmt|2026.10.19 20:25:21
+time_local|2026.10.19 15:25:21
+desfase_servidor_gmt_seg|10800
+time_gmt_offset|18000
+time_daylight_savings|0
+sha256_abc|32:ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad
+sha256_vacio|0:
+sha256_utf8|32:78ecdd951c9882ea94cc860bf19c2e8af08b545e7ec5633acbb1704d34efb4d6
+sesion_trade|SUNDAY|0|fin|error=4307
+sesion_trade|MONDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_trade|MONDAY|1|fin|error=4307
+sesion_trade|TUESDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_trade|TUESDAY|1|fin|error=4307
+sesion_trade|WEDNESDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_trade|WEDNESDAY|1|fin|error=4307
+sesion_trade|THURSDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_trade|THURSDAY|1|fin|error=4307
+sesion_trade|FRIDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_trade|FRIDAY|1|fin|error=4307
+sesion_trade|SATURDAY|0|fin|error=4307
+sesion_quote|SUNDAY|0|fin|error=4307
+sesion_quote|MONDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_quote|MONDAY|1|fin|error=4307
+sesion_quote|TUESDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_quote|TUESDAY|1|fin|error=4307
+sesion_quote|WEDNESDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_quote|WEDNESDAY|1|fin|error=4307
+sesion_quote|THURSDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_quote|THURSDAY|1|fin|error=4307
+sesion_quote|FRIDAY|0|00:05|23:55|from_seg=300|to_seg=86100
+sesion_quote|FRIDAY|1|fin|error=4307
+sesion_quote|SATURDAY|0|fin|error=4307
+bytes_bin_utf8|StringToCharArray devuelve 13
+bytes_bin_utf8|FileWriteArray escribe 12
+anadir|tamano_al_abrir=12
+trunca|tamano_al_reabrir_solo_write=0
+fin|ok

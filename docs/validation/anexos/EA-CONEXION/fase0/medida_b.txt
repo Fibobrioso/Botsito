@@ -1,0 +1,5 @@
+enum|DEMO=0|CONTEST=1|REAL=2
+enum_margen|NETTING=0|EXCHANGE=1|HEDGING=2
+init|SUCCEEDED=0|FAILED=1
+antes_de_conectar|connected=0|trade_mode=0|error_trade_mode=0|login_distinto_de_cero=si|error_login=0|servidor_vacio=no|margin_mode=0
+conectado|connected=1|trade_mode=0|error_trade_mode=0|login_distinto_de_cero=si|error_login=0|servidor_vacio=no|margin_mode=2

@@ -1,0 +1,20 @@
+medida|TesterFase0|1
+mql_tester|1
+terminal_connected|1
+account_trade_mode|ACCOUNT_TRADE_MODE_DEMO
+account_margin_mode|ACCOUNT_MARGIN_MODE_RETAIL_HEDGING
+account_server|FTMO-Demo
+time_trade_server|2026.10.13 00:00:00
+time_current|2026.10.13 00:00:00
+time_gmt|2026.10.13 00:00:00
+sesion_trade|SUNDAY|0|no|00:00|00:00|error=4307
+sesion_trade|MONDAY|0|si|00:05|23:55|error=0
+sesion_trade|TUESDAY|0|si|00:05|23:55|error=0
+sesion_trade|WEDNESDAY|0|si|00:05|23:55|error=0
+sesion_trade|THURSDAY|0|si|00:05|23:55|error=0
+sesion_trade|FRIDAY|0|si|00:05|23:55|error=0
+sesion_trade|SATURDAY|0|no|00:00|00:00|error=4307
+ticks|83305
+primer_tick|2026.10.13 00:05:04
+ultimo_tick|2026.10.13 23:54:59
+deinit_reason|1

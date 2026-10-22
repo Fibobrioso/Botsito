@@ -274,24 +274,30 @@ una pieza lee un hecho o un parámetro de la estrategia, espera a F26 (ADR-0082 
 porta código de Python se prueba contra los mismos casos que sus tests.
 
 ### R6a.1 · Conexión, reloj del servidor, sesiones del símbolo y journal
-- **Refs:** ID:ADR-0082 · F:F31 · F:F33 · F:F17 · ID:A-28 · NA:N
+- **Refs:** ID:ADR-0082 · F:F31 · F:F33 · F:F17 · ID:A-28
 - **Qué es:** el EA que se conecta y se niega fuera de una cuenta DEMO (como
   `tools/mql5/MedirDemoFTMO.mq5`); lee el desfase del reloj del servidor (no decide A-28); lee las
-  sesiones del símbolo con `SymbolInfoSessionTrade` (condición 2 de NA:N, `RENOVAR-CIERRES.md`);
-  comprueba `ACCOUNT_MARGIN_MODE` al arrancar (MASTER_PLAN §H); y fija el formato del journal, uno
+  sesiones del símbolo con `SymbolInfoSessionTrade` (condición 2 de `RENOVAR-CIERRES.md`);
+  lee y registra `ACCOUNT_MARGIN_MODE` al arrancar, sin abortar, y lo compara R6a.7 (MASTER_PLAN
+  §H; ADR-0082 §10, recuadro del 2026-10-19); y fija el formato del journal, uno
   solo y versionado, pensando en F34. Su fase 0 mide cómo se compila y se prueba en MT5, con
   PARADA (ADR-0082 D7).
 - **Depende de:** nada.
-- **Quién:** la sesión, con el encargo del consultor; Aleks compila y ejecuta en su máquina y en
-  la demo.
+- **Quién:** la sesión, con el encargo del consultor: compila y ejecuta las pruebas en la máquina
+  de Aleks (`src/botsito/mql5bridge/compilar.py`); Aleks pone el EA en la demo.
 - **Hecho cuando:** el EA conecta en la demo, escribe el journal con el desfase y las sesiones del
-  símbolo, y se niega fuera de una demo.
+  símbolo, y se niega fuera de una demo; esto último lo prueban las pruebas estáticas de la CI y
+  las dinámicas del script de pruebas, porque no se ejecuta en una cuenta real.
+- **Estado:** HECHA (`trabajo/ea-conexion`, `stable/F37x-ea-conexion`; EA-CONEXION.md): el EA
+  `mql5/Experts/Botsito.mq5`, el journal v1 (`mql5/JOURNAL.md`) con su validador y su golden, y
+  la corrida del 2026-10-21 en la demo con el journal congelado en los anexos.
 
 ### R6a.2 · Parámetros, perfil y calendario generados
 - **Refs:** ID:ADR-0082 · F:F28 · ID:ADR-0068
 - **Qué es:** los parámetros de firma, bróker, instrumento y ejecución, el perfil de cuenta y el
   calendario de cierres, generados desde el repo para el EA, con su propio hash en el journal; ni
-  una cifra a mano (ADR-0082 D5). La parte de estrategia de F28 espera a F26.
+  una cifra a mano (ADR-0082 D5). La parte de estrategia de F28 espera a F26. Si se decide, también
+  `LATIDO_SEG` y `TOPE_SESIONES`, las dos cifras del formato del journal (`mql5/JOURNAL.md`).
 - **Depende de:** R6a.1.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** regenerar no da diff y el hash está en el journal.
@@ -339,7 +345,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** antes de operar, el EA compara el hash de lo que recibe (ADR-0082 D5) con el del repo
   en el tag stable vigente, y el hash de la spec solo cuando el EA la lleve (desde F29); el desfase
   del reloj con la tabla, `ACCOUNT_MARGIN_MODE`, y `SymbolInfo`/`AccountInfo` con el perfil; y aborta
-  si algo no cuadra (MASTER_PLAN §H y §H.2).
+  si algo no cuadra (MASTER_PLAN §H y §H.2). Antes de comparar `ACCOUNT_MARGIN_MODE`, el parámetro
+  del modo de margen se crea con su fuente, la respuesta de FTMO sobre la cuenta Swing (A.2).
 - **Depende de:** R6a.1 a R6a.6.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el pre-vuelo aborta en la demo ante cada discrepancia provocada.
@@ -375,7 +382,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   deslizamientos y los swaps); el BE de una venta que salta por el ASK
   (NA:M); y, del heredado 10, lo que queda: A-28 y el grabador de spread y ticks (F17, PARCIAL).
 - **Depende de:** la prueba nueva de FTMO del 26 de octubre (fechas fijas).
-- **Quién:** Aleks ejecuta; la sesión congela cada CSV en su rama.
+- **Quién:** Aleks ejecuta; los dos CSV los congela una sola rama, tras la ejecución 3, que es la
+  que decide A-28 con los dos (EA-CONEXION.md, D6).
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
 
 ### A.2 · Las preguntas a FTMO

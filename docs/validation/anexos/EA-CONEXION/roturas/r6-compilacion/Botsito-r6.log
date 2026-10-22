@@ -1,0 +1,15 @@
+# fuente: mql5/Experts/Botsito.mq5 (copia del indice de git; sha256 27f28fafec06c9591839aa6ef40a5499c5803f53f45605f23921f1dcfc0e5fcd)
+# log original: UTF-16LE con BOM y CRLF, sha256 db3994f441fdf001b08dbd57e5000bbff6eb4a264fb1edaa9e92bc7bfaceef82
+# codigo de salida de MetaEditor: 0 (1 con exito, 0 con error: no es la puerta)
+# puerta: NO PASA (2 errores, 0 avisos, .ex5 no)
+# sustitucion a proposito en mql5/Experts/Botsito.mq5: 'return(INIT_SUCCEEDED);' -> 'return(INIT_SUCCEEDED)'
+
+
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5 : information: compiling C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Include\Botsito\Capa\Journal.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Include\Botsito\Capa\Cuenta.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Include\Botsito\Capa\Reloj.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5 : information: including C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Include\Botsito\Capa\Sesiones.mqh
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5(69,3) : error 154: '}' - semicolon expected
+C:\Users\USER\AppData\Local\Temp\botsito-mql5-1bw8y5gg\mql5\Experts\Botsito.mq5(69,3) : error 154: '}' - semicolon expected
+Result: 2 errors, 0 warnings
