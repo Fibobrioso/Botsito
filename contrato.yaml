@@ -5,6 +5,7 @@ tramo: R4
 rutas_permitidas:
   - docs/validation/PREVIA-SESION-5.md
   - docs/sesion-5/PREGUNTAS.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
   - docs/runbooks/
   - docs/plan/HOJA-DE-RUTA.md
   - docs/encargos/

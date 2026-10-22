@@ -404,6 +404,9 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Depende de:** nada.
 - **Quién:** Aleks.
 - **Hecho cuando:** la confirmación está registrada y la sesión 5 tiene fecha.
+- **Estado:** la sesión 5 tiene fecha, el viernes 2026-10-23 (Aleks, 2026-10-21; la línea del paso 1
+  de «Antes» de SESION-DE-PREGUNTAS.md da `False`, PREVIA-SESION-5.md §3). Falta la confirmación
+  escrita del trader sobre marzo (heredado 2): A.3 no está HECHA.
 
 ### A.4 · La copia de seguridad
 - **Refs:** (Technical Debt de PROJECT_STATE, «Copia de seguridad … INCOMPLETA desde el 2026-09-09»)
@@ -464,8 +467,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   Y, desde `trabajo/barrido-sesion-5` (BARRIDO-SESION-5.md §1.d y §4): `scripts/hoja_preguntas.py`
   sigue con el encabezado y la regla 2 de la sesión 2, lleva A-24 (DECIDIDA) en su orden, no
   lleva A-50, A-53 ni A-57 y no puede llevar la B de VISOR-CONSTRUCCION.md §3.2 (toca A-46,
-  RESUELTA); y el paso 6 de «Antes» de `docs/runbooks/SESION-DE-PREGUNTAS.md` dice todavía «abril
-  o agosto», que su regla 2 amplió a julio del 1 al 17 y a enero del 2 al 30.
+  RESUELTA). El paso 6 de «Antes» de `docs/runbooks/SESION-DE-PREGUNTAS.md`, que decía todavía
+  «abril o agosto», remite a su regla 2 desde `trabajo/previa-sesion-5` (PREVIA-SESION-5.md §3).
 - **Depende de:** nada (J, antes de la próxima sesión que etiquete días).
 - **Quién:** el consultor (L, 6 y la decisión de 7 y 8); la sesión, en ramas propias.
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.

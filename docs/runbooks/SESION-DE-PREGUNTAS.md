@@ -73,7 +73,8 @@ precondición de ceguera.
    preparados según la regla 2.
 6. **Si se van a enseñar gráficos (regla 2), comprobar cada día antes de prepararlos**, con la
    misma línea del paso 1 (imprime solo `True` o `False`; `casos_ocultos` son los reservados más
-   los retirados). Tiene que salir `False` en todos, y el día tiene que ser de abril o de agosto.
+   los retirados). Tiene que salir `False` en todos, y el día tiene que ser de construcción, los
+   que dice la regla 2 (abril, julio del 1 al 17, agosto y enero del 2 al 30).
    Los gráficos se generan fuera del repositorio, y la clave de cada uno (día, hora, qué es cada
    opción) la guarda Aleks y no se enseña.
 
