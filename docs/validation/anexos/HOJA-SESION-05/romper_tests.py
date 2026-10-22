@@ -12,7 +12,7 @@ import importlib.util
 import sys
 import traceback
 from collections.abc import Callable, Iterator
-from contextlib import contextmanager
+from contextlib import ExitStack, contextmanager
 from pathlib import Path
 from types import ModuleType
 from typing import Any
@@ -52,6 +52,29 @@ def poner(obj: Any, clave: str, valor: Any) -> Iterator[None]:
             setattr(obj, clave, antes)
 
 
+@contextmanager
+def juntas(*mutaciones: Any) -> Iterator[None]:
+    """Varias mutaciones a la vez (se deshacen todas al salir)."""
+    with ExitStack() as pila:
+        for mutacion in mutaciones:
+            pila.enter_context(mutacion)
+        yield
+
+
+class _HojaCambiada:
+    """Lo que el test lee de docs/sesion-5/PREGUNTAS.md, con el titulo de S-9 cambiado: el lado de
+    la hoja, sin escribir en el fichero (revisor de `trabajo/hoja-sesion-05`, b2)."""
+
+    def __init__(self, ruta: Path) -> None:
+        self.ruta = ruta
+
+    def read_text(self, encoding: str) -> str:
+        texto = self.ruta.read_text(encoding=encoding)
+        viejo = "**S-9. Qué liquidez eliges cuando hay varias**"
+        assert texto.count(viejo) == 1
+        return texto.replace(viejo, "**S-9. Otro título**")
+
+
 def correr(prueba: Callable[[ModuleType], None]) -> str:
     try:
         prueba(m)
@@ -68,6 +91,13 @@ textos04 = m.CODIGOS_DE_SESION_TEXTO["04"]
 sin_s25 = {k: v for k, v in textos05.items() if k != "S-25"}
 con_s25 = {**textos04, "S-25": "x"}
 orden04_cambiado = (m.ORDEN_SESION_04[1], m.ORDEN_SESION_04[0], *m.ORDEN_SESION_04[2:])
+orden04_s22_al_final = (*(c for c in m.ORDEN_SESION_04 if c != "S-22"), "S-22")
+
+
+def agrupar_sin_hoja(presentes: Any, hoja: Any) -> list[str]:
+    """`orden_de_preguntas` roto: ignora la hoja y ordena por letra y numero (revisor, b3)."""
+    return sorted(set(presentes), key=lambda p: (p[0], int(p[2:])) if p[2:].isdigit() else (p, 0))
+
 
 CASOS: list[tuple[str, Callable[[ModuleType], None], list[tuple[str, Any]]]] = [
     (
@@ -78,6 +108,8 @@ CASOS: list[tuple[str, Callable[[ModuleType], None], list[tuple[str, Any]]]] = [
              poner(textos05, "S-7", titulo_del_cuerpo_s7)),
             ("sin S-25 (la hoja de 24 codigos)",
              poner(m.CODIGOS_DE_SESION_TEXTO, "05", sin_s25)),
+            ("del lado de la hoja: el titulo de S-9 cambiado en lo que se lee de PREGUNTAS.md",
+             poner(t, "PREGUNTAS_05", _HojaCambiada(t.PREGUNTAS_05))),
         ],
     ),
     (
@@ -96,6 +128,14 @@ CASOS: list[tuple[str, Callable[[ModuleType], None], list[tuple[str, Any]]]] = [
              poner(m.HOJAS, "04", orden04_cambiado)),
             ("el texto de S-1 de la 03 cambiado",
              poner(m.CODIGOS_DE_SESION_TEXTO["03"], "S-1", "otro texto")),
+            ("la hoja 04 reordenada en su sitio (ORDEN_SESION_04 y HOJAS['04'] a la vez)",
+             juntas(poner(m, "ORDEN_SESION_04", orden04_cambiado),
+                    poner(m.HOJAS, "04", orden04_cambiado))),
+            ("la hoja 04 con S-22 al final (lo agrupa despues de S-7)",
+             juntas(poner(m, "ORDEN_SESION_04", orden04_s22_al_final),
+                    poner(m.HOJAS, "04", orden04_s22_al_final))),
+            ("las hojas intactas y el agrupado sin mirar la hoja (por letra y numero)",
+             poner(m, "orden_de_preguntas", agrupar_sin_hoja)),
         ],
     ),
     (

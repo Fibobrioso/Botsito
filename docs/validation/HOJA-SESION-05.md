@@ -113,13 +113,17 @@ En `tests/unit/test_transcribir_sesion.py`:
 
 **Los tests, rotos a propósito en los dos sentidos.** Con
 `docs/validation/anexos/HOJA-SESION-05/romper_tests.py <raiz>`: carga el guion y los tests, y corre
-cada test tal cual y con dos mutaciones en memoria, una por sentido, deshaciendo cada una antes de
-la siguiente; no escribe nada. Salida (`PYTHONUTF8=1 uv run python … .`):
+cada test tal cual y con mutaciones en memoria, al menos una por sentido, deshaciendo cada una antes
+de la siguiente; no escribe nada (tampoco en PREGUNTAS.md: la mutación del lado de la hoja cambia lo
+que el test LEE, no el fichero). Tras la revisión (b2 y b3, §10) lleva tres mutaciones más: el lado
+de la hoja en el test de los textos, y dos que llegan al orden y al agrupado de la 04. Salida
+(`PYTHONUTF8=1 uv run python … .`):
 
 ```
 test_la_hoja_05_tiene_los_25_codigos_con_su_texto: tal cual -> pasa
   roto (S-7 con el titulo del cuerpo y no el del recuadro) -> FALLA en test_transcribir_sesion.py:478: assert m.CODIGOS_DE_SESION_TEXTO["05"] == titulos
   roto (sin S-25 (la hoja de 24 codigos)) -> FALLA en test_transcribir_sesion.py:478: assert m.CODIGOS_DE_SESION_TEXTO["05"] == titulos
+  roto (del lado de la hoja: el titulo de S-9 cambiado en lo que se lee de PREGUNTAS.md) -> FALLA en test_transcribir_sesion.py:478: assert m.CODIGOS_DE_SESION_TEXTO["05"] == titulos
   de nuevo tal cual -> pasa
 test_s25_vale_en_la_05_y_no_en_la_04: tal cual -> pasa
   roto (S-25 tambien en la 04) -> FALLA en test_transcribir_sesion.py:490: assert "S-25" not in v04
@@ -128,6 +132,9 @@ test_s25_vale_en_la_05_y_no_en_la_04: tal cual -> pasa
 test_la_03_y_la_04_no_cambian: tal cual -> pasa
   roto (la hoja 04 con S-1 y S-2 cambiados de sitio) -> FALLA en test_transcribir_sesion.py:498: assert m.HOJAS["04"] is m.ORDEN_SESION_04
   roto (el texto de S-1 de la 03 cambiado) -> FALLA en test_transcribir_sesion.py:501: assert m.CODIGOS_DE_SESION_TEXTO["03"]["S-1"] == "cómo decide el sesgo del día"
+  roto (la hoja 04 reordenada en su sitio (ORDEN_SESION_04 y HOJAS['04'] a la vez)) -> FALLA en test_transcribir_sesion.py:499: assert list(m.ORDEN_SESION_04) == ORDEN_04
+  roto (la hoja 04 con S-22 al final (lo agrupa despues de S-7)) -> FALLA en test_transcribir_sesion.py:499: assert list(m.ORDEN_SESION_04) == ORDEN_04
+  roto (las hojas intactas y el agrupado sin mirar la hoja (por letra y numero)) -> FALLA en test_transcribir_sesion.py:505: assert texto.index("## S-1\n") < texto.index("## S-22") < texto.index("## S-7")
   de nuevo tal cual -> pasa
 test_la_sesion_en_curso_es_la_05: tal cual -> pasa
   roto (SESION_EN_CURSO = 04 (lo de main)) -> FALLA en test_transcribir_sesion.py:483: assert m.SESION_EN_CURSO == "05"
@@ -142,7 +149,13 @@ y `ruff format --check` en verde sobre los tres ficheros de Python. `Tests Curre
 de 1642 a 1647 funciones (`state check` lo pidió).
 
 **Ningún documento de la fase 0 quedó falso**, salvo el docstring, corregido arriba. No hay
-recuadros.
+recuadros. **Pero la fase 0 no miró `docs/sesion-5/`, y allí hay uno que sí** (revisor, b1, §10):
+`docs/sesion-5/PREGUNTAS.md:22-24` dice que los textos de los códigos «entran en ese script con la
+ingesta de la sesión (`CODIGOS_DE_SESION_TEXTO["05"]`), no aquí», y sus recuadros de S-7, S-12 y
+S-13 (`:246`, `:415`, `:483`) dicen que su texto va a `CODIGOS_DE_SESION_TEXTO["05"]` «con la
+ingesta». Desde esta rama entran antes, aquí. **No lo corrijo**: el encargo dice que PREGUNTAS.md
+no se toca. Lo que sigue siendo cierto es lo que importa para la sesión: el texto que vale es el de
+los recuadros, y es el que lleva el guion. Propuesta para el consultor, en §6.
 
 ## 3 · Fase 2: la regla del 2026-10-21
 
@@ -189,6 +202,16 @@ corpus, `fuentes.yaml` ni la cuarentena (`src/botsito/corpus/cuarentena.py` sin 
   (unos 160 bytes; PROJECT_STATE quedaría hacia 22.560).
 - Ninguna letra pasa a HECHA (V se cumple con la sesión y su activación); la hoja de ruta no
   cambia.
+- **Para decidir el consultor (revisor, b1):** `docs/sesion-5/PREGUNTAS.md:22-24` y sus recuadros
+  de S-7, S-12 y S-13 dicen que los textos entran en `CODIGOS_DE_SESION_TEXTO["05"]` «con la
+  ingesta», y entran en esta rama. Opciones: (a) un recuadro de corrección en PREGUNTAS.md, junto a
+  `:22-24`, en el commit del contrato de la orden de cierre (habría que ampliar el contrato a
+  `docs/sesion-5/PREGUNTAS.md`), que diga: «Desde `trabajo/hoja-sesion-05` (2026-10-22) los textos
+  de los códigos ya están en `scripts/transcribir_sesion.py`, `CODIGOS_DE_SESION_TEXTO["05"]`,
+  antes de grabar: S-7 y S-12 con el título de su recuadro, y los demás con el suyo. Lo que dicen
+  los recuadros sobre «con la ingesta» vale ahora para esta rama»; (b) dejarlo para la rama de la
+  ingesta, que escribe `docs/sesion-5/HOJA-USADA.md`. Recomiendo (a): es una línea, y quien abra la
+  ingesta lee PREGUNTAS.md antes que nada.
 
 ## 7 · El encargo, punto por punto
 
@@ -207,10 +230,10 @@ corpus, `fuentes.yaml` ni la cuarentena (`src/botsito/corpus/cuarentena.py` sin 
 | F1.5 | El docstring: v9 con `--sesion 03`, v10 con `--sesion 04` | Hecho | §2 |
 | F1.6 | El test de `SESION_EN_CURSO` se parte | Hecho | §2 |
 | F1.7 | Tests rotos en los dos sentidos, con las dos salidas | Hecho | §2, `romper_tests.py` |
-| F1.8 | Documentos falsos corregidos | Hecho | §1.c: solo el docstring |
+| F1.8 | Documentos falsos corregidos | Parcial, declarado | §1.c: el docstring, corregido; `docs/sesion-5/PREGUNTAS.md:22-24` y tres recuadros (revisor, b1) no se tocan porque el encargo lo prohíbe: §2 y la propuesta de §6 |
 | F2 | La entrada del 2026-10-21 en DECISIONES-DE-PROCESO.md, con las dos frases y sus orígenes verificados | Hecho, con un matiz | §3 (la frase de SESGO-H4-COLOR va sobre el cierre de corrida-construccion) |
 | NC | Lo que no cambia | Hecho | §5 |
-| C | Informe, `make check`, `fix/hoja-sesion-05` con solo el fallo de `state check`, revisor | Hecho | §8 y el revisor, abajo |
+| C | Informe, `make check`, `fix/hoja-sesion-05` con solo el fallo de `state check`, revisor | Hecho | §8; el revisor, pegado en §9, y sus hallazgos, en §10 |
 
 **Desviaciones declaradas:**
 1. Un test de más, `test_la_filtrada_de_la_05_agrupa_con_su_hoja`, que el encargo no pide (§2).
@@ -218,6 +241,147 @@ corpus, `fuentes.yaml` ni la cuarentena (`src/botsito/corpus/cuarentena.py` sin 
    Así, si la hoja cambia (un recuadro nuevo) y el guion no, falla.
 3. El contrato se amplió a `docs/validation/anexos/HOJA-SESION-05/`, por el guion de las roturas.
 
+## 8 · `make check` y CI de Linux
+
+- `make check` del commit aab4df3 (fases 1 y 2): exit 0, `2734 passed in 922.37s`, ningún `failed`,
+  `SELLO: make check en verde sobre el arbol fd941e16279f0909424082ff0c2264d1cb6b5db0`,
+  `PICO DE MEMORIA de make check: 297 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 287 MiB)`.
+- CI de Linux: `git push origin trabajo/hoja-sesion-05:refs/heads/fix/hoja-sesion-05`. **Run
+  39738216803** sobre `aab4df336da311abb8f1b95f3f6128e5f81ed74e`: `1 failed, 2723 passed, 10
+  skipped`; el único fallo es el esperado, `FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo`
+  (PROJECT_STATE declara `trabajo/hoja-sesion-05` y la rama es `fix/hoja-sesion-05`). Consultada
+  con `gh run list --branch fix/hoja-sesion-05` y `gh run view 39738216803 --log-failed`, a mano,
+  una vez cada uno, tras una espera en segundo plano sin consulta. Una primera llamada,
+  `gh run list --commit aab4df3`, antes de la espera, dio `[]`: el run aún no existía.
+
+## 9 · Informe del revisor, entero
+
+El subagente `revisor` (opus), 2026-10-22, sobre aab4df3 más el informe estadiado (§8 y el
+Estado). Pegado tal cual (sin la sangría que añade el entorno); no cita ningún tramo no citable.
+
+> ## Informe del revisor · trabajo/hoja-sesion-05 · 2026-10-22
+>
+> Base `main` 7e6dec2. Commits adcc76b y aab4df3, más el informe con un cambio estadiado (§8 y el Estado).
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 0 menor. **Sin hallazgos.**
+>
+> Lo que comprobé:
+> 1. **Contrato.** `uv run python scripts/contrato_rama.py` dice: `CONTRATO: 9 ficheros dentro del contrato de trabajo/hoja-sesion-05 (riesgo medio, artefacto docs/validation/HOJA-SESION-05.md, tramo 'R4', 3 comprobaciones para el revisor)` y sale con exit=0.
+>    - `uv run pytest tests/unit/test_transcribir_sesion.py`: `112 passed in 38.16s`.
+>    - `make check` no lo ejecuté. `make-check.log` (fechado a las 02:05 del 22-10) trae `2734 passed in 922.37s`, `SELLO: make check en verde sobre el arbol fd941e16279f0909424082ff0c2264d1cb6b5db0` y `PICO DE MEMORIA … 297 MiB … el mayor proceso, 287 MiB`.
+>    - `git rev-parse aab4df3^{tree}` da `fd941e16…`: el sello es el árbol de aab4df3. El de adcc76b es `e01e52ea…`, que es el que cita §0.
+> 2. **Trailers `Fuente:`.** No hacen falta: ningún commit toca `knowledge/spec/` ni `knowledge/cases/`.
+> 3. **Holdout y material.** No se toca nada de holdout, transcripciones, fotogramas ni libros. La única lectura es `docs/sesion-5/PREGUNTAS.md`, un documento nuestro. No hace falta ninguna fila en HOLDOUT-EXPOSICIONES.
+> 4. **Regímenes de cambio.** El diff no toca evidence, feedback, manifests ni corpus. `docs/state/HISTORIA.md` tiene solo líneas añadidas (`git diff --numstat`: `167 0`), con `# Archivo 42 · PROJECT_STATE.md de main en 7e6dec2`.
+> 5. **Ambigüedades y ADR.** Ninguno cambia.
+> 6. **Informes cerrados.** Ninguno cambia: solo es nuevo `HOJA-SESION-05.md` y su anexo.
+> 7. **Las tres guardias de una `cita`.** No se aplica.
+> 8. **Cifras de negocio en el motor.** No hay: el cambio es en `scripts/` y en tests.
+> 9. **`PROJECT_STATE.md`.** Cambia lo de abrir-rama, el recuento de 1642 a 1647 (son 5 funciones `def test_` nuevas) y Archivo 41 a 42.
+> 10. **El informe.** Existe y acaba en «Rama lista para revisión, NO cerrada».
+> 11. **Citas del informe (más de tres) contra su fuente, todas exactas:**
+>     - `docs/encargos/trabajo-previa-sesion-5.md:13`
+>     - `PREVIA-SESION-5.md:28`
+>     - `EA-CONEXION.md:1076` (fila 3g) y `:1077` (fila 0/7)
+>     - `SESGO-H4-COLOR.md:1269` (§10) y `:1301` (con el matiz de corrida-construccion, bien declarado)
+>     - `PROJECT_STATE.md:104` (la línea de Technical Debt)
+>     - HISTORIA, registro de cierre de ea-conexion, punto 3 (`HISTORIA.md:11139-11141`)
+> 12. **Evidencia nueva.** No hay.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 1 importa, 3 menor. Requisitos: 20 hechos, 2 parciales, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base 7e6dec2, tag sobre e4563db, ninguna otra rama | Hecho | informe §0; mensaje de adcc76b |
+> | 2 | Abrir con abrir-rama: encargo tal cual con fecha, contrato y Archivo en HISTORIA | Hecho | `docs/encargos/trabajo-hoja-sesion-05.md:3`; `contrato.yaml`; HISTORIA Archivo 42 |
+> | 3 | R1 · guardia o clasificador: PARADA salvo la forma propuesta | Hecho (declarado) | informe:198, «ninguna negativa» |
+> | 4 | R2 · CI sin guion ni bucle | Hecho (declarado) | informe §8:230-232 |
+> | 5 | F0.1 · usos de los códigos y de `--sesion` | Hecho | `git show main:scripts/transcribir_sesion.py`: 124, 163, 168, 195, 203, 307, 344, 366, 607-608, 631, 654-656, todas como dice §1.a |
+> | 6 | F0.2 · tests que fijan la 04 o la sesión en curso | Hecho | main `test_transcribir_sesion.py:398`, `:403 assert m.SESION_EN_CURSO == "04"`, 408, 419, 438 y 442; ningún test llama a `main()` sin `--sesion` salvo `:293` (solo `--audio`) |
+> | 7 | F0.3 · skill, SESION-DE-PREGUNTAS y MIRAR-EL-MATERIAL | Hecho | `SKILL.md:20,69-70` siguen ciertos para la sesión 5. `SESION-DE-PREGUNTAS.md:69` es de `hoja_preguntas` y `:157` de `feedback new --sesion`; MIRAR-EL-MATERIAL no los nombra |
+> | 8 | F1.1 · `ORDEN_SESION_05` S-1..S-25 con su comentario; el orden de PREGUNTAS es el numérico | Hecho | `transcribir_sesion.py:121-131`; Grep `^\*\*S-` en PREGUNTAS.md da las líneas 74 a 779, crecientes |
+> | 9 | F1.2 · textos de la 05: título sin «S-n. », sin lo de detrás de la negrita, S-1 en dos líneas, minúscula; S-7 y S-12 del recuadro; S-13 y S-15 con el suyo | Hecho | Los 25 comparados uno a uno con PREGUNTAS.md (74-75, 94, 120, …, 779). S-7 viene de `:248` y S-12 de `:417`. Los recuadros de S-13 (`:479-485`) y S-15 (`:538-546`) no traen «Título», y el guion conserva `:487` y `:548` |
+> | 10 | F1.3 · `HOJAS["05"]` y `SESION_EN_CURSO = "05"` | Hecho | `transcribir_sesion.py:212,214` |
+> | 11 | F1.4 · la 03 y la 04 agrupan igual; 02, 03 y 04 sin cambios | Hecho | `git diff main...HEAD -- scripts/transcribir_sesion.py` solo añade; ni una línea de las hojas ni de los textos 02, 03 y 04 cambia |
+> | 12 | F1.5 · docstring: v9 con `--sesion 03`, v10 con `--sesion 04`, ningún ejemplo de re-filtrada sin `--sesion` | Hecho | `transcribir_sesion.py:47-54`. El único `--solo-filtrar` del docstring lleva `--sesion 04` (`:49-50`) |
+> | 13 | F1.6 · se parte el test de `SESION_EN_CURSO` | Hecho | `test_transcribir_sesion.py:399-406` sin la aserción; `:481-484` es `test_la_sesion_en_curso_es_la_05` |
+> | 14 | F1.7 · cuatro tests rotos en los dos sentidos, con sus salidas | Hecho | `PYTHONUTF8=1 uv run python docs/validation/anexos/HOJA-SESION-05/romper_tests.py .` reproduce línea a línea la salida del informe (`:120-136`), acaba en «todo como se espera» y sale con exit=0 |
+> | 15 | F1.8 · un documento que queda falso se corrige en la rama | Parcial | hallazgo b1 |
+> | 16 | F2 · entrada del 2026-10-21 en «Decisions and Rationale», con el formato de la sección y «nace aquí» | Hecho | `DECISIONES-DE-PROCESO.md:28`: formato fecha · decisión · Problema · Alternativas · Estado: ACTIVE, como las del 2026-09-04; «NACE AQUI… no viene de la mudanza» |
+> | 17 | F2 · las dos frases literales, con sus orígenes verificados | Hecho | Las dos frases coinciden carácter a carácter con el encargo (`:42-43`). Orígenes comprobados en el eje (a), punto 11 |
+> | 18 | F2 · PARADA si un test exige otro sitio | Hecho | informe §3:163-165; sin PARADA |
+> | 19 | Lo que NO cambia (motor, spec, ambigüedades, feedback, casos, corpus, fuentes.yaml, cuarentena, PREGUNTAS.md) | Hecho | `git diff --stat main...HEAD`: 9 ficheros, ninguno de esas rutas; `contrato_rama.py` en verde con `docs/sesion-5/` protegido |
+> | 20 | Informe y make check sellado | Hecho | eje (a), punto 1 (aab4df3). El cambio estadiado del informe todavía no tiene sello propio |
+> | 21 | Push a `fix/hoja-sesion-05` y CI de Linux con solo el fallo de state check | Hecho (en parte por declaración) | `gh run view 39738216803 --json conclusion,headSha` da `{"conclusion":"failure","headSha":"aab4df336da311abb8f1b95f3f6128e5f81ed74e"}`: el run es sobre aab4df3 y falla. Que el único fallo sea `test_state_check_ok_on_real_repo` lo dice el informe (§8:227-229); no lo comprobé (ver abajo) |
+> | 22 | El revisor, lanzado con el informe terminado, pegado al final | Parcial | pendiente de pegar este informe (informe:237, «El revisor, abajo») |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | **Un documento dice que los textos de la 05 entran con la ingesta, y ahora entran en esta rama.** El informe lo da por cierto y no lo declara: «Ningún documento de la fase 0 quedó falso, salvo el docstring» (informe:144) y §1.c. `docs/sesion-5/PREGUNTAS.md:22-24` dice: «Los textos de estos códigos entran en ese script con la ingesta de la sesión (`CODIGOS_DE_SESION_TEXTO["05"]`), no aquí». Lo repiten sus recuadros en `:246`, `:415` y `:483` («a `CODIGOS_DE_SESION_TEXTO["05"]` con la ingesta»). Tras aab4df3 entran en esta rama, antes de la ingesta. El Grep de la fase 0 buscaba `CODIGOS_DE_SESION_TEXTO`, pero no sobre `docs/sesion-5/`. PREGUNTAS.md no se toca por el encargo (`:17`), así que lo que tocaba era declararlo en el informe o subirlo al consultor (PARADA con propuesta, `:28`), no callarlo. | `git grep -n 'CODIGOS_DE_SESION_TEXTO\["05"\]'` da `docs/sesion-5/PREGUNTAS.md:23`, `:246`, `:415` y `:483`. También `PREVIA-SESION-5.md:83` y `:482`, informe cerrado que cuenta lo que entonces decía PREGUNTAS |
+> | b2 | menor | **La rotura del test de los textos de la 05 solo prueba el lado del guion.** El informe dice que «si la hoja o el guion cambian uno sin el otro, falla» (informe:106-107; desviación 2, :217-218). Las dos mutaciones del anexo cambian el guion. Ninguna cambia el texto leído de PREGUNTAS.md (por ejemplo, sustituyendo `PREGUNTAS_05` en memoria). Por construcción la igualdad falla en los dos casos, pero ese lado no está demostrado. | `romper_tests.py:77-80` |
+> | b3 | menor | **La rotura de `test_la_03_y_la_04_no_cambian` cae en la identidad, no en el agrupado.** La mutación «la hoja 04 con S-1 y S-2 cambiados» sustituye `HOJAS["04"]` por una tupla nueva y cae en la comprobación de identidad (`:498 assert m.HOJAS["04"] is m.ORDEN_SESION_04`). Ninguna mutación llega a la aserción del orden (`:499`) ni al agrupado de la filtrada (`:503-506`), que es lo que el encargo pide fijar («agrupando exactamente igual»). | `romper_tests.py:70,95-96`; salida «FALLA en test_transcribir_sesion.py:498» |
+> | b4 | menor | **La tabla del informe marca el revisor como «Hecho» antes de pegarlo.** La fila C de §7 dice «Hecho» e incluye al revisor, cuyo informe aún no está pegado. | informe:213 |
+>
+> ### Lo que no pude comprobar
+> - **El sello del árbol estadiado.** `git write-tree` escribe en la base de objetos y no lo ejecuté. El cambio estadiado (§8 y el Estado del informe) no está cubierto por el sello `fd941e16…`, que es el árbol de aab4df3. Su commit necesitará otro `make check`.
+> - **Que el único fallo del run 39738216803 sea `test_state_check_ok_on_real_repo`.** Hice la única consulta permitida (`--json conclusion,headSha`): da `failure` sobre aab4df3. El detalle del fallo descansa en lo que dice el informe (§8).
+> - **La primera pasada de pytest.** Un segundo pytest encadenado en el mismo comando lo negó la guardia (regla de `trabajo/guion-mismo-comando`). Lo relancé solo, en su propia llamada, y dio `112 passed`.
+> - **`ruff check` y `ruff format --check`.** No los relancé; los cubre el `make check` de aab4df3.
+> - **R1 y R2** (ninguna negativa de la guardia en la rama; la CI sin bucle). Solo tengo la declaración del informe.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short && git diff --cached --stat`
+> 2. Read de `docs/encargos/trabajo-hoja-sesion-05.md`, `contrato.yaml` y `docs/validation/HOJA-SESION-05.md`
+> 3. `git diff main...HEAD -- scripts/transcribir_sesion.py tests/unit/test_transcribir_sesion.py docs/runbooks/DECISIONES-DE-PROCESO.md PROJECT_STATE.md`
+> 4. Grep `^\*\*S-[0-9]+\.|Título:|^> .*2026-10-21` en `docs/sesion-5/PREGUNTAS.md`
+> 5. `uv run python scripts/contrato_rama.py`
+> 6. `uv run pytest -q tests/unit/test_transcribir_sesion.py`
+> 7. `PYTHONUTF8=1 uv run python docs/validation/anexos/HOJA-SESION-05/romper_tests.py .`
+> 8. `gh run view 39738216803 --json conclusion,headSha` (una vez)
+> 9. Un pytest con `echo exit` y un segundo pytest en el mismo comando: lo negó la guardia
+> 10. `uv run pytest -q tests/unit/test_transcribir_sesion.py -p no:cacheprovider | grep …` y `uv run pytest tests/unit/test_transcribir_sesion.py -p no:cacheprovider -rN | tail -3`
+> 11. Read de `romper_tests.py`
+> 12. `git diff --cached`; `git grep -n -e solo-filtrar -e SESION_EN_CURSO -e "sesion en curso" -- scripts .claude/skills docs/runbooks CLAUDE.md`
+> 13. `git grep -n transcribir_sesion -- .claude docs/runbooks CLAUDE.md docs/plan PROJECT_STATE.md docs/HANDOFF.md docs/sesion-5`
+> 14. Read de `SKILL.md:14-78`, `PREGUNTAS.md:15-29`, `:239-250`, `:479-487` y `:538-547`
+> 15. `git grep -n` de `CODIGOS_DE_SESION_TEXTO["05"]`, `ORDEN_SESION_05` y `HOJAS["05"]` fuera de los ficheros de la rama
+> 16. `git show main:scripts/transcribir_sesion.py | grep -n …` y `git show main:tests/unit/test_transcribir_sesion.py | grep -n …`; `git grep -n SESION_EN_CURSO -- tests src`
+> 17. Grep de `main(|parse_args|--sesion|procesar(` en el test
+> 18. `sed -n` de `trabajo-previa-sesion-5.md:13`, `PREVIA-SESION-5.md:26-29`, `EA-CONEXION.md:1074-1078`, `SESGO-H4-COLOR.md:1269,1299-1302` y `PROJECT_STATE.md:104`
+> 19. `grep` de los encabezados de PREVIA, de ea-conexion en HISTORIA y de su fila en ERRORES-RECURRENTES; Read de `HISTORIA.md:11133-11144`
+> 20. `git diff main...HEAD --numstat -- docs/state/HISTORIA.md` y cabecera del diff
+> 21. `ls -la make-check.log`; `grep` de SELLO, PICO, passed y failed; `git log -1 --format='%h %ci' aab4df3`
+> 22. `git rev-parse aab4df3^{tree} adcc76b^{tree}`; `git log --format='%h%n%B---' main..HEAD`
+> 23. `sed -n '69p;157p' docs/runbooks/SESION-DE-PREGUNTAS.md`; grep de «sesión en curso» y `--sesion` en MIRAR-EL-MATERIAL y SESION-DE-PREGUNTAS
+> 24. `git grep -n -i -e "con la ingesta" -e "hoja 05" -e ORDEN_SESION_NN -- docs/runbooks .claude/skills docs/plan PROJECT_STATE.md`
+
+## 10 · Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| b1 | importa | **Declarado, sin tocar PREGUNTAS.md**, que el encargo prohíbe tocar: §2 dice que `docs/sesion-5/PREGUNTAS.md:22-24` y los recuadros de S-7, S-12 y S-13 (`:246`, `:415`, `:483`) quedan desfasados («con la ingesta»), §7 (F1.8) pasa a «Parcial, declarado», y §6 propone al consultor un recuadro en la orden de cierre, con su texto. La fase 0 no buscó en `docs/sesion-5/`: es lo que se le escapó. |
+| b2 | menor | Arreglado: `romper_tests.py` tiene una mutación del lado de la hoja (cambia en memoria lo que el test lee de PREGUNTAS.md, el título de S-9, sin escribir el fichero), y falla en `:478` (§2). |
+| b3 | menor | Arreglado: dos mutaciones reordenan la hoja 04 en su sitio (`ORDEN_SESION_04` y `HOJAS["04"]` a la vez) y caen en el orden (`:499`); una tercera deja las hojas intactas y rompe solo el agrupado (`orden_de_preguntas` sin mirar la hoja) y cae en la filtrada de la 04 (`:505`) (§2). |
+| b4 | menor | Arreglado: la fila C de §7 remite a §9 y §10. |
+
+Lo que el revisor no pudo comprobar del run 39738216803 (que el único fallo sea el esperado) lo
+dice §8 con su salida: `gh run view 39738216803 --log-failed`, «1 failed, 2723 passed, 10 skipped»
+y `FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo`. Tras los arreglos, el último
+commit lleva su propio `make check` y su propia CI (§11).
+
+## 11 · El último commit, con los arreglos del revisor
+
+Su `make check` y su CI de Linux por `fix/hoja-sesion-05` no pueden ir dentro del árbol que
+sellan: el resultado del `make check` va en el mensaje de su commit, y el número del run de la CI,
+en el mensaje final a Aleks. La CI se consulta igual que en §8: una espera en segundo plano sin
+consulta y después un `gh run list` y un `gh run view` sueltos.
+
 ## Estado
 
-EN CURSO: falta el `make check` de la entrega, la CI de Linux y el revisor.
+Rama lista para revisión, NO cerrada. Fases 0, 1 y 2 hechas (§7), con tres desviaciones declaradas
+y un documento desfasado que el encargo no deja tocar (b1: `docs/sesion-5/PREGUNTAS.md:22-24`, con
+la propuesta de §6). CI de Linux de aab4df3 con solo el fallo esperado (run 39738216803). El
+revisor (§9) no encontró nada que bloquee; su «importa» está declarado y sus tres «menor»,
+arreglados (§10).
