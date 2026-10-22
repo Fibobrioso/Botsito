@@ -88,14 +88,20 @@ de ENTRADA: `-f concat -i lista`); ninguna opción se repite; nada va detrás de
    `subfile,`-; una letra de unidad con su barra, `C:/` o `C:\`, no lo es; `C:x`, sí), sin `%` (un
    patrón de secuencia son muchos ficheros), que no empiece por `\\` o `//` (`\\?\C:\…`, `\\.\`,
    una ruta de red), que no sea un directorio, y que pase `motivo_fichero` POR SU TEXTO Y RESUELTA
-   (`os.path.realpath`: un enlace o un nombre corto 8.3 de Windows): sobre material protegido niega
-   con su motivo, con el mensaje de `main` («ejecutar <ruta>. Regla: …»). Y si existe, BINARIA: un
-   fichero cuyos primeros 4096 bytes no llevan ningún nulo se niega, porque ffmpeg detecta por el
-   CONTENIDO, no por la extensión, una lista que nombra otros ficheros (`ffconcat version 1.0`,
-   `#EXTM3U`, un `.mpd`); un vídeo o un audio llevan nulos en su cabecera. La salida de la
-   extracción pasa por las mismas comprobaciones de protocolo, `%` y `\\`, y «fuera del repo» se
-   mira también resuelta (`_ffmpeg_dentro_del_repo`). (Lo de `\\`, `realpath` y la entrada de
-   texto entró tras el revisor: b3 y «lo que no pude comprobar».)
+   (`os.path.realpath`: un enlace o un nombre corto 8.3 de Windows) Y SIN LOS PUNTOS NI ESPACIOS
+   DEL FINAL de cada nombre, que Windows quita al abrir (`_ffmpeg_formas_de_la_ruta`): sobre
+   material protegido niega con su motivo, con el mensaje de `main` («ejecutar <ruta>. Regla: …»).
+   Y la entrada tiene que ser **un contenedor de vídeo reconocido** (`_ffmpeg_es_video`, desde la
+   respuesta del consultor, §11-§12): extensión `.mp4`, `.mov`, `.mkv` o `.webm`
+   (`EXTENSIONES_DE_VIDEO`, comparada en minúsculas) Y sus bytes mágicos -ISO BMFF, `ftyp` en el
+   desplazamiento 4 (`MAGIA_ISO_BMFF`); Matroska/WebM, `1A 45 DF A3` al principio
+   (`MAGIA_MATROSKA`)-. Todo lo demás se niega, también un fichero que no existe o no se puede leer:
+   ffmpeg detecta por el CONTENIDO una lista que nombra otros ficheros (`#EXTM3U`, `ffconcat
+   version 1.0`). Detrás, como segunda barrera, la de antes (`_ffmpeg_es_texto`): sin ningún nulo
+   en los primeros 4096 bytes, se niega. La salida de la extracción pasa por las mismas
+   comprobaciones de protocolo, `%` y `\\`, y «fuera del repo» se mira en las tres formas
+   (`_ffmpeg_dentro_del_repo`). (Lo de `\\`, `realpath` y la entrada de texto entró tras el
+   revisor: b3 y «lo que no pude comprobar»; los bytes mágicos y los finales, tras el consultor.)
 5. **El resto de la línea**: lo que va antes y a la vez en el mismo comando se exige igual que en
    `main`, con las dos piezas de la familia 3 (`_exigir_lo_de_antes`: delante solo `cd` literal
    -no `cd -`-, asignaciones literales, `export` o `set -e/-u/-o pipefail`; `_exigir_lo_de_a_la_vez`:
@@ -123,6 +129,14 @@ de ENTRADA: `-f concat -i lista`); ninguna opción se repite; nada va detrás de
    aceptable porque es audio binario (`.wav`, `.flac`, `.mp3`, `.m4a`), que no se lee como texto; y
    el audio de una sesión es la entrada de `transcribir_sesion.py --audio`, que ya es la puerta de
    la cuarentena.
+8. **La comilla ANSI-C, para toda la guardia** (ampliación del encargo, declarada; respuesta del
+   consultor, punto 2): `tokenizar` copiaba el interior de `$'…'` tal cual, sin interpretar sus
+   escapes, y con eso `cat $'…/Back\x74est marzo 2026/v.mp4'` pasaba en `main`. Ahora una comilla
+   `$'…'` cuyo interior lleva una barra invertida (`_ansi_c_con_escapes`) tiene VALOR DESCONOCIDO:
+   se marca como una variable sin valor y `resolver` la niega (`DinamicoError`), igual que
+   `$X` sin valor; lo que ya se negaba con un valor desconocido se niega, y lo demás no cambia.
+   Sin barra, sigue siendo literal. Además, el final de la comilla se busca saltando los escapes
+   (`$'a\'b'` es una sola palabra), dentro y fuera de un `$(...)`. Qué cambia, medido, en §12.
 
 Nada de esto ha necesitado algo que la guardia no supiera ya del comando (sus palabras resueltas,
 sus redirecciones, el nivel y la secuencia): sin PARADA.
@@ -134,7 +148,8 @@ entero como código de la rama y sus literales del material la harían negarlo).
 de `tmp_path` con los vídeos SIN SEGUIR y binarios (el principio de un mp4), y las rutas del
 material a trozos por la misma razón.
 
-- `test_la_matriz_de_ffmpeg`: 75 comandos (16 que pasan y 59 negados) con su decisión esperada
+- `test_la_matriz_de_ffmpeg`: 94 comandos (19 que pasan y 75 negados) desde la respuesta del
+  consultor (§12; antes, 75: 16 y 59) con su decisión esperada
   -las cuatro formas, con rutas relativas y absolutas, a `-`, `NUL` y `/dev/null`, con
   `2>&1 | grep`, con `2>` fuera del repo y tras `cd`, y las cuatro formas exactas de la skill; y
   todos los negados que pide el encargo y algunos más, entre ellos los doce del revisor: `find
@@ -150,6 +165,9 @@ material a trozos por la misma razón.
   vacío las 16 permitidas vuelven a negarse con `R_EJECUCION` (salida en §A.2).
 - `test_con_una_opcion_de_mas_un_negado_pasa`: roto a propósito en el otro sentido, con `-map` en
   la extracción y `-report` en ffprobe, los dos negados correspondientes PASAN (salida en §A.2).
+- `test_sin_los_bytes_magicos_la_lista_hls_vuelve_a_pasar` y
+  `test_sin_el_arreglo_de_la_comilla_ansi_c_los_cuatro_pasan`: las dos roturas a propósito de la
+  respuesta del consultor (§12).
 - `test_la_matriz_frente_a_la_guardia_de_main`: la misma matriz con la guardia de `main` (cargada
   de `git show main:` o `origin/main`, como `test_la_guardia_frente_a_la_de_main_caso_a_caso`),
   con `decidir`. Exige que ningún caso pase a PASAR fuera de las formas permitidas y que ninguna
@@ -157,14 +175,15 @@ material a trozos por la misma razón.
 
 ### Casos que cambian de decisión frente a `main`
 
-**De NIEGA a PASA: solo las cuatro formas permitidas**, los 16 casos de `PERMITIDAS` (ffprobe
+**De NIEGA a PASA: solo las cuatro formas permitidas**, los 19 casos de `PERMITIDAS` (ffprobe
 relativa, absoluta con `-i`, con `-print_format`; silencios relativa y absoluta a `NUL`; volumen a
 `/dev/null`, absoluta y con `2>` fuera del repo; extracción absoluta, relativa `../fuera`, `.mp3` y
-`.m4a` tras `cd`; y las cuatro de la skill). En `main` todas niegan con `R_EJECUCION`.
+`.m4a` tras `cd`; las cuatro de la skill; y, desde §12, ffprobe y volumen sobre un `.mkv` y una
+comilla `$'…'` sin barra). En `main` todas niegan con `R_EJECUCION`.
 
-**De PASA a NIEGA (endurecimiento, declarado)**: nueve casos que `main` dejaba pasar porque el
-argumento no es un fichero que exista (o es un directorio) y la regla del programa desconocido
-solo mira ficheros:
+**De PASA a NIEGA (endurecimiento, declarado)**: quince casos que `main` dejaba pasar. Nueve, de
+la primera versión, porque el argumento no es un fichero que exista (o es un directorio) y la
+regla del programa desconocido solo mira ficheros; los otros seis, de §12, al final de la tabla:
 
 | Caso | main | rama |
 |---|---|---|
@@ -177,6 +196,12 @@ solo mira ficheros:
 | una entrada con `%d` | pasa | R_FFMPEG |
 | `ffmpeg -version` | pasa | R_FFMPEG |
 | una entrada que es un directorio (`ffprobe -show_format docs`) | pasa | R_FFMPEG |
+| una entrada que no existe (`ffprobe -show_format no-existe.mp4`) | pasa | R_FFMPEG |
+| **ANSI-C: `ffprobe -show_format $'<raíz>/…/Back\x74est marzo 2026/v.mp4'`** | **pasa** | R_FFMPEG |
+| **ANSI-C: `ffmpeg -i $'<raíz>/…/Back\164est marzo 2026/v.mp4' … -`** | **pasa** | R_FFMPEG |
+| **ANSI-C: `cat $'<raíz>/…/Back\x74est marzo 2026/v.mp4'`** | **pasa** | niega (argumento dinámico) |
+| **ANSI-C: `cd $'<raíz>/…/Back\x74est marzo 2026' && ffprobe -show_format v.mp4`** | **pasa** | R_EJECUCION |
+| **`ffprobe -show_format "<raíz>/…/Backtest marzo 2026 /v.mp4"`** (espacio final) | **pasa** | R_SIN_ABRIR |
 
 El de marzo se añadió a la matriz al ver los otros, y es un agujero de `main`: con el
 prefijo `file:` delante, `ffprobe` sobre el vídeo de la carpeta de marzo pasaba, porque
@@ -185,7 +210,11 @@ encargo dice «ninguno fuera de las cuatro formas»; lo leo como «ninguno se AB
 formas», y declaro estos nueve cierres: `ffmpeg -version` pasa a negarse porque no está en la lista
 (nada del repo lo usa: `inventario.py` llama a `ffprobe -version` desde Python, no por Bash).
 
-**El alcance de «ninguno se abre»** (revisor, b5): lo demuestra el test sobre los 75 casos de la
+Los cinco en negrita del final leían la carpeta de marzo en `main` (§12). En `cat` y `Read`, el
+espacio o el punto final ya se negaban en `main` (medido: `espacio_final.py`, §12); el hueco del
+espacio final era de `ffprobe`, que estaba en `SIN_LECTURA_DE_RUTAS`.
+
+**El alcance de «ninguno se abre»** (revisor, b5): lo demuestra el test sobre los 94 casos de la
 matriz, no sobre todo comando posible. El revisor encontró tres formas fuera de la matriz que se
 ABRÍAN en `4dbb48b` (b1, b2, b4); están corregidas y en la matriz, y la comparación con `main` las
 da como «main R_EJECUCION | rama R_EJECUCION» (sin cambio). Una cuarta, el alias de la raíz (b3),
@@ -208,7 +237,9 @@ regla de la guardia: el diff de `guardia.py` es la cabecera, `SIN_LECTURA_DE_RUT
 de entrada en `analizar_comando` y el bloque nuevo (`git diff --stat main...HEAD`: `guardia.py`,
 `ingerir-sesion/SKILL.md`, el test nuevo, el informe y su anexo, el encargo, `contrato.yaml`,
 `PROJECT_STATE.md` y `HISTORIA.md`; `scripts/contrato_rama.py` en verde). PowerShell: sin cambio (la regla solo entra con
-`not ctx.powershell`, y `analizar_powershell` no se toca).
+`not ctx.powershell`, y `analizar_powershell` no se toca). La única excepción, declarada y pedida
+por el consultor: la comilla ANSI-C de §1.8, que toca `tokenizar` y `resolver` y vale para todo
+Bash; lo que cambia con ella está medido en §12.
 
 ## §5 · Comandos negados durante la rama
 
@@ -223,10 +254,22 @@ Y tres más del mismo tipo -un comando que no está en la lista cerrada delante 
 `sed -i … PROJECT_STATE.md && git add … && uv run botsito state check`- → cada una en llamadas
 separadas. Ninguna se rodeó.
 
+Al aplicar la respuesta del consultor (§12), cuatro más, resueltas igual:
+- `RAIZ_REAL=… uv run python medir_respuesta.py …`: «el nombre de entorno `RAIZ_REAL` no esta en
+  la lista cerrada» → «sin esa variable»: la raíz pasa como argumento del guion.
+- `uv run pytest … | sed 's/\r$//'`: detrás en la tubería solo filtros de la lista → sin el `sed`.
+- `cp guardia.py <carpeta de trabajo> && uv run python medir_respuesta.py …`: «antes, en el mismo
+  comando, va `cp`» → en dos llamadas.
+- (La misma forma, otra vez, al regenerar el anexo: en dos llamadas.)
+
 ## §6 · Exposiciones
 
 Ninguna. La rama no leyó material del punto 3 de `CLAUDE.md`, ni transcripciones, ni fotogramas; los
-vídeos de los tests son ficheros de 16 bytes inventados en `tmp`.
+vídeos de los tests son ficheros inventados en `tmp`. Para fijar la condición de §12 se leyeron, con
+un guion de Python (`cabeceras.py`, no ffmpeg), los primeros 4096 bytes de tres vídeos de sesión que
+no se protegen -`2026-08-20 22-33-04.mp4` (v1), `2026-09-05 21-03-59.mkv` (v5) y `Grabación de
+pantalla 2026-10-04 105617.mp4`- y se imprimió solo su cabecera de contenedor (16 bytes en hex) y
+la posición del primer byte nulo: 0, 45 y 0. No es contenido de la sesión.
 
 ## §7 · Sello y CI
 
@@ -240,12 +283,13 @@ vídeos de los tests son ficheros de 16 bytes inventados en `tmp`.
   `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (la rama se llama `fix/`, `RITUAL.md`).
   Ninguno de los 10 saltados es de `test_guardia_ffmpeg.py`: las cuatro pruebas corrieron en Linux,
   también la comparación con la guardia de `main` (el checkout lleva `fetch-depth: 0`).
-- El commit de los arreglos del revisor (§10), el último de la rama: `test_guardia_ffmpeg.py` (5
-  pruebas; la de los alias, solo en Windows) y `test_guardia_claude.py` enteros en verde antes del
-  sello; su `make check` y su run de la CI de Linux por `fix/guardia-ffmpeg` no caben en el commit
-  que sellan: van en el mensaje de entrega a Aleks, y el run que cuenta es ese.
-- No se pasó el revisor una segunda vez sobre los arreglos; si el consultor lo quiere, va antes del
-  cierre.
+- `3372f7a` (los arreglos del revisor): `make check` exit 0, 2739 passed, `SELLO … 621a13ff…`,
+  pico 295 MiB; CI de Linux, run 39830835494: `1 failed, 2727 passed, 11 skipped`, el único fallo
+  el esperado (`test_state_check_ok_on_real_repo`) y el salto de más, el test de los alias (solo
+  Windows).
+- El commit de la respuesta del consultor (§12), el último de la rama: su `make check` y su run de
+  la CI de Linux no caben en el commit que sellan; van en el mensaje de entrega a Aleks, y el run
+  que cuenta es ese. El revisor, la segunda pasada, va en §13.
 
 ## §8 · El encargo, punto por punto
 
@@ -282,7 +326,8 @@ vídeos de los tests son ficheros de 16 bytes inventados en `tmp`.
 
 Desviaciones, todas por exceso y declaradas: la entrada se mira también resuelta, se niegan las
 rutas `\\`/`//`, las entradas de texto y toda redirección de entrada; `nul` en minúsculas; nueve
-casos que `main` dejaba pasar se niegan (§2).
+casos que `main` dejaba pasar se niegan (§2). El consultor las aceptó todas (§11, sus respuestas
+a las tres preguntas); lo que añadió su respuesta, punto por punto, en §12.
 
 ## §9 · Para el consultor, y la Next Action del cierre
 
@@ -295,18 +340,34 @@ casos que `main` dejaba pasar se niegan (§2).
    Debt o una rama de G.1.
 3. Las desviaciones por exceso de §8 (sobre todo la entrada binaria): si alguna sobra.
 
+Las tres las contestó el consultor el 2026-10-22 (§11): 1, sí; 2, una línea nueva en K, la parte
+prioritaria, en el commit del contrato del cierre (no un Technical Debt); 3, no sobra ninguna.
+
 **Next Action, preparada para el commit del contrato del cierre** (`RITUAL.md`, puntos 3 y 4; en la
-rama no se toca). La K pierde su segunda frase; queda:
+rama no se toca). La K pierde la frase de ffprobe y gana, delante, la línea del alias de la raíz
+(respuesta del consultor, pregunta 2, y «lo menor», tercer punto); queda:
 
-> K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada
-> crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que
-> la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en
-> la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un
-> clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos
-> sentidos. (ffprobe y ffmpeg: hecho en trabajo/guardia-ffmpeg, GUARDIA-FFMPEG.md.)
+> K. PRIORITARIA, porque lee material protegido: el alias de la raíz en motivo_fichero. Hoy pasan
+> cat, Read, grep -r y find … -exec cat sobre la raíz escrita con \\?\ o con su nombre corto 8.3,
+> o sobre un directorio que CONTIENE el repo; y las variables se resuelven con el entorno del hook,
+> otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11; en ffprobe y ffmpeg ya está cerrado).
+> Rama propia de la familia 1 de la guardia, con un test que rompa a propósito los dos sentidos.
+> Después, la guardia exigir_sin_crudo da un falso positivo con una asignación a una variable
+> llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si
+> cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos
+> sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como
+> tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de
+> los dos sentidos. (ffprobe y ffmpeg: hecho en trabajo/guardia-ffmpeg, GUARDIA-FFMPEG.md.)
 
-Y, si el consultor lo acepta, una línea nueva de Technical Debt con la pregunta 2. G.1 de
-`docs/plan/HOJA-DE-RUTA.md` no pasa a HECHA (lo dice el encargo).
+**Fila de `docs/runbooks/ERRORES-RECURRENTES.md`, preparada para el cierre** (respuesta del
+consultor, pregunta 1): la de esta rama, con sus dos pasadas del revisor y la revisión del
+consultor, y dos agujeros de `main` que se cierran aquí y leían la carpeta de marzo: `ffprobe` con
+el prefijo `file:` (o con un espacio final en el nombre de la carpeta), y la comilla ANSI-C `$'…'`
+con escapes, que el tokenizador copiaba sin interpretar (`cat $'…Back\x74est…'`). La señal: una
+forma de escribir la misma ruta que la guardia no normaliza; qué hacer: cada regla mira la ruta
+en todas sus formas, o niega lo que no sabe calcular.
+
+G.1 de `docs/plan/HOJA-DE-RUTA.md` no pasa a HECHA (lo dice el encargo).
 
 ## §10 · El revisor
 
@@ -432,23 +493,194 @@ Pregunta 1, lo que la lista sí cierra: las opciones fuera de la lista, las que 
 
 Ficheros de referencia: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ffmpeg.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-FFMPEG.md`, `C:\Users\USER\Desktop\Bot v3\docs\encargos\trabajo-guardia-ffmpeg.md`.
 
+## §11 · Respuesta del consultor (2026-10-22, sobre `3372f7a`), copiada tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a trabajo/guardia-ffmpeg (3372f7a, run 39830835494), 2026-10-22. Cópiala tal cual al final del informe (§11) y aplícala punto por punto. La rama NO está lista: una revisión independiente del consultor sobre 3372f7a (decidir de la rama y de main cargados con importlib sobre un repo inventado en tmp; ffmpeg 6.1 real solo sobre vídeos inventados con lavfi) da por buenos los arreglos de b1 a b7 y encuentra dos cosas nuevas.
+>
+> LO NUEVO, A ARREGLAR EN ESTA RAMA
+> 1. BLOQUEA. Una lista HLS con un byte nulo burla la comprobación de «entrada de texto». _ffmpeg_es_texto solo busca \x00 en los primeros 4096 bytes, y la lista cerrada no limita la entrada. Se escribe fuera del repo, con printf o con Write, un p.m3u8 con «#EXTM3U», un «#EXTINF:3,\0» y la ruta absoluta del vídeo de la carpeta de marzo; después «ffprobe -v error -show_format -show_streams "<F>/p.m3u8"», la extracción y volumedetect sobre él PASAN en la rama (en main, R_EJECUCION), y ffprobe real devuelve format_name=hls con los códecs del vídeo de marzo. Arreglo, nombrando la condición: una entrada solo vale si es un contenedor de vídeo reconocido por sus bytes mágicos (ISO BMFF: «ftyp» en el desplazamiento 4; Matroska/WebM: 1A 45 DF A3 al principio) Y su extensión es .mp4, .mov, .mkv o .webm. Todo lo demás se niega, también un fichero que no se puede leer. _ffmpeg_es_texto se queda como segunda barrera o sale si sobra: dilo.
+> 2. IMPORTA (lo abre la rama) y BLOQUEA (heredado de main). La comilla ANSI-C $'…' no se interpreta: el tokenizador copia su interior tal cual. En la rama, «ffmpeg -i "<vídeo>" -vn -sn -dn $'<R>\x2fa.wav'» pasa y bash escribe dentro del repo. Y en main y en la rama, «ffprobe -show_format $'…/Back\x74est marzo 2026/v.mp4'», «ffmpeg -i $'…\164…' …», «cat $'…\x74…'» y «cd $'…\x74…' && ffprobe v.mp4» PASAN: leen la carpeta de marzo. Arreglo, para toda la guardia y no solo para ffmpeg: una palabra con comilla ANSI-C que lleve una barra invertida tiene valor desconocido (como una sustitución), y lo que ya se niega con un valor desconocido se niega. Mide antes en qué reglas cambia la decisión, ponlo en la tabla de comparación con main, y que test_el_ritual_y_los_runbooks_pasan y test_ninguna_denegacion_toca_el_ritual sigan en verde. Es una ampliación del encargo, declarada: el agujero lee material protegido y el arreglo es de una línea de condición.
+> Cada uno con sus casos en la matriz y roto a propósito en los dos sentidos (sin la comprobación de los bytes mágicos, el .m3u8 vuelve a pasar; con ella, un .mp4 de verdad sigue pasando; sin el arreglo de $'…', los cuatro de arriba pasan). En Windows, ejecuta además el test de los alias que se salta en Linux (8.3 y \\?\) y mide «…\Bot v3.\a.wav» y «…\Bot v3 \a.wav» como salida: tienen que quedar dentro del repo y negarse. Las salidas, al informe.
+>
+> TUS TRES PREGUNTAS DEL §9
+> 1. Sí. «Ninguno fuera de las cuatro formas» quería decir que no se abre nada nuevo. Que nueve comandos que main dejaba pasar ahora se nieguen está bien, y el de ffprobe con file: sobre la carpeta de marzo era un agujero: va declarado en el informe y a la fila de ERRORES-RECURRENTES en el cierre.
+> 2. El alias de la raíz (\\?\, el nombre corto 8.3 y un directorio que contiene el repo) que hoy deja pasar cat, Read y grep -r: una línea nueva en K de la Next Action, en el commit del contrato del cierre, como la parte prioritaria de K, porque lee material protegido. No se arregla aquí: es otra familia de reglas. Prepara el texto en el §9.
+> 3. No sobra ninguna. Negar las entradas de texto se queda (ahora con la condición del punto 1); negar \\ y // y cualquier redirección de entrada, también. nul en minúsculas, bien.
+>
+> LO MENOR (sin cambios, al informe)
+> - «ffprobe "<vídeo>" &» solo pasa: se acepta, no abre nada.
+> - Una línea partida con barra invertida y salto se niega: se acepta; la skill no la usa.
+> - Las variables se resuelven con el entorno del hook (de main): a la línea de K del punto 2, como otro caso del mismo hueco.
+>
+> DESPUÉS
+> make check sellado, commit, push a fix/guardia-ffmpeg y la CI de Linux con un gh run view suelto (dame el número). Después el revisor OTRA VEZ, sobre el último commit y con el informe terminado, con el encargo de comprobar los arreglos de esta respuesta y de intentar romper la regla con formas que no estén en la matriz (envoltorios, comillas, escapes, ficheros que se hacen pasar por otro formato). Su informe, pegado al final.
+>
+> Rama lista para revisión, NO cerrada.
+
+## §12 · La respuesta, punto por punto
+
+Antes de tocar nada se midió lo que dice la respuesta, con `decidir` de tres guardias -la de `main`
+(`git show main:`), la de `3372f7a` y la nueva- sobre un repo inventado en `tmp`, sin ejecutar
+ffmpeg (`medir_respuesta.py` en la carpeta de trabajo; salida entera en
+`anexos/GUARDIA-FFMPEG/respuesta-consultor-medida.txt`).
+
+### Punto 1 (bloquea): la lista HLS con un byte nulo
+
+| Caso | main | 3372f7a | rama |
+|---|---|---|---|
+| `ffprobe -v error -show_format -show_streams "<fuera>/p.m3u8"` | R_EJECUCION | **pasa** | R_FFMPEG |
+| la extracción sobre `p.m3u8` | R_EJECUCION | **pasa** | R_FFMPEG |
+| `volumedetect` sobre `p.m3u8` | R_EJECUCION | **pasa** | R_FFMPEG |
+
+Reproducido: en `3372f7a` las tres pasaban. Hecho: la condición nombrada de la respuesta,
+`_ffmpeg_es_video` (§1.4): extensión `.mp4`, `.mov`, `.mkv` o `.webm` Y bytes mágicos (`ftyp` en
+el 4, o `1A 45 DF A3` en el 0); todo lo demás se niega, también lo que no existe o no se puede
+leer. **`_ffmpeg_es_texto` se queda, como segunda barrera**: sola no basta (un nulo la burla, que es
+el hallazgo), pero no cuesta nada sobre los vídeos de verdad -el primer nulo de tres vídeos de
+sesión medidos cae en el byte 0 (los dos mp4) y en el 45 (el mkv)- y niega un fichero que lleva
+`ftyp` en el 4 y es texto (caso «ftyp en un texto sin nulos»).
+
+En la matriz, siete casos nuevos: las tres de arriba, la misma lista llamada `.mp4`, los bytes de
+un mp4 en un `.txt`, `ftyp` en un texto sin nulos y una entrada que no existe (esta, de `pasa` en
+`main` a `R_FFMPEG`). Los vídeos del test llevan ahora la cabecera real de 16 bytes de v1 (mp4) y
+de v5 (mkv), y pasan ffprobe y volumen sobre el `.mkv` (dos permitidas nuevas).
+
+Roto a propósito: `test_sin_los_bytes_magicos_la_lista_hls_vuelve_a_pasar` -con `_ffmpeg_es_video`
+siempre verdadero, las tres HLS PASAN-; y con la comprobación, los vídeos de verdad pasan (las
+permitidas de la matriz).
+
+**Lo que no pude medir:** qué hace ffmpeg de verdad con un fichero que lleva los bytes mágicos y
+algo más (no se ejecuta ffmpeg). Por lo que se sabe de sus formatos -no medido aquí-, los que
+nombran otros ficheros buscan su marca en el byte 0 (`#EXTM3U`, `ffconcat version`) o leen el
+fichero entero como XML (un `.mpd` de DASH), y ninguno de los dos casa con un fichero que empieza
+por una caja `ftyp` o por la marca de Matroska. Va al revisor (§13) como forma que intentar.
+
+### Punto 2 (importa y bloquea): la comilla ANSI-C
+
+| Caso | main | 3372f7a | rama |
+|---|---|---|---|
+| `ffmpeg -i "<vídeo>" -vn -sn -dn $'<raíz>\x2fa.wav'` | R_EJECUCION | R_FFMPEG en Windows (la `\` es un separador y la ruta cae dentro); **pasa** en Linux (la medida del consultor) | R_FFMPEG |
+| `ffprobe -show_format $'…/Back\x74est marzo 2026/v.mp4'` | **pasa** | **pasa** | R_FFMPEG |
+| `ffmpeg -i $'…/Back\164est marzo 2026/v.mp4' … -` | **pasa** | **pasa** | R_FFMPEG |
+| `cat $'…/Back\x74est marzo 2026/v.mp4'` | **pasa** | **pasa** | niega (argumento dinámico) |
+| `cd $'…/Back\x74est marzo 2026' && ffprobe -show_format v.mp4` | **pasa** | **pasa** | R_EJECUCION |
+
+Reproducido: los cuatro que leen la carpeta de marzo pasaban en `main` y en `3372f7a`. Hecho, para
+toda la guardia (§1.8): `$'…'` con una barra invertida tiene valor desconocido.
+
+**Antes del arreglo se midió en qué reglas cambia la decisión** (la misma tabla, más filas; con
+`$X` sin valor al lado, para comparar):
+
+| Comando | main | rama | Por qué |
+|---|---|---|---|
+| `head -c 10 $'…\x74…/v.mp4'`, `grep -f $'…\x74…' f`, `echo $(cat $'…\x74…')`, `bash -c "cat $'…\x74…'"` | pasa | niega (argumento dinámico) | como `cat "$X"`, que ya se niega en `main` |
+| `grep $'\t' otro.wav` | pasa | niega (argumento dinámico) | el patrón es dinámico; la forma literal es `grep -P '\t'` |
+| `git log --format=$'%h\t%s' -1` | excepción en el repo de `tmp` (la regla de git lee `knowledge/corpus/fuentes.yaml`, que allí no existe); no medido en el real | niega | `git log` con un argumento dinámico, como con `$X` |
+| `ls $'…\x74…'`, `sha256sum $'…\x74…/v.mp4'` | pasa | pasa | listar y hashear se dejan también con un argumento dinámico, como en `main` |
+| `echo $'a\nb'`, `printf $'%s\n' x` | pasa | pasa | no leen ficheros |
+| `sed -n $'1p' f`, `awk $'{print}' f`, `cat $'otro.wav'`, `echo $'hola'` | pasa | pasa | sin barra: literal, como antes |
+| `IFS=$'\n'; ls`, `sed -n $'1r …'`, `awk $'BEGIN{…getline…}'`, `source $'…'` | niega | niega | ya negados por otra regla |
+| `echo $'a\'b' && cat otro.wav` | niega («una comilla simple sin cerrar») | **pasa** | el final de la comilla se busca ahora saltando `\'`: la línea se parte bien. El único caso que pasa a PASAR; no abre nada (un `echo` y un fichero sin proteger) |
+
+Ni el ritual, ni los runbooks, ni las skills, ni el Makefile usan `$'…'` (`grep -rn "\$'"` sobre
+`docs/runbooks`, `.claude/skills`, `CLAUDE.md`, `Makefile`, `scripts` y `.github`: solo `.pyc`).
+`test_el_ritual_y_los_runbooks_pasan` y `test_ninguna_denegacion_toca_el_ritual` (62 casos) y
+`test_guardia_claude.py` entero, en verde con el arreglo.
+
+En la matriz, cinco casos nuevos (los de la primera tabla) y una permitida: `$'…'` sin barra. Roto a
+propósito: `test_sin_el_arreglo_de_la_comilla_ansi_c_los_cuatro_pasan`, con `_ansi_c_con_escapes`
+siempre falso, como en `main`. **Matiz medido:** sin ese arreglo, `cat` pasa, pero los tres de
+ffmpeg los sigue negando la barrera del punto 1 -la guardia mira la ruta sin interpretar, que no
+existe, y una entrada que no se puede leer se niega-; sin las dos barreras, pasan los cuatro. El
+test comprueba las dos cosas.
+
+### Punto 2, la medida de Windows
+
+`test_un_alias_de_la_raiz_no_saca_la_salida_ni_abre_la_entrada`, ejecutado en esta máquina: pasa,
+con el nombre corto real de la raíz del repo de `tmp`
+(`C:\Users\USER\AppData\Local\Temp\PYTEST~1\PYTEST~2\TEST_U~1\repo`): `\\?\<raíz>\a.wav` y
+`<raíz 8.3>\a.wav` se niegan con `R_FFMPEG`, y `ffprobe` sobre `<raíz 8.3>\…\marzo\v.mp4`, con
+`R_SIN_ABRIR`.
+
+La salida en la raíz con un punto o un espacio al final del nombre, con la raíz real del repo y con
+la de `tmp`:
+
+| Salida | main | 3372f7a | rama |
+|---|---|---|---|
+| `C:\Users\USER\Desktop\Bot v3.\a.wav` | pasa | R_FFMPEG | R_FFMPEG |
+| `C:\Users\USER\Desktop\Bot v3 \a.wav` | pasa | **pasa** | R_FFMPEG |
+| `C:\Users\USER\Desktop\Bot v3. \a.wav` | pasa | **pasa** | R_FFMPEG |
+| `C:\Users\USER\Desktop\Bot v3..\a.wav` | pasa | **pasa** | R_FFMPEG |
+| `<tmp>\repo.\a.wav` | R_EJECUCION | R_FFMPEG | R_FFMPEG |
+| `<tmp>\repo \a.wav` (y `repo. `, `repo..`) | R_EJECUCION | **pasa** | R_FFMPEG |
+
+Con el punto pasaba ya bien (`realpath` lo quitaba); con el espacio, NO: `3372f7a` dejaba escribir
+dentro del repo. Arreglado con `_ffmpeg_formas_de_la_ruta`: la ruta se mira también sin los puntos
+ni espacios del final de cada nombre, para la salida, para las redirecciones y para la entrada. En
+la matriz, cuatro casos: la salida con punto, con espacio y con los dos, y `ffprobe` sobre la
+carpeta de marzo con un espacio final, que en `main` PASABA (ffprobe estaba en
+`SIN_LECTURA_DE_RUTAS`) y ahora niega con `R_SIN_ABRIR`. En Linux un nombre con espacio final es
+otro directorio: negarlo allí es negar de más y no abre nada. En `main`, las de la raíz real
+pasaban porque allí el vídeo del comando no existe y la regla del programa desconocido solo mira
+ficheros que existen (en `tmp`, donde existe, niega con `R_EJECUCION`); es la regla que esta rama
+sustituye para ffmpeg. Para `cat` y `Read`, el punto y el espacio final ya se niegan en `main`
+(medido con `espacio_final.py`).
+
+### Las tres preguntas del §9
+
+1. «Ninguno se abre»: aceptado. El de `file:` sobre marzo va declarado en §2 y a la fila de
+   `ERRORES-RECURRENTES.md` del cierre, preparada en §9.
+2. El alias de la raíz: no se arregla aquí. La línea de K, la parte prioritaria, preparada en §9
+   para el commit del contrato del cierre.
+3. No sobra ninguna: sin cambios.
+
+### Lo menor
+
+- `ffprobe "<vídeo>" &` solo, pasa: aceptado (el caso «en segundo plano» de la matriz, con algo
+  detrás, sigue negado).
+- La línea partida con barra invertida y salto se niega: aceptado; la skill no la usa.
+- Las variables con el entorno del hook: a la línea de K (§9), como otro caso del mismo hueco.
+
+### Después
+
+Matriz: 94 casos (19 permitidas, 75 negadas); frente a `main`, se abren solo las 19 permitidas y
+se cierran quince (§2). `test_guardia_ffmpeg.py` (7 pruebas, la de los alias solo en Windows) y
+`test_guardia_claude.py` enteros, en verde antes del sello. El `make check`, el commit, el push a
+`fix/guardia-ffmpeg` y el run de la CI de Linux, en el mensaje de entrega (§7). El revisor, otra
+vez, en §13.
+
+## §13 · El revisor, segunda pasada
+
+Se lanza sobre el commit de §12, con este informe terminado, con el encargo de la respuesta del
+consultor: comprobar sus arreglos e intentar romper la regla con formas que no estén en la matriz
+(envoltorios, comillas, escapes, ficheros que se hacen pasar por otro formato). Su informe se pega
+aquí, tal cual, en el commit siguiente.
+
 ## §A · Anexo (`docs/validation/anexos/GUARDIA-FFMPEG/`)
 
 - `fase0-main.txt`: la tabla de §0.1, con la guardia de `main` (`git show main:`), regenerada con
   los vídeos binarios (las decisiones, las mismas que con los de texto).
-- `fase0-rama.txt`: los mismos diez casos con la guardia de la rama: pasan los de las formas
-  permitidas salvo la extracción DENTRO del repo (`R_FFMPEG`, «la salida `audio.wav` esta dentro
-  del repositorio»); marzo sigue negado con `R_SIN_ABRIR`; el que no existe sigue pasando.
-- `salidas-pytest.txt`: `uv run pytest -q -s tests/unit/test_guardia_ffmpeg.py`, exit 0, sobre el
-  último commit. Contiene:
+- `fase0-rama.txt`: los mismos diez casos con la guardia de la rama, regenerado tras §12: pasan
+  los de las formas permitidas salvo la extracción DENTRO del repo (`R_FFMPEG`, «la salida
+  `audio.wav` esta dentro del repositorio»); marzo sigue negado con `R_SIN_ABRIR`; el que no
+  existe, que pasaba en `3372f7a`, se niega ahora (`R_FFMPEG`, no se puede leer).
+- `salidas-pytest.txt`: `uv run pytest -q -s tests/unit/test_guardia_ffmpeg.py`, en Windows, sobre
+  el último commit, las 7 pruebas en verde. Contiene:
   - §A.1, la matriz entera (`| caso | comando | obtenido | esperado |`);
-  - §A.2, las dos roturas a propósito (`sin la regla | …` y `con una opcion de mas | …`);
+  - §A.2, las cuatro roturas a propósito (`sin la regla | …`, `con una opcion de mas | …`,
+    `sin los bytes magicos | …` y `sin el arreglo de $'...' | …` / `y sin los bytes magicos | …`)
+    y el nombre corto de la raíz del test de los alias;
   - §A.3, la comparación con `main` caso a caso (`| caso | main X | rama Y |`).
+- `respuesta-consultor-medida.txt`: las tablas de §12, con `decidir` de `main`, de `3372f7a` y de
+  la rama nueva (`medir_respuesta.py`).
 
 ## Estado
 
 TERMINADA, pendiente de la revisión del consultor: las cuatro formas de ffprobe y ffmpeg pasan,
-todo lo demás se niega, y los dos bloqueos y los cinco «importa» del revisor están arreglados o
-contestados (§10); tres preguntas para el consultor en §9, ninguna bloquea la ingesta.
+todo lo demás se niega. Los hallazgos de la primera pasada del revisor (§10) y los dos de la
+revisión del consultor (§11) están arreglados, cada uno con sus casos en la matriz y roto a
+propósito en los dos sentidos (§12); la segunda pasada del revisor, en §13.
 
 Rama lista para revisión, NO cerrada.

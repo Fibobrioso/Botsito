@@ -73,6 +73,9 @@ Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
    `.flac`, `.mp3` o `.m4a` fuera del repo, al final; ffprobe, `-v -loglevel -hide_banner
    -show_format -show_streams -show_entries -of -print_format -select_streams` y un fichero
    (posicional o con `-i`). Una redireccion de la salida a un fichero dentro del repo se niega.
+   El `<video>` tiene que ser un `.mp4`, `.mov`, `.mkv` o `.webm` que exista y lleve los bytes de
+   su contenedor (una lista `.m3u8` o `ffconcat` se niega), con la ruta literal: ni `$VAR` ni una
+   comilla `$'...'` con escapes.
    Un corte de audio entra en
    `knowledge/corpus/tramos_no_citables.yaml` con motivo «SIN AUDIO», en `naturaleza` y en el
    comentario de `fuentes.yaml`, y la respuesta afectada se marca «respuesta incompleta por audio».

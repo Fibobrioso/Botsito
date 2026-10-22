@@ -42,14 +42,17 @@ Dos familias de reglas:
    pasan por esa funcion sino por `_analizar_ffmpeg`, con su regla `R_FFMPEG`: solo cuatro formas
    de LISTA CERRADA sobre un video que no se protege -ffprobe de metadatos, ffmpeg que mide
    silencios o volumen con la salida nula y ffmpeg que extrae el audio a un fichero FUERA del
-   repositorio-, cada entrada por `motivo_fichero` (por su texto y resuelta) y binaria (un texto
-   puede ser una lista `ffconcat`), sin sustituciones ni redirecciones de entrada, y todo lo demas
-   negado. Lo que va antes y a la vez en el mismo comando se exige igual que en el resto de la
-   familia 3 (`_exigir_lo_de_antes`, `_exigir_lo_de_a_la_vez`); lo que se deja es leer un guion.
+   repositorio-, cada entrada por `motivo_fichero` (por su texto, resuelta y sin los puntos o
+   espacios finales que Windows quita) y un contenedor de video por su extension y sus bytes
+   magicos (una lista HLS o `ffconcat` nombra otros ficheros), sin sustituciones ni redirecciones
+   de entrada, y todo lo demas negado. Lo que va antes y a la vez en el mismo comando se exige
+   igual que en el resto de la familia 3 (`_exigir_lo_de_antes`, `_exigir_lo_de_a_la_vez`); lo que
+   se deja es leer un guion.
 
 Un comando que no se puede decidir con seguridad -una ruta construida al ejecutarse, `eval`, un
-`xargs` que lee contenido- SE BLOQUEA si podria llegar a material protegido, y el mensaje dice como
-reescribirlo. Un fallo interno de la guardia bloquea solo lo que menciona material sensible.
+`xargs` que lee contenido, una comilla ANSI-C `$'...'` con escapes- SE BLOQUEA si podria llegar a
+material protegido, y el mensaje dice como reescribirlo. Un fallo interno de la guardia bloquea
+solo lo que menciona material sensible.
 
 Sin dependencias: solo la biblioteca estandar, porque corre con el Python del sistema y no con el
 entorno del proyecto. Contrato con Claude Code: lee el JSON del evento por stdin; sale con 0 para
@@ -642,6 +645,12 @@ class Lexico:
     heredocs: list[Heredoc] = field(default_factory=list)
 
 
+def _ansi_c_con_escapes(interior: str) -> bool:
+    """Si el interior de una comilla `$'...'` lleva una barra invertida: entonces su valor es el
+    que bash calcula con los escapes, y la guardia no lo calcula (`tokenizar`)."""
+    return "\\" in interior
+
+
 def tokenizar(texto: str) -> Lexico:
     lex = Lexico()
     i, n = 0, len(texto)
@@ -669,10 +678,13 @@ def tokenizar(texto: str) -> Lexico:
         while j < n:
             c = texto[j]
             if comilla:
-                if c == comilla:
+                if c == comilla[-1]:
                     comilla = ""
-                elif c == "\\" and comilla == '"':
+                elif c == "\\" and comilla != "'":  # en `"..."` y en `$'...'` escapa
                     j += 1
+            elif texto.startswith("$'", j):
+                comilla = "$'"
+                j += 1
             elif c in "'\"":
                 comilla = c
             elif c == "\\":
@@ -767,12 +779,20 @@ def tokenizar(texto: str) -> Lexico:
             i = fin + 1
             continue
         if c == "$" and texto.startswith("$'", i):
-            fin = texto.find("'", i + 2)
-            if fin < 0:
+            # La comilla ANSI-C: bash interpreta sus escapes (`\x74`, `\164`, `\'`...). Con
+            # una barra invertida dentro, su valor es DESCONOCIDO, como el de una sustitucion
+            # (`resolver` lo niega), y sin ella es literal. Copiar el interior tal cual dejaba leer
+            # la carpeta de marzo con `cat $'...Back\x74est...'` (respuesta del consultor del
+            # 2026-10-22 a `trabajo/guardia-ffmpeg`, punto 2).
+            j = i + 2
+            while j < n and texto[j] != "'":
+                j += 2 if texto[j] == "\\" else 1
+            if j >= n:
                 raise BloqueoError("una comilla $'...' sin cerrar")
-            actual.append(texto[i + 2 : fin])
+            interior = texto[i + 2 : j]
+            actual.append(f"\x00V'{interior}'\x00" if _ansi_c_con_escapes(interior) else interior)
             en_palabra = True
-            i = fin + 1
+            i = j + 1
             continue
         if c == '"':
             en_palabra = True
@@ -983,6 +1003,8 @@ def resolver(p: Palabra, ctx: Contexto, lex: Lexico, max_valores: int = 256) -> 
                 raise DinamicoError(f"$({interior.strip()})")
         elif trozo.startswith("\x00V"):
             nombre = trozo[2:-1]
+            if nombre.startswith("'"):  # una comilla ANSI-C con escapes (`tokenizar`)
+                raise DinamicoError(f"${nombre}")
             base = re.split(r"[:#%/^,@\[]", nombre, maxsplit=1)[0]
             if base in VARIABLES_NO_RUTA:
                 opciones = ["0"]
@@ -2958,6 +2980,13 @@ SALIDAS_NULAS = DISPOSITIVOS_NULOS | {"-"}  # la de la medida: con `-f null` no 
 # No se reutiliza `EXTENSIONES_AUDIO` de `scripts/transcribir_sesion.py`: lleva contenedores de
 # video (encargo).
 EXTENSIONES_DE_EXTRACCION = (".wav", ".flac", ".mp3", ".m4a")
+# La entrada: un contenedor de video por su extension Y por sus bytes magicos -ISO BMFF, `ftyp` en
+# el desplazamiento 4; Matroska/WebM, 1A 45 DF A3 al principio-. Una lista HLS con un byte nulo
+# pasaba la comprobacion de «texto» y ffprobe la leia como `hls` con el video de marzo dentro
+# (respuesta del consultor del 2026-10-22, punto 1). La extension se compara en minusculas.
+EXTENSIONES_DE_VIDEO = (".mp4", ".mov", ".mkv", ".webm")
+MAGIA_ISO_BMFF = (4, b"ftyp")
+MAGIA_MATROSKA = (0, b"\x1a\x45\xdf\xa3")
 # Un prefijo de protocolo (`concat:`, `file:`, `subfile,`...): lo que va antes de `:` o `,` son
 # solo los caracteres de un esquema de ffmpeg. Una letra de unidad de Windows con su barra no lo
 # es (`C:/x`, `C:\x`); `C:x`, si.
@@ -3078,17 +3107,38 @@ def _ffmpeg_formas(prog: str, args: list[str], ctx: Contexto) -> list[str]:
     return entradas
 
 
+def _ffmpeg_formas_de_la_ruta(ruta: str) -> tuple[str, ...]:
+    """La ruta absoluta por su texto, RESUELTA (`realpath`: un enlace, `\\\\?\\C:\\...`, un nombre
+    corto 8.3 de Windows; revisor de la rama, b3) y sin los puntos ni espacios del final de cada
+    nombre, que Windows quita al abrir (`Bot v3.` y `Bot v3 ` son `Bot v3`: medido en la respuesta
+    del consultor del 2026-10-22; en Linux son otro directorio, y negar de mas ahi no abre nada)."""
+    sin_finales = os.path.normpath(re.sub(r"[ .]+(?=[\\/]|$)", "", ruta))
+    return (ruta, os.path.realpath(ruta), sin_finales)
+
+
 def _ffmpeg_dentro_del_repo(ruta: str, ctx: Contexto) -> bool:
-    """Por su texto o RESUELTA (`realpath`: un enlace, `\\\\?\\C:\\...`, un nombre corto 8.3 de
-    Windows), dentro de la raiz (revisor de la rama, b3)."""
-    return any(ctx.politica.relativa(r) is not None for r in (ruta, os.path.realpath(ruta)))
+    """En cualquiera de sus formas (`_ffmpeg_formas_de_la_ruta`), dentro de la raiz."""
+    return any(ctx.politica.relativa(r) is not None for r in _ffmpeg_formas_de_la_ruta(ruta))
+
+
+def _ffmpeg_es_video(ruta: str) -> bool:
+    """Si es un contenedor de video por su extension y por sus bytes magicos. Uno que no se puede
+    leer no lo es: no se sabe que es."""
+    if not ruta.lower().endswith(EXTENSIONES_DE_VIDEO):
+        return False
+    try:
+        with open(ruta, "rb") as f:
+            principio = f.read(4096)
+    except OSError:
+        return False
+    return any(principio[d : d + len(m)] == m for d, m in (MAGIA_ISO_BMFF, MAGIA_MATROSKA))
 
 
 def _ffmpeg_es_texto(ruta: str) -> bool:
-    """Si el principio del fichero no lleva ningun byte nulo: un video o un audio si lo llevan, y
-    un fichero de texto ffmpeg puede leerlo como una LISTA que nombra otros ficheros (`ffconcat`,
-    `#EXTM3U`, un `.mpd`), detectada por su contenido y no por su extension (revisor, «lo que no
-    pude comprobar»). Uno que no se puede leer cuenta como texto: no se sabe que es."""
+    """Segunda barrera, detras de los bytes magicos: si el principio del fichero no lleva ningun
+    byte nulo. Sola no basta -un nulo la burla (respuesta del consultor del 2026-10-22, punto 1)-,
+    pero no cuesta nada: los videos de sesion medidos llevan el primer nulo en el byte 0 (mp4) o
+    en el 45 (mkv). Uno que no se puede leer cuenta como texto."""
     try:
         with open(ruta, "rb") as f:
             return b"\x00" not in f.read(4096)
@@ -3139,17 +3189,20 @@ def _analizar_ffmpeg(
     except FfmpegNegadoError as exc:
         niega(str(exc))
     for nombre, ruta in rutas:
-        for r in (ruta, os.path.realpath(ruta)):  # por su texto y resuelta (revisor, b3)
+        for r in _ffmpeg_formas_de_la_ruta(ruta):  # por su texto, resuelta y sin finales
             motivo = ctx.politica.motivo_fichero(r)
             if motivo:
                 raise BloqueoError(f"ejecutar {nombre}.\nRegla: {motivo}.")
         if os.path.isdir(ruta):
             niega(f"la entrada {nombre} es un directorio")
-        if os.path.exists(ruta) and _ffmpeg_es_texto(ruta):
+        if not _ffmpeg_es_video(ruta):
             niega(
-                f"la entrada {nombre} es texto: ffmpeg puede leerla como una lista que nombra "
-                "otros ficheros (`ffconcat`, `#EXTM3U`)"
+                f"la entrada {nombre} no es un contenedor de video reconocido (extension "
+                f"{', '.join(EXTENSIONES_DE_VIDEO)} y sus bytes magicos), o no se puede leer: "
+                "ffmpeg lee una lista (`#EXTM3U`, `ffconcat`) como los ficheros que nombra"
             )
+        if _ffmpeg_es_texto(ruta):
+            niega(f"la entrada {nombre} es texto: ffmpeg puede leerla como una lista")
     for op, destino in cmd.salidas:
         if op in {">&", "<&"} and re.fullmatch(r"\d+-?|-", destino.texto):
             continue  # `2>&1`: a otro descriptor, no a un fichero

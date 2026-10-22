@@ -14,6 +14,9 @@
 | skill: volumen | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null - 2>&1 | grep -E "mean_volume|max_volume"` | pasa | pasa |
 | skill: metadatos | `ffprobe -v error -show_format -show_streams "corpus/Estrategia del trader/sesion-05.mp4"` | pasa | pasa |
 | skill: audio fuera del repo | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/sesion-05.wav"` | pasa | pasa |
+| ffprobe, un mkv | `ffprobe -v error -show_format -show_streams "corpus/Estrategia del trader/sesion-05.mkv"` | pasa | pasa |
+| volumen, un mkv | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mkv" -vn -sn -dn -af volumedetect -f null -` | pasa | pasa |
+| comilla ANSI-C sin barra | `ffprobe -show_format $'corpus/Estrategia del trader/sesion-05.mp4'` | pasa | pasa |
 | entrada protegida, ffprobe | `ffprobe -v error -show_format "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
 | entrada protegida, medida | `ffmpeg -i "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4" -vn -sn -dn -af volumedetect -f null -` | R_SIN_ABRIR | R_SIN_ABRIR |
 | entrada protegida, extraccion | `ffmpeg -i "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.wav"` | R_SIN_ABRIR | R_SIN_ABRIR |
@@ -73,6 +76,22 @@
 | redireccion de entrada | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null - < otro.wav` | R_FFMPEG | R_FFMPEG |
 | entrada que es un directorio | `ffprobe -show_format docs` | R_FFMPEG | R_FFMPEG |
 | entrada de texto (ffconcat) | `ffmpeg -i lista.mp4 -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| lista HLS, ffprobe | `ffprobe -v error -show_format -show_streams "{FUERA}/p.m3u8"` | R_FFMPEG | R_FFMPEG |
+| lista HLS, extraccion | `ffmpeg -i "{FUERA}/p.m3u8" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.wav"` | R_FFMPEG | R_FFMPEG |
+| lista HLS, volumedetect | `ffmpeg -i "{FUERA}/p.m3u8" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| lista HLS llamada .mp4 | `ffprobe -show_format lista-hls.mp4` | R_FFMPEG | R_FFMPEG |
+| bytes de mp4 en un .txt | `ffprobe -show_format video.txt` | R_FFMPEG | R_FFMPEG |
+| ftyp en un texto sin nulos | `ffprobe -show_format texto.mp4` | R_FFMPEG | R_FFMPEG |
+| entrada que no existe | `ffprobe -show_format no-existe.mp4` | R_FFMPEG | R_FFMPEG |
+| ANSI-C: salida \x2f en el repo | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 $'{REPO}\x2fa.wav'` | R_FFMPEG | R_FFMPEG |
+| ANSI-C: ffprobe en marzo, \x74 | `ffprobe -show_format $'{REPO}/{MARZO_X}/v.mp4'` | R_FFMPEG | R_FFMPEG |
+| ANSI-C: ffmpeg en marzo, \164 | `ffmpeg -i $'{REPO}/{MARZO_O}/v.mp4' -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| ANSI-C: cat en marzo | `cat $'{REPO}/{MARZO_X}/v.mp4'` | DINAMICO | DINAMICO |
+| ANSI-C: cd a marzo | `cd $'{REPO}/{MARZO_X}' && ffprobe -show_format v.mp4` | R_EJECUCION | R_EJECUCION |
+| salida en la raiz con punto final | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 '{REPO}./a.wav'` | R_FFMPEG | R_FFMPEG |
+| salida en la raiz con espacio final | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 '{REPO} /a.wav'` | R_FFMPEG | R_FFMPEG |
+| salida en la raiz con punto y espacio | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 '{REPO}. /a.wav'` | R_FFMPEG | R_FFMPEG |
+| entrada en marzo con espacio final | `ffprobe -show_format "{REPO}/corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026 /v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
 .sin la regla | ffprobe, relativa | R_EJECUCION
 sin la regla | ffprobe, absoluta con -i | R_EJECUCION
 sin la regla | ffprobe, -print_format | R_EJECUCION
@@ -89,9 +108,23 @@ sin la regla | skill: silencios | R_EJECUCION
 sin la regla | skill: volumen | R_EJECUCION
 sin la regla | skill: metadatos | R_EJECUCION
 sin la regla | skill: audio fuera del repo | R_EJECUCION
+sin la regla | ffprobe, un mkv | R_EJECUCION
+sin la regla | volumen, un mkv | R_EJECUCION
+sin la regla | comilla ANSI-C sin barra | R_EJECUCION
 .con una opcion de mas | -map | pasa
 con una opcion de mas | ffprobe -report | pasa
-.nombre corto de la raiz: C:\Users\USER\AppData\Local\Temp\PYTEST~1\PYTEST~2\TEST_U~1\repo
+.sin los bytes magicos | lista HLS, ffprobe | pasa
+sin los bytes magicos | lista HLS, extraccion | pasa
+sin los bytes magicos | lista HLS, volumedetect | pasa
+.sin el arreglo de $'...' | ANSI-C: ffprobe en marzo, \x74 | R_FFMPEG
+sin el arreglo de $'...' | ANSI-C: ffmpeg en marzo, \164 | R_FFMPEG
+sin el arreglo de $'...' | ANSI-C: cat en marzo | pasa
+sin el arreglo de $'...' | ANSI-C: cd a marzo | R_FFMPEG
+y sin los bytes magicos | ANSI-C: ffprobe en marzo, \x74 | pasa
+y sin los bytes magicos | ANSI-C: ffmpeg en marzo, \164 | pasa
+y sin los bytes magicos | ANSI-C: cat en marzo | pasa
+y sin los bytes magicos | ANSI-C: cd a marzo | pasa
+.nombre corto de la raiz: C:\Users\USER\AppData\Local\Temp\PYTEST~1\PYTEST~4\TEST_U~1\repo
 .| ffprobe, relativa | main R_EJECUCION | rama pasa |
 | ffprobe, absoluta con -i | main R_EJECUCION | rama pasa |
 | ffprobe, -print_format | main R_EJECUCION | rama pasa |
@@ -108,6 +141,9 @@ con una opcion de mas | ffprobe -report | pasa
 | skill: volumen | main R_EJECUCION | rama pasa |
 | skill: metadatos | main R_EJECUCION | rama pasa |
 | skill: audio fuera del repo | main R_EJECUCION | rama pasa |
+| ffprobe, un mkv | main R_EJECUCION | rama pasa |
+| volumen, un mkv | main R_EJECUCION | rama pasa |
+| comilla ANSI-C sin barra | main R_EJECUCION | rama pasa |
 | dos -i | main R_EJECUCION | rama R_FFMPEG |
 | ffprobe con dos entradas | main R_EJECUCION | rama R_FFMPEG |
 | salida en el repo, relativa | main R_EJECUCION | rama R_FFMPEG |
@@ -155,4 +191,20 @@ con una opcion de mas | ffprobe -report | pasa
 | redireccion de entrada | main R_EJECUCION | rama R_FFMPEG |
 | entrada que es un directorio | main pasa | rama R_FFMPEG |
 | entrada de texto (ffconcat) | main R_EJECUCION | rama R_FFMPEG |
+| lista HLS, ffprobe | main R_EJECUCION | rama R_FFMPEG |
+| lista HLS, extraccion | main R_EJECUCION | rama R_FFMPEG |
+| lista HLS, volumedetect | main R_EJECUCION | rama R_FFMPEG |
+| lista HLS llamada .mp4 | main R_EJECUCION | rama R_FFMPEG |
+| bytes de mp4 en un .txt | main R_EJECUCION | rama R_FFMPEG |
+| ftyp en un texto sin nulos | main R_EJECUCION | rama R_FFMPEG |
+| entrada que no existe | main pasa | rama R_FFMPEG |
+| ANSI-C: salida \x2f en el repo | main R_EJECUCION | rama R_FFMPEG |
+| ANSI-C: ffprobe en marzo, \x74 | main pasa | rama R_FFMPEG |
+| ANSI-C: ffmpeg en marzo, \164 | main pasa | rama R_FFMPEG |
+| ANSI-C: cat en marzo | main pasa | rama DINAMICO |
+| ANSI-C: cd a marzo | main pasa | rama R_EJECUCION |
+| salida en la raiz con punto final | main R_EJECUCION | rama R_FFMPEG |
+| salida en la raiz con espacio final | main R_EJECUCION | rama R_FFMPEG |
+| salida en la raiz con punto y espacio | main R_EJECUCION | rama R_FFMPEG |
+| entrada en marzo con espacio final | main pasa | rama R_SIN_ABRIR |
 .

@@ -23,8 +23,16 @@ GUARDIA = RAIZ / ".claude" / "hooks" / "guardia.py"
 ESTRATEGIA = "corp" + "us/Estrategia del trader"
 MATERIAL = ESTRATEGIA + "/Material adicional de su operativa"
 VIDEO = ESTRATEGIA + "/sesion-05.mp4"
-MARZO = MATERIAL + "/Back" + "test marzo 2026/v.mp4"
+MKV = ESTRATEGIA + "/sesion-05.mkv"
+CARPETA_MARZO = MATERIAL + "/Back" + "test marzo 2026"
+MARZO = CARPETA_MARZO + "/v.mp4"
 IMAGEN = MATERIAL + "/WhatsApp Image.jpeg"
+# Los 16 primeros bytes de dos videos de sesion de verdad (v1, mp4, y v5, mkv), medidos en la rama
+# (docs/validation/GUARDIA-FFMPEG.md, §11): la regla pide los bytes magicos de un contenedor.
+CABECERA_MP4 = bytes.fromhex("00000028 66747970 69736f34 00000000")
+CABECERA_MKV = bytes.fromhex("1a45dfa3 a3428681 0142f781 0142f281")
+# Una lista HLS con un byte nulo que nombra el video de marzo (respuesta del consultor, punto 1).
+HLS = b"#EXTM3U\n#EXTINF:3,\x00\n{MARZO_ABS}\n#EXT-X-ENDLIST\n"
 
 
 @pytest.fixture(scope="module")
@@ -55,16 +63,21 @@ def repo(tmp_path: Path) -> Path:
     _git(r, "add", "-A")
     _git(r, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "inicio")
     _git(r, "checkout", "-q", "-b", "trabajo/prueba")
-    # Despues del commit: sin seguir, como el video real; binarios, como un video (el principio de
-    # un mp4), porque la regla niega una entrada de texto (puede ser una lista `ffconcat`).
-    for rel in (VIDEO, MARZO, IMAGEN, "otro.wav"):
+    # Despues del commit: sin seguir, como el video real; con la cabecera de un contenedor de
+    # verdad, porque la regla pide sus bytes magicos (una lista nombra otros ficheros).
+    for rel in (VIDEO, MARZO, IMAGEN, "otro.wav", "video.txt"):
         ruta = r / rel
         ruta.parent.mkdir(parents=True, exist_ok=True)
-        ruta.write_bytes(b"\x00\x00\x00\x20ftypisom\x00\x00\x02\x00")
+        ruta.write_bytes(CABECERA_MP4 + b"\x00" * 16)
+    (r / MKV).write_bytes(CABECERA_MKV + b"\x00" * 16)
     (r / "lista.txt").write_text("ffconcat version 1.0\nfile 'otro.wav'\n", encoding="utf-8")
     (r / "lista.mp4").write_text("ffconcat version 1.0\nfile 'otro.wav'\n", encoding="utf-8")
+    (r / "texto.mp4").write_text("abcdftyp sin un solo byte nulo\n", encoding="utf-8")
     (r / "docs").mkdir()
     (tmp_path / "fuera").mkdir()
+    hls = HLS.replace(b"{MARZO_ABS}", (r / MARZO).as_posix().encode())
+    (tmp_path / "fuera" / "p.m3u8").write_bytes(hls)
+    (r / "lista-hls.mp4").write_bytes(hls)
     return r
 
 
@@ -78,6 +91,8 @@ def _regla(modulo: ModuleType, motivo: str | None) -> str:
     """`pasa`, o el nombre de la constante de regla que cita el motivo."""
     if motivo is None:
         return "pasa"
+    if "se construye al ejecutarse y este comando lee contenido" in motivo:
+        return "DINAMICO"  # la negativa de un lector con un argumento dinamico no cita constante
     nombres = [
         n for n in dir(modulo) if n.startswith("R_") and f"Regla: {getattr(modulo, n)}" in motivo
     ]
@@ -141,6 +156,11 @@ PERMITIDAS = [
         f"ffmpeg -hide_banner -nostdin -i {V} -vn -sn -dn -ac 1 -ar 16000 "
         '"{FUERA}/sesion-05.wav"',
     ),
+    # La respuesta del consultor del 2026-10-22: un Matroska de verdad pasa, y una comilla ANSI-C
+    # sin barra invertida es literal.
+    ("ffprobe, un mkv", f'ffprobe -v error -show_format -show_streams "{MKV}"'),
+    ("volumen, un mkv", f'ffmpeg -hide_banner -nostdin -i "{MKV}" {VOL} -'),
+    ("comilla ANSI-C sin barra", f"ffprobe -show_format $'{VIDEO}'"),
 ]
 NEGADAS = [
     ("entrada protegida, ffprobe", f'ffprobe -v error -show_format "{MARZO}"', "R_SIN_ABRIR"),
@@ -232,7 +252,49 @@ NEGADAS = [
     ("redireccion de entrada", f"ffmpeg -i {V} {VOL} - < otro.wav", "R_FFMPEG"),
     ("entrada que es un directorio", "ffprobe -show_format docs", "R_FFMPEG"),
     ("entrada de texto (ffconcat)", f"ffmpeg -i lista.mp4 {VOL} -", "R_FFMPEG"),
+    # La respuesta del consultor del 2026-10-22. Punto 1: la entrada, un contenedor de video por su
+    # extension y sus bytes magicos.
+    (
+        "lista HLS, ffprobe",
+        'ffprobe -v error -show_format -show_streams "{FUERA}/p.m3u8"',
+        "R_FFMPEG",
+    ),
+    ("lista HLS, extraccion", f'ffmpeg -i "{{FUERA}}/p.m3u8" {EXT} "{{FUERA}}/a.wav"', "R_FFMPEG"),
+    ("lista HLS, volumedetect", f'ffmpeg -i "{{FUERA}}/p.m3u8" {VOL} -', "R_FFMPEG"),
+    ("lista HLS llamada .mp4", "ffprobe -show_format lista-hls.mp4", "R_FFMPEG"),
+    ("bytes de mp4 en un .txt", "ffprobe -show_format video.txt", "R_FFMPEG"),
+    ("ftyp en un texto sin nulos", "ffprobe -show_format texto.mp4", "R_FFMPEG"),
+    ("entrada que no existe", "ffprobe -show_format no-existe.mp4", "R_FFMPEG"),
+    # Punto 2: la comilla ANSI-C con escapes tiene valor desconocido.
+    ("ANSI-C: salida \\x2f en el repo", f"ffmpeg -i {V} {EXT} $'{{REPO}}\\x2fa.wav'", "R_FFMPEG"),
+    (
+        "ANSI-C: ffprobe en marzo, \\x74",
+        "ffprobe -show_format $'{REPO}/{MARZO_X}/v.mp4'",
+        "R_FFMPEG",
+    ),
+    (
+        "ANSI-C: ffmpeg en marzo, \\164",
+        f"ffmpeg -i $'{{REPO}}/{{MARZO_O}}/v.mp4' {VOL} -",
+        "R_FFMPEG",
+    ),
+    ("ANSI-C: cat en marzo", "cat $'{REPO}/{MARZO_X}/v.mp4'", "DINAMICO"),
+    ("ANSI-C: cd a marzo", "cd $'{REPO}/{MARZO_X}' && ffprobe -show_format v.mp4", "R_EJECUCION"),
+    # La medida de Windows del punto 2: un nombre con punto o espacio final es el mismo directorio.
+    ("salida en la raiz con punto final", f"ffmpeg -i {V} {EXT} '{{REPO}}./a.wav'", "R_FFMPEG"),
+    ("salida en la raiz con espacio final", f"ffmpeg -i {V} {EXT} '{{REPO}} /a.wav'", "R_FFMPEG"),
+    (
+        "salida en la raiz con punto y espacio",
+        f"ffmpeg -i {V} {EXT} '{{REPO}}. /a.wav'",
+        "R_FFMPEG",
+    ),
+    (
+        "entrada en marzo con espacio final",
+        'ffprobe -show_format "{REPO}/' + CARPETA_MARZO + ' /v.mp4"',
+        "R_SIN_ABRIR",
+    ),
 ]
+# Los cuatro de la respuesta del consultor que leen la carpeta de marzo con `$'...'`.
+ANSI_C_EN_MARZO = [n for n, _c, _e in NEGADAS if n.startswith("ANSI-C:") and "marzo" in n]
 MATRIZ = [(n, c, "pasa") for n, c in PERMITIDAS] + NEGADAS
 
 
@@ -241,6 +303,8 @@ def _comando(plantilla: str, repo: Path) -> str:
         plantilla.replace("{VA}", (repo / VIDEO).as_posix())
         .replace("{FUERA}", (repo.parent / "fuera").as_posix())
         .replace("{REPO}", repo.as_posix())
+        .replace("{MARZO_X}", CARPETA_MARZO.replace("Back" + "test", "Back\\x74est"))
+        .replace("{MARZO_O}", CARPETA_MARZO.replace("Back" + "test", "Back\\164est"))
     )
 
 
@@ -279,6 +343,45 @@ def test_con_una_opcion_de_mas_un_negado_pasa(
     for nombre in ("-map", "ffprobe -report"):
         motivo = _decide(g, repo, _comando(casos[nombre], repo))
         print(f"con una opcion de mas | {nombre} | {_regla(g, motivo)}")
+        assert motivo is None, nombre
+
+
+def test_sin_los_bytes_magicos_la_lista_hls_vuelve_a_pasar(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Roto a proposito (respuesta del consultor, punto 1): sin la comprobacion de los bytes
+    magicos, la lista HLS con un nulo vuelve a pasar; con ella, los videos de verdad pasan (la
+    matriz)."""
+    casos = dict((n, c) for n, c, _e in NEGADAS)
+    monkeypatch.setattr(g, "_ffmpeg_es_video", lambda _ruta: True)
+    for nombre in ("lista HLS, ffprobe", "lista HLS, extraccion", "lista HLS, volumedetect"):
+        motivo = _decide(g, repo, _comando(casos[nombre], repo))
+        print(f"sin los bytes magicos | {nombre} | {_regla(g, motivo)}")
+        assert motivo is None, nombre
+
+
+def test_sin_el_arreglo_de_la_comilla_ansi_c_los_cuatro_pasan(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Roto a proposito (respuesta del consultor, punto 2): si la comilla ANSI-C se copia tal cual,
+    como en `main`, `cat` lee la carpeta de marzo; los tres de ffmpeg los para ademas la barrera
+    del punto 1 -la guardia mira la ruta sin interpretar, que no existe, y una entrada que no se
+    puede leer se niega-, y sin las dos barreras pasan los cuatro."""
+    casos = dict((n, c) for n, c, _e in NEGADAS)
+    assert len(ANSI_C_EN_MARZO) == 4
+    monkeypatch.setattr(g, "_ansi_c_con_escapes", lambda _interior: False)
+    for nombre in ANSI_C_EN_MARZO:
+        motivo = _decide(g, repo, _comando(casos[nombre], repo))
+        print(f"sin el arreglo de $'...' | {nombre} | {_regla(g, motivo)}")
+        if "cat" in nombre:
+            assert motivo is None, nombre
+        else:
+            assert _regla(g, motivo) == "R_FFMPEG" and "no se puede leer" in str(motivo), nombre
+    monkeypatch.setattr(g, "_ffmpeg_es_video", lambda _ruta: True)
+    monkeypatch.setattr(g, "_ffmpeg_es_texto", lambda _ruta: False)
+    for nombre in ANSI_C_EN_MARZO:
+        motivo = _decide(g, repo, _comando(casos[nombre], repo))
+        print(f"y sin los bytes magicos | {nombre} | {_regla(g, motivo)}")
         assert motivo is None, nombre
 
 

@@ -1,0 +1,41 @@
+| caso | guardia_main | guardia_3372f7a | guardia_nueva |
+| m3u8: ffprobe | R_EJECUCION | pasa | R_FFMPEG |
+| m3u8: extraccion | R_EJECUCION | pasa | R_FFMPEG |
+| m3u8: volumedetect | R_EJECUCION | pasa | R_FFMPEG |
+| ansi: salida \x2f en el repo | R_EJECUCION | R_FFMPEG | R_FFMPEG |
+| ansi: ffprobe marzo \x74 | pasa | pasa | R_FFMPEG |
+| ansi: ffmpeg -i marzo \164 | pasa | pasa | R_FFMPEG |
+| ansi: cat marzo \x74 | pasa | pasa | ?el argumento `$'C:/Users/USER/AppData/Local/Temp/tmp2m6q8dbk |
+| ansi: cd marzo && ffprobe | pasa | pasa | R_EJECUCION |
+| ansi: ls marzo (listar) | pasa | pasa | pasa |
+| ansi: sha256sum marzo | pasa | pasa | pasa |
+| ansi: head marzo | pasa | pasa | ?el argumento `$'C:/Users/USER/AppData/Local/Temp/tmp2m6q8dbk |
+| ansi: grep $'\t' otro.wav | pasa | pasa | ?el argumento `$'\t'` se construye al ejecutarse y este coman |
+| ansi: echo $'a\nb' | pasa | pasa | pasa |
+| ansi: printf $'%s\n' x | pasa | pasa | pasa |
+| ansi: IFS=$'\n'; ls | R_EJECUCION | R_EJECUCION | R_EJECUCION |
+| ansi: git log --format | excepcion FileNotFoundError | excepcion FileNotFoundError | ?`git log` con un argumento que se construye al ejecutarse. C |
+| ansi: sed -n $'1p' otro.wav | pasa | pasa | pasa |
+| ansi: awk $'{print}' | pasa | pasa | pasa |
+| ansi sin barra: cat | pasa | pasa | pasa |
+| var: cat $X | ?el argumento `$X_NO` se construye al ejecutarse y este coman | ?el argumento `$X_NO` se construye al ejecutarse y este coman | ?el argumento `$X_NO` se construye al ejecutarse y este coman |
+| var: sed -n $X otro.wav | R_EJECUCION | R_EJECUCION | R_EJECUCION |
+| var: awk $X otro.wav | R_EJECUCION | R_EJECUCION | R_EJECUCION |
+| ansi: sed r marzo | R_EJECUCION | R_EJECUCION | R_EJECUCION |
+| ansi: awk getline marzo | R_EJECUCION | R_EJECUCION | R_EJECUCION |
+| ansi: grep -f marzo | pasa | pasa | ?el argumento `$'C:/Users/USER/AppData/Local/Temp/tmp2m6q8dbk |
+| ansi: source | R_EJECUCION | R_EJECUCION | R_EJECUCION |
+| ansi: dentro de $() | pasa | pasa | ?el argumento `$'C:/Users/USER/AppData/Local/Temp/tmp2m6q8dbk |
+| ansi: dentro de bash -c | pasa | pasa | ?el argumento `$'C:/Users/USER/AppData/Local/Temp/tmp2m6q8dbk |
+| ansi sin barra: echo | pasa | pasa | pasa |
+| ansi: \' dentro | ?una comilla simple sin cerrar | ?una comilla simple sin cerrar | pasa |
+
+Windows, la salida con punto o espacio final en el nombre de la raiz:
+| `repo.` | R_EJECUCION: ejecutar `ffmpeg`: la guardia no sabe con que se ejecuta corpus/Estrat | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\AppData\Local\Temp\tmp2m6q8dbk\repo | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\AppData\Local\Temp\tmp2m6q8dbk\repo |
+| `repo ` | R_EJECUCION: ejecutar `ffmpeg`: la guardia no sabe con que se ejecuta corpus/Estrat | pasa | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\AppData\Local\Temp\tmp2m6q8dbk\repo |
+| `repo. ` | R_EJECUCION: ejecutar `ffmpeg`: la guardia no sabe con que se ejecuta corpus/Estrat | pasa | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\AppData\Local\Temp\tmp2m6q8dbk\repo |
+| `repo..` | R_EJECUCION: ejecutar `ffmpeg`: la guardia no sabe con que se ejecuta corpus/Estrat | pasa | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\AppData\Local\Temp\tmp2m6q8dbk\repo |
+| `Bot v3.` | pasa | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\Desktop\Bot v3.\a.wav` esta dentro  | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\Desktop\Bot v3.\a.wav` esta dentro  |
+| `Bot v3 ` | pasa | pasa | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\Desktop\Bot v3 \a.wav` esta dentro  |
+| `Bot v3. ` | pasa | pasa | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\Desktop\Bot v3. \a.wav` esta dentro |
+| `Bot v3..` | pasa | pasa | R_FFMPEG: `ffmpeg`: la salida `C:\Users\USER\Desktop\Bot v3..\a.wav` esta dentro |

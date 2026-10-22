@@ -48,3 +48,29 @@ Dado por Aleks (consultor) el 2026-10-22. Copiado tal cual:
 > Informe en docs/validation/GUARDIA-FFMPEG.md. make check sellado; push a fix/guardia-ffmpeg (git push origin trabajo/guardia-ffmpeg:refs/heads/fix/guardia-ffmpeg) y CI de Linux con solo el fallo esperado de state check (RITUAL.md: toda rama que toque .claude/hooks); dame los números de run. Después el revisor, lanzado con el informe YA TERMINADO, y su informe pegado al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la revision (2026-10-22, sobre 3372f7a)
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a trabajo/guardia-ffmpeg (3372f7a, run 39830835494), 2026-10-22. Cópiala tal cual al final del informe (§11) y aplícala punto por punto. La rama NO está lista: una revisión independiente del consultor sobre 3372f7a (decidir de la rama y de main cargados con importlib sobre un repo inventado en tmp; ffmpeg 6.1 real solo sobre vídeos inventados con lavfi) da por buenos los arreglos de b1 a b7 y encuentra dos cosas nuevas.
+>
+> LO NUEVO, A ARREGLAR EN ESTA RAMA
+> 1. BLOQUEA. Una lista HLS con un byte nulo burla la comprobación de «entrada de texto». _ffmpeg_es_texto solo busca \x00 en los primeros 4096 bytes, y la lista cerrada no limita la entrada. Se escribe fuera del repo, con printf o con Write, un p.m3u8 con «#EXTM3U», un «#EXTINF:3,\0» y la ruta absoluta del vídeo de la carpeta de marzo; después «ffprobe -v error -show_format -show_streams "<F>/p.m3u8"», la extracción y volumedetect sobre él PASAN en la rama (en main, R_EJECUCION), y ffprobe real devuelve format_name=hls con los códecs del vídeo de marzo. Arreglo, nombrando la condición: una entrada solo vale si es un contenedor de vídeo reconocido por sus bytes mágicos (ISO BMFF: «ftyp» en el desplazamiento 4; Matroska/WebM: 1A 45 DF A3 al principio) Y su extensión es .mp4, .mov, .mkv o .webm. Todo lo demás se niega, también un fichero que no se puede leer. _ffmpeg_es_texto se queda como segunda barrera o sale si sobra: dilo.
+> 2. IMPORTA (lo abre la rama) y BLOQUEA (heredado de main). La comilla ANSI-C $'…' no se interpreta: el tokenizador copia su interior tal cual. En la rama, «ffmpeg -i "<vídeo>" -vn -sn -dn $'<R>\x2fa.wav'» pasa y bash escribe dentro del repo. Y en main y en la rama, «ffprobe -show_format $'…/Back\x74est marzo 2026/v.mp4'», «ffmpeg -i $'…\164…' …», «cat $'…\x74…'» y «cd $'…\x74…' && ffprobe v.mp4» PASAN: leen la carpeta de marzo. Arreglo, para toda la guardia y no solo para ffmpeg: una palabra con comilla ANSI-C que lleve una barra invertida tiene valor desconocido (como una sustitución), y lo que ya se niega con un valor desconocido se niega. Mide antes en qué reglas cambia la decisión, ponlo en la tabla de comparación con main, y que test_el_ritual_y_los_runbooks_pasan y test_ninguna_denegacion_toca_el_ritual sigan en verde. Es una ampliación del encargo, declarada: el agujero lee material protegido y el arreglo es de una línea de condición.
+> Cada uno con sus casos en la matriz y roto a propósito en los dos sentidos (sin la comprobación de los bytes mágicos, el .m3u8 vuelve a pasar; con ella, un .mp4 de verdad sigue pasando; sin el arreglo de $'…', los cuatro de arriba pasan). En Windows, ejecuta además el test de los alias que se salta en Linux (8.3 y \\?\) y mide «…\Bot v3.\a.wav» y «…\Bot v3 \a.wav» como salida: tienen que quedar dentro del repo y negarse. Las salidas, al informe.
+>
+> TUS TRES PREGUNTAS DEL §9
+> 1. Sí. «Ninguno fuera de las cuatro formas» quería decir que no se abre nada nuevo. Que nueve comandos que main dejaba pasar ahora se nieguen está bien, y el de ffprobe con file: sobre la carpeta de marzo era un agujero: va declarado en el informe y a la fila de ERRORES-RECURRENTES en el cierre.
+> 2. El alias de la raíz (\\?\, el nombre corto 8.3 y un directorio que contiene el repo) que hoy deja pasar cat, Read y grep -r: una línea nueva en K de la Next Action, en el commit del contrato del cierre, como la parte prioritaria de K, porque lee material protegido. No se arregla aquí: es otra familia de reglas. Prepara el texto en el §9.
+> 3. No sobra ninguna. Negar las entradas de texto se queda (ahora con la condición del punto 1); negar \\ y // y cualquier redirección de entrada, también. nul en minúsculas, bien.
+>
+> LO MENOR (sin cambios, al informe)
+> - «ffprobe "<vídeo>" &» solo pasa: se acepta, no abre nada.
+> - Una línea partida con barra invertida y salto se niega: se acepta; la skill no la usa.
+> - Las variables se resuelven con el entorno del hook (de main): a la línea de K del punto 2, como otro caso del mismo hueco.
+>
+> DESPUÉS
+> make check sellado, commit, push a fix/guardia-ffmpeg y la CI de Linux con un gh run view suelto (dame el número). Después el revisor OTRA VEZ, sobre el último commit y con el informe terminado, con el encargo de comprobar los arreglos de esta respuesta y de intentar romper la regla con formas que no estén en la matriz (envoltorios, comillas, escapes, ficheros que se hacen pasar por otro formato). Su informe, pegado al final.
+>
+> Rama lista para revisión, NO cerrada.
