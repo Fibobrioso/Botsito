@@ -55,11 +55,15 @@ def repo(tmp_path: Path) -> Path:
     _git(r, "add", "-A")
     _git(r, "-c", "user.name=t", "-c", "user.email=t@t", "commit", "-q", "-m", "inicio")
     _git(r, "checkout", "-q", "-b", "trabajo/prueba")
-    # Despues del commit: sin seguir, como el video real.
-    for rel in (VIDEO, MARZO, IMAGEN, "otro.wav", "lista.txt"):
+    # Despues del commit: sin seguir, como el video real; binarios, como un video (el principio de
+    # un mp4), porque la regla niega una entrada de texto (puede ser una lista `ffconcat`).
+    for rel in (VIDEO, MARZO, IMAGEN, "otro.wav"):
         ruta = r / rel
         ruta.parent.mkdir(parents=True, exist_ok=True)
-        ruta.write_text("x\n", encoding="utf-8")
+        ruta.write_bytes(b"\x00\x00\x00\x20ftypisom\x00\x00\x02\x00")
+    (r / "lista.txt").write_text("ffconcat version 1.0\nfile 'otro.wav'\n", encoding="utf-8")
+    (r / "lista.mp4").write_text("ffconcat version 1.0\nfile 'otro.wav'\n", encoding="utf-8")
+    (r / "docs").mkdir()
     (tmp_path / "fuera").mkdir()
     return r
 
@@ -206,6 +210,28 @@ NEGADAS = [
         "R_FFMPEG",
     ),
     ("ffmpeg -version", "ffmpeg -version", "R_FFMPEG"),
+    # Los del revisor de la rama (b1, b2, b4 y a4): lo que va antes y a la vez, las redirecciones
+    # de entrada, el directorio y la entrada de texto.
+    (
+        "find -exec ffprobe {}",
+        'find "{REPO}/.." -name "*.mp4" -exec ffprobe -show_format {} \\;',
+        "R_EJECUCION",
+    ),
+    ("cd - delante", f'cd "{{FUERA}}" && cd - && ffprobe -show_format {V}', "R_EJECUCION"),
+    ("cd dinamico delante", f'cd "$DIR_X" && ffprobe -show_format {V}', "R_EJECUCION"),
+    ("cp delante", f"cp otro.wav b.wav && ffprobe -show_format {V}", "R_EJECUCION"),
+    ("cd o true delante", f'cd "{{FUERA}}" || true; ffprobe -show_format {V}', "R_EJECUCION"),
+    ("| tee detras", f"ffprobe -show_format {V} | tee meta.json", "R_EJECUCION"),
+    ("en segundo plano", f"ffprobe -show_format {V} & cat otro.wav", "R_EJECUCION"),
+    (
+        "sustitucion en el mismo comando",
+        f"ffprobe -show_format {V} && echo $(git rev-parse HEAD)",
+        "R_FFMPEG",
+    ),
+    ("redireccion 1<> dentro del repo", f"ffprobe -show_format {V} 1<>meta.json", "R_FFMPEG"),
+    ("redireccion de entrada", f"ffmpeg -i {V} {VOL} - < otro.wav", "R_FFMPEG"),
+    ("entrada que es un directorio", "ffprobe -show_format docs", "R_FFMPEG"),
+    ("entrada de texto (ffconcat)", f"ffmpeg -i lista.mp4 {VOL} -", "R_FFMPEG"),
 ]
 MATRIZ = [(n, c, "pasa") for n, c in PERMITIDAS] + NEGADAS
 
@@ -254,6 +280,31 @@ def test_con_una_opcion_de_mas_un_negado_pasa(
         motivo = _decide(g, repo, _comando(casos[nombre], repo))
         print(f"con una opcion de mas | {nombre} | {_regla(g, motivo)}")
         assert motivo is None, nombre
+
+
+@pytest.mark.skipif(sys.platform != "win32", reason="los alias de ruta son de Windows")
+def test_un_alias_de_la_raiz_no_saca_la_salida_ni_abre_la_entrada(
+    g: ModuleType, repo: Path
+) -> None:
+    """Revisor de la rama, b3: la raiz escrita con `\\\\?\\` o con su nombre corto 8.3 no es
+    «fuera del repo», y una entrada protegida escrita asi sigue negada con su motivo."""
+    import ctypes
+
+    largo = str(repo)
+    casos = [(f"ffmpeg -i {V} {EXT} '\\\\?\\{largo}\\a.wav'", "R_FFMPEG")]
+    corto = largo
+    if sys.platform == "win32":  # para mypy en Linux, que no conoce `windll`
+        buffer = ctypes.create_unicode_buffer(1024)
+        ctypes.windll.kernel32.GetShortPathNameW(largo, buffer, 1024)
+        corto = buffer.value or largo
+    if corto.lower() != largo.lower():
+        casos += [
+            (f"ffmpeg -i {V} {EXT} '{corto}\\a.wav'", "R_FFMPEG"),
+            (f"ffprobe -show_format '{corto}\\{MARZO}'", "R_SIN_ABRIR"),
+        ]
+    print(f"nombre corto de la raiz: {'sin 8.3 en este volumen' if len(casos) == 1 else corto}")
+    for comando, esperado in casos:
+        assert _regla(g, _decide(g, repo, comando)) == esperado, comando
 
 
 def _guardia_de_main(tmp_path: Path) -> ModuleType:

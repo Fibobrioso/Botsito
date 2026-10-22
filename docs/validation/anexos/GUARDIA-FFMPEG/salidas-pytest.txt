@@ -61,6 +61,18 @@
 | opcion tras la salida | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.wav" -y` | R_FFMPEG | R_FFMPEG |
 | -c:a y -acodec | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 -c:a flac -acodec flac "{FUERA}/a.flac"` | R_FFMPEG | R_FFMPEG |
 | ffmpeg -version | `ffmpeg -version` | R_FFMPEG | R_FFMPEG |
+| find -exec ffprobe {} | `find "{REPO}/.." -name "*.mp4" -exec ffprobe -show_format {} \;` | R_EJECUCION | R_EJECUCION |
+| cd - delante | `cd "{FUERA}" && cd - && ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4"` | R_EJECUCION | R_EJECUCION |
+| cd dinamico delante | `cd "$DIR_X" && ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4"` | R_EJECUCION | R_EJECUCION |
+| cp delante | `cp otro.wav b.wav && ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4"` | R_EJECUCION | R_EJECUCION |
+| cd o true delante | `cd "{FUERA}" || true; ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4"` | R_EJECUCION | R_EJECUCION |
+| | tee detras | `ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4" | tee meta.json` | R_EJECUCION | R_EJECUCION |
+| en segundo plano | `ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4" & cat otro.wav` | R_EJECUCION | R_EJECUCION |
+| sustitucion en el mismo comando | `ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4" && echo $(git rev-parse HEAD)` | R_FFMPEG | R_FFMPEG |
+| redireccion 1<> dentro del repo | `ffprobe -show_format "corpus/Estrategia del trader/sesion-05.mp4" 1<>meta.json` | R_FFMPEG | R_FFMPEG |
+| redireccion de entrada | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null - < otro.wav` | R_FFMPEG | R_FFMPEG |
+| entrada que es un directorio | `ffprobe -show_format docs` | R_FFMPEG | R_FFMPEG |
+| entrada de texto (ffconcat) | `ffmpeg -i lista.mp4 -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
 .sin la regla | ffprobe, relativa | R_EJECUCION
 sin la regla | ffprobe, absoluta con -i | R_EJECUCION
 sin la regla | ffprobe, -print_format | R_EJECUCION
@@ -79,6 +91,7 @@ sin la regla | skill: metadatos | R_EJECUCION
 sin la regla | skill: audio fuera del repo | R_EJECUCION
 .con una opcion de mas | -map | pasa
 con una opcion de mas | ffprobe -report | pasa
+.nombre corto de la raiz: C:\Users\USER\AppData\Local\Temp\PYTEST~1\PYTEST~2\TEST_U~1\repo
 .| ffprobe, relativa | main R_EJECUCION | rama pasa |
 | ffprobe, absoluta con -i | main R_EJECUCION | rama pasa |
 | ffprobe, -print_format | main R_EJECUCION | rama pasa |
@@ -137,4 +150,9 @@ con una opcion de mas | ffprobe -report | pasa
 | opcion tras la salida | main R_EJECUCION | rama R_FFMPEG |
 | -c:a y -acodec | main R_EJECUCION | rama R_FFMPEG |
 | ffmpeg -version | main pasa | rama R_FFMPEG |
+| sustitucion en el mismo comando | main R_EJECUCION | rama R_FFMPEG |
+| redireccion 1<> dentro del repo | main R_EJECUCION | rama R_FFMPEG |
+| redireccion de entrada | main R_EJECUCION | rama R_FFMPEG |
+| entrada que es un directorio | main pasa | rama R_FFMPEG |
+| entrada de texto (ffconcat) | main R_EJECUCION | rama R_FFMPEG |
 .

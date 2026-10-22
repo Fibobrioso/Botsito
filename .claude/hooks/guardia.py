@@ -42,7 +42,10 @@ Dos familias de reglas:
    pasan por esa funcion sino por `_analizar_ffmpeg`, con su regla `R_FFMPEG`: solo cuatro formas
    de LISTA CERRADA sobre un video que no se protege -ffprobe de metadatos, ffmpeg que mide
    silencios o volumen con la salida nula y ffmpeg que extrae el audio a un fichero FUERA del
-   repositorio-, cada entrada por `motivo_fichero`, sin sustituciones, y todo lo demas negado.
+   repositorio-, cada entrada por `motivo_fichero` (por su texto y resuelta) y binaria (un texto
+   puede ser una lista `ffconcat`), sin sustituciones ni redirecciones de entrada, y todo lo demas
+   negado. Lo que va antes y a la vez en el mismo comando se exige igual que en el resto de la
+   familia 3 (`_exigir_lo_de_antes`, `_exigir_lo_de_a_la_vez`); lo que se deja es leer un guion.
 
 Un comando que no se puede decidir con seguridad -una ruta construida al ejecutarse, `eval`, un
 `xargs` que lee contenido- SE BLOQUEA si podria llegar a material protegido, y el mensaje dice como
@@ -2983,6 +2986,8 @@ def _ffmpeg_ruta(valor: str, ctx: Contexto, que: str) -> str:
         raise FfmpegNegadoError(f"{que} `{valor}` lleva un prefijo de protocolo")
     if "%" in valor:
         raise FfmpegNegadoError(f"{que} `{valor}`: un patron (`%d`) son muchos ficheros")
+    if valor.startswith(("\\\\", "//")):  # `\\?\C:\...`, `\\.\`, `\\servidor\` (revisor, b3)
+        raise FfmpegNegadoError(f"{que} `{valor}` es una ruta de dispositivo o de red")
     return _absoluta(valor, ctx.cwd)
 
 
@@ -3068,9 +3073,27 @@ def _ffmpeg_formas(prog: str, args: list[str], ctx: Contexto) -> list[str]:
     destino = _ffmpeg_ruta(salida, ctx, "la salida")
     if not salida.lower().endswith(EXTENSIONES_DE_EXTRACCION):
         raise FfmpegNegadoError(f"la salida `{salida}` no es un fichero de audio de la lista")
-    if ctx.politica.relativa(destino) is not None:
+    if _ffmpeg_dentro_del_repo(destino, ctx):
         raise FfmpegNegadoError(f"la salida `{salida}` esta dentro del repositorio")
     return entradas
+
+
+def _ffmpeg_dentro_del_repo(ruta: str, ctx: Contexto) -> bool:
+    """Por su texto o RESUELTA (`realpath`: un enlace, `\\\\?\\C:\\...`, un nombre corto 8.3 de
+    Windows), dentro de la raiz (revisor de la rama, b3)."""
+    return any(ctx.politica.relativa(r) is not None for r in (ruta, os.path.realpath(ruta)))
+
+
+def _ffmpeg_es_texto(ruta: str) -> bool:
+    """Si el principio del fichero no lleva ningun byte nulo: un video o un audio si lo llevan, y
+    un fichero de texto ffmpeg puede leerlo como una LISTA que nombra otros ficheros (`ffconcat`,
+    `#EXTM3U`, un `.mpd`), detectada por su contenido y no por su extension (revisor, «lo que no
+    pude comprobar»). Uno que no se puede leer cuenta como texto: no se sabe que es."""
+    try:
+        with open(ruta, "rb") as f:
+            return b"\x00" not in f.read(4096)
+    except OSError:
+        return True
 
 
 def _analizar_ffmpeg(
@@ -3078,8 +3101,10 @@ def _analizar_ffmpeg(
 ) -> None:
     """ffprobe y ffmpeg: pasan SOLO en una de las cuatro formas de la lista cerrada, con cada
     entrada legible; todo lo demas se niega con `R_FFMPEG`. Excepcion declarada a la familia 3
-    (cabecera): estas formas no pasan por `exigir_ejecucion_verificable`, porque lo que ejecutan es
-    ffmpeg, no un fichero de la rama, y sus ficheros son datos de audio y video."""
+    (cabecera): estas formas no pasan por `exigir_ejecucion_verificable` -no hay guion que leer: lo
+    que ejecutan es ffmpeg, y sus ficheros son datos de audio y video-, pero lo que va antes y a la
+    vez en el mismo comando se exige igual (`_exigir_lo_de_antes`, `_exigir_lo_de_a_la_vez`:
+    revisor de la rama, a1/b1/b2/b4)."""
 
     def niega(por: str) -> NoReturn:
         raise BloqueoError(f"`{prog}`: {por}.\nRegla: {R_FFMPEG}.\n{COMO_FFMPEG}")
@@ -3089,13 +3114,13 @@ def _analizar_ffmpeg(
     nivel = ctx.nivel if ctx.nivel is not None else lex
     if nivel.sustituciones or _hay_sustitucion_de_proceso(nivel):
         niega("el comando lleva una sustitucion (`$(...)`, acentos graves o `<(...)`)")
-    for otro in ctx.secuencia[: ctx.posicion]:
-        # Un `cd` a un sitio que no se sabe deja sin saber donde caen las rutas relativas.
-        if otro.argv and _nombre_de_programa(otro.argv[0].texto) in {"cd", "pushd", "popd"}:
-            for a in otro.argv[1:]:
-                valores = _valores(a, ctx, lex)
-                if a.glob or valores is None or len(valores) != 1:
-                    niega("antes va un cambio de directorio que se construye al ejecutarse")
+    # Antes, solo `cd` literal (no `cd -`), asignaciones literales, `export` o `set`; a la vez, en
+    # la tuberia, solo filtros, y nada en segundo plano: `find ... -exec ffprobe {}`, `cd -`,
+    # `| tee` y `&` pasaban sin esto (revisor, b1, b2 y b4).
+    _exigir_lo_de_antes(ctx, cmd, prog)
+    _exigir_lo_de_a_la_vez(ctx, cmd, prog)
+    if cmd.entradas or cmd.heredocs:
+        niega("lleva una redireccion de entrada (`<`, `<>`, `<<`): la medida no lee de la entrada")
     textos: list[str] = []
     for a in args:
         valores = _valores(a, ctx, lex)
@@ -3114,11 +3139,17 @@ def _analizar_ffmpeg(
     except FfmpegNegadoError as exc:
         niega(str(exc))
     for nombre, ruta in rutas:
-        motivo = ctx.politica.motivo_fichero(ruta)
-        if motivo:
-            raise BloqueoError(f"ejecutar {nombre}.\nRegla: {motivo}.")
+        for r in (ruta, os.path.realpath(ruta)):  # por su texto y resuelta (revisor, b3)
+            motivo = ctx.politica.motivo_fichero(r)
+            if motivo:
+                raise BloqueoError(f"ejecutar {nombre}.\nRegla: {motivo}.")
         if os.path.isdir(ruta):
             niega(f"la entrada {nombre} es un directorio")
+        if os.path.exists(ruta) and _ffmpeg_es_texto(ruta):
+            niega(
+                f"la entrada {nombre} es texto: ffmpeg puede leerla como una lista que nombra "
+                "otros ficheros (`ffconcat`, `#EXTM3U`)"
+            )
     for op, destino in cmd.salidas:
         if op in {">&", "<&"} and re.fullmatch(r"\d+-?|-", destino.texto):
             continue  # `2>&1`: a otro descriptor, no a un fichero
@@ -3127,7 +3158,7 @@ def _analizar_ffmpeg(
             niega("redirige su salida a un fichero que se construye al ejecutarse")
         if valores[0] in DISPOSITIVOS_NULOS:
             continue
-        if ctx.politica.relativa(_absoluta(valores[0], ctx.cwd)) is not None:
+        if _ffmpeg_dentro_del_repo(_absoluta(valores[0], ctx.cwd), ctx):
             niega(f"redirige su salida a {valores[0]}, dentro del repositorio")
 
 
