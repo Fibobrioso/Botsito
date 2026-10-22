@@ -2,7 +2,7 @@
 
 Las «Reglas vivas» de `PROJECT_STATE.md` que hasta el 2026-10-21 solo vivían allí, mudadas TAL CUAL,
 con su título de entonces y en el mismo orden, en `trabajo/previa-sesion-5` (respuesta del consultor
-a la PARADA de su fase 0, punto 3; `docs/validation/PREVIA-SESION-5.md` §5). Siguen vigentes: lo que
+a la PARADA de su fase 0, punto 3; `docs/validation/PREVIA-SESION-5.md` §5 y §6). Siguen vigentes: lo que
 cambia es dónde se leen. En `PROJECT_STATE.md`, «Reglas vivas», queda una línea que apunta aquí, y
 el texto literal de cada una, con su condición, en `docs/state/HISTORIA.md`
 («# Regla viva SUSTITUIDA · sale de PROJECT_STATE.md en trabajo/previa-sesion-5 (2026-10-21)»).

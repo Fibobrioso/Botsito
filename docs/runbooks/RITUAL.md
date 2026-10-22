@@ -366,7 +366,7 @@ Después, el ritual de siempre desde `git checkout main`. El merge pasa sin más
 commit de la rama ya se selló al hacerse.
 
 Dos hechos de la puerta y de `main` que vivían en «Technical Debt» de `PROJECT_STATE.md` sin ser
-deuda abierta, mudados tal cual el 2026-10-21 en `trabajo/previa-sesion-5` (PREVIA-SESION-5.md §5;
+deuda abierta, mudados tal cual el 2026-10-21 en `trabajo/previa-sesion-5` (PREVIA-SESION-5.md §6;
 su texto y su condición, también en `docs/state/HISTORIA.md`):
 
 - Hook local: tras cambiar `scripts/git-hooks/`, ejecutar `make hooks` (el 2026-09-07 la copia instalada no protegia `knowledge/corpus/fotogramas`; los tests de historial en CI son la garantia real).

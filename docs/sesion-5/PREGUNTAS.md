@@ -408,7 +408,8 @@ A-49
 > lado y solo el trader lo puede decidir, así que S-12 pasa a tener dos partes, en este orden: el
 > lado, y después la de A-50 sobre el lado que conteste. **El «Para Aleks» de abajo estaba mal**
 > («opera el segundo dibujo solo si el 0 queda por encima», y en el encargo de esta rama «opera las
-> dos: eso es (a)»): hoy el bot no opera ninguno de los dos dibujos; el error es del consultor
+> dos: eso es (a)»): hoy el bot no opera ninguno de los dos dibujos del recuadro de ese encargo, que
+> tienen los dos el 0 por encima de la línea; el error es del consultor
 > (respuesta a la PARADA, punto 0). **Lo que va a la hoja del trader, y a
 > `CODIGOS_DE_SESION_TEXTO["05"]` con la ingesta, es el texto de este recuadro.** El cuerpo de abajo
 > queda intacto.
@@ -438,7 +439,8 @@ A-49
 >   - **Pregunta:** «Y si la caja queda a caballo del nivel, con el 0 de tu lado y el 1 del otro, ¿la
 >     operas?» Si contestó (b), por debajo: «Y si la caja queda a caballo del nivel, con el 1 de tu
 >     lado y el 0 del otro, ¿la operas?» (en una compra el 0 está siempre arriba, así que con la caja
->     por debajo el lado del trader solo puede tener el 1).
+>     por debajo el lado del trader solo puede tener el 1). Si contestó (c), depende: se le pide el
+>     caso del que depende y la segunda parte se hace sobre el lado que dé en ese caso.
 > - **Para precisar:**
 >   - ¿Y si el 0 queda justo en la línea, ni por encima ni por debajo?
 >   - En venta, lo mismo al revés: ¿es igual?
@@ -446,8 +448,10 @@ A-49
 >   caballo, ______».
 > - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-04.md` §0.e.6 y A-50. Hoy el bot sigue RN-005: en
 >   una compra, la zona por encima del bajo tomado es ruido (`se_desarrolla_en_el_lado_de_ruido`, que
->   compara solo el 0: `engine/zonas.py:537-539`), y no opera ninguno de los dos dibujos del texto de
->   abajo, que tienen el 0 por encima de la línea. La respuesta a la primera parte decide si RN-005
+>   compara solo el 0: `engine/zonas.py:537-539`), y no opera ninguno de los dos dibujos del recuadro
+>   del encargo de `trabajo/previa-sesion-5` (el texto anterior a este), que tienen los dos el 0 por
+>   encima de la línea; el segundo dibujo del cuerpo de abajo, con el 0 por debajo y el 1 por encima,
+>   no se puede dar en una compra. La respuesta a la primera parte decide si RN-005
 >   sigue o se reabre; la segunda es A-50, y con (b) es justo la lectura de hoy (el 0 al otro lado es
 >   ruido aunque el 1 quede del lado del trader).*
 

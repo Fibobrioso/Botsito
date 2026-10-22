@@ -106,7 +106,7 @@ Es lo que mas tiempo hace perder. `knowledge/corpus/transcripciones/` solo tiene
 ## Tres hechos del material que vivían en PROJECT_STATE
 
 Mudados tal cual de «Technical Debt» de `PROJECT_STATE.md` el 2026-10-21, en
-`trabajo/previa-sesion-5` (PREVIA-SESION-5.md §5): no eran deuda abierta, sino reglas o hechos de
+`trabajo/previa-sesion-5` (PREVIA-SESION-5.md §6): no eran deuda abierta, sino reglas o hechos de
 cómo se mira el material. El de `idealTP`, con su texto entero del Archivo 1 de
 `docs/state/HISTORIA.md` (`:564`), que `PROJECT_STATE.md` recortaba a su arranque. Su texto y su
 condición, también en `docs/state/HISTORIA.md`.

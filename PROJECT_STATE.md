@@ -96,7 +96,7 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
 
 ## Technical Debt
-Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`. Lo que no era deuda, en su runbook desde trabajo/previa-sesion-5 (PREVIA-SESION-5.md §5).
+Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`. Lo que no era deuda, desde trabajo/previa-sesion-5: `docs/runbooks/MIRAR-EL-MATERIAL.md` y `RITUAL.md` (al final) y `DECISIONES-DE-PROCESO.md` (F07); tabla en PREVIA-SESION-5.md §6.
 - El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
 - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación: la rama que congele los CSV de las ejecuciones 2 y 3 comprueba el CRLF del CSV 2 en `MQL5\Files` antes de copiarlo (EA-CONEXION.md §0.c).
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
@@ -144,7 +144,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Copia de seguridad de las crudas activas y los WAV fuera de esta maquina: HECHA HASTA v5, INCOMPLETA desde el 2026-09-09.
 
 ## Reglas vivas
-Las que solo viven aqui (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
+Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
 
 ### Change Regimes (must be respected), lo que CLAUDE.md no dice
 - knowledge/cases/holdout/{1,2,3}/ → tres particiones reservadas; cada una se abre una sola vez. QUE CUENTA COMO ABRIRLA, quien lo autoriza y que se hace ante una exposicion: `knowledge/cases/holdout/README.md` (ADR-0021). No se lee desde ningun sitio salvo la puerta `botsito.cases.holdout`, que se niega sin `PREREGISTRO.md` relleno y sin autorizacion commiteada por particion; la guarda de `tests/conftest.py` vigila a cualquier llamante durante los tests, y `kit build` / `kit check` declaran las velas de dias reservados que leen, que no es abrir (ADR-0021, ADR-0033).

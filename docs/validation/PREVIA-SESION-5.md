@@ -106,7 +106,7 @@ El subagente `auditor-encargo`: 40 afirmaciones, 24 correctas, 3 incorrectas y 1
 | H5 | Los esquemas de S-7 y S-12 están al revés en el cuerpo, y el esquema se dibuja para el trader | herencia | decisiones 0 y 1 |
 | H8 | La contradicción RN-005 frente a `ev-v9-004919-c6bfb3ee` sin marcar en A-50 | herencia | decisión 0 (marcarla en `ambiguedades.yaml` queda fuera de esta rama, que no toca la spec) |
 
-El informe del auditor, entero, se pega al final del informe en la entrega.
+El informe del auditor, entero, está en §11.
 
 ## 3 · El runbook y la fecha (punto 3), hecho
 
@@ -270,8 +270,10 @@ cuerpo queda intacto.
    fase 0 no propuso mover. Con ellos dentro, PROJECT_STATE ya baja de 22.000.
 5. **Los punteros.** `test_project_state.py` exige solo los `## `. Hay un puntero de una línea en
    cada uno de los dos de los que salió algo: «Technical Debt» lleva, en su línea de cabecera,
-   «Lo que no era deuda, en su runbook desde trabajo/previa-sesion-5 (PREVIA-SESION-5.md §5)», y
-   «Reglas vivas» lleva, en la suya, la lista de lo que salió y
+   «Lo que no era deuda, desde trabajo/previa-sesion-5: `docs/runbooks/MIRAR-EL-MATERIAL.md` y
+   `RITUAL.md` (al final) y `DECISIONES-DE-PROCESO.md` (F07); tabla en PREVIA-SESION-5.md §6» (con
+   los runbooks nombrados tras el hallazgo h2 del revisor), y «Reglas vivas» lleva, en la suya («Las
+   que solo vivian aqui y se quedan», m1), la lista de lo que salió y
    `docs/runbooks/DECISIONES-DE-PROCESO.md`, «en sus secciones del mismo nombre». Los `###` de
    Decisions and Rationale y Known Issues salen enteros (ningún test los exige); en el runbook son
    `## ` con el mismo título.
@@ -313,7 +315,10 @@ mudan.
 **Comprobado con un guion**, `docs/validation/anexos/PREVIA-SESION-5/comprobar_movido.py <raiz>`
 (solo lee: `git show main:PROJECT_STATE.md` y los ficheros). Cada línea que está en el PS de `main` y
 no en el de la rama tiene que aparecer literal en uno de los tres runbooks y en la cola de HISTORIA
-de esta rama. Salen 28 líneas; 21 están en los dos sitios. Las otras 7 no se mudaron:
+de esta rama, como línea entera (sin la sangría); en el runbook vale también como arranque de una
+línea más larga, si tiene 40 caracteres o más, porque `idealTP` y F07 llevan allí el texto entero
+del Archivo 1, que PS recortaba. Salen 28 líneas; 20 están en los dos sitios. Las otras 8 no se
+mudaron:
 - `main`, la Current Feature de `main` y las dos «— ninguna desde el Archivo 40» las cambió la
   apertura (Archivo 41);
 - las dos cabeceras de «Technical Debt» y «Reglas vivas» siguen en PS, con su puntero añadido;
@@ -321,19 +326,20 @@ de esta rama. Salen 28 líneas; 21 están en los dos sitios. Las otras 7 no se m
 
 En la primera pasada la comprobación encontró dos líneas de HISTORIA que no eran literales: les
 había antepuesto «(de «…»)». Se corrigieron antes del commit, con el origen en la línea de la
-condición.
+condición. La primera versión del guion comparaba por subcadena y daba por bueno `main`, que casa
+con cualquier texto (hallazgo m2 del revisor); la de ahora compara líneas enteras.
 
 ## 7 · Tamaño final de PROJECT_STATE
 
-**21.805 bytes** (`wc -c`; `main`: 24.135; tope del test: 25.000; objetivo: 22.000). Quedan 3.195
-bytes libres hasta el tope. Con las líneas preparadas para el cierre quedaría en **22.254**.
+**21.910 bytes** (`wc -c`; `main`: 24.135; tope del test: 25.000; objetivo: 22.000). Quedan 3.090
+bytes libres hasta el tope. Con las líneas preparadas para el cierre quedaría en **22.359**.
 
 ## 8 · Líneas preparadas para el commit del contrato de la orden de cierre
 
 Simuladas en memoria con `docs/validation/anexos/PREVIA-SESION-5/simular_cierre.py <raiz>` (como
 el de VISOR-CONSTRUCCION y el de EA-CONEXION, con sus propias sustituciones):
 `test_hoja_de_ruta.py` a, b y c sin problemas (`a: []`, `b: []`, `c: []`), y los cuatro de
-`test_project_state.py` pasan. **PROJECT_STATE quedaría en 22.254 bytes.** El simulador lleva el
+`test_project_state.py` pasan. **PROJECT_STATE quedaría en 22.359 bytes.** El simulador lleva el
 texto exacto; aquí, lo que dice:
 
 - **PROJECT_STATE, V:** la hoja de preguntas lleva los recuadros de corrección de S-7, S-12, S-13 y
@@ -362,10 +368,285 @@ no corre ninguna herramienta: `git diff main --stat` (abajo, en la entrega) da `
 `docs/validation/anexos/PREVIA-SESION-5/` (`comprobar_movido.py` y `simular_cierre.py`). La CI de
 Linux por `fix/` no hace falta.
 
-**Negativas de la guardia después de la fase 0**, las dos resueltas con la forma que proponía su
-mensaje: `wc -c` y `pytest` en el mismo comando (los partí en dos llamadas), y un `sed -n` detrás de
-la tubería de un guion (lo cambié por `grep`, que la guardia admite).
+**Negativas de la guardia después de la fase 0**, las tres resueltas con la forma que proponía su
+mensaje: `wc -c` y `pytest` en el mismo comando (los partí en dos llamadas); un `sed -n` detrás de
+la tubería de un guion (lo cambié por `grep`, que la guardia admite); y `git add` con
+`contrato_rama.py` en el mismo comando, en la entrega (dos llamadas).
+
+## 10 · El encargo, punto por punto
+
+| # | Requisito (encargo y respuesta a la PARADA) | Estado | Evidencia |
+|---|---|---|---|
+| 0.1 | Base: `main` 24b7cba, `origin/main`, el tag, ninguna otra rama | Hecho | §0, tabla |
+| 0.2 | La CI de 24b7cba con `gh`, a mano y una vez | Hecho | §0: `gh run view 39705799089` → success |
+| 0.3 | Abrir con `abrir-rama`, tramo R4, informe `PREVIA-SESION-5.md`, rutas permitidas | Hecho, ampliado | 05a4eb0; `contrato.yaml` permite `docs/runbooks/` entero (los runbooks que reciben texto) y, ampliado después, `HOLDOUT-EXPOSICIONES.md` (fase 0) y `docs/validation/anexos/PREVIA-SESION-5/` (simulador) |
+| 0.4 | Skills `fase-cero` con `auditor-encargo`, `entregar-rama`; `/model` | Hecho | §2 (auditor); este recorrido; `/model` lo revisa Aleks en su terminal |
+| 0.5 | Negativas de la guardia: PARADA salvo seguir su forma, declarándolo | Hecho | seis negativas, las seis con la forma que proponía su mensaje: §0 (tres) y §9 (tres) |
+| 1 | Rama solo de documentos, que cierre el jueves 22 | Hecho | §9: ni código, ni tests, ni hooks; lista para revisión el 2026-10-21 |
+| 2.1 | Verificar la orientación con `orden_stop_punto` y `caja_bloque` | Hecho | §1: `parametros.yaml:631-632` y `:652-654` |
+| 2.2 | Recuadro de S-7 con el texto del encargo | Hecho, ampliado por la respuesta (1) | recuadro antes de S-7; esquema sustituido (§5) |
+| 2.3 | Recuadro de S-12 con el texto del encargo | Hecho de otra forma | la respuesta (0) lo sustituye por dos partes; desviación 1 de §5 (la segunda parte con el lado (b)) |
+| 2.4 | El cuerpo de PREGUNTAS.md intacto | Hecho | `git diff --numstat` → `105 0` |
+| 2.5 | Comprobar S-13, S-16 y S-17 | Hecho | §1, tabla: S-13 al revés (recuadro, respuesta 2), S-16 bien, S-17 no nombra la caja |
+| 3.1 | El paso 6 del runbook remite a la regla 2 | Hecho | `SESION-DE-PREGUNTAS.md`, paso 6 de «Antes»; §3 |
+| 3.2 | La línea del paso 1 con 2026-10-23; si True, PARADA | Hecho | `False` (§3); declarado en HOLDOUT-EXPOSICIONES, 2026-10-21 |
+| 3.3 | A.3 con una línea de Estado y la fecha; no HECHA; la fecha no va a PS | Hecho | `HOJA-DE-RUTA.md`, A.3; PS no la nombra |
+| 4.1 | Fase 0: lista, destinos y tamaño; PARADA si no llega sin tocar nada vivo | Hecho | §4; PARADA (0402698) |
+| 4.2 | Solo entradas enteras, nada resumido ni perdido | Hecho | §6; `comprobar_movido.py`: 20 líneas en su runbook y en HISTORIA, las 8 restantes explicadas |
+| 4.3 | 22.000 bytes o menos | Hecho | 21.910 (§7) |
+| 4.4 | Los tests de PS siguen pasando | Hecho | `make check` (abajo); `state check` OK; `test_project_state`, `test_hoja_de_ruta`, `test_kit` en verde |
+| 5 | Lo que NO cambia (motor, spec, parametros, ambigüedades, feedback, cases, holdout, `hoja_preguntas.py`, guardias, `.claude/`, Makefile) | Hecho | §9: `git diff main --stat`; `contrato_rama.py` en verde con todo eso protegido |
+| 6.1 | Informe: encargo frente a lo hecho, desviaciones, lo movido, tamaño, líneas preparadas, simuladas | Hecho | §5 a §8 y esta tabla |
+| 6.2 | La línea PICO DE MEMORIA de cada `make check` | Hecho | §0, §5 y «Los make check de la entrega» |
+| 6.3 | Revisor opus, dos ejes, con las comprobaciones añadidas | Hecho | al final |
+| 6.4 | CI: decir que no toca hooks, rutas ni código, con la lista | Hecho | §9 |
+| R0 | S-12 en dos partes, citas enfrentadas, «Para Aleks» corregido; el error del consultor al informe y a la orden de cierre | Hecho, con la desviación 1 | recuadro de S-12; §5; §8 |
+| R0b | S-15: el lado se pregunta en S-12 | Hecho | recuadro de S-15 |
+| R1 | S-7: esquema con el 0 arriba y tres mínimos rotulados | Hecho | recuadro de S-7 |
+| R2 | S-13: «baja mucho (la caja se hace muy grande)» | Hecho | recuadro de S-13 |
+| R3 | Conjunto A y Reglas vivas a `DECISIONES-DE-PROCESO.md`, enteras y en orden; punteros; BUSCAR se queda; PARADA si un test exige texto en PS | Hecho, con las desviaciones 3 a 5 | §5, §6; ningún test lo exige (§5, punto 3) |
+| R4 | S-9 y S-10 no dan por bueno ningún lado | Hecho | §5, «Punto 4» |
+| R5 | Revisor con la comprobación de S-7, S-12, S-13 y S-15 contra RN-005, `orden_stop_punto` y `caja_bloque` | Hecho | al final |
+
+## Los make check de la entrega
+
+- Commit 45fcf82 (la respuesta aplicada): exit 0, `2729 passed in 955.41s`, ningún `failed`,
+  `SELLO: make check en verde sobre el arbol 265118d76638d6c44af412b99db1d156fa1b5ad4`,
+  `PICO DE MEMORIA de make check: 298 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 288 MiB)`.
+- El último, el que sella este informe con los arreglos del revisor: su resultado (passed, SELLO y
+  PICO DE MEMORIA) no puede ir dentro del árbol que sella; va en el mensaje de su commit.
+
+## 11 · Informe del auditor (fase 0), entero
+
+El subagente `auditor-encargo`, 2026-10-21, sobre el encargo antes de la fase 0. Pegado tal cual (sin
+la sangría que añade el entorno); no cita ningún tramo no citable.
+
+> ## Auditoría del encargo · trabajo/previa-sesion-5 · 2026-10-21
+>
+> Resumen: 40 afirmaciones; 24 correctas, 3 incorrectas y 13 con matiz. 8 herencias no recogidas.
+>
+> He leído el encargo en `C:\Users\USER\Desktop\Bot v3\docs\encargos\trabajo-previa-sesion-5.md`. Rama `trabajo/previa-sesion-5`, solo lectura. No he abierto material protegido ni he ejecutado ningún comando del encargo.
+>
+> ### Afirmaciones
+> | # | Afirmación (literal del encargo) | Veredicto | Evidencia |
+> |---|---|---|---|
+> | 1 | «main 24b7cba, el commit de estado sobre el merge e76f829 (stable/F37x-ea-conexion)» | CORRECTA | `git rev-parse origin/main` da 24b7cba2…. `stable/F37x-ea-conexion^{commit}` da e76f829…. Solo existen `main` y la rama |
+> | 2 | «NA:V, hoja de ruta R4.1 y A.3, tramo R4» | CORRECTA | `HOJA-DE-RUTA.md:195-199` (R4.1 lleva `NA:V`); `:401-406` (A.3); `PROJECT_STATE.md:32` «F. V.»; `contrato.yaml:4` dice `tramo: R4` (`contrato_rama.py:123-124` acepta el id) |
+> | 3 | Skills abrir-rama, fase-cero (con auditor-encargo) y entregar-rama | CORRECTA | Existen en `.claude/skills/` y `.claude/agents/` |
+> | 4 | La regla nueva del consultor del 2026-10-21 sobre las negativas de la guardia | CORRECTA | `HISTORIA.md:11140` y `:11153-11154` |
+> | 5 | «la sesión 5 … es el viernes 23 de octubre … cerrar el jueves 22» | CORRECTA | El 2026-10-23 cae en viernes (calculado) |
+> | 6 | «PROJECT_STATE, que está en 24.135 bytes (tope 25.000)» | CORRECTA, con matiz | `git show main:PROJECT_STATE.md \| wc -c` da 24135; el tope es `TOPE_BYTES = 25_000` en `tests/unit/test_project_state.py:21` y `:52`. En la rama ya pesa 24.277 |
+> | 7 | «Es una rama solo de documentos: no cambia el motor, la spec…» | CORRECTA | `contrato.yaml:13-26` protege `src/`, `knowledge/`, `scripts/`, `tests/`, `.claude/` y el Makefile |
+> | 8 | «En una compra, el 0 … es el punto (… arriba) y el 1 es el otro extremo, del lado del stop (abajo); en una venta, al revés» | CORRECTA | `parametros.yaml:631-632` (`ultimo_pivote_m1`: «un BAJO en una venta») y `:653-654` (`r6`: «el extremo opuesto -la maxima en una venta-») |
+> | 9 | «S-7 preguntaba "desde dónde trazas el 0"» | CORRECTA | `docs/sesion-5/PREGUNTAS.md:254` |
+> | 10 | «con opciones que son las del 1 (A-48: r1, r4 y r6 de caja_bloque)» | MATIZ | `PREGUNTAS.md:255-257`: (a) es r1 y (b) es r4, pero (c) es «depende, ¿de qué?». Ninguna opción es r6 |
+> | 11 | «S-12 decía, de una compra, "el 1 queda por encima y el 0 por debajo", que es imposible» | CORRECTA | `PREGUNTAS.md:375-377` |
+> | 12 | Su fuente §0.e.6 «decía "el 0 de este lado y el 1 del otro"» | MATIZ | El literal es «el 0 queda de este lado y el 1 del otro», y el primer dibujo es «la caja entera queda al otro lado del nivel tomado» (`ACTIVAR-SESION-04.md:324-327`). La cita del encargo está recortada |
+> | 13 | «su propia línea "Para Aleks" habla del 0 por encima» | CORRECTA en lo literal | `PREGUNTAS.md:387-389`. Pero esa línea contradice al código (fila 20) |
+> | 14 | «PREGUNTAS.md está cerrado en main» | CORRECTA | Está en main desde el cierre de barrido-sesion-5 (`HISTORIA.md:10889`, `:10912-10917`) |
+> | 15 | «lleva un recuadro de corrección … y su cuerpo queda intacto» (como régimen) | MATIZ | La regla de recuadros de `CLAUDE.md` («Regimenes de cambio») cubre solo `docs/validation/`. `docs/sesion-N/` no tiene régimen escrito y `docs/sesion-4/` no tiene ningún recuadro. Es una decisión del consultor por analogía, no una regla, y conviene decirlo así en el informe |
+> | 16 | S-7: «(a) = r1, (b) = r4, (c) = r6» | CORRECTA | `parametros.yaml:653-656` |
+> | 17 | «r6 (el valor de hoy de caja_bloque)» | CORRECTA | `parametros.yaml:661-663`: `valor: r6`, DEFAULT_AMBIGUOUS, A-48 |
+> | 18 | «último alto de M1 = ultimo_pivote_m1, el valor de hoy; el punto de la vela de la toma = referencia_de_la_toma» | CORRECTA | `parametros.yaml:628-641` |
+> | 19 | «la de la vela abierta es A-49» | CORRECTA | `PROJECT_STATE.md:87`; `parametros.yaml:684-689` |
+> | 20 | S-12, «Para Aleks»: «hoy el bot mira solo el 0 (RN-005) y opera las dos: eso es (a)» | **INCORRECTA** | En alcista la toma es un BAJO y la entrada una COMPRA (`engine/zonas.py:115-116`). Hay ruido si `e.entrada > toma["nivel"]` en compra (`zonas.py:539`), y RN-005 prohíbe abrir (`strategy_spec.yaml:1216-1219`, `:1244-1251`). La descripción del predicado dice que en alcista el ruido está «por encima» (`strategy_spec.yaml:198-205`). A-50 lo pone con todas las letras: «una compra cuyo 0 queda por encima del nivel … es ruido aunque el 1 quede del lado del trader» (`ambiguedades.yaml:1505-1508`). Resultado: en los dos dibujos del recuadro el 0 queda por encima de la línea, así que el bot no opera **ninguno**. No hace ni (a) ni (b) |
+> | 21 | El dibujo de S-12: en una compra, «la caja entera queda por encima de la línea» del bajo tomado como lado bueno, y (b) «tiene que quedar por encima» | MATIZ grave | RN-005 y A-50 ponen el lado del trader en compra **por debajo** del bajo tomado (las mismas citas de la fila 20). Lo sostiene solo `ev-v9-004919-c6bfb3ee` («en una compra … tiene que desarrollarse todo por encima», `knowledge/evidence/v9/ev-v9-004919-c6bfb3ee.yaml:9-10`), y A-50 lo cita junto a los ítems de RN-005 con `contradiccion: null` (`ambiguedades.yaml:1515-1522`). El repo se contradice a sí mismo, y el recuadro hereda un lado que RN-005 llama ruido |
+> | 22 | «S-13, S-16 y S-17 la nombran» | MATIZ | S-13 (`:414`) y S-16 (`:465-482`) nombran el 0 y el 1. S-17 (`:489-520`) no nombra la caja ni el 0 o el 1. Además, S-13 `:414` dice «Si el 1 de la caja sube mucho» sobre una compra (`:404`). Con r6 el 1 de una compra es un mínimo (`parametros.yaml:653-654`), que en una ventana creciente no sube: posible orientación al revés, y la sesión tiene que mirarla |
+> | 23 | Runbook, paso 6 de «Antes» (hacia :76): «el día tiene que ser de abril o de agosto» | CORRECTA | `docs/runbooks/SESION-DE-PREGUNTAS.md:74-78`, la frase en `:76` |
+> | 24 | Regla 2: «abril, julio del 1 al 17, agosto y enero del 2 al 30» | CORRECTA | `SESION-DE-PREGUNTAS.md:21-23`; ADR-0078:7 y ADR-0079:7 |
+> | 25 | «Es un runbook: se edita directamente» | CORRECTA | `CLAUDE.md` no da régimen a `docs/runbooks/`, y `contrato.yaml:8` lo permite |
+> | 26 | La línea del paso 1 «imprime solo True o False» | CORRECTA | `SESION-DE-PREGUNTAS.md:48-56`; `casos_ocultos` existe en `cases/holdout.py:456` |
+> | 27 | «la confirmación de marzo sigue pendiente, así que A.3 no pasa a HECHA» | CORRECTA | Hecho cuando de A.3: «la confirmación está registrada y la sesión 5 tiene fecha» (`HOJA-DE-RUTA.md:406`). Lo pendiente: `PROJECT_STATE.md:67` (heredado 2) y `PREGUNTAS.md:696-698` |
+> | 28 | «solo se mueven entradas enteras, nunca se resumen ni se pierde texto» | CORRECTA | `docs/state/README.md:71-75` |
+> | 29 | Lo que sale «deja una línea con el puntero» | **INCORRECTA** | README: «En `PROJECT_STATE.md` no queda ni un resumen» (`:75`), y para las HECHAS «no queda ni el resumen» (`:37`). plataforma-adelantada no dejó ningún puntero en PS: el puntero fue a la hoja de ruta, en lugar del `HER:n` (`PLATAFORMA-ADELANTADA.md:456`, `:533-549`). El arranque con puntero de dieta-y-skills (`DIETA-Y-SKILLS.md:110-112`) es anterior al criterio del 2026-10-08 |
+> | 30 | «como lo hicieron trabajo/dieta-y-skills y trabajo/plataforma-adelantada» | MATIZ | Las dos lo hicieron de forma distinta (fila 29). El criterio vigente nace en `trabajo/adelgazar-estado` (`README.md:58-60`), que el encargo no nombra |
+> | 31 | Destino: «un runbook, ERRORES-RECURRENTES o el informe que la originó, si su texto ya está allí entero» | MATIZ | La condición (b) cuenta la Next Action, `CLAUDE.md` o un runbook, no un informe; un informe solo entra por (d) (`README.md:65-69`). El texto literal va siempre a HISTORIA con su bloque (`:72-75`). Llevar texto a un runbook para que valga (b) fue la opción 6a, con orden expresa del consultor (`PLATAFORMA-ADELANTADA.md:450-456`) |
+> | 32 | «o sale a HISTORIA bajo "# Next Action HECHA"» | MATIZ | Ese encabezado es solo para letras de la Next Action (`README.md:36`; `test_hoja_de_ruta.py:61` lee la letra). Technical Debt y los heredados usan `# Technical Debt PAGADA/RECLASIFICADA`, `# Pendiente heredado SALE` y `# Regla viva SUSTITUIDA` (`README.md:73-75`). Y un cambio de la Next Action va en el commit del contrato de la orden de cierre, no en las fases (`README.md:34-42`, `:77-80`) |
+> | 33 | Las deudas en mayúsculas de septiembre «son reglas o lecciones y no deudas abiertas (por ejemplo "BUSCAR EN EL CORPUS…")» | **INCORRECTA** | plataforma-adelantada (2026-10-18) las revisó una a una y se quedaron todas salvo tres (`PLATAFORMA-ADELANTADA.md:221-260`). La del ejemplo está «Abierta» (`:243-244`): el campo que pedía su condición (`HISTORIA.md:565`) no existe. `ADELGAZAR-ESTADO.md:114` también la dejó |
+> | 34 | «y los pendientes heredados» como candidatos | MATIZ | Los que quedan (2, 6, 7, 8, 9, 10 y 27) ya se revisaron y se quedaron con su motivo (`PLATAFORMA-ADELANTADA.md:189-215`). El consultor dijo «No busques más recortes» (`:781`) |
+> | 35 | «objetivo: 22.000 bytes o menos» | MATIZ | La pasada completa anterior se quedó en 22.517 (`PLATAFORMA-ADELANTADA.md:583`). Desde entonces EA-CONEXION añadió 5 líneas de Technical Debt (`HISTORIA.md:11176`). Lo probable es la PARADA, que el propio encargo prevé |
+> | 36 | Los tests que vigilan PS: test_project_state, test_kit (la tabla), test_hoja_de_ruta y state check | CORRECTA | `CLAUDE.md`; `test_hoja_de_ruta.py:9-10`; `cli.py:2922-2924` |
+> | 37 | «Los informes cerrados de docs/validation/ solo reciben recuadros» | CORRECTA, con matiz | `CLAUDE.md`, «Regimenes de cambio». Pero `contrato.yaml:6` solo permite `PREVIA-SESION-5.md` dentro de `docs/validation/`: hoy no cabe ningún recuadro ni ninguna fila de exposiciones (herencia 3) |
+> | 38 | «como simular_cierre.py de VISOR-CONSTRUCCION» | CORRECTA, con matiz | `docs/validation/anexos/VISOR-CONSTRUCCION/simular_cierre.py:1-12` (a, b y c de test_hoja_de_ruta y las cuatro de test_project_state, en memoria). Sus sustituciones son las de esa rama (`:129`), así que hay que escribir uno propio, como hizo EA-CONEXION (`EA-CONEXION.md:769`). No cubre test_kit ni state check |
+> | 39 | «CI: si la rama no toca hooks, rutas ni código, dilo con la lista de ficheros» | CORRECTA | Es lo que hizo barrido-sesion-5 (`HISTORIA.md:10934-10935`) |
+> | 40 | «La fecha no va a PROJECT_STATE» | CORRECTA | Ninguna regla la pide allí; A.3 es su sitio (`HOJA-DE-RUTA.md:403`) |
+>
+> ### Lo que el repo pide y el encargo no recoge
+> | # | Qué | Dónde lo pide | Evidencia |
+> |---|---|---|---|
+> | 1 | **A.4, la copia de seguridad: fecha límite «antes de grabar la próxima sesión».** R4.1 y V dependen de ella, y sigue INCOMPLETA | HOJA-DE-RUTA, PROJECT_STATE, PREGUNTAS | `HOJA-DE-RUTA.md:408-414`, `:217-219`, `:532`; `PROJECT_STATE.md:54` y `:146`; `PREGUNTAS.md:8-9` |
+> | 2 | La línea de G.2 sobre el paso 6 («dice todavía "abril o agosto"») tiene que salir o cambiar en las líneas preparadas para el commit del contrato | G.2 | `HOJA-DE-RUTA.md:467-468`; entró con el cierre del barrido (`HISTORIA.md:10924-10925`) |
+> | 3 | Declarar en HOLDOUT-EXPOSICIONES, el mismo día, la consulta de `casos_ocultos` del paso 1. El barrido la declaró tras el hallazgo a1 del revisor. Hoy el contrato no permite ese fichero | CLAUDE.md (ADR-0021 §4); precedente | `HOLDOUT-EXPOSICIONES.md:64`; `PREGUNTAS.md:60-63`; `contrato.yaml:5-12` |
+> | 4 | Si sale un heredado de PS, su `HER:n` sale de la hoja en el mismo commit, o falla test_hoja_de_ruta (b). Y no pueden salir sin dejar al vacío a quien los cita: la Technical Debt de la copia de seguridad (A.4 la cita por su texto) y las condiciones previas que nombra G | test_hoja_de_ruta; precedente | `test_hoja_de_ruta.py:165`; `PLATAFORMA-ADELANTADA.md:456`, `:249-252`, `:263-264`; `HOJA-DE-RUTA.md:409`; `PROJECT_STATE.md:40` |
+> | 5 | Las líneas «Esquema inventado» de S-7 («el punto de breaker es el mínimo de la última roja», en una compra) y de S-12, y «Si la última vela roja es muy pequeña, ¿pones el 0 en ella igual?», tienen la caja al revés. El texto corregido del encargo no las sustituye, y el esquema se dibuja para el trader | PREGUNTAS (cómo se leen) | `PREGUNTAS.md:252-253`, `:261`, `:375-377`; `:38-39` (los esquemas se enseñan) |
+> | 6 | Los textos de los códigos entran en `CODIGOS_DE_SESION_TEXTO["05"]` con la ingesta: el recuadro tiene que decir que S-7 y S-12 se toman de él y no del cuerpo | PREGUNTAS | `PREGUNTAS.md:22-24` |
+> | 7 | Todo cambio de la Next Action (incluida una letra HECHA) va en el commit del contrato de la orden de cierre, no en las fases | README (punto Y) | `docs/state/README.md:34-42`, `:77-80` |
+> | 8 | La contradicción entre RN-005 (en compra, por encima es ruido) y `ev-v9-004919-c6bfb3ee` (en compra, todo por encima), que A-50 junta sin marcarla. Decide qué dibujo es el correcto en S-12 | A-50 | `ambiguedades.yaml:1491-1522`; `strategy_spec.yaml:198-205` |
+>
+> ### Comandos del encargo
+> | # | Comando | ¿Existe y se ejecuta así? | Evidencia |
+> |---|---|---|---|
+> | 1 | La línea del paso 1: `uv run python -c "from pathlib import Path; from botsito.cases.holdout import casos_ocultos; print(any('<AAAA-MM-DD>' in c for c in casos_ocultos(Path('.'))))"` | Sí | `SESION-DE-PREGUNTAS.md:53`; `cases/holdout.py:456` |
+> | 2 | `gh run view 39705799089 …`, a mano y una vez | Fuera de botsito; la sesión ya lo ejecutó | `PREVIA-SESION-5.md:18` |
+> | 3 | `uv run python scripts/contrato_rama.py` | Sí | `contrato.yaml:28`; `scripts/contrato_rama.py` |
+> | 4 | `make check > make-check.log 2>&1` | Sí | `CLAUDE.md` |
+> | 5 | state check (`uv run botsito state check`) | Sí | `cli.py:2922-2924` |
+> | 6 | simular_cierre como el de VISOR-CONSTRUCCION (`uv run python <guion> <raiz>`) | Existe, pero con las sustituciones de su rama: hace falta uno propio | `anexos/VISOR-CONSTRUCCION/simular_cierre.py:12`, `:20`, `:129` |
+>
+> ### Lo que no pude comprobar
+> - La CI de main del run 39705799089: no consulto `gh`. El informe de la sesión trae la salida (`PREVIA-SESION-5.md:18`).
+> - Si 22.000 bytes se alcanzan sin tocar nada vivo. Hace falta la lista de la fase 0; el precedente apunta a que no (fila 35).
+> - El sentido real de v9 0:49:19 (compra o venta): no leo la transcripción, solo el ítem de evidencia.
+> - Si el esquema de S-16 («una roja pequeña que cierra en el 0», en una compra) es coherente con un punto que es un alto de M1. No veo el 0 y el 1 cambiados, pero no lo afirmo.
+> - La salida de la línea del paso 1 para el 2026-10-23: no la ejecuto, es un paso de la sesión.
+>
+> ### Lo más grave
+> Hay dos cosas. La primera: el recuadro de S-12 se escribiría sobre algo falso. Su «Para Aleks» dice que el bot mira solo el 0 y opera los dos dibujos (a). Según el código, en una compra el bot llama ruido a todo 0 por encima del bajo tomado (`zonas.py:115-116` y `:539`; `ambiguedades.yaml:1505-1508`), así que no opera ninguno de los dos dibujos, que tienen el 0 por encima. Y el lado bueno que dibuja la pregunta («la caja entera por encima») es el que RN-005 llama ruido. Lo sostiene un único ítem, `ev-v9-004919`, que el repo no marca como contradicción. Antes de fijar el texto, el consultor tiene que decidir de qué lado del nivel opera el trader en una compra. Si no, el recuadro le pregunta al trader por el lado contrario al que sostiene la spec, y la respuesta no se podrá leer contra A-50.
+>
+> La segunda: el adelgazamiento de PROJECT_STATE va contra su propio criterio. Pide dejar «una línea con el puntero» y mandar a HISTORIA bajo «# Next Action HECHA» lo que no es de la Next Action, cuando `docs/state/README.md:37`, `:72-75` y `:77-80` lo prohíben o lo dejan para el commit del contrato. Además, su ejemplo de deuda «que no es deuda» es una deuda abierta que dos ramas recientes revisaron y dejaron (`PLATAFORMA-ADELANTADA.md:243-244`; `ADELGAZAR-ESTADO.md:114`).
+>
+> A eso se suma lo que el encargo no recoge. Los esquemas de S-7 y S-12 siguen al revés en el cuerpo que se dibuja. La copia de seguridad A.4 es condición para grabar el viernes. Y el contrato no permite declarar la exposición de `casos_ocultos` en HOLDOUT-EXPOSICIONES.
+
+## 12 · Informe del revisor, entero
+
+El subagente `revisor` (opus), 2026-10-21, sobre HEAD 45fcf82 más el informe estadiado (§10 y el
+Estado). Pegado tal cual (sin la sangría que añade el entorno); no cita ningún tramo no citable.
+
+> ## Informe del revisor · trabajo/previa-sesion-5 · 2026-10-21
+>
+> Revisé el árbol estadiado: HEAD 45fcf82 más `docs/validation/PREVIA-SESION-5.md` estadiado (la tabla de §10 y el Estado). Base: 24b7cba.
+>
+> **Veredicto:** no hay nada que bloquee. Hay 4 hallazgos que importan (1 en el eje a y 3 en el b) y 3 menores. Los cuatro recuadros de la caja (S-7, S-12, S-13 y S-15) están bien orientados según RN-005, `orden_stop_punto` y `caja_bloque`. La desviación 1 es correcta geométricamente.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 0 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | A la fila nueva de `HOLDOUT-EXPOSICIONES.md` (2026-10-21) le faltan tres de las cinco columnas de la tabla: «Particiones», «Quien» y «¿Quema?». La exposición está declarada el mismo día (ADR-0021 §4 se cumple), pero la fila acaba en la segunda celda. | `docs/validation/HOLDOUT-EXPOSICIONES.md:15`: la cabecera es `\| Fecha \| Que se vio \| Particiones \| Quien \| ¿Quema? \|`. En `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md`, la fila añadida es `\| 2026-10-21 \| **Fase 0 de la rama …** … ni febrero. \|`: solo dos celdas. Las filas anteriores llevan, por ejemplo, `\| ninguna \| la sesion, con el encargo … \| No: … \|`. |
+>
+> **Comprobado sin hallazgos:**
+> - **Contrato.** `uv run python scripts/contrato_rama.py` da `CONTRATO: 15 ficheros dentro del contrato de trabajo/previa-sesion-5 (riesgo bajo, artefacto docs/validation/PREVIA-SESION-5.md, tramo 'R4', 2 comprobaciones para el revisor)` y sale con 0.
+> - **`make check`.** No lo ejecuté, porque escribe. Su evidencia está en `make-check.log`:
+>   - `2729 passed in 955.41s`;
+>   - `SELLO: make check en verde sobre el arbol 265118d76638d6c44af412b99db1d156fa1b5ad4`;
+>   - `PICO DE MEMORIA … 298 MiB`.
+>   - El sello coincide con `git rev-parse HEAD^{tree}` (= 265118d7…). El cambio estadiado del informe todavía no tiene sello.
+> - **Trailers `Fuente:`.** No aplica: la rama no toca `knowledge/spec/` ni `knowledge/cases/` (`git diff --name-status main...HEAD`).
+> - **Holdout y material.** No se toca nada de `knowledge/cases/holdout/`, ni libros, ni imágenes, ni fotogramas, ni crudas. La consulta a `casos_ocultos` está declarada (con el defecto de a1).
+> - **Regímenes de cambio.** No hay cambios en `knowledge/evidence/`, `knowledge/feedback/`, `data/manifests/` ni en el corpus. `HISTORIA.md` solo crece: 232 líneas añadidas y 0 borradas.
+> - **Ambigüedades y ADR.** No cambian.
+> - **Informes cerrados.** El único `docs/validation/` de main que cambia es `HOLDOUT-EXPOSICIONES.md`, que es un registro y recibe solo una fila añadida (`1 0`).
+> - **Tres guardias de una `cita`.** No aplica.
+> - **Cifras.** No hay código.
+> - **Tres citas del informe, contrastadas con su fuente, correctas:**
+>   - `parametros.yaml:631` (`un BAJO en una`), `:652-653` (`con el 0 en el punto`, `la maxima en una venta`) y `:662` (`valor: r6`);
+>   - `zonas.py:115-116` y `:537-539` (`ruido = e.entrada > toma["nivel"] if e.lado == COMPRA …`);
+>   - `strategy_spec.yaml:203`, y el comentario de A-50 en `ambiguedades.yaml:1505-1508`: «una compra cuyo 0 queda por encima del nivel … es ruido aunque el 1 quede del lado del trader».
+> - **Citas de las dos evidencias de S-12.** Las de `ev-v1-001306-f98e12e9` y `ev-v9-004919-c6bfb3ee` en los recuadros son literales de su `cita_literal`.
+> - **Punto 10.** No aplica: no hay ítems de evidencia nuevos.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 3 importa, 3 menor. Requisitos: 22 hechos, 1 parcial, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base, tag, CI y ninguna otra rama | Hecho | informe §0, tabla. La CI no la reconsulté. |
+> | 2 | Abrir con abrir-rama: tramo R4, informe y rutas | Hecho | `contrato.yaml:1-28` |
+> | 3 | Negativas de la guardia declaradas | Hecho | informe §0 y §9 (cinco) |
+> | 4 | S-7 y S-12 verificadas contra parametros.yaml | Hecho | informe §1; líneas comprobadas |
+> | 5 | Recuadro S-7 con el texto del encargo | Hecho | `PREGUNTAS.md:240-271`. El título, «Lo que todavía no sabemos», la pregunta, «Para precisar», «Para confirmar» y «Para Aleks» coinciden palabra por palabra con el encargo (líneas 23-24). |
+> | 6 | Recuadro S-12 | Hecho de otra forma (lo declara la respuesta, punto 0) | `PREGUNTAS.md:402-452` |
+> | 7 | El cuerpo de PREGUNTAS.md intacto | Hecho | `git diff --numstat main...HEAD -- docs/sesion-5/PREGUNTAS.md`: `105 0` |
+> | 8 | S-13, S-16 y S-17 comprobadas | Hecho | informe §1. Confirmo que S-16 (`:575-578`, «por encima del 0 en una compra») está bien. |
+> | 9 | Paso 6 del runbook remite a la regla 2 | Hecho | `SESION-DE-PREGUNTAS.md:76-77`, que concuerda con `:21` |
+> | 10 | Línea del paso 1 con 2026-10-23 → False | Hecho, según el informe | No la reejecuté (ver «Lo que no pude comprobar»). |
+> | 11 | A.3 con Estado y fecha, sin HECHA; la fecha no va a PS | Hecho | `HOJA-DE-RUTA.md:407-409`. `grep -c "2026-10-23\|23 de octubre" PROJECT_STATE.md` → `0`. |
+> | 12 | Fase 0: lista, destinos, tamaño y PARADA | Hecho | informe §4 y «Lo que necesito que decidas» |
+> | 13 | Entradas enteras, nada resumido ni perdido | Hecho | `comprobar_movido.py`: 21 OK; los 7 FALTA son cabeceras o líneas de apertura. Lo contrasté con el diff de PS, la cola de HISTORIA (`:11384-11424`) y los tres runbooks. |
+> | 14 | idealTP y F07 con el texto entero del Archivo 1 | Hecho | `HISTORIA.md:564` = `MIRAR-EL-MATERIAL.md`, viñeta idealTP. `HISTORIA.md:589` = `DECISIONES-DE-PROCESO.md`, última viñeta. Idénticos. |
+> | 15 | PS en 22.000 bytes o menos | Hecho | `wc -c PROJECT_STATE.md` → `21805` |
+> | 16 | Los tests de PS pasan | Hecho | `make-check.log` (2729 passed). El simulador los pasa sobre el texto simulado. |
+> | 17 | Lo que NO cambia (§5 del encargo) | Hecho | `git diff --name-status main...HEAD`: solo docs, `contrato.yaml` y dos guiones de anexo. Nada en src, knowledge, scripts, tests, .claude ni Makefile. |
+> | 18 | Líneas preparadas, simuladas | Hecho | `simular_cierre.py`: `a: []`, `b: []`, `c: []`, los cuatro tests de PS pasan, `PROJECT_STATE simulado: 22254 bytes`. Escribe solo en un `TemporaryDirectory`. |
+> | 19 | PICO DE MEMORIA de cada make check | Hecho | informe:26, :217 y :408 |
+> | 20 | Respuesta 0 (S-12 en dos partes) y 0b (S-15) | Hecho, con h1 | `PREGUNTAS.md:402-452` y `:538-546` |
+> | 21 | Respuesta 1 (esquema de S-7) y 2 (S-13 «baja mucho») | Hecho | `PREGUNTAS.md:252-256` y `:478-484` |
+> | 22 | Respuesta 3: DECISIONES-DE-PROCESO.md en el mismo orden, punteros, BUSCAR se queda | Hecho, con h2 | El orden es Change Regimes → Things → Decisions → Known Issues, igual que el PS de main. BUSCAR sigue en PS. |
+> | 23 | Respuesta 4: S-9 y S-10 | Hecho | `PREGUNTAS.md:361-362`: S-10 solo dice «el precio vuelve por encima», del precio y no de la caja. La copia de la respuesta es idéntica en el informe y en el encargo (`diff` → IGUALES). |
+> | 24 | Auditor pegado entero en la entrega | Parcial | h3 |
+>
+> **La geometría (comprobaciones añadidas 2 y 3).** En una compra la entrada es un ALTO de M1 (el pivote contrario: `:631`, un BAJO en una venta), y el 1 es el extremo opuesto, el mínimo (`:653`). El bot llama ruido a `entrada > nivel` (`zonas.py:539`).
+> - **S-7:** el 0 está arriba, en el último alto, y el 1 abajo, con r1, r4 y r6 bien emparejados con (a), (b) y (c).
+> - **S-13:** «baja mucho» es correcto, porque con r6 el 1 es un mínimo que baja al reubicar.
+> - **S-15:** «en una compra, por encima del bajo tomado es ruido» es correcto.
+> - **S-12, desviación 1:** es correcta. Con el 0 siempre por encima del 1, una caja a caballo tiene el 0 arriba y el 1 abajo. Si el trader contesta (b), su lado solo puede tener el 1. Que con (b) coincida con la lectura de hoy de A-50 también es correcto.
+> - **Las demás desviaciones:** la 2 (texto propio), la 3 (F07 a DECISIONES con el texto del Archivo 1) y la 5 (punteros) están justificadas. La 4 (el alcance de «las Reglas vivas») es una lectura que se puede defender, pero el consultor debería confirmarla. La respuesta dice «En PROJECT_STATE se quedan los encabezados que exigen los tests», y eso admite también la lectura de sacarlo todo. La rama la declara.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | h1 | importa | El «Para Aleks» del recuadro de S-12 describe el cuerpo de forma inexacta. Dice que los dos dibujos «del texto de abajo» tienen el 0 por encima, pero el cuerpo pone el segundo con el 0 POR DEBAJO. Leído tal cual, ese dibujo no es ruido para el bot, que compara solo el 0. Los que tienen los dos el 0 arriba son los dibujos del recuadro del encargo («texto anterior», como dice la respuesta). | `PREGUNTAS.md:449-450`: «no opera ninguno de los dos dibujos del texto de abajo, que tienen el 0 por encima de la línea». Frente a `PREGUNTAS.md:463-464`: «en el segundo el 1 queda por encima y el 0 por debajo». |
+> | h2 | importa | Los punteros llevan a un apartado que no es el del texto. El de «Technical Debt» en PS no apunta a ninguna sección de runbook sino a «PREVIA-SESION-5.md §5», y la tabla de destinos está en §6. Lo mismo pasa con los párrafos de entrada de MIRAR-EL-MATERIAL y RITUAL. El encargo pide que cada puntero lleve al sitio del texto entero. | `PROJECT_STATE.md` (diff, línea de cabecera de Technical Debt): «Lo que no era deuda, en su runbook desde trabajo/previa-sesion-5 (PREVIA-SESION-5.md §5)». `docs/runbooks/MIRAR-EL-MATERIAL.md:109` y `RITUAL.md:369`: «(PREVIA-SESION-5.md §5)». El informe estadiado tiene `289:## 6 · Lo que salió de PROJECT_STATE, y adónde`. |
+> | h3 | importa | El informe promete pegar entero el informe del auditor y no está, y el Estado ya dice «lista para revisión». | informe estadiado :109: «El informe del auditor, entero, se pega al final del informe en la entrega». Los `## ` del fichero acaban en `410:## Estado`, sin la sección del auditor. |
+> | m1 | menor | La cabecera de «Reglas vivas» conserva «Las que solo viven aqui», y la misma línea dice a continuación que cuatro bloques viven en otro sitio. | `PROJECT_STATE.md`, línea de «## Reglas vivas» (diff) |
+> | m2 | menor | §6 cuenta `main` entre las 7 líneas que «no se mudaron», pero el guion la marca OK: el `in` por subcadena casa cualquier línea corta. Para líneas cortas, el OK del guion no prueba nada. | Salida de `comprobar_movido.py`: `OK runbook=True historia=True \| main`. Informe:317. Guion: `en_rb = l.strip() in runbooks`. |
+> | m3 | menor | Si el trader contesta (c) «depende» a la primera parte de S-12, la segunda parte no tiene formulación. | `PREGUNTAS.md:438-441`: solo se contemplan la de la respuesta y la variante (b). |
+>
+> ### Lo que no pude comprobar
+> - La línea del paso 1 con `2026-10-23` (`casos_ocultos`). No la reejecuté: consultar `casos_ocultos` es una exposición que habría que declarar el mismo día, y yo no escribo. La evidencia que la sustituye es el informe §3 (`False`) y su fila en HOLDOUT-EXPOSICIONES.
+> - `make check`, que escribe. Lo sustituyen `make-check.log` y el informe. El árbol estadiado actual (informe con §10 y Estado) no tiene sello.
+> - La CI de main (run 39705799089). No consulté gh.
+> - Que el encargo sea copia tal cual del prompt original: no tengo el original.
+> - El sentido (compra o venta) de v9 0:49:19 en la transcripción, que es material protegido. Solo vi la `afirmacion` del ítem, que dice «en una compra».
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short && git diff --cached --stat`
+> 2. Read `docs/encargos/trabajo-previa-sesion-5.md` y `contrato.yaml`
+> 3. `git show :docs/validation/PREVIA-SESION-5.md | cat -n`
+> 4. `uv run python scripts/contrato_rama.py`
+> 5. `PYTHONUTF8=1 uv run python docs/validation/anexos/PREVIA-SESION-5/comprobar_movido.py .`
+> 6. `PYTHONUTF8=1 uv run python docs/validation/anexos/PREVIA-SESION-5/simular_cierre.py .`
+> 7. `cat` de los dos guiones de anexo
+> 8. `git diff main...HEAD -- PROJECT_STATE.md`
+> 9. `git diff main...HEAD -- docs/runbooks/ docs/plan/HOJA-DE-RUTA.md docs/validation/HOLDOUT-EXPOSICIONES.md`
+> 10. `sed -n '564p;589p'` y `grep -n` de idealTP/F07 en HISTORIA; cabecera de HOLDOUT-EXPOSICIONES
+> 11. `grep -n "^# "` de HISTORIA y `sed -n '11380,11424p' docs/state/HISTORIA.md`
+> 12. `sed -n '55,90p' docs/state/README.md`
+> 13. Un `grep -rn` sobre `.` (lo bloqueó la guardia; lo sustituí por Grep con glob acotado: CLAUDE.md, runbooks, state/README, tests, src, scripts, .claude, plan)
+> 14. `git diff --numstat` y `git diff -U2 main...HEAD -- docs/sesion-5/PREGUNTAS.md`
+> 15. `sed -n` del cuerpo de S-7, S-12, S-13 y S-15 en PREGUNTAS.md
+> 16. `sed -n` de `zonas.py:110-118,528-542`, `strategy_spec.yaml:195-207` y `parametros.yaml:624-666`
+> 17. Grep de los tres ids de evidencia; `grep -A3 cita_literal/afirmacion` de ev-v1-001306 y ev-v9-004919
+> 18. `git diff --name-status main...HEAD`, `--cached`, `make-check.log` (SELLO/PICO/passed) y `git rev-parse HEAD^{tree}`
+> 19. `git diff --numstat main...HEAD`; regla 2 y paso 1 de SESION-DE-PREGUNTAS.md
+> 20. Grep de las secciones de PS en tests/src/scripts; `grep -n` de líneas en parametros/strategy_spec; Grep de A-50 en ambiguedades.yaml; Grep de «sube mucho|baja mucho» y de «por encima|por debajo|el 0|el 1» en PREGUNTAS.md
+> 21. `git show :docs/validation/PREVIA-SESION-5.md | grep -n "^## \|auditor"`; `git diff --cached … | grep "^-"`
+> 22. `diff` de la respuesta del consultor: encargo líneas 51-60 frente a informe 223-232 → IGUALES
+> 23. `grep -c` de la fecha en PS, `wc -c PROJECT_STATE.md` y conteo de líneas borradas en HISTORIA (0)
+
+## 13 · Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Arreglado: la fila del 2026-10-21 de `HOLDOUT-EXPOSICIONES.md` lleva sus cinco celdas (Particiones «ninguna»; Quien «la sesion, con el encargo del consultor del 2026-10-21»; ¿Quema? «No: …»), como las anteriores. |
+| h1 | importa | Arreglado en el recuadro de S-12, en los dos sitios: en el motivo, «no opera ninguno de los dos dibujos del recuadro de ese encargo, que tienen los dos el 0 por encima de la línea»; en el «Para Aleks», «no opera ninguno de los dos dibujos del recuadro del encargo de `trabajo/previa-sesion-5` (el texto anterior a este), que tienen los dos el 0 por encima de la línea; el segundo dibujo del cuerpo de abajo, con el 0 por debajo y el 1 por encima, no se puede dar en una compra». |
+| h2 | importa | Arreglado. El puntero de «Technical Debt» en PS nombra los tres runbooks y la tabla de §6. Los párrafos de entrada de `MIRAR-EL-MATERIAL.md` y `RITUAL.md` apuntan a §6, y el de `DECISIONES-DE-PROCESO.md` a §5 y §6. Los recuadros de PREGUNTAS.md siguen citando §1 y §5, que es donde están el inventario y la aplicación. |
+| h3 | importa | Arreglado: el informe del auditor está entero en §11. |
+| m1 | menor | Arreglado: «Las que solo vivian aqui y se quedan». |
+| m2 | menor | Arreglado en el guion: compara líneas enteras (y, en el runbook, el arranque de una línea más larga si tiene 40 caracteres o más, para `idealTP` y F07). Da 20 en los dos sitios y 8 explicadas, `main` entre ellas; §6 y la tabla de §10 lo dicen. |
+| m3 | menor | Arreglado: la segunda parte de S-12 dice qué hacer si contesta (c): se le pide el caso del que depende y la segunda parte se hace sobre el lado que dé. Es texto mío, como los de la desviación 2. |
+
+**La desviación 4** (el alcance de «las Reglas vivas») la deja el revisor para que el consultor la
+confirme; la rama la mantiene negando por defecto (§5). Si el consultor quiere sacarlas todas, son
+el régimen del holdout y las tres primeras de «Things That Must Not Be Changed», con el mismo
+método.
+
+Tras los arreglos, PROJECT_STATE pesa 21.910 bytes (el puntero de «Technical Debt» nombra ahora los
+runbooks), y las líneas del cierre lo dejarían en 22.359; `simular_cierre.py` da `a: []`, `b: []`,
+`c: []` y los cuatro tests de PS pasan.
 
 ## Estado
 
-EN CURSO. La respuesta a la PARADA está aplicada; faltan el `make check`, el revisor y la entrega.
+Rama lista para revisión, NO cerrada. Todo el encargo y la respuesta a la PARADA están hechos (§10),
+con cinco desviaciones declaradas (§5); el revisor no encontró nada que bloquee, y sus cuatro
+«importa» y sus tres «menor» están arreglados (§13).

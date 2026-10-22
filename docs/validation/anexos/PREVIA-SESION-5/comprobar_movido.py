@@ -18,10 +18,16 @@ runbooks = "\n".join(
 historia = (raiz / "docs/state/HISTORIA.md").read_text(encoding="utf-8")
 cola = historia[historia.index("# Technical Debt RECLASIFICADA · sale de PROJECT_STATE.md en trabajo/previa-sesion-5"):]
 salen = [l for l in antes if l not in ahora and l.strip()]
+# lineas enteras (sin la sangria), no subcadenas: una linea corta como `main` casaria en cualquier sitio
+lineas_rb = {x.strip() for x in runbooks.splitlines()}
+lineas_hi = {x.strip() for x in cola.splitlines()}
 mal = 0
 for l in salen:
-    en_rb = l.strip() in runbooks
-    en_hi = l.strip() in cola
+    s = l.strip()
+    # la linea de PS que recortaba su texto (idealTP, F07) es el arranque de la del Archivo 1, que
+    # es la que lleva el runbook: vale como prefijo, solo si es larga
+    en_rb = s in lineas_rb or (len(s) >= 40 and any(x.startswith(s) for x in lineas_rb))
+    en_hi = s in lineas_hi
     print(("OK " if en_rb and en_hi else "FALTA ") + f"runbook={en_rb} historia={en_hi} | {l[:90]}")
     mal += not (en_rb and en_hi)
 print(f"{len(salen)} lineas salen; {mal} sin destino completo")
