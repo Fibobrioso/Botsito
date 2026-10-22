@@ -645,8 +645,51 @@ Tras los arreglos, PROJECT_STATE pesa 21.910 bytes (el puntero de «Technical De
 runbooks), y las líneas del cierre lo dejarían en 22.359; `simular_cierre.py` da `a: []`, `b: []`,
 `c: []` y los cuatro tests de PS pasan.
 
+## 14 · Orden de cierre del consultor (2026-10-21) y su punto 1, el commit previo
+
+Copiada tal cual:
+
+> Orden de cierre de trabajo/previa-sesion-5 (consultor, 2026-10-21). Antes de cerrar, un commit en la rama; después espera a que escriba /cerrar-rama.
+>
+> 1. Commit previo (make check sellado, con su PICO DE MEMORIA en el mensaje): en docs/sesion-5/PREGUNTAS.md, el recuadro de S-12 pasa a llevar el texto que va en la hoja del trader, tal cual, sin las dos variantes para (a) y (b), porque la forma neutra vale para las dos respuestas:
+>    Título: «De qué lado del nivel tomado va tu caja, y si puede quedar a caballo».
+>    Lo que nos has dicho: «el precio puede o bien continuar o bien puede hacer lo que quiera, no me importa nuestra operativa tiene que estar por debajo» (v1 0:13:06, ev-v1-001306-f98e12e9); «no nos importa lo que haga por debajo, aquí no hay ninguna entrada, tiene que ser todo por encima» (v9 0:49:19, ev-v9-004919-c6bfb3ee, de una compra); y la de la sesión 4 que ya estaba (v10 1:50:03, ev-v10-015003-dd8ab1bf, transcripción dudosa).
+>    Lo que todavía no sabemos: «Las dos primeras frases parecen decir cosas distintas: en una compra, ¿tu operación va por encima o por debajo del nivel de M15 que se tomó? Y, sabido eso, qué pasa si la caja queda a caballo del nivel.»
+>    Esquema inventado: el nivel de M15 que se tomó y dos cajas, una por encima y otra por debajo, sin decir cuál vale.
+>    Pregunta: «En una compra, después de que el precio toma la liquidez de M15, ¿tu caja tiene que quedar por encima o por debajo del nivel tomado? Y si la caja queda a caballo del nivel, con una parte de tu lado y otra del otro, ¿la operas? (a) por encima del nivel tomado; (b) por debajo del nivel tomado; (c) depende, ¿de qué?»
+>    Para precisar: «Si queda a caballo del nivel, con una parte de la caja de tu lado y otra del otro, ¿la operas, o tiene que quedar la caja entera de tu lado?»; «¿Y si el 0 queda justo en el nivel, ni de un lado ni del otro?»; «En venta, lo mismo al revés: ¿es igual?».
+>    Para confirmar al final: «En una compra, mi caja va ______ del nivel tomado, y si queda a caballo, ______.»
+>    El «Para Aleks» que escribiste se queda, y gana esta frase: «el texto "el 0 de tu lado y el 1 del otro" del encargo no se podía dibujar con la respuesta (b); error del consultor, corregido con la forma neutra».
+>
+> 2. Tag: stable/F37y-previa-sesion-5.
+>
+> 3. Commit del contrato: las líneas de §8 del informe tal cual. Comprueba en memoria que test_hoja_de_ruta.py y test_project_state.py siguen pasando y da el tamaño de PROJECT_STATE.
+>
+> 4. Hallazgos del consultor para la fila de ERRORES-RECURRENTES (además de la de §8):
+>    - importa (consultor y revisor del barrido): la caja orientada al revés en S-7, S-12 y S-13 pasó el revisor del barrido y la revisión del consultor; la vio el consultor al hacer el PDF. Lección: la geometría de la caja y el lado se comprueban contra orden_stop_punto, caja_bloque y RN-005 en el código antes de dar una pregunta por buena.
+>    - importa (consultor): el «Para Aleks» de S-12 («opera las dos») se escribió sin mirar RN-005 ni zonas.py:537-539, y la guía de la entrevista lo llevó al usuario. Lección: lo que la guía dice que hace hoy el bot se mide en el código, no se deduce del texto de la pregunta.
+>    - menor (consultor): «el 0 de tu lado y el 1 del otro» no se podía dibujar con la respuesta (b); se corrigió con la forma neutra.
+>    - Las seis negativas de la guardia resueltas con la forma que propone su mensaje, declaradas: válidas, por la regla del 2026-10-21.
+>
+> 5. Informe final: sha de main, el tag, el run de la CI de main en verde, las ramas que quedan (solo main) y el tamaño de PROJECT_STATE.
+
+**Punto 1, hecho en la rama.** El recuadro de S-12 lleva el texto de la orden tal cual: el título, «Lo
+que nos has dicho» (las tres citas), «Lo que todavía no sabemos», el esquema neutro, la pregunta con
+sus tres opciones, «Para precisar» y «Para confirmar al final». Salen las dos partes y las variantes
+para (a), (b) y (c), y con ellas la desviación 1 de §5 y el arreglo de m3 de §13. El motivo del
+recuadro lo dice (respuesta, punto 0, y esta orden, punto 1). El «Para Aleks» se queda, y gana la
+frase de la orden. El cuerpo de PREGUNTAS.md sigue intacto: solo hay líneas añadidas frente a `main`.
+Los puntos 2 a 5 son del cierre (`/cerrar-rama`).
+
+**Séptima negativa de la guardia**, en este commit: un `sed` con el comando `r` (insertar un
+fichero) para meter esta sección en el informe, fuera de la lista de `sed` que la guardia admite.
+Seguí la forma que proponía su mensaje: un guion de la carpeta de trabajo escrito con Write, con
+las rutas por argumento, y ejecutado en otra llamada. Declarada por la regla del 2026-10-21.
+
 ## Estado
 
 Rama lista para revisión, NO cerrada. Todo el encargo y la respuesta a la PARADA están hechos (§10),
 con cinco desviaciones declaradas (§5); el revisor no encontró nada que bloquee, y sus cuatro
-«importa» y sus tres «menor» están arreglados (§13).
+«importa» y sus tres «menor» están arreglados (§13). La orden de cierre (§14) llegó el 2026-10-21:
+su punto 1 está hecho en la rama, con la forma neutra de S-12 que sustituye a la desviación 1, y
+el cierre espera a `/cerrar-rama`.

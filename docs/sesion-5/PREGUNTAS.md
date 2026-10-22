@@ -405,47 +405,42 @@ A-49
 > (en una compra el 0 es el punto, arriba, y el 1 el extremo de abajo: `orden_stop_punto` y
 > `caja_bloque` de `knowledge/spec/parametros.yaml`); y la pregunta daba por bueno un lado del nivel
 > tomado («la caja entera por encima») que es el que RN-005 llama ruido. El repo se contradice en ese
-> lado y solo el trader lo puede decidir, así que S-12 pasa a tener dos partes, en este orden: el
-> lado, y después la de A-50 sobre el lado que conteste. **El «Para Aleks» de abajo estaba mal**
+> lado y solo el trader lo puede decidir, así que S-12 pregunta primero el lado y, sabido eso, la
+> caja a caballo (A-50), en una forma neutra que vale para las dos respuestas (respuesta a la PARADA,
+> punto 0, y orden de cierre del consultor del 2026-10-21, punto 1). **El «Para Aleks» de abajo estaba mal**
 > («opera el segundo dibujo solo si el 0 queda por encima», y en el encargo de esta rama «opera las
 > dos: eso es (a)»): hoy el bot no opera ninguno de los dos dibujos del recuadro de ese encargo, que
 > tienen los dos el 0 por encima de la línea; el error es del consultor
 > (respuesta a la PARADA, punto 0). **Lo que va a la hoja del trader, y a
 > `CODIGOS_DE_SESION_TEXTO["05"]` con la ingesta, es el texto de este recuadro.** El cuerpo de abajo
 > queda intacto.
-> - **Título:** «De qué lado del nivel tomado va tu caja, y si la operas a caballo».
+> - **Título:** «De qué lado del nivel tomado va tu caja, y si puede quedar a caballo».
 > - **Lo que nos has dicho:**
->   - en tus vídeos: «el precio puede o bien continuar o bien puede hacer lo que quiera, no me
->     importa nuestra operativa tiene que estar por debajo» (v1 0:13:06, `ev-v1-001306-f98e12e9`);
->   - sesión 3, de una compra: «no nos importa lo que haga por debajo, aquí no hay ninguna entrada,
->     tiene que ser todo por encima» (v9 0:49:19, `ev-v9-004919-c6bfb3ee`);
+>   - «el precio puede o bien continuar o bien puede hacer lo que quiera, no me importa nuestra
+>     operativa tiene que estar por debajo» (v1 0:13:06, `ev-v1-001306-f98e12e9`);
+>   - «no nos importa lo que haga por debajo, aquí no hay ninguna entrada, tiene que ser todo por
+>     encima» (v9 0:49:19, `ev-v9-004919-c6bfb3ee`, de una compra);
 >   - sesión 4: «si la caja queda a nivel de la liquidez que se tomó, ¿descartas la entrada? Eso creo
 >     que entonces a lo mejor tiene que ver con el igual [...] y no me da igual la respuesta es la ve
 >     no me da igual» (v10 1:50:03, `ev-v10-015003-dd8ab1bf`, transcripción dudosa).
-> - **Lo que todavía no sabemos:** en una compra, de qué lado del nivel tomado tiene que quedar tu
->   caja; y, si queda a caballo del nivel, si la operas.
-> - **Primera parte, el lado.**
->   - **Esquema inventado, no es un día real:** para una compra, la línea del bajo de M15 que el
->     precio tomó, y dos cajas: una entera por encima de la línea y otra entera por debajo, sin decir
->     cuál vale.
->   - **Pregunta:** «En una compra, después de que el precio toma la liquidez de M15, ¿tu caja tiene
->     que quedar por encima o por debajo del nivel tomado?
->     - (a) por encima;
->     - (b) por debajo;
->     - (c) depende, ¿de qué?»
-> - **Segunda parte, a caballo, sobre el lado que haya contestado.**
->   - **Esquema inventado, no es un día real:** la misma compra, con la caja cruzando la línea: el 0
->     arriba y el 1 abajo, uno a cada lado de la línea.
->   - **Pregunta:** «Y si la caja queda a caballo del nivel, con el 0 de tu lado y el 1 del otro, ¿la
->     operas?» Si contestó (b), por debajo: «Y si la caja queda a caballo del nivel, con el 1 de tu
->     lado y el 0 del otro, ¿la operas?» (en una compra el 0 está siempre arriba, así que con la caja
->     por debajo el lado del trader solo puede tener el 1). Si contestó (c), depende: se le pide el
->     caso del que depende y la segunda parte se hace sobre el lado que dé en ese caso.
+> - **Lo que todavía no sabemos:** «Las dos primeras frases parecen decir cosas distintas: en una
+>   compra, ¿tu operación va por encima o por debajo del nivel de M15 que se tomó? Y, sabido eso, qué
+>   pasa si la caja queda a caballo del nivel.»
+> - **Esquema inventado, no es un día real:** el nivel de M15 que se tomó y dos cajas, una por encima
+>   y otra por debajo, sin decir cuál vale.
+> - **Pregunta:** «En una compra, después de que el precio toma la liquidez de M15, ¿tu caja tiene
+>   que quedar por encima o por debajo del nivel tomado? Y si la caja queda a caballo del nivel, con
+>   una parte de tu lado y otra del otro, ¿la operas?
+>   - (a) por encima del nivel tomado;
+>   - (b) por debajo del nivel tomado;
+>   - (c) depende, ¿de qué?»
 > - **Para precisar:**
->   - ¿Y si el 0 queda justo en la línea, ni por encima ni por debajo?
->   - En venta, lo mismo al revés: ¿es igual?
+>   - «Si queda a caballo del nivel, con una parte de la caja de tu lado y otra del otro, ¿la operas,
+>     o tiene que quedar la caja entera de tu lado?»
+>   - «¿Y si el 0 queda justo en el nivel, ni de un lado ni del otro?»
+>   - «En venta, lo mismo al revés: ¿es igual?»
 > - **Para confirmar al final:** «En una compra, mi caja va ______ del nivel tomado, y si queda a
->   caballo, ______».
+>   caballo, ______.»
 > - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-04.md` §0.e.6 y A-50. Hoy el bot sigue RN-005: en
 >   una compra, la zona por encima del bajo tomado es ruido (`se_desarrolla_en_el_lado_de_ruido`, que
 >   compara solo el 0: `engine/zonas.py:537-539`), y no opera ninguno de los dos dibujos del recuadro
@@ -453,7 +448,9 @@ A-49
 >   encima de la línea; el segundo dibujo del cuerpo de abajo, con el 0 por debajo y el 1 por encima,
 >   no se puede dar en una compra. La respuesta a la primera parte decide si RN-005
 >   sigue o se reabre; la segunda es A-50, y con (b) es justo la lectura de hoy (el 0 al otro lado es
->   ruido aunque el 1 quede del lado del trader).*
+>   ruido aunque el 1 quede del lado del trader). El texto «el 0 de tu lado y el 1 del otro» del
+>   encargo no se podía dibujar con la respuesta (b); error del consultor, corregido con la forma
+>   neutra.*
 
 **S-12. Si la caja queda a caballo del nivel tomado** · en parte · A-50
 - **Lo que nos has dicho:**
