@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/previa-sesion-5
+main
 
 ## Current Feature
-trabajo/previa-sesion-5 EN CURSO (abierta el 2026-10-21 desde main 24b7cba; V de la Next Action, R4.1 y A.3): el repo listo para la sesión 5 con el trader (recuadros en S-7, S-12, S-13 y S-15 de docs/sesion-5/PREGUNTAS.md, el runbook de la sesión, la fecha y PROJECT_STATE más delgado). Encargo: docs/encargos/trabajo-previa-sesion-5.md. Informe: docs/validation/PREVIA-SESION-5.md.
+Ninguna rama abierta. trabajo/previa-sesion-5 cerrada en main el 2026-10-21 (stable/F37y-previa-sesion-5): el repo listo para la sesión 5 con el trader. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-e76f829 · merge de `trabajo/ea-conexion` (tag `stable/F37x-ea-conexion`): el primer EA de la capa de MT5 (R6a.1, ADR-0082), que nunca opera: se niega fuera de DEMO, lee la cuenta (con ACCOUNT_MARGIN_MODE, sin abortar), el reloj del servidor y las sesiones del símbolo, y lo escribe en el journal v1 (mql5/JOURNAL.md), con su validador en src/botsito/mql5bridge/ y la ruta de compilación y pruebas compilar.py. La corrida de cierre del 2026-10-21 en la demo, congelada en los anexos. Sobre `stable/F37w-barrido-sesion-5` (ff55b3d). Informe docs/validation/EA-CONEXION.md; el registro del cierre, al final de HISTORIA.
+e4563db · merge de `trabajo/previa-sesion-5` (tag `stable/F37y-previa-sesion-5`): recuadros de corrección en S-7, S-12, S-13 y S-15 de docs/sesion-5/PREGUNTAS.md (la caja de una compra, con el 0 arriba y el 1 abajo; S-12 pregunta primero de qué lado del nivel tomado va la caja, porque RN-005 y ev-v9-004919 se contradicen), el paso 6 de SESION-DE-PREGUNTAS.md, la fecha de la sesión 5 en A.3, y las Reglas vivas y lo que no era deuda, enteros, a docs/runbooks/DECISIONES-DE-PROCESO.md, MIRAR-EL-MATERIAL.md y RITUAL.md. Sobre `stable/F37x-ea-conexion` (e76f829). Informe docs/validation/PREVIA-SESION-5.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-e76f829 · merge: trabajo/ea-conexion, el EA de conexion de la capa de MT5 (R6a.1) con su journal v1, validado en la demo · tag stable/F37x-ea-conexion
+e4563db · merge: trabajo/previa-sesion-5, el repo listo para la sesion 5 (recuadros de S-7, S-12, S-13 y S-15, la fecha y PROJECT_STATE a su runbook) · tag stable/F37y-previa-sesion-5
 
 ## Tests Currently Passing
 1642 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
