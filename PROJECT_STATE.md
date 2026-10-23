@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-ci
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-ffmpeg cerrada en main el 2026-10-22 (stable/F38a-guardia-ffmpeg): ffprobe y ffmpeg en cuatro formas de lista cerrada en la guardia de Claude Code, para la ingesta de la sesión 5. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/guardia-ci, EN CURSO (abierta el 2026-10-23 desde main 2a99e64): la guardia de Claude Code niega, por la condición, esperar a la CI con una consulta repetida (una consulta de CI dentro de un bucle o acompañada de una espera) y deja la consulta suelta; paga la línea de Technical Debt del guion que espera a la CI en bucle (carril de guardias y deuda; no toca G.1). Encargo: docs/encargos/trabajo-guardia-ci.md. Informe: docs/validation/GUARDIA-CI.md. Cierra con stable/F38b-guardia-ci; la ingesta de la sesión 5 pasa a F38c.
 
 ## Stable Main State
 975c086 · merge de `trabajo/guardia-ffmpeg` (tag `stable/F38a-guardia-ffmpeg`): en `.claude/hooks/guardia.py`, `_analizar_ffmpeg` y `R_FFMPEG` (ffprobe de metadatos, silencios y volumen con salida nula, y el audio a un fichero fuera del repo; la entrada, un contenedor de vídeo por extensión y bytes mágicos), y en `tokenizar`, `$'…'` con escapes como valor desconocido y `$"…"` como `"…"`; tests/unit/test_guardia_ffmpeg.py; las cuatro formas en la skill ingerir-sesion. Sobre `stable/F37z-hoja-sesion-05` (e044b15). Informe docs/validation/GUARDIA-FFMPEG.md; el registro del cierre, al final de HISTORIA.
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 43 (2026-10-22).
+— ninguna desde el Archivo 44 (2026-10-23).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 43 (2026-10-22).
+— ninguna desde el Archivo 44 (2026-10-23).
