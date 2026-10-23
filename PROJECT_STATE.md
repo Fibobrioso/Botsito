@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/guardia-ffmpeg
+main
 
 ## Current Feature
-trabajo/guardia-ffmpeg, EN CURSO (abierta el 2026-10-22 desde main 8cfed04): la guardia de Claude Code deja cuatro formas de ffprobe y ffmpeg sobre un vídeo que no protege, por lista cerrada, para la ingesta de la sesión 5 (NA:K, la parte de ffprobe y ffmpeg; hoja de ruta G.1). Encargo: docs/encargos/trabajo-guardia-ffmpeg.md. Informe: docs/validation/GUARDIA-FFMPEG.md. F37 agotada: cierra con stable/F38a-*.
+Ninguna rama abierta. trabajo/guardia-ffmpeg cerrada en main el 2026-10-22 (stable/F38a-guardia-ffmpeg): ffprobe y ffmpeg en cuatro formas de lista cerrada en la guardia de Claude Code, para la ingesta de la sesión 5. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-e044b15 · merge de `trabajo/hoja-sesion-05` (tag `stable/F37z-hoja-sesion-05`): la hoja 05 en scripts/transcribir_sesion.py (ORDEN_SESION_05 S-1..S-25, sus textos de PREGUNTAS.md, SESION_EN_CURSO = "05"; v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`), la regla del 2026-10-21 en docs/runbooks/DECISIONES-DE-PROCESO.md, y un recuadro en docs/sesion-5/PREGUNTAS.md junto a :22-24. Sobre `stable/F37y-previa-sesion-5` (e4563db). Informe docs/validation/HOJA-SESION-05.md; el registro del cierre, al final de HISTORIA.
+975c086 · merge de `trabajo/guardia-ffmpeg` (tag `stable/F38a-guardia-ffmpeg`): en `.claude/hooks/guardia.py`, `_analizar_ffmpeg` y `R_FFMPEG` (ffprobe de metadatos, silencios y volumen con salida nula, y el audio a un fichero fuera del repo; la entrada, un contenedor de vídeo por extensión y bytes mágicos), y en `tokenizar`, `$'…'` con escapes como valor desconocido y `$"…"` como `"…"`; tests/unit/test_guardia_ffmpeg.py; las cuatro formas en la skill ingerir-sesion. Sobre `stable/F37z-hoja-sesion-05` (e044b15). Informe docs/validation/GUARDIA-FFMPEG.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-e044b15 · merge: trabajo/hoja-sesion-05, la hoja de la sesion 05 en transcribir_sesion.py antes de grabar y la regla del 2026-10-21 en DECISIONES-DE-PROCESO · tag stable/F37z-hoja-sesion-05
+975c086 · merge: trabajo/guardia-ffmpeg, ffprobe y ffmpeg en cuatro formas de lista cerrada y las comillas $'...' y $"..." en el tokenizador de la guardia · tag stable/F38a-guardia-ffmpeg
 
 ## Tests Currently Passing
 1655 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
