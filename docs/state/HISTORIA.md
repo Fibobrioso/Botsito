@@ -11861,3 +11861,78 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 42 (2026-10-22).
+
+# Registro de cierre · `trabajo/guardia-ffmpeg` (2026-10-22)
+
+- Orden de cierre de Aleks del 2026-10-22, tras la revisión del consultor de a841e58 y del run
+  39885418720, pegada en la conversación y lanzada después por Aleks con `/cerrar-rama`; ejecutada
+  siguiendo `RITUAL.md` con la skill `cerrar-rama`. Rama aceptada tras tres pasadas del revisor
+  (opus; GUARDIA-FFMPEG.md §10, §13 y §16) y dos respuestas del consultor (§11 y §14). Nunca se
+  cerró sin la orden. Sus puntos, todos en este commit:
+  1. K de la Next Action CAMBIA (no sale): entra la línea PRIORITARIA del alias de la raíz
+     (`\\?\`, el nombre corto 8.3, un directorio que contiene el repo, y las variables resueltas
+     con el entorno del hook), después el falso positivo de `exigir_sin_crudo` y lo que queda de
+     ENTRADA-JULIO.md §8, sin mencionar ffprobe ni ffmpeg; 1b, G.1 de la hoja de ruta gana la
+     línea prioritaria con el mismo texto corto;
+  2. A.4 HECHA (lo declaró Aleks el 2026-10-22, con capturas al consultor): en la hoja de ruta, su
+     `**Estado:** HECHA`, sus Refs con la deuda nueva y fuera la línea de «Fechas fijas» de la
+     copia; en PROJECT_STATE, la línea de Technical Debt de la copia de seguridad, sustituida;
+  3. las metas de Aleks, una línea nueva en la cabecera de la hoja de ruta;
+  4. la fila de ERRORES-RECURRENTES (la del §9 con tres agujeros de `main`, y los tres hallazgos
+     del consultor de la orden);
+  5. una fila de HOLDOUT-EXPOSICIONES del 2026-10-22 (la cabecera de contenedor de v1, v5 y v10) y
+     un recuadro de corrección en el §6 del informe.
+- **DESVIACIÓN AUTORIZADA del ritual** (orden de cierre; precedente: el cierre de
+  `trabajo/hoja-sesion-05`): el commit del contrato toca, además de lo que prevén `RITUAL.md` y la
+  skill, la línea de Technical Debt de PROJECT_STATE (punto 2), `docs/plan/HOJA-DE-RUTA.md` fuera
+  de letras y heredados (puntos 1b, 2 y 3) y `docs/validation/HOLDOUT-EXPOSICIONES.md` (punto 5).
+  La puerta de `git status --short` da, además de `D  contrato.yaml`, `M  docs/state/HISTORIA.md`,
+  `M  docs/runbooks/ERRORES-RECURRENTES.md`, `M  PROJECT_STATE.md` y `M  docs/plan/HOJA-DE-RUTA.md`,
+  la línea `M  docs/validation/HOLDOUT-EXPOSICIONES.md` que la orden autoriza **y la línea
+  `M  docs/validation/GUARDIA-FFMPEG.md`**, que la orden no lista en la puerta pero exige su punto 5
+  («el §6 del informe se corrige con un recuadro en ese mismo commit»); nada más. La puerta se da
+  por buena así.
+- **Lo que entra** (carril de guardias y deuda, G.1; la parte de ffprobe y ffmpeg de K):
+  - `.claude/hooks/guardia.py`: `_analizar_ffmpeg` y `R_FFMPEG`, cuatro formas de LISTA CERRADA de
+    ffprobe y ffmpeg sobre un vídeo que no se protege (metadatos; silencios y volumen con salida
+    nula; el audio a un fichero FUERA del repo), todo lo demás negado; excepción declarada a la
+    familia 3 (no lee un guion; lo de antes y a la vez se exige igual); ffprobe sale de
+    `SIN_LECTURA_DE_RUTAS`; la entrada, un contenedor de vídeo por extensión y bytes mágicos, por
+    `motivo_fichero` en su texto, resuelta y sin puntos ni espacios finales; para toda la guardia
+    (y para `solo_lectura.py`, que comparte `tokenizar`), la comilla `$'…'` con escapes tiene
+    valor desconocido y `$"…"` se lee como `"…"`;
+  - `tests/unit/test_guardia_ffmpeg.py` (nuevo): la matriz de 102 casos (20 pasan, 82 negados),
+    cuatro roturas a propósito, el test de alias de Windows y la comparación con la guardia de
+    `main` (se abren 19, las permitidas que `main` negaba, y se cierran 20) (1647 a 1655 tests);
+  - `.claude/skills/ingerir-sesion/SKILL.md`, paso 2: las cuatro formas exactas.
+- **Lo que sale** (la parte de ffprobe y ffmpeg de K, que ya no está en la Next Action): la frase de
+  ENTRADA-JULIO.md §8 «que `ffprobe` y `ffmpeg -i` sobre un vídeo lean y no ejecuten»: hecha aquí.
+- Letras: ninguna sale ni entra; cambia K. Ningún heredado sale. En la hoja de ruta, A.4 pasa a
+  HECHA (no es una letra); V sigue nombrando «la copia de seguridad (A.4)» entre sus dependencias:
+  la orden no cambia V, y queda cumplida.
+- Negativas de la guardia o del clasificador: once en la rama, todas resueltas con la forma que
+  propone la guardia (GUARDIA-FFMPEG.md §5); una más en este cierre (`sed … | rev`: detrás en la
+  tubería solo filtros de la lista → `grep -o`).
+- Letra del tag: la última cerrada era la z de F37 (`stable/F37z-hoja-sesion-05`); F37 está
+  agotada y la serie sigue en F38a. `stable/F38a-*` no existe en local ni en origin (comprobado
+  antes del tag).
+- Tag: `stable/F38a-guardia-ffmpeg`. El merge es
+  `git rev-parse "stable/F38a-guardia-ffmpeg^{commit}"`.
+- Commits de la rama: `0252d4f` (apertura: encargo, contrato y Archivo 43), `4dbb48b` (la regla,
+  el test, la skill y el informe), `3372f7a` (los hallazgos de la primera pasada del revisor),
+  `c0510f2` (la respuesta del consultor: bytes mágicos, la comilla `$'…'` y los finales de Windows),
+  `79a560b` (la segunda pasada del revisor), `8347e4e` (la segunda respuesta: la comilla `$"…"` y
+  el riesgo residual acotado), `a841e58` (la pasada corta del revisor) y el de este registro.
+- CI de Linux por `fix/guardia-ffmpeg`, todos con solo el fallo esperado de `state check`
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`): run 39822012476 sobre 4dbb48b (1
+  failed, 2727 passed, 10 skipped); 39830835494 sobre 3372f7a (1 failed, 2727 passed, 11 skipped);
+  39871631795 sobre c0510f2 (1 failed, 2729 passed, 11 skipped); 39876229031 sobre 79a560b (ídem);
+  39880288314 sobre 8347e4e (1 failed, 2730 passed, 11 skipped); y 39885418720 sobre a841e58: el
+  intento 1 se canceló a los 20 minutos instalando ffmpeg con `apt-get`, antes de `make check`
+  (no es un resultado, `RITUAL.md`), y se relanzó con `gh run rerun`; el intento 2, el mismo run,
+  dio 1 failed, 2730 passed, 11 skipped. El salto 11.º es el test de alias, solo de Windows. La CI
+  de `main` corre tras el push.
+- Exposiciones: una, declarada en este commit en HOLDOUT-EXPOSICIONES.md (fila del 2026-10-22): los
+  primeros 4096 bytes de v1, v5 y v10 (v10, en cuarentena), de los que solo se imprimió la cabecera
+  del contenedor y la posición del primer byte nulo.
+- Informe: `docs/validation/GUARDIA-FFMPEG.md`. Encargo: `docs/encargos/trabajo-guardia-ffmpeg.md`.

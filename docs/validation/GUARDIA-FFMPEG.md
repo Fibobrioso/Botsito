@@ -285,6 +285,14 @@ Al aplicar la segunda respuesta (§15), dos más:
 
 ## §6 · Exposiciones
 
+> **CORRECCIÓN (2026-10-22, `trabajo/guardia-ffmpeg`, en el commit del cierre; hallazgo de la
+> sesión en la orden de cierre del consultor).** Este apartado decía «Ninguna» y llamaba a los tres
+> vídeos de la medida del byte nulo «vídeos de sesión que no se protegen». Uno de ellos,
+> `Grabación de pantalla 2026-10-04 105617.mp4`, es **v10, la sesión 4, en cuarentena**. Lo que se
+> leyó fueron sus primeros 4096 bytes, y lo que se imprimió, solo la cabecera del contenedor y la
+> posición del primer byte nulo: ningún contenido, ninguna transcripción. Va declarado en
+> `docs/validation/HOLDOUT-EXPOSICIONES.md`, fila del 2026-10-22. El cuerpo de abajo queda intacto.
+
 Ninguna. La rama no leyó material del punto 3 de `CLAUDE.md`, ni transcripciones, ni fotogramas; los
 vídeos de los tests son ficheros inventados en `tmp`. Para fijar la condición de §12 se leyeron, con
 un guion de Python (`cabeceras.py`, no ffmpeg), los primeros 4096 bytes de tres vídeos de sesión que
