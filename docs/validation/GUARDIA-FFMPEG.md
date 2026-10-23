@@ -287,9 +287,12 @@ la posición del primer byte nulo: 0, 45 y 0. No es contenido de la sesión.
   pico 295 MiB; CI de Linux, run 39830835494: `1 failed, 2727 passed, 11 skipped`, el único fallo
   el esperado (`test_state_check_ok_on_real_repo`) y el salto de más, el test de los alias (solo
   Windows).
-- El commit de la respuesta del consultor (§12), el último de la rama: su `make check` y su run de
-  la CI de Linux no caben en el commit que sellan; van en el mensaje de entrega a Aleks, y el run
-  que cuenta es ese. El revisor, la segunda pasada, va en §13.
+- `c0510f2` (la respuesta del consultor, §12): `make check` exit 0, 2741 passed, `SELLO … 0bdda303…`,
+  pico 297 MiB; CI de Linux, run 39871631795: `1 failed, 2729 passed, 11 skipped`, el único fallo
+  el esperado. El revisor, la segunda pasada, sobre este commit (§13).
+- El commit que pega el informe del revisor (§13), el último de la rama: su `make check` y su run
+  de la CI de Linux no caben en el commit que sellan; van en el mensaje de entrega a Aleks, y el
+  run que cuenta es ese.
 
 ## §8 · El encargo, punto por punto
 
@@ -343,6 +346,14 @@ a las tres preguntas); lo que añadió su respuesta, punto por punto, en §12.
 Las tres las contestó el consultor el 2026-10-22 (§11): 1, sí; 2, una línea nueva en K, la parte
 prioritaria, en el commit del contrato del cierre (no un Technical Debt); 3, no sobra ninguna.
 
+4. (Nueva, de la segunda pasada del revisor, §13 a1.) La comilla `$"…"` deja leer la carpeta de
+   marzo con `cat`, `head` o `grep`, en `main` y en la rama. Opciones: (a) cerrarla aquí, como
+   `$'…'`: una línea en `tokenizar` (`$"` se lee como `"`), con sus casos en la matriz, roto a
+   propósito, la tabla de qué cambia frente a `main`, otro `make check` y otra CI; (b) dejarla en
+   la línea prioritaria de K (ya preparada abajo). Recomiendo (a): lee material reservado, el
+   arreglo es una línea, y la clase es la misma que el consultor ya mandó cerrar aquí. Coste de
+   (b): el agujero sigue abierto en `main` hasta la rama de K.
+
 **Next Action, preparada para el commit del contrato del cierre** (`RITUAL.md`, puntos 3 y 4; en la
 rama no se toca). La K pierde la frase de ffprobe y gana, delante, la línea del alias de la raíz
 (respuesta del consultor, pregunta 2, y «lo menor», tercer punto); queda:
@@ -351,6 +362,8 @@ rama no se toca). La K pierde la frase de ffprobe y gana, delante, la línea del
 > cat, Read, grep -r y find … -exec cat sobre la raíz escrita con \\?\ o con su nombre corto 8.3,
 > o sobre un directorio que CONTIENE el repo; y las variables se resuelven con el entorno del hook,
 > otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11; en ffprobe y ffmpeg ya está cerrado).
+> Y la comilla `$"…"`, que el tokenizador deja con el `$` literal: `cat $"<marzo>"` pasa
+> (GUARDIA-FFMPEG.md §13, a1), salvo que el consultor la cierre en trabajo/guardia-ffmpeg.
 > Rama propia de la familia 1 de la guardia, con un test que rompa a propósito los dos sentidos.
 > Después, la guardia exigir_sin_crudo da un falso positivo con una asignación a una variable
 > llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si
@@ -653,10 +666,78 @@ vez, en §13.
 
 ## §13 · El revisor, segunda pasada
 
-Se lanza sobre el commit de §12, con este informe terminado, con el encargo de la respuesta del
-consultor: comprobar sus arreglos e intentar romper la regla con formas que no estén en la matriz
-(envoltorios, comillas, escapes, ficheros que se hacen pasar por otro formato). Su informe se pega
-aquí, tal cual, en el commit siguiente.
+Lanzado sobre `c0510f2` (el commit de §12), con este informe terminado y el encargo de la respuesta
+del consultor: comprobar sus arreglos e intentar romper la regla con formas que no estén en la
+matriz (envoltorios, comillas, escapes, ficheros que se hacen pasar por otro formato). Resultado:
+eje (b), 8 de 8 hechos y ningún hallazgo; la regla aguantó todo lo que probó fuera de la matriz.
+Eje (a), un «importa» heredado de `main`.
+
+### Lo que se hizo con los hallazgos del revisor (segunda pasada)
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa (de `main`) | **No se arregla en esta rama.** La comilla `$"…"` (traducción de locale) se tokeniza con el `$` literal, y `cat`, `head` o `grep` sobre `$"<carpeta de marzo>/v.mp4"` pasan en `main` y en la rama. No atraviesa la regla de ffmpeg (allí niega `R_FFMPEG`). El encargo dice que no cambia «cualquier otra regla de la guardia salvo lo declarado», y la respuesta del consultor amplió solo a `$'…'`: ampliar otra vez lo decide el consultor (pregunta 4 de §9). El arreglo propuesto es de una línea: en `tokenizar`, `$"` se lee como `"` (sin catálogo de traducción, bash da el mismo texto). Mientras, va a la línea prioritaria de K, preparada en §9. |
+| — | «lo que no pude comprobar» | Qué hace ffmpeg con un fichero que lleva los bytes mágicos y algo más: sin medir, en §12 y aquí. Un enlace que cambia entre la decisión y la ejecución: fuera del alcance de una guardia que decide antes; el enlace que ya existe se resuelve con `realpath`. Las permitidas con un envoltorio delante y las redirecciones `2>>`, `&>` o `3>` con una entrada válida: no medidas por el revisor (solo lee); el bucle de las salidas no mira el operador. |
+
+### Informe del revisor, segunda pasada (pegado tal cual)
+
+## Informe del revisor · trabajo/guardia-ffmpeg · 2026-10-22 (SEGUNDA pasada, sobre c0510f2)
+
+Base: `git merge-base main HEAD` = 8cfed04. Commits de la rama: 0252d4f (apertura), 4dbb48b (regla), 3372f7a (hallazgos 1a pasada), c0510f2 (respuesta del consultor). `git status --short` vacío. Todo lo medí con `decidir` de la rama (HEAD) y de `main`, cargando el fuente de cada una con `exec` del `git show` (sin escribir a disco) y apuntando `Politica` al repo real, para que `motivo_fichero` sea el de verdad; nunca ejecuté ffmpeg ni ffprobe. Soy de solo lectura: no pude usar Write ni crear ficheros con Bash (lo niega `solo_lectura.py`), así que no monté un repo de `tmp` con vídeos propios; medí sobre entradas inventadas/inexistentes y rutas protegidas reales (sin abrir su contenido), y para confirmar que las PERMITIDAS PASAN me apoyo en la matriz del test (fixtures con cabeceras reales, en verde local y en CI).
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 0 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa (heredado de `main`, NO lo introduce la rama) | La comilla de traducción de locale `$"..."` no se interpreta: el tokenizador conserva el `$` literal, y con eso un lector normal lee material reservado. `cat $"<marzo>"`, `head -c 10 $"<marzo>"` y `grep x $"<marzo>"` **PASAN en la rama Y en main**, mientras bash quita el `$` y abre el vídeo real de la carpeta de marzo (holdout/material reservado, CLAUDE.md §3). Es el hermano exacto del agujero de `$'...'` que el consultor mandó cerrar en esta rama «porque lee material protegido»: el arreglo de la rama (`_ansi_c_con_escapes`, `tokenizar`) cubre `$'...'` pero no `$"..."`. No rompe la regla de ffmpeg (sobre una entrada `$"..."` la regla niega con R_FFMPEG, porque la ruta con `$` no es un vídeo válido), ni es un fallo de implementar lo que el consultor pidió (pidió ANSI-C `$'...'`); es un agujero guard-wide que esta pasada destapa al «intentar romper con comillas». | Medido rama vs main: `cat $"corp…/Back…test marzo 2026/v.mp4"` → rama PASA, main PASA. Control: `cat "<marzo>"` (comillas normales) → las dos «leer el contenido de corpus/…». Control del hermano ya cerrado: `cat $'…Back\x74est…'` → rama niega («el argumento `$'corpus/…` se construye al ejecutarse»), main PASA. En la regla de ffmpeg: `ffprobe -show_format $"<marzo>"` → rama R_FFMPEG (ruta `$corpus/…`, no es contenedor). |
+
+Comprobado sin hallazgos:
+- **Contrato:** `uv run python scripts/contrato_rama.py` → «CONTRATO: 12 ficheros dentro del contrato … 3 comprobaciones». Comprobación 1 (`contrato_rama.py`) ✓. Comprobación 2 (`uv run pytest -q tests/unit/test_guardia_claude.py tests/unit/test_guardia_ffmpeg.py`) → todo en puntos, sin F ni E. Comprobación 3 (`make check`, que escribe → no la ejecuto): en `make-check.log` «2741 passed», «SELLO … sobre el arbol 0bdda303d6b5ef94ba243eb1567b5fb42d737abd», «PICO DE MEMORIA … 297 MiB»; `git rev-parse c0510f2^{tree}` = 0bdda303… (coincide con el sello).
+- **CI:** `gh run view 39871631795` → headSha c0510f2, fix/guardia-ffmpeg, conclusion failure con `1 failed, 2729 passed, 11 skipped`; el único FAILED es `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (rama `fix/`, único fallo aceptado); el 11º skip es el test de alias (solo Windows). El informe §7 dice que ese run es «el que cuenta»; cuadra.
+- **Trailers `Fuente:`, ADR, ambigüedades, guardias de `cita`, evidencia nueva:** no aplican. `git log main..HEAD -- knowledge/spec knowledge/cases` vacío; ningún commit toca `knowledge/`, `docs/adr/`, `data/manifests/` ni ambigüedades.
+- **Regímenes de cambio:** `git diff --name-status main...HEAD` → solo M/A sobre rutas del contrato (`guardia.py`, `ingerir-sesion/SKILL.md`, `PROJECT_STATE.md`, `HISTORIA.md`, `contrato.yaml`, encargo, informe y anexos, `test_guardia_ffmpeg.py`). Ningún directorio inmutable tocado.
+- **Informes cerrados:** ninguno modificado (GUARDIA-FFMPEG.md es A/nuevo).
+- **PROJECT_STATE:** 22.628 bytes (< 25.000). El informe acaba en «Rama lista para revisión, NO cerrada» y el Estado = TERMINADA, pendiente de revisión del consultor.
+- **Material protegido:** no lo abrí; sobre rutas de marzo solo medí `motivo_fichero`/`decidir` (que niegan sin leer).
+
+### Eje (b) · Encargo (original + respuesta del consultor §11)
+Resumen: 0 bloquea, 0 importa, 0 menor. Requisitos: 8 hechos, 0 parciales, 0 no hechos.
+
+| # | Requisito (respuesta del consultor + encargo de esta pasada) | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Punto 1: la entrada solo vale si es contenedor de vídeo por extensión (.mp4/.mov/.mkv/.webm) Y bytes mágicos (ftyp@4; `1A45DFA3`@0); `_ffmpeg_es_video`/`_ffmpeg_es_texto` | Hecho | `guardia.py` `_ffmpeg_es_video`, `MAGIA_ISO_BMFF`, `MAGIA_MATROSKA`, `EXTENSIONES_DE_VIDEO`; medido: `.m3u8`, `.mpd`, `.ffconcat`, `.mp4`/`.MP4` inexistente, `.mov` → todas R_FFMPEG «no es un contenedor»; `_ffmpeg_es_video(inexistente)=False`, `(.mpd)=False`. `_ffmpeg_es_texto` declarado como 2ª barrera (§1.4) |
+| 2 | Punto 2: `$'...'` con barra invertida = valor desconocido, para TODA la guardia (`_ansi_c_con_escapes`, `tokenizar`, `sustitucion`, `resolver`); tabla de qué cambia vs main; `test_el_ritual_y_los_runbooks_pasan` y `test_ninguna_denegacion_toca_el_ritual` en verde | Hecho | Diff de `tokenizar` y `resolver`; `cat $'…\x74…'` rama niega / main pasa; los 5 casos ANSI-C de la matriz; §12 tiene la tabla de reglas que cambian; los dos tests en verde (suite completa de `test_guardia_claude.py` passed) |
+| 3 | Windows: `_ffmpeg_formas_de_la_ruta` (puntos/espacios finales) y el test de alias (8.3, `\\?\`); salidas `…\Bot v3.\a.wav` y `…\Bot v3 \a.wav` dentro del repo y negadas | Hecho | `test_un_alias_de_la_raiz…` corrió en esta máquina Windows y pasó (en CI Linux es el 11º skip); §12 tabla de salidas con punto/espacio → R_FFMPEG. Confirmado a nivel función: salida `\\?\<raíz>\data\a.wav` la corta `_ffmpeg_ruta` (prefijo `\\`); `../fuera/a.wav` dentro=False, `data/a.wav` dentro=True |
+| 4 | Cada arreglo roto a propósito en los dos sentidos | Hecho | `test_sin_los_bytes_magicos_la_lista_hls_vuelve_a_pasar`, `test_sin_el_arreglo_de_la_comilla_ansi_c_los_cuatro_pasan` (+ la variante «y sin los bytes magicos»); todos en verde |
+| 5 | K y fila de ERRORES-RECURRENTES del §9 según la respuesta | Hecho | §9: K reescrita (alias de la raíz como parte prioritaria + variables con el entorno del hook) y fila de ERRORES preparada (file: y espacio final, y `$'…'`) |
+| 6 | Intentar romper con envoltorios | Hecho (la regla aguanta) | env/command/exec/nice/timeout/nohup/stdbuf/time/bash -c/sh -c/`\ffprobe`/`/usr/bin/ffprobe`/`ffprobe.exe`/`command -p`/`builtin`/`timeout env`: todos ENCAMINADOS a la regla de ffmpeg (rama R_FFMPEG donde main PASA); sobre marzo → rama niega con el motivo (R_SIN_ABRIR). `env -C <dir>`, `uv --directory`, `xargs`, `FFREPORT` → IndecidibleError/R_EJECUCION en rama y main |
+| 7 | Intentar romper con comillas/escapes/redirecciones | Hecho | Concatenación de comillas bien cerrada sobre marzo → R_SIN_ABRIR; backslash-escapando los espacios de marzo → R_SIN_ABRIR; llaves `{v,w}` y `$S/…` y glob → «se construye al ejecutarse»; `~` expandido; `0< <marzo>` y `<<<` → redirección de entrada negada; `$"..."` → ver a1 (único escape que filtra, por lectores no-ffmpeg). Redirecciones de salida raras (`2>>`, `&>`, `3>`) sobre un fichero del repo: la regla las trata en el mismo bucle `_ffmpeg_dentro_del_repo` que la matriz prueba con `2>` y `>`; no pude llegar a ese bucle con una entrada inexistente (el chequeo de la entrada dispara antes), así que su cierre lo verifico por lectura de código, no empíricamente |
+| 8 | Ficheros que se hacen pasar por otro formato | Hecho hasta donde no hace falta ejecutar | La reja de extensión niega de entrada `.m3u8`/`.mpd`/`.ffconcat`/`.m3u` (no son `.mp4/.mov/.mkv/.webm`). Un fichero con los bytes mágicos de mp4/mkv renombrado `.mp4` pasaría `_ffmpeg_es_video` y `_ffmpeg_es_texto`; que ffmpeg lo trate como mov/mp4 (y NO como lista HLS/DASH/IMF/ffconcat) es el razonamiento del consultor §12, que no re-medí (ver «Lo que no pude comprobar») |
+
+Sin hallazgos en el eje (b): los dos arreglos de la respuesta del consultor están implementados tal como se pidió, con sus casos en la matriz, rotos en los dos sentidos, y los tests del ritual en verde. La regla de ffprobe/ffmpeg aguantó TODAS las formas que probé fuera de la matriz: ningún envoltorio, comilla, escape o redirección consiguió que la regla ABRIERA un vídeo que no debe ni que una entrada protegida pasara; los envoltorios se despojan y se encaminan a `_analizar_ffmpeg` (que vuelve a pasar por `motivo_fichero`). El único escape que filtra (`$"..."`) NO atraviesa la regla de ffmpeg: filtra por `cat`/`head`/`grep`, y por eso es un asunto de la guardia entera (eje a, a1), no de esta rama.
+
+### Lo que no pude comprobar
+- **Qué hace ffmpeg de verdad con un fichero que lleva los bytes mágicos de mp4/mkv y además es una lista (DASH `.mpd`, IMF, HLS, `ffconcat`):** no se ejecuta ffmpeg (prohibido por el encargo, y además la CLI no está en mi entorno). La reja de extensión ya niega esas extensiones; un fichero disfrazado de `.mp4` con `ftyp`@4 y sin nulos pasaría las dos barreras de la guardia, y el que ffmpeg elija el demuxer mov/mp4 por puntuación de sonda (y no la lista) es el razonamiento del consultor (§12), no una medida mía.
+- **TOCTOU / enlaces que cambian entre decisión y ejecución:** la guardia resuelve enlaces con `realpath` en el momento de decidir (un symlink a marzo se cierra por ahí), pero no puede defenderse de un enlace o una ruta que se cree o cambie DESPUÉS de decidir y antes de que ffmpeg abra. No medible sin escribir en disco.
+- **Confirmar que las 19 PERMITIDAS PASAN con un envoltorio delante (p. ej. `timeout 10 ffmpeg -i <vídeo válido> …`):** necesitaría un vídeo real con cabecera válida en disco, y no puedo crear ficheros (agente de solo lectura). Mis medidas de envoltorios usan entradas inexistentes, que dan R_FFMPEG «no es contenedor»: eso demuestra que el envoltorio se despoja y se encamina a la regla de ffmpeg, no que un vídeo válido envuelto pase. El PASO de las PERMITIDAS lo cubre `test_la_matriz_de_ffmpeg` con los fixtures (verde local y en el CI Linux, donde además se instaló ffmpeg).
+- **Las redirecciones de salida `2>>`, `&>`, `3>` a un fichero del repo con una entrada VÁLIDA:** no pude observar ese tramo (el chequeo de la entrada dispara antes con entrada inexistente, y no puedo crear un vídeo válido); su cierre lo verifico por lectura del bucle `for op, destino in cmd.salidas` de `_analizar_ffmpeg`, que trata cualquier `destino` por `_ffmpeg_dentro_del_repo` sin mirar el operador.
+- **Literalidad del encargo y de la respuesta del consultor copiados:** no los comparo con el prompt original.
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Lecturas: `contrato.yaml`, encargo, `GUARDIA-FFMPEG.md` (entero, dos páginas), `test_guardia_ffmpeg.py`, y tramos de `guardia.py` (`analizar_comando`, `_envoltorios`, `_ejecucion_de_un_programa_desconocido`, `_exigir_lo_de_antes/_a_la_vez`, `_es_fichero_programa`, el bloque `_analizar_ffmpeg` y el diff `main...HEAD`), `solo_lectura.py`.
+3. `uv run python scripts/contrato_rama.py` (en su propia llamada; la guardia me negó encadenarlo tras `cat contrato.yaml` → lo leí con Read y lo ejecuté suelto).
+4. `uv run pytest -q tests/unit/test_guardia_claude.py tests/unit/test_guardia_ffmpeg.py` (y `-rs` para ver que no hay skips inesperados en local): todo passed.
+5. `grep -nE "SELLO|PICO DE MEMORIA|passed|failed" make-check.log`; `git rev-parse c0510f2^{tree} 3372f7a^{tree}`.
+6. `gh run view 39871631795` (suelto); `gh run view 39871631795 --log-failed | grep …`; `gh run view 39871631795 --json headSha,headBranch,conclusion`.
+7. Cinco `uv run python -c "…"` que exec'an las dos guardias (rama = `git show HEAD:…`, main = `git show main:…`) y llaman a `decidir`/`motivo_fichero`/`_ffmpeg_*` sobre: envoltorios con entrada inventada; protegido vía envoltorios/quoting/redirecciones; concatenación de comillas y `$"..."` y backslash-espacios; lectores no-ffmpeg con `$"..."`/`$'...'`/comillas; reja de extensión y normalización. Ninguno escribe en disco.
+8. `git diff --name-status main...HEAD`; `git log main..HEAD -- knowledge/spec knowledge/cases`; `wc -c PROJECT_STATE.md`; `tail docs/validation/GUARDIA-FFMPEG.md`.
+
+### Recomendación (para el consultor)
+El único hallazgo, a1 (`$"..."` lee material reservado por `cat`/`head`/`grep`, en main y en la rama), es de la misma clase que el alias de la raíz y la expansión de variables que ya van a la línea K del cierre: no rompe la regla de ffmpeg ni contradice lo que el consultor pidió, pero es el hermano de `$'...'` y lee holdout. Encaja en la K (parte prioritaria, con el alias y las variables), no en esta rama salvo que el consultor decida ampliarla otra vez como hizo con `$'...'`. El fuente relevante: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py` (`tokenizar`, el tramo `$'`/`$"`), `C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-FFMPEG.md` (§9, la K) y `C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ffmpeg.py`.
+
+Este informe va al §13 del informe de la rama; no lo pego yo (lo devuelvo, como pide el encargo).
 
 ## §A · Anexo (`docs/validation/anexos/GUARDIA-FFMPEG/`)
 
@@ -681,6 +762,8 @@ aquí, tal cual, en el commit siguiente.
 TERMINADA, pendiente de la revisión del consultor: las cuatro formas de ffprobe y ffmpeg pasan,
 todo lo demás se niega. Los hallazgos de la primera pasada del revisor (§10) y los dos de la
 revisión del consultor (§11) están arreglados, cada uno con sus casos en la matriz y roto a
-propósito en los dos sentidos (§12); la segunda pasada del revisor, en §13.
+propósito en los dos sentidos (§12). La segunda pasada del revisor (§13) no encuentra nada en el
+encargo y un «importa» heredado de `main`, la comilla `$"…"`, que no se arregla aquí: es la
+pregunta 4 de §9.
 
 Rama lista para revisión, NO cerrada.
