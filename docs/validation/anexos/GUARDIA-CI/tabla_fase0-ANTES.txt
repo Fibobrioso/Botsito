@@ -1,0 +1,40 @@
+N1	negar	pasa	
+N2	negar	pasa	
+N3	negar	R_EJECUCION	ejecutar `for i`: el bucle `for` fija `i`, que no esta en la lista (`NOMBRES_DE_ENTORNO`).
+N3b	negar	pasa	
+N4	negar	pasa	
+N5	negar	pasa	
+N5b	negar	pasa	
+N6	negar	pasa	
+N7	negar	pasa	
+N7b	negar	pasa	
+N8	negar	pasa	
+N8b	negar	pasa	
+N9	negar	R_EJECUCION	`un bloque de codigo `{ ... }`` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+N9b	negar	R_EJECUCION	`un bloque de codigo `{ ... }`` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+N9c	negar	R_EJECUCION	`gh run view 39893825671` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+N10	negar	pasa	
+N11	negar	pasa	
+N12	negar	pasa	
+N13	negar	pasa	
+N14	negar	pasa	
+N15	duda	pasa	
+N16	duda	pasa	
+N17	negar	pasa	
+N18	negar	pasa	
+N8c	negar	pasa	
+N8d	negar	R_EJECUCION	ejecutar `run=...`: el nombre de entorno `run` no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`): una variable de entorno puede cambiar que codigo se carga (`PYTHONPATH`, `BASH_ENV`, `LD_PRELOAD`...)
+N19	negar	pasa	
+B1	pasar	pasa	
+B2	pasar	pasa	
+B3	pasar	pasa	
+B4	pasar	pasa	
+B5	pasar	pasa	
+B6	pasar	pasa	
+B7	pasar	pasa	
+B8	pasar	pasa	
+B9	pasar	pasa	
+B10	pasar	pasa	
+B11	pasar	pasa	
+B12	pasar	pasa	
+B13	pasar	pasa	

@@ -1,0 +1,4 @@
+uv run pytest -q tests/unit/test_t.py	pasa
+uv run python -m pytest -q tests/unit/test_t.py	pasa
+uv run pytest -q otra/test_t.py	NIEGA: el codigo nombra corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4.
+uv run python tests/unit/test_t.py	NIEGA: el codigo nombra corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4.
