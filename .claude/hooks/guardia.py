@@ -652,10 +652,10 @@ def _ansi_c_con_escapes(interior: str) -> bool:
 
 
 def _comilla_de_locale(texto: str, i: int) -> bool:
-    """Si en `i` empieza una comilla de traduccion `$"..."`: bash la lee como `"..."` (solo traduce
-    la cadena segun el idioma, nunca la convierte en otra ruta). Dejar el `$` en la palabra hacia
-    que `cat $"<carpeta de marzo>/v.mp4"` pasara (segunda respuesta del consultor del 2026-10-22 a
-    `trabajo/guardia-ffmpeg`, punto 1)."""
+    """Si en `i` empieza una comilla de traduccion `$"..."`: bash la lee como `"..."` y solo la
+    traduce con un catalogo de mensajes (`TEXTDOMAIN`, que la guardia no deja fijar); sin el, el
+    texto es el mismo. Dejar el `$` en la palabra hacia que `cat $"<carpeta de marzo>/v.mp4"`
+    pasara (segunda respuesta del consultor del 2026-10-22 a `trabajo/guardia-ffmpeg`, punto 1)."""
     return texto.startswith('$"', i)
 
 

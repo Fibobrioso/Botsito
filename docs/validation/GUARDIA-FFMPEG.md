@@ -138,7 +138,8 @@ de ENTRADA: `-f concat -i lista`); ninguna opción se repite; nada va detrás de
    Sin barra, sigue siendo literal. Además, el final de la comilla se busca saltando los escapes
    (`$'a\'b'` es una sola palabra), dentro y fuera de un `$(...)`. Qué cambia, medido, en §12.
    Y la comilla de traducción `$"…"` (segunda respuesta del consultor, punto 1): se lee como
-   `"…"` (`_comilla_de_locale`), porque bash solo traduce la cadena según el idioma; antes el `$`
+   `"…"` (`_comilla_de_locale`), porque bash solo la traduce con un catálogo de mensajes, que la
+   guardia no deja fijar (matiz en §15); antes el `$`
    se quedaba en la palabra y `cat $"<marzo>/v.mp4"` pasaba. Qué cambia, en §15.
 
 Nada de esto ha necesitado algo que la guardia no supiera ya del comando (sus palabras resueltas,
@@ -251,7 +252,9 @@ de entrada en `analizar_comando` y el bloque nuevo (`git diff --stat main...HEAD
 `PROJECT_STATE.md` y `HISTORIA.md`; `scripts/contrato_rama.py` en verde). PowerShell: sin cambio (la regla solo entra con
 `not ctx.powershell`, y `analizar_powershell` no se toca). La única excepción, declarada y pedida
 por el consultor: las comillas `$'…'` y `$"…"` de §1.8, que tocan `tokenizar` y `resolver` y
-valen para todo Bash; lo que cambia con ellas está medido en §12 y §15.
+valen para todo Bash, y también para `.claude/hooks/solo_lectura.py`, el hook de los agentes de
+solo lectura, que usa el mismo `tokenizar` (no se toca el fichero); lo que cambia con ellas está
+medido en §12 y §15.
 
 ## §5 · Comandos negados durante la rama
 
@@ -311,9 +314,13 @@ la posición del primer byte nulo: 0, 45 y 0. No es contenido de la sesión.
 - `79a560b` (el informe del revisor pegado en §13): `make check` exit 0, 2741 passed,
   `SELLO … 0d194ea0…`, pico 297 MiB; CI de Linux, run 39876229031: `1 failed, 2729 passed, 11
   skipped`, el único fallo el esperado.
-- El commit de la segunda respuesta (§15) y el que pega la pasada corta del revisor (§16): sus
-  `make check` y sus runs de la CI de Linux no caben en el commit que sellan; van en el mensaje de
-  entrega a Aleks, y el run que cuenta es el del último.
+- `8347e4e` (la segunda respuesta, §15): `make check` exit 0, 2742 passed, `SELLO … 9140f35f…`,
+  pico 297 MiB; CI de Linux, run 39880288314: `1 failed, 2730 passed, 11 skipped`, el único fallo
+  el esperado. La pasada corta del revisor, sobre este commit (§16).
+- El commit que pega esa pasada (§16), el último de la rama, con lo que se hizo con sus hallazgos
+  (declararlos, y el docstring de `_comilla_de_locale`): su `make check` y su run de la CI de
+  Linux no caben en el commit que sellan; van en el mensaje de entrega a Aleks, y el run que
+  cuenta es ese.
 
 ## §8 · El encargo, punto por punto
 
@@ -397,7 +404,9 @@ consultor, pregunta 1): la de esta rama, con sus dos pasadas del revisor y la re
 consultor, y dos agujeros de `main` que se cierran aquí y leían la carpeta de marzo: `ffprobe` con
 el prefijo `file:` (o con un espacio final en el nombre de la carpeta), la comilla ANSI-C `$'…'`
 con escapes, que el tokenizador copiaba sin interpretar (`cat $'…Back\x74est…'`), y la comilla
-de traducción `$"…"`, que dejaba el `$` en la palabra (`cat $"<marzo>/v.mp4"`). La señal: una
+de traducción `$"…"`, que dejaba el `$` en la palabra (`cat $"<marzo>/v.mp4"`; y también
+`$"git" push --force`, `git commit $"--no-verify"`, `git push origin $":main"` y un heredoc
+`<<$"EOF"` que escondía lo de detrás, §15). La señal: una
 forma de escribir la misma ruta que la guardia no normaliza; qué hacer: cada regla mira la ruta
 en todas sus formas, o niega lo que no sabe calcular.
 
@@ -803,12 +812,36 @@ Qué cambia fuera de la matriz, medido con `decidir` de `main` y de la rama sobr
 | `ls $"<carpeta de marzo>"`, `sha256sum $"<marzo>/v.mp4"` (listar y hashear) | pasa | pasa |
 | `cat $"<marzo>/v.mp4"` | **pasa** | R_SIN_ABRIR |
 | `cat corp$"us/…/<marzo>/v.mp4"` (pegada a otra palabra) | **pasa** | R_SIN_ABRIR |
-| `cat $"$X/v.mp4"` (una variable sin valor dentro) | niega (dinámico) | niega (dinámico) |
+| `cat $"$X_NO/v.mp4"` (una variable sin valor dentro) | niega (dinámico) | niega (dinámico) |
 | `cat $"$(pwd)/notas.txt"` | R_EJECUCION | R_EJECUCION |
 | `git log --format=$"%h %s" -1` | excepción en el repo de `tmp` (le falta `knowledge/corpus/fuentes.yaml`) | la misma |
 
-Solo cambia lo que leía material protegido. Ni el ritual, ni los runbooks, ni las skills, ni el
-Makefile, ni la CI usan `$"` (`grep -rnF '$"'`, sin resultados).
+En esa tabla solo cambia lo que leía material protegido. **Pero el arreglo cierra más de lo que
+decía la tabla** (pasada corta del revisor, §16, a1; las cuatro primeras, medidas también por la
+sesión con `decidir` de `main` y de la rama en la raíz real, `verificar_a1.py`), siempre en el
+sentido de negar más:
+
+| Comando | main | rama |
+|---|---|---|
+| `$"git" push --force` | **pasa** | «`git push` forzado» |
+| `git commit $"--no-verify" -m x` | **pasa** | «`git commit --no-verify`» |
+| `git push origin $":main"` | **pasa** | «`git push` que borra la referencia remota `main`» |
+| un heredoc `cat <<$"EOF"` y, detrás del `EOF`, `git push --force` (o `cat "<marzo>/v.mp4"`) | **pasa**: el delimitador quedaba como `$EOF` y lo de detrás se leía como cuerpo | niega |
+| en `solo_lectura.py` (el hook de los agentes de solo lectura, que usa el mismo `tokenizar`): `$"rm" x`, `$"git" commit -m x` | pasa | «`rm` escribe», «`git commit` cambia el repositorio» (medido por el revisor) |
+
+Son agujeros de `main` de la misma clase -operaciones prohibidas escritas con `$"…"`- y van a la
+fila de `ERRORES-RECURRENTES.md` preparada en §9. No van a la matriz de ffmpeg: son de otras
+reglas, cuyos tests viven en `test_guardia_claude.py`, que esta rama no toca (§2). El arreglo de
+`$'…'` de §12 pasa igual por `solo_lectura.py`, y tampoco se había dicho: se declara aquí.
+
+Un matiz de la frase de la respuesta, «nunca la convierte en otra ruta» (revisor, «lo que no pude
+comprobar»): con un catálogo de mensajes (`TEXTDOMAIN`, `TEXTDOMAINDIR`) bash SÍ sustituye la
+cadena por su traducción. Lo que se midió: el entorno no trae ningún `TEXTDOMAIN*`, y la guardia
+niega fijarlo (`TEXTDOMAIN=… cat` y `export TEXTDOMAIN`, `R_EJECUCION` en `main` y en la rama).
+Sin catálogo, el texto es el mismo, que es lo que lee la guardia.
+
+Ni el ritual, ni los runbooks, ni las skills, ni el Makefile, ni la CI usan `$"` (`grep -rnF
+'$"'`, sin resultados).
 `test_el_ritual_y_los_runbooks_pasan` y `test_ninguna_denegacion_toca_el_ritual` (62 casos) y
 `test_guardia_claude.py` entero, en verde.
 
@@ -849,8 +882,100 @@ sobre el diff de este commit, en §16.
 
 ## §16 · El revisor, pasada corta sobre el diff de §15
 
-Se lanza sobre el commit de §15, solo sobre su diff (el arreglo de `$"…"` y su matriz); su informe
-se pega aquí, tal cual, en el commit siguiente.
+Lanzado sobre `8347e4e` (el commit de §15), solo sobre su diff (`git diff 79a560b 8347e4e`: el
+arreglo de `$"…"` y su matriz). Resultado: eje (b), 8 de 8 hechos y ningún hallazgo; ninguna forma
+rara de `$"…"` lee la carpeta de marzo ni escribe en la rama. Eje (a), un «importa» y un «menor».
+
+### Lo que se hizo con los hallazgos del revisor (pasada corta)
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Declarado: §15 dice ahora que el arreglo también cierra operaciones prohibidas escritas con `$"…"` (`push --force`, `--no-verify`, el borrado de `main`), el heredoc `<<$"EOF"` y dos casos de `solo_lectura.py`; las cuatro de la guardia, medidas también por la sesión. §4 nombra `solo_lectura.py`, que comparte `tokenizar`, también para el arreglo de `$'…'`. La fila de `ERRORES-RECURRENTES.md` preparada en §9 los lleva. No van a la matriz de ffmpeg: son de otras reglas, y `test_guardia_claude.py` no se toca en esta rama. |
+| a2 | menor | Corregido: la tabla de §15 dice `$X_NO`, como el anexo. |
+| — | «lo que no pude comprobar» | La CI de `8347e4e` no había terminado cuando miró: su resultado, en §7 y en el mensaje de entrega. El matiz de «nunca la convierte en otra ruta» (con `TEXTDOMAIN`): escrito en §15, y el docstring de `_comilla_de_locale` dice ya lo que se midió. |
+
+### Informe del revisor, pasada corta (pegado tal cual)
+
+## Informe del revisor · trabajo/guardia-ffmpeg · 2026-10-22 (pasada corta, solo `git diff 79a560b 8347e4e`)
+
+Resumen: el arreglo de `$"…"` está bien hecho y la matriz y el §15 se sostienen. Hay un hallazgo «importa»: el arreglo cierra en `main` más huecos de los que el informe declara. Ninguno bloquea. La CI de 8347e4e no había terminado cuando miré.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **El arreglo cambia más de lo que el §15 declara.** `docs/validation/GUARDIA-FFMPEG.md:810` dice «Solo cambia lo que leía material protegido». No es así: el arreglo también cierra en `main` huecos de operaciones prohibidas, y endurece el otro hook que usa `tokenizar`, `solo_lectura.py`. Todo va en el sentido de negar más, así que es una mejora. Pero no está declarado, no está en la tabla de §15 ni en la matriz, y el §4 (línea 254) no nombra `solo_lectura.py`. Medido con `decidir` de main y de la rama (repo real, `exec` del `git show`). | `$"git" push --force`: main **pasa**, rama «`git push` forzado». `git commit $"--no-verify" -m x`: main **pasa**, rama «`git commit --no-verify`». `git push origin $":main"`: main **pasa**, rama «borra la referencia remota `main`». Un heredoc con delimitador `<<$"EOF"` seguido de `cat "<marzo>/v.mp4"` o de `git push --force`: main **pasa** (toma el delimitador como `$EOF` y esconde lo que va detrás dentro del cuerpo), rama los niega. Bash cierra el cuerpo en `EOF`: `bash -c 'cat <<$"EOF"⏎hola⏎EOF⏎echo FUERA_DEL_CUERPO'` imprime `hola` y `FUERA_DEL_CUERPO`. En `solo_lectura.motivo`, `$"rm" x` y `$"git" commit -m x` dan `None` en main y «`rm` escribe» / «`git commit` cambia el repositorio» en HEAD. Son agujeros de `main` de la misma clase que la fila de ERRORES-RECURRENTES preparada en §9. Faltan en esa fila y en la tabla de §15. |
+| a2 | menor | La tabla de §15 y su anexo no muestran el mismo comando. | `GUARDIA-FFMPEG.md:806` dice `` `cat $"$X/v.mp4"` ``; `anexos/GUARDIA-FFMPEG/locale-medida.txt:9` dice `` `cat $"$X_NO/v.mp4"` ``. |
+
+Comprobado sin hallazgos:
+- **El cambio en `guardia.py` es solo el declarado:** la función `_comilla_de_locale` (`texto.startswith('$"', i)`, la condición con nombre) y tres líneas en `tokenizar` (`guardia.py:805-807`). Va después de la rama de `$'…'` y antes de la de `"`.
+- **Solo afecta a Bash:** `tokenizar` solo se llama desde `analizar_bash` (`guardia.py:1082`), así que PowerShell no cambia.
+- **Formas raras que no están en la matriz** (main → rama):
+  - Pasaban en main y ahora `R_SIN_ABRIR`: pegada delante (`cat corp$"us/…"`), dos trozos `$"…"$"…"`, `$"…"` seguido de `'…'`, dentro de `$(...)` y de acentos graves, `bash -c '…'`, `sh -c 'head …'`, heredoc con comillas a `bash`, `cat < $"…"`, `$"cat" $"…"`, `dd if=$"…"`, `cd $"…" && cat v.mp4`, `cd … && ffmpeg …`, `cp $"…" /tmp`.
+  - `find $"<carpeta>" -exec cat {} +`: main pasa, rama `R_CAPTURA`.
+  - `ffprobe $"file:…"` y `ffprobe file:$"…"`: main pasa, rama `R_FFMPEG`.
+  - `python $"…"`: main `R_EJECUCION`, rama `R_SIN_ABRIR`.
+  - Ya negadas igual en las dos (`R_EJECUCION`): heredoc sin comillas a `bash`, asignación y `cat "$X"` (con `;`, `&&`, `export` y como prefijo de entorno), `while read … < $"…"`, `source`, `xargs cat`, `TEXTDOMAIN=… cat` y `export TEXTDOMAIN`. `grep -r x $"<material>"` da `R_CAPTURA` en las dos.
+  - Pasan en las dos y no leen nada: `$$"…"`, `\$"…"`, `"$"…""` y `'$"…"'`. Bash los convierte en el PID o en `$` delante de la ruta, o en un literal, y esa ruta no existe. El tokenizador da lo mismo que bash: `['\x00V$\x00p']`, `['$p']`, `['a$b']`, `['$"p"']`.
+  - El heredoc que solo lleva datos pasa en las dos (es texto, no se lee ningún fichero).
+  - Ninguna forma probada lee la carpeta de marzo ni escribe en la rama.
+- **Lo legítimo sigue pasando:** `echo $"hola"`, `git log --format=$"%h %s" -1` y `ls $"<carpeta de marzo>"` (listar), en main y en la rama.
+- **Ritual y tests:** ni `docs/runbooks`, ni `.claude/skills`, ni `Makefile`, ni `.github` usan `$"` (`grep -rnF`, vacío). `pytest tests/unit/test_guardia_ffmpeg.py` más `test_el_ritual_y_los_runbooks_pasan` y `test_ninguna_denegacion_toca_el_ritual`: `70 passed`, exit 0 (8 + 62).
+- **`make-check.log`:** `2742 passed`. `SELLO … 9140f35f66f2028ab385a3e883894ce05edbf382`, que coincide con `git rev-parse 8347e4e^{tree}`. `PICO DE MEMORIA … 297 MiB`.
+- **PROJECT_STATE.md:** pasa de 1654 a 1655 funciones de test, +1, que es el test nuevo.
+- **Copias de la respuesta del consultor:** la del §14 y la del final del encargo son idénticas (`diff` de sus líneas `>`: IGUALES).
+- `git status --short` sigue vacío al terminar.
+
+### Eje (b) · Encargo (segunda respuesta del consultor)
+Resumen: 0 bloquea, 0 importa, 0 menor. Requisitos: 8 hechos, 0 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | `$"…"` se lee como `"…"`, con la condición nombrada | Hecho | `guardia.py:654-659, 805-807`; `tokenizar('cat $"a b"')` da `['cat','a b']` (main: `'$a b'`) |
+| 2 | Los cinco casos sobre la carpeta de marzo (cat, head, grep, ffprobe, cd) en la matriz | Hecho | `test_guardia_ffmpeg.py`, `NEGADAS` con «locale:»; `LOCALE_EN_MARZO` tiene los 5, todos `R_SIN_ABRIR` (anexo A.1) |
+| 3 | Un `$"…"` legítimo que pasa | Hecho | `PERMITIDAS`, «comilla de locale, el video»: pasa / pasa |
+| 4 | Roto a propósito en los dos sentidos | Hecho | `test_sin_el_arreglo_de_la_comilla_de_locale_los_cinco_pasan`: sin el arreglo, cat/head/grep pasan y ffprobe/cd dan `R_FFMPEG` por «no se puede leer»; sin además los bytes mágicos, pasan los 5. Con el arreglo se niegan (la matriz). En verde |
+| 5 | En la tabla de comparación con main | Hecho | Anexo A.3: los 5 «main pasa \| rama R_SIN_ABRIR»; §2, «veinte» (9+6+5). Recuento: 20 permitidas, 82 negadas, 102 en total (medido importando el módulo) |
+| 6 | Los dos tests del ritual en verde | Hecho | 70 passed (arriba) |
+| 7 | El riesgo residual escrito y acotado: ninguna opción de demuxer y `-enable_drefs` negado; la entrada pasa `motivo_fichero` | Hecho | §15 punto 2. Dos casos `R_FFMPEG` en la matriz. Listas cerradas en `guardia.py:2965-2988`: ninguna opción de demuxer |
+| 8 | `enable_drefs` desactivado por defecto, con la versión y la fuente | Hecho, verificado | `README.txt`, línea 3: «Version: 9.0.1-full_build-www.gyan.dev». `doc\ffmpeg-formats.html`, líneas 1649 («3.18 mov/mp4/3gp»), 1656 («3.18.1 Options») y 1660-1662: «enable_drefs … Enable loading of external tracks, disabled by default. Enabling this can theoretically leak information in some use cases.» `which ffmpeg ffprobe` apunta a `…/WinGet/Links/`, la misma instalación. `use_absolute_path` (línea 1665) también viene desactivado y tampoco está en la lista |
+
+Sin hallazgos en este eje. La rama no toca nada fuera de lo que la respuesta pide, salo lo de a1, que ya va en el eje (a).
+
+### Lo que no pude comprobar
+- **La CI de Linux de 8347e4e:** run 39880288314, `headSha` 8347e4e…, `status: in_progress`, sin conclusión en las dos consultas que hice. No había terminado.
+- **La frase «nunca la convierte en otra ruta»** (del consultor, copiada en el docstring y en §1.8). Si hay un catálogo de mensajes (`TEXTDOMAIN`/`TEXTDOMAINDIR`), bash sustituye la cadena por su traducción, y no tengo manual local de bash para citarlo. Montar un catálogo para probarlo escribe, así que no lo hice. Lo que sí medí: `env` no trae ningún `TEXTDOMAIN*`; `bash -c 'echo $"hola" ${TEXTDOMAIN-sin_TEXTDOMAIN}'` da `hola sin_TEXTDOMAIN`; y la guardia niega fijarlo (`TEXTDOMAIN=… cat`, `export TEXTDOMAIN`: `R_EJECUCION` en main y en la rama).
+- No ejecuté ffmpeg ni ffprobe, como se pidió.
+
+### Comandos ejecutados
+1. `git log --format='%h %s' -3 && git diff --stat 79a560b 8347e4e && git status --short`
+2. `git diff 79a560b 8347e4e -- .claude/hooks/guardia.py tests/unit/test_guardia_ffmpeg.py PROJECT_STATE.md docs/encargos/trabajo-guardia-ffmpeg.md`
+3. `git diff 79a560b 8347e4e -- docs/validation/` (leído del fichero de salida)
+4. Read de `guardia.py:600-899` y `1070-1094`; Grep de `tokenizar(`
+5. `sed -n 1,80p .claude/hooks/solo_lectura.py`
+6. `uv run python -c` (sin registrar en `sys.modules`; falló, AttributeError de dataclass)
+7. `uv run python -c` con el tokenizador de la rama y el de main sobre formas raras
+8. `uv run python -c` con `decidir` de main y de la rama sobre 38 comandos
+9. `grep -rnF '$"' docs/runbooks .claude/skills Makefile .github scripts/*.sh`
+10. `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_ffmpeg.py …::test_el_ritual_y_los_runbooks_pasan …::test_ninguna_denegacion_toca_el_ritual` (dos veces; la segunda, sin `-q`: 70 passed, exit 0)
+11. `uv run python -c "…import test_guardia_ffmpeg…"` (recuento 20/82/102) y `git status --short`
+12. `grep -n "comilla de locale" …/salidas-pytest.txt` y recuentos del anexo
+13. `ls`, `sed -n 1,6p README.txt` y `grep -n enable_drefs doc/ffmpeg-formats.html`; Read de `ffmpeg-formats.html:1649-1668`
+14. `which ffmpeg ffprobe`; `grep -n` de las listas de opciones; Read de `guardia.py:2965-2989`
+15. `gh run list --branch fix/guardia-ffmpeg --limit 1`, después `gh run view 39880288314` y dos veces `gh run view 39880288314 --json headSha,status,conclusion`
+16. `grep -n "SELLO\|PICO DE MEMORIA\|passed\|failed" make-check.log`, `git rev-parse 8347e4e^{tree}`, `ls -la make-check.log`
+17. `diff` de las líneas `>` del encargo y del §14
+18. `env | grep TEXTDOMAIN` con `bash -c 'echo $"hola" …'` en el mismo comando: la guardia lo negó («antes, en el mismo comando, va `env`»). Seguí su forma y los partí en dos llamadas: `env | grep -c "^TEXTDOMAIN"` y `bash -c 'echo $"hola" ${TEXTDOMAIN-sin_TEXTDOMAIN}'`
+19. `uv run python -c` con `solo_lectura.motivo` de main y de HEAD (cada uno con su guardia, cargados por `exec` del `git show`)
+20. `uv run python -c` con `decidir` sobre `$"git" push --force`, `git commit $"--no-verify"`, `git push origin $":main"` y otros
+21. `bash -c 'cat <<$"EOF"⏎hola⏎EOF⏎echo FUERA_DEL_CUERPO'`
+22. `uv run python -c` con `decidir` sobre el heredoc `<<$"EOF"` seguido de `cat "<marzo>"` y de `git push --force`
+23. `git ls-files | grep medir_…` y `grep -n` en `GUARDIA-FFMPEG.md`
+
+Ficheros relevantes: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C:\Users\USER\Desktop\Bot v3\.claude\hooks\solo_lectura.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ffmpeg.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-FFMPEG.md`, `C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-FFMPEG\locale-medida.txt`, `C:\Users\USER\AppData\Local\Microsoft\WinGet\Packages\Gyan.FFmpeg_Microsoft.Winget.Source_8wekyb3d8bbwe\ffmpeg-9.0.1-full_build\doc\ffmpeg-formats.html`.
+
+Este informe va al §16 de la rama; no lo pego yo, lo devuelvo.
 
 ## §A · Anexo (`docs/validation/anexos/GUARDIA-FFMPEG/`)
 
@@ -880,6 +1005,8 @@ revisión del consultor (§11) están arreglados, cada uno con sus casos en la m
 propósito en los dos sentidos (§12). La segunda pasada del revisor (§13) no encuentra nada en el
 encargo y un «importa» heredado de `main`, la comilla `$"…"`; el consultor mandó cerrarla aquí
 (§14) y está cerrada, con su matriz y roto a propósito (§15), y el riesgo residual de los bytes
-mágicos, escrito y acotado (§15). La pasada corta del revisor sobre ese diff, en §16.
+mágicos, escrito y acotado (§15). La pasada corta del revisor sobre ese diff (§16) no encuentra
+nada en el encargo; su «importa» -el arreglo cierra en `main` más de lo declarado, siempre
+negando más- y su «menor» están declarados y corregidos. Queda para la orden de cierre.
 
 Rama lista para revisión, NO cerrada.
