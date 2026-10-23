@@ -56,7 +56,27 @@ Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
    con `drive_id: null` tiene que estar en la lista o en sus EXCEPCIONES. Despues,
    `uv run botsito corpus inventory` (hashea todo: minutos) y `uv run botsito corpus check --hashes`.
 2. **Audio.** No hay comando del repo: se mide con `ffmpeg -af silencedetect` (en v8, -50 dB y 30 s
-   minimo; `SESION-02-VIDEO-V8.md`). Un corte de audio entra en
+   minimo; `SESION-02-VIDEO-V8.md`) y `volumedetect`. La guardia deja SOLO estas formas, de lista
+   cerrada (`trabajo/guardia-ffmpeg`, `docs/validation/GUARDIA-FFMPEG.md`); una opcion de mas, una
+   sustitucion `$(...)`, una entrada con protocolo (`file:`, `concat:`...) o una salida dentro del
+   repo las niega, y sobre material protegido niega con su motivo:
+   - silencios: `ffmpeg -hide_banner -nostdin -i "<video>" -vn -sn -dn -af silencedetect=noise=-50dB:d=30 -f null - 2>&1 | grep silence_`
+   - volumen: `ffmpeg -hide_banner -nostdin -i "<video>" -vn -sn -dn -af volumedetect -f null - 2>&1 | grep -E "mean_volume|max_volume"`
+   - metadatos: `ffprobe -v error -show_format -show_streams "<video>"`
+   - el audio para `transcribir_sesion.py --audio`, a un fichero FUERA del repo:
+     `ffmpeg -hide_banner -nostdin -i "<video>" -vn -sn -dn -ac 1 -ar 16000 "<fuera del repo>/sesion-NN.wav"`
+
+   Lo que admite cada una, entero: generales `-hide_banner -nostdin -nostats -y -n -v X -loglevel X`
+   (ffmpeg); en las dos de ffmpeg, un `-i` y `-vn -sn -dn` tras el; la medida, `-af` con SOLO
+   `silencedetect=noise=<n>dB:d=<n>` o SOLO `volumedetect`, y `-f null` con salida `-`, `NUL` o
+   `/dev/null`; la extraccion, `-ac`, `-ar` y `-c:a` o `-acodec` opcionales y una salida `.wav`,
+   `.flac`, `.mp3` o `.m4a` fuera del repo, al final; ffprobe, `-v -loglevel -hide_banner
+   -show_format -show_streams -show_entries -of -print_format -select_streams` y un fichero
+   (posicional o con `-i`). Una redireccion de la salida a un fichero dentro del repo se niega.
+   El `<video>` tiene que ser un `.mp4`, `.mov`, `.mkv` o `.webm` que exista y lleve los bytes de
+   su contenedor (una lista `.m3u8` o `ffconcat` se niega), con la ruta literal: ni `$VAR` ni una
+   comilla `$'...'` con escapes.
+   Un corte de audio entra en
    `knowledge/corpus/tramos_no_citables.yaml` con motivo «SIN AUDIO», en `naturaleza` y en el
    comentario de `fuentes.yaml`, y la respuesta afectada se marca «respuesta incompleta por audio».
    Puerta: tras la transcripcion, ningun segmento con `t1` dentro del corte (alucinacion del ASR).

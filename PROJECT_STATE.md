@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-ffmpeg
 
 ## Current Feature
-Ninguna rama abierta. trabajo/hoja-sesion-05 cerrada en main el 2026-10-22 (stable/F37z-hoja-sesion-05): la hoja de la sesión 05 en scripts/transcribir_sesion.py antes de grabar. F37 agotada: la rama siguiente cierra con stable/F38a-*. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/guardia-ffmpeg, EN CURSO (abierta el 2026-10-22 desde main 8cfed04): la guardia de Claude Code deja cuatro formas de ffprobe y ffmpeg sobre un vídeo que no protege, por lista cerrada, para la ingesta de la sesión 5 (NA:K, la parte de ffprobe y ffmpeg; hoja de ruta G.1). Encargo: docs/encargos/trabajo-guardia-ffmpeg.md. Informe: docs/validation/GUARDIA-FFMPEG.md. F37 agotada: cierra con stable/F38a-*.
 
 ## Stable Main State
 e044b15 · merge de `trabajo/hoja-sesion-05` (tag `stable/F37z-hoja-sesion-05`): la hoja 05 en scripts/transcribir_sesion.py (ORDEN_SESION_05 S-1..S-25, sus textos de PREGUNTAS.md, SESION_EN_CURSO = "05"; v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`), la regla del 2026-10-21 en docs/runbooks/DECISIONES-DE-PROCESO.md, y un recuadro en docs/sesion-5/PREGUNTAS.md junto a :22-24. Sobre `stable/F37y-previa-sesion-5` (e4563db). Informe docs/validation/HOJA-SESION-05.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ e044b15 · merge de `trabajo/hoja-sesion-05` (tag `stable/F37z-hoja-sesion-05`):
 e044b15 · merge: trabajo/hoja-sesion-05, la hoja de la sesion 05 en transcribir_sesion.py antes de grabar y la regla del 2026-10-21 en DECISIONES-DE-PROCESO · tag stable/F37z-hoja-sesion-05
 
 ## Tests Currently Passing
-1647 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1655 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -45,7 +45,7 @@ J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de 
 
 A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2 entre el 26 y el 30 de octubre, con el script 1.1 compilado antes; la 3 después del 1 de noviembre. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza` (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
 
-K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, los dos arreglos de ENTRADA-JULIO.md §8: que `ffprobe` y `ffmpeg -i` sobre un vídeo lean y no ejecuten; y que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`); cada uno con su test de los dos sentidos.
+K. PRIORITARIA, porque lee material protegido: el alias de la raíz en motivo_fichero. Hoy pasan cat, Read, grep -r y find … -exec cat sobre la raíz escrita con \\?\ o con su nombre corto 8.3, o sobre un directorio que CONTIENE el repo; y las variables se resuelven con el entorno del hook, otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11). Rama propia de la familia 1 de la guardia, con un test que rompa a propósito los dos sentidos. Después, la guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; si el literal de 1:44:49 es «1 o 2» o «12» lo lee Aleks con `--crudo` en su terminal (punto 8 de la respuesta del consultor del 2026-10-11); S-14 va a la sesión 5 (R4.1).
 
@@ -141,7 +141,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - EL DETECTOR DE CONTRADICCIONES NO VE LOS TEMAS HERMANOS (2026-09-17, rama del breaker de M1, informe §5).
 - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
 - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
-- Copia de seguridad de las crudas activas y los WAV fuera de esta maquina: HECHA HASTA v5, INCOMPLETA desde el 2026-09-09.
+- Copia de seguridad de las crudas y los WAV: hecha hasta v10 (2026-10-22, Drive privado de Aleks, con SHA256SUMS). Cada sesión nueva se añade tras su ingesta; los vídeos de las sesiones, recomendado, sin hacer.
 - El docstring de `tests/contract/test_tramos_fuente.py:5` cita «PROJECT_STATE, Decisions and Rationale, 2026-09-04», que vive desde trabajo/previa-sesion-5 en `docs/runbooks/DECISIONES-DE-PROCESO.md`: lo corrige la próxima rama que toque `tests/` (PREVIA-SESION-5.md §5).
 
 ## Reglas vivas
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 42 (2026-10-22).
+— ninguna desde el Archivo 43 (2026-10-22).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 42 (2026-10-22).
+— ninguna desde el Archivo 43 (2026-10-22).

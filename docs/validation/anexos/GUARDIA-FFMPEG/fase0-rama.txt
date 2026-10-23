@@ -1,0 +1,10 @@
+| ffprobe sobre un video | `ffprobe -v error -show_format -show_streams "corpus/Estrategia del trader/sesion-05.mp4"` | PASA |  |  |
+| ffprobe absoluto | `ffprobe -v error -show_format "<tmp>/repo/corpus/Estrategia del trader/sesion-05.mp4"` | PASA |  |  |
+| ffprobe, video sin seguir en videos/ | `ffprobe -v error -show_format videos/sesion.mp4` | PASA |  |  |
+| silencedetect | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af silencedetect=noise=-50dB:d=30 -f null -` | PASA |  |  |
+| volumedetect | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -` | PASA |  |  |
+| extraccion dentro del repo | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 audio.wav` | NIEGA | R_FFMPEG | `ffmpeg`: la salida `audio.wav` esta dentro del repositorio. |
+| extraccion fuera del repo | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 "<tmp>/fuera/audio.wav"` | PASA |  |  |
+| ffprobe sobre marzo | `ffprobe -v error -show_format "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | NIEGA | R_SIN_ABRIR | ejecutar corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4. |
+| ffmpeg sobre marzo | `ffmpeg -i "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4" -vn -sn -dn -af volumedetect -f null -` | NIEGA | R_SIN_ABRIR | ejecutar corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4. |
+| ffprobe sobre un video que no existe | `ffprobe -v error -show_format videos/no-existe.mp4` | NIEGA | R_FFMPEG | `ffprobe`: la entrada videos/no-existe.mp4 no es un contenedor de video reconocido (extension .mp4, .mov, .mkv, .webm y sus bytes magicos), o no se puede leer:  |

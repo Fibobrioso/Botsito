@@ -38,10 +38,21 @@ Dos familias de reglas:
    el guion tiene que existir y leerse al inspeccionar, y en el mismo comando solo puede ir antes
    o a la vez lo de una lista cerrada (`cd`, asignaciones literales, `export`, `set -e/-u/-o
    pipefail`, y detras, en la tuberia, filtros que no escriben). En PowerShell, ninguna ejecucion.
+   EXCEPCION declarada (`trabajo/guardia-ffmpeg`, 2026-10-22): `ffprobe` y `ffmpeg` en Bash no
+   pasan por esa funcion sino por `_analizar_ffmpeg`, con su regla `R_FFMPEG`: solo cuatro formas
+   de LISTA CERRADA sobre un video que no se protege -ffprobe de metadatos, ffmpeg que mide
+   silencios o volumen con la salida nula y ffmpeg que extrae el audio a un fichero FUERA del
+   repositorio-, cada entrada por `motivo_fichero` (por su texto, resuelta y sin los puntos o
+   espacios finales que Windows quita) y un contenedor de video por su extension y sus bytes
+   magicos (una lista HLS o `ffconcat` nombra otros ficheros), sin sustituciones ni redirecciones
+   de entrada, y todo lo demas negado. Lo que va antes y a la vez en el mismo comando se exige
+   igual que en el resto de la familia 3 (`_exigir_lo_de_antes`, `_exigir_lo_de_a_la_vez`); lo que
+   se deja es leer un guion.
 
 Un comando que no se puede decidir con seguridad -una ruta construida al ejecutarse, `eval`, un
-`xargs` que lee contenido- SE BLOQUEA si podria llegar a material protegido, y el mensaje dice como
-reescribirlo. Un fallo interno de la guardia bloquea solo lo que menciona material sensible.
+`xargs` que lee contenido, una comilla ANSI-C `$'...'` con escapes- SE BLOQUEA si podria llegar a
+material protegido, y el mensaje dice como reescribirlo. Un fallo interno de la guardia bloquea
+solo lo que menciona material sensible.
 
 Sin dependencias: solo la biblioteca estandar, porque corre con el Python del sistema y no con el
 entorno del proyecto. Contrato con Claude Code: lee el JSON del evento por stdin; sale con 0 para
@@ -634,6 +645,20 @@ class Lexico:
     heredocs: list[Heredoc] = field(default_factory=list)
 
 
+def _ansi_c_con_escapes(interior: str) -> bool:
+    """Si el interior de una comilla `$'...'` lleva una barra invertida: entonces su valor es el
+    que bash calcula con los escapes, y la guardia no lo calcula (`tokenizar`)."""
+    return "\\" in interior
+
+
+def _comilla_de_locale(texto: str, i: int) -> bool:
+    """Si en `i` empieza una comilla de traduccion `$"..."`: bash la lee como `"..."` y solo la
+    traduce con un catalogo de mensajes (`TEXTDOMAIN`, que la guardia no deja fijar); sin el, el
+    texto es el mismo. Dejar el `$` en la palabra hacia que `cat $"<carpeta de marzo>/v.mp4"`
+    pasara (segunda respuesta del consultor del 2026-10-22 a `trabajo/guardia-ffmpeg`, punto 1)."""
+    return texto.startswith('$"', i)
+
+
 def tokenizar(texto: str) -> Lexico:
     lex = Lexico()
     i, n = 0, len(texto)
@@ -661,10 +686,13 @@ def tokenizar(texto: str) -> Lexico:
         while j < n:
             c = texto[j]
             if comilla:
-                if c == comilla:
+                if c == comilla[-1]:
                     comilla = ""
-                elif c == "\\" and comilla == '"':
+                elif c == "\\" and comilla != "'":  # en `"..."` y en `$'...'` escapa
                     j += 1
+            elif texto.startswith("$'", j):
+                comilla = "$'"
+                j += 1
             elif c in "'\"":
                 comilla = c
             elif c == "\\":
@@ -759,12 +787,23 @@ def tokenizar(texto: str) -> Lexico:
             i = fin + 1
             continue
         if c == "$" and texto.startswith("$'", i):
-            fin = texto.find("'", i + 2)
-            if fin < 0:
+            # La comilla ANSI-C: bash interpreta sus escapes (`\x74`, `\164`, `\'`...). Con
+            # una barra invertida dentro, su valor es DESCONOCIDO, como el de una sustitucion
+            # (`resolver` lo niega), y sin ella es literal. Copiar el interior tal cual dejaba leer
+            # la carpeta de marzo con `cat $'...Back\x74est...'` (respuesta del consultor del
+            # 2026-10-22 a `trabajo/guardia-ffmpeg`, punto 2).
+            j = i + 2
+            while j < n and texto[j] != "'":
+                j += 2 if texto[j] == "\\" else 1
+            if j >= n:
                 raise BloqueoError("una comilla $'...' sin cerrar")
-            actual.append(texto[i + 2 : fin])
+            interior = texto[i + 2 : j]
+            actual.append(f"\x00V'{interior}'\x00" if _ansi_c_con_escapes(interior) else interior)
             en_palabra = True
-            i = fin + 1
+            i = j + 1
+            continue
+        if c == "$" and _comilla_de_locale(texto, i):
+            i += 1  # `$"..."` es `"..."`: el `$` no llega a la palabra
             continue
         if c == '"':
             en_palabra = True
@@ -897,7 +936,8 @@ LECTOR_DE_METADATOS = {
     "hostname", "nproc", "seq", "tty", "clear", "hash", "alias", "help", "history",
 }  # fmt: skip
 # No leen el contenido de sus argumentos de ruta (o el del proyecto, que es su puerta).
-SIN_LECTURA_DE_RUTAS = {"make", "rm", "mv", "curl", "wget", "gh", "uv", "cmake", "ffprobe"}
+# (`ffprobe` salio en `trabajo/guardia-ffmpeg`: lo decide `_analizar_ffmpeg`, por lista cerrada.)
+SIN_LECTURA_DE_RUTAS = {"make", "rm", "mv", "curl", "wget", "gh", "uv", "cmake"}
 RECURSIVOS_CON_IGNORE = {"rg"}
 ARCHIVADORES = {"tar", "zip", "7z", "7za"}
 INTERPRETES = {"python", "python3", "py", "node", "perl", "ruby", "deno", "bun", "Rscript"}
@@ -974,6 +1014,8 @@ def resolver(p: Palabra, ctx: Contexto, lex: Lexico, max_valores: int = 256) -> 
                 raise DinamicoError(f"$({interior.strip()})")
         elif trozo.startswith("\x00V"):
             nombre = trozo[2:-1]
+            if nombre.startswith("'"):  # una comilla ANSI-C con escapes (`tokenizar`)
+                raise DinamicoError(f"${nombre}")
             base = re.split(r"[:#%/^,@\[]", nombre, maxsplit=1)[0]
             if base in VARIABLES_NO_RUTA:
                 opciones = ["0"]
@@ -1401,6 +1443,9 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
             "sintaxis admitida): puede cambiar el estado del shell o cargar codigo (`enable -f`, "
             "`shopt`, `ulimit`, `bind`...)",
         )
+    if prog in PROGRAMAS_FFMPEG and not ctx.powershell:  # lista cerrada propia (cabecera, 3)
+        _analizar_ffmpeg(prog, args, cmd, ctx, lex)
+        return
     if not _no_ejecuta(prog):  # todo programa fuera de `NO_EJECUTAN` es una ejecucion
         _ejecucion_de_un_programa_desconocido(prog, args, cmd, ctx, lex)
     if prog in LECTOR_DE_METADATOS:
@@ -2894,6 +2939,291 @@ def _ejecucion_de_un_programa_desconocido(
         guiones=[(f, "desconocido") for f in ficheros],
         indecidible=indecidible,
     )
+
+
+# ------------------------------------------------------------- ffprobe y ffmpeg, lista cerrada
+R_FFMPEG = (
+    "encargo de `trabajo/guardia-ffmpeg` (decision del consultor del 2026-10-22): ffprobe y ffmpeg "
+    "solo en cuatro formas de LISTA CERRADA sobre un video que no se protege -ffprobe de "
+    "metadatos, ffmpeg que mide silencios o volumen con la salida nula y ffmpeg que extrae el "
+    "audio a un fichero FUERA del repositorio-; todo lo demas se niega "
+    "(docs/validation/GUARDIA-FFMPEG.md)"
+)
+COMO_FFMPEG = (
+    "Como reescribirlo: una de las cuatro formas, con rutas literales y nada mas: "
+    "`ffprobe [-v X] [-hide_banner] [-show_format] [-show_streams] [-show_entries X] [-of X] "
+    "[-select_streams X] <video>`; `ffmpeg [-hide_banner] [-nostdin] [-nostats] [-v X] -i <video> "
+    "-vn -sn -dn -af silencedetect=noise=<n>dB:d=<n> -f null -` (o `-af volumedetect`); y "
+    "`ffmpeg [...] -i <video> -vn -sn -dn [-ac N] [-ar N] [-c:a X] <fuera del repo>.wav|.flac|.mp3|"
+    ".m4a` (la skill ingerir-sesion, paso 2)."
+)
+PROGRAMAS_FFMPEG = frozenset({"ffmpeg", "ffprobe"})
+# Las opciones de cada forma, cerradas: las que toman valor (con el patron de su valor) y las que
+# no. Una que no esta se niega: ffmpeg y ffprobe tienen cientos que escriben o leen otros ficheros
+# (-report, -vstats_file, -progress, -dump_attachment, -f concat, -filter_script...).
+FFPROBE_CON_VALOR: dict[str, str] = {
+    "-v": r"[A-Za-z0-9+_-]+",
+    "-loglevel": r"[A-Za-z0-9+_-]+",
+    "-show_entries": r"[A-Za-z0-9_=:,.-]+",
+    "-of": r"[A-Za-z0-9_=:,.-]+",
+    "-print_format": r"[A-Za-z0-9_=:,.-]+",
+    "-select_streams": r"[A-Za-z0-9_:.#-]+",
+}
+FFPROBE_SIN_VALOR = frozenset({"-hide_banner", "-show_format", "-show_streams"})
+FFMPEG_GENERALES_CON_VALOR: dict[str, str] = {
+    "-v": r"[A-Za-z0-9+_-]+",
+    "-loglevel": r"[A-Za-z0-9+_-]+",
+}
+FFMPEG_GENERALES_SIN_VALOR = frozenset({"-hide_banner", "-nostdin", "-nostats", "-y", "-n"})
+FFMPEG_SIN_VIDEO = ("-vn", "-sn", "-dn")  # las tres, en las dos formas de ffmpeg
+FFMPEG_MEDIDA_CON_VALOR: dict[str, str] = {
+    "-af": r"silencedetect=noise=-?\d+(?:\.\d+)?dB:d=\d+(?:\.\d+)?|volumedetect",
+    "-f": r"null",
+}
+FFMPEG_EXTRACCION_CON_VALOR: dict[str, str] = {
+    "-ac": r"\d+",
+    "-ar": r"\d+",
+    "-c:a": r"[A-Za-z0-9_]+",
+    "-acodec": r"[A-Za-z0-9_]+",
+}
+DISPOSITIVOS_NULOS = frozenset({"NUL", "nul", "/dev/null"})
+SALIDAS_NULAS = DISPOSITIVOS_NULOS | {"-"}  # la de la medida: con `-f null` no escribe nada
+# No se reutiliza `EXTENSIONES_AUDIO` de `scripts/transcribir_sesion.py`: lleva contenedores de
+# video (encargo).
+EXTENSIONES_DE_EXTRACCION = (".wav", ".flac", ".mp3", ".m4a")
+# La entrada: un contenedor de video por su extension Y por sus bytes magicos -ISO BMFF, `ftyp` en
+# el desplazamiento 4; Matroska/WebM, 1A 45 DF A3 al principio-. Una lista HLS con un byte nulo
+# pasaba la comprobacion de «texto» y ffprobe la leia como `hls` con el video de marzo dentro
+# (respuesta del consultor del 2026-10-22, punto 1). La extension se compara en minusculas.
+EXTENSIONES_DE_VIDEO = (".mp4", ".mov", ".mkv", ".webm")
+MAGIA_ISO_BMFF = (4, b"ftyp")
+MAGIA_MATROSKA = (0, b"\x1a\x45\xdf\xa3")
+# Un prefijo de protocolo (`concat:`, `file:`, `subfile,`...): lo que va antes de `:` o `,` son
+# solo los caracteres de un esquema de ffmpeg. Una letra de unidad de Windows con su barra no lo
+# es (`C:/x`, `C:\x`); `C:x`, si.
+_PROTOCOLO = re.compile(r"^[A-Za-z0-9+.-]*[:,]")
+_UNIDAD = re.compile(r"^[A-Za-z]:[\\/]")
+
+
+class FfmpegNegadoError(Exception):
+    """Una pieza del comando fuera de la lista cerrada de ffprobe y ffmpeg."""
+
+
+def _ffmpeg_valor(args: list[str], i: int, patron: str) -> str:
+    if i + 1 >= len(args):
+        raise FfmpegNegadoError(f"`{args[i]}` sin su valor")
+    valor = args[i + 1]
+    if not re.fullmatch(patron, valor):
+        raise FfmpegNegadoError(f"`{args[i]} {valor}`: un valor fuera de la lista cerrada")
+    return valor
+
+
+def _ffmpeg_ruta(valor: str, ctx: Contexto, que: str) -> str:
+    """La ruta absoluta de una entrada o una salida, o `FfmpegNegadoError`."""
+    if not valor or valor == "-":
+        raise FfmpegNegadoError(f"{que} `{valor}`: la entrada o salida estandar no es un fichero")
+    if _PROTOCOLO.match(valor) and not _UNIDAD.match(valor):
+        raise FfmpegNegadoError(f"{que} `{valor}` lleva un prefijo de protocolo")
+    if "%" in valor:
+        raise FfmpegNegadoError(f"{que} `{valor}`: un patron (`%d`) son muchos ficheros")
+    if valor.startswith(("\\\\", "//")):  # `\\?\C:\...`, `\\.\`, `\\servidor\` (revisor, b3)
+        raise FfmpegNegadoError(f"{que} `{valor}` es una ruta de dispositivo o de red")
+    return _absoluta(valor, ctx.cwd)
+
+
+def _ffmpeg_formas(prog: str, args: list[str], ctx: Contexto) -> list[str]:
+    """Las entradas de la forma admitida en la que encaja el comando, o `FfmpegNegadoError`."""
+    vistas: set[str] = set()
+    entradas: list[str] = []
+    if prog == "ffprobe":
+        i = 0
+        while i < len(args):
+            t = args[i]
+            if t in vistas:
+                raise FfmpegNegadoError(f"`{t}` repetida")
+            vistas.add(t)
+            if t in FFPROBE_SIN_VALOR:
+                i += 1
+            elif t in FFPROBE_CON_VALOR:
+                _ffmpeg_valor(args, i, FFPROBE_CON_VALOR[t])
+                i += 2
+            elif t == "-i":
+                entradas.append(_ffmpeg_valor(args, i, r"(?s).+"))
+                i += 2
+            elif t.startswith("-"):
+                raise FfmpegNegadoError(f"`ffprobe {t}`: una opcion fuera de la lista cerrada")
+            else:
+                vistas.discard(t)
+                entradas.append(t)
+                i += 1
+        if len(entradas) != 1:
+            raise FfmpegNegadoError(f"{len(entradas)} ficheros de entrada: tiene que ser uno")
+        return entradas
+    # ffmpeg: [generales] -i <video> [generales y opciones de salida] <salida>, la salida al final.
+    if not args or args[-1].startswith("-") and args[-1] != "-":
+        raise FfmpegNegadoError("sin una salida al final")
+    salida, resto = args[-1], args[:-1]
+    if resto.count("-i") != 1:
+        raise FfmpegNegadoError("tiene que llevar exactamente un `-i`")
+    tras_la_entrada = False
+    de_salida: dict[str, str | None] = {}
+    i = 0
+    while i < len(resto):
+        t = resto[i]
+        if t in vistas:
+            raise FfmpegNegadoError(f"`{t}` repetida")
+        vistas.add(t)
+        if t in FFMPEG_GENERALES_SIN_VALOR:
+            i += 1
+        elif t in FFMPEG_GENERALES_CON_VALOR:
+            _ffmpeg_valor(resto, i, FFMPEG_GENERALES_CON_VALOR[t])
+            i += 2
+        elif t == "-i":
+            entradas.append(_ffmpeg_valor(resto, i, r"(?s).+"))
+            tras_la_entrada = True
+            i += 2
+        elif not tras_la_entrada:
+            # Antes de `-i`, una opcion de salida seria de ENTRADA (`-f concat -i lista`).
+            raise FfmpegNegadoError(f"`ffmpeg {t}` antes de `-i`: solo las opciones generales")
+        elif t in FFMPEG_SIN_VIDEO:
+            de_salida[t] = None
+            i += 1
+        elif t in FFMPEG_MEDIDA_CON_VALOR:
+            de_salida[t] = _ffmpeg_valor(resto, i, FFMPEG_MEDIDA_CON_VALOR[t])
+            i += 2
+        elif t in FFMPEG_EXTRACCION_CON_VALOR:
+            de_salida[t] = _ffmpeg_valor(resto, i, FFMPEG_EXTRACCION_CON_VALOR[t])
+            i += 2
+        else:
+            raise FfmpegNegadoError(f"`ffmpeg {t}`: opcion o fichero fuera de la lista cerrada")
+    if any(o not in de_salida for o in FFMPEG_SIN_VIDEO):
+        raise FfmpegNegadoError("le falta alguna de `-vn -sn -dn`")
+    medida = set(de_salida) & set(FFMPEG_MEDIDA_CON_VALOR)
+    extraccion = set(de_salida) & set(FFMPEG_EXTRACCION_CON_VALOR)
+    if medida:
+        if extraccion or medida != set(FFMPEG_MEDIDA_CON_VALOR):
+            raise FfmpegNegadoError(
+                "la medida es `-af <silencedetect|volumedetect> -f null` y nada mas"
+            )
+        if salida not in SALIDAS_NULAS:
+            raise FfmpegNegadoError(f"la medida escribe en `{salida}`: solo `-`, NUL o /dev/null")
+        return entradas
+    if "-c:a" in extraccion and "-acodec" in extraccion:
+        raise FfmpegNegadoError("`-c:a` y `-acodec` a la vez")
+    destino = _ffmpeg_ruta(salida, ctx, "la salida")
+    if not salida.lower().endswith(EXTENSIONES_DE_EXTRACCION):
+        raise FfmpegNegadoError(f"la salida `{salida}` no es un fichero de audio de la lista")
+    if _ffmpeg_dentro_del_repo(destino, ctx):
+        raise FfmpegNegadoError(f"la salida `{salida}` esta dentro del repositorio")
+    return entradas
+
+
+def _ffmpeg_formas_de_la_ruta(ruta: str) -> tuple[str, ...]:
+    """La ruta absoluta por su texto, RESUELTA (`realpath`: un enlace, `\\\\?\\C:\\...`, un nombre
+    corto 8.3 de Windows; revisor de la rama, b3) y sin los puntos ni espacios del final de cada
+    nombre, que Windows quita al abrir (`Bot v3.` y `Bot v3 ` son `Bot v3`: medido en la respuesta
+    del consultor del 2026-10-22; en Linux son otro directorio, y negar de mas ahi no abre nada)."""
+    sin_finales = os.path.normpath(re.sub(r"[ .]+(?=[\\/]|$)", "", ruta))
+    return (ruta, os.path.realpath(ruta), sin_finales)
+
+
+def _ffmpeg_dentro_del_repo(ruta: str, ctx: Contexto) -> bool:
+    """En cualquiera de sus formas (`_ffmpeg_formas_de_la_ruta`), dentro de la raiz."""
+    return any(ctx.politica.relativa(r) is not None for r in _ffmpeg_formas_de_la_ruta(ruta))
+
+
+def _ffmpeg_es_video(ruta: str) -> bool:
+    """Si es un contenedor de video por su extension y por sus bytes magicos. Uno que no se puede
+    leer no lo es: no se sabe que es."""
+    if not ruta.lower().endswith(EXTENSIONES_DE_VIDEO):
+        return False
+    try:
+        with open(ruta, "rb") as f:
+            principio = f.read(4096)
+    except OSError:
+        return False
+    return any(principio[d : d + len(m)] == m for d, m in (MAGIA_ISO_BMFF, MAGIA_MATROSKA))
+
+
+def _ffmpeg_es_texto(ruta: str) -> bool:
+    """Segunda barrera, detras de los bytes magicos: si el principio del fichero no lleva ningun
+    byte nulo. Sola no basta -un nulo la burla (respuesta del consultor del 2026-10-22, punto 1)-,
+    pero no cuesta nada: los videos de sesion medidos llevan el primer nulo en el byte 0 (mp4) o
+    en el 45 (mkv). Uno que no se puede leer cuenta como texto."""
+    try:
+        with open(ruta, "rb") as f:
+            return b"\x00" not in f.read(4096)
+    except OSError:
+        return True
+
+
+def _analizar_ffmpeg(
+    prog: str, args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
+) -> None:
+    """ffprobe y ffmpeg: pasan SOLO en una de las cuatro formas de la lista cerrada, con cada
+    entrada legible; todo lo demas se niega con `R_FFMPEG`. Excepcion declarada a la familia 3
+    (cabecera): estas formas no pasan por `exigir_ejecucion_verificable` -no hay guion que leer: lo
+    que ejecutan es ffmpeg, y sus ficheros son datos de audio y video-, pero lo que va antes y a la
+    vez en el mismo comando se exige igual (`_exigir_lo_de_antes`, `_exigir_lo_de_a_la_vez`:
+    revisor de la rama, a1/b1/b2/b4)."""
+
+    def niega(por: str) -> NoReturn:
+        raise BloqueoError(f"`{prog}`: {por}.\nRegla: {R_FFMPEG}.\n{COMO_FFMPEG}")
+
+    if ctx.en_sustitucion:
+        niega("va dentro de una sustitucion `$(...)`")
+    nivel = ctx.nivel if ctx.nivel is not None else lex
+    if nivel.sustituciones or _hay_sustitucion_de_proceso(nivel):
+        niega("el comando lleva una sustitucion (`$(...)`, acentos graves o `<(...)`)")
+    # Antes, solo `cd` literal (no `cd -`), asignaciones literales, `export` o `set`; a la vez, en
+    # la tuberia, solo filtros, y nada en segundo plano: `find ... -exec ffprobe {}`, `cd -`,
+    # `| tee` y `&` pasaban sin esto (revisor, b1, b2 y b4).
+    _exigir_lo_de_antes(ctx, cmd, prog)
+    _exigir_lo_de_a_la_vez(ctx, cmd, prog)
+    if cmd.entradas or cmd.heredocs:
+        niega("lleva una redireccion de entrada (`<`, `<>`, `<<`): la medida no lee de la entrada")
+    textos: list[str] = []
+    for a in args:
+        valores = _valores(a, ctx, lex)
+        if (
+            a.glob
+            or re.search(r"\{[^}]*(,|\.\.)[^}]*\}", a.texto)
+            or valores is None
+            or len(valores) != 1
+        ):
+            visible = re.sub(r"\x00[SV]([^\x00]*)\x00", r"$\1", a.texto)
+            niega(f"el argumento `{visible}` se construye al ejecutarse")
+        textos.append(valores[0])
+    try:
+        entradas = _ffmpeg_formas(prog, textos, ctx)
+        rutas = [(e, _ffmpeg_ruta(e, ctx, "la entrada")) for e in entradas]
+    except FfmpegNegadoError as exc:
+        niega(str(exc))
+    for nombre, ruta in rutas:
+        for r in _ffmpeg_formas_de_la_ruta(ruta):  # por su texto, resuelta y sin finales
+            motivo = ctx.politica.motivo_fichero(r)
+            if motivo:
+                raise BloqueoError(f"ejecutar {nombre}.\nRegla: {motivo}.")
+        if os.path.isdir(ruta):
+            niega(f"la entrada {nombre} es un directorio")
+        if not _ffmpeg_es_video(ruta):
+            niega(
+                f"la entrada {nombre} no es un contenedor de video reconocido (extension "
+                f"{', '.join(EXTENSIONES_DE_VIDEO)} y sus bytes magicos), o no se puede leer: "
+                "ffmpeg lee una lista (`#EXTM3U`, `ffconcat`) como los ficheros que nombra"
+            )
+        if _ffmpeg_es_texto(ruta):
+            niega(f"la entrada {nombre} es texto: ffmpeg puede leerla como una lista")
+    for op, destino in cmd.salidas:
+        if op in {">&", "<&"} and re.fullmatch(r"\d+-?|-", destino.texto):
+            continue  # `2>&1`: a otro descriptor, no a un fichero
+        valores = _valores(destino, ctx, lex)
+        if destino.glob or valores is None or len(valores) != 1:
+            niega("redirige su salida a un fichero que se construye al ejecutarse")
+        if valores[0] in DISPOSITIVOS_NULOS:
+            continue
+        if _ffmpeg_dentro_del_repo(_absoluta(valores[0], ctx.cwd), ctx):
+            niega(f"redirige su salida a {valores[0]}, dentro del repositorio")
 
 
 def _es_fichero_de_la_rama(texto: str, ctx: Contexto) -> bool:

@@ -4,6 +4,8 @@ El ORDEN y el ESTADO vivos de todo lo pendiente (desde `trabajo/hoja-de-ruta`, 2
 inventario y fuentes en `docs/validation/HOJA-DE-RUTA.md` §0). `docs/plan/MASTER_PLAN.md` define
 las funcionalidades (§A); su §E queda como historia.
 
+Metas (Aleks): firme, el bot testeado y funcional para marzo de 2027; optimista, diciembre de 2026, que ya no cabe por los 3 meses de sombra de F34; y, desde el 2026-10-22, el bot operativo y generando dinero antes de agosto de 2027, cuando Aleks empieza sus prácticas.
+
 **Cómo se lee.** Cada entrada lleva sus referencias: `NA:X` (letra viva de la Next Action de
 `PROJECT_STATE.md`), `HER:n` (pendiente heredado), `ID:` (una ambigüedad `A-nn`, un `ADR-nnnn` o una
 regla `RN-nnn`) y `F:Fnn` (funcionalidad de MASTER_PLAN §A). Y cuatro campos: qué es, de qué
@@ -409,12 +411,13 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   escrita del trader sobre marzo (heredado 2): A.3 no está HECHA.
 
 ### A.4 · La copia de seguridad
-- **Refs:** (Technical Debt de PROJECT_STATE, «Copia de seguridad … INCOMPLETA desde el 2026-09-09»)
+- **Refs:** (Technical Debt de PROJECT_STATE, «Copia de seguridad de las crudas y los WAV: hecha hasta v10»)
 - **Qué es:** las crudas y los WAV fuera de la máquina: falta v6 (la sesión 1), y el texto de la
   deuda no dice nada de v7–v10.
 - **Depende de:** nada. **Fecha límite: antes de grabar la próxima sesión con el trader.**
 - **Quién:** Aleks (el consultor no tiene acceso a su máquina ni a su Drive).
 - **Hecho cuando:** v6 a v10 están en Drive con su SHA256SUMS.
+- **Estado:** HECHA (2026-10-22, Aleks: data/transcripciones/v6 a v10 (158 ficheros) y SHA256SUMS-v6-v10.txt (158 líneas, una por fichero) en una carpeta privada de su Google Drive).
 
 ## Carril: guardias y deuda
 
@@ -423,6 +426,10 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** lo que importa o ejecuta un guion (B); las rutas compuestas (C); las formas raras (D);
   el falso positivo de `exigir_sin_crudo` (K, junto a B o C si cabe). Y lo medido en
   `trabajo/entorno-code` (ENTORNO-CODE.md §6):
+  - **PRIORITARIO, porque lee material protegido** (consultor, 2026-10-22, K): el alias de la
+    raíz en motivo_fichero. Hoy pasan cat, Read, grep -r y find … -exec cat sobre la raíz escrita
+    con \\?\ o con su nombre corto 8.3, o sobre un directorio que CONTIENE el repo; y las variables
+    se resuelven con el entorno del hook, otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11).
   - **Prioritario dentro de G.1** (consultor, 2026-10-11): la guardia no niega
     `git ls-files knowledge/cases | grep ...`, listar la carpeta madre del holdout con un filtro
     detrás (§10.1). Es la 4.ª vez que alguien lo hace, esta vez el propio revisor.
@@ -532,4 +539,3 @@ sus ambigüedades, sin revisar cada informe a fondo.
   ejecución 3, después del 1 de noviembre (NA:A).
 - La semana del 26 al 30 de octubre de 2026 es la primera en que el bot abre a otra hora: Europa ya
   cambió la hora y EE. UU. no (ADR-0069).
-- La copia de seguridad, antes de grabar la próxima sesión con el trader (A.4).
