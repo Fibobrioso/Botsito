@@ -161,6 +161,8 @@ PERMITIDAS = [
     ("ffprobe, un mkv", f'ffprobe -v error -show_format -show_streams "{MKV}"'),
     ("volumen, un mkv", f'ffmpeg -hide_banner -nostdin -i "{MKV}" {VOL} -'),
     ("comilla ANSI-C sin barra", f"ffprobe -show_format $'{VIDEO}'"),
+    # La segunda respuesta del consultor: un `$"..."` fuera de lo protegido es `"..."`, y pasa.
+    ("comilla de locale, el video", f'ffprobe -v error -show_format $"{VIDEO}"'),
 ]
 NEGADAS = [
     ("entrada protegida, ffprobe", f'ffprobe -v error -show_format "{MARZO}"', "R_SIN_ABRIR"),
@@ -292,9 +294,25 @@ NEGADAS = [
         'ffprobe -show_format "{REPO}/' + CARPETA_MARZO + ' /v.mp4"',
         "R_SIN_ABRIR",
     ),
+    # La segunda respuesta del consultor, punto 2: ninguna opcion de demuxer (`enable_drefs` haria
+    # que el de MP4 siguiera referencias a ficheros externos).
+    ("ffprobe -enable_drefs", f"ffprobe -enable_drefs 1 -show_format {V}", "R_FFMPEG"),
+    ("ffmpeg -enable_drefs", f"ffmpeg -enable_drefs 1 -i {V} {VOL} -", "R_FFMPEG"),
+    # La segunda respuesta del consultor, punto 1: `$"..."` se lee como `"..."`.
+    ("locale: cat en marzo", f'cat $"{MARZO}"', "R_SIN_ABRIR"),
+    ("locale: head en marzo", f'head -c 10 $"{MARZO}"', "R_SIN_ABRIR"),
+    ("locale: grep en marzo", f'grep x $"{MARZO}"', "R_SIN_ABRIR"),
+    ("locale: ffprobe en marzo", 'ffprobe -show_format $"{REPO}/' + MARZO + '"', "R_SIN_ABRIR"),
+    (
+        "locale: cd a marzo",
+        f'cd $"{CARPETA_MARZO}" && ffprobe -show_format v.mp4',
+        "R_SIN_ABRIR",
+    ),
 ]
 # Los cuatro de la respuesta del consultor que leen la carpeta de marzo con `$'...'`.
 ANSI_C_EN_MARZO = [n for n, _c, _e in NEGADAS if n.startswith("ANSI-C:") and "marzo" in n]
+# Los cinco de la segunda respuesta que leen la carpeta de marzo con `$"..."`.
+LOCALE_EN_MARZO = [n for n, _c, _e in NEGADAS if n.startswith("locale:")]
 MATRIZ = [(n, c, "pasa") for n, c in PERMITIDAS] + NEGADAS
 
 
@@ -380,6 +398,31 @@ def test_sin_el_arreglo_de_la_comilla_ansi_c_los_cuatro_pasan(
     monkeypatch.setattr(g, "_ffmpeg_es_video", lambda _ruta: True)
     monkeypatch.setattr(g, "_ffmpeg_es_texto", lambda _ruta: False)
     for nombre in ANSI_C_EN_MARZO:
+        motivo = _decide(g, repo, _comando(casos[nombre], repo))
+        print(f"y sin los bytes magicos | {nombre} | {_regla(g, motivo)}")
+        assert motivo is None, nombre
+
+
+def test_sin_el_arreglo_de_la_comilla_de_locale_los_cinco_pasan(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Roto a proposito (segunda respuesta del consultor, punto 1): si `$"..."` deja el `$` en la
+    palabra, como en `main`, `cat`, `head` y `grep` leen la carpeta de marzo; ffprobe y el `cd` los
+    para ademas la barrera de los bytes magicos (la ruta con `$` no existe), y sin ella pasan los
+    cinco. Con el arreglo, los cinco se niegan y el `$"..."` del video pasa (la matriz)."""
+    casos = dict((n, c) for n, c, _e in NEGADAS)
+    assert len(LOCALE_EN_MARZO) == 5
+    monkeypatch.setattr(g, "_comilla_de_locale", lambda _texto, _i: False)
+    for nombre in LOCALE_EN_MARZO:
+        motivo = _decide(g, repo, _comando(casos[nombre], repo))
+        print(f'sin el arreglo de $"..." | {nombre} | {_regla(g, motivo)}')
+        if "ffprobe" in nombre or "cd" in nombre:
+            assert _regla(g, motivo) == "R_FFMPEG" and "no se puede leer" in str(motivo), nombre
+        else:
+            assert motivo is None, nombre
+    monkeypatch.setattr(g, "_ffmpeg_es_video", lambda _ruta: True)
+    monkeypatch.setattr(g, "_ffmpeg_es_texto", lambda _ruta: False)
+    for nombre in LOCALE_EN_MARZO:
         motivo = _decide(g, repo, _comando(casos[nombre], repo))
         print(f"y sin los bytes magicos | {nombre} | {_regla(g, motivo)}")
         assert motivo is None, nombre

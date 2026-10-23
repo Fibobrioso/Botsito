@@ -17,6 +17,7 @@
 | ffprobe, un mkv | `ffprobe -v error -show_format -show_streams "corpus/Estrategia del trader/sesion-05.mkv"` | pasa | pasa |
 | volumen, un mkv | `ffmpeg -hide_banner -nostdin -i "corpus/Estrategia del trader/sesion-05.mkv" -vn -sn -dn -af volumedetect -f null -` | pasa | pasa |
 | comilla ANSI-C sin barra | `ffprobe -show_format $'corpus/Estrategia del trader/sesion-05.mp4'` | pasa | pasa |
+| comilla de locale, el video | `ffprobe -v error -show_format $"corpus/Estrategia del trader/sesion-05.mp4"` | pasa | pasa |
 | entrada protegida, ffprobe | `ffprobe -v error -show_format "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
 | entrada protegida, medida | `ffmpeg -i "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4" -vn -sn -dn -af volumedetect -f null -` | R_SIN_ABRIR | R_SIN_ABRIR |
 | entrada protegida, extraccion | `ffmpeg -i "corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4" -vn -sn -dn -ac 1 -ar 16000 "{FUERA}/a.wav"` | R_SIN_ABRIR | R_SIN_ABRIR |
@@ -92,6 +93,13 @@
 | salida en la raiz con espacio final | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 '{REPO} /a.wav'` | R_FFMPEG | R_FFMPEG |
 | salida en la raiz con punto y espacio | `ffmpeg -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -ac 1 -ar 16000 '{REPO}. /a.wav'` | R_FFMPEG | R_FFMPEG |
 | entrada en marzo con espacio final | `ffprobe -show_format "{REPO}/corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026 /v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
+| ffprobe -enable_drefs | `ffprobe -enable_drefs 1 -show_format "corpus/Estrategia del trader/sesion-05.mp4"` | R_FFMPEG | R_FFMPEG |
+| ffmpeg -enable_drefs | `ffmpeg -enable_drefs 1 -i "corpus/Estrategia del trader/sesion-05.mp4" -vn -sn -dn -af volumedetect -f null -` | R_FFMPEG | R_FFMPEG |
+| locale: cat en marzo | `cat $"corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
+| locale: head en marzo | `head -c 10 $"corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
+| locale: grep en marzo | `grep x $"corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
+| locale: ffprobe en marzo | `ffprobe -show_format $"{REPO}/corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | R_SIN_ABRIR | R_SIN_ABRIR |
+| locale: cd a marzo | `cd $"corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026" && ffprobe -show_format v.mp4` | R_SIN_ABRIR | R_SIN_ABRIR |
 .sin la regla | ffprobe, relativa | R_EJECUCION
 sin la regla | ffprobe, absoluta con -i | R_EJECUCION
 sin la regla | ffprobe, -print_format | R_EJECUCION
@@ -111,6 +119,7 @@ sin la regla | skill: audio fuera del repo | R_EJECUCION
 sin la regla | ffprobe, un mkv | R_EJECUCION
 sin la regla | volumen, un mkv | R_EJECUCION
 sin la regla | comilla ANSI-C sin barra | R_EJECUCION
+sin la regla | comilla de locale, el video | R_EJECUCION
 .con una opcion de mas | -map | pasa
 con una opcion de mas | ffprobe -report | pasa
 .sin los bytes magicos | lista HLS, ffprobe | pasa
@@ -124,7 +133,17 @@ y sin los bytes magicos | ANSI-C: ffprobe en marzo, \x74 | pasa
 y sin los bytes magicos | ANSI-C: ffmpeg en marzo, \164 | pasa
 y sin los bytes magicos | ANSI-C: cat en marzo | pasa
 y sin los bytes magicos | ANSI-C: cd a marzo | pasa
-.nombre corto de la raiz: C:\Users\USER\AppData\Local\Temp\PYTEST~1\PYTEST~4\TEST_U~1\repo
+.sin el arreglo de $"..." | locale: cat en marzo | pasa
+sin el arreglo de $"..." | locale: head en marzo | pasa
+sin el arreglo de $"..." | locale: grep en marzo | pasa
+sin el arreglo de $"..." | locale: ffprobe en marzo | R_FFMPEG
+sin el arreglo de $"..." | locale: cd a marzo | R_FFMPEG
+y sin los bytes magicos | locale: cat en marzo | pasa
+y sin los bytes magicos | locale: head en marzo | pasa
+y sin los bytes magicos | locale: grep en marzo | pasa
+y sin los bytes magicos | locale: ffprobe en marzo | pasa
+y sin los bytes magicos | locale: cd a marzo | pasa
+.nombre corto de la raiz: C:\Users\USER\AppData\Local\Temp\PYTEST~1\PY36F8~1\TEST_U~1\repo
 .| ffprobe, relativa | main R_EJECUCION | rama pasa |
 | ffprobe, absoluta con -i | main R_EJECUCION | rama pasa |
 | ffprobe, -print_format | main R_EJECUCION | rama pasa |
@@ -207,4 +226,11 @@ y sin los bytes magicos | ANSI-C: cd a marzo | pasa
 | salida en la raiz con espacio final | main R_EJECUCION | rama R_FFMPEG |
 | salida en la raiz con punto y espacio | main R_EJECUCION | rama R_FFMPEG |
 | entrada en marzo con espacio final | main pasa | rama R_SIN_ABRIR |
+| ffprobe -enable_drefs | main R_EJECUCION | rama R_FFMPEG |
+| ffmpeg -enable_drefs | main R_EJECUCION | rama R_FFMPEG |
+| locale: cat en marzo | main pasa | rama R_SIN_ABRIR |
+| locale: head en marzo | main pasa | rama R_SIN_ABRIR |
+| locale: grep en marzo | main pasa | rama R_SIN_ABRIR |
+| locale: ffprobe en marzo | main pasa | rama R_SIN_ABRIR |
+| locale: cd a marzo | main pasa | rama R_SIN_ABRIR |
 .

@@ -74,3 +74,15 @@ Dado por Aleks (consultor) el 2026-10-22. Copiado tal cual:
 > make check sellado, commit, push a fix/guardia-ffmpeg y la CI de Linux con un gh run view suelto (dame el número). Después el revisor OTRA VEZ, sobre el último commit y con el informe terminado, con el encargo de comprobar los arreglos de esta respuesta y de intentar romper la regla con formas que no estén en la matriz (envoltorios, comillas, escapes, ficheros que se hacen pasar por otro formato). Su informe, pegado al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Segunda respuesta del consultor (2026-10-22, sobre 79a560b)
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Segunda respuesta del consultor a trabajo/guardia-ffmpeg (79a560b, run 39876229031), 2026-10-22. Cópiala tal cual al final del informe y aplícala.
+>
+> 1. Pregunta 4 del §9 (la comilla $"…"): opción (a), se cierra en esta rama. Por qué: lee material protegido, es la misma clase que ya mandé cerrar aquí ($'…') y el arreglo es de una línea con la condición nombrada: en el tokenizador, $"…" se lee como "…" (bash solo traduce la cadena según el idioma, nunca la convierte en otra ruta). Con sus casos en la matriz (cat, head, grep, ffprobe, cd sobre la carpeta de marzo con $"…"; y un $"…" legítimo fuera de lo protegido, que pasa), roto a propósito en los dos sentidos, en la tabla de comparación con main, y los dos tests del ritual en verde.
+> 2. Lo que queda sin medir (un fichero con los bytes mágicos y algo más dentro): se acepta como riesgo residual y se escribe así en el informe. Dos cosas lo acotan y hay que dejarlas dichas: la lista cerrada no admite ninguna opción de demuxer (por ejemplo, -enable_drefs, la que haría que el demuxer de MP4 siga referencias a ficheros externos), y la entrada tiene que pasar motivo_fichero por su propia ruta. Verifica en la documentación de ffmpeg de la versión que hay en la máquina que enable_drefs viene desactivado por defecto, y apunta la versión y la fuente; si no lo puedes verificar, dilo así, sin afirmarlo.
+> 3. Después: make check sellado, commit, push a fix/guardia-ffmpeg y la CI de Linux con un gh run view suelto; dame el número. El revisor, una pasada corta solo sobre el diff de este commit (el arreglo de $"…" y su matriz), pegada al final.
+>
+> Con eso la rama queda para su orden de cierre. Rama lista para revisión, NO cerrada.

@@ -16,7 +16,7 @@ e044b15 · merge de `trabajo/hoja-sesion-05` (tag `stable/F37z-hoja-sesion-05`):
 e044b15 · merge: trabajo/hoja-sesion-05, la hoja de la sesion 05 en transcribir_sesion.py antes de grabar y la regla del 2026-10-21 en DECISIONES-DE-PROCESO · tag stable/F37z-hoja-sesion-05
 
 ## Tests Currently Passing
-1654 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1655 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

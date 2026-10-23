@@ -651,6 +651,14 @@ def _ansi_c_con_escapes(interior: str) -> bool:
     return "\\" in interior
 
 
+def _comilla_de_locale(texto: str, i: int) -> bool:
+    """Si en `i` empieza una comilla de traduccion `$"..."`: bash la lee como `"..."` (solo traduce
+    la cadena segun el idioma, nunca la convierte en otra ruta). Dejar el `$` en la palabra hacia
+    que `cat $"<carpeta de marzo>/v.mp4"` pasara (segunda respuesta del consultor del 2026-10-22 a
+    `trabajo/guardia-ffmpeg`, punto 1)."""
+    return texto.startswith('$"', i)
+
+
 def tokenizar(texto: str) -> Lexico:
     lex = Lexico()
     i, n = 0, len(texto)
@@ -793,6 +801,9 @@ def tokenizar(texto: str) -> Lexico:
             actual.append(f"\x00V'{interior}'\x00" if _ansi_c_con_escapes(interior) else interior)
             en_palabra = True
             i = j + 1
+            continue
+        if c == "$" and _comilla_de_locale(texto, i):
+            i += 1  # `$"..."` es `"..."`: el `$` no llega a la palabra
             continue
         if c == '"':
             en_palabra = True

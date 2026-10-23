@@ -1,0 +1,12 @@
+| caso | comando | guardia_main | guardia_nueva |
+| echo | `echo $"hola"` | pasa | pasa |
+| printf | `printf $"%s\n" x` | pasa | pasa |
+| cat de un fichero sin proteger | `cat $"notas.txt"` | pasa | pasa |
+| grep sobre un fichero sin proteger | `grep hola $"notas.txt"` | pasa | pasa |
+| ls de la carpeta de marzo (listar) | `ls $"corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026"` | pasa | pasa |
+| sha256sum en marzo (hashear) | `sha256sum $"corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | pasa | pasa |
+| cat en marzo | `cat $"corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | pasa | R_SIN_ABRIR |
+| cat con una variable dentro | `cat $"$X_NO/v.mp4"` | niega: el argumento `$$X_NO/v.mp4` se construye al ejecutarse y este comando  | niega: el argumento `$X_NO/v.mp4` se construye al ejecutarse y este comando l |
+| cat con una sustitucion dentro | `cat $"$(pwd)/notas.txt"` | R_EJECUCION | R_EJECUCION |
+| pegada a otra palabra | `cat corp$"us/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4"` | pasa | R_SIN_ABRIR |
+| git log con formato | `git log --format=$"%h %s" -1` | excepcion FileNotFoundError | excepcion FileNotFoundError |
