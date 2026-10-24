@@ -12103,3 +12103,82 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 43 (2026-10-22).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/guardia-ci (2026-10-24)
+
+Su texto literal en «Technical Debt», con su condicion y su evidencia:
+
+- La guardia no niega un guion que espera a la CI en bucle (gh run view o gh run list repetidos): se lanzó dos veces seguidas contra la orden del consultor (cierre de trabajo/barrido-sesion-5 y entrega de trabajo/ea-conexion, EA-CONEXION.md §13), y las dos se paró sin leer su salida. Para el carril de guardias y deuda: negarlo por la condición (un bucle o una espera alrededor de una consulta de CI), con su test de los dos sentidos.
+  Condicion (a) PAGADA: `.claude/hooks/guardia.py`, la seccion «esperar a la CI» (`R_ESPERA_CI`, `exigir_sin_espera_a_la_ci`, `_exigir_codigo_sin_ci`), con `tests/unit/test_guardia_ci.py` (115 casos; rotos a proposito en los dos sentidos, `test_sin_la_regla_vuelve_lo_de_antes` y `test_con_la_consulta_suelta_como_espera_las_buenas_se_niegan`); el guion real del incidente (`docs/validation/anexos/GUARDIA-CI/esperar_run_original.py`, fila N8c) se niega. Rama `trabajo/guardia-ci`, tag `stable/F38b-guardia-ci`; informe `docs/validation/GUARDIA-CI.md`.
+
+# Registro de cierre · `trabajo/guardia-ci` (2026-10-24)
+
+- Orden de cierre de Aleks del 2026-10-23, tras la entrega de `fe901fe` y su run 40062879327, pegada
+  en la conversación y lanzada después por Aleks con `/cerrar-rama`; ejecutada siguiendo
+  `RITUAL.md` con la skill `cerrar-rama`. Rama
+  aceptada tras una fase 0 con tres PARADAS (la de la fase 0, la de las herramientas fuera del
+  matcher y la de la regla de código) y sus tres respuestas, y una pasada del revisor (opus;
+  GUARDIA-CI.md §8, lo hecho en §9). Nunca se cerró sin la orden. Sus puntos:
+  1. b7, en un commit previo al cierre (`3eea475`, con su `make check` y su CI): el texto de la espera
+     pasa a «una espera sin consulta (`sleep` en segundo plano) y despues otra consulta suelta» en
+     el mensaje de la guardia, `entregar-rama`, `cerrar-rama` y `RITUAL.md:320`, con el test que lo
+     fija;
+  2. b2: la lista cerrada de vías de salida no se amplía; `aiohttp` queda como riesgo residual, con
+     su test y en la línea nueva de Technical Debt;
+  3. en este commit: V de la Next Action con «(A.4, HECHA el 2026-10-22)», el «Depende de» de R4.1
+     de la hoja de ruta con «R1.1 (HECHA)» y la copia de seguridad «(A.4, HECHA el 2026-10-22)», la
+     línea de Technical Debt del guion de CI fuera (bloque PAGADA de arriba) y la línea nueva de
+     Technical Debt de GUARDIA-CI.md §5.3, tal cual; G.1 no recibe nada y K sigue como está;
+  4. la fila de ERRORES-RECURRENTES, con los hallazgos del revisor y los cinco de la orden.
+- **DESVIACIÓN declarada** (precedente: el cierre de `trabajo/guardia-ffmpeg`): la puerta del
+  commit del contrato da, además de `D  contrato.yaml`, `M  docs/state/HISTORIA.md`,
+  `M  docs/runbooks/ERRORES-RECURRENTES.md`, `M  PROJECT_STATE.md` y `M  docs/plan/HOJA-DE-RUTA.md`,
+  la línea `M  docs/validation/GUARDIA-CI.md`: el informe gana aquí la orden de cierre copiada
+  (lo pide la orden), las CI de `fe901fe` y `3eea475`, los `make check` de esos dos commits y su
+  `## Estado` de cerrada. No se pudo sellar aparte: `make check` no sella con otros cambios sin
+  estadiar, y los de este commit ya estaban hechos. Nada más.
+- **Lo que entra** (carril de guardias y deuda; no es una letra de la Next Action):
+  - `.claude/hooks/guardia.py`: la familia 4 de la cabecera y la sección «esperar a la CI». En Bash
+    se niega una consulta de CI (`gh run view|list`, `gh pr checks|status`, `gh pr view` con
+    `statusCheckRollup`, o una ruta de la API: `actions/runs|jobs`, `check-runs|suites`,
+    `commits/<sha>/status(es)`) y una espera (`while`, `until`, `for`, `select`, una función,
+    `sleep`, `watch`, `tail -f`, un programa que lanza la consulta) en el mismo comando, mirado
+    entero; `gh run watch` y `gh pr checks --watch` siempre; lo que no se puede decidir junto a una
+    consulta o una espera. En código (un guion, `python -c`, `bash -c`, un heredoc), la mención de
+    la CI con una vía de salir del proceso o algo no decidible, salvo cargar la propia guardia por
+    su ruta; en un lenguaje que no es Python, la mención basta. En PowerShell, consulta y espera.
+    La consulta suelta pasa. `Monitor` se decide como Bash (`R_MONITOR` si su entrada no se
+    reconoce);
+  - `.claude/settings.json`: `Monitor` en el matcher del `PreToolUse`, y en `permissions.deny`
+    `Artifact`, `ArtifactData`, `DesignSync` y `file_upload`, `navigate`, `get_page_text` y
+    `read_page` de claude-in-chrome; probado en vivo, sin reiniciar la sesión;
+  - `tests/unit/test_guardia_ci.py` (nuevo, 16 funciones y 115 casos; 1655 a 1671 tests); en
+    `tests/unit/test_guardia_claude.py`, el matcher con `Monitor` y `_casa_regla` con reglas que no
+    son `Bash(...)`; en `tests/unit/test_guardia_ffmpeg.py`, su cabecera corregida;
+  - recuadros de corrección en `docs/sesion-5/PREGUNTAS.md` (A.4 HECHA) y en
+    `docs/validation/GUARDIA-FFMPEG.md` (la guardia no lee `tests/`);
+  - la forma de esperar en `entregar-rama`, `cerrar-rama` y `RITUAL.md`;
+  - en PROJECT_STATE, dos líneas de Technical Debt: la de las herramientas cerradas por permisos
+    (en la rama) y la de los riesgos residuales (en este commit).
+- **Lo que sale**: la línea de Technical Debt del guion que espera a la CI en bucle (PAGADA, arriba).
+- Letras: ninguna sale ni entra; cambia V (su dependencia de A.4, ya HECHA). Ningún heredado sale.
+  En la hoja de ruta, solo el «Depende de» de R4.1.
+- Negativas de la guardia o del clasificador: ninguna del clasificador; de la guardia, las de
+  GUARDIA-CI.md §4 (todas de reglas de `main`, resueltas con la forma que propone la guardia) y la
+  PARADA 3 (la regla nueva negaba un guion que solo mencionaba la CI). Además, Claude Code bloquea
+  un `sleep` en primer plano (§6), de donde sale b7.
+- Letra del tag: la última cerrada era `stable/F38a-guardia-ffmpeg`; `stable/F38b-*` no existe en
+  local ni en origin (comprobado antes del tag). La ingesta de la sesión 5 será F38c.
+- Tag: `stable/F38b-guardia-ci`. El merge es `git rev-parse "stable/F38b-guardia-ci^{commit}"`.
+- Commits de la rama: `4f534bb` (apertura: encargo, contrato y Archivo 44), `55d691a` (fase 0 y su
+  PARADA), `2244e7b` (la respuesta a la fase 0 y la PARADA 2), `babecf5` (la ampliación del
+  contrato y la respuesta a la PARADA 2), `e43d5b2` (la regla, Monitor y los permisos), `74336c7`
+  (la respuesta a la PARADA 3), `7926d57` (D5 en Linux), `fe901fe` (los hallazgos del revisor),
+  `3eea475` (el texto de b7) y el de este registro.
+- CI de Linux por `fix/guardia-ci`: run 40056337257 sobre 74336c7 (2 failed, 2830 passed, 11
+  skipped: el aceptado de `state check` y la columna «antes» de D5, que dependía del sistema);
+  40059054099 sobre 7926d57 (1 failed, 2831 passed, 11 skipped); 40062879327 sobre fe901fe (1
+  failed, 2845 passed, 11 skipped); 40066035413 sobre 3eea475 (1 failed, 2845 passed, 11 skipped). El único fallo, el aceptado:
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`. La CI de `main` corre tras el push.
+- Exposiciones: ninguna.
+- Informe: `docs/validation/GUARDIA-CI.md`. Encargo: `docs/encargos/trabajo-guardia-ci.md`.

@@ -882,6 +882,8 @@ filtrado con `grep`.
 |---|---|---|
 | `74336c7` (la respuesta a la PARADA 3) | **40056337257** | `failure`: 2 failed, 2830 passed, 11 skipped. Uno, el aceptado: `test_state_check_ok_on_real_repo`. **El otro, no:** `test_sin_la_regla_vuelve_lo_de_antes` con `{'D5': 'R_EJECUCION'}` |
 | `7926d57` (el arreglo de D5) | **40059054099** | `completed` / `failure` con **1 failed, 2831 passed, 11 skipped**: solo el aceptado, `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/guardia-ci'» y la rama es `fix/guardia-ci`). Puerta de RITUAL.md cumplida |
+| `fe901fe` (los hallazgos del revisor) | **40062879327** | 1 failed, 2845 passed, 11 skipped: solo el aceptado |
+| `3eea475` (b7, por la orden de cierre) | **40066035413** | 1 failed, 2845 passed, 11 skipped: solo el aceptado |
 
 **El fallo de D5, medido:** D5 es `"C:\Program Files\GitHub CLI\gh.exe" run view` en un bucle. Su
 decisión ANTES (la de `main`, con la regla apagada) depende del sistema: en Windows pasa, y en
@@ -1129,12 +1131,14 @@ consulta es suelta. Va a la línea de Technical Debt del cierre (§5.3).
 | `e43d5b2` (fases 1 y 2) | exit 0, 2826 passed, `SELLO` sobre el árbol `0292e735…` | 298 MiB |
 | `74336c7` (PARADA 3) | exit 0, 2843 passed in 914.16s, `SELLO` sobre el árbol `e328feaf…` | 297 MiB |
 | `7926d57` (D5) | exit 0, 2843 passed in 932.78s, `SELLO` sobre el árbol `75a18b1a…` (`= 7926d57^{tree}`, revisor) | 297 MiB |
-| el de los hallazgos del revisor | su `make check` y su run van en el mensaje de entrega: un commit no puede llevar su propio sello ni su propia CI | |
+| `fe901fe` (los hallazgos del revisor) | exit 0, 2857 passed in 936.19s, `SELLO` sobre el árbol `ba18fd89…` | 298 MiB |
+| `3eea475` (b7) | exit 0, 2857 passed in 948.82s, `SELLO` sobre el árbol `5232d169…` | 298 MiB |
 
 ## Orden de cierre (consultor, 2026-10-23)
 
-Copiada tal cual. Llegó como texto pegado: la sesión no puede cargar la skill `cerrar-rama` desde
-él (`cerrar-rama/SKILL.md:20-22`), así que lee su fichero y lo sigue igual.
+Copiada tal cual. Llegó como texto pegado (la sesión no puede cargar la skill `cerrar-rama` desde
+él, `cerrar-rama/SKILL.md:20-22`, y empezó leyendo su fichero), y después Aleks la lanzó con
+`/cerrar-rama`: el cierre sigue la skill y `RITUAL.md`.
 
 > Orden de cierre de trabajo/guardia-ci (consultor, 2026-10-23). Tag: stable/F38b-guardia-ci. Cópiala al informe, en una sección «Orden de cierre».
 >
@@ -1169,8 +1173,12 @@ que no lleva tildes). Cambian: `COMO_ESPERAR_CI` en `.claude/hooks/guardia.py`, 
 
 ## Estado
 
-EN CIERRE por la orden de cierre del 2026-10-23 (arriba): el commit previo de b7 y, después, el
-cierre. Lo que sigue era el estado de la entrega:
+CERRADA por la orden de cierre del 2026-10-23 (arriba), con `stable/F38b-guardia-ci`: b7 en
+`3eea475` (su CI, run 40066035413, solo el fallo aceptado); b2 se queda como riesgo residual; el
+contrato sale y entran lo preparado en §3 y §5.3, el registro en HISTORIA y la fila de
+ERRORES-RECURRENTES en el commit del contrato. El merge, el tag, el commit de estado y la CI de
+`main`, en el registro de cierre de `docs/state/HISTORIA.md` y en `PROJECT_STATE.md`. Lo que sigue
+era el estado de la entrega:
 
 LISTA PARA REVISIÓN. Fase 0 y tres PARADAS con sus respuestas aplicadas; la regla, Monitor y los
 permisos, con sus tests (16 funciones, 115 casos) y sus pruebas en vivo; la CI de Linux de

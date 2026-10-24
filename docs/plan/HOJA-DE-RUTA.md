@@ -216,9 +216,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   (ENTRADA-JULIO.md §8) y la pregunta 3 con el ejemplo del 29 de abril y la caja de la
   reentrada (PUNTO-USADO.md §5). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md
   (trabajo/barrido-sesion-5).
-- **Depende de:** R1.1, R3.1 (HECHA), R1.2 (HECHA), R3.2 (HECHA), R3.3 (HECHA), R3.4 (HECHA) y
-  la copia de
-  seguridad del carril de Aleks.
+- **Depende de:** R1.1 (HECHA), R3.1 (HECHA), R1.2 (HECHA), R3.2 (HECHA), R3.3 (HECHA),
+  R3.4 (HECHA) y la copia de seguridad del carril de Aleks (A.4, HECHA el 2026-10-22).
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.
 
