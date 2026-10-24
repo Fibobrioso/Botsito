@@ -47,3 +47,22 @@ aquí van juntos, tal cual. Copiado tal cual:
 > Informe en docs/validation/GUARDIA-ALIAS.md. make check sellado; push a fix/guardia-alias (git push origin trabajo/guardia-alias:refs/heads/fix/guardia-alias; si el clasificador lo niega, me lo dices y lo lanza Aleks con «!») y CI de Linux con solo el fallo esperado de state check; dame el número de run. Después el revisor, lanzado con el informe YA TERMINADO, con este encargo: buscar cinco formas de escribir la raíz o una carpeta que la contenga que la tabla no recoja y pasarlas por decidir EN MEMORIA contra el repo inventado, sin leer nada real. Su informe pegado al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 1 (2026-10-24), tal cual
+
+> Respuesta del consultor a la PARADA 1 de trabajo/guardia-alias (2026-10-24). Cópiala al informe, en su sección.
+>
+> 0. SÍ: _canonica dentro de _absoluta.
+> 1. SÍ: os.path.realpath más los prefijos a mano (\\?\, //?/, \\?\UNC\, UNC a la propia máquina). Como realpath también resuelve junctions y symlinks, añade a los tests un disfraz más: una junction (mklink /J, en Windows) o un symlink dentro del repo inventado que apunte a un sitio protegido, negado al leer por él; y lo bueno, una junction a src/, pasando.
+> 2. SÍ: lo no canonizable (UNC a otra máquina, \\.\, GLOBALROOT, Volume{…}) se niega siempre desde _absoluta, con un mensaje que diga que la ruta no se puede canonizar y cuál es la forma buena (la ruta normal desde la raíz o relativa).
+> 3. SÍ: lista cerrada para la propia máquina: localhost, 127.0.0.1, ::1, . y el nombre del equipo (leído en el hook, no escrito en el código).
+> 4. SÍ: un ancestro de la raíz se decide como la raíz, con su respeta_ignore.
+> 5. SÍ: en PowerShell se resuelven $env:, $HOME, $PWD y ~; una variable que no se resuelve delante de un lector se niega.
+> 6. SÍ: prefijos y 8.3 solo con os.name == "nt", y skips declarados en Linux. La CI de fix/ tiene que enseñar que en Linux pasan los demás.
+> 7. SÍ: amplía el contrato a tests/contract/test_tramos_fuente.py en un commit propio y corrige su docstring (cita DECISIONES-DE-PROCESO.md, no PROJECT_STATE). La línea de Technical Debt que lo pide (PROJECT_STATE:146) sale en el commit del contrato del cierre y así gana bytes. Declara que trabajo/guardia-ci tocó tests/ y no la pagó: es un error del consultor, para la orden de cierre.
+> 8. SÍ: la regla fina de Artifact y claude-in-chrome, fuera de esta rama (siguen negadas por permisos).
+> 9. SÍ: el revisor añade comillas y escapes de bash sobre la raíz ($'…', $"…", barras invertidas), junto a sus cinco formas.
+>
+> PROJECT_STATE: margen de 814 bytes. En el cierre salen la parte de K que paga esta rama y la línea del punto 7; si aun así no cabe, PARADA antes de recortar nada más.
+>
+> Sigue con las fases 1 y 2 y la entrega, como dice el encargo.

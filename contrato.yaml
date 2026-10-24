@@ -9,6 +9,7 @@ rutas_permitidas:
   - .claude/hooks/solo_lectura.py
   - tests/unit/test_guardia_alias.py
   - tests/unit/test_guardia_claude.py
+  - tests/contract/test_tramos_fuente.py  # punto 7 de la respuesta a la PARADA 1: su docstring
   - docs/validation/GUARDIA-FFMPEG.md
   - docs/validation/GUARDIAS-CLAUDE.md
   - docs/validation/ENTORNO-CODE.md
