@@ -3667,7 +3667,23 @@ PROGRAMAS_QUE_ESPERAN = frozenset({"sleep", "watch"})
 PROGRAMAS_DE_RED = frozenset({"curl", "wget"})
 # Los programas cuyos argumentos son DATOS para esta regla: los de `NO_EJECUTAN` (no ejecutan
 # codigo), salvo los que lanzan otro programa (`xargs`, `find -exec`) y los que consultan.
-PROGRAMAS_DE_DATOS = frozenset(NO_EJECUTAN) - {"xargs", "find", "gh", "curl"}
+PROGRAMAS_DE_DATOS = frozenset(NO_EJECUTAN) - {"xargs", "find", "gh", "curl"} | {
+    # Buscadores y visores de texto que no estan en `NO_EJECUTAN` (no son de los 503 comandos
+    # reales) pero tampoco ejecutan su patron: `rg -n "gh run watch" docs` pasaba en `main` y la
+    # primera version de la regla lo negaba (revisor de `trabajo/guardia-ci`, b5).
+    "rg",
+    "egrep",
+    "fgrep",
+    "ag",
+    "ack",
+    "less",
+    "more",
+}
+# Los programas que lanzan otro y NO lo repiten: con la consulta detras, no son una espera. Los
+# demas que lanzan una consulta (`xargs gh ...`, `find -exec gh ...`, `viddy gh ...`, uno que la
+# guardia no conoce) pueden repetirla, y cuentan como espera (revisor, b3). Los envoltorios de
+# `_quitar_envoltorios` ya se han quitado antes de mirar esto.
+LANZADORES_SIN_REPETICION = frozenset({"gh", "curl", "wget"})
 # Lo que puede ir justo antes de una palabra que abre un comando (`do while`, `then for`...).
 _ABRE_COMANDO = frozenset({"do", "then", "else", "elif", "{", "!", "time"})
 _GH_EN_TEXTO = re.compile(r"(?i)(?<![\w.-])gh(?:\.exe)?(?![\w.-])")
@@ -3725,9 +3741,14 @@ def _consulta_gh(palabras: list[str], i: int, huella: HuellaCI) -> None:
     que = " ".join(["gh", *sub])
     if any("\x00" in t for t in sub):
         huella.posibles_consultas.append("`gh` con un subcomando que se construye al ejecutarse")
-    elif sub == ["run", "watch"] or (sub == ["pr", "checks"] and "--watch" in palabras[i:]):
+    elif sub == ["run", "watch"] or (
+        sub == ["pr", "checks"]
+        and any(t == "--watch" or t.startswith("--watch=") for t in palabras[i:])
+    ):  # `--watch=true` tambien (revisor, b1)
         huella.siempre = huella.siempre or que
-    elif sub in (["run", "view"], ["run", "list"], ["pr", "checks"]):
+    elif sub in (["run", "view"], ["run", "list"], ["pr", "checks"], ["pr", "status"]) or (
+        sub == ["pr", "view"] and any("statuscheckrollup" in t.lower() for t in palabras[i:])
+    ):  # `gh pr status` y `gh pr view --json statusCheckRollup` preguntan lo mismo (revisor, b4)
         huella.consultas.append(que)
     elif sub[:1] == ["api"] and any("\x00" in t for t in palabras[i + 1 :]):
         huella.posibles_consultas.append("`gh api` con un argumento que se construye al ejecutarse")
@@ -3772,10 +3793,18 @@ def huella_ci(texto: str, huella: HuellaCI | None = None, profundidad: int = 0) 
         elif argv and _programa(argv[0].texto) in PROGRAMAS_QUE_ESPERAN:
             huella.esperas.append(_programa(argv[0].texto))
         prog = _programa(argv[0].texto) if argv else ""
+        if prog == "tail" and any(
+            re.fullmatch(r"-[a-zA-Z]*[fF][a-zA-Z]*|--follow(=.*)?", a.texto) for a in argv[1:]
+        ):
+            huella.esperas.append("tail -f")  # sigue el fichero sin acabar (revisor, b3)
         if prog in PROGRAMAS_DE_DATOS or _es_interprete(prog):
             # Sus argumentos son datos (`grep "gh run watch" f`, `git commit -m "..."`); el codigo
             # de un `python -c` lo decide `_exigir_codigo_sin_ci` (respuesta a la PARADA 3).
             continue
+        if prog not in LANZADORES_SIN_REPETICION and any(
+            _programa(a.texto) in {"gh", "curl", "wget"} for a in argv[1:]
+        ):
+            huella.esperas.append(f"`{prog}` lanza la consulta y puede repetirla")
         palabras = [a.texto for a in cmd.argv]
         for i, t in enumerate(palabras):
             if _programa(t) == "gh":
@@ -3845,10 +3874,15 @@ _SALIDA_DEL_PROCESO = re.compile(
     r"|\bhttp\.client\b|\bfrom\s+http\s+import\b[^\n]*\bclient\b"
     r"|\.(?:system|popen|exec[lv]\w*|spawn\w*|posix_spawn\w*)\s*\("
     r"|\bfrom\s+os\s+import\b[^\n]*\b(?:system|popen|exec[lv]\w*|spawn\w*|posix_spawn\w*)\b"
+    r"|\bfrom\s+os\s+import\s*\*"  # trae `system` sin nombrarlo (revisor, b2)
     r"|\bcreate_subprocess_\w+"
 )
-# Con estas no se puede decidir que se importa o se ejecuta: cuentan como via de salida.
-_NO_DECIDIBLE_EN_CODIGO = re.compile(r"(?<![\w.])(?:__import__|exec|eval|compile)\s*\(|\brunpy\b")
+# Con estas no se puede decidir que se importa o se ejecuta: cuentan como via de salida. Y
+# `getattr(os, ...)`, que llega a `os.system` sin escribirlo (revisor, b2).
+_NO_DECIDIBLE_EN_CODIGO = re.compile(
+    r"(?<![\w.])(?:__import__|exec|eval|compile)\s*\(|\brunpy\b"
+    r"|(?<![\w.])getattr\s*\(\s*(?:os|subprocess|sys|builtins|__builtins__)\b"
+)
 _IMPORTLIB = re.compile(r"\bimportlib\b")
 # La excepcion, una y cerrada: cargar la propia guardia por su ruta literal, o con la forma exacta
 # de `tests/unit/test_guardia_ci.py` y del anexo `tabla_fase0.py` (`RAIZ / ".claude" / "hooks" /
@@ -3971,6 +4005,14 @@ def _exigir_codigo_sin_ci(codigo: str, es_python: bool) -> None:
     if gh is None and m is None and not _ruta_de_ci(codigo):
         return
     que = m.group(0) if m else ("gh" if gh is not None else "una ruta de la API de la CI")
+    if not es_python:
+        # Las vias de salida de la lista son de Python; en otro lenguaje (`node -e` con `fetch` o
+        # `execSync`, revisor b2) no se puede decidir si sale del proceso: la mencion basta.
+        _niega_ci(
+            f"`{que}`",
+            "el codigo menciona la CI en un lenguaje que la guardia no analiza: no se puede "
+            "decidir si sale del proceso para consultarla",
+        )
     sin_cadenas = _sin_cadenas(codigo, es_python)
     salida = _SALIDA_DEL_PROCESO.search(sin_cadenas)
     if salida:

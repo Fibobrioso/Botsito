@@ -601,7 +601,7 @@ Medida por los tests (la columna «antes» es la decisión con la regla apagada,
 | D2 | Bash | R_EJECUCION | R_ESPERA_CI |
 | D3 | Bash | pasa | R_ESPERA_CI |
 | D4 | Bash | R_EJECUCION | R_ESPERA_CI |
-| D5 | Bash | pasa | R_ESPERA_CI |
+| D5 | Bash | pasa en Windows; `R_EJECUCION` en Linux (§6) | R_ESPERA_CI |
 | D6 | Bash | pasa | R_ESPERA_CI |
 | D7 | Bash | pasa | R_ESPERA_CI |
 | D8 | Bash | pasa | R_ESPERA_CI |
@@ -663,7 +663,8 @@ los tests. Tras la respuesta a la PARADA 3 vuelve a pasar, y su salida de despu�
 
 ### 1.5 Los subagentes (punto 8)
 
-- **La configuración que lo hace:** `.claude/settings.json:69`, el único `PreToolUse` del proyecto,
+- **La configuración que lo hace:** `.claude/settings.json:74-76` en la rama (`:69` en `main`,
+  antes de que la rama añadiera siete líneas a `deny`; revisor, a1), el único `PreToolUse` del proyecto,
   con su `matcher` y sin filtro por agente; los dos agentes de solo lectura añaden a él
   `solo_lectura.py` con `matcher: "Bash"` (`.claude/agents/revisor.md:8`,
   `.claude/agents/auditor-encargo.md:8`), no lo sustituyen.
@@ -861,7 +862,7 @@ junto a una vía de salida). Aplico lo que describe, que no deja dudas, y lo dig
 
 Junto a la que sale (§3), esta, para el commit del contrato del cierre:
 
-> - La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) junto a una vía de salida (riesgo residual declarado en trabajo/guardia-ci, GUARDIA-CI.md §5.2; lo fija `test_riesgo_residual_la_mencion_a_trozos_no_se_ve`), y no lee el código bajo `tests/` que se le pasa a pytest (`_analizar_pytest`): un test que esperase a la CI pasaría. El hueco de `tests/` es anterior a la rama. Para el carril de guardias.
+> - La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) junto a una vía de salida, ni cuando la vía de salida es un cliente de Python fuera de la lista cerrada del consultor (`aiohttp`); no ve como bucle una espera hecha a nivel de agente (`ScheduleWakeup`, `CronCreate`) con una consulta suelta en cada despertar; y no lee el código bajo `tests/` que se le pasa a pytest (`_analizar_pytest`): un test que esperase a la CI pasaría. Riesgos residuales declarados en trabajo/guardia-ci (GUARDIA-CI.md §5.2 y §9; los fijan `test_riesgo_residual_la_mencion_a_trozos_no_se_ve` y `test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa`); el hueco de `tests/` es anterior a la rama. Para el carril de guardias.
 
 ### 5.4 Punto 1: el revisor
 
@@ -880,6 +881,7 @@ filtrado con `grep`.
 | commit | run | resultado |
 |---|---|---|
 | `74336c7` (la respuesta a la PARADA 3) | **40056337257** | `failure`: 2 failed, 2830 passed, 11 skipped. Uno, el aceptado: `test_state_check_ok_on_real_repo`. **El otro, no:** `test_sin_la_regla_vuelve_lo_de_antes` con `{'D5': 'R_EJECUCION'}` |
+| `7926d57` (el arreglo de D5) | **40059054099** | `completed` / `failure` con **1 failed, 2831 passed, 11 skipped**: solo el aceptado, `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/guardia-ci'» y la rama es `fix/guardia-ci`). Puerta de RITUAL.md cumplida |
 
 **El fallo de D5, medido:** D5 es `"C:\Program Files\GitHub CLI\gh.exe" run view` en un bucle. Su
 decisión ANTES (la de `main`, con la regla apagada) depende del sistema: en Windows pasa, y en
@@ -890,6 +892,14 @@ la regla nueva no tiene el agujero; lo que fallaba era la columna «antes» del 
 Windows. Arreglo: la columna «antes» de D5 queda por sistema (`P if os.name == "nt" else X`), con
 el porqué y el run en el comentario. Es la lección de `trabajo/guardias-claude`: Windows tapa lo
 que Linux no.
+
+**Medido al esperar el segundo run** (lo que §0.i dejaba sin medir): un `sleep 60` en PRIMER plano
+lo bloquea Claude Code, no la guardia («Blocked: standalone sleep 60. To wait for a condition, use
+Monitor with an until-loop ... To wait for a command you started, use run_in_background: true»).
+Su sugerencia de un `Monitor` con bucle es justo lo que esta rama niega si consulta la CI; la otra
+vía, el `sleep` solo en segundo plano, es la del mensaje de la guardia, y es la que se usó. La forma
+de esperar del mensaje («`sleep` solo, o en segundo plano») vale, pero en la práctica es en segundo
+plano.
 
 
 ## 7. El encargo, punto por punto
@@ -930,8 +940,8 @@ que Linux no.
 | 32 | El Technical Debt del guion sale en el cierre, preparado | Hecho | §3, §5.3 |
 | 33 | Lo falso de la fase 0 c), corregido | Hecho | nada falso; la forma de esperar, añadida (respuesta 1, punto 5) |
 | 34 | Informe con la tabla de la fase 0 antes y después | Hecho | §1.3; `tabla_fase0-ANTES.txt` y `tabla_fase0-DESPUES.txt` |
-| 35 | `make check` sellado, push a `fix/guardia-ci`, CI con solo el fallo de `state check`, número del run | ver §6 | |
-| 36 | El revisor, con el informe terminado, con sus cinco formas en memoria; su informe pegado | ver §8 | |
+| 35 | `make check` sellado, push a `fix/guardia-ci`, CI con solo el fallo de `state check`, número del run | Hecho | §6: run 40059054099 sobre `7926d57`, consultado con `gh run view` suelto |
+| 36 | El revisor, con el informe terminado, con sus cinco formas en memoria; su informe pegado | Hecho | §8 (encontró 15, 10 pasaban), §9 lo hecho con cada hallazgo |
 
 **Respuesta 1:** 0 (Monitor en el matcher y en `decidir`, contrato en un commit propio, sus tests en los dos sentidos, la lista de herramientas y la prueba en vivo sin reiniciar) Hecho, §1.4 y PARADA 2; 1 Hecho; 2 Hecho (N15, N16, B14); 3 Hecho, y matizado por la respuesta 3; 4 Hecho (solo el recuadro); 5 Hecho; 6 Hecho (y su error, declarado); 7 Hecho; 8 Hecho (§1.5); el `for n` con su motivo (N3b) Hecho; los disfraces de la fila de ffmpeg Hecho.
 **Respuesta 2:** 0 y 1 (las siete en `deny`, con su test roto en los dos sentidos y la prueba en vivo de `Artifact list` y `navigate about:blank`) Hecho; 2 Hecho (EnterWorktree fuera); 3 Hecho; la línea de Technical Debt Hecho (`PROJECT_STATE.md`).
@@ -950,7 +960,184 @@ que Linux no.
 `scripts/contrato_rama.py`: «29 ficheros dentro del contrato» en el último `make check`.
 `PROJECT_STATE.md`: 23.777 bytes (tope 25.000).
 
+## 8. Revisor
+
+El subagente `revisor`, lanzado el 2026-10-23 sobre `7926d57` con este informe terminado (las
+ediciones sin commitear eran la fila del run 40059054099 en §6, la fila 35 de §7, el `## Estado` y
+el párrafo «Medido al esperar el segundo run», que él mismo señala), con el alcance del encargo:
+sus dos ejes y cinco formas de esperar a la CI fuera de la tabla, en memoria. Su informe, tal cual.
+No cita ningún tramo no citable: 0 retiradas. Se omite solo la línea que el arnés de Claude Code
+antepuso al devolverlo («[harness: subagent output matched instruction-shaped pattern(s):
+settings-json ...]»), que no es del revisor.
+
+## Informe del revisor · trabajo/guardia-ci · 2026-10-23
+
+HEAD 7926d57, base main 2a99e64. Además de lo commiteado, el árbol de trabajo tiene una edición sin commitear en `docs/validation/GUARDIA-CI.md` (12 líneas añadidas y 3 quitadas). Incluye la fila de §6 con el run 40059054099, la fila 35 de §7 y el `## Estado`, como dijiste. También incluye un párrafo nuevo de §6, «Medido al esperar el segundo run», que no estaba en tu lista.
+
+**Forma usada para las pruebas en memoria:** `uv run python -c` con la carga exacta de la excepción: `import importlib.util, sys; spec = importlib.util.spec_from_file_location("g", ".claude/hooks/guardia.py"); g = importlib.util.module_from_spec(spec); sys.modules["g"] = g; spec.loader.exec_module(g)`. Después llama a `g.decidir({"tool_name": ..., "tool_input": {"command": ...}, "cwd": "C:/Users/USER/Desktop/Bot v3"}, g.Politica(g.RAIZ))`. El código no tiene ninguna vía de salida ni monta nada a trozos. La guardia dejó pasar las tres llamadas, así que la excepción funciona en la práctica para el revisor. No ejecuté de verdad ninguna forma ni consulté la CI.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | §1.5 cita `.claude/settings.json:69` como «la configuración que lo hace», que es justo la evidencia que pedía el punto 8 de la respuesta 1. En la rama, la línea 69 ya no es el matcher: lo era en `main`, y la propia rama la movió al añadir siete líneas a `deny`. Ahora el matcher está en `:76` (`PreToolUse` en `:74`). En la PARADA 2 (línea 393 del informe) la cita era correcta, porque se escribió antes del cambio. | `GUARDIA-CI.md:666`; `sed -n '67,70p' .claude/settings.json` da el hook `estado_sesion.py` y `"timeout": 10`; `grep -n '"matcher"' .claude/settings.json` da `76: "matcher": "Read\|Grep\|Glob\|Bash\|PowerShell\|Monitor"` |
+| a2 | menor | La tabla §1.3 da a D5 «antes: pasa» sin decir que eso solo vale en Windows. En Linux es `R_EJECUCION`, y el test ya lo distingue. §6 lo explica, pero la tabla no remite allí. | `GUARDIA-CI.md:604`; `tests/unit/test_guardia_ci.py:141` (`P if os.name == "nt" else X`) |
+| a3 | menor | La numeración de la fase 0 salta de 0.f a 0.h: no hay 0.g. | `GUARDIA-CI.md:210` y `:244` |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` → «CONTRATO: 29 ficheros dentro del contrato de trabajo/guardia-ci (riesgo alto, artefacto docs/validation/GUARDIA-CI.md, tramo 'Carril: guardias y deuda', 3 comprobaciones para el revisor)», exit 0.
+- **Suites de la guardia.** `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_ci.py tests/unit/test_guardia_claude.py tests/unit/test_guardia_ffmpeg.py` → exit 0, 673 puntos (9×72+25), coincide con el «673 passed» de §5.1. Añadí `-p no:cacheprovider` para no escribir la caché. La línea de resumen no salió en la salida capturada.
+- **`make check`.** No lo ejecuté porque escribe. `make-check.log` da `2843 passed in 932.78s`, `SELLO: make check en verde sobre el arbol 75a18b1a9490f195ea481e110f328c7f6e99a11e`, igual a `git rev-parse 7926d57^{tree}`, y `PICO DE MEMORIA de make check: 297 MiB en test`.
+- **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases`: `git log ... -- knowledge/spec knowledge/cases` sale vacío.
+- **Holdout y material.** Nada de `knowledge/`, `data/` ni `corpus/` en el diff. §0.j declara ninguna exposición. La ruta de marzo solo aparece montada a trozos, sobre un fichero inventado en `tmp_path`.
+- **Regímenes de cambio.** No hay cambios en evidence, feedback, manifests, transcripciones, fotogramas ni `libros.yaml`. `HISTORIA.md` solo añade líneas: 0 líneas `-`.
+- **Ambigüedades, ADR y citas de la spec.** No se tocan: no aplica.
+- **Informes cerrados.** `GUARDIA-FFMPEG.md` solo gana un recuadro `>` con fecha y rama, junto al pasaje que corrige. `docs/sesion-5/PREGUNTAS.md` solo gana su recuadro (punto 4).
+- **Citas del informe comprobadas:** `DECISIONES-DE-PROCESO.md:28`, con el texto citado literal; `HOJA-DE-RUTA.md:420` («Estado: HECHA (2026-10-22…»); `solo_lectura.py:11-12`; `guardia.py:1989-1990` de `main` (el `continue` de `tests/`); `PROJECT_STATE.md:104`. Todas sostienen lo que se afirma, salvo a1.
+- **Cifras.** `PROJECT_STATE.md` pesa 23.777 bytes (cuadra con §7.1). 1669 tests = 1655 + las 14 funciones de `test_guardia_ci.py`.
+- **El informe** existe y acaba en su `## Estado`.
+- **Ensayos aislados.** La limpieza de V se ensayó con `git worktree add --detach`, según §2.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 7 importa, 0 menor. Requisitos: 29 hechos (4 de ellos «hecho de otra forma», todos declarados), 1 parcial, 0 no hechos, 1 en curso (este revisor).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Verificar la base (tag en origin, CI de main en success, ninguna otra rama) | Hecho | informe, «Base comprobada al abrir». La CI no la reconsulté. |
+| 2 | Abrir con abrir-rama: encargo, contrato y Archivo en HISTORIA | Hecho | `4f534bb`; HISTORIA solo añade líneas |
+| 3 | La línea de Technical Debt sigue abierta | Hecho | `PROJECT_STATE.md:104` |
+| 4 | Objetivo 1: negar consulta + bucle o espera | Hecho, con huecos | `test_la_tabla`, 72 casos en verde; huecos en b1-b4 |
+| 5 | Objetivo 2: la consulta suelta pasa | Hecho | B1-B5 y B9-B14; en memoria también pasan `gh run list --branch fix/guardia-ci --limit 3 --json databaseId,status,headSha` y `gh run view 40059054099 --json status,conclusion,headSha,headBranch` |
+| 6 | Objetivo 3: la limpieza de V | Hecho de otra forma | preparada para el cierre por el punto 7 de la respuesta 1, declarado en §2 y §3 |
+| 7 | Qué cuenta como consulta, más las rutas nuevas | Hecho | `RUTA_DE_CI` en `guardia.py`; R1-R4 |
+| 8 | Las formas sueltas de los runbooks y las skills siguen pasando; buscar más | Hecho | B7, B8 y B13 en la tabla |
+| 9 | Shell: bucle, `sleep`, `watch`; `gh run watch` siempre | Hecho | N1-N18 |
+| 10 | Guion o código: `gh` o `curl` con bucle o espera | Hecho de otra forma | respuestas 1 (punto 3) y 3 (punto 0), declarado en §5.1; huecos en b2 |
+| 11 | Reutilizar `analizar_codigo` | Hecho | `_exigir_codigo_sin_ci` se llama desde `analizar_codigo` |
+| 12 | El mensaje de la negativa | Hecho | `COMO_ESPERAR_CI`; `test_el_mensaje_dice_que_hacer` |
+| 13 | Lo que no cambia | Hecho | `git diff --name-status main...HEAD`: nada de `src/`, `knowledge/`, `data/`, `config/`, `scripts/`, `tools/`, `mql5/`, Makefile ni `.github/`. De `guardia.py` solo se quitan las líneas que §7 nombra. |
+| 14 | No leer material del punto 3 | Hecho | §0.j; `HOLDOUT-EXPOSICIONES.md` sin tocar |
+| 15 | Ante una negativa, PARADA o la forma que propone la guardia | Hecho | §4 |
+| 16 | La CI con `gh run view` suelto | Hecho según §6 | sin verificar (está prohibido consultarla) |
+| 17 | Si la guardia cambiada niega algo que antes se hacía, PARADA | Hecho para lo que vio (PARADA 3) | b5: queda una regresión sin ver |
+| 18 | Fase 0 a-d y su PARADA | Hecho | §0.a-§0.d; `55d691a` |
+| 19 | Tests primero, rotos en los dos sentidos, con las dos salidas | Hecho | `pytest-1` y `pytest-2`; cinco tests rotos a propósito |
+| 20 | Un disfraz por familia (más la fila de guardia-ffmpeg) | Hecho | D1-D18 |
+| 21 | Lo que no se puede decidir se niega, con su test | Hecho para lo que reconoce | D2, D13, D18; b3: `viddy` no |
+| 22 | Literales a trozos | Hecho de otra forma | respuesta 1, punto 6 |
+| 23 | pytest y `make check` siguen pasando por la guardia | Hecho | mi pytest pasó la guardia; `make-check.log` sellado |
+| 24 | Los tests comprueban el MOTIVO | Hecho | `_regla`, `test_guardia_ci.py:238-244` |
+| 25 | Código mínimo, con el porqué y el origen | Hecho | comentario de la sección; el tamaño está declarado |
+| 26 | `make check` con `PICO DE MEMORIA` y los tiempos antes y después | Hecho | §1.6, §5 (lo que sale es el `make check` de `e43d5b2`) |
+| 27 | Fase 2: V, Technical Debt y lo que la fase 0 c) halló falso | Hecho de otra forma / Hecho | §2, §3, §5.3 |
+| 28 | Tabla de la fase 0 antes y después | Hecho | §1.3; `tabla_fase0-ANTES.txt` y `-DESPUES.txt` |
+| 29 | `make check` sellado, push a `fix/`, CI y número del run | Parcial | push comprobado: `git ls-remote` da `7926d5779c…` en `refs/heads/fix/guardia-ci`. El `make check` del último commit no está en el informe (b6). |
+| 30 | El revisor y su informe pegado | En curso | este informe |
+| R1 | Respuesta 1, puntos 0-8, el `for n` y los disfraces | Hecho | contrato ampliado en commit propio (`babecf5`); tests de Monitor en los dos sentidos; prueba en vivo 2c de `pruebas-en-vivo.txt`; la cita del punto 8 es la de a1 |
+| R2 | Respuesta 2, puntos 0-3 | Hecho | las siete herramientas en `deny` (diff de `settings.json`); test roto en los dos sentidos; `Artifact list` y `navigate about:blank` negadas en vivo |
+| R3 | Respuesta 3, puntos 0 y 1, y el hueco de `tests/` | Hecho, con huecos | §5.1-§5.4; b2 |
+| — | Respuestas copiadas tal cual en el encargo y en el informe | Hecho | las tres, comparadas por programa: IGUAL |
+| — | «El encargo, punto por punto» | Hecho | §7 |
+
+**Las formas de esperar a la CI que no están en §1.3 ni en §5.1, pasadas por `decidir` en memoria:**
+
+| id | comando (Bash, salvo indicación) | resultado |
+|---|---|---|
+| K1 | `gh pr checks 12 --watch=true` (también como `Monitor`) | **PASA** |
+| K2 | `viddy -n 30 gh run view 39893825671` (también como `Monitor`) | **PASA** |
+| K4 | `while true; do gh pr view 12 --json statusCheckRollup; sleep 30; done` | **PASA** |
+| K15 | `while true; do gh pr status; sleep 30; done` | **PASA** |
+| K5 | `python -c "from os import *; import time` + `while True: system('gh run view …'); time.sleep(30)"` | **PASA** |
+| K7 | `python -c "import os,time` + `while True: getattr(os,'system')('gh run view …'); time.sleep(30)"` | **PASA** |
+| K6 | `node -e "setInterval(async()=>console.log(await (await fetch('<API>/commits/<sha>/check-runs')).text()),30000)"` | **PASA** |
+| K12 | `node -e "setInterval(()=>console.log(require('child_process').execSync('gh run view …').toString()),30000)"` | **PASA** |
+| K10 | `python -c` con `aiohttp` y `asyncio.sleep(30)` en un `while True` sobre `check-runs` | **PASA** |
+| K11 | `gh run view R && timeout 300 tail -f Makefile; gh run view R` | **PASA** |
+| K13 | `curl -sf --retry 50 --retry-delay 30 --retry-all-errors <check-runs>` | PASA (dudosa: reintenta solo si hay error, no espera a que termine) |
+| K3 | `gh run view R; ping -n 300 127.0.0.1; gh run view R` | niega, pero por otra regla (`R_EJECUCION`: «antes, en el mismo comando, va `gh run view`») |
+| K8 | `gh alias set w 'run watch'` y `gh w R` | niega (`R_EJECUCION`: subcomando fuera de la lista cerrada) |
+| K9 | `while true; do gh workflow view ci.yml; sleep 30; done` | niega (`R_EJECUCION`: `gh workflow`) |
+| K14 | `gh run view R; read -t 300 x; gh run view R` | niega (`R_EJECUCION`: `read` fija `x`) |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | `gh pr checks --watch=true` pasa, en Bash y en `Monitor`, aunque la rama declara que `gh pr checks --watch` se niega «siempre» (N14). La condición busca la palabra exacta `"--watch"`. Que `gh` acepte `--watch=true` es lo normal en pflag, pero no lo ejecuté. | `guardia.py`, `_consulta_gh`: `sub == ["pr", "checks"] and "--watch" in palabras[i:]`; salida en memoria: `K1 \| PASA`, `K1m Monitor \| PASA` |
+| b2 | importa | En código, la vía de salida se reconoce solo por cómo se escribe y solo con nombres de Python. (1) `os.system`, que la respuesta 3 nombra expresamente, se esquiva con `from os import *` + `system(` (K5) o con `getattr(os,'system')` (K7). (2) `node -e` lo analiza la guardia como código (`node` está en `INTERPRETES`, `guardia.py:952`), pero `fetch(` y `execSync(` no están en `_SALIDA_DEL_PROCESO`: K6 y K12 pasan. (3) `aiohttp` no está en la lista cerrada del consultor: K10 pasa. No es el riesgo residual `"g"+"h"` que declara §5.2: aquí la mención se ve entera. | `_SALIDA_DEL_PROCESO` exige `\.system\s*\(` o `from os import … system`; salida: `K5 \| PASA`, `K7 \| PASA`, `K6 \| PASA`, `K12 \| PASA`, `K10 \| PASA` |
+| b3 | importa | Hay esperas que no se reconocen. Un programa desconocido que envuelve una consulta (`viddy -n 30 gh run view`, K2) cuenta como consulta pero no como espera, en contra de «lo que no se pueda decidir se niega» (fase 1 del encargo). `timeout 300 tail -f` (K11) es una espera y no está en `PROGRAMAS_QUE_ESPERAN`. | `PROGRAMAS_QUE_ESPERAN = frozenset({"sleep", "watch"})`; `K2 \| PASA`, `K11 \| PASA` |
+| b4 | importa | Hay consultas de CI que no se reconocen: `gh pr view --json statusCheckRollup` (K4) y `gh pr status` (K15), que preguntan lo mismo («¿ha terminado?»), pasan dentro de un `while … sleep`. Quedan fuera de la definición del encargo, pero la fase 0 ya la amplió a `gh pr checks` con ese mismo argumento. | `_consulta_gh` solo reconoce `run view\|list\|watch` y `pr checks`; `K4 \| PASA`, `K15 \| PASA` |
+| b5 | importa | Regresión que no vio la PARADA 3: `rg -n "gh run watch" docs/runbooks`, una búsqueda de texto, pasa con la regla apagada (lo de `main`) y ahora se niega con `R_ESPERA_CI`. `rg` no está en `NO_EJECUTAN` ni en `PROGRAMAS_DE_DATOS`, así que su patrón se lee como Bash. Con `grep` y `git grep` pasa. La regla de la rama es: «te niega algo que antes hacías → hallazgo». | En memoria: `con la regla F2 \| NIEGA: esperar a la CI: \`gh run watch\`…`; `sin la regla F2 \| PASA`; `rg en NO_EJECUTAN: False \| rg en PROGRAMAS_DE_DATOS: False` |
+| b6 | importa | La fila 35 de §7 dice «`make check` sellado … Hecho, §6», pero §6 solo trae la CI. El informe recoge únicamente el `make check` de `e43d5b2` (§5) y ninguno de `74336c7` ni de `7926d57`. La evidencia existe fuera del informe: `make-check.log` da 2843 passed, `SELLO` sobre el árbol de `7926d57` y `PICO DE MEMORIA` de 297 MiB. | `GUARDIA-CI.md:942` y `:788-790`; `make-check.log:77,101,103`; `git rev-parse 7926d57^{tree}` = `75a18b1a…` |
+| b7 | importa | Lo que propone el mensaje («`sleep` solo») no se puede hacer en primer plano: Claude Code lo bloquea, y en su lugar sugiere un `Monitor` con bucle, que esta rama niega si consulta la CI. §6 lo declara, pero el texto que copiaron las skills y `RITUAL.md:320` sigue diciendo «`sleep` solo». Ese texto lo fijó el consultor (punto 5), así que la decisión de cambiarlo es suya. | `GUARDIA-CI.md` §6, párrafo sin commitear «Medido al esperar el segundo run»; diff de `RITUAL.md` y de las dos skills |
+
+### Lo que no pude comprobar
+- Los runs 40056337257 y 40059054099, y la CI de `main` 39893825671: el encargo prohíbe consultar la CI. Solo comprobé que `fix/guardia-ci` apunta a `7926d57` (`git ls-remote`).
+- `make check`: escribe, así que no lo ejecuté. Lo sustituye `make-check.log`, cuyo sello coincide con el árbol de `7926d57`. Las ediciones sin commitear del informe necesitarán su propio `make check`.
+- Que `gh` acepte `--watch=true` (K1), y lo que devuelven `gh pr view --json statusCheckRollup` y `gh pr status`: no ejecuté `gh`.
+- Si `Monitor` tiene más parámetros que `command`, `description` y `timeout_ms`, y por tanto si `R_MONITOR` negaría un uso legítimo: no tengo esa herramienta en esta sesión. La rama prefiere negar ante la duda, así que es un riesgo de falso positivo, no un hueco.
+- Que el hook corre para los subagentes lo confirmé de paso: la guardia de proyecto me bloqueó a mí (revisor) un `for c in …` con `R_EJECUCION`, el mismo mensaje que `pruebas-en-vivo.txt`.
+- Un bucle hecho a nivel de agente (`ScheduleWakeup` o `CronCreate`, con consultas sueltas en cada despertar) no lo puede decidir `decidir`, y no lo probé.
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Read `docs/encargos/trabajo-guardia-ci.md`, `contrato.yaml` y `docs/validation/GUARDIA-CI.md` (entero, en dos tramos)
+3. `uv run python scripts/contrato_rama.py`
+4. `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_ci.py tests/unit/test_guardia_claude.py tests/unit/test_guardia_ffmpeg.py 2>&1 | tail -15` (en segundo plano)
+5. `git diff main...HEAD -- .claude/settings.json && git diff --name-status main...HEAD && git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases | head`
+6. `git diff main...HEAD -- .claude/hooks/guardia.py`
+7. `grep -n "_es_interprete\b" …` y `grep -n "^INTERPRETES\|^def _es_interprete" -A8 .claude/hooks/guardia.py`
+8. `grep -nE … tests/unit/test_guardia_ci.py`; Read `tests/unit/test_guardia_ci.py` (líneas 1-94 y 176-470)
+9. `uv run python -c '<carga por la excepción>; K1…K15 por g.decidir'`
+10. `git diff main...HEAD -- docs/validation/GUARDIA-FFMPEG.md docs/sesion-5/PREGUNTAS.md docs/runbooks/RITUAL.md .claude/skills PROJECT_STATE.md tests/unit/test_guardia_claude.py tests/unit/test_guardia_ffmpeg.py && git diff main...HEAD -- docs/state/HISTORIA.md | grep -c '^-[^-]'`
+11. `git show main:.claude/hooks/guardia.py | sed -n '1986,1991p'`; `grep`/`sed` sobre `guardia.py`, `solo_lectura.py`, `settings.json`, `DECISIONES-DE-PROCESO.md`, `HOJA-DE-RUTA.md` y `PROJECT_STATE.md`
+12. `ls -la make-check.log; grep -n "SELLO\|PICO DE MEMORIA\|passed in\|exit=" make-check.log | tail -8; grep -n … GUARDIA-CI.md; grep -n "Depende de R1.1" PROJECT_STATE.md`
+13. `git rev-parse 7926d57^{tree} 74336c7^{tree} e43d5b2^{tree}; git log -3 --format='%h %ci'; sed -n '70,103p' make-check.log | grep …`
+14. Read `docs/validation/anexos/GUARDIA-CI/pruebas-en-vivo.txt` y `tabla_fase0-DESPUES.txt`
+15. `git diff --stat; git diff docs/validation/GUARDIA-CI.md | grep '^[-+]'; wc -c PROJECT_STATE.md`
+16. `git ls-remote --heads origin fix/guardia-ci trabajo/guardia-ci`
+17. `uv run python -c '<carga>; F1-F7, K1m y K2m (Monitor) por g.decidir'`
+18. Read de la salida de la tarea de fondo (pytest)
+19. `uv run python -c '<carga>; rg con la regla y sin ella (exigir_sin_espera_a_la_ci apagada en memoria)'`
+20. `uv run python -c '<compara las tres respuestas copiadas en el encargo y en el informe>'`
+21. `sed -n '67,70p' .claude/settings.json; git show main:.claude/settings.json | sed -n '67,70p'; grep -n "settings.json:69\|settings.json:7" GUARDIA-CI.md`
+22. `for c in …; do git show --stat …; done`: **NEGADO por la guardia** («ejecutar `for c`: el bucle `for` fija `c`, que no esta en la lista (`NOMBRES_DE_ENTORNO`)»). Seguí con la forma equivalente de una sola llamada, sin bucle: `git log --stat --format='== %h %s' main..HEAD | grep -v '^$'`
+23. Grep `^#+ .*(0\.g|§8|^## 8)` en `GUARDIA-CI.md` (sin resultados)
+
+## 9. Lo que se hizo con los hallazgos del revisor
+
+| # | gravedad | qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado**: §1.5 cita ahora `.claude/settings.json:74-76` en la rama (`:69` en `main`). La PARADA 2 se queda con `:69`, que era lo verdadero cuando se escribió. |
+| a2 | menor | **Arreglado**: la fila D5 de §1.3 dice «pasa en Windows; `R_EJECUCION` en Linux (§6)». |
+| a3 | menor | **Contestado**: no hay 0.g porque la sección de decisiones de la fase 0 iba a ser 0.g y salió con el título de la skill («Lo que necesito que decidas»); los §0.h-§0.j se citan en el informe y en las respuestas, así que no se renumeran. |
+| b1 | importa | **Arreglado**: `gh pr checks` niega con `--watch` y con `--watch=<valor>` (`_consulta_gh`). Test K1. |
+| b2 | importa | **Arreglado en parte, el resto contestado.** (1) `from os import *` cuenta como vía de salida y `getattr(os|subprocess|sys|builtins, ...)` como no decidible: son la misma `os.system` de la lista del consultor escrita de otra forma (K5, K7, F4). (2) En un lenguaje que la guardia no analiza (`node -e` y los demás que no son Python), la mención de la CI basta para negar: sus vías de salida no se pueden decidir con la lista de Python (K6, K12); el `lo que no se pueda decidir se niega` del encargo. (3) `aiohttp` **no**: la lista del consultor es cerrada, y ampliarla es decisión suya; queda como riesgo residual declarado, con su test (`test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa`) y en la línea de Technical Debt del cierre (§5.3, ampliada). |
+| b3 | importa | **Arreglado**: un programa que lanza `gh`, `curl` o `wget` y no es uno de ellos (`viddy`, `xargs`, `find -exec`, uno desconocido) cuenta como espera, porque puede repetirla (`LANZADORES_SIN_REPETICION`); y `tail -f`/`-F`/`--follow` también (K2, K11, K16). |
+| b4 | importa | **Arreglado**: `gh pr status` y `gh pr view` con `statusCheckRollup` son consultas (K4, K15); `gh pr view --json title` sigue sin serlo (F3). Ampliación de «qué cuenta como consulta», con el mismo argumento con que la fase 0 añadió `gh pr checks`; declarada. |
+| b5 | importa | **Arreglado y declarado como regresión cazada por el revisor** (la PARADA 3 no la vio): `rg`, `egrep`, `fgrep`, `ag`, `ack`, `less` y `more` entran en `PROGRAMAS_DE_DATOS`; `rg -n "gh run watch" docs/runbooks` vuelve a pasar (F2). No hubo PARADA porque no la sufrió la sesión, sino que la encontró el revisor en memoria, y el arreglo devuelve exactamente lo de `main`; se te dice aquí y en el mensaje de entrega. |
+| b6 | importa | **Arreglado**: §6 trae el `make check` de cada commit con CI (abajo, §9.1). |
+| b7 | importa | **Para el consultor**: el texto de las skills y de `RITUAL.md:320` es el que fijaste en la respuesta 1, punto 5 («`sleep` solo, o en segundo plano»); medido, `sleep` solo en primer plano lo bloquea Claude Code. Propuesta: «una espera sin consulta (`sleep` en segundo plano)». No lo cambio sin tu orden. |
+
+Lo que el revisor no pudo comprobar y queda declarado: un bucle a nivel de agente (`ScheduleWakeup`
+o `CronCreate`, con una consulta suelta en cada despertar) no pasa por la guardia como bucle: cada
+consulta es suelta. Va a la línea de Technical Debt del cierre (§5.3).
+
+### 9.1 Los `make check` de los commits con CI
+
+| commit | `make check` | `PICO DE MEMORIA` |
+|---|---|---|
+| `e43d5b2` (fases 1 y 2) | exit 0, 2826 passed, `SELLO` sobre el árbol `0292e735…` | 298 MiB |
+| `74336c7` (PARADA 3) | exit 0, 2843 passed in 914.16s, `SELLO` sobre el árbol `e328feaf…` | 297 MiB |
+| `7926d57` (D5) | exit 0, 2843 passed in 932.78s, `SELLO` sobre el árbol `75a18b1a…` (`= 7926d57^{tree}`, revisor) | 297 MiB |
+| el de los hallazgos del revisor | su `make check` y su run van en el mensaje de entrega: un commit no puede llevar su propio sello ni su propia CI | |
+
 ## Estado
 
-EN CURSO · entrega: la CI de `74336c7` dio un fallo de más (§6), arreglado; falta la CI del
-arreglo y el revisor.
+LISTA PARA REVISIÓN. Fase 0 y tres PARADAS con sus respuestas aplicadas; la regla, Monitor y los
+permisos, con sus tests (16 funciones, 115 casos) y sus pruebas en vivo; la CI de Linux de
+`7926d57` con solo el fallo aceptado (run 40059054099); el revisor, con sus hallazgos arreglados o
+contestados (§9). Pendiente de decisión del consultor: el texto «`sleep` solo» (b7) y la lista
+cerrada de vías de salida (`aiohttp`, b2). El `make check` y el run del commit de los hallazgos del
+revisor van en el mensaje de entrega. Lo que entra y sale en el cierre, preparado en §3 y §5.3.
+
+Rama lista para revisión, NO cerrada.

@@ -390,6 +390,53 @@ def test_sin_la_excepcion_el_guion_de_la_fase_0_se_niega(
     assert _de_la_tabla(g, repo, "Bash", _guion(repo, "t.py", otra)) == P
 
 
+# ------------------------------------------ las formas del revisor (GUARDIA-CI.md §8, K1-K15)
+NODE_FETCH = (
+    f"node -e \"setInterval(async()=>console.log(await (await fetch('{CR}')).text()),30000)\""
+)
+NODE_EXEC = (
+    "node -e \"setInterval(()=>console.log(require('child_process').execSync("
+    f"'{VER}').toString()),30000)\""
+)
+
+
+@pytest.mark.parametrize(
+    ("ident", "comando", "esperado"),
+    [
+        ("K1", "gh pr checks 12 --watch=true", E),
+        ("K2", f"viddy -n 30 {VER}", E),
+        ("K4", "while true; do gh pr view 12 --json statusCheckRollup; sleep 30; done", E),
+        ("K15", "while true; do gh pr status; sleep 30; done", E),
+        ("K5", f"python -c \"from os import *; import time\nwhile True: system('{VER}')\"", E),
+        ("K7", f"python -c \"import os\ngetattr(os, 'system')('{VER}')\"", E),
+        ("K6", NODE_FETCH, E),
+        ("K12", NODE_EXEC, E),
+        ("K11", f"{VER} && timeout 300 tail -f Makefile; {VER}", E),
+        ("K16", f"seq 3 | xargs -I{{}} {VER}", E),
+        ("F2", 'rg -n "gh run watch" docs/runbooks', P),  # `main` lo deja; la regla, tambien
+        ("F3", "gh pr view 12 --json title", P),
+        ("F4", "python -c \"import os\nprint(getattr(os, 'sep'), 'gh run view')\"", E),
+    ],
+)
+def test_las_formas_del_revisor(
+    g: ModuleType, repo: Path, ident: str, comando: str, esperado: str
+) -> None:
+    """Las que el revisor encontro fuera de la tabla (b1-b5), con su decision. F4: `getattr(os,
+    ...)` cuenta aunque pida otra cosa: no se puede decidir que pide."""
+    assert _de_la_tabla(g, repo, "Bash", comando) == esperado, ident
+
+
+def test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa(g: ModuleType, repo: Path) -> None:
+    """RIESGO RESIDUAL DECLARADO (revisor, b2 K10): un cliente de red de Python fuera de la lista
+    cerrada del consultor (`aiohttp`) no cuenta como via de salida. Ampliarla es decision suya."""
+    comando = (
+        'python -c "import aiohttp, asyncio\nasync def m():\n    while True:\n'
+        f"        async with aiohttp.ClientSession() as s: await s.get('{CR}')\n"
+        '        await asyncio.sleep(30)"'
+    )
+    assert _de_la_tabla(g, repo, "Bash", comando) == P
+
+
 # ------------------------------------------------------------------------------------- Monitor
 def test_monitor_se_decide_como_bash(g: ModuleType, repo: Path) -> None:
     """Respuesta a la fase 0, punto 0: un Monitor que espera a la CI se niega, uno que lee material
