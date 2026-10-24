@@ -77,6 +77,7 @@ import glob as globmod
 import io
 import json
 import os
+import posixpath
 import re
 import socket
 import subprocess
@@ -1087,6 +1088,24 @@ def resolver(p: Palabra, ctx: Contexto, lex: Lexico, max_valores: int = 256) -> 
 _UNIDAD_MSYS = re.compile(r"^/(?:proc/cygdrive/|cygdrive/)?([a-zA-Z])(/.*)?$")
 _TILDE_DE_PILA = re.compile(r"^~([+-])(\d*)(?=[\\/]|$)")
 _PROVEEDOR_FS = re.compile(r"(?i)^(?:microsoft\.powershell\.core\\)?filesystem::")
+# Pasada corta del revisor (GUARDIA-ALIAS.md §12): `/proc/self/cwd/` es el directorio de trabajo,
+# como `~+`; el de otro proceso, o `root`, `fd`, `exe`..., no se sabe al inspeccionar.
+_PROC_DE_UN_PROCESO = re.compile(r"^/proc/(self|thread-self|\d+)/([^/]+)(/.*)?$")
+
+
+def _sin_disfraz_posix(ruta: str, cwd: str) -> str:
+    """Una ruta con UNA barra inicial, sin `//` ni `/./` ni `..` (los disfraces de `/proc/cygdrive/`
+    que abren en Git Bash: revisor, pasada corta, b1), y `/proc/self/cwd/` como el directorio de
+    trabajo (b2). Una con dos barras iniciales (`//?/`, `//servidor/`) no se toca aqui."""
+    if not ruta.startswith("/") or ruta.startswith("//"):
+        return ruta
+    r = posixpath.normpath(ruta)
+    m = _PROC_DE_UN_PROCESO.match(r)
+    if not m:
+        return r if _UNIDAD_MSYS.match(r) else ruta
+    if m.group(1) == "self" and m.group(2) == "cwd":
+        return cwd + (m.group(3) or "")
+    return _no_canonizable(ruta)
 
 
 def _tilde_de_bash(ruta: str, cwd: str) -> str:
@@ -1131,7 +1150,7 @@ def _lecturas_de_la_herramienta(texto: str) -> list[str]:
 
 
 def _absoluta(ruta: str, cwd: str) -> str:
-    r = ruta.strip()
+    r = _sin_disfraz_posix(ruta.strip(), cwd)
     m = _UNIDAD_MSYS.match(r)
     if m:
         r = f"{m.group(1).upper()}:{m.group(2) or '/'}"

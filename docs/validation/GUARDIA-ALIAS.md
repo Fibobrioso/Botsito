@@ -585,8 +585,9 @@ dice que esas formas «pasan» la guardia, y era verdad: no lleva recuadro.
   herramienta Bash deshace antes de bash, `~+` y `~-`, `/proc/cygdrive/c/`, la ruta relativa a la
   unidad `C:<rel>`, la ruta de proveedor de PowerShell `FileSystem::`, las llaves de bash y las URL
   `file:///`. Todas pasaban ya en `main`. Las decide el consultor (§8).
-- **Una unidad de `subst` o mapeada** hacia una carpeta del disco del repo: `C:x` en esa otra
-  unidad se deja pasar (§11.1), y `realpath` resuelve `subst` solo si la ruta es absoluta.
+- **Una unidad de `subst` o mapeada** hacia una carpeta del disco del repo: la unidad sin barra de
+  esa otra unidad (`D:x`) se deja pasar (§11.1), y `realpath` resuelve `subst` solo si la ruta es
+  absoluta.
 - **Un alias del equipo** que no sea `gethostname()` ni su parte corta (un nombre DNS propio, una
   IP de la red local) se niega como «otra máquina»: negar de más.
 - **En Linux** la CI no prueba el código de prefijos ni de 8.3 (punto 6, declarado).
@@ -904,7 +905,104 @@ roturas. Corren en los dos sistemas `~+`/`~-` y `FileSystem::`, con sus 4 rotura
    PROJECT_STATE de la rama: 24.186 → **24.007**, 993 de margen bajo 25.000. K pierde 455 bytes y
    Technical Debt gana 276. Cabe: no hace falta PARADA.
 
+## §12 · Informe del revisor · trabajo/guardia-alias · 2026-10-24 (pasada corta sobre `git diff f3a2f3e bcc70f7`), pegado tal cual
+
+**Lo principal:** las cinco formas de mi pasada anterior (b1 a b5) se niegan ya con la regla del sitio, y su equivalente sobre `src/botsito/cli.py` pasa. No he encontrado ninguna regresión en el ritual ni en los comandos que leen datos. Quedan dos huecos que siguen leyendo material protegido, y los dos pasan igual en `main`. Uno son los disfraces de `/proc/cygdrive/` con `//` o `/./`. El otro es una forma nueva, `/proc/self/cwd/`. En los dos casos el `cat` real abrió el fichero bueno del repo inventado.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 0 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | menor | `fase1/roturas.txt` está en ISO-8859 y no en UTF-8: el `·` se ve como `�` en `git diff`. Ya lo estaba antes de este commit, y las 10 líneas nuevas siguen igual. | `file docs/validation/anexos/GUARDIA-ALIAS/fase1/roturas.txt` → `ISO-8859 text`; lo mismo con `git show f3a2f3e:…roturas.txt \| file -` |
+
+Comprobado sin hallazgos:
+- **Contrato:** `uv run python scripts/contrato_rama.py` → «CONTRATO: 25 ficheros dentro del contrato de trabajo/guardia-alias (riesgo alto, artefacto docs/validation/GUARDIA-ALIAS.md, tramo 'Carril: guardias y deuda', 3 comprobaciones para el revisor)», exit 0.
+- **pytest:**
+  - `tests/unit/test_guardia_alias.py`: 50 en verde.
+  - `test_guardia_claude.py`, `test_guardia_ci.py` y `test_guardia_ffmpeg.py`: exit 0 sin fallos (incluye `RITUAL` y `RITUAL_MAKE`).
+- **Sello:** `make-check.log:102` dice `SELLO: … sobre el arbol 5d54c79d…`, que es `git rev-parse 'bcc70f7^{tree}'`. `:104` dice `PICO DE MEMORIA … 298 MiB`.
+- **Ficheros que toca el commit:** hooks, tests, docs, el anexo y `PROJECT_STATE.md` (1685 → 1690). No toca `knowledge/`, holdout, ningún directorio inmutable ni ningún ADR. `GUARDIA-ALIAS.md` es nuevo en la rama (no es un informe cerrado).
+- **Las respuestas del consultor:** la del encargo (líneas 72-79) y la del informe (817-824) son IGUALES (`diff`).
+- **Las líneas que cita §11.1** (1070, 1087, 1092, 1103, 1119, 1125, 1140, 4342, 4447) corresponden al código.
+- **El anexo `decisiones.txt`:** 96 líneas, de las que 26 «pasa», como dice §11.2. `roturas.txt`: 24 «falla».
+
+### Eje (b) · Encargo (respuesta a la PARADA 2)
+Resumen: 2 bloquea, 1 importa, 3 menor. Requisitos: 9 hechos, 1 parcial, 0 no hechos (3 pendientes que van después de esta pasada).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | P0: Bash y Monitor se deciden sobre el texto tal como llega y con un nivel de `\` menos; se niega si cualquiera de las dos lecturas llega a lo protegido | Hecho | `guardia.py:1125-1130` y `:4446-4448`. En memoria, b1 con 4 formas × 2 comillas × 2 herramientas: R_HOLDOUT, R_SIN_ABRIR y R_CUARENTENA; en `main`, «pasa» |
+| 2 | P0: tests en los dos sentidos con las 18 filas dobladas, y su equivalente en `src/` | Hecho | `test_las_barras_dobladas_de_la_herramienta_se_niegan`; roturas `una_lectura` y `todo_es_la_raiz` |
+| 3 | P0: recuadro que corrige la causa de la fase 0 | Hecho | `GUARDIA-ALIAS.md:50-57` |
+| 4 | P1: `~+` y `~-` | Hecho | `:1088-1101`. En memoria: `~+` niega con la regla del sitio y `~+` hacia `src/` pasa. `~-` da R_ALIAS, también hacia `src/` (negar de más, declarado en §11.1) |
+| 5 | P1: `/proc/cygdrive/` | **Parcial** | Ver b1: los disfraces pasan |
+| 6 | P1: `C:<rel>` | Hecho | En las seis herramientas niega; hacia `src/` pasa; `C:..\…` desde `src` da R_HOLDOUT. La rama de `_no_canonizable` no tiene test (b3) |
+| 7 | P1: `FileSystem::` y su forma larga | Hecho | Niega, con comillas y con `-LiteralPath`. `Microsoft.PowerShell.Core/FileSystem::` pasa la guardia, pero PowerShell real no la abre («No se encuentra ningún proveedor») |
+| 8 | P1: lo que no se puede canonizar, negado como en la respuesta 1 | Hecho | `~-`, `~+1` y `C:<rel>` con el directorio de trabajo en otra unidad: R_ALIAS |
+| 9 | P2/P3: llaves y `file:///` a Technical Debt; K y G.1 en el cierre; cifra de PS simulada | Hecho (texto preparado para el cierre) | §11.4. La cifra 24.007 no la comprobé |
+| 10 | make check sellado | Hecho | `make-check.log:102` = árbol de bcc70f7 |
+| — | CI de Linux, este informe pegado, «Rama lista para revisión» | Pendientes | Estado: «EN CURSO» (`GUARDIA-ALIAS.md:909`) |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | **bloquea** | **Los disfraces de `/proc/cygdrive/` pasan.** `_UNIDAD_MSYS` (`guardia.py:1087`) casa sobre el texto antes de normalizarlo. Por eso `/proc//cygdrive/c/…`, `/proc/cygdrive//c/…` y `/proc/./cygdrive/c/…` no se traducen a `C:`. Es la forma que pide el punto 1, y el encargo pedía un disfraz por familia. | En memoria, `cat '<forma>/<HOLD>'`: «pasa» en la rama y en `main`. Real, solo sobre el `cli.py` del repo inventado: con `/proc//cygdrive/c/…`, con `/proc/cygdrive//c/…` y con `/proc/./cygdrive/c/…` sale `x = 1`, rc=0. `/cygdrive//c/` y `/PROC/…` no abren (rc=1) |
+| b2 | **bloquea** (va contra el OBJETIVO; no es regresión) | **`/proc/self/cwd/<rel>`** es un alias del directorio de trabajo, como `~+`, y no está entre las cinco formas. La guardia no lo traduce. | En memoria, `cat '/proc/self/cwd/<HOLD>'` con cwd en el repo inventado: «pasa» en la rama y en `main`. Real, `cat '/proc/self/cwd/src/botsito/cli.py'` → `x = 1`, rc=0. Si va aquí o a la deuda C lo decide el consultor |
+| b3 | importa | **La rama `_no_canonizable` de `_relativa_a_unidad`** (la unidad del repo, con el directorio de trabajo en otra) no tiene test ni rotura. El punto 1 pide un test en los dos sentidos por cada forma. | `test_la_unidad_sin_barra_…` solo prueba la misma unidad y `Z:x\y.txt`. En memoria funciona: Read de `C:<rel>` con cwd `Z:\x` da R_ALIAS, igual hacia `src/` |
+| b4 | menor | `test_proc_cygdrive_es_la_unidad` y los casos de `~-` y `~+1` solo prueban Bash, no Monitor. | `test_guardia_alias.py`, los casos de esos dos tests |
+| b5 | menor | §5 dice «`C:x` en esa otra unidad se deja pasar», pero la decisión de §11.1 es sobre `D:x` (otra unidad). | `GUARDIA-ALIAS.md:588-589` frente a `:838-839` |
+| b6 | menor | La segunda lectura niega `echo "x\\"`, con el motivo «una comilla doble sin cerrar», sin regla con nombre y sin decir que viene de la segunda lectura. En `main` pasaba. No hace daño: con la capa de la herramienta, bash recibe esa misma comilla sin cerrar. | En memoria, en la rama: «niega(sin R_): una comilla doble sin cerrar»; en `main`: «pasa» |
+
+**Punto (3), la decisión de §11.1 y la segunda lectura:**
+- **Lo que pasaba en `main` sigue pasando.** Comparé 22 comandos contra el repo REAL, en memoria, con la rama y con `main`. Salen IGUALES salvo b6:
+  - con `\\`: `grep "…\\|…"`, `printf '%s\\n'`, `echo`, `ls` y `cat` de rutas `C:\\…`, `python -c`, `awk`, `sed`, `grep -rn '\\\\?'`, un heredoc `'EOF2'`;
+  - de lectura de datos: `corpus frames show`, `corpus transcript show` (R_TRAMO en las dos), `kb find`, `kit check`, `pytest`, `make check > make-check.log 2>&1`;
+  - con `~`: `echo ~-`, `echo '~-'`, `ls ~+`, `cd src && ls ~-`.
+- **La unidad sin barra de otra unidad (`Z:x`) pasa y no abre nada del repo.** El único riesgo es el de `subst`, que está declarado (§5).
+
+### Lo que no pude comprobar
+- La CI de Linux de bcc70f7: no la esperé, por indicación de la sesión.
+- Si Monitor quita de verdad un nivel de `\` (no tengo la herramienta), y si Read y Grep reales abren `C:<rel>`.
+- En Linux, cómo resuelve `realpath` del hook `/proc/self/cwd`. Ahí `/proc/self/cwd` existe de forma nativa.
+- La cifra 24.007 de PS (`simular_ps.py`): es un guion nuevo de la rama y no lo ejecuté.
+- Exposiciones: ninguna. Todo se hizo sobre el repo inventado de la pasada anterior (`C:\Users\USER\AppData\Local\Temp\claude\C--Users-USER-Desktop-Bot-v3\76226a3b-7f68-4e43-9153-3301b3c01892\scratchpad\rev9y5cbpqd\Bot v3 prueba`, con ficheros falsos), y los programas reales solo sobre su `src/botsito/cli.py`.
+
+### Comandos ejecutados
+1. `git branch --show-current; git status --short; git log --format='%h %s' f3a2f3e..bcc70f7; git diff --stat f3a2f3e bcc70f7`
+2. `git diff f3a2f3e bcc70f7 --` de `.claude/hooks/guardia.py`, `tests/unit/test_guardia_alias.py`, el encargo, PS, `roturas.txt` y `GUARDIA-ALIAS.md`
+3. `sed -n 4400,4470p` y `sed -n '/^def main/,…'` sobre `guardia.py`; `grep -n "def _no_canonizable"`; `sed -n <línea>p` de las 9 líneas de §11.1
+4. Read: `GUARDIA-ALIAS.md` 1-80 y 677-911
+5. `diff` del encargo (72-79) contra el informe (817-824) → IGUALES; `grep -n "comilla\|subst"` sobre el informe y el test
+6. `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_alias.py` → 50 en verde
+7. `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_claude.py tests/unit/test_guardia_ci.py tests/unit/test_guardia_ffmpeg.py` (en segundo plano) → exit 0
+8. `ls` del scratchpad y del repo inventado; `find` con los nombres protegidos enmascarados
+9. `uv run python - <<'EOF'` (×4): `decidir` en memoria de la rama y de `main` (`git show main:…`). El primero lo negó la guardia (literal `\\?\{R}`) y el tercero también (literal con `//proc`); los rehice con `chr(92)`/`chr(47)`
+10. Programas reales en el repo inventado, solo sobre `cli.py`: `cat` con `/proc/self/cwd/`, `/PROC/cygdrive/`, `/proc//cygdrive/`, `/proc/cygdrive//c/`, `/cygdrive//c/` y `/proc/./cygdrive/`; `powershell.exe -NoProfile -Command "Get-Content 'Microsoft.PowerShell.Core/FileSystem::…cli.py'"`
+11. `uv run python scripts/contrato_rama.py`. Antes, un comando compuesto con `f=…` lo negó la guardia (R_EJECUCION); lo partí en dos
+12. `grep -n "SELLO\|PICO DE MEMORIA" make-check.log; git rev-parse 'bcc70f7^{tree}'; wc -l` y `grep -c` sobre los anexos; `file roturas.txt`, también la versión de f3a2f3e
+
+## §13 · Lo hecho con la pasada corta
+
+La CI de Linux de bcc70f7 (run **40140980135**) salió solo con el fallo esperado de state check:
+2.868 passed y 38 skipped.
+
+| hallazgo | qué se hizo |
+|---|---|
+| b1, disfraces de `/proc/cygdrive/` (bloquea) | `_sin_disfraz_posix` (en `_absoluta`): una ruta con UNA barra inicial se normaliza con `posixpath.normpath` (sin `//`, `/./` ni `..`) antes de casar `_UNIDAD_MSYS`. Una con dos barras (`//?/`, `//servidor/`) no se toca ahí. Test: cinco formas (con `//`, `/./` y `x/..`) × los tres sitios y `src/`, en Bash y Monitor |
+| b2, `/proc/self/cwd/` (bloquea) | **Ampliación declarada:** no estaba entre las formas de la PARADA 2, pero es de la familia de `~+` (un alias del directorio de trabajo), lee material protegido, y la respuesta pide que la ingesta entre con la guardia cerrada. `/proc/self/cwd/` es el directorio de trabajo; `/proc/<pid>/…`, `/proc/thread-self/…` y `/proc/self/root`, `fd`, `exe`… no se saben: `_no_canonizable`. Test nuevo, `test_proc_self_cwd_es_el_directorio_de_trabajo`, en los dos sistemas |
+| b3, la rama `_no_canonizable` de `C:<rel>` (importa) | test: Read de `C:<rel>` con el directorio de trabajo en otra unidad, hacia el holdout y hacia `src/`: `R_ALIAS` |
+| b4, Monitor (menor) | `~-`, `~+1` y `/proc/cygdrive/` también en Monitor |
+| b5, §5 (menor) | corregido: la unidad sin barra de OTRA unidad (`D:x`) |
+| b6, `echo "x\\"` (menor) | se queda: la segunda lectura es lo que bash recibe de verdad, y ahí la comilla está sin cerrar. Declarado |
+| a1, `roturas.txt` en ISO-8859 (menor) | los anexos `roturas.txt` y `decisiones.txt`, regenerados en UTF-8 desde el registro de pytest (que en la consola de Windows sale en cp1252) |
+
+Roturas nuevas: `sin_disfraz_posix` contra `/proc/cygdrive/` y `/proc/self/cwd/`, y
+`todo_es_la_raiz` contra `/proc/self/cwd/`. Ahora son **54 tests** y **27 roturas**, todas
+«falla» (`fase1/roturas.txt`). Las decisiones de los seis tests de la PARADA 2 y de la pasada
+corta están en `parada2/decisiones.txt`: 144, de las que 37 pasan, todas sobre `src/`, fuera de la
+raíz o en la casa.
+
 ## Estado
 
-EN CURSO: la respuesta a la PARADA 2 aplicada (§11); falta el sello, la CI de Linux y la
-pasada corta del revisor.
+EN CURSO: la respuesta a la PARADA 2 y la pasada corta del revisor aplicadas (§11, §13); falta
+el sello, la CI de Linux y una pasada mínima del revisor sobre lo de §13.

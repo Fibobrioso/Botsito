@@ -95,6 +95,8 @@ def _romper(cual: str, g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatc
         monkeypatch.setattr(g, "_UNIDAD_MSYS", re.compile(r"^/(?:cygdrive/)?([a-zA-Z])(/.*)?$"))
     elif cual == "sin_unidad_sin_barra":
         monkeypatch.setattr(g, "_relativa_a_unidad", lambda ruta, cwd: ruta)
+    elif cual == "sin_disfraz_posix":  # pasada corta del revisor: sin normalizar `/proc/...`
+        monkeypatch.setattr(g, "_sin_disfraz_posix", lambda ruta, cwd: ruta)
     elif cual == "sin_proveedor":
         monkeypatch.setattr(g, "_sin_proveedor", lambda ruta: ruta)
     else:
@@ -563,10 +565,28 @@ def test_tilde_mas_y_tilde_menos_de_bash(g: ModuleType, repo: Path) -> None:
         casos.append((f"~+ hacia el holdout, {etiqueta}", herramienta, entrada, "R_HOLDOUT"))
     for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat ~+/{BUENO}"):
         casos.append((f"~+ hacia src, {etiqueta}", herramienta, entrada, "pasa"))
+    for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat ~-/'{HOLD}'"):
+        casos.append((f"~- hacia el holdout, {etiqueta}", herramienta, entrada, "R_ALIAS"))
+    for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat ~+1/{BUENO}"):
+        casos.append((f"~+1, {etiqueta}", herramienta, entrada, "R_ALIAS"))
+    casos.append(("~ sigue siendo la casa", "Bash", {"command": "cat ~/x.txt"}, "pasa"))
+    fallos = _fallos_de(g, repo, casos)
+    assert not fallos, "\n".join(fallos)
+
+
+def test_proc_self_cwd_es_el_directorio_de_trabajo(g: ModuleType, repo: Path) -> None:
+    """Pasada corta del revisor, b2: `/proc/self/cwd/` es el directorio de trabajo (como `~+`);
+    el de otro proceso o `/proc/self/root/` no se saben: `R_ALIAS`."""
+    casos = []
+    for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat '/proc/self/cwd/{HOLD}'"):
+        casos.append((f"/proc/self/cwd al holdout, {etiqueta}", herramienta, entrada, "R_HOLDOUT"))
+    for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat '/proc//self/./cwd/{HOLD}'"):
+        casos.append((f"/proc/self/cwd con disfraz, {etiqueta}", herramienta, entrada, "R_HOLDOUT"))
+    for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat /proc/self/cwd/{BUENO}"):
+        casos.append((f"/proc/self/cwd a src, {etiqueta}", herramienta, entrada, "pasa"))
     casos += [
-        ("~- hacia el holdout", "Bash", {"command": f"cat ~-/'{HOLD}'"}, "R_ALIAS"),
-        ("~+1", "Bash", {"command": f"cat ~+1/{BUENO}"}, "R_ALIAS"),
-        ("~ sigue siendo la casa", "Bash", {"command": "cat ~/x.txt"}, "pasa"),
+        ("/proc/1/cwd", "Bash", {"command": f"cat '/proc/1/cwd/{BUENO}'"}, "R_ALIAS"),
+        ("/proc/self/root", "Bash", {"command": f"cat '/proc/self/root/{BUENO}'"}, "R_ALIAS"),
     ]
     fallos = _fallos_de(g, repo, casos)
     assert not fallos, "\n".join(fallos)
@@ -576,13 +596,22 @@ def test_tilde_mas_y_tilde_menos_de_bash(g: ModuleType, repo: Path) -> None:
 def test_proc_cygdrive_es_la_unidad(g: ModuleType, repo: Path) -> None:
     """Punto 1: `/proc/cygdrive/c/...` de MSYS es `C:/...`, como `/c/` y `/cygdrive/c/`."""
     r = repo.as_posix()
-    msys = f"/proc/cygdrive/{r[0].lower()}{r[2:]}"
+    u, resto = r[0].lower(), r[2:]
+    # La forma y sus disfraces que abren en Git Bash (revisor, pasada corta, b1).
+    formas = {
+        "/proc/cygdrive": f"/proc/cygdrive/{u}{resto}",
+        "/proc//cygdrive": f"/proc//cygdrive/{u}{resto}",
+        "/proc/cygdrive//": f"/proc/cygdrive//{u}{resto}",
+        "/proc/./cygdrive": f"/proc/./cygdrive/{u}{resto}",
+        "/proc/x/../cygdrive": f"/proc/x/../cygdrive/{u}{resto}",
+    }
     casos = []
-    for sitio, (rel, esperada) in PROTEGIDOS.items():
-        casos.append(
-            (f"{sitio} por /proc/cygdrive", "Bash", {"command": f"cat '{msys}/{rel}'"}, esperada)
-        )
-    casos.append(("src por /proc/cygdrive", "Bash", {"command": f"cat '{msys}/{BUENO}'"}, "pasa"))
+    for nombre, msys in formas.items():
+        for sitio, (rel, esperada) in PROTEGIDOS.items():
+            for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat '{msys}/{rel}'"):
+                casos.append((f"{sitio} por {nombre}, {etiqueta}", herramienta, entrada, esperada))
+        for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat '{msys}/{BUENO}'"):
+            casos.append((f"src por {nombre}, {etiqueta}", herramienta, entrada, "pasa"))
     fallos = _fallos_de(g, repo, casos)
     assert not fallos, "\n".join(fallos)
 
@@ -610,6 +639,15 @@ def test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad(
         fallos += _fallos_de(g, repo, casos)
     otra_unidad = ("otra unidad", "Read", {"file_path": f"{otra}:x\\y.txt"}, "pasa")
     fallos += _fallos_de(g, repo, [otra_unidad])
+    # La unidad del repo con el directorio de trabajo en OTRA unidad: el de la del repo no se sabe
+    # (revisor, pasada corta, b3), hacia lo protegido y hacia lo bueno.
+    for rel in (HOLD, BUENO):
+        entrada = {"file_path": f"{unidad}:{rel.replace('/', chr(92))}"}
+        evento = {"tool_name": "Read", "tool_input": entrada, "cwd": f"{otra}:\\x"}
+        obtenida = _regla(g, g.decidir(evento, g.Politica(repo)))
+        print(f"cwd en otra unidad | {rel == BUENO and 'src' or 'holdout'} | {obtenida}")
+        if obtenida != "R_ALIAS":
+            fallos.append(f"cwd en otra unidad ({rel == BUENO and 'src' or 'holdout'}): {obtenida}")
     assert not fallos, "\n".join(fallos)
 
 
@@ -658,6 +696,9 @@ ROTURAS = [
     _w("todo_es_la_raiz", "test_proc_cygdrive_es_la_unidad"),
     _w("sin_unidad_sin_barra", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
     _w("todo_es_la_raiz", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
+    _w("sin_disfraz_posix", "test_proc_cygdrive_es_la_unidad"),
+    ("sin_disfraz_posix", "test_proc_self_cwd_es_el_directorio_de_trabajo"),
+    ("todo_es_la_raiz", "test_proc_self_cwd_es_el_directorio_de_trabajo"),
     ("sin_proveedor", "test_el_proveedor_filesystem_de_powershell"),
     ("todo_es_la_raiz", "test_el_proveedor_filesystem_de_powershell"),
 ]

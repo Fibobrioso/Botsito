@@ -1,24 +1,27 @@
-ROTO | identidad | test_cada_forma_de_la_raiz_se_niega_con_la_regla_del_sitio | falla: \\?\ · Bash cat: pasa
+ROTO | identidad | test_cada_forma_de_la_raiz_se_niega_con_la_regla_del_sitio | falla: \\?\ Â· Bash cat: pasa
 ROTO | identidad | test_una_variable_de_bash_con_un_alias_se_niega | falla: caso 0: pasa
 ROTO | identidad | test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena | falla: ('Bash', None)
-ROTO | identidad | test_leer_por_una_union_o_un_enlace_hacia_lo_protegido_se_niega | falla: v3 prueba\docs\atajo\caso.yaml · Bash cat: pasa
-ROTO | todo_es_la_raiz | test_lo_bueno_pasa_con_cada_forma_de_la_raiz | falla: \\?\ · Bash cat: R_HOLDOUT
-ROTO | todo_es_la_raiz | test_lo_bueno_pasa_en_las_formas_de_siempre | falla: ruta 0 · Bash cat: R_HOLDOUT
+ROTO | identidad | test_leer_por_una_union_o_un_enlace_hacia_lo_protegido_se_niega | falla: v3 prueba\docs\atajo\caso.yaml Â· Bash cat: pasa
+ROTO | todo_es_la_raiz | test_lo_bueno_pasa_con_cada_forma_de_la_raiz | falla: \\?\ Â· Bash cat: R_HOLDOUT
+ROTO | todo_es_la_raiz | test_lo_bueno_pasa_en_las_formas_de_siempre | falla: ruta 0 Â· Bash cat: R_HOLDOUT
 ROTO | todo_es_la_raiz | test_una_carpeta_hermana_sin_el_repo_pasa | falla: grep -r: R_HOLDOUT
-ROTO | sin_contenedor | test_un_lector_recursivo_sobre_una_carpeta_que_contiene_la_raiz_se_niega | falla: la carpeta del repo · grep -r: pasa
+ROTO | sin_contenedor | test_un_lector_recursivo_sobre_una_carpeta_que_contiene_la_raiz_se_niega | falla: la carpeta del repo Â· grep -r: pasa
 ROTO | sin_contenedor | test_rg_desde_fuera_respeta_lo_ignorado_como_desde_la_raiz | falla: assert 'pasa' == 'R_HOLDOUT'
 ROTO | sin_variables_ps | test_powershell_resuelve_env_home_pwd_y_tilde | falla: caso 0: pasa
 ROTO | sin_variables_ps | test_powershell_niega_una_variable_que_no_resuelve_delante_de_un_lector | falla: ('Get-Content "$env:GUARDIA_ALIAS_NO_EXISTE\\a.txt"', None)
 ROTO | sin_no_canonizable | test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena | falla: ('Bash', None)
 ROTO | todo_es_la_raiz | test_powershell_lo_bueno_y_lo_literal_pasan | falla: Get-Content "$env:GUARDIA_ALIAS_PRUEBA\src\botsito\cli.py": R_HOLDOUT
 ROTO | identidad | test_fuera_de_windows_los_prefijos_no_se_tocan | falla: assert '\\\\?\\C:\\x\\y' == 'C:\\x\\y'
-ROTO | una_lectura | test_las_barras_dobladas_de_la_herramienta_se_niegan | falla: \\?\ · ' · Bash: pasa
-ROTO | todo_es_la_raiz | test_las_barras_dobladas_de_la_herramienta_se_niegan | falla: \\?\ · ' · Bash: R_HOLDOUT
+ROTO | una_lectura | test_las_barras_dobladas_de_la_herramienta_se_niegan | falla: \\?\ Â· ' Â· Bash: pasa
+ROTO | todo_es_la_raiz | test_las_barras_dobladas_de_la_herramienta_se_niegan | falla: \\?\ Â· ' Â· Bash: R_HOLDOUT
 ROTO | sin_tilde_de_pila | test_tilde_mas_y_tilde_menos_de_bash | falla: caso 0 (~+ hacia el holdout, Bash): pasa, se esperaba R_HOLDOUT
 ROTO | todo_es_la_raiz | test_tilde_mas_y_tilde_menos_de_bash | falla: caso 2 (~+ hacia src, Bash): R_HOLDOUT, se esperaba pasa
-ROTO | sin_proc_cygdrive | test_proc_cygdrive_es_la_unidad | falla: caso 0 (marzo por /proc/cygdrive): pasa, se esperaba R_SIN_ABRIR
-ROTO | todo_es_la_raiz | test_proc_cygdrive_es_la_unidad | falla: caso 0 (marzo por /proc/cygdrive): R_HOLDOUT, se esperaba R_SIN_ABRIR
-ROTO | sin_unidad_sin_barra | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo · Bash cat): pasa, se esperaba R_SIN_ABRIR
-ROTO | todo_es_la_raiz | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo · Bash cat): R_HOLDOUT, se esperaba R_SIN_ABRIR
+ROTO | sin_proc_cygdrive | test_proc_cygdrive_es_la_unidad | falla: caso 0 (marzo por /proc/cygdrive, Bash): pasa, se esperaba R_SIN_ABRIR
+ROTO | todo_es_la_raiz | test_proc_cygdrive_es_la_unidad | falla: caso 0 (marzo por /proc/cygdrive, Bash): R_HOLDOUT, se esperaba R_SIN_ABRIR
+ROTO | sin_unidad_sin_barra | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo Â· Bash cat): pasa, se esperaba R_SIN_ABRIR
+ROTO | todo_es_la_raiz | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo Â· Bash cat): R_HOLDOUT, se esperaba R_SIN_ABRIR
+ROTO | sin_disfraz_posix | test_proc_cygdrive_es_la_unidad | falla: caso 8 (marzo por /proc//cygdrive, Bash): pasa, se esperaba R_SIN_ABRIR
+ROTO | sin_disfraz_posix | test_proc_self_cwd_es_el_directorio_de_trabajo | falla: caso 0 (/proc/self/cwd al holdout, Bash): pasa, se esperaba R_HOLDOUT
+ROTO | todo_es_la_raiz | test_proc_self_cwd_es_el_directorio_de_trabajo | falla: caso 4 (/proc/self/cwd a src, Bash): R_HOLDOUT, se esperaba pasa
 ROTO | sin_proveedor | test_el_proveedor_filesystem_de_powershell | falla: caso 0 (FileSystem:: marzo): pasa, se esperaba R_SIN_ABRIR
 ROTO | todo_es_la_raiz | test_el_proveedor_filesystem_de_powershell | falla: caso 0 (FileSystem:: marzo): R_HOLDOUT, se esperaba R_SIN_ABRIR

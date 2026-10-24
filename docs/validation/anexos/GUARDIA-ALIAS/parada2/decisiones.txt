@@ -50,38 +50,86 @@ caso 0 | ~+ hacia el holdout, Bash | R_HOLDOUT
 caso 1 | ~+ hacia el holdout, Monitor | R_HOLDOUT
 caso 2 | ~+ hacia src, Bash | pasa
 caso 3 | ~+ hacia src, Monitor | pasa
-caso 4 | ~- hacia el holdout | R_ALIAS
-caso 5 | ~+1 | R_ALIAS
-caso 6 | ~ sigue siendo la casa | pasa
-caso 0 | marzo por /proc/cygdrive | R_SIN_ABRIR
-caso 1 | holdout por /proc/cygdrive | R_HOLDOUT
-caso 2 | cruda por /proc/cygdrive | R_CUARENTENA
-caso 3 | src por /proc/cygdrive | pasa
-caso 0 | marzo · Bash cat | R_SIN_ABRIR
-caso 1 | marzo · Read | R_SIN_ABRIR
-caso 2 | marzo · Grep | R_SIN_ABRIR
-caso 3 | marzo · PowerShell Get-Content | R_SIN_ABRIR
-caso 4 | marzo · Monitor cat | R_SIN_ABRIR
-caso 5 | marzo · python guion | R_SIN_ABRIR
-caso 0 | holdout · Bash cat | R_HOLDOUT
-caso 1 | holdout · Read | R_HOLDOUT
-caso 2 | holdout · Grep | R_HOLDOUT
-caso 3 | holdout · PowerShell Get-Content | R_HOLDOUT
-caso 4 | holdout · Monitor cat | R_HOLDOUT
-caso 5 | holdout · python guion | R_HOLDOUT
-caso 0 | cruda · Bash cat | R_CUARENTENA
-caso 1 | cruda · Read | R_CUARENTENA
-caso 2 | cruda · Grep | R_CUARENTENA
-caso 3 | cruda · PowerShell Get-Content | R_CUARENTENA
-caso 4 | cruda · Monitor cat | R_CUARENTENA
-caso 5 | cruda · python guion | R_CUARENTENA
-caso 0 | src · Bash cat | pasa
-caso 1 | src · Read | pasa
-caso 2 | src · Grep | pasa
-caso 3 | src · PowerShell Get-Content | pasa
-caso 4 | src · Monitor cat | pasa
-caso 5 | src · python guion | pasa
+caso 4 | ~- hacia el holdout, Bash | R_ALIAS
+caso 5 | ~- hacia el holdout, Monitor | R_ALIAS
+caso 6 | ~+1, Bash | R_ALIAS
+caso 7 | ~+1, Monitor | R_ALIAS
+caso 8 | ~ sigue siendo la casa | pasa
+caso 0 | /proc/self/cwd al holdout, Bash | R_HOLDOUT
+caso 1 | /proc/self/cwd al holdout, Monitor | R_HOLDOUT
+caso 2 | /proc/self/cwd con disfraz, Bash | R_HOLDOUT
+caso 3 | /proc/self/cwd con disfraz, Monitor | R_HOLDOUT
+caso 4 | /proc/self/cwd a src, Bash | pasa
+caso 5 | /proc/self/cwd a src, Monitor | pasa
+caso 6 | /proc/1/cwd | R_ALIAS
+caso 7 | /proc/self/root | R_ALIAS
+caso 0 | marzo por /proc/cygdrive, Bash | R_SIN_ABRIR
+caso 1 | marzo por /proc/cygdrive, Monitor | R_SIN_ABRIR
+caso 2 | holdout por /proc/cygdrive, Bash | R_HOLDOUT
+caso 3 | holdout por /proc/cygdrive, Monitor | R_HOLDOUT
+caso 4 | cruda por /proc/cygdrive, Bash | R_CUARENTENA
+caso 5 | cruda por /proc/cygdrive, Monitor | R_CUARENTENA
+caso 6 | src por /proc/cygdrive, Bash | pasa
+caso 7 | src por /proc/cygdrive, Monitor | pasa
+caso 8 | marzo por /proc//cygdrive, Bash | R_SIN_ABRIR
+caso 9 | marzo por /proc//cygdrive, Monitor | R_SIN_ABRIR
+caso 10 | holdout por /proc//cygdrive, Bash | R_HOLDOUT
+caso 11 | holdout por /proc//cygdrive, Monitor | R_HOLDOUT
+caso 12 | cruda por /proc//cygdrive, Bash | R_CUARENTENA
+caso 13 | cruda por /proc//cygdrive, Monitor | R_CUARENTENA
+caso 14 | src por /proc//cygdrive, Bash | pasa
+caso 15 | src por /proc//cygdrive, Monitor | pasa
+caso 16 | marzo por /proc/cygdrive//, Bash | R_SIN_ABRIR
+caso 17 | marzo por /proc/cygdrive//, Monitor | R_SIN_ABRIR
+caso 18 | holdout por /proc/cygdrive//, Bash | R_HOLDOUT
+caso 19 | holdout por /proc/cygdrive//, Monitor | R_HOLDOUT
+caso 20 | cruda por /proc/cygdrive//, Bash | R_CUARENTENA
+caso 21 | cruda por /proc/cygdrive//, Monitor | R_CUARENTENA
+caso 22 | src por /proc/cygdrive//, Bash | pasa
+caso 23 | src por /proc/cygdrive//, Monitor | pasa
+caso 24 | marzo por /proc/./cygdrive, Bash | R_SIN_ABRIR
+caso 25 | marzo por /proc/./cygdrive, Monitor | R_SIN_ABRIR
+caso 26 | holdout por /proc/./cygdrive, Bash | R_HOLDOUT
+caso 27 | holdout por /proc/./cygdrive, Monitor | R_HOLDOUT
+caso 28 | cruda por /proc/./cygdrive, Bash | R_CUARENTENA
+caso 29 | cruda por /proc/./cygdrive, Monitor | R_CUARENTENA
+caso 30 | src por /proc/./cygdrive, Bash | pasa
+caso 31 | src por /proc/./cygdrive, Monitor | pasa
+caso 32 | marzo por /proc/x/../cygdrive, Bash | R_SIN_ABRIR
+caso 33 | marzo por /proc/x/../cygdrive, Monitor | R_SIN_ABRIR
+caso 34 | holdout por /proc/x/../cygdrive, Bash | R_HOLDOUT
+caso 35 | holdout por /proc/x/../cygdrive, Monitor | R_HOLDOUT
+caso 36 | cruda por /proc/x/../cygdrive, Bash | R_CUARENTENA
+caso 37 | cruda por /proc/x/../cygdrive, Monitor | R_CUARENTENA
+caso 38 | src por /proc/x/../cygdrive, Bash | pasa
+caso 39 | src por /proc/x/../cygdrive, Monitor | pasa
+caso 0 | marzo Â· Bash cat | R_SIN_ABRIR
+caso 1 | marzo Â· Read | R_SIN_ABRIR
+caso 2 | marzo Â· Grep | R_SIN_ABRIR
+caso 3 | marzo Â· PowerShell Get-Content | R_SIN_ABRIR
+caso 4 | marzo Â· Monitor cat | R_SIN_ABRIR
+caso 5 | marzo Â· python guion | R_SIN_ABRIR
+caso 0 | holdout Â· Bash cat | R_HOLDOUT
+caso 1 | holdout Â· Read | R_HOLDOUT
+caso 2 | holdout Â· Grep | R_HOLDOUT
+caso 3 | holdout Â· PowerShell Get-Content | R_HOLDOUT
+caso 4 | holdout Â· Monitor cat | R_HOLDOUT
+caso 5 | holdout Â· python guion | R_HOLDOUT
+caso 0 | cruda Â· Bash cat | R_CUARENTENA
+caso 1 | cruda Â· Read | R_CUARENTENA
+caso 2 | cruda Â· Grep | R_CUARENTENA
+caso 3 | cruda Â· PowerShell Get-Content | R_CUARENTENA
+caso 4 | cruda Â· Monitor cat | R_CUARENTENA
+caso 5 | cruda Â· python guion | R_CUARENTENA
+caso 0 | src Â· Bash cat | pasa
+caso 1 | src Â· Read | pasa
+caso 2 | src Â· Grep | pasa
+caso 3 | src Â· PowerShell Get-Content | pasa
+caso 4 | src Â· Monitor cat | pasa
+caso 5 | src Â· python guion | pasa
 caso 0 | otra unidad | pasa
+cwd en otra unidad | holdout | R_ALIAS
+cwd en otra unidad | src | R_ALIAS
 caso 0 | FileSystem:: marzo | R_SIN_ABRIR
 caso 1 | FileSystem:: holdout | R_HOLDOUT
 caso 2 | FileSystem:: cruda | R_CUARENTENA
