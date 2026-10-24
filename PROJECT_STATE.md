@@ -16,7 +16,7 @@ trabajo/guardia-ci, EN CURSO (abierta el 2026-10-23 desde main 2a99e64): la guar
 975c086 · merge: trabajo/guardia-ffmpeg, ffprobe y ffmpeg en cuatro formas de lista cerrada y las comillas $'...' y $"..." en el tokenizador de la guardia · tag stable/F38a-guardia-ffmpeg
 
 ## Tests Currently Passing
-1665 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1669 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

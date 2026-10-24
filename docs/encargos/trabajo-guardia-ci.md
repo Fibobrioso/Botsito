@@ -93,3 +93,18 @@ Copiada tal cual:
 > - Si la sesión tiene que reiniciarse para cargar settings.json, dímelo antes de hacerlo y retoma con retomar-rama.
 >
 > Lo demás, como dicen el encargo y la respuesta 1.
+
+## Respuesta del consultor a la PARADA 3 (2026-10-23)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 3 (2026-10-23). Cópiala al informe, en su sección.
+>
+> 0. Opción (a): en un guion o código en línea, la consulta de CI cuenta solo si el código menciona gh o una ruta de CI Y además tiene una vía de salir del proceso: subprocess, os.system, os.popen, os.exec*, os.spawn*, pty, asyncio.create_subprocess_*, urllib, requests, httpx, http.client o socket. Y, para cerrar el hueco del __import__ dinámico: __import__, importlib, exec, eval, compile y runpy también cuentan como vía de salida, porque con ellas no se puede decidir qué se importa (se niega por no decidible, con su mensaje).
+>    Excepción, una y cerrada: cargar la propia guardia desde su ruta literal (.claude/hooks/guardia.py con importlib.util.spec_from_file_location, o la forma exacta que usen hoy tests/unit/test_guardia_ci.py y tabla_fase0.py), siempre que no haya otra vía de salida en el código. Su test, en los dos sentidos: tabla_fase0.py pasa; el mismo guion con un import de subprocess añadido, se niega; con importlib sobre cualquier otra ruta, se niega; y con la ruta de la guardia montada a trozos, se niega.
+>    El "g"+"h" a trozos con una vía de salida tiene que salir negado: si la mención no se ve pero hay vía de salida y el código construye cadenas, aplica lo que la guardia ya hace con las rutas compuestas (analizar_codigo, deuda C); si no lo cubre, es riesgo residual declarado en el informe y en la línea de Technical Debt, no un arreglo nuevo en esta rama.
+> 1. El revisor: con la opción (a) no monta nada a trozos. Hace sus pruebas en memoria con tabla_fase0.py o con un python -c que cargue la guardia por la excepción de arriba, y declara en su informe la forma que usó.
+>
+> Declara además en el informe y en la línea de Technical Debt que preparas para el cierre: como la guardia no lee el código que está bajo tests/ (guardia.py:1989), un test que espere a la CI pasaría. Es un hueco que ya existía, no de esta rama: no se arregla aquí.
+>
+> Después, el push a fix/guardia-ci, su CI de Linux consultada con gh run view suelto, y el revisor, como dice el encargo.

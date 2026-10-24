@@ -69,11 +69,13 @@ from __future__ import annotations
 
 import ast
 import glob as globmod
+import io
 import json
 import os
 import re
 import subprocess
 import sys
+import tokenize
 import urllib.parse
 from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
@@ -3663,6 +3665,9 @@ RUTA_DE_CI = re.compile(
 PALABRAS_DE_BUCLE = frozenset({"while", "until", "for", "select", "function"})
 PROGRAMAS_QUE_ESPERAN = frozenset({"sleep", "watch"})
 PROGRAMAS_DE_RED = frozenset({"curl", "wget"})
+# Los programas cuyos argumentos son DATOS para esta regla: los de `NO_EJECUTAN` (no ejecutan
+# codigo), salvo los que lanzan otro programa (`xargs`, `find -exec`) y los que consultan.
+PROGRAMAS_DE_DATOS = frozenset(NO_EJECUTAN) - {"xargs", "find", "gh", "curl"}
 # Lo que puede ir justo antes de una palabra que abre un comando (`do while`, `then for`...).
 _ABRE_COMANDO = frozenset({"do", "then", "else", "elif", "{", "!", "time"})
 _GH_EN_TEXTO = re.compile(r"(?i)(?<![\w.-])gh(?:\.exe)?(?![\w.-])")
@@ -3766,6 +3771,11 @@ def huella_ci(texto: str, huella: HuellaCI | None = None, profundidad: int = 0) 
             huella.posibles_esperas.append(que)
         elif argv and _programa(argv[0].texto) in PROGRAMAS_QUE_ESPERAN:
             huella.esperas.append(_programa(argv[0].texto))
+        prog = _programa(argv[0].texto) if argv else ""
+        if prog in PROGRAMAS_DE_DATOS or _es_interprete(prog):
+            # Sus argumentos son datos (`grep "gh run watch" f`, `git commit -m "..."`); el codigo
+            # de un `python -c` lo decide `_exigir_codigo_sin_ci` (respuesta a la PARADA 3).
+            continue
         palabras = [a.texto for a in cmd.argv]
         for i, t in enumerate(palabras):
             if _programa(t) == "gh":
@@ -3776,11 +3786,12 @@ def huella_ci(texto: str, huella: HuellaCI | None = None, profundidad: int = 0) 
                 )
             if _ruta_de_ci(t):
                 huella.consultas.append(re.sub(r"\x00[SV]([^\x00]*)\x00", r"$\1", t)[:80])
-        for t in [*palabras, *(v.texto for v in cmd.asignaciones.values())]:
+        for t in palabras:
             if "\x00" not in t and re.search(r"\s", t):
-                # Una palabra es un dato hasta que algo la ejecuta: de ella cuenta lo que se VE de
-                # consulta o de espera, no lo que no se puede decidir (un patron de `grep` leido
-                # como Bash parece un programa con comodin: medido con el de RITUAL.md:317).
+                # La palabra de un programa que puede ejecutarla (`watch 'gh ...'`, `alias c='gh
+                # ...'`, `sh -c`) se lee como Bash: de ella cuenta lo que se VE de consulta o de
+                # espera, no lo que no se puede decidir (un patron de `grep` leido como Bash parece
+                # un programa con comodin: medido con el de RITUAL.md:317).
                 anidado = t.split("=", 1)[1] if re.match(r"^[A-Za-z_][\w.-]*=", t) else t
                 visto = huella_ci(anidado, None, profundidad + 1)
                 huella.consultas += visto.consultas
@@ -3826,17 +3837,156 @@ def exigir_sin_espera_a_la_ci(texto: str, ctx: Contexto) -> None:
         )
 
 
+# En codigo, la consulta cuenta solo si el codigo menciona la CI Y puede salir del proceso
+# (respuesta del consultor a la PARADA 3 de `trabajo/guardia-ci`, punto 0): un guion que solo lleva
+# `gh run view` como dato -el de la fase 0, que se lo pasa a `decidir`- no consulta nada.
+_SALIDA_DEL_PROCESO = re.compile(
+    r"\b(?:subprocess|pty|urllib\d?|requests|httpx|socket)\b"
+    r"|\bhttp\.client\b|\bfrom\s+http\s+import\b[^\n]*\bclient\b"
+    r"|\.(?:system|popen|exec[lv]\w*|spawn\w*|posix_spawn\w*)\s*\("
+    r"|\bfrom\s+os\s+import\b[^\n]*\b(?:system|popen|exec[lv]\w*|spawn\w*|posix_spawn\w*)\b"
+    r"|\bcreate_subprocess_\w+"
+)
+# Con estas no se puede decidir que se importa o se ejecuta: cuentan como via de salida.
+_NO_DECIDIBLE_EN_CODIGO = re.compile(r"(?<![\w.])(?:__import__|exec|eval|compile)\s*\(|\brunpy\b")
+_IMPORTLIB = re.compile(r"\bimportlib\b")
+# La excepcion, una y cerrada: cargar la propia guardia por su ruta literal, o con la forma exacta
+# de `tests/unit/test_guardia_ci.py` y del anexo `tabla_fase0.py` (`RAIZ / ".claude" / "hooks" /
+# "guardia.py"`, directa o en una variable asignada asi una sola vez).
+_RUTA_DE_LA_GUARDIA = (".claude", "hooks", "guardia.py")
+_IMPORTLIB_PERMITIDO = frozenset(
+    {"importlib.util.spec_from_file_location", "importlib.util.module_from_spec"}
+)
+
+
+def _sin_cadenas(codigo: str, es_python: bool) -> str:
+    """El codigo Python sin sus cadenas ni sus comentarios, para buscar en el una via de salida: una
+    que solo aparece en un dato (`tabla_fase0.py` lleva `import subprocess` dentro de los comandos
+    de su tabla) no sale del proceso. En otro lenguaje, o si no se puede tokenizar, el texto
+    entero: lo que no se puede decidir cuenta."""
+    if not es_python:
+        return codigo
+    try:
+        fichas = list(tokenize.generate_tokens(io.StringIO(codigo).readline))
+    except (tokenize.TokenError, SyntaxError):
+        return codigo
+    quitar = {tokenize.STRING, tokenize.COMMENT, getattr(tokenize, "FSTRING_MIDDLE", -1)}
+    nombres = {tokenize.NAME, tokenize.NUMBER}
+    partes: list[str] = []
+    previa: int | None = None
+    for f in fichas:
+        if f.type in quitar:
+            continue
+        if previa in nombres and f.type in nombres:
+            partes.append(" ")
+        partes.append(f.string)
+        previa = f.type
+    return "".join(partes)
+
+
+def _nombre_punteado(nodo: ast.AST) -> str | None:
+    if isinstance(nodo, ast.Name):
+        return nodo.id
+    if isinstance(nodo, ast.Attribute):
+        base = _nombre_punteado(nodo.value)
+        return f"{base}.{nodo.attr}" if base else None
+    return None
+
+
+def _es_ruta_de_la_guardia(nodo: ast.expr, asignaciones: dict[str, ast.expr | None]) -> bool:
+    """La ruta literal de la guardia (`".claude/hooks/guardia.py"`, o absoluta acabada asi), o
+    `NOMBRE / ".claude" / "hooks" / "guardia.py"`, o una variable asignada UNA vez a una de las
+    dos. Montada a trozos (`+`, f-cadenas, `join`) no lo es."""
+    if isinstance(nodo, ast.Constant) and isinstance(nodo.value, str):
+        ruta = nodo.value.replace("\\", "/").strip()
+        literal = "/".join(_RUTA_DE_LA_GUARDIA)
+        return ruta == literal or ruta.endswith("/" + literal)
+    if isinstance(nodo, ast.Name):
+        valor = asignaciones.pop(nodo.id, None)  # pop: una variable no puede apuntarse a si misma
+        return valor is not None and _es_ruta_de_la_guardia(valor, asignaciones)
+    piezas: list[ast.expr] = []
+    while isinstance(nodo, ast.BinOp) and isinstance(nodo.op, ast.Div):
+        piezas.insert(0, nodo.right)
+        nodo = nodo.left
+    return (
+        isinstance(nodo, ast.Name)
+        and len(piezas) == len(_RUTA_DE_LA_GUARDIA)
+        and all(
+            isinstance(p, ast.Constant) and p.value == v
+            for p, v in zip(piezas, _RUTA_DE_LA_GUARDIA, strict=True)
+        )
+    )
+
+
+def _carga_solo_la_guardia(codigo: str) -> bool:
+    """Si TODO lo que el codigo hace con `importlib` es cargar la propia guardia por su ruta: sus
+    imports son `import importlib` o `import importlib.util`, sin alias ni `from`, y cada aparicion
+    del nombre es la raiz de una LLAMADA a `importlib.util.module_from_spec` o a
+    `importlib.util.spec_from_file_location(_, <ruta de la guardia>)`."""
+    try:
+        arbol = ast.parse(codigo)
+    except SyntaxError:
+        return False
+    padres = {id(h): p for p in ast.walk(arbol) for h in ast.iter_child_nodes(p)}
+    asignaciones: dict[str, ast.expr | None] = {}
+    for n in ast.walk(arbol):
+        if isinstance(n, ast.Assign) and len(n.targets) == 1 and isinstance(n.targets[0], ast.Name):
+            nombre = n.targets[0].id
+            asignaciones[nombre] = None if nombre in asignaciones else n.value
+    for n in ast.walk(arbol):
+        if isinstance(n, ast.ImportFrom) and (n.module or "").split(".")[0] == "importlib":
+            return False
+        if isinstance(n, ast.Import) and any(
+            a.name.split(".")[0] == "importlib"
+            and (a.asname is not None or a.name not in {"importlib", "importlib.util"})
+            for a in n.names
+        ):
+            return False
+        if not (isinstance(n, ast.Name) and n.id == "importlib"):
+            continue
+        cima: ast.AST = n
+        while isinstance(padres.get(id(cima)), ast.Attribute):
+            cima = padres[id(cima)]
+        llamada = padres.get(id(cima))
+        if _nombre_punteado(cima) not in _IMPORTLIB_PERMITIDO or not (
+            isinstance(llamada, ast.Call) and llamada.func is cima
+        ):
+            return False
+        if _nombre_punteado(cima) == "importlib.util.spec_from_file_location" and not (
+            len(llamada.args) >= 2 and _es_ruta_de_la_guardia(llamada.args[1], dict(asignaciones))
+        ):
+            return False
+    return True
+
+
 def _exigir_codigo_sin_ci(codigo: str, es_python: bool) -> None:
-    """En codigo (un guion, `python -c`, un heredoc a un interprete), toda consulta de CI: un
-    literal que sea el programa `gh`, `gh run|pr|api|workflow` en el texto, o una ruta de la API
-    de la CI."""
+    """En codigo (un guion, `python -c`, un heredoc a un interprete): se niega si MENCIONA la CI (un
+    literal que sea el programa `gh`, `gh run|pr|api|workflow` en el texto o una ruta de la API de
+    la CI) y ademas puede salir del proceso (`_SALIDA_DEL_PROCESO`) o hace algo con lo que no se
+    puede decidir que importa o ejecuta (`__import__`, `importlib`, `exec`, `eval`, `compile`,
+    `runpy`), salvo cargar la propia guardia por su ruta (respuesta del consultor a la PARADA 3).
+    Riesgo residual declarado: una mencion montada a trozos (`"g" + "h"`) no se ve."""
     gh = next((x for x in _literales(codigo, es_python) if _programa(x) == "gh"), None)
     m = _GH_EN_CODIGO.search(codigo)
-    if gh is not None or m or _ruta_de_ci(codigo):
-        que = m.group(0) if m else ("gh" if gh is not None else "una ruta de la API de la CI")
+    if gh is None and m is None and not _ruta_de_ci(codigo):
+        return
+    que = m.group(0) if m else ("gh" if gh is not None else "una ruta de la API de la CI")
+    sin_cadenas = _sin_cadenas(codigo, es_python)
+    salida = _SALIDA_DEL_PROCESO.search(sin_cadenas)
+    if salida:
         _niega_ci(
-            f"`{que}`",
-            "el codigo consulta la CI (un guion o codigo en linea), con espera o sin ella",
+            f"`{que}` y `{salida.group(0).strip()}`",
+            "el codigo menciona la CI y puede salir del proceso para consultarla (un guion o "
+            "codigo en linea), con espera o sin ella",
+        )
+    dudosa = _NO_DECIDIBLE_EN_CODIGO.search(sin_cadenas)
+    if dudosa is None and not (es_python and _carga_solo_la_guardia(codigo)):
+        dudosa = _IMPORTLIB.search(sin_cadenas)
+    if dudosa:
+        _niega_ci(
+            f"`{que}` y `{dudosa.group(0).strip()}`",
+            "el codigo menciona la CI y usa algo con lo que no se puede decidir que importa o "
+            "ejecuta (`__import__`, `importlib`, `exec`, `eval`, `compile`, `runpy`)",
         )
 
 

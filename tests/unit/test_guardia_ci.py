@@ -296,6 +296,98 @@ def test_con_la_consulta_suelta_como_espera_las_buenas_se_niegan(
         assert decision == E, ident
 
 
+# --------------------------------------------- en codigo: mencion Y via de salida (PARADA 3)
+TABLA_FASE0 = (ANEXO / "tabla_fase0.py").read_text(encoding="utf-8")
+CARGA_ANEXO = 'RAIZ / ".claude" / "hooks" / "guardia.py"'
+CARGA_REVISOR = (
+    'python -c "import importlib.util, sys; '
+    "spec = importlib.util.spec_from_file_location('g', '.claude/hooks/guardia.py'); "
+    "g = importlib.util.module_from_spec(spec); sys.modules['g'] = g; spec.loader.exec_module(g); "
+    "print(g.decidir({'tool_name': 'Bash', 'tool_input': {'command': 'gh run watch 1'}}, "
+    'g.Politica(g.RAIZ)))"'
+)
+
+
+def _guion(repo: Path, nombre: str, texto: str) -> str:
+    (repo.parent / "scratchpad" / nombre).write_text(texto, encoding="utf-8")
+    return f'python "{(repo.parent / "scratchpad" / nombre).as_posix()}" .'
+
+
+def test_el_guion_de_la_fase_0_pasa_y_sus_variantes_no(g: ModuleType, repo: Path) -> None:
+    """Respuesta a la PARADA 3, punto 0, la excepcion en los dos sentidos: `tabla_fase0.py` carga
+    la guardia por su ruta y solo lleva `gh` como dato, y pasa; con `import subprocess`, con
+    `importlib` sobre otra ruta o con la ruta de la guardia montada a trozos, se niega."""
+    assert CARGA_ANEXO in TABLA_FASE0
+    casos = {
+        "tal cual": (TABLA_FASE0, P),
+        "con subprocess": ("import subprocess\n" + TABLA_FASE0, E),
+        "otra ruta": (TABLA_FASE0.replace(CARGA_ANEXO, 'RAIZ / "otro" / "modulo.py"'), E),
+        "a trozos": (
+            TABLA_FASE0.replace(CARGA_ANEXO, 'RAIZ / ".claude" / "hooks" / ("guar" + "dia.py")'),
+            E,
+        ),
+        "literal a trozos": (
+            TABLA_FASE0.replace(CARGA_ANEXO, '".claude/hooks/" + "guardia.py"'),
+            E,
+        ),
+        "literal": (TABLA_FASE0.replace(CARGA_ANEXO, '".claude/hooks/guardia.py"'), P),
+    }
+    for nombre, (texto, esperado) in casos.items():
+        decision = _de_la_tabla(g, repo, "Bash", _guion(repo, "t.py", texto))
+        print(f"tabla_fase0 | {nombre} | {decision}")
+        assert decision == esperado, nombre
+
+
+@pytest.mark.parametrize(
+    ("comando", "esperado"),
+    [
+        (CARGA_REVISOR, P),  # la forma del revisor (punto 1)
+        ("python -c \"print('gh run view 1')\"", P),  # la mencion sola es un dato
+        ("python -c \"print('" + CR + "')\"", P),
+        ("python -c \"__import__('subprocess'); print('gh run view 1')\"", E),
+        ("python -c \"exec('x = 1'); print('gh run view 1')\"", E),
+        ("python -c \"eval('1'); print('gh run view 1')\"", E),
+        ("python -c \"compile('1', 'x', 'eval'); print('gh run view 1')\"", E),
+        ("python -c \"import runpy; print('gh run view 1')\"", E),
+        ("python -c \"import importlib; importlib.import_module('os'); print('gh run')\"", E),
+        ("python -c \"from importlib import import_module; print('gh run view 1')\"", E),
+        ("python -c \"import os; os.system('gh run view 1')\"", E),
+        ("python -c \"import requests; requests.get('" + CR + "')\"", E),
+        ("python -c \"import socket; print('gh run view 1')\"", E),
+        ("python -c \"import re; re.compile('x'); print('gh run view 1')\"", P),
+    ],
+)
+def test_en_codigo_la_mencion_cuenta_con_una_via_de_salida(
+    g: ModuleType, repo: Path, comando: str, esperado: str
+) -> None:
+    """Respuesta a la PARADA 3, punto 0: en codigo cuenta la mencion de la CI con una via de salir
+    del proceso, o con algo que no deja decidir que se importa (`__import__`, `importlib`, `exec`,
+    `eval`, `compile`, `runpy`); `re.compile` no es el `compile` de Python."""
+    assert _de_la_tabla(g, repo, "Bash", comando) == esperado
+
+
+def test_riesgo_residual_la_mencion_a_trozos_no_se_ve(g: ModuleType, repo: Path) -> None:
+    """RIESGO RESIDUAL DECLARADO (respuesta a la PARADA 3, punto 0; GUARDIA-CI.md y la linea de
+    Technical Debt del cierre): con una via de salida, `"g" + "h"` esconde la mencion y pasa;
+    `analizar_codigo` solo mira rutas compuestas con literales del material, no esto. Si un dia
+    se cierra, este test cambia de sentido."""
+    comando = "python -c \"import subprocess; subprocess.run(['g' + 'h', 'run', 'view', '1'])\""
+    assert _de_la_tabla(g, repo, "Bash", comando) == P
+
+
+def test_sin_la_excepcion_el_guion_de_la_fase_0_se_niega(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Roto a proposito en los dos sentidos: sin la excepcion, `tabla_fase0.py` se niega; con una
+    excepcion que aceptara cualquier ruta, el guion con `importlib` sobre otra ruta pasaria."""
+    otra = TABLA_FASE0.replace(CARGA_ANEXO, 'RAIZ / "otro" / "modulo.py"')
+    monkeypatch.setattr(g, "_carga_solo_la_guardia", lambda codigo: False)
+    assert _de_la_tabla(g, repo, "Bash", _guion(repo, "t.py", TABLA_FASE0)) == E
+    monkeypatch.undo()
+    monkeypatch.setattr(g, "_es_ruta_de_la_guardia", lambda nodo, asignaciones: True)
+    assert _de_la_tabla(g, repo, "Bash", _guion(repo, "t.py", otra)) == P
+
+
 # ------------------------------------------------------------------------------------- Monitor
 def test_monitor_se_decide_como_bash(g: ModuleType, repo: Path) -> None:
     """Respuesta a la fase 0, punto 0: un Monitor que espera a la CI se niega, uno que lee material

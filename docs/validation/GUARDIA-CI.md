@@ -516,6 +516,8 @@ suelta, y `timeout N` delante de una consulta (punto 2).
 `gh`, `gh run|pr|api|workflow`, o una ruta de la CI). Una cadena montada a trozos (`"g" + "h"`) o
 un import dinámico la esquivan; en Bash, `eval` ya lo niega otra regla. Y en código lo que se niega
 es la MENCIÓN: un guion que solo lleva `gh run view` como dato también se niega (PARADA 3).
+**Cambiado tras la PARADA 3 (§5):** en código cuenta la mención con una vía de salida o con algo no
+decidible; el `__import__` dinámico ya se niega; `"g" + "h"` queda como riesgo residual declarado.
 
 ### 1.2 Los tests (`tests/unit/test_guardia_ci.py`)
 
@@ -634,9 +636,9 @@ Medida por los tests (la columna «antes» es la decisión con la regla apagada,
 | B19 | Bash | pasa | pasa |
 
 
-El guion de la fase 0 (`anexos/GUARDIA-CI/tabla_fase0.py`) ya no se puede ejecutar: lleva `gh run
-view` como cadenas y la regla de código lo niega (PARADA 3). Por eso la tabla de después sale de
-los tests.
+El guion de la fase 0 (`anexos/GUARDIA-CI/tabla_fase0.py`) ya no se podía ejecutar: lleva `gh run
+view` como cadenas y la regla de código lo negaba (PARADA 3). Por eso la tabla de después salió de
+los tests. Tras la respuesta a la PARADA 3 vuelve a pasar, y su salida de después está en §5.
 
 ### 1.4 `settings.json`, `Monitor` y las pruebas en vivo
 
@@ -656,8 +658,8 @@ los tests.
   un fichero, y ninguna consultó la CI.
 - **Lo que hacía antes y sigue pudiendo hacer**, medido después del cambio: Bash, `git`, `uv run
   pytest` sobre `tests/`, `make check` (en memoria con la ruta absoluta del repo: pasan) y los
-  `python` de la carpeta de trabajo que no mencionan la CI. La excepción, `tabla_fase0.py`, es la
-  PARADA 3.
+  `python` de la carpeta de trabajo que no mencionan la CI. La excepción, `tabla_fase0.py`, fue la
+  PARADA 3 (§5: resuelta, vuelve a pasar).
 
 ### 1.5 Los subagentes (punto 8)
 
@@ -727,8 +729,9 @@ informe del commit siguiente (un commit no puede llevar el resultado de su propi
 | abrir-rama | `git show $(git log ...):PROJECT_STATE.md` | `git show` con un argumento que se construye al ejecutarse | la forma que propone: dos llamadas con el sha literal |
 | tres veces (abrir, ampliar el contrato, la tabla) | `git add ... && uv run python scripts/contrato_rama.py`; `sed -i ... && python tabla_md.py` | «antes, en el mismo comando, va `git add ...`» (`R_EJECUCION`) | la forma que propone: cada uno en su llamada |
 | tras el cambio, en memoria | `python docs/validation/anexos/GUARDIA-CI/tabla_fase0.py .` | `R_ESPERA_CI`, «el codigo consulta la CI» | PARADA 3; no lo ejecuté |
+| tras la PARADA 3, dos veces | `uv run ruff format ... && ... && uv run pytest ...`; `grep -c ...; uv run botsito state check` | «ejecutar `pytest`/`botsito state check`: antes, en el mismo comando, va ...» (`R_EJECUCION`) | la forma que propone: cada uno en su llamada |
 
-Ninguna del clasificador. Las tres primeras son de reglas de `main`, no de la regla nueva.
+Ninguna del clasificador. Todas menos la PARADA 3 son de reglas de `main`, no de la regla nueva.
 Aparte: `git worktree list` enseña un worktree de OTRA sesión
 (`…/2ea2c3d2-…/scratchpad/wt-ci`, en `e7df30b`); no es de esta rama y no lo he tocado.
 
@@ -765,7 +768,108 @@ antes hacías, es un hallazgo de la rama: PARADA con el comando y el mensaje.»
 1. **El revisor**, si eliges (a): ¿le digo en su encargo que monte las cadenas a trozos, declarado
    en su informe? Recomiendo sí con (a); con (b) no hace falta.
 
+## Respuesta del consultor a la PARADA 3 (2026-10-23)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 3 (2026-10-23). Cópiala al informe, en su sección.
+>
+> 0. Opción (a): en un guion o código en línea, la consulta de CI cuenta solo si el código menciona gh o una ruta de CI Y además tiene una vía de salir del proceso: subprocess, os.system, os.popen, os.exec*, os.spawn*, pty, asyncio.create_subprocess_*, urllib, requests, httpx, http.client o socket. Y, para cerrar el hueco del __import__ dinámico: __import__, importlib, exec, eval, compile y runpy también cuentan como vía de salida, porque con ellas no se puede decidir qué se importa (se niega por no decidible, con su mensaje).
+>    Excepción, una y cerrada: cargar la propia guardia desde su ruta literal (.claude/hooks/guardia.py con importlib.util.spec_from_file_location, o la forma exacta que usen hoy tests/unit/test_guardia_ci.py y tabla_fase0.py), siempre que no haya otra vía de salida en el código. Su test, en los dos sentidos: tabla_fase0.py pasa; el mismo guion con un import de subprocess añadido, se niega; con importlib sobre cualquier otra ruta, se niega; y con la ruta de la guardia montada a trozos, se niega.
+>    El "g"+"h" a trozos con una vía de salida tiene que salir negado: si la mención no se ve pero hay vía de salida y el código construye cadenas, aplica lo que la guardia ya hace con las rutas compuestas (analizar_codigo, deuda C); si no lo cubre, es riesgo residual declarado en el informe y en la línea de Technical Debt, no un arreglo nuevo en esta rama.
+> 1. El revisor: con la opción (a) no monta nada a trozos. Hace sus pruebas en memoria con tabla_fase0.py o con un python -c que cargue la guardia por la excepción de arriba, y declara en su informe la forma que usó.
+>
+> Declara además en el informe y en la línea de Technical Debt que preparas para el cierre: como la guardia no lee el código que está bajo tests/ (guardia.py:1989), un test que espere a la CI pasaría. Es un hueco que ya existía, no de esta rama: no se arregla aquí.
+>
+> Después, el push a fix/guardia-ci, su CI de Linux consultada con gh run view suelto, y el revisor, como dice el encargo.
+
+## 5. La respuesta a la PARADA 3, aplicada (2026-10-23)
+
+**Antes, el sello de §1-§4:** el `make check` de `e43d5b2` salió con exit 0, ningún `failed`,
+`2826 passed in 1109.27s`, `SELLO: make check en verde sobre el arbol 0292e735…` y `PICO DE
+MEMORIA de make check: 298 MiB en test`.
+
+**La etiqueta de la respuesta:** dice «Opción (a)» y describe la (b) de la PARADA (la mención
+junto a una vía de salida). Aplico lo que describe, que no deja dudas, y lo digo aquí.
+
+### 5.1 Punto 0: en código, la mención con una vía de salida
+
+- `_exigir_codigo_sin_ci` niega solo si el código MENCIONA la CI y además:
+  - **puede salir del proceso** (`_SALIDA_DEL_PROCESO`): `subprocess`, `pty`, `urllib`,
+    `requests`, `httpx`, `socket`, `http.client`, una llamada `.system(`, `.popen(`, `.exec[lv]…(`,
+    `.spawn…(` o `.posix_spawn…(`, o su `from os import`, y `create_subprocess_*`;
+  - **o hace algo no decidible** (`_NO_DECIDIBLE_EN_CODIGO`): `__import__(`, `exec(`, `eval(`,
+    `compile(` (el de Python, no `re.compile`), `runpy`, o `importlib` fuera de la excepción. El
+    mensaje lo dice: «usa algo con lo que no se puede decidir que importa o ejecuta».
+- **La excepción, una y cerrada** (`_carga_solo_la_guardia`, por el árbol de Python): todo uso de
+  `importlib` es `import importlib` o `import importlib.util` sin alias ni `from`, y cada aparición
+  es la raíz de una LLAMADA a `importlib.util.module_from_spec` o a
+  `importlib.util.spec_from_file_location(_, <ruta de la guardia>)`. La ruta vale si es el literal
+  `.claude/hooks/guardia.py` (o una ruta absoluta acabada así), si es `NOMBRE / ".claude" / "hooks"
+  / "guardia.py"` (la forma exacta de `tabla_fase0.py` y de `test_guardia_ci.py`), o si es una
+  variable asignada una sola vez a una de las dos. Montada a trozos (`+`, f-cadena, `join`) no vale.
+- **Dos ajustes que la medida pidió**, sin cambiar la regla:
+  1. La vía de salida se busca en el código Python **sin sus cadenas ni comentarios**
+     (`_sin_cadenas`, con `tokenize`): `tabla_fase0.py` lleva `import subprocess` DENTRO de los
+     comandos de su tabla, y con el texto entero se negaba. En otro lenguaje, o si no se tokeniza,
+     cuenta el texto entero.
+  2. En Bash, los argumentos de un programa que no ejecuta nada (`NO_EJECUTAN`, salvo `xargs`,
+     `find`, `gh` y `curl`: `PROGRAMAS_DE_DATOS`) y el código de un intérprete son DATOS para
+     esta regla. La forma del revisor (`python -c` que carga la guardia y le pasa `gh run watch 1`)
+     la negaba la regla de Bash, que leía el código como Bash, y por lo mismo se negaría `grep "gh
+     run watch" fichero` o un `git commit -m` que lo nombre. El código de un `python -c` lo decide
+     ya la regla de código.
+- **Los tests** (`tests/unit/test_guardia_ci.py`, ahora 14 funciones y 101 casos; el recuento de
+  `PROJECT_STATE.md` pasa a 1669; salida en
+  `anexos/GUARDIA-CI/pytest-3-tras-la-parada-3.txt`, **101 passed**):
+  - `test_el_guion_de_la_fase_0_pasa_y_sus_variantes_no`, la excepción en los dos sentidos:
+
+    ```
+    tabla_fase0 | tal cual | pasa
+    tabla_fase0 | con subprocess | R_ESPERA_CI
+    tabla_fase0 | otra ruta | R_ESPERA_CI
+    tabla_fase0 | a trozos | R_ESPERA_CI
+    tabla_fase0 | literal a trozos | R_ESPERA_CI
+    tabla_fase0 | literal | pasa
+    ```
+  - `test_en_codigo_la_mencion_cuenta_con_una_via_de_salida`, 14 casos: la forma del revisor y la
+    mención sola pasan; `__import__`, `exec`, `eval`, `compile`, `runpy`,
+    `importlib.import_module`, `from importlib import`, `os.system`, `requests` y `socket` se
+    niegan; `re.compile` no cuenta como `compile`.
+  - **Roto a propósito**, `test_sin_la_excepcion_el_guion_de_la_fase_0_se_niega`: sin la excepción,
+    `tabla_fase0.py` se niega; con una excepción que aceptara cualquier ruta, el guion con
+    `importlib` sobre otra ruta pasa.
+  - `test_riesgo_residual_la_mencion_a_trozos_no_se_ve` deja escrito el riesgo residual (abajo).
+  - Los 72 de la tabla, sin cambios: los C1-C5, N7, N7b, N8c, N8b y N19 siguen negados (todos
+    importan `subprocess` o `urllib`).
+- **Lo que hacía antes, otra vez de verdad:** `python docs/validation/anexos/GUARDIA-CI/tabla_fase0.py`
+  se ejecutó (solo llama a `decidir`) y pasó la guardia. Su salida es la tabla de después con el
+  mismo guion que midió la de antes (`anexos/GUARDIA-CI/tabla_fase0-DESPUES.txt`): las 27 formas N
+  (incluido N8, el guion rehecho) con `R_ESPERA_CI` y las 13 B que pasan.
+- La suite entera de la guardia: **673 passed in 168.08s**.
+
+### 5.2 Riesgo residual y hueco declarados (punto 0 y su último párrafo)
+
+- **`"g" + "h"` con una vía de salida pasa.** `analizar_codigo` solo mira rutas compuestas con
+  literales del MATERIAL (la deuda C), no una mención de la CI montada a trozos; no lo cubre, y no
+  se arregla aquí. Lo fija `test_riesgo_residual_la_mencion_a_trozos_no_se_ve`.
+- **La guardia no lee el código bajo `tests/`** cuando se le pasa a pytest (`guardia.py`,
+  `_analizar_pytest`, el `continue` de `rel.startswith("tests/")`): un test que esperara a la CI
+  pasaría. Es un hueco anterior a esta rama: no se arregla aquí.
+
+### 5.3 La línea de Technical Debt que entra en el cierre
+
+Junto a la que sale (§3), esta, para el commit del contrato del cierre:
+
+> - La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) junto a una vía de salida (riesgo residual declarado en trabajo/guardia-ci, GUARDIA-CI.md §5.2; lo fija `test_riesgo_residual_la_mencion_a_trozos_no_se_ve`), y no lee el código bajo `tests/` que se le pasa a pytest (`_analizar_pytest`): un test que esperase a la CI pasaría. El hueco de `tests/` es anterior a la rama. Para el carril de guardias.
+
+### 5.4 Punto 1: el revisor
+
+Hace sus pruebas en memoria con `tabla_fase0.py` o con un `python -c` que cargue la guardia por la
+excepción (la forma de `CARGA_REVISOR` en el test pasa), sin montar nada a trozos, y declara en su
+informe la forma que usó.
+
 ## Estado
 
-EN CURSO · PARADA 3: fases 1 y 2 hechas y selladas; espero la decisión sobre qué cuenta como
-consulta en código. Falta, después: el push a `fix/guardia-ci` y su CI, y el revisor.
+EN CURSO · entrega: la respuesta a la PARADA 3 aplicada (§5). Falta el push a `fix/guardia-ci` y
+su CI de Linux, y el revisor.
