@@ -55,3 +55,23 @@ Dado por Aleks (consultor) el 2026-10-23. Copiado tal cual:
 > Informe en docs/validation/GUARDIA-CI.md, con la tabla de la fase 0 antes y después del cambio. make check sellado; push a fix/guardia-ci (git push origin trabajo/guardia-ci:refs/heads/fix/guardia-ci; si el clasificador lo niega, me lo dices y lo lanza Aleks con «!») y CI de Linux con solo el fallo esperado de state check; dame el número de run, consultado con gh run view suelto. Después el revisor, lanzado con el informe YA TERMINADO, con este encargo: buscar cinco formas de esperar a la CI que la tabla no recoja y pasarlas por decidir EN MEMORIA, como los tests, sin ejecutar ninguna de verdad ni consultar la CI; decir cuáles pasan. Su informe pegado al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-10-23)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 (2026-10-23). Cópiala al informe, en su sección.
+>
+> 0. Monitor: SÍ, en esta rama. Amplía el contrato a .claude/settings.json en un commit propio que lo declare. Monitor entra en el matcher de PreToolUse de guardia.py y la guardia decide su comando con las mismas reglas que Bash; si el formato de su entrada no se reconoce, se niega. Tests en los dos sentidos: un Monitor que espera a la CI en bucle se niega, un Monitor que lee material protegido se niega (ruta montada a trozos) y un Monitor inocuo pasa (por ejemplo, esperar a que exista un fichero de la carpeta de trabajo sin leerlo). Además, en el informe: la lista de TODAS las herramientas de esta sesión que ejecutan comandos o leen ficheros, frente al matcher, con fichero:línea. Si aparece otra fuera del matcher que no sea Monitor, no la arregles: PARADA con la lista. Cuando cambie settings.json, di si la sesión tiene que reiniciarse para que el hook nuevo cargue y compruébalo con un caso negado de verdad, sin consultar la CI.
+> 1. Rutas de CI: SÍ, añade actions/jobs y commits/<sha>/status y statuses.
+> 2. SÍ, negar una espera y una consulta en el mismo comando (sleep 300 && gh run view). timeout N gh run view pasa. El mensaje de la negativa ya da la vía buena: la espera sola, o en segundo plano, y después la consulta suelta en otro comando.
+> 3. SÍ, negar un guion con una sola consulta de CI aunque no tenga bucle: es la regla escrita de DECISIONES-DE-PROCESO.md («ninguna consulta de la CI con un guion»).
+> 4. SÍ, un recuadro de corrección en docs/sesion-5/PREGUNTAS.md:8-9 (A.4 HECHA el 2026-10-22), ampliando el contrato. Que sea solo ese recuadro: el resto de PREGUNTAS.md lo toca la ingesta.
+> 5. SÍ, una línea con la forma de esperar en entregar-rama, cerrar-rama y RITUAL.md:320, con el mismo texto que el mensaje de la negativa. Amplía el contrato a esas skills.
+> 6. SÍ, corrige la cabecera de test_guardia_ffmpeg.py y pon un recuadro en GUARDIA-FFMPEG.md: la guardia no lee lo que está bajo tests/ (guardia.py:1989). Mi encargo repetía ese error; lo declaro como error del consultor para la orden de cierre. Como la guardia no lee tests/, los literales de test_guardia_ci.py no hace falta montarlos a trozos, salvo los que nombren material protegido, que siguen a trozos por costumbre.
+> 7. SÍ: la limpieza de V se prepara en el informe y se aplica en el commit del contrato del cierre, como manda el punto Y de RITUAL. Lo mismo para la línea de Technical Debt que paga esta rama.
+> 8. SÍ, la regla solo en guardia.py, siempre que se demuestre que corre para los subagentes: cita el fichero:línea de la configuración que lo hace y añade un test o una prueba en memoria que lo enseñe. Si no se puede demostrar, PARADA.
+>
+> También: el for con la variable n, que hoy pasa, entra en los tests junto a los que hoy se niegan por otra regla, comprobando el MOTIVO. Y la fila única de trabajo/guardia-ffmpeg en ERRORES-RECURRENTES: los tests de disfraz cubren los agujeros que dice esa fila, no los cuatro que nombraba mi encargo.
+>
+> Sigue con las fases 1 y 2 y la entrega tal como dice el encargo, con el revisor al final. Si tocar settings.json te deja sin poder ejecutar algo que antes hacías, PARADA.

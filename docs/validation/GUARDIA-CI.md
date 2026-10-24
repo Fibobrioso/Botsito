@@ -363,6 +363,90 @@ con un fichero inventado; no se abrió nada de marzo.
    agentes (0.b'); (b) además una copia en `solo_lectura.py`. Recomiendo (a): una sola regla que
    mantener. Coste de (b): dos condiciones que pueden divergir.
 
+## Respuesta del consultor a la PARADA de la fase 0 (2026-10-23)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 (2026-10-23). Cópiala al informe, en su sección.
+>
+> 0. Monitor: SÍ, en esta rama. Amplía el contrato a .claude/settings.json en un commit propio que lo declare. Monitor entra en el matcher de PreToolUse de guardia.py y la guardia decide su comando con las mismas reglas que Bash; si el formato de su entrada no se reconoce, se niega. Tests en los dos sentidos: un Monitor que espera a la CI en bucle se niega, un Monitor que lee material protegido se niega (ruta montada a trozos) y un Monitor inocuo pasa (por ejemplo, esperar a que exista un fichero de la carpeta de trabajo sin leerlo). Además, en el informe: la lista de TODAS las herramientas de esta sesión que ejecutan comandos o leen ficheros, frente al matcher, con fichero:línea. Si aparece otra fuera del matcher que no sea Monitor, no la arregles: PARADA con la lista. Cuando cambie settings.json, di si la sesión tiene que reiniciarse para que el hook nuevo cargue y compruébalo con un caso negado de verdad, sin consultar la CI.
+> 1. Rutas de CI: SÍ, añade actions/jobs y commits/<sha>/status y statuses.
+> 2. SÍ, negar una espera y una consulta en el mismo comando (sleep 300 && gh run view). timeout N gh run view pasa. El mensaje de la negativa ya da la vía buena: la espera sola, o en segundo plano, y después la consulta suelta en otro comando.
+> 3. SÍ, negar un guion con una sola consulta de CI aunque no tenga bucle: es la regla escrita de DECISIONES-DE-PROCESO.md («ninguna consulta de la CI con un guion»).
+> 4. SÍ, un recuadro de corrección en docs/sesion-5/PREGUNTAS.md:8-9 (A.4 HECHA el 2026-10-22), ampliando el contrato. Que sea solo ese recuadro: el resto de PREGUNTAS.md lo toca la ingesta.
+> 5. SÍ, una línea con la forma de esperar en entregar-rama, cerrar-rama y RITUAL.md:320, con el mismo texto que el mensaje de la negativa. Amplía el contrato a esas skills.
+> 6. SÍ, corrige la cabecera de test_guardia_ffmpeg.py y pon un recuadro en GUARDIA-FFMPEG.md: la guardia no lee lo que está bajo tests/ (guardia.py:1989). Mi encargo repetía ese error; lo declaro como error del consultor para la orden de cierre. Como la guardia no lee tests/, los literales de test_guardia_ci.py no hace falta montarlos a trozos, salvo los que nombren material protegido, que siguen a trozos por costumbre.
+> 7. SÍ: la limpieza de V se prepara en el informe y se aplica en el commit del contrato del cierre, como manda el punto Y de RITUAL. Lo mismo para la línea de Technical Debt que paga esta rama.
+> 8. SÍ, la regla solo en guardia.py, siempre que se demuestre que corre para los subagentes: cita el fichero:línea de la configuración que lo hace y añade un test o una prueba en memoria que lo enseñe. Si no se puede demostrar, PARADA.
+>
+> También: el for con la variable n, que hoy pasa, entra en los tests junto a los que hoy se niegan por otra regla, comprobando el MOTIVO. Y la fila única de trabajo/guardia-ffmpeg en ERRORES-RECURRENTES: los tests de disfraz cubren los agujeros que dice esa fila, no los cuatro que nombraba mi encargo.
+>
+> Sigue con las fases 1 y 2 y la entrega tal como dice el encargo, con el revisor al final. Si tocar settings.json te deja sin poder ejecutar algo que antes hacías, PARADA.
+
+## PARADA 2 · Las herramientas de esta sesión frente al matcher (2026-10-23)
+
+Punto 0 de la respuesta: «la lista de TODAS las herramientas de esta sesión que ejecutan comandos o
+leen ficheros, frente al matcher, con fichero:línea. Si aparece otra fuera del matcher que no sea
+Monitor, no la arregles: PARADA con la lista». Aparecen varias. No he arreglado ninguna, no he
+tocado `settings.json` ni la guardia, y no he usado ninguna de ellas.
+
+**El matcher.** `.claude/settings.json:69`: `"matcher": "Read|Grep|Glob|Bash|PowerShell"`, con el
+comando de `guardia.py` en `:73`. No hay otro hook de `PreToolUse` en la configuración de usuario
+(`~/.claude/settings.json` no tiene `hooks`). Los dos agentes de solo lectura añaden
+`solo_lectura.py` con `matcher: "Bash"` (`.claude/agents/revisor.md:8` y
+`.claude/agents/auditor-encargo.md:8`), y su `tools:` es `Read, Grep, Glob, Bash` (`:4`).
+
+**De dónde sale la lista.** Las herramientas son las que esta sesión tiene cargadas o diferidas, y
+lo que hacen sale de la definición de cada una (sus parámetros), no de un fichero del repositorio:
+eso no tiene `fichero:línea`, y lo digo. Cargué el esquema de las diferidas con `ToolSearch`, que
+solo trae la definición: no llamé a ninguna.
+
+| herramienta | qué hace con ficheros o comandos (el parámetro) | en el matcher |
+|---|---|---|
+| Read, Grep, Glob | leen ficheros o listan nombres | sí |
+| Bash | ejecuta un comando (`command`, también con `run_in_background`) | sí |
+| PowerShell | ejecuta un comando (no está cargada en esta sesión; el matcher la cubre) | sí |
+| **Monitor** | ejecuta un comando de shell (`command`) cuya salida es el flujo de eventos | **no**: el punto 0 la arregla |
+| **Artifact** | `publish` lee un fichero local (`file_path`, `files`, `file_paths` con `asset: true`) y lo publica en claude.ai; `read` con `path`/`out_dir` escribe | **no** |
+| **ArtifactData** | `set`/`update` con `file_path`: «a local JSON file ... sent as the document», y `out_dir` escribe | **no** |
+| **DesignSync** | `write_files` con `localPath`: «the tool reads from disk, encodes, and uploads ... contents never enter the model context» | **no** |
+| **mcp__claude-in-chrome__file_upload** | sube a una página ficheros locales por su ruta (`paths`); la definición dice que solo los «shared with this session» | **no** |
+| **mcp__claude-in-chrome__navigate** (con `get_page_text`, `read_page`, `javascript_tool`) | abre una URL; con `file:///...` un navegador abre un fichero local, y las otras tres leen la página. Que la extensión tenga permiso de `file://` no lo he medido | **no** |
+| **EnterWorktree** | ejecuta `git worktree add` y cambia el directorio de la sesión; no lee contenido | **no** |
+| Edit, Write, NotebookEdit | escriben; Edit y NotebookEdit exigen un Read previo del fichero en la conversación (lo dice su definición), y Write para sobrescribir uno existente. Un Read negado por la guardia los deja sin poder tocarlo. Write crea un fichero nuevo sin leer nada | no, cubiertas por el Read previo |
+| Agent, Workflow | lanzan subagentes, cuyas herramientas pasan por el mismo hook (punto 8, por demostrar en la fase 1) | no, cubiertas a través del subagente |
+| Skill | carga un `SKILL.md` de `.claude/skills/` | no; no lee nada fuera de las skills |
+| CronCreate, ScheduleWakeup, RemoteTrigger | programan un prompt (o un disparador remoto); no ejecutan un comando ni leen un fichero por sí mismas | no; lo que ejecute el prompt pasa por el hook |
+| Google Drive `create_file`, Gmail `create_draft`, Canva y Claude Docs | suben CONTENIDO que se les pasa (`textContent`, `base64Content`, `attachments.content`), no una ruta: para subir un fichero la sesión tendría que leerlo antes con Read o Bash | no, cubiertas por la lectura previa |
+| ReadMcpResourceTool | lee un recurso de un servidor MCP por su URI; ninguno de los servidores configurados es de ficheros locales | no |
+
+**Fuera del matcher, que no son Monitor:** Artifact, ArtifactData, DesignSync, `file_upload` y
+`navigate` de claude-in-chrome (con sus lectores de página), y EnterWorktree. Las cinco primeras
+pueden leer un fichero local y mandarlo fuera sin que la guardia lo vea (Artifact y DesignSync lo
+publican o lo suben; Chrome lo abre o lo sube). EnterWorktree solo ejecuta git.
+
+## Lo que necesito que decidas (PARADA 2)
+
+0. **Las herramientas que leen un fichero local fuera del matcher** (Artifact, ArtifactData,
+   DesignSync y `file_upload` de claude-in-chrome). Opciones: (a) en esta rama, añadirlas al
+   matcher y que `decidir` mire sus rutas (`file_path`, `files`, `file_paths`, `localPath`,
+   `paths`) con `motivo_fichero`, como un Read, y niegue lo que no reconoce; (b) una línea de
+   Technical Debt y su propia rama del carril. Recomiendo (b): son cuatro formatos de entrada
+   distintos, con sus tests, y esta rama es la de la CI; el riesgo hasta entonces es bajo, porque
+   ninguna se usa en el trabajo del repositorio y todas piden aprobación o un plan antes de subir.
+   Coste de (b): el hueco sigue abierto hasta esa rama.
+1. **`navigate` de claude-in-chrome con `file://`.** Opciones: (a) lo mismo que el punto 0, mirando
+   la ruta de una URL `file://`; (b) Technical Debt, con una medida primero de si la extensión
+   abre `file://` en esta máquina. Recomiendo (b): sin esa medida no se sabe si el hueco existe.
+2. **EnterWorktree.** Opciones: (a) dejarla fuera: solo ejecuta `git worktree add`, que la guardia
+   deja pasar en Bash, y no lee contenido; (b) añadirla al matcher y negarla, porque cambia el
+   directorio de la sesión. Recomiendo (a). Coste de (b): ninguno práctico, la skill
+   `comparar-con-main` usa `git worktree add` por Bash.
+3. **Sigo con el resto mientras tanto.** Opciones: (a) aplicar ya los puntos 0 a 8 de tu
+   respuesta (Monitor incluido), que no dependen de esta PARADA; (b) esperar. Recomiendo (a): esta
+   PARADA solo decide qué más entra en el matcher.
+
 ## Estado
 
-EN CURSO · PARADA de la fase 0: espero la respuesta del consultor a «Lo que necesito que decidas».
+EN CURSO · PARADA 2: la respuesta a la fase 0 está copiada arriba, sin aplicar todavía; espero la
+decisión sobre las herramientas fuera del matcher que no son Monitor.
