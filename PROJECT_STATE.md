@@ -16,7 +16,7 @@ trabajo/guardia-ci, EN CURSO (abierta el 2026-10-23 desde main 2a99e64): la guar
 975c086 · merge: trabajo/guardia-ffmpeg, ffprobe y ffmpeg en cuatro formas de lista cerrada y las comillas $'...' y $"..." en el tokenizador de la guardia · tag stable/F38a-guardia-ffmpeg
 
 ## Tests Currently Passing
-1655 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1665 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -102,6 +102,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) lo comprueban un test estático textual (`globales_sin_reiniciar`, `tests/contract/test_capa_mt5.py`) y la corrida de la demo: el script de pruebas no puede provocar un `REASON_CHARTCHANGE` (EA-CONEXION.md §10).
 - La guardia no niega un guion que espera a la CI en bucle (gh run view o gh run list repetidos): se lanzó dos veces seguidas contra la orden del consultor (cierre de trabajo/barrido-sesion-5 y entrega de trabajo/ea-conexion, EA-CONEXION.md §13), y las dos se paró sin leer su salida. Para el carril de guardias y deuda: negarlo por la condición (un bucle o una espera alrededor de una consulta de CI), con su test de los dos sentidos.
+- Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome leen un fichero local o una página `file://` fuera del matcher de la guardia: desde trabajo/guardia-ci están cerradas en `permissions.deny` de `.claude/settings.json` (GUARDIA-CI.md, PARADA 2). La regla fina, mirar sus rutas como un Read por si algún día hacen falta, va en su propia rama del carril de guardias, junto a K (el alias de la raíz).
 - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
 - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) sigue ligada al escenario en que nació y sus cierres cuentan en los cartuchos de aquel (zonas.py, `zona_del_punto` liga solo al crearla); ADR-0083 lo hace alcanzable y la fase 4 no lo midió: hace falta la traza por cierre (PUNTO-USADO.md §1.c y §4.f).

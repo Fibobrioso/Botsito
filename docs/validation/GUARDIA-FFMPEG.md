@@ -152,6 +152,17 @@ entero como código de la rama y sus literales del material la harían negarlo).
 de `tmp_path` con los vídeos SIN SEGUIR y binarios (el principio de un mp4), y las rutas del
 material a trozos por la misma razón.
 
+> **RECUADRO DE CORRECCIÓN (2026-10-23, rama `trabajo/guardia-ci`; respuesta del consultor a su
+> fase 0, punto 6; `docs/validation/GUARDIA-CI.md` §0.e).** La razón del párrafo de arriba no es
+> cierta: la guardia NO lee un fichero bajo `tests/` cuando se le pasa a pytest. `_analizar_pytest`
+> (`.claude/hooks/guardia.py`, «La suite de `tests/` es codigo revisado ... no se lee», y el
+> `continue` de `rel.startswith("tests/")`) se lo salta, así desde el 2026-10-01. Medido en
+> `trabajo/guardia-ci` con el mismo fichero dentro y fuera de `tests/`
+> (`docs/validation/anexos/GUARDIA-CI/pytest_lee-SALIDA.txt`): `uv run pytest tests/unit/...` pasa
+> y `uv run pytest otra/...` lo niega. Solo lo leería ejecutado con `python` directamente. Tocar
+> `test_guardia_claude.py` no hacía negar nada (`trabajo/guardia-ci` lo tocó); montar a trozos
+> las rutas del material no hace daño y se mantiene por costumbre. El cuerpo queda intacto.
+
 - `test_la_matriz_de_ffmpeg`: 102 comandos (20 que pasan y 82 negados) desde la segunda respuesta
   del consultor (§15; con la primera, 94: 19 y 75; antes, 75: 16 y 59) con su decisión esperada
   -las cuatro formas, con rutas relativas y absolutas, a `-`, `NUL` y `/dev/null`, con

@@ -8,6 +8,11 @@ decisiones del consultor del 2026-10-19, al final de ese informe.
 > **Antes de grabar: la copia de seguridad A.4** (`docs/plan/HOJA-DE-RUTA.md`, carril de Aleks).
 > La sesión 5 depende de ella y hoy no está hecha.
 
+> **RECUADRO DE CORRECCIÓN (2026-10-23, rama `trabajo/guardia-ci`; respuesta del consultor a la
+> fase 0, punto 4; `docs/validation/GUARDIA-CI.md` §0.d).** La copia de seguridad A.4 está HECHA
+> desde el 2026-10-22 (`docs/plan/HOJA-DE-RUTA.md`, A.4, «Estado: HECHA»): «hoy no está hecha» ya
+> no es verdad. El aviso de arriba queda como estaba.
+
 **La hoja es el PDF del consultor**, hecho con este documento, como en la sesión 4
 (`docs/sesion-4/HOJA-USADA.md`). No sale de `scripts/hoja_preguntas.py`, que no se toca en esta
 rama (decisión 3 del consultor). Al PDF van, de cada pregunta: el título, «Lo que nos has dicho»,

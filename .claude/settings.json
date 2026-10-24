@@ -48,7 +48,14 @@
       "Bash(rm -rf ./knowledge*)",
       "Bash(rm -fr data*)",
       "Bash(rm -fr corpus*)",
-      "Bash(rm -fr knowledge*)"
+      "Bash(rm -fr knowledge*)",
+      "Artifact",
+      "ArtifactData",
+      "DesignSync",
+      "mcp__claude-in-chrome__file_upload",
+      "mcp__claude-in-chrome__navigate",
+      "mcp__claude-in-chrome__get_page_text",
+      "mcp__claude-in-chrome__read_page"
     ]
   },
   "hooks": {
@@ -66,7 +73,7 @@
     ],
     "PreToolUse": [
       {
-        "matcher": "Read|Grep|Glob|Bash|PowerShell",
+        "matcher": "Read|Grep|Glob|Bash|PowerShell|Monitor",
         "hooks": [
           {
             "type": "command",

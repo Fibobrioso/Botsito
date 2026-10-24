@@ -3,8 +3,10 @@ no se protege, y todo lo demas negado (`trabajo/guardia-ffmpeg`, docs/validation
 
 La matriz se decide con el texto de cada comando sobre videos inventados en un repo de `tmp_path`,
 SIN SEGUIR como el video real de una sesion (que vive en `corpus/`, fuera de git); nunca se ejecuta
-ffmpeg. Las rutas del material protegido se montan a trozos: este fichero lo lee la guardia como
-codigo cuando se le pasa a pytest, y un literal con la ruta entera la haria negarlo.
+ffmpeg. Las rutas del material protegido se montan a trozos por costumbre: la guardia NO lee este
+fichero cuando se le pasa a pytest (`_analizar_pytest` se salta lo que esta bajo `tests/`), solo
+si se ejecutara con `python` directamente (`trabajo/guardia-ci`, GUARDIA-CI.md §0.e, corrige lo
+que decia aqui).
 """
 
 from __future__ import annotations

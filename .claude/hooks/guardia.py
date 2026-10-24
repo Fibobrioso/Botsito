@@ -1,4 +1,4 @@
-"""La guardia de Claude Code: un hook `PreToolUse` para Read, Grep, Glob, Bash y PowerShell.
+"""La guardia de Claude Code: hook `PreToolUse` para Read, Grep, Glob, Bash, PowerShell y Monitor.
 
 Rama `trabajo/guardias-claude` (2026-10-01, docs/validation/GUARDIAS-CLAUDE.md). Es DEFENSA EN
 PROFUNDIDAD: la barrera principal sigue siendo el codigo (`botsito.cases.holdout`, la compuerta del
@@ -49,6 +49,12 @@ Dos familias de reglas:
    igual que en el resto de la familia 3 (`_exigir_lo_de_antes`, `_exigir_lo_de_a_la_vez`); lo que
    se deja es leer un guion.
 
+4. NO SE ESPERA A LA CI CON UNA CONSULTA REPETIDA (`trabajo/guardia-ci`, 2026-10-23,
+   docs/validation/GUARDIA-CI.md): una consulta de CI y una espera en el mismo comando, `gh run
+   watch` y toda consulta desde codigo se niegan con `R_ESPERA_CI`; la consulta suelta pasa (la
+   seccion «esperar a la CI»). Desde la misma rama `Monitor`, que ejecuta un comando de shell, se
+   decide como Bash, y una entrada suya que no se reconoce se niega (`R_MONITOR`).
+
 Un comando que no se puede decidir con seguridad -una ruta construida al ejecutarse, `eval`, un
 `xargs` que lee contenido, una comilla ANSI-C `$'...'` con escapes- SE BLOQUEA si podria llegar a
 material protegido, y el mensaje dice como reescribirlo. Un fallo interno de la guardia bloquea
@@ -68,6 +74,7 @@ import os
 import re
 import subprocess
 import sys
+import urllib.parse
 from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -973,6 +980,9 @@ class Contexto:
     nivel: Lexico | None = None
     en_sustitucion: bool = False
     powershell: bool = False
+    # Si el texto es CODIGO -un guion de shell, `bash -c`- y no la linea de la sesion: ahi toda
+    # consulta de CI se niega, con espera o sin ella (`exigir_sin_espera_a_la_ci`).
+    en_codigo: bool = False
 
     def rama_actual(self) -> str:
         if not self.rama_leida:
@@ -1080,6 +1090,7 @@ def analizar_bash(texto: str, ctx: Contexto) -> None:
         raise BloqueoError("demasiados niveles de `bash -c` o `$(...)` anidados para decidir")
     exigir_sin_crudo(texto, "el comando")
     lex = tokenizar(texto)
+    exigir_sin_espera_a_la_ci(texto, ctx)  # antes que las demas: su motivo es el que cuenta
     # La comprobacion de `(( ... ))` mira el texto, pero el CUERPO de un heredoc es datos, no codigo
     # se le quita antes para no negar un heredoc que lleve `((` en una linea (revisor sexta pasada,
     # A3; cuarta pasada A5).
@@ -1138,6 +1149,7 @@ def _sub(
     sub.profundidad = ctx.profundidad + 1
     sub.en_sustitucion = ctx.en_sustitucion if en_sustitucion is None else en_sustitucion
     sub.powershell = ctx.powershell if powershell is None else powershell
+    sub.en_codigo = ctx.en_codigo
     return sub
 
 
@@ -3478,7 +3490,9 @@ def _exigir_guion_legible(
 
 def _analizar_codigo_de(texto: str, lenguaje: str, ctx: Contexto) -> None:
     if lenguaje == "shell":
-        analizar_bash(texto, _sub(ctx))
+        sub = _sub(ctx)
+        sub.en_codigo = True
+        analizar_bash(texto, sub)
     elif lenguaje == "powershell":
         analizar_powershell(texto, _sub(ctx, powershell=True))
     else:
@@ -3566,6 +3580,7 @@ def analizar_codigo(codigo: str, ctx: Contexto, es_python: bool) -> None:
     """Codigo en linea (o un guion sin seguir). Cada literal de texto que sea una ruta se mira; y
     si el codigo recorre directorios o construye rutas con literales sensibles, no se decide."""
     exigir_sin_crudo(codigo, "el codigo que se ejecuta")
+    _exigir_codigo_sin_ci(codigo, es_python)
     literales = _literales(codigo, es_python)
     recorre = CODIGO_QUE_RECORRE.search(codigo) is not None
     directorios = 0
@@ -3612,6 +3627,217 @@ def _literales(codigo: str, es_python: bool) -> list[str]:
                 if isinstance(n, ast.Constant) and isinstance(n.value, str)
             ]
     return [a or b for a, b in re.findall(r"'([^'\n]*)'|\"([^\"\n]*)\"", codigo)]
+
+
+# ------------------------------------------- esperar a la CI (`trabajo/guardia-ci`, 2026-10-23)
+# Por que: la sesion espero dos veces seguidas a la CI con un guion que la consultaba en bucle,
+# contra la orden del encargo (`docs/validation/EA-CONEXION.md` §13, `esperar_run.py`; cierre de
+# `trabajo/barrido-sesion-5`), y la regla escrita (`docs/runbooks/DECISIONES-DE-PROCESO.md`,
+# entrada del 2026-10-21, punto 2) no la hacia cumplir nadie. UNA condicion, con su regla y su
+# mensaje (docs/validation/GUARDIA-CI.md §0.f y las dos respuestas del consultor del 2026-10-23):
+# - en Bash se niega un texto que tenga a la vez una CONSULTA de CI y una ESPERA, mirado ENTERO -el
+#   nivel, sus `$(...)` y cada argumento con espacios, que se lee como Bash (`watch 'gh ...'`,
+#   `alias c='gh ...'`)-; `gh run watch` y `gh pr checks --watch`, siempre; y lo que no se puede
+#   decidir (un programa, o un argumento de `gh`/`curl`, que se construye al ejecutarse) junto a una
+#   espera o a una consulta;
+# - en codigo -un guion, `python -c`, `bash -c`, un heredoc a un interprete- toda consulta, con
+#   espera o sin ella (respuesta a la fase 0, punto 3: «ninguna consulta de la CI con un guion»);
+# - en PowerShell, una consulta y una espera en el mismo texto.
+# La consulta suelta en Bash pasa (`gh run view <run>`, `gh run list`, `gh run rerun`, la de
+# check-runs de RITUAL.md), y `timeout N` delante de una consulta no es una espera.
+R_ESPERA_CI = (
+    "docs/runbooks/DECISIONES-DE-PROCESO.md, entrada del 2026-10-21, punto (2): «Ninguna consulta "
+    "de la CI con un guion ni con un bucle» (origen: el guion de espera de EA-CONEXION.md §13; "
+    "encargo de `trabajo/guardia-ci`)"
+)
+COMO_ESPERAR_CI = (
+    "Como reescribirlo: una consulta suelta con `gh run view <run>`; si hay que esperar, una "
+    "espera sin consulta (`sleep` solo, o en segundo plano) y despues otra consulta suelta."
+)
+# Las rutas de la API que dicen si la CI ha terminado (respuesta a la fase 0, punto 1: las tres
+# del encargo y `actions/jobs`, `commits/<sha>/status` y `statuses`). Se buscan tras deshacer los
+# `%XX` de una URL y sin distinguir mayusculas.
+RUTA_DE_CI = re.compile(
+    r"actions/(?:runs|jobs)|check-(?:runs|suites)|commits/[^/\s'\"]+/status(?:es)?(?![\w-])", re.I
+)
+PALABRAS_DE_BUCLE = frozenset({"while", "until", "for", "select", "function"})
+PROGRAMAS_QUE_ESPERAN = frozenset({"sleep", "watch"})
+PROGRAMAS_DE_RED = frozenset({"curl", "wget"})
+# Lo que puede ir justo antes de una palabra que abre un comando (`do while`, `then for`...).
+_ABRE_COMANDO = frozenset({"do", "then", "else", "elif", "{", "!", "time"})
+_GH_EN_TEXTO = re.compile(r"(?i)(?<![\w.-])gh(?:\.exe)?(?![\w.-])")
+_ESPERA_EN_TEXTO = re.compile(r"(?i)\b(?:sleep|watch|while|until|for|select|function)\b")
+# En codigo: la palabra `gh` (suelta, entre comillas o como ruta) seguida de un subcomando.
+_GH_EN_CODIGO = re.compile(
+    r"(?i)(?<![\w.-])gh(?:\.exe)?['\"]?\s*[,\s]\s*['\"]?(?:run|pr|api|workflow)(?![\w-])"
+)
+_ESPERA_EN_POWERSHELL = re.compile(
+    r"(?i)\b(?:while|for|foreach|do|until|start-sleep|sleep|wait-event|timeout)\b"
+)
+
+
+def _programa(texto: str) -> str:
+    """El nombre de un programa en cualquiera de sus formas: con su ruta (con `/` o `\\`, tambien
+    en Linux), en mayusculas, con `.exe`/`.cmd`/`.bat` y con los espacios o puntos finales que
+    Windows quita (la fila de `trabajo/guardia-ffmpeg` en ERRORES-RECURRENTES.md)."""
+    nombre = re.split(r"[\\/]", texto.strip())[-1].lower().rstrip(" .")
+    for ext in (".exe", ".cmd", ".bat"):
+        nombre = nombre.removesuffix(ext)
+    return nombre.rstrip(" .")
+
+
+def _ruta_de_ci(texto: str) -> bool:
+    return RUTA_DE_CI.search(urllib.parse.unquote(texto)) is not None
+
+
+@dataclass
+class HuellaCI:
+    """Lo que un texto de Bash tiene de consulta a la CI y de espera."""
+
+    consultas: list[str] = field(default_factory=list)
+    esperas: list[str] = field(default_factory=list)
+    # Lo que no se puede decidir: lo que puede ser una consulta (un `gh` o un `curl` con un
+    # argumento que se construye al ejecutarse, o un programa que se construye) y lo que puede ser
+    # una espera (un programa que se construye).
+    posibles_consultas: list[str] = field(default_factory=list)
+    posibles_esperas: list[str] = field(default_factory=list)
+    siempre: str | None = None  # `gh run watch`, `gh pr checks --watch`
+
+
+def _consulta_gh(palabras: list[str], i: int, huella: HuellaCI) -> None:
+    """Un `gh` en `palabras[i]`: que consulta, por sus dos primeras palabras que no son opcion."""
+    sub: list[str] = []
+    j = i + 1
+    while j < len(palabras) and len(sub) < 2:
+        t = palabras[j]
+        if t in {"-R", "--repo"}:
+            j += 2
+        elif t.startswith("-"):
+            j += 1
+        else:
+            sub.append(t)
+            j += 1
+    que = " ".join(["gh", *sub])
+    if any("\x00" in t for t in sub):
+        huella.posibles_consultas.append("`gh` con un subcomando que se construye al ejecutarse")
+    elif sub == ["run", "watch"] or (sub == ["pr", "checks"] and "--watch" in palabras[i:]):
+        huella.siempre = huella.siempre or que
+    elif sub in (["run", "view"], ["run", "list"], ["pr", "checks"]):
+        huella.consultas.append(que)
+    elif sub[:1] == ["api"] and any("\x00" in t for t in palabras[i + 1 :]):
+        huella.posibles_consultas.append("`gh api` con un argumento que se construye al ejecutarse")
+
+
+def huella_ci(texto: str, huella: HuellaCI | None = None, profundidad: int = 0) -> HuellaCI:
+    """La consulta y la espera de un texto de Bash ENTERO: el nivel, sus `$(...)` y cada palabra
+    con espacios, que se lee como Bash (sin su `NOMBRE=` delante: `alias c='gh ...'`)."""
+    huella = huella if huella is not None else HuellaCI()
+    if profundidad > 4:
+        huella.posibles_consultas.append("demasiados niveles anidados")
+        return huella
+    try:
+        lex = tokenizar(texto)
+    except BloqueoError:  # no se sabe leer: cuenta lo que se ve en el texto
+        if _GH_EN_TEXTO.search(texto) or _ruta_de_ci(texto):
+            huella.consultas.append(texto[:60])
+        if _ESPERA_EN_TEXTO.search(texto):
+            huella.esperas.append(texto[:60])
+        return huella
+    p = lex.palabras
+    for k, palabra in enumerate(p):
+        if palabra.op:
+            continue
+        previa = p[k - 1] if k else None
+        abre = (
+            previa is None
+            or (previa.op and previa.texto in SEPARADORES)
+            or (not previa.op and previa.texto in _ABRE_COMANDO)
+        )
+        if abre and palabra.texto in PALABRAS_DE_BUCLE:
+            huella.esperas.append(palabra.texto)
+        siguientes = p[k + 1 : k + 3]
+        if [(s.op, s.texto) for s in siguientes] == [(True, "("), (True, ")")]:
+            huella.esperas.append(f"{palabra.texto}()")  # una funcion puede llamarse a si misma
+    for cmd in comandos(lex):
+        argv = _quitar_envoltorios(cmd.argv)
+        if argv and ("\x00" in argv[0].texto or argv[0].glob):
+            que = f"`{_visible(cmd)}`: el programa se construye al ejecutarse"
+            huella.posibles_consultas.append(que)
+            huella.posibles_esperas.append(que)
+        elif argv and _programa(argv[0].texto) in PROGRAMAS_QUE_ESPERAN:
+            huella.esperas.append(_programa(argv[0].texto))
+        palabras = [a.texto for a in cmd.argv]
+        for i, t in enumerate(palabras):
+            if _programa(t) == "gh":
+                _consulta_gh(palabras, i, huella)
+            if _programa(t) in PROGRAMAS_DE_RED and any("\x00" in x for x in palabras[i + 1 :]):
+                huella.posibles_consultas.append(
+                    f"`{_programa(t)}` con un argumento que se construye al ejecutarse"
+                )
+            if _ruta_de_ci(t):
+                huella.consultas.append(re.sub(r"\x00[SV]([^\x00]*)\x00", r"$\1", t)[:80])
+        for t in [*palabras, *(v.texto for v in cmd.asignaciones.values())]:
+            if "\x00" not in t and re.search(r"\s", t):
+                # Una palabra es un dato hasta que algo la ejecuta: de ella cuenta lo que se VE de
+                # consulta o de espera, no lo que no se puede decidir (un patron de `grep` leido
+                # como Bash parece un programa con comodin: medido con el de RITUAL.md:317).
+                anidado = t.split("=", 1)[1] if re.match(r"^[A-Za-z_][\w.-]*=", t) else t
+                visto = huella_ci(anidado, None, profundidad + 1)
+                huella.consultas += visto.consultas
+                huella.esperas += visto.esperas
+                huella.siempre = huella.siempre or visto.siempre
+    for interior in lex.sustituciones:
+        huella_ci(interior, huella, profundidad + 1)
+    return huella
+
+
+def _niega_ci(que: str, por: str) -> NoReturn:
+    raise BloqueoError(f"esperar a la CI: {que}: {por}.\nRegla: {R_ESPERA_CI}.\n{COMO_ESPERAR_CI}")
+
+
+def exigir_sin_espera_a_la_ci(texto: str, ctx: Contexto) -> None:
+    """LA condicion en Bash (en codigo, `_exigir_codigo_sin_ci`; en PowerShell, al principio de
+    `analizar_powershell`). Se llama al principio de `analizar_bash`, antes que ninguna otra regla
+    del texto: asi su motivo gana al de `_exigir_for` y los tests lo pueden comprobar."""
+    h = huella_ci(texto)
+    if h.siempre:
+        _niega_ci(f"`{h.siempre}`", "es una espera que consulta la CI en bucle")
+    if h.consultas and ctx.en_codigo:
+        _niega_ci(
+            f"`{h.consultas[0]}`",
+            "consulta la CI desde un guion o codigo en linea (`bash -c`, un `.sh`), con espera o "
+            "sin ella",
+        )
+    if h.consultas and h.esperas:
+        _niega_ci(
+            f"`{h.consultas[0]}` y `{h.esperas[0]}`",
+            "una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el "
+            "mismo comando",
+        )
+    if h.posibles_consultas and h.esperas:
+        _niega_ci(
+            f"{h.posibles_consultas[0]} y `{h.esperas[0]}`",
+            "junto a una espera, algo que puede ser una consulta de CI y no se puede decidir",
+        )
+    if h.consultas and h.posibles_esperas:
+        _niega_ci(
+            f"`{h.consultas[0]}` y {h.posibles_esperas[0]}",
+            "junto a una consulta de CI, algo que puede ser una espera y no se puede decidir",
+        )
+
+
+def _exigir_codigo_sin_ci(codigo: str, es_python: bool) -> None:
+    """En codigo (un guion, `python -c`, un heredoc a un interprete), toda consulta de CI: un
+    literal que sea el programa `gh`, `gh run|pr|api|workflow` en el texto, o una ruta de la API
+    de la CI."""
+    gh = next((x for x in _literales(codigo, es_python) if _programa(x) == "gh"), None)
+    m = _GH_EN_CODIGO.search(codigo)
+    if gh is not None or m or _ruta_de_ci(codigo):
+        que = m.group(0) if m else ("gh" if gh is not None else "una ruta de la API de la CI")
+        _niega_ci(
+            f"`{que}`",
+            "el codigo consulta la CI (un guion o codigo en linea), con espera o sin ella",
+        )
 
 
 # ------------------------------------------------------------------------------- powershell
@@ -3699,6 +3925,8 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
     """Mas tosco que bash: rutas por las comillas y las palabras; si una es protegida, solo se
     deja pasar si TODOS los comandos del texto son de metadatos."""
     exigir_sin_crudo(texto, "PowerShell")
+    if (_GH_EN_TEXTO.search(texto) or _ruta_de_ci(texto)) and _ESPERA_EN_POWERSHELL.search(texto):
+        _niega_ci("PowerShell", "una consulta de CI y una espera (un bucle o `Start-Sleep`)")
     ctx.powershell = True
     bajo = texto.lower()
     if re.search(r"(?i)\b(invoke-expression|iex|-encodedcommand|-enc)\b", texto):
@@ -3773,6 +4001,19 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
 
 
 # ---------------------------------------------------------------------------- las herramientas
+# Las herramientas que ejecutan un comando de shell. `Monitor` (respuesta del consultor a la fase 0
+# de `trabajo/guardia-ci`, punto 0) ejecuta su `command` como Bash y estaba fuera del matcher:
+# entra en `.claude/settings.json` y aqui se decide con las mismas reglas que Bash; una entrada que
+# no sea un `command` de texto (`ws`, sin `command`, una clave que no se conoce) se niega.
+HERRAMIENTAS_DE_COMANDO = frozenset({"Bash", "PowerShell", "Monitor"})
+CLAVES_DE_MONITOR = frozenset({"command", "description", "timeout_ms"})
+R_MONITOR = (
+    "respuesta del consultor a la fase 0 de `trabajo/guardia-ci` (2026-10-23), punto 0: Monitor "
+    "se decide con las mismas reglas que Bash, y «si el formato de su entrada no se reconoce, se "
+    "niega»"
+)
+
+
 def decidir(evento: dict[str, object], politica: Politica) -> str | None:
     """El motivo del bloqueo, o None si pasa."""
     herramienta = str(evento.get("tool_name", ""))
@@ -3807,13 +4048,21 @@ def decidir(evento: dict[str, object], politica: Politica) -> str | None:
             )
         if herramienta == "Glob":
             return None  # listar nombres no es abrir (ADR-0021 §1)
-        if herramienta in {"Bash", "PowerShell"}:
+        if herramienta in HERRAMIENTAS_DE_COMANDO:
+            if herramienta == "Monitor" and (
+                not isinstance(entrada.get("command"), str) or not set(entrada) <= CLAVES_DE_MONITOR
+            ):
+                claves = ", ".join(sorted(str(k) for k in entrada)) or "ninguna"
+                return (
+                    f"Monitor con una entrada que la guardia no reconoce (claves: {claves}): solo "
+                    f"decide un `command` de texto, como el de Bash.\nRegla: {R_MONITOR}."
+                )
             comando = str(entrada.get("command", ""))
             ctx = Contexto(politica, cwd)
-            if herramienta == "Bash":
-                analizar_bash(comando, ctx)
-            else:
+            if herramienta == "PowerShell":
                 analizar_powershell(comando, ctx)
+            else:
+                analizar_bash(comando, ctx)
             return None
     except BloqueoError as exc:
         return str(exc)

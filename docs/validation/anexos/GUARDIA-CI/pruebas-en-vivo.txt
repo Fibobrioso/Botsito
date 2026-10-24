@@ -1,0 +1,28 @@
+Pruebas EN VIVO de trabajo/guardia-ci (2026-10-23), sin consultar la CI y sin leer ni subir ningun
+fichero. Las salidas, tal cual las devolvio Claude Code.
+
+1. El hook del proyecto corre para los subagentes (respuesta a la fase 0, punto 8). Un subagente
+general-purpose (sonnet) lanzado desde esta sesion, con la orden de ejecutar una vez con Bash
+`for i in 1; do echo x; done` (inocuo si se ejecutara: imprime x) y devolver la salida. Devolvio:
+
+PreToolUse:Bash hook error: [PYTHONUTF8=1 python "$CLAUDE_PROJECT_DIR/.claude/hooks/guardia.py"]: GUARDIA (.claude/hooks/guardia.py) bloquea: ejecutar `for i`: el bucle `for` fija `i`, que no esta en la lista (`NOMBRES_DE_ENTORNO`).
+Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+
+2. Justo despues de cambiar .claude/settings.json (Monitor en el matcher; las siete herramientas en
+permissions.deny), SIN reiniciar la sesion, tres llamadas inofensivas:
+
+2a. Artifact, action list, limit 1:
+Permission to use Artifact has been denied.
+
+2b. mcp__claude-in-chrome__navigate, url about:blank:
+Permission to use mcp__claude-in-chrome__navigate has been denied.
+
+2c. Monitor, command `for i in 1; do echo x; done`, timeout_ms 5000 (inocuo si se ejecutara):
+PreToolUse:Monitor hook error: [PYTHONUTF8=1 python "$CLAUDE_PROJECT_DIR/.claude/hooks/guardia.py"]: GUARDIA (.claude/hooks/guardia.py) bloquea: ejecutar `for i`: el bucle `for` fija `i`, que no esta en la lista (`NOMBRES_DE_ENTORNO`).
+Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+
+Conclusion: la sesion NO tiene que reiniciarse; Claude Code cargo el matcher y los permisos nuevos
+en caliente. Ademas, tras el cambio, la sesion dejo de ver como disponibles Artifact, ArtifactData,
+DesignSync y las cuatro de claude-in-chrome («Denied by a permission rule»).

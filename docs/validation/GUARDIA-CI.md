@@ -477,6 +477,295 @@ Por las dos respuestas, `contrato.yaml` amplía `rutas_permitidas` en un commit 
 | `docs/validation/GUARDIA-FFMPEG.md` | respuesta 1, punto 6 (un recuadro en `:150-153`) |
 | `docs/sesion-5/PREGUNTAS.md` | respuesta 1, punto 4 (solo el recuadro de `:8-9`) |
 
+## 1. Fase 1 · La condición (2026-10-23)
+
+Aplicada la respuesta a la fase 0 (puntos 0-3 y 8) y la respuesta a la PARADA 2 (puntos 0, 1 y 3).
+
+### 1.1 El código (`.claude/hooks/guardia.py`)
+
+- **Una sección nueva, «esperar a la CI»**, con su comentario del porqué y el origen
+  (EA-CONEXION.md §13 y DECISIONES-DE-PROCESO.md, 2026-10-21, punto 2): `R_ESPERA_CI`,
+  `COMO_ESPERAR_CI` (el texto del encargo), `RUTA_DE_CI` (las tres del encargo más `actions/jobs`
+  y `commits/<sha>/status(es)`, punto 1; tras deshacer `%XX` y sin mayúsculas), `huella_ci` (lo que
+  un texto de Bash tiene de consulta y de espera, mirado entero: el nivel, sus `$(...)` y cada
+  palabra con espacios leída como Bash), `exigir_sin_espera_a_la_ci` (la condición en Bash) y
+  `_exigir_codigo_sin_ci` (en código).
+- **Se llama en tres sitios, al principio de cada uno**, para que su motivo gane al de otras reglas:
+  `analizar_bash` (justo tras `tokenizar`; vale en todos los niveles: `bash -c`, un `.sh`, cada
+  `$(...)`), `analizar_codigo` (`python -c`, heredocs, guiones que no son los de `main`) y
+  `analizar_powershell`.
+- **`Contexto.en_codigo`**: lo pone `_analizar_codigo_de` al analizar un guion de shell o un
+  `bash -c`; ahí toda consulta se niega, con espera o sin ella (punto 3).
+- **`decidir`**: `HERRAMIENTAS_DE_COMANDO = {Bash, PowerShell, Monitor}`; Monitor se decide como
+  Bash, y una entrada que no sea un `command` de texto con solo `command`, `description` y
+  `timeout_ms` se niega con `R_MONITOR` (punto 0).
+- La cabecera del módulo nombra la familia 4.
+- **Una corrección en el camino, medida:** la primera versión negaba B7, la forma de RITUAL.md:317,
+  porque leía como Bash el patrón de su `grep` (`"status": *"[^"]*"...`) y lo veía como un programa
+  con comodín. Una palabra es un dato hasta que algo la ejecuta: de las palabras anidadas solo
+  cuenta la consulta o la espera que se VE, no lo que no se puede decidir.
+
+Lo que se niega (y lo que no), en una línea: en Bash, una consulta de CI y una espera (`while`,
+`until`, `for`, `select`, `function`, `f()`, `sleep`, `watch`) en el mismo comando; `gh run
+watch` y `gh pr checks --watch` siempre; lo que no se puede decidir (un programa, o un argumento de
+`gh`/`curl`, que se construye al ejecutarse) junto a una espera, o un programa que se construye
+junto a una consulta; en código, toda consulta; en PowerShell, consulta y espera. Pasa la consulta
+suelta, y `timeout N` delante de una consulta (punto 2).
+
+**Límite declarado:** en código la consulta se reconoce por el texto (un literal que sea el programa
+`gh`, `gh run|pr|api|workflow`, o una ruta de la CI). Una cadena montada a trozos (`"g" + "h"`) o
+un import dinámico la esquivan; en Bash, `eval` ya lo niega otra regla. Y en código lo que se niega
+es la MENCIÓN: un guion que solo lleva `gh run view` como dato también se niega (PARADA 3).
+
+### 1.2 Los tests (`tests/unit/test_guardia_ci.py`)
+
+Fichero nuevo, 10 funciones y 84 casos, todo en memoria con `decidir` sobre un repo de `tmp_path`
+(ningún comando se ejecuta, ninguno consulta la CI). Sus literales van enteros, salvo la ruta de
+marzo (punto 6 de la respuesta: la guardia no lee `tests/`).
+
+- `test_la_tabla`: 72 formas con su decisión ANTES (la de `main`) y DESPUÉS, comprobando el MOTIVO
+  (la constante `R_*` que cita): N1-N19 de la fase 0, el `for n` (N3b) y las que hoy niega otra
+  regla (N3, N8d, N9-N9c, D2, D4, D9, D13-D18), las rutas nuevas (R1-R4), un guion o código con UNA
+  consulta (C1-C5, punto 3), los disfraces de la fila de `trabajo/guardia-ffmpeg` en
+  ERRORES-RECURRENTES.md (D1-D12: `$'gh'`, `$'\x67h'`, `$"gh"`, `"gh "` con espacio final, la ruta
+  del programa con `\` o `/` y en mayúsculas, `check%2Druns`, `find -exec`, `cd -`, `| tee`, `&`,
+  `1<>`) y los del encargo (D13-D18: una variable, un alias, dos funciones, `xargs sh -c`,
+  `$(echo gh)`); y 19 que pasan (B1-B19).
+- `test_el_mensaje_dice_que_hacer`: el texto del encargo, literal.
+- **Roto a propósito, en los dos sentidos:** `test_sin_la_regla_vuelve_lo_de_antes` (con la
+  condición apagada, las 72 vuelven a su decisión de `main`: salida en
+  `anexos/GUARDIA-CI/tabla-SIN-LA-REGLA.txt`) y
+  `test_con_la_consulta_suelta_como_espera_las_buenas_se_niegan` (si `gh` contara como espera, las
+  ocho buenas que consultan se negarían).
+- Monitor: `test_monitor_se_decide_como_bash` (espera a la CI → `R_ESPERA_CI`; `cat` de la carpeta
+  de marzo → `R_SIN_ABRIR`; `until test -f listo; do sleep 1; done` pasa),
+  `test_monitor_con_una_entrada_que_no_se_reconoce_se_niega` (`ws`, sin `command`, `command` que no
+  es texto, una clave de más → `R_MONITOR`) y, roto a propósito,
+  `test_sin_monitor_en_decidir_el_que_lee_pasaria`.
+- `test_un_subagente_se_decide_igual` (punto 8, en memoria).
+- `settings.json`: `test_las_herramientas_que_el_repo_no_usa_estan_denegadas` y, roto a propósito
+  en los dos sentidos, `test_si_falta_un_nombre_o_esta_mal_escrito_se_ve` (quitar cada nombre lo
+  caza; escribirlo con `_` en vez de `-` también; con todos, nada).
+
+**Las dos salidas** (tests primero): `anexos/GUARDIA-CI/pytest-1-antes-del-codigo.txt`, el fichero
+contra la guardia SIN el código: 66 fallos (todos los que piden la regla nueva, Monitor y
+`settings.json`; en esa versión B19 era `git log` y fallaba por el repo de prueba, y se cambió por
+`wc -l`). `anexos/GUARDIA-CI/pytest-2-con-el-codigo.txt`: **84 passed in 16.99s**.
+
+### 1.3 La tabla, antes y después
+
+Medida por los tests (la columna «antes» es la decisión con la regla apagada, que reproduce la de
+`main`: la de la fase 0 coincide en todas las filas que ya tenía). 53 negadas con `R_ESPERA_CI`
+(39 que en `main` pasaban y 14 que `main` negaba por otra regla) y 19 que pasan antes y después.
+
+| id | herramienta | antes (sin la regla = `main`) | después |
+|---|---|---|---|
+| N1 | Bash | pasa | R_ESPERA_CI |
+| N2 | Bash | pasa | R_ESPERA_CI |
+| N3 | Bash | R_EJECUCION | R_ESPERA_CI |
+| N3b | Bash | pasa | R_ESPERA_CI |
+| N4 | Bash | pasa | R_ESPERA_CI |
+| N5 | Bash | pasa | R_ESPERA_CI |
+| N5b | Bash | pasa | R_ESPERA_CI |
+| N6 | Bash | pasa | R_ESPERA_CI |
+| N7 | Bash | pasa | R_ESPERA_CI |
+| N7b | Bash | pasa | R_ESPERA_CI |
+| N8c | Bash | pasa | R_ESPERA_CI |
+| N8b | Bash | pasa | R_ESPERA_CI |
+| N8d | Bash | R_EJECUCION | R_ESPERA_CI |
+| N9 | PowerShell | R_EJECUCION | R_ESPERA_CI |
+| N9b | PowerShell | R_EJECUCION | R_ESPERA_CI |
+| N9c | PowerShell | R_EJECUCION | R_ESPERA_CI |
+| N10 | Bash | pasa | R_ESPERA_CI |
+| N11 | Bash | pasa | R_ESPERA_CI |
+| N12 | Bash | pasa | R_ESPERA_CI |
+| N13 | Bash | pasa | R_ESPERA_CI |
+| N14 | Bash | pasa | R_ESPERA_CI |
+| N15 | Bash | pasa | R_ESPERA_CI |
+| N16 | Bash | pasa | R_ESPERA_CI |
+| N17 | Bash | pasa | R_ESPERA_CI |
+| N18 | Bash | pasa | R_ESPERA_CI |
+| N19 | Bash | pasa | R_ESPERA_CI |
+| R1 | Bash | pasa | R_ESPERA_CI |
+| R2 | Bash | pasa | R_ESPERA_CI |
+| R3 | Bash | pasa | R_ESPERA_CI |
+| R4 | Bash | pasa | R_ESPERA_CI |
+| C1 | Bash | pasa | R_ESPERA_CI |
+| C2 | Bash | pasa | R_ESPERA_CI |
+| C3 | Bash | pasa | R_ESPERA_CI |
+| C4 | Bash | pasa | R_ESPERA_CI |
+| C5 | Bash | pasa | R_ESPERA_CI |
+| D1 | Bash | pasa | R_ESPERA_CI |
+| D2 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D3 | Bash | pasa | R_ESPERA_CI |
+| D4 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D5 | Bash | pasa | R_ESPERA_CI |
+| D6 | Bash | pasa | R_ESPERA_CI |
+| D7 | Bash | pasa | R_ESPERA_CI |
+| D8 | Bash | pasa | R_ESPERA_CI |
+| D9 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D10 | Bash | pasa | R_ESPERA_CI |
+| D11 | Bash | pasa | R_ESPERA_CI |
+| D12 | Bash | pasa | R_ESPERA_CI |
+| D13 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D14 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D15 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D16 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D17 | Bash | R_EJECUCION | R_ESPERA_CI |
+| D18 | Bash | R_EJECUCION | R_ESPERA_CI |
+| B1 | Bash | pasa | pasa |
+| B2 | Bash | pasa | pasa |
+| B3 | Bash | pasa | pasa |
+| B4 | Bash | pasa | pasa |
+| B5 | Bash | pasa | pasa |
+| B6 | Bash | pasa | pasa |
+| B7 | Bash | pasa | pasa |
+| B8 | Bash | pasa | pasa |
+| B9 | Bash | pasa | pasa |
+| B10 | Bash | pasa | pasa |
+| B11 | Bash | pasa | pasa |
+| B12 | Bash | pasa | pasa |
+| B13 | Bash | pasa | pasa |
+| B14 | Bash | pasa | pasa |
+| B15 | Bash | pasa | pasa |
+| B16 | Bash | pasa | pasa |
+| B17 | Bash | pasa | pasa |
+| B18 | Bash | pasa | pasa |
+| B19 | Bash | pasa | pasa |
+
+
+El guion de la fase 0 (`anexos/GUARDIA-CI/tabla_fase0.py`) ya no se puede ejecutar: lleva `gh run
+view` como cadenas y la regla de código lo niega (PARADA 3). Por eso la tabla de después sale de
+los tests.
+
+### 1.4 `settings.json`, `Monitor` y las pruebas en vivo
+
+- `.claude/settings.json`: `Monitor` en el matcher (`"Read|Grep|Glob|Bash|PowerShell|Monitor"`) y
+  en `permissions.deny`, con su nombre exacto: `Artifact`, `ArtifactData`, `DesignSync`,
+  `mcp__claude-in-chrome__file_upload`, `mcp__claude-in-chrome__navigate`,
+  `mcp__claude-in-chrome__get_page_text` y `mcp__claude-in-chrome__read_page`.
+- `tests/unit/test_guardia_claude.py` (ampliación declarada): el matcher esperado lleva `Monitor`, y
+  `_casa_regla` devuelve `False` para una regla que no es `Bash(...)` en vez de fallar.
+- **Pruebas en vivo, sin reiniciar la sesión** (`anexos/GUARDIA-CI/pruebas-en-vivo.txt`):
+  `Artifact` con `action: list` → «Permission to use Artifact has been denied.»;
+  `navigate` a `about:blank` → «Permission to use mcp__claude-in-chrome__navigate has been
+  denied.»; `Monitor` con `for i in 1; do echo x; done` (inocuo) → «PreToolUse:Monitor hook error:
+  ... GUARDIA (.claude/hooks/guardia.py) bloquea: ejecutar `for i` ...». **La sesión NO tiene que
+  reiniciarse:** Claude Code cargó el matcher y los permisos en caliente, y desde ese momento dejó
+  de ofrecer las siete herramientas («Denied by a permission rule»). Ninguna llamada leyó ni subió
+  un fichero, y ninguna consultó la CI.
+- **Lo que hacía antes y sigue pudiendo hacer**, medido después del cambio: Bash, `git`, `uv run
+  pytest` sobre `tests/`, `make check` (en memoria con la ruta absoluta del repo: pasan) y los
+  `python` de la carpeta de trabajo que no mencionan la CI. La excepción, `tabla_fase0.py`, es la
+  PARADA 3.
+
+### 1.5 Los subagentes (punto 8)
+
+- **La configuración que lo hace:** `.claude/settings.json:69`, el único `PreToolUse` del proyecto,
+  con su `matcher` y sin filtro por agente; los dos agentes de solo lectura añaden a él
+  `solo_lectura.py` con `matcher: "Bash"` (`.claude/agents/revisor.md:8`,
+  `.claude/agents/auditor-encargo.md:8`), no lo sustituyen.
+- **Prueba de verdad:** un subagente lanzado desde esta sesión ejecutó una vez `for i in 1; do echo
+  x; done` y Claude Code le devolvió el bloqueo de `guardia.py`, entero, en
+  `anexos/GUARDIA-CI/pruebas-en-vivo.txt` (y el auditor de la fase 0 ya lo había visto). **Prueba en
+  memoria:** `test_un_subagente_se_decide_igual`, la misma decisión con los campos `agent_id` y
+  `agent_type` en el evento. La regla va solo en `guardia.py`; `solo_lectura.py` no se toca.
+
+### 1.6 Tiempos y `make check`
+
+| suite | antes del cambio | después |
+|---|---|---|
+| `test_guardia_claude.py` + `test_guardia_ffmpeg.py` | 572 passed in 181.20s | 572 passed in 159.46s |
+| las tres, con `test_guardia_ci.py` | — | 656 passed in 180.44s |
+| `test_guardia_ci.py` sola | — | 84 passed in 16.99s |
+
+La regla nueva no hace más lenta la suite (la diferencia de 181 a 159 s es ruido de la máquina).
+El `make check` de este commit, con su `PICO DE MEMORIA`, va en el mensaje de la PARADA 3 y en el
+informe del commit siguiente (un commit no puede llevar el resultado de su propio sello).
+
+## 2. Fase 2 · Documentos
+
+- **`docs/sesion-5/PREGUNTAS.md`**: un recuadro de corrección junto a `:8-9` (A.4 HECHA el
+  2026-10-22), y nada más del fichero (punto 4).
+- **`docs/validation/GUARDIA-FFMPEG.md`**: recuadro junto a `:150-153` (la guardia no lee `tests/`),
+  con el cuerpo intacto; y la cabecera de `tests/unit/test_guardia_ffmpeg.py` corregida (punto 6).
+  **Error del consultor, declarado para la orden de cierre** (punto 6, sus palabras): «Mi encargo
+  repetía ese error».
+- **La forma de esperar**, con el mismo texto que el mensaje de la negativa, en
+  `entregar-rama/SKILL.md` (paso 7), `cerrar-rama/SKILL.md` (paso 7) y `RITUAL.md:320` (punto 5).
+- **`PROJECT_STATE.md`**: la línea nueva de Technical Debt de las siete herramientas (respuesta a la
+  PARADA 2, puntos 0 y 1), junto a la del guion de CI, y el recuento de tests (1655 → 1665).
+- **La limpieza de V, medida en un clon desechable** (`git worktree add --detach`, quitado
+  después): con la forma A («(A.4, HECHA el 2026-10-22)», y «R1.1 (HECHA)» de H12) y con la B
+  (quitarla), `test_hoja_de_ruta.py` y `test_project_state.py` dan **19 passed** las dos veces:
+  ninguno mira el contenido de «Depende de». Preparo la A, que es la costumbre de R4.1 (cada
+  dependencia con su «(HECHA)»). Se aplica en el commit del contrato del cierre (punto 7).
+
+## 3. Preparado para el commit del contrato del cierre (punto Y de RITUAL)
+
+- **Next Action, V** (`PROJECT_STATE.md:54`): «Depende de R1.1, de R3.1 y de la copia de seguridad
+  (A.4).» pasa a «Depende de R1.1, de R3.1 y de la copia de seguridad (A.4, HECHA el
+  2026-10-22).»
+- **`docs/plan/HOJA-DE-RUTA.md:219-221`**, el «Depende de» de R4.1:
+
+  ```
+  - **Depende de:** R1.1 (HECHA), R3.1 (HECHA), R1.2 (HECHA), R3.2 (HECHA), R3.3 (HECHA),
+    R3.4 (HECHA) y la copia de seguridad del carril de Aleks (A.4, HECHA el 2026-10-22).
+  ```
+- **Technical Debt que sale**, condición (a) PAGADA (`docs/state/README.md`): la línea
+  `PROJECT_STATE.md:104` («La guardia no niega un guion que espera a la CI en bucle ...»), con su
+  texto literal, al final de HISTORIA bajo `# Technical Debt PAGADA · sale de PROJECT_STATE.md en
+  trabajo/guardia-ci (<fecha del cierre>)`; evidencia: `tests/unit/test_guardia_ci.py` y el commit
+  de esta fase.
+- Lo de siempre del cierre: el registro en HISTORIA y la fila de ERRORES-RECURRENTES (con el error
+  del consultor del punto 6). G.1 no recibe nada.
+
+## 4. Las negativas en esta rama
+
+| cuándo | comando | lo que dijo | qué hice |
+|---|---|---|---|
+| abrir-rama | `git show $(git log ...):PROJECT_STATE.md` | `git show` con un argumento que se construye al ejecutarse | la forma que propone: dos llamadas con el sha literal |
+| tres veces (abrir, ampliar el contrato, la tabla) | `git add ... && uv run python scripts/contrato_rama.py`; `sed -i ... && python tabla_md.py` | «antes, en el mismo comando, va `git add ...`» (`R_EJECUCION`) | la forma que propone: cada uno en su llamada |
+| tras el cambio, en memoria | `python docs/validation/anexos/GUARDIA-CI/tabla_fase0.py .` | `R_ESPERA_CI`, «el codigo consulta la CI» | PARADA 3; no lo ejecuté |
+
+Ninguna del clasificador. Las tres primeras son de reglas de `main`, no de la regla nueva.
+Aparte: `git worktree list` enseña un worktree de OTRA sesión
+(`…/2ea2c3d2-…/scratchpad/wt-ci`, en `e7df30b`); no es de esta rama y no lo he tocado.
+
+## PARADA 3 · La regla de código niega un guion que solo MENCIONA la CI (2026-10-23)
+
+Encargo, «REGLAS DE ESTA RAMA»: «Si cambias la guardia y a partir de ese commit te niega algo que
+antes hacías, es un hallazgo de la rama: PARADA con el comando y el mensaje.»
+
+- **Comando** (decidido en memoria con `decidir`, NO ejecutado): `python
+  docs/validation/anexos/GUARDIA-CI/tabla_fase0.py .`, el guion de la fase 0 que pasa la tabla por
+  `decidir`.
+- **Mensaje:** «esperar a la CI: `gh', 'run`: el codigo consulta la CI (un guion o codigo en linea),
+  con espera o sin ella. Regla: docs/runbooks/DECISIONES-DE-PROCESO.md, entrada del 2026-10-21,
+  punto (2) ...»
+- **Por qué:** la regla de código (punto 3 de tu respuesta) reconoce la consulta por el TEXTO, y ese
+  guion lleva `gh run view` como cadenas que le pasa a `decidir`; no llama a `gh` ni a la red.
+- **A quién más afecta:** al revisor del cierre. El encargo le pide pasar cinco formas «por decidir
+  EN MEMORIA, como los tests»; el revisor no tiene Write, así que lo haría con `uv run python -c`, y
+  un `python -c` que lleva `gh run view` como dato se niega igual. Solo pasaría montando las cadenas
+  a trozos, que es justo la forma de esquivar la regla (§1.1, límite).
+
+## Lo que necesito que decidas (PARADA 3)
+
+0. **Qué cuenta como consulta en código.** Opciones: (a) dejarlo como está, por el texto: se niega
+   la mención aunque sea un dato, y el revisor (y cualquier guion de medida) monta las cadenas a
+   trozos, que es lo que preveía tu encargo; (b) exigir además, en Python, una llamada que salga del
+   proceso: `subprocess`, `os.system`/`os.popen`, `urllib`, `requests`, `http.client` o `socket` en
+   el código; sin ninguna de ellas, una mención de `gh` es un dato y pasa. En los demás lenguajes,
+   por el texto, como hoy. Recomiendo (b): separa el guion que consulta de verdad (los dos del
+   incidente, C1-C5 y N19 importan `subprocess` o `urllib`) del que solo pasa cadenas a `decidir`,
+   y no obliga al revisor a enseñar la forma de esquivar la regla. Coste de (b): un `__import__`
+   dinámico de `subprocess` la esquiva, como `"g" + "h"` esquiva la (a): ninguna de las dos cierra
+   el código del todo. Coste de (a): el revisor tiene que montar a trozos.
+1. **El revisor**, si eliges (a): ¿le digo en su encargo que monte las cadenas a trozos, declarado
+   en su informe? Recomiendo sí con (a); con (b) no hace falta.
+
 ## Estado
 
-EN CURSO · fase 1: las dos respuestas están copiadas y el contrato ampliado; falta aplicarlas.
+EN CURSO · PARADA 3: fases 1 y 2 hechas y selladas; espero la decisión sobre qué cuenta como
+consulta en código. Falta, después: el push a `fix/guardia-ci` y su CI, y el revisor.
