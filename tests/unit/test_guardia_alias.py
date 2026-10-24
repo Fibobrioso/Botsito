@@ -25,6 +25,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -86,6 +87,16 @@ def _romper(cual: str, g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatc
         monkeypatch.setattr(g, "_variables_powershell", lambda texto, ctx: (texto, []))
     elif cual == "sin_no_canonizable":
         monkeypatch.setattr(g, "_no_canonizable", lambda ruta: ruta)
+    elif cual == "una_lectura":  # PARADA 2, punto 0: sin la lectura con un nivel de `\\` menos
+        monkeypatch.setattr(g, "_lecturas_de_la_herramienta", lambda texto: [texto])
+    elif cual == "sin_tilde_de_pila":
+        monkeypatch.setattr(g, "_tilde_de_bash", lambda ruta, cwd: os.path.expanduser(ruta))
+    elif cual == "sin_proc_cygdrive":
+        monkeypatch.setattr(g, "_UNIDAD_MSYS", re.compile(r"^/(?:cygdrive/)?([a-zA-Z])(/.*)?$"))
+    elif cual == "sin_unidad_sin_barra":
+        monkeypatch.setattr(g, "_relativa_a_unidad", lambda ruta, cwd: ruta)
+    elif cual == "sin_proveedor":
+        monkeypatch.setattr(g, "_sin_proveedor", lambda ruta: ruta)
     else:
         raise AssertionError(cual)
 
@@ -485,6 +496,137 @@ def test_leer_por_una_union_o_un_enlace_hacia_lo_protegido_se_niega(
     assert not fallos, "\n".join(fallos)
 
 
+# ---------------------------- respuesta a la PARADA 2: lo que el revisor encontro abierto (§9)
+def _bash_y_monitor(comando: str) -> list[tuple[str, str, dict[str, Any]]]:
+    return [
+        ("Bash", "Bash", {"command": comando}),
+        ("Monitor", "Monitor", {"command": comando, "description": "x", "timeout_ms": 1000}),
+    ]
+
+
+def _dobladas(repo: Path, rel: str) -> list[tuple[str, str]]:
+    """Las 18 filas de b1: `\\\\?\\`, UNC a `localhost` y `\\\\?\\UNC\\`, con cada `\\` DOBLADA,
+    como hay que escribirlas para que la herramienta Bash le entregue a bash la buena."""
+    r = str(repo)
+    rw = rel.replace("/", "\\")
+    unidad, sin_unidad = r[0], r[2:]
+    formas = [
+        ("\\\\?\\", f"\\\\?\\{r}\\{rw}"),
+        ("UNC localhost", f"\\\\localhost\\{unidad}${sin_unidad}\\{rw}"),
+        ("\\\\?\\UNC\\localhost", f"\\\\?\\UNC\\localhost\\{unidad}${sin_unidad}\\{rw}"),
+    ]
+    return [(f, ruta.replace("\\", "\\\\")) for f, ruta in formas]
+
+
+def _fallos_dobladas(g: ModuleType, repo: Path, rel: str, esperada: str) -> list[str]:
+    fallos = []
+    for forma, doblada in _dobladas(repo, rel):
+        for comillas in ("'", '"'):
+            for etiqueta, herramienta, entrada in _bash_y_monitor(
+                f"cat {comillas}{doblada}{comillas}"
+            ):
+                obtenida = _regla(g, _decide(g, repo, herramienta, entrada))
+                print(f"dobladas | {forma} | {comillas} | {etiqueta} | {obtenida}")
+                if (esperada == "pasa") != (obtenida == "pasa") or (
+                    esperada != "pasa" and esperada not in obtenida.split(",")
+                ):
+                    fallos.append(f"{forma} · {comillas} · {etiqueta}: {obtenida}")
+    return fallos
+
+
+@SOLO_WINDOWS
+def test_las_barras_dobladas_de_la_herramienta_se_niegan(g: ModuleType, repo: Path) -> None:
+    """Punto 0: la guardia decide el texto tal como llega y con un nivel de `\\` menos."""
+    fallos = []
+    for rel, esperada in PROTEGIDOS.values():
+        fallos += _fallos_dobladas(g, repo, rel, esperada)
+    fallos += _fallos_dobladas(g, repo, BUENO, "pasa")
+    assert not fallos, "\n".join(fallos)
+
+
+def _fallos_de(
+    g: ModuleType, repo: Path, casos: list[tuple[str, str, dict[str, Any], str]]
+) -> list[str]:
+    fallos = []
+    for n, (etiqueta, herramienta, entrada, esperada) in enumerate(casos):
+        obtenida = _regla(g, _decide(g, repo, herramienta, entrada))
+        print(f"caso {n} | {etiqueta} | {obtenida}")
+        if obtenida != esperada:
+            fallos.append(f"caso {n} ({etiqueta}): {obtenida}, se esperaba {esperada}")
+    return fallos
+
+
+def test_tilde_mas_y_tilde_menos_de_bash(g: ModuleType, repo: Path) -> None:
+    """Punto 1: `~+` es el directorio de trabajo; `~-` y `~+N` no se saben: `R_ALIAS`."""
+    casos = []
+    for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat ~+/'{HOLD}'"):
+        casos.append((f"~+ hacia el holdout, {etiqueta}", herramienta, entrada, "R_HOLDOUT"))
+    for etiqueta, herramienta, entrada in _bash_y_monitor(f"cat ~+/{BUENO}"):
+        casos.append((f"~+ hacia src, {etiqueta}", herramienta, entrada, "pasa"))
+    casos += [
+        ("~- hacia el holdout", "Bash", {"command": f"cat ~-/'{HOLD}'"}, "R_ALIAS"),
+        ("~+1", "Bash", {"command": f"cat ~+1/{BUENO}"}, "R_ALIAS"),
+        ("~ sigue siendo la casa", "Bash", {"command": "cat ~/x.txt"}, "pasa"),
+    ]
+    fallos = _fallos_de(g, repo, casos)
+    assert not fallos, "\n".join(fallos)
+
+
+@SOLO_WINDOWS
+def test_proc_cygdrive_es_la_unidad(g: ModuleType, repo: Path) -> None:
+    """Punto 1: `/proc/cygdrive/c/...` de MSYS es `C:/...`, como `/c/` y `/cygdrive/c/`."""
+    r = repo.as_posix()
+    msys = f"/proc/cygdrive/{r[0].lower()}{r[2:]}"
+    casos = []
+    for sitio, (rel, esperada) in PROTEGIDOS.items():
+        casos.append(
+            (f"{sitio} por /proc/cygdrive", "Bash", {"command": f"cat '{msys}/{rel}'"}, esperada)
+        )
+    casos.append(("src por /proc/cygdrive", "Bash", {"command": f"cat '{msys}/{BUENO}'"}, "pasa"))
+    fallos = _fallos_de(g, repo, casos)
+    assert not fallos, "\n".join(fallos)
+
+
+@SOLO_WINDOWS
+def test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad(
+    g: ModuleType, repo: Path
+) -> None:
+    """Punto 1: `C:x`, con la unidad del directorio de trabajo, cuelga de el; otra unidad que la
+    del repositorio no puede caer bajo la raiz y se deja."""
+    unidad = str(repo)[0]
+    otra = next(u for u in "ZYXWV" if u != unidad.upper())
+    # Cada grupo se decide nada mas crearlo: `_herramientas` reescribe el guion de Python.
+    fallos = []
+    grupos = [
+        (sitio, f"{unidad}:{rel.replace('/', chr(92))}", e)
+        for sitio, (rel, e) in PROTEGIDOS.items()
+    ]
+    grupos.append(("src", f"{unidad}:src\\botsito\\cli.py", "pasa"))
+    for sitio, ruta, esperada in grupos:
+        casos = [
+            (f"{sitio} · {etiqueta}", herramienta, entrada, esperada)
+            for etiqueta, herramienta, entrada in _herramientas(ruta, repo.parent / "fuera")
+        ]
+        fallos += _fallos_de(g, repo, casos)
+    otra_unidad = ("otra unidad", "Read", {"file_path": f"{otra}:x\\y.txt"}, "pasa")
+    fallos += _fallos_de(g, repo, [otra_unidad])
+    assert not fallos, "\n".join(fallos)
+
+
+def test_el_proveedor_filesystem_de_powershell(g: ModuleType, repo: Path) -> None:
+    """Punto 1: `FileSystem::<ruta>` y `Microsoft.PowerShell.Core\\FileSystem::<ruta>`."""
+    r = repo.as_posix()
+    casos = []
+    for prefijo in ("FileSystem::", "Microsoft.PowerShell.Core\\FileSystem::", "filesystem::"):
+        for sitio, (rel, esperada) in PROTEGIDOS.items():
+            comando = f"Get-Content '{prefijo}{r}/{rel}'"
+            casos.append((f"{prefijo} {sitio}", "PowerShell", {"command": comando}, esperada))
+        bueno = f"Get-Content '{prefijo}{r}/{BUENO}'"
+        casos.append((f"{prefijo} src", "PowerShell", {"command": bueno}, "pasa"))
+    fallos = _fallos_de(g, repo, casos)
+    assert not fallos, "\n".join(fallos)
+
+
 # ------------------------------------------------------------ roto a proposito (los dos sentidos)
 # Cada pieza, con los tests que sostiene: con la pieza rota, cada uno de ellos tiene que FALLAR.
 def _w(rotura: str, nombre: str) -> Any:
@@ -507,6 +649,17 @@ ROTURAS = [
     # Revisor, b9: los dos que no se rompian nunca.
     ("todo_es_la_raiz", "test_powershell_lo_bueno_y_lo_literal_pasan"),
     _w("identidad", "test_fuera_de_windows_los_prefijos_no_se_tocan"),
+    # Respuesta a la PARADA 2: cada condicion nueva, rota; y el otro sentido, canonizando de mas.
+    _w("una_lectura", "test_las_barras_dobladas_de_la_herramienta_se_niegan"),
+    _w("todo_es_la_raiz", "test_las_barras_dobladas_de_la_herramienta_se_niegan"),
+    ("sin_tilde_de_pila", "test_tilde_mas_y_tilde_menos_de_bash"),
+    ("todo_es_la_raiz", "test_tilde_mas_y_tilde_menos_de_bash"),
+    _w("sin_proc_cygdrive", "test_proc_cygdrive_es_la_unidad"),
+    _w("todo_es_la_raiz", "test_proc_cygdrive_es_la_unidad"),
+    _w("sin_unidad_sin_barra", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
+    _w("todo_es_la_raiz", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
+    ("sin_proveedor", "test_el_proveedor_filesystem_de_powershell"),
+    ("todo_es_la_raiz", "test_el_proveedor_filesystem_de_powershell"),
 ]
 
 

@@ -47,6 +47,15 @@ material adicional, `holdout/1` y la cruda de v7). Las salidas completas, en
 
 ### §0.a · El diagnóstico del 2026-10-24: existe, dice eso, y la cifra se confirma
 
+> **CORRECCIÓN (2026-10-24, `trabajo/guardia-alias`, respuesta del consultor a la PARADA 2,
+> punto 0).** Las 123 de abajo son lecturas que la guardia DEJABA PASAR, medidas en memoria. De las
+> 99 de a/d, 18 (`\\?\`, UNC a `localhost` y `\\?\UNC\`, en Bash `cat` y Monitor) no abren el
+> fichero tal como las escribe `medir_k.py`. En §3.4 di como causa la comilla doble de bash; es
+> otra: la herramienta Bash de Claude Code vuelve `\\` una sola barra ANTES de bash, también entre
+> comillas simples (revisor, a1). Escritas con las barras dobladas, sí abren, y la guardia, que
+> veía el texto sin esa capa, las dejaba pasar (b1). Desde la PARADA 2 la guardia decide las dos
+> lecturas (§11). El cuerpo de abajo queda como estaba.
+
 - Los cinco ficheros existen en el scratchpad de la sesión anterior y están copiados en
   `docs/validation/anexos/GUARDIA-ALIAS/diagnostico/` (DIAGNOSTICO-K.md, tabla.md, medir_k.py,
   existe.py, contar.py). La carpeta trae además el repo inventado `Bot v3 prueba` (NO se copia:
@@ -576,6 +585,8 @@ dice que esas formas «pasan» la guardia, y era verdad: no lleva recuadro.
   herramienta Bash deshace antes de bash, `~+` y `~-`, `/proc/cygdrive/c/`, la ruta relativa a la
   unidad `C:<rel>`, la ruta de proveedor de PowerShell `FileSystem::`, las llaves de bash y las URL
   `file:///`. Todas pasaban ya en `main`. Las decide el consultor (§8).
+- **Una unidad de `subst` o mapeada** hacia una carpeta del disco del repo: `C:x` en esa otra
+  unidad se deja pasar (§11.1), y `realpath` resuelve `subst` solo si la ruta es absoluta.
 - **Un alias del equipo** que no sea `gethostname()` ni su parte corta (un nombre DNS propio, una
   IP de la red local) se niega como «otra máquina»: negar de más.
 - **En Linux** la CI no prueba el código de prefijos ni de 8.3 (punto 6, declarado).
@@ -801,8 +812,99 @@ Las comillas y escapes de bash sobre la raíz (punto 9), probados en hold, marzo
 
 El repo inventado sigue en `C:\Users\USER\AppData\Local\Temp\claude\C--Users-USER-Desktop-Bot-v3\76226a3b-7f68-4e43-9153-3301b3c01892\scratchpad\rev9y5cbpqd\`, fuera del repositorio; solo lleva ficheros falsos.
 
+## §10 · Respuesta del consultor a la PARADA 2 (2026-10-24), copiada tal cual
+
+> Respuesta del consultor a la PARADA 2 de trabajo/guardia-alias (2026-10-24). Cópiala al informe, en su sección.
+>
+> 0. SÍ: la guardia decide sobre el texto tal como llega y también con un nivel de \ menos (lo que hace la herramienta Bash antes de llegar a bash), en Bash y en Monitor, y niega si cualquiera de las dos lecturas llega a algo protegido. Tests en los dos sentidos con las 18 filas de barras dobladas (negadas) y su equivalente sobre src/ (pasando). Corrige en el informe la causa que diste en la fase 0, con un recuadro.
+> 1. SÍ, en esta rama: ~+ y ~-, /proc/cygdrive/, C:<rel> (unidad sin barra, relativa al directorio de esa unidad) y el proveedor FileSystem:: de PowerShell, cada una con su línea de condición y su test en los dos sentidos; lo que no se pueda canonizar, negado como en el punto 2 de la respuesta 1. La ingesta espera: es mejor que entre con la guardia cerrada.
+> 2. SÍ: las llaves de bash ({a,b} que componen una ruta) y las URL file:/// van a Technical Debt, juntas con la deuda C (rutas compuestas), no a K.
+> 3. Con el punto 1 hecho aquí, la línea PRIORITARIA de G.1 y la parte de K que paga esta rama salen en el commit del contrato del cierre. Lo que queda de K (exigir_sin_crudo, los tests de un clon de comparar-con-main) sigue, y la línea de las llaves y file:/// entra en Technical Debt. Da la cifra de PROJECT_STATE simulada con eso; si pasa de 25.000, PARADA.
+>
+> Después: make check sellado, push a fix/guardia-alias y CI de Linux con un gh run view suelto, y una pasada CORTA del revisor solo sobre lo nuevo (los puntos 0 y 1, más sus cinco formas de antes, ahora negadas), con su informe pegado al final. Rama lista para revisión, NO cerrada.
+
+## §11 · La respuesta a la PARADA 2, punto por punto
+
+### §11.1 · El código (`.claude/hooks/guardia.py`)
+
+| punto | pieza | línea | qué hace |
+|---|---|---|---|
+| 0 | `_lecturas_de_la_herramienta` y su uso en `decidir` | 1125, 4447 | Bash y Monitor se deciden sobre el texto tal como llega y, si lleva `\\`, también con un nivel de `\` menos (cada `\\` es una `\`, como lo deja la herramienta Bash); se niega si cualquiera de las dos lecturas llega a algo protegido. La segunda lectura va con un contexto nuevo |
+| 1 | `_UNIDAD_MSYS` | 1087 | `/proc/cygdrive/c/…` es `C:/…`, como `/c/` y `/cygdrive/c/` |
+| 1 | `_tilde_de_bash` (en `_absoluta` y en `resolver`, 1070) | 1092 | `~+` es el directorio de trabajo; `~-` (`$OLDPWD`) y `~+N`/`~-N` (la pila de `pushd`) no se saben al inspeccionar: `_no_canonizable`, `R_ALIAS` |
+| 1 | `_relativa_a_unidad` (en `_absoluta`, 1140) | 1103 | solo Windows: `C:x` con la unidad del directorio de trabajo cuelga de él; con la unidad del repo pero otro directorio de trabajo, `_no_canonizable`; con otra unidad que la del repo, se deja (no puede caer bajo la raíz) |
+| 1 | `_sin_proveedor` (en PowerShell, 4342) | 1119 | `FileSystem::` y `Microsoft.PowerShell.Core\FileSystem::`, en cualquier caja, se quitan antes de canonizar |
+
+**Una decisión mía, declarada:** la unidad sin barra de OTRA unidad que la del repositorio
+(`D:x`) se deja pasar en vez de negarse. Una ruta en otra unidad no puede caer bajo la raíz, que
+el punto 2 de la respuesta 1 pone como condición («y pueda caer bajo la raíz», el OBJETIVO). Y
+negarla negaría cualquier guion con un literal como `"x: %d"`, porque `analizar_codigo` pasa
+cada literal por `_absoluta`. Riesgo: una unidad de `subst` que apunte a una carpeta del disco del
+repo (§5).
+
+### §11.2 · Los tests (`tests/unit/test_guardia_alias.py`, 50 tests, 15,6 s)
+
+| test | qué exige | sistema |
+|---|---|---|
+| `test_las_barras_dobladas_de_la_herramienta_se_niegan` | las 18 filas de b1 con las barras dobladas (`\\?\`, UNC a `localhost` y `\\?\UNC\`, entre comillas simples y dobles, en Bash y Monitor, en los tres sitios): la regla del sitio; su equivalente sobre `src/`: pasa | Windows |
+| `test_tilde_mas_y_tilde_menos_de_bash` | `~+` hacia el holdout en Bash y Monitor: `R_HOLDOUT`; `~+` hacia `src/`: pasa; `~-` y `~+1`: `R_ALIAS`; `~` sigue siendo la casa: pasa | los dos |
+| `test_proc_cygdrive_es_la_unidad` | `/proc/cygdrive/c/<raíz>` hacia los tres sitios: la regla del sitio; hacia `src/`: pasa | Windows |
+| `test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad` | `C:<rel>` hacia los tres sitios en las 6 herramientas: la regla del sitio; hacia `src/`: pasa; `Z:x\y.txt`: pasa | Windows |
+| `test_el_proveedor_filesystem_de_powershell` | `FileSystem::`, `Microsoft.PowerShell.Core\FileSystem::` y `filesystem::` hacia los tres sitios: la regla; hacia `src/`: pasa | los dos |
+| `test_roto_a_proposito` (+10, 24 en total) | ver abajo | 4 en los dos, 6 solo Windows |
+
+Las 96 decisiones de esos cinco tests, una por línea (forma, comillas, herramienta, regla), en
+`anexos/GUARDIA-ALIAS/parada2/decisiones.txt`: 70 negadas con su regla y 26 que pasan, las 26
+sobre `src/` o fuera de la raíz.
+
+**Rotos a propósito, en los dos sentidos** (`fase1/roturas.txt`, 24 líneas, todas «falla»). Por
+cada condición nueva, una rotura que la quita y otra que canoniza de más (`todo_es_la_raiz`):
+
+| condición | sin ella | canonizando de más |
+|---|---|---|
+| las dos lecturas | `\\?\ · ' · Bash: pasa` | `\\?\ · ' · Bash: R_HOLDOUT` (sobre `src/`) |
+| `~+` y `~-` | `caso 0 (~+ hacia el holdout, Bash): pasa` | `caso 2 (~+ hacia src, Bash): R_HOLDOUT` |
+| `/proc/cygdrive/` | `caso 0 (marzo por /proc/cygdrive): pasa` | `caso 0 (…): R_HOLDOUT, se esperaba R_SIN_ABRIR` |
+| `C:<rel>` | `caso 0 (marzo · Bash cat): pasa` | `caso 0 (…): R_HOLDOUT, se esperaba R_SIN_ABRIR` |
+| `FileSystem::` | `caso 0 (FileSystem:: marzo): pasa` | `caso 0 (…): R_HOLDOUT, se esperaba R_SIN_ABRIR` |
+
+**En Linux van con `skip`** las de barras dobladas, `/proc/cygdrive/` y `C:<rel>`, y sus 6
+roturas. Corren en los dos sistemas `~+`/`~-` y `FileSystem::`, con sus 4 roturas.
+
+**Las cinco formas del revisor, ahora:** b1 a b5 se niegan con la regla del sitio (b2 con `~-`, con
+`R_ALIAS`). Medido en memoria sobre el repo inventado del test; nada se abrió del repo real.
+
+### §11.3 · Lo demás
+
+- **Regresión:** las tres suites de antes, 687 passed (223 s, con otras pruebas a la vez en la
+  máquina). `PROJECT_STATE.md`: 1.690 funciones de test (+5).
+- **La tabla del diagnóstico** (`medir_k.py` otra vez): idéntica a `fase1/tabla-despues.md`. Sus
+  18 filas de a/d siguen pasando porque, TAL COMO están escritas, la herramienta las deja en
+  `\?\…` y no abren; con las barras dobladas, que sí abren, se niegan (el test de arriba).
+- **El recuadro** de la causa de la fase 0, en §0.a.
+- **Las llaves y `file:///`** (punto 2): a Technical Debt, junto a la deuda C, en el commit del
+  contrato del cierre (abajo); no se tocan aquí.
+
+### §11.4 · Para el commit del contrato del cierre (sustituye a §4, puntos 1 a 4)
+
+1. **K** pierde su parte PRIORITARIA y queda como en §4, punto 1 (`exigir_sin_crudo` y los tests de
+   un clon de comparar-con-main).
+2. **G.1:** sale el punto «PRIORITARIO, porque lee material protegido» (HOJA-DE-RUTA.md:428-431).
+3. **Technical Debt:** sale la línea del docstring (PROJECT_STATE.md:146, pagada en 38f03c4) y
+   entran dos:
+
+   > - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza
+   >   OSError la guardia compara la forma sin prefijos; Grep y `rg` sobre una carpeta que contiene
+   >   la raíz se deciden como sobre la raíz, suponiendo, sin medirlo, que respetan su `.gitignore`.
+   > - La guardia no expande las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) ni mira las
+   >   URL `file:///` (urllib, curl), que leen material protegido en `main` y en la rama
+   >   (GUARDIA-ALIAS.md §9, b6 y b7): van con la deuda C de la Next Action (rutas compuestas).
+
+4. **Bytes**, simulado en memoria (`anexos/GUARDIA-ALIAS/parada2/simular_ps.py`) sobre el
+   PROJECT_STATE de la rama: 24.186 → **24.007**, 993 de margen bajo 25.000. K pierde 455 bytes y
+   Technical Debt gana 276. Cabe: no hace falta PARADA.
+
 ## Estado
 
-Rama lista para revisión, NO cerrada. Con la PARADA 2 abierta (§8): el revisor encontró cinco
-formas que bloquean el OBJETIVO y dos que importan, todas abiertas ya en `main`; lo que decida
-el consultor sobre ellas cambia el texto de K del cierre (§8, punto 3).
+EN CURSO: la respuesta a la PARADA 2 aplicada (§11); falta el sello, la CI de Linux y la
+pasada corta del revisor.

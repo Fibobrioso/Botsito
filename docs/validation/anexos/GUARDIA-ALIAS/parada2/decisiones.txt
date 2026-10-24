@@ -1,0 +1,96 @@
+dobladas | \\?\ | ' | Bash | R_SIN_ABRIR
+dobladas | \\?\ | ' | Monitor | R_SIN_ABRIR
+dobladas | \\?\ | " | Bash | R_SIN_ABRIR
+dobladas | \\?\ | " | Monitor | R_SIN_ABRIR
+dobladas | UNC localhost | ' | Bash | R_SIN_ABRIR
+dobladas | UNC localhost | ' | Monitor | R_SIN_ABRIR
+dobladas | UNC localhost | " | Bash | R_SIN_ABRIR
+dobladas | UNC localhost | " | Monitor | R_SIN_ABRIR
+dobladas | \\?\UNC\localhost | ' | Bash | R_SIN_ABRIR
+dobladas | \\?\UNC\localhost | ' | Monitor | R_SIN_ABRIR
+dobladas | \\?\UNC\localhost | " | Bash | R_SIN_ABRIR
+dobladas | \\?\UNC\localhost | " | Monitor | R_SIN_ABRIR
+dobladas | \\?\ | ' | Bash | R_HOLDOUT
+dobladas | \\?\ | ' | Monitor | R_HOLDOUT
+dobladas | \\?\ | " | Bash | R_HOLDOUT
+dobladas | \\?\ | " | Monitor | R_HOLDOUT
+dobladas | UNC localhost | ' | Bash | R_HOLDOUT
+dobladas | UNC localhost | ' | Monitor | R_HOLDOUT
+dobladas | UNC localhost | " | Bash | R_HOLDOUT
+dobladas | UNC localhost | " | Monitor | R_HOLDOUT
+dobladas | \\?\UNC\localhost | ' | Bash | R_HOLDOUT
+dobladas | \\?\UNC\localhost | ' | Monitor | R_HOLDOUT
+dobladas | \\?\UNC\localhost | " | Bash | R_HOLDOUT
+dobladas | \\?\UNC\localhost | " | Monitor | R_HOLDOUT
+dobladas | \\?\ | ' | Bash | R_CUARENTENA
+dobladas | \\?\ | ' | Monitor | R_CUARENTENA
+dobladas | \\?\ | " | Bash | R_CUARENTENA
+dobladas | \\?\ | " | Monitor | R_CUARENTENA
+dobladas | UNC localhost | ' | Bash | R_CUARENTENA
+dobladas | UNC localhost | ' | Monitor | R_CUARENTENA
+dobladas | UNC localhost | " | Bash | R_CUARENTENA
+dobladas | UNC localhost | " | Monitor | R_CUARENTENA
+dobladas | \\?\UNC\localhost | ' | Bash | R_CUARENTENA
+dobladas | \\?\UNC\localhost | ' | Monitor | R_CUARENTENA
+dobladas | \\?\UNC\localhost | " | Bash | R_CUARENTENA
+dobladas | \\?\UNC\localhost | " | Monitor | R_CUARENTENA
+dobladas | \\?\ | ' | Bash | pasa
+dobladas | \\?\ | ' | Monitor | pasa
+dobladas | \\?\ | " | Bash | pasa
+dobladas | \\?\ | " | Monitor | pasa
+dobladas | UNC localhost | ' | Bash | pasa
+dobladas | UNC localhost | ' | Monitor | pasa
+dobladas | UNC localhost | " | Bash | pasa
+dobladas | UNC localhost | " | Monitor | pasa
+dobladas | \\?\UNC\localhost | ' | Bash | pasa
+dobladas | \\?\UNC\localhost | ' | Monitor | pasa
+dobladas | \\?\UNC\localhost | " | Bash | pasa
+dobladas | \\?\UNC\localhost | " | Monitor | pasa
+caso 0 | ~+ hacia el holdout, Bash | R_HOLDOUT
+caso 1 | ~+ hacia el holdout, Monitor | R_HOLDOUT
+caso 2 | ~+ hacia src, Bash | pasa
+caso 3 | ~+ hacia src, Monitor | pasa
+caso 4 | ~- hacia el holdout | R_ALIAS
+caso 5 | ~+1 | R_ALIAS
+caso 6 | ~ sigue siendo la casa | pasa
+caso 0 | marzo por /proc/cygdrive | R_SIN_ABRIR
+caso 1 | holdout por /proc/cygdrive | R_HOLDOUT
+caso 2 | cruda por /proc/cygdrive | R_CUARENTENA
+caso 3 | src por /proc/cygdrive | pasa
+caso 0 | marzo · Bash cat | R_SIN_ABRIR
+caso 1 | marzo · Read | R_SIN_ABRIR
+caso 2 | marzo · Grep | R_SIN_ABRIR
+caso 3 | marzo · PowerShell Get-Content | R_SIN_ABRIR
+caso 4 | marzo · Monitor cat | R_SIN_ABRIR
+caso 5 | marzo · python guion | R_SIN_ABRIR
+caso 0 | holdout · Bash cat | R_HOLDOUT
+caso 1 | holdout · Read | R_HOLDOUT
+caso 2 | holdout · Grep | R_HOLDOUT
+caso 3 | holdout · PowerShell Get-Content | R_HOLDOUT
+caso 4 | holdout · Monitor cat | R_HOLDOUT
+caso 5 | holdout · python guion | R_HOLDOUT
+caso 0 | cruda · Bash cat | R_CUARENTENA
+caso 1 | cruda · Read | R_CUARENTENA
+caso 2 | cruda · Grep | R_CUARENTENA
+caso 3 | cruda · PowerShell Get-Content | R_CUARENTENA
+caso 4 | cruda · Monitor cat | R_CUARENTENA
+caso 5 | cruda · python guion | R_CUARENTENA
+caso 0 | src · Bash cat | pasa
+caso 1 | src · Read | pasa
+caso 2 | src · Grep | pasa
+caso 3 | src · PowerShell Get-Content | pasa
+caso 4 | src · Monitor cat | pasa
+caso 5 | src · python guion | pasa
+caso 0 | otra unidad | pasa
+caso 0 | FileSystem:: marzo | R_SIN_ABRIR
+caso 1 | FileSystem:: holdout | R_HOLDOUT
+caso 2 | FileSystem:: cruda | R_CUARENTENA
+caso 3 | FileSystem:: src | pasa
+caso 4 | Microsoft.PowerShell.Core\FileSystem:: marzo | R_SIN_ABRIR
+caso 5 | Microsoft.PowerShell.Core\FileSystem:: holdout | R_HOLDOUT
+caso 6 | Microsoft.PowerShell.Core\FileSystem:: cruda | R_CUARENTENA
+caso 7 | Microsoft.PowerShell.Core\FileSystem:: src | pasa
+caso 8 | filesystem:: marzo | R_SIN_ABRIR
+caso 9 | filesystem:: holdout | R_HOLDOUT
+caso 10 | filesystem:: cruda | R_CUARENTENA
+caso 11 | filesystem:: src | pasa

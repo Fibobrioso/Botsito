@@ -66,3 +66,14 @@ aquí van juntos, tal cual. Copiado tal cual:
 > PROJECT_STATE: margen de 814 bytes. En el cierre salen la parte de K que paga esta rama y la línea del punto 7; si aun así no cabe, PARADA antes de recortar nada más.
 >
 > Sigue con las fases 1 y 2 y la entrega, como dice el encargo.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-24), tal cual
+
+> Respuesta del consultor a la PARADA 2 de trabajo/guardia-alias (2026-10-24). Cópiala al informe, en su sección.
+>
+> 0. SÍ: la guardia decide sobre el texto tal como llega y también con un nivel de \ menos (lo que hace la herramienta Bash antes de llegar a bash), en Bash y en Monitor, y niega si cualquiera de las dos lecturas llega a algo protegido. Tests en los dos sentidos con las 18 filas de barras dobladas (negadas) y su equivalente sobre src/ (pasando). Corrige en el informe la causa que diste en la fase 0, con un recuadro.
+> 1. SÍ, en esta rama: ~+ y ~-, /proc/cygdrive/, C:<rel> (unidad sin barra, relativa al directorio de esa unidad) y el proveedor FileSystem:: de PowerShell, cada una con su línea de condición y su test en los dos sentidos; lo que no se pueda canonizar, negado como en el punto 2 de la respuesta 1. La ingesta espera: es mejor que entre con la guardia cerrada.
+> 2. SÍ: las llaves de bash ({a,b} que componen una ruta) y las URL file:/// van a Technical Debt, juntas con la deuda C (rutas compuestas), no a K.
+> 3. Con el punto 1 hecho aquí, la línea PRIORITARIA de G.1 y la parte de K que paga esta rama salen en el commit del contrato del cierre. Lo que queda de K (exigir_sin_crudo, los tests de un clon de comparar-con-main) sigue, y la línea de las llaves y file:/// entra en Technical Debt. Da la cifra de PROJECT_STATE simulada con eso; si pasa de 25.000, PARADA.
+>
+> Después: make check sellado, push a fix/guardia-alias y CI de Linux con un gh run view suelto, y una pasada CORTA del revisor solo sobre lo nuevo (los puntos 0 y 1, más sus cinco formas de antes, ahora negadas), con su informe pegado al final. Rama lista para revisión, NO cerrada.

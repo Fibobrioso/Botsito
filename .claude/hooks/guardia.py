@@ -1067,7 +1067,7 @@ def resolver(p: Palabra, ctx: Contexto, lex: Lexico, max_valores: int = 256) -> 
         if len(valores) > max_valores:
             raise DinamicoError(p.texto)
     if valores and valores[0].startswith("~"):
-        valores = [os.path.expanduser(v) for v in valores]
+        valores = [_tilde_de_bash(v, ctx.cwd) for v in valores]  # `~+`, `~-` (guardia-alias)
     if not p.glob:
         return valores
     expandidos: list[str] = []
@@ -1080,13 +1080,64 @@ def resolver(p: Palabra, ctx: Contexto, lex: Lexico, max_valores: int = 256) -> 
     return expandidos
 
 
+# Respuesta del consultor a la PARADA 2 de `trabajo/guardia-alias` (2026-10-24), punto 1: formas
+# de la raiz que el revisor encontro abiertas (GUARDIA-ALIAS.md §9, b2 a b5), cada una con su
+# linea: `/proc/cygdrive/c/` (el alias de unidad de MSYS, como `/c/` y `/cygdrive/c/`), `~+` y
+# `~-` de bash (`$PWD` y `$OLDPWD`), la unidad sin barra `C:x` y `FileSystem::` de PowerShell.
+_UNIDAD_MSYS = re.compile(r"^/(?:proc/cygdrive/|cygdrive/)?([a-zA-Z])(/.*)?$")
+_TILDE_DE_PILA = re.compile(r"^~([+-])(\d*)(?=[\\/]|$)")
+_PROVEEDOR_FS = re.compile(r"(?i)^(?:microsoft\.powershell\.core\\)?filesystem::")
+
+
+def _tilde_de_bash(ruta: str, cwd: str) -> str:
+    """`~` y `~usuario` por `expanduser`; `~+` es el directorio de trabajo; `~-` (`$OLDPWD`) y
+    `~+N`/`~-N` (la pila de `pushd`) no se saben al inspeccionar: `_no_canonizable`."""
+    m = _TILDE_DE_PILA.match(ruta)
+    if not m:
+        return os.path.expanduser(ruta) if ruta.startswith("~") else ruta
+    if m.group(1) == "+" and not m.group(2):
+        return cwd + ruta[m.end() :]
+    return _no_canonizable(ruta)
+
+
+def _relativa_a_unidad(ruta: str, cwd: str) -> str:
+    """En Windows, `C:x` (la unidad sin barra) es relativa al directorio de ESA unidad: si es la
+    del directorio de trabajo, cuelga de el; si es otra unidad que la del repositorio, no puede
+    caer bajo la raiz y se deja; si es la del repositorio pero no la del trabajo, el directorio de
+    esa unidad no se sabe: `_no_canonizable`."""
+    m = re.match(r"^([a-zA-Z]):(?![\\/])(.*)$", ruta, re.S)
+    if os.name != "nt" or not m:
+        return ruta
+    unidad, resto = m.group(1).lower(), m.group(2)
+    if cwd[1:2] == ":" and unidad == cwd[0].lower():
+        return os.path.join(cwd, resto)
+    if unidad != str(RAIZ)[0].lower():
+        return ruta
+    return _no_canonizable(ruta)
+
+
+def _sin_proveedor(ruta: str) -> str:
+    """PowerShell: `FileSystem::C:\\x` y `Microsoft.PowerShell.Core\\FileSystem::C:\\x` son
+    `C:\\x`."""
+    return _PROVEEDOR_FS.sub("", ruta)
+
+
+def _lecturas_de_la_herramienta(texto: str) -> list[str]:
+    """El texto de un comando tal como llega y con un nivel de `\\` menos: la herramienta Bash de
+    Claude Code vuelve `\\\\` una sola barra ANTES de bash, tambien entre comillas simples
+    (revisor de `trabajo/guardia-alias`, a1 y b1; respuesta a la PARADA 2, punto 0)."""
+    menos = texto.replace("\\\\", "\\")
+    return [texto] if menos == texto else [texto, menos]
+
+
 def _absoluta(ruta: str, cwd: str) -> str:
     r = ruta.strip()
-    m = re.match(r"^/(?:cygdrive/)?([a-zA-Z])(/.*)?$", r)
+    m = _UNIDAD_MSYS.match(r)
     if m:
         r = f"{m.group(1).upper()}:{m.group(2) or '/'}"
     elif r.startswith("~"):
-        r = os.path.expanduser(r)
+        r = _tilde_de_bash(r, cwd)
+    r = _relativa_a_unidad(r, cwd)
     relativa = not os.path.isabs(r) or re.match(r"^[\\/](?![\\/])", r)
     if relativa and not re.match(r"^[a-zA-Z]:", r):
         r = os.path.join(cwd, r)
@@ -4288,7 +4339,7 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
     for t in trozos:
         if not t or t.startswith("-") or t.startswith("$"):
             continue
-        ruta = _absoluta(t, ctx.cwd)
+        ruta = _absoluta(_sin_proveedor(t), ctx.cwd)
         motivo = ctx.politica.motivo_fichero(ruta) or (
             ctx.politica.motivo_dentro_de_zona(ruta) if os.path.isdir(ruta) else None
         )
@@ -4392,8 +4443,9 @@ def decidir(evento: dict[str, object], politica: Politica) -> str | None:
             ctx = Contexto(politica, cwd)
             if herramienta == "PowerShell":
                 analizar_powershell(comando, ctx)
-            else:
-                analizar_bash(comando, ctx)
+            else:  # las dos lecturas: se niega si cualquiera llega a algo protegido
+                for i, lectura in enumerate(_lecturas_de_la_herramienta(comando)):
+                    analizar_bash(lectura, ctx if i == 0 else Contexto(politica, cwd))
             return None
     except BloqueoError as exc:
         return str(exc)
