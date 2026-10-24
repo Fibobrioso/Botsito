@@ -94,7 +94,7 @@ para el log de `make check`, Edit para `PROJECT_STATE.md` y, en la rama, para
 7. `git push --atomic origin main <tag>`, `git ls-remote --tags`, y la CI del commit de estado
    (`HEAD`) hasta `"conclusion": "success"`. Cómo se espera (el mensaje de la guardia,
    `trabajo/guardia-ci`): una consulta suelta con `gh run view <run>`; si hay que esperar, una
-   espera sin consulta (`sleep` solo, o en segundo plano) y despues otra consulta suelta.
+   espera sin consulta (`sleep` en segundo plano) y despues otra consulta suelta.
 8. Solo con la CI en verde: `git branch -d <rama>` y, si existe, el borrado de `fix/<rama>` en
    `origin` (`RITUAL.md`, ultimo paso).
 

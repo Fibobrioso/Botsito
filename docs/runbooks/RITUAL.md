@@ -319,8 +319,8 @@ curl -s --ssl-no-revoke https://api.github.com/repos/Fibobrioso/Botsito/commits/
 → **`--ssl-no-revoke` hace falta en esta máquina**; sin él el `curl` falla.
 → **`"status": "in_progress"` o `"queued"`:** la CI sigue corriendo. Se espera y se repite la misma
 línea. Cómo se espera (el mensaje de la guardia, `trabajo/guardia-ci`): una consulta suelta con
-`gh run view <run>`; si hay que esperar, una espera sin consulta (`sleep` solo, o en segundo
-plano) y despues otra consulta suelta. Nunca un bucle ni un guion que consulte: la guardia lo niega.
+`gh run view <run>`; si hay que esperar, una espera sin consulta (`sleep` en segundo plano) y
+despues otra consulta suelta. Nunca un bucle ni un guion que consulte: la guardia lo niega.
 → **`"status": "422"`:** no es un fallo de la CI. Es GitHub diciendo que **no conoce ese commit**, o
 sea que **el push no llegó**.
 → **Puerta:** `"status": "completed"` con `"conclusion": "success"`. La CI que cuenta es la del

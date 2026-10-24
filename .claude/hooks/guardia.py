@@ -3654,7 +3654,7 @@ R_ESPERA_CI = (
 )
 COMO_ESPERAR_CI = (
     "Como reescribirlo: una consulta suelta con `gh run view <run>`; si hay que esperar, una "
-    "espera sin consulta (`sleep` solo, o en segundo plano) y despues otra consulta suelta."
+    "espera sin consulta (`sleep` en segundo plano) y despues otra consulta suelta."
 )
 # Las rutas de la API que dicen si la CI ha terminado (respuesta a la fase 0, punto 1: las tres
 # del encargo y `actions/jobs`, `commits/<sha>/status` y `statuses`). Se buscan tras deshacer los

@@ -1131,7 +1131,46 @@ consulta es suelta. Va a la línea de Technical Debt del cierre (§5.3).
 | `7926d57` (D5) | exit 0, 2843 passed in 932.78s, `SELLO` sobre el árbol `75a18b1a…` (`= 7926d57^{tree}`, revisor) | 297 MiB |
 | el de los hallazgos del revisor | su `make check` y su run van en el mensaje de entrega: un commit no puede llevar su propio sello ni su propia CI | |
 
+## Orden de cierre (consultor, 2026-10-23)
+
+Copiada tal cual. Llegó como texto pegado: la sesión no puede cargar la skill `cerrar-rama` desde
+él (`cerrar-rama/SKILL.md:20-22`), así que lee su fichero y lo sigue igual.
+
+> Orden de cierre de trabajo/guardia-ci (consultor, 2026-10-23). Tag: stable/F38b-guardia-ci. Cópiala al informe, en una sección «Orden de cierre».
+>
+> Decisiones sobre lo pendiente:
+> 1. b7: el texto pasa a «una espera sin consulta (sleep en segundo plano) y después otra consulta suelta», igual en los cuatro sitios: el mensaje de la negativa en guardia.py, entregar-rama, cerrar-rama y RITUAL.md:320. Va en un commit previo al cierre, con su make check sellado (línea PICO DE MEMORIA) y su CI de Linux por fix/guardia-ci, consultada con gh run view suelto (solo el fallo aceptado). Si un test fija el texto viejo, se actualiza en el mismo commit. Si algo más cambia, PARADA.
+> 2. b2 (aiohttp): la lista cerrada de vías de salida NO se amplía. Queda como riesgo residual, con su test y en la línea de §5.3, tal como está.
+>
+> Commit del contrato (punto Y de RITUAL), además de lo de siempre:
+> - Lo preparado en §3: V con «(A.4, HECHA el 2026-10-22)», el «Depende de» de R4.1 en la hoja de ruta tal como está en §3, y la línea de Technical Debt del guion de CI fuera, a HISTORIA como PAGADA con su evidencia.
+> - La línea nueva de Technical Debt de §5.3, tal cual.
+> - G.1 no recibe nada. La línea PRIORITARIA del alias de la raíz (K) sigue como está: es la siguiente del carril de guardias.
+> - PROJECT_STATE bajo 25.000 bytes: da la cifra final. Si no cabe, PARADA antes de recortar nada.
+>
+> Hallazgos para ERRORES-RECURRENTES (fila de trabajo/guardia-ci):
+> - (importa, del consultor) El encargo afirmó que la guardia lee los tests que se le pasan a pytest. Lo copié de la cabecera de test_guardia_ffmpeg.py sin medirlo, y guardia.py:1989 se los salta. Lección: lo que se afirma del mecanismo de la guardia se mide con decidir o se escribe como «verifica que…»; nunca se copia de un comentario.
+> - (menor, del consultor) La respuesta a la PARADA 3 decía «Opción (a)» y describía la (b); la sesión aplicó lo descrito, que era lo que yo quería. Lección: una opción se cita por su texto, no solo por su letra.
+> - (menor, del consultor) Fijé «sleep solo» como vía buena sin medir que Claude Code bloquea un sleep en primer plano (b7). Lección: la vía que se propone en un mensaje de negativa se prueba antes de escribirla.
+> - (importa, de la sesión, cazado por el revisor) La regla nueva negaba rg -n "gh run watch" docs/…, que pasaba en main (b5). Lección para la sesión: después de cambiar la guardia, se vuelven a pasar por decidir las formas de lectura que pasaban en main (programas de datos), no solo las de la regla.
+> - Lo bueno, para el registro: la fase 0 destapó Monitor fuera del matcher y otras siete herramientas que leen ficheros locales, y quedaron cerradas por matcher y por permisos, probado en vivo y sin reiniciar.
+>
+> Aparte: el worktree de otra sesión que salió en git worktree list (…/scratchpad/wt-ci, en e7df30b) no se toca en el cierre. En el informe final dime si e7df30b existe en algún ref de este repo (git branch -a --contains e7df30b y git log --all --oneline | grep e7df30b, sin consultar nada más).
+>
+> Después del cierre: CI de main sobre el HEAD nuevo, consultada con gh run view suelto, y el informe final con main, tag, run y bytes de PROJECT_STATE. Siguiente tag: F38c, que es el de la ingesta de la sesión 5.
+
+### El commit previo de b7 (punto 1)
+
+El texto nuevo, idéntico en los cuatro sitios: «una espera sin consulta (`sleep` en segundo plano)
+y despues otra consulta suelta» (sin tilde en «despues», como el resto del mensaje de la guardia,
+que no lleva tildes). Cambian: `COMO_ESPERAR_CI` en `.claude/hooks/guardia.py`, el paso 7 de
+`entregar-rama` y de `cerrar-rama`, y `RITUAL.md:320`; y el test que fijaba el viejo,
+`test_el_mensaje_dice_que_hacer`. Nada más.
+
 ## Estado
+
+EN CIERRE por la orden de cierre del 2026-10-23 (arriba): el commit previo de b7 y, después, el
+cierre. Lo que sigue era el estado de la entrega:
 
 LISTA PARA REVISIÓN. Fase 0 y tres PARADAS con sus respuestas aplicadas; la regla, Monitor y los
 permisos, con sus tests (16 funciones, 115 casos) y sus pruebas en vivo; la CI de Linux de

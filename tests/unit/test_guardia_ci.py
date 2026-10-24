@@ -264,7 +264,8 @@ def test_la_tabla(
 def test_el_mensaje_dice_que_hacer(g: ModuleType) -> None:
     """El texto del encargo: la consulta suelta y la espera sin consulta."""
     assert "una consulta suelta con `gh run view <run>`" in g.COMO_ESPERAR_CI
-    assert "una espera sin consulta (`sleep` solo, o en segundo plano)" in g.COMO_ESPERAR_CI
+    # El texto que fijo la orden de cierre (b7): «sleep solo» no vale, Claude Code lo bloquea.
+    assert "una espera sin consulta (`sleep` en segundo plano)" in g.COMO_ESPERAR_CI
     assert "despues otra consulta suelta" in g.COMO_ESPERAR_CI
 
 

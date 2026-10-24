@@ -65,8 +65,8 @@ de GitHub con el sha escrito tal cual), Read, Edit para el informe, y el subagen
    `failed`, la linea `SELLO`), commit.
 7. **CI de Linux, si toca la plataforma** (`RITUAL.md`): `git push origin trabajo/<x>:refs/heads/fix/<x>`,
    esperar el run (como dice el mensaje de la guardia, `trabajo/guardia-ci`: una consulta suelta
-   con `gh run view <run>`; si hay que esperar, una espera sin consulta (`sleep` solo, o en segundo
-   plano) y despues otra consulta suelta) y anotar numero, commit y resultado: con
+   con `gh run view <run>`; si hay que esperar, una espera sin consulta (`sleep` en segundo plano)
+   y despues otra consulta suelta) y anotar numero, commit y resultado: con
    `gh run list --branch fix/<x>`, o por
    la API de check-runs con el sha de 40 caracteres escrito tal cual (las ordenes de cierre del
    consultor, `docs/state/HISTORIA.md`), que vale tambien si el clasificador niega lo otro; el
