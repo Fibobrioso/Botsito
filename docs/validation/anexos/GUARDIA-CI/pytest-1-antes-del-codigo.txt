@@ -1,0 +1,566 @@
+FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF..................F [ 85%]
+FFFFFFFFFFFF                                                             [100%]
+================================== FAILURES ===================================
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N1	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N2	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: ejecutar `for i`: el bucle `for` fija `i`, que no esta en la lista (`NOMBRES_DE_ENTORNO`).
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+N3	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `for i`: el bucle `for` fija `i`, que no esta en la lista (`NOMBRES_DE_ENTORNO`).
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N3b	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N4	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N5	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N5b	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N6	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N7	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N7b	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N8c	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N8b	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: ejecutar `run=...`: el nombre de entorno `run` no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`): una variable de entorno puede cambiar que codigo se carga (`PYTHONPATH`, `BASH_ENV`, `LD_PRELOAD`...).
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: sin esa variable. Si hace falta, el consultor la anade a `NOMBRES_DE_ENTORNO` con su porque.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+N8d	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `run=...`: el nombre de entorno `run` no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`): una variable de entorno puede cambiar que codigo se carga (`PYTHONPATH`, `BASH_ENV`, `LD_PRELOAD`...).
+E   AssertionError: `un bloque de codigo `{ ... }`` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: la herramienta Bash.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+N9	PowerShell	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: `un bloque de codigo `{ ... }`` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+E   AssertionError: `un bloque de codigo `{ ... }`` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: la herramienta Bash.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+N9b	PowerShell	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: `un bloque de codigo `{ ... }`` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+E   AssertionError: `gh run view 39893825671` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: la herramienta Bash.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+N9c	PowerShell	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: `gh run view 39893825671` en PowerShell: no se admite ninguna ejecucion (su lista cerrada esta vacia).
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N10	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N11	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N12	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N13	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N14	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N15	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N16	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N17	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N18	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+N19	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+R1	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+R2	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+R3	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+R4	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+C1	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+C2	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+C3	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+C4	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+C5	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D1	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: ejecutar `$'\x67h'`: el programa se construye al ejecutarse.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D2	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `$'\x67h'`: el programa se construye al ejecutarse.
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D3	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: ejecutar `gh `: antes, en el mismo comando, va `true`.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D4	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `gh `: antes, en el mismo comando, va `true`.
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D5	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D6	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D7	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-3866\\test_la_tabla_D8_Bash_while_tr0\\repo\\knowledge\\corpus\\fuentes.yaml'
+C:\Users\USER\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-3866\\test_la_tabla_D8_Bash_while_tr0\\repo\\knowledge\\corpus\\fuentes.yaml'
+E   AssertionError: ejecutar `true`: antes, en el mismo comando, va `cd -`.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D9	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `true`: antes, en el mismo comando, va `cd -`.
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D10	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D11	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: None
+    assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+---------------------------- Captured stdout call -----------------------------
+D12	Bash	pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: None
+E   AssertionError: ejecutar `gh run view 39893825671`: antes, en el mismo comando, va `true`.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D13	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `gh run view 39893825671`: antes, en el mismo comando, va `true`.
+E   AssertionError: ejecutar `true`: antes, en el mismo comando, va `alias c=gh run view 39893825671`.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D14	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `true`: antes, en el mismo comando, va `alias c=gh run view 39893825671`.
+E   AssertionError: ejecutar `f`: antes, en el mismo comando, va `f`.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D15	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `f`: antes, en el mismo comando, va `f`.
+E   AssertionError: ejecutar `f`: antes, en el mismo comando, va `f`.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D16	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `f`: antes, en el mismo comando, va `f`.
+E   AssertionError: ejecutar `seq`: detras, en la misma tuberia, va `xargs -I{} sh -c gh run view 39893825671; sleep 30`: solo filtros que leen de la entrada estandar y no escriben ningun fichero.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D17	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `seq`: detras, en la misma tuberia, va `xargs -I{} sh -c gh run view 39893825671; sleep 30`: solo filtros que leen de la entrada estandar y no escriben ningun fichero.
+E   AssertionError: ejecutar `true`: el comando lleva una sustitucion (`$(...)`, acentos graves o `<(...)`), que corre antes que la ejecucion o a la vez.
+      Regla: encargo de `trabajo/guion-mismo-comando` (respuesta del consultor del 2026-10-07): la guardia solo deja ejecutar codigo si es SEGURO que lo que se ejecuta es lo que ella leyo al inspeccionar el comando; si no lo puede garantizar, NIEGA (RELOJ-INVIERNO.md §4.5).
+      Como reescribirlo: el guion, con la herramienta Write, y su ejecucion en OTRA llamada; delante, solo `cd`, asignaciones con valor literal, `export X=valor` o `set -e`/`-u`/`-o pipefail`; detras, en la misma tuberia, solo `head`, `tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.
+    assert 'R_EJECUCION' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + R_EJECUCION
+---------------------------- Captured stdout call -----------------------------
+D18	Bash	R_EJECUCION
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:252: AssertionError: ejecutar `true`: el comando lleva una sustitucion (`$(...)`, acentos graves o `<(...)`), que corre antes que la ejecucion o a la vez.
+E   FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-3866\\test_la_tabla_B19_Bash_git_log0\\repo\\knowledge\\corpus\\fuentes.yaml'
+C:\Users\USER\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1013: FileNotFoundError: [Errno 2] No such file or directory: 'C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-3866\\test_la_tabla_B19_Bash_git_log0\\repo\\knowledge\\corpus\\fuentes.yaml'
+E   AttributeError: module 'guardia_claude' has no attribute 'COMO_ESPERAR_CI'
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:259: AttributeError: module 'guardia_claude' has no attribute 'COMO_ESPERAR_CI'
+E   AttributeError: <module 'guardia_claude' from 'C:\\Users\\USER\\Desktop\\Bot v3\\.claude\\hooks\\guardia.py'> has no attribute 'exigir_sin_espera_a_la_ci'
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:269: AttributeError: <module 'guardia_claude' from 'C:\\Users\\USER\\Desktop\\Bot v3\\.claude\\hooks\\guardia.py'> has no attribute 'exigir_sin_espera_a_la_ci'
+E   AttributeError: module 'guardia_claude' has no attribute 'PROGRAMAS_QUE_ESPERAN'
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:283: AttributeError: module 'guardia_claude' has no attribute 'PROGRAMAS_QUE_ESPERAN'
+E   AssertionError: assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:297: AssertionError: assert 'pasa' == 'R_ESPERA_CI'
+E   AssertionError: assert 'pasa' == 'R_MONITOR'
+      
+      - R_MONITOR
+      + pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:316: AssertionError: assert 'pasa' == 'R_MONITOR'
+E   AssertionError: assert 'pasa' == 'R_MONITOR'
+      
+      - R_MONITOR
+      + pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:316: AssertionError: assert 'pasa' == 'R_MONITOR'
+E   AssertionError: assert 'pasa' == 'R_MONITOR'
+      
+      - R_MONITOR
+      + pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:316: AssertionError: assert 'pasa' == 'R_MONITOR'
+E   AssertionError: assert 'pasa' == 'R_MONITOR'
+      
+      - R_MONITOR
+      + pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:316: AssertionError: assert 'pasa' == 'R_MONITOR'
+E   AttributeError: <module 'guardia_claude' from 'C:\\Users\\USER\\Desktop\\Bot v3\\.claude\\hooks\\guardia.py'> has no attribute 'HERRAMIENTAS_DE_COMANDO'
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:324: AttributeError: <module 'guardia_claude' from 'C:\\Users\\USER\\Desktop\\Bot v3\\.claude\\hooks\\guardia.py'> has no attribute 'HERRAMIENTAS_DE_COMANDO'
+E   AssertionError: assert 'pasa' == 'R_ESPERA_CI'
+      
+      - R_ESPERA_CI
+      + pasa
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:335: AssertionError: assert 'pasa' == 'R_ESPERA_CI'
+E   AssertionError: assert ['Artifact', ...ge_text', ...] == []
+      
+      Left contains 7 more items, first extra item: 'Artifact'
+      Use -v to get more diff
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:349: AssertionError: assert ['Artifact', ...ge_text', ...] == []
+E   AssertionError: assert ['Artifact', ...ge_text', ...] == []
+      
+      Left contains 7 more items, first extra item: 'Artifact'
+      Use -v to get more diff
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_ci.py:357: AssertionError: assert ['Artifact', ...ge_text', ...] == []
+=========================== short test summary info ===========================
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N1-Bash-while true; do gh run view 39893825671 --json status; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N2-Bash-until gh run view 39893825671 --exit-status; do sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N3-Bash-for i in 1 2 3; do gh run view 39893825671; sleep 30; done-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N3b-Bash-for n in 1 2 3; do gh run view 39893825671; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N4-Bash-gh run view 39893825671 && sleep 30 && gh run view 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N5-Bash-gh run watch 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N5b-Bash-gh run watch 39893825671 --exit-status-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N6-Bash-watch -n 30 gh run view 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N7-Bash-python -c "import subprocess, time\nwhile True:\n    subprocess.run(['gh', 'run', 'view', '39893825671'])\n    time.sleep(30)"-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N7b-Bash-python -c "import subprocess,time; [(subprocess.run(['gh','run','view','39893825671']), time.sleep(30)) for _ in range(20)]"-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N8c-Bash-python "{FUERA}/esperar_run_original.py" 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N8b-Bash-uv run python "{FUERA}/esperar_run_original.py" 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N8d-Bash-sh "{FUERA}/esperar_run_original.sh" 39893825671-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N9-PowerShell-for ($i = 0; $i -lt 20; $i++) { gh run view 39893825671; Start-Sleep -Seconds 30 }-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N9b-PowerShell-while ($true) { gh run view 39893825671; Start-Sleep 30 }-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N9c-PowerShell-gh run view 39893825671; Start-Sleep 30; gh run view 39893825671-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N10-Bash-while true; do curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/check-runs | grep -o '"status": *"[^"]*"\\|"conclusion": *"[^"]*"'; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N11-Bash-while true; do gh api repos/Fibobrioso/Botsito/actions/runs/39893825671 --jq .s; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N12-Bash-timeout 600 gh run watch 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N13-Bash-gh run view 39893825671; sleep 30; gh run view 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N14-Bash-gh pr checks 12 --watch-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N15-Bash-sleep 300 && gh run view 39893825671 --json status,conclusion-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N16-Bash-sleep 300; gh run view 39893825671-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N17-Bash-until curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/check-runs | grep -q completed; do sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N18-Bash-while sleep 30; do gh run view 39893825671; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[N19-Bash-python -c "import subprocess,time\nwhile True:\n    subprocess.run(['curl','-s','https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/check-runs'])\n    time.sleep(30)"-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[R1-Bash-while true; do curl -s https://api.github.com/repos/Fibobrioso/Botsito/actions/jobs/1; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[R2-Bash-while true; do curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/status; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[R3-Bash-while true; do gh api repos/x/y/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/statuses; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[R4-Bash-while true; do curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/check-suites; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[C1-Bash-python "{FUERA}/una_consulta.py"-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[C2-Bash-sh "{FUERA}/una_consulta.sh"-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[C3-Bash-bash -c 'gh run view 39893825671'-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[C4-Bash-python -c "import subprocess; subprocess.run(['gh','run','view','39893825671'])"-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[C5-Bash-python - <<'EOF'\nimport urllib.request\nurllib.request.urlopen('https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/check-runs')\nEOF-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D1-Bash-while true; do $'gh' run view 39893825671; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D2-Bash-while true; do $'\\x67h' run view 39893825671; sleep 30; done-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D3-Bash-while true; do $"gh" run view 39893825671; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D4-Bash-while true; do "gh " run view 39893825671; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D5-Bash-while true; do "C:\\Program Files\\GitHub CLI\\gh.exe" run view 39893825671; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D6-Bash-while true; do "/c/Program Files/GitHub CLI/GH.EXE" run view 39893825671; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D7-Bash-while true; do curl -s https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee659614f1a21e2d110/check%2Druns; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D8-Bash-while true; do find . -maxdepth 0 -exec gh run view 39893825671 \\;; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D9-Bash-cd - && while true; do gh run view 39893825671; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D10-Bash-gh run view 39893825671 | tee run.log; sleep 30; gh run view 39893825671 | tee -a run.log-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D11-Bash-gh run view 39893825671 & sleep 30-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D12-Bash-gh run view 39893825671 1<>run.log; sleep 30-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D13-Bash-S="gh run view 39893825671"; while true; do $S; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D14-Bash-alias c='gh run view 39893825671'; while true; do c; sleep 30; done-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D15-Bash-f() { gh run view 39893825671; sleep 30; f; }; f-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D16-Bash-f() { gh run view 39893825671; f; }; f-pasa-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D17-Bash-seq 20 | xargs -I{} sh -c 'gh run view 39893825671; sleep 30'-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[D18-Bash-while true; do $(echo gh) run view 39893825671; sleep 30; done-R_EJECUCION-R_ESPERA_CI]
+FAILED tests/unit/test_guardia_ci.py::test_la_tabla[B19-Bash-git log --oneline -3-pasa-pasa]
+FAILED tests/unit/test_guardia_ci.py::test_el_mensaje_dice_que_hacer - Attrib...
+FAILED tests/unit/test_guardia_ci.py::test_sin_la_regla_vuelve_lo_de_antes - ...
+FAILED tests/unit/test_guardia_ci.py::test_con_la_consulta_suelta_como_espera_las_buenas_se_niegan
+FAILED tests/unit/test_guardia_ci.py::test_monitor_se_decide_como_bash - Asse...
+FAILED tests/unit/test_guardia_ci.py::test_monitor_con_una_entrada_que_no_se_reconoce_se_niega[entrada0]
+FAILED tests/unit/test_guardia_ci.py::test_monitor_con_una_entrada_que_no_se_reconoce_se_niega[entrada1]
+FAILED tests/unit/test_guardia_ci.py::test_monitor_con_una_entrada_que_no_se_reconoce_se_niega[entrada2]
+FAILED tests/unit/test_guardia_ci.py::test_monitor_con_una_entrada_que_no_se_reconoce_se_niega[entrada3]
+FAILED tests/unit/test_guardia_ci.py::test_sin_monitor_en_decidir_el_que_lee_pasaria
+FAILED tests/unit/test_guardia_ci.py::test_un_subagente_se_decide_igual - Ass...
+FAILED tests/unit/test_guardia_ci.py::test_las_herramientas_que_el_repo_no_usa_estan_denegadas
+FAILED tests/unit/test_guardia_ci.py::test_si_falta_un_nombre_o_esta_mal_escrito_se_ve

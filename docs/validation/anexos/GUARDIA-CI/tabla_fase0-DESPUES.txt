@@ -1,0 +1,40 @@
+N1	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `while`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N2	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `until`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N3	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `for`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N3b	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `for`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N4	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `sleep`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N5	negar	R_ESPERA_CI	esperar a la CI: `gh run watch`: es una espera que consulta la CI en bucle.
+N5b	negar	R_ESPERA_CI	esperar a la CI: `gh run watch`: es una espera que consulta la CI en bucle.
+N6	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `watch`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N7	negar	R_ESPERA_CI	esperar a la CI: `gh', 'run` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera o sin ella.
+N7b	negar	R_ESPERA_CI	esperar a la CI: `gh','run` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera o sin ella.
+N8	negar	R_ESPERA_CI	esperar a la CI: `gh run` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera o sin ella.
+N8b	negar	R_ESPERA_CI	esperar a la CI: `gh run` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera o sin ella.
+N9	negar	R_ESPERA_CI	esperar a la CI: PowerShell: una consulta de CI y una espera (un bucle o `Start-Sleep`).
+N9b	negar	R_ESPERA_CI	esperar a la CI: PowerShell: una consulta de CI y una espera (un bucle o `Start-Sleep`).
+N9c	negar	R_ESPERA_CI	esperar a la CI: PowerShell: una consulta de CI y una espera (un bucle o `Start-Sleep`).
+N10	negar	R_ESPERA_CI	esperar a la CI: `https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee6` y `while`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo co
+N11	negar	R_ESPERA_CI	esperar a la CI: `repos/Fibobrioso/Botsito/actions/runs/39893825671` y `while`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N12	negar	R_ESPERA_CI	esperar a la CI: `gh run watch`: es una espera que consulta la CI en bucle.
+N13	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `sleep`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N14	negar	R_ESPERA_CI	esperar a la CI: `gh pr checks`: es una espera que consulta la CI en bucle.
+N15	duda	R_ESPERA_CI	esperar a la CI: `gh run view` y `sleep`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N16	duda	R_ESPERA_CI	esperar a la CI: `gh run view` y `sleep`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N17	negar	R_ESPERA_CI	esperar a la CI: `https://api.github.com/repos/Fibobrioso/Botsito/commits/2a99e64fa00d1ff4b0c45ee6` y `until`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo co
+N18	negar	R_ESPERA_CI	esperar a la CI: `gh run view` y `while`: una consulta de CI y una espera (un bucle, `sleep`, `watch` o una funcion) en el mismo comando.
+N8c	negar	R_ESPERA_CI	esperar a la CI: `gh run` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera o sin ella.
+N8d	negar	R_ESPERA_CI	esperar a la CI: `gh run view`: consulta la CI desde un guion o codigo en linea (`bash -c`, un `.sh`), con espera o sin ella.
+N19	negar	R_ESPERA_CI	esperar a la CI: `una ruta de la API de la CI` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera o sin ella.
+B1	pasar	pasa	
+B2	pasar	pasa	
+B3	pasar	pasa	
+B4	pasar	pasa	
+B5	pasar	pasa	
+B6	pasar	pasa	
+B7	pasar	pasa	
+B8	pasar	pasa	
+B9	pasar	pasa	
+B10	pasar	pasa	
+B11	pasar	pasa	
+B12	pasar	pasa	
+B13	pasar	pasa	

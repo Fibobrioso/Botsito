@@ -1134,7 +1134,8 @@ def _casa_regla(regla: str, comando: str) -> bool:
     equivale a ` *`, un ` *` final casa tambien el comando a secas, y las asignaciones del
     principio se saltan (code.claude.com/docs/en/permissions, 2026-10-01)."""
     m = re.fullmatch(r"Bash\((.*)\)", regla)
-    assert m, regla
+    if not m:  # una herramienta entera (`Artifact`, `mcp__...`): no casa con ningun comando
+        return False
     patron = m.group(1)
     if patron.endswith(":*"):
         patron = patron[:-2] + " *"
@@ -1150,7 +1151,9 @@ def test_los_ajustes_registran_la_guardia_y_las_denegaciones() -> None:
     ajustes = json.loads(AJUSTES.read_text(encoding="utf-8"))
     entradas = ajustes["hooks"]["PreToolUse"]
     assert len(entradas) == 1
-    assert set(entradas[0]["matcher"].split("|")) == {"Read", "Grep", "Glob", "Bash", "PowerShell"}
+    # `Monitor` desde `trabajo/guardia-ci` (respuesta del consultor a la fase 0, punto 0).
+    matcher = set(entradas[0]["matcher"].split("|"))
+    assert matcher == {"Read", "Grep", "Glob", "Bash", "PowerShell", "Monitor"}
     orden = entradas[0]["hooks"][0]["command"]
     assert "PYTHONUTF8=1" in orden and ".claude/hooks/guardia.py" in orden
     deny = ajustes["permissions"]["deny"]

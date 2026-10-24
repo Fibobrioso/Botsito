@@ -1,0 +1,160 @@
+N1	Bash	R_ESPERA_CI
+.N2	Bash	R_ESPERA_CI
+.N3	Bash	R_ESPERA_CI
+.N3b	Bash	R_ESPERA_CI
+.N4	Bash	R_ESPERA_CI
+.N5	Bash	R_ESPERA_CI
+.N5b	Bash	R_ESPERA_CI
+.N6	Bash	R_ESPERA_CI
+.N7	Bash	R_ESPERA_CI
+.N7b	Bash	R_ESPERA_CI
+.N8c	Bash	R_ESPERA_CI
+.N8b	Bash	R_ESPERA_CI
+.N8d	Bash	R_ESPERA_CI
+.N9	PowerShell	R_ESPERA_CI
+.N9b	PowerShell	R_ESPERA_CI
+.N9c	PowerShell	R_ESPERA_CI
+.N10	Bash	R_ESPERA_CI
+.N11	Bash	R_ESPERA_CI
+.N12	Bash	R_ESPERA_CI
+.N13	Bash	R_ESPERA_CI
+.N14	Bash	R_ESPERA_CI
+.N15	Bash	R_ESPERA_CI
+.N16	Bash	R_ESPERA_CI
+.N17	Bash	R_ESPERA_CI
+.N18	Bash	R_ESPERA_CI
+.N19	Bash	R_ESPERA_CI
+.R1	Bash	R_ESPERA_CI
+.R2	Bash	R_ESPERA_CI
+.R3	Bash	R_ESPERA_CI
+.R4	Bash	R_ESPERA_CI
+.C1	Bash	R_ESPERA_CI
+.C2	Bash	R_ESPERA_CI
+.C3	Bash	R_ESPERA_CI
+.C4	Bash	R_ESPERA_CI
+.C5	Bash	R_ESPERA_CI
+.D1	Bash	R_ESPERA_CI
+.D2	Bash	R_ESPERA_CI
+.D3	Bash	R_ESPERA_CI
+.D4	Bash	R_ESPERA_CI
+.D5	Bash	R_ESPERA_CI
+.D6	Bash	R_ESPERA_CI
+.D7	Bash	R_ESPERA_CI
+.D8	Bash	R_ESPERA_CI
+.D9	Bash	R_ESPERA_CI
+.D10	Bash	R_ESPERA_CI
+.D11	Bash	R_ESPERA_CI
+.D12	Bash	R_ESPERA_CI
+.D13	Bash	R_ESPERA_CI
+.D14	Bash	R_ESPERA_CI
+.D15	Bash	R_ESPERA_CI
+.D16	Bash	R_ESPERA_CI
+.D17	Bash	R_ESPERA_CI
+.D18	Bash	R_ESPERA_CI
+.B1	Bash	pasa
+.B2	Bash	pasa
+.B3	Bash	pasa
+.B4	Bash	pasa
+.B5	Bash	pasa
+.B6	Bash	pasa
+.B7	Bash	pasa
+.B8	Bash	pasa
+.B9	Bash	pasa
+.B10	Bash	pasa
+.B11	Bash	pasa
+.B12	Bash	pasa
+.B13	Bash	pasa
+.B14	Bash	pasa
+.B15	Bash	pasa
+.B16	Bash	pasa
+.B17	Bash	pasa
+.B18	Bash	pasa
+.B19	Bash	pasa
+..sin la regla | N1 | pasa
+sin la regla | N2 | pasa
+sin la regla | N3 | R_EJECUCION
+sin la regla | N3b | pasa
+sin la regla | N4 | pasa
+sin la regla | N5 | pasa
+sin la regla | N5b | pasa
+sin la regla | N6 | pasa
+sin la regla | N7 | pasa
+sin la regla | N7b | pasa
+sin la regla | N8c | pasa
+sin la regla | N8b | pasa
+sin la regla | N8d | R_EJECUCION
+sin la regla | N9 | R_EJECUCION
+sin la regla | N9b | R_EJECUCION
+sin la regla | N9c | R_EJECUCION
+sin la regla | N10 | pasa
+sin la regla | N11 | pasa
+sin la regla | N12 | pasa
+sin la regla | N13 | pasa
+sin la regla | N14 | pasa
+sin la regla | N15 | pasa
+sin la regla | N16 | pasa
+sin la regla | N17 | pasa
+sin la regla | N18 | pasa
+sin la regla | N19 | pasa
+sin la regla | R1 | pasa
+sin la regla | R2 | pasa
+sin la regla | R3 | pasa
+sin la regla | R4 | pasa
+sin la regla | C1 | pasa
+sin la regla | C2 | pasa
+sin la regla | C3 | pasa
+sin la regla | C4 | pasa
+sin la regla | C5 | pasa
+sin la regla | D1 | pasa
+sin la regla | D2 | R_EJECUCION
+sin la regla | D3 | pasa
+sin la regla | D4 | R_EJECUCION
+sin la regla | D5 | pasa
+sin la regla | D6 | pasa
+sin la regla | D7 | pasa
+sin la regla | D8 | pasa
+sin la regla | D9 | R_EJECUCION
+sin la regla | D10 | pasa
+sin la regla | D11 | pasa
+sin la regla | D12 | pasa
+sin la regla | D13 | R_EJECUCION
+sin la regla | D14 | R_EJECUCION
+sin la regla | D15 | R_EJECUCION
+sin la regla | D16 | R_EJECUCION
+sin la regla | D17 | R_EJECUCION
+sin la regla | D18 | R_EJECUCION
+sin la regla | B1 | pasa
+sin la regla | B2 | pasa
+sin la regla | B3 | pasa
+sin la regla | B4 | pasa
+sin la regla | B5 | pasa
+sin la regla | B6 | pasa
+sin la regla | B7 | pasa
+sin la regla | B8 | pasa
+sin la regla | B9 | pasa
+sin la regla | B10 | pasa
+sin la regla | B11 | pasa
+sin la regla | B12 | pasa
+sin la regla | B13 | pasa
+sin la regla | B14 | pasa
+sin la regla | B15 | pasa
+sin la regla | B16 | pasa
+sin la regla | B17 | pasa
+sin la regla | B18 | pasa
+sin la regla | B19 | pasa
+.gh como espera | B1 | R_ESPERA_CI
+gh como espera | B2 | R_ESPERA_CI
+gh como espera | B3 | R_ESPERA_CI
+gh como espera | B4 | R_ESPERA_CI
+gh como espera | B9 | R_ESPERA_CI
+gh como espera | B11 | R_ESPERA_CI
+gh como espera | B12 | R_ESPERA_CI
+gh como espera | B14 | R_ESPERA_CI
+.tabla_fase0 | tal cual | pasa
+tabla_fase0 | con subprocess | R_ESPERA_CI
+tabla_fase0 | otra ruta | R_ESPERA_CI
+tabla_fase0 | a trozos | R_ESPERA_CI
+tabla_fase0 | literal a trozos | R_ESPERA_CI
+tabla_fase0 | literal | pasa
+..........................
+101 passed in 23.26s

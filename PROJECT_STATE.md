@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-ci
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-ffmpeg cerrada en main el 2026-10-22 (stable/F38a-guardia-ffmpeg): ffprobe y ffmpeg en cuatro formas de lista cerrada en la guardia de Claude Code, para la ingesta de la sesión 5. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/guardia-ci, LISTA PARA REVISIÓN, NO cerrada (abierta el 2026-10-23 desde main 2a99e64): la guardia de Claude Code niega, por la condición, esperar a la CI con una consulta repetida (una consulta de CI dentro de un bucle o acompañada de una espera) y deja la consulta suelta; paga la línea de Technical Debt del guion que espera a la CI en bucle (carril de guardias y deuda; no toca G.1). Encargo: docs/encargos/trabajo-guardia-ci.md. Informe: docs/validation/GUARDIA-CI.md. Cierra con stable/F38b-guardia-ci; la ingesta de la sesión 5 pasa a F38c.
 
 ## Stable Main State
 975c086 · merge de `trabajo/guardia-ffmpeg` (tag `stable/F38a-guardia-ffmpeg`): en `.claude/hooks/guardia.py`, `_analizar_ffmpeg` y `R_FFMPEG` (ffprobe de metadatos, silencios y volumen con salida nula, y el audio a un fichero fuera del repo; la entrada, un contenedor de vídeo por extensión y bytes mágicos), y en `tokenizar`, `$'…'` con escapes como valor desconocido y `$"…"` como `"…"`; tests/unit/test_guardia_ffmpeg.py; las cuatro formas en la skill ingerir-sesion. Sobre `stable/F37z-hoja-sesion-05` (e044b15). Informe docs/validation/GUARDIA-FFMPEG.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/guardia-ffmpeg cerrada en main el 2026-10-22 (stab
 975c086 · merge: trabajo/guardia-ffmpeg, ffprobe y ffmpeg en cuatro formas de lista cerrada y las comillas $'...' y $"..." en el tokenizador de la guardia · tag stable/F38a-guardia-ffmpeg
 
 ## Tests Currently Passing
-1655 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1671 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -51,7 +51,7 @@ H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el um
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1). La hoja 05 está en `scripts/transcribir_sesion.py`, por defecto (trabajo/hoja-sesion-05); v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`. Si en la grabación algún código del 21 al 25 sale como "veinte y N", el detector lo abre como S-20: la ingesta revisa a mano el bloque de S-20.
+V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4, HECHA el 2026-10-22). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1). La hoja 05 está en `scripts/transcribir_sesion.py`, por defecto (trabajo/hoja-sesion-05); v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`. Si en la grabación algún código del 21 al 25 sale como "veinte y N", el detector lo abre como S-20: la ingesta revisa a mano el bloque de S-20.
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -101,7 +101,8 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación: la rama que congele los CSV de las ejecuciones 2 y 3 comprueba el CRLF del CSV 2 en `MQL5\Files` antes de copiarlo (EA-CONEXION.md §0.c).
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) lo comprueban un test estático textual (`globales_sin_reiniciar`, `tests/contract/test_capa_mt5.py`) y la corrida de la demo: el script de pruebas no puede provocar un `REASON_CHARTCHANGE` (EA-CONEXION.md §10).
-- La guardia no niega un guion que espera a la CI en bucle (gh run view o gh run list repetidos): se lanzó dos veces seguidas contra la orden del consultor (cierre de trabajo/barrido-sesion-5 y entrega de trabajo/ea-conexion, EA-CONEXION.md §13), y las dos se paró sin leer su salida. Para el carril de guardias y deuda: negarlo por la condición (un bucle o una espera alrededor de una consulta de CI), con su test de los dos sentidos.
+- La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) junto a una vía de salida, ni cuando la vía de salida es un cliente de Python fuera de la lista cerrada del consultor (`aiohttp`); no ve como bucle una espera hecha a nivel de agente (`ScheduleWakeup`, `CronCreate`) con una consulta suelta en cada despertar; y no lee el código bajo `tests/` que se le pasa a pytest (`_analizar_pytest`): un test que esperase a la CI pasaría. Riesgos residuales declarados en trabajo/guardia-ci (GUARDIA-CI.md §5.2 y §9; los fijan `test_riesgo_residual_la_mencion_a_trozos_no_se_ve` y `test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa`); el hueco de `tests/` es anterior a la rama. Para el carril de guardias.
+- Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome leen un fichero local o una página `file://` fuera del matcher de la guardia: desde trabajo/guardia-ci están cerradas en `permissions.deny` de `.claude/settings.json` (GUARDIA-CI.md, PARADA 2). La regla fina, mirar sus rutas como un Read por si algún día hacen falta, va en su propia rama del carril de guardias, junto a K (el alias de la raíz).
 - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
 - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) sigue ligada al escenario en que nació y sus cierres cuentan en los cartuchos de aquel (zonas.py, `zona_del_punto` liga solo al crearla); ADR-0083 lo hace alcanzable y la fase 4 no lo midió: hace falta la traza por cierre (PUNTO-USADO.md §1.c y §4.f).
@@ -157,8 +158,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 43 (2026-10-22).
+— ninguna desde el Archivo 44 (2026-10-23).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 43 (2026-10-22).
+— ninguna desde el Archivo 44 (2026-10-23).
