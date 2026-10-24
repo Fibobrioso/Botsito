@@ -136,7 +136,9 @@ TABLA: list[tuple[str, str, str, str, str]] = [
     ("D2", "Bash", _bucle(f"$'\\x67h' run view {RUN}"), X, E),
     ("D3", "Bash", _bucle(f'$"gh" run view {RUN}'), P, E),
     ("D4", "Bash", _bucle(f'"gh " run view {RUN}'), X, E),
-    ("D5", "Bash", _bucle(f"{GH_WIN} run view {RUN}"), P, E),
+    # Antes depende del sistema: en Linux la guardia de `main` no parte la ruta por `\` y la lee
+    # como un programa desconocido (CI de `fix/guardia-ci`, run 40056337257); despues, igual.
+    ("D5", "Bash", _bucle(f"{GH_WIN} run view {RUN}"), P if os.name == "nt" else X, E),
     ("D6", "Bash", _bucle(f"{GH_BASH} run view {RUN}"), P, E),
     ("D7", "Bash", _bucle(f"curl -s {API}/commits/{SHA}/check%2Druns"), P, E),
     ("D8", "Bash", _bucle(f"find Makefile -maxdepth 0 -exec gh run view {RUN} \\;"), P, E),
