@@ -1,0 +1,12 @@
+ROTO | identidad | test_cada_forma_de_la_raiz_se_niega_con_la_regla_del_sitio | falla: \\?\ · Bash cat: pasa
+ROTO | identidad | test_una_variable_de_bash_con_un_alias_se_niega | falla: caso 0: pasa
+ROTO | identidad | test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena | falla: ('Bash', None)
+ROTO | identidad | test_leer_por_una_union_o_un_enlace_hacia_lo_protegido_se_niega | falla: v3 prueba\docs\atajo\caso.yaml · Bash cat: pasa
+ROTO | todo_es_la_raiz | test_lo_bueno_pasa_con_cada_forma_de_la_raiz | falla: \\?\ · Bash cat: R_HOLDOUT
+ROTO | todo_es_la_raiz | test_lo_bueno_pasa_en_las_formas_de_siempre | falla: ruta 0 · Bash cat: R_HOLDOUT
+ROTO | todo_es_la_raiz | test_una_carpeta_hermana_sin_el_repo_pasa | falla: grep -r: R_HOLDOUT
+ROTO | sin_contenedor | test_un_lector_recursivo_sobre_una_carpeta_que_contiene_la_raiz_se_niega | falla: la carpeta del repo · grep -r: pasa
+ROTO | sin_contenedor | test_rg_desde_fuera_respeta_lo_ignorado_como_desde_la_raiz | falla: assert 'pasa' == 'R_HOLDOUT'
+ROTO | sin_variables_ps | test_powershell_resuelve_env_home_pwd_y_tilde | falla: caso 0: pasa
+ROTO | sin_variables_ps | test_powershell_niega_una_variable_que_no_resuelve_delante_de_un_lector | falla: ('Get-Content "$env:GUARDIA_ALIAS_NO_EXISTE\\a.txt"', None)
+ROTO | sin_no_canonizable | test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena | falla: ('Bash', None)

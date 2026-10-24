@@ -392,8 +392,199 @@ PowerShell y Monitor); y `solo_lectura.py` no se toca (§0.f).
   Technical Debt (PROJECT_STATE.md:146) sale en el commit del contrato del cierre. **Declarado,
   para la orden de cierre:** `trabajo/guardia-ci` (y antes `trabajo/guardia-ffmpeg`) tocaron
   `tests/` y no la pagaron; el consultor lo da como error suyo.
+- **Puntos 0 a 6 y 9:** en §3 (código y tests). **Punto 8:** fuera de la rama; la línea de
+  Technical Debt de Artifact y claude-in-chrome sigue (PROJECT_STATE.md:105). **Punto 9:** en el
+  encargo del revisor (§6).
+
+## §3 · Fase 1: la condición
+
+### §3.1 · El código (`.claude/hooks/guardia.py`, +146 −7)
+
+| pieza | línea | qué hace | punto |
+|---|---|---|---|
+| `R_ALIAS` | 172 | la regla, con su origen | 2, 5 |
+| `_absoluta` → `_canonica` | 1093 | todo lo que la política recibe ya es canónico | 0 |
+| `_propia_maquina` | 1109 | `localhost`, `127.0.0.1`, `::1`, `.` y el nombre del equipo, LEÍDO con `socket.gethostname()` (y su parte corta) | 3 |
+| `_no_canonizable` | 1114 | `BloqueoError` con «no se puede canonizar» y la forma buena («desde la raíz» o relativa) | 2 |
+| `_sin_prefijos` | 1123 | solo Windows: `\\?\X:` y `//?/X:` y `\\.\X:` → `X:`; `\\?\UNC\h\X$` y `\\h\X$` con `h` propia → `X:`; `GLOBALROOT`, `Volume{…}`, `\\.\pipe`, otra máquina o un recurso que no es `X$` → `_no_canonizable`; un prefijo sin nada detrás o un servidor sin recurso no nombra un fichero y se deja | 1-3, 6 |
+| `_canonica` | 1149 | en Windows, `_sin_prefijos`, `normpath` y sin puntos y espacios finales; en los dos sistemas, `os.path.realpath` si es absoluta (8.3, finales, enlaces, uniones, la cola que no existe) | 1, 6 |
+| `candidatos_de_ruta` | 1173 | `https://x/y` ya no da el candidato `//x/y` (sería un UNC a otra máquina y se negaría un `grep` de una URL) | — |
+| `Politica.raiz_norm` | 298 | la raíz también canónica | 0 |
+| `Politica.contiene_la_raiz` y `motivo_directorio` | 453, 540 | un ancestro de la raíz se recorre como la raíz, con el mismo `respeta_ignore` | 4 |
+| `cd` sin destino | 1464 | `~` por `_absoluta` (canónica) | 0 |
+| `_variables_powershell` | 4214 | `$env:X`, `${env:X}`, `$HOME`, `$PWD` (y `CLAUDE_PROJECT_DIR`, la raíz, como en Bash) | 5 |
+| PowerShell, variable sin resolver | 4304 | delante de un lector, `R_ALIAS` | 5 |
+| PowerShell, `?` del prefijo | 4312 | el `?` de `\\?\` no es un comodín: lo bueno con prefijo pasa (§0.g) | — |
+| `decidir`, el `cwd` | 4355 | canónico, como todo lo que cuelga de él | 0 |
+| cabecera, familia 1 | 25-30 | la condición, dicha | — |
+
+La «excepción» del OSError (`_canonica`): si `realpath` lanza un `OSError` (en 3.12 no lanza en
+modo no estricto salvo errores de Windows fuera de su lista), se compara la forma sin prefijos y
+sin finales. No se niega, porque `_canonica` también pasa por cada literal de un guion y un
+literal raro (`a?b`, `<x>`) negaría el guion entero. Es riesgo residual declarado (§5).
+
+### §3.2 · Los tests (`tests/unit/test_guardia_alias.py`, 33 tests, 11 s)
+
+En memoria, con `decidir`, sobre un repo inventado en `tmp_path` con espacio en el nombre y
+ficheros falsos en tres sitios protegidos (marzo, `holdout/1`, la cruda de v7). Las rutas
+protegidas se montan a trozos y los mensajes nombran el caso por su número, no por su ruta.
+
+| test | qué exige | sistema |
+|---|---|---|
+| `test_cada_forma_de_la_raiz_se_niega_con_la_regla_del_sitio` (×3 sitios) | 15 formas (`\\?\`, `//?/`, UNC a `localhost`, a `127.0.0.1`, al nombre del equipo y con `/`, `\\?\UNC\localhost`, el punto final, `\\.\X:`, el 8.3 y el 8.3 con `//?/`, y los disfraces: MAYÚSCULAS, barras mezcladas, `.` y `..`, la unidad en minúscula, punto final con prefijo) × 6 herramientas (Bash `cat`, Read, Grep, PowerShell, Monitor, un guion de Python): la regla del sitio | Windows |
+| `test_lo_bueno_pasa_con_cada_forma_de_la_raiz` | las mismas 15 formas sobre `src/`: pasa en las 6 | Windows |
+| `test_lo_bueno_pasa_en_las_formas_de_siempre` | relativa, absoluta, `.`/`..`, y los programas de datos de `main`: `grep -rn`, `rg`, `wc -c`, `sha256sum` y `stat` sobre lo protegido, `ls` | los dos |
+| `test_un_lector_recursivo_sobre_una_carpeta_que_contiene_la_raiz_se_niega` | `grep -r`, `grep -R`, `find -exec cat`, `cp -r`, `rg --no-ignore`, Grep y Monitor sobre la carpeta del repo y la de encima (y con `\\?\` y `//?/` en Windows): negado con regla | los dos |
+| `test_rg_desde_fuera_respeta_lo_ignorado_como_desde_la_raiz` | `rg` sin `--no-ignore` desde fuera: `R_HOLDOUT` (no entra en lo ignorado, sí en el holdout) | los dos |
+| `test_una_carpeta_hermana_sin_el_repo_pasa` | lo mismo sobre una carpeta sin el repo: pasa | los dos |
+| `test_una_variable_de_bash_con_un_alias_se_niega` | `S="//?/<raíz>"`, `S='\\?\<raíz>'`, `S='//localhost/C$…'`, `S="<8.3>"` definidas en el mismo comando: `R_SIN_ABRIR`; `export S=…`: negado | Windows |
+| `test_powershell_resuelve_env_home_pwd_y_tilde` | `$env:USERPROFILE`, una variable de entorno propia, `$env:CLAUDE_PROJECT_DIR`, `$HOME`, `$PWD`, `~`, `$ENV:userprofile` y barras con `..`: `R_SIN_ABRIR`; `${env:X}` y `gc` ya se niegan como ejecución | los dos |
+| `test_powershell_niega_una_variable_que_no_resuelve_delante_de_un_lector` | `$env:NO_EXISTE` y `$algo` delante de `Get-Content`: `R_ALIAS` | los dos |
+| `test_powershell_lo_bueno_y_lo_literal_pasan` | `$env:` y `$PWD` hacia `src/`, `%USERPROFILE%` literal, `Get-ChildItem $env:X` y `Write-Output $algo` sin lector, y `\\?\` hacia `src/`: pasan | los dos |
+| `test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena` (×7) | otra máquina (`\\`, `//` y `\\?\UNC\`), un recurso de `localhost` que no es `X$`, `\\.\pipe`, `GLOBALROOT`, `Volume{…}`, en Bash, Read y Grep: `R_ALIAS`, «no se puede canonizar» y «desde la raíz» | Windows |
+| `test_fuera_de_windows_los_prefijos_no_se_tocan` | en Windows `\\?\C:\x\y` → `C:\x\y`; fuera, `\\?\` queda en el nombre | los dos |
+| `test_leer_por_una_union_o_un_enlace_hacia_lo_protegido_se_niega` | una unión (`mklink /J`; en Linux un enlace simbólico) en `docs/` hacia `holdout/1`: `R_HOLDOUT` en las 6 herramientas; otra hacia `src/`: pasa | los dos |
+| `test_roto_a_proposito` (×12) | ver §3.3 | 7 en los dos, 5 solo Windows |
+
+**En Linux van con `skip`** (punto 6), declarados: las 3 de formas y la de lo bueno con prefijos,
+la de variables de Bash, las 7 de lo no canonizable y 5 roturas: 17 de 33. Las otras 16 corren en
+los dos sistemas; la CI de `fix/` lo enseña (§7).
+
+**Contra la guardia de `main`** (antes del código; anexo `fase1/tests-contra-la-guardia-de-main.txt`,
+con la versión del test de ese momento): fallaron todas las familias, lo que demuestra que el test
+ve el agujero: las 3 de formas, lo bueno con prefijo en PowerShell, el contenedor, `rg` desde
+fuera, las variables de Bash y las tres de PowerShell, las 7 de lo no canonizable, la de Linux y la
+de la unión.
+
+### §3.3 · Roto a propósito, en los dos sentidos
+
+`test_roto_a_proposito` rompe una pieza (`_romper`) y exige que cada test que la pieza sostiene
+FALLE. Salida, `anexos/GUARDIA-ALIAS/fase1/roturas.txt` (12 líneas, todas «falla»):
+
+| rotura | sentido | tests que tienen que fallar, y fallan |
+|---|---|---|
+| `identidad` (`_canonica` = `normpath`, como `main`) | lo protegido vuelve a pasar | formas (`\\?\ · Bash cat: pasa`), variables de Bash (`caso 0: pasa`), lo no canonizable (`('Bash', None)`), la unión (`…\docs\atajo\caso.yaml · Bash cat: pasa`) |
+| `todo_es_la_raiz` (todo cae en el holdout) | lo bueno se niega | lo bueno con prefijos (`\\?\ · Bash cat: R_HOLDOUT`), lo bueno de siempre (`ruta 0 · Bash cat: R_HOLDOUT`), la carpeta hermana (`grep -r: R_HOLDOUT`) |
+| `sin_contenedor` | el contenedor vuelve a pasar | el lector recursivo (`la carpeta del repo · grep -r: pasa`), `rg` desde fuera (`'pasa' == 'R_HOLDOUT'`) |
+| `sin_variables_ps` | `$env:` vuelve a pasar | las dos de PowerShell (`caso 0: pasa`; `$env:…NO_EXISTE… None`) |
+| `sin_no_canonizable` | otra máquina pasa | lo no canonizable (`('Bash', None)`) |
+
+Primero lo monté con una variable de entorno (`GUARDIA_ALIAS_MUTANTE`, una corrida por mutante).
+La guardia lo negó: el nombre no está en `NOMBRES_DE_ENTORNO` («Como reescribirlo: sin esa
+variable»). Seguí esa forma, declarada: las roturas pasan a tests del propio fichero con
+`monkeypatch`, como `test_sin_la_regla_las_permitidas_vuelven_a_negarse` de ffmpeg. Así quedan
+en la suite y corren en cada `make check`.
+
+### §3.4 · La tabla del diagnóstico, antes y después
+
+`medir_k.py`, el mismo guion, sobre el mismo repo inventado: antes, `diagnostico/tabla.md`;
+después, `fase1/tabla-despues.md`. Recuento de `contar.py`:
+
+| bloque | filas | pasan antes | pasan después | fugas después |
+|---|---|---|---|---|
+| a/d, la raíz en sus formas | 288 | 117 (99 fugas + 18 del espacio final, que no existe) | 18 | 0 (abajo) |
+| b, contenedor inventado | 18 | 15 (12 fugas + 3 de Glob) | 3 (Glob) | 0 |
+| b', contenedor real | 8 | 6 | 2 (Grep) | 0 (abajo) |
+| c, variables | 24 | 9 (6 fugas + 3 de `%USERPROFILE%`) | 3 (`%USERPROFILE%`) | 0 |
+| e, lo bueno | 97 | 3 negadas | 0 negadas | — |
+
+Las que siguen pasando, una por una:
+
+- **a/d, 18:** `\\?\`, UNC a `localhost` y `\\?\UNC\` en Bash `cat` y en Monitor, escritas por
+  `medir_k.py` ENTRE COMILLAS DOBLES. Bash vuelve `\\` una sola barra, la guardia ve `\?\C:\…`
+  y `\localhost\C$\…` (que no son alias), y `cat` de Git Bash no abre nada con ellas: medido
+  sobre el fichero BUENO del repo inventado, `cat "\\?\C:\…\src\botsito\cli.py"` y
+  `cat "\\localhost\C$\…"` dan «No such file or directory», y con comillas simples también (Git
+  Bash recibe una sola barra). Con `/` (`//?/` y `//localhost/C$/`) `cat` sí abre, y esas se
+  niegan. **Corrección al diagnóstico:** esas 18 de a/d no eran fugas; la cifra real de antes
+  era 105, no 123, y queda en 0.
+- **b', 2:** Grep sobre el Escritorio y la carpeta del usuario REALES se decide ahora como Grep
+  sobre la raíz (punto 4, con `respeta_ignore`): no entra en `corpus/` ni `data/`, y en el resto
+  del repo real la política no encuentra nada protegido, así que pasa, igual que Grep desde la
+  raíz. Que Grep y `rg` desde fuera respetan el `.gitignore` del repo es lo que la guardia ya
+  supone para ellos dentro; desde fuera no lo medí (§5).
+- **b, 3 y c, 3:** Glob lista nombres (ADR-0021 §1) y `%USERPROFILE%` no lo expande nadie.
+
+**Lo bueno:** las 97 pasan (antes, 3 negadas sin regla en PowerShell por el `?` del prefijo).
+
+### §3.5 · `make check` y tiempos
+
+Suite de la guardia (las tres de antes, 687 tests, Windows): **178,89 s antes, 159,41 s
+después**. La segunda corrió a la vez que otras pruebas en la misma máquina: no se lee como una
+mejora, sino como que no empeora. El test más lento sube de 5,82 s a 9,46 s
+(`test_la_lista_de_la_guardia_es_la_que_se_calcula`, que no pasa por `_absoluta`; ruido de la
+corrida simultánea). La suite nueva: 33 tests, 11,02 s. Los registros, en `fase0/pytest-antes.log`
+y `fase1/pytest-despues.log`.
+
+`make check` completo: ver §7.
+
+## §4 · Fase 2: documentos
+
+**Lo falso en runbooks y skills:** ninguno. La fase 0 no encontró ninguna afirmación de
+`docs/runbooks/` ni de `.claude/skills/` sobre el alias de la raíz; lo que la contradice está en
+el diagnóstico (§3.4, las 18 de comillas dobles), que es anexo de esta rama, y en el texto de K y
+de G.1 sobre las variables de PowerShell (§0.e), que se reescribe abajo. `GUARDIA-FFMPEG.md` §9
+dice que esas formas «pasan» la guardia, y era verdad: no lleva recuadro.
+
+**Para el commit del contrato del cierre** (`RITUAL.md`, punto Y; no se toca en la rama):
+
+1. **K de la Next Action** pierde su primera parte (la PRIORITARIA, que paga esta rama) y queda:
+
+   > K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable
+   > llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C
+   > si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los
+   > dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca
+   > como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su
+   > test de los dos sentidos.
+
+2. **G.1 de `docs/plan/HOJA-DE-RUTA.md`:** sale el punto «PRIORITARIO, porque lee material
+   protegido» (líneas 428-431); `Refs` sigue con NA:K, porque K sigue. G.1 no pasa a HECHA.
+3. **Technical Debt:** sale la línea del docstring de `test_tramos_fuente.py` (PROJECT_STATE.md:146,
+   pagada en 38f03c4), y entra, en su sitio:
+
+   > - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza
+   >   OSError la guardia compara la forma sin prefijos; Grep y `rg` sobre una carpeta que contiene
+   >   la raíz se deciden como sobre la raíz, suponiendo, sin medirlo, que respetan su `.gitignore`.
+
+4. **Bytes:** simulado en memoria (`scratchpad/simular_ps.py`) sobre el PROJECT_STATE de la rama:
+   24.186 → **23.738** (K pierde 455 bytes, la línea de Technical Debt cambia de 276 a 283). Cabe
+   bajo 25.000 con 1.262 de margen, antes de lo que el cierre cambie en Current Feature y Stable
+   Main State. No hace falta recortar nada más.
+5. **Registro en HISTORIA y fila de `ERRORES-RECURRENTES.md`** (RITUAL, puntos 1 y 2), con lo
+   que dejen el revisor y el consultor. La señal de esta rama: una cifra de «fugas» medida en
+   memoria que no se contrastó con lo que el programa de verdad abre (las 18 de comillas
+   dobles); qué hacer: cada fila de «pasa» de una tabla de fugas se comprueba, una vez por
+   forma, con el programa real sobre el fichero bueno del repo inventado.
+6. **Declarado para la orden de cierre** (punto 7): `trabajo/guardia-ci` tocó `tests/` y no pagó la
+   deuda del docstring; el consultor lo da como error suyo.
+
+## §5 · Riesgos residuales
+
+- **`realpath` con OSError:** se compara la forma sin prefijos (§3.1). No medí ninguna ruta que lo
+  dispare en 3.12.
+- **Grep y `rg` desde un contenedor:** se decide como desde la raíz con `respeta_ignore`; si
+  ripgrep desde fuera NO aplicara el `.gitignore` del repo, entraría en `corpus/` y `data/`. `rg
+  --no-ignore` desde fuera sí se niega (test). Sin medir con `rg` real, porque mediría sobre el
+  Escritorio real.
+- **Las formas con `\` entre comillas dobles en Bash** pasan la guardia porque el valor que ve no
+  es un alias; medido que `cat` no abre nada con ellas (§3.4). Si otro programa de Git Bash las
+  abriera, se vería en el revisor.
+- **Un alias del equipo** que no sea `gethostname()` ni su parte corta (un nombre DNS propio, una
+  IP de la red local) se niega como «otra máquina»: negar de más.
+- **En Linux** la CI no prueba el código de prefijos ni de 8.3 (punto 6, declarado).
+
+## §6 · El encargo del revisor
+
+Con el informe terminado, sobre el último commit: (a) las reglas de la casa; (b) el encargo y la
+respuesta a la PARADA 1, punto por punto; y, por el encargo y su punto 9, buscar cinco formas de
+escribir la raíz o una carpeta que la contenga que la tabla no recoja, y además las comillas y
+escapes de bash sobre la raíz (`$'…'`, `$"…"`, barras invertidas), y pasarlas por `decidir` EN
+MEMORIA contra un repo inventado, sin leer nada real.
+
+## §7 · Sello y CI
+
+PENDIENTE.
 
 ## Estado
 
-EN CURSO: fase 0 hecha; PARADA 1, a la espera de la respuesta del consultor a «Lo que necesito
-que decidas». Sin código de la guardia escrito.
+EN CURSO: fases 0, 1 y 2 hechas; falta el sello, la CI de Linux y el revisor.

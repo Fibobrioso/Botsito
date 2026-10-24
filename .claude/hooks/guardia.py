@@ -24,6 +24,11 @@ Dos familias de reglas:
      y un registro de feedback que etiquete un caso reservado.
    Los casos reservados se leen de los `particiones.yaml` commiteados con la misma regla que
    `casos_reservados` (`tests/unit/test_guardia_claude.py` compara las dos).
+   Desde `trabajo/guardia-alias` (2026-10-24) toda ruta se compara en su forma CANONICA
+   (`_canonica`, dentro de `_absoluta`): sin `\\\\?\\`, `//?/` ni UNC a la propia maquina, y con
+   `realpath` (8.3, puntos y espacios finales, enlaces y uniones); lo que no se puede canonizar se
+   niega (`R_ALIAS`); un lector recursivo sobre una carpeta que CONTIENE la raiz se decide como
+   sobre la raiz; y PowerShell resuelve `$env:`, `$HOME` y `$PWD`.
 
 2. LAS OPERACIONES PROHIBIDAS: `--no-verify`, `push --force`, borrar o mover tags, borrar una
    referencia remota que no sea una rama `trabajo/`, `feature/` o `fix/` (`trabajo/dieta-y-skills`:
@@ -73,6 +78,7 @@ import io
 import json
 import os
 import re
+import socket
 import subprocess
 import sys
 import tokenize
@@ -163,6 +169,12 @@ R_BRANCH_D = (
     "docs/runbooks/RITUAL.md: «`-d` y no `-D`: si git se niega, es que algo no esta fusionado»"
 )
 R_REVERT = "docs/runbooks/RITUAL.md, «Si la CI sale roja»: «No se revierte `main`»"
+R_ALIAS = (
+    "respuesta del consultor a la PARADA 1 de `trabajo/guardia-alias` (2026-10-24, "
+    "docs/validation/GUARDIA-ALIAS.md): toda ruta se compara en su forma CANONICA (`_canonica`), "
+    "lo que no se puede canonizar se niega, y en PowerShell una variable que no se resuelve "
+    "delante de un lector se niega"
+)
 R_FICHERO_OCULTO = (
     "ordenes del consultor del 2026-10-01 (`trabajo/cuarentena-por-defecto`): un fichero del "
     "repositorio que copia texto que hoy se oculta (sesion en cuarentena, tramo no citable o "
@@ -283,7 +295,7 @@ class Politica:
 
     @cached_property
     def raiz_norm(self) -> str:
-        return _normcase(str(self.raiz))
+        return _normcase(_canonica(str(self.raiz)))  # canonica, como lo que se compara con ella
 
     @cached_property
     def reservados(self) -> dict[str, str]:
@@ -438,6 +450,10 @@ class Politica:
             return n[len(self.raiz_norm) + 1 :]
         return None
 
+    def contiene_la_raiz(self, ruta: str) -> bool:
+        """Si `ruta` (canonica) es un directorio que CONTIENE la raiz: el Escritorio, `C:\\`."""
+        return self.raiz_norm.startswith(_normcase(ruta).rstrip("/") + "/")
+
     def mes_de(self, texto: str) -> str | None:
         m = _MES.search(texto.lower())
         if not m or not m.group(2):
@@ -517,7 +533,11 @@ class Politica:
         `git grep`) salvo que se le de una ruta de dentro."""
         rel = self.relativa(ruta)
         if rel is None:
-            return None
+            if not self.contiene_la_raiz(ruta):
+                return None
+            # Un ANCESTRO de la raiz se recorre como la raiz, con el mismo `respeta_ignore`
+            # (respuesta del consultor a la PARADA 1 de `trabajo/guardia-alias`, punto 4).
+            rel, ruta = "", str(self.raiz)
         dentro_ignorado = rel.split("/")[0] in RAICES_IGNORADAS
         if rel == "knowledge/_proposals" or rel.startswith("knowledge/_proposals/"):
             # Solo con una ruta de dentro: desde mas arriba bloquearia toda busqueda del repo
@@ -1070,7 +1090,78 @@ def _absoluta(ruta: str, cwd: str) -> str:
     relativa = not os.path.isabs(r) or re.match(r"^[\\/](?![\\/])", r)
     if relativa and not re.match(r"^[a-zA-Z]:", r):
         r = os.path.join(cwd, r)
-    return os.path.normpath(r)
+    return _canonica(r)
+
+
+# ------------------------------------------------------------------ la ruta canonica
+# Por que: la fase 0 de `trabajo/guardia-alias` (docs/validation/GUARDIA-ALIAS.md §0) midio 123
+# lecturas protegidas que pasaban porque la ruta se comparaba POR SU TEXTO: la raiz escrita con
+# `\\?\`, `//?/`, un UNC a la propia maquina, `\\?\UNC\`, su nombre corto 8.3 o un punto final no
+# empezaba por la raiz, y la politica la daba por «fuera». Respuesta del consultor a la PARADA 1,
+# puntos 0-3 y 6: `_canonica` dentro de `_absoluta` (por donde pasan todas las herramientas),
+# `os.path.realpath` (8.3, puntos y espacios finales, enlaces y uniones) mas los prefijos a mano,
+# la propia maquina por lista cerrada con su nombre LEIDO en el hook, lo que no se puede
+# canonizar se niega, y los prefijos y el 8.3 solo en Windows.
+_PROPIA_MAQUINA = frozenset({"localhost", "127.0.0.1", "::1", "."})
+_FINALES = re.compile(r"(?<=[^\\/ .])[ .]+(?=[\\/]|$)")  # Windows los quita al abrir
+
+
+def _propia_maquina() -> frozenset[str]:
+    equipo = socket.gethostname().lower()
+    return _PROPIA_MAQUINA | {equipo, equipo.split(".", 1)[0]}
+
+
+def _no_canonizable(ruta: str) -> str:
+    raise BloqueoError(
+        f"la ruta `{ruta}` no se puede canonizar (un recurso de otra maquina, un dispositivo o un "
+        "volumen por su nombre): la guardia no sabe si cae bajo la raiz del repositorio.\n"
+        f"Regla: {R_ALIAS}.\nComo reescribirlo: la ruta normal desde la raiz (`C:\\...`) o "
+        "relativa al directorio de trabajo."
+    )
+
+
+def _sin_prefijos(ruta: str) -> str:
+    """En Windows, la ruta sin el prefijo de dispositivo (`\\\\?\\`, `//?/`, `\\\\.\\` ante una
+    unidad) ni el UNC a la propia maquina (`\\\\<equipo>\\C$\\...` -> `C:\\...`). Un prefijo sin
+    nada detras, o un servidor sin recurso, no nombra ningun fichero y se deja como esta (un
+    literal de un guion); lo demas que empieza por dos barras es `_no_canonizable`."""
+    s = ruta.replace("/", "\\")
+    m = re.match(r"^\\\\([?.])\\(.*)$", s, re.S)
+    if m:
+        clase, resto = m.groups()
+        if not resto:
+            return ruta
+        if re.match(r"^[a-zA-Z]:(\\|$)", resto):
+            return resto
+        if clase == "?":
+            if not resto.upper().startswith("UNC\\"):
+                return _no_canonizable(ruta)  # GLOBALROOT, Volume{...}
+            s = "\\\\" + resto[4:]
+    m = re.match(r"^\\\\([^\\]+)\\([^\\]+)(\\.*)?$", s, re.S)
+    if not m:
+        return ruta
+    equipo, recurso, cola = m.groups()
+    if equipo.lower() in _propia_maquina() and re.fullmatch(r"[a-zA-Z]\$", recurso):
+        return f"{recurso[0]}:{cola or chr(92)}"
+    return _no_canonizable(ruta)
+
+
+def _canonica(ruta: str) -> str:
+    """La forma canonica de una ruta: la que se compara con la raiz. Absoluta, `realpath`
+    (resuelve el nombre corto 8.3, los puntos y espacios finales, enlaces y uniones, y la cola que
+    no existe tras el prefijo mas largo que si), y en Windows sin prefijos de dispositivo ni UNC a
+    la propia maquina. Una ruta relativa (solo `C:x`, relativa a la unidad) no se toca."""
+    r = ruta
+    if os.name == "nt":
+        r = _FINALES.sub("", os.path.normpath(_sin_prefijos(r)))
+    if not os.path.isabs(r):
+        return os.path.normpath(r)
+    try:
+        return os.path.normpath(os.path.realpath(r))
+    except ValueError:  # un caracter nulo: no es una ruta que se pueda abrir
+        return os.path.normpath(r)
+    except OSError:  # riesgo residual declarado (GUARDIA-ALIAS.md): la forma sin prefijos
+        return os.path.normpath(r)
 
 
 def candidatos_de_ruta(valor: str) -> Iterator[str]:
@@ -1079,7 +1170,7 @@ def candidatos_de_ruta(valor: str) -> Iterator[str]:
     if "=" in valor:
         yield valor.split("=", 1)[1]
     m = re.match(r"^[^:/\\]{2,}:(.+)$", valor)
-    if m:
+    if m and not m.group(1).startswith("//"):  # `https://...` no es `rev:ruta` (guardia-alias)
         yield m.group(1)
     if valor.startswith("@"):
         yield valor[1:]
@@ -1370,7 +1461,7 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         # marca el fin de las opciones y tampoco es el destino (revisor sexta pasada, E4).
         destinos = [a for a in args if not re.fullmatch(r"-[PLe@]+|--", a.texto)]
         if not destinos:  # `cd` (o solo opciones) a secas va a HOME (revisor, B4)
-            ctx.cwd = os.path.expanduser("~")
+            ctx.cwd = _absoluta("~", ctx.cwd)
         else:
             vals = _valores(destinos[0], ctx, lex)
             if vals and len(vals) == 1:
@@ -4113,6 +4204,42 @@ def _ejecucion_en_powershell(texto: str) -> str | None:
     return None
 
 
+_VARIABLE_PS = re.compile(
+    r"\$\{env:([A-Za-z_]\w*)\}|\$env:([A-Za-z_]\w*)|\$\{([A-Za-z_]\w*)\}|\$([A-Za-z_]\w*)",
+    re.IGNORECASE,
+)
+_PS_NO_RUTA = frozenset({"true", "false", "null", "_", "psitem"})
+
+
+def _variables_powershell(texto: str, ctx: Contexto) -> tuple[str, list[str]]:
+    """El texto con `$env:X`, `${env:X}`, `$HOME` y `$PWD` sustituidos como los veria PowerShell
+    (el entorno del hook; `CLAUDE_PROJECT_DIR`, la raiz, como en Bash), y las variables que no se
+    resuelven. Respuesta del consultor a la PARADA 1 de `trabajo/guardia-alias`, punto 5: la fase
+    0 midio que PowerShell no resolvia ninguna y eximia `$env:` (GUARDIA-ALIAS.md §0.e). `~` ya la
+    expande `_absoluta`."""
+    sin_resolver: list[str] = []
+
+    def valor(m: re.Match[str]) -> str:
+        entorno = m.group(1) or m.group(2)
+        nombre = entorno or m.group(3) or m.group(4) or ""
+        bajo = nombre.lower()
+        if entorno:
+            if bajo == "claude_project_dir":
+                return str(ctx.politica.raiz)
+            if nombre in os.environ:  # en Windows, os.environ no distingue mayusculas
+                return os.environ[nombre]
+        elif bajo == "home":
+            return os.path.expanduser("~")
+        elif bajo == "pwd":
+            return ctx.cwd
+        elif bajo in _PS_NO_RUTA:
+            return m.group(0)
+        sin_resolver.append(m.group(0))
+        return m.group(0)
+
+    return _VARIABLE_PS.sub(valor, texto), sin_resolver
+
+
 def analizar_powershell(texto: str, ctx: Contexto) -> None:
     """Mas tosco que bash: rutas por las comillas y las palabras; si una es protegida, solo se
     deja pasar si TODOS los comandos del texto son de metadatos."""
@@ -4152,8 +4279,10 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
     ejecucion = _ejecucion_en_powershell(texto)
     if ejecucion is not None:
         exigir_ejecucion_verificable(ctx, Lexico(), Comando([], [], [], {}, []), ejecucion)
+    resuelto, sin_resolver = _variables_powershell(texto, ctx)
     trozos = [
-        a or b or c for a, b, c in re.findall(r"'([^']*)'|\"([^\"]*)\"|([^\s'\";|&(){}]+)", texto)
+        a or b or c
+        for a, b, c in re.findall(r"'([^']*)'|\"([^\"]*)\"|([^\s'\";|&(){}]+)", resuelto)
     ]
     protegido: str | None = None
     for t in trozos:
@@ -4172,8 +4301,17 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
         if lectora or not all(PS_METADATOS.match(s) for s in segmentos):
             raise BloqueoError(f"PowerShell lee el contenido de {protegido}")
         return
+    if lectora and sin_resolver:
+        raise BloqueoError(
+            f"PowerShell lee contenido con `{sin_resolver[0]}`, una variable que la guardia no "
+            f"sabe resolver: no se puede decidir si llega a material protegido.\nRegla: {R_ALIAS}."
+            f"\n{COMO_REESCRIBIR}"
+        )
+    # El `?` de un prefijo de dispositivo (`\\?\`, `//?/`) no es un comodin (GUARDIA-ALIAS.md
+    # §0.g: negaba sin regla un fichero bueno escrito asi).
+    sin_prefijos = re.sub(r"[\\/]{2}[?.][\\/]", "", bajo)
     dinamico = re.search(
-        r"\$(?!env:|true\b|false\b|null\b|_\b|PSItem\b)\w|\$\(|-recurse|[*?]", bajo
+        r"\$(?!env:|true\b|false\b|null\b|_\b|PSItem\b)\w|\$\(|-recurse|[*?]", sin_prefijos
     )
     if (
         lectora
@@ -4214,6 +4352,7 @@ def decidir(evento: dict[str, object], politica: Politica) -> str | None:
         return None
     cwd = str(evento.get("cwd") or politica.raiz)
     try:
+        cwd = _absoluta(cwd, str(politica.raiz))  # canonico, como todo lo que cuelga de el
         if herramienta == "Read":
             ruta = _absoluta(str(entrada.get("file_path", "")), cwd)
             motivo = politica.motivo_fichero(ruta)
