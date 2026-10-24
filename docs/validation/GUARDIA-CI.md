@@ -446,7 +446,37 @@ publican o lo suben; Chrome lo abre o lo sube). EnterWorktree solo ejecuta git.
    respuesta (Monitor incluido), que no dependen de esta PARADA; (b) esperar. Recomiendo (a): esta
    PARADA solo decide qué más entra en el matcher.
 
+## Respuesta del consultor a la PARADA 2 (2026-10-23)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 2 (2026-10-23). Cópiala al informe, en su sección.
+>
+> 0. Artifact, ArtifactData, DesignSync y file_upload de claude-in-chrome: en esta rama NO se meten en el matcher ni en la guardia. Este repo no las necesita para nada, así que se cierran ya por permisos: añádelas a permissions.deny de .claude/settings.json (ya está en el contrato por el punto 0 de la respuesta 1), con su nombre EXACTO tal como aparece en tu lista de herramientas (las de MCP, con su prefijo mcp__…). La regla fina (mirar sus rutas como un Read, por si algún día hacen falta) va a una línea de Technical Debt para su propia rama del carril de guardias, junto a la línea PRIORITARIA del alias de la raíz (K).
+> 1. navigate de claude-in-chrome: también a permissions.deny, y con él get_page_text y read_page (las que leerían una página file://). No hace falta medir si la extensión abre file://: el repo no usa el navegador. Va a la misma línea de Technical Debt.
+> 2. EnterWorktree: fuera, de acuerdo; solo hace lo mismo que git worktree add por Bash, y eso la guardia ya lo deja pasar.
+> 3. SÍ, aplica ya los puntos 0 a 8 de la respuesta 1, Monitor incluido.
+>
+> Para lo nuevo de los puntos 0 y 1:
+> - Un test en test_guardia_ci.py (o donde estén hoy los de settings.json, test_guardia_claude.py:1131) que falle si alguno de esos nombres sale de permissions.deny, roto a propósito en los dos sentidos.
+> - En cuanto settings.json cambie, prueba la negativa de verdad con una llamada inofensiva: Artifact con action list, y navigate a about:blank. Las dos tienen que salir negadas, y la salida va en el informe. No hagas ninguna llamada que lea o suba un fichero. Si alguna no sale negada (nombre mal escrito, o hace falta reiniciar la sesión), dilo y PARADA.
+> - Si la sesión tiene que reiniciarse para cargar settings.json, dímelo antes de hacerlo y retoma con retomar-rama.
+>
+> Lo demás, como dicen el encargo y la respuesta 1.
+
+## Ampliación del contrato (2026-10-23, commit propio)
+
+Por las dos respuestas, `contrato.yaml` amplía `rutas_permitidas` en un commit que solo hace eso
+(y copia esta respuesta):
+
+| ruta | por qué |
+|---|---|
+| `.claude/settings.json` | respuesta 1, punto 0 (Monitor en el matcher); respuesta 2, puntos 0 y 1 (`permissions.deny`) |
+| `tests/unit/test_guardia_claude.py` | no lo pidió el consultor, lo pide el repo: su `test_los_ajustes_registran_la_guardia_y_las_denegaciones` (`:1149-1153`) exige que el matcher sea EXACTAMENTE `{Read, Grep, Glob, Bash, PowerShell}`, y su `_casa_regla` (`:1132-1137`) hace `assert` de que toda regla de `deny` sea `Bash(...)`: con Monitor en el matcher y las herramientas en `deny`, los dos fallarían. Solo se tocan esas dos piezas |
+| `tests/unit/test_guardia_ffmpeg.py` | respuesta 1, punto 6 (su cabecera, `:6-7`) |
+| `docs/validation/GUARDIA-FFMPEG.md` | respuesta 1, punto 6 (un recuadro en `:150-153`) |
+| `docs/sesion-5/PREGUNTAS.md` | respuesta 1, punto 4 (solo el recuadro de `:8-9`) |
+
 ## Estado
 
-EN CURSO · PARADA 2: la respuesta a la fase 0 está copiada arriba, sin aplicar todavía; espero la
-decisión sobre las herramientas fuera del matcher que no son Monitor.
+EN CURSO · fase 1: las dos respuestas están copiadas y el contrato ampliado; falta aplicarlas.

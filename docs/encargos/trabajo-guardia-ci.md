@@ -75,3 +75,21 @@ Copiada tal cual:
 > También: el for con la variable n, que hoy pasa, entra en los tests junto a los que hoy se niegan por otra regla, comprobando el MOTIVO. Y la fila única de trabajo/guardia-ffmpeg en ERRORES-RECURRENTES: los tests de disfraz cubren los agujeros que dice esa fila, no los cuatro que nombraba mi encargo.
 >
 > Sigue con las fases 1 y 2 y la entrega tal como dice el encargo, con el revisor al final. Si tocar settings.json te deja sin poder ejecutar algo que antes hacías, PARADA.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-23)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 2 (2026-10-23). Cópiala al informe, en su sección.
+>
+> 0. Artifact, ArtifactData, DesignSync y file_upload de claude-in-chrome: en esta rama NO se meten en el matcher ni en la guardia. Este repo no las necesita para nada, así que se cierran ya por permisos: añádelas a permissions.deny de .claude/settings.json (ya está en el contrato por el punto 0 de la respuesta 1), con su nombre EXACTO tal como aparece en tu lista de herramientas (las de MCP, con su prefijo mcp__…). La regla fina (mirar sus rutas como un Read, por si algún día hacen falta) va a una línea de Technical Debt para su propia rama del carril de guardias, junto a la línea PRIORITARIA del alias de la raíz (K).
+> 1. navigate de claude-in-chrome: también a permissions.deny, y con él get_page_text y read_page (las que leerían una página file://). No hace falta medir si la extensión abre file://: el repo no usa el navegador. Va a la misma línea de Technical Debt.
+> 2. EnterWorktree: fuera, de acuerdo; solo hace lo mismo que git worktree add por Bash, y eso la guardia ya lo deja pasar.
+> 3. SÍ, aplica ya los puntos 0 a 8 de la respuesta 1, Monitor incluido.
+>
+> Para lo nuevo de los puntos 0 y 1:
+> - Un test en test_guardia_ci.py (o donde estén hoy los de settings.json, test_guardia_claude.py:1131) que falle si alguno de esos nombres sale de permissions.deny, roto a propósito en los dos sentidos.
+> - En cuanto settings.json cambie, prueba la negativa de verdad con una llamada inofensiva: Artifact con action list, y navigate a about:blank. Las dos tienen que salir negadas, y la salida va en el informe. No hagas ninguna llamada que lea o suba un fichero. Si alguna no sale negada (nombre mal escrito, o hace falta reiniciar la sesión), dilo y PARADA.
+> - Si la sesión tiene que reiniciarse para cargar settings.json, dímelo antes de hacerlo y retoma con retomar-rama.
+>
+> Lo demás, como dicen el encargo y la respuesta 1.
