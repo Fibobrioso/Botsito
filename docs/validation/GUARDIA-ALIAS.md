@@ -583,7 +583,17 @@ MEMORIA contra un repo inventado, sin leer nada real.
 
 ## §7 · Sello y CI
 
-PENDIENTE.
+- **1422227** (el código): `make check` en Windows en verde, 2.890 passed en 1.023 s, sello sobre
+  el árbol `0e03f244…`, `PICO DE MEMORIA de make check: 299 MiB en test`. Push a
+  `fix/guardia-alias` (pasó, sin `!`). **CI de Linux, run 40132371656: failure**, con dos fallos:
+  el esperado de state check (`test_state_check_ok_on_real_repo`) y uno mío,
+  `test_powershell_resuelve_env_home_pwd_y_tilde`, «caso 6: R_ALIAS». El caso 6 es el disfraz
+  `$ENV:userprofile`: en Linux el entorno distingue mayúsculas, no se resuelve y la guardia lo
+  niega con `R_ALIAS`, que es lo correcto. El fallo era del test, que esperaba la regla del sitio.
+  2.860 passed y 28 skipped (entre ellos los 17 de §3.2).
+- **Arreglo:** ese disfraz se exige resuelto solo en Windows; en Linux se exige `R_ALIAS`.
+
+PENDIENTE: el sello y la CI del arreglo.
 
 ## Estado
 

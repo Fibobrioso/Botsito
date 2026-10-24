@@ -358,9 +358,15 @@ def test_powershell_resuelve_env_home_pwd_y_tilde(
         f'Get-Content "$HOME{s}{nombre}{s}{m}"',
         f'Get-Content "$PWD{s}{m}"',
         f'Get-Content "~{s}{nombre}{s}{m}"',
-        f'Get-Content "$ENV:userprofile{s}{nombre}{s}{m}"',  # disfraz: mayusculas cambiadas
         f'Get-Content "$env:GUARDIA_ALIAS_PRUEBA/./docs/../{MARZO}"',  # disfraz: barras y ..
     ]
+    # Disfraz: mayusculas cambiadas. En Windows el entorno no distingue mayusculas y se resuelve;
+    # en Linux si las distingue, no se resuelve y se niega (`R_ALIAS`): CI run 40132371656.
+    cambiada = f'Get-Content "$ENV:userprofile{s}{nombre}{s}{m}"'
+    if EN_WINDOWS:
+        casos.append(cambiada)
+    else:
+        assert "R_ALIAS" in _regla(g, _decide(g, repo, "PowerShell", {"command": cambiada}))
     fallos = []
     for comando in casos:
         obtenida = _regla(g, _decide(g, repo, "PowerShell", {"command": comando}))
