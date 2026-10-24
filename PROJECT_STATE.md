@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-alias
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-ci cerrada en main el 2026-10-24 (stable/F38b-guardia-ci): la guardia de Claude Code niega esperar a la CI con una consulta repetida, y Monitor entra en su matcher. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md; la ingesta de la sesión 5 cerrará con F38c.
+trabajo/guardia-alias, EN CURSO (abierta el 2026-10-24 desde main af89a78): la guardia de Claude Code niega la lectura del material protegido escriba como se escriba la ruta (canoniza antes de comparar y niega lo no canonizable que pueda caer bajo la raíz); paga la línea PRIORITARIA de G.1 y la parte de K del alias de la raíz en motivo_fichero (lo demás de K sigue). Encargo: docs/encargos/trabajo-guardia-alias.md. Informe: docs/validation/GUARDIA-ALIAS.md. Cierra con stable/F38c-guardia-alias; la ingesta de la sesión 5 pasa a F38d.
 
 ## Stable Main State
 2cc3b93 · merge de `trabajo/guardia-ci` (tag `stable/F38b-guardia-ci`): en `.claude/hooks/guardia.py`, la sección «esperar a la CI» (`R_ESPERA_CI`): una consulta de CI y una espera en el mismo comando, `gh run watch`, `gh pr checks --watch` y toda consulta desde código con una vía de salida se niegan, y la consulta suelta pasa; `Monitor` se decide como Bash (`R_MONITOR`). En `.claude/settings.json`, `Monitor` en el matcher y siete herramientas que leen ficheros locales en `permissions.deny`. tests/unit/test_guardia_ci.py. Sobre `stable/F38a-guardia-ffmpeg` (975c086). Informe docs/validation/GUARDIA-CI.md; el registro del cierre, al final de HISTORIA.
@@ -158,8 +158,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 44 (2026-10-23).
+— ninguna desde el Archivo 45 (2026-10-24).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 44 (2026-10-23).
+— ninguna desde el Archivo 45 (2026-10-24).

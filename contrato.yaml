@@ -1,0 +1,40 @@
+rama: trabajo/guardia-alias
+riesgo: alto  # cambia la guardia de Claude Code (.claude/hooks/guardia.py y, si la medida lo pide, solo_lectura.py), que decide que se lee del material protegido: canoniza la ruta antes de comparar y niega lo no canonizable; toca la plataforma de Claude Code y obliga a la CI de Linux por fix/
+artefacto: docs/validation/GUARDIA-ALIAS.md
+tramo: "Carril: guardias y deuda"
+rutas_permitidas:
+  - docs/validation/GUARDIA-ALIAS.md
+  - docs/validation/anexos/GUARDIA-ALIAS/
+  - .claude/hooks/guardia.py
+  - .claude/hooks/solo_lectura.py
+  - tests/unit/test_guardia_alias.py
+  - tests/unit/test_guardia_claude.py
+  - docs/validation/GUARDIA-FFMPEG.md
+  - docs/validation/GUARDIAS-CLAUDE.md
+  - docs/validation/ENTORNO-CODE.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/runbooks/DECISIONES-DE-PROCESO.md
+  - .claude/skills/
+  - docs/plan/HOJA-DE-RUTA.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - .claude/settings.json
+  - .github/
+  - Makefile
+  - src/
+  - config/
+  - data/manifests/
+  - knowledge/
+  - docs/adr/
+  - docs/spec/
+  - scripts/
+  - tools/mql5/
+  - mql5/
+  - tests/unit/test_guardia_ci.py
+  - tests/unit/test_guardia_ffmpeg.py
+comprobaciones:
+  - uv run python scripts/contrato_rama.py
+  - uv run pytest -q tests/unit/test_guardia_alias.py tests/unit/test_guardia_claude.py tests/unit/test_guardia_ffmpeg.py tests/unit/test_guardia_ci.py
+  - make check > make-check.log 2>&1
