@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/guardia-ci
+main
 
 ## Current Feature
-trabajo/guardia-ci, LISTA PARA REVISIÓN, NO cerrada (abierta el 2026-10-23 desde main 2a99e64): la guardia de Claude Code niega, por la condición, esperar a la CI con una consulta repetida (una consulta de CI dentro de un bucle o acompañada de una espera) y deja la consulta suelta; paga la línea de Technical Debt del guion que espera a la CI en bucle (carril de guardias y deuda; no toca G.1). Encargo: docs/encargos/trabajo-guardia-ci.md. Informe: docs/validation/GUARDIA-CI.md. Cierra con stable/F38b-guardia-ci; la ingesta de la sesión 5 pasa a F38c.
+Ninguna rama abierta. trabajo/guardia-ci cerrada en main el 2026-10-24 (stable/F38b-guardia-ci): la guardia de Claude Code niega esperar a la CI con una consulta repetida, y Monitor entra en su matcher. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md; la ingesta de la sesión 5 cerrará con F38c.
 
 ## Stable Main State
-975c086 · merge de `trabajo/guardia-ffmpeg` (tag `stable/F38a-guardia-ffmpeg`): en `.claude/hooks/guardia.py`, `_analizar_ffmpeg` y `R_FFMPEG` (ffprobe de metadatos, silencios y volumen con salida nula, y el audio a un fichero fuera del repo; la entrada, un contenedor de vídeo por extensión y bytes mágicos), y en `tokenizar`, `$'…'` con escapes como valor desconocido y `$"…"` como `"…"`; tests/unit/test_guardia_ffmpeg.py; las cuatro formas en la skill ingerir-sesion. Sobre `stable/F37z-hoja-sesion-05` (e044b15). Informe docs/validation/GUARDIA-FFMPEG.md; el registro del cierre, al final de HISTORIA.
+2cc3b93 · merge de `trabajo/guardia-ci` (tag `stable/F38b-guardia-ci`): en `.claude/hooks/guardia.py`, la sección «esperar a la CI» (`R_ESPERA_CI`): una consulta de CI y una espera en el mismo comando, `gh run watch`, `gh pr checks --watch` y toda consulta desde código con una vía de salida se niegan, y la consulta suelta pasa; `Monitor` se decide como Bash (`R_MONITOR`). En `.claude/settings.json`, `Monitor` en el matcher y siete herramientas que leen ficheros locales en `permissions.deny`. tests/unit/test_guardia_ci.py. Sobre `stable/F38a-guardia-ffmpeg` (975c086). Informe docs/validation/GUARDIA-CI.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-975c086 · merge: trabajo/guardia-ffmpeg, ffprobe y ffmpeg en cuatro formas de lista cerrada y las comillas $'...' y $"..." en el tokenizador de la guardia · tag stable/F38a-guardia-ffmpeg
+2cc3b93 · merge: trabajo/guardia-ci, la guardia niega esperar a la CI con una consulta repetida, Monitor en el matcher y siete herramientas en permissions.deny · tag stable/F38b-guardia-ci
 
 ## Tests Currently Passing
 1671 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
