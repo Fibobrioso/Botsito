@@ -423,7 +423,7 @@ modo no estricto salvo errores de Windows fuera de su lista), se compara la form
 sin finales. No se niega, porque `_canonica` también pasa por cada literal de un guion y un
 literal raro (`a?b`, `<x>`) negaría el guion entero. Es riesgo residual declarado (§5).
 
-### §3.2 · Los tests (`tests/unit/test_guardia_alias.py`, 33 tests, 11 s)
+### §3.2 · Los tests (`tests/unit/test_guardia_alias.py`, 35 tests tras el revisor, 11 a 45 s)
 
 En memoria, con `decidir`, sobre un repo inventado en `tmp_path` con espacio en el nombre y
 ficheros falsos en tres sitios protegidos (marzo, `holdout/1`, la cruda de v7). Las rutas
@@ -444,11 +444,12 @@ protegidas se montan a trozos y los mensajes nombran el caso por su número, no 
 | `test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena` (×7) | otra máquina (`\\`, `//` y `\\?\UNC\`), un recurso de `localhost` que no es `X$`, `\\.\pipe`, `GLOBALROOT`, `Volume{…}`, en Bash, Read y Grep: `R_ALIAS`, «no se puede canonizar» y «desde la raíz» | Windows |
 | `test_fuera_de_windows_los_prefijos_no_se_tocan` | en Windows `\\?\C:\x\y` → `C:\x\y`; fuera, `\\?\` queda en el nombre | los dos |
 | `test_leer_por_una_union_o_un_enlace_hacia_lo_protegido_se_niega` | una unión (`mklink /J`; en Linux un enlace simbólico) en `docs/` hacia `holdout/1`: `R_HOLDOUT` en las 6 herramientas; otra hacia `src/`: pasa | los dos |
-| `test_roto_a_proposito` (×12) | ver §3.3 | 7 en los dos, 5 solo Windows |
+| `test_roto_a_proposito` (×14) | ver §3.3 | 8 en los dos, 6 solo Windows |
 
 **En Linux van con `skip`** (punto 6), declarados: las 3 de formas y la de lo bueno con prefijos,
-la de variables de Bash, las 7 de lo no canonizable y 5 roturas: 17 de 33. Las otras 16 corren en
-los dos sistemas; la CI de `fix/` lo enseña (§7).
+la de variables de Bash, las 7 de lo no canonizable y 6 roturas: 18 de 35. Las otras 17 corren en
+los dos sistemas; la CI de `fix/` lo enseña (§7). Tras el revisor (b10), el contenedor lleva
+también sus disfraces: MAYÚSCULAS, barras mezcladas con `..`, y `/./` al final.
 
 **Contra la guardia de `main`** (antes del código; anexo `fase1/tests-contra-la-guardia-de-main.txt`,
 con la versión del test de ese momento): fallaron todas las familias, lo que demuestra que el test
@@ -459,7 +460,9 @@ de la unión.
 ### §3.3 · Roto a propósito, en los dos sentidos
 
 `test_roto_a_proposito` rompe una pieza (`_romper`) y exige que cada test que la pieza sostiene
-FALLE. Salida, `anexos/GUARDIA-ALIAS/fase1/roturas.txt` (12 líneas, todas «falla»):
+FALLE. Salida, `anexos/GUARDIA-ALIAS/fase1/roturas.txt` (14 líneas, todas «falla»; las dos
+últimas, de b9 del revisor: lo bueno de PowerShell con `todo_es_la_raiz`, «R_HOLDOUT», y los
+prefijos en Windows con `identidad`, «'\\\\?\\C:\\x\\y' == 'C:\\x\\y'»):
 
 | rotura | sentido | tests que tienen que fallar, y fallan |
 |---|---|---|
@@ -482,7 +485,7 @@ después, `fase1/tabla-despues.md`. Recuento de `contar.py`:
 
 | bloque | filas | pasan antes | pasan después | fugas después |
 |---|---|---|---|---|
-| a/d, la raíz en sus formas | 288 | 117 (99 fugas + 18 del espacio final, que no existe) | 18 | 0 (abajo) |
+| a/d, la raíz en sus formas | 288 | 117 (99 fugas + 18 del espacio final, que no existe) | 18 | 0 tal como están escritas; el hueco que las 18 representan sigue abierto (abajo, y b1) |
 | b, contenedor inventado | 18 | 15 (12 fugas + 3 de Glob) | 3 (Glob) | 0 |
 | b', contenedor real | 8 | 6 | 2 (Grep) | 0 (abajo) |
 | c, variables | 24 | 9 (6 fugas + 3 de `%USERPROFILE%`) | 3 (`%USERPROFILE%`) | 0 |
@@ -491,13 +494,16 @@ después, `fase1/tabla-despues.md`. Recuento de `contar.py`:
 Las que siguen pasando, una por una:
 
 - **a/d, 18:** `\\?\`, UNC a `localhost` y `\\?\UNC\` en Bash `cat` y en Monitor, escritas por
-  `medir_k.py` ENTRE COMILLAS DOBLES. Bash vuelve `\\` una sola barra, la guardia ve `\?\C:\…`
-  y `\localhost\C$\…` (que no son alias), y `cat` de Git Bash no abre nada con ellas: medido
-  sobre el fichero BUENO del repo inventado, `cat "\\?\C:\…\src\botsito\cli.py"` y
-  `cat "\\localhost\C$\…"` dan «No such file or directory», y con comillas simples también (Git
-  Bash recibe una sola barra). Con `/` (`//?/` y `//localhost/C$/`) `cat` sí abre, y esas se
-  niegan. **Corrección al diagnóstico:** esas 18 de a/d no eran fugas; la cifra real de antes
-  era 105, no 123, y queda en 0.
+  `medir_k.py` entre comillas dobles: la guardia ve `\?\C:\…` y `\localhost\C$\…` (que no son
+  alias) y pasa. Escritas ASÍ no abren: medido sobre el fichero BUENO del repo inventado,
+  `cat "\\?\C:\…\src\botsito\cli.py"` da «No such file or directory», y entre comillas simples
+  también. **Corregido por el revisor (a1 y b1, §9):** la causa no es la comilla doble de bash
+  sino la herramienta Bash de Claude Code, que quita un nivel de `\` ANTES de bash, también
+  entre comillas simples. Con las barras DOBLADAS (`cat '\\\\?\\C:\\…'`, `cat '\\\\localhost\\C$\\…'`)
+  bash recibe el prefijo bueno, `cat` abre el fichero bueno, y la guardia, que ve cuatro barras,
+  lo deja pasar: también sobre lo protegido, en la rama y en `main`. **Así que estas 18 filas no
+  son fugas tal como están escritas, pero el hueco que representan sigue abierto (b1), y la cifra
+  de después no es 0.** Va a las decisiones del consultor (§8).
 - **b', 2:** Grep sobre el Escritorio y la carpeta del usuario REALES se decide ahora como Grep
   sobre la raíz (punto 4, con `respeta_ignore`): no entra en `corpus/` ni `data/`, y en el resto
   del repo real la política no encuentra nada protegido, así que pasa, igual que Grep desde la
@@ -566,9 +572,10 @@ dice que esas formas «pasan» la guardia, y era verdad: no lleva recuadro.
   ripgrep desde fuera NO aplicara el `.gitignore` del repo, entraría en `corpus/` y `data/`. `rg
   --no-ignore` desde fuera sí se niega (test). Sin medir con `rg` real, porque mediría sobre el
   Escritorio real.
-- **Las formas con `\` entre comillas dobles en Bash** pasan la guardia porque el valor que ve no
-  es un alias; medido que `cat` no abre nada con ellas (§3.4). Si otro programa de Git Bash las
-  abriera, se vería en el revisor.
+- **Lo que el revisor encontró abierto** (§9, b1 a b7): las barras invertidas dobladas que la
+  herramienta Bash deshace antes de bash, `~+` y `~-`, `/proc/cygdrive/c/`, la ruta relativa a la
+  unidad `C:<rel>`, la ruta de proveedor de PowerShell `FileSystem::`, las llaves de bash y las URL
+  `file:///`. Todas pasaban ya en `main`. Las decide el consultor (§8).
 - **Un alias del equipo** que no sea `gethostname()` ni su parte corta (un nombre DNS propio, una
   IP de la red local) se niega como «otra máquina»: negar de más.
 - **En Linux** la CI no prueba el código de prefijos ni de 8.3 (punto 6, declarado).
@@ -593,8 +600,209 @@ MEMORIA contra un repo inventado, sin leer nada real.
   2.860 passed y 28 skipped (entre ellos los 17 de §3.2).
 - **Arreglo:** ese disfraz se exige resuelto solo en Windows; en Linux se exige `R_ALIAS`.
 
-PENDIENTE: el sello y la CI del arreglo.
+- **ef23607** (el arreglo): `make check` en Windows en verde, 2.890 passed en 957 s, sello sobre
+  el árbol `ed3e2a6a…`, `PICO DE MEMORIA de make check: 297 MiB en test`. **CI de Linux, run
+  40134439368: solo el fallo esperado**, `test_state_check_ok_on_real_repo`; 2.861 passed, 28
+  skipped. En Linux pasan los 16 tests de la rama que no son de Windows (punto 6).
+- **El último commit** (el informe del revisor y los arreglos de a1, b8, b9 y b10, que tocan el
+  test): `make check` sellado antes del commit y push a `fix/`; el número de su CI va en el mensaje
+  de entrega a Aleks, para no abrir otro commit solo para escribirlo.
+
+## §8 · El encargo, punto por punto, y lo que queda para el consultor
+
+| # | Punto del encargo | Estado | Dónde |
+|---|---|---|---|
+| 1 | Base verificada (af89a78, tag en origin, CI de main, ninguna otra rama) | hecho | «Base comprobada al abrir» |
+| 2 | Abrir con abrir-rama; encargo tal cual con fecha; tag F38c | hecho | c60a8d4; `docs/encargos/trabajo-guardia-alias.md` |
+| 3 | Verificar el diagnóstico | hecho | §0.a |
+| 4 | OBJETIVO: negar el material protegido escriba como se escriba la ruta | **parcial** | las seis formas del diagnóstico, el contenedor, las variables y los enlaces, cerrados (§3); el revisor encontró cinco formas más que bloquean y dos que importan, abiertas también en `main` (§9, b1-b7) |
+| 5 | `solo_lectura.py` si la medida lo pide | hecho: no lo pide | §0.f |
+| 6 | Lo bueno sigue pasando con cualquier forma de la raíz | hecho | §3.2, §3.4 (e: 0 negadas) |
+| 7 | Qué no cambia | hecho | `git diff --name-status main...HEAD`: hooks, tests, docs, PROJECT_STATE, HISTORIA |
+| 8 | Reglas de la rama: en memoria, rutas a trozos, PARADA ante una negativa salvo la forma propuesta | hecho | §0.0 y §3.3 (las negativas y la forma seguida) |
+| 9 | Fase 0, a) a f), y PARADA | hecho (Linux de 0.c, por la CI) | §0, «Lo que necesito que decidas» |
+| 10 | Fase 1: tests primero, rotos a propósito en los dos sentidos, con las dos salidas | hecho | §3.2, §3.3; b9 del revisor, arreglado |
+| 11 | Un disfraz por familia | hecho | §3.2; b10 del revisor, arreglado |
+| 12 | 8.3 y UNC con skip fuera de Windows, declarados | hecho | §3.2 |
+| 13 | El código mínimo, con porqué y origen | hecho | §3.1 |
+| 14 | La tabla del diagnóstico antes y después | hecho, corregida por el revisor | §3.4 |
+| 15 | `make check` con PICO DE MEMORIA; tiempo de la suite antes y después | hecho | §3.5, §7 |
+| 16 | Fase 2: lo falso en runbooks y skills | hecho: ninguno | §4 |
+| 17 | Fase 2: textos para el punto Y y bytes de PROJECT_STATE | hecho | §4 (y la variante de abajo) |
+| 18 | Push a fix/, CI de Linux con solo el fallo esperado, número de run | hecho | §7, run 40134439368 (y la del último commit, abajo) |
+| 19 | El revisor con el informe terminado y su encargo de cinco formas, más las comillas y escapes (punto 9) | hecho | §6, §9 |
+| P0-P9 | La respuesta a la PARADA 1 | hecho | §2, §3.1 |
+
+**Lo arreglado del revisor en la rama:** a1 (la causa de las 18 filas, §3.4 y el comentario del
+test), b8 (esta tabla), b9 (dos roturas más: 14) y b10 (disfraces del contenedor). a2 queda como
+está: el docstring del test dice «123 lecturas protegidas que pasaban» la guardia, y es verdad; lo
+que el revisor corrige es si abrían, que va en §3.4.
+
+**Lo que necesito que decidas** (PARADA 2, ninguna de estas formas la abrió esta rama):
+
+0. **b1, las barras invertidas dobladas** (la herramienta Bash quita un nivel de `\` antes de bash).
+   Opciones: (a) en Bash y Monitor, la guardia decide también sobre el texto con un nivel de `\`
+   menos, y niega si cualquiera de las dos lecturas llega a lo protegido; (b) negar en Bash toda
+   ruta que empiece por `\\` (cuatro barras en el texto), como ya hace ffmpeg. Recomiendo (a): es
+   la misma condición con la capa de la herramienta modelada, y (b) no cubre otras barras dentro.
+   Coste de (b): menos código, más agujeros. Falta medir si PowerShell y Monitor quitan ese nivel.
+1. **b2 a b5, traducciones que faltan en `_absoluta`:** `~+` y `~-` (`$PWD` y `$OLDPWD`),
+   `/proc/cygdrive/X/`, la ruta relativa a la unidad `C:<rel>` (colgarla del cwd si la unidad es la
+   del cwd, y si no `_no_canonizable`) y `FileSystem::` de PowerShell. Opciones: (a) se cierran aquí,
+   con sus tests rotos a propósito, otro `make check`, otra CI y otra pasada del revisor; (b) una
+   rama nueva, y la línea PRIORITARIA de K se queda con ellas. Recomiendo (a): leen material
+   protegido, son de la misma familia que el OBJETIVO, y el arreglo de cada una es una línea de
+   condición. Coste de (a): la rama se alarga (la ingesta de la sesión 5 espera).
+2. **b6 y b7, las llaves de bash y las URL `file:///`:** son otro mecanismo (expansión y protocolo).
+   Opciones: (a) a Technical Debt, con su evidencia, para la rama de C; (b) cerrarlas aquí.
+   Recomiendo (a). Si es (b), en `file://` se recupera la ruta y se mira; en las llaves, negar un
+   lector con `{…,…}` que no se expanda.
+3. **Si 1 es (b):** la K del cierre no pierde su parte PRIORITARIA entera: queda «K. PRIORITARIA,
+   porque lee material protegido: la guardia aún deja leer lo protegido con las barras dobladas de
+   la herramienta Bash, `~+`/`~-`, `/proc/cygdrive/`, `C:<rel>` y `FileSystem::` (GUARDIA-ALIAS.md
+   §9)», delante del resto de K. Medido en memoria con el mismo `simular_ps.py`: 23.960 bytes,
+   1.040 de margen.
+
+## §9 · Informe del revisor · trabajo/guardia-alias · 2026-10-24 (sobre ef23607), pegado tal cual
+
+Revisión sobre ef23607 (árbol `ed3e2a6a…`), más la edición sin commitear de `docs/validation/GUARDIA-ALIAS.md` (§7 y Estado).
+
+**Lo principal:** la rama hace casi todo lo que pide el encargo, pero no cumple su OBJETIVO («escriba como se escriba la ruta»). Encontré cinco formas de escribir la raíz y una vía de escape de bash que pasan la guardia sobre lo protegido. En los seis casos el programa de verdad abre el fichero bueno del repo inventado. Hay además dos formas de escribir la ruta que también abren. Todas pasan igual en `main`, así que no son regresiones: son huecos que la tabla no recoge.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | §3.4 corrige la cifra del diagnóstico: «esas 18 de a/d no eran fugas; la cifra real de antes era 105 … y queda en 0». Lo medido es cierto: con `\\?\` escrito tal cual, el `cat` de la herramienta Bash no abre. La conclusión no se sostiene, porque la herramienta quita un nivel de barras invertidas ANTES de bash, también entre comillas simples. La guardia decide sobre el texto con barras dobles, y bash recibe el prefijo bueno. Con las barras doblando el prefijo, el `cat` real abre y la guardia lo deja pasar (b1). No es la comilla doble de bash, como dicen §3.4 y el comentario de `tests/unit/test_guardia_alias.py:192-193`. | `printf '%s\|' '\\?\x' "\\?\y" '\\\\z' a\\b` → `\?\x\|\?\y\|\\z\|ab\|`, y `echo 'one\\two'` → `one\two`: un nivel menos, también entre comillas simples. Además, `cat '\\?\C:\…\Bot v3 prueba\src\botsito\cli.py'` → «No such file», y `cat '\\\\?\\C:\\…\\src\\botsito\\cli.py'` → `x = 1`. |
+| a2 | menor | El docstring del test sigue diciendo «123 lecturas protegidas que pasaban»; el informe lo corrige a 105. | `tests/unit/test_guardia_alias.py:3`; `GUARDIA-ALIAS.md:499-500` |
+
+Comprobado sin hallazgos:
+- **Contrato:** `uv run python scripts/contrato_rama.py` → «CONTRATO: 23 ficheros dentro del contrato de trabajo/guardia-alias (riesgo alto, …, 3 comprobaciones para el revisor)», exit 0.
+- **pytest del contrato:** `test_guardia_alias.py` sola, 33 en verde. Las cuatro suites del contrato, exit 0 sin fallos.
+- **`make check`:** `make-check.log:102` dice `SELLO: … sobre el arbol ed3e2a6ab42b961c0da0acd90d88aef283a7708e`, que es el árbol de ef23607 (`git rev-parse 'ef23607^{tree}'`). `:104` dice `PICO DE MEMORIA … 297 MiB`.
+- **CI:** `gh run view 40134439368` → `failure`, headSha ef23607, `fix/guardia-alias`. Con `--log-failed`, el único fallo es `test_state_check_ok_on_real_repo` (1 failed, 2861 passed, 28 skipped).
+- **Fuente:** la rama no toca `knowledge/spec` ni `knowledge/cases`.
+- **Holdout y material:** no se tocan. El informe declara «Ninguna» exposición (§0.j), lo que es coherente con que solo hubo ficheros falsos.
+- **Regímenes de cambio:** no se toca ningún directorio inmutable ni `libros.yaml`. `HISTORIA.md` solo añade (168 líneas añadidas, 0 borradas).
+- **Ambigüedades y ADR:** ninguno.
+- **Informes cerrados:** ninguno cambiado (`GUARDIA-ALIAS.md` es `A`).
+- **Las tres guardias de una `cita`:** no aplica.
+- **Cifras:** no aplica, la rama no toca código de negocio.
+- **Tres citas del informe contra su fuente, correctas:**
+  - `PROJECT_STATE.md:146`: el docstring con dueño.
+  - `PROJECT_STATE.md:105`: la línea de Artifact y claude-in-chrome.
+  - `solo_lectura.py:11-16` y `:118`: «lista de lo que escribe»; solo decide sobre Bash.
+  - También `DECISIONES-DE-PROCESO.md:26` y `HOJA-DE-RUTA.md:428-431`.
+- **Evidencia nueva:** no hay.
+
+### Eje (b) · Encargo
+Resumen: 6 bloquea, 3 importa, 1 menor. Requisitos: 30 hechos, 4 parciales, 2 no hechos (los dos del cierre, que van después de este informe).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base verificada: af89a78, tag en origin, CI de main, ninguna otra rama | Hecho | informe, «Base comprobada al abrir» |
+| 2 | Abrir con abrir-rama: encargo, contrato, Archivo en HISTORIA | Hecho | c60a8d4; HISTORIA solo añade |
+| 3 | Encargo copiado tal cual, con fecha; tag F38c | Hecho | `docs/encargos/trabajo-guardia-alias.md:1-49` |
+| 4 | Verificar que el diagnóstico existe y dice eso | Hecho | §0.a |
+| 5 | OBJETIVO: negar escriba como se escriba la ruta | **Parcial** | b1-b5 (bloquea) y b6-b7 (importa) |
+| 6 | `solo_lectura.py`, solo si la medida lo pide | Hecho (no lo pide) | §0.f; sin diff |
+| 7 | Lo bueno sigue pasando con cualquier forma de la raíz | Hecho | `test_lo_bueno_pasa_con_cada_forma_de_la_raiz`; tabla e, 0 negadas |
+| 8 | Qué no cambia (motor, spec, Makefile, settings, otras reglas, el resto de K) | Hecho | `git diff --name-status main...HEAD`: solo hooks, tests, docs, PS, HISTORIA |
+| 9 | 0.a: copiar el diagnóstico tras comprobarlo; re-pasar `medir_k` (123) | Hecho | §0.a; anexo `diagnostico/` |
+| 10 | 0.b: fichero:línea de cada llamada | Hecho | §0.b |
+| 11 | 0.c: Windows, ctypes y tiempos | Hecho | §0.c |
+| 12 | 0.c: Linux, `realpath` y skips | Parcial, declarado | §0.0 (`wsl` negado), §0.i; la CI de fix/ lo suple |
+| 13 | 0.d: lectores recursivos | Hecho | §0.d |
+| 14 | 0.e: variables | Hecho | §0.e |
+| 15 | 0.f: `solo_lectura` | Hecho | §0.f |
+| 16 | PARADA con tabla, propuesta y lo no clasificable | Hecho | «Lo que necesito que decidas» |
+| 17 | Tests primero, cada uno roto a propósito, con las dos salidas | **Parcial** | b9 |
+| 18 | Cada familia negada con su motivo | Hecho | §3.2 |
+| 19 | Un disfraz por familia | Parcial | b10 |
+| 20 | 8.3 y UNC con skip fuera de Windows, declarados | Hecho | `SOLO_WINDOWS`; §3.2, 17 de 33 |
+| 21 | Código mínimo, con el porqué y el origen en un comentario | Hecho | `guardia.py`, bloque «la ruta canonica» |
+| 22 | Tabla antes y después en el anexo | Hecho | `fase1/tabla-despues.md` |
+| 23 | `make check` completo con PICO DE MEMORIA | Hecho | `make-check.log:102,104` |
+| 24 | Tiempo de la suite antes y después | Hecho | §3.5 |
+| 25 | Fase 2: lo falso en runbooks y skills | Hecho (ninguno) | §4 |
+| 26 | Fase 2: textos para el punto Y (K, G.1, Technical Debt) y bytes de PS | Hecho | §4.1-4.4 |
+| 27 | Push a fix/ y CI de Linux con solo el fallo esperado | Hecho | run 40134439368, comprobado |
+| 28 | Revisor lanzado con el informe terminado, y su informe pegado al final | No hecho aún | es este informe; se pega después |
+| 29 | «Rama lista para revisión, NO cerrada» | No hecho aún | Estado: «EN CURSO» (`:603`) |
+| P0 | `_canonica` dentro de `_absoluta` | Hecho | diff de `_absoluta` |
+| P1 | `realpath` más prefijos; test de unión y enlace en los dos sentidos | Hecho | `test_leer_por_una_union_o_un_enlace…` |
+| P2 | Lo no canonizable se niega, con la forma buena | Hecho | `_no_canonizable`; test ×7 |
+| P3 | Lista cerrada para la propia máquina, con el nombre leído | Hecho | `_propia_maquina` (`socket.gethostname()`) |
+| P4 | Un ancestro de la raíz se decide como la raíz, con su `respeta_ignore` | Hecho | `contiene_la_raiz`, `motivo_directorio` |
+| P5 | PowerShell: `$env:`, `$HOME`, `$PWD`, `~`; negar la variable sin resolver | Hecho | `_variables_powershell`; `:4304` |
+| P6 | Solo en `nt`; skips; la CI enseña Linux | Hecho | run 40134439368 |
+| P7 | Commit propio, docstring y declaración para el cierre | Hecho | 38f03c4; §2 |
+| P8 | Artifact y claude-in-chrome, fuera de la rama | Hecho | §2 |
+| P9 | El revisor añade comillas y escapes | Hecho | §6 |
+| E5 | Respuestas copiadas tal cual; tabla «El encargo, punto por punto» | Copia Hecho; tabla **No** | `diff` encargo:53-68 contra informe:369-384 → IGUALES; tabla en b8 |
+
+Hallazgos. Todo se midió en memoria con `decidir` de la rama, contra el repo inventado del fixture (espacio en el nombre, ficheros falsos en marzo, `holdout/1` y la cruda de v7), en el scratchpad. «Abre» se comprobó SOLO sobre `src/botsito/cli.py` del repo inventado. Las formas b1-b7 pasan también con la guardia de `main` (cargada de `git show main:…`): son huecos previos, no regresiones.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | **bloquea** | **Las barras invertidas dobladas en la herramienta Bash.** La herramienta quita un nivel de `\` antes de bash (a1). Con `cat '\\\\?\\<raíz>\\…'` y `cat '\\\\localhost\\C$\\…'` la guardia ve cuatro barras: `_sin_prefijos` no lo reconoce, la ruta no empieza por la raíz y pasa. Bash recibe `\\?\…` y abre. Va por Bash y Monitor. Los tests de la rama prueban la forma con dos barras, que con la herramienta real no abre. | En memoria, Q10, Q10b, Q11 y Q12 (cuatro barras con `?`, `localhost\C$` y `.`): **PASA** en Bash y en Monitor, en hold, marzo y bueno. Real con la herramienta Bash: `cat '\\\\?\\C:\\…\\src\\botsito\\cli.py'` → `x = 1`; `cat '\\\\localhost\\C$\\…\\cli.py'` → `x = 1`, rc=0. |
+| b2 | **bloquea** | **`~+` y `~-`** (bash los vuelve `$PWD` y `$OLDPWD`). `_absoluta` y `resolver` los pasan por `expanduser`, que da el directorio del usuario `+` o `-`. | `cat ~+/'<HOLD>'`: PASA en Bash y Monitor, en los tres sitios. `cd '<R>/knowledge/cases' && cd .. && cat ~-/'hol''dout/1/caso.yaml'`: PASA. Real: `cat ~+/src/botsito/cli.py` y la forma con `~-` → ABRE (rc=0). |
+| b3 | **bloquea** | **`/proc/cygdrive/c/…`**, el alias de unidad de MSYS. `_absoluta` solo traduce `/c/` y `/cygdrive/c/` (`guardia.py`, regex `^/(?:cygdrive/)?([a-zA-Z])…`). | `cat '/proc/cygdrive/c<R sin unidad>/<rel>'`: PASA en los tres sitios. Real sobre el bueno: ABRE (rc=0). `grep -r` sobre el contenedor escrito así sí se niega (R_SIN_ABRIR). |
+| b4 | **bloquea** | **La ruta relativa a la unidad, `C:<rel>`** (sin barra tras los dos puntos). `_absoluta` no la cuelga del cwd y `_canonica` la deja «relativa», así que `relativa()` da `None`. | `C:<rel>`: PASA en un guion de Python (decidido justo tras escribirlo), Read, Grep, PowerShell y Bash `cat`, en los tres sitios. Real, con cwd en el repo inventado: `python -c "open(r'C:src\botsito\cli.py')"` ABRE; `powershell.exe … Get-Content 'C:src\botsito\cli.py'` ABRE. El `cat` de Git Bash NO abre (rc=1). |
+| b5 | **bloquea** | **La ruta de proveedor de PowerShell**, `FileSystem::<raíz>\…` y `Microsoft.PowerShell.Core\FileSystem::…`: el trozo no es absoluto para `_absoluta`. | `Get-Content 'FileSystem::<R>\<rel>'`: PASA en los tres sitios; la forma larga, también. Real: `powershell.exe -Command "Get-Content 'FileSystem::<R>\src\botsito\cli.py'"` → ABRE. |
+| b6 | importa | **Las llaves de bash**, `'<R>/'{<rel>,zz}`: la guardia no las expande. No es una forma de la raíz, pero el OBJETIVO dice «escriba como se escriba la ruta». | PASA en los tres sitios. Real sobre el bueno: el contenido sale por stdout (rc=1 solo por la rama `zz`). |
+| b7 | importa | **Las URL `file:///`**: `python -c "urllib.request.urlopen('file:///<R>/…')"` y `curl -s 'file:///<R con %20>/…'`. Desde esta rama `candidatos_de_ruta` deja de dar un candidato a `x://…`, `file://` incluido; en `main` ya pasaban. | Las dos formas: PASA. Real: urllib ABRE; curl con `%20` ABRE (rc=0). Sin `%20`, curl no abre (rc=3). |
+| b8 | importa | Falta la tabla «El encargo, punto por punto» de la skill `entregar-rama` (E5). Solo está «§2 · La respuesta, punto por punto», que cubre la respuesta a la PARADA y no el encargo. | `grep -n "punto por punto" GUARDIA-ALIAS.md` → solo `:386` y `:579` |
+| b9 | importa | «Cada uno roto a propósito»: dos tests no se rompen nunca. `test_powershell_lo_bueno_y_lo_literal_pasan` (ninguna rotura de «lo bueno» la sostiene) y `test_fuera_de_windows_los_prefijos_no_se_tocan` no están en `ROTURAS`. | `tests/unit/test_guardia_alias.py:489-502` |
+| b10 | menor | Disfraces: la familia del contenedor solo lleva los prefijos (`\\?\`, `//?/`), sin mayúsculas, barras mezcladas ni `.`/`..`. | `test_guardia_alias.py:265-270` |
+
+Qué hacer con cada uno lo decide el consultor. Una lectura posible: b1 y b2 son del mismo motor (modelar la capa de la herramienta y los `~+`/`~-` de bash); b3-b5 son traducciones que faltan en `_absoluta`; b6 y b7 son de otro mecanismo (expansión y URL) y podrían ir a Technical Debt.
+
+Las comillas y escapes de bash sobre la raíz (punto 9), probados en hold, marzo y cruda; todos niegan con la regla del sitio salvo `$'…'` con escapes:
+- `$'…'` sin escapes: niega con la regla.
+- `$'…'` con escapes y prefijo: niega sin R_ («el argumento `$'…'`…»). Niega, aunque sin regla con nombre.
+- `$"…"`, y `$"//?/…"`.
+- Barras invertidas sin comillas (`kno\wledge`, `Bot\ v3`).
+- Barra invertida seguida de salto de línea a mitad de la ruta.
+- Comillas pegadas (`"<R>"/'know'"ledge…"`).
+- `C:\\…` sin comillas.
+- `'\\?\'"<R>…"` (prefijo entre simples pegado a dobles).
+- `pushd`: R_EJECUCION.
+- Los flujos `::$INDEX_ALLOCATION` y `::$DATA` en Bash, Read y guion: niegan con la regla del sitio, porque `realpath` los resuelve (en `main` pasaban).
+- `${C:\…}` en PowerShell: R_EJECUCION.
+
+### Lo que no pude comprobar
+- Si Read y Grep (herramientas de Claude Code) abren de verdad `C:<rel>` (b4). Solo medí la decisión de la guardia, PASA. Probarlo exigiría la herramienta real sobre una ruta relativa a la unidad; no lo intenté.
+- Si Monitor y PowerShell quitan también un nivel de `\` (b1). No tengo esas herramientas cargadas. La decisión en memoria para Monitor es PASA.
+- `$OLDPWD`: en memoria pasa, porque el proceso de mi Python sí tenía `OLDPWD` en el entorno. La guardia REAL negó mi `cat "$OLDPWD/…"` sobre el fichero bueno (sin regla con nombre, «se construye al ejecutarse»). No se cuenta como fuga, pero la decisión depende del entorno del hook.
+- `make check`: no lo ejecuté (escribe); su evidencia es `make-check.log`. Tampoco `git write-tree`.
+- `rg` real desde un contenedor: no lo medí, por la misma razón que el informe (habría que correrlo sobre el Escritorio real).
+- Una unidad de `subst` o mapeada hacia el repo: haría falta cambiar el sistema.
+
+### Comandos ejecutados
+1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git diff --stat main...HEAD`; `git status --short`
+2. Read: `docs/encargos/trabajo-guardia-alias.md`, `contrato.yaml`, `docs/validation/GUARDIA-ALIAS.md`, `tests/unit/test_guardia_alias.py`
+3. `uv run python scripts/contrato_rama.py`
+4. `git diff --name-status main...HEAD`; `git diff main -- docs/validation/GUARDIA-ALIAS.md | head -60`
+5. `git diff main...HEAD -- .claude/hooks/guardia.py tests/contract/test_tramos_fuente.py PROJECT_STATE.md`
+6. `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_alias.py`
+7. `uv run pytest -q -p no:cacheprovider` con las cuatro suites del contrato (en segundo plano; exit 0)
+8. `sed -n` y `grep -n` sobre `guardia.py`: `_absoluta`, `$'…'`, `cd`/`pushd`
+9. `uv run python -` (heredoc con `'EOF'`): construye el repo inventado `…\scratchpad\rev9y5cbpqd\Bot v3 prueba` con git y ficheros falsos
+10. `uv run python -` (cuatro sondas): `decidir` en memoria de la rama y de `main` (`git show main:.claude/hooks/guardia.py`); programas reales (bash `-s` y `-c`, `python -c`, `powershell.exe`, curl) solo sobre el `cli.py` del repo inventado
+11. `cd <repo inventado> && cd src && cd .. && cat "$OLDPWD/botsito/cli.py"`: negado por la guardia real
+12. `printf '%s|' '\\?\x' "\\?\y" '\\\\z' a\\b; echo; echo 'one\\two'`
+13. `cat '\\\\?\\C:\\…\\Bot v3 prueba\\src\\botsito\\cli.py'`; `cat '\\?\C:\…\cli.py'`; `cat '\\\\localhost\\C$\\…\\cli.py'` (solo el fichero bueno inventado)
+14. `ls -la make-check.log`; `grep -n "SELLO\|PICO DE MEMORIA" make-check.log`; `tail -c 300 make-check.log`; `git diff --numstat main...HEAD -- docs/state/HISTORIA.md PROJECT_STATE.md`; `grep -n "punto por punto\|…" GUARDIA-ALIAS.md`
+15. `git rev-parse 'ef23607^{tree}'`; `sed -n` sobre ERRORES-RECURRENTES:94-95, PROJECT_STATE:105 y :146, DECISIONES-DE-PROCESO:26, solo_lectura.py:10-17 y :116-119, HOJA-DE-RUTA:426-432
+16. `git show --stat 38f03c4`; `diff` de la respuesta (encargo:53-68 contra informe:369-384)
+17. `gh run view 40134439368 --json …`; `gh run view 40134439368 --log-failed | grep …`
+
+El repo inventado sigue en `C:\Users\USER\AppData\Local\Temp\claude\C--Users-USER-Desktop-Bot-v3\76226a3b-7f68-4e43-9153-3301b3c01892\scratchpad\rev9y5cbpqd\`, fuera del repositorio; solo lleva ficheros falsos.
 
 ## Estado
 
-EN CURSO: fases 0, 1 y 2 hechas; falta el sello, la CI de Linux y el revisor.
+Rama lista para revisión, NO cerrada. Con la PARADA 2 abierta (§8): el revisor encontró cinco
+formas que bloquean el OBJETIVO y dos que importan, todas abiertas ya en `main`; lo que decida
+el consultor sobre ellas cambia el texto de K del cierre (§8, punto 3).

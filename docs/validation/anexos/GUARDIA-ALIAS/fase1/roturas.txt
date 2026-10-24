@@ -10,3 +10,5 @@ ROTO | sin_contenedor | test_rg_desde_fuera_respeta_lo_ignorado_como_desde_la_ra
 ROTO | sin_variables_ps | test_powershell_resuelve_env_home_pwd_y_tilde | falla: caso 0: pasa
 ROTO | sin_variables_ps | test_powershell_niega_una_variable_que_no_resuelve_delante_de_un_lector | falla: ('Get-Content "$env:GUARDIA_ALIAS_NO_EXISTE\\a.txt"', None)
 ROTO | sin_no_canonizable | test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena | falla: ('Bash', None)
+ROTO | todo_es_la_raiz | test_powershell_lo_bueno_y_lo_literal_pasan | falla: Get-Content "$env:GUARDIA_ALIAS_PRUEBA\src\botsito\cli.py": R_HOLDOUT
+ROTO | identidad | test_fuera_de_windows_los_prefijos_no_se_tocan | falla: assert '\\\\?\\C:\\x\\y' == 'C:\\x\\y'

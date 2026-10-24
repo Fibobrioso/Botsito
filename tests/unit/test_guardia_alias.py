@@ -189,8 +189,9 @@ def _herramientas(ruta: str, fuera: Path) -> list[tuple[str, str, dict[str, Any]
     """La misma lectura por cada herramienta que la guardia decide."""
     guion = fuera / "guion.py"
     guion.write_text(f"print(open(r'{ruta}', encoding='utf-8').read())\n", encoding="utf-8")
-    # Entre comillas SIMPLES: entre dobles, Bash vuelve `\\\\` una sola barra, y `cat` de Git Bash
-    # no abre `\\?\...` ni `\\localhost\...` (medido sobre el fichero bueno, GUARDIA-ALIAS.md §3).
+    # Entre comillas simples, la guardia ve la ruta tal cual. (La herramienta Bash de Claude Code
+    # quita un nivel de `\` ANTES de bash, tambien entre simples: revisor, a1 y b1; GUARDIA-ALIAS.md
+    # §8. Ese hueco, con las barras dobladas, queda para el consultor.)
     cat = f"cat '{ruta}'"
     return [
         ("Bash cat", "Bash", {"command": cat}),
@@ -267,6 +268,10 @@ def _contenedores(repo: Path) -> list[tuple[str, str]]:
     if EN_WINDOWS:
         salida.append(("la carpeta del repo con \\\\?\\", "\\\\?\\" + str(repo.parent)))
         salida.append(("la carpeta del repo con //?/", "//?/" + repo.parent.as_posix()))
+        # Disfraces de la familia (revisor, b10): mayusculas, barras mezcladas, `.` y `..`
+        salida.append(("en MAYUSCULAS", str(repo.parent).upper()))
+        salida.append(("con barras mezcladas y ..", f"{repo.parent}/x\\..\\."))
+    salida.append(("con /./ al final", f"{repo.parent.as_posix()}/./"))
     return salida
 
 
@@ -499,6 +504,9 @@ ROTURAS = [
     ("sin_variables_ps", "test_powershell_resuelve_env_home_pwd_y_tilde"),
     ("sin_variables_ps", "test_powershell_niega_una_variable_que_no_resuelve_delante_de_un_lector"),
     _w("sin_no_canonizable", "test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena"),
+    # Revisor, b9: los dos que no se rompian nunca.
+    ("todo_es_la_raiz", "test_powershell_lo_bueno_y_lo_literal_pasan"),
+    _w("identidad", "test_fuera_de_windows_los_prefijos_no_se_tocan"),
 ]
 
 
