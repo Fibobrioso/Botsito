@@ -191,6 +191,81 @@ redondeado hacia fuera como los de v10, con motivo «SIN AUDIO», y a la `natura
 comentario de v15 en `fuentes.yaml`. La puerta del ASR (ningún segmento con `t1` dentro del
 corte) se pasa tras la transcripción (§2.2).
 
+### 2.2 v15: transcripción, cuarentena y puerta del ASR
+
+- **Transcripción del corpus**, tras el «listo» de Aleks: `uv run botsito corpus transcribe --video
+  v15` → `tr-v15-large-v3-int8-float16-2ec65e67`, **1344 segmentos**. `corpus transcript check`:
+  `OK: 16 transcripciones coherentes con el disco y el glosario`.
+- **El guion de `main`** (`git diff --quiet main -- scripts/transcribir_sesion.py`: idéntico):
+  `--audio C:/Users/USER/Desktop/sesion-05-audio/sesion-05-v15.wav --sesion 05 --video v15`, a
+  continuación, nunca a la vez. El registro (`sesion-05-v15.registro.txt`) dice:
+  - hoja: la de la sesión 05;
+  - audio comprobado: el sha256 de su WAV (`796fbb1c7aea…`) es el de la transcripción del corpus de
+    v15;
+  - ASR de 1188,6 s (factor 0,20); **1344 segmentos**, los mismos que la transcripción del corpus;
+  - **segmentos en cuarentena: 0 en 0 bloques**; segmentos tapados por tramos: 0; bloques
+    `[NO CITABLE]`: 0;
+  - códigos detectados: S-1 00:10, S-2 01:51, S-3 03:59 (×2), S-4 07:40, S-5 16:02, S-6 19:31,
+    S-7 28:19, S-8 36:26, S-9 41:19, S-10 51:41, S-11 51:46, S-12 58:50, S-14 80:27, S-15 80:29,
+    S-16 86:45; sin código detectado, S-13, S-17 a S-25.
+- **La cuarentena por condición (decisión 2 del consultor): 0 bloques.** Ningún segmento de v15
+  nombra un mes con días reservados o sin demostrar libre, ni trae una fecha numérica ni un día de
+  la semana con número.
+- **La premisa de la decisión 2, medida (CLAUDE.md, «Como se trabaja»: gana la medida).** La
+  decisión dice que la cuarentena por condición bloquea las frases que nombran julio con un día. **No
+  es así para julio.** Julio es un mes libre (`meses_libres`: 1, 4, 7, 8, 10, 11 y 12), y la regla
+  de fecha solo casa formas numéricas. Con frases SINTÉTICAS, sin leer ninguna transcripción
+  (`motivos_cuarentena` con los meses libres):
+  - «el 21 de julio», «veintiuno de julio», «el día 21», «aquí en julio, el 24» y «julio 28» → no
+    se tapan;
+  - «el lunes 21» → día de la semana con número; «21/07» → fecha numérica; «el 21 de marzo» → mes.
+
+  Por eso la decisión 4 (PARADA ante un día de julio del 18 en adelante fuera de cuarentena) se
+  aplicó con un detector propio ANTES de leer. `detector_julio.py`, en la carpeta de trabajo,
+  imprime solo marcas de tiempo, el tipo de coincidencia y un booleano «18-31». En v15 dio:
+  `lineas con texto: 1344; lineas que nombran julio: 0` y una coincidencia «día + número»
+  (08:47) con `18-31=no`. **Ningún día de julio, sin PARADA.**
+- **La puerta del ASR del corte SIN AUDIO.** El guion tapa todo segmento que SOLAPE un tramo
+  (`tapados_por_tramos`, `s.t1_ms > a and s.t0_ms < b`, `scripts/transcribir_sesion.py:307`) y tapó
+  **0**. Ningún segmento solapa 1:22:26–1:23:33, así que tampoco hay ninguno con `t1` dentro. Las
+  marcas de la filtrada alrededor, impresas solas, saltan de `[82:10]` a `[84:00]`.
+
+### 2.3 v15: lo que enseñó el trader, y los tramos que se marcaron al leer
+
+**Lo que se enseñó.** Los esquemas inventados de la hoja se enseñaron en pantalla, y el trader los
+comenta y corrige varias veces («el ejemplo del esquema inventado está mal planteado», 61:59). Para
+responder, **el trader compartió su FX Replay** (respuesta a de Aleks): traza ejemplos sobre su
+replay y dibuja un esquema propio «con un paint» (S-14, 72:46).
+
+**Los meses que nombra en voz: ninguno.** El detector no encuentra «julio» y la cuarentena no tapa
+nada.
+
+**Tramos de precaución (ADR-0021 §2), marcados al leerlos** en `tramos_no_citables.yaml` y
+declarados en `HOLDOUT-EXPOSICIONES.md` (2026-10-25). Aquí solo se dice dónde están; **ninguna
+cifra se copia y ninguna se usa** (la lección de la sesión 4: `HOLDOUT-EXPOSICIONES.md`, filas del
+2026-10-04).
+- **0:10:21–0:14:43** (dentro de S-4): sobre su replay, cuenta resultados de operaciones y de
+  sesiones concretas y da cifras agregadas de esos días.
+- **1:14:41–1:16:52** (dentro de S-14): busca «el día más reciente» de su backtest y comenta el
+  resultado de sus operaciones y de sus sesiones.
+- **1:17:52–1:18:06** (dentro de S-14): dos cifras agregadas, porcentajes, de las sesiones de su
+  replay.
+
+Fuera de ellos, al explicar una regla sobre su replay, nombra el resultado de alguna operación
+suelta (gana, pierde, queda en break even), sin cifras.
+
+**Tramos ajenos a la operativa**, no citables y sin describir: 0:41:22–0:41:36, 0:59:09–1:00:03
+(conversación personal) y 1:40:37–1:40:58 (el final de la grabación, tras cortarse S-18).
+
+### 2.4 Fotogramas: ninguno abierto
+
+Decisión 1 del consultor (respuesta a): en esta rama no se abre ningún fotograma de v15 ni de v16.
+`frames extract` y `frames check` sí se hacen (paso 5 de la skill); las citas salen solo de la
+filtrada.
+- v15: `uv run botsito corpus frames extract --video v15` → `OK: fr-v15-5dcfa8d3 (6058 fotogramas,
+  0 extra)`; `uv run botsito corpus frames check` → `OK: 11 extracciones coherentes con el disco; 3
+  obligatorios presentes`.
+
 ## Estado
 
 EN CURSO.
