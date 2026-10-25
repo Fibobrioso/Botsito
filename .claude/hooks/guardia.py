@@ -77,7 +77,6 @@ import glob as globmod
 import io
 import json
 import os
-import posixpath
 import re
 import socket
 import subprocess
@@ -1089,23 +1088,36 @@ _UNIDAD_MSYS = re.compile(r"^/(?:proc/cygdrive/|cygdrive/)?([a-zA-Z])(/.*)?$")
 _TILDE_DE_PILA = re.compile(r"^~([+-])(\d*)(?=[\\/]|$)")
 _PROVEEDOR_FS = re.compile(r"(?i)^(?:microsoft\.powershell\.core\\)?filesystem::")
 # Pasada corta del revisor (GUARDIA-ALIAS.md §12): `/proc/self/cwd/` es el directorio de trabajo,
-# como `~+`; el de otro proceso, o `root`, `fd`, `exe`..., no se sabe al inspeccionar.
-_PROC_DE_UN_PROCESO = re.compile(r"^/proc/(self|thread-self|\d+)/([^/]+)(/.*)?$")
+# como `~+`; el de otro proceso, o `root`, `fd`, `exe`..., no se sabe al inspeccionar. Solo esos
+# ENLACES de `/proc`: `/proc/self/status` o `cmdline` no llevan a ningun fichero.
+_PROCESO = re.compile(r"^(self|thread-self|\d+)$")
+_ENLACES_DE_PROC = frozenset({"cwd", "root", "fd", "exe", "map_files", "task"})
 
 
 def _sin_disfraz_posix(ruta: str, cwd: str) -> str:
     """Una ruta con UNA barra inicial, sin `//` ni `/./` ni `..` (los disfraces de `/proc/cygdrive/`
     que abren en Git Bash: revisor, pasada corta, b1), y `/proc/self/cwd/` como el directorio de
-    trabajo (b2). Una con dos barras iniciales (`//?/`, `//servidor/`) no se toca aqui."""
+    trabajo (b2). Se recorre tramo a tramo y `..` se resuelve DESPUES de traducir `cwd`, como lo
+    resuelve el sistema: `/proc/self/cwd/..` es el padre del directorio de trabajo (pasada minima,
+    c1). Una con dos barras iniciales (`//?/`, `//servidor/`) no se toca aqui."""
     if not ruta.startswith("/") or ruta.startswith("//"):
         return ruta
-    r = posixpath.normpath(ruta)
-    m = _PROC_DE_UN_PROCESO.match(r)
-    if not m:
-        return r if _UNIDAD_MSYS.match(r) else ruta
-    if m.group(1) == "self" and m.group(2) == "cwd":
-        return cwd + (m.group(3) or "")
-    return _no_canonizable(ruta)
+    tramos = [t for t in ruta.split("/") if t not in ("", ".")]
+    pila: list[str] = []
+    for i, tramo in enumerate(tramos):
+        if tramo == "..":
+            if pila:
+                pila.pop()
+            continue
+        pila.append(tramo)
+        if len(pila) == 3 and pila[0] == "proc" and _PROCESO.match(pila[1]):
+            if pila[2] not in _ENLACES_DE_PROC:
+                return ruta
+            if pila[1] in {"self", "thread-self"} and pila[2] == "cwd":
+                return "/".join([cwd, *tramos[i + 1 :]])
+            return _no_canonizable(ruta)
+    r = "/" + "/".join(pila)
+    return r if _UNIDAD_MSYS.match(r) else ruta
 
 
 def _tilde_de_bash(ruta: str, cwd: str) -> str:

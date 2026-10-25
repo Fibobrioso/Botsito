@@ -1002,7 +1002,87 @@ Roturas nuevas: `sin_disfraz_posix` contra `/proc/cygdrive/` y `/proc/self/cwd/`
 corta están en `parada2/decisiones.txt`: 144, de las que 37 pasan, todas sobre `src/`, fuera de la
 raíz o en la casa.
 
+## §14 · Informe del revisor · trabajo/guardia-alias · 2026-10-24 (pasada mínima sobre `git diff bcc70f7 79f7c26`), pegado tal cual
+
+**Lo principal:** b1 queda cerrado y no hay ninguna regresión frente a `main`. b2 queda **a medias**: `/proc/self/cwd/..` (y `../..`) sigue pasando la guardia, y es un camino real a la raíz del repo desde `src/`.
+
+Todas las pruebas se hicieron con `decidir` en memoria, con el módulo de la rama y con el de `main` (`git show main:.claude/hooks/guardia.py`). El repo inventado es el de mis pasadas anteriores, con ficheros falsos en marzo, el holdout y la cruda: `C:\Users\USER\AppData\Local\Temp\claude\C--Users-USER-Desktop-Bot-v3\76226a3b-7f68-4e43-9153-3301b3c01892\scratchpad\rev9y5cbpqd\Bot v3 prueba`.
+
+### Hallazgos
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| c1 | **bloquea** (b2 incompleto; en `main` pasa igual, así que no es una regresión) | **`/proc/self/cwd/..` y `/proc/self/cwd/../..` pasan la guardia.** El problema está en el orden de `_sin_disfraz_posix` (`guardia.py:1102-1107`): primero hace `posixpath.normpath` y después busca `self/cwd`. El `..` se come `cwd`, la ruta queda en `/proc/self` o `/proc`, ya no casa `_PROC_DE_UN_PROCESO` y se devuelve la ruta original sin traducir. Git Bash, en cambio, resuelve `..` sobre el directorio real. Resultado: un lector recursivo llega a la raíz, o a un ancestro, sin que la guardia lo vea. | En memoria, en el repo inventado: `grep -r dato /proc/self/cwd/..` con cwd `src` → rama `pasa`, main `pasa`, mientras `grep -r dato ..` con el mismo cwd → `R_SIN_ABRIR`. Lo mismo con `grep -r dato /proc/self/cwd/../..` desde `src/botsito` (pasa; `../..` → `R_SIN_ABRIR`), con `cd src && grep -r dato /proc/self/cwd/..` (pasa) y con Grep `path: /proc/self/cwd/..` desde `src` (pasa; `..` → `R_HOLDOUT`). Prueba real, solo listando nombres: `cd …/Bot v3 prueba/src && ls /proc/self/cwd/..` → `Makefile corpus data docs knowledge src`, rc=0, es decir, la raíz del repo. El `grep` real no lo ejecuté, porque leería los ficheros falsos protegidos. |
+| c2 | menor | Por la misma causa, `/proc/self/cwd/../<x>` se niega con `R_ALIAS` aunque vaya a lo bueno, y `cat /proc/self/status` (o `/proc/<pid>/cmdline`) pasa de `pasa` en `main` a `R_ALIAS`. Es negar de más. §13 lo cubre solo con el «…» de «`root`, `fd`, `exe`…». | La guardia real negó `cat /proc/self/cwd/../botsito/cli.py` desde `src/botsito` («no se puede canonizar»). En memoria, en el repo real: `cat /proc/self/status` → rama `R_ALIAS`, main `pasa`. Es el único DISTINTO de 37 casos. |
+| c3 | menor | La parte b3 de `test_la_unidad_sin_barra_…` sí detecta la rotura, pero no está en `ROTURAS`: ni `sin_no_canonizable` ni otra rotura se emparejan con esa rama. | En memoria, con `_no_canonizable` cambiado por la identidad, Read `C:<HOLD>` con cwd `Z:\x` pasa de `R_ALIAS` a `pasa`, y lo mismo hacia `src`. `test_guardia_alias.py:674-704`: `sin_no_canonizable` solo aparece con `test_lo_que_no_se_puede_canonizar_…`. |
+| c4 | menor | En `parada2/decisiones.txt`, las líneas `dobladas | … | pasa` (líneas 37-48) no dicen a qué sitio apuntan. Que van a `src/` solo se deduce del orden del test, no del anexo, y eso no basta para sostener «37 pasan, todas sobre `src/`…» (§13). | `decisiones.txt:37-48`; `test_guardia_alias.py:531` no imprime el `rel`. |
+| c5 | menor | El `## Estado` de `GUARDIA-ALIAS.md:1007-1008` dice «falta el sello», pero el sello ya está. | `make-check.log:102` `SELLO … d800d8fb…` = `git rev-parse '79f7c26^{tree}'`; `:104` dice `PICO DE MEMORIA … 298 MiB`. |
+
+### Comprobado sin hallazgos
+- **(1) b1:** probé 9 disfraces: `/proc/cygdrive`, `/proc//cygdrive`, `/proc/cygdrive//`, `/proc/./cygdrive`, `/proc/x/../cygdrive`, `/proc/cygdrive/./u`, `/proc/cygdrive/u//`, `/cygdrive//` y `/./u`. Cada uno contra marzo, holdout y cruda, en Bash y Monitor: `R_SIN_ABRIR`, `R_HOLDOUT` y `R_CUARENTENA` en la rama, y `pasa` en `main`. Hacia `src/botsito/cli.py`, `pasa` en los dos.
+- **(1) b2:** `/proc/self/cwd`, `/proc/self/./cwd`, `/proc//self/./cwd` y `/proc/self/cwd/` (con barra final) se niegan con la regla del sitio y pasan hacia `src` (en `main` pasaban todas). Salvo el caso `..` de c1.
+- **(2) `_sin_disfraz_posix`:** 37 casos contra el repo real, rama frente a `main`, y solo cambia `/proc/self/status` (c2). Los iguales:
+  - rutas absolutas `C:/…` y `C:\…`, `/c/…`, `/cygdrive/c/…`, `//?/C:/…`, `//localhost/c$/…`;
+  - rutas de Linux: `/tmp/x.txt`, `/tmp/../tmp`, `/etc/hosts`, `/`, `/c/`, `/c/Users/../Users`, `/x/../c/…`, `/proc`, `/proc/meminfo`, `/proc/cpuinfo`, `/proc/cygdrive`;
+  - comandos de RITUAL: `git status/log/diff/fetch/merge-base`, `make check > make-check.log 2>&1`, `pytest`, `state check`, `contrato_rama.py`, `knowledge validate`, `grep SELLO`;
+  - Read, Grep y Glob con `C:\`, `/c/` y `/tmp`;
+  - el holdout por `/c/…` sigue en `R_HOLDOUT`.
+
+  No abre nada nuevo: todo lo que cambia, cambia hacia negar. Las rutas con dos barras iniciales no se tocan (`guardia.py:1100`).
+- **(3) Tests:** `tests/unit/test_guardia_alias.py` da 54 en verde. b3 está en `test_guardia_alias.py:642-650` (`R_ALIAS` en los dos sentidos, como en §13). b4: `~-`, `~+1` y las cinco formas de `/proc/cygdrive` van ya por `_bash_y_monitor`. Las roturas nuevas están en `:699-701`.
+- **a1:** `file` dice `UTF-8 text` de `roturas.txt` y de `decisiones.txt`. `roturas.txt` tiene 27 líneas y las 27 dicen «falla»; `decisiones.txt` tiene 144 líneas, de las que 37 acaban en `pasa`, como dice §13. Las 37 van a `src`, a la casa o a otra unidad (las dobladas, ver c4).
+
+### Lo que no pude comprobar
+- La CI de Linux de 79f7c26: no la esperé, por indicación de la sesión. Tampoco cómo resuelve `realpath` `/proc/self/cwd/..` en Linux, ni si allí el caso c1 se comporta igual.
+- El `grep -r` real por `/proc/self/cwd/..`: no lo ejecuté, porque leería los ficheros falsos protegidos. La evidencia que lo sustituye es el `ls` de nombres.
+- Un caso de prueba que contenía el literal `gh run view <n>` lo negó la guardia (regla de espera de la CI). Lo quité, no lo rodeé.
+- Exposiciones: ninguna.
+
+### Comandos ejecutados
+1. `git log --format='%h %s' bcc70f7..79f7c26; git diff --stat bcc70f7 79f7c26`
+2. `git diff bcc70f7 79f7c26 -- .claude/hooks/guardia.py tests/unit/test_guardia_alias.py PROJECT_STATE.md`
+3. Grep de los encabezados de `GUARDIA-ALIAS.md`; Read de `:908-1009`, de `test_guardia_alias.py:1-160` y `:618-707`, y de `guardia.py:1080-1270`
+4. `ls` del scratchpad y del repo inventado; `find` con los nombres protegidos enmascarados; `git branch --show-current`
+5. `uv run python - <<'EOF'` (b1/b2 en memoria, rama frente a main, repo inventado)
+6. `uv run python - <<'EOF'` (c1 y los 37 casos de (2)): la primera vez lo negó la guardia por `gh run`; repetido sin ese caso
+7. Real: `cd …/Bot v3 prueba/src && ls /proc/self/cwd/..` → la raíz; `cat /proc/self/cwd/../botsito/cli.py` → lo negó la guardia (`R_ALIAS`)
+8. `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_alias.py` → 54 en verde
+9. `file`, `grep -c` y `wc -l` sobre los dos anexos (una primera versión con `$'\r'` la negó la guardia; repetida sin eso); `grep` de las líneas `pasa` y de `dobladas |` en el test
+10. `uv run python - <<'EOF'` (b3 con `_no_canonizable` como identidad, en memoria)
+11. `grep -n "SELLO\|PICO DE MEMORIA" make-check.log; git rev-parse '79f7c26^{tree}'; git status --short`
+
+## §15 · Lo hecho con la pasada mínima
+
+La CI de Linux de 79f7c26 (run **40143081981**) salió solo con el fallo esperado de state check (§16).
+
+| hallazgo | qué se hizo |
+|---|---|
+| c1, `/proc/self/cwd/..` (bloquea) | `_sin_disfraz_posix` recorre la ruta tramo a tramo y traduce `/proc/self/cwd` (y `thread-self`) al directorio de trabajo EN CUANTO aparece, antes de resolver los `..` que vengan detrás, como hace el sistema. Test: `cd src && grep -r x /proc/self/cwd/..` se niega con la MISMA regla que `cd src && grep -r x ..`; Grep sobre `/proc/self/cwd/..` desde la raíz (su padre contiene el repo) se niega con regla; `cd src && cat /proc/self/cwd/../src/botsito/cli.py` pasa |
+| c2, `/proc/self/status` (menor) | solo los ENLACES de `/proc` (`cwd`, `root`, `fd`, `exe`, `map_files`, `task`) son no canonizables; `/proc/self/status` y `cmdline` pasan, como en `main`. Test |
+| c3 (menor) | rotura `sin_no_canonizable` contra la unidad sin barra: falla, como debe |
+| c4 (menor) | las líneas de `dobladas` dicen ya si van a `src` o a lo protegido |
+| c5 (menor) | el Estado, al día |
+
+**55 tests** y **28 roturas**, todas «falla» (`fase1/roturas.txt`). `parada2/decisiones.txt`: 147
+decisiones de los seis tests de la PARADA 2 y de las pasadas del revisor, de las que pasan 39:
+las 39 van a `src/`, a la casa, a otra unidad o a `/proc/self/status`. Las tres suites de antes:
+ver §16.
+
+**Sin otra pasada del revisor:** los arreglos de c1 a c5 no tienen una cuarta pasada. c1 era el
+único que bloqueaba, y su test lo cubre en los dos sentidos con su rotura (`sin_disfraz_posix`).
+Si el consultor la quiere, es sobre `git diff 79f7c26 <último>`.
+
+## §16 · Sello y CI de los últimos commits
+
+| commit | qué | `make check` (Windows) | CI de Linux |
+|---|---|---|---|
+| bcc70f7 | la respuesta a la PARADA 2 | 2.907 passed, sello `5d54c79d…`, 298 MiB | run 40140980135: solo `test_state_check_ok_on_real_repo` |
+| 79f7c26 | la pasada corta del revisor | 2.911 passed, sello `d800d8fb…`, 298 MiB | run 40143081981: solo `test_state_check_ok_on_real_repo` (2.871 passed, 39 skipped) |
+| el último | la pasada mínima (§15) | sellado antes del commit | su número, en el mensaje de entrega a Aleks |
+
+Las tres suites de la guardia de antes, contra el último código: 687 passed, sin fallos.
+
 ## Estado
 
-EN CURSO: la respuesta a la PARADA 2 y la pasada corta del revisor aplicadas (§11, §13); falta
-el sello, la CI de Linux y una pasada mínima del revisor sobre lo de §13.
+Rama lista para revisión, NO cerrada. La respuesta a la PARADA 2 está aplicada entera (§11),
+con la pasada corta (§13) y la mínima (§15) del revisor. Los arreglos de la mínima no tienen
+otra pasada (§15).

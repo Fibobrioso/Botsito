@@ -528,7 +528,8 @@ def _fallos_dobladas(g: ModuleType, repo: Path, rel: str, esperada: str) -> list
                 f"cat {comillas}{doblada}{comillas}"
             ):
                 obtenida = _regla(g, _decide(g, repo, herramienta, entrada))
-                print(f"dobladas | {forma} | {comillas} | {etiqueta} | {obtenida}")
+                destino = "src" if rel == BUENO else "protegido"  # pasada minima, c4
+                print(f"dobladas | {destino} | {forma} | {comillas} | {etiqueta} | {obtenida}")
                 if (esperada == "pasa") != (obtenida == "pasa") or (
                     esperada != "pasa" and esperada not in obtenida.split(",")
                 ):
@@ -574,6 +575,12 @@ def test_tilde_mas_y_tilde_menos_de_bash(g: ModuleType, repo: Path) -> None:
     assert not fallos, "\n".join(fallos)
 
 
+def _regla_de_la_raiz(g: ModuleType, repo: Path) -> str:
+    """La regla con que se niega `grep -r` sobre la raiz escrita normal: la misma que tiene que
+    salir por cualquier alias de la raiz."""
+    return _regla(g, _decide(g, repo, "Bash", {"command": "cd src && grep -r x .."}))
+
+
 def test_proc_self_cwd_es_el_directorio_de_trabajo(g: ModuleType, repo: Path) -> None:
     """Pasada corta del revisor, b2: `/proc/self/cwd/` es el directorio de trabajo (como `~+`);
     el de otro proceso o `/proc/self/root/` no se saben: `R_ALIAS`."""
@@ -587,7 +594,21 @@ def test_proc_self_cwd_es_el_directorio_de_trabajo(g: ModuleType, repo: Path) ->
     casos += [
         ("/proc/1/cwd", "Bash", {"command": f"cat '/proc/1/cwd/{BUENO}'"}, "R_ALIAS"),
         ("/proc/self/root", "Bash", {"command": f"cat '/proc/self/root/{BUENO}'"}, "R_ALIAS"),
+        # `..` DESPUES de traducir `cwd` (pasada minima, c1): desde `src/`, la raiz del repo.
+        ("cwd/.. desde src", "Bash", {"command": "cd src && grep -r x /proc/self/cwd/.."}, "?"),
+        (
+            "cwd/../src desde src",
+            "Bash",
+            {"command": f"cd src && cat /proc/self/cwd/../{BUENO}"},
+            "pasa",
+        ),
+        # Lo que no es un enlace de /proc no lleva a ningun fichero (c2): como en `main`.
+        ("/proc/self/status", "Bash", {"command": "cat /proc/self/status"}, "pasa"),
     ]
+    obtenida = _regla(g, _decide(g, repo, "Grep", {"pattern": "x", "path": "/proc/self/cwd/.."}))
+    print(f"Grep /proc/self/cwd/.. desde la raiz (su padre contiene el repo) | {obtenida}")
+    assert obtenida not in {"pasa"} and not obtenida.startswith("niega"), obtenida
+    casos = [c if c[3] != "?" else (*c[:3], _regla_de_la_raiz(g, repo)) for c in casos]
     fallos = _fallos_de(g, repo, casos)
     assert not fallos, "\n".join(fallos)
 
@@ -698,6 +719,8 @@ ROTURAS = [
     _w("todo_es_la_raiz", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
     _w("sin_disfraz_posix", "test_proc_cygdrive_es_la_unidad"),
     ("sin_disfraz_posix", "test_proc_self_cwd_es_el_directorio_de_trabajo"),
+    # Pasada minima, c3: la rama `_no_canonizable` de la unidad sin barra.
+    _w("sin_no_canonizable", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
     ("todo_es_la_raiz", "test_proc_self_cwd_es_el_directorio_de_trabajo"),
     ("sin_proveedor", "test_el_proveedor_filesystem_de_powershell"),
     ("todo_es_la_raiz", "test_el_proveedor_filesystem_de_powershell"),

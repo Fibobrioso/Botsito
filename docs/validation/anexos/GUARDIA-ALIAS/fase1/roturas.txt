@@ -21,7 +21,8 @@ ROTO | todo_es_la_raiz | test_proc_cygdrive_es_la_unidad | falla: caso 0 (marzo 
 ROTO | sin_unidad_sin_barra | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo · Bash cat): pasa, se esperaba R_SIN_ABRIR
 ROTO | todo_es_la_raiz | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo · Bash cat): R_HOLDOUT, se esperaba R_SIN_ABRIR
 ROTO | sin_disfraz_posix | test_proc_cygdrive_es_la_unidad | falla: caso 8 (marzo por /proc//cygdrive, Bash): pasa, se esperaba R_SIN_ABRIR
-ROTO | sin_disfraz_posix | test_proc_self_cwd_es_el_directorio_de_trabajo | falla: caso 0 (/proc/self/cwd al holdout, Bash): pasa, se esperaba R_HOLDOUT
+ROTO | sin_disfraz_posix | test_proc_self_cwd_es_el_directorio_de_trabajo | falla: pasa
+ROTO | sin_no_canonizable | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: cwd en otra unidad (holdout): pasa
 ROTO | todo_es_la_raiz | test_proc_self_cwd_es_el_directorio_de_trabajo | falla: caso 4 (/proc/self/cwd a src, Bash): R_HOLDOUT, se esperaba pasa
 ROTO | sin_proveedor | test_el_proveedor_filesystem_de_powershell | falla: caso 0 (FileSystem:: marzo): pasa, se esperaba R_SIN_ABRIR
 ROTO | todo_es_la_raiz | test_el_proveedor_filesystem_de_powershell | falla: caso 0 (FileSystem:: marzo): R_HOLDOUT, se esperaba R_SIN_ABRIR

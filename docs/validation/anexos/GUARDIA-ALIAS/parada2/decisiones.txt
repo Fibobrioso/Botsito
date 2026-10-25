@@ -1,51 +1,51 @@
-dobladas | \\?\ | ' | Bash | R_SIN_ABRIR
-dobladas | \\?\ | ' | Monitor | R_SIN_ABRIR
-dobladas | \\?\ | " | Bash | R_SIN_ABRIR
-dobladas | \\?\ | " | Monitor | R_SIN_ABRIR
-dobladas | UNC localhost | ' | Bash | R_SIN_ABRIR
-dobladas | UNC localhost | ' | Monitor | R_SIN_ABRIR
-dobladas | UNC localhost | " | Bash | R_SIN_ABRIR
-dobladas | UNC localhost | " | Monitor | R_SIN_ABRIR
-dobladas | \\?\UNC\localhost | ' | Bash | R_SIN_ABRIR
-dobladas | \\?\UNC\localhost | ' | Monitor | R_SIN_ABRIR
-dobladas | \\?\UNC\localhost | " | Bash | R_SIN_ABRIR
-dobladas | \\?\UNC\localhost | " | Monitor | R_SIN_ABRIR
-dobladas | \\?\ | ' | Bash | R_HOLDOUT
-dobladas | \\?\ | ' | Monitor | R_HOLDOUT
-dobladas | \\?\ | " | Bash | R_HOLDOUT
-dobladas | \\?\ | " | Monitor | R_HOLDOUT
-dobladas | UNC localhost | ' | Bash | R_HOLDOUT
-dobladas | UNC localhost | ' | Monitor | R_HOLDOUT
-dobladas | UNC localhost | " | Bash | R_HOLDOUT
-dobladas | UNC localhost | " | Monitor | R_HOLDOUT
-dobladas | \\?\UNC\localhost | ' | Bash | R_HOLDOUT
-dobladas | \\?\UNC\localhost | ' | Monitor | R_HOLDOUT
-dobladas | \\?\UNC\localhost | " | Bash | R_HOLDOUT
-dobladas | \\?\UNC\localhost | " | Monitor | R_HOLDOUT
-dobladas | \\?\ | ' | Bash | R_CUARENTENA
-dobladas | \\?\ | ' | Monitor | R_CUARENTENA
-dobladas | \\?\ | " | Bash | R_CUARENTENA
-dobladas | \\?\ | " | Monitor | R_CUARENTENA
-dobladas | UNC localhost | ' | Bash | R_CUARENTENA
-dobladas | UNC localhost | ' | Monitor | R_CUARENTENA
-dobladas | UNC localhost | " | Bash | R_CUARENTENA
-dobladas | UNC localhost | " | Monitor | R_CUARENTENA
-dobladas | \\?\UNC\localhost | ' | Bash | R_CUARENTENA
-dobladas | \\?\UNC\localhost | ' | Monitor | R_CUARENTENA
-dobladas | \\?\UNC\localhost | " | Bash | R_CUARENTENA
-dobladas | \\?\UNC\localhost | " | Monitor | R_CUARENTENA
-dobladas | \\?\ | ' | Bash | pasa
-dobladas | \\?\ | ' | Monitor | pasa
-dobladas | \\?\ | " | Bash | pasa
-dobladas | \\?\ | " | Monitor | pasa
-dobladas | UNC localhost | ' | Bash | pasa
-dobladas | UNC localhost | ' | Monitor | pasa
-dobladas | UNC localhost | " | Bash | pasa
-dobladas | UNC localhost | " | Monitor | pasa
-dobladas | \\?\UNC\localhost | ' | Bash | pasa
-dobladas | \\?\UNC\localhost | ' | Monitor | pasa
-dobladas | \\?\UNC\localhost | " | Bash | pasa
-dobladas | \\?\UNC\localhost | " | Monitor | pasa
+dobladas | protegido | \\?\ | ' | Bash | R_SIN_ABRIR
+dobladas | protegido | \\?\ | ' | Monitor | R_SIN_ABRIR
+dobladas | protegido | \\?\ | " | Bash | R_SIN_ABRIR
+dobladas | protegido | \\?\ | " | Monitor | R_SIN_ABRIR
+dobladas | protegido | UNC localhost | ' | Bash | R_SIN_ABRIR
+dobladas | protegido | UNC localhost | ' | Monitor | R_SIN_ABRIR
+dobladas | protegido | UNC localhost | " | Bash | R_SIN_ABRIR
+dobladas | protegido | UNC localhost | " | Monitor | R_SIN_ABRIR
+dobladas | protegido | \\?\UNC\localhost | ' | Bash | R_SIN_ABRIR
+dobladas | protegido | \\?\UNC\localhost | ' | Monitor | R_SIN_ABRIR
+dobladas | protegido | \\?\UNC\localhost | " | Bash | R_SIN_ABRIR
+dobladas | protegido | \\?\UNC\localhost | " | Monitor | R_SIN_ABRIR
+dobladas | protegido | \\?\ | ' | Bash | R_HOLDOUT
+dobladas | protegido | \\?\ | ' | Monitor | R_HOLDOUT
+dobladas | protegido | \\?\ | " | Bash | R_HOLDOUT
+dobladas | protegido | \\?\ | " | Monitor | R_HOLDOUT
+dobladas | protegido | UNC localhost | ' | Bash | R_HOLDOUT
+dobladas | protegido | UNC localhost | ' | Monitor | R_HOLDOUT
+dobladas | protegido | UNC localhost | " | Bash | R_HOLDOUT
+dobladas | protegido | UNC localhost | " | Monitor | R_HOLDOUT
+dobladas | protegido | \\?\UNC\localhost | ' | Bash | R_HOLDOUT
+dobladas | protegido | \\?\UNC\localhost | ' | Monitor | R_HOLDOUT
+dobladas | protegido | \\?\UNC\localhost | " | Bash | R_HOLDOUT
+dobladas | protegido | \\?\UNC\localhost | " | Monitor | R_HOLDOUT
+dobladas | protegido | \\?\ | ' | Bash | R_CUARENTENA
+dobladas | protegido | \\?\ | ' | Monitor | R_CUARENTENA
+dobladas | protegido | \\?\ | " | Bash | R_CUARENTENA
+dobladas | protegido | \\?\ | " | Monitor | R_CUARENTENA
+dobladas | protegido | UNC localhost | ' | Bash | R_CUARENTENA
+dobladas | protegido | UNC localhost | ' | Monitor | R_CUARENTENA
+dobladas | protegido | UNC localhost | " | Bash | R_CUARENTENA
+dobladas | protegido | UNC localhost | " | Monitor | R_CUARENTENA
+dobladas | protegido | \\?\UNC\localhost | ' | Bash | R_CUARENTENA
+dobladas | protegido | \\?\UNC\localhost | ' | Monitor | R_CUARENTENA
+dobladas | protegido | \\?\UNC\localhost | " | Bash | R_CUARENTENA
+dobladas | protegido | \\?\UNC\localhost | " | Monitor | R_CUARENTENA
+dobladas | src | \\?\ | ' | Bash | pasa
+dobladas | src | \\?\ | ' | Monitor | pasa
+dobladas | src | \\?\ | " | Bash | pasa
+dobladas | src | \\?\ | " | Monitor | pasa
+dobladas | src | UNC localhost | ' | Bash | pasa
+dobladas | src | UNC localhost | ' | Monitor | pasa
+dobladas | src | UNC localhost | " | Bash | pasa
+dobladas | src | UNC localhost | " | Monitor | pasa
+dobladas | src | \\?\UNC\localhost | ' | Bash | pasa
+dobladas | src | \\?\UNC\localhost | ' | Monitor | pasa
+dobladas | src | \\?\UNC\localhost | " | Bash | pasa
+dobladas | src | \\?\UNC\localhost | " | Monitor | pasa
 caso 0 | ~+ hacia el holdout, Bash | R_HOLDOUT
 caso 1 | ~+ hacia el holdout, Monitor | R_HOLDOUT
 caso 2 | ~+ hacia src, Bash | pasa
@@ -63,6 +63,9 @@ caso 4 | /proc/self/cwd a src, Bash | pasa
 caso 5 | /proc/self/cwd a src, Monitor | pasa
 caso 6 | /proc/1/cwd | R_ALIAS
 caso 7 | /proc/self/root | R_ALIAS
+caso 8 | cwd/.. desde src | R_SIN_ABRIR
+caso 9 | cwd/../src desde src | pasa
+caso 10 | /proc/self/status | pasa
 caso 0 | marzo por /proc/cygdrive, Bash | R_SIN_ABRIR
 caso 1 | marzo por /proc/cygdrive, Monitor | R_SIN_ABRIR
 caso 2 | holdout por /proc/cygdrive, Bash | R_HOLDOUT
