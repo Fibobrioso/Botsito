@@ -63,6 +63,134 @@ Lo que se sigue de ellas:
   sustituye a ese dato.
 - **d)** No hay hoja con notas: no entra nada en `Sesiones/`.
 
+### 0.2 Los días, antes de registrar
+
+La línea de `SESION-DE-PREGUNTAS.md` («Antes», paso 1), una vez por día, imprime solo `True` o
+`False`:
+- `2026-10-23`: `False`;
+- `2026-10-25`: `False`. **Desviación del paso 1, declarada** (encargo): este día se comprobó
+  DESPUÉS de grabar, no antes. Declarada también en `HOLDOUT-EXPOSICIONES.md` (2026-10-25).
+
+Además, el recuento de casos de `casos_ocultos` de `2026-07`, sin imprimir ninguna clave: **0**.
+Julio no tiene ningún día oculto.
+
+### 0.3 Los dos vídeos
+
+Son los dos únicos vídeos del primer nivel de `corpus/Estrategia del trader/` que no estaban en
+`fuentes.yaml`, que acababa en v14. v15 y v16 son los dos siguientes ids libres.
+
+| | v15 | v16 |
+|---|---|---|
+| Fichero | `Grabación de pantalla 2026-10-23 174536.mp4` | `Grabación de pantalla 2026-10-25 140140.mp4` |
+| Bytes | 6.740.009.101 | 2.324.823.273 |
+| Fecha (del nombre) | 2026-10-23 | 2026-10-25 |
+| Duración (ffprobe, formato) | **6057,16 s = 1:40:57** (Aleks: 1 h 40 min) | **2089,99 s = 34:50** (Aleks: unos 35 min) |
+| Vídeo | h264 1920×1080, 30 fps | h264 1920×1080, 30 fps |
+| Audio | AAC estéreo 48 kHz, 6057,16 s | AAC estéreo 48 kHz, 2089,99 s |
+| Audio extraído (fuera del repo) | `C:\Users\USER\Desktop\sesion-05-audio\sesion-05-v15.wav`, 193.828.942 bytes | `C:\Users\USER\Desktop\sesion-05-audio\sesion-05-v16.wav`, 66.879.566 bytes |
+
+### 0.4 Dos vídeos para un mismo id de sesión: medido antes del registro
+
+El encargo pide medir si el repositorio admite dos vídeos para un mismo id de sesión antes del
+registro. **Lo admite sin tocar código:**
+- **`fuentes.yaml`** no tiene campo de sesión: cada vídeo lleva su `fecha_grabacion`, y la sesión
+  va en la `naturaleza` y en el comentario. `fecha_grabacion` solo la lee el inventario
+  (`corpus/inventario.py:40,82,264`); nada la cruza con la fecha de una sesión.
+- **La evidencia** no tiene campo de sesión: cada ítem lleva su `video_id` (por ejemplo
+  `knowledge/evidence/v10/ev-v10-011021-02f5dcf3.yaml`). Una respuesta repartida entre los dos
+  vídeos se cita en dos ítems, uno por vídeo.
+- **El feedback** exige que `fecha` sea la del id de la sesión (`feedback/modelo.py:247-248`) y
+  admite `recibido_el` posterior (`:302-307`). La línea que lo dice es `modelo.py:113`: «`fecha`
+  es la de la SESION y esta bien asi: fecha la PREGUNTA. `recibido_el` fecha la RESPUESTA.»
+  **Para la activación:** un registro de feedback que cite v16 llevará `fecha` 2026-10-23 y
+  `recibido_el` 2026-10-25. Desde `CORTE_PROCEDENCIA` los dos campos son obligatorios
+  (`:293-299`).
+- **La cuarentena** es una lista de vídeos (`SESIONES_EN_CUARENTENA`) y la guardia de Claude Code
+  la deduce de `fuentes.yaml` (`drive_id: null` menos v6, `.claude/hooks/guardia.py:327`). Dos
+  vídeos con `drive_id: null` entran los dos.
+- **`scripts/transcribir_sesion.py`** procesa un audio por ejecución con su `--video`
+  (`main`, «uno por ejecucion, porque cada uno lleva los tramos de su video»). Comprueba que el
+  sha256 del WAV es el de la transcripción del corpus de ese vídeo (`comprobar_audio_del_video`)
+  y nombra sus salidas por el nombre del audio (`salidas_de`). Por eso los dos audios llevan
+  nombres distintos.
+- **Precedente:** la sesión 2 se partió el mismo día en v7 y v8, sin campo de sesión en ningún
+  sitio (`fuentes.yaml`, `SESION-02-VIDEO-V8.md`).
+
+## 1. El registro (v15 y v16)
+
+- **`fuentes.yaml`**: v15 y v16 con `drive_id: null`, su fecha y una `naturaleza` que describe el
+  vídeo entero, también el replay de julio que enseñó el trader (respuesta a). Encima, un
+  comentario de la sesión partida en dos días. En la descripción de `Mensajes del trader`, la
+  captura de marzo (ampliación del encargo).
+- **`tests/unit/test_inventario.py`**: `range(1, 15)` → `range(1, 17)`.
+- **La captura de marzo** llegó con doble extensión (`mensaje-whatsapp-2026-10-25-1358.png.png`).
+  La guardia no deja renombrarla desde la sesión, así que Aleks la renombró con `mv` antes del
+  inventario.
+
+### 1.1 El test roto a propósito
+
+Con v15 y v16 ya en `fuentes.yaml` y ANTES de añadirlos a `SESIONES_EN_CUARENTENA`:
+
+```
+uv run pytest -q tests/unit/test_cuarentena.py \
+  "tests/unit/test_guardia_claude.py::test_la_guardia_y_el_modulo_dicen_la_misma_cuarentena" \
+  "tests/unit/test_guardia_claude.py::test_contra_el_repo_real_ve_lo_mismo_que_el_codigo" -p no:randomly
+E       AssertionError: assert ['v15: es una... EXCEPCIONES'] == []
+E         Left contains 2 more items, first extra item: 'v15: es una sesion (drive_id null) y no esta en SESIONES_EN_CUARENTENA ni en EXCEPCIONES'
+E       AssertionError: assert frozenset({'v..., 'v8', 'v9'}) == frozenset({'v..., 'v8', 'v9'})
+E         'v16'
+E         'v15'
+E       AssertionError: assert frozenset({'v..., 'v8', 'v9'}) == {'v10', 'v7', 'v8', 'v9'}
+E         'v16'
+E         'v15'
+FAILED tests/unit/test_cuarentena.py::test_la_lista_cuadra_con_fuentes - Asse...
+FAILED tests/unit/test_guardia_claude.py::test_la_guardia_y_el_modulo_dicen_la_misma_cuarentena
+FAILED tests/unit/test_guardia_claude.py::test_contra_el_repo_real_ve_lo_mismo_que_el_codigo
+```
+
+La guardia ve v15 y v16 en cuarentena en cuanto entran en `fuentes.yaml`, porque los deduce de
+allí. Por eso fallan las dos de `test_guardia_claude.py`:
+- la segunda, porque la guardia los tiene y el módulo todavía no;
+- la tercera, porque el conjunto esperado está escrito a mano.
+
+La primera falla porque el módulo no los tiene en su lista.
+
+Después:
+- `src/botsito/corpus/cuarentena.py`: `SESIONES_EN_CUARENTENA` con `"v15"` y `"v16"`;
+- `tests/unit/test_guardia_claude.py:152`: el conjunto esperado con v15 y v16;
+- `tests/unit/test_cuarentena.py`: el ejemplo sintético de `test_la_comprobacion_de_la_lista_no_es_decorativa`
+  lleva v15 y v16, y la sesión sin listar que sondea pasa a v17.
+
+Las mismas tres pruebas pasan (el resultado, en §1.2 con el inventario).
+
+### 1.2 Inventario y hashes
+
+- `uv run botsito corpus inventory`: `OK: manifiesto escrito · heredado_v2: 477 ficheros,
+  117,626,282 bytes · material_adicional: 73 ficheros, 6,850,662 bytes · video_original: 16
+  ficheros, 63,773,597,529 bytes`. El manifiesto gana tres entradas y nada más: v15 (sha256
+  `a91b7f35…2c47f66`), v16 (`4fe72e14…25b43dfb`) y la captura de marzo (`75f9eda2…4577e2c1`).
+  Los vídeos pasan de 14 a 16 y el material adicional de 72 a 73.
+- `uv run botsito corpus check --hashes`: `OK: el corpus coincide con el manifiesto (hashes)`.
+- Las tres pruebas de §1.1 y `tests/unit/test_inventario.py`, después del alta: **55 passed**.
+
+## 2. Audio, cuarentena y holdout
+
+### 2.1 Los cortes de audio
+
+Con las formas de la skill (paso 2): `silencedetect=noise=-50dB:d=30` y `volumedetect` sobre cada
+vídeo.
+
+| Vídeo | silencedetect -50 dB, 30 s | volumedetect (vídeo entero) |
+|---|---|---|
+| v15 | **un silencio: 4946,245–5012,143 s (65,9 s) = 1:22:26–1:23:33** | media −22,7 dB, máximo −0,1 dB |
+| v16 | ninguno | media −22,1 dB, máximo 0,0 dB |
+
+**El de v15 es un corte de cero digital.** La misma forma, con `noise=-90dB`, da 4946,570–5011,977 s
+(65,4 s): el audio está por debajo de −90 dB. Va a `tramos_no_citables.yaml` como 1:22:26–1:23:33,
+redondeado hacia fuera como los de v10, con motivo «SIN AUDIO», y a la `naturaleza` y el
+comentario de v15 en `fuentes.yaml`. La puerta del ASR (ningún segmento con `t1` dentro del
+corte) se pasa tras la transcripción (§2.2).
+
 ## Estado
 
 EN CURSO.
