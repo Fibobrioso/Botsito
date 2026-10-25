@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/guardia-alias
+main
 
 ## Current Feature
-trabajo/guardia-alias, EN CURSO (abierta el 2026-10-24 desde main af89a78): la guardia de Claude Code niega la lectura del material protegido escriba como se escriba la ruta (canoniza antes de comparar y niega lo no canonizable que pueda caer bajo la raíz); paga la línea PRIORITARIA de G.1 y la parte de K del alias de la raíz en motivo_fichero (lo demás de K sigue). Encargo: docs/encargos/trabajo-guardia-alias.md. Informe: docs/validation/GUARDIA-ALIAS.md. Cierra con stable/F38c-guardia-alias; la ingesta de la sesión 5 pasa a F38d.
+Ninguna rama abierta. trabajo/guardia-alias cerrada en main el 2026-10-24 (stable/F38c-guardia-alias): la guardia de Claude Code compara cada ruta en su forma canónica y niega lo que no puede canonizar, y sale la parte PRIORITARIA de K. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md; la ingesta de la sesión 5 cerrará con F38d.
 
 ## Stable Main State
-2cc3b93 · merge de `trabajo/guardia-ci` (tag `stable/F38b-guardia-ci`): en `.claude/hooks/guardia.py`, la sección «esperar a la CI» (`R_ESPERA_CI`): una consulta de CI y una espera en el mismo comando, `gh run watch`, `gh pr checks --watch` y toda consulta desde código con una vía de salida se niegan, y la consulta suelta pasa; `Monitor` se decide como Bash (`R_MONITOR`). En `.claude/settings.json`, `Monitor` en el matcher y siete herramientas que leen ficheros locales en `permissions.deny`. tests/unit/test_guardia_ci.py. Sobre `stable/F38a-guardia-ffmpeg` (975c086). Informe docs/validation/GUARDIA-CI.md; el registro del cierre, al final de HISTORIA.
+68eaa83 · merge de `trabajo/guardia-alias` (tag `stable/F38c-guardia-alias`): en `.claude/hooks/guardia.py`, `_canonica` dentro de `_absoluta` (realpath, sin `\\?\`, `//?/` ni UNC a la propia máquina, `~+`, `/proc/cygdrive/`, `/proc/self/cwd/`, `C:x` y `D:x`), `R_ALIAS` para lo no canonizable, el contenedor de la raíz decidido como la raíz, las variables de PowerShell y `FileSystem::`, y Bash y Monitor decididos también con un nivel de `\` menos. tests/unit/test_guardia_alias.py. Sobre `stable/F38b-guardia-ci` (2cc3b93). Informe docs/validation/GUARDIA-ALIAS.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-2cc3b93 · merge: trabajo/guardia-ci, la guardia niega esperar a la CI con una consulta repetida, Monitor en el matcher y siete herramientas en permissions.deny · tag stable/F38b-guardia-ci
+68eaa83 · merge: trabajo/guardia-alias, la guardia compara cada ruta en su forma canonica y niega lo que no puede canonizar · tag stable/F38c-guardia-alias
 
 ## Tests Currently Passing
 1693 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
