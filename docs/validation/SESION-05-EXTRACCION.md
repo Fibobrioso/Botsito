@@ -265,6 +265,111 @@ filtrada.
 - v15: `uv run botsito corpus frames extract --video v15` → `OK: fr-v15-5dcfa8d3 (6058 fotogramas,
   0 extra)`; `uv run botsito corpus frames check` → `OK: 11 extracciones coherentes con el disco; 3
   obligatorios presentes`.
+- v16: `uv run botsito corpus frames extract --video v16` → `OK: fr-v16-21754f20 (2090 fotogramas,
+  0 extra)`; `uv run botsito corpus frames check` → `OK: 12 extracciones coherentes con el disco; 3
+  obligatorios presentes`.
+
+### 2.5 v16: transcripción y cuarentena
+
+- **Transcripción del corpus**, tras el segundo «listo» de Aleks: `uv run botsito corpus transcribe
+  --video v16` → `tr-v16-large-v3-int8-float16-dc91b386`, **526 segmentos** (cuatro fragmentos:
+  148, 117, 167 y 94). `corpus transcript check`: `OK: 17 transcripciones coherentes con el disco y
+  el glosario`.
+- **El guion de `main`**, igual que para v15: `--audio
+  C:/Users/USER/Desktop/sesion-05-audio/sesion-05-v16.wav --sesion 05 --video v16`. El registro
+  (`sesion-05-v16.registro.txt`) dice:
+  - hoja: la de la sesión 05; tramos no citables del vídeo: 0 (aún no había ninguno);
+  - audio comprobado: el sha256 de su WAV (`1ae80e35e431…`) es el de la transcripción del corpus de
+    v16;
+  - ASR de 674,8 s (factor 0,32); **526 segmentos**;
+  - **segmentos en cuarentena: 7 en 2 bloques**, tapados solo por meses; motivos «mes» 3 y
+    «vecino» 4; bloques `[NO CITABLE]`: 0;
+  - códigos detectados: S-18 00:10, S-19 06:33, S-20 18:52, S-21 18:53, S-22 21:37, S-23 26:48,
+    S-25 29:02; sin código detectado, S-1 a S-17 (de v15) y S-24.
+- **La cuarentena por condición (decisión 2 del consultor): 2 bloques**, `[CUARENTENA 32:58–33:07]`
+  y `[CUARENTENA 33:11–33:22]`, los dos en «Para cerrar» y caídos por un mes (más el vecino de cada
+  uno). No se leen. Por el contexto visible (§3, «Para cerrar»), son la petición de la confirmación
+  escrita de marzo; su contenido se da por la declaración de Aleks, como manda el añadido.
+- **Sin corte de audio** (§2.1), así que no hay puerta del ASR que pasar en v16.
+
+### 2.6 v16: lo que enseñó el trader, y los tramos que se marcaron al leer
+
+**El detector antes de leer** (`detector_julio.py`, hoy en `anexos/SESION-05/`): `lineas con texto:
+519; lineas que nombran julio: 7`, 6 coincidencias, dos con `18-31=SI` (29:02 `julio+num` y 32:10
+`vecino`). Con el número enmascarado (`enmascarar_lineas.py`, en la carpeta de trabajo) las dos son
+el código de voz de S-25 («pregunta ese [N]», «ese [N] cerrada»), no un día: sin PARADA, y se leyó
+la filtrada entera.
+
+**Los meses que nombra en voz**, fuera de los dos bloques: julio (el Excel de julio de S-25 y los
+días «del 1 al 17», que no llegan al 18), agosto (la exportación, «Para cerrar») y diciembre
+(pendiente de grabar). Ninguno tiene días en `casos_ocultos`. Y la fecha de la grabación, «Hoy, [N]
+del 10», que la cuarentena no tapa (§2.7, segundo hallazgo).
+
+**La PARADA (§2.7).** Al leer, en 0:31:04, dentro de S-25, el trader dice hasta qué día de julio
+llegó su backtest: un día del 18 en adelante, fuera de los bloques. El detector no la había marcado;
+la vio después el barrido ancho. El número no se escribe en ningún sitio.
+
+**Tramos de precaución**, en `tramos_no_citables.yaml` y declarados en `HOLDOUT-EXPOSICIONES.md`
+(2026-10-25, fila de v16). Aquí solo se dice dónde están; **ninguna cifra se copia y ninguna se
+usa**:
+- **0:20:02–0:21:16** (entre S-20 y S-21): cifras agregadas de sus backtests, una racha de pérdidas
+  de un mes y cuántas operaciones caben en un día, sobre un rango que puede incluir meses
+  reservados. Decisión de la sesión con la regla de ADR-0021 §2.
+- **0:30:41–0:31:37** (dentro de S-25): enseña su replay de julio y dice hasta qué día llegó su
+  backtest. Decisión del consultor (§2.7, punto 1). La respuesta a S-25, desde 0:31:37, queda fuera.
+
+**Tramos ajenos a la operativa: ninguno.** El final (33:36–34:41) es la disponibilidad del trader
+para más sesiones y la explicación de Aleks del error de fidelidad de agosto; es de la operativa y se
+cita (§3, «Para cerrar»).
+
+### 2.7 La PARADA de v16 y la respuesta del consultor
+
+**La PARADA (2026-10-25)**, por la decisión 4 del consultor («Si en la filtrada aparece un día de
+julio del 18 en adelante fuera de un bloque en cuarentena, PARADA sin copiarlo»):
+- **Dónde y qué.** v16, línea `[31:04]`, dentro de S-25. Enmascarada: «el backtest hasta el [N],».
+  El trader enseña su replay de julio («[30:41] … voy a mostrar yo hice el bates hasta el final») y
+  dice hasta qué día llegó: el final del rango del mes. Ninguna operación, ningún resultado y ningún
+  detalle de ese día.
+- **Por qué no la paró el detector antes de leer.** `detector_julio.py` solo marcaba un número junto
+  a «julio» o «día» en la misma línea o en la contigua. Esta línea no tiene ninguna de las dos
+  palabras, y «julio» sale seis líneas más abajo (31:20). El detector no la marcó, se leyó la
+  filtrada entera y se vio al leerla.
+- **El barrido ancho, después** (`barrido_18_31.py`, hoy en `anexos/SESION-05/`): toda línea con un
+  entero suelto de 18 a 31, impresa con el número sustituido por `[N]`. En v15 no hay ningún día de
+  julio (salen pips, minutos, horas de la pregunta, el 29 de abril de la hoja y un código). En v16
+  esta línea es la única que es un día de julio; las otras seis son códigos de voz, «[N] páginas» y
+  la fecha de hoy.
+- **Segundo hallazgo, que no bloquea.** La regla de fecha numérica de la cuarentena no tapa una fecha
+  seguida de coma. Con texto sintético: `motivos_cuarentena('hoy 25 del 10')` da
+  `['fecha numerica']`, y `motivos_cuarentena('hoy, 25 del 10,')` da `[]`. El lookahead `(?![\d.,])`
+  excluye la coma para no tapar precios como «10,5», y con ello deja pasar fechas en prosa. Aquí
+  solo dejó a la vista la fecha de la propia grabación.
+
+**La respuesta del consultor (2026-10-25)**, copiada tal cual:
+
+> Respuesta del consultor a la PARADA de v16 (2026-10-25). Cópiala al informe, en su sección.
+>
+> 1. SÍ, opción (a): v16 de 0:30:41 a 0:31:37 entra en tramos_no_citables.yaml como tramo de precaución (motivo: el trader enseña su replay de julio y dice hasta qué día llegó su backtest, un día del 18 en adelante). El número no se escribe en ningún sitio: ni en el informe, ni en HOLDOUT-EXPOSICIONES.md, ni en un commit, ni en el chat. La respuesta a S-25 (0:31:37 a 0:32:10) queda fuera del tramo y se puede citar.
+> 2. HOLDOUT-EXPOSICIONES.md, con fecha de hoy: la sesión leyó, al leer la filtrada de v16, el día en que acaba el backtest de julio del trader (un día del 18 al 31), sin ninguna operación, resultado ni detalle de ese día; el número no se registra. Y por qué pasó: el detector de la sesión (detector_julio.py, en el scratchpad) era más estrecho que la regla del encargo (solo un número junto a «julio» o «día»).
+> 3. Para el resto de la rama: antes de leer cualquier filtrada (o volver a leer una), se pasa primero el barrido ancho (barrido_18_31.py, con el número enmascarado), y solo después se lee. Si sale otra línea con un día de julio del 18 en adelante, PARADA como esta. Copia los dos scripts del scratchpad a docs/validation/anexos/SESION-05/ para que el revisor los vea.
+> 4. El segundo hallazgo (la fecha numérica seguida de coma que la cuarentena no tapa, con la prueba sintética) va preparado en el informe como una línea de Technical Debt para la orden de cierre, del carril de guardias y de la cuarentena por condición. No se arregla en esta rama.
+> 5. El dato de hasta dónde llega el backtest de julio NO se usa para U (julio del 20 al 31) ni para nada más. Cuando toque U, el consultor se lo pregunta a Aleks o al trader por su vía.
+>
+> Sigue con v16 (tramos, informe, commit) y con lo que quede, como dice el encargo.
+
+**Cómo se aplicó, punto por punto:**
+1. Hecho: el tramo 0:30:41–0:31:37 de v16 en `tramos_no_citables.yaml`, con el motivo del punto 1 y
+   sin el número.
+2. Hecho: fila de v16 en `HOLDOUT-EXPOSICIONES.md` (2026-10-25), punto (3) de la fila.
+3. Hecho: los dos guiones, en `docs/validation/anexos/SESION-05/` (el contrato se amplió con esa
+   carpeta en el commit de v16). `barrido_18_31.py` va tal cual; `detector_julio.py` va con su
+   expresión `DIA_NUM` partida en tres líneas por `ruff format` (la misma cadena; su salida sobre la
+   filtrada de v16, repetida desde el anexo, es idéntica). El barrido se pasó otra vez sobre v16
+   antes de releer las líneas de los límites de los tramos: da las mismas siete líneas y solo la de
+   31:04 es un día de julio. `enmascarar_lineas.py`, con el que se leyeron enmascaradas las
+   coincidencias del detector, sigue en la carpeta de trabajo (no lo pidió el punto 3).
+4. Preparado en §6 (la línea de Technical Debt).
+5. Queda dicho: el dato no se usa para nada.
 
 ## Estado
 

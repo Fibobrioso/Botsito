@@ -1,0 +1,70 @@
+# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion es otro manifiesto con reemplaza_a.
+carpeta: transcripciones/v16/large-v3-int8-float16
+corte:
+  max_s: 780.0
+  min_s: 420.0
+  muestras_s: 16000
+  objetivo_s: 600.0
+  silencio_minimo_s: 0.5
+  umbral_db: -35.0
+cortes_forzados_m: []
+descartados: 0
+duracion_video_s: 2089.986
+duracion_wav_s: 2089.984
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: Grabación de pantalla 2026-10-25 140140.mp4
+fragmentos:
+- fin_m: 9624847
+  indice: 0
+  inicio_m: 0
+- fin_m: 19233912
+  indice: 1
+  inicio_m: 9624847
+- fin_m: 28859784
+  indice: 2
+  inicio_m: 19233912
+- fin_m: 33439744
+  indice: 3
+  inicio_m: 28859784
+generado_el: '2026-10-25T22:16:18Z'
+glosario_sha256_inicial: 6a1da3cafac46e6b7b002adffac36a664fa0867e43d5a09d7bc174ccdd3cc743
+hueco_transcripcion_s: 30.0
+huecos: []
+motor:
+  beam_size: 5
+  compute_type: int8_float16
+  condition_on_previous_text: false
+  ctranslate2: 4.8.2
+  dispositivo: cuda
+  faster_whisper: 1.2.1
+  gpu: NVIDIA GeForce GTX 1650, 610.62
+  hotwords: null
+  idioma: es
+  initial_prompt_sha256: 327e1ef9ad176500d2878faf7776199a3dec1cfda445f516f23c1edda48ee120
+  initial_prompt_tokens: 96
+  modelo: large-v3
+  modelo_ruta: C:\Users\USER\.cache\huggingface\hub\models--Systran--faster-whisper-large-v3\snapshots\edaa852ec7e145841d8ffdb056a99866b5f0a478
+  modelo_sha256: 69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1
+  motor: faster-whisper
+  nvidia_cublas_cu12: 12.9.2.10
+  nvidia_cudnn_cu12: 9.25.1.1
+  python: 3.12.10
+  temperature: 0.0
+  vad_filter: true
+  word_timestamps: true
+ms_con_habla: 1822920
+muestras: 33439744
+recortados: 0
+schema_version: 1
+segmentos: 526
+senales:
+  baja_prob: 0
+  compresion: 0
+  no_habla: 125
+  repeticion: 0
+sha256_cruda: dc91b38670a57198d4e45cbd76cedb2092af02aad24bd77891989c4c371e6b7a
+sha256_video: 4fe72e14f9b1b77cc2ad9a8a8c1fa079cbf5a565e324361ec972039f25b43dfb
+sha256_wav: 1ae80e35e43130d5daad486b19489fc1d3287bd0694c8843312ed3b022adcef8
+silencios_detectados: 390
+transcripcion_id: tr-v16-large-v3-int8-float16-dc91b386
+video_id: v16

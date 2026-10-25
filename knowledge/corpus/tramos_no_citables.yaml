@@ -409,3 +409,17 @@ tramos:
       fin de la grabacion: conversacion ajena a la operativa, tras cortarse la respuesta de S-18; no es especificacion y no se cita ni se describe
     acordado: >-
       decision de la sesion, encargo de trabajo/sesion-05 (2026-10-25); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v16
+    t0: "0:20:02"
+    t1: "0:21:16"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader da cifras agregadas de sus backtests (una racha de perdidas de un mes y cuantas operaciones caben en un dia), sobre un rango que puede incluir meses reservados. Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      decision de la sesion con la regla de ADR-0021 §2 (un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md), encargo de trabajo/sesion-05 (2026-10-25); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v16
+    t0: "0:30:41"
+    t1: "0:31:37"
+    motivo: >-
+      precaucion: el trader ensena su replay de julio y dice hasta que dia llego su backtest, un dia del 18 en adelante. El numero no se escribe en ningun sitio y no se usa para nada. La respuesta a S-25, desde 0:31:37, queda fuera del tramo
+    acordado: >-
+      respuesta del consultor a la PARADA de v16 (2026-10-25, punto 1), con su decision 4 del encargo de trabajo/sesion-05 («ENTRADAS», a); docs/validation/SESION-05-EXTRACCION.md y docs/validation/HOLDOUT-EXPOSICIONES.md

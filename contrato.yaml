@@ -5,6 +5,7 @@ tramo: R4
 rutas_permitidas:
   - docs/validation/SESION-05-EXTRACCION.md
   - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/validation/anexos/SESION-05/  # ampliada el 2026-10-25: respuesta del consultor a la PARADA de v16, punto 3
   - docs/sesion-5/HOJA-USADA.md
   - docs/sesion-5/PREGUNTAS.md
   - docs/encargos/
