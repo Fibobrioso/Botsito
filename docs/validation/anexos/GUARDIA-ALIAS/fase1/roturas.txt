@@ -19,6 +19,10 @@ ROTO | todo_es_la_raiz | test_tilde_mas_y_tilde_menos_de_bash | falla: caso 2 (~
 ROTO | sin_proc_cygdrive | test_proc_cygdrive_es_la_unidad | falla: caso 0 (marzo por /proc/cygdrive, Bash): pasa, se esperaba R_SIN_ABRIR
 ROTO | todo_es_la_raiz | test_proc_cygdrive_es_la_unidad | falla: caso 0 (marzo por /proc/cygdrive, Bash): R_HOLDOUT, se esperaba R_SIN_ABRIR
 ROTO | sin_unidad_sin_barra | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo · Bash cat): pasa, se esperaba R_SIN_ABRIR
+ROTO | sin_unidad_sin_barra | test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz | falla: caso 0 (marzo · Bash cat): pasa, se esperaba R_SIN_ABRIR
+ROTO | todo_es_la_raiz | test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz | falla: caso 0 (marzo · Bash cat): R_HOLDOUT, se esperaba R_SIN_ABRIR
+ROTO | sin_prefijos_tras_realpath | test_una_unidad_mapeada_a_la_propia_maquina_se_compara_como_la_unidad | falla: caso 0 (marzo · Bash cat): pasa, se esperaba R_SIN_ABRIR
+ROTO | todo_es_la_raiz | test_una_unidad_mapeada_a_la_propia_maquina_se_compara_como_la_unidad | falla: caso 0 (marzo · Bash cat): R_HOLDOUT, se esperaba R_SIN_ABRIR
 ROTO | todo_es_la_raiz | test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad | falla: caso 0 (marzo · Bash cat): R_HOLDOUT, se esperaba R_SIN_ABRIR
 ROTO | sin_disfraz_posix | test_proc_cygdrive_es_la_unidad | falla: caso 8 (marzo por /proc//cygdrive, Bash): pasa, se esperaba R_SIN_ABRIR
 ROTO | sin_disfraz_posix | test_proc_self_cwd_es_el_directorio_de_trabajo | falla: pasa

@@ -1131,11 +1131,22 @@ def _tilde_de_bash(ruta: str, cwd: str) -> str:
     return _no_canonizable(ruta)
 
 
+def _unidad_completa(ruta: str) -> str:
+    """`D:x` absoluta, como la resuelve Windows (`GetFullPathNameW`, que es `os.path.abspath` en
+    Windows): con el directorio de esa unidad. `realpath` (en `_canonica`) resuelve despues un
+    `subst` o una unidad de red. Si no se puede, `_no_canonizable`."""
+    try:
+        return os.path.abspath(ruta)
+    except (OSError, ValueError):
+        return _no_canonizable(ruta)
+
+
 def _relativa_a_unidad(ruta: str, cwd: str) -> str:
     """En Windows, `C:x` (la unidad sin barra) es relativa al directorio de ESA unidad: si es la
-    del directorio de trabajo, cuelga de el; si es otra unidad que la del repositorio, no puede
-    caer bajo la raiz y se deja; si es la del repositorio pero no la del trabajo, el directorio de
-    esa unidad no se sabe: `_no_canonizable`."""
+    del directorio de trabajo, cuelga de el; si es la del repositorio pero no la del trabajo, el
+    directorio de esa unidad no se sabe: `_no_canonizable`; si es otra unidad, se canoniza como
+    las demas (`_unidad_completa` y `realpath`) y se compara: con `subst` o una unidad de red,
+    otra letra puede apuntar a una carpeta que contiene el repo (orden de cierre, punto 1)."""
     m = re.match(r"^([a-zA-Z]):(?![\\/])(.*)$", ruta, re.S)
     if os.name != "nt" or not m:
         return ruta
@@ -1143,7 +1154,7 @@ def _relativa_a_unidad(ruta: str, cwd: str) -> str:
     if cwd[1:2] == ":" and unidad == cwd[0].lower():
         return os.path.join(cwd, resto)
     if unidad != str(RAIZ)[0].lower():
-        return ruta
+        return _unidad_completa(ruta)
     return _no_canonizable(ruta)
 
 
@@ -1239,11 +1250,26 @@ def _canonica(ruta: str) -> str:
     if not os.path.isabs(r):
         return os.path.normpath(r)
     try:
-        return os.path.normpath(os.path.realpath(r))
+        real = _realpath(r)
     except ValueError:  # un caracter nulo: no es una ruta que se pueda abrir
         return os.path.normpath(r)
     except OSError:  # riesgo residual declarado (GUARDIA-ALIAS.md): la forma sin prefijos
         return os.path.normpath(r)
+    return _tras_realpath(real)
+
+
+def _realpath(ruta: str) -> str:
+    """`os.path.realpath`, aparte para que el test pueda simular una unidad (`subst`, de red)."""
+    return os.path.realpath(ruta)
+
+
+def _tras_realpath(real: str) -> str:
+    """Lo que da `realpath`, otra vez sin prefijos: una unidad mapeada a la propia maquina sale
+    como `\\\\equipo\\C$\\...`, que tiene que compararse como `C:\\...` (revisor, pasada minima
+    previa al cierre, m1)."""
+    if os.name == "nt":
+        return os.path.normpath(_sin_prefijos(real))
+    return os.path.normpath(real)
 
 
 def candidatos_de_ruta(valor: str) -> Iterator[str]:

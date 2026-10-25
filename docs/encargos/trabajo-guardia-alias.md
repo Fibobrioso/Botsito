@@ -77,3 +77,22 @@ aquí van juntos, tal cual. Copiado tal cual:
 > 3. Con el punto 1 hecho aquí, la línea PRIORITARIA de G.1 y la parte de K que paga esta rama salen en el commit del contrato del cierre. Lo que queda de K (exigir_sin_crudo, los tests de un clon de comparar-con-main) sigue, y la línea de las llaves y file:/// entra en Technical Debt. Da la cifra de PROJECT_STATE simulada con eso; si pasa de 25.000, PARADA.
 >
 > Después: make check sellado, push a fix/guardia-alias y CI de Linux con un gh run view suelto, y una pasada CORTA del revisor solo sobre lo nuevo (los puntos 0 y 1, más sus cinco formas de antes, ahora negadas), con su informe pegado al final. Rama lista para revisión, NO cerrada.
+
+## Orden de cierre (2026-10-24), tal cual
+
+> Orden de cierre de trabajo/guardia-alias (consultor, 2026-10-24). Tag: stable/F38c-guardia-alias. Cópiala al informe, en una sección «Orden de cierre».
+>
+> Antes del cierre, un commit previo:
+> 1. D:x (la unidad sin barra de otra unidad) NO se deja pasar por ser otra unidad: con subst o una unidad de red, otra letra puede apuntar a una carpeta que contiene el repo. Se canoniza como las demás (GetFullPathNameW y realpath, que resuelve subst y unidades mapeadas en una ruta que existe) y se niega si cae bajo la raíz o si no se puede canonizar. Test en los dos sentidos, con su rotura: en el repo inventado, una unidad simulada (monkeypatch de la canonización) que apunta a un ancestro de la raíz, negada; y D:x a una carpeta ajena, pasando. Corrige §11.1.
+> 2. Una pasada MÍNIMA del revisor sobre git diff 79f7c26 y lo del punto 1, en memoria contra el repo inventado, sin leer nada real: el recorrido tramo a tramo de las rutas, /proc/self/cwd/.., /proc/self/status y D:x. Si encuentra un bloquea, PARADA; si no, sigue.
+> 3. make check sellado (si tarda mucho más de lo normal, dilo: anoche la máquina se suspendió) y CI de Linux por fix/guardia-alias con solo el fallo esperado, consultada con un gh run view suelto.
+>
+> Commit del contrato (punto Y de RITUAL): lo preparado en §11.4 tal cual (K, G.1, Technical Debt), la línea de test_tramos_fuente.py fuera, a HISTORIA como PAGADA, y PROJECT_STATE bajo 25.000 (da la cifra; si no cabe, PARADA).
+>
+> Hallazgos para ERRORES-RECURRENTES (fila de trabajo/guardia-alias):
+> - (importa, del consultor) El encargo de trabajo/guardia-ci tocaba tests/ y no recogió la deuda con dueño de test_tramos_fuente.py («la próxima rama que toque tests/»). Lección: en el paso 2 de la puerta, buscar en Technical Debt las deudas cuyo dueño es «la próxima rama que toque <ruta>» frente a las rutas del contrato.
+> - (importa, de la sesión) El diagnóstico sin rama contó como fugas 18 filas que, escritas así, no abrían nada (la herramienta Bash quita un nivel de \), y dio una causa falsa; se corrigió en la fase 0. Lección: una fuga cuenta cuando la lectura de la forma que llega a bash abre el fichero; la tabla mide las dos lecturas.
+> - (importa, del revisor) Dos pasadas encontraron huecos que bloqueaban (disfraces de /proc/cygdrive/ y /proc/self/cwd/..): una canonización se prueba con . y .. intercalados en cada tramo, no solo al final.
+> - Lo bueno: se cerraron todos los alias de la raíz que salieron, sin regresiones en las 687 de antes, y la suite de la guardia quedó más rápida (178,9 s → 159,4 s).
+>
+> Después del cierre: CI de main sobre el HEAD nuevo con un gh run view suelto, y el informe final con main, tag, run y bytes de PROJECT_STATE. Siguiente tag: F38d, la ingesta de la sesión 5.

@@ -97,6 +97,8 @@ def _romper(cual: str, g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatc
         monkeypatch.setattr(g, "_relativa_a_unidad", lambda ruta, cwd: ruta)
     elif cual == "sin_disfraz_posix":  # pasada corta del revisor: sin normalizar `/proc/...`
         monkeypatch.setattr(g, "_sin_disfraz_posix", lambda ruta, cwd: ruta)
+    elif cual == "sin_prefijos_tras_realpath":  # m1: lo que da realpath, sin quitar prefijos
+        monkeypatch.setattr(g, "_tras_realpath", lambda real: os.path.normpath(real))
     elif cual == "sin_proveedor":
         monkeypatch.setattr(g, "_sin_proveedor", lambda ruta: ruta)
     else:
@@ -672,6 +674,82 @@ def test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad(
     assert not fallos, "\n".join(fallos)
 
 
+@SOLO_WINDOWS
+def test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Orden de cierre, punto 1: `D:x` de otra unidad no pasa por ser otra unidad. Con `subst` o
+    una unidad de red puede apuntar a una carpeta que contiene el repo: se canoniza y se compara.
+    La unidad se SIMULA (monkeypatch de `_unidad_completa`, sin tocar el sistema): una apunta al
+    ancestro de la raiz y otra a una carpeta ajena."""
+    unidad = str(repo)[0].upper()
+    subst = next(u for u in "QRSTU" if u != unidad)
+    ajena = next(u for u in "VWXYZ" if u != unidad)
+    destinos = {subst: repo.parent, ajena: repo.parent / "hermana"}
+    original = g._unidad_completa
+
+    def simulada(ruta: str) -> str:
+        letra = ruta[0].upper()
+        if letra in destinos:
+            return str(destinos[letra] / ruta[2:])
+        return str(original(ruta))
+
+    monkeypatch.setattr(g, "_unidad_completa", simulada)
+    grupos = [
+        (sitio, f"{subst}:{repo.name}\\{rel.replace('/', chr(92))}", esperada)
+        for sitio, (rel, esperada) in PROTEGIDOS.items()
+    ]
+    grupos.append(
+        ("src por la unidad simulada", f"{subst}:{repo.name}\\src\\botsito\\cli.py", "pasa")
+    )
+    grupos.append(("la unidad ajena", f"{ajena}:nota.txt", "pasa"))
+    fallos = []
+    for sitio, ruta, esperada in grupos:  # cada grupo, nada mas crearlo (el guion se reescribe)
+        casos = [
+            (f"{sitio} · {etiqueta}", herramienta, entrada, esperada)
+            for etiqueta, herramienta, entrada in _herramientas(ruta, repo.parent / "fuera")
+        ]
+        fallos += _fallos_de(g, repo, casos)
+    assert not fallos, "\n".join(fallos)
+
+
+@SOLO_WINDOWS
+def test_una_unidad_mapeada_a_la_propia_maquina_se_compara_como_la_unidad(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Revisor, pasada minima previa al cierre, m1: `realpath` sobre una unidad de red mapeada a
+    la propia maquina da `\\\\localhost\\C$\\...`, y eso se compara como `C:\\...`. La unidad se
+    SIMULA (monkeypatch de `_realpath`, sin `net use`): `Q:\\` es el padre del repo visto por la
+    red; `V:\\` es una unidad de OTRA maquina, que no se puede canonizar."""
+    r = str(repo.parent)
+    por_la_red = f"\\\\localhost\\{r[0]}${r[2:]}"
+    original = g._realpath
+
+    def simulada(ruta: str) -> str:
+        if ruta[:2].upper() == "Q:":
+            return por_la_red + ruta[2:]
+        if ruta[:2].upper() == "V:":
+            return "\\\\otra-maquina\\datos" + ruta[2:]
+        return str(original(ruta))
+
+    monkeypatch.setattr(g, "_realpath", simulada)
+    grupos = [
+        (sitio, f"Q:\\{repo.name}\\{rel.replace('/', chr(92))}", esperada)
+        for sitio, (rel, esperada) in PROTEGIDOS.items()
+    ]
+    grupos.append(("src por la unidad mapeada", f"Q:\\{repo.name}\\src\\botsito\\cli.py", "pasa"))
+    grupos.append(("una unidad de otra maquina", "V:\\x\\y.txt", "R_ALIAS"))
+    fallos = []
+    for sitio, ruta, esperada in grupos:
+        casos = [
+            (f"{sitio} · {etiqueta}", herramienta, entrada, esperada)
+            for etiqueta, herramienta, entrada in _herramientas(ruta, repo.parent / "fuera")
+            if etiqueta in {"Read", "Bash cat", "Grep"}
+        ]
+        fallos += _fallos_de(g, repo, casos)
+    assert not fallos, "\n".join(fallos)
+
+
 def test_el_proveedor_filesystem_de_powershell(g: ModuleType, repo: Path) -> None:
     """Punto 1: `FileSystem::<ruta>` y `Microsoft.PowerShell.Core\\FileSystem::<ruta>`."""
     r = repo.as_posix()
@@ -716,6 +794,15 @@ ROTURAS = [
     _w("sin_proc_cygdrive", "test_proc_cygdrive_es_la_unidad"),
     _w("todo_es_la_raiz", "test_proc_cygdrive_es_la_unidad"),
     _w("sin_unidad_sin_barra", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
+    # Orden de cierre, punto 1: otra unidad que apunta a un ancestro de la raiz.
+    _w("sin_unidad_sin_barra", "test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz"),
+    _w("todo_es_la_raiz", "test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz"),
+    # m1: una unidad mapeada a la propia maquina.
+    _w(
+        "sin_prefijos_tras_realpath",
+        "test_una_unidad_mapeada_a_la_propia_maquina_se_compara_como_la_unidad",
+    ),
+    _w("todo_es_la_raiz", "test_una_unidad_mapeada_a_la_propia_maquina_se_compara_como_la_unidad"),
     _w("todo_es_la_raiz", "test_la_unidad_sin_barra_es_relativa_al_directorio_de_esa_unidad"),
     _w("sin_disfraz_posix", "test_proc_cygdrive_es_la_unidad"),
     ("sin_disfraz_posix", "test_proc_self_cwd_es_el_directorio_de_trabajo"),

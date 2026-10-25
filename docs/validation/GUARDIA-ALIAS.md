@@ -585,9 +585,11 @@ dice que esas formas «pasan» la guardia, y era verdad: no lleva recuadro.
   herramienta Bash deshace antes de bash, `~+` y `~-`, `/proc/cygdrive/c/`, la ruta relativa a la
   unidad `C:<rel>`, la ruta de proveedor de PowerShell `FileSystem::`, las llaves de bash y las URL
   `file:///`. Todas pasaban ya en `main`. Las decide el consultor (§8).
-- **Una unidad de `subst` o mapeada** hacia una carpeta del disco del repo: la unidad sin barra de
-  esa otra unidad (`D:x`) se deja pasar (§11.1), y `realpath` resuelve `subst` solo si la ruta es
-  absoluta.
+- **Una unidad de `subst` o mapeada** hacia una carpeta que contiene el repo: desde la orden de
+  cierre, `D:x` se canoniza con `GetFullPathNameW` y `realpath` (§11.1, recuadro). Queda que
+  `realpath` resuelve `subst` y las unidades de red sobre una ruta que EXISTE: una cola que no
+  existe tras la letra se resuelve por su prefijo más largo, como el resto (medido en §0.c). La
+  unidad se probó simulada (monkeypatch), no con un `subst` real.
 - **Un alias del equipo** que no sea `gethostname()` ni su parte corta (un nombre DNS propio, una
   IP de la red local) se niega como «otra máquina»: negar de más.
 - **En Linux** la CI no prueba el código de prefijos ni de 8.3 (punto 6, declarado).
@@ -836,6 +838,15 @@ El repo inventado sigue en `C:\Users\USER\AppData\Local\Temp\claude\C--Users-USE
 | 1 | `_relativa_a_unidad` (en `_absoluta`, 1140) | 1103 | solo Windows: `C:x` con la unidad del directorio de trabajo cuelga de él; con la unidad del repo pero otro directorio de trabajo, `_no_canonizable`; con otra unidad que la del repo, se deja (no puede caer bajo la raíz) |
 | 1 | `_sin_proveedor` (en PowerShell, 4342) | 1119 | `FileSystem::` y `Microsoft.PowerShell.Core\FileSystem::`, en cualquier caja, se quitan antes de canonizar |
 
+> **CORRECCIÓN (2026-10-24, orden de cierre, punto 1).** La decisión de abajo era falsa en su
+> premisa: con `subst` o una unidad de red, otra letra SÍ puede apuntar a una carpeta que contiene
+> el repo. Desde el commit previo al cierre, `D:x` de otra unidad se canoniza como las demás
+> (`_unidad_completa`: `GetFullPathNameW`, que es `os.path.abspath` en Windows; y `realpath` en
+> `_canonica`, que resuelve `subst` y unidades mapeadas en una ruta que existe) y se niega si cae
+> bajo la raíz o si no se puede canonizar. Un literal como `"x: %d"` no niega el guion: se
+> canoniza a una unidad que no contiene el repo. Test:
+> `test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz` (§18). El cuerpo queda como estaba.
+
 **Una decisión mía, declarada:** la unidad sin barra de OTRA unidad que la del repositorio
 (`D:x`) se deja pasar en vez de negarse. Una ruta en otra unidad no puede caer bajo la raíz, que
 el punto 2 de la respuesta 1 pone como condición («y pueda caer bajo la raíz», el OBJETIVO). Y
@@ -1081,8 +1092,116 @@ Si el consultor la quiere, es sobre `git diff 79f7c26 <último>`.
 
 Las tres suites de la guardia de antes, contra el último código: 687 passed, sin fallos.
 
+## §17 · Orden de cierre (consultor, 2026-10-24), copiada tal cual
+
+> Orden de cierre de trabajo/guardia-alias (consultor, 2026-10-24). Tag: stable/F38c-guardia-alias. Cópiala al informe, en una sección «Orden de cierre».
+>
+> Antes del cierre, un commit previo:
+> 1. D:x (la unidad sin barra de otra unidad) NO se deja pasar por ser otra unidad: con subst o una unidad de red, otra letra puede apuntar a una carpeta que contiene el repo. Se canoniza como las demás (GetFullPathNameW y realpath, que resuelve subst y unidades mapeadas en una ruta que existe) y se niega si cae bajo la raíz o si no se puede canonizar. Test en los dos sentidos, con su rotura: en el repo inventado, una unidad simulada (monkeypatch de la canonización) que apunta a un ancestro de la raíz, negada; y D:x a una carpeta ajena, pasando. Corrige §11.1.
+> 2. Una pasada MÍNIMA del revisor sobre git diff 79f7c26 y lo del punto 1, en memoria contra el repo inventado, sin leer nada real: el recorrido tramo a tramo de las rutas, /proc/self/cwd/.., /proc/self/status y D:x. Si encuentra un bloquea, PARADA; si no, sigue.
+> 3. make check sellado (si tarda mucho más de lo normal, dilo: anoche la máquina se suspendió) y CI de Linux por fix/guardia-alias con solo el fallo esperado, consultada con un gh run view suelto.
+>
+> Commit del contrato (punto Y de RITUAL): lo preparado en §11.4 tal cual (K, G.1, Technical Debt), la línea de test_tramos_fuente.py fuera, a HISTORIA como PAGADA, y PROJECT_STATE bajo 25.000 (da la cifra; si no cabe, PARADA).
+>
+> Hallazgos para ERRORES-RECURRENTES (fila de trabajo/guardia-alias):
+> - (importa, del consultor) El encargo de trabajo/guardia-ci tocaba tests/ y no recogió la deuda con dueño de test_tramos_fuente.py («la próxima rama que toque tests/»). Lección: en el paso 2 de la puerta, buscar en Technical Debt las deudas cuyo dueño es «la próxima rama que toque <ruta>» frente a las rutas del contrato.
+> - (importa, de la sesión) El diagnóstico sin rama contó como fugas 18 filas que, escritas así, no abrían nada (la herramienta Bash quita un nivel de \), y dio una causa falsa; se corrigió en la fase 0. Lección: una fuga cuenta cuando la lectura de la forma que llega a bash abre el fichero; la tabla mide las dos lecturas.
+> - (importa, del revisor) Dos pasadas encontraron huecos que bloqueaban (disfraces de /proc/cygdrive/ y /proc/self/cwd/..): una canonización se prueba con . y .. intercalados en cada tramo, no solo al final.
+> - Lo bueno: se cerraron todos los alias de la raíz que salieron, sin regresiones en las 687 de antes, y la suite de la guardia quedó más rápida (178,9 s → 159,4 s).
+>
+> Después del cierre: CI de main sobre el HEAD nuevo con un gh run view suelto, y el informe final con main, tag, run y bytes de PROJECT_STATE. Siguiente tag: F38d, la ingesta de la sesión 5.
+
+## §18 · La orden de cierre: el commit previo
+
+**Punto 1, `D:x`:** `_unidad_completa` (`GetFullPathNameW`, que es `os.path.abspath` en Windows) y
+después `realpath` en `_canonica`; se niega si cae bajo la raíz o si no se puede canonizar. La
+unidad sin barra de la unidad del repo con el directorio de trabajo en otra sigue siendo
+`_no_canonizable`. Test `test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz`, en los dos
+sentidos: una unidad simulada (monkeypatch de `_unidad_completa`) que apunta al ancestro de la raíz,
+negada con la regla de cada sitio, y hacia `src/` pasando; una unidad ajena, pasando. Roturas
+`sin_unidad_sin_barra` y `todo_es_la_raiz`: fallan. §11.1 corregido con un recuadro.
+
+**Punto 2, la pasada mínima del revisor** (pegada abajo): ningún «bloquea», así que se sigue.
+
+| hallazgo | qué se hizo |
+|---|---|
+| m1, una unidad mapeada a la propia máquina (importa) | **arreglado:** `realpath` devuelve una unidad de red mapeada a la propia máquina como `\\equipo\C$\…`; ahora lo que da `realpath` pasa otra vez por `_sin_prefijos` (`_tras_realpath`), y se compara como `C:\…`. Una unidad de red de OTRA máquina sale como un UNC ajeno y se niega por no canonizable. Test `test_una_unidad_mapeada_a_la_propia_maquina_se_compara_como_la_unidad` (con `_realpath` simulado, sin `net use`) y sus roturas `sin_prefijos_tras_realpath` y `todo_es_la_raiz`: fallan. La afirmación del docstring y de §5 queda medida, en simulación |
+| m2, §17 dentro de la fila c5 (importa) | **arreglado:** el guion que la insertó buscó el PRIMER «## Estado» del fichero, que estaba citado dentro de la fila c5 del informe pegado en §14. §17 está ahora antes del Estado de verdad, la fila c5 vuelve a estar entera, y «§18» es esta sección |
+| m3, el recuento de tests (menor) | ahora son **61 tests** y **32 roturas**, todas «falla» (`fase1/roturas.txt`); 1.693 funciones de test en el repo |
+| m4, `/proc/self/fd/../cwd/` (menor) | se queda: niega de más, sin riesgo, y es la regla de los enlaces de `/proc` |
+
+**Punto 3:** el sello y la CI, abajo (§19).
+
+### Informe del revisor · trabajo/guardia-alias · 2026-10-24 (pasada mínima: `git diff 79f7c26 fe6f294` más lo que está sin commitear), pegado tal cual
+
+**No hay ningún «bloquea».** Hay 2 «importa» y 2 «menor».
+
+#### Hallazgos
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| m1 | importa | El texto dice que `realpath` resuelve «las unidades de red», y no lo hace para una unidad mapeada a la propia máquina. `realpath` sobre una unidad mapeada devuelve la forma UNC `\\equipo\C$\...`. `_canonica` (guardia.py:1242-1257) solo aplica `_sin_prefijos` ANTES de llamar a `realpath`, nunca después. Por eso `\\localhost\C$\...` no se compara como `C:\...`, y la lectura pasa. El hueco afecta a `Q:\...` (ya estaba en `main`) y a `Q:x` (lo nuevo). Lo hecho cumple el punto 1 al pie de la letra («se canoniza como las demás»), y por eso no lo marco «bloquea». Lo que no se sostiene es la afirmación, en el docstring de `_unidad_completa` (guardia.py:1136-1137), en GUARDIA-ALIAS.md:588-592 y en el recuadro nuevo de §11.1. Viene de la orden del consultor y no se midió (CLAUDE.md: «toda afirmación del consultor sobre cómo se comporta un mecanismo se mide»). Con `subst`, en cambio, sí se niega. | En memoria, con `decidir` sobre el repo inventado y `os.path.realpath` simulado para que devuelva `\\localhost\C$` + resto (lo que da una unidad mapeada): `Q: con barra … \\localhost\C$\Users | pasa` y `Q: sin barra … \\localhost\C$\Users | pasa`. Para comparar, el UNC directo `\\localhost\C$\...` da `R_HOLDOUT`, y con `realpath` simulando un `subst` (devuelve `C:...`) da `Q: sin barra R_HOLDOUT \| con barra R_HOLDOUT`. |
+| m2 | importa | La Orden de cierre (§17) quedó pegada DENTRO de la fila c5 del informe del revisor de §14, que está pegado tal cual. Cuatro efectos: (1) se parte la celda de c5; (2) `## §17 · …` no es un encabezado, porque arranca a mitad de la línea («El `## §17 · Orden de cierre…»); (3) aparece una línea falsa que empieza por `## Estado` (la 1048) delante del Estado de verdad (la 1114); (4) el recuadro nuevo remite a «(§18)», y no hay §18. El texto copiado sí coincide palabra por palabra con el del encargo. | `git diff -- docs/validation/GUARDIA-ALIAS.md`: `-\| c5 \| menor \| El \`## Estado\`…` y luego `+\| c5 \| menor \| El \`## §17 · Orden de cierre (consultor, 2026-10-24), copiada tal cual`. `grep -n "^## "` da `1048:## Estado\` de \`GUARDIA-ALIAS.md:1007-1008\` dice «falta el sello»…` y `1114:## Estado`. La línea 848 contiene «(§18)», y `grep "§18"` no encuentra ninguna sección con ese número. |
+| m3 | menor | §15 dice «**55 tests** y **28 roturas**», pero con lo sin commitear el fichero ya tiene 58 tests. | `pytest --collect-only -q tests/unit/test_guardia_alias.py` → `58`; GUARDIA-ALIAS.md:1096. |
+| m4 | menor | `/proc/self/fd/../cwd/<HOLD>` se niega con `R_ALIAS`, aunque el sistema lo resolvería a `/proc/self/cwd`. Niega de más, sin riesgo. | Caso a8 en memoria → `R_ALIAS`. |
+
+#### Comprobado sin hallazgos
+Todo en memoria, con `decidir` de la rama sobre un repo inventado en `%TEMP%\tmpx4q03yrz\Bot v3 prueba` con ficheros FALSOS de holdout y cruda, montado como el fixture `repo`.
+
+- **(a) El recorrido tramo a tramo.** Estas rutas se niegan:
+  - `/proc/./self/../self/cwd/./knowledge/../<HOLD>` → `R_HOLDOUT`
+  - `/x/../proc/self/cwd/<HOLD>` → `R_HOLDOUT`
+  - `/proc/self/cwd/src/../<HOLD>` → `R_HOLDOUT`
+  - `/proc/self/cwd/../<repo>/<HOLD>` → `R_HOLDOUT`
+  - `/proc/self/cwd/././<HOLD>` → `R_HOLDOUT`
+  - `/proc/cygdrive/./x/../<unidad>/…/<HOLD>` → `R_HOLDOUT`
+  - `cd src && grep -r x /proc/self/./cwd/..` → `R_HOLDOUT`
+
+  `/proc/self/cwd/./src/./../src/botsito/cli.py` → `pasa`.
+
+  `/proc/self/status/../cwd/<HOLD>` y `/proc/self/cmdline/../cwd/<CRUDA>` pasan la guardia. No es un hueco: Git Bash real, sobre el fichero bueno del repo inventado, responde `cat: /proc/self/status/../cwd/src/botsito/cli.py: Not a directory` (rc 1). Las formas `/proc/self/cwd/src/botsito/cli.py` y `/proc/self/cwd/../Bot v3 prueba/src/botsito/cli.py` sí abren en Git Bash (rc 0), lo que confirma que el modelo de la guardia es correcto.
+- **(b) `/proc/self/cwd/..`:**
+  - Grep sobre esa ruta desde la raíz → `R_HOLDOUT`
+  - `grep -r x /proc/self/cwd/..` → `R_HOLDOUT`
+  - `cd src && cat /proc/self/cwd/../<HOLD>` → `R_HOLDOUT`
+  - `cd src && ls /proc/self/cwd/..` → `pasa` (es un listado, que está permitido)
+- **(c) `/proc/self/status`:** `cat` y Read → `pasa`, como en `main`. Lo mismo `cat /proc/self/cmdline` y `cat /proc/cpuinfo` → `pasa`.
+- **(d) `D:x`**, con `_unidad_completa` simulada:
+  - Unidad que apunta al padre del repo: hacia holdout → `R_HOLDOUT`, y hacia cruda → `R_CUARENTENA`, en Bash, Read, Grep y PowerShell. Hacia `src/botsito/cli.py` → `pasa`.
+  - `grep -r x Q:` y Grep sobre `Q:` → `R_HOLDOUT` (la unidad contiene la raíz).
+  - Unidad ajena `V:nota.txt` → `pasa` en las cuatro herramientas.
+  - Sin simular, `abspath` real de `Q:x` da `Q:\x` → `pasa`.
+  - Los literales `"x: %d"`, `"q: %d"`, `"z:%d"`, `"c: %d"` y `"a:b"` dentro de un guion (fuera del repo y en `src/`) → `pasa`. No niegan el guion.
+- **La suite:** `uv run pytest -q tests/unit/test_guardia_alias.py` → 58 passed. Con `-k "otra_unidad or roto"` → 31 passed: el test nuevo y sus dos roturas nuevas (`sin_unidad_sin_barra` y `todo_es_la_raiz`) fallan cuando deben.
+- **La copia de la orden:** el texto en el encargo y en el informe es el mismo palabra por palabra (comparado en el diff). El fallo de colocación es m2.
+
+#### Lo que no pude comprobar
+- Un `subst` o un `net use` reales: crearlos cambia el sistema, así que no los creé. m1 se apoya en simular `realpath` con su comportamiento documentado en Windows (una unidad mapeada da UNC), no en una unidad real.
+- `make check` y la CI de lo sin commitear: escriben. No hay sello del árbol actual que pueda citar.
+- No abrí nada real protegido. Las rutas protegidas se escribieron a trozos.
+
+#### Comandos ejecutados
+1. `git status --short`; `git log main..` limitado a `79f7c26..HEAD`; `git diff --stat 79f7c26 HEAD`; `git diff --stat`; `git diff --cached --stat`
+2. `git diff 79f7c26 HEAD -- .claude/hooks/guardia.py tests/unit/test_guardia_alias.py`; `git diff -- …` de los mismos ficheros
+3. Lectura de guardia.py:1080-1279 y de las cabeceras y ayudantes del test
+4. `uv run pytest -q tests/unit/test_guardia_alias.py -p no:cacheprovider`
+5. `uv run python -` (stdin con `<<'EOF'`): repo inventado en un directorio temporal y casos a1-a11, b1-b4, c1-c4, d0-d9; Git Bash real solo sobre `src/botsito/cli.py` del repo inventado
+6. `uv run python -`: simulación de una unidad de red y de un `subst` con `realpath` cambiado (dos ejecuciones; la primera la invalidó la herramienta Bash al quitar un nivel de `\`, y la repetí con `chr(92)`)
+7. `git diff -- docs/encargos/trabajo-guardia-alias.md docs/validation/GUARDIA-ALIAS.md`; `git cat-file -e main:docs/validation/GUARDIA-ALIAS.md` (no está en `main`); `grep -n "^## \|§18"`; `sed -n 1083,1118p`
+8. `uv run pytest … -k "otra_unidad or roto"`; `--collect-only -q`; `sed -n 725,800p tests/unit/test_guardia_alias.py`
+
+Ficheros relevantes:
+- C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py (1097-1158, 1242-1257)
+- C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-ALIAS.md (588-592, 841-848, 1046-1048, 1096)
+- C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_alias.py (675-711, 734-770)
+- Repo inventado que se ha quedado en disco: C:\Users\USER\AppData\Local\Temp\tmpx4q03yrz (no lo borré porque soy de solo lectura)
+
+## §19 · Sello y CI del commit previo
+
+Ver el registro de cierre en `docs/state/HISTORIA.md` (el sello y el run de la CI de Linux de este
+commit van allí y en el mensaje final, porque se conocen después de commitearlo).
+
 ## Estado
 
-Rama lista para revisión, NO cerrada. La respuesta a la PARADA 2 está aplicada entera (§11),
-con la pasada corta (§13) y la mínima (§15) del revisor. Los arreglos de la mínima no tienen
-otra pasada (§15).
+Rama lista para revisión, NO cerrada; con su orden de cierre (§17) y el commit previo que pide
+(§18). El cierre lo ejecuta `cerrar-rama`, lanzada por Aleks.

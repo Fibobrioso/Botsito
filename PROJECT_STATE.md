@@ -16,7 +16,7 @@ trabajo/guardia-alias, EN CURSO (abierta el 2026-10-24 desde main af89a78): la g
 2cc3b93 · merge: trabajo/guardia-ci, la guardia niega esperar a la CI con una consulta repetida, Monitor en el matcher y siete herramientas en permissions.deny · tag stable/F38b-guardia-ci
 
 ## Tests Currently Passing
-1691 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1693 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
