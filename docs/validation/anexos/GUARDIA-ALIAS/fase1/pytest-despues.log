@@ -1,0 +1,17 @@
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+........................................................................ [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 73%]
+........................................................................ [ 83%]
+........................................................................ [ 94%]
+.......................................                                  [100%]
+============================= slowest 5 durations =============================
+9.46s call     tests/unit/test_guardia_claude.py::test_la_lista_de_la_guardia_es_la_que_se_calcula
+1.00s setup    tests/unit/test_guardia_claude.py::test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node -r ./a.py inocuo.py]
+0.79s setup    tests/unit/test_guardia_claude.py::test_ejecucion_lo_que_vio_la_segunda_pasada_se_niega[Bash-node --require=./a.py inocuo.py]
+0.78s call     tests/unit/test_guardia_ffmpeg.py::test_sin_la_regla_las_permitidas_vuelven_a_negarse
+0.74s setup    tests/unit/test_guardia_claude.py::test_ejecucion_un_nombre_de_entorno_que_carga_codigo_se_niega[LD_LIBRARY_PATH]
+687 passed in 159.41s (0:02:39)

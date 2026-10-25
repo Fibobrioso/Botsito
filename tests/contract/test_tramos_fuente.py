@@ -2,8 +2,9 @@
 
 Es la guardia de trazabilidad de spec y casos (`commits_sin_fuente`) sobre una ruta mas, con su
 propia ancla. La garantia es este test en la CI contra la historia de git, como las guardias de
-inmutabilidad (PROJECT_STATE, Decisions and Rationale, 2026-09-04). No hay un bucle propio: la
-lectura del trailer es la de `commits_sin_fuente` (decision 3 del consultor del 2026-10-05).
+inmutabilidad (docs/runbooks/DECISIONES-DE-PROCESO.md, Decisions and Rationale, 2026-09-04). No
+hay un bucle propio: la lectura del trailer es la de `commits_sin_fuente` (decision 3 del
+consultor del 2026-10-05).
 
 EL ANCLA ES UN SHA, NUNCA UNA FECHA NI UN TAG: `c489685`, el ultimo commit que toco el fichero sin
 `Fuente:` (docs/validation/GUARDIAS-CITAS.md §0.c). Los tres que deja fuera -`cfec50b` y `c489685`

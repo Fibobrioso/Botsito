@@ -1,0 +1,17 @@
+........................................................................ [ 10%]
+........................................................................ [ 20%]
+........................................................................ [ 31%]
+........................................................................ [ 41%]
+........................................................................ [ 52%]
+........................................................................ [ 62%]
+........................................................................ [ 73%]
+........................................................................ [ 83%]
+........................................................................ [ 94%]
+.......................................                                  [100%]
+============================= slowest 5 durations =============================
+5.82s call     tests/unit/test_guardia_claude.py::test_la_lista_de_la_guardia_es_la_que_se_calcula
+0.67s call     tests/unit/test_guardia_ffmpeg.py::test_sin_la_regla_las_permitidas_vuelven_a_negarse
+0.39s call     tests/unit/test_guardia_claude.py::test_el_proceso_sale_con_2_y_el_motivo_o_con_0
+0.28s setup    tests/unit/test_guardia_claude.py::test_no_se_borra_main_ni_un_tag_ni_lo_que_no_se_puede_decidir[git push origin --delete refs/tags/x]
+0.28s setup    tests/unit/test_guardia_claude.py::test_powershell[git push --force origin trabajo/x-True]
+687 passed in 178.89s (0:02:58)

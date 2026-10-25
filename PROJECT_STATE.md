@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-alias
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-ci cerrada en main el 2026-10-24 (stable/F38b-guardia-ci): la guardia de Claude Code niega esperar a la CI con una consulta repetida, y Monitor entra en su matcher. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md; la ingesta de la sesión 5 cerrará con F38c.
+trabajo/guardia-alias, EN CURSO (abierta el 2026-10-24 desde main af89a78): la guardia de Claude Code niega la lectura del material protegido escriba como se escriba la ruta (canoniza antes de comparar y niega lo no canonizable que pueda caer bajo la raíz); paga la línea PRIORITARIA de G.1 y la parte de K del alias de la raíz en motivo_fichero (lo demás de K sigue). Encargo: docs/encargos/trabajo-guardia-alias.md. Informe: docs/validation/GUARDIA-ALIAS.md. Cierra con stable/F38c-guardia-alias; la ingesta de la sesión 5 pasa a F38d.
 
 ## Stable Main State
 2cc3b93 · merge de `trabajo/guardia-ci` (tag `stable/F38b-guardia-ci`): en `.claude/hooks/guardia.py`, la sección «esperar a la CI» (`R_ESPERA_CI`): una consulta de CI y una espera en el mismo comando, `gh run watch`, `gh pr checks --watch` y toda consulta desde código con una vía de salida se niegan, y la consulta suelta pasa; `Monitor` se decide como Bash (`R_MONITOR`). En `.claude/settings.json`, `Monitor` en el matcher y siete herramientas que leen ficheros locales en `permissions.deny`. tests/unit/test_guardia_ci.py. Sobre `stable/F38a-guardia-ffmpeg` (975c086). Informe docs/validation/GUARDIA-CI.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/guardia-ci cerrada en main el 2026-10-24 (stable/F
 2cc3b93 · merge: trabajo/guardia-ci, la guardia niega esperar a la CI con una consulta repetida, Monitor en el matcher y siete herramientas en permissions.deny · tag stable/F38b-guardia-ci
 
 ## Tests Currently Passing
-1671 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1693 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -45,7 +45,7 @@ J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de 
 
 A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2 entre el 26 y el 30 de octubre, con el script 1.1 compilado antes; la 3 después del 1 de noviembre. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza` (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
 
-K. PRIORITARIA, porque lee material protegido: el alias de la raíz en motivo_fichero. Hoy pasan cat, Read, grep -r y find … -exec cat sobre la raíz escrita con \\?\ o con su nombre corto 8.3, o sobre un directorio que CONTIENE el repo; y las variables se resuelven con el entorno del hook, otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11). Rama propia de la familia 1 de la guardia, con un test que rompa a propósito los dos sentidos. Después, la guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos.
+K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos.
 
 H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; si el literal de 1:44:49 es «1 o 2» o «12» lo lee Aleks con `--crudo` en su terminal (punto 8 de la respuesta del consultor del 2026-10-11); S-14 va a la sesión 5 (R4.1).
 
@@ -143,7 +143,8 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
 - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
 - Copia de seguridad de las crudas y los WAV: hecha hasta v10 (2026-10-22, Drive privado de Aleks, con SHA256SUMS). Cada sesión nueva se añade tras su ingesta; los vídeos de las sesiones, recomendado, sin hacer.
-- El docstring de `tests/contract/test_tramos_fuente.py:5` cita «PROJECT_STATE, Decisions and Rationale, 2026-09-04», que vive desde trabajo/previa-sesion-5 en `docs/runbooks/DECISIONES-DE-PROCESO.md`: lo corrige la próxima rama que toque `tests/` (PREVIA-SESION-5.md §5).
+- Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos; Grep y `rg` sobre una carpeta que contiene la raíz se deciden como sobre la raíz, suponiendo, sin medirlo, que respetan su `.gitignore`.
+- La guardia no expande las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) ni mira las URL `file:///` (urllib, curl), que leen material protegido en `main` y en la rama (GUARDIA-ALIAS.md §9, b6 y b7): van con la deuda C de la Next Action (rutas compuestas).
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
@@ -158,8 +159,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 44 (2026-10-23).
+— ninguna desde el Archivo 45 (2026-10-24).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 44 (2026-10-23).
+— ninguna desde el Archivo 45 (2026-10-24).

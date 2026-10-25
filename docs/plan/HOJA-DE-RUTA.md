@@ -425,10 +425,6 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** lo que importa o ejecuta un guion (B); las rutas compuestas (C); las formas raras (D);
   el falso positivo de `exigir_sin_crudo` (K, junto a B o C si cabe). Y lo medido en
   `trabajo/entorno-code` (ENTORNO-CODE.md §6):
-  - **PRIORITARIO, porque lee material protegido** (consultor, 2026-10-22, K): el alias de la
-    raíz en motivo_fichero. Hoy pasan cat, Read, grep -r y find … -exec cat sobre la raíz escrita
-    con \\?\ o con su nombre corto 8.3, o sobre un directorio que CONTIENE el repo; y las variables
-    se resuelven con el entorno del hook, otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11).
   - **Prioritario dentro de G.1** (consultor, 2026-10-11): la guardia no niega
     `git ls-files knowledge/cases | grep ...`, listar la carpeta madre del holdout con un filtro
     detrás (§10.1). Es la 4.ª vez que alguien lo hace, esta vez el propio revisor.
