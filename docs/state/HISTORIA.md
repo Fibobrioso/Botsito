@@ -12350,3 +12350,100 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 44 (2026-10-23).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/guardia-alias (2026-10-24)
+
+Su texto literal en «Technical Debt», con su condicion y su evidencia:
+
+- El docstring de `tests/contract/test_tramos_fuente.py:5` cita «PROJECT_STATE, Decisions and Rationale, 2026-09-04», que vive desde trabajo/previa-sesion-5 en `docs/runbooks/DECISIONES-DE-PROCESO.md`: lo corrige la próxima rama que toque `tests/` (PREVIA-SESION-5.md §5).
+  PAGADA en `38f03c4` (respuesta del consultor a la PARADA 1, punto 7): el docstring cita
+  `docs/runbooks/DECISIONES-DE-PROCESO.md`, Decisions and Rationale, 2026-09-04. Declarado por la
+  orden de cierre: `trabajo/guardia-ci` (y antes `trabajo/guardia-ffmpeg`) tocaron `tests/` y no la
+  pagaron; el consultor lo da como error suyo.
+
+# Next Action HECHA · K, su parte PRIORITARIA · sale de PROJECT_STATE.md en trabajo/guardia-alias (2026-10-24)
+
+El texto literal que sale de K (lo demás de K sigue en PROJECT_STATE.md):
+
+K. PRIORITARIA, porque lee material protegido: el alias de la raíz en motivo_fichero. Hoy pasan cat, Read, grep -r y find … -exec cat sobre la raíz escrita con \\?\ o con su nombre corto 8.3, o sobre un directorio que CONTIENE el repo; y las variables se resuelven con el entorno del hook, otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11). Rama propia de la familia 1 de la guardia, con un test que rompa a propósito los dos sentidos.
+
+Y el punto que sale de G.1 de `docs/plan/HOJA-DE-RUTA.md` (G.1 no pasa a HECHA; sus Refs siguen
+con NA:K):
+
+  - **PRIORITARIO, porque lee material protegido** (consultor, 2026-10-22, K): el alias de la
+    raíz en motivo_fichero. Hoy pasan cat, Read, grep -r y find … -exec cat sobre la raíz escrita
+    con \\?\ o con su nombre corto 8.3, o sobre un directorio que CONTIENE el repo; y las variables
+    se resuelven con el entorno del hook, otro caso del mismo hueco (GUARDIA-FFMPEG.md §9 y §11).
+
+Evidencia: `.claude/hooks/guardia.py` (`_canonica` dentro de `_absoluta`, `R_ALIAS`, el contenedor,
+las variables de PowerShell, las dos lecturas de la herramienta Bash, `~+`/`~-`, `/proc/cygdrive/`,
+`/proc/self/cwd/`, `C:x` y `D:x`, `FileSystem::`), `tests/unit/test_guardia_alias.py`;
+informe `docs/validation/GUARDIA-ALIAS.md`.
+
+# Registro de cierre · `trabajo/guardia-alias` (2026-10-24)
+
+- Orden de cierre del consultor del 2026-10-24, pegada en la conversación y lanzada por Aleks con
+  `/cerrar-rama`; ejecutada siguiendo `RITUAL.md` con la skill `cerrar-rama`. Rama aceptada tras
+  una fase 0 con su PARADA 1, la PARADA 2 (los hallazgos de la primera pasada del revisor) y sus
+  dos respuestas, y cuatro pasadas del revisor: la completa (GUARDIA-ALIAS.md §9), la corta (§12),
+  la mínima (§14) y la mínima previa al cierre que pide la orden (§18). Nunca se cerró sin la orden.
+  Sus puntos:
+  1. en un commit previo (`fc187e0`, con su `make check` y su CI): `D:x` de otra unidad se
+     canoniza (`GetFullPathNameW` y `realpath`) y se niega si cae bajo la raíz o no se puede
+     canonizar, con su test en los dos sentidos (una unidad simulada hacia un ancestro de la raíz)
+     y su rotura; §11.1 corregido con un recuadro;
+  2. la pasada mínima del revisor previa al cierre: sin «bloquea»; m1 (una unidad mapeada a la
+     propia máquina, que `realpath` da como UNC) arreglado en el mismo commit previo, m2 (la orden
+     copiada dentro de una fila citada) recolocada, m3 y m4 contestados (§18);
+  3. en este commit: lo preparado en GUARDIA-ALIAS.md §11.4 tal cual (K pierde su parte
+     PRIORITARIA, sale el punto PRIORITARIO de G.1, en Technical Debt sale la línea del docstring de
+     `test_tramos_fuente.py`, PAGADA arriba, y entran la de los riesgos residuales y la de las llaves
+     y `file:///`), con PROJECT_STATE en 24007 bytes;
+  4. la fila de ERRORES-RECURRENTES, con los hallazgos del revisor y los de la orden.
+- **DESVIACIÓN declarada** (precedente: los cierres de `trabajo/guardia-ffmpeg` y
+  `trabajo/guardia-ci`): la puerta del commit del contrato da, además de `D  contrato.yaml`,
+  `M  docs/state/HISTORIA.md`, `M  docs/runbooks/ERRORES-RECURRENTES.md`, `M  PROJECT_STATE.md` y
+  `M  docs/plan/HOJA-DE-RUTA.md`, la línea `M  docs/validation/GUARDIA-ALIAS.md`: el informe gana
+  aquí el sello y la CI del commit previo (§19) y su Estado de cerrada. Nada más.
+- **Lo que entra** (carril de guardias y deuda, G.1; paga la parte PRIORITARIA de K):
+  - `.claude/hooks/guardia.py`: toda ruta se compara en su forma CANÓNICA (`_canonica`, dentro de
+    `_absoluta`): sin `\\?\`, `//?/`, `\\.\X:` ni UNC a la propia máquina (lista cerrada con el
+    nombre del equipo leído en el hook), con `realpath` (8.3, puntos y espacios finales, enlaces y
+    uniones) y otra vez sin prefijos tras él; lo que no se puede canonizar (otra máquina,
+    `GLOBALROOT`, `Volume{…}`, `\\.\pipe`, `~-`, `/proc/<pid>/cwd`) se niega con `R_ALIAS`; un
+    lector recursivo sobre una carpeta que contiene la raíz se decide como sobre la raíz, con su
+    `respeta_ignore`; PowerShell resuelve `$env:`, `$HOME` y `$PWD` y niega delante de un lector la
+    variable que no resuelve, y quita `FileSystem::`; Bash y Monitor se deciden también con un
+    nivel de `\` menos (lo que hace la herramienta Bash); `~+`, `/proc/cygdrive/` y sus disfraces,
+    `/proc/self/cwd/` tramo a tramo, `C:x` relativa al directorio de su unidad y `D:x` canonizada;
+  - `tests/unit/test_guardia_alias.py` (nuevo: 22 funciones de test, 61 casos, 32 roturas a
+    propósito en los dos sentidos; 1671 a 1693 funciones de test en el repo);
+  - el docstring de `tests/contract/test_tramos_fuente.py` (la deuda con dueño);
+  - el anexo `docs/validation/anexos/GUARDIA-ALIAS/` (el diagnóstico sin rama, las medidas de la
+    fase 0, la tabla antes y después, las roturas y las decisiones).
+- **Lo que sale**: la parte PRIORITARIA de K y el punto PRIORITARIO de G.1 (HECHA, arriba); la línea
+  de Technical Debt del docstring (PAGADA, arriba).
+- Letras: ninguna sale entera; K cambia. Ningún heredado sale. En la hoja de ruta, solo G.1.
+- Negativas de la guardia o del clasificador: ninguna del clasificador; de la guardia, las de
+  GUARDIA-ALIAS.md §0.0, §3.3 y §7 (`mkdir` y `wsl` en un comando, `wsl` suelto, la variable de
+  entorno de los mutantes, `pytest -o`, comandos encadenados): todas de reglas de `main`, resueltas
+  con la forma que propone la guardia salvo `wsl`, que dejó Linux a la CI.
+- `make check` del commit previo: tardó lo normal (ver §19 del informe). El de `fe6f294` tardó
+  2 h 23 min por una suspensión de la máquina, en verde.
+- Letra del tag: la última cerrada era `stable/F38b-guardia-ci`; `stable/F38c-*` no existe en local
+  ni en origin (comprobado antes del tag). La ingesta de la sesión 5 será F38d.
+- Tag: `stable/F38c-guardia-alias`. El merge es `git rev-parse "stable/F38c-guardia-alias^{commit}"`.
+- Commits de la rama: `c60a8d4` (apertura: encargo, contrato y Archivo 45), `e6f9d83` (fase 0 y
+  PARADA 1), `38f03c4` (la respuesta a la PARADA 1 y su punto 7), `1422227` (la condición),
+  `ef23607` (el disfraz de `$ENV:` en Linux), `f3a2f3e` (la primera pasada del revisor y la PARADA
+  2), `bcc70f7` (la respuesta a la PARADA 2), `79f7c26` (la pasada corta), `fe6f294` (la pasada
+  mínima), `fc187e0` (el commit previo que pide la orden) y el de este registro.
+- CI de Linux por `fix/guardia-alias`: run 40132371656 sobre 1422227 (2 failed: el aceptado y el
+  disfraz `$ENV:userprofile`, que en Linux no se resuelve; arreglado en ef23607); 40134439368 sobre
+  ef23607, 40137362156 sobre f3a2f3e, 40140980135 sobre bcc70f7, 40143081981 sobre 79f7c26,
+  40153211820 sobre fe6f294 y 40156175494 sobre fc187e0 (1 failed, el aceptado; 2871 passed, 46 skipped). Salvo el primero, el único
+  fallo es el aceptado: `test_state_check_ok_on_real_repo`, por el nombre `fix/`. La CI de `main`
+  corre tras el push.
+- Exposiciones: ninguna.
+- Informe: `docs/validation/GUARDIA-ALIAS.md`. Encargo: `docs/encargos/trabajo-guardia-alias.md`.
+

@@ -1198,10 +1198,14 @@ Ficheros relevantes:
 
 ## §19 · Sello y CI del commit previo
 
-Ver el registro de cierre en `docs/state/HISTORIA.md` (el sello y el run de la CI de Linux de este
-commit van allí y en el mensaje final, porque se conocen después de commitearlo).
+- `fc187e0`: `make check` en Windows en verde en 16 min 58 s (un tiempo normal), 2.918 passed,
+  sello `43301ea2…`, `PICO DE MEMORIA de make check: 298 MiB en test`. Las tres suites de la
+  guardia de antes, 687 passed.
+- CI de Linux por `fix/guardia-alias`, run **40156175494**: solo el fallo esperado,
+  `test_state_check_ok_on_real_repo` (2.871 passed, 46 skipped).
+- El commit del contrato: lo preparado en §11.4 tal cual; PROJECT_STATE en **24.007 bytes**.
 
 ## Estado
 
-Rama lista para revisión, NO cerrada; con su orden de cierre (§17) y el commit previo que pide
-(§18). El cierre lo ejecuta `cerrar-rama`, lanzada por Aleks.
+CERRADA en `main` con `stable/F38c-guardia-alias`, por la orden de cierre del 2026-10-24 (§17),
+lanzada por Aleks con `/cerrar-rama`. El registro del cierre, al final de `docs/state/HISTORIA.md`.
