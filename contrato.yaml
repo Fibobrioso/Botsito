@@ -1,0 +1,43 @@
+rama: trabajo/sesion-05
+riesgo: medio  # anade al corpus (v15 y v16, transcripciones, fotogramas, tramos, evidencia) y da de alta los dos videos en la cuarentena con sus tests; no toca spec, feedback, casos, motor, cifras ni scripts/transcribir_sesion.py
+artefacto: docs/validation/SESION-05-EXTRACCION.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/SESION-05-EXTRACCION.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/sesion-5/HOJA-USADA.md
+  - docs/sesion-5/PREGUNTAS.md
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+  - knowledge/corpus/fuentes.yaml
+  - knowledge/corpus/manifest.yaml
+  - knowledge/corpus/tramos_no_citables.yaml
+  - knowledge/corpus/transcripciones/tr-v15-*.yaml
+  - knowledge/corpus/transcripciones/tr-v16-*.yaml
+  - knowledge/corpus/fotogramas/fr-v15-*.yaml
+  - knowledge/corpus/fotogramas/fr-v16-*.yaml
+  - knowledge/evidence/v15/
+  - knowledge/evidence/v16/
+  - src/botsito/corpus/cuarentena.py
+  - tests/unit/test_inventario.py
+  - tests/unit/test_cuarentena.py
+  - tests/unit/test_guardia_claude.py
+  - .claude/hooks/ficheros_con_ocultos.txt
+rutas_protegidas:
+  - scripts/transcribir_sesion.py
+  - knowledge/spec/
+  - knowledge/feedback/
+  - knowledge/cases/
+  - knowledge/corpus/libros.yaml
+  - src/botsito/engine/
+  - src/botsito/domain/
+  - docs/adr/
+comprobaciones:
+  - uv run botsito corpus check --hashes
+  - uv run botsito corpus transcript check
+  - uv run botsito corpus frames check
+  - uv run botsito evidence contradictions
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones knowledge/corpus/fotogramas data/manifests
+  - make check > make-check.log 2>&1

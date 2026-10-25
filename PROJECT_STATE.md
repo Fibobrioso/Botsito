@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesion-05
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-alias cerrada en main el 2026-10-24 (stable/F38c-guardia-alias): la guardia de Claude Code compara cada ruta en su forma canónica y niega lo que no puede canonizar, y sale la parte PRIORITARIA de K. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md; la ingesta de la sesión 5 cerrará con F38d.
+trabajo/sesion-05, EN CURSO (abierta el 2026-10-25 desde main 7eef8cf): ingesta de la sesión 5 con el trader, grabada en dos vídeos (v15 el 2026-10-23 y v16 el 2026-10-25, un solo id 2026-10-23-sesion-05), hasta el informe de extracción por pregunta; no resuelve nada (NA:V, R4.1). Encargo: docs/encargos/trabajo-sesion-05.md. Informe: docs/validation/SESION-05-EXTRACCION.md. Cierra con stable/F38d-sesion-05.
 
 ## Stable Main State
 68eaa83 · merge de `trabajo/guardia-alias` (tag `stable/F38c-guardia-alias`): en `.claude/hooks/guardia.py`, `_canonica` dentro de `_absoluta` (realpath, sin `\\?\`, `//?/` ni UNC a la propia máquina, `~+`, `/proc/cygdrive/`, `/proc/self/cwd/`, `C:x` y `D:x`), `R_ALIAS` para lo no canonizable, el contenedor de la raíz decidido como la raíz, las variables de PowerShell y `FileSystem::`, y Bash y Monitor decididos también con un nivel de `\` menos. tests/unit/test_guardia_alias.py. Sobre `stable/F38b-guardia-ci` (2cc3b93). Informe docs/validation/GUARDIA-ALIAS.md; el registro del cierre, al final de HISTORIA.
@@ -159,8 +159,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 45 (2026-10-24).
+— ninguna desde el Archivo 46 (2026-10-25).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 45 (2026-10-24).
+— ninguna desde el Archivo 46 (2026-10-25).
