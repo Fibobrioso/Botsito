@@ -1,0 +1,18 @@
+id: ev-v15-005126-5baccf2a
+video_id: v15
+t0: 0:51:26
+t1: 0:51:33
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para confirmar al final si una liquidez se toma antes de las 7 y otra después, mi toma es
+  la más reciente
+afirmacion: si una liquidez se toma antes de las 7 y otra despues, la toma que vale es la mas reciente
+tema: liquidez.m15.tomada_antes_de_las_7
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-10 (A-43, segunda parte); no dice si la MISMA liquidez tomada dos veces vale la segunda vez.
+  docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

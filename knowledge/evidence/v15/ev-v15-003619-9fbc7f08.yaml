@@ -1,0 +1,18 @@
+id: ev-v15-003619-9fbc7f08
+video_id: v15
+t0: 0:36:19
+t1: 0:36:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: como estamos en un flujo alcista vamos utilizando el 1 conforme va desarrollándose.
+afirmacion: en un flujo alcista va usando el 1 de la caja conforme el precio se desarrolla
+tema: herramientas.caja.actualizable_mientras_avanza
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v15-003619-60121c7d
+notas: S-7 (A-48 y A-49); dice «usualmente», no «siempre» (34:41). Supersede a ev-v15-003619-60121c7d,
+  cuya afirmacion anadia una condicion de fuera de la ventana (hallazgo a1 del revisor). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

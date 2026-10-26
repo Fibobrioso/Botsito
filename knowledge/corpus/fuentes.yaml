@@ -154,6 +154,44 @@ videos:
       exporto xlsx y ya no puede (borro el backtest); esos dias no tienen libro ni casos (no
       comprobado: lo comprueba la rama que lo transcriba)
 
+  # LA SESION 5 CON EL TRADER, GRABADA EN DOS PARTES Y EN DOS DIAS (rama `trabajo/sesion-05`,
+  # docs/validation/SESION-05-EXTRACCION.md): un solo id de sesion, 2026-10-23-sesion-05, con la
+  # hoja de la sesion 05 (docs/sesion-5/HOJA-USADA.md, codigos S-1 a S-25) y dos videos, cada uno
+  # con su fecha. Precedente de una sesion partida, el mismo dia: v7 y v8 (sesion 2).
+  - video_id: v15
+    fichero: "Grabación de pantalla 2026-10-23 174536.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 6740009101
+    fecha_grabacion: "2026-10-23"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): primera parte de
+    # la sesion 5. Duracion 1:40:57 (6057,2 s), 1920x1080 a 30 fps, audio AAC estereo a 48 kHz. El
+    # audio tiene UN CORTE de cero digital (ffmpeg silencedetect a -50 dB y 30 s, y a -90 dB, y
+    # volumedetect, el 2026-10-25): de 1:22:26 a 1:23:33 (4946,2 s a 5012,1 s). Lo dicho en el no
+    # se oye; esta en tramos_no_citables.yaml. Segun Aleks (2026-10-25), el trader compartio su FX
+    # Replay y enseno ejemplos de su operativa con julio como mes, dias sin precisar.
+    naturaleza: >-
+      sesion 5 con el trader, primera parte (2026-10-23-sesion-05, hoja de la sesion 05): preguntas
+      del consultor de S-1 a S-17 y el arranque de S-18, que quedo incompleta, con respuestas del
+      trader en voz; el trader comparte su replay de FX Replay y ensena ejemplos de su operativa de
+      julio, dias sin precisar; con UN CORTE de audio de cero digital, de 1:22:26 a 1:23:33, en el
+      que no se oye nada
+
+  - video_id: v16
+    fichero: "Grabación de pantalla 2026-10-25 140140.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 2324823273
+    fecha_grabacion: "2026-10-25"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): segunda parte de
+    # la sesion 5, grabada dos dias despues de la primera (v15). Duracion 34:50 (2090,0 s),
+    # 1920x1080 a 30 fps, audio AAC estereo a 48 kHz, sin ningun silencio de mas de 30 s a -50 dB
+    # (ffmpeg silencedetect y volumedetect, el 2026-10-25). Segun Aleks (2026-10-25), puede que el
+    # trader ensenara tambien su replay de julio; no lo recuerda con seguridad.
+    naturaleza: >-
+      sesion 5 con el trader, segunda parte, dos dias despues (mismo id 2026-10-23-sesion-05, hoja
+      de la sesion 05): S-18 repetida desde el principio, S-19 a S-25 y las peticiones de «Para
+      cerrar», con respuestas del trader en voz; puede que el trader ensene tambien su replay de
+      julio, dias sin precisar; sin cortes de audio
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2
@@ -208,6 +246,17 @@ carpetas:
       2026-10-17 y no anade nada a la regla: no se registra ni se interpreta. Entrada de los dos
       registros de feedback de esa fecha (CORRECT sobre RN-003 y CONFIRM sobre
       sesgo_h4_criterio_ruptura) y del ADR de esa rama.
+      El 2026-10-25 (rama trabajo/sesion-05, docs/validation/SESION-05-EXTRACCION.md, «Para
+      cerrar») entra UNA captura mas, `mensaje-whatsapp-2026-10-25-1358.png`: la confirmacion
+      ESCRITA del trader de que el backtest de marzo es material que ya ha visto
+      (docs/validation/REGISTRO-MARZO.md §2, paso 0), que mando por WhatsApp durante la llamada
+      de la segunda parte de la sesion 5 (v16), al pedirsela Aleks en voz. Literal, transcrito por
+      el consultor de la captura: «Confirmado backtest de marzo», mensaje del trader del
+      2026-10-25 a las 13:58 (hora de Lima); solo nombra el mes, sin ninguna fecha ni ningun
+      resultado. La sesion no la abre (ADR-0038): queda con su hash para verificar el literal. El
+      mensaje siguiente de la captura (14:01) no se registra ni se interpreta. Ningun nombre ni
+      numero del trader entra al repositorio. Aleks la guardo con doble extension (`.png.png`) y
+      la renombro el 2026-10-25, antes del inventario.
 
   - ruta: "Sesiones"
     papel: material_adicional

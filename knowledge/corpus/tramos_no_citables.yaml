@@ -360,3 +360,80 @@ tramos:
       completa el tramo de cuarentena mecanica de la sesion 03 de 0:34:44-0:34:56 (segmentos 609-612 de la cruda), registrado con t1 en el segundo truncado de la marca y sin margen: este cubre el bloque [CUARENTENA 34:44–34:56] de la version filtrada con t1 un segundo despues, para cubrir la cola de su ultimo segmento (el 612 termina en 2.096.900 ms). Se quedo fuera en FILTRADAS-ESCENARIO-B.md §4.2 porque solapaba la ventana vieja de ev-v9-003456-9ef48fb5, que esta rama corrige. Pueden nombrar un mes con dias reservados o una fecha. No se leen, no se citan y no se reconstruyen hasta que el consultor los revise
     acordado: >-
       decision del consultor del 2026-10-05 (encargo de trabajo/ventana-ev-v9-003456, punto c, y su visto bueno a la fase 0, punto 2); criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo»; docs/validation/VENTANA-EV-V9.md
+  - video_id: v15
+    t0: "1:22:26"
+    t1: "1:23:33"
+    motivo: >-
+      SIN AUDIO: cero digital (por debajo de -90 dB: ffmpeg silencedetect a -50 dB y 30 s da de 4946,2 s a 5012,1 s, y a -90 dB y 30 s de 4946,6 s a 5012,0 s; volumedetect del video entero, 2026-10-25). Lo que se dijo ahi no esta en la grabacion; el ASR no puede haber sacado de ahi nada que sea del trader. Solo se reabre si entra un audio de respaldo por el procedimiento de docs/validation/SESION-03-EXTRACCION.md §2
+    acordado: >-
+      skill ingerir-sesion, paso 2 (un corte de audio entra aqui con motivo SIN AUDIO), en la rama trabajo/sesion-05 (encargo del consultor del 2026-10-25); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v15
+    t0: "0:10:21"
+    t1: "0:14:43"
+    motivo: >-
+      precaucion (ADR-0021 §2): sobre su replay en pantalla, el trader cuenta resultados de operaciones y de sesiones concretas y da cifras agregadas de esos dias, que el audio no identifica (segun Aleks, julio, dias sin precisar). Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      respuesta a de Aleks y decisiones del consultor del 2026-10-25 (encargo de trabajo/sesion-05, «ENTRADAS», a) y regla de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-05-EXTRACCION.md)
+  - video_id: v15
+    t0: "0:41:22"
+    t1: "0:41:36"
+    motivo: >-
+      conversacion ajena a la operativa; no es especificacion y no se cita ni se describe
+    acordado: >-
+      decision de la sesion, encargo de trabajo/sesion-05 (2026-10-25); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v15
+    t0: "0:59:09"
+    t1: "1:00:03"
+    motivo: >-
+      conversacion personal, ajena a la operativa, entre el trader y el consultor; no es especificacion y no se cita ni se describe
+    acordado: >-
+      decision de la sesion, encargo de trabajo/sesion-05 (2026-10-25), con el criterio del tramo de v10 1:43:42; docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v15
+    t0: "1:14:41"
+    t1: "1:16:52"
+    motivo: >-
+      precaucion (ADR-0021 §2): sobre su replay en pantalla, el trader busca el dia mas reciente de su backtest y comenta el resultado de sus operaciones y de sus sesiones, de dias que el audio no identifica (segun Aleks, julio, dias sin precisar). Se leyo en la filtrada; no se cita y nada de ello se usa
+    acordado: >-
+      respuesta a de Aleks y decisiones del consultor del 2026-10-25 (encargo de trabajo/sesion-05, «ENTRADAS», a) y regla de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-05-EXTRACCION.md)
+  - video_id: v15
+    t0: "1:17:52"
+    t1: "1:18:06"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader da dos cifras agregadas (porcentajes) de las sesiones de su replay en pantalla, de dias que el audio no identifica (segun Aleks, julio, dias sin precisar). Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      respuesta a de Aleks y decisiones del consultor del 2026-10-25 (encargo de trabajo/sesion-05, «ENTRADAS», a) y regla de ADR-0021 §2: un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md (docs/validation/SESION-05-EXTRACCION.md)
+  - video_id: v15
+    t0: "1:40:37"
+    t1: "1:40:58"
+    motivo: >-
+      fin de la grabacion: conversacion ajena a la operativa, tras cortarse la respuesta de S-18; no es especificacion y no se cita ni se describe
+    acordado: >-
+      decision de la sesion, encargo de trabajo/sesion-05 (2026-10-25); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v16
+    t0: "0:20:02"
+    t1: "0:21:16"
+    motivo: >-
+      precaucion (ADR-0021 §2): el trader da cifras agregadas de sus backtests (una racha de perdidas de un mes y cuantas operaciones caben en un dia), sobre un rango que puede incluir meses reservados. Se leyo en la filtrada; no se cita y ninguna cifra se usa
+    acordado: >-
+      decision de la sesion con la regla de ADR-0021 §2 (un tramo dudoso va aqui y no se cita ni se describe mas alla de lo declarado en docs/validation/HOLDOUT-EXPOSICIONES.md), encargo de trabajo/sesion-05 (2026-10-25); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v16
+    t0: "0:30:41"
+    t1: "0:31:37"
+    motivo: >-
+      precaucion: el trader ensena su replay de julio y dice hasta que dia llego su backtest, un dia del 18 en adelante. El numero no se escribe en ningun sitio y no se usa para nada. La respuesta a S-25, desde 0:31:37, queda fuera del tramo
+    acordado: >-
+      respuesta del consultor a la PARADA de v16 (2026-10-25, punto 1), con su decision 4 del encargo de trabajo/sesion-05 («ENTRADAS», a); docs/validation/SESION-05-EXTRACCION.md y docs/validation/HOLDOUT-EXPOSICIONES.md
+  - video_id: v16
+    t0: "0:32:58"
+    t1: "0:33:08"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 05 (v16): el bloque [CUARENTENA 32:58–33:07] de la version filtrada, que cayo por la cuarentena por condicion (un mes no demostrado libre y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-05 (2026-10-25); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v16
+    t0: "0:33:11"
+    t1: "0:33:23"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 05 (v16): el bloque [CUARENTENA 33:11–33:22] de la version filtrada, que cayo por la cuarentena por condicion (un mes no demostrado libre y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-05 (2026-10-25); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-05-EXTRACCION.md

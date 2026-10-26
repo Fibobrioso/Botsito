@@ -1,0 +1,18 @@
+id: ev-v15-002729-30480ec5
+video_id: v15
+t0: 0:27:29
+t1: 0:27:38
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: un posible punto breaker tiene que haber roto por encima porque si no está roto por encima,
+  nosotros no lo validamos
+afirmacion: para volver a validar un posible punto de breaker el precio tiene que haberlo roto; si no
+  esta roto, no se valida
+tema: reentrada.punto_se_valida_de_nuevo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6 (pregunta 3 de PUNTO-USADO.md, ADR-0083). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

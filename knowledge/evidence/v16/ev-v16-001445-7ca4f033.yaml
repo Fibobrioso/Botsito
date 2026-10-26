@@ -1,0 +1,17 @@
+id: ev-v16-001445-7ca4f033
+video_id: v16
+t0: 0:14:45
+t1: 0:14:56
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esta zona breaker como digo se tiene que ir actualizando no se puede poner aquí o sea siempre
+  el punto breaker al más reciente y el más reciente y que cumple con las condiciones
+afirmacion: 'el punto de breaker se va actualizando: siempre el mas reciente que cumple las condiciones'
+tema: entrada.orden.punto_mas_reciente
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'S-20 (ADR-0076 §4, pregunta 2): contesta «otra» (17:07) y corrige el esquema. docs/validation/SESION-05-EXTRACCION.md'
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

@@ -1,0 +1,20 @@
+id: ev-v15-011956-dce80292
+video_id: v15
+t0: '1:19:56'
+t1: '1:20:27'
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: para confirmar al final, si un día no opero normalmente es porque, bueno, como vamos a operar
+  en este caso, uno cuenta con noticias, pues no habría excusas, o sea, si un día no se opera es porque
+  estaba enfermo, estaba enfermo.
+afirmacion: 'operando con noticias no hay excusa para no operar un dia: si un dia no opera es porque estaba
+  enfermo'
+tema: no_trade.dia_sin_operar_por_ausencia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; la linea
+  mezcla la confirmacion leida y la respuesta
+provenance: botsito
+notas: S-14, la confirmacion. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

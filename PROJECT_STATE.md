@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesion-05
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-alias cerrada en main el 2026-10-24 (stable/F38c-guardia-alias): la guardia de Claude Code compara cada ruta en su forma canónica y niega lo que no puede canonizar, y sale la parte PRIORITARIA de K. Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md; la ingesta de la sesión 5 cerrará con F38d.
+trabajo/sesion-05, EN CURSO (abierta el 2026-10-25 desde main 7eef8cf): ingesta de la sesión 5 con el trader, grabada en dos vídeos (v15 el 2026-10-23 y v16 el 2026-10-25, un solo id 2026-10-23-sesion-05), hasta el informe de extracción por pregunta; no resuelve nada (NA:V, R4.1). Encargo: docs/encargos/trabajo-sesion-05.md. Informe: docs/validation/SESION-05-EXTRACCION.md. Cierra con stable/F38d-sesion-05.
 
 ## Stable Main State
 68eaa83 · merge de `trabajo/guardia-alias` (tag `stable/F38c-guardia-alias`): en `.claude/hooks/guardia.py`, `_canonica` dentro de `_absoluta` (realpath, sin `\\?\`, `//?/` ni UNC a la propia máquina, `~+`, `/proc/cygdrive/`, `/proc/self/cwd/`, `C:x` y `D:x`), `R_ALIAS` para lo no canonizable, el contenedor de la raíz decidido como la raíz, las variables de PowerShell y `FileSystem::`, y Bash y Monitor decididos también con un nivel de `\` menos. tests/unit/test_guardia_alias.py. Sobre `stable/F38b-guardia-ci` (2cc3b93). Informe docs/validation/GUARDIA-ALIAS.md; el registro del cierre, al final de HISTORIA.
@@ -51,7 +51,7 @@ H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el um
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4, HECHA el 2026-10-22). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1). La hoja 05 está en `scripts/transcribir_sesion.py`, por defecto (trabajo/hoja-sesion-05); v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`. Si en la grabación algún código del 21 al 25 sale como "veinte y N", el detector lo abre como S-20: la ingesta revisa a mano el bloque de S-20.
+V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4, HECHA el 2026-10-22). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1). La hoja 05 está en `scripts/transcribir_sesion.py`, por defecto (trabajo/hoja-sesion-05); v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`. Si en la grabación algún código del 21 al 25 sale como "veinte y N", el detector lo abre como S-20: la ingesta revisa a mano el bloque de S-20. Sesión 5 celebrada (2026-10-23 y 2026-10-25, v15 y v16) e ingerida (SESION-05-EXTRACCION.md); falta su activación.
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -64,7 +64,7 @@ N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-202
 Del Next Action viejo, sin evidencia de estar hechos; texto entero: `docs/state/HISTORIA.md`;
 criterio de salida: `docs/state/README.md`.
 
-- 2. Marzo: faltan vistos.yaml, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y A.3).
+- 2. Marzo: faltan vistos.yaml y el paso a (hoja de ruta, R5.3); la confirmacion escrita del trader llego el 2026-10-25 (A.3 HECHA; SESION-05-EXTRACCION.md §3.5).
 - 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confirmado por el trader. Bajar sus velas es…
 - 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobertura` saca junio del universo de un…
 - 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico que se puede abrir de ese material y no se…
@@ -97,6 +97,8 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 
 ## Technical Debt
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`. Lo que no era deuda, desde trabajo/previa-sesion-5: `docs/runbooks/MIRAR-EL-MATERIAL.md` y `RITUAL.md` (al final) y `DECISIONES-DE-PROCESO.md` (F07); tabla en PREVIA-SESION-5.md §6.
+- PRIORITARIA. La cuarentena por condición deja pasar texto de un mes que puede acabar reservado: `meses_libres` cuenta diciembre como libre con NA:I sin decidir (`motivos_cuarentena('el [N] de diciembre')`: `[]` con meses libres, `['mes']` sin ellos), y la fecha numérica seguida de coma no se tapa (`'hoy 25 del 10'` da `['fecha numerica']`; `'hoy, 25 del 10,'`, `[]`). Carril de guardias y cuarentena (SESION-05-EXTRACCION.md §2.7 y §11, a4).
+- La skill ingerir-sesion tiene que mandar el barrido ancho ANTES de leer cada filtrada: días 18 a 31 en dígitos y en letra, con el número enmascarado (`anexos/SESION-05/barrido_18_31.py` solo ve dígitos). Dueño: la próxima rama que toque `.claude/skills/ingerir-sesion` (SESION-05-EXTRACCION.md §2.7).
 - El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
 - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación: la rama que congele los CSV de las ejecuciones 2 y 3 comprueba el CRLF del CSV 2 en `MQL5\Files` antes de copiarlo (EA-CONEXION.md §0.c).
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
@@ -159,8 +161,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 45 (2026-10-24).
+— ninguna desde el Archivo 46 (2026-10-25).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 45 (2026-10-24).
+— ninguna desde el Archivo 46 (2026-10-25).

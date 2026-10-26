@@ -1,0 +1,20 @@
+id: ev-v15-010451-5b123278
+video_id: v15
+t0: '1:04:51'
+t1: '1:05:28'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: ahora y si el 0 queda justo en la la línea ni por encima ni por debajo eso es indiferente
+  aquí no está por debajo pero es indiferente o sea el cero en este caso está por encima pero lo importante
+  es eso o sea validar correctamente nuestro posible breaker
+afirmacion: 'si el 0 de la caja queda justo en la linea del nivel tomado, o por encima en una compra,
+  es indiferente: lo importante es validar bien el posible punto de breaker'
+tema: entrada.caja_a_caballo_indiferente
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; habla
+  sobre su replay, y no se abrio ningun fotograma
+provenance: botsito
+notas: S-12b (A-50); va contra se_desarrolla_en_el_lado_de_ruido. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

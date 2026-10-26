@@ -97,9 +97,18 @@ def test_la_lista_cuadra_con_fuentes() -> None:
 
 
 def test_la_comprobacion_de_la_lista_no_es_decorativa() -> None:
-    reales = {"v1": "d1", "v6": None, "v7": None, "v8": None, "v9": None, "v10": None}
+    reales = {
+        "v1": "d1",
+        "v6": None,
+        "v7": None,
+        "v8": None,
+        "v9": None,
+        "v10": None,
+        "v15": None,
+        "v16": None,
+    }
     assert problemas_de_la_lista(reales) == []
-    assert any("v15: es una sesion" in p for p in problemas_de_la_lista({**reales, "v15": None}))
+    assert any("v17: es una sesion" in p for p in problemas_de_la_lista({**reales, "v17": None}))
     assert any(
         "v7: esta en" in p and "drive_id" in p
         for p in problemas_de_la_lista({**reales, "v7": "abc"})

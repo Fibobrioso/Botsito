@@ -1,0 +1,16 @@
+id: ev-v15-004448-aac87b77
+video_id: v15
+t0: 0:44:48
+t1: 0:44:54
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pero por lo general se toma se da prioridad pues a la liquidez más reciente
+afirmacion: cuando hay varias liquidez de M15, se da prioridad a la mas reciente (opcion a de S-9)
+tema: liquidez.m15.marca_mas_reciente
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-9 (CORRIDA-CONSTRUCCION.md §4.5, pregunta 5). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

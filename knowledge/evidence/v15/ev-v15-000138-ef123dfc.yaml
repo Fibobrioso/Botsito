@@ -1,0 +1,16 @@
+id: ev-v15-000138-ef123dfc
+video_id: v15
+t0: 0:01:38
+t1: 0:01:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se decide al cierre de esa vela nunca se cambia la idea durante la vela siguiente
+afirmacion: el sesgo de H4 se decide al cierre de la vela y no se cambia durante la vela siguiente
+tema: sesgo.h4.se_decide_al_cierre
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1, para precisar. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

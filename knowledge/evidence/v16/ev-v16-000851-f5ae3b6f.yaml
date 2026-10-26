@@ -1,0 +1,20 @@
+id: ev-v16-000851-f5ae3b6f
+video_id: v16
+t0: 0:08:51
+t1: 0:09:06
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: casi no tiene un cuerpo, uno o dos puntos igual, o sea, no pasa nada simplemente no se toma
+  en cuenta o sea, y si son dos velas sin cuerpos seguidas, tampoco, o sea no afecta no afecta, sigo manteniendo
+  la estructura
+afirmacion: 'en el retroceso, una vela sin cuerpo, una de uno o dos puntos o dos sin cuerpo seguidas no
+  cuentan como alternancia: se sigue como si no estuvieran (opcion b de S-19)'
+tema: zona_control.vela_sin_cuerpo_no_alterna
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-19 (ADR-0076 §4, pregunta 1); la letra, en 8:35 («no cuenta sigue como si no estuvieran»). En
+  tension con S-24 (uno o dos puntos valen para trazar el punto). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

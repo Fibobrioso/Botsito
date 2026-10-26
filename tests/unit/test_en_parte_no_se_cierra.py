@@ -71,8 +71,13 @@ def test_ninguna_en_parte_esta_resuelta() -> None:
 
 
 def test_la_sesion_4_deja_en_parte_lo_que_dice_su_tabla() -> None:
-    """Sin esto el test anterior podria pasar leyendo nada."""
-    textos = [p.read_text(encoding="utf-8") for p in EXTRACCIONES]
+    """Sin esto el test anterior podria pasar leyendo nada. Lee SOLO la sesion 4: una sesion
+    posterior puede resolver lo que la 4 dejo en parte (A-32 en la sesion 5), y aqui solo se
+    comprueba que el lector lee la tabla de la 4 (respuesta del consultor del 2026-10-25,
+    trabajo/sesion-05)."""
+    sesion_4 = RAIZ / "docs" / "validation" / "SESION-04-EXTRACCION.md"
+    assert sesion_4 in EXTRACCIONES
+    textos = [sesion_4.read_text(encoding="utf-8")]
     assert {"A-13", "A-32", "A-35", "A-43", "A-44", "A-50", "A-53"} <= solo_en_parte(textos)
     # A-49 es mezclada (S-4 resuelve; S-1 y S-2 en parte): no es «solo en parte»
     assert "A-49" not in solo_en_parte(textos)

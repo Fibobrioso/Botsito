@@ -1,0 +1,21 @@
+id: ev-v15-011912-0ae32588
+video_id: v15
+t0: '1:19:12'
+t1: '1:19:45'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Solo me he saltado a lo mejor para cuando en una sesión había break events, me lo he saltado.
+  Cuando en una sesión no lo he contabilizado porque sé que es break event, entonces para evitar todo
+  eso, poner la orden y demás, quitarme tiempo, pues me de saltado pero en los últimos partes que se ha
+  enviado con vídeo y todo pues no se está tal cual
+afirmacion: en sus backtests anteriores se saltaba las sesiones que sabia que acababan en break even;
+  en los ultimos, los grabados en video, no
+tema: material.backtests_viejos_saltaban_be
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-14; pesa en toda medida de fidelidad sobre backtests antiguos (P6 de CORRIDA-CONSTRUCCION.md
+  §4.5). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

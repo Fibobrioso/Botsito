@@ -37,6 +37,13 @@ muestreo cuando una clase entera de imagenes esta prohibida.
 
 ## 2. Que exigen las reglas antes de ingerir un mes de invierno, por tipo de material
 
+> **RECUADRO DE CORRECCIÓN (2026-10-25, rama `trabajo/sesion-05`, orden de cierre del consultor,
+> punto 2).** En el punto 1 de abajo, **la confirmacion escrita del trader ya no esta pendiente**.
+> Llego por WhatsApp el 2026-10-25 a las 13:58 (hora de Lima), «Confirmado backtest de marzo»,
+> registrada en `knowledge/corpus/fuentes.yaml` («Mensajes del trader») y en
+> `docs/validation/SESION-05-EXTRACCION.md` §3.5. Del paso 0 queda marzo en `vistos.yaml`, y
+> despues el paso a. El cuerpo queda intacto.
+
 ### El libro (`.xlsx`)
 
 Mezcla granularidades (ADR-0037): trae filas por operacion y posiblemente hojas con agregados. Hasta

@@ -1,0 +1,17 @@
+id: ev-v15-000856-ee8f7ba3
+video_id: v15
+t0: 0:08:56
+t1: 0:09:04
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no solo el del día y las 9 seguidas la respuesta es la A
+afirmacion: 'el trader no tiene tope de semana: solo el del dia y las 9 perdidas seguidas (opcion a de
+  S-4)'
+tema: riesgo.tope_trader_solo_dia
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-44). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

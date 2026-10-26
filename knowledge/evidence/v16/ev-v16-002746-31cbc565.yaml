@@ -1,0 +1,19 @@
+id: ev-v16-002746-31cbc565
+video_id: v16
+t0: 0:27:46
+t1: 0:28:21
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: las 3 son válidas para trazar un punto breaker, entonces la respuesta sería D, otra cual,
+  pues las 3, o sea, que se muestran visualmente, sea un punto, dos puntos o 12 puntos, sirve para nosotros
+  poder trazar
+afirmacion: las velas de M1 con cuerpo de 1, 2 o 12 puntos valen las tres para trazar un punto de breaker
+  (opcion d de S-24)
+tema: mapeo.vela_casi_plana_umbral
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-24 (RN-007, NA:H); contradice ev-v10-014310-2296423b y esta en tension con S-19. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

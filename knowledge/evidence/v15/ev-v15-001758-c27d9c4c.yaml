@@ -1,0 +1,19 @@
+id: ev-v15-001758-c27d9c4c
+video_id: v15
+t0: 0:17:58
+t1: 0:18:15
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Pero en este caso lo más óptimo por ahora, planteándolo, creo que sería pues no usar una
+  gestión, o sea, fija en cierta parte. O sea, opción A. Claro, bajo el lote y a lo que cabe y entro igual.
+afirmacion: si el lote no cabe por margen, baja el lote a lo que cabe y entra igual (opcion a de S-5),
+  por ahora
+tema: riesgo.lote_si_no_cabe_limitar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5 (A-57, ADR-0081); con «creo» y «por ahora», y despues de que el consultor planteara la disyuntiva.
+  docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

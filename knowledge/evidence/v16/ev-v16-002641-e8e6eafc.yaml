@@ -1,0 +1,16 @@
+id: ev-v16-002641-e8e6eafc
+video_id: v16
+t0: 0:26:41
+t1: 0:26:46
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la respuesta es con el sesgo bajista una vela neutra de 4 horas deja el sesgo bajista todavía
+afirmacion: con el sesgo bajista, una vela de 4 horas neutra mantiene el sesgo bajista (opcion a de S-23)
+tema: sesgo.h4.vela_neutra_mantiene
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-23 (ADR-0075; reserva de fb-2026-10-04-sesion-04-ca0afae6). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

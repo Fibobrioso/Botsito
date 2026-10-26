@@ -1,0 +1,20 @@
+id: ev-v15-003244-dcd8a834
+video_id: v15
+t0: 0:32:44
+t1: 0:33:10
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: entonces nosotros tendríamos el trazo desde aquí hasta aquí, esperamos el cierre, o sea,
+  sea una vela verde o una vela roja, entonces trazaríamos el nivel 0 desde aquí y el nivel 1 desde el
+  punto más alto, donde cierra,
+afirmacion: 'la caja se traza al cierre de la vela que rompe, sea verde o roja: el 0 en el punto y el
+  1 en el punto mas alto, donde cierra (en una venta de su replay)'
+tema: herramientas.caja.trazado_al_cierre_0_y_1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; habla
+  sobre su replay, y no se abrio ningun fotograma
+provenance: botsito
+notas: S-7 (A-48 y A-49). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

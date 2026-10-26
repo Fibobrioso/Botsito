@@ -1,0 +1,17 @@
+id: ev-v15-005839-f2e43c27
+video_id: v15
+t0: 0:58:39
+t1: 0:58:46
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Si hay una continuidad de sesgo, sí. Pero si no, no. Esa es la respuesta que daría.
+afirmacion: una toma de la sesion de la manana vale para la tarde solo si hay continuidad de sesgo; si
+  el sesgo cambia, no vale (opcion b de S-11)
+tema: sesgo.toma_de_la_manana_vale_si_continuidad
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-11 (VISOR-CONSTRUCCION.md §3.2, pregunta B); A-46 no se reabre. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

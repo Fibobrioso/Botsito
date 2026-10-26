@@ -1,0 +1,18 @@
+id: ev-v15-000256-f3c52278
+video_id: v15
+t0: 0:02:56
+t1: 0:03:17
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Claro, en este caso sería la respuesta B, no, sigue el sesgo que había, que en este caso
+  es alcista, como con la vela neutra que rompe por los dos lados, o sea, la respuesta es la B.
+afirmacion: 'una vela de 4 horas que rompe con la mecha y cierra sin cuerpo no cambia el sesgo: sigue
+  el que habia (opcion b de S-2)'
+tema: sesgo.h4.sin_cuerpo_mantiene_sesgo
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (SESGO-H4-COLOR.md §4.4, ADR-0080 §4). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

@@ -1,0 +1,20 @@
+id: ev-v15-010850-e3c57529
+video_id: v15
+t0: '1:08:50'
+t1: '1:09:10'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para confirmar al final con la orden sin llenarse el precio toma otra liquidez la orden
+  con la orden se actualiza la orden actualiza la orden pero la orden se actualiza en m1 conforme se va
+  desarrollando pues un nuevo punto
+afirmacion: con la orden sin llenar, si el precio toma otra liquidez, la orden se actualiza en M1 al nuevo
+  punto de breaker; no se quita
+tema: entrada.orden.otra_liquidez_se_mueve
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; la linea
+  mezcla la confirmacion leida y la respuesta
+provenance: botsito
+notas: S-13 (A-53), la confirmacion. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

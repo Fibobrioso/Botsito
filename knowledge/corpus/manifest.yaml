@@ -199,6 +199,10 @@ ficheros:
   papel: material_adicional
   ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-14-1518-confirma.png
   sha256: f9c4f0aa3f5382ae519a1d0f6a080ebc3e6c24c6e08a237fb9eb71883178775c
+- bytes: 31037
+  papel: material_adicional
+  ruta: Material adicional de su operativa/Mensajes del trader/mensaje-whatsapp-2026-10-25-1358.png
+  sha256: 75f9eda2d24ba1219e314f7ae036bcd6e60a7e1aeac5e20aa0cda49e4577e2c1
 - bytes: 162226
   papel: material_adicional
   ruta: Material adicional de su operativa/WhatsApp Image 2026-09-03 at 5.55.36 PM.jpeg
@@ -2266,11 +2270,11 @@ resumen:
     bytes: 117626282
     ficheros: 477
   material_adicional:
-    bytes: 6819625
-    ficheros: 72
+    bytes: 6850662
+    ficheros: 73
   video_original:
-    bytes: 54708765155
-    ficheros: 14
+    bytes: 63773597529
+    ficheros: 16
 umbral_hueco_segundos: 180
 version: 1
 videos:
@@ -2428,3 +2432,25 @@ videos:
   fps: 30/1
   sha256: e13e4e4df1ffcc2aad90d3d07d138e217d6c0aa871178cb90f766a17203961d6
   video_id: v14
+- alto: 1080
+  ancho: 1920
+  audio: true
+  bytes: 6740009101
+  drive_id: ''
+  duracion_s: 6057.16
+  fecha_grabacion: '2026-10-23'
+  fichero: Grabación de pantalla 2026-10-23 174536.mp4
+  fps: 30/1
+  sha256: a91b7f358ed034f882bf1354f554307bb46402bf05ebe71691a5eb3ce2c47f66
+  video_id: v15
+- alto: 1080
+  ancho: 1920
+  audio: true
+  bytes: 2324823273
+  drive_id: ''
+  duracion_s: 2089.986
+  fecha_grabacion: '2026-10-25'
+  fichero: Grabación de pantalla 2026-10-25 140140.mp4
+  fps: 30/1
+  sha256: 4fe72e14f9b1b77cc2ad9a8a8c1fa079cbf5a565e324361ec972039f25b43dfb
+  video_id: v16

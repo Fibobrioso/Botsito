@@ -1,0 +1,23 @@
+id: ev-v16-002841-8cfe382a
+video_id: v16
+t0: 0:28:41
+t1: 0:29:02
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para confirmar al final una vela de casi planas y su cuerpo es de bueno tiene que ser cero
+  puntos tiene que ser cero puntos o sea no casi o sea si no tiene que ser plana totalmente porque estas
+  velas pues pueden servir también como trazo a punto breaker perfecto
+afirmacion: una vela casi plana tiene que ser de cero puntos de cuerpo, plana totalmente, porque las otras
+  pueden servir para trazar el punto de breaker
+tema: mapeo.vela_casi_plana_umbral
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; la linea
+  mezcla la confirmacion leida y la respuesta
+provenance: botsito
+supersede: ev-v16-002841-b47d0461
+notas: 'S-24 (RN-007, NA:H), la confirmacion: sustituye al literal de v10 1:44:49 (respuesta c de Aleks).
+  Supersede a ev-v16-002841-b47d0461, cuya afirmacion anadia «y no se usa para trazar el punto» (hallazgo
+  a1 del revisor). docs/validation/SESION-05-EXTRACCION.md'
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386
