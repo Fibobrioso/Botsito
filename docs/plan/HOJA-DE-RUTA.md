@@ -197,7 +197,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
-- **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-49 · ID:A-50 ·
+- **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-48 · ID:A-49 · ID:A-50 ·
   ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:V · ID:RN-004 · ID:RN-020 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** RN-004 tras A-35 y RN-020 tras A-44, con su medida (`docs/runbooks/ACTIVAR-A35-A44.md`

@@ -25,6 +25,8 @@ rutas_permitidas:
   - tests/unit/test_cuarentena.py
   - tests/unit/test_guardia_claude.py
   - .claude/hooks/ficheros_con_ocultos.txt
+  - tests/unit/test_en_parte_no_se_cierra.py  # ampliada el 2026-10-25: respuesta del consultor a la PARADA del make check de la extraccion, punto 2 (la comprobacion de la sesion 4 lee solo su informe)
+  - docs/plan/HOJA-DE-RUTA.md  # ampliada el 2026-10-25: misma respuesta, punto 3; SOLO ID:A-48 en las Refs de R4.1 (el consultor levanta para esto la prohibicion del anadido de marzo)
 rutas_protegidas:
   - scripts/transcribir_sesion.py
   - knowledge/spec/
