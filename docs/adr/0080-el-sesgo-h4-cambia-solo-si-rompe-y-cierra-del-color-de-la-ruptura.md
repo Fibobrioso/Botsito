@@ -56,8 +56,9 @@ el cuestionario de la sesión 5» de `SESGO-H4-COLOR.md`).
 > **CONFIRMADO POR EL TRADER el 2026-10-23 (sesión 5, S-2, sobre un esquema dibujado; recuadro del
 > 2026-10-26, `trabajo/activar-sesion-05`, que no reescribe el cuerpo).** «Sigue el sesgo que
 > había … la respuesta es la B» (`ev-v15-000256-f3c52278`; `fb-2026-10-23-sesion-05-85ce7ba5`,
-> CONFIRM sobre RN-003): la ruptura simple de una vela sin cuerpo no decide y la búsqueda sigue, y
-> lo lejos que llegue la mecha es indiferente. D3 deja de ser una decisión provisional del
+> CONFIRM sobre RN-003): la ruptura simple de una vela sin cuerpo no decide y la búsqueda sigue
+> (que lo lejos que llegue la mecha es indiferente lo cuenta `SESION-05-EXTRACCION.md` §3.3, S-2,
+> fuera del ítem). D3 deja de ser una decisión provisional del
 > consultor. Reserva: la subpregunta del caso al revés (sesgo bajista) se leyó y el trader volvió al
 > ejemplo alcista; la regla que dio, «sigue el sesgo que había», cubre los dos lados, pero el caso
 > bajista no lo dijo con sus palabras.
@@ -154,9 +155,10 @@ cuya mecha rompio por encima deja el sesgo alcista»). Decisión del consultor (
 > una H4 que rompe el máximo de la anterior solo con la mecha y cierra roja, el trader dijo «sigue
 > bajista, claramente … como cierra bajista, pues sigue siendo bajista» (`ev-v15-000049-3b294480`;
 > `fb-2026-10-23-sesion-05-af24c935`, CONFIRM sobre RN-003): es el caso 3 de la regla del color, y
-> va con el WhatsApp y contra la sesión 1. Añadió que lo lejos que llegue la mecha y el tamaño del
-> cuerpo no importan, y que el sesgo se decide al cierre de esa vela y no se cambia durante la
-> siguiente (`ev-v15-000138-ef123dfc`). Lo que recogían las notas de `41f46b21` queda contradicho
+> va con el WhatsApp y contra la sesión 1. Añadió que el sesgo «se decide al cierre de esa vela
+> nunca se cambia la idea durante la vela siguiente» (`ev-v15-000138-ef123dfc`); que lo lejos que
+> llegue la mecha y el tamaño del cuerpo no importan lo cuenta `SESION-05-EXTRACCION.md` §3.3, S-1,
+> fuera de los ítems. Lo que recogían las notas de `41f46b21` queda contradicho
 > por dos respuestas del trader; A-1 sigue sin reabrirse (punto 6). Las notas de RN-003 lo dicen.
 
 ### 10. El motor y el arnés

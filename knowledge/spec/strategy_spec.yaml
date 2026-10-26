@@ -1281,8 +1281,9 @@ reglas:
       en M15 solo se busca a favor, que es lo que este filtro ya hace.
       CONFIRMADA EN LA SESION 5 (2026-10-23, S-12a, sobre un esquema; rama
       trabajo/activar-sesion-05; fb-2026-10-23-sesion-05-ffb3011e, ev-v15-010104-23adba23): en
-      una compra la caja queda POR DEBAJO del nivel de M15 tomado y en venta al reves, que es lo
-      que esta regla dice; la frase de la sesion 3 que decia lo contrario de una compra («tiene
+      una compra la caja queda POR DEBAJO del nivel de M15 tomado, que es lo que esta regla dice
+      (que en venta es al reves lo cuenta SESION-05-EXTRACCION.md §3.3, S-12a, fuera del item);
+      la frase de la sesion 3 que decia lo contrario de una compra («tiene
       que ser todo por encima», ev-v9-004919-c6bfb3ee) recibe un CORRECT
       (fb-2026-10-23-sesion-05-a42c72dd). Lo que queda a caballo del nivel es A-50 (S-12b),
       ABIERTA; reserva: la linea de la transcripcion mezcla la pregunta leida y la respuesta
@@ -1941,8 +1942,10 @@ reglas:
       día y las 9 seguidas», ev-v15-000856-ee8f7ba3, fb-2026-10-23-sesion-05-e9559876) y
       perdida_trader_unidad = porcentaje («planteándolo a porcentajes, sería un 4,5»,
       ev-v15-000913-bdb12f92, fb-2026-10-23-sesion-05-1772d9ef): solo el acumulador perdida_dia se
-      compara, y perdida_maxima_semanal queda sin efecto y sin CORRECT (desviacion declarada del
-      runbook ACTIVAR-A35-A44.md §1). La MAGNITUD la fija perdida_trader_magnitud = saldo como
+      compara. El tope de la semana lo retiro el trader -del 9 % semanal de la sesion 1 dijo «creo
+      que aquí hay un error, sería 9 pérdidas seguidas» (ev-v15-000913-bdb12f92): lo que hay es la
+      racha de RN-036-, y perdida_maxima_semanal queda CONFIRMED, sin efecto y sin CORRECT
+      (desviacion declarada del runbook ACTIVAR-A35-A44.md §1). La MAGNITUD la fija perdida_trader_magnitud = saldo como
       DEFAULT_AMBIGUOUS bajo A-44: LECTURA DEL CONSULTOR de la cita de esta regla, «De la cuenta
       basado en el saldo» (fb-2026-09-09-sesion-01-bff260ea), que habla de la base del porcentaje y
       no de si lo abierto cuenta; el trader no lo ha dicho, y es la primera pregunta de la sesion

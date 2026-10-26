@@ -164,10 +164,12 @@ def test_con_el_registro_real_el_tope_es_el_del_dia_en_porcentaje_sobre_el_saldo
 def test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta(
     registro: Registro,
 ) -> None:
-    """El test sintetico que pidio el encargo: con la magnitud leida del registro (saldo, bajo
-    A-44) una posicion abierta que va perdiendo y se recupera no suma perdida del dia; si el
-    registro se leyera como equity, sumaria. Si alguien cambia la magnitud a equity sin pasar por
-    A-44, este test falla."""
+    """El test saldo/equity que pidio el encargo de trabajo/activar-sesion-05 (lo pedia sobre un
+    registro sintetico; va sobre el REAL, para que vigile el valor real, y lo sintetico es el
+    escenario: hecho de otra forma, declarado en ACTIVAR-SESION-05.md §1.2): con la magnitud leida
+    del registro (saldo, bajo A-44) una posicion abierta que va perdiendo y se recupera no suma
+    perdida del dia; si el registro se leyera como equity, sumaria. Si alguien cambia la magnitud a
+    equity sin pasar por A-44, este test falla."""
     t0 = datetime(2030, 1, 15, 8, tzinfo=UTC)
     real = tope_del_registro(registro, HUSO_PERFIL)
     como_equity = TopeTrader(

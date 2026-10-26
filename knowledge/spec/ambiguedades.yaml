@@ -1794,7 +1794,8 @@ ambiguedades:
       fb-2026-10-23-sesion-05-146c4789, ev-v15-001758-c27d9c4c): «bajo el lote y a lo que cabe y
       entro igual», la opcion a, que es lo que hace el bot (lote_si_no_cabe = limitar, ADR-0081).
       RESERVAS: lo dijo «por ahora» y con «creo», y despues de que Aleks le planteara la
-      disyuntiva; no ha vivido el caso en su cuenta.
+      disyuntiva; y no ha vivido el caso en su cuenta (lo cuenta SESION-05-EXTRACCION.md §3.2, S-5,
+      fuera de los items).
     resuelve_en: [F24]
     # NACE el 2026-10-17 (rama trabajo/margen-lote, ADR-0081 §6; respuesta del consultor a la PARADA,
     # punto 4). Clase pregunta y NO bloqueante: el bot opera con el DEFAULT (limitar) y la respuesta

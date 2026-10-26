@@ -291,19 +291,25 @@ Qué backtest viene de una grabación en vídeo, por `fuentes.yaml` (`naturaleza
 
 | Libro (construcción) | Grabado en vídeo | De dónde sale |
 |---|---|---|
-| Enero 2026 (`ENERO 2026.xlsx`) | No | ningún vídeo del backtest; v4 es «entrevista … sobre el backtest de enero en FXReplay» (`fuentes.yaml:32`), no la grabación de hacerlo |
-| Abril 2026 (`ABRIL 2026.xlsx`) | No | ningún vídeo lo nombra |
-| Julio 2026 (`JULIO_2026.xlsx`) | Sí, según el trader | v11, v12 y v13 (`fuentes.yaml:119-145`): «parte del backtest del 1 al 17 de julio que exporta el xlsx del mes (no comprobado: lo comprueba la rama que lo transcriba)», y v14 el tramo final sin xlsx. Lo comprueba T (R2.4) |
-| Agosto 2026 (`AGOSTO 2026.xlsx`) | No el libro que hay | v7 y v8 (`fuentes.yaml:52-79`) graban en la sesión 2 un backtesting de la segunda mitad de agosto, y S-16 de la sesión 4 lo da por bueno; pero su exportación no ha llegado (NA:Q) y el libro de agosto que mide hoy es anterior |
+| Enero 2026 (`backtesting-analytics ENERO 2026.xlsx`, `libros.yaml:54`) | No | ningún vídeo del backtest; v4 es «entrevista … sobre el backtest de enero en FXReplay» (`fuentes.yaml:32`), no la grabación de hacerlo |
+| Abril 2026 (`backtesting-analytics ABRIL 2026.xlsx`, `libros.yaml:30`) | Un día, el 29 | v5 (`fuentes.yaml:38-40`): «el trader graba su pantalla en FXReplay (sesion Backtest ABRIL 2026, dia 29 de abril, EURUSD M1) mapeando la estructura y colocando la caja»; el resto del libro, no. *(Corregido tras el revisor, a2: la primera redacción decía «ningún vídeo lo nombra».)* |
+| Julio 2026 (`backtesting-analytics_JULIO_2026.xlsx`, `libros.yaml:69`) | Sí, según el trader | v11, v12 y v13 (`fuentes.yaml:119-145`): «parte del backtest del 1 al 17 de julio que exporta el xlsx del mes (no comprobado: lo comprueba la rama que lo transcriba)», y v14 el tramo final sin xlsx. Lo comprueba T (R2.4) |
+| Agosto 2026 (`backtesting-analytics AGOSTO 2026.xlsx`, `libros.yaml:18`) | No el libro que hay | v7 y v8 (`fuentes.yaml:52-79`) graban en la sesión 2 un backtesting de la segunda mitad de agosto, y S-16 de la sesión 4 lo da por bueno; pero su exportación no ha llegado (NA:Q) y el libro de agosto que mide hoy es anterior (medido el 2026-09-21/22 en `libros.yaml`; los vídeos son del 2026-09-27) |
 | Mayo 2026 | No | reservado (ADR-0043); no es de construcción |
 
-Lo que S-14 añade: en los backtests NO grabados en vídeo el trader se saltaba las sesiones que iban a
-acabar en break even («me he saltado … en lugar de poner break even no he operado … no se ve
-reflejado en el backtest», `ev-v15-011023-5f0f2dd1`; `ev-v15-011912-0ae32588`), y en los grabados
-en vídeo no («en los últimos partes que se ha enviado con vídeo y todo pues no se está tal cual»,
-`ev-v15-011956-dce80292`; el final de v16, `ev-v16-003421-b824b770`). Para F26: de los cuatro libros
-de construcción, uno (julio) es de la clase «grabado en vídeo», y solo según el trader hasta que T lo
-compruebe; enero, abril y el agosto que hay son de la clase en que faltan sesiones de break even.
+Lo que S-14 añade, con el texto de sus ítems *(corregido tras el revisor, b1: la primera redacción
+citaba líneas de la extracción atribuidas a dos ítems que no las traen)*: en sus backtests
+anteriores el trader se saltaba las sesiones que sabía que acababan en break even, y en los
+grabados en vídeo no («Solo me he saltado a lo mejor para cuando en una sesión había break events,
+me lo he saltado. … pero en los últimos partes que se ha enviado con vídeo y todo pues no se está
+tal cual», `ev-v15-011912-0ae32588`); el final de v16 lo confirma («habías evitado ciertas
+operaciones que eran de breakeven correcto exacto exacto», `ev-v16-003421-b824b770`). Lo demás de
+S-14 va de por qué no opera un día: porque no hubo toma de liquidez de M15 («puede haber que no hubo
+toma de liquidez de M15», `ev-v15-011023-5f0f2dd1`), no por el resultado del día anterior
+(`ev-v15-011728-b5bd4d05`), y la confirmación, que si un día no opera es porque estaba enfermo
+(`ev-v15-011956-dce80292`). Para F26: de los cuatro libros de construcción, uno (julio) es de la
+clase «grabado en vídeo», y solo según el trader hasta que T lo compruebe; abril tiene grabado un
+solo día (el 29, v5); enero y el agosto que hay son de la clase en que faltan sesiones de break even.
 
 ### 0.c `PROJECT_STATE.md` y los 23.000 bytes
 
@@ -691,8 +697,11 @@ con los valores puestos: 7 + 5 + 4):
   que prueban -los tres estados del tope sobre el cableado y sobre el motor de la spec- no cambia.
   Dos tests nuevos (1694 → 1696 funciones):
   `test_con_el_registro_real_el_tope_es_el_del_dia_en_porcentaje_sobre_el_saldo` (dia, saldo,
-  porcentaje, 4,5, semana `None`, huso SUPUESTO, diagnóstico rechazado) y el **test sintético que
-  pidió el encargo**, `test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta`:
+  porcentaje, 4,5, semana `None`, huso SUPUESTO, diagnóstico rechazado) y el **test saldo/equity
+  que pidió el encargo, HECHO DE OTRA FORMA** (el encargo lo pedía «sobre un registro sintético»;
+  está sobre el registro REAL, para que vigile el valor real de `perdida_trader_magnitud`, y lo
+  sintético es el escenario: una caída en abierto que se recupera; declarado tras el revisor, b3),
+  `test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta`:
   con el tope leído del registro, una equity 5.000 por debajo con el saldo intacto da `perdida_dia`
   0; el mismo tope leído como `equity` daría 5 (%). Si alguien cambia la magnitud sin pasar por
   A-44, falla. Y `test_la_cli_se_niega_sin_a44…` (tocado por segunda vez, punto 8) pasa a
@@ -1002,16 +1011,17 @@ que tiene que enseñar cada uno.
    de 97:48 no está en ningún ítem y su ASR es dudoso).
 4. **A-53** (S-13): la subpregunta del recuadro, «si el 1 de la caja baja mucho antes de que la
    orden se llene, ¿la sigues moviendo o la quitas?», y «si la orden se llena antes de que aparezca
-   el punto nuevo, ¿esa operación vale?»; con opciones (a) sigue / (b) se quita / (c) otra, y (a)
-   vale / (b) no vale / (c) otra. Esquema: la orden puesta, el 1 que baja, el punto nuevo; «M1».
+   el punto nuevo, ¿esa operación vale?»; con opciones (a) sigue / (b) se quita / (c) otra, ¿cuál?, y
+   (a) vale / (b) no vale / (c) otra, ¿cuál?. Esquema: la orden puesta, el 1 que baja, el punto
+   nuevo; «M1».
 5. **A-43, segunda parte** (S-10): «La MISMA liquidez de M15 se toma antes de las 7 y el precio
    vuelve y la toma otra vez después de las 7. ¿La segunda toma vale para operar? (a) sí; (b) no,
    solo cuenta la primera; (c) otra, ¿cuál?». Esquema: el nivel de M15, una vela que lo cruza con
    cuerpo antes de la línea de las 7 y otra después; «M15» y la línea de las 07:00 en el dibujo.
 6. **A-49 y A-48** (S-7): con un esquema que NO lleve el 0 en el último alto de M1 (lo que no
    entendió): «¿Dónde pones el 0 de la caja y hasta dónde llevas el 1? ¿Con la vela cerrada o
-   mientras se forma?»; opciones (a) cerrada / (b) en formación / (c) otra, y para el bloque (a)
-   solo la vela contraria / (b) todo el tramo / (c) otra. «M1» en el dibujo.
+   mientras se forma?»; opciones (a) cerrada / (b) en formación / (c) otra, ¿cuál?, y para el bloque
+   (a) solo la vela contraria / (b) todo el tramo / (c) otra, ¿cuál?. «M1» en el dibujo.
 7. **A-50** (S-12b; §2, 4): confirmar «la caja entera» con dos dibujos: «En esta caja el 0 queda del
    lado de ruido pero el 1 no; en esta otra la caja entera queda del lado de ruido. ¿Cuál
    descartas? (a) las dos; (b) solo la que queda entera; (c) otra, ¿cuál?». «M1» y el nivel de M15
@@ -1019,22 +1029,25 @@ que tiene que enseñar cada uno.
 8. **ADR-0083** (S-6): «Tras un stop en un punto, ¿cuántas veces vuelves a entrar en ese mismo
    punto? (a) una más; (b) hasta agotar los tres cartuchos; (c) ninguna; (d) otra, ¿cuál?»; «Al
    reentrar, ¿la caja es la del primer intento o la trazas de nuevo? (a) la misma; (b) nueva; (c)
-   otra»; «Tras un break even, ¿vuelves al mismo punto? (a) sí; (b) no; (c) otra». Esquema: un punto
-   con dos entradas seguidas, la primera al stop; «M1».
+   otra, ¿cuál?»; «Tras un break even, ¿vuelves al mismo punto? (a) sí; (b) no; (c) otra, ¿cuál?».
+   Esquema: un punto con dos entradas seguidas, la primera al stop; «M1».
 9. **S-16**: el precio ya pasado del 0 al formarse la caja, con el esquema rehecho en M1 y con velas:
    «Cuando la caja se forma y el precio ya está más allá del 0, ¿pones la orden igual? (a) sí, en el
    0; (b) no, espero otra caja; (c) otra, ¿cuál?». «M1» escrito.
 10. **S-19 frente a S-24** (§2, 3 y 9): «En el retroceso, ¿una vela de 1 o 2 puntos de cuerpo cuenta
     como cambio de color? (a) sí; (b) no, como si no tuviera cuerpo; (c) otra, ¿cuál?»; y «una vela
     sin cuerpo con mechas largas, ¿cuenta como si no existiera o miras sus mechas? (a) como si no
-    existiera; (b) miro las mechas; (c) otra». Esquema: el retroceso con una vela de un punto y otra
-    sin cuerpo y mechas largas; «M1».
+    existiera; (b) miro las mechas; (c) otra, ¿cuál?». Esquema: el retroceso con una vela de un
+    punto y otra sin cuerpo y mechas largas; «M1».
 11. **S-20** (§2, 8): «Si una vela de color contrario rompe el punto con la mecha pero antes hubo
     alternancia de colores, ¿qué pesa más: la mecha que rompe o la alternancia? (a) la mecha, y
     entro; (b) la alternancia, y no entro; (c) otra, ¿cuál?». «M1».
 12. **S-14**: los días de construcción en que el bot opera y él no (lo pidió él), cuando la
     re-corrida tras la rama de motor los dé; enseñados por la regla 2 (cortados antes de la orden y
-    sin fecha), elegidos por el consultor al preparar la hoja.
+    sin fecha), elegidos por el consultor al preparar la hoja. Por cada día: «Aquí el bot habría
+    entrado y tú no. ¿Por qué no entraste? (a) no hubo toma de liquidez de M15; (b) la zona no
+    estaba limpia; (c) la sesión iba a acabar en break even y me la salté; (d) no operé ese día;
+    (e) otra, ¿cuál?» *(opciones añadidas tras el revisor, b7)*.
 
 ## 4. Lo que no es de spec y va a las líneas del cierre (D)
 
@@ -1071,7 +1084,7 @@ Preparadas, no aplicadas (la Next Action y la hoja de ruta no se tocan en la ram
 - **G** gana una línea: «Y, para elegir los libros que miden (S-14, sesión 5): en sus backtests sin
   vídeo el trader se saltaba las sesiones que iban a acabar en break even, y en los grabados en
   vídeo no; de los libros de construcción solo julio es de los grabados, según él (T lo comprueba);
-  enero, abril y el agosto actual, no (ACTIVAR-SESION-05.md §0.b.7).»
+  de abril solo el día 29 (v5); enero y el agosto actual, no (ACTIVAR-SESION-05.md §0.b.7).»
 - **K** gana la ampliación del punto 14: «Y la guardia niega como tests los de un clon de `C:/cm/`
   que globean `knowledge/cases` o recorren directorios: `test_kit.py`, `test_selector_orden_stop.py`
   y `test_renovar_cierres.py` no se pudieron correr en el clon de `trabajo/activar-sesion-05`
@@ -1122,8 +1135,9 @@ H (−482), la introducción de TD (−≈200) y el reloj de Oanda (−≈120); 
 larga que el borrador de §0.c porque lleva la lista de motor), la línea de G (+≈330), la de K
 (+≈260), la del `no_trade` (+≈230) y `Current Feature` del cierre en lugar del de la apertura
 (−≈150): ≈23.500, por debajo del tope de 25.000 de `test_project_state.py` y por encima de los
-23.000 del aviso del revisor. Si el consultor quiere los 23.000, la V corta puede remitir a §2 sin
-la lista (−≈450): ≈23.050. Se mide en el cierre con el texto definitivo.
+23.000 que exige la FASE 0 c del encargo. Con la V corta remitiendo a §2 sin la lista (−≈450)
+queda en ≈23.050, todavía por encima: cómo bajar de 23.000 sin quitar nada vivo es el punto 2 de la
+PARADA 2 (el revisor, b4). Se mide en el cierre con el texto definitivo.
 
 ## 6. El encargo, punto por punto
 
@@ -1142,7 +1156,7 @@ Cada requisito del encargo y de la respuesta del consultor a la PARADA, con su e
 | 8 | Ningún registro sobre una ambigüedad «en parte» | Hecho | los registros sobre ambigüedad son solo A-57 y A-32 (RESUELTAS); `test_kit.py::test_una_en_parte_no_entra_en_resueltas` (A-49) |
 | 9 | Ninguna cifra dentro de una forma ejecutable | Hecho | ninguna `forma:` cambia (`git diff main...HEAD -- knowledge/spec/strategy_spec.yaml`: solo `notas` y `descripcion`) |
 | 10 | Sin medidas agregadas: el arnés solo para ver que corre; fichero fuera del repo, sin resumir; ninguna cifra de cobertura | Hecho | §0.b.2 (clon, `C:/cm/salida/`, no leído); el informe no da cifras de cobertura ni de operaciones |
-| 11 | Material: ninguna filtrada; citas solo de los ítems de §8 con su texto; lo demás remitido a su sección | Hecho | cada `respuesta_literal` es la `cita_literal` de su ítem (§1); ADR-0081 y ADR-0083 remiten a §3.2 sin citar; §0.g |
+| 11 | Material: ninguna filtrada; citas solo de los ítems de §8 con su texto; lo demás remitido a su sección | Parcial, declarado | cada `respuesta_literal` es la `cita_literal` de su ítem (§1); ADR-0081 y ADR-0083 remiten a §3.2 sin citar. El revisor (b1, b2) encontró citas y paráfrasis de la extracción fuera de los ítems: las del informe, la spec y los ADR están corregidas (§9.1); las de las NOTAS de tres registros de feedback (`af24c935`, `146c4789`, y las paráfrasis de `85ce7ba5`, `b09c3fed`, `ffb3011e`) no se editan (solo añadir) y van a la PARADA 2, punto 1 |
 | 12 | Next Action y hoja de ruta no se tocan; Known Ambiguities sí | Hecho | `git diff main...HEAD -- docs/plan/`: vacío; `PROJECT_STATE.md` solo la tabla, `Current Feature` y el recuento de tests |
 | 13 | Makefile, `.claude/` y la guardia no se tocan | Hecho | `git diff --stat main...HEAD` |
 | 14 | Fechas: v15 `--fecha 2026-10-23 --recibido-el 2026-10-23`; v16 `--recibido-el 2026-10-25` | Hecho | los once registros de `knowledge/feedback/2026-10-23-sesion-05/` (v16: A-32 y S-23) |
@@ -1163,13 +1177,14 @@ Cada requisito del encargo y de la respuesta del consultor a la PARADA, con su e
 | 29 | Un commit por respuesta, con `apply --check` solo de esa respuesta, los cinco sitios, `test_kit`, `spec_version`, manifiesto y docs, `knowledge validate` antes de `make check`, `Fuente:` con ids existentes | Hecho | §1.1-§1.5; `git log --format='%h%n%B' main..HEAD -- knowledge/spec` (§8) |
 | 30 | Cada ADR enmendado o que deja de ser provisional, con recuadro y fila del índice | Hecho | ADR-0081 (recuadro, Estado, índice), ADR-0080 §4 y §9, ADR-0075, ADR-0083; NOTAs en ADR-0053, ADR-0054 y ADR-0070 (punto 5); la de ADR-0066 espera a la PARADA 2 |
 | 31 | Tests que cambian de sentido a propósito, dichos en el commit y el informe, con la salida de main y de la rama | Hecho | §0.b.1 (clon: 23 fallan con los valores), §1.1, §1.2; los mensajes de los commits 3bbcad1 y f60fca5 |
-| 32 | Test sintético saldo/equity | Hecho | `test_preparar_a44.py::test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta` (§1.2) |
+| 32 | Test sintético saldo/equity | Hecho de otra forma, declarado | sobre el registro REAL con un escenario sintético, para que vigile el valor real: `test_preparar_a44.py::test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta` (§1.2; el revisor, b3) |
 | 33 | Los tests con `data/` se saltan en la CI de Linux | Hecho | `pytest.skip` en los de §1.1 y §1.2; la CI (§8) |
 | 34 | HOLDOUT: rutas literales, sin listar carpetas madre con filtro; la regla al revisor | Hecho | §0.g; el alcance del revisor (§9) |
 | 35 | El fichero del arnés no se commitea ni se resume; exposiciones el mismo día; ninguna fecha reservada ni resultado | Hecho | `C:/cm/salida/` fuera del repo; HOLDOUT-EXPOSICIONES (2026-10-26, puntos 1-5); §7 |
 | 36 | CI de Linux por `fix/activar-sesion-05` con `gh run view` suelto; solo el fallo de `state check` | Hecho | §8 |
-| 37 | Revisor opus con los cuatro alcances más el quinto (DEFAULT_AMBIGUOUS con lectura del consultor), informe pegado | Hecho | §9 |
+| 37 | Revisor opus con los cuatro alcances más el quinto (DEFAULT_AMBIGUOUS con lectura del consultor), informe pegado | Hecho | §9 (una pasada, sobre c03190e; su informe tal cual y lo que se hizo con cada hallazgo) |
 | 38 | Las líneas del cierre al final del informe, con el tamaño de PROJECT_STATE | Hecho | §5 |
+| 38b | FASE 0 c: PROJECT_STATE en 23.000 bytes o menos con las líneas del cierre; si no cabe, decirlo en la PARADA | Parcial, declarado | ≈23.500 con las líneas de §5, ≈23.050 con la V corta sin la lista: no llega a 23.000 sin quitar algo vivo; va a la PARADA 2, punto 2 (el revisor, b4) |
 | 39 | Respuesta, punto 5: NOTAs en ADR-0053 §3.3 y §9, ADR-0054 §1 e Impacto, ADR-0070 §3; ADR-0066 y ADR-0075 de una línea | Parcial, declarado | ADR-0053, 0054, 0070 y 0075: hechas; ADR-0066 (S-11) espera a la PARADA 2 |
 | 40 | Respuesta, punto 6: contrato ampliado a `ACTIVAR-A35-A44.md` en commit propio, con NOTA y las tres desviaciones | Hecho | §1.8 |
 | 41 | Respuesta, punto 7: recorte de Technical Debt en el commit del contrato | Hecho (preparado) | §5 |
@@ -1190,7 +1205,8 @@ sigue fuera del repositorio y sin leer.
 
 ## 8. Lo que NO cambia, medido, y la CI de Linux
 
-`git diff --name-status main...HEAD`: 45 ficheros; fuera de `knowledge/feedback/2026-10-23-sesion-05/`,
+`git diff --name-status main...HEAD`: 46 ficheros (contados con `wc -l`; la primera redacción decía
+45, el revisor, a4); fuera de `knowledge/feedback/2026-10-23-sesion-05/`,
 `knowledge/spec/`, `docs/spec/`, `docs/adr/` y `tests/unit/`, solo `PROJECT_STATE.md`,
 `contrato.yaml`, el encargo, `docs/state/HISTORIA.md`, el informe, `HOLDOUT-EXPOSICIONES.md`,
 `scripts/hoja_preguntas.py` y `docs/runbooks/ACTIVAR-A35-A44.md`. Ningún fichero de `src/`,
@@ -1202,8 +1218,16 @@ sigue fuera del repositorio y sin leer.
 (`knowledge validate`: «commits con Fuente»).
 
 **CI de Linux** (la rama toca `tests/` que leen rutas y `scripts/`; `RITUAL.md`, «Antes del merge»):
-`git push origin trabajo/activar-sesion-05:refs/heads/fix/activar-sesion-05`, y la consulta suelta
-`gh run view <run>`. PENDIENTE: se rellena con el número de run, el commit y el resultado.
+`git push origin trabajo/activar-sesion-05:refs/heads/fix/activar-sesion-05` (2026-10-26, 15:35Z,
+sobre c03190e) y la consulta suelta `gh run view 40350807999`, con una espera sin consulta (`sleep`
+en segundo plano) entre cada dos consultas; ningún guion ni bucle.
+
+| Run | Commit | Intento | Resultado |
+|---|---|---|---|
+| 40350807999 | c03190e | 1 | **sin resultado**: el paso `sudo apt-get install ffmpeg` se colgó 19 minutos (15:35:34 → 15:54:24) y el workflow se canceló a los 20 con `make check` recién empezado (pytest al 14 %). Es el precedente de `trabajo/guardia-ffmpeg` (un run colgado en `apt-get` no es un resultado): `gh run rerun 40350807999` |
+| 40350807999 | c03190e | 2 | `make check` entero en 6m20s: lint «All checks passed!», `1 failed, 2876 passed, 46 skipped in 339.34s`; el único fallo, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/activar-sesion-05'; la rama actual es 'fix/activar-sesion-05'»), que es el ÚNICO aceptado (`RITUAL.md`, «Antes del merge: la CI de Linux»). Los 46 saltados son los que necesitan `data/` (§1.1, §1.2) y los de siempre |
+
+El run del commit que pegue el informe del revisor (§9) se anota al final de esta sección.
 
 ## PARADA 2 · S-11: la cita contradice en su primera mitad A-46 RESUELTA y lo que RN-004 hace
 
@@ -1247,9 +1271,206 @@ espera.
    cuya cita contradice en parte la regla que confirma, que el revisor (alcance 1) verá; coste de
    (c): reabrir con una frase de seis palabras lo que el trader cerró en la sesión 3 con una regla,
    y el motor cambiaría de sentido en una rama que no toca código.
+1. **Las notas de tres registros de feedback citan o parafrasean líneas de la extracción que no
+   están en su ítem** (el revisor, b1 y b2; los registros son de solo añadir y no se editan):
+   `fb-2026-10-23-sesion-05-af24c935` (S-1) cita «por un pip o un punto, pues sirve»
+   (SESION-05-EXTRACCION.md §3.3, S-1, [01:25]); `fb-2026-10-23-sesion-05-146c4789` (A-57) cita
+   «no me ha pasado» y «se seguia manteniendo el rr» (§3.2, S-5, [18:36]-[19:00]); y
+   `85ce7ba5`, `b09c3fed` y `ffb3011e` parafrasean sin remitir a la sección («lo lejos que llegue
+   la mecha es indiferente», «el lunes sigue el sesgo que se arrastra», «en venta al reves (65:33)»
+   y «el «creo» de 60:31»). Ninguna de esas frases está en un `respuesta_literal` ni en un
+   `valor_resultante`: son notas, y lo que fijan los registros no cambia. Opciones: (a) dejarlos
+   como están, declarados aquí y en §6 (fila 11), y que el cierre lo anote en ERRORES-RECURRENTES
+   (la lección: las notas de un registro también se escriben solo con lo que trae el ítem, y lo
+   demás se remite a la sección); (b) cinco registros nuevos que los supersedan (`--supersede`),
+   iguales salvo las notas; (c) solo los dos de b1 (`af24c935` y `146c4789`), que llevan citas
+   literales. Recomiendo (a): un registro inmutable no se corrige por su prosa, y cinco (o dos)
+   registros más por unas notas ensucian la cadena de feedback que `feedback trace` y
+   `knowledge validate` leen. Coste de (a): las citas quedan en el repositorio, declaradas; coste
+   de (b) y (c): cinco o dos registros que no dicen nada nuevo, y A-57 pasaría a cerrarse por el
+   registro nuevo.
+2. **`PROJECT_STATE.md` y los 23.000 bytes de la FASE 0 c** (el revisor, b4): con las líneas de
+   §5 queda en ≈23.500 y con la V corta sin la lista de motor en ≈23.050. Para bajar de 23.000
+   sin quitar nada vivo: (a) la V remite a §2 y la línea de G se acorta a su mitad («S-14, sesión
+   5: en sus backtests sin vídeo el trader se saltaba las sesiones que iban a acabar en break even;
+   qué libro viene de vídeo, ACTIVAR-SESION-05.md §0.b.7», −≈180): ≈22.870; (b) además la
+   ampliación de K va a la hoja de ruta (carril de guardias) y no a la Next Action (−≈260):
+   ≈22.610; (c) aceptar ≈23.050 o ≈23.500, por debajo del tope de 25.000 del test. Recomiendo (a):
+   cumple el encargo con dos recortes de prosa, sin mover nada de sitio. Coste de (b): la deuda de
+   K se parte en dos sitios; coste de (c): el encargo no se cumple en la letra.
+
+## 9. Informe del revisor
+
+Una pasada, `model: opus` (`.claude/agents/revisor.md`), sobre c03190e con el §8 de la CI estadiado,
+con los cuatro alcances del encargo más el quinto de la respuesta y la regla del holdout (rutas
+literales, sin listar carpetas madre con filtro). Resumen: eje (a) 0 bloquea, 3 importa, 3 menor;
+eje (b) 1 bloquea, 3 importa, 4 menor. Lo que se hizo con cada uno, en §9.1; su informe tal cual, en
+§9.2 (nada cita un tramo no citable: ninguna retirada).
+
+### 9.1 Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado**: la fila del 2026-10-26 de HOLDOUT-EXPOSICIONES.md dice ahora que los tests del clon que corren el arnés o el visor sí leyeron el `data/` real (abril y el M1 de marzo, lo mismo que (4) y (5)), corregido el mismo día |
+| a2 | importa | **Arreglado**: §0.b.7 da abril como «un día, el 29» con v5 (`fuentes.yaml:38-40`), y la línea de G de §5 lo dice; R5.1 y la deuda del `no_trade` no nombraban libros |
+| a3 | importa | **Arreglado**: las notas de RN-005 (spec 18.1.9) y los recuadros de ADR-0080 §4 y §9 atribuyen a cada ítem solo su texto y remiten lo demás a la sección de la extracción (§3.3, S-12a, S-2 y S-1) sin citarlo |
+| a4 | menor | **Arreglado**: 46 ficheros (§8) |
+| a5 | menor | **Arreglado**: ADR-0081 (`## Estado`) y su fila del índice dicen «sesión 5, 2026-10-23: A-57 RESUELTA, activada el 2026-10-26»; `ambiguedades.yaml` ya fechaba la respuesta |
+| a6 | menor | **Arreglado**: §0.b.7 con los nombres reales de `libros.yaml` y su línea |
+| b1 | **bloquea** | **Arreglado en parte, y el resto a la PARADA 2**: (1) §0.b.7 cita ahora solo el texto de sus ítems (`ev-v15-011912-0ae32588`, `ev-v16-003421-b824b770`, `ev-v15-011023-5f0f2dd1`, `ev-v15-011728-b5bd4d05`, `ev-v15-011956-dce80292`); (2) y (3), las notas de `af24c935` y `146c4789`, no se editan (solo añadir): PARADA 2, punto 1, con tres formas y recomendación; §6, fila 11, pasa a «Parcial, declarado» |
+| b2 | importa | **Arreglado donde se puede, el resto declarado**: la pregunta de A-57 y el recuadro de ADR-0081 remiten «no ha vivido el caso en su cuenta» a §3.2 de la extracción, fuera de los ítems; las paráfrasis en las notas de `85ce7ba5`, `b09c3fed` y `ffb3011e` van con b1 a la PARADA 2, punto 1 |
+| b3 | importa | **Declarado**: el test saldo/equity va sobre el registro REAL con un escenario sintético, hecho de otra forma a propósito (vigila el valor real); lo dicen §1.2, §6 (fila 32) y la docstring del test |
+| b4 | importa | **A la PARADA 2, punto 2**, con tres formas de bajar de 23.000 y recomendación; §5 y §6 (fila 38b) lo dicen |
+| b5 | menor | **Arreglado**: §6 (filas 37 y 38) y el `## Estado`, con el revisor hecho |
+| b6 | menor | **Arreglado**: NOTAs de una línea en la cabecera y en §3 de ADR-0081 |
+| b7 | menor | **Arreglado**: toda opción de §3 acaba en «otra, ¿cuál?» y S-14 lleva opciones |
+| b8 | menor | **Arreglado**: las notas de RN-020 dicen que el trader retiró el tope semanal, con `ev-v15-000913-bdb12f92` (spec 18.1.9) |
+
+Lo que el revisor no pudo comprobar y sigue así: el orden entre la fila de exposiciones y la
+corrida del clon (no hay marcas de hora; la fila se escribió antes, como dice §0.g, y no se puede
+demostrar), los tres tests que la guardia negó en el clon (§0.f) y el fichero del arnés de
+`C:/cm/salida/` (fuera del repo, a propósito).
+
+### 9.2 El informe, tal cual
+
+> ## Informe del revisor · trabajo/activar-sesion-05 · 2026-10-26
+>
+> Base `b61c8f8` (`git merge-base main HEAD`). Diez commits, de 4ee08fa a c03190e, más el informe estadiado sin commitear (solo cambia §8, la CI). Encargo: `docs/encargos/trabajo-activar-sesion-05.md`. Contrato: `contrato.yaml`. Informe: `docs/validation/ACTIVAR-SESION-05.md`.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 3 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | La fila de exposiciones del 2026-10-26 dice que los tests del clon no leen `data/`, y el propio informe dice lo contrario dos veces. En el clon, que apuntaba al `data/` real, el arnés a secas sobre el primer mes de construcción salió con código 0, es decir, corrió. Lo leído es lo mismo que la fila ya declara en (4) y (5), el M1 de marzo para calentar, y es del mismo día. Por eso no bloquea, pero la frase (3) es falsa. | `HOLDOUT-EXPOSICIONES.md`, fila 2026-10-26, (3): «…los tests de §0.b.5: nada de eso lee `data/`». En contra: `ACTIVAR-SESION-05.md:85-86` (el clon con `settings.local.toml` «apuntando al `corpus/` y al `data/` reales»); `:139` (`test_la_cli_se_niega_sin_lectura_y_no_escribe_nada` «`assert (0 == 2)`: a secas corre»; en `main`, `tests/unit/test_preparar_a35.py:404-409` corre `motor arnes --meses construccion[0]` a secas); `:477-478` (§0.g: los pytest del clon «leen el `data/` solo por las puertas del propio código (`test_visor.py` y `test_preparar_a35.py`…)»). |
+> | a2 | importa | Para S-14 el informe dice que ningún vídeo nombra el backtest de abril, y `fuentes.yaml` sí registra una grabación de ese backtest. La conclusión pasa a las líneas preparadas de G y R5.1 («enero, abril y el agosto actual, no»). | `ACTIVAR-SESION-05.md:295`: «Abril 2026 … No … ningún vídeo lo nombra». En contra, `knowledge/corpus/fuentes.yaml:38-40` (v5): «el trader graba su pantalla en FXReplay (sesion Backtest ABRIL 2026, dia 29 de abril, EURUSD M1)». Las líneas que lo heredan: `ACTIVAR-SESION-05.md:1071-1074` y `:1112-1114`. |
+> | a3 | importa | Notas de la spec y recuadros de ADR atribuyen a un ítem cosas que ese ítem no dice (CLAUDE.md: «Nada afirma más de lo que su cita sostiene»). | (1) Notas de RN-005 (`strategy_spec.yaml`, añadido en 29ecbe1): «en una compra la caja queda POR DEBAJO … **y en venta al reves**», citando `ev-v15-010104-23adba23`. La `cita_literal` del ítem solo habla de compra: «claro en una compra sería bien pues queda por debajo ahora lo muestro en el ejemplo». (2) Recuadro de ADR-0080 §4: «…la ruptura simple … no decide … **y lo lejos que llegue la mecha es indiferente**» (`ev-v15-000256-f3c52278`). La cita no lo dice; viene de `SESION-05-EXTRACCION.md:562` ([03:32]). (3) Recuadro de ADR-0080 §9: «**Añadió que lo lejos que llegue la mecha y el tamaño del cuerpo no importan**, y que el sesgo se decide al cierre … (`ev-v15-000138-ef123dfc`)». El ítem solo dice «se decide al cierre de esa vela nunca se cambia la idea durante la vela siguiente»; lo demás está en la extracción, `:541-542` ([01:25]-[01:30]). |
+> | a4 | menor | En §8 el informe cuenta 45 ficheros cambiados; son 46. | `ACTIVAR-SESION-05.md:1193`: «45 ficheros». En contra: `git diff --name-status main...HEAD \| wc -l` da 46, y `contrato_rama.py` dice «46 ficheros dentro del contrato». |
+> | a5 | menor | A-57 aparece resuelta en dos fechas distintas según el sitio. | `ambiguedades.yaml` (pregunta de A-57): «RESUELTA el 2026-10-23». ADR-0081 `## Estado` y `docs/adr/README.md` (fila 0081): «A-57 RESUELTA el 2026-10-26». |
+> | a6 | menor | En §0.b.7 los nombres de los libros no son los reales. | `ACTIVAR-SESION-05.md:294-297` (`ENERO 2026.xlsx`, `JULIO_2026.xlsx`…). En `libros.yaml:18,54,69` los nombres son `backtesting-analytics AGOSTO 2026.xlsx`, `backtesting-analytics ENERO 2026.xlsx` y `backtesting-analytics_JULIO_2026.xlsx`. |
+>
+> Comprobado sin hallazgos:
+> - **Contrato:** `contrato_rama.py` en verde (salida tal cual: «CONTRATO: 46 ficheros dentro del contrato de trabajo/activar-sesion-05 (riesgo alto, artefacto docs/validation/ACTIVAR-SESION-05.md, tramo 'R4', 5 comprobaciones para el revisor)», exit 0).
+> - **`feedback apply --check`:** «3 parametros; 0 cambian, 3 ya estaban», sin escribir nada.
+> - **`knowledge validate`** (sin redirigir): exit 0, con «OK: 187 registros de feedback, historial intacto, commits con Fuente» y «hash del manifiesto al dia».
+> - **`make check`:** en `make-check.log`, «SELLO: make check en verde sobre el arbol 23ab689d…», que es igual a `git rev-parse HEAD^{tree}` (c03190e). «2923 passed». «PICO DE MEMORIA … 298 MiB».
+> - **Docs generados:** `test_spec_docs_generados` en verde; sustituye a `spec docs --escribir`, que no ejecuté.
+> - **Trailers `Fuente:`:** están en el cuerpo de los cinco commits de spec (3bbcad1, f60fca5, 36fccb2, d3eeca4, 29ecbe1), y todos sus ids existen.
+> - **Holdout:** nada toca `knowledge/cases/`, `knowledge/evidence/`, `knowledge/corpus/` ni `data/manifests/`.
+> - **Regímenes de cambio:** el feedback nuevo son 11 ficheros, todos `A`. `HISTORIA.md`, `HOLDOUT-EXPOSICIONES.md` y el runbook solo tienen líneas añadidas.
+> - **CORRECT y RESOLVE:** los RESOLVE_UNKNOWN de A-57 y A-32 apuntan a la ambigüedad. El CORRECT va sobre evidencia, que el modelo admite (`modelo.py:67`). Los CONFIRM van sobre reglas, como pide `modelo.py:66`.
+> - **Ambigüedades:** cada commit que cambia `ambiguedades.yaml` lleva también `docs/spec/ambiguedades.md`. La fila de A-57 sale en 36fccb2 y la de A-32 en d3eeca4. Los cinco sitios de las dos están tocados.
+> - **ADR:** todos los cambiados siguen con el Estado en `ACTIVE` (`test_adr` en verde).
+> - **Informes cerrados:** ningún informe cerrado de `main` se modifica.
+> - **Citas en la spec:** ningún sitio nuevo con `cita` ni con `forma:`.
+> - **Cifras:** ninguna dentro de una forma ejecutable.
+> - **Evidencia nueva:** ningún ítem añadido, así que el punto 10 no aplica.
+> - **Ensayos:** se hicieron en un worktree (`git worktree add`), no en copias sueltas.
+> - **Citas del informe** comprobadas contra su fuente, y correctas: `ERRORES-RECURRENTES.md:84` (lección 2), `PREGUNTAS.md:414-419`, `modelo.py:66`, `tope_trader.py:140-144` y `diagnostico.py:111-116`.
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 3 importa, 4 menor. Requisitos: 31 hechos (más 3 hechos de otra forma), 4 parciales, 2 no hechos (uno declarado), 1 pendiente.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Rama desde b61c8f8 con `abrir-rama`; contrato R4, riesgo alto, artefacto | Hecho | merge-base b61c8f8; `contrato.yaml:1-4`; 4ee08fa |
+> | 2 | Nada de `src/botsito/engine` ni `domain` | Hecho | `git diff --name-status main...HEAD`: ningún `src/` |
+> | 3 | En `tests/` solo lo de b.5 y lo pedido | Hecho | `test_kit` y `test_hoja_preguntas` cambian por el cierre de A-32 (`AMBIGUEDADES.md:28-35`) |
+> | 4 | Ninguna «en parte» se cierra; A-35 y A-44 ABIERTAS y bloqueantes | Hecho | `ambiguedades.yaml` (estado ABIERTA); `test_en_parte_no_se_cierra.py` en verde |
+> | 5 | Ningún registro sobre una ambigüedad «en parte» | Hecho | Los únicos registros con objetivo `ambiguedad` son los de A-57 (146c4789) y A-32 (b8271811) |
+> | 6 | Ninguna cifra en una forma ejecutable | Hecho | Ninguna línea `forma:`/`cuando:`/`entonces:` añadida en `knowledge/spec/` |
+> | 7 | Arnés solo para ver que corre; fichero fuera del repo; sin cifras | Hecho | §0.b.2 (código 0, `C:/cm/salida/`; solo el `grep -c DIAGNOSTICO` y el número de líneas) |
+> | 8 | Citas SOLO de los ítems de §8, con su texto | **No hecho** | b1 |
+> | 9 | Next Action y hoja de ruta sin tocar; Known Ambiguities sí | Hecho | El diff de PS solo toca Current Branch/Feature, tests, la tabla y Archivo 47; `docs/plan/` sin cambios |
+> | 10 | Makefile, `.claude/` y la guardia sin tocar | Hecho | diff |
+> | 11 | Fechas: v15 23/23, v16 23/25 | Hecho | 9 registros de v15 con `fecha`/`recibido_el` 2026-10-23; b09c3fed y b8271811 (v16, «Grabación de pantalla 2026-10-25 140140.mp4») con `recibido_el` 2026-10-25 |
+> | 12 | A.1: A-35 por RESOLVE_UNKNOWN sobre el parámetro, «desviación» en el registro, las notas de A-35 y RN-004 | Hecho | 03449065 (`registrado_por` y `notas`: «DESVIACION»); notas de RN-004; comentario de A-35 |
+> | 13 | A.2: alcance y unidad por registro; la magnitud | Hecho de otra forma (declarado, punto 1) | e9559876, 1772d9ef; `perdida_trader_magnitud` DEFAULT_AMBIGUOUS sin registro |
+> | 14 | Punto 2: `ev-v10-010913-c4949417` y la reserva del «creo» en las notas | Hecho | notas de 1772d9ef; descripción de `perdida_trader_unidad` |
+> | 15 | A.2: reinicio UNKNOWN; `perdida_maxima_semanal` sin CORRECT, y su descripción **y las notas de RN-020** dicen que el trader lo retiró, con `ev-v15-000913` | Parcial | La descripción sí. RN-020 dice «queda sin efecto y sin CORRECT» y no que el trader lo retirara (b8) |
+> | 16 | A.3: A-57 RESUELTA; `lote_si_no_cabe` a CONFIRMED con `decision`; reservas; recuadro e índice de ADR-0081 | Hecho | 146c4789; `parametros.yaml`; ADR-0081 §1, Estado y fila del índice |
+> | 17 | A.4: A-32 RESUELTA con los dos ítems; la verificación de `mecha`/`cuerpo` | Hecho | b8271811; §1.4; `estructura_m1.py:103-111` y `:334` comprobados |
+> | 18 | Punto 3: S-1, S-2, S-23 sobre RN-003; S-9 sobre RN-004; S-12a sobre RN-005 más el CORRECT | Hecho | af24c935, 85ce7ba5, b09c3fed, bd88993f, ffb3011e, a42c72dd |
+> | 19 | Punto 3: S-11, CONFIRM sobre RN-004 | No hecho (declarado, PARADA 2) | `ACTIVAR-SESION-05.md:1216-1257`; lo que dice de A-46, ADR-0066 §1, `primitivas.py`, el test (`_h4_alcista`) y `PREGUNTAS.md:414-419` se sostiene en el repo |
+> | 20 | A.5: S-19 medido con `test_a21_series`; a la rama de motor | Hecho | §0.b.4; §2, punto 9 |
+> | 21 | Punto 5: recuadros de ADR-0080 §4/§9, NOTA de ADR-0075; NOTA de ADR-0066 | Parcial (declarado) | Están todos menos la NOTA de ADR-0066, que espera a la PARADA 2 |
+> | 22 | A.6: recuadro de ADR-0083, que sigue PROVISIONAL | Hecho de otra forma (declarado, §0.e.11) | ADR-0083 §1: lo que no está en ítems se remite a §3.2 |
+> | 23 | A.7: test de control de la sesión 5 | Hecho | `test_en_parte_no_se_cierra.py`, dos tests nuevos; 6 en verde |
+> | 24 | B: diez puntos con fuente y `fichero:línea` | Hecho | Comprobados `pivotes_m15.py:23-26`, `estructura_m1.py:103-111`, `zonas.py:539`, `racha.py:79`, `broker.py:177` |
+> | 25 | C: lista de la sesión 6, cerrada, con opciones | Hecho | §3 (con b7) |
+> | 26 | D: líneas del cierre y recuento de S-14 por `libros.yaml` | Parcial | §0.b.7, §4 y §5; abril mal clasificado (a2) |
+> | 27 | Fase 0 a-d y PARADA | Hecho | 556f571; «Lo que necesito que decidas» |
+> | 28 | Respuesta copiada tal cual en el encargo y en el informe | Hecho | `diff` de encargo:132-154 contra informe:551-573: iguales |
+> | 29 | Un commit por respuesta; Fuente con ids que existen; `spec_version` | Hecho | 18.1.3 → 18.1.8 en cinco commits |
+> | 30 | NOTAs en ADR-0053, 0054 y 0070, con sus filas | Hecho | diff de los ADR y de `README.md` |
+> | 31 | Punto 6: NOTA del runbook en commit propio, con el contrato | Hecho | 75f4cbe |
+> | 32 | Tests que rompen a propósito, con la salida de main y de la rama | Hecho | §0.b.1 (tres sin medir por la guardia, declarado) |
+> | 33 | Test del saldo frente a la equity **sobre un registro sintético** | Hecho de otra forma, **sin declarar** | b3 |
+> | 34 | Tests con `data/` saltados en la CI | Hecho | CI: 46 skipped |
+> | 35 | Exposiciones el mismo día | Hecho | fila 2026-10-26 (con a1) |
+> | 36 | PROJECT_STATE en 23.000 bytes o menos con las líneas del cierre | Parcial | b4 |
+> | 37 | CI de Linux por `fix/`, con número de run | Hecho | `gh run view 40350807999`: attempt 2, headSha c03190e, «1 failed, 2876 passed, 46 skipped», el fallo es `test_state_check_ok_on_real_repo` |
+> | 38 | El informe del revisor pegado | Pendiente | este informe |
+> | 39 | Líneas del cierre (V, H, F, G, K, TD, R4.1, R4.2, R5.1, tamaño) | Hecho | §5 |
+> | 40 | «El encargo, punto por punto» (E5) | Hecho | §6 (con b5) |
+> | 41 | Quinto alcance: el DEFAULT_AMBIGUOUS nuevo dice que es lectura del consultor y de qué ambigüedad cuelga | Hecho | descripción de `perdida_trader_magnitud`: «es LECTURA DEL CONSULTOR, bajo A-44, que sigue ABIERTA»; es el único DEFAULT_AMBIGUOUS nuevo |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | **bloquea** | Hay citas literales que no salen de ningún ítem de §8, contra la regla explícita del encargo (l. 20: «Las citas salen SOLO de los ítems … Lo que la extracción cuenta fuera de un ítem se remite a su sección, sin citarlo») y contra el alcance 2. Además, §6 fila 11 lo da por «Hecho». Dos de los sitios son registros de feedback, que son de solo añadir: la forma de corregirlos la decide el consultor. | (1) `ACTIVAR-SESION-05.md:300-302`: «me he saltado … en lugar de poner break even no he operado … no se ve reflejado en el backtest», atribuida a `ev-v15-011023-5f0f2dd1`. Ese ítem dice «Vale, puede haber que no hubo toma de liquidez de M15.». El texto está en `SESION-05-EXTRACCION.md:759-761` ([69:28]-[69:36]) y un grep de «no se ve reflejado» en `knowledge/evidence` no encuentra nada. En `:303-304`, «en los últimos partes que se ha enviado con vídeo…» se atribuye a `ev-v15-011956-dce80292` (que va de «estaba enfermo») y está en `ev-v15-011912-0ae32588`. (2) `fb-2026-10-23-sesion-05-af24c935`, notas: «por un pip o un punto, pues sirve». Sale de `SESION-05-EXTRACCION.md:541` ([01:25]-[01:26]), fuera de 0:00:49-0:01:16 y de 0:01:38-0:01:44. (3) `fb-2026-10-23-sesion-05-146c4789`, notas: «no me ha pasado» y «se seguia manteniendo el rr». Salen de `SESION-05-EXTRACCION.md:467-469` ([18:36]-[19:00]), fuera de 0:17:58-0:18:15. |
+> | b2 | importa | Hay afirmaciones del trader que salen de fuera de los ítems y no se remiten a su sección de la extracción, como pedía el encargo. | 85ce7ba5, notas: «lo lejos que llegue la mecha es indiferente» (extracción `:562`). b09c3fed, notas: «el lunes sigue el sesgo que se arrastra» (extracción `:993-994`). «No ha vivido el caso en su cuenta», en la pregunta de A-57 (`ambiguedades.yaml`) y en el recuadro de ADR-0081 §1 (extracción `:467`). ffb3011e, notas: «en venta al reves (65:33)» y «el «creo» de 60:31» (extracción `:695-702`). |
+> | b3 | importa | El encargo pedía el test del saldo frente a la equity «sobre un registro sintético». El test está hecho sobre el registro REAL; lo sintético es solo el escenario. La docstring lo llama «el test sintetico que pidio el encargo» y el informe no lo declara como hecho de otra forma. Puede que sea mejor así (fija el valor real), pero tiene que estar declarado. | Encargo l. 109. `tests/unit/test_preparar_a44.py:164-184`: `test_con_el_registro_real_…(registro: Registro)` usa `tope_del_registro(registro, …)`. `ACTIVAR-SESION-05.md:694-698` y §6 fila 32: «Hecho». |
+> | b4 | importa | El encargo (c, l. 98) dice que PROJECT_STATE «tiene que quedar en 23.000 o menos». Con las líneas preparadas quedaría en ≈23.500, y la alternativa que ofrece el informe se queda en ≈23.050. La PARADA 2 no lo plantea y §6 no tiene una fila para este requisito. | `ACTIVAR-SESION-05.md:1119-1126` («≈23.500 … por encima de los 23.000 … ≈23.050»); §6 fila 38: «Hecho». `wc -c PROJECT_STATE.md` = 24305. |
+> | b5 | menor | §6 da por hechos el revisor y el §9, que todavía no existe; y el `## Estado`, que no se actualizó en el cambio estadiado, sigue diciendo que falta la CI que §8 ya trae. | `ACTIVAR-SESION-05.md`, §6 fila 37 («Hecho \| §9»); `:1262-1263` («Falta la CI de Linux (§8) y el revisor (§9)»); `git diff --cached` solo cambia §8. |
+> | b6 | menor | ADR-0081 deja de ser provisional con un recuadro en §1, pero su cuerpo sigue describiendo `lote_si_no_cabe` como DEFAULT_AMBIGUOUS bajo A-57, sin una NOTA al lado. Es el criterio que la rama aplicó a ADR-0054 en Impacto. | `docs/adr/0081-…md:13` («PROVISIONAL hasta la sesión 5»), `:83` («`DEFAULT_AMBIGUOUS` bajo **A-57**») y `:171`. |
+> | b7 | menor | La lista de la sesión 6 no lleva siempre «otra, ¿cuál?», y S-14 no tiene opciones (encargo C, l. 66). | `ACTIVAR-SESION-05.md:1005` (A-53, «(c) otra»), `:1013-1014`, `:1021-1022`, `:1030`; punto 12 (`:1035-1037`) sin opciones. |
+> | b8 | menor | Las notas de RN-020 no dicen que el trader retiró el tope semanal, que es lo que pedía A.2. Lo dice solo la descripción del parámetro. | Encargo l. 39. Notas de RN-020: «perdida_maxima_semanal queda sin efecto y sin CORRECT (desviacion declarada…)», y `ev-v15-000913` solo se cita ahí para la unidad. |
+>
+> ### Lo que no pude comprobar
+> - `make check` (escribe): no lo ejecuté. Uso `make-check.log`, cuyo SELLO coincide con el árbol de c03190e. El cambio estadiado de §8 no tiene sello; le toca su propio `make check` antes del commit.
+> - `spec docs --escribir` (escribe): no lo ejecuté. Lo sustituye `tests/contract/test_spec_docs_generados.py`, en verde.
+> - `knowledge validate > knowledge-validate.log`: lo ejecuté sin redirigir para no escribir, y salió con exit 0.
+> - Que la fila de exposiciones se escribiera ANTES de la corrida de b.2, y en qué orden corrieron los pytest del clon frente a esa fila: no hay marcas de hora en el repo, y el clon ya está retirado.
+> - Lo que hicieron en el clon `test_kit.py`, `test_selector_orden_stop.py` y `test_renovar_cierres.py` (la guardia los negó, lo declara §0.f); y lo que dicen los ficheros del arnés en `C:/cm/salida/` (fuera del repo, a propósito no los leo).
+> - Las citas de la extracción contra las filtradas: no abro transcripciones, por la regla del encargo. b1 y b2 se apoyan en el texto de la extracción y en los ítems, no en el vídeo.
+> - La afirmación de §0.b.7 de que el libro de agosto es anterior a v7 y v8: solo la sostiene a medias que `libros.yaml` lo midiera el 2026-09-21/22 y que los vídeos sean del 2026-09-27; sin abrir filas no puedo decir más.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. `uv run python scripts/contrato_rama.py`
+> 3. `git diff --cached --stat && git diff --cached | head -80; git diff --name-status main...HEAD | wc -l; git diff --name-status main...HEAD`
+> 4. `cat` de los once registros de `knowledge/feedback/2026-10-23-sesion-05/`, en tres llamadas (la guardia negó un `for`).
+> 5. `ls knowledge/evidence/v15/ knowledge/evidence/v16/` y `git log … -- knowledge/evidence/v15 knowledge/evidence/v16`
+> 6. `cat` y `grep` de los ítems: v15 000049, 000138, 000256, 001758, 010104, 004448, 005839, 000447, 000530, 000553, 000856, 000913, 002029, 002441, 002729, 011023, 011728, 011912, 011956, 013605; v16 002641, 002521, 000234, 000603, 003421, 000851; `ev-v10-010913-c4949417`; `ev-v9-004919-c6bfb3ee`.
+> 7. Grep en `knowledge/evidence` y en `SESION-05-EXTRACCION.md` de: «pip o un punto», «no me ha pasado», «manteniendo el rr», «lunes», «indiferente», «65:33», «60:31», «pip», «cuerpo rojo», «no se ve reflejado», «en lugar de poner break», «aunque fue roja», `^\| S-11 `.
+> 8. `git diff main...HEAD --` de `strategy_spec.yaml`, `parametros.yaml`, `spec_manifest.yaml`, `ambiguedades.yaml`, `PROJECT_STATE.md`, los ADR 0053, 0054, 0070, 0075, 0080, 0081 y 0083 con `README.md`, `HOLDOUT-EXPOSICIONES.md`, `ACTIVAR-A35-A44.md`, los tests de control, kit y hoja, y `hoja_preguntas.py`.
+> 9. `git log --name-status --format='--- %h %s' main..HEAD`; `git show 3bbcad1 -- PROJECT_STATE.md`; `git show 36fccb2|d3eeca4|6971d30 -- PROJECT_STATE.md | grep`.
+> 10. `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases | grep -E "^[0-9a-f]{7}$|^Fuente:"`, y un `ls` de los ids citados.
+> 11. `uv run botsito feedback apply --sesion 2026-10-23-sesion-05 --check`
+> 12. `uv run botsito knowledge validate`
+> 13. `grep` de SELLO y PICO en `make-check.log`; `git rev-parse HEAD^{tree}`, `75f4cbe^{tree}`, `git ls-files -s`.
+> 14. `uv run pytest` de test_adr, test_en_parte_no_se_cierra, test_kit, test_hoja_preguntas, test_spec_docs_generados, test_provisional_cuelga_de_abierta y test_registro (sin fallos); repetido con test_preparar_a44: «128 passed».
+> 15. `git diff main...HEAD -- knowledge/spec/ | grep` de `cita:` y `forma:` añadidos.
+> 16. Grep de `^## |Estado:|Rama lista` en el informe; Read de sus líneas 1-1264.
+> 17. `sed` de `ERRORES-RECURRENTES.md:82-86`, `PREGUNTAS.md:405-425`, `modelo.py:60-70`, `tope_trader.py:138-146`, `diagnostico.py:109-117`, `pivotes_m15.py:22-28`, `estructura_m1.py:103-111` y `:332-336`, `zonas.py:522-540`, `racha.py:77-81`, `broker.py:175-179`, ADR-0081 `:8-16` y `:76-86`; grep de ADR-0066 y de `primitivas.py:264-298`.
+> 18. Grep de A-46 en `ambiguedades.yaml`; `cat` de `fb-2026-09-29-sesion-03-5021677e` y grep de `fb-2026-09-09-sesion-01-41f46b21` y `-bff260ea`; grep de `sesgo` y `alcista` en `test_sesiones_independientes.py`.
+> 19. Read de `fuentes.yaml:36-160`; grep de agosto en `libros.yaml`; grep de `naturaleza` en `fuentes.yaml`.
+> 20. `git show main:tests/unit/test_preparar_a35.py | grep -A32 …`
+> 21. `git grep -n "A-32"|"A-57" main -- knowledge/spec/…`
+> 22. `grep` de los patrones `ID:` en `test_hoja_de_ruta.py` y en `HOJA-DE-RUTA.md`.
+> 23. `diff` de encargo:132-154 contra informe:551-573: iguales.
+> 24. `wc -c PROJECT_STATE.md`; conteo de líneas `-` en los diffs de solo añadir.
+> 25. `gh run view 40350807999`; `--json headSha,attempt,conclusion,headBranch`; `--log-failed | grep`.
 
 ## Estado
 
-EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está aplicada punto por punto (§1),
-con una excepción declarada, S-11, que queda en la PARADA 2; las líneas del cierre, en §5. Falta
-la CI de Linux (§8) y el revisor (§9).
+LISTA PARA REVISIÓN SALVO LA PARADA 2 (2026-10-26), NO cerrada. La respuesta del consultor a la
+PARADA está aplicada punto por punto (§1, ocho commits sellados), con una excepción declarada: S-11,
+cuya cita contradice A-46 RESUELTA y lo medido, queda en la PARADA 2 junto con dos puntos que dejó el
+revisor (las notas de tres registros con citas fuera de sus ítems; los 23.000 bytes de
+PROJECT_STATE). La CI de Linux del último commit con contenido (c03190e) está en verde con el
+único fallo aceptado (§8); el run del commit que pega este informe se consulta con `gh run view` y
+va en el mensaje final a Aleks. Las líneas del cierre, en §5; lo que va a la rama de motor, en §2;
+la lista de la sesión 6, en §3.
+
+Rama lista para revisión, NO cerrada.
