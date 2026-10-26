@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.1.6` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.1.7` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (14)
+## ABIERTA (13)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -27,12 +27,6 @@ Afecta a: `broker_offset_base`, `broker_dst`.
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST».
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
-
-### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
-
-En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada.
-
-Afecta a: `breaker_m1_criterio_ruptura`.
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
@@ -144,7 +138,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (36)
+## RESUELTA (37)
 
 ### A-1 · sesgo H4
 
@@ -267,6 +261,12 @@ Afecta a: `orden_pendiente_al_abrir_sesion`.
 ### A-31 · el stop entero de una entrada que se activo sin ruptura · pregunta
 
 Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera como un loss … gastaría un intento»: la lectura de RN-016 era la del trader (fb-2026-09-29-sesion-03-d36ba0d2).
+
+### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
+
+En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada. RESUELTA el 2026-10-25 en la sesion 5 (S-18, la de v16, 0:02:34-0:03:12 y 0:06:03-0:06:18; fb-2026-10-23-sesion-05-b8271811, ev-v16-000234-9a4fa375, ev-v16-000603-6955d127): «en M1 la mecha siempre vale»; la unica ruptura que pide cuerpo es la que habilita la zona lineal de liquidez de M15, y una linea que viene de M15 «la cuento como de M15 aunque la mire de M1». Ningun valor cambia: breaker_m1_criterio_ruptura = mecha y liquidez_m15_criterio_toma = cuerpo ya lo hacian, y ningun codigo descarta una entrada por una linea de M1 rota con mecha.
+
+Afecta a: `breaker_m1_criterio_ruptura`.
 
 ### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
 

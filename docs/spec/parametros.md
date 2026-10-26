@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.1.6` · hash `5532492a9236…`
+`spec_version 18.1.7` · hash `19930de08bdb…`
 
 109 en total: 97 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -212,7 +212,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `breaker_m1_criterio_ruptura`
 
-criterio de ruptura del breaker (BOS) de M1, el que forma los dos esquemas de entrada. Era el unico de su familia que vivia en prosa -dentro de la descripcion de `se_da_esquema`- mientras sus hermanos (sesgo_h4_criterio_ruptura, zona_control_criterio_completada, break_even_criterio_ruptura y liquidez_m15_criterio_toma) ya eran parametros. NO es la toma de liquidez de M15, que exige cuerpo (RN-004): son dos rupturas distintas, y confundirlas es lo que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md)
+criterio de ruptura del breaker (BOS) de M1, el que forma los dos esquemas de entrada. Era el unico de su familia que vivia en prosa -dentro de la descripcion de `se_da_esquema`- mientras sus hermanos (sesgo_h4_criterio_ruptura, zona_control_criterio_completada, break_even_criterio_ruptura y liquidez_m15_criterio_toma) ya eran parametros. NO es la toma de liquidez de M15, que exige cuerpo (RN-004): son dos rupturas distintas, y confundirlas es lo que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md). CONFIRMADO EN LA SESION 5 (2026-10-25, S-18, A-32 RESUELTA; fb-2026-10-23-sesion-05-b8271811, ev-v16-000234-9a4fa375): «en M1 la mecha siempre vale»; solo la ruptura que habilita la zona lineal de M15 pide cuerpo, y una linea que viene de M15 cuenta como de M15 aunque se mire en M1 (ev-v16-000603-6955d127)
 
 Opciones: `mecha`, `cuerpo`.
 
@@ -712,7 +712,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `zona_control_limpia`
 
-la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Fue A-21, ABIERTA y BLOQUEANTE de RN-008 hasta el 2026-10-12: este parametro no le ponia valor, solo cerraba el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto» (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa (ev-v10-011734-fedd3f8e). Eso es `solo_una_zona_de_control`: cada paso de vela contraria a vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1 rechaza, medido con series sinteticas en compra y en venta (ADR-0076); no entra ninguna opcion nueva. Lo lee quien construye las primitivas, no una regla (engine/zonas.py); con el valor fijado, --diagnostico-a21 ya no existe
+la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Fue A-21, ABIERTA y BLOQUEANTE de RN-008 hasta el 2026-10-12: este parametro no le ponia valor, solo cerraba el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32, RESUELTA el 2026-10-25 en la sesion 5: era la liquidez de M15, porque en M1 la mecha siempre vale, fb-2026-10-23-sesion-05-b8271811), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto» (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa (ev-v10-011734-fedd3f8e). Eso es `solo_una_zona_de_control`: cada paso de vela contraria a vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1 rechaza, medido con series sinteticas en compra y en venta (ADR-0076); no entra ninguna opcion nueva. Lo lee quien construye las primitivas, no una regla (engine/zonas.py); con el valor fijado, --diagnostico-a21 ya no existe
 
 Opciones: `solo_una_zona_de_control`, `sin_mecha_mas_alla_del_extremo`.
 

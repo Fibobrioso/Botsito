@@ -764,6 +764,53 @@ lista son anteriores a la rama (`fb-2026-09-29-sesion-03-31fb311f` y
 `fb-2026-10-04-sesion-04-ca0afae6`, los CORRECT sobre RN-003 que §0.e ya contaba y que las notas de
 RN-003 explican).
 
+### 1.4 A-32 RESUELTA · en M1 la mecha siempre vale (A.4; ningún valor cambia)
+
+**El registro:** `fb-2026-10-23-sesion-05-b8271811`, RESOLVE_UNKNOWN sobre LA AMBIGÜEDAD A-32, cita
+`ev-v16-000234-9a4fa375` (v16, 0:02:34-0:03:12; `--fecha 2026-10-23 --recibido-el 2026-10-25`, la
+grabación del 2026-10-25), `valor_resultante` «en M1 la mecha siempre vale; la unica ruptura que
+pide cuerpo es la que habilita la zona lineal de liquidez de M15, y una linea que viene de M15
+cuenta como de M15 aunque se mire en M1 (… ya fijados; ningun valor cambia)». Las notas llevan
+`ev-v16-000603-6955d127` («la cuento como de M15 aunque la mire de M1»), la sesión 4
+(`ev-v10-020142-30fd2569`, la que la dejó en parte), que lo dijo en compra y en venta, y la
+verificación que pedía el encargo. Ningún registro sobre parámetros: `feedback apply --check` sigue
+proponiendo `0 cambian, 3 ya estaban`.
+
+**La verificación de A.4** (medida en la fase 0, §0.a, fila S-18, y no contradicha al aplicar):
+`breaker_m1_criterio_ruptura` = `mecha` (`_pasa` con MECHA, `domain/estructura_m1.py:103-111`) y
+`liquidez_m15_criterio_toma` = `cuerpo` (`cruza`, `domain/pivotes_m15.py:208-218`) ya lo hacen; la
+única lectura del motor que descarta una entrada por una mecha de M1,
+`sin_mecha_mas_alla_del_extremo` (`estructura_m1.py:334`), está INACTIVA porque
+`zona_control_limpia` = `solo_una_zona_de_control` (`grep -n sin_mecha_mas_alla_del_extremo
+src/botsito`: la constante, su lista y esa única rama). Sin PARADA.
+
+**Los cinco sitios:**
+1. El registro de parámetros: ningún valor cambia; las descripciones de `breaker_m1_criterio_ruptura`
+   («CONFIRMADO EN LA SESION 5 … A-32 RESUELTA») y de `zona_control_limpia` («que nivel era es
+   A-32, RESUELTA … era la liquidez de M15») lo dicen.
+2. `ambiguedades.yaml`, A-32: `estado: RESUELTA`, «RESUELTA el 2026-10-25 en la sesion 5 …» en
+   `pregunta`, y un comentario fechado (la 4 la dejó en parte, la 5 la resuelve).
+3. La regla que la citaba: ninguna regla de `strategy_spec.yaml` nombra A-32 (`grep -n A-32`: 0
+   líneas); el sitio es la descripción de `zona_control_limpia` (punto 1).
+4. La tabla «Known Ambiguities» de `PROJECT_STATE.md`: sale la fila de A-32.
+5. La hoja de preguntas: `scripts/hoja_preguntas.py` pierde el bloque «La liquidez de M15», que
+   solo llevaba A-32, y `tests/unit/test_hoja_preguntas.py` pierde «A-32» de `ORDEN`, los dos con
+   su comentario.
+
+Más `tests/unit/test_kit.py`: RESUELTAS gana A-32 y `EN_PARTE_SESION_4` la pierde, con el
+comentario (una sesión posterior puede cerrar lo que la 4 dejó en parte; lo que la 5 deja en
+parte lo vigilará el test de control de A.7). `spec_version` 18.1.6 → 18.1.7, manifiesto
+(`19930de08bdb…`) y docs.
+
+**Lo medido:** `test_kit`, `test_hoja_preguntas` (con la hoja escrita en un `.docx` temporal),
+`test_en_parte_no_se_cierra`, `test_registro`, `test_spec_docs_generados`, `test_project_state`,
+`test_hoja_de_ruta`, `test_reabrir_y_fuente_documental`, `test_pivotes_m15` y `test_a21_series`:
+192 en verde, 0 fallos. `knowledge validate`: exit 0. `feedback pending`: el registro de A-32
+reflejado; siguen los dos CORRECT antiguos sobre RN-003 de §1.3. Una trampa propia, corregida
+antes de validar: tres notas de la spec citaron un id `fb-…` escrito antes de crear el registro
+(el hash sale del contenido): sustituido por el real, `b8271811`, en los tres sitios (`grep` del
+provisional: 0 líneas).
+
 ## Estado
 
 EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por

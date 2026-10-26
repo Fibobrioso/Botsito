@@ -50,10 +50,11 @@ REGLAS = (
 # A-47: las tres son la caja y la orden de la entrada. El 2026-10-02 (trabajo/cerrar-a29-a36)
 # sale A-29, RESUELTA con su respuesta grabada de la sesion 3. El 2026-10-06
 # (trabajo/activacion-a42, ADR-0069) sale A-42, RESUELTA por S-7 y por escrito. El 2026-10-12
-# (trabajo/activar-sesion-04-motor, ADR-0076) sale A-21, RESUELTA por S-10 de la sesion 4.
+# (trabajo/activar-sesion-04-motor, ADR-0076) sale A-21, RESUELTA por S-10 de la sesion 4. El
+# 2026-10-26 (trabajo/activar-sesion-05) sale A-32, RESUELTA por S-18 de la sesion 5 (v16), con su
+# bloque «La liquidez de M15», que solo la llevaba a ella; A-57 nunca estuvo en la hoja.
 ORDEN_SESION_02: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("Lo primero", ("A-35", "A-44", "A-43", "A-24")),
-    ("La liquidez de M15", ("A-32",)),
     ("La orden y el stop", ("A-48", "A-49")),
     ("La gestión de la operación", ("A-13",)),
 )
