@@ -858,6 +858,17 @@ respuesta anterior del trader. La hoja ya lo preveía al revés (`PREGUNTAS.md:4
 (a), A-46 se REABRE con un `REOPEN`); el trader contestó (b) para el caso preguntado y (a) para el
 caso que A-46 ya tenía respondido. Ningún registro de S-11 en este commit.
 
+### 1.6 ADR-0083 sigue PROVISIONAL: el recuadro de S-6 (A.6)
+
+Recuadro bajo D1 de ADR-0083 con lo que dijo el trader en S-6 y solo con lo que los tres ítems
+sostienen (§0.e, 11): la duda sobre las reentradas en el mismo nivel tras un break even
+(`ev-v15-002029-1ac081ae`, «una duda, no una regla»), el ejemplo en que el 1 sigue y el 0 se
+actualiza (`ev-v15-002441-2e609b87`) y que el punto tiene que haber roto para volver a validarse
+(`ev-v15-002729-30480ec5`); lo demás del tramo (que son decisiones distintas, los «equals») se
+remite a SESION-05-EXTRACCION.md §3.2 sin citarlo. Ningún registro de feedback (en parte). El
+`## Estado` del ADR y su fila del índice dicen que D1 sigue PROVISIONAL y que la pregunta pasa a la
+sesión 6 (§3, 8). `test_adr.py` en verde (el Estado empieza por `ACTIVE`).
+
 ## Estado
 
 EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por

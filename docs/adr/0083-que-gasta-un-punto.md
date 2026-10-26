@@ -48,6 +48,24 @@ ventana prohibida de ADR-0068 y la red de seguridad del fin del día, ADR-0053 �
 usada y su punto sin gastar, como hasta hoy: esa caja no vuelve, otra sí. EXPIRADA no ocurre
 (ningún llamador del cableado pone `expira_ms`).
 
+> **LO QUE DIJO EL TRADER EN LA SESIÓN 5 (2026-10-23, S-6, «pregunta 3»; recuadro del 2026-10-26,
+> `trabajo/activar-sesion-05`, que no reescribe el cuerpo). D1 SIGUE PROVISIONAL.** Sobre su propio
+> replay, sin que se le enseñara ningún día real, contestó en parte y sin una regla: de las
+> reentradas en el mismo nivel, «me da unas ganas de replantearme para poder quitar esa condicional
+> cuando hay break even porque siento yo que las veces que he hecho backtesting … son las que nos
+> generan un gran cúmulo de pérdidas» (`ev-v15-002029-1ac081ae`: una duda, no una regla); en su
+> ejemplo «solo vemos el punto … El punto 1 … Se actualiza del nivel 0 … sigue marcando el mismo
+> nivel» (`ev-v15-002441-2e609b87`: el 1 sigue y el 0 se actualiza; si la caja es la del primer
+> intento o una nueva no lo dice con esas palabras); y «un posible punto breaker tiene que haber
+> roto por encima porque si no está roto por encima, nosotros no lo validamos»
+> (`ev-v15-002729-30480ec5`: para volver a validar el punto, el precio tiene que haberlo roto).
+> No dio un número de reentradas y no llegó a decir si tras un break even vuelve al mismo punto. Lo
+> demás de ese tramo -que cada reentrada es una decisión aparte y su duda sobre los niveles
+> iguales- está en `SESION-05-EXTRACCION.md` §3.2, S-6, y no se cita aquí. Ningún registro de
+> feedback: una respuesta «en parte» no fija nada. **Lo que pasa a la sesión 6:** cuántas veces
+> reentra en el mismo punto tras un stop, si la caja de la reentrada es la del primer intento o una
+> nueva, y qué hace tras un break even; con esquemas, sin días reales.
+
 ### 2. D2 · Cómo lo hace el código
 
 Hoy hay dos marcas en la memoria de la sesión (`engine/zonas.py`): `usadas`, por ZONA (una caja), que
@@ -188,5 +206,5 @@ por zona que la decisión 1 no pedía, y deja el rechazo al llenar sin gastar el
 
 ## Estado
 
-ACTIVE (PROVISIONAL en D1 hasta la pregunta 3 de la sesión 5, V; enmienda la decisión 1 de ADR-0064;
-nota en ADR-0074 §4)
+ACTIVE (PROVISIONAL en D1: la sesión 5 respondió en parte y sin regla, recuadro del 2026-10-26 en
+§1; va a la sesión 6; enmienda la decisión 1 de ADR-0064; nota en ADR-0074 §4)
