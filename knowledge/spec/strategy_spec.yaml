@@ -1083,6 +1083,18 @@ reglas:
       ACEPTADO) EL MOTOR LO HACE: con la doble ruptura sesgo_h4_al_abrir ata el lado del color,
       y `ambiguo` queda solo para la vela que rompe los dos extremos y cierra sin cuerpo, que el
       trader no describio -hasta la sesion 4: desde ADR-0075 esa vela no decide (arriba).
+      CONFIRMADA EN LA SESION 5 (2026-10-23 y 2026-10-25, sobre esquemas dibujados; rama
+      trabajo/activar-sesion-05), tres CONFIRM sobre esta regla: (S-1,
+      fb-2026-10-23-sesion-05-af24c935, ev-v15-000049-3b294480) con el sesgo bajista, la H4 que
+      rompe el maximo solo con la mecha y cierra roja deja el sesgo bajista -el caso 3 de la regla
+      del color-, lo que CIERRA la contradiccion con la sesion 1 de arriba (ADR-0080 §9) a favor
+      del color, y el sesgo se decide al cierre de esa vela (ev-v15-000138-ef123dfc); (S-2,
+      fb-2026-10-23-sesion-05-85ce7ba5, ev-v15-000256-f3c52278) la ruptura simple de una vela SIN
+      cuerpo no decide y sigue el sesgo que habia: la decision del consultor de ADR-0080 D3 deja de
+      ser provisional (reserva: el caso bajista no lo dijo con sus palabras); (S-23,
+      fb-2026-10-23-sesion-05-b09c3fed, ev-v16-002641-e8e6eafc, ev-v16-002521-02c1be20) con el
+      sesgo bajista la neutra de doble ruptura mantiene el sesgo, tambien dos seguidas: la reserva
+      del caso bajista de ADR-0075 queda contestada
     forma:
       cuando:
         todos_de:
@@ -1214,7 +1226,10 @@ reglas:
       rama de motor con ADR, y la sesion 6 confirma si es la mecha de la vela contraria);
       fijar el parametro con la ambiguedad abierta es una DESVIACION declarada de la skill
       activar-sesion y del runbook ACTIVAR-A35-A44.md §1, por orden del consultor
-      (trabajo/activar-sesion-05, respuesta a la PARADA, punto 0)
+      (trabajo/activar-sesion-05, respuesta a la PARADA, punto 0). CONFIRMADO EN LA SESION 5
+      (S-9, fb-2026-10-23-sesion-05-bd88993f, ev-v15-004448-aac87b77): cuando hay varias liquidez
+      de M15 «se da prioridad pues a la liquidez más reciente», sin mirar H1 ni H4, que es la que
+      esta regla toma (A-24, DECIDIDA por ADR-0045, sigue DECIDIDA); reserva: «por lo general»
     forma:
       cuando:
         todos_de:
@@ -1264,6 +1279,13 @@ reglas:
       DESDE EL 2026-09-29 (sesion 3, A-26 RESUELTA; fb-2026-09-29-sesion-03-fc2c5c1f,
       ev-v9-001915-d03d1565): cuando el flujo de M15 va contra el sesgo de H4, manda el sesgo y
       en M15 solo se busca a favor, que es lo que este filtro ya hace.
+      CONFIRMADA EN LA SESION 5 (2026-10-23, S-12a, sobre un esquema; rama
+      trabajo/activar-sesion-05; fb-2026-10-23-sesion-05-ffb3011e, ev-v15-010104-23adba23): en
+      una compra la caja queda POR DEBAJO del nivel de M15 tomado y en venta al reves, que es lo
+      que esta regla dice; la frase de la sesion 3 que decia lo contrario de una compra («tiene
+      que ser todo por encima», ev-v9-004919-c6bfb3ee) recibe un CORRECT
+      (fb-2026-10-23-sesion-05-a42c72dd). Lo que queda a caballo del nivel es A-50 (S-12b),
+      ABIERTA; reserva: la linea de la transcripcion mezcla la pregunta leida y la respuesta
     forma:
       cuando:
         todos_de:

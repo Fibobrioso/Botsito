@@ -1,0 +1,25 @@
+id: fb-2026-10-23-sesion-05-85ce7ba5
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-003
+accion: CONFIRM
+respuesta_literal: Claro, en este caso sería la respuesta B, no, sigue el sesgo que había, que en este
+  caso es alcista, como con la vela neutra que rompe por los dos lados, o sea, la respuesta es la B.
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, encargo A.5 y respuesta a la PARADA,
+  punto 3: CONFIRM sobre la regla, no sobre el ADR)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: 0:02:56
+t1: 0:03:17
+notas: 'S-2 (SESGO-H4-COLOR.md §4.4; ADR-0080 §4, D3): una H4 que rompe un extremo con la mecha y cierra
+  sin cuerpo no cambia el sesgo, sigue el que habia, la opcion b (ev-v15-000256-f3c52278). La decision
+  provisional del consultor de ADR-0080 §4 (la ruptura simple sin cuerpo no decide y la busqueda sigue)
+  queda confirmada por el trader; es lo que hace el motor (test_sesgo_h4.py::test_ruptura_simple_sin_cuerpo_no_decide_y_la_busqueda_sigue).
+  Para precisar: lo lejos que llegue la mecha es indiferente. RESERVA: la subpregunta del caso al reves
+  (sesgo bajista) se leyo y la respuesta volvio al ejemplo alcista; la regla que da, «sigue el sesgo que
+  habia», cubre los dos lados, pero el caso bajista no lo dijo con sus palabras. Sin «creo»'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

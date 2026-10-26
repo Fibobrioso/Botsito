@@ -1,0 +1,25 @@
+id: fb-2026-10-23-sesion-05-ffb3011e
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-005
+accion: CONFIRM
+respuesta_literal: claro en una compra sería bien pues queda por debajo ahora lo muestro en el ejemplo
+registrado_por: Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, encargo A.5 y respuesta a la PARADA,
+  punto 3)
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: '1:01:04'
+t1: '1:01:25'
+notas: 'S-12a (RN-005; el recuadro del 2026-10-21 de la hoja, PREVIA-SESION-5.md §1): en una compra la
+  caja queda POR DEBAJO del nivel de M15 tomado, la opcion b (ev-v15-010104-23adba23), y en venta al reves
+  (65:33). Coincide con RN-005 (ev-v1-001306-f98e12e9: lo que queda por encima del nivel tomado en una
+  compra es ruido) y con lo que hace el motor (engine/zonas.py, se_desarrolla_en_el_lado_de_ruido; test_spec_fidelidad.py::test_rn005_prohibe_el_lado_de_ruido_y_no_el_de_la_operativa):
+  RN-005 no se reabre. Contradice ev-v9-004919-c6bfb3ee («tiene que ser todo por encima»), que recibe
+  un CORRECT en este mismo commit. RESERVA: la linea de la transcripcion mezcla la pregunta leida y la
+  respuesta (confianza media del item); el «creo» de 60:31 es sobre a que iba referida la frase de RN-005,
+  no sobre el lado. Lo que queda a caballo del nivel es S-12b (A-50, ABIERTA)'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

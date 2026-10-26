@@ -811,6 +811,53 @@ antes de validar: tres notas de la spec citaron un id `fb-…` escrito antes de 
 (el hash sale del contenido): sustituido por el real, `b8271811`, en los tres sitios (`grep` del
 provisional: 0 líneas).
 
+### 1.5 Las confirmaciones (A.5; puntos 3, 5 y 9): S-1, S-2, S-23, S-9 y S-12a, y el CORRECT sobre `ev-v9-004919-c6bfb3ee`. S-11, a la PARADA 2
+
+**Los registros**, todos CONFIRM sin valor sobre una REGLA (el punto 3 corrige el encargo: CONFIRM no
+admite ADR ni ambigüedad, `modelo.py:66`), con la cita de su ítem y la reserva en las notas (punto 9):
+
+| Código | Registro | Objetivo | Cita | Lo que confirma | Reserva en las notas |
+|---|---|---|---|---|---|
+| S-1 | `fb-2026-10-23-sesion-05-af24c935` | RN-003 | `ev-v15-000049-3b294480` (0:00:49-0:01:16) | el caso 3 de la regla del color: rompe el máximo solo con la mecha y cierra roja → sigue bajista; cierra la contradicción de ADR-0080 §9 con la sesión 1 a favor del color; se decide al cierre de la vela (`ev-v15-000138-ef123dfc`); A-1 no se reabre | solo el caso bajista |
+| S-2 | `fb-2026-10-23-sesion-05-85ce7ba5` | RN-003 | `ev-v15-000256-f3c52278` (0:02:56-0:03:17) | D3 de ADR-0080 §4: la ruptura simple sin cuerpo no decide y sigue el sesgo que había | el caso bajista no lo dijo con sus palabras |
+| S-23 | `fb-2026-10-23-sesion-05-b09c3fed` | RN-003 | `ev-v16-002641-e8e6eafc` (v16, 0:26:41-0:26:46; `--recibido-el 2026-10-25`) | con el sesgo bajista la neutra de doble ruptura mantiene el sesgo, también dos seguidas (`ev-v16-002521-02c1be20`); la reserva de `fb-2026-10-04-sesion-04-ca0afae6` queda contestada | «creo» solo en un ejemplo |
+| S-9 | `fb-2026-10-23-sesion-05-bd88993f` | RN-004 | `ev-v15-004448-aac87b77` (0:44:48-0:44:54) | la liquidez que RN-004 toma es la más reciente (A-24, DECIDIDA por ADR-0045, sigue DECIDIDA: el registro apunta a la regla) | «por lo general»; solo la compra |
+| S-12a | `fb-2026-10-23-sesion-05-ffb3011e` | RN-005 | `ev-v15-010104-23adba23` (1:01:04-1:01:25) | en una compra la caja queda por debajo del nivel tomado, y en venta al revés: RN-005 sigue; A-50 (S-12b) ABIERTA | la línea mezcla pregunta y respuesta (confianza media) |
+| S-12a | `fb-2026-10-23-sesion-05-a42c72dd` | CORRECT sobre `ev-v9-004919-c6bfb3ee`, `valor_resultante` «por debajo del nivel tomado en una compra» | la misma cita | el ítem de la sesión 3 («tiene que ser todo por encima») queda corregido por la sesión 5 sin editarlo ni supersederlo (precedente `fb-2026-09-09-sesion-01-2ba4c3e7`) | — |
+
+`feedback apply --check` no propone nada (ningún registro sobre parámetros). `feedback pending
+--todos` da los seis como reflejados: los cinco CONFIRM, «confirma la regla vigente»; el CORRECT
+sobre evidencia, «sin forma mecanica de cruzarlo», como los de la sesión 1.
+
+**Las notas de las reglas** (una línea por lo que confirma, como pedía el encargo): RN-003
+(«CONFIRMADA EN LA SESION 5 … tres CONFIRM»: S-1 cierra la contradicción, S-2 deja de ser
+provisional, S-23 contesta la reserva del caso bajista), RN-004 (S-9: la más reciente; A-24 sigue
+DECIDIDA) y RN-005 (S-12a y el CORRECT). `spec_version` 18.1.7 → 18.1.8, manifiesto
+(`20076c8d14a4…`) y docs.
+
+**Los ADR** (punto 5): ADR-0080, recuadro bajo §4 («CONFIRMADO POR EL TRADER … D3 deja de ser una
+decisión provisional», con la reserva) y recuadro al final de §9 («CONTRADICCIÓN CERRADA …»);
+ADR-0075, NOTA de una línea bajo las reservas de §1 (S-23); las dos filas del índice. **La NOTA de
+ADR-0066 por S-11 NO se escribe en este commit**: S-11 va a la PARADA 2 (abajo).
+
+**Lo medido:** `test_sesgo_h4`, `test_spec_fidelidad`, `test_adr`, `test_registro`,
+`test_spec_docs_generados`, `test_citas_supersedidas`, `test_cli` y `test_kit`: 211 en verde, 0
+fallos. `knowledge validate`: exit 0.
+
+**S-11, lo que al aplicarlo contradice algo medido (PARADA 2, abajo):** la cita de S-11
+(`ev-v15-005839-f2e43c27`: «Si hay una continuidad de sesgo, sí. Pero si no, no») contesta el caso
+preguntado -el sesgo cambia a las 11, la toma de la mañana no vale- como hace el motor, pero su
+primera mitad dice que CON continuidad de sesgo la toma de la mañana SÍ vale para la tarde, y eso
+es lo contrario de A-46 RESUELTA («cada uno es un mundo diferente», `fb-2026-09-29-sesion-03-5021677e`:
+la pregunta de A-46 era exactamente si la toma de la mañana sigue valiendo en la tarde, sin
+distinguir el sesgo) y de lo que RN-004 hace con `la_toma_es_de_la_sesion` (ADR-0066 §1), medido
+en `test_sesiones_independientes.py::test_la_toma_de_la_primera_sesion_no_vale_en_la_segunda`
+(el sesgo sigue alcista y la toma no vale). Un CONFIRM sobre RN-004 con esa cita afirmaría más de
+lo que la regla hace; la skill `activar-sesion` manda PARADA cuando una respuesta contradice una
+respuesta anterior del trader. La hoja ya lo preveía al revés (`PREGUNTAS.md:414-419`: si contesta
+(a), A-46 se REABRE con un `REOPEN`); el trader contestó (b) para el caso preguntado y (a) para el
+caso que A-46 ya tenía respondido. Ningún registro de S-11 en este commit.
+
 ## Estado
 
 EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por
