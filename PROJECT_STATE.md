@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/sesion-05
+main
 
 ## Current Feature
-trabajo/sesion-05, EN CURSO (abierta el 2026-10-25 desde main 7eef8cf): ingesta de la sesión 5 con el trader, grabada en dos vídeos (v15 el 2026-10-23 y v16 el 2026-10-25, un solo id 2026-10-23-sesion-05), hasta el informe de extracción por pregunta; no resuelve nada (NA:V, R4.1). Encargo: docs/encargos/trabajo-sesion-05.md. Informe: docs/validation/SESION-05-EXTRACCION.md. Cierra con stable/F38d-sesion-05.
+Ninguna rama abierta. trabajo/sesion-05 cerrada en main el 2026-10-25 (stable/F38d-sesion-05): la sesión 5 con el trader ingerida (v15 y v16) y extraída por pregunta, sin resolver nada; su activación es V (R4.1). Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
 
 ## Stable Main State
-68eaa83 · merge de `trabajo/guardia-alias` (tag `stable/F38c-guardia-alias`): en `.claude/hooks/guardia.py`, `_canonica` dentro de `_absoluta` (realpath, sin `\\?\`, `//?/` ni UNC a la propia máquina, `~+`, `/proc/cygdrive/`, `/proc/self/cwd/`, `C:x` y `D:x`), `R_ALIAS` para lo no canonizable, el contenedor de la raíz decidido como la raíz, las variables de PowerShell y `FileSystem::`, y Bash y Monitor decididos también con un nivel de `\` menos. tests/unit/test_guardia_alias.py. Sobre `stable/F38b-guardia-ci` (2cc3b93). Informe docs/validation/GUARDIA-ALIAS.md; el registro del cierre, al final de HISTORIA.
+baaf74b · merge de `trabajo/sesion-05` (tag `stable/F38d-sesion-05`): v15 y v16 en el corpus y en `SESIONES_EN_CUARENTENA`, con transcripciones, fotogramas y 11 tramos no citables; 55 ítems de evidencia (49 vivos); docs/sesion-5/HOJA-USADA.md; la confirmación escrita de marzo en fuentes.yaml (A.3 HECHA). Sobre `stable/F38c-guardia-alias` (68eaa83). Informe docs/validation/SESION-05-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-68eaa83 · merge: trabajo/guardia-alias, la guardia compara cada ruta en su forma canonica y niega lo que no puede canonizar · tag stable/F38c-guardia-alias
+baaf74b · merge: trabajo/sesion-05, la sesion 5 con el trader ingerida (v15 y v16) y su extraccion por pregunta · tag stable/F38d-sesion-05
 
 ## Tests Currently Passing
 1693 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
