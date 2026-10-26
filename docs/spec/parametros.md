@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.1.5` · hash `bfae30bb0afb…`
+`spec_version 18.1.6` · hash `5532492a9236…`
 
 109 en total: 97 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -64,7 +64,7 @@
 | `liquidez_m15_pivote_formado` | `cierre_vela_contraria` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-03449065` | en que momento un pivote de M15 cuenta como formado (A-35) |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
 | `lote_margen_libre_fraccion` | `0.95` | CONFIRMED | ejecucion | `ADR-0081` | fraccion del margen libre de la cuenta que el lote puede ocupar |
-| `lote_si_no_cabe` | `limitar` | DEFAULT_AMBIGUOUS · en revision por A-57 | ejecucion | `ADR-0081` | que hace el bot cuando el lote del riesgo no cabe en la cuenta |
+| `lote_si_no_cabe` | `limitar` | CONFIRMED | ejecucion | `ADR-0081` | que hace el bot cuando el lote del riesgo no cabe en la cuenta |
 | `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `max_escenarios_por_sesion` | `sin_limite` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-7ad9753b` | escenarios que puede abrir una sesion como maximo |
 | `modelo_llenado` | `al_tocar` | CONFIRMED | ejecucion | `ADR-0012` | como se decide que una orden limite se ha llenado |
@@ -462,7 +462,7 @@ el bot dimensiona el lote que cabe sobre esta fraccion del margen libre (equidad
 
 ### `lote_si_no_cabe`
 
-el lote que dimensiona RN-011 (riesgo_por_operacion sobre la distancia hasta el stop) puede no caber en firma_volumen_max_lotes ni en el margen libre a firma_apalancamiento (los stops del trader son de pips: FTMO-P-D1.md §2, MARGEN-LOTE.md §2.b). Con `limitar` el bot coloca la orden con el menor de tres lotes -el del riesgo, el tope de volumen y el que cabe en el margen libre por lote_margen_libre_fraccion-, redondeado hacia abajo al paso: la misma decision, el mismo resultado en R, menos riesgo en dinero. Con `no_operar` la orden que no cabe no se envia y queda anotada. Lo lee el cableado al preparar la orden (`colocar_orden_limite`), no una regla (patron de cierre_pendientes, ADR-0068). Por debajo de instrumento_lote_minimo no se opera con ninguna de las dos (ADR-0081 §2). DEFAULT NUESTRO en `limitar`, PROVISIONAL hasta que el trader diga que hace el en su cuenta cuando el lote no cabe: A-57, sesion 5
+el lote que dimensiona RN-011 (riesgo_por_operacion sobre la distancia hasta el stop) puede no caber en firma_volumen_max_lotes ni en el margen libre a firma_apalancamiento (los stops del trader son de pips: FTMO-P-D1.md §2, MARGEN-LOTE.md §2.b). Con `limitar` el bot coloca la orden con el menor de tres lotes -el del riesgo, el tope de volumen y el que cabe en el margen libre por lote_margen_libre_fraccion-, redondeado hacia abajo al paso: la misma decision, el mismo resultado en R, menos riesgo en dinero. Con `no_operar` la orden que no cabe no se envia y queda anotada. Lo lee el cableado al preparar la orden (`colocar_orden_limite`), no una regla (patron de cierre_pendientes, ADR-0068). Por debajo de instrumento_lote_minimo no se opera con ninguna de las dos (ADR-0081 §2). Fue DEFAULT NUESTRO en `limitar`, PROVISIONAL bajo A-57 hasta el 2026-10-26: EL TRADER LO CONFIRMO en la sesion 5 (S-5, 2026-10-23, fb-2026-10-23-sesion-05-146c4789, ev-v15-001758-c27d9c4c: «bajo el lote y a lo que cabe y entro igual»), con las reservas de que lo dijo «por ahora» y con «creo», y despues de que Aleks le planteara la disyuntiva; A-57 RESUELTA. La fuente sigue siendo la decision (categoria ejecucion: el valor lo decide ADR-0081 y el trader lo confirma)
 
 Opciones: `limitar`, `no_operar`.
 

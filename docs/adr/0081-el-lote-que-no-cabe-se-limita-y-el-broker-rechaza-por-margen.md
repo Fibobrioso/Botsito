@@ -37,6 +37,16 @@ la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 («El lote que no cabe: ¿qué h
 cuenta real cuando el stop es tan pequeño que el lote del 0,5 % pasa del máximo de la firma (50
 lotes)?») y se amplía al margen.
 
+> **CONFIRMADO POR EL TRADER el 2026-10-23 (sesión 5, S-5; recuadro del 2026-10-26,
+> `trabajo/activar-sesion-05`, que no reescribe el cuerpo).** A la pregunta de A-57 respondió la
+> opción (a): «bajo el lote y a lo que cabe y entro igual» (`ev-v15-001758-c27d9c4c`;
+> `fb-2026-10-23-sesion-05-146c4789`, RESOLVE_UNKNOWN sobre A-57, que queda RESUELTA). D1 deja de
+> ser PROVISIONAL y `lote_si_no_cabe` pasa a CONFIRMED en `limitar` con fuente esta decisión (es
+> de `ejecucion`: el valor lo decide el ADR y el trader lo confirma). Reservas, escritas en el
+> registro: lo dijo «por ahora» y con «creo», y después de que Aleks, preguntado por él, le
+> planteara la disyuntiva entre una gestión de riesgo fija y una variable
+> (`SESION-05-EXTRACCION.md` §3.2, S-5); no ha vivido el caso en su cuenta.
+
 ### 2. D2 · El lote final es el menor de tres, redondeado hacia abajo al paso
 
     lote = min( lote del riesgo (RN-011),
@@ -253,5 +263,5 @@ heredado 37; A-18).
 
 ## Estado
 
-ACTIVE (PROVISIONAL en D1 hasta la respuesta del trader a A-57, sesión 5; enmienda ADR-0052 §4,
-ADR-0053 §1 y ADR-0026, Impacto)
+ACTIVE (D1 confirmada por el trader en la sesión 5, A-57 RESUELTA el 2026-10-26, con sus
+reservas en el recuadro de §1; enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto)

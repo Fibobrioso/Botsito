@@ -274,8 +274,9 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 IDS_RESERVADOS: dict[str, str] = {}
 # Las RESUELTAS, congeladas: las doce de la sesion 1, A-14 y A-20 (por escrito), las diez de la
 # sesion 3, A-29 y A-36 (trabajo/cerrar-a29-a36), A-42 (ADR-0069), las siete de la sesion 4
-# (trabajo/activar-sesion-04), A-51 (trabajo/activar-sesion-04-motor, ADR-0077) y A-21 (la misma
-# rama, ADR-0076). El comentario
+# (trabajo/activar-sesion-04), A-51 (trabajo/activar-sesion-04-motor, ADR-0077), A-21 (la misma
+# rama, ADR-0076) y A-57 (la sesion 5, S-5, trabajo/activar-sesion-05: el trader confirmo el
+# DEFAULT de ADR-0081, limitar el lote y entrar). El comentario
 # de `test_ambiguedades_reales_y_esquema` cuenta la
 # historia de cada una. Una «en parte» NUNCA entra aqui (`test_una_en_parte_no_entra_en_resueltas`).
 RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
@@ -303,6 +304,7 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
         "A-47",
         "A-51",
         "A-52",
+        "A-57",
     }
 )
 # Las que la sesion 4 dejo «en parte» (SESION-04-EXTRACCION.md §5; ACTIVAR-SESION-04.md §0.e y §5)

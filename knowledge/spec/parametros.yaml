@@ -1877,11 +1877,14 @@ parametros:
       mismo resultado en R, menos riesgo en dinero. Con `no_operar` la orden que no cabe no se
       envia y queda anotada. Lo lee el cableado al preparar la orden (`colocar_orden_limite`), no
       una regla (patron de cierre_pendientes, ADR-0068). Por debajo de instrumento_lote_minimo no
-      se opera con ninguna de las dos (ADR-0081 §2). DEFAULT NUESTRO en `limitar`, PROVISIONAL
-      hasta que el trader diga que hace el en su cuenta cuando el lote no cabe: A-57, sesion 5
-    estado: DEFAULT_AMBIGUOUS
+      se opera con ninguna de las dos (ADR-0081 §2). Fue DEFAULT NUESTRO en `limitar`, PROVISIONAL
+      bajo A-57 hasta el 2026-10-26: EL TRADER LO CONFIRMO en la sesion 5 (S-5, 2026-10-23,
+      fb-2026-10-23-sesion-05-146c4789, ev-v15-001758-c27d9c4c: «bajo el lote y a lo que cabe y
+      entro igual»), con las reservas de que lo dijo «por ahora» y con «creo», y despues de que
+      Aleks le planteara la disyuntiva; A-57 RESUELTA. La fuente sigue siendo la decision
+      (categoria ejecucion: el valor lo decide ADR-0081 y el trader lo confirma)
+    estado: CONFIRMED
     valor: limitar
-    ambiguedad_id: A-57
     consumido_por: [ADR-0081]
     fuente:
       tipo: decision

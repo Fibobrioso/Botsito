@@ -727,6 +727,43 @@ desde ahora a secas en cada `make check` con la misma lectura de antes, están d
 corregirlo. `knowledge validate`: exit 0 (`OK: registro con 109 parametros (14 sin confirmar)`,
 `OK: 179 registros de feedback`).
 
+### 1.3 A-57 RESUELTA · `lote_si_no_cabe` = `limitar`, confirmado por el trader (A.3; punto 9)
+
+**El registro:** `fb-2026-10-23-sesion-05-146c4789`, RESOLVE_UNKNOWN sobre LA AMBIGÜEDAD A-57
+(ADR-0022), cita `ev-v15-001758-c27d9c4c` (0:17:58-0:18:15), `valor_resultante` «baja el lote a lo
+que cabe y entra igual (lote_si_no_cabe = limitar, la opcion a; por ahora)». Las notas llevan las
+tres reservas (punto 9 (a)): «por ahora» y «creo» (17:58), y que contestó después de que Aleks,
+preguntado por él, planteara la disyuntiva (remitiendo a SESION-05-EXTRACCION.md §3.2, S-5, sin
+citarla); y que no ha vivido el caso en su cuenta. `feedback apply --check` no propone nada nuevo
+(`3 parametros; 0 cambian, 3 ya estaban`): el registro va sobre la ambigüedad, no sobre el
+parámetro, y `lote_si_no_cabe` es de `ejecucion`.
+
+**Los cinco sitios** (`AMBIGUEDADES.md`):
+1. `parametros.yaml`, `lote_si_no_cabe`: a mano, `estado: CONFIRMED`, sin `ambiguedad_id`, la fuente
+   sigue siendo `decision` ADR-0081 (lo que exige `test_registro.py:176-180` para un parámetro que
+   no es de estrategia); la descripción dice quién lo confirmó, cuándo y con qué reservas.
+2. `ambiguedades.yaml`, A-57: `estado: RESUELTA`, «RESUELTA el 2026-10-23 en la sesion 5 …» al final
+   de `pregunta` con las reservas, y un comentario fechado.
+3. La regla que lo citaba: las notas de RN-011 («DEFAULT bajo A-57 hasta el 2026-10-26 … A-57 ESTA
+   RESUELTA»).
+4. La tabla «Known Ambiguities» de `PROJECT_STATE.md`: sale la fila de A-57.
+5. La hoja de preguntas: A-57 no estaba en ella (no cambia).
+
+Más `tests/unit/test_kit.py` (RESUELTAS gana A-57, con su comentario), `spec_version` 18.1.5 →
+18.1.6 con manifiesto (`5532492a9236…`) y docs, y ADR-0081: recuadro bajo D1 («CONFIRMADO POR EL
+TRADER … D1 deja de ser PROVISIONAL», con las reservas), su `## Estado` y la fila del índice. El
+comentario de `src/botsito/engine/broker.py:177` («DEFAULT_AMBIGUOUS bajo A-57») queda viejo y
+`src/` está protegido: a la rama de motor (§0.e, 24).
+
+**Lo medido:** `tests/contract/test_provisional_cuelga_de_abierta.py`, `test_registro.py`,
+`test_margen_lote.py`, `test_kit.py`, `test_hoja_preguntas.py`, `test_en_parte_no_se_cierra.py`,
+`test_spec_docs_generados.py`, `test_adr.py`, `test_project_state.py` y
+`test_reabrir_y_fuente_documental.py`: 176 en verde, 0 fallos. `knowledge validate`: exit 0.
+`feedback pending`: el registro de A-57 queda reflejado (A-57 RESUELTA); los dos pendientes que
+lista son anteriores a la rama (`fb-2026-09-29-sesion-03-31fb311f` y
+`fb-2026-10-04-sesion-04-ca0afae6`, los CORRECT sobre RN-003 que §0.e ya contaba y que las notas de
+RN-003 explican).
+
 ## Estado
 
 EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por
