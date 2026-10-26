@@ -423,3 +423,17 @@ tramos:
       precaucion: el trader ensena su replay de julio y dice hasta que dia llego su backtest, un dia del 18 en adelante. El numero no se escribe en ningun sitio y no se usa para nada. La respuesta a S-25, desde 0:31:37, queda fuera del tramo
     acordado: >-
       respuesta del consultor a la PARADA de v16 (2026-10-25, punto 1), con su decision 4 del encargo de trabajo/sesion-05 («ENTRADAS», a); docs/validation/SESION-05-EXTRACCION.md y docs/validation/HOLDOUT-EXPOSICIONES.md
+  - video_id: v16
+    t0: "0:32:58"
+    t1: "0:33:08"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 05 (v16): el bloque [CUARENTENA 32:58–33:07] de la version filtrada, que cayo por la cuarentena por condicion (un mes no demostrado libre y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-05 (2026-10-25); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-05-EXTRACCION.md
+  - video_id: v16
+    t0: "0:33:11"
+    t1: "0:33:23"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 05 (v16): el bloque [CUARENTENA 33:11–33:22] de la version filtrada, que cayo por la cuarentena por condicion (un mes no demostrado libre y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-05 (2026-10-25); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-05-EXTRACCION.md

@@ -290,6 +290,12 @@ filtrada.
   y `[CUARENTENA 33:11–33:22]`, los dos en «Para cerrar» y caídos por un mes (más el vecino de cada
   uno). No se leen. Por el contexto visible (§3, «Para cerrar»), son la petición de la confirmación
   escrita de marzo; su contenido se da por la declaración de Aleks, como manda el añadido.
+- **Los dos bloques, a `tramos_no_citables.yaml`**, sin contenido y en un commit propio (paso 4 de
+  la skill; encargo, «El recorrido»), con el criterio de «Los límites de un tramo»
+  (`SESION-DE-PREGUNTAS.md`): **0:32:58–0:33:08** y **0:33:11–0:33:23** (el fin de cada bloque más
+  un segundo). Control positivo: cada bloque cabe entero en su tramo. El segundo de margen del
+  segundo tramo toca la primera línea visible tras el bloque (`[33:22]`), que por eso tampoco se
+  cita.
 - **Sin corte de audio** (§2.1), así que no hay puerta del ASR que pasar en v16.
 
 ### 2.6 v16: lo que enseñó el trader, y los tramos que se marcaron al leer
