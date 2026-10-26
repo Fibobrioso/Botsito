@@ -17,8 +17,7 @@ from botsito.domain.estructura_m1 import SOLO_UNA_ZONA_DE_CONTROL
 from botsito.domain.pivotes_m15 import CIERRE_VELA_CONTRARIA
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
-from botsito.engine import diagnostico, zonas
-from botsito.engine.diagnostico import Diagnostico
+from botsito.engine import zonas
 from botsito.engine.interprete import EstadoDia, Interprete, Momento, ReglaEjecutable
 from botsito.engine.motor import DatosMercado, MotorSpec
 from botsito.engine.perfil_cuenta import cargar_perfil
@@ -102,11 +101,9 @@ def _datos(registro: Registro, m1: list[Vela]) -> DatosMercado:
 
 
 def _motor(registro: Registro, reglas: list[ReglaEjecutable]) -> MotorSpec:
-    tope = tope_del_registro(
-        registro,
-        cargar_perfil(tc.PERFIL).huso_corte(),
-        Diagnostico(a44=diagnostico.A44_SIN_TOPE),
-    )
+    # a secas desde la sesion 5 (trabajo/activar-sesion-05): A-44 esta fijada y el diagnostico se
+    # rechaza; sobre un dia sintetico sin perdidas el tope del dia no dispara
+    tope = tope_del_registro(registro, cargar_perfil(tc.PERFIL).huso_corte())
     primitivas = primitivas_escritas(registro, tope, SOLO_UNA_ZONA_DE_CONTROL)
     return MotorSpec(Interprete(cargar_vocabulario(ta.SPEC), primitivas), reglas)
 

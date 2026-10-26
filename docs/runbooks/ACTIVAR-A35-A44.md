@@ -1,5 +1,27 @@
 # Activar RN-004 y RN-020 con la respuesta del trader (A-35 y A-44)
 
+> **NOTA (2026-10-26, rama `trabajo/activar-sesion-05`; el cuerpo no se toca).** Este runbook se
+> ejecutó con la sesión 5 (2026-10-23, v15; `docs/validation/ACTIVAR-SESION-05.md`). Lo que se
+> fijó: `liquidez_m15_pivote_formado` = `cierre_vela_contraria` (S-3,
+> `fb-2026-10-23-sesion-05-03449065`), `perdida_trader_alcance` = `dia` y `perdida_trader_unidad`
+> = `porcentaje` (S-4, `fb-2026-10-23-sesion-05-e9559876`, `fb-2026-10-23-sesion-05-1772d9ef`),
+> todos por `feedback apply` (§2); `perdida_trader_reinicio_huso` sigue UNKNOWN (el corte del
+> perfil, SUPUESTO, como dice la tabla de §0). El arnés y el visor corren a secas y
+> `--diagnostico-a35` y `--diagnostico-a44` se rechazan; §0 («tiene que salir `ERROR: A-35 sin
+> fijar`») ya no describe el estado de partida. **Tres desviaciones declaradas de este runbook**,
+> por orden del consultor (respuesta a la PARADA del 2026-10-26, puntos 0, 1 y 6): (1) la segunda
+> mitad de A-35 («se actualiza el de la mecha», `ev-v15-000553-9d95178a`), que contradice lo fijo y
+> visible de `domain/pivotes_m15.py`, NO se abre como ambigüedad nueva (§1 lo pedía): ya es la
+> pregunta de A-35, que sigue ABIERTA, y su mecanismo lo escribe la rama de motor con ADR; (2)
+> `perdida_maxima_semanal` = 9 queda CONFIRMED y SIN EFECTO con el alcance `dia`, sin el CORRECT
+> que §1 pide para «un tope distinto de los de la sesión 1»: el trader dijo del 9 % semanal «creo
+> que aquí hay un error» (`ev-v15-000913-bdb12f92`), y lo que lo sustituye es la racha de RN-036; (3)
+> `perdida_trader_magnitud` = `saldo` entra como DEFAULT_AMBIGUOUS bajo A-44 (lectura del consultor
+> sobre `fb-2026-09-09-sesion-01-bff260ea`), no por la tabla de §1 («la pérdida es sobre lo
+> cerrado»): el trader no lo dijo, y es la primera pregunta de la sesión 6. A-35 y A-44 siguen
+> ABIERTAS y bloqueantes: los cinco sitios de §3 no se tocaron para ellas. La medida de §5 y §5.1
+> (la re-corrida con `--simular` y su `diff`) va después de la rama de motor, no en la de spec.
+
 Para ejecutarlo minutos después de la reunión con el trader. Desde `trabajo/preparar-a35-a44`
 (2026-09-26) activar cada regla es **escribir UN valor y correr UN comando**: el mecanismo ya
 está construido y probado; lo único que falta es lo que el trader diga. **Nada de lo que hay aquí

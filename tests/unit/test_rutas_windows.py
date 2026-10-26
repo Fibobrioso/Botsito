@@ -72,12 +72,14 @@ def test_la_cli_se_niega_ante_una_ruta_larga_antes_de_leer_nada(
     from botsito import cli
 
     real = cargar_criterio(RAIZ)
-    d = _mas_largas()
-    diag = ["--diagnostico-a35", str(d.a35), "--diagnostico-a44", str(d.a44)]
-    carpeta = tmp_path / ("c" * max(1, LIMITE_RUTA_WINDOWS - len(str(tmp_path)) - 40))
+    # sin `--diagnostico-*` desde la sesion 5 (A-35 y A-44 fijadas: la CLI los rechaza antes de
+    # mirar la ruta). Hasta entonces la carpeta quedaba 40 por debajo del limite y era el rotulo
+    # del diagnostico el que la pasaba; sin rotulo, la carpeta sola tiene que pasarlo (medido el
+    # 2026-10-26: con el margen de 40 el arnes corria entero y fallaba al escribir)
+    carpeta = tmp_path / ("c" * max(1, LIMITE_RUTA_WINDOWS - len(str(tmp_path)) + 1))
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.construccion[0], "--salida",
-         str(carpeta / "informe.txt"), *diag]
+         str(carpeta / "informe.txt")]
     )  # fmt: skip
     err = capsys.readouterr().err
     assert codigo == 2 and str(LIMITE_RUTA_WINDOWS) in err and "--salida" in err
@@ -86,7 +88,7 @@ def test_la_cli_se_niega_ante_una_ruta_larga_antes_de_leer_nada(
     if casos:
         codigo = cli.main(
             ["--repo", str(RAIZ), "motor", "visor", "--caso", casos[0].stem, "--salida",
-             str(carpeta), *diag]
+             str(carpeta)]
         )  # fmt: skip
         err = capsys.readouterr().err
         assert codigo == 2 and str(LIMITE_RUTA_WINDOWS) in err

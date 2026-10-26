@@ -119,18 +119,71 @@ def _registro_sintetico(tmp_path: Path, **valores: str) -> Registro:
 # ------------------------------------------------------------------------- los tres estados
 
 
-def test_sin_fijar_se_niega_nombrando_a44_y_el_diagnostico_corre(registro: Registro) -> None:
+def _diagnostico(tmp_path: Path, modo: str) -> TopeTrader:
+    """Un tope hipotetico sobre un registro SIN A-44 (los seis UNKNOWN). Hasta el 2026-10-26 estos
+    tests lo pedian sobre el registro real; desde la sesion 5 (`trabajo/activar-sesion-05`) el real
+    tiene A-44 fijada y rechaza el diagnostico, asi que los tres estados del tope se prueban sobre
+    un registro sintetico sin fijar. Lo que prueban no cambia."""
+    return tope_del_registro(_registro_sintetico(tmp_path), HUSO_PERFIL, Diagnostico(a44=modo))
+
+
+def test_sin_fijar_se_niega_nombrando_a44_y_el_diagnostico_corre(tmp_path: Path) -> None:
+    sin_fijar = _registro_sintetico(tmp_path)
     with pytest.raises(TopeSinFijarError, match="A-44") as exc:
-        tope_del_registro(registro, HUSO_PERFIL)
+        tope_del_registro(sin_fijar, HUSO_PERFIL)
     assert tope_trader.P_ALCANCE in str(exc.value) and "diagnostico" in str(exc.value)
-    sin = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_SIN_TOPE))
+    sin = _diagnostico(tmp_path, diagnostico.A44_SIN_TOPE)
     assert sin.alcance == SIN_TOPE and sin.diagnostico == "DIAGNOSTICO-A44-sin_tope"
     assert not sin.aplica_dia and not sin.aplica_semana and "sin_tope" in sin.descripcion()
-    marcador = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_MARCADOR))
+    marcador = _diagnostico(tmp_path, diagnostico.A44_MARCADOR)
     assert marcador.alcance == AMBOS and marcador.unidad == USD and marcador.magnitud == EQUITY
     assert marcador.tope_dia == Decimal(1) and marcador.tope_semana == Decimal(1)
     assert marcador.huso_supuesto and marcador.huso_reinicio is HUSO_PERFIL
     assert "DIAGNOSTICO-A44-marcador" in marcador.descripcion()
+
+
+def test_con_el_registro_real_el_tope_es_el_del_dia_en_porcentaje_sobre_el_saldo(
+    registro: Registro,
+) -> None:
+    """Lo que la sesion 5 fijo (S-4, trabajo/activar-sesion-05): solo el tope del dia, en
+    porcentaje (el 4,5 % de la sesion 1 sobre el saldo inicial del dia), sin tope de semana; la
+    magnitud `saldo` es un DEFAULT_AMBIGUOUS bajo A-44 (lectura del consultor) y el reloj del
+    reinicio sigue sin decirlo el trader: el corte del perfil, marcado SUPUESTO. Con el valor
+    puesto, el diagnostico se rechaza."""
+    t = tope_del_registro(registro, HUSO_PERFIL)
+    assert (t.alcance, t.magnitud, t.unidad) == (DIA, SALDO, PORCENTAJE)
+    assert t.aplica_dia and not t.aplica_semana
+    assert (t.tope_dia, t.tope_semana) == (Decimal("4.5"), None)
+    assert t.base_dia == "saldo_inicial_dia"
+    assert t.huso_supuesto and t.huso_reinicio is HUSO_PERFIL and SUPUESTO_HUSO in t.descripcion()
+    assert t.diagnostico is None
+    with pytest.raises(TopeRechazadoError, match="ya esta fijado"):
+        tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_SIN_TOPE))
+
+
+def test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta(
+    registro: Registro,
+) -> None:
+    """El test saldo/equity que pidio el encargo de trabajo/activar-sesion-05 (lo pedia sobre un
+    registro sintetico; va sobre el REAL, para que vigile el valor real, y lo sintetico es el
+    escenario: hecho de otra forma, declarado en ACTIVAR-SESION-05.md §1.2): con la magnitud leida
+    del registro (saldo, bajo A-44) una posicion abierta que va perdiendo y se recupera no suma
+    perdida del dia; si el registro se leyera como equity, sumaria. Si alguien cambia la magnitud a
+    equity sin pasar por A-44, este test falla."""
+    t0 = datetime(2030, 1, 15, 8, tzinfo=UTC)
+    real = tope_del_registro(registro, HUSO_PERFIL)
+    como_equity = TopeTrader(
+        real.alcance, EQUITY, real.unidad, real.tope_dia, real.tope_semana,
+        real.base_dia, real.base_semana, real.huso_reinicio, real.huso_supuesto,
+    )  # fmt: skip
+    caida = CAPITAL - 5000  # la equity con la posicion abierta en perdida; el saldo no se mueve
+    por_registro = SeguidorTope(real, t0, CAPITAL).acumuladores(CAPITAL, caida)
+    por_equity = SeguidorTope(como_equity, t0, CAPITAL).acumuladores(CAPITAL, caida)
+    assert set(por_registro) == {"perdida_dia", "perdida_dia:tope"}
+    assert por_registro["perdida_dia"] == Decimal(0)
+    assert por_equity["perdida_dia"] == Decimal(5)  # 5.000 sobre 100.000, en porcentaje
+    assert por_registro["perdida_dia"] != por_equity["perdida_dia"]
+    assert por_registro["perdida_dia:tope"] == Decimal("4.5")
 
 
 def test_con_el_tope_fijado_el_diagnostico_se_rechaza_y_sin_tope_es_una_respuesta(
@@ -275,9 +328,9 @@ def _motor_con_tope(
 
 
 def test_sin_tope_rn020_no_bloquea_ni_es_hueco(
-    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], tmp_path: Path
 ) -> None:
-    tope = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_SIN_TOPE))
+    tope = _diagnostico(tmp_path, diagnostico.A44_SIN_TOPE)
     motor = _motor_con_tope(registro, vocabulario, tc.RUTA_STOP, tope)
     r = motor.correr_dia(tc._dia())
     traza = r.sesiones["07-11"]
@@ -294,12 +347,12 @@ def test_sin_tope_rn020_no_bloquea_ni_es_hueco(
 
 
 def test_con_un_valor_concreto_rn020_prohibe_al_cierre_de_m1_siguiente_a_la_perdida(
-    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], tmp_path: Path
 ) -> None:
     """El marcador (un dolar sobre la equity): la posicion se llena en MINUTO_ZONA+3 y el precio
     la deja en perdida; RN-020 dispara en el primer cierre de M1 que ve la perdida y fija
     `detenido_por_tope`; la traza dice que el primer limite tocado fue el del trader."""
-    tope = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_MARCADOR))
+    tope = _diagnostico(tmp_path, diagnostico.A44_MARCADOR)
     motor = _motor_con_tope(registro, vocabulario, tc.RUTA_STOP, tope)
     r = motor.correr_dia(tc._dia())
     traza = r.sesiones["07-11"]
@@ -315,13 +368,13 @@ def test_con_un_valor_concreto_rn020_prohibe_al_cierre_de_m1_siguiente_a_la_perd
 
 
 def test_independiente_de_la_firma_se_aplica_el_que_se_toque_primero_y_la_traza_lo_dice(
-    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], tmp_path: Path
 ) -> None:
     """El hueco de 2.000 puntos suspende la cuenta de la firma. Con el marcador del trader, el
     tope del trader se toca ANTES (la posicion queda en perdida tres minutos antes del hueco) y la
     traza lo dice, con el instante de la peor marca; con sin_tope, la primera en tocarse es la
     firma, en el instante exacto del tick."""
-    marcador = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_MARCADOR))
+    marcador = _diagnostico(tmp_path, diagnostico.A44_MARCADOR)
     motor = _motor_con_tope(registro, vocabulario, RUTA_TRADER_PRIMERO, marcador)
     motor.correr_dia(tc._dia())
     assert motor.cuenta is not None and motor.cuenta.estado is EstadoCuenta.SUSPENDIDA
@@ -331,7 +384,7 @@ def test_independiente_de_la_firma_se_aplica_el_que_se_toque_primero_y_la_traza_
     assert (
         origen == ORIGEN_TRADER and cual == "perdida_dia" and firma_ms is not None and ms < firma_ms
     )
-    sin = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_SIN_TOPE))
+    sin = _diagnostico(tmp_path, diagnostico.A44_SIN_TOPE)
     motor2 = _motor_con_tope(registro, vocabulario, RUTA_TRADER_PRIMERO, sin)
     motor2.correr_dia(tc._dia())
     assert motor2.primero_en_tocar is not None and motor2.primero_en_tocar[0] == ORIGEN_FIRMA
@@ -356,17 +409,17 @@ def test_sin_tope_fijado_ni_diagnostico_sigue_siendo_hueco_con_nombre(
 
 
 def test_el_motor_de_la_spec_sin_cuenta_evalua_rn020_con_tope_y_sin_el_es_hueco(
-    registro: Registro, reglas: list[ReglaEjecutable]
+    registro: Registro, reglas: list[ReglaEjecutable], tmp_path: Path
 ) -> None:
     voc = cargar_vocabulario(tc.SPEC)
     datos = ta35._datos(registro, "cierre_vela_contraria")
-    sin = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_SIN_TOPE))
+    sin = _diagnostico(tmp_path, diagnostico.A44_SIN_TOPE)
     r = MotorSpec(Interprete(voc, primitivas_escritas(registro, sin)), reglas).correr_dia(
         ta35._dia(datos)
     )
     faltan = {p for _, p in r.sesiones["07-11"].no_implementadas}
     assert "acumulador:perdida_dia" not in faltan and "RN-020" not in r.sesiones["07-11"].disparadas
-    marcador = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_MARCADOR))
+    marcador = _diagnostico(tmp_path, diagnostico.A44_MARCADOR)
     r = MotorSpec(Interprete(voc, primitivas_escritas(registro, marcador)), reglas).correr_dia(
         ta35._dia(datos)
     )
@@ -378,13 +431,16 @@ def test_el_motor_de_la_spec_sin_cuenta_evalua_rn020_con_tope_y_sin_el_es_hueco(
 
 
 def test_el_marcador_cero_se_alcanza_sin_perder_nada_y_rn020_bloquea_de_punta_a_punta(
-    registro: Registro, vocabulario: dict[str, dict[str, Any]], reglas: list[ReglaEjecutable]
+    registro: Registro,
+    vocabulario: dict[str, dict[str, Any]],
+    reglas: list[ReglaEjecutable],
+    tmp_path: Path,
 ) -> None:
     """Fase 3d de la verificacion: un marcador que SI se alcanza en construccion aunque el bot no
     opere (tope cero). En el motor de la spec RN-020 dispara en cada sesion y fija
     `detenido_por_tope`; en el motor cableado, ademas, `abrir_operacion` queda prohibido y la
     estrategia sintetica no coloca ninguna orden. No es un valor plausible de nadie."""
-    cero = tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_MARCADOR_CERO))
+    cero = _diagnostico(tmp_path, diagnostico.A44_MARCADOR_CERO)
     assert cero.tope_dia == Decimal(0) and cero.diagnostico == "DIAGNOSTICO-A44-marcador_cero"
     voc = cargar_vocabulario(tc.SPEC)
     datos = ta35._datos(registro, "cierre_vela_contraria")
@@ -404,17 +460,23 @@ def test_el_marcador_cero_se_alcanza_sin_perder_nada_y_rn020_bloquea_de_punta_a_
     assert motor.primero_en_tocar is not None and motor.primero_en_tocar[0] == ORIGEN_TRADER
 
 
-def test_la_cli_se_niega_sin_a44_aunque_a35_vaya_en_diagnostico(
+def test_la_cli_rechaza_el_diagnostico_de_a44_con_el_tope_fijado(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    """Hasta el 2026-10-26 este test comprobaba la NEGATIVA a secas con el registro real sin
+    fijar (nombrando A-44). Cambia de sentido A PROPOSITO en `trabajo/activar-sesion-05`: la sesion
+    5 fijo el tope del trader, asi que `--diagnostico-a44` se rechaza («ya esta fijado») antes de
+    leer una sola vela y sin escribir nada; a secas la corrida cuenta (la prueba, con `data/`,
+    `test_preparar_a35.py::test_por_la_cli_a_secas_el_informe_cuenta_y_no_lleva_etiqueta_si_hay_datos`)."""
     from botsito import cli
 
     real = cargar_criterio(RAIZ)
     salida = tmp_path / "informe.txt"
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.construccion[0], "--salida",
-         str(salida), "--diagnostico-a35", "inicio_vela_contraria"]
+         str(salida), "--diagnostico-a44", "sin_tope"]
     )  # fmt: skip
     err = capsys.readouterr().err
-    assert codigo == 2 and "A-44" in err and tope_trader.P_ALCANCE in err
+    assert codigo == 2 and "ya esta fijado" in err and tope_trader.P_ALCANCE in err
+    assert "A-35" not in err  # la compuerta de A-35 ya no para nada: tambien esta fijada
     assert not list(tmp_path.iterdir())

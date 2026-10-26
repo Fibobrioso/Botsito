@@ -1,0 +1,25 @@
+id: fb-2026-10-23-sesion-05-b09c3fed
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-003
+accion: CONFIRM
+respuesta_literal: la respuesta es con el sesgo bajista una vela neutra de 4 horas deja el sesgo bajista
+  todavía
+registrado_por: 'Aleks · grabacion de la sesion 5, segunda parte (v16, 2026-10-25), version filtrada leida
+  por la sesion; activado por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, encargo A.5
+  y respuesta a la PARADA, punto 3: CONFIRM sobre la regla, no sobre el ADR)'
+grabacion: Grabación de pantalla 2026-10-25 140140.mp4
+t0: 0:26:41
+t1: 0:26:46
+notas: 'S-23 (ADR-0075): con el sesgo bajista, una H4 neutra -doble ruptura y cierre sin color- mantiene
+  el sesgo bajista, la opcion a (ev-v16-002641-e8e6eafc); tambien con dos neutras seguidas, hasta una
+  ruptura con cuerpo (ev-v16-002521-02c1be20). Completa el caso alcista de la sesion 4 (fb-2026-10-04-sesion-04-ca0afae6,
+  ev-v10-014005-7e2228f4): la RESERVA de ese registro -lo dijo con sesgo previo alcista y el caso bajista
+  se deducia- queda contestada en voz. Es lo que hace el motor (test_sesgo_h4.py::test_una_neutra_mantiene_el_sesgo_anterior_alcista_y_bajista
+  y ::test_dos_neutras_seguidas_mantienen_el_sesgo). Para precisar: el lunes sigue el sesgo que se arrastra.
+  «creo» solo en un ejemplo, no en la regla'
+recibido_el: '2026-10-25'
+procedencia: trader_grabado

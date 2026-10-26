@@ -53,6 +53,16 @@ una neutra no tiene color; es la lectura de S-13 (ADR-0075), con su reserva: el 
 solo con un sesgo previo alcista. **Va como pregunta de confirmación a la sesión 5** (lista «Para
 el cuestionario de la sesión 5» de `SESGO-H4-COLOR.md`).
 
+> **CONFIRMADO POR EL TRADER el 2026-10-23 (sesión 5, S-2, sobre un esquema dibujado; recuadro del
+> 2026-10-26, `trabajo/activar-sesion-05`, que no reescribe el cuerpo).** «Sigue el sesgo que
+> había … la respuesta es la B» (`ev-v15-000256-f3c52278`; `fb-2026-10-23-sesion-05-85ce7ba5`,
+> CONFIRM sobre RN-003): la ruptura simple de una vela sin cuerpo no decide y la búsqueda sigue
+> (que lo lejos que llegue la mecha es indiferente lo cuenta `SESION-05-EXTRACCION.md` §3.3, S-2,
+> fuera del ítem). D3 deja de ser una decisión provisional del
+> consultor. Reserva: la subpregunta del caso al revés (sesgo bajista) se leyó y el trader volvió al
+> ejemplo alcista; la regla que dio, «sigue el sesgo que había», cubre los dos lados, pero el caso
+> bajista no lo dijo con sus palabras.
+
 ### 5. D4 · El extremo es el máximo o el mínimo, y romperlo con mecha o con cuerpo es superarlo con la mecha
 
 La línea discontinua del esquema está en la mecha: el extremo de la anterior es su máximo o su
@@ -139,6 +149,17 @@ cuya mecha rompio por encima deja el sesgo alcista»). Decisión del consultor (
   que cambia es la condición del cierre, que entra por el CORRECT sobre RN-003, como ADR-0060 y
   ADR-0075 cambiaron la regla sin reabrir A-1 ni A-34. Reabrirla quitaría el registro que sostiene
   `mecha`.
+
+> **CONTRADICCIÓN CERRADA el 2026-10-23 (sesión 5, S-1, con el esquema dibujado; recuadro del
+> 2026-10-26, `trabajo/activar-sesion-05`, que no reescribe el cuerpo).** Con el sesgo bajista y
+> una H4 que rompe el máximo de la anterior solo con la mecha y cierra roja, el trader dijo «sigue
+> bajista, claramente … como cierra bajista, pues sigue siendo bajista» (`ev-v15-000049-3b294480`;
+> `fb-2026-10-23-sesion-05-af24c935`, CONFIRM sobre RN-003): es el caso 3 de la regla del color, y
+> va con el WhatsApp y contra la sesión 1. Añadió que el sesgo «se decide al cierre de esa vela
+> nunca se cambia la idea durante la vela siguiente» (`ev-v15-000138-ef123dfc`); que lo lejos que
+> llegue la mecha y el tamaño del cuerpo no importan lo cuenta `SESION-05-EXTRACCION.md` §3.3, S-1,
+> fuera de los ítems. Lo que recogían las notas de `41f46b21` queda contradicho
+> por dos respuestas del trader; A-1 sigue sin reabrirse (punto 6). Las notas de RN-003 lo dicen.
 
 ### 10. El motor y el arnés
 

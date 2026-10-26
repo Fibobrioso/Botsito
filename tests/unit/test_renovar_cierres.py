@@ -185,7 +185,7 @@ def test_simular_un_dia_posterior_a_hasta_sale_con_2_y_lo_nombra(
     r = cli.main(
         [
             "--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", "2026-04",
-            "--diagnostico-a35", "cierre_vela_contraria", "--diagnostico-a44", "sin_tope",
+            # sin `--diagnostico-*` desde la sesion 5: A-35 y A-44 fijadas, se rechazan
             "--salida", str(tmp_path / "arnes.txt"),
         ]
     )  # fmt: skip

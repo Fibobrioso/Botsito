@@ -274,8 +274,10 @@ def repo_kit(tmp_path: Path) -> tuple[Path, dict[str, str]]:
 IDS_RESERVADOS: dict[str, str] = {}
 # Las RESUELTAS, congeladas: las doce de la sesion 1, A-14 y A-20 (por escrito), las diez de la
 # sesion 3, A-29 y A-36 (trabajo/cerrar-a29-a36), A-42 (ADR-0069), las siete de la sesion 4
-# (trabajo/activar-sesion-04), A-51 (trabajo/activar-sesion-04-motor, ADR-0077) y A-21 (la misma
-# rama, ADR-0076). El comentario
+# (trabajo/activar-sesion-04), A-51 (trabajo/activar-sesion-04-motor, ADR-0077), A-21 (la misma
+# rama, ADR-0076), A-57 (la sesion 5, S-5, trabajo/activar-sesion-05: el trader confirmo el
+# DEFAULT de ADR-0081, limitar el lote y entrar) y A-32 (la sesion 5, S-18 de v16: en M1 la mecha
+# siempre vale; la sesion 4 la habia dejado en parte). El comentario
 # de `test_ambiguedades_reales_y_esquema` cuenta la
 # historia de cada una. Una «en parte» NUNCA entra aqui (`test_una_en_parte_no_entra_en_resueltas`).
 RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
@@ -289,6 +291,7 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
         "A-29",
         "A-30",
         "A-31",
+        "A-32",
         "A-33",
         "A-34",
         "A-36",
@@ -303,14 +306,19 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
         "A-47",
         "A-51",
         "A-52",
+        "A-57",
     }
 )
 # Las que la sesion 4 dejo «en parte» (SESION-04-EXTRACCION.md §5; ACTIVAR-SESION-04.md §0.e y §5)
 # y van a la hoja de la sesion 5 sin cerrarse. A-49 es MEZCLADA -S-4 resuelve, S-1 y S-2 en parte-
 # y por eso `tests/unit/test_en_parte_no_se_cierra.py` no la vigila como «solo en parte»: el
 # consultor la dejo ABIERTA (PARADA 2 de trabajo/activar-sesion-04, opcion b: el testimonio de S-4
-# entra como CONFIRM sobre su item, fb-2026-10-04-sesion-04-35a080e2, sin cerrarla).
-EN_PARTE_SESION_4 = frozenset({"A-13", "A-32", "A-35", "A-43", "A-44", "A-49", "A-50", "A-53"})
+# entra como CONFIRM sobre su item, fb-2026-10-04-sesion-04-35a080e2, sin cerrarla). A-32 salio
+# el 2026-10-26 (trabajo/activar-sesion-05): la sesion 4 la dejo en parte y la sesion 5 la resuelve
+# (S-18, v16), asi que una sesion posterior puede cerrar lo que la 4 dejo en parte; lo que la 5
+# deja en parte lo vigila `test_la_sesion_5_deja_en_parte_lo_que_dice_su_tabla`
+# (tests/unit/test_en_parte_no_se_cierra.py).
+EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-44", "A-49", "A-50", "A-53"})
 
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:

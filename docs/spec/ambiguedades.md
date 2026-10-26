@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.1.3` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.1.9` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (15)
+## ABIERTA (13)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -28,15 +28,9 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
 
-### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
-
-En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada.
-
-Afecta a: `breaker_m1_criterio_ruptura`.
-
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
-Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco?
+Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco? RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado» (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), contradice lo que hace el motor y queda para la rama de motor y la sesion 6. SIGUE ABIERTA.
 
 Afecta a: `liquidez_m15_pivote_formado`.
 
@@ -48,7 +42,7 @@ Afecta a: `toma_antes_de_la_ventana`.
 
 ### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) · **BLOQUEANTE** · pregunta
 
-¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar? RESPONDIDA en la sesion 3 (2026-09-29, v9 1:11:30-1:11:54) con una lectura que el registro no tiene: el tope no es un porcentaje sino 9 perdidas SEGUIDAS, sin importar el dia ni la semana («9 pérdidas seguidas» / «O en un día» / «Seguidas»; «el último cartucho es el noveno»). No encaja en perdida_trader_alcance ni en perdida_trader_unidad, asi que PARA (docs/runbooks/ACTIVAR-A35-A44.md §4) y sigue ABIERTA; lo que falta para escribir el tope es A-51.
+¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar? RESPONDIDA en la sesion 3 (2026-09-29, v9 1:11:30-1:11:54) con una lectura que el registro no tiene: el tope no es un porcentaje sino 9 perdidas SEGUIDAS, sin importar el dia ni la semana («9 pérdidas seguidas» / «O en un día» / «Seguidas»; «el último cartucho es el noveno»). No encaja en perdida_trader_alcance ni en perdida_trader_unidad, asi que PARA (docs/runbooks/ACTIVAR-A35-A44.md §4) y sigue ABIERTA; lo que falta para escribir el tope es A-51. RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:08:56-0:09:20, S-4): solo el tope del dia y las 9 seguidas, sin tope de semana (ev-v15-000856-ee8f7ba3), y la cifra en porcentaje, «sería un 4,5» (ev-v15-000913-bdb12f92, con «creo»): perdida_trader_alcance = dia y perdida_trader_unidad = porcentaje (fb-2026-10-23-sesion-05-e9559876, fb-2026-10-23-sesion-05-1772d9ef). Lo que no dijo: si la perdida cuenta lo abierto (perdida_trader_magnitud, DEFAULT_AMBIGUOUS en saldo, lectura del consultor) y con que reloj vuelve a contar. SIGUE ABIERTA.
 
 Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`, `perdida_trader_alcance`, `perdida_trader_magnitud`, `perdida_trader_unidad`, `perdida_trader_dia_usd`, `perdida_trader_semana_usd`, `perdida_trader_reinicio_huso`.
 
@@ -102,12 +96,6 @@ Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa
 
 Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Impacto»: «Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00.».
 
-### A-57 · qué hace el trader cuando el lote de su riesgo no cabe en el margen o en el volumen máximo de la cuenta · pregunta
-
-En la cuenta a la que va el bot (FTMO Swing: 50 lotes como máximo por orden y apalancamiento 1:30), el lote del 0,5 % sobre la distancia al stop no cabe cuando el stop es muy corto: el volumen máximo corta por debajo de 1 pip y el margen libre, con todo el saldo, por debajo de unos 1,8-2 pips (FTMO-P-D1.md §2). ¿Qué haces tú en tu cuenta real cuando el stop es tan pequeño que el lote de tu riesgo no cabe: reduces el lote al que cabe y entras igual, no entras, u otra cosa? Hasta tu respuesta el bot LIMITA el lote y opera (lote_si_no_cabe, ADR-0081, decisión provisional del consultor). Ninguna frase tuya del corpus habla de esto: se buscó en la evidencia, el feedback y las transcripciones citables («apalancamiento», «lotes», «lote» junto a «cabe», «máximo», «bróker», «cuenta», «fondeo» o «FTMO»: 0 resultados; «margen»: solo el margen de beneficio o del stop; «lotaje»: solo sobre qué distancia se calcula). Las dos citas de abajo son lo más cercano, y son respaldo débil: dicen lo que hiciste con el lote en tu prueba de fondeo (entrar sin calcularlo; un lote fijo muy bajo por falta de calculadora), no qué haces cuando el lote de tu riesgo no cabe.
-
-Afecta a: `lote_si_no_cabe`.
-
 ## DECIDIDA (7)
 
 ### A-15 · alcance de la ventana operativa · cerrada por `ADR-0024` el 2026-09-12
@@ -150,7 +138,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (35)
+## RESUELTA (37)
 
 ### A-1 · sesgo H4
 
@@ -274,6 +262,12 @@ Afecta a: `orden_pendiente_al_abrir_sesion`.
 
 Si una entrada se activa sin que se haya dado la ruptura y acaba tocando el stop, ¿cómo la cuentas en tus intentos? RESUELTA el 2026-09-29 en la sesion 3 (v9 1:26:12): «si llega a tocar el stop se considera como un loss … gastaría un intento»: la lectura de RN-016 era la del trader (fb-2026-09-29-sesion-03-d36ba0d2).
 
+### A-32 · el nivel que al romperse con mecha invalida la entrada · pregunta
+
+En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa nada. RESUELTA el 2026-10-25 en la sesion 5 (S-18, la de v16, 0:02:34-0:03:12 y 0:06:03-0:06:18; fb-2026-10-23-sesion-05-b8271811, ev-v16-000234-9a4fa375, ev-v16-000603-6955d127): «en M1 la mecha siempre vale»; la unica ruptura que pide cuerpo es la que habilita la zona lineal de liquidez de M15, y una linea que viene de M15 «la cuento como de M15 aunque la mire de M1». Ningun valor cambia: breaker_m1_criterio_ruptura = mecha y liquidez_m15_criterio_toma = cuerpo ya lo hacian, y ningun codigo descarta una entrada por una linea de M1 rota con mecha.
+
+Afecta a: `breaker_m1_criterio_ruptura`.
+
 ### A-33 · tres ganadoras que cierran por debajo de 3R · pregunta
 
 ¿Alguna vez cierras una operación ganadora antes de que llegue al objetivo? ¿En qué casos? RESUELTA el 2026-10-04 en la sesion 4 (S-12, v10 1:27:04-1:27:36 y 1:29:02-1:29:21; ADR-0073): nunca; «todo es 13 o sea fijo es 13 la regla es esa [...] respecto al 1 de la caja», sin parciales y sin dejar correr. RESERVA LITERAL del trader: «no vamos a dejar correr nada por ahora» (ev-v10-012704-d3facd31): lo de los primeros videos queda de lado, no negado. Las ganadoras del material que cierran por debajo de 3R, que esta respuesta no explica, pasan a A-56 (medicion). Ningun valor cambia: parciales, objetivo_rr y base_calculo_objetivo ya estaban CONFIRMED (fb-2026-10-04-sesion-04-df162e6e).
@@ -343,3 +337,9 @@ Afecta a: `racha_perdidas_max`, `racha_perdidas_corte`, `racha_perdidas_reinicio
 En una misma sesión, cada vez que el precio toma una liquidez nueva de M15, ¿vuelves a buscar entrada? (a) sí, todas las veces, no hay máximo; (b) hasta un número de liquidez por sesión, ¿cuántas?; (c) otra, ¿cuál? Es la pregunta 20 de docs/sesion-4/PREGUNTAS.md. RESUELTA el 2026-10-04 en la sesion 4 (S-20, v10 1:54:49-1:55:04 y 1:56:40-1:56:55): opcion (a), sin maximo; «tomamos todas las entradas ganadoras o perdidas que se puedan dar en una sesión», hasta que salta el tope de perdida (fb-2026-10-04-sesion-04-f0e58d1f; max_escenarios_por_sesion queda CONFIRMED en sin_limite, el mismo valor). Las «dos entradas por dia» de v4 quedan descartadas.
 
 Afecta a: `max_escenarios_por_sesion`.
+
+### A-57 · qué hace el trader cuando el lote de su riesgo no cabe en el margen o en el volumen máximo de la cuenta · pregunta
+
+En la cuenta a la que va el bot (FTMO Swing: 50 lotes como máximo por orden y apalancamiento 1:30), el lote del 0,5 % sobre la distancia al stop no cabe cuando el stop es muy corto: el volumen máximo corta por debajo de 1 pip y el margen libre, con todo el saldo, por debajo de unos 1,8-2 pips (FTMO-P-D1.md §2). ¿Qué haces tú en tu cuenta real cuando el stop es tan pequeño que el lote de tu riesgo no cabe: reduces el lote al que cabe y entras igual, no entras, u otra cosa? Hasta tu respuesta el bot LIMITA el lote y opera (lote_si_no_cabe, ADR-0081, decisión provisional del consultor). Ninguna frase tuya del corpus habla de esto: se buscó en la evidencia, el feedback y las transcripciones citables («apalancamiento», «lotes», «lote» junto a «cabe», «máximo», «bróker», «cuenta», «fondeo» o «FTMO»: 0 resultados; «margen»: solo el margen de beneficio o del stop; «lotaje»: solo sobre qué distancia se calcula). Las dos citas de abajo son lo más cercano, y son respaldo débil: dicen lo que hiciste con el lote en tu prueba de fondeo (entrar sin calcularlo; un lote fijo muy bajo por falta de calculadora), no qué haces cuando el lote de tu riesgo no cabe. RESUELTA el 2026-10-23 en la sesion 5 (S-5, v15 0:17:58-0:18:15; fb-2026-10-23-sesion-05-146c4789, ev-v15-001758-c27d9c4c): «bajo el lote y a lo que cabe y entro igual», la opcion a, que es lo que hace el bot (lote_si_no_cabe = limitar, ADR-0081). RESERVAS: lo dijo «por ahora» y con «creo», y despues de que Aleks le planteara la disyuntiva; y no ha vivido el caso en su cuenta (lo cuenta SESION-05-EXTRACCION.md §3.2, S-5, fuera de los items).
+
+Afecta a: `lote_si_no_cabe`.

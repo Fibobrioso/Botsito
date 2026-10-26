@@ -50,6 +50,11 @@ no cambia.
   no haya otro rango mayor» (SESION-04-EXTRACCION.md §3.14): la búsqueda hacia atrás de ADR-0044
   §2 es la que da «el rango anterior», y no se toca.
 
+> **NOTA del 2026-10-26 (`trabajo/activar-sesion-05`).** La reserva (1) queda contestada en la
+> sesión 5 (S-23, v16, `ev-v16-002641-e8e6eafc`; `fb-2026-10-23-sesion-05-b09c3fed`, CONFIRM
+> sobre RN-003): con el sesgo bajista la neutra lo mantiene, también dos seguidas, hasta una
+> ruptura con cuerpo.
+
 ### 2. Lo que enmienda de ADR-0060
 
 - **§1**, «La vela con doble ruptura fija el sesgo: la búsqueda hacia atrás de ADR-0044 §2 para en

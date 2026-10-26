@@ -1,0 +1,28 @@
+id: fb-2026-10-23-sesion-05-146c4789
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-57
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Pero en este caso lo más óptimo por ahora, planteándolo, creo que sería pues no usar
+  una gestión, o sea, fija en cierta parte. O sea, opción A. Claro, bajo el lote y a lo que cabe y entro
+  igual.
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, encargo A.3 y respuesta a la PARADA,
+  punto 9: todas las reservas, escritas en las notas)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: 0:17:58
+t1: 0:18:15
+valor_resultante: baja el lote a lo que cabe y entra igual (lote_si_no_cabe = limitar, la opcion a; por
+  ahora)
+notas: 'S-5 (A-57, ADR-0081 D1): la opcion a, que es lo que hace el bot (ev-v15-001758-c27d9c4c). RESERVAS,
+  las dos del encargo y la tercera de la extraccion: lo dijo con «por ahora» y con «creo» (17:58); y contesto
+  despues de que Aleks, preguntado por el, planteara la disyuntiva entre una gestion de riesgo fija y
+  una variable (SESION-05-EXTRACCION.md §3.2, S-5, que lo hace notar; no se cita). No ha vivido el caso
+  en su cuenta («no me ha pasado») y con menos lote «se seguia manteniendo el rr». lote_si_no_cabe es
+  de categoria ejecucion: feedback apply no lo escribe, pasa a mano de DEFAULT_AMBIGUOUS a CONFIRMED con
+  fuente decision ADR-0081, que deja de ser PROVISIONAL en D1'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

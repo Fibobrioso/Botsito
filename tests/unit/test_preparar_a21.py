@@ -27,7 +27,7 @@ from botsito.domain.pivotes_m15 import CIERRE_VELA_CONTRARIA
 from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
-from botsito.engine import arnes, cableado, diagnostico, visor, zonas
+from botsito.engine import arnes, cableado, visor, zonas
 from botsito.engine.cuenta import reglas_de_fase
 from botsito.engine.diagnostico import Diagnostico
 from botsito.engine.interprete import Interprete, ReglaEjecutable
@@ -152,11 +152,9 @@ def _datos(registro: Registro, camino: list[Paso], hasta: int | None = None) -> 
 
 
 def _motor(registro: Registro, reglas: list[ReglaEjecutable], limpia: str) -> MotorSpec:
-    tope = tope_del_registro(
-        registro,
-        cargar_perfil(tc.PERFIL).huso_corte(),
-        Diagnostico(a44=diagnostico.A44_SIN_TOPE),
-    )
+    # a secas desde la sesion 5 (trabajo/activar-sesion-05): A-44 esta fijada y el diagnostico se
+    # rechaza; sobre un dia sintetico sin perdidas el tope del dia no dispara
+    tope = tope_del_registro(registro, cargar_perfil(tc.PERFIL).huso_corte())
     return MotorSpec(
         Interprete(cargar_vocabulario(ta.SPEC), primitivas_escritas(registro, tope, limpia)), reglas
     )
@@ -286,14 +284,13 @@ def _mercado_de(m1: list[Vela]) -> MercadoDia:
 def test_por_el_cableado_la_zona_llega_al_broker_como_una_orden_limite(
     registro: Registro, reglas: list[ReglaEjecutable]
 ) -> None:
-    """Con el broker y la cuenta cableados (ADR-0053) y los tres selectores en diagnostico, la
-    zona del primer esquema se convierte en una orden limite en la entrada del bloque, con el stop
-    a stop_fraccion_caja de la caja y el objetivo a objetivo_rr sobre la caja completa."""
+    """Con el broker y la cuenta cableados (ADR-0053) y el tope del trader leido del registro
+    (a secas desde la sesion 5), la zona del primer esquema se convierte en una orden limite en la
+    entrada del bloque, con el stop a stop_fraccion_caja de la caja y el objetivo a objetivo_rr
+    sobre la caja completa."""
     m1 = _m1(LIMPIO)
     perfil = cargar_perfil(tc.PERFIL)
-    tope = tope_del_registro(
-        registro, perfil.huso_corte(), Diagnostico(a44=diagnostico.A44_SIN_TOPE)
-    )
+    tope = tope_del_registro(registro, perfil.huso_corte())
     motor = cableado.MotorCableado(
         vocabulario=cargar_vocabulario(ta.SPEC),
         reglas=reglas,

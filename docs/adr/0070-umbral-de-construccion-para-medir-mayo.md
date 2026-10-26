@@ -78,6 +78,15 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > 70.0 %; precision 2.6 % por debajo de 60.0 %)`; con la cuenta reiniciada cada día, cobertura
    > 6.1 % y precisión 12.8 %, también «no».
 
+   > **NOTA del 2026-10-26 (`trabajo/activar-sesion-05`, no reescribe el cuerpo).** Desde la
+   > sesión 5 (S-3, `fb-2026-10-23-sesion-05-03449065`) A-35 tiene valor y `--diagnostico-a35`
+   > se rechaza; y con A-44 (S-4, `fb-2026-10-23-sesion-05-e9559876`,
+   > `fb-2026-10-23-sesion-05-1772d9ef`, y la magnitud como DEFAULT_AMBIGUOUS bajo A-44) también
+   > `--diagnostico-a44`: el motor ya no necesita ningún diagnóstico para correr. La corrida sobre toda la
+   > construcción con `--simular` y sin ningún `--diagnostico-*` es la que cuenta por este punto,
+   > y es la re-corrida que sigue a la rama de motor de la sesión 5, no una de esa rama (que solo
+   > corrió sobre un mes con `--meses`, lo que por el punto 2 no habilita nada).
+
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
 5. **Dónde viven las cifras y quién lo dice.** Tres campos nuevos en `criterio_fidelidad.yaml`,

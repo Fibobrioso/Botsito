@@ -847,6 +847,12 @@ ambiguedades:
       En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea
       horizontal que tenías dibujada. ¿Qué nivel marcaba esa línea? Si no lo recuerdas, no pasa
       nada.
+      RESUELTA el 2026-10-25 en la sesion 5 (S-18, la de v16, 0:02:34-0:03:12 y 0:06:03-0:06:18;
+      fb-2026-10-23-sesion-05-b8271811, ev-v16-000234-9a4fa375, ev-v16-000603-6955d127): «en M1 la
+      mecha siempre vale»; la unica ruptura que pide cuerpo es la que habilita la zona lineal de
+      liquidez de M15, y una linea que viene de M15 «la cuento como de M15 aunque la mire de M1».
+      Ningun valor cambia: breaker_m1_criterio_ruptura = mecha y liquidez_m15_criterio_toma =
+      cuerpo ya lo hacian, y ningun codigo descarta una entrada por una linea de M1 rota con mecha.
     # PREGUNTA ANTERIOR, SUSTITUIDA EN LA SEGUNDA REVISION DEL CONSULTOR (2026-09-25, rama
     # trabajo/sesion-02):
     # "En uno de tus vídeos descartas una entrada porque el precio rompe con mecha una línea
@@ -860,12 +866,16 @@ ambiguedades:
     resuelve_en: [F19, F20]
     # la linea no lleva etiqueta en pantalla; en la misma pantalla, unos segundos antes y en M15, hay
     # zonas marcadas "m1 lq" y "15 lq", asi que el trader distingue las dos y aqui no consta cual es
+    # La sesion 4 la dejo EN PARTE (S-23, ev-v10-020142-30fd2569: en M1 vale con mecha y cuerpo; un
+    # nivel de M15 roto con mecha anula la entrada) y la sesion 5 la RESUELVE (S-18, v16; rama
+    # trabajo/activar-sesion-05, A.4 del encargo): sale de la hoja de preguntas y de
+    # EN_PARTE_SESION_4 de tests/unit/test_kit.py
     evidencia:
       - ev-v4-005310-ce69f8c6
       - ev-v4-005910-d24c0345
     parametros: [breaker_m1_criterio_ruptura]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -951,7 +961,12 @@ ambiguedades:
     titulo: cuándo un pivote de M15 está formado
     pregunta: >-
       Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué
-      haces si después el precio lo supera un poco?
+      haces si después el precio lo supera un poco? RESPONDIDA EN PARTE en la sesion 5 (2026-10-23,
+      v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado»
+      (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija
+      liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la
+      segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), contradice lo que hace el
+      motor y queda para la rama de motor y la sesion 6. SIGUE ABIERTA.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
@@ -979,6 +994,14 @@ ambiguedades:
     # El selector de la respuesta, SIN VALOR (UNKNOWN) desde el 2026-09-26 (rama
     # trabajo/preparar-a35-a44): sus opciones son las dos lecturas que el corpus documenta, y
     # activar RN-004 es escribirle la que diga el trader (docs/runbooks/ACTIVAR-A35-A44.md)
+    # CON VALOR DESDE EL 2026-10-26 (rama trabajo/activar-sesion-05, sesion 5, S-3): el trader
+    # responde la primera mitad -cierre_vela_contraria, fb-2026-10-23-sesion-05-03449065- y el
+    # parametro se fija con la ambiguedad ABIERTA. Es una DESVIACION declarada de la skill
+    # activar-sesion («en parte no se cierra ... sin fijar nada») y del runbook §1 (la segunda
+    # mitad no abre una ambiguedad nueva: ya es esta pregunta), por orden del consultor (respuesta
+    # a la PARADA, punto 0), para que el arnes corra sin --diagnostico-a35. Lo que falta: si el
+    # extremo se actualiza a la mecha de la vela contraria (ev-v15-000553-9d95178a, que hoy
+    # pivotes_m15.py no hace) -rama de motor con ADR, y la sesion 6 lo confirma-
     parametros: [liquidez_m15_pivote_formado]
     contradiccion: null
     estado: ABIERTA
@@ -1286,7 +1309,13 @@ ambiguedades:
       semana («9 pérdidas seguidas» / «O en un día» / «Seguidas»; «el último cartucho es el
       noveno»). No encaja en perdida_trader_alcance ni en perdida_trader_unidad, asi que PARA
       (docs/runbooks/ACTIVAR-A35-A44.md §4) y sigue ABIERTA; lo que falta para escribir el tope
-      es A-51.
+      es A-51. RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:08:56-0:09:20, S-4): solo el
+      tope del dia y las 9 seguidas, sin tope de semana (ev-v15-000856-ee8f7ba3), y la cifra en
+      porcentaje, «sería un 4,5» (ev-v15-000913-bdb12f92, con «creo»): perdida_trader_alcance = dia
+      y perdida_trader_unidad = porcentaje (fb-2026-10-23-sesion-05-e9559876,
+      fb-2026-10-23-sesion-05-1772d9ef). Lo que no dijo: si la perdida cuenta lo abierto
+      (perdida_trader_magnitud, DEFAULT_AMBIGUOUS en saldo, lectura del consultor) y con que reloj
+      vuelve a contar. SIGUE ABIERTA.
     resuelve_en: [F11, F18]
     # NACE EL 2026-09-26 (rama trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks
     # tras la revision del consultor). RN-020 -«el tope porcentual del trader es el unico freno del
@@ -1310,6 +1339,14 @@ ambiguedades:
     # Los seis `perdida_trader_*` son los campos que la respuesta fija, SIN VALOR (UNKNOWN) desde
     # el 2026-09-26 (rama trabajo/preparar-a35-a44): alcance (sin_tope | dia | semana | ambos),
     # magnitud, unidad, las cifras en dinero y el huso del reinicio (docs/runbooks/ACTIVAR-A35-A44.md)
+    # CON VALOR DESDE EL 2026-10-26 (rama trabajo/activar-sesion-05, sesion 5, S-4): alcance dia y
+    # unidad porcentaje por el trader; magnitud saldo como DEFAULT_AMBIGUOUS bajo esta ambiguedad
+    # (lectura del consultor sobre fb-2026-09-09-sesion-01-bff260ea, sin registro de feedback;
+    # respuesta del consultor a la PARADA, punto 1); el huso del reinicio sigue UNKNOWN y
+    # perdida_maxima_semanal queda CONFIRMED y sin efecto, sin CORRECT. Fijar con la ambiguedad
+    # ABIERTA es una DESVIACION declarada de la skill activar-sesion y del runbook §1, por orden del
+    # consultor (punto 0), para que el arnes corra sin --diagnostico-a44. Para la sesion 6, en este
+    # orden: la magnitud (¿cuenta lo abierto?) y el reloj con el que vuelve a contar
     parametros: [perdida_maxima_diaria, base_calculo_perdida_diaria, perdida_maxima_semanal, base_calculo_perdida_semanal, perdida_trader_alcance, perdida_trader_magnitud, perdida_trader_unidad, perdida_trader_dia_usd, perdida_trader_semana_usd, perdida_trader_reinicio_huso]
     contradiccion: null
     estado: ABIERTA
@@ -1753,14 +1790,23 @@ ambiguedades:
       calcula). Las dos citas de abajo son lo más cercano, y son respaldo débil: dicen lo que
       hiciste con el lote en tu prueba de fondeo (entrar sin calcularlo; un lote fijo muy bajo por
       falta de calculadora), no qué haces cuando el lote de tu riesgo no cabe.
+      RESUELTA el 2026-10-23 en la sesion 5 (S-5, v15 0:17:58-0:18:15;
+      fb-2026-10-23-sesion-05-146c4789, ev-v15-001758-c27d9c4c): «bajo el lote y a lo que cabe y
+      entro igual», la opcion a, que es lo que hace el bot (lote_si_no_cabe = limitar, ADR-0081).
+      RESERVAS: lo dijo «por ahora» y con «creo», y despues de que Aleks le planteara la
+      disyuntiva; y no ha vivido el caso en su cuenta (lo cuenta SESION-05-EXTRACCION.md §3.2, S-5,
+      fuera de los items).
     resuelve_en: [F24]
     # NACE el 2026-10-17 (rama trabajo/margen-lote, ADR-0081 §6; respuesta del consultor a la PARADA,
     # punto 4). Clase pregunta y NO bloqueante: el bot opera con el DEFAULT (limitar) y la respuesta
     # del trader entra como RESOLVE_UNKNOWN sobre esta ambiguedad en la sesion 5 (R4.1).
+    # RESUELTA el 2026-10-26 (rama trabajo/activar-sesion-05, A.3 del encargo): lote_si_no_cabe pasa
+    # a CONFIRMED con fuente decision ADR-0081 (categoria ejecucion: feedback apply no lo escribe), y
+    # ADR-0081 deja de ser PROVISIONAL en D1 (recuadro). Las reservas, en las notas del registro.
     evidencia: [ev-v4-002457-5a2e88c6, ev-v4-012900-8ef676ed]
     parametros: [lote_si_no_cabe]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

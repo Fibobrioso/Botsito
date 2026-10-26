@@ -12,6 +12,8 @@ phase: post-F14 (rama `trabajo/margen-lote`, R3.3 de la hoja de ruta; heredado 3
 > su cuenta cuando el lote de su riesgo no cabe NO está en el corpus (§6): la decisión D1 es
 > PROVISIONAL hasta la sesión 5 (A-57). **Enmienda ADR-0052 §4, ADR-0053 §1 (tabla, `redondear_lote`)
 > y ADR-0026 (Impacto)**, con recuadro en cada uno y fila del índice.
+> *(NOTA del 2026-10-26, `trabajo/activar-sesion-05`: D1 ya no es provisional; el trader la confirmó
+> en la sesión 5, recuadro de §1.)*
 
 ## Decision
 
@@ -36,6 +38,17 @@ el trader diga qué hace él** (A-57, §6): la pregunta ya estaba en la lista «
 la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 («El lote que no cabe: ¿qué hace el trader en su
 cuenta real cuando el stop es tan pequeño que el lote del 0,5 % pasa del máximo de la firma (50
 lotes)?») y se amplía al margen.
+
+> **CONFIRMADO POR EL TRADER el 2026-10-23 (sesión 5, S-5; recuadro del 2026-10-26,
+> `trabajo/activar-sesion-05`, que no reescribe el cuerpo).** A la pregunta de A-57 respondió la
+> opción (a): «bajo el lote y a lo que cabe y entro igual» (`ev-v15-001758-c27d9c4c`;
+> `fb-2026-10-23-sesion-05-146c4789`, RESOLVE_UNKNOWN sobre A-57, que queda RESUELTA). D1 deja de
+> ser PROVISIONAL y `lote_si_no_cabe` pasa a CONFIRMED en `limitar` con fuente esta decisión (es
+> de `ejecucion`: el valor lo decide el ADR y el trader lo confirma). Reservas, escritas en el
+> registro: lo dijo «por ahora» y con «creo», y después de que Aleks, preguntado por él, le
+> planteara la disyuntiva entre una gestión de riesgo fija y una variable
+> (`SESION-05-EXTRACCION.md` §3.2, S-5), y, según esa misma sección y fuera de los ítems, no ha
+> vivido el caso en su cuenta.
 
 ### 2. D2 · El lote final es el menor de tres, redondeado hacia abajo al paso
 
@@ -70,7 +83,9 @@ En `knowledge/spec/parametros.yaml`, con el patrón de `cierre_pendientes` (ADR-
 de ejecución que lee el simulador, no una regla de la spec):
 
 - **`lote_si_no_cabe`**: `enum`, opciones `limitar` | `no_operar`, valor **`limitar`**,
-  `DEFAULT_AMBIGUOUS` bajo **A-57**, `consumido_por: [ADR-0081]`. Con `no_operar`, una orden cuyo
+  `DEFAULT_AMBIGUOUS` bajo **A-57**, `consumido_por: [ADR-0081]` *(NOTA del 2026-10-26,
+  `trabajo/activar-sesion-05`: CONFIRMED en `limitar` con fuente esta decisión, A-57 RESUELTA por el
+  trader en la sesión 5; recuadro de §1)*. Con `no_operar`, una orden cuyo
   lote del riesgo no cabe NO SE ENVÍA y queda anotada con su motivo en la traza del día (como
   `bloqueadas`); el camino es el mismo que el del lote por debajo del mínimo (§2).
 - **`lote_margen_libre_fraccion`**: `decimal`, valor **`0.95`**, entre 0 y 1, `CONFIRMED`,
@@ -253,5 +268,6 @@ heredado 37; A-18).
 
 ## Estado
 
-ACTIVE (PROVISIONAL en D1 hasta la respuesta del trader a A-57, sesión 5; enmienda ADR-0052 §4,
-ADR-0053 §1 y ADR-0026, Impacto)
+ACTIVE (D1 confirmada por el trader en la sesión 5, 2026-10-23: A-57 RESUELTA, activada el
+2026-10-26, con sus reservas en el recuadro de §1; enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026,
+Impacto)

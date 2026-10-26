@@ -1,0 +1,24 @@
+id: fb-2026-10-23-sesion-05-a42c72dd
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: evidence
+  id: ev-v9-004919-c6bfb3ee
+accion: CORRECT
+respuesta_literal: claro en una compra sería bien pues queda por debajo ahora lo muestro en el ejemplo
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, encargo A.5: CORRECT sobre evidencia,
+  precedente fb-2026-09-09-sesion-01-2ba4c3e7)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: '1:01:04'
+t1: '1:01:25'
+valor_resultante: por debajo del nivel tomado en una compra
+notas: 'S-12a (RN-005): el item de la sesion 3 decia de una compra «no nos importa lo que haga por debajo,
+  aquí no hay ninguna entrada, tiene que ser todo por encima» (ev-v9-004919-c6bfb3ee, A-50), y en la sesion
+  5, con el esquema delante, el trader dice que en una compra la caja queda por debajo del nivel tomado
+  (ev-v15-010104-23adba23), que es lo que RN-005 y el motor hacen. El item no se edita (inmutable) ni
+  se supersede: este CORRECT deja dicho que su afirmacion queda corregida por la sesion 5; A-50 (si cuenta
+  solo el 0 o la caja entera) sigue ABIERTA. Va junto al CONFIRM sobre RN-005 del mismo tramo'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

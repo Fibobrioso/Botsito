@@ -1,0 +1,27 @@
+id: fb-2026-10-23-sesion-05-1772d9ef
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: parametro
+  id: perdida_trader_unidad
+accion: RESOLVE_UNKNOWN
+respuesta_literal: bueno, creo que aquí hay un error, sería 9 pérdidas seguidas planteándolo a porcentajes,
+  sería un 4,5
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, respuesta a la PARADA, puntos 0 y
+  2: DESVIACION declarada de la skill activar-sesion -«en parte no se cierra», sin fijar nada-: el parametro
+  se fija con A-44 ABIERTA para que el arnes corra a secas)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: 0:09:13
+t1: 0:09:20
+valor_resultante: porcentaje
+notas: 'S-4 (A-44), para precisar: la cifra del tope del dia es un porcentaje -«planteándolo a porcentajes,
+  sería un 4,5»- sobre la base que ya esta CONFIRMED (base_calculo_perdida_diaria = saldo_inicial_dia,
+  fb-2026-09-09-sesion-01-bff260ea). RESERVA: la cita empieza con «creo» (ev-v15-000913-bdb12f92); lo
+  mismo, sin «creo», lo dijo en la sesion 4: «Sería un 4,5% de pérdida en el día» (ev-v10-010913-c4949417,
+  S-9 de SESION-04-EXTRACCION.md), y la hoja de la sesion 5 ya recogia la unidad por esa cita. El «9 %
+  a la semana» de la sesion 1, que aqui llama error, queda CONFIRMED y sin efecto por el alcance dia (ver
+  el registro de perdida_trader_alcance): sin CORRECT, desviacion declarada del runbook §1'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

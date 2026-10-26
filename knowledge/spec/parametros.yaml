@@ -486,7 +486,11 @@ parametros:
       sus hermanos (sesgo_h4_criterio_ruptura, zona_control_criterio_completada,
       break_even_criterio_ruptura y liquidez_m15_criterio_toma) ya eran parametros. NO es la toma de
       liquidez de M15, que exige cuerpo (RN-004): son dos rupturas distintas, y confundirlas es lo
-      que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md)
+      que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md). CONFIRMADO
+      EN LA SESION 5 (2026-10-25, S-18, A-32 RESUELTA; fb-2026-10-23-sesion-05-b8271811,
+      ev-v16-000234-9a4fa375): «en M1 la mecha siempre vale»; solo la ruptura que habilita la zona
+      lineal de M15 pide cuerpo, y una linea que viene de M15 cuenta como de M15 aunque se mire en
+      M1 (ev-v16-000603-6955d127)
     estado: CONFIRMED
     valor: "mecha"
     fuente:
@@ -507,9 +511,20 @@ parametros:
       ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor
       (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo
       diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una
-      regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
-    estado: UNKNOWN
+      regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py). FIJADO EL
+      2026-10-26 (sesion 5, S-3, fb-2026-10-23-sesion-05-03449065): `cierre_vela_contraria`, «en
+      cuanto la vela roja de despues ya cerrado» (ev-v15-000447-6699c708); la vela que cierra sin
+      cuerpo no cuenta como vela de despues (ev-v15-000530-234d4a81). A-35 SIGUE ABIERTA y
+      bloqueante por su segunda mitad -«se actualiza el de la mecha», ev-v15-000553-9d95178a, que
+      contradice lo fijo de pivotes_m15.py y va a la rama de motor-: fijar el parametro con la
+      ambiguedad abierta es una DESVIACION declarada de la skill activar-sesion, por orden del
+      consultor (trabajo/activar-sesion-05, PARADA, punto 0), para que el arnes corra a secas
     consumido_por: [ADR-0045]
+    estado: CONFIRMED
+    valor: cierre_vela_contraria
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-23-sesion-05-03449065
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum
@@ -907,8 +922,10 @@ parametros:
       busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md):
       `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona
       de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la
-      entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna
-      mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque.
+      entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32, RESUELTA el 2026-10-25 en
+      la sesion 5: era la liquidez de M15, porque en M1 la mecha siempre vale,
+      fb-2026-10-23-sesion-05-b8271811), leida como que ninguna mecha entre el bloque de origen y
+      el breaker puede pasar el extremo lejano del bloque.
       RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si
       no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto»
       (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa
@@ -1142,7 +1159,13 @@ parametros:
     unidad: porcentaje del saldo que declara base_calculo_perdida_semanal
     descripcion: >-
       perdida acumulada en la semana que detiene la operativa; la base la fija
-      base_calculo_perdida_semanal y el corte, reloj_dia_riesgo
+      base_calculo_perdida_semanal y el corte, reloj_dia_riesgo. SIN EFECTO DESDE EL 2026-10-26
+      (sesion 5, S-4): perdida_trader_alcance = dia, asi que el motor no lee este tope
+      (engine/tope_trader.py), y el trader dijo del 9 % semanal de la sesion 1 «creo que aquí hay
+      un error, sería 9 pérdidas seguidas» (ev-v15-000913-bdb12f92; ya en la sesion 4,
+      ev-v10-010913-c4949417). Queda CONFIRMED en 9 y SIN CORRECT, como DESVIACION declarada del
+      runbook ACTIVAR-A35-A44.md §1 por orden del consultor (trabajo/activar-sesion-05): lo que lo
+      sustituye es la racha de RN-036 (A-51), no otra cifra
     estado: CONFIRMED
     valor: "9"
     fuente:
@@ -1335,6 +1358,13 @@ parametros:
   # UNKNOWN hasta que el trader responda; leerlos falla y el motor se niega a correr salvo en
   # diagnostico etiquetado (docs/runbooks/ACTIVAR-A35-A44.md). Independientes de los `firma_*` del
   # perfil de cuenta: son del trader, no de la firma (ADR-0053 §3.3 y §9).
+  # DESDE EL 2026-10-26 (sesion 5, S-4; rama trabajo/activar-sesion-05): alcance `dia` y unidad
+  # `porcentaje` los dijo el trader (fb-2026-10-23-sesion-05-e9559876 y
+  # fb-2026-10-23-sesion-05-1772d9ef); la magnitud `saldo` es DEFAULT_AMBIGUOUS, lectura del
+  # consultor bajo A-44, que SIGUE ABIERTA; el huso del reinicio sigue UNKNOWN (el motor usa el corte
+  # del perfil, SUPUESTO) y las dos cifras en dinero no se leen con `porcentaje`. Fijar los
+  # parametros con la ambiguedad abierta es una DESVIACION declarada de la skill activar-sesion,
+  # por orden del consultor (respuesta a la PARADA, puntos 0 y 1), para que el arnes corra a secas.
   - nombre: perdida_trader_alcance
     categoria: estrategia
     tipo: enum
@@ -1344,9 +1374,18 @@ parametros:
       si el trader deja de operar por una perdida acumulada y en que plazo: en el dia
       (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno
       (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay
-      alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
-    estado: UNKNOWN
+      alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega. FIJADO
+      EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-e9559876): `dia`, «no solo el del día y
+      las 9 seguidas la respuesta es la A» (ev-v15-000856-ee8f7ba3): el tope del dia y la racha de
+      RN-036, sin tope de semana; con `dia` el motor no lee perdida_maxima_semanal. A-44 SIGUE
+      ABIERTA por la magnitud (perdida_trader_magnitud) y el reloj del reinicio; fijarlo con ella
+      abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
     consumido_por: [ADR-0053]
+    estado: CONFIRMED
+    valor: dia
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-23-sesion-05-e9559876
   - nombre: perdida_trader_magnitud
     categoria: estrategia
     tipo: enum
@@ -1355,9 +1394,24 @@ parametros:
     descripcion: >-
       si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas)
       o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni
-      perdida_semana (ADR-0053 §3.3): es A-44
-    estado: UNKNOWN
+      perdida_semana (ADR-0053 §3.3): es A-44. DEFAULT NUESTRO en `saldo` desde el 2026-10-26
+      (rama trabajo/activar-sesion-05, respuesta del consultor a la PARADA, punto 1): es LECTURA
+      DEL CONSULTOR, bajo A-44, que sigue ABIERTA, y no una respuesta del trader. La fuente es lo
+      unico que el trader ha dicho con la palabra «saldo», «De la cuenta basado en el saldo, y que
+      sea en el saldo inicial del día» (fb-2026-09-09-sesion-01-bff260ea, que es un CORRECT sobre
+      perdida_maxima_diaria y habla de la BASE del porcentaje, no de si lo abierto cuenta); en la
+      sesion 5 no lo dijo (S-4: ev-v15-000856-ee8f7ba3 y ev-v15-000913-bdb12f92 dan el alcance y la
+      unidad). Por eso no entra CONFIRMED (precedente orden_stop_punto;
+      docs/runbooks/ERRORES-RECURRENTES.md, trabajo/corrida-construccion, leccion 2). Con `saldo`,
+      una caida en abierto que se recupera no cuenta (medido: ACTIVAR-SESION-05.md §0.b.3). Es la
+      primera pregunta de la sesion 6. Lo lee engine/tope_trader.py (`registro.opcion`, anotado)
+    estado: DEFAULT_AMBIGUOUS
+    valor: saldo
+    ambiguedad_id: A-44
     consumido_por: [ADR-0053]
+    fuente:
+      tipo: feedback
+      id: fb-2026-09-09-sesion-01-bff260ea
   - nombre: perdida_trader_unidad
     categoria: estrategia
     tipo: enum
@@ -1366,9 +1420,17 @@ parametros:
     descripcion: >-
       si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y
       perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o
-      una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
-    estado: UNKNOWN
+      una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd).
+      FIJADO EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-1772d9ef): `porcentaje`,
+      «planteándolo a porcentajes, sería un 4,5» (ev-v15-000913-bdb12f92, con «creo»; sin «creo» en
+      la sesion 4, «Sería un 4,5% de pérdida en el día», ev-v10-010913-c4949417). A-44 sigue
+      ABIERTA: DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
     consumido_por: [ADR-0053]
+    estado: CONFIRMED
+    valor: porcentaje
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-23-sesion-05-1772d9ef
   - nombre: perdida_trader_dia_usd
     categoria: estrategia
     tipo: decimal
@@ -1821,11 +1883,14 @@ parametros:
       mismo resultado en R, menos riesgo en dinero. Con `no_operar` la orden que no cabe no se
       envia y queda anotada. Lo lee el cableado al preparar la orden (`colocar_orden_limite`), no
       una regla (patron de cierre_pendientes, ADR-0068). Por debajo de instrumento_lote_minimo no
-      se opera con ninguna de las dos (ADR-0081 §2). DEFAULT NUESTRO en `limitar`, PROVISIONAL
-      hasta que el trader diga que hace el en su cuenta cuando el lote no cabe: A-57, sesion 5
-    estado: DEFAULT_AMBIGUOUS
+      se opera con ninguna de las dos (ADR-0081 §2). Fue DEFAULT NUESTRO en `limitar`, PROVISIONAL
+      bajo A-57 hasta el 2026-10-26: EL TRADER LO CONFIRMO en la sesion 5 (S-5, 2026-10-23,
+      fb-2026-10-23-sesion-05-146c4789, ev-v15-001758-c27d9c4c: «bajo el lote y a lo que cabe y
+      entro igual»), con las reservas de que lo dijo «por ahora» y con «creo», y despues de que
+      Aleks le planteara la disyuntiva; A-57 RESUELTA. La fuente sigue siendo la decision
+      (categoria ejecucion: el valor lo decide ADR-0081 y el trader lo confirma)
+    estado: CONFIRMED
     valor: limitar
-    ambiguedad_id: A-57
     consumido_por: [ADR-0081]
     fuente:
       tipo: decision

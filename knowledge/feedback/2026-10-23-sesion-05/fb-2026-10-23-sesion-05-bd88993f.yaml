@@ -1,0 +1,23 @@
+id: fb-2026-10-23-sesion-05-bd88993f
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-004
+accion: CONFIRM
+respuesta_literal: pero por lo general se toma se da prioridad pues a la liquidez más reciente
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, encargo A.5 y respuesta a la PARADA,
+  punto 3: CONFIRM sobre la regla RN-004, no sobre A-24, que sigue DECIDIDA)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: 0:44:48
+t1: 0:44:54
+notas: 'S-9 (CORRIDA-CONSTRUCCION.md §4.5, pregunta 5): cuando hay varias liquidez de M15 se da prioridad
+  a la mas reciente, la opcion a (ev-v15-004448-aac87b77), y no mira H1 ni H4. Confirma la liquidez que
+  RN-004 toma: el pivote de M15 MAS RECIENTE YA FORMADO, que es A-24 DECIDIDA por ADR-0045 (domain/pivotes_m15.py,
+  pivote_mas_reciente; test_pivotes_m15.py::test_el_mas_reciente_del_lado_pedido_manda). A-24 sigue DECIDIDA:
+  este registro apunta a la regla, no a la ambiguedad. RESERVA: lo dijo con «por lo general» y solo sobre
+  la compra; sin «creo»'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

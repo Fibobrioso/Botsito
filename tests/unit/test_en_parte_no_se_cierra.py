@@ -83,6 +83,38 @@ def test_la_sesion_4_deja_en_parte_lo_que_dice_su_tabla() -> None:
     assert "A-49" not in solo_en_parte(textos)
 
 
+def test_la_sesion_5_deja_en_parte_lo_que_dice_su_tabla() -> None:
+    """El test de control de la sesion 5 (encargo de `trabajo/activar-sesion-05`, A.7): lee SOLO
+    SESION-05-EXTRACCION.md y comprueba que su tabla final deja «solo en parte» lo que la rama no
+    cerro -A-35 y A-44 (con valor en sus parametros, pero ABIERTAS: desviacion declarada), A-43,
+    A-13 y A-53-, y que lo que la 5 da como «resuelve» (A-57 y A-32) no esta entre ellas. Con el
+    primer test del fichero, una «en parte» de la sesion 5 metida en RESUELTAS de
+    ambiguedades.yaml hace fallar `test_ninguna_en_parte_esta_resuelta`; sin este, aquel podria
+    pasar leyendo una tabla vacia de la 5."""
+    sesion_5 = RAIZ / "docs" / "validation" / "SESION-05-EXTRACCION.md"
+    assert sesion_5 in EXTRACCIONES
+    textos = [sesion_5.read_text(encoding="utf-8")]
+    en_parte = solo_en_parte(textos)
+    assert {"A-13", "A-35", "A-43", "A-44", "A-53"} <= en_parte
+    assert not {"A-32", "A-57"} & en_parte
+    # y las cinco siguen ABIERTAS en el YAML: ninguna «en parte» de la 5 se cerro en la rama
+    estados = _estados()
+    assert all(estados[aid] == "ABIERTA" for aid in ("A-13", "A-35", "A-43", "A-44", "A-53"))
+    assert estados["A-32"] == "RESUELTA" and estados["A-57"] == "RESUELTA"
+
+
+def test_se_rompe_a_proposito_si_una_en_parte_de_la_sesion_5_figura_resuelta() -> None:
+    """La rotura a proposito del test de control: el YAML sintetico da RESUELTA una «en parte» de
+    la tabla real de la sesion 5 (A-35) y el lector la caza."""
+    sesion_5 = (RAIZ / "docs" / "validation" / "SESION-05-EXTRACCION.md").read_text(
+        encoding="utf-8"
+    )
+    estados = dict.fromkeys(solo_en_parte([sesion_5]), "ABIERTA")
+    assert en_parte_cerradas([sesion_5], estados) == []
+    estados["A-35"] = "RESUELTA"
+    assert en_parte_cerradas([sesion_5], estados) == ["A-35 (RESUELTA)"]
+
+
 TABLA = """# SESION-09-EXTRACCION
 
 ## 5. Tabla final

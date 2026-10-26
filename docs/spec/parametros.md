@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.1.3` · hash `94d004a77863…`
+`spec_version 18.1.9` · hash `7d95d99de12f…`
 
-109 en total: 93 con valor y 16 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+109 en total: 97 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -61,9 +61,10 @@
 | `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-9f3e9dda` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
+| `liquidez_m15_pivote_formado` | `cierre_vela_contraria` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-03449065` | en que momento un pivote de M15 cuenta como formado (A-35) |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
 | `lote_margen_libre_fraccion` | `0.95` | CONFIRMED | ejecucion | `ADR-0081` | fraccion del margen libre de la cuenta que el lote puede ocupar |
-| `lote_si_no_cabe` | `limitar` | DEFAULT_AMBIGUOUS · en revision por A-57 | ejecucion | `ADR-0081` | que hace el bot cuando el lote del riesgo no cabe en la cuenta |
+| `lote_si_no_cabe` | `limitar` | CONFIRMED | ejecucion | `ADR-0081` | que hace el bot cuando el lote del riesgo no cabe en la cuenta |
 | `mapeo_dos_velas` | `order_block_mayor` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-7ee9cabc` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `max_escenarios_por_sesion` | `sin_limite` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-7ad9753b` | escenarios que puede abrir una sesion como maximo |
 | `modelo_llenado` | `al_tocar` | CONFIRMED | ejecucion | `ADR-0012` | como se decide que una orden limite se ha llenado |
@@ -77,6 +78,9 @@
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
+| `perdida_trader_alcance` | `dia` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-e9559876` | a que aplica el tope de perdida propio del trader |
+| `perdida_trader_magnitud` | `saldo` | DEFAULT_AMBIGUOUS · en revision por A-44 | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | sobre que magnitud de la cuenta se mide la perdida del trader |
+| `perdida_trader_unidad` | `porcentaje` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-1772d9ef` | en que unidad esta la cifra del tope del trader |
 | `racha_perdidas_corte` | `ganadora` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-ecdd0572` | que cierre pone la racha a cero |
 | `racha_perdidas_max` | `9` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-b7040095` | perdidas seguidas tras las que no se opera mas ese dia |
 | `racha_perdidas_reanudacion` | `dia_siguiente` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-fa5ef0f6` | cuando se vuelve a operar tras la racha |
@@ -108,14 +112,10 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 
 - **`broker_dst`** (broker) — con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 - **`broker_offset_base`** (broker) — desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
-- **`liquidez_m15_pivote_formado`** (estrategia) — cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
 - **`objetivo_extension`** (estrategia) — hasta donde se extiende el objetivo; solo si objetivo_extension_activa
-- **`perdida_trader_alcance`** (estrategia) — si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
 - **`perdida_trader_dia_usd`** (estrategia) — el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
-- **`perdida_trader_magnitud`** (estrategia) — si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44
 - **`perdida_trader_reinicio_huso`** (estrategia) — con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?»-. Si no dice otro, el motor usa el huso de corte del perfil de cuenta y la traza lo marca como SUPUESTO; por eso puede quedarse UNKNOWN con el tope fijado. reloj_dia_riesgo dice que el dia de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso
 - **`perdida_trader_semana_usd`** (estrategia) — el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
-- **`perdida_trader_unidad`** (estrategia) — si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
 - **`spread_maximo`** (estrategia) — spread por encima del cual no se abre la operacion; solo si filtro_spread
 - **`stop_colchon_spread`** (estrategia) — si el 0,8 es fijo o es 0,75 mas un colchon variable. RESPONDIDO Y DESCARTADO en la sesion 1 (A-10): el 0,8 ya lleva el colchon dentro, asi que no hay parametro que fijar. Se queda UNKNOWN a proposito -leerlo falla- y la regla vive en strategy_spec
 - **`stop_proteccion_capital`** (estrategia) — la fraccion de la caja que queda al otro lado del stop. DERIVADA de stop_fraccion_caja (1 - 0,8 = 0,2), asi que no se fija aqui: se queda UNKNOWN y el invariante vive en strategy_spec, para que no haya dos puertas para el mismo numero. OJO, dos cosas que esta descripcion decia hasta el 2026-09-11: el stop no "se mueve" -nace en la orden, A-11- y ese tramo no es presupuesto de riesgo que se "guarde", porque el lote ya no se dimensiona sobre la caja entera; RN-012 dice que no se arriesga nunca
@@ -151,10 +151,14 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `huso_operativa` → ADR-0027, ADR-0053, ADR-0063
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
+- `liquidez_m15_pivote_formado` → ADR-0045
 - `lote_margen_libre_fraccion` → ADR-0081
 - `lote_si_no_cabe` → ADR-0081
 - `modelo_llenado` → F24, F27
 - `orden_stop_punto` → ADR-0064
+- `perdida_trader_alcance` → ADR-0053
+- `perdida_trader_magnitud` → ADR-0053
+- `perdida_trader_unidad` → ADR-0053
 - `racha_perdidas_corte` → ADR-0077
 - `racha_perdidas_reanudacion` → ADR-0077
 - `saldo_inicial_cuenta` → F24, F33
@@ -208,7 +212,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `breaker_m1_criterio_ruptura`
 
-criterio de ruptura del breaker (BOS) de M1, el que forma los dos esquemas de entrada. Era el unico de su familia que vivia en prosa -dentro de la descripcion de `se_da_esquema`- mientras sus hermanos (sesgo_h4_criterio_ruptura, zona_control_criterio_completada, break_even_criterio_ruptura y liquidez_m15_criterio_toma) ya eran parametros. NO es la toma de liquidez de M15, que exige cuerpo (RN-004): son dos rupturas distintas, y confundirlas es lo que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md)
+criterio de ruptura del breaker (BOS) de M1, el que forma los dos esquemas de entrada. Era el unico de su familia que vivia en prosa -dentro de la descripcion de `se_da_esquema`- mientras sus hermanos (sesgo_h4_criterio_ruptura, zona_control_criterio_completada, break_even_criterio_ruptura y liquidez_m15_criterio_toma) ya eran parametros. NO es la toma de liquidez de M15, que exige cuerpo (RN-004): son dos rupturas distintas, y confundirlas es lo que hacia parecer que el corpus se contradecia (docs/validation/BREAKER-M1.md). CONFIRMADO EN LA SESION 5 (2026-10-25, S-18, A-32 RESUELTA; fb-2026-10-23-sesion-05-b8271811, ev-v16-000234-9a4fa375): «en M1 la mecha siempre vale»; solo la ruptura que habilita la zona lineal de M15 pide cuerpo, y una linea que viene de M15 cuenta como de M15 aunque se mire en M1 (ev-v16-000603-6955d127)
 
 Opciones: `mecha`, `cuerpo`.
 
@@ -442,7 +446,7 @@ Opciones: `cuerpo`, `mecha`.
 
 ### `liquidez_m15_pivote_formado`
 
-cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
+cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py). FIJADO EL 2026-10-26 (sesion 5, S-3, fb-2026-10-23-sesion-05-03449065): `cierre_vela_contraria`, «en cuanto la vela roja de despues ya cerrado» (ev-v15-000447-6699c708); la vela que cierra sin cuerpo no cuenta como vela de despues (ev-v15-000530-234d4a81). A-35 SIGUE ABIERTA y bloqueante por su segunda mitad -«se actualiza el de la mecha», ev-v15-000553-9d95178a, que contradice lo fijo de pivotes_m15.py y va a la rama de motor-: fijar el parametro con la ambiguedad abierta es una DESVIACION declarada de la skill activar-sesion, por orden del consultor (trabajo/activar-sesion-05, PARADA, punto 0), para que el arnes corra a secas
 
 Opciones: `inicio_vela_contraria`, `cierre_vela_contraria`.
 
@@ -458,7 +462,7 @@ el bot dimensiona el lote que cabe sobre esta fraccion del margen libre (equidad
 
 ### `lote_si_no_cabe`
 
-el lote que dimensiona RN-011 (riesgo_por_operacion sobre la distancia hasta el stop) puede no caber en firma_volumen_max_lotes ni en el margen libre a firma_apalancamiento (los stops del trader son de pips: FTMO-P-D1.md §2, MARGEN-LOTE.md §2.b). Con `limitar` el bot coloca la orden con el menor de tres lotes -el del riesgo, el tope de volumen y el que cabe en el margen libre por lote_margen_libre_fraccion-, redondeado hacia abajo al paso: la misma decision, el mismo resultado en R, menos riesgo en dinero. Con `no_operar` la orden que no cabe no se envia y queda anotada. Lo lee el cableado al preparar la orden (`colocar_orden_limite`), no una regla (patron de cierre_pendientes, ADR-0068). Por debajo de instrumento_lote_minimo no se opera con ninguna de las dos (ADR-0081 §2). DEFAULT NUESTRO en `limitar`, PROVISIONAL hasta que el trader diga que hace el en su cuenta cuando el lote no cabe: A-57, sesion 5
+el lote que dimensiona RN-011 (riesgo_por_operacion sobre la distancia hasta el stop) puede no caber en firma_volumen_max_lotes ni en el margen libre a firma_apalancamiento (los stops del trader son de pips: FTMO-P-D1.md §2, MARGEN-LOTE.md §2.b). Con `limitar` el bot coloca la orden con el menor de tres lotes -el del riesgo, el tope de volumen y el que cabe en el margen libre por lote_margen_libre_fraccion-, redondeado hacia abajo al paso: la misma decision, el mismo resultado en R, menos riesgo en dinero. Con `no_operar` la orden que no cabe no se envia y queda anotada. Lo lee el cableado al preparar la orden (`colocar_orden_limite`), no una regla (patron de cierre_pendientes, ADR-0068). Por debajo de instrumento_lote_minimo no se opera con ninguna de las dos (ADR-0081 §2). Fue DEFAULT NUESTRO en `limitar`, PROVISIONAL bajo A-57 hasta el 2026-10-26: EL TRADER LO CONFIRMO en la sesion 5 (S-5, 2026-10-23, fb-2026-10-23-sesion-05-146c4789, ev-v15-001758-c27d9c4c: «bajo el lote y a lo que cabe y entro igual»), con las reservas de que lo dijo «por ahora» y con «creo», y despues de que Aleks le planteara la disyuntiva; A-57 RESUELTA. La fuente sigue siendo la decision (categoria ejecucion: el valor lo decide ADR-0081 y el trader lo confirma)
 
 Opciones: `limitar`, `no_operar`.
 
@@ -532,11 +536,11 @@ perdida acumulada en el dia que detiene la operativa; la base la fija base_calcu
 
 ### `perdida_maxima_semanal`
 
-perdida acumulada en la semana que detiene la operativa; la base la fija base_calculo_perdida_semanal y el corte, reloj_dia_riesgo
+perdida acumulada en la semana que detiene la operativa; la base la fija base_calculo_perdida_semanal y el corte, reloj_dia_riesgo. SIN EFECTO DESDE EL 2026-10-26 (sesion 5, S-4): perdida_trader_alcance = dia, asi que el motor no lee este tope (engine/tope_trader.py), y el trader dijo del 9 % semanal de la sesion 1 «creo que aquí hay un error, sería 9 pérdidas seguidas» (ev-v15-000913-bdb12f92; ya en la sesion 4, ev-v10-010913-c4949417). Queda CONFIRMED en 9 y SIN CORRECT, como DESVIACION declarada del runbook ACTIVAR-A35-A44.md §1 por orden del consultor (trabajo/activar-sesion-05): lo que lo sustituye es la racha de RN-036 (A-51), no otra cifra
 
 ### `perdida_trader_alcance`
 
-si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
+si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega. FIJADO EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-e9559876): `dia`, «no solo el del día y las 9 seguidas la respuesta es la A» (ev-v15-000856-ee8f7ba3): el tope del dia y la racha de RN-036, sin tope de semana; con `dia` el motor no lee perdida_maxima_semanal. A-44 SIGUE ABIERTA por la magnitud (perdida_trader_magnitud) y el reloj del reinicio; fijarlo con ella abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
 
 Opciones: `sin_tope`, `dia`, `semana`, `ambos`.
 
@@ -546,7 +550,7 @@ el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_uni
 
 ### `perdida_trader_magnitud`
 
-si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44
+si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44. DEFAULT NUESTRO en `saldo` desde el 2026-10-26 (rama trabajo/activar-sesion-05, respuesta del consultor a la PARADA, punto 1): es LECTURA DEL CONSULTOR, bajo A-44, que sigue ABIERTA, y no una respuesta del trader. La fuente es lo unico que el trader ha dicho con la palabra «saldo», «De la cuenta basado en el saldo, y que sea en el saldo inicial del día» (fb-2026-09-09-sesion-01-bff260ea, que es un CORRECT sobre perdida_maxima_diaria y habla de la BASE del porcentaje, no de si lo abierto cuenta); en la sesion 5 no lo dijo (S-4: ev-v15-000856-ee8f7ba3 y ev-v15-000913-bdb12f92 dan el alcance y la unidad). Por eso no entra CONFIRMED (precedente orden_stop_punto; docs/runbooks/ERRORES-RECURRENTES.md, trabajo/corrida-construccion, leccion 2). Con `saldo`, una caida en abierto que se recupera no cuenta (medido: ACTIVAR-SESION-05.md §0.b.3). Es la primera pregunta de la sesion 6. Lo lee engine/tope_trader.py (`registro.opcion`, anotado)
 
 Opciones: `saldo`, `equity`.
 
@@ -560,7 +564,7 @@ el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trade
 
 ### `perdida_trader_unidad`
 
-si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
+si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd). FIJADO EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-1772d9ef): `porcentaje`, «planteándolo a porcentajes, sería un 4,5» (ev-v15-000913-bdb12f92, con «creo»; sin «creo» en la sesion 4, «Sería un 4,5% de pérdida en el día», ev-v10-010913-c4949417). A-44 sigue ABIERTA: DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
 
 Opciones: `porcentaje`, `usd`.
 
@@ -708,7 +712,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `zona_control_limpia`
 
-la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Fue A-21, ABIERTA y BLOQUEANTE de RN-008 hasta el 2026-10-12: este parametro no le ponia valor, solo cerraba el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto» (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa (ev-v10-011734-fedd3f8e). Eso es `solo_una_zona_de_control`: cada paso de vela contraria a vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1 rechaza, medido con series sinteticas en compra y en venta (ADR-0076); no entra ninguna opcion nueva. Lo lee quien construye las primitivas, no una regla (engine/zonas.py); con el valor fijado, --diagnostico-a21 ya no existe
+la condicion que el trader mira para dar por limpia la zona de control antes de entrar (ev-v1-001435-f0586d02, «que no haga mucho ruido, o sea, sea una zona limpia»). Fue A-21, ABIERTA y BLOQUEANTE de RN-008 hasta el 2026-10-12: este parametro no le ponia valor, solo cerraba el conjunto de condiciones de validez de una zona que el corpus enuncia, y que la busqueda de A-21 dio como lo mas cercano (docs/validation/A24-A21-A26-A34-CLASIFICACION.md): `solo_una_zona_de_control`, la unica condicion es la de RN-009 (v3 #624-#627: mas de una zona de control invalida), y `sin_mecha_mas_alla_del_extremo`, una mecha que rompe el nivel deja la entrada sin validez (ev-v4-005310-ce69f8c6; que nivel era es A-32, RESUELTA el 2026-10-25 en la sesion 5: era la liquidez de M15, porque en M1 la mecha siempre vale, fb-2026-10-23-sesion-05-b8271811), leida como que ninguna mecha entre el bloque de origen y el breaker puede pasar el extremo lejano del bloque. RESUELTA POR EL TRADER el 2026-10-04 (sesion 4, S-10, v10 1:17:25): una zona esta limpia si no hay velas verdes y rojas alternandose, «¿Es solo eso? Claro, exacto» (ev-v10-011725-3741e266), y el numero de velas del retroceso no importa (ev-v10-011734-fedd3f8e). Eso es `solo_una_zona_de_control`: cada paso de vela contraria a vela del color de la entrada forma una zona de control que zonas_control_max_por_esquema = 1 rechaza, medido con series sinteticas en compra y en venta (ADR-0076); no entra ninguna opcion nueva. Lo lee quien construye las primitivas, no una regla (engine/zonas.py); con el valor fijado, --diagnostico-a21 ya no existe
 
 Opciones: `solo_una_zona_de_control`, `sin_mecha_mas_alla_del_extremo`.
 
