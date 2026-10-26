@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/activar-sesion-05
+main
 
 ## Current Feature
-trabajo/activar-sesion-05 LISTA PARA REVISIÓN, NO cerrada (abierta el 2026-10-25 desde b61c8f8; tramo R4, R4.1; V de la Next Action): las respuestas de la sesión 5 entran en la spec por su régimen (A-57 y A-32 RESUELTAS), A-35 y A-44 con valor en sus parámetros aunque sigan ABIERTAS, y lo que pide motor o va a la sesión 6 queda en el informe. Encargo docs/encargos/trabajo-activar-sesion-05.md; informe docs/validation/ACTIVAR-SESION-05.md.
+Ninguna rama abierta. trabajo/activar-sesion-05 cerrada en main el 2026-10-26 (stable/F38e-activar-sesion-05): la parte de spec de la sesión 5 activada (A-57 y A-32 RESUELTAS; A-35 y A-44 con valor y ABIERTAS); lo siguiente, la rama de motor (V; F de la Next Action; docs/plan/HOJA-DE-RUTA.md).
 
 ## Stable Main State
-baaf74b · merge de `trabajo/sesion-05` (tag `stable/F38d-sesion-05`): v15 y v16 en el corpus y en `SESIONES_EN_CUARENTENA`, con transcripciones, fotogramas y 11 tramos no citables; 55 ítems de evidencia (49 vivos); docs/sesion-5/HOJA-USADA.md; la confirmación escrita de marzo en fuentes.yaml (A.3 HECHA). Sobre `stable/F38c-guardia-alias` (68eaa83). Informe docs/validation/SESION-05-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
+2c26fb2 · merge de `trabajo/activar-sesion-05` (tag `stable/F38e-activar-sesion-05`): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros y ABIERTAS (desviación declarada); cinco CONFIRM y un CORRECT; spec 18.1.9; el arnés y el visor a secas; lo que pide motor en ACTIVAR-SESION-05.md §2 y la lista de la sesión 6 en §3. Sobre `stable/F38d-sesion-05` (baaf74b). Informe docs/validation/ACTIVAR-SESION-05.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-baaf74b · merge: trabajo/sesion-05, la sesion 5 con el trader ingerida (v15 y v16) y su extraccion por pregunta · tag stable/F38d-sesion-05
+2c26fb2 · merge: trabajo/activar-sesion-05, la parte de spec de la sesion 5 activada (A-57 y A-32 RESUELTAS, A-35 y A-44 con valor) y lo que va a motor y a la sesion 6 · tag stable/F38e-activar-sesion-05
 
 ## Tests Currently Passing
 1698 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
