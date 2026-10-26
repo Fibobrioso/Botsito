@@ -1,0 +1,16 @@
+id: ev-v16-002126-d2376f71
+video_id: v16
+t0: 0:21:26
+t1: 0:21:35
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Pues al día siguiente Nuevamente en cero, o sea, se sigue continuando
+afirmacion: al dia siguiente de parar por 9 perdidas seguidas, la racha empieza en cero (opcion a de S-21)
+tema: riesgo.racha_empieza_en_cero_al_dia_siguiente
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-21 (ADR-0077 §5, que hoy hace b); la confirmacion leida, en 21:26. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

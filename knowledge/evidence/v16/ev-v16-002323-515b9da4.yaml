@@ -1,0 +1,20 @@
+id: ev-v16-002323-515b9da4
+video_id: v16
+t0: 0:23:23
+t1: 0:23:39
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Pues lo cierro enseguida Lo cierro enseguida, nunca se deja ¿Pones órdenes en el último
+  minuto Antes de las 11 o de las 3? Esto es una muy buena pregunta Y la respuesta es no No se pone ninguna
+  orden En el último minuto antes de las 11 o de las 3
+afirmacion: si la orden se llena en el ultimo minuto la cierra enseguida, y en el ultimo minuto antes
+  de las 11 o de las 3 no pone ninguna orden
+tema: entrada.orden.ultimo_minuto_sin_ordenes
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; las lineas
+  mezclan la subpregunta leida y la respuesta
+provenance: botsito
+notas: S-22, para precisar. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

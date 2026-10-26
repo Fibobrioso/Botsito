@@ -1,0 +1,16 @@
+id: ev-v15-011023-5f0f2dd1
+video_id: v15
+t0: '1:10:23'
+t1: '1:10:26'
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: Vale, puede haber que no hubo toma de liquidez de M15.
+afirmacion: una causa de no operar un dia o una sesion es que no hubo toma de liquidez de M15
+tema: no_trade.sin_toma_m15
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-14 (CORRIDA-CONSTRUCCION.md §4.5, pregunta 7). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

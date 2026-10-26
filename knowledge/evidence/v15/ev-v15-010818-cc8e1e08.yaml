@@ -1,0 +1,20 @@
+id: ev-v15-010818-cc8e1e08
+video_id: v15
+t0: '1:08:18'
+t1: '1:08:50'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: es indiferente el tiempo, o sea como hemos podido ver en un ejemplo donde nosotros claro,
+  o sea, justamente aquí en m1 o sea podemos ir actualizando puede pasar 10 15 20 minutos pero si no se
+  nos desarrolla otro otro punto de otro punto breaker entonces es eso no se va a ir actualizando conforme
+  se vaya desarrollando el orden flow pues en m1
+afirmacion: 'una orden sin llenar no tiene tiempo maximo: se va actualizando en M1 conforme se desarrolla
+  el flujo, y si no aparece otro punto de breaker no se mueve'
+tema: entrada.orden.vida_hasta_nuevo_breaker
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-13 (A-53). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

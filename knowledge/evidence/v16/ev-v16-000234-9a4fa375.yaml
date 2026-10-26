@@ -1,0 +1,21 @@
+id: ev-v16-000234-9a4fa375
+video_id: v16
+t0: 0:02:34
+t1: 0:03:12
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no, en M1 la mecha siempre vale pero, claro teniendo en cuenta el contexto también en el
+  que se desarrolla, porque si es con una zona lineal de M15 si es una zona lineal de M15 pues Pues, en
+  este caso es de alcista a bajista y de bajista a alcista, pues, dentro de esta zona de aquí, el rompimiento,
+  para habilitar la zona lineal de M15, tiene que ser con cuerpo. Pero, si no, ya posterior a ello, se
+  puede ser con mecha. Entonces, la respuesta es la A.
+afirmacion: en M1 una ruptura con mecha siempre vale; solo la ruptura que habilita la zona lineal de liquidez
+  de M15 tiene que ser con cuerpo (opcion a de S-18)
+tema: liquidez.m1_mecha_m15_cuerpo
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-18 (A-32), la de v16, que es la que vale (respuesta b de Aleks). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

@@ -1,0 +1,18 @@
+id: ev-v15-000913-bdb12f92
+video_id: v15
+t0: 0:09:13
+t1: 0:09:20
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: bueno, creo que aquí hay un error, sería 9 pérdidas seguidas planteándolo a porcentajes,
+  sería un 4,5
+afirmacion: el 9 % semanal de la sesion 1 es un error; lo que hay son 9 perdidas seguidas, que en porcentaje
+  son un 4,5
+tema: riesgo.tope_diario_45_sin_semanal
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-44), para precisar; con «creo». docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

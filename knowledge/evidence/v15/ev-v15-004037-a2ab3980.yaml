@@ -1,0 +1,20 @@
+id: ev-v15-004037-a2ab3980
+video_id: v15
+t0: 0:40:37
+t1: 0:40:55
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Sí, sería un punto breaker, pero claro, como digo, tiene que cumplir esa condicional de
+  que el precio, pues, haya venido de un order flow bajista. Esto haya llegado hasta aquí por debajo,
+  aquí puede haber todas las velas que quiera, no pasa nada, pero luego nos tiene que romper, o sea, tiene
+  que cerrar por debajo.
+afirmacion: si entre la verde y la roja hay velas sin cuerpo, el maximo de la verde es punto de breaker
+  siempre que el precio venga de un flujo bajista y despues rompa cerrando por debajo
+tema: mapeo.velas_sin_cuerpo_no_cortan_tramo_breaker
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-8, la confirmacion. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

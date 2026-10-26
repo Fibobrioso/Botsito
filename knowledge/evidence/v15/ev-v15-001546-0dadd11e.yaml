@@ -1,0 +1,17 @@
+id: ev-v15-001546-0dadd11e
+video_id: v15
+t0: 0:15:46
+t1: 0:15:53
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: tienes tope de semana y lo tocas un miércoles vuelves el lunes siguiente no, vuelvo el día
+  siguiente y ya está
+afirmacion: tras tocar el tope vuelve a operar al dia siguiente, no el lunes siguiente
+tema: riesgo.tope_vuelve_al_dia_siguiente
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-44), la confirmacion; la linea mezcla la pregunta leida y la respuesta. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

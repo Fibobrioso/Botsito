@@ -1,0 +1,18 @@
+id: ev-v15-012616-d534455a
+video_id: v15
+t0: '1:26:16'
+t1: '1:26:41'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Entro en la zona, no número Sino entro en la zona en la que el precio llega a activar
+afirmacion: 'despues de la toma entra en la zona en la que el precio llega a activar la orden, sin numero
+  de zonas: la orden se actualiza a la mas reciente (opcion c de S-15)'
+tema: entrada.zona_mas_reciente_sin_limite
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'S-15 (CORRIDA-CONSTRUCCION.md §4.5, pregunta 8); va contra RN-009 (zonas_control_max_por_esquema).
+  Sigue: «O sea, siempre al más reciente trabajamos» (86:36). docs/validation/SESION-05-EXTRACCION.md'
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

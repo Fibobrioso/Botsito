@@ -1,0 +1,17 @@
+id: ev-v15-003619-60121c7d
+video_id: v15
+t0: 0:36:19
+t1: 0:36:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: como estamos en un flujo alcista vamos utilizando el 1 conforme va desarrollándose.
+afirmacion: el 1 de la caja se va actualizando mientras el precio se desarrolla y no aparece otro punto
+  de breaker
+tema: herramientas.caja.actualizable_mientras_avanza
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-7 (A-48 y A-49); dice «usualmente», no «siempre» (34:41). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

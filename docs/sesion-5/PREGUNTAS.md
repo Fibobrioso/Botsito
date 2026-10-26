@@ -36,6 +36,12 @@ no aquí.
 > ingesta» vale ahora para trabajo/hoja-sesion-05. El párrafo de arriba y los recuadros quedan
 > intactos.
 
+> **RECUADRO (2026-10-25, rama `trabajo/sesion-05`; encargo del consultor, «La hoja que se
+> llevó», punto 3).** La sesión 5 se grabó en dos días (v15 el 2026-10-23 y v16 el 2026-10-25). La
+> hoja que se usó -los títulos, los recuadros que sustituyeron al cuerpo (S-7, S-12 y S-13), el
+> orden, los esquemas y «Para cerrar»- está en `docs/sesion-5/HOJA-USADA.md`, y lo que contestó el
+> trader, en `docs/validation/SESION-05-EXTRACCION.md`. Este documento queda intacto.
+
 **Desviaciones declaradas:**
 1. **Las preguntas van cerradas, con opciones**, y con «otra, ¿cuál?» donde las opciones pueden
    sugerir. El runbook pide abiertas («Durante», punto 2); manda el encargo (D2), como en la

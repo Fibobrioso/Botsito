@@ -1,0 +1,20 @@
+id: ev-v16-003421-b824b770
+video_id: v16
+t0: 0:34:21
+t1: 0:34:41
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: el error que hubo de pensar que no había fidelidad en agosto era necesariamente porque no
+  es que tengas una operativa distinta sino porque habías evitado ciertas operaciones que eran de breakeven
+  correcto exacto exacto
+afirmacion: el trader confirma que la falta de fidelidad de agosto venia de operaciones de break even
+  que evito, no de otra operativa
+tema: material.backtests_viejos_saltaban_be
+confianza: media
+extractor: llm
+revisado_por: 'consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces: lo explica el consultor y el «correcto exacto
+  exacto» es del trader, por contexto'
+provenance: botsito
+notas: Final de v16, con S-14 (ev-v15-011912-0ae32588). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

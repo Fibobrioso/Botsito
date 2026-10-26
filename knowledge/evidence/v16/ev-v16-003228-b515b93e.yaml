@@ -1,0 +1,20 @@
+id: ev-v16-003228-b515b93e
+video_id: v16
+t0: 0:32:28
+t1: 0:32:47
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Ah, todavía no envió a diciembre Ah, cierto, ¿no? Sí, todavía está pendiente diciembre Ya,
+  pero cuando se necesite Lo grabas con video y vos, pues Sí, sí, sí, lo grabo tal cual
+afirmacion: diciembre esta pendiente y, cuando se necesite, el trader lo graba en video con su voz tal
+  cual; no queda claro si lo pendiente es el envio del backtest o su video
+tema: material.diciembre_pendiente_de_grabar
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; las voces
+  del dialogo no se distinguen
+provenance: botsito
+notas: Para cerrar, diciembre (NA:I, que dice que el backtest llego el 2026-10-09 sin video). No se decide
+  nada. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

@@ -1,0 +1,17 @@
+id: ev-v16-003249-49af3f8b
+video_id: v16
+t0: 0:32:49
+t1: 0:32:56
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Sí, lo tiene, creo que sí está, bro
+afirmacion: de la exportacion de agosto, el trader cree que ya esta
+tema: material.exportacion_agosto
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'Para cerrar, agosto (NA:Q): no dice si ya la mando ni cuando. La linea siguiente (32:56) toca
+  el tramo de cuarentena de 0:32:58 y no se cita. No se decide nada. docs/validation/SESION-05-EXTRACCION.md'
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

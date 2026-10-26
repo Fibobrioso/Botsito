@@ -1,0 +1,19 @@
+id: ev-v15-002441-ec3c910c
+video_id: v15
+t0: 0:24:41
+t1: 0:24:51
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: O sea, solo vemos el punto, si te das cuenta El punto 1 Que allí, solo que Se actualiza
+  del nivel 0 Allí abajo, y ya está
+afirmacion: 'en la reentrada en el mismo punto tras un stop, la caja se vuelve a trazar: se actualiza
+  desde el nivel 0, no es la del primer intento'
+tema: reentrada.caja_se_vuelve_a_trazar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; habla
+  sobre su replay, y no se abrio ningun fotograma
+provenance: botsito
+notas: S-6 (pregunta 3 de PUNTO-USADO.md, ADR-0083). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

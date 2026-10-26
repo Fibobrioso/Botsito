@@ -1,0 +1,17 @@
+id: ev-v15-000553-9d95178a
+video_id: v15
+t0: 0:05:53
+t1: 0:05:56
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Ah, se actualiza el de la mecha Se actualiza el de la mecha
+afirmacion: si el precio pasa el alto de M15 solo con la mecha y vuelve, el alto pasa a ser el de esa
+  mecha
+tema: liquidez.m15.alto_se_actualiza_a_la_mecha
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-35), segunda mitad, sin parametro hoy; mirar frente a ev-v10-012456-9dc1d221. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

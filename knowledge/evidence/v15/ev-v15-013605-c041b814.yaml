@@ -1,0 +1,20 @@
+id: ev-v15-013605-c041b814
+video_id: v15
+t0: '1:36:05'
+t1: '1:36:30'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: event en 5 segundos el precio llega y toca ya se pone en break event que cuando nos vamos
+  m1 ya aquí estaría la condicional para nosotros poner en break event o sea inmediatamente apenas toque
+  que se pone en break y en la entrada y ya apenas toque
+afirmacion: mirado en 5 segundos, el stop pasa a la entrada en cuanto el precio toca, inmediatamente (opcion
+  a de S-17)
+tema: break_even.disparador_al_toque
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'S-17 (A-13); antes dijo la (b) (ev de 1:35:10): se contradice. Lo de hoy es break_even_condicion
+  = tocar (CONFIRMED). docs/validation/SESION-05-EXTRACCION.md'
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

@@ -1,0 +1,18 @@
+id: ev-v16-001834-732a76b6
+video_id: v16
+t0: 0:18:34
+t1: 0:18:52
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no importa el color de la vela que rompe, puede ser una vela verde que ha hecho luego un
+  retroceso pero ha sacado su mecha y ha tocado o sea ha roto esto el punto breaker entonces se valida
+afirmacion: 'no importa el color de la vela que rompe el punto de breaker: si lo pasa con la mecha, se
+  valida'
+tema: entrada.punto_roto_con_mecha_cualquier_color
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-20 (ADR-0076 §4, pregunta 2), para precisar. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

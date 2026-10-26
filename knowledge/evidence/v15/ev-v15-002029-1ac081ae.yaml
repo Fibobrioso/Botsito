@@ -1,0 +1,19 @@
+id: ev-v15-002029-1ac081ae
+video_id: v15
+t0: 0:20:29
+t1: 0:20:51
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pero, si soy sincero hermano me lo estoy pensando y me da unas ganas de replantearme para
+  poder quitar esa condicional cuando hay break even porque siento yo que las veces que he hecho backtesting
+  o sea, son las que nos generan un gran cúmulo de pérdidas
+afirmacion: el trader duda de las reentradas en el mismo nivel y se plantea quitar esa condicion cuando
+  hay break even, porque en sus backtests le generan muchas perdidas; es una duda, no una regla
+tema: reentrada.mismo_nivel_duda
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6 (pregunta 3 de PUNTO-USADO.md, ADR-0083). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

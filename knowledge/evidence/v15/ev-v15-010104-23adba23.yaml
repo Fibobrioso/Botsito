@@ -1,0 +1,18 @@
+id: ev-v15-010104-23adba23
+video_id: v15
+t0: '1:01:04'
+t1: '1:01:25'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: claro en una compra sería bien pues queda por debajo ahora lo muestro en el ejemplo
+afirmacion: en una compra, la caja queda por debajo del nivel de M15 tomado (opcion b de S-12, primera
+  parte)
+tema: entrada.caja_lado_del_nivel_tomado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; las lineas
+  mezclan la pregunta leida y la respuesta
+provenance: botsito
+notas: S-12a (RN-005, ev-v1-001306-f98e12e9, frente a ev-v9-004919-c6bfb3ee). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

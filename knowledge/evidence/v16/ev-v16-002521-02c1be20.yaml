@@ -1,0 +1,19 @@
+id: ev-v16-002521-02c1be20
+video_id: v16
+t0: 0:25:21
+t1: 0:25:46
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: llegamos a trazar otra vela neutra que también ha hecho lo mismo nuestro sesgo todavía se
+  sigue manteniendo bajista entonces tenemos unas dos velas neutras pero nuestro sesgo todavía está aquí
+  hasta que posteriormente pues se llegue a haber un rompimiento con cuerpo
+afirmacion: con dos velas de 4 horas neutras seguidas el sesgo bajista se mantiene, hasta una ruptura
+  con cuerpo
+tema: sesgo.h4.vela_neutra_mantiene
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-23, para precisar. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

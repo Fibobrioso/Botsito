@@ -1,0 +1,16 @@
+id: ev-v16-000603-6955d127
+video_id: v16
+t0: 0:06:03
+t1: 0:06:18
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: claro, o sea, claro, la cuento como de M15 aunque la mire de M1
+afirmacion: una linea que viene de M15 la cuenta como de M15 aunque la mire en M1
+tema: liquidez.linea_m15_vista_en_m1
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-18 (A-32), para precisar. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

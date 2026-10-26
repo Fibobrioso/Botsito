@@ -1,0 +1,18 @@
+id: ev-v15-011728-b5bd4d05
+video_id: v15
+t0: '1:17:28'
+t1: '1:17:42'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no, seguimos operando todas las operaciones que encontremos tanto en la primera como segunda
+  sesión pero, pero aquí viene el pero, esto ya es algo que a lo mejor pues más adelante pueda variar
+afirmacion: 'no deja de operar tras ganar o perder: sigue con todas las operaciones de las dos sesiones,
+  aunque mas adelante puede variar'
+tema: riesgo.no_deja_de_operar_tras_resultado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-14. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

@@ -1,0 +1,17 @@
+id: ev-v16-003149-b3b79c79
+video_id: v16
+t0: 0:31:49
+t1: 0:32:10
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: todo está tal cual todo está grabado está todo está grabado todas las entradas pérdidas
+  ganancias todos los break events
+afirmacion: 'hizo todos los dias de julio sin saltarse ninguno: todo esta grabado, tambien los break even'
+tema: material.julio_completo_sin_saltos
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-25, para precisar. docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

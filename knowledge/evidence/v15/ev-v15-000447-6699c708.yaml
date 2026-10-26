@@ -1,0 +1,18 @@
+id: ev-v15-000447-6699c708
+video_id: v15
+t0: 0:04:47
+t1: 0:05:09
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Vale, en este caso sería pues en cuanto la vela roja de después ya cerrado, de esa manera
+  pues nosotros tenemos de una manera más clara como trazar la zona lineal de liquidez en M15, la B.
+afirmacion: un alto de M15 se da por formado cuando la vela roja de despues ya ha cerrado (opcion b de
+  S-3)
+tema: liquidez.m15.pivote_formado_al_cierre_vela_contraria
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-35). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

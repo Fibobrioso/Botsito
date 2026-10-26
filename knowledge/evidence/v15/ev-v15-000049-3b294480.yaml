@@ -1,0 +1,19 @@
+id: ev-v15-000049-3b294480
+video_id: v15
+t0: 0:00:49
+t1: 0:01:16
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: sigue bajista, claramente porque la regla O sea, dice que para que pueda hacer al menos
+  eso, al cambiar el sesgo, pues tendría que cerrar con mecha por arriba del sesgo bajista anterior, con
+  cuerpo, con mecha. Pero en este caso, como cierra bajista, pues sigue siendo bajista.
+afirmacion: con el sesgo bajista, una vela de 4 horas que rompe el maximo de la anterior solo con la mecha
+  y cierra roja deja el sesgo bajista (opcion b de S-1)
+tema: sesgo.h4.mecha_arriba_cierre_rojo_sigue_bajista
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (SESGO-H4-COLOR.md §4.4, ADR-0080); va contra la sesion 1 (ADR-0080 §9). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

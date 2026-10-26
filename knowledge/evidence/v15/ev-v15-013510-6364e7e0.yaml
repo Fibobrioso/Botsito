@@ -1,0 +1,20 @@
+id: ev-v15-013510-6364e7e0
+video_id: v15
+t0: '1:35:10'
+t1: '1:35:20'
+modalidad: audio
+tipo: MANAGEMENT
+cita_literal: esté por debajo, nosotros la podemos poner en break even entonces es eso tiene que cerrar
+  por debajo o sea, con mecho o con cuerpo
+afirmacion: en M1, el stop pasa a la entrada cuando la vela cierra pasada la zona de control, con mecha
+  o con cuerpo (opcion b de S-17)
+tema: break_even.disparador_cierre_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; habla
+  sobre su replay, y no se abrio ningun fotograma
+provenance: botsito
+notas: 'S-17 (A-13); en la misma respuesta acaba diciendo «apenas toque» (ev de 1:36:05): se contradice.
+  docs/validation/SESION-05-EXTRACCION.md'
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

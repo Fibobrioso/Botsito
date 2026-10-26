@@ -1,0 +1,18 @@
+id: ev-v15-003959-5898c61e
+video_id: v15
+t0: 0:39:59
+t1: 0:40:29
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: cambia algo si son 3 velas sin cuerpo en vez de una, es indiferente, o sea, las velas sin
+  cuerpo pues no cuentan, en venta lo mismo revés es igual,
+afirmacion: las velas sin cuerpo dentro del tramo que marca el punto de breaker no cuentan, sean una o
+  tres, y en venta igual al reves
+tema: mapeo.velas_sin_cuerpo_no_cortan_tramo_breaker
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-8 (VISOR-CONSTRUCCION.md §3.2, pregunta A). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67
