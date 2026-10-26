@@ -1528,3 +1528,59 @@ mensaje final a Aleks. Las líneas del cierre, en §5; lo que va a la rama de mo
 de la sesión 6, en §3.
 
 Rama lista para revisión, NO cerrada.
+
+## Orden de cierre (2026-10-26)
+
+Copiada tal cual. Pegada en la conversación por Aleks, sin `/cerrar-rama`: la sesión leyó
+`.claude/skills/cerrar-rama/SKILL.md` y la siguió (la skill lo prevé para una orden pegada). Lo
+hecho en el commit del contrato va en el registro de cierre de `docs/state/HISTORIA.md`.
+
+> Orden de cierre de trabajo/activar-sesion-05 (consultor, 2026-10-26). Tag: stable/F38e-activar-sesion-05. Cópiala al informe, en una sección «Orden de cierre».
+>
+> Commit del contrato (punto Y de RITUAL), además de lo de siempre:
+> 1. Las líneas de §5 tal como quedan tras la PARADA 2: V corta remitiendo a §2 (sin la lista de motor) y diciendo que S-11 va a la sesión 6; H sale a HISTORIA; F; G con la línea de S-14 a su mitad; K con la ampliación del clon; Technical Debt con la línea de S-14 en la del no_trade, la palabra en la de test_visor.py, el recorte de la introducción y el de Oanda; la hoja de ruta: R4.1 con «spec HECHA» (sin «HECHA» a secas, como mediste), sin NA:H; R4.2 nueva con la lista de §3, S-11 incluida; R5.1 con la línea de S-14.
+> 2. Recuadro de corrección en SESION-05-EXTRACCION.md, junto a la fila de S-11 de la tabla final (§5) y en §3.3: «resuelve (b)» lo era para el caso preguntado; su primera mitad («si hay una continuidad de sesgo, sí») contradice A-46 RESUELTA y va a la sesión 6 (ACTIVAR-SESION-05.md, PARADA 2). Es desviación autorizada del commit del contrato, como en los cierres anteriores.
+> 3. PROJECT_STATE por debajo de 23.000 bytes: da la cifra. Si no cabe, PARADA antes de recortar nada vivo.
+>
+> Hallazgos para ERRORES-RECURRENTES (fila de trabajo/activar-sesion-05):
+> - (importa, del consultor) El encargo puso como objetivo de CONFIRM ADR y ambigüedades, que el modelo no admite (modelo.py:66), y quiso fijar la magnitud por feedback cuando el trader no la dijo. Lección: el objetivo de cada registro y su procedencia se comprueban contra modelo.py y ERRORES-RECURRENTES.md:84 antes de escribir el encargo.
+> - (importa, del consultor) El encargo pidió el arnés con --simular sobre toda la construcción como «solo para ver que corre», y por ADR-0070 §3 esa corrida cuenta. Lección: antes de pedir una corrida, leer qué la hace contar.
+> - (importa, del consultor) Decidió el CONFIRM de S-11 copiando «A-46 no se reabre» de la extracción sin cruzar la cita con A-46, y restringió la segunda mitad de A-35 a «la mecha de la vela contraria» con un tramo que no está en ningún ítem. Lección: lo que una extracción propone se cruza con la ambigüedad RESUELTA que toca antes de activarlo, y toda restricción de un encargo sale de un ítem.
+> - (importa, de la sesión, lo cazó el revisor) Notas de cinco registros de feedback con citas o paráfrasis de la extracción fuera de su ítem; no se corrigen (solo añadir). Lección: las notas de un registro también se escriben solo con lo que trae su ítem, y lo demás se remite a la sección.
+> - (menor, de la sesión) test_rutas_windows corrió una vez el arnés entero sobre abril al quitar el rótulo de diagnóstico, declarado y corregido. Lección: al quitar un --diagnostico-* de un test, medir antes si el test deja de fallar donde esperaba.
+> - Lo bueno: la fase 0 midió en un clon lo que el encargo daba por hecho y corrigió cuatro errores del consultor antes de escribir nada; la PARADA 2 paró justo donde debía.
+>
+> Después del cierre: CI de main sobre el HEAD nuevo con un gh run view suelto, y el informe final con main, tag, run, ramas que quedan y bytes de PROJECT_STATE.
+
+## PARADA 3 · `PROJECT_STATE.md` no baja de 23.000 con las líneas aprobadas (2026-10-26, en el cierre)
+
+Al aplicar el punto 1 de la orden en la rama (sin commitear), `wc -c PROJECT_STATE.md` da
+**23.550 bytes** con el `Current Feature` de la rama (448 bytes). El del cierre mide unos 300 (el
+de `trabajo/sesion-05`, Archivo 47: 296), y las otras dos líneas de cabecera cambian de texto con
+un largo parecido: tras el cierre quedaría en **≈23.400**, por encima de los 23.000 del punto 3 y
+por debajo del tope de 25.000 de `test_project_state.py`. Por qué falló la estimación de §5
+(≈22.870): la V corta se contó como +≈450 y, ya escrita en §5, mide 759 bytes; y la línea de K del
+punto 14 (+≈290) no estaba en la tabla de §0.c. Error de la sesión: una cifra que se podía medir
+con `wc -c` sobre un texto ya escrito se estimó (va a ERRORES-RECURRENTES, columna «qué se le
+escapó»). Todo lo demás del commit del contrato está preparado en el árbol de trabajo, sin
+commitear: el registro de HISTORIA (con la cifra pendiente), la fila de ERRORES-RECURRENTES, la
+hoja de ruta, los dos recuadros de la extracción y esta sección.
+
+0. **Cómo bajar de 23.000 sin quitar nada vivo.** Opciones: (a) recortar la prosa de la V a lo
+   que no vive en otro sitio: fuera la lista de valores de los parámetros (están en
+   `parametros.yaml` y en §1), «(encargo del consultor tras este cierre)» y la referencia al
+   `diff` (§5 y ACTIVAR-A35-A44.md §5.1): −≈200, ≈23.200 tras el cierre, todavía por encima; (b)
+   además de (a), la ampliación de K del punto 14 va a G.1 de la hoja de ruta (carril de guardias,
+   donde K ya tiene su entrada con hallazgos de guardia de otras ramas, igual que éste) y no a la
+   Next Action: −≈290, ≈22.900; (c) aceptar ≈23.400; (d) (a) y llevar a HISTORIA el párrafo
+   «Candidatas a ambiguedad sin abrir» (554 bytes) con un puntero de una línea: ≈22.650, pero son
+   candidatas vivas. Recomiendo (b): es lo único que baja de 23.000 sin quitar nada vivo, y G.1 es
+   donde ya se recogen los falsos positivos y negativas de la guardia que esperan su rama. Coste de
+   (b): la deuda de K se lee en dos sitios (lo que pesó en la PARADA 2 para no elegirla); coste de
+   (a) sola: no cumple; de (c): la letra de la orden; de (d): mover candidatas vivas por bytes.
+
+**Respuesta de Aleks a la PARADA 3 (2026-10-26, al lanzar `/cerrar-rama`): (b).** Aplicada en el
+commit del contrato: la V sin la lista de valores, sin «(encargo del consultor tras este cierre)»
+y sin la referencia al `diff`; la ampliación de K, como viñeta de G.1 de la hoja de ruta («Desde
+`trabajo/activar-sesion-05`»), y K en la Next Action como estaba. La cifra medida, en el registro
+del cierre de HISTORIA.

@@ -198,11 +198,11 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-48 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:A-57 · ID:RN-007 · NA:H · NA:V · ID:RN-004 · ID:RN-020 ·
+  ID:A-53 · ID:A-57 · ID:RN-007 · NA:V · ID:RN-004 · ID:RN-020 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** RN-004 tras A-35 y RN-020 tras A-44, con su medida (`docs/runbooks/ACTIVAR-A35-A44.md`
   §5.1); las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
-  la casi plana de NA:H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
+  la casi plana, la antigua H), escritas en ACTIVAR-SESION-04.md §5 y ACTIVAR-SESION-04-MOTOR.md §5; las
   preguntas de ACTIVAR-SESION-04-MOTOR.md §5: el último minuto (cuándo se retira una orden
   pendiente a la hora de cerrar), la vela sin cuerpo en medio del retroceso y el breaker contrario
   que rompe con mecha (ADR-0076 §4), la racha tras la novena pérdida (ADR-0077 §5) y la
@@ -220,6 +220,22 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   R3.4 (HECHA) y la copia de seguridad del carril de Aleks (A.4, HECHA el 2026-10-22).
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.
+- **Estado:** spec HECHA (`trabajo/activar-sesion-05`, `stable/F38e-activar-sesion-05`;
+  ACTIVAR-SESION-05.md): A-57 y A-32 RESUELTAS, A-35 y A-44 con valor y ABIERTAS (desviación
+  declarada), el arnés sin diagnóstico; cinco CONFIRM y un CORRECT; S-11 «en parte», a R4.2. Motor
+  pendiente (`trabajo/activar-sesion-05-motor`, §2 del informe) y después la re-corrida de
+  ADR-0070 §3 con su `diff` (ACTIVAR-A35-A44.md §5.1).
+
+### R4.2 · Preparar y celebrar la sesión 6
+- **Refs:** NA:V · ID:A-35 · ID:A-44 · ID:A-13 · ID:A-43 · ID:A-46 · ID:A-48 · ID:A-49 · ID:A-50 ·
+  ID:A-53 · ID:ADR-0083 · ID:RN-007
+- **Qué es:** la lista de ACTIVAR-SESION-05.md §3: la magnitud de A-44 primero y su reloj; la
+  mecha de A-35; A-13; A-53; A-43; A-49/A-48; A-50; ADR-0083; S-16; S-19 frente a S-24; S-20;
+  S-14 con los días de construcción que dé la re-corrida; y S-11 «en parte» (la toma de la mañana
+  con el MISMO sesgo en la tarde; A-46 sigue RESUELTA).
+- **Depende de:** `trabajo/activar-sesion-05-motor` y la re-corrida del arnés (R4.1, lo que queda).
+- **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
+- **Hecho cuando:** la sesión 6 está ingerida y activada.
 
 ## R5 · Fidelidad
 
@@ -228,7 +244,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** rellenar PREREGISTRO.md (métrica, umbral, partición, autorización); arreglar que una
   pregunta abre N particiones (rama de código en la puerta); decidir qué conjunto es el universo
   (los dos días de la sesión 1 sin partición); A-56 medida, o declarada conocida, para puntuar el
-  objetivo; A-16 (Oanda frente a Dukascopy).
+  objetivo; A-16 (Oanda frente a Dukascopy); y, al elegir los libros que miden, que en los
+  backtests sin vídeo faltan las sesiones que el trader se saltó por ir a break even (S-14,
+  sesión 5; ACTIVAR-SESION-05.md §0.b.7).
 - **Depende de:** la decisión del consultor sobre cuántos días reservados necesita F26.
 - **Quién:** el consultor decide; Aleks autoriza la apertura (ADR-0021 §3); la sesión ejecuta.
 - **Hecho cuando:** PREREGISTRO está relleno y commiteado, y la puerta abre una sola partición.
@@ -444,6 +462,10 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   - Desde `trabajo/corrida-construccion` (CORRIDA-CONSTRUCCION.md §1.j): la guardia niega un
     guion de la carpeta de trabajo que nombre `data/manifests/ticks/<manifiesto>.yaml` de un mes de
     construcción, aunque Read deja abrir esos manifiestos; que admita esas rutas literales.
+  - Desde `trabajo/activar-sesion-05` (ACTIVAR-SESION-05.md §0.f; va con K, el clon de
+    `C:/cm/`): la guardia niega como tests los de un clon de `C:/cm/` que globean
+    `knowledge/cases` o recorren directorios: `test_kit.py`, `test_selector_orden_stop.py` y
+    `test_renovar_cierres.py` no se pudieron correr en ese clon.
 - **Depende de:** nada.
 - **Quién:** la sesión, en ramas propias.
 - **Hecho cuando:** cada una con su test que la rompe a propósito.

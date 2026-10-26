@@ -12851,3 +12851,86 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 46 (2026-10-25).
+
+# Next Action HECHA · H · RN-007, la vela casi plana · sale de PROJECT_STATE.md en trabajo/activar-sesion-05 (2026-10-26)
+
+Texto literal al salir (la sesión 5 respondió S-24 y S-19: RN-007 con umbral cero va a la rama de
+motor, ACTIVAR-SESION-05.md §2, punto 3; lo que queda de S-14 va a la sesión 6, §3, punto 12):
+
+H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; si el literal de 1:44:49 es «1 o 2» o «12» lo lee Aleks con `--crudo` en su terminal (punto 8 de la respuesta del consultor del 2026-10-11); S-14 va a la sesión 5 (R4.1).
+
+# Registro de cierre · `trabajo/activar-sesion-05` (2026-10-26)
+
+- Orden de cierre del consultor del 2026-10-26, pegada en la conversación por Aleks (sin
+  `/cerrar-rama`: la sesión leyó `.claude/skills/cerrar-rama/SKILL.md` y la siguió, como la propia
+  skill prevé para una orden pegada); ejecutada siguiendo `RITUAL.md`. La rama tuvo una PARADA de
+  fase 0 (ACTIVAR-SESION-05.md, «Lo que necesito que decidas»), la PARADA 2 (S-11, las notas de
+  cinco registros, los 23.000 bytes), una pasada del revisor (§9) y, en el cierre, la PARADA 3 (los
+  bytes de PROJECT_STATE medidos, abajo). Nunca se cerró sin la orden.
+- **En este commit**, por la orden:
+  1. las líneas de §5 del informe tal como quedaron tras la PARADA 2: la V corta (remite a §2 sin
+     la lista de motor; S-11 va a la sesión 6), H sale (arriba, con su texto literal), F nueva, G
+     con la línea de S-14 a su mitad, K con la ampliación del clon de `C:/cm/` (punto 14),
+     Technical Debt con la línea de S-14 en la del `no_trade`, `test_preparar_a35.py` en la de
+     `test_visor.py`, la introducción sin su segunda frase y la deuda de Oanda solo con la parte
+     viva de la serie; la hoja de ruta: R4.1 con «**Estado:** spec HECHA» (a propósito, no «HECHA»
+     a secas: `NA:V` sigue viva y `test_hoja_de_ruta` daría problema) y sin `NA:H` en sus Refs ni
+     en su texto, R4.2 nueva con la lista de §3 y S-11 (`ID:A-46`, RESUELTA), R5.1 con la línea de
+     S-14;
+  2. dos recuadros de corrección en `docs/validation/SESION-05-EXTRACCION.md`, junto a la fila de
+     S-11 de la tabla final (§5) y bajo el encabezado de S-11 en §3.3: «resuelve (b)» lo era para
+     el caso preguntado; la primera mitad de la cita contradice A-46 RESUELTA y va a la sesión 6.
+     El cuerpo, intacto;
+  3. `PROJECT_STATE.md`: con las líneas de §5 tal cual medía 23.550 bytes, por encima de los
+     23.000 de la orden (PARADA 3, en el informe; la V corta se había estimado en +≈450 y mide
+     759, y la línea de K no estaba en la tabla de §0.c). Aleks eligió (b) al lanzar
+     `/cerrar-rama`: la V sin la lista de valores, sin «(encargo del consultor tras este cierre)»
+     y sin la referencia al `diff`, y la ampliación de K como viñeta de G.1 de la hoja de ruta.
+     Resultado en este commit: 23.075 bytes con el `Current Feature` de la rama (448); el del
+     cierre lo deja por debajo de 23.000 (la cifra final, en el mensaje de cierre);
+  y la fila de ERRORES-RECURRENTES con los hallazgos del revisor y los seis de la orden.
+- **DESVIACIÓN declarada** (precedentes: los cierres de `trabajo/guardia-ffmpeg`, `trabajo/guardia-ci`,
+  `trabajo/guardia-alias` y `trabajo/sesion-05`): la puerta del commit del contrato da, además de
+  `D  contrato.yaml`, `M  docs/state/HISTORIA.md`, `M  docs/runbooks/ERRORES-RECURRENTES.md`,
+  `M  PROJECT_STATE.md` y `M  docs/plan/HOJA-DE-RUTA.md`, la línea de
+  `docs/validation/SESION-05-EXTRACCION.md` (los recuadros del punto 2, autorizados por la orden) y
+  la de `docs/validation/ACTIVAR-SESION-05.md` (la orden copiada en su sección «Orden de cierre» y
+  la PARADA 3 con su respuesta).
+- **Lo que entra** (tramo R4, R4.1, la parte de spec): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor
+  en sus parámetros (`liquidez_m15_pivote_formado` = `cierre_vela_contraria`; `perdida_trader_alcance`
+  = `dia`, `perdida_trader_unidad` = `porcentaje`, `perdida_trader_magnitud` = `saldo` como
+  DEFAULT_AMBIGUOUS, lectura del consultor) y ABIERTAS, desviación declarada en registros, notas e
+  informe; `perdida_maxima_semanal` SIN EFECTO sin CORRECT; cinco CONFIRM (S-1, S-2, S-23 sobre
+  RN-003; S-9 sobre RN-004; S-12a sobre RN-005) y el CORRECT sobre `ev-v9-004919-c6bfb3ee`; once
+  registros en `knowledge/feedback/2026-10-23-sesion-05/`; spec 18.1.3 → 18.1.9; NOTAs y recuadros
+  en ADR-0053, 0054, 0066 (ninguna), 0070, 0075, 0080, 0081 (deja de ser provisional) y 0083 (sigue
+  provisional); el arnés y el visor corren a secas (ningún `--diagnostico-*` aceptado con valores
+  fijados) y sus tests cambian de sentido a propósito; el test de control de la sesión 5
+  (`test_en_parte_no_se_cierra.py`); la NOTA del runbook ACTIVAR-A35-A44.md; S-11 «en parte», sin
+  registro (PARADA 2). Lo que pide motor, en ACTIVAR-SESION-05.md §2 (diez puntos, rama
+  `trabajo/activar-sesion-05-motor`); la lista de la sesión 6, en §3 (trece puntos).
+- **Lo que sale**: H (HECHA, arriba). V cambia (la parte de spec hecha; queda la de motor). R4.1
+  «spec HECHA», sigue viva hasta la rama de motor.
+- Exposiciones: la fila del 2026-10-26 de `HOLDOUT-EXPOSICIONES.md` (la fase 0 y el clon; el arnés
+  sobre abril con el M1 de marzo para calentar; los tests a secas en cada `make check`;
+  `test_rutas_windows` una vez el arnés entero, corregido).
+- Negativas de la guardia o del clasificador: en la rama, las de §0.f y §9 del informe (comandos
+  compuestos, `for`, `uv run` encadenados; los tres tests del clon que globean `knowledge/cases`);
+  en el cierre, un `awk` con `getline` para medir líneas de HISTORIA (reescrito con `sed -n` y
+  `wc -c`). Ninguna del clasificador.
+- Letra del tag: la última cerrada era `stable/F38d-sesion-05`; `stable/F38e-*` no existe en local
+  ni en origin (comprobado antes del tag).
+- Tag: `stable/F38e-activar-sesion-05`. El merge es `git rev-parse "stable/F38e-activar-sesion-05^{commit}"`.
+- Commits de la rama: `4ee08fa` (apertura: encargo, contrato y Archivo 47), `556f571` (fase 0
+  medida y PARADA), `3bbcad1` (A-35), `f60fca5` (A-44), `36fccb2` (A-57 RESUELTA), `d3eeca4` (A-32
+  RESUELTA), `29ecbe1` (las confirmaciones y el CORRECT), `e48ad22` (ADR-0083, el recuadro de S-6),
+  `6971d30` (el test de control), `75f4cbe` (la NOTA del runbook y el contrato ampliado), `c03190e`
+  (el informe: motor, sesión 6, líneas del cierre, encargo punto por punto, PARADA 2), `2f55050`
+  (la CI, el revisor y lo hecho con cada hallazgo), `c37f136` (la respuesta a la PARADA 2 aplicada)
+  y el de este registro.
+- CI de Linux por `fix/activar-sesion-05`: run 40350807999 sobre `c03190e` (intento 1 cancelado
+  por el `apt-get ffmpeg` colgado 19 min, relanzado; intento 2 en verde), 40364392244 sobre
+  `2f55050` y 40406392686 sobre `c37f136`; los tres con `1 failed, 2876 passed, 46 skipped`, y el
+  único fallo es el aceptado: `test_state_check_ok_on_real_repo`, por el nombre `fix/`. La CI de
+  `main` corre tras el push.
+- Informe: `docs/validation/ACTIVAR-SESION-05.md`. Encargo: `docs/encargos/trabajo-activar-sesion-05.md`.

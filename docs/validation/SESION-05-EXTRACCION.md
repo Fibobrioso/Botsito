@@ -665,6 +665,14 @@ caja» / «[28:40] Donde pones el 0 y hasta donde llevas el 1».)
 
 #### S-11 · Una toma de la sesión de la mañana con el sesgo contrario
 
+> **RECUADRO DE CORRECCIÓN (2026-10-26, rama `trabajo/activar-sesion-05`, orden de cierre).**
+> «RESUELVE: (b)» lo era para el caso preguntado (la mañana alcista, la tarde bajista: sin
+> continuidad de sesgo). La primera mitad de la cita, «[58:39] Si hay una continuidad de sesgo,
+> sí», es el caso que A-46 ya tenía respondido al revés (RESUELTA el 2026-09-29, «cada uno es un
+> mundo diferente»; ADR-0066 §1; RN-004 `la_toma_es_de_la_sesion`) y la contradice: S-11 queda
+> «en parte», sin registro, y esa mitad va a la sesión 6 (ACTIVAR-SESION-05.md, PARADA 2 y §3,
+> punto 13). A-46 no se reabre y el motor no cambia. El cuerpo de abajo no se toca.
+
 - **Vídeo y tramo:** v15, 51:46–58:48.
 - **La respuesta:** «[58:30] Para confirmar al final, ¿una toma de la sesión de la mañana con el
   sesgo de la tarde a su favor vale para la tarde?» / «[58:39] Si hay una continuidad de sesgo, sí.»
@@ -1202,6 +1210,7 @@ sí), las de ADR-0076 §4 (S-19 sí y S-20 en parte), ADR-0077 §5 (S-21 sí), R
 | S-9 | CORRIDA §4.5, p. 5 | v15 | 41:19–46:44 | **resuelve**: (a), la más reciente | sí | no | solo compra |
 | S-10 | A-43 (2.ª parte) | v15 | 46:48–51:41 | en parte | sí | no | solo compra |
 | S-11 | VISOR §3.2, B | v15 | 51:46–58:48 | **resuelve**: (b); A-46 no se reabre | sí | no | sí |
+| | | | | *RECUADRO DE CORRECCIÓN (2026-10-26, `trabajo/activar-sesion-05`, orden de cierre): la fila de arriba queda como está; «resuelve (b)» lo era para el caso preguntado, y la primera mitad de la cita («si hay una continuidad de sesgo, sí») contradice A-46 RESUELTA: S-11 es «en parte», sin registro, y va a la sesión 6 (ACTIVAR-SESION-05.md, PARADA 2; el recuadro de §3.3, S-11)* | | | |
 | S-12a | RN-005 (el lado) | v15 | 58:50–65:53 | **resuelve**: (b), por debajo; contra `ev-v9-004919-c6bfb3ee` | sí | solo en 60:31 | sí |
 | S-12b | A-50 | v15 | 64:51–65:53 | en parte, y contra el bot | en parte | no | sí |
 | S-13 | A-53 | v15 | 65:54–69:10 | en parte, hacia (b); la subpregunta del recuadro no se hizo | sí | no | no lo dice |

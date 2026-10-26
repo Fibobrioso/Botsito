@@ -29,7 +29,7 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. V. Las ramas de R6a (ADR-0082) van en los huecos de espera y no le quitan turno a V.
+F. La rama de motor de V; después la re-corrida del arnés y la sesión 6; R6a en los huecos.
 
 
 
@@ -37,7 +37,7 @@ T. Transcribir v11 a v14 (backtest de julio en vídeo, 2 h 38 min, con audio), c
 
 U. Julio 20-31: solo en vídeo (v14); decidir si se extraen casos del vídeo, tras transcribir v11-v14. Depende de T.
 
-G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-56, la regla del objetivo frente al material, ADR-0073) y A-16. Holdout-3 tiene un día medido menos desde el 2026-10-14 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta. fidelidad-1 tiene 3 días medidos menos desde el 2026-10-17 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta.
+G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-56, la regla del objetivo frente al material, ADR-0073) y A-16. Holdout-3 tiene un día medido menos desde el 2026-10-14 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta. fidelidad-1 tiene 3 días medidos menos desde el 2026-10-17 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta. Y, para elegir los libros que miden (S-14, sesión 5): en sus backtests sin vídeo el trader se saltaba las sesiones que iban a acabar en break even; qué libro viene de vídeo, ACTIVAR-SESION-05.md §0.b.7.
 
 I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1); julio ya entró (ADR-0078). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04).
 
@@ -47,11 +47,9 @@ A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en d
 
 K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos.
 
-H. **RN-007, la vela casi plana: espera a la pregunta 14 de la sesion 4** (el umbral de «casi plana», que el trader no dio). RN-007 ya lo dice en su texto, pero sin umbral no hay rama de codigo y su forma ejecutable no cambia (docs/validation/REFLEJAR-FEEDBACK-S3.md §1.3). Respondida en parte en S-14; si el literal de 1:44:49 es «1 o 2» o «12» lo lee Aleks con `--crudo` en su terminal (punto 8 de la respuesta del consultor del 2026-10-11); S-14 va a la sesión 5 (R4.1).
-
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Preparar, celebrar y activar la sesión 5 (R4.1): las «en parte» de ACTIVAR-SESION-04.md §0.e y §5 y ACTIVAR-SESION-04-MOTOR.md §5 y §6 (A-13, A-32, A-35, la segunda parte de A-43, A-44, A-49, A-50, A-53 y S-14, que es H) y las preguntas de esos §5; si el xlsx de julio es la exportación de v11 a v13 (ENTRADA-JULIO.md §8); y la lista «Para el cuestionario de la sesión 5» de CORRIDA-CONSTRUCCION.md §4.5 con su pregunta 1 sustituida por las dos de SESGO-H4-COLOR.md §4.4 (la ruptura simple sin cuerpo, D3 de ADR-0080, y la contradicción con la sesión 1, con un esquema dibujado), en su orden; A-57 (el lote que no cabe, MARGEN-LOTE.md §5); las preguntas de VISOR-CONSTRUCCION.md §3.2; y la pregunta 3 con el ejemplo del 29 de abril y la caja de la reentrada (PUNTO-USADO.md). Depende de R1.1, de R3.1 y de la copia de seguridad (A.4, HECHA el 2026-10-22). Hoja de preguntas: docs/sesion-5/PREGUNTAS.md (trabajo/barrido-sesion-5), con los recuadros de corrección de S-7, S-12, S-13 y S-15 (trabajo/previa-sesion-5): la primera parte de S-12 decide si RN-005 sigue o se reabre (PREVIA-SESION-5.md §1). La hoja 05 está en `scripts/transcribir_sesion.py`, por defecto (trabajo/hoja-sesion-05); v9 y v10 se re-filtran con `--sesion 03` y `--sesion 04`. Si en la grabación algún código del 21 al 25 sale como "veinte y N", el detector lo abre como S-20: la ingesta revisa a mano el bloque de S-20. Sesión 5 celebrada (2026-10-23 y 2026-10-25, v15 y v16) e ingerida (SESION-05-EXTRACCION.md); falta su activación.
+V. Activar la sesión 5 (R4.1). HECHA LA PARTE DE SPEC en `trabajo/activar-sesion-05` (ACTIVAR-SESION-05.md): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros y ABIERTAS, desviación declarada; el arnés corre sin ningún `--diagnostico-*`; cinco CONFIRM y un CORRECT; S-11 «en parte», sin registro, va a la sesión 6. QUEDA `trabajo/activar-sesion-05-motor` con los diez puntos de ACTIVAR-SESION-05.md §2. Después, la re-corrida del arnés con `--simular` sobre toda la construcción (ADR-0070 §3) y la sesión 6 (R4.2) con la lista de §3.
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -94,7 +92,7 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
 
 ## Technical Debt
-Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`. Lo que no era deuda, desde trabajo/previa-sesion-5: `docs/runbooks/MIRAR-EL-MATERIAL.md` y `RITUAL.md` (al final) y `DECISIONES-DE-PROCESO.md` (F07); tabla en PREVIA-SESION-5.md §6.
+Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
 - PRIORITARIA. La cuarentena por condición deja pasar texto de un mes que puede acabar reservado: `meses_libres` cuenta diciembre como libre con NA:I sin decidir (`motivos_cuarentena('el [N] de diciembre')`: `[]` con meses libres, `['mes']` sin ellos), y la fecha numérica seguida de coma no se tapa (`'hoy 25 del 10'` da `['fecha numerica']`; `'hoy, 25 del 10,'`, `[]`). Carril de guardias y cuarentena (SESION-05-EXTRACCION.md §2.7 y §11, a4).
 - La skill ingerir-sesion tiene que mandar el barrido ancho ANTES de leer cada filtrada: días 18 a 31 en dígitos y en letra, con el número enmascarado (`anexos/SESION-05/barrido_18_31.py` solo ve dígitos). Dueño: la próxima rama que toque `.claude/skills/ingerir-sesion` (SESION-05-EXTRACCION.md §2.7).
 - El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
@@ -109,7 +107,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el arnés sí, :2437): con `--todos` arrastra la cuenta (VISOR-CONSTRUCCION.md §4.3).
 - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
 - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
-- `test_visor.py` hace leer al visor el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18; VISOR-CONSTRUCCION.md §4.3).
+- `test_visor.py` y `test_preparar_a35.py` hacen leer el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18 y 2026-10-26; VISOR-CONSTRUCCION.md §4.3).
 - `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker (VISOR-CONSTRUCCION.md §4.3).
 - El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los ticks empiezan en ventana_inicio y la orden lleva 1 ms antes (VISOR-CONSTRUCCION.md §4.3).
 - `arnes.dias_de_mercado` lee para calentar el M1 entero de marzo y de junio (días reservados) en cada corrida del arnés y cada make check, sin declararlo; declarado en HOLDOUT-EXPOSICIONES (2026-10-14); la línea LECTURA: va a G.2 (CORRIDA-CONSTRUCCION.md §1.c).
@@ -124,10 +122,10 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - `cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT (2026-09-25, medido con git 2.55 en docs/validation/BLINDAJE.md §2):
 - `scripts/v5_criterio.py` SOLO RECONOCE CAJAS DE VENTA (2026-09-23):
 - NADA COMPRUEBA MECANICAMENTE QUE EL CUERPO DE UN INFORME CERRADO NO CAMBIE (2026-09-22, `trabajo/guardia-ids-docs`).
-- LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY, Y EL RELOJ DE SU GRAFICO ES UTC+2 FIJO (2026-09-21, rama de abril). Sigue viva solo la parte de la serie: el reloj quedó corregido el 2026-10-06 (ADR-0069: Europe/Madrid).
+- LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY (2026-09-21, rama de abril; el reloj quedó corregido el 2026-10-06, ADR-0069).
 - EL FRACTAL 5/120 NO CAPTURA LO QUE EL TRADER LLAMA ESTRUCTURA (2026-09-21, informe §R2).
 - LA GUARDIA DE `cobertura_material` EN `universo()` ES MAS ESTRICTA DE LO QUE ADR-0025 SOSTIENE (2026-09-21, y el defecto es de la rama del dia anterior).
-- EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21).
+- EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21); y (S-14, sesión 5) en los backtests sin vídeo faltan las sesiones que el trader se saltó por ir a break even: un día en que el bot opera y él no puede ser eso, no un no_trade (ACTIVAR-SESION-05.md §0.b.7).
 - `fecha_grabacion` TIENE QUE SER UN EJE DE PRIMERA CLASE, Y EL DETECTOR DE CONTRADICCIONES TIENE QUE ORDENAR POR ELLA (2026-09-21, deuda con nombre puesta por el consultor).
 - F26 lee la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073, ADR-0040).
 - BUSCAR EN EL CORPUS ANTES DE REDACTAR CUALQUIER AMBIGUEDAD, Y ESCRIBIR QUE SE BUSCO (2026-09-21, rama F14a).
