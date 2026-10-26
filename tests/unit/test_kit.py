@@ -316,7 +316,8 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
 # entra como CONFIRM sobre su item, fb-2026-10-04-sesion-04-35a080e2, sin cerrarla). A-32 salio
 # el 2026-10-26 (trabajo/activar-sesion-05): la sesion 4 la dejo en parte y la sesion 5 la resuelve
 # (S-18, v16), asi que una sesion posterior puede cerrar lo que la 4 dejo en parte; lo que la 5
-# deja en parte lo vigila `test_una_en_parte_de_la_sesion_5_no_entra_en_resueltas`.
+# deja en parte lo vigila `test_la_sesion_5_deja_en_parte_lo_que_dice_su_tabla`
+# (tests/unit/test_en_parte_no_se_cierra.py).
 EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-44", "A-49", "A-50", "A-53"})
 
 

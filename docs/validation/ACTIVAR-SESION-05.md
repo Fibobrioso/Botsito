@@ -869,6 +869,18 @@ remite a SESION-05-EXTRACCION.md §3.2 sin citarlo. Ningún registro de feedback
 `## Estado` del ADR y su fila del índice dicen que D1 sigue PROVISIONAL y que la pregunta pasa a la
 sesión 6 (§3, 8). `test_adr.py` en verde (el Estado empieza por `ACTIVE`).
 
+### 1.7 El test de control de la sesión 5 (A.7)
+
+`tests/unit/test_en_parte_no_se_cierra.py` gana dos tests (1696 → 1698 funciones):
+`test_la_sesion_5_deja_en_parte_lo_que_dice_su_tabla` lee SOLO SESION-05-EXTRACCION.md y exige que
+su tabla final deje «solo en parte» A-13, A-35, A-43, A-44 y A-53, que A-32 y A-57 (las «resuelve»)
+no estén entre ellas, y que en el YAML las cinco sigan ABIERTAS y las dos RESUELTAS; con
+`test_ninguna_en_parte_esta_resuelta`, una «en parte» de la 5 metida en RESUELTAS hace fallar.
+Y `test_se_rompe_a_proposito_si_una_en_parte_de_la_sesion_5_figura_resuelta` lo rompe a propósito
+con un YAML sintético que da A-35 por RESUELTA sobre la tabla real: `['A-35 (RESUELTA)']`. El
+comentario de `EN_PARTE_SESION_4` en `test_kit.py` apunta a él. Medido: el fichero en verde (6
+tests); `make check` sellado.
+
 ## Estado
 
 EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por
