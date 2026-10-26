@@ -1408,6 +1408,44 @@ Lo que esta rama dejó en la máquina y no está en el repositorio:
 - **Los fotogramas**, `data/fotogramas/v15/` (2,7 GB) y `data/fotogramas/v16/` (772 MB): se
   regeneran desde el vídeo con `corpus frames extract`, así que copiarlos o no lo decide Aleks.
 
+## 9. El cierre de la rama: sellos, push y CI
+
+**Los commits**, cada uno con su `make check` sellado (exit 0, ningún `failed`, la línea `SELLO`):
+
+| Commit | Qué | SELLO (árbol) |
+|---|---|---|
+| `c6d7cef` | abre la rama: encargo, contrato y Archivo 46 | sellado; el hash no se guardó (el log se reescribe en cada `make check`) |
+| `1e86611` | registro de v15 y v16, en cuarentena; corte SIN AUDIO de v15 | ídem |
+| `334a49b` | v15 transcrita, filtrada y con fotogramas; sus tramos | ídem |
+| `7b4b463` | v16 transcrita, filtrada y con fotogramas; sus tramos de precaución; la PARADA de julio | `9cb61644…` |
+| `5f47908` | los dos bloques en cuarentena de v16, en su commit propio | `7592a346…` |
+| `36490d6` | commit propio de §7.1: el test de la sesión 4 y `ID:A-48` en R4.1 | `9b9731d8…` |
+| `0f173b3` | la extracción, la evidencia y la hoja usada | `1d75befb…` |
+
+El último `make check`, el de `0f173b3`: `SELLO: make check en verde sobre el arbol
+1d75befbda8808508abad5305298b5d33f5a7e49`, `DURACION de make check: 1122 s`, `PICO DE MEMORIA de
+make check: 298 MiB`, `exit=0`. Comprobaciones del contrato sobre ese commit:
+- `git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones
+  knowledge/corpus/fotogramas data/manifests`: `53 A`, nada más;
+- `knowledge validate`: `OK: 552 items de evidencia, 0 contradicciones abiertas, historial
+  intacto`;
+- `evidence contradictions`: `0 contradicciones abiertas`.
+
+**`PROJECT_STATE.md`**: 23.796 bytes, lo mismo que tras abrir la rama. La rama no lo toca más, y
+con lo preparado en §6 quedaría hacia 24.220, bajo 25.000.
+
+**Push**: `git push origin trabajo/sesion-05:refs/heads/fix/sesion-05`, `* [new branch]
+trabajo/sesion-05 -> fix/sesion-05`. El clasificador no lo negó.
+
+**CI de Linux, run 40254117212** (`fix/sesion-05`, sobre `0f173b3`). Se esperó con un `sleep` en
+segundo plano y se consultó con un solo `gh run view` suelto. **Falla solo el test esperado**:
+`FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo` con `ERROR: PROJECT_STATE declara
+la rama 'trabajo/sesion-05'; la rama actual es 'fix/sesion-05'`. El resultado:
+`1 failed, 2871 passed, 46 skipped in 215.45s`.
+
+Este §9 entra en un commit posterior a `0f173b3`, que se empuja igual a `fix/sesion-05`. Su run va
+en la sección del revisor.
+
 ## Estado
 
 Extracción terminada el 2026-10-25: los dos vídeos ingeridos (registro, audio, transcripción,
@@ -1418,4 +1456,5 @@ ni motor, ni casos; ADR-0081 y ADR-0083 siguen PROVISIONALES. Decide el consulto
 - las contradicciones de §4.1;
 - qué hace con H (§4.2) y con lo preparado para la orden de cierre (§6).
 
-**EN CURSO** hasta el `make check` sellado, la CI de Linux por `fix/sesion-05` y el revisor.
+**EN CURSO** hasta el revisor (§9: `make check` sellado y la CI de Linux por `fix/sesion-05`, con
+solo el fallo esperado).
