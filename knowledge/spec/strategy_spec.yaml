@@ -589,7 +589,14 @@ tokens:
       -no hay `fijar` que lo escriba- y por eso RN-004 no puede dispararse. Que pivote se marca lo
       decide A-24, DECIDIDA por ADR-0045: el MAS RECIENTE YA FORMADO. Cuando esta formado es A-35, y
       hasta que se responda la regla no se escribe: escribir aqui una inventada seria hacer pasar por
-      metodo del trader lo que decide el plan. La vela que lo marca es contraria al FLUJO DE M15, no al sesgo de H4
+      metodo del trader lo que decide el plan. DESDE EL 2026-10-26 (sesion 5, S-3,
+      fb-2026-10-23-sesion-05-03449065) ESTA RESPONDIDO EN SU PRIMERA MITAD: el pivote esta formado
+      al CIERRE de la vela contraria (liquidez_m15_pivote_formado = cierre_vela_contraria,
+      ev-v15-000447-6699c708; la vela sin cuerpo no cuenta, ev-v15-000530-234d4a81), que es lo que
+      domain/pivotes_m15.py produce; A-35 sigue ABIERTA por su segunda mitad (si el extremo se
+      actualiza a la mecha, ev-v15-000553-9d95178a: rama de motor y sesion 6), y fijar el parametro
+      con ella abierta es una DESVIACION declarada de la skill activar-sesion por orden del
+      consultor (trabajo/activar-sesion-05). La vela que lo marca es contraria al FLUJO DE M15, no al sesgo de H4
       (ev-v3-001204-889179d2, ev-v4-003451-d750e553, ev-v6-003701-7613b381, ev-v3-011147-fa2e6984: "seria solo
       M15, M15 y ya"); que pasa cuando ese flujo va contra el sesgo de H4 es A-26
   lote_calculado:
@@ -1191,7 +1198,16 @@ reglas:
       intentos_tras_toma_nueva, CONFIRMADO en la sesion 4 (S-18, A-25 RESUELTA el 2026-10-04:
       la toma de otra liquidez reinicia los tres intentos, fb-2026-10-04-sesion-04-9f3e9dda). Abrir
       un escenario es el reinicio de los cartuchos (cartuchos_reinicio = siguiente_liquidez_m15,
-      ratificado en S-18, fb-2026-10-04-sesion-04-e0173b1b)
+      ratificado en S-18, fb-2026-10-04-sesion-04-e0173b1b). DESDE EL 2026-10-26 (sesion 5, S-3,
+      fb-2026-10-23-sesion-05-03449065) A-35 TIENE VALOR: liquidez_m15_pivote_formado =
+      cierre_vela_contraria («en cuanto la vela roja de despues ya cerrado»,
+      ev-v15-000447-6699c708; la sin cuerpo no cuenta, ev-v15-000530-234d4a81), y esta regla
+      dispara a secas, sin --diagnostico-a35. A-35 sigue ABIERTA y bloqueante por su segunda
+      mitad (el extremo se actualiza a la mecha, ev-v15-000553-9d95178a, que el motor no hace:
+      rama de motor con ADR, y la sesion 6 confirma si es la mecha de la vela contraria);
+      fijar el parametro con la ambiguedad abierta es una DESVIACION declarada de la skill
+      activar-sesion y del runbook ACTIVAR-A35-A44.md §1, por orden del consultor
+      (trabajo/activar-sesion-05, respuesta a la PARADA, punto 0)
     forma:
       cuando:
         todos_de:

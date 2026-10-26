@@ -377,8 +377,9 @@ def test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos(tmp_path: Path
         pytest.skip("sin reparto dev-visto")
     caso = sorted(c for c, p in visto.asignacion(RAIZ, mes).items() if p == "dev")[0]
     salida = tmp_path / "visor"
-    # A-35 sin fijar: a secas el visor se niega nombrandola (rama trabajo/preparar-a35-a44); en
-    # diagnostico corre, y la pagina lleva la etiqueta en el nombre y en el cuerpo
+    # A-44 sin fijar: a secas el visor se niega nombrandola (rama trabajo/preparar-a35-a44; A-35
+    # esta fijada desde la sesion 5, trabajo/activar-sesion-05, y su diagnostico se rechaza); en
+    # diagnostico de A-44 corre, y la pagina lleva la etiqueta en el nombre y en el cuerpo
     assert (
         cli.main(["--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida)])
         == 2
@@ -386,17 +387,17 @@ def test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos(tmp_path: Path
     assert not salida.exists()
     peticion = [
         "--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida),
-        "--diagnostico-a35", "cierre_vela_contraria", "--diagnostico-a44", "sin_tope",
+        "--diagnostico-a44", "sin_tope",
     ]  # fmt: skip
     codigo = cli.main(peticion)
     if codigo == 2:
         pytest.skip("sin dataset en esta maquina")
     assert codigo == 0
-    # sin `.a21=` desde ADR-0076: A-21 esta fijada y no lleva etiqueta
-    pagina = salida / f"{caso}.DIAGNOSTICO.a35=cierre_vela_contraria.a44=sin_tope.html"
+    # sin `.a21=` desde ADR-0076 ni `.a35=` desde la sesion 5: fijadas, no llevan etiqueta
+    pagina = salida / f"{caso}.DIAGNOSTICO.a44=sin_tope.html"
     primero = pagina.read_bytes()
     assert not (salida / f"{caso}.html").exists()
-    assert b"DIAGNOSTICO-A35-cierre_vela_contraria" in primero
+    assert b"DIAGNOSTICO-A44-sin_tope" in primero and b"DIAGNOSTICO-A35" not in primero
     assert cli.main(peticion) == 0
     assert pagina.read_bytes() == primero
     assert not (salida / visor.INDICE).exists()

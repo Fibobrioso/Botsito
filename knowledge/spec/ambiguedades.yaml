@@ -951,7 +951,12 @@ ambiguedades:
     titulo: cuándo un pivote de M15 está formado
     pregunta: >-
       Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué
-      haces si después el precio lo supera un poco?
+      haces si después el precio lo supera un poco? RESPONDIDA EN PARTE en la sesion 5 (2026-10-23,
+      v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado»
+      (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija
+      liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la
+      segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), contradice lo que hace el
+      motor y queda para la rama de motor y la sesion 6. SIGUE ABIERTA.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
@@ -979,6 +984,14 @@ ambiguedades:
     # El selector de la respuesta, SIN VALOR (UNKNOWN) desde el 2026-09-26 (rama
     # trabajo/preparar-a35-a44): sus opciones son las dos lecturas que el corpus documenta, y
     # activar RN-004 es escribirle la que diga el trader (docs/runbooks/ACTIVAR-A35-A44.md)
+    # CON VALOR DESDE EL 2026-10-26 (rama trabajo/activar-sesion-05, sesion 5, S-3): el trader
+    # responde la primera mitad -cierre_vela_contraria, fb-2026-10-23-sesion-05-03449065- y el
+    # parametro se fija con la ambiguedad ABIERTA. Es una DESVIACION declarada de la skill
+    # activar-sesion («en parte no se cierra ... sin fijar nada») y del runbook §1 (la segunda
+    # mitad no abre una ambiguedad nueva: ya es esta pregunta), por orden del consultor (respuesta
+    # a la PARADA, punto 0), para que el arnes corra sin --diagnostico-a35. Lo que falta: si el
+    # extremo se actualiza a la mecha de la vela contraria (ev-v15-000553-9d95178a, que hoy
+    # pivotes_m15.py no hace) -rama de motor con ADR, y la sesion 6 lo confirma-
     parametros: [liquidez_m15_pivote_formado]
     contradiccion: null
     estado: ABIERTA

@@ -1,0 +1,29 @@
+id: fb-2026-10-23-sesion-05-03449065
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: parametro
+  id: liquidez_m15_pivote_formado
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Vale, en este caso sería pues en cuanto la vela roja de después ya cerrado, de esa
+  manera pues nosotros tenemos de una manera más clara como trazar la zona lineal de liquidez en M15,
+  la B.
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, respuesta a la PARADA, punto 0: DESVIACION
+  declarada de la skill activar-sesion -«en parte no se cierra», sin fijar nada-: el parametro se fija
+  con A-35 ABIERTA para que el arnes corra a secas)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: 0:04:47
+t1: 0:05:09
+valor_resultante: cierre_vela_contraria
+notas: 'S-3 (A-35), primera mitad, FIRME: un alto de M15 esta formado cuando la vela roja de despues ya
+  ha cerrado, la opcion b de la hoja (ev-v15-000447-6699c708); una vela que cierra sin cuerpo no cuenta
+  como la vela de despues (ev-v15-000530-234d4a81), que es lo que domain/pivotes_m15.py ya hace. A-35
+  SIGUE ABIERTA y bloqueante: la segunda mitad -«se actualiza el de la mecha», ev-v15-000553-9d95178a-
+  contradice lo fijo y visible de pivotes_m15.py (la mecha de la contraria no mueve el nivel) y va a la
+  rama de motor con su ADR; que sea la mecha de la vela contraria se confirma en la sesion 6. DESVIACION
+  declarada tambien del runbook ACTIVAR-A35-A44.md §1: no abre una ambiguedad nueva, porque ya es la segunda
+  mitad de la pregunta de A-35'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

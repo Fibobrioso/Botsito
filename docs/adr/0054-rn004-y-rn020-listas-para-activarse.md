@@ -34,6 +34,14 @@ phase: post-F14 (rama `trabajo/preparar-a35-a44`)
   cambia: un fichero de diagnóstico nunca se llama como una línea base.)*
 - Activar cada regla es escribir un valor y correr un comando: `docs/runbooks/ACTIVAR-A35-A44.md`.
 
+> **NOTA del 2026-10-26 (`trabajo/activar-sesion-05`, no reescribe el cuerpo).** El selector de
+> A-35 ya no es UNKNOWN: `liquidez_m15_pivote_formado` = `cierre_vela_contraria` desde la sesión 5
+> (S-3, `fb-2026-10-23-sesion-05-03449065`, `ev-v15-000447-6699c708`), y el arnés y el visor
+> corren sin `--diagnostico-a35`, que desde entonces se rechaza. A-35 sigue ABIERTA por la
+> segunda mitad de su pregunta (el extremo que se actualiza a la mecha, `ev-v15-000553-9d95178a`:
+> rama de motor y sesión 6); fijar el valor con la ambigüedad abierta es una desviación declarada
+> de la skill `activar-sesion`, por orden del consultor (`docs/validation/ACTIVAR-SESION-05.md`).
+
 ### 2. El tope del trader tiene tres estados y es independiente de la firma
 
 - **SIN FIJAR**: el motor se niega (salvo diagnóstico).
@@ -97,7 +105,8 @@ diagnóstico permite ver el embudo sin que ninguna cifra cuente.
   `cruza` en `engine/primitivas.py`; `DatosMercado` con M15 y M1; el cableado de RN-020 en
   `engine/cableado.py`; `_empate_inocuo` en `engine/interprete.py`.
 - Registro: `liquidez_m15_pivote_formado` y los seis `perdida_trader_*`, todos UNKNOWN; spec
-  13.2.0.
+  13.2.0. *(NOTA del 2026-10-26, `trabajo/activar-sesion-05`: `liquidez_m15_pivote_formado`
+  CONFIRMED en `cierre_vela_contraria`, spec 18.1.4; ver la NOTA de §1.)*
 - Nace A-45; la hoja de la sesión 02 la lleva justo después de A-35.
 - `docs/runbooks/ACTIVAR-A35-A44.md`, `scripts/verificacion_a35_a44.py`.
 

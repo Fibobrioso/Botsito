@@ -507,9 +507,20 @@ parametros:
       ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor
       (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo
       diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una
-      regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py)
-    estado: UNKNOWN
+      regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py). FIJADO EL
+      2026-10-26 (sesion 5, S-3, fb-2026-10-23-sesion-05-03449065): `cierre_vela_contraria`, «en
+      cuanto la vela roja de despues ya cerrado» (ev-v15-000447-6699c708); la vela que cierra sin
+      cuerpo no cuenta como vela de despues (ev-v15-000530-234d4a81). A-35 SIGUE ABIERTA y
+      bloqueante por su segunda mitad -«se actualiza el de la mecha», ev-v15-000553-9d95178a, que
+      contradice lo fijo de pivotes_m15.py y va a la rama de motor-: fijar el parametro con la
+      ambiguedad abierta es una DESVIACION declarada de la skill activar-sesion, por orden del
+      consultor (trabajo/activar-sesion-05, PARADA, punto 0), para que el arnes corra a secas
     consumido_por: [ADR-0045]
+    estado: CONFIRMED
+    valor: cierre_vela_contraria
+    fuente:
+      tipo: feedback
+      id: fb-2026-10-23-sesion-05-03449065
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum

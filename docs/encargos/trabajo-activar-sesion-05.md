@@ -126,3 +126,29 @@ Dado por Aleks (consultor) el 2026-10-25, en un solo mensaje. Copiado tal cual:
 >   - El tamaño final de PROJECT_STATE con todo eso.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-26)
+
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-05 (2026-10-26). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). Si al aplicar algo medido lo contradice, PARADA 2.
+>
+> 0. (a). La desviación declarada de A.1 y A.2 manda sobre activar-sesion, con la palabra «desviación» en los registros, las notas y el informe. Motivo: sin ella el arnés no corre a secas hasta la sesión 6, y lo que se fija está dicho por el trader (A-35) o es un valor provisional a la vista (A-44, punto 1).
+> 1. (b). perdida_trader_magnitud a DEFAULT_AMBIGUOUS, valor saldo, ambiguedad_id A-44, fuente fb-2026-09-09-sesion-01-bff260ea, a mano y sin registro de feedback; la lectura del consultor va en su descripción y en las notas de RN-020, y la magnitud es la primera pregunta de la sesión 6. Motivo: es un default nuestro bajo una ambigüedad ABIERTA (precedente orden_stop_punto), y un CONFIRMED pondría en boca del trader lo que no dijo. Corrige mi error: el encargo decía «registro RESOLVE_UNKNOWN sobre el parámetro» y eso contradecía ERRORES-RECURRENTES.md:84 y mi propia decisión del 2026-10-19 sobre b10. El test sintético saldo/equity se queda.
+> 2. (b). La unidad lleva además ev-v10-010913-c4949417 en las notas, con la reserva del «creo» de ev-v15-000913-bdb12f92.
+> 3. (a). S-1, S-2 y S-23, CONFIRM sobre RN-003; S-9 y S-11, sobre RN-004; S-12a, sobre RN-005, más el CORRECT sobre ev-v9-004919-c6bfb3ee. A-24 sigue DECIDIDA. Los recuadros de ADR-0080 §4 y §9, ADR-0066 y ADR-0075 citan esos registros. Corrige mi error: los objetivos del encargo (ADR y ambigüedades) no los admite CONFIRM (modelo.py:66).
+> 4. (a). Arnés a secas y con --simular solo con --meses 2026-04, fichero fuera del repo y sin resumir, con la lectura del M1 de marzo declarada antes de correr (ya está). Corrige mi error: por ADR-0070 §3 la corrida sobre toda la construcción con --simular cuenta, y esa es la re-corrida que va después de la rama de motor.
+> 5. (a). Una NOTA fechada en ADR-0053 §3.3 y §9, ADR-0054 §1 e Impacto y ADR-0070 §3, en los commits de A-35 y A-44, con sus filas del índice. Lo que añadí de más en el encargo, el recuadro de ADR-0066 y ADR-0075 por S-11 y S-23, va también como NOTA de una línea en el commit de las confirmaciones.
+> 6. (a). Amplía el contrato a docs/runbooks/ACTIVAR-A35-A44.md, en un commit propio, con una NOTA al principio: activado el 2026-10-26, lo que se fijó y las tres desviaciones (la segunda mitad de A-35 no abre ambigüedad nueva; perdida_maxima_semanal sin CORRECT; la magnitud como DEFAULT_AMBIGUOUS). El cuerpo no se toca.
+> 7. (a). Acortar la introducción de Technical Debt y dejar de la deuda de Oanda solo la parte viva de la serie, en el commit del contrato. Las candidatas sin abrir se quedan.
+> 8. (a). Dos commits, con los cinco tests de CLI tocados dos veces, y cada commit en verde.
+> 9. (a). Todas se activan, con su reserva escrita en las notas del registro.
+>
+> Además, lo que sale de §0.e:
+> 10. B.1 (la segunda mitad de A-35): la rama de motor escribe lo que sostiene ev-v15-000553-9d95178a («se actualiza el de la mecha») y remite a SESION-05-EXTRACCION.md §3.1 para el ejemplo del replay, sin citarlo. Que sea la mecha de la vela contraria es lo que se pregunta en la sesión 6 para confirmarlo. Corrige mi error: el encargo restringía a la vela contraria con un tramo que no está en ningún ítem.
+> 11. Lista de la sesión 6, S-14 (§0.e.13): los días en que el bot opera y él no se enseñan como permite la regla 2 de SESION-DE-PREGUNTAS.md (solo días de construcción, cortados antes de la orden y sin fecha), y la elección de los días la hago yo al preparar la hoja. Corrige la frase «nada de esto se pregunta con días reales», que era demasiado ancha: quédala como «ningún día reservado ni ninguna fecha».
+> 12. §0.e.17 (RN-020 no retira la orden pendiente al llegar al tope): de acuerdo, entra en «Para la rama de motor» como punto 10, con RN-036 de modelo.
+> 13. §0.e.18 (la medida de R4.1 con su diff): va en las líneas del cierre como la re-corrida que sigue a la rama de motor, no en esta rama.
+> 14. §0.f (la guardia niega los tests de un clon en C:/cm/): hallazgo importa, de acuerdo. Ponlo en las líneas del cierre como ampliación de K, con los tres ficheros nuevos.
+>
+> Sigue lo que manda el encargo: un commit por respuesta, knowledge validate antes de make check, Fuente: en el cuerpo con ids que existen, CI de Linux por fix/activar-sesion-05 con su número de run (gh run view suelto), revisor (opus) con los cuatro alcances del encargo más un quinto (cada DEFAULT_AMBIGUOUS nuevo dice en su descripción que es lectura del consultor y bajo qué ambigüedad) y su informe pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.

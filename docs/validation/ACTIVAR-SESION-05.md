@@ -544,7 +544,105 @@ repositorio y sin leer.
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta del consultor a la PARADA (2026-10-26)
+
+Copiada tal cual.
+
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-05 (2026-10-26). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). Si al aplicar algo medido lo contradice, PARADA 2.
+>
+> 0. (a). La desviación declarada de A.1 y A.2 manda sobre activar-sesion, con la palabra «desviación» en los registros, las notas y el informe. Motivo: sin ella el arnés no corre a secas hasta la sesión 6, y lo que se fija está dicho por el trader (A-35) o es un valor provisional a la vista (A-44, punto 1).
+> 1. (b). perdida_trader_magnitud a DEFAULT_AMBIGUOUS, valor saldo, ambiguedad_id A-44, fuente fb-2026-09-09-sesion-01-bff260ea, a mano y sin registro de feedback; la lectura del consultor va en su descripción y en las notas de RN-020, y la magnitud es la primera pregunta de la sesión 6. Motivo: es un default nuestro bajo una ambigüedad ABIERTA (precedente orden_stop_punto), y un CONFIRMED pondría en boca del trader lo que no dijo. Corrige mi error: el encargo decía «registro RESOLVE_UNKNOWN sobre el parámetro» y eso contradecía ERRORES-RECURRENTES.md:84 y mi propia decisión del 2026-10-19 sobre b10. El test sintético saldo/equity se queda.
+> 2. (b). La unidad lleva además ev-v10-010913-c4949417 en las notas, con la reserva del «creo» de ev-v15-000913-bdb12f92.
+> 3. (a). S-1, S-2 y S-23, CONFIRM sobre RN-003; S-9 y S-11, sobre RN-004; S-12a, sobre RN-005, más el CORRECT sobre ev-v9-004919-c6bfb3ee. A-24 sigue DECIDIDA. Los recuadros de ADR-0080 §4 y §9, ADR-0066 y ADR-0075 citan esos registros. Corrige mi error: los objetivos del encargo (ADR y ambigüedades) no los admite CONFIRM (modelo.py:66).
+> 4. (a). Arnés a secas y con --simular solo con --meses 2026-04, fichero fuera del repo y sin resumir, con la lectura del M1 de marzo declarada antes de correr (ya está). Corrige mi error: por ADR-0070 §3 la corrida sobre toda la construcción con --simular cuenta, y esa es la re-corrida que va después de la rama de motor.
+> 5. (a). Una NOTA fechada en ADR-0053 §3.3 y §9, ADR-0054 §1 e Impacto y ADR-0070 §3, en los commits de A-35 y A-44, con sus filas del índice. Lo que añadí de más en el encargo, el recuadro de ADR-0066 y ADR-0075 por S-11 y S-23, va también como NOTA de una línea en el commit de las confirmaciones.
+> 6. (a). Amplía el contrato a docs/runbooks/ACTIVAR-A35-A44.md, en un commit propio, con una NOTA al principio: activado el 2026-10-26, lo que se fijó y las tres desviaciones (la segunda mitad de A-35 no abre ambigüedad nueva; perdida_maxima_semanal sin CORRECT; la magnitud como DEFAULT_AMBIGUOUS). El cuerpo no se toca.
+> 7. (a). Acortar la introducción de Technical Debt y dejar de la deuda de Oanda solo la parte viva de la serie, en el commit del contrato. Las candidatas sin abrir se quedan.
+> 8. (a). Dos commits, con los cinco tests de CLI tocados dos veces, y cada commit en verde.
+> 9. (a). Todas se activan, con su reserva escrita en las notas del registro.
+>
+> Además, lo que sale de §0.e:
+> 10. B.1 (la segunda mitad de A-35): la rama de motor escribe lo que sostiene ev-v15-000553-9d95178a («se actualiza el de la mecha») y remite a SESION-05-EXTRACCION.md §3.1 para el ejemplo del replay, sin citarlo. Que sea la mecha de la vela contraria es lo que se pregunta en la sesión 6 para confirmarlo. Corrige mi error: el encargo restringía a la vela contraria con un tramo que no está en ningún ítem.
+> 11. Lista de la sesión 6, S-14 (§0.e.13): los días en que el bot opera y él no se enseñan como permite la regla 2 de SESION-DE-PREGUNTAS.md (solo días de construcción, cortados antes de la orden y sin fecha), y la elección de los días la hago yo al preparar la hoja. Corrige la frase «nada de esto se pregunta con días reales», que era demasiado ancha: quédala como «ningún día reservado ni ninguna fecha».
+> 12. §0.e.17 (RN-020 no retira la orden pendiente al llegar al tope): de acuerdo, entra en «Para la rama de motor» como punto 10, con RN-036 de modelo.
+> 13. §0.e.18 (la medida de R4.1 con su diff): va en las líneas del cierre como la re-corrida que sigue a la rama de motor, no en esta rama.
+> 14. §0.f (la guardia niega los tests de un clon en C:/cm/): hallazgo importa, de acuerdo. Ponlo en las líneas del cierre como ampliación de K, con los tres ficheros nuevos.
+>
+> Sigue lo que manda el encargo: un commit por respuesta, knowledge validate antes de make check, Fuente: en el cuerpo con ids que existen, CI de Linux por fix/activar-sesion-05 con su número de run (gh run view suelto), revisor (opus) con los cuatro alcances del encargo más un quinto (cada DEFAULT_AMBIGUOUS nuevo dice en su descripción que es lectura del consultor y bajo qué ambigüedad) y su informe pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+## 1. La respuesta aplicada, commit a commit
+
+Cada punto de la respuesta del consultor, en el orden del plan de §0.d; lo que al aplicarlo
+contradijo algo medido va como PARADA nueva. Todos los registros llevan la cita de su ítem de
+SESION-05-EXTRACCION.md §8 como `respuesta_literal`, `--medio video`, la grabación de v15 o v16,
+el tramo del ítem, `--procedencia trader_grabado` y las fechas del encargo (v15: `--fecha 2026-10-23
+--recibido-el 2026-10-23`; v16: `--recibido-el 2026-10-25`).
+
+### 1.1 A-35 · `liquidez_m15_pivote_formado` = `cierre_vela_contraria` (puntos 0 y 10)
+
+**El registro:** `fb-2026-10-23-sesion-05-03449065`, RESOLVE_UNKNOWN sobre el PARÁMETRO (no sobre
+la ambigüedad), cita `ev-v15-000447-6699c708` (0:04:47-0:05:09), notas con `ev-v15-000530-234d4a81`
+(la sin cuerpo no cuenta) y `ev-v15-000553-9d95178a` (la segunda mitad, a la rama de motor). El
+`registrado_por` y las notas llevan la palabra DESVIACION dos veces, como pidió el punto 0: de la
+skill `activar-sesion` («en parte no se cierra … sin fijar nada») y del runbook
+`ACTIVAR-A35-A44.md` §1 (la segunda mitad no abre una ambigüedad nueva: ya es la pregunta de
+A-35). Ningún registro sobre A-35, que SIGUE ABIERTA y bloqueante.
+
+**`feedback apply --sesion 2026-10-23-sesion-05 --check`** propuso exactamente este registro
+(`1 parametros; 1 cambian, 0 ya estaban`) y sin `--check` escribió `estado: CONFIRMED`,
+`valor: cierre_vela_contraria` y `fuente: {tipo: feedback, id: fb-…-03449065}` en
+`parametros.yaml` (la descripción, a mano, con la fecha, los tres ítems y la desviación).
+
+**Los sitios tocados** (los del runbook §3.3 que aplican a un parámetro fijado con la ambigüedad
+abierta; la tabla de `PROJECT_STATE.md` y la hoja de preguntas no cambian porque A-35 sigue
+ABIERTA):
+- `knowledge/spec/ambiguedades.yaml`, A-35: «RESPONDIDA EN PARTE en la sesion 5 … SIGUE ABIERTA» al
+  final de `pregunta` (el precedente de A-44 tras la sesión 3) y un comentario fechado con la
+  desviación y lo que falta para la sesión 6.
+- `knowledge/spec/strategy_spec.yaml`: las notas de RN-004 («DESDE EL 2026-10-26 … A-35 TIENE
+  VALOR … DESVIACION declarada») y la descripción del token `liquidez_m15` («ESTA RESPONDIDO EN SU
+  PRIMERA MITAD»), que era el tercer sitio del runbook (§0.e, 19).
+- `spec_version` 18.1.3 → 18.1.4, `spec manifest --escribir` (hash `3167d9bbbb88…`) y
+  `spec docs --escribir` (los cuatro de `docs/spec/`).
+- ADR-0054: NOTA fechada bajo §1 y en Impacto; ADR-0070: NOTA bajo la de §3 del 2026-10-14 (el
+  diagnóstico queda solo para A-44, y la corrida que cuenta es la re-corrida tras la rama de
+  motor). Las dos filas del índice de `docs/adr/README.md` lo dicen (punto 5).
+
+**Tests que cambian de sentido a propósito** (§0.b.5; medidos en el clon de §0.b.1, donde los de
+`main` fallaban con el valor puesto):
+- `test_preparar_a35.py`: `test_sin_fijar_el_motor_se_niega_nombrando_a35` pasa a
+  `test_con_el_registro_real_la_lectura_es_el_cierre_y_el_diagnostico_se_rechaza` (el registro
+  real da `cierre_vela_contraria`; `Diagnostico(a35=…)` se rechaza con «ya esta fijado») y la
+  negativa sin fijar se conserva sobre un registro sintético UNKNOWN en
+  `test_sin_fijar_se_niega_nombrando_a35` (test nuevo: 1693 → 1694 funciones);
+  `test_la_cli_se_niega_sin_lectura_y_no_escribe_nada` pasa a
+  `test_la_cli_rechaza_el_diagnostico_de_a35_y_no_escribe_nada` (medida sigue negándose con
+  MEDIDA; `--diagnostico-a35` sobre construcción se rechaza sin escribir; a secas, la siguiente
+  compuerta es A-44, que en este commit sigue sin fijar: **se toca otra vez en el commit de
+  A-44**); `test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos` corre solo con
+  `--diagnostico-a44 sin_tope`, el fichero es `informe.DIAGNOSTICO.a44=sin_tope.txt` y ninguna
+  línea lleva `DIAGNOSTICO-A35` (se toca otra vez en el commit de A-44: a secas).
+- Los cinco tests de CLI que pedían los dos diagnósticos pierden `--diagnostico-a35` en este
+  commit y `--diagnostico-a44` en el siguiente (punto 8): `test_preparar_a44.py::
+  test_la_cli_se_niega_sin_a44_aunque_a35_vaya_en_diagnostico` (ahora
+  `…_con_a35_ya_fijada`: a secas se niega nombrando A-44), `test_selector_orden_stop.py` (dos
+  tests), `test_renovar_cierres.py`, `test_rutas_windows.py` (`diag` solo con A-44) y
+  `test_visor.py` (a secas sigue en 2, ahora por A-44; la página se llama
+  `<caso>.DIAGNOSTICO.a44=sin_tope.html` y no lleva `DIAGNOSTICO-A35`).
+- Sin cambio, como preveía §0.b.5: `test_preparar_a21.py::test_la_cli_no_conoce_diagnostico_a21…`
+  (la compuerta de medida va antes), `test_cableado.py`, `test_umbral_mayo.py`,
+  `test_diferencias_por_operacion.py`, `test_kit.py` (bloqueantes ABIERTAS siguen siendo
+  {A-35, A-44}).
+
+`uv run pytest` sobre los once ficheros tocados o vecinos (`test_preparar_a35`, `test_preparar_a44`,
+`test_selector_orden_stop`, `test_renovar_cierres`, `test_rutas_windows`, `test_visor`, `test_kit`,
+`test_registro`, `test_hoja_preguntas`, `test_spec_docs_generados`, `test_adr`): 161 en verde, 0
+fallos. `knowledge validate`: exit 0 (`OK: registro con 109 parametros (16 sin confirmar)`,
+`OK: 177 registros de feedback, historial intacto, commits con Fuente`).
+
 ## Estado
 
-EN CURSO (2026-10-26): fase 0 medida y PARADA abierta; se espera la respuesta del consultor a «Lo
-que necesito que decidas». Nada de spec, knowledge ni código se ha tocado en la rama.
+EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por
+punto, un commit por respuesta (§1). Lo hecho hasta aquí lo dice §1; lo que falta, el plan de §0.d.

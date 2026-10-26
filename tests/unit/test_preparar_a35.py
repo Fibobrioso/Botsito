@@ -332,11 +332,40 @@ def test_la_invariancia_de_h3_sigue_con_la_lectura_puesta(
 # ------------------------------------------------------------------------- el diagnostico
 
 
-def test_sin_fijar_el_motor_se_niega_nombrando_a35(registro: Registro) -> None:
+def test_con_el_registro_real_la_lectura_es_el_cierre_y_el_diagnostico_se_rechaza(
+    registro: Registro,
+) -> None:
+    """Hasta el 2026-10-26 este test comprobaba la NEGATIVA con el registro real sin fijar
+    (`SinFijarError` nombrando A-35) y que el diagnostico corria. Cambia de sentido A PROPOSITO en
+    `trabajo/activar-sesion-05`: la sesion 5 fijo `liquidez_m15_pivote_formado` =
+    `cierre_vela_contraria` (S-3, fb-2026-10-23-sesion-05-03449065), asi que el registro real da
+    esa lectura y el diagnostico se rechaza, como el test sintetico de abajo. La negativa sin
+    fijar sigue probada con un registro sintetico en `test_sin_fijar_se_niega_nombrando_a35`."""
+    assert lectura_pivote(registro) == CIERRE_VELA_CONTRARIA
+    with pytest.raises(DiagnosticoRechazadoError, match="ya esta fijado"):
+        lectura_pivote(registro, Diagnostico(a35=INICIO_VELA_CONTRARIA))
+
+
+def test_sin_fijar_se_niega_nombrando_a35(tmp_path: Path) -> None:
+    """Lo que el registro real hacia hasta la sesion 5, sobre un registro sintetico UNKNOWN."""
+    contenido = f"""
+parametros:
+  - nombre: {diagnostico.PARAMETRO_A35}
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando esta formado
+    opciones: [inicio_vela_contraria, cierre_vela_contraria]
+    descripcion: el selector, sin responder en este registro de prueba
+    estado: UNKNOWN
+"""
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(contenido, encoding="utf-8")
+    sin_fijar = cargar_registro(ruta)
     with pytest.raises(SinFijarError, match="A-35") as exc:
-        lectura_pivote(registro)
+        lectura_pivote(sin_fijar)
     assert diagnostico.PARAMETRO_A35 in str(exc.value) and "diagnostico" in str(exc.value)
-    assert lectura_pivote(registro, Diagnostico(a35=INICIO_VELA_CONTRARIA)) == INICIO_VELA_CONTRARIA
+    hipotetica = lectura_pivote(sin_fijar, Diagnostico(a35=INICIO_VELA_CONTRARIA))
+    assert hipotetica == INICIO_VELA_CONTRARIA
 
 
 def test_con_el_valor_fijado_el_diagnostico_se_rechaza(tmp_path: Path) -> None:
@@ -385,12 +414,14 @@ def test_el_diagnostico_etiqueta_cada_linea_cada_fichero_y_cada_pagina() -> None
         Diagnostico(a44="plausible")
 
 
-def test_la_cli_se_niega_sin_lectura_y_no_escribe_nada(
+def test_la_cli_rechaza_el_diagnostico_de_a35_y_no_escribe_nada(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     """La compuerta de construccion manda primero (medida se niega con su mensaje aunque se pida
-    el diagnostico); un mes de construccion SIN el diagnostico se niega nombrando A-35 antes de
-    leer una sola vela."""
+    el diagnostico). Hasta el 2026-10-26 un mes de construccion SIN el diagnostico se negaba
+    nombrando A-35; desde la sesion 5 (`trabajo/activar-sesion-05`, A-35 fijada) el sentido cambia
+    A PROPOSITO: pedir `--diagnostico-a35` se rechaza («ya esta fijado») antes de leer una sola
+    vela, y a secas la siguiente compuerta es la de A-44, que sigue sin fijar."""
     from botsito import cli
 
     real = cargar_criterio(RAIZ)
@@ -403,16 +434,24 @@ def test_la_cli_se_niega_sin_lectura_y_no_escribe_nada(
     assert codigo == 2 and "MEDIDA" in capsys.readouterr().err
     construccion = real.construccion[0]
     codigo = cli.main(
+        ["--repo", str(RAIZ), "motor", "arnes", "--meses", construccion, "--salida", str(salida),
+         "--diagnostico-a35", INICIO_VELA_CONTRARIA]
+    )  # fmt: skip
+    err = capsys.readouterr().err
+    assert codigo == 2 and "ya esta fijado" in err and diagnostico.PARAMETRO_A35 in err
+    assert not list(tmp_path.iterdir())
+    codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", construccion, "--salida", str(salida)]
     )
     err = capsys.readouterr().err
-    assert codigo == 2 and "A-35" in err and diagnostico.PARAMETRO_A35 in err
+    assert codigo == 2 and "A-44" in err and "A-35" not in err
     assert not list(tmp_path.iterdir())
     for peticion in (["--caso", f"caso-x-{real.construccion[0]}-00"], ["--todos"]):
         codigo = cli.main(
-            ["--repo", str(RAIZ), "motor", "visor", *peticion, "--salida", str(tmp_path / "v")]
-        )
-        assert codigo in (2, 3), peticion  # 2: sin lectura (o sin datos); 3: caso oculto
+            ["--repo", str(RAIZ), "motor", "visor", *peticion, "--salida", str(tmp_path / "v"),
+             "--diagnostico-a35", INICIO_VELA_CONTRARIA]
+        )  # fmt: skip
+        assert codigo in (2, 3), peticion  # 2: diagnostico rechazado (o sin datos); 3: oculto
         assert not (tmp_path / "v").exists()
 
 
@@ -420,7 +459,9 @@ def test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
     """Con `data/` en la maquina: el informe del arnes en diagnostico lleva la etiqueta en el
-    nombre y en CADA linea, y no existe un fichero con el nombre pedido a secas."""
+    nombre y en CADA linea, y no existe un fichero con el nombre pedido a secas. Desde el
+    2026-10-26 (`trabajo/activar-sesion-05`, A-35 fijada por la sesion 5) el diagnostico que queda
+    es solo el de A-44: sin `.a35=` en el nombre ni `DIAGNOSTICO-A35` en las lineas."""
     from botsito import cli
     from botsito.cases.paquete import cargar_config
     from botsito.data.dataset import DatasetError, buscar_manifiesto
@@ -436,15 +477,16 @@ def test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos(
     salida = tmp_path / "informe.txt"
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", mes, "--salida", str(salida),
-         "--diagnostico-a35", CIERRE_VELA_CONTRARIA, "--diagnostico-a44", "sin_tope"]
+         "--diagnostico-a44", "sin_tope"]
     )  # fmt: skip
     if codigo == 2 and "falta en disco" in capsys.readouterr().err:
         pytest.skip("sin las velas de construccion en esta maquina")
     assert codigo == 0
-    # sin `.a21=` desde ADR-0076: A-21 esta fijada y no lleva etiqueta
-    etiquetado = tmp_path / f"informe.DIAGNOSTICO.a35={CIERRE_VELA_CONTRARIA}.a44=sin_tope.txt"
+    # sin `.a21=` desde ADR-0076 ni `.a35=` desde la sesion 5: fijadas, no llevan etiqueta
+    etiquetado = tmp_path / "informe.DIAGNOSTICO.a44=sin_tope.txt"
     assert etiquetado.exists() and not salida.exists()
     lineas = etiquetado.read_text(encoding="utf-8").split("\n")
-    prefijo = f"[DIAGNOSTICO-A35-{CIERRE_VELA_CONTRARIA}][DIAGNOSTICO-A44-sin_tope] "
+    prefijo = "[DIAGNOSTICO-A44-sin_tope] "
     assert all(ln.startswith(prefijo) for ln in lineas if ln)
+    assert "DIAGNOSTICO-A35" not in lineas[0]
     assert "sin valor para ninguna medida" in lineas[0]

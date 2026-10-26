@@ -73,7 +73,9 @@ def test_la_cli_se_niega_ante_una_ruta_larga_antes_de_leer_nada(
 
     real = cargar_criterio(RAIZ)
     d = _mas_largas()
-    diag = ["--diagnostico-a35", str(d.a35), "--diagnostico-a44", str(d.a44)]
+    # sin `--diagnostico-a35` desde la sesion 5 (A-35 fijada: la CLI lo rechaza antes de mirar la
+    # ruta); la carpeta pasa del limite sin rotulo, asi que la negativa sigue siendo la de la ruta
+    diag = ["--diagnostico-a44", str(d.a44)]
     carpeta = tmp_path / ("c" * max(1, LIMITE_RUTA_WINDOWS - len(str(tmp_path)) - 40))
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.construccion[0], "--salida",

@@ -404,16 +404,19 @@ def test_el_marcador_cero_se_alcanza_sin_perder_nada_y_rn020_bloquea_de_punta_a_
     assert motor.primero_en_tocar is not None and motor.primero_en_tocar[0] == ORIGEN_TRADER
 
 
-def test_la_cli_se_niega_sin_a44_aunque_a35_vaya_en_diagnostico(
+def test_la_cli_se_niega_sin_a44_con_a35_ya_fijada(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
+    """Hasta el 2026-10-26 pedia `--diagnostico-a35` para pasar la compuerta de A-35; desde la
+    sesion 5 (`trabajo/activar-sesion-05`) A-35 esta fijada y esa opcion se rechaza antes de llegar
+    a A-44, asi que a secas la primera compuerta que se niega es la del tope del trader."""
     from botsito import cli
 
     real = cargar_criterio(RAIZ)
     salida = tmp_path / "informe.txt"
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--meses", real.construccion[0], "--salida",
-         str(salida), "--diagnostico-a35", "inicio_vela_contraria"]
+         str(salida)]
     )  # fmt: skip
     err = capsys.readouterr().err
     assert codigo == 2 and "A-44" in err and tope_trader.P_ALCANCE in err
