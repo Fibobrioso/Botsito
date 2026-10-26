@@ -377,27 +377,25 @@ def test_por_la_cli_sobre_un_dia_dev_de_construccion_si_hay_datos(tmp_path: Path
         pytest.skip("sin reparto dev-visto")
     caso = sorted(c for c, p in visto.asignacion(RAIZ, mes).items() if p == "dev")[0]
     salida = tmp_path / "visor"
-    # A-44 sin fijar: a secas el visor se niega nombrandola (rama trabajo/preparar-a35-a44; A-35
-    # esta fijada desde la sesion 5, trabajo/activar-sesion-05, y su diagnostico se rechaza); en
-    # diagnostico de A-44 corre, y la pagina lleva la etiqueta en el nombre y en el cuerpo
-    assert (
-        cli.main(["--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida)])
-        == 2
-    )
-    assert not salida.exists()
-    peticion = [
+    # Hasta la sesion 5 el visor se negaba a secas (A-35 y A-44 sin fijar) y corria en
+    # diagnostico etiquetado; desde trabajo/activar-sesion-05 (2026-10-26) corre a secas, la
+    # pagina vuelve a llamarse <caso>.html sin rotulo, y el diagnostico se rechaza sin escribir
+    # (ACTIVAR-A35-A44.md §2): cambio de sentido a proposito
+    en_diagnostico = [
         "--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida),
-        "--diagnostico-a44", "sin_tope",
+        "--diagnostico-a35", "cierre_vela_contraria", "--diagnostico-a44", "sin_tope",
     ]  # fmt: skip
+    assert cli.main(en_diagnostico) == 2
+    assert not salida.exists()
+    peticion = ["--repo", str(RAIZ), "motor", "visor", "--caso", caso, "--salida", str(salida)]
     codigo = cli.main(peticion)
     if codigo == 2:
         pytest.skip("sin dataset en esta maquina")
     assert codigo == 0
-    # sin `.a21=` desde ADR-0076 ni `.a35=` desde la sesion 5: fijadas, no llevan etiqueta
-    pagina = salida / f"{caso}.DIAGNOSTICO.a44=sin_tope.html"
+    pagina = salida / f"{caso}.html"
     primero = pagina.read_bytes()
-    assert not (salida / f"{caso}.html").exists()
-    assert b"DIAGNOSTICO-A44-sin_tope" in primero and b"DIAGNOSTICO-A35" not in primero
+    assert [p.name for p in salida.iterdir()] == [pagina.name]
+    assert b"DIAGNOSTICO" not in primero
     assert cli.main(peticion) == 0
     assert pagina.read_bytes() == primero
     assert not (salida / visor.INDICE).exists()

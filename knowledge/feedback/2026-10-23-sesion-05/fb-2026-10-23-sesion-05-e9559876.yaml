@@ -1,0 +1,27 @@
+id: fb-2026-10-23-sesion-05-e9559876
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: parametro
+  id: perdida_trader_alcance
+accion: RESOLVE_UNKNOWN
+respuesta_literal: no solo el del día y las 9 seguidas la respuesta es la A
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05, respuesta a la PARADA, punto 0: DESVIACION
+  declarada de la skill activar-sesion -«en parte no se cierra», sin fijar nada-: el parametro se fija
+  con A-44 ABIERTA para que el arnes corra a secas)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: 0:08:56
+t1: 0:09:04
+valor_resultante: dia
+notas: 'S-4 (A-44), FIRME: el trader no tiene tope de semana, solo el del dia (perdida_maxima_diaria,
+  4,5 %) y las 9 perdidas seguidas (RN-036, A-51), la opcion a de la hoja (ev-v15-000856-ee8f7ba3). Con
+  alcance dia el motor no lee perdida_maxima_semanal (engine/tope_trader.py), que queda CONFIRMED en 9
+  desde la sesion 1 y sin efecto: NO se registra un CORRECT sobre el (DESVIACION declarada del runbook
+  ACTIVAR-A35-A44.md §1, por orden del consultor), y lo que dijo de el -«creo que aqui hay un error»,
+  ev-v15-000913-bdb12f92- queda en el registro de la unidad. A-44 SIGUE ABIERTA y bloqueante: la magnitud
+  (saldo o equity) no la dijo y va como DEFAULT_AMBIGUOUS, lectura del consultor, primera pregunta de
+  la sesion 6; el huso del reinicio sigue UNKNOWN y el motor usa el corte del perfil, marcado SUPUESTO'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

@@ -419,9 +419,10 @@ def test_la_cli_rechaza_el_diagnostico_de_a35_y_no_escribe_nada(
 ) -> None:
     """La compuerta de construccion manda primero (medida se niega con su mensaje aunque se pida
     el diagnostico). Hasta el 2026-10-26 un mes de construccion SIN el diagnostico se negaba
-    nombrando A-35; desde la sesion 5 (`trabajo/activar-sesion-05`, A-35 fijada) el sentido cambia
-    A PROPOSITO: pedir `--diagnostico-a35` se rechaza («ya esta fijado») antes de leer una sola
-    vela, y a secas la siguiente compuerta es la de A-44, que sigue sin fijar."""
+    nombrando A-35; desde la sesion 5 (`trabajo/activar-sesion-05`, A-35 y A-44 fijadas) el
+    sentido cambia A PROPOSITO: pedir `--diagnostico-a35` o `--diagnostico-a44` se rechaza («ya
+    esta fijado») antes de leer una sola vela, y a secas la corrida cuenta (con `data/`, el test
+    siguiente)."""
     from botsito import cli
 
     real = cargar_criterio(RAIZ)
@@ -441,10 +442,11 @@ def test_la_cli_rechaza_el_diagnostico_de_a35_y_no_escribe_nada(
     assert codigo == 2 and "ya esta fijado" in err and diagnostico.PARAMETRO_A35 in err
     assert not list(tmp_path.iterdir())
     codigo = cli.main(
-        ["--repo", str(RAIZ), "motor", "arnes", "--meses", construccion, "--salida", str(salida)]
-    )
+        ["--repo", str(RAIZ), "motor", "arnes", "--meses", construccion, "--salida", str(salida),
+         "--diagnostico-a44", "sin_tope"]
+    )  # fmt: skip
     err = capsys.readouterr().err
-    assert codigo == 2 and "A-44" in err and "A-35" not in err
+    assert codigo == 2 and "ya esta fijado" in err and "A-44" in err and "A-35" not in err
     assert not list(tmp_path.iterdir())
     for peticion in (["--caso", f"caso-x-{real.construccion[0]}-00"], ["--todos"]):
         codigo = cli.main(
@@ -455,13 +457,16 @@ def test_la_cli_rechaza_el_diagnostico_de_a35_y_no_escribe_nada(
         assert not (tmp_path / "v").exists()
 
 
-def test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos(
+def test_por_la_cli_a_secas_el_informe_cuenta_y_no_lleva_etiqueta_si_hay_datos(
     tmp_path: Path, capsys: pytest.CaptureFixture[str]
 ) -> None:
-    """Con `data/` en la maquina: el informe del arnes en diagnostico lleva la etiqueta en el
-    nombre y en CADA linea, y no existe un fichero con el nombre pedido a secas. Desde el
-    2026-10-26 (`trabajo/activar-sesion-05`, A-35 fijada por la sesion 5) el diagnostico que queda
-    es solo el de A-44: sin `.a35=` en el nombre ni `DIAGNOSTICO-A35` en las lineas."""
+    """Con `data/` en la maquina. Hasta el 2026-10-26 este test corria el arnes en DIAGNOSTICO y
+    comprobaba la etiqueta en el nombre y en cada linea; desde la sesion 5
+    (`trabajo/activar-sesion-05`, A-35 y A-44 fijadas) cambia de sentido A PROPOSITO: a secas el
+    arnes corre, el fichero se llama como se pidio, ninguna linea lleva `[DIAGNOSTICO` y el
+    diagnostico se rechaza sin escribir nada (ACTIVAR-A35-A44.md §2: «la corrida a secas ya cuenta
+    y su fichero no lleva etiqueta»). La etiqueta en si la siguen probando los tests sinteticos de
+    `etiquetar`."""
     from botsito import cli
     from botsito.cases.paquete import cargar_config
     from botsito.data.dataset import DatasetError, buscar_manifiesto
@@ -476,17 +481,19 @@ def test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos(
         pytest.skip("sin las velas de construccion en esta maquina")
     salida = tmp_path / "informe.txt"
     codigo = cli.main(
-        ["--repo", str(RAIZ), "motor", "arnes", "--meses", mes, "--salida", str(salida),
-         "--diagnostico-a44", "sin_tope"]
-    )  # fmt: skip
+        ["--repo", str(RAIZ), "motor", "arnes", "--meses", mes, "--salida", str(salida)]
+    )
     if codigo == 2 and "falta en disco" in capsys.readouterr().err:
         pytest.skip("sin las velas de construccion en esta maquina")
     assert codigo == 0
-    # sin `.a21=` desde ADR-0076 ni `.a35=` desde la sesion 5: fijadas, no llevan etiqueta
-    etiquetado = tmp_path / "informe.DIAGNOSTICO.a44=sin_tope.txt"
-    assert etiquetado.exists() and not salida.exists()
-    lineas = etiquetado.read_text(encoding="utf-8").split("\n")
-    prefijo = "[DIAGNOSTICO-A44-sin_tope] "
-    assert all(ln.startswith(prefijo) for ln in lineas if ln)
-    assert "DIAGNOSTICO-A35" not in lineas[0]
-    assert "sin valor para ninguna medida" in lineas[0]
+    assert salida.exists() and [p.name for p in tmp_path.iterdir()] == ["informe.txt"]
+    lineas = salida.read_text(encoding="utf-8").split("\n")
+    assert not any(ln.startswith("[DIAGNOSTICO") for ln in lineas)
+    assert "DIAGNOSTICO" not in lineas[0] and "sin valor para ninguna medida" not in lineas[0]
+    # y el diagnostico, con los dos fijados, se rechaza sin escribir nada mas
+    codigo = cli.main(
+        ["--repo", str(RAIZ), "motor", "arnes", "--meses", mes, "--salida", str(salida),
+         "--diagnostico-a35", CIERRE_VELA_CONTRARIA, "--diagnostico-a44", "sin_tope"]
+    )  # fmt: skip
+    assert codigo == 2 and "ya esta fijado" in capsys.readouterr().err
+    assert [p.name for p in tmp_path.iterdir()] == ["informe.txt"]

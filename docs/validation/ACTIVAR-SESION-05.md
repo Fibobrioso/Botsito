@@ -642,6 +642,91 @@ ABIERTA):
 fallos. `knowledge validate`: exit 0 (`OK: registro con 109 parametros (16 sin confirmar)`,
 `OK: 177 registros de feedback, historial intacto, commits con Fuente`).
 
+### 1.2 A-44 · `perdida_trader_alcance` = `dia`, `perdida_trader_unidad` = `porcentaje`, `perdida_trader_magnitud` = `saldo` como DEFAULT_AMBIGUOUS (puntos 0, 1, 2, 5, 8 y 12)
+
+**Los registros**, los dos sobre PARÁMETROS, ninguno sobre A-44 (que SIGUE ABIERTA y bloqueante):
+- `fb-2026-10-23-sesion-05-e9559876`, RESOLVE_UNKNOWN sobre `perdida_trader_alcance` = `dia`, cita
+  `ev-v15-000856-ee8f7ba3` (0:08:56-0:09:04). Las notas dicen que con `dia` el motor no lee
+  `perdida_maxima_semanal`, que queda CONFIRMED en 9 y SIN EFECTO, sin CORRECT: la segunda
+  desviación declarada del runbook `ACTIVAR-A35-A44.md` §1 (punto 6 de la respuesta).
+- `fb-2026-10-23-sesion-05-1772d9ef`, RESOLVE_UNKNOWN sobre `perdida_trader_unidad` =
+  `porcentaje`, cita `ev-v15-000913-bdb12f92` (0:09:13-0:09:20); las notas llevan la RESERVA del
+  «creo» y, como pidió el punto 2 (b), la cita de la sesión 4 sin «creo», `ev-v10-010913-c4949417`.
+- Los dos `registrado_por` y las notas llevan DESVIACION (de la skill `activar-sesion`, punto 0).
+
+**`feedback apply --check`** propuso exactamente los dos (`3 parametros; 2 cambian, 1 ya estaban`:
+el tercero es el de A-35, ya escrito) y sin `--check` los dejó CONFIRMED con `fuente: feedback`.
+
+**La magnitud, a mano (punto 1 (b)):** `perdida_trader_magnitud` pasa de UNKNOWN a
+`DEFAULT_AMBIGUOUS`, `valor: saldo`, `ambiguedad_id: A-44`, `fuente: {tipo: feedback, id:
+fb-2026-09-09-sesion-01-bff260ea}`, y su descripción dice que es LECTURA DEL CONSULTOR bajo A-44,
+qué dice y qué no dice esa cita («De la cuenta basado en el saldo»: la base del porcentaje, no si lo
+abierto cuenta), por qué no entra CONFIRMED (precedente `orden_stop_punto`; la lección 2 de
+`trabajo/corrida-construccion` en ERRORES-RECURRENTES.md) y que es la primera pregunta de la
+sesión 6. Sin registro de feedback. `tests/contract/test_provisional_cuelga_de_abierta.py` y
+`test_registro.py` en verde (un DEFAULT_AMBIGUOUS de estrategia con fuente `feedback`, bajo una
+ABIERTA).
+
+**Los sitios tocados** (la tabla de `PROJECT_STATE.md` y la hoja no cambian: A-44 sigue ABIERTA):
+- `parametros.yaml`: el comentario de cabecera de los seis `perdida_trader_*`, las descripciones
+  de `alcance` y `unidad` (fecha, ítem, registro, desviación), la de `magnitud` (arriba) y la de
+  `perdida_maxima_semanal` («SIN EFECTO … sin CORRECT, como DESVIACION declarada del runbook §1»).
+- `ambiguedades.yaml`, A-44: «RESPONDIDA EN PARTE en la sesion 5 … SIGUE ABIERTA» en `pregunta` y
+  un comentario fechado con lo fijado, la lectura del consultor y el orden de la sesión 6
+  (magnitud primero, reloj después).
+- `strategy_spec.yaml`: las notas de RN-020 (valor, magnitud como lectura del consultor con la
+  medida de §0.b.3, reloj SUPUESTO, desviación, y «LO QUE ESTA REGLA SIGUE SIN HACER: no retira la
+  orden pendiente al llegar al tope», punto 12) y las descripciones de los acumuladores
+  `perdida_dia` y `perdida_semana` (sin tocar su `magnitud`, que la spec no declara: la lleva el
+  parámetro, ADR-0002).
+- `spec_version` 18.1.4 → 18.1.5, manifiesto (`bfae30bb0afb…`) y los cuatro docs de `docs/spec/`.
+- ADR-0053: NOTA fechada bajo §3.3 y al final de §9; ADR-0054: la NOTA de §1 y la de Impacto
+  ganan A-44; ADR-0070: la NOTA de §3 dice que el motor ya no necesita ningún diagnóstico. Las tres
+  filas del índice actualizadas (punto 5).
+
+**Tests que cambian de sentido a propósito** (§0.b.5; en el clon de §0.b.1 los de `main` fallaban
+con los valores puestos: 7 + 5 + 4):
+- `test_preparar_a44.py`: los siete que pedían el tope hipotético sobre el registro REAL pasan a
+  pedirlo sobre un registro SINTÉTICO sin A-44 (`_diagnostico`, sobre `_registro_sintetico`): lo
+  que prueban -los tres estados del tope sobre el cableado y sobre el motor de la spec- no cambia.
+  Dos tests nuevos (1694 → 1696 funciones):
+  `test_con_el_registro_real_el_tope_es_el_del_dia_en_porcentaje_sobre_el_saldo` (dia, saldo,
+  porcentaje, 4,5, semana `None`, huso SUPUESTO, diagnóstico rechazado) y el **test sintético que
+  pidió el encargo**, `test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta`:
+  con el tope leído del registro, una equity 5.000 por debajo con el saldo intacto da `perdida_dia`
+  0; el mismo tope leído como `equity` daría 5 (%). Si alguien cambia la magnitud sin pasar por
+  A-44, falla. Y `test_la_cli_se_niega_sin_a44…` (tocado por segunda vez, punto 8) pasa a
+  `test_la_cli_rechaza_el_diagnostico_de_a44_con_el_tope_fijado`.
+- `test_preparar_a21.py` (`_motor` y el test del cableado) y `test_sesiones_independientes.py`
+  (`_motor`): `tope_del_registro(registro, huso)` a secas; sus días sintéticos no pierden y el tope
+  del día no dispara. Importes de `Diagnostico` que sobraban, fuera.
+- Los cinco tests de CLI, por segunda vez: pierden `--diagnostico-a44`. `test_visor.py` corre a
+  secas, la página vuelve a ser `<caso>.html` sin `DIAGNOSTICO` y el diagnóstico se rechaza sin
+  escribir; `test_rutas_windows.py` ya no construye el `Diagnostico`.
+- `test_preparar_a35.py`, segunda vez: `test_la_cli_rechaza_el_diagnostico_de_a35_y_no_escribe_nada`
+  comprueba también el rechazo de `--diagnostico-a44`, y
+  `test_por_la_cli_en_diagnostico_todo_sale_etiquetado_si_hay_datos` pasa a
+  `test_por_la_cli_a_secas_el_informe_cuenta_y_no_lleva_etiqueta_si_hay_datos` (con `data/`: a
+  secas corre con código 0, el fichero se llama como se pidió, ninguna línea lleva `[DIAGNOSTICO`,
+  y con los dos diagnósticos se rechaza sin escribir nada más).
+
+**Una trampa medida, corregida en el mismo commit:** `test_rutas_windows.py::
+test_la_cli_se_niega_ante_una_ruta_larga_antes_de_leer_nada` construía la carpeta 40 caracteres
+por debajo del límite y era el rótulo del diagnóstico el que la pasaba; sin rótulo la carpeta cabía,
+el arnés corrió entero sobre el primer mes de construcción y falló al escribir
+(`FileNotFoundError`). §0.b.5 lo preveía al revés («la carpeta sigue pasando del límite sin
+rótulo»): error de la fase 0, corregido aquí. Ahora la carpeta sola pasa del límite y la CLI se
+niega antes de leer nada. Esa corrida única, y que `test_preparar_a35.py` y `test_visor.py` corran
+desde ahora a secas en cada `make check` con la misma lectura de antes, están declaradas en
+`HOLDOUT-EXPOSICIONES.md` (fila del 2026-10-26, punto 5).
+
+`uv run pytest` sobre los diecinueve ficheros tocados o vecinos (los ocho de arriba más `test_kit`,
+`test_registro`, `test_provisional_cuelga_de_abierta`, `test_spec_docs_generados`, `test_adr`,
+`test_cableado`, `test_racha_perdidas`, `test_umbral_mayo`, `test_diferencias_por_operacion`,
+`test_en_parte_no_se_cierra`, `test_spec_fidelidad`): un fallo, el de la trampa, y en verde tras
+corregirlo. `knowledge validate`: exit 0 (`OK: registro con 109 parametros (14 sin confirmar)`,
+`OK: 179 registros de feedback`).
+
 ## Estado
 
 EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por

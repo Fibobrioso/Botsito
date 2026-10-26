@@ -16,7 +16,7 @@ baaf74b · merge de `trabajo/sesion-05` (tag `stable/F38d-sesion-05`): v15 y v16
 baaf74b · merge: trabajo/sesion-05, la sesion 5 con el trader ingerida (v15 y v16) y su extraccion por pregunta · tag stable/F38d-sesion-05
 
 ## Tests Currently Passing
-1694 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1696 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

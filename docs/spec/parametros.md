@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.1.4` · hash `3167d9bbbb88…`
+`spec_version 18.1.5` · hash `bfae30bb0afb…`
 
-109 en total: 94 con valor y 15 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+109 en total: 97 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -78,6 +78,9 @@
 | `parciales` | `no` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0905fd59` | si/no |
 | `perdida_maxima_diaria` | `4.5 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | porcentaje del saldo que declara base_calculo_perdida_diaria |
 | `perdida_maxima_semanal` | `9 %` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | porcentaje del saldo que declara base_calculo_perdida_semanal |
+| `perdida_trader_alcance` | `dia` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-e9559876` | a que aplica el tope de perdida propio del trader |
+| `perdida_trader_magnitud` | `saldo` | DEFAULT_AMBIGUOUS · en revision por A-44 | estrategia | `fb-2026-09-09-sesion-01-bff260ea` | sobre que magnitud de la cuenta se mide la perdida del trader |
+| `perdida_trader_unidad` | `porcentaje` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-1772d9ef` | en que unidad esta la cifra del tope del trader |
 | `racha_perdidas_corte` | `ganadora` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-ecdd0572` | que cierre pone la racha a cero |
 | `racha_perdidas_max` | `9` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-b7040095` | perdidas seguidas tras las que no se opera mas ese dia |
 | `racha_perdidas_reanudacion` | `dia_siguiente` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-fa5ef0f6` | cuando se vuelve a operar tras la racha |
@@ -110,12 +113,9 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 - **`broker_dst`** (broker) — con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 - **`broker_offset_base`** (broker) — desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
 - **`objetivo_extension`** (estrategia) — hasta donde se extiende el objetivo; solo si objetivo_extension_activa
-- **`perdida_trader_alcance`** (estrategia) — si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
 - **`perdida_trader_dia_usd`** (estrategia) — el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
-- **`perdida_trader_magnitud`** (estrategia) — si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44
 - **`perdida_trader_reinicio_huso`** (estrategia) — con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?»-. Si no dice otro, el motor usa el huso de corte del perfil de cuenta y la traza lo marca como SUPUESTO; por eso puede quedarse UNKNOWN con el tope fijado. reloj_dia_riesgo dice que el dia de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso
 - **`perdida_trader_semana_usd`** (estrategia) — el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
-- **`perdida_trader_unidad`** (estrategia) — si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
 - **`spread_maximo`** (estrategia) — spread por encima del cual no se abre la operacion; solo si filtro_spread
 - **`stop_colchon_spread`** (estrategia) — si el 0,8 es fijo o es 0,75 mas un colchon variable. RESPONDIDO Y DESCARTADO en la sesion 1 (A-10): el 0,8 ya lleva el colchon dentro, asi que no hay parametro que fijar. Se queda UNKNOWN a proposito -leerlo falla- y la regla vive en strategy_spec
 - **`stop_proteccion_capital`** (estrategia) — la fraccion de la caja que queda al otro lado del stop. DERIVADA de stop_fraccion_caja (1 - 0,8 = 0,2), asi que no se fija aqui: se queda UNKNOWN y el invariante vive en strategy_spec, para que no haya dos puertas para el mismo numero. OJO, dos cosas que esta descripcion decia hasta el 2026-09-11: el stop no "se mueve" -nace en la orden, A-11- y ese tramo no es presupuesto de riesgo que se "guarde", porque el lote ya no se dimensiona sobre la caja entera; RN-012 dice que no se arriesga nunca
@@ -156,6 +156,9 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `lote_si_no_cabe` → ADR-0081
 - `modelo_llenado` → F24, F27
 - `orden_stop_punto` → ADR-0064
+- `perdida_trader_alcance` → ADR-0053
+- `perdida_trader_magnitud` → ADR-0053
+- `perdida_trader_unidad` → ADR-0053
 - `racha_perdidas_corte` → ADR-0077
 - `racha_perdidas_reanudacion` → ADR-0077
 - `saldo_inicial_cuenta` → F24, F33
@@ -533,11 +536,11 @@ perdida acumulada en el dia que detiene la operativa; la base la fija base_calcu
 
 ### `perdida_maxima_semanal`
 
-perdida acumulada en la semana que detiene la operativa; la base la fija base_calculo_perdida_semanal y el corte, reloj_dia_riesgo
+perdida acumulada en la semana que detiene la operativa; la base la fija base_calculo_perdida_semanal y el corte, reloj_dia_riesgo. SIN EFECTO DESDE EL 2026-10-26 (sesion 5, S-4): perdida_trader_alcance = dia, asi que el motor no lee este tope (engine/tope_trader.py), y el trader dijo del 9 % semanal de la sesion 1 «creo que aquí hay un error, sería 9 pérdidas seguidas» (ev-v15-000913-bdb12f92; ya en la sesion 4, ev-v10-010913-c4949417). Queda CONFIRMED en 9 y SIN CORRECT, como DESVIACION declarada del runbook ACTIVAR-A35-A44.md §1 por orden del consultor (trabajo/activar-sesion-05): lo que lo sustituye es la racha de RN-036 (A-51), no otra cifra
 
 ### `perdida_trader_alcance`
 
-si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega
+si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega. FIJADO EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-e9559876): `dia`, «no solo el del día y las 9 seguidas la respuesta es la A» (ev-v15-000856-ee8f7ba3): el tope del dia y la racha de RN-036, sin tope de semana; con `dia` el motor no lee perdida_maxima_semanal. A-44 SIGUE ABIERTA por la magnitud (perdida_trader_magnitud) y el reloj del reinicio; fijarlo con ella abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
 
 Opciones: `sin_tope`, `dia`, `semana`, `ambos`.
 
@@ -547,7 +550,7 @@ el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_uni
 
 ### `perdida_trader_magnitud`
 
-si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44
+si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es A-44. DEFAULT NUESTRO en `saldo` desde el 2026-10-26 (rama trabajo/activar-sesion-05, respuesta del consultor a la PARADA, punto 1): es LECTURA DEL CONSULTOR, bajo A-44, que sigue ABIERTA, y no una respuesta del trader. La fuente es lo unico que el trader ha dicho con la palabra «saldo», «De la cuenta basado en el saldo, y que sea en el saldo inicial del día» (fb-2026-09-09-sesion-01-bff260ea, que es un CORRECT sobre perdida_maxima_diaria y habla de la BASE del porcentaje, no de si lo abierto cuenta); en la sesion 5 no lo dijo (S-4: ev-v15-000856-ee8f7ba3 y ev-v15-000913-bdb12f92 dan el alcance y la unidad). Por eso no entra CONFIRMED (precedente orden_stop_punto; docs/runbooks/ERRORES-RECURRENTES.md, trabajo/corrida-construccion, leccion 2). Con `saldo`, una caida en abierto que se recupera no cuenta (medido: ACTIVAR-SESION-05.md §0.b.3). Es la primera pregunta de la sesion 6. Lo lee engine/tope_trader.py (`registro.opcion`, anotado)
 
 Opciones: `saldo`, `equity`.
 
@@ -561,7 +564,7 @@ el tope de perdida de la semana en dinero, si el trader lo da asi (perdida_trade
 
 ### `perdida_trader_unidad`
 
-si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd)
+si el tope es un porcentaje de la base que declara la spec (perdida_maxima_diaria y perdida_maxima_semanal, con base_calculo_perdida_diaria y base_calculo_perdida_semanal) o una cifra en la moneda de la cuenta (perdida_trader_dia_usd y perdida_trader_semana_usd). FIJADO EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-1772d9ef): `porcentaje`, «planteándolo a porcentajes, sería un 4,5» (ev-v15-000913-bdb12f92, con «creo»; sin «creo» en la sesion 4, «Sería un 4,5% de pérdida en el día», ev-v10-010913-c4949417). A-44 sigue ABIERTA: DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
 
 Opciones: `porcentaje`, `usd`.
 

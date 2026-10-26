@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.1.4` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.1.5` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
@@ -48,7 +48,7 @@ Afecta a: `toma_antes_de_la_ventana`.
 
 ### A-44 · magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) · **BLOQUEANTE** · pregunta
 
-¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar? RESPONDIDA en la sesion 3 (2026-09-29, v9 1:11:30-1:11:54) con una lectura que el registro no tiene: el tope no es un porcentaje sino 9 perdidas SEGUIDAS, sin importar el dia ni la semana («9 pérdidas seguidas» / «O en un día» / «Seguidas»; «el último cartucho es el noveno»). No encaja en perdida_trader_alcance ni en perdida_trader_unidad, asi que PARA (docs/runbooks/ACTIVAR-A35-A44.md §4) y sigue ABIERTA; lo que falta para escribir el tope es A-51.
+¿Hay alguna pérdida a partir de la cual dejas de operar? ¿Cuándo vuelves a empezar a contar? RESPONDIDA en la sesion 3 (2026-09-29, v9 1:11:30-1:11:54) con una lectura que el registro no tiene: el tope no es un porcentaje sino 9 perdidas SEGUIDAS, sin importar el dia ni la semana («9 pérdidas seguidas» / «O en un día» / «Seguidas»; «el último cartucho es el noveno»). No encaja en perdida_trader_alcance ni en perdida_trader_unidad, asi que PARA (docs/runbooks/ACTIVAR-A35-A44.md §4) y sigue ABIERTA; lo que falta para escribir el tope es A-51. RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:08:56-0:09:20, S-4): solo el tope del dia y las 9 seguidas, sin tope de semana (ev-v15-000856-ee8f7ba3), y la cifra en porcentaje, «sería un 4,5» (ev-v15-000913-bdb12f92, con «creo»): perdida_trader_alcance = dia y perdida_trader_unidad = porcentaje (fb-2026-10-23-sesion-05-e9559876, fb-2026-10-23-sesion-05-1772d9ef). Lo que no dijo: si la perdida cuenta lo abierto (perdida_trader_magnitud, DEFAULT_AMBIGUOUS en saldo, lectura del consultor) y con que reloj vuelve a contar. SIGUE ABIERTA.
 
 Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxima_semanal`, `base_calculo_perdida_semanal`, `perdida_trader_alcance`, `perdida_trader_magnitud`, `perdida_trader_unidad`, `perdida_trader_dia_usd`, `perdida_trader_semana_usd`, `perdida_trader_reinicio_huso`.
 

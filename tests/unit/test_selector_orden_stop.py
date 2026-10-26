@@ -139,10 +139,10 @@ def test_la_cli_con_simular_se_niega_sin_a47_antes_de_leer_velas(
     real = cargar_criterio(RAIZ)
     (tmp_path / "salida").mkdir()
     salida = tmp_path / "salida" / "informe.txt"
-    # sin `--diagnostico-a35` desde la sesion 5 (A-35 fijada, se rechaza); A-44 sigue sin fijar
+    # sin `--diagnostico-a35` ni `--diagnostico-a44` desde la sesion 5 (fijadas, se rechazan)
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", real.construccion[0],
-         "--salida", str(salida), "--diagnostico-a44", "sin_tope"]
+         "--salida", str(salida)]
     )  # fmt: skip
     err = capsys.readouterr().err
     assert codigo == 2 and "A-47" in err and PARAMETRO_A47 in err
@@ -180,7 +180,7 @@ def test_la_cli_con_a47_fijada_pasa_a_pedir_a27(
     salida = tmp_path / "salida" / "informe.txt"
     codigo = cli.main(
         ["--repo", str(RAIZ), "motor", "arnes", "--simular", "--meses", real.construccion[0],
-         "--salida", str(salida), "--diagnostico-a44", "sin_tope"]
+         "--salida", str(salida)]
     )  # fmt: skip
     err = capsys.readouterr().err
     if codigo == 2 and "falta en disco" in err:

@@ -124,6 +124,14 @@ frenos de la estrategia disparan ANTES del límite); la cuenta suspende por deba
 trader, RN-020) no declaran `magnitud` en la spec —saldo o equity— y no se supone; `cartuchos`
 (RN-016) depende de `cartucho_criterio` y de `se_cierra_operacion` con esquema, que es geometría.
 
+> **NOTA del 2026-10-26 (`trabajo/activar-sesion-05`, no reescribe el cuerpo).** `perdida_dia` ya
+> no es hueco: desde la sesión 5 (S-4) el tope del trader tiene alcance `dia` y unidad
+> `porcentaje` dichos por el trader (`fb-2026-10-23-sesion-05-e9559876`,
+> `fb-2026-10-23-sesion-05-1772d9ef`), y `perdida_semana` queda sin efecto. La magnitud sigue sin
+> decirla el trader: `perdida_trader_magnitud` = `saldo` entra como DEFAULT_AMBIGUOUS bajo A-44
+> (lectura del consultor sobre `fb-2026-09-09-sesion-01-bff260ea`; primera pregunta de la sesión
+> 6), con A-44 ABIERTA, por orden del consultor (`docs/validation/ACTIVAR-SESION-05.md`).
+
 ### 4. Un solo reloj
 
 **El reloj del simulador es el del perfil de cuenta (`firma_huso_corte`)**, y el cableado
@@ -211,6 +219,13 @@ spec, y la spec no lo inventa. Por eso nace **A-44**, BLOQUEANTE de RN-020: «ma
 tope de pérdida propio del trader (perdida_dia, perdida_semana)», en la hoja de la sesión 02 justo
 después de A-43. La pregunta al trader, en forma abierta: «¿Hay alguna pérdida a partir de la
 cual dejas de operar? ¿Cuándo vuelves a empezar a contar?».
+
+> **NOTA del 2026-10-26 (`trabajo/activar-sesion-05`, no reescribe el cuerpo).** A-44 está
+> respondida EN PARTE en la sesión 5 (S-4): el tope es solo del día, en porcentaje (el 4,5 % de la
+> sesión 1 sobre el saldo inicial del día), sin tope de semana; RN-020 deja de prohibir por hueco
+> y corre sin `--diagnostico-a44`. La magnitud (si lo abierto cuenta) va como DEFAULT_AMBIGUOUS
+> `saldo`, lectura del consultor, y el reloj del reinicio sigue UNKNOWN (el motor usa el corte del
+> perfil, SUPUESTO): A-44 sigue ABIERTA y bloqueante, y es lo primero de la sesión 6.
 
 ## Problema que resuelve
 

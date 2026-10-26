@@ -780,12 +780,19 @@ hechos:
 # evaluar el limite al cierre de M1 sobre P/L realizado y perder la cuenta sin que nada se quejara.
 acumuladores:
   perdida_dia:
-    descripcion: perdida acumulada desde el corte del dia de riesgo
+    descripcion: >-
+      perdida acumulada desde el corte del dia de riesgo. Desde el 2026-10-26 (sesion 5, S-4) la
+      produce el tope del trader de engine/tope_trader.py con perdida_trader_alcance = dia y
+      perdida_trader_unidad = porcentaje; su magnitud es perdida_trader_magnitud (saldo,
+      DEFAULT_AMBIGUOUS bajo A-44, lectura del consultor) y su corte, el del perfil, SUPUESTO
+      mientras perdida_trader_reinicio_huso siga UNKNOWN
     base: base_calculo_perdida_diaria
     reinicia_con: reloj_dia_riesgo
     cita: fb-2026-09-09-sesion-01-462134c7
   perdida_semana:
-    descripcion: perdida acumulada desde el corte de la semana
+    descripcion: >-
+      perdida acumulada desde el corte de la semana. SIN EFECTO desde el 2026-10-26 (sesion 5,
+      S-4): con perdida_trader_alcance = dia el tope del trader no lo produce ni RN-020 lo compara
     base: base_calculo_perdida_semanal
     reinicia_con: reloj_dia_riesgo
     cita: fb-2026-09-09-sesion-01-a85b6bc7
@@ -1904,7 +1911,22 @@ reglas:
       midio en 4,865 % sobre el 4,5 % ([d1-interprete-04])-. No se cambia su lectura, porque es la
       que dijo el trader. Lo que impide que ese desbordamiento cueste la cuenta son los frenos de la
       firma, que saltan antes de su limite y no abren una operacion que no cabe (RN-029, RN-031 y
-      RN-032, ADR-0031)
+      RN-032, ADR-0031). DESDE EL 2026-10-26 (sesion 5, S-4; rama trabajo/activar-sesion-05) EL
+      TOPE TIENE VALOR Y ESTA REGLA DEJA DE SER HUECO: perdida_trader_alcance = dia («no solo el del
+      día y las 9 seguidas», ev-v15-000856-ee8f7ba3, fb-2026-10-23-sesion-05-e9559876) y
+      perdida_trader_unidad = porcentaje («planteándolo a porcentajes, sería un 4,5»,
+      ev-v15-000913-bdb12f92, fb-2026-10-23-sesion-05-1772d9ef): solo el acumulador perdida_dia se
+      compara, y perdida_maxima_semanal queda sin efecto y sin CORRECT (desviacion declarada del
+      runbook ACTIVAR-A35-A44.md §1). La MAGNITUD la fija perdida_trader_magnitud = saldo como
+      DEFAULT_AMBIGUOUS bajo A-44: LECTURA DEL CONSULTOR de la cita de esta regla, «De la cuenta
+      basado en el saldo» (fb-2026-09-09-sesion-01-bff260ea), que habla de la base del porcentaje y
+      no de si lo abierto cuenta; el trader no lo ha dicho, y es la primera pregunta de la sesion
+      6. Con saldo, una caida en abierto que se recupera no cuenta; con equity contaria
+      (ACTIVAR-SESION-05.md §0.b.3). El reloj del reinicio sigue UNKNOWN: el motor usa el corte del
+      perfil y lo marca SUPUESTO. A-44 SIGUE ABIERTA y bloqueante; fijar los parametros con ella
+      abierta es una DESVIACION declarada de la skill activar-sesion por orden del consultor
+      (respuesta a la PARADA, puntos 0 y 1). LO QUE ESTA REGLA SIGUE SIN HACER: no retira la orden
+      pendiente al llegar al tope (RN-036 si lo hace): rama de motor
     decision: ADR-0027
     forma:
       cuando:
