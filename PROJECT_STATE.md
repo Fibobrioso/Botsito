@@ -7,7 +7,7 @@
 trabajo/activar-sesion-05
 
 ## Current Feature
-trabajo/activar-sesion-05 LISTA PARA REVISIÓN salvo la PARADA 2 (S-11), NO cerrada (abierta el 2026-10-25 desde b61c8f8; tramo R4, R4.1; V de la Next Action): las respuestas de la sesión 5 entran en la spec por su régimen (A-57 y A-32 RESUELTAS), A-35 y A-44 con valor en sus parámetros aunque sigan ABIERTAS, y lo que pide motor o va a la sesión 6 queda en el informe. Encargo docs/encargos/trabajo-activar-sesion-05.md; informe docs/validation/ACTIVAR-SESION-05.md.
+trabajo/activar-sesion-05 LISTA PARA REVISIÓN, NO cerrada (abierta el 2026-10-25 desde b61c8f8; tramo R4, R4.1; V de la Next Action): las respuestas de la sesión 5 entran en la spec por su régimen (A-57 y A-32 RESUELTAS), A-35 y A-44 con valor en sus parámetros aunque sigan ABIERTAS, y lo que pide motor o va a la sesión 6 queda en el informe. Encargo docs/encargos/trabajo-activar-sesion-05.md; informe docs/validation/ACTIVAR-SESION-05.md.
 
 ## Stable Main State
 baaf74b · merge de `trabajo/sesion-05` (tag `stable/F38d-sesion-05`): v15 y v16 en el corpus y en `SESIONES_EN_CUARENTENA`, con transcripciones, fotogramas y 11 tramos no citables; 55 ítems de evidencia (49 vivos); docs/sesion-5/HOJA-USADA.md; la confirmación escrita de marzo en fuentes.yaml (A.3 HECHA). Sobre `stable/F38c-guardia-alias` (68eaa83). Informe docs/validation/SESION-05-EXTRACCION.md; el registro del cierre, al final de HISTORIA.

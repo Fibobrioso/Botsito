@@ -1048,6 +1048,15 @@ que tiene que enseñar cada uno.
     entrado y tú no. ¿Por qué no entraste? (a) no hubo toma de liquidez de M15; (b) la zona no
     estaba limpia; (c) la sesión iba a acabar en break even y me la salté; (d) no operé ese día;
     (e) otra, ¿cuál?» *(opciones añadidas tras el revisor, b7)*.
+13. **S-11, «en parte»** (A-46, RESUELTA y sin tocar; respuesta a la PARADA 2, punto 0 (b)): a lo
+    preguntado (mañana alcista, tarde bajista) contestó (b); la primera mitad de su cita («si hay
+    una continuidad de sesgo, sí», `ev-v15-005839-f2e43c27`) es el caso que A-46 ya tenía
+    respondido al revés, y se le pregunta solo: «Una toma de la mañana, y en la tarde el MISMO
+    sesgo: ¿esa toma vale para operar en la tarde? (a) sí, si el sesgo sigue igual; (b) no, cada
+    sesión espera su propia toma; (c) otra, ¿cuál?». Esquema: dos sesiones del día con el mismo
+    sesgo de H4, la toma de M15 en la primera y ninguna en la segunda; «M15» y la línea entre las
+    dos sesiones en el dibujo. Sin registro en esta rama; el recuadro en la tabla final de
+    SESION-05-EXTRACCION.md, en el commit del contrato del cierre.
 
 ## 4. Lo que no es de spec y va a las líneas del cierre (D)
 
@@ -1068,23 +1077,20 @@ Preparadas, no aplicadas (la Next Action y la hoja de ruta no se tocan en la ram
 
 **Next Action (`PROJECT_STATE.md`):**
 
-- **V**, corta: «Activar la sesión 5 (R4.1). HECHA LA PARTE DE SPEC en `trabajo/activar-sesion-05`
-  (ACTIVAR-SESION-05.md): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros
-  (`cierre_vela_contraria`; `dia`, `porcentaje`, y `saldo` como DEFAULT_AMBIGUOUS) y ABIERTAS,
-  desviación declarada; el arnés corre sin ningún `--diagnostico-*`; cinco CONFIRM y un CORRECT.
-  QUEDA `trabajo/activar-sesion-05-motor` (encargo del consultor tras este cierre) con la lista de
-  ACTIVAR-SESION-05.md §2: la mecha de A-35 (ADR), S-8, RN-007 con umbral cero (CORRECT sobre
-  `ev-v10-014310-2296423b`), A-50 con parámetro nuevo, S-15 (ADR), S-21 (opción nueva y recuadro en
-  ADR-0077 §5), S-22 (el último minuto), S-20, S-19 y que RN-020 retire la pendiente. Después, la
-  re-corrida del arnés con `--simular` sobre toda la construcción (ADR-0070 §3; `diff` contra
-  CABLEADO-SIMULADOR-LINEA-BASE.txt, ACTIVAR-A35-A44.md §5.1) y la sesión 6 (R4.2) con la lista de
-  §3. S-11 según la PARADA 2.»
+- **V**, corta (respuesta a la PARADA 2, punto 2 (a): remite a §2 sin la lista): «Activar la
+  sesión 5 (R4.1). HECHA LA PARTE DE SPEC en `trabajo/activar-sesion-05` (ACTIVAR-SESION-05.md):
+  A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros (`cierre_vela_contraria`; `dia`,
+  `porcentaje`, y `saldo` como DEFAULT_AMBIGUOUS) y ABIERTAS, desviación declarada; el arnés corre
+  sin ningún `--diagnostico-*`; cinco CONFIRM y un CORRECT; S-11 «en parte», sin registro. QUEDA
+  `trabajo/activar-sesion-05-motor` (encargo del consultor tras este cierre) con los diez puntos de
+  ACTIVAR-SESION-05.md §2. Después, la re-corrida del arnés con `--simular` sobre toda la
+  construcción (ADR-0070 §3; `diff` contra CABLEADO-SIMULADOR-LINEA-BASE.txt, ACTIVAR-A35-A44.md
+  §5.1) y la sesión 6 (R4.2) con la lista de §3.»
 - **H** sale: RN-007 con umbral cero va a la rama de motor (S-24; V). Su texto, a HISTORIA.
 - **F**: «La rama de motor de V; después la re-corrida del arnés y la sesión 6; R6a en los huecos.»
-- **G** gana una línea: «Y, para elegir los libros que miden (S-14, sesión 5): en sus backtests sin
-  vídeo el trader se saltaba las sesiones que iban a acabar en break even, y en los grabados en
-  vídeo no; de los libros de construcción solo julio es de los grabados, según él (T lo comprueba);
-  de abril solo el día 29 (v5); enero y el agosto actual, no (ACTIVAR-SESION-05.md §0.b.7).»
+- **G** gana una línea, a su mitad (PARADA 2, punto 2 (a)): «Y, para elegir los libros que miden
+  (S-14, sesión 5): en sus backtests sin vídeo el trader se saltaba las sesiones que iban a acabar
+  en break even; qué libro viene de vídeo, ACTIVAR-SESION-05.md §0.b.7.»
 - **K** gana la ampliación del punto 14: «Y la guardia niega como tests los de un clon de `C:/cm/`
   que globean `knowledge/cases` o recorren directorios: `test_kit.py`, `test_selector_orden_stop.py`
   y `test_renovar_cierres.py` no se pudieron correr en el clon de `trabajo/activar-sesion-05`
@@ -1117,9 +1123,10 @@ Preparadas, no aplicadas (la Next Action y la hoja de ruta no se tocan en la ram
   `False` con «**Estado:** spec HECHA», `True` con «**Estado:** HECHA»), y R4.1 sigue viva hasta
   que la rama de motor cierre.
 - **R4.2**, nueva, «Preparar y celebrar la sesión 6»: Refs `NA:V · ID:A-35 · ID:A-44 · ID:A-13 ·
-  ID:A-43 · ID:A-48 · ID:A-49 · ID:A-50 · ID:A-53 · ID:ADR-0083 · ID:RN-007`; Qué es: la lista de §3
-  (la magnitud de A-44 primero y su reloj; la mecha de A-35; A-13; A-53; A-43; A-49/A-48; A-50;
-  ADR-0083; S-16; S-19 frente a S-24; S-20; S-14 con los días que dé la re-corrida); Depende de:
+  ID:A-43 · ID:A-46 · ID:A-48 · ID:A-49 · ID:A-50 · ID:A-53 · ID:ADR-0083 · ID:RN-007`; Qué es: la
+  lista de §3 (la magnitud de A-44 primero y su reloj; la mecha de A-35; A-13; A-53; A-43;
+  A-49/A-48; A-50; ADR-0083; S-16; S-19 frente a S-24; S-20; S-14 con los días que dé la
+  re-corrida; S-11 «en parte», la toma de la mañana con el MISMO sesgo en la tarde); Depende de:
   `trabajo/activar-sesion-05-motor` y la re-corrida del arnés; Quién: la sesión prepara la hoja con
   el consultor; Aleks celebra; Hecho cuando: la sesión 6 está ingerida y activada.
 - **R5.1** gana en «Qué es»: «y, al elegir los libros que miden, que en los backtests sin vídeo
@@ -1129,15 +1136,28 @@ Preparadas, no aplicadas (la Next Action y la hoja de ruta no se tocan en la ram
   esta rama el motor no necesita diagnóstico; la corrida es la re-corrida tras la rama de motor
   (punto 13).
 
+**Lo demás del commit del contrato del cierre** (respuesta a la PARADA 2):
+
+- **SESION-05-EXTRACCION.md, tabla final, S-11**: un recuadro de corrección junto a la fila (fecha
+  y rama): «resuelve: (b); A-46 no se reabre» pasa a «en parte: (b) a lo preguntado (sin
+  continuidad de sesgo); la primera mitad de la cita, «si hay una continuidad de sesgo, sí», es el
+  caso que A-46 ya tenía respondido al revés, y va a la sesión 6 (ACTIVAR-SESION-05.md §3, 13)».
+  El cuerpo del informe cerrado, intacto (CLAUDE.md, «Regimenes de cambio»).
+- **ERRORES-RECURRENTES.md**, dos filas: (1) las notas de un registro de feedback también se
+  escriben solo con lo que trae el ítem que cita, y lo demás se remite a la sección de la
+  extracción (señal: una cita en `notas` que `grep` no encuentra en `knowledge/evidence`; cinco
+  registros de la sesión 5, declarados en §6 fila 11); (2) una respuesta «resuelve» de la tabla de
+  extracción se cruza con la ambigüedad RESUELTA que toca antes de decidir un CONFIRM (señal: la
+  cita del ítem dice más que la pregunta; S-11 frente a A-46, PARADA 2).
+
 **El tamaño de `PROJECT_STATE.md`** con todo eso, medido sobre el fichero de la rama (`wc -c`):
-hoy 24.305 bytes (tras salir las filas de A-32 y A-57 y cambiar el recuento de tests). Sale la V larga (−1.537),
-H (−482), la introducción de TD (−≈200) y el reloj de Oanda (−≈120); entran la V corta (+≈900, más
-larga que el borrador de §0.c porque lleva la lista de motor), la línea de G (+≈330), la de K
-(+≈260), la del `no_trade` (+≈230) y `Current Feature` del cierre en lugar del de la apertura
-(−≈150): ≈23.500, por debajo del tope de 25.000 de `test_project_state.py` y por encima de los
-23.000 que exige la FASE 0 c del encargo. Con la V corta remitiendo a §2 sin la lista (−≈450)
-queda en ≈23.050, todavía por encima: cómo bajar de 23.000 sin quitar nada vivo es el punto 2 de la
-PARADA 2 (el revisor, b4). Se mide en el cierre con el texto definitivo.
+hoy 24.378 bytes (tras salir las filas de A-32 y A-57 y cambiar el recuento de tests). Sale la V
+larga (−1.537), H (−482), la introducción de TD (−≈200) y el reloj de Oanda (−≈120); entran la V
+corta de arriba, que remite a §2 sin la lista de motor (+≈450), la línea de G a su mitad (+≈150),
+la de K (+≈260), la del `no_trade` (+≈230) y `Current Feature` del cierre en lugar del de la
+apertura (−≈150): ≈22.870, por debajo del tope de 25.000 de `test_project_state.py` y de los 23.000
+que exige la FASE 0 c del encargo (respuesta a la PARADA 2, punto 2 (a); la V con la lista y la G
+entera daban ≈23.500, el revisor b4). Se mide en el cierre con el texto definitivo.
 
 ## 6. El encargo, punto por punto
 
@@ -1165,7 +1185,7 @@ Cada requisito del encargo y de la respuesta del consultor a la PARADA, con su e
 | 17 | A.2: reinicio_huso UNKNOWN; `perdida_maxima_semanal` sin CORRECT, desviación declarada; sin ADR nuevo | Hecho | §1.2; descripción de `perdida_maxima_semanal` |
 | 18 | A.3 A-57 RESUELTA: registro sobre la ambigüedad; `lote_si_no_cabe` a CONFIRMED con `decision` a mano; reservas; ADR-0081 recuadro e índice | Hecho | §1.3 |
 | 19 | A.4 A-32 RESUELTA con los dos ítems; verificar `mecha`/`cuerpo` y que ningún código descarta por mecha de M1 | Hecho | §1.4 |
-| 20 | A.5 CONFIRM de S-1, S-2, S-9, S-11, S-12a, S-23 (+ CORRECT) | Parcial, declarado | cinco CONFIRM y el CORRECT (§1.5); S-11 en PARADA 2 (contradice A-46 y lo medido) |
+| 20 | A.5 CONFIRM de S-1, S-2, S-9, S-11, S-12a, S-23 (+ CORRECT) | Hecho de otra forma, declarado | cinco CONFIRM y el CORRECT (§1.5); S-11 sin registro, «en parte» a la sesión 6 (§3, 13): contradice A-46 y lo medido, PARADA 2 punto 0, decidido (b) por el consultor |
 | 21 | A.5 S-19: medir con `test_a21_series.py`; si el motor no hace (b), a la rama de motor sin registro | Hecho | §0.b.4; §2, 9 |
 | 22 | A.6 ADR-0083 PROVISIONAL con recuadro de S-6 y la pregunta de la sesión 6 | Hecho | §1.6 |
 | 23 | A.7 test de control de la sesión 5 en `test_en_parte_no_se_cierra.py` | Hecho | §1.7 |
@@ -1175,7 +1195,7 @@ Cada requisito del encargo y de la respuesta del consultor a la PARADA, con su e
 | 27 | FASE 0 a-d y PARADA con lo mínimo | Hecho | §0 y «Lo que necesito que decidas»; commit 556f571 |
 | 28 | Respuesta copiada tal cual al encargo y al informe; aplicada punto por punto | Hecho | «Respuesta del consultor a la PARADA (2026-10-26)» en los dos; §1 |
 | 29 | Un commit por respuesta, con `apply --check` solo de esa respuesta, los cinco sitios, `test_kit`, `spec_version`, manifiesto y docs, `knowledge validate` antes de `make check`, `Fuente:` con ids existentes | Hecho | §1.1-§1.5; `git log --format='%h%n%B' main..HEAD -- knowledge/spec` (§8) |
-| 30 | Cada ADR enmendado o que deja de ser provisional, con recuadro y fila del índice | Hecho | ADR-0081 (recuadro, Estado, índice), ADR-0080 §4 y §9, ADR-0075, ADR-0083; NOTAs en ADR-0053, ADR-0054 y ADR-0070 (punto 5); la de ADR-0066 espera a la PARADA 2 |
+| 30 | Cada ADR enmendado o que deja de ser provisional, con recuadro y fila del índice | Hecho | ADR-0081 (recuadro, Estado, índice), ADR-0080 §4 y §9, ADR-0075, ADR-0083; NOTAs en ADR-0053, ADR-0054 y ADR-0070 (punto 5); ADR-0066 sin NOTA por la respuesta a la PARADA 2 (0 (b)) |
 | 31 | Tests que cambian de sentido a propósito, dichos en el commit y el informe, con la salida de main y de la rama | Hecho | §0.b.1 (clon: 23 fallan con los valores), §1.1, §1.2; los mensajes de los commits 3bbcad1 y f60fca5 |
 | 32 | Test sintético saldo/equity | Hecho de otra forma, declarado | sobre el registro REAL con un escenario sintético, para que vigile el valor real: `test_preparar_a44.py::test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta` (§1.2; el revisor, b3) |
 | 33 | Los tests con `data/` se saltan en la CI de Linux | Hecho | `pytest.skip` en los de §1.1 y §1.2; la CI (§8) |
@@ -1184,8 +1204,8 @@ Cada requisito del encargo y de la respuesta del consultor a la PARADA, con su e
 | 36 | CI de Linux por `fix/activar-sesion-05` con `gh run view` suelto; solo el fallo de `state check` | Hecho | §8 |
 | 37 | Revisor opus con los cuatro alcances más el quinto (DEFAULT_AMBIGUOUS con lectura del consultor), informe pegado | Hecho | §9 (una pasada, sobre c03190e; su informe tal cual y lo que se hizo con cada hallazgo) |
 | 38 | Las líneas del cierre al final del informe, con el tamaño de PROJECT_STATE | Hecho | §5 |
-| 38b | FASE 0 c: PROJECT_STATE en 23.000 bytes o menos con las líneas del cierre; si no cabe, decirlo en la PARADA | Parcial, declarado | ≈23.500 con las líneas de §5, ≈23.050 con la V corta sin la lista: no llega a 23.000 sin quitar algo vivo; va a la PARADA 2, punto 2 (el revisor, b4) |
-| 39 | Respuesta, punto 5: NOTAs en ADR-0053 §3.3 y §9, ADR-0054 §1 e Impacto, ADR-0070 §3; ADR-0066 y ADR-0075 de una línea | Parcial, declarado | ADR-0053, 0054, 0070 y 0075: hechas; ADR-0066 (S-11) espera a la PARADA 2 |
+| 38b | FASE 0 c: PROJECT_STATE en 23.000 bytes o menos con las líneas del cierre; si no cabe, decirlo en la PARADA | Hecho (estimado; se mide en el cierre) | ≈22.870 con la V remitiendo a §2 y la G a su mitad (§5), por la respuesta a la PARADA 2, punto 2 (a); el revisor, b4 |
+| 39 | Respuesta, punto 5: NOTAs en ADR-0053 §3.3 y §9, ADR-0054 §1 e Impacto, ADR-0070 §3; ADR-0066 y ADR-0075 de una línea | Hecho de otra forma, declarado | ADR-0053, 0054, 0070 y 0075: hechas; ADR-0066 (S-11) sin NOTA, por la respuesta a la PARADA 2 (0 (b)) |
 | 40 | Respuesta, punto 6: contrato ampliado a `ACTIVAR-A35-A44.md` en commit propio, con NOTA y las tres desviaciones | Hecho | §1.8 |
 | 41 | Respuesta, punto 7: recorte de Technical Debt en el commit del contrato | Hecho (preparado) | §5 |
 | 42 | Respuesta, puntos 10-14: la mecha sin restringir a la contraria; S-14 con la regla 2; RN-020 como punto 10 de motor; la re-corrida en el cierre; K ampliada | Hecho | §2 (1 y 10), §3 (12), §5 |
@@ -1298,6 +1318,39 @@ espera.
    ≈22.610; (c) aceptar ≈23.050 o ≈23.500, por debajo del tope de 25.000 del test. Recomiendo (a):
    cumple el encargo con dos recortes de prosa, sin mover nada de sitio. Coste de (b): la deuda de
    K se parte en dos sitios; coste de (c): el encargo no se cumple en la letra.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-26)
+
+Copiada tal cual.
+
+> Respuesta del consultor a la PARADA 2 de trabajo/activar-sesion-05 (2026-10-26). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», y aplícala.
+>
+> 0. (b). S-11 sin registro: pasa a «en parte» en la lista de la sesión 6 (§3) con la pregunta «Una toma de la mañana, y en la tarde el MISMO sesgo: ¿esa toma vale para operar en la tarde? (a) sí, si el sesgo sigue igual; (b) no, cada sesión espera su propia toma; (c) otra, ¿cuál?», y sin NOTA en ADR-0066. A-46 sigue RESUELTA y el motor no cambia. El recuadro en la tabla final de SESION-05-EXTRACCION.md va en el commit del contrato del cierre. Corrige mi error: decidí el CONFIRM de S-11 copiando «A-46 no se reabre» de la extracción sin cruzar la cita con A-46.
+> 1. (a). Los cinco registros se quedan como están, declarados en el informe (§6, fila 11); la lección va a ERRORES-RECURRENTES en el cierre.
+> 2. (a). La V remite a §2 sin la lista y la línea de G va a su mitad, en el commit del contrato del cierre.
+>
+> Lo que toca en la rama: la lista de §3 con S-11, §5 con la V y la G recortadas y la mención a S-11 resuelta, y el Estado del informe. Un commit sellado, push a fix/activar-sesion-05 y su run con gh run view suelto. Sin revisor nuevo: son cambios de documentación que salen de esta respuesta.
+>
+> Rama lista para revisión, NO cerrada.
+
+### La PARADA 2, aplicada (un commit, sin revisor nuevo)
+
+- **0 (b)**: S-11 sin registro. Es el punto 13 de la lista de §3 («en parte», con la pregunta
+  literal de la respuesta); ADR-0066 sin NOTA; A-46 sigue RESUELTA y el motor no cambia (nada de
+  `src/` ni de `knowledge/` en este commit). El recuadro de la tabla final de
+  SESION-05-EXTRACCION.md (S-11: «resuelve: (b); A-46 no se reabre» pasa a «en parte: (b) a lo
+  preguntado; la primera mitad de la cita, a la sesión 6») va en el commit del contrato del cierre,
+  y así lo dice §5. §6, filas 20, 30 y 39, ya no esperan a la PARADA 2. Hallazgo para
+  ERRORES-RECURRENTES en el cierre: una respuesta «resuelve» de la extracción se cruza con la
+  ambigüedad que ya estaba cerrada antes de decidir un CONFIRM.
+- **1 (a)**: los cinco registros (`af24c935`, `146c4789`, `85ce7ba5`, `b09c3fed`, `ffb3011e`)
+  se quedan como están, declarados en §6 (fila 11); la lección (las notas de un registro también se
+  escriben solo con lo que trae el ítem) va a ERRORES-RECURRENTES en el commit del contrato del
+  cierre, y §5 lo lleva.
+- **2 (a)**: la V de §5 remite a §2 sin la lista de motor y la línea de G queda en su mitad; el
+  tamaño estimado de PROJECT_STATE.md pasa a ≈22.870 (§5, último párrafo). Se mide en el cierre.
+- `PROJECT_STATE.md`, `Current Feature`: deja de decir «salvo la PARADA 2 (S-11)» (fuera de lo que
+  nombra la respuesta, pero decía algo que ya no es verdad).
 
 ## 9. Informe del revisor
 
@@ -1464,13 +1517,14 @@ demostrar), los tres tests que la guardia negó en el clon (§0.f) y el fichero 
 
 ## Estado
 
-LISTA PARA REVISIÓN SALVO LA PARADA 2 (2026-10-26), NO cerrada. La respuesta del consultor a la
-PARADA está aplicada punto por punto (§1, ocho commits sellados), con una excepción declarada: S-11,
-cuya cita contradice A-46 RESUELTA y lo medido, queda en la PARADA 2 junto con dos puntos que dejó el
-revisor (las notas de tres registros con citas fuera de sus ítems; los 23.000 bytes de
-PROJECT_STATE). La CI de Linux del último commit con contenido (c03190e) está en verde con el
-único fallo aceptado (§8); el run del commit que pega este informe se consulta con `gh run view` y
-va en el mensaje final a Aleks. Las líneas del cierre, en §5; lo que va a la rama de motor, en §2;
-la lista de la sesión 6, en §3.
+LISTA PARA REVISIÓN (2026-10-26), NO cerrada. La respuesta del consultor a la PARADA está aplicada
+punto por punto (§1, ocho commits sellados) y la de la PARADA 2 también («La PARADA 2, aplicada»,
+un commit de documentación sin revisor nuevo): S-11 sin registro y «en parte» en la lista de la
+sesión 6 (§3, 13), A-46 RESUELTA y el motor sin cambio; los cinco registros con citas fuera de sus
+ítems se quedan declarados (§6, fila 11); la V y la G recortadas en §5 (≈22.870). La CI de Linux
+de los commits anteriores está en verde con el único fallo aceptado (§8, runs 40350807999 y
+40364392244); el run del commit que aplica la PARADA 2 se consulta con `gh run view` y va en el
+mensaje final a Aleks. Las líneas del cierre, en §5; lo que va a la rama de motor, en §2; la lista
+de la sesión 6, en §3.
 
 Rama lista para revisión, NO cerrada.

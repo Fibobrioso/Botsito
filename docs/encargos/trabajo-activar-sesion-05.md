@@ -152,3 +152,17 @@ Dado por Aleks (consultor) el 2026-10-25, en un solo mensaje. Copiado tal cual:
 > Sigue lo que manda el encargo: un commit por respuesta, knowledge validate antes de make check, Fuente: en el cuerpo con ids que existen, CI de Linux por fix/activar-sesion-05 con su número de run (gh run view suelto), revisor (opus) con los cuatro alcances del encargo más un quinto (cada DEFAULT_AMBIGUOUS nuevo dice en su descripción que es lectura del consultor y bajo qué ambigüedad) y su informe pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-26)
+
+Copiada tal cual.
+
+> Respuesta del consultor a la PARADA 2 de trabajo/activar-sesion-05 (2026-10-26). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», y aplícala.
+>
+> 0. (b). S-11 sin registro: pasa a «en parte» en la lista de la sesión 6 (§3) con la pregunta «Una toma de la mañana, y en la tarde el MISMO sesgo: ¿esa toma vale para operar en la tarde? (a) sí, si el sesgo sigue igual; (b) no, cada sesión espera su propia toma; (c) otra, ¿cuál?», y sin NOTA en ADR-0066. A-46 sigue RESUELTA y el motor no cambia. El recuadro en la tabla final de SESION-05-EXTRACCION.md va en el commit del contrato del cierre. Corrige mi error: decidí el CONFIRM de S-11 copiando «A-46 no se reabre» de la extracción sin cruzar la cita con A-46.
+> 1. (a). Los cinco registros se quedan como están, declarados en el informe (§6, fila 11); la lección va a ERRORES-RECURRENTES en el cierre.
+> 2. (a). La V remite a §2 sin la lista y la línea de G va a su mitad, en el commit del contrato del cierre.
+>
+> Lo que toca en la rama: la lista de §3 con S-11, §5 con la V y la G recortadas y la mención a S-11 resuelta, y el Estado del informe. Un commit sellado, push a fix/activar-sesion-05 y su run con gh run view suelto. Sin revisor nuevo: son cambios de documentación que salen de esta respuesta.
+>
+> Rama lista para revisión, NO cerrada.
