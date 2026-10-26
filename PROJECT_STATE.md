@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-05
 
 ## Current Feature
-Ninguna rama abierta. trabajo/sesion-05 cerrada en main el 2026-10-25 (stable/F38d-sesion-05): la sesión 5 con el trader ingerida (v15 y v16) y extraída por pregunta, sin resolver nada; su activación es V (R4.1). Lo siguiente lo dice F de la Next Action y lo ordena docs/plan/HOJA-DE-RUTA.md.
+trabajo/activar-sesion-05 EN CURSO (abierta el 2026-10-25 desde b61c8f8; tramo R4, R4.1; V de la Next Action): las respuestas de la sesión 5 entran en la spec por su régimen, A-35 y A-44 con valor en sus parámetros aunque sigan ABIERTAS, y lo que pide motor o va a la sesión 6 queda en el informe. Encargo docs/encargos/trabajo-activar-sesion-05.md; informe docs/validation/ACTIVAR-SESION-05.md.
 
 ## Stable Main State
 baaf74b · merge de `trabajo/sesion-05` (tag `stable/F38d-sesion-05`): v15 y v16 en el corpus y en `SESIONES_EN_CUARENTENA`, con transcripciones, fotogramas y 11 tramos no citables; 55 ítems de evidencia (49 vivos); docs/sesion-5/HOJA-USADA.md; la confirmación escrita de marzo en fuentes.yaml (A.3 HECHA). Sobre `stable/F38c-guardia-alias` (68eaa83). Informe docs/validation/SESION-05-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
@@ -161,8 +161,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 46 (2026-10-25).
+— ninguna desde el Archivo 47 (2026-10-25).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 46 (2026-10-25).
+— ninguna desde el Archivo 47 (2026-10-25).
