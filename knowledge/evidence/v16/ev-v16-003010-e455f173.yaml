@@ -1,0 +1,22 @@
+id: ev-v16-003010-e455f173
+video_id: v16
+t0: 0:30:10
+t1: 0:30:29
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: Entonces, creo que sí estaba en orden, porque justamente él como que miraba las partes del
+  inicio del video, y el último video era el que no procesó. O sea, el último video era el que traía este
+  tramo final, entonces, yo creería que sí, igual lo puede corroborar el propio bot, creería yo.
+afirmacion: el trader cree que el Excel de julio si esta en orden, que el ultimo video era el que no se
+  proceso, y que lo puede corroborar el bot
+tema: material.excel_julio_exportacion_tres_primeros_videos
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v16-003142-bb737430
+notas: S-25 (ENTRADA-JULIO.md §8), con «creo» y «creería». Supersede a ev-v16-003142-bb737430, cuya cita
+  («voy a decirle que sí», 31:45) responde a «la respuesta del cuarto» y no nombra el Excel (hallazgo
+  a1 del revisor). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

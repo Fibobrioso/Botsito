@@ -1,0 +1,21 @@
+id: ev-v15-002441-2e609b87
+video_id: v15
+t0: 0:24:41
+t1: 0:24:59
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: O sea, solo vemos el punto, si te das cuenta El punto 1 Que allí, solo que Se actualiza
+  del nivel 0 Allí abajo, y ya está Entonces, claro, aquí sigue marcando el mismo nivel
+afirmacion: 'en su ejemplo, solo mira el punto: el 1 sigue, se actualiza el nivel 0, abajo, y sigue marcando
+  el mismo nivel'
+tema: reentrada.caja_se_vuelve_a_trazar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; habla
+  sobre su replay, y no se abrio ningun fotograma
+provenance: botsito
+supersede: ev-v15-002441-ec3c910c
+notas: S-6 (pregunta 3 de PUNTO-USADO.md, ADR-0083). Supersede a ev-v15-002441-ec3c910c, cuya afirmacion
+  decia mas que su cita (hallazgo a1 del revisor). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v15-large-v3-int8-float16-2ec65e67

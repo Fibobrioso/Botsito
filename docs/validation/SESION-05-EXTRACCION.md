@@ -55,8 +55,8 @@ Lo que se sigue de ellas:
   registro de cada filtrada, y la exposición del replay de julio se declara en
   `HOLDOUT-EXPOSICIONES.md`. Un día de julio del 18 en adelante fuera de la cuarentena es PARADA.
 - **b)** v15 lleva S-1 a S-17 enteras y el arranque de S-18. v16 lleva S-18 entera, S-19 a S-25 y
-  «Para cerrar». Nada quedó para WhatsApp ni para la sesión 6, aunque `PREGUNTAS.md:83` lo preveía
-  para S-23 y S-18. El código de S-17 se busca igual en las dos filtradas, como pide el encargo.
+  «Para cerrar». Nada quedó para WhatsApp ni para la sesión 6, aunque `PREGUNTAS.md` (§1, «Si falta
+  tiempo») lo preveía para S-25 y S-23 (WhatsApp) y S-18 (sesión 6). El código de S-17 se busca igual en las dos filtradas, como pide el encargo.
 - **c)** El minuto 1:44:49 de v10 no se leyó: no entra ningún dato de Aleks. S-24 de esta sesión
   sustituye a ese dato.
 - **d)** No hay hoja con notas: no entra nada en `Sesiones/`.
@@ -330,14 +330,15 @@ cita (§3, «Para cerrar»).
 
 **La PARADA (2026-10-25)**, por la decisión 4 del consultor («Si en la filtrada aparece un día de
 julio del 18 en adelante fuera de un bloque en cuarentena, PARADA sin copiarlo»):
-- **Dónde y qué.** v16, línea `[31:04]`, dentro de S-25. Enmascarada: «el backtest hasta el [N],».
-  El trader enseña su replay de julio («[30:41] … voy a mostrar yo hice el bates hasta el final») y
-  dice hasta qué día llegó: el final del rango del mes. Ninguna operación, ningún resultado y ningún
-  detalle de ese día.
+- **Dónde y qué.** v16, en 0:31:04, dentro de S-25 y dentro de lo que hoy es el tramo de precaución
+  0:30:41–0:31:37. Lo que pasa ahí se dice solo con el motivo de ese tramo: el trader enseña su
+  replay de julio y dice hasta qué día llegó su backtest, un día del 18 en adelante. Ninguna
+  operación, ningún resultado y ningún detalle de ese día. *(Corregido tras el revisor, hallazgo a3:
+  la primera redacción, escrita antes de que el tramo existiera, citaba dos frases de dentro del
+  tramo y describía dónde aparecía la palabra «julio».)*
 - **Por qué no la paró el detector antes de leer.** `detector_julio.py` solo marcaba un número junto
-  a «julio» o «día» en la misma línea o en la contigua. Esta línea no tiene ninguna de las dos
-  palabras, y «julio» sale seis líneas más abajo (31:20). El detector no la marcó, se leyó la
-  filtrada entera y se vio al leerla.
+  a «julio» o «día» en la misma línea o en la contigua, y esa línea no tiene ninguna de las dos
+  palabras. El detector no la marcó, se leyó la filtrada entera y se vio al leerla.
 - **El barrido ancho, después** (`barrido_18_31.py`, hoy en `anexos/SESION-05/`): toda línea con un
   entero suelto de 18 a 31, impresa con el número sustituido por `[N]`. En v15 no hay ningún día de
   julio (salen pips, minutos, horas de la pregunta, el 29 de abril de la hoja y un código). En v16
@@ -427,7 +428,7 @@ filtrada.
 
 - **Vídeo y tramo:** v15, 07:40–15:59. Dentro va un tramo de precaución (10:21–14:43, §2.3) que no
   se cita.
-- **La respuesta:** «[08:56] no» / «[08:58] solo el del día y las» / «[09:00] 9 seguidas» /
+- **La respuesta:** «[08:57] no» / «[08:58] solo el del día y las» / «[09:00] 9 seguidas» /
   «[09:03] la respuesta es la A».
 - **Para precisar, el 9 % de la sesión 1:** «[09:13] bueno, creo que» / «[09:14] aquí hay un error,
   sería 9 pérdidas seguidas» / «[09:17] planteándolo» / «[09:18] a porcentajes, sería un 4,5».
@@ -512,8 +513,11 @@ filtrada.
   - **No da un número de reentradas.** Cada reentrada es una decisión independiente, que puede
     caer en el mismo nivel si el precio vuelve a validar el punto, y para validarlo tiene que haber
     roto.
-  - **La caja de la reentrada se vuelve a trazar** («actualizar la zona»; «se actualiza del nivel
-    0»): no es la del primer intento.
+  - **La caja de la reentrada se actualiza en parte.** En su ejemplo dice «actualizar la zona» y
+    «se actualiza del nivel 0 allí abajo», pero «el punto 1» sigue y «aquí sigue marcando el mismo
+    nivel» (24:51). Si es la caja del primer intento o una nueva no lo dice con esas palabras.
+    *(Corregido tras el revisor, hallazgo a2: la primera redacción decía «no es la del primer
+    intento», y la cita no lo sostiene.)*
   - **Sobre las reentradas en niveles iguales («equals») duda en voz alta**: le dan «ganas de
     replantearme» y cree que «no deberían de estar». Es una opinión con «creo», no una regla.
   - **Tras un break even:** lo que dice («quitar esa condicional cuando hay break even») no llega
@@ -1027,16 +1031,25 @@ tiene bloque `## S-20`). **El código de S-17 no está en v16**: ni «17» como 
   §2.7), que no se cita ni se describe más.
 - **Antes de contestar:** «[29:20] es una buena pregunta bro porque no sé si está en orden» /
   «[29:22] yo creo que sí o sea» … «[29:32] o sea creo que si está en orden».
-- **La respuesta:** «[31:42] ¿cuál sería la respuesta del cuarto?» / «[31:43] a ver» / «[31:45] voy
-  a decirle que sí, entonces, sí, sí».
+- **La respuesta a la pregunta:** «[30:10] Entonces, creo que sí estaba en orden, porque justamente
+  él como que miraba las partes del inicio del video, y el último video era el que no procesó.» /
+  «[30:20] O sea, el último video era el que traía este tramo final, entonces, yo creería que sí,
+  igual lo puede corroborar el propio bot, creería yo.» El hablante se atribuye por contexto.
+- **Después del tramo de precaución:** «[31:42] ¿cuál sería la respuesta del cuarto?» / «[31:43] a
+  ver» / «[31:45] voy a decirle que sí, entonces, sí, sí». Ese «sí» contesta a «la respuesta del
+  cuarto» y no nombra el Excel. *(Corregido tras el revisor, hallazgo a2: la primera redacción daba
+  este «sí» como la respuesta a la pregunta y no citaba 30:10–30:20.)*
 - **Para precisar:** «[31:49] el cuarto video» / «[31:51] el del final del mes no tiene Excel,
   exacto»; y «[31:54] hiciste todos los días de julio» / «[31:56] te saltaste alguno» / «[31:57] todo
   está tal cual» / «[31:59] todo está grabado está todo está grabado todas las entradas pérdidas
   ganancias todos los break [32:04] events …».
-- **Propuesta: RESUELVE, con dudas: (a).** Dice que sí, después de decir dos veces «creo» y «no sé si
-  está en orden». El cuarto vídeo no tiene Excel, y dice que hizo todo julio sin saltarse nada. La
-  rama de T (transcribir v11 a v14) lo medirá además (`PREGUNTAS.md`, «Para Aleks» de S-25).
-- **Regla general:** no aplica. **«creo»:** sí (29:22, 29:32). **Compra y venta:** no aplica.
+- **Propuesta: RESUELVE EN PARTE, hacia la (a).** Cree que el Excel está en orden («creo»,
+  «creería», «no sé si está en orden») y dice que lo puede corroborar el bot. No dice con sus
+  palabras que sea la exportación de los tres primeros vídeos. Después dice que hizo todo julio sin
+  saltarse nada, y se lee que el cuarto vídeo no tiene Excel. La rama de T (transcribir v11 a v14)
+  lo medirá además (`PREGUNTAS.md`, «Para Aleks» de S-25).
+- **Regla general:** no aplica. **«creo»:** sí (29:22, 29:32, 30:10, 30:20). **Compra y venta:** no
+  aplica.
 
 ### 3.5 «Para cerrar» (v16, sin código de voz)
 
@@ -1056,8 +1069,9 @@ tiene bloque `## S-20`). **El código de S-17 no está en v16**: ni «17» como 
   **Lo que queda sin cita.** La línea siguiente, la de 32:56, toca el tramo de cuarentena que
   empieza en 0:32:58: su segmento llega a 0:32:58.116, y `evidence new` la rechaza (respuesta del
   consultor del 2026-10-25, punto 4: es correcto no citarla). **Sin citarla, lo que se entiende:**
-  el trader repite, ya sin «creo», que lo de agosto está, es decir, que la exportación existe. No
-  dice si ya la mandó ni cuándo la manda. Lo decide el consultor en la activación; aquí no se
+  se repite, ya sin «creo», que lo de agosto está, es decir, que la exportación existe. La
+  transcripción no separa voces y la línea se atribuye al trader solo por contexto (hallazgo a8 del
+  revisor). No dice si ya la mandó ni cuándo la manda. Lo decide el consultor en la activación; aquí no se
   decide nada.
 - **Marzo: la confirmación escrita** (encargo, «Ampliación declarada del 2026-10-25»).
   - **La petición en voz cae en la cuarentena**: los dos bloques (32:58–33:07 y 33:11–33:22) caen
@@ -1077,6 +1091,10 @@ tiene bloque `## S-20`). **El código de S-17 no está en v16**: ni «17» como 
     de su nombre (`stat`); si esa es la hora en que terminó de grabarse, 33:22 de v16 cae hacia las
     14:00:12 del reloj del ordenador, y las 13:58 del mensaje son del reloj del teléfono, unos dos
     minutos antes. Los dos relojes no se han comparado; no cambia el literal ni la confirmación.
+    **Esta medida no la pide el encargo** (hallazgo b4 del revisor). Se dejó porque el añadido manda
+    dar el «contexto» de la confirmación, y ese contexto es la declaración de Aleks («en ese momento
+    me lo envió»). La medida no la contradice ni la confirma, y si el consultor la ve de más, se
+    quita.
 - **El final de v16** (33:36–34:41): el trader se ofrece para más sesiones, y Aleks explica que el
   error de fidelidad de agosto venía de las operaciones de break even que se saltaba: «[34:21] ok,
   ok, porque claro, el error que hubo de pensar» / «[34:23] que no había fidelidad en agosto era
@@ -1117,7 +1135,8 @@ tiene bloque `## S-20`). **El código de S-17 no está en v16**: ni «17» como 
     (`ev-v10-014310-2296423b`).
 13. **S-21 contra el bot:** la racha empieza de cero al día siguiente; ADR-0077 §5 (PROVISIONAL) hace
     (b).
-14. **S-25 con dudas:** dice que sí tras «creo» y «no sé si está en orden». La rama de T lo mide.
+14. **S-25, en parte:** cree que el Excel está en orden («creo», «creería»), sin decir con sus
+    palabras que sea la exportación de los tres primeros vídeos. La rama de T lo mide.
 15. **Diciembre (NA:I):** el diálogo dice «pendiente»; NA:I dice que el backtest llegó sin vídeo.
 16. **La hora del mensaje de marzo** frente al reloj de la grabación (§3.5): unos dos minutos, en
     relojes distintos. No se decide nada.
@@ -1154,7 +1173,7 @@ Lo que V (`PROJECT_STATE.md`, Next Action) pedía a la sesión 5, con el código
 | A-50 (la caja a caballo) | §0.e.6 | S-12b | en parte, y contra el bot |
 | A-53 (la orden sin llenar) | §0.e.7, con CORRIDA §4.5, pregunta 6 | S-13 | en parte; la subpregunta del recuadro no se hizo |
 | S-14 de la sesión 4, que es H (RN-007) | NA:H | S-24 | sí: el umbral es cero (§4.2) |
-| Si el xlsx de julio es la exportación de v11 a v13 | `ENTRADA-JULIO.md` §8 | S-25 | sí, con dudas |
+| Si el xlsx de julio es la exportación de v11 a v13 | `ENTRADA-JULIO.md` §8 | S-25 | en parte: cree que está en orden; no lo dice con esas palabras |
 | A-57 (el lote que no cabe) | `MARGEN-LOTE.md` §5 | S-5 | sí: (a), «por ahora» y con «creo» |
 | `VISOR-CONSTRUCCION.md` §3.2, pregunta 8 | CORRIDA §4.5, pregunta 8 | S-15 (el lado, S-12a/S-12b) | sí, y contra el bot |
 | `VISOR-CONSTRUCCION.md` §3.2, pregunta 9 | CORRIDA §4.5, pregunta 9 | S-16 | no: dice que el esquema no casa y no la responde |
@@ -1162,7 +1181,7 @@ Lo que V (`PROJECT_STATE.md`, Next Action) pedía a la sesión 5, con el código
 | `VISOR-CONSTRUCCION.md` §3.2, pregunta 3 | CORRIDA §4.5, pregunta 3 | S-6 | en parte |
 | `VISOR-CONSTRUCCION.md` §3.2, A | — | S-8 | sí: (a), con una condición |
 | `VISOR-CONSTRUCCION.md` §3.2, B | — | S-11 | sí: (b); A-46 no se reabre |
-| La pregunta 3 de `PUNTO-USADO.md` (la caja de la reentrada) | `PUNTO-USADO.md` §5 | S-6 | en parte: la caja se vuelve a trazar; el número de reentradas, no |
+| La pregunta 3 de `PUNTO-USADO.md` (la caja de la reentrada) | `PUNTO-USADO.md` §5 | S-6 | en parte: en su ejemplo se actualiza el nivel 0 y el 1 sigue; si la caja es nueva y el número de reentradas, no los dice |
 
 Lo demás que V nombra también se preguntó: las dos de `SESGO-H4-COLOR.md` §4.4 (S-1 y S-2, las dos
 sí), las de ADR-0076 §4 (S-19 sí y S-20 en parte), ADR-0077 §5 (S-21 sí), RN-035 (S-22 sí), ADR-0075
@@ -1175,7 +1194,7 @@ sí), las de ADR-0076 §4 (S-19 sí y S-20 en parte), ADR-0077 §5 (S-21 sí), R
 | **S-3** | A-35 | v15 | 03:59–07:40 | en parte: la primera mitad **resuelve**, (b) = `cierre_vela_contraria`, sin PARADA; la segunda no tiene parámetro | sí | no | sí |
 | **S-4** | A-44 | v15 | 07:40–15:59 | en parte: alcance (a), el día; la magnitud no la dijo: **PARADA de §4** | sí | sí | n/a |
 | **S-5** | A-57 | v15 | 16:02–19:27 | **resuelve**: (a), bajar el lote a lo que cabe | sí, «por ahora» | sí | n/a |
-| **S-6** | pregunta 3 (ADR-0083) | v15 | 19:31–28:19 | en parte: la caja se vuelve a trazar; sin número de reentradas; ADR-0083 ni confirmado ni negado | en parte | sí | no lo dice |
+| **S-6** | pregunta 3 (ADR-0083) | v15 | 19:31–28:19 | en parte: se actualiza el nivel 0 y el 1 sigue; sin número de reentradas; ADR-0083 ni confirmado ni negado | en parte | sí | no lo dice |
 | S-1 | ADR-0080 | v15 | 00:10–01:48 | **resuelve**: (b), sigue bajista; casa con ADR-0080 y choca con la sesión 1 | sí | no | solo bajista |
 | S-2 | ADR-0080 §4 | v15 | 01:51–03:57 | **resuelve**: (b), sigue el sesgo anterior | sí | no | la regla sí; el caso bajista no |
 | S-7 | A-48, A-49 | v15 | 28:19–36:26 | en parte: la traza al cierre; el 1 se actualiza; no elige opción | en parte | sí, sobre el esquema | sí |
@@ -1197,10 +1216,11 @@ sí), las de ADR-0076 §4 (S-19 sí y S-20 en parte), ADR-0077 §5 (S-21 sí), R
 | S-22 | RN-035 | v16 | 21:37–23:47 | **resuelve**: un minuto antes | sí | no | n/a |
 | S-23 | ADR-0075 | v16 | 23:49–26:46 | **resuelve**: (a) | sí | solo en un ejemplo | sí, con la sesión 4 |
 | S-24 | RN-007 (H) | v16 | 26:48–28:55 | **resuelve**: (d), el umbral es cero; contradice la sesión 4 | sí | lo dice y se corrige | n/a |
-| S-25 | `ENTRADA-JULIO.md` §8 | v16 | 29:02–32:10 | **resuelve, con dudas**: (a) | n/a | sí | n/a |
+| S-25 | `ENTRADA-JULIO.md` §8 | v16 | 29:02–32:10 | en parte, hacia (a): cree que está en orden | n/a | sí | n/a |
 | Para cerrar | NA:I, NA:Q, marzo | v16 | 32:10–34:41 | marzo: confirmación escrita recibida; diciembre y agosto: lo que dijo, sin decidir | n/a | sí (agosto) | n/a |
 
-Resuelve: 15 (una con dudas). En parte: 10. No resuelve: 1 (S-16). Más «Para cerrar».
+Resuelve: 14. En parte: 11. No resuelve: 1 (S-16). Más «Para cerrar». (S-25 pasó de «resuelve,
+con dudas» a «en parte» tras el revisor, hallazgo a2.)
 
 ## 6. Para la orden de cierre (preparado, sin aplicar)
 
@@ -1343,9 +1363,10 @@ con `7 failed, 2911 passed`, por tres causas:
   `tr-v16-large-v3-int8-float16-dc91b386`, y los fotogramas `fr-v15-5dcfa8d3` y `fr-v16-21754f20`.
 - `knowledge/corpus/tramos_no_citables.yaml`: 11 tramos nuevos. De v15, 7: 1 SIN AUDIO, 3 de
   precaución y 3 ajenos. De v16, 4: 2 de precaución y 2 de cuarentena.
-- **49 ítems de evidencia**: 31 de v15 y 18 de v16 (abajo), con `evidence contradictions` en `0
-  contradicciones abiertas` y `knowledge validate` en verde (`552 items de evidencia, 0
-  contradicciones abiertas, historial intacto`).
+- **55 ítems de evidencia, 49 vivos** (abajo). En `0f173b3` entraron 49: 31 de v15 y 18 de v16.
+  Tras el revisor (hallazgo a1) entraron 6 más, 3 de cada vídeo, que supersedan cada uno a uno de
+  aquellos con el mismo tema, porque la evidencia commiteada no se edita. `evidence contradictions`
+  da `0 contradicciones abiertas`, y `knowledge validate` está en verde (§10).
 - `src/botsito/corpus/cuarentena.py` (v15 y v16 en `SESIONES_EN_CUARENTENA`) y sus tests
   (`test_inventario`, `test_cuarentena`, `test_guardia_claude`).
 - `docs/sesion-5/HOJA-USADA.md` y el recuadro de `docs/sesion-5/PREGUNTAS.md`.
@@ -1363,15 +1384,15 @@ con `7 failed, 2911 passed`, por tres causas:
 | S-3 | `ev-v15-000447-6699c708`, `ev-v15-000530-234d4a81`, `ev-v15-000553-9d95178a` |
 | S-4 | `ev-v15-000856-ee8f7ba3`, `ev-v15-000913-bdb12f92`, `ev-v15-001546-0dadd11e` |
 | S-5 | `ev-v15-001758-c27d9c4c` |
-| S-6 | `ev-v15-002029-1ac081ae`, `ev-v15-002441-ec3c910c`, `ev-v15-002729-30480ec5` |
-| S-7 | `ev-v15-003244-dcd8a834`, `ev-v15-003619-60121c7d` |
+| S-6 | `ev-v15-002029-1ac081ae`, `ev-v15-002441-2e609b87` (supersede a `ev-v15-002441-ec3c910c`), `ev-v15-002729-30480ec5` |
+| S-7 | `ev-v15-003244-dcd8a834`, `ev-v15-003619-9fbc7f08` (supersede a `ev-v15-003619-60121c7d`) |
 | S-8 | `ev-v15-003959-5898c61e`, `ev-v15-004037-a2ab3980` |
 | S-9 | `ev-v15-004448-aac87b77` |
 | S-10 | `ev-v15-005126-5baccf2a` |
 | S-11 | `ev-v15-005839-f2e43c27` |
 | S-12a | `ev-v15-010104-23adba23` |
 | S-12b | `ev-v15-010451-5b123278` |
-| S-13 | `ev-v15-010818-cc8e1e08`, `ev-v15-010850-e3c57529` |
+| S-13 | `ev-v15-010818-cc8e1e08`, `ev-v15-010850-f0728663` (supersede a `ev-v15-010850-e3c57529`) |
 | S-14 | `ev-v15-011023-5f0f2dd1`, `ev-v15-011728-b5bd4d05`, `ev-v15-011912-0ae32588`, `ev-v15-011956-dce80292` |
 | S-15 | `ev-v15-012616-d534455a` |
 | S-16 | — (no resuelve) |
@@ -1379,34 +1400,15 @@ con `7 failed, 2911 passed`, por tres causas:
 | S-18 | `ev-v16-000234-9a4fa375`, `ev-v16-000603-6955d127` (la de v15, incompleta, sin ítem) |
 | S-19 | `ev-v16-000851-f5ae3b6f` |
 | S-20 | `ev-v16-001445-7ca4f033`, `ev-v16-001834-732a76b6` |
-| S-21 | `ev-v16-001952-63c96f1f`, `ev-v16-002126-d2376f71` |
+| S-21 | `ev-v16-001952-9fe00b36` (supersede a `ev-v16-001952-63c96f1f`), `ev-v16-002126-d2376f71` |
 | S-22 | `ev-v16-002248-08e9600f`, `ev-v16-002323-515b9da4` |
 | S-23 | `ev-v16-002521-02c1be20`, `ev-v16-002641-e8e6eafc` |
-| S-24 | `ev-v16-002746-31cbc565`, `ev-v16-002841-b47d0461` |
-| S-25 | `ev-v16-003142-bb737430`, `ev-v16-003149-b3b79c79` |
+| S-24 | `ev-v16-002746-31cbc565`, `ev-v16-002841-8cfe382a` (supersede a `ev-v16-002841-b47d0461`) |
+| S-25 | `ev-v16-003010-e455f173` (supersede a `ev-v16-003142-bb737430`), `ev-v16-003149-b3b79c79` |
 | Para cerrar | `ev-v16-003228-b515b93e` (diciembre), `ev-v16-003249-49af3f8b` (agosto), `ev-v16-003421-b824b770` (el error de agosto, con S-14) |
 
 Marzo no tiene ítem: la petición cae en la cuarentena y la confirmación es un mensaje escrito, que
 va en `fuentes.yaml`.
-
-### 8.1 Para la copia de seguridad A.4: lo nuevo fuera de git
-
-Lo que esta rama dejó en la máquina y no está en el repositorio:
-- **Los vídeos**, en `corpus/Estrategia del trader/`:
-  - `Grabación de pantalla 2026-10-23 174536.mp4` (v15, 6.740.009.101 bytes);
-  - `Grabación de pantalla 2026-10-25 140140.mp4` (v16, 2.324.823.273 bytes).
-- **La captura de marzo**, en `corpus/Estrategia del trader/Material adicional de su
-  operativa/Mensajes del trader/mensaje-whatsapp-2026-10-25-1358.png` (sin abrir).
-- **Las transcripciones del corpus**, `data/transcripciones/v15/` y `data/transcripciones/v16/`: en
-  cada una, `audio.wav`, `audio.sha256_video` y la carpeta `large-v3-int8-float16/` (`cruda.jsonl`,
-  `cruda.txt`, `corregida.jsonl`, `correcciones.jsonl`, `huella.txt`, `video.sha256`, `fragmentos/`
-  y `parciales/`).
-- **Los audios y las salidas del guion**, en `C:\Users\USER\Desktop\sesion-05-audio\`:
-  `sesion-05-v15.wav` (193.828.942 bytes) y `sesion-05-v16.wav` (66.879.566 bytes); de cada vídeo,
-  `.cruda-NO-LEER.jsonl`, `.cruda-NO-LEER.txt`, `.filtrada.md` y `.registro.txt`; y las carpetas
-  `sesion-05-v15-trabajo/` y `sesion-05-v16-trabajo/`.
-- **Los fotogramas**, `data/fotogramas/v15/` (2,7 GB) y `data/fotogramas/v16/` (772 MB): se
-  regeneran desde el vídeo con `corpus frames extract`, así que copiarlos o no lo decide Aleks.
 
 ## 9. El cierre de la rama: sellos, push y CI
 
@@ -1446,15 +1448,301 @@ la rama 'trabajo/sesion-05'; la rama actual es 'fix/sesion-05'`. El resultado:
 Este §9 entra en un commit posterior a `0f173b3`, que se empuja igual a `fix/sesion-05`. Su run va
 en la sección del revisor.
 
+## 10. El encargo, punto por punto
+
+El encargo (cuatro mensajes, el añadido de marzo y las dos respuestas del consultor a las PARADAS,
+copiadas al final de `docs/encargos/trabajo-sesion-05.md`), partido en requisitos:
+
+| # | Requisito | Estado | Dónde |
+|---|---|---|---|
+| 1 | Abrir con `abrir-rama`: encargo, contrato y Archivo en HISTORIA | Hecho | `c6d7cef`; «Base comprobada al abrir» |
+| 2 | Comprobar la base: main, tag, CI, ramas, hoja 05 en el guion y regla del 2026-10-21 | Hecho | «Base comprobada al abrir» |
+| 3 | Copiar el encargo tal cual con Write, y después las respuestas del consultor | Hecho | `docs/encargos/trabajo-sesion-05.md` (las respuestas, añadidas tras el revisor, b2) |
+| 4 | Duraciones exactas con ffprobe | Hecho | §0.3 |
+| 5 | v15 y v16, siguientes ids libres, con `drive_id` null y en `SESIONES_EN_CUARENTENA` | Hecho | §0.3, §1 |
+| 6 | Medir si se admiten dos vídeos por id de sesión, con el precedente | Hecho | §0.4 |
+| 7 | Nota para la activación: un feedback de v16 lleva `fecha` 2026-10-23 y `recibido_el` 2026-10-25, con la línea verificada | Hecho | §0.4; §6 e) |
+| 8 | Buscar el código de S-17 en las dos filtradas | Hecho | §3.3 (S-17), §3.4 |
+| 9 | No resolver nada; no tocar `transcribir_sesion.py`; ADR-0081 y ADR-0083 siguen PROVISIONALES | Hecho | rutas protegidas sin tocar (§9); «Estado» |
+| 10 | Negativas de la guardia: PARADA, o la forma que propone, declarada | Hecho | §7 |
+| 11 | Los dos días con `casos_ocultos`; la desviación del 25 declarada | Hecho | §0.2 |
+| 12 | Preguntas a) a d) antes del registro, y sus respuestas tal cual | Hecho | §0.1 |
+| 13 | Toda consulta de casos y toda lectura de una filtrada, declarada el mismo día | Hecho | `HOLDOUT-EXPOSICIONES.md`, cinco filas del 2026-10-25 (la quinta, tras el revisor, a4) |
+| 14 | `HOJA-USADA.md` con la forma de la de la sesión 4, sin citas del trader | Hecho | `docs/sesion-5/HOJA-USADA.md` |
+| 15 | Recuadro en `PREGUNTAS.md` que apunte a `HOJA-USADA.md` | Hecho | `PREGUNTAS.md`, recuadro del 2026-10-25 |
+| 16 | Verificar que los recuadros de la hoja son S-7, S-12, S-13 y S-15 | Hecho | `HOJA-USADA.md` §4 |
+| 17 | Filtradas con el guion de `main` y `--sesion 05`; revisar «veinte y N» en el bloque de S-20 | Hecho | §2.2, §2.5, §3.4 |
+| 18 | Registro: `naturaleza` del vídeo entero, `test_inventario`, `corpus inventory` y `check --hashes` | Hecho | §1, §1.2 |
+| 19 | Test roto a propósito antes de la cuarentena, y después pasando | Hecho | §1.1 |
+| 20 | Audio con las formas de la skill, en WAV de nombres distintos fuera del repo | Hecho | §0.3, §2.1 |
+| 21 | Antes de la segunda transcripción, comprobar que los ficheros de v15 siguen ahí | **Parcial** | no consta en el informe que se hiciera; lo que se ve después, sí (§11, b3) |
+| 22 | Corte SIN AUDIO en los tramos, y la puerta del ASR | Hecho | §2.1, §2.2 |
+| 23 | «Listo» de Aleks antes de cada transcripción; bloques de cuarentena en un commit propio por vídeo | Hecho; v16 en un commit posterior, declarado | §2.2, §2.5; §7, punto 7 |
+| 24 | `frames extract` y `frames check` de los dos | Hecho | §2.4 |
+| 25 | Ningún fotograma abierto; citas solo de la filtrada | Hecho | §2.4 |
+| 26 | Día de julio del 18 en adelante fuera de la cuarentena: PARADA sin copiarlo | Hecho | §2.7 |
+| 27 | Informe con la forma de la sesión 4 y la tabla final con sus columnas | Hecho | §3, §5 |
+| 28 | Orden: S-3 y S-4 con `ACTIVAR-A35-A44.md`, después S-5 y S-6, después el resto | Hecho | §3.1, §3.2, §3.3 |
+| 29 | S-12 en dos filas | Hecho | §3.3, §5 |
+| 30 | S-1 y S-2 frente a ADR-0080 y la sesión 1 | Hecho | §3.3 |
+| 31 | «Para cerrar»: diciembre, agosto y marzo, solo lo que dijo | Hecho | §3.5 |
+| 32 | Evidencia fuera de todos los tramos; `evidence contradictions` y `knowledge validate` en verde | Hecho | §8; §11 (a1) |
+| 33 | Cobertura de V, y qué pasa con H tras S-24 | Hecho | §4.3, §4.2 |
+| 34 | Lista para la copia A.4, al final del informe | Hecho | §12 (se movió al final tras el revisor, b5) |
+| 35 | `PROJECT_STATE.md` bajo 25.000 bytes | Hecho | 23.796 (§9) |
+| 36 | Cierre: sello, push a `fix/`, CI con solo el fallo esperado, número de run; sin registro de cierre en HISTORIA | Hecho | §9; §11 |
+| 37 | Añadido de marzo: `fuentes.yaml`, literal, hora, contexto, HOLDOUT, A.3 y heredado 2 preparados, lo que queda del paso 0 | Hecho | §3.5, §6 |
+| 38 | Añadido de marzo: no tocar `vistos.yaml` ni la hoja de ruta | Hecho de otra forma, declarado | `vistos.yaml` sin tocar; en la hoja de ruta solo `ID:A-48`, por la respuesta del consultor (§7.1) |
+| 39 | Respuesta a la PARADA de v16: tramo, HOLDOUT, barrido antes de leer, anexo, línea de Technical Debt, el dato sin usar | Hecho | §2.7, §6 d) |
+| 40 | Respuesta a la PARADA del `make check`: lección, test de la sesión 4, `ID:A-48`, agosto sin cita | Hecho | §7.1, §3.5 |
+| 41 | Revisor con el informe terminado y su informe pegado al final | Hecho | «Informe del revisor» |
+| 42 | «Rama lista para revisión, NO cerrada» | Hecho | «Estado» |
+
+## 11. Lo que se hizo con los hallazgos del revisor
+
+El revisor (subagente `revisor`) revisó `90a1da5`: **eje (a), 0 bloquea, 4 importa y 4 menor;
+eje (b), 0 bloquea, 4 importa y 1 menor.** Su informe está al final, tal cual salvo lo que se dice
+allí. Uno por uno:
+- **a1 (importa), afirmaciones que dicen más que su cita.** Arreglado con seis ítems nuevos que
+  supersedan a los seis con el mismo tema (`evidence new --supersede`; la evidencia commiteada no se
+  edita):
+
+  | Superseded | Nuevo | Qué cambia |
+  |---|---|---|
+  | `ev-v15-002441-ec3c910c` | `ev-v15-002441-2e609b87` | la cita llega a 24:51; la afirmación dice que se actualiza el 0 y el 1 sigue, sin «no es la del primer intento» |
+  | `ev-v16-003142-bb737430` | `ev-v16-003010-e455f173` | la cita es la respuesta a la pregunta (30:10–30:20), con «creo»; confianza baja |
+  | `ev-v15-003619-60121c7d` | `ev-v15-003619-9fbc7f08` | sin la condición de fuera de la ventana |
+  | `ev-v15-010850-e3c57529` | `ev-v15-010850-f0728663` | sin «no se quita» |
+  | `ev-v16-001952-63c96f1f` | `ev-v16-001952-9fe00b36` | la cita trae el arranque de la línea; «no suelen», sin «ese día» |
+  | `ev-v16-002841-b47d0461` | `ev-v16-002841-8cfe382a` | sin «y no se usa para trazar el punto» |
+
+  `evidence contradictions`: `0 contradicciones abiertas`. `knowledge validate`: `OK: 558 items de
+  evidencia, 0 contradicciones abiertas, historial intacto`.
+- **a2 (importa), dos propuestas que dicen más que su cita.** S-6 corregida en §3.2, §4.3 y §5: se
+  actualiza el 0 y el 1 sigue. S-25 corregida en §3.4, §4.1, §4.3 y §5: cita 30:10–30:20 y pasa a
+  «en parte». El recuento de §5 queda en 14, 11 y 1.
+- **a3 (importa), citas de dentro del tramo 0:30:41–0:31:37.** Retiradas de §2.7: queda solo el
+  motivo del tramo, con una nota. Tampoco van en el informe del revisor pegado abajo.
+- **a4 (importa), un día de diciembre leído y no declarado.** Declarado en `HOLDOUT-EXPOSICIONES.md`
+  (fila nueva del 2026-10-25) sin copiar el número; el número tampoco va en el informe del revisor
+  pegado abajo (ver allí). **Para el consultor:** la cuarentena por condición trata diciembre como
+  libre (`meses_libres` incluye el 12) mientras NA:I no ha decidido si es construcción o reservado.
+  Es un caso de la línea de Technical Debt de §6 d) o de una nueva, y lo decide él.
+- **a5 (menor), la remisión a `PREGUNTAS.md:83`.** Arreglada en §0.1: remite a la sección, porque el
+  recuadro nuevo de esta rama movió las líneas.
+- **a6 (menor), la marca de S-4.** Arreglada: «[08:57] no».
+- **a7 (menor), `barrido_18_31.py` solo ve cifras.** Sin cambio: el consultor mandó copiar los dos
+  guiones tal cual, y el revisor midió que en estas dos filtradas no hay ningún número de 18 a 31
+  escrito en letra. Queda para el consultor si la puerta se amplía.
+- **a8 (menor), agosto sin aviso de voces.** Arreglado en §3.5.
+- **b1 (importa), falta «El encargo, punto por punto».** Arreglado: §10.
+- **b2 (importa), las respuestas del consultor no están al final del encargo.** Arreglado: están
+  copiadas tal cual al final de `docs/encargos/trabajo-sesion-05.md`.
+- **b3 (importa), no consta la comprobación de los ficheros de v15 antes de la segunda
+  transcripción.** No se puede arreglar a posteriori, y no se afirma que se hiciera. Lo que se ve
+  después: en `C:\Users\USER\Desktop\sesion-05-audio\` siguen los ficheros de v15
+  (`sesion-05-v15.wav`, `.cruda-NO-LEER.*`, `.filtrada.md` y `.registro.txt`, de las 15:17 y las
+  16:21) junto a los de v16 (17:27), con nombres distintos (§12). Requisito 21 de §10: parcial.
+- **b4 (importa), la medida del reloj de v16.** Contestado en §3.5: se deja, porque el añadido pide
+  el contexto de la confirmación, y la medida ni lo cambia ni decide nada. Si el consultor la ve de
+  más, se quita.
+- **b5 (menor), la lista A.4 no estaba al final, y «Estado» seguía EN CURSO.** Arreglado: la lista
+  es §12, la última sección antes de «Estado», y el informe del revisor va pegado después, como en
+  la sesión 4. «Estado» ya no dice EN CURSO.
+- **Lo que el revisor declaró de sí mismo.** Su lectura de las filtradas, en la fila nueva de
+  `HOLDOUT-EXPOSICIONES.md`. La consulta de CI de más (`--log-failed`) y la guardia que le negó un
+  `python -c`: quedan dichas aquí.
+
+**Después de los arreglos:** `make check` sellado, commit, push a `fix/sesion-05` y la CI de ese
+commit (el run va en el mensaje final a Aleks: este informe no puede llevar el run de su propio
+commit). No se lanzó otra pasada del revisor: el encargo pide una.
+
+## 12. Para la copia de seguridad A.4: lo nuevo fuera de git
+
+Lo que esta rama dejó en la máquina y no está en el repositorio:
+- **Los vídeos**, en `corpus/Estrategia del trader/`:
+  - `Grabación de pantalla 2026-10-23 174536.mp4` (v15, 6.740.009.101 bytes);
+  - `Grabación de pantalla 2026-10-25 140140.mp4` (v16, 2.324.823.273 bytes).
+- **La captura de marzo**, en `corpus/Estrategia del trader/Material adicional de su
+  operativa/Mensajes del trader/mensaje-whatsapp-2026-10-25-1358.png` (sin abrir).
+- **Las transcripciones del corpus**, `data/transcripciones/v15/` y `data/transcripciones/v16/`: en
+  cada una, `audio.wav`, `audio.sha256_video` y la carpeta `large-v3-int8-float16/` (`cruda.jsonl`,
+  `cruda.txt`, `corregida.jsonl`, `correcciones.jsonl`, `huella.txt`, `video.sha256`, `fragmentos/`
+  y `parciales/`).
+- **Los audios y las salidas del guion**, en `C:\Users\USER\Desktop\sesion-05-audio\`:
+  `sesion-05-v15.wav` (193.828.942 bytes) y `sesion-05-v16.wav` (66.879.566 bytes); de cada vídeo,
+  `.cruda-NO-LEER.jsonl`, `.cruda-NO-LEER.txt`, `.filtrada.md` y `.registro.txt`; y las carpetas
+  `sesion-05-v15-trabajo/` y `sesion-05-v16-trabajo/`.
+- **Los fotogramas**, `data/fotogramas/v15/` (2,7 GB) y `data/fotogramas/v16/` (772 MB): se
+  regeneran desde el vídeo con `corpus frames extract`, así que copiarlos o no lo decide Aleks.
+
 ## Estado
 
-Extracción terminada el 2026-10-25: los dos vídeos ingeridos (registro, audio, transcripción,
-cuarentena, fotogramas), las 25 preguntas y «Para cerrar» extraídos con su propuesta, 49 ítems de
-evidencia y la tabla final. **Esta rama no resuelve nada**: ni feedback, ni ambigüedades, ni spec,
-ni motor, ni casos; ADR-0081 y ADR-0083 siguen PROVISIONALES. Decide el consultor, en V (R4.1):
+Extracción terminada el 2026-10-25, con los hallazgos del revisor arreglados o contestados (§11):
+- los dos vídeos ingeridos: registro, audio, transcripción, cuarentena y fotogramas;
+- las 25 preguntas y «Para cerrar», extraídas con su propuesta;
+- 55 ítems de evidencia, de los que 49 están vivos;
+- la tabla final.
+
+**Esta rama no resuelve nada**: ni feedback, ni ambigüedades, ni spec, ni motor, ni casos. ADR-0081
+y ADR-0083 siguen PROVISIONALES. Lo decide el consultor, en V (R4.1):
 - la **PARADA de §4 de `ACTIVAR-A35-A44.md` para A-44** (S-4: la magnitud del tope no se dijo);
 - las contradicciones de §4.1;
-- qué hace con H (§4.2) y con lo preparado para la orden de cierre (§6).
+- qué hace con H (§4.2) y con lo preparado para la orden de cierre (§6);
+- diciembre en `meses_libres` (§11, a4) y la puerta del barrido (§11, a7).
 
-**EN CURSO** hasta el revisor (§9: `make check` sellado y la CI de Linux por `fix/sesion-05`, con
-solo el fallo esperado).
+Rama lista para revisión, NO cerrada.
+
+## Informe del revisor
+
+Pegado tal cual. Sus encabezados bajan dos niveles para que queden dentro de esta sección y ninguna
+de sus tablas se lea como la tabla final del informe. Y salvo tres cosas, que se marcan entre
+corchetes donde estaban:
+- **dos citas retiradas** porque son de dentro de un tramo no citable (`entregar-rama`, paso 8): en
+  a3, las del tramo de precaución de v16 0:30:41–0:31:37; en a8, la línea de 32:56, que toca el
+  tramo de cuarentena de 0:32:58;
+- **el número del día de diciembre, enmascarado como `[N]` las tres veces que sale** (a4 dos veces
+  y el comando 31). Es decisión de la sesión, con el mismo criterio que el consultor fijó para el
+  día de julio: diciembre está sin sortear (NA:I).
+
+### Informe del revisor · trabajo/sesion-05 · 2026-10-25
+
+Revisión de HEAD `90a1da5` sobre la base `7eef8cf`: 8 commits y 72 ficheros, con el árbol limpio.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 4 importa, 4 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **Hay ítems nuevos cuya afirmación dice más que su cita (punto 10).** Los dos que más pesan son los primeros: (1) `ev-v15-002441-ec3c910c`. La cita dice «El punto 1 Que allí, solo que Se actualiza del nivel 0 Allí abajo, y ya está», es decir, el 1 se queda y solo cambia el 0; la línea siguiente de la filtrada, `[24:51]`, dice «aquí sigue marcando el mismo nivel». La afirmación dice otra cosa: «en la reentrada en el mismo punto tras un stop, la caja se vuelve a trazar: se actualiza desde el nivel 0, no es la del primer intento». Ni «reentrada tras un stop» ni «no es la del primer intento» están en la cita. (2) `ev-v16-003142-bb737430`. La cita es «¿cuál sería la respuesta del cuarto? a ver voy a decirle que sí, entonces, sí, sí», cuyo referente es «el cuarto». La afirmación dice «el Excel de julio es la exportacion de los tres primeros videos de julio (opcion a de S-25)», y la cita no nombra ni el Excel ni los tres vídeos. Los otros cuatro añaden menos: (3) `ev-v15-003619-60121c7d` añade la condición «y no aparece otro punto de breaker», que está en 36:03–36:14, fuera de la ventana; (4) `ev-v15-010850-e3c57529` añade «no se quita»; (5) `ev-v16-001952-63c96f1f` cambia «no solemos hacer una operación más» por «no hace una operacion mas ese dia» («ese día» no está en la cita, y la línea de la filtrada empieza con «también al día siguiente», que la cita deja fuera); (6) `ev-v16-002841-b47d0461` añade «y no se usa para trazar el punto». Los ítems ya están commiteados, así que se corrigen con un ítem nuevo que los supersede, no editándolos. | Read de los 49 ítems (`knowledge/evidence/v15/`, `v16/`); filtrada de v15, líneas 628-633; filtrada de v16, líneas 277-279 y 483-488 |
+| a2 | importa | **El informe afirma más que su cita en dos propuestas, por la misma razón que a1.** (1) S-6 dice «La caja de la reentrada se vuelve a trazar … no es la del primer intento», y lo repite en la cobertura de V y en la tabla final. La cita solo dice que se actualiza el 0. (2) S-25 se da como «RESUELVE, con dudas: (a)» apoyándose en el «sí» de 31:45, que contesta a «la respuesta del cuarto». La respuesta del trader a la pregunta principal está en 30:10–30:20 («creo que sí estaba en orden … yo creería que sí, igual lo puede corroborar el propio bot, creería yo»), es citable (antes de 30:41) y el informe no la usa. | `SESION-05-EXTRACCION.md:515-516, 1165, 1178`; `:1030-1037, 1157, 1200`; filtrada de v16, líneas 457-458 y 483-488 |
+| a3 | importa | **El informe cita y describe texto de dentro de un tramo no citable** (v16, 0:30:41–0:31:37): [retirado: dos citas y una descripción de dentro del tramo de precaución de v16 0:30:41–0:31:37]. Además se contradice: el mismo informe dice que ese tramo «no se cita ni se describe más». El motivo del tramo ya cubre lo necesario; esas citas deberían salir. | `SESION-05-EXTRACCION.md:333-340` frente a `:1026-1027`; `tramos_no_citables.yaml` (entrada v16 0:30:41) |
+| a4 | importa | **En la filtrada de v16 hay una fecha de diciembre que no se declaró.** La línea `[32:10]` termina en «ahora sí ya lo último el [N] de diciembre». Lo más probable es que el ASR haya oído así «el backtest de diciembre» (la hoja dice «El backtest de diciembre que nos mandaste», `PREGUNTAS.md:816`). La sesión la leyó (cita 32:10), pero la fila de v16 de `HOLDOUT-EXPOSICIONES.md` solo dice «diciembre (pendiente de grabar)». La cuarentena no la tapa porque `meses_libres` cuenta el 12 como libre, aunque `PROJECT_STATE.md:42` (NA:I) dice que el consultor aún no ha decidido si diciembre es de construcción o reservado. Medido: `motivos_cuarentena('el [N] de diciembre')` da `['mes']` sin meses libres y `[]` con {1,4,7,8,10,11,12}. | filtrada de v16, línea 494; `HOLDOUT-EXPOSICIONES.md` (fila de v16, punto 2); `SESION-05-EXTRACCION.md:214`; comando de abajo |
+| a5 | menor | El informe remite a `PREGUNTAS.md:83` para «lo preveía para S-23 y S-18». Esa línea está vacía: el texto está en `:88-89` y nombra también S-25. `HOJA-USADA.md:61-62` lo dice bien. | `SESION-05-EXTRACCION.md:58-59` |
+| a6 | menor | S-4 cita «[08:56] no», pero en la filtrada esa línea es `[08:57] no` (el ítem trae `t0: 0:08:56`). El literal tiene que llevar la marca de la filtrada. | `SESION-05-EXTRACCION.md:431`; filtrada de v15, línea 356 |
+| a7 | menor | `barrido_18_31.py` (la puerta que ordenó el consultor) solo detecta cifras: no pasa el texto por `numeros_a_cifras`, como sí hace `detector_julio.py:38`, así que un «veintiocho» escrito en letra pasaría. En estas dos filtradas no cambia nada: medido, no hay ninguna palabra que empiece por «dieciocho», «diecinueve», «veinte», «veinti» o «treinta». | `anexos/SESION-05/barrido_18_31.py:14,20-25`; Grep (recuento) en las dos filtradas: 0 |
+| a8 | menor | En agosto, la línea de 32:56 ([retirado: cita de una línea que toca el tramo de cuarentena de v16 que empieza en 0:32:58]) se atribuye al trader («el trader repite») sin avisar de que la transcripción no separa voces, cuando en el resto del informe sí se avisa. | `SESION-05-EXTRACCION.md:1058-1060`; filtrada de v16, línea 508 |
+
+Comprobado sin hallazgos:
+- **El contrato.** `contrato_rama.py` dice «CONTRATO: 72 ficheros dentro del contrato de trabajo/sesion-05 (riesgo medio, artefacto docs/validation/SESION-05-EXTRACCION.md, tramo 'R4', 7 comprobaciones para el revisor)», exit 0. Las comprobaciones que no escriben salen así:
+  - `corpus check --hashes`: «OK: el corpus coincide con el manifiesto (hashes)»;
+  - `transcript check`: «OK: 17 transcripciones coherentes…»;
+  - `frames check`: «OK: 12 extracciones coherentes con el disco; 3 obligatorios presentes»;
+  - el diff de los directorios inmutables: `53 A` y nada más.
+- **`make check`.** `make-check.log`:
+  - línea 102: «SELLO: make check en verde sobre el arbol 95141fff…», que es `HEAD^{tree}`; el último commit está sellado;
+  - línea 104: «PICO DE MEMORIA … 297 MiB»;
+  - línea 100: `knowledge validate` «OK: 552 items de evidencia, 0 contradicciones abiertas, historial intacto».
+- **Tests de los ficheros que toca la rama.** pytest (sin caché) de `test_cuarentena`, `test_inventario`, `test_en_parte_no_se_cierra`, `test_hoja_de_ruta` y las dos de cuarentena de `test_guardia_claude`: exit 0.
+- **Lista de ficheros con texto oculto.** `scripts/ficheros_con_ocultos.py` (modo comprobar): «OK: .claude/hooks/ficheros_con_ocultos.txt coincide».
+- **CI del último commit.** Run 40256865471 sobre `fix/sesion-05`: solo falla `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`, con «PROJECT_STATE declara la rama 'trabajo/sesion-05'; la rama actual es 'fix/sesion-05'». Resultado: `1 failed, 2871 passed, 46 skipped`.
+- **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases`, así que no aplica.
+- **Holdout y regímenes.** Nada en `knowledge/cases/holdout`, `knowledge/feedback`, `libros.yaml`, `vistos.yaml`, `docs/adr`, `scripts/` ni `.claude/` (0 ficheros). `HISTORIA.md` solo crece (0 líneas quitadas). `HOLDOUT-EXPOSICIONES.md` solo gana cuatro filas.
+- **Ambigüedades, ADR y sitios con `cita` en la spec.** No hay cambios.
+- **Ventanas de los 49 ítems frente a los 11 tramos nuevos.** Ninguna solapa. El caso límite es `ev-v16-001952` (t1 0:20:02 frente al tramo que empieza en 0:20:02): `verificacion.py:358-408` usa intervalos semiabiertos y comprueba también los segmentos, y lo acepta.
+- **El día de julio y las cifras.** En el diff y en los mensajes de commit, con los enteros del 18 al 31 enmascarados, solo aparecen los usos conocidos (códigos S-18 y S-25, fechas de octubre, los rangos «18 al 31» y «20-31»). Ninguna línea con «hasta el [N]» fuera de la ya enmascarada de §2.7.
+- **Ningún número de teléfono** en las líneas añadidas.
+- **Afirmaciones medidas.** `motivos_cuarentena('hoy 25 del 10')` da `['fecha numerica']` y `('hoy, 25 del 10,')` da `[]`, como dice §2.7. `feedback/modelo.py:113`, `:247-248` y `:293-307` dicen lo que cita §0.4.
+- **Citas del informe comprobadas contra la filtrada:** S-3 (04:47, 05:30, 05:53), S-4 (08:57–09:36, 15:20–15:52), S-7 (36:19), S-12a (60:31, 61:04–61:20, 61:59), S-21 (19:52), S-25 (29:20–29:32, 31:42–32:04) y «Para cerrar» (32:28–32:55). Salvo lo señalado en a1, a2, a6 y a8, coinciden.
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 4 importa, 0 menor. Requisitos: 34 hechos, 1 parcial, 0 no hechos (uno, la frase final, queda pendiente hasta después del revisor; uno, hecho de otra forma y declarado).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con `abrir-rama`: encargo, contrato y archivo en HISTORIA | Hecho | `c6d7cef`; `HISTORIA.md` «# Archivo 46» |
+| 2 | Comprobar la base (main, tag, CI, ramas, hoja 05, regla del 2026-10-21) | Hecho | informe:15-32 |
+| 3 | Copiar el encargo tal cual, con Write y la fecha | Hecho (sin el original no se puede comparar) | `docs/encargos/trabajo-sesion-05.md` |
+| 4 | Duraciones exactas con ffprobe | Hecho | informe:85 |
+| 5 | v15/v16 son los siguientes ids libres, con `drive_id` null y en `SESIONES_EN_CUARENTENA` | Hecho | `fuentes.yaml` (diff); `cuarentena.py:51` |
+| 6 | Medir si se admiten dos vídeos por id de sesión, con el precedente | Hecho | informe §0.4 |
+| 7 | Buscar el código de S-17 en las dos filtradas | Hecho | informe:870-872 |
+| 8 | Nota de feedback de v16: `fecha` 2026-10-23 y `recibido_el` 2026-10-25, con la línea verificada | Hecho | informe:100-105, 1247-1248; `modelo.py:113` |
+| 9 | No resolver nada; no tocar `transcribir_sesion.py` | Hecho | diff de las rutas protegidas: 0 ficheros |
+| 10 | Negativas de la guardia: PARADA o la forma que propone, declarada | Hecho | informe §7 |
+| 11 | Los dos días con `casos_ocultos`, y la desviación del 25 declarada | Hecho | informe:66-73; fila de HOLDOUT |
+| 12 | Preguntas a) a d) antes del registro, y sus respuestas | Hecho | informe §0.1 |
+| 13 | Declarar cada consulta de casos y cada lectura de filtrada en HOLDOUT | Hecho, con la salvedad de a4 | cuatro filas del 2026-10-25 |
+| 14 | `HOJA-USADA.md`: tabla, orden, no hechas, recuadros, esquemas, «Para cerrar», dos días; sin citas del trader | Hecho | `docs/sesion-5/HOJA-USADA.md` |
+| 15 | Recuadro en `PREGUNTAS.md` | Hecho | `PREGUNTAS.md:39-43` |
+| 16 | Verificar que los recuadros son S-7, S-12, S-13 y S-15 | Hecho | `HOJA-USADA.md:64-82` |
+| 17 | Filtradas con el guion de main y `--sesion 05`; el registro dice la hoja; «veinte y N» en el bloque de S-20 | Hecho | informe:197-208, 276-286, 868-871; Grep «veinte»: 0 |
+| 18 | Registro: `naturaleza` del vídeo entero, `test_inventario`, `inventory`, `check --hashes` | Hecho | informe §1, §1.2 |
+| 19 | Test roto a propósito y después pasando, con sus salidas | Hecho | informe §1.1, 172 |
+| 20 | Audio con las formas de la skill y WAV con nombres distintos fuera del repo | Hecho (las formas exactas, no verificables) | informe §2.1, :88 |
+| 21 | Antes de la segunda transcripción, comprobar que los ficheros de v15 siguen ahí | **Parcial** | no está en el informe (Grep: 0); el resultado sí se ve: `ls` de la carpeta de audio, v15 a las 16:21 y v16 a las 17:27, con nombres distintos |
+| 22 | Corte SIN AUDIO en tramos, y la puerta del ASR | Hecho | tramos (v15 1:22:26); informe:226-229 |
+| 23 | Transcripción con el «listo» de Aleks; bloques en cuarentena en commit propio por vídeo | Hecho (v16 tarde, declarado en §7.7) | `5f47908` |
+| 24 | `frames extract` y `frames check` de los dos | Hecho | informe §2.4 |
+| 25 | Verificación final: solo `A` en los directorios inmutables | Hecho | `53 A` |
+| 26 | Informe con la forma de SESION-04 y la tabla final con sus columnas | Hecho | informe §5 |
+| 27 | Por código: tramo, literal, propuesta, regla general, «creo», compra y venta | Hecho, con la salvedad de a2 | informe §3 |
+| 28 | Orden: S-3 y S-4 con `ACTIVAR-A35-A44`, después S-5 y S-6, después el resto | Hecho | informe §3.1-§3.3 |
+| 29 | S-12 en dos filas | Hecho | informe:679-717 |
+| 30 | S-1 y S-2 frente a ADR-0080 y la sesión 1 | Hecho | informe:541-569 |
+| 31 | «Para cerrar»: diciembre, agosto y marzo | Hecho | informe §3.5 |
+| 32 | Evidencia fuera de los tramos; `contradictions` y `validate` en verde | Hecho | `make-check.log:100` |
+| 33 | Cobertura de V y qué pasa con H tras S-24 | Hecho | informe §4.2, §4.3 |
+| 34 | Lista de copia A.4; `PROJECT_STATE` por debajo de 25.000 | Hecho | informe §8.1; `git show HEAD:PROJECT_STATE.md \| wc -c` = 23796 |
+| 35 | Cierre: sello, push a `fix/`, CI con solo el fallo esperado, número de run, sin cierre en HISTORIA | Hecho | informe §9; run 40256865471 (arriba) |
+| 36 | Ampliación de marzo: `fuentes.yaml`, inventario, literal y contexto, HOLDOUT, A.3 y heredado 2 preparados, lo que queda del paso 0 | Hecho | diff de `fuentes.yaml`; informe §3.5, §6 |
+| 37 | Ampliación: no tocar `vistos.yaml` ni la hoja de ruta | Hecho de otra forma, y declarado | `vistos.yaml` sin tocar; `HOJA-DE-RUTA.md` solo `ID:A-48`, con la respuesta del consultor (§7.1) y el comentario del contrato (`contrato.yaml:29`) |
+| 38 | «Rama lista para revisión, NO cerrada» | Pendiente: se pone después del revisor | informe:1459 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | **Falta la tabla «El encargo, punto por punto»** que pide la skill `entregar-rama` (E5 de `trabajo/entorno-code`). Las dos secciones «Cómo se aplicó, punto por punto» solo cubren las respuestas del consultor. | `.claude/skills/entregar-rama/SKILL.md:46-50, 97`; Grep «punto por punto» en el informe: solo líneas 364 y 1310 |
+| b2 | importa | **Las respuestas del consultor a las dos PARADAS** (la de v16 y la del `make check`) **no están al final del encargo**, solo en el informe. El encargo termina en la ampliación de marzo. | `fase-cero/SKILL.md:90`; `entregar-rama/SKILL.md:18`; `docs/encargos/trabajo-sesion-05.md:74-97` |
+| b3 | importa | **No consta la comprobación que pide el encargo antes de la segunda transcripción** (que los ficheros de v15 siguen ahí). El resultado es bueno, pero el informe no dice que se hizo. | encargo:52; informe §2.5 (sin mención) |
+| b4 | importa | **Hay algo de más que el encargo no pide y el informe no justifica:** la medida del `mtime` de v16 frente a la hora del WhatsApp (`stat` del vídeo), y el punto 16 de §4.1 que sale de ella. El encargo pide «solo lo que dijo, sin decidir nada». | informe:1076-1079, 1122-1123 |
+| b5 | menor | La lista A.4 tenía que ir «al final del informe» y está en §8.1, con §9 y «Estado» detrás. Además, «Estado» sigue en «EN CURSO», y `entregar-rama` pide quitarlo. | encargo:66; informe:1392, 1459; `entregar-rama/SKILL.md:56` |
+
+#### Lo que no pude comprobar
+- **`uv run botsito evidence contradictions`:** la guardia de solo lectura lo niega («ese subcomando u opcion de `botsito` escribe»). Lo sustituye `make-check.log:100` («0 contradicciones abiertas»).
+- **`knowledge validate > knowledge-validate.log` y `make check`:** escriben, así que no los ejecuté. Los sustituyen `make-check.log:100-104` y que el sello sea igual a `HEAD^{tree}` (95141fff…). `knowledge-validate.log` no existe.
+- **Que el día de julio y las cifras de los tramos de precaución no estén en el diff:** no se puede comprobar del todo sin conocer el número ni las cifras, y no los leí. Solo hice búsquedas con los números enmascarados (ver eje a).
+- **Sin registro con el que comprobarlas:** las formas exactas de ffprobe y ffmpeg, el «listo» de Aleks antes de cada transcripción, que no corrió ningún `make check` en la ventana prohibida, que no se abrió ningún fotograma, y que el encargo se copió tal cual.
+- **Mi propia lectura de las filtradas (fuera del repo), que hay que declarar hoy en `HOLDOUT-EXPOSICIONES.md`:**
+  - el barrido ancho de las dos, como manda el consultor; enseñó enmascaradas [59:22] (dentro del tramo personal de v15) y [31:04] (dentro del tramo de precaución de v16);
+  - de las dos, listados de solo marcas de tiempo, y un recuento de números escritos en letra (0);
+  - de v16, las líneas 274-279 (19:21-19:57), 427-459 (29:02-30:29) y 482-508 (31:40-32:56); la de 32:56 toca el tramo de cuarentena que empieza en 0:32:58;
+  - de v15, las líneas 88-127 (04:47-07:30), 339-381 (07:40-09:51), 466-497 (15:01-15:59), 619-637 (23:25-24:59), 771-797 (35:09-36:56) y 1108-1124 (60:03-61:59).
+  - Nada entre 30:41 y 31:37 de v16, ninguna cruda, ningún fotograma y ninguna captura.
+- **Una consulta de CI de más:** además del `gh run view 40256865471` suelto, hice una consulta suelta con `--log-failed` (filtrada con grep) para saber qué test fallaba. Es una desviación de «un único gh run view».
+- **Bloqueo de la guardia:** negó un `python -c` que recorría `knowledge/evidence/*` para cruzar ventanas con tramos. Lo hice con Grep de `t0`/`t1` y comparándolos a mano.
+
+#### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. Read de `docs/encargos/trabajo-sesion-05.md` y de `contrato.yaml`
+3. `uv run python scripts/contrato_rama.py`
+4. `uv run botsito corpus check --hashes`; `uv run botsito corpus transcript check`; `uv run botsito corpus frames check`
+5. `uv run botsito evidence contradictions` (negado por la guardia de solo lectura)
+6. `git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones knowledge/corpus/fotogramas data/manifests | awk | sort | uniq -c`
+7. `ls -la make-check.log knowledge-validate.log`; grep de `SELLO`, `PICO` y `passed` en `make-check.log`
+8. `git diff --name-status` de las rutas protegidas y reguladas, y de todo lo que no es `A`
+9. `git rev-parse HEAD^{tree} 0f173b3^{tree}`; `cat .git/botsito-sello`
+10. `git diff main...HEAD` de `PROJECT_STATE.md`, `HOJA-DE-RUTA.md`, `PREGUNTAS.md`, `HOLDOUT-EXPOSICIONES.md`, `cuarentena.py`, `tests/`, `tramos_no_citables.yaml` y `fuentes.yaml`
+11. Read y grep de `docs/adr/0021-que-cuenta-como-abrir-un-holdout.md`
+12. Read entero de `docs/validation/SESION-05-EXTRACCION.md`
+13. `cat` de los 49 ítems de evidencia; grep de `revisado_por` en v10
+14. `uv run python -c …` que recorría la evidencia (negado por la guardia); Grep de `^t[01]:` en v15 y v16
+15. Read de `src/botsito/evidence/verificacion.py:345-424`
+16. Read de los dos guiones del anexo; `uv run python docs/validation/anexos/SESION-05/barrido_18_31.py` sobre la filtrada de v16 y sobre la de v15
+17. Grep de `diciembre` en `PREGUNTAS.md`; grep de `meses_libres`; Read de `cases/holdout.py:548-657`; Read de `PREGUNTAS.md:805-834`; grep de `diciembre` en `guardia.py` y en `PROJECT_STATE.md`
+18. `git diff main...HEAD … | grep … | sed` (dos búsquedas enmascaradas de los enteros 18-31) y el mismo enmascarado sobre `git log --format=%B`
+19. `git diff … HISTORIA.md | grep -c`; `wc -c PROJECT_STATE.md` en `main` y en HEAD; `git log` de las rutas protegidas
+20. `gh run view 40256865471`; `gh run view 40256865471 --log-failed | grep … | cut | head`
+21. Grep de marcas de tiempo (solo con `-o`) y Read por tramos de las dos filtradas (líneas listadas arriba); Grep (recuento) de números en letra
+22. Read de `docs/sesion-5/HOJA-USADA.md`; Read y Grep de `PREGUNTAS.md` (recuadros y WhatsApp)
+23. Grep de `siguen ah…` en el informe; `sed -n` de `src/botsito/feedback/modelo.py`; `ls -la` de `C:/Users/USER/Desktop/sesion-05-audio/`
+24. grep de las tres citas de v10; grep de `SESGO-H4-COLOR.md` y de `ACTIVAR-SESION-04.md`; Read de `SESGO-H4-COLOR.md:929-948`
+25. Grep y Read de `docs/runbooks/ACTIVAR-A35-A44.md`
+26. `git log --format='--- %h%n%B' main..HEAD`
+27. `git diff --name-only` de las rutas protegidas; `git log` de `contrato.yaml`
+28. `sed` de `scripts/ficheros_con_ocultos.py`; `uv run python scripts/ficheros_con_ocultos.py` (modo comprobar)
+29. `uv run pytest -p no:cacheprovider` de los cinco ficheros de test (exit 0)
+30. grep de `knowledge validate` en el `Makefile` y en `make-check.log`
+31. `uv run python -c` con `motivos_cuarentena` (las dos fechas sintéticas, y «el [N] de diciembre» con y sin meses libres)
+32. Read de `.claude/skills/entregar-rama/SKILL.md` y de `fase-cero/SKILL.md:80-109`; Grep de «punto por punto» en los informes de las sesiones 4 y 5
+33. grep de «confirmacion escrita» en `CLAUDE.md`, `ENTRADA-MARZO.md`, `HOJA-DE-RUTA.md` y `PROJECT_STATE.md`
+34. Grep de números con forma de teléfono en las líneas añadidas

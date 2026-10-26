@@ -1,0 +1,21 @@
+id: ev-v16-001952-9fe00b36
+video_id: v16
+t0: 0:19:52
+t1: 0:20:02
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: también al día siguiente no solemos hacer una operación más después de nueve pérdidas consecutivas
+  en pérdida ojo que no se cuentan los break even
+afirmacion: despues de nueve perdidas consecutivas no suelen hacer una operacion mas, y los break even
+  no se cuentan
+tema: riesgo.racha_be_no_corta
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-10-25 (trabajo/sesion-05) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto; la linea
+  mezcla la subpregunta leida («también al día siguiente») y la respuesta
+provenance: botsito
+supersede: ev-v16-001952-63c96f1f
+notas: S-21, para precisar. Supersede a ev-v16-001952-63c96f1f, cuya afirmacion anadia «ese dia» y su
+  cita dejaba fuera el arranque de la linea (hallazgo a1 del revisor). docs/validation/SESION-05-EXTRACCION.md
+transcripcion: tr-v16-large-v3-int8-float16-dc91b386

@@ -95,3 +95,30 @@ marzo. Cópialo al encargo como ampliación declarada, en su sección, con la fe
 > - No se toca knowledge/corpus/vistos.yaml (marzo en vistos es otro paso de REGISTRO-MARZO §2/ENTRADA-MARZO) ni la hoja de ruta.
 > - Para la orden de cierre, deja preparado en el informe: A.3 pasa a HECHA (fecha de la sesión 5: 2026-10-23 y 2026-10-25; confirmación escrita de marzo recibida el 2026-10-25), con el texto nuevo de su Estado, y la línea de la Next Action o heredado 2 que la pedía, con su texto nuevo. Lo que siga pendiente del paso 0 (marzo en vistos.yaml), lo dices.
 > - Declara en HOLDOUT-EXPOSICIONES.md, con fecha de hoy, que el mensaje solo nombra el mes (ninguna fecha, ningún resultado) y que nadie de la sesión ha abierto la captura.
+
+## Respuesta del consultor a la PARADA de v16 (2026-10-25)
+
+Copiada tal cual. La PARADA y cómo se aplicó: `docs/validation/SESION-05-EXTRACCION.md` §2.7.
+
+> Respuesta del consultor a la PARADA de v16 (2026-10-25). Cópiala al informe, en su sección.
+>
+> 1. SÍ, opción (a): v16 de 0:30:41 a 0:31:37 entra en tramos_no_citables.yaml como tramo de precaución (motivo: el trader enseña su replay de julio y dice hasta qué día llegó su backtest, un día del 18 en adelante). El número no se escribe en ningún sitio: ni en el informe, ni en HOLDOUT-EXPOSICIONES.md, ni en un commit, ni en el chat. La respuesta a S-25 (0:31:37 a 0:32:10) queda fuera del tramo y se puede citar.
+> 2. HOLDOUT-EXPOSICIONES.md, con fecha de hoy: la sesión leyó, al leer la filtrada de v16, el día en que acaba el backtest de julio del trader (un día del 18 al 31), sin ninguna operación, resultado ni detalle de ese día; el número no se registra. Y por qué pasó: el detector de la sesión (detector_julio.py, en el scratchpad) era más estrecho que la regla del encargo (solo un número junto a «julio» o «día»).
+> 3. Para el resto de la rama: antes de leer cualquier filtrada (o volver a leer una), se pasa primero el barrido ancho (barrido_18_31.py, con el número enmascarado), y solo después se lee. Si sale otra línea con un día de julio del 18 en adelante, PARADA como esta. Copia los dos scripts del scratchpad a docs/validation/anexos/SESION-05/ para que el revisor los vea.
+> 4. El segundo hallazgo (la fecha numérica seguida de coma que la cuarentena no tapa, con la prueba sintética) va preparado en el informe como una línea de Technical Debt para la orden de cierre, del carril de guardias y de la cuarentena por condición. No se arregla en esta rama.
+> 5. El dato de hasta dónde llega el backtest de julio NO se usa para U (julio del 20 al 31) ni para nada más. Cuando toque U, el consultor se lo pregunta a Aleks o al trader por su vía.
+>
+> Sigue con v16 (tramos, informe, commit) y con lo que quede, como dice el encargo.
+
+## Respuesta del consultor a la PARADA del make check de la extracción (2026-10-25)
+
+Copiada tal cual. La PARADA y cómo se aplicó: `docs/validation/SESION-05-EXTRACCION.md` §7.1.
+
+> Respuesta del consultor a la PARADA del make check de la extracción (2026-10-25). Cópiala al informe, en su sección.
+>
+> 1. El id inexistente del §7: bien corregido. Declara en el informe cómo se cazó (los tres tests) y la lección: un id de evidencia se cita solo después de que su fichero esté escrito, nunca antes.
+> 2. SÍ: test_la_sesion_4_deja_en_parte_lo_que_dice_su_tabla lee solo SESION-04-EXTRACCION.md (es una comprobación de que el lector lee algo de la sesión 4, como dice su docstring). Amplía el contrato a ese fichero de test en un commit propio que lo declare. El test de la regla (una «en parte» no puede estar RESUELTA) sigue leyendo TODAS las extracciones y no se toca. Enseña en el informe que sigue pasando y que se rompe a propósito.
+> 3. SÍ, opción (a): levanto la prohibición del añadido de marzo SOLO para este cambio. Se añade ID:A-48 a las Refs de R4.1 en docs/plan/HOJA-DE-RUTA.md, y nada más de la hoja de ruta (A.3 sigue preparada para la orden de cierre, no se aplica aquí). Amplía el contrato a HOJA-DE-RUTA.md en el mismo commit propio, declarándolo. La fila de S-7 se queda como está («A-48, A-49», «en parte»): no se toca la extracción para que pase un test.
+> 4. El hallazgo de agosto (32:56 toca el tramo en cuarentena que empieza en 0:32:58 y evidence new lo rechaza): correcto no citarlo. En «Para cerrar», di que lo de agosto queda sin cita por ese motivo y qué se entiende sin citar (si dice que la exportación está o no), para que yo lo decida en la activación.
+>
+> Después: make check sellado, commit, push a fix/sesion-05, CI con un gh run view suelto y el revisor, como dice el encargo.
