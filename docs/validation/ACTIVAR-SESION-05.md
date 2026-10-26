@@ -881,6 +881,18 @@ con un YAML sintético que da A-35 por RESUELTA sobre la tabla real: `['A-35 (RE
 comentario de `EN_PARTE_SESION_4` en `test_kit.py` apunta a él. Medido: el fichero en verde (6
 tests); `make check` sellado.
 
+### 1.8 El runbook `ACTIVAR-A35-A44.md`: el contrato ampliado y la NOTA (punto 6)
+
+`contrato.yaml` gana `docs/runbooks/ACTIVAR-A35-A44.md` en `rutas_permitidas` (la ampliación se
+declara aquí, como pide `abrir-rama`), y el runbook lleva al principio, bajo su título, una NOTA
+fechada que no toca el cuerpo: que se ejecutó con la sesión 5, qué se fijó (los tres valores y sus
+registros; el huso del reinicio UNKNOWN y SUPUESTO), que §0 ya no describe el estado de partida
+(el arnés y el visor corren a secas y los diagnósticos se rechazan), las TRES desviaciones
+declaradas de este runbook por orden del consultor (la segunda mitad de A-35 no abre ambigüedad
+nueva; `perdida_maxima_semanal` sin CORRECT; la magnitud como DEFAULT_AMBIGUOUS), que A-35 y A-44
+siguen ABIERTAS (los cinco sitios de §3 no se tocaron para ellas) y que la medida de §5 y §5.1 va
+después de la rama de motor. `scripts/contrato_rama.py` en verde con el fichero dentro del contrato.
+
 ## Estado
 
 EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por

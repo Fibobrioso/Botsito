@@ -12,6 +12,7 @@ rutas_permitidas:
   - tests/unit/
   - scripts/hoja_preguntas.py
   - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/runbooks/ACTIVAR-A35-A44.md  # ampliado el 2026-10-26 (respuesta del consultor a la PARADA, punto 6): solo una NOTA al principio
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
