@@ -35,6 +35,13 @@ la linea viva, en el Archivo 37). El xlsx ya esta en el corpus (REGISTRO-MARZO.m
 **Faltan** `vistos.yaml`, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y
 A.3):
 
+> **CORRECCIÓN (2026-10-25, rama `trabajo/sesion-05`, orden de cierre del consultor, punto 2).**
+> **La confirmacion escrita del trader ya esta.** Llego por WhatsApp el 2026-10-25 a las 13:58
+> (hora de Lima): «Confirmado backtest de marzo». Esta registrada en `knowledge/corpus/fuentes.yaml`
+> («Mensajes del trader») y en `docs/validation/SESION-05-EXTRACCION.md` §3.5, y A.3 esta HECHA.
+> **De lo de arriba faltan** marzo en `vistos.yaml` y el paso a (R5.3). Lo mismo vale para el
+> recuadro del 2026-10-10 de mas abajo. El texto de abajo queda intacto.
+
 - **Marzo a `vistos.yaml`**, con `visto_el` = la fecha en que el trader lo backtesteo, citando el
   commit de entrega, y su `cobertura_material` declarada (paso a). Es material del CAMINO DE
   FIDELIDAD (ADR-0036), para `fidelidad-2` y `fidelidad-3`.

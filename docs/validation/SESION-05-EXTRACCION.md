@@ -1746,3 +1746,41 @@ Resumen: 0 bloquea, 4 importa, 0 menor. Requisitos: 34 hechos, 1 parcial, 0 no h
 32. Read de `.claude/skills/entregar-rama/SKILL.md` y de `fase-cero/SKILL.md:80-109`; Grep de «punto por punto» en los informes de las sesiones 4 y 5
 33. grep de «confirmacion escrita» en `CLAUDE.md`, `ENTRADA-MARZO.md`, `HOJA-DE-RUTA.md` y `PROJECT_STATE.md`
 34. Grep de números con forma de teléfono en las líneas añadidas
+
+## Orden de cierre (2026-10-25)
+
+Copiada tal cual. Lanzada por Aleks con `/cerrar-rama`. Lo hecho en el commit del contrato va en el
+registro de cierre de `docs/state/HISTORIA.md`.
+
+> Orden de cierre de trabajo/sesion-05 (consultor, 2026-10-25). Tag: stable/F38d-sesion-05. Cópiala al informe, en una sección «Orden de cierre».
+>
+> Lo que pide decisión en §4 (la PARADA de A-44, las contradicciones de §4.1, H tras S-24, A-35 en parte) NO se decide en esta rama: es de la activación (V, R4.1). La extracción se queda como está.
+>
+> Commit del contrato (punto Y de RITUAL), además de lo de siempre:
+> 1. §6 a) y b) tal cual: A.3 HECHA con su Estado nuevo, y el heredado 2 con su texto nuevo.
+> 2. §6 c): corrige lo que todavía dice que falta la confirmación escrita de marzo: CLAUDE.md:180, docs/runbooks/ENTRADA-MARZO.md:35 y :111, y R5.3 de docs/plan/HOJA-DE-RUTA.md («Qué es» y «Depende de»). Busca con grep -i «confirmacion escrita» y «confirmación escrita» por si hay más. Un runbook o informe cerrado lleva recuadro; CLAUDE.md y la hoja de ruta, el texto nuevo. Lo que queda pendiente de marzo es vistos.yaml y el paso a. Si la guardia niega tocar CLAUDE.md, PARADA.
+> 3. V en la Next Action: añade, en pocas palabras, que la sesión 5 está celebrada (2026-10-23 y 2026-10-25, v15 y v16) e ingerida (SESION-05-EXTRACCION.md) y que falta su activación. Sin repetir el resto de V.
+> 4. Technical Debt: UNA sola línea para la cuarentena por condición, que junte §6 d) (la fecha numérica seguida de coma) y el hallazgo a4 del revisor: meses_libres cuenta diciembre como libre aunque NA:I no está decidido. PRIORITARIA, porque deja pasar texto de un mes que puede acabar reservado. Las dos con su medida sintética. Carril de guardias y cuarentena.
+> 5. Technical Debt: la skill ingerir-sesion tiene que mandar el barrido ancho (los días 18 a 31 con dígitos Y escritos en letra, con el número enmascarado) antes de leer cada filtrada, no después. Dueño: la próxima rama que toque .claude/skills/ingerir-sesion. Si no cabe, va solo a ERRORES-RECURRENTES.
+> 6. PROJECT_STATE bajo 25.000 bytes: da la cifra. Si no cabe, PARADA antes de recortar nada.
+>
+> Hallazgos para ERRORES-RECURRENTES (fila de trabajo/sesion-05):
+> - (importa, de la sesión) El detector de julio era más estrecho que la regla del encargo, y la sesión leyó la filtrada de v16 entera con él; salió un día de julio del 18 en adelante (PARADA de v16) y, después, el revisor encontró uno de diciembre sin declarar. Lección: el barrido ancho (dígitos y letra, número enmascarado) va ANTES de leer cada filtrada.
+> - (menor, de la sesión) Un id de evidencia citado en el informe antes de existir (5 de los 7 rojos del make check). Lección: un id se cita después de escribir su fichero.
+> - (menor, del consultor) El encargo no previó que «Para cerrar» nombra diciembre por construcción, ni que la cuarentena trata diciembre como libre con NA:I sin decidir. Lección: al preparar una ingesta, mirar qué meses nombra la propia hoja y cómo los trata meses_libres.
+> - (menor, de Aleks, sin culpa) En S-13 se leyó el cuerpo sin la subpregunta del recuadro: va a la lista de la sesión 6.
+> - Lo bueno: dos vídeos de una sesión partida en dos días, sin tocar código; 26 preguntas extraídas, 14 resuelven; marzo confirmado por escrito; dos PARADAS bien levantadas.
+>
+> Después del cierre: CI de main sobre el HEAD nuevo con un gh run view suelto, y el informe final con main, tag, run y bytes de PROJECT_STATE.
+
+**Cómo se aplicó** (en el commit del contrato; el detalle, en el registro de cierre de HISTORIA):
+1. A.3 HECHA, con el Estado de §6 a). Sus Refs ya no llevan `HER:2`, porque el heredado 2 sigue
+   vivo (R5.3) y `test_hoja_de_ruta` no deja que una entrada HECHA apunte a un heredado vivo. El
+   heredado 2 lleva el texto de §6 b).
+2. `CLAUDE.md:180` y R5.3 («Qué es» y «Depende de»), con texto nuevo; la guardia no negó tocar
+   `CLAUDE.md`. En `ENTRADA-MARZO.md` va un recuadro junto a la línea 35, que vale también para el
+   recuadro de la 111; en `REGISTRO-MARZO.md` §2, otro recuadro. El grep de las dos grafías no dio
+   nada más que diga que falta la de marzo.
+3. V: una frase al final.
+4. y 5. Las dos líneas de Technical Debt, al principio de la lista.
+6. `PROJECT_STATE.md`: 24.730 bytes.

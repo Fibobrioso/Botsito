@@ -177,7 +177,8 @@ consultor del 2026-09-30): entra por el camino de fidelidad como mes reservado, 
 `docs/runbooks/ENTRADA-MARZO.md`. A-42 esta RESUELTA (ADR-0069) y `cases/` cuenta la ventana de cada
 caso por la rejilla H4 desde `trabajo/cases-rejilla` (CASES-REJILLA.md), asi que la PARADA B0 ya no
 lo detiene; no se sortea ni se ingiere hasta cumplir lo que queda antes del paso b: del paso 0,
-marzo en `vistos.yaml` y la confirmacion escrita del trader (REGISTRO-MARZO.md §2), y el paso a.
+marzo en `vistos.yaml` (REGISTRO-MARZO.md §2), y el paso a. La confirmacion escrita del trader
+llego el 2026-10-25 (SESION-05-EXTRACCION.md §3.5; hoja de ruta, A.3).
 Lo unico que se lee antes es la columna de fechas, UNA vez y antes del sorteo, y **la lee Aleks**
 (ADR-0072; para marzo, ADR-0046 §6a, excepcion acotada a ADR-0039 §1); sus 7 imagenes no se abren. Guardia: la de Claude
 Code bloquea su carpeta `Backtest marzo 2026`.

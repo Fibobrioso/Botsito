@@ -244,10 +244,10 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ### R5.3 · Marzo
 - **Refs:** HER:2 · ID:ADR-0046 · ID:ADR-0072
 - **Qué es:** la entrada de marzo por el camino de fidelidad (`docs/runbooks/ENTRADA-MARZO.md`):
-  marzo en `vistos.yaml` y la confirmación escrita del trader (heredado 2; su paso 0); la columna de fechas por
-  Aleks (paso a); sorteo; huso por velas; `libros.yaml` (paso 0 y paso d); ingesta de los
-  `fidelidad-dev`.
-- **Depende de:** la confirmación del trader y la lectura de Aleks.
+  marzo en `vistos.yaml` (heredado 2; lo que queda de su paso 0: la confirmación escrita del trader
+  llegó el 2026-10-25, A.3); la columna de fechas por Aleks (paso a); sorteo; huso por velas;
+  `libros.yaml` (paso 0 y paso d); ingesta de los `fidelidad-dev`.
+- **Depende de:** la lectura de Aleks (la confirmación del trader ya está: A.3, HECHA).
 - **Quién:** Aleks (fechas, confirmación); la sesión (cada paso, con sus PARADAS).
 - **Hecho cuando:** marzo está sorteado, declarado e ingerido en sus días `dev`.
 
@@ -400,14 +400,17 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Hecho cuando:** las respuestas están registradas.
 
 ### A.3 · La agenda con el trader
-- **Refs:** HER:2
+- **Refs:** (la parte del heredado 2 que es la confirmación escrita; lo que queda de él vive en R5.3)
 - **Qué es:** la confirmación escrita del trader sobre marzo (heredado 2) y la fecha de la sesión 5.
 - **Depende de:** nada.
 - **Quién:** Aleks.
 - **Hecho cuando:** la confirmación está registrada y la sesión 5 tiene fecha.
-- **Estado:** la sesión 5 tiene fecha, el viernes 2026-10-23 (Aleks, 2026-10-21; la línea del paso 1
-  de «Antes» de SESION-DE-PREGUNTAS.md da `False`, PREVIA-SESION-5.md §3). Falta la confirmación
-  escrita del trader sobre marzo (heredado 2): A.3 no está HECHA.
+- **Estado:** HECHA (2026-10-25). La sesión 5 se grabó en dos días, el 2026-10-23 (v15) y el
+  2026-10-25 (v16), con un solo id, `2026-10-23-sesion-05` (SESION-05-EXTRACCION.md). La
+  confirmación escrita del trader sobre marzo llegó por WhatsApp el 2026-10-25 a las 13:58 (hora
+  de Lima), «Confirmado backtest de marzo», registrada en `fuentes.yaml` («Mensajes del trader») y
+  en SESION-05-EXTRACCION.md §3.5. Lo que queda del paso 0 de marzo, marzo en `vistos.yaml`, es de
+  R5.3.
 
 ### A.4 · La copia de seguridad
 - **Refs:** (Technical Debt de PROJECT_STATE, «Copia de seguridad de las crudas y los WAV: hecha hasta v10»)

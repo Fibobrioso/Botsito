@@ -12616,3 +12616,67 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 45 (2026-10-24).
+
+
+# Registro de cierre · `trabajo/sesion-05` (2026-10-25)
+
+- Orden de cierre del consultor del 2026-10-25, pegada en la conversación y lanzada por Aleks con
+  `/cerrar-rama`; ejecutada siguiendo `RITUAL.md` con la skill `cerrar-rama`. La rama tuvo dos
+  PARADAS con su respuesta (la de v16, por un día de julio del 18 en adelante, y la del `make check`
+  de la extracción) y una pasada del revisor (SESION-05-EXTRACCION.md, «Informe del revisor», y
+  §11). Nunca se cerró sin la orden. Lo que pide decisión en §4 del informe (la PARADA de A-44, las
+  contradicciones de §4.1, H tras S-24, A-35 en parte) NO se decide aquí: es de la activación (V,
+  R4.1).
+- **En este commit**, por la orden:
+  1. §6 a) y b) del informe tal cual: A.3 HECHA en la hoja de ruta, con su Estado nuevo y sus Refs
+     sin `HER:2` (el heredado 2 sigue vivo por R5.3, y una entrada HECHA no puede apuntar a un
+     heredado vivo, `test_hoja_de_ruta`); el heredado 2 con su texto nuevo;
+  2. lo que todavía decía que faltaba la confirmación escrita de marzo: `CLAUDE.md:180` y R5.3 de
+     la hoja de ruta («Qué es» y «Depende de»), con texto nuevo; `docs/runbooks/ENTRADA-MARZO.md`
+     (un recuadro junto a la línea 35, que vale también para la 111) y
+     `docs/validation/REGISTRO-MARZO.md` §2 (un recuadro), cerrados. El grep de las dos grafías dio
+     además menciones de otros meses o históricas (ADR-0011, F10, `kit/README.md`, `HANDOFF.md`,
+     MASTER_PLAN y siete informes cerrados), que no dicen que falte la de marzo y no se tocan. La
+     guardia no negó tocar `CLAUDE.md`;
+  3. V en la Next Action: la sesión 5, celebrada (2026-10-23 y 2026-10-25, v15 y v16) e ingerida, y
+     su activación pendiente;
+  4. Technical Debt, PRIORITARIA: la cuarentena por condición (diciembre libre con NA:I sin decidir,
+     y la fecha numérica seguida de coma), con las dos medidas sintéticas;
+  5. Technical Debt: el barrido ancho antes de leer cada filtrada, en la skill `ingerir-sesion`;
+  6. `PROJECT_STATE.md` en 24.730 bytes con todo lo anterior;
+  y la fila de ERRORES-RECURRENTES con los hallazgos del revisor y los de la orden.
+- **DESVIACIÓN declarada** (precedentes: los cierres de `trabajo/guardia-ffmpeg`, `trabajo/guardia-ci`
+  y `trabajo/guardia-alias`): la puerta del commit del contrato da, además de `D  contrato.yaml`,
+  `M  docs/state/HISTORIA.md`, `M  docs/runbooks/ERRORES-RECURRENTES.md`, `M  PROJECT_STATE.md` y
+  `M  docs/plan/HOJA-DE-RUTA.md`, las líneas de `CLAUDE.md`, `docs/runbooks/ENTRADA-MARZO.md` y
+  `docs/validation/REGISTRO-MARZO.md` (punto 2 de la orden) y la de
+  `docs/validation/SESION-05-EXTRACCION.md` (la orden copiada en su sección «Orden de cierre»).
+- **Lo que entra** (tramo R4, R4.1): la sesión 5 en el corpus como v15 y v16, en cuarentena, con sus
+  transcripciones, fotogramas y 11 tramos no citables; 55 ítems de evidencia (49 vivos); la
+  extracción por pregunta (`docs/validation/SESION-05-EXTRACCION.md`); `docs/sesion-5/HOJA-USADA.md`;
+  el anexo `docs/validation/anexos/SESION-05/`; v15 y v16 en `SESIONES_EN_CUARENTENA` con sus
+  tests; la comprobación de la sesión 4 de `test_en_parte_no_se_cierra.py` leyendo solo su informe,
+  y `ID:A-48` en R4.1; la confirmación escrita de marzo en `fuentes.yaml`.
+- **Lo que sale**: A.3 (HECHA en la hoja de ruta). Ninguna letra sale; V cambia. El heredado 2 sigue
+  vivo, con su texto nuevo.
+- Exposiciones: cinco filas de `HOLDOUT-EXPOSICIONES.md` del 2026-10-25 (los días y julio antes de
+  leer; la confirmación de marzo; la lectura de v15; la de v16, con el día de julio sin número; y
+  el día de diciembre y la lectura del revisor).
+- Negativas de la guardia o del clasificador: ninguna del clasificador; de la guardia, las de §7 del
+  informe (comandos compuestos de la sesión, una variable de entorno, `transcript show --help`),
+  todas de reglas de `main`, resueltas con la forma que propone la guardia o abandonadas.
+- Letra del tag: la última cerrada era `stable/F38c-guardia-alias`; `stable/F38d-*` no existe en
+  local ni en origin (comprobado antes del tag).
+- Tag: `stable/F38d-sesion-05`. El merge es `git rev-parse "stable/F38d-sesion-05^{commit}"`.
+- Commits de la rama: `c6d7cef` (apertura: encargo, contrato y Archivo 46), `1e86611` (registro de
+  v15 y v16, en cuarentena, y el corte SIN AUDIO de v15), `334a49b` (v15 transcrita, filtrada y con
+  fotogramas; sus tramos), `7b4b463` (v16 transcrita, filtrada y con fotogramas; sus tramos de
+  precaución; la PARADA de julio), `5f47908` (los dos bloques en cuarentena de v16), `36490d6` (el
+  test de la sesión 4 y `ID:A-48` en R4.1, por la respuesta a la PARADA del `make check`), `0f173b3`
+  (la extracción, la evidencia y la hoja usada), `90a1da5` (el cierre en el informe), `bd59399` (los
+  hallazgos del revisor y su informe pegado) y el de este registro.
+- CI de Linux por `fix/sesion-05`: run 40254117212 sobre `0f173b3`, 40256865471 sobre `90a1da5` y
+  40260994725 sobre `bd59399`; los tres con `1 failed, 2871 passed, 46 skipped`, y el único fallo es
+  el aceptado: `test_state_check_ok_on_real_repo`, por el nombre `fix/`. La CI de `main` corre tras
+  el push.
+- Informe: `docs/validation/SESION-05-EXTRACCION.md`. Encargo: `docs/encargos/trabajo-sesion-05.md`.
