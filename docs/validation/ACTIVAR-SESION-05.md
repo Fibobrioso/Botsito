@@ -893,7 +893,363 @@ nueva; `perdida_maxima_semanal` sin CORRECT; la magnitud como DEFAULT_AMBIGUOUS)
 siguen ABIERTAS (los cinco sitios de §3 no se tocaron para ellas) y que la medida de §5 y §5.1 va
 después de la rama de motor. `scripts/contrato_rama.py` en verde con el fichero dentro del contrato.
 
+## 2. Para la rama de motor (`trabajo/activar-sesion-05-motor`)
+
+Lo que la sesión 5 dejó claro y pide código (B del encargo, con los puntos 10 y 12 de la respuesta a
+la PARADA), cada uno con su fuente -solo ítems de §8 de SESION-05-EXTRACCION.md- y lo que hace hoy el
+código (`fichero:línea` de esta rama, igual que `main`; §0.a). Aquí no se tocó código: `src/` está
+protegido por el contrato.
+
+1. **S-3, segunda mitad de A-35: el extremo se actualiza a la mecha.** Fuente:
+   `ev-v15-000553-9d95178a` («se actualiza el de la mecha»; afirmación: si el precio pasa el alto de
+   M15 solo con la mecha y vuelve, el alto pasa a ser el de esa mecha). Hoy
+   `domain/pivotes_m15.py:23-26` deja el nivel en el extremo de la racha y la mecha de la contraria
+   NO lo mueve (`_pivote_de`, :86-101; `test_pivotes_m15.py::test_lo_fijo_y_visible_doji_y_mecha_de_la_contraria`,
+   :145). La rama de motor escribe lo que ese ítem sostiene y remite a SESION-05-EXTRACCION.md §3.1
+   (S-3) para el ejemplo del replay, sin citarlo; que sea la mecha de LA VELA CONTRARIA es lo que
+   se pregunta en la sesión 6 para confirmarlo (punto 10: el encargo lo restringía con un tramo que
+   no está en ningún ítem). ADR nuevo; A-35 sigue ABIERTA hasta la sesión 6, y entonces se cierra.
+2. **S-8: la vela sin cuerpo dentro del tramo no corta el punto de breaker.** Fuente:
+   `ev-v15-003959-5898c61e`, `ev-v15-004037-a2ab3980` (VISOR-CONSTRUCCION.md §3.2, pregunta A: (a),
+   con una condición: el máximo de la verde vale si el precio viene de un flujo bajista y luego
+   cierra por debajo). Hoy el doji corta la racha y no forma pivote (`pivotes_m15.py:127-128`) y
+   el impulso salta las de cuerpo cero pero una racha cortada no da el bloque
+   (`domain/estructura_m1.py:128-138`, `:268-291`); `test_a21_series.py`, fila «alternancia con
+   cuerpo cero en medio».
+3. **S-24 y H: RN-007 con umbral cero.** Fuente: `ev-v16-002746-31cbc565`, `ev-v16-002841-8cfe382a`
+   («casi plana» = sin cuerpo, cierre igual a la apertura, la definición de A-21 y de
+   `pivotes_m15`; sobre ella no se traza punto). Hoy RN-007 (`strategy_spec.yaml:1300-1329`) dice
+   «casi plana» sin umbral y está DESALINEADA del motor. La sesión 4 («1 o 2 puntos»,
+   `ev-v10-014310-2296423b`, en parte y con el ASR dudoso) la corrige S-24, explícita y con
+   confirmación: CORRECT sobre esa evidencia, en la rama de motor. Si mira o no las mechas de una
+   vela sin cuerpo va a la sesión 6 (§3). Es la H de la Next Action, que sale en el cierre (§5).
+4. **S-12b y A-50: parámetro nuevo `solo_el_0` / `caja_entera`, con `caja_entera` y A-50 ABIERTA.**
+   Fuente: `ev-v15-010451-5b123278` (una caja se descarta por el lado de ruido solo si queda entera
+   de ese lado). Hoy `se_desarrolla_en_el_lado_de_ruido` mira solo el 0, `e.entrada`
+   (`engine/zonas.py:522-540`, :539). La rama de motor mide si ese parámetro puede tener valor sin
+   registro del trader (ADR-0004 y `test_registro.py:157-175`: es de estrategia) y, si no puede,
+   PARADA allí.
+5. **S-15: entrar en la zona más reciente que valide el punto, sin límite de zonas tras la toma.**
+   Fuente: `ev-v15-012616-d534455a`. Hoy `zonas_de_control` cuenta desde la toma
+   (`estructura_m1.py:141-158`) y con más zonas que `zonas_control_max_por_esquema` = 1
+   (`parametros.yaml:926-943`) no hay esquema (`:324-326`; `test_a21_series.py`, fila S-10, 2
+   zonas → `None`). RN-009 no se borra: su literal es de la zona del retroceso (ADR-0076); cambia el
+   alcance del recuento (el retroceso del punto vigente, no todo desde la toma). ADR que lo diga;
+   si no se puede escribir sin contradecir el literal de RN-009, PARADA allí.
+6. **S-21: tras parar por 9 pérdidas, al día siguiente la racha empieza de cero.** Fuente:
+   `ev-v16-001952-9fe00b36`, `ev-v16-002126-d2376f71`. Hoy `racha_perdidas_reinicio` = `nunca`,
+   CONFIRMED (`parametros.yaml:1259-1273`) y `SeguidorRacha` (`engine/racha.py:79`) sigue en 9 al
+   día siguiente (ADR-0077 §5). Opción nueva (criterio del consultor: `tras_la_detencion`), CORRECT
+   sobre el valor de la sesión 4 (`fb-2026-10-04-sesion-04-8e2d728a`) y recuadro en ADR-0077 §5.
+   Mientras no se pare, la racha sigue de un día a otro (sesión 4).
+7. **S-22: la orden sin llenar se quita un minuto antes del final de la ventana.** Fuente:
+   `ev-v16-002248-08e9600f`, `ev-v16-002323-515b9da4` (igual que la posición; en ese último minuto
+   no se pone ninguna orden, y si una se llena ahí se cierra enseguida). Hoy RN-035 retira la
+   pendiente en `ventana_fin` (`strategy_spec.yaml:936-994`) y el hueco del último minuto está
+   congelado en `test_rn035_ventana_fin.py::test_hueco_la_orden_que_se_llena_en_el_ultimo_minuto_se_cierra_en_el_limite`
+   (:72), que cambia de sentido a propósito en esa rama.
+8. **S-20, en parte: la mecha de una vela de cualquier color rompe el punto.** Fuente:
+   `ev-v16-001445-7ca4f033`, `ev-v16-001834-732a76b6`. Hoy `_pasa` con MECHA no mira el color de
+   la vela que rompe (`estructura_m1.py:103-111`, `:321-323`; `test_a21_series.py`, fila «breaker
+   contrario (R) que rompe con mecha, retroceso limpio»): el motor ya lo hace; la rama de motor solo
+   lo apunta. Qué pesa más, la mecha o la alternancia de antes, va a la sesión 6.
+9. **S-19: la vela sin cuerpo en medio del retroceso no cuenta como alternancia.** Fuente:
+   `ev-v16-000851-f5ae3b6f`. Medido en §0.b.4: el motor NO hace la (b) del trader (el doji corta la
+   racha, `pivotes_m15.py:127-131`; la fila del doji de `test_a21_series.py` da `segundo_esquema`,
+   1 zona, y el motor entra; con la (b) quedan R, V, R, que es la serie S-10: 2 zonas, sin esquema).
+   Sin registro en esta rama. Ojo con el punto 3: una vela de uno o dos puntos «no se toma en
+   cuenta» aquí y vale para trazar un punto en S-24 (§3).
+10. **RN-020 no retira la orden pendiente al llegar al tope** (punto 12 de la respuesta; §0.e, 17).
+    Con A-44 activada, RN-020 prohíbe `abrir_operacion` y fija `detenido_por_tope`
+    (`strategy_spec.yaml`, su forma), pero no retira la pendiente; el modelo es RN-036
+    (`retirar_ordenes_pendientes`, ADR-0077; `ACTIVAR-A35-A44.md:223-225`). Las notas de RN-020 lo
+    dicen desde el commit de A-44.
+
+Y lo que queda viejo fuera de `tests/` y del contrato (§0.b.5, §0.e, 24): el comentario de
+`src/botsito/engine/broker.py:177` («DEFAULT_AMBIGUOUS bajo A-57»); y los tres guiones que
+construyen `Diagnostico(a35=…, a44=…)` contra el registro real y ya no corren
+(`scripts/embudo_77.py:435`, `scripts/caja_77_exploratoria.py:132`, `scripts/bloque_de_la_caja.py:266`).
+
+## 3. La lista para la sesión 6
+
+Para la hoja de la sesión 6 (R4.2, que prepara el consultor; C del encargo con el punto 11 de la
+respuesta). Cada pregunta cerrada, con opciones y «otra, ¿cuál?», en el lenguaje del trader, con
+esquemas de VELAS y el marco temporal escrito en el dibujo (lo que pidió en S-16 y S-17). **Ningún
+día reservado ni ninguna fecha**; los días de construcción de S-14 se enseñan como permite la regla
+2 de SESION-DE-PREGUNTAS.md (solo días de construcción, cortados antes de la orden y sin fecha), y
+los elige el consultor al preparar la hoja (punto 11). Los esquemas los dibuja la hoja; aquí, lo
+que tiene que enseñar cada uno.
+
+1. **A-44, la magnitud, primero** (S-4; `perdida_trader_magnitud` = `saldo`, DEFAULT_AMBIGUOUS,
+   lectura del consultor): «La pérdida del día que te hace parar, ¿la cuentas solo con las
+   operaciones que ya cerraste, o también con lo que vas perdiendo en la que tienes abierta?
+   (a) solo con las cerradas; (b) también con la abierta; (c) otra, ¿cuál?». Esquema: un día en M1
+   con dos cerradas en pérdida y una abierta que va perdiendo y se recupera; el marco «M1» en el
+   dibujo. Y el reloj del «día siguiente» (`perdida_trader_reinicio_huso`, UNKNOWN): «Cuando paras
+   por la pérdida del día, ¿cuándo vuelves a contar desde cero? (a) a las 12 de la noche de tu
+   hora; (b) a las 12 de la noche de la hora del bróker; (c) al abrir tu primera sesión del día
+   siguiente; (d) otra, ¿cuál?».
+2. **A-35, la mecha** (S-3, segunda mitad; §2, 1): «Marcas un alto en M15 cuando cierra la vela
+   contraria. Si esa vela contraria pasa el alto con la mecha y cierra por debajo, ¿tu alto pasa a
+   ser esa mecha? (a) sí, el alto es la mecha; (b) no, el alto sigue siendo el de antes; (c) otra,
+   ¿cuál? ¿Y lo mismo en un bajo?». Esquema: tres velas de M15 con el alto, la contraria roja con
+   la mecha por encima y el cierre por debajo; «M15» escrito.
+3. **A-13** (S-17): «Cuando pasas el stop a la entrada, ¿lo haces en cuanto el precio toca el nivel
+   o esperas a que cierre la vela de M1 más allá? (a) al toque; (b) al cierre de M1; (c) otra,
+   ¿cuál?». Esquema: la operación abierta en M1, la vela que toca el nivel con la mecha y la que
+   cierra más allá; «M1». Hasta entonces `break_even_condicion` = `tocar` (CONFIRMED) no se toca:
+   su última frase y su confirmación son «apenas toque» (`ev-v15-013605-c041b814`; la confirmación
+   de 97:48 no está en ningún ítem y su ASR es dudoso).
+4. **A-53** (S-13): la subpregunta del recuadro, «si el 1 de la caja baja mucho antes de que la
+   orden se llene, ¿la sigues moviendo o la quitas?», y «si la orden se llena antes de que aparezca
+   el punto nuevo, ¿esa operación vale?»; con opciones (a) sigue / (b) se quita / (c) otra, y (a)
+   vale / (b) no vale / (c) otra. Esquema: la orden puesta, el 1 que baja, el punto nuevo; «M1».
+5. **A-43, segunda parte** (S-10): «La MISMA liquidez de M15 se toma antes de las 7 y el precio
+   vuelve y la toma otra vez después de las 7. ¿La segunda toma vale para operar? (a) sí; (b) no,
+   solo cuenta la primera; (c) otra, ¿cuál?». Esquema: el nivel de M15, una vela que lo cruza con
+   cuerpo antes de la línea de las 7 y otra después; «M15» y la línea de las 07:00 en el dibujo.
+6. **A-49 y A-48** (S-7): con un esquema que NO lleve el 0 en el último alto de M1 (lo que no
+   entendió): «¿Dónde pones el 0 de la caja y hasta dónde llevas el 1? ¿Con la vela cerrada o
+   mientras se forma?»; opciones (a) cerrada / (b) en formación / (c) otra, y para el bloque (a)
+   solo la vela contraria / (b) todo el tramo / (c) otra. «M1» en el dibujo.
+7. **A-50** (S-12b; §2, 4): confirmar «la caja entera» con dos dibujos: «En esta caja el 0 queda del
+   lado de ruido pero el 1 no; en esta otra la caja entera queda del lado de ruido. ¿Cuál
+   descartas? (a) las dos; (b) solo la que queda entera; (c) otra, ¿cuál?». «M1» y el nivel de M15
+   en los dos.
+8. **ADR-0083** (S-6): «Tras un stop en un punto, ¿cuántas veces vuelves a entrar en ese mismo
+   punto? (a) una más; (b) hasta agotar los tres cartuchos; (c) ninguna; (d) otra, ¿cuál?»; «Al
+   reentrar, ¿la caja es la del primer intento o la trazas de nuevo? (a) la misma; (b) nueva; (c)
+   otra»; «Tras un break even, ¿vuelves al mismo punto? (a) sí; (b) no; (c) otra». Esquema: un punto
+   con dos entradas seguidas, la primera al stop; «M1».
+9. **S-16**: el precio ya pasado del 0 al formarse la caja, con el esquema rehecho en M1 y con velas:
+   «Cuando la caja se forma y el precio ya está más allá del 0, ¿pones la orden igual? (a) sí, en el
+   0; (b) no, espero otra caja; (c) otra, ¿cuál?». «M1» escrito.
+10. **S-19 frente a S-24** (§2, 3 y 9): «En el retroceso, ¿una vela de 1 o 2 puntos de cuerpo cuenta
+    como cambio de color? (a) sí; (b) no, como si no tuviera cuerpo; (c) otra, ¿cuál?»; y «una vela
+    sin cuerpo con mechas largas, ¿cuenta como si no existiera o miras sus mechas? (a) como si no
+    existiera; (b) miro las mechas; (c) otra». Esquema: el retroceso con una vela de un punto y otra
+    sin cuerpo y mechas largas; «M1».
+11. **S-20** (§2, 8): «Si una vela de color contrario rompe el punto con la mecha pero antes hubo
+    alternancia de colores, ¿qué pesa más: la mecha que rompe o la alternancia? (a) la mecha, y
+    entro; (b) la alternancia, y no entro; (c) otra, ¿cuál?». «M1».
+12. **S-14**: los días de construcción en que el bot opera y él no (lo pidió él), cuando la
+    re-corrida tras la rama de motor los dé; enseñados por la regla 2 (cortados antes de la orden y
+    sin fecha), elegidos por el consultor al preparar la hoja.
+
+## 4. Lo que no es de spec y va a las líneas del cierre (D)
+
+- **S-14 y el final de v16** (`ev-v15-011023-5f0f2dd1`, `ev-v15-011912-0ae32588`,
+  `ev-v15-011956-dce80292`, `ev-v16-003421-b824b770`): en sus backtests anteriores se saltaba
+  sesiones que iban a acabar en break even, y en los grabados en vídeo no. Medido en §0.b.7 por
+  `libros.yaml` y `fuentes.yaml`, sin abrir filas: de los cuatro libros de construcción solo julio
+  viene de un backtest grabado en vídeo, y solo según el trader (lo comprueba T); enero, abril y el
+  agosto que hay, no. Las líneas, en §5.
+- **S-25**: lo mide T (R2.4); sin cambio.
+- **Diciembre (NA:I)** y **agosto (NA:Q)**: no cambian; Aleks se lo pregunta al trader.
+- **La medida de la hora del mensaje de marzo** (SESION-05-EXTRACCION.md §3.5): se queda como está.
+
+## 5. Las líneas para el commit del contrato del cierre
+
+Preparadas, no aplicadas (la Next Action y la hoja de ruta no se tocan en la rama; las comprueba
+`tests/unit/test_hoja_de_ruta.py` en el cierre, en memoria, como en `trabajo/entrada-enero`).
+
+**Next Action (`PROJECT_STATE.md`):**
+
+- **V**, corta: «Activar la sesión 5 (R4.1). HECHA LA PARTE DE SPEC en `trabajo/activar-sesion-05`
+  (ACTIVAR-SESION-05.md): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros
+  (`cierre_vela_contraria`; `dia`, `porcentaje`, y `saldo` como DEFAULT_AMBIGUOUS) y ABIERTAS,
+  desviación declarada; el arnés corre sin ningún `--diagnostico-*`; cinco CONFIRM y un CORRECT.
+  QUEDA `trabajo/activar-sesion-05-motor` (encargo del consultor tras este cierre) con la lista de
+  ACTIVAR-SESION-05.md §2: la mecha de A-35 (ADR), S-8, RN-007 con umbral cero (CORRECT sobre
+  `ev-v10-014310-2296423b`), A-50 con parámetro nuevo, S-15 (ADR), S-21 (opción nueva y recuadro en
+  ADR-0077 §5), S-22 (el último minuto), S-20, S-19 y que RN-020 retire la pendiente. Después, la
+  re-corrida del arnés con `--simular` sobre toda la construcción (ADR-0070 §3; `diff` contra
+  CABLEADO-SIMULADOR-LINEA-BASE.txt, ACTIVAR-A35-A44.md §5.1) y la sesión 6 (R4.2) con la lista de
+  §3. S-11 según la PARADA 2.»
+- **H** sale: RN-007 con umbral cero va a la rama de motor (S-24; V). Su texto, a HISTORIA.
+- **F**: «La rama de motor de V; después la re-corrida del arnés y la sesión 6; R6a en los huecos.»
+- **G** gana una línea: «Y, para elegir los libros que miden (S-14, sesión 5): en sus backtests sin
+  vídeo el trader se saltaba las sesiones que iban a acabar en break even, y en los grabados en
+  vídeo no; de los libros de construcción solo julio es de los grabados, según él (T lo comprueba);
+  enero, abril y el agosto actual, no (ACTIVAR-SESION-05.md §0.b.7).»
+- **K** gana la ampliación del punto 14: «Y la guardia niega como tests los de un clon de `C:/cm/`
+  que globean `knowledge/cases` o recorren directorios: `test_kit.py`, `test_selector_orden_stop.py`
+  y `test_renovar_cierres.py` no se pudieron correr en el clon de `trabajo/activar-sesion-05`
+  (ACTIVAR-SESION-05.md §0.f).»
+- **Technical Debt**: la deuda «EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO…» gana «; y (S-14,
+  sesión 5) en los backtests sin vídeo faltan las sesiones que el trader se saltó por ir a break
+  even: un día en que el bot opera y él no puede ser eso, no un no_trade (ACTIVAR-SESION-05.md
+  §0.b.7)». La línea de `test_visor.py` (:113) y la del M1 de marzo (:116) siguen; desde esta rama
+  `test_preparar_a35.py` corre el arnés a secas en cada `make check` con la misma lectura
+  (HOLDOUT-EXPOSICIONES, 2026-10-26, punto 5): una palabra en la de `test_visor.py`.
+- **Technical Debt, el recorte del punto 7 (a)**: la segunda frase de la introducción (:98, «Lo que no
+  era deuda, desde trabajo/previa-sesion-5: … tabla en PREVIA-SESION-5.md §6») sale (≈200 bytes;
+  PREVIA-SESION-5.md §6 la conserva); la deuda de Oanda (:128) queda solo con la parte viva de la
+  serie: «LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY (2026-09-21, rama de abril; el reloj
+  quedó corregido el 2026-10-06, ADR-0069).» Las candidatas sin abrir (:94-95) se quedan.
+- **Known Ambiguities**: ya en la rama (salen A-57 y A-32).
+- **Pendientes heredados**: sin cambio.
+
+**Hoja de ruta (`docs/plan/HOJA-DE-RUTA.md`):**
+
+- **R4.1**: Estado «spec HECHA (`trabajo/activar-sesion-05`, este tag; ACTIVAR-SESION-05.md): A-57 y
+  A-32 RESUELTAS, A-35 y A-44 con valor y ABIERTAS (desviación declarada), el arnés sin
+  diagnóstico; motor pendiente (`trabajo/activar-sesion-05-motor`, §2 del informe) y después la
+  re-corrida de ADR-0070 §3 con su `diff` (ACTIVAR-A35-A44.md §5.1)». Sus Refs pierden `NA:H` (H
+  sale: `test_hoja_de_ruta`, problemas_b) y conservan `ID:A-32` e `ID:A-57` (existen; el test (d)
+  solo exige que una respondida ABIERTA esté en R1 o R4, y problemas_b solo que el id exista:
+  medido en §0.b.6). OJO: mientras R4.1 no sea HECHA del todo, `NA:V` sigue viva, y
+  `test_hoja_de_ruta.py` (problemas_b) da por problema una entrada HECHA con su letra viva: por
+  eso el Estado empieza por «spec HECHA», que el regex `\*\*Estado:\*\*\s*HECHA` NO casa (medido:
+  `False` con «**Estado:** spec HECHA», `True` con «**Estado:** HECHA»), y R4.1 sigue viva hasta
+  que la rama de motor cierre.
+- **R4.2**, nueva, «Preparar y celebrar la sesión 6»: Refs `NA:V · ID:A-35 · ID:A-44 · ID:A-13 ·
+  ID:A-43 · ID:A-48 · ID:A-49 · ID:A-50 · ID:A-53 · ID:ADR-0083 · ID:RN-007`; Qué es: la lista de §3
+  (la magnitud de A-44 primero y su reloj; la mecha de A-35; A-13; A-53; A-43; A-49/A-48; A-50;
+  ADR-0083; S-16; S-19 frente a S-24; S-20; S-14 con los días que dé la re-corrida); Depende de:
+  `trabajo/activar-sesion-05-motor` y la re-corrida del arnés; Quién: la sesión prepara la hoja con
+  el consultor; Aleks celebra; Hecho cuando: la sesión 6 está ingerida y activada.
+- **R5.1** gana en «Qué es»: «y, al elegir los libros que miden, que en los backtests sin vídeo
+  faltan las sesiones que el trader se saltó por ir a break even (S-14, sesión 5;
+  ACTIVAR-SESION-05.md §0.b.7)».
+- **R5.2**: su «Depende de» ya dice «una corrida que cuente (sin diagnóstico; ADR-0070 §3)»: desde
+  esta rama el motor no necesita diagnóstico; la corrida es la re-corrida tras la rama de motor
+  (punto 13).
+
+**El tamaño de `PROJECT_STATE.md`** con todo eso, medido sobre el fichero de la rama (`wc -c`):
+hoy 24.305 bytes (tras salir las filas de A-32 y A-57 y cambiar el recuento de tests). Sale la V larga (−1.537),
+H (−482), la introducción de TD (−≈200) y el reloj de Oanda (−≈120); entran la V corta (+≈900, más
+larga que el borrador de §0.c porque lleva la lista de motor), la línea de G (+≈330), la de K
+(+≈260), la del `no_trade` (+≈230) y `Current Feature` del cierre en lugar del de la apertura
+(−≈150): ≈23.500, por debajo del tope de 25.000 de `test_project_state.py` y por encima de los
+23.000 del aviso del revisor. Si el consultor quiere los 23.000, la V corta puede remitir a §2 sin
+la lista (−≈450): ≈23.050. Se mide en el cierre con el texto definitivo.
+
+## 6. El encargo, punto por punto
+
+Cada requisito del encargo y de la respuesta del consultor a la PARADA, con su estado y su evidencia
+(skill `entregar-rama`, paso 1). «Hecho de otra forma» solo donde el informe lo declara.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde main b61c8f8 con `abrir-rama`: base comprobada, contrato R4 riesgo alto, artefacto | Hecho | cabecera del informe; `contrato.yaml`; commit 4ee08fa |
+| 2 | Si el encargo y las skills chocan, ganan ellas y se dice | Hecho | PARADA punto 0 (la desviación de A.1/A.2 frente a `activar-sesion`), decidida por el consultor; PARADA 2 (S-11) |
+| 3 | OBJETIVO: lo que la sesión 5 cierra, RESUELTO por su régimen | Hecho | A-57 (§1.3) y A-32 (§1.4) RESUELTAS con registro sobre la ambigüedad y los cinco sitios |
+| 4 | A-35 y A-44 con valor en sus parámetros, ABIERTAS, y el arnés sin `--diagnostico-*` | Hecho | §1.1, §1.2; `test_preparar_a35.py::test_por_la_cli_a_secas_el_informe_cuenta_y_no_lleva_etiqueta_si_hay_datos` corre a secas en `make check`; `test_kit` bloqueantes = {A-35, A-44} |
+| 5 | Lo que pide motor y lo que va a la sesión 6, en el informe | Hecho | §2 y §3 |
+| 6 | Nada de `src/botsito/engine` ni `domain`; en `tests/` solo lo de b.5 y lo pedido | Hecho | `git diff --stat main...HEAD`: ningún fichero de `src/`; tests de §1.1, §1.2 y §1.7 (§8) |
+| 7 | Nada fijado se pisa sin su régimen; ninguna «en parte» se cierra; A-35 y A-44 ABIERTAS y bloqueantes | Hecho | `ambiguedades.yaml`; `test_kit.py::test_ambiguedades_reales_y_esquema`; `test_en_parte_no_se_cierra.py` con el test de control (§1.7) |
+| 8 | Ningún registro sobre una ambigüedad «en parte» | Hecho | los registros sobre ambigüedad son solo A-57 y A-32 (RESUELTAS); `test_kit.py::test_una_en_parte_no_entra_en_resueltas` (A-49) |
+| 9 | Ninguna cifra dentro de una forma ejecutable | Hecho | ninguna `forma:` cambia (`git diff main...HEAD -- knowledge/spec/strategy_spec.yaml`: solo `notas` y `descripcion`) |
+| 10 | Sin medidas agregadas: el arnés solo para ver que corre; fichero fuera del repo, sin resumir; ninguna cifra de cobertura | Hecho | §0.b.2 (clon, `C:/cm/salida/`, no leído); el informe no da cifras de cobertura ni de operaciones |
+| 11 | Material: ninguna filtrada; citas solo de los ítems de §8 con su texto; lo demás remitido a su sección | Hecho | cada `respuesta_literal` es la `cita_literal` de su ítem (§1); ADR-0081 y ADR-0083 remiten a §3.2 sin citar; §0.g |
+| 12 | Next Action y hoja de ruta no se tocan; Known Ambiguities sí | Hecho | `git diff main...HEAD -- docs/plan/`: vacío; `PROJECT_STATE.md` solo la tabla, `Current Feature` y el recuento de tests |
+| 13 | Makefile, `.claude/` y la guardia no se tocan | Hecho | `git diff --stat main...HEAD` |
+| 14 | Fechas: v15 `--fecha 2026-10-23 --recibido-el 2026-10-23`; v16 `--recibido-el 2026-10-25` | Hecho | los once registros de `knowledge/feedback/2026-10-23-sesion-05/` (v16: A-32 y S-23) |
+| 15 | A.1 A-35: RESOLVE_UNKNOWN sobre el parámetro, con «desviación»; ningún registro sobre A-35; notas en A-35 y RN-004 | Hecho | §1.1 |
+| 16 | A.2 A-44: alcance y unidad por registro; magnitud `saldo` | Hecho de otra forma | la magnitud como DEFAULT_AMBIGUOUS sin registro (respuesta a la PARADA, punto 1 (b)); §1.2 |
+| 17 | A.2: reinicio_huso UNKNOWN; `perdida_maxima_semanal` sin CORRECT, desviación declarada; sin ADR nuevo | Hecho | §1.2; descripción de `perdida_maxima_semanal` |
+| 18 | A.3 A-57 RESUELTA: registro sobre la ambigüedad; `lote_si_no_cabe` a CONFIRMED con `decision` a mano; reservas; ADR-0081 recuadro e índice | Hecho | §1.3 |
+| 19 | A.4 A-32 RESUELTA con los dos ítems; verificar `mecha`/`cuerpo` y que ningún código descarta por mecha de M1 | Hecho | §1.4 |
+| 20 | A.5 CONFIRM de S-1, S-2, S-9, S-11, S-12a, S-23 (+ CORRECT) | Parcial, declarado | cinco CONFIRM y el CORRECT (§1.5); S-11 en PARADA 2 (contradice A-46 y lo medido) |
+| 21 | A.5 S-19: medir con `test_a21_series.py`; si el motor no hace (b), a la rama de motor sin registro | Hecho | §0.b.4; §2, 9 |
+| 22 | A.6 ADR-0083 PROVISIONAL con recuadro de S-6 y la pregunta de la sesión 6 | Hecho | §1.6 |
+| 23 | A.7 test de control de la sesión 5 en `test_en_parte_no_se_cierra.py` | Hecho | §1.7 |
+| 24 | B: «Para la rama de motor», cada una con fuente y `fichero:línea` | Hecho | §2 (diez puntos, con el 10 del punto 12 de la respuesta) |
+| 25 | C: la lista de la sesión 6, cerrada, con opciones y esquemas de velas con el marco temporal | Hecho | §3 (la frase ancha corregida por el punto 11) |
+| 26 | D: las líneas del cierre (S-14 en G, R5.1 y la deuda del no_trade; S-25; NA:I y NA:Q; marzo) | Hecho | §4 y §5 |
+| 27 | FASE 0 a-d y PARADA con lo mínimo | Hecho | §0 y «Lo que necesito que decidas»; commit 556f571 |
+| 28 | Respuesta copiada tal cual al encargo y al informe; aplicada punto por punto | Hecho | «Respuesta del consultor a la PARADA (2026-10-26)» en los dos; §1 |
+| 29 | Un commit por respuesta, con `apply --check` solo de esa respuesta, los cinco sitios, `test_kit`, `spec_version`, manifiesto y docs, `knowledge validate` antes de `make check`, `Fuente:` con ids existentes | Hecho | §1.1-§1.5; `git log --format='%h%n%B' main..HEAD -- knowledge/spec` (§8) |
+| 30 | Cada ADR enmendado o que deja de ser provisional, con recuadro y fila del índice | Hecho | ADR-0081 (recuadro, Estado, índice), ADR-0080 §4 y §9, ADR-0075, ADR-0083; NOTAs en ADR-0053, ADR-0054 y ADR-0070 (punto 5); la de ADR-0066 espera a la PARADA 2 |
+| 31 | Tests que cambian de sentido a propósito, dichos en el commit y el informe, con la salida de main y de la rama | Hecho | §0.b.1 (clon: 23 fallan con los valores), §1.1, §1.2; los mensajes de los commits 3bbcad1 y f60fca5 |
+| 32 | Test sintético saldo/equity | Hecho | `test_preparar_a44.py::test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta` (§1.2) |
+| 33 | Los tests con `data/` se saltan en la CI de Linux | Hecho | `pytest.skip` en los de §1.1 y §1.2; la CI (§8) |
+| 34 | HOLDOUT: rutas literales, sin listar carpetas madre con filtro; la regla al revisor | Hecho | §0.g; el alcance del revisor (§9) |
+| 35 | El fichero del arnés no se commitea ni se resume; exposiciones el mismo día; ninguna fecha reservada ni resultado | Hecho | `C:/cm/salida/` fuera del repo; HOLDOUT-EXPOSICIONES (2026-10-26, puntos 1-5); §7 |
+| 36 | CI de Linux por `fix/activar-sesion-05` con `gh run view` suelto; solo el fallo de `state check` | Hecho | §8 |
+| 37 | Revisor opus con los cuatro alcances más el quinto (DEFAULT_AMBIGUOUS con lectura del consultor), informe pegado | Hecho | §9 |
+| 38 | Las líneas del cierre al final del informe, con el tamaño de PROJECT_STATE | Hecho | §5 |
+| 39 | Respuesta, punto 5: NOTAs en ADR-0053 §3.3 y §9, ADR-0054 §1 e Impacto, ADR-0070 §3; ADR-0066 y ADR-0075 de una línea | Parcial, declarado | ADR-0053, 0054, 0070 y 0075: hechas; ADR-0066 (S-11) espera a la PARADA 2 |
+| 40 | Respuesta, punto 6: contrato ampliado a `ACTIVAR-A35-A44.md` en commit propio, con NOTA y las tres desviaciones | Hecho | §1.8 |
+| 41 | Respuesta, punto 7: recorte de Technical Debt en el commit del contrato | Hecho (preparado) | §5 |
+| 42 | Respuesta, puntos 10-14: la mecha sin restringir a la contraria; S-14 con la regla 2; RN-020 como punto 10 de motor; la re-corrida en el cierre; K ampliada | Hecho | §2 (1 y 10), §3 (12), §5 |
+
+## 7. Exposiciones
+
+Las de la fase 0 (§0.g: la lectura del M1 de marzo para calentar la corrida del clon sobre abril,
+declarada antes de correr) y, al aplicar la respuesta, las del punto 5 de la fila del 2026-10-26 de
+`HOLDOUT-EXPOSICIONES.md`: con A-35 y A-44 fijadas, `test_preparar_a35.py` y `test_visor.py` corren
+a secas en cada `make check` lo que antes corrían en diagnóstico (abril, y el M1 de marzo para
+calentar), con la salida en una carpeta temporal que nadie lee; y `test_rutas_windows.py` corrió
+una vez el arnés entero sobre abril antes de fallar al escribir (§1.2, la trampa), corregido. Nada
+más: ninguna filtrada, ningún libro, ninguna imagen, ningún fotograma, ningún listado de
+`knowledge/cases/` ni de carpetas madre (toda ruta, literal en el comando); ninguna fecha de día
+reservado ni ningún resultado de operación en nada de lo escrito; el fichero del arnés del clon
+sigue fuera del repositorio y sin leer.
+
+## 8. Lo que NO cambia, medido, y la CI de Linux
+
+`git diff --name-status main...HEAD`: 45 ficheros; fuera de `knowledge/feedback/2026-10-23-sesion-05/`,
+`knowledge/spec/`, `docs/spec/`, `docs/adr/` y `tests/unit/`, solo `PROJECT_STATE.md`,
+`contrato.yaml`, el encargo, `docs/state/HISTORIA.md`, el informe, `HOLDOUT-EXPOSICIONES.md`,
+`scripts/hoja_preguntas.py` y `docs/runbooks/ACTIVAR-A35-A44.md`. Ningún fichero de `src/`,
+`Makefile`, `.claude/`, `docs/plan/`, `knowledge/evidence/`, `knowledge/cases/` ni
+`knowledge/corpus/`. `uv run python scripts/contrato_rama.py` en verde en cada commit.
+
+`git log --format='%h%n%B' main..HEAD -- knowledge/spec`: los cinco commits que tocan la spec
+(3bbcad1, f60fca5, 36fccb2, d3eeca4, 29ecbe1) llevan `Fuente:` en el cuerpo con ids que existen
+(`knowledge validate`: «commits con Fuente»).
+
+**CI de Linux** (la rama toca `tests/` que leen rutas y `scripts/`; `RITUAL.md`, «Antes del merge»):
+`git push origin trabajo/activar-sesion-05:refs/heads/fix/activar-sesion-05`, y la consulta suelta
+`gh run view <run>`. PENDIENTE: se rellena con el número de run, el commit y el resultado.
+
+## PARADA 2 · S-11: la cita contradice en su primera mitad A-46 RESUELTA y lo que RN-004 hace
+
+Al aplicar el punto 3 de tu respuesta (S-11, CONFIRM sobre RN-004) lo medido lo contradice
+(§1.5), y tu regla dice PARADA 2. Las dos fuentes:
+
+- **Lo que dijo en la sesión 5** (`ev-v15-005839-f2e43c27`, v15 0:58:39-0:58:46, a la confirmación
+  final de S-11, «¿una toma de la sesión de la mañana con el sesgo de la tarde a su favor vale para
+  la tarde?»): «Si hay una continuidad de sesgo, sí. Pero si no, no. Esa es la respuesta que
+  daría.» Para el caso preguntado (la mañana alcista, la tarde bajista: sin continuidad) es la (b),
+  no vale, y la extracción la dio como «resuelve: (b); A-46 no se reabre» porque la respuesta no es
+  la (a) a ESA pregunta.
+- **Lo que ya estaba fijado**: A-46 RESUELTA el 2026-09-29 (`fb-2026-09-29-sesion-03-5021677e`,
+  «cada uno es un mundo diferente»), cuya pregunta era exactamente «si la liquidez se tomó en una
+  sesión anterior del mismo día … ¿sigue valiendo para operar en la siguiente, o esperas una toma
+  nueva?», sin distinguir el sesgo; ADR-0066 §1 («Tomado en una sesion anterior del dia: no
+  cuenta») y RN-004 `la_toma_es_de_la_sesion` (`engine/primitivas.py:266-296`). Medido:
+  `tests/unit/test_sesiones_independientes.py::test_la_toma_de_la_primera_sesion_no_vale_en_la_segunda`
+  (el sesgo sigue alcista en las dos sesiones y la toma de la mañana no vale en la tarde) pasa en
+  la rama.
+
+La primera mitad de la cita -con continuidad de sesgo la toma de la mañana SÍ vale para la
+tarde- dice lo contrario de A-46 y del motor en el caso de continuidad, que es el que A-46
+respondió. La hoja lo preveía al revés (PREGUNTAS.md:414-419: «si contesta (a), A-46 se REABRE con
+un REOPEN»): contestó (b) a lo preguntado y (a) a lo que A-46 ya tenía respondido. Un CONFIRM sobre
+RN-004 con esa cita afirmaría más de lo que la regla hace (`CLAUDE.md`: nada afirma más de lo que
+su cita sostiene), y `activar-sesion` manda PARADA cuando una respuesta contradice una respuesta
+anterior del trader. Por eso S-11 no tiene registro en la rama, y la NOTA de ADR-0066 (punto 5)
+espera.
+
+0. **Qué hacer con S-11.** Opciones: (a) CONFIRM sobre RN-004 como decidiste, con las notas
+   diciendo que la primera mitad («con continuidad, sí») contradice A-46 y el motor y va a la
+   sesión 6 como pregunta nueva («una toma de la mañana con el MISMO sesgo en la tarde, ¿vale?»),
+   más una NOTA en ADR-0066 §1 que lo declare; (b) ningún registro: S-11 pasa a «en parte» en la
+   lista de la sesión 6 con esa pregunta, sin NOTA en ADR-0066, y la tabla final de
+   SESION-05-EXTRACCION.md queda como está (un recuadro de corrección allí, en el cierre); (c)
+   `REOPEN` sobre A-46 (`supersede` a `5021677e`, A-46 vuelve a ABIERTA con su fila y su sitio en
+   la hoja) y después, cuando la sesión 6 responda, el `RESOLVE_UNKNOWN` nuevo. Recomiendo (b):
+   no fija nada que el trader no haya dicho dos veces y deja la contradicción a la vista donde se
+   decide, la hoja de la sesión 6; coste, un recuadro en la extracción. Coste de (a): un CONFIRM
+   cuya cita contradice en parte la regla que confirma, que el revisor (alcance 1) verá; coste de
+   (c): reabrir con una frase de seis palabras lo que el trader cerró en la sesión 3 con una regla,
+   y el motor cambiaría de sentido en una rama que no toca código.
+
 ## Estado
 
-EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está copiada y se aplica punto por
-punto, un commit por respuesta (§1). Lo hecho hasta aquí lo dice §1; lo que falta, el plan de §0.d.
+EN CURSO (2026-10-26): la respuesta del consultor a la PARADA está aplicada punto por punto (§1),
+con una excepción declarada, S-11, que queda en la PARADA 2; las líneas del cierre, en §5. Falta
+la CI de Linux (§8) y el revisor (§9).
