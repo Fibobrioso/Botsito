@@ -1229,7 +1229,18 @@ reglas:
       (trabajo/activar-sesion-05, respuesta a la PARADA, punto 0). CONFIRMADO EN LA SESION 5
       (S-9, fb-2026-10-23-sesion-05-bd88993f, ev-v15-004448-aac87b77): cuando hay varias liquidez
       de M15 «se da prioridad pues a la liquidez más reciente», sin mirar H1 ni H4, que es la que
-      esta regla toma (A-24, DECIDIDA por ADR-0045, sigue DECIDIDA); reserva: «por lo general»
+      esta regla toma (A-24, DECIDIDA por ADR-0045, sigue DECIDIDA); reserva: «por lo general».
+      DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor, ADR-0084) LA SEGUNDA MITAD DE A-35
+      LA HACE EL MOTOR: si el precio pasa el nivel de M15 solo con la mecha y vuelve, el nivel
+      pasa a esa mecha («se actualiza el de la mecha», ev-v15-000553-9d95178a), segun
+      liquidez_m15_mecha_que_vuelve (DEFAULT_AMBIGUOUS en cualquier_mecha, LECTURA DEL CONSULTOR
+      bajo A-35: la mecha de la vela contraria y la de cualquier M1 posterior; la sesion 6
+      pregunta cual). El nivel se congela en cuanto una M1 lo cruza con
+      liquidez_m15_criterio_toma, que es lo que esta regla llama tomar: asi «lo tiene que pasar
+      con cuerpo» de la sesion 4 (ev-v10-012456-9dc1d221) y «se actualiza el de la mecha» de la 5
+      hablan de dos cosas, cuando queda TOMADO y que nivel se usa mientras no lo este. Lo de «no
+      se tapa con un parametro provisional» de estas notas lo enmienda ADR-0084 en ADR-0045: el
+      mecanismo lo dijo el trader; el valor solo elige su alcance. A-35 sigue ABIERTA
     forma:
       cuando:
         todos_de:

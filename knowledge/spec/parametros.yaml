@@ -525,6 +525,34 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-10-23-sesion-05-03449065
+  - nombre: liquidez_m15_mecha_que_vuelve
+    categoria: estrategia
+    tipo: enum
+    unidad: que mecha que pasa el nivel de M15 y vuelve mueve el nivel a esa mecha (A-35)
+    opciones: [no_mueve, solo_la_contraria, cualquier_mecha]
+    descripcion: >-
+      la segunda mitad de A-35: si el precio pasa el alto (o el bajo) de M15 solo con la mecha y
+      vuelve, el nivel pasa a ser el de esa mecha («se actualiza el de la mecha», sesion 5, S-3,
+      v15 0:05:53, ev-v15-000553-9d95178a; ADR-0084, domain/pivotes_m15.py). `no_mueve`: lo que
+      hacia el motor hasta ADR-0084 (el extremo de la racha, sin mechas). `solo_la_contraria`:
+      la mecha de la propia vela contraria que forma el pivote, que es el caso del ejemplo que el
+      trader enseno en su replay (SESION-05-EXTRACCION.md §3.1, S-3, fuera del item).
+      `cualquier_mecha`: ademas, la de cualquier M1 posterior que lo pase con la mecha sin
+      cruzarlo con liquidez_m15_criterio_toma; en cuanto una M1 lo cruza (la toma, ADR-0062) el
+      nivel se congela. DEFAULT_AMBIGUOUS en `cualquier_mecha` por decision del consultor
+      (2026-10-26, trabajo/activar-sesion-05-motor): el trader dijo el mecanismo y no eligio
+      entre los dos casos, asi que el valor es LECTURA DEL CONSULTOR bajo A-35, que sigue ABIERTA
+      y lo pregunta en la sesion 6; por eso no lleva registro de feedback (precedente:
+      perdida_trader_magnitud). En un bajo, en espejo (decision del consultor; la extraccion lo
+      recoge fuera de un item). Lo lee quien construye los datos del dia (arnes y visor), no una
+      regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
+    consumido_por: [ADR-0084]
+    estado: DEFAULT_AMBIGUOUS
+    valor: cualquier_mecha
+    ambiguedad_id: A-35
+    fuente:
+      tipo: evidence
+      id: ev-v15-000553-9d95178a
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum

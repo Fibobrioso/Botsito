@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.1.9` · hash `7d95d99de12f…`
+`spec_version 18.2.0` · hash `0eae9377e40b…`
 
-109 en total: 97 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+110 en total: 98 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -61,6 +61,7 @@
 | `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-9f3e9dda` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
+| `liquidez_m15_mecha_que_vuelve` | `cualquier_mecha` | DEFAULT_AMBIGUOUS · en revision por A-35 | estrategia | `ev-v15-000553-9d95178a` | que mecha que pasa el nivel de M15 y vuelve mueve el nivel a esa mecha (A-35) |
 | `liquidez_m15_pivote_formado` | `cierre_vela_contraria` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-03449065` | en que momento un pivote de M15 cuenta como formado (A-35) |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
 | `lote_margen_libre_fraccion` | `0.95` | CONFIRMED | ejecucion | `ADR-0081` | fraccion del margen libre de la cuenta que el lote puede ocupar |
@@ -151,6 +152,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `huso_operativa` → ADR-0027, ADR-0053, ADR-0063
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
+- `liquidez_m15_mecha_que_vuelve` → ADR-0084
 - `liquidez_m15_pivote_formado` → ADR-0045
 - `lote_margen_libre_fraccion` → ADR-0081
 - `lote_si_no_cabe` → ADR-0081
@@ -443,6 +445,12 @@ latencia que asume `cruce_mas_latencia`; con `al_tocar` no se usa
 si la liquidez de M15 se toma con cierre de cuerpo o basta la mecha
 
 Opciones: `cuerpo`, `mecha`.
+
+### `liquidez_m15_mecha_que_vuelve`
+
+la segunda mitad de A-35: si el precio pasa el alto (o el bajo) de M15 solo con la mecha y vuelve, el nivel pasa a ser el de esa mecha («se actualiza el de la mecha», sesion 5, S-3, v15 0:05:53, ev-v15-000553-9d95178a; ADR-0084, domain/pivotes_m15.py). `no_mueve`: lo que hacia el motor hasta ADR-0084 (el extremo de la racha, sin mechas). `solo_la_contraria`: la mecha de la propia vela contraria que forma el pivote, que es el caso del ejemplo que el trader enseno en su replay (SESION-05-EXTRACCION.md §3.1, S-3, fuera del item). `cualquier_mecha`: ademas, la de cualquier M1 posterior que lo pase con la mecha sin cruzarlo con liquidez_m15_criterio_toma; en cuanto una M1 lo cruza (la toma, ADR-0062) el nivel se congela. DEFAULT_AMBIGUOUS en `cualquier_mecha` por decision del consultor (2026-10-26, trabajo/activar-sesion-05-motor): el trader dijo el mecanismo y no eligio entre los dos casos, asi que el valor es LECTURA DEL CONSULTOR bajo A-35, que sigue ABIERTA y lo pregunta en la sesion 6; por eso no lleva registro de feedback (precedente: perdida_trader_magnitud). En un bajo, en espejo (decision del consultor; la extraccion lo recoge fuera de un item). Lo lee quien construye los datos del dia (arnes y visor), no una regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
+
+Opciones: `no_mueve`, `solo_la_contraria`, `cualquier_mecha`.
 
 ### `liquidez_m15_pivote_formado`
 

@@ -209,6 +209,10 @@ def dias_de_mercado(
                 agregar(m1, MINUTOS_M15, anclaje),
                 m1,
                 lectura_pivote,
+                # ADR-0084: que mecha que pasa el nivel de M15 y vuelve lo mueve, y el criterio
+                # de la toma que lo congela (RN-004); los dos del registro, por su nombre
+                registro.opcion("liquidez_m15_mecha_que_vuelve"),
+                registro.opcion("liquidez_m15_criterio_toma"),
             )
         salida[d.dia] = DiaDeMercado(
             date.fromisoformat(d.dia), reloj.huso_visible, sesiones, por_mes[mes], reloj=reloj

@@ -5,7 +5,6 @@ encargo manda escribir van declarados aquí en un bloque `ids-inexistentes`, com
 `knowledge validate`; cada uno sale del bloque en el commit que lo crea):
 
 ```ids-inexistentes
-ADR-0084 — el encargo lo manda escribir en esta rama (A-35, la mecha que vuelve); aún no existe
 ADR-0085 — el encargo lo manda escribir en esta rama (las velas sin cuerpo en M1, enmienda ADR-0076); aún no existe
 ADR-0086 — el encargo lo manda escribir en esta rama (RN-020 retira la orden pendiente); aún no existe
 ADR-0087 — el encargo lo nombra como posible ADR de S-15 si la fase 0 encuentra la frontera; aún no existe
@@ -129,5 +128,32 @@ ADR-0087 — el encargo lo nombra como posible ADR de S-15 si la fase 0 encuentr
 >   · R4.2: la lista de la sesión 6 con lo que esta rama le deja (A-35: la contraria o cualquier mecha, y el bajo; las mechas de una vela sin cuerpo en M1; en M15, si una vela sin cuerpo corta la racha; la condición de ev-v15-004037-a2ab3980 si no se aplicó; S-15 si va a la sesión 6);
 >   · lo que cambie en Known Ambiguities y Technical Debt;
 >   · el tamaño final de PROJECT_STATE con todo eso, medido con wc -c sobre el texto ya escrito y no estimado. Hoy mide 22.989 bytes: las líneas del cierre tienen que restar en neto para quedar por debajo de 23.000 (la V nueva no puede ser más larga que la de hoy).
+>
+> Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-26)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-05-motor (2026-10-26). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). Si al aplicar algo lo medido lo contradice, PARADA 2.
+>
+> 0. (a). ADR-0084 enmienda ADR-0045 en la frase «no se sustituye por un parámetro provisional, porque es un mecanismo y no una cifra» (recuadro en su Decisión y fila del índice) y lleva NOTA en ADR-0054, «Por qué descartamos las demás», (2); las notas de A-35 en ambiguedades.yaml y de RN-004 lo dicen. El motivo va escrito en el ADR: la prohibición era contra un mecanismo inventado que se hiciera pasar por método del trader (ADR-0054, (2)), y este mecanismo lo dijo el trader (ev-v15-000553-9d95178a); el valor provisional solo elige su alcance, y es LECTURA DEL CONSULTOR. Corrige mi error, con su nombre: el encargo pidió un DEFAULT_AMBIGUOUS bajo A-35 sin leer ADR-0045 ni ADR-0054. Para la fila de ERRORES-RECURRENTES del cierre: antes de proponer un valor provisional bajo una ambigüedad, se lee el ADR que la abrió.
+> 1. (a). cualquier_mecha, con la tensión escrita en ADR-0084: los dos ítems contestan a la misma pregunta («si después el precio lo supera un poco»); v10 dice que eso no es tomarlo y v15, qué nivel queda; el nivel se congela al tomarse, que es lo que los hace compatibles. La implementación de 0.b.4 es la que quiero: la función pura de pivotes_m15.py que lleva el nivel a la mecha más lejana de las M1 que lo pasan sin cruzarlo con el criterio y se para en la primera que lo cruza, aplicada por motor.liquidez_m15, y con la identidad de _toma_del_momento intacta. La línea R4.2 del cierre añade (ii) a la pregunta de la sesión 6 (tu matiz 9): «¿la mecha que mueve el alto es la de la vela contraria que lo forma, o también la de una vela posterior que lo pasa y vuelve?».
+> 2. (a). El test compara solo sobre las series sin velas sin cuerpo y añade otro que exige que, en las que las llevan, la única diferencia sea el punto de ADR-0085. El guion de CAJA-77 no se toca.
+> 3. (a). No se aplica; ADR-0085 lo dice (pedirlo sería romper con cuerpo en M1, contra A-32 RESUELTA) y va a la lista de la sesión 6.
+> 4. (a). Argumento caja: caja_lado_de_ruido en la forma de RN-005 y en el vocabulario de se_desarrolla_en_el_lado_de_ruido, sin ADR; la lectura del consultor va en la descripción del parámetro, en las notas de RN-005, en la nota de A-50 (se corrige «el motor no cambia hasta la respuesta») y en el informe.
+> 5. (a). El predicado en_el_ultimo_tramo_h4 me vale. Tercera rama de RN-035, gate RN-037 sobre abrir_operacion y RN-035 sin prohibe. Recuadros en ADR-0060 §5 y §6 y en ADR-0066 §4, con sus filas del índice. Los literales, de nueve palabras o más, como mediste. Tests de que la orden se retira en el último minuto y de que en el primer cierre de la sesión de las 11 se puede colocar.
+> 6. (a), con el tercer dibujo. Además, como lo medido en 0.b.8 dice que la serie S-10 ya entra por el camino real y ADR-0076 §2 la midió con detectar_esquema, va una NOTA en ADR-0076 §2 (en el commit de ADR-0085, que ya lo enmienda) con lo medido, y una línea para el cierre: que la re-corrida mire las entradas que nacen en el primer punto tras la toma y se llenan antes de la alternancia. Sin registro y sin ADR-0087.
+> 7. (a). Contrato ampliado a docs/runbooks/ACTIVAR-A35-A44.md, con una NOTA al principio de §5.1 (el heredado 35, hecho por ADR-0086); el cuerpo no se toca.
+> 8. (a). Orden de los commits: 1; 2+3; 4; 5; 6; 8; 10+11.
+>
+> Además:
+> 9. ADR-0087 no se crea en esta rama y se queda en los bloques ids-inexistentes del encargo y del informe. Línea para Technical Debt en el cierre: la rama que cree ADR-0087 lo saca de esos dos bloques, o knowledge validate falla.
+> 10. Para la fila de ERRORES-RECURRENTES del cierre, también estos errores del consultor: el encargo daba RN-011 como la regla que coloca (es RN-015), y el auditor del consultor buscó sobre la raíz de un clon (ya declarado en la apertura).
+> 11. Las dos negativas de la guardia de §0.d (pytest de test_kit.py desde el clon de C:/cm/ y las dos ejecuciones encadenadas) van a las líneas del cierre, en K, junto a la de los tests del clon que ya tiene G.1.
+>
+> Sigue lo que manda el encargo: un commit por grupo, con el paso 3 de activar-sesion, knowledge validate antes de make check y Fuente: en el cuerpo con ids que existen; CI de Linux por fix/activar-sesion-05-motor con su número de run (gh run view suelto); revisor (opus) con los cinco alcances del encargo y su informe pegado al final; y las líneas del cierre con PROJECT_STATE medido con wc -c, por debajo de 23.000 en neto. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
 >
 > Rama lista para revisión, NO cerrada.

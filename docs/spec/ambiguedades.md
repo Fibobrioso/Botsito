@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.1.9` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.2.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
@@ -30,9 +30,9 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
-Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco? RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado» (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), contradice lo que hace el motor y queda para la rama de motor y la sesion 6. SIGUE ABIERTA.
+Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco? RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado» (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), la hace el motor desde el 2026-10-26 (ADR-0084, trabajo/activar-sesion-05-motor) con el selector liquidez_m15_mecha_que_vuelve = cualquier_mecha, LECTURA DEL CONSULTOR: el trader no eligio entre la mecha de la vela contraria que forma el alto (su ejemplo) y la de una vela posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. SIGUE ABIERTA.
 
-Afecta a: `liquidez_m15_pivote_formado`.
+Afecta a: `liquidez_m15_pivote_formado`, `liquidez_m15_mecha_que_vuelve`.
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 

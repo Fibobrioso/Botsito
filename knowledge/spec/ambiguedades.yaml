@@ -965,8 +965,11 @@ ambiguedades:
       v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado»
       (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija
       liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la
-      segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), contradice lo que hace el
-      motor y queda para la rama de motor y la sesion 6. SIGUE ABIERTA.
+      segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), la hace el motor desde el
+      2026-10-26 (ADR-0084, trabajo/activar-sesion-05-motor) con el selector
+      liquidez_m15_mecha_que_vuelve = cualquier_mecha, LECTURA DEL CONSULTOR: el trader no eligio
+      entre la mecha de la vela contraria que forma el alto (su ejemplo) y la de una vela
+      posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. SIGUE ABIERTA.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
@@ -1002,7 +1005,15 @@ ambiguedades:
     # a la PARADA, punto 0), para que el arnes corra sin --diagnostico-a35. Lo que falta: si el
     # extremo se actualiza a la mecha de la vela contraria (ev-v15-000553-9d95178a, que hoy
     # pivotes_m15.py no hace) -rama de motor con ADR, y la sesion 6 lo confirma-
-    parametros: [liquidez_m15_pivote_formado]
+    # DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor, ADR-0084) EL MOTOR LO HACE: el
+    # selector liquidez_m15_mecha_que_vuelve, DEFAULT_AMBIGUOUS en cualquier_mecha bajo esta
+    # ambiguedad, por decision del consultor y sin registro (el trader dijo el mecanismo; el
+    # alcance -la mecha de la contraria, o tambien la de una M1 posterior que lo pasa y vuelve- es
+    # lectura suya). ADR-0045 decia que A-35 «no se sustituye por un parametro provisional»:
+    # ADR-0084 lo enmienda ahi, porque la prohibicion era contra un mecanismo inventado y este lo
+    # dijo el trader. El nivel se congela en cuanto una M1 lo cruza con el criterio de la toma.
+    # Sigue ABIERTA: la sesion 6 pregunta cual de las dos mechas, y el bajo
+    parametros: [liquidez_m15_pivote_formado, liquidez_m15_mecha_que_vuelve]
     contradiccion: null
     estado: ABIERTA
     decision: null

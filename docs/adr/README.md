@@ -48,7 +48,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0042 | Material ya visto entra por un reparto dev-visto, sin sorteo y sin holdout | ACTIVE |
 | 0043 | Criterio de fidelidad en desarrollo | ACTIVE |
 | 0044 | El sesgo H4: ambiguo, insuficiente, y fijado al abrir la sesion | ACTIVE (con enmiendas: ADR-0060 §1 y ADR-0075 en su §1, la doble ruptura; ADR-0080 en su §2 y su alternativa descartada, el color de la ruptura) |
-| 0045 | La liquidez de M15 es el pivote mas reciente ya formado | ACTIVE |
+| 0045 | La liquidez de M15 es el pivote mas reciente ya formado | ACTIVE (enmendado por ADR-0084 en «no se sustituye por un parámetro provisional»: `liquidez_m15_mecha_que_vuelve`, DEFAULT_AMBIGUOUS bajo A-35) |
 | 0046 | Marzo entra por el camino de fidelidad, con su reserva y sin repetir el sorteo | ACTIVE |
 | 0047 | La unidad de comparacion es la operacion tambien en el holdout | ACTIVE |
 | 0048 | El arnes del motor | ACTIVE |
@@ -57,7 +57,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0051 | El modelo de llenado (con las decisiones nocturnas resueltas y los ticks obligatorios para simular) | ACTIVE |
 | 0052 | El broker simulado | ACTIVE |
 | 0053 | El cableado del simulador (con las decisiones resueltas por el consultor, 2.1 y 5.1 para revisar, y A-44 como siguiente bloqueo tras A-35) | ACTIVE (nota de ADR-0082; notas del 2026-10-26 en §3.3 y §9: A-44 con valor por la sesión 5, la magnitud como DEFAULT_AMBIGUOUS, sigue ABIERTA) |
-| 0054 | RN-004 y RN-020, listas para activarse con la respuesta del trader | ACTIVE (nota del 2026-10-26 en §1 e Impacto: A-35 fijada en `cierre_vela_contraria` y A-44 en `dia`/`porcentaje` por la sesión 5, la magnitud `saldo` como DEFAULT_AMBIGUOUS; las dos siguen ABIERTAS) |
+| 0054 | RN-004 y RN-020, listas para activarse con la respuesta del trader | ACTIVE (nota del 2026-10-26 en §1 e Impacto: A-35 fijada en `cierre_vela_contraria` y A-44 en `dia`/`porcentaje` por la sesión 5, la magnitud `saldo` como DEFAULT_AMBIGUOUS; las dos siguen ABIERTAS; nota de ADR-0084 en «Por qué descartamos las demás», (2): la mecha que vuelve como DEFAULT_AMBIGUOUS bajo A-35) |
 | 0055 | RN-011 y la zona de entrada: preparada para A-21, con el selector de «limpia» PROVISIONAL | ACTIVE (con enmienda de ADR-0076: A-21 RESUELTA, `--diagnostico-a21` retirado) |
 | 0056 | La entrada con la ruptura: RN-011 con orden stop, preparada con selectores UNKNOWN | ACTIVE |
 | 0057 | Órdenes stop y rechazo de pendientes en el bróker simulado (PROVISIONAL hasta la demo de FTMO) | ACTIVE (desde el 2026-10-09, ADR-0071: §3 y §5 MEDIDOS en la ejecución 1 de la demo; §1 coincide con una observación; §2 sigue PROVISIONAL) |
@@ -87,4 +87,5 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0081 | El lote que no cabe en el margen o en el volumen se limita, y el bróker simulado rechaza por margen libre al colocar y al llenar | ACTIVE (D1 confirmada por el trader en la sesión 5, 2026-10-23: A-57 RESUELTA, activada el 2026-10-26, con reservas en el recuadro de §1; enmienda ADR-0052 §4, ADR-0053 §1 y ADR-0026, Impacto) |
 | 0082 | La capa de MT5 que nunca decide una operación va antes de F26: ejecuta, frena, veta, mide y registra, y ninguna de sus entradas es un hecho ni un parámetro de la estrategia | ACTIVE (enmienda MASTER_PLAN §0, la regla de PROJECT_STATE, ADR-0067 §1 y ADR-0068 §4; nota en ADR-0050 §4 y ADR-0053 §3.2) |
 | 0083 | Qué gasta un punto: el rechazo (al colocar o al llenar) y el no envío; el llenado no, y tras una pérdida o un break even el mismo punto se vuelve a colocar, con la misma caja o con otra | ACTIVE (PROVISIONAL en D1: la sesión 5 respondió en parte, recuadro del 2026-10-26 en §1, y va a la sesión 6; enmienda la decisión 1 de ADR-0064; nota en ADR-0074 §4) |
+| 0084 | La mecha que pasa el nivel de M15 y vuelve lo mueve a esa mecha: `liquidez_m15_mecha_que_vuelve` bajo A-35 | ACTIVE (DEFAULT_AMBIGUOUS en `cualquier_mecha`, lectura del consultor; A-35 sigue ABIERTA y la sesión 6 pregunta cuál mecha; enmienda ADR-0045; nota en ADR-0054) |
 | 0037 | La granularidad del dato decide que se abre, no el tipo de fichero | ACTIVE (con correccion del 2026-09-21 en su decision 7: el objetivo no es `idealTP` ni `maxTP`, es la regla `objetivo_rr`) |

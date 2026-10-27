@@ -102,6 +102,11 @@ diagnóstico permite ver el embudo sin que ninguna cifra cuente.
 
 - **(2)** es un mecanismo inventado haciéndose pasar por método del trader (ADR-0045 lo prohibió
   para A-35).
+  > **NOTA del 2026-10-26 (`trabajo/activar-sesion-05-motor`, ADR-0084, no reescribe el
+  > cuerpo).** La segunda mitad de A-35 (la mecha que pasa el nivel y vuelve lo mueve) entra como
+  > `liquidez_m15_mecha_que_vuelve`, DEFAULT_AMBIGUOUS bajo A-35: no es (2), porque el mecanismo
+  > lo dijo el trader (`ev-v15-000553-9d95178a`) y el valor provisional solo elige su alcance
+  > (lectura del consultor, a la sesión 6). ADR-0084 enmienda ADR-0045 en esa frase.
 - **(3)** deja la activación para después de la reunión, que es cuando más fácil es ajustar el
   mecanismo a la respuesta.
 

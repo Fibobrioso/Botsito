@@ -25,7 +25,6 @@ Los ADR que el encargo manda escribir se citan aquí antes de existir; cada uno 
 el commit que lo crea:
 
 ```ids-inexistentes
-ADR-0084 — el mecanismo de la mecha que vuelve (A-35, punto 1); aún no existe
 ADR-0085 — las velas sin cuerpo en M1, enmienda ADR-0076 (punto 2); aún no existe
 ADR-0086 — RN-020 retira la orden pendiente al llegar al tope (punto 8); aún no existe
 ADR-0087 — el ADR que S-15 tendría si existiera la frontera (punto 9); aún no existe
@@ -322,7 +321,88 @@ estaba antes y no se toca).
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta del consultor a la PARADA (2026-10-26)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-05-motor (2026-10-26). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). Si al aplicar algo lo medido lo contradice, PARADA 2.
+>
+> 0. (a). ADR-0084 enmienda ADR-0045 en la frase «no se sustituye por un parámetro provisional, porque es un mecanismo y no una cifra» (recuadro en su Decisión y fila del índice) y lleva NOTA en ADR-0054, «Por qué descartamos las demás», (2); las notas de A-35 en ambiguedades.yaml y de RN-004 lo dicen. El motivo va escrito en el ADR: la prohibición era contra un mecanismo inventado que se hiciera pasar por método del trader (ADR-0054, (2)), y este mecanismo lo dijo el trader (ev-v15-000553-9d95178a); el valor provisional solo elige su alcance, y es LECTURA DEL CONSULTOR. Corrige mi error, con su nombre: el encargo pidió un DEFAULT_AMBIGUOUS bajo A-35 sin leer ADR-0045 ni ADR-0054. Para la fila de ERRORES-RECURRENTES del cierre: antes de proponer un valor provisional bajo una ambigüedad, se lee el ADR que la abrió.
+> 1. (a). cualquier_mecha, con la tensión escrita en ADR-0084: los dos ítems contestan a la misma pregunta («si después el precio lo supera un poco»); v10 dice que eso no es tomarlo y v15, qué nivel queda; el nivel se congela al tomarse, que es lo que los hace compatibles. La implementación de 0.b.4 es la que quiero: la función pura de pivotes_m15.py que lleva el nivel a la mecha más lejana de las M1 que lo pasan sin cruzarlo con el criterio y se para en la primera que lo cruza, aplicada por motor.liquidez_m15, y con la identidad de _toma_del_momento intacta. La línea R4.2 del cierre añade (ii) a la pregunta de la sesión 6 (tu matiz 9): «¿la mecha que mueve el alto es la de la vela contraria que lo forma, o también la de una vela posterior que lo pasa y vuelve?».
+> 2. (a). El test compara solo sobre las series sin velas sin cuerpo y añade otro que exige que, en las que las llevan, la única diferencia sea el punto de ADR-0085. El guion de CAJA-77 no se toca.
+> 3. (a). No se aplica; ADR-0085 lo dice (pedirlo sería romper con cuerpo en M1, contra A-32 RESUELTA) y va a la lista de la sesión 6.
+> 4. (a). Argumento caja: caja_lado_de_ruido en la forma de RN-005 y en el vocabulario de se_desarrolla_en_el_lado_de_ruido, sin ADR; la lectura del consultor va en la descripción del parámetro, en las notas de RN-005, en la nota de A-50 (se corrige «el motor no cambia hasta la respuesta») y en el informe.
+> 5. (a). El predicado en_el_ultimo_tramo_h4 me vale. Tercera rama de RN-035, gate RN-037 sobre abrir_operacion y RN-035 sin prohibe. Recuadros en ADR-0060 §5 y §6 y en ADR-0066 §4, con sus filas del índice. Los literales, de nueve palabras o más, como mediste. Tests de que la orden se retira en el último minuto y de que en el primer cierre de la sesión de las 11 se puede colocar.
+> 6. (a), con el tercer dibujo. Además, como lo medido en 0.b.8 dice que la serie S-10 ya entra por el camino real y ADR-0076 §2 la midió con detectar_esquema, va una NOTA en ADR-0076 §2 (en el commit de ADR-0085, que ya lo enmienda) con lo medido, y una línea para el cierre: que la re-corrida mire las entradas que nacen en el primer punto tras la toma y se llenan antes de la alternancia. Sin registro y sin ADR-0087.
+> 7. (a). Contrato ampliado a docs/runbooks/ACTIVAR-A35-A44.md, con una NOTA al principio de §5.1 (el heredado 35, hecho por ADR-0086); el cuerpo no se toca.
+> 8. (a). Orden de los commits: 1; 2+3; 4; 5; 6; 8; 10+11.
+>
+> Además:
+> 9. ADR-0087 no se crea en esta rama y se queda en los bloques ids-inexistentes del encargo y del informe. Línea para Technical Debt en el cierre: la rama que cree ADR-0087 lo saca de esos dos bloques, o knowledge validate falla.
+> 10. Para la fila de ERRORES-RECURRENTES del cierre, también estos errores del consultor: el encargo daba RN-011 como la regla que coloca (es RN-015), y el auditor del consultor buscó sobre la raíz de un clon (ya declarado en la apertura).
+> 11. Las dos negativas de la guardia de §0.d (pytest de test_kit.py desde el clon de C:/cm/ y las dos ejecuciones encadenadas) van a las líneas del cierre, en K, junto a la de los tests del clon que ya tiene G.1.
+>
+> Sigue lo que manda el encargo: un commit por grupo, con el paso 3 de activar-sesion, knowledge validate antes de make check y Fuente: en el cuerpo con ids que existen; CI de Linux por fix/activar-sesion-05-motor con su número de run (gh run view suelto); revisor (opus) con los cinco alcances del encargo y su informe pegado al final; y las líneas del cierre con PROJECT_STATE medido con wc -c, por debajo de 23.000 en neto. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+## 1. La respuesta aplicada, commit a commit
+
+### 1.1 Punto 1 · A-35, la mecha que vuelve (`liquidez_m15_mecha_que_vuelve`, ADR-0084; decisiones 0 y 1)
+
+- **ADR-0084** (`docs/adr/0084-la-mecha-que-pasa-el-nivel-de-m15-y-vuelve-lo-mueve.md`): el
+  mecanismo (los casos (i) y (ii), el nivel congelado al tomarse, el espejo en el bajo como
+  DECISIÓN DEL CONSULTOR, solo M15), el selector como LECTURA DEL CONSULTOR bajo A-35 y sin
+  registro, por qué enmienda ADR-0045 (recuadro en su Decisión y fila del índice) con NOTA en
+  ADR-0054 «Por qué descartamos las demás» (2) y su fila, el contraste con `ev-v10-012456`
+  (compatible: cuándo queda TOMADO frente a qué nivel se usa) y con `ev-v10-020142` y ADR-0062
+  (la ruptura que habilita sigue pidiendo cuerpo), y el error del consultor con su nombre. Sale
+  de los dos bloques `ids-inexistentes`.
+- **Registro:** `liquidez_m15_mecha_que_vuelve`, `estrategia`, enum `[no_mueve, solo_la_contraria,
+  cualquier_mecha]`, DEFAULT_AMBIGUOUS en `cualquier_mecha`, `ambiguedad_id: A-35`, fuente
+  evidence `ev-v15-000553-9d95178a`, `consumido_por: [ADR-0084]`; su descripción dice que es
+  lectura del consultor y por qué no lleva registro. A-35 en `ambiguedades.yaml`: la pregunta y el
+  comentario lo dicen, `parametros` gana el nuevo. RN-004: sus notas. `spec_version` 18.1.9 →
+  18.2.0 (un parámetro nuevo); `spec manifest --escribir` y `spec docs --escribir`
+  (`docs/spec/ambiguedades.md`, `parametros.md`, `reglas.md`, `glosario.md`). Sin registro de
+  feedback: `feedback apply --check` no tiene nada que proponer aquí y no se ejecutó.
+- **Código:** `domain/pivotes_m15.py` (`_pivote_de` con la mecha de la contraria, el argumento
+  `mecha_que_vuelve` de `pivotes_formados` y `pivote_mas_reciente` con `no_mueve` por defecto,
+  `nivel_con_mecha_que_vuelve`, la docstring que ya no deja la mecha «fija y visible»);
+  `engine/motor.py` (`DatosMercado` recibe `mecha_que_vuelve` y `criterio_toma`, con lo de siempre
+  por defecto, y `liquidez_m15` aplica (i) por el selector y (ii) con las M1 desde `formado_en`
+  hasta el instante); `engine/arnes.py` y `engine/visor.py` los leen del registro por su nombre.
+  `domain/estructura_m1.py` no cambia: sus tres llamadores no piden ninguna mecha.
+- **Tests:** `tests/unit/test_pivotes_m15.py`:
+  `test_lo_fijo_y_visible_doji_y_mecha_de_la_contraria` se parte en
+  `test_lo_fijo_y_visible_el_doji_corta_la_racha` (no cambia) y
+  `test_la_mecha_de_la_contraria_mueve_el_nivel_segun_el_selector`, que CAMBIA DE SENTIDO A
+  PROPÓSITO (la mecha 140 de la contraria daba 134; con `solo_la_contraria` y `cualquier_mecha` da
+  140, y 90 en el bajo; con `no_mueve` y sin pedir nada, 134); `test_las_mechas_posteriores_mueven_el_nivel_y_la_toma_lo_congela`
+  (dos mechas seguidas mueven dos veces: 137, 138; la M1 que cierra sobre el nivel viejo y no sobre
+  el movido no es toma; la que cruza congela; con `mecha` como criterio la primera ya es toma),
+  `test_el_caso_ii_en_un_bajo_en_espejo` y `test_una_mecha_fuera_del_selector_se_niega`.
+  `tests/unit/test_mecha_que_vuelve.py` (nuevo), por el camino real: `DatosMercado.liquidez_m15`
+  con el registro vigente y `alcanza_nivel`/`cruza` de `primitivas_escritas` (niveles 137, 138,
+  138 en tres cierres; `cruza` NO en la M1 que cierra en 136 y SÍ en la que cierra en 141; la
+  anotación `liquidez_m15` de la traza lleva el nivel movido; tras la toma una mecha a 150 no mueve
+  nada); cada opción del selector por ese camino (134 / 140 / 141); un valor fuera del enum falla al
+  leer el registro y `DatosMercado` lo rechaza; y las series de M1 no se mueven (la contraria de M1
+  con mecha 1130 deja la referencia y el punto en 1120). **Con el código de `main`** (clon
+  `C:/cm/main`, `git worktree add --detach … main`, los dos ficheros copiados dentro): los dos
+  módulos no se recogen, `ImportError: cannot import name 'CUALQUIER_MECHA' from
+  'botsito.domain.pivotes_m15'`; y lo que `main` hace con esas velas está medido en §0.a (punto 1)
+  y §0.b.4: la contraria con mecha 140 deja el nivel en 134 y una M15 o M1 posterior con mecha
+  tampoco lo mueve. **Con el de la rama:** 71 tests en verde entre `test_pivotes_m15.py`,
+  `test_mecha_que_vuelve.py`, `test_estructura_m1.py`, `test_a21_series.py`, `test_preparar_a35.py`
+  y `test_orden_stop_pivote.py`.
+- **`test_kit.py` no cambia**: los conjuntos de RESUELTAS y de bloqueantes ABIERTAS (A-35 y A-44)
+  son los mismos; A-35 sigue ABIERTA.
+- **Trailer:** `Fuente: ev-v15-000553-9d95178a, ADR-0084`.
+
 ## Estado
 
-EN CURSO. Fase 0 medida y en PARADA (2026-10-26): espera la respuesta del consultor a «Lo que
-necesito que decidas». Ningún código, spec ni knowledge tocados en la rama.
+EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida:
+se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hecho: el 1.

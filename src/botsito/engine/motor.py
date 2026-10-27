@@ -30,7 +30,14 @@ from typing import Protocol
 from botsito.cases.criterio_fidelidad import Operacion
 from botsito.comun.husos import huso_canonico
 from botsito.data.velas import a_minuto
-from botsito.domain.pivotes_m15 import Pivote, pivote_mas_reciente
+from botsito.domain.pivotes_m15 import (
+    CUALQUIER_MECHA,
+    MECHAS_QUE_VUELVEN,
+    NO_MUEVE,
+    Pivote,
+    nivel_con_mecha_que_vuelve,
+    pivote_mas_reciente,
+)
 from botsito.domain.velas import MinutoUtc, Vela
 from botsito.engine.interprete import (
     VALOR_APAGADO,
@@ -66,7 +73,16 @@ class DatosMercado:
         velas_m15: Sequence[Vela] = (),
         velas_m1: Sequence[Vela] = (),
         lectura_pivote: str | None = None,
+        mecha_que_vuelve: str = NO_MUEVE,
+        criterio_toma: str = "cuerpo",
     ) -> None:
+        # `mecha_que_vuelve` y `criterio_toma` son `liquidez_m15_mecha_que_vuelve` y
+        # `liquidez_m15_criterio_toma` del registro (ADR-0084): los lee quien construye los datos
+        # (el arnes y el visor). Sin darlos, el nivel es el de antes de ADR-0084
+        if mecha_que_vuelve not in MECHAS_QUE_VUELVEN:
+            raise ValueError(
+                f"mecha que vuelve {mecha_que_vuelve!r} no esta en {MECHAS_QUE_VUELVEN}"
+            )
         self._velas = sorted(velas_h4, key=lambda v: v.fin)
         self._fines = [v.fin for v in self._velas]
         # las M15 completas, por su fin; las incompletas (la ultima del tramo) no cierran nunca
@@ -77,6 +93,8 @@ class DatosMercado:
         self._m1 = sorted(velas_m1, key=lambda v: v.inicio)
         self._inicios_m1 = [v.inicio for v in self._m1]
         self.lectura_pivote = lectura_pivote
+        self.mecha_que_vuelve = mecha_que_vuelve
+        self.criterio_toma = criterio_toma
 
     def velas_h4_cerradas(self, instante: int) -> list[Vela]:
         return self._velas[: bisect.bisect_right(self._fines, instante)]
@@ -135,13 +153,22 @@ class DatosMercado:
             raise SinLecturaDePivoteError(
                 "sin lectura de «formado» (A-35): estos datos no producen liquidez_m15"
             )
-        return pivote_mas_reciente(
+        p = pivote_mas_reciente(
             self._m15,
             self.m15_en_curso(instante),
             self.lectura_pivote,
             instante,
             lado,
             self._n_m15_cerradas(instante),
+            self.mecha_que_vuelve,
+        )
+        if p is None or self.mecha_que_vuelve != CUALQUIER_MECHA:
+            return p
+        # caso (ii) de ADR-0084: las M1 cerradas desde que el pivote esta formado hasta este
+        # instante (la que cierra en `instante` incluida) mueven el nivel con sus mechas, y la
+        # primera que lo cruza con el criterio de la toma lo congela
+        return nivel_con_mecha_que_vuelve(
+            p, self.m1_entre(int(p.formado_en), instante), self.criterio_toma
         )
 
 

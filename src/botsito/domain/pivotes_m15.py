@@ -20,22 +20,34 @@ Lo que si esta documentado, y de donde sale cada cosa:
   Ninguna otra lectura esta documentada (dudas 1 y 2 de la clasificacion): no se anade ninguna.
 - **El mas reciente** de los formados es el que cuenta (ADR-0045, `ev-v1-001334-96e8ca40`).
 
+- **La mecha que pasa el nivel y vuelve lo mueve a esa mecha** (sesion 5, S-3, segunda mitad de
+  A-35: «se actualiza el de la mecha», `ev-v15-000553-9d95178a`; ADR-0084). El selector
+  `liquidez_m15_mecha_que_vuelve` dice de que mechas: `no_mueve` (lo de antes de ADR-0084),
+  `solo_la_contraria` (la mecha de la propia vela contraria que forma el pivote, el caso del
+  ejemplo del trader) o `cualquier_mecha` (ademas, la de cualquier M1 posterior que lo pase con la
+  mecha sin cruzarlo con el criterio de la toma, `nivel_con_mecha_que_vuelve`; LECTURA DEL
+  CONSULTOR, ADR-0084). El nivel se CONGELA en cuanto una M1 lo cruza con el criterio (la toma,
+  ADR-0062): asi casa con «lo tiene que pasar con cuerpo, no con mecha» de la sesion 4
+  (`ev-v10-012456-9dc1d221`, que dice cuando queda TOMADO) y la identidad del pivote que guarda
+  el productor de la zona no cambia tras la toma. En espejo en un BAJO (decision del consultor).
+  Solo M15: los llamadores de M1 (`domain/estructura_m1.py`) no piden ninguna mecha.
+
 Lo que NO esta documentado y aqui se deja FIJO Y VISIBLE, sin decidirlo por el trader (candidatos a
 ambiguedad en `docs/validation/PREPARACION-A35-A44.md`): el nivel es el extremo de la racha de
-velas del mismo color inmediatamente anterior a la contraria, y la mecha de la propia vela
-contraria no lo mueve («¿que haces si despues el precio lo supera un poco?» es la segunda pregunta
-de A-35); una vela sin cuerpo (cierre igual a la apertura) no es de ningun color, no es contraria
-y corta la racha; y con la lectura `inicio_vela_contraria` el pivote es el ESTADO en cada instante:
-si la vela en curso vuelve a su color, el pivote desaparece (P9 dice «voy marcando»).
+velas del mismo color inmediatamente anterior a la contraria (con `no_mueve`, la mecha de la propia
+vela contraria no lo mueve; desde ADR-0084 la mueve segun el selector); una vela sin cuerpo
+(cierre igual a la apertura) no es de ningun color, no es contraria y corta la racha; y con la
+lectura `inicio_vela_contraria` el pivote es el ESTADO en cada instante: si la vela en curso
+vuelve a su color, el pivote desaparece (P9 dice «voy marcando»).
 
-Puro: velas dentro, pivote fuera. Sin reloj, sin IO, sin registro (ADR-0002: el selector lo lee
-quien construye los datos del dia, no este modulo).
+Puro: velas dentro, pivote fuera. Sin reloj, sin IO, sin registro (ADR-0002: los selectores los
+lee quien construye los datos del dia, no este modulo).
 """
 
 from __future__ import annotations
 
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from botsito.domain.velas import MinutoUtc, Vela
 
@@ -45,6 +57,13 @@ LECTURAS = (INICIO_VELA_CONTRARIA, CIERRE_VELA_CONTRARIA)
 ALTO = "alto"
 BAJO = "bajo"
 LADOS = (ALTO, BAJO)
+# Las opciones de `liquidez_m15_mecha_que_vuelve` (A-35, ADR-0084): que mecha que pasa el nivel y
+# vuelve lo mueve. `no_mueve` es lo que hacia el modulo hasta ADR-0084 y lo que piden los
+# llamadores de M1.
+NO_MUEVE = "no_mueve"
+SOLO_LA_CONTRARIA = "solo_la_contraria"
+CUALQUIER_MECHA = "cualquier_mecha"
+MECHAS_QUE_VUELVEN = (NO_MUEVE, SOLO_LA_CONTRARIA, CUALQUIER_MECHA)
 
 
 class PivoteError(ValueError):
@@ -83,29 +102,33 @@ def _racha_anterior(velas: Sequence[Vela], hasta: int, signo: int) -> list[Vela]
     return racha
 
 
-def _pivote_de(contraria: Vela, racha: Sequence[Vela], formado_en: MinutoUtc) -> Pivote:
+def _pivote_de(contraria: Vela, racha: Sequence[Vela], formado_en: MinutoUtc, mecha: str) -> Pivote:
+    # con `solo_la_contraria` o `cualquier_mecha`, la mecha de la propia contraria mueve el nivel
+    # si pasa el extremo de la racha (caso (i) de ADR-0084); con `no_mueve`, el extremo de la racha
+    con_mecha = mecha != NO_MUEVE
     if color(contraria) < 0:
-        return Pivote(
-            ALTO,
-            int(max(int(v.maxima) for v in racha)),
-            contraria.inicio,
-            contraria.fin,
-            formado_en,
-        )
-    return Pivote(
-        BAJO,
-        int(min(int(v.minima) for v in racha)),
-        contraria.inicio,
-        contraria.fin,
-        formado_en,
-    )
+        nivel = int(max(int(v.maxima) for v in racha))
+        if con_mecha:
+            nivel = max(nivel, int(contraria.maxima))
+        return Pivote(ALTO, nivel, contraria.inicio, contraria.fin, formado_en)
+    nivel = int(min(int(v.minima) for v in racha))
+    if con_mecha:
+        nivel = min(nivel, int(contraria.minima))
+    return Pivote(BAJO, nivel, contraria.inicio, contraria.fin, formado_en)
 
 
 def _comprobar(
-    cerradas: Sequence[Vela], n: int, en_curso: Vela | None, lectura: str, instante: int
+    cerradas: Sequence[Vela],
+    n: int,
+    en_curso: Vela | None,
+    lectura: str,
+    instante: int,
+    mecha: str = NO_MUEVE,
 ) -> None:
     if lectura not in LECTURAS:
         raise PivoteError(f"lectura {lectura!r} no esta en {LECTURAS}")
+    if mecha not in MECHAS_QUE_VUELVEN:
+        raise PivoteError(f"mecha que vuelve {mecha!r} no esta en {MECHAS_QUE_VUELVEN}")
     if n < 0 or n > len(cerradas):
         raise PivoteError(f"n={n} fuera de las {len(cerradas)} velas cerradas")
     if n and int(cerradas[n - 1].fin) > instante:
@@ -120,7 +143,9 @@ def _formado_en(c: Vela, lectura: str) -> MinutoUtc:
     return c.fin if lectura == CIERRE_VELA_CONTRARIA else MinutoUtc(int(c.inicio) + 1)
 
 
-def _pivote_en(cerradas: Sequence[Vela], i: int, lectura: str) -> Pivote | None:
+def _pivote_en(
+    cerradas: Sequence[Vela], i: int, lectura: str, mecha: str = NO_MUEVE
+) -> Pivote | None:
     """El pivote que marca la vela cerrada `i` si es contraria a una racha anterior."""
     c = cerradas[i]
     signo = color(c)
@@ -129,10 +154,12 @@ def _pivote_en(cerradas: Sequence[Vela], i: int, lectura: str) -> Pivote | None:
     racha = _racha_anterior(cerradas, i, -signo)
     if not racha:
         return None
-    return _pivote_de(c, racha, _formado_en(c, lectura))
+    return _pivote_de(c, racha, _formado_en(c, lectura), mecha)
 
 
-def _pivote_en_curso(cerradas: Sequence[Vela], n: int, en_curso: Vela | None) -> Pivote | None:
+def _pivote_en_curso(
+    cerradas: Sequence[Vela], n: int, en_curso: Vela | None, mecha: str = NO_MUEVE
+) -> Pivote | None:
     """Con la lectura `inicio`: el pivote que la M15 en curso marca ahora mismo, si va contraria."""
     if en_curso is None or n == 0:
         return None
@@ -142,7 +169,7 @@ def _pivote_en_curso(cerradas: Sequence[Vela], n: int, en_curso: Vela | None) ->
     racha = _racha_anterior(cerradas, n, -signo)
     if not racha:
         return None
-    return _pivote_de(en_curso, racha, MinutoUtc(int(en_curso.inicio) + 1))
+    return _pivote_de(en_curso, racha, MinutoUtc(int(en_curso.inicio) + 1), mecha)
 
 
 def pivotes_formados(
@@ -151,23 +178,26 @@ def pivotes_formados(
     lectura: str,
     instante: int,
     n: int | None = None,
+    mecha_que_vuelve: str = NO_MUEVE,
 ) -> list[Pivote]:
     """Todos los pivotes formados a la vista en `instante` (un cierre de M1), del mas antiguo al
     mas reciente. `cerradas` son las M15 en orden y sin solapar; cuentan las `n` primeras (todas
     si `n` es None), que tienen que tener fin <= instante; `en_curso` es la M15 que contiene
-    `instante` construida SOLO con las M1 cerradas hasta el (None si no hay ninguna)."""
+    `instante` construida SOLO con las M1 cerradas hasta el (None si no hay ninguna).
+    `mecha_que_vuelve` es el selector de ADR-0084: con `no_mueve` (lo de siempre, y lo que piden
+    los llamadores de M1) la mecha de la contraria no mueve el nivel."""
     n = len(cerradas) if n is None else n
-    _comprobar(cerradas, n, en_curso, lectura, instante)
+    _comprobar(cerradas, n, en_curso, lectura, instante, mecha_que_vuelve)
     for a, b in zip(cerradas[:n], cerradas[1:n], strict=False):
         if b.inicio < a.fin:
             raise PivoteError("las M15 cerradas tienen que ir en orden y sin solapar")
     salida: list[Pivote] = []
     for i in range(1, n):
-        p = _pivote_en(cerradas, i, lectura)
+        p = _pivote_en(cerradas, i, lectura, mecha_que_vuelve)
         if p is not None:
             salida.append(p)
     if lectura == INICIO_VELA_CONTRARIA:
-        p = _pivote_en_curso(cerradas, n, en_curso)
+        p = _pivote_en_curso(cerradas, n, en_curso, mecha_que_vuelve)
         if p is not None:
             salida.append(p)
     return salida
@@ -180,22 +210,45 @@ def pivote_mas_reciente(
     instante: int,
     lado: str,
     n: int | None = None,
+    mecha_que_vuelve: str = NO_MUEVE,
 ) -> Pivote | None:
     """El pivote formado mas reciente del lado pedido (ADR-0045), o None si no hay ninguno.
-    Busca hacia atras desde el mas reciente: no recorre toda la serie en cada instante."""
+    Busca hacia atras desde el mas reciente: no recorre toda la serie en cada instante. El nivel
+    lleva la mecha de la contraria segun `mecha_que_vuelve`; las mechas de las M1 posteriores
+    (`cualquier_mecha`) las aplica quien tiene las M1, con `nivel_con_mecha_que_vuelve`."""
     if lado not in LADOS:
         raise PivoteError(f"lado {lado!r} no esta en {LADOS}")
     n = len(cerradas) if n is None else n
-    _comprobar(cerradas, n, en_curso, lectura, instante)
+    _comprobar(cerradas, n, en_curso, lectura, instante, mecha_que_vuelve)
     if lectura == INICIO_VELA_CONTRARIA:
-        p = _pivote_en_curso(cerradas, n, en_curso)
+        p = _pivote_en_curso(cerradas, n, en_curso, mecha_que_vuelve)
         if p is not None and p.lado == lado:
             return p
     for i in range(n - 1, 0, -1):
-        p = _pivote_en(cerradas, i, lectura)
+        p = _pivote_en(cerradas, i, lectura, mecha_que_vuelve)
         if p is not None and p.lado == lado:
             return p
     return None
+
+
+def nivel_con_mecha_que_vuelve(pivote: Pivote, m1: Sequence[Vela], criterio: str) -> Pivote:
+    """El pivote con el nivel movido por las M1 que lo pasan solo con la mecha y vuelven (caso
+    (ii) de ADR-0084, `cualquier_mecha`): `m1` son las M1 cerradas desde que el pivote esta
+    formado, en orden. Cada una que lo pasa con la mecha SIN cruzarlo con `criterio` (la toma,
+    `liquidez_m15_criterio_toma`) lleva el nivel a su mecha; la primera que lo cruza lo TOMA y
+    el nivel se congela ahi: las M1 siguientes ya no lo mueven. Puro; con `no_mueve` o
+    `solo_la_contraria` quien llama no usa esta funcion."""
+    actual = pivote
+    for v in m1:
+        if int(v.inicio) < int(actual.formado_en):
+            continue  # anterior a la formacion: su mecha ya esta en la contraria (caso (i))
+        if cruza(v, actual, criterio):
+            break
+        if actual.lado == ALTO and int(v.maxima) > actual.nivel:
+            actual = replace(actual, nivel=int(v.maxima))
+        elif actual.lado == BAJO and int(v.minima) < actual.nivel:
+            actual = replace(actual, nivel=int(v.minima))
+    return actual
 
 
 def toca(vela: Vela, pivote: Pivote) -> bool:
@@ -222,13 +275,18 @@ __all__ = [
     "ALTO",
     "BAJO",
     "CIERRE_VELA_CONTRARIA",
+    "CUALQUIER_MECHA",
     "INICIO_VELA_CONTRARIA",
     "LADOS",
     "LECTURAS",
+    "MECHAS_QUE_VUELVEN",
+    "NO_MUEVE",
+    "SOLO_LA_CONTRARIA",
     "Pivote",
     "PivoteError",
     "color",
     "cruza",
+    "nivel_con_mecha_que_vuelve",
     "pivote_mas_reciente",
     "pivotes_formados",
     "toca",
