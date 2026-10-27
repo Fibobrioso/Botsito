@@ -101,3 +101,29 @@ Dado por Aleks (consultor) el 2026-10-27, en un solo mensaje. Copiado tal cual:
 > Revisor (opus) sobre la rama, con estos alcances: (1) que la corrida 1 usó solo opciones de la lista cerrada, su salida no lleva rótulo DIAGNOSTICO y el veredicto del informe es el literal de la salida; (2) que nada de src/, tests/, knowledge/ ni .claude/ cambia (git diff main --stat); (3) que las tablas del informe dicen lo que dicen las salidas, comprobado a mano en tres filas de cada mes, en tres entradas de la lista de la decisión 5 contra la «Ordenes» de la corrida 2 y en el sesgo de tres sesiones de la corrida 1 contra su línea «Por sesion»; (4) que ningún texto commiteado (ficheros, informe, su propio informe y mensajes de commit) lleva una vela, una H4, un pivote, un precio, un instante o una fecha anteriores al día dev al que pertenecen, ni de un mes con días reservados. El revisor no corre el arnés (solo_lectura.py lo niega): revisa las salidas commiteadas y el código. Su informe, pegado al final. Arregla lo que bloquee o importe, o dime por qué no.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-27)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/recorrida-construccion (2026-10-27). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). Si al aplicar algo lo medido lo contradice, PARADA 2 antes de seguir.
+>
+> 0. (a). La columna «dónde» da la posición del punto de la orden llenada frente a la toma (referencia / primer punto tras la toma / posterior, por contraria_inicio), y una columna aparte, «reubicaciones», cuenta las órdenes anteriores del mismo escenario canceladas por RN-006. Motivo: las tres categorías del encargo se solapan (S-10 es a la vez primer punto y reubicada), y así no se pierde ninguna de las dos cosas. Añado una marca más: si la zona de la orden llenada pertenece a un escenario distinto del de la toma vigente al llenar (la zona reutilizada en un escenario nuevo, H6 del auditor), la fila lo dice en una columna «escenario», sin cambiar nada más.
+> 1. (a). «Zonas al llenar» = zonas_de_control con las M1 cerradas hasta el último cierre anterior al llenado (lo que RN-009 ve en ese cierre), y además «zonas al colocar». Motivo: es exactamente la condición en la que RN-009 muerde.
+> 2. (a). Queda autorizado, una sola vez y después de las tres corridas del arnés, este comando literal:
+>    uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas_antes_alternancia.py --diaria "docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.cuenta=diaria.txt" --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas-antes-alternancia.txt
+>    Si sus llenadas no coinciden una a una con las «llenada» de «Ordenes» de la corrida 2, sale con 3 y es PARADA: no se ajusta el guion para que coincidan. Nunca a la vez que make check ni que otra corrida.
+> 3. (a). La copia de horas_perdidas.py va idéntica, al lado de la de patrones.py. Motivo: la copia la importa, y un fichero idéntico no cambia ninguna regla.
+> 4. (a). La línea base vigente pasa a ser la salida de la corrida 1 tal como queda en anexos, sin copia. La NOTA al principio de ACTIVAR-A35-A44.md §5 va en un commit propio después de la fase 2, con el contrato ampliado solo a ese runbook, y declara también la desviación del visor (motor visor --caso no se abre en esta rama). CABLEADO-SIMULADOR-LINEA-BASE.txt no se toca.
+> 5. (a). La fila de HOLDOUT-EXPOSICIONES tal como está propuesta en §0.c, en su propio commit, ANTES de correr nada.
+> 6. (a), con esta forma para las líneas del cierre:
+>    - F tal cual la propone el encargo.
+>    - Entrada nueva en la hoja de ruta, en el carril G: «G.5 · La cuarentena por condición», Refs: —; Qué es: la línea PRIORITARIA de Technical Debt (diciembre en meses_libres con NA:I sin decidir, y la fecha numérica seguida de coma que no se tapa; SESION-05-EXTRACCION.md §2.7 y §11, a4); Depende de: nada; Quién: la sesión, con el encargo del consultor; Hecho cuando: los dos casos tienen su test que rompe en main y pasa en la rama, antes de ingerir la sesión 6. Comprueba que test_hoja_de_ruta pasa con ella.
+>    - R5.2, «Depende de» pasa a: «la corrida que cuenta (R4.1; ADR-0070 §3) con un "sí", y el ADR propio de la rama de medida (ADR-0070 §6)».
+> 7. (a). Si una corrida o el guion mueren o salen con un código distinto de 0 (salvo el 1 del diff), PARADA con el error literal, sin relanzar.
+>
+> Sigue con la fase 1 (la fila, el README, los dos guiones con sus tests de humo en los dos sentidos y su salida pegada), make check en verde antes de cada commit con ruff format, ruff check y mypy antes, y después la fase 2 y la PARADA 2 con todo commiteado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.
