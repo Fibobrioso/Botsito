@@ -47,7 +47,7 @@ from botsito.domain.pivotes_m15 import (  # noqa: E402
 from botsito.domain.sesgo import sesgo_h4  # noqa: E402
 from botsito.domain.velas import MinutoUtc, Vela  # noqa: E402
 from botsito.engine import arnes  # noqa: E402
-from botsito.engine.diagnostico import A44_SIN_TOPE, Diagnostico  # noqa: E402
+from botsito.engine.diagnostico import Diagnostico  # noqa: E402
 from botsito.engine.interprete import Interprete, reglas_ejecutables  # noqa: E402
 from botsito.engine.motor import MotorSpec, _minuto_utc  # noqa: E402
 from botsito.engine.perfil_cuenta import cargar_perfil  # noqa: E402
@@ -262,9 +262,9 @@ def zonas_del_productor(dias_caja: set[str]) -> dict[tuple[str, str], Esquema | 
     spec = RAIZ / "knowledge" / "spec" / "strategy_spec.yaml"
     voc, reglas = cargar_vocabulario(spec), reglas_ejecutables(cargar_reglas(spec))
     perfil = next(iter(sorted((RAIZ / "knowledge" / "cuentas").glob("*.yaml"))))
-    tope = tope_del_registro(
-        registro, cargar_perfil(perfil).huso_corte(), Diagnostico(a44=A44_SIN_TOPE)
-    )
+    # A-44 tiene valor desde la sesion 5 (trabajo/activar-sesion-05): pedirla en diagnostico la
+    # rechaza TopeRechazadoError, asi que el guion lee el tope del registro
+    tope = tope_del_registro(registro, cargar_perfil(perfil).huso_corte(), Diagnostico())
     tope_zonas = registro.entero("zonas_control_max_por_esquema")
     criterio_breaker = registro.opcion("breaker_m1_criterio_ruptura")
     tope_sesgo = registro.entero("sesgo_h4_tope_velas")

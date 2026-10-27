@@ -12,11 +12,15 @@ from botsito.domain.pivotes_m15 import (
     ALTO,
     BAJO,
     CIERRE_VELA_CONTRARIA,
+    CUALQUIER_MECHA,
     INICIO_VELA_CONTRARIA,
     LECTURAS,
+    NO_MUEVE,
+    SOLO_LA_CONTRARIA,
     PivoteError,
     color,
     cruza,
+    nivel_con_mecha_que_vuelve,
     pivote_mas_reciente,
     pivotes_formados,
     toca,
@@ -142,16 +146,129 @@ def test_el_mas_reciente_del_lado_pedido_manda() -> None:
     )
 
 
-def test_lo_fijo_y_visible_doji_y_mecha_de_la_contraria() -> None:
-    """Un doji no es de ningun color: no es contraria y corta la racha. La mecha de la propia
-    contraria no mueve el nivel (segunda pregunta de A-35, sin decidir)."""
+def test_lo_fijo_y_visible_el_doji_corta_la_racha() -> None:
+    """Un doji no es de ningun color: no es contraria y corta la racha. Hasta el 2026-10-26 este
+    test se llamaba `test_lo_fijo_y_visible_doji_y_mecha_de_la_contraria` y mezclaba el doji (que
+    no cambia) con la mecha de la contraria (que cambia con ADR-0084): se parte en dos."""
     con_doji = [_m15(0, 100, 110), _m15(1, 110, 110), _m15(2, 110, 100)]
     assert pivotes_formados(con_doji, None, CIERRE_VELA_CONTRARIA, int(con_doji[-1].fin)) == []
-    roja_con_mecha = _m15(3, 130, 118, alto=140)  # la mecha supera el 134 de la racha
+
+
+ROJA_CON_MECHA = _m15(3, 130, 118, alto=140)  # la mecha supera el 134 de la racha
+BAJO_RACHA = [_m15(0, 130, 120), _m15(1, 120, 110), _m15(2, 110, 100, bajo=96)]
+VERDE_CON_MECHA = _m15(3, 100, 112, bajo=90)  # la mecha baja del 96 de la racha
+
+
+@pytest.mark.parametrize(
+    ("mecha", "alto_esperado", "bajo_esperado"),
+    [(NO_MUEVE, 134, 96), (SOLO_LA_CONTRARIA, 140, 90), (CUALQUIER_MECHA, 140, 90)],
+)
+def test_la_mecha_de_la_contraria_mueve_el_nivel_segun_el_selector(
+    mecha: str, alto_esperado: int, bajo_esperado: int
+) -> None:
+    """Caso (i) de ADR-0084 (sesion 5, S-3: «se actualiza el de la mecha», ev-v15-000553-9d95178a):
+    la contraria que pasa con su mecha el extremo de la racha y cierra por debajo deja el nivel en
+    su mecha, en un alto y en un bajo (en espejo). Con `no_mueve`, lo de antes del ADR. CAMBIA DE
+    SENTIDO A PROPOSITO el 2026-10-26: hasta entonces el nivel era 134 y la mecha no lo movia."""
     (p,) = pivotes_formados(
-        [*FLUJO_ALCISTA, roja_con_mecha], None, CIERRE_VELA_CONTRARIA, int(roja_con_mecha.fin)
+        [*FLUJO_ALCISTA, ROJA_CON_MECHA],
+        None,
+        CIERRE_VELA_CONTRARIA,
+        int(ROJA_CON_MECHA.fin),
+        mecha_que_vuelve=mecha,
     )
+    assert p.lado == ALTO and p.nivel == alto_esperado
+    (q,) = pivotes_formados(
+        [*BAJO_RACHA, VERDE_CON_MECHA],
+        None,
+        CIERRE_VELA_CONTRARIA,
+        int(VERDE_CON_MECHA.fin),
+        mecha_que_vuelve=mecha,
+    )
+    assert q.lado == BAJO and q.nivel == bajo_esperado
+    # y el mas reciente, por el mismo camino
+    r = pivote_mas_reciente(
+        [*FLUJO_ALCISTA, ROJA_CON_MECHA],
+        None,
+        CIERRE_VELA_CONTRARIA,
+        int(ROJA_CON_MECHA.fin),
+        ALTO,
+        mecha_que_vuelve=mecha,
+    )
+    assert r is not None and r.nivel == alto_esperado
+    # sin pedir nada, lo de siempre: es lo que piden los llamadores de M1
+    (s,) = pivotes_formados(
+        [*FLUJO_ALCISTA, ROJA_CON_MECHA], None, CIERRE_VELA_CONTRARIA, int(ROJA_CON_MECHA.fin)
+    )
+    assert s.nivel == 134
+
+
+def _m1(k: int, a: int, c: int, alto: int | None = None, bajo: int | None = None) -> Vela:
+    """La M1 numero `k` despues del cierre de la ROJA (T0 + 60)."""
+    hi = alto if alto is not None else max(a, c) + 1
+    lo = bajo if bajo is not None else min(a, c) - 1
+    return Vela(MinutoUtc(T0 + 60 + k), Puntos(a), Puntos(hi), Puntos(lo), Puntos(c), 1)
+
+
+def test_las_mechas_posteriores_mueven_el_nivel_y_la_toma_lo_congela() -> None:
+    """Caso (ii) de ADR-0084, `cualquier_mecha` (LECTURA DEL CONSULTOR): con el pivote formado,
+    cada M1 que lo pasa solo con la mecha lo lleva a su mecha (dos seguidas, dos veces); la que lo
+    cruza con `cuerpo` es la toma (ADR-0062) y el nivel se congela: las mechas de despues ya no
+    lo mueven. Una M1 que cruza el nivel VIEJO pero no el movido no es toma."""
+    (p,) = pivotes_formados([*FLUJO_ALCISTA, ROJA], None, CIERRE_VELA_CONTRARIA, int(ROJA.fin))
     assert p.nivel == 134
+    m1 = [
+        _m1(0, 118, 125, alto=137),  # pasa con la mecha y vuelve: 137
+        _m1(1, 125, 136, alto=138),  # cierra sobre 134 pero no sobre 137: no es toma; mecha 138
+        _m1(2, 136, 141, alto=142),  # cierra sobre 138: la toma; el nivel se congela en 138
+        _m1(3, 141, 130, alto=150),  # despues de la toma: la mecha ya no mueve nada
+    ]
+    niveles = [nivel_con_mecha_que_vuelve(p, m1[: k + 1], "cuerpo").nivel for k in range(4)]
+    assert niveles == [137, 138, 138, 138]
+    assert cruza(m1[1], nivel_con_mecha_que_vuelve(p, m1[:1], "cuerpo"), "cuerpo") is False
+    assert cruza(m1[2], nivel_con_mecha_que_vuelve(p, m1[:2], "cuerpo"), "cuerpo") is True
+    # sin ninguna M1 posterior, el pivote tal cual; y las M1 anteriores a la formacion no cuentan
+    assert nivel_con_mecha_que_vuelve(p, [], "cuerpo") == p
+    anterior = Vela(MinutoUtc(T0 + 50), Puntos(120), Puntos(160), Puntos(119), Puntos(121), 1)
+    assert nivel_con_mecha_que_vuelve(p, [anterior], "cuerpo") == p
+    # con el criterio `mecha`, la primera mecha que lo pasa ya es la toma: no mueve nada
+    assert nivel_con_mecha_que_vuelve(p, m1, "mecha").nivel == 134
+
+
+def test_el_caso_ii_en_un_bajo_en_espejo() -> None:
+    (q,) = pivotes_formados(
+        [*BAJO_RACHA, _m15(3, 100, 112)], None, CIERRE_VELA_CONTRARIA, int(BAJO_RACHA[-1].fin) + 15
+    )
+    assert q.lado == BAJO and q.nivel == 96
+    m1 = [
+        _m1(0, 112, 105, bajo=93),  # pasa con la mecha y vuelve: 93
+        _m1(1, 105, 94, bajo=91),  # cierra bajo 96 pero no bajo 93: no es toma; mecha 91
+        _m1(2, 94, 88, bajo=87),  # cierra bajo 91: la toma; congelado en 91
+        _m1(3, 88, 95, bajo=80),  # despues de la toma, nada
+    ]
+    assert [nivel_con_mecha_que_vuelve(q, m1[: k + 1], "cuerpo").nivel for k in range(4)] == [
+        93, 91, 91, 91,
+    ]  # fmt: skip
+
+
+def test_una_mecha_fuera_del_selector_se_niega() -> None:
+    with pytest.raises(PivoteError, match="mecha que vuelve"):
+        pivotes_formados(
+            [*FLUJO_ALCISTA, ROJA],
+            None,
+            CIERRE_VELA_CONTRARIA,
+            int(ROJA.fin),
+            mecha_que_vuelve="a_ojo",
+        )
+    with pytest.raises(PivoteError, match="mecha que vuelve"):
+        pivote_mas_reciente(
+            [*FLUJO_ALCISTA, ROJA],
+            None,
+            CIERRE_VELA_CONTRARIA,
+            int(ROJA.fin),
+            ALTO,
+            mecha_que_vuelve="x",
+        )
 
 
 def test_toca_y_cruza_con_cuerpo_o_con_mecha() -> None:

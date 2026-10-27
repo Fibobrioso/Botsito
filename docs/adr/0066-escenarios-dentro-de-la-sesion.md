@@ -80,6 +80,14 @@ independencia de las sesiones (A-46). `sigue_hasta_ventana_fin` es lo que hacia 
 «la dejo y la sigo moviendo en la sesión siguiente» de la pregunta 5 no se escribe hasta que el
 trader la elija. Una posicion abierta no entra: la cierra RN-002.
 
+> **Enmendada el 2026-10-26 (`trabajo/activar-sesion-05-motor`; sesión 5, S-22).** RN-035 gana
+> una tercera rama: la orden sin llenar se retira en el último minuto de cada vela H4 de la
+> ventana -[fin − `cierre_h4_antelacion`, fin), sin el evento del límite, `en_el_ultimo_tramo_h4`-,
+> que es lo que el trader dijo («Un minuto antes», `ev-v16-002248-08e9600f`,
+> `fb-2026-10-23-sesion-05-1526aa39`, su cita desde entonces); las dos ramas de aquí se quedan
+> como red y no encuentran nada. Que valga también a las 11 es lectura del consultor. RN-037
+> (gate) no deja colocar ni recolocar en ese minuto (`ev-v16-002323-515b9da4`).
+
 ### 4 bis. La orden pendiente al abrir otro escenario en la misma sesion
 
 Si una toma de otra liquidez abre un escenario con una orden del anterior sin llenar,

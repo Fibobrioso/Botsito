@@ -20,6 +20,14 @@ RESUELTA (ADR-0022), y pasa a RESUELTA solo con un registro del trader que apunt
 - es bloqueante, y bloquea RN-004;
 - no se sustituye por un parámetro provisional, porque es un mecanismo y no una cifra.
 
+> **Enmendada por ADR-0084 (2026-10-26, `trabajo/activar-sesion-05-motor`)** en la última viñeta:
+> `liquidez_m15_mecha_que_vuelve` es un parámetro DEFAULT_AMBIGUOUS bajo A-35, que sigue ABIERTA.
+> La prohibición era contra un mecanismo inventado que se hiciera pasar por método del trader
+> (ADR-0054, «Por qué descartamos las demás», (2)); el de la mecha que vuelve lo dijo el trader
+> en la sesión 5 (`ev-v15-000553-9d95178a`), y el valor provisional solo elige su alcance, que es
+> lectura del consultor y va a la sesión 6. El selector de «formado»
+> (`liquidez_m15_pivote_formado`) nunca fue provisional: tiene valor del trader desde la sesión 5.
+
 ## Problema que resuelve
 
 Nadie produce `liquidez_m15` en la spec, así que RN-004 no puede dispararse. El productor no se

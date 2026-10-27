@@ -8,18 +8,24 @@ Lo que dijo el trader en la sesion 4 (S-8), ya en el registro:
   (`ev-v10-010653-81316808`; ya en v9, `ev-v9-011128-a267338b`);
 - `racha_perdidas_corte`: solo una ganadora la pone a cero; un break even no la corta
   (`ev-v10-010715-fae17215`: «luego nos sigue un break even no corta la racha como tal»);
-- `racha_perdidas_reinicio`: nunca por calendario, «la racha sigue de un día a otro y una semana
-  otra» (`ev-v10-010804-5b6ad1a3`);
+- `racha_perdidas_reinicio`: mientras no se pare, la racha sigue de un dia a otro, «la racha
+  sigue de un día a otro y una semana otra» (`ev-v10-010804-5b6ad1a3`); y desde la sesion 5
+  (S-21, `ev-v16-002126-d2376f71`: «Pues al día siguiente Nuevamente en cero»), tras parar por
+  la racha el dia siguiente empieza en cero: `tras_la_detencion`
+  (`fb-2026-10-23-sesion-05-978be13f`, CORRECT sobre el parametro, que supersede al `nunca` de la
+  sesion 4; recuadro en ADR-0077 §5);
 - `racha_perdidas_reanudacion`: tras la racha, «sería el día siguiente» (el mismo item).
 
 Lo que cuenta como PERDIDA es lo mismo que gasta un cartucho en RN-016 (`cartucho_criterio`,
 `cuenta_como_perdida`): no se inventa otra definicion. El «dia» es el dia OPERATIVO del reloj de
 las sesiones (`reloj_sesiones`, ADR-0063; `rejilla_h4`, ADR-0069), porque la ventana entera cae
 dentro de un dia civil: tras la racha no se opera mas en ese dia operativo y se vuelve en la
-primera sesion del siguiente. LECTURA DE LA SESION, escrita en ADR-0077: la detencion es del dia
-en que cayo la perdida que alcanza el tope; la racha sigue contando (reinicio `nunca`), asi que
-al dia siguiente vale lo mismo pero la detencion ha caducado, y la siguiente perdida -la decima-
-vuelve a detener el dia en que caiga.
+primera sesion del siguiente. La detencion es del dia en que cayo la perdida que alcanza el tope
+(ADR-0077 §5). Con `nunca` -la lectura PROVISIONAL de la sesion 4- la racha seguia contando: al
+dia siguiente valia lo mismo, la detencion habia caducado y la siguiente perdida -la decima-
+volvia a detener. Con `tras_la_detencion` el seguidor anota el dia de la detencion cuando la ve
+(`detenido`) y, en el primer instante del dia operativo siguiente -al consultarla o al registrar
+un cierre-, pone la racha a cero: una perdida mas no detiene.
 
 Ninguna cifra vive aqui (ADR-0002): el tope lo nombra la forma de RN-036 y lo lee el acumulador
 del registro; las opciones de los tres enums se leen por su nombre.
@@ -47,6 +53,7 @@ HECHO_DETENIDO = "detenido_por_racha"
 CORTE_GANADORA = "ganadora"
 CORTE_GANADORA_O_BREAK_EVEN = "ganadora_o_break_even"
 REINICIO_NUNCA = "nunca"
+REINICIO_TRAS_LA_DETENCION = "tras_la_detencion"
 REANUDACION_DIA_SIGUIENTE = "dia_siguiente"
 # Lo que el broker dice de cada cierre (`clasificar_cierre`, `primitivas_broker`): el mecanismo y
 # como se activo la operacion. Son los mismos tokens que la spec declara.
@@ -88,13 +95,23 @@ class SeguidorRacha:
     # el dia operativo de la ultima perdida contada: si la racha esta en el tope o por encima, ese
     # dia no se opera mas y al siguiente se vuelve (`detenido`)
     ultima_perdida_dia: date | None = None
+    # el dia operativo en que `detenido` vio la detencion: con `tras_la_detencion`, al llegar el
+    # dia siguiente la racha vuelve a cero (sesion 5, S-21)
+    detenido_en: date | None = None
+    # el tope con el que `detenido` consulto la ultima vez: lo nombra la forma de RN-036 y aqui
+    # solo se recuerda, para que el reinicio llegue tambien si la perdida que alcanza el tope es
+    # la ultima del dia y nadie vuelve a consultar ese dia (el cierre de fin de dia del cableado)
+    tope_visto: int | None = None
     cierres: list[tuple[int, str | None, str | None]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         if self.corte not in (CORTE_GANADORA, CORTE_GANADORA_O_BREAK_EVEN):
             raise RachaError(f"{P_CORTE} = {self.corte!r}: sin contrato")
-        if self.reinicio != REINICIO_NUNCA:
-            raise RachaError(f"{P_REINICIO} = {self.reinicio!r}: solo `nunca` tiene contrato")
+        if self.reinicio not in (REINICIO_NUNCA, REINICIO_TRAS_LA_DETENCION):
+            raise RachaError(
+                f"{P_REINICIO} = {self.reinicio!r}: solo `nunca` y `tras_la_detencion` tienen "
+                "contrato"
+            )
         if self.reanudacion != REANUDACION_DIA_SIGUIENTE:
             raise RachaError(
                 f"{P_REANUDACION} = {self.reanudacion!r}: solo `dia_siguiente` tiene contrato"
@@ -104,10 +121,32 @@ class SeguidorRacha:
     def dia_operativo(self, instante_ms: int) -> date:
         return self.reloj.lectura(instante_ms // MS_POR_MINUTO)[0]
 
+    def _detenida_antes_de(self, dia: date) -> bool:
+        """Si la racha detuvo un dia operativo anterior a `dia`: porque `detenido` lo vio
+        (`detenido_en`), o porque la racha llego al ultimo tope consultado y la perdida que la
+        dejo ahi cayo un dia anterior (nadie consulto despues de ella ese dia)."""
+        if self.detenido_en is not None and dia > self.detenido_en:
+            return True
+        return (
+            self.tope_visto is not None
+            and self.racha >= self.tope_visto
+            and self.ultima_perdida_dia is not None
+            and dia > self.ultima_perdida_dia
+        )
+
+    def _reiniciar_si_toca(self, dia: date) -> None:
+        """Con `tras_la_detencion` (sesion 5, S-21): llegado un dia operativo posterior al de la
+        detencion, la racha empieza en cero. Con `nunca`, nada."""
+        if self.reinicio == REINICIO_TRAS_LA_DETENCION and self._detenida_antes_de(dia):
+            self.racha = 0
+            self.ultima_perdida_dia = None
+            self.detenido_en = None
+
     def registrar(self, instante_ms: int, resultado: str | None, por: str | None) -> None:
         """Un cierre del broker, en orden de instante: una perdida suma; una ganadora pone la racha
         a cero (y un break even tambien, solo con `ganadora_o_break_even`); lo demas no la toca.
         El tope no entra aqui: lo nombra la forma de RN-036 y lo aplica `detenido`."""
+        self._reiniciar_si_toca(self.dia_operativo(instante_ms))
         self.cierres.append((instante_ms, resultado, por))
         if resultado == GANANCIA or (
             resultado == BREAK_EVEN and self.corte == CORTE_GANADORA_O_BREAK_EVEN
@@ -122,14 +161,22 @@ class SeguidorRacha:
     def detenido(self, instante_ms: int, tope: int) -> bool:
         """Si en este instante no se opera por la racha (`racha_perdidas` contra
         `racha_perdidas_max`): la racha esta en el tope o por encima Y la perdida que la dejo ahi
-        cayo en el dia operativo de `instante_ms`. Al dia siguiente la racha sigue (`reinicio` =
-        `nunca`) pero la detencion ha caducado (`reanudacion` = `dia_siguiente`); la siguiente
-        perdida vuelve a detener su dia (ADR-0077 §5)."""
+        cayo en el dia operativo de `instante_ms`. La detencion caduca al dia siguiente
+        (`reanudacion` = `dia_siguiente`); que vale la racha entonces lo dice `reinicio`: con
+        `nunca` sigue, y la siguiente perdida vuelve a detener su dia (ADR-0077 §5); con
+        `tras_la_detencion` empieza en cero (sesion 5, S-21). Anota el dia en que ve la
+        detencion, que es lo que el reinicio necesita."""
         if tope <= 0:
             raise RachaError(f"{P_MAX} = {tope}: es un entero positivo")
+        self.tope_visto = tope
+        dia = self.dia_operativo(instante_ms)
+        self._reiniciar_si_toca(dia)
         if self.racha < tope or self.ultima_perdida_dia is None:
             return False
-        return self.dia_operativo(instante_ms) == self.ultima_perdida_dia
+        if dia != self.ultima_perdida_dia:
+            return False
+        self.detenido_en = dia
+        return True
 
     def descripcion(self) -> str:
         ultima = (
@@ -156,6 +203,8 @@ __all__ = [
     "P_MAX",
     "P_REANUDACION",
     "P_REINICIO",
+    "REINICIO_NUNCA",
+    "REINICIO_TRAS_LA_DETENCION",
     "RachaError",
     "SeguidorRacha",
     "cuenta_como_perdida",

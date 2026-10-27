@@ -218,6 +218,13 @@ sigue siendo lo esperado hasta que la geometría exista: **no es un fallo de la 
 
 ### 5.1 · RN-004 tras A-35 y RN-020 tras A-44: lo que queda, y cómo se mide
 
+> **NOTA (2026-10-26, rama `trabajo/activar-sesion-05-motor`; el cuerpo no se toca).** El
+> heredado 35 de abajo («RN-020 tampoco retira la orden pendiente al llegar a su tope») queda
+> hecho por ADR-0086: la forma de RN-020 gana `retirar_ordenes_pendientes`, la acción de RN-036,
+> por decisión del consultor con el motivo de ADR-0077 §3. Lo demás de esta sección (la re-corrida
+> del arnés con `--simular` y su `diff` contra la línea base) sigue pendiente y es lo que queda de
+> R4.1 tras esa rama.
+
 Hasta el 2026-10-18 vivía en `PROJECT_STATE.md` como pendientes heredados 25, 30 y 35 (sale en
 `trabajo/plataforma-adelantada`). Su texto: las líneas vivas, en el Archivo 37 de
 `docs/state/HISTORIA.md`; lo que recortaban, en su Archivo 1 (los tres «DESPUES DE LA SESION 02» y

@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.1.9` · hash `7d95d99de12f…`
+`spec_version 18.5.2` · hash `fc939ebd8a50…`
 
-109 en total: 97 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+111 en total: 99 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -17,6 +17,7 @@
 | `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
 | `caja_bloque` | `r6` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-001550-82e5cffc` | que velas dan el 1 de la caja de la orden stop |
+| `caja_lado_de_ruido` | `caja_entera` | DEFAULT_AMBIGUOUS · en revision por A-50 | estrategia | `ev-v15-010451-5b123278` | que parte de la caja se compara con el nivel tomado para descartarla por el lado de ruido |
 | `caja_se_fija` | `en_cada_cierre_m1` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0074` | cuando se fija el 1 de la caja de la orden stop |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
@@ -61,6 +62,7 @@
 | `intentos_tras_toma_nueva` | `vuelven_a_cartuchos_max` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-9f3e9dda` | que pasa con los intentos cuando se toma otra liquidez con el escenario vivo |
 | `latencia_ms` | `0` | CONFIRMED | ejecucion | `ADR-0012` | milisegundos de latencia supuesta entre senal y orden |
 | `liquidez_m15_criterio_toma` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-6e15504f` | cuerpo/mecha |
+| `liquidez_m15_mecha_que_vuelve` | `cualquier_mecha` | DEFAULT_AMBIGUOUS · en revision por A-35 | estrategia | `ev-v15-000553-9d95178a` | que mecha que pasa el nivel de M15 y vuelve mueve el nivel a esa mecha (A-35) |
 | `liquidez_m15_pivote_formado` | `cierre_vela_contraria` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-03449065` | en que momento un pivote de M15 cuenta como formado (A-35) |
 | `lotaje_base` | `hasta_stop_fraccion` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-17ed6193` | distancia que absorbe riesgo_por_operacion |
 | `lote_margen_libre_fraccion` | `0.95` | CONFIRMED | ejecucion | `ADR-0081` | fraccion del margen libre de la cuenta que el lote puede ocupar |
@@ -84,7 +86,7 @@
 | `racha_perdidas_corte` | `ganadora` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-ecdd0572` | que cierre pone la racha a cero |
 | `racha_perdidas_max` | `9` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-b7040095` | perdidas seguidas tras las que no se opera mas ese dia |
 | `racha_perdidas_reanudacion` | `dia_siguiente` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-fa5ef0f6` | cuando se vuelve a operar tras la racha |
-| `racha_perdidas_reinicio` | `nunca` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-d1792021` | cuando se pone a cero la racha por calendario |
+| `racha_perdidas_reinicio` | `tras_la_detencion` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-978be13f` | cuando se pone a cero la racha por calendario o tras la detencion |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
 | `reloj_dia_riesgo` | `civil_operativa` | CONFIRMED | prop_firm | `ADR-0027` | que reloj marca el corte del dia (y de la semana) de riesgo |
 | `reloj_sesiones` | `rejilla_h4` | CONFIRMED | ejecucion | `ADR-0069` | con que reloj del registro se cuentan la ventana operativa y sus sesiones |
@@ -151,6 +153,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `huso_operativa` → ADR-0027, ADR-0053, ADR-0063
 - `instrumento` → F24, F28, F31, F33
 - `latencia_ms` → F24, F27
+- `liquidez_m15_mecha_que_vuelve` → ADR-0084
 - `liquidez_m15_pivote_formado` → ADR-0045
 - `lote_margen_libre_fraccion` → ADR-0081
 - `lote_si_no_cabe` → ADR-0081
@@ -232,6 +235,12 @@ el bloque que da el 1 de la caja de cada orden stop, con el 0 en el punto (ADR-0
 
 Opciones: `r6`, `r4`, `r1`.
 
+### `caja_lado_de_ruido`
+
+que parte de la caja de la orden stop mira RN-005 frente al nivel de M15 tomado (A-50). `solo_el_0`: la entrada; una compra cuyo 0 queda por encima del nivel es ruido aunque el 1 quede del lado del trader (lo que hacia el motor hasta el 2026-10-26, decision de codigo sin fuente de trabajo/preparar-a21). `caja_entera`: el 0 y el 1; una caja a caballo del nivel no se descarta. DEFAULT_AMBIGUOUS en `caja_entera` desde el 2026-10-26 (trabajo/activar-sesion-05-motor, respuesta del consultor a la PARADA, punto 4): es LECTURA DEL CONSULTOR bajo A-50, que sigue ABIERTA, y no una respuesta del trader. Lo que dijo en la sesion 5 (S-12b, v15 1:04:51, ev-v15-010451-5b123278) es que si el 0 queda justo en la linea del nivel, o por encima en una compra, «es indiferente» y que lo importante es validar bien el punto de breaker: eso descarta mirar solo el 0; que haga falta la caja ENTERA del lado de ruido se deduce de su ejemplo (SESION-05-EXTRACCION.md §3.3, fuera del item) y por eso no lleva registro de feedback (precedente: caja_bloque, con fuente evidence bajo A-48). El 0 justo en la linea no es ruido con ninguna de las dos (estrictamente al otro lado). Lo lee la forma de RN-005 (`se_desarrolla_en_el_lado_de_ruido`, engine/zonas.py); el 1 es el de la zona del punto, el mismo que llevara la orden. La sesion 6 lo confirma con dos dibujos
+
+Opciones: `solo_el_0`, `caja_entera`.
+
 ### `caja_se_fija`
 
 cuando se calcula el 1 de la caja de cada orden stop (ADR-0064, decision 5, y su sensibilidad pedida por el consultor el 2026-09-30). `al_verse_el_punto`: una vez, la primera vez que se ve el punto, y no cambia hasta el punto siguiente. `en_cada_cierre_m1`: en cada cierre de M1 hasta el llenado, con las velas desde el pivote hasta la ultima cerrada, que es lo que se ve hacer al trader en BLOQUE-DE-LA-CAJA.md §2.4 (el 1 es la maxima de la vela en curso o de la anterior en 10 de 12 cajas); un 1 nuevo reubica la orden con su stop y su lote. Es un mecanismo del motor sobre A-49 -cuando se traza la caja-, no una cita del trader: hasta el 2026-10-11 el valor era el de la decision 5 de ADR-0064, la lectura mas conservadora. DESDE ADR-0074 (2026-10-11, sesion 4, S-4: «si ocurre una vela verde, otra vela verde, pues simplemente lo vamos actualizando la caja, mientras no se desarrolle otro punto breaker», ev-v10-004945-59ebac47) el valor es `en_cada_cierre_m1`, por decision; sigue DEFAULT_AMBIGUOUS bajo A-49 porque A-49 (la caja con la vela cerrada o en formacion) sigue ABIERTA y es el unico estado que admite ambiguedad_id. Lo lee el productor (engine/zonas.py), no una regla
@@ -262,7 +271,7 @@ Opciones: `si`, `no`.
 
 ### `cierre_h4_antelacion`
 
-con cuanta antelacion al fin de su vela H4 se cierra toda operacion abierta (RN-002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060): en la sesion 3 el trader dice que cierra siempre un minuto antes de que termine la vela de cuatro horas, y hasta hoy esa cifra vivia solo en la prosa de RN-002, sin parametro. La vela H4 es la de la rejilla de anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef): ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo sigue dando por pendiente mientras RN-002 no lo cite
+con cuanta antelacion al fin de su vela H4 se cierra toda operacion abierta (RN-002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060): en la sesion 3 el trader dice que cierra siempre un minuto antes de que termine la vela de cuatro horas, y hasta hoy esa cifra vivia solo en la prosa de RN-002, sin parametro. La vela H4 es la de la rejilla de anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef): ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo sigue dando por pendiente mientras RN-002 no lo cite. DESDE EL 2026-10-26 (sesion 5, S-22; rama trabajo/activar-sesion-05-motor) lo leen tambien RN-035 y RN-037 por el predicado en_el_ultimo_tramo_h4: en ese mismo tramo antes del fin de la H4 la orden sin llenar se retira y no se coloca ninguna (ADR-0060 §5, recuadro)
 
 ### `cierre_pendientes`
 
@@ -444,6 +453,12 @@ si la liquidez de M15 se toma con cierre de cuerpo o basta la mecha
 
 Opciones: `cuerpo`, `mecha`.
 
+### `liquidez_m15_mecha_que_vuelve`
+
+la segunda mitad de A-35: si el precio pasa el alto (o el bajo) de M15 solo con la mecha y vuelve, el nivel pasa a ser el de esa mecha («se actualiza el de la mecha», sesion 5, S-3, v15 0:05:53, ev-v15-000553-9d95178a; ADR-0084, domain/pivotes_m15.py). `no_mueve`: lo que hacia el motor hasta ADR-0084 (el extremo de la racha, sin mechas). `solo_la_contraria`: la mecha de la propia vela contraria que forma el pivote, que es el caso del ejemplo que el trader enseno en su replay (SESION-05-EXTRACCION.md §3.1, S-3, fuera del item). `cualquier_mecha`: ademas, la de cualquier M1 posterior que lo pase con la mecha sin cruzarlo con liquidez_m15_criterio_toma; en cuanto una M1 lo cruza (la toma, ADR-0062) el nivel se congela (DECISION DEL CONSULTOR, respuesta a la PARADA de esa rama, punto 1; no sale de ningun item). DEFAULT_AMBIGUOUS en `cualquier_mecha` por decision del consultor (2026-10-26, trabajo/activar-sesion-05-motor): el trader dijo el mecanismo y no eligio entre los dos casos, asi que el valor es LECTURA DEL CONSULTOR bajo A-35, que sigue ABIERTA y lo pregunta en la sesion 6; por eso no lleva registro de feedback (precedente: perdida_trader_magnitud). En un bajo, en espejo (decision del consultor; la extraccion lo recoge fuera de un item). Lo lee quien construye los datos del dia (arnes y visor), no una regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
+
+Opciones: `no_mueve`, `solo_la_contraria`, `cualquier_mecha`.
+
 ### `liquidez_m15_pivote_formado`
 
 cuando un alto o un bajo de M15 pasa a estar formado y puede ser la liquidez (ADR-0045: el mas reciente ya formado). Es A-35, ABIERTA y BLOQUEANTE de RN-004, y la responde el trader: este parametro NO le pone valor, solo cierra el conjunto de respuestas que el corpus documenta -`inicio_vela_contraria`, «apenas se inicia una vela contraria en un flujo de ordenes, yo ya lo tomo como un punto» (v4 #942, ev-v4-005749-1e9325cb); y `cierre_vela_contraria`, «Uno ya formado» frente a «aunque sigan en curso» (v4 #846 y #849, ev-v4-005053-885e2773)-, para que activar RN-004 sea escribir UN valor (docs/runbooks/ACTIVAR-A35-A44.md). Sin fijar, el motor se niega a correr salvo en modo diagnostico etiquetado. Lo lee quien construye los datos del dia (arnes y visor), no una regla: la vela contraria al flujo marca el extremo (domain/pivotes_m15.py). FIJADO EL 2026-10-26 (sesion 5, S-3, fb-2026-10-23-sesion-05-03449065): `cierre_vela_contraria`, «en cuanto la vela roja de despues ya cerrado» (ev-v15-000447-6699c708); la vela que cierra sin cuerpo no cuenta como vela de despues (ev-v15-000530-234d4a81). A-35 SIGUE ABIERTA y bloqueante por su segunda mitad -«se actualiza el de la mecha», ev-v15-000553-9d95178a, que contradice lo fijo de pivotes_m15.py y va a la rama de motor-: fijar el parametro con la ambiguedad abierta es una DESVIACION declarada de la skill activar-sesion, por orden del consultor (trabajo/activar-sesion-05, PARADA, punto 0), para que el arnes corra a secas
@@ -586,9 +601,9 @@ Opciones: `dia_siguiente`, `semana_siguiente`, `sin_fecha`.
 
 ### `racha_perdidas_reinicio`
 
-si la racha de RN-036 se reinicia con el calendario (A-51; ADR-0077). `nunca`: «la racha sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte. Las otras dos opciones estan declaradas y sin contrato en el motor
+si la racha de RN-036 se reinicia con el calendario o tras parar (A-51; ADR-0077). `nunca`: «la racha sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte; era la lectura PROVISIONAL de ADR-0077 §5 (tras la novena, la racha seguia en 9 y la decima volvia a detener). `tras_la_detencion`, DESDE EL 2026-10-26 (sesion 5, S-21, v16 0:21:26, ev-v16-002126-d2376f71; rama trabajo/activar-sesion-05-motor): «Pues al día siguiente Nuevamente en cero» (al dia siguiente de parar por nueve perdidas seguidas, la racha empieza en cero: la afirmacion del item); mientras no se pare, la racha sigue de un dia a otro, que es lo que la sesion 4 dijo (con la reserva de ese item: la linea mezcla la lectura del consultor y la respuesta). Lo lee engine/racha.py por su nombre: al llegar el dia operativo siguiente al de la detencion, la racha empieza en cero. `fin_de_dia` y `fin_de_semana` estan declaradas y sin contrato en el motor
 
-Opciones: `nunca`, `fin_de_dia`, `fin_de_semana`.
+Opciones: `nunca`, `fin_de_dia`, `fin_de_semana`, `tras_la_detencion`.
 
 ### `reentrada_tras_equal`
 

@@ -388,7 +388,10 @@ parametros:
       anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la
       frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef):
       ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo
-      sigue dando por pendiente mientras RN-002 no lo cite
+      sigue dando por pendiente mientras RN-002 no lo cite. DESDE EL 2026-10-26 (sesion 5, S-22;
+      rama trabajo/activar-sesion-05-motor) lo leen tambien RN-035 y RN-037 por el predicado
+      en_el_ultimo_tramo_h4: en ese mismo tramo antes del fin de la H4 la orden sin llenar se
+      retira y no se coloca ninguna (ADR-0060 §5, recuadro)
     estado: CONFIRMED
     valor: 1
     fuente:
@@ -525,6 +528,35 @@ parametros:
     fuente:
       tipo: feedback
       id: fb-2026-10-23-sesion-05-03449065
+  - nombre: liquidez_m15_mecha_que_vuelve
+    categoria: estrategia
+    tipo: enum
+    unidad: que mecha que pasa el nivel de M15 y vuelve mueve el nivel a esa mecha (A-35)
+    opciones: [no_mueve, solo_la_contraria, cualquier_mecha]
+    descripcion: >-
+      la segunda mitad de A-35: si el precio pasa el alto (o el bajo) de M15 solo con la mecha y
+      vuelve, el nivel pasa a ser el de esa mecha («se actualiza el de la mecha», sesion 5, S-3,
+      v15 0:05:53, ev-v15-000553-9d95178a; ADR-0084, domain/pivotes_m15.py). `no_mueve`: lo que
+      hacia el motor hasta ADR-0084 (el extremo de la racha, sin mechas). `solo_la_contraria`:
+      la mecha de la propia vela contraria que forma el pivote, que es el caso del ejemplo que el
+      trader enseno en su replay (SESION-05-EXTRACCION.md §3.1, S-3, fuera del item).
+      `cualquier_mecha`: ademas, la de cualquier M1 posterior que lo pase con la mecha sin
+      cruzarlo con liquidez_m15_criterio_toma; en cuanto una M1 lo cruza (la toma, ADR-0062) el
+      nivel se congela (DECISION DEL CONSULTOR, respuesta a la PARADA de esa rama, punto 1; no
+      sale de ningun item). DEFAULT_AMBIGUOUS en `cualquier_mecha` por decision del consultor
+      (2026-10-26, trabajo/activar-sesion-05-motor): el trader dijo el mecanismo y no eligio
+      entre los dos casos, asi que el valor es LECTURA DEL CONSULTOR bajo A-35, que sigue ABIERTA
+      y lo pregunta en la sesion 6; por eso no lleva registro de feedback (precedente:
+      perdida_trader_magnitud). En un bajo, en espejo (decision del consultor; la extraccion lo
+      recoge fuera de un item). Lo lee quien construye los datos del dia (arnes y visor), no una
+      regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
+    consumido_por: [ADR-0084]
+    estado: DEFAULT_AMBIGUOUS
+    valor: cualquier_mecha
+    ambiguedad_id: A-35
+    fuente:
+      tipo: evidence
+      id: ev-v15-000553-9d95178a
   - nombre: liquidez_m15_criterio_toma
     categoria: estrategia
     tipo: enum
@@ -706,6 +738,33 @@ parametros:
     fuente:
       tipo: decision
       id: ADR-0074
+  - nombre: caja_lado_de_ruido
+    categoria: estrategia
+    tipo: enum
+    unidad: que parte de la caja se compara con el nivel tomado para descartarla por el lado de ruido
+    opciones: [solo_el_0, caja_entera]
+    descripcion: >-
+      que parte de la caja de la orden stop mira RN-005 frente al nivel de M15 tomado (A-50).
+      `solo_el_0`: la entrada; una compra cuyo 0 queda por encima del nivel es ruido aunque el 1
+      quede del lado del trader (lo que hacia el motor hasta el 2026-10-26, decision de codigo sin
+      fuente de trabajo/preparar-a21). `caja_entera`: el 0 y el 1; una caja a caballo del nivel no
+      se descarta. DEFAULT_AMBIGUOUS en `caja_entera` desde el 2026-10-26
+      (trabajo/activar-sesion-05-motor, respuesta del consultor a la PARADA, punto 4): es LECTURA
+      DEL CONSULTOR bajo A-50, que sigue ABIERTA, y no una respuesta del trader. Lo que dijo en la
+      sesion 5 (S-12b, v15 1:04:51, ev-v15-010451-5b123278) es que si el 0 queda justo en la linea
+      del nivel, o por encima en una compra, «es indiferente» y que lo importante es validar bien el
+      punto de breaker: eso descarta mirar solo el 0; que haga falta la caja ENTERA del lado de ruido
+      se deduce de su ejemplo (SESION-05-EXTRACCION.md §3.3, fuera del item) y por eso no lleva
+      registro de feedback (precedente: caja_bloque, con fuente evidence bajo A-48). El 0 justo en la
+      linea no es ruido con ninguna de las dos (estrictamente al otro lado). Lo lee la forma de
+      RN-005 (`se_desarrolla_en_el_lado_de_ruido`, engine/zonas.py); el 1 es el de la zona del
+      punto, el mismo que llevara la orden. La sesion 6 lo confirma con dos dibujos
+    estado: DEFAULT_AMBIGUOUS
+    valor: caja_entera
+    ambiguedad_id: A-50
+    fuente:
+      tipo: evidence
+      id: ev-v15-010451-5b123278
   - nombre: toma_antes_de_la_ventana
     categoria: estrategia
     tipo: enum
@@ -1282,18 +1341,26 @@ parametros:
   - nombre: racha_perdidas_reinicio
     categoria: estrategia
     tipo: enum
-    unidad: cuando se pone a cero la racha por calendario
-    opciones: [nunca, fin_de_dia, fin_de_semana]
+    unidad: cuando se pone a cero la racha por calendario o tras la detencion
+    opciones: [nunca, fin_de_dia, fin_de_semana, tras_la_detencion]
     descripcion: >-
-      si la racha de RN-036 se reinicia con el calendario (A-51; ADR-0077). `nunca`: «la racha
-      sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04,
-      ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte. Las otras dos
-      opciones estan declaradas y sin contrato en el motor
+      si la racha de RN-036 se reinicia con el calendario o tras parar (A-51; ADR-0077). `nunca`:
+      «la racha sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04,
+      ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte; era la lectura
+      PROVISIONAL de ADR-0077 §5 (tras la novena, la racha seguia en 9 y la decima volvia a
+      detener). `tras_la_detencion`, DESDE EL 2026-10-26 (sesion 5, S-21, v16 0:21:26,
+      ev-v16-002126-d2376f71; rama trabajo/activar-sesion-05-motor): «Pues al día siguiente
+      Nuevamente en cero» (al dia siguiente de parar por nueve perdidas seguidas, la racha empieza
+      en cero: la afirmacion del item); mientras no se pare, la racha
+      sigue de un dia a otro, que es lo que la sesion 4 dijo (con la reserva de ese item: la linea
+      mezcla la lectura del consultor y la respuesta). Lo lee engine/racha.py por su nombre:
+      al llegar el dia operativo siguiente al de la detencion, la racha empieza en cero.
+      `fin_de_dia` y `fin_de_semana` estan declaradas y sin contrato en el motor
     estado: CONFIRMED
-    valor: nunca
+    valor: tras_la_detencion
     fuente:
       tipo: feedback
-      id: fb-2026-10-04-sesion-04-d1792021
+      id: fb-2026-10-23-sesion-05-978be13f
   - nombre: racha_perdidas_reanudacion
     categoria: estrategia
     tipo: enum

@@ -788,9 +788,12 @@ ambiguedades:
       mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e).
       orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de
       ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que
-      sostiene el cierre es la razon del trader. «Un minuto antes» es frase del consultor y no se
-      fija. A ventana_fin la retirada la hace hoy el cableado al terminar el dia (ADR-0053 §6) sin
-      regla de la spec: la rama ventana_fin de RN-035 va a trabajo/activar-sesion-04-motor.
+      sostiene el cierre es la razon del trader. «Un minuto antes» era entonces frase del
+      consultor; en la sesion 5 (S-22) lo dijo el trader y RN-035 lo cita
+      (fb-2026-10-23-sesion-05-1526aa39; rama trabajo/activar-sesion-05-motor, orden de cierre del
+      consultor del 2026-10-27). A ventana_fin la retirada la hacia el cableado al terminar el dia
+      (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035, hecha en
+      trabajo/activar-sesion-04-motor.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la
@@ -965,8 +968,11 @@ ambiguedades:
       v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado»
       (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija
       liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la
-      segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), contradice lo que hace el
-      motor y queda para la rama de motor y la sesion 6. SIGUE ABIERTA.
+      segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), la hace el motor desde el
+      2026-10-26 (ADR-0084, trabajo/activar-sesion-05-motor) con el selector
+      liquidez_m15_mecha_que_vuelve = cualquier_mecha, LECTURA DEL CONSULTOR: el trader no eligio
+      entre la mecha de la vela contraria que forma el alto (su ejemplo) y la de una vela
+      posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. SIGUE ABIERTA.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
@@ -1002,7 +1008,15 @@ ambiguedades:
     # a la PARADA, punto 0), para que el arnes corra sin --diagnostico-a35. Lo que falta: si el
     # extremo se actualiza a la mecha de la vela contraria (ev-v15-000553-9d95178a, que hoy
     # pivotes_m15.py no hace) -rama de motor con ADR, y la sesion 6 lo confirma-
-    parametros: [liquidez_m15_pivote_formado]
+    # DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor, ADR-0084) EL MOTOR LO HACE: el
+    # selector liquidez_m15_mecha_que_vuelve, DEFAULT_AMBIGUOUS en cualquier_mecha bajo esta
+    # ambiguedad, por decision del consultor y sin registro (el trader dijo el mecanismo; el
+    # alcance -la mecha de la contraria, o tambien la de una M1 posterior que lo pasa y vuelve- es
+    # lectura suya). ADR-0045 decia que A-35 «no se sustituye por un parametro provisional»:
+    # ADR-0084 lo enmienda ahi, porque la prohibicion era contra un mecanismo inventado y este lo
+    # dijo el trader. El nivel se congela en cuanto una M1 lo cruza con el criterio de la toma.
+    # Sigue ABIERTA: la sesion 6 pregunta cual de las dos mechas, y el bajo
+    parametros: [liquidez_m15_pivote_formado, liquidez_m15_mecha_que_vuelve]
     contradiccion: null
     estado: ABIERTA
     decision: null
@@ -1534,6 +1548,14 @@ ambiguedades:
       la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa»,
       y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al
       punto mas alto y que todo tiene que desarrollarse mas alla del nivel.
+      RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 1:04:51-1:05:28, S-12b): si el 0 queda
+      justo en la linea del nivel tomado, o por encima en una compra, «es indiferente» y lo
+      importante es validar bien el posible punto de breaker (ev-v15-010451-5b123278); en su
+      ejemplo el 0 queda del lado de ruido y la caja vale. Desde el 2026-10-26
+      (trabajo/activar-sesion-05-motor) RN-005 lee caja_lado_de_ruido = caja_entera,
+      DEFAULT_AMBIGUOUS bajo esta ambiguedad y LECTURA DEL CONSULTOR (que haga falta la caja
+      ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). SIGUE ABIERTA: la sesion 6 lo
+      confirma con dos dibujos.
     resuelve_en: [F19, F20]
     # NACE el 2026-09-28 (rama trabajo/registrar-embudo, orden del consultor tras
     # docs/validation/EMBUDO-77.md §4, punto 1). RN-005 prohibe abrir cuando la zona se desarrolla
@@ -1549,13 +1571,19 @@ ambiguedades:
     # zonas habria coincidido con el trader, porque sus operaciones mueren antes. NO bloqueante: el
     # motor corre con la lectura vigente y no cambia hasta la respuesta. Sin parametro: el selector,
     # si hace falta, nace con la rama de codigo que lo consuma (ADR-0054).
+    # DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor; respuesta del consultor a la PARADA,
+    # punto 4) EL SELECTOR EXISTE Y EL MOTOR CAMBIA: caja_lado_de_ruido, enum [solo_el_0,
+    # caja_entera], DEFAULT_AMBIGUOUS en caja_entera con la fuente de S-12b, sin registro (lectura
+    # del consultor); lo lee la forma de RN-005 como argumento `caja`. Lo de «el motor no cambia
+    # hasta la respuesta» de arriba queda corregido por esa decision. Sigue ABIERTA.
     evidencia:
       - ev-v1-001306-f98e12e9
       - ev-v3-001725-bca9714b
       - ev-v3-001600-ed45b091
       - ev-v9-004721-2e023ac6
       - ev-v9-004919-c6bfb3ee
-    parametros: []
+      - ev-v15-010451-5b123278
+    parametros: [caja_lado_de_ruido]
     contradiccion: null
     estado: ABIERTA
     decision: null

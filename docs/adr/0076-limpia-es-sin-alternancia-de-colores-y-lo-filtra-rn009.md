@@ -13,6 +13,12 @@ phase: post-F14 (rama `trabajo/activar-sesion-04-motor`, R1.1 de la hoja de ruta
 > `sin_alternancia_de_colores` y la regla de la vela sin cuerpo que había decidido el 2026-10-11
 > (encargo de la rama, decisión 3): se midió antes de añadir nada, y no hacía falta.
 
+> **Enmendado por ADR-0085 (2026-10-26, `trabajo/activar-sesion-05-motor`).** La regla de la vela
+> sin cuerpo que aquí se retiró la dijo el trader en la sesión 5 (S-8 y S-19,
+> `ev-v15-003959-5898c61e`, `ev-v16-000851-f5ae3b6f`): en M1 la vela sin cuerpo no corta la racha,
+> no es contraria, no forma pivote ni cuenta como alternancia. La fila DISTINTO del doji de §2
+> deja de serlo; A-21 sigue RESUELTA con `solo_una_zona_de_control`.
+
 ## Decision
 
 ### 1. Lo que dijo el trader
@@ -58,6 +64,20 @@ contrario que rompe con la mecha (el bloque de origen es el propio breaker y la 
 alternancia anterior queda dentro del tope). Es el caso (b) de la respuesta del consultor: A-21 se
 cierra con la opción que ya existe. Las series viven como tests
 (`tests/unit/test_a21_series.py`), con la medida literal al lado.
+
+> **Enmendado por ADR-0085 (2026-10-26).** La fila «alternancia con cuerpo cero en medio (R,
+> doji, V, R) y breaker V» da desde entonces dos zonas y ningún esquema, igual que la lectura
+> literal (el doji no corta la racha ni cuenta como alternancia en M1: sesión 5, S-19). La única
+> fila DISTINTO que queda es la del breaker contrario que rompe con la mecha tras una
+> alternancia (S-20, a la sesión 6). `pivotes_m15.py` sigue cortando la racha con el doji en M15.
+>
+> **NOTA del 2026-10-26 (`trabajo/activar-sesion-05-motor`, fase 0, §0.b.8 de su informe; no
+> reescribe el cuerpo).** Esta tabla mide con `detectar_esquema`. Por el camino real del cableado
+> (la orden stop en el último pivote de M1, `orden_limite_nace = al_aparecer_punto_de_breaker`),
+> la serie S-10 YA ENTRA: la orden nace en el primer punto tras la toma y se llena en la primera
+> verde que lo pasa, antes de que la alternancia exista; RN-009 solo muerde en el cierre en que hay
+> que colocar o recolocar con dos o más zonas ya formadas desde la toma. No se decide nada con
+> eso: va a la sesión 6 (S-15) y la re-corrida de ADR-0070 §3 lo mira.
 
 ### 3. Lo que se fija y lo que se retira
 

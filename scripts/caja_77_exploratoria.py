@@ -111,7 +111,7 @@ def tomas_del_productor(raiz: Path) -> dict[tuple[str, str], dict[str, Any]]:
     from botsito.config.ajustes import carpeta_datos
     from botsito.config.registro import ParametroDesconocidoError, cargar_registro
     from botsito.engine import arnes, cableado, diagnostico, entrada, relojes, tope_trader, zonas
-    from botsito.engine.diagnostico import A44_SIN_TOPE, Diagnostico
+    from botsito.engine.diagnostico import Diagnostico
     from botsito.engine.interprete import reglas_ejecutables
     from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
 
@@ -129,7 +129,9 @@ def tomas_del_productor(raiz: Path) -> dict[tuple[str, str], dict[str, Any]]:
         fijado = None
     a47 = None if fijado is not None else entrada.STOP_EN_RUPTURA
     # A-21 ya no va en el diagnostico (ADR-0076): la lectura de «limpia» es la del registro
-    diag = Diagnostico(a35=CIERRE_VELA_CONTRARIA, a44=A44_SIN_TOPE, a27=0, a47=a47)
+    # A-35 y A-44 tienen valor desde la sesion 5 (trabajo/activar-sesion-05): pedirlas en
+    # diagnostico se rechaza, asi que el guion lee el registro y solo deja en hipotesis A-27 y A-47
+    diag = Diagnostico(a27=0, a47=a47)
     lectura = diagnostico.lectura_pivote(registro, diag)
     perfil = cableado.perfil_del_repo(raiz, None)
     tope = tope_trader.tope_del_registro(registro, perfil.huso_corte(), diag)

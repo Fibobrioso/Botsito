@@ -154,6 +154,17 @@ predicados:
     fuente: reloj
     cita: fb-2026-09-29-sesion-03-c38c4aef
     literal: siempre menos un minuto, antes de que cierre, pues, como tal, la sesión de cuatro horas
+  en_el_ultimo_tramo_h4:
+    descripcion: >-
+      a la vela H4 que contiene el minuto que acaba de cerrar le queda `antelacion` o menos para
+      terminar Y todavia no ha terminado: el evento del propio limite NO cuenta, porque ya es de
+      la vela -y de la sesion- siguiente. Es `vence_vela_h4` sin el limite (sesion 5, S-22,
+      2026-10-26, trabajo/activar-sesion-05-motor): en ese tramo RN-035 retira la orden sin llenar
+      y RN-037 no deja colocar ni recolocar ninguna; en el limite, la sesion nueva ya coloca
+    argumentos: [anclaje, antelacion]
+    fuente: reloj
+    cita: ev-v16-002248-08e9600f
+    literal: Si está abierta o todavía no se ha llenado la orden Un minuto antes
   alcanza_nivel:
     descripcion: >-
       el precio llega al nivel marcado: la ultima vela de M1 cerrada lo toca, aunque sea solo con
@@ -200,8 +211,14 @@ predicados:
       encima si el sesgo es alcista, por debajo si es bajista. Su operativa esta en el otro: por
       debajo en alcista (ev-v1-001306, v1 0:13:06) y por encima en bajista (ev-v3-001725, v3 0:17:25,
       sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de 0:15:08, no por la frase citada).
-      Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader
-    argumentos: [que, sentido]
+      Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader.
+      `caja` (caja_lado_de_ruido, A-50; desde el 2026-10-26, trabajo/activar-sesion-05-motor) dice
+      que parte de la caja se compara con el nivel tomado: `solo_el_0`, la entrada, lo de siempre;
+      `caja_entera`, el 0 y el 1, y una caja a caballo del nivel no es ruido (sesion 5, S-12b,
+      ev-v15-010451-5b123278: el 0 en la linea o por encima «es indiferente»; que haga falta la
+      caja ENTERA del lado de ruido es LECTURA DEL CONSULTOR). El 0 justo en la linea no es ruido
+      con ninguna de las dos
+    argumentos: [que, sentido, caja]
     lado_de_ruido: {alcista: por_encima, bajista: por_debajo}
     notas: >-
       `sentido` es una LIGADURA del arbol -RN-005 ata S al valor de `sesgo`- y la guardia rechaza
@@ -948,36 +965,46 @@ reglas:
     estado: VIGENTE
 
   - id: RN-035
-    titulo: la orden que sigue pendiente al abrir otra sesion, o al llegar ventana_fin, se retira
+    titulo: >-
+      la orden que sigue sin llenar se retira un minuto antes de que termine su vela H4, y la
+      que quede al abrir otra sesion o al llegar ventana_fin tambien
     cuando: >-
-      abre una sesion operativa y queda una orden de la sesion anterior sin llenar, o la hora de
-      pared, en el reloj que dice reloj_sesiones, alcanza ventana_fin con una orden sin llenar
+      a la vela H4 en curso -en la rejilla de anclaje_h4- le queda cierre_h4_antelacion o menos
+      para terminar y todavia no ha terminado, con una orden sin llenar; o abre una sesion
+      operativa y queda una orden de la sesion anterior sin llenar; o la hora de pared, en el reloj
+      que dice reloj_sesiones, alcanza ventana_fin con una orden sin llenar
     entonces: >-
       se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario, y
       al fin de la ventana no queda ninguna orden viva
-    parametros: [orden_pendiente_al_abrir_sesion, ventana_fin, reloj_sesiones]
-    cita: fb-2026-10-04-sesion-04-45e624c5
-    literal: >-
-      sí, se quita, porque siempre se va a ir actualizando la orden, como te digo o sea, no va a
-      haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario
+    parametros:
+      [orden_pendiente_al_abrir_sesion, ventana_fin, reloj_sesiones, anclaje_h4,
+       cierre_h4_antelacion]
+    cita: fb-2026-10-23-sesion-05-1526aa39
+    literal: Si está abierta o todavía no se ha llenado la orden Un minuto antes
     decision: ADR-0066
     notas: >-
-      LA CITA ES EL REGISTRO DE S-5 DESDE EL 2026-10-12 (trabajo/activar-sesion-04-motor,
-      decision 5 del consultor; mismo precedente que ADR-0060 §6): la regla hace en sus dos ramas
-      lo que el trader dijo. Hasta entonces era fb-2026-09-29-sesion-03-5021677e, la independencia
-      de las sesiones («cada uno es un mundo diferente», A-46 RESUELTA), que sostenia el valor
-      provisional y sigue en las notas.
-      DESDE EL 2026-10-12 LA REGLA TAMBIEN RETIRA A ventana_fin: `alcanza_hora` sobre
-      reloj_sesiones, la misma puerta que la segunda rama de RN-002, en el instante que el trader
-      confirmo: sus palabras son «no va a haber órdenes que a lo mejor se pueden tomar a las 3 o
-      fuera de horario» (la cita), y «se quita tanto a las 11 como a las 3» es la frase del
-      consultor a la que contesto «Exacto» (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es
-      frase del consultor y no se fija. La cancelacion del cableado al terminar el dia (ADR-0053 §6) se queda como red de
-      seguridad y no encuentra nada (tests/unit/test_rn035_ventana_fin.py). HUECO QUE NO SE
-      ARREGLA AQUI, congelado con un test: una orden pendiente puede llenarse en el ultimo minuto
-      de la H4 [fin-1, fin), despues de que RN-002 cierre en el evento fin-1, tanto a las 11 como a
-      ventana_fin; entonces se cierra en el evento del limite (ADR-0060 §5). La pregunta va a la
-      sesion 5.
+      LA CITA ES EL CORRECT DE LA SESION 5 DESDE EL 2026-10-26 (S-22, v16 0:22:48,
+      ev-v16-002248-08e9600f; rama trabajo/activar-sesion-05-motor): al llegar la hora de cerrar,
+      la orden sin llenar se quita un minuto antes, igual que se cierra la operacion abierta (lo
+      dice como «otra», pero es la b). El minuto es cierre_h4_antelacion sobre la rejilla de
+      anclaje_h4, la misma de RN-002, y SIN el evento del propio limite, que ya es de la sesion
+      siguiente (`en_el_ultimo_tramo_h4`). La nota del item lo situa en ventana_fin; que valga
+      tambien a las 11 es LECTURA DEL CONSULTOR («siempre», y ev-v16-002323-515b9da4 nombra las 11
+      y las 3 para no poner ordenes). Las dos ramas de antes -al abrir la sesion y a ventana_fin-
+      se quedan como red: con la primera rama, en ese instante ya no hay nada que retirar
+      (tests/unit/test_ultimo_minuto.py). El hueco de la orden que se llenaba en el ultimo minuto
+      queda cerrado: ya no esta pendiente cuando empiezan sus ticks; lo que se llene antes lo
+      cierra RN-002 en el evento siguiente (ADR-0060 §5). Que en ese minuto no se coloque ni se
+      recoloque ninguna orden es RN-037. Hasta entonces la cita era fb-2026-10-04-sesion-04-45e624c5
+      (S-5 de la sesion 4: «no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de
+      horario»), y antes fb-2026-09-29-sesion-03-5021677e, la independencia de las sesiones
+      («cada uno es un mundo diferente», A-46 RESUELTA), que sostenia el valor provisional.
+      DESDE EL 2026-10-12 (trabajo/activar-sesion-04-motor, decision 5 del consultor) LA REGLA
+      TAMBIEN RETIRA A ventana_fin: `alcanza_hora` sobre reloj_sesiones, la misma puerta que la
+      segunda rama de RN-002, en el instante que el trader confirmo en la sesion 4; «se quita tanto
+      a las 11 como a las 3» es la frase del consultor a la que contesto «Exacto»
+      (SESION-04-EXTRACCION.md §3.6). La cancelacion del cableado al terminar el dia (ADR-0053 §6)
+      se queda como red de seguridad y no encuentra nada (tests/unit/test_rn035_ventana_fin.py).
       NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066), PROVISIONAL: que hace el
       trader con una orden sin llenar al acabar la sesion no lo dijo -el corte de audio de v9
       0:28:49-0:29:53 cae en esa respuesta- y es la pregunta 5 de la sesion 4 (A-30 y A-39). La
@@ -992,11 +1019,16 @@ reglas:
       siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5,
       ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39,
       fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida
-      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija.
+      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» era entonces frase del consultor, y en la
+      sesion 5 lo dijo el trader (arriba). La retirada un minuto antes se hace segun
+      orden_pendiente_al_abrir_sesion (con se_retira, el valor vigente, se retira; con
+      sigue_hasta_ventana_fin la regla dispararia sin retirar), como dice el recuadro de ADR-0060
+      §5 (orden de cierre del consultor del 2026-10-27)
     forma:
       cuando:
         todos_de:
           - cualquiera_de:
+              - en_el_ultimo_tramo_h4: {anclaje: anclaje_h4, antelacion: cierre_h4_antelacion}
               - abre_sesion_operativa: {}
               - alcanza_hora: {hora: ventana_fin, reloj: reloj_sesiones}
           - hecho: orden_limite_pendiente
@@ -1005,6 +1037,39 @@ reglas:
         hace:
           - retirar_orden_limite: {de: ORDEN, segun: orden_pendiente_al_abrir_sesion}
     clase: disparador
+    estado: VIGENTE
+
+  - id: RN-037
+    titulo: en el ultimo minuto antes de las 11 o de las 3 no se pone ninguna orden
+    cuando: >-
+      a la vela H4 en curso -en la rejilla de anclaje_h4- le queda cierre_h4_antelacion o menos
+      para terminar y todavia no ha terminado
+    entonces: no se coloca ni se reubica ninguna orden
+    parametros: [anclaje_h4, cierre_h4_antelacion]
+    cita: ev-v16-002323-515b9da4
+    literal: No se pone ninguna orden En el último minuto antes de las 11 o de las 3
+    notas: >-
+      NACE el 2026-10-26 (sesion 5, S-22, v16 0:23:23; rama trabajo/activar-sesion-05-motor) de
+      lo que el item afirma: si la orden se llena en el ultimo minuto la cierra enseguida, y en el
+      ultimo minuto antes de las 11 o de las 3 no pone ninguna orden (sus palabras, en el
+      literal). Cita el item directamente, como RN-005. Es una gate
+      sobre abrir_operacion, el efecto de colocar_orden_limite (RN-015): en [fin -
+      cierre_h4_antelacion, fin) de cada vela H4 de la ventana, sobre la rejilla de anclaje_h4 y sin
+      el evento del limite (`en_el_ultimo_tramo_h4`, el mismo predicado con el que RN-035 retira
+      la pendiente), RN-015 no coloca y la recolocacion de RN-006 -que cancela y vuelve a colocar
+      por RN-011 y RN-015- tampoco; en el evento del limite, que es el primer cierre de la sesion
+      siguiente, se coloca. Va aparte de RN-035 y no dentro de ella porque las gates se evaluan
+      antes que los disparadores en cada vuelta del evento: un `prohibe` dentro de un disparador
+      llegaria tarde si otro disparador anterior en el desempate ya hubiera colocado
+      (ACTIVAR-SESION-05-MOTOR.md §0.b.7). Lo que ya esta lleno al llegar ese minuto lo cierra
+      RN-002 (ADR-0060 §5)
+    forma:
+      cuando:
+        todos_de:
+          - en_el_ultimo_tramo_h4: {anclaje: anclaje_h4, antelacion: cierre_h4_antelacion}
+      entonces:
+        prohibe: [abrir_operacion]
+    clase: gate
     estado: VIGENTE
 
   - id: RN-003
@@ -1229,7 +1294,19 @@ reglas:
       (trabajo/activar-sesion-05, respuesta a la PARADA, punto 0). CONFIRMADO EN LA SESION 5
       (S-9, fb-2026-10-23-sesion-05-bd88993f, ev-v15-004448-aac87b77): cuando hay varias liquidez
       de M15 «se da prioridad pues a la liquidez más reciente», sin mirar H1 ni H4, que es la que
-      esta regla toma (A-24, DECIDIDA por ADR-0045, sigue DECIDIDA); reserva: «por lo general»
+      esta regla toma (A-24, DECIDIDA por ADR-0045, sigue DECIDIDA); reserva: «por lo general».
+      DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor, ADR-0084) LA SEGUNDA MITAD DE A-35
+      LA HACE EL MOTOR: si el precio pasa el nivel de M15 solo con la mecha y vuelve, el nivel
+      pasa a esa mecha («se actualiza el de la mecha», ev-v15-000553-9d95178a), segun
+      liquidez_m15_mecha_que_vuelve (DEFAULT_AMBIGUOUS en cualquier_mecha, LECTURA DEL CONSULTOR
+      bajo A-35: la mecha de la vela contraria y la de cualquier M1 posterior; la sesion 6
+      pregunta cual). El nivel se congela en cuanto una M1 lo cruza con
+      liquidez_m15_criterio_toma, que es lo que esta regla llama tomar (DECISION DEL CONSULTOR,
+      respuesta a la PARADA de esa rama, punto 1; no sale de ningun item): asi «lo tiene que pasar
+      con cuerpo» de la sesion 4 (ev-v10-012456-9dc1d221) y «se actualiza el de la mecha» de la 5
+      hablan de dos cosas, cuando queda TOMADO y que nivel se usa mientras no lo este. Lo de «no
+      se tapa con un parametro provisional» de estas notas lo enmienda ADR-0084 en ADR-0045: el
+      mecanismo lo dijo el trader; el valor solo elige su alcance. A-35 sigue ABIERTA
     forma:
       cuando:
         todos_de:
@@ -1256,7 +1333,7 @@ reglas:
       el precio se desarrolla por encima de la liquidez de M15 en sesgo alcista, o por debajo de ella
       en sesgo bajista
     entonces: no hay entrada
-    parametros: []
+    parametros: [caja_lado_de_ruido]
     cita: ev-v3-001725-bca9714b
     literal: >-
       la operativa está por encima no por debajo todo lo que haya por debajo es ruido
@@ -1286,13 +1363,25 @@ reglas:
       la frase de la sesion 3 que decia lo contrario de una compra («tiene
       que ser todo por encima», ev-v9-004919-c6bfb3ee) recibe un CORRECT
       (fb-2026-10-23-sesion-05-a42c72dd). Lo que queda a caballo del nivel es A-50 (S-12b),
-      ABIERTA; reserva: la linea de la transcripcion mezcla la pregunta leida y la respuesta
+      ABIERTA; reserva: la linea de la transcripcion mezcla la pregunta leida y la respuesta.
+      DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor) LA FORMA LEE caja_lado_de_ruido
+      (DEFAULT_AMBIGUOUS en caja_entera bajo A-50, sin registro): el trader dijo en S-12b que si
+      el 0 queda justo en la linea o por encima en una compra «es indiferente», que lo importante
+      es validar el punto de breaker (ev-v15-010451-5b123278), y eso descarta mirar solo el 0; que
+      la caja se descarte solo si queda ENTERA del lado de ruido es LECTURA DEL CONSULTOR (se
+      deduce de su ejemplo, SESION-05-EXTRACCION.md §3.3, fuera del item). Con `solo_el_0`, lo de
+      antes. El 1 que se mira es el de la zona del punto, el mismo que llevara la orden
+      (engine/zonas.py, ACTIVAR-SESION-05-MOTOR.md §0.b.6). A-50 sigue ABIERTA y la sesion 6 lo
+      confirma con dos dibujos
     forma:
       cuando:
         todos_de:
           - hecho: sesgo
             liga: S
-          - se_desarrolla_en_el_lado_de_ruido: {que: liquidez_m15, sentido: S}
+          - se_desarrolla_en_el_lado_de_ruido:
+              que: liquidez_m15
+              sentido: S
+              caja: caja_lado_de_ruido
       entonces:
         prohibe: [abrir_operacion]
     clase: gate
@@ -1362,8 +1451,21 @@ reglas:
       DESDE EL 2026-09-29 (sesion 3, E-3; fb-2026-09-29-sesion-03-ffab23dc,
       ev-v9-013021-ea0db73a): una vela casi plana, sin color claro, «cuenta como si no
       existiera», y sobre ella no se traza punto de breaker. El trader no dio el umbral de «casi
-      plana» («en EURUSD muy rara vez»). DESALINEADO CON EL MOTOR: el mapeo de M1 no trata esas
-      velas aparte; hacen falta el umbral y una rama de codigo.
+      plana» («en EURUSD muy rara vez»).
+      DESDE EL 2026-10-26 (sesion 5, S-24 y S-8; rama trabajo/activar-sesion-05-motor, ADR-0085)
+      CASI PLANA ES CUERPO CERO: «tiene que ser cero puntos … plana totalmente porque estas velas
+      pues pueden servir también como trazo a punto breaker» (ev-v16-002841-8cfe382a), CORRECT
+      sobre el item de la sesion 4 que decia «1 o 2 puntos» entre comillas
+      (fb-2026-10-23-sesion-05-a9e4f879 sobre ev-v10-014310-2296423b; va sobre la evidencia porque
+      esta regla ya tiene un CORRECT vivo); y «las velas sin cuerpo pues no cuentan», sean una o
+      tres, en compra y en venta (fb-2026-10-23-sesion-05-72c9a9e8, CONFIRM sobre esta regla,
+      ev-v15-003959-5898c61e). EL MOTOR LO HACE EN M1 (ADR-0085; domain/pivotes_m15.py y
+      domain/estructura_m1.py): la vela de cuerpo cero no corta la racha, no es contraria, no forma
+      pivote, no entra en el extremo del punto y no cuenta como alternancia en el retroceso
+      (ev-v16-000851-f5ae3b6f). Ni cifra ni parametro de umbral: cuerpo cero es cierre igual a la
+      apertura (ADR-0002). A la sesion 6: si se miran las mechas de una vela sin cuerpo (hoy
+      cuentan donde cuentan, decision del consultor) y las velas de 1 o 2 puntos, que aqui siguen
+      siendo de su color aunque ev-v16-000851 las meta en el mismo saco
     forma:
       cuando:
         todos_de:
@@ -1909,7 +2011,8 @@ reglas:
       la perdida acumulada desde el corte que marca reloj_dia_riesgo -la medianoche civil en
       huso_operativa, que es tambien la de la firma- alcanza perdida_maxima_diaria sobre
       base_calculo_perdida_diaria, o perdida_maxima_semanal sobre base_calculo_perdida_semanal
-    entonces: se deja de operar hasta el corte siguiente
+    entonces: >-
+      se deja de operar hasta el corte siguiente y se retira la orden pendiente que quede
     parametros:
       - perdida_maxima_diaria
       - base_calculo_perdida_diaria
@@ -1953,8 +2056,12 @@ reglas:
       (ACTIVAR-SESION-05.md §0.b.3). El reloj del reinicio sigue UNKNOWN: el motor usa el corte del
       perfil y lo marca SUPUESTO. A-44 SIGUE ABIERTA y bloqueante; fijar los parametros con ella
       abierta es una DESVIACION declarada de la skill activar-sesion por orden del consultor
-      (respuesta a la PARADA, puntos 0 y 1). LO QUE ESTA REGLA SIGUE SIN HACER: no retira la orden
-      pendiente al llegar al tope (RN-036 si lo hace): rama de motor
+      (respuesta a la PARADA, puntos 0 y 1). DESDE EL 2026-10-26 (rama
+      trabajo/activar-sesion-05-motor, ADR-0086) ESTA REGLA TAMBIEN RETIRA LA ORDEN PENDIENTE que
+      quede al llegar al tope (`retirar_ordenes_pendientes`, la accion de RN-036): DECISION DEL
+      CONSULTOR con el modelo y el motivo de ADR-0077 §3 -el broker la llenaria por ticks mientras
+      el trader ya ha dejado de operar-, no una respuesta del trader; cierra el heredado 35 de
+      ACTIVAR-A35-A44.md §5.1. No lee nada mas ni cambia lo que cuenta
     decision: ADR-0027
     forma:
       cuando:
@@ -1966,6 +2073,7 @@ reglas:
         prohibe: [abrir_operacion]
         hace:
           - fijar: {hecho: detenido_por_tope, a: hasta_el_corte_siguiente}
+          - retirar_ordenes_pendientes: {}
     clase: gate
     estado: VIGENTE
 
@@ -1977,8 +2085,9 @@ reglas:
     entonces: >-
       se prohibe abrir operacion lo que queda del dia operativo (reloj_sesiones) y se retira la
       orden pendiente que quede; se vuelve en la primera sesion del dia siguiente
-      (racha_perdidas_reanudacion) con la racha intacta (racha_perdidas_reinicio = nunca), que solo
-      una ganadora pone a cero (racha_perdidas_corte)
+      (racha_perdidas_reanudacion) con la racha en cero (racha_perdidas_reinicio =
+      tras_la_detencion); mientras no se pare, la racha sigue de un dia a otro y solo una ganadora
+      la pone a cero (racha_perdidas_corte)
     parametros:
       - racha_perdidas_max
       - racha_perdidas_corte
@@ -2004,7 +2113,16 @@ reglas:
       novena no queda ninguna pendiente y la retirada es la red de seguridad. Que vale la racha tras la
       novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA PROVISIONAL DE LA SESION
       (ADR-0077 §5; la pregunta va a la sesion 5). Las 9 vienen de un 0,5 % de riesgo por
-      operacion, como el del bot (racha_perdidas_max)
+      operacion, como el del bot (racha_perdidas_max).
+      DESDE EL 2026-10-26 (sesion 5, S-21; rama trabajo/activar-sesion-05-motor) LA RACHA EMPIEZA
+      EN CERO AL DIA SIGUIENTE DE PARAR: «Pues al día siguiente Nuevamente en cero»
+      (ev-v16-002126-d2376f71; fb-2026-10-23-sesion-05-978be13f, CORRECT sobre
+      racha_perdidas_reinicio = tras_la_detencion, que supersede al `nunca` de la sesion 4). La
+      lectura provisional de ADR-0077 §5 queda sustituida (recuadro alli); mientras no se pare, la
+      racha sigue de un dia a otro, como dijo la sesion 4 (ev-v10-010804-5b6ad1a3, con su
+      reserva). A-51 sigue RESUELTA: no cambia lo que la cerro, solo la lectura que el ADR
+      declaraba provisional. Lo que esta regla cuenta y cuando detiene no cambia; engine/racha.py
+      pone la racha a cero en el primer instante del dia operativo siguiente a la detencion
     forma:
       cuando:
         cualquiera_de:

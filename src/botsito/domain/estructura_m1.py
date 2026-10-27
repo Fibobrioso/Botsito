@@ -48,6 +48,8 @@ from botsito.domain.pivotes_m15 import (
     ALTO,
     BAJO,
     CIERRE_VELA_CONTRARIA,
+    SIN_CUERPO_NO_CUENTA,
+    Pivote,
     color,
     pivotes_formados,
 )
@@ -119,10 +121,20 @@ def referencia_del_breaker(m1: Sequence[Vela], hasta: int, lado: str) -> int | N
     if hasta <= 0:
         return None
     instante = int(m1[hasta - 1].fin)
-    for p in reversed(pivotes_formados(m1, None, CIERRE_VELA_CONTRARIA, instante, hasta)):
+    for p in reversed(_pivotes_m1(m1, instante, hasta)):
         if p.lado == contrario:
             return p.nivel
     return None
+
+
+def _pivotes_m1(m1: Sequence[Vela], instante: int, n: int) -> list[Pivote]:
+    """Los pivotes de M1 formados con `m1[:n]`: `pivotes_formados` con `cierre_vela_contraria` y,
+    desde ADR-0085 (sesion 5, S-8 y S-19), con la vela sin cuerpo que NO corta la racha, no es
+    contraria, no forma pivote ni entra en el extremo (`sin_cuerpo = no_cuenta`). Solo aqui: los
+    datos de M15 no lo piden."""
+    return pivotes_formados(
+        m1, None, CIERRE_VELA_CONTRARIA, instante, n, sin_cuerpo=SIN_CUERPO_NO_CUENTA
+    )
 
 
 def bloque_de_origen(m1: Sequence[Vela], idx_breaker: int, lado: str) -> tuple[int, int] | None:
@@ -152,7 +164,7 @@ def zonas_de_control(m1: Sequence[Vela], desde: int, hasta: int, lado: str) -> i
         return 0
     instante = int(m1[hasta].fin)
     n = 0
-    for p in pivotes_formados(m1, None, CIERRE_VELA_CONTRARIA, instante, hasta + 1):
+    for p in _pivotes_m1(m1, instante, hasta + 1):
         if p.lado == sentido and int(p.contraria_inicio) > int(m1[primer_impulso].inicio):
             n += 1
     return n
@@ -197,7 +209,7 @@ def ultimo_punto_de_ruptura(
     if n <= 0:
         return None
     buscado = ALTO if signo == 1 else BAJO
-    for p in reversed(pivotes_formados(m1, None, CIERRE_VELA_CONTRARIA, int(m1[n - 1].fin), n)):
+    for p in reversed(_pivotes_m1(m1, int(m1[n - 1].fin), n)):
         if p.lado != buscado:
             continue
         ic = next((i for i in range(n) if int(m1[i].inicio) == int(p.contraria_inicio)), None)
@@ -251,7 +263,9 @@ def zona_posterior_completada(m1: Sequence[Vela], lado: str, criterio: str) -> i
     completa cuando una M1 posterior PASA ese punto con `criterio` («rompe el punto alto
     anterior con mecha», fb-2026-09-09-sesion-01-a456bc3f). Manda el ULTIMO punto formado, y
     la mecha de la propia vela contraria no cuenta: el punto existe desde su cierre, como en
-    `pivotes_m15`. Sin mirar al futuro: solo usa las velas dadas."""
+    `pivotes_m15`. Una vela sin cuerpo no corta la racha ni entra en el extremo (ADR-0085, la
+    misma geometria que el breaker; ADR-0061 §4). Sin mirar al futuro: solo usa las velas
+    dadas."""
     return _recorrer_zona_posterior(m1, lado, criterio)[0]
 
 
@@ -280,6 +294,10 @@ def _recorrer_zona_posterior(
         c = color(v)
         if c == signo:
             racha.append(v)
+            continue
+        if c == 0:
+            # ADR-0085 (sesion 5, S-8 y S-19): la vela sin cuerpo no corta la racha a favor, no es
+            # contraria y no entra en el extremo; su mecha si cuenta para pasar el punto (arriba)
             continue
         if c == -signo and racha:
             extremo = (

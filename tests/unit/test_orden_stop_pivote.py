@@ -64,6 +64,25 @@ def _serie(cierres: list[int]) -> list[Vela]:
     return velas
 
 
+def _sin_velas_sin_cuerpo(velas: list[Vela]) -> list[Vela]:
+    """La misma serie con cada vela sin cuerpo convertida en una verde de un punto de cuerpo
+    (cierra un punto por encima de su apertura, con la mecha de arriba un punto mas), sin mover
+    las demas: para comparar con el guion de CAJA-77 donde ADR-0085 no cambia nada."""
+    salida = []
+    for v in velas:
+        if v.cierre == v.abierta:
+            v = Vela(
+                v.inicio,
+                v.abierta,
+                Puntos(int(v.maxima) + 1),
+                v.minima,
+                Puntos(int(v.abierta) + 1),
+                1,
+            )
+        salida.append(v)
+    return salida
+
+
 def _registro(tmp_path: Path, **valores: str) -> Registro:
     """El registro real con los valores pedidos para los parametros de ADR-0064."""
     texto = PARAMETROS.read_text(encoding="utf-8")
@@ -72,6 +91,7 @@ def _registro(tmp_path: Path, **valores: str) -> Registro:
         "orden_stop_punto": "    valor: ultimo_pivote_m1\n",
         "caja_bloque": "    valor: r6\n",
         "caja_se_fija": "    valor: en_cada_cierre_m1\n",  # ADR-0074 (sesion 4, S-4)
+        "caja_lado_de_ruido": "    valor: caja_entera\n",  # A-50 (sesion 5, S-12b)
         "stop_fraccion_caja": '    valor: "0.8"\n',
     }
     for nombre, valor in valores.items():
@@ -125,17 +145,52 @@ def test_la_caja_de_r6_r4_y_r1() -> None:
     )
 
 
-@pytest.mark.parametrize("lado", [VENTA, COMPRA])
-def test_son_las_funciones_de_r5_y_r6_de_caja_77(lado: str) -> None:
-    """El productor usa lo que CAJA-77 midio: sobre series al azar, el punto y el 0 de R5, y el 1
-    de R6, R4 y R1, salen iguales que en scripts/bloque_de_la_caja.py."""
-    bc = _cargar("bloque_de_la_caja")
+def _series_al_azar() -> list[list[Vela]]:
     azar = random.Random(7)
+    series = []
     for _ in range(60):
         cierres = [1000]
         for _ in range(40):
             cierres.append(cierres[-1] + azar.randint(-6, 6))
-        velas = _serie(cierres)
+        series.append(_serie(cierres))
+    return series
+
+
+def _sin_cuerpo(velas: list[Vela]) -> bool:
+    return any(v.cierre == v.abierta for v in velas)
+
+
+@pytest.mark.parametrize("lado", [VENTA, COMPRA])
+def test_en_las_series_con_velas_sin_cuerpo_la_unica_diferencia_es_el_punto_de_adr_0085(
+    lado: str,
+) -> None:
+    """ADR-0085 (sesion 5, S-8): en M1 la vela sin cuerpo no corta la racha, no es contraria y no
+    entra en el extremo. El guion de CAJA-77 no se toca (reproduce lo que midio), asi que sobre
+    las series al azar CON velas sin cuerpo el punto del productor es el que el guion da sobre la
+    misma serie SIN ellas: la unica diferencia es esa. Respuesta del consultor a la PARADA de
+    trabajo/activar-sesion-05-motor, punto 2. En main el punto cambiaba en 9 de las 120 series."""
+    bc = _cargar("bloque_de_la_caja")
+    con = [velas for velas in _series_al_azar() if _sin_cuerpo(velas)]
+    assert con  # con pasos de -6 a 6, hay velas sin cuerpo en todas
+    for velas in con:
+        p = ultimo_punto_de_ruptura(velas, lado)
+        r5 = bc.r5([v for v in velas if v.cierre != v.abierta], lado)
+        assert (p is None) == (r5 is None)
+        if p is not None and r5 is not None:
+            assert p.nivel == r5[0]
+
+
+@pytest.mark.parametrize("lado", [VENTA, COMPRA])
+def test_son_las_funciones_de_r5_y_r6_de_caja_77(lado: str) -> None:
+    """El productor usa lo que CAJA-77 midio: sobre series al azar, el punto y el 0 de R5, y el 1
+    de R6, R4 y R1, salen iguales que en scripts/bloque_de_la_caja.py. Desde ADR-0085 (2026-10-26)
+    la comparacion es sobre series SIN velas sin cuerpo (las series al azar de siempre, con esas
+    velas sustituidas por una de un punto de cuerpo del color de la anterior): con ellas, el punto
+    del productor y el del guion se separan a proposito (el test de arriba)."""
+    bc = _cargar("bloque_de_la_caja")
+    for original in _series_al_azar():
+        velas = _sin_velas_sin_cuerpo(original)
+        assert not _sin_cuerpo(velas)
         p = ultimo_punto_de_ruptura(velas, lado)
         r5 = bc.r5(velas, lado)
         assert (p is None) == (r5 is None)
@@ -148,7 +203,7 @@ def test_son_las_funciones_de_r5_y_r6_de_caja_77(lado: str) -> None:
             del_lado = caja is not None and (
                 caja[1] > p.nivel if lado == VENTA else caja[1] < p.nivel
             )
-            assert uno == (caja[1] if del_lado else None), (bloque, cierres)
+            assert uno == (caja[1] if del_lado else None), (bloque, lado)
 
 
 # ---------------------------------------------------------------------------- el productor

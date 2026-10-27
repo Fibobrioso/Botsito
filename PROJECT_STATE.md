@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-05-motor
 
 ## Current Feature
-Ninguna rama abierta. trabajo/activar-sesion-05 cerrada en main el 2026-10-26 (stable/F38e-activar-sesion-05): la parte de spec de la sesión 5 activada (A-57 y A-32 RESUELTAS; A-35 y A-44 con valor y ABIERTAS); lo siguiente, la rama de motor (V; F de la Next Action; docs/plan/HOJA-DE-RUTA.md).
+trabajo/activar-sesion-05-motor, EN CURSO desde el 2026-10-26 (encargo docs/encargos/trabajo-activar-sesion-05-motor.md; informe docs/validation/ACTIVAR-SESION-05-MOTOR.md): los puntos de ACTIVAR-SESION-05.md §2 entran en la spec y en el motor por su régimen, con fase 0 y PARADA (V; R4.1).
 
 ## Stable Main State
 2c26fb2 · merge de `trabajo/activar-sesion-05` (tag `stable/F38e-activar-sesion-05`): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros y ABIERTAS (desviación declarada); cinco CONFIRM y un CORRECT; spec 18.1.9; el arnés y el visor a secas; lo que pide motor en ACTIVAR-SESION-05.md §2 y la lista de la sesión 6 en §3. Sobre `stable/F38d-sesion-05` (baaf74b). Informe docs/validation/ACTIVAR-SESION-05.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/activar-sesion-05 cerrada en main el 2026-10-26 (s
 2c26fb2 · merge: trabajo/activar-sesion-05, la parte de spec de la sesion 5 activada (A-57 y A-32 RESUELTAS, A-35 y A-44 con valor) y lo que va a motor y a la sesion 6 · tag stable/F38e-activar-sesion-05
 
 ## Tests Currently Passing
-1698 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1730 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -29,7 +29,7 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La rama de motor de V; después la re-corrida del arnés y la sesión 6; R6a en los huecos.
+F. La re-corrida del arnés (ADR-0070 §3); después la sesión 6; R6a en los huecos.
 
 
 
@@ -45,11 +45,11 @@ J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de 
 
 A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2 entre el 26 y el 30 de octubre, con el script 1.1 compilado antes; la 3 después del 1 de noviembre. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza` (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
 
-K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos.
+K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos. Y las dos negativas de ACTIVAR-SESION-05-MOTOR.md §0.d (pytest desde C:/cm/, encadenadas).
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Activar la sesión 5 (R4.1). HECHA LA PARTE DE SPEC en `trabajo/activar-sesion-05` (ACTIVAR-SESION-05.md): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros y ABIERTAS, desviación declarada; el arnés corre sin ningún `--diagnostico-*`; cinco CONFIRM y un CORRECT; S-11 «en parte», sin registro, va a la sesión 6. QUEDA `trabajo/activar-sesion-05-motor` con los diez puntos de ACTIVAR-SESION-05.md §2. Después, la re-corrida del arnés con `--simular` sobre toda la construcción (ADR-0070 §3) y la sesión 6 (R4.2) con la lista de §3.
+V. Activar la sesión 5 (R4.1). HECHAS spec y motor (`trabajo/activar-sesion-05` y `trabajo/activar-sesion-05-motor`, este tag: ADR-0084 a 0086, RN-037; A-35 y A-50 con lectura del consultor, ABIERTAS). QUEDA la re-corrida del arnés con `--simular` sobre toda la construcción (ADR-0070 §3; diff contra CABLEADO-SIMULADOR-LINEA-BASE.txt, ACTIVAR-A35-A44.md §5.1); después la sesión 6 (R4.2).
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
@@ -101,6 +101,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) lo comprueban un test estático textual (`globales_sin_reiniciar`, `tests/contract/test_capa_mt5.py`) y la corrida de la demo: el script de pruebas no puede provocar un `REASON_CHARTCHANGE` (EA-CONEXION.md §10).
 - La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) junto a una vía de salida, ni cuando la vía de salida es un cliente de Python fuera de la lista cerrada del consultor (`aiohttp`); no ve como bucle una espera hecha a nivel de agente (`ScheduleWakeup`, `CronCreate`) con una consulta suelta en cada despertar; y no lee el código bajo `tests/` que se le pasa a pytest (`_analizar_pytest`): un test que esperase a la CI pasaría. Riesgos residuales declarados en trabajo/guardia-ci (GUARDIA-CI.md §5.2 y §9; los fijan `test_riesgo_residual_la_mencion_a_trozos_no_se_ve` y `test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa`); el hueco de `tests/` es anterior a la rama. Para el carril de guardias.
 - Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome leen un fichero local o una página `file://` fuera del matcher de la guardia: desde trabajo/guardia-ci están cerradas en `permissions.deny` de `.claude/settings.json` (GUARDIA-CI.md, PARADA 2). La regla fina, mirar sus rutas como un Read por si algún día hacen falta, va en su propia rama del carril de guardias, junto a K (el alias de la raíz).
+- ADR 0087 (S-15, no existe) sigue en los `ids-inexistentes` del encargo y del informe de trabajo/activar-sesion-05-motor; lo saca la rama que lo cree.
 - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
 - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) sigue ligada al escenario en que nació y sus cierres cuentan en los cartuchos de aquel (zonas.py, `zona_del_punto` liga solo al crearla); ADR-0083 lo hace alcanzable y la fase 4 no lo midió: hace falta la traza por cierre (PUNTO-USADO.md §1.c y §4.f).
@@ -157,8 +158,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 47 (2026-10-25).
+— ninguna desde el Archivo 48 (2026-10-26).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 47 (2026-10-25).
+— ninguna desde el Archivo 48 (2026-10-26).

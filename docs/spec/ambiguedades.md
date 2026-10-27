@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.1.9` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.5.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
@@ -30,9 +30,9 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
-Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco? RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado» (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), contradice lo que hace el motor y queda para la rama de motor y la sesion 6. SIGUE ABIERTA.
+Cuando marcas un alto o un bajo en M15 como liquidez, ¿en qué momento lo das por bueno? ¿Y qué haces si después el precio lo supera un poco? RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 0:04:47-0:05:56, S-3): la primera mitad es «en cuanto la vela roja de después ya cerrado» (ev-v15-000447-6699c708; la que cierra sin cuerpo no cuenta, ev-v15-000530-234d4a81) y fija liquidez_m15_pivote_formado = cierre_vela_contraria (fb-2026-10-23-sesion-05-03449065); la segunda, «se actualiza el de la mecha» (ev-v15-000553-9d95178a), la hace el motor desde el 2026-10-26 (ADR-0084, trabajo/activar-sesion-05-motor) con el selector liquidez_m15_mecha_que_vuelve = cualquier_mecha, LECTURA DEL CONSULTOR: el trader no eligio entre la mecha de la vela contraria que forma el alto (su ejemplo) y la de una vela posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. SIGUE ABIERTA.
 
-Afecta a: `liquidez_m15_pivote_formado`.
+Afecta a: `liquidez_m15_pivote_formado`, `liquidez_m15_mecha_que_vuelve`.
 
 ### A-43 · si una liquidez de M15 tomada antes de las 7 cuenta para operar después · pregunta
 
@@ -60,7 +60,9 @@ Afecta a: `caja_se_fija`.
 
 ### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
 
-Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa», y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al punto mas alto y que todo tiene que desarrollarse mas alla del nivel.
+Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa», y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al punto mas alto y que todo tiene que desarrollarse mas alla del nivel. RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 1:04:51-1:05:28, S-12b): si el 0 queda justo en la linea del nivel tomado, o por encima en una compra, «es indiferente» y lo importante es validar bien el posible punto de breaker (ev-v15-010451-5b123278); en su ejemplo el 0 queda del lado de ruido y la caja vale. Desde el 2026-10-26 (trabajo/activar-sesion-05-motor) RN-005 lee caja_lado_de_ruido = caja_entera, DEFAULT_AMBIGUOUS bajo esta ambiguedad y LECTURA DEL CONSULTOR (que haga falta la caja ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). SIGUE ABIERTA: la sesion 6 lo confirma con dos dibujos.
+
+Afecta a: `caja_lado_de_ruido`.
 
 ### A-53 · la orden sin llenar cuando el precio toma otra liquidez de M15 · pregunta
 
@@ -254,7 +256,7 @@ Afecta a: `orden_limite_nace`.
 
 ### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
 
-Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:54:27-0:54:51): se quita, a las 11 y a las 3, «porque siempre se va a ir actualizando la orden [...] no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e). orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que sostiene el cierre es la razon del trader. «Un minuto antes» es frase del consultor y no se fija. A ventana_fin la retirada la hace hoy el cableado al terminar el dia (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035 va a trabajo/activar-sesion-04-motor.
+Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:54:27-0:54:51): se quita, a las 11 y a las 3, «porque siempre se va a ir actualizando la orden [...] no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e). orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que sostiene el cierre es la razon del trader. «Un minuto antes» era entonces frase del consultor; en la sesion 5 (S-22) lo dijo el trader y RN-035 lo cita (fb-2026-10-23-sesion-05-1526aa39; rama trabajo/activar-sesion-05-motor, orden de cierre del consultor del 2026-10-27). A ventana_fin la retirada la hacia el cableado al terminar el dia (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035, hecha en trabajo/activar-sesion-04-motor.
 
 Afecta a: `orden_pendiente_al_abrir_sesion`.
 

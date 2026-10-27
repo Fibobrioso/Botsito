@@ -108,6 +108,10 @@ ORDEN_SE_MUEVE = "se_mueve"
 ORDEN_SE_RETIRA = "se_retira"
 HECHO_DETENIDO = "detenido_por_cartuchos"
 TERMINADO_POR_GANANCIA = "ganancia"
+# Las opciones de `caja_lado_de_ruido` (A-50): que parte de la caja se compara con el nivel tomado
+# en RN-005. DEFAULT_AMBIGUOUS en `caja_entera`, lectura del consultor (sesion 5, S-12b).
+SOLO_EL_0 = "solo_el_0"
+CAJA_ENTERA = "caja_entera"
 LOOKBACK_M1 = (
     240  # minutos de M1 anteriores a la toma con los que se busca la referencia del breaker
 )
@@ -535,8 +539,23 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         if e is None or toma is None:
             return Resultado(Tri.NO)
         # RN-005: la operativa alcista va por debajo de la liquidez tomada, la bajista por encima;
-        # una zona al otro lado se desarrolla en el ruido
-        ruido = e.entrada > toma["nivel"] if e.lado == COMPRA else e.entrada < toma["nivel"]
+        # una zona al otro lado se desarrolla en el ruido. Que parte de la caja se mira lo dice
+        # `caja` (caja_lado_de_ruido, A-50): `solo_el_0`, la entrada (lo de siempre);
+        # `caja_entera`, el 0 Y el 1 (el extremo): si el 0 queda del lado de ruido pero el 1 no,
+        # la caja esta a caballo y no se descarta (sesion 5, S-12b, ev-v15-010451-5b123278; que
+        # haga falta la caja ENTERA es LECTURA DEL CONSULTOR). Estrictamente al otro lado: el 0
+        # justo en la linea es «indiferente» para el trader, y aqui no es ruido
+        caja = registro.opcion(str(args["caja"]))
+        if caja not in (SOLO_EL_0, CAJA_ENTERA):
+            raise ValueError(f"{args['caja']} = {caja!r}: lectura sin contrato")
+        nivel = int(toma["nivel"])
+
+        def del_lado_de_ruido(precio: int) -> bool:
+            return precio > nivel if e.lado == COMPRA else precio < nivel
+
+        ruido = del_lado_de_ruido(e.entrada)
+        if caja == CAJA_ENTERA:
+            ruido = ruido and del_lado_de_ruido(e.extremo)
         return Resultado(Tri.SI if ruido else Tri.NO)
 
     def la_orden_nace_antes_del_esquema(
@@ -572,6 +591,8 @@ __all__ = [
     "terminar",
     "AL_APARECER_PUNTO_DE_BREAKER",
     "AL_DARSE_EL_ESQUEMA",
+    "CAJA_ENTERA",
+    "SOLO_EL_0",
     "LADO_ENTRADA",
     "PARAMETRO_A21",
     "EN_CADA_CIERRE_M1",

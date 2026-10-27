@@ -312,7 +312,13 @@ class Preparador:
         h4_todas = agregar(list(m1_mes), MINUTOS_H4, anclaje)
         sesiones = tuple(Sesion(s.nombre, s.desde, s.hasta) for s in self.config.sesiones)
         datos = DatosMercado(
-            h4_todas, agregar(list(m1_mes), MINUTOS_M15, anclaje), m1_mes, self.lectura_pivote
+            h4_todas,
+            agregar(list(m1_mes), MINUTOS_M15, anclaje),
+            m1_mes,
+            self.lectura_pivote,
+            # ADR-0084: la mecha que vuelve y el criterio de la toma, los mismos que el arnes
+            self.registro.opcion("liquidez_m15_mecha_que_vuelve"),
+            self.registro.opcion("liquidez_m15_criterio_toma"),
         )
         reloj = self.reloj
         mercado = DiaDeMercado(dia, self.huso, sesiones, datos, reloj=reloj)
