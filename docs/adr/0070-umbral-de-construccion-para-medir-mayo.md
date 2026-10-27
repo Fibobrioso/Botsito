@@ -95,7 +95,9 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > vigente desde esa rama). Por el punto 4, se sigue construyendo y mayo no se toca. Con la cuenta
    > arrastrada, el bot deja de colocar desde el 2026-01-20 por RN-032 (la pérdida total más el riesgo
    > de la siguiente operación llega al límite de la firma), con la cuenta EN_CURSO;
-   > RECORRIDA-CONSTRUCCION.md §2.2.
+   > RECORRIDA-CONSTRUCCION.md §2.2. 2 de las 53 llenadas de esta corrida salen del respaldo M1 con la
+   > vela que colocó la orden, contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8); sin ellas la
+   > precisión sería 13,7 % y el veredicto sigue "no".
 
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
