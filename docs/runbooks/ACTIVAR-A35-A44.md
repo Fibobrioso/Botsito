@@ -215,8 +215,9 @@ Lo mismo si el trader responde a medias, con un ejemplo o en dos sentidos (`SESI
 > «Por sesion» sesión a sesión) y qué cambia por el motor o por la construcción más amplia (CONJUNTO,
 > «RN-003 al abrir», que es un agregado y no se parte por mes; el embudo; la simulación), en
 > RECORRIDA-CONSTRUCCION.md §2.5. **Desviación declarada:** el `motor visor --caso` de este bloque
-> no se ejecutó en esa rama (encargo del consultor, «Autorización expresa»); los días que se abren
-> en el visor los elige el consultor en su PARADA 2.
+> no se ejecutó en esa rama (encargo del consultor, «Autorización expresa»; y su respuesta a la
+> PARADA 2, punto 1: el visor no se abre en esa rama, y en su lugar se midió sobre las salidas y los
+> ticks de los días dev, RECORRIDA-CONSTRUCCION.md §2.8).
 
 ```
 uv run botsito motor arnes --simular --salida arnes-activado.txt
