@@ -2005,7 +2005,8 @@ reglas:
       la perdida acumulada desde el corte que marca reloj_dia_riesgo -la medianoche civil en
       huso_operativa, que es tambien la de la firma- alcanza perdida_maxima_diaria sobre
       base_calculo_perdida_diaria, o perdida_maxima_semanal sobre base_calculo_perdida_semanal
-    entonces: se deja de operar hasta el corte siguiente
+    entonces: >-
+      se deja de operar hasta el corte siguiente y se retira la orden pendiente que quede
     parametros:
       - perdida_maxima_diaria
       - base_calculo_perdida_diaria
@@ -2049,8 +2050,12 @@ reglas:
       (ACTIVAR-SESION-05.md §0.b.3). El reloj del reinicio sigue UNKNOWN: el motor usa el corte del
       perfil y lo marca SUPUESTO. A-44 SIGUE ABIERTA y bloqueante; fijar los parametros con ella
       abierta es una DESVIACION declarada de la skill activar-sesion por orden del consultor
-      (respuesta a la PARADA, puntos 0 y 1). LO QUE ESTA REGLA SIGUE SIN HACER: no retira la orden
-      pendiente al llegar al tope (RN-036 si lo hace): rama de motor
+      (respuesta a la PARADA, puntos 0 y 1). DESDE EL 2026-10-26 (rama
+      trabajo/activar-sesion-05-motor, ADR-0086) ESTA REGLA TAMBIEN RETIRA LA ORDEN PENDIENTE que
+      quede al llegar al tope (`retirar_ordenes_pendientes`, la accion de RN-036): DECISION DEL
+      CONSULTOR con el modelo y el motivo de ADR-0077 §3 -el broker la llenaria por ticks mientras
+      el trader ya ha dejado de operar-, no una respuesta del trader; cierra el heredado 35 de
+      ACTIVAR-A35-A44.md §5.1. No lee nada mas ni cambia lo que cuenta
     decision: ADR-0027
     forma:
       cuando:
@@ -2062,6 +2067,7 @@ reglas:
         prohibe: [abrir_operacion]
         hace:
           - fijar: {hecho: detenido_por_tope, a: hasta_el_corte_siguiente}
+          - retirar_ordenes_pendientes: {}
     clase: gate
     estado: VIGENTE
 

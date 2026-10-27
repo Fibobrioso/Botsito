@@ -18,6 +18,7 @@ rutas_permitidas:
   - scripts/caja_77_exploratoria.py  # punto 10 del encargo
   - scripts/bloque_de_la_caja.py  # punto 10 del encargo
   - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/runbooks/ACTIVAR-A35-A44.md  # ampliado el 2026-10-26 (respuesta del consultor a la PARADA, punto 7): solo una NOTA al principio de §5.1
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md

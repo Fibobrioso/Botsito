@@ -25,7 +25,6 @@ Los ADR que el encargo manda escribir se citan aquí antes de existir; cada uno 
 el commit que lo crea:
 
 ```ids-inexistentes
-ADR-0086 — RN-020 retira la orden pendiente al llegar al tope (punto 8); aún no existe
 ADR-0087 — el ADR que S-15 tendría si existiera la frontera (punto 9); aún no existe
 ```
 
@@ -628,8 +627,43 @@ Commit 5: dd2042f.
 - **Trailer:** `Fuente: fb-2026-10-23-sesion-05-1526aa39, ev-v16-002248-08e9600f,
   ev-v16-002323-515b9da4`.
 
+### 1.6 Puntos 8 y 7 · RN-020 retira la orden pendiente al llegar al tope (ADR-0086; decisiones 7 y 8)
+
+Commit 6: 4855860 (el primer `make check` de ese commit salió en rojo por los dos tests de
+`test_vida_de_la_orden.py`, corregidos en el mismo commit, §1.5).
+
+- **ADR-0086** (`docs/adr/0086-rn020-retira-la-orden-pendiente-al-llegar-al-tope.md`): DECISIÓN
+  DEL CONSULTOR, sin ítem de evidencia, con el modelo y el motivo de RN-036 (ADR-0077 §3: el
+  bróker la llenaría por ticks mientras el trader ya ha dejado de operar); enmienda ADR-0077 §3
+  en «RN-020 no cambia» (recuadro allí y fila del índice); cierra el heredado 35. Sale de los dos
+  bloques `ids-inexistentes`; queda solo ADR-0087 (decisión 9: no se crea en esta rama).
+- **Spec.** RN-020: su `entonces` («y se retira la orden pendiente que quede»), la forma (`hace`
+  gana `retirar_ordenes_pendientes: {}`, la acción de RN-036, sin argumentos e idempotente) y sus
+  notas (en vez de «LO QUE ESTA REGLA SIGUE SIN HACER», que lo hace desde ADR-0086, por decisión
+  del consultor y no por el trader). No lee nada más ni cambia lo que cuenta; `decision` sigue en
+  ADR-0027 (el corte del día). `spec_version` 18.4.0 → 18.5.0 (una regla hace algo nuevo);
+  `spec manifest --escribir`, `spec docs --escribir`. Sin registro: nada que aplicar.
+- **Punto 7:** el contrato gana `docs/runbooks/ACTIVAR-A35-A44.md` (comentado en `contrato.yaml`;
+  `contrato_rama.py` en verde con 49 ficheros) para la NOTA al principio de §5.1 (el heredado 35,
+  hecho por ADR-0086; la re-corrida sigue pendiente); el cuerpo no se toca.
+- **Código:** ninguno: la acción existe desde ADR-0077 (`primitivas_broker.py`).
+- **Tests.** `tests/unit/test_rn020_retira_pendiente.py` (nuevo), por el cableado real y la spec
+  real: una orden colocada en MINUTO_ZONA que no se llena y un acumulador `perdida_dia` SINTÉTICO
+  (como los de `test_cableado`) que da SÍ desde un cierre posterior; RN-020 dispara en ese cierre,
+  fija `detenido_por_tope`, la orden queda CANCELADA en ese mismo instante, las peticiones son
+  colocar y cancelar, el cableado no encuentra nada al fin del día y RN-035 ya no tiene nada que
+  retirar a las 10:59; y la forma de RN-020 lleva la acción de RN-036. **Con el código de `main`**
+  (clon `C:/cm/main`): los dos fallan, `cancelada and 1894701599999 == ((31578245 * 60000) - 1)`
+  (la orden seguía viva hasta que RN-035 la retiraba a las 11) y `{'retirar_ordenes_pendientes':
+  {}} in [{'fijar': …}]` (la forma no la llevaba). **Con el de la rama:** 164 tests en verde entre
+  `test_rn020_retira_pendiente.py`, `test_preparar_a44.py`, `test_cableado.py`, `test_spec.py`,
+  `test_spec_fidelidad.py`, `test_huecos_motor.py`, `test_racha_perdidas.py` y
+  `test_diferencias_por_operacion.py`.
+- **`test_kit.py` no cambia**; A-44 sigue ABIERTA con sus parámetros como estaban.
+- **Trailer:** `Fuente: ADR-0086`.
+
 ## Estado
 
 EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida:
 se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1, el 2+3,
-el 4, el 5 y el 6.
+el 4, el 5, el 6 y el 8 (con el 7).

@@ -64,6 +64,9 @@ cero (`racha_perdidas_corte`).
   vuelve a decir lo mismo mientras dure la detención.
 - **RN-020 no cambia** (ni su prosa ni lo que hace con una orden pendiente, que es nada: heredado
   35, para cuando se active A-44).
+  > **Enmendada por ADR-0086 (2026-10-26, `trabajo/activar-sesion-05-motor`).** Con A-44 activada
+  > (sesión 5), RN-020 también retira la orden pendiente que quede al llegar al tope, con la misma
+  > acción y el mismo motivo que RN-036: decisión del consultor; el heredado 35 queda hecho.
 
 ### 4. «Día siguiente» es el día operativo del reloj de las sesiones
 
