@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.3.0` · hash `d6371fa4a21e…`
+`spec_version 18.3.1` · hash `15d59e1974ce…`
 
 111 en total: 99 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -86,7 +86,7 @@
 | `racha_perdidas_corte` | `ganadora` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-ecdd0572` | que cierre pone la racha a cero |
 | `racha_perdidas_max` | `9` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-b7040095` | perdidas seguidas tras las que no se opera mas ese dia |
 | `racha_perdidas_reanudacion` | `dia_siguiente` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-fa5ef0f6` | cuando se vuelve a operar tras la racha |
-| `racha_perdidas_reinicio` | `nunca` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-d1792021` | cuando se pone a cero la racha por calendario |
+| `racha_perdidas_reinicio` | `tras_la_detencion` | CONFIRMED | estrategia | `fb-2026-10-23-sesion-05-978be13f` | cuando se pone a cero la racha por calendario o tras la detencion |
 | `reentrada_tras_equal` | `si` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-060cd801` | si/no |
 | `reloj_dia_riesgo` | `civil_operativa` | CONFIRMED | prop_firm | `ADR-0027` | que reloj marca el corte del dia (y de la semana) de riesgo |
 | `reloj_sesiones` | `rejilla_h4` | CONFIRMED | ejecucion | `ADR-0069` | con que reloj del registro se cuentan la ventana operativa y sus sesiones |
@@ -601,9 +601,9 @@ Opciones: `dia_siguiente`, `semana_siguiente`, `sin_fecha`.
 
 ### `racha_perdidas_reinicio`
 
-si la racha de RN-036 se reinicia con el calendario (A-51; ADR-0077). `nunca`: «la racha sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte. Las otras dos opciones estan declaradas y sin contrato en el motor
+si la racha de RN-036 se reinicia con el calendario o tras parar (A-51; ADR-0077). `nunca`: «la racha sigue de un día a otro y una semana otra» (sesion 4, S-8, v10 1:08:04, ev-v10-010804-5b6ad1a3): solo la corta lo que diga racha_perdidas_corte; era la lectura PROVISIONAL de ADR-0077 §5 (tras la novena, la racha seguia en 9 y la decima volvia a detener). `tras_la_detencion`, DESDE EL 2026-10-26 (sesion 5, S-21, v16 0:21:26, ev-v16-002126-d2376f71; rama trabajo/activar-sesion-05-motor): «al día siguiente de parar por nueve pérdidas … Pues al día siguiente Nuevamente en cero»; mientras no se pare, la racha sigue de un dia a otro, que es lo que la sesion 4 dijo (con la reserva de ese item: la linea mezcla la lectura del consultor y la respuesta). Lo lee engine/racha.py por su nombre: al llegar el dia operativo siguiente al de la detencion, la racha empieza en cero. `fin_de_dia` y `fin_de_semana` estan declaradas y sin contrato en el motor
 
-Opciones: `nunca`, `fin_de_dia`, `fin_de_semana`.
+Opciones: `nunca`, `fin_de_dia`, `fin_de_semana`, `tras_la_detencion`.
 
 ### `reentrada_tras_equal`
 

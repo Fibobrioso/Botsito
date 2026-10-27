@@ -516,8 +516,53 @@ la nota de A-50 y aquí. Commit 2+3: 225ac79.
 - **`test_kit.py` no cambia**; A-50 sigue ABIERTA (no bloqueante, como estaba).
 - **Trailer:** `Fuente: ev-v15-010451-5b123278`.
 
+### 1.4 Punto 5 · S-21, la racha tras la detención (`racha_perdidas_reinicio` = `tras_la_detencion`; decisión 5)
+
+Commit 4: 5b44cd6.
+
+- **Registro:** `fb-2026-10-23-sesion-05-978be13f`, CORRECT sobre el parámetro
+  `racha_perdidas_reinicio` con valor `tras_la_detencion` y `--supersede
+  fb-2026-10-04-sesion-04-d1792021` (el RESOLVE_UNKNOWN de la sesión 4, valor `nunca`; sin el
+  supersede seguiría vivo sin que el parámetro lo cite); v16, `ev-v16-002126-d2376f71`,
+  0:21:26-0:21:35, recibido el 10-25; mismo id que en el clon de la fase 0. La opción
+  `tras_la_detencion` entra en el enum ANTES del `apply` (si no, el registro se rechaza).
+  `feedback apply --check`: «4 parametros; 1 cambian, 3 ya estaban», SOLO este; `feedback apply`
+  deja el parámetro CONFIRMED en `tras_la_detencion` citando el registro; `feedback pending`
+  sigue con los dos CORRECT sobre RN-003 de `main` y nada nuevo. A-51 sigue RESUELTA y sin
+  REOPEN: lo que cambia es la lectura que ADR-0077 §5 declaraba provisional (recuadro allí y fila
+  del índice). La descripción del parámetro dice las dos cosas (la sesión 4 con su reserva: la
+  línea mezcla la lectura del consultor y la respuesta). RN-036: su `entonces` («con la racha en
+  cero») y sus notas; lo que cuenta y cuándo detiene no cambia. `spec_version` 18.3.0 → 18.3.1
+  (un valor y una redacción); `spec manifest --escribir`, `spec docs --escribir`.
+- **Código:** `engine/racha.py`: `SeguidorRacha` admite `tras_la_detencion` junto a `nunca` (las
+  otras dos siguen sin contrato); `detenido` anota el día operativo en que ve la detención
+  (`detenido_en`) y, con `tras_la_detencion`, al llegar un día posterior -al consultar o al
+  registrar un cierre- pone la racha a cero (`_reiniciar_si_toca`). Con `nunca`, lo de antes. La
+  docstring del módulo lo cuenta.
+- **Tests** (`tests/unit/test_racha_perdidas.py`). CAMBIAN DE SENTIDO A PROPÓSITO:
+  `test_los_cuatro_parametros_son_del_trader_y_estan_confirmados` (el reinicio es
+  `tras_la_detencion` y cita el CORRECT), `test_nueve_perdidas_con_un_break_even_en_medio_detienen_hasta_el_dia_siguiente`
+  (al día siguiente la racha es 0 y una pérdida más no detiene) y
+  `test_el_cableado_detiene_el_noveno_dia_y_vuelve_a_operar_el_decimo` (el décimo día opera con la
+  racha en cero, su pérdida es la primera de otra racha, RN-036 no dispara y el informe dice «1
+  seguidas»). Nuevos: `test_el_reinicio_llega_aunque_nadie_consulte_entre_medias` (el primer
+  cierre del día siguiente ya cuenta desde cero), `test_ocho_perdidas_cruzan_de_un_dia_a_otro_y_la_novena_detiene`
+  (cinco y tres son ocho; la novena detiene su día; al siguiente, cero) y
+  `test_con_nunca_la_racha_sigue_en_nueve_y_la_decima_vuelve_a_detener` (la lectura provisional
+  de ADR-0077 §5 sigue teniendo contrato con `nunca`, probada con un seguidor hecho a mano).
+  `test_las_opciones_sin_contrato_se_niegan` NO cambia: `fin_de_dia` se sigue negando. Un valor
+  fuera del enum falla al leer el registro (`test_registro.py::test_enum_exige_opciones_y_el_valor_debe_estar_en_ellas`,
+  que ya existía, lo cubre para todo enum). **Con el código de `main`** (clon `C:/cm/main`): cinco
+  fallos, `AttributeError: module 'botsito.engine.racha' has no attribute
+  'REINICIO_TRAS_LA_DETENCION'`, `'SeguidorRacha' object has no attribute 'detenido_en'`,
+  `assert (10 == 1)` y `AssertionError: (10, datetime.date(2030, 1, 28))` en el cableado (el
+  décimo día volvía a detener). **Con el de la rama:** 88 tests en verde entre
+  `test_racha_perdidas.py`, `test_cableado.py` y `test_registro.py`.
+- **`test_kit.py` no cambia**: A-51 sigue en RESUELTAS.
+- **Trailer:** `Fuente: fb-2026-10-23-sesion-05-978be13f, ev-v16-002126-d2376f71`.
+
 ## Estado
 
 EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida:
-se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1, el 2+3
-y el 4.
+se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1, el 2+3,
+el 4 y el 5.

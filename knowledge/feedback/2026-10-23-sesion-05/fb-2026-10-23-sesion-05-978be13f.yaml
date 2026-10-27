@@ -1,0 +1,24 @@
+id: fb-2026-10-23-sesion-05-978be13f
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: parametro
+  id: racha_perdidas_reinicio
+accion: CORRECT
+respuesta_literal: Pues al día siguiente Nuevamente en cero, o sea, se sigue continuando
+registrado_por: 'Aleks · grabacion de la sesion 5, segunda parte (v16, 2026-10-25), version filtrada leida
+  por la sesion; activado por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05-motor, punto
+  5: CORRECT sobre el parametro, con supersede del RESOLVE_UNKNOWN de la sesion 4)'
+grabacion: Grabación de pantalla 2026-10-25 140140.mp4
+t0: 0:21:26
+t1: 0:21:35
+valor_resultante: tras_la_detencion
+supersede: fb-2026-10-04-sesion-04-d1792021
+notas: 'S-21 (RN-036; ADR-0077 §5): al dia siguiente de parar por 9 perdidas seguidas, la racha empieza
+  en cero, la opcion a (ev-v16-002126-d2376f71). Supersede a fb-2026-10-04-sesion-04-d1792021 (valor nunca):
+  mientras no se pare, la racha sigue de un dia a otro, que es lo que ADR-0077 ya hace con ev-v10-010804-5b6ad1a3,
+  con la reserva de ese item (la linea mezcla la lectura del consultor y la respuesta). A-51 sigue RESUELTA:
+  cambia la lectura que ADR-0077 §5 declaraba provisional'
+recibido_el: '2026-10-25'
+procedencia: trader_grabado

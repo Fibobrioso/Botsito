@@ -2019,8 +2019,9 @@ reglas:
     entonces: >-
       se prohibe abrir operacion lo que queda del dia operativo (reloj_sesiones) y se retira la
       orden pendiente que quede; se vuelve en la primera sesion del dia siguiente
-      (racha_perdidas_reanudacion) con la racha intacta (racha_perdidas_reinicio = nunca), que solo
-      una ganadora pone a cero (racha_perdidas_corte)
+      (racha_perdidas_reanudacion) con la racha en cero (racha_perdidas_reinicio =
+      tras_la_detencion); mientras no se pare, la racha sigue de un dia a otro y solo una ganadora
+      la pone a cero (racha_perdidas_corte)
     parametros:
       - racha_perdidas_max
       - racha_perdidas_corte
@@ -2046,7 +2047,16 @@ reglas:
       novena no queda ninguna pendiente y la retirada es la red de seguridad. Que vale la racha tras la
       novena -sigue en 9 y la decima vuelve a detener su dia- es LECTURA PROVISIONAL DE LA SESION
       (ADR-0077 §5; la pregunta va a la sesion 5). Las 9 vienen de un 0,5 % de riesgo por
-      operacion, como el del bot (racha_perdidas_max)
+      operacion, como el del bot (racha_perdidas_max).
+      DESDE EL 2026-10-26 (sesion 5, S-21; rama trabajo/activar-sesion-05-motor) LA RACHA EMPIEZA
+      EN CERO AL DIA SIGUIENTE DE PARAR: «Pues al día siguiente Nuevamente en cero»
+      (ev-v16-002126-d2376f71; fb-2026-10-23-sesion-05-978be13f, CORRECT sobre
+      racha_perdidas_reinicio = tras_la_detencion, que supersede al `nunca` de la sesion 4). La
+      lectura provisional de ADR-0077 §5 queda sustituida (recuadro alli); mientras no se pare, la
+      racha sigue de un dia a otro, como dijo la sesion 4 (ev-v10-010804-5b6ad1a3, con su
+      reserva). A-51 sigue RESUELTA: no cambia lo que la cerro, solo la lectura que el ADR
+      declaraba provisional. Lo que esta regla cuenta y cuando detiene no cambia; engine/racha.py
+      pone la racha a cero en el primer instante del dia operativo siguiente a la detencion
     forma:
       cuando:
         cualquiera_de:

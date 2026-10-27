@@ -73,10 +73,14 @@ def _seguidor(registro: Registro) -> SeguidorRacha:
 
 
 def test_los_cuatro_parametros_son_del_trader_y_estan_confirmados(registro: Registro) -> None:
-    """A-51 RESUELTA (sesion 4, S-8): los valores, con su fuente de feedback."""
+    """A-51 RESUELTA (sesion 4, S-8): los valores, con su fuente de feedback. El reinicio CAMBIA DE
+    SENTIDO A PROPOSITO el 2026-10-26 (sesion 5, S-21): de `nunca` a `tras_la_detencion`, por el
+    CORRECT fb-2026-10-23-sesion-05-978be13f."""
     assert registro.entero(racha.P_MAX) == TOPE
     assert registro.opcion(racha.P_CORTE) == racha.CORTE_GANADORA
-    assert registro.opcion(racha.P_REINICIO) == racha.REINICIO_NUNCA
+    assert registro.opcion(racha.P_REINICIO) == racha.REINICIO_TRAS_LA_DETENCION
+    fuente = registro.parametros[racha.P_REINICIO].fuente
+    assert fuente is not None and fuente.id == "fb-2026-10-23-sesion-05-978be13f"
     assert registro.opcion(racha.P_REANUDACION) == racha.REANUDACION_DIA_SIGUIENTE
     for nombre in (racha.P_MAX, racha.P_CORTE, racha.P_REINICIO, racha.P_REANUDACION):
         p = registro.parametros[nombre]
@@ -117,6 +121,10 @@ def test_las_opciones_sin_contrato_se_niegan(registro: Registro) -> None:
 def test_nueve_perdidas_con_un_break_even_en_medio_detienen_hasta_el_dia_siguiente(
     registro: Registro,
 ) -> None:
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-10-26 (sesion 5, S-21, ev-v16-002126-d2376f71): con
+    `tras_la_detencion` el dia siguiente a la detencion empieza en cero y una perdida mas NO
+    detiene. Hasta entonces (`nunca`, la lectura provisional de ADR-0077 §5) la racha seguia en 9
+    y la decima volvia a detener; esa lectura sigue probada abajo con un seguidor en `nunca`."""
     s = _seguidor(registro)
     dia = DIAS[0]
     for k in range(7):
@@ -128,15 +136,56 @@ def test_nueve_perdidas_con_un_break_even_en_medio_detienen_hasta_el_dia_siguien
     assert s.racha == 8 and not s.detenido(_ms(dia, 10), TOPE)
     s.registrar(_ms(dia, 11), "salto_el_stop", "activacion_sin_ruptura")  # la novena
     assert s.racha == 9 and s.detenido(_ms(dia, 11), TOPE) and s.detenido(_ms(dia, 13), TOPE)
-    # el dia siguiente se vuelve, con la racha intacta: `reinicio` = nunca
-    assert not s.detenido(_ms(DIAS[1], 8), TOPE) and s.racha == 9
-    # y la decima vuelve a detener el dia en que cae (ADR-0077 §5)
+    assert s.detenido_en == dia
+    # el dia siguiente se vuelve, con la racha EN CERO: `reinicio` = tras_la_detencion
+    assert not s.detenido(_ms(DIAS[1], 8), TOPE) and s.racha == 0 and s.detenido_en is None
+    # y una perdida mas es la primera de una racha nueva: no detiene
     s.registrar(_ms(DIAS[1], 9), "salto_el_stop", "primer_esquema")
-    assert (
-        s.racha == 10
-        and s.detenido(_ms(DIAS[1], 10), TOPE)
-        and not s.detenido(_ms(DIAS[2], 8), TOPE)
+    assert s.racha == 1 and not s.detenido(_ms(DIAS[1], 10), TOPE)
+
+
+def test_el_reinicio_llega_aunque_nadie_consulte_entre_medias(registro: Registro) -> None:
+    """La racha vuelve a cero tambien si lo primero del dia siguiente es un cierre, no una
+    consulta: `registrar` mira el dia antes de contar."""
+    s = _seguidor(registro)
+    for k in range(TOPE):
+        s.registrar(_ms(DIAS[0], 8) + k * MS_POR_MINUTO, "salto_el_stop", "primer_esquema")
+    assert s.detenido(_ms(DIAS[0], 9), TOPE)  # la detencion se ve, y se anota
+    s.registrar(_ms(DIAS[1], 9), "salto_el_stop", "primer_esquema")
+    assert s.racha == 1 and not s.detenido(_ms(DIAS[1], 10), TOPE)
+
+
+def test_ocho_perdidas_cruzan_de_un_dia_a_otro_y_la_novena_detiene(registro: Registro) -> None:
+    """Mientras no se pare, la racha sigue de un dia a otro (sesion 4, ev-v10-010804-5b6ad1a3):
+    cinco perdidas un dia y tres al siguiente son ocho, y la novena detiene el dia en que cae."""
+    s = _seguidor(registro)
+    for k in range(5):
+        s.registrar(_ms(DIAS[0], 8) + k * MS_POR_MINUTO, "salto_el_stop", "primer_esquema")
+    assert not s.detenido(_ms(DIAS[0], 9), TOPE) and s.detenido_en is None
+    for k in range(3):
+        s.registrar(_ms(DIAS[1], 8) + k * MS_POR_MINUTO, "salto_el_stop", "primer_esquema")
+    assert s.racha == 8 and not s.detenido(_ms(DIAS[1], 9), TOPE)
+    s.registrar(_ms(DIAS[1], 9), "salto_el_stop", "primer_esquema")
+    assert s.racha == 9 and s.detenido(_ms(DIAS[1], 10), TOPE)
+    assert not s.detenido(_ms(DIAS[2], 8), TOPE) and s.racha == 0
+
+
+def test_con_nunca_la_racha_sigue_en_nueve_y_la_decima_vuelve_a_detener(registro: Registro) -> None:
+    """La lectura provisional de ADR-0077 §5, que sigue teniendo contrato con `nunca`: el valor del
+    trader hasta la sesion 5, probado con un seguidor hecho a mano."""
+    s = SeguidorRacha(
+        reloj_de_las_sesiones(registro),
+        "solo_perdida",
+        racha.CORTE_GANADORA,
+        racha.REINICIO_NUNCA,
+        racha.REANUDACION_DIA_SIGUIENTE,
     )
+    for k in range(TOPE):
+        s.registrar(_ms(DIAS[0], 8) + k * MS_POR_MINUTO, "salto_el_stop", "primer_esquema")
+    assert s.detenido(_ms(DIAS[0], 9), TOPE)
+    assert not s.detenido(_ms(DIAS[1], 8), TOPE) and s.racha == 9
+    s.registrar(_ms(DIAS[1], 9), "salto_el_stop", "primer_esquema")
+    assert s.racha == 10 and s.detenido(_ms(DIAS[1], 10), TOPE)
 
 
 def test_una_ganadora_a_la_octava_pone_la_racha_a_cero(registro: Registro) -> None:
@@ -297,8 +346,10 @@ def test_el_cableado_detiene_el_noveno_dia_y_vuelve_a_operar_el_decimo(
     sin --diagnostico-a44. Los ocho primeros dias colocan la segunda orden (lejos, pendiente, que
     RN-035 retira al abrir la tarde); el noveno, tras la novena perdida, RN-036 dispara, fija
     `detenido_por_racha`, la segunda colocacion queda prohibida y no hay ninguna pendiente que el
-    cableado cancele al fin del dia; el decimo dia vuelve a operar con la racha en 9, y su perdida
-    -la decima- vuelve a detener."""
+    cableado cancele al fin del dia; el decimo dia vuelve a operar con la racha EN CERO (sesion 5,
+    S-21, `tras_la_detencion`) y su perdida es la primera de una racha nueva: no detiene. CAMBIA
+    DE SENTIDO A PROPOSITO el 2026-10-26: hasta entonces el decimo dia volvia con la racha en 9 y
+    su perdida -la decima- volvia a detener."""
     motor = tc._motor(registro, vocabulario, tc._mercado(tc.RUTA_STOP))
     assert motor.tope is None
     motor.mercados = {d.isoformat(): _mercado_del_dia(d, tc.RUTA_STOP) for d in DIAS}
@@ -325,7 +376,7 @@ def test_el_cableado_detiene_el_noveno_dia_y_vuelve_a_operar_el_decimo(
         traza = r.sesiones["07-11"]
         broker = motor.brokers[dia.isoformat()]
         assert len(r.operaciones) == 1, (k, dia)  # la primera orden se llena y pierde cada dia
-        if k == 9 or k == 10:
+        if k == 9:
             assert "RN-036" in traza.disparadas, (k, dia)
             assert ("detenido_por_racha", "hasta_el_dia_siguiente") in {
                 (h, v) for _, _, h, v in traza.fijados
@@ -336,8 +387,8 @@ def test_el_cableado_detiene_el_noveno_dia_y_vuelve_a_operar_el_decimo(
         else:
             assert "RN-036" not in traza.disparadas, (k, dia)
             assert broker.ordenes["o2"].estado == CANCELADA, (k, dia)  # RN-035 al abrir la tarde
-    assert motor.racha.racha == 10
-    assert "RACHA DE PERDIDAS (RN-036, A-51): 10 seguidas" in cableado.informe_simulacion(motor)
+    assert motor.racha.racha == 1  # la del decimo dia, sola: la racha empezo en cero
+    assert "RACHA DE PERDIDAS (RN-036, A-51): 1 seguidas" in cableado.informe_simulacion(motor)
     assert not any(
         p.startswith("acumulador:racha")
         for r in resultados

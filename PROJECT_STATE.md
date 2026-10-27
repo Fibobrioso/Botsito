@@ -16,7 +16,7 @@ trabajo/activar-sesion-05-motor, EN CURSO desde el 2026-10-26 (encargo docs/enca
 2c26fb2 · merge: trabajo/activar-sesion-05, la parte de spec de la sesion 5 activada (A-57 y A-32 RESUELTAS, A-35 y A-44 con valor) y lo que va a motor y a la sesion 6 · tag stable/F38e-activar-sesion-05
 
 ## Tests Currently Passing
-1718 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1721 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

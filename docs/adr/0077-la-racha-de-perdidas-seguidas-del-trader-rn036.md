@@ -97,6 +97,15 @@ del consultor del 2026-10-12): «Después de parar por 9 pérdidas seguidas, cua
 siguiente: (a) empiezas a contar de cero; (b) sigues en 9 y una pérdida más te vuelve a parar ese
 día; (c) otra, ¿cuál?».
 
+> **Sustituida el 2026-10-26 (`trabajo/activar-sesion-05-motor`; sesión 5, S-21).** El trader
+> contestó (a): «Pues al día siguiente Nuevamente en cero, o sea, se sigue continuando»
+> (`ev-v16-002126-d2376f71`). `racha_perdidas_reinicio` pasa a `tras_la_detencion` por
+> `fb-2026-10-23-sesion-05-978be13f` (CORRECT sobre el parámetro, que supersede al `nunca` de la
+> sesión 4): tras parar, el día siguiente empieza en cero; mientras no se pare, la racha sigue de
+> un día a otro (la sesión 4, con su reserva). `SeguidorRacha` lo hace: anota el día de la
+> detención y pone la racha a cero en el primer instante del día operativo siguiente. A-51 sigue
+> RESUELTA.
+
 ### 6. Lo que no cambia
 
 RN-016 y `cartuchos` (solo comparten la definición de pérdida), RN-020, A-44 (ABIERTA, bloqueante),
