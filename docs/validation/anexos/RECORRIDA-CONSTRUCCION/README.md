@@ -65,6 +65,24 @@ son comparables y cuáles cambian por el motor o por la construcción más ampli
 - `test_humo.py`: los tests de humo de los dos guiones sobre salidas sintéticas, que rompen en los
   dos sentidos; no los recoge `make check` (`pyproject.toml`, `testpaths = ["tests"]`):
   `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION/test_humo.py -q`
+- `comparar_rn003.py`: el rn003 de cada sesión con operaciones del trader de abril y agosto en la
+  línea base de 2026-09-26 frente a la corrida 1, porque «RN-003 al abrir» es un agregado de todas
+  las sesiones y no se parte por mes en el diff (`RECORRIDA-CONSTRUCCION.md` §2.5). Solo lee las
+  dos salidas. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/comparar_rn003.py docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`
+  → `rn003-abril-agosto.txt`.
+- `lista_s14.py`: la lista «Para S-14» (`RECORRIDA-CONSTRUCCION.md` §4): las sesiones de P6 de la
+  corrida 2 (de `patrones.py` sobre la diaria) cruzadas con `entradas-antes-alternancia.txt` (el
+  sesgo, el camino del bot y la R de cada llenada) y con `cuenta-arrastrada.txt` (la última sesión
+  con un llenado de la corrida 1). Solo lee los ficheros de esta carpeta.
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/lista_s14.py docs/validation/anexos/RECORRIDA-CONSTRUCCION`
+  → `lista-s14.txt`.
+
+## Las salidas (fase 2)
+
+`cuenta-arrastrada.txt` (corrida 1; la línea base vigente), `diaria.DIAGNOSTICO.cuenta=diaria.txt`
+(corrida 2), `diff-linea-base.txt`, `patrones-arrastrada.txt` y `patrones-diaria.txt` (con `--filas`),
+`entradas-antes-alternancia.txt`, `rn003-abril-agosto.txt` y `lista-s14.txt`. Las líneas `TIEMPO` y
+`MEMORIA` de cada corrida, en `RECORRIDA-CONSTRUCCION.md` §2.
 
 ## Lo que no hay aquí
 

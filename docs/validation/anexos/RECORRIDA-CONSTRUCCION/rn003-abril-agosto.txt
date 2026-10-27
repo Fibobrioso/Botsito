@@ -1,0 +1,15 @@
+sesiones: linea base 49; corrida 1 104; comunes 49
+solo en la base: []
+sesiones comunes cuyo rn003 cambia: 8
+  2026-04-03 11-15: ambiguo -> alcista
+  2026-04-13 11-15: ambiguo -> bajista
+  2026-04-24 07-11: ambiguo -> bajista
+  2026-08-04 11-15: alcista -> bajista
+  2026-08-07 11-15: bajista -> alcista
+  2026-08-11 07-11: ambiguo -> alcista
+  2026-08-20 07-11: ambiguo -> bajista
+  2026-08-26 11-15: ambiguo -> alcista
+  base 2026-04: alcista 10, ambiguo 3, bajista 10
+  base 2026-08: alcista 11, ambiguo 3, bajista 12
+  corrida 1 2026-04: alcista 11, bajista 12
+  corrida 1 2026-08: alcista 13, bajista 13

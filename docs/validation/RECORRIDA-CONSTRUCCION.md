@@ -596,6 +596,787 @@ sobre `entradas_antes_alternancia.py` y `test_humo.py`: los únicos dos errores 
 `horas_perdidas.py` es idéntica por decisión (punto 3) y la de `patrones.py` cambia solo `_cuerpo`.
 Los guiones nuevos no tienen ningún error propio de mypy.
 
+## 2. Fase 2 · Las corridas (2026-10-27)
+
+Sobre el código commiteado (74ab3cb, nada de `src/` cambia respecto a `main`), sin `--meses`, una
+corrida cada vez y ninguna a la par de un `make check`, en segundo plano con
+`CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1`. Los tres comandos literales del encargo y lo que
+salió por pantalla, tal cual:
+
+1. `uv run botsito motor arnes --simular --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`
+   → `OK: informe del arnes en docs\validation\anexos\RECORRIDA-CONSTRUCCION\cuenta-arrastrada.txt`;
+   `TIEMPO: 336.5 s; MEMORIA: pico del proceso de 629.1 MiB`; `exit=0`. Fichero final:
+   **`cuenta-arrastrada.txt`** (1.224 líneas; `grep -c DIAGNOSTICO` = 0: sin rótulo).
+2. `uv run botsito motor arnes --simular --diagnostico-cuenta-diaria --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.txt`
+   → `TIEMPO: 299.0 s; MEMORIA: pico del proceso de 638.3 MiB`; `exit=0`. Fichero final:
+   **`diaria.DIAGNOSTICO.cuenta=diaria.txt`** (3.507 líneas, todas con el rótulo
+   `[DIAGNOSTICO-CUENTA-diaria] `), el nombre que §0.a predijo.
+3. La 1 repetida con `--salida` en la carpeta de trabajo de la sesión (fuera del repo) y comparada
+   con `diff` contra la commiteada: §2.4.
+
+Ninguna salió con un código distinto de 0, ninguna pidió `--depuracion` ni un día fuera de la
+construcción (§0.b: todos los días dev tienen ticks).
+
+### 2.1 La corrida 1, la que cuenta por ADR-0070 §3: el veredicto literal
+
+Línea 13 de `cuenta-arrastrada.txt`, copiada tal cual:
+
+```
+habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 3.5 % por debajo de 70.0 %; precision 13.2 % por debajo de 60.0 %)
+```
+
+Dice **«no»**, y por las dos condiciones de umbral, sin ningún motivo de opción (la lista cerrada se
+cumplió: ningún «opción fuera de la lista», «sin simulación», perfil ni fase). **Decisión 2 del
+consultor (§0.0): se sigue construyendo, mayo no se toca y el umbral no cambia (ADR-0070 §4).** Lo
+que la corrida 2 dice en la misma línea: `no (opción fuera de la lista: --diagnostico-cuenta-diaria;
+cobertura 20.7 % por debajo de 70.0 %; precision 15.6 % por debajo de 60.0 %)`, como §0.a predijo.
+
+### 2.2 Por corrida y por mes: operaciones del trader, puntuables del bot, parejas, cobertura y precisión
+
+De «### Resumen por mes» de cada salida (el orden es el de `construccion`):
+
+| Corrida | Mes | días | trader | bot puntuables | bot en días sin trader | parejas | cobertura | precisión |
+|---|---|---|---|---|---|---|---|---|
+| 1 arrastrada | 2026-04 | 21 | 35 | 0 | 0 | 0 | 0/35 (0.0 %) | sin definir (cero operaciones del bot puntuables) |
+| 1 arrastrada | 2026-07 | 13 | 67 | 0 | 0 | 0 | 0/67 (0.0 %) | sin definir |
+| 1 arrastrada | 2026-08 | 21 | 42 | 0 | 0 | 0 | 0/42 (0.0 %) | sin definir |
+| 1 arrastrada | 2026-01 | 21 | 54 | 53 | 0 | 7 | 7/54 (13.0 %) | 7/53 (13.2 %) |
+| 1 arrastrada | **total** | 76 | 198 | 53 | 0 | 7 | 7/198 (3.5 %) | 7/53 (13.2 %); parejas en el mismo minuto 5 |
+| 2 diaria | 2026-04 | 21 | 35 | 53 | 19 | 7 | 7/35 (20.0 %) | 7/53 (13.2 %) |
+| 2 diaria | 2026-07 | 13 | 67 | 56 | 0 | 15 | 15/67 (22.4 %) | 15/56 (26.8 %) |
+| 2 diaria | 2026-08 | 21 | 42 | 73 | 9 | 12 | 12/42 (28.6 %) | 12/73 (16.4 %) |
+| 2 diaria | 2026-01 | 21 | 54 | 81 | 0 | 7 | 7/54 (13.0 %) | 7/81 (8.6 %) |
+| 2 diaria | **total** | 76 | 198 | 263 | 28 | 41 | 41/198 (20.7 %) | 41/263 (15.6 %); parejas en el mismo minuto 26 |
+
+**Por qué la corrida 1 solo opera en enero.** El arnés corre los meses en orden de fecha
+(`validar_meses` devuelve `sorted`, `arnes.py:121`): enero primero. Con la cuenta arrastrada, el
+saldo baja de 100.000 a 90.741,16 el 2026-01-20 (curva: `2026-01-20 | 92415.29 | 90741.16`;
+mínimo del tramo; máximo 102.686,13 el 2026-01-06), y desde la sesión 11-15 de ese día **RN-032**
+(«no se abre una operación cuyo riesgo no cabe antes del límite de la firma», `strategy_spec.yaml:2491-2499`:
+la pérdida total más el riesgo de la operación llega al límite menos `firma_margen_seguridad`)
+prohíbe `abrir_operacion` en todos los cierres: cada línea «Por sesion» desde `2026-01-21 07-11`
+hasta `2026-08-31` acaba en `bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion`
+(96 de las 104 sesiones con operaciones del trader llevan ese bloqueo; 8, `bloqueadas ninguna`), con
+RN-032 entre las disparadas (128 de 152 sesiones). El límite total de la firma no arrastra
+(`firma_perdida_total_arrastra = false`), así que una vez gastado el 10 % menos el margen no vuelve a
+caber ninguna operación. **La cuenta no corta el tramo** («Veredicto de la cuenta: estado EN_CURSO;
+motivo: sin objetivo alcanzado ni limite infringido; instante: -»; `PRIMERO EN TOCAR UN LIMITE:
+ninguno`; `dias de trading: 13`), pero el bot deja de operar el 2026-01-20 y abril, julio y agosto
+corren con todos los hechos del camino producidos (`todos los hechos del camino producidos`: 22 de
+23 sesiones en abril, 23 de 25 en julio, 24 de 26 en agosto) y ninguna orden colocada. Es el camino
+de la cuenta que la decisión 4 aparta de la clasificación: por eso los patrones se cuentan sobre la
+corrida 2. Y el tramo no es continuo (enero, y de abril a agosto con huecos): la curva es indicativa,
+como dijo R3.1.
+
+**La cuenta de la corrida 1**: saldo final 90.741,16; equity final 90.741,16; 13 días de trading; 76
+días en la curva (enero del 2 al 30 se mueve; del 2026-04-01 al 2026-08-31 la curva repite
+90.741,16). Peor día: 2026-01-20 (de 92.415,29 a 90.741,16, −1,81 % del saldo de corte; el límite
+diario de la firma es 5 %).
+
+**Peticiones al servidor (informativo, como en R3.1):** corrida 1, 395 en total, máximo diario 66
+(2026-01-19) frente a `firma_mensajes_dia_max` 2000; 63 de los 76 días con 0. Corrida 2, 2.454 en
+total (enero 679, abril 630, julio 459, agosto 686), máximo diario 73 (2026-07-17); 3 días con 0. El
+freno de ADR-0067 (umbrales `aviso 1000, corte 1500, bucle 5 iguales en 1 min`, PROVISIONALES bajo
+A-54): «ningun aviso ni ninguna peticion negada» en las dos. Los cierres de mercado (ADR-0068):
+«ninguna peticion negada ni ninguna pendiente cancelada» en las dos.
+
+### 2.3 Lo que el arnés hace ahora y antes no (§0.i), medido en las dos salidas
+
+| Qué | Corrida 1 (arrastrada) | Corrida 2 (diaria) |
+|---|---|---|
+| `TOPE DEL TRADER (RN-020, A-44)` | `tope del trader: dia, sobre saldo, en porcentaje; dia 4.5 sobre saldo_inicial_dia; reinicio en Europe/Prague; SUPUESTO: reinicio con el huso de corte del perfil (el trader no dijo otro)` | la misma línea |
+| Sesiones que detiene RN-020 (`detenido_por_tope: N de 104`; `RN-020` en disparadas) | 0 de 104; RN-020 no aparece en «Reglas disparadas» | 0 de 104; ídem |
+| Órdenes que retira ADR-0086 (canceladas con RN-020 en el motivo) | 0 | 0 |
+| `detenido_por_tope_total` | 0 de 104 | 0 de 104 |
+| RN-036 (racha): sesiones en que dispara / `detenido_por_racha` / `RACHA DE PERDIDAS` al final | 2 de 152 (1 de 104) / 1 de 104 / `5 seguidas; la ultima el 2026-01-20` | 0 de 152 / 0 de 104 / `2 seguidas; la ultima el 2026-08-31` (la cuenta diaria reinicia la racha cada día) |
+| RN-037 (el último minuto antes de las 11 o las 3): sesiones en que dispara | 152 de 152 | 152 de 152 |
+| Cancelaciones «en el ultimo tramo de la vela H4» (RN-035 y RN-037 en el motivo) | 0 | 4 (1 en enero, 3 en agosto); RN-035 dispara en 4 de 152 sesiones |
+| `detenido_por_cartuchos` | 2 de 104 (RN-016 en 2 sesiones) | 4 de 104 (RN-016 en 4) |
+| `liquidez_tomada` (la referencia de ACTIVAR-A35-A44.md §5.1: R3.1 dio 98 y 97 de 104) | 96 de 104 | 96 de 104 |
+| `orden_dimensionada` / `operacion del bot` | 96 / 16 de 104 | 96 / 92 de 104 |
+| Qué reinicia la cuenta diaria (`cableado.py:248-249`) | — | la cuenta, el seguidor del tope y la racha, cada día; la curva, el veredicto y `PRIMERO EN TOCAR` son solo del último día (`CUENTA: REINICIADA CADA DIA`) |
+
+RN-020 no detuvo ninguna sesión: en la corrida 1 la cuenta nunca pierde el 4,5 % del saldo de
+corte en un día (el peor día pierde 1,81 %), y en la corrida 2 cada día empieza en 100.000. Los 12
+parámetros DEFAULT_AMBIGUOUS con los que corrió la corrida que cuenta son los de la tabla de §0.i
+(el registro no cambió en la rama: `git diff main -- knowledge/` vacío).
+
+### 2.4 La repetición de la corrida 1 fuera del repo (determinismo)
+
+Después de la corrida 2, nunca a la vez: `uv run botsito motor arnes --simular --salida
+<carpeta de trabajo de la sesión>/cuenta-arrastrada.txt` → `TIEMPO: 342.6 s; MEMORIA: pico del
+proceso de 630.4 MiB`; `exit=0`. `diff docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt
+<la copia>` → sin salida, `diff exit=0`: **idéntica byte a byte**. La copia se borró (`rm`; `ls`
+de la carpeta ya no la lista) y no se commitea. Tres corridas: 336,5 + 299,0 + 342,6 s de arnés
+(16,3 min) y de 629 a 638 MiB de pico, lo que §0.j esperaba.
+
+### 2.5 El diff contra la línea base (`diff-linea-base.txt`)
+
+`diff docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION/diff-linea-base.txt`
+→ `exit=1` (hay diferencias; no es un fallo). 1.348 líneas: 129 de la línea base salen (`<`), 1.191
+de la corrida 1 entran (`>`), en 14 bloques; de las 162 líneas de la línea base, 33 siguen iguales
+(títulos de sección, `MOTOR`, `PERFIL`, `FASE`, las etiquetas fijas). Por sección:
+
+| Bloque (líneas de la base → de la corrida 1) | Sección | Qué cambia | Comparable | Por qué cambia |
+|---|---|---|---|---|
+| 4 → 4 | CONJUNTO | `(2026-04, 2026-08); dias 42; sesiones 49` → `(2026-01, 2026-04, 2026-07, 2026-08); dias 76; sesiones 104` | no | construcción más amplia (ADR-0078, ADR-0079) |
+| 7-8, 10-12 → 7-13 | Criterio de fidelidad | trader 77 → 198; bot 0 → 53; cobertura 0/77 → 7/198; precisión sin definir → 7/53; mismo minuto 0 → 5; **línea de veredicto nueva** (no existía: ADR-0070 es del 2026-10-07) | las 77 operaciones de abril y agosto siguen dentro de las 198 (35 + 42, §0.d) | construcción (el total) y motor (el bot opera) |
+| 16-22 → 17-24 | Embudo de hechos | `sesgo 49 de 49` → `104 de 104`; `orden_dimensionada 0` → 96; `liquidez_tomada 0` → 96; `operacion del bot 0` → 16; `detenido_por_racha` nuevo | el sesgo se produce en todas las sesiones en las dos | construcción (104) y motor (A-35, A-44 y A-21 con valor; RN-036) |
+| 25-29 → 27 | Paradas NO_IMPLEMENTADA | cinco paradas (`perdida_dia`, `perdida_semana`, `alcanza_nivel`, `cruza`, `toca_colocar_orden_limite`, 49 de 49 cada una) → `ninguna` | sí: era el hueco de A-44, A-35 y A-21 | motor |
+| 32-35 → 30-50 | Reglas disparadas | 3 reglas (RN-001, RN-003, RN-033) → 20 | RN-003 sigue en todas; RN-001 42/84 → 78/152 | motor y construcción |
+| 38-43 → 53-301 | Avisos de orden | 6 avisos (RN-001, RN-033, en 6 sesiones de abril y agosto) → 249 | los 6 de la base no se repiten tal cual: hoy los avisos son de RN-004/RN-006/RN-011/RN-012 | motor |
+| 46-47 → 304-309 | RN-003 al abrir | `alcista 21; ambiguo 6; bajista 22` → `alcista 51; bajista 52; insuficiente 1` (y cuatro líneas nuevas de ADR-0060/0075/0080); por operación `a favor 58; ambiguo 7; en contra 12` → `154; 42; insuficiente 2` | **no por mes: es un agregado de todas las sesiones**; se compara por sesión abajo | construcción (104 sesiones) y motor (ADR-0069, 0075, 0080) |
+| 50-98 → 312-683 | Por sesion | 49 líneas → 104, y el formato gana `detenido_por_racha`, `bloqueadas` | sí, sesión a sesión en abril y agosto (abajo) | motor y construcción |
+| 103 → 688-691 | Simulación | `DIAS CORRIDOS 42` → 76; `TOPE DEL TRADER`, `RACHA DE PERDIDAS`, `PRIMERO EN TOCAR` nuevas | — | construcción y motor |
+| 109-111 → 697-699 | Veredicto de la cuenta | saldo 100000 → 90741.16; días de trading 0 → 13 | — | motor (el bot opera) |
+| 114-155 → 702-777 | Curva de equity | 42 días planos → 76 días, enero se mueve | los 42 días de abril y agosto siguen en la curva, planos en las dos (en la base por no operar; aquí por RN-032) | motor |
+| 158 → 780-1220 | Eventos del broker | `ninguno` → 127 (todos de enero) | — | motor |
+| 160-162 → 1222-1224 y lo que sigue | Totales, huecos y secciones nuevas | `eventos: 0` → 127; `rechazos 0` → 4; huecos `perdida_dia, perdida_semana` → `ninguno`; después, las secciones que la base no tiene (Diferencias por operacion, Ordenes, Rechazos, Peticiones, freno, cierres) | los huecos: sí (A-44 cerró el hueco de RN-020) | motor |
+
+**El rn003 de las 49 sesiones de abril y agosto, sesión a sesión** (guion `comparar_rn003.py` de la
+carpeta de trabajo, que lee las líneas «Por sesion» de las dos salidas): las 49 sesiones de la base
+están en la corrida 1 (más las 55 de enero y julio); **8 cambian de sesgo**: `2026-04-03 11-15`
+ambiguo → alcista, `2026-04-13 11-15` ambiguo → bajista, `2026-04-24 07-11` ambiguo → bajista,
+`2026-08-04 11-15` alcista → bajista, `2026-08-07 11-15` bajista → alcista, `2026-08-11 07-11`
+ambiguo → alcista, `2026-08-20 07-11` ambiguo → bajista, `2026-08-26 11-15` ambiguo → alcista. Las
+seis «ambiguo» desaparecen (ADR-0075: la H4 neutra con doble ruptura no decide; ADR-0080: el sesgo
+cambia por el color) y dos sesiones de agosto se dan la vuelta (ADR-0080: «las mismas ocho sesiones
+cambian», SESGO-H4-COLOR.md, con la rejilla de ADR-0069). Por mes: abril `alcista 10, ambiguo 3,
+bajista 10` → `alcista 11, bajista 12`; agosto `alcista 11, ambiguo 3, bajista 12` → `alcista 13,
+bajista 13`. Ninguna de las 41 restantes cambia. Es lo que §0.g anunció: el sesgo de abril y agosto
+cambió por el MOTOR, no por la construcción.
+
+### 2.6 Los patrones T0 y P1 a P7 de las dos corridas, por mes
+
+Con la copia de `patrones.py` (§1.2), `--filas` a `patrones-diaria.txt` y `patrones-arrastrada.txt`
+(sus cabeceras, tal cual: `448 filas, 104 sesiones con rn003` y `244 filas, 104 sesiones con
+rn003`). **La clasificación que cuenta es la de la corrida 2 (decisión 4)**; la corrida 1 va como
+contexto del camino de la cuenta. «P? solo otro lado»: 0 filas en las dos.
+
+| Corrida | Mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de más | P6 trader no operó | P7 repetidas | T0 pareja |
+|---|---|---|---|---|---|---|---|---|---|
+| 2 diaria | 2026-01 | 7 | 16 | 20 | 3 | 60 | 14 | 1 | 7 |
+| 2 diaria | 2026-04 | 9 | 5 | 13 | 1 | 31 | 34 | 0 | 7 |
+| 2 diaria | 2026-07 | 20 | 12 | 15 | 1 | 39 | 2 | 4 | 15 |
+| 2 diaria | 2026-08 | 8 | 7 | 12 | 3 | 43 | 27 | 0 | 12 |
+| 2 diaria | **total** | **44** | **40** | **60** | **8** | **173** | **77** | **5** | **41** |
+| 1 arrastrada | 2026-01 | 7 | 11 | 11 | 17 | 37 | 9 | 1 | 7 |
+| 1 arrastrada | 2026-04 | 9 | 0 | 0 | 26 | 0 | 0 | 0 | 0 |
+| 1 arrastrada | 2026-07 | 20 | 0 | 0 | 47 | 0 | 0 | 0 | 0 |
+| 1 arrastrada | 2026-08 | 8 | 0 | 0 | 34 | 0 | 0 | 0 | 0 |
+| 1 arrastrada | **total** | **44** | **11** | **11** | **124** | **37** | **9** | **1** | **7** |
+
+Detalles de la corrida 2 (de la cabecera de `patrones-diaria.txt`): P1 por sesgo del bot: alcista
+14, bajista 28, insuficiente 2 (44 filas en 21 sesiones: las mismas 44 y 21 que la corrida 1 y que
+PUNTO-USADO, porque el sesgo no cambió desde ADR-0080); P3: misma entrada otra hora 3, otra entrada
+57; P5: mismo lado 137, otro lado 36; P6: en día 28, en sesión 49; P7: Δentrada 0 puntos 1, 1 punto
+2, 3 puntos 2. **Filas que tocan una hora perdida, marcadas «posible M» sin cambiar de patrón: 25
+en la corrida 2 y 12 en la corrida 1** (las filas, con su marca, en los dos ficheros `--filas`).
+
+**Como contexto, nunca como referencia, PUNTO-USADO** (`anexos/PUNTO-USADO/patrones.txt`, la
+diaria de entonces, 364 filas; `patrones-arrastrada.txt`, 240 filas):
+
+| Corrida de PUNTO-USADO | Mes | P1 | P2 | P3 | P4 | P5 | P6 | P7 | T0 |
+|---|---|---|---|---|---|---|---|---|---|
+| diaria | 2026-01 | 7 | 13 | 26 | 6 | 43 | 8 | 0 | 2 |
+| diaria | 2026-04 | 9 | 4 | 11 | 6 | 22 | 21 | 0 | 5 |
+| diaria | 2026-07 | 20 | 9 | 14 | 14 | 25 | 2 | 3 | 7 |
+| diaria | 2026-08 | 8 | 7 | 9 | 14 | 25 | 20 | 0 | 4 |
+| diaria | total | 44 | 33 | 60 | 40 | 115 | 51 | 3 | 18 |
+| arrastrada | total | 44 | 12 | 22 | 118 | 37 | 5 | — | 2 |
+
+Lo que separa estas corridas de aquellas, sin ajustar nada para acercarlas: ADR-0084 (la mecha que
+pasa el nivel de M15 y vuelve lo mueve, `cualquier_mecha`), ADR-0085 (la vela sin cuerpo en M1 no
+corta la racha ni cuenta como alternancia; RN-007 con umbral cero), ADR-0086 (RN-020 retira la
+pendiente al tope), RN-037 (ningún orden en el último minuto de la H4) y la retirada de RN-035 un
+minuto antes del fin de la H4, A-35 y A-44 con valor (el motor corre sin diagnóstico; RN-020 evaluado
+con el tope del trader en vez de `sin_tope`), la racha de RN-036 a cero tras la detención
+(`tras_la_detencion`: en PUNTO-USADO la racha de enero -`12 seguidas`- seguía viva y bloqueaba; aquí
+la arrastrada la deja en 5 y lo que bloquea de febrero en adelante es RN-032) y la caja entera frente
+al nivel tomado (RN-005, `caja_lado_de_ruido = caja_entera`). En la diaria, las parejas pasan de 18
+a 41, P4 (el trader opera a favor y el bot no tiene ninguna orden en la sesión) de 40 a 8, P5 de 115
+a 173 y P6 de 51 a 77: el bot coloca en más sesiones. En la arrastrada, el bot de PUNTO-USADO dejó
+de operar por la racha; el de hoy, por RN-032 desde el 2026-01-20: los dos acaban con ≈90.7 k
+(90.711,97 entonces, 90.741,16 ahora) y P4 en abril, julio y agosto es toda la columna.
+
+### 2.7 El embudo por mes y los rechazos por motivo de las dos corridas
+
+«### Embudo por mes: primer hecho del camino que falta en las sesiones con operaciones del trader
+y sin operación del bot»:
+
+| Corrida | Mes | sesiones con trader | sin operación del bot | de ellas: todos los hechos producidos | `orden_dimensionada[productoras sin cumplirse]` |
+|---|---|---|---|---|---|
+| 1 arrastrada | 2026-04 | 23 | 23 | 22 | 1 |
+| 1 arrastrada | 2026-07 | 25 | 25 | 23 | 2 |
+| 1 arrastrada | 2026-08 | 26 | 26 | 24 | 2 |
+| 1 arrastrada | 2026-01 | 30 | 14 | 11 | 3 |
+| 2 diaria | 2026-04 | 23 | 2 | 1 | 1 |
+| 2 diaria | 2026-07 | 25 | 3 | 1 | 2 |
+| 2 diaria | 2026-08 | 26 | 3 | 1 | 2 |
+| 2 diaria | 2026-01 | 30 | 4 | 1 | 3 |
+
+En la corrida 2 quedan 12 sesiones con operaciones del trader y sin operación del bot: 8 en las que
+`orden_dimensionada` no se produjo (RN-011 no dimensionó: sin punto con caja, o la zona del lado de
+ruido), y 4 con todos los hechos producidos (el bot colocó y la orden no se llenó, se canceló o se
+rechazó). Ningún freno `detenido_por_*` aparece en el embudo por mes de ninguna de las dos.
+
+«### Rechazos por motivo (mes | motivo | peticion | rechazos)»: corrida 1, `2026-01 |
+precio_invalido | colocar | 4`; corrida 2, `precio_invalido | colocar` 8 (enero), 10 (abril), 8
+(julio), 10 (agosto) = 36. Ningún otro motivo, ningún rechazo al modificar ni al llenar. «Ordenes no
+enviadas por el bot»: `ninguna` en las dos. Órdenes: corrida 1 `cancelada 158, llenada 53, rechazada
+4`; corrida 2 `cancelada 1002, llenada 291, rechazada 36`. Casi todas las cancelaciones llevan RN-006
+en el motivo (la reubicación cancela y recoloca: 158 de 158 en la 1; 998 de 1.002 en la 2, y las 4
+restantes «en el ultimo tramo de la vela H4» con RN-035 y RN-037). El límite que mordió el lote al
+colocar (`limite`): corrida 2, `margen` 445, `volumen+margen` 144, `ninguno` 740.
+
+## 3. La lista «Entradas antes de la alternancia» (decisión 5; respuesta a la PARADA, puntos 0, 1 y 2)
+
+Comando autorizado, una sola vez y después de las tres corridas, nunca a la vez que nada:
+`uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas_antes_alternancia.py --diaria "docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.cuenta=diaria.txt" --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas-antes-alternancia.txt`
+→ `OK: … entradas-antes-alternancia.txt (291 llenadas, 259 en la lista)`; `exit=0`. La cabecera
+del fichero: `ORDENES llenadas frente a «### Ordenes» de la corrida 2: iguales (291)`: las 291
+órdenes llenadas que reproduce el guion (cuenta reiniciada cada día) coinciden línea a línea con las
+291 filas `llenada` de «### Ordenes» de `diaria.DIAGNOSTICO.cuenta=diaria.txt` (si no, habría
+salido con 3). Ninguna fila lleva «(antes del dia)» (`grep -c`: 0): ningún instante ni punto es
+anterior a las 00:00Z de su día dev. Las columnas, en el orden de la respuesta a la PARADA: zonas al
+llenar y al colocar (punto 1), dónde (referencia / primer punto tras la toma / posterior) y
+reubicaciones (punto 0), escenario (la marca de H6: 12 llenadas cuya zona es de un escenario
+anterior al vigente al llenar, con «vig. n X»), R sobre el riesgo con el que nació la posición, y
+pareja (T0, por la medida del criterio) o patrón (P5, P6, de `patrones.py` sobre la corrida 2). **Sin
+conclusiones: es para el dibujo 3 de S-15, y RN-009 no cambia.**
+
+### 3.1 El resumen (del fichero, «## Resumen»)
+
+- Llenadas: 291; **en la lista (zonas al llenar < 2): 259**; fuera (2 o más zonas): 32.
+- Por mes: enero 77, abril 61, julio 48, agosto 73 (de 81, 72, 56 y 82 llenadas).
+- Por zonas al llenar: **0 zonas 149; 1 zona 110**.
+- Por dónde estaba la orden: **primer punto tras la toma 161; referencia 43; posterior 55**. Cruce
+  con las zonas: 0 zonas → primer punto 106, referencia 43; 1 zona → primer punto 55, posterior 55
+  (ninguna «referencia» con 1 zona, ninguna «posterior» con 0, como es de esperar: un punto
+  posterior ya deja una zona detrás).
+- Por reubicaciones (órdenes anteriores del mismo escenario canceladas por RN-006): 0 → 46; 1 → 55;
+  2 → 47; 3 → 44; 4 → 25; 5 → 20; 6 → 4; 7 → 5; 8 → 3; 9 → 5; 10 → 2; 11 → 3. **213 de las 259
+  llenadas venían de al menos una reubicación** (S-10: primer punto, reubicada, 0 zonas: aquí son
+  las 106 − las de reubicaciones 0 de ese grupo); 46 se llenaron en la primera orden del escenario.
+- Por pareja o patrón: **P5 (de más, en sesión con trader) 160; P6 (el trader no operó) 65; T0 pareja
+  34** (de las 41 parejas de la corrida 2, 7 se llenaron con 2 o más zonas). Cruce: 0 zonas → P5 88,
+  P6 41, T0 20; 1 zona → P5 72, P6 24, T0 14. Dónde × patrón: primer punto → P5 99, P6 41, T0 21;
+  referencia → P5 22, P6 13, T0 8; posterior → P5 39, P6 11, T0 5.
+- Resultado en R (sobre el riesgo inicial; la salida de `motivo_cierre`): **positivos 36, negativos
+  176, cero 47** (stops a break even); por motivo: stop 222, objetivo 34, manual 3 (cierre forzoso
+  al fin de la ventana). Con 0 zonas: objetivo 22, stop 124, manual 3; con 1 zona: objetivo 12, stop 98.
+- Las 32 que quedan fuera (2 o más zonas al llenar), en «## Todas las llenadas» del fichero.
+
+### 3.2 La lista, por día y sesión (las 259; el fichero trae además entrada, punto, sesgo y camino)
+
+Hora = el llenado, UTC; «al colocar» = zonas en el cierre que colocó la orden; reubic. =
+reubicaciones; escenario = el de la zona («vig.» = el vigente al llenar, si es otro).
+
+| día | sesión | orden | lado | llenada (UTC) | zonas al llenar | al colocar | dónde | reubic. | escenario | R | pareja o patrón |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 2026-01-02 | 11-15 | o7 | venta | 12:12:26 | 0 | 0 | primer punto tras la toma | 6 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-02 | 11-15 | o9 | venta | 13:28:06 | 0 | 0 | referencia | 0 | n 2 | +0.57 (manual) | T0 |
+| 2026-01-05 | 07-11 | o3 | venta | 06:04:22 | 1 | 1 | posterior | 2 | n 1 | +2.86 (objetivo) | P5 |
+| 2026-01-05 | 07-11 | o16 | venta | 08:33:08 | 0 | 0 | primer punto tras la toma | 4 | n 3 | +3.60 (objetivo) | P5 |
+| 2026-01-05 | 07-11 | o18 | venta | 09:28:17 | 0 | 0 | primer punto tras la toma | 0 | n 4 | +3.75 (objetivo) | P5 |
+| 2026-01-05 | 11-15 | o19 | venta | 10:22:00 | 0 | 0 | referencia | 0 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-05 | 11-15 | o20 | venta | 10:24:00 | 1 | 1 | primer punto tras la toma | 0 | n 1 | +0.00 (stop) | P5 |
+| 2026-01-05 | 11-15 | o21 | venta | 10:56:00 | 0 | 0 | referencia | 0 | n 2 | -1.00 (stop) | P5 |
+| 2026-01-06 | 07-11 | o1 | compra | 06:00:00 | 0 | 0 | referencia | 0 | n 1 | +3.64 (objetivo) | P5 |
+| 2026-01-06 | 07-11 | o9 | compra | 08:02:05 | 1 | 1 | posterior | 5 | n 3 | +3.65 (objetivo) | P5 |
+| 2026-01-06 | 11-15 | o20 | venta | 13:43:00 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.12 (stop) | P6 |
+| 2026-01-06 | 11-15 | o21 | venta | 13:44:30 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +3.50 (objetivo) | P6 |
+| 2026-01-07 | 07-11 | o2 | venta | 06:34:16 | 0 | 0 | referencia | 1 | n 1 | -1.00 (stop) | T0 |
+| 2026-01-07 | 07-11 | o4 | venta | 06:39:03 | 1 | 1 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-07 | 07-11 | o9 | venta | 06:55:07 | 0 | 0 | primer punto tras la toma | 2 | n 2 | -1.00 (stop) | P5 |
+| 2026-01-07 | 07-11 | o10 | venta | 06:57:57 | 1 | 1 | primer punto tras la toma | 2 | n 2 | +0.00 (stop) | P5 |
+| 2026-01-07 | 11-15 | o11 | venta | 10:03:27 | 0 | 0 | referencia | 0 | n 1 | -1.00 (stop) | P6 |
+| 2026-01-07 | 11-15 | o18 | venta | 13:00:00 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -1.00 (stop) | P6 |
+| 2026-01-08 | 07-11 | o2 | compra | 06:30:49 | 0 | 0 | referencia | 1 | n 1 | +0.00 (stop) | P5 |
+| 2026-01-08 | 07-11 | o8 | compra | 08:08:57 | 1 | 1 | posterior | 4 | n 2 | -1.11 (stop) | P5 |
+| 2026-01-09 | 07-11 | o3 | venta | 08:04:03 | 0 | 0 | primer punto tras la toma | 2 | n 1 | +0.00 (stop) | P5 |
+| 2026-01-09 | 11-15 | o13 | venta | 13:38:25 | 1 | 1 | posterior | 2 | n 2 | -1.00 (stop) | P6 |
+| 2026-01-12 | 11-15 | o5 | compra | 10:27:27 | 0 | 0 | primer punto tras la toma | 4 | n 1 | +3.38 (objetivo) | P5 |
+| 2026-01-12 | 11-15 | o8 | compra | 13:03:46 | 1 | 0 | primer punto tras la toma | 2 | n 2 | +3.69 (objetivo) | T0 |
+| 2026-01-13 | 07-11 | o3 | venta | 07:35:42 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-13 | 07-11 | o4 | venta | 07:36:00 | 1 | 1 | primer punto tras la toma | 2 | n 1 | -1.20 (stop) | P5 |
+| 2026-01-13 | 07-11 | o7 | venta | 08:02:25 | 0 | 0 | primer punto tras la toma | 1 | n 2 | -1.00 (stop) | P5 |
+| 2026-01-13 | 07-11 | o12 | venta | 09:06:56 | 1 | 1 | posterior | 1 | n 3 | +0.00 (stop) | P5 |
+| 2026-01-13 | 07-11 | o15 | venta | 09:35:09 | 0 | 0 | primer punto tras la toma | 2 | n 4 | -1.40 (stop) | P5 |
+| 2026-01-13 | 07-11 | o17 | venta | 09:37:02 | 1 | 1 | primer punto tras la toma | 3 | n 4 | -0.14 (stop) | P5 |
+| 2026-01-13 | 11-15 | o18 | compra | 11:21:51 | 0 | 0 | referencia | 0 | n 1 | -0.13 (stop) | T0 |
+| 2026-01-13 | 11-15 | o22 | compra | 12:44:54 | 0 | 0 | primer punto tras la toma | 3 | n 2 | -1.09 (stop) | P5 |
+| 2026-01-14 | 07-11 | o2 | compra | 06:01:10 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -1.25 (stop) | P5 |
+| 2026-01-14 | 07-11 | o3 | compra | 06:02:00 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -1.25 (stop) | T0 |
+| 2026-01-14 | 07-11 | o5 | compra | 06:05:00 | 1 | 1 | posterior | 1 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-14 | 07-11 | o9 | compra | 08:01:30 | 0 | 0 | primer punto tras la toma | 3 | n 2 | -1.12 (stop) | P5 |
+| 2026-01-14 | 07-11 | o10 | compra | 08:03:50 | 0 | 0 | primer punto tras la toma | 3 | n 2 | +3.60 (objetivo) | P5 |
+| 2026-01-15 | 07-11 | o2 | venta | 06:12:00 | 0 | 0 | referencia | 1 | n 1 | +3.38 (objetivo) | P5 |
+| 2026-01-15 | 07-11 | o4 | venta | 07:07:43 | 1 | 0 | primer punto tras la toma | 0 | n 2 | -0.10 (stop) | P5 |
+| 2026-01-15 | 07-11 | o7 | venta | 08:30:20 | 1 | 1 | primer punto tras la toma | 2 | n 3 | -1.04 (stop) | P5 |
+| 2026-01-15 | 11-15 | o14 | venta | 10:36:44 | 0 | 0 | referencia | 1 | n 1 | -0.19 (stop) | P6 |
+| 2026-01-16 | 07-11 | o7 | venta | 09:27:42 | 0 | 0 | primer punto tras la toma | 1 | n 2 | +0.00 (stop) | P5 |
+| 2026-01-16 | 11-15 | o15 | compra | 12:34:38 | 1 | 1 | posterior | 7 | n 1 | -1.00 (stop) | P6 |
+| 2026-01-16 | 11-15 | o16 | compra | 12:35:15 | 1 | 1 | posterior | 7 | n 1 | +2.18 (objetivo) | P6 |
+| 2026-01-16 | 11-15 | o17 | compra | 12:55:48 | 0 | 0 | referencia | 0 | n 2 | +0.00 (stop) | P6 |
+| 2026-01-19 | 07-11 | o3 | compra | 06:48:30 | 0 | 0 | primer punto tras la toma | 2 | n 1 | +3.43 (objetivo) | P5 |
+| 2026-01-19 | 07-11 | o5 | compra | 07:49:14 | 1 | 0 | primer punto tras la toma | 0 | n 2 | -0.05 (stop) | P5 |
+| 2026-01-19 | 07-11 | o9 | compra | 08:16:01 | 1 | 0 | primer punto tras la toma | 3 | n 3 | -0.21 (stop) | P5 |
+| 2026-01-19 | 07-11 | o15 | compra | 09:23:08 | 1 | 1 | posterior | 5 | n 4 | -1.14 (stop) | P5 |
+| 2026-01-19 | 11-15 | o32 | venta | 13:25:19 | 1 | 0 | primer punto tras la toma | 1 | n 3 | -1.00 (stop) | T0 |
+| 2026-01-20 | 11-15 | o6 | compra | 12:59:00 | 1 | 1 | posterior | 5 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-20 | 11-15 | o7 | compra | 13:00:11 | 1 | 1 | posterior | 5 | n 1 | -1.08 (stop) | P5 |
+| 2026-01-20 | 11-15 | o13 | compra | 13:31:00 | 1 | 1 | posterior | 5 | n 2 | -1.00 (stop) | P5 |
+| 2026-01-21 | 07-11 | o4 | venta | 06:46:24 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.11 (stop) | P5 |
+| 2026-01-21 | 11-15 | o15 | venta | 11:31:16 | 1 | 1 | posterior | 7 | n 1 | +0.00 (stop) | P5 |
+| 2026-01-21 | 11-15 | o17 | venta | 12:25:09 | 0 | 0 | primer punto tras la toma | 1 | n 2 | -1.00 (stop) | P5 |
+| 2026-01-22 | 07-11 | o2 | venta | 06:35:32 | 0 | 0 | primer punto tras la toma | 1 | n 1 | +3.75 (objetivo) | P6 |
+| 2026-01-22 | 07-11 | o4 | venta | 07:28:14 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -1.00 (stop) | P6 |
+| 2026-01-23 | 07-11 | o6 | compra | 06:17:57 | 0 | 0 | primer punto tras la toma | 5 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-23 | 07-11 | o9 | compra | 06:53:22 | 0 | 0 | referencia | 0 | n 2 | -1.00 (stop) | P5 |
+| 2026-01-23 | 07-11 | o10 | compra | 06:55:52 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -1.00 (stop) | P5 |
+| 2026-01-26 | 07-11 | o12 | compra | 07:49:56 | 1 | 1 | posterior | 5 | n 2 | -1.05 (stop) | P5 |
+| 2026-01-27 | 07-11 | o3 | venta | 06:08:10 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.10 (stop) | P5 |
+| 2026-01-27 | 07-11 | o4 | venta | 06:10:02 | 1 | 1 | primer punto tras la toma | 2 | n 1 | +3.67 (objetivo) | P5 |
+| 2026-01-27 | 07-11 | o9 | venta | 06:48:52 | 1 | 0 | primer punto tras la toma | 4 | n 2 | +3.48 (objetivo) | P5 |
+| 2026-01-27 | 07-11 | o11 | venta | 09:55:21 | 0 | 0 | primer punto tras la toma | 1 | n 3 | -1.00 (stop) | P5 |
+| 2026-01-27 | 11-15 | o14 | venta | 11:08:09 | 0 | 0 | primer punto tras la toma | 1 | n 1 | +0.00 (stop) | P6 |
+| 2026-01-27 | 11-15 | o20 | venta | 12:01:00 | 0 | 0 | primer punto tras la toma | 5 | n 2 | -1.00 (stop) | P6 |
+| 2026-01-27 | 11-15 | o21 | venta | 12:05:46 | 1 | 1 | posterior | 5 | n 2 | -1.00 (stop) | P6 |
+| 2026-01-28 | 07-11 | o5 | compra | 07:54:45 | 0 | 0 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P5 |
+| 2026-01-28 | 07-11 | o9 | compra | 08:55:32 | 1 | 0 | primer punto tras la toma | 3 | n 2 | +0.00 (stop) | P5 |
+| 2026-01-29 | 07-11 | o5 | compra | 06:14:55 | 1 | 1 | posterior | 4 | n 1 | +3.50 (objetivo) | P5 |
+| 2026-01-29 | 07-11 | o16 | compra | 08:44:44 | 1 | 1 | posterior | 1 | n 3 | +0.00 (stop) | P5 |
+| 2026-01-29 | 11-15 | o28 | venta | 12:54:12 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.86 (stop) | P5 |
+| 2026-01-29 | 11-15 | o29 | venta | 12:55:00 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-01-30 | 07-11 | o3 | venta | 07:35:25 | 0 | 0 | primer punto tras la toma | 2 | n 1 | +0.00 (stop) | P5 |
+| 2026-01-30 | 11-15 | o8 | venta | 10:54:26 | 1 | 1 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P5 |
+| 2026-04-01 | 07-11 | o2 | compra | 07:56:07 | 1 | 0 | primer punto tras la toma | 1 | n 1 | -1.00 (stop) | P6 |
+| 2026-04-01 | 11-15 | o7 | compra | 12:30:23 | 0 | 0 | primer punto tras la toma | 1 | n 1 | +2.10 (objetivo) | P5 |
+| 2026-04-02 | 11-15 | o8 | venta | 12:11:26 | 0 | 0 | primer punto tras la toma | 7 | n 1 | -0.03 (stop) | P6 |
+| 2026-04-03 | 07-11 | o10 | venta | 06:15:00 | 1 | 1 | posterior | 9 | n 1 | -1.00 (stop) | P5 |
+| 2026-04-03 | 07-11 | o14 | venta | 06:54:47 | 1 | 0 | primer punto tras la toma | 2 | n 2 | -0.07 (stop) | P5 |
+| 2026-04-03 | 11-15 | o20 | compra | 11:43:37 | 1 | 0 | primer punto tras la toma | 2 | n 2 | -0.23 (stop) | P5 |
+| 2026-04-03 | 11-15 | o24 | compra | 12:41:05 | 1 | 0 | primer punto tras la toma | 2 | n 3 | -0.08 (stop) | P5 |
+| 2026-04-06 | 07-11 | o5 | compra | 06:32:00 | 1 | 1 | primer punto tras la toma | 4 | n 1 | -1.06 (stop) | T0 |
+| 2026-04-06 | 07-11 | o6 | compra | 08:57:01 | 0 | 0 | referencia | 0 | n 2 | -0.28 (manual) | P5 |
+| 2026-04-06 | 11-15 | o11 | compra | 10:01:00 | 0 | 0 | primer punto tras la toma | 4 | n 1 | -1.00 (stop) | P6 |
+| 2026-04-06 | 11-15 | o12 | compra | 10:03:00 | 1 | 1 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P6 |
+| 2026-04-07 | 07-11 | o1 | venta | 05:00:00 | 0 | 0 | referencia | 0 | n 1 | -2.00 (stop) | P6 |
+| 2026-04-07 | 07-11 | o6 | venta | 06:31:14 | 0 | 0 | primer punto tras la toma | 1 | n 2 | -1.00 (stop) | P6 |
+| 2026-04-07 | 11-15 | o28 | compra | 10:26:00 | 0 | 0 | referencia | 0 | n 1 | -1.10 (stop) | P6 |
+| 2026-04-07 | 11-15 | o29 | compra | 10:29:00 | 0 | 0 | referencia | 0 | n 1 | -0.01 (stop) | P6 |
+| 2026-04-08 | 07-11 | o4 | compra | 07:15:28 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +3.48 (objetivo) | P6 |
+| 2026-04-08 | 07-11 | o6 | compra | 08:16:20 | 0 | 0 | primer punto tras la toma | 1 | n 2 | -1.00 (stop) | P6 |
+| 2026-04-09 | 07-11 | o2 | compra | 05:03:28 | 1 | 0 | primer punto tras la toma | 0 | n 1 | -1.00 (stop) | P5 |
+| 2026-04-09 | 07-11 | o6 | compra | 05:41:30 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -1.12 (stop) | P5 |
+| 2026-04-09 | 11-15 | o8 | compra | 11:04:24 | 0 | 0 | referencia | 1 | n 1 | +3.73 (objetivo) | P5 |
+| 2026-04-10 | 11-15 | o3 | venta | 09:25:48 | 1 | 0 | primer punto tras la toma | 2 | n 1 | +0.00 (stop) | P6 |
+| 2026-04-10 | 11-15 | o8 | venta | 11:12:19 | 1 | 0 | primer punto tras la toma | 3 | n 3 | -1.00 (stop) | P6 |
+| 2026-04-10 | 11-15 | o16 | venta | 12:39:11 | 1 | 1 | posterior | 4 | n 4 | +0.00 (stop) | P6 |
+| 2026-04-13 | 07-11 | o5 | compra | 05:05:00 | 0 | 0 | primer punto tras la toma | 4 | n 1 | -1.00 (stop) | P5 |
+| 2026-04-14 | 07-11 | o7 | compra | 06:23:31 | 0 | 0 | primer punto tras la toma | 1 | n 2 | +3.75 (objetivo) | T0 |
+| 2026-04-14 | 11-15 | o16 | compra | 12:05:49 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | T0 |
+| 2026-04-14 | 11-15 | o17 | compra | 12:10:38 | 1 | 1 | posterior | 2 | n 1 | +0.00 (stop) | P5 |
+| 2026-04-15 | 07-11 | o8 | venta | 06:14:16 | 0 | 0 | referencia | 0 | n 2 | +0.00 (stop) | P6 |
+| 2026-04-15 | 11-15 | o23 | compra | 10:32:09 | 0 | 0 | primer punto tras la toma | 4 | n 2 | -1.07 (stop) | P6 |
+| 2026-04-15 | 11-15 | o26 | compra | 10:36:04 | 1 | 1 | posterior | 6 | n 2 | -1.10 (stop) | P6 |
+| 2026-04-15 | 11-15 | o28 | compra | 11:49:12 | 0 | 0 | referencia | 0 | n 3 | +0.00 (stop) | P6 |
+| 2026-04-16 | 07-11 | o4 | compra | 06:08:17 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-04-16 | 07-11 | o7 | compra | 06:11:29 | 1 | 1 | primer punto tras la toma | 5 | n 1 | -0.04 (stop) | P5 |
+| 2026-04-16 | 07-11 | o9 | compra | 07:56:02 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -1.33 (stop) | P5 |
+| 2026-04-16 | 11-15 | o18 | venta | 11:10:27 | 1 | 1 | posterior | 8 | n 1 | +0.00 (stop) | P5 |
+| 2026-04-17 | 07-11 | o10 | venta | 08:55:41 | 1 | 1 | posterior | 9 | n 1 | -1.00 (stop) | P5 |
+| 2026-04-20 | 07-11 | o2 | compra | 05:30:00 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -1.00 (stop) | P6 |
+| 2026-04-20 | 07-11 | o5 | compra | 05:33:17 | 1 | 1 | posterior | 3 | n 1 | -1.00 (stop) | P6 |
+| 2026-04-20 | 11-15 | o8 | compra | 09:33:46 | 0 | 0 | referencia | 2 | n 1 | +0.00 (stop) | P6 |
+| 2026-04-22 | 07-11 | o3 | venta | 05:15:02 | 1 | 0 | primer punto tras la toma | 2 | n 1 | -1.29 (stop) | P5 |
+| 2026-04-22 | 07-11 | o8 | venta | 07:46:00 | 0 | 0 | referencia | 0 | n 2 | -1.00 (stop) | P5 |
+| 2026-04-22 | 11-15 | o21 | compra | 11:46:12 | 1 | 1 | primer punto tras la toma | 6 | n 2 | -1.05 (stop) | P6 |
+| 2026-04-23 | 07-11 | o1 | venta | 05:01:00 | 0 | 0 | referencia | 0 | n 1 | -1.14 (stop) | P5 |
+| 2026-04-23 | 07-11 | o3 | venta | 05:05:00 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -2.00 (stop) | P5 |
+| 2026-04-23 | 07-11 | o12 | venta | 06:55:12 | 1 | 1 | posterior | 2 | n 2 | +3.56 (objetivo) | P5 |
+| 2026-04-24 | 07-11 | o6 | venta | 05:43:18 | 1 | 1 | posterior | 5 | n 1 | -1.50 (stop) | P5 |
+| 2026-04-24 | 07-11 | o8 | venta | 06:44:30 | 0 | 0 | primer punto tras la toma | 0 | n 2 | +3.75 (objetivo) | T0 |
+| 2026-04-24 | 07-11 | o19 | venta | 08:01:31 | 1 | 0 | primer punto tras la toma | 10 | n 3 | +0.00 (stop) | P5 |
+| 2026-04-24 | 07-11 | o20 | venta | 08:06:38 | 1 | 1 | posterior | 10 | n 3 | -1.00 (stop) | P5 |
+| 2026-04-24 | 07-11 | o23 | venta | 08:22:57 | 0 | 0 | primer punto tras la toma | 1 | n 4 | +3.29 (objetivo) | P5 |
+| 2026-04-24 | 11-15 | o26 | compra | 12:37:44 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.09 (stop) | P5 |
+| 2026-04-24 | 11-15 | o27 | compra | 12:39:32 | 1 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P5 |
+| 2026-04-27 | 07-11 | o2 | compra | 05:01:07 | 0 | 0 | primer punto tras la toma | 0 | n 1 | -1.00 (stop) | P6 |
+| 2026-04-27 | 07-11 | o3 | compra | 05:02:02 | 0 | 0 | primer punto tras la toma | 0 | n 1 | -1.11 (stop) | P6 |
+| 2026-04-27 | 07-11 | o4 | compra | 05:03:44 | 0 | 0 | primer punto tras la toma | 0 | n 1 | +0.00 (stop) | P6 |
+| 2026-04-27 | 07-11 | o11 | compra | 06:04:52 | 0 | 0 | primer punto tras la toma | 4 | n 2 | -1.00 (stop) | P6 |
+| 2026-04-28 | 07-11 | o4 | venta | 08:11:54 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.07 (stop) | T0 |
+| 2026-04-28 | 11-15 | o9 | venta | 11:14:06 | 1 | 1 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P6 |
+| 2026-04-28 | 11-15 | o10 | venta | 12:54:41 | 0 | 0 | referencia | 0 | n 2 | -1.00 (stop) | P6 |
+| 2026-04-29 | 07-11 | o6 | venta | 07:14:06 | 1 | 1 | posterior | 5 | n 1 | -0.10 (stop) | P5 |
+| 2026-04-29 | 11-15 | o11 | venta | 09:36:33 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +3.64 (objetivo) | T0 |
+| 2026-07-01 | 07-11 | o4 | venta | 05:11:13 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-01 | 07-11 | o5 | venta | 05:12:11 | 1 | 1 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-01 | 11-15 | o10 | venta | 10:58:16 | 1 | 1 | posterior | 3 | n 1 | +3.60 (objetivo) | P5 |
+| 2026-07-02 | 07-11 | o3 | compra | 05:37:32 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P6 |
+| 2026-07-02 | 07-11 | o4 | compra | 05:40:20 | 1 | 1 | posterior | 2 | n 1 | +0.00 (stop) | P6 |
+| 2026-07-02 | 11-15 | o7 | compra | 09:13:30 | 0 | 0 | primer punto tras la toma | 2 | n 1 | +0.00 (stop) | P5 |
+| 2026-07-02 | 11-15 | o9 | compra | 10:18:40 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -1.29 (stop) | P5 |
+| 2026-07-02 | 11-15 | o12 | compra | 10:21:52 | 1 | 1 | posterior | 2 | n 2 | -1.00 (stop) | T0 |
+| 2026-07-02 | 11-15 | o24 | compra | 12:01:00 | 1 | 1 | posterior | 11 | n 3 | -1.00 (stop) | T0 |
+| 2026-07-02 | 11-15 | o25 | compra | 12:02:09 | 1 | 1 | posterior | 11 | n 3 | -1.00 (stop) | P5 |
+| 2026-07-03 | 07-11 | o4 | compra | 06:02:06 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-03 | 07-11 | o5 | compra | 06:03:31 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +2.57 (objetivo) | P5 |
+| 2026-07-03 | 07-11 | o6 | compra | 07:24:42 | 0 | 0 | referencia | 0 | n 2 | -1.00 (stop) | P5 |
+| 2026-07-03 | 07-11 | o8 | compra | 07:35:41 | 1 | 1 | posterior | 1 | n 2 (vig. n 3) | -1.00 (stop) | P5 |
+| 2026-07-03 | 11-15 | o15 | compra | 09:13:34 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +0.00 (stop) | P5 |
+| 2026-07-07 | 07-11 | o6 | venta | 08:26:50 | 1 | 1 | posterior | 5 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-07 | 11-15 | o7 | venta | 10:35:15 | 0 | 0 | referencia | 0 | n 1 | -1.07 (stop) | P5 |
+| 2026-07-07 | 11-15 | o11 | venta | 10:43:03 | 1 | 1 | posterior | 3 | n 1 | -0.14 (stop) | P5 |
+| 2026-07-07 | 11-15 | o15 | venta | 11:26:01 | 0 | 0 | primer punto tras la toma | 3 | n 2 | -1.00 (stop) | P5 |
+| 2026-07-07 | 11-15 | o22 | venta | 12:35:03 | 1 | 1 | posterior | 4 | n 3 | +3.20 (objetivo) | P5 |
+| 2026-07-08 | 07-11 | o2 | compra | 07:19:11 | 0 | 0 | referencia | 1 | n 1 | +3.67 (objetivo) | T0 |
+| 2026-07-08 | 07-11 | o6 | compra | 08:25:52 | 0 | 0 | primer punto tras la toma | 3 | n 2 | -0.41 (stop) | P5 |
+| 2026-07-09 | 07-11 | o4 | compra | 07:52:19 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-09 | 07-11 | o8 | compra | 08:45:25 | 1 | 0 | primer punto tras la toma | 2 | n 2 | -1.00 (stop) | P5 |
+| 2026-07-09 | 11-15 | o16 | compra | 10:59:01 | 1 | 1 | posterior | 4 | n 1 | -0.09 (stop) | P5 |
+| 2026-07-10 | 07-11 | o3 | compra | 05:28:00 | 1 | 1 | primer punto tras la toma | 1 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-10 | 07-11 | o4 | compra | 05:32:00 | 1 | 1 | posterior | 1 | n 1 | -1.00 (stop) | T0 |
+| 2026-07-10 | 07-11 | o12 | compra | 07:59:02 | 1 | 1 | posterior | 3 | n 3 | -1.11 (stop) | P5 |
+| 2026-07-10 | 11-15 | o16 | venta | 10:58:43 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | T0 |
+| 2026-07-13 | 07-11 | o12 | venta | 07:13:34 | 0 | 0 | primer punto tras la toma | 1 | n 2 | +0.00 (stop) | P5 |
+| 2026-07-13 | 11-15 | o13 | compra | 09:02:14 | 0 | 0 | referencia | 0 | n 1 | -0.05 (stop) | P5 |
+| 2026-07-13 | 11-15 | o22 | compra | 09:55:33 | 1 | 0 | primer punto tras la toma | 1 | n 2 | +0.00 (stop) | P5 |
+| 2026-07-14 | 07-11 | o2 | compra | 06:20:07 | 0 | 0 | referencia | 1 | n 1 | -1.00 (stop) | T0 |
+| 2026-07-14 | 07-11 | o7 | compra | 06:55:30 | 1 | 1 | primer punto tras la toma | 2 | n 2 | -1.00 (stop) | T0 |
+| 2026-07-14 | 11-15 | o11 | compra | 09:35:04 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +0.00 (stop) | T0 |
+| 2026-07-15 | 07-11 | o3 | compra | 05:04:01 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-15 | 07-11 | o4 | compra | 05:06:16 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.08 (stop) | T0 |
+| 2026-07-15 | 07-11 | o7 | compra | 06:45:00 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -1.00 (stop) | P5 |
+| 2026-07-15 | 11-15 | o23 | venta | 12:37:22 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -1.04 (stop) | P5 |
+| 2026-07-15 | 11-15 | o24 | venta | 12:39:37 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -1.00 (stop) | P5 |
+| 2026-07-16 | 07-11 | o6 | compra | 05:55:58 | 1 | 1 | posterior | 5 | n 1 | -1.00 (stop) | T0 |
+| 2026-07-16 | 11-15 | o12 | compra | 09:35:57 | 0 | 0 | primer punto tras la toma | 2 | n 1 | +3.67 (objetivo) | P5 |
+| 2026-07-16 | 11-15 | o18 | compra | 12:40:41 | 0 | 0 | primer punto tras la toma | 0 | n 3 | -1.03 (stop) | P5 |
+| 2026-07-17 | 07-11 | o10 | venta | 05:46:05 | 1 | 0 | primer punto tras la toma | 9 | n 1 | -1.00 (stop) | T0 |
+| 2026-07-17 | 07-11 | o22 | venta | 06:32:32 | 1 | 1 | posterior | 11 | n 2 | -1.00 (stop) | P5 |
+| 2026-07-17 | 11-15 | o24 | compra | 09:40:58 | 0 | 0 | referencia | 1 | n 1 | -0.05 (stop) | P5 |
+| 2026-07-17 | 11-15 | o26 | compra | 10:54:43 | 0 | 0 | referencia | 0 | n 3 | -1.00 (stop) | P5 |
+| 2026-07-17 | 11-15 | o38 | compra | 12:46:33 | 1 | 1 | posterior | 4 | n 4 | +0.00 (stop) | P5 |
+| 2026-08-03 | 07-11 | o1 | venta | 05:48:46 | 0 | 0 | referencia | 0 | n 1 | +0.00 (stop) | P5 |
+| 2026-08-03 | 07-11 | o2 | venta | 05:51:09 | 0 | 0 | primer punto tras la toma | 0 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-03 | 07-11 | o6 | venta | 07:36:53 | 0 | 0 | referencia | 3 | n 2 | -0.03 (stop) | P5 |
+| 2026-08-03 | 11-15 | o14 | venta | 09:51:57 | 1 | 1 | posterior | 7 | n 1 | +0.00 (stop) | T0 |
+| 2026-08-03 | 11-15 | o18 | venta | 11:06:13 | 1 | 1 | posterior | 3 | n 2 | -1.08 (stop) | P5 |
+| 2026-08-03 | 11-15 | o28 | venta | 12:03:38 | 1 | 1 | posterior | 9 | n 3 | -1.05 (stop) | P5 |
+| 2026-08-04 | 11-15 | o15 | venta | 10:54:04 | 1 | 1 | primer punto tras la toma | 5 | n 1 | +0.00 (stop) | P5 |
+| 2026-08-05 | 07-11 | o9 | compra | 06:24:06 | 1 | 1 | posterior | 3 | n 2 | -1.00 (stop) | P6 |
+| 2026-08-05 | 11-15 | o17 | compra | 12:47:25 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P6 |
+| 2026-08-06 | 07-11 | o4 | venta | 05:59:27 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-06 | 07-11 | o5 | venta | 06:00:00 | 1 | 1 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | T0 |
+| 2026-08-06 | 11-15 | o11 | venta | 10:34:53 | 0 | 0 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P6 |
+| 2026-08-07 | 07-11 | o4 | compra | 05:27:15 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-07 | 07-11 | o13 | compra | 07:07:54 | 1 | 1 | primer punto tras la toma | 2 | n 2 | -0.11 (stop) | P5 |
+| 2026-08-07 | 07-11 | o14 | compra | 07:10:00 | 1 | 1 | posterior | 2 | n 2 | +0.00 (stop) | P5 |
+| 2026-08-07 | 07-11 | o16 | compra | 08:15:10 | 0 | 0 | primer punto tras la toma | 1 | n 3 | +0.00 (stop) | P5 |
+| 2026-08-07 | 11-15 | o17 | compra | 10:49:23 | 0 | 0 | referencia | 0 | n 1 | -0.25 (stop) | P5 |
+| 2026-08-10 | 07-11 | o2 | venta | 05:08:18 | 0 | 0 | referencia | 1 | n 1 | +0.00 (stop) | P6 |
+| 2026-08-10 | 11-15 | o16 | compra | 09:39:10 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-10 | 11-15 | o18 | compra | 09:42:02 | 1 | 1 | posterior | 4 | n 1 | +3.75 (objetivo) | P5 |
+| 2026-08-10 | 11-15 | o24 | compra | 11:16:11 | 0 | 0 | primer punto tras la toma | 5 | n 2 | -0.08 (stop) | P5 |
+| 2026-08-10 | 11-15 | o25 | compra | 11:21:38 | 1 | 1 | posterior | 5 | n 2 | -1.00 (stop) | P5 |
+| 2026-08-11 | 07-11 | o2 | compra | 05:57:13 | 0 | 0 | referencia | 1 | n 1 | +0.00 (stop) | P5 |
+| 2026-08-11 | 07-11 | o7 | compra | 08:08:39 | 1 | 0 | primer punto tras la toma | 4 | n 2 | +0.00 (stop) | T0 |
+| 2026-08-11 | 11-15 | o12 | venta | 11:06:43 | 0 | 0 | primer punto tras la toma | 4 | n 1 | -1.00 (stop) | P6 |
+| 2026-08-11 | 11-15 | o13 | venta | 11:08:02 | 1 | 1 | primer punto tras la toma | 4 | n 1 | -0.05 (stop) | P6 |
+| 2026-08-12 | 07-11 | o8 | venta | 08:26:03 | 0 | 0 | primer punto tras la toma | 2 | n 2 | -1.00 (stop) | P5 |
+| 2026-08-12 | 11-15 | o14 | venta | 11:37:49 | 1 | 0 | primer punto tras la toma | 1 | n 2 | -1.21 (stop) | P6 |
+| 2026-08-13 | 07-11 | o2 | venta | 05:04:24 | 1 | 0 | primer punto tras la toma | 1 | n 1 | -1.17 (stop) | P5 |
+| 2026-08-13 | 07-11 | o9 | venta | 08:51:21 | 0 | 0 | referencia | 0 | n 3 | +1.86 (manual) | P5 |
+| 2026-08-17 | 07-11 | o1 | compra | 05:00:01 | 0 | 0 | referencia | 0 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-17 | 11-15 | o15 | compra | 10:12:19 | 1 | 0 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P6 |
+| 2026-08-17 | 11-15 | o17 | compra | 10:42:34 | 0 | 0 | primer punto tras la toma | 0 | n 2 | -0.20 (stop) | P6 |
+| 2026-08-18 | 07-11 | o4 | venta | 05:51:15 | 1 | 1 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P6 |
+| 2026-08-18 | 07-11 | o6 | venta | 07:08:15 | 0 | 0 | primer punto tras la toma | 1 | n 2 | -1.22 (stop) | P6 |
+| 2026-08-18 | 07-11 | o10 | venta | 07:32:00 | 1 | 0 | primer punto tras la toma | 2 | n 3 | -1.00 (stop) | P6 |
+| 2026-08-18 | 11-15 | o14 | venta | 09:36:18 | 0 | 0 | referencia | 3 | n 1 | -1.00 (stop) | P6 |
+| 2026-08-18 | 11-15 | o15 | venta | 09:40:20 | 1 | 0 | primer punto tras la toma | 3 | n 1 | -0.33 (stop) | P6 |
+| 2026-08-18 | 11-15 | o18 | venta | 12:10:07 | 0 | 0 | primer punto tras la toma | 0 | n 3 | -1.00 (stop) | P6 |
+| 2026-08-20 | 07-11 | o3 | venta | 06:02:00 | 1 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-20 | 07-11 | o14 | venta | 07:45:00 | 0 | 0 | primer punto tras la toma | 1 | n 3 | -1.00 (stop) | P5 |
+| 2026-08-20 | 07-11 | o17 | venta | 08:47:50 | 1 | 0 | primer punto tras la toma | 1 | n 4 | -1.00 (stop) | P5 |
+| 2026-08-20 | 11-15 | o19 | compra | 10:50:01 | 0 | 0 | referencia | 1 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-20 | 11-15 | o30 | compra | 11:49:09 | 1 | 1 | primer punto tras la toma | 3 | n 2 | -1.00 (stop) | T0 |
+| 2026-08-21 | 07-11 | o2 | compra | 05:32:51 | 0 | 0 | referencia | 1 | n 1 | +3.60 (objetivo) | T0 |
+| 2026-08-21 | 07-11 | o5 | compra | 07:49:14 | 0 | 0 | primer punto tras la toma | 2 | n 2 | -1.00 (stop) | P5 |
+| 2026-08-21 | 07-11 | o7 | compra | 07:51:12 | 1 | 1 | posterior | 2 | n 2 | -1.00 (stop) | P5 |
+| 2026-08-21 | 11-15 | o10 | compra | 11:37:05 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.05 (stop) | P5 |
+| 2026-08-21 | 11-15 | o14 | compra | 12:21:03 | 0 | 0 | primer punto tras la toma | 1 | n 2 | +0.00 (stop) | P5 |
+| 2026-08-24 | 07-11 | o3 | compra | 05:25:00 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P6 |
+| 2026-08-24 | 07-11 | o4 | compra | 05:27:04 | 1 | 1 | posterior | 2 | n 1 | -1.00 (stop) | P6 |
+| 2026-08-24 | 07-11 | o6 | compra | 06:26:02 | 1 | 0 | primer punto tras la toma | 1 | n 2 | -1.08 (stop) | P6 |
+| 2026-08-24 | 07-11 | o12 | compra | 07:19:42 | 0 | 0 | primer punto tras la toma | 3 | n 3 | +0.00 (stop) | P6 |
+| 2026-08-24 | 07-11 | o21 | compra | 08:15:54 | 0 | 0 | primer punto tras la toma | 1 | n 5 | -1.10 (stop) | P6 |
+| 2026-08-24 | 11-15 | o25 | venta | 11:29:53 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -1.00 (stop) | T0 |
+| 2026-08-24 | 11-15 | o30 | venta | 12:31:22 | 1 | 0 | primer punto tras la toma | 4 | n 2 | -0.07 (stop) | P5 |
+| 2026-08-25 | 07-11 | o2 | venta | 06:21:07 | 1 | 0 | primer punto tras la toma | 1 | n 1 | -1.09 (stop) | P5 |
+| 2026-08-25 | 07-11 | o10 | venta | 07:23:47 | 1 | 1 | posterior | 5 | n 2 | +3.20 (objetivo) | P5 |
+| 2026-08-25 | 07-11 | o12 | venta | 08:31:03 | 0 | 0 | primer punto tras la toma | 1 | n 3 | -1.00 (stop) | P5 |
+| 2026-08-25 | 07-11 | o13 | venta | 08:32:02 | 0 | 0 | primer punto tras la toma | 1 | n 3 | +0.00 (stop) | P5 |
+| 2026-08-25 | 11-15 | o19 | venta | 11:54:00 | 0 | 0 | primer punto tras la toma | 1 | n 1 | +3.75 (objetivo) | P5 |
+| 2026-08-26 | 07-11 | o7 | venta | 05:39:19 | 0 | 0 | primer punto tras la toma | 6 | n 1 | -1.00 (stop) | T0 |
+| 2026-08-26 | 07-11 | o10 | venta | 05:42:54 | 0 | 0 | primer punto tras la toma | 8 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-26 | 07-11 | o11 | venta | 05:44:11 | 1 | 1 | posterior | 8 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-26 | 07-11 | o17 | venta | 07:07:02 | 0 | 0 | primer punto tras la toma | 5 | n 2 | -1.12 (stop) | P5 |
+| 2026-08-26 | 11-15 | o24 | compra | 10:31:00 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +0.00 (stop) | P5 |
+| 2026-08-26 | 11-15 | o27 | compra | 11:26:30 | 0 | 0 | referencia | 0 | n 3 | +3.60 (objetivo) | T0 |
+| 2026-08-27 | 11-15 | o9 | venta | 12:13:40 | 1 | 1 | primer punto tras la toma | 2 | n 1 | +0.00 (stop) | T0 |
+| 2026-08-28 | 07-11 | o6 | venta | 06:05:52 | 1 | 1 | posterior | 5 | n 1 | -1.00 (stop) | P6 |
+| 2026-08-28 | 11-15 | o16 | venta | 10:42:17 | 0 | 0 | primer punto tras la toma | 9 | n 1 | -1.08 (stop) | T0 |
+| 2026-08-31 | 07-11 | o4 | compra | 05:40:41 | 1 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
+| 2026-08-31 | 07-11 | o7 | compra | 06:58:11 | 0 | 0 | referencia | 1 | n 2 | -1.00 (stop) | T0 |
+| 2026-08-31 | 11-15 | o14 | compra | 12:41:16 | 0 | 0 | referencia | 1 | n 1 | -0.33 (stop) | P6 |
+
+## 4. La lista «Para S-14»: las sesiones de P6 de la corrida 2 (el bot opera y el trader no)
+
+De `patrones-diaria.txt` (P6: 77 filas en **34 sesiones**; 49 «en sesión», en días en que el trader
+operó la otra sesión, y 28 «en día», en días sin ninguna operación del trader), cruzadas por el
+guion `lista_s14.py` (solo lee los anexos) con `entradas-antes-alternancia.txt` (el sesgo y el
+camino del bot, el R de cada llenada) y con `cuenta-arrastrada.txt` (si la cuenta de la corrida 1
+llega). Fichero: `lista-s14.txt`. **Los días los elige el consultor al preparar la hoja de la sesión
+6**; ninguna fila lleva nada anterior a su día dev. «Viene de vídeo» por §0.d: abril solo el 29 (no
+hay P6 ese día), julio «según el trader», enero y agosto no. **La cuenta arrastrada de la corrida 1
+no corta el tramo (EN_CURSO)** pero su última sesión con un llenado es `2026-01-20 11-15` (§2.2,
+RN-032): las 5 sesiones de P6 anteriores a ella tuvieron también llenadas en la corrida 1 (las
+mismas), y las 29 posteriores no tienen ninguna orden en la corrida 1.
+
+| día | sesión | vídeo | operaciones del bot (lado, llenada UTC) | sesgo | camino del bot (primer instante de cada hecho) | R de cada llenada | corrida 1 |
+|---|---|---|---|---|---|---|---|
+| 2026-01-06 | 11-15 | no | 2 ventas (13:43:00, 13:44:30) | bajista | sesgo 10:00Z → liquidez_tomada 13:36Z → orden_dimensionada 13:36Z | -1.12 (stop); +3.50 (objetivo) | llega: llenó 2 |
+| 2026-01-07 | 11-15 | no | 2 ventas (10:03:27, 13:00:00) | bajista | 10:00Z → 10:03Z → 10:03Z | -1.00 (stop); -1.00 (stop) | llega: llenó 2 |
+| 2026-01-09 | 11-15 | no | 1 venta (13:38:25) | bajista | 10:00Z → 10:39Z → 10:39Z | -1.00 (stop) | llega: llenó 1 |
+| 2026-01-15 | 11-15 | no | 1 venta (10:36:44) | bajista | 10:00Z → 10:35Z → 10:35Z | -0.19 (stop) | llega: llenó 1 |
+| 2026-01-16 | 11-15 | no | 3 compras (12:34:38, 12:35:15, 12:55:48) | alcista | 10:00Z → 12:25Z → 12:25Z | -1.00 (stop); +2.18 (objetivo); +0.00 (stop) | llega: llenó 3 |
+| 2026-01-22 | 07-11 | no | 2 ventas (06:35:32, 07:28:14) | bajista | 06:00Z → 06:32Z → 06:32Z | +3.75 (objetivo); -1.00 (stop) | posterior al 2026-01-20 11-15: sin orden |
+| 2026-01-27 | 11-15 | no | 3 ventas (11:08:09, 12:01:00, 12:05:46) | bajista | 10:00Z → 11:06Z → 11:06Z | +0.00 (stop); -1.00 (stop); -1.00 (stop) | sin orden |
+| 2026-04-01 | 07-11 | no | 2 compras (07:56:07, 08:03:21) | alcista | 05:00Z → 07:50Z → 07:50Z | -1.00 (stop); +0.00 (stop) | sin orden |
+| 2026-04-02 | 11-15 | no | 2 ventas (12:11:26, 12:54:03) | bajista | 09:00Z → 12:03Z → 12:03Z | -0.03 (stop); +1.43 (manual) | sin orden |
+| 2026-04-06 | 11-15 | no | 2 compras (10:01:00, 10:03:00) · posible M (hora perdida 2026-04-06T10Z) | alcista | 09:00Z → 09:55Z → 09:55Z | -1.00 (stop); +0.00 (stop) | sin orden |
+| 2026-04-07 | 07-11 | no | 3 ventas (05:00:00, 05:09:27, 06:31:14) | bajista | 05:00Z → 05:00Z → 05:00Z | -2.00 (stop); -0.33 (stop); -1.00 (stop) | sin orden |
+| 2026-04-07 | 11-15 | no | 2 compras (10:26:00, 10:29:00) · posible M (2026-04-07T10Z) | alcista | 09:00Z → 10:26Z → 10:26Z | -1.10 (stop); -0.01 (stop) | sin orden |
+| 2026-04-08 | 07-11 | no | 2 compras (07:15:28, 08:16:20) | alcista | 05:00Z → 07:11Z → 07:11Z | +3.48 (objetivo); -1.00 (stop) | sin orden |
+| 2026-04-10 | 11-15 | no | 4 ventas (09:25:48, 11:12:19, 11:15:07, 12:39:11) | bajista | 09:00Z → 09:19Z → 09:19Z | +0.00; -1.00; +0.00; +0.00 (stops) | sin orden |
+| 2026-04-15 | 07-11 | no | 1 venta (06:14:16) | bajista | 05:00Z → 05:02Z → 05:02Z | +0.00 (stop) | sin orden |
+| 2026-04-15 | 11-15 | no | 5 compras (09:14:00, 10:32:09, 10:36:04, 10:40:53, 11:49:12) | alcista | 09:00Z → 09:04Z → 09:04Z | +0.00; -1.07; -1.10; -0.17; +0.00 (stops) | sin orden |
+| 2026-04-20 | 07-11 | no | 2 compras (05:30:00, 05:33:17) | alcista | 05:00Z → 05:27Z → 05:27Z | -1.00 (stop); -1.00 (stop) | sin orden |
+| 2026-04-20 | 11-15 | no | 2 compras (09:33:46, 12:17:20) | alcista | 09:00Z → 09:28Z → 09:28Z | +0.00 (stop); -0.04 (stop) | sin orden |
+| 2026-04-22 | 11-15 | no | 1 compra (11:46:12) | alcista | 09:00Z → 09:55Z → 09:55Z | -1.05 (stop) | sin orden |
+| 2026-04-27 | 07-11 | no | 4 compras (05:01:07, 05:02:02, 05:03:44, 06:04:52) | alcista | 05:00Z → 05:00Z → 05:00Z | -1.00; -1.11; +0.00; -1.00 (stops) | sin orden |
+| 2026-04-28 | 11-15 | no | 2 ventas (11:14:06, 12:54:41) | bajista | 09:00Z → 11:06Z → 11:06Z | +0.00 (stop); -1.00 (stop) | sin orden |
+| 2026-07-02 | 07-11 | según el trader (v11-v13; lo comprueba T) | 2 compras (05:37:32, 05:40:20) | alcista | 05:00Z → 05:33Z → 05:33Z | -1.00 (stop); +0.00 (stop) | sin orden |
+| 2026-08-05 | 07-11 | no | 1 compra (06:24:06) | alcista | 05:00Z → 05:03Z → 05:03Z | -1.00 (stop) | sin orden |
+| 2026-08-05 | 11-15 | no | 1 compra (12:47:25) | alcista | 09:00Z → 12:44Z → 12:44Z | -1.00 (stop) | sin orden |
+| 2026-08-06 | 11-15 | no | 1 venta (10:34:53) | bajista | 09:00Z → 10:29Z → 10:29Z | +0.00 (stop) | sin orden |
+| 2026-08-10 | 07-11 | no | 2 ventas (05:08:18, 07:32:42) | bajista | 05:00Z → 05:07Z → 05:07Z | +0.00 (stop); -1.08 (stop) | sin orden |
+| 2026-08-11 | 11-15 | no | 2 ventas (11:06:43, 11:08:02) | bajista | 09:00Z → 11:02Z → 11:02Z | -1.00 (stop); -0.05 (stop) | sin orden |
+| 2026-08-12 | 11-15 | no | 1 venta (11:37:49) | bajista | 09:00Z → 09:13Z → 09:13Z | -1.21 (stop) | sin orden |
+| 2026-08-17 | 11-15 | no | 2 compras (10:12:19, 10:42:34) | alcista | 09:00Z → 10:06Z → 10:06Z | +0.00 (stop); -0.20 (stop) | sin orden |
+| 2026-08-18 | 07-11 | no | 4 ventas (05:51:15, 07:08:15, 07:11:38, 07:32:00) | bajista | 05:00Z → 05:47Z → 05:47Z | -1.00; -1.22; -0.06; -1.00 (stops) | sin orden |
+| 2026-08-18 | 11-15 | no | 3 ventas (09:36:18, 09:40:20, 12:10:07) | bajista | 09:00Z → 09:31Z → 09:31Z | -1.00; -0.33; -1.00 (stops) | sin orden |
+| 2026-08-24 | 07-11 | no | 8 compras (05:25:00 a 08:19:05) | alcista | 05:00Z → 05:22Z → 05:22Z | -1.00; -1.00; -1.08; -1.17; +0.00; +0.00; -1.10; -1.00 (stops) | sin orden |
+| 2026-08-28 | 07-11 | no | 1 venta (06:05:52) | bajista | 05:00Z → 05:58Z → 05:58Z | -1.00 (stop) | sin orden |
+| 2026-08-31 | 11-15 | no | 1 compra (12:41:16) | alcista | 09:00Z → 12:39Z → 12:39Z | -0.33 (stop) | sin orden |
+
+En las 34 sesiones el camino es el mismo: `sesgo` al abrir (RN-003), `liquidez_tomada` (RN-004) y
+`orden_dimensionada` (RN-011) en el mismo cierre, y la orden stop en el punto. Dos sesiones de abril
+(06 y 07, 11-15) tienen todas sus llenadas en una hora de ticks perdida (posible M). La R de las 77
+llenadas de P6: 5 objetivos y 1 cierre manual positivo, 24 a cero (break even) y 47 negativas.
+
+## 5. El encargo frente a lo hecho
+
+### 5.1 Punto por punto
+
+| # | El encargo pide | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Rama desde main 88f97f7 con la base entera comprobada, abrir-rama, contrato R4, artefacto, encargo copiado tal cual | Hecho | cabecera; f043554 |
+| 2 | Fable 5.1 / esfuerzo alto; `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` | Hecho | `/model` al empezar; `echo` = 1 (cabecera) |
+| 3 | Nada de src/, tests/, knowledge/, Makefile ni .claude/; criterio_fidelidad.yaml, ambigüedades, ADR-0083, informes cerrados y líneas base sin tocar | Hecho | §8: `git diff main --stat -- src/ tests/ knowledge/ Makefile .claude/` vacío; `rutas_protegidas` del contrato |
+| 4 | Next Action y hoja de ruta sin tocar en la rama; PROJECT_STATE solo lo de abrir-rama (22.924 bytes verificados) | Hecho | §0 cabecera (`wc -c` 22924 en main); las líneas, en §6 |
+| 5 | Antes de leer casos dev, `casos_reservados` por recuento, declarado el mismo día | Hecho | §0.c, §0.m; fila del 2026-10-27 de HOLDOUT-EXPOSICIONES |
+| 6 | Nada de mayo ni de meses reservados; el calentamiento declarado; nada anterior al día dev en ningún texto | Hecho | la fila; `grep -c "antes del dia"` 0; ninguna H4 ni pivote impreso; las fechas de los textos son todas de días dev (enero 2-30, abril, julio 1-17, agosto) |
+| 7 | Ninguna cifra fija ni cambia un valor, ni los DEFAULT_AMBIGUOUS, ni el umbral | Hecho | `git diff main -- knowledge/` vacío; ADR-0070 §4 |
+| 8 | Las 5 decisiones de §0.0 aplicadas | Hecho | §2.1 (1 y 2: «no»), §2.6 (4), §3 (5 con la regla de la PARADA) |
+| 9 | Solo los tres comandos del arnés y el guion aprobado; ningún visor | Hecho | §2 y §3: los comandos literales; `motor visor` no se ejecutó (desviación del runbook, §5.2) |
+| 10 | Fase 0 a) a j) con fichero:línea y PARADA | Hecho | §0.a-§0.m; respuesta del consultor copiada |
+| 11 | Fase 1: fila y README en su commit; guiones con tests de humo en los dos sentidos y su salida pegada; ruff/mypy antes de cada make check | Hecho | a713e23; fec05fc y 74ab3cb; §1.2 (10 passed; mypy: solo los dos errores heredados) |
+| 12 | Fase 2: las tres corridas sin `--meses`, TIEMPO y MEMORIA copiados, nombres finales, repetición con diff y borrado, el diff de la línea base a fichero | Hecho | §2, §2.4, §2.5 |
+| 13 | Informe: por corrida y mes; veredicto literal; la cuenta (tramo, día y regla); peticiones y freno; tramo no continuo | Hecho | §2.1, §2.2 |
+| 14 | Lo de i): RN-020, ADR-0086, RN-036, RN-037, la lista DEFAULT_AMBIGUOUS | Hecho | §2.3, §0.i |
+| 15 | El diff resumido por sección con el fichero en anexos | Hecho | §2.5; `diff-linea-base.txt` |
+| 16 | Patrones de las dos corridas por mes con la copia arreglada; PUNTO-USADO como contexto con los cambios del motor; posible M | Hecho | §2.6; `patrones-diaria.txt`, `patrones-arrastrada.txt` |
+| 17 | Embudo por mes y rechazos por motivo | Hecho | §2.7 |
+| 18 | Lista «Entradas antes de la alternancia», por día y sesión, con las dos columnas, patrón, R y pareja; sin conclusiones | Hecho | §3; `entradas-antes-alternancia.txt` |
+| 19 | Lista «Para S-14» con primer hecho, R, si la cuenta arrastrada llega, y vídeo | Hecho | §4; `lista-s14.txt` |
+| 20 | Encargo frente a lo hecho, desviaciones, comandos, exposiciones | Hecho | §5 |
+| 21 | PARADA 2 con todo commiteado | Hecho | el último commit de la rama antes de esta PARADA |
+| 22 | Las líneas del cierre, medidas; PROJECT_STATE < 23.000 con ellas | Hecho | §6 (22.640 bytes sobre una copia) |
+| 23 | Hallazgos para ERRORES-RECURRENTES | Hecho | §7 |
+| 24 | Revisor (opus) con los cuatro alcances, informe pegado | Pendiente de la PARADA 2 (entregar-rama) | — |
+
+### 5.2 Desviaciones declaradas
+
+1. **El visor no se abre.** `docs/runbooks/ACTIVAR-A35-A44.md` §5 manda `uv run botsito motor visor
+   --caso <caso dev>` después del `diff`; en esta rama no se ejecuta ningún `motor visor` (encargo,
+   «Autorización expresa»; respuesta a la PARADA, punto 4). Los días del visor los elige el consultor
+   en la PARADA 2. La NOTA de §5 del runbook lo declara (commit propio, contrato ampliado solo a él).
+2. **La línea base vigente pasa a ser `anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`**, sin
+   copia; `CABLEADO-SIMULADOR-LINEA-BASE.txt` no se toca (punto 4). Los documentos que la nombran
+   como vigente (§0.g) siguen diciéndolo: solo el runbook gana la NOTA; lo demás son informes cerrados
+   (no se editan) y `PROJECT_STATE.md` (la V sale en el cierre).
+3. **Dos guiones auxiliares más que los dos del encargo**: `comparar_rn003.py` (el rn003 por sesión
+   frente a la línea base, porque «RN-003 al abrir» no se parte por mes, auditor #45) y
+   `lista_s14.py` (la lista de §4 cruzando los anexos). Solo leen los ficheros commiteados de
+   `docs/validation/` y no corren nada; con `ruff format`, `ruff check` y `mypy` (sin errores propios).
+   Sin test de humo propio: no deciden nada, y sus salidas (`rn003-abril-agosto.txt`, `lista-s14.txt`)
+   se comprueban contra las salidas del arnés a mano (tres filas, el revisor).
+4. **La copia de `patrones.py` corta el rótulo solo si la línea empieza por `[DIAGNOSTICO`**, como
+   dice el encargo; `comun_visor.py` corta si empieza por `[` (auditor, #37). Sobre estas salidas da
+   lo mismo.
+5. **El guion de f) reproduce la corrida 2** (cuenta diaria), no la 1, como el encargo previó; la
+   comprobación una a una salió `iguales (291)`.
+6. **Herencia H5 del auditor**: las cifras de referencia de `ACTIVAR-A35-A44.md` §5.1
+   (`liquidez_tomada` 98 y 97 de 104 en R3.1; RN-020 0 de 104 con `sin_tope`) se comparan en §2.3:
+   hoy 96 de 104 y 0 de 104 (con el tope del trader evaluado).
+
+### 5.3 Comandos ejecutados (literales, en orden)
+
+Apertura y fase 0: los de la cabecera (git, `gh api`), `uv run botsito state check`,
+`uv run python scripts/contrato_rama.py`, `make check > make-check.log 2>&1` (×5 hasta la PARADA 2:
+apertura, fase 0, fila+README, guiones, ampliación del guion), los dos guiones de medida de la
+carpeta de trabajo (`medir_fase0.py`, `medir_patrones_rotulo.py`, solo lectura). Fase 1:
+`uv run ruff format`, `uv run ruff check`, `uv run mypy` sobre los ficheros de anexos,
+`uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION/test_humo.py -q`,
+`uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/patrones.py <la diaria de PUNTO-USADO y su copia sin rótulo>`.
+Fase 2, cada uno solo y en segundo plano:
+1. `uv run botsito motor arnes --simular --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`
+2. `uv run botsito motor arnes --simular --diagnostico-cuenta-diaria --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.txt`
+3. `uv run botsito motor arnes --simular --salida <carpeta de trabajo>/cuenta-arrastrada.txt`; `diff <commiteada> <copia>`; `rm <copia>`
+4. `diff docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt > docs/validation/anexos/RECORRIDA-CONSTRUCCION/diff-linea-base.txt` (exit 1; la guardia no negó la redirección)
+5. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/patrones.py "<diaria>" --filas > …/patrones-diaria.txt` y lo mismo con `cuenta-arrastrada.txt` → `patrones-arrastrada.txt`
+6. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas_antes_alternancia.py --diaria "docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.cuenta=diaria.txt" --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas-antes-alternancia.txt` (una vez, después de las tres corridas)
+7. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/comparar_rn003.py docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt > …/rn003-abril-agosto.txt`
+8. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/lista_s14.py docs/validation/anexos/RECORRIDA-CONSTRUCCION > …/lista-s14.txt`
+
+Lo que la guardia negó en la rama, sin rodearla (todo reescrito en llamadas sueltas, como ella pide):
+`$'\r'` en un `grep` (se usó `file`), `date` detrás de un `tail`, `uv run --project` desde la carpeta
+de trabajo (se corrió ruff desde la raíz), `cmp` detrás de un `cp` y `cmp` sobre un `.py` (se usó
+`diff`). Ninguna negativa tocó material protegido ni un comando del arnés.
+
+### 5.4 Exposiciones
+
+Las de la fila del 2026-10-27 de `docs/validation/HOLDOUT-EXPOSICIONES.md`, declaradas antes de
+correr: las tres corridas y el guion de f) leyeron para calentar el M1 entero de marzo (mes
+reservado entero) y de junio (11 días reservados); cada `make check` de la rama (cinco hasta la
+PARADA 2, y los que sigan) lee el M1 de marzo por `test_preparar_a35.py` y `test_visor.py`. Ninguna
+etiqueta, ninguna operación del trader ni cifra del bot de un día reservado se leyó ni se imprimió;
+ningún texto de la rama lleva una fecha, una vela, una H4, un pivote ni un precio anteriores al día
+dev al que pertenece. Nada de mayo, marzo (salvo las velas del calentamiento), febrero, septiembre
+ni diciembre; ningún libro, imagen, fotograma ni transcripción.
+
+## 6. Las líneas del cierre (preparadas, medidas; no aplicadas en la rama)
+
+- **Next Action, V sale** (R4.1 HECHA) y entra al final de `docs/state/HISTORIA.md` con su texto
+  literal bajo `# Next Action HECHA · V · sale de PROJECT_STATE.md en trabajo/recorrida-construccion (<fecha del cierre>)`
+  (RITUAL.md, punto 3). El texto literal de hoy (`PROJECT_STATE.md:52`):
+  `V. Activar la sesión 5 (R4.1). HECHAS spec y motor (\`trabajo/activar-sesion-05\` y \`trabajo/activar-sesion-05-motor\`, este tag: ADR-0084 a 0086, RN-037; A-35 y A-50 con lectura del consultor, ABIERTAS). QUEDA la re-corrida del arnés con \`--simular\` sobre toda la construcción (ADR-0070 §3; diff contra CABLEADO-SIMULADOR-LINEA-BASE.txt, ACTIVAR-A35-A44.md §5.1); después la sesión 6 (R4.2).`
+- **F** pasa a: `F. La rama corta de la cuarentena por condición (Technical Debt, PRIORITARIA) antes de ingerir la sesión 6; la preparación de la sesión 6 (R4.2); R6a en los huecos.`
+  Contra `tests/unit/test_hoja_de_ruta.py`: `DEPENDENCIA` casa «antes de ingerir la sesión 6» y
+  `LETRA_SUELTA` no encuentra ninguna letra suelta en ese tramo (`R4.2` y `R6a` llevan dígito
+  detrás; «PRIORITARIA» es palabra), y la hoja gana la entrada G.5 de abajo para que F no nombre
+  nada que la hoja no tenga (respuesta, punto 6).
+- **`Current Branch`**: `main`. **`Current Feature`**: `Ninguna rama abierta.
+  trabajo/recorrida-construccion cerrada en main el <fecha> (stable/F38g-recorrida-construccion):
+  la corrida que cuenta por ADR-0070 §3 dio «no» (cobertura 3,5 %, precisión 13,2 %); se sigue
+  construyendo (RECORRIDA-CONSTRUCCION.md).`
+- **`PROJECT_STATE.md` con esas líneas aplicadas** (guion `medir_ps.py` de la carpeta de trabajo,
+  sobre una copia fuera del repo: sale V con su línea en blanco, cambia F, `Current Branch` y
+  `Current Feature`): **22.640 bytes** (hoy en la rama 23.098; en main 22.924; el tope del test,
+  25.000; la orden del consultor para este cierre, 23.000). `Completed Features` y `Change Log` no
+  cambian en el cierre (`docs/state/README.md`); el recuento de tests tampoco (ningún test nuevo
+  dentro de `tests/`).
+- **Hoja de ruta, R4.1**: `**Estado:** HECHA (\`trabajo/activar-sesion-05\`, \`stable/F38e-activar-sesion-05\`; \`trabajo/activar-sesion-05-motor\`, \`stable/F38f-activar-sesion-05-motor\`; \`trabajo/recorrida-construccion\`, el tag de su cierre: la corrida que cuenta por ADR-0070 §3 dio «no» -cobertura 3,5 %, precisión 13,2 %- y las dos listas para la sesión 6 están en RECORRIDA-CONSTRUCCION.md §3 y §4).`
+  Y `NA:V` sale de sus Refs (quedan los `ID:`).
+- **Hoja de ruta, R4.2**: `NA:V` sale de sus Refs; «Qué es» gana «S-14 con las 34 sesiones de P6 de
+  la re-corrida (RECORRIDA-CONSTRUCCION.md §4; 77 llenadas) y el dibujo 3 de S-15 con las 259
+  entradas llenadas con menos de dos zonas de control (§3; 149 con cero, 110 con una)» en lugar de
+  «S-14 con los días de construcción que dé la re-corrida»; «Depende de» pasa a «nada (la re-corrida
+  está hecha, R4.1)».
+- **Hoja de ruta, R5.2, «Depende de»** (respuesta, punto 6): `la corrida que cuenta (R4.1; ADR-0070
+  §3) con un "sí", y el ADR propio de la rama de medida (ADR-0070 §6)`.
+- **Hoja de ruta, entrada nueva en «Carril: guardias y deuda»** (respuesta, punto 6), con la forma
+  de G.4:
+  ```
+  ### G.5 · La cuarentena por condición
+  - **Refs:** —
+  - **Qué es:** la línea PRIORITARIA de Technical Debt: diciembre cuenta como libre en `meses_libres`
+    con NA:I sin decidir, y la fecha numérica seguida de coma no se tapa (SESION-05-EXTRACCION.md
+    §2.7 y §11, a4).
+  - **Depende de:** nada.
+  - **Quién:** la sesión, con el encargo del consultor.
+  - **Hecho cuando:** los dos casos tienen su test que rompe en main y pasa en la rama, antes de
+    ingerir la sesión 6.
+  ```
+  `Refs: —` no lleva ninguna `NA:`/`HER:`/`ID:`, así que `test_hoja_de_ruta` (problemas_b) no
+  encuentra nada que comprobar en ella; «NA:I» dentro de «Qué es» es una referencia a una letra
+  viva (I sigue en la Next Action). Se comprueba en el cierre con el test en memoria, como en
+  `trabajo/entrada-enero`.
+- **ADR-0070 §3, NOTA fechada** (el cuerpo no se toca; contrato ampliado al ADR solo para eso, en
+  un commit propio, si la PARADA 2 lo aprueba):
+  `> **NOTA del <fecha> (\`trabajo/recorrida-construccion\`, no reescribe el cuerpo).** La primera corrida que cuenta por este punto (sin ningún \`--diagnostico-*\`, con \`--simular\`, sobre toda la construcción: 76 días dev, 198 operaciones del trader) dio \`habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 3.5 % por debajo de 70.0 %; precision 13.2 % por debajo de 60.0 %)\` (\`docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt\`, la línea base vigente desde esa rama). Por el punto 4, se sigue construyendo y mayo no se toca.`
+- **La línea base** (§0.g, punto 4 de la respuesta): la NOTA al principio de `ACTIVAR-A35-A44.md` §5
+  (commit propio, en esta rama, después de la fase 2): la línea base vigente es
+  `docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`, qué es comparable con la
+  anterior (§2.5), y que `motor visor --caso` no se abrió en la rama (desviación). No hay más
+  documento ejecutable que la nombre (§0.g).
+- **Technical Debt**: ninguna línea nueva; la deuda de `arnes.dias_de_mercado` (lee marzo y junio
+  para calentar) sigue como está, con una fila más en HOLDOUT-EXPOSICIONES que la cita.
+
+## 7. Hallazgos para ERRORES-RECURRENTES (la fila de la rama, en el cierre)
+
+1. **(Del consultor)** El encargo pedía clasificar con `patrones.py` una salida sin rótulo, y su
+   lectura por «] » daba un P1 falso sin error; lo vio el auditor del consultor. Lección: un guion de
+   anexos escrito para salidas rotuladas se prueba sobre una salida sin rótulo antes de reutilizarlo.
+   Señal: «0 sesiones con rn003» en la cabecera (§0.e).
+2. **Las categorías de una lista se comprueban sobre el caso que la motiva antes de fijarlas.** Las
+   tres del encargo para «dónde estaba la orden» se solapaban en S-10, el caso que la lista quería
+   capturar (auditor #22); la PARADA las separó en dos columnas. Señal: el ejemplo nombrado cae en
+   dos categorías a la vez.
+3. **Un guion copiado de otro anexo se copia con lo que importa.** `patrones.py` importa
+   `horas_perdidas.py` de su directorio; copiado solo, falla al importar (auditor H2). Señal: un
+   `sys.path.insert(0, parent)` seguido de un import local.
+4. **«Un agregado de toda la salida» no se compara por mes en un diff.** «RN-003 al abrir» suma
+   todas las sesiones; para comparar abril y agosto con la línea base hizo falta leer las líneas
+   «Por sesion» una a una (§2.5). Señal: una sección del informe sin desglose por mes citada como
+   «comparable por mes».
+5. **La cuenta arrastrada puede quedar «viva» y muda a la vez.** El veredicto dice EN_CURSO y el
+   bot no coloca nada desde el 2026-01-20 por RN-032 (el límite total de la firma no arrastra):
+   «la cuenta llega a la sesión» no es lo mismo que «el bot pudo operar en ella» (§2.2, §4). Señal:
+   `estado: EN_CURSO` con `bloqueadas RN-015:…:prohibida:abrir_operacion` en todas las sesiones
+   siguientes.
+6. **La guardia niega lo que encadena un lector con otro comando**: `cmp` tras `cp`, `date` tras
+   `tail`, `$'\r'`, `uv run --project`. Una llamada por comando, desde la raíz (§5.3).
+
+## 8. Lo que NO cambia, medido
+
+`git diff main --stat -- src/ tests/ knowledge/ Makefile .claude/ config/ docs/adr/ docs/plan/
+docs/runbooks/` (hasta la PARADA 2, antes del commit de la NOTA del runbook): vacío. Lo que la rama
+añade o cambia: `contrato.yaml`, `PROJECT_STATE.md` (la apertura), `docs/state/HISTORIA.md` (el
+Archivo 49), `docs/encargos/trabajo-recorrida-construccion.md`, este informe,
+`docs/validation/HOLDOUT-EXPOSICIONES.md` (una fila) y `docs/validation/anexos/RECORRIDA-CONSTRUCCION/`
+(README, 6 guiones, 1 test, 8 salidas). Ningún parámetro, regla, ambigüedad ni ADR cambia; A-35 y
+A-44 siguen ABIERTAS y bloqueantes; ADR-0083 sigue PROVISIONAL en D1; `criterio_fidelidad.yaml` y
+`CABLEADO-SIMULADOR-LINEA-BASE.txt` intactos. La CI de Linux: la rama no toca `.claude/`, hooks,
+rutas de plataforma ni código, así que no hace falta `fix/`.
+
 ## Estado
 
-EN CURSO. Fase 1 commiteada (la fila, el README y los guiones); sigue la fase 2 (las corridas).
+EN CURSO. PARADA 2: las salidas, el diff, los guiones y el informe hasta aquí commiteados; falta el
+commit propio de la NOTA del runbook (contrato ampliado) y la respuesta del consultor a la PARADA 2
+(patrones nuevos, días del visor, lo que va a la hoja de la sesión 6, la NOTA de ADR-0070).
