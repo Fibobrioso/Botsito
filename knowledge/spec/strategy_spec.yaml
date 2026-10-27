@@ -200,8 +200,14 @@ predicados:
       encima si el sesgo es alcista, por debajo si es bajista. Su operativa esta en el otro: por
       debajo en alcista (ev-v1-001306, v1 0:13:06) y por encima en bajista (ev-v3-001725, v3 0:17:25,
       sobre un ejemplo cuyo sesgo H4 es bajista por el contexto de 0:15:08, no por la frase citada).
-      Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader
-    argumentos: [que, sentido]
+      Que en alcista lo de ENCIMA sea ruido es simetria del ejemplo bajista, no una frase del trader.
+      `caja` (caja_lado_de_ruido, A-50; desde el 2026-10-26, trabajo/activar-sesion-05-motor) dice
+      que parte de la caja se compara con el nivel tomado: `solo_el_0`, la entrada, lo de siempre;
+      `caja_entera`, el 0 y el 1, y una caja a caballo del nivel no es ruido (sesion 5, S-12b,
+      ev-v15-010451-5b123278: el 0 en la linea o por encima «es indiferente»; que haga falta la
+      caja ENTERA del lado de ruido es LECTURA DEL CONSULTOR). El 0 justo en la linea no es ruido
+      con ninguna de las dos
+    argumentos: [que, sentido, caja]
     lado_de_ruido: {alcista: por_encima, bajista: por_debajo}
     notas: >-
       `sentido` es una LIGADURA del arbol -RN-005 ata S al valor de `sesgo`- y la guardia rechaza
@@ -1267,7 +1273,7 @@ reglas:
       el precio se desarrolla por encima de la liquidez de M15 en sesgo alcista, o por debajo de ella
       en sesgo bajista
     entonces: no hay entrada
-    parametros: []
+    parametros: [caja_lado_de_ruido]
     cita: ev-v3-001725-bca9714b
     literal: >-
       la operativa está por encima no por debajo todo lo que haya por debajo es ruido
@@ -1297,13 +1303,25 @@ reglas:
       la frase de la sesion 3 que decia lo contrario de una compra («tiene
       que ser todo por encima», ev-v9-004919-c6bfb3ee) recibe un CORRECT
       (fb-2026-10-23-sesion-05-a42c72dd). Lo que queda a caballo del nivel es A-50 (S-12b),
-      ABIERTA; reserva: la linea de la transcripcion mezcla la pregunta leida y la respuesta
+      ABIERTA; reserva: la linea de la transcripcion mezcla la pregunta leida y la respuesta.
+      DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor) LA FORMA LEE caja_lado_de_ruido
+      (DEFAULT_AMBIGUOUS en caja_entera bajo A-50, sin registro): el trader dijo en S-12b que si
+      el 0 queda justo en la linea o por encima en una compra «es indiferente», que lo importante
+      es validar el punto de breaker (ev-v15-010451-5b123278), y eso descarta mirar solo el 0; que
+      la caja se descarte solo si queda ENTERA del lado de ruido es LECTURA DEL CONSULTOR (se
+      deduce de su ejemplo, SESION-05-EXTRACCION.md §3.3, fuera del item). Con `solo_el_0`, lo de
+      antes. El 1 que se mira es el de la zona del punto, el mismo que llevara la orden
+      (engine/zonas.py, ACTIVAR-SESION-05-MOTOR.md §0.b.6). A-50 sigue ABIERTA y la sesion 6 lo
+      confirma con dos dibujos
     forma:
       cuando:
         todos_de:
           - hecho: sesgo
             liga: S
-          - se_desarrolla_en_el_lado_de_ruido: {que: liquidez_m15, sentido: S}
+          - se_desarrolla_en_el_lado_de_ruido:
+              que: liquidez_m15
+              sentido: S
+              caja: caja_lado_de_ruido
       entonces:
         prohibe: [abrir_operacion]
     clase: gate

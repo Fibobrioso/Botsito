@@ -734,6 +734,33 @@ parametros:
     fuente:
       tipo: decision
       id: ADR-0074
+  - nombre: caja_lado_de_ruido
+    categoria: estrategia
+    tipo: enum
+    unidad: que parte de la caja se compara con el nivel tomado para descartarla por el lado de ruido
+    opciones: [solo_el_0, caja_entera]
+    descripcion: >-
+      que parte de la caja de la orden stop mira RN-005 frente al nivel de M15 tomado (A-50).
+      `solo_el_0`: la entrada; una compra cuyo 0 queda por encima del nivel es ruido aunque el 1
+      quede del lado del trader (lo que hacia el motor hasta el 2026-10-26, decision de codigo sin
+      fuente de trabajo/preparar-a21). `caja_entera`: el 0 y el 1; una caja a caballo del nivel no
+      se descarta. DEFAULT_AMBIGUOUS en `caja_entera` desde el 2026-10-26
+      (trabajo/activar-sesion-05-motor, respuesta del consultor a la PARADA, punto 4): es LECTURA
+      DEL CONSULTOR bajo A-50, que sigue ABIERTA, y no una respuesta del trader. Lo que dijo en la
+      sesion 5 (S-12b, v15 1:04:51, ev-v15-010451-5b123278) es que si el 0 queda justo en la linea
+      del nivel, o por encima en una compra, «es indiferente» y que lo importante es validar bien el
+      punto de breaker: eso descarta mirar solo el 0; que haga falta la caja ENTERA del lado de ruido
+      se deduce de su ejemplo (SESION-05-EXTRACCION.md §3.3, fuera del item) y por eso no lleva
+      registro de feedback (precedente: caja_bloque, con fuente evidence bajo A-48). El 0 justo en la
+      linea no es ruido con ninguna de las dos (estrictamente al otro lado). Lo lee la forma de
+      RN-005 (`se_desarrolla_en_el_lado_de_ruido`, engine/zonas.py); el 1 es el de la zona del
+      punto, el mismo que llevara la orden. La sesion 6 lo confirma con dos dibujos
+    estado: DEFAULT_AMBIGUOUS
+    valor: caja_entera
+    ambiguedad_id: A-50
+    fuente:
+      tipo: evidence
+      id: ev-v15-010451-5b123278
   - nombre: toma_antes_de_la_ventana
     categoria: estrategia
     tipo: enum

@@ -1545,6 +1545,14 @@ ambiguedades:
       la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa»,
       y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al
       punto mas alto y que todo tiene que desarrollarse mas alla del nivel.
+      RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 1:04:51-1:05:28, S-12b): si el 0 queda
+      justo en la linea del nivel tomado, o por encima en una compra, «es indiferente» y lo
+      importante es validar bien el posible punto de breaker (ev-v15-010451-5b123278); en su
+      ejemplo el 0 queda del lado de ruido y la caja vale. Desde el 2026-10-26
+      (trabajo/activar-sesion-05-motor) RN-005 lee caja_lado_de_ruido = caja_entera,
+      DEFAULT_AMBIGUOUS bajo esta ambiguedad y LECTURA DEL CONSULTOR (que haga falta la caja
+      ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). SIGUE ABIERTA: la sesion 6 lo
+      confirma con dos dibujos.
     resuelve_en: [F19, F20]
     # NACE el 2026-09-28 (rama trabajo/registrar-embudo, orden del consultor tras
     # docs/validation/EMBUDO-77.md §4, punto 1). RN-005 prohibe abrir cuando la zona se desarrolla
@@ -1560,13 +1568,19 @@ ambiguedades:
     # zonas habria coincidido con el trader, porque sus operaciones mueren antes. NO bloqueante: el
     # motor corre con la lectura vigente y no cambia hasta la respuesta. Sin parametro: el selector,
     # si hace falta, nace con la rama de codigo que lo consuma (ADR-0054).
+    # DESDE EL 2026-10-26 (trabajo/activar-sesion-05-motor; respuesta del consultor a la PARADA,
+    # punto 4) EL SELECTOR EXISTE Y EL MOTOR CAMBIA: caja_lado_de_ruido, enum [solo_el_0,
+    # caja_entera], DEFAULT_AMBIGUOUS en caja_entera con la fuente de S-12b, sin registro (lectura
+    # del consultor); lo lee la forma de RN-005 como argumento `caja`. Lo de «el motor no cambia
+    # hasta la respuesta» de arriba queda corregido por esa decision. Sigue ABIERTA.
     evidencia:
       - ev-v1-001306-f98e12e9
       - ev-v3-001725-bca9714b
       - ev-v3-001600-ed45b091
       - ev-v9-004721-2e023ac6
       - ev-v9-004919-c6bfb3ee
-    parametros: []
+      - ev-v15-010451-5b123278
+    parametros: [caja_lado_de_ruido]
     contradiccion: null
     estado: ABIERTA
     decision: null

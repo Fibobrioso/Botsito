@@ -65,7 +65,13 @@ def test_rn005_prohibe_el_lado_de_ruido_y_no_el_de_la_operativa(spec: Any) -> No
     cuando = _forma(rn005)["cuando"]["todos_de"]
     assert {"hecho": "sesgo", "liga": "S"} in cuando
     (llamada,) = [c for c in cuando if "se_desarrolla_en_el_lado_de_ruido" in c]
-    assert llamada["se_desarrolla_en_el_lado_de_ruido"] == {"que": "liquidez_m15", "sentido": "S"}
+    # `caja` desde el 2026-10-26 (A-50, caja_lado_de_ruido, trabajo/activar-sesion-05-motor):
+    # cambia de sentido a proposito; los dos argumentos de siempre siguen iguales
+    assert llamada["se_desarrolla_en_el_lado_de_ruido"] == {
+        "que": "liquidez_m15",
+        "sentido": "S",
+        "caja": "caja_lado_de_ruido",
+    }
     assert _forma(rn005)["entonces"] == {"prohibe": ["abrir_operacion"]}
 
     lados = vocabulario["predicados"]["se_desarrolla_en_el_lado_de_ruido"]["lado_de_ruido"]

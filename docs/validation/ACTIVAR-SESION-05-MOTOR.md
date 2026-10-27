@@ -473,7 +473,51 @@ una vez.
   ev-v15-003959-5898c61e, ev-v15-004037-a2ab3980, ev-v16-000851-f5ae3b6f, ev-v16-002841-8cfe382a,
   ADR-0085`.
 
+### 1.3 Punto 4 · A-50, la caja entera (`caja_lado_de_ruido`; decisión 4)
+
+Sin ADR: la LECTURA DEL CONSULTOR va en la descripción del parámetro, en las notas de RN-005, en
+la nota de A-50 y aquí. Commit 2+3: 225ac79.
+
+- **Registro:** `caja_lado_de_ruido`, `estrategia`, enum `[solo_el_0, caja_entera]`,
+  DEFAULT_AMBIGUOUS en `caja_entera`, `ambiguedad_id: A-50`, fuente evidence
+  `ev-v15-010451-5b123278`, sin registro de feedback (precedente `caja_bloque`); su descripción
+  dice qué dijo el trader (el 0 en la línea o por encima «es indiferente»; lo importante es validar
+  el punto), que eso descarta mirar solo el 0, y que la caja ENTERA es lectura del consultor
+  deducida de su ejemplo (§3.3 de la extracción, fuera del ítem). Lector: el argumento
+  `caja: caja_lado_de_ruido` en la forma de RN-005 y en el vocabulario de
+  `se_desarrolla_en_el_lado_de_ruido` (`argumentos: [que, sentido, caja]`, con su descripción),
+  como se ensayó en §0.b (`comprobar_consumo` lo acepta). RN-005: `parametros` y sus notas. A-50
+  en `ambiguedades.yaml`: la pregunta («RESPONDIDA EN PARTE … SIGUE ABIERTA»), el comentario
+  (corregido «el motor no cambia hasta la respuesta»), `evidencia` gana el ítem y `parametros` el
+  selector; `docs/runbooks/AMBIGUEDADES.md` leído antes. `spec_version` 18.2.1 → 18.3.0 (un
+  parámetro nuevo); `spec manifest --escribir`, `spec docs --escribir`. `feedback apply --check`
+  no tiene nada que proponer (sin registro).
+- **Código:** `engine/zonas.py`, `se_desarrolla_en_el_lado_de_ruido` lee `caja` por su nombre: con
+  `solo_el_0`, lo de siempre (la entrada); con `caja_entera`, ruido solo si el 0 Y el 1 (el
+  `extremo` de la zona del punto, el mismo que llevará la orden, §0.b.6) quedan del lado de
+  ruido; una lectura fuera de las dos se niega con nombre. El 0 justo en la línea sigue sin ser
+  ruido con ninguna (estricto, como antes).
+- **Tests.** `tests/unit/test_caja_lado_de_ruido.py` (nuevo), por el camino real
+  (`primitivas_zona` con el registro y `zona_del_punto`), en compra y en venta: la caja a caballo
+  (el 0 del lado de ruido, el 1 no) NO es ruido con `caja_entera` y SÍ con `solo_el_0`; la caja
+  entera del lado de ruido es ruido con las dos; el 0 justo en la línea no lo es con ninguna; el
+  registro real trae el valor como DEFAULT_AMBIGUOUS bajo A-50 con su fuente, y un valor fuera
+  del enum falla al leer el registro. `test_spec_fidelidad.py::test_rn005_prohibe_el_lado_de_ruido_y_no_el_de_la_operativa`
+  CAMBIA DE SENTIDO A PROPÓSITO en la invocación exacta (gana `caja`; los dos argumentos de
+  siempre, iguales). `test_orden_stop_pivote._registro` conoce el parámetro nuevo (para pedir
+  `solo_el_0` sobre el registro real). `test_registro.py` y
+  `test_provisional_cuelga_de_abierta.py` pasan con el valor de fuente evidence (lo que el encargo
+  pedía verificar). **Con el código de `main`** (clon `C:/cm/main`): los seis tests del fichero
+  nuevo fallan, `ParametroDesconocidoError: parametro no registrado: caja_lado_de_ruido` y
+  `AssertionError: caja_lado_de_ruido` (la línea del valor no existe en su registro). **Con el de
+  la rama:** 197 tests en verde entre `test_caja_lado_de_ruido.py`, `test_spec_fidelidad.py`,
+  `test_spec.py`, `test_orden_stop_pivote.py`, `test_preparar_a21.py`, `test_huecos_motor.py`,
+  `test_cableado.py`, `test_registro.py` y `test_provisional_cuelga_de_abierta.py`.
+- **`test_kit.py` no cambia**; A-50 sigue ABIERTA (no bloqueante, como estaba).
+- **Trailer:** `Fuente: ev-v15-010451-5b123278`.
+
 ## Estado
 
 EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida:
-se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1 y el 2+3.
+se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1, el 2+3
+y el 4.

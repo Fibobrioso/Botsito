@@ -91,6 +91,7 @@ def _registro(tmp_path: Path, **valores: str) -> Registro:
         "orden_stop_punto": "    valor: ultimo_pivote_m1\n",
         "caja_bloque": "    valor: r6\n",
         "caja_se_fija": "    valor: en_cada_cierre_m1\n",  # ADR-0074 (sesion 4, S-4)
+        "caja_lado_de_ruido": "    valor: caja_entera\n",  # A-50 (sesion 5, S-12b)
         "stop_fraccion_caja": '    valor: "0.8"\n',
     }
     for nombre, valor in valores.items():

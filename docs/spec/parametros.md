@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.2.1` · hash `1f4166930db9…`
+`spec_version 18.3.0` · hash `d6371fa4a21e…`
 
-110 en total: 98 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+111 en total: 99 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -17,6 +17,7 @@
 | `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
 | `caja_bloque` | `r6` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-001550-82e5cffc` | que velas dan el 1 de la caja de la orden stop |
+| `caja_lado_de_ruido` | `caja_entera` | DEFAULT_AMBIGUOUS · en revision por A-50 | estrategia | `ev-v15-010451-5b123278` | que parte de la caja se compara con el nivel tomado para descartarla por el lado de ruido |
 | `caja_se_fija` | `en_cada_cierre_m1` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0074` | cuando se fija el 1 de la caja de la orden stop |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
 | `cartuchos_max` | `3` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-1a3064b0` | intentos por zona de liquidez |
@@ -233,6 +234,12 @@ desfase base del reloj del servidor, medido en el terminal y no supuesto. En la 
 el bloque que da el 1 de la caja de cada orden stop, con el 0 en el punto (ADR-0064 §2), con las reglas de docs/validation/CAJA-77.md: `r6`, el extremo opuesto -la maxima en una venta- de las velas desde la que marca el nivel del punto hasta el instante de colocar o reubicar; `r4`, el del tramo de velas contrarias consecutivas que acaba en la ultima contraria; `r1`, el de esa ultima contraria. Es A-48, con las dos lecturas que ADR-0056 §5 documento (ultima_contraria = r1, tramo_de_contrarias = r4) y la de R6. DEFAULT NUESTRO en `r6`, por decision del consultor; la cita es «trazamos el GAN desde el posible punto de breaker hasta el punto mas alto» (v7 0:15:50). Lo lee el productor (engine/zonas.py), no una regla
 
 Opciones: `r6`, `r4`, `r1`.
+
+### `caja_lado_de_ruido`
+
+que parte de la caja de la orden stop mira RN-005 frente al nivel de M15 tomado (A-50). `solo_el_0`: la entrada; una compra cuyo 0 queda por encima del nivel es ruido aunque el 1 quede del lado del trader (lo que hacia el motor hasta el 2026-10-26, decision de codigo sin fuente de trabajo/preparar-a21). `caja_entera`: el 0 y el 1; una caja a caballo del nivel no se descarta. DEFAULT_AMBIGUOUS en `caja_entera` desde el 2026-10-26 (trabajo/activar-sesion-05-motor, respuesta del consultor a la PARADA, punto 4): es LECTURA DEL CONSULTOR bajo A-50, que sigue ABIERTA, y no una respuesta del trader. Lo que dijo en la sesion 5 (S-12b, v15 1:04:51, ev-v15-010451-5b123278) es que si el 0 queda justo en la linea del nivel, o por encima en una compra, «es indiferente» y que lo importante es validar bien el punto de breaker: eso descarta mirar solo el 0; que haga falta la caja ENTERA del lado de ruido se deduce de su ejemplo (SESION-05-EXTRACCION.md §3.3, fuera del item) y por eso no lleva registro de feedback (precedente: caja_bloque, con fuente evidence bajo A-48). El 0 justo en la linea no es ruido con ninguna de las dos (estrictamente al otro lado). Lo lee la forma de RN-005 (`se_desarrolla_en_el_lado_de_ruido`, engine/zonas.py); el 1 es el de la zona del punto, el mismo que llevara la orden. La sesion 6 lo confirma con dos dibujos
+
+Opciones: `solo_el_0`, `caja_entera`.
 
 ### `caja_se_fija`
 
