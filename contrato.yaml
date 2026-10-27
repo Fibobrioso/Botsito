@@ -1,0 +1,32 @@
+rama: trabajo/recorrida-construccion
+riesgo: alto  # no cambia codigo, pero corre el arnes sobre toda la construccion (calienta con el M1 de meses con dias reservados, declarado) y su salida pasa a ser la linea base vigente; cada cifra que escribe se compara a mano
+artefacto: docs/validation/RECORRIDA-CONSTRUCCION.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/RECORRIDA-CONSTRUCCION.md
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/
+  - tests/
+  - knowledge/
+  - Makefile
+  - .claude/
+  - config/
+  - data/manifests/
+  - scripts/
+  - pyproject.toml
+  - docs/plan/
+  - docs/adr/
+  - docs/runbooks/
+  - docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt
+  - docs/validation/anexos/CORRIDA-CONSTRUCCION/
+  - docs/validation/anexos/PUNTO-USADO/
+  - docs/validation/anexos/VISOR-CONSTRUCCION/
+comprobaciones:
+  - git diff main --stat -- src/ tests/ knowledge/ Makefile .claude/
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
