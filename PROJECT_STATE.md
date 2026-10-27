@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/activar-sesion-05-motor
+main
 
 ## Current Feature
-trabajo/activar-sesion-05-motor, EN CURSO desde el 2026-10-26 (encargo docs/encargos/trabajo-activar-sesion-05-motor.md; informe docs/validation/ACTIVAR-SESION-05-MOTOR.md): los puntos de ACTIVAR-SESION-05.md §2 entran en la spec y en el motor por su régimen, con fase 0 y PARADA (V; R4.1).
+Ninguna rama abierta. trabajo/activar-sesion-05-motor cerrada en main el 2026-10-27 (stable/F38f-activar-sesion-05-motor): la parte de motor de la sesión 5; lo siguiente, la re-corrida del arnés (F; docs/plan/HOJA-DE-RUTA.md).
 
 ## Stable Main State
-2c26fb2 · merge de `trabajo/activar-sesion-05` (tag `stable/F38e-activar-sesion-05`): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros y ABIERTAS (desviación declarada); cinco CONFIRM y un CORRECT; spec 18.1.9; el arnés y el visor a secas; lo que pide motor en ACTIVAR-SESION-05.md §2 y la lista de la sesión 6 en §3. Sobre `stable/F38d-sesion-05` (baaf74b). Informe docs/validation/ACTIVAR-SESION-05.md; el registro del cierre, al final de HISTORIA.
+d843dbc · merge de `trabajo/activar-sesion-05-motor` (tag `stable/F38f-activar-sesion-05-motor`): la parte de motor de la sesión 5: ADR-0084 a 0086, RN-037, la racha tras la detención, la caja entera; A-35 y A-50 con lectura del consultor, ABIERTAS; spec 18.5.2. Sobre `stable/F38e-activar-sesion-05` (2c26fb2). Informe docs/validation/ACTIVAR-SESION-05-MOTOR.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-2c26fb2 · merge: trabajo/activar-sesion-05, la parte de spec de la sesion 5 activada (A-57 y A-32 RESUELTAS, A-35 y A-44 con valor) y lo que va a motor y a la sesion 6 · tag stable/F38e-activar-sesion-05
+d843dbc · merge: trabajo/activar-sesion-05-motor, la parte de motor de la sesion 5 (ADR-0084 a 0086, RN-037) y lo que va a la re-corrida y a la sesion 6 · tag stable/F38f-activar-sesion-05-motor
 
 ## Tests Currently Passing
 1730 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
