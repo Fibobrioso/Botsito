@@ -98,6 +98,10 @@ class SeguidorRacha:
     # el dia operativo en que `detenido` vio la detencion: con `tras_la_detencion`, al llegar el
     # dia siguiente la racha vuelve a cero (sesion 5, S-21)
     detenido_en: date | None = None
+    # el tope con el que `detenido` consulto la ultima vez: lo nombra la forma de RN-036 y aqui
+    # solo se recuerda, para que el reinicio llegue tambien si la perdida que alcanza el tope es
+    # la ultima del dia y nadie vuelve a consultar ese dia (el cierre de fin de dia del cableado)
+    tope_visto: int | None = None
     cierres: list[tuple[int, str | None, str | None]] = field(default_factory=list)
 
     def __post_init__(self) -> None:
@@ -117,14 +121,23 @@ class SeguidorRacha:
     def dia_operativo(self, instante_ms: int) -> date:
         return self.reloj.lectura(instante_ms // MS_POR_MINUTO)[0]
 
+    def _detenida_antes_de(self, dia: date) -> bool:
+        """Si la racha detuvo un dia operativo anterior a `dia`: porque `detenido` lo vio
+        (`detenido_en`), o porque la racha llego al ultimo tope consultado y la perdida que la
+        dejo ahi cayo un dia anterior (nadie consulto despues de ella ese dia)."""
+        if self.detenido_en is not None and dia > self.detenido_en:
+            return True
+        return (
+            self.tope_visto is not None
+            and self.racha >= self.tope_visto
+            and self.ultima_perdida_dia is not None
+            and dia > self.ultima_perdida_dia
+        )
+
     def _reiniciar_si_toca(self, dia: date) -> None:
         """Con `tras_la_detencion` (sesion 5, S-21): llegado un dia operativo posterior al de la
         detencion, la racha empieza en cero. Con `nunca`, nada."""
-        if (
-            self.reinicio == REINICIO_TRAS_LA_DETENCION
-            and self.detenido_en is not None
-            and dia > self.detenido_en
-        ):
+        if self.reinicio == REINICIO_TRAS_LA_DETENCION and self._detenida_antes_de(dia):
             self.racha = 0
             self.ultima_perdida_dia = None
             self.detenido_en = None
@@ -155,6 +168,7 @@ class SeguidorRacha:
         detencion, que es lo que el reinicio necesita."""
         if tope <= 0:
             raise RachaError(f"{P_MAX} = {tope}: es un entero positivo")
+        self.tope_visto = tope
         dia = self.dia_operativo(instante_ms)
         self._reiniciar_si_toca(dia)
         if self.racha < tope or self.ultima_perdida_dia is None:

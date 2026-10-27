@@ -90,8 +90,10 @@ trader no describió ese caso (dijo además que no tiene hora límite para abrir
 > que se cierra la posición (`ev-v16-002248-08e9600f`, `fb-2026-10-23-sesion-05-1526aa39`), y en
 > ese minuto no se pone ninguna orden (`ev-v16-002323-515b9da4`). RN-035 la retira en
 > [fin − `cierre_h4_antelacion`, fin) con el predicado `en_el_ultimo_tramo_h4` -el mismo tramo sin
-> el evento del límite- y RN-037 no deja colocar ni recolocar ahí: ninguna orden está pendiente
-> cuando empiezan los ticks del último minuto, así que nada se llena en él. El predicado
+> el evento del límite- y RN-037 no deja colocar ni recolocar ahí: con
+> `orden_pendiente_al_abrir_sesion` = `se_retira` (el valor vigente; con `sigue_hasta_ventana_fin`
+> RN-035 dispara sin retirar), ninguna orden está pendiente cuando empiezan los ticks del último
+> minuto, así que nada se llena en él. El predicado
 > `vence_vela_h4` y RN-002 no cambian: siguen valiendo también en el límite, para lo que ya
 > estuviera abierto.
 

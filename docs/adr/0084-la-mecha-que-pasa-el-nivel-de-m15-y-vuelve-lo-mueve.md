@@ -38,7 +38,9 @@ Dos casos caben en el ítem, y el motor hace los dos según el selector:
   a esa mecha (`nivel_con_mecha_que_vuelve`, solo con `cualquier_mecha`). Que (ii) también valga
   es **LECTURA DEL CONSULTOR**: el ítem contesta a «si después el precio lo supera un poco», que es
   (ii), y el ejemplo es (i); el trader no eligió entre los dos.
-- **El nivel se congela al tomarse.** `nivel_con_mecha_que_vuelve` recorre las M1 cerradas desde
+- **El nivel se congela al tomarse: DECISIÓN DEL CONSULTOR** (respuesta a la PARADA, punto 1; no
+  sale de ningún ítem, y tiene efecto: una M1 que cierra con cuerpo sobre el nivel ORIGINAL ya no
+  es toma si una mecha anterior lo movió). `nivel_con_mecha_que_vuelve` recorre las M1 cerradas desde
   que el pivote está formado: cada una que lo pasa solo con la mecha lo mueve; la primera que lo
   cruza con el criterio lo toma y las siguientes ya no lo mueven. Medido en la fase 0
   (`ACTIVAR-SESION-05-MOTOR.md` §0.b.4): el productor de la zona guarda `(lado, nivel,

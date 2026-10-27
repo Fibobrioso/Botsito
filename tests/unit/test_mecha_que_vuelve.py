@@ -9,11 +9,17 @@ el extremo de la racha)."""
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
+from botsito.cases.paquete import Config
+from botsito.cases.paquete import Sesion as SesionConfig
 from botsito.config.registro import Registro, RegistroError, cargar_registro
+from botsito.data.dataset import DatasetError
+from botsito.data.velas import a_minuto
 from botsito.domain.estructura_m1 import COMPRA, referencia_del_breaker, ultimo_punto_de_ruptura
 from botsito.domain.pivotes_m15 import (
     ALTO,
@@ -23,10 +29,14 @@ from botsito.domain.pivotes_m15 import (
     SOLO_LA_CONTRARIA,
 )
 from botsito.domain.valores import Puntos
-from botsito.domain.velas import MinutoUtc, Vela
+from botsito.domain.velas import MinutoUtc, SerieVelas, Vela
+from botsito.engine import arnes, visor
+from botsito.engine.arnes import DiaTrader
 from botsito.engine.interprete import EstadoDia, Momento, Resultado, Tri
 from botsito.engine.motor import DatosMercado
 from botsito.engine.primitivas import primitivas_escritas
+from botsito.engine.relojes import reloj_de_las_sesiones
+from botsito.engine.visor import Preparador
 from tests.unit.test_estructura_m1 import TOMA, _serie
 from tests.unit.test_pivotes_m15 import FLUJO_ALCISTA, ROJA, ROJA_CON_MECHA, _m15
 
@@ -164,3 +174,109 @@ def test_las_series_de_m1_no_se_mueven() -> None:
     # y la M15 sin ninguna M1 posterior tampoco cambia con el selector por defecto
     datos = _datos(cargar_registro(PARAMETROS), [*FLUJO_ALCISTA, _m15(3, 130, 118)], [], NO_MUEVE)
     assert _nivel(datos, FIN_ROJA) == 134
+
+
+# --------------------------------------------- quien construye los datos los lee del registro
+# Hallazgo b3 del revisor (2026-10-27): los dos valores de ADR-0084 que `DatosMercado` recibe los
+# leen el arnes (`dias_de_mercado`) y el visor (`Preparador.preparar`) del registro, por su nombre.
+# Con los cargadores de velas sustituidos por una serie sintetica, nada toca `data/`.
+
+
+class _CapturadoError(Exception):
+    """El motor falso se queda con el `DiaDeMercado` que le llega y corta: lo que viene despues
+    (stops del trader, medida) no es de este test."""
+
+    def __init__(self, mercado: Any) -> None:
+        self.mercado = mercado
+
+
+class _MotorQueCaptura:
+    def correr_dia(self, mercado: Any) -> Any:
+        raise _CapturadoError(mercado)
+
+
+_MES = "2030-01"
+_DIA = f"{_MES}-15"
+
+
+def _serie_sintetica() -> SerieVelas:
+    inicio = int(a_minuto(datetime(2030, 1, 15, 6, 0, tzinfo=UTC)))
+    velas = tuple(
+        Vela(
+            MinutoUtc(inicio + k),
+            Puntos(1000 + k),
+            Puntos(1002 + k),
+            Puntos(999 + k),
+            Puntos(1001 + k),
+            1,
+        )
+        for k in range(60)
+    )
+    return SerieVelas("EURUSD", 1, 100_000, 1, velas)
+
+
+def _config() -> Config:
+    return Config(
+        simbolo="EURUSD",
+        dataset_prefijo="sintetico-",
+        ventana_local=("07:00", "15:00"),
+        sesiones=(SesionConfig("07-11", "07:00", "11:00"),),
+        anclajes=(),
+        min_velas_ventana=0,
+        etiquetas=(),
+        particiones={},
+        cobertura={},
+        materiales={},
+        doc={},
+    )
+
+
+def _buscar_solo_el_mes(repo: Path, nombre: str) -> Path:
+    """Solo existe el dataset del mes del dia: el del mes anterior (el calentamiento) no, y los
+    dos cargadores lo saltan como con un dataset real que falte."""
+    if not nombre.endswith(_MES):
+        raise DatasetError(f"sin dataset {nombre}")
+    return Path(nombre)
+
+
+def _cargadores_sinteticos(monkeypatch: pytest.MonkeyPatch, modulo: Any) -> None:
+    serie = _serie_sintetica()
+    monkeypatch.setattr(modulo, "buscar_manifiesto", _buscar_solo_el_mes)
+    monkeypatch.setattr(modulo, "cargar_manifiesto", lambda ruta: {"id": ruta.name})
+    monkeypatch.setattr(modulo, "cargar_serie", lambda manifiesto, carpeta: serie)
+
+
+def test_el_arnes_lee_del_registro_la_mecha_y_el_criterio_de_la_toma(
+    registro: Registro, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    _cargadores_sinteticos(monkeypatch, arnes)
+    dias = [DiaTrader("sintetico", _DIA, ())]
+    mercado = arnes.dias_de_mercado(
+        tmp_path, tmp_path, _config(), registro, dias, reloj_de_las_sesiones(registro)
+    )
+    datos = mercado[_DIA].datos
+    assert datos.mecha_que_vuelve == registro.opcion("liquidez_m15_mecha_que_vuelve")
+    assert datos.criterio_toma == registro.opcion("liquidez_m15_criterio_toma")
+    assert datos.lectura_pivote is None  # el arnes la recibe aparte, como hasta hoy
+
+
+def test_el_visor_lee_del_registro_la_mecha_y_el_criterio_de_la_toma(
+    registro: Registro, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    _cargadores_sinteticos(monkeypatch, visor)
+    preparador = Preparador(
+        repo=tmp_path,
+        carpeta_datos=tmp_path,
+        criterio=cast(Any, None),  # no llega a usarse: el motor falso corta antes
+        registro=registro,
+        config=_config(),
+        vocabulario={},
+        motor=cast(Any, _MotorQueCaptura()),
+        lectura_pivote=registro.opcion("liquidez_m15_pivote_formado"),
+    )
+    with pytest.raises(_CapturadoError) as capturado:
+        preparador.preparar(DiaTrader("sintetico", _DIA, ()))
+    datos = capturado.value.mercado.datos
+    assert datos.mecha_que_vuelve == registro.opcion("liquidez_m15_mecha_que_vuelve")
+    assert datos.criterio_toma == registro.opcion("liquidez_m15_criterio_toma")
+    assert datos.lectura_pivote == registro.opcion("liquidez_m15_pivote_formado")

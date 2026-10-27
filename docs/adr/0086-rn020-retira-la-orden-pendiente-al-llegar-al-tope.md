@@ -28,7 +28,8 @@ alcance y la unidad de A-44 son los que eran.
 
 ADR-0077 §3 lo decidió para la racha: se retira «porque el bróker la llenaría por ticks mientras
 el trader ya ha dejado de operar». El tope del día es la otra detención del trader (RN-020, A-44;
-sesión 5, S-4: «solo el del día y las 9 seguidas»), y una orden viva al llegar a él la llenaría
+sesión 5, S-4: «solo el del día y las 9 seguidas», `ev-v15-000856-ee8f7ba3`, el ítem que ya cita
+RN-020), y una orden viva al llegar a él la llenaría
 igual. Dentro de la spec, RN-011 no coloca con una orden pendiente ni con una posición viva, así
 que en el cierre de M1 en que cae la pérdida que alcanza el tope no suele quedar ninguna
 pendiente: la acción es la red de seguridad, como en RN-036, y vale para cualquier pendiente que

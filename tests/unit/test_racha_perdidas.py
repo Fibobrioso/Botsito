@@ -144,15 +144,35 @@ def test_nueve_perdidas_con_un_break_even_en_medio_detienen_hasta_el_dia_siguien
     assert s.racha == 1 and not s.detenido(_ms(DIAS[1], 10), TOPE)
 
 
-def test_el_reinicio_llega_aunque_nadie_consulte_entre_medias(registro: Registro) -> None:
-    """La racha vuelve a cero tambien si lo primero del dia siguiente es un cierre, no una
-    consulta: `registrar` mira el dia antes de contar."""
+def test_el_reinicio_llega_aunque_nadie_consulte_despues_de_la_novena(registro: Registro) -> None:
+    """La racha vuelve a cero tambien si nadie consulta `detenido` despues de la novena perdida
+    en su dia (el cierre de fin de dia del cableado, que se registra tras la ultima evaluacion)
+    y lo primero del dia siguiente es otro cierre: el seguidor recuerda el ultimo tope con que se
+    le consulto -antes de la novena- y `registrar` mira el dia antes de contar. Hallazgo b4 del
+    revisor (2026-10-27): la primera version solo reiniciaba si `detenido` habia visto la
+    detencion."""
     s = _seguidor(registro)
-    for k in range(TOPE):
+    for k in range(TOPE - 1):
         s.registrar(_ms(DIAS[0], 8) + k * MS_POR_MINUTO, "salto_el_stop", "primer_esquema")
-    assert s.detenido(_ms(DIAS[0], 9), TOPE)  # la detencion se ve, y se anota
-    s.registrar(_ms(DIAS[1], 9), "salto_el_stop", "primer_esquema")
+    assert not s.detenido(_ms(DIAS[0], 9), TOPE)  # la consulta de siempre, con ocho
+    s.registrar(_ms(DIAS[0], 10), "salto_el_stop", "primer_esquema")  # la novena, sin consulta
+    assert s.racha == TOPE and s.detenido_en is None
+    s.registrar(_ms(DIAS[1], 9), "salto_el_stop", "primer_esquema")  # el dia siguiente, un cierre
     assert s.racha == 1 and not s.detenido(_ms(DIAS[1], 10), TOPE)
+    # y si lo primero del dia siguiente es la consulta, tambien
+    t = _seguidor(registro)
+    for k in range(TOPE - 1):
+        t.registrar(_ms(DIAS[0], 8) + k * MS_POR_MINUTO, "salto_el_stop", "primer_esquema")
+    assert not t.detenido(_ms(DIAS[0], 9), TOPE)
+    t.registrar(_ms(DIAS[0], 10), "salto_el_stop", "primer_esquema")
+    assert not t.detenido(_ms(DIAS[1], 8), TOPE) and t.racha == 0
+    # sin ninguna consulta nunca, el seguidor no conoce el tope y no puede reiniciar: la racha
+    # sigue (es el caso que el cableado no produce: consulta en cada cierre de M1)
+    u = _seguidor(registro)
+    for k in range(TOPE):
+        u.registrar(_ms(DIAS[0], 8) + k * MS_POR_MINUTO, "salto_el_stop", "primer_esquema")
+    u.registrar(_ms(DIAS[1], 9), "salto_el_stop", "primer_esquema")
+    assert u.racha == TOPE + 1
 
 
 def test_ocho_perdidas_cruzan_de_un_dia_a_otro_y_la_novena_detiene(registro: Registro) -> None:

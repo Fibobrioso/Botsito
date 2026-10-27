@@ -1019,7 +1019,8 @@ reglas:
       siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5,
       ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39,
       fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida
-      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija.
+      (SESION-04-EXTRACCION.md §3.6); «un minuto antes» era entonces frase del consultor, y en la
+      sesion 5 lo dijo el trader (arriba)
     forma:
       cuando:
         todos_de:
@@ -1045,9 +1046,10 @@ reglas:
     cita: ev-v16-002323-515b9da4
     literal: No se pone ninguna orden En el último minuto antes de las 11 o de las 3
     notas: >-
-      NACE el 2026-10-26 (sesion 5, S-22, v16 0:23:23; rama trabajo/activar-sesion-05-motor): «si
-      la orden se llena en el ultimo minuto la cierra enseguida, y en el ultimo minuto antes de las
-      11 o de las 3 no pone ninguna orden». Cita el item directamente, como RN-005. Es una gate
+      NACE el 2026-10-26 (sesion 5, S-22, v16 0:23:23; rama trabajo/activar-sesion-05-motor) de
+      lo que el item afirma: si la orden se llena en el ultimo minuto la cierra enseguida, y en el
+      ultimo minuto antes de las 11 o de las 3 no pone ninguna orden (sus palabras, en el
+      literal). Cita el item directamente, como RN-005. Es una gate
       sobre abrir_operacion, el efecto de colocar_orden_limite (RN-015): en [fin -
       cierre_h4_antelacion, fin) de cada vela H4 de la ventana, sobre la rejilla de anclaje_h4 y sin
       el evento del limite (`en_el_ultimo_tramo_h4`, el mismo predicado con el que RN-035 retira
@@ -1296,7 +1298,8 @@ reglas:
       liquidez_m15_mecha_que_vuelve (DEFAULT_AMBIGUOUS en cualquier_mecha, LECTURA DEL CONSULTOR
       bajo A-35: la mecha de la vela contraria y la de cualquier M1 posterior; la sesion 6
       pregunta cual). El nivel se congela en cuanto una M1 lo cruza con
-      liquidez_m15_criterio_toma, que es lo que esta regla llama tomar: asi «lo tiene que pasar
+      liquidez_m15_criterio_toma, que es lo que esta regla llama tomar (DECISION DEL CONSULTOR,
+      respuesta a la PARADA de esa rama, punto 1; no sale de ningun item): asi «lo tiene que pasar
       con cuerpo» de la sesion 4 (ev-v10-012456-9dc1d221) y «se actualiza el de la mecha» de la 5
       hablan de dos cosas, cuando queda TOMADO y que nivel se usa mientras no lo este. Lo de «no
       se tapa con un parametro provisional» de estas notas lo enmienda ADR-0084 en ADR-0045: el
