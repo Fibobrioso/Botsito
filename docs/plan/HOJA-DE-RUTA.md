@@ -220,11 +220,11 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   R3.4 (HECHA) y la copia de seguridad del carril de Aleks (A.4, HECHA el 2026-10-22).
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.
-- **Estado:** spec HECHA (`trabajo/activar-sesion-05`, `stable/F38e-activar-sesion-05`;
-  ACTIVAR-SESION-05.md): A-57 y A-32 RESUELTAS, A-35 y A-44 con valor y ABIERTAS (desviación
-  declarada), el arnés sin diagnóstico; cinco CONFIRM y un CORRECT; S-11 «en parte», a R4.2. Motor
-  pendiente (`trabajo/activar-sesion-05-motor`, §2 del informe) y después la re-corrida de
-  ADR-0070 §3 con su `diff` (ACTIVAR-A35-A44.md §5.1).
+- **Estado:** spec y motor HECHOS (`trabajo/activar-sesion-05`, `stable/F38e-activar-sesion-05`;
+  `trabajo/activar-sesion-05-motor`, `stable/F38f-activar-sesion-05-motor`;
+  ACTIVAR-SESION-05-MOTOR.md: ADR-0084 a ADR-0086, RN-037). Queda la re-corrida de ADR-0070 §3
+  con su `diff` (ACTIVAR-A35-A44.md §5.1), que mire las entradas que nacen en el primer punto tras
+  la toma y se llenan antes de la alternancia (ACTIVAR-SESION-05-MOTOR.md §0.b.8).
 
 ### R4.2 · Preparar y celebrar la sesión 6
 - **Refs:** NA:V · ID:A-35 · ID:A-44 · ID:A-13 · ID:A-43 · ID:A-46 · ID:A-48 · ID:A-49 · ID:A-50 ·
@@ -232,8 +232,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** la lista de ACTIVAR-SESION-05.md §3: la magnitud de A-44 primero y su reloj; la
   mecha de A-35; A-13; A-53; A-43; A-49/A-48; A-50; ADR-0083; S-16; S-19 frente a S-24; S-20;
   S-14 con los días de construcción que dé la re-corrida; y S-11 «en parte» (la toma de la mañana
-  con el MISMO sesgo en la tarde; A-46 sigue RESUELTA).
-- **Depende de:** `trabajo/activar-sesion-05-motor` y la re-corrida del arnés (R4.1, lo que queda).
+  con el MISMO sesgo en la tarde; A-46 sigue RESUELTA). Y lo que deja
+  `trabajo/activar-sesion-05-motor` (ACTIVAR-SESION-05-MOTOR.md §2): A-35, si la mecha que mueve
+  el nivel es solo la de la contraria o también la de una vela posterior, y lo mismo en un bajo
+  (hoy `cualquier_mecha`, lectura del consultor, ADR-0084); las mechas de una vela sin cuerpo en
+  M1 (ADR-0085 §3); en M15, si una vela sin cuerpo entre la racha y la contraria corta la racha;
+  la condición de `ev-v15-004037-a2ab3980` (romper cerrando por debajo, flujo bajista; no
+  aplicada); S-15 con dos dibujos en M1, cada uno con el marco escrito: el dibujo 2 («Después de
+  la toma, el primer retroceso tiene alternancia; aparece un punto nuevo y su retroceso está
+  limpio. ¿Entras en este segundo? (a) sí; (b) no; (c) otra, ¿cuál?») y el dibujo 3 («La orden
+  ya está puesta en el primer punto tras la toma y se llena con la primera vela verde del
+  retroceso, antes de que haya alternancia. ¿Esa entrada vale? (a) sí; (b) no, había que esperar
+  al punto siguiente; (c) otra, ¿cuál?»); S-19 frente a S-24 (la vela de 1 o 2 puntos sigue
+  siendo de su color); y A-50 con sus dos dibujos (hoy `caja_entera`, lectura del consultor).
+- **Depende de:** la re-corrida del arnés (R4.1, lo que queda).
 - **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 6 está ingerida y activada.
 
@@ -496,6 +508,10 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   lleva A-50, A-53 ni A-57 y no puede llevar la B de VISOR-CONSTRUCCION.md §3.2 (toca A-46,
   RESUELTA). El paso 6 de «Antes» de `docs/runbooks/SESION-DE-PREGUNTAS.md`, que decía todavía
   «abril o agosto», remite a su regla 2 desde `trabajo/previa-sesion-5` (PREVIA-SESION-5.md §3).
+  Y, desde `trabajo/activar-sesion-05-motor` (orden de cierre del 2026-10-27): una comprobación
+  que compare las notas de cada registro de feedback con el ítem que cita (segunda rama seguida
+  con notas que traen contenido de otros ítems: `trabajo/activar-sesion-05` y
+  `trabajo/activar-sesion-05-motor`; ERRORES-RECURRENTES.md, «Patrones que ya se conocen»).
 - **Depende de:** nada (J, antes de la próxima sesión que etiquete días).
 - **Quién:** el consultor (L, 6 y la decisión de 7 y 8); la sesión, en ramas propias.
 - **Hecho cuando:** cada una sale de PROJECT_STATE con su evidencia.

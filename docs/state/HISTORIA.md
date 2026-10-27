@@ -13101,3 +13101,70 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 47 (2026-10-25).
+
+# Registro de cierre · `trabajo/activar-sesion-05-motor` (2026-10-27)
+
+- Orden de cierre del consultor del 2026-10-27, pegada en la conversación por Aleks y, después,
+  `/cerrar-rama` lanzado por Aleks (la orden está copiada tal cual en ACTIVAR-SESION-05-MOTOR.md,
+  «Orden de cierre», y al final del encargo); ejecutada siguiendo `RITUAL.md`. La rama tuvo una
+  PARADA de fase 0 (ACTIVAR-SESION-05-MOTOR.md, «Lo que necesito que decidas», doce decisiones), una
+  pasada del revisor (§8, opus, cinco alcances) y, antes del cierre, el commit propio que la orden
+  pedía (`0661a3d`, seis puntos). Nunca se cerró sin la orden.
+- **En este commit**, por la orden y por el runbook: las líneas de §3 del informe tal cual (la V
+  con «este tag», «sobre toda la construcción» y el `diff` contra CABLEADO-SIMULADOR-LINEA-BASE.txt;
+  la F; K con las dos negativas de §0.d; la línea de Technical Debt del ADR de S-15, el que el
+  encargo numeraba 0087 y no existe (escrita sin su id literal, a diferencia de §3 del informe:
+  `knowledge validate` no admite citar un id inexistente en PROJECT_STATE ni aquí sin un bloque
+  `ids-inexistentes`, y en PROJECT_STATE el bloque no cabe en los 23.000 bytes; el primer
+  `make check` de este commit lo sacó en rojo, desviación declarada); Known Ambiguities
+  sin cambio: ninguna ambigüedad se abre ni se cierra); la hoja de ruta: R4.1 con
+  «**Estado:** spec y motor HECHOS» (no «HECHA» a secas: `NA:V` sigue viva hasta la re-corrida),
+  R4.2 «Qué es» con lo de §2 del informe y S-15 con los dos dibujos del punto 5 de la orden, y en
+  G.2 la comprobación que compare las notas de cada registro de feedback con su ítem; la fila de
+  ERRORES-RECURRENTES con los hallazgos del revisor y los nueve de la orden, y el patrón nuevo de
+  las notas con contenido de otros ítems en «Patrones que ya se conocen». Ninguna entrada de la
+  Next Action sale HECHA: V cambia de texto y sigue viva.
+- **Lo que entra** (tramo R4, R4.1, la parte de motor): ADR-0084 (la mecha que pasa el nivel de
+  M15 y vuelve lo mueve; `liquidez_m15_mecha_que_vuelve` = `cualquier_mecha` DEFAULT_AMBIGUOUS bajo
+  A-35, lectura del consultor; enmienda ADR-0045, NOTA en ADR-0054); ADR-0085 (la vela sin cuerpo
+  en M1 no corta la racha ni cuenta como alternancia; casi plana es cuerpo cero; enmienda
+  ADR-0076, NOTA en ADR-0061; CONFIRM de RN-007 y CORRECT sobre `ev-v10-014310-2296423b`);
+  `caja_lado_de_ruido` = `caja_entera` como argumento de RN-005 (A-50, lectura del consultor);
+  `racha_perdidas_reinicio` = `tras_la_detencion` (CORRECT con supersede, recuadro en ADR-0077 §5 y
+  NOTA en su alternativa 4); RN-035 retira la orden sin llenar un minuto antes del fin de su H4 y
+  RN-037 (gate nueva) no deja colocar en ese minuto, por el predicado `en_el_ultimo_tramo_h4`
+  (recuadros en ADR-0060 §5 y §6 y ADR-0066 §4); ADR-0086 (RN-020 retira la pendiente al llegar al
+  tope, como RN-036; recuadros en ADR-0077 §3 y §6); cuatro registros en
+  `knowledge/feedback/2026-10-23-sesion-05/`; spec 18.1.9 → 18.5.2; los tres guiones y
+  `broker.py:177` del punto 10; dos recuadros en ACTIVAR-SESION-05.md; A-30 con la frase del
+  minuto corregida; los tests nuevos (mecha, velas sin cuerpo, caja, último minuto, RN-020, el
+  cargador del arnés y del visor, la racha sin consulta tras la novena) y los que cambian de
+  sentido a propósito, dichos en el informe; 1730 funciones de test. Lo que queda: la re-corrida
+  del arnés con `--simular` sobre toda la construcción (ADR-0070 §3) y la sesión 6 (R4.2, lista en
+  ACTIVAR-SESION-05-MOTOR.md §2).
+- **Lo que no cambia**: A-13, ADR-0083, A-44 y sus parámetros, lo que cuenta RN-036, RN-009, el
+  Makefile, `.claude/` y la guardia; ninguna ambigüedad se cierra; `test_kit.py` sin tocar.
+- Exposiciones: la fila del 2026-10-26 (el auditor del consultor sobre la raíz de un clon, declarada
+  en el primer commit) y la del 2026-10-27 (lo que `test_preparar_a35.py` y `test_visor.py` leen
+  en cada `make check` con el motor nuevo: abril y el M1 de marzo para calentar) de
+  `HOLDOUT-EXPOSICIONES.md`. Nada más leyó material.
+- Negativas de la guardia o del clasificador: en la rama, las de §0.d del informe (pytest de
+  `test_kit.py` desde el clon de `C:/cm/` y dos ejecuciones encadenadas), más las de siempre con
+  comandos compuestos, `$'\r'` y `uv run --project`, todas reescritas; ninguna del clasificador
+  (los tres push a `fix/` pasaron).
+- Letra del tag: la última cerrada era `stable/F38e-activar-sesion-05`; `stable/F38f-*` no existe
+  en local ni en origin (comprobado antes del tag).
+- Tag: `stable/F38f-activar-sesion-05-motor`. El merge es
+  `git rev-parse "stable/F38f-activar-sesion-05-motor^{commit}"`.
+- Commits de la rama: `e8cde8b` (apertura: encargo, contrato, Archivo 48 y la fila de HOLDOUT del
+  auditor del consultor), `53b879a` (fase 0 medida y PARADA), `35211a0` (punto 1, ADR-0084),
+  `225ac79` (puntos 2 y 3, ADR-0085), `5b44cd6` (punto 4, `caja_lado_de_ruido`), `dd2042f` (punto
+  5, la racha), `4855860` (punto 6, RN-035 y RN-037), `7208db2` (punto 8, ADR-0086, y el runbook
+  del 7), `b18fe31` (puntos 10 y 11), `ce42294` (los hallazgos del revisor y el informe hasta §8),
+  `0661a3d` (la orden de cierre: sus seis puntos previos) y el de este registro.
+- CI de Linux por `fix/activar-sesion-05-motor`: run 40460127761 sobre `b18fe31` (`1 failed, 2921
+  passed, 46 skipped`), 40466482458 sobre `ce42294` y 40520969973 sobre `0661a3d` (los dos `1
+  failed, 2923 passed, 46 skipped`); en los tres el único fallo es el aceptado,
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`. La CI de `main` corre tras el push.
+- Informe: `docs/validation/ACTIVAR-SESION-05-MOTOR.md`. Encargo:
+  `docs/encargos/trabajo-activar-sesion-05-motor.md`.
