@@ -151,37 +151,47 @@ def _motor_con_zona(
 def test_la_pendiente_de_la_tarde_sale_cancelada_en_ventana_fin_por_rn035(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
 ) -> None:
-    """Como `test_rn035_ventana_fin`: la orden de la tarde no se llena y RN-035 la retira a
-    ventana_fin; la fila dice donde cayo el cierre y que reglas dispararon."""
+    """Como `test_rn035_ventana_fin`: la orden de la tarde no se llena y RN-035 la retira; la fila
+    dice donde cayo el cierre y que reglas dispararon. CAMBIA DE SENTIDO A PROPOSITO el 2026-10-26
+    (sesion 5, S-22): la retirada es un minuto antes de ventana_fin, en el ultimo tramo de la vela
+    H4, y la fila lo dice asi."""
+    antelacion = registro.minutos("cierre_h4_antelacion")
+    retirada = (tc.MINUTO_FIN - antelacion) * MS_POR_MINUTO - 1
     motor = _motor_con_zona(registro, vocabulario, ZONA_TARDE, {})
     motor.correr_dia(tc._dia())
     tb = motor.trazas_broker[DIA]
     assert tb.cancelados_fin_dia == 0
-    assert [(ms, id) for ms, id, _ in tb.cancelaciones] == [
-        (tc.MINUTO_FIN * MS_POR_MINUTO - 1, "o1")
-    ]
+    assert [(ms, id) for ms, id, _ in tb.cancelaciones] == [(retirada, "o1")]
     (fila,) = _lineas_de_ordenes(motor)
     campos = fila.split(" | ")
     assert campos[1:3] == ["11-15", "o1"] and campos[5] == "cancelada"
-    assert campos[6].startswith("en ventana_fin; reglas disparadas en ese cierre: ")
+    assert campos[6].startswith(
+        "en el ultimo tramo de la vela H4; reglas disparadas en ese cierre: "
+    )
     assert "RN-035" in campos[6] and "viva" not in fila
-    assert campos[7] == cableado._instante(tc.MINUTO_FIN * MS_POR_MINUTO - 1).isoformat()
+    assert campos[7] == cableado._instante(retirada).isoformat()
 
 
 def test_la_pendiente_de_la_manana_sale_cancelada_al_abrir_otra_sesion(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
 ) -> None:
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-10-26 (sesion 5, S-22): la orden de la manana ya no
+    sale cancelada al abrir la tarde sino un minuto antes, en el ultimo tramo de su vela H4; el
+    nombre se conserva para que la historia se lea."""
+    antelacion = registro.minutos("cierre_h4_antelacion")
     motor = _motor_con_zona(registro, vocabulario, tc.MINUTO_ZONA, {})
     motor.correr_dia(tc._dia())
     tb = motor.trazas_broker[DIA]
     apertura_tarde = next(d for n, d, _ in tb.limites if n == "11-15")
     assert [(ms, id) for ms, id, _ in tb.cancelaciones] == [
-        (apertura_tarde * MS_POR_MINUTO - 1, "o1")
+        ((apertura_tarde - antelacion) * MS_POR_MINUTO - 1, "o1")
     ]
     (fila,) = _lineas_de_ordenes(motor)
     campos = fila.split(" | ")
     assert campos[1:3] == ["07-11", "o1"] and campos[5] == "cancelada"
-    assert campos[6].startswith("al abrir otra sesion; reglas disparadas en ese cierre: ")
+    assert campos[6].startswith(
+        "en el ultimo tramo de la vela H4; reglas disparadas en ese cierre: "
+    )
     assert "RN-035" in campos[6]
 
 
@@ -201,6 +211,14 @@ def test_el_motivo_de_una_cancelacion_dice_donde_cayo_y_que_disparo() -> None:
     )
     # la apertura de la PRIMERA sesion no es «abrir otra sesion»
     assert cableado._motivo_de_cancelacion(100, limites, ["RN-035"]).startswith("reglas ")
+    # el ultimo tramo de la vela H4 (sesion 5, S-22), con la antelacion del registro: el minuto
+    # anterior a cada limite, y no el limite ni dos antes
+    assert cableado._motivo_de_cancelacion(339, limites, ["RN-035"], 1) == (
+        "en el ultimo tramo de la vela H4; reglas disparadas en ese cierre: RN-035"
+    )
+    assert cableado._motivo_de_cancelacion(579, limites, ["RN-035"], 1).startswith("en el ultimo ")
+    assert cableado._motivo_de_cancelacion(338, limites, ["RN-035"], 1).startswith("reglas ")
+    assert cableado._motivo_de_cancelacion(339, limites, ["RN-035"]).startswith("reglas ")
 
 
 def test_la_sesion_de_una_orden_es_la_del_cierre_en_que_se_coloco() -> None:

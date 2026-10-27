@@ -438,7 +438,9 @@ def test_por_el_cableado_tras_una_perdida_el_escenario_sigue_y_cuenta_el_intento
 @pytest.mark.parametrize(
     ("valor", "retirada_en"),
     [
-        ("se_retira", tc.FIN_H4 * 60_000 - 1),  # la apertura de la tarde, 11:00 Madrid
+        # el ultimo minuto de la manana, 10:59 Madrid (sesion 5, S-22; hasta el 2026-10-26, la
+        # apertura de la tarde, 11:00)
+        ("se_retira", (tc.FIN_H4 - 1) * 60_000 - 1),
         ("sigue_hasta_ventana_fin", tc.MINUTO_FIN * 60_000 - 1),  # el fin del dia
     ],
 )
@@ -446,15 +448,17 @@ def test_la_orden_viva_al_cambiar_de_sesion_segun_el_parametro(
     tmp_path: Path, valor: str, retirada_en: int
 ) -> None:
     """La orden de la manana no se llena (el precio no baja a la entrada). Con `se_retira`
-    (PROVISIONAL, pregunta 5) RN-035 la retira en la apertura de la tarde; con
-    `sigue_hasta_ventana_fin`, lo de antes, sigue viva hasta que el cableado la cancela al final
-    del dia."""
+    (PROVISIONAL, pregunta 5) RN-035 la retira; con `sigue_hasta_ventana_fin`, lo de antes,
+    sigue viva hasta que el cableado la cancela al final del dia. CAMBIA DE SENTIDO A PROPOSITO el
+    2026-10-26 (sesion 5, S-22): con `se_retira` la retirada es un minuto antes de que termine la
+    H4 de la manana, no en la apertura de la tarde."""
     reg = _registro(tmp_path, orden_pendiente_al_abrir_sesion=valor)
     motor = tc._motor(reg, cargar_vocabulario(tc.SPEC), tc._mercado({}))
     r = motor.correr_dia(tc._dia())
     o1 = motor.brokers[tc.DIA.isoformat()].ordenes["o1"]
     assert o1.estado == CANCELADA and o1.ultimo_cambio_ms == retirada_en
-    assert ("RN-035" in r.sesiones["11-15"].disparadas) is True
+    # RN-035 dispara en el ultimo minuto de la manana (con `sigue_hasta_ventana_fin` sin retirar)
+    assert ("RN-035" in r.sesiones["07-11"].disparadas) is True
 
 
 # ----------------------------------- la orden viva cuando se abre otro escenario (orden 2, punto 4)
@@ -584,9 +588,9 @@ def test_la_orden_viva_cuando_otra_toma_abre_un_escenario(tmp_path: Path, valor:
         (PETICION_COLOCAR, "o1"),
         (PETICION_CANCELAR, "o1"),
         (PETICION_COLOCAR, "o2"),
-        (PETICION_CANCELAR, "o2"),  # RN-035 en la apertura de la tarde (se_retira)
+        (PETICION_CANCELAR, "o2"),  # RN-035 en el ultimo minuto de la manana (sesion 5, S-22)
     ]
-    assert peticiones[-1].instante_ms == tc.FIN_H4 * 60_000 - 1
+    assert peticiones[-1].instante_ms == (tc.FIN_H4 - 1) * 60_000 - 1
 
 
 def test_el_tope_de_escenarios_por_sesion(tmp_path: Path) -> None:

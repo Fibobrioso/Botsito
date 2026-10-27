@@ -85,11 +85,25 @@ límite, antes de que empiece la vela siguiente: ninguna posición cruza de una 
 trader no describió ese caso (dijo además que no tiene hora límite para abrir,
 `ev-v9-012514-b5b6c84f`); la alternativa era dejarla vivir hasta el fin de la vela siguiente.
 
+> **Enmendada en lo que describe el 2026-10-26 (`trabajo/activar-sesion-05-motor`; sesión 5,
+> S-22).** El trader sí describió el caso: la orden sin llenar se quita «un minuto antes», igual
+> que se cierra la posición (`ev-v16-002248-08e9600f`, `fb-2026-10-23-sesion-05-1526aa39`), y en
+> ese minuto no se pone ninguna orden (`ev-v16-002323-515b9da4`). RN-035 la retira en
+> [fin − `cierre_h4_antelacion`, fin) con el predicado `en_el_ultimo_tramo_h4` -el mismo tramo sin
+> el evento del límite- y RN-037 no deja colocar ni recolocar ahí: ninguna orden está pendiente
+> cuando empiezan los ticks del último minuto, así que nada se llena en él. El predicado
+> `vence_vela_h4` y RN-002 no cambian: siguen valiendo también en el límite, para lo que ya
+> estuviera abierto.
+
 ### 6. Lo que NO se decide aquí
 
 - **La orden pendiente al vencer la vela.** RN-002 cierra posiciones; no retira órdenes. A-39 sigue
   ABIERTA por el corte de audio y «por la orden pendiente», y `retirar_orden_limite` sigue
   declarada y sin regla que la use (A-30).
+  > **Decidido después (recuadro del 2026-10-26, `trabajo/activar-sesion-05-motor`).** A-30 y A-39
+  > quedaron RESUELTAS en la sesión 4 y RN-035 usa `retirar_orden_limite` desde ADR-0066; desde la
+  > sesión 5 (S-22) RN-035 retira la orden sin llenar también en el último minuto de la vela H4,
+  > con `en_el_ultimo_tramo_h4`, y RN-037 no deja colocar en él. RN-002 sigue sin retirar órdenes.
 - **El reloj de la ventana** (A-42, ADR-0059). Esta regla no depende de él: mira la rejilla H4.
 - **Qué registro cita cada regla.** RN-002, RN-003 y RN-033 siguen citando los registros de la
   sesión 1, como las dejó `trabajo/activar-sesion-03`, y sus tres CORRECT de la sesión 3 siguen

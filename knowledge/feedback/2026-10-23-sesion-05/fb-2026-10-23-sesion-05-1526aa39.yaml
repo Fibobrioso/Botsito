@@ -1,0 +1,26 @@
+id: fb-2026-10-23-sesion-05-1526aa39
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-035
+accion: CORRECT
+respuesta_literal: perfecto, la respuesta es aquí, siempre menos un minuto, es justamente lo que iba a
+  comentar Siempre se cierra Si está abierta o todavía no se ha llenado la orden Un minuto antes
+registrado_por: 'Aleks · grabacion de la sesion 5, segunda parte (v16, 2026-10-25), version filtrada leida
+  por la sesion; activado por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05-motor, punto
+  6: CORRECT sobre RN-035)'
+grabacion: Grabación de pantalla 2026-10-25 140140.mp4
+t0: 0:22:48
+t1: 0:23:17
+valor_resultante: al llegar la hora de cerrar, la orden sin llenar se quita un minuto antes, igual que
+  se cierra la operacion abierta
+notas: 'S-22 (RN-035): al llegar la hora de cerrar, la orden sin llenar se quita un minuto antes, igual
+  que se cierra la operacion abierta (ev-v16-002248-08e9600f); lo dice como otra, pero es la b. El minuto
+  es cierre_h4_antelacion sobre la rejilla de anclaje_h4, sin el evento del propio limite. Que valga tambien
+  a las 11 es LECTURA DEL CONSULTOR (la nota del item lo situa en ventana_fin; siempre; y ev-v16-002323-515b9da4
+  nombra las 11 y las 3 para no poner ordenes). Para precisar, ev-v16-002323-515b9da4: si se llena en
+  el ultimo minuto la cierra enseguida, y en ese minuto no pone ninguna orden (RN-037)'
+recibido_el: '2026-10-25'
+procedencia: trader_grabado

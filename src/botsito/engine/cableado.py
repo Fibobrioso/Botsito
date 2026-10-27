@@ -172,15 +172,21 @@ MOTIVO_SIN_REGLA = "sin regla disparada en ese cierre"
 
 
 def _motivo_de_cancelacion(
-    instante: int, limites: Sequence[tuple[str, int, int]], disparadas: Sequence[str]
+    instante: int,
+    limites: Sequence[tuple[str, int, int]],
+    disparadas: Sequence[str],
+    antelacion: int = 0,
 ) -> str:
     """Donde cayo el cierre de M1 que cancelo y que reglas dispararon en el: es lo que la traza
-    deja leer. `instante` es el minuto UTC del cierre."""
+    deja leer. `instante` es el minuto UTC del cierre; `antelacion` es cierre_h4_antelacion, para
+    nombrar el ultimo tramo de la vela H4 (sesion 5, S-22: ahi retira RN-035)."""
     donde = ""
     if any(instante == desde for _, desde, _ in limites[1:]):
         donde = "al abrir otra sesion; "
     elif limites and instante == max(hasta for _, _, hasta in limites):
         donde = "en ventana_fin; "
+    elif any(hasta - antelacion <= instante < hasta for _, _, hasta in limites):
+        donde = "en el ultimo tramo de la vela H4; "
     reglas = ", ".join(sorted(set(disparadas))) or MOTIVO_SIN_REGLA
     return f"{donde}reglas disparadas en ese cierre: {reglas}"
 
@@ -330,7 +336,12 @@ class MotorCableado:
             peticiones = broker.traza().peticiones
             for pet in peticiones[peticiones_vistas:]:
                 if pet.tipo == PETICION_CANCELAR:
-                    motivo = _motivo_de_cancelacion(instante, limites, evento.disparadas)
+                    motivo = _motivo_de_cancelacion(
+                        instante,
+                        limites,
+                        evento.disparadas,
+                        self.registro.minutos("cierre_h4_antelacion"),
+                    )
                     tb.cancelaciones.append((pet.instante_ms, pet.id, motivo))
             peticiones_vistas = len(peticiones)
             ctx.eventos = []

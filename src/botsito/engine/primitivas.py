@@ -3,9 +3,10 @@
 Hoy son pocas, y todo lo demas es NO_IMPLEMENTADA (ADR-0048 §2):
 
 - de reloj: `abre_sesion_operativa`; `en_ventana` y `alcanza_hora`, que leen el reloj de las
-  sesiones por el selector que la forma nombra (`engine/relojes.py`, ADR-0063); y
-  `vence_vela_h4`, que
-  mira la rejilla H4 de `anclaje_h4` -la de la agregacion- y no la ventana (RN-002, ADR-0060);
+  sesiones por el selector que la forma nombra (`engine/relojes.py`, ADR-0063); `vence_vela_h4`,
+  que mira la rejilla H4 de `anclaje_h4` -la de la agregacion- y no la ventana (RN-002,
+  ADR-0060); y `en_el_ultimo_tramo_h4`, lo mismo sin el evento del limite (RN-035 y RN-037,
+  sesion 5, S-22);
 - de mercado: `sesgo_h4_al_abrir`, SOLO con `que: vela_h4_previa` y `contra:
   extremo_de_la_h4_anterior`, que es RN-003 y usa `domain/sesgo.py` tal cual (ADR-0044, ADR-0048
   §8, ADR-0049 H1). Siempre tiene respuesta -alcista, bajista, ambiguo o insuficiente- y la ata en
@@ -148,6 +149,19 @@ def primitivas_escritas(
         antelacion = registro.minutos(str(args["antelacion"]))
         fin = _fin_de_la_h4(anclaje, int(momento.instante) - 1)
         return Resultado(Tri.SI if fin - int(momento.instante) <= antelacion else Tri.NO)
+
+    def en_el_ultimo_tramo_h4(
+        args: Mapping[str, Any], momento: Momento, estado: EstadoDia
+    ) -> Resultado | NoImplementada:
+        # Sesion 5, S-22 (RN-035 y RN-037): el ultimo tramo de la vela H4, [fin - antelacion, fin),
+        # SIN el evento del propio limite, que ya es de la vela y de la sesion siguiente (en el
+        # una orden nueva si se coloca). Es `vence_vela_h4` menos el limite: ahi se retira la
+        # orden sin llenar y no se coloca ni se recoloca ninguna
+        anclaje = registro.hora(str(args["anclaje"]))
+        antelacion = registro.minutos(str(args["antelacion"]))
+        fin = _fin_de_la_h4(anclaje, int(momento.instante) - 1)
+        queda = fin - int(momento.instante)
+        return Resultado(Tri.SI if 0 < queda <= antelacion else Tri.NO)
 
     def abre_sesion_operativa(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -344,6 +358,7 @@ def primitivas_escritas(
         "en_ventana": en_ventana,
         "alcanza_hora": alcanza_hora,
         "vence_vela_h4": vence_vela_h4,
+        "en_el_ultimo_tramo_h4": en_el_ultimo_tramo_h4,
         "sesgo_h4_al_abrir": sesgo_h4_al_abrir,
         "alcanza_nivel": alcanza_nivel,
         "cruza": cruza_nivel,

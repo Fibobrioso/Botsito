@@ -561,8 +561,75 @@ Commit 4: 5b44cd6.
 - **`test_kit.py` no cambia**: A-51 sigue en RESUELTAS.
 - **Trailer:** `Fuente: fb-2026-10-23-sesion-05-978be13f, ev-v16-002126-d2376f71`.
 
+### 1.5 Punto 6 · S-22, el último minuto (RN-035 y RN-037, `en_el_ultimo_tramo_h4`; decisión 5)
+
+Commit 5: dd2042f.
+
+- **Registro:** `fb-2026-10-23-sesion-05-1526aa39`, CORRECT sobre RN-035 con valor «al llegar la
+  hora de cerrar, la orden sin llenar se quita un minuto antes, igual que se cierra la operacion
+  abierta» (v16, `ev-v16-002248-08e9600f`, 0:22:48-0:23:17, recibido el 10-25; mismo id que en
+  el clon). `feedback apply --check` no tiene nada que proponer (ningún parámetro); `feedback
+  pending` deja de listarlo en cuanto RN-035 lo cita, y quedan los dos CORRECT sobre RN-003 de
+  `main`.
+- **Spec.** Predicado nuevo `en_el_ultimo_tramo_h4` (`[anclaje, antelacion]`, fuente `reloj`,
+  cita `ev-v16-002248-08e9600f`, literal de nueve palabras: «Si está abierta o todavía no se ha
+  llenado la orden Un minuto antes»; tres de tres palabras no pasaban `literal_coincide`,
+  §0.b.7): SÍ en [fin − `antelacion`, fin) de la vela H4 de la rejilla de `anclaje_h4`, NO en el
+  límite, que ya es de la sesión siguiente. **RN-035**: título y `cuando` con la tercera rama,
+  `cita` y `literal` del CORRECT, `parametros` gana `anclaje_h4` y `cierre_h4_antelacion`, la
+  forma gana `en_el_ultimo_tramo_h4` como primera opción del `cualquiera_de` (las dos de antes se
+  quedan como red), y las notas quitan que «un minuto antes» es frase del consultor y el HUECO,
+  dicen que valer también a las 11 es LECTURA DEL CONSULTOR y remiten a RN-037. **RN-037**, gate
+  nueva (la 32.ª vigente): `cuando` el mismo predicado, `prohibe: [abrir_operacion]` -el efecto de
+  `colocar_orden_limite`, RN-015, que es quien coloca (el encargo decía RN-011; matiz del
+  auditor)-, cita `ev-v16-002323-515b9da4` y literal de catorce palabras; sus notas dicen por qué
+  es una gate aparte y no un `prohibe` en RN-035 (§0.b.7: las gates se evalúan antes que los
+  disparadores). Las tres guardias de `spec/modelo.py` no se amplían: ya recorren todos los
+  predicados y reglas con cita (medido en el clon y aquí, `knowledge validate` en verde).
+  `spec_version` 18.3.1 → 18.4.0 (una regla y un predicado nuevos); `spec manifest --escribir`,
+  `spec docs --escribir`. Recuadros en ADR-0060 §5 y §6 y en ADR-0066 §4, con sus filas del
+  índice.
+- **Código:** `engine/primitivas.py`, `en_el_ultimo_tramo_h4` junto a `vence_vela_h4`, con la
+  misma rejilla (`_fin_de_la_h4`) y `0 < fin − instante <= antelacion`. Nada más: la retirada es
+  `retirar_orden_limite` (ya existía) y la prohibición la aplica el intérprete.
+- **Tests.** `tests/unit/test_ultimo_minuto.py` (nuevo), por el cableado real con la spec y el
+  registro vigentes, a las 11 y a las 3: la orden sin llenar se retira en el evento fin − 1 y no se
+  llena aunque el BID baje en ese minuto (en `main` se llenaba: `assert 'llenada' ==
+  'cancelada'`); una zona que aparece en fin − 1 no se coloca, con RN-037 en `disparadas` y
+  `("RN-015", "accion:colocar_orden_limite", "prohibida:abrir_operacion")` en `bloqueadas` (en
+  `main`, `'RN-037' in {...}` falla y la orden se colocaba); en el primer cierre de la sesión de
+  las 11 sí se coloca (pasa también en `main`: es la guardia de que el límite no se toca; para
+  ese test hizo falta un `toca_colocar_orden_limite` sintético SIN estado, porque el de
+  `test_cableado` se consume al evaluarse y en una apertura el intérprete evalúa el `cuando` de
+  RN-011 una vez más para avisar del empate con RN-003, ADR-0049 H3: se dice en su docstring);
+  lo que se llena en el minuto anterior al último lo cierra RN-002 en el evento siguiente, fin − 1,
+  en el que RN-035 ya no encuentra nada (ADR-0060 §5 entero para la posición); y la forma y el
+  vocabulario (el predicado de reloj con sus dos argumentos, RN-037 gate, las citas). CAMBIAN DE
+  SENTIDO A PROPÓSITO: `test_rn035_ventana_fin.py::test_hueco_la_orden_que_se_llena_en_el_ultimo_minuto_se_cierra_en_el_limite`
+  (a las 11 y a las 3: la orden se retira en el último minuto y no se llena; el nombre se
+  conserva) y `::test_rn035_retira_la_pendiente_a_ventana_fin_y_el_cableado_no_encuentra_nada` (la
+  retirada es a 14:59, no a `ventana_fin`), y en `test_escenarios_por_sesion.py`
+  `test_la_orden_viva_al_cambiar_de_sesion_segun_el_parametro[se_retira]` y
+  `test_la_orden_viva_cuando_otra_toma_abre_un_escenario` (la orden de la mañana se retira a las
+  10:59, no en la apertura de la tarde; RN-035 dispara en la sesión 07-11); y en
+  `test_vida_de_la_orden.py` los dos de la pendiente cancelada (a ventana_fin y al abrir otra
+  sesión), que el primer `make check` de este commit sacó en rojo: la cancelación cae un minuto
+  antes y la fila del informe de órdenes la rotula «en el ultimo tramo de la vela H4»
+  (`cableado._motivo_de_cancelacion` gana ese rótulo con `cierre_h4_antelacion` del registro, sin
+  cifra). **Con el código de `main`** (clon `C:/cm/main`): esos cinco fallan como se ha dicho y en `test_ultimo_minuto.py`
+  fallan cuatro de seis (los dos de la retirada, los dos de RN-037; `KeyError: 'RN-037'` en el de
+  la forma). **Con el de la rama:** 279 tests en verde entre `test_ultimo_minuto.py`,
+  `test_rn035_ventana_fin.py`, `test_escenarios_por_sesion.py`, `test_cableado.py`,
+  `test_cierre_vela_h4.py`, `test_racha_perdidas.py`, `test_spec.py`, `test_spec_fidelidad.py`,
+  `test_huecos_motor.py`, `test_sesiones_independientes.py`, `test_punto_usado.py`,
+  `test_margen_lote.py`, `test_caja_hasta_el_llenado.py`, `test_orden_stop_pivote.py`,
+  `test_be_al_tick.py`, `test_dos_relojes.py`, `test_preparar_a44.py` y `test_preparar_a21.py`.
+- **`test_kit.py` no cambia**; ninguna ambigüedad se toca (A-30 y A-39 siguen RESUELTAS).
+- **Trailer:** `Fuente: fb-2026-10-23-sesion-05-1526aa39, ev-v16-002248-08e9600f,
+  ev-v16-002323-515b9da4`.
+
 ## Estado
 
 EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida:
 se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1, el 2+3,
-el 4 y el 5.
+el 4, el 5 y el 6.

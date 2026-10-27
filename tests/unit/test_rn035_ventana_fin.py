@@ -1,9 +1,9 @@
 """RN-035, tramo ventana_fin (sesion 4, S-5; trabajo/activar-sesion-04-motor, decision 5): la orden
 que sigue pendiente al llegar ventana_fin la retira RN-035 segun orden_pendiente_al_abrir_sesion, y
-la cancelacion del cableado al terminar el dia (ADR-0053 §6) ya no encuentra nada. Y el hueco que NO
-se arregla aqui, CONGELADO: una orden que se llena en el ultimo minuto de la H4 -[fin-1, fin)-,
-despues de que RN-002 ya cerrara en el evento fin-1, se cierra en el evento del propio limite
-(ADR-0060 §5), igual a las 11 que a ventana_fin. Todo sintetico; el dia es de 2030."""
+la cancelacion del cableado al terminar el dia (ADR-0053 §6) ya no encuentra nada. El hueco que
+este fichero congelaba -una orden que se llenaba en el ultimo minuto de la H4- quedo cerrado el
+2026-10-26 (sesion 5, S-22): RN-035 la retira un minuto antes (tests/unit/test_ultimo_minuto.py).
+Todo sintetico; el dia es de 2030."""
 
 from __future__ import annotations
 
@@ -13,7 +13,7 @@ import pytest
 
 from botsito.config.registro import Registro, cargar_registro
 from botsito.domain.ticks import MS_POR_MINUTO
-from botsito.engine.broker import CANCELADA, MANUAL, PETICION_CANCELAR, PETICION_COLOCAR
+from botsito.engine.broker import CANCELADA, PETICION_CANCELAR, PETICION_COLOCAR
 from botsito.spec.modelo import cargar_vocabulario
 from tests.unit import test_cableado as tc
 
@@ -41,16 +41,19 @@ def _motor(registro: Registro, vocabulario: dict[str, dict[str, Any]], zona: int
 def test_rn035_retira_la_pendiente_a_ventana_fin_y_el_cableado_no_encuentra_nada(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
 ) -> None:
-    """La orden de la tarde no se llena (el precio no baja). A ventana_fin la retira RN-035 con su
-    motivo en la traza del motor (la regla en `disparadas`), y la red de seguridad del cableado
-    no cancela nada. Falla con el codigo de `main`: alli RN-035 solo dispara al abrir una sesion y
-    la orden la cancela el cableado sin regla."""
+    """La orden de la tarde no se llena (el precio no baja). La retira RN-035 con su motivo en la
+    traza del motor (la regla en `disparadas`), y la red de seguridad del cableado no cancela
+    nada. CAMBIA DE SENTIDO A PROPOSITO el 2026-10-26 (sesion 5, S-22): la retirada ya no es a
+    ventana_fin sino un minuto antes, en el ultimo tramo de la H4 (`cierre_h4_antelacion`); la
+    rama de ventana_fin se queda como red y no encuentra nada."""
     assert registro.opcion("orden_pendiente_al_abrir_sesion") == "se_retira"
+    antelacion = registro.minutos("cierre_h4_antelacion")
     motor = _motor(registro, vocabulario, ZONA_TARDE, {})
     r = motor.correr_dia(tc._dia())
     o1 = motor.brokers[tc.DIA.isoformat()].ordenes["o1"]
     assert o1.colocada_ms == ZONA_TARDE * MS_POR_MINUTO - 1
-    assert o1.estado == CANCELADA and o1.ultimo_cambio_ms == tc.MINUTO_FIN * MS_POR_MINUTO - 1
+    assert o1.estado == CANCELADA
+    assert o1.ultimo_cambio_ms == (tc.MINUTO_FIN - antelacion) * MS_POR_MINUTO - 1
     assert "RN-035" in r.sesiones["11-15"].disparadas
     assert "RN-035" not in r.sesiones["07-11"].disparadas  # la manana no tuvo orden
     tb = motor.trazas_broker[tc.DIA.isoformat()]
@@ -63,30 +66,28 @@ def test_rn035_retira_la_pendiente_a_ventana_fin_y_el_cableado_no_encuentra_nada
 
 
 @pytest.mark.parametrize(
-    ("zona", "fin"),
+    ("zona", "fin", "sesion"),
     [
-        (tc.MINUTO_ZONA, tc.FIN_H4),  # la manana: el fin de la primera H4, las 11 del trader
-        (ZONA_TARDE, tc.MINUTO_FIN),  # la tarde: ventana_fin, las 3
+        (tc.MINUTO_ZONA, tc.FIN_H4, "07-11"),  # la manana: el fin de la primera H4, las 11
+        (ZONA_TARDE, tc.MINUTO_FIN, "11-15"),  # la tarde: ventana_fin, las 3
     ],
 )
 def test_hueco_la_orden_que_se_llena_en_el_ultimo_minuto_se_cierra_en_el_limite(
-    registro: Registro, vocabulario: dict[str, dict[str, Any]], zona: int, fin: int
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], zona: int, fin: int, sesion: str
 ) -> None:
-    """CONGELA lo que pasa hoy, no lo arregla (decision 5 del encargo; pregunta para la sesion 5):
-    RN-002 cierra lo abierto en el evento fin-1 (`vence_vela_h4` con cierre_h4_antelacion), pero
-    una orden pendiente puede llenarse DESPUES, dentro del ultimo minuto [fin-1, fin); entonces se
-    cierra en el evento del propio limite (ADR-0060 §5), y la posicion vive menos de un minuto.
-    RN-035 no la ve: al llegar el limite ya no esta pendiente."""
-    # el BID baja 10 puntos en el ultimo minuto: el ASK (BID + spread) queda por debajo de la
-    # entrada y la limite se llena en el tick de los 40 s; el stop (16 puntos) no se toca
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-10-26 (sesion 5, S-22; trabajo/activar-sesion-05-motor,
+    punto 6): hasta entonces CONGELABA el hueco -una orden pendiente podia llenarse en el ultimo
+    minuto [fin-1, fin), despues de que RN-002 cerrara en fin-1, y la posicion se cerraba en el
+    evento del limite (ADR-0060 §5)-. Desde entonces RN-035 retira la orden sin llenar en el
+    evento fin-1 («un minuto antes», ev-v16-002248-08e9600f) y no se llena aunque el BID baje en
+    ese minuto, a las 11 y a las 3. El nombre se conserva para que la historia se lea; lo demas
+    esta en tests/unit/test_ultimo_minuto.py."""
     motor = _motor(registro, vocabulario, zona, {fin - 1: tc.ENTRADA - 10})
     r = motor.correr_dia(tc._dia())
     broker = motor.brokers[tc.DIA.isoformat()]
-    assert len(r.operaciones) == 1 and len(broker.posiciones) == 1
-    p = next(iter(broker.posiciones.values()))
-    assert (fin - 1) * MS_POR_MINUTO <= p.abierta_ms < fin * MS_POR_MINUTO
-    assert not p.abierta and p.cerrada_ms == fin * MS_POR_MINUTO - 1
-    assert p.motivo_cierre == MANUAL  # RN-002, cerrar_a_mercado
-    assert "RN-002" in r.sesiones["11-15"].disparadas  # el evento del limite es de la sesion 11-15
-    assert "RN-035" not in r.sesiones["11-15"].disparadas
+    assert not r.operaciones and not broker.posiciones
+    o1 = broker.ordenes["o1"]
+    assert o1.estado == CANCELADA and o1.ultimo_cambio_ms == (fin - 1) * MS_POR_MINUTO - 1
+    assert "RN-035" in r.sesiones[sesion].disparadas
+    assert "RN-002" not in r.sesiones["11-15"].disparadas  # nada abierto que cerrar en el limite
     assert motor.trazas_broker[tc.DIA.isoformat()].cancelados_fin_dia == 0

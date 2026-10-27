@@ -2,9 +2,9 @@
 
 # Reglas de la operativa
 
-`spec_version 18.3.1` · hash `15d59e1974ce…`
+`spec_version 18.4.0` · hash `2316e0cce227…`
 
-31 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
+32 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
 ## Vigentes
 
@@ -1233,15 +1233,15 @@
 }
 ```
 
-### RN-035 · la orden que sigue pendiente al abrir otra sesion, o al llegar ventana_fin, se retira
+### RN-035 · la orden que sigue sin llenar se retira un minuto antes de que termine su vela H4, y la que quede al abrir otra sesion o al llegar ventana_fin tambien
 
 - **Clase**: `disparador`
-- **Cuando**: abre una sesion operativa y queda una orden de la sesion anterior sin llenar, o la hora de pared, en el reloj que dice reloj_sesiones, alcanza ventana_fin con una orden sin llenar
+- **Cuando**: a la vela H4 en curso -en la rejilla de anclaje_h4- le queda cierre_h4_antelacion o menos para terminar y todavia no ha terminado, con una orden sin llenar; o abre una sesion operativa y queda una orden de la sesion anterior sin llenar; o la hora de pared, en el reloj que dice reloj_sesiones, alcanza ventana_fin con una orden sin llenar
 - **Entonces**: se retira, segun orden_pendiente_al_abrir_sesion; la sesion nueva empieza sin escenario, y al fin de la ventana no queda ninguna orden viva
-- **Parametros**: `orden_pendiente_al_abrir_sesion`, `ventana_fin`, `reloj_sesiones`
-- **Cita**: `fb-2026-10-04-sesion-04-45e624c5` — *«sí, se quita, porque siempre se va a ir actualizando la orden, como te digo o sea, no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario»*
+- **Parametros**: `orden_pendiente_al_abrir_sesion`, `ventana_fin`, `reloj_sesiones`, `anclaje_h4`, `cierre_h4_antelacion`
+- **Cita**: `fb-2026-10-23-sesion-05-1526aa39` — *«Si está abierta o todavía no se ha llenado la orden Un minuto antes»*
 - **Decision**: `ADR-0066` — dice mas que su cita, y lo declara
-- **Notas**: LA CITA ES EL REGISTRO DE S-5 DESDE EL 2026-10-12 (trabajo/activar-sesion-04-motor, decision 5 del consultor; mismo precedente que ADR-0060 §6): la regla hace en sus dos ramas lo que el trader dijo. Hasta entonces era fb-2026-09-29-sesion-03-5021677e, la independencia de las sesiones («cada uno es un mundo diferente», A-46 RESUELTA), que sostenia el valor provisional y sigue en las notas. DESDE EL 2026-10-12 LA REGLA TAMBIEN RETIRA A ventana_fin: `alcanza_hora` sobre reloj_sesiones, la misma puerta que la segunda rama de RN-002, en el instante que el trader confirmo: sus palabras son «no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (la cita), y «se quita tanto a las 11 como a las 3» es la frase del consultor a la que contesto «Exacto» (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija. La cancelacion del cableado al terminar el dia (ADR-0053 §6) se queda como red de seguridad y no encuentra nada (tests/unit/test_rn035_ventana_fin.py). HUECO QUE NO SE ARREGLA AQUI, congelado con un test: una orden pendiente puede llenarse en el ultimo minuto de la H4 [fin-1, fin), despues de que RN-002 cierre en el evento fin-1, tanto a las 11 como a ventana_fin; entonces se cierra en el evento del limite (ADR-0060 §5). La pregunta va a la sesion 5. NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066), PROVISIONAL: que hace el trader con una orden sin llenar al acabar la sesion no lo dijo -el corte de audio de v9 0:28:49-0:29:53 cae en esa respuesta- y es la pregunta 5 de la sesion 4 (A-30 y A-39). La cita es la de la independencia de las sesiones (A-46 RESUELTA), que es lo que sostiene el valor provisional `se_retira`; la otra opcion, `sigue_hasta_ventana_fin`, es lo que hacia el motor hasta hoy (DECISION 3 de ADR-0064): la orden de la manana no se reubicaba con los puntos de la tarde y, como RN-011 no coloca con una orden pendiente, dejaba la tarde sin operar. Una posicion ABIERTA no entra aqui: la cierra RN-002. La opcion de la pregunta 5 «la dejo y la sigo moviendo en la sesión siguiente» no se escribe hasta que el trader la elija. DESDE EL 2026-10-04 (sesion 4, S-5; activada el 2026-10-11, trabajo/activar-sesion-04) YA NO ES PROVISIONAL: el trader dice que la orden sin llenar se quita a las 11 y a las 3, «porque siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5, ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39, fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija.
+- **Notas**: LA CITA ES EL CORRECT DE LA SESION 5 DESDE EL 2026-10-26 (S-22, v16 0:22:48, ev-v16-002248-08e9600f; rama trabajo/activar-sesion-05-motor): al llegar la hora de cerrar, la orden sin llenar se quita un minuto antes, igual que se cierra la operacion abierta (lo dice como «otra», pero es la b). El minuto es cierre_h4_antelacion sobre la rejilla de anclaje_h4, la misma de RN-002, y SIN el evento del propio limite, que ya es de la sesion siguiente (`en_el_ultimo_tramo_h4`). La nota del item lo situa en ventana_fin; que valga tambien a las 11 es LECTURA DEL CONSULTOR («siempre», y ev-v16-002323-515b9da4 nombra las 11 y las 3 para no poner ordenes). Las dos ramas de antes -al abrir la sesion y a ventana_fin- se quedan como red: con la primera rama, en ese instante ya no hay nada que retirar (tests/unit/test_ultimo_minuto.py). El hueco de la orden que se llenaba en el ultimo minuto queda cerrado: ya no esta pendiente cuando empiezan sus ticks; lo que se llene antes lo cierra RN-002 en el evento siguiente (ADR-0060 §5). Que en ese minuto no se coloque ni se recoloque ninguna orden es RN-037. Hasta entonces la cita era fb-2026-10-04-sesion-04-45e624c5 (S-5 de la sesion 4: «no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario»), y antes fb-2026-09-29-sesion-03-5021677e, la independencia de las sesiones («cada uno es un mundo diferente», A-46 RESUELTA), que sostenia el valor provisional. DESDE EL 2026-10-12 (trabajo/activar-sesion-04-motor, decision 5 del consultor) LA REGLA TAMBIEN RETIRA A ventana_fin: `alcanza_hora` sobre reloj_sesiones, la misma puerta que la segunda rama de RN-002, en el instante que el trader confirmo en la sesion 4; «se quita tanto a las 11 como a las 3» es la frase del consultor a la que contesto «Exacto» (SESION-04-EXTRACCION.md §3.6). La cancelacion del cableado al terminar el dia (ADR-0053 §6) se queda como red de seguridad y no encuentra nada (tests/unit/test_rn035_ventana_fin.py). NACE el 2026-10-01 (rama feature/escenarios-por-sesion, ADR-0066), PROVISIONAL: que hace el trader con una orden sin llenar al acabar la sesion no lo dijo -el corte de audio de v9 0:28:49-0:29:53 cae en esa respuesta- y es la pregunta 5 de la sesion 4 (A-30 y A-39). La cita es la de la independencia de las sesiones (A-46 RESUELTA), que es lo que sostiene el valor provisional `se_retira`; la otra opcion, `sigue_hasta_ventana_fin`, es lo que hacia el motor hasta hoy (DECISION 3 de ADR-0064): la orden de la manana no se reubicaba con los puntos de la tarde y, como RN-011 no coloca con una orden pendiente, dejaba la tarde sin operar. Una posicion ABIERTA no entra aqui: la cierra RN-002. La opcion de la pregunta 5 «la dejo y la sigo moviendo en la sesión siguiente» no se escribe hasta que el trader la elija. DESDE EL 2026-10-04 (sesion 4, S-5; activada el 2026-10-11, trabajo/activar-sesion-04) YA NO ES PROVISIONAL: el trader dice que la orden sin llenar se quita a las 11 y a las 3, «porque siempre se va a ir actualizando la orden» (fb-2026-10-04-sesion-04-45e624c5, ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39, fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); «un minuto antes» es frase del consultor y no se fija.
 
 **Forma ejecutable**, tal cual la lee el motor:
 
@@ -1251,6 +1251,12 @@
     "todos_de": [
       {
         "cualquiera_de": [
+          {
+            "en_el_ultimo_tramo_h4": {
+              "anclaje": "anclaje_h4",
+              "antelacion": "cierre_h4_antelacion"
+            }
+          },
           {
             "abre_sesion_operativa": {}
           },
@@ -1327,6 +1333,37 @@
 }
 ```
 
+### RN-037 · en el ultimo minuto antes de las 11 o de las 3 no se pone ninguna orden
+
+- **Clase**: `gate`
+- **Cuando**: a la vela H4 en curso -en la rejilla de anclaje_h4- le queda cierre_h4_antelacion o menos para terminar y todavia no ha terminado
+- **Entonces**: no se coloca ni se reubica ninguna orden
+- **Parametros**: `anclaje_h4`, `cierre_h4_antelacion`
+- **Cita**: `ev-v16-002323-515b9da4` — *«No se pone ninguna orden En el último minuto antes de las 11 o de las 3»*
+- **Notas**: NACE el 2026-10-26 (sesion 5, S-22, v16 0:23:23; rama trabajo/activar-sesion-05-motor): «si la orden se llena en el ultimo minuto la cierra enseguida, y en el ultimo minuto antes de las 11 o de las 3 no pone ninguna orden». Cita el item directamente, como RN-005. Es una gate sobre abrir_operacion, el efecto de colocar_orden_limite (RN-015): en [fin - cierre_h4_antelacion, fin) de cada vela H4 de la ventana, sobre la rejilla de anclaje_h4 y sin el evento del limite (`en_el_ultimo_tramo_h4`, el mismo predicado con el que RN-035 retira la pendiente), RN-015 no coloca y la recolocacion de RN-006 -que cancela y vuelve a colocar por RN-011 y RN-015- tampoco; en el evento del limite, que es el primer cierre de la sesion siguiente, se coloca. Va aparte de RN-035 y no dentro de ella porque las gates se evaluan antes que los disparadores en cada vuelta del evento: un `prohibe` dentro de un disparador llegaria tarde si otro disparador anterior en el desempate ya hubiera colocado (ACTIVAR-SESION-05-MOTOR.md §0.b.7). Lo que ya esta lleno al llegar ese minuto lo cierra RN-002 (ADR-0060 §5)
+
+**Forma ejecutable**, tal cual la lee el motor:
+
+```json
+{
+  "cuando": {
+    "todos_de": [
+      {
+        "en_el_ultimo_tramo_h4": {
+          "anclaje": "anclaje_h4",
+          "antelacion": "cierre_h4_antelacion"
+        }
+      }
+    ]
+  },
+  "entonces": {
+    "prohibe": [
+      "abrir_operacion"
+    ]
+  }
+}
+```
+
 ## Descartadas
 
 ### RN-013 · hay un unico esquema de stop, y vale para cualquier esquema de entrada
@@ -1376,7 +1413,7 @@
 
 ## Vocabulario
 
-### predicados (27)
+### predicados (28)
 
 - **`abre_sesion_operativa`** — empieza una de las sesiones de la ventana Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
 - **`alcanza_hora`** — la hora de pared, en el reloj que dice `reloj`, llega al instante declarado Argumentos: `hora`, `reloj`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-ffb528d7`: *«la operativa se cierra a las 3pm en punto»*.
@@ -1385,6 +1422,7 @@
 - **`contexto_filtrable`** — el spread se ensancha por encima de lo tolerable Argumentos: `spread`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-3565552d`: *«a mí me es indiferente si hay noticia o no [...] Sí, incluimos noticias»*.
 - **`cruza`** — el precio pasa al otro lado del nivel con el criterio declarado, mirado en la ultima vela de M1 cerrada y no en la de M15 (A-45 RESUELTA en la sesion 3; cierra lo PROVISIONAL de ADR-0054 §4) Argumentos: `que`, `criterio`. Fuente: `mercado`. Cita `fb-2026-09-09-sesion-01-6e15504f`: *«¿Vale con que la vela cierre con el cuerpo por encima del máximo, por debajo del mínimo, o vale con que la mecha lo perfore? Con cuerpo»*.
 - **`distancia_menor_que`** — el nivel que pide la spec queda mas cerca del precio que el minimo del broker; el minimo viene en puntos y `digitos` lo traduce a precio Argumentos: `que`, `tope`, `digitos`. Fuente: `bot`. Lo provoca la accion: escribir_stop_en_la_orden, fijar_objetivo. Cita `fb-2026-09-09-sesion-01-c698bc6a`: *«Que sea fiel a la operativa y no busque nada adicional.»*.
+- **`en_el_ultimo_tramo_h4`** — a la vela H4 que contiene el minuto que acaba de cerrar le queda `antelacion` o menos para terminar Y todavia no ha terminado: el evento del propio limite NO cuenta, porque ya es de la vela -y de la sesion- siguiente. Es `vence_vela_h4` sin el limite (sesion 5, S-22, 2026-10-26, trabajo/activar-sesion-05-motor): en ese tramo RN-035 retira la orden sin llenar y RN-037 no deja colocar ni recolocar ninguna; en el limite, la sesion nueva ya coloca Argumentos: `anclaje`, `antelacion`. Fuente: `reloj`. Cita `ev-v16-002248-08e9600f`: *«Si está abierta o todavía no se ha llenado la orden Un minuto antes»*.
 - **`en_ventana`** — la hora de pared, en el reloj que dice `reloj`, cae en el intervalo medio abierto [inicio, fin). `reloj` es un selector del registro: dice con cual de sus relojes se cuenta, y el huso de cada reloj vive en su propio parametro (ADR-0063) Argumentos: `inicio`, `fin`, `reloj`, `dias`. Fuente: `reloj`. Cita `fb-2026-09-09-sesion-01-8741c388`: *«Tu operativa inicia 7AM, me dijiste, ¿no? Sí [...] Por ahora vamos a trabajarlo en esas dos sesiones»*.
 - **`la_orden_nace_antes_del_esquema`** — la orden de entrada nace antes de que se de el esquema, segun `momento` (orden_limite_nace): SI con `al_aparecer_punto_de_breaker`, en la que la orden stop espera en el posible punto de breaker y solo se llena cuando el precio lo rompe, que es el esquema 1 (ADR-0056 §7, ADR-0064). Lo lee RN-008 para no frenar la colocacion Argumentos: `momento`. Fuente: `motor`.
 - **`la_toma_es_de_la_sesion`** — la liquidez no estaba tomada ya al abrir la sesion: ninguna M1 cerro pasada la linea, con el `criterio` de la toma, entre la formacion del pivote y la apertura. Una toma previa en una sesion anterior del dia no cuenta (A-46, cada sesion es un mundo diferente); una previa a la primera sesion del dia la decide `antes_de_la_ventana` (A-43). Sin ella, RN-004 volvia a fijar la toma de la manana en la apertura de la tarde sobre el mismo pivote si el precio seguia pasado (ADR-0066) Argumentos: `que`, `criterio`, `antes_de_la_ventana`. Fuente: `mercado`. Cita `ev-v9-004533-d075b080`: *«si la liquidez se formó antes de las 7, pero el precio la toma ya dentro. Es valio la entrada, sí.»*.
