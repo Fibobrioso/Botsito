@@ -994,6 +994,12 @@ conclusiones: es para el dibujo 3 de S-15, y RN-009 no cambia.**
   176, cero 47** (stops a break even); por motivo: stop 222, objetivo 34, manual 3 (cierre forzoso
   al fin de la ventana). Con 0 zonas: objetivo 22, stop 124, manual 3; con 1 zona: objetivo 12, stop 98.
 - Las 32 que quedan fuera (2 o más zonas al llenar), en «## Todas las llenadas» del fichero.
+- **Marca E (respuesta a la PARADA 3, punto 1 a): 10 de las 259 filas** llevan «E: llenada con la
+  vela que la colocó (ADR-0051 §2)»: el bróker las llenó con el respaldo M1 en la vela cuyo cierre
+  colocó la orden (§2.8 c). Las 10 llenadas así de la corrida 2 están todas en esta lista (ninguna
+  tiene 2 o más zonas). Es un error nuestro, no una regla del trader: no se eligen para la sesión 6.
+  La marca va en la tabla de §3.2; `entradas-antes-alternancia.txt` no la lleva, porque solo lo
+  regenera el guion de f), que corre el motor y estaba autorizado una sola vez.
 
 ### 3.2 La lista, por día y sesión (las 259; el fichero trae además entrada, punto, sesgo y camino)
 
@@ -1008,9 +1014,9 @@ reubicaciones; escenario = el de la zona («vig.» = el vigente al llenar, si es
 | 2026-01-05 | 07-11 | o16 | venta | 08:33:08 | 0 | 0 | primer punto tras la toma | 4 | n 3 | +3.60 (objetivo) | P5 |
 | 2026-01-05 | 07-11 | o18 | venta | 09:28:17 | 0 | 0 | primer punto tras la toma | 0 | n 4 | +3.75 (objetivo) | P5 |
 | 2026-01-05 | 11-15 | o19 | venta | 10:22:00 | 0 | 0 | referencia | 0 | n 1 | -1.00 (stop) | P5 |
-| 2026-01-05 | 11-15 | o20 | venta | 10:24:00 | 1 | 1 | primer punto tras la toma | 0 | n 1 | +0.00 (stop) | P5 |
+| 2026-01-05 | 11-15 | o20 | venta | 10:24:00 | 1 | 1 | primer punto tras la toma | 0 | n 1 | +0.00 (stop) | P5 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
 | 2026-01-05 | 11-15 | o21 | venta | 10:56:00 | 0 | 0 | referencia | 0 | n 2 | -1.00 (stop) | P5 |
-| 2026-01-06 | 07-11 | o1 | compra | 06:00:00 | 0 | 0 | referencia | 0 | n 1 | +3.64 (objetivo) | P5 |
+| 2026-01-06 | 07-11 | o1 | compra | 06:00:00 | 0 | 0 | referencia | 0 | n 1 | +3.64 (objetivo) | P5 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
 | 2026-01-06 | 07-11 | o9 | compra | 08:02:05 | 1 | 1 | posterior | 5 | n 3 | +3.65 (objetivo) | P5 |
 | 2026-01-06 | 11-15 | o20 | venta | 13:43:00 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.12 (stop) | P6 |
 | 2026-01-06 | 11-15 | o21 | venta | 13:44:30 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +3.50 (objetivo) | P6 |
@@ -1088,11 +1094,11 @@ reubicaciones; escenario = el de la zona («vig.» = el vigente al llenar, si es
 | 2026-04-03 | 11-15 | o24 | compra | 12:41:05 | 1 | 0 | primer punto tras la toma | 2 | n 3 | -0.08 (stop) | P5 |
 | 2026-04-06 | 07-11 | o5 | compra | 06:32:00 | 1 | 1 | primer punto tras la toma | 4 | n 1 | -1.06 (stop) | T0 |
 | 2026-04-06 | 07-11 | o6 | compra | 08:57:01 | 0 | 0 | referencia | 0 | n 2 | -0.28 (manual) | P5 |
-| 2026-04-06 | 11-15 | o11 | compra | 10:01:00 | 0 | 0 | primer punto tras la toma | 4 | n 1 | -1.00 (stop) | P6 |
-| 2026-04-06 | 11-15 | o12 | compra | 10:03:00 | 1 | 1 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P6 |
-| 2026-04-07 | 07-11 | o1 | venta | 05:00:00 | 0 | 0 | referencia | 0 | n 1 | -2.00 (stop) | P6 |
+| 2026-04-06 | 11-15 | o11 | compra | 10:01:00 | 0 | 0 | primer punto tras la toma | 4 | n 1 | -1.00 (stop) | P6 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
+| 2026-04-06 | 11-15 | o12 | compra | 10:03:00 | 1 | 1 | primer punto tras la toma | 4 | n 1 | +0.00 (stop) | P6 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
+| 2026-04-07 | 07-11 | o1 | venta | 05:00:00 | 0 | 0 | referencia | 0 | n 1 | -2.00 (stop) | P6 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
 | 2026-04-07 | 07-11 | o6 | venta | 06:31:14 | 0 | 0 | primer punto tras la toma | 1 | n 2 | -1.00 (stop) | P6 |
-| 2026-04-07 | 11-15 | o28 | compra | 10:26:00 | 0 | 0 | referencia | 0 | n 1 | -1.10 (stop) | P6 |
+| 2026-04-07 | 11-15 | o28 | compra | 10:26:00 | 0 | 0 | referencia | 0 | n 1 | -1.10 (stop) | P6 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
 | 2026-04-07 | 11-15 | o29 | compra | 10:29:00 | 0 | 0 | referencia | 0 | n 1 | -0.01 (stop) | P6 |
 | 2026-04-08 | 07-11 | o4 | compra | 07:15:28 | 0 | 0 | primer punto tras la toma | 3 | n 1 | +3.48 (objetivo) | P6 |
 | 2026-04-08 | 07-11 | o6 | compra | 08:16:20 | 0 | 0 | primer punto tras la toma | 1 | n 2 | -1.00 (stop) | P6 |
@@ -1122,7 +1128,7 @@ reubicaciones; escenario = el de la zona («vig.» = el vigente al llenar, si es
 | 2026-04-22 | 07-11 | o8 | venta | 07:46:00 | 0 | 0 | referencia | 0 | n 2 | -1.00 (stop) | P5 |
 | 2026-04-22 | 11-15 | o21 | compra | 11:46:12 | 1 | 1 | primer punto tras la toma | 6 | n 2 | -1.05 (stop) | P6 |
 | 2026-04-23 | 07-11 | o1 | venta | 05:01:00 | 0 | 0 | referencia | 0 | n 1 | -1.14 (stop) | P5 |
-| 2026-04-23 | 07-11 | o3 | venta | 05:05:00 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -2.00 (stop) | P5 |
+| 2026-04-23 | 07-11 | o3 | venta | 05:05:00 | 0 | 0 | primer punto tras la toma | 1 | n 1 | -2.00 (stop) | P5 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
 | 2026-04-23 | 07-11 | o12 | venta | 06:55:12 | 1 | 1 | posterior | 2 | n 2 | +3.56 (objetivo) | P5 |
 | 2026-04-24 | 07-11 | o6 | venta | 05:43:18 | 1 | 1 | posterior | 5 | n 1 | -1.50 (stop) | P5 |
 | 2026-04-24 | 07-11 | o8 | venta | 06:44:30 | 0 | 0 | primer punto tras la toma | 0 | n 2 | +3.75 (objetivo) | T0 |
@@ -1165,8 +1171,8 @@ reubicaciones; escenario = el de la zona («vig.» = el vigente al llenar, si es
 | 2026-07-09 | 07-11 | o4 | compra | 07:52:19 | 0 | 0 | primer punto tras la toma | 3 | n 1 | -1.00 (stop) | P5 |
 | 2026-07-09 | 07-11 | o8 | compra | 08:45:25 | 1 | 0 | primer punto tras la toma | 2 | n 2 | -1.00 (stop) | P5 |
 | 2026-07-09 | 11-15 | o16 | compra | 10:59:01 | 1 | 1 | posterior | 4 | n 1 | -0.09 (stop) | P5 |
-| 2026-07-10 | 07-11 | o3 | compra | 05:28:00 | 1 | 1 | primer punto tras la toma | 1 | n 1 | -1.00 (stop) | P5 |
-| 2026-07-10 | 07-11 | o4 | compra | 05:32:00 | 1 | 1 | posterior | 1 | n 1 | -1.00 (stop) | T0 |
+| 2026-07-10 | 07-11 | o3 | compra | 05:28:00 | 1 | 1 | primer punto tras la toma | 1 | n 1 | -1.00 (stop) | P5 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
+| 2026-07-10 | 07-11 | o4 | compra | 05:32:00 | 1 | 1 | posterior | 1 | n 1 | -1.00 (stop) | T0 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
 | 2026-07-10 | 07-11 | o12 | compra | 07:59:02 | 1 | 1 | posterior | 3 | n 3 | -1.11 (stop) | P5 |
 | 2026-07-10 | 11-15 | o16 | venta | 10:58:43 | 0 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | T0 |
 | 2026-07-13 | 07-11 | o12 | venta | 07:13:34 | 0 | 0 | primer punto tras la toma | 1 | n 2 | +0.00 (stop) | P5 |
@@ -1228,7 +1234,7 @@ reubicaciones; escenario = el de la zona («vig.» = el vigente al llenar, si es
 | 2026-08-18 | 11-15 | o15 | venta | 09:40:20 | 1 | 0 | primer punto tras la toma | 3 | n 1 | -0.33 (stop) | P6 |
 | 2026-08-18 | 11-15 | o18 | venta | 12:10:07 | 0 | 0 | primer punto tras la toma | 0 | n 3 | -1.00 (stop) | P6 |
 | 2026-08-20 | 07-11 | o3 | venta | 06:02:00 | 1 | 0 | primer punto tras la toma | 2 | n 1 | -1.00 (stop) | P5 |
-| 2026-08-20 | 07-11 | o14 | venta | 07:45:00 | 0 | 0 | primer punto tras la toma | 1 | n 3 | -1.00 (stop) | P5 |
+| 2026-08-20 | 07-11 | o14 | venta | 07:45:00 | 0 | 0 | primer punto tras la toma | 1 | n 3 | -1.00 (stop) | P5 · **E: llenada con la vela que la colocó (ADR-0051 §2)** |
 | 2026-08-20 | 07-11 | o17 | venta | 08:47:50 | 1 | 0 | primer punto tras la toma | 1 | n 4 | -1.00 (stop) | P5 |
 | 2026-08-20 | 11-15 | o19 | compra | 10:50:01 | 0 | 0 | referencia | 1 | n 1 | -1.00 (stop) | P5 |
 | 2026-08-20 | 11-15 | o30 | compra | 11:49:09 | 1 | 1 | primer punto tras la toma | 3 | n 2 | -1.00 (stop) | T0 |
@@ -1286,9 +1292,9 @@ mismas), y las 29 posteriores no tienen ninguna orden en la corrida 1.
 | 2026-01-27 | 11-15 | no | 3 ventas (11:08:09, 12:01:00, 12:05:46) | bajista | 10:00Z → 11:06Z → 11:06Z | +0.00 (stop); -1.00 (stop); -1.00 (stop) | sin orden |
 | 2026-04-01 | 07-11 | no | 2 compras (07:56:07, 08:03:21) | alcista | 05:00Z → 07:50Z → 07:50Z | -1.00 (stop); +0.00 (stop) | sin orden |
 | 2026-04-02 | 11-15 | no | 2 ventas (12:11:26, 12:54:03) | bajista | 09:00Z → 12:03Z → 12:03Z | -0.03 (stop); +1.43 (manual) | sin orden |
-| 2026-04-06 | 11-15 | no | 2 compras (10:01:00, 10:03:00) · posible M (hora perdida 2026-04-06T10Z) | alcista | 09:00Z → 09:55Z → 09:55Z | -1.00 (stop); +0.00 (stop) | sin orden |
-| 2026-04-07 | 07-11 | no | 3 ventas (05:00:00, 05:09:27, 06:31:14) | bajista | 05:00Z → 05:00Z → 05:00Z | -2.00 (stop); -0.33 (stop); -1.00 (stop) | sin orden |
-| 2026-04-07 | 11-15 | no | 2 compras (10:26:00, 10:29:00) · posible M (2026-04-07T10Z) | alcista | 09:00Z → 10:26Z → 10:26Z | -1.10 (stop); -0.01 (stop) | sin orden |
+| 2026-04-06 | 11-15 | no | 2 compras (10:01:00, 10:03:00) · posible M (hora perdida 2026-04-06T10Z) · **las dos, E: llenada con la vela que la colocó (ADR-0051 §2)** | alcista | 09:00Z → 09:55Z → 09:55Z | -1.00 (stop); +0.00 (stop) | sin orden |
+| 2026-04-07 | 07-11 | no | 3 ventas (05:00:00, 05:09:27, 06:31:14) · **la de 05:00:00, E: llenada con la vela que la colocó (ADR-0051 §2)** | bajista | 05:00Z → 05:00Z → 05:00Z | -2.00 (stop); -0.33 (stop); -1.00 (stop) | sin orden |
+| 2026-04-07 | 11-15 | no | 2 compras (10:26:00, 10:29:00) · posible M (2026-04-07T10Z) · **la de 10:26:00, E: llenada con la vela que la colocó (ADR-0051 §2)** | alcista | 09:00Z → 10:26Z → 10:26Z | -1.10 (stop); -0.01 (stop) | sin orden |
 | 2026-04-08 | 07-11 | no | 2 compras (07:15:28, 08:16:20) | alcista | 05:00Z → 07:11Z → 07:11Z | +3.48 (objetivo); -1.00 (stop) | sin orden |
 | 2026-04-10 | 11-15 | no | 4 ventas (09:25:48, 11:12:19, 11:15:07, 12:39:11) | bajista | 09:00Z → 09:19Z → 09:19Z | +0.00; -1.00; +0.00; +0.00 (stops) | sin orden |
 | 2026-04-15 | 07-11 | no | 1 venta (06:14:16) | bajista | 05:00Z → 05:02Z → 05:02Z | +0.00 (stop) | sin orden |
@@ -1316,6 +1322,14 @@ En las 34 sesiones el camino es el mismo: `sesgo` al abrir (RN-003), `liquidez_t
 `orden_dimensionada` (RN-011) en el mismo cierre, y la orden stop en el punto. Dos sesiones de abril
 (06 y 07, 11-15) tienen todas sus llenadas en una hora de ticks perdida (posible M). La R de las 77
 llenadas de P6: 5 objetivos y 1 cierre manual positivo, 24 a cero (break even) y 47 negativas.
+
+**Marca E (respuesta a la PARADA 3, punto 1 a): 3 de las 34 filas** (sesiones) llevan «E: llenada
+con la vela que la colocó (ADR-0051 §2)», en 4 de sus 77 llenadas: 2026-04-06 11-15 (las dos),
+2026-04-07 07-11 (la de 05:00:00) y 2026-04-07 11-15 (la de 10:26:00). No se eligen para la sesión
+6. `lista-s14.txt` la lleva: `lista_s14.py` la calcula de la salida de la corrida 2 (la llenada con
+`respaldo_m1` cuya orden se colocó 1 ms antes, el cierre de la misma vela) y su cabecera da «10; de
+ellas en P6: 4, en 3 sesiones». **Fuera también, por la respuesta a la PARADA 2 (punto 2)**: las
+sesiones «posible M» y las del 1 de abril y el 1 de julio (2026-04-01 07-11 está en esta lista).
 
 ## 5. El encargo frente a lo hecho
 
@@ -1464,7 +1478,42 @@ ni diciembre; ningún libro, imagen, fotograma ni transcripción.
   anterior (§2.5), y que `motor visor --caso` no se abrió en la rama (desviación). No hay más
   documento ejecutable que la nombre (§0.g).
 - **Technical Debt**: ninguna línea nueva; la deuda de `arnes.dias_de_mercado` (lee marzo y junio
-  para calentar) sigue como está, con una fila más en HOLDOUT-EXPOSICIONES que la cita.
+  para calentar) sigue como está, con una fila más en HOLDOUT-EXPOSICIONES que la cita. Y **sale**
+  (respuesta a la PARADA 3, punto 1 c) la línea «- El bróker simulado cotiza con el respaldo M1 la
+  orden del primer cierre de la ventana: los ticks empiezan en ventana_inicio y la orden lleva 1 ms
+  antes (VISOR-CONSTRUCCION.md §4.3).», porque pasa a la Next Action.
+- **Next Action, entrada nueva** (respuesta a la PARADA 3, punto 1 c), tras la N, con la letra que
+  decida el consultor en la PARADA 4 (no queda ninguna libre: abajo):
+  `<letra>. El bróker simulado llena con el respaldo M1 una orden en la vela cuyo cierre la colocó, en todo minuto sin ticks (el borde de la ventana y las horas perdidas), contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8; antes, VISOR-CONSTRUCCION.md §4.3). Rama propia con su test que rompe en main, una NOTA en ADR-0051 §5 y las corridas repetidas; antes de la próxima corrida del arnés que cuente (ADR-0070 §3).`
+  Contra `test_hoja_de_ruta` (c): `DEPENDENCIA` casa «antes de la próxima corrida del arnés que
+  cuente (ADR-0070 §3)» y `LETRA_SUELTA` no encuentra en ese tramo ninguna letra suelta («ADR-0070»
+  lleva guion); la simulación lo confirma (`c: []`).
+- **Hoja de ruta, entrada nueva en R3** (tras R3.4):
+  ```
+  ### R3.5 · El respaldo M1 no llena con la vela que colocó la orden
+  - **Refs:** NA:<letra> · ID:ADR-0051
+  - **Qué es:** en todo minuto sin ticks (el borde de la ventana y las horas perdidas) el bróker
+    simulado llena una orden con la vela M1 cuyo cierre la colocó, con precios anteriores a la
+    orden, contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8: 2 llenadas en la corrida que
+    cuenta, 10 en la diaria); se corrige con su test, una NOTA en ADR-0051 §5 y las corridas
+    repetidas.
+  - **Depende de:** nada.
+  - **Quién:** la sesión, con el encargo del consultor.
+  - **Hecho cuando:** un test que llena con la vela que colocó la orden rompe en `main` y pasa en
+    la rama, y las dos corridas de `trabajo/recorrida-construccion` están repetidas en la suya.
+  ```
+- **R5.2, «Depende de»** (sustituye a la línea de arriba): `la corrida que cuenta (R4.1; ADR-0070
+  §3) con un "sí", y el ADR propio de la rama de medida (ADR-0070 §6); y NA:<letra>, el respaldo M1
+  corregido (R3.5).`
+- **R4.2, «Qué es»**: la línea de S-14 de arriba gana «, sin las marcadas E» (las 10 de §3.2 y las 4
+  de §4).
+- **Todas las líneas, medidas.** `anexos/RECORRIDA-CONSTRUCCION/simular_cierre.py <raíz> <letra>`
+  las aplica en memoria (V a HISTORIA, F, la letra nueva, la deuda que sale, `Current Branch` y
+  `Current Feature`; R4.1, R4.2, R5.2, R3.5 y G.5 en la hoja), corre las funciones a, b y c de
+  `test_hoja_de_ruta.py` y los cuatro tests de `test_project_state.py` sobre una copia fuera del
+  repo: con H, R o Z, `a: []`, `b: []`, `c: []` y **PROJECT_STATE en 22.872 bytes** (por debajo de
+  23.000; antes de la respuesta a la PARADA 3, 22.640). Con E, que la hoja ya nombra en una entrada
+  HECHA (R3.3), (b) rompe: «NA:E esta HECHA y la letra sigue viva».
 
 ## 7. Hallazgos para ERRORES-RECURRENTES (la fila de la rama, en el cierre)
 
@@ -1490,6 +1539,11 @@ ni diciembre; ningún libro, imagen, fotograma ni transcripción.
    siguientes.
 6. **La guardia niega lo que encadena un lector con otro comando**: `cmp` tras `cp`, `date` tras
    `tail`, `$'\r'`, `uv run --project`. Una llamada por comando, desde la raíz (§5.3).
+7. **(Del consultor, respuesta a la PARADA 3, punto 1 d)** La deuda de VISOR-CONSTRUCCION describió el
+   caso en el que se vio («la orden del primer cierre de la ventana») y no la condición («toda orden
+   evaluada con el respaldo M1 en la vela que la colocó»), y la condición alcanzó también una hora sin
+   ticks fuera del borde (8 de las 10 llenadas de la corrida 2, §2.8 c). Lección: una deuda se escribe
+   nombrando la condición, no el caso.
 
 ## 8. Lo que NO cambia, medido
 
@@ -1613,7 +1667,78 @@ dice ADR-0051**, y la causa no es de esos dos casos sino del respaldo M1 del br�
    productor, como el de f), solo ese día y con la cuenta diaria). Recomiendo (a): la pregunta de
    b) era si las reglas de parada se aplican, y eso lo responden las cifras de la salida.
 
+## Respuesta del consultor a la PARADA 3 (2026-10-27)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 3 de trabajo/recorrida-construccion (2026-10-27). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 3», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> 0. «No». En un minuto sin ticks el bróker simulado llena la orden con la vela M1 cuyo cierre la colocó, es decir, con precios anteriores a la orden. ADR-0051 §2 dice que una orden se evalúa contra lo posterior («sin mirar al futuro»), y §5 dice con qué se evalúa un minuto sin ticks, no que valga una vela anterior a la orden. Es un error nuestro (E), no una regla del trader.
+> 1. Esta rama no toca src/ (el encargo lo prohíbe y el veredicto no cambia: sin las 2 llenadas la precisión sería 13,7 % y sigue «no»). Lo que sí hace:
+>    a) Marca en las dos listas (§3 y §4, y en sus ficheros de anexos si los regenera un guion de la rama) las 10 llenadas de la corrida 2 que el bróker llenó con la vela que colocó la orden, con «E: llenada con la vela que la colocó (ADR-0051 §2)», para que no se elijan para la sesión 6. Y §3.1 y §4 dicen cuántas filas de cada lista llevan la marca.
+>    b) La NOTA de ADR-0070 §3 de esta rama gana una frase: «2 de las 53 llenadas de esta corrida salen del respaldo M1 con la vela que colocó la orden, contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8); sin ellas la precisión sería 13,7 % y el veredicto sigue "no".» (La NOTA es de esta rama y no está en main: se edita en un commit propio, sin reescribir el anterior.)
+>    c) Líneas del cierre, además de las de §6:
+>       - Technical Debt: sale la línea «El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana…», porque pasa a la Next Action.
+>       - Next Action, entrada nueva, con una letra que no esté viva ni aparezca como NA: en la hoja de ruta ni en los registros «# Next Action HECHA» de HISTORIA (compruébalo con grep y di cuál): «<letra>. El bróker simulado llena con el respaldo M1 una orden en la vela cuyo cierre la colocó, en todo minuto sin ticks (el borde de la ventana y las horas perdidas), contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8; antes, VISOR-CONSTRUCCION.md §4.3). Rama propia con su test que rompe en main, una NOTA en ADR-0051 §5 y las corridas repetidas; antes de la próxima corrida del arnés que cuente (ADR-0070 §3).» Comprueba la línea contra test_hoja_de_ruta (palabra de dependencia seguida de una letra suelta que no esté viva).
+>       - Hoja de ruta, entrada nueva «R3.5 · El respaldo M1 no llena con la vela que colocó la orden», Refs NA:<letra> · ID:ADR-0051, con Qué es, Depende de (nada), Quién (la sesión, con el encargo del consultor) y Hecho cuando (un test que llena con la vela que colocó la orden rompe en main y pasa en la rama, y las dos corridas de esta rama repetidas en la suya). Y R5.2 nombra NA:<letra> en «Depende de»: la medida de mayo no va sin ese arreglo.
+>       - Vuelve a medir PROJECT_STATE con wc -c sobre la copia con todas las líneas; tiene que quedar por debajo de 23.000.
+>    d) ERRORES-RECURRENTES, un hallazgo más en la fila de la rama: la deuda de VISOR-CONSTRUCCION describió el caso en el que se vio («la orden del primer cierre de la ventana») y no la condición («toda orden evaluada con el respaldo M1 en la vela que la colocó»), y la condición alcanzó también una hora sin ticks fuera del borde. Lección: una deuda se escribe nombrando la condición, no el caso.
+> 2. Lanza ya el revisor (opus) con los cinco alcances, y el quinto ampliado: que los dos «no» de §2.8 y los recuentos 2 y 10 salen de lo que dicen el código del bróker y del cableado (el respaldo M1) y las salidas, comprobado a mano en los dos casos y en dos más de los 10. Su informe, pegado al final; arregla lo que bloquee o importe, o dime por qué no.
+> 3. La toma de cada escenario queda sin medir, en «Lo que no pude medir». No hay guion nuevo.
+>
+> make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+### La respuesta aplicada, punto por punto
+
+| # | Punto | Estado | Evidencia |
+|---|---|---|---|
+| 0 | «No»: error nuestro (E) | Hecho | §2.8 c), §3.1, §4 |
+| 1 a | La marca E en las dos listas y sus recuentos | Hecho | §3.2 (10 filas), §3.1 («10 de las 259»), §4 («3 de las 34», 4 llenadas); `lista-s14.txt` regenerado por `lista_s14.py` («10; de ellas en P6: 4, en 3 sesiones»); `entradas-antes-alternancia.txt` no se regenera (el guion que lo escribe corre el motor y estaba autorizado una sola vez) |
+| 1 b | Frase nueva en la NOTA de ADR-0070 §3, commit propio | Hecho | su commit, tras el de esta respuesta |
+| 1 c | Líneas del cierre: la deuda sale, la letra nueva, R3.5, R5.2, PROJECT_STATE < 23.000 | Hecho salvo la letra: **PARADA 4** | §6; `simular_cierre.py`: 22.872 bytes, a/b/c vacíos con H, R o Z |
+| 1 d | Hallazgo para ERRORES-RECURRENTES | Hecho | §7, punto 7 |
+| 2 | El revisor, con el quinto alcance ampliado | Lanzado tras los dos commits de esta respuesta | su informe, al final |
+| 3 | La toma de cada escenario, sin medir | Hecho | «Lo que no pude medir (§2.8)» |
+
+## PARADA 4 · No queda ninguna letra que cumpla el punto 1 c) (2026-10-27)
+
+Medido con `grep` sobre `PROJECT_STATE.md`, `docs/plan/HOJA-DE-RUTA.md` y `docs/state/HISTORIA.md`:
+
+| Dónde | Letras |
+|---|---|
+| Vivas en la Next Action (`^[A-Z]\. `) | A B C D F G I J K L M N Q T U V |
+| Como `NA:` en la hoja de ruta | A B C D E F G I J K L M N O P Q S T U V W X Y |
+| En los registros `# Next Action HECHA · X ·` de HISTORIA | E F H I J K O P Q R S T U V W X Y Z |
+
+Entre las tres cubren las 26 letras: **ninguna cumple «que no esté viva ni aparezca como NA: en la
+hoja de ruta ni en los registros "# Next Action HECHA" de HISTORIA»**. Y `test_hoja_de_ruta` solo
+lee entradas de UNA letra (`entradas_vivas`, `^([A-Z])\. `; `REF`, `NA:[A-Z]`), así que una
+entrada de dos letras no la vería ni la comprobaría. Las letras que solo están en HISTORIA (H, R y
+Z) pasan los tres tests con todas las líneas del cierre (simulación de §6); las que la hoja nombra
+en una entrada HECHA rompen (b) (medido con E).
+
+## Lo que necesito que decidas (PARADA 4)
+
+0. **La letra de la entrada nueva.** Opciones: (a) **Z**, que solo está en HISTORIA (`# Next Action
+   HECHA · Z ·`, `trabajo/cases-rejilla`, 2026-10-10), no aparece en la hoja y no se confunde con
+   los ids de tramo (R3.5) ni con la H reciente (RN-007, 2026-10-26); (b) R (HECHA el 2026-10-05,
+   la más antigua, pero «NA:R» al lado de «R3.5» se lee mal); (c) H (HECHA el 2026-10-26, la más
+   reciente); (d) ninguna reutilizada: una entrada fuera de la Next Action (solo en la hoja, R3.5,
+   sin `NA:`), o un esquema de dos letras, que pide cambiar `test_hoja_de_ruta.py` en su propia rama
+   (tests/ está protegido en esta). Recomiendo (a): pasa los tres tests (`a: []`, `b: []`, `c: []`;
+   22.872 bytes), y el registro HECHA de la Z anterior queda en HISTORIA con su fecha, que la
+   distingue. Coste de (d): o la entrada no está en la Next Action, que es lo que pediste, o una rama
+   más antes de cerrar.
+1. **Regla para la próxima vez.** Opciones: (a) desde ahora, una letra se reutiliza solo si su
+   registro HECHA es anterior y no aparece en la hoja, y el registro HECHA nuevo lleva fecha (ya la
+   lleva siempre); (b) abrir en el carril de deuda que `test_hoja_de_ruta` admita entradas de dos
+   letras. Recomiendo (a), y (b) solo si se vuelven a agotar.
+
 ## Estado
 
-EN CURSO. PARADA 3: §2.8 y la NOTA de ADR-0070 commiteados; espero la respuesta del consultor a la
-PARADA 3 antes del revisor.
+EN CURSO. Respuesta a la PARADA 3 aplicada (commit de la marca E y las líneas del cierre, y commit
+propio de la frase de ADR-0070); el revisor lanzado; PARADA 4 sobre la letra de la entrada nueva.

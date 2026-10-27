@@ -149,3 +149,28 @@ Copiada tal cual:
 > make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanzo yo con «!».
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 3 (2026-10-27)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 3 de trabajo/recorrida-construccion (2026-10-27). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 3», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> 0. «No». En un minuto sin ticks el bróker simulado llena la orden con la vela M1 cuyo cierre la colocó, es decir, con precios anteriores a la orden. ADR-0051 §2 dice que una orden se evalúa contra lo posterior («sin mirar al futuro»), y §5 dice con qué se evalúa un minuto sin ticks, no que valga una vela anterior a la orden. Es un error nuestro (E), no una regla del trader.
+> 1. Esta rama no toca src/ (el encargo lo prohíbe y el veredicto no cambia: sin las 2 llenadas la precisión sería 13,7 % y sigue «no»). Lo que sí hace:
+>    a) Marca en las dos listas (§3 y §4, y en sus ficheros de anexos si los regenera un guion de la rama) las 10 llenadas de la corrida 2 que el bróker llenó con la vela que colocó la orden, con «E: llenada con la vela que la colocó (ADR-0051 §2)», para que no se elijan para la sesión 6. Y §3.1 y §4 dicen cuántas filas de cada lista llevan la marca.
+>    b) La NOTA de ADR-0070 §3 de esta rama gana una frase: «2 de las 53 llenadas de esta corrida salen del respaldo M1 con la vela que colocó la orden, contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8); sin ellas la precisión sería 13,7 % y el veredicto sigue "no".» (La NOTA es de esta rama y no está en main: se edita en un commit propio, sin reescribir el anterior.)
+>    c) Líneas del cierre, además de las de §6:
+>       - Technical Debt: sale la línea «El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana…», porque pasa a la Next Action.
+>       - Next Action, entrada nueva, con una letra que no esté viva ni aparezca como NA: en la hoja de ruta ni en los registros «# Next Action HECHA» de HISTORIA (compruébalo con grep y di cuál): «<letra>. El bróker simulado llena con el respaldo M1 una orden en la vela cuyo cierre la colocó, en todo minuto sin ticks (el borde de la ventana y las horas perdidas), contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8; antes, VISOR-CONSTRUCCION.md §4.3). Rama propia con su test que rompe en main, una NOTA en ADR-0051 §5 y las corridas repetidas; antes de la próxima corrida del arnés que cuente (ADR-0070 §3).» Comprueba la línea contra test_hoja_de_ruta (palabra de dependencia seguida de una letra suelta que no esté viva).
+>       - Hoja de ruta, entrada nueva «R3.5 · El respaldo M1 no llena con la vela que colocó la orden», Refs NA:<letra> · ID:ADR-0051, con Qué es, Depende de (nada), Quién (la sesión, con el encargo del consultor) y Hecho cuando (un test que llena con la vela que colocó la orden rompe en main y pasa en la rama, y las dos corridas de esta rama repetidas en la suya). Y R5.2 nombra NA:<letra> en «Depende de»: la medida de mayo no va sin ese arreglo.
+>       - Vuelve a medir PROJECT_STATE con wc -c sobre la copia con todas las líneas; tiene que quedar por debajo de 23.000.
+>    d) ERRORES-RECURRENTES, un hallazgo más en la fila de la rama: la deuda de VISOR-CONSTRUCCION describió el caso en el que se vio («la orden del primer cierre de la ventana») y no la condición («toda orden evaluada con el respaldo M1 en la vela que la colocó»), y la condición alcanzó también una hora sin ticks fuera del borde. Lección: una deuda se escribe nombrando la condición, no el caso.
+> 2. Lanza ya el revisor (opus) con los cinco alcances, y el quinto ampliado: que los dos «no» de §2.8 y los recuentos 2 y 10 salen de lo que dicen el código del bróker y del cableado (el respaldo M1) y las salidas, comprobado a mano en los dos casos y en dos más de los 10. Su informe, pegado al final; arregla lo que bloquee o importe, o dime por qué no.
+> 3. La toma de cada escenario queda sin medir, en «Lo que no pude medir». No hay guion nuevo.
+>
+> make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.

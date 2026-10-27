@@ -85,6 +85,14 @@ son comparables y cuáles cambian por el motor o por la construcción más ampli
   calentamiento. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/costes_y_sesiones.py`
   → `costes-y-sesiones.txt`.
 
+- `simular_cierre.py` (respuesta a la PARADA 3, punto 1 c): aplica en memoria las líneas del cierre
+  preparadas en `RECORRIDA-CONSTRUCCION.md` §6 con la letra que se le da, corre las funciones a, b y c
+  de `tests/unit/test_hoja_de_ruta.py` y los cuatro tests de `tests/unit/test_project_state.py`
+  sobre una copia fuera del repo, y mide PROJECT_STATE. No escribe en el repo.
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/simular_cierre.py . <letra>`.
+- `lista_s14.py` marca además, desde la respuesta a la PARADA 3 (punto 1 a), las llenadas que el
+  bróker hizo con la vela que colocó la orden («E: llenada con la vela que la colocó (ADR-0051 §2)»).
+
 ## Las salidas (fase 2)
 
 `cuenta-arrastrada.txt` (corrida 1; la línea base vigente), `diaria.DIAGNOSTICO.cuenta=diaria.txt`

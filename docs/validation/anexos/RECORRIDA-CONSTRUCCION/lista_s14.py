@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import sys
 from collections import defaultdict
+from datetime import datetime
 from pathlib import Path
 
 carpeta = Path(sys.argv[1])
@@ -28,17 +29,61 @@ VIDEO = {"2026-04-29": "si (v5)"}
 VIDEO_MES = {"2026-07": "segun el trader (v11-v13; lo comprueba T)"}
 
 
+# La marca de la respuesta del consultor a la PARADA 3 (punto 1 a): la llenada que el broker hizo
+# con el respaldo M1 en la vela cuyo cierre coloco la orden (RECORRIDA-CONSTRUCCION.md §2.8)
+MARCA_E = "E: llenada con la vela que la colocó (ADR-0051 §2)"
+
+
 def sin_rotulo(ln: str) -> str:
     return ln.split("] ", 1)[1] if ln.startswith(ROTULO) and "] " in ln else ln
 
 
+def llenadas_con_su_vela(ls: list[str]) -> set[tuple[str, str]]:
+    """(dia, instante ISO del llenado) de cada orden que el broker lleno con el respaldo M1 en la
+    vela cuyo cierre la coloco: «### Eventos del broker» con `llenada` y `respaldo_m1`, y en
+    «### Ordenes» la orden colocada 1 ms antes de ese instante (el cierre de la misma vela)."""
+    colocada: dict[tuple[str, str], str] = {}
+    respaldo: list[tuple[str, str, str]] = []
+    seccion = ""
+    for ln in ls:
+        if ln.startswith("### "):
+            seccion = ln
+            continue
+        if not ln.startswith("20"):
+            continue
+        p = ln.split(" | ")
+        if seccion.startswith("### Ordenes ("):
+            colocada[(p[0], p[2])] = p[3]
+        elif seccion.startswith("### Eventos del broker") and p[2:] == [
+            "llenada",
+            p[3],
+            "respaldo_m1",
+        ]:
+            respaldo.append((p[0], p[3], p[1]))
+    salida: set[tuple[str, str]] = set()
+    for dia, orden, llenada in respaldo:
+        ms_col = datetime.fromisoformat(colocada[(dia, orden)]).timestamp() * 1000
+        ms_ll = datetime.fromisoformat(llenada).timestamp() * 1000
+        if round(ms_ll - ms_col) == 1:
+            salida.add((dia, llenada))
+    return salida
+
+
+# 0. las llenadas de la corrida 2 hechas con la vela que coloco la orden
+CON_SU_VELA = llenadas_con_su_vela([sin_rotulo(x) for x in DIARIA.read_text("utf-8").splitlines()])
+
 # 1. las filas P6 de la corrida 2, por (dia, sesion)
 filas, sesgo = patrones.leer(DIARIA)
 p6: dict[tuple[str, str], list[str]] = defaultdict(list)
+marcadas_e = 0
 for patron, _detalle, marca, fila in patrones.clasificar(filas, sesgo):
     if patron.startswith("P6"):
         p = fila.split(" | ")
-        p6[(p[1], p[2])].append(f"{p[3]} {p[4]} {p[5]}" + (f" [{marca}]" if marca else ""))
+        marcas = [marca] if marca else []
+        if (p[1], p[4]) in CON_SU_VELA:
+            marcas.append(MARCA_E)
+            marcadas_e += 1
+        p6[(p[1], p[2])].append(f"{p[3]} {p[4]} {p[5]}" + "".join(f" [{m}]" for m in marcas))
 
 # 2. del guion de f): R, sesgo y camino por (dia, sesion), de la tabla «Todas las llenadas»
 todas: dict[tuple[str, str], list[list[str]]] = defaultdict(list)
@@ -74,6 +119,11 @@ for ln in arr:
 ultima = max(llenadas_arr) if llenadas_arr else ("", "")
 print(f"corrida 1: {estado}; {instante}; ultima sesion con un llenado: {ultima[0]} {ultima[1]}")
 print(f"sesiones P6 en la corrida 2: {len(p6)}; filas P6: {sum(len(v) for v in p6.values())}")
+marcadas_sesiones = sum(1 for ops in p6.values() if any(MARCA_E in o for o in ops))
+print(
+    f"llenadas de la corrida 2 con la vela que coloco la orden: {len(CON_SU_VELA)}; de ellas en "
+    f"P6: {marcadas_e}, en {marcadas_sesiones} sesiones de esta lista [{MARCA_E}]"
+)
 print(
     "dia | sesion | mes viene de video | operaciones del bot (lado, llenada, entrada) | sesgo | "
     "camino del bot | R de cada llenada | la cuenta arrastrada (corrida 1) llega a la sesion | "
