@@ -127,3 +127,25 @@ Copiada tal cual:
 > Sigue con la fase 1 (la fila, el README, los dos guiones con sus tests de humo en los dos sentidos y su salida pegada), make check en verde antes de cada commit con ruff format, ruff check y mypy antes, y después la fase 2 y la PARADA 2 con todo commiteado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanzo yo con «!».
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-27)
+
+Copiada tal cual:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/recorrida-construccion (2026-10-27). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> 1. Ningún patrón nuevo, y el visor NO se abre en esta rama. En su lugar, una medida sobre las salidas commiteadas y los ticks de los días dev (nada anterior al día dev, nada del calentamiento), en un §2.8 nuevo del informe:
+>    a) Toda llenada de la corrida 2 cuyo R se aparte más de 0,25 del que da su motivo sin costes (stop −1; stop en break even 0; objetivo +3,75, que es 3 veces la distancia del 0 al 1 sobre el riesgo del 0 al 0,8): día, sesión, id, R y la causa leída en la salida y en los ticks (comisión sobre un stop pequeño, deslizamiento, hueco o spread a la apertura de la ventana, respaldo M1 en una hora perdida, el lote limitado por volumen o margen, u otra). Entre ellas, la de −2,00 R del 2026-04-07 07-11, llenada a las 05:00:00, y la de +2,18 R por objetivo del 2026-01-16 11-15.
+>    b) Toda sesión de la corrida 2 con más de 4 llenadas (entre ellas, 2026-08-24 07-11, con 8): cuántos escenarios hubo y de qué toma sale cada uno, cuántas llenadas por escenario y por punto, y por qué no detuvieron antes RN-016 (cartuchos), RN-036 (racha) ni RN-020, según la salida.
+>    c) Cada caso se marca «regla aplicada como está escrita» o «no» con su evidencia. Si alguno es «no» (una regla que el motor no aplica como dice la spec), PARADA 3 antes del revisor. Si todos son «sí», sigue sin parar.
+>    Motivo: son las diferencias más grandes que deja la corrida, y antes de llevarlas a la sesión 6 hay que saber si son del trader o nuestras. Leer salidas y ticks de días dev no necesita el visor.
+> 2. La hoja de la sesión 6: las dos listas (§3 y §4) se quedan como están, y los días los elijo yo en la rama de preparación. Desde ya quedan fuera las sesiones marcadas «posible M» y las del 1 de abril y el 1 de julio (su contexto de H4 y M15 puede venir del día anterior, que es reservado o fuera de construcción).
+> 3. Apruebo la NOTA de ADR-0070 §3 tal como está en §6, en un commit propio, con el contrato ampliado solo a ese ADR, y con una frase más al final: «Con la cuenta arrastrada, el bot deja de colocar desde el 2026-01-20 por RN-032 (la pérdida total más el riesgo de la siguiente operación llega al límite de la firma), con la cuenta EN_CURSO; RECORRIDA-CONSTRUCCION.md §2.2.»
+> 4. Las líneas del cierre de §6 y los hallazgos de §7 quedan aprobados tal cual, con la NOTA del punto 3. Y si el punto 1 cambia algún recuento de §6, se vuelve a medir PROJECT_STATE con wc -c sobre la copia.
+> 5. Después, el revisor (opus) con los cuatro alcances del encargo y uno más: (5) que §2.8 dice lo que dicen las salidas, comprobado a mano en tres casos de a) y en la sesión 2026-08-24 07-11 de b), y que nada de §2.8 imprime algo anterior al día dev. Su informe, pegado al final; arregla lo que bloquee o importe, o dime por qué no.
+>
+> make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.

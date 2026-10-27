@@ -77,6 +77,14 @@ son comparables y cuáles cambian por el motor o por la construcción más ampli
   `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/lista_s14.py docs/validation/anexos/RECORRIDA-CONSTRUCCION`
   → `lista-s14.txt`.
 
+- `costes_y_sesiones.py` (respuesta del consultor a la PARADA 2, punto 1; `RECORRIDA-CONSTRUCCION.md`
+  §2.8): las llenadas de la corrida 2 cuyo R se aparta más de 0,25 del de su motivo sin costes, con
+  su causa leída en la salida y en los ticks; las sesiones con más de 4 llenadas; y el censo de los
+  eventos del respaldo M1 de las dos corridas. Solo lee las salidas de esta carpeta y los ticks de
+  los días dev en ventanas de un minuto (`data.ticks.cargar_ticks`); no corre el motor ni lee el
+  calentamiento. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/costes_y_sesiones.py`
+  → `costes-y-sesiones.txt`.
+
 ## Las salidas (fase 2)
 
 `cuenta-arrastrada.txt` (corrida 1; la línea base vigente), `diaria.DIAGNOSTICO.cuenta=diaria.txt`
