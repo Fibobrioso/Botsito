@@ -17,6 +17,8 @@ sys.path.insert(0, str(AQUI))
 import entradas_antes_alternancia as eaa  # noqa: E402
 import patrones  # noqa: E402
 
+from botsito.engine.interprete import VALOR_APAGADO  # noqa: E402  (eaa pone src/ en sys.path)
+
 PATRONES_VIEJO = AQUI.parent / "CORRIDA-CONSTRUCCION" / "patrones.py"
 ROTULO = "[DIAGNOSTICO-CUENTA-diaria] "
 POR_SESION = (
@@ -63,6 +65,22 @@ def test_la_columna_de_zonas_dice_cuantas_habia() -> None:
 def test_una_reubicada_sale_como_reubicada_y_una_no_reubicada_no() -> None:
     assert eaa.fila_texto(_llenada(0, reubicaciones=1)).split(" | ")[10] == "1"
     assert eaa.fila_texto(_llenada(0, reubicaciones=0)).split(" | ")[10] == "0"
+
+
+def test_el_camino_da_el_primer_instante_de_cada_hecho_y_enmascara_lo_anterior_al_dia() -> None:
+    inicio_dia = 29_000_000  # un minuto UTC cualquiera que hace de 00:00Z del dia dev
+    fijados = [
+        (inicio_dia + 60 * 8 + 5, "RN-011", "orden_dimensionada", "zona:1"),
+        (inicio_dia + 60 * 7 + 3, "RN-004", "liquidez_tomada", "si"),
+        (inicio_dia + 60 * 7 + 9, "RN-004", "liquidez_tomada", "si"),
+        (inicio_dia + 60 * 8 + 6, "RN-015", "orden_dimensionada", VALOR_APAGADO),
+        (inicio_dia - 10, "RN-003", "sesgo", "alcista"),
+    ]
+    camino = eaa.camino_de(fijados, inicio_dia)
+    assert camino.startswith(f"sesgo {eaa.OCULTO} (RN-003) -> liquidez_tomada ")
+    assert "liquidez_tomada" in camino and camino.count("liquidez_tomada") == 1
+    assert camino.endswith("(RN-011)")  # el apagado de RN-015 no cuenta
+    assert eaa.camino_de([], inicio_dia) == "-"
 
 
 def test_donde_esta_referencia_primero_y_posterior() -> None:

@@ -55,7 +55,8 @@ son comparables y cuáles cambian por el motor o por la construcción más ampli
   memoria del motor: por cada orden LLENADA, las zonas de control formadas desde la toma de su
   escenario al llenar y al colocar (`estructura_m1.zonas_de_control`), dónde estaba la orden
   (referencia / primer punto tras la toma / posterior), cuántas órdenes anteriores del escenario
-  canceló RN-006 y si la zona es de otro escenario. Antes de escribir nada comprueba que sus órdenes
+  canceló RN-006, si la zona es de otro escenario, su R, su pareja o patrón, y el sesgo y el camino
+  del bot en su sesión (para la lista «Para S-14»). Antes de escribir nada comprueba que sus órdenes
   llenadas coinciden una a una con las `llenada` de «### Ordenes» de la corrida 2; si no, sale con 3
   (PARADA). Comando autorizado, una sola vez y después de las tres corridas:
   `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas_antes_alternancia.py --diaria "docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.cuenta=diaria.txt" --salida docs/validation/anexos/RECORRIDA-CONSTRUCCION/entradas-antes-alternancia.txt`

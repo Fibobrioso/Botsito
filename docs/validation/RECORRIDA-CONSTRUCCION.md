@@ -571,16 +571,22 @@ Cuatro ficheros en `docs/validation/anexos/RECORRIDA-CONSTRUCCION/`:
   punto 1), la columna «escenario» marca si la zona es de otro escenario que el vigente al llenar
   (punto 0, H6), R sale del stop con el que nació la posición, y la pareja o el patrón, de la medida
   del criterio y de la copia de `patrones.py` sobre la diaria. Enmascara con «(antes del dia)» todo
-  instante anterior a las 00:00Z del día dev.
-- **`test_humo.py`**: 9 tests sobre salidas sintéticas, en los dos sentidos:
-  `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION/test_humo.py -q` → `.........  [100%]`
-  (9 passed). Una llenada con 0 zonas y otra con 1 entran en la lista y su columna lo dice; con 2 o
+  instante anterior a las 00:00Z del día dev. **Ampliado en el commit siguiente** (antes de correr
+  nada) con dos columnas más, solo lectura, para la lista «Para S-14»: el sesgo de la sesión (la
+  anotación de RN-003 de la traza) y el camino del bot en ella (`camino_de`: el primer instante en
+  que la sesión fijó cada hecho, con su regla, enmascarado si es anterior al día), porque las
+  sesiones de P6 no tienen línea «Por sesion» en la salida del arnés (`arnes.informe` solo lista las
+  sesiones con operaciones del trader, `:293`).
+- **`test_humo.py`**: 10 tests sobre salidas sintéticas, en los dos sentidos:
+  `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION/test_humo.py -q` → `..........  [100%]`
+  (10 passed; 9 antes de la ampliación). Una llenada con 0 zonas y otra con 1 entran en la lista y su columna lo dice; con 2 o
   con 3, no; una reubicada sale con `1` en la columna de reubicaciones y una no reubicada con `0`;
   `donde_esta` da las tres posiciones (y el cierre de la toma cuenta ya como «tras la toma»);
   `reubicaciones_antes` no cuenta la cancelada por RN-035 ni la posterior; `llenadas_de_ordenes`
   lee solo las `llenada`, con y sin rótulo; la copia de `patrones.py` lee el sesgo de una línea
   «Por sesion» sintética con rótulo y sin él (P4 en las dos) **y el guion viejo de R3.1, cargado por
-  ruta, rompe sin rótulo** (0 sesiones y P1 sesgo); y `_cuerpo` solo corta `[DIAGNOSTICO`.
+  ruta, rompe sin rótulo** (0 sesiones y P1 sesgo); `_cuerpo` solo corta `[DIAGNOSTICO`; y
+  `camino_de` da el primer instante de cada hecho, salta los apagados y enmascara lo anterior al día.
 
 `ruff format --check`: «4 files already formatted»; `ruff check`: «All checks passed!»; `mypy`
 sobre `entradas_antes_alternancia.py` y `test_humo.py`: los únicos dos errores son

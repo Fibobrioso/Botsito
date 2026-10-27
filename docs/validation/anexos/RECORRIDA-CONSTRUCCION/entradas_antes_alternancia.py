@@ -20,7 +20,10 @@ Por cada orden llenada:
 - escenario: el de su zona y, si es otro, el vigente al llenar (la zona reutilizada en un
   escenario nuevo, PUNTO-USADO.md §1.c);
 - su resultado en R (sobre el riesgo con el que nacio) y si la empareja el trader (la medida del
-  criterio) o su patron (P5 o P6, con la copia de `patrones.py` de esta carpeta).
+  criterio) o su patron (P5 o P6, con la copia de `patrones.py` de esta carpeta);
+- el sesgo de su sesion (la anotacion de RN-003) y el camino del bot en ella: el primer instante
+  en que se fijo cada hecho, con la regla (para la lista «Para S-14»: las sesiones de P6 no tienen
+  linea «Por sesion» en la salida del arnes, que solo cubre las que tienen operaciones del trader).
 
 Lo que imprime cumple la regla de la rama: nada anterior a las 00:00Z del dia dev (se escribe
 «(antes del dia)»); ninguna H4, ningun pivote de M15, ninguna vela.
@@ -55,7 +58,8 @@ from botsito.config.registro import cargar_registro  # noqa: E402
 from botsito.domain.estructura_m1 import zonas_de_control  # noqa: E402
 from botsito.domain.ticks import MS_POR_MINUTO  # noqa: E402
 from botsito.engine import arnes, cableado, diagnostico, entrada, tope_trader, zonas  # noqa: E402
-from botsito.engine.interprete import reglas_ejecutables  # noqa: E402
+from botsito.engine.interprete import VALOR_APAGADO, reglas_ejecutables  # noqa: E402
+from botsito.engine.primitivas import ANOTACION_SESGO  # noqa: E402
 from botsito.spec.modelo import cargar_reglas, cargar_vocabulario  # noqa: E402
 
 REFERENCIA = "referencia"
@@ -68,7 +72,8 @@ TOPE_LISTA = 2
 MARCA_ROTULO = "[DIAGNOSTICO"
 CABECERA = (
     "dia | sesion | orden | lado | llenada UTC | entrada | zonas al llenar | zonas al colocar | "
-    "donde | punto | reubicaciones | escenario | R | pareja o patron"
+    "donde | punto | reubicaciones | escenario | R | pareja o patron | sesgo | camino del bot en "
+    "la sesion (primer instante de cada hecho, con su regla)"
 )
 
 
@@ -90,6 +95,8 @@ class Llenada:
     escenario: str
     r: str
     pareja: str
+    sesgo: str = "-"
+    camino: str = "-"
 
 
 # ------------------------------------------------------------------ las reglas puras de la lista
@@ -132,8 +139,23 @@ def fila_texto(f: Llenada) -> str:
     return (
         f"{f.dia} | {f.sesion} | {f.orden} | {f.lado} | {f.llenada} | {f.entrada} | "
         f"{f.zonas_llenar} | {f.zonas_colocar} | {f.donde} | {f.punto} | {f.reubicaciones} | "
-        f"{f.escenario} | {f.r} | {f.pareja}"
+        f"{f.escenario} | {f.r} | {f.pareja} | {f.sesgo} | {f.camino}"
     )
+
+
+def camino_de(fijados: Sequence[tuple[int, str, str, str]], inicio_dia: int) -> str:
+    """El primer instante en que la sesion fijo cada hecho (sin los apagados), en orden, con la
+    regla que lo fijo; un instante anterior a las 00:00Z del dia dev se enmascara."""
+    vistos: dict[str, str] = {}
+    for instante, regla, hecho, valor in sorted(fijados):
+        if valor == VALOR_APAGADO or hecho in vistos:
+            continue
+        if instante < inicio_dia:
+            hora = OCULTO
+        else:
+            hora = datetime.fromtimestamp(instante * 60, UTC).strftime("%H:%M") + "Z"
+        vistos[hecho] = f"{hecho} {hora} ({regla})"
+    return " -> ".join(vistos.values()) or "-"
 
 
 def sin_rotulo(ln: str) -> str:
@@ -254,6 +276,7 @@ def leer_llenadas(
         for patron, _, _, fila in patrones.clasificar(filas_p, sesgo)
         if fila.startswith("bot | ")
     }
+    trazas = {(r.dia, s): t for r in corrida.resultados for s, t in r.sesiones.items()}
     salida: list[Llenada] = []
     for dia in sorted(motor.trazas_broker):
         broker = motor.brokers[dia]
@@ -315,6 +338,9 @@ def leer_llenadas(
                 if (dia, sesion, llenada, entrada_txt) in parejas
                 else patron_bot.get(clave_bot, "sin fila en «Diferencias»")
             )
+            traza = trazas.get((dia, sesion))
+            sesgo_txt = traza.anotaciones.get(ANOTACION_SESGO, "sin anotacion") if traza else "-"
+            camino = camino_de(traza.fijados, inicio_dia) if traza else "-"
             salida.append(
                 Llenada(
                     dia,
@@ -331,6 +357,8 @@ def leer_llenadas(
                     texto_esc,
                     _r_de(p, escala),
                     pareja,
+                    sesgo_txt,
+                    camino,
                 )
             )
     return salida
@@ -380,7 +408,8 @@ def main(diaria: Path, salida: Path) -> int:
         "reubicaciones: ordenes anteriores del mismo escenario canceladas por RN-006; "
         "escenario: el de la zona y, si es otro, el vigente al llenar; R: sobre el riesgo con "
         "el que nacio la posicion; pareja o patron: T0 si la empareja el trader (criterio), "
-        "si no el patron de patrones.py sobre la corrida 2",
+        "si no el patron de patrones.py sobre la corrida 2; sesgo: la anotacion de RN-003 de la "
+        "sesion; camino: el primer instante en que la sesion fijo cada hecho, con su regla",
         "",
         f"## En la lista (zonas al llenar < {TOPE_LISTA})",
         CABECERA,
