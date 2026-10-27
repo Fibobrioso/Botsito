@@ -87,6 +87,16 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > y es la re-corrida que sigue a la rama de motor de la sesión 5, no una de esa rama (que solo
    > corrió sobre un mes con `--meses`, lo que por el punto 2 no habilita nada).
 
+   > **NOTA del 2026-10-27 (`trabajo/recorrida-construccion`, no reescribe el cuerpo).** La primera
+   > corrida que cuenta por este punto (sin ningún `--diagnostico-*`, con `--simular`, sobre toda la
+   > construcción: 76 días dev, 198 operaciones del trader) dio
+   > `habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 3.5 % por debajo de 70.0 %; precision 13.2 % por debajo de 60.0 %)`
+   > (`docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`, la línea base
+   > vigente desde esa rama). Por el punto 4, se sigue construyendo y mayo no se toca. Con la cuenta
+   > arrastrada, el bot deja de colocar desde el 2026-01-20 por RN-032 (la pérdida total más el riesgo
+   > de la siguiente operación llega al límite de la firma), con la cuenta EN_CURSO;
+   > RECORRIDA-CONSTRUCCION.md §2.2.
+
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
 5. **Dónde viven las cifras y quién lo dice.** Tres campos nuevos en `criterio_fidelidad.yaml`,
