@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-05-motor
 
 ## Current Feature
-Ninguna rama abierta. trabajo/activar-sesion-05 cerrada en main el 2026-10-26 (stable/F38e-activar-sesion-05): la parte de spec de la sesión 5 activada (A-57 y A-32 RESUELTAS; A-35 y A-44 con valor y ABIERTAS); lo siguiente, la rama de motor (V; F de la Next Action; docs/plan/HOJA-DE-RUTA.md).
+trabajo/activar-sesion-05-motor, EN CURSO desde el 2026-10-26 (encargo docs/encargos/trabajo-activar-sesion-05-motor.md; informe docs/validation/ACTIVAR-SESION-05-MOTOR.md): los puntos de ACTIVAR-SESION-05.md §2 entran en la spec y en el motor por su régimen, con fase 0 y PARADA (V; R4.1).
 
 ## Stable Main State
 2c26fb2 · merge de `trabajo/activar-sesion-05` (tag `stable/F38e-activar-sesion-05`): A-57 y A-32 RESUELTAS; A-35 y A-44 con valor en sus parámetros y ABIERTAS (desviación declarada); cinco CONFIRM y un CORRECT; spec 18.1.9; el arnés y el visor a secas; lo que pide motor en ACTIVAR-SESION-05.md §2 y la lista de la sesión 6 en §3. Sobre `stable/F38d-sesion-05` (baaf74b). Informe docs/validation/ACTIVAR-SESION-05.md; el registro del cierre, al final de HISTORIA.
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 47 (2026-10-25).
+— ninguna desde el Archivo 48 (2026-10-26).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 47 (2026-10-25).
+— ninguna desde el Archivo 48 (2026-10-26).

@@ -1,0 +1,45 @@
+rama: trabajo/activar-sesion-05-motor
+riesgo: alto  # cambia la spec (parametros nuevos, reglas, registros del trader) Y el motor (domain y engine), con ADR nuevos; cada valor con su Fuente:
+artefacto: docs/validation/ACTIVAR-SESION-05-MOTOR.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/ACTIVAR-SESION-05-MOTOR.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/validation/ACTIVAR-SESION-05.md  # SOLO los dos recuadros de correccion del punto 11 del encargo
+  - knowledge/feedback/2026-10-23-sesion-05/
+  - knowledge/spec/
+  - docs/spec/
+  - docs/adr/
+  - src/botsito/domain/
+  - src/botsito/engine/
+  - src/botsito/spec/
+  - tests/
+  - scripts/embudo_77.py  # punto 10 del encargo
+  - scripts/caja_77_exploratoria.py  # punto 10 del encargo
+  - scripts/bloque_de_la_caja.py  # punto 10 del encargo
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - knowledge/evidence/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - knowledge/feedback/2026-09-09-sesion-01/
+  - knowledge/feedback/2026-09-29-sesion-03/
+  - knowledge/feedback/2026-10-04-sesion-04/
+  - knowledge/cuentas/
+  - config/
+  - data/manifests/
+  - docs/plan/
+  - docs/adr/0000-template.md
+  - src/botsito/cli.py
+  - src/botsito/feedback/
+comprobaciones:
+  - uv run botsito feedback apply --sesion 2026-10-23-sesion-05 --check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito spec docs --escribir
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
