@@ -546,6 +546,50 @@ cual, con una precisión: el guion de f) se nombra por su fichero final
 en el mismo commit con los comandos literales y qué es cada fichero: la carpeta tiene que existir
 antes de correr, porque el arnés no la crea (`cli.py`, `salida.write_text`).
 
+### 1.2 Puntos 0, 1, 2 y 3 · Los guiones y su test de humo
+
+Cuatro ficheros en `docs/validation/anexos/RECORRIDA-CONSTRUCCION/`:
+
+- **`patrones.py`**: copia de `anexos/CORRIDA-CONSTRUCCION/patrones.py` con UNA diferencia, medida
+  con `diff`: la cabecera que lo declara, la ruta de «Uso» y `_cuerpo`, que corta el rótulo solo si la
+  línea empieza por `[DIAGNOSTICO` y lleva `"] "` (`ROTULO`); ninguna regla de clasificación cambia
+  (el `diff` no toca ninguna otra línea). Sobre la diaria rotulada de PUNTO-USADO da lo mismo que
+  `anexos/PUNTO-USADO/patrones.txt` («364 filas, 104 sesiones con rn003»; P1 44, P2 33, P3 60, P4 40,
+  P5 115, P6 51, P7 3, T0 18), y sobre la MISMA salida sin rótulo (la copia de la carpeta de trabajo
+  de §0.e) da exactamente la misma tabla, donde el guion de R3.1 daba 0 sesiones y 180 P1.
+- **`horas_perdidas.py`**: copia IDÉNTICA (`diff` vacío) de la de R3.1, porque `patrones.py` lo
+  importa de su directorio (punto 3).
+- **`entradas_antes_alternancia.py`**: el guion de f) (§0.f), con las reglas puras separadas para
+  el test: `donde_esta` (referencia / primer punto tras la toma / posterior, por `contraria_inicio`
+  frente al cierre de la toma; punto 0), `reubicaciones_antes` (las órdenes anteriores del mismo
+  escenario canceladas con RN-006 en su motivo), `en_la_lista` (zonas al llenar < 2),
+  `llenadas_de_ordenes` (las filas `llenada` de «### Ordenes», con y sin rótulo). Construye el motor
+  como `cli.motor_arnes`, con `motor.cuenta_diaria = True` (reproduce la corrida 2), compara sus
+  llenadas línea a línea con las de `--diaria` y sale con 3 si difieren; después lee la memoria del
+  motor: `_zonas_hasta` llama a `zonas_de_control` con las M1 cerradas hasta el último cierre anterior
+  al llenado (`abierta_ms // MS_POR_MINUTO`) y al colocar (`(colocada_ms + 1) // MS_POR_MINUTO`;
+  punto 1), la columna «escenario» marca si la zona es de otro escenario que el vigente al llenar
+  (punto 0, H6), R sale del stop con el que nació la posición, y la pareja o el patrón, de la medida
+  del criterio y de la copia de `patrones.py` sobre la diaria. Enmascara con «(antes del dia)» todo
+  instante anterior a las 00:00Z del día dev.
+- **`test_humo.py`**: 9 tests sobre salidas sintéticas, en los dos sentidos:
+  `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION/test_humo.py -q` → `.........  [100%]`
+  (9 passed). Una llenada con 0 zonas y otra con 1 entran en la lista y su columna lo dice; con 2 o
+  con 3, no; una reubicada sale con `1` en la columna de reubicaciones y una no reubicada con `0`;
+  `donde_esta` da las tres posiciones (y el cierre de la toma cuenta ya como «tras la toma»);
+  `reubicaciones_antes` no cuenta la cancelada por RN-035 ni la posterior; `llenadas_de_ordenes`
+  lee solo las `llenada`, con y sin rótulo; la copia de `patrones.py` lee el sesgo de una línea
+  «Por sesion» sintética con rótulo y sin él (P4 en las dos) **y el guion viejo de R3.1, cargado por
+  ruta, rompe sin rótulo** (0 sesiones y P1 sesgo); y `_cuerpo` solo corta `[DIAGNOSTICO`.
+
+`ruff format --check`: «4 files already formatted»; `ruff check`: «All checks passed!»; `mypy`
+sobre `entradas_antes_alternancia.py` y `test_humo.py`: los únicos dos errores son
+`Item "TextIO" of "TextIO | Any" has no attribute "reconfigure"` en `horas_perdidas.py:34` y
+`patrones.py:180`, que son las líneas de R3.1 (los originales dan los mismos dos errores,
+`CORRIDA-CONSTRUCCION/patrones.py:166` y `horas_perdidas.py:34`): no se tocan, porque la copia de
+`horas_perdidas.py` es idéntica por decisión (punto 3) y la de `patrones.py` cambia solo `_cuerpo`.
+Los guiones nuevos no tienen ningún error propio de mypy.
+
 ## Estado
 
-EN CURSO. Fase 1: la fila y el README commiteados; siguen los guiones.
+EN CURSO. Fase 1 commiteada (la fila, el README y los guiones); sigue la fase 2 (las corridas).
