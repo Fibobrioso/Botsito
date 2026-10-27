@@ -6,6 +6,7 @@ rutas_permitidas:
   - docs/validation/RECORRIDA-CONSTRUCCION.md
   - docs/validation/anexos/RECORRIDA-CONSTRUCCION/
   - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ACTIVAR-A35-A44.md  # ampliado el 2026-10-27 (respuesta del consultor a la PARADA, punto 4): solo la NOTA al principio de §5
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
@@ -21,7 +22,10 @@ rutas_protegidas:
   - pyproject.toml
   - docs/plan/
   - docs/adr/
-  - docs/runbooks/
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/runbooks/RITUAL.md
+  - docs/runbooks/VISOR-DIAS.md
+  - docs/runbooks/ARNES-MOTOR.md
   - docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt
   - docs/validation/anexos/CORRIDA-CONSTRUCCION/
   - docs/validation/anexos/PUNTO-USADO/

@@ -203,6 +203,21 @@ Lo mismo si el trader responde a medias, con un ejemplo o en dos sentidos (`SESI
 
 ## 5. Después de activar: lo que se mide y lo que se mira
 
+> **NOTA (2026-10-27, rama `trabajo/recorrida-construccion`; el cuerpo no se toca).** La medida de
+> esta sección se hizo (`docs/validation/RECORRIDA-CONSTRUCCION.md` §2): la primera corrida que
+> cuenta por ADR-0070 §3 (`motor arnes --simular`, sin ningún `--diagnostico-*`, sobre toda la
+> construcción) dio «no» (cobertura 3,5 %, precisión 13,2 %). **Desde esa rama la línea base
+> vigente es `docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`**, tal como
+> quedó en los anexos y sin copia (respuesta del consultor a la PARADA de esa rama, punto 4);
+> `CABLEADO-SIMULADOR-LINEA-BASE.txt` no se toca, y su `diff` contra la nueva está en
+> `anexos/RECORRIDA-CONSTRUCCION/diff-linea-base.txt`. Qué es comparable entre las dos (las 77
+> operaciones del trader de abril y agosto; los huecos NO_IMPLEMENTADA, que ya no hay; las líneas
+> «Por sesion» sesión a sesión) y qué cambia por el motor o por la construcción más amplia (CONJUNTO,
+> «RN-003 al abrir», que es un agregado y no se parte por mes; el embudo; la simulación), en
+> RECORRIDA-CONSTRUCCION.md §2.5. **Desviación declarada:** el `motor visor --caso` de este bloque
+> no se ejecutó en esa rama (encargo del consultor, «Autorización expresa»); los días que se abren
+> en el visor los elige el consultor en su PARADA 2.
+
 ```
 uv run botsito motor arnes --simular --salida arnes-activado.txt
 diff docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt arnes-activado.txt

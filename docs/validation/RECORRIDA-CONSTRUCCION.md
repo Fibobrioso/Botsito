@@ -1375,8 +1375,18 @@ A-44 siguen ABIERTAS y bloqueantes; ADR-0083 sigue PROVISIONAL en D1; `criterio_
 `CABLEADO-SIMULADOR-LINEA-BASE.txt` intactos. La CI de Linux: la rama no toca `.claude/`, hooks,
 rutas de plataforma ni código, así que no hace falta `fix/`.
 
+## 9. La NOTA del runbook (respuesta a la PARADA, punto 4; commit propio tras la fase 2)
+
+`docs/runbooks/ACTIVAR-A35-A44.md` gana una NOTA al principio de §5 (el cuerpo no se toca): la
+medida de §5 se hizo, la línea base vigente es `anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`
+sin copia, `CABLEADO-SIMULADOR-LINEA-BASE.txt` no se toca, qué es comparable (§2.5), y la desviación
+del visor. El contrato se amplía en el mismo commit solo a ese fichero (`rutas_permitidas`, con su
+comentario); `docs/runbooks/` sale de `rutas_protegidas` como carpeta y quedan protegidos por nombre
+los runbooks que una rama así podría tocar por costumbre (ERRORES-RECURRENTES, RITUAL, VISOR-DIAS,
+ARNES-MOTOR); los demás siguen fuera de `rutas_permitidas`, que es lo que el contrato comprueba.
+
 ## Estado
 
-EN CURSO. PARADA 2: las salidas, el diff, los guiones y el informe hasta aquí commiteados; falta el
-commit propio de la NOTA del runbook (contrato ampliado) y la respuesta del consultor a la PARADA 2
-(patrones nuevos, días del visor, lo que va a la hoja de la sesión 6, la NOTA de ADR-0070).
+EN CURSO. PARADA 2: las salidas, el diff, los guiones, el informe y la NOTA del runbook
+commiteados; espero la respuesta del consultor a la PARADA 2 (patrones nuevos, días del visor, lo
+que va a la hoja de la sesión 6, la NOTA de ADR-0070) y después el revisor (entregar-rama).
