@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.5.1` · hash `43924e0c6bd2…`
+`spec_version 18.5.2` · hash `fc939ebd8a50…`
 
 111 en total: 99 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -271,7 +271,7 @@ Opciones: `si`, `no`.
 
 ### `cierre_h4_antelacion`
 
-con cuanta antelacion al fin de su vela H4 se cierra toda operacion abierta (RN-002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060): en la sesion 3 el trader dice que cierra siempre un minuto antes de que termine la vela de cuatro horas, y hasta hoy esa cifra vivia solo en la prosa de RN-002, sin parametro. La vela H4 es la de la rejilla de anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef): ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo sigue dando por pendiente mientras RN-002 no lo cite
+con cuanta antelacion al fin de su vela H4 se cierra toda operacion abierta (RN-002). NACE el 2026-09-30 (rama trabajo/nocturno-01oct, ADR-0060): en la sesion 3 el trader dice que cierra siempre un minuto antes de que termine la vela de cuatro horas, y hasta hoy esa cifra vivia solo en la prosa de RN-002, sin parametro. La vela H4 es la de la rejilla de anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef): ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo sigue dando por pendiente mientras RN-002 no lo cite. DESDE EL 2026-10-26 (sesion 5, S-22; rama trabajo/activar-sesion-05-motor) lo leen tambien RN-035 y RN-037 por el predicado en_el_ultimo_tramo_h4: en ese mismo tramo antes del fin de la H4 la orden sin llenar se retira y no se coloca ninguna (ADR-0060 §5, recuadro)
 
 ### `cierre_pendientes`
 

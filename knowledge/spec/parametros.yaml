@@ -388,7 +388,10 @@ parametros:
       anclaje_h4, no la ventana operativa. LA FUENTE ES EL ITEM DE EVIDENCIA que recoge la
       frase, y no el registro de feedback de esa misma frase (fb-2026-09-29-sesion-03-c38c4aef):
       ese registro es un CORRECT sobre la REGLA, no sobre un parametro, y `feedback pending` lo
-      sigue dando por pendiente mientras RN-002 no lo cite
+      sigue dando por pendiente mientras RN-002 no lo cite. DESDE EL 2026-10-26 (sesion 5, S-22;
+      rama trabajo/activar-sesion-05-motor) lo leen tambien RN-035 y RN-037 por el predicado
+      en_el_ultimo_tramo_h4: en ese mismo tramo antes del fin de la H4 la orden sin llenar se
+      retira y no se coloca ninguna (ADR-0060 §5, recuadro)
     estado: CONFIRMED
     valor: 1
     fuente:

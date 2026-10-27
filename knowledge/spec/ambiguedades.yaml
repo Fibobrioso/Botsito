@@ -788,9 +788,12 @@ ambiguedades:
       mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e).
       orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de
       ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que
-      sostiene el cierre es la razon del trader. «Un minuto antes» es frase del consultor y no se
-      fija. A ventana_fin la retirada la hace hoy el cableado al terminar el dia (ADR-0053 §6) sin
-      regla de la spec: la rama ventana_fin de RN-035 va a trabajo/activar-sesion-04-motor.
+      sostiene el cierre es la razon del trader. «Un minuto antes» era entonces frase del
+      consultor; en la sesion 5 (S-22) lo dijo el trader y RN-035 lo cita
+      (fb-2026-10-23-sesion-05-1526aa39; rama trabajo/activar-sesion-05-motor, orden de cierre del
+      consultor del 2026-10-27). A ventana_fin la retirada la hacia el cableado al terminar el dia
+      (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035, hecha en
+      trabajo/activar-sesion-04-motor.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿que haces con una orden limite que sigue pendiente, sin llenar, cuando llegan las 15:00: la

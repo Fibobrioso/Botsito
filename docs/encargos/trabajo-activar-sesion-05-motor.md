@@ -155,3 +155,38 @@ Copiada tal cual:
 > Sigue lo que manda el encargo: un commit por grupo, con el paso 3 de activar-sesion, knowledge validate antes de make check y Fuente: en el cuerpo con ids que existen; CI de Linux por fix/activar-sesion-05-motor con su número de run (gh run view suelto); revisor (opus) con los cinco alcances del encargo y su informe pegado al final; y las líneas del cierre con PROJECT_STATE medido con wc -c, por debajo de 23.000 en neto. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
 >
 > Rama lista para revisión, NO cerrada.
+
+## Orden de cierre (consultor, 2026-10-27)
+
+Copiada tal cual del mensaje de Aleks del 2026-10-27:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto (la misma sesión)
+>
+> Orden de cierre de trabajo/activar-sesion-05-motor (consultor, 2026-10-27). Tag: stable/F38f-activar-sesion-05-motor (comprueba que está libre en local y en origin). Cópiala al informe, en una sección «Orden de cierre», y sigue la skill cerrar-rama cuando lance /cerrar-rama.
+>
+> ANTES DEL CIERRE, en la rama, un commit propio con make check sellado (decisiones del consultor sobre lo que su auditor vio y el revisor no):
+> 1. A-30 en knowledge/spec/ambiguedades.yaml (RESUELTA; antes, docs/runbooks/AMBIGUEDADES.md): la frase «"Un minuto antes" es frase del consultor y no se fija» pasa a decir que entonces lo era y que en la sesión 5 lo dijo el trader (RN-035, fb-2026-10-23-sesion-05-1526aa39), y «va a trabajo/activar-sesion-04-motor» pasa a «hecho en trabajo/activar-sesion-04-motor». Su estado no cambia. spec docs --escribir en el mismo commit.
+> 2. Notas de RN-035: que la retirada un minuto antes se hace según orden_pendiente_al_abrir_sesion (con se_retira, el valor vigente), como ya dice el recuadro de ADR-0060 §5.
+> 3. La descripción de cierre_h4_antelacion nombra también RN-035, RN-037 y en_el_ultimo_tramo_h4.
+> 4. ADR-0077: recuadro en §6 («RN-020 no cambia»), que remite a ADR-0086, y una NOTA junto a la alternativa 4 de «Por qué descartamos» que diga que tras_la_detencion la adopta tras la respuesta del trader (fb-2026-10-23-sesion-05-978be13f). Fila del índice.
+> 5. La pregunta de S-15 del informe (§2, punto 5) se rehace: el dibujo 1 (la alternancia dentro de un retroceso) sale, porque ya lo contestó en la sesión 4 (S-10, ADR-0076 §1); quedan dos preguntas separadas. Dibujo 2: «Después de la toma, el primer retroceso tiene alternancia; aparece un punto nuevo y su retroceso está limpio. ¿Entras en este segundo? (a) sí; (b) no; (c) otra, ¿cuál?». Dibujo 3: «La orden ya está puesta en el primer punto tras la toma y se llena con la primera vela verde del retroceso, antes de que haya alternancia. ¿Esa entrada vale? (a) sí; (b) no, había que esperar al punto siguiente; (c) otra, ¿cuál?». Los dos en M1, con el marco escrito en el dibujo.
+> 6. b2: los registros 72c9a9e8, 978be13f y 1526aa39 se quedan como están, y también a9e4f879, que su auditor vio con lo mismo (la justificación del régimen con fb-…-ffab23dc); además, el literal de 72c9a9e8 empieza con la pregunta leída y su ítem no lleva la reserva de «mezcla». La desviación (h) de §4 se amplía con eso. Sin superseder: son notas de contexto y no cambian objetivo, acción, valor ni cita.
+> spec_version según la regla del manifiesto (redacción), spec manifest --escribir, spec docs --escribir, knowledge validate antes de make check, trailer Fuente: fb-2026-10-23-sesion-05-1526aa39, fb-2026-10-23-sesion-05-978be13f, ADR-0086. Push a fix/activar-sesion-05-motor y su run con un gh run view suelto: verde salvo el fallo aceptado de state check, antes del merge.
+>
+> COMMIT DEL CONTRATO (punto Y de RITUAL), además de lo de siempre:
+> - Las líneas de §3 tal cual: V, F, K (las dos negativas de §0.d), la línea de Technical Debt de ADR-0087, Current Feature con la fecha del cierre; Known Ambiguities sin cambio. PROJECT_STATE por debajo de 23.000 bytes, medido con wc -c: el margen es de 26 bytes, así que nada más entra en PROJECT_STATE; si no cabe, PARADA antes de recortar nada vivo.
+> - Hoja de ruta: R4.1 con el Estado de §3 (sin «HECHA» a secas); R4.2 «Qué es» con lo de §2 y S-15 con los dos dibujos del punto 5; y en G.2 una viñeta nueva: «Una comprobación que compare las notas de cada registro de feedback con el ítem que cita (segunda rama seguida con notas que traen contenido de otros ítems: trabajo/activar-sesion-05 y trabajo/activar-sesion-05-motor)».
+> - La NOTA del runbook ya entró en la rama: nada más.
+>
+> Hallazgos para ERRORES-RECURRENTES (fila de trabajo/activar-sesion-05-motor):
+> - (importa, del consultor) El encargo puso un valor provisional bajo A-35 sin leer ADR-0045 ni ADR-0054, que lo prohibían. Lección: antes de proponer un valor provisional bajo una ambigüedad, se lee el ADR que la abrió.
+> - (importa, del consultor) El auditor del consultor hizo un grep sobre la raíz de un clon y leyó el holdout sin imprimirlo (fila del 2026-10-26 de HOLDOUT-EXPOSICIONES). Lección: también el auditor del consultor busca solo sobre rutas literales.
+> - (importa, del consultor) La respuesta a la PARADA ordenó «el nivel se congela al tomarse» sin rotularlo como decisión del consultor (lo cazó el revisor, b5). Lección: toda restricción que no sale de un ítem lleva su rótulo también en una respuesta a una PARADA.
+> - (menor, del consultor) El encargo daba RN-011 como la regla que coloca (es RN-015) y pedía un test para algo que no puede pasar (lo llenado en el último minuto, b6). Lección: el mecanismo que nombra un encargo se lee en la spec antes de escribirlo.
+> - (importa, de la sesión, lo cazó el auditor del consultor y no el revisor) La frase que el encargo mandaba quitar seguía en A-30 y en docs/spec/ambiguedades.md, y la pregunta de S-15 contradecía S-10. Lección para el revisor: una frase que el encargo manda quitar se busca en toda la spec y sus docs generados, no solo en la regla; y toda pregunta para el trader se cruza con lo que ya contestó.
+> - (importa, de la sesión, lo cazó el revisor) Las notas de cuatro registros con contenido de otros ítems, segunda rama seguida (b2): pasa a «Patrones que ya se conocen», con su señal, y la guardia queda en G.2.
+> - (importa, de la sesión, lo cazó el revisor) La racha solo se reiniciaba si se consultaba tras la novena, y el nombre del test prometía más (b4); los fallos con main de los puntos 1 y 4 eran de importación o de registro, no de comportamiento, y las copias del clon eran viejas (b3). Lección: el test que falla con main tiene que fallar por comportamiento y con la versión de hoy del test.
+> - (menor, de la sesión) Tres make check perdidos por lint, mypy y tests no buscados antes. Lección: ruff format, ruff check y mypy sobre lo tocado, y git grep de los instantes y reglas que cambian, antes de make check.
+> - Lo bueno: la fase 0 midió que S-15 no tenía frontera y que S-10 ya entra por el camino real; el predicado en_el_ultimo_tramo_h4 separa el límite sin cifra; y la PARADA corrigió dos errores del consultor antes de escribir código.
+>
+> Después del cierre: CI de main sobre el HEAD nuevo con un gh run view suelto; retira el clon C:/cm/main con git worktree remove; y el informe final con sha de main, tag, run de la CI de main, ramas que quedan (locales y fix/ en origin) y bytes de PROJECT_STATE.

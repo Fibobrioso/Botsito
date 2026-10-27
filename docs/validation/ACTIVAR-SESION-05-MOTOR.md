@@ -747,16 +747,17 @@ opciones y «otra, ¿cuál?», con esquemas de velas y el marco escrito):
    sea roja? ¿Y hace falta que el precio venga de un flujo bajista? (a) basta con que sea roja;
    (b) tiene que cerrar por debajo; (c) otra, ¿cuál?». Hoy basta con que sea roja (en M1 la mecha
    siempre vale, A-32).
-5. **S-15, la zona más reciente (decisión 6), con tres dibujos en M1:** la alternancia dentro de
-   un retroceso; un retroceso sucio seguido de un punto nuevo con su retroceso limpio; y el que
-   mide §0.b.8: la orden ya puesta en el primer punto tras la toma y llenada por la primera verde
-   del retroceso, antes de que la alternancia exista. «De estos tres dibujos, ¿en cuál entras y
-   en cuál no? Y en el tercero, la orden ya está puesta en el primer punto después de la toma y
-   se llena en la primera vela verde del retroceso, antes de que haya alternancia: ¿esa entrada
-   vale, o había que esperar al punto siguiente? (a) entro en el primero y en el tercero, y la
-   entrada del tercero vale; (b) solo en el segundo: el retroceso sucio no vale y en el tercero
-   la orden no debía estar puesta todavía; (c) otra, ¿cuál?» (opciones escritas tras el revisor,
-   m1). Sin registro y sin ADR en esta rama; RN-009 no cambia.
+5. **S-15, la zona más reciente (decisión 6), dos preguntas separadas, cada una con su dibujo en
+   M1 y el marco escrito en el dibujo** (rehechas por la orden de cierre del consultor del
+   2026-10-27, punto 5: el dibujo de la alternancia dentro de un retroceso sale, porque el trader
+   ya lo contestó en la sesión 4, S-10, ADR-0076 §1; la versión anterior, con tres dibujos y una
+   pregunta que contradecía S-10, la vio el auditor del consultor). **Dibujo 2:** «Después de la
+   toma, el primer retroceso tiene alternancia; aparece un punto nuevo y su retroceso está limpio.
+   ¿Entras en este segundo? (a) sí; (b) no; (c) otra, ¿cuál?». **Dibujo 3** (el que mide §0.b.8):
+   «La orden ya está puesta en el primer punto tras la toma y se llena con la primera vela verde
+   del retroceso, antes de que haya alternancia. ¿Esa entrada vale? (a) sí; (b) no, había que
+   esperar al punto siguiente; (c) otra, ¿cuál?». Sin registro y sin ADR en esta rama; RN-009 no
+   cambia.
 6. **S-19 frente a S-24 (§3, 10, primera pregunta):** la vela de 1 o 2 puntos sigue siendo de su
    color (ADR-0085 §3) hasta que el trader diga lo contrario.
 7. **A-50 (§3, 7):** los dos dibujos, con el valor de hoy `caja_entera` (lectura del consultor).
@@ -795,7 +796,8 @@ deuda se acortan; la frase de `Current Feature` ya no es un supuesto de 232 byte
   (`test_hoja_de_ruta`, `problemas_b`).
 - **`docs/plan/HOJA-DE-RUTA.md`, R4.2, «Qué es»:** gana lo de §2 de este informe: A-35 (la contraria
   o cualquier mecha, y el bajo); las mechas de una vela sin cuerpo en M1; en M15, si una vela sin
-  cuerpo corta la racha; la condición de `ev-v15-004037-a2ab3980`; S-15 con los tres dibujos.
+  cuerpo corta la racha; la condición de `ev-v15-004037-a2ab3980`; S-15 con los dos dibujos del
+  punto 5 de la orden de cierre (§2, punto 5).
 - **`docs/runbooks/ERRORES-RECURRENTES.md`, fila de la rama** (la escribe `cerrar-rama`), con lo
   que el consultor pidió (respuesta a la PARADA, puntos 0 y 10, y el encargo, «PRIMER COMMIT»):
   (1) antes de proponer un valor provisional bajo una ambigüedad se lee el ADR que la abrió
@@ -860,9 +862,14 @@ de CAJA-77 no se toca» y el commit b18fe31 cambia `scripts/bloque_de_la_caja.py
 misma respuesta manda cambiar en los tres guiones; las dos frases hablan de partes distintas del
 fichero (revisor, m4); (h) las notas de tres registros de feedback traen contenido de otros ítems o
 de la spec (72c9a9e8: RN-007 y ADR-0085; 978be13f: `ev-v10-010804` y ADR-0077; 1526aa39: lo que
-dice `ev-v16-002323`), contra «las notas de cada registro, solo con lo que trae su ítem»; son
-inmutables tras el commit y se queda como está salvo que el consultor pida superseder (revisor,
-b2; §8).
+dice `ev-v16-002323`; y a9e4f879, que vio el auditor del consultor: la justificación del régimen
+con `fb-2026-09-29-sesion-03-ffab23dc`), contra «las notas de cada registro, solo con lo que trae
+su ítem»; además, el `respuesta_literal` de 72c9a9e8 empieza con la pregunta leída («cambia algo
+si son 3 velas sin cuerpo en vez de una») y su ítem, `ev-v15-003959-5898c61e`, no lleva la reserva
+de «mezcla». Son inmutables tras el commit y se quedan como están, sin superseder (decisión del
+consultor en la orden de cierre del 2026-10-27, punto 6: son notas de contexto y no cambian
+objetivo, acción, valor ni cita; revisor, b2; §8). La guardia que compare las notas con el ítem va
+a G.2 de la hoja de ruta en el cierre.
 
 ## 5. Exposiciones
 
@@ -1142,6 +1149,41 @@ repo el `make-check.log` del último); `ventana_no_citable` por segmento (necesi
 no se abre; por tramos, 0 solapes); y `medir_ps.py` (fuera del repo, a propósito: solo sirve a
 este informe).
 
+## Orden de cierre (consultor, 2026-10-27)
+
+Copiada tal cual del mensaje de Aleks del 2026-10-27:
+
+> Modelo: Fable 5.1 · Esfuerzo: alto (la misma sesión)
+>
+> Orden de cierre de trabajo/activar-sesion-05-motor (consultor, 2026-10-27). Tag: stable/F38f-activar-sesion-05-motor (comprueba que está libre en local y en origin). Cópiala al informe, en una sección «Orden de cierre», y sigue la skill cerrar-rama cuando lance /cerrar-rama.
+>
+> ANTES DEL CIERRE, en la rama, un commit propio con make check sellado (decisiones del consultor sobre lo que su auditor vio y el revisor no):
+> 1. A-30 en knowledge/spec/ambiguedades.yaml (RESUELTA; antes, docs/runbooks/AMBIGUEDADES.md): la frase «"Un minuto antes" es frase del consultor y no se fija» pasa a decir que entonces lo era y que en la sesión 5 lo dijo el trader (RN-035, fb-2026-10-23-sesion-05-1526aa39), y «va a trabajo/activar-sesion-04-motor» pasa a «hecho en trabajo/activar-sesion-04-motor». Su estado no cambia. spec docs --escribir en el mismo commit.
+> 2. Notas de RN-035: que la retirada un minuto antes se hace según orden_pendiente_al_abrir_sesion (con se_retira, el valor vigente), como ya dice el recuadro de ADR-0060 §5.
+> 3. La descripción de cierre_h4_antelacion nombra también RN-035, RN-037 y en_el_ultimo_tramo_h4.
+> 4. ADR-0077: recuadro en §6 («RN-020 no cambia»), que remite a ADR-0086, y una NOTA junto a la alternativa 4 de «Por qué descartamos» que diga que tras_la_detencion la adopta tras la respuesta del trader (fb-2026-10-23-sesion-05-978be13f). Fila del índice.
+> 5. La pregunta de S-15 del informe (§2, punto 5) se rehace: el dibujo 1 (la alternancia dentro de un retroceso) sale, porque ya lo contestó en la sesión 4 (S-10, ADR-0076 §1); quedan dos preguntas separadas. Dibujo 2: «Después de la toma, el primer retroceso tiene alternancia; aparece un punto nuevo y su retroceso está limpio. ¿Entras en este segundo? (a) sí; (b) no; (c) otra, ¿cuál?». Dibujo 3: «La orden ya está puesta en el primer punto tras la toma y se llena con la primera vela verde del retroceso, antes de que haya alternancia. ¿Esa entrada vale? (a) sí; (b) no, había que esperar al punto siguiente; (c) otra, ¿cuál?». Los dos en M1, con el marco escrito en el dibujo.
+> 6. b2: los registros 72c9a9e8, 978be13f y 1526aa39 se quedan como están, y también a9e4f879, que su auditor vio con lo mismo (la justificación del régimen con fb-…-ffab23dc); además, el literal de 72c9a9e8 empieza con la pregunta leída y su ítem no lleva la reserva de «mezcla». La desviación (h) de §4 se amplía con eso. Sin superseder: son notas de contexto y no cambian objetivo, acción, valor ni cita.
+> spec_version según la regla del manifiesto (redacción), spec manifest --escribir, spec docs --escribir, knowledge validate antes de make check, trailer Fuente: fb-2026-10-23-sesion-05-1526aa39, fb-2026-10-23-sesion-05-978be13f, ADR-0086. Push a fix/activar-sesion-05-motor y su run con un gh run view suelto: verde salvo el fallo aceptado de state check, antes del merge.
+>
+> COMMIT DEL CONTRATO (punto Y de RITUAL), además de lo de siempre:
+> - Las líneas de §3 tal cual: V, F, K (las dos negativas de §0.d), la línea de Technical Debt de ADR-0087, Current Feature con la fecha del cierre; Known Ambiguities sin cambio. PROJECT_STATE por debajo de 23.000 bytes, medido con wc -c: el margen es de 26 bytes, así que nada más entra en PROJECT_STATE; si no cabe, PARADA antes de recortar nada vivo.
+> - Hoja de ruta: R4.1 con el Estado de §3 (sin «HECHA» a secas); R4.2 «Qué es» con lo de §2 y S-15 con los dos dibujos del punto 5; y en G.2 una viñeta nueva: «Una comprobación que compare las notas de cada registro de feedback con el ítem que cita (segunda rama seguida con notas que traen contenido de otros ítems: trabajo/activar-sesion-05 y trabajo/activar-sesion-05-motor)».
+> - La NOTA del runbook ya entró en la rama: nada más.
+>
+> Hallazgos para ERRORES-RECURRENTES (fila de trabajo/activar-sesion-05-motor):
+> - (importa, del consultor) El encargo puso un valor provisional bajo A-35 sin leer ADR-0045 ni ADR-0054, que lo prohibían. Lección: antes de proponer un valor provisional bajo una ambigüedad, se lee el ADR que la abrió.
+> - (importa, del consultor) El auditor del consultor hizo un grep sobre la raíz de un clon y leyó el holdout sin imprimirlo (fila del 2026-10-26 de HOLDOUT-EXPOSICIONES). Lección: también el auditor del consultor busca solo sobre rutas literales.
+> - (importa, del consultor) La respuesta a la PARADA ordenó «el nivel se congela al tomarse» sin rotularlo como decisión del consultor (lo cazó el revisor, b5). Lección: toda restricción que no sale de un ítem lleva su rótulo también en una respuesta a una PARADA.
+> - (menor, del consultor) El encargo daba RN-011 como la regla que coloca (es RN-015) y pedía un test para algo que no puede pasar (lo llenado en el último minuto, b6). Lección: el mecanismo que nombra un encargo se lee en la spec antes de escribirlo.
+> - (importa, de la sesión, lo cazó el auditor del consultor y no el revisor) La frase que el encargo mandaba quitar seguía en A-30 y en docs/spec/ambiguedades.md, y la pregunta de S-15 contradecía S-10. Lección para el revisor: una frase que el encargo manda quitar se busca en toda la spec y sus docs generados, no solo en la regla; y toda pregunta para el trader se cruza con lo que ya contestó.
+> - (importa, de la sesión, lo cazó el revisor) Las notas de cuatro registros con contenido de otros ítems, segunda rama seguida (b2): pasa a «Patrones que ya se conocen», con su señal, y la guardia queda en G.2.
+> - (importa, de la sesión, lo cazó el revisor) La racha solo se reiniciaba si se consultaba tras la novena, y el nombre del test prometía más (b4); los fallos con main de los puntos 1 y 4 eran de importación o de registro, no de comportamiento, y las copias del clon eran viejas (b3). Lección: el test que falla con main tiene que fallar por comportamiento y con la versión de hoy del test.
+> - (menor, de la sesión) Tres make check perdidos por lint, mypy y tests no buscados antes. Lección: ruff format, ruff check y mypy sobre lo tocado, y git grep de los instantes y reglas que cambian, antes de make check.
+> - Lo bueno: la fase 0 midió que S-15 no tenía frontera y que S-10 ya entra por el camino real; el predicado en_el_ultimo_tramo_h4 separa el límite sin cifra; y la PARADA corrigió dos errores del consultor antes de escribir código.
+>
+> Después del cierre: CI de main sobre el HEAD nuevo con un gh run view suelto; retira el clon C:/cm/main con git worktree remove; y el informe final con sha de main, tag, run de la CI de main, ramas que quedan (locales y fix/ en origin) y bytes de PROJECT_STATE.
+
 ## Estado
 
-Rama lista para revisión, NO cerrada. Los once puntos del encargo aplicados según la respuesta del consultor del 2026-10-26, en diez commits sellados: e8cde8b (apertura), 53b879a (fase 0 y PARADA), 35211a0 (punto 1), 225ac79 (puntos 2 y 3), 5b44cd6 (punto 4), dd2042f (punto 5), 4855860 (punto 6), 7208db2 (puntos 8 y 7), b18fe31 (puntos 10 y 11) y el de este informe con los arreglos del revisor (§8). CI de Linux por `fix/activar-sesion-05-motor`: §7. Pendiente del consultor: b2 (si supersede los tres registros o los deja).
+Rama lista para revisión, NO cerrada. Los once puntos del encargo aplicados según la respuesta del consultor del 2026-10-26, en diez commits sellados: e8cde8b (apertura), 53b879a (fase 0 y PARADA), 35211a0 (punto 1), 225ac79 (puntos 2 y 3), 5b44cd6 (punto 4), dd2042f (punto 5), 4855860 (punto 6), 7208db2 (puntos 8 y 7), b18fe31 (puntos 10 y 11), ce42294 (los arreglos del revisor, §8; CI run 40466482458, solo el fallo aceptado) y el commit de la orden de cierre (sus seis puntos: A-30, las notas de RN-035, `cierre_h4_antelacion`, ADR-0077 §6 y su NOTA, la pregunta de S-15 en §2 y la desviación (h); `spec_version` 18.5.2). CI de Linux por `fix/activar-sesion-05-motor`: §7 y el mensaje final. b2 decidido por el consultor (los registros se quedan). A la espera de `/cerrar-rama`.

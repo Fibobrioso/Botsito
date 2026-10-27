@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.5.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.5.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
@@ -256,7 +256,7 @@ Afecta a: `orden_limite_nace`.
 
 ### A-30 · la orden limite pendiente al llegar el fin de la ventana · pregunta
 
-Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:54:27-0:54:51): se quita, a las 11 y a las 3, «porque siempre se va a ir actualizando la orden [...] no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e). orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que sostiene el cierre es la razon del trader. «Un minuto antes» es frase del consultor y no se fija. A ventana_fin la retirada la hace hoy el cableado al terminar el dia (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035 va a trabajo/activar-sesion-04-motor.
+Si se acaba tu horario de operar y tienes una orden límite puesta que todavía no se ha llenado, ¿qué haces con ella? RESUELTA el 2026-10-04 en la sesion 4 (S-5, v10 0:54:27-0:54:51): se quita, a las 11 y a las 3, «porque siempre se va a ir actualizando la orden [...] no va a haber órdenes que a lo mejor se pueden tomar a las 3 o fuera de horario» (fb-2026-10-04-sesion-04-766c8d2e). orden_pendiente_al_abrir_sesion queda CONFIRMED en se_retira, el mismo valor (RN-035 deja de ser PROVISIONAL). RESERVA: la pregunta fue dirigida (SESION-04-EXTRACCION.md §3.6); lo que sostiene el cierre es la razon del trader. «Un minuto antes» era entonces frase del consultor; en la sesion 5 (S-22) lo dijo el trader y RN-035 lo cita (fb-2026-10-23-sesion-05-1526aa39; rama trabajo/activar-sesion-05-motor, orden de cierre del consultor del 2026-10-27). A ventana_fin la retirada la hacia el cableado al terminar el dia (ADR-0053 §6) sin regla de la spec: la rama ventana_fin de RN-035, hecha en trabajo/activar-sesion-04-motor.
 
 Afecta a: `orden_pendiente_al_abrir_sesion`.
 

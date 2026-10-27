@@ -1020,7 +1020,10 @@ reglas:
       ev-v10-005427-1a0867af), y tambien si a las 11 cambia el sesgo (A-39,
       fb-2026-10-04-sesion-04-dd888b55). A-30 y A-39 RESUELTAS. RESERVA: la pregunta fue dirigida
       (SESION-04-EXTRACCION.md §3.6); «un minuto antes» era entonces frase del consultor, y en la
-      sesion 5 lo dijo el trader (arriba)
+      sesion 5 lo dijo el trader (arriba). La retirada un minuto antes se hace segun
+      orden_pendiente_al_abrir_sesion (con se_retira, el valor vigente, se retira; con
+      sigue_hasta_ventana_fin la regla dispararia sin retirar), como dice el recuadro de ADR-0060
+      §5 (orden de cierre del consultor del 2026-10-27)
     forma:
       cuando:
         todos_de:

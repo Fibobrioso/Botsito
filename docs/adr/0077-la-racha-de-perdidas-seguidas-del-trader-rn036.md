@@ -114,6 +114,14 @@ día; (c) otra, ¿cuál?».
 RN-016 y `cartuchos` (solo comparten la definición de pérdida), RN-020, A-44 (ABIERTA, bloqueante),
 `--diagnostico-a44` y `--diagnostico-a35`, el `SeguidorTope`, `engine/cuenta.py`.
 
+> **Enmendado el 2026-10-26 (`trabajo/activar-sesion-05-motor`, ADR-0086; orden de cierre del
+> consultor del 2026-10-27).** «RN-020 no cambia» ya no vale para lo que hace con una orden
+> pendiente: desde ADR-0086, al llegar al tope del día RN-020 también la retira
+> (`retirar_ordenes_pendientes`, la misma acción de RN-036 de §3), con el mismo motivo. Lo demás
+> de esta lista sigue igual; `--diagnostico-a44` y `--diagnostico-a35` siguen declaradas en la
+> CLI, pero desde `trabajo/activar-sesion-05` (A-35 y A-44 con valor en el registro) se rechazan
+> (`test_preparar_a35.py`, `test_preparar_a44.py`: «el diagnostico se rechaza»).
+
 ## Problema que resuelve
 
 A-51 nació de la respuesta de A-44 en la sesión 3 (el tope del trader son 9 pérdidas seguidas, no
@@ -139,6 +147,11 @@ porque la racha persiste.
 - La 2 deja RN-036 bloqueada por A-44 (RN-020 sigue en `--diagnostico-a44`), contra el encargo.
 - La 3 pone a cero la racha cada día (ADR-0053 §6), contra «la racha sigue de un día a otro».
 - La 4 inventa un reinicio que el trader negó; queda como lectura alternativa en §5.
+  **NOTA (2026-10-27, `trabajo/activar-sesion-05-motor`, orden de cierre del consultor):** la 4
+  es lo que el trader contestó en la sesión 5 (S-21, `ev-v16-002126-d2376f71`: «Pues al día
+  siguiente Nuevamente en cero»): `racha_perdidas_reinicio` = `tras_la_detencion` se adopta tras
+  esa respuesta, por `fb-2026-10-23-sesion-05-978be13f` (recuadro de §5). En la sesión 4 el
+  trader no la había negado: la lectura de §5 era PROVISIONAL, y la sesión 5 la sustituyó.
 
 ## Impacto
 
