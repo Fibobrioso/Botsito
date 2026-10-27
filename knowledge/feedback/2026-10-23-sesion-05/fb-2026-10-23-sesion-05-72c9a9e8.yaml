@@ -1,0 +1,21 @@
+id: fb-2026-10-23-sesion-05-72c9a9e8
+sesion: 2026-10-23-sesion-05
+fecha: '2026-10-23'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-007
+accion: CONFIRM
+respuesta_literal: cambia algo si son 3 velas sin cuerpo en vez de una, es indiferente, o sea, las velas
+  sin cuerpo pues no cuentan, en venta lo mismo revés es igual,
+registrado_por: 'Aleks · grabacion de la sesion 5 (v15), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-10-26 (trabajo/activar-sesion-05-motor, punto 2: CONFIRM sobre RN-007)'
+grabacion: Grabación de pantalla 2026-10-23 174536.mp4
+t0: 0:39:59
+t1: 0:40:29
+notas: 'S-8 (RN-007; ADR-0085): las velas sin cuerpo dentro del tramo que marca el punto de breaker no
+  cuentan, sean una o tres, y en venta igual al reves (ev-v15-003959-5898c61e). Confirma lo que RN-007
+  ya dice -la casi plana cuenta como si no existiera y sobre ella no se traza punto-; el motor lo hace
+  en M1 desde ADR-0085'
+recibido_el: '2026-10-23'
+procedencia: trader_grabado

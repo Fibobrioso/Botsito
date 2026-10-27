@@ -2,7 +2,7 @@
 
 # Reglas de la operativa
 
-`spec_version 18.2.0` · hash `0eae9377e40b…`
+`spec_version 18.2.1` · hash `1f4166930db9…`
 
 31 vigentes y 5 descartadas. La precedencia va por CLASE y no por el orden de este documento, que es editorial: `gate` > `terminal` > `disparador` > `fallback` (ADR-0018).
 
@@ -286,7 +286,7 @@
 - **Entonces**: se agrupan segun mapeo_dos_velas y el resto se trata como ruido; una vela casi plana, sin color claro, cuenta como si no existiera y sobre ella no se traza punto de breaker
 - **Parametros**: `mapeo_dos_velas`
 - **Cita**: `fb-2026-09-29-sesion-03-ffab23dc` — *«cuenta como si no existiera no se puede trazar, o sea allí no se puede trazar un punto de breaker»*
-- **Notas**: DESDE EL 2026-09-30 (rama feature/reflejar-feedback-s3) la regla cita la correccion de la sesion 3 (E-3). Que varias velas formen una estructura lo sostiene mapeo_dos_velas, que cita fb-2026-09-09-sesion-01-7ee9cabc («sería considerado una estructura»), la cita de esta regla hasta ese dia. DESDE EL 2026-09-29 (sesion 3, E-3; fb-2026-09-29-sesion-03-ffab23dc, ev-v9-013021-ea0db73a): una vela casi plana, sin color claro, «cuenta como si no existiera», y sobre ella no se traza punto de breaker. El trader no dio el umbral de «casi plana» («en EURUSD muy rara vez»). DESALINEADO CON EL MOTOR: el mapeo de M1 no trata esas velas aparte; hacen falta el umbral y una rama de codigo.
+- **Notas**: DESDE EL 2026-09-30 (rama feature/reflejar-feedback-s3) la regla cita la correccion de la sesion 3 (E-3). Que varias velas formen una estructura lo sostiene mapeo_dos_velas, que cita fb-2026-09-09-sesion-01-7ee9cabc («sería considerado una estructura»), la cita de esta regla hasta ese dia. DESDE EL 2026-09-29 (sesion 3, E-3; fb-2026-09-29-sesion-03-ffab23dc, ev-v9-013021-ea0db73a): una vela casi plana, sin color claro, «cuenta como si no existiera», y sobre ella no se traza punto de breaker. El trader no dio el umbral de «casi plana» («en EURUSD muy rara vez»). DESDE EL 2026-10-26 (sesion 5, S-24 y S-8; rama trabajo/activar-sesion-05-motor, ADR-0085) CASI PLANA ES CUERPO CERO: «tiene que ser cero puntos … plana totalmente porque estas velas pues pueden servir también como trazo a punto breaker» (ev-v16-002841-8cfe382a), CORRECT sobre el item de la sesion 4 que decia «1 o 2 puntos» entre comillas (fb-2026-10-23-sesion-05-a9e4f879 sobre ev-v10-014310-2296423b; va sobre la evidencia porque esta regla ya tiene un CORRECT vivo); y «las velas sin cuerpo pues no cuentan», sean una o tres, en compra y en venta (fb-2026-10-23-sesion-05-72c9a9e8, CONFIRM sobre esta regla, ev-v15-003959-5898c61e). EL MOTOR LO HACE EN M1 (ADR-0085; domain/pivotes_m15.py y domain/estructura_m1.py): la vela de cuerpo cero no corta la racha, no es contraria, no forma pivote, no entra en el extremo del punto y no cuenta como alternancia en el retroceso (ev-v16-000851-f5ae3b6f). Ni cifra ni parametro de umbral: cuerpo cero es cierre igual a la apertura (ADR-0002). A la sesion 6: si se miran las mechas de una vela sin cuerpo (hoy cuentan donde cuentan, decision del consultor) y las velas de 1 o 2 puntos, que aqui siguen siendo de su color aunque ev-v16-000851 las meta en el mismo saco
 
 **Forma ejecutable**, tal cual la lee el motor:
 

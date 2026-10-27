@@ -4,8 +4,10 @@ vela del color de la entrada forma una zona de control. La tabla de series sinte
 respuesta del consultor (2026-10-12, punto 0), en compra y en venta: por cada serie, lo que da
 `detectar_esquema` con `solo_una_zona_de_control` y el tope de RN-009, y lo que daria la
 comprobacion literal «ningun cambio de color en el retroceso» (solo como medida). Las unicas
-diferencias salen de la vela de cuerpo cero en medio y del breaker contrario que rompe con mecha:
-las dos preguntas de la sesion 5."""
+diferencias salian de la vela de cuerpo cero en medio y del breaker contrario que rompe con mecha:
+las dos preguntas de la sesion 5. Desde ADR-0085 (2026-10-26) la vela de cuerpo cero ya no es una
+diferencia: el trader dijo que no cuenta como alternancia (S-19), y queda solo el breaker por
+mecha (S-20, a la sesion 6)."""
 
 from __future__ import annotations
 
@@ -91,7 +93,9 @@ SERIES: list[tuple[str, list[Paso], str, int, bool, str, bool]] = [
         "alternancia con cuerpo cero en medio (R, doji, V, R) y breaker V",
         [(990, 1040), (1040, 1020), (1020, 1020), (1020, 1050), (1050, 1030),
          (1030, 1119, None, 1125)],
-        SEGUNDO_ESQUEMA, 1, False, "RVR", False,  # el doji corta la racha y no forma pivote
+        # ADR-0085 (sesion 5, S-19): el doji no corta la racha ni cuenta como alternancia, asi que
+        # da lo mismo que R, V, R (S-10). Hasta el 2026-10-26: segundo esquema con 1 zona, DISTINTO
+        NONE, 2, False, "RVR", True,
     ),
     (
         "breaker contrario (R) que rompe con mecha tras alternancia (R, V)",
@@ -159,12 +163,13 @@ def test_la_tabla_de_series_de_a21(
 
 
 def test_las_diferencias_son_solo_el_doji_y_el_breaker_por_mecha() -> None:
-    """El caso (b) de la respuesta del consultor: A-21 se cierra con la opcion que ya existe."""
+    """El caso (b) de la respuesta del consultor: A-21 se cierra con la opcion que ya existe.
+    CAMBIA DE SENTIDO A PROPOSITO el 2026-10-26 (ADR-0085, sesion 5, S-19): la vela sin cuerpo ya
+    no es una diferencia -el motor hace lo que la lectura literal-, y queda solo el breaker
+    contrario que rompe con la mecha tras una alternancia (S-20, a la sesion 6). El nombre se
+    conserva para que la historia se lea."""
     distintas = [nombre for nombre, *_, igual in SERIES if not igual]
-    assert distintas == [
-        "alternancia con cuerpo cero en medio (R, doji, V, R) y breaker V",
-        "breaker contrario (R) que rompe con mecha tras alternancia (R, V)",
-    ]
+    assert distintas == ["breaker contrario (R) que rompe con mecha tras alternancia (R, V)"]
 
 
 def test_a21_queda_cerrada_con_la_opcion_que_ya_existia() -> None:

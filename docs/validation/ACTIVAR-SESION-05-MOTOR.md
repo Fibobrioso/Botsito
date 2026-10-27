@@ -25,7 +25,6 @@ Los ADR que el encargo manda escribir se citan aquí antes de existir; cada uno 
 el commit que lo crea:
 
 ```ids-inexistentes
-ADR-0085 — las velas sin cuerpo en M1, enmienda ADR-0076 (punto 2); aún no existe
 ADR-0086 — RN-020 retira la orden pendiente al llegar al tope (punto 8); aún no existe
 ADR-0087 — el ADR que S-15 tendría si existiera la frontera (punto 9); aún no existe
 ```
@@ -400,9 +399,81 @@ Copiada tal cual:
   y `test_orden_stop_pivote.py`.
 - **`test_kit.py` no cambia**: los conjuntos de RESUELTAS y de bloqueantes ABIERTAS (A-35 y A-44)
   son los mismos; A-35 sigue ABIERTA.
-- **Trailer:** `Fuente: ev-v15-000553-9d95178a, ADR-0084`.
+- **Trailer:** `Fuente: ev-v15-000553-9d95178a, ADR-0084`. Commit 35211a0.
+- **Tres pasadas de `make check`**: la primera cayó en lint (nueve líneas largas), la segunda en
+  mypy (`Pivote | None` sin comprobar en el test); desde entonces, antes de cada `make check`,
+  `ruff format`, `ruff check` y `mypy` sobre los ficheros tocados (segundos frente a los 18
+  minutos de la suite). Para ERRORES-RECURRENTES en el cierre.
+
+### 1.2 Puntos 2 y 3 · Las velas sin cuerpo en M1 y RN-007 con umbral cero (ADR-0085; decisiones 2, 3 y 6)
+
+En un commit, como se dijo en §0.a: el código es el de ADR-0085 y las notas de RN-007 se escriben
+una vez.
+
+- **ADR-0085** (`docs/adr/0085-la-vela-sin-cuerpo-en-m1-no-corta-la-racha-ni-cuenta-como-alternancia.md`):
+  los cuatro ítems, el cambio solo en M1 y solo con cuerpo cero (dónde y qué no cambia), las tres
+  DECISIONES DEL CONSULTOR (las mechas de la vela sin cuerpo siguen contando donde cuentan; la
+  vela de 1 o 2 puntos sigue siendo de su color; la condición de `ev-v15-004037` no se aplica
+  porque pediría cuerpo en M1 contra A-32 RESUELTA), que enmienda ADR-0076 en su cabecera y en
+  la fila del doji de §2 (recuadros y fila del índice) con la NOTA de lo medido en §0.b.8 sobre
+  S-10 por el camino real (decisión 6), y la NOTA en ADR-0061 §4 (fila del índice). Sale de los
+  dos bloques `ids-inexistentes`.
+- **Registros** (los mismos que en el clon de la fase 0, con los mismos ids):
+  `fb-2026-10-23-sesion-05-72c9a9e8`, CONFIRM sobre RN-007 sin valor (v15,
+  `ev-v15-003959-5898c61e`, 0:39:59-0:40:29, recibido el 10-23);
+  `fb-2026-10-23-sesion-05-a9e4f879`, CORRECT sobre `ev-v10-014310-2296423b` con valor «una vela
+  casi plana tiene que ser de cero puntos de cuerpo, plana totalmente» (v16,
+  `ev-v16-002841-8cfe382a`, 0:28:41-0:29:02, recibido el 10-25). `feedback apply --check`: «3
+  parametros; 0 cambian, 3 ya estaban» (ninguno fija un parámetro; no se aplicó nada).
+  `feedback pending`: el CONFIRM en `(=)` («confirma la regla vigente RN-007»), el CORRECT en `(?)`
+  («sin forma mecanica de cruzarlo», como `a42c72dd`), y los pendientes siguen siendo los dos
+  CORRECT sobre RN-003 de `main`. S-19 sin registro (su ítem mete en el mismo saco las velas de
+  uno o dos puntos).
+- **RN-007**: sus notas dejan de decir «DESALINEADO CON EL MOTOR» y dicen que casi plana es cuerpo
+  cero desde `a9e4f879`, que el motor lo hace en M1 por ADR-0085 y que las mechas de una vela sin
+  cuerpo y las velas de 1 o 2 puntos van a la sesión 6; su literal y su cita no cambian, y su
+  forma no necesita predicado nuevo (`color() == 0` ya es la definición). `spec_version` 18.2.0 →
+  18.2.1 (redacción); `spec manifest --escribir`, `spec docs --escribir`.
+- **Código:** `domain/pivotes_m15.py` (`sin_cuerpo` en `_racha_anterior`, `_pivote_en`,
+  `_pivote_en_curso`, `pivotes_formados` y `pivote_mas_reciente`, con `corta_la_racha` por
+  defecto: M15 no se mueve); `domain/estructura_m1.py` (`_pivotes_m1`, que piden `no_cuenta`, en
+  `referencia_del_breaker`, `zonas_de_control` y `ultimo_punto_de_ruptura`;
+  `_recorrer_zona_posterior` salta la vela de cuerpo cero). `bloque_de_origen`,
+  `extremo_de_la_caja` y `_pasa` no cambian (§0.b.5).
+- **Tests.** `tests/unit/test_velas_sin_cuerpo_m1.py` (nuevo): V, sin cuerpo, R da el punto en el
+  máximo de la verde, en compra y en venta, con una y con tres velas sin cuerpo (y la vela que
+  marca el nivel es la verde, no la sin cuerpo con mecha más alta); R, sin cuerpo, V, R da lo
+  mismo que R, V, R (dos zonas, ningún esquema); una vela de 1 punto sigue contando como color
+  (forma el punto y alterna en el retroceso); la zona posterior salta la vela sin cuerpo (mismo
+  extremo que sin ella); por el camino real, `toca_colocar_orden_limite` con el registro vigente
+  liga la zona del BAJO que la vela sin cuerpo cortaba (R, R, sin cuerpo, V en una venta); las
+  series de M15 no se mueven (solo `no_cuenta` daría el pivote, y un valor fuera de las dos
+  lecturas se niega). CAMBIAN DE SENTIDO A PROPÓSITO: la fila del doji de
+  `tests/unit/test_a21_series.py` (de segundo esquema con 1 zona y DISTINTO a ninguno con 2 e
+  igual que la lectura literal) y `test_las_diferencias_son_solo_el_doji_y_el_breaker_por_mecha`
+  (queda solo el breaker por mecha; el nombre se conserva) con su docstring;
+  `tests/unit/test_orden_stop_pivote.py::test_son_las_funciones_de_r5_y_r6_de_caja_77` compara con
+  el guion de CAJA-77 sobre las series al azar con cada vela sin cuerpo convertida en una verde de
+  un punto (el guion no se toca), y el test nuevo
+  `test_en_las_series_con_velas_sin_cuerpo_la_unica_diferencia_es_el_punto_de_adr_0085` exige
+  que, con ellas, el punto del productor sea el que el guion da sobre la misma serie sin esas
+  velas (decisión 2). **Con el código de `main`** (clon `C:/cm/main`): `test_velas_sin_cuerpo_m1.py`
+  no se recoge (`ImportError: cannot import name 'SIN_CUERPO_CORTA'`), y los dos ficheros
+  cambiados, corridos aparte, fallan en lo que cambia a propósito: `FAILED
+  test_la_tabla_de_series_de_a21[compra-alternancia con cuerpo cero en medio …]`, el mismo en
+  venta, y `FAILED test_en_las_series_con_velas_sin_cuerpo_la_unica_diferencia_es_el_punto_de_adr_0085`
+  en venta y en compra (`test_las_diferencias…` lee la columna `igual` de la tabla y pasa en los
+  dos lados: es la fila la que falla en `main`). **Con el de la rama:** 108 tests en verde entre `test_velas_sin_cuerpo_m1.py`, `test_a21_series.py`,
+  `test_orden_stop_pivote.py`, `test_pivotes_m15.py`, `test_estructura_m1.py`,
+  `test_mecha_que_vuelve.py`, `test_be_al_tick.py`, `test_preparar_a21.py`,
+  `test_caja_hasta_el_llenado.py`, `test_punto_usado.py` y `test_embudo_77.py`.
+- **`test_kit.py` no cambia**; A-21 sigue RESUELTA como la deja ADR-0076; ninguna ambigüedad se
+  cierra.
+- **Trailer:** `Fuente: fb-2026-10-23-sesion-05-72c9a9e8, fb-2026-10-23-sesion-05-a9e4f879,
+  ev-v15-003959-5898c61e, ev-v15-004037-a2ab3980, ev-v16-000851-f5ae3b6f, ev-v16-002841-8cfe382a,
+  ADR-0085`.
 
 ## Estado
 
 EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida:
-se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hecho: el 1.
+se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1 y el 2+3.

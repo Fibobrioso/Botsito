@@ -5,7 +5,6 @@ encargo manda escribir van declarados aquí en un bloque `ids-inexistentes`, com
 `knowledge validate`; cada uno sale del bloque en el commit que lo crea):
 
 ```ids-inexistentes
-ADR-0085 — el encargo lo manda escribir en esta rama (las velas sin cuerpo en M1, enmienda ADR-0076); aún no existe
 ADR-0086 — el encargo lo manda escribir en esta rama (RN-020 retira la orden pendiente); aún no existe
 ADR-0087 — el encargo lo nombra como posible ADR de S-15 si la fase 0 encuentra la frontera; aún no existe
 ```

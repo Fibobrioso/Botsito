@@ -67,6 +67,11 @@ el breaker (`domain/estructura_m1.py`, `domain/pivotes_m15.py`):
 
 Código: `zona_posterior_completada`, pura, en `domain/estructura_m1.py`.
 
+> **NOTA del 2026-10-26 (`trabajo/activar-sesion-05-motor`, ADR-0085; no reescribe el cuerpo).**
+> La misma geometría de M1 salta desde entonces la vela sin cuerpo: no corta la racha a favor, no
+> es contraria y no entra en el punto extremo (sesión 5, S-8 y S-19). Su mecha sí cuenta para pasar
+> el punto, como cualquier otra.
+
 ### 5. Lo que todavía no es «al tocar»
 
 La estrategia se evalúa al cierre de M1 (ADR-0028), así que el stop se mueve en el cierre de la M1

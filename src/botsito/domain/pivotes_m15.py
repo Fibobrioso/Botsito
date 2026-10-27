@@ -64,6 +64,12 @@ NO_MUEVE = "no_mueve"
 SOLO_LA_CONTRARIA = "solo_la_contraria"
 CUALQUIER_MECHA = "cualquier_mecha"
 MECHAS_QUE_VUELVEN = (NO_MUEVE, SOLO_LA_CONTRARIA, CUALQUIER_MECHA)
+# Que hace una vela sin cuerpo con la racha (ADR-0085): en M15, `corta_la_racha` (lo de siempre, y
+# el valor por defecto); en M1, `no_cuenta` (no corta la racha, no es contraria, no forma pivote y
+# no entra en el extremo: sesion 5, S-8 y S-19), que piden los llamadores de domain/estructura_m1.py
+SIN_CUERPO_CORTA = "corta_la_racha"
+SIN_CUERPO_NO_CUENTA = "no_cuenta"
+SIN_CUERPO = (SIN_CUERPO_CORTA, SIN_CUERPO_NO_CUENTA)
 
 
 class PivoteError(ValueError):
@@ -91,12 +97,20 @@ def color(v: Vela) -> int:
     return 0
 
 
-def _racha_anterior(velas: Sequence[Vela], hasta: int, signo: int) -> list[Vela]:
-    """Las velas consecutivas de color `signo` que terminan justo antes del indice `hasta`."""
+def _racha_anterior(
+    velas: Sequence[Vela], hasta: int, signo: int, sin_cuerpo: str = SIN_CUERPO_CORTA
+) -> list[Vela]:
+    """Las velas consecutivas de color `signo` que terminan justo antes del indice `hasta`. Con
+    `sin_cuerpo = no_cuenta` (ADR-0085, M1) una vela de cuerpo cero en medio ni corta la racha ni
+    entra en ella (su extremo no cuenta)."""
     racha: list[Vela] = []
     i = hasta - 1
-    while i >= 0 and color(velas[i]) == signo:
-        racha.append(velas[i])
+    while i >= 0:
+        c = color(velas[i])
+        if c == signo:
+            racha.append(velas[i])
+        elif not (c == 0 and sin_cuerpo == SIN_CUERPO_NO_CUENTA):
+            break
         i -= 1
     racha.reverse()
     return racha
@@ -124,11 +138,14 @@ def _comprobar(
     lectura: str,
     instante: int,
     mecha: str = NO_MUEVE,
+    sin_cuerpo: str = SIN_CUERPO_CORTA,
 ) -> None:
     if lectura not in LECTURAS:
         raise PivoteError(f"lectura {lectura!r} no esta en {LECTURAS}")
     if mecha not in MECHAS_QUE_VUELVEN:
         raise PivoteError(f"mecha que vuelve {mecha!r} no esta en {MECHAS_QUE_VUELVEN}")
+    if sin_cuerpo not in SIN_CUERPO:
+        raise PivoteError(f"vela sin cuerpo {sin_cuerpo!r} no esta en {SIN_CUERPO}")
     if n < 0 or n > len(cerradas):
         raise PivoteError(f"n={n} fuera de las {len(cerradas)} velas cerradas")
     if n and int(cerradas[n - 1].fin) > instante:
@@ -144,21 +161,30 @@ def _formado_en(c: Vela, lectura: str) -> MinutoUtc:
 
 
 def _pivote_en(
-    cerradas: Sequence[Vela], i: int, lectura: str, mecha: str = NO_MUEVE
+    cerradas: Sequence[Vela],
+    i: int,
+    lectura: str,
+    mecha: str = NO_MUEVE,
+    sin_cuerpo: str = SIN_CUERPO_CORTA,
 ) -> Pivote | None:
-    """El pivote que marca la vela cerrada `i` si es contraria a una racha anterior."""
+    """El pivote que marca la vela cerrada `i` si es contraria a una racha anterior. Una vela sin
+    cuerpo nunca es contraria."""
     c = cerradas[i]
     signo = color(c)
     if signo == 0:
         return None
-    racha = _racha_anterior(cerradas, i, -signo)
+    racha = _racha_anterior(cerradas, i, -signo, sin_cuerpo)
     if not racha:
         return None
     return _pivote_de(c, racha, _formado_en(c, lectura), mecha)
 
 
 def _pivote_en_curso(
-    cerradas: Sequence[Vela], n: int, en_curso: Vela | None, mecha: str = NO_MUEVE
+    cerradas: Sequence[Vela],
+    n: int,
+    en_curso: Vela | None,
+    mecha: str = NO_MUEVE,
+    sin_cuerpo: str = SIN_CUERPO_CORTA,
 ) -> Pivote | None:
     """Con la lectura `inicio`: el pivote que la M15 en curso marca ahora mismo, si va contraria."""
     if en_curso is None or n == 0:
@@ -166,7 +192,7 @@ def _pivote_en_curso(
     signo = color(en_curso)
     if signo == 0:
         return None
-    racha = _racha_anterior(cerradas, n, -signo)
+    racha = _racha_anterior(cerradas, n, -signo, sin_cuerpo)
     if not racha:
         return None
     return _pivote_de(en_curso, racha, MinutoUtc(int(en_curso.inicio) + 1), mecha)
@@ -179,25 +205,28 @@ def pivotes_formados(
     instante: int,
     n: int | None = None,
     mecha_que_vuelve: str = NO_MUEVE,
+    sin_cuerpo: str = SIN_CUERPO_CORTA,
 ) -> list[Pivote]:
     """Todos los pivotes formados a la vista en `instante` (un cierre de M1), del mas antiguo al
     mas reciente. `cerradas` son las M15 en orden y sin solapar; cuentan las `n` primeras (todas
     si `n` es None), que tienen que tener fin <= instante; `en_curso` es la M15 que contiene
     `instante` construida SOLO con las M1 cerradas hasta el (None si no hay ninguna).
     `mecha_que_vuelve` es el selector de ADR-0084: con `no_mueve` (lo de siempre, y lo que piden
-    los llamadores de M1) la mecha de la contraria no mueve el nivel."""
+    los llamadores de M1) la mecha de la contraria no mueve el nivel. `sin_cuerpo` es lo de
+    ADR-0085: con `corta_la_racha` (lo de siempre, M15) la vela sin cuerpo corta la racha; con
+    `no_cuenta` (M1) ni la corta ni entra en el extremo."""
     n = len(cerradas) if n is None else n
-    _comprobar(cerradas, n, en_curso, lectura, instante, mecha_que_vuelve)
+    _comprobar(cerradas, n, en_curso, lectura, instante, mecha_que_vuelve, sin_cuerpo)
     for a, b in zip(cerradas[:n], cerradas[1:n], strict=False):
         if b.inicio < a.fin:
             raise PivoteError("las M15 cerradas tienen que ir en orden y sin solapar")
     salida: list[Pivote] = []
     for i in range(1, n):
-        p = _pivote_en(cerradas, i, lectura, mecha_que_vuelve)
+        p = _pivote_en(cerradas, i, lectura, mecha_que_vuelve, sin_cuerpo)
         if p is not None:
             salida.append(p)
     if lectura == INICIO_VELA_CONTRARIA:
-        p = _pivote_en_curso(cerradas, n, en_curso, mecha_que_vuelve)
+        p = _pivote_en_curso(cerradas, n, en_curso, mecha_que_vuelve, sin_cuerpo)
         if p is not None:
             salida.append(p)
     return salida
@@ -211,6 +240,7 @@ def pivote_mas_reciente(
     lado: str,
     n: int | None = None,
     mecha_que_vuelve: str = NO_MUEVE,
+    sin_cuerpo: str = SIN_CUERPO_CORTA,
 ) -> Pivote | None:
     """El pivote formado mas reciente del lado pedido (ADR-0045), o None si no hay ninguno.
     Busca hacia atras desde el mas reciente: no recorre toda la serie en cada instante. El nivel
@@ -219,13 +249,13 @@ def pivote_mas_reciente(
     if lado not in LADOS:
         raise PivoteError(f"lado {lado!r} no esta en {LADOS}")
     n = len(cerradas) if n is None else n
-    _comprobar(cerradas, n, en_curso, lectura, instante, mecha_que_vuelve)
+    _comprobar(cerradas, n, en_curso, lectura, instante, mecha_que_vuelve, sin_cuerpo)
     if lectura == INICIO_VELA_CONTRARIA:
-        p = _pivote_en_curso(cerradas, n, en_curso, mecha_que_vuelve)
+        p = _pivote_en_curso(cerradas, n, en_curso, mecha_que_vuelve, sin_cuerpo)
         if p is not None and p.lado == lado:
             return p
     for i in range(n - 1, 0, -1):
-        p = _pivote_en(cerradas, i, lectura, mecha_que_vuelve)
+        p = _pivote_en(cerradas, i, lectura, mecha_que_vuelve, sin_cuerpo)
         if p is not None and p.lado == lado:
             return p
     return None
@@ -281,6 +311,9 @@ __all__ = [
     "LECTURAS",
     "MECHAS_QUE_VUELVEN",
     "NO_MUEVE",
+    "SIN_CUERPO",
+    "SIN_CUERPO_CORTA",
+    "SIN_CUERPO_NO_CUENTA",
     "SOLO_LA_CONTRARIA",
     "Pivote",
     "PivoteError",
