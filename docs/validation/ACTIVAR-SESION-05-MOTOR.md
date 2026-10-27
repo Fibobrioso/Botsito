@@ -662,8 +662,32 @@ Commit 6: 4855860 (el primer `make check` de ese commit salió en rojo por los d
 - **`test_kit.py` no cambia**; A-44 sigue ABIERTA con sus parámetros como estaban.
 - **Trailer:** `Fuente: ADR-0086`.
 
+### 1.7 Puntos 10 y 11 · Lo viejo del final de §2 y los dos recuadros de corrección
+
+Commit 8: 7208db2. Sin código del motor ni spec.
+
+- **Punto 10.** `src/botsito/engine/broker.py:177`: el comentario de las opciones de
+  `lote_si_no_cabe` deja de decir «DEFAULT_AMBIGUOUS bajo A-57» (A-57 está RESUELTA desde la
+  sesión 5; CONFIRMED en `limitar`). Los tres guiones que construían `Diagnostico` con valores que
+  hoy se rechazan: `scripts/embudo_77.py` y `scripts/caja_77_exploratoria.py` quitan `a35` y `a44`
+  (quedan A-27 y A-47 en hipótesis, y el registro da la lectura y el tope) y
+  `scripts/bloque_de_la_caja.py` pasa `Diagnostico()` a `tope_del_registro` (lo rechazaba
+  `TopeRechazadoError`); sus importaciones sobrantes salen. No se ejecutan sobre material; los
+  tests que los importan pasan: `test_embudo_77.py`, `test_orden_stop_pivote.py` (carga
+  `bloque_de_la_caja.py`) y `test_margen_lote.py` (el bróker): 35 en verde. `mypy` sobre los tres
+  guiones da cuatro avisos que ya están en `main` (medido en el clon `C:/cm/main`: los mismos
+  cuatro); `make check` los admite como hasta ahora.
+- **Punto 11.** Dos recuadros de corrección en `docs/validation/ACTIVAR-SESION-05.md` (informe
+  cerrado: recuadro con fecha y rama, cuerpo intacto; el contrato lo permitía desde la apertura):
+  junto a §2, 4, que «la caja entera» es lectura del consultor deducida de su ejemplo y no lo que
+  dice `ev-v15-010451-5b123278`; y junto a §2, 6, que el registro de la sesión 4 es
+  `fb-2026-10-04-sesion-04-d1792021` (no `8e2d728a`, el de A-51) y que un CORRECT va sobre el
+  parámetro, no sobre un registro.
+- **Trailer:** ninguno (ni `knowledge/spec` ni `knowledge/cases`); `knowledge validate` en verde.
+
 ## Estado
 
-EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida:
-se aplica punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11). Hechos: el 1, el 2+3,
-el 4, el 5, el 6 y el 8 (con el 7).
+EN CURSO. Fase 0 medida (commit 53b879a) y respuesta del consultor del 2026-10-26 recibida y
+aplicada punto por punto, un commit por grupo (1; 2+3; 4; 5; 6; 8; 10+11): todos hechos. Queda la
+entrega (skill `entregar-rama`): el informe cerrado con las líneas del cierre, la CI de Linux, el
+revisor y su informe pegado.

@@ -938,6 +938,13 @@ protegido por el contrato.
    (`engine/zonas.py:522-540`, :539). La rama de motor mide si ese parámetro puede tener valor sin
    registro del trader (ADR-0004 y `test_registro.py:157-175`: es de estrategia) y, si no puede,
    PARADA allí.
+   > **CORRECCIÓN (2026-10-27, `trabajo/activar-sesion-05-motor`, punto 11 de su encargo).** Que
+   > «una caja se descarta por el lado de ruido solo si queda entera de ese lado» NO es lo que dice
+   > `ev-v15-010451-5b123278`: el ítem dice que si el 0 queda justo en la línea del nivel tomado, o
+   > por encima en una compra, es indiferente, y que lo importante es validar bien el posible punto
+   > de breaker. Eso descarta mirar solo el 0; que haga falta la caja ENTERA es LECTURA DEL
+   > CONSULTOR, deducida de su ejemplo (SESION-05-EXTRACCION.md §3.3, S-12b, fuera del ítem).
+   > Así entró `caja_lado_de_ruido` (ACTIVAR-SESION-05-MOTOR.md §1.3).
 5. **S-15: entrar en la zona más reciente que valide el punto, sin límite de zonas tras la toma.**
    Fuente: `ev-v15-012616-d534455a`. Hoy `zonas_de_control` cuenta desde la toma
    (`estructura_m1.py:141-158`) y con más zonas que `zonas_control_max_por_esquema` = 1
@@ -951,6 +958,13 @@ protegido por el contrato.
    día siguiente (ADR-0077 §5). Opción nueva (criterio del consultor: `tras_la_detencion`), CORRECT
    sobre el valor de la sesión 4 (`fb-2026-10-04-sesion-04-8e2d728a`) y recuadro en ADR-0077 §5.
    Mientras no se pare, la racha sigue de un día a otro (sesión 4).
+   > **CORRECCIÓN (2026-10-27, `trabajo/activar-sesion-05-motor`, punto 11 de su encargo).** El
+   > registro de la sesión 4 que fijó `racha_perdidas_reinicio` = `nunca` es
+   > `fb-2026-10-04-sesion-04-d1792021` (el RESOLVE_UNKNOWN sobre el parámetro), no
+   > `fb-2026-10-04-sesion-04-8e2d728a`, que es el de A-51. Y un registro no puede ser objetivo de
+   > un CORRECT (`OBJETIVOS_POR_ACCION`, `feedback/modelo.py`): el CORRECT va sobre el PARÁMETRO,
+   > con `--supersede` de d1792021 (`fb-2026-10-23-sesion-05-978be13f`,
+   > ACTIVAR-SESION-05-MOTOR.md §1.4).
 7. **S-22: la orden sin llenar se quita un minuto antes del final de la ventana.** Fuente:
    `ev-v16-002248-08e9600f`, `ev-v16-002323-515b9da4` (igual que la posición; en ese último minuto
    no se pone ninguna orden, y si una se llena ahí se cierra enseguida). Hoy RN-035 retira la

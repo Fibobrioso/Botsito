@@ -174,7 +174,8 @@ LIMITE_VOLUMEN = "volumen"
 LIMITE_MARGEN = "margen"
 LIMITE_MINIMO = "minimo"
 SIN_LIMITE = "ninguno"
-# las opciones de `lote_si_no_cabe` (ADR-0081 §3; DEFAULT_AMBIGUOUS bajo A-57)
+# las opciones de `lote_si_no_cabe` (ADR-0081 §3; CONFIRMED en `limitar` desde la sesion 5, A-57
+# RESUELTA el 2026-10-26)
 LOTE_LIMITAR = "limitar"
 LOTE_NO_OPERAR = "no_operar"
 # la anotacion de cada orden al colocarla (solo salida): margen requerido, margen libre, riesgo en
