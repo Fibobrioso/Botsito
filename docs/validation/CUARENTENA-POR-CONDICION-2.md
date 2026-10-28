@@ -1016,7 +1016,30 @@ Los arreglos de §12 van en un commit sellado con `make check`, que se empuja a
 commit) se da en el mensaje final a Aleks con su número y resultado; anotarlo aquí exigiría otro
 commit sin CI. El de 9567a8c es el 40731298628 (§10).
 
+## Orden de cierre (2026-10-28)
+
+Dada por Aleks (consultor) el 2026-10-28. Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/cuarentena-por-condicion-2 (2026-10-28). Copia esta orden tal cual al final del encargo y del informe, en «Orden de cierre (2026-10-28)», en un commit propio antes del commit del contrato.
+>
+> Ciérrala con la skill cerrar-rama, siguiendo docs/runbooks/RITUAL.md con todas sus puertas. Tag: stable/F38h-cuarentena-por-condicion-2. Antes del tag, comprueba que stable/F38h-* no existe ni en local ni en origin.
+>
+> En el commit del contrato (chore(cierre): sale el contrato y entra el registro en HISTORIA):
+> - Sale contrato.yaml; entra el registro del cierre en HISTORIA con stable/F38h-cuarentena-por-condicion-2^{commit} en lugar del sha.
+> - Todas las líneas de CUARENTENA-POR-CONDICION-2.md §6, tal cual: en la Next Action, F entera y la frase nueva al final de K; en Technical Debt, salen la línea PRIORITARIA de la cuarentena y la de la skill ingerir-sesion, y entra la de la salida de meses_reservados.yaml (dueña, la rama de R5.4); en la hoja de ruta, G.5 con «la I sin decidir» y su «Estado: HECHA» con el tag de arriba, y R5.4 con su añadido. Ninguna letra sale de la Next Action (G.5 no tenía letra propia: la llevaba F), así que no hay registro «# Next Action HECHA».
+> - ERRORES-RECURRENTES, la fila de la rama. Del consultor, tres hallazgos de su encargo que vio la fase 0 y no su auditor: (1) arreglaba un hueco en una regex sin buscar sus copias (_RE_DIA_BARRA_MES); (2) la regla nueva prometía una salida «por ADR» que el código no tiene y contradecía ADR-0078 y ADR-0079 (habría atrapado agosto); (3) el literal del test era una fecha real y el caso de control estaba mal numerado. Lección para el consultor: antes de escribir una regla sobre un fichero, leer cómo se entra y cómo se sale de él en el código y qué ADR lo nombran; antes de arreglar una regex, buscar sus copias. De la sesión, lo que el revisor encontró (B1: la batería del superconjunto tenía fechas posibles de meses reservados; A1, la cita de MIRAR-EL-MATERIAL). Y un hallazgo menor del consultor sobre el revisor: en sus comandos 14, 25 y 31 sustituyó por su cuenta tres comandos negados (git -C por solo_lectura.py, un bucle for y un grep $'\r' por la guardia) en vez de declararlos y seguir sin ellos; eran de solo lectura y no tocaron material, pero la regla del 2026-10-21 (DECISIONES-DE-PROCESO.md) dice PARADA salvo seguir la forma que la propia guardia propone. Lección para el revisor: una negativa se declara; solo se usa otra forma si la propone la guardia en su mensaje.
+> - Antes de commitear, mide PROJECT_STATE con wc -c (tiene que dar unos 22.889, por debajo de 23.000) y pasa test_hoja_de_ruta y test_project_state en el make check sellado.
+>
+> Después, lo de siempre: merge --no-ff a main, el tag, el commit de estado que solo reemplaza Current Branch (main), Current Feature («Ninguna rama abierta. trabajo/cuarentena-por-condicion-2 cerrada en main el 2026-10-28 (stable/F38h-cuarentena-por-condicion-2): diciembre tapado en la cuarentena mientras no se decida, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras (CUARENTENA-POR-CONDICION-2.md).»), Stable Main State y Last Stable Commit (la Next Action ya cambió en el contrato y aquí no se toca), make check sellado, push atómico de main y el tag en un solo comando (confirmo la regla ask con «1. Yes»), la CI de main en verde mirada sin guion ni bucle, y borrar la rama local y la remota fix/cuarentena-por-condicion-2.
+>
+> El worktree de otra sesión (.../scratchpad/wt-ci, e7df30b): mide con git worktree list, git -C <ruta> status --short y git merge-base --is-ancestor e7df30b main. Si está limpio y e7df30b ya está en main, quítalo con git worktree remove <ruta> (sin --force) y git worktree prune; si no, no lo toques y dímelo con la medida.
+>
+> Nunca --no-verify, push --force, borrar tags, cherry-pick ni rebase. Si algo no cuadra, PARADA antes del merge.
+>
+> Informe final: sha de main, tag, número del run de la CI de main con su resultado, ramas que quedan (local y remota), lo del worktree wt-ci y tamaño de PROJECT_STATE en bytes.
+
 ## Estado
 
-Fases 0 a 4 hechas; los hallazgos del revisor, arreglados (§12); el clon, borrado (§12). Rama lista
-para revisión, NO cerrada.
+Fases 0 a 4 hechas; los hallazgos del revisor, arreglados (§12); el clon, borrado (§12). Orden de cierre del 2026-10-28 recibida (arriba): se cierra con cerrar-rama, tag stable/F38h-cuarentena-por-condicion-2.
