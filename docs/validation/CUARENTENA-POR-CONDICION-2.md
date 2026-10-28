@@ -74,13 +74,13 @@ meses son libres y si octubre y diciembre lo son.
 - **`numeros_a_cifras`** (`:186-213`) pasa a cifras los números en letra de 0 a 99 («treinta y
   cinco» → 35, «veinticinco» → 25), sobre texto ya normalizado; «un» y «una» no. `motivos_cuarentena`
   (`:301-316`) aplica `numeros_a_cifras(normalizar(texto))` (`:305`) antes de las reglas, así que
-  «el veinticinco del diez,» es lo mismo que «el 25 del 10,».
+  «el cuarenta y cinco del trece,» es lo mismo que «el 45 del 13,».
 - **Medido en el código de `main`** (sonda, texto sintético):
 
   | Texto | `motivos_cuarentena` en `main` |
   |---|---|
-  | `hoy 25 del 10` | `['fecha numerica']` |
-  | `hoy, 25 del 10,` | `[]` |
+  | el literal del encargo para la coma, sin las comas (una fecha real: §0.g, 5) | `['fecha numerica']` |
+  | el mismo literal, con sus comas | `[]` |
   | `el 31/02,` | `[]` |
   | `, 31-02 ,` | `['fecha numerica']` |
   | `el 31.02.99` | `['fecha numerica']` |
@@ -91,10 +91,11 @@ meses son libres y si octubre y diciembre lo son.
   el CUARTO («el 31.02.99.», que `main` no tapa por el punto final); el de control, que ya se tapa
   hoy, es el TERCERO («, 31-02 ,»). La frase del encargo («los tres primeros nuevos y el tercero,
   de control») se lee así.
-- **«hoy, 25 del 10,» no es una fecha imposible**, como piden los tests de
-  `test_transcribir_sesion.py` (su docstring, `:5-7`). Es el literal del encargo y el de la línea
-  PRIORITARIA de Technical Debt; se usa porque octubre es un mes DEMOSTRADO libre (sonda: «octubre
-  libre: True»), así que ningún caso reservado ni oculto cae en él. Se dice en el docstring del test.
+- **El literal del encargo para la coma no es una fecha imposible**, como piden los tests de
+  `test_transcribir_sesion.py` (su docstring, `:5-7`): es una fecha real (§0.g, 5). Se cambió por
+  «hoy, 45 del 13,» en los tests, en el comentario de `_RE_FECHA` y en este informe (respuesta del
+  consultor a la PARADA de la fase 0, punto 3); el literal del encargo solo queda en las copias
+  literales del encargo y de la respuesta.
 
 ### 0.c Los tests de hoy
 
@@ -199,7 +200,7 @@ Lanzado sobre c0607bd. Resultado: 53 afirmaciones, 34 correctas, 2 incorrectas y
    texto, y romperían `test_abril_agosto_enero...` (`{1, 4, 8} <= libres`) y el cruce con la lista
    blanca de la guardia (`test_cuarentena_por_condicion.py:274-286`, agosto en
    `MESES_DE_DESARROLLO`). Y, por el hallazgo 3, ya no saldría.
-5. **«hoy, 25 del 10,» es una fecha real**: la de la grabación de v16 (SESION-05-EXTRACCION.md:351,
+5. **El literal del encargo para la coma es una fecha real**: la de la grabación de v16 (SESION-05-EXTRACCION.md:351,
    «solo dejó a la vista la fecha de la propia grabación»). Octubre es libre, así que no es un día
    reservado; pero choca con «todo test va con texto sintético, sin fechas reales» del encargo y con
    el docstring del fichero de tests («fechas IMPOSIBLES»). «hoy, 45 del 13,» rompe igual en `main`
@@ -339,6 +340,223 @@ La línea base de `main` se midió en el árbol de la rama ANTES de tocar nada d
 `git diff main --stat -- src scripts knowledge .claude tests` vacío: el código y los datos eran los
 de `main`. Ninguna ruta sale de la lista y ningún ítem pasa de oculto a visible: sin PARADA.
 
+## PARADA 2 · La guardia no deja correr en el clon de main los tests de la fase 2 (deuda K), 2026-10-28
+
+**Lo hecho de la fase 2, SIN COMMITEAR** (en el árbol de trabajo):
+
+- `src/botsito/corpus/cuarentena.py`: `_ANTES = (?<!\d)(?<!\d[.,])` y `_DESPUES = (?!\d)(?![.,]\d)`,
+  con la condición escrita en su comentario, en las tres primeras alternativas de `_RE_FECHA` y en
+  `_RE_DIA_BARRA_MES`; «mes N» y `_RE_DIA_NUMERO` sin tocar.
+- **Un desvío, medido**: con los mismos lookarounds, `_RE_DIA_BARRA_MES.findall` NO era superconjunto
+  de `main`: la batería del test de superconjunto dio 432 textos en los que la rama perdía una fecha
+  que `main` sacaba (el primero, `,1/1-26`: el borde nuevo deja casar `1/1`, que se come el principio
+  de `1-26`, la que `main` sacaba; con `,1/1-12` se perdería el 1 de diciembre). `_RE_FECHA.search`
+  sí era superconjunto (0 textos). Arreglo mínimo: `_RE_DIA_BARRA_MES` va dentro de un lookahead,
+  `(?=...)`, para que `findall` vea también las candidatas que se solapan; solo la usa `fechas_en`.
+  Con eso, 0 pérdidas.
+- `tests/unit/test_transcribir_sesion.py`: `test_una_fecha_pegada_a_una_coma_o_un_punto_va_a_cuarentena`
+  (las tres nuevas y la de control), `test_un_numero_con_decimales_no_es_una_fecha` (las cuatro del
+  encargo y tres que SOLO la condición del dígito a cada lado deja fuera: «1,5 del 3», «entre
+  1.08/1.09», «de 10,5-11,5»; las cuatro del encargo no las taparía ningún borde, porque no tienen
+  separador de fecha), `test_fechas_en_ve_la_fecha_pegada_a_una_coma_o_un_punto`,
+  `test_la_coma_y_el_punto_rotos_a_proposito_en_los_dos_sentidos` (con el `_RE_FECHA` y el
+  `_RE_DIA_BARRA_MES` de `main` copiados como literales, las nuevas no se tapan; con un borde que
+  solo mire el dígito, los decimales serían fechas) y `test_la_rama_no_tapa_menos_que_main` (139.392
+  textos sintéticos). **En la rama: 20 passed.**
+
+**La negativa.** En el clon `C:/cm/main` (0fa9c81), con `tests/unit/test_transcribir_sesion.py` de la
+rama copiado dentro, `uv run pytest ... -k "pegada or decimales or fechas_en_ve or rotos_a_proposito
+or no_tapa_menos"` da:
+
+```
+GUARDIA (.claude/hooks/guardia.py) bloquea: el codigo nombra la carpeta \., que contiene material
+protegido, y no se puede decidir que abrira dentro.
+Como reescribirlo: rutas LITERALES de ficheros que se puedan leer, o la CLI del proyecto.
+```
+
+El mismo fichero corre en el repo real (arriba): la guardia no lee como test el del clon y analiza
+sus literales de regex (`\.`) como rutas. Es la deuda K (`PROJECT_STATE.md`, Next Action K). El de
+diciembre (fase 1) sí corrió en el clon porque su fichero no lleva ese literal. La forma que propone
+la guardia no aplica, y la regla de la rama dice «PARADA, sin otra vía».
+
+**Lo que necesito que decidas:**
+
+1. (a) **Recomendado:** que valga como «rompe en main» lo que ya corre en el repo real: el test (1)
+   de `test_la_coma_y_el_punto_rotos_a_proposito_en_los_dos_sentidos`, que aplica a los textos
+   nuevos las regex de `main` copiadas como literales (con su commit y líneas de origen), más la
+   sonda de la fase 0 (§0.b), que midió esos textos con el código de `main` (salvo «hoy, 45 del 13,»,
+   que midió el auditor: `[]`). Y si lo autorizas, la sonda (`sonda_fase0.py`, sin regex literales)
+   corrida en el clon con los literales corregidos, como segunda medida en `main`. (b) Arreglar antes
+   la deuda K en su rama y volver aquí. (c) Otra que digas.
+2. El desvío del lookahead en `_RE_DIA_BARRA_MES`: lo doy por bueno salvo que digas otra cosa; es lo
+   que exige el superconjunto que pediste (punto 1 de tu respuesta).
+
+Mientras tanto no commiteo la fase 2 ni sigo con la regeneración, las fases 3 y 4 ni el cierre.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-28)
+
+Dada por Aleks (consultor) el 2026-10-28. Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 2 de trabajo/cuarentena-por-condicion-2 (2026-10-28). Cópiala tal cual al encargo y al informe, en «Respuesta del consultor a la PARADA 2», con su fecha, en el commit de la fase 2.
+>
+> 1. Cómo demostrar que rompen en main: (a) y la segunda medida en el clon, las dos.
+>    - La prueba de «rompe en main» es la sonda de la fase 0 repetida en C:/cm/main sobre todos los textos nuevos de los tests (los de _RE_FECHA, los de _RE_DIA_BARRA_MES y los de la fase 3 si aplica), porque mide el código real de main y no una copia. Su salida, literal, en el informe, junto a la de la rama. La guardia la deja pasar porque el guion no lleva el literal que dispara el falso positivo: no es una vía nueva para rodear la negativa, es la misma sonda de la fase 0, y así se declara.
+>    - El test con las regex de main copiadas literalmente, con su commit y sus líneas de origen, se queda en el repo como guardia de regresión del superconjunto, no como prueba de que rompe en main. Dilo así en su docstring.
+>    - Desviación de G.5 («Hecho cuando: test que rompe en main»), declarada en el informe: se demuestra con la sonda sobre main en el clon, porque la guardia niega los ficheros de test en el clon (deuda K).
+>    - Para el cierre, una línea que se añade a K en la Next Action, con la medida: la guardia niega en el clon de comparar-con-main un fichero de test porque «el código nombra la carpeta .», un falso positivo que en el repo real no salta. Escribe en el informe qué literal lo dispara (fichero:línea) y la frase exacta de la guardia.
+>
+> 2. El lookahead de _RE_DIA_BARRA_MES: aprobado. Condiciones: (i) el test de superconjunto cubre también fechas_en (todo par (mes, día) que main saca, la rama lo saca), con 0 pérdidas; (ii) cuenta, sobre la misma batería sintética, cuántos textos dan en la rama fechas que main no da (solapes como «1/1-12»), y escríbelo; es el lado seguro, pero se declara; (iii) un comentario encima de la regex con la condición y el porqué (findall no ve fechas solapadas sin el lookahead); (iv) entra en la lista de desviaciones del informe.
+>
+> Después: commit de la fase 2 con su make check sellado, la regeneración tras la fase 2 con scripts/ficheros_con_ocultos.py de main (PARADA si sale alguna ruta o algún ítem pasa de oculto a visible; solo recuentos), y las fases 3 y 4 y el cierre de la rama como dice el encargo. Al terminar, borra el clon C:/cm/main con la skill comparar-con-main, como ella diga.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 2. Fase 2 · La coma y el punto (2026-10-28)
+
+### 2.a Lo escrito
+
+- `src/botsito/corpus/cuarentena.py`: `_ANTES = (?<!\d)(?<!\d[.,])` y `_DESPUES = (?!\d)(?![.,]\d)`,
+  con la condición en su comentario («una coma o un punto forman parte de un numero solo cuando
+  tienen un digito a cada lado. Por eso «10,5» y «1.0850» no son fechas y «hoy, 45 del 13,» y «el
+  31/02,» si»), en las tres primeras alternativas de `_RE_FECHA` y en `_RE_DIA_BARRA_MES`; «mes N»
+  y `_RE_DIA_NUMERO` sin tocar. `_RE_DIA_BARRA_MES`, además, dentro de un lookahead (2.d).
+- `tests/unit/test_transcribir_sesion.py`, junto a `test_una_fecha_numerica_va_a_cuarentena`: los
+  cinco tests de 2.b. Cambios en ellos respecto a la PARADA 2: el docstring del de superconjunto
+  dice que es guardia de regresión y no la prueba de «rompe en main»; el superconjunto cubre
+  `fechas_en` entera (todo par (mes, día) que `main` saca); y la batería lleva «-12» al final, para
+  que tenga solapes (151.008 textos).
+
+### 2.b Rompe en main: la sonda sobre el código real de `main` y la de la rama
+
+Respuesta a la PARADA 2, punto 1: la prueba es la sonda de la fase 0 repetida (`sonda_fase2.py`,
+scratchpad, fuera del repo) en el clon `C:/cm/main` (0fa9c81) y en la rama, sobre todos los textos
+nuevos de los tests. La guardia la deja pasar porque el guion no lleva el literal que dispara el falso
+positivo (2.e): no es una vía nueva para rodear la negativa, es la misma sonda de la fase 0. La fase
+3 no aplica: `scripts/barrido_dias.py` no existe en `main`. Salidas literales:
+
+**`main`** (`cd C:/cm/main && uv run python .../sonda_fase2.py .../sonda2-main.json`):
+
+```
+codigo de: C:\cm\main\src\botsito\corpus\cuarentena.py
+diciembre: []
+motivos 'hoy, 45 del 13,' []
+motivos 'el 31/02,' []
+motivos 'el 31.02.99.' []
+motivos ', 31-02 ,' ['fecha numerica']
+motivos 'cuesta 10,5 pips' []
+motivos 'son 1,5 pips' []
+motivos '1.0850 del 2' []
+motivos '2.000 mensajes' []
+motivos '1,5 del 3' []
+motivos 'entre 1.08/1.09' []
+motivos 'de 10,5-11,5' []
+fechas_en 'el 31/02' [(2, 31)]
+fechas_en 'el 31/02,' []
+fechas_en 'el 31/02.' []
+fechas_en 'entre 1.08/1.09' []
+fechas_en ',1/1-12' [(12, 1)]
+bateria: 151008 textos; 28973 con fecha numerica; 4152 con alguna fecha de fechas_en
+```
+
+**Rama** (la misma orden en el repo):
+
+```
+codigo de: C:\Users\USER\Desktop\Bot v3\src\botsito\corpus\cuarentena.py
+diciembre: ['mes']
+motivos 'hoy, 45 del 13,' ['fecha numerica']
+motivos 'el 31/02,' ['fecha numerica']
+motivos 'el 31.02.99.' ['fecha numerica']
+motivos ', 31-02 ,' ['fecha numerica']
+motivos 'cuesta 10,5 pips' []
+motivos 'son 1,5 pips' []
+motivos '1.0850 del 2' []
+motivos '2.000 mensajes' []
+motivos '1,5 del 3' []
+motivos 'entre 1.08/1.09' []
+motivos 'de 10,5-11,5' []
+fechas_en 'el 31/02' [(2, 31)]
+fechas_en 'el 31/02,' [(2, 31)]
+fechas_en 'el 31/02.' [(2, 31)]
+fechas_en 'entre 1.08/1.09' []
+fechas_en ',1/1-12' [(1, 1), (12, 1)]
+bateria: 151008 textos; 37403 con fecha numerica; 5859 con alguna fecha de fechas_en
+```
+
+Así: las tres nuevas («hoy, 45 del 13,», «el 31/02,», «el 31.02.99.») dan `[]` en `main` y
+`['fecha numerica']` en la rama; la de control se tapa en los dos; los siete números con decimales no
+se tapan en ninguno; `fechas_en("el 31/02,")` da `[]` en `main` y `[(2, 31)]` en la rama.
+
+**Los tests, en la rama** (`uv run pytest -rA tests/unit/test_transcribir_sesion.py -k ...`): PASSED
+`test_una_fecha_pegada_a_una_coma_o_un_punto_va_a_cuarentena` (4 casos),
+`test_un_numero_con_decimales_no_es_una_fecha` (7), `test_fechas_en_ve_la_fecha_pegada_a_una_coma_o_un_punto`,
+`test_la_coma_y_el_punto_rotos_a_proposito_en_los_dos_sentidos` y `test_la_rama_no_tapa_menos_que_main`;
+y los 6 de `test_una_fecha_numerica_va_a_cuarentena`, tal cual. Los dos sentidos rotos a propósito,
+dentro del test: (1) con el `_RE_FECHA` y el `_RE_DIA_BARRA_MES` de `main` copiados como literales,
+las nuevas no se tapan y `fechas_en` no saca «el 31/02,»; (2) con un borde que solo mire el dígito,
+los tres decimales («1,5 del 3», «entre 1.08/1.09», «de 10,5-11,5») se taparían. Las cuatro del
+encargo que no son fechas no las taparía ningún borde (no tienen separador de fecha): por eso se
+añadieron esas tres, que son las que solo la condición nueva deja fuera.
+
+### 2.c La rama no tapa menos que `main`
+
+Por construcción: en cada posición, `(?<![\d.,])` exige que el carácter anterior no sea dígito, ni
+coma, ni punto; `(?<!\d)(?<!\d[.,])` solo exige que no sea dígito y que los dos anteriores no sean
+dígito+coma o dígito+punto, lo que el primero ya impide. Lo mismo hacia delante. El cuerpo de la
+regex no cambia, así que todo `search` que casa con el borde de `main` casa con el de la rama.
+Para `findall` no basta (2.d). Medido sobre la batería de 151.008 textos (`cruzar_sondas.py`, con
+las salidas del código real de los dos lados):
+
+```
+textos: 151008
+fecha numerica: main 28973, rama 37403; main tapa y la rama no: 0; la rama tapa y main no: 8430
+fechas_en: textos en que main saca un par que la rama no: 0; en que la rama saca un par que main no: 2031 (de ellos, 324 en que main ya sacaba otro: solapes)
+```
+
+`test_la_rama_no_tapa_menos_que_main` fija lo mismo como guardia de regresión.
+
+### 2.d Desviación: el lookahead de `_RE_DIA_BARRA_MES`
+
+Con solo los lookarounds nuevos, `findall` perdía fechas: la primera versión del test de superconjunto
+dio 432 textos en los que la rama no sacaba un par que `main` sí (el primero, `,1/1-26`). `findall`
+no vuelve atrás: con el borde nuevo, «1/1» (que `main` rechazaba por la coma de delante) se come el
+principio de «1-26»; con «,1/1-12» se perdería el par (12, 1). La regex va dentro de un lookahead,
+`(?=...)`, para que `findall` vea también las candidatas que se solapan; solo la usa `fechas_en`.
+Aprobado por el consultor (PARADA 2, punto 2), con sus condiciones: (i) el superconjunto cubre
+`fechas_en`, con 0 pérdidas (2.c); (ii) la rama saca pares que `main` no en 2031 textos de la
+batería, 324 de ellos solapes donde `main` ya sacaba otro par: es el lado seguro (más evidencia
+puede ocultarse, nunca menos); (iii) el comentario encima de la regex dice la condición y el porqué;
+(iv) entra en la lista de desviaciones (§5).
+
+### 2.e La negativa de la guardia en el clon (deuda K)
+
+- La frase exacta: «GUARDIA (.claude/hooks/guardia.py) bloquea: el codigo nombra la carpeta \., que
+  contiene material protegido, y no se puede decidir que abrira dentro.»
+- Lo que la dispara: la constante de texto `"\."` que `ast` saca del f-string de
+  `RE_FECHA_MAIN` en `tests/unit/test_transcribir_sesion.py:133` (`:131` en la copia que se llevó al
+  clon): el trozo entre `{_NUM_MAIN}` y `{_NUM_MAIN}` de `rf"|(?<![\d.,]){_NUM_MAIN}\.{_NUM_MAIN}\.\d{{2,4}}(?![\d.,])"`.
+  `analizar_codigo` (`.claude/hooks/guardia.py:3780-3815`) mira cada literal como ruta
+  (`_literales`, `:3818-3830`); en Windows `\.` es la raíz de la unidad, un directorio con material
+  protegido (`:3799-3808`). En el repo real el fichero no se analiza porque la guardia lo reconoce
+  como test; en el clon no (deuda K).
+- **Desviación de G.5** («Hecho cuando: los dos casos tienen su test que rompe en main y pasa en la
+  rama»): la coma y el punto se demuestran con la sonda sobre `main` en el clon (2.b), porque la
+  guardia niega los ficheros de test en el clon. Diciembre sí con su test en el clon (§1.c).
+
+### 2.f La regeneración tras la fase 2 y los recuentos
+
+Antes del commit, `uv run python scripts/ficheros_con_ocultos.py` (comprobación, el guion de `main`)
+da «OK: .claude/hooks/ficheros_con_ocultos.txt coincide» con el código de la fase 2. La regeneración
+con `--escribir`, tras el commit (§2.g). `medir_visibles.py` con el código de la rama:
+
+| Qué | `main` | Rama tras la fase 2 |
+|---|---|---|
+| Propuestas con algún segmento oculto | 10 | 10 (entran 0, salen 0) |
+| Ítems de evidencia visibles en `kb` | 555 | 555 (a ocultos 0, a visibles 0) |
+| Segmentos visibles en `kb` | 5860 | 5850 (a ocultos 10, a visibles 0) |
+
+Diez segmentos de las crudas pasan a ocultos (fechas pegadas a una coma o un punto, y sus vecinos);
+ninguno pasa de oculto a visible, y ningún ítem de evidencia cambia: sin PARADA.
+
 ## Estado
 
-EN CURSO. Fases 1 a 4 con los cambios de la respuesta del consultor.
+EN CURSO. Fase 2 hecha; siguen la regeneración tras la fase 2, las fases 3 y 4 y el cierre.

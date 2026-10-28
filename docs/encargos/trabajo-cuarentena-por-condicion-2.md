@@ -80,3 +80,21 @@ Dada por Aleks (consultor) el 2026-10-28. Copiada tal cual:
 > Para la orden de cierre, tres hallazgos del consultor que el auditor del consultor no vio y la fase 0 sí: (1) el encargo arreglaba un hueco en una regex sin buscar otras con el mismo hueco; (2) la regla nueva prometía una salida «por ADR» que el código no tiene y contradecía ADR-0078 y ADR-0079 (habría atrapado agosto); (3) el literal del test era una fecha real y el caso de control estaba mal numerado. Lección para el consultor: antes de escribir una regla sobre un fichero, leer cómo se entra y cómo se sale de él en el código, y qué ADR lo nombran; y antes de arreglar una regex, buscar sus copias.
 >
 > Sigue con las fases 1 a 4 como dice el encargo, con estos cambios. Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-28)
+
+Dada por Aleks (consultor) el 2026-10-28. Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 2 de trabajo/cuarentena-por-condicion-2 (2026-10-28). Cópiala tal cual al encargo y al informe, en «Respuesta del consultor a la PARADA 2», con su fecha, en el commit de la fase 2.
+>
+> 1. Cómo demostrar que rompen en main: (a) y la segunda medida en el clon, las dos.
+>    - La prueba de «rompe en main» es la sonda de la fase 0 repetida en C:/cm/main sobre todos los textos nuevos de los tests (los de _RE_FECHA, los de _RE_DIA_BARRA_MES y los de la fase 3 si aplica), porque mide el código real de main y no una copia. Su salida, literal, en el informe, junto a la de la rama. La guardia la deja pasar porque el guion no lleva el literal que dispara el falso positivo: no es una vía nueva para rodear la negativa, es la misma sonda de la fase 0, y así se declara.
+>    - El test con las regex de main copiadas literalmente, con su commit y sus líneas de origen, se queda en el repo como guardia de regresión del superconjunto, no como prueba de que rompe en main. Dilo así en su docstring.
+>    - Desviación de G.5 («Hecho cuando: test que rompe en main»), declarada en el informe: se demuestra con la sonda sobre main en el clon, porque la guardia niega los ficheros de test en el clon (deuda K).
+>    - Para el cierre, una línea que se añade a K en la Next Action, con la medida: la guardia niega en el clon de comparar-con-main un fichero de test porque «el código nombra la carpeta .», un falso positivo que en el repo real no salta. Escribe en el informe qué literal lo dispara (fichero:línea) y la frase exacta de la guardia.
+>
+> 2. El lookahead de _RE_DIA_BARRA_MES: aprobado. Condiciones: (i) el test de superconjunto cubre también fechas_en (todo par (mes, día) que main saca, la rama lo saca), con 0 pérdidas; (ii) cuenta, sobre la misma batería sintética, cuántos textos dan en la rama fechas que main no da (solapes como «1/1-12»), y escríbelo; es el lado seguro, pero se declara; (iii) un comentario encima de la regex con la condición y el porqué (findall no ve fechas solapadas sin el lookahead); (iv) entra en la lista de desviaciones del informe.
+>
+> Después: commit de la fase 2 con su make check sellado, la regeneración tras la fase 2 con scripts/ficheros_con_ocultos.py de main (PARADA si sale alguna ruta o algún ítem pasa de oculto a visible; solo recuentos), y las fases 3 y 4 y el cierre de la rama como dice el encargo. Al terminar, borra el clon C:/cm/main con la skill comparar-con-main, como ella diga.
+>
+> Rama lista para revisión, NO cerrada.
