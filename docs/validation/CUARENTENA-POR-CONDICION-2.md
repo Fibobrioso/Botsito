@@ -557,6 +557,176 @@ con `--escribir`, tras el commit (§2.g). `medir_visibles.py` con el código de 
 Diez segmentos de las crudas pasan a ocultos (fechas pegadas a una coma o un punto, y sus vecinos);
 ninguno pasa de oculto a visible, y ningún ítem de evidencia cambia: sin PARADA.
 
+### 2.g La regeneración tras la fase 2
+
+Tras el commit de la fase 2 (bed6968), `uv run python scripts/ficheros_con_ocultos.py --escribir`
+(el guion de `main`): «propuestas con segmentos ocultos: 10», «salidas de medicion con lineas
+ocultas, y ficheros que las copian: 4», «OK: 14 ficheros». `git status --short` vacío: el fichero
+no cambia ni un byte. **14 rutas antes y 14 después; entran 0, salen 0.** Sin PARADA.
+
+## 3. Fase 3 · El barrido ancho en la skill (2026-10-28)
+
+- **`scripts/barrido_dias.py`** (nuevo): recibe la filtrada y el rango (`--desde`, `--hasta`; por
+  defecto 18 y 31); de cada línea `[mm:ss] texto` (los encabezados no se barren, como en
+  `barrido_18_31.py`) pasa el texto por `normalizar` y `numeros_a_cifras` de
+  `botsito.corpus.cuarentena` y, si tiene un entero suelto dentro del rango, imprime la marca y la
+  línea con ese número cambiado por `[N]`; al final, el recuento. El entero suelto: `ENTERO =
+  (?<!\w)(?<!\d[.,])(\d{1,2})(?!\d)(?![.,]\d)`, la condición de la fase 2 (coma o punto solo con
+  dígito a cada lado) más «no pegado a una letra» (el código S25 no es un día), que es lo que ya
+  hacía `barrido_18_31.py`. Nunca imprime el número; sí imprime, enmascarada, la línea de la
+  filtrada: es su propósito, y la excepción a «solo recuentos» (§0.h, 8). `barrido_18_31.py` queda
+  en su anexo tal cual.
+- **`tests/unit/test_barrido_dias.py`** (nuevo), con una filtrada SINTÉTICA en una carpeta temporal,
+  sin fechas reales (días sueltos o con el mes 13). En la rama, 5 passed:
+  `test_el_dia_en_digitos_y_en_letra_sale_con_el_numero_enmascarado` («el 25 del 13» y «el
+  veinticinco» salen como `el [N] ...`; «hoy, 31,» sale como `hoy, [N],`; recuento 3),
+  `test_fuera_del_rango_un_precio_y_un_codigo_no_salen` (el 5, «1,25», «S25» y los encabezados no
+  salen), `test_la_salida_nunca_trae_el_numero`, `test_el_rango_se_fija_por_argumento` y
+  `test_roto_a_proposito_en_los_dos_sentidos`: (1) sin `numeros_a_cifras` (como
+  `barrido_18_31.py`) el día en letra no sale; (2) sin la condición del dígito a cada lado, «1,25»
+  saldría como `1,[N]`; y (3) el lookbehind de `barrido_18_31.py` no ve «hoy,31» y el nuevo sí.
+  Rompe en `main` no aplica: el guion no existe allí.
+- **La skill** `.claude/skills/ingerir-sesion/SKILL.md`, paso 6 (donde se lee la filtrada; el paso
+  4 la escribe, §0.f). `git diff main -- .claude/skills/ingerir-sesion/SKILL.md`, entero:
+
+  ```diff
+  @@ -93,7 +93,12 @@ Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
+      (v7: `3718889`). Desde ese commit `evidence propose --check` y `evidence new` rechazan citarlos.
+   5. **Fotogramas.** `uv run botsito corpus frames extract --video <vN>`; puerta:
+      `uv run botsito corpus frames check` (0 huecos, 0 extra).
+  -6. **Extraccion por pregunta.** La deteccion automatica («pregunta» + codigo ... «fin de pregunta»)
+  +6. **Extraccion por pregunta.** Antes de leer o releer cualquier filtrada se pasa
+  +   `uv run python scripts/barrido_dias.py <filtrada>` con el rango que fije el encargo de la ingesta
+  +   (`--desde`, `--hasta`; por defecto 18 a 31): ve los dias en digitos y en letra, y los imprime
+  +   enmascarados. Si sale una linea que sea un dia fuera de construccion del mes que nombra, PARADA
+  +   sin copiarla (regla del consultor del 2026-10-25, `SESION-05-EXTRACCION.md` §2.7, punto 3).
+  +   La deteccion automatica («pregunta» + codigo ... «fin de pregunta»)
+      dio 0 en v7 y en v9, y no se afloja (`SESION-DE-PREGUNTAS.md`). Se localiza a mano en la
+      filtrada, por los codigos sueltos o el texto leido de la pregunta; la cita es el literal de la
+      filtrada con su `mm:ss`, y el hablante se atribuye por contexto y se declara en `revisado_por`.
+  ```
+
+  Solo cambia ese paso. La regla del 2026-10-25 hablaba de julio del 18 en adelante; la skill la
+  dice para cualquier mes, como manda el encargo (§0.h, 8).
+
+## 4. Fase 4 · La regla de letras (2026-10-28)
+
+En `docs/runbooks/DECISIONES-DE-PROCESO.md`, «Decisions and Rationale», tras la del 2026-10-21 y con
+su formato, la entrada «2026-10-27 · La letra de una entrada nueva de la Next Action»: dice que nace
+aquí y no viene de la mudanza de PROJECT_STATE; la frase literal del encargo; el origen (las dos
+secciones de RECORRIDA-CONSTRUCCION.md, `:1752` y `:1952`, punto 1 en `:1962`; y la Z, con su
+registro HECHA anterior en `docs/state/HISTORIA.md:7644`); el problema; la alternativa; ACTIVE.
+Dos matices del auditor (§0.h, 8), escritos en la propia entrada: la segunda oración del consultor era
+«Las dos letras solo si se vuelven a agotar.», y las dos letras no se descartaron del todo: se
+dejaron para cuando se vuelvan a agotar. Ningún test fija esa sección (`grep DECISIONES-DE-PROCESO
+tests/`: solo una mención en un docstring de `tests/contract/test_tramos_fuente.py`).
+
+## 5. Desviaciones
+
+1. **El lookahead de `_RE_DIA_BARRA_MES`** (§2.d), aprobado en la respuesta a la PARADA 2, punto 2.
+2. **«Rompe en main» de la coma y el punto, por la sonda y no por el test** (§2.b, §2.e), por la
+   deuda K: desviación del «Hecho cuando» de G.5, ordenada en la respuesta a la PARADA 2, punto 1.
+3. **El literal del test**: «hoy, 45 del 13,» en lugar del del encargo, que es una fecha real
+   (§0.g-h, respuesta a la PARADA de la fase 0, punto 3).
+4. **`_RE_DIA_BARRA_MES` también cambia**, no solo `_RE_FECHA` (respuesta a la PARADA de la fase 0,
+   punto 1).
+5. **Tres textos más que no son fechas** («1,5 del 3», «entre 1.08/1.09», «de 10,5-11,5»), porque
+   los cuatro del encargo no los taparía ningún borde (§2.b).
+6. **`tests/unit/test_barrido_dias.py`**, un fichero de tests que el encargo no nombra, para el guion
+   nuevo de la fase 3 (en el contrato desde la apertura).
+7. **La regeneración tras la fase 1 además de la de la fase 2**, y los recuentos de `kb`, declarados
+   en una sola fila de HOLDOUT (respuesta a la PARADA de la fase 0, puntos 1 y 4).
+
+## 6. Las líneas del cierre, preparadas y SIN aplicar
+
+Simuladas en memoria (`simular_cierre.py` y `lineas_cierre.py`, en el scratchpad) sobre el
+`PROJECT_STATE.md`, la hoja de ruta y la HISTORIA de la rama: las cuatro comprobaciones de
+`test_hoja_de_ruta` (`problemas_a`, `_b`, `_c`, `_d`) dan `[]`. `wc -c` del `PROJECT_STATE.md`
+resultante: **22.889 bytes** (hoy, en la rama, 23.056). El cierre de `RITUAL.md` cambia además
+Current Branch, Current Feature, Stable Main State y Last Stable Commit, que no se simulan.
+
+**`PROJECT_STATE.md`, Next Action:**
+
+- F, entera: «F. La preparación de la sesión 6 (R4.2); R6a y Z en los huecos.»
+- K, se añade al final: «Y la de CUARENTENA-POR-CONDICION-2.md §2.e: en el clon de comparar-con-main
+  la guardia niega un fichero de test porque «el codigo nombra la carpeta \.» (la constante `\.` de
+  un f-string de regex, que en Windows es la raíz de la unidad), un falso positivo que en el repo real
+  no salta.»
+
+**`PROJECT_STATE.md`, Technical Debt:** salen la línea PRIORITARIA de la cuarentena y la de la skill
+ingerir-sesion; entra:
+
+- «Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin
+  excepción), y ADR-0078 y ADR-0079 exigen que un mes de construcción no esté en él: la rama que
+  decida llevar a construcción un mes de aquí construye antes la salida, con su ADR. Dueña: la rama
+  de R5.4, diciembre (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase
+  0, punto 2).»
+
+**`docs/plan/HOJA-DE-RUTA.md`:**
+
+- G.5, «Qué es»: «NA:I sin decidir» pasa a «la I sin decidir» (con la I viva, `test_hoja_de_ruta`
+  daría «esta HECHA y la letra sigue viva»); y tras «Hecho cuando» entra «- **Estado:** HECHA
+  (`stable/F38h-cuarentena-por-condicion-2`; docs/validation/CUARENTENA-POR-CONDICION-2.md: la coma
+  y el punto, por la sonda sobre el código de main en un clon, §2.b y §2.e).» (el tag, el siguiente
+  de la serie; lo fija la orden de cierre).
+- R5.4, «Qué es», se añade al final: «; si diciembre va a construcción, antes la salida de
+  meses_reservados.yaml con su ADR (hoy no existe).»
+
+**Para la fila de la rama en `ERRORES-RECURRENTES.md`** (la escribe el cierre): los tres hallazgos
+del consultor de su respuesta a la PARADA de la fase 0 y su lección, más lo que diga la orden de
+cierre.
+
+## 7. Comandos, literales
+
+De la sesión, en orden (los de solo lectura de código con Read y Grep no se listan):
+
+1. Base: `git fetch origin`; `git status --short`; `git rev-parse --short main`;
+   `git rev-parse main origin/main`; `git rev-parse "stable/F38g-recorrida-construccion^{commit}" main^1`;
+   `git ls-remote --tags origin stable/F38g-recorrida-construccion`; `git branch --list`;
+   `git ls-remote --heads origin "fix/*"`; `gh api repos/{owner}/{repo}/commits/0fa9c81b5b26d47f884860ff4530eb0a37eb6b02/check-runs --jq ...`;
+   `git checkout -b trabajo/cuarentena-por-condicion-2`; `git ls-remote --heads origin`.
+2. Apertura: `printf '\n# Archivo 50 · ...' >> docs/state/HISTORIA.md`; `git show main:PROJECT_STATE.md >> docs/state/HISTORIA.md`;
+   `git add ...`; `uv run botsito state check`; `uv run python scripts/contrato_rama.py`;
+   `make check > make-check.log 2>&1` (en segundo plano, cada vez); `git commit -q -F <fichero>`.
+3. Fase 0: `uv run python <scratchpad>/sonda_fase0.py` (texto sintético).
+4. Fase 1: `uv run python <scratchpad>/fila_holdout.py "<repo>"`; `git diff main --stat -- src scripts knowledge .claude tests`;
+   `uv run python <scratchpad>/medir_visibles.py "<repo>" <scratchpad>/visibles-main.json`;
+   `uv run pytest -p no:cacheprovider -rA <tests> -k "..."`; `git worktree add --detach C:/cm/main main`;
+   `cp <test de la rama> C:/cm/main/tests/unit/...`; `cd C:/cm/main && uv run pytest ...`;
+   `cp .claude/hooks/ficheros_con_ocultos.txt <scratchpad>/lista-main.txt`;
+   `git diff main --stat -- scripts/ficheros_con_ocultos.py`; `uv run python scripts/ficheros_con_ocultos.py`;
+   `uv run python scripts/ficheros_con_ocultos.py --escribir`; `git diff --stat -- .claude/hooks/ficheros_con_ocultos.txt`;
+   `uv run python <scratchpad>/medir_visibles.py ... visibles-f1.json`; `uv run python <scratchpad>/comparar_visibles.py ...`;
+   `uv run botsito knowledge validate`.
+5. Fase 2: `uv run pytest ...`; `cp ...` y `cd C:/cm/main && uv run pytest ...` (negado, PARADA 2);
+   `cd C:/cm/main && uv run python <scratchpad>/sonda_fase2.py <scratchpad>/sonda2-main.json`;
+   `uv run python <scratchpad>/sonda_fase2.py <scratchpad>/sonda2-rama.json`;
+   `uv run python <scratchpad>/cruzar_sondas.py ...`; `uv run python scripts/ficheros_con_ocultos.py`;
+   `uv run python <scratchpad>/medir_visibles.py ... visibles-f2.json`; `uv run ruff check ...`;
+   `uv run ruff format --check ...`; `uv run mypy`; tras el commit, `uv run python scripts/ficheros_con_ocultos.py --escribir`.
+6. Fase 3: `cp <scratchpad>/barrido_dias.py scripts/`; `cp <scratchpad>/test_barrido_dias.py tests/unit/`;
+   `uv run ruff format scripts/barrido_dias.py tests/unit/test_barrido_dias.py`; `uv run pytest -rA tests/unit/test_barrido_dias.py`;
+   `git diff main -- .claude/skills/ingerir-sesion/SKILL.md`.
+7. Cierre preparado: `uv run python <scratchpad>/simular_cierre.py "<repo>"`; `wc -c ...`.
+
+**Negativas de la guardia, todas seguidas por la forma que ella propone** (regla de la rama):
+`c=$(git log ...)` (variable de entorno fuera de la lista); `git add ... && uv run botsito state check`;
+`git log ... | xargs grep` (se hizo con la herramienta Grep); `pytest ... | sed ...` (se quitó el
+`sed`); `cp ... && cd C:/cm/main && uv run pytest` (en dos llamadas); `git diff ... ; uv run python
+scripts/ficheros_con_ocultos.py` (en dos); `uv run --project ...` (desde el repo); `git status --short;
+uv run botsito state check` (en dos); `git status --short; cmp ...` (se usó `git status` solo). La
+única que no tenía forma propuesta, la del clon, fue la PARADA 2.
+
+## 8. Exposiciones del día
+
+Una fila en `docs/validation/HOLDOUT-EXPOSICIONES.md` (2026-10-28), escrita ANTES del primer `make
+check` con diciembre y antes de ejecutar nada que leyera material: las cuatro lecturas en memoria (la
+de cada `make check`, las dos regeneraciones y los recuentos de `kb` con el código de `main` y el de
+la rama). Fuera de eso, ninguna lectura de material: ni libros, ni imágenes, ni fotogramas, ni
+filtradas; las sondas y los tests, con texto sintético. El auditor del encargo declaró lo suyo en su
+informe (§0.h): una llamada a `meses_libres` con texto sintético y un `git ls-files knowledge/cases`
+que solo listó rutas de README.
+
 ## Estado
 
-EN CURSO. Fase 2 hecha; siguen la regeneración tras la fase 2, las fases 3 y 4 y el cierre.
+EN CURSO. Fases 1 a 4 hechas; siguen el `make check` sellado, el push a `fix/`, la CI y el revisor.

@@ -16,7 +16,7 @@ faf5ce2 · merge de `trabajo/recorrida-construccion` (tag `stable/F38g-recorrida
 faf5ce2 · merge: trabajo/recorrida-construccion, la corrida que cuenta por ADR-0070 §3 (no), la linea base nueva, las dos listas para la sesion 6 y el error del respaldo M1 (Z) · tag stable/F38g-recorrida-construccion
 
 ## Tests Currently Passing
-1736 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1741 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
