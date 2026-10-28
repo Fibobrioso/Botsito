@@ -3,15 +3,19 @@
 docs/validation/SESION-05-EXTRACCION.md §2.7, punto 3; skill `ingerir-sesion`).
 
 Toda linea `[mm:ss] texto` de la filtrada con un entero suelto dentro del rango de dias (por
-defecto 18 a 31) se imprime con su marca de tiempo y ese numero sustituido por [N]: el numero no se
-imprime nunca. Antes de buscar, la linea pasa por `normalizar` y `numeros_a_cifras` de
-`botsito.corpus.cuarentena`, asi que el dia escrito en letra («el veinticinco») sale igual que en
-digitos. Sucesor de `docs/validation/anexos/SESION-05/barrido_18_31.py`, que solo veia digitos
+defecto 18 a 31) se imprime con su marca de tiempo y esos numeros sustituidos por [N]: un numero
+DEL RANGO no se imprime nunca. El resto de la linea sale tal cual, normalizada, con los demas
+numeros (un mes en cifras, un dia por debajo de `--desde`) a la vista: por eso el rango tiene que
+cubrir todos los dias que no son de construccion del mes que se barre. Antes de buscar, la linea
+pasa por `normalizar` y `numeros_a_cifras` de `botsito.corpus.cuarentena`, asi que el dia escrito
+en letra («el veinticinco») sale igual que en digitos. Sucesor de
+`docs/validation/anexos/SESION-05/barrido_18_31.py`, que solo veia digitos
 (SESION-05-EXTRACCION.md §11, a7).
 
-Un entero suelto: no pegado a una letra (el codigo S25 no es un dia) ni a otro digito, y con la
-condicion de la regla de fecha (`cuarentena._RE_FECHA`): una coma o un punto forman parte de un
-numero solo cuando tienen un digito a cada lado. Por eso «1,25» no es un dia y «hoy, 25,» si.
+Un entero suelto: no pegado a una letra (el codigo S25 no es un dia; como en `barrido_18_31.py`)
+ni a otro digito, y con el MISMO borde que la regla de fecha (`cuarentena._ANTES` y
+`cuarentena._DESPUES`, importados, no copiados): una coma o un punto forman parte de un numero solo
+cuando tienen un digito a cada lado. Por eso «1,25» no es un dia y «hoy, 25,» si.
 
 Uso:
     uv run python scripts/barrido_dias.py <filtrada.md> [--desde 18] [--hasta 31]
@@ -24,10 +28,12 @@ import re
 import sys
 from pathlib import Path
 
-from botsito.corpus.cuarentena import normalizar, numeros_a_cifras
+# `_ANTES` y `_DESPUES` son el borde de la regla de fecha: se importan para que la condicion viva en
+# un solo sitio (revisor de `trabajo/cuarentena-por-condicion-2`, A2).
+from botsito.corpus.cuarentena import _ANTES, _DESPUES, normalizar, numeros_a_cifras
 
 LINEA = re.compile(r"^\[(\d+:\d\d)\] (.*)$")
-ENTERO = re.compile(r"(?<!\w)(?<!\d[.,])(\d{1,2})(?!\d)(?![.,]\d)")
+ENTERO = re.compile(rf"(?<!\w){_ANTES}(\d{{1,2}}){_DESPUES}")
 DESDE = 18
 HASTA = 31
 

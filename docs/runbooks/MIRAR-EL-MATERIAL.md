@@ -130,7 +130,8 @@ su ADR.
 Por qué: la cuarentena del texto solo deja ver un mes DEMOSTRADO libre (`meses_libres`,
 `src/botsito/cases/holdout.py`), y un mes recibido y fuera del repo pasaba por libre, porque no
 tiene casos en ningún reparto (condición (a)) ni entrada en `knowledge/cases/meses_reservados.yaml`
-(condición (b)). Diciembre de 2025 fue el caso (recibido el 2026-10-09, SESION-05-EXTRACCION.md
-§2.7). La regla nombra la condición -material recibido y sin ADR de construcción- en vez de añadir
+(condición (b)). Diciembre de 2025 fue el caso: recibido el 2026-10-09 (la entrada I de la Next
+Action de `PROJECT_STATE.md`; SESION-05-EXTRACCION.md §3.5), y el hueco, medido en
+SESION-05-EXTRACCION.md §11, a4. La regla nombra la condición -material recibido y sin ADR de construcción- en vez de añadir
 un mes a mano cada vez que alguien se da cuenta. Los meses de construcción, por sus ADR: abril y
 agosto (ADR-0043), julio (ADR-0078) y enero (ADR-0079).

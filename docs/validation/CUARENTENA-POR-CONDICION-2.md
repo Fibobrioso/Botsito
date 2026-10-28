@@ -349,15 +349,16 @@ de `main`. Ninguna ruta sale de la lista y ningún ítem pasa de oculto a visibl
   `_RE_DIA_BARRA_MES`; «mes N» y `_RE_DIA_NUMERO` sin tocar.
 - **Un desvío, medido**: con los mismos lookarounds, `_RE_DIA_BARRA_MES.findall` NO era superconjunto
   de `main`: la batería del test de superconjunto dio 432 textos en los que la rama perdía una fecha
-  que `main` sacaba (el primero, `,1/1-26`: el borde nuevo deja casar `1/1`, que se come el principio
-  de `1-26`, la que `main` sacaba; con `,1/1-12` se perdería el 1 de diciembre). `_RE_FECHA.search`
+  que `main` sacaba (con una fecha imposible, `,1/31-2`: el borde nuevo deja casar `1/31`, que se
+  come el principio de `31-2`, la que `main` sacaba; los ejemplos de esta PARADA se cambiaron tras el
+  revisor, B1, por fechas imposibles). `_RE_FECHA.search`
   sí era superconjunto (0 textos). Arreglo mínimo: `_RE_DIA_BARRA_MES` va dentro de un lookahead,
   `(?=...)`, para que `findall` vea también las candidatas que se solapan; solo la usa `fechas_en`.
   Con eso, 0 pérdidas.
 - `tests/unit/test_transcribir_sesion.py`: `test_una_fecha_pegada_a_una_coma_o_un_punto_va_a_cuarentena`
   (las tres nuevas y la de control), `test_un_numero_con_decimales_no_es_una_fecha` (las cuatro del
-  encargo y tres que SOLO la condición del dígito a cada lado deja fuera: «1,5 del 3», «entre
-  1.08/1.09», «de 10,5-11,5»; las cuatro del encargo no las taparía ningún borde, porque no tienen
+  encargo y tres que SOLO la condición del dígito a cada lado deja fuera, hoy «1,5 del 13», «entre
+  1.45/1.46», «de 10,5-13,5» tras el revisor, B1; las cuatro del encargo no las taparía ningún borde, porque no tienen
   separador de fecha), `test_fechas_en_ve_la_fecha_pegada_a_una_coma_o_un_punto`,
   `test_la_coma_y_el_punto_rotos_a_proposito_en_los_dos_sentidos` (con el `_RE_FECHA` y el
   `_RE_DIA_BARRA_MES` de `main` copiados como literales, las nuevas no se tapan; con un borde que
@@ -423,8 +424,10 @@ Dada por Aleks (consultor) el 2026-10-28. Copiada tal cual:
 - `tests/unit/test_transcribir_sesion.py`, junto a `test_una_fecha_numerica_va_a_cuarentena`: los
   cinco tests de 2.b. Cambios en ellos respecto a la PARADA 2: el docstring del de superconjunto
   dice que es guardia de regresión y no la prueba de «rompe en main»; el superconjunto cubre
-  `fechas_en` entera (todo par (mes, día) que `main` saca); y la batería lleva «-12» al final, para
-  que tenga solapes (151.008 textos).
+  `fechas_en` entera (todo par (mes, día) que `main` saca); y, tras el revisor (B1), la batería solo
+  guarda los textos sin ninguna fecha posible (`_sin_fechas_posibles`: todo par de números sueltos
+  unido por un separador tiene el mes fuera de 1-12 o más días que el mes) y sus asserts solo dan
+  recuentos: 73.008 textos de 210.912.
 
 ### 2.b Rompe en main: la sonda sobre el código real de `main` y la de la rama
 
@@ -447,15 +450,15 @@ motivos 'cuesta 10,5 pips' []
 motivos 'son 1,5 pips' []
 motivos '1.0850 del 2' []
 motivos '2.000 mensajes' []
-motivos '1,5 del 3' []
-motivos 'entre 1.08/1.09' []
-motivos 'de 10,5-11,5' []
+motivos '1,5 del 13' []
+motivos 'entre 1.45/1.46' []
+motivos 'de 10,5-13,5' []
 fechas_en 'el 31/02' [(2, 31)]
 fechas_en 'el 31/02,' []
 fechas_en 'el 31/02.' []
-fechas_en 'entre 1.08/1.09' []
-fechas_en ',1/1-12' [(12, 1)]
-bateria: 151008 textos; 28973 con fecha numerica; 4152 con alguna fecha de fechas_en
+fechas_en 'entre 1.45/1.46' []
+fechas_en ',1/31-2' [(2, 31)]
+bateria: 73008 textos; 17203 con fecha numerica; 1284 con alguna fecha de fechas_en
 ```
 
 **Rama** (la misma orden en el repo):
@@ -471,16 +474,20 @@ motivos 'cuesta 10,5 pips' []
 motivos 'son 1,5 pips' []
 motivos '1.0850 del 2' []
 motivos '2.000 mensajes' []
-motivos '1,5 del 3' []
-motivos 'entre 1.08/1.09' []
-motivos 'de 10,5-11,5' []
+motivos '1,5 del 13' []
+motivos 'entre 1.45/1.46' []
+motivos 'de 10,5-13,5' []
 fechas_en 'el 31/02' [(2, 31)]
 fechas_en 'el 31/02,' [(2, 31)]
 fechas_en 'el 31/02.' [(2, 31)]
-fechas_en 'entre 1.08/1.09' []
-fechas_en ',1/1-12' [(1, 1), (12, 1)]
-bateria: 151008 textos; 37403 con fecha numerica; 5859 con alguna fecha de fechas_en
+fechas_en 'entre 1.45/1.46' []
+fechas_en ',1/31-2' [(2, 31)]
+bateria: 73008 textos; 25487 con fecha numerica; 1902 con alguna fecha de fechas_en
 ```
+
+(Las dos salidas, de la sonda repetida tras el revisor, B1, con la batería sin fechas posibles y los
+decimales nuevos; la primera pasada, con la batería de 151.008 textos, dio lo mismo en los textos
+comunes: 0 pérdidas.)
 
 Así: las tres nuevas («hoy, 45 del 13,», «el 31/02,», «el 31.02.99.») dan `[]` en `main` y
 `['fecha numerica']` en la rama; la de control se tapa en los dos; los siete números con decimales no
@@ -493,7 +500,7 @@ se tapan en ninguno; `fechas_en("el 31/02,")` da `[]` en `main` y `[(2, 31)]` en
 y los 6 de `test_una_fecha_numerica_va_a_cuarentena`, tal cual. Los dos sentidos rotos a propósito,
 dentro del test: (1) con el `_RE_FECHA` y el `_RE_DIA_BARRA_MES` de `main` copiados como literales,
 las nuevas no se tapan y `fechas_en` no saca «el 31/02,»; (2) con un borde que solo mire el dígito,
-los tres decimales («1,5 del 3», «entre 1.08/1.09», «de 10,5-11,5») se taparían. Las cuatro del
+los tres decimales («1,5 del 13», «entre 1.45/1.46», «de 10,5-13,5») se taparían. Las cuatro del
 encargo que no son fechas no las taparía ningún borde (no tienen separador de fecha): por eso se
 añadieron esas tres, que son las que solo la condición nueva deja fuera.
 
@@ -503,29 +510,35 @@ Por construcción: en cada posición, `(?<![\d.,])` exige que el carácter anter
 coma, ni punto; `(?<!\d)(?<!\d[.,])` solo exige que no sea dígito y que los dos anteriores no sean
 dígito+coma o dígito+punto, lo que el primero ya impide. Lo mismo hacia delante. El cuerpo de la
 regex no cambia, así que todo `search` que casa con el borde de `main` casa con el de la rama.
-Para `findall` no basta (2.d). Medido sobre la batería de 151.008 textos (`cruzar_sondas.py`, con
-las salidas del código real de los dos lados):
+Para `findall` no basta (2.d). Medido sobre la batería del test, 73.008 textos sin ninguna fecha
+posible (`cruzar_sondas.py`, con las salidas del código real de los dos lados):
 
 ```
-textos: 151008
-fecha numerica: main 28973, rama 37403; main tapa y la rama no: 0; la rama tapa y main no: 8430
-fechas_en: textos en que main saca un par que la rama no: 0; en que la rama saca un par que main no: 2031 (de ellos, 324 en que main ya sacaba otro: solapes)
+textos: 73008
+fecha numerica: main 17203, rama 25487; main tapa y la rama no: 0; la rama tapa y main no: 8284
+fechas_en: textos en que main saca un par que la rama no: 0; en que la rama saca un par que main no: 618 (de ellos, 0 en que main ya sacaba otro: solapes)
 ```
 
-`test_la_rama_no_tapa_menos_que_main` fija lo mismo como guardia de regresión.
+`test_la_rama_no_tapa_menos_que_main` fija lo mismo como guardia de regresión, y solo da recuentos si
+falla. Con la primera batería (151.008 textos, con fechas posibles: B1) el cruce dio también 0
+pérdidas, 8430 textos más tapados y 2031 con pares nuevos, 324 de ellos solapes.
 
 ### 2.d Desviación: el lookahead de `_RE_DIA_BARRA_MES`
 
 Con solo los lookarounds nuevos, `findall` perdía fechas: la primera versión del test de superconjunto
-dio 432 textos en los que la rama no sacaba un par que `main` sí (el primero, `,1/1-26`). `findall`
-no vuelve atrás: con el borde nuevo, «1/1» (que `main` rechazaba por la coma de delante) se come el
-principio de «1-26»; con «,1/1-12» se perdería el par (12, 1). La regex va dentro de un lookahead,
+dio 432 textos en los que la rama no sacaba un par que `main` sí. `findall` no vuelve atrás: con el
+borde nuevo, en «,1/31-2», «1/31» (que `main` rechazaba por la coma de delante) se come el principio
+de «31-2», y se pierde el par (2, 31) que `main` sacaba. La regex va dentro de un lookahead,
 `(?=...)`, para que `findall` vea también las candidatas que se solapan; solo la usa `fechas_en`.
-Aprobado por el consultor (PARADA 2, punto 2), con sus condiciones: (i) el superconjunto cubre
-`fechas_en`, con 0 pérdidas (2.c); (ii) la rama saca pares que `main` no en 2031 textos de la
-batería, 324 de ellos solapes donde `main` ya sacaba otro par: es el lado seguro (más evidencia
-puede ocultarse, nunca menos); (iii) el comentario encima de la regex dice la condición y el porqué;
-(iv) entra en la lista de desviaciones (§5).
+Medido con un mutante sin el lookahead (`mutante_lookahead.py`, scratchpad): `,1/31-2` da
+`[('1', '31')]` sin él y `[('1', '31'), ('31', '2')]` con él; y sobre la batería del test el mutante
+pierde pares de `main` en 192 textos, la rama en 0. Aprobado por el consultor (PARADA 2, punto 2),
+con sus condiciones: (i) el superconjunto cubre `fechas_en`, con 0 pérdidas (2.c); (ii) sobre la
+batería del test, la rama saca pares que `main` no en 618 textos, ninguno de ellos un solape con otro
+par de `main` (en la primera batería, con fechas posibles, 2031 y 324): es el lado seguro (más
+evidencia puede ocultarse, nunca menos); el solape tiene además su literal en el test, «,1/31-2»;
+(iii) el comentario encima de la regex dice la condición y el porqué; (iv) entra en la lista de
+desviaciones (§5).
 
 ### 2.e La negativa de la guardia en el clon (deuda K)
 
@@ -571,11 +584,15 @@ no cambia ni un byte. **14 rutas antes y 14 después; entran 0, salen 0.** Sin P
   `barrido_18_31.py`) pasa el texto por `normalizar` y `numeros_a_cifras` de
   `botsito.corpus.cuarentena` y, si tiene un entero suelto dentro del rango, imprime la marca y la
   línea con ese número cambiado por `[N]`; al final, el recuento. El entero suelto: `ENTERO =
-  (?<!\w)(?<!\d[.,])(\d{1,2})(?!\d)(?![.,]\d)`, la condición de la fase 2 (coma o punto solo con
-  dígito a cada lado) más «no pegado a una letra» (el código S25 no es un día), que es lo que ya
-  hacía `barrido_18_31.py`. Nunca imprime el número; sí imprime, enmascarada, la línea de la
-  filtrada: es su propósito, y la excepción a «solo recuentos» (§0.h, 8). `barrido_18_31.py` queda
-  en su anexo tal cual.
+  (?<!\w){_ANTES}(\d{1,2}){_DESPUES}`, con `_ANTES` y `_DESPUES` IMPORTADOS de
+  `botsito.corpus.cuarentena` (tras el revisor, A2: la primera versión los copiaba a mano), es
+  decir la condición de la fase 2 (coma o punto solo con dígito a cada lado), más «no pegado a una
+  letra» (el código S25 no es un día), que es lo que ya hacía `barrido_18_31.py` (desviación, §5).
+  Nunca imprime un número DEL RANGO; sí imprime la línea de la filtrada, normalizada, con los demás
+  números a la vista (un mes en cifras, un día por debajo de `--desde`): es su propósito, y la
+  excepción a «solo recuentos» (§0.h, 8); por eso el docstring y la skill dicen que el rango cubre
+  todos los días fuera de construcción del mes que se barre (tras el revisor, B4).
+  `barrido_18_31.py` queda en su anexo tal cual.
 - **`tests/unit/test_barrido_dias.py`** (nuevo), con una filtrada SINTÉTICA en una carpeta temporal,
   sin fechas reales (días sueltos o con el mes 13). En la rama, 5 passed:
   `test_el_dia_en_digitos_y_en_letra_sale_con_el_numero_enmascarado` («el 25 del 13» y «el
@@ -630,8 +647,11 @@ tests/`: solo una mención en un docstring de `tests/contract/test_tramos_fuente
    (§0.g-h, respuesta a la PARADA de la fase 0, punto 3).
 4. **`_RE_DIA_BARRA_MES` también cambia**, no solo `_RE_FECHA` (respuesta a la PARADA de la fase 0,
    punto 1).
-5. **Tres textos más que no son fechas** («1,5 del 3», «entre 1.08/1.09», «de 10,5-11,5»), porque
+5. **Tres textos más que no son fechas** («1,5 del 13», «entre 1.45/1.46», «de 10,5-13,5»), porque
    los cuatro del encargo no los taparía ningún borde (§2.b).
+8. **`ENTERO` del barrido añade «no pegado a una letra»** (`(?<!\w)`) a la condición de la fase 2
+   que manda el encargo, como hacía `barrido_18_31.py`: el código S25 no es un día (§3; revisor,
+   B3).
 6. **`tests/unit/test_barrido_dias.py`**, un fichero de tests que el encargo no nombra, para el guion
    nuevo de la fase 3 (en el contrato desde la apertura).
 7. **La regeneración tras la fase 1 además de la de la fase 2**, y los recuentos de `kb`, declarados
@@ -744,11 +764,11 @@ uv run botsito state check` (en dos); `git status --short; cmp ...` (se usó `gi
 | 21 | Resp. PARADA 2: rompe en main por la sonda en el clon, salidas literales | Hecho | §2.b |
 | 22 | Resp. PARADA 2: el test de regex copiadas, como guardia de regresión en su docstring | Hecho | `test_la_rama_no_tapa_menos_que_main` |
 | 23 | Resp. PARADA 2: desviación de G.5 declarada; literal y frase de la guardia | Hecho | §2.e |
-| 24 | Resp. PARADA 2: solapes contados | Hecho (2031 textos, 324 solapes) | §2.c-d |
+| 24 | Resp. PARADA 2: solapes contados | Hecho (sobre la batería del test, 618 textos y 0 solapes; en la primera, 2031 y 324; el solape, con su literal) | §2.c-d |
 | 25 | Fila de HOLDOUT antes de leer, con las tres (y cuatro) lecturas | Hecho | §1.d, §9 |
 | 26 | Regeneración tras la fase 1 y tras la fase 2, solo recuentos, PARADA si sale algo | Hecho (14 → 14 las dos veces) | §1.d, §2.g |
 | 27 | Ítems de evidencia y propuestas de visibles a ocultos, por recuento | Hecho (0 y 0; 10 segmentos) | §1.d, §2.f |
-| 28 | F3: `scripts/barrido_dias.py` (normalizar, numeros_a_cifras, [N], misma condición) | Hecho | §3 |
+| 28 | F3: `scripts/barrido_dias.py` (normalizar, numeros_a_cifras, [N], misma condición) | Hecho, con «no pegado a una letra» (§5, 8) | §3 |
 | 29 | F3: tests sintéticos rotos en los dos sentidos | Hecho | §3 |
 | 30 | F3: la skill, solo ese paso, con el diff | Hecho | §3 |
 | 31 | F4: la entrada en DECISIONES-DE-PROCESO con su frase literal, origen, problema, alternativa, ACTIVE | Hecho | §4 |
@@ -757,8 +777,8 @@ uv run botsito state check` (en dos); `git status --short; cmp ...` (se usó `gi
 | 34 | Resp. 2: línea de Technical Debt (R5.4) y la frase en R5.4 | Hecho (preparadas) | §6 |
 | 35 | Resp. PARADA 2: la línea que se añade a K | Hecho (preparada) | §6 |
 | 36 | `make check` sellado, push a `fix/`, CI de Linux | Hecho | §10 |
-| 37 | Revisor con el informe terminado y su alcance; su informe pegado | Hecho | al final |
-| 38 | Borrar el clon `C:/cm/main` con `comparar-con-main` | Hecho | §10 |
+| 37 | Revisor con el informe terminado y su alcance; su informe pegado | Hecho (lanzado sobre 1086d7d; pegado tras su informe, con lo que se hizo) | §11, §12 |
+| 38 | Borrar el clon `C:/cm/main` con `comparar-con-main` | Hecho (tras el revisor) | §12 |
 | 39 | QUÉ NO CAMBIA: motor, spec, ambigüedades, feedback, evidencia, casos, repartos, corpus, guardia, settings | Hecho (`git diff --stat main...HEAD`, §10) | §10 |
 
 ## 9. Exposiciones del día
@@ -796,7 +816,207 @@ que solo listó rutas de README.
 - **El clon `C:/cm/main`** se deja hasta después del revisor y se borra con `comparar-con-main`
   (respuesta a la PARADA 2); se anota al final.
 
+## 11. Informe del revisor (subagente `revisor`, 2026-10-28), pegado tal cual
+
+Lanzado sobre 9567a8c con este informe terminado y estadiado (luego commiteado como 1086d7d), con
+los cinco alcances del encargo. Sin retiradas: no cita nada de un tramo no citable.
+
+> ## Informe del revisor · trabajo/cuarentena-por-condicion-2 · 2026-10-28
+>
+> La rama no tiene ningún hallazgo que bloquee. Hay tres que importan y tres menores. Lo más serio es B1: la batería del test de superconjunto y un literal de los tests nuevos usan fechas posibles de meses reservados (diciembre y septiembre), y eso choca con «sin fechas reales».
+>
+> Base: `merge-base main HEAD` = 0fa9c81. Seis commits (c0607bd..9567a8c). El informe está estadiado sin commitear y lo he leído del árbol de trabajo. `git diff --stat main...HEAD` da 15 ficheros.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | importa | La sección nueva de MIRAR-EL-MATERIAL cita mal de dónde sale la fecha. Dice «Diciembre de 2025 fue el caso (recibido el 2026-10-09, SESION-05-EXTRACCION.md §2.7)», pero §2.7 no habla de diciembre. | `docs/runbooks/MIRAR-EL-MATERIAL.md:133`. `grep -ni diciembre` en SESION-05-EXTRACCION.md da las líneas 41, 308, 1066-1073, 1148, 1229, 1417 y 1535 en adelante; ninguna cae en §2.7 (líneas 329-378). La fecha está en §3.5 (`:1073`, «NA:I dice que el backtest llegó el 2026-10-09 sin vídeo») y en `PROJECT_STATE.md:42` (NA:I). El hueco de diciembre en `meses_libres` está en §11, a4 (`:1535`). |
+> | A2 | menor | `scripts/barrido_dias.py` crea una tercera copia escrita a mano de la regla «coma o punto solo con un dígito a cada lado», en vez de usar `_ANTES` y `_DESPUES` de `cuarentena.py`. Ningún test ata las dos copias, así que si la regla cambia en `cuarentena.py`, el barrido no la sigue. Es la misma lección del consultor: «antes de arreglar una regex, buscar sus copias». | `scripts/barrido_dias.py:30` frente a `src/botsito/corpus/cuarentena.py:289-290` |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py`: «CONTRATO: 15 ficheros dentro del contrato de trabajo/cuarentena-por-condicion-2 (riesgo alto, artefacto docs/validation/CUARENTENA-POR-CONDICION-2.md, tramo 'Carril: guardias y deuda', 4 comprobaciones para el revisor)».
+> - **Tests del contrato.** `pytest` de `test_cuarentena_por_condicion`, `test_transcribir_sesion`, `test_cuarentena` y `test_barrido_dias`: **233 passed**, exit 0. `test_guardia_claude.py` no lo ejecuté porque lee las crudas (ver «Lo que no pude comprobar»).
+> - **El árbol sellado.** `git rev-parse 9567a8c^{tree}` = 294323dc7948…, el mismo que el SELLO que cita el informe (§10).
+> - **CI.** `gh run view 40731298628`: headSha 9567a8c449bd…, rama `fix/cuarentena-por-condicion-2`, `failure`. En `--log-failed` solo falla `test_state_check_ok_on_real_repo`, con «1 failed, 2943 passed, 46 skipped».
+> - **Trailer `Fuente:`.** El único commit que toca `knowledge/cases/` es f5bc65b, y lleva «Fuente: ADR-0072» en el cuerpo. El ADR existe (`docs/adr/0072-…`) y su línea 55 nombra diciembre.
+> - **Holdout y material.** Nada toca `knowledge/cases/holdout/`. Hay fila del 2026-10-28 en HOLDOUT-EXPOSICIONES, y solo añade (+1/-0).
+> - **Regímenes de cambio.**
+>   - Nada cambia en `evidence/`, `feedback/`, `manifests/`, `corpus/` ni `libros.yaml`.
+>   - `meses_reservados.yaml` y `HISTORIA.md` solo añaden: +19/-0 y +167/-0 (`git diff --numstat`).
+> - **Ambigüedades, ADR y `cita` de la spec.** La rama no los toca.
+> - **Informes cerrados.** No se modifica ninguno de `docs/validation/`; HOLDOUT-EXPOSICIONES es un registro y solo gana una fila.
+> - **`git diff --check main...HEAD`** limpio. **Fin de línea:** LF en los ficheros nuevos y en los cambiados que comprobé (`git ls-files --eol`).
+> - **Tres citas del informe, contrastadas con su fuente:**
+>   - `ADR-0043:30` («construcción = abril y agosto»).
+>   - `ADR-0078:39` y `ADR-0079:50` («no está en meses_reservados.yaml»).
+>   - `CUARENTENA-POR-CONDICION.md:208` («Régimen: solo añadir…»).
+>   - `RECORRIDA-CONSTRUCCION.md:1752`, `:1952` y `:1962`.
+>   - `HISTORIA.md:7644` («# Next Action HECHA · Z · …»).
+>   - `guardia.py:3780`, `:3805-3807` y `:3818-3830`.
+>   - Todas cuadran.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 42 hechos y 2 hechos de otra forma (aprobados), 2 parciales, 1 no hecho (pendiente por diseño).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base verificada con git, sin otra rama | Hecho | informe :8-20; merge-base 0fa9c81 |
+> | 2 | abrir-rama: encargo, contrato y Archivo 50 | Hecho | c0607bd; HISTORIA +167 «# Archivo 50 · …0fa9c81» |
+> | 3-8 | Fase 0: holdout.py, `_RE_FECHA`, tests, dependientes, documentos, barrido y skill | Hecho | §0.a-f; líneas comprobadas (`holdout.py:556,557,575,582,620,667`; `guardia.py:243`) |
+> | 9 | PARADA de la fase 0 y su respuesta copiada tal cual, en commit propio | Hecho | `diff` encargo:68-82 frente a informe:254-268, idénticos; a21edf8 |
+> | 10 | Entrada 2025-12 con sus tres claves, el motivo, `fuente: [ADR-0072, SESION-05-EXTRACCION.md]` y `declarado_el` | Hecho | diff de `meses_reservados.yaml` |
+> | 11 | Trailer `Fuente: ADR-0072` | Hecho | f5bc65b |
+> | 12 | Test de diciembre: rompe en main y pasa en la rama | Hecho | reproducido: en el clon `C:/cm/main` (HEAD 0fa9c81, solo tests modificados) `motivos_cuarentena('eso fue en diciembre', meses_libres(...))` da `[]`; en la rama, `['mes']` |
+> | 13 | test_5, fuente_real_valida, fuente_es_solo_anadir y abril_agosto_enero siguen en verde | Hecho | 233 passed |
+> | 14 | Regla literal en la cabecera y en MIRAR-EL-MATERIAL | Hecho | texto idéntico al de la respuesta, punto 2 (cabecera :17-24; MIRAR :123-128) |
+> | 15 | Meses de construcción comprobados en los ADR | Hecho | §1.a |
+> | 16 | Por qué ninguna condición cubría el hueco | Hecho | §1.b |
+> | 17 | Buscar copias de `(?<![\d.,])` en src/, scripts/ y .claude/hooks/ | Hecho | mi Grep: solo el comentario de `cuarentena.py:287` |
+> | 18 | Lookarounds nuevos en las tres alternativas; «mes N» y `_RE_DIA_NUMERO` intactos | Hecho | diff de `cuarentena.py` |
+> | 19 | La condición escrita en el comentario | Hecho | `cuarentena.py:284-288` |
+> | 20 | `_RE_DIA_BARRA_MES` con el mismo borde | Hecho de otra forma (lookahead aprobado en la PARADA 2, punto 2) | `cuarentena.py:384-390`; §2.d; §5.1 |
+> | 21 | Tests: cuatro que se tapan y cuatro que no | Hecho, con tres de más (declarado) | test_transcribir_sesion.py:115-146; §5.5 |
+> | 22 | «hoy, 45 del 13,» rompe en main | Hecho de otra forma (por la sonda; desviación ordenada) | reproducido en el clon: `[[], [], [], ['fecha numerica'], [], [], []]`; en la rama, las cuatro dan `['fecha numerica']` y los decimales `[]` |
+> | 23 | Test de superconjunto con las regex de main literales y su origen | Hecho | :126-135, copia idéntica a `git show 0fa9c81:…:283-290,377` |
+> | 24-27 | PARADA 2, punto 2 (i) a (iv) | Hecho | :206-216; §2.c-d; comentario :384-389; §5.1 |
+> | 28 | Docstring: «guardia de regresión», no la prueba de rompe en main | Hecho | :199-203 |
+> | 29 | Literal que dispara la guardia (fichero:línea) y su frase | Hecho | `test_transcribir_sesion.py:133` (y `:131` en la copia del clon, comprobado con grep) |
+> | 30 | Fila de HOLDOUT con las lecturas | Hecho | diff de HOLDOUT; el orden temporal, ver «no pude» |
+> | 31 | Dos regeneraciones con el guion de main; ninguna ruta sale | Hecho | `ficheros_con_ocultos.txt` no aparece en el diff; 14 rutas sin comentario (`grep -vc`); el guion, sin diff |
+> | 32 | Recuentos de evidencia, propuestas y segmentos | Hecho (no reproducible por mí) | §1.d, §2.f |
+> | 33 | `scripts/barrido_dias.py` | Hecho (con «no pegado a letra» añadido, ver B3) | :29-49 |
+> | 34 | Tests del barrido, rotos en los dos sentidos | Hecho | `test_barrido_dias.py`, 5 passed |
+> | 35 | `barrido_18_31.py` intacto | Hecho | no está en el diff |
+> | 36 | Skill: solo el paso de lectura, con su diff | Hecho | `git diff`: un solo hunk (@@ -93,7 +93,12), paso 6, +6/-1 |
+> | 37 | Fase 4: frase literal, origen, problema, alternativa y ACTIVE | Hecho | `DECISIONES-DE-PROCESO.md:29`; la frase, idéntica a la del encargo |
+> | 38 | Contrato | Hecho | contrato_rama.py |
+> | 39 | Líneas del cierre, `test_hoja_de_ruta` y `wc -c` | Hecho | reproducido en memoria (sin la escritura final de `simular_cierre.py`): `a: [] b: [] c: [] d: []`, 22889 bytes, hoy 23056 |
+> | 40 | Respuesta 2 (i) y (ii) preparadas | Hecho | `lineas_cierre.py:26-30, 52-59` |
+> | 41 | Línea de K preparada | Hecho | `lineas_cierre.py:7-13` |
+> | 42 | make check sellado | Hecho para 9567a8c | árbol 294323dc |
+> | 43 | Push a `fix/` y CI | Hecho | run 40731298628 |
+> | 44 | Revisor y su informe pegado | Parcial (en curso) | — |
+> | 45 | Borrar `C:/cm/main` | No hecho (pendiente, por orden del llamador) | el clon existe, HEAD 0fa9c81 |
+> | 46 | «Sin fechas reales» en los tests nuevos | Parcial | B1 |
+> | 47 | QUÉ NO CAMBIA | Hecho | `diff --name-status`: nada de motor, spec, guardia, settings, corpus ni evidencia |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | importa | Los datos de prueba nuevos incluyen fechas posibles de meses reservados, contra el encargo («Todo test va con texto sintético, sin fechas reales»), la respuesta del consultor a la PARADA de la fase 0, punto 3 («Ningún literal de los tests nuevos es una fecha real»), y el docstring del propio fichero (`:5-7`: «Ningun dato de prueba lleva una fecha real de un dia reservado … fechas IMPOSIBLES»). Concretamente:<br>• La batería combina 1, 9, 12 y 31 con «/», «-», « de » y « del » (`:177`, `:182`): salen «12/9», «1/12», «31 de 12»… (septiembre tiene días reservados y diciembre es reservado entero).<br>• `:216` afirma `{(12, 1)}` para «,1/1-12»: el 1 de diciembre.<br>Si el test falla, pytest imprime esas listas (`assert menos == []`, `:210`; `assert perdidas == []`, `:212`).<br>Atenúa la gravedad que «1/1-12» lo propuso el propio consultor en la PARADA 2, punto 2 (ii).<br>Arreglo posible: los números de mes de la batería, solo de construcción (1, 4, 7, 8) o imposibles, y «,1/1-4» en lugar de «,1/1-12»; lo he medido a mano y conserva el solape. | `tests/unit/test_transcribir_sesion.py:5-7`, `:177`, `:180`, `:210`, `:212`, `:216` |
+> | B2 | importa | La tabla «El encargo, punto por punto» da por hechas dos cosas que no lo están:<br>• La fila 38 dice «Borrar el clon `C:/cm/main` · Hecho · §10», pero el propio §10 dice que se deja hasta después del revisor, y el clon sigue en pie (`cd C:/cm/main && git rev-parse HEAD` = 0fa9c81…; `git status` muestra los dos tests modificados).<br>• La fila 37 dice «su informe pegado · Hecho», y todavía no está pegado. | `docs/validation/CUARENTENA-POR-CONDICION-2.md:760-761` frente a `:796-797` y `:801-802` |
+> | B3 | menor | `ENTERO` añade `(?<!\w)` (no pegado a una letra) a la condición de la fase 2 que manda el encargo. Está explicado en §3, pero no figura en §5 «Desviaciones», y la fila 28 dice «Hecho» a secas. | `scripts/barrido_dias.py:30`; informe §3 :573-576, §5, §8 fila 28 |
+> | B4 | menor | La skill dice que el barrido imprime los días «enmascarados», pero el guion imprime la línea entera normalizada: solo enmascara los enteros que caen dentro del rango, y los demás números de esa línea (un mes en cifras, un día por debajo de `--desde`) salen tal cual. Es lo que pide el encargo, pero conviene escribirlo en la skill y en el docstring: el rango tiene que cubrir todos los días que no son de construcción del mes que se barre. | `scripts/barrido_dias.py:45-48`; `SKILL.md:96-100` |
+>
+> **Los alcances del encargo:**
+> 1. **Que los tests rompen de verdad en main.**
+>    - Diciembre: reproducido en el clon (`[]`) y en la rama (`['mes']`).
+>    - La coma y el punto: reproducido con el código real de main en el clon (`cu.__file__` = `C:\cm\main\src\…`): las tres nuevas dan `[]`, la de control `['fecha numerica']`, `fechas_en('el 31/02,')` da `[]` y `fechas_en(',1/1-12')` da `[(12, 1)]`. En la rama: `[(2, 31)]`.
+>    - Coincide con §2.b.
+> 2. **Que nada imprime un mes reservado, una fecha real ni un caso.**
+>    - Las sondas imprimen texto sintético y recuentos. `medir_visibles.py`, `comparar_visibles.py` y `cruzar_sondas.py` imprimen solo recuentos.
+>    - Si el test de diciembre falla, pytest no imprime el conjunto de meses libres: la explicación propia de la comparación de listas sustituye los «where». Solo enseña el literal «diciembre», que ya está en el yaml commiteado.
+>    - `barrido_dias.py` imprime líneas de la filtrada enmascaradas, por diseño del encargo. Está declarado en el docstring, en §3 y en §0.h punto 8 (ver B4).
+>    - Queda abierto B1.
+> 3. **Que la rama no tapa menos que main.**
+>    - Lo demuestro: `(?<!\d)(?<!\d[.,])` acepta toda posición que acepta `(?<![\d.,])`, y lo mismo hacia delante. En cada posición de `_RE_DIA_BARRA_MES` el cuerpo deja una sola elección de grupos, así que, con el lookahead, `findall` de la rama ve todas las posiciones en que casa main y saca los mismos pares.
+>    - `_RE_FECHA` solo se usa con `.search` (`cuarentena.py:317`); `_RE_DIA_BARRA_MES` solo en `fechas_en` (`:402`).
+>    - El test pasa.
+> 4. **La regeneración.** Está declarada en la fila del 2026-10-28. El fichero no cambia (14 rutas, sin diff) y el guion es el de main.
+> 5. **El diff de la skill.** Un solo hunk, en el paso 6.
+>
+> **Las líneas del cierre (§6), puestas a prueba.** Ejecuté `simular_cierre.py` en memoria contra las funciones de `test_hoja_de_ruta`, sin su última línea, que escribe. Resultado: `a: [] b: [] c: [] d: []` y 22889 bytes. Las cuatro sustituciones casan una sola vez. Z está viva en la Next Action (`PROJECT_STATE.md:58`), así que «R6a y Z en los huecos» vale.
+>
+> ### Lo que no pude comprobar
+> - **El sello del commit del informe y la línea `PICO DE MEMORIA`.** `make-check.log` está a medio escribir: su línea 3 es «SELLO: borrado el anterior…».
+> - **El CI del commit del informe.** Todavía no existe.
+> - **`test_guardia_claude.py` (la comprobación 3 del contrato).** No lo ejecuté porque `test_la_lista_de_la_guardia_es_la_que_se_calcula` lee las crudas. Su evidencia: el run 40731298628 pasa salvo state check, y el fichero de la lista no aparece en el diff.
+> - **Los recuentos de `kb`** (555 ítems de evidencia; segmentos de 5860 a 5850) y las salidas de las regeneraciones. Para reproducirlos habría que leer las crudas. Solo tengo las salidas que cita el informe y los JSON del scratchpad.
+> - **Que la fila de HOLDOUT se escribiera antes de la primera lectura.** Git no lo dice. Lo que hay son las fechas de modificación del scratchpad, que encajan: `fila_holdout.py` 10:39, `visibles-main.json` 10:40.
+> - **La negativa de la guardia en el clon (deuda K).** Reproducirla exige ejecutar pytest en el clon con el fichero copiado. Comprobé el literal en `C:/cm/main/tests/unit/test_transcribir_sesion.py:131` y el texto del mensaje en `guardia.py:3805-3807`.
+> - **Que la guardia deje pasar `barrido_dias.py` sobre una filtrada real.** Habría que tocar material.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. Read de: el encargo, `contrato.yaml`, el informe (enteros); `scripts/barrido_dias.py`, `tests/unit/test_barrido_dias.py`, `test_cuarentena_por_condicion.py:180-309`, `test_transcribir_sesion.py:1-30, 128-135`, `SKILL.md:70-114`, `guardia.py:3780-3831`; y los guiones del scratchpad (`sonda_fase2.py`, `cruzar_sondas.py`, `medir_visibles.py`, `comparar_visibles.py`, `simular_cierre.py`, `lineas_cierre.py`, `fila_holdout.py`).
+> 3. `uv run python scripts/contrato_rama.py`
+> 4. `git diff main...HEAD -- src/botsito/corpus/cuarentena.py knowledge/cases/meses_reservados.yaml`
+> 5. Grep de `_RE_DIA_BARRA_MES|_RE_FECHA\b|_ANTES|_DESPUES` en `*.py`
+> 6. `git diff main...HEAD -- tests/unit/test_transcribir_sesion.py tests/unit/test_cuarentena_por_condicion.py`
+> 7. `sed -n '1,35p' docs/validation/anexos/SESION-05/barrido_18_31.py`
+> 8. `git show 0fa9c81:src/botsito/corpus/cuarentena.py | sed -n '283,290p;377,392p'`
+> 9. `git diff main...HEAD --` de HOLDOUT-EXPOSICIONES, DECISIONES-DE-PROCESO, MIRAR-EL-MATERIAL, SKILL.md y PROJECT_STATE
+> 10. `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases`; `git diff --name-status main...HEAD`; `git log … -- HOLDOUT/meses_reservados/test`
+> 11. `git diff --numstat main...HEAD`; `ls docs/adr | grep …`; `sed -n '50,58p' docs/adr/0072*.md`
+> 12. Grep de `2026-10-09|diciembre` en SESION-05-EXTRACCION.md; `grep -n '^#'` y `sed` de sus líneas 300-312 y 1064-1074; Grep en PROJECT_STATE; `sed -n '42p' PROJECT_STATE.md`
+> 13. `sed` de ADR-0043:30, ADR-0078:39, ADR-0079:50,59, RECORRIDA:1752,1784,1952,1960-1963 y HISTORIA:7644
+> 14. `git worktree list…` y `git -C C:/cm/main …`: negados por `solo_lectura.py`. Los sustituí por `cd C:/cm/main && git rev-parse HEAD`, `git status --short`.
+> 15. `ls -la <scratchpad>`
+> 16. `cd "C:/Users/USER/Desktop/Bot v3" && uv run python -c "<exec de simular_cierre.py sin su última línea de escritura>"`
+> 17. `grep -n '^[A-Z]\. ' PROJECT_STATE.md`; `grep -n 'def \|stable\|HECHA' tests/unit/test_hoja_de_ruta.py`
+> 18. Grep de `data/transcripciones|cargar_cruda|…` en los cuatro tests; `grep -n 'def repo\|tmp_path\|RAIZ' tests/unit/test_cuarentena.py`
+> 19. `uv run pytest -p no:cacheprovider` sobre los cuatro ficheros de test (`-q`, y después `-rA` con `tail`): 233 passed, exit=0
+> 20. `ls -la make-check.log && grep -nE 'SELLO|PICO DE MEMORIA|passed|failed' make-check.log`
+> 21. `git rev-parse 9567a8c^{tree} bed6968^{tree} f5bc65b^{tree}`
+> 22. `gh run view 40731298628 --json headSha,conclusion,status,headBranch`; `gh run view 40731298628 --log-failed | grep …`
+> 23. `git diff main...HEAD -- docs/state/HISTORIA.md | sed -n '1,12p'`; `git show main:PROJECT_STATE.md | wc -l`
+> 24. `diff <(sed encargo 68-82) <(sed informe 254-268)` y lo mismo con 88-100 frente a 400-412: IGUAL1 e IGUAL2
+> 25. Un bucle `for` negado por la guardia; lo sustituí por `git log --stat --format='== %h %s' main..HEAD`
+> 26. `cd C:/cm/main && uv run --frozen python -c "<motivos y fechas_en de los textos sintéticos>"` y lo mismo en la rama; `meses_libres` con «eso fue en diciembre» en el clon y en la rama
+> 27. `grep -n 'NUM_MAIN}\\\.' C:/cm/main/tests/unit/test_transcribir_sesion.py`; grep de las funciones de la guardia
+> 28. Grep de lookarounds con `\d`, coma y punto en `{src,scripts,.claude}/**/*.py`, en tres variantes
+> 29. `ls data/transcripciones/` (solo nombres)
+> 30. `grep -vc '^#\|^$' .claude/hooks/ficheros_con_ocultos.txt`; `git diff main...HEAD --stat -- .claude/hooks/ficheros_con_ocultos.txt | wc -l`
+> 31. `git diff --check main...HEAD`; `git ls-files --eol` de cinco ficheros. Un `grep $'\r'` fue negado por la guardia; lo sustituí por `ls-files --eol`.
+> 32. `grep -n` de las líneas de los hallazgos en el test, en MIRAR-EL-MATERIAL y en el informe; `grep -n` de las funciones de `holdout.py`; `sed -n '204,209p;258p' docs/validation/CUARENTENA-POR-CONDICION.md`
+>
+> No leí ninguna transcripción, filtrada, fotograma, libro ni nada del holdout, y no ejecuté nada que los lea.
+
+## 12. Lo que se hizo con los hallazgos del revisor
+
+- **A1 (importa), arreglado.** `docs/runbooks/MIRAR-EL-MATERIAL.md`: la fecha de recepción cita la
+  entrada I de la Next Action y SESION-05-EXTRACCION.md §3.5 (`:1062`, «Para cerrar»); el hueco,
+  §11, a4.
+- **A2 (menor), arreglado.** `scripts/barrido_dias.py` importa `_ANTES` y `_DESPUES` de
+  `botsito.corpus.cuarentena` en lugar de copiarlos: la condición vive en un solo sitio, y los tests
+  del barrido siguen en verde (5 passed).
+- **B1 (importa), arreglado.** En `tests/unit/test_transcribir_sesion.py`: la batería guarda solo
+  los textos sin ninguna fecha posible (`_sin_fechas_posibles`, con `DIAS_DEL_MES`: todo par de
+  números sueltos unidos por un separador, también coma y espacio, tiene el mes fuera de 1-12 o más
+  días que el mes; 73.008 de 210.912 textos); los asserts del superconjunto dan solo recuentos; el
+  solape va con «,1/31-2» (el 31 de febrero) en lugar del ejemplo de la PARADA 2; y los tres
+  decimales añadidos pasan a «1,5 del 13», «entre 1.45/1.46», «de 10,5-13,5». Medido después: la
+  batería sigue detectando la falta del lookahead (un mutante sin él pierde pares de `main` en 192
+  textos; la rama, en 0); la sonda, repetida en el clon y en la rama con esa batería (§2.b, §2.c),
+  da 0 pérdidas. El comentario del test ya no nombra el literal de la fecha real. Los cuatro textos
+  que no son fechas que dicta el encargo se quedan tal cual. Los pasajes del informe con los
+  ejemplos viejos se rehicieron (§2.a-d, la PARADA 2, §5 y la tabla).
+- **B2 (importa), arreglado.** Filas 37 y 38 de §8 al día: el revisor está pegado aquí y el clon,
+  borrado (abajo).
+- **B3 (menor), arreglado.** «No pegado a una letra» entra en §5 como desviación 8, y la fila 28
+  lo dice.
+- **B4 (menor), arreglado.** El docstring de `barrido_dias.py` y el paso 6 de la skill dicen que solo
+  se enmascaran los números DEL RANGO y que el rango cubre todos los días fuera de construcción del
+  mes que se barre. El diff de la skill contra `main` sigue siendo un solo hunk, en el paso 6.
+- **El clon `C:/cm/main`**, borrado con `comparar-con-main`: `git worktree remove --force
+  C:/cm/main` (con `--force` porque llevaba los dos ficheros de tests de la rama copiados) y
+  `git worktree prune`. Después, `git worktree list` sin el clon; `git branch --list`, `main` y la
+  rama; `git tag -l`, 141, como antes; `git ls-remote --heads origin`, `main` y
+  `fix/cuarentena-por-condicion-2` (el push de la rama). Queda un worktree de otra sesión
+  (`.../2ea2c3d2-.../scratchpad/wt-ci`, e7df30b), que esta rama no creó y no toca.
+- Lo que el revisor no pudo comprobar se queda así: la CI del último commit, abajo.
+- Las tres negativas que el revisor declara en sus comandos 14, 25 y 31 (`solo_lectura.py` y la
+  guardia) las rodeó él con otra forma; se dejan dichas aquí para el consultor.
+
+## 13. El último commit y su CI
+
+Los arreglos de §12 van en un commit sellado con `make check`, que se empuja a
+`fix/cuarentena-por-condicion-2` con la misma orden de §10. Su run (el que cuenta, el del último
+commit) se da en el mensaje final a Aleks con su número y resultado; anotarlo aquí exigiría otro
+commit sin CI. El de 9567a8c es el 40731298628 (§10).
+
 ## Estado
 
-Fases 0 a 4 hechas; `make check` sellado; CI de Linux con solo el fallo esperado (run 40731298628).
-Falta el revisor.
+Fases 0 a 4 hechas; los hallazgos del revisor, arreglados (§12); el clon, borrado (§12). Rama lista
+para revisión, NO cerrada.

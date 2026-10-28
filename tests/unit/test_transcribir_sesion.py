@@ -114,14 +114,14 @@ def test_una_fecha_numerica_va_a_cuarentena(m: ModuleType, texto: str) -> None:
 
 # Rama `trabajo/cuarentena-por-condicion-2`: una coma o un punto forman parte de un numero solo con
 # un digito a cada lado. Fechas imposibles (mes 13, 31 de febrero), como el resto del fichero. El
-# encargo traia «hoy, 25 del 10,», que es una fecha real (la de una grabacion): se cambio por
-# «hoy, 45 del 13,» (respuesta del consultor a la PARADA de la fase 0, punto 3).
+# literal del encargo era una fecha real (la de una grabacion): se cambio por «hoy, 45 del 13,»
+# (respuesta del consultor a la PARADA de la fase 0, punto 3).
 PEGADAS_NUEVAS = ("hoy, 45 del 13,", "el 31/02,", "el 31.02.99.")  # en main: []
 PEGADA_DE_CONTROL = ", 31-02 ,"  # ya se tapaba en main
 NO_SON_FECHAS = ("cuesta 10,5 pips", "son 1,5 pips", "1.0850 del 2", "2.000 mensajes")
 # Los que SOLO la condicion del digito a cada lado deja fuera: con un borde que no mire la coma ni
 # el punto, serian fechas.
-DECIMALES_QUE_NO_SON_FECHAS = ("1,5 del 3", "entre 1.08/1.09", "de 10,5-11,5")
+DECIMALES_QUE_NO_SON_FECHAS = ("1,5 del 13", "entre 1.45/1.46", "de 10,5-13,5")
 
 # `_RE_FECHA` y `_RE_DIA_BARRA_MES` de `main`, copiadas tal cual de src/botsito/corpus/cuarentena.py
 # en 0fa9c81 (`:283-289` y `:377`), antes de esta rama: el borde excluia TODA coma o punto. Son la
@@ -151,7 +151,7 @@ def test_fechas_en_ve_la_fecha_pegada_a_una_coma_o_un_punto(m: ModuleType) -> No
     """La misma condicion en `_RE_DIA_BARRA_MES`, que usa la evidencia (`fechas_en`)."""
     assert cu.fechas_en("el 31/02,") == {(2, 31)}
     assert cu.fechas_en("el 31/02.") == {(2, 31)}
-    assert cu.fechas_en("entre 1.08/1.09") == set()
+    assert cu.fechas_en("entre 1.45/1.46") == set()
 
 
 def test_la_coma_y_el_punto_rotos_a_proposito_en_los_dos_sentidos(m: ModuleType) -> None:
@@ -172,20 +172,35 @@ def test_la_coma_y_el_punto_rotos_a_proposito_en_los_dos_sentidos(m: ModuleType)
     assert not any(tapa(cu._RE_FECHA, t) for t in DECIMALES_QUE_NO_SON_FECHAS)
 
 
+DIAS_DEL_MES = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+# Dos numeros sueltos de una o dos cifras unidos por cualquier separador que una fecha pueda usar
+# (de mas: tambien la coma y el espacio), solapados. Las dos regex solo sacan numeros sueltos.
+_PAR = re.compile(r"(?=(?<!\d)(\d{1,2})\s*(?:[/.,-]|\s+del?\s+|\s+)\s*(\d{1,2})(?!\d))")
+
+
+def _sin_fechas_posibles(texto: str) -> bool:
+    """Ningun par dia/mes del texto es una fecha que exista (revisor de la rama, B1): o el mes no
+    esta entre 1 y 12, o el dia pasa de los del mes («31/2», «31/4», «45 del 13»)."""
+    pares = [(int(d), int(m)) for d, m in _PAR.findall(texto)]
+    return not any(1 <= m <= 12 and 1 <= d <= DIAS_DEL_MES[m - 1] for d, m in pares)
+
+
 def _bateria() -> list[str]:
-    """Textos sinteticos: numeros, decimales, precios y fechas con signos alrededor."""
-    numeros = ("1", "9", "12", "31", "45", "0", "10,5", "1,5", "1.0850", "2.000", "1.08")
+    """Textos sinteticos: numeros, decimales, precios y fechas con signos alrededor, y de ellos
+    solo los que no traen ninguna fecha posible (ningun dato de prueba es una fecha real)."""
+    numeros = ("1", "9", "12", "31", "45", "0", "10,5", "1,5", "1.0850", "2.000", "1.08", "30", "2")
     separadores = ("/", "-", " / ", " del ", " de ", ".", ",", " ")
     antes = ("", "hoy, ", "el ", "1", "1,", "1.", ",", ".", "a,", "x.", "(", "mes ")
-    despues = ("", ",", ".", " ", "1", ",5", ".5", "x", ".99", ".99.", "-26", "-12", ")")
-    textos = []
-    for a in numeros:
-        for s in separadores:
-            for b in numeros:
-                for pre in antes:
-                    for post in despues:
-                        textos.append(f"{pre}{a}{s}{b}{post}")
-    return textos
+    despues = ("", ",", ".", " ", "1", ",5", ".5", "x", ".99", ".99.", "-26", "-2", ")")
+    return [
+        texto
+        for a in numeros
+        for s in separadores
+        for b in numeros
+        for pre in antes
+        for post in despues
+        if _sin_fechas_posibles(texto := f"{pre}{a}{s}{b}{post}")
+    ]
 
 
 def _fechas_en_main(texto: str) -> set[tuple[int, int]]:
@@ -203,17 +218,24 @@ def test_la_rama_no_tapa_menos_que_main(m: ModuleType) -> None:
     esa es la sonda de la fase 0 repetida sobre el codigo real de main en un clon
     (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA 2, punto 1). Aqui, con las
     regex de main copiadas arriba: todo texto que main tapa lo tapa la rama, y todo par (mes, dia)
-    que `fechas_en` sacaba con main lo saca la rama. Y la rama tapa alguno que main no."""
+    que `fechas_en` sacaba con main lo saca la rama. Y la rama tapa alguno que main no. Si falla,
+    solo da recuentos: ningun texto de la bateria se imprime."""
     textos = _bateria()
-    assert len(textos) > 10_000
-    menos = [t for t in textos if RE_FECHA_MAIN.search(t) and not cu._RE_FECHA.search(t)]
-    assert menos == []
-    perdidas = [t for t in textos if _fechas_en_main(t) - cu.fechas_en(t)]
-    assert perdidas == []
-    assert any(cu._RE_FECHA.search(t) and not RE_FECHA_MAIN.search(t) for t in textos)
-    assert any(cu.fechas_en(t) - _fechas_en_main(t) for t in textos)
-    # El solape que obliga al lookahead de `_RE_DIA_BARRA_MES`: «1/1» ya no se come a «1-12».
-    assert _fechas_en_main(",1/1-12") == {(12, 1)} <= cu.fechas_en(",1/1-12")
+    n = len(textos)
+    assert n > 10_000
+    menos = sum(1 for t in textos if RE_FECHA_MAIN.search(t) and not cu._RE_FECHA.search(t))
+    assert menos == 0, f"{menos} textos que main tapa y la rama no"
+    perdidas = sum(1 for t in textos if _fechas_en_main(t) - cu.fechas_en(t))
+    assert perdidas == 0, f"{perdidas} textos en que la rama pierde una fecha de main"
+    nuevas = sum(1 for t in textos if cu._RE_FECHA.search(t) and not RE_FECHA_MAIN.search(t))
+    assert nuevas > 0
+    mas_fechas = sum(1 for t in textos if cu.fechas_en(t) - _fechas_en_main(t))
+    assert mas_fechas > 0
+    # El solape que obliga al lookahead de `_RE_DIA_BARRA_MES`, con una fecha imposible (el 31 de
+    # febrero): sin el, «1/31» se comeria a «31-2», que main si sacaba.
+    assert _sin_fechas_posibles(",1/31-2")
+    assert _fechas_en_main(",1/31-2") == {(2, 31)} <= cu.fechas_en(",1/31-2")
+    assert cu.fechas_en(",1/31-2") - {(2, 31)} == set()  # «1/31»: el mes 31 no es una fecha
 
 
 @pytest.mark.parametrize("texto", ["el jueves 40 entré", "el lunes, 40", "el 40, domingo"])
