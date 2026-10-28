@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/recorrida-construccion
+main
 
 ## Current Feature
-trabajo/recorrida-construccion, EN CURSO (abierta el 2026-10-27; tramo R4, R4.1: V y F): la corrida que cuenta por ADR-0070 §3 sobre toda la construcción, su diff contra la línea base, la corrida con cuenta diaria para clasificar y las dos listas para la sesión 6. Encargo docs/encargos/trabajo-recorrida-construccion.md; informe docs/validation/RECORRIDA-CONSTRUCCION.md.
+Ninguna rama abierta. trabajo/recorrida-construccion cerrada en main el 2026-10-27 (stable/F38g-recorrida-construccion): la corrida que cuenta por ADR-0070 §3 dio «no» (cobertura 3,5 %, precisión 13,2 %); se sigue construyendo (RECORRIDA-CONSTRUCCION.md).
 
 ## Stable Main State
-d843dbc · merge de `trabajo/activar-sesion-05-motor` (tag `stable/F38f-activar-sesion-05-motor`): la parte de motor de la sesión 5: ADR-0084 a 0086, RN-037, la racha tras la detención, la caja entera; A-35 y A-50 con lectura del consultor, ABIERTAS; spec 18.5.2. Sobre `stable/F38e-activar-sesion-05` (2c26fb2). Informe docs/validation/ACTIVAR-SESION-05-MOTOR.md; el registro del cierre, al final de HISTORIA.
+faf5ce2 · merge de `trabajo/recorrida-construccion` (tag `stable/F38g-recorrida-construccion`): la corrida que cuenta por ADR-0070 §3 («no»), la línea base nueva, las dos listas para la sesión 6 y el error del respaldo M1 (Z). Sobre `stable/F38f-activar-sesion-05-motor` (d843dbc). Informe docs/validation/RECORRIDA-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-d843dbc · merge: trabajo/activar-sesion-05-motor, la parte de motor de la sesion 5 (ADR-0084 a 0086, RN-037) y lo que va a la re-corrida y a la sesion 6 · tag stable/F38f-activar-sesion-05-motor
+faf5ce2 · merge: trabajo/recorrida-construccion, la corrida que cuenta por ADR-0070 §3 (no), la linea base nueva, las dos listas para la sesion 6 y el error del respaldo M1 (Z) · tag stable/F38g-recorrida-construccion
 
 ## Tests Currently Passing
 1730 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
