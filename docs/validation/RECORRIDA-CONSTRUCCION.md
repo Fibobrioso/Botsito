@@ -1454,7 +1454,12 @@ rama (once hasta el revisor, y los que sigan) lee el M1 de marzo por `test_prepa
 `test_visor.py`. La segunda (*añadida tras el revisor, a2*): `costes_y_sesiones.py` (§2.8) leyó los
 TICKS de días dev de construcción, en ventanas de un minuto, después de la PARADA 2; material de
 desarrollo, sin ningún día reservado (los manifiestos de ticks solo tienen días dev, §0.b), y sin
-calentamiento. Ninguna
+calentamiento.
+
+La regla de «nada anterior al día dev» no alcanza la línea «calendario: cubre … UTC, N cierres» de
+la salida del arnés: es la cobertura del calendario de cierres del perfil (ADR-0068), no una vela,
+un precio, un instante de mercado ni material del trader (respuesta del consultor a la PARADA 4,
+punto 2). Ninguna
 etiqueta, ninguna operación del trader ni cifra del bot de un día reservado se leyó ni se imprimió;
 ningún texto de la rama lleva una fecha, una vela, una H4, un pivote ni un precio anteriores al día
 dev al que pertenece. Nada de mayo, marzo (salvo las velas del calentamiento), febrero, septiembre
@@ -1944,9 +1949,39 @@ check-runs, con su salida, y la variable del entorno), §2.4 (la repetición, co
 commit. El sesgo del 1 de abril y del 1 de julio queda fuera de la hoja de la sesión 6 por la
 respuesta a la PARADA 2, punto 2.
 
+## Respuesta del consultor a la PARADA 4 y orden de cierre (2026-10-27)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA 4 y orden de cierre de trabajo/recorrida-construccion (2026-10-27). Copia la respuesta tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 4», con su fecha, en un commit propio antes del commit del contrato.
+>
+> RESPUESTA A LA PARADA 4
+> 0. (a) Z. Pasa los tres tests de test_hoja_de_ruta y PROJECT_STATE queda en 22.872 bytes; el registro HECHA de la Z anterior queda en HISTORIA con su fecha, que la distingue.
+> 1. (a). Desde hoy, DECISIÓN DEL CONSULTOR: una letra de la Next Action se reutiliza solo si su registro «# Next Action HECHA» es anterior y la hoja de ruta no la nombra; el registro HECHA nuevo lleva su fecha. Esta rama no la escribe en ningún runbook (docs/runbooks/ está fuera de su contrato salvo ACTIVAR-A35-A44.md): la lleva el encargo de la rama de la cuarentena (G.5) a docs/runbooks/DECISIONES-DE-PROCESO.md. Las dos letras solo si se vuelven a agotar.
+> 2. (a). La regla de «nada anterior al día dev» no alcanza la línea «calendario: cubre … UTC, N cierres» de la salida del arnés: es la cobertura del calendario de cierres del perfil (ADR-0068), no una vela, un precio, un instante de mercado ni material del trader. Dilo así en §5.4.
+>
+> ORDEN DE CIERRE
+> Ciérrala con la skill cerrar-rama, siguiendo docs/runbooks/RITUAL.md con todas sus puertas. Tag: stable/F38g-recorrida-construccion.
+>
+> En el commit del contrato (chore(cierre): sale el contrato y entra el registro en HISTORIA):
+> - Sale contrato.yaml; entra el registro del cierre en HISTORIA con stable/F38g-recorrida-construccion^{commit} en lugar del sha.
+> - Next Action: V sale a HISTORIA con su texto literal bajo «# Next Action HECHA · V · …» (RITUAL.md, punto 3); F, la de §6; entra Z con el texto de §6, tras la N.
+> - Technical Debt: sale la línea «El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana…».
+> - Hoja de ruta, todo lo de §6 con Z en lugar de <letra>: R4.1 HECHA (NA:V fuera de sus Refs); R4.2 (NA:V fuera, «Qué es» con las dos listas y «sin las marcadas E», «Depende de» nada); R5.2 con su «Depende de» nuevo y NA:Z; R3.5 nueva con Refs NA:Z · ID:ADR-0051; G.5 nueva.
+> - ERRORES-RECURRENTES, la fila de la rama: los hallazgos 1 a 7 de §7 tal cual, y uno más, menor, del consultor: el primer borrador de este encargo llevaba una restricción para un «sí» que contradecía ADR-0070 §6 y una definición de la lista de §0.b.8 que dejaba fuera el caso que la motivaba (S-10, reubicada, y S-10b, con una zona); las vio el auditor del consultor antes de entregar. Lección para el consultor: no es una regla nueva, sino dos que ya existen y no se aplicaron (una restricción se contrasta con el ADR del que sale, y una categoría se prueba sobre el caso que la motiva antes de fijarla). Para el revisor: sin hallazgos que se le escaparan.
+> - Antes de commitear, mide PROJECT_STATE con wc -c (tiene que dar unos 22.872, por debajo de 23.000) y pasa test_hoja_de_ruta y test_project_state en el make check sellado.
+>
+> Después, lo de siempre: merge --no-ff a main, el tag, el commit de estado que solo reemplaza Current Branch, Current Feature (la frase de §6), Stable Main State y Last Stable Commit (la Next Action ya cambió en el contrato y aquí no se toca), make check sellado, push atómico de main y el tag en un solo comando (confirmo la regla ask con «1. Yes»), la CI de main en verde mirada sin guion ni bucle, y borrar la rama local. No hay fix/ que borrar.
+>
+> Nunca --no-verify, push --force, borrar tags, cherry-pick ni rebase. Si algo no cuadra, PARADA antes del merge.
+>
+> Informe final: sha de main, tag, número del run de la CI de main con su resultado, ramas que quedan (local y remota) y tamaño de PROJECT_STATE en bytes.
+
 ## Estado
 
 LISTA PARA REVISIÓN, NO cerrada. Todo lo del encargo y de las respuestas a las PARADAS 1, 2 y 3 está
-hecho y commiteado, con el revisor pegado y sus hallazgos arreglados o declarados. Queda una decisión
-del consultor para el commit del contrato del cierre, no para la rama: la PARADA 4 (la letra de la
-entrada nueva de la Next Action y la línea del calendario de cierres).
+hecho y commiteado, con el revisor pegado y sus hallazgos arreglados o declarados. La PARADA 4 está
+respondida (la letra es Z; la línea del calendario queda fuera de la regla, §5.4) y llegó la orden
+de cierre (2026-10-27, tag `stable/F38g-recorrida-construccion`).
