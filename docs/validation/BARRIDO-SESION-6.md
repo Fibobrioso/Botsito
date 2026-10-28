@@ -602,6 +602,33 @@ de la fase 1 (§2.1): un patrón entre comillas que acaba en espacio. Era para e
 tests; lo encontré con la herramienta Grep sobre `src/botsito/domain`, otra petición. Para el carril
 de guardias, con la de §2.1.
 
+### 2.3 Fase 3: la hoja 06 en `scripts/transcribir_sesion.py`
+
+Los gráficos quedaron en 6c114cb (sellado: árbol 5c28fcdd…, 1118 s, `PICO DE MEMORIA de make check:
+299 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 289 MiB)`).
+
+En `scripts/transcribir_sesion.py`, lo que midió §1.f, con los códigos finales de
+`docs/sesion-6/PREGUNTAS.md`:
+- `ORDEN_SESION_06` = S-1 a S-23, en el orden de la hoja (el numérico), con su comentario;
+- `CODIGOS_DE_SESION_TEXTO["06"]`: el título de cada pregunta, con la primera letra en minúscula
+  (S-7 a S-12, «gráfico 1» a «gráfico 6»), y el comentario de encima lo dice;
+- `HOJAS["06"] = ORDEN_SESION_06` y `SESION_EN_CURSO = "06"`;
+- el docstring: el ejemplo de uso pasa a `--video v17`, el siguiente id libre.
+`_RE_CODIGO` no cambia: S-1 a S-23 caben en una letra y una o dos cifras (D7).
+
+En `tests/unit/test_transcribir_sesion.py`:
+- `test_la_hoja_06_tiene_los_23_codigos_con_su_texto`: los títulos, leídos de
+  `docs/sesion-6/PREGUNTAS.md` con la misma `_RE_TITULO` que la 05 (`^\*\*S-(\d+)\. (.+?)\*\*`), son
+  exactamente los del guion;
+- `test_la_sesion_en_curso_es_la_06` (falla con el guion de `main`, que dice «05»);
+- `test_s24_y_s25_valen_en_la_05_y_no_en_la_06` y `test_la_filtrada_de_la_06_agrupa_con_su_hoja`;
+- `test_la_sesion_en_curso_es_la_05` pasa a `test_la_hoja_05_sigue_en_su_sitio`: la 05 ya no es la
+  sesión en curso y su hoja no cambia (comprueba el texto de su S-14).
+
+`PREGUNTAS.md` ya decía (fase 1) que los textos están en el guion antes de grabar, sin «con la
+ingesta». Lo que la ingesta de la 6 hará y no es de esta rama (§1.f): v17 en `fuentes.yaml` y en
+`SESIONES_EN_CUARENTENA`.
+
 ## Estado
 
-EN CURSO: fases 1 y 2 hechas; sigue la fase 3 (hoja 06).
+EN CURSO: fases 1, 2 y 3 hechas; siguen la CI de Linux por fix/barrido-sesion-6, el revisor y la entrega.

@@ -604,10 +604,10 @@ def test_la_hoja_05_tiene_los_25_codigos_con_su_texto(m: ModuleType) -> None:
     assert m.CODIGOS_DE_SESION_TEXTO["05"] == titulos
 
 
-def test_la_sesion_en_curso_es_la_05(m: ModuleType) -> None:
-    """La hoja por defecto de `--sesion`: la de la sesion 5 (2026-10-23)."""
-    assert m.SESION_EN_CURSO == "05"
+def test_la_hoja_05_sigue_en_su_sitio(m: ModuleType) -> None:
+    """La sesion 5 ya no es la sesion en curso (lo es la 06), y su hoja no cambia."""
     assert m.HOJAS["05"] is m.ORDEN_SESION_05
+    assert m.CODIGOS_DE_SESION_TEXTO["05"]["S-14"] == "qué te hace no operar un día o una sesión"
 
 
 def test_s25_vale_en_la_05_y_no_en_la_04(m: ModuleType) -> None:
@@ -639,3 +639,49 @@ def test_la_filtrada_de_la_05_agrupa_con_su_hoja(m: ModuleType) -> None:
     lineas, _ = m.lineas_filtradas(_segs(m, textos), m.codigos_validos("05"))
     texto = m.version_filtrada(lineas, "prueba", m.HOJAS["05"])
     assert texto.index("## S-7\n") < texto.index("## S-22") < texto.index("## S-25")
+
+
+# ------------------------------------------------- la hoja de la sesion 06 (S-1 a S-23, por sesion)
+
+PREGUNTAS_06 = RAIZ / "docs" / "sesion-6" / "PREGUNTAS.md"
+
+
+def _titulos_06() -> dict[str, str]:
+    """Los textos que la hoja 06 tiene que llevar, leidos de docs/sesion-6/PREGUNTAS.md: el titulo
+    de cada pregunta (la negrita «**S-n. ...**») con la primera letra en minuscula."""
+    texto = PREGUNTAS_06.read_text(encoding="utf-8")
+    titulos = {f"S-{n}": " ".join(t.split()) for n, t in _RE_TITULO.findall(texto)}
+    return {codigo: t[0].lower() + t[1:] for codigo, t in titulos.items()}
+
+
+def test_la_hoja_06_tiene_los_23_codigos_con_su_texto(m: ModuleType) -> None:
+    """S-1 a S-23 en el orden de la hoja, que es el numerico, y cada uno con el titulo de su
+    pregunta en docs/sesion-6/PREGUNTAS.md (S-7 a S-12, «gráfico 1» a «gráfico 6»)."""
+    assert list(m.ORDEN_SESION_06) == [f"S-{n}" for n in range(1, 24)]
+    titulos = _titulos_06()
+    assert list(titulos) == list(m.ORDEN_SESION_06)
+    assert m.CODIGOS_DE_SESION_TEXTO["06"] == titulos
+
+
+def test_la_sesion_en_curso_es_la_06(m: ModuleType) -> None:
+    """La hoja por defecto de `--sesion`: la de la sesion 6 (2026-10-28, antes de grabar)."""
+    assert m.SESION_EN_CURSO == "06"
+    assert m.HOJAS["06"] is m.ORDEN_SESION_06
+
+
+def test_s24_y_s25_valen_en_la_05_y_no_en_la_06(m: ModuleType) -> None:
+    v05, v06 = m.codigos_validos("05"), m.codigos_validos("06")
+    assert {"S-24", "S-25"} <= set(v05)
+    assert not {"S-24", "S-25"} & set(v06)
+    assert m.codigo_en("pregunta ese veintitrés", v06) == "S-23"
+    assert m.codigo_en("pregunta ese veinticuatro", v06) is None
+
+
+def test_la_filtrada_de_la_06_agrupa_con_su_hoja(m: ModuleType) -> None:
+    """Con la hoja 06, S-7 (el gráfico 1) va antes que S-13 y S-23 abre su pregunta."""
+    textos = [
+        "pregunta ese trece", "a", "pregunta ese siete", "b", "pregunta ese veintitrés", "c",
+    ]  # fmt: skip
+    lineas, _ = m.lineas_filtradas(_segs(m, textos), m.codigos_validos("06"))
+    texto = m.version_filtrada(lineas, "prueba", m.HOJAS["06"])
+    assert texto.index("## S-7\n") < texto.index("## S-13") < texto.index("## S-23")

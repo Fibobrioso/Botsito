@@ -45,7 +45,7 @@ treinta y cinco», «pregunta a 35», «pregunta A-35»...), hasta la siguiente 
 El «a N» suelto no abre nada. Solo cuentan los codigos que se preguntan (ABIERTA o DECIDIDA).
 
 Uso (un solo comando, desde la raiz del repo; un audio por ejecucion):
-    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v15
+    uv run python scripts/transcribir_sesion.py --audio <fichero> --video v17
     uv run python scripts/transcribir_sesion.py --audio <fichero> --video v10 --sesion 04 \
         --solo-filtrar          (rehace la filtrada desde la cruda)
 La hoja (orden y codigos de sesion) es la de `--sesion`, por defecto la sesion en curso: cada
@@ -129,13 +129,23 @@ ORDEN_SESION_05 = (
     "S-10", "S-11", "S-12", "S-13", "S-14", "S-15", "S-16", "S-17",
     "S-18", "S-19", "S-20", "S-21", "S-22", "S-23", "S-24", "S-25",
 )  # fmt: skip
+# La hoja de la sesion 06 (docs/sesion-6/PREGUNTAS.md, `trabajo/barrido-sesion-6`, 2026-10-28):
+# S-1 a S-23 en el orden de la hoja, que es el numerico. Los codigos son los de la sesion 6, NO
+# los de la 05: S-n es la pregunta n de docs/sesion-6/PREGUNTAS.md, y S-7 a S-12 son los
+# graficos 1 a 6. Entra antes de grabar, para que la ingesta use el guion de `main` sin tocarlo.
+ORDEN_SESION_06 = (
+    "S-1", "S-2", "S-3", "S-4", "S-5", "S-6", "S-7", "S-8", "S-9",
+    "S-10", "S-11", "S-12", "S-13", "S-14", "S-15", "S-16", "S-17",
+    "S-18", "S-19", "S-20", "S-21", "S-22", "S-23",
+)  # fmt: skip
 # Los codigos de sesion con su texto, POR SESION: el mismo codigo vuelve con otro texto (S-1 era en
 # la 03 «como decide el sesgo del dia» y en la 04 es la pregunta 1 de PREGUNTAS.md), asi que un
 # diccionario comun se pisaria. Los de la 03 se definieron en la revision del consultor del
 # 2026-09-29 (hasta entonces E-1, E-2 y E-3 no tenian texto en ningun fichero del repositorio); los
 # de la 04 son los titulos de PREGUNTAS.md y del encargo de `trabajo/sesion-04`; los de la 05, los
 # titulos de docs/sesion-5/PREGUNTAS.md (la negrita, sin «S-n. » ni lo que va detras), salvo S-7 y
-# S-12, que toman el «Titulo» de su recuadro de correccion del 2026-10-21.
+# S-12, que toman el «Titulo» de su recuadro de correccion del 2026-10-21; los de la 06, los
+# titulos de docs/sesion-6/PREGUNTAS.md, igual (sin recuadros).
 CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
     "02": {},
     "03": {
@@ -203,6 +213,33 @@ CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
         "S-24": "la vela casi plana: de cuántos puntos",
         "S-25": "el Excel de julio y los tres primeros vídeos",
     },
+    "06": {
+        "S-1": (
+            "la pérdida del día que te hace parar: solo con las cerradas o también con la abierta"
+        ),
+        "S-2": "cuándo vuelves a contar desde cero después de parar por la pérdida del día",
+        "S-3": "la mecha que mueve tu alto de M15, y la vela que lo toma después",
+        "S-4": "en M15, una vela sin cuerpo entre las verdes y la roja",
+        "S-5": "después de la toma, un retroceso con alternancia y un punto nuevo limpio",
+        "S-6": "la orden puesta en el primer punto que se llena antes de que haya alternancia",
+        "S-7": "gráfico 1",
+        "S-8": "gráfico 2",
+        "S-9": "gráfico 3",
+        "S-10": "gráfico 4",
+        "S-11": "gráfico 5",
+        "S-12": "gráfico 6",
+        "S-13": "cuándo pasas el stop a la entrada: al toque o al cierre de la vela de M1",
+        "S-14": "la orden sin llenar cuando el precio toma otra liquidez de M15",
+        "S-15": "la misma liquidez tomada antes de las 7 y otra vez después",
+        "S-16": "los dos extremos de la caja: qué velas dan el 1",
+        "S-17": "frente al nivel tomado: solo el 0 o la caja entera",
+        "S-18": "las reentradas en el mismo punto",
+        "S-19": "el precio ya está más allá del 0 cuando se forma la caja",
+        "S-20": "la vela de 1 o 2 puntos en el retroceso, y la vela sin cuerpo con mechas largas",
+        "S-21": "el punto de breaker roto con la mecha después de una alternancia",
+        "S-22": "para que el máximo de la verde sea tu punto, ¿qué tiene que hacer la roja?",
+        "S-23": "una toma de la mañana, y por la tarde el mismo sesgo",
+    },
 }
 # La hoja con la que se agrupa la version filtrada de cada sesion (`--sesion`).
 HOJAS: dict[str, tuple[str, ...]] = {
@@ -210,8 +247,9 @@ HOJAS: dict[str, tuple[str, ...]] = {
     "03": ORDEN_SESION_03,
     "04": ORDEN_SESION_04,
     "05": ORDEN_SESION_05,
+    "06": ORDEN_SESION_06,
 }
-SESION_EN_CURSO = "05"
+SESION_EN_CURSO = "06"
 
 
 # ------------------------------------------------------------------------------ cuarentena

@@ -16,7 +16,7 @@ d5f6b81 · merge de `trabajo/cuarentena-por-condicion-2` (tag `stable/F38h-cuare
 d5f6b81 · merge: trabajo/cuarentena-por-condicion-2, diciembre tapado en la cuarentena, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras · tag stable/F38h-cuarentena-por-condicion-2
 
 ## Tests Currently Passing
-1757 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1761 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
