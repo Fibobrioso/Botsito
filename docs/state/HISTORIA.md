@@ -13336,3 +13336,46 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 48 (2026-10-26).
+
+# Next Action HECHA · V · sale de PROJECT_STATE.md en trabajo/recorrida-construccion (2026-10-27)
+
+V. Activar la sesión 5 (R4.1). HECHAS spec y motor (`trabajo/activar-sesion-05` y `trabajo/activar-sesion-05-motor`, este tag: ADR-0084 a 0086, RN-037; A-35 y A-50 con lectura del consultor, ABIERTAS). QUEDA la re-corrida del arnés con `--simular` sobre toda la construcción (ADR-0070 §3; diff contra CABLEADO-SIMULADOR-LINEA-BASE.txt, ACTIVAR-A35-A44.md §5.1); después la sesión 6 (R4.2).
+
+La hace `trabajo/recorrida-construccion` (docs/validation/RECORRIDA-CONSTRUCCION.md): la corrida que cuenta por ADR-0070 §3 dio «no» (cobertura 3,5 %, precisión 13,2 %), y la sesión 6 (R4.2) tiene sus dos listas.
+
+# Registro de cierre · `trabajo/recorrida-construccion` (2026-10-27)
+
+- Orden de cierre del consultor del 2026-10-27, junto con su respuesta a la PARADA 4, pegada en la
+  conversación por Aleks (copiada tal cual al final del encargo y del informe, en su commit
+  propio); la skill `cerrar-rama` no se puede cargar desde un texto pegado, así que la sesión leyó
+  su fichero y lo siguió con `RITUAL.md`. La rama tuvo cuatro PARADAS (fase 0; la entrega de las
+  corridas; el «no» del respaldo M1 en §2.8; la letra agotada) y una pasada del revisor (§10,
+  opus, cinco alcances). Nunca se cerró sin la orden.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action pierde la
+  V (aquí arriba, HECHA), F pasa a la de §6 del informe y entra la Z (el respaldo M1), tras la N,
+  reutilizando la letra de un registro HECHA anterior (respuesta a la PARADA 4, punto 0: las 26
+  estaban usadas); sale de Technical Debt la línea del respaldo M1 en el primer cierre de la
+  ventana, que pasa a la Z; la hoja de ruta: R4.1 HECHA sin `NA:V`, R4.2 sin `NA:V` y con las dos
+  listas, R5.2 con su «Depende de» nuevo y `NA:Z`, R3.5 y G.5 nuevas; la fila de
+  ERRORES-RECURRENTES con los hallazgos del revisor, los siete de §7 y el del consultor.
+- **Lo que entra** (tramo R4, R4.1, lo que quedaba): la primera corrida que cuenta por ADR-0070 §3
+  (`anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt`), «no» (cobertura 3,5 %, precisión
+  13,2 %), que pasa a ser la línea base vigente (NOTA en ACTIVAR-A35-A44.md §5) y cuyo veredicto
+  queda en una NOTA de ADR-0070 §3; la corrida con la cuenta diaria (41/198, 15,6 %); el `diff`
+  contra CABLEADO-SIMULADOR-LINEA-BASE.txt; los patrones; las dos listas para la sesión 6 (259
+  entradas antes de la alternancia y 34 sesiones de P6, con la marca E en 10 y 4 llenadas); §2.8
+  (costes y sesiones cargadas leídos en las salidas y en los ticks) y el hallazgo E del respaldo
+  M1. Ningún cambio en `src/`, `tests/`, `knowledge/`, el Makefile ni `.claude/`.
+- Exposiciones: las dos filas del 2026-10-27 de esta rama en `HOLDOUT-EXPOSICIONES.md` (el
+  calentamiento con el M1 de marzo y de junio, y la lectura de ticks de días dev de §2.8).
+- Negativas de la guardia: las de siempre con comandos compuestos, `$'\r'`, `uv run --project`,
+  `cmp` y un `grep -r` compuesto (RECORRIDA-CONSTRUCCION.md §5.3), todas reescritas en llamadas
+  sueltas; ninguna del clasificador.
+- Letra del tag: la última cerrada era `stable/F38f-activar-sesion-05-motor`; `stable/F38g-*` no
+  existe en local ni en origin (comprobado antes del tag).
+- Tag: `stable/F38g-recorrida-construccion`. El merge es `git rev-parse "stable/F38g-recorrida-construccion^{commit}"`.
+- Commits de la rama: `f043554` (chore(rama): abre trabajo/recorrida-construccion (encargo, contrato y Archivo 49 de PROJECT_STATE)), `ef2d7d5` (docs(recorrida-construccion): la fase 0, medida, y la PARADA con siete decisiones), `a713e23` (docs(recorrida-construccion): la fila de exposiciones del dia y el README de los anexos, antes de correr nada; la respuesta del consultor a la PARADA), `fec05fc` (feat(anexos): los guiones de la fase 1 de recorrida-construccion (patrones.py con el rotulo opcional, horas_perdidas.py identico, entradas_antes_alternancia.py) y su test de humo), `74ab3cb` (feat(anexos): el guion de entradas da tambien el sesgo y el camino del bot en la sesion (para la lista de S-14), con su test), `665094a` (docs(recorrida-construccion): fase 2, las dos corridas (la que cuenta dio «no»), su diff contra la linea base, los patrones, las dos listas para la sesion 6 y el informe hasta la PARADA 2), `3923789` (docs(runbooks): NOTA en ACTIVAR-A35-A44 §5: la linea base vigente es la corrida 1 de recorrida-construccion, y la desviacion del visor; contrato ampliado solo a ese runbook), `c0ba90c` (docs(recorrida-construccion): §2.8, los costes y las sesiones cargadas de la corrida 2 leidos en la salida y en los ticks; dos casos donde el respaldo M1 llena con la vela que coloco la orden (PARADA 3)), `a468d5d` (docs(adr): NOTA en ADR-0070 §3 con el veredicto literal de la primera corrida que cuenta (no) y el corte por RN-032; contrato ampliado solo a ese ADR), `8e7f902` (docs(recorrida-construccion): la respuesta a la PARADA 3 aplicada (la marca E en las dos listas, las lineas del cierre medidas, el hallazgo) y la PARADA 4 sobre la letra), `5e66bdd` (docs(adr): la NOTA de ADR-0070 §3 gana la frase de las 2 llenadas del respaldo M1 con la vela que coloco la orden (sin ellas, 13,7 % y sigue «no»)), `f5a373c` (docs(recorrida-construccion): el informe del revisor pegado, sus hallazgos arreglados o declarados (recuento de P6, la lectura de ticks declarada, la NOTA del runbook, §5 al dia); rama lista para revision), `d03c6c3` (docs(recorrida-construccion): la respuesta del consultor a la PARADA 4 y la orden de cierre, copiadas tal cual; la linea del calendario de cierres fuera de la regla (§5.4)) y el de este registro.
+- CI: sin CI de Linux por `fix/`: la rama no toca la plataforma (ni `.claude/`, ni hooks, ni
+  rutas, ni código). La CI de `main` corre tras el push.
+- Informe: `docs/validation/RECORRIDA-CONSTRUCCION.md`. Encargo:
+  `docs/encargos/trabajo-recorrida-construccion.md`.

@@ -29,7 +29,7 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La re-corrida del arnés (ADR-0070 §3); después la sesión 6; R6a en los huecos.
+F. La rama corta de la cuarentena por condición (Technical Debt, PRIORITARIA) antes de ingerir la sesión 6; la preparación de la sesión 6 (R4.2); R6a en los huecos.
 
 
 
@@ -49,13 +49,13 @@ K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una va
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
-V. Activar la sesión 5 (R4.1). HECHAS spec y motor (`trabajo/activar-sesion-05` y `trabajo/activar-sesion-05-motor`, este tag: ADR-0084 a 0086, RN-037; A-35 y A-50 con lectura del consultor, ABIERTAS). QUEDA la re-corrida del arnés con `--simular` sobre toda la construcción (ADR-0070 §3; diff contra CABLEADO-SIMULADOR-LINEA-BASE.txt, ACTIVAR-A35-A44.md §5.1); después la sesión 6 (R4.2).
-
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
 N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y se renueva por condición, no cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres; docs/runbooks/RENOVAR-CIERRES.md). La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1 (EA-CONEXION.md §11, el journal de la demo del 2026-10-21 en anexos/EA-CONEXION/demo-20261021-cierre/), y R6a.5 la usa (ADR-0082 D6).
+
+Z. El bróker simulado llena con el respaldo M1 una orden en la vela cuyo cierre la colocó, en todo minuto sin ticks (el borde de la ventana y las horas perdidas), contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8; antes, VISOR-CONSTRUCCION.md §4.3). Rama propia con su test que rompe en main, una NOTA en ADR-0051 §5 y las corridas repetidas; antes de la próxima corrida del arnés que cuente (ADR-0070 §3).
 
 ### Pendientes heredados (sin verificar)
 
@@ -110,7 +110,6 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
 - `test_visor.py` y `test_preparar_a35.py` hacen leer el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18 y 2026-10-26; VISOR-CONSTRUCCION.md §4.3).
 - `motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker (VISOR-CONSTRUCCION.md §4.3).
-- El bróker simulado cotiza con el respaldo M1 la orden del primer cierre de la ventana: los ticks empiezan en ventana_inicio y la orden lleva 1 ms antes (VISOR-CONSTRUCCION.md §4.3).
 - `arnes.dias_de_mercado` lee para calentar el M1 entero de marzo y de junio (días reservados) en cada corrida del arnés y cada make check, sin declararlo; declarado en HOLDOUT-EXPOSICIONES (2026-10-14); la línea LECTURA: va a G.2 (CORRIDA-CONSTRUCCION.md §1.c).
 - El docstring de `engine/freno.py:7-8` dice que el adaptador real de MetaTrader usará la misma clase; ADR-0082 lo enmienda (el EA la porta). Lo paga R6a.4 (PLATAFORMA-ADELANTADA.md).
 

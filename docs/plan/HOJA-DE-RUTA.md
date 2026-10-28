@@ -194,11 +194,23 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   en `main` por D1); la corrida 2 repetida con los tres comandos de R3.1 (§4). PROVISIONAL en
   D1 hasta la pregunta 3 de la sesión 5 (R4.1).
 
+### R3.5 · El respaldo M1 no llena con la vela que colocó la orden
+- **Refs:** NA:Z · ID:ADR-0051
+- **Qué es:** en todo minuto sin ticks (el borde de la ventana y las horas perdidas) el bróker
+  simulado llena una orden con la vela M1 cuyo cierre la colocó, con precios anteriores a la
+  orden, contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8: 2 llenadas en la corrida que
+  cuenta, 10 en la diaria); se corrige con su test, una NOTA en ADR-0051 §5 y las corridas
+  repetidas.
+- **Depende de:** nada.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** un test que llena con la vela que colocó la orden rompe en `main` y pasa en
+  la rama, y las dos corridas de `trabajo/recorrida-construccion` están repetidas en la suya.
+
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
 - **Refs:** ID:A-13 · ID:A-32 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-48 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:A-57 · ID:RN-007 · NA:V · ID:RN-004 · ID:RN-020 ·
+  ID:A-53 · ID:A-57 · ID:RN-007 · ID:RN-004 · ID:RN-020 ·
   ID:ADR-0076 · ID:ADR-0077
 - **Qué es:** RN-004 tras A-35 y RN-020 tras A-44, con su medida (`docs/runbooks/ACTIVAR-A35-A44.md`
   §5.1); las «en parte» de la sesión 4 (con la segunda parte de A-43 y S-14, que es RN-007 y
@@ -220,18 +232,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   R3.4 (HECHA) y la copia de seguridad del carril de Aleks (A.4, HECHA el 2026-10-22).
 - **Quién:** la sesión prepara y activa; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 5 está ingerida y activada.
-- **Estado:** spec y motor HECHOS (`trabajo/activar-sesion-05`, `stable/F38e-activar-sesion-05`;
+- **Estado:** HECHA (`trabajo/activar-sesion-05`, `stable/F38e-activar-sesion-05`;
   `trabajo/activar-sesion-05-motor`, `stable/F38f-activar-sesion-05-motor`;
-  ACTIVAR-SESION-05-MOTOR.md: ADR-0084 a ADR-0086, RN-037). Queda la re-corrida de ADR-0070 §3
-  con su `diff` (ACTIVAR-A35-A44.md §5.1), que mire las entradas que nacen en el primer punto tras
-  la toma y se llenan antes de la alternancia (ACTIVAR-SESION-05-MOTOR.md §0.b.8).
+  `trabajo/recorrida-construccion`, `stable/F38g-recorrida-construccion`: la corrida que cuenta por ADR-0070 §3
+  dio «no» -cobertura 3,5 %, precisión 13,2 %- y las dos listas para la sesión 6 están en
+  RECORRIDA-CONSTRUCCION.md §3 y §4).
 
 ### R4.2 · Preparar y celebrar la sesión 6
-- **Refs:** NA:V · ID:A-35 · ID:A-44 · ID:A-13 · ID:A-43 · ID:A-46 · ID:A-48 · ID:A-49 · ID:A-50 ·
+- **Refs:** ID:A-35 · ID:A-44 · ID:A-13 · ID:A-43 · ID:A-46 · ID:A-48 · ID:A-49 · ID:A-50 ·
   ID:A-53 · ID:ADR-0083 · ID:RN-007
 - **Qué es:** la lista de ACTIVAR-SESION-05.md §3: la magnitud de A-44 primero y su reloj; la
   mecha de A-35; A-13; A-53; A-43; A-49/A-48; A-50; ADR-0083; S-16; S-19 frente a S-24; S-20;
-  S-14 con los días de construcción que dé la re-corrida; y S-11 «en parte» (la toma de la mañana
+  S-14 con las 34 sesiones de P6 de la re-corrida (RECORRIDA-CONSTRUCCION.md §4; 77 llenadas) y
+  el dibujo 3 de S-15 con las 259 entradas llenadas con menos de dos zonas de control (§3; 149
+  con cero, 110 con una), sin las marcadas E; y S-11 «en parte» (la toma de la mañana
   con el MISMO sesgo en la tarde; A-46 sigue RESUELTA). Y lo que deja
   `trabajo/activar-sesion-05-motor` (ACTIVAR-SESION-05-MOTOR.md §2): A-35, si la mecha que mueve
   el nivel es solo la de la contraria o también la de una vela posterior, y lo mismo en un bajo
@@ -245,7 +259,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   retroceso, antes de que haya alternancia. ¿Esa entrada vale? (a) sí; (b) no, había que esperar
   al punto siguiente; (c) otra, ¿cuál?»); S-19 frente a S-24 (la vela de 1 o 2 puntos sigue
   siendo de su color); y A-50 con sus dos dibujos (hoy `caja_entera`, lectura del consultor).
-- **Depende de:** la re-corrida del arnés (R4.1, lo que queda).
+- **Depende de:** nada (la re-corrida está hecha, R4.1).
 - **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 6 está ingerida y activada.
 
@@ -267,7 +281,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Refs:** ID:ADR-0070 · ID:ADR-0043
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
-- **Depende de:** R3.1, con una corrida que cuente (sin diagnóstico; ADR-0070 §3).
+- **Depende de:** la corrida que cuenta (R4.1; ADR-0070 §3) con un "sí", y el ADR propio de la
+  rama de medida (ADR-0070 §6); y NA:Z, el respaldo M1 corregido (R3.5).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la medida de mayo está en su informe.
 
@@ -537,6 +552,16 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Depende de:** R0.2.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** cada hueco tiene skill o se decide que no la necesita.
+
+### G.5 · La cuarentena por condición
+- **Refs:** —
+- **Qué es:** la línea PRIORITARIA de Technical Debt: diciembre cuenta como libre en `meses_libres`
+  con NA:I sin decidir, y la fecha numérica seguida de coma no se tapa (SESION-05-EXTRACCION.md
+  §2.7 y §11, a4).
+- **Depende de:** nada.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** los dos casos tienen su test que rompe en main y pasa en la rama, antes de
+  ingerir la sesión 6.
 
 ## Carril: material reservado que no se toca
 
