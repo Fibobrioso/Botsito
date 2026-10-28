@@ -266,6 +266,79 @@ Dada por Aleks (consultor) el 2026-10-28. Copiada tal cual:
 >
 > Sigue con las fases 1 a 4 como dice el encargo, con estos cambios. Rama lista para revisión, NO cerrada.
 
+## 1. Fase 1 · Diciembre (2026-10-28)
+
+### 1.a Antes de escribir: las copias del hueco y los meses de construcción
+
+- **Las regex con el hueco** (respuesta, punto 1). Búsqueda en `src/`, `scripts/` y `.claude/hooks/`
+  de `(?<![\d.,])` y `(?![\d.,])` (Grep): solo `src/botsito/corpus/cuarentena.py:285`, `:286`,
+  `:287` (`_RE_FECHA`) y `:377` (`_RE_DIA_BARRA_MES`). Ampliada a cualquier clase negada con coma
+  y punto en cualquier orden: sale además `scripts/a18_buscar.py:71`, que ya usa la forma buena
+  (`(?<![a-z0-9])(?<![0-9][.,:])` y `(?![a-z0-9%])(?![.,:][0-9])`: puntuación solo con dígito a cada
+  lado), así que no es una copia del hueco. **Ninguna fuera de `cuarentena.py`: sin PARADA.**
+- **Los meses de construcción, por sus ADR** (respuesta, punto 2): abril y agosto (ADR-0043:30,
+  «construcción = abril y agosto»), julio (ADR-0078, título y `:20`) y enero (ADR-0079, título y
+  `:28`; `:59` resume: «ADR-0043 fijó construcción = abril y agosto; ADR-0078 añadió julio»).
+  Ningún otro ADR mete un mes («entra en construcci», «pasa a construcci», «construcción = » en
+  `docs/adr/`: mayo solo aparece como condición futura, ADR-0043:42 y ADR-0070:122). Son los
+  cuatro de la respuesta, y la regla se escribe con ellos.
+
+### 1.b Lo escrito
+
+- `knowledge/cases/meses_reservados.yaml`: la entrada `"2025-12"` con las tres claves de
+  `_problemas_de_mes` (`motivo`, `fuente: [ADR-0072, docs/validation/SESION-05-EXTRACCION.md]`,
+  `declarado_el: "2026-10-28"`); ADR-0072:55 nombra diciembre entre los backtests que vienen, y
+  `_fuente_existe` admite las dos (sonda de la fase 0). En la cabecera, la regla nueva con el texto
+  literal de la respuesta, y debajo los ADR de cada mes de construcción y por qué hacía falta.
+- `docs/runbooks/MIRAR-EL-MATERIAL.md`: la sección corta nueva al final, «El material recibido: el
+  mes entra en meses_reservados.yaml el mismo día», con la misma regla literal y su porqué.
+- **Por qué el hueco no lo cubría ninguna de las dos condiciones de `meses_libres`**: (a) mira los
+  casos de los repartos, y un mes recibido y fuera del repo no tiene ninguno; (b) mira
+  `meses_reservados.yaml`, y nadie lo había anotado. Un mes así pasaba por DEMOSTRADO libre. La
+  regla nombra la condición (material recibido y sin ADR de construcción) en vez de añadir un mes a
+  mano cada vez que alguien lo nota.
+- Con diciembre, los meses demostrados libres pasan de 7 a 6 (sonda y `medir_visibles.py`); se
+  tapan 6.
+
+### 1.c El test
+
+`test_diciembre_recibido_y_sin_decidir_se_tapa_en_el_repo_real`
+(`tests/unit/test_cuarentena_por_condicion.py`): `motivos_cuarentena("eso fue en diciembre",
+meses_libres(RAIZ)) == [MOTIVO_MES]`, contra el repositorio real y con texto sintético.
+
+- **En `main`** (clon `git worktree add --detach C:/cm/main main`, en 0fa9c81, con el fichero de
+  tests de la rama copiado dentro; skill `comparar-con-main`):
+
+  ```
+  >       assert cu.motivos_cuarentena("eso fue en diciembre", meses_libres(RAIZ)) == [cu.MOTIVO_MES]
+  E       AssertionError: assert [] == ['mes']
+  E         Right contains one more item: 'mes'
+  FAILED tests/unit/test_cuarentena_por_condicion.py::test_diciembre_recibido_y_sin_decidir_se_tapa_en_el_repo_real
+  ```
+- **En la rama**: `PASSED`. Y en la misma ejecución, tal cual y en verde,
+  `test_5_ningun_mes_con_dias_ocultos_o_reservados_queda_sin_cubrir`, `test_la_fuente_real_valida`,
+  `test_la_fuente_es_solo_anadir` y los 15 casos de
+  `test_abril_agosto_enero_y_el_lenguaje_normal_no_se_filtran` (enero, abril y agosto siguen libres):
+  19 passed.
+
+La guardia de Claude Code aceptó como test el del clon (no salió la deuda K).
+
+### 1.d La regeneración tras la fase 1 y los recuentos
+
+Declarada antes en `HOLDOUT-EXPOSICIONES.md` (fila del 2026-10-28). `scripts/ficheros_con_ocultos.py`
+es el de `main` (`git diff main --stat -- scripts/ficheros_con_ocultos.py` vacío).
+
+| Qué | `main` | Rama tras la fase 1 |
+|---|---|---|
+| Rutas en `.claude/hooks/ficheros_con_ocultos.txt` | 14 | 14 (entran 0, salen 0; el fichero no cambia ni un byte) |
+| Propuestas con algún segmento oculto | 10 | 10 (entran 0, salen 0) |
+| Ítems de evidencia visibles en `kb` | 555 | 555 (a ocultos 0, a visibles 0) |
+| Segmentos visibles en `kb` | 5860 | 5860 (a ocultos 0, a visibles 0) |
+
+La línea base de `main` se midió en el árbol de la rama ANTES de tocar nada de la fase 1, con
+`git diff main --stat -- src scripts knowledge .claude tests` vacío: el código y los datos eran los
+de `main`. Ninguna ruta sale de la lista y ningún ítem pasa de oculto a visible: sin PARADA.
+
 ## Estado
 
 EN CURSO. Fases 1 a 4 con los cambios de la respuesta del consultor.
