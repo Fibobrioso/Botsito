@@ -717,7 +717,51 @@ scripts/ficheros_con_ocultos.py` (en dos); `uv run --project ...` (desde el repo
 uv run botsito state check` (en dos); `git status --short; cmp ...` (se usó `git status` solo). La
 única que no tenía forma propuesta, la del clon, fue la PARADA 2.
 
-## 8. Exposiciones del día
+## 8. El encargo, punto por punto
+
+| # | Requisito (encargo y respuestas) | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base verificada con git (main, tag, que no hay otra rama) | Hecho | cabecera |
+| 2 | Abrir con `abrir-rama`: encargo tal cual, contrato, Archivo en HISTORIA | Hecho | c0607bd |
+| 3 | Fase 0: holdout.py (a), (b), `_problemas_de_mes`, validate, origen del régimen (no ADR) | Hecho | §0.a |
+| 4 | Fase 0: `_RE_FECHA`, por qué excluye coma y punto, `numeros_a_cifras` | Hecho, con matiz (el comentario no habla de «10,5») | §0.b |
+| 5 | Fase 0: tests de la fecha y los que leen el repo real | Hecho | §0.c |
+| 6 | Fase 0: dependientes de `meses_libres` y de la regla; qué lee el guion de la lista | Hecho | §0.d |
+| 7 | Fase 0: documentos que dicen qué meses son libres | Hecho | §0.e |
+| 8 | Fase 0: `barrido_18_31.py` línea a línea y la skill | Hecho | §0.f |
+| 9 | Fase 0: PARADA si pide más | Hecho (PARADA de la fase 0) | §0.g-h, respuesta |
+| 10 | Copiar las respuestas tal cual, en commits propios | Hecho | a21edf8; la de la PARADA 2, en bed6968 |
+| 11 | F1: entrada 2025-12 con tres claves, motivo, fuentes, fecha; trailer `Fuente: ADR-0072` | Hecho | f5bc65b |
+| 12 | F1: test de diciembre que rompe en main y pasa en la rama; los cuatro siguen | Hecho | §1.c |
+| 13 | F1: la regla nueva, literal, en la cabecera y en MIRAR-EL-MATERIAL; meses de construcción verificados | Hecho | §1.a-b |
+| 14 | F1: por qué el hueco no lo cubre ninguna condición | Hecho | §1.b |
+| 15 | Resp. 1: buscar copias del hueco en src/, scripts/, .claude/hooks/ | Hecho (solo en `cuarentena.py`) | §1.a |
+| 16 | F2: lookarounds nuevos en las tres primeras alternativas; «mes N» y `_RE_DIA_NUMERO` intactos | Hecho | §2.a |
+| 17 | Resp. 1: los mismos en `_RE_DIA_BARRA_MES`, test que rompe en main | Hecho de otra forma (lookahead, aprobado; rompe en main por la sonda) | §2.b, §2.d |
+| 18 | F2: tests de las cuatro que se tapan y las cuatro que no, rotos en los dos sentidos | Hecho, con tres de más | §2.b |
+| 19 | Resp. 3: «hoy, 45 del 13,» en tests, informe y comentario | Hecho | §0.b, §2.a |
+| 20 | F2: superconjunto, escrito y con test; ampliado a `fechas_en` con 0 pérdidas | Hecho | §2.c |
+| 21 | Resp. PARADA 2: rompe en main por la sonda en el clon, salidas literales | Hecho | §2.b |
+| 22 | Resp. PARADA 2: el test de regex copiadas, como guardia de regresión en su docstring | Hecho | `test_la_rama_no_tapa_menos_que_main` |
+| 23 | Resp. PARADA 2: desviación de G.5 declarada; literal y frase de la guardia | Hecho | §2.e |
+| 24 | Resp. PARADA 2: solapes contados | Hecho (2031 textos, 324 solapes) | §2.c-d |
+| 25 | Fila de HOLDOUT antes de leer, con las tres (y cuatro) lecturas | Hecho | §1.d, §9 |
+| 26 | Regeneración tras la fase 1 y tras la fase 2, solo recuentos, PARADA si sale algo | Hecho (14 → 14 las dos veces) | §1.d, §2.g |
+| 27 | Ítems de evidencia y propuestas de visibles a ocultos, por recuento | Hecho (0 y 0; 10 segmentos) | §1.d, §2.f |
+| 28 | F3: `scripts/barrido_dias.py` (normalizar, numeros_a_cifras, [N], misma condición) | Hecho | §3 |
+| 29 | F3: tests sintéticos rotos en los dos sentidos | Hecho | §3 |
+| 30 | F3: la skill, solo ese paso, con el diff | Hecho | §3 |
+| 31 | F4: la entrada en DECISIONES-DE-PROCESO con su frase literal, origen, problema, alternativa, ACTIVE | Hecho | §4 |
+| 32 | Contrato con lo que toca la rama | Hecho (con `test_barrido_dias.py`, declarado) | `contrato.yaml` |
+| 33 | Líneas del cierre preparadas sin aplicar; `test_hoja_de_ruta` y `wc -c` | Hecho (22.889 bytes) | §6 |
+| 34 | Resp. 2: línea de Technical Debt (R5.4) y la frase en R5.4 | Hecho (preparadas) | §6 |
+| 35 | Resp. PARADA 2: la línea que se añade a K | Hecho (preparada) | §6 |
+| 36 | `make check` sellado, push a `fix/`, CI de Linux | Hecho | §10 |
+| 37 | Revisor con el informe terminado y su alcance; su informe pegado | Hecho | al final |
+| 38 | Borrar el clon `C:/cm/main` con `comparar-con-main` | Hecho | §10 |
+| 39 | QUÉ NO CAMBIA: motor, spec, ambigüedades, feedback, evidencia, casos, repartos, corpus, guardia, settings | Hecho (`git diff --stat main...HEAD`, §10) | §10 |
+
+## 9. Exposiciones del día
 
 Una fila en `docs/validation/HOLDOUT-EXPOSICIONES.md` (2026-10-28), escrita ANTES del primer `make
 check` con diciembre y antes de ejecutar nada que leyera material: las cuatro lecturas en memoria (la
@@ -727,6 +771,32 @@ filtradas; las sondas y los tests, con texto sintético. El auditor del encargo 
 informe (§0.h): una llamada a `meses_libres` con texto sintético y un `git ls-files knowledge/cases`
 que solo listó rutas de README.
 
+## 10. Sello, CI de Linux y lo que no cambia
+
+- **`make check`** de cada commit, en verde con su línea `SELLO` (el de 9567a8c: 2990 passed,
+  `SELLO: make check en verde sobre el arbol 294323dc...`). El primer intento de la fase 2 salió en
+  rojo por dos líneas de más de 100 caracteres (ruff); se partieron y se volvió a sellar.
+- **CI de Linux**: `git push origin trabajo/cuarentena-por-condicion-2:refs/heads/fix/cuarentena-por-condicion-2`;
+  run **40731298628** sobre 9567a8c449bdfbed14ca03fc388ad4cff33c15ca (por la API de check-runs con
+  el sha literal; consultado con `gh run view` suelto, con una espera `sleep` en segundo plano entre
+  medias). Resultado: un solo fallo, el esperado, `test_state_check_ok_on_real_repo` («PROJECT_STATE
+  declara la rama 'trabajo/cuarentena-por-condicion-2'; la rama actual es
+  'fix/cuarentena-por-condicion-2'»); `1 failed, 2943 passed, 46 skipped`. El run del último commit
+  de la rama se anota al final, tras el revisor.
+- **Lo que no cambia**: `git diff --stat main...HEAD` da 15 ficheros, todos del contrato
+  (`.claude/skills/ingerir-sesion/SKILL.md`, `PROJECT_STATE.md`, `contrato.yaml`, el encargo,
+  `DECISIONES-DE-PROCESO.md`, `MIRAR-EL-MATERIAL.md`, `HISTORIA.md`, este informe,
+  `HOLDOUT-EXPOSICIONES.md`, `meses_reservados.yaml`, `scripts/barrido_dias.py`,
+  `src/botsito/corpus/cuarentena.py` y los tres ficheros de tests). Ni el motor, ni la spec, ni las
+  ambigüedades, el feedback, la evidencia, los casos, los repartos, el corpus, `fuentes.yaml`,
+  `libros.yaml`, `SESIONES_EN_CUARENTENA`, los tramos no citables, `.claude/hooks/guardia.py` ni
+  `.claude/settings.json`. `.claude/hooks/ficheros_con_ocultos.txt` no aparece porque las dos
+  regeneraciones lo dejaron igual. `uv run python scripts/contrato_rama.py`: «15 ficheros dentro
+  del contrato».
+- **El clon `C:/cm/main`** se deja hasta después del revisor y se borra con `comparar-con-main`
+  (respuesta a la PARADA 2); se anota al final.
+
 ## Estado
 
-EN CURSO. Fases 1 a 4 hechas; siguen el `make check` sellado, el push a `fix/`, la CI y el revisor.
+Fases 0 a 4 hechas; `make check` sellado; CI de Linux con solo el fallo esperado (run 40731298628).
+Falta el revisor.
