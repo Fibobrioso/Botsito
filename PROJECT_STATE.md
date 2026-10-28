@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/cuarentena-por-condicion-2
+main
 
 ## Current Feature
-trabajo/cuarentena-por-condicion-2, EN CURSO (abierta el 2026-10-28; tramo «Carril: guardias y deuda», G.5; F): diciembre en meses_reservados.yaml, la fecha numérica pegada a una coma o un punto, el barrido ancho de días en la skill ingerir-sesion y la regla de letras en DECISIONES-DE-PROCESO.md. Encargo docs/encargos/trabajo-cuarentena-por-condicion-2.md; informe docs/validation/CUARENTENA-POR-CONDICION-2.md.
+Ninguna rama abierta. trabajo/cuarentena-por-condicion-2 cerrada en main el 2026-10-28 (stable/F38h-cuarentena-por-condicion-2): diciembre tapado en la cuarentena mientras no se decida, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras (CUARENTENA-POR-CONDICION-2.md).
 
 ## Stable Main State
-faf5ce2 · merge de `trabajo/recorrida-construccion` (tag `stable/F38g-recorrida-construccion`): la corrida que cuenta por ADR-0070 §3 («no»), la línea base nueva, las dos listas para la sesión 6 y el error del respaldo M1 (Z). Sobre `stable/F38f-activar-sesion-05-motor` (d843dbc). Informe docs/validation/RECORRIDA-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
+d5f6b81 · merge de `trabajo/cuarentena-por-condicion-2` (tag `stable/F38h-cuarentena-por-condicion-2`): diciembre en meses_reservados.yaml, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras. Sobre `stable/F38g-recorrida-construccion` (faf5ce2). Informe docs/validation/CUARENTENA-POR-CONDICION-2.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-faf5ce2 · merge: trabajo/recorrida-construccion, la corrida que cuenta por ADR-0070 §3 (no), la linea base nueva, las dos listas para la sesion 6 y el error del respaldo M1 (Z) · tag stable/F38g-recorrida-construccion
+d5f6b81 · merge: trabajo/cuarentena-por-condicion-2, diciembre tapado en la cuarentena, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras · tag stable/F38h-cuarentena-por-condicion-2
 
 ## Tests Currently Passing
 1741 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
