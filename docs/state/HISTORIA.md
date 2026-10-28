@@ -13546,3 +13546,43 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 49 (2026-10-27).
+
+# Registro de cierre · `trabajo/cuarentena-por-condicion-2` (2026-10-28)
+
+- Orden de cierre del consultor del 2026-10-28, dada por Aleks tras la revisión (copiada tal cual al
+  final del encargo y del informe, en su commit propio, 76c61ee); Aleks lanzó `/cerrar-rama` y la
+  sesión siguió `RITUAL.md`. La rama tuvo dos PARADAS (fase 0: el hueco gemelo en `fechas_en`, la
+  regla nueva sin salida que habría atrapado agosto, el literal con fecha real y el orden de la
+  regeneración; PARADA 2: la guardia niega en el clon los ficheros de test, deuda K) y una pasada del
+  revisor (§11; lo hecho, §12). Nunca se cerró sin la orden.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; las líneas de §6 del
+  informe, tal cual: la Next Action, F entera y la frase nueva al final de K (ninguna letra sale:
+  G.5 no tenía letra propia, la llevaba F, así que no hay registro «# Next Action HECHA»); Technical
+  Debt, salen la línea PRIORITARIA de la cuarentena y la de la skill ingerir-sesion, y entra la de la
+  salida de `meses_reservados.yaml` (dueña, la rama de R5.4); la hoja de ruta, G.5 con «la I sin
+  decidir» y su «Estado: HECHA», y R5.4 con su añadido; la fila de ERRORES-RECURRENTES.
+- **Lo que entra** (carril de guardias y deuda, G.5): diciembre de 2025 en
+  `knowledge/cases/meses_reservados.yaml` (la cuarentena del texto lo tapa mientras NA:I no decida) y
+  la regla del material recibido en su cabecera y en MIRAR-EL-MATERIAL.md; el borde de la regla de
+  fecha (una coma o un punto son del número solo con un dígito a cada lado) en `_RE_FECHA` y en
+  `_RE_DIA_BARRA_MES`, este dentro de un lookahead para no perder fechas solapadas; los tests
+  (diciembre rompe en main por su test en el clon; la coma y el punto, por la sonda sobre el código
+  de main en el clon, por la deuda K) y el de superconjunto, con una batería sin fechas posibles;
+  `scripts/barrido_dias.py`, el barrido ancho de días en dígitos y en letra, que la skill
+  ingerir-sesion manda en su paso 6 antes de leer cada filtrada; la regla de letras del 2026-10-27
+  en DECISIONES-DE-PROCESO.md. Las dos regeneraciones de la lista de la guardia la dejan igual (14
+  rutas); ningún ítem de evidencia cambia y 10 segmentos más quedan ocultos.
+- Exposiciones: la fila del 2026-10-28 de esta rama en `HOLDOUT-EXPOSICIONES.md` (las lecturas en
+  memoria de cada `make check`, de las dos regeneraciones y de los recuentos de `kb`).
+- Negativas de la guardia: las de siempre con comandos compuestos (`c=$(...)`, `xargs`, `| sed`,
+  `cp && pytest`, `uv run --project`, `git status; cmp`), todas en llamadas sueltas; y la del clon
+  (deuda K), que fue la PARADA 2. Ninguna del clasificador.
+- Letra del tag: la última cerrada era `stable/F38g-recorrida-construccion`; `stable/F38h-*` no
+  existe en local ni en origin (comprobado antes del tag).
+- Tag: `stable/F38h-cuarentena-por-condicion-2`. El merge es `git rev-parse "stable/F38h-cuarentena-por-condicion-2^{commit}"`.
+- Commits de la rama: `c0607bd` (chore(rama): abre trabajo/cuarentena-por-condicion-2 (encargo, contrato y Archivo 50 de PROJECT_STATE)), `2863235` (docs: fase 0 medida, el auditor del encargo y la PARADA), `a21edf8` (docs: la respuesta del consultor a la PARADA de la fase 0, copiada tal cual), `f5bc65b` (feat(cuarentena): diciembre de 2025 en meses_reservados.yaml y la regla del material recibido), `bed6968` (feat(cuarentena): una coma o un punto son del numero solo con un digito a cada lado), `9567a8c` (feat(ingerir-sesion): el barrido ancho de dias antes de leer cada filtrada, y la regla de letras), `1086d7d` (docs: el informe terminado para el revisor), `a6b5867` (fix: los hallazgos del revisor y su informe pegado), `76c61ee` (docs: la orden de cierre, copiada tal cual) y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- CI de Linux por `fix/cuarentena-por-condicion-2`: run 40731298628 sobre 9567a8c y run
+  40739978222 sobre a6b5867, los dos con un solo fallo, el esperado de `state check` por el nombre
+  `fix/` (`1 failed, 2943 passed, 46 skipped`). La CI de `main` corre tras el push.
+- Informe: `docs/validation/CUARENTENA-POR-CONDICION-2.md`. Encargo:
+  `docs/encargos/trabajo-cuarentena-por-condicion-2.md`.

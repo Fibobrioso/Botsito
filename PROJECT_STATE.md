@@ -29,7 +29,7 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La rama corta de la cuarentena por condición (Technical Debt, PRIORITARIA) antes de ingerir la sesión 6; la preparación de la sesión 6 (R4.2); R6a en los huecos.
+F. La preparación de la sesión 6 (R4.2); R6a y Z en los huecos.
 
 
 
@@ -45,7 +45,7 @@ J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de 
 
 A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2 entre el 26 y el 30 de octubre, con el script 1.1 compilado antes; la 3 después del 1 de noviembre. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza` (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
 
-K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos. Y las dos negativas de ACTIVAR-SESION-05-MOTOR.md §0.d (pytest desde C:/cm/, encadenadas).
+K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos. Y las dos negativas de ACTIVAR-SESION-05-MOTOR.md §0.d (pytest desde C:/cm/, encadenadas). Y la de CUARENTENA-POR-CONDICION-2.md §2.e: en el clon de comparar-con-main la guardia niega un fichero de test porque «el codigo nombra la carpeta \.» (la constante `\.` de un f-string de regex, que en Windows es la raíz de la unidad), un falso positivo que en el repo real no salta.
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
@@ -93,8 +93,7 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 
 ## Technical Debt
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
-- PRIORITARIA. La cuarentena por condición deja pasar texto de un mes que puede acabar reservado: `meses_libres` cuenta diciembre como libre con NA:I sin decidir (`motivos_cuarentena('el [N] de diciembre')`: `[]` con meses libres, `['mes']` sin ellos), y la fecha numérica seguida de coma no se tapa (`'hoy 25 del 10'` da `['fecha numerica']`; `'hoy, 25 del 10,'`, `[]`). Carril de guardias y cuarentena (SESION-05-EXTRACCION.md §2.7 y §11, a4).
-- La skill ingerir-sesion tiene que mandar el barrido ancho ANTES de leer cada filtrada: días 18 a 31 en dígitos y en letra, con el número enmascarado (`anexos/SESION-05/barrido_18_31.py` solo ve dígitos). Dueño: la próxima rama que toque `.claude/skills/ingerir-sesion` (SESION-05-EXTRACCION.md §2.7).
+- Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción), y ADR-0078 y ADR-0079 exigen que un mes de construcción no esté en él: la rama que decida llevar a construcción un mes de aquí construye antes la salida, con su ADR. Dueña: la rama de R5.4, diciembre (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2).
 - El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
 - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación: la rama que congele los CSV de las ejecuciones 2 y 3 comprueba el CRLF del CSV 2 en `MQL5\Files` antes de copiarlo (EA-CONEXION.md §0.c).
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
