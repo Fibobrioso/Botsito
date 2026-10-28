@@ -1,0 +1,170 @@
+# RECORRIDA-CONSTRUCCION §2.8: costes, sesiones cargadas y el respaldo M1
+llenadas leidas de entradas-antes-alternancia.txt: 291
+## a) Llenadas de la corrida 2 con |R - R esperado| > 0,25
+dia | sesion | orden | lado | motivo | R | R esperado | desviacion | caja (pt) | stop (pt) | R teorico (llenado en el 0) | llenado: fuente, deslizamiento (pt), spread (pt) | salida: fuente, precio, salto sobre su nivel (pt) | limite del lote | comision en R | causa | comprobacion del R | regla aplicada como esta escrita
+2026-01-05 | 07-11 | o3 | venta | objetivo | +2.86 | +3.75 | -0.89 | 7 | 6 | +3.50 | ticks 06:04:22.610Z, +1, 3 | ticks 06:04:49.907Z, 1.16831, +0 | volumen+margen (riesgo 0.146%) | 1.67 | redondeo de una caja de 7 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-01-12 | 11-15 | o5 | compra | objetivo | +3.38 | +3.75 | -0.37 | 15 | 12 | +3.75 | ticks 10:27:27.536Z, +1, 5 | ticks 10:52:07.850Z, 1.16828, +0 | margen (riesgo 0.293%) | 0.83 | el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-01-13 | 07-11 | o15 | venta | stop | -1.40 | -1.00 | -0.40 | 6 | 5 | -1.00 | ticks 09:35:09.396Z, +0, 6 | ticks 09:35:09.607Z, 1.16716, +2 | volumen+margen (riesgo 0.122%) | 2.00 | el tick que salta el stop llega 2 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-01-15 | 07-11 | o2 | venta | objetivo | +3.38 | +3.75 | -0.37 | 15 | 12 | +3.75 | ticks 06:12:00.151Z, +1, 3 | ticks 06:43:14.866Z, 1.16323, +0 | margen (riesgo 0.294%) | 0.83 | el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-01-16 | 11-15 | o16 | compra | objetivo | +2.18 | +3.75 | -1.57 | 9 | 8 | +3.38 | ticks 12:35:15.720Z, +3, 4 | ticks 12:46:39.863Z, 1.16188, +0 | volumen+margen (riesgo 0.196%) | 1.25 | redondeo de una caja de 9 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 3 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-01-19 | 07-11 | o3 | compra | objetivo | +3.43 | +3.75 | -0.32 | 8 | 7 | +3.43 | ticks 06:48:30.138Z, +0, 3 | ticks 06:55:12.145Z, 1.16290, +0 | volumen+margen (riesgo 0.172%) | 1.43 | redondeo de una caja de 8 pt (stop alejandose, objetivo abajo) | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-01-27 | 07-11 | o9 | venta | objetivo | +3.48 | +3.75 | -0.27 | 34 | 28 | +3.64 | ticks 06:48:52.751Z, +1, 1 | ticks 07:56:14.215Z, 1.18677, +0 | ninguno (riesgo 0.500%) | 0.36 | redondeo de una caja de 34 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-01-29 | 11-15 | o28 | venta | stop | -1.86 | -1.00 | -0.86 | 17 | 14 | -1.00 | ticks 12:54:12.220Z, +0, 2 | ticks 12:54:30.039Z, 1.19575, +12 | margen (riesgo 0.334%) | 0.71 | el tick que salta el stop llega 12 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-04-01 | 11-15 | o7 | compra | objetivo | +2.10 | +3.75 | -1.65 | 17 | 14 | +3.64 | ticks 12:30:23.864Z, +7, 4 | ticks 12:35:05.749Z, 1.16021, +0 | margen (riesgo 0.344%) | 0.71 | redondeo de una caja de 17 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 7 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-04-07 | 07-11 | o1 | venta | stop | -2.00 | -1.00 | -1.00 | 5 | 4 | -1.00 | respaldo_m1 05:00:00.000Z, +0, - | ticks 05:00:00.061Z, 1.15386, +4 | volumen+margen (riesgo 0.099%) | 2.50 | llenado con el respaldo M1 (fuera de la cobertura de ticks (el minuto antes de la ventana); con la M1 cuyo cierre coloco la orden); el tick que salta el stop llega 4 pt pasado su nivel | R desde el precio de salida: cuadra | NO: la orden se evalua contra la M1 cuyo cierre la coloco, cuyos precios son todos anteriores a la orden; ADR-0051 §2 dice que una orden no se evalua contra el tick en que se decidio, solo contra los posteriores, y el respaldo de §5 no lo excluye por escrito; y no es una hora perdida: es el borde de la cobertura de ticks, y §8 deja el respaldo para depurar y para las horas perdidas
+2026-04-07 | 07-11 | o4 | venta | stop (tras mover a break even) | -0.33 | +0.00 | -0.33 | 15 | 12 | +0.00 | ticks 05:09:27.936Z, +0, 4 | ticks 05:14:13.954Z, 1.15381, +4 | margen (riesgo 0.296%) | 0.83 | el tick que salta el stop llega 4 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-04-08 | 07-11 | o4 | compra | objetivo | +3.48 | +3.75 | -0.27 | 34 | 28 | +3.64 | ticks 07:15:28.258Z, +1, 2 | ticks 07:22:10.085Z, 1.16924, +0 | ninguno (riesgo 0.500%) | 0.36 | redondeo de una caja de 34 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-04-16 | 07-11 | o9 | compra | stop | -1.33 | -1.00 | -0.33 | 14 | 12 | -1.00 | ticks 07:56:02.860Z, +0, 2 | ticks 08:05:00.212Z, 1.17907, +4 | margen (riesgo 0.290%) | 0.83 | el tick que salta el stop llega 4 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-04-22 | 07-11 | o3 | venta | stop | -1.29 | -1.00 | -0.29 | 15 | 12 | -1.00 | ticks 05:15:02.197Z, +2, 5 | ticks 05:16:09.723Z, 1.17433, +4 | margen (riesgo 0.291%) | 0.83 | el tick que llena la orden stop llega 2 pt pasado el 0; el tick que salta el stop llega 4 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-04-23 | 07-11 | o3 | venta | stop | -2.00 | -1.00 | -1.00 | 5 | 4 | -1.00 | respaldo_m1 05:05:00.000Z, +0, - | respaldo_m1 05:06:00.000Z, 1.17011, +4 | volumen+margen (riesgo 0.097%) | 2.50 | llenado con el respaldo M1 (hora perdida; con la M1 cuyo cierre coloco la orden); salida con el respaldo M1 (hora perdida); el tick que salta el stop llega 4 pt pasado su nivel | R desde el precio de salida: cuadra | NO: la orden se evalua contra la M1 cuyo cierre la coloco, cuyos precios son todos anteriores a la orden; ADR-0051 §2 dice que una orden no se evalua contra el tick en que se decidio, solo contra los posteriores, y el respaldo de §5 no lo excluye por escrito
+2026-04-24 | 07-11 | o6 | venta | stop | -1.50 | -1.00 | -0.50 | 5 | 4 | -1.00 | ticks 05:43:18.197Z, +0, 5 | ticks 05:43:20.179Z, 1.16826, +2 | volumen+margen (riesgo 0.098%) | 2.50 | el tick que salta el stop llega 2 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-04-24 | 07-11 | o23 | venta | objetivo | +3.29 | +3.75 | -0.46 | 19 | 16 | +3.56 | ticks 08:22:57.320Z, +1, 4 | ticks 08:39:56.882Z, 1.16881, +0 | margen (riesgo 0.390%) | 0.62 | redondeo de una caja de 19 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-07-02 | 11-15 | o9 | compra | stop | -1.29 | -1.00 | -0.29 | 8 | 7 | -1.00 | ticks 10:18:40.271Z, +0, 5 | ticks 10:18:45.860Z, 1.14069, +2 | volumen+margen (riesgo 0.175%) | 1.43 | el tick que salta el stop llega 2 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-07-03 | 07-11 | o5 | compra | objetivo | +2.57 | +3.75 | -1.18 | 13 | 11 | +3.55 | ticks 06:03:31.550Z, +3, 4 | ticks 06:14:21.004Z, 1.14535, +0 | margen (riesgo 0.274%) | 0.91 | redondeo de una caja de 13 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 3 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-07-07 | 11-15 | o22 | venta | objetivo | +3.20 | +3.75 | -0.55 | 11 | 9 | +3.67 | ticks 12:35:03.466Z, +1, 2 | ticks 12:43:01.091Z, 1.14371, +0 | volumen+margen (riesgo 0.224%) | 1.11 | redondeo de una caja de 11 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-07-08 | 07-11 | o6 | compra | stop (tras mover a break even) | -0.41 | +0.00 | -0.41 | 67 | 54 | +0.00 | ticks 08:25:52.521Z, +0, 4 | ticks 08:39:12.300Z, 1.14095, +22 | ninguno (riesgo 0.500%) | 0.19 | el tick que salta el stop llega 22 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-08-18 | 11-15 | o15 | venta | stop (tras mover a break even) | -0.33 | +0.00 | -0.33 | 25 | 20 | +0.00 | ticks 09:40:20.862Z, +1, 3 | ticks 09:53:29.350Z, 1.15768, +7 | margen (riesgo 0.492%) | 0.50 | el tick que llena la orden stop llega 1 pt pasado el 0; el tick que salta el stop llega 7 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-08-25 | 07-11 | o10 | venta | objetivo | +3.20 | +3.75 | -0.55 | 11 | 9 | +3.67 | ticks 07:23:47.000Z, +1, 5 | ticks 07:31:15.966Z, 1.16583, +0 | volumen+margen (riesgo 0.220%) | 1.11 | redondeo de una caja de 11 pt (stop alejandose, objetivo abajo); el tick que llena la orden stop llega 1 pt pasado el 0 | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-08-28 | 11-15 | o17 | venta | stop (tras mover a break even) | -0.46 | +0.00 | -0.46 | 14 | 12 | +0.00 | ticks 10:46:30.795Z, +1, 2 | ticks 10:51:17.572Z, 1.16460, +6 | margen (riesgo 0.294%) | 0.83 | el tick que llena la orden stop llega 1 pt pasado el 0; el tick que salta el stop llega 6 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+2026-08-31 | 11-15 | o14 | compra | stop (tras mover a break even) | -0.33 | +0.00 | -0.33 | 32 | 26 | +0.00 | ticks 12:41:16.249Z, +1, 4 | ticks 12:55:02.512Z, 1.15940, +9 | ninguno (riesgo 0.500%) | 0.38 | el tick que llena la orden stop llega 1 pt pasado el 0; el tick que salta el stop llega 9 pt pasado su nivel | R desde el precio de salida: cuadra | si: ADR-0051 §1-§5 y ADR-0057: la orden stop y el stop se llenan al tick que los dispara, el objetivo a su precio; el redondeo es el de stop_fraccion_redondeo y fijar_objetivo
+casos: 25; por tipo de causa (un caso puede tener varias): deslizamiento de la entrada 15, redondeo de una caja pequena 10, respaldo M1 1, respaldo M1 con la vela que decidio la orden 2, salto del stop 13
+
+cerradas a mercado (manual, sin R esperado): 5
+2026-01-02 | 11-15 | o9 | venta | R +0.57
+2026-01-21 | 11-15 | o26 | venta | R -0.09
+2026-04-02 | 11-15 | o9 | venta | R +1.43
+2026-04-06 | 07-11 | o6 | compra | R -0.28
+2026-08-13 | 07-11 | o9 | venta | R +1.86
+
+## b) Sesiones de la corrida 2 con mas de 4 llenadas
+### 2026-01-13 07-11: 7 llenadas
+escenarios con llenadas: 4 (n 1: 3, n 2: 1, n 3: 1, n 4: 2); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 116624@29471494 2, 116598@29471498 1, 116618@29471521 1, 116683@29471585 1, 116709@29471614 2
+  n 1: o3 07:35:42.488Z 116624@29471494 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o4 07:36:00.709Z 116624@29471494 -1.20 (stop; cartuchos gastados antes de llenar: 1) · o5 07:44:43.041Z 116598@29471498 -1.00 (stop; cartuchos gastados antes de llenar: 2)
+  n 2: o7 08:02:25.839Z 116618@29471521 -1.00 (stop; cartuchos gastados antes de llenar: 0)
+  n 3: o12 09:06:56.595Z 116683@29471585 +0.00 (stop, break even; cartuchos gastados antes de llenar: 0)
+  n 4: o15 09:35:09.396Z 116709@29471614 -1.40 (stop; cartuchos gastados antes de llenar: 0) · o17 09:37:02.137Z 116709@29471614 -0.14 (stop, break even; cartuchos gastados antes de llenar: 1)
+racha de perdidas maxima del dia (RN-036, tope 9): 6; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -4.01 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: 2026-01-13 07-11 | bot 7 | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-016, RN-018, RN-027, RN-037
+### 2026-01-14 07-11: 5 llenadas
+escenarios con llenadas: 2 (n 1: 3, n 2: 2); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 116419@29472840 2, 116428@29472844 1, 116463@29472960 2
+  n 1: o2 06:01:10.917Z 116419@29472840 -1.25 (stop; cartuchos gastados antes de llenar: 0) · o3 06:02:00.327Z 116419@29472840 -1.25 (stop; cartuchos gastados antes de llenar: 1) · o5 06:05:00.996Z 116428@29472844 -1.00 (stop; cartuchos gastados antes de llenar: 2)
+  n 2: o9 08:01:30.033Z 116463@29472960 -1.12 (stop; cartuchos gastados antes de llenar: 0) · o10 08:03:50.562Z 116463@29472960 +3.60 (objetivo; cartuchos gastados antes de llenar: 1)
+racha de perdidas maxima del dia (RN-036, tope 9): 4; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -0.92 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: 2026-01-14 07-11 | bot 5 | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-016, RN-017, RN-018, RN-027, RN-034, RN-037
+### 2026-04-15 11-15: 5 llenadas
+escenarios con llenadas: 3 (n 1: 1, n 2: 3, n 3: 1); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 117817@29604071 1, 117767@29604151 1, 117746@29604155 2, 117775@29604225 1
+  n 1: o18 09:14:00.183Z 117817@29604071 +0.00 (stop, break even; cartuchos gastados antes de llenar: 0)
+  n 2: o23 10:32:09.956Z 117767@29604151 -1.07 (stop; cartuchos gastados antes de llenar: 0) · o26 10:36:04.641Z 117746@29604155 -1.10 (stop; cartuchos gastados antes de llenar: 1) · o27 10:40:53.013Z 117746@29604155 -0.17 (stop, break even; cartuchos gastados antes de llenar: 2)
+  n 3: o28 11:49:12.810Z 117775@29604225 +0.00 (stop, break even; cartuchos gastados antes de llenar: 0)
+racha de perdidas maxima del dia (RN-036, tope 9): 2; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -1.78 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: no hay
+### 2026-04-24 07-11: 5 llenadas
+escenarios con llenadas: 4 (n 1: 1, n 2: 1, n 3: 2, n 4: 1); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 116820@29616822 1, 116826@29616883 1, 116871@29616955 1, 116853@29616963 1, 116938@29616980 1
+  n 1: o6 05:43:18.197Z 116820@29616822 -1.50 (stop; cartuchos gastados antes de llenar: 0)
+  n 2: o8 06:44:30.284Z 116826@29616883 +3.75 (objetivo; cartuchos gastados antes de llenar: 0)
+  n 3: o19 08:01:31.808Z 116871@29616955 +0.00 (stop, break even; cartuchos gastados antes de llenar: 0) · o20 08:06:38.549Z 116853@29616963 -1.00 (stop; cartuchos gastados antes de llenar: 0)
+  n 4: o23 08:22:57.320Z 116938@29616980 +3.29 (objetivo, break even; cartuchos gastados antes de llenar: 0)
+racha de perdidas maxima del dia (RN-036, tope 9): 2; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -0.87 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: 2026-04-24 07-11 | bot 5 | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037
+### 2026-07-02 11-15: 6 llenadas
+escenarios con llenadas: 3 (n 1: 1, n 2: 2, n 3: 3); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 114136@29716391 1, 114078@29716457 1, 114070@29716460 1, 114039@29716560 3
+  n 1: o7 09:13:30.241Z 114136@29716391 +0.00 (stop, break even; cartuchos gastados antes de llenar: 0)
+  n 2: o9 10:18:40.271Z 114078@29716457 -1.29 (stop; cartuchos gastados antes de llenar: 0) · o12 10:21:52.916Z 114070@29716460 -1.00 (stop; cartuchos gastados antes de llenar: 1)
+  n 3: o24 12:01:00.067Z 114039@29716560 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o25 12:02:09.571Z 114039@29716560 -1.00 (stop; cartuchos gastados antes de llenar: 1) · o27 12:05:03.255Z 114039@29716560 -1.00 (stop; cartuchos gastados antes de llenar: 2)
+racha de perdidas maxima del dia (RN-036, tope 9): 6; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -3.63 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: 2026-07-02 11-15 | bot 6 | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-016, RN-018, RN-027, RN-037
+### 2026-07-03 07-11: 5 llenadas
+escenarios con llenadas: 3 (n 1: 2, n 2: 2, n 3: 1); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 114496@29717641 2, 114545@29717714 1, 114517@29717734 1, 114501@29717740 1
+  n 1: o4 06:02:06.574Z 114496@29717641 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o5 06:03:31.550Z 114496@29717641 +2.57 (objetivo, break even; cartuchos gastados antes de llenar: 1)
+  n 2: o6 07:24:42.409Z 114545@29717714 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o8 07:35:41.827Z 114517@29717734 -1.00 (stop; cartuchos gastados antes de llenar: 1)
+  n 3: o11 07:42:56.334Z 114501@29717740 +3.75 (objetivo, break even; cartuchos gastados antes de llenar: 0)
+racha de perdidas maxima del dia (RN-036, tope 9): 2; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -0.05 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: 2026-07-03 07-11 | bot 5 | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037
+### 2026-07-07 11-15: 5 llenadas
+escenarios con llenadas: 3 (n 1: 2, n 2: 2, n 3: 1); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 114293@29723671 1, 114308@29723682 1, 114359@29723725 1, 114354@29723727 1, 114404@29723794 1
+  n 1: o7 10:35:15.065Z 114293@29723671 -1.07 (stop; cartuchos gastados antes de llenar: 0) · o11 10:43:03.629Z 114308@29723682 -0.14 (stop, break even; cartuchos gastados antes de llenar: 1)
+  n 2: o15 11:26:01.684Z 114359@29723725 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o17 11:31:59.213Z 114354@29723727 -1.00 (stop; cartuchos gastados antes de llenar: 1)
+  n 3: o22 12:35:03.466Z 114404@29723794 +3.20 (objetivo, break even; cartuchos gastados antes de llenar: 0)
+racha de perdidas maxima del dia (RN-036, tope 9): 4; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -2.13 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: 2026-07-07 11-15 | bot 5 | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037
+### 2026-07-10 07-11: 5 llenadas
+escenarios con llenadas: 3 (n 1: 2, n 2: 2, n 3: 1); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 114385@29727686 1, 114381@29727688 1, 114398@29727791 1, 114404@29727825 1, 114373@29727838 1
+  n 1: o3 05:28:00.000Z 114385@29727686 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o4 05:32:00.000Z 114381@29727688 -1.00 (stop; cartuchos gastados antes de llenar: 1)
+  n 2: o7 07:14:10.108Z 114398@29727791 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o8 07:50:14.460Z 114404@29727825 -1.00 (stop; cartuchos gastados antes de llenar: 1)
+  n 3: o12 07:59:02.973Z 114373@29727838 -1.11 (stop; cartuchos gastados antes de llenar: 0)
+racha de perdidas maxima del dia (RN-036, tope 9): 6; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -3.37 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: 2026-07-10 07-11 | bot 5 | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027, RN-037
+### 2026-08-24 07-11: 8 llenadas
+escenarios con llenadas: 5 (n 1: 2, n 2: 2, n 3: 1, n 4: 1, n 5: 2); la toma de cada escenario no esta en ninguna salida commiteada
+llenadas por punto: 116793@29792484 1, 116793@29792486 1, 116761@29792544 1, 116758@29792546 1, 116721@29792598 1, 116670@29792631 1, 116646@29792654 1, 116642@29792656 1
+  n 1: o3 05:25:00.642Z 116793@29792484 -1.00 (stop; cartuchos gastados antes de llenar: 0) · o4 05:27:04.662Z 116793@29792486 -1.00 (stop; cartuchos gastados antes de llenar: 1)
+  n 2: o6 06:26:02.202Z 116761@29792544 -1.08 (stop; cartuchos gastados antes de llenar: 0) · o8 06:29:06.793Z 116758@29792546 -1.17 (stop; cartuchos gastados antes de llenar: 1)
+  n 3: o12 07:19:42.159Z 116721@29792598 +0.00 (stop, break even; cartuchos gastados antes de llenar: 0)
+  n 4: o19 07:53:32.497Z 116670@29792631 +0.00 (stop, break even; cartuchos gastados antes de llenar: 0)
+  n 5: o21 08:15:54.634Z 116646@29792654 -1.10 (stop; cartuchos gastados antes de llenar: 0) · o23 08:19:05.794Z 116642@29792656 -1.00 (stop; cartuchos gastados antes de llenar: 1)
+racha de perdidas maxima del dia (RN-036, tope 9): 7; resultado del dia en % del saldo (R x riesgo de cada orden, menos la comision): -4.15 (RN-020: tope 4,5 de perdida)
+linea «Por sesion» de la salida: no hay
+
+## c) Censo de los eventos del respaldo M1, en las dos corridas
+### corrida 1: 8 eventos del respaldo
+  llenada · fuera de la cobertura de ticks (el minuto antes de la ventana); llenada con la M1 cuyo cierre coloco la orden: 1
+  llenada · hora perdida: 2
+  llenada · hora perdida; llenada con la M1 cuyo cierre coloco la orden: 1
+  stop · hora perdida: 3
+  stop_movido · hora perdida: 1
+  2026-01-05 | 10:22:00.000Z | llenada | o19 | hora perdida
+  2026-01-05 | 10:23:00.000Z | stop | pos-o19 | hora perdida
+  2026-01-05 | 10:24:00.000Z | llenada | o20 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-01-05 | 10:28:59.999Z | stop_movido | pos-o20 | hora perdida
+  2026-01-05 | 10:37:00.000Z | stop | pos-o20 | hora perdida
+  2026-01-05 | 10:56:00.000Z | llenada | o21 | hora perdida
+  2026-01-05 | 10:59:00.000Z | stop | pos-o21 | hora perdida
+  2026-01-06 | 06:00:00.000Z | llenada | o1 | fuera de la cobertura de ticks (el minuto antes de la ventana); llenada con la M1 cuyo cierre coloco la orden
+### corrida 2: 34 eventos del respaldo
+  llenada · fuera de la cobertura de ticks (el minuto antes de la ventana); llenada con la M1 cuyo cierre coloco la orden: 2
+  llenada · hora perdida: 6
+  llenada · hora perdida; llenada con la M1 cuyo cierre coloco la orden: 8
+  stop · hora perdida: 14
+  stop_movido · hora perdida: 4
+  2026-01-05 | 10:22:00.000Z | llenada | o19 | hora perdida
+  2026-01-05 | 10:23:00.000Z | stop | pos-o19 | hora perdida
+  2026-01-05 | 10:24:00.000Z | llenada | o20 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-01-05 | 10:28:59.999Z | stop_movido | pos-o20 | hora perdida
+  2026-01-05 | 10:37:00.000Z | stop | pos-o20 | hora perdida
+  2026-01-05 | 10:56:00.000Z | llenada | o21 | hora perdida
+  2026-01-05 | 10:59:00.000Z | stop | pos-o21 | hora perdida
+  2026-01-06 | 06:00:00.000Z | llenada | o1 | fuera de la cobertura de ticks (el minuto antes de la ventana); llenada con la M1 cuyo cierre coloco la orden
+  2026-04-06 | 10:01:00.000Z | llenada | o11 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-04-06 | 10:02:00.000Z | stop | pos-o11 | hora perdida
+  2026-04-06 | 10:03:00.000Z | llenada | o12 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-04-06 | 10:06:59.999Z | stop_movido | pos-o12 | hora perdida
+  2026-04-06 | 10:07:00.000Z | stop | pos-o12 | hora perdida
+  2026-04-07 | 05:00:00.000Z | llenada | o1 | fuera de la cobertura de ticks (el minuto antes de la ventana); llenada con la M1 cuyo cierre coloco la orden
+  2026-04-07 | 10:26:00.000Z | llenada | o28 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-04-07 | 10:27:00.000Z | stop | pos-o28 | hora perdida
+  2026-04-07 | 10:29:00.000Z | llenada | o29 | hora perdida
+  2026-04-07 | 10:32:59.999Z | stop_movido | pos-o29 | hora perdida
+  2026-04-07 | 10:33:00.000Z | stop | pos-o29 | hora perdida
+  2026-04-22 | 07:46:00.000Z | llenada | o8 | hora perdida
+  2026-04-22 | 07:48:00.000Z | stop | pos-o8 | hora perdida
+  2026-04-23 | 05:01:00.000Z | llenada | o1 | hora perdida
+  2026-04-23 | 05:02:00.000Z | stop | pos-o1 | hora perdida
+  2026-04-23 | 05:05:00.000Z | llenada | o3 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-04-23 | 05:06:00.000Z | stop | pos-o3 | hora perdida
+  2026-07-10 | 05:28:00.000Z | llenada | o3 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-07-10 | 05:31:00.000Z | stop | pos-o3 | hora perdida
+  2026-07-10 | 05:32:00.000Z | llenada | o4 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-07-10 | 05:36:00.000Z | stop | pos-o4 | hora perdida
+  2026-08-20 | 07:02:00.000Z | llenada | o12 | hora perdida
+  2026-08-20 | 07:07:59.999Z | stop_movido | pos-o12 | hora perdida
+  2026-08-20 | 07:34:00.000Z | stop | pos-o12 | hora perdida
+  2026-08-20 | 07:45:00.000Z | llenada | o14 | hora perdida; llenada con la M1 cuyo cierre coloco la orden
+  2026-08-20 | 07:59:00.000Z | stop | pos-o14 | hora perdida
