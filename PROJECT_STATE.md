@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/barrido-sesion-6
 
 ## Current Feature
-Ninguna rama abierta. trabajo/cuarentena-por-condicion-2 cerrada en main el 2026-10-28 (stable/F38h-cuarentena-por-condicion-2): diciembre tapado en la cuarentena mientras no se decida, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras (CUARENTENA-POR-CONDICION-2.md).
+trabajo/barrido-sesion-6 EN CURSO (NA:F, R4.2): la hoja de preguntas de la sesión 6, los gráficos de S-14 fuera del repo y la hoja 06 en transcribir_sesion.py. Encargo docs/encargos/trabajo-barrido-sesion-6.md; informe docs/validation/BARRIDO-SESION-6.md.
 
 ## Stable Main State
 d5f6b81 · merge de `trabajo/cuarentena-por-condicion-2` (tag `stable/F38h-cuarentena-por-condicion-2`): diciembre en meses_reservados.yaml, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras. Sobre `stable/F38g-recorrida-construccion` (faf5ce2). Informe docs/validation/CUARENTENA-POR-CONDICION-2.md; el registro del cierre, al final de HISTORIA.
@@ -156,8 +156,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 50 (2026-10-28).
+— ninguna desde el Archivo 51 (2026-10-28).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 50 (2026-10-28).
+— ninguna desde el Archivo 51 (2026-10-28).

@@ -1,0 +1,27 @@
+rama: trabajo/barrido-sesion-6
+riesgo: medio  # anade un guion que lee velas de construccion y escribe PNG fuera del repo, y toca transcribir_sesion.py; no cambia la spec ni el motor
+artefacto: docs/validation/BARRIDO-SESION-6.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/BARRIDO-SESION-6.md
+  - docs/sesion-6/PREGUNTAS.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/SESION-DE-PREGUNTAS.md
+  - scripts/graficos_sesion.py
+  - tests/unit/test_graficos_sesion.py
+  - scripts/transcribir_sesion.py
+  - tests/unit/test_transcribir_sesion.py
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+rutas_protegidas:
+  - src/
+  - knowledge/
+  - config/
+  - data/manifests/
+  - .claude/
+  - Makefile
+  - scripts/hoja_preguntas.py
+comprobaciones:
+  - uv run pytest tests/unit/test_graficos_sesion.py tests/unit/test_transcribir_sesion.py -q
+  - make check > make-check.log 2>&1
