@@ -111,6 +111,21 @@ def test_la_ventana_se_recorta_antes_de_un_dia_no_permitido(g: ModuleType) -> No
     assert all(v.inicio >= graf.h4[0].inicio for v in graf.h4)
 
 
+def test_el_recorte_empieza_en_el_primer_minuto_permitido_en_los_dos_relojes(
+    g: ModuleType,
+) -> None:
+    """El recorte, solo: la ventana pedida empieza el 1 de agosto (fuera de la construccion de
+    prueba); las 00:00 de Madrid del 2 son aun el 1 en UTC, asi que empieza a las 00:00 UTC del 2.
+    Rompe por aqui, y no en la ultima puerta de `preparar`, si el recorte deja de recortar."""
+    desde = a_minuto(datetime(2030, 8, 1, tzinfo=UTC))
+    corte = a_minuto(datetime(2030, 8, 3, 5, 40, tzinfo=UTC))
+    assert g.recorte(desde, corte, CONSTRUCCION, set()) == a_minuto(
+        datetime(2030, 8, 2, tzinfo=UTC)
+    )
+    tras_el_oculto = a_minuto(datetime(2030, 8, 3, tzinfo=UTC))
+    assert g.recorte(desde, corte, CONSTRUCCION, {(8, 2)}) == tras_el_oculto
+
+
 def test_un_dia_oculto_dentro_de_la_ventana_la_recorta(g: ModuleType) -> None:
     dia = date(2030, 8, 20)
     graf = g.preparar(

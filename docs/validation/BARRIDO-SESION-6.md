@@ -477,6 +477,8 @@ Copiada tal cual:
 |---|---|---|
 | 543099d (apertura) | exit 0, ningún `failed`, `SELLO` sobre el árbol e0295eb9…; 1170 s | `PICO DE MEMORIA de make check: 298 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 289 MiB)` |
 | 17335ad (fase 0) | exit 0, ningún `failed`, `SELLO` sobre el árbol 8820d706…; 1100 s | `PICO DE MEMORIA de make check: 299 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 288 MiB)` |
+| 60ebcf2 (fase 1) | exit 0, ningún `failed`, `SELLO` sobre el árbol 8e43f9a5…; 1118 s | `PICO DE MEMORIA de make check: 299 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 289 MiB)` |
+| 09afe20 (fase 2, el guion) | exit 0, ningún `failed`, `SELLO` sobre el árbol 3825290f…; 1022 s (un primer intento, en rojo por `mypy`, §2.2) | `PICO DE MEMORIA de make check: 300 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 290 MiB)` |
 
 ### 2.1 Fase 1: `docs/sesion-6/PREGUNTAS.md` y los dos cambios de D8
 
@@ -531,6 +533,75 @@ usa el perfil; lo medí con preguntas distintas a ficheros concretos (Grep sobre
 el mismo comando. Parece un falso positivo de la guardia con `grep -rln` sobre una carpeta; queda
 para el carril de guardias.
 
+### 2.2 Fase 2: el guion de los gráficos y los gráficos
+
+**El guion**, `scripts/graficos_sesion.py`, y sus tests, `tests/unit/test_graficos_sesion.py`, en
+09afe20 (sellado: árbol 3825290f…, 1022 s, `PICO DE MEMORIA de make check: 300 MiB en `test` (suma de
+sus procesos, memoria comprometida, Windows; el mayor proceso, 290 MiB)`; el primer intento de ese
+`make check` salió en rojo por `mypy` sobre los tests, arreglado antes de sellar). Lo que fija cada
+condición de D6 y de la respuesta:
+
+| Condición | En el guion | El test que la fija |
+|---|---|---|
+| a) negar por defecto: día fuera de la construcción o en `casos_ocultos` | `CONSTRUCCION` (la regla 2, cruzada con `cargar_criterio(...).construccion`: si difieren, error); `preparar` niega el día pedido; `recorte` recorta cada marco al primer minuto permitido en Madrid y en UTC; `comprobar`, la última puerta | `test_un_dia_fuera_de_la_construccion_sale_con_error`, `test_un_dia_en_casos_ocultos_sale_con_error`, `test_el_recorte_empieza_en_el_primer_minuto_permitido_en_los_dos_relojes`, `test_la_ventana_se_recorta_antes_de_un_dia_no_permitido`, `test_un_dia_oculto_dentro_de_la_ventana_la_recorta` |
+| b) solo la ventana, por la API del manifiesto, sin calentamiento, sin recorrer carpetas | `cargar` lee el mes del día con `buscar_manifiesto`/`cargar_manifiesto`/`cargar_ventana`; ninguna ventana cruza de mes (si cruzara, error); ni `glob`, ni `iterdir`, ni `listdir`, ni `scandir`, ni `walk`; ninguna variable llamada como la palabra vetada | `test_el_guion_no_recorre_carpetas_ni_usa_la_palabra_vetada` (por `ast`) |
+| c) el corte | la última M1 es la que coloca la primera orden; un lector que devuelve velas fuera de la ventana hace salir con error | `test_ninguna_vela_pasa_del_corte`, `test_un_lector_que_devuelve_velas_tras_el_corte_hace_salir_con_error`, `test_ningun_elemento_del_svg_cae_a_la_derecha_del_corte` |
+| d) sin fecha | `lleva_fecha` (AAAA-MM-DD, DD/MM, DD-MM o un mes) sobre cada SVG y cada nombre; sin `<title>`, `<metadata>` ni comentarios; horas de Madrid; el marco en cada panel | `test_la_comprobacion_de_fechas_caza_cada_forma`, `test_las_horas_y_los_precios_no_son_fechas`, `test_los_svg_y_sus_nombres_no_llevan_fecha_ni_metadatos`, `test_un_svg_con_fecha_no_se_escribe` |
+| e) una sola marca (decisión 3) | la línea `class="punto"` en el panel de M1 del marcado; la escala de ese panel incluye el punto en las dos imágenes | `test_los_svg_y_sus_nombres_no_llevan_fecha_ni_metadatos` (el marcado es el limpio más UNA línea) |
+| f) la raíz, fuera del repo; nada se escribe si algo falla | `escribir` niega una raíz dentro del repo, no pisa nada y genera todo en memoria antes del primer fichero | `test_la_raiz_no_puede_estar_dentro_del_repo`, `test_no_pisa_una_salida_que_ya_existe`, `test_un_svg_con_fecha_no_se_escribe` |
+| g) datos sintéticos | velas de 2030 en enero y agosto, meses libres (lección B1 de `trabajo/cuarentena-por-condicion-2`) | todos |
+
+**Los tests rompen de verdad** (lección b3 de `trabajo/hoja-sesion-05`): siete mutantes del guion,
+aplicados uno a uno en el clon (`mutantes.py`, carpeta de trabajo de la sesión), y el test de cada
+condición falla con ellos: el día fuera de la construcción («DID NOT RAISE»), `casos_ocultos`
+ignorado (el `pytest.raises` no casa: salta otra puerta), la ventana sin recorte (la paraba la
+última puerta, `comprobar`, antes de la aserción del test de `preparar`: por eso entra
+`test_el_recorte_empieza_en_el_primer_minuto_permitido_en_los_dos_relojes`, y ese mutante, cargado
+en memoria con el test nuevo, falla en su `assert`), las velas tras el corte (otra puerta), una
+fecha en el SVG («DID NOT RAISE»), la raíz dentro del repo (escribió en el clon, que es lo que el
+clon protege) y un guion que recorre una carpeta (`iterdir`). El guion queda restaurado y el clon,
+quitado.
+
+**La guardia** (decisión 6): la segunda y única sonda repetida, con el guion casi final y un
+`--dias` vacío (`uv run python scripts/graficos_sesion.py --dias <vacio.txt> --salida <carpeta de
+trabajo>`), pasó: el guion salió con «ERROR: --dias no trae ningun dia. No se ha escrito nada.»
+antes de leer ninguna vela. Las dos ejecuciones con velas, desde el clon, también pasaron.
+
+**El ensayo en un clon y la generación, una sola vez** (D6 f y regla 1 de «Ensayos aislados»):
+`git worktree add --detach C:/cm/graficos 09afe20`, con su `config/settings.local.toml` apuntando al
+`data/` real (sin copiar velas; el guion solo escribe en `--salida`, `escribir`). Primero, la raíz
+dentro del clon: «ERROR: la raiz de salida esta dentro del repositorio. No se ha escrito nada.», y
+`git status --short --ignored` del clon sin nada nuevo salvo `.venv`, la configuración y
+`__pycache__`. Después, la generación, con los 8 días en el orden que propuse (la lista, en un
+fichero de la carpeta de trabajo; el orden, solo en `clave.txt`):
+`uv run python scripts/graficos_sesion.py --dias <dias-s14.txt> --salida "C:/Users/USER/Desktop/sesion-06-graficos"`
+→ «OK: 17 ficheros (8 graficos y clave.txt) en la salida», con cuatro líneas `LECTURA:` (los cuatro
+ficheros mensuales: 26, 26, 27 y 26 días con velas; 0 en `casos_ocultos` en cada uno, julio
+incluido; 1 y 12 días fuera de la construcción, de enero y de julio). Los gráficos 7 y 8 son las
+reservas. `git worktree remove --force C:/cm/graficos` (por `.venv`, la configuración y la carpeta
+que dejó el mutante de la raíz) y `git worktree prune`.
+
+**Dos comprobados a mano contra «### Ordenes»** (sin decir aquí cuáles: la clave está solo en
+`clave.txt`): en los dos, el corte de `clave.txt` es la M1 de la primera fila de su sesión en «###
+Ordenes» de `diaria.DIAGNOSTICO.cuenta=diaria.txt` (una cancelada, colocada en el cierre de esa M1),
+pasada a la hora de Madrid de ese día; el punto de `clave.txt` es la columna `punto` de esa fila, que
+es también su precio; y el panel de M1 del SVG tiene exactamente las velas de la ventana (una hora
+antes de la sesión hasta la M1 del corte, sin huecos en esos dos días), con la última hora rotulada
+en esa misma M1 o en la del mismo rótulo. En los 8: cada marcado es su limpio más una sola línea, la
+`class="punto"`, y ningún SVG lleva una fecha, un comentario ni metadatos (`comprobar_svg.py`,
+carpeta de trabajo).
+
+**Lo que queda para la guía de Aleks** (decisiones 3 y 8; está en el «Para Aleks» de S-7): la línea
+es el nivel donde el bot pondría su orden de entrada; el gráfico acaba en la vela en que el bot da
+la liquidez por tomada; sin stop, objetivo, llenado ni resultado; corrida 2; velas de Dukascopy. El
+gráfico 3 (el único de julio) tiene la H4 recortada a día y medio, como dijo §1.d.
+
+**Una negativa de la guardia en esta fase, sin rodearla:** `grep -rn "^Puntos\|Puntos = " src/botsito/domain/*.py | head -3`
+→ «bloquea: leer el contenido de  .» (la regla de las capturas de Analytics), la misma forma que la
+de la fase 1 (§2.1): un patrón entre comillas que acaba en espacio. Era para el tipo `Puntos` de los
+tests; lo encontré con la herramienta Grep sobre `src/botsito/domain`, otra petición. Para el carril
+de guardias, con la de §2.1.
+
 ## Estado
 
-EN CURSO: fase 1 hecha (PREGUNTAS.md y D8); siguen la fase 2 (guion y gráficos) y la fase 3 (hoja 06).
+EN CURSO: fases 1 y 2 hechas; sigue la fase 3 (hoja 06).
