@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/cuarentena-por-condicion-2
 
 ## Current Feature
-Ninguna rama abierta. trabajo/recorrida-construccion cerrada en main el 2026-10-27 (stable/F38g-recorrida-construccion): la corrida que cuenta por ADR-0070 §3 dio «no» (cobertura 3,5 %, precisión 13,2 %); se sigue construyendo (RECORRIDA-CONSTRUCCION.md).
+trabajo/cuarentena-por-condicion-2, EN CURSO (abierta el 2026-10-28; tramo «Carril: guardias y deuda», G.5; F): diciembre en meses_reservados.yaml, la fecha numérica pegada a una coma o un punto, el barrido ancho de días en la skill ingerir-sesion y la regla de letras en DECISIONES-DE-PROCESO.md. Encargo docs/encargos/trabajo-cuarentena-por-condicion-2.md; informe docs/validation/CUARENTENA-POR-CONDICION-2.md.
 
 ## Stable Main State
 faf5ce2 · merge de `trabajo/recorrida-construccion` (tag `stable/F38g-recorrida-construccion`): la corrida que cuenta por ADR-0070 §3 («no»), la línea base nueva, las dos listas para la sesión 6 y el error del respaldo M1 (Z). Sobre `stable/F38f-activar-sesion-05-motor` (d843dbc). Informe docs/validation/RECORRIDA-CONSTRUCCION.md; el registro del cierre, al final de HISTORIA.
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 49 (2026-10-27).
+— ninguna desde el Archivo 50 (2026-10-28).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 49 (2026-10-27).
+— ninguna desde el Archivo 50 (2026-10-28).
