@@ -300,7 +300,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Refs:** NA:I · NA:N
 - **Qué es:** el backtest de diciembre (sin vídeo), sin abrir; antes, renovar hacia atrás el
   calendario de cierres (RENOVAR-CIERRES.md, condición 1) y que el consultor decida si es
-  construcción o reservado.
+  construcción o reservado; si diciembre va a construcción, antes la salida de
+  meses_reservados.yaml con su ADR (hoy no existe).
 - **Depende de:** R2.2 (HECHA) y R2.1 (HECHA) y R1.1.
 - **Quién:** el consultor decide; Aleks lee la columna de fechas (ADR-0072); la sesión ejecuta.
 - **Hecho cuando:** diciembre está ingerido o declarado reservado.
@@ -556,12 +557,15 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ### G.5 · La cuarentena por condición
 - **Refs:** —
 - **Qué es:** la línea PRIORITARIA de Technical Debt: diciembre cuenta como libre en `meses_libres`
-  con NA:I sin decidir, y la fecha numérica seguida de coma no se tapa (SESION-05-EXTRACCION.md
+  con la I sin decidir, y la fecha numérica seguida de coma no se tapa (SESION-05-EXTRACCION.md
   §2.7 y §11, a4).
 - **Depende de:** nada.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** los dos casos tienen su test que rompe en main y pasa en la rama, antes de
   ingerir la sesión 6.
+- **Estado:** HECHA (`stable/F38h-cuarentena-por-condicion-2`;
+  docs/validation/CUARENTENA-POR-CONDICION-2.md: la coma y el punto, por la sonda sobre el código de
+  main en un clon, §2.b y §2.e).
 
 ## Carril: material reservado que no se toca
 

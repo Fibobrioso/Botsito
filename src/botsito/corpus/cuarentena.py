@@ -281,10 +281,17 @@ def _patrones(tapados: frozenset[int]) -> tuple[re.Pattern[str] | None, re.Patte
 
 
 _NUM = r"(?:\d{1,2})"
+# Los bordes de un numero de fecha (rama `trabajo/cuarentena-por-condicion-2`): una coma o un punto
+# forman parte de un numero solo cuando tienen un digito a cada lado. Por eso «10,5» y «1.0850» no
+# son fechas y «hoy, 45 del 13,» y «el 31/02,» si. Hasta esa rama el borde excluia TODA coma o
+# punto (`(?<![\d.,])`, `(?![\d.,])`) y una fecha seguida de puntuacion no se tapaba
+# (SESION-05-EXTRACCION.md §2.7). Lo usan `_RE_FECHA` y `_RE_DIA_BARRA_MES`: la misma condicion.
+_ANTES = r"(?<!\d)(?<!\d[.,])"
+_DESPUES = r"(?!\d)(?![.,]\d)"
 _RE_FECHA = re.compile(
-    rf"(?<![\d.,]){_NUM}\s*[/-]\s*{_NUM}(?:\s*[/-]\s*\d{{2,4}})?(?![\d.,])"  # 31/02, 31-02-26
-    rf"|(?<![\d.,]){_NUM}\.{_NUM}\.\d{{2,4}}(?![\d.,])"  # 31.02.26 (dos partes: precio)
-    rf"|(?<![\d.,]){_NUM}\s+del?\s+{_NUM}(?![\d.,])"  # «45 del 13», «3 de 9»
+    rf"{_ANTES}{_NUM}\s*[/-]\s*{_NUM}(?:\s*[/-]\s*\d{{2,4}})?{_DESPUES}"  # 31/02, 31-02-26
+    rf"|{_ANTES}{_NUM}\.{_NUM}\.\d{{2,4}}{_DESPUES}"  # 31.02.26 (dos partes: precio)
+    rf"|{_ANTES}{_NUM}\s+del?\s+{_NUM}{_DESPUES}"  # «45 del 13», «3 de 9»
     rf"|\bmes\s+{_NUM}\b"  # «el mes 9»
 )
 _DIAS = r"(?:lunes|martes|miercoles|jueves|viernes|sabado|domingo)"
@@ -374,7 +381,13 @@ _MESES_NUM = {
 _RE_NOMBRE_MES = "|".join(_MESES_NUM)
 _RE_DIA_DE_MES = re.compile(rf"\b(\d{{1,2}})\s+(?:de\s+)?({_RE_NOMBRE_MES})\b")
 _RE_MES_DIA = re.compile(rf"\b({_RE_NOMBRE_MES})\s+(\d{{1,2}})\b")
-_RE_DIA_BARRA_MES = re.compile(r"(?<![\d.,])(\d{1,2})\s*[/-]\s*(\d{1,2})(?![\d.,])")
+# El mismo borde que `_RE_FECHA` (`_ANTES`, `_DESPUES`: una coma o un punto son del numero solo con
+# un digito a cada lado), y dentro de un lookahead para que `findall` vea tambien las fechas que se
+# SOLAPAN: `findall` no vuelve atras, y con el borde nuevo una fecha que antes se rechazaba puede
+# comerse el principio de otra (en «,1/1-12», «1/1» se comeria «1-12», que el borde viejo si
+# sacaba). Asi saca todas las de antes y las nuevas (`test_la_rama_no_tapa_menos_que_main`; rama
+# `trabajo/cuarentena-por-condicion-2`, respuesta del consultor a la PARADA 2, punto 2).
+_RE_DIA_BARRA_MES = re.compile(rf"(?={_ANTES}(\d{{1,2}})\s*[/-]\s*(\d{{1,2}}){_DESPUES})")
 
 
 def fechas_en(texto: str) -> set[tuple[int, int]]:

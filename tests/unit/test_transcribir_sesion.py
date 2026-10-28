@@ -112,6 +112,132 @@ def test_una_fecha_numerica_va_a_cuarentena(m: ModuleType, texto: str) -> None:
     assert cu.MOTIVO_FECHA in cu.motivos_cuarentena(texto), texto
 
 
+# Rama `trabajo/cuarentena-por-condicion-2`: una coma o un punto forman parte de un numero solo con
+# un digito a cada lado. Fechas imposibles (mes 13, 31 de febrero), como el resto del fichero. El
+# literal del encargo era una fecha real (la de una grabacion): se cambio por «hoy, 45 del 13,»
+# (respuesta del consultor a la PARADA de la fase 0, punto 3).
+PEGADAS_NUEVAS = ("hoy, 45 del 13,", "el 31/02,", "el 31.02.99.")  # en main: []
+PEGADA_DE_CONTROL = ", 31-02 ,"  # ya se tapaba en main
+NO_SON_FECHAS = ("cuesta 10,5 pips", "son 1,5 pips", "1.0850 del 2", "2.000 mensajes")
+# Los que SOLO la condicion del digito a cada lado deja fuera: con un borde que no mire la coma ni
+# el punto, serian fechas.
+DECIMALES_QUE_NO_SON_FECHAS = ("1,5 del 13", "entre 1.45/1.46", "de 10,5-13,5")
+
+# `_RE_FECHA` y `_RE_DIA_BARRA_MES` de `main`, copiadas tal cual de src/botsito/corpus/cuarentena.py
+# en 0fa9c81 (`:283-289` y `:377`), antes de esta rama: el borde excluia TODA coma o punto. Son la
+# GUARDIA DE REGRESION del superconjunto (`test_la_rama_no_tapa_menos_que_main`); que los textos
+# nuevos rompen en main lo prueba la sonda sobre el codigo real de main (informe de la rama).
+_NUM_MAIN = r"(?:\d{1,2})"
+RE_FECHA_MAIN = re.compile(
+    rf"(?<![\d.,]){_NUM_MAIN}\s*[/-]\s*{_NUM_MAIN}(?:\s*[/-]\s*\d{{2,4}})?(?![\d.,])"
+    rf"|(?<![\d.,]){_NUM_MAIN}\.{_NUM_MAIN}\.\d{{2,4}}(?![\d.,])"
+    rf"|(?<![\d.,]){_NUM_MAIN}\s+del?\s+{_NUM_MAIN}(?![\d.,])"
+    rf"|\bmes\s+{_NUM_MAIN}\b"
+)
+RE_DIA_BARRA_MES_MAIN = re.compile(r"(?<![\d.,])(\d{1,2})\s*[/-]\s*(\d{1,2})(?![\d.,])")
+
+
+@pytest.mark.parametrize("texto", [*PEGADAS_NUEVAS, PEGADA_DE_CONTROL])
+def test_una_fecha_pegada_a_una_coma_o_un_punto_va_a_cuarentena(m: ModuleType, texto: str) -> None:
+    assert cu.MOTIVO_FECHA in cu.motivos_cuarentena(texto), texto
+
+
+@pytest.mark.parametrize("texto", [*NO_SON_FECHAS, *DECIMALES_QUE_NO_SON_FECHAS])
+def test_un_numero_con_decimales_no_es_una_fecha(m: ModuleType, texto: str) -> None:
+    assert cu.motivos_cuarentena(texto) == [], texto
+
+
+def test_fechas_en_ve_la_fecha_pegada_a_una_coma_o_un_punto(m: ModuleType) -> None:
+    """La misma condicion en `_RE_DIA_BARRA_MES`, que usa la evidencia (`fechas_en`)."""
+    assert cu.fechas_en("el 31/02,") == {(2, 31)}
+    assert cu.fechas_en("el 31/02.") == {(2, 31)}
+    assert cu.fechas_en("entre 1.45/1.46") == set()
+
+
+def test_la_coma_y_el_punto_rotos_a_proposito_en_los_dos_sentidos(m: ModuleType) -> None:
+    def tapa(regex: re.Pattern[str], texto: str) -> bool:
+        return bool(regex.search(cu.numeros_a_cifras(cu.normalizar(texto))))
+
+    # (1) Con el borde de main, las nuevas no se tapan (y la de control si): son nuevas de verdad.
+    assert not any(tapa(RE_FECHA_MAIN, t) for t in PEGADAS_NUEVAS)
+    assert tapa(RE_FECHA_MAIN, PEGADA_DE_CONTROL)
+    assert RE_DIA_BARRA_MES_MAIN.findall("el 31/02,") == []
+    # (2) Con un borde que solo mire el digito, sin la coma ni el punto, los decimales serian
+    # fechas.
+    solo_digito = re.compile(
+        cu._RE_FECHA.pattern.replace(cu._ANTES, r"(?<!\d)").replace(cu._DESPUES, r"(?!\d)")
+    )
+    assert solo_digito.pattern != cu._RE_FECHA.pattern
+    assert all(tapa(solo_digito, t) for t in DECIMALES_QUE_NO_SON_FECHAS)
+    assert not any(tapa(cu._RE_FECHA, t) for t in DECIMALES_QUE_NO_SON_FECHAS)
+
+
+DIAS_DEL_MES = (31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+# Dos numeros sueltos de una o dos cifras unidos por cualquier separador que una fecha pueda usar
+# (de mas: tambien la coma y el espacio), solapados. Las dos regex solo sacan numeros sueltos.
+_PAR = re.compile(r"(?=(?<!\d)(\d{1,2})\s*(?:[/.,-]|\s+del?\s+|\s+)\s*(\d{1,2})(?!\d))")
+
+
+def _sin_fechas_posibles(texto: str) -> bool:
+    """Ningun par dia/mes del texto es una fecha que exista (revisor de la rama, B1): o el mes no
+    esta entre 1 y 12, o el dia pasa de los del mes («31/2», «31/4», «45 del 13»)."""
+    pares = [(int(d), int(m)) for d, m in _PAR.findall(texto)]
+    return not any(1 <= m <= 12 and 1 <= d <= DIAS_DEL_MES[m - 1] for d, m in pares)
+
+
+def _bateria() -> list[str]:
+    """Textos sinteticos: numeros, decimales, precios y fechas con signos alrededor, y de ellos
+    solo los que no traen ninguna fecha posible (ningun dato de prueba es una fecha real)."""
+    numeros = ("1", "9", "12", "31", "45", "0", "10,5", "1,5", "1.0850", "2.000", "1.08", "30", "2")
+    separadores = ("/", "-", " / ", " del ", " de ", ".", ",", " ")
+    antes = ("", "hoy, ", "el ", "1", "1,", "1.", ",", ".", "a,", "x.", "(", "mes ")
+    despues = ("", ",", ".", " ", "1", ",5", ".5", "x", ".99", ".99.", "-26", "-2", ")")
+    return [
+        texto
+        for a in numeros
+        for s in separadores
+        for b in numeros
+        for pre in antes
+        for post in despues
+        if _sin_fechas_posibles(texto := f"{pre}{a}{s}{b}{post}")
+    ]
+
+
+def _fechas_en_main(texto: str) -> set[tuple[int, int]]:
+    """`fechas_en` de `main` (src/botsito/corpus/cuarentena.py en 0fa9c81, `:380-391`) con su
+    `_RE_DIA_BARRA_MES`; las otras dos regex no cambian en la rama."""
+    t = cu.numeros_a_cifras(cu.normalizar(texto))
+    salida = {(cu._MESES_NUM[m], int(d)) for d, m in cu._RE_DIA_DE_MES.findall(t)}
+    salida |= {(cu._MESES_NUM[m], int(d)) for m, d in cu._RE_MES_DIA.findall(t)}
+    salida |= {(int(m), int(d)) for d, m in RE_DIA_BARRA_MES_MAIN.findall(t)}
+    return {(m, d) for m, d in salida if 1 <= m <= 12 and 1 <= d <= 31}
+
+
+def test_la_rama_no_tapa_menos_que_main(m: ModuleType) -> None:
+    """GUARDIA DE REGRESION del superconjunto, no la prueba de que los tests nuevos rompen en main:
+    esa es la sonda de la fase 0 repetida sobre el codigo real de main en un clon
+    (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA 2, punto 1). Aqui, con las
+    regex de main copiadas arriba: todo texto que main tapa lo tapa la rama, y todo par (mes, dia)
+    que `fechas_en` sacaba con main lo saca la rama. Y la rama tapa alguno que main no. Si falla,
+    solo da recuentos: ningun texto de la bateria se imprime."""
+    textos = _bateria()
+    n = len(textos)
+    assert n > 10_000
+    menos = sum(1 for t in textos if RE_FECHA_MAIN.search(t) and not cu._RE_FECHA.search(t))
+    assert menos == 0, f"{menos} textos que main tapa y la rama no"
+    perdidas = sum(1 for t in textos if _fechas_en_main(t) - cu.fechas_en(t))
+    assert perdidas == 0, f"{perdidas} textos en que la rama pierde una fecha de main"
+    nuevas = sum(1 for t in textos if cu._RE_FECHA.search(t) and not RE_FECHA_MAIN.search(t))
+    assert nuevas > 0
+    mas_fechas = sum(1 for t in textos if cu.fechas_en(t) - _fechas_en_main(t))
+    assert mas_fechas > 0
+    # El solape que obliga al lookahead de `_RE_DIA_BARRA_MES`, con una fecha imposible (el 31 de
+    # febrero): sin el, «1/31» se comeria a «31-2», que main si sacaba.
+    assert _sin_fechas_posibles(",1/31-2")
+    assert _fechas_en_main(",1/31-2") == {(2, 31)} <= cu.fechas_en(",1/31-2")
+    assert cu.fechas_en(",1/31-2") - {(2, 31)} == set()  # «1/31»: el mes 31 no es una fecha
+
+
 @pytest.mark.parametrize("texto", ["el jueves 40 entré", "el lunes, 40", "el 40, domingo"])
 def test_un_dia_de_la_semana_con_un_numero_va_a_cuarentena(m: ModuleType, texto: str) -> None:
     assert cu.MOTIVO_DIA in cu.motivos_cuarentena(texto), texto

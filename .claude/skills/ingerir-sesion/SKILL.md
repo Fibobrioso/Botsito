@@ -93,7 +93,13 @@ Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
    (v7: `3718889`). Desde ese commit `evidence propose --check` y `evidence new` rechazan citarlos.
 5. **Fotogramas.** `uv run botsito corpus frames extract --video <vN>`; puerta:
    `uv run botsito corpus frames check` (0 huecos, 0 extra).
-6. **Extraccion por pregunta.** La deteccion automatica («pregunta» + codigo ... «fin de pregunta»)
+6. **Extraccion por pregunta.** Antes de leer o releer cualquier filtrada se pasa
+   `uv run python scripts/barrido_dias.py <filtrada>` con el rango que fije el encargo de la ingesta
+   (`--desde`, `--hasta`; por defecto 18 a 31): ve los dias en digitos y en letra, y enmascara
+   solo los numeros DEL RANGO (los demas de la linea salen tal cual), asi que el rango cubre todos
+   los dias fuera de construccion del mes que se barre. Si sale una linea que sea un dia fuera de
+   construccion del mes que nombra, PARADA sin copiarla (regla del consultor del 2026-10-25, `SESION-05-EXTRACCION.md` §2.7, punto 3).
+   La deteccion automatica («pregunta» + codigo ... «fin de pregunta»)
    dio 0 en v7 y en v9, y no se afloja (`SESION-DE-PREGUNTAS.md`). Se localiza a mano en la
    filtrada, por los codigos sueltos o el texto leido de la pregunta; la cita es el literal de la
    filtrada con su `mm:ss`, y el hablante se atribuye por contexto y se declara en `revisado_por`.

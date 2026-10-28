@@ -13,6 +13,18 @@
 #
 # Si este fichero falta, no se puede leer o no valida, `meses_libres` devuelve None y la cuarentena
 # del texto tapa los doce meses: ningun fallo de lectura deja un mes a la vista.
+#
+# EL MATERIAL RECIBIDO (rama `trabajo/cuarentena-por-condicion-2`, respuesta del consultor del
+# 2026-10-28 a la PARADA de su fase 0, punto 2; docs/validation/CUARENTENA-POR-CONDICION-2.md):
+# Todo mes del que se reciba material del trader y que no sea ya de construcción por su ADR (hoy
+# enero, abril, julio y agosto) entra en meses_reservados.yaml el mismo día que se recibe, antes de
+# que el consultor decida si es construcción o reservado. Hoy un mes no puede salir de este fichero
+# (holdout.py lo niega sin excepción), y ADR-0078 y ADR-0079 exigen que un mes de construcción no
+# esté en él: la rama que decida llevar a construcción un mes de aquí construye antes la salida, con
+# su ADR.
+# (Los meses de construccion, por sus ADR: abril y agosto, ADR-0043; julio, ADR-0078; enero,
+# ADR-0079.) Sin esta regla, un mes recibido y fuera del repo quedaba libre: no tiene casos en
+# ningun reparto (condicion (a)) ni entrada aqui (condicion (b)).
 meses:
   "2026-02":
     motivo: >-
@@ -27,3 +39,10 @@ meses:
       sortea ni se ingiere hasta que A-42 este resuelta (PARADA B0 de docs/runbooks/ENTRADA-MARZO.md)
     fuente: [ADR-0046, docs/validation/REGISTRO-MARZO.md]
     declarado_el: "2026-10-04"
+  "2025-12":
+    motivo: >-
+      recibido el 2026-10-09 (xlsx y capturas de estadistica, sin video) y SIN ABRIR, fuera del
+      repo; el consultor no ha decidido si es construccion o reservado (NA:I); mientras no se
+      decida no se puede leer, y la cuarentena del texto lo tapa
+    fuente: [ADR-0072, docs/validation/SESION-05-EXTRACCION.md]
+    declarado_el: "2026-10-28"

@@ -301,6 +301,14 @@ def test_la_fuente_real_valida() -> None:
     assert {"2026-02", "2026-03"} <= set(cargar_meses_reservados(RAIZ))
 
 
+def test_diciembre_recibido_y_sin_decidir_se_tapa_en_el_repo_real() -> None:
+    """Rama `trabajo/cuarentena-por-condicion-2`: diciembre de 2025 se recibio el 2026-10-09 y el
+    consultor no ha decidido si es construccion o reservado (NA:I). No tiene casos ni, hasta esta
+    rama, entrada en `meses_reservados.yaml`, asi que pasaba por libre. Contra el repositorio real y
+    con texto sintetico: en `main` da [] y en la rama ["mes"]."""
+    assert cu.motivos_cuarentena("eso fue en diciembre", meses_libres(RAIZ)) == [cu.MOTIVO_MES]
+
+
 def test_sin_la_fuente_validate_lo_dice(tmp_path: Path) -> None:
     repo = _repo(tmp_path, None)
     assert any("no existe" in p for p in problemas_de_meses_reservados(repo))
