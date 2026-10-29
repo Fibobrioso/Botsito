@@ -108,7 +108,7 @@ hoja = cambiar(
     hoja,
     "  la rama, y las dos corridas de `trabajo/recorrida-construccion` están repetidas en la suya.\n\n",
     "  la rama, y las dos corridas de `trabajo/recorrida-construccion` están repetidas en la suya.\n"
-    "- **Estado:** HECHA (`trabajo/respaldo-m1`, el tag de su cierre; RESPALDO-M1.md): una vela del\n"
+    "- **Estado:** HECHA (`trabajo/respaldo-m1`, `stable/F38j-respaldo-m1`; RESPALDO-M1.md): una vela del\n"
     "  respaldo solo evalúa lo decidido antes de que empezara (ADR-0051 §5, NOTA); 8 tests rompen en\n"
     "  `main` y pasan en la rama; las dos corridas repetidas dan cero eventos con la vela de su\n"
     "  decisión, y la que cuenta sigue en «no».\n\n" + R36,

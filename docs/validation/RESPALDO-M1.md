@@ -693,11 +693,11 @@ la par:
 |---|---|---|---|
 | 1 | `uv run botsito motor arnes --simular --salida docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt` | `exit=0`; `OK: informe del arnes en docs\validation\anexos\RESPALDO-M1\cuenta-arrastrada.txt` | `TIEMPO: 351.0 s; MEMORIA: pico del proceso de 630.3 MiB` |
 | 2 | `uv run botsito motor arnes --simular --diagnostico-cuenta-diaria --salida docs/validation/anexos/RESPALDO-M1/diaria.txt` | `exit=0`; escribe **`diaria.DIAGNOSTICO.cuenta=diaria.txt`** (el nombre real, como en RECORRIDA) | `TIEMPO: 315.8 s; MEMORIA: pico del proceso de 638.4 MiB` |
-| 3 | la 1 con `--salida` en la carpeta de trabajo de la sesión; `diff` contra la commiteada; `rm` | `exit=0`; `diff=0` (**idénticas byte a byte**); copia borrada (`rm=0`) | `TIEMPO: 347.7 s; MEMORIA: pico del proceso de 630.1 MiB` |
-| 4 | `python -B docs/validation/anexos/RESPALDO-M1/sesiones_s14.py <diaria de RECORRIDA> <diaria nueva> > …/sesiones-s14.txt` | `exit=0` | — |
-| 5 | `python -B docs/validation/anexos/RESPALDO-M1/censo_respaldo.py <las dos nuevas> <las dos de RECORRIDA> > …/censo-respaldo.txt` | `exit=0` | — |
-| 6 | `python -B docs/validation/anexos/RESPALDO-M1/patrones.py <salida> > …/patrones-arrastrada.txt` y `…/patrones-diaria.txt` | `exit=0` (las dos) | — |
-| 7 | `diff docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt > …/diff-linea-base.txt` | `diff=1` (hay diferencias: no es un fallo); 544 líneas | — |
+| 3 | `uv run botsito motor arnes --simular --salida "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/c5921e91-beb5-4611-b646-e089f72fda40/scratchpad/cuenta-arrastrada.txt"`; `diff docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/c5921e91-beb5-4611-b646-e089f72fda40/scratchpad/cuenta-arrastrada.txt"`; `rm "C:/Users/USER/AppData/Local/Temp/claude/C--Users-USER-Desktop-Bot-v3/c5921e91-beb5-4611-b646-e089f72fda40/scratchpad/cuenta-arrastrada.txt"` | `exit=0`; `diff=0` (**idénticas byte a byte**); `rm=0` | `TIEMPO: 347.7 s; MEMORIA: pico del proceso de 630.1 MiB` |
+| 4 | `python -B docs/validation/anexos/RESPALDO-M1/sesiones_s14.py "docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.cuenta=diaria.txt" "docs/validation/anexos/RESPALDO-M1/diaria.DIAGNOSTICO.cuenta=diaria.txt" > docs/validation/anexos/RESPALDO-M1/sesiones-s14.txt` | `exit=0` | — |
+| 5 | `python -B docs/validation/anexos/RESPALDO-M1/censo_respaldo.py docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt "docs/validation/anexos/RESPALDO-M1/diaria.DIAGNOSTICO.cuenta=diaria.txt" docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt "docs/validation/anexos/RECORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.cuenta=diaria.txt" > docs/validation/anexos/RESPALDO-M1/censo-respaldo.txt` (vuelto a correr tras a4 del revisor: `diff` con el anterior vacío) | `exit=0` | — |
+| 6 | `python -B docs/validation/anexos/RESPALDO-M1/patrones.py docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt > docs/validation/anexos/RESPALDO-M1/patrones-arrastrada.txt` y `python -B docs/validation/anexos/RESPALDO-M1/patrones.py "docs/validation/anexos/RESPALDO-M1/diaria.DIAGNOSTICO.cuenta=diaria.txt" > docs/validation/anexos/RESPALDO-M1/patrones-diaria.txt`; después `sed -i 's/$//'` sobre las dos (su `print` escribe CRLF en Windows) | `exit=0` (las dos) | — |
+| 7 | `diff docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt > docs/validation/anexos/RESPALDO-M1/diff-linea-base.txt` | `diff=1` (hay diferencias: no es un fallo); 544 líneas | — |
 
 Los tiempos caen en lo esperado (299 a 343 s en RECORRIDA; 351,0 s, un 2 % por encima del máximo);
 la memoria, igual (629 a 638 MiB).
@@ -783,23 +783,60 @@ la sesión 6; la diaria nueva tiene 75 filas P6 (77) y las 8 sesiones elegidas n
 he recontado las 34 sesiones ni las 259 (exige `entradas_antes_alternancia.py`, que no se corre:
 punto 5); las líneas del cierre no tocan R4.2.
 
-## 5. El encargo frente a lo hecho
+## 5. El encargo, punto por punto
 
-| Punto del encargo | Hecho | Dónde |
-|---|---|---|
-| 0. Apertura con `abrir-rama`, la CI de `main` con `gh` | Hecho | Apertura; 4036818 |
-| 2 a)-k). Fase 0 y PARADA | Hecho; auditor; PARADA con 11 decisiones | §0; 56b2233 |
-| Respuesta a la PARADA, tal cual, y aplicada | Hecho | 556452a; §1 |
-| 3. Tests que rompen en `main` (1-4) y los del otro sentido; `comparar-con-main` | Hecho: 8 rompen, 4 pasan en los dos; los dos lados pegados | §2.2; beb9c93 |
-| 3. Docstring de `llenado.py`; NOTA en ADR-0051 §5 (y §3) | Hecho | §2.1 |
-| 4. La fila de exposiciones antes de correr, en su commit | Hecho | d380632 |
-| 4. Corridas 1, 2 y 3, una a la vez, en segundo plano | Hecho; la variable, comprobada | §4.1, §4.2 |
-| 4. Guiones (g) sobre las salidas; criterio de hecho Z = 0 | Hecho: Z = 0 en las dos | §4.4 |
-| 4. Qué cambia por corrida | Hecho | §4.5 |
-| 4. Las 8 sesiones de S-14, sin R | Hecho: no cambian | §4.3 |
-| 4. NOTA de ADR-0070 §3 (y ACTIVAR-A35-A44 §5, punto 6) | Hecho | este commit |
-| 5. Informe; líneas del cierre medidas sobre una copia; fila de ERRORES-RECURRENTES | Hecho | §6, §7 |
-| 5. Revisor (opus) con los cinco alcances, su informe pegado | §8 | — |
+El encargo y las dos respuestas del consultor, partidos en requisitos (E = encargo; P = respuesta a
+la PARADA; P2 = respuesta a la PARADA 2). Estados: Hecho / Hecho de otra forma (declarado) /
+Parcial / No hecho.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | E0: base 0e021bf, merge 89dc902, tag F38i; la CI 40815230287 con `gh` | Hecho | Apertura (tabla) |
+| 2 | E0: `abrir-rama`; encargo tal cual; contrato con R3 y riesgo alto; Archivo en HISTORIA | Hecho | 4036818 |
+| 3 | E0: las rutas del contrato; nada más sin ampliarlo a la vista | Hecho | `contrato.yaml`; ACTIVAR-A35-A44 ampliado en 556452a; `contrato_rama.py` en verde |
+| 4 | E1: QUÉ NO CAMBIA (spec, casos, `parametros.yaml`, `llenado.yaml`, motor, ADR-0051 §1/§4/§6, ADR-0057 §1, ninguna cifra) | Hecho | `git diff --name-status main...HEAD`: en `src/` solo `llenado.py` y `broker.py`; nada en `knowledge/` ni `config/` |
+| 5 | E2 a): las lecturas del respaldo y los precios sin tick, con los dos casos de futuro y la diferencia de velas | Hecho | §0.a |
+| 6 | E2 b): la deuda de cotizar | Hecho | §0.b |
+| 7 | E2 c): el instante de la decisión, `ultimo_cambio_ms` y los tres «NO» | Hecho | §0.c |
+| 8 | E2 d): ADR-0051 §3 frente a ADR-0057 §1 | Hecho | §0.d |
+| 9 | E2 e): los eventos que no son llenadas | Hecho | §0.e |
+| 10 | E2 f): la forma de la corrección y lo que sigue igual | Hecho (con prototipo de (a)) | §0.f |
+| 11 | E2 g): los guiones | Hecho | §0.g |
+| 12 | E2 h): la línea base | Hecho | §0.h |
+| 13 | E2 i): recuentos y tiempos | Hecho | §0.i |
+| 14 | E2 j): herencias | Hecho | §0.j |
+| 15 | E2 k): la exposición de la fase 0 el mismo día, en su commit | Hecho de otra forma (declarado) | La fila del 2026-10-28 entró a las 00:37 del 29 (56b2233): desviación 7 |
+| 16 | E2: PARADA con «Lo que necesito que decidas», numerada y con recomendación | Hecho | 56b2233 |
+| 17 | P: respuesta tal cual en el encargo y el informe | Hecho | 556452a |
+| 18 | P0: las dos cifras en el informe y en el cierre | Hecho | §4.4; `simular_cierre.py` (registro HECHA de Z) |
+| 19 | P1: la forma (b), sin tocar `desde`, «ahora − 1», ticks, `_fin_ms` ni el instante | Hecho | §2.1; beb9c93 |
+| 20 | P1: tests de `main` que la rozan, sin tocarlos | Hecho | `tests/` solo añade un fichero; 3038 passed |
+| 21 | P1 y E3: tests 1-3 del encargo, el 4 (stop movido) y los dos de la modificación, que rompen en `main` | Hecho | §2.2 (8 FAILED en `main`, PASSED en la rama) |
+| 22 | E3: los cuatro de f) en los dos lados | Hecho | §2.2 |
+| 23 | E3: `comparar-con-main`, los dos lados pegados | Hecho | §2.2 |
+| 24 | E3: docstring de `llenado.py` sin «PROPUESTO», con la regla del respaldo | Hecho | `llenado.py:1`, `:13-19` |
+| 25 | P4 y E3: NOTAS de ADR-0051 §5 y §3 | Hecho | beb9c93 |
+| 26 | P9: la NOTA dice que la repetición del trader sin ticks ya no se reproduce igual | Hecho | ADR-0051 §5, NOTA |
+| 27 | P2: los dos casos de futuro no se arreglan; `_peor_del_minuto` a H con su sonda | Hecho | la sonda 5, en `anexos/RESPALDO-M1/sonda_z.py` (tras b2 del revisor); H en §6 |
+| 28 | P3: la línea de Technical Debt de las cotizaciones, con su texto | Hecho (en las líneas del cierre) | §6 |
+| 29 | P5 y P2-1: `censo_respaldo.py` por la condición general y `sesiones_s14.py` con las cuatro cosas | Hecho | §3, §4.3, §4.4 |
+| 30 | P6: el contrato a ACTIVAR-A35-A44, solo para la NOTA de §5 | Hecho | 556452a; e808391 |
+| 31 | P7 y E4: la fila de la fase 2 en su commit, antes de correr | Hecho | d380632, antes de las corridas |
+| 32 | P8 y P2-2: la letra H con su grep; R3.6; R5.2 | Hecho | §1; §6 |
+| 33 | P10 y P2-4: la variable comprobada y cómo; corridas en segundo plano sin ella delante | Hecho de otra forma (declarado) | §4.1: ya valía 1 y Aleks eligió no reiniciar |
+| 34 | E4.1-3: las tres corridas, una a la vez; el nombre real de la diaria; la repetición con `diff` y borrada | Hecho | §4.2 |
+| 35 | E4: criterio de hecho, Z = 0 en las dos | Hecho | §4.4 |
+| 36 | E4: los demás eventos del respaldo, contados y explicados | Hecho | §4.4 |
+| 37 | E4: qué cambia por corrida (veredicto, cobertura, precisión, parejas, llenadas, RN-032) | Hecho | §4.5 |
+| 38 | E4 y P2-1: las 8 sesiones de S-14, sin R; PARADA si cambia algo | Hecho: no cambian | §4.3 |
+| 39 | E4 y P6: NOTA de ADR-0070 §3 y de ACTIVAR-A35-A44 §5 | Hecho | e808391 |
+| 40 | E5: el informe con fases, PARADAS, tests, corridas, exposiciones y desviaciones | Hecho | este fichero |
+| 41 | E5: las líneas del cierre medidas sobre una copia, contra `test_hoja_de_ruta` | Hecho | §6 |
+| 42 | E5: PROJECT_STATE por debajo de 25.000 y, si se puede, de 23.000 | Parcial | 23.968: por debajo del tope, no de la alerta (desviación 2) |
+| 43 | E5, P y P2-3: la fila de ERRORES-RECURRENTES con los tres hallazgos del consultor | Hecho | §7 |
+| 44 | E5: el revisor (opus) con los cinco alcances, pegado; lo que importe, arreglado | Hecho | §8 |
+| 45 | E5: sin `fix/` (no toca hooks, rutas ni plataforma) | Hecho | `git diff --name-status`: nada en `.claude/`, `Makefile` ni scripts de plataforma |
+| 46 | Siempre: `make check` antes de cada commit, con ruff y mypy; mensajes con Write y `-F` | Hecho | §5.3 |
 
 **Desviaciones declaradas.**
 1. La variable del punto 10 ya valía 1 y Aleks eligió no reiniciar (§4.1).
@@ -815,6 +852,15 @@ punto 5); las líneas del cierre no tocan R4.2.
 6. Los dos errores de `mypy` de `patrones.py` y `horas_perdidas.py` al tipar las copias vienen de los
    originales de `anexos/RECORRIDA-CONSTRUCCION/` y `make check` no tipa esa carpeta; las copias son
    idénticas y no se tocan.
+7. **La fila del 2026-10-28 de HOLDOUT-EXPOSICIONES no entró el mismo día** (hallazgo a1 del
+   revisor). Declara el `make check` de la apertura y la primera lectura de las salidas de
+   RECORRIDA, del 28 por la tarde y la noche (hora local), pero entró en 56b2233, a las 00:37 del 29
+   (hora local; en UTC, las dos cosas son del 29). Se escribió en el árbol después de esas
+   lecturas, durante la fase 0. No se reescribe: lo dice este punto, y §5.2 ya no afirma «todas
+   antes».
+8. **Dos lecturas de salidas de días dev quedaron sin fila hasta el revisor** (a2): `lado_caja1.py` y
+   `llenadas_mes.py`, más las lecturas con `grep` de la fase 2. Ahora tienen su fila, del mismo día
+   (2026-10-29).
 
 ### 5.1 Comandos ejecutados (literales, en orden; los de la fase 2 en §4.2)
 
@@ -838,10 +884,32 @@ de Windows); ninguna bloqueó una medida necesaria.
 
 ### 5.2 Exposiciones
 
-Las filas de HOLDOUT-EXPOSICIONES de la rama, todas antes de la lectura que declaran: 2026-10-28
-(apertura y comienzo de la fase 0), 2026-10-29 (fase 0), 2026-10-29 (fase 1, antes de su primer
-`make check`) y 2026-10-29 (fase 2, en d380632, antes de correr). Ninguna partición tocada; ningún
-libro, imagen, fotograma ni transcripción; ningún R de las sesiones de S-14.
+Las filas de HOLDOUT-EXPOSICIONES de la rama:
+- 2026-10-28: la apertura y el comienzo de la fase 0. Se escribió después de esas lecturas y entró
+  a las 00:37 del 29 (desviación 7).
+- 2026-10-29: la fase 0, en su commit (56b2233).
+- 2026-10-29: la fase 1, antes de su primer `make check` (beb9c93).
+- 2026-10-29: la fase 2, en d380632, antes de correr; git lo fecha antes de las corridas, que
+  usan 823404a.
+- 2026-10-29: lo que las anteriores no nombraban, añadida tras el revisor (desviación 8).
+
+Ninguna partición tocada; ningún libro, imagen, fotograma ni transcripción; ningún R de las
+sesiones de S-14.
+
+### 5.3 Los `make check` de la rama
+
+| Commit | Árbol del `SELLO` | Duración | `PICO DE MEMORIA` |
+|---|---|---|---|
+| 4036818 (apertura) | 5ebeb8d4… | 1117 s | 300 MiB en `test` |
+| 56b2233 (fase 0) | 2aaf46ed… | 1090 s | 300 MiB |
+| 556452a (respuesta a la PARADA) | 94a2a4f8… | 1179 s | 300 MiB |
+| beb9c93 (fase 1) | f9c33d73… | 1139 s (3038 passed) | 300 MiB |
+| d380632 (anexos y fila de la fase 2) | 5cb071cc… | 1124 s | 300 MiB |
+| 823404a (respuesta a la PARADA 2) | 239ede82… | 1065 s | 300 MiB |
+| e808391 (fase 2) | 7617087e… | 1162 s (3038 passed) | 300 MiB |
+| (el de la entrega) | §8.1 | | |
+
+Todos: exit 0 y ningún `failed`, leídos en `make-check.log` antes de cada commit.
 
 ## 6. Las líneas del cierre (preparadas y medidas sobre una copia; no aplicadas en la rama)
 
@@ -877,8 +945,166 @@ Las líneas (literales en el guion):
 
 ## 8. El revisor
 
-Pendiente.
+Subagente `revisor` (opus), lanzado el 2026-10-29 sobre e808391 con el informe terminado y los
+cinco alcances del encargo. Su informe, tal cual (ninguna cita de un tramo no citable: nada
+retirado):
+
+> ## Informe del revisor · trabajo/respaldo-m1 · 2026-10-29
+>
+> HEAD e808391, base 0e021bf (`git merge-base main HEAD` = 0e021bf9…). `git status --short` vacío. Siete commits, de 4036818 a e808391.
+>
+> Veredicto: nada bloquea. Hay 4 hallazgos que importan (2 en cada eje) y 5 menores. Los cinco alcances que pediste se cumplen, con un matiz en el 3: los relojes de las filas de exposiciones.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 2 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | La fila de exposiciones del 2026-10-28 se commiteó ya el 29 en hora local, y después de una de las lecturas que declara. Por eso §5.2 no se sostiene cuando dice «todas antes de la lectura que declaran». Esa fila declara el `make check` de la apertura y la lectura de las salidas de RECORRIDA del día 28. Pero no entra en 4036818, la apertura: entra en 56b2233. Es «el mismo día» solo si se escribió en el árbol antes de medianoche, y eso no se puede comprobar. En UTC, los dos commits caen el 29 (04:59Z y 05:37Z), así que la fecha de la fila tampoco cuadra en UTC. | `git log main..HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md` → 56b2233 `2026-10-29 00:37:40 -0500` (añade las filas del 10-28 y del 10-29 de la fase 0); 4036818 `2026-10-28 23:59:39 -0500`. `git show 56b2233 -- …HOLDOUT-EXPOSICIONES.md \| grep '^+\|'` → `+\| 2026-10-28 \| **Rama trabajo/respaldo-m1 … apertura y comienzo de la fase 0.**`. RESPALDO-M1.md:841-842 («todas antes de la lectura que declaran: 2026-10-28 (apertura y comienzo de la fase 0)…») |
+> | a2 | importa | `lado_caja1.py` leyó `entradas-antes-alternancia.txt` y la diaria de RECORRIDA el 2026-10-29, y ninguna fila lo declara. La fila de la fase 0 del 10-29 solo nombra `censo_cierre.py` sobre «las dos salidas» (cuenta-arrastrada y diaria). La de la fase 2 solo nombra los guiones de `anexos/RESPALDO-M1/`, y `lado_caja1.py` es de la carpeta de trabajo. No es holdout: son salidas de días dev. Pero CLAUDE.md pide declarar el mismo día también el material de desarrollo. | RESPALDO-M1.md:647-650 («`lado_caja1.py`, guion de la carpeta de trabajo que solo lee esos dos ficheros»); Grep `lado_caja1` en HOLDOUT-EXPOSICIONES.md → sin coincidencias; la fila de la fase 0 (HOLDOUT-EXPOSICIONES.md:83) dice «`censo_cierre.py`, las dos salidas de (2) de la fila anterior» |
+> | a3 | menor | El docstring de un test no coincide con su código: dice 990 y el código modifica a 995. | tests/unit/test_respaldo_m1_decision.py:143 («se modifica a 990») y :145 («se evalua con 990»), frente a :154 `precio=995` |
+> | a4 | menor | El censo no sale con 3, como dicen su docstring y el README: sale con 1. `SystemExit` con una cadena da código 1. | censo_respaldo.py:12-13 («el guion sale con 3») y :96-99 `raise SystemExit(f"…")`; README.md:46 («sale con 3») |
+> | a5 | menor | Un docstring cita una línea que ya no es: el «ahora - 1» está ahora en broker.py:759-760, no en :743-744. | test_respaldo_m1_decision.py:199; broker.py:759-760 en la rama |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python -B scripts/contrato_rama.py` dice: `CONTRATO: 25 ficheros dentro del contrato de trabajo/respaldo-m1 (riesgo alto, artefacto docs/validation/RESPALDO-M1.md, tramo 'R3', 2 comprobaciones para el revisor)`, exit 0.
+> - **Comprobación 1 del contrato.** `uv run python -B -m pytest tests/unit/test_llenado.py tests/unit/test_broker.py tests/unit/test_broker_ordenes_stop.py tests/unit/test_respaldo_m1_decision.py tests/unit/test_be_al_tick.py tests/unit/test_instante_llenado.py tests/unit/test_caja_hasta_el_llenado.py -p no:cacheprovider` → `64 passed in 43.69s`.
+> - **Comprobación 2 (`make check`).** No la ejecuté. `make-check.log`: `3038 passed in 1072.61s`, `SELLO: make check en verde sobre el arbol 7617087e…`, que es el `HEAD^{tree}` de e808391, y `PICO DE MEMORIA de make check: 300 MiB en test`. Ningún `failed` ni `error`.
+> - **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec/` ni `knowledge/cases/`, así que no hacen falta.
+> - **Holdout.** Nada en `knowledge/cases/holdout/`. Ningún libro, imagen ni fotograma.
+> - **Fechas en los anexos.** En las salidas de la rama solo hay los 76 días dev (21+21+13+21), más dos fechas del calendario de cierres (2025-12-04 y 2026-10-08, que no son mercado). Ningún desfase `+01:00` o `+02:00`, y ninguna hora `T00`-`T03`.
+> - **Ningún R de S-14.** `sesiones-s14.txt` solo trae id, colocada, precio, punto y lado.
+> - **Régimen de cambio.** `git diff --name-status`: nada en `knowledge/`, `data/manifests/`, `config/`, `.claude/`, el Makefile ni `anexos/RECORRIDA-CONSTRUCCION/`. `tests/` solo añade `test_respaldo_m1_decision.py`. HISTORIA, HOLDOUT-EXPOSICIONES, ADR-0051, ADR-0070 y ACTIVAR-A35-A44 solo añaden líneas (numstat con 0 borradas).
+> - **Ambigüedades.** Ninguna tocada.
+> - **ADR.** El `## Estado` de ADR-0051 y de ADR-0070 sigue en `ACTIVE`.
+> - **Informes cerrados.** Ninguno cambia.
+> - **Citas en la spec y evidencia nueva.** Ningún sitio nuevo con `cita` y ningún item nuevo de evidencia.
+> - **Citas del informe, comprobadas contra su fuente.**
+>   - ADR-0057:26-27, «la misma que la límite (la salida se mira desde la vela siguiente)»: sí.
+>   - graficos_sesion.py:98-101, `Orden` solo con `colocada` y `punto`: sí.
+>   - DECISIONES-DE-PROCESO.md:29, la regla de letras: sí. Además, H tiene un único registro HECHA (HISTORIA:12855) y ningún `NA:H` en la hoja.
+>   - El 13,7 % y «ninguna de las dos es pareja»: RECORRIDA-CONSTRUCCION.md:960-961.
+>   - Saldo 90652.93 y o1 por ticks a las 06:00:03.566 a 1.17297: cuenta-arrastrada.txt:605, :697 y :798.
+> - **Copias de guiones.** `patrones.py` y `horas_perdidas.py` tienen el mismo sha256 que los de RECORRIDA (330b7d62… y dfa782a3…).
+>
+> Alcances del encargo:
+> - **Alcance 1: los 8 tests rompen en main por la causa de Z.** Lo he razonado sobre el código de main, que se ve en el contexto del diff: `_fin_ms(vela) <= desde_ms` sin `decidido`, y `desde = max(ahora-1, ultimo_cambio_ms)`.
+>   - Tests 1-3: la vela M0, colocada en `_cierre(M0)`, entra entera. 1894694460000 es el fin de M0 y 1894694480000 es M0+1 a los 20 s, las cifras de la salida pegada.
+>   - Test 4: el stop movido a 1000 se evalúa contra M0, cuya mínima es 1000 (`assert (False)`).
+>   - Test 5: sale a 1000 y no a 990.
+>   - Tests 6-7: la vela de la modificación se evalúa con la versión nueva.
+>   - Test 8: sin `decidido`, el `desde` a media vela cuenta.
+>   - Ninguno rompe por otra causa (rechazo, freno o firma): las funciones de main aceptan los 6 argumentos posicionales y `modificar` y `mover_stop` existen con la misma firma.
+> - **Alcance 2: la condición se aplica en toda lectura del respaldo.**
+>   - Solo `broker._proximo_evento` llama a las tres funciones del respaldo (Grep en `src/` y en `scripts/`), y les pasa siempre el instante del objeto (broker.py:767-772 y :783-795). Las llamadas sin él toman `decidido = desde_ms` (llenado.py:169, :219 y :299), así que se niega por defecto.
+>   - Las otras cuatro lecturas del inventario (`cotizacion`, `_precio_de_mercado`, `precio_de_conversion` y `_peor_del_minuto`) no se tocan, como decidió la PARADA (puntos 2 y 3).
+>   - Lo que va por ticks, `desde`, el «ahora - 1», `_fin_ms` y el instante del evento no cambian en el diff.
+>   - ADR-0057 §1 se mantiene: `abierta_ms` es el inicio de la vela siguiente y `>=` la cuenta. Lo fijan el test 11 y los de main.
+> - **Alcance 2: la restauración frente a ADR-0065 §4.** No encontré ningún defecto.
+>   - La regla de `_nivel_de_la_vela` (inicio ≥ decidido) y la de `_de_la_version_anterior` (minuto·60000 < cambio) son la misma, negada.
+>   - La orden se restaura antes de la comprobación de margen (broker.py:846-849, antes de :850).
+>   - El stop vuelve al anterior y `stop_original` pasa a `None` solo si el anterior era el de nacimiento (:890-892). Con dos movimientos, se conserva como break even.
+>   - La traza conserva el `stop_movido` y su petición, y el informe lo declara (§2.1).
+> - **Alcance 4: las NOTAS solo añaden** (diff -U2 de los tres ficheros).
+> - **Alcance 5: las líneas del cierre pasan.** `uv run python -B docs/validation/anexos/RESPALDO-M1/simular_cierre.py .` → `a: [] b: [] c: []`, `23968 bytes … los cuatro tests de test_project_state: ok`, exit 0. La deuda de cotizar está en las líneas del cierre (`DEUDA`, simular_cierre.py:77-85), letra a letra igual al punto 3 de la respuesta. El texto de H es letra a letra el del punto 8.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos (46): 41 hechos, 1 hecho de otra forma y declarado, 2 parciales, 1 no hecho y 1 pendiente (el revisor, que es este informe).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base 0e021bf y CI 40815230287 verificadas con gh | Hecho | RESPALDO-M1.md:9-15 |
+> | 2 | Encargo tal cual, contrato con R3 y riesgo alto, Archivo en HISTORIA | Hecho | contrato.yaml:2-4; HISTORIA +166/-0 |
+> | 3 | Rutas del contrato; ACTIVAR-A35-A44 ampliado a la vista | Hecho | contrato.yaml:14; 556452a; contrato_rama.py exit 0 |
+> | 4 | QUÉ NO CAMBIA (spec, casos, parámetros, llenado.yaml, motor, ADR-0051 §1/§4/§6, ADR-0057 §1) | Hecho | name-status: solo llenado.py y broker.py en `src/`; ADR-0051 solo NOTAs en §3 y §5 |
+> | 5-14 | Fase 0, a) a j) | Hecho | §0.a-§0.j (RESPALDO-M1.md:31-294) |
+> | 15 | k) La lectura de la fase 0 se declara el mismo día, en el commit de la fase 0 | Parcial | La fila del 10-28 entra el 29 a las 00:37 local (56b2233). Ver a1 en el eje (a) |
+> | 16 | PARADA con «Lo que necesito que decidas», numerada y con recomendación | Hecho | RESPALDO-M1.md:366-438 |
+> | 17 | Respuestas de las PARADAS 1 y 2 tal cual, en el encargo y en el informe | Hecho | `diff <(sed -n '128,182p' encargo) <(sed -n '444,498p' informe)` vacío; las de la PARADA 2 también |
+> | 18 | Tests 1-3 del encargo: rompen en main y pasan en la rama | Hecho | test_respaldo_m1_decision.py:79-105; §2.2 |
+> | 19 | Test 4 (e) | Hecho | :108-119 |
+> | 20 | Tests de la PARADA: el stop original sin break even, la modificación con su precio anterior | Hecho | :122-173 |
+> | 21 | Los cuatro puntos de f) pasan en los dos lados; tests de main sin tocar | Hecho | :189-242; `git diff --name-status main...HEAD -- tests/` = solo `A test_respaldo_m1_decision.py`; 3038 passed |
+> | 22 | `comparar-con-main`, los dos lados pegados | Hecho | RESPALDO-M1.md:584-617 |
+> | 23 | Docstring de llenado.py, sin «PROPUESTO» | Hecho | llenado.py:1 y :15-19 |
+> | 24 | NOTAs de ADR-0051 §3 y §5; la repetición del trader (punto 9) | Hecho | diff de ADR-0051 |
+> | 25 | La fila de la fase 2 en su commit, antes de correr | Hecho | d380632 (10:49), antes de las corridas sobre 823404a (11:36) |
+> | 26 | Corridas una a una, en segundo plano, con la variable | Hecho de otra forma, declarado | §4.1; desviación 1 |
+> | 27 | El nombre real del fichero de la diaria | Hecho | §4.2, fila 2 |
+> | 28 | Guiones de g) con las condiciones del punto 5 | Hecho | censo_respaldo.py:106-122; sesiones_s14.py:45-99 |
+> | 29 | Criterio de hecho Z = 0 en las dos corridas | Hecho | censo-respaldo.txt:2 y :13 |
+> | 30 | Qué cambia por corrida (veredicto, cobertura, precisión, parejas, llenadas, RN-032) | Hecho | §4.5 |
+> | 31 | Las 8 sesiones de S-14, sin R | Hecho | sesiones-s14.txt:11 («0») |
+> | 32 | NOTA de ADR-0070 §3 y de ACTIVAR §5 | Hecho | diff |
+> | 33 | Informe con fases, comandos, tiempos y picos | Hecho, con el menor b4 | §2-§5 |
+> | 34 | Z sale, con su registro HECHA y las dos cifras | Hecho | simular_cierre.py:66-75 |
+> | 35 | F termina en «R6a en los huecos.» | Hecho | :76 |
+> | 36 | R3.5 con «Estado: HECHA» | Hecho, con el menor b3 | :107-115 |
+> | 37 | R5.2 nombra la letra nueva (PARADA, punto 8) | Hecho | :116-120 |
+> | 38 | Deuda de cotizar en Technical Debt, con su texto | Hecho | :77-85 |
+> | 39 | Letra H, R3.6 y el grep | Hecho | §1 (RESPALDO-M1.md:516-536); :93-106 |
+> | 40 | `_peor_del_minuto` en H, «con su sonda 5 y con la del auditor» (PARADA, punto 2) | Parcial | Ver b2 |
+> | 41 | PROJECT_STATE medido con wc -c | Hecho | 23968 bytes; la alerta de 23.000, declarada (desviación 2) |
+> | 42 | La copia pasa test_hoja_de_ruta | Hecho | lo ejecuté |
+> | 43 | Fila de ERRORES-RECURRENTES con los 3 hallazgos del consultor | Hecho | §7 |
+> | 44 | El revisor, pegado al final del informe | Pendiente | §8 «Pendiente.» (es este informe) |
+> | 45 | «El encargo, punto por punto» (E5) | No hecho | Ver b1 |
+> | 46 | No toca hooks, rutas ni plataforma | Hecho | name-status |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | Falta la tabla «El encargo, punto por punto» que pide la skill. La §5 «El encargo frente a lo hecho» va por bloques, sin requisitos numerados ni los estados Parcial / No hecho / Hecho de otra forma, y no parte las respuestas del consultor. | RESPALDO-M1.md:786-802; .claude/skills/entregar-rama/SKILL.md:46-50 y :97 |
+> | b2 | importa | El punto 2 de la PARADA pide que `_peor_del_minuto` vaya a H «con su sonda 5 y con la del auditor». En el repo no quedan las sondas: `sonda_z.py` está fuera, en la carpeta de trabajo. La sonda 5 solo está descrita en §0.a, fila 7. La del auditor no aparece en el informe fuera de la respuesta citada. El informe no lo declara como desviación. | RESPALDO-M1.md:24-27 y :49; simular_cierre.py:93-100 (R3.6 remite a «§0.a y §0.l»); Grep «instante redondo» en el informe: solo en la cita (:468 y :484) |
+> | b3 | menor | El «Estado: HECHA» de R3.5 dice «el tag de su cierre» y no el tag, que las demás entradas HECHA sí nombran. El tag previsto es `stable/F38j-respaldo-m1`. | simular_cierre.py:111; HOJA-DE-RUTA.md:30, :40 y :77 |
+> | b4 | menor | Los «comandos literales» no lo son del todo: §4.2, filas 3-7, y §5.1 llevan marcadores y «…». Y faltan el SELLO y el pico de los `make check` de d380632, 823404a y e808391 (el log solo cubre e808391). | RESPALDO-M1.md:696-700, :821-831, :17-19 y :621-624 |
+>
+> ### Lo que no pude comprobar
+> - Si las filas del 10-28, de la fase 0 y de la fase 1 se escribieron en el árbol antes de sus lecturas. Git solo da la hora del commit: las de la fase 0 y la fase 1 entran en el mismo commit que cierra la lectura.
+> - El lado de main de los 8 tests, ejecutado de verdad. Hace falta `git worktree add`, que escribe, así que lo sustituyo por la lectura del código de main y por la salida que pega §2.2.
+> - `test_simulacion.py`, `test_cableado.py` y `tests/regression/test_cuenta_7_de_agosto.py` en mi sesión: leen `data/` de agosto y no lo declaré. Su evidencia es el `make check` sellado sobre HEAD (3038 passed).
+> - `make check` (escribe) y el sello de los commits intermedios.
+> - La sonda del auditor del consultor y los guiones de la carpeta de trabajo (`sonda_z.py`, `tres_no.py`, `be_vela.py`, `lado_caja1.py`, `letras.py`): no están en el repo.
+> - El contenido de `cuenta-arrastrada.txt` y de la diaria, más allá de fechas, horas y las líneas citadas.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %ad %s' --date=iso main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. Read: el encargo, `contrato.yaml`, RESPALDO-M1.md (entero), test_respaldo_m1_decision.py, llenado.py:270-349, broker.py:560-904, censo_respaldo.py, sesiones_s14.py, simular_cierre.py, el README de los anexos, sesiones-s14.txt, censo-respaldo.txt, ADR-0070:84-101, graficos_sesion.py:94-103, DECISIONES-DE-PROCESO.md:26-31
+> 3. `git diff main...HEAD -- src/`
+> 4. `git diff --name-status main...HEAD` y lo mismo sobre las rutas protegidas
+> 5. Grep de llamadores y campos en `src/` y en `scripts/`; Grep de `m1_entre`
+> 6. `uv run python -B scripts/contrato_rama.py`
+> 7. `uv run python -B -m pytest …` (dos veces, con `-p no:cacheprovider`)
+> 8. `grep` de SELLO, PICO, passed y failed en make-check.log; `git rev-parse HEAD^{tree}`
+> 9. `git log … -- HOLDOUT-EXPOSICIONES.md`; `git diff main...HEAD -- HOLDOUT-EXPOSICIONES.md`; `git show {56b2233,beb9c93,d380632} -- HOLDOUT-EXPOSICIONES.md | grep '^+|'` (el `for` lo negó la guardia; lo partí en tres llamadas, como ella propone)
+> 10. Grep de fechas fuera de los días dev en los anexos; `grep -ohE` de fechas por mes; `grep` de `+0[12]:00` y de las horas `T0[0-3]`
+> 11. `git diff main...HEAD --numstat` y `-U2` de los ADR y de ACTIVAR; `git diff … -- PROJECT_STATE.md`
+> 12. Grep de los nombres de test, del `## Estado` de los ADR, de ADR-0065 §4, de la cita de ADR-0057, del 13,7 % en RECORRIDA, de H en HISTORIA y en la hoja, de «punto por punto» en la skill, de «Estado: HECHA» en la hoja, de `lado_caja1` en HOLDOUT-EXPOSICIONES y de los datos de cuenta-arrastrada
+> 13. `diff <(sed -n …) <(sed -n …)` de las dos respuestas del consultor
+> 14. `sha256sum` de las copias de los guiones
+> 15. `git show --stat d380632` y `e808391`; `git show e808391 -- censo_respaldo.py`
+> 16. `uv run python -B docs/validation/anexos/RESPALDO-M1/simular_cierre.py .`
+
+### 8.1 Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Declarado, no reescrito**: desviación 7 de §5; §5.2 ya no dice «todas antes». La fila no se edita (HOLDOUT-EXPOSICIONES solo admite filas nuevas en esta rama); la lectura que declara es de material de desarrollo, sin días reservados. |
+| a2 | importa | **Arreglado**: fila nueva del 2026-10-29 en HOLDOUT-EXPOSICIONES que nombra `lado_caja1.py`, `llenadas_mes.py`, las lecturas con `grep` de la fase 2 y las del revisor; desviación 8. |
+| a3 | menor | **Arreglado**: el docstring dice 995 (`test_respaldo_m1_decision.py:143` y `:145`). |
+| a4 | menor | **Arreglado**: `censo_respaldo.py` imprime el motivo por stderr y sale con 3. Vuelto a correr: `censo-respaldo.txt`, sin cambios (`diff` vacío). |
+| a5 | menor | **Arreglado**: cita `broker.py:759-760`. |
+| b1 | importa | **Arreglado**: §5 es ahora «El encargo, punto por punto», con 46 requisitos numerados (encargo y las dos respuestas) y sus estados. |
+| b2 | importa | **Arreglado**: `anexos/RESPALDO-M1/sonda_z.py` entra en la rama, con las seis sondas, la 5 entre ellas (la de `_peor_del_minuto`). Corrida con el código de la rama: las 1 a 3 ya no llenan con la vela de su decisión, y la 3 sale por el stop original (990); las 4 a 6 dan lo mismo que en §0.a. La sonda del auditor del consultor no está en el repo, es del consultor: la entrada H (texto del punto 8, tal cual) no la nombra, y la rama de H la tendrá que pedir. Requisito 27 de §5. |
+| b3 | menor | **Arreglado**: R3.5 nombra `stable/F38j-respaldo-m1` en `simular_cierre.py`; la simulación vuelve a dar `a: [] b: [] c: []` y 23.968 bytes. |
+| b4 | menor | **Arreglado**: §4.2 lleva los comandos literales, con rutas enteras; §5.3, el `SELLO` y el pico de cada `make check` de la rama. §5.1 sigue resumiendo la fase 0 con «…» en las rutas de la carpeta de trabajo, que es temporal y no está en el repo. |
+
+El `make check` de este último commit: en su mensaje.
 
 ## Estado
 
-EN CURSO: fase 2 hecha; falta el revisor y la entrega.
+Hecho, con las desviaciones declaradas en §5. La corrección de Z está en `llenado.py` y
+`broker.py`, con 12 tests (8 rompen en `main`). Las dos corridas, repetidas, dan Z = 0, y la que
+cuenta sigue en «no». Las líneas del cierre están preparadas y simuladas (§6), y la fila de
+ERRORES-RECURRENTES, preparada (§7). Sin CI de Linux: la rama no toca hooks, rutas ni plataforma.
+
+Rama lista para revisión, NO cerrada.

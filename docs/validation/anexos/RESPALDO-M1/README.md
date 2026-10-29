@@ -50,5 +50,11 @@ plano y nunca a la par de un `make check` (Claude Code arrancado con
   colocación, el mismo punto, el mismo precio y el mismo lado. **Sin ningún R.**
   → `sesiones-s14.txt`.
 
+- `sonda_z.py`: las seis sondas de la fase 0, con velas y ticks sintéticos (`RESPALDO-M1.md` §0.a),
+  añadida tras el revisor (b2). La 5 es la de `_peor_del_minuto`, que heredan la Next Action H y
+  R3.6. No lee datos.
+- `simular_cierre.py`: las líneas del cierre, en memoria, contra `test_hoja_de_ruta` y
+  `test_project_state` (`RESPALDO-M1.md` §6); no escribe en el repo.
+
 Las líneas `TIEMPO` y `MEMORIA` de cada corrida van por pantalla, no al fichero: están en el informe
 de la rama. Si una corrida muere o sale con un código distinto de 0, no se relanza sin decirlo.

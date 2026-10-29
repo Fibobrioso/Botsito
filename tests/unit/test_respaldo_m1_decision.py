@@ -140,9 +140,9 @@ def test_la_vela_del_stop_movido_que_toca_el_stop_original_sale_por_el_sin_break
 
 
 def test_la_vela_de_una_modificacion_se_evalua_con_la_orden_anterior() -> None:
-    """Limite de compra en 1000 colocada al empezar M0; en el cierre de M0+1 se modifica a 990. La
+    """Limite de compra en 1000 colocada al empezar M0; en el cierre de M0+1 se modifica a 995. La
     M0+1 lleva el ASK a 998: llena la orden ANTERIOR (1000), a su precio, con su stop y su objetivo,
-    al fin de M0+1. En `main` la M0+1 se evalua con 990 y no llena."""
+    al fin de M0+1. En `main` la M0+1 se evalua con 995 y no llena."""
     m1 = [
         _vela(M0, 1010, 1012, 1005, 1010),
         _vela(M0 + 1, 1008, 1010, 995, 1000),
@@ -196,7 +196,7 @@ def test_una_pendiente_de_antes_de_una_vela_sin_ticks_se_llena_en_esa_vela() -> 
 
 
 def test_el_tick_del_ultimo_evento_puede_llenar_otra_pendiente() -> None:
-    """«ahora - 1» (`broker.py:743-744`): el tick que llena una orden llena tambien otra que
+    """«ahora - 1» (`broker.py:759-760`): el tick que llena una orden llena tambien otra que
     estaba pendiente y lo cruza."""
     ticks = [_tick(M0, 10, 1005), _tick(M0, 30, 994)]
     b = _broker(ticks, [])

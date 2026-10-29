@@ -93,10 +93,12 @@ def censo(ruta: Path) -> tuple[list[str], int]:
             llenada[(dia, f"pos-{id_}")] = ms
     n_movidos = sum(len(v) for v in movidos.values())
     if modificar != n_movidos:
-        raise SystemExit(
+        print(
             f"{ruta.name}: {modificar} peticiones modificar y {n_movidos} stops movidos: hay "
-            "modificaciones de orden que la salida no fecha; el censo quedaria incompleto"
+            "modificaciones de orden que la salida no fecha; el censo quedaria incompleto",
+            file=sys.stderr,
         )
+        raise SystemExit(3)
     cuenta: Counter[str] = Counter()
     filas = []
     z = 0
