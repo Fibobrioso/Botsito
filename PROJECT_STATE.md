@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/respaldo-m1
 
 ## Current Feature
-Ninguna rama abierta. trabajo/barrido-sesion-6 cerrada en main el 2026-10-28 (stable/F38i-barrido-sesion-6): la hoja de la sesión 6 (docs/sesion-6/PREGUNTAS.md), scripts/graficos_sesion.py con los gráficos de S-14 fuera del repo, la hoja 06 de transcribir_sesion.py y la regla 2 de SESION-DE-PREGUNTAS.md (BARRIDO-SESION-6.md).
+trabajo/respaldo-m1 EN CURSO (NA:Z, R3.5): el respaldo M1 del bróker simulado deja de evaluar un evento contra precios anteriores al instante en que se decidió, y se repiten las dos corridas de recorrida-construccion. Encargo docs/encargos/trabajo-respaldo-m1.md; informe docs/validation/RESPALDO-M1.md.
 
 ## Stable Main State
 89dc902 · merge de `trabajo/barrido-sesion-6` (tag `stable/F38i-barrido-sesion-6`): la hoja de la sesión 6, scripts/graficos_sesion.py con los gráficos de S-14 fuera del repo, la hoja 06 y la regla 2 de SESION-DE-PREGUNTAS. Sobre `stable/F38h-cuarentena-por-condicion-2` (d5f6b81). Informe docs/validation/BARRIDO-SESION-6.md; el registro del cierre, al final de HISTORIA.
@@ -156,8 +156,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 51 (2026-10-28).
+— ninguna desde el Archivo 52 (2026-10-28).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 51 (2026-10-28).
+— ninguna desde el Archivo 52 (2026-10-28).
