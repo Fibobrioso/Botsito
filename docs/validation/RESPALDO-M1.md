@@ -650,7 +650,29 @@ diaria de RECORRIDA que trae `entradas-antes-alternancia.txt` → **291 cuadran,
 recuentos). `sesiones_s14.py` compara lo que el gráfico SÍ dibuja (la M1 de colocación y el punto)
 y, además, el precio y el lado deducido.
 
+## Respuesta del consultor a la PARADA 2 (2026-10-29)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/respaldo-m1 (2026-10-29). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha, y aplícala.
+>
+> 1. (a). sesiones_s14.py compara, en las 8 sesiones, lo que el gráfico dibuja (la M1 de colocación y el punto de la primera orden) y, además, el precio y el lado deducido por la caja 1, que ya está validado en las 291 llenadas de la diaria de RECORRIDA cuyo lado se conoce. El informe dice que el lado se deduce, con esa validación. Si en alguna sesión cambia CUALQUIERA de las cuatro cosas (M1, punto, precio o lado deducido) entre la diaria de RECORRIDA y la nueva, o si deja de ser P6, PARADA antes de seguir, sin imprimir ningún R.
+> 2. La letra H para el punto 8: aceptada, con su grep en el informe.
+> 3. Un hallazgo más del consultor para la fila de ERRORES-RECURRENTES, en el cierre: en la respuesta a la PARADA pedí comparar «el mismo lado que dibujó scripts/graficos_sesion.py» sin leer el script, que no dibuja el lado (graficos_sesion.py:98-101). Lección: una comprobación contra un artefacto se escribe después de leer qué contiene ese artefacto.
+> 4. Lo que sigue: el commit con esta respuesta; Aleks reinicia Claude Code con la variable; compruebas que vale 1 y escribes cómo lo has comprobado; la fase 2 como dice el encargo, una corrida cada vez, en segundo plano y nunca a la par de un make check; el informe, el revisor y la entrega. Si la variable no está puesta, PARADA antes de correr.
+>
+> make check en verde antes de cada commit. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto, y lo lanza Aleks con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+**La respuesta aplicada.** 1: `sesiones_s14.py` ya compara las cuatro cosas (M1 de colocación,
+punto, precio y lado deducido por la caja 1, validada en 291 de 291 llenadas, §3) y si sigue siendo
+P6; si cambia cualquiera, PARADA antes de seguir. 2: la letra H, con su grep en §1. 3: el hallazgo
+va a la fila de ERRORES-RECURRENTES preparada para el cierre. 4: este commit; después, el reinicio.
+
 ## Estado
 
-EN CURSO: fase 1 hecha (beb9c93); fase 2 preparada. PARADA 2 (el lado del punto 5) y espera a que
-Aleks reinicie Claude Code con la variable (punto 10).
+EN CURSO: fase 1 hecha (beb9c93); fase 2 preparada (d380632); respuesta a la PARADA 2 copiada.
+Espera a que Aleks reinicie Claude Code con la variable (punto 10).
