@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/respaldo-m1
+main
 
 ## Current Feature
-trabajo/respaldo-m1 EN CURSO (NA:Z, R3.5): el respaldo M1 del bróker simulado deja de evaluar un evento contra precios anteriores al instante en que se decidió, y se repiten las dos corridas de recorrida-construccion. Encargo docs/encargos/trabajo-respaldo-m1.md; informe docs/validation/RESPALDO-M1.md.
+Ninguna rama abierta. trabajo/respaldo-m1 cerrada en main el 2026-10-29 (stable/F38j-respaldo-m1): una vela del respaldo M1 solo evalúa lo decidido antes de que empezara; las dos corridas repetidas, sin ningún evento con la vela de su decisión, y la que cuenta sigue en «no» (RESPALDO-M1.md).
 
 ## Stable Main State
-89dc902 · merge de `trabajo/barrido-sesion-6` (tag `stable/F38i-barrido-sesion-6`): la hoja de la sesión 6, scripts/graficos_sesion.py con los gráficos de S-14 fuera del repo, la hoja 06 y la regla 2 de SESION-DE-PREGUNTAS. Sobre `stable/F38h-cuarentena-por-condicion-2` (d5f6b81). Informe docs/validation/BARRIDO-SESION-6.md; el registro del cierre, al final de HISTORIA.
+4b12a92 · merge de `trabajo/respaldo-m1` (tag `stable/F38j-respaldo-m1`): el respaldo M1 no evalúa contra precios anteriores a la decisión (Z, R3.5), con la versión anterior en la vela de un cambio (ADR-0051 §5, NOTA); la línea base vigente es anexos/RESPALDO-M1/cuenta-arrastrada.txt. Sobre `stable/F38i-barrido-sesion-6` (89dc902). Informe docs/validation/RESPALDO-M1.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-89dc902 · merge: trabajo/barrido-sesion-6, la hoja de la sesión 6, los gráficos de S-14 fuera del repo, la hoja 06 y la regla 2 de SESION-DE-PREGUNTAS · tag stable/F38i-barrido-sesion-6
+4b12a92 · merge: trabajo/respaldo-m1, el respaldo M1 no evalúa contra precios anteriores a la decisión (Z) · tag stable/F38j-respaldo-m1
 
 ## Tests Currently Passing
 1777 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
