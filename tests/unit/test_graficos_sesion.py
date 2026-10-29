@@ -260,17 +260,91 @@ def test_no_pisa_una_salida_que_ya_existe(g: ModuleType, tmp_path: Path) -> None
 
 def test_el_guion_no_recorre_carpetas_ni_usa_la_palabra_vetada() -> None:
     arbol = ast.parse(GUION.read_text(encoding="utf-8"))
-    vetadas = {"glob", "rglob", "iterdir", "listdir", "scandir", "walk"}
-    usadas = {
-        n.attr if isinstance(n, ast.Attribute) else n.id
-        for n in ast.walk(arbol)
-        if isinstance(n, (ast.Attribute, ast.Name))
-    }
+    nodos = list(ast.walk(arbol))
+    vetadas = {"glob", "rglob", "iterdir", "listdir", "scandir", "walk", "fwalk"}
+    # los nombres usados, los importados (con su alias o sin el), las palabras de los textos y
+    # cualquier getattr, que podria montar un nombre a trozos
+    usadas = {n.attr for n in nodos if isinstance(n, ast.Attribute)}
+    usadas |= {n.id for n in nodos if isinstance(n, ast.Name)}
+    for n in nodos:
+        if isinstance(n, ast.Import):
+            usadas |= {a.name.split(".")[0] for a in n.names}
+        if isinstance(n, ast.ImportFrom):
+            usadas |= {a.name for a in n.names} | {(n.module or "").split(".")[0]}
+        if isinstance(n, ast.Constant) and isinstance(n.value, str):
+            usadas |= set(re.findall(r"[a-z]+", n.value.lower())) & vetadas
     assert not usadas & vetadas
-    nombres = {n.id for n in ast.walk(arbol) if isinstance(n, ast.Name)} | {
-        a.arg for n in ast.walk(arbol) if isinstance(n, ast.FunctionDef) for a in n.args.args
+    assert "getattr" not in usadas
+    # ninguna variable, argumento (posicional, con nombre o solo por nombre) ni clave se llama
+    # con la palabra que la guardia veta
+    nombres = {n.id for n in nodos if isinstance(n, ast.Name)}
+    for n in nodos:
+        if isinstance(n, (ast.FunctionDef, ast.Lambda)):
+            todos = n.args.posonlyargs + n.args.args + n.args.kwonlyargs
+            nombres |= {a.arg for a in todos}
+        if isinstance(n, ast.keyword) and n.arg:
+            nombres.add(n.arg)
+        if isinstance(n, ast.Dict):
+            nombres |= {str(k.value) for k in n.keys if isinstance(k, ast.Constant)}
+    assert not any("crudo" in str(x) for x in nombres)
+
+
+def test_main_pasa_casos_ocultos_a_preparar() -> None:
+    """main() niega por defecto con los dias de `casos_ocultos`, no con un conjunto vacio."""
+    arbol = ast.parse(GUION.read_text(encoding="utf-8"))
+    main = next(n for n in ast.walk(arbol) if isinstance(n, ast.FunctionDef) and n.name == "main")
+    asignado = [
+        n.value
+        for n in ast.walk(main)
+        if isinstance(n, ast.Assign) and [ast.unparse(t) for t in n.targets] == ["ocultos"]
+    ]
+    assert [ast.unparse(v) for v in asignado] == ["dias_de_casos(casos_ocultos(RAIZ))"]
+    llamadas = [
+        n
+        for n in ast.walk(main)
+        if isinstance(n, ast.Call) and isinstance(n.func, ast.Name) and n.func.id == "preparar"
+    ]
+    assert len(llamadas) == 1 and ast.unparse(llamadas[0].args[-1]) == "ocultos"
+
+
+def test_la_construccion_del_guion_es_la_regla_2(g: ModuleType) -> None:
+    """La constante es la regla 2 de SESION-DE-PREGUNTAS.md (ADR-0078 y ADR-0079): abril, julio del
+    1 al 17, agosto y enero del 2 al 30."""
+    assert g.CONSTRUCCION == {
+        "2026-01": (2, 30),
+        "2026-04": (1, 30),
+        "2026-07": (1, 17),
+        "2026-08": (1, 31),
     }
-    assert not any("crudo" in x for x in nombres)
+
+
+@pytest.mark.parametrize("mes, primero", [("2026-01", 2), ("2026-04", 1), ("2026-07", 1)])
+def test_con_la_construccion_real_ninguna_ventana_entra_en_el_mes_anterior(
+    g: ModuleType, mes: str, primero: int
+) -> None:
+    """El calentamiento queda fuera: con la constante real, una ventana pedida desde cuatro dias
+    antes del segundo dia de construccion del mes empieza en las 00:00 UTC del primero."""
+    anio, m = int(mes[:4]), int(mes[5:])
+    corte = a_minuto(datetime(anio, m, primero + 1, 10, 0, tzinfo=UTC))
+    desde = corte - 5 * 24 * 60
+    inicio = g.recorte(desde, corte, g.CONSTRUCCION, set())
+    assert inicio == a_minuto(datetime(anio, m, primero, tzinfo=UTC))
+
+
+def test_la_ultima_puerta_niega_una_vela_tras_el_corte(g: ModuleType) -> None:
+    """`comprobar`, sola: un grafico con una M1 posterior al corte sale con error."""
+    dia = date(2030, 8, 20)
+    graf = g.preparar(
+        g.Pedido(dia, "11-15"), _orden(g, dia, 10, 5), _cargador(), _anclaje(), CONSTRUCCION, set()
+    )
+    tras = _velas(
+        datetime(2030, 8, 20, 10, 6, tzinfo=UTC), datetime(2030, 8, 20, 10, 7, tzinfo=UTC)
+    )
+    mala = g.Grafico(
+        graf.pedido, graf.corte, graf.punto, graf.escala, graf.h4, graf.m15, graf.m1 + tuple(tras)
+    )
+    with pytest.raises(g.GraficoError, match="pasa del corte"):
+        g.comprobar(mala, CONSTRUCCION, set())
 
 
 # ------------------------------------------------------------------- la orden del anexo

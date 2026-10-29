@@ -77,16 +77,18 @@ día**, como en la 5 (decisión 0).
 - **Para precisar:**
   - En el dibujo, cuando la abierta toca ese punto, ¿cierras ya o la dejas seguir?
   - Si la cuentas con la abierta, ¿miras lo que pierde en cada momento o solo cuando cierra la vela?
-  - Si llegas al tope, ¿quitas también la orden que tuvieras puesta sin llenar?
 - **Para confirmar al final:** «Paro cuando la pérdida del día llega al 4,5 % del saldo del inicio
   del día, contando ______ (solo las cerradas / también la abierta)».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-05.md` §3.1. Hoy el bot cuenta solo las cerradas:
   `perdida_trader_magnitud` = `saldo`, DEFAULT_AMBIGUOUS bajo A-44, lectura del consultor
   (`knowledge/spec/parametros.yaml:1475-1476`), que lee `engine/tope_trader.py:176`. (a) → `saldo`
   (lo de hoy); (b) → `equity`. El 4,5 % (`perdida_maxima_diaria`, `parametros.yaml:1208-1209`) y la
-  base (`base_calculo_perdida_diaria` = `saldo_inicial_dia`, `:1404-1405`) ya están CONFIRMED, y la
-  orden sin llenar ya se retira al llegar al tope (ADR-0086, decisión del consultor): la tercera
-  subpregunta solo confirma.*
+  base (`base_calculo_perdida_diaria` = `saldo_inicial_dia`, `:1404-1405`) ya están CONFIRMED. La
+  orden sin llenar al llegar al tope no se pregunta: la retira RN-020 por DECISIÓN DEL CONSULTOR,
+  que descartó preguntarlo en la sesión 6 (ADR-0086:56 y :66-67). La segunda subpregunta no cambia
+  ningún valor si contesta «en cada momento»: el seguidor del tope recibe la equity en cada
+  instante (`engine/tope_trader.py:219-221`, y el cableado le pasa la peor equity de cada tramo,
+  `engine/cableado.py:310-311`); «solo al cierre de la vela» pediría un ADR.*
 
 **S-2. Cuándo vuelves a contar desde cero después de parar por la pérdida del día** · A-44
 - **Lo que nos has dicho:** de la semana, «vuelvo el día siguiente y ya está» (v15 0:15:46,
@@ -391,9 +393,11 @@ más separa al bot del trader es que el bot entra mucho donde él no.
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-05.md` §3.5. Hoy la toma de antes de las 7 cuenta
   (`toma_antes_de_la_ventana` = `cuenta`, CONFIRMED, `parametros.yaml:788-789`;
   `engine/primitivas.py:304-309`), y la segunda toma del mismo pivote no abre escenario nuevo
-  (`engine/zonas.py:292-294`): el bot opera desde las 7 con la primera. (a) y (b) con «opero desde las
-  7 con ella» no cambian nada; (b) con «ya no opero esa liquidez» pediría una opción nueva con su
-  ADR.*
+  (`engine/zonas.py:292-294`): el bot opera desde las 7 con la primera. (b) con «opero desde las 7
+  con ella» es lo de hoy. (a) cambia la toma que usa el bot: si la que vale es la segunda, las zonas
+  de control del retroceso se cuentan desde ella (`domain/estructura_m1.py:153-157`, «entre la toma
+  … y el breaker») y no desde la primera, y pide ADR. (b) con «ya no opero esa liquidez» pediría una
+  opción nueva, también con su ADR.*
 
 **S-16. Los dos extremos de la caja: qué velas dan el 1** · en parte · A-48 y A-49
 - **Lo que nos has dicho:**
@@ -407,25 +411,30 @@ más separa al bot del trader es que el bot entra mucho donde él no.
 - **Lo que todavía no sabemos:** de qué velas sale el 1: solo de la última vela contraria, de las
   contrarias seguidas, o de todas las velas desde el punto.
 - **Esquema inventado, no es un día real** («M1» escrito en el dibujo; el 0 NO está en el último bajo
-  del dibujo): una venta. El punto, un bajo de M1 (el 0, abajo). Después, dos velas verdes seguidas,
-  una roja pequeña, otra verde y la vela que rompe el punto. Las cinco velas tienen máximos distintos,
-  y el más alto es el de la primera verde.
+  del dibujo): una venta. El punto, un bajo de M1 (el 0, abajo). Después: una vela verde grande
+  (A), una roja pequeña, dos verdes seguidas (B y C) y la vela roja que rompe el punto. Los máximos,
+  de más alto a más bajo: el de A, el de B y el de C, y el de la roja que rompe, el más bajo.
 - **Pregunta:** «En este dibujo, el 0 de la caja es este punto. ¿Hasta dónde llevas el 1?
-  - (a) al máximo de la última vela verde antes de la ruptura;
-  - (b) al máximo de las verdes seguidas que acaban en esa última;
-  - (c) al punto más alto de todas las velas desde el punto;
+  - (a) al máximo de la última vela verde antes de la ruptura (C);
+  - (b) al máximo de las verdes seguidas que acaban en esa última (B y C: el de B);
+  - (c) al punto más alto de todas las velas desde el punto (el de A);
   - (d) otra, ¿cuál?»
 - **Para precisar:**
   - ¿Trazas la caja cuando cierra la vela que rompe, o mientras se forma?
   - En una compra, al revés (el 0 arriba y el 1 abajo), ¿igual?
-- **Para confirmar al final:** «El 0 de la caja va en el punto; el 1, en ______; trazo la caja
-  ______ (al cierre / mientras se forma), y mientras no aparece otro punto, el 1 ______».
+- **Para confirmar al final:** «El 0 de la caja va en ______ (el punto más reciente / el punto de
+  cuando se tomó la liquidez); el 1, en ______; trazo la caja ______ (al cierre / mientras se forma),
+  y mientras no aparece otro punto, el 1 ______».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-05.md` §3.6, con el esquema cambiado: el 0 no va en
   el último alto ni bajo de M1, lo que no entendió en la sesión 5. Hoy: `caja_bloque` = `r6`,
   DEFAULT_AMBIGUOUS bajo A-48 (`parametros.yaml:708-709`, descripción :698-706); `caja_se_fija` =
   `en_cada_cierre_m1` bajo A-49 (`:735-736`; `engine/zonas.py:389`); `orden_stop_punto` =
-  `ultimo_pivote_m1` bajo A-48 (`:687-688`). (a) → `r1`; (b) → `r4`; (c) → `r6` (lo de hoy).
-  «Al cierre» y «el 1 se va actualizando» casan con `en_cada_cierre_m1` (ADR-0074, sesión 4 S-4).*
+  `ultimo_pivote_m1` bajo A-48 (`:687-688`). (a) → `r1`; (b) → `r4`; (c) → `r6` (lo de hoy): con la
+  roja entre A y B, el tramo de contrarias seguidas que acaba en C es B y C
+  (`domain/estructura_m1.py:242-249`), así que las tres opciones dan tres 1 distintos. En la
+  confirmación, «el punto más reciente» → `ultimo_pivote_m1` (lo de hoy; «siempre el punto breaker al
+  más reciente», `ev-v16-001445-7ca4f033`) y «el de la toma» → `referencia_de_la_toma`. «Al cierre»
+  y «el 1 se va actualizando» casan con `en_cada_cierre_m1` (ADR-0074, sesión 4 S-4).*
 
 **S-17. Frente al nivel tomado: solo el 0 o la caja entera** · en parte · A-50
 - **Lo que nos has dicho:** «si el 0 queda justo en la la línea ni por encima ni por debajo eso es
@@ -592,8 +601,9 @@ más separa al bot del trader es que el bot entra mucho donde él no.
 
 **S-23. Una toma de la mañana, y por la tarde el mismo sesgo** · en parte · A-46
 - **Lo que nos has dicho:** «Si hay una continuidad de sesgo, sí. Pero si no, no. Esa es la respuesta
-  que daría.» (v15 0:58:39, `ev-v15-005839-f2e43c27`); y en la sesión 3, de las dos sesiones del
-  día: «cada uno es un mundo diferente» (`fb-2026-09-29-sesion-03-5021677e`, v9 0:32:53).
+  que daría.» (v15 0:58:39, `ev-v15-005839-f2e43c27`); y en la sesión 3, cuando te resumimos que
+  distinguías las dos sesiones del día y que «cada uno es un mundo diferente», contestaste «Claro,
+  exacto» (`fb-2026-09-29-sesion-03-5021677e`, v9 0:32:53).
 - **Lo que todavía no sabemos:** si, con el MISMO sesgo por la tarde, la toma de la mañana te vale
   para operar la tarde, o cada sesión espera su propia toma.
 - **Esquema inventado, no es un día real** («M15» escrito, y la línea entre las dos sesiones en el
