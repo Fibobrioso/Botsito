@@ -924,3 +924,35 @@ sello y el último run de la CI, en la tabla de abajo.
 ## Estado
 
 Rama lista para revisión, NO cerrada. Todo hecho: fase 0 con su PARADA y la respuesta del consultor aplicada; fase 1 (PREGUNTAS.md y D8), fase 2 (guion, tests y gráficos fuera del repo) y fase 3 (hoja 06); CI de Linux con el único fallo aceptado; revisor pasado y sus hallazgos arreglados o declarados (§8.1). Lo que el consultor tiene que mirar: las dos negativas de la guardia sin PARADA (§4, punto 3, y §8.1, a1/b9) y la desviación de las tres preguntas (§2.1).
+
+## Orden de cierre (2026-10-28)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/barrido-sesion-6 (consultor, 2026-10-28). Cópiala tal cual al final del encargo y del informe, en «Orden de cierre», en su propio commit (sellado), antes del commit del contrato. Después, el ritual de docs/runbooks/RITUAL.md con la skill cerrar-rama, que lanzo yo con /cerrar-rama.
+>
+> Revisión del consultor: la rama cumple el encargo y la respuesta a la PARADA. PREGUNTAS.md trae las 23 preguntas con citas registradas, sin fechas reservadas ni R del bot, y las cajas y los lados casan con orden_stop_punto, caja_bloque, RN-005 y caja_lado_de_ruido. El guion niega por defecto y sus tests cazan los mutantes. La CI de fix/barrido-sesion-6 sobre 9ffc445 (run 40791693637) solo tiene el fallo aceptado de state check.
+>
+> 1. Tag: stable/F38i-barrido-sesion-6. Comprueba antes que no existe ni en local ni en origin. Mensaje del merge: «merge: trabajo/barrido-sesion-6, la hoja de la sesión 6, los gráficos de S-14 fuera del repo, la hoja 06 y la regla 2 de SESION-DE-PREGUNTAS».
+>
+> 2. Las dos negativas de la guardia sin PARADA (a1/b9): quedan declaradas y no se deshacen. Eran dos grep de solo lectura sobre código, no sobre material protegido, y el dato no cambió ninguna decisión. No hace falta que los lance con «!». La lección de la fila de ERRORES-RECURRENTES se queda tal cual: una negativa de la guardia a un comando de solo lectura también es PARADA.
+>
+> 3. En el commit del contrato (chore(cierre)), además de lo que manda RITUAL.md:
+>  a) PROJECT_STATE.md, Next Action:
+>   - F, entera, la línea 1 de §6 del informe: «F. La sesión 6 con el trader (R4.2): la hoja es docs/sesion-6/PREGUNTAS.md y el PDF del consultor, y los gráficos de S-14 están fuera del repo; después, su ingesta. R6a y Z en los huecos.»
+>   - K gana al final esta frase (108 bytes con su espacio inicial): « Y la de BARRIDO-SESION-6.md §4: un grep con un patrón que acaba en espacio da «leer el contenido de .».» Va en K, que es la entrada de los falsos positivos de la guardia, en lugar de la línea nueva de Technical Debt que proponía §6, línea 6.
+>   - Ninguna letra pasa a HECHA: F sigue viva hasta que la sesión 6 se celebre e ingiera.
+>  b) docs/plan/HOJA-DE-RUTA.md: las líneas 2 y 3 de §6, tal cual (las Refs de R4.2 con NA:F e ID:ADR-0084, y el añadido al final de su «Qué es»). R4.2 no gana «Estado»: no está hecha. NA:F se queda también en G.4.
+>  c) docs/runbooks/SESION-DE-PREGUNTAS.md: la línea 4 de §6, tal cual (el paso 6 de «Antes» nombra scripts/graficos_sesion.py). Es un fichero más de los que enumera la puerta del commit del contrato (RITUAL.md): su línea M está autorizada por esta orden y no es motivo de PARADA.
+>  d) docs/runbooks/ERRORES-RECURRENTES.md: la fila de §7, con dos cambios:
+>   - En la parte del consultor, «en la que cuenta, la 1, el bot casi no opera (P4 = 124) y 29 de las 34 sesiones de S-14 no tienen orden» pasa a «en la que cuenta, la 1, el bot no llena ninguna orden después de la última sesión del 20 de enero, por RN-032 (RECORRIDA-CONSTRUCCION.md:1295-1298), y 29 de las 34 sesiones de S-14 no tienen orden».
+>   - La columna del consultor pasa de «Dos» a «Tres» y gana al final este hallazgo: «(menor, del consultor sobre el informe y el revisor) la PARADA de la fase 0 resumió la corrida 1 como «casi no opera (P4 = 124)», y lo medido es que no llena ninguna orden después de la última sesión del 20 de enero; el revisor dio por buena esa cita». Y la columna de la lección gana: «Para el revisor: una frase que resume otra corrida se contrasta con la línea del informe que la mide, no solo con que la cita exista.»
+>  Mide PROJECT_STATE con wc -c ANTES de commitear, como manda RITUAL.md: con las líneas de esta orden tiene que dar unos 22.991 bytes (22.883 de §6 más 108). Si pasa de 23.000, PARADA antes de commitear.
+>
+> 4. Lo demás, según RITUAL.md: merge --no-ff a main con el mensaje del punto 1, el tag sobre el merge, y el commit de estado, que solo reemplaza Current Branch (main), Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en el punto 3). Current Feature: «Ninguna rama abierta. trabajo/barrido-sesion-6 cerrada en main el 2026-10-28 (stable/F38i-barrido-sesion-6): la hoja de la sesión 6 (docs/sesion-6/PREGUNTAS.md), scripts/graficos_sesion.py con los gráficos de S-14 fuera del repo, la hoja 06 de transcribir_sesion.py y la regla 2 de SESION-DE-PREGUNTAS.md (BARRIDO-SESION-6.md).» Stable Main State y Last Stable Commit, con la forma del cierre anterior. Después: make check sellado, push atómico de main y el tag (Aleks confirma la regla ask con «1. Yes»), la CI de main con un gh run view suelto y sin guion, y, con la CI en verde, el borrado de la rama local y de fix/barrido-sesion-6 en origin.
+>
+> 5. No toques la carpeta C:\Users\USER\Desktop\sesion-06-graficos\ ni el worktree wt-ci.
+>
+> 6. Informe final: sha de main y del merge, el tag y a qué commit apunta, el run de la CI de main y su resultado, las ramas que quedan en local y en origin, el tamaño de PROJECT_STATE.md y el siguiente tag (F38j).
