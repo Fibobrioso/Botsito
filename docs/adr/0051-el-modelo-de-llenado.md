@@ -58,6 +58,15 @@ vela M1 cuyo rango cubre el stop y el objetivo no se sabe el orden: se toma el s
 una M1 que cubre la límite de entrada y luego el stop, se toma que la entrada se llenó y el stop
 saltó en la misma vela (la peor lectura).
 
+> **NOTA del 2026-10-29 (`trabajo/respaldo-m1`, no reescribe el cuerpo ni cambia lo que decide
+> ADR-0057).** La última frase de este punto no es lo que hace el código: desde ADR-0057 §1 (ACTIVE)
+> la salida tras un llenado del respaldo se mira **desde la vela siguiente**, igual para una límite
+> que para una stop. El llenado se sella en el cierre de su vela (`abierta_ms`) y esa vela ya no
+> cuenta para la salida (`engine/llenado.py`, `primera_salida`); lo fijan
+> `test_broker_ordenes_stop.py` (`test_misma_vela_la_stop_sigue_la_convencion_de_la_limite`) y
+> `test_broker.py` (`test_el_respaldo_m1_llena_cierra_y_marca_sin_ticks`). Manda ADR-0057 §1
+> (`docs/validation/RESPALDO-M1.md` §0.d).
+
 ### 4. El deslizamiento
 
 **No se modela un deslizamiento fijo** (DECISIÓN NOCTURNA 3). Motivo: no hay ninguna medida del
@@ -76,6 +85,27 @@ con la vela M1 BID del repositorio y el spread supuesto de §6, con la regla pes
 evento queda marcado. El informe de una corrida dice cuántos eventos salieron de cada fuente.
 El instante de un evento del respaldo es el CIERRE de la vela (la lectura que menos sabe: nada
 dentro del minuto).
+
+> **NOTA del 2026-10-29 (`trabajo/respaldo-m1`, Z de la Next Action y R3.5; no reescribe el
+> cuerpo).** Lo que §2 dice de los ticks («una orden colocada en un tick no se evalúa contra ese
+> mismo tick») vale también para el respaldo, con su forma: **una vela M1 solo evalúa lo que ya
+> estaba decidido cuando EMPEZÓ** (inicio de la vela ≥ el instante de la decisión). El instante sale
+> del objeto: `ultimo_cambio_ms` de la orden (al colocarla o modificarla) y, en la salida,
+> `abierta_ms` con el stop de nacimiento o `stop_movido_ms` con el movido. Antes, el motor colocaba
+> en el cierre de la M1 menos 1 ms y el respaldo la evaluaba contra esa misma vela, con precios
+> anteriores a la orden: 2 llenadas en la corrida que cuenta y 10 llenadas y 2 stops en la diaria de
+> `trabajo/recorrida-construccion` (`docs/validation/RESPALDO-M1.md` §0.e). **La vela que contiene
+> el instante de un cambio se evalúa con la versión ANTERIOR, si estaba decidida a tiempo**: el stop
+> antes de moverlo (ADR-0065 §4: si esa vela toca el stop original, sale por él y no hay break even)
+> y la orden antes de modificarla (con su precio, su stop y su objetivo); si no hay versión anterior
+> (una orden recién colocada, una posición abierta a media vela con `abrir_conocida`), esa vela no
+> cuenta. No cambian el `desde` exclusivo ni los ticks, el instante del evento (sigue en el cierre
+> de la vela, como dice este punto y ADR-0057 §1) ni la vela de la salida tras un llenado (§3, su
+> NOTA). Código: `engine/llenado.py` (`_nivel_de_la_vela`) y `engine/broker.py`; tests:
+> `tests/unit/test_respaldo_m1_decision.py`. **La repetición del trader sin ticks** (§8,
+> `REPETICION-TRADER-SALIDA.txt`) abre a media vela con `abrir_conocida` y ya no se reproduce igual:
+> la vela de cada apertura deja de evaluarse en el respaldo; `trabajo/respaldo-m1` no la vuelve a
+> correr.
 
 ### 6. El spread
 

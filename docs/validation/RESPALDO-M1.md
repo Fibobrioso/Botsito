@@ -502,15 +502,15 @@ Copiada tal cual:
 | Punto | Qué | Estado |
 |---|---|---|
 | 0 | Las dos cifras (2 llenadas y 0 stops en la corrida 1; 10 y 2 en la 2) en el informe y en las líneas del cierre | en las líneas del cierre (entrega) |
-| 1 | La forma (b) en `llenado.py` y `broker.py`, con sus tests | fase 1 |
+| 1 | La forma (b) en `llenado.py` y `broker.py`, con sus tests | **hecho** (§2.1, §2.2) |
 | 2 | `_peor_del_minuto` a la letra nueva (punto 8); `_precio_de_mercado` y `precio_de_conversion` al punto 3 | en las líneas del cierre |
 | 3 | La línea de Technical Debt de las cotizaciones sin tick, con su texto | en las líneas del cierre |
-| 4 | Las NOTAS de ADR-0051 §5 y §3 | fase 1 |
+| 4 | Las NOTAS de ADR-0051 §5 y §3 | **hecho** (§2.1) |
 | 5 | `censo_respaldo.py` (Z por la condición general) y `sesiones_s14.py` (el lado, comprobado) | fase 2 |
 | 6 | El contrato se amplía a `docs/runbooks/ACTIVAR-A35-A44.md`, solo para la NOTA de §5 | **hecho** en este commit (`contrato.yaml`) |
 | 7 | La fila de exposiciones de las fases 1 y 2, en su propio commit antes de correr | fase 2 (la de la fase 1, antes de su primer `make check`) |
 | 8 | La letra nueva de la Next Action, R3.6 en la hoja de ruta, R5.2 | **letra elegida: H** (abajo); el texto, en las líneas del cierre |
-| 9 | La NOTA de ADR-0051 sobre la repetición del trader sin ticks | fase 1 |
+| 9 | La NOTA de ADR-0051 sobre la repetición del trader sin ticks | **hecho** (NOTA de §5) |
 | 10 | La variable `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`, comprobada al empezar la fase 2 | fase 2 |
 
 **La letra del punto 8.** Regla (`DECISIONES-DE-PROCESO.md:29`): una letra se reutiliza solo si su
@@ -535,6 +535,86 @@ Y: registros HECHA 2; NA:Y en la hoja 1
 Cumplen las dos condiciones H, R y V; se toma **H**, la primera por orden alfabético. Z, al salir en
 el cierre, también quedaría libre, pero hoy la hoja de ruta la nombra (R3.5 y R5.2).
 
+## 2. Fase 1 · La corrección y sus tests (2026-10-29)
+
+### 2.1 La corrección (forma (b) del punto 1)
+
+- `engine/llenado.py`: `primer_llenado_limite`, `primer_llenado_stop` y `primera_salida` reciben
+  `decidido_ms` (por defecto `desde_ms`: niega por defecto) y `anterior` (instante en que se decidió
+  la versión anterior, su nivel). En el respaldo, el nivel de cada vela lo da `_nivel_de_la_vela`:
+  el vigente si la vela empieza en o después de `decidido_ms`; si no, el anterior si se decidió en o
+  antes de que la vela empiece; si no, la vela no cuenta. No cambian `desde`, el «ahora − 1», los
+  ticks, `_fin_ms` ni el instante del evento (el cierre de la vela).
+- `engine/broker.py`: `Orden.anterior` (instante, precio, stop, objetivo) lo guarda `modificar`;
+  `Posicion.stop_anterior` (desde cuándo valía, stop) lo guarda `_mover`. `_proximo_evento` pasa
+  `o.ultimo_cambio_ms` y la versión anterior a la orden, y `abierta_ms` o `stop_movido_ms` con el
+  stop anterior a la salida. `_aplicar`: si llena una orden la versión anterior (el evento del
+  respaldo sale de una vela que empezó antes de la modificación), la orden vuelve a su precio, stop
+  y objetivo de antes; si salta el stop anterior en la vela en cuyo cierre se movió, la posición
+  vuelve a ese stop y, si era el de nacimiento, `stop_original` queda en `None`: se clasifica como
+  stop entero y no como break even (ADR-0065 §4). La traza conserva el `stop_movido` y su petición,
+  porque se enviaron.
+- Docstring de `llenado.py`: la cabecera ya no dice «PROPUESTO»; la línea del respaldo dice la
+  regla, como la de los ticks, y «SIN MIRAR AL FUTURO» gana su contrapartida («NI AL PASADO»).
+- NOTAS en ADR-0051 §3 (la salida tras un llenado del respaldo, desde la vela siguiente: ADR-0057
+  §1) y §5 (la condición, la versión anterior y la repetición del trader sin ticks: puntos 4 y 9).
+  El cuerpo no cambia.
+
+Ninguna cifra, parámetro, spec ni caso: `git diff main --stat -- knowledge/ config/` vacío.
+
+### 2.2 Los tests, en los dos lados
+
+`tests/unit/test_respaldo_m1_decision.py`, 12 tests con velas y ticks sintéticos de 2030:
+
+| Test | Qué fija | `main` | rama |
+|---|---|---|---|
+| `test_una_stop_colocada_en_el_cierre_de_una_m1_sin_ticks_no_se_llena_con_esa_vela` | encargo 1 | FAILED (`llenada … respaldo_m1` con la vela de la decisión) | PASSED |
+| `test_una_limite_colocada_en_el_cierre_de_una_m1_sin_ticks_no_se_llena_con_esa_vela` | encargo 2 | FAILED (ídem) | PASSED |
+| `test_en_el_borde_de_la_ventana_la_orden_solo_se_evalua_contra_los_ticks_que_siguen` | encargo 3 | FAILED (respaldo al fin de M0 en vez del tick de M0+1) | PASSED |
+| `test_el_stop_movido_en_el_cierre_de_una_m1_sin_ticks_no_salta_con_esa_vela` | encargo 4 (e) | FAILED (sale a break even con la vela que lo movió) | PASSED |
+| `test_la_vela_del_stop_movido_que_toca_el_stop_original_sale_por_el_sin_break_even` | punto 1, ADR-0065 §4 | FAILED (`('stop', 1000, …)` en vez de 990) | PASSED |
+| `test_la_vela_de_una_modificacion_se_evalua_con_la_orden_anterior` | punto 1 | FAILED (no llena) | PASSED |
+| `test_la_vela_de_una_modificacion_no_llena_la_version_nueva` | punto 1 | FAILED (llena una vela antes) | PASSED |
+| `test_sin_instante_decidido_la_funcion_pura_niega_por_defecto` | negar por defecto | FAILED (llena con `desde` a media vela) | PASSED |
+| `test_una_pendiente_de_antes_de_una_vela_sin_ticks_se_llena_en_esa_vela` | f), 1 | PASSED | PASSED |
+| `test_el_tick_del_ultimo_evento_puede_llenar_otra_pendiente` | f), 2 | PASSED | PASSED |
+| `test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente` | f), 3 (ADR-0057 §1) | PASSED | PASSED |
+| `test_con_ticks_el_instante_de_la_decision_ya_no_contaba` | lo que va por ticks | PASSED | PASSED |
+
+**Lado `main`** (`comparar-con-main`; estado del repo antes: `git status --short` con los tres
+ficheros de la fase 1 sin commitear, `git branch --list` = `main` y `trabajo/respaldo-m1`, 143
+tags): `git worktree add --detach C:/cm/main main`, el test copiado dentro del clon, `uv run pytest
+tests/unit/test_respaldo_m1_decision.py -q -p no:cacheprovider -rA` → 8 FAILED y 4 PASSED; con
+`--tb=line`, las 8 son `AssertionError` por la vela de la decisión, ninguna por otra causa:
+
+```
+E   AssertionError: assert [(18946944600...respaldo_m1')] == []
+E   AssertionError: assert [(18946944600...respaldo_m1')] == []
+E   AssertionError: assert [(18946944600...respaldo_m1')] == [(18946944800...'v', 'ticks')]
+E   AssertionError: assert (False)
+E   AssertionError: assert ('stop', 1000...'respaldo_m1') == ('stop', 990,...'respaldo_m1')
+E   AssertionError: assert [] == [(18946945200...respaldo_m1')]
+E   AssertionError: assert [(18946945200...respaldo_m1')] == [(18946945800...respaldo_m1')]
+E   AssertionError: assert Evento(tipo='llenado', instante_ms=1894694460000, precio=1000, fuente='respaldo_m1', minuto=31578240) is None
+```
+
+(1894694460000 es el fin de M0, 2030-01-15 08:01:00Z.) El clon se quitó con `--force` (llevaba el
+test copiado, sin seguir) y `git worktree prune`; después, `git branch --list` y los 143 tags,
+iguales.
+
+**Lado rama**: en el repositorio, `uv run pytest tests/unit/test_respaldo_m1_decision.py
+tests/unit/test_llenado.py tests/unit/test_broker.py tests/unit/test_broker_ordenes_stop.py
+tests/unit/test_be_al_tick.py tests/unit/test_instante_llenado.py tests/unit/test_caja_hasta_el_llenado.py
+tests/unit/test_simulacion.py tests/unit/test_cableado.py tests/regression/test_cuenta_7_de_agosto.py
+-q` → todos pasan: los 12 nuevos y **los nueve ficheros de `main` del prototipo de (a), sin
+tocarlos** (punto 1: ninguno tuvo que cambiar; con los datos de agosto, la regresión no se salta).
+La suite entera, en el `make check` del commit (§2.3).
+
+### 2.3 El commit de la fase 1
+
+`ruff format`, `ruff check` y `mypy` sobre `llenado.py`, `broker.py` y el test: limpios. `make
+check`: en el mensaje del commit y en §5.
+
 ## Estado
 
-EN CURSO: respuesta del consultor copiada; fase 1.
+EN CURSO: fase 1 (la corrección, sus tests y las NOTAS de ADR-0051).

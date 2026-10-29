@@ -16,7 +16,7 @@ trabajo/respaldo-m1 EN CURSO (NA:Z, R3.5): el respaldo M1 del bróker simulado d
 89dc902 · merge: trabajo/barrido-sesion-6, la hoja de la sesión 6, los gráficos de S-14 fuera del repo, la hoja 06 y la regla 2 de SESION-DE-PREGUNTAS · tag stable/F38i-barrido-sesion-6
 
 ## Tests Currently Passing
-1765 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1777 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
