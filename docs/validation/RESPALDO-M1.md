@@ -1108,3 +1108,58 @@ cuenta sigue en «no». Las líneas del cierre están preparadas y simuladas (§
 ERRORES-RECURRENTES, preparada (§7). Sin CI de Linux: la rama no toca hooks, rutas ni plataforma.
 
 Rama lista para revisión, NO cerrada.
+
+## Orden de cierre del consultor (2026-10-29)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/respaldo-m1 (consultor, 2026-10-29), tras revisar RESPALDO-M1.md entero. Cópiala tal cual al final del informe, en «Orden de cierre del consultor (2026-10-29)», en un commit antes del ritual. Después cierra con la skill cerrar-rama cuando Aleks escriba /cerrar-rama trabajo/respaldo-m1.
+>
+> 1. Tag: stable/F38j-respaldo-m1. Comprueba antes que no existe ni en local ni en origin. Mensaje del merge: «merge: trabajo/respaldo-m1, el respaldo M1 no evalúa contra precios anteriores a la decisión (Z)».
+>
+> 2. Hallazgos del consultor que el revisor no vio: ninguno que bloquee ni importe. Una observación para el informe, sin cambio en la rama. En la corrida que cuenta, el bot no tiene ninguna operación puntuable en abril, julio ni agosto, porque RN-032 congela la cuenta arrastrada desde el 2026-01-20 (§4.5). Así, su precisión es solo de enero, y su cobertura no tiene ninguna pareja fuera de enero. Va a la entrada nueva del punto 4.c.
+>
+> 3. La fila de ERRORES-RECURRENTES, la de §7, con el revisor de §8 (0 bloquea, 4 importan, 5 menores). Corrige una frase: de los tres hallazgos del consultor, los dos primeros los cazó su auditor antes de llegar a la sesión, y el tercero (el lado que no dibuja graficos_sesion.py) lo encontró la sesión en la PARADA 2. Lección para el revisor: ninguna nueva.
+>
+> 4. En el commit del contrato, además de lo de §6 (sale Z con su registro HECHA nuevo, entra H, R3.5 HECHA, R3.6 nueva, R5.2 con NA:H y la línea de cotizar en Technical Debt), estos cambios. En PROJECT_STATE, todo corto; el detalle va a la hoja de ruta:
+>
+>    a) F, entera: «F. La sesión 6 con el trader (R4.2), el martes 2026-11-03: la hoja es docs/sesion-6/PREGUNTAS.md y el PDF del consultor, y los gráficos de S-14 están fuera del repo; después, su ingesta. R6a en los huecos.» En R4.2 de la hoja de ruta, una frase: los gráficos de S-14 siguen valiendo con el bróker corregido (RESPALDO-M1.md §4.3).
+>
+>    b) A, en PROJECT_STATE: solo cambian dos frases y lo demás se queda tal cual (lo que miden las ejecuciones, el calendario de noticias opcional).
+>       - «la 2 entre el 26 y el 30 de octubre, con el script 1.1 compilado antes; la 3 después del 1 de noviembre.» pasa a: «la 2, hecha el 2026-10-29 (script 1.1; CSV en data/demo_ftmo/ sin congelar, el original sigue en MQL5\Files); la 3, del 2026-11-02 al 2026-11-06.»
+>       - «La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza` (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4).» pasa a: «En la 2, el margen de 1,00 lote cuadra con FTMO-P-D1.md §3. Cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4) pide un script 1.2, que aún no existe: una rama corta antes de la 3; si no llega, esa medida pasa a la siguiente prueba.»
+>       Antes, verifica en el CSV las cifras:
+>       - con el lector, desfase 180 y comisión de 2,50 por lado con 1,00 lote, en valor absoluto (DEAL_COMMISSION sale negativa);
+>       - el margen, en la nota de la fila volumen_comision (3720,77), con el ask de la fila apertura_compra_mercado, porque la fila volumen_comision no trae precios: 100.000 × ask / 30.
+>       Si la guardia de K (exigir_sin_crudo) niega el lector, PARADA y lo lanza Aleks con «!».
+>
+>    c) En la hoja de ruta:
+>       - A.1: el «Depende de» pasa a «la prueba nueva de FTMO del 2026-10-29». El «Qué es» gana la ejecución 2 hecha, con sus tres cifras (desfase 180; comisión 2,50 por lado; margen 3720,77 con el ask de la apertura, que cuadra con FTMO-P-D1 §3), y el script 1.2 que falta para el instante del margen de una pendiente stop.
+>       - R6a.6: «Depende de» nombra el script 1.2 y la ejecución 3.
+>       - «Fechas fijas»: sale la línea de la prueba del 2026-10-08. La de la ejecución 2 pasa a: «La ejecución 2, hecha el 2026-10-29 en la prueba creada ese día; la 3, del 2 al 6 de noviembre de 2026 (NA:A).» Y entra: «La sesión 6 con el trader, el martes 3 de noviembre de 2026 (NA:F).»
+>
+>    d) Entrada NUEVA de la Next Action con la letra R. La regla de DECISIONES-DE-PROCESO.md (2026-10-27) deja R, V y Z, y el precedente de la rama es el orden alfabético; compruébalo con el grep y dilo. En una sola línea, corta:
+>       «R. Decisión de Aleks (2026-10-29): fidelidad por criterios, además de por operación, y rentabilidad pre-registrada como puerta para operar en vivo. Rama de método con ADR (enmienda ADR-0043 y ADR-0070) y medida de los sesgos de la cifra de fidelidad, antes de la próxima corrida que cuente (R3.7).»
+>
+>    e) Hoja de ruta, entrada nueva «R3.7 · Método: rentabilidad como puerta, fidelidad por criterios y los sesgos de la cifra», con estos campos:
+>       - Refs: NA:R · ID:ADR-0043 · ID:ADR-0070 · ID:A-16 · F:F27.
+>       - Qué es: «Decisión de Aleks del 2026-10-29. La fidelidad se mide por CRITERIOS (la misma liquidez de M15, la misma caja, el mismo punto y la misma entrada, pieza a pieza) además de por operación entera, y la RENTABILIDAD pasa a ser la puerta para operar en vivo, con su criterio pre-registrado: esperanza después de comisión y deslizamiento, drawdown dentro de los límites de FTMO, diario y total, medida una sola vez sobre meses que el bot no ha visto. La fidelidad sigue siendo la herramienta de construcción. Una rama de método con su ADR, que enmienda ADR-0043 y ADR-0070 y declara lo ya visto (las corridas de RECORRIDA-CONSTRUCCION y RESPALDO-M1); su fase 0 revisa también la NOTA de MASTER_PLAN §0 (F26 antes de todo lo que opera en vivo) y F35. Y una medida de los sesgos de la cifra: (1) Oanda frente a Dukascopy contra la tolerancia de 3 puntos (A-16, adelantada desde F26: R5.1 lo dice); (2) el camino de la cuenta: la corrida que cuenta no puntúa ninguna operación del bot en abril, julio ni agosto porque RN-032 congela la cuenta desde el 2026-01-20 (RESPALDO-M1.md §4.5); (3) el material sin vídeo, donde el trader se saltaba las sesiones que iban a break even (S-14 de la sesión 5); (4) las tolerancias de entrada e instante. Los umbrales los fija el consultor en la PARADA de esa rama, antes de ver ninguna corrida nueva.»
+>       - Depende de: la activación de la sesión 6 (R4.2).
+>       - Quién: la sesión, con el encargo del consultor.
+>       - Hecho cuando: el ADR está aceptado con los umbrales pre-registrados y la medida de los cuatro sesgos tiene su informe.
+>       En R5.1, una frase: A-16 se mide antes, en R3.7. Y R5.2 nombra también NA:R en «Depende de».
+>
+>    f) El tamaño. Mide PROJECT_STATE con wc -c sobre la copia con TODAS las líneas (las de §6 y estas). Si pasa de 24.700 bytes, PARADA antes del commit, con la medida y tu propuesta de qué pasa a la hoja de ruta o a HISTORIA. Pasa test_hoja_de_ruta y test_project_state sobre la copia antes del commit.
+>
+> 5. El ritual, como manda RITUAL.md con la skill cerrar-rama:
+>    - merge y tag;
+>    - commit de estado, que solo cambia Current Branch, Current Feature, Stable Main State y Last Stable Commit;
+>    - make check sellado;
+>    - push atómico de main y el tag; Aleks confirma la regla ask con «1. Yes»;
+>    - CI de main en verde antes de borrar nada;
+>    - y borrar la rama local.
+>    Sin --no-verify, sin push --force y sin consultar la CI con un guion ni con un bucle.
+>
+> 6. Informe final: sha de main, tag, run de la CI de main, ramas que quedan, tamaño de PROJECT_STATE y la letra usada en 4.d.
