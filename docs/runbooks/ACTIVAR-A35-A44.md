@@ -219,6 +219,14 @@ Lo mismo si el trader responde a medias, con un ejemplo o en dos sentidos (`SESI
 > PARADA 2, punto 1: el visor no se abre en esa rama, y en su lugar se midió sobre las salidas y los
 > ticks de los días dev, RECORRIDA-CONSTRUCCION.md §2.8).
 
+> **NOTA (2026-10-29, rama `trabajo/respaldo-m1`; el cuerpo y la NOTA anterior no se tocan).** La
+> corrida que cuenta se repitió con el respaldo M1 corregido (ADR-0051 §5, NOTA del 2026-10-29) y dio
+> el mismo «no» (cobertura 3,5 %, precisión 13,2 %; ADR-0070 §3, NOTA del 2026-10-29). **Desde esa
+> rama la línea base vigente es `docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt`**
+> (respuesta del consultor a la PARADA de esa rama, punto 6); la de `anexos/RECORRIDA-CONSTRUCCION/`
+> no se toca, y el `diff` entre las dos está en `anexos/RESPALDO-M1/diff-linea-base.txt`
+> (`docs/validation/RESPALDO-M1.md` §4).
+
 ```
 uv run botsito motor arnes --simular --salida arnes-activado.txt
 diff docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt arnes-activado.txt

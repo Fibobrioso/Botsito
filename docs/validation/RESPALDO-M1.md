@@ -672,7 +672,213 @@ punto, precio y lado deducido por la caja 1, validada en 291 de 291 llenadas, §
 P6; si cambia cualquiera, PARADA antes de seguir. 2: la letra H, con su grep en §1. 3: el hallazgo
 va a la fila de ERRORES-RECURRENTES preparada para el cierre. 4: este commit; después, el reinicio.
 
+## 4. Fase 2 · Las corridas repetidas (2026-10-29)
+
+### 4.1 La variable, antes de correr (punto 10)
+
+`printenv CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP` → `1` (código 0), en el shell de la
+herramienta Bash, que hereda el entorno del proceso de Claude Code. No sale de un perfil de bash
+(`grep` en `~/.bashrc`, `~/.bash_profile` y `~/.profile`: nada) ni de ningún `settings*.json` de
+`~/.claude/` ni de `.claude/` del proyecto (Grep: nada): viene del entorno con que se arrancó Claude
+Code. Leerla en el registro de Windows con PowerShell (`[Environment]::GetEnvironmentVariable`) lo
+niega la guardia («una llamada a .NET»), y no la he rodeado. Como ya valía 1, pregunté a Aleks si
+reiniciaba o lanzaba; respondió «Lanza ya». Ninguna corrida murió.
+
+### 4.2 Los comandos, en orden, con su salida
+
+Todos desde la raíz, sobre el código commiteado (823404a), uno a uno, en segundo plano, sin nada a
+la par:
+
+| # | Comando | Salida | TIEMPO / MEMORIA |
+|---|---|---|---|
+| 1 | `uv run botsito motor arnes --simular --salida docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt` | `exit=0`; `OK: informe del arnes en docs\validation\anexos\RESPALDO-M1\cuenta-arrastrada.txt` | `TIEMPO: 351.0 s; MEMORIA: pico del proceso de 630.3 MiB` |
+| 2 | `uv run botsito motor arnes --simular --diagnostico-cuenta-diaria --salida docs/validation/anexos/RESPALDO-M1/diaria.txt` | `exit=0`; escribe **`diaria.DIAGNOSTICO.cuenta=diaria.txt`** (el nombre real, como en RECORRIDA) | `TIEMPO: 315.8 s; MEMORIA: pico del proceso de 638.4 MiB` |
+| 3 | la 1 con `--salida` en la carpeta de trabajo de la sesión; `diff` contra la commiteada; `rm` | `exit=0`; `diff=0` (**idénticas byte a byte**); copia borrada (`rm=0`) | `TIEMPO: 347.7 s; MEMORIA: pico del proceso de 630.1 MiB` |
+| 4 | `python -B docs/validation/anexos/RESPALDO-M1/sesiones_s14.py <diaria de RECORRIDA> <diaria nueva> > …/sesiones-s14.txt` | `exit=0` | — |
+| 5 | `python -B docs/validation/anexos/RESPALDO-M1/censo_respaldo.py <las dos nuevas> <las dos de RECORRIDA> > …/censo-respaldo.txt` | `exit=0` | — |
+| 6 | `python -B docs/validation/anexos/RESPALDO-M1/patrones.py <salida> > …/patrones-arrastrada.txt` y `…/patrones-diaria.txt` | `exit=0` (las dos) | — |
+| 7 | `diff docs/validation/anexos/RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt > …/diff-linea-base.txt` | `diff=1` (hay diferencias: no es un fallo); 544 líneas | — |
+
+Los tiempos caen en lo esperado (299 a 343 s en RECORRIDA; 351,0 s, un 2 % por encima del máximo);
+la memoria, igual (629 a 638 MiB).
+
+### 4.3 Las 8 sesiones de S-14 (antes que nada; respuesta a la PARADA 2, punto 1)
+
+`sesiones-s14.txt`: **las 8 siguen siendo P6** (las mismas filas P6 en cada una) y **su primera
+orden tiene la misma M1 de colocación, el mismo punto, el mismo precio y el mismo lado deducido**
+(«sesiones que cambian: 0»). El lado se deduce de la caja 1 (venta si queda por encima del precio,
+compra si por debajo), validado en las 291 llenadas de la diaria de RECORRIDA cuyo lado se conoce
+(291 cuadran, §3). No hay PARADA: los gráficos de S-14 de la sesión 6 siguen valiendo. Ningún R
+impreso.
+
+### 4.4 El criterio de hecho: cero eventos con la vela de su decisión
+
+`censo-respaldo.txt` (por la condición general: el inicio de la vela del evento frente al instante
+en que se decidió lo evaluado):
+
+| Salida | eventos del respaldo | llenadas | stops | `stop_movido` | modificar = stops movidos | **Z** |
+|---|---|---|---|---|---|---|
+| RESPALDO-M1 / corrida 1 | 7 | 3 | 3 | 1 | 21 = 21 | **0** |
+| RESPALDO-M1 / corrida 2 | 22 | 9 | 9 | 4 | 118 = 118 | **0** |
+| RECORRIDA / corrida 1 | 8 | 4 | 3 | 1 | 21 = 21 | 2 |
+| RECORRIDA / corrida 2 | 34 | 16 | 14 | 4 | 118 = 118 | 10, y 2 stops en la vela del stop movido que con `main` eran Z (§0.e) |
+
+**Criterio de hecho cumplido: Z = 0 en las dos corridas nuevas**, y ningún stop en la vela de su
+stop movido. Los demás eventos del respaldo, todos en horas perdidas y con la vela posterior a su
+decisión: en la corrida 1, 3 llenadas (2026-01-05 o19 a las 10:22, **o20 a las 10:25, una vela
+después que en RECORRIDA**, o21 a las 10:56), sus 3 stops y 1 stop movido (pos-o20, 10:28:59.999),
+que salta a las 10:37 con la vela posterior. En la corrida 2, 9 llenadas, 9 stops y 4 stops movidos
+(su lista, en el fichero). Desaparecen del respaldo las 2 del borde de la ventana (2026-01-06 o1,
+que ahora se llena por ticks a las 06:00:03.566 a 1.17297, y 2026-04-07 o1) y, en la diaria, las de
+2026-04-06 o12, 2026-04-07 o28, 2026-04-23 o3, 2026-07-10 o3 y o4 y 2026-08-20 o14 dejan de llenarse
+con su vela. Los dos stops de §0.e ya no saltan en la vela de su stop movido: el 2026-04-06, o11
+se llena a las 10:02 (la vela siguiente a la que la colocó) y ya no hay una segunda llenada a las
+10:03 (los ids de las órdenes posteriores se renumeran: la o12 nueva es otra orden); el stop de pos-o11,
+movido a las 10:06:59.999, salta a las 10:15. El 2026-04-07, el de pos-o29, movido a las
+10:32:59.999, salta a las 10:38.
+
+### 4.5 Qué cambia frente a recorrida-construccion, por corrida
+
+Sin interpretar: la clasificación de las diferencias es del consultor.
+
+**Corrida 1 (la que cuenta).** El veredicto literal no cambia:
+`habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 3.5 % por debajo de 70.0 %; precision 13.2 % por debajo de 60.0 %)`.
+
+| mes | trader | bot puntuables | parejas | cobertura | precisión | llenadas |
+|---|---|---|---|---|---|---|
+| 2026-04 | 35 | 0 (0) | 0 (0) | 0,0 % (0,0) | sin definir | 0 (0) |
+| 2026-07 | 67 | 0 (0) | 0 (0) | 0,0 % | sin definir | 0 (0) |
+| 2026-08 | 42 | 0 (0) | 0 (0) | 0,0 % | sin definir | 0 (0) |
+| 2026-01 | 54 | 53 (53) | 7 (7) | 13,0 % (13,0) | 13,2 % (13,2) | 53 (53) |
+
+(entre paréntesis, RECORRIDA). RN-032 congela la cuenta arrastrada **desde el mismo día, el
+2026-01-20** (la última sesión con llenado es la 11-15 del 2026-01-20 en las dos; desde el 21 la
+curva no cambia), con `estado: EN_CURSO`. Lo que sí cambia: las dos llenadas de Z (2026-01-05 o20
+a las 10:25:00 en vez de las 10:24:00; 2026-01-06 o1 por ticks a las 06:00:03.566 y 1.17297 en vez
+del respaldo a las 06:00:00 y 1.17293), y con ellas el saldo y la equity de cada día desde el
+2026-01-06 (saldo final 90.652,93 frente a 90.741,16) y los lotes de las órdenes posteriores, que se
+calculan sobre el saldo (`diff-linea-base.txt`, 544 líneas: «Por operacion» 2 filas, la curva, los
+eventos y «### Ordenes»). Patrones (`patrones-arrastrada.txt`): idénticos a los de RECORRIDA (T0 7,
+P1 44, P2 11, P3 11, P4 124, P5 37, P6 9, P7 1).
+
+**Corrida 2 (la diaria, diagnóstico).** El veredicto literal:
+`habilita medir el conjunto de medida (2026-05) (ADR-0070): no (opción fuera de la lista: --diagnostico-cuenta-diaria; cobertura 20.2 % por debajo de 70.0 %; precision 15.4 % por debajo de 60.0 %)`
+(RECORRIDA: 20,7 % y 15,6 %).
+
+| mes | trader | bot puntuables | parejas | cobertura | precisión | llenadas |
+|---|---|---|---|---|---|---|
+| 2026-04 | 35 | 51 (53) | 7 (7) | 20,0 % (20,0) | 13,7 % (13,2) | 69 (72) |
+| 2026-07 | 67 | 54 (56) | 14 (15) | 20,9 % (22,4) | 25,9 % (26,8) | 54 (56) |
+| 2026-08 | 42 | 73 (73) | 12 (12) | 28,6 % (28,6) | 16,4 % (16,4) | 82 (82) |
+| 2026-01 | 54 | 81 (81) | 7 (7) | 13,0 % (13,0) | 8,6 % (8,6) | 81 (81) |
+
+Parejas 40 (41): la que se va es la T0 de 2026-07-10 o4, una de las llenadas de Z (§2.8 c de
+RECORRIDA). Llenadas 286 (291). Patrones (`patrones-diaria.txt`, total frente a RECORRIDA): T0 40
+(41), P1 44 (44), P2 40 (40), P3 62 (60), P4 8 (8), P5 171 (173), P6 75 (77), P7 4 (5). La cuenta
+diaria no congela: cada día empieza de cero.
+
+**Herencia H7 (R4.2).** R4.2 cita cifras de la diaria de RECORRIDA (34 sesiones de P6, 77
+llenadas, 259 / 149 / 110). Siguen siendo las de esa salida, que es la que se usó para la hoja de
+la sesión 6; la diaria nueva tiene 75 filas P6 (77) y las 8 sesiones elegidas no cambian (§4.3). No
+he recontado las 34 sesiones ni las 259 (exige `entradas_antes_alternancia.py`, que no se corre:
+punto 5); las líneas del cierre no tocan R4.2.
+
+## 5. El encargo frente a lo hecho
+
+| Punto del encargo | Hecho | Dónde |
+|---|---|---|
+| 0. Apertura con `abrir-rama`, la CI de `main` con `gh` | Hecho | Apertura; 4036818 |
+| 2 a)-k). Fase 0 y PARADA | Hecho; auditor; PARADA con 11 decisiones | §0; 56b2233 |
+| Respuesta a la PARADA, tal cual, y aplicada | Hecho | 556452a; §1 |
+| 3. Tests que rompen en `main` (1-4) y los del otro sentido; `comparar-con-main` | Hecho: 8 rompen, 4 pasan en los dos; los dos lados pegados | §2.2; beb9c93 |
+| 3. Docstring de `llenado.py`; NOTA en ADR-0051 §5 (y §3) | Hecho | §2.1 |
+| 4. La fila de exposiciones antes de correr, en su commit | Hecho | d380632 |
+| 4. Corridas 1, 2 y 3, una a la vez, en segundo plano | Hecho; la variable, comprobada | §4.1, §4.2 |
+| 4. Guiones (g) sobre las salidas; criterio de hecho Z = 0 | Hecho: Z = 0 en las dos | §4.4 |
+| 4. Qué cambia por corrida | Hecho | §4.5 |
+| 4. Las 8 sesiones de S-14, sin R | Hecho: no cambian | §4.3 |
+| 4. NOTA de ADR-0070 §3 (y ACTIVAR-A35-A44 §5, punto 6) | Hecho | este commit |
+| 5. Informe; líneas del cierre medidas sobre una copia; fila de ERRORES-RECURRENTES | Hecho | §6, §7 |
+| 5. Revisor (opus) con los cinco alcances, su informe pegado | §8 | — |
+
+**Desviaciones declaradas.**
+1. La variable del punto 10 ya valía 1 y Aleks eligió no reiniciar (§4.1).
+2. PROJECT_STATE con las líneas del cierre mide 23.968 bytes: por debajo del tope de 25.000, pero
+   por encima de la alerta de 23.000. Los textos que lo suben (la entrada H y la línea de Technical
+   Debt de las cotizaciones) son los que dictó el consultor; recortarlos sería cambiarlos (§6).
+3. El punto 5 de la respuesta pedía comparar el lado contra el que dibujaba `graficos_sesion.py`, que
+   no lo dibuja (PARADA 2, resuelta).
+4. La suite entera no se pudo correr en el clon del prototipo de la fase 0 (guardia, §0.m); la corre
+   cada `make check` de la rama.
+5. El encargo citaba como precedente la fila a1 de recorrida-construccion; es la de
+   `trabajo/activar-sesion-05` (auditor, 45).
+6. Los dos errores de `mypy` de `patrones.py` y `horas_perdidas.py` al tipar las copias vienen de los
+   originales de `anexos/RECORRIDA-CONSTRUCCION/` y `make check` no tipa esa carpeta; las copias son
+   idénticas y no se tocan.
+
+### 5.1 Comandos ejecutados (literales, en orden; los de la fase 2 en §4.2)
+
+1. Apertura: `git fetch origin`, `git rev-parse`, `git ls-remote`, `gh run view 40815230287 --json …`,
+   `git checkout -b trabajo/respaldo-m1`, el Archivo 52 con `printf` y `git show main:PROJECT_STATE.md`.
+2. Fase 0: `python -B <carpeta de trabajo>/censo_z.py <salida>` (×2), `uv run python -B …/sonda_z.py`,
+   `…/recuentos.py .`, `…/tres_no.py .`, `…/be_vela.py .`, `…/censo_cierre.py <salida>` (×2),
+   `…/letras.py .`, `…/parche_a.py C:/cm/z-proto` y los nueve ficheros de tests en ese clon.
+3. Fase 1: `ruff format`, `ruff check`, `mypy` sobre lo tocado; los diez ficheros de tests en el repo;
+   `comparar-con-main` (§2.2).
+4. Antes de la fase 2: `…/lado_caja1.py docs/validation/anexos/RECORRIDA-CONSTRUCCION`; los guiones
+   nuevos sobre las salidas de RECORRIDA.
+5. Cierre simulado: `uv run python -B docs/validation/anexos/RESPALDO-M1/simular_cierre.py .`.
+6. Un `make check > make-check.log 2>&1` antes de cada commit.
+
+**Negativas de la guardia, sin rodear**: comandos compuestos con `python -` o con `git add` delante
+de un `python`, `grep -r` sin ruta, `pytest` sobre un directorio o sin rutas en el clon, la variable
+de entorno delante del comando, un `for` en Bash, `rev`, y PowerShell con una llamada a .NET. Cada
+una se rehízo en la forma que propone la propia guardia, o se dejó (la suite en el clon, el registro
+de Windows); ninguna bloqueó una medida necesaria.
+
+### 5.2 Exposiciones
+
+Las filas de HOLDOUT-EXPOSICIONES de la rama, todas antes de la lectura que declaran: 2026-10-28
+(apertura y comienzo de la fase 0), 2026-10-29 (fase 0), 2026-10-29 (fase 1, antes de su primer
+`make check`) y 2026-10-29 (fase 2, en d380632, antes de correr). Ninguna partición tocada; ningún
+libro, imagen, fotograma ni transcripción; ningún R de las sesiones de S-14.
+
+## 6. Las líneas del cierre (preparadas y medidas sobre una copia; no aplicadas en la rama)
+
+`docs/validation/anexos/RESPALDO-M1/simular_cierre.py` las aplica en memoria sobre PROJECT_STATE,
+la hoja de ruta y HISTORIA de la rama y corre `test_hoja_de_ruta` (a, b, c) y `test_project_state`:
+
+```
+letra H: viva en la copia simulada? True; HECHA en HISTORIA? True; NA:H en la hoja de main? False; Z viva en la copia? False; NA:Z en la hoja simulada? False
+a: []
+b: []
+c: []
+PROJECT_STATE con las lineas del cierre: 23968 bytes (wc -c de la copia: 23968); los cuatro tests de test_project_state: ok
+```
+
+Las líneas (literales en el guion):
+- **Next Action**: sale Z, con su registro nuevo `# Next Action HECHA · Z · sale de PROJECT_STATE.md
+  en trabajo/respaldo-m1 (<fecha>)` en HISTORIA (RITUAL, punto 3; el registro HECHA de Z de
+  `cases-rejilla` es anterior, `DECISIONES-DE-PROCESO.md:29`), con las dos cifras del punto 0 (2
+  llenadas y 0 stops en la corrida 1; 10 llenadas y 2 stops en la 2). Entra **H** en su sitio, con
+  el texto del punto 8 tal cual. F termina en «R6a en los huecos.».
+- **Technical Debt**: entra la línea de las cotizaciones sin tick del punto 3, tal cual.
+- **Hoja de ruta**: R3.5 pierde `NA:Z` en Refs y gana su «Estado: HECHA» con la rama y el informe;
+  entra **R3.6** con `NA:H · ID:ADR-0051 · ID:ADR-0057`, Depende de R3.5, y el «Hecho cuando» del
+  punto 8; R5.2 nombra `NA:H, el sello del respaldo M1 (R3.6)` en lugar de `NA:Z`.
+- **PROJECT_STATE**: 23.968 bytes con todas las líneas (tope 25.000; alerta 23.000: desviación 2).
+  Los recuentos de «Tests Currently Passing» ya van en la rama (1777).
+
+## 7. La fila de ERRORES-RECURRENTES (preparada para el cierre)
+
+| Rama | El revisor | Lo que se aprende |
+|---|---|---|
+| `trabajo/respaldo-m1` | (§8) | (1) **(Del consultor)** El encargo escribió la condición de Z sin medir el borde ni leer ADR-0057 §1. Lección: una condición sobre instantes se escribe con el borde medido (qué vale exactamente en el instante de la decisión) y con todos los ADR que fijan ese borde. (2) **(Del consultor)** El primer borrador de la respuesta movía el sello del respaldo a k fin − 1 sin buscar los otros lectores de `abierta_ms` y del minuto del evento, con una regla que se contradecía. Lección: antes de proponer que se mueva un instante, se buscan con grep todos los que lo leen; y una regla que deja decidir a la sesión no puede contradecirse ni tocar lo que «QUÉ NO CAMBIA» protege. (3) **(Del consultor)** La respuesta pidió comparar «el lado que dibujó `graficos_sesion.py`» sin leer el script, que no lo dibuja. Lección: una comprobación contra un artefacto se escribe después de leer qué contiene. Señal: el artefacto se nombra pero no se cita su línea. (4) **Un prototipo en un clon antes de proponer la forma**: midió que los tests de `main` que el encargo no listaba (abrir a media vela) pasaban con (a), y así la PARADA llevó una medida y no una lectura. (5) **La versión anterior de un objeto también es una decisión**: excluir la vela del cambio dejaba sin evaluar el stop original (ADR-0065 §4); la condición correcta elige la versión vigente al inicio de la vela, no solo «después de la decisión». Señal: un objeto con historia (stop movido, orden modificada) y una regla que solo mira el último cambio. |
+
+## 8. El revisor
+
+Pendiente.
+
 ## Estado
 
-EN CURSO: fase 1 hecha (beb9c93); fase 2 preparada (d380632); respuesta a la PARADA 2 copiada.
-Espera a que Aleks reinicie Claude Code con la variable (punto 10).
+EN CURSO: fase 2 hecha; falta el revisor y la entrega.

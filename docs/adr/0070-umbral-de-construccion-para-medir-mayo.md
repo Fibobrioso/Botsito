@@ -99,6 +99,19 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > vela que colocó la orden, contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8); sin ellas la
    > precisión sería 13,7 % y el veredicto sigue "no".
 
+   > **NOTA del 2026-10-29 (`trabajo/respaldo-m1`, no reescribe el cuerpo ni la NOTA anterior).**
+   > Corregido el respaldo M1 (una vela solo evalúa lo decidido antes de que empezara: ADR-0051 §5,
+   > NOTA del 2026-10-29), la corrida que cuenta por este punto, repetida con el mismo comando y
+   > sobre la misma construcción, da
+   > `habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 3.5 % por debajo de 70.0 %; precision 13.2 % por debajo de 60.0 %)`,
+   > el mismo veredicto: las 2 llenadas que salían con la vela que colocó la orden ya no lo hacen
+   > (una se llena una vela después y la otra por ticks) y ninguna era pareja. El bot sigue sin
+   > colocar desde el 2026-01-20 por RN-032. **Desde esta rama la línea base vigente es
+   > `docs/validation/anexos/RESPALDO-M1/cuenta-arrastrada.txt`** (respuesta del consultor a la
+   > PARADA de esa rama, punto 6); la de `anexos/RECORRIDA-CONSTRUCCION/` no se toca, y el `diff`
+   > entre las dos está en `anexos/RESPALDO-M1/diff-linea-base.txt` (`docs/validation/RESPALDO-M1.md`
+   > §4). Por el punto 4, se sigue construyendo y mayo no se toca.
+
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
 5. **Dónde viven las cifras y quién lo dice.** Tres campos nuevos en `criterio_fidelidad.yaml`,

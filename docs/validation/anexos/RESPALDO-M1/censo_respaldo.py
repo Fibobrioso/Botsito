@@ -126,8 +126,8 @@ def censo(ruta: Path) -> tuple[list[str], int]:
         cuenta[f"{tipo} · {lugar} · {clase}"] += 1
         filas.append(f"  {dia} | {hora(ms)} | {tipo} | {id_} | {lugar} | {clase}")
     salida = [
-        f"### {ruta.name}: {sum(cuenta.values())} eventos del respaldo; peticiones modificar "
-        f"{modificar} = stops movidos {n_movidos}; Z: {z}"
+        f"### {ruta.parent.name}/{ruta.name}: {sum(cuenta.values())} eventos del respaldo; "
+        f"peticiones modificar {modificar} = stops movidos {n_movidos}; Z: {z}"
     ]
     salida += [f"  {k}: {n}" for k, n in sorted(cuenta.items())]
     return salida + filas, z

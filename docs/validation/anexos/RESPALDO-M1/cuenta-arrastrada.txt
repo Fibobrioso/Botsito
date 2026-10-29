@@ -1,0 +1,1224 @@
+# Arnes del motor
+
+MOTOR: spec vigente + broker simulado (ADR-0053)
+CONJUNTO: construccion (2026-01, 2026-04, 2026-07, 2026-08); dias 76; sesiones con operaciones del trader 104
+
+## Criterio de fidelidad (ADR-0043)
+operaciones del trader: 198
+operaciones del bot puntuables: 53
+operaciones del bot en dias sin operaciones del trader: 0
+cobertura: 7/198 (3.5 %)
+precision: 7/53 (13.2 %)
+parejas en el mismo minuto: 5
+habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 3.5 % por debajo de 70.0 %; precision 13.2 % por debajo de 60.0 %)
+
+## Embudo sobre el grafo de hechos (ADR-0048 §5)
+cuantas sesiones con operaciones del trader producen cada hecho:
+- sesgo: 104 de 104
+- orden_dimensionada: 96 de 104
+- detenido_por_tope: 0 de 104
+- detenido_por_tope_total: 0 de 104
+- detenido_por_cartuchos: 2 de 104
+- detenido_por_racha: 1 de 104
+- liquidez_tomada: 96 de 104
+- operacion del bot: 16 de 104
+
+cuantas se paran en cada primitiva NO_IMPLEMENTADA:
+- ninguna
+
+## Reglas disparadas por sesion (ADR-0049)
+sobre las 152 sesiones corridas, y sobre las 104 con operaciones del trader:
+- RN-001: 78 de 152; 48 de 104
+- RN-002: 1 de 152; 1 de 104
+- RN-003: 152 de 152; 104 de 104
+- RN-004: 135 de 152; 96 de 104
+- RN-005: 127 de 152; 90 de 104
+- RN-006: 21 de 152; 16 de 104
+- RN-009: 135 de 152; 96 de 104
+- RN-011: 135 de 152; 96 de 104
+- RN-012: 18 de 152; 13 de 104
+- RN-014: 11 de 152; 10 de 104
+- RN-015: 135 de 152; 96 de 104
+- RN-016: 2 de 152; 2 de 104
+- RN-017: 8 de 152; 6 de 104
+- RN-018: 20 de 152; 15 de 104
+- RN-027: 135 de 152; 96 de 104
+- RN-032: 128 de 152; 88 de 104
+- RN-033: 1 de 152; 1 de 104
+- RN-034: 8 de 152; 6 de 104
+- RN-036: 2 de 152; 1 de 104
+- RN-037: 152 de 152; 104 de 104
+
+## Avisos de orden dentro de una clase (ADR-0049, H3)
+- 2026-01-02 11-15: disparador RN-004, RN-006
+- 2026-01-02 11-15: disparador RN-004, RN-011
+- 2026-01-02 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-02 11-15: disparador RN-011, RN-012
+- 2026-01-02 11-15: disparador RN-011, RN-017, RN-034
+- 2026-01-02 11-15: disparador RN-012, RN-015
+- 2026-01-02 11-15: disparador RN-015, RN-017, RN-034
+- 2026-01-02 11-15: disparador RN-017, RN-034
+- 2026-01-05 07-11: disparador RN-004, RN-006
+- 2026-01-05 07-11: disparador RN-004, RN-011
+- 2026-01-05 07-11: disparador RN-011, RN-017, RN-034
+- 2026-01-05 07-11: disparador RN-015, RN-017, RN-034
+- 2026-01-05 07-11: disparador RN-017, RN-034
+- 2026-01-05 11-15: disparador RN-004, RN-006
+- 2026-01-05 11-15: disparador RN-004, RN-011
+- 2026-01-05 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-05 11-15: disparador RN-011, RN-012
+- 2026-01-05 11-15: disparador RN-012, RN-015
+- 2026-01-06 07-11: disparador RN-004, RN-006
+- 2026-01-06 07-11: disparador RN-004, RN-011
+- 2026-01-06 07-11: disparador RN-004, RN-014
+- 2026-01-06 07-11: disparador RN-011, RN-017, RN-034
+- 2026-01-06 07-11: disparador RN-015, RN-017, RN-034
+- 2026-01-06 07-11: disparador RN-017, RN-034
+- 2026-01-06 11-15: disparador RN-004, RN-006
+- 2026-01-06 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-06 11-15: disparador RN-011, RN-012
+- 2026-01-06 11-15: disparador RN-012, RN-015
+- 2026-01-06 11-15: disparador RN-017, RN-034
+- 2026-01-07 07-11: disparador RN-004, RN-006
+- 2026-01-07 07-11: disparador RN-004, RN-011
+- 2026-01-07 07-11: disparador RN-004, RN-011, RN-012
+- 2026-01-07 07-11: disparador RN-011, RN-012
+- 2026-01-07 07-11: disparador RN-012, RN-015
+- 2026-01-07 11-15: disparador RN-004, RN-006
+- 2026-01-07 11-15: disparador RN-004, RN-011
+- 2026-01-07 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-07 11-15: disparador RN-011, RN-012
+- 2026-01-07 11-15: disparador RN-012, RN-015
+- 2026-01-08 07-11: disparador RN-004, RN-006
+- 2026-01-08 07-11: disparador RN-004, RN-011
+- 2026-01-08 07-11: disparador RN-004, RN-011, RN-012
+- 2026-01-08 07-11: disparador RN-011, RN-012
+- 2026-01-08 07-11: disparador RN-012, RN-015
+- 2026-01-09 07-11: disparador RN-004, RN-006
+- 2026-01-09 07-11: disparador RN-004, RN-011
+- 2026-01-09 07-11: disparador RN-004, RN-011, RN-012
+- 2026-01-09 07-11: disparador RN-011, RN-012
+- 2026-01-09 07-11: disparador RN-012, RN-015
+- 2026-01-09 11-15: disparador RN-004, RN-006
+- 2026-01-09 11-15: disparador RN-004, RN-011
+- 2026-01-09 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-09 11-15: disparador RN-011, RN-012
+- 2026-01-09 11-15: disparador RN-012, RN-015
+- 2026-01-12 11-15: disparador RN-004, RN-006
+- 2026-01-12 11-15: disparador RN-004, RN-011
+- 2026-01-12 11-15: disparador RN-011, RN-017, RN-034
+- 2026-01-12 11-15: disparador RN-015, RN-017, RN-034
+- 2026-01-12 11-15: disparador RN-017, RN-034
+- 2026-01-13 07-11: disparador RN-004, RN-006
+- 2026-01-13 07-11: disparador RN-004, RN-011
+- 2026-01-13 07-11: disparador RN-004, RN-011, RN-012
+- 2026-01-13 07-11: disparador RN-011, RN-012
+- 2026-01-13 07-11: disparador RN-012, RN-015
+- 2026-01-13 07-11: gate RN-001, RN-005, RN-009, RN-016
+- 2026-01-13 07-11: gate RN-001, RN-009, RN-016
+- 2026-01-13 07-11: gate RN-005, RN-009, RN-016
+- 2026-01-13 07-11: gate RN-009, RN-016
+- 2026-01-13 11-15: disparador RN-004, RN-006
+- 2026-01-13 11-15: disparador RN-004, RN-011
+- 2026-01-13 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-13 11-15: disparador RN-011, RN-012
+- 2026-01-13 11-15: disparador RN-012, RN-015
+- 2026-01-14 07-11: disparador RN-004, RN-006
+- 2026-01-14 07-11: disparador RN-004, RN-011
+- 2026-01-14 07-11: disparador RN-004, RN-011, RN-012
+- 2026-01-14 07-11: disparador RN-011, RN-012
+- 2026-01-14 07-11: disparador RN-012, RN-015
+- 2026-01-14 07-11: gate RN-001, RN-005, RN-009, RN-016, RN-036
+- 2026-01-14 07-11: gate RN-001, RN-009, RN-016, RN-036
+- 2026-01-14 07-11: gate RN-001, RN-036
+- 2026-01-14 07-11: gate RN-005, RN-009, RN-016, RN-036
+- 2026-01-14 07-11: gate RN-005, RN-009, RN-036
+- 2026-01-14 07-11: gate RN-005, RN-009, RN-036, RN-037
+- 2026-01-14 07-11: gate RN-005, RN-036
+- 2026-01-14 07-11: gate RN-009, RN-016, RN-036
+- 2026-01-14 07-11: gate RN-009, RN-036
+- 2026-01-14 07-11: gate RN-009, RN-036, RN-037
+- 2026-01-14 07-11: gate RN-016, RN-036
+- 2026-01-14 07-11: gate RN-036, RN-037
+- 2026-01-14 11-15: disparador RN-004, RN-011
+- 2026-01-14 11-15: gate RN-001, RN-009, RN-036
+- 2026-01-14 11-15: gate RN-005, RN-009, RN-036
+- 2026-01-14 11-15: gate RN-009, RN-036
+- 2026-01-14 11-15: gate RN-009, RN-036, RN-037
+- 2026-01-14 11-15: gate RN-036, RN-037
+- 2026-01-15 07-11: disparador RN-004, RN-006
+- 2026-01-15 07-11: disparador RN-004, RN-011
+- 2026-01-15 07-11: disparador RN-004, RN-011, RN-012
+- 2026-01-15 07-11: disparador RN-011, RN-012
+- 2026-01-15 07-11: disparador RN-011, RN-017, RN-034
+- 2026-01-15 07-11: disparador RN-012, RN-015
+- 2026-01-15 07-11: disparador RN-015, RN-017, RN-034
+- 2026-01-15 07-11: disparador RN-017, RN-034
+- 2026-01-15 11-15: disparador RN-011, RN-012
+- 2026-01-15 11-15: disparador RN-012, RN-015
+- 2026-01-16 07-11: disparador RN-004, RN-006
+- 2026-01-16 07-11: disparador RN-004, RN-011
+- 2026-01-16 07-11: disparador RN-011, RN-012
+- 2026-01-16 07-11: disparador RN-012, RN-015
+- 2026-01-16 11-15: disparador RN-004, RN-006
+- 2026-01-16 11-15: disparador RN-004, RN-011
+- 2026-01-16 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-16 11-15: disparador RN-004, RN-014
+- 2026-01-16 11-15: disparador RN-011, RN-012
+- 2026-01-16 11-15: disparador RN-011, RN-017, RN-034
+- 2026-01-16 11-15: disparador RN-012, RN-015
+- 2026-01-16 11-15: disparador RN-015, RN-017, RN-034
+- 2026-01-16 11-15: disparador RN-017, RN-034
+- 2026-01-19 07-11: disparador RN-004, RN-006
+- 2026-01-19 07-11: disparador RN-004, RN-011
+- 2026-01-19 07-11: disparador RN-004, RN-011, RN-012
+- 2026-01-19 07-11: disparador RN-011, RN-012
+- 2026-01-19 07-11: disparador RN-011, RN-017, RN-034
+- 2026-01-19 07-11: disparador RN-012, RN-015
+- 2026-01-19 07-11: disparador RN-015, RN-017, RN-034
+- 2026-01-19 07-11: disparador RN-017, RN-034
+- 2026-01-19 11-15: disparador RN-004, RN-006
+- 2026-01-19 11-15: disparador RN-004, RN-011
+- 2026-01-19 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-19 11-15: disparador RN-011, RN-012
+- 2026-01-19 11-15: disparador RN-012, RN-015
+- 2026-01-20 11-15: disparador RN-004, RN-006
+- 2026-01-20 11-15: disparador RN-004, RN-011
+- 2026-01-20 11-15: disparador RN-004, RN-011, RN-012
+- 2026-01-20 11-15: disparador RN-011, RN-012
+- 2026-01-20 11-15: disparador RN-012, RN-015
+- 2026-01-21 07-11: disparador RN-004, RN-011
+- 2026-01-21 11-15: disparador RN-004, RN-011
+- 2026-01-22 07-11: disparador RN-004, RN-011
+- 2026-01-23 07-11: disparador RN-004, RN-011
+- 2026-01-23 11-15: disparador RN-004, RN-011
+- 2026-01-26 07-11: disparador RN-004, RN-011
+- 2026-01-27 07-11: disparador RN-004, RN-011
+- 2026-01-27 11-15: disparador RN-004, RN-011
+- 2026-01-28 07-11: disparador RN-004, RN-011
+- 2026-01-28 11-15: disparador RN-004, RN-011
+- 2026-01-29 07-11: disparador RN-004, RN-011
+- 2026-01-29 11-15: disparador RN-004, RN-011
+- 2026-01-30 07-11: disparador RN-004, RN-011
+- 2026-01-30 11-15: disparador RN-004, RN-011
+- 2026-04-01 07-11: disparador RN-004, RN-011
+- 2026-04-01 11-15: disparador RN-004, RN-011
+- 2026-04-02 11-15: disparador RN-004, RN-011
+- 2026-04-03 07-11: disparador RN-004, RN-011
+- 2026-04-03 11-15: disparador RN-004, RN-011
+- 2026-04-06 07-11: disparador RN-004, RN-011
+- 2026-04-06 11-15: disparador RN-004, RN-011
+- 2026-04-07 07-11: disparador RN-004, RN-011
+- 2026-04-07 11-15: disparador RN-004, RN-011
+- 2026-04-08 07-11: disparador RN-004, RN-011
+- 2026-04-09 07-11: disparador RN-004, RN-011
+- 2026-04-09 11-15: disparador RN-004, RN-011
+- 2026-04-10 11-15: disparador RN-004, RN-011
+- 2026-04-13 07-11: disparador RN-004, RN-011
+- 2026-04-13 11-15: disparador RN-004, RN-011
+- 2026-04-14 07-11: disparador RN-004, RN-011
+- 2026-04-14 11-15: disparador RN-004, RN-011
+- 2026-04-15 07-11: disparador RN-004, RN-011
+- 2026-04-15 11-15: disparador RN-004, RN-011
+- 2026-04-16 07-11: disparador RN-004, RN-011
+- 2026-04-16 11-15: disparador RN-004, RN-011
+- 2026-04-17 07-11: disparador RN-004, RN-011
+- 2026-04-20 07-11: disparador RN-004, RN-011
+- 2026-04-20 11-15: disparador RN-004, RN-011
+- 2026-04-21 07-11: disparador RN-004, RN-011
+- 2026-04-21 11-15: disparador RN-004, RN-011
+- 2026-04-22 07-11: disparador RN-004, RN-011
+- 2026-04-22 11-15: disparador RN-004, RN-011
+- 2026-04-23 07-11: disparador RN-004, RN-011
+- 2026-04-24 07-11: disparador RN-004, RN-011
+- 2026-04-24 11-15: disparador RN-004, RN-011
+- 2026-04-27 07-11: disparador RN-004, RN-011
+- 2026-04-27 11-15: disparador RN-004, RN-011
+- 2026-04-28 07-11: disparador RN-004, RN-011
+- 2026-04-28 11-15: disparador RN-004, RN-011
+- 2026-04-29 07-11: disparador RN-004, RN-011
+- 2026-04-29 11-15: disparador RN-004, RN-011
+- 2026-07-01 07-11: disparador RN-004, RN-011
+- 2026-07-01 11-15: disparador RN-004, RN-011
+- 2026-07-02 07-11: disparador RN-004, RN-011
+- 2026-07-02 11-15: disparador RN-004, RN-011
+- 2026-07-03 07-11: disparador RN-004, RN-011
+- 2026-07-03 11-15: disparador RN-004, RN-011
+- 2026-07-07 07-11: disparador RN-004, RN-011
+- 2026-07-07 11-15: disparador RN-004, RN-011
+- 2026-07-08 07-11: disparador RN-004, RN-011
+- 2026-07-08 11-15: disparador RN-004, RN-011
+- 2026-07-09 07-11: disparador RN-004, RN-011
+- 2026-07-09 11-15: disparador RN-004, RN-011
+- 2026-07-10 07-11: disparador RN-004, RN-011
+- 2026-07-10 11-15: disparador RN-004, RN-011
+- 2026-07-13 07-11: disparador RN-004, RN-011
+- 2026-07-13 11-15: disparador RN-004, RN-011
+- 2026-07-14 07-11: disparador RN-004, RN-011
+- 2026-07-14 11-15: disparador RN-004, RN-011
+- 2026-07-15 07-11: disparador RN-004, RN-011
+- 2026-07-15 11-15: disparador RN-004, RN-011
+- 2026-07-16 07-11: disparador RN-004, RN-011
+- 2026-07-16 11-15: disparador RN-004, RN-011
+- 2026-07-17 07-11: disparador RN-004, RN-011
+- 2026-07-17 11-15: disparador RN-004, RN-011
+- 2026-08-03 07-11: disparador RN-004, RN-011
+- 2026-08-03 11-15: disparador RN-004, RN-011
+- 2026-08-04 07-11: disparador RN-004, RN-011
+- 2026-08-04 11-15: disparador RN-004, RN-011
+- 2026-08-05 07-11: disparador RN-004, RN-011
+- 2026-08-05 11-15: disparador RN-004, RN-011
+- 2026-08-06 07-11: disparador RN-004, RN-011
+- 2026-08-06 11-15: disparador RN-004, RN-011
+- 2026-08-07 07-11: disparador RN-004, RN-011
+- 2026-08-10 07-11: disparador RN-004, RN-011
+- 2026-08-10 11-15: disparador RN-004, RN-011
+- 2026-08-11 07-11: disparador RN-004, RN-011
+- 2026-08-11 11-15: disparador RN-004, RN-011
+- 2026-08-12 07-11: disparador RN-004, RN-011
+- 2026-08-12 11-15: disparador RN-004, RN-011
+- 2026-08-13 07-11: disparador RN-004, RN-011
+- 2026-08-13 11-15: disparador RN-004, RN-011
+- 2026-08-17 07-11: disparador RN-004, RN-011
+- 2026-08-17 11-15: disparador RN-004, RN-011
+- 2026-08-18 07-11: disparador RN-004, RN-011
+- 2026-08-18 11-15: disparador RN-004, RN-011
+- 2026-08-20 07-11: disparador RN-004, RN-011
+- 2026-08-20 11-15: disparador RN-004, RN-011
+- 2026-08-21 07-11: disparador RN-004, RN-011
+- 2026-08-21 11-15: disparador RN-004, RN-011
+- 2026-08-24 07-11: disparador RN-004, RN-011
+- 2026-08-24 11-15: disparador RN-004, RN-011
+- 2026-08-25 07-11: disparador RN-004, RN-011
+- 2026-08-25 11-15: disparador RN-004, RN-011
+- 2026-08-26 07-11: disparador RN-004, RN-011
+- 2026-08-26 11-15: disparador RN-004, RN-011
+- 2026-08-27 07-11: disparador RN-004, RN-011
+- 2026-08-27 11-15: disparador RN-004, RN-011
+- 2026-08-28 07-11: disparador RN-004, RN-011
+- 2026-08-28 11-15: disparador RN-004, RN-011
+- 2026-08-31 07-11: disparador RN-004, RN-011
+- 2026-08-31 11-15: disparador RN-004, RN-011
+
+## RN-003 al abrir la sesion (domain/sesgo.py, anotacion del motor)
+por sesion: alcista 51; bajista 52; insuficiente 1
+de ellas con doble ruptura, que decide el color de la vela (ADR-0060): 22
+sesiones con alguna H4 saltada por color contrario (rompio un extremo y cerro del color contrario, ADR-0080 D1): 21 (29 velas)
+sesiones con alguna H4 saltada por neutra simple (rompio un extremo y cerro sin cuerpo, ADR-0080 D3): 0 (0 velas)
+sesiones con alguna H4 saltada por neutra con doble ruptura (ADR-0075): 0 (0 velas)
+por operacion del trader: a favor 154; en contra 42; insuficiente 2
+
+## Por sesion
+2026-01-02 07-11 | trader 2 | bot 0 | rn003 insuficiente | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-003, RN-033, RN-037 | bloqueadas ninguna
+2026-01-02 11-15 | trader 5 | bot 2 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-002, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-05 07-11 | trader 4 | bot 3 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-05 11-15 | trader 2 | bot 3 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-018, RN-027, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-06 07-11 | trader 1 | bot 2 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-07 07-11 | trader 1 | bot 4 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-08 07-11 | trader 3 | bot 2 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-08 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-001, RN-003, RN-037 | bloqueadas ninguna
+2026-01-09 07-11 | trader 1 | bot 2 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-018, RN-027, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-12 11-15 | trader 1 | bot 2 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-13 07-11 | trader 1 | bot 7 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:si detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-016, RN-018, RN-027, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-13 11-15 | trader 3 | bot 2 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-018, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-14 07-11 | trader 1 | bot 3 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:si detenido_por_racha:si liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-016, RN-027, RN-036, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-15 07-11 | trader 1 | bot 3 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-16 07-11 | trader 1 | bot 1 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-018, RN-027, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-19 07-11 | trader 1 | bot 4 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-014, RN-015, RN-017, RN-018, RN-027, RN-034, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-19 11-15 | trader 3 | bot 1 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-20 11-15 | trader 1 | bot 3 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-006, RN-009, RN-011, RN-012, RN-015, RN-018, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-21 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-21 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-22 11-15 | trader 3 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-001, RN-003, RN-032, RN-037 | bloqueadas ninguna
+2026-01-23 07-11 | trader 3 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-23 11-15 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-26 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-27 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-28 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-29 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-29 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-30 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-01-30 11-15 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-01 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-03 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-03 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-06 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-09 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-09 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-10 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-003, RN-032, RN-037 | bloqueadas ninguna
+2026-04-13 07-11 | trader 3 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-13 11-15 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-14 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-14 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-16 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-16 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-17 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-21 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-22 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-23 07-11 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-24 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-24 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-27 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-28 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-29 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-04-29 11-15 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-01 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-01 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-02 11-15 | trader 6 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-03 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-03 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-06 07-11 | trader 4 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-003, RN-032, RN-037 | bloqueadas ninguna
+2026-07-06 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-001, RN-003, RN-032, RN-037 | bloqueadas ninguna
+2026-07-07 07-11 | trader 4 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-07 11-15 | trader 4 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-08 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-08 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-09 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-09 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-10 07-11 | trader 8 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-10 11-15 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-13 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-13 11-15 | trader 3 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-14 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-14 11-15 | trader 6 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-15 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-15 11-15 | trader 4 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-16 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-16 11-15 | trader 3 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-17 07-11 | trader 4 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-07-17 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-03 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-03 11-15 | trader 4 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-04 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-06 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-07 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-07 11-15 | trader 3 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-10 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-11 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-12 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-13 07-11 | trader 2 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-14 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-003, RN-032, RN-037 | bloqueadas ninguna
+2026-08-17 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-19 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:no[productoras sin cumplirse] detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:no[productoras sin cumplirse] | disparadas RN-001, RN-003, RN-032, RN-037 | bloqueadas ninguna
+2026-08-20 07-11 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-20 11-15 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-21 07-11 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-21 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-24 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-25 07-11 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-25 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-26 07-11 | trader 3 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-26 11-15 | trader 1 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-27 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-27 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-28 11-15 | trader 1 | bot 0 | rn003 bajista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-001, RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+2026-08-31 07-11 | trader 2 | bot 0 | rn003 alcista | sesgo:si orden_dimensionada:si detenido_por_tope:no[productoras sin cumplirse] detenido_por_tope_total:no[productoras sin cumplirse] detenido_por_cartuchos:no[productoras sin cumplirse] detenido_por_racha:no[productoras sin cumplirse] liquidez_tomada:si | disparadas RN-003, RN-004, RN-005, RN-009, RN-011, RN-015, RN-027, RN-032, RN-037 | bloqueadas RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion
+
+## Diferencias por operacion (ADR-0043: 3 puntos, 15 min)
+### Resumen por mes (en el orden de construccion)
+mes | dias | trader | bot puntuables | bot en dias sin trader | parejas | cobertura | precision
+2026-04 | 21 | 35 | 0 | 0 | 0 | 0/35 (0.0 %) | sin definir (cero operaciones del bot puntuables)
+2026-07 | 13 | 67 | 0 | 0 | 0 | 0/67 (0.0 %) | sin definir (cero operaciones del bot puntuables)
+2026-08 | 21 | 42 | 0 | 0 | 0 | 0/42 (0.0 %) | sin definir (cero operaciones del bot puntuables)
+2026-01 | 21 | 54 | 53 | 0 | 7 | 7/54 (13.0 %) | 7/53 (13.2 %)
+### Embudo por mes: primer hecho del camino que falta en las sesiones con operaciones del trader y sin operacion del bot (los frenos detenido_por_*, solo si se produjeron)
+mes | hecho[primitivas NO_IMPLEMENTADA] | sesiones
+2026-04 | sesiones con operaciones del trader 23; sin operacion del bot 23
+2026-04 | todos los hechos del camino producidos | 22
+2026-04 | orden_dimensionada[productoras sin cumplirse] | 1
+2026-07 | sesiones con operaciones del trader 25; sin operacion del bot 25
+2026-07 | todos los hechos del camino producidos | 23
+2026-07 | orden_dimensionada[productoras sin cumplirse] | 2
+2026-08 | sesiones con operaciones del trader 26; sin operacion del bot 26
+2026-08 | todos los hechos del camino producidos | 24
+2026-08 | orden_dimensionada[productoras sin cumplirse] | 2
+2026-01 | sesiones con operaciones del trader 30; sin operacion del bot 14
+2026-01 | todos los hechos del camino producidos | 11
+2026-01 | orden_dimensionada[productoras sin cumplirse] | 3
+### Por operacion (por mes de construccion y por dia; en cada dia, el trader primero y despues el bot sin pareja)
+quien | dia | sesion | lado | instante UTC | entrada | resultado
+trader | 2026-04-01 | 11-15 | compra | 2026-04-01T12:30:20+00:00 | 1.1597 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-03 | 07-11 | compra | 2026-04-03T05:27:10+00:00 | 1.15306 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-03 | 11-15 | compra | 2026-04-03T11:43:35+00:00 | 1.15419 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-06 | 07-11 | compra | 2026-04-06T06:34:15+00:00 | 1.15238 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-09 | 07-11 | venta | 2026-04-09T07:12:50+00:00 | 1.16659 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-09 | 11-15 | venta | 2026-04-09T09:15:30+00:00 | 1.16748 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-10 | 07-11 | compra | 2026-04-10T06:33:55+00:00 | 1.16862 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-04-10 | 07-11 | compra | 2026-04-10T08:05:45+00:00 | 1.16798 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-04-13 | 07-11 | compra | 2026-04-13T06:47:45+00:00 | 1.16802 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-13 | 07-11 | compra | 2026-04-13T06:50:00+00:00 | 1.16802 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-13 | 07-11 | compra | 2026-04-13T08:21:35+00:00 | 1.16936 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-13 | 11-15 | compra | 2026-04-13T10:26:50+00:00 | 1.16858 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-13 | 11-15 | compra | 2026-04-13T12:02:20+00:00 | 1.16857 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-14 | 07-11 | compra | 2026-04-14T06:23:35+00:00 | 1.17596 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-14 | 11-15 | compra | 2026-04-14T12:06:35+00:00 | 1.17944 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-16 | 07-11 | compra | 2026-04-16T06:13:30+00:00 | 1.18033 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-16 | 11-15 | venta | 2026-04-16T11:13:10+00:00 | 1.17855 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-17 | 07-11 | venta | 2026-04-17T08:10:00+00:00 | 1.17816 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-17 | 07-11 | venta | 2026-04-17T08:36:10+00:00 | 1.17842 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-21 | 07-11 | venta | 2026-04-21T05:12:55+00:00 | 1.17788 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-22 | 07-11 | venta | 2026-04-22T08:02:15+00:00 | 1.17553 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-22 | 07-11 | venta | 2026-04-22T08:19:00+00:00 | 1.17566 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-23 | 07-11 | venta | 2026-04-23T05:30:00+00:00 | 1.17018 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-23 | 07-11 | venta | 2026-04-23T05:53:30+00:00 | 1.17038 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-23 | 07-11 | venta | 2026-04-23T06:49:35+00:00 | 1.17072 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-24 | 07-11 | venta | 2026-04-24T06:44:30+00:00 | 1.16826 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-24 | 11-15 | venta | 2026-04-24T11:06:25+00:00 | 1.17034 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-24 | 11-15 | venta | 2026-04-24T11:30:35+00:00 | 1.17165 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-27 | 11-15 | compra | 2026-04-27T11:45:35+00:00 | 1.17416 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-27 | 11-15 | compra | 2026-04-27T12:00:00+00:00 | 1.17417 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-28 | 07-11 | venta | 2026-04-28T08:12:05+00:00 | 1.17022 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-29 | 07-11 | venta | 2026-04-29T07:55:40+00:00 | 1.17064 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-29 | 07-11 | venta | 2026-04-29T07:58:35+00:00 | 1.17064 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-29 | 11-15 | venta | 2026-04-29T09:36:25+00:00 | 1.17031 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-04-29 | 11-15 | venta | 2026-04-29T11:02:00+00:00 | 1.17066 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-01 | 07-11 | compra | 2026-07-01T06:15:55+00:00 | 1.14042 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-01 | 07-11 | compra | 2026-07-01T07:33:05+00:00 | 1.13958 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-01 | 11-15 | venta | 2026-07-01T10:59:05+00:00 | 1.13984 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-02 | 11-15 | compra | 2026-07-02T09:34:25+00:00 | 1.14102 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-02 | 11-15 | compra | 2026-07-02T10:25:50+00:00 | 1.14069 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-02 | 11-15 | compra | 2026-07-02T10:45:20+00:00 | 1.14068 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-02 | 11-15 | compra | 2026-07-02T11:59:30+00:00 | 1.14039 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-02 | 11-15 | compra | 2026-07-02T12:10:00+00:00 | 1.13996 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-02 | 11-15 | compra | 2026-07-02T12:23:05+00:00 | 1.13976 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-03 | 07-11 | compra | 2026-07-03T07:24:00+00:00 | 1.14528 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-03 | 07-11 | compra | 2026-07-03T07:43:00+00:00 | 1.14502 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-03 | 11-15 | compra | 2026-07-03T10:02:00+00:00 | 1.14423 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-06 | 07-11 | compra | 2026-07-06T06:22:05+00:00 | 1.14252 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-07-06 | 07-11 | compra | 2026-07-06T06:29:45+00:00 | 1.14234 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-07-06 | 07-11 | compra | 2026-07-06T06:33:55+00:00 | 1.14244 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-07-06 | 07-11 | compra | 2026-07-06T08:51:10+00:00 | 1.14172 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-07-06 | 11-15 | compra | 2026-07-06T10:11:25+00:00 | 1.1413 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-07-07 | 07-11 | compra | 2026-07-07T05:02:50+00:00 | 1.14372 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-07 | 07-11 | compra | 2026-07-07T05:17:40+00:00 | 1.14347 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-07 | 07-11 | compra | 2026-07-07T05:50:00+00:00 | 1.14293 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-07 | 07-11 | compra | 2026-07-07T06:14:00+00:00 | 1.14262 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-07 | 11-15 | compra | 2026-07-07T10:01:35+00:00 | 1.14256 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-07 | 11-15 | compra | 2026-07-07T10:08:05+00:00 | 1.14262 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-07 | 11-15 | compra | 2026-07-07T11:51:25+00:00 | 1.14331 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-07 | 11-15 | compra | 2026-07-07T11:57:35+00:00 | 1.14336 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-08 | 07-11 | compra | 2026-07-08T07:19:15+00:00 | 1.14203 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-08 | 11-15 | compra | 2026-07-08T11:43:35+00:00 | 1.14039 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-09 | 07-11 | compra | 2026-07-09T07:59:00+00:00 | 1.14338 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-09 | 11-15 | compra | 2026-07-09T11:02:05+00:00 | 1.1424 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T05:36:35+00:00 | 1.14382 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T05:45:20+00:00 | 1.14382 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T07:10:50+00:00 | 1.14398 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T07:17:40+00:00 | 1.14396 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T07:50:15+00:00 | 1.14406 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T08:01:25+00:00 | 1.14378 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T08:28:15+00:00 | 1.14342 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 07-11 | compra | 2026-07-10T08:42:50+00:00 | 1.14331 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:55:30+00:00 | 1.14339 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:56:25+00:00 | 1.14338 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-10 | 11-15 | venta | 2026-07-10T10:58:40+00:00 | 1.14338 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-13 | 07-11 | venta | 2026-07-13T05:17:55+00:00 | 1.14066 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-13 | 11-15 | compra | 2026-07-13T09:44:05+00:00 | 1.14295 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-13 | 11-15 | compra | 2026-07-13T09:54:45+00:00 | 1.14296 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-13 | 11-15 | compra | 2026-07-13T11:25:05+00:00 | 1.14278 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 07-11 | compra | 2026-07-14T06:30:30+00:00 | 1.13878 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 07-11 | compra | 2026-07-14T06:55:30+00:00 | 1.13876 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 11-15 | compra | 2026-07-14T09:35:15+00:00 | 1.13976 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 11-15 | compra | 2026-07-14T09:48:20+00:00 | 1.13984 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 11-15 | compra | 2026-07-14T10:29:05+00:00 | 1.13953 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 11-15 | compra | 2026-07-14T10:33:40+00:00 | 1.13961 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 11-15 | compra | 2026-07-14T10:44:05+00:00 | 1.1394 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-14 | 11-15 | compra | 2026-07-14T11:06:45+00:00 | 1.13923 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-15 | 07-11 | compra | 2026-07-15T05:06:55+00:00 | 1.14368 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-15 | 07-11 | compra | 2026-07-15T07:12:25+00:00 | 1.1431 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-15 | 11-15 | compra | 2026-07-15T10:05:50+00:00 | 1.1418 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-15 | 11-15 | compra | 2026-07-15T10:45:45+00:00 | 1.14142 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-15 | 11-15 | compra | 2026-07-15T12:00:55+00:00 | 1.14146 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-15 | 11-15 | compra | 2026-07-15T12:14:10+00:00 | 1.14092 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-16 | 07-11 | compra | 2026-07-16T06:00:10+00:00 | 1.14654 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-16 | 11-15 | compra | 2026-07-16T09:36:00+00:00 | 1.14624 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-16 | 11-15 | compra | 2026-07-16T11:19:40+00:00 | 1.1462 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-16 | 11-15 | compra | 2026-07-16T11:55:40+00:00 | 1.1467 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-17 | 07-11 | venta | 2026-07-17T05:46:05+00:00 | 1.14409 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-17 | 07-11 | venta | 2026-07-17T06:27:45+00:00 | 1.14498 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-17 | 07-11 | venta | 2026-07-17T06:45:05+00:00 | 1.1449 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-17 | 07-11 | venta | 2026-07-17T07:05:35+00:00 | 1.14508 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-07-17 | 11-15 | venta | 2026-07-17T11:44:50+00:00 | 1.14332 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-03 | 07-11 | venta | 2026-08-03T06:03:05+00:00 | 1.15364 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-03 | 07-11 | venta | 2026-08-03T06:07:40+00:00 | 1.15362 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-03 | 11-15 | venta | 2026-08-03T09:46:15+00:00 | 1.15274 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-03 | 11-15 | venta | 2026-08-03T09:52:50+00:00 | 1.1528 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-03 | 11-15 | venta | 2026-08-03T12:03:25+00:00 | 1.1532 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-03 | 11-15 | venta | 2026-08-03T12:10:55+00:00 | 1.15322 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-04 | 11-15 | venta | 2026-08-04T11:34:50+00:00 | 1.15184 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-06 | 07-11 | venta | 2026-08-06T06:07:25+00:00 | 1.15488 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-07 | 07-11 | venta | 2026-08-07T05:14:55+00:00 | 1.15248 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-07 | 11-15 | venta | 2026-08-07T11:47:55+00:00 | 1.15318 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-07 | 11-15 | venta | 2026-08-07T12:09:10+00:00 | 1.15346 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-07 | 11-15 | venta | 2026-08-07T12:14:55+00:00 | 1.15345 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-10 | 11-15 | compra | 2026-08-10T11:57:15+00:00 | 1.15503 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-10 | 11-15 | compra | 2026-08-10T12:38:45+00:00 | 1.15484 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-11 | 07-11 | compra | 2026-08-11T08:08:55+00:00 | 1.1533 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-12 | 07-11 | compra | 2026-08-12T05:25:20+00:00 | 1.1533 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-13 | 07-11 | venta | 2026-08-13T07:33:55+00:00 | 1.15204 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-13 | 07-11 | venta | 2026-08-13T07:49:40+00:00 | 1.15247 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-14 | 07-11 | compra | 2026-08-14T06:30:10+00:00 | 1.15404 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-08-17 | 07-11 | compra | 2026-08-17T05:17:15+00:00 | 1.15842 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-19 | 11-15 | compra | 2026-08-19T09:03:00+00:00 | 1.15984 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-08-19 | 11-15 | compra | 2026-08-19T11:46:15+00:00 | 1.1603 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-08-20 | 07-11 | compra | 2026-08-20T05:47:10+00:00 | 1.16709 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-20 | 11-15 | compra | 2026-08-20T11:00:00+00:00 | 1.16976 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-20 | 11-15 | compra | 2026-08-20T11:49:10+00:00 | 1.16868 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-21 | 07-11 | compra | 2026-08-21T05:32:55+00:00 | 1.1692 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-21 | 11-15 | compra | 2026-08-21T11:56:10+00:00 | 1.1699 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-24 | 11-15 | venta | 2026-08-24T11:29:50+00:00 | 1.16674 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-25 | 07-11 | venta | 2026-08-25T06:16:30+00:00 | 1.16564 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-25 | 07-11 | venta | 2026-08-25T06:37:00+00:00 | 1.16573 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-25 | 07-11 | venta | 2026-08-25T08:48:30+00:00 | 1.1665 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-25 | 11-15 | venta | 2026-08-25T11:55:00+00:00 | 1.16622 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-26 | 07-11 | venta | 2026-08-26T05:49:25+00:00 | 1.16652 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-26 | 07-11 | venta | 2026-08-26T07:03:00+00:00 | 1.1668 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-26 | 07-11 | venta | 2026-08-26T08:31:15+00:00 | 1.16752 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-26 | 11-15 | compra | 2026-08-26T11:26:30+00:00 | 1.16621 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-27 | 07-11 | venta | 2026-08-27T08:04:45+00:00 | 1.16562 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-27 | 07-11 | venta | 2026-08-27T08:12:25+00:00 | 1.1656 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-27 | 11-15 | venta | 2026-08-27T12:13:40+00:00 | 1.16422 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-28 | 11-15 | venta | 2026-08-28T10:42:10+00:00 | 1.16458 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-31 | 07-11 | compra | 2026-08-31T06:30:15+00:00 | 1.15878 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-08-31 | 07-11 | compra | 2026-08-31T06:58:10+00:00 | 1.15879 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-02 | 07-11 | compra | 2026-01-02T07:38:25+00:00 | 1.17357 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-01-02 | 07-11 | compra | 2026-01-02T08:34:25+00:00 | 1.17293 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-01-02 | 11-15 | venta | 2026-01-02T12:12:20+00:00 | 1.17241 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-02T12:12:26.197000+00:00 1.17237 (Δentrada -4 puntos, Δinstante +0 min 6 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-02 | 11-15 | venta | 2026-01-02T12:20:20+00:00 | 1.17232 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-02T12:12:26.197000+00:00 1.17237 (Δentrada +5 puntos, Δinstante -7 min 53 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-02 | 11-15 | venta | 2026-01-02T12:45:20+00:00 | 1.1726 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-02T12:12:26.197000+00:00 1.17237 (Δentrada -23 puntos, Δinstante -32 min 53 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-02 | 11-15 | venta | 2026-01-02T13:21:50+00:00 | 1.17246 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-02T13:28:06.811000+00:00 1.17243 (Δentrada -3 puntos, Δinstante +6 min 16 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-02 | 11-15 | venta | 2026-01-02T13:28:15+00:00 | 1.17242 | PAREJA bot 2026-01-02T13:28:06.811000+00:00 1.17243 (Δentrada +1 puntos, Δinstante -0 min 8 s)
+bot | 2026-01-02 | 11-15 | venta | 2026-01-02T12:12:26.197000+00:00 | 1.17237 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-02T12:12:20+00:00 1.17241 (Δentrada +4 puntos, Δinstante -0 min 6 s)
+trader | 2026-01-05 | 07-11 | venta | 2026-01-05T06:25:05+00:00 | 1.16858 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T06:04:22.610000+00:00 1.16851 (Δentrada -7 puntos, Δinstante -20 min 42 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-05 | 07-11 | venta | 2026-01-05T06:48:25+00:00 | 1.16899 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T06:04:22.610000+00:00 1.16851 (Δentrada -48 puntos, Δinstante -44 min 2 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-05 | 07-11 | venta | 2026-01-05T07:00:05+00:00 | 1.16907 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T06:04:22.610000+00:00 1.16851 (Δentrada -56 puntos, Δinstante -55 min 42 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-05 | 07-11 | venta | 2026-01-05T08:33:50+00:00 | 1.16914 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T08:33:08.979000+00:00 1.16931 (Δentrada +17 puntos, Δinstante -0 min 41 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-05 | 11-15 | venta | 2026-01-05T10:57:45+00:00 | 1.1687 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T10:56:00+00:00 1.16877 (Δentrada +7 puntos, Δinstante -1 min 45 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-05 | 11-15 | venta | 2026-01-05T11:04:15+00:00 | 1.16889 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-05T10:56:00+00:00 1.16877 (Δentrada -12 puntos, Δinstante -8 min 15 s); primer hecho que falto: todos los hechos del camino producidos
+bot | 2026-01-05 | 07-11 | venta | 2026-01-05T06:04:22.610000+00:00 | 1.16851 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-05T06:25:05+00:00 1.16858 (Δentrada +7 puntos, Δinstante +20 min 42 s)
+bot | 2026-01-05 | 07-11 | venta | 2026-01-05T08:33:08.979000+00:00 | 1.16931 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-05T08:33:50+00:00 1.16914 (Δentrada -17 puntos, Δinstante +0 min 41 s)
+bot | 2026-01-05 | 07-11 | venta | 2026-01-05T09:28:17.619000+00:00 | 1.16852 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-05T08:33:50+00:00 1.16914 (Δentrada +62 puntos, Δinstante -54 min 27 s)
+bot | 2026-01-05 | 11-15 | venta | 2026-01-05T10:22:00+00:00 | 1.16856 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-05T10:57:45+00:00 1.1687 (Δentrada +14 puntos, Δinstante +35 min 45 s)
+bot | 2026-01-05 | 11-15 | venta | 2026-01-05T10:25:00+00:00 | 1.16853 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-05T10:57:45+00:00 1.1687 (Δentrada +17 puntos, Δinstante +32 min 45 s)
+bot | 2026-01-05 | 11-15 | venta | 2026-01-05T10:56:00+00:00 | 1.16877 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-05T10:57:45+00:00 1.1687 (Δentrada -7 puntos, Δinstante +1 min 45 s)
+trader | 2026-01-06 | 07-11 | compra | 2026-01-06T09:22:00+00:00 | 1.17171 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-06T08:02:05.637000+00:00 1.17298 (Δentrada +127 puntos, Δinstante -79 min 54 s); primer hecho que falto: todos los hechos del camino producidos
+bot | 2026-01-06 | 07-11 | compra | 2026-01-06T06:00:03.566000+00:00 | 1.17297 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-06T09:22:00+00:00 1.17171 (Δentrada -126 puntos, Δinstante +201 min 56 s)
+bot | 2026-01-06 | 07-11 | compra | 2026-01-06T08:02:05.637000+00:00 | 1.17298 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-06T09:22:00+00:00 1.17171 (Δentrada -127 puntos, Δinstante +79 min 54 s)
+bot | 2026-01-06 | 11-15 | venta | 2026-01-06T13:43:00.155000+00:00 | 1.17108 | SIN PAREJA; ninguna operacion del trader en la sesion
+bot | 2026-01-06 | 11-15 | venta | 2026-01-06T13:44:30.248000+00:00 | 1.17108 | SIN PAREJA; ninguna operacion del trader en la sesion
+trader | 2026-01-07 | 07-11 | venta | 2026-01-07T06:34:15+00:00 | 1.16932 | PAREJA bot 2026-01-07T06:34:16.052000+00:00 1.16929 (Δentrada -3 puntos, Δinstante +0 min 1 s)
+bot | 2026-01-07 | 07-11 | venta | 2026-01-07T06:39:03.925000+00:00 | 1.16935 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-07T06:34:15+00:00 1.16932 (Δentrada -3 puntos, Δinstante -4 min 48 s)
+bot | 2026-01-07 | 07-11 | venta | 2026-01-07T06:55:07.894000+00:00 | 1.16976 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-07T06:34:15+00:00 1.16932 (Δentrada -44 puntos, Δinstante -20 min 52 s)
+bot | 2026-01-07 | 07-11 | venta | 2026-01-07T06:57:57.157000+00:00 | 1.16975 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-07T06:34:15+00:00 1.16932 (Δentrada -43 puntos, Δinstante -23 min 42 s)
+bot | 2026-01-07 | 11-15 | venta | 2026-01-07T10:03:27.549000+00:00 | 1.16848 | SIN PAREJA; ninguna operacion del trader en la sesion
+bot | 2026-01-07 | 11-15 | venta | 2026-01-07T13:00:00.593000+00:00 | 1.16871 | SIN PAREJA; ninguna operacion del trader en la sesion
+trader | 2026-01-08 | 07-11 | compra | 2026-01-08T08:21:25+00:00 | 1.16746 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-08T08:08:57.120000+00:00 1.16767 (Δentrada +21 puntos, Δinstante -12 min 27 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-08 | 07-11 | compra | 2026-01-08T08:28:15+00:00 | 1.16756 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-08T08:08:57.120000+00:00 1.16767 (Δentrada +11 puntos, Δinstante -19 min 17 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-08 | 07-11 | compra | 2026-01-08T08:58:55+00:00 | 1.16728 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-08T08:08:57.120000+00:00 1.16767 (Δentrada +39 puntos, Δinstante -49 min 57 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-08 | 11-15 | venta | 2026-01-08T13:29:05+00:00 | 1.1675 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+bot | 2026-01-08 | 07-11 | compra | 2026-01-08T06:30:49.261000+00:00 | 1.16792 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-08T08:21:25+00:00 1.16746 (Δentrada -46 puntos, Δinstante +110 min 35 s)
+bot | 2026-01-08 | 07-11 | compra | 2026-01-08T08:08:57.120000+00:00 | 1.16767 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-08T08:21:25+00:00 1.16746 (Δentrada -21 puntos, Δinstante +12 min 27 s)
+trader | 2026-01-09 | 07-11 | venta | 2026-01-09T09:07:50+00:00 | 1.16486 | PAREJA bot 2026-01-09T09:07:50.529000+00:00 1.16484 (Δentrada -2 puntos, Δinstante +0 min 0 s)
+bot | 2026-01-09 | 07-11 | venta | 2026-01-09T08:04:03.504000+00:00 | 1.16481 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-09T09:07:50+00:00 1.16486 (Δentrada +5 puntos, Δinstante +63 min 46 s)
+bot | 2026-01-09 | 11-15 | venta | 2026-01-09T13:38:25.128000+00:00 | 1.16534 | SIN PAREJA; ninguna operacion del trader en la sesion
+trader | 2026-01-12 | 11-15 | compra | 2026-01-12T13:03:45+00:00 | 1.16821 | PAREJA bot 2026-01-12T13:03:46.862000+00:00 1.16821 (Δentrada +0 puntos, Δinstante +0 min 1 s)
+bot | 2026-01-12 | 11-15 | compra | 2026-01-12T10:27:27.536000+00:00 | 1.16784 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-12T13:03:45+00:00 1.16821 (Δentrada +37 puntos, Δinstante +156 min 17 s)
+trader | 2026-01-13 | 07-11 | venta | 2026-01-13T07:42:25+00:00 | 1.16603 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-13T07:44:43.041000+00:00 1.16597 (Δentrada -6 puntos, Δinstante +2 min 18 s); primer hecho que falto: todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos
+trader | 2026-01-13 | 11-15 | compra | 2026-01-13T11:12:20+00:00 | 1.16662 | PAREJA bot 2026-01-13T11:21:51.162000+00:00 1.16664 (Δentrada +2 puntos, Δinstante +9 min 31 s)
+trader | 2026-01-13 | 11-15 | compra | 2026-01-13T12:45:15+00:00 | 1.16615 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-13T12:44:54.717000+00:00 1.16607 (Δentrada -8 puntos, Δinstante -0 min 20 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-13 | 11-15 | compra | 2026-01-13T13:14:55+00:00 | 1.16553 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-13T12:44:54.717000+00:00 1.16607 (Δentrada +54 puntos, Δinstante -30 min 0 s); primer hecho que falto: todos los hechos del camino producidos
+bot | 2026-01-13 | 07-11 | venta | 2026-01-13T07:35:42.488000+00:00 | 1.16624 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-13T07:42:25+00:00 1.16603 (Δentrada -21 puntos, Δinstante +6 min 42 s)
+bot | 2026-01-13 | 07-11 | venta | 2026-01-13T07:36:00.709000+00:00 | 1.16623 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-13T07:42:25+00:00 1.16603 (Δentrada -20 puntos, Δinstante +6 min 24 s)
+bot | 2026-01-13 | 07-11 | venta | 2026-01-13T07:44:43.041000+00:00 | 1.16597 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-13T07:42:25+00:00 1.16603 (Δentrada +6 puntos, Δinstante -2 min 18 s)
+bot | 2026-01-13 | 07-11 | venta | 2026-01-13T08:02:25.839000+00:00 | 1.16615 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-13T07:42:25+00:00 1.16603 (Δentrada -12 puntos, Δinstante -20 min 0 s)
+bot | 2026-01-13 | 07-11 | venta | 2026-01-13T09:06:56.595000+00:00 | 1.16681 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-13T07:42:25+00:00 1.16603 (Δentrada -78 puntos, Δinstante -84 min 31 s)
+bot | 2026-01-13 | 07-11 | venta | 2026-01-13T09:35:09.396000+00:00 | 1.16709 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-13T07:42:25+00:00 1.16603 (Δentrada -106 puntos, Δinstante -112 min 44 s)
+bot | 2026-01-13 | 07-11 | venta | 2026-01-13T09:37:02.137000+00:00 | 1.16709 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-13T07:42:25+00:00 1.16603 (Δentrada -106 puntos, Δinstante -114 min 37 s)
+bot | 2026-01-13 | 11-15 | compra | 2026-01-13T12:44:54.717000+00:00 | 1.16607 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-13T12:45:15+00:00 1.16615 (Δentrada +8 puntos, Δinstante +0 min 20 s)
+trader | 2026-01-14 | 07-11 | compra | 2026-01-14T06:03:15+00:00 | 1.16422 | PAREJA bot 2026-01-14T06:02:00.327000+00:00 1.16419 (Δentrada -3 puntos, Δinstante -1 min 14 s)
+bot | 2026-01-14 | 07-11 | compra | 2026-01-14T06:01:10.917000+00:00 | 1.16419 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-14T06:03:15+00:00 1.16422 (Δentrada +3 puntos, Δinstante +2 min 4 s)
+bot | 2026-01-14 | 07-11 | compra | 2026-01-14T06:05:00.996000+00:00 | 1.16428 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-14T06:03:15+00:00 1.16422 (Δentrada -6 puntos, Δinstante -1 min 45 s)
+trader | 2026-01-15 | 07-11 | venta | 2026-01-15T08:42:10+00:00 | 1.1634 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-15T08:30:20.139000+00:00 1.1632 (Δentrada -20 puntos, Δinstante -11 min 49 s); primer hecho que falto: todos los hechos del camino producidos
+bot | 2026-01-15 | 07-11 | venta | 2026-01-15T06:12:00.151000+00:00 | 1.16367 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-15T08:42:10+00:00 1.1634 (Δentrada -27 puntos, Δinstante +150 min 9 s)
+bot | 2026-01-15 | 07-11 | venta | 2026-01-15T07:07:43.044000+00:00 | 1.16335 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-15T08:42:10+00:00 1.1634 (Δentrada +5 puntos, Δinstante +94 min 26 s)
+bot | 2026-01-15 | 07-11 | venta | 2026-01-15T08:30:20.139000+00:00 | 1.1632 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-15T08:42:10+00:00 1.1634 (Δentrada +20 puntos, Δinstante +11 min 49 s)
+bot | 2026-01-15 | 11-15 | venta | 2026-01-15T10:36:44.928000+00:00 | 1.16376 | SIN PAREJA; ninguna operacion del trader en la sesion
+trader | 2026-01-16 | 07-11 | venta | 2026-01-16T07:20:15+00:00 | 1.16108 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-16T09:27:42.663000+00:00 1.16132 (Δentrada +24 puntos, Δinstante +127 min 27 s); primer hecho que falto: todos los hechos del camino producidos
+bot | 2026-01-16 | 07-11 | venta | 2026-01-16T09:27:42.663000+00:00 | 1.16132 | SIN PAREJA; trader mas cercano en la sesion: venta 2026-01-16T07:20:15+00:00 1.16108 (Δentrada -24 puntos, Δinstante -127 min 27 s)
+bot | 2026-01-16 | 11-15 | compra | 2026-01-16T12:34:38.875000+00:00 | 1.16161 | SIN PAREJA; ninguna operacion del trader en la sesion
+bot | 2026-01-16 | 11-15 | compra | 2026-01-16T12:35:15.720000+00:00 | 1.16164 | SIN PAREJA; ninguna operacion del trader en la sesion
+bot | 2026-01-16 | 11-15 | compra | 2026-01-16T12:55:48.295000+00:00 | 1.16169 | SIN PAREJA; ninguna operacion del trader en la sesion
+trader | 2026-01-19 | 07-11 | compra | 2026-01-19T08:32:40+00:00 | 1.16203 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-19T08:16:01.647000+00:00 1.16235 (Δentrada +32 puntos, Δinstante -16 min 38 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-19 | 11-15 | venta | 2026-01-19T10:15:50+00:00 | 1.1627 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-19T13:25:19.294000+00:00 1.16323 (Δentrada +53 puntos, Δinstante +189 min 29 s); primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-19 | 11-15 | venta | 2026-01-19T13:25:05+00:00 | 1.16326 | PAREJA bot 2026-01-19T13:25:19.294000+00:00 1.16323 (Δentrada -3 puntos, Δinstante +0 min 14 s)
+trader | 2026-01-19 | 11-15 | venta | 2026-01-19T13:36:00+00:00 | 1.16332 | SIN PAREJA; bot mas cercano en la sesion: venta 2026-01-19T13:25:19.294000+00:00 1.16323 (Δentrada -9 puntos, Δinstante -10 min 40 s); primer hecho que falto: todos los hechos del camino producidos
+bot | 2026-01-19 | 07-11 | compra | 2026-01-19T06:48:30.138000+00:00 | 1.16266 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-19T08:32:40+00:00 1.16203 (Δentrada -63 puntos, Δinstante +104 min 9 s)
+bot | 2026-01-19 | 07-11 | compra | 2026-01-19T07:49:14.151000+00:00 | 1.16254 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-19T08:32:40+00:00 1.16203 (Δentrada -51 puntos, Δinstante +43 min 25 s)
+bot | 2026-01-19 | 07-11 | compra | 2026-01-19T08:16:01.647000+00:00 | 1.16235 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-19T08:32:40+00:00 1.16203 (Δentrada -32 puntos, Δinstante +16 min 38 s)
+bot | 2026-01-19 | 07-11 | compra | 2026-01-19T09:23:08.486000+00:00 | 1.16155 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-19T08:32:40+00:00 1.16203 (Δentrada +48 puntos, Δinstante -50 min 28 s)
+trader | 2026-01-20 | 11-15 | compra | 2026-01-20T13:32:20+00:00 | 1.17228 | SIN PAREJA; bot mas cercano en la sesion: compra 2026-01-20T13:31:00.060000+00:00 1.17217 (Δentrada -11 puntos, Δinstante -1 min 19 s); primer hecho que falto: todos los hechos del camino producidos
+bot | 2026-01-20 | 11-15 | compra | 2026-01-20T12:59:00.278000+00:00 | 1.17273 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-20T13:32:20+00:00 1.17228 (Δentrada -45 puntos, Δinstante +33 min 19 s)
+bot | 2026-01-20 | 11-15 | compra | 2026-01-20T13:00:11.797000+00:00 | 1.17271 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-20T13:32:20+00:00 1.17228 (Δentrada -43 puntos, Δinstante +32 min 8 s)
+bot | 2026-01-20 | 11-15 | compra | 2026-01-20T13:31:00.060000+00:00 | 1.17217 | SIN PAREJA; trader mas cercano en la sesion: compra 2026-01-20T13:32:20+00:00 1.17228 (Δentrada +11 puntos, Δinstante +1 min 19 s)
+trader | 2026-01-21 | 07-11 | venta | 2026-01-21T06:56:45+00:00 | 1.1723 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-21 | 07-11 | venta | 2026-01-21T09:32:10+00:00 | 1.171 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-21 | 11-15 | venta | 2026-01-21T11:55:35+00:00 | 1.1717 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-22 | 11-15 | venta | 2026-01-22T11:13:50+00:00 | 1.16968 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-01-22 | 11-15 | venta | 2026-01-22T11:51:30+00:00 | 1.17026 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-01-22 | 11-15 | venta | 2026-01-22T12:27:45+00:00 | 1.17082 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: orden_dimensionada[productoras sin cumplirse]
+trader | 2026-01-23 | 07-11 | compra | 2026-01-23T07:00:05+00:00 | 1.1743 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-23 | 07-11 | compra | 2026-01-23T07:31:15+00:00 | 1.1738 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-23 | 07-11 | compra | 2026-01-23T08:23:00+00:00 | 1.1732 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-23 | 11-15 | venta | 2026-01-23T11:52:10+00:00 | 1.17382 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-23 | 11-15 | venta | 2026-01-23T12:55:35+00:00 | 1.17428 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-26 | 07-11 | compra | 2026-01-26T08:01:30+00:00 | 1.18456 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-27 | 07-11 | compra | 2026-01-27T08:42:50+00:00 | 1.18547 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-27 | 07-11 | compra | 2026-01-27T08:45:45+00:00 | 1.18547 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-28 | 07-11 | compra | 2026-01-28T07:54:45+00:00 | 1.19885 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-29 | 07-11 | compra | 2026-01-29T07:50:05+00:00 | 1.19717 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-29 | 07-11 | compra | 2026-01-29T08:59:50+00:00 | 1.19675 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-29 | 11-15 | venta | 2026-01-29T13:01:15+00:00 | 1.19601 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-30 | 07-11 | venta | 2026-01-30T08:08:25+00:00 | 1.19381 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-30 | 11-15 | venta | 2026-01-30T11:21:05+00:00 | 1.19323 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+trader | 2026-01-30 | 11-15 | venta | 2026-01-30T12:04:10+00:00 | 1.19503 | SIN PAREJA; ninguna operacion del bot en la sesion; primer hecho que falto: todos los hechos del camino producidos
+
+## Simulacion (ADR-0053)
+MOTOR: spec vigente + broker simulado (ADR-0053)
+PERFIL: ftmo-2step-swing-100k; FASE: reto
+DIAS CORRIDOS: 76
+TOPE DEL TRADER (RN-020, A-44): tope del trader: dia, sobre saldo, en porcentaje; dia 4.5 sobre saldo_inicial_dia; reinicio en Europe/Prague; SUPUESTO: reinicio con el huso de corte del perfil (el trader no dijo otro)
+RACHA DE PERDIDAS (RN-036, A-51): 5 seguidas; la ultima el 2026-01-20
+PRIMERO EN TOCAR UN LIMITE: ninguno
+
+### Veredicto de la cuenta sobre el tramo
+estado: EN_CURSO
+motivo: sin objetivo alcanzado ni limite infringido
+instante: -
+saldo final: 90652.9300000
+equity final: 90652.9300000
+dias de trading: 13
+
+### Curva de equity (dia | saldo al corte | saldo final | equity minima)
+2026-01-02 | 100000 | 99686.2500000 | 99403.8000000
+2026-01-05 | 99686.2500000 | 99752.1100000 | 99443.1500000
+2026-01-06 | 99752.1100000 | 102587.6600000 | 99340.2000000
+2026-01-07 | 102587.6600000 | 99322.0600000 | 99322.0600000
+2026-01-08 | 99322.0600000 | 98433.6500000 | 98433.6500000
+2026-01-09 | 98433.6500000 | 97178.8800000 | 97178.8800000
+2026-01-12 | 97178.8800000 | 99649.8300000 | 96846.9400000
+2026-01-13 | 99649.8300000 | 95539.8700000 | 95539.8700000
+2026-01-14 | 95539.8700000 | 94491.5200000 | 94491.5200000
+2026-01-15 | 94491.5200000 | 94051.5700000 | 93842.0500000
+2026-01-16 | 94051.5700000 | 93553.9300000 | 93200.5000000
+2026-01-19 | 93553.9300000 | 92325.5600000 | 92325.5600000
+2026-01-20 | 92325.5600000 | 90652.9300000 | 90652.9300000
+2026-01-21 | 90652.9300000 | 90652.9300000 | -
+2026-01-22 | 90652.9300000 | 90652.9300000 | -
+2026-01-23 | 90652.9300000 | 90652.9300000 | -
+2026-01-26 | 90652.9300000 | 90652.9300000 | -
+2026-01-27 | 90652.9300000 | 90652.9300000 | -
+2026-01-28 | 90652.9300000 | 90652.9300000 | -
+2026-01-29 | 90652.9300000 | 90652.9300000 | -
+2026-01-30 | 90652.9300000 | 90652.9300000 | -
+2026-04-01 | 90652.9300000 | 90652.9300000 | -
+2026-04-02 | 90652.9300000 | 90652.9300000 | -
+2026-04-03 | 90652.9300000 | 90652.9300000 | -
+2026-04-06 | 90652.9300000 | 90652.9300000 | -
+2026-04-07 | 90652.9300000 | 90652.9300000 | -
+2026-04-08 | 90652.9300000 | 90652.9300000 | -
+2026-04-09 | 90652.9300000 | 90652.9300000 | -
+2026-04-10 | 90652.9300000 | 90652.9300000 | -
+2026-04-13 | 90652.9300000 | 90652.9300000 | -
+2026-04-14 | 90652.9300000 | 90652.9300000 | -
+2026-04-15 | 90652.9300000 | 90652.9300000 | -
+2026-04-16 | 90652.9300000 | 90652.9300000 | -
+2026-04-17 | 90652.9300000 | 90652.9300000 | -
+2026-04-20 | 90652.9300000 | 90652.9300000 | -
+2026-04-21 | 90652.9300000 | 90652.9300000 | -
+2026-04-22 | 90652.9300000 | 90652.9300000 | -
+2026-04-23 | 90652.9300000 | 90652.9300000 | -
+2026-04-24 | 90652.9300000 | 90652.9300000 | -
+2026-04-27 | 90652.9300000 | 90652.9300000 | -
+2026-04-28 | 90652.9300000 | 90652.9300000 | -
+2026-04-29 | 90652.9300000 | 90652.9300000 | -
+2026-07-01 | 90652.9300000 | 90652.9300000 | -
+2026-07-02 | 90652.9300000 | 90652.9300000 | -
+2026-07-03 | 90652.9300000 | 90652.9300000 | -
+2026-07-06 | 90652.9300000 | 90652.9300000 | -
+2026-07-07 | 90652.9300000 | 90652.9300000 | -
+2026-07-08 | 90652.9300000 | 90652.9300000 | -
+2026-07-09 | 90652.9300000 | 90652.9300000 | -
+2026-07-10 | 90652.9300000 | 90652.9300000 | -
+2026-07-13 | 90652.9300000 | 90652.9300000 | -
+2026-07-14 | 90652.9300000 | 90652.9300000 | -
+2026-07-15 | 90652.9300000 | 90652.9300000 | -
+2026-07-16 | 90652.9300000 | 90652.9300000 | -
+2026-07-17 | 90652.9300000 | 90652.9300000 | -
+2026-08-03 | 90652.9300000 | 90652.9300000 | -
+2026-08-04 | 90652.9300000 | 90652.9300000 | -
+2026-08-05 | 90652.9300000 | 90652.9300000 | -
+2026-08-06 | 90652.9300000 | 90652.9300000 | -
+2026-08-07 | 90652.9300000 | 90652.9300000 | -
+2026-08-10 | 90652.9300000 | 90652.9300000 | -
+2026-08-11 | 90652.9300000 | 90652.9300000 | -
+2026-08-12 | 90652.9300000 | 90652.9300000 | -
+2026-08-13 | 90652.9300000 | 90652.9300000 | -
+2026-08-14 | 90652.9300000 | 90652.9300000 | -
+2026-08-17 | 90652.9300000 | 90652.9300000 | -
+2026-08-18 | 90652.9300000 | 90652.9300000 | -
+2026-08-19 | 90652.9300000 | 90652.9300000 | -
+2026-08-20 | 90652.9300000 | 90652.9300000 | -
+2026-08-21 | 90652.9300000 | 90652.9300000 | -
+2026-08-24 | 90652.9300000 | 90652.9300000 | -
+2026-08-25 | 90652.9300000 | 90652.9300000 | -
+2026-08-26 | 90652.9300000 | 90652.9300000 | -
+2026-08-27 | 90652.9300000 | 90652.9300000 | -
+2026-08-28 | 90652.9300000 | 90652.9300000 | -
+2026-08-31 | 90652.9300000 | 90652.9300000 | -
+
+### Eventos del broker (dia | instante UTC | tipo | id | fuente)
+2026-01-02 | 2026-01-02T12:12:26.197000+00:00 | llenada | o7 | ticks
+2026-01-02 | 2026-01-02T12:13:04.894000+00:00 | stop | pos-o7 | ticks
+2026-01-02 | 2026-01-02T13:28:06.811000+00:00 | llenada | o9 | ticks
+2026-01-02 | 2026-01-02T13:32:23.559000+00:00 | stop_movido | pos-o9 | ticks
+2026-01-02 | 2026-01-02T13:58:59.999000+00:00 | manual | pos-o9 | ticks
+2026-01-05 | 2026-01-05T06:04:22.610000+00:00 | llenada | o3 | ticks
+2026-01-05 | 2026-01-05T06:04:49.907000+00:00 | objetivo | pos-o3 | ticks
+2026-01-05 | 2026-01-05T08:33:08.979000+00:00 | llenada | o16 | ticks
+2026-01-05 | 2026-01-05T08:34:59.655000+00:00 | objetivo | pos-o16 | ticks
+2026-01-05 | 2026-01-05T09:28:17.619000+00:00 | llenada | o18 | ticks
+2026-01-05 | 2026-01-05T09:32:14.249000+00:00 | objetivo | pos-o18 | ticks
+2026-01-05 | 2026-01-05T10:22:00+00:00 | llenada | o19 | respaldo_m1
+2026-01-05 | 2026-01-05T10:23:00+00:00 | stop | pos-o19 | respaldo_m1
+2026-01-05 | 2026-01-05T10:25:00+00:00 | llenada | o20 | respaldo_m1
+2026-01-05 | 2026-01-05T10:28:59.999000+00:00 | stop_movido | pos-o20 | respaldo_m1
+2026-01-05 | 2026-01-05T10:37:00+00:00 | stop | pos-o20 | respaldo_m1
+2026-01-05 | 2026-01-05T10:56:00+00:00 | llenada | o21 | respaldo_m1
+2026-01-05 | 2026-01-05T10:59:00+00:00 | stop | pos-o21 | respaldo_m1
+2026-01-06 | 2026-01-06T06:00:03.566000+00:00 | llenada | o1 | ticks
+2026-01-06 | 2026-01-06T06:02:41.273000+00:00 | stop_movido | pos-o1 | ticks
+2026-01-06 | 2026-01-06T06:29:31.802000+00:00 | objetivo | pos-o1 | ticks
+2026-01-06 | 2026-01-06T08:02:05.637000+00:00 | llenada | o9 | ticks
+2026-01-06 | 2026-01-06T08:05:05.606000+00:00 | stop_movido | pos-o9 | ticks
+2026-01-06 | 2026-01-06T08:15:26.994000+00:00 | objetivo | pos-o9 | ticks
+2026-01-06 | 2026-01-06T13:43:00.155000+00:00 | llenada | o20 | ticks
+2026-01-06 | 2026-01-06T13:43:02.255000+00:00 | stop | pos-o20 | ticks
+2026-01-06 | 2026-01-06T13:44:30.248000+00:00 | llenada | o21 | ticks
+2026-01-06 | 2026-01-06T13:48:10.125000+00:00 | objetivo | pos-o21 | ticks
+2026-01-07 | 2026-01-07T06:34:16.052000+00:00 | llenada | o2 | ticks
+2026-01-07 | 2026-01-07T06:36:59.882000+00:00 | stop | pos-o2 | ticks
+2026-01-07 | 2026-01-07T06:39:03.925000+00:00 | llenada | o4 | ticks
+2026-01-07 | 2026-01-07T06:39:42.451000+00:00 | stop | pos-o4 | ticks
+2026-01-07 | 2026-01-07T06:55:07.894000+00:00 | llenada | o9 | ticks
+2026-01-07 | 2026-01-07T06:56:38.788000+00:00 | stop | pos-o9 | ticks
+2026-01-07 | 2026-01-07T06:57:57.157000+00:00 | llenada | o10 | ticks
+2026-01-07 | 2026-01-07T07:00:10.609000+00:00 | stop_movido | pos-o10 | ticks
+2026-01-07 | 2026-01-07T07:00:11.040000+00:00 | stop | pos-o10 | ticks
+2026-01-07 | 2026-01-07T10:03:27.549000+00:00 | llenada | o11 | ticks
+2026-01-07 | 2026-01-07T10:08:19.925000+00:00 | stop | pos-o11 | ticks
+2026-01-07 | 2026-01-07T13:00:00.593000+00:00 | llenada | o18 | ticks
+2026-01-07 | 2026-01-07T13:00:05.753000+00:00 | stop | pos-o18 | ticks
+2026-01-08 | 2026-01-08T06:30:49.261000+00:00 | llenada | o2 | ticks
+2026-01-08 | 2026-01-08T06:33:01.193000+00:00 | stop_movido | pos-o2 | ticks
+2026-01-08 | 2026-01-08T06:33:01.251000+00:00 | stop | pos-o2 | ticks
+2026-01-08 | 2026-01-08T08:08:57.120000+00:00 | llenada | o8 | ticks
+2026-01-08 | 2026-01-08T08:15:49.860000+00:00 | stop | pos-o8 | ticks
+2026-01-09 | 2026-01-09T08:04:03.504000+00:00 | llenada | o3 | ticks
+2026-01-09 | 2026-01-09T08:06:33.005000+00:00 | stop_movido | pos-o3 | ticks
+2026-01-09 | 2026-01-09T08:55:06.837000+00:00 | stop | pos-o3 | ticks
+2026-01-09 | 2026-01-09T09:07:50.529000+00:00 | llenada | o7 | ticks
+2026-01-09 | 2026-01-09T09:11:19.132000+00:00 | stop | pos-o7 | ticks
+2026-01-09 | 2026-01-09T13:38:25.128000+00:00 | llenada | o13 | ticks
+2026-01-09 | 2026-01-09T13:43:51.222000+00:00 | stop | pos-o13 | ticks
+2026-01-12 | 2026-01-12T10:27:27.536000+00:00 | llenada | o5 | ticks
+2026-01-12 | 2026-01-12T10:37:03.964000+00:00 | stop_movido | pos-o5 | ticks
+2026-01-12 | 2026-01-12T10:52:07.850000+00:00 | objetivo | pos-o5 | ticks
+2026-01-12 | 2026-01-12T13:03:46.862000+00:00 | llenada | o8 | ticks
+2026-01-12 | 2026-01-12T13:16:04.601000+00:00 | stop_movido | pos-o8 | ticks
+2026-01-12 | 2026-01-12T13:16:29.488000+00:00 | objetivo | pos-o8 | ticks
+2026-01-13 | 2026-01-13T07:35:42.488000+00:00 | llenada | o3 | ticks
+2026-01-13 | 2026-01-13T07:35:57.150000+00:00 | stop | pos-o3 | ticks
+2026-01-13 | 2026-01-13T07:36:00.709000+00:00 | llenada | o4 | ticks
+2026-01-13 | 2026-01-13T07:39:45.939000+00:00 | stop | pos-o4 | ticks
+2026-01-13 | 2026-01-13T07:44:43.041000+00:00 | llenada | o5 | ticks
+2026-01-13 | 2026-01-13T07:46:47.755000+00:00 | stop | pos-o5 | ticks
+2026-01-13 | 2026-01-13T08:02:25.839000+00:00 | llenada | o7 | ticks
+2026-01-13 | 2026-01-13T08:04:26.835000+00:00 | stop | pos-o7 | ticks
+2026-01-13 | 2026-01-13T09:06:56.595000+00:00 | llenada | o12 | ticks
+2026-01-13 | 2026-01-13T09:18:02.035000+00:00 | stop_movido | pos-o12 | ticks
+2026-01-13 | 2026-01-13T09:26:11.413000+00:00 | stop | pos-o12 | ticks
+2026-01-13 | 2026-01-13T09:35:09.396000+00:00 | llenada | o15 | ticks
+2026-01-13 | 2026-01-13T09:35:09.607000+00:00 | stop | pos-o15 | ticks
+2026-01-13 | 2026-01-13T09:37:02.137000+00:00 | llenada | o17 | ticks
+2026-01-13 | 2026-01-13T09:40:14.500000+00:00 | stop_movido | pos-o17 | ticks
+2026-01-13 | 2026-01-13T09:51:06.211000+00:00 | stop | pos-o17 | ticks
+2026-01-13 | 2026-01-13T11:21:51.162000+00:00 | llenada | o18 | ticks
+2026-01-13 | 2026-01-13T11:25:28.231000+00:00 | stop_movido | pos-o18 | ticks
+2026-01-13 | 2026-01-13T11:49:11.008000+00:00 | stop | pos-o18 | ticks
+2026-01-13 | 2026-01-13T12:44:54.717000+00:00 | llenada | o22 | ticks
+2026-01-13 | 2026-01-13T12:46:44.577000+00:00 | stop | pos-o22 | ticks
+2026-01-14 | 2026-01-14T06:01:10.917000+00:00 | llenada | o2 | ticks
+2026-01-14 | 2026-01-14T06:01:27.139000+00:00 | stop | pos-o2 | ticks
+2026-01-14 | 2026-01-14T06:02:00.327000+00:00 | llenada | o3 | ticks
+2026-01-14 | 2026-01-14T06:02:04.216000+00:00 | stop | pos-o3 | ticks
+2026-01-14 | 2026-01-14T06:05:00.996000+00:00 | llenada | o5 | ticks
+2026-01-14 | 2026-01-14T06:05:01.417000+00:00 | stop | pos-o5 | ticks
+2026-01-15 | 2026-01-15T06:12:00.151000+00:00 | llenada | o2 | ticks
+2026-01-15 | 2026-01-15T06:17:00.019000+00:00 | stop_movido | pos-o2 | ticks
+2026-01-15 | 2026-01-15T06:43:14.866000+00:00 | objetivo | pos-o2 | ticks
+2026-01-15 | 2026-01-15T07:07:43.044000+00:00 | llenada | o4 | ticks
+2026-01-15 | 2026-01-15T07:11:36.437000+00:00 | stop_movido | pos-o4 | ticks
+2026-01-15 | 2026-01-15T08:25:36.159000+00:00 | stop | pos-o4 | ticks
+2026-01-15 | 2026-01-15T08:30:20.139000+00:00 | llenada | o7 | ticks
+2026-01-15 | 2026-01-15T08:37:12.813000+00:00 | stop | pos-o7 | ticks
+2026-01-15 | 2026-01-15T10:36:44.928000+00:00 | llenada | o14 | ticks
+2026-01-15 | 2026-01-15T10:45:12.954000+00:00 | stop_movido | pos-o14 | ticks
+2026-01-15 | 2026-01-15T10:45:21.081000+00:00 | stop | pos-o14 | ticks
+2026-01-16 | 2026-01-16T09:27:42.663000+00:00 | llenada | o7 | ticks
+2026-01-16 | 2026-01-16T09:34:26.161000+00:00 | stop_movido | pos-o7 | ticks
+2026-01-16 | 2026-01-16T09:36:27.077000+00:00 | stop | pos-o7 | ticks
+2026-01-16 | 2026-01-16T12:34:38.875000+00:00 | llenada | o15 | ticks
+2026-01-16 | 2026-01-16T12:34:51.483000+00:00 | stop | pos-o15 | ticks
+2026-01-16 | 2026-01-16T12:35:15.720000+00:00 | llenada | o16 | ticks
+2026-01-16 | 2026-01-16T12:38:15.595000+00:00 | stop_movido | pos-o16 | ticks
+2026-01-16 | 2026-01-16T12:46:39.863000+00:00 | objetivo | pos-o16 | ticks
+2026-01-16 | 2026-01-16T12:55:48.295000+00:00 | llenada | o17 | ticks
+2026-01-16 | 2026-01-16T13:02:12.238000+00:00 | stop_movido | pos-o17 | ticks
+2026-01-16 | 2026-01-16T13:09:56.990000+00:00 | stop | pos-o17 | ticks
+2026-01-19 | 2026-01-19T06:48:30.138000+00:00 | llenada | o3 | ticks
+2026-01-19 | 2026-01-19T06:50:11.247000+00:00 | stop_movido | pos-o3 | ticks
+2026-01-19 | 2026-01-19T06:55:12.145000+00:00 | objetivo | pos-o3 | ticks
+2026-01-19 | 2026-01-19T07:49:14.151000+00:00 | llenada | o5 | ticks
+2026-01-19 | 2026-01-19T07:57:19.539000+00:00 | stop_movido | pos-o5 | ticks
+2026-01-19 | 2026-01-19T07:57:31.296000+00:00 | stop | pos-o5 | ticks
+2026-01-19 | 2026-01-19T08:16:01.647000+00:00 | llenada | o9 | ticks
+2026-01-19 | 2026-01-19T08:20:14.490000+00:00 | stop_movido | pos-o9 | ticks
+2026-01-19 | 2026-01-19T08:22:31.628000+00:00 | stop | pos-o9 | ticks
+2026-01-19 | 2026-01-19T09:23:08.486000+00:00 | llenada | o15 | ticks
+2026-01-19 | 2026-01-19T09:23:36.974000+00:00 | stop | pos-o15 | ticks
+2026-01-19 | 2026-01-19T13:25:19.294000+00:00 | llenada | o32 | ticks
+2026-01-19 | 2026-01-19T13:30:36.569000+00:00 | stop | pos-o32 | ticks
+2026-01-20 | 2026-01-20T12:59:00.278000+00:00 | llenada | o6 | ticks
+2026-01-20 | 2026-01-20T12:59:49.402000+00:00 | stop | pos-o6 | ticks
+2026-01-20 | 2026-01-20T13:00:11.797000+00:00 | llenada | o7 | ticks
+2026-01-20 | 2026-01-20T13:05:28.579000+00:00 | stop | pos-o7 | ticks
+2026-01-20 | 2026-01-20T13:31:00.060000+00:00 | llenada | o13 | ticks
+2026-01-20 | 2026-01-20T13:33:40.455000+00:00 | stop | pos-o13 | ticks
+
+eventos: 127; por fuente: respaldo_m1 7, ticks 120
+rechazos del broker: 4
+huecos con nombre (primitivas sin contrato que se pidieron): ninguno
+
+### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD) | riesgo (% del saldo) | lote del riesgo | limite | punto | caja 1)
+2026-01-02 | 11-15 | o1 | 2026-01-02T12:02:59.999000+00:00 | 1.17206 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-02T12:03:59.999000+00:00 | 24.31 | 19 | 94994.57 | 100000.00 | 0.462 | 26.31 | margen | 117206@29455921 | 1.17229
+2026-01-02 | 11-15 | o2 | 2026-01-02T12:03:59.999000+00:00 | 1.17206 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-02T12:06:59.999000+00:00 | 19.23 | 26 | 75145.71 | 100000.00 | 0.500 | 19.23 | ninguno | 117206@29455921 | 1.17238
+2026-01-02 | 11-15 | o3 | 2026-01-02T12:06:59.999000+00:00 | 1.17206 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-02T12:07:59.999000+00:00 | 15.62 | 32 | 61045.56 | 100000.00 | 0.500 | 15.62 | ninguno | 117206@29455921 | 1.17245
+2026-01-02 | 11-15 | o4 | 2026-01-02T12:07:59.999000+00:00 | 1.17206 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-02T12:08:59.999000+00:00 | 15.62 | 32 | 61045.56 | 100000.00 | 0.500 | 15.62 | ninguno | 117206@29455921 | 1.17246
+2026-01-02 | 11-15 | o5 | 2026-01-02T12:08:59.999000+00:00 | 1.17206 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-02T12:10:59.999000+00:00 | 15.15 | 33 | 59208.72 | 100000.00 | 0.500 | 15.15 | ninguno | 117206@29455921 | 1.17247
+2026-01-02 | 11-15 | o6 | 2026-01-02T12:10:59.999000+00:00 | 1.17206 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-02T12:11:59.999000+00:00 | 14.70 | 34 | 57448.09 | 100000.00 | 0.500 | 14.70 | ninguno | 117206@29455921 | 1.17248
+2026-01-02 | 11-15 | o7 | 2026-01-02T12:11:59.999000+00:00 | 1.17237 | llenada | - | 2026-01-02T12:12:26.197000+00:00 | 24.30 | 9 | 94966.83 | 100000.00 | 0.219 | 55.55 | volumen+margen | 117237@29455931 | 1.17248
+2026-01-02 | 11-15 | o8 | 2026-01-02T12:13:59.999000+00:00 | 1.17233 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-02T12:15:59.999000+00:00 | 24.19 | 10 | 94536.94 | 99538.30 | 0.243 | 49.76 | margen | 117233@29455933 | 1.17245
+2026-01-02 | 11-15 | o9 | 2026-01-02T13:24:59.999000+00:00 | 1.17243 | llenada | - | 2026-01-02T13:28:06.811000+00:00 | 13.45 | 37 | 52583.67 | 99538.30 | 0.500 | 13.45 | ninguno | 117243@29456002 | 1.17289
+2026-01-05 | 07-11 | o1 | 2026-01-05T05:59:59.999000+00:00 | 1.16836 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:01:59.999000+00:00 | 24.31 | 17 | 94689.88 | 99686.25 | 0.415 | 29.31 | margen | 116836@29459879 | 1.16857
+2026-01-05 | 07-11 | o2 | 2026-01-05T06:01:59.999000+00:00 | 1.16843 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:03:59.999000+00:00 | 24.31 | 16 | 94695.55 | 99686.25 | 0.390 | 31.15 | margen | 116843@29459881 | 1.16862
+2026-01-05 | 07-11 | o3 | 2026-01-05T06:03:59.999000+00:00 | 1.16852 | llenada | - | 2026-01-05T06:04:22.610000+00:00 | 24.31 | 6 | 94693.12 | 99686.25 | 0.146 | 83.07 | volumen+margen | 116852@29459883 | 1.16859
+2026-01-05 | 07-11 | o4 | 2026-01-05T06:25:59.999000+00:00 | 1.16856 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:26:59.999000+00:00 | 24.37 | 10 | 94930.09 | 99929.35 | 0.244 | 49.96 | margen | 116856@29459904 | 1.16868
+2026-01-05 | 07-11 | o5 | 2026-01-05T06:26:59.999000+00:00 | 1.16855 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:27:59.999000+00:00 | 24.36 | 9 | 94894.38 | 99929.35 | 0.219 | 55.51 | volumen+margen | 116855@29459906 | 1.16866
+2026-01-05 | 07-11 | o6 | 2026-01-05T06:27:59.999000+00:00 | 1.16855 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:28:59.999000+00:00 | 24.36 | 14 | 94900.06 | 99929.35 | 0.341 | 35.68 | margen | 116855@29459906 | 1.16872
+2026-01-05 | 07-11 | o7 | 2026-01-05T06:28:59.999000+00:00 | 1.16855 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:32:59.999000+00:00 | 24.36 | 18 | 94900.88 | 99929.35 | 0.439 | 27.75 | margen | 116855@29459906 | 1.16877
+2026-01-05 | 07-11 | o8 | 2026-01-05T06:32:59.999000+00:00 | 1.16871 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:33:59.999000+00:00 | 24.36 | 11 | 94905.75 | 99929.35 | 0.268 | 45.42 | margen | 116871@29459912 | 1.16884
+2026-01-05 | 07-11 | o9 | 2026-01-05T06:33:59.999000+00:00 | 1.16871 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:34:59.999000+00:00 | 24.36 | 13 | 94911.43 | 99929.35 | 0.317 | 38.43 | margen | 116871@29459912 | 1.16887
+2026-01-05 | 07-11 | o10 | 2026-01-05T06:34:59.999000+00:00 | 1.16871 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T06:35:59.999000+00:00 | 23.79 | 21 | 92693.77 | 99929.35 | 0.500 | 23.79 | ninguno | 116871@29459912 | 1.16897
+2026-01-05 | 07-11 | o11 | 2026-01-05T06:35:59.999000+00:00 | 1.16871 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-05T06:38:59.999000+00:00 | 21.72 | 23 | 84634.15 | 99929.35 | 0.500 | 21.72 | ninguno | 116871@29459912 | 1.16899
+2026-01-05 | 07-11 | o12 | 2026-01-05T08:23:59.999000+00:00 | 1.16881 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T08:26:59.999000+00:00 | 11.61 | 43 | 45249.98 | 99929.35 | 0.500 | 11.61 | ninguno | 116881@29460022 | 1.16934
+2026-01-05 | 07-11 | o13 | 2026-01-05T08:26:59.999000+00:00 | 1.16881 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T08:27:59.999000+00:00 | 10.40 | 48 | 40536.77 | 99929.35 | 0.500 | 10.40 | ninguno | 116881@29460022 | 1.1694
+2026-01-05 | 07-11 | o14 | 2026-01-05T08:27:59.999000+00:00 | 1.16881 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T08:30:59.999000+00:00 | 9.60 | 52 | 37422.08 | 99929.35 | 0.500 | 9.60 | ninguno | 116881@29460022 | 1.16945
+2026-01-05 | 07-11 | o15 | 2026-01-05T08:30:59.999000+00:00 | 1.16881 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T08:32:59.999000+00:00 | 9.25 | 54 | 36055.58 | 99929.35 | 0.500 | 9.25 | ninguno | 116881@29460022 | 1.16948
+2026-01-05 | 07-11 | o16 | 2026-01-05T08:32:59.999000+00:00 | 1.16931 | llenada | - | 2026-01-05T08:33:08.979000+00:00 | 24.35 | 10 | 94917.11 | 99929.35 | 0.244 | 49.96 | margen | 116931@29460032 | 1.16943
+2026-01-05 | 07-11 | o17 | 2026-01-05T09:26:59.999000+00:00 | 1.16839 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-05T09:27:59.999000+00:00 | 17.95 | 28 | 69916.45 | 100562.45 | 0.500 | 17.95 | ninguno | 116839@29460085 | 1.16874
+2026-01-05 | 07-11 | o18 | 2026-01-05T09:27:59.999000+00:00 | 1.16852 | llenada | - | 2026-01-05T09:28:17.619000+00:00 | 24.52 | 12 | 95509.49 | 100562.45 | 0.293 | 41.90 | margen | 116852@29460087 | 1.16867
+2026-01-05 | 11-15 | o19 | 2026-01-05T10:19:59.999000+00:00 | 1.16856 | llenada | - | 2026-01-05T10:22:00+00:00 | 23.05 | 22 | 89805.10 | 101420.65 | 0.500 | 23.05 | ninguno | 116856@29460138 | 1.16883
+2026-01-05 | 11-15 | o20 | 2026-01-05T10:23:59.999000+00:00 | 1.16853 | llenada | - | 2026-01-05T10:25:00+00:00 | 24.55 | 17 | 95627.16 | 100683.05 | 0.415 | 29.61 | margen | 116853@29460142 | 1.16874
+2026-01-05 | 11-15 | o21 | 2026-01-05T10:54:59.999000+00:00 | 1.16877 | llenada | - | 2026-01-05T10:56:00+00:00 | 24.48 | 18 | 95385.50 | 100437.55 | 0.439 | 27.89 | margen | 116877@29460173 | 1.16899
+2026-01-05 | 11-15 | o22 | 2026-01-05T10:59:59.999000+00:00 | 1.16867 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T11:00:59.999000+00:00 | 19.18 | 26 | 74736.79 | 99752.11 | 0.500 | 19.18 | ninguno | 116867@29460178 | 1.16899
+2026-01-05 | 11-15 | o23 | 2026-01-05T11:00:59.999000+00:00 | 1.16867 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T11:01:59.999000+00:00 | 16.62 | 30 | 64757.06 | 99752.11 | 0.500 | 16.62 | ninguno | 116867@29460178 | 1.16904
+2026-01-05 | 11-15 | o24 | 2026-01-05T11:01:59.999000+00:00 | 1.16886 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-05T11:02:59.999000+00:00 | 24.32 | 15 | 94764.50 | 99752.11 | 0.366 | 33.25 | margen | 116886@29460181 | 1.16904
+2026-01-05 | 11-15 | o25 | 2026-01-05T11:02:59.999000+00:00 | 1.16886 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-05T11:03:59.999000+00:00 | 24.31 | 16 | 94732.83 | 99752.11 | 0.390 | 31.17 | margen | 116886@29460181 | 1.16906
+2026-01-06 | 07-11 | o1 | 2026-01-06T05:59:59.999000+00:00 | 1.17293 | llenada | - | 2026-01-06T06:00:03.566000+00:00 | 24.23 | 14 | 94732.03 | 99752.11 | 0.340 | 35.62 | margen | 117293@29461317 | 1.17276
+2026-01-06 | 07-11 | o2 | 2026-01-06T07:22:59.999000+00:00 | 1.17427 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-06T07:23:59.999000+00:00 | 6.29 | 80 | 24602.50 | 100648.62 | 0.500 | 6.29 | ninguno | 117427@29461389 | 1.17327
+2026-01-06 | 07-11 | o3 | 2026-01-06T07:23:59.999000+00:00 | 1.17338 | rechazada | precio_invalido | 2026-01-06T07:23:59.999000+00:00 | 24.44 | 9 | 95594.62 | 100648.62 | 0.219 | 55.91 | volumen+margen | 117338@29461403 | 1.17327
+2026-01-06 | 07-11 | o4 | 2026-01-06T07:53:59.999000+00:00 | 1.17352 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T07:55:59.999000+00:00 | 14.80 | 34 | 57875.89 | 100648.62 | 0.500 | 14.80 | ninguno | 117352@29461431 | 1.1731
+2026-01-06 | 07-11 | o5 | 2026-01-06T07:55:59.999000+00:00 | 1.17339 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T07:56:59.999000+00:00 | 14.80 | 34 | 57871.95 | 100648.62 | 0.500 | 14.80 | ninguno | 117339@29461435 | 1.17297
+2026-01-06 | 07-11 | o6 | 2026-01-06T07:56:59.999000+00:00 | 1.17339 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T07:57:59.999000+00:00 | 12.27 | 41 | 47974.47 | 100648.62 | 0.500 | 12.27 | ninguno | 117339@29461435 | 1.17288
+2026-01-06 | 07-11 | o7 | 2026-01-06T07:57:59.999000+00:00 | 1.17339 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T07:58:59.999000+00:00 | 7.86 | 64 | 30722.38 | 100648.62 | 0.500 | 7.86 | ninguno | 117339@29461435 | 1.17259
+2026-01-06 | 07-11 | o8 | 2026-01-06T07:58:59.999000+00:00 | 1.17339 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T08:01:59.999000+00:00 | 7.62 | 66 | 29788.10 | 100648.62 | 0.500 | 7.62 | ninguno | 117339@29461435 | 1.17257
+2026-01-06 | 07-11 | o9 | 2026-01-06T08:01:59.999000+00:00 | 1.17298 | llenada | - | 2026-01-06T08:02:05.637000+00:00 | 21.88 | 23 | 85545.69 | 100648.62 | 0.500 | 21.88 | ninguno | 117298@29461441 | 1.1727
+2026-01-06 | 07-11 | o10 | 2026-01-06T09:02:59.999000+00:00 | 1.17291 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T09:04:59.999000+00:00 | 10.87 | 47 | 42483.95 | 102267.74 | 0.500 | 10.87 | ninguno | 117291@29461501 | 1.17233
+2026-01-06 | 07-11 | o11 | 2026-01-06T09:04:59.999000+00:00 | 1.17291 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T09:05:59.999000+00:00 | 7.98 | 64 | 31178.66 | 102267.74 | 0.499 | 7.98 | ninguno | 117291@29461501 | 1.17211
+2026-01-06 | 07-11 | o12 | 2026-01-06T09:05:59.999000+00:00 | 1.17291 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T09:06:59.999000+00:00 | 7.86 | 65 | 30711.64 | 102267.74 | 0.500 | 7.86 | ninguno | 117291@29461501 | 1.1721
+2026-01-06 | 07-11 | o13 | 2026-01-06T09:06:59.999000+00:00 | 1.17232 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T09:07:59.999000+00:00 | 20.45 | 25 | 79898.15 | 102267.74 | 0.500 | 20.45 | ninguno | 117232@29461506 | 1.17201
+2026-01-06 | 07-11 | o14 | 2026-01-06T09:07:59.999000+00:00 | 1.17232 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T09:09:59.999000+00:00 | 17.04 | 30 | 66571.30 | 102267.74 | 0.500 | 17.04 | ninguno | 117232@29461506 | 1.17195
+2026-01-06 | 07-11 | o15 | 2026-01-06T09:09:59.999000+00:00 | 1.17222 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T09:11:59.999000+00:00 | 24.86 | 19 | 97136.31 | 102267.74 | 0.462 | 26.91 | margen | 117222@29461509 | 1.17199
+2026-01-06 | 07-11 | o16 | 2026-01-06T09:11:59.999000+00:00 | 1.17222 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-06T09:12:59.999000+00:00 | 24.86 | 20 | 97119.73 | 102267.74 | 0.486 | 25.56 | margen | 117222@29461509 | 1.17198
+2026-01-06 | 11-15 | o17 | 2026-01-06T13:35:59.999000+00:00 | 1.17073 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T13:36:59.999000+00:00 | 19.66 | 26 | 76741.50 | 102267.74 | 0.500 | 19.66 | ninguno | 117073@29461775 | 1.17105
+2026-01-06 | 11-15 | o18 | 2026-01-06T13:36:59.999000+00:00 | 1.17073 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T13:37:59.999000+00:00 | 10.65 | 48 | 41581.50 | 102267.74 | 0.500 | 10.65 | ninguno | 117073@29461775 | 1.17133
+2026-01-06 | 11-15 | o19 | 2026-01-06T13:37:59.999000+00:00 | 1.17073 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-06T13:42:59.999000+00:00 | 10.22 | 50 | 39896.50 | 102267.74 | 0.500 | 10.22 | ninguno | 117073@29461775 | 1.17135
+2026-01-06 | 11-15 | o20 | 2026-01-06T13:42:59.999000+00:00 | 1.17108 | llenada | - | 2026-01-06T13:43:00.155000+00:00 | 24.88 | 8 | 97123.23 | 102267.74 | 0.195 | 63.91 | volumen+margen | 117108@29461782 | 1.17118
+2026-01-06 | 11-15 | o21 | 2026-01-06T13:43:59.999000+00:00 | 1.17108 | llenada | - | 2026-01-06T13:44:30.248000+00:00 | 24.77 | 12 | 96699.60 | 101795.02 | 0.292 | 42.41 | margen | 117108@29461782 | 1.17122
+2026-01-07 | 07-11 | o1 | 2026-01-07T06:29:59.999000+00:00 | 1.1693 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T06:30:59.999000+00:00 | 24.99 | 19 | 97420.18 | 102587.66 | 0.463 | 26.99 | margen | 116930@29462786 | 1.16953
+2026-01-07 | 07-11 | o2 | 2026-01-07T06:30:59.999000+00:00 | 1.1693 | llenada | - | 2026-01-07T06:34:16.052000+00:00 | 23.31 | 22 | 90871.70 | 102587.66 | 0.500 | 23.31 | ninguno | 116930@29462786 | 1.16957
+2026-01-07 | 07-11 | o3 | 2026-01-07T06:36:59.999000+00:00 | 1.16935 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-07T06:38:59.999000+00:00 | 24.81 | 11 | 96714.34 | 101818.43 | 0.268 | 46.28 | margen | 116935@29462795 | 1.16948
+2026-01-07 | 07-11 | o4 | 2026-01-07T06:38:59.999000+00:00 | 1.16935 | llenada | - | 2026-01-07T06:39:03.925000+00:00 | 24.81 | 15 | 96706.90 | 101818.43 | 0.366 | 33.93 | margen | 116935@29462795 | 1.16953
+2026-01-07 | 07-11 | o5 | 2026-01-07T06:39:59.999000+00:00 | 1.16937 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T06:41:59.999000+00:00 | 24.66 | 13 | 96128.79 | 101198.18 | 0.317 | 38.92 | margen | 116937@29462799 | 1.16953
+2026-01-07 | 07-11 | o6 | 2026-01-07T06:41:59.999000+00:00 | 1.16937 | cancelada | reglas disparadas en ese cierre: RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-07T06:45:59.999000+00:00 | 24.66 | 17 | 96137.01 | 101198.18 | 0.414 | 29.76 | margen | 116937@29462799 | 1.16958
+2026-01-07 | 07-11 | o7 | 2026-01-07T06:51:59.999000+00:00 | 1.16942 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T06:52:59.999000+00:00 | 15.33 | 33 | 59777.80 | 101198.18 | 0.500 | 15.33 | ninguno | 116942@29462809 | 1.16983
+2026-01-07 | 07-11 | o8 | 2026-01-07T06:52:59.999000+00:00 | 1.16942 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T06:54:59.999000+00:00 | 11.76 | 43 | 45860.08 | 101198.18 | 0.500 | 11.76 | ninguno | 116942@29462809 | 1.16995
+2026-01-07 | 07-11 | o9 | 2026-01-07T06:54:59.999000+00:00 | 1.16976 | llenada | - | 2026-01-07T06:55:07.894000+00:00 | 24.65 | 12 | 96124.32 | 101198.18 | 0.292 | 42.16 | margen | 116976@29462814 | 1.16991
+2026-01-07 | 07-11 | o10 | 2026-01-07T06:56:59.999000+00:00 | 1.16976 | llenada | - | 2026-01-07T06:57:57.157000+00:00 | 24.52 | 12 | 95610.84 | 100655.88 | 0.292 | 41.93 | margen | 116976@29462814 | 1.16991
+2026-01-07 | 11-15 | o11 | 2026-01-07T10:02:59.999000+00:00 | 1.16851 | llenada | - | 2026-01-07T10:03:27.549000+00:00 | 15.21 | 33 | 59261.20 | 100410.68 | 0.500 | 15.21 | ninguno | 116851@29463002 | 1.16892
+2026-01-07 | 11-15 | o12 | 2026-01-07T10:08:59.999000+00:00 | 1.16847 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T10:09:59.999000+00:00 | 13.84 | 36 | 53924.33 | 99711.02 | 0.500 | 13.84 | ninguno | 116847@29463006 | 1.16891
+2026-01-07 | 11-15 | o13 | 2026-01-07T10:09:59.999000+00:00 | 1.16847 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T10:12:59.999000+00:00 | 13.84 | 36 | 53920.64 | 99711.02 | 0.500 | 13.84 | ninguno | 116847@29463006 | 1.16892
+2026-01-07 | 11-15 | o14 | 2026-01-07T10:12:59.999000+00:00 | 1.16867 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T10:13:59.999000+00:00 | 24.31 | 10 | 94709.33 | 99711.02 | 0.244 | 49.85 | margen | 116867@29463012 | 1.16879
+2026-01-07 | 11-15 | o15 | 2026-01-07T10:13:59.999000+00:00 | 1.16867 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T10:14:59.999000+00:00 | 24.31 | 18 | 94714.19 | 99711.02 | 0.439 | 27.69 | margen | 116867@29463012 | 1.16889
+2026-01-07 | 11-15 | o16 | 2026-01-07T10:14:59.999000+00:00 | 1.16867 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-07T10:16:59.999000+00:00 | 24.31 | 19 | 94713.38 | 99711.02 | 0.463 | 26.23 | margen | 116867@29463012 | 1.1689
+2026-01-07 | 11-15 | o17 | 2026-01-07T12:58:59.999000+00:00 | 1.16856 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T12:59:59.999000+00:00 | 24.31 | 20 | 94704.47 | 99711.02 | 0.488 | 24.92 | margen | 116856@29463175 | 1.1688
+2026-01-07 | 11-15 | o18 | 2026-01-07T12:59:59.999000+00:00 | 1.16871 | llenada | - | 2026-01-07T13:00:00.593000+00:00 | 24.31 | 6 | 94708.52 | 99711.02 | 0.146 | 83.09 | volumen+margen | 116871@29463179 | 1.16878
+2026-01-07 | 11-15 | o19 | 2026-01-07T13:00:59.999000+00:00 | 1.16871 | rechazada | precio_invalido | 2026-01-07T13:00:59.999000+00:00 | 24.22 | 6 | 94342.55 | 99322.06 | 0.146 | 82.76 | volumen+margen | 116871@29463179 | 1.16878
+2026-01-07 | 11-15 | o20 | 2026-01-07T13:01:59.999000+00:00 | 1.16852 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-07T13:02:59.999000+00:00 | 24.22 | 20 | 94349.01 | 99322.06 | 0.488 | 24.83 | margen | 116852@29463181 | 1.16876
+2026-01-07 | 11-15 | o21 | 2026-01-07T13:02:59.999000+00:00 | 1.16852 | cancelada | reglas disparadas en ese cierre: RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-07T13:03:59.999000+00:00 | 23.64 | 21 | 92097.50 | 99322.06 | 0.500 | 23.64 | ninguno | 116852@29463181 | 1.16878
+2026-01-07 | 11-15 | o22 | 2026-01-07T13:42:59.999000+00:00 | 1.16852 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T13:46:59.999000+00:00 | 7.52 | 66 | 29308.95 | 99322.06 | 0.500 | 7.52 | ninguno | 116852@29463220 | 1.16934
+2026-01-07 | 11-15 | o23 | 2026-01-07T13:46:59.999000+00:00 | 1.16904 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T13:47:59.999000+00:00 | 23.64 | 21 | 92140.84 | 99322.06 | 0.500 | 23.64 | ninguno | 116904@29463226 | 1.1693
+2026-01-07 | 11-15 | o24 | 2026-01-07T13:47:59.999000+00:00 | 1.16904 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T13:49:59.999000+00:00 | 17.73 | 28 | 69103.86 | 99322.06 | 0.500 | 17.73 | ninguno | 116904@29463226 | 1.16938
+2026-01-07 | 11-15 | o25 | 2026-01-07T13:49:59.999000+00:00 | 1.16914 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-07T13:51:59.999000+00:00 | 24.20 | 19 | 94324.34 | 99322.06 | 0.463 | 26.13 | margen | 116914@29463229 | 1.16937
+2026-01-07 | 11-15 | o26 | 2026-01-07T13:51:59.999000+00:00 | 1.16914 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-07T13:53:59.999000+00:00 | 19.10 | 26 | 74451.16 | 99322.06 | 0.500 | 19.10 | ninguno | 116914@29463229 | 1.16946
+2026-01-08 | 07-11 | o1 | 2026-01-08T06:27:59.999000+00:00 | 1.16792 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-08T06:28:59.999000+00:00 | 14.18 | 35 | 55186.67 | 99322.06 | 0.500 | 14.18 | ninguno | 116792@29464224 | 1.16749
+2026-01-08 | 07-11 | o2 | 2026-01-08T06:28:59.999000+00:00 | 1.16792 | llenada | - | 2026-01-08T06:30:49.261000+00:00 | 13.79 | 36 | 53669.30 | 99322.06 | 0.500 | 13.79 | ninguno | 116792@29464224 | 1.16747
+2026-01-08 | 07-11 | o3 | 2026-01-08T08:01:59.999000+00:00 | 1.16814 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-08T08:02:59.999000+00:00 | 11.02 | 45 | 42890.94 | 99184.16 | 0.500 | 11.02 | ninguno | 116814@29464317 | 1.16758
+2026-01-08 | 07-11 | o4 | 2026-01-08T08:02:59.999000+00:00 | 1.16814 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-08T08:03:59.999000+00:00 | 9.53 | 52 | 37088.54 | 99184.16 | 0.500 | 9.53 | ninguno | 116814@29464317 | 1.16749
+2026-01-08 | 07-11 | o5 | 2026-01-08T08:03:59.999000+00:00 | 1.16814 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-08T08:04:59.999000+00:00 | 9.35 | 53 | 36390.20 | 99184.16 | 0.500 | 9.35 | ninguno | 116814@29464317 | 1.16748
+2026-01-08 | 07-11 | o6 | 2026-01-08T08:04:59.999000+00:00 | 1.16757 | rechazada | precio_invalido | 2026-01-08T08:04:59.999000+00:00 | 24.20 | 8 | 94186.40 | 99184.16 | 0.195 | 61.99 | volumen+margen | 116757@29464324 | 1.16748
+2026-01-08 | 07-11 | o7 | 2026-01-08T08:06:59.999000+00:00 | 1.16767 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-08T08:07:59.999000+00:00 | 24.20 | 10 | 94186.40 | 99184.16 | 0.244 | 49.59 | margen | 116767@29464326 | 1.16755
+2026-01-08 | 07-11 | o8 | 2026-01-08T08:07:59.999000+00:00 | 1.16767 | llenada | - | 2026-01-08T08:08:57.120000+00:00 | 24.21 | 19 | 94221.28 | 99184.16 | 0.464 | 26.10 | margen | 116767@29464326 | 1.16744
+2026-01-09 | 07-11 | o1 | 2026-01-09T08:01:59.999000+00:00 | 1.16435 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-09T08:02:59.999000+00:00 | 6.65 | 74 | 25830.15 | 98433.65 | 0.500 | 6.65 | ninguno | 116435@29465756 | 1.16527
+2026-01-09 | 07-11 | o2 | 2026-01-09T08:02:59.999000+00:00 | 1.16435 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-09T08:03:59.999000+00:00 | 6.47 | 76 | 25121.07 | 98433.65 | 0.500 | 6.47 | ninguno | 116435@29465756 | 1.16529
+2026-01-09 | 07-11 | o3 | 2026-01-09T08:03:59.999000+00:00 | 1.16481 | llenada | - | 2026-01-09T08:04:03.504000+00:00 | 12.61 | 39 | 48961.27 | 98433.65 | 0.500 | 12.61 | ninguno | 116481@29465763 | 1.16529
+2026-01-09 | 07-11 | o4 | 2026-01-09T08:58:59.999000+00:00 | 1.16465 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-09T09:01:59.999000+00:00 | 18.90 | 26 | 73393.11 | 98307.55 | 0.500 | 18.90 | ninguno | 116465@29465816 | 1.16497
+2026-01-09 | 07-11 | o5 | 2026-01-09T09:01:59.999000+00:00 | 1.16479 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-09T09:03:59.999000+00:00 | 24.05 | 12 | 93383.74 | 98307.55 | 0.294 | 40.96 | margen | 116479@29465821 | 1.16493
+2026-01-09 | 07-11 | o6 | 2026-01-09T09:03:59.999000+00:00 | 1.16479 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-09T09:04:59.999000+00:00 | 24.05 | 13 | 93384.55 | 98307.55 | 0.318 | 37.81 | margen | 116479@29465821 | 1.16495
+2026-01-09 | 07-11 | o7 | 2026-01-09T09:04:59.999000+00:00 | 1.16485 | llenada | - | 2026-01-09T09:07:50.529000+00:00 | 24.05 | 12 | 93390.16 | 98307.55 | 0.294 | 40.96 | margen | 116485@29465824 | 1.165
+2026-01-09 | 11-15 | o8 | 2026-01-09T10:38:59.999000+00:00 | 1.16406 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-09T10:40:59.999000+00:00 | 15.27 | 32 | 59271.01 | 97754.40 | 0.500 | 15.27 | ninguno | 116406@29465914 | 1.16446
+2026-01-09 | 11-15 | o9 | 2026-01-09T10:40:59.999000+00:00 | 1.16406 | cancelada | reglas disparadas en ese cierre: RN-005, RN-006, RN-011, RN-015, RN-027 | 2026-01-09T10:42:59.999000+00:00 | 14.81 | 33 | 57483.04 | 97754.40 | 0.500 | 14.81 | ninguno | 116406@29465914 | 1.16447
+2026-01-09 | 11-15 | o10 | 2026-01-09T13:33:59.999000+00:00 | 1.16254 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-09T13:34:59.999000+00:00 | 2.00 | 244 | 7765.33 | 97754.40 | 0.499 | 2.00 | ninguno | 116254@29466091 | 1.16558
+2026-01-09 | 11-15 | o11 | 2026-01-09T13:34:59.999000+00:00 | 1.16467 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-09T13:35:59.999000+00:00 | 8.42 | 58 | 32701.32 | 97754.40 | 0.500 | 8.42 | ninguno | 116467@29466094 | 1.16539
+2026-01-09 | 11-15 | o12 | 2026-01-09T13:35:59.999000+00:00 | 1.16467 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-09T13:37:59.999000+00:00 | 4.79 | 102 | 18614.58 | 97754.40 | 0.500 | 4.79 | ninguno | 116467@29466094 | 1.16594
+2026-01-09 | 11-15 | o13 | 2026-01-09T13:37:59.999000+00:00 | 1.16534 | llenada | - | 2026-01-09T13:38:25.128000+00:00 | 8.72 | 56 | 33880.69 | 97754.40 | 0.500 | 8.72 | ninguno | 116534@29466097 | 1.16604
+2026-01-12 | 11-15 | o1 | 2026-01-12T10:19:59.999000+00:00 | 1.16848 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-12T10:20:59.999000+00:00 | 13.13 | 37 | 51121.66 | 97178.88 | 0.500 | 13.13 | ninguno | 116848@29470216 | 1.16802
+2026-01-12 | 11-15 | o2 | 2026-01-12T10:20:59.999000+00:00 | 1.16848 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-12T10:21:59.999000+00:00 | 9.71 | 50 | 37802.65 | 97178.88 | 0.500 | 9.71 | ninguno | 116848@29470216 | 1.16786
+2026-01-12 | 11-15 | o3 | 2026-01-12T10:21:59.999000+00:00 | 1.16848 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-12T10:22:59.999000+00:00 | 8.37 | 58 | 32581.34 | 97178.88 | 0.500 | 8.37 | ninguno | 116848@29470216 | 1.16776
+2026-01-12 | 11-15 | o4 | 2026-01-12T10:22:59.999000+00:00 | 1.16848 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-12T10:26:59.999000+00:00 | 6.74 | 72 | 26233.43 | 97178.88 | 0.499 | 6.74 | ninguno | 116848@29470216 | 1.16758
+2026-01-12 | 11-15 | o5 | 2026-01-12T10:26:59.999000+00:00 | 1.16783 | llenada | - | 2026-01-12T10:27:27.536000+00:00 | 23.71 | 12 | 92291.18 | 97178.88 | 0.293 | 40.49 | margen | 116783@29470226 | 1.16768
+2026-01-12 | 11-15 | o6 | 2026-01-12T12:54:59.999000+00:00 | 1.16842 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-12T13:00:59.999000+00:00 | 10.20 | 48 | 39707.24 | 97985.02 | 0.500 | 10.20 | ninguno | 116842@29470371 | 1.16783
+2026-01-12 | 11-15 | o7 | 2026-01-12T13:00:59.999000+00:00 | 1.16821 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-12T13:01:59.999000+00:00 | 23.90 | 20 | 93051.46 | 97985.02 | 0.488 | 24.49 | margen | 116821@29470380 | 1.16796
+2026-01-12 | 11-15 | o8 | 2026-01-12T13:01:59.999000+00:00 | 1.16821 | llenada | - | 2026-01-12T13:03:46.862000+00:00 | 13.99 | 35 | 54461.67 | 97985.02 | 0.500 | 13.99 | ninguno | 116821@29470380 | 1.16778
+2026-01-13 | 07-11 | o1 | 2026-01-13T07:32:59.999000+00:00 | 1.16609 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T07:33:59.999000+00:00 | 24.35 | 20 | 94663.06 | 99649.83 | 0.489 | 24.91 | margen | 116609@29471490 | 1.16634
+2026-01-13 | 07-11 | o2 | 2026-01-13T07:33:59.999000+00:00 | 1.16609 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T07:34:59.999000+00:00 | 23.72 | 21 | 92211.50 | 99649.83 | 0.500 | 23.72 | ninguno | 116609@29471490 | 1.16635
+2026-01-13 | 07-11 | o3 | 2026-01-13T07:34:59.999000+00:00 | 1.16624 | llenada | - | 2026-01-13T07:35:42.488000+00:00 | 24.35 | 9 | 94667.12 | 99649.83 | 0.220 | 55.36 | volumen+margen | 116624@29471494 | 1.16635
+2026-01-13 | 07-11 | o4 | 2026-01-13T07:35:59.999000+00:00 | 1.16624 | llenada | - | 2026-01-13T07:36:00.709000+00:00 | 24.23 | 9 | 94195.74 | 99187.18 | 0.220 | 55.10 | volumen+margen | 116624@29471494 | 1.16635
+2026-01-13 | 07-11 | o5 | 2026-01-13T07:39:59.999000+00:00 | 1.16598 | llenada | - | 2026-01-13T07:44:43.041000+00:00 | 16.44 | 30 | 63915.98 | 98654.12 | 0.500 | 16.44 | ninguno | 116598@29471498 | 1.16635
+2026-01-13 | 07-11 | o6 | 2026-01-13T07:58:59.999000+00:00 | 1.16606 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-13T08:01:59.999000+00:00 | 13.99 | 35 | 54396.85 | 97980.08 | 0.500 | 13.99 | ninguno | 116606@29471517 | 1.16649
+2026-01-13 | 07-11 | o7 | 2026-01-13T08:01:59.999000+00:00 | 1.16618 | llenada | - | 2026-01-13T08:02:25.839000+00:00 | 23.94 | 17 | 93069.94 | 97980.08 | 0.415 | 28.81 | margen | 116618@29471521 | 1.16639
+2026-01-13 | 07-11 | o8 | 2026-01-13T08:04:59.999000+00:00 | 1.16613 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T08:05:59.999000+00:00 | 23.76 | 20 | 92374.13 | 97261.88 | 0.489 | 24.31 | margen | 116613@29471523 | 1.16637
+2026-01-13 | 07-11 | o9 | 2026-01-13T08:05:59.999000+00:00 | 1.16613 | cancelada | reglas disparadas en ese cierre: RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-13T08:06:59.999000+00:00 | 22.10 | 22 | 85924.80 | 97261.88 | 0.500 | 22.10 | ninguno | 116613@29471523 | 1.1664
+2026-01-13 | 07-11 | o10 | 2026-01-13T09:00:59.999000+00:00 | 1.16666 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T09:03:59.999000+00:00 | 23.75 | 20 | 92371.67 | 97261.88 | 0.488 | 24.31 | margen | 116666@29471578 | 1.1669
+2026-01-13 | 07-11 | o11 | 2026-01-13T09:03:59.999000+00:00 | 1.16671 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T09:05:59.999000+00:00 | 19.45 | 25 | 75661.80 | 97261.88 | 0.500 | 19.45 | ninguno | 116671@29471583 | 1.16702
+2026-01-13 | 07-11 | o12 | 2026-01-13T09:05:59.999000+00:00 | 1.16683 | llenada | - | 2026-01-13T09:06:56.595000+00:00 | 23.75 | 14 | 92379.58 | 97261.88 | 0.342 | 34.73 | margen | 116683@29471585 | 1.167
+2026-01-13 | 07-11 | o13 | 2026-01-13T09:32:59.999000+00:00 | 1.16676 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T09:33:59.999000+00:00 | 15.64 | 31 | 60846.38 | 97024.38 | 0.500 | 15.64 | ninguno | 116676@29471610 | 1.16714
+2026-01-13 | 07-11 | o14 | 2026-01-13T09:33:59.999000+00:00 | 1.16676 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T09:34:59.999000+00:00 | 15.16 | 32 | 58977.45 | 97024.38 | 0.500 | 15.16 | ninguno | 116676@29471610 | 1.16715
+2026-01-13 | 07-11 | o15 | 2026-01-13T09:34:59.999000+00:00 | 1.16709 | llenada | - | 2026-01-13T09:35:09.396000+00:00 | 23.69 | 5 | 92162.00 | 97024.38 | 0.122 | 97.02 | volumen+margen | 116709@29471614 | 1.16715
+2026-01-13 | 07-11 | o16 | 2026-01-13T09:35:59.999000+00:00 | 1.16709 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T09:36:59.999000+00:00 | 23.59 | 8 | 91780.04 | 96621.65 | 0.195 | 60.38 | volumen+margen | 116709@29471614 | 1.16719
+2026-01-13 | 07-11 | o17 | 2026-01-13T09:36:59.999000+00:00 | 1.16709 | llenada | - | 2026-01-13T09:37:02.137000+00:00 | 23.59 | 14 | 91774.54 | 96621.65 | 0.342 | 34.50 | margen | 116709@29471614 | 1.16726
+2026-01-13 | 11-15 | o18 | 2026-01-13T11:19:59.999000+00:00 | 1.16664 | llenada | - | 2026-01-13T11:21:51.162000+00:00 | 23.53 | 15 | 91490.91 | 96338.57 | 0.366 | 32.11 | margen | 116664@29471717 | 1.16646
+2026-01-13 | 11-15 | o19 | 2026-01-13T12:39:59.999000+00:00 | 1.16652 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T12:40:59.999000+00:00 | 15.00 | 32 | 58310.00 | 96056.21 | 0.500 | 15.00 | ninguno | 116652@29471798 | 1.16613
+2026-01-13 | 11-15 | o20 | 2026-01-13T12:40:59.999000+00:00 | 1.16652 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T12:41:59.999000+00:00 | 12.00 | 40 | 46642.80 | 96056.21 | 0.500 | 12.00 | ninguno | 116652@29471798 | 1.16602
+2026-01-13 | 11-15 | o21 | 2026-01-13T12:41:59.999000+00:00 | 1.16652 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-13T12:42:59.999000+00:00 | 10.91 | 44 | 42407.17 | 96056.21 | 0.500 | 10.91 | ninguno | 116652@29471798 | 1.16598
+2026-01-13 | 11-15 | o22 | 2026-01-13T12:42:59.999000+00:00 | 1.16606 | llenada | - | 2026-01-13T12:44:54.717000+00:00 | 23.47 | 10 | 91221.63 | 96056.21 | 0.244 | 48.02 | margen | 116606@29471802 | 1.16594
+2026-01-14 | 07-11 | o1 | 2026-01-14T05:59:59.999000+00:00 | 1.16425 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-14T06:00:59.999000+00:00 | 23.38 | 8 | 90730.77 | 95539.87 | 0.196 | 59.71 | volumen+margen | 116425@29472837 | 1.16415
+2026-01-14 | 07-11 | o2 | 2026-01-14T06:00:59.999000+00:00 | 1.16419 | llenada | - | 2026-01-14T06:01:10.917000+00:00 | 23.38 | 4 | 90727.65 | 95539.87 | 0.098 | 119.42 | volumen+margen | 116419@29472840 | 1.16414
+2026-01-14 | 07-11 | o3 | 2026-01-14T06:01:59.999000+00:00 | 1.16419 | llenada | - | 2026-01-14T06:02:00.327000+00:00 | 23.30 | 4 | 90417.98 | 95189.17 | 0.098 | 118.98 | volumen+margen | 116419@29472840 | 1.16414
+2026-01-14 | 07-11 | o4 | 2026-01-14T06:02:59.999000+00:00 | 1.16416 | rechazada | precio_invalido | 2026-01-14T06:02:59.999000+00:00 | 23.21 | 3 | 90070.27 | 94839.67 | 0.073 | 158.06 | volumen+margen | 116416@29472842 | 1.16413
+2026-01-14 | 07-11 | o5 | 2026-01-14T06:04:59.999000+00:00 | 1.16428 | llenada | - | 2026-01-14T06:05:00.996000+00:00 | 23.21 | 5 | 90076.46 | 94839.67 | 0.122 | 94.83 | volumen+margen | 116428@29472844 | 1.16422
+2026-01-15 | 07-11 | o1 | 2026-01-15T06:09:59.999000+00:00 | 1.16368 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-15T06:10:59.999000+00:00 | 23.13 | 10 | 89728.21 | 94491.52 | 0.245 | 47.24 | margen | 116368@29474288 | 1.1638
+2026-01-15 | 07-11 | o2 | 2026-01-15T06:10:59.999000+00:00 | 1.16368 | llenada | - | 2026-01-15T06:12:00.151000+00:00 | 23.14 | 12 | 89763.92 | 94491.52 | 0.294 | 39.37 | margen | 116368@29474288 | 1.16383
+2026-01-15 | 07-11 | o3 | 2026-01-15T07:04:59.999000+00:00 | 1.16325 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-15T07:05:59.999000+00:00 | 14.43 | 33 | 55960.98 | 95278.28 | 0.500 | 14.43 | ninguno | 116325@29474340 | 1.16366
+2026-01-15 | 07-11 | o4 | 2026-01-15T07:05:59.999000+00:00 | 1.16335 | llenada | - | 2026-01-15T07:07:43.044000+00:00 | 22.68 | 21 | 87959.84 | 95278.28 | 0.500 | 22.68 | ninguno | 116335@29474345 | 1.16361
+2026-01-15 | 07-11 | o5 | 2026-01-15T08:25:59.999000+00:00 | 1.1632 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-15T08:26:59.999000+00:00 | 23.27 | 16 | 90239.51 | 95006.12 | 0.392 | 29.68 | margen | 116320@29474424 | 1.16339
+2026-01-15 | 07-11 | o6 | 2026-01-15T08:26:59.999000+00:00 | 1.1632 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-15T08:28:59.999000+00:00 | 23.27 | 20 | 90239.51 | 95006.12 | 0.490 | 23.75 | margen | 116320@29474424 | 1.16344
+2026-01-15 | 07-11 | o7 | 2026-01-15T08:28:59.999000+00:00 | 1.1632 | llenada | - | 2026-01-15T08:30:20.139000+00:00 | 19.79 | 24 | 76744.96 | 95006.12 | 0.500 | 19.79 | ninguno | 116320@29474424 | 1.16349
+2026-01-15 | 07-11 | o8 | 2026-01-15T09:37:59.999000+00:00 | 1.16312 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-15T09:40:59.999000+00:00 | 12.09 | 39 | 46892.68 | 94313.47 | 0.500 | 12.09 | ninguno | 116312@29474494 | 1.1636
+2026-01-15 | 07-11 | o9 | 2026-01-15T09:40:59.999000+00:00 | 1.16335 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-15T09:41:59.999000+00:00 | 23.10 | 19 | 89595.66 | 94313.47 | 0.465 | 24.81 | margen | 116335@29474500 | 1.16358
+2026-01-15 | 07-11 | o10 | 2026-01-15T09:41:59.999000+00:00 | 1.16335 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-15T09:42:59.999000+00:00 | 22.45 | 21 | 87068.58 | 94313.47 | 0.500 | 22.45 | ninguno | 116335@29474500 | 1.16361
+2026-01-15 | 07-11 | o11 | 2026-01-15T09:42:59.999000+00:00 | 1.1635 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-15T09:43:59.999000+00:00 | 23.09 | 12 | 89560.72 | 94313.47 | 0.294 | 39.29 | margen | 116350@29474502 | 1.16364
+2026-01-15 | 07-11 | o12 | 2026-01-15T09:43:59.999000+00:00 | 1.1635 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-15T09:45:59.999000+00:00 | 23.09 | 16 | 89564.57 | 94313.47 | 0.392 | 29.47 | margen | 116350@29474502 | 1.1637
+2026-01-15 | 11-15 | o13 | 2026-01-15T10:34:59.999000+00:00 | 1.16376 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-15T10:35:59.999000+00:00 | 20.50 | 23 | 79542.05 | 94313.47 | 0.500 | 20.50 | ninguno | 116376@29474553 | 1.16404
+2026-01-15 | 11-15 | o14 | 2026-01-15T10:35:59.999000+00:00 | 1.16376 | llenada | - | 2026-01-15T10:36:44.928000+00:00 | 17.46 | 27 | 67743.64 | 94313.47 | 0.500 | 17.46 | ninguno | 116376@29474553 | 1.16409
+2026-01-16 | 07-11 | o1 | 2026-01-16T07:00:59.999000+00:00 | 1.16042 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T07:01:59.999000+00:00 | 7.70 | 61 | 29803.62 | 94051.57 | 0.499 | 7.70 | ninguno | 116042@29475772 | 1.16118
+2026-01-16 | 07-11 | o2 | 2026-01-16T07:01:59.999000+00:00 | 1.16042 | cancelada | reglas disparadas en ese cierre: RN-005, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T07:04:59.999000+00:00 | 7.34 | 64 | 28407.51 | 94051.57 | 0.499 | 7.34 | ninguno | 116042@29475772 | 1.16121
+2026-01-16 | 07-11 | o3 | 2026-01-16T07:05:59.999000+00:00 | 1.1608 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T07:07:59.999000+00:00 | 23.08 | 16 | 89318.06 | 94051.57 | 0.393 | 29.39 | margen | 116080@29475784 | 1.161
+2026-01-16 | 07-11 | o4 | 2026-01-16T07:07:59.999000+00:00 | 1.16089 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-16T07:09:59.999000+00:00 | 23.08 | 18 | 89322.68 | 94051.57 | 0.442 | 26.12 | margen | 116089@29475787 | 1.16111
+2026-01-16 | 07-11 | o5 | 2026-01-16T09:22:59.999000+00:00 | 1.16114 | cancelada | reglas disparadas en ese cierre: RN-005, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T09:24:59.999000+00:00 | 18.08 | 26 | 69991.90 | 94051.57 | 0.500 | 18.08 | ninguno | 116114@29475920 | 1.16146
+2026-01-16 | 07-11 | o6 | 2026-01-16T09:25:59.999000+00:00 | 1.16132 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T09:26:59.999000+00:00 | 23.07 | 9 | 89313.97 | 94051.57 | 0.221 | 52.25 | volumen+margen | 116132@29475924 | 1.16143
+2026-01-16 | 07-11 | o7 | 2026-01-16T09:26:59.999000+00:00 | 1.16132 | llenada | - | 2026-01-16T09:27:42.663000+00:00 | 23.07 | 16 | 89313.20 | 94051.57 | 0.392 | 29.39 | margen | 116132@29475924 | 1.16151
+2026-01-16 | 11-15 | o8 | 2026-01-16T12:24:59.999000+00:00 | 1.16211 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T12:26:59.999000+00:00 | 19.54 | 24 | 75677.77 | 93820.87 | 0.500 | 19.54 | ninguno | 116211@29476101 | 1.16182
+2026-01-16 | 11-15 | o9 | 2026-01-16T12:26:59.999000+00:00 | 1.1619 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T12:27:59.999000+00:00 | 23.01 | 8 | 89115.43 | 93820.87 | 0.196 | 58.63 | volumen+margen | 116190@29476106 | 1.1618
+2026-01-16 | 11-15 | o10 | 2026-01-16T12:27:59.999000+00:00 | 1.1619 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T12:28:59.999000+00:00 | 23.01 | 16 | 89106.22 | 93820.87 | 0.392 | 29.31 | margen | 116190@29476106 | 1.16171
+2026-01-16 | 11-15 | o11 | 2026-01-16T12:28:59.999000+00:00 | 1.1619 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T12:29:59.999000+00:00 | 23.01 | 20 | 89100.86 | 93820.87 | 0.491 | 23.45 | margen | 116190@29476106 | 1.16165
+2026-01-16 | 11-15 | o12 | 2026-01-16T12:29:59.999000+00:00 | 1.1619 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T12:30:59.999000+00:00 | 22.33 | 21 | 86468.46 | 93820.87 | 0.500 | 22.33 | ninguno | 116190@29476106 | 1.16164
+2026-01-16 | 11-15 | o13 | 2026-01-16T12:30:59.999000+00:00 | 1.1619 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T12:32:59.999000+00:00 | 16.17 | 29 | 62610.78 | 93820.87 | 0.500 | 16.17 | ninguno | 116190@29476106 | 1.16154
+2026-01-16 | 11-15 | o14 | 2026-01-16T12:32:59.999000+00:00 | 1.1619 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-16T12:33:59.999000+00:00 | 15.13 | 31 | 58584.37 | 93820.87 | 0.500 | 15.13 | ninguno | 116190@29476106 | 1.16152
+2026-01-16 | 11-15 | o15 | 2026-01-16T12:33:59.999000+00:00 | 1.16161 | llenada | - | 2026-01-16T12:34:38.875000+00:00 | 23.01 | 8 | 89095.49 | 93820.87 | 0.196 | 58.63 | volumen+margen | 116161@29476113 | 1.16152
+2026-01-16 | 11-15 | o16 | 2026-01-16T12:34:59.999000+00:00 | 1.16161 | llenada | - | 2026-01-16T12:35:15.720000+00:00 | 22.91 | 8 | 88707.52 | 93406.69 | 0.196 | 58.37 | volumen+margen | 116161@29476113 | 1.16152
+2026-01-16 | 11-15 | o17 | 2026-01-16T12:54:59.999000+00:00 | 1.16169 | llenada | - | 2026-01-16T12:55:48.295000+00:00 | 17.35 | 27 | 67168.21 | 93727.43 | 0.500 | 17.35 | ninguno | 116169@29476132 | 1.16136
+2026-01-19 | 07-11 | o1 | 2026-01-19T06:44:59.999000+00:00 | 1.16296 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T06:45:59.999000+00:00 | 14.17 | 33 | 54914.42 | 93553.93 | 0.500 | 14.17 | ninguno | 116296@29480080 | 1.16255
+2026-01-19 | 07-11 | o2 | 2026-01-19T06:45:59.999000+00:00 | 1.16296 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T06:47:59.999000+00:00 | 11.99 | 39 | 46466.05 | 93553.93 | 0.500 | 11.99 | ninguno | 116296@29480080 | 1.16248
+2026-01-19 | 07-11 | o3 | 2026-01-19T06:47:59.999000+00:00 | 1.16266 | llenada | - | 2026-01-19T06:48:30.138000+00:00 | 22.93 | 7 | 88862.16 | 93553.93 | 0.172 | 66.82 | volumen+margen | 116266@29480087 | 1.16258
+2026-01-19 | 07-11 | o4 | 2026-01-19T07:46:59.999000+00:00 | 1.16276 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T07:47:59.999000+00:00 | 12.35 | 38 | 47857.07 | 93874.95 | 0.500 | 12.35 | ninguno | 116276@29480143 | 1.16229
+2026-01-19 | 07-11 | o5 | 2026-01-19T07:47:59.999000+00:00 | 1.16254 | llenada | - | 2026-01-19T07:49:14.151000+00:00 | 23.01 | 20 | 89155.31 | 93874.95 | 0.490 | 23.46 | margen | 116254@29480147 | 1.16229
+2026-01-19 | 07-11 | o6 | 2026-01-19T08:08:59.999000+00:00 | 1.16277 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T08:10:59.999000+00:00 | 7.31 | 64 | 28314.07 | 93621.84 | 0.500 | 7.31 | ninguno | 116277@29480165 | 1.16197
+2026-01-19 | 07-11 | o7 | 2026-01-19T08:10:59.999000+00:00 | 1.16277 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T08:12:59.999000+00:00 | 6.98 | 67 | 27040.99 | 93621.84 | 0.500 | 6.98 | ninguno | 116277@29480165 | 1.16194
+2026-01-19 | 07-11 | o8 | 2026-01-19T08:12:59.999000+00:00 | 1.16235 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T08:13:59.999000+00:00 | 22.29 | 21 | 86351.46 | 93621.84 | 0.500 | 22.29 | ninguno | 116235@29480172 | 1.16209
+2026-01-19 | 07-11 | o9 | 2026-01-19T08:13:59.999000+00:00 | 1.16235 | llenada | - | 2026-01-19T08:16:01.647000+00:00 | 19.50 | 24 | 75540.40 | 93621.84 | 0.500 | 19.50 | ninguno | 116235@29480172 | 1.16206
+2026-01-19 | 07-11 | o10 | 2026-01-19T09:15:59.999000+00:00 | 1.16269 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T09:16:59.999000+00:00 | 5.30 | 88 | 20521.95 | 93329.34 | 0.500 | 5.30 | ninguno | 116269@29480227 | 1.16159
+2026-01-19 | 07-11 | o11 | 2026-01-19T09:16:59.999000+00:00 | 1.16269 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T09:18:59.999000+00:00 | 5.07 | 92 | 19633.24 | 93329.34 | 0.500 | 5.07 | ninguno | 116269@29480227 | 1.16155
+2026-01-19 | 07-11 | o12 | 2026-01-19T09:18:59.999000+00:00 | 1.1618 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T09:19:59.999000+00:00 | 22.89 | 12 | 88642.29 | 93329.34 | 0.294 | 38.88 | margen | 116180@29480238 | 1.16165
+2026-01-19 | 07-11 | o13 | 2026-01-19T09:19:59.999000+00:00 | 1.1618 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T09:20:59.999000+00:00 | 22.89 | 16 | 88635.42 | 93329.34 | 0.392 | 29.16 | margen | 116180@29480238 | 1.1616
+2026-01-19 | 07-11 | o14 | 2026-01-19T09:20:59.999000+00:00 | 1.1618 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T09:22:59.999000+00:00 | 17.28 | 27 | 66904.70 | 93329.34 | 0.500 | 17.28 | ninguno | 116180@29480238 | 1.16147
+2026-01-19 | 07-11 | o15 | 2026-01-19T09:22:59.999000+00:00 | 1.16155 | llenada | - | 2026-01-19T09:23:08.486000+00:00 | 22.89 | 7 | 88624.74 | 93329.34 | 0.172 | 66.66 | volumen+margen | 116155@29480242 | 1.16147
+2026-01-19 | 07-11 | o16 | 2026-01-19T09:23:59.999000+00:00 | 1.16155 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T09:24:59.999000+00:00 | 22.79 | 11 | 88236.80 | 92917.32 | 0.270 | 42.23 | margen | 116155@29480242 | 1.16142
+2026-01-19 | 07-11 | o17 | 2026-01-19T09:24:59.999000+00:00 | 1.16155 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-19T09:25:59.999000+00:00 | 12.90 | 36 | 49930.31 | 92917.32 | 0.500 | 12.90 | ninguno | 116155@29480242 | 1.16111
+2026-01-19 | 11-15 | o18 | 2026-01-19T10:05:59.999000+00:00 | 1.16231 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T10:07:59.999000+00:00 | 13.66 | 34 | 52941.15 | 92917.32 | 0.500 | 13.66 | ninguno | 116231@29480284 | 1.16273
+2026-01-19 | 11-15 | o19 | 2026-01-19T10:07:59.999000+00:00 | 1.16231 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T10:09:59.999000+00:00 | 12.55 | 37 | 48640.04 | 92917.32 | 0.500 | 12.55 | ninguno | 116231@29480284 | 1.16277
+2026-01-19 | 11-15 | o20 | 2026-01-19T10:09:59.999000+00:00 | 1.16261 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T10:10:59.999000+00:00 | 22.77 | 11 | 88247.41 | 92917.32 | 0.270 | 42.23 | margen | 116261@29480289 | 1.16274
+2026-01-19 | 11-15 | o21 | 2026-01-19T10:10:59.999000+00:00 | 1.16261 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T10:11:59.999000+00:00 | 22.77 | 14 | 88255.00 | 92917.32 | 0.343 | 33.18 | margen | 116261@29480289 | 1.16278
+2026-01-19 | 11-15 | o22 | 2026-01-19T10:11:59.999000+00:00 | 1.16261 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T10:13:59.999000+00:00 | 22.77 | 15 | 88251.21 | 92917.32 | 0.368 | 30.97 | margen | 116261@29480289 | 1.16279
+2026-01-19 | 11-15 | o23 | 2026-01-19T10:13:59.999000+00:00 | 1.16267 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-19T10:14:59.999000+00:00 | 22.77 | 15 | 88259.56 | 92917.32 | 0.368 | 30.97 | margen | 116267@29480293 | 1.16285
+2026-01-19 | 11-15 | o24 | 2026-01-19T11:59:59.999000+00:00 | 1.1625 | cancelada | reglas disparadas en ese cierre: RN-005, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T12:02:59.999000+00:00 | 14.51 | 32 | 56239.31 | 92917.32 | 0.500 | 14.51 | ninguno | 116250@29480393 | 1.16289
+2026-01-19 | 11-15 | o25 | 2026-01-19T12:03:59.999000+00:00 | 1.16264 | cancelada | reglas disparadas en ese cierre: RN-006, RN-011, RN-015, RN-027 | 2026-01-19T12:05:59.999000+00:00 | 22.77 | 13 | 88251.97 | 92917.32 | 0.319 | 35.73 | margen | 116264@29480402 | 1.1628
+2026-01-19 | 11-15 | o26 | 2026-01-19T12:05:59.999000+00:00 | 1.16264 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T12:07:59.999000+00:00 | 22.77 | 20 | 88251.97 | 92917.32 | 0.490 | 23.22 | margen | 116264@29480402 | 1.16288
+2026-01-19 | 11-15 | o27 | 2026-01-19T12:07:59.999000+00:00 | 1.16265 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T12:08:59.999000+00:00 | 22.77 | 12 | 88255.76 | 92917.32 | 0.294 | 38.71 | margen | 116265@29480407 | 1.1628
+2026-01-19 | 11-15 | o28 | 2026-01-19T12:08:59.999000+00:00 | 1.16265 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T12:09:59.999000+00:00 | 22.77 | 18 | 88259.56 | 92917.32 | 0.441 | 25.81 | margen | 116265@29480407 | 1.16287
+2026-01-19 | 11-15 | o29 | 2026-01-19T12:09:59.999000+00:00 | 1.16265 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-19T12:10:59.999000+00:00 | 22.77 | 19 | 88261.83 | 92917.32 | 0.466 | 24.45 | margen | 116265@29480407 | 1.16288
+2026-01-19 | 11-15 | o30 | 2026-01-19T13:20:59.999000+00:00 | 1.16303 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T13:22:59.999000+00:00 | 16.59 | 28 | 64329.94 | 92917.32 | 0.500 | 16.59 | ninguno | 116303@29480478 | 1.16337
+2026-01-19 | 11-15 | o31 | 2026-01-19T13:22:59.999000+00:00 | 1.16323 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T13:23:59.999000+00:00 | 22.76 | 9 | 88258.73 | 92917.32 | 0.220 | 51.62 | volumen+margen | 116323@29480482 | 1.16334
+2026-01-19 | 11-15 | o32 | 2026-01-19T13:23:59.999000+00:00 | 1.16323 | llenada | - | 2026-01-19T13:25:19.294000+00:00 | 22.76 | 16 | 88262.52 | 92917.32 | 0.392 | 29.03 | margen | 116323@29480482 | 1.16342
+2026-01-19 | 11-15 | o33 | 2026-01-19T13:30:59.999000+00:00 | 1.16301 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-19T13:31:59.999000+00:00 | 15.38 | 30 | 59640.05 | 92325.56 | 0.500 | 15.38 | ninguno | 116301@29480488 | 1.16338
+2026-01-19 | 11-15 | o34 | 2026-01-19T13:31:59.999000+00:00 | 1.16301 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-009, RN-011, RN-015, RN-027 | 2026-01-19T13:33:59.999000+00:00 | 14.42 | 32 | 55920.28 | 92325.56 | 0.500 | 14.42 | ninguno | 116301@29480488 | 1.1634
+2026-01-20 | 11-15 | o1 | 2026-01-20T12:49:59.999000+00:00 | 1.17358 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T12:50:59.999000+00:00 | 9.61 | 48 | 37576.70 | 92325.56 | 0.500 | 9.61 | ninguno | 117358@29481888 | 1.17299
+2026-01-20 | 11-15 | o2 | 2026-01-20T12:50:59.999000+00:00 | 1.17358 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T12:51:59.999000+00:00 | 8.70 | 53 | 34016.13 | 92325.56 | 0.499 | 8.70 | ninguno | 117358@29481888 | 1.17292
+2026-01-20 | 11-15 | o3 | 2026-01-20T12:51:59.999000+00:00 | 1.17358 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T12:55:59.999000+00:00 | 7.10 | 65 | 27759.11 | 92325.56 | 0.500 | 7.10 | ninguno | 117358@29481888 | 1.17277
+2026-01-20 | 11-15 | o4 | 2026-01-20T12:55:59.999000+00:00 | 1.17308 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T12:56:59.999000+00:00 | 11.54 | 40 | 45109.86 | 92325.56 | 0.500 | 11.54 | ninguno | 117308@29481895 | 1.17259
+2026-01-20 | 11-15 | o5 | 2026-01-20T12:56:59.999000+00:00 | 1.17308 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T12:58:59.999000+00:00 | 10.73 | 43 | 41939.99 | 92325.56 | 0.500 | 10.73 | ninguno | 117308@29481895 | 1.17255
+2026-01-20 | 11-15 | o6 | 2026-01-20T12:58:59.999000+00:00 | 1.17271 | llenada | - | 2026-01-20T12:59:00.278000+00:00 | 22.43 | 13 | 87679.62 | 92325.56 | 0.316 | 35.50 | margen | 117271@29481898 | 1.17255
+2026-01-20 | 11-15 | o7 | 2026-01-20T12:59:59.999000+00:00 | 1.17271 | llenada | - | 2026-01-20T13:00:11.797000+00:00 | 22.30 | 13 | 87165.50 | 91764.81 | 0.316 | 35.29 | margen | 117271@29481898 | 1.17255
+2026-01-20 | 11-15 | o8 | 2026-01-20T13:23:59.999000+00:00 | 1.17331 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T13:25:59.999000+00:00 | 4.65 | 98 | 18168.79 | 91229.61 | 0.500 | 4.65 | ninguno | 117331@29481918 | 1.17209
+2026-01-20 | 11-15 | o9 | 2026-01-20T13:25:59.999000+00:00 | 1.17331 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T13:26:59.999000+00:00 | 4.60 | 99 | 17974.04 | 91229.61 | 0.499 | 4.60 | ninguno | 117331@29481918 | 1.17208
+2026-01-20 | 11-15 | o10 | 2026-01-20T13:26:59.999000+00:00 | 1.17228 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T13:27:59.999000+00:00 | 21.72 | 21 | 84860.04 | 91229.61 | 0.500 | 21.72 | ninguno | 117228@29481926 | 1.17202
+2026-01-20 | 11-15 | o11 | 2026-01-20T13:27:59.999000+00:00 | 1.17228 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T13:28:59.999000+00:00 | 19.00 | 24 | 74231.10 | 91229.61 | 0.500 | 19.00 | ninguno | 117228@29481926 | 1.17199
+2026-01-20 | 11-15 | o12 | 2026-01-20T13:28:59.999000+00:00 | 1.17228 | cancelada | reglas disparadas en ese cierre: RN-004, RN-006, RN-011, RN-015, RN-027 | 2026-01-20T13:30:59.999000+00:00 | 12.67 | 36 | 49497.89 | 91229.61 | 0.500 | 12.67 | ninguno | 117228@29481926 | 1.17184
+2026-01-20 | 11-15 | o13 | 2026-01-20T13:30:59.999000+00:00 | 1.17217 | llenada | - | 2026-01-20T13:31:00.060000+00:00 | 22.18 | 16 | 86661.70 | 91229.61 | 0.389 | 28.50 | margen | 117217@29481930 | 1.17198
+ordenes: cancelada 158, llenada 53, rechazada 4
+
+### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del riesgo)
+ninguna
+no enviadas: 0
+
+### Rechazos por motivo (mes | motivo | peticion | rechazos)
+2026-01 | precio_invalido | colocar | 4
+
+### Peticiones al servidor (R13; dia de la firma en Europe/Prague)
+LECTURA: colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, emitidas por el bot; solo se mide, nada frena
+dia | total | colocar | modificar | cancelar | cerrar | rechazadas
+2026-01-02 | 18 | 9 | 1 | 7 | 1 | 0
+2026-01-05 | 45 | 25 | 1 | 19 | 0 | 0
+2026-01-06 | 39 | 21 | 2 | 16 | 0 | 1
+2026-01-07 | 46 | 26 | 1 | 19 | 0 | 1
+2026-01-08 | 14 | 8 | 1 | 5 | 0 | 1
+2026-01-09 | 24 | 13 | 1 | 10 | 0 | 0
+2026-01-12 | 16 | 8 | 2 | 6 | 0 | 0
+2026-01-13 | 38 | 22 | 3 | 13 | 0 | 0
+2026-01-14 | 6 | 5 | 0 | 1 | 0 | 1
+2026-01-15 | 27 | 14 | 3 | 10 | 0 | 0
+2026-01-16 | 33 | 17 | 3 | 13 | 0 | 0
+2026-01-19 | 66 | 34 | 3 | 29 | 0 | 0
+2026-01-20 | 23 | 13 | 0 | 10 | 0 | 0
+2026-01-21 | 0 | 0 | 0 | 0 | 0 | 0
+2026-01-22 | 0 | 0 | 0 | 0 | 0 | 0
+2026-01-23 | 0 | 0 | 0 | 0 | 0 | 0
+2026-01-26 | 0 | 0 | 0 | 0 | 0 | 0
+2026-01-27 | 0 | 0 | 0 | 0 | 0 | 0
+2026-01-28 | 0 | 0 | 0 | 0 | 0 | 0
+2026-01-29 | 0 | 0 | 0 | 0 | 0 | 0
+2026-01-30 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-01 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-02 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-03 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-06 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-07 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-08 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-09 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-10 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-13 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-14 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-15 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-16 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-17 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-20 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-21 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-22 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-23 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-24 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-27 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-28 | 0 | 0 | 0 | 0 | 0 | 0
+2026-04-29 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-01 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-02 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-03 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-06 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-07 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-08 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-09 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-10 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-13 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-14 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-15 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-16 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07-17 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-03 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-04 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-05 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-06 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-07 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-10 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-11 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-12 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-13 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-14 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-17 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-18 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-19 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-20 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-21 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-24 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-25 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-26 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-27 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-28 | 0 | 0 | 0 | 0 | 0 | 0
+2026-08-31 | 0 | 0 | 0 | 0 | 0 | 0
+maximo diario: 66 (2026-01-19); firma_mensajes_dia_max: 2000
+
+### El freno de peticiones (ADR-0067)
+umbrales: aviso 1000, corte 1500, bucle 5 iguales en 1 min
+ningun aviso ni ninguna peticion negada
+
+### Los cierres de mercado (ADR-0068)
+calendario: cubre 2025-12-04 05:00 a 2026-10-08 04:00 UTC, 228 cierres; margen 120 min, minimo 120 min; pendientes: se cancelan
+ninguna peticion negada ni ninguna pendiente cancelada
