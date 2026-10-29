@@ -195,7 +195,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   D1 hasta la pregunta 3 de la sesión 5 (R4.1).
 
 ### R3.5 · El respaldo M1 no llena con la vela que colocó la orden
-- **Refs:** NA:Z · ID:ADR-0051
+- **Refs:** ID:ADR-0051
 - **Qué es:** en todo minuto sin ticks (el borde de la ventana y las horas perdidas) el bróker
   simulado llena una orden con la vela M1 cuyo cierre la colocó, con precios anteriores a la
   orden, contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8: 2 llenadas en la corrida que
@@ -205,6 +205,44 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** un test que llena con la vela que colocó la orden rompe en `main` y pasa en
   la rama, y las dos corridas de `trabajo/recorrida-construccion` están repetidas en la suya.
+- **Estado:** HECHA (`trabajo/respaldo-m1`, `stable/F38j-respaldo-m1`; RESPALDO-M1.md): una vela del
+  respaldo solo evalúa lo decidido antes de que empezara (ADR-0051 §5, NOTA); 8 tests rompen en
+  `main` y pasan en la rama; las dos corridas repetidas dan cero eventos con la vela de su
+  decisión, y la que cuenta sigue en «no».
+
+### R3.6 · El respaldo M1 sella en el cierre, después de que el motor decida
+- **Refs:** NA:H · ID:ADR-0051 · ID:ADR-0057
+- **Qué es:** el evento de una vela del respaldo se sella en su cierre, un milisegundo después
+  de que el motor decida: la vela no se evalúa para lo que vivía en ella cuando el motor actúa
+  en su cierre, y `_peor_del_minuto` marca entera la vela siguiente al avanzar hasta un instante
+  redondo (RESPALDO-M1.md §0.a y §0.l). Rama propia con un ADR que enmiende ADR-0051 §5 y
+  ADR-0057 §1.
+- **Depende de:** R3.5.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el ADR está aceptado, un test que rompe en `main` pasa en la rama y las dos
+  corridas están repetidas.
+
+### R3.7 · Método: rentabilidad como puerta, fidelidad por criterios y los sesgos de la cifra
+- **Refs:** NA:R · ID:ADR-0043 · ID:ADR-0070 · ID:A-16 · F:F27
+- **Qué es:** Decisión de Aleks del 2026-10-29. La fidelidad se mide por CRITERIOS (la misma
+  liquidez de M15, la misma caja, el mismo punto y la misma entrada, pieza a pieza) además de por
+  operación entera, y la RENTABILIDAD pasa a ser la puerta para operar en vivo, con su criterio
+  pre-registrado: esperanza después de comisión y deslizamiento, drawdown dentro de los límites
+  de FTMO, diario y total, medida una sola vez sobre meses que el bot no ha visto. La fidelidad
+  sigue siendo la herramienta de construcción. Una rama de método con su ADR, que enmienda
+  ADR-0043 y ADR-0070 y declara lo ya visto (las corridas de RECORRIDA-CONSTRUCCION y
+  RESPALDO-M1); su fase 0 revisa también la NOTA de MASTER_PLAN §0 (F26 antes de todo lo que
+  opera en vivo) y F35. Y una medida de los sesgos de la cifra: (1) Oanda frente a Dukascopy
+  contra la tolerancia de 3 puntos (A-16, adelantada desde F26: R5.1 lo dice); (2) el camino de
+  la cuenta: la corrida que cuenta no puntúa ninguna operación del bot en abril, julio ni agosto
+  porque RN-032 congela la cuenta desde el 2026-01-20 (RESPALDO-M1.md §4.5); (3) el material
+  sin vídeo, donde el trader se saltaba las sesiones que iban a break even (S-14 de la sesión
+  5); (4) las tolerancias de entrada e instante. Los umbrales los fija el consultor en la PARADA
+  de esa rama, antes de ver ninguna corrida nueva.
+- **Depende de:** la activación de la sesión 6 (R4.2).
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el ADR está aceptado con los umbrales pre-registrados y la medida de los
+  cuatro sesgos tiene su informe.
 
 ## R4 · La sesión 5 con el trader y su activación
 
@@ -264,7 +302,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   A-35; de las 34 sesiones de S-14 salen las 3 marcadas E y la del 1 de abril (quedan 30; se
   enseñan 6, con 2 de reserva). Hoja de preguntas: docs/sesion-6/PREGUNTAS.md
   (trabajo/barrido-sesion-6); los gráficos de S-14, con `scripts/graficos_sesion.py`, fuera del
-  repo.
+  repo. Los gráficos de S-14 siguen valiendo con el bróker corregido (RESPALDO-M1.md §4.3).
 - **Depende de:** nada (la re-corrida está hecha, R4.1).
 - **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 6 está ingerida y activada.
@@ -276,7 +314,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** rellenar PREREGISTRO.md (métrica, umbral, partición, autorización); arreglar que una
   pregunta abre N particiones (rama de código en la puerta); decidir qué conjunto es el universo
   (los dos días de la sesión 1 sin partición); A-56 medida, o declarada conocida, para puntuar el
-  objetivo; A-16 (Oanda frente a Dukascopy); y, al elegir los libros que miden, que en los
+  objetivo; A-16 (Oanda frente a Dukascopy), que se mide antes, en R3.7; y, al elegir los
+  libros que miden, que en los
   backtests sin vídeo faltan las sesiones que el trader se saltó por ir a break even (S-14,
   sesión 5; ACTIVAR-SESION-05.md §0.b.7).
 - **Depende de:** la decisión del consultor sobre cuántos días reservados necesita F26.
@@ -288,7 +327,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
 - **Depende de:** la corrida que cuenta (R4.1; ADR-0070 §3) con un "sí", y el ADR propio de la
-  rama de medida (ADR-0070 §6); y NA:Z, el respaldo M1 corregido (R3.5).
+  rama de medida (ADR-0070 §6); NA:H, el sello del respaldo M1 (R3.6); y NA:R, el
+  método (R3.7).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la medida de mayo está en su informe.
 
@@ -389,7 +429,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   según `lote_si_no_cabe` (las dos opciones, con el valor que deje A-57); y el rechazo por margen.
   Con la ejecución 3 de la demo, que mide cuándo comprueba MT5 el margen de una pendiente stop
   (A.1).
-- **Depende de:** R6a.2, R6a.3 y la ejecución 3 de la demo.
+- **Depende de:** R6a.2, R6a.3, el script 1.2 de MedirDemoFTMO y la ejecución 3 de la demo.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el límite portado pasa los mismos casos que sus tests de Python.
 
@@ -434,7 +474,11 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** las ejecuciones 2 y 3 de MedirDemoFTMO (A-28, el nivel exacto de ADR-0057, los
   deslizamientos y los swaps); el BE de una venta que salta por el ASK
   (NA:M); y, del heredado 10, lo que queda: A-28 y el grabador de spread y ticks (F17, PARCIAL).
-- **Depende de:** la prueba nueva de FTMO del 26 de octubre (fechas fijas).
+  La ejecución 2 está hecha (2026-10-29, script 1.1): desfase del servidor 180 minutos; comisión
+  2,50 por lado con 1,00 lote; margen 3720,77 con el ask de la apertura, que cuadra con
+  FTMO-P-D1 §3. Falta un script 1.2 para el instante en que MT5 comprueba el margen de una
+  pendiente stop (ADR-0081 §4).
+- **Depende de:** la prueba nueva de FTMO del 2026-10-29.
 - **Quién:** Aleks ejecuta; los dos CSV los congela una sola rama, tras la ejecución 3, que es la
   que decide A-28 con los dos (EA-CONEXION.md, D6).
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
@@ -605,8 +649,8 @@ sus ambigüedades, sin revisar cada informe a fondo.
 
 ## Fechas fijas
 
-- La prueba gratuita de FTMO del 2026-10-08 vence hacia el 2026-10-22 (NA:A).
-- La ejecución 2 de la demo, entre el 26 y el 30 de octubre de 2026, en una prueba creada el 26; la
-  ejecución 3, después del 1 de noviembre (NA:A).
+- La ejecución 2, hecha el 2026-10-29 en la prueba creada ese día; la 3, del 2 al 6 de noviembre de
+  2026 (NA:A).
+- La sesión 6 con el trader, el martes 3 de noviembre de 2026 (NA:F).
 - La semana del 26 al 30 de octubre de 2026 es la primera en que el bot abre a otra hora: Europa ya
   cambió la hora y EE. UU. no (ADR-0069).

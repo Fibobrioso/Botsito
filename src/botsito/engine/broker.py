@@ -70,6 +70,7 @@ from botsito.engine.cuenta import Cargo, Marca, Operacion
 from botsito.engine.freno import Corte, FrenoPeticiones, LimitesFreno
 from botsito.engine.llenado import (
     RESPALDO_M1,
+    STOP,
     TICKS,
     TIPO_LIMITE,
     TIPO_STOP,
@@ -233,6 +234,9 @@ class Orden:
     ultimo_cambio_ms: int = 0
     historial: list[tuple[int, str]] = field(default_factory=list)  # (instante, estado)
     tipo: str = TIPO_LIMITE  # TIPO_LIMITE o TIPO_STOP
+    # la version antes de la ultima modificacion (instante en que se decidio, precio, stop,
+    # objetivo): el respaldo M1 evalua con ella la vela en que se modifico (ADR-0051 §5, NOTA)
+    anterior: tuple[int, int, int, int] | None = None
 
 
 @dataclass
@@ -253,6 +257,9 @@ class Posicion:
     ultimo_precio: int = 0
     stop_original: int | None = None  # el stop con el que nacio, si se movio despues
     stop_movido_ms: int | None = None  # el ultimo cambio de stop: el nuevo cuenta DESPUES
+    # el stop antes del ultimo cambio y desde cuando valia: el respaldo M1 evalua con el la vela en
+    # cuyo cierre se movio (ADR-0065 §4; ADR-0051 §5, NOTA)
+    stop_anterior: tuple[int, int] | None = None
     # el break even vigilado al tick (ADR-0065): el nivel que el BID tiene que pasar y desde cuando
     break_even_nivel: int | None = None
     break_even_desde_ms: int = 0
@@ -299,6 +306,12 @@ class Traza:
         for _, _, _, fuente in self.eventos:
             salida[fuente] = salida.get(fuente, 0) + 1
         return salida
+
+
+def _de_la_version_anterior(evento: Evento, cambio_ms: int) -> bool:
+    """Si un evento del respaldo salio de una vela que empezo antes del ultimo cambio del objeto: la
+    evaluo su version anterior (`llenado._nivel_de_la_vela`)."""
+    return evento.fuente == RESPALDO_M1 and int(evento.minuto) * MS_POR_MINUTO < cambio_ms
 
 
 def _instante(ms: int) -> datetime:
@@ -578,6 +591,7 @@ class Broker:
             self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, id, False))
             return r
         self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, id, True))
+        orden.anterior = (orden.ultimo_cambio_ms, orden.precio, orden.stop, orden.objetivo)
         orden.precio = nuevo_precio
         orden.stop = nuevo_stop
         orden.objetivo = nuevo_objetivo
@@ -698,6 +712,8 @@ class Broker:
         self._peticiones.append(Peticion(instante_ms, PETICION_MODIFICAR, p.id, True))
         if p.stop_original is None:
             p.stop_original = p.stop
+        vigente_desde = p.abierta_ms if p.stop_movido_ms is None else p.stop_movido_ms
+        p.stop_anterior = (vigente_desde, p.stop)
         p.stop = stop
         p.stop_movido_ms = instante_ms
         p.break_even_nivel = None
@@ -741,7 +757,9 @@ class Broker:
                 candidatos.append((ventana, o.id, CANCELADA, o.id, None))
             tope = hasta_ms if o.expira_ms is None else min(hasta_ms, o.expira_ms)
             # el tick en el que se coloco o modifico no cuenta (exclusivo); el tick del ultimo
-            # evento procesado SI puede llenar otra orden pendiente (por eso ahora - 1)
+            # evento procesado SI puede llenar otra orden pendiente (por eso ahora - 1). Con el
+            # respaldo, la vela cuenta si empezo despues de colocarla o modificarla, y la vela de
+            # la modificacion, con la version anterior (ADR-0051 §5, NOTA del 2026-10-29)
             llenado = primer_llenado_stop if o.tipo == TIPO_STOP else primer_llenado_limite
             ev = llenado(
                 o.lado,
@@ -750,6 +768,8 @@ class Broker:
                 tope,
                 self.mercado,
                 self.config,
+                o.ultimo_cambio_ms,
+                o.anterior[:2] if o.anterior is not None else None,
             )
             if ev is not None:
                 candidatos.append((ev.instante_ms, o.id, LLENADA, o.id, ev))
@@ -761,8 +781,18 @@ class Broker:
             # el stop movido cuenta desde el tick SIGUIENTE al que lo movio (ADR-0065 §3), como
             # cualquier evento del modelo: nunca contra el tick en el que se decidio
             desde = max(self.ahora_ms - 1, p.abierta_ms, p.stop_movido_ms or 0)
+            # con el respaldo, la vela del stop movido se evalua con el anterior (ADR-0065 §4)
+            decidido = p.abierta_ms if p.stop_movido_ms is None else p.stop_movido_ms
             ev = primera_salida(
-                p.lado, p.stop, p.objetivo, desde, hasta_ms, self.mercado, self.config
+                p.lado,
+                p.stop,
+                p.objetivo,
+                desde,
+                hasta_ms,
+                self.mercado,
+                self.config,
+                decidido,
+                p.stop_anterior,
             )
             if ev is not None:
                 candidatos.append((ev.instante_ms, p.id, ev.tipo, p.id, ev))
@@ -813,6 +843,10 @@ class Broker:
             return
         if tipo == LLENADA:
             o = self.ordenes[objeto]
+            if o.anterior is not None and _de_la_version_anterior(evento, o.ultimo_cambio_ms):
+                # la vela que la lleno empezo antes de la modificacion: se lleno la orden de antes,
+                # con su stop y su objetivo, y la modificacion no llego a tener efecto
+                _, o.precio, o.stop, o.objetivo = o.anterior
             if self.reglas.apalancamiento is not None:
                 # ADR-0081 §4: al llenar, el margen al precio del llenado contra el margen libre de
                 # ESTE instante; la reserva de la propia orden (si es una stop) pasa a ser el margen
@@ -845,6 +879,17 @@ class Broker:
             self._eventos.append((instante, LLENADA, o.id, evento.fuente))
             return
         p = self.posiciones[objeto]
+        if (
+            evento.tipo == STOP
+            and p.stop_anterior is not None
+            and p.stop_movido_ms is not None
+            and _de_la_version_anterior(evento, p.stop_movido_ms)
+        ):
+            # ADR-0065 §4: la vela en cuyo cierre se movio el stop toco el anterior; sale por el, y
+            # si era el de nacimiento, no hay break even
+            p.stop = p.stop_anterior[1]
+            if p.stop == p.stop_original:
+                p.stop_original = None
         self._cerrar(p, instante, evento.precio, evento.tipo, evento.fuente)
 
     def _cancelar_por_cierre(self, o: Orden, instante: int) -> None:

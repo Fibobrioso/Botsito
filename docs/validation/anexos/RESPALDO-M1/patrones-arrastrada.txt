@@ -1,0 +1,17 @@
+cuenta-arrastrada.txt: 244 filas, 104 sesiones con rn003
+mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de mas | P6 donde el trader no opero | P7 entradas repetidas | T0 pareja
+2026-01 | 7 | 11 | 11 | 17 | 37 | 9 | 1 | 7
+2026-04 | 9 | 0 | 0 | 26 | 0 | 0 | 0 | 0
+2026-07 | 20 | 0 | 0 | 47 | 0 | 0 | 0 | 0
+2026-08 | 8 | 0 | 0 | 34 | 0 | 0 | 0 | 0
+total | 44 | 11 | 11 | 124 | 37 | 9 | 1 | 7
+P1 sesgo: 44 filas en 21 sesiones
+  P1 sesgo · sesgo alcista: 14
+  P1 sesgo · sesgo bajista: 28
+  P1 sesgo · sesgo insuficiente: 2
+  P2 entrada · Δentrada: 11
+  P3 otra zona · otra entrada: 11
+  P5 de mas · mismo lado: 37
+  P6 donde el trader no opero · en sesion: 9
+  P7 entradas repetidas · Δentrada 3 puntos, bot ya emparejado: 1
+filas marcadas posible M (hora perdida): 12

@@ -1,4 +1,4 @@
-"""El modelo de llenado (ADR-0051, PROPUESTO): cuando y a que precio ocurre cada evento.
+"""El modelo de llenado (ADR-0051): cuando y a que precio ocurre cada evento.
 
 FUNCIONES PURAS sobre un `Mercado` que entrega, minuto a minuto, los ticks (si los hay) o la vela
 M1 BID de respaldo con un spread supuesto. Sin IO, sin reloj, sin cifras de negocio: lo elegible
@@ -12,14 +12,20 @@ viene en `Configuracion`, que el broker lee de `knowledge/simulador/llenado.yaml
   posteriores (`desde_ms` exclusivo).
 - Sin ticks en un minuto, el RESPALDO M1: pesimista, el stop primero, y el evento en el CIERRE de
   la vela, marcado `respaldo_m1` (§3, §5). Un stop se llena a su nivel salvo que la vela abra mas
-  alla: entonces a la apertura (§4, deslizamiento de hueco).
+  alla: entonces a la apertura (§4, deslizamiento de hueco). Una vela solo evalua lo que ya estaba
+  decidido cuando EMPEZO (`decidido_ms`, NOTA de §5 del 2026-10-29): lo decidido despues de su
+  inicio no se evalua contra ella, cuyos precios pueden ser anteriores a la decision; si habia una
+  version anterior decidida a tiempo (el stop antes de moverlo, la orden antes de modificarla), esa
+  vela se evalua con ella (ADR-0065 §4).
 - Sin deslizamiento fijo salvo que la configuracion lo declare (§4).
 - La ORDEN STOP DE ENTRADA (ADR-0056 §2, ADR-0057) salta al tocar su nivel y se llena al precio
   del tick que la dispara, como el stop de una posicion; y una pendiente del lado equivocado del
   precio se reconoce con `lado_equivocado` sobre la cotizacion del momento (`Mercado.cotizacion`).
 
 SIN MIRAR AL FUTURO: cada funcion recorre desde `desde_ms` hacia delante y se detiene en el primer
-evento; nada de lo posterior cambia lo decidido.
+evento; nada de lo posterior cambia lo decidido. Y NI AL PASADO: ningun evento se evalua contra un
+precio anterior al instante en que se decidio lo evaluado (con ticks, `desde_ms` exclusivo; con el
+respaldo, `decidido_ms`).
 """
 
 from __future__ import annotations
@@ -117,6 +123,20 @@ def _fin_ms(vela: Vela) -> int:
     return int(vela.fin) * MS_POR_MINUTO
 
 
+def _nivel_de_la_vela(
+    vela: Vela, decidido_ms: int, nivel: int, anterior: tuple[int, int] | None
+) -> int | None:
+    """El nivel con el que el respaldo evalua `vela` (NOTA de ADR-0051 §5, 2026-10-29): el vigente,
+    si se decidio en o antes de que la vela empiece; si no, el `anterior` (instante en que se
+    decidio, nivel), si se decidio a tiempo; si no, ninguno y la vela no cuenta."""
+    inicio = int(vela.inicio) * MS_POR_MINUTO
+    if inicio >= decidido_ms:
+        return nivel
+    if anterior is not None and inicio >= anterior[0]:
+        return anterior[1]
+    return None
+
+
 def _pasa(valor: int, nivel: int, sentido: int, al_toque: bool) -> bool:
     """`sentido` +1: el valor tiene que superar el nivel; -1: quedar por debajo."""
     if sentido > 0:
@@ -135,14 +155,18 @@ def primer_llenado_limite(
     hasta_ms: int,
     mercado: Mercado,
     config: Configuracion,
+    decidido_ms: int | None = None,
+    anterior: tuple[int, int] | None = None,
 ) -> Evento | None:
     """El primer instante en (desde_ms, hasta_ms) en que una LIMITE se llena, o None si no llega.
 
     Compra: el ASK pasa por debajo del precio. Venta: el BID pasa por encima (ADR-0051 §1-2). El
-    precio de llenado es el de la orden.
+    precio de llenado es el de la orden. En el respaldo, `decidido_ms` (por defecto `desde_ms`) y
+    `anterior` (instante, precio) dicen con que precio cuenta cada vela (`_nivel_de_la_vela`).
     """
     if hasta_ms <= desde_ms:
         return None
+    decidido = desde_ms if decidido_ms is None else decidido_ms
     sentido = -1 if lado == "compra" else 1
     for m in _minutos(desde_ms, hasta_ms):
         ticks = mercado.ticks_del_minuto(m)
@@ -159,11 +183,14 @@ def primer_llenado_limite(
         vela = mercado.m1(m)
         if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
             continue
+        nivel = _nivel_de_la_vela(vela, decidido, precio, anterior)
+        if nivel is None:
+            continue
         spread = config.spread_supuesto(MinutoUtc(m))
         # compra: el ASK mas bajo de la vela es la minima BID mas el spread; venta: la maxima BID
         extremo = int(vela.minima) + spread if lado == "compra" else int(vela.maxima)
-        if _pasa(extremo, precio, sentido, config.limite_llena_al_toque):
-            return Evento(LLENADO, _fin_ms(vela), precio, RESPALDO_M1, MinutoUtc(m))
+        if _pasa(extremo, nivel, sentido, config.limite_llena_al_toque):
+            return Evento(LLENADO, _fin_ms(vela), nivel, RESPALDO_M1, MinutoUtc(m))
     return None
 
 
@@ -174,6 +201,8 @@ def primer_llenado_stop(
     hasta_ms: int,
     mercado: Mercado,
     config: Configuracion,
+    decidido_ms: int | None = None,
+    anterior: tuple[int, int] | None = None,
 ) -> Evento | None:
     """El primer instante en (desde_ms, hasta_ms) en que una orden STOP DE ENTRADA salta, o None.
 
@@ -183,9 +212,11 @@ def primer_llenado_stop(
     si el tick llega ya pasado el nivel (hueco), a ese precio, peor que el nivel, nunca al nivel.
     Respaldo M1 (solo para depurar, ADR-0051 §8): la vela es BID y el ASK es BID mas el spread
     supuesto; al nivel, o a la APERTURA si la vela abre ya pasada; sellado al cierre de la vela,
-    como la limite. La misma convencion que el stop de una posicion (§4)."""
+    como la limite. La misma convencion que el stop de una posicion (§4); y, como la limite, con
+    `decidido_ms` y `anterior` para el nivel de cada vela (`_nivel_de_la_vela`)."""
     if hasta_ms <= desde_ms:
         return None
+    decidido = desde_ms if decidido_ms is None else decidido_ms
     compra = lado == "compra"
     for m in _minutos(desde_ms, hasta_ms):
         ticks = mercado.ticks_del_minuto(m)
@@ -208,15 +239,18 @@ def primer_llenado_stop(
         vela = mercado.m1(m)
         if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
             continue
+        nivel = _nivel_de_la_vela(vela, decidido, precio, anterior)
+        if nivel is None:
+            continue
         desplazamiento = config.spread_supuesto(MinutoUtc(m)) if compra else 0
         abre = int(vela.abierta) + desplazamiento
         extremo = int(vela.maxima) + desplazamiento if compra else int(vela.minima)
-        if (extremo >= precio) if compra else (extremo <= precio):
-            hueco = abre > precio if compra else abre < precio
+        if (extremo >= nivel) if compra else (extremo <= nivel):
+            hueco = abre > nivel if compra else abre < nivel
             return Evento(
                 LLENADO,
                 _fin_ms(vela),
-                _deslizar_entrada(abre if hueco else precio, compra, config),
+                _deslizar_entrada(abre if hueco else nivel, compra, config),
                 RESPALDO_M1,
                 MinutoUtc(m),
             )
@@ -249,15 +283,20 @@ def primera_salida(
     hasta_ms: int,
     mercado: Mercado,
     config: Configuracion,
+    decidido_ms: int | None = None,
+    anterior: tuple[int, int] | None = None,
 ) -> Evento | None:
     """Que toca antes desde una posicion abierta: el STOP o el OBJETIVO (ADR-0051 §3-4).
 
     Larga: stop si el BID toca o baja del stop; objetivo si el BID pasa por encima. Corta: stop si
     el ASK toca o supera el stop; objetivo si el ASK pasa por debajo. Con ticks, el primero que
-    ocurra (empate: stop, al precio del tick que lo dispara). Con respaldo M1: el stop primero.
+    ocurra (empate: stop, al precio del tick que lo dispara). Con respaldo M1: el stop primero, y
+    el stop de cada vela por `_nivel_de_la_vela`: `decidido_ms` es la apertura o el ultimo cambio
+    del stop, y `anterior` (instante, stop), el que tenia antes de moverlo (ADR-0065 §4).
     """
     if hasta_ms <= desde_ms:
         return None
+    decidido = desde_ms if decidido_ms is None else decidido_ms
     larga = lado == "compra"
     if larga and not stop < objetivo:
         raise LlenadoError("una larga lleva el stop por debajo del objetivo")
@@ -287,17 +326,20 @@ def primera_salida(
         vela = mercado.m1(m)
         if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
             continue
+        nivel = _nivel_de_la_vela(vela, decidido, stop, anterior)
+        if nivel is None:
+            continue
         spread = config.spread_supuesto(MinutoUtc(m))
         # larga: mira el BID (la vela es BID); corta: mira el ASK = BID + spread
         desplazamiento = 0 if larga else spread
         abre = int(vela.abierta) + desplazamiento
         peor = int(vela.minima) + desplazamiento if larga else int(vela.maxima) + desplazamiento
         mejor = int(vela.maxima) + desplazamiento if larga else int(vela.minima) + desplazamiento
-        toca_stop = peor <= stop if larga else peor >= stop
+        toca_stop = peor <= nivel if larga else peor >= nivel
         if toca_stop:
             # hueco: si la vela ABRE mas alla del stop, se llena a la apertura (§4)
-            salta = abre < stop if larga else abre > stop
-            precio = abre if salta else stop
+            salta = abre < nivel if larga else abre > nivel
+            precio = abre if salta else nivel
             return Evento(
                 STOP,
                 _fin_ms(vela),

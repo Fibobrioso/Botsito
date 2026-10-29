@@ -1,0 +1,22 @@
+diaria.DIAGNOSTICO.cuenta=diaria.txt: 444 filas, 104 sesiones con rn003
+mes | P1 sesgo | P2 entrada | P3 otra zona | P4 sin orden | P5 de mas | P6 donde el trader no opero | P7 entradas repetidas | T0 pareja
+2026-01 | 7 | 16 | 20 | 3 | 60 | 14 | 1 | 7
+2026-04 | 9 | 5 | 13 | 1 | 30 | 32 | 0 | 7
+2026-07 | 20 | 12 | 17 | 1 | 38 | 2 | 3 | 14
+2026-08 | 8 | 7 | 12 | 3 | 43 | 27 | 0 | 12
+total | 44 | 40 | 62 | 8 | 171 | 75 | 4 | 40
+P1 sesgo: 44 filas en 21 sesiones
+  P1 sesgo · sesgo alcista: 14
+  P1 sesgo · sesgo bajista: 28
+  P1 sesgo · sesgo insuficiente: 2
+  P2 entrada · Δentrada: 40
+  P3 otra zona · misma entrada, otra hora: 3
+  P3 otra zona · otra entrada: 59
+  P5 de mas · mismo lado: 135
+  P5 de mas · otro lado: 36
+  P6 donde el trader no opero · en dia: 27
+  P6 donde el trader no opero · en sesion: 48
+  P7 entradas repetidas · Δentrada 0 puntos, bot ya emparejado: 1
+  P7 entradas repetidas · Δentrada 1 puntos, bot ya emparejado: 1
+  P7 entradas repetidas · Δentrada 3 puntos, bot ya emparejado: 2
+filas marcadas posible M (hora perdida): 21

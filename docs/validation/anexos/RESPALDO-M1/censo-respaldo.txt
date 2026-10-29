@@ -1,0 +1,94 @@
+# RESPALDO-M1: el censo de los eventos del respaldo M1 (criterio de hecho: Z = 0)
+### RESPALDO-M1/cuenta-arrastrada.txt: 7 eventos del respaldo; peticiones modificar 21 = stops movidos 21; Z: 0
+  llenada · hora perdida · vela posterior a la decision: 3
+  stop · hora perdida · vela posterior a la decision: 3
+  stop_movido · hora perdida · decision del motor (no se evalua): 1
+  2026-01-05 | 10:22:00.000Z | llenada | o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:23:00.000Z | stop | pos-o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:25:00.000Z | llenada | o20 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:28:59.999Z | stop_movido | pos-o20 | hora perdida | decision del motor (no se evalua)
+  2026-01-05 | 10:37:00.000Z | stop | pos-o20 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:56:00.000Z | llenada | o21 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:59:00.000Z | stop | pos-o21 | hora perdida | vela posterior a la decision
+### RESPALDO-M1/diaria.DIAGNOSTICO.cuenta=diaria.txt: 22 eventos del respaldo; peticiones modificar 118 = stops movidos 118; Z: 0
+  llenada · hora perdida · vela posterior a la decision: 9
+  stop · hora perdida · vela posterior a la decision: 9
+  stop_movido · hora perdida · decision del motor (no se evalua): 4
+  2026-01-05 | 10:22:00.000Z | llenada | o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:23:00.000Z | stop | pos-o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:25:00.000Z | llenada | o20 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:28:59.999Z | stop_movido | pos-o20 | hora perdida | decision del motor (no se evalua)
+  2026-01-05 | 10:37:00.000Z | stop | pos-o20 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:56:00.000Z | llenada | o21 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:59:00.000Z | stop | pos-o21 | hora perdida | vela posterior a la decision
+  2026-04-06 | 10:02:00.000Z | llenada | o11 | hora perdida | vela posterior a la decision
+  2026-04-06 | 10:06:59.999Z | stop_movido | pos-o11 | hora perdida | decision del motor (no se evalua)
+  2026-04-06 | 10:15:00.000Z | stop | pos-o11 | hora perdida | vela posterior a la decision
+  2026-04-07 | 10:29:00.000Z | llenada | o29 | hora perdida | vela posterior a la decision
+  2026-04-07 | 10:32:59.999Z | stop_movido | pos-o29 | hora perdida | decision del motor (no se evalua)
+  2026-04-07 | 10:38:00.000Z | stop | pos-o29 | hora perdida | vela posterior a la decision
+  2026-04-22 | 07:46:00.000Z | llenada | o8 | hora perdida | vela posterior a la decision
+  2026-04-22 | 07:48:00.000Z | stop | pos-o8 | hora perdida | vela posterior a la decision
+  2026-04-23 | 05:01:00.000Z | llenada | o1 | hora perdida | vela posterior a la decision
+  2026-04-23 | 05:02:00.000Z | stop | pos-o1 | hora perdida | vela posterior a la decision
+  2026-08-20 | 07:02:00.000Z | llenada | o12 | hora perdida | vela posterior a la decision
+  2026-08-20 | 07:07:59.999Z | stop_movido | pos-o12 | hora perdida | decision del motor (no se evalua)
+  2026-08-20 | 07:34:00.000Z | stop | pos-o12 | hora perdida | vela posterior a la decision
+  2026-08-20 | 07:47:00.000Z | llenada | o14 | hora perdida | vela posterior a la decision
+  2026-08-20 | 07:59:00.000Z | stop | pos-o14 | hora perdida | vela posterior a la decision
+### RECORRIDA-CONSTRUCCION/cuenta-arrastrada.txt: 8 eventos del respaldo; peticiones modificar 21 = stops movidos 21; Z: 2
+  llenada · borde de la cobertura de ticks · Z: 1
+  llenada · hora perdida · Z: 1
+  llenada · hora perdida · vela posterior a la decision: 2
+  stop · hora perdida · vela posterior a la decision: 3
+  stop_movido · hora perdida · decision del motor (no se evalua): 1
+  2026-01-05 | 10:22:00.000Z | llenada | o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:23:00.000Z | stop | pos-o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:24:00.000Z | llenada | o20 | hora perdida | Z
+  2026-01-05 | 10:28:59.999Z | stop_movido | pos-o20 | hora perdida | decision del motor (no se evalua)
+  2026-01-05 | 10:37:00.000Z | stop | pos-o20 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:56:00.000Z | llenada | o21 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:59:00.000Z | stop | pos-o21 | hora perdida | vela posterior a la decision
+  2026-01-06 | 06:00:00.000Z | llenada | o1 | borde de la cobertura de ticks | Z
+### RECORRIDA-CONSTRUCCION/diaria.DIAGNOSTICO.cuenta=diaria.txt: 34 eventos del respaldo; peticiones modificar 118 = stops movidos 118; Z: 10
+  llenada · borde de la cobertura de ticks · Z: 2
+  llenada · hora perdida · Z: 8
+  llenada · hora perdida · vela posterior a la decision: 6
+  stop · hora perdida · vela del stop movido (rama: el stop anterior, ADR-0065 §4; main: el nuevo, Z): 2
+  stop · hora perdida · vela posterior a la decision: 12
+  stop_movido · hora perdida · decision del motor (no se evalua): 4
+  2026-01-05 | 10:22:00.000Z | llenada | o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:23:00.000Z | stop | pos-o19 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:24:00.000Z | llenada | o20 | hora perdida | Z
+  2026-01-05 | 10:28:59.999Z | stop_movido | pos-o20 | hora perdida | decision del motor (no se evalua)
+  2026-01-05 | 10:37:00.000Z | stop | pos-o20 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:56:00.000Z | llenada | o21 | hora perdida | vela posterior a la decision
+  2026-01-05 | 10:59:00.000Z | stop | pos-o21 | hora perdida | vela posterior a la decision
+  2026-01-06 | 06:00:00.000Z | llenada | o1 | borde de la cobertura de ticks | Z
+  2026-04-06 | 10:01:00.000Z | llenada | o11 | hora perdida | Z
+  2026-04-06 | 10:02:00.000Z | stop | pos-o11 | hora perdida | vela posterior a la decision
+  2026-04-06 | 10:03:00.000Z | llenada | o12 | hora perdida | Z
+  2026-04-06 | 10:06:59.999Z | stop_movido | pos-o12 | hora perdida | decision del motor (no se evalua)
+  2026-04-06 | 10:07:00.000Z | stop | pos-o12 | hora perdida | vela del stop movido (rama: el stop anterior, ADR-0065 §4; main: el nuevo, Z)
+  2026-04-07 | 05:00:00.000Z | llenada | o1 | borde de la cobertura de ticks | Z
+  2026-04-07 | 10:26:00.000Z | llenada | o28 | hora perdida | Z
+  2026-04-07 | 10:27:00.000Z | stop | pos-o28 | hora perdida | vela posterior a la decision
+  2026-04-07 | 10:29:00.000Z | llenada | o29 | hora perdida | vela posterior a la decision
+  2026-04-07 | 10:32:59.999Z | stop_movido | pos-o29 | hora perdida | decision del motor (no se evalua)
+  2026-04-07 | 10:33:00.000Z | stop | pos-o29 | hora perdida | vela del stop movido (rama: el stop anterior, ADR-0065 §4; main: el nuevo, Z)
+  2026-04-22 | 07:46:00.000Z | llenada | o8 | hora perdida | vela posterior a la decision
+  2026-04-22 | 07:48:00.000Z | stop | pos-o8 | hora perdida | vela posterior a la decision
+  2026-04-23 | 05:01:00.000Z | llenada | o1 | hora perdida | vela posterior a la decision
+  2026-04-23 | 05:02:00.000Z | stop | pos-o1 | hora perdida | vela posterior a la decision
+  2026-04-23 | 05:05:00.000Z | llenada | o3 | hora perdida | Z
+  2026-04-23 | 05:06:00.000Z | stop | pos-o3 | hora perdida | vela posterior a la decision
+  2026-07-10 | 05:28:00.000Z | llenada | o3 | hora perdida | Z
+  2026-07-10 | 05:31:00.000Z | stop | pos-o3 | hora perdida | vela posterior a la decision
+  2026-07-10 | 05:32:00.000Z | llenada | o4 | hora perdida | Z
+  2026-07-10 | 05:36:00.000Z | stop | pos-o4 | hora perdida | vela posterior a la decision
+  2026-08-20 | 07:02:00.000Z | llenada | o12 | hora perdida | vela posterior a la decision
+  2026-08-20 | 07:07:59.999Z | stop_movido | pos-o12 | hora perdida | decision del motor (no se evalua)
+  2026-08-20 | 07:34:00.000Z | stop | pos-o12 | hora perdida | vela posterior a la decision
+  2026-08-20 | 07:45:00.000Z | llenada | o14 | hora perdida | Z
+  2026-08-20 | 07:59:00.000Z | stop | pos-o14 | hora perdida | vela posterior a la decision
+Z en total: 12
