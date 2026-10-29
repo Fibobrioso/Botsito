@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/barrido-sesion-6
+main
 
 ## Current Feature
-trabajo/barrido-sesion-6 EN CURSO (NA:F, R4.2): la hoja de preguntas de la sesión 6, los gráficos de S-14 fuera del repo y la hoja 06 en transcribir_sesion.py. Encargo docs/encargos/trabajo-barrido-sesion-6.md; informe docs/validation/BARRIDO-SESION-6.md.
+Ninguna rama abierta. trabajo/barrido-sesion-6 cerrada en main el 2026-10-28 (stable/F38i-barrido-sesion-6): la hoja de la sesión 6 (docs/sesion-6/PREGUNTAS.md), scripts/graficos_sesion.py con los gráficos de S-14 fuera del repo, la hoja 06 de transcribir_sesion.py y la regla 2 de SESION-DE-PREGUNTAS.md (BARRIDO-SESION-6.md).
 
 ## Stable Main State
-d5f6b81 · merge de `trabajo/cuarentena-por-condicion-2` (tag `stable/F38h-cuarentena-por-condicion-2`): diciembre en meses_reservados.yaml, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras. Sobre `stable/F38g-recorrida-construccion` (faf5ce2). Informe docs/validation/CUARENTENA-POR-CONDICION-2.md; el registro del cierre, al final de HISTORIA.
+89dc902 · merge de `trabajo/barrido-sesion-6` (tag `stable/F38i-barrido-sesion-6`): la hoja de la sesión 6, scripts/graficos_sesion.py con los gráficos de S-14 fuera del repo, la hoja 06 y la regla 2 de SESION-DE-PREGUNTAS. Sobre `stable/F38h-cuarentena-por-condicion-2` (d5f6b81). Informe docs/validation/BARRIDO-SESION-6.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-d5f6b81 · merge: trabajo/cuarentena-por-condicion-2, diciembre tapado en la cuarentena, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras · tag stable/F38h-cuarentena-por-condicion-2
+89dc902 · merge: trabajo/barrido-sesion-6, la hoja de la sesión 6, los gráficos de S-14 fuera del repo, la hoja 06 y la regla 2 de SESION-DE-PREGUNTAS · tag stable/F38i-barrido-sesion-6
 
 ## Tests Currently Passing
 1765 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
