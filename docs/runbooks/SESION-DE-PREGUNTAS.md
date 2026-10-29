@@ -95,6 +95,9 @@ precondición de ceguera.
    que dice la regla 2 (abril, julio del 1 al 17, agosto y enero del 2 al 30).
    Los gráficos se generan fuera del repositorio, y la clave de cada uno (día, hora, qué es cada
    opción) la guarda Aleks y no se enseña.
+   Desde la sesión 6 los genera `scripts/graficos_sesion.py`: SVG con H4, M15 y M1 cortados en la
+   primera orden del bot, uno limpio y otro con la línea del punto, y su `clave.txt`, fuera del
+   repositorio (`docs/validation/BARRIDO-SESION-6.md` §2.2).
 
 ## Durante (Aleks)
 

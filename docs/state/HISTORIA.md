@@ -13752,3 +13752,42 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 50 (2026-10-28).
+
+# Registro de cierre · `trabajo/barrido-sesion-6` (2026-10-28)
+
+- Orden de cierre del consultor del 2026-10-28, dada por Aleks tras la revisión (copiada tal cual al
+  final del encargo y del informe, en su commit propio, cb95545); Aleks lanzó `/cerrar-rama` y la
+  sesión siguió `RITUAL.md`. La rama tuvo una PARADA (fase 0: el orden, la duración, los días de
+  S-14, las marcas, las ventanas, el formato del gráfico, la guardia con `crudo`, la regla 2 y la
+  corrida de S-14) y una pasada del revisor (§8; lo hecho, §8.1). Nunca se cerró sin la orden.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action, F entera
+  (línea 1 de §6 del informe) y la frase nueva al final de K (ninguna letra sale: F sigue viva hasta
+  que la sesión 6 se celebre e ingiera, así que no hay registro «# Next Action HECHA»); la hoja de
+  ruta, R4.2 con NA:F e ID:ADR-0084 en sus Refs y su añadido al final de «Qué es», sin «Estado»
+  (líneas 2 y 3 de §6); `docs/runbooks/SESION-DE-PREGUNTAS.md`, el paso 6 de «Antes» nombra
+  `scripts/graficos_sesion.py` (línea 4 de §6, autorizada por la orden); la fila de
+  ERRORES-RECURRENTES (§7, con los dos cambios de la orden).
+- **Lo que entra** (R4.2): `docs/sesion-6/PREGUNTAS.md`, la hoja de la sesión 6 (23 códigos: las dos
+  bloqueantes, S-15 con sus dos esquemas y S-14 con 6 días reales de construcción, el resto y «Para
+  cerrar»), con citas de lo registrado y una línea «Para Aleks» por pregunta; la regla 2 de
+  `SESION-DE-PREGUNTAS.md`, que permite una segunda imagen con la línea del punto de la primera
+  orden del bot (con su recuadro «Por qué cambió»), y el recuadro de «Durante», paso 2;
+  `scripts/graficos_sesion.py`, que dibuja H4, M15 y M1 de días de construcción en SVG fuera del
+  repo, cortados en la primera orden del bot y negando por defecto, con sus tests; los gráficos de
+  S-7 a S-12 (y dos de reserva), generados una sola vez desde un clon en
+  `C:\Users\USER\Desktop\sesion-06-graficos\`, con su `clave.txt`; y la hoja 06 de
+  `scripts/transcribir_sesion.py` (S-1 a S-23, sesión en curso 06).
+- Exposiciones: cuatro filas del 2026-10-28 de esta rama en `HOLDOUT-EXPOSICIONES.md` (fase 0, fase
+  1, fase 2 y los dos subagentes). Ningún día reservado, ninguna vela de marzo ni de junio.
+- Negativas de la guardia: un comando encadenado y una variable de entorno (las dos, con la forma que
+  propone su mensaje); la sonda con `crudo` (PARADA, decisión 6); y dos `grep` con un patrón que
+  acaba en espacio, sin PARADA (hallazgo a1/b9 del revisor, declarado; la orden de cierre, punto 2,
+  los deja así). Ninguna del clasificador.
+- Letra del tag: la última cerrada era `stable/F38h-cuarentena-por-condicion-2`; `stable/F38i-*` no
+  existe en local ni en origin (comprobado antes del tag).
+- Tag: `stable/F38i-barrido-sesion-6`. El merge es `git rev-parse "stable/F38i-barrido-sesion-6^{commit}"`.
+- Commits de la rama: `543099d` (chore(rama): abre trabajo/barrido-sesion-6 (encargo, contrato y Archivo 51 de PROJECT_STATE)), `17335ad` (docs: la fase 0 y la PARADA), `60ebcf2` (docs: la respuesta a la PARADA copiada, PREGUNTAS.md y los dos cambios de D8), `09afe20` (feat: scripts/graficos_sesion.py y sus tests), `6c114cb` (docs: los gráficos generados una vez desde un clon, su fila de exposiciones y el test del recorte), `72ceb5e` (feat: la hoja 06 en transcribir_sesion.py y sus tests), `9ffc445` (fix: los hallazgos del revisor y su informe pegado), `cb95545` (docs: la orden de cierre, copiada tal cual) y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- CI de Linux por `fix/barrido-sesion-6`: run 40786171885 sobre 72ceb5e (`1 failed, 2973 passed, 46
+  skipped`) y run 40791693637 sobre 9ffc445 (`1 failed, 2979 passed, 46 skipped`), los dos con un
+  solo fallo, el esperado de `state check` por el nombre `fix/`. La CI de `main` corre tras el push.
+- Informe: `docs/validation/BARRIDO-SESION-6.md`. Encargo: `docs/encargos/trabajo-barrido-sesion-6.md`.
