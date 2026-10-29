@@ -13957,3 +13957,54 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 51 (2026-10-28).
+
+# Next Action HECHA · Z · sale de PROJECT_STATE.md en trabajo/respaldo-m1 (2026-10-29)
+
+Z. El bróker simulado llena con el respaldo M1 una orden en la vela cuyo cierre la colocó, en todo minuto sin ticks (el borde de la ventana y las horas perdidas), contra ADR-0051 §2 (RECORRIDA-CONSTRUCCION.md §2.8; antes, VISOR-CONSTRUCCION.md §4.3). Rama propia con su test que rompe en main, una NOTA en ADR-0051 §5 y las corridas repetidas; antes de la próxima corrida del arnés que cuente (ADR-0070 §3).
+
+La hace `trabajo/respaldo-m1` (docs/validation/RESPALDO-M1.md): una vela del respaldo M1 solo evalúa lo decidido antes de que empezara (ADR-0051 §5, NOTA del 2026-10-29); 2 llenadas y 0 stops en la corrida que cuenta y 10 llenadas y 2 stops en la diaria de recorrida-construccion dejan de evaluarse con la vela de su decisión, y las dos corridas repetidas dan Z = 0; el veredicto de ADR-0070 §3 sigue «no».
+
+# Registro de cierre · `trabajo/respaldo-m1` (2026-10-29)
+
+- Orden de cierre del consultor del 2026-10-29, dada por Aleks tras la revisión (copiada tal cual al
+  final del informe, en su commit propio, cba20e1); Aleks lanzó `/cerrar-rama trabajo/respaldo-m1` y
+  la sesión siguió `RITUAL.md`. La rama tuvo dos PARADAS (la fase 0, con once decisiones, y la
+  PARADA 2: `graficos_sesion.py` no dibuja el lado) y una pasada del revisor (RESPALDO-M1.md §8;
+  lo hecho, §8.1). Nunca se cerró sin la orden.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action: sale Z
+  (su registro «# Next Action HECHA · Z», arriba), entran H y R, cambian F y dos frases de A; en
+  Technical Debt entra la línea de las cotizaciones sin tick; la hoja de ruta: R3.5 HECHA y sin
+  NA:Z, R3.6 (NA:H) y R3.7 (NA:R) nuevas, R5.2 con NA:H y NA:R, una frase en R4.2 y en R5.1,
+  A.1 con la ejecución 2 hecha, R6a.6 con el script 1.2, y «Fechas fijas»; la fila de
+  ERRORES-RECURRENTES (§7 del informe, con la corrección del punto 3 de la orden).
+- **Lo que entra** (R3.5): una vela del respaldo M1 solo evalúa lo decidido antes de que empezara,
+  y la vela de un cambio se evalúa con la versión anterior (el stop antes de moverlo, ADR-0065 §4;
+  la orden antes de modificarla), en `engine/llenado.py` y `engine/broker.py`; 12 tests en
+  `tests/unit/test_respaldo_m1_decision.py` (8 rompen en `main`); NOTAS en ADR-0051 §3 y §5, en
+  ADR-0070 §3 y en ACTIVAR-A35-A44.md §5; las dos corridas de recorrida-construccion repetidas
+  en `docs/validation/anexos/RESPALDO-M1/`, con Z = 0 en las dos y el mismo «no» en la que cuenta,
+  que pasa a ser la línea base vigente; y los guiones de esos anexos.
+- Verificado antes del commit del contrato (punto 4.b de la orden), con `scripts/leer_demo_ftmo.py`
+  sobre `data/demo_ftmo/MedirDemoFTMO_20261029_194056.csv`: desfase 180; comisión -2.50 por lado
+  con 1,00 lote (2,50 en valor absoluto); el margen de la nota de `volumen_comision`, 3720.77,
+  es 100000 × 1.11623 (el ask de `apertura_compra_mercado`) / 30. PROJECT_STATE con todas las
+  líneas: 24.415 bytes (punto 4.f: menos de 24.700).
+- Exposiciones: seis filas de esta rama en `HOLDOUT-EXPOSICIONES.md` (2026-10-28 y cinco del
+  2026-10-29). Ninguna partición tocada; ningún R de las sesiones de S-14.
+- Negativas de la guardia: comandos compuestos, un `for`, `rev`, una variable de entorno delante
+  de un comando, `grep -r` sin ruta, `pytest` sin rutas en un clon, PowerShell con .NET y un
+  heredoc en el cierre; todas rehechas en la forma que propone su mensaje o dejadas
+  (RESPALDO-M1.md §5.1). Ninguna del clasificador.
+- Letra del tag: la última cerrada era `stable/F38i-barrido-sesion-6`; `stable/F38j-*` no existe
+  en local ni en origin (comprobado antes del tag). Letras de la Next Action: H y R (la regla de
+  DECISIONES-DE-PROCESO.md, por orden alfabético; RESPALDO-M1.md §1).
+- Tag: `stable/F38j-respaldo-m1`. El merge es `git rev-parse "stable/F38j-respaldo-m1^{commit}"`.
+- Commits de la rama: `4036818` (chore(rama): abre trabajo/respaldo-m1), `56b2233` (docs: la fase 0
+  y la PARADA), `556452a` (docs: la respuesta a la PARADA; el contrato a ACTIVAR-A35-A44),
+  `beb9c93` (fix: la corrección y sus tests), `d380632` (docs: los anexos y la fila de la fase 2,
+  antes de correr), `823404a` (docs: la respuesta a la PARADA 2), `e808391` (docs: las corridas,
+  el censo y las NOTAS), `f80abd0` (fix: los hallazgos del revisor), `cba20e1` (docs: la orden de cierre), y este
+  (chore(cierre): sale el contrato y entra el registro en HISTORIA).
+- CI de Linux por `fix/`: ninguna (la rama no toca hooks, rutas ni plataforma). La CI de `main`
+  corre tras el push.
+- Informe: `docs/validation/RESPALDO-M1.md`. Encargo: `docs/encargos/trabajo-respaldo-m1.md`.
