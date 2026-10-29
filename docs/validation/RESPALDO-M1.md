@@ -437,6 +437,104 @@ incorrecta** y 10 con matiz; 8 herencias. Lo que cambia lo que se hace, con lo m
    CLAUDE.md y no hace falta tocar la guardia. Coste de (b): ninguno, salvo que el `TIEMPO` y la
    `MEMORIA` los copio de su salida.
 
+## Respuesta del consultor a la PARADA (2026-10-29)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/respaldo-m1 (2026-10-29). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> Contexto de la decisión del punto 1. Tu fase 0 mide cuatro síntomas: los casos de Z, los 22 cancelados en el cierre de una M1 sin ticks (punto 8), la marca un minuto adelante de _peor_del_minuto (punto 2) y ADR-0065 §4 sin cumplir. Pensé que tenían una raíz común: el respaldo sella su evento en el cierre de la vela (k fin, ADR-0051 §5 y ADR-0057 §1), un milisegundo después de que el motor decida (k fin - 1). Por eso estudié una forma (c): sellar en k fin - 1. Mi auditor la probó con un prototipo en memoria sobre main, con datos sintéticos, y midió que (c) no es neutral fuera de las tres funciones de llenado.py:
+> - la posición abierta por el respaldo cae en el minuto k, así que las marcas (broker.py:888 y :909-913) meten la vela del llenado. En la sonda, una marca de 970 por debajo de un stop de 990 llega a cuenta.marcar y a los topes antes de la decisión;
+> - el break even por velas (primitivas_broker.py:279, m1_entre desde abierta_ms) mete la vela del llenado en la zona posterior de RN-014;
+> - un llenado en la última vela de 07-11 pasa de la sesión 11-15 a la 07-11 (cableado.py:464-465);
+> - cambian el fin de la ventana (la última vela pasa a evaluarse) y el borde de la ventana prohibida (ADR-0068);
+> - rompen 5 tests de main, todos por ese milisegundo;
+> - y choca con ADR-0057 §1, que también sella al cierre y está en «QUÉ NO CAMBIA».
+> Así que (c) es otra rama con su propio ADR, no esta. Va como entrada nueva (punto 8), con lo que midió el auditor.
+>
+> 0. (a). El informe y las líneas del cierre dicen las dos cifras: 2 llenadas y 0 stops en la corrida 1; 10 llenadas y 2 stops en la 2.
+>
+> 1. (b), tal como la propones:
+>    - las tres funciones del respaldo reciben el instante de la decisión de lo que evalúan, decidido_ms, que por defecto vale desde_ms. Una vela solo cuenta si EMPIEZA en o después de él. El instante sale del objeto: ultimo_cambio_ms en la orden; abierta_ms en la salida con el stop de nacimiento;
+>    - la vela que contiene stop_movido_ms se evalúa con el stop ANTERIOR (ADR-0065 §4) y las siguientes con el nuevo;
+>    - una orden modificada sigue la misma regla con su precio anterior.
+>    Sin tocar desde, el «ahora - 1», los ticks, el instante del evento (sigue en el cierre de la vela, ADR-0051 §5 y ADR-0057 §1) ni _fin_ms, que también usa Mercado.cotizacion.
+>    (b) no está prototipada. Los tests de main que la rozan (los de §0.f y los nueve ficheros del prototipo de (a)) tienen que pasar sin tocarlos. Si alguno tiene que cambiar, PARADA.
+>    Los tests de la fase 1 cubren, además de los del encargo, el stop movido: una vela que toca el stop original y la entrada sale por el stop original, sin break even. Y la modificación de una orden con su precio anterior.
+>
+> 2. Los dos casos de futuro no se arreglan aquí.
+>    - _peor_del_minuto entra en la letra nueva del punto 8, nombrado por su condición: acepta toda vela que EMPIEZA en o antes de «hasta», así que cuando se avanza hasta un instante redondo (cada evento del respaldo, una cancelación por ventana, una expiración) marca entera la vela siguiente. Va con su sonda 5 y con la del auditor (avanzar a un instante redondo marca la vela siguiente).
+>    - _precio_de_mercado y precio_de_conversion van al punto 3.
+>
+> 3. (a), en una línea de Technical Debt que nombra la condición: «Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) usa lo último cerrado antes del instante, que sin ticks es la M1 k-1 o el último tick anterior, y _precio_de_mercado y precio_de_conversion (cierre a mercado y margen) usan la k. Y en un minuto con ticks sin ninguno anterior al instante, estas dos toman el cierre de su vela; el motor no llega a ese caso (RESPALDO-M1.md §0.a y §0.b). Decidirlo es una NOTA o un ADR sobre ADR-0057 §4.»
+>
+> 4. (a). La NOTA va en ADR-0051 §5, con la condición de (b): la vela cuenta si empieza en o después de lo decidido, y la vela del stop movido se evalúa con el stop anterior. Y otra en §3: la salida tras un llenado del respaldo se mira desde la vela siguiente (ADR-0057 §1, el código y sus tests), sin cambiar lo que decide.
+>
+> 5. (a), con dos condiciones:
+>    - censo_respaldo.py detecta Z por la condición general (el inicio de la vela del evento, (ms - 1) // 60000 en minutos, es anterior al instante decidido) y no solo por colocada == ms - 1. Así el criterio de hecho de la fase 2 no queda vacío por construcción.
+>    - sesiones_s14.py toma el lado de «### Ordenes» si lo trae. Si no, la deducción por la caja 1 se comprueba en las 8 sesiones contra la diaria de RECORRIDA, y tiene que dar el mismo lado que dibujó scripts/graficos_sesion.py. Si alguna no cuadra, PARADA.
+>
+> 6. (a). El contrato se amplía a docs/runbooks/ACTIVAR-A35-A44.md en un commit a la vista, solo para la NOTA de §5.
+>
+> 7. (a).
+>
+> 8. (a), en UNA letra nueva de la Next Action, no en Technical Debt. Elígela con la regla de letras de DECISIONES-DE-PROCESO.md y di cuál es, con el grep. Su texto, en el cierre:
+>    «<letra>. En el respaldo M1 el evento de una vela se sella en su cierre, un milisegundo después de que el motor decida (ADR-0051 §5, ADR-0057 §1). Por eso la vela k no se evalúa para lo que vivía en ella cuando el motor actúa en su cierre (22 de 1002 cancelaciones en la corrida diaria de recorrida-construccion, RESPALDO-M1.md §0.l), y _peor_del_minuto marca entera la vela siguiente cuando se avanza hasta un instante redondo. Rama propia con un ADR que enmiende esos dos ADR. Antes de decidir, se mide lo que el auditor de RESPALDO-M1 encontró en la forma «sellar en k fin - 1»: las marcas y m1_entre del break even empiezan a contar la vela del llenado, cambia la sesión de un llenado en la última vela de 07-11, cambian el fin de la ventana y el borde de ADR-0068, y rompen 5 tests de main por el milisegundo. Va antes de la próxima corrida del arnés que cuente (ADR-0070 §3).»
+>    En la hoja de ruta entra R3.6 con esa letra (Refs NA:<letra> · ID:ADR-0051 · ID:ADR-0057; Depende de: R3.5; Quién: la sesión, con el encargo del consultor; Hecho cuando: el ADR está aceptado, un test que rompe en main pasa en la rama y las dos corridas están repetidas). R5.2 nombra la letra nueva en «Depende de», en lugar de NA:Z.
+>    Comprueba la copia contra test_hoja_de_ruta.
+>
+> 9. (a). La NOTA de ADR-0051 dice que la repetición del trader sin ticks (ADR-0051 §8, REPETICION-TRADER-SALIDA.txt) ya no se reproduce igual, y que esta rama no la vuelve a correr.
+>
+> 10. (a). Antes de la fase 2, Aleks cierra Claude Code y lo vuelve a abrir con la variable puesta. Al empezar la fase 2, compruebas que vale 1 y escribes en el informe cómo lo has comprobado. Las corridas van sin la variable delante y en segundo plano. Si la variable no está puesta, PARADA antes de correr.
+>
+> Dos hallazgos del consultor para la fila de ERRORES-RECURRENTES de la rama, en el cierre. Los dos los encontró su auditor antes de que llegaran a la sesión:
+> - En el encargo escribí la condición de Z como «una vela cuyo intervalo empieza en o antes de ese instante no cuenta», con la NOTA en el mismo sentido, sin medir el borde y sin leer ADR-0057 §1. Lección: una condición sobre instantes se escribe con el borde medido (qué vale exactamente en el instante de la decisión) y con todos los ADR que fijan ese borde.
+> - En el primer borrador de esta respuesta propuse mover el sello del respaldo a k fin - 1, con una regla para que la sesión decidiera sola. No había buscado los otros lectores de abierta_ms y del minuto del evento (las marcas, el break even por velas, la sesión, la ventana). Y la regla se contradecía: pedía tests de main intactos y a la vez admitía que cambiaran. Lección: antes de proponer que se mueva un instante, se buscan con grep todos los que lo leen. Y una regla que deja decidir a la sesión no puede contradecirse ni tocar lo que «QUÉ NO CAMBIA» protege.
+>
+> Lo que sigue, en este orden: el commit con esta respuesta; la fase 1; Aleks reinicia Claude Code con la variable; la fase 2; el informe, el revisor y la entrega. make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto, y lo lanza Aleks con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+## 1. La respuesta aplicada, punto por punto
+
+| Punto | Qué | Estado |
+|---|---|---|
+| 0 | Las dos cifras (2 llenadas y 0 stops en la corrida 1; 10 y 2 en la 2) en el informe y en las líneas del cierre | en las líneas del cierre (entrega) |
+| 1 | La forma (b) en `llenado.py` y `broker.py`, con sus tests | fase 1 |
+| 2 | `_peor_del_minuto` a la letra nueva (punto 8); `_precio_de_mercado` y `precio_de_conversion` al punto 3 | en las líneas del cierre |
+| 3 | La línea de Technical Debt de las cotizaciones sin tick, con su texto | en las líneas del cierre |
+| 4 | Las NOTAS de ADR-0051 §5 y §3 | fase 1 |
+| 5 | `censo_respaldo.py` (Z por la condición general) y `sesiones_s14.py` (el lado, comprobado) | fase 2 |
+| 6 | El contrato se amplía a `docs/runbooks/ACTIVAR-A35-A44.md`, solo para la NOTA de §5 | **hecho** en este commit (`contrato.yaml`) |
+| 7 | La fila de exposiciones de las fases 1 y 2, en su propio commit antes de correr | fase 2 (la de la fase 1, antes de su primer `make check`) |
+| 8 | La letra nueva de la Next Action, R3.6 en la hoja de ruta, R5.2 | **letra elegida: H** (abajo); el texto, en las líneas del cierre |
+| 9 | La NOTA de ADR-0051 sobre la repetición del trader sin ticks | fase 1 |
+| 10 | La variable `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`, comprobada al empezar la fase 2 | fase 2 |
+
+**La letra del punto 8.** Regla (`DECISIONES-DE-PROCESO.md:29`): una letra se reutiliza solo si su
+registro «# Next Action HECHA» es anterior y la hoja de ruta no la nombra. Medido con un guion de la
+carpeta de trabajo (`letras.py <raíz>`, que solo lee `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y
+`docs/plan/HOJA-DE-RUTA.md`, con `^# Next Action HECHA · X · ` y `\bNA:X\b`):
+
+```
+vivas: ABCDFGIJKLMNQTUZ
+E: registros HECHA 3; NA:E en la hoja 1
+H: registros HECHA 1; NA:H en la hoja 0
+O: registros HECHA 2; NA:O en la hoja 1
+P: registros HECHA 2; NA:P en la hoja 1
+R: registros HECHA 1; NA:R en la hoja 0
+S: registros HECHA 1; NA:S en la hoja 1
+V: registros HECHA 2; NA:V en la hoja 0
+W: registros HECHA 2; NA:W en la hoja 1
+X: registros HECHA 1; NA:X en la hoja 2
+Y: registros HECHA 2; NA:Y en la hoja 1
+```
+
+Cumplen las dos condiciones H, R y V; se toma **H**, la primera por orden alfabético. Z, al salir en
+el cierre, también quedaría libre, pero hoy la hoja de ruta la nombra (R3.5 y R5.2).
+
 ## Estado
 
-EN CURSO: fase 0 entregada; PARADA. Espera la respuesta del consultor.
+EN CURSO: respuesta del consultor copiada; fase 1.

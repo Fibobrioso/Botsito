@@ -11,6 +11,7 @@ rutas_permitidas:
   - docs/validation/RESPALDO-M1.md
   - docs/validation/anexos/RESPALDO-M1/**
   - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ACTIVAR-A35-A44.md  # solo la NOTA de §5 (respuesta a la PARADA, punto 6)
   - docs/encargos/
   - PROJECT_STATE.md
   - docs/state/HISTORIA.md
