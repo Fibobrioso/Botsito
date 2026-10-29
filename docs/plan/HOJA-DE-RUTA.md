@@ -239,8 +239,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   RECORRIDA-CONSTRUCCION.md §3 y §4).
 
 ### R4.2 · Preparar y celebrar la sesión 6
-- **Refs:** ID:A-35 · ID:A-44 · ID:A-13 · ID:A-43 · ID:A-46 · ID:A-48 · ID:A-49 · ID:A-50 ·
-  ID:A-53 · ID:ADR-0083 · ID:RN-007
+- **Refs:** NA:F · ID:A-35 · ID:A-44 · ID:A-13 · ID:A-43 · ID:A-46 · ID:A-48 · ID:A-49 ·
+  ID:A-50 · ID:A-53 · ID:ADR-0083 · ID:ADR-0084 · ID:RN-007
 - **Qué es:** la lista de ACTIVAR-SESION-05.md §3: la magnitud de A-44 primero y su reloj; la
   mecha de A-35; A-13; A-53; A-43; A-49/A-48; A-50; ADR-0083; S-16; S-19 frente a S-24; S-20;
   S-14 con las 34 sesiones de P6 de la re-corrida (RECORRIDA-CONSTRUCCION.md §4; 77 llenadas) y
@@ -259,6 +259,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   retroceso, antes de que haya alternancia. ¿Esa entrada vale? (a) sí; (b) no, había que esperar
   al punto siguiente; (c) otra, ¿cuál?»); S-19 frente a S-24 (la vela de 1 o 2 puntos sigue
   siendo de su color); y A-50 con sus dos dibujos (hoy `caja_entera`, lectura del consultor).
+  Y lo que añade `trabajo/barrido-sesion-6` (BARRIDO-SESION-6.md §1): «el nivel se congela al
+  tomarse» (ADR-0084:41-48, decisión del consultor con efecto visible), dentro de la pregunta de
+  A-35; de las 34 sesiones de S-14 salen las 3 marcadas E y la del 1 de abril (quedan 30; se
+  enseñan 6, con 2 de reserva). Hoja de preguntas: docs/sesion-6/PREGUNTAS.md
+  (trabajo/barrido-sesion-6); los gráficos de S-14, con `scripts/graficos_sesion.py`, fuera del
+  repo.
 - **Depende de:** nada (la re-corrida está hecha, R4.1).
 - **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 6 está ingerida y activada.

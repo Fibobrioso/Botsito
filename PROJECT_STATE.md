@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/barrido-sesion-6
 
 ## Current Feature
-Ninguna rama abierta. trabajo/cuarentena-por-condicion-2 cerrada en main el 2026-10-28 (stable/F38h-cuarentena-por-condicion-2): diciembre tapado en la cuarentena mientras no se decida, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras (CUARENTENA-POR-CONDICION-2.md).
+trabajo/barrido-sesion-6 EN CURSO (NA:F, R4.2): la hoja de preguntas de la sesión 6, los gráficos de S-14 fuera del repo y la hoja 06 en transcribir_sesion.py. Encargo docs/encargos/trabajo-barrido-sesion-6.md; informe docs/validation/BARRIDO-SESION-6.md.
 
 ## Stable Main State
 d5f6b81 · merge de `trabajo/cuarentena-por-condicion-2` (tag `stable/F38h-cuarentena-por-condicion-2`): diciembre en meses_reservados.yaml, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras. Sobre `stable/F38g-recorrida-construccion` (faf5ce2). Informe docs/validation/CUARENTENA-POR-CONDICION-2.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ d5f6b81 · merge de `trabajo/cuarentena-por-condicion-2` (tag `stable/F38h-cuare
 d5f6b81 · merge: trabajo/cuarentena-por-condicion-2, diciembre tapado en la cuarentena, la coma y el punto en la regla de fecha, el barrido ancho en la skill ingerir-sesion y la regla de letras · tag stable/F38h-cuarentena-por-condicion-2
 
 ## Tests Currently Passing
-1741 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1765 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -29,7 +29,7 @@ C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La preparación de la sesión 6 (R4.2); R6a y Z en los huecos.
+F. La sesión 6 con el trader (R4.2): la hoja es docs/sesion-6/PREGUNTAS.md y el PDF del consultor, y los gráficos de S-14 están fuera del repo; después, su ingesta. R6a y Z en los huecos.
 
 
 
@@ -45,7 +45,7 @@ J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de 
 
 A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2 entre el 26 y el 30 de octubre, con el script 1.1 compilado antes; la 3 después del 1 de noviembre. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. La ejecución 2 comprueba la fórmula del margen con `MargenAlcanza` (FTMO-P-D1.md §3), y la 3 mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
 
-K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos. Y las dos negativas de ACTIVAR-SESION-05-MOTOR.md §0.d (pytest desde C:/cm/, encadenadas). Y la de CUARENTENA-POR-CONDICION-2.md §2.e: en el clon de comparar-con-main la guardia niega un fichero de test porque «el codigo nombra la carpeta \.» (la constante `\.` de un f-string de regex, que en Windows es la raíz de la unidad), un falso positivo que en el repo real no salta.
+K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos. Y las dos negativas de ACTIVAR-SESION-05-MOTOR.md §0.d (pytest desde C:/cm/, encadenadas). Y la de CUARENTENA-POR-CONDICION-2.md §2.e: en el clon de comparar-con-main la guardia niega un fichero de test porque «el codigo nombra la carpeta \.» (la constante `\.` de un f-string de regex, que en Windows es la raíz de la unidad), un falso positivo que en el repo real no salta. Y la de BARRIDO-SESION-6.md §4: un grep con un patrón que acaba en espacio da «leer el contenido de .».
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
@@ -156,8 +156,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 50 (2026-10-28).
+— ninguna desde el Archivo 51 (2026-10-28).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 50 (2026-10-28).
+— ninguna desde el Archivo 51 (2026-10-28).

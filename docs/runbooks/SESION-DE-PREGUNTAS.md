@@ -22,7 +22,10 @@ precondición de ceguera.
    del 2 al 30, desde ADR-0078 y ADR-0079, comprobados con
    `casos_reservados`), cortados ANTES de la colocación de la orden, sin la operación, sin el
    resultado y sin la fecha visible. Nunca un día de medición, holdout o retirado. Primero se
-   hace la pregunta en abstracto y después se enseña el gráfico.
+   hace la pregunta en abstracto y después se enseña el gráfico. Solo con días de construcción,
+   después del gráfico limpio se puede enseñar una segunda imagen del mismo corte con una sola
+   marca, la línea horizontal en el punto de la primera orden del bot (el nivel donde la pondría),
+   y nunca la orden, el stop, el objetivo, el llenado ni el resultado.
 
    > **Por qué cambió (decisión del consultor, 2026-09-28, rama `trabajo/bloque-de-la-caja`).**
    > Hasta ese día decía: «No se enseña ningún gráfico de ningún día. Ni en pantalla compartida
@@ -37,6 +40,21 @@ precondición de ceguera.
    > gráfico que trae un día reservado sin que se sepa, lo cubren ahora la comprobación de cada
    > día (paso 6 de «Antes») y que el gráfico lo prepara Aleks, no el trader. Es la regla de la
    > regla de `CLAUDE.md`: una prohibición que no sale de un ADR se revisa.
+
+   > **Por qué cambió (decisión del consultor, 2026-10-28, rama `trabajo/barrido-sesion-6`; D8 del
+   > encargo y su respuesta a la PARADA, puntos 3 y 7; `docs/validation/BARRIDO-SESION-6.md`).**
+   > Hasta ese día el cuerpo de esta regla decía: «**Solo se enseñan gráficos de días de
+   > CONSTRUCCIÓN** (abril, julio del 1 al 17, agosto y enero del 2 al 30, desde ADR-0078 y
+   > ADR-0079, comprobados con `casos_reservados`), cortados ANTES de la colocación de la orden, sin
+   > la operación, sin el resultado y sin la fecha visible. Nunca un día de medición, holdout o
+   > retirado. Primero se hace la pregunta en abstracto y después se enseña el gráfico.» Se añade la
+   > segunda imagen porque S-14 de la sesión 6 pregunta por qué el trader no entró donde el bot sí, y
+   > sin saber dónde habría entrado el bot no se puede contestar. La marca es una sola: el punto de
+   > la primera orden del bot, que es el precio de entrada de su orden stop (medido en las 34
+   > sesiones de `RECORRIDA-CONSTRUCCION.md` §4); el gráfico acaba en la vela en que el bot da la
+   > liquidez por tomada, que es la misma en que coloca esa orden. Como la del 2026-09-28, sale de una
+   > decisión del consultor y no de un ADR: enseñar un día de construcción no es abrir ni exponer un
+   > día reservado (ADR-0021).
 3. **Si el trader empieza a comentar operaciones concretas de septiembre, se reconduce la
    conversación** hacia la pregunta, sin discutir la operación. Septiembre tiene días reservados.
 4. **Las respuestas entran después, y solo por dos vías:** la grabación al corpus y un
@@ -77,6 +95,9 @@ precondición de ceguera.
    que dice la regla 2 (abril, julio del 1 al 17, agosto y enero del 2 al 30).
    Los gráficos se generan fuera del repositorio, y la clave de cada uno (día, hora, qué es cada
    opción) la guarda Aleks y no se enseña.
+   Desde la sesión 6 los genera `scripts/graficos_sesion.py`: SVG con H4, M15 y M1 cortados en la
+   primera orden del bot, uno limpio y otro con la línea del punto, y su `clave.txt`, fuera del
+   repositorio (`docs/validation/BARRIDO-SESION-6.md` §2.2).
 
 ## Durante (Aleks)
 
@@ -84,6 +105,13 @@ precondición de ceguera.
 2. **Seguir la hoja en orden**, leyendo cada pregunta como está. Si el trader no la entiende, se
    le describe la situación de otra manera, **sin ofrecerle opciones ni respuestas**: la pregunta
    se escribió abierta para no sugerir.
+
+   > **RECUADRO (2026-10-28, rama `trabajo/barrido-sesion-6`; D8 del encargo y respuesta del
+   > consultor a la PARADA, punto 7).** Desde la sesión 4 las preguntas son cerradas, con opciones
+   > (`docs/sesion-4/PREGUNTAS.md`, donde «otra, ¿cuál?» iba solo donde las opciones podían
+   > sugerir); desde la sesión 5, con «otra, ¿cuál?» en todas. La consigna de no ofrecer opciones ni
+   > respuestas vale para las repreguntas: si el trader no entiende la pregunta, se le describe la
+   > situación de otra manera, sin proponerle otras. El texto de este paso queda como estaba.
 3. **Anotar en el recuadro** la idea de la respuesta y, si se puede, el minuto aproximado de la
    grabación. Sirve para encontrar el tramo; la cita saldrá de la transcripción.
 4. **Si responde a medias o con un ejemplo**, se le puede pedir que lo diga en general («¿eso lo
