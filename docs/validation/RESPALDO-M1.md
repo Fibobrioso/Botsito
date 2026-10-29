@@ -506,9 +506,9 @@ Copiada tal cual:
 | 2 | `_peor_del_minuto` a la letra nueva (punto 8); `_precio_de_mercado` y `precio_de_conversion` al punto 3 | en las líneas del cierre |
 | 3 | La línea de Technical Debt de las cotizaciones sin tick, con su texto | en las líneas del cierre |
 | 4 | Las NOTAS de ADR-0051 §5 y §3 | **hecho** (§2.1) |
-| 5 | `censo_respaldo.py` (Z por la condición general) y `sesiones_s14.py` (el lado, comprobado) | fase 2 |
+| 5 | `censo_respaldo.py` (Z por la condición general) y `sesiones_s14.py` (el lado, comprobado) | guiones escritos y probados (§3); el lado, PARADA 2 |
 | 6 | El contrato se amplía a `docs/runbooks/ACTIVAR-A35-A44.md`, solo para la NOTA de §5 | **hecho** en este commit (`contrato.yaml`) |
-| 7 | La fila de exposiciones de las fases 1 y 2, en su propio commit antes de correr | fase 2 (la de la fase 1, antes de su primer `make check`) |
+| 7 | La fila de exposiciones de las fases 1 y 2, en su propio commit antes de correr | **hecho**: la de la fase 1 en beb9c93; la de la fase 2, en el commit de §3, antes de correr |
 | 8 | La letra nueva de la Next Action, R3.6 en la hoja de ruta, R5.2 | **letra elegida: H** (abajo); el texto, en las líneas del cierre |
 | 9 | La NOTA de ADR-0051 sobre la repetición del trader sin ticks | **hecho** (NOTA de §5) |
 | 10 | La variable `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP`, comprobada al empezar la fase 2 | fase 2 |
@@ -610,11 +610,47 @@ tests/unit/test_simulacion.py tests/unit/test_cableado.py tests/regression/test_
 tocarlos** (punto 1: ninguno tuvo que cambiar; con los datos de agosto, la regresión no se salta).
 La suite entera, en el `make check` del commit (§2.3).
 
+Y, con la rama ya commiteada (beb9c93), su clon desechable (`git worktree add --detach C:/cm/rama
+HEAD`): `uv run pytest tests/unit/test_respaldo_m1_decision.py -q -p no:cacheprovider -rA` → **12
+PASSED**. Clon quitado sin `--force` (no quedaba nada sin seguir) y `git worktree prune`; después,
+`git status --short` vacío, `git branch --list` = `main` y `trabajo/respaldo-m1`, 143 tags: lo mismo
+que antes. Nada se creó en origin (ningún push).
+
 ### 2.3 El commit de la fase 1
 
 `ruff format`, `ruff check` y `mypy` sobre `llenado.py`, `broker.py` y el test: limpios. `make
-check`: en el mensaje del commit y en §5.
+check` de beb9c93: exit 0, ningún `failed`, `SELLO` sobre el árbol f9c33d73…; **3038 passed** en
+1056 s (la suite entera: ningún test de `main` cambió ni rompió); 1139 s en total; `PICO DE MEMORIA
+de make check: 300 MiB en test`.
+
+## 3. Antes de la fase 2: los guiones, el README y la fila
+
+En su propio commit, antes de correr nada (punto 7): `docs/validation/anexos/RESPALDO-M1/` con su
+README; `patrones.py` y `horas_perdidas.py`, copias idénticas (`sha256sum`: 330b7d62… y dfa782a3…,
+los mismos que en `anexos/RECORRIDA-CONSTRUCCION/`); `censo_respaldo.py` y `sesiones_s14.py`,
+nuevos; y la fila del 2026-10-29 de la fase 2 en HOLDOUT-EXPOSICIONES.
+
+**Los guiones, probados sobre las salidas de RECORRIDA** (solo leen ficheros commiteados):
+- `censo_respaldo.py` sobre `cuenta-arrastrada.txt` y la diaria de RECORRIDA: Z = 2 y Z = 10
+  (las llenadas), y 2 stops de la diaria en «vela del stop movido», que con el código de `main`
+  eran Z (§0.e). Reproduce el censo de §0.e por la condición general, como pide el punto 5.
+- `sesiones_s14.py` con la diaria de RECORRIDA a los dos lados: las 8 sesiones P6, «0 cambian», y
+  la M1 de colocación de cada primera orden, la misma que la tabla de BARRIDO-SESION-6.md §1.d en
+  hora de Madrid (por ejemplo, la fila 18: 05:32:59.999Z = 07:32 de Madrid).
+
+**Lo que el punto 5 da por hecho y no es así (PARADA 2).** `scripts/graficos_sesion.py` **no dibuja
+el lado**: su `Orden` solo lleva `colocada` y `punto` (`graficos_sesion.py:98-101`), y lo dibujado
+son las velas cortadas en la M1 de colocación y, en el marcado, la línea del punto (BARRIDO-SESION-6
+§2.2; la fila del 2026-10-28 de HOLDOUT-EXPOSICIONES: «sin orden, stop, objetivo, llenado ni
+resultado»). «### Ordenes» tampoco trae el lado. Así que «tiene que dar el mismo lado que dibujó
+`scripts/graficos_sesion.py`» no se puede comprobar. Lo que sí he medido: la regla de la caja 1
+(venta si queda por encima del precio, compra si por debajo) contra el lado de las 291 llenadas de la
+diaria de RECORRIDA que trae `entradas-antes-alternancia.txt` → **291 cuadran, 0 no**
+(`lado_caja1.py`, guion de la carpeta de trabajo que solo lee esos dos ficheros e imprime
+recuentos). `sesiones_s14.py` compara lo que el gráfico SÍ dibuja (la M1 de colocación y el punto)
+y, además, el precio y el lado deducido.
 
 ## Estado
 
-EN CURSO: fase 1 (la corrección, sus tests y las NOTAS de ADR-0051).
+EN CURSO: fase 1 hecha (beb9c93); fase 2 preparada. PARADA 2 (el lado del punto 5) y espera a que
+Aleks reinicie Claude Code con la variable (punto 10).
