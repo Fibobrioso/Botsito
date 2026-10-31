@@ -180,3 +180,31 @@ Copiada tal cual:
 > El bloque de HISTORIA va como «# Pendiente heredado SALE», con el texto literal entero y las tres condiciones con su evidencia. Lo demás del punto 7 sigue igual: ENTRADA-MARZO.md:32 y la prosa de la hoja de ruta pasan a remitir a ENTRADA-MARZO.md, HER:2 sale de R5.3, y el contrato se amplía a ENTRADA-MARZO.md solo para esa frase. Esto es distinto de lo que bloqueó el revisor en plataforma-adelantada: entonces se pedía (b) para la línea entera, y (b) no cubría las dos frases; ahora esas dos salen por (c) con su evidencia. Dilo así en el informe.
 >
 > Previsión aceptada: 21.784 bytes. Sigue con la fase 1 y la fase 2 como dice la respuesta a la PARADA.
+
+## Revisión del consultor y orden de cierre (2026-10-31)
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Revisión del consultor de trabajo/margen-pendiente (2026-10-31) y orden de cierre. Primero los arreglos, en un commit propio; el cierre solo cuando Aleks escriba /cerrar-rama trabajo/margen-pendiente en una línea sola, después de confirmar que la comparación del lector dio IDENTICAS.
+>
+> A. ARREGLOS ANTES DEL CIERRE (un commit, make check en verde)
+> 1. El test estático: la salida en rojo pegada en §1.5 es del comprobador anterior a b2. Repite la rotura a propósito sobre copias en la carpeta de trabajo con el comprobador final (sin req.sl en el paso 8; sin PonerCaducidad; una función nueva que envía sin stop; un sl a 0; una sobrecarga del mismo nombre sin stop; una acción puesta por variable), y pega la salida completa de pytest en rojo y luego en verde sobre el fichero de la rama, en §1.5, sin borrar lo anterior.
+> 2. a4 no es «se deja»: dejar «falso positivo medido con enero,» en la línea de ADR-0042 es una desviación de (e), que solo conserva la cita del informe. Como el bloque de HISTORIA (e2d80a3) ya fijó lo que queda y HISTORIA solo se amplía, la línea no se toca: pasa a «desviación menor de (e), declarada» en §4, en §8.1 y en la fila de §5.
+> 3. En §2 (o en la PARADA 2 aplicada), nombra la condición del fragmento «Al entregarlo: el xlsx al corpus» del heredado 2: (c) SUSTITUIDA, el xlsx de marzo está recibido (REGISTRO-MARZO.md, «Fecha de recepcion: 2026-09-30»; verifica la línea). El bloque de HISTORIA no se corrige; el informe lo dice.
+> 4. §0.a: main tiene 842 líneas, no 843. Y la lista de lo que cambia en PROJECT_STATE (§2) gana las dos líneas de Completed Features y Change Log, «Archivo 52 (2026-10-28)» → «Archivo 53 (2026-10-31)», efecto de abrir-rama.
+> 5. §1.2: «la misma regla que el lector» para M2 vale solo para carga/no carga; el script da carga también donde el lector dice «no concluyente: carga, pero ni a la orden ni al mercado». Dilo así, y que es inocuo para la ocupación de M4.
+> 6. DEMO-FTMO.md dice «hasta dos minutos y medio» y §1.2 «2,5-3 minutos»: una sola cifra en los dos.
+>
+> B. HALLAZGOS DEL CONSULTOR QUE EL REVISOR NO VIO (para la fila de ERRORES-RECURRENTES, columna «consultor», además de los cinco ya escritos en §5): (importa) la prueba «rompe de verdad» del test estático se pegó con el comprobador anterior a b2 y no se repitió con el definitivo; (menor) a4 contestado como «no aplica» cuando es una desviación de (e); (menor) el fragmento «el xlsx al corpus» del heredado 2 sin condición nombrada; (menor) 843 frente a 842 líneas y las dos líneas Archivo 52→53 fuera del diff declarado. Lección para el revisor: cuando un hallazgo suyo obliga a reescribir un comprobador, la evidencia de que rompe se vuelve a producir con la versión final; y una línea de PROJECT_STATE que se queda distinta de lo que manda el criterio es una desviación, no una excepción.
+>
+> C. ORDEN DE CIERRE (skill cerrar-rama, RITUAL.md)
+> - Tag: stable/F38k-margen-pendiente. Verifica en HISTORIA que el último es F38j y que F38k no existe ni en local ni en origin.
+> - Commit del contrato (chore(cierre): sale el contrato y entra el registro en HISTORIA), con todo lo que cambia la Next Action y la hoja de ruta:
+>   - Next Action, entrada A: la frase «Cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4) pide un script 1.2, que aún no existe: una rama corta antes de la 3; si no llega, esa medida pasa a la siguiente prueba.» pasa a «La 3 va con el script 1.2 (trabajo/margen-pendiente), que además mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4; paso 8, DEMO-FTMO.md).». No sale ni entra ninguna letra.
+>   - Hoja de ruta: A.1 y R6a.6 con los textos de §3 del informe. test_hoja_de_ruta en verde.
+>   - docs/state/README.md, junto a la condición (e), una línea con fecha y rama: «Decisión de Aleks (2026-10-30): el tope de 25.000 bytes se mantiene, porque cada sesión lee este fichero al arrancar; solo se replantea subirlo cuando no quede nada que recortar con las condiciones (a) a (e).»
+>   - La fila de ERRORES-RECURRENTES de §5, con lo de B añadido.
+>   - El registro de cierre en HISTORIA con stable/F38k-margen-pendiente^{commit}.
+> - Commit de estado en main: solo Current Branch (main), Current Feature, Stable Main State y Last Stable Commit, con los tres textos literales del punto 6 de la respuesta a la PARADA, con el sha del merge y la fecha. La Next Action no se toca aquí.
+> - El resto, según RITUAL: merge, tag, make check sellado y push atómico de main y el tag en un solo comando. Si el clasificador niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees. La CI de main tiene que estar en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual, sin guion ni bucle. Con la CI de main en completed/success, borra trabajo/margen-pendiente (git branch -d); no hay fix/ remota.
+> - Informe final: sha de main, tag, run de la CI de main, ramas que quedan (solo main y, si sigue, el worktree wt-ci, que no se toca) y tamaño de PROJECT_STATE con wc -c (esperado: 21.784 bytes).

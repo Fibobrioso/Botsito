@@ -24,7 +24,8 @@ repositorio.
 
 ### 0.a El script 1.1
 
-Verificado en `tools/mql5/MedirDemoFTMO.mq5` (843 líneas):
+Verificado en `tools/mql5/MedirDemoFTMO.mq5` (842 líneas, `git show main:tools/mql5/MedirDemoFTMO.mq5 | wc -l`;
+decía 843, corregido tras la revisión del consultor, §9):
 
 | Lo que dice el encargo | Medido |
 |---|---|
@@ -643,8 +644,13 @@ toda otra posicion lleva stop» (punto 1). El fuente sigue en ASCII.
 
 - **M2 por las tres cifras** (punto 2.d): escribe antes y después ACCOUNT_MARGIN, ACCOUNT_MARGIN_FREE y
   ACCOUNT_MARGIN_INITIAL, y decide «carga» por la bajada del LIBRE (≥ 10 % del margen calculado al
-  mercado), con la misma regla que el lector; lo escribe en `m2_carga_script`, que elige la ocupación
-  de M4.
+  mercado), con la misma regla que el lector para carga / no carga; lo escribe en `m2_carga_script`,
+  que elige la ocupación de M4. La regla es la misma solo en eso: el script da «carga» también donde el
+  lector dice «no concluyente: carga, pero ni a la orden ni al mercado» (la bajada pasa del 10 % pero
+  no casa con ninguno de los dos cálculos). Es inocuo para la ocupación de M4: si la pendiente carga
+  algo, sea cual sea el precio al que la calcula MT5, la ocupación por una posición ya no sirve y la
+  que se elige es la de las pendientes lejanas, que es lo que el script hace (corregido tras la
+  revisión del consultor, §9).
 - **M4** (puntos 2.a, 2.b, 2.c y 2.e): S sin pausa (la ocupación va enseguida); el libre antes de S
   (`m4_libre_antes_stop`), con S puesta (`m4_libre_tras_stop`; si M2 dijo que carga, espera a que la
   cuenta lo refleje) y con la ocupación (`m4_libre_tras_ocupar`); lo que reservó S es la diferencia
@@ -672,8 +678,9 @@ toda otra posicion lleva stop» (punto 1). El fuente sigue en ASCII.
   frente a 34 (42) de la 1.1. Muy por debajo de 2.000 al día (R13) y de 200 órdenes a la vez (como
   mucho 3).
 - **Tiempo del paso 8**, peor caso: unos 16 s de pausas, hasta 15 s esperando a la cuenta (M2 y dos
-  en M4), hasta 120 s esperando a que salte S y los `Limpiar`: unos 2,5-3 minutos. El script entero,
-  como mucho unos 6.
+  en M4), hasta 120 s esperando a que salte S y los `Limpiar`: como mucho unos dos minutos y medio,
+  la misma cifra que `DEMO-FTMO.md` (decía «2,5-3 minutos», corregido tras la revisión del consultor,
+  §9). El script entero, como mucho unos 6.
 
 ### 1.3 La compilación
 
@@ -752,6 +759,879 @@ dos salidas fuera del repo:
 - **La guardia y pytest** (fase 0, 0.g): con el lector ya cambiado, `uv run pytest
   tests/unit/test_leer_demo_ftmo.py …` no lo niega.
 
+#### 1.5.1 La rotura, repetida con el comprobador final (revisión del consultor, §9, punto A.1)
+
+Lo de arriba («En rojo…») se hizo con el comprobador ANTERIOR a b2 (9 tests). Repetido el
+2026-10-31 con el test de la rama tal cual (13 tests, a90cd45) y guion `rojo2.py` en la carpeta
+de trabajo: por cada rotura, un árbol desechable con el test copiado en `tests/contract/` y el
+script 1.2 estropeado en `tools/mql5/` (las inserciones van delante de `OnStart`, así que la
+línea 759 sigue siendo la condición DEMO en los seis), y `python -m pytest
+tests/contract/test_medir_demo_ftmo.py -q -p no:cacheprovider` dentro de él. Después, el mismo
+test sobre el fichero de la rama, desde la raíz del repo.
+
+En los seis, el test principal (`test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad`,
+o el de la lista de las que envían) cae nombrando exactamente la rotura. Fallan además los tests
+de roturas en memoria, porque comparan la lista ENTERA de problemas y el fuente de partida ya
+trae uno (y, en 1, 2 y 4, el caso parametrizado que quita la línea que ya falta). Resumen: 7, 7, 7,
+7, 6 y 7 failed; en la rama, 13 passed. La salida completa de pytest, tal cual (solo se quitan los
+espacios al final de línea):
+
+**1. sin el `req.sl` de `AbrirCompra` (paso 8)** (`rojo2/1_sin_sl_paso8`), código de salida 1:
+
+```text
+F...F...FFFFF                                                            [100%]
+================================== FAILURES ===================================
+______ test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad ______
+
+    def test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad() -> None:
+>       assert problemas(_texto()) == []
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == []
+E
+E         Left contains one more item: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:122: AssertionError
+_ test_rompe_si_falta_el_stop_la_caducidad_o_el_magico[AbrirCompra-   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n-AbrirCompra: DEAL sin req.sl] _
+
+funcion = 'AbrirCompra'
+quitar = '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n'
+esperado = 'AbrirCompra: DEAL sin req.sl'
+
+    @pytest.mark.parametrize(
+        ("funcion", "quitar", "esperado"),
+        [
+            ("ColocarBuyStop", "   req.sl = NormalizeDouble(precio - stop * g_point, g_digits);\n",
+             "ColocarBuyStop: PENDING sin req.sl"),
+            ("AbrirCompra", "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n",
+             "AbrirCompra: DEAL sin req.sl"),
+            ("ColocarBuyStop", "   PonerCaducidad(req);\n",
+             "ColocarBuyStop: PENDING sin PonerCaducidad"),
+            ("AbrirCompra", "   req.magic = MAGICO;\n", "AbrirCompra: DEAL sin req.magic"),
+            ("EnviarPendiente", "   PonerCaducidad(req);\n",
+             "EnviarPendiente: PENDING sin PonerCaducidad"),
+        ],
+    )  # fmt: skip
+    def test_rompe_si_falta_el_stop_la_caducidad_o_el_magico(
+        funcion: str, quitar: str, esperado: str
+    ) -> None:
+>       rotos = problemas(_sin(_texto(), funcion, quitar))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\contract\test_medir_demo_ftmo.py:178:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+texto = '//+------------------------------------------------------------------+\n//| MedirDemoFTMO.mq5                        ...posiciones del script";\n   Alert(msg);\n  }\n//+------------------------------------------------------------------+\n'
+funcion = 'AbrirCompra'
+quitar = '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n'
+poner = ''
+
+    def _sin(texto: str, funcion: str, quitar: str, poner: str = "") -> str:
+        cuerpo = _cuerpo(texto, funcion)
+>       assert quitar in cuerpo, (funcion, quitar)
+E       AssertionError: ('AbrirCompra', '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);
+E         ')
+E       assert '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n' in 'bool AbrirCompra(const double volumen, const MqlTick &t, const int stop, MqlTradeResult &res)\n  {\n   MqlTradeReques...eturn ok;\n  }\n\n// Espera (hasta P8_ESPERA_CUENTA ms) a que cambie el margen libre, el usado o el de las pendientes.'
+
+tests\contract\test_medir_demo_ftmo.py:157: AssertionError
+_____________ test_rompe_con_una_funcion_nueva_que_envia_sin_stop _____________
+
+    def test_rompe_con_una_funcion_nueva_que_envia_sin_stop() -> None:
+        nueva = (
+            "\nbool AbrirSinStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_DEAL;\n"
+            "   r.magic = MAGICO;\n"
+            "   r.volume = volumen;\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["AbrirSinStop: DEAL sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == ['AbrirSinSto... proteccion)']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:190: AssertionError
+________________________ test_rompe_con_un_stop_a_cero ________________________
+
+    def test_rompe_con_un_stop_a_cero() -> None:
+        sl = "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n"
+>       texto = _sin(_texto(), "AbrirCompra", sl, "   req.sl = 0.0;\n")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\contract\test_medir_demo_ftmo.py:198:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+texto = '//+------------------------------------------------------------------+\n//| MedirDemoFTMO.mq5                        ...posiciones del script";\n   Alert(msg);\n  }\n//+------------------------------------------------------------------+\n'
+funcion = 'AbrirCompra'
+quitar = '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n'
+poner = '   req.sl = 0.0;\n'
+
+    def _sin(texto: str, funcion: str, quitar: str, poner: str = "") -> str:
+        cuerpo = _cuerpo(texto, funcion)
+>       assert quitar in cuerpo, (funcion, quitar)
+E       AssertionError: ('AbrirCompra', '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);
+E         ')
+E       assert '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n' in 'bool AbrirCompra(const double volumen, const MqlTick &t, const int stop, MqlTradeResult &res)\n  {\n   MqlTradeReques...eturn ok;\n  }\n\n// Espera (hasta P8_ESPERA_CUENTA ms) a que cambie el margen libre, el usado o el de las pendientes.'
+
+tests\contract\test_medir_demo_ftmo.py:157: AssertionError
+___________ test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop ___________
+
+    def test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop() -> None:
+        sobrecarga = (
+            "\nbool ColocarBuyStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_PENDING;\n"
+            "   r.magic = MAGICO;\n   PonerCaducidad(r);\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", sobrecarga + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["ColocarBuyStop: PENDING sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == ['ColocarBuyS... proteccion)']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:209: AssertionError
+________________ test_rompe_con_una_accion_puesta_por_variable ________________
+
+    def test_rompe_con_una_accion_puesta_por_variable() -> None:
+        nueva = (
+            "\nbool EnviarCualquiera(const ENUM_TRADE_REQUEST_ACTIONS acc)\n  {\n"
+            "   MqlTradeRequest r;\n   MqlTradeResult s;\n   ZeroMemory(r);\n"
+            "   r.action = acc;\n   r.magic = MAGICO;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc"
+        ]
+E       AssertionError: assert ['AbrirCompra...de leer: acc'] == ['EnviarCualq...de leer: acc']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:220: AssertionError
+____________ test_rompe_con_un_ordersend_sin_accion_en_la_funcion _____________
+
+    def test_rompe_con_un_ordersend_sin_accion_en_la_funcion() -> None:
+        nueva = (
+            "\nbool ReenviarPeticion(MqlTradeRequest &r)\n  {\n   MqlTradeResult s;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)"
+        ]
+E       AssertionError: assert ['AbrirCompra...sin .action)'] == ['ReenviarPet...sin .action)']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Left contains one more item: 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:232: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/contract/test_medir_demo_ftmo.py::test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_si_falta_el_stop_la_caducidad_o_el_magico[AbrirCompra-   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n-AbrirCompra: DEAL sin req.sl]
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_funcion_nueva_que_envia_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_stop_a_cero
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_accion_puesta_por_variable
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_ordersend_sin_accion_en_la_funcion
+7 failed, 6 passed in 0.32s
+```
+
+**2. sin el `PonerCaducidad(req)` de `ColocarBuyStop` (paso 8)** (`rojo2/2_sin_caducidad`), código de salida 1:
+
+```text
+F....F..FFFFF                                                            [100%]
+================================== FAILURES ===================================
+______ test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad ______
+
+    def test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad() -> None:
+>       assert problemas(_texto()) == []
+E       AssertionError: assert ['ColocarBuyS...ducidad(req)'] == []
+E
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin PonerCaducidad(req)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:122: AssertionError
+_ test_rompe_si_falta_el_stop_la_caducidad_o_el_magico[ColocarBuyStop-   PonerCaducidad(req);\n-ColocarBuyStop: PENDING sin PonerCaducidad] _
+
+funcion = 'ColocarBuyStop', quitar = '   PonerCaducidad(req);\n'
+esperado = 'ColocarBuyStop: PENDING sin PonerCaducidad'
+
+    @pytest.mark.parametrize(
+        ("funcion", "quitar", "esperado"),
+        [
+            ("ColocarBuyStop", "   req.sl = NormalizeDouble(precio - stop * g_point, g_digits);\n",
+             "ColocarBuyStop: PENDING sin req.sl"),
+            ("AbrirCompra", "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n",
+             "AbrirCompra: DEAL sin req.sl"),
+            ("ColocarBuyStop", "   PonerCaducidad(req);\n",
+             "ColocarBuyStop: PENDING sin PonerCaducidad"),
+            ("AbrirCompra", "   req.magic = MAGICO;\n", "AbrirCompra: DEAL sin req.magic"),
+            ("EnviarPendiente", "   PonerCaducidad(req);\n",
+             "EnviarPendiente: PENDING sin PonerCaducidad"),
+        ],
+    )  # fmt: skip
+    def test_rompe_si_falta_el_stop_la_caducidad_o_el_magico(
+        funcion: str, quitar: str, esperado: str
+    ) -> None:
+>       rotos = problemas(_sin(_texto(), funcion, quitar))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\contract\test_medir_demo_ftmo.py:178:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+texto = '//+------------------------------------------------------------------+\n//| MedirDemoFTMO.mq5                        ...posiciones del script";\n   Alert(msg);\n  }\n//+------------------------------------------------------------------+\n'
+funcion = 'ColocarBuyStop', quitar = '   PonerCaducidad(req);\n', poner = ''
+
+    def _sin(texto: str, funcion: str, quitar: str, poner: str = "") -> str:
+        cuerpo = _cuerpo(texto, funcion)
+>       assert quitar in cuerpo, (funcion, quitar)
+E       AssertionError: ('ColocarBuyStop', '   PonerCaducidad(req);
+E         ')
+E       assert '   PonerCaducidad(req);\n' in 'bool ColocarBuyStop(const double volumen, const double precio, const int stop, const string comentario,\n            ...\n      Sleep(InpPausaMs);\n   return ok;\n  }\n\n// Una compra a mercado del paso 8: con MAGICO y stop de proteccion.'
+
+tests\contract\test_medir_demo_ftmo.py:157: AssertionError
+_____________ test_rompe_con_una_funcion_nueva_que_envia_sin_stop _____________
+
+    def test_rompe_con_una_funcion_nueva_que_envia_sin_stop() -> None:
+        nueva = (
+            "\nbool AbrirSinStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_DEAL;\n"
+            "   r.magic = MAGICO;\n"
+            "   r.volume = volumen;\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["AbrirSinStop: DEAL sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['ColocarBuyS... proteccion)'] == ['AbrirSinSto... proteccion)']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin PonerCaducidad(req)' != 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:190: AssertionError
+________________________ test_rompe_con_un_stop_a_cero ________________________
+
+    def test_rompe_con_un_stop_a_cero() -> None:
+        sl = "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n"
+        texto = _sin(_texto(), "AbrirCompra", sl, "   req.sl = 0.0;\n")
+>       assert problemas(texto) == ["AbrirCompra: DEAL sin req.sl (stop de proteccion)"]
+E       AssertionError: assert ['ColocarBuyS... proteccion)'] == ['AbrirCompra... proteccion)']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin PonerCaducidad(req)' != 'AbrirCompra: DEAL sin req.sl (stop de proteccion)'
+E         Left contains one more item: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:199: AssertionError
+___________ test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop ___________
+
+    def test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop() -> None:
+        sobrecarga = (
+            "\nbool ColocarBuyStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_PENDING;\n"
+            "   r.magic = MAGICO;\n   PonerCaducidad(r);\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", sobrecarga + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["ColocarBuyStop: PENDING sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['ColocarBuyS... proteccion)'] == ['ColocarBuyS... proteccion)']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin PonerCaducidad(req)' != 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:209: AssertionError
+________________ test_rompe_con_una_accion_puesta_por_variable ________________
+
+    def test_rompe_con_una_accion_puesta_por_variable() -> None:
+        nueva = (
+            "\nbool EnviarCualquiera(const ENUM_TRADE_REQUEST_ACTIONS acc)\n  {\n"
+            "   MqlTradeRequest r;\n   MqlTradeResult s;\n   ZeroMemory(r);\n"
+            "   r.action = acc;\n   r.magic = MAGICO;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc"
+        ]
+E       AssertionError: assert ['ColocarBuyS...de leer: acc'] == ['EnviarCualq...de leer: acc']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin PonerCaducidad(req)' != 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:220: AssertionError
+____________ test_rompe_con_un_ordersend_sin_accion_en_la_funcion _____________
+
+    def test_rompe_con_un_ordersend_sin_accion_en_la_funcion() -> None:
+        nueva = (
+            "\nbool ReenviarPeticion(MqlTradeRequest &r)\n  {\n   MqlTradeResult s;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)"
+        ]
+E       AssertionError: assert ['ColocarBuyS...sin .action)'] == ['ReenviarPet...sin .action)']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin PonerCaducidad(req)' != 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Left contains one more item: 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:232: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/contract/test_medir_demo_ftmo.py::test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_si_falta_el_stop_la_caducidad_o_el_magico[ColocarBuyStop-   PonerCaducidad(req);\n-ColocarBuyStop: PENDING sin PonerCaducidad]
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_funcion_nueva_que_envia_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_stop_a_cero
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_accion_puesta_por_variable
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_ordersend_sin_accion_en_la_funcion
+7 failed, 6 passed in 0.37s
+```
+
+**3. una función nueva, `AbrirSinStop`, que envía un DEAL sin stop** (`rojo2/3_funcion_nueva_sin_stop`), código de salida 1:
+
+```text
+FF......FFFFF                                                            [100%]
+================================== FAILURES ===================================
+______ test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad ______
+
+    def test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad() -> None:
+>       assert problemas(_texto()) == []
+E       AssertionError: assert ['AbrirSinSto... proteccion)'] == []
+E
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:122: AssertionError
+____ test_las_que_envian_son_las_conocidas_y_la_lista_sin_stop_es_cerrada _____
+
+    def test_las_que_envian_son_las_conocidas_y_la_lista_sin_stop_es_cerrada() -> None:
+        """Si nace otra funcion que envia, este test la nombra: que cumpla (o se discuta su motivo)."""
+        envian = que_envian(_texto())
+>       assert envian == [
+            "AbrirCompra",
+            "CerrarPosicion",
+            "ColocarBuyStop",
+            "EnviarPendiente",
+            "MedirComision",
+            "MedirLlenadoStop",
+        ]
+E       AssertionError: assert ['AbrirCompra...omision', ...] == ['AbrirCompra...rLlenadoStop']
+E
+E         At index 1 diff: 'AbrirSinStop' != 'CerrarPosicion'
+E         Left contains one more item: 'MedirLlenadoStop'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:128: AssertionError
+_____________ test_rompe_con_una_funcion_nueva_que_envia_sin_stop _____________
+
+    def test_rompe_con_una_funcion_nueva_que_envia_sin_stop() -> None:
+        nueva = (
+            "\nbool AbrirSinStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_DEAL;\n"
+            "   r.magic = MAGICO;\n"
+            "   r.volume = volumen;\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["AbrirSinStop: DEAL sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirSinSto... proteccion)'] == ['AbrirSinSto... proteccion)']
+E
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:190: AssertionError
+________________________ test_rompe_con_un_stop_a_cero ________________________
+
+    def test_rompe_con_un_stop_a_cero() -> None:
+        sl = "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n"
+        texto = _sin(_texto(), "AbrirCompra", sl, "   req.sl = 0.0;\n")
+>       assert problemas(texto) == ["AbrirCompra: DEAL sin req.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == ['AbrirCompra... proteccion)']
+E
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:199: AssertionError
+___________ test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop ___________
+
+    def test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop() -> None:
+        sobrecarga = (
+            "\nbool ColocarBuyStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_PENDING;\n"
+            "   r.magic = MAGICO;\n   PonerCaducidad(r);\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", sobrecarga + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["ColocarBuyStop: PENDING sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirSinSto... proteccion)'] == ['ColocarBuyS... proteccion)']
+E
+E         At index 0 diff: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)' != 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:209: AssertionError
+________________ test_rompe_con_una_accion_puesta_por_variable ________________
+
+    def test_rompe_con_una_accion_puesta_por_variable() -> None:
+        nueva = (
+            "\nbool EnviarCualquiera(const ENUM_TRADE_REQUEST_ACTIONS acc)\n  {\n"
+            "   MqlTradeRequest r;\n   MqlTradeResult s;\n   ZeroMemory(r);\n"
+            "   r.action = acc;\n   r.magic = MAGICO;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc"
+        ]
+E       AssertionError: assert ['AbrirSinSto...de leer: acc'] == ['EnviarCualq...de leer: acc']
+E
+E         At index 0 diff: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)' != 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:220: AssertionError
+____________ test_rompe_con_un_ordersend_sin_accion_en_la_funcion _____________
+
+    def test_rompe_con_un_ordersend_sin_accion_en_la_funcion() -> None:
+        nueva = (
+            "\nbool ReenviarPeticion(MqlTradeRequest &r)\n  {\n   MqlTradeResult s;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)"
+        ]
+E       AssertionError: assert ['AbrirSinSto...sin .action)'] == ['ReenviarPet...sin .action)']
+E
+E         At index 0 diff: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)' != 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Left contains one more item: 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:232: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/contract/test_medir_demo_ftmo.py::test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad
+FAILED tests/contract/test_medir_demo_ftmo.py::test_las_que_envian_son_las_conocidas_y_la_lista_sin_stop_es_cerrada
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_funcion_nueva_que_envia_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_stop_a_cero
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_accion_puesta_por_variable
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_ordersend_sin_accion_en_la_funcion
+7 failed, 6 passed in 0.34s
+```
+
+**4. el `req.sl` de `AbrirCompra` puesto a `0.0`** (`rojo2/4_sl_a_cero`), código de salida 1:
+
+```text
+F...F...FFFFF                                                            [100%]
+================================== FAILURES ===================================
+______ test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad ______
+
+    def test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad() -> None:
+>       assert problemas(_texto()) == []
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == []
+E
+E         Left contains one more item: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:122: AssertionError
+_ test_rompe_si_falta_el_stop_la_caducidad_o_el_magico[AbrirCompra-   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n-AbrirCompra: DEAL sin req.sl] _
+
+funcion = 'AbrirCompra'
+quitar = '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n'
+esperado = 'AbrirCompra: DEAL sin req.sl'
+
+    @pytest.mark.parametrize(
+        ("funcion", "quitar", "esperado"),
+        [
+            ("ColocarBuyStop", "   req.sl = NormalizeDouble(precio - stop * g_point, g_digits);\n",
+             "ColocarBuyStop: PENDING sin req.sl"),
+            ("AbrirCompra", "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n",
+             "AbrirCompra: DEAL sin req.sl"),
+            ("ColocarBuyStop", "   PonerCaducidad(req);\n",
+             "ColocarBuyStop: PENDING sin PonerCaducidad"),
+            ("AbrirCompra", "   req.magic = MAGICO;\n", "AbrirCompra: DEAL sin req.magic"),
+            ("EnviarPendiente", "   PonerCaducidad(req);\n",
+             "EnviarPendiente: PENDING sin PonerCaducidad"),
+        ],
+    )  # fmt: skip
+    def test_rompe_si_falta_el_stop_la_caducidad_o_el_magico(
+        funcion: str, quitar: str, esperado: str
+    ) -> None:
+>       rotos = problemas(_sin(_texto(), funcion, quitar))
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\contract\test_medir_demo_ftmo.py:178:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+texto = '//+------------------------------------------------------------------+\n//| MedirDemoFTMO.mq5                        ...posiciones del script";\n   Alert(msg);\n  }\n//+------------------------------------------------------------------+\n'
+funcion = 'AbrirCompra'
+quitar = '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n'
+poner = ''
+
+    def _sin(texto: str, funcion: str, quitar: str, poner: str = "") -> str:
+        cuerpo = _cuerpo(texto, funcion)
+>       assert quitar in cuerpo, (funcion, quitar)
+E       AssertionError: ('AbrirCompra', '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);
+E         ')
+E       assert '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n' in 'bool AbrirCompra(const double volumen, const MqlTick &t, const int stop, MqlTradeResult &res)\n  {\n   MqlTradeReques...eturn ok;\n  }\n\n// Espera (hasta P8_ESPERA_CUENTA ms) a que cambie el margen libre, el usado o el de las pendientes.'
+
+tests\contract\test_medir_demo_ftmo.py:157: AssertionError
+_____________ test_rompe_con_una_funcion_nueva_que_envia_sin_stop _____________
+
+    def test_rompe_con_una_funcion_nueva_que_envia_sin_stop() -> None:
+        nueva = (
+            "\nbool AbrirSinStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_DEAL;\n"
+            "   r.magic = MAGICO;\n"
+            "   r.volume = volumen;\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["AbrirSinStop: DEAL sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == ['AbrirSinSto... proteccion)']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:190: AssertionError
+________________________ test_rompe_con_un_stop_a_cero ________________________
+
+    def test_rompe_con_un_stop_a_cero() -> None:
+        sl = "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n"
+>       texto = _sin(_texto(), "AbrirCompra", sl, "   req.sl = 0.0;\n")
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\contract\test_medir_demo_ftmo.py:198:
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+texto = '//+------------------------------------------------------------------+\n//| MedirDemoFTMO.mq5                        ...posiciones del script";\n   Alert(msg);\n  }\n//+------------------------------------------------------------------+\n'
+funcion = 'AbrirCompra'
+quitar = '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n'
+poner = '   req.sl = 0.0;\n'
+
+    def _sin(texto: str, funcion: str, quitar: str, poner: str = "") -> str:
+        cuerpo = _cuerpo(texto, funcion)
+>       assert quitar in cuerpo, (funcion, quitar)
+E       AssertionError: ('AbrirCompra', '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);
+E         ')
+E       assert '   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n' in 'bool AbrirCompra(const double volumen, const MqlTick &t, const int stop, MqlTradeResult &res)\n  {\n   MqlTradeReques...eturn ok;\n  }\n\n// Espera (hasta P8_ESPERA_CUENTA ms) a que cambie el margen libre, el usado o el de las pendientes.'
+
+tests\contract\test_medir_demo_ftmo.py:157: AssertionError
+___________ test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop ___________
+
+    def test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop() -> None:
+        sobrecarga = (
+            "\nbool ColocarBuyStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_PENDING;\n"
+            "   r.magic = MAGICO;\n   PonerCaducidad(r);\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", sobrecarga + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["ColocarBuyStop: PENDING sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == ['ColocarBuyS... proteccion)']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:209: AssertionError
+________________ test_rompe_con_una_accion_puesta_por_variable ________________
+
+    def test_rompe_con_una_accion_puesta_por_variable() -> None:
+        nueva = (
+            "\nbool EnviarCualquiera(const ENUM_TRADE_REQUEST_ACTIONS acc)\n  {\n"
+            "   MqlTradeRequest r;\n   MqlTradeResult s;\n   ZeroMemory(r);\n"
+            "   r.action = acc;\n   r.magic = MAGICO;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc"
+        ]
+E       AssertionError: assert ['AbrirCompra...de leer: acc'] == ['EnviarCualq...de leer: acc']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:220: AssertionError
+____________ test_rompe_con_un_ordersend_sin_accion_en_la_funcion _____________
+
+    def test_rompe_con_un_ordersend_sin_accion_en_la_funcion() -> None:
+        nueva = (
+            "\nbool ReenviarPeticion(MqlTradeRequest &r)\n  {\n   MqlTradeResult s;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)"
+        ]
+E       AssertionError: assert ['AbrirCompra...sin .action)'] == ['ReenviarPet...sin .action)']
+E
+E         At index 0 diff: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)' != 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Left contains one more item: 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:232: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/contract/test_medir_demo_ftmo.py::test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_si_falta_el_stop_la_caducidad_o_el_magico[AbrirCompra-   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n-AbrirCompra: DEAL sin req.sl]
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_funcion_nueva_que_envia_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_stop_a_cero
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_accion_puesta_por_variable
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_ordersend_sin_accion_en_la_funcion
+7 failed, 6 passed in 0.32s
+```
+
+**5. una sobrecarga `ColocarBuyStop(const double volumen)` sin stop** (`rojo2/5_sobrecarga_sin_stop`), código de salida 1:
+
+```text
+F.......FFFFF                                                            [100%]
+================================== FAILURES ===================================
+______ test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad ______
+
+    def test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad() -> None:
+>       assert problemas(_texto()) == []
+E       AssertionError: assert ['ColocarBuyS... proteccion)'] == []
+E
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:122: AssertionError
+_____________ test_rompe_con_una_funcion_nueva_que_envia_sin_stop _____________
+
+    def test_rompe_con_una_funcion_nueva_que_envia_sin_stop() -> None:
+        nueva = (
+            "\nbool AbrirSinStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_DEAL;\n"
+            "   r.magic = MAGICO;\n"
+            "   r.volume = volumen;\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["AbrirSinStop: DEAL sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['ColocarBuyS... proteccion)'] == ['AbrirSinSto... proteccion)']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)' != 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:190: AssertionError
+________________________ test_rompe_con_un_stop_a_cero ________________________
+
+    def test_rompe_con_un_stop_a_cero() -> None:
+        sl = "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n"
+        texto = _sin(_texto(), "AbrirCompra", sl, "   req.sl = 0.0;\n")
+>       assert problemas(texto) == ["AbrirCompra: DEAL sin req.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirCompra... proteccion)'] == ['AbrirCompra... proteccion)']
+E
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:199: AssertionError
+___________ test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop ___________
+
+    def test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop() -> None:
+        sobrecarga = (
+            "\nbool ColocarBuyStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_PENDING;\n"
+            "   r.magic = MAGICO;\n   PonerCaducidad(r);\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", sobrecarga + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["ColocarBuyStop: PENDING sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['ColocarBuyS... proteccion)'] == ['ColocarBuyS... proteccion)']
+E
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:209: AssertionError
+________________ test_rompe_con_una_accion_puesta_por_variable ________________
+
+    def test_rompe_con_una_accion_puesta_por_variable() -> None:
+        nueva = (
+            "\nbool EnviarCualquiera(const ENUM_TRADE_REQUEST_ACTIONS acc)\n  {\n"
+            "   MqlTradeRequest r;\n   MqlTradeResult s;\n   ZeroMemory(r);\n"
+            "   r.action = acc;\n   r.magic = MAGICO;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc"
+        ]
+E       AssertionError: assert ['ColocarBuyS...de leer: acc'] == ['EnviarCualq...de leer: acc']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)' != 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:220: AssertionError
+____________ test_rompe_con_un_ordersend_sin_accion_en_la_funcion _____________
+
+    def test_rompe_con_un_ordersend_sin_accion_en_la_funcion() -> None:
+        nueva = (
+            "\nbool ReenviarPeticion(MqlTradeRequest &r)\n  {\n   MqlTradeResult s;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)"
+        ]
+E       AssertionError: assert ['ColocarBuyS...sin .action)'] == ['ReenviarPet...sin .action)']
+E
+E         At index 0 diff: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)' != 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Left contains one more item: 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:232: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/contract/test_medir_demo_ftmo.py::test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_funcion_nueva_que_envia_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_stop_a_cero
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_accion_puesta_por_variable
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_ordersend_sin_accion_en_la_funcion
+6 failed, 7 passed in 0.32s
+```
+
+**6. una función nueva, `EnviarCualquiera`, con `r.action = acc`** (`rojo2/6_accion_por_variable`), código de salida 1:
+
+```text
+FF......FFFFF                                                            [100%]
+================================== FAILURES ===================================
+______ test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad ______
+
+    def test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad() -> None:
+>       assert problemas(_texto()) == []
+E       AssertionError: assert ['EnviarCualq...de leer: acc'] == []
+E
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:122: AssertionError
+____ test_las_que_envian_son_las_conocidas_y_la_lista_sin_stop_es_cerrada _____
+
+    def test_las_que_envian_son_las_conocidas_y_la_lista_sin_stop_es_cerrada() -> None:
+        """Si nace otra funcion que envia, este test la nombra: que cumpla (o se discuta su motivo)."""
+        envian = que_envian(_texto())
+>       assert envian == [
+            "AbrirCompra",
+            "CerrarPosicion",
+            "ColocarBuyStop",
+            "EnviarPendiente",
+            "MedirComision",
+            "MedirLlenadoStop",
+        ]
+E       AssertionError: assert ['AbrirCompra...omision', ...] == ['AbrirCompra...rLlenadoStop']
+E
+E         At index 3 diff: 'EnviarCualquiera' != 'EnviarPendiente'
+E         Left contains one more item: 'MedirLlenadoStop'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:128: AssertionError
+_____________ test_rompe_con_una_funcion_nueva_que_envia_sin_stop _____________
+
+    def test_rompe_con_una_funcion_nueva_que_envia_sin_stop() -> None:
+        nueva = (
+            "\nbool AbrirSinStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_DEAL;\n"
+            "   r.magic = MAGICO;\n"
+            "   r.volume = volumen;\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["AbrirSinStop: DEAL sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['EnviarCualq... proteccion)'] == ['AbrirSinSto... proteccion)']
+E
+E         At index 0 diff: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc' != 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:190: AssertionError
+________________________ test_rompe_con_un_stop_a_cero ________________________
+
+    def test_rompe_con_un_stop_a_cero() -> None:
+        sl = "   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);\n"
+        texto = _sin(_texto(), "AbrirCompra", sl, "   req.sl = 0.0;\n")
+>       assert problemas(texto) == ["AbrirCompra: DEAL sin req.sl (stop de proteccion)"]
+E       AssertionError: assert ['AbrirCompra...de leer: acc'] == ['AbrirCompra... proteccion)']
+E
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:199: AssertionError
+___________ test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop ___________
+
+    def test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop() -> None:
+        sobrecarga = (
+            "\nbool ColocarBuyStop(const double volumen)\n  {\n   MqlTradeRequest r;\n"
+            "   MqlTradeResult s;\n   ZeroMemory(r);\n   r.action = TRADE_ACTION_PENDING;\n"
+            "   r.magic = MAGICO;\n   PonerCaducidad(r);\n   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", sobrecarga + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == ["ColocarBuyStop: PENDING sin r.sl (stop de proteccion)"]
+E       AssertionError: assert ['EnviarCualq... proteccion)'] == ['ColocarBuyS... proteccion)']
+E
+E         At index 0 diff: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc' != 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Left contains one more item: 'ColocarBuyStop: PENDING sin r.sl (stop de proteccion)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:209: AssertionError
+________________ test_rompe_con_una_accion_puesta_por_variable ________________
+
+    def test_rompe_con_una_accion_puesta_por_variable() -> None:
+        nueva = (
+            "\nbool EnviarCualquiera(const ENUM_TRADE_REQUEST_ACTIONS acc)\n  {\n"
+            "   MqlTradeRequest r;\n   MqlTradeResult s;\n   ZeroMemory(r);\n"
+            "   r.action = acc;\n   r.magic = MAGICO;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc"
+        ]
+E       AssertionError: assert ['EnviarCualq...de leer: acc'] == ['EnviarCualq...de leer: acc']
+E
+E         Left contains one more item: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:220: AssertionError
+____________ test_rompe_con_un_ordersend_sin_accion_en_la_funcion _____________
+
+    def test_rompe_con_un_ordersend_sin_accion_en_la_funcion() -> None:
+        nueva = (
+            "\nbool ReenviarPeticion(MqlTradeRequest &r)\n  {\n   MqlTradeResult s;\n"
+            "   return OrderSend(r, s);\n  }\n"
+        )
+        texto = _texto().replace("void OnStart()", nueva + "\nvoid OnStart()", 1)
+>       assert problemas(texto) == [
+            "ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)"
+        ]
+E       AssertionError: assert ['EnviarCualq...sin .action)'] == ['ReenviarPet...sin .action)']
+E
+E         At index 0 diff: 'EnviarCualquiera: OrderSend(r) con una accion que no se puede leer: acc' != 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Left contains one more item: 'ReenviarPeticion: OrderSend(r) con una accion que no se puede leer: (sin .action)'
+E         Use -v to get more diff
+
+tests\contract\test_medir_demo_ftmo.py:232: AssertionError
+=========================== short test summary info ===========================
+FAILED tests/contract/test_medir_demo_ftmo.py::test_toda_funcion_que_abre_o_coloca_lleva_magico_stop_y_caducidad
+FAILED tests/contract/test_medir_demo_ftmo.py::test_las_que_envian_son_las_conocidas_y_la_lista_sin_stop_es_cerrada
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_funcion_nueva_que_envia_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_stop_a_cero
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_una_accion_puesta_por_variable
+FAILED tests/contract/test_medir_demo_ftmo.py::test_rompe_con_un_ordersend_sin_accion_en_la_funcion
+7 failed, 6 passed in 0.35s
+```
+
+**En verde, el fichero de la rama** (`python -m pytest tests/contract/test_medir_demo_ftmo.py
+-p no:cacheprovider` en la raíz; el `addopts` de `pyproject.toml:39` ya pone `-q -ra`), código de salida 0:
+
+```text
+.............                                                            [100%]
+13 passed in 0.25s
+```
+
 ### 1.6 El runbook y los README
 
 `docs/runbooks/DEMO-FTMO.md`: el tiempo de la cabecera (con la 1.2, como mucho unos seis minutos); en
@@ -785,7 +1665,19 @@ una frase cada uno con el paso 8 (los dos dicen lo que hace el script y lo que l
   fue el pendiente heredado 2 de `PROJECT_STATE.md`)»; el «alli» de la línea siguiente sigue siendo
   PROJECT_STATE). Ninguna otra mención del heredado 2 queda viva (`grep 'heredado 2\|HER:2'` en la
   hoja, ENTRADA-MARZO.md y PROJECT_STATE.md: solo la frase nueva del runbook).
+- **La condición del fragmento «Al entregarlo: el xlsx al corpus»** del heredado 2 (añadido tras la
+  revisión del consultor, §9): (c) SUSTITUIDA. El xlsx de marzo está recibido:
+  `docs/validation/REGISTRO-MARZO.md:118`, «**Fecha de recepcion: 2026-09-30. Contenido: NO
+  ABIERTO.**» (línea verificada el 2026-10-31 con `grep -n "Fecha de recepcion"`). El bloque de HISTORIA
+  (e2d80a3) no lo nombra en ninguna de sus tres viñetas (su «El resto» enumera `vistos.yaml`, el
+  camino de fidelidad y el CONFIRM de F09); no se corrige, porque HISTORIA solo se amplía
+  (`tests/unit/test_historia.py`): lo dice este informe.
 - **La deuda de `cherry-pick` se queda** (punto 7).
+- **Lo demás que cambia en PROJECT_STATE**, efecto de `abrir-rama` y no de la fase 2 (añadido tras
+  la revisión del consultor, §9): las dos líneas de `Completed Features` y `Change Log`, «— ninguna
+  desde el Archivo 52 (2026-10-28).» → «— ninguna desde el Archivo 53 (2026-10-31).»
+  (`git diff main -- PROJECT_STATE.md`); y la cabecera de la rama (Current Branch, Current Feature) y
+  el recuento de tests, que el cierre sustituye.
 - **Bytes por sección, antes y después** (en la rama; anexo `anexos/MARGEN-PENDIENTE/bytes-por-seccion.txt`;
   los de `main` por línea, en `anexos/MARGEN-PENDIENTE/bytes-main.txt`):
 
@@ -859,6 +1751,11 @@ la rama:
 8. **Negativas de la guardia en las fases 1 y 2**: `sed -i … && uv run botsito state check` en una sola
    llamada («ejecutar `botsito state check`: antes, en el mismo comando, va `sed -i`»); rehecho en dos
    llamadas, la forma que propone. Ninguna del clasificador.
+9. **Desviación menor de (e), declarada** (a4 del revisor; revisión del consultor, §9): la línea de
+   ADR-0042 de Technical Debt conserva en su paréntesis «falso positivo medido con enero,» además de la
+   cita del informe con su sección («ENTRADA-ENERO.md §0.b»), que es lo único que (e) conserva. La
+   línea no se toca: el bloque «# Technical Debt ACORTADA» de HISTORIA (e2d80a3) ya fijó lo que queda, y
+   HISTORIA solo se amplía.
 
 **Exposiciones:** ninguna en toda la rama. No se leyó material del trader, velas, ticks ni el CSV de
 `data/demo_ftmo/`; `HOLDOUT-EXPOSICIONES.md` no se toca.
@@ -869,7 +1766,7 @@ Se completa con lo que encuentre el revisor (abajo); lo del consultor, tal como 
 
 | rama | revisor | consultor | lección |
 |---|---|---|---|
-| `trabajo/margen-pendiente` | Una pasada, opus (§8): 0 bloquea, 7 importa (a1=b5 la cita de ENTRADA-MARZO:45-49 que la propia rama desplazaba una línea; a2=b4 el deslizamiento justificado con más de lo que dice su fuente y presentado como garantía; b1 `Limpiar` sin comprobar entre medidas; b2 el test estático no negaba un stop a 0, una sobrecarga ni una acción por variable; b3 una frase del runbook que el paso 8 dejaba falsa), 4 menores (a3, a4, b6, b7); arreglados todos salvo a4, contestado (§8.1) | Cuatro, de la respuesta a la PARADA (2026-10-31): (1) **importa**: el encargo dio como dato lo que decía el auditor del consultor sin medirlo: (e) ahorraba de 2.400 a 2.650 bytes (son 2.169); los stops saldrían de 2 a 4 pips (salen de 1,3 a 2,2); trece tests leen PROJECT_STATE (lo leen seis y lo nombran trece) y `test_ids_citados` lo lee (lo hace `knowledge validate`); la comprobación de Aleks daría el margen 3720.77, que el lector no imprime; y citas de línea de `test_capa_mt5.py` (:143-151 son :142-149; :278 es una cadena de ejemplo). (2) **importa**: en el primer borrador de su respuesta aceptó sacar por (b) la deuda de `cherry-pick` sin comprobar que su texto entero vivía en otro sitio; lo cazó su auditor. (3) **menor**: el encargo nombró una frase falsa de la cabecera y no vio la segunda («toda posición lleva stop de protección»). (4) **menor**: fijó 2,50 USD de comisión para el tope sin mirar que el registro mantiene 5. Y uno de la respuesta misma: (5) **importa**: el punto 7 daba por hecho que la versión entera del heredado 2 vivía en ENTRADA-MARZO.md:45-49, el mismo hueco que bloqueó el revisor de `trabajo/plataforma-adelantada` (b1); lo midió la sesión y salió la PARADA 2. De la sesión: el falso positivo de `crudo` volvió a saltar sobre un guion propio de la carpeta de trabajo (otra aparición de K), y una medida (554 bytes) se hizo con `grep` tras esa negativa | Lo que diga el auditor del consultor sobre una cifra, un recuento o un mecanismo va en el encargo como «verifica que…», nunca como dato (la lección de visor-construccion, repetida). Antes de aceptar una salida por (b), leer el texto entero en HISTORIA y buscar cada frase; y si una rama anterior ya la bloqueó, leer por qué. Antes de pedir que se corrija un texto, leerlo entero. Tras una negativa de la guardia, ni siquiera una medida auxiliar cambia de vía: se apunta el orden. Y una medida que solo prueba el estado («Rejected») no prueba la causa: el «sí» de M4 exige el comentario del margen |
+| `trabajo/margen-pendiente` | Una pasada, opus (§8): 0 bloquea, 7 importa (a1=b5 la cita de ENTRADA-MARZO:45-49 que la propia rama desplazaba una línea; a2=b4 el deslizamiento justificado con más de lo que dice su fuente y presentado como garantía; b1 `Limpiar` sin comprobar entre medidas; b2 el test estático no negaba un stop a 0, una sobrecarga ni una acción por variable; b3 una frase del runbook que el paso 8 dejaba falsa), 4 menores (a3, a4, b6, b7); arreglados todos salvo a4, que queda como desviación menor de (e), declarada (§4, desviación 9; §8.1) | Cuatro, de la respuesta a la PARADA (2026-10-31): (1) **importa**: el encargo dio como dato lo que decía el auditor del consultor sin medirlo: (e) ahorraba de 2.400 a 2.650 bytes (son 2.169); los stops saldrían de 2 a 4 pips (salen de 1,3 a 2,2); trece tests leen PROJECT_STATE (lo leen seis y lo nombran trece) y `test_ids_citados` lo lee (lo hace `knowledge validate`); la comprobación de Aleks daría el margen 3720.77, que el lector no imprime; y citas de línea de `test_capa_mt5.py` (:143-151 son :142-149; :278 es una cadena de ejemplo). (2) **importa**: en el primer borrador de su respuesta aceptó sacar por (b) la deuda de `cherry-pick` sin comprobar que su texto entero vivía en otro sitio; lo cazó su auditor. (3) **menor**: el encargo nombró una frase falsa de la cabecera y no vio la segunda («toda posición lleva stop de protección»). (4) **menor**: fijó 2,50 USD de comisión para el tope sin mirar que el registro mantiene 5. Y uno de la respuesta misma: (5) **importa**: el punto 7 daba por hecho que la versión entera del heredado 2 vivía en ENTRADA-MARZO.md:45-49, el mismo hueco que bloqueó el revisor de `trabajo/plataforma-adelantada` (b1); lo midió la sesión y salió la PARADA 2. De la sesión: el falso positivo de `crudo` volvió a saltar sobre un guion propio de la carpeta de trabajo (otra aparición de K), y una medida (554 bytes) se hizo con `grep` tras esa negativa. Y cuatro de la revisión del consultor (2026-10-31, §9) que el revisor no vio: (6) **importa**: la prueba «rompe de verdad» del test estático se pegó con el comprobador anterior a b2 y no se repitió con el definitivo; (7) **menor**: a4 contestado como «no aplica» cuando es una desviación de (e); (8) **menor**: el fragmento «el xlsx al corpus» del heredado 2 sin condición nombrada; (9) **menor**: 843 frente a 842 líneas, y las dos líneas Archivo 52→53 fuera del diff declarado | Lo que diga el auditor del consultor sobre una cifra, un recuento o un mecanismo va en el encargo como «verifica que…», nunca como dato (la lección de visor-construccion, repetida). Antes de aceptar una salida por (b), leer el texto entero en HISTORIA y buscar cada frase; y si una rama anterior ya la bloqueó, leer por qué. Antes de pedir que se corrija un texto, leerlo entero. Tras una negativa de la guardia, ni siquiera una medida auxiliar cambia de vía: se apunta el orden. Y una medida que solo prueba el estado («Rejected») no prueba la causa: el «sí» de M4 exige el comentario del margen. Para el revisor: cuando un hallazgo suyo obliga a reescribir un comprobador, la evidencia de que rompe se vuelve a producir con la versión final; y una línea de PROJECT_STATE que se queda distinta de lo que manda el criterio es una desviación, no una excepción |
 
 ## 6. El encargo, punto por punto
 
@@ -1090,7 +1987,7 @@ Resumen: 0 bloquea, 5 importa, 2 menor. Requisitos: 32 hechos, 2 parciales, 0 no
 | b2 | importa | **Arreglado.** El test estático parte de las funciones que llaman a `OrderSend` y lee la acción de su petición. Una acción que no es `TRADE_ACTION_DEAL`/`PENDING`/`REMOVE`/`MODIFY` escrita tal cual (una variable, o ninguna en la función) es un problema. Las sobrecargas se miran aparte (lista, no dict), y un `.sl = 0` no cuenta como stop. Tests nuevos, uno por rotura: `test_rompe_con_un_stop_a_cero`, `test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop`, `test_rompe_con_una_accion_puesta_por_variable` y `test_rompe_con_un_ordersend_sin_accion_en_la_funcion`. |
 | b3 | importa | **Arreglado.** `DEMO-FTMO.md`, «Lo que hace…»: «Solo toca **EURUSD**, con el **lote mínimo** …, salvo en los pasos 6 y 8. … El 8, desde la 1.2, usa lotes grandes (el punto siguiente).» |
 | a3 | menor | **Arreglado.** El «Como se lee» del README atribuye cada parte a su fuente: la lectura estricta y la medida de 200 y 160 bytes vienen de la fase 0 (§0.h.2), aceptadas con la previsión, y la coma de la enumeración, del punto 6. |
-| a4 | menor | **Se deja, con motivo.** El paréntesis de la línea de ADR-0042 era «(falso positivo medido con enero, ENTRADA-ENERO.md §0.b)», y esa es la cita de su informe tal como la línea la escribía. Quitarle «falso positivo medido con enero» sería reescribirla, y además el bloque de HISTORIA (e2d80a3) ya registra lo que queda, y no se puede cambiar. |
+| a4 | menor | **Desviación menor de (e), declarada** (§4, desviación 9; corregido tras la revisión del consultor, §9: no es «se deja»). (e) solo conserva la cita del informe con su sección, y la línea guarda además «falso positivo medido con enero,». La línea no se toca: el bloque de HISTORIA (e2d80a3) ya fijó lo que queda, y HISTORIA solo se amplía. Lo que decía esta fila: **Se deja, con motivo.** El paréntesis de la línea de ADR-0042 era «(falso positivo medido con enero, ENTRADA-ENERO.md §0.b)», y esa es la cita de su informe tal como la línea la escribía. Quitarle «falso positivo medido con enero» sería reescribirla, y además el bloque de HISTORIA (e2d80a3) ya registra lo que queda, y no se puede cambiar. |
 | b6 | menor | **Arreglado.** El «no» y el «sí» de M4 enseñan `m4_libre_al_resolver` («libre al resolver …»), sin que decida nada. |
 | b7 | menor | **Arreglado.** El stop mínimo de `StopDelTope` es el mayor de `P8_STOP_MIN` y el stops level más 1. |
 | «Lo que no pude comprobar», guiones | — | `fase2.py` y `cierre_copia.py` se escribieron en la carpeta de trabajo, FUERA del repo. `fase2.py` se ensayó primero sobre copias de PROJECT_STATE y HISTORIA en esa carpeta (`ensayo2/`, misma salida que en el repo: 22.119 bytes, −2.169 y −164), y después se ejecutó sobre el repo con la raíz como argumento (CLAUDE.md, «Ensayos aislados», punto 2), sin `make check` corriendo. `cierre_copia.py` solo lee el repo y escribe las copias en la carpeta de trabajo. No se usó un clon `git worktree` para el ensayo de `fase2.py`: es una desviación menor de «Ensayos aislados», punto 1. |
@@ -1108,6 +2005,51 @@ PROJECT_STATE: 22.119 bytes en la rama y 21.784 con las líneas del cierre (`cie
 vez). La fila de ERRORES-RECURRENTES (§5) gana, en «revisor»: «Una pasada (opus): 0 bloquea, 7
 importa (a1=b5, a2=b4, b1, b2, b3), 4 menores (a3, a4, b6, b7); arreglados todos salvo a4, contestado».
 
+## 9. Revisión del consultor y orden de cierre (2026-10-31)
+
+### 9.1 Lo que se hizo con los arreglos de A (un commit, antes del cierre)
+
+| punto | qué se hizo |
+|---|---|
+| A.1 | Repetidas las seis roturas con el comprobador final, en árboles desechables de la carpeta de trabajo (guion `rojo2.py`): 7, 7, 7, 7, 6 y 7 failed; en la rama, 13 passed. La salida completa, en §1.5.1, debajo de lo de antes, que no se borra. |
+| A.2 | a4 pasa a «desviación menor de (e), declarada»: §4 (desviación 9), §8.1 (fila a4, con lo que decía) y la fila de §5. La línea de PROJECT_STATE no se toca. |
+| A.3 | §2, viñeta nueva: «Al entregarlo: el xlsx al corpus», (c) SUSTITUIDA, con `REGISTRO-MARZO.md:118` («Fecha de recepcion: 2026-09-30. Contenido: NO ABIERTO.»), línea verificada con `grep -n`. El bloque de HISTORIA no se corrige, y la viñeta lo dice. |
+| A.4 | §0.a: 842 líneas (`git show main:tools/mql5/MedirDemoFTMO.mq5 \| wc -l`). §2, viñeta nueva: las dos líneas «Archivo 52 (2026-10-28)» → «Archivo 53 (2026-10-31)» de Completed Features y Change Log, efecto de `abrir-rama`. |
+| A.5 | §1.2, M2: la regla es la misma que la del lector solo para carga / no carga; el script da «carga» también donde el lector dice «no concluyente: carga, pero ni a la orden ni al mercado», y es inocuo para la ocupación de M4 (si carga algo, la ocupación es la de las pendientes lejanas). |
+| A.6 | Una sola cifra: «como mucho unos dos minutos y medio», la de `DEMO-FTMO.md:12`, que no cambia; §1.2 deja de decir «2,5-3 minutos». |
+| B | Los cuatro hallazgos y la lección para el revisor, en la fila de §5 (columna «consultor», puntos 6 a 9, y la columna «lección»). |
+
+C se aplica con `/cerrar-rama trabajo/margen-pendiente`, cuando Aleks lo escriba tras confirmar que la
+comparación del lector dio IDENTICAS; en este commit no se toca nada del cierre.
+
+### 9.2 La revisión, tal cual
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Revisión del consultor de trabajo/margen-pendiente (2026-10-31) y orden de cierre. Primero los arreglos, en un commit propio; el cierre solo cuando Aleks escriba /cerrar-rama trabajo/margen-pendiente en una línea sola, después de confirmar que la comparación del lector dio IDENTICAS.
+>
+> A. ARREGLOS ANTES DEL CIERRE (un commit, make check en verde)
+> 1. El test estático: la salida en rojo pegada en §1.5 es del comprobador anterior a b2. Repite la rotura a propósito sobre copias en la carpeta de trabajo con el comprobador final (sin req.sl en el paso 8; sin PonerCaducidad; una función nueva que envía sin stop; un sl a 0; una sobrecarga del mismo nombre sin stop; una acción puesta por variable), y pega la salida completa de pytest en rojo y luego en verde sobre el fichero de la rama, en §1.5, sin borrar lo anterior.
+> 2. a4 no es «se deja»: dejar «falso positivo medido con enero,» en la línea de ADR-0042 es una desviación de (e), que solo conserva la cita del informe. Como el bloque de HISTORIA (e2d80a3) ya fijó lo que queda y HISTORIA solo se amplía, la línea no se toca: pasa a «desviación menor de (e), declarada» en §4, en §8.1 y en la fila de §5.
+> 3. En §2 (o en la PARADA 2 aplicada), nombra la condición del fragmento «Al entregarlo: el xlsx al corpus» del heredado 2: (c) SUSTITUIDA, el xlsx de marzo está recibido (REGISTRO-MARZO.md, «Fecha de recepcion: 2026-09-30»; verifica la línea). El bloque de HISTORIA no se corrige; el informe lo dice.
+> 4. §0.a: main tiene 842 líneas, no 843. Y la lista de lo que cambia en PROJECT_STATE (§2) gana las dos líneas de Completed Features y Change Log, «Archivo 52 (2026-10-28)» → «Archivo 53 (2026-10-31)», efecto de abrir-rama.
+> 5. §1.2: «la misma regla que el lector» para M2 vale solo para carga/no carga; el script da carga también donde el lector dice «no concluyente: carga, pero ni a la orden ni al mercado». Dilo así, y que es inocuo para la ocupación de M4.
+> 6. DEMO-FTMO.md dice «hasta dos minutos y medio» y §1.2 «2,5-3 minutos»: una sola cifra en los dos.
+>
+> B. HALLAZGOS DEL CONSULTOR QUE EL REVISOR NO VIO (para la fila de ERRORES-RECURRENTES, columna «consultor», además de los cinco ya escritos en §5): (importa) la prueba «rompe de verdad» del test estático se pegó con el comprobador anterior a b2 y no se repitió con el definitivo; (menor) a4 contestado como «no aplica» cuando es una desviación de (e); (menor) el fragmento «el xlsx al corpus» del heredado 2 sin condición nombrada; (menor) 843 frente a 842 líneas y las dos líneas Archivo 52→53 fuera del diff declarado. Lección para el revisor: cuando un hallazgo suyo obliga a reescribir un comprobador, la evidencia de que rompe se vuelve a producir con la versión final; y una línea de PROJECT_STATE que se queda distinta de lo que manda el criterio es una desviación, no una excepción.
+>
+> C. ORDEN DE CIERRE (skill cerrar-rama, RITUAL.md)
+> - Tag: stable/F38k-margen-pendiente. Verifica en HISTORIA que el último es F38j y que F38k no existe ni en local ni en origin.
+> - Commit del contrato (chore(cierre): sale el contrato y entra el registro en HISTORIA), con todo lo que cambia la Next Action y la hoja de ruta:
+>   - Next Action, entrada A: la frase «Cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4) pide un script 1.2, que aún no existe: una rama corta antes de la 3; si no llega, esa medida pasa a la siguiente prueba.» pasa a «La 3 va con el script 1.2 (trabajo/margen-pendiente), que además mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4; paso 8, DEMO-FTMO.md).». No sale ni entra ninguna letra.
+>   - Hoja de ruta: A.1 y R6a.6 con los textos de §3 del informe. test_hoja_de_ruta en verde.
+>   - docs/state/README.md, junto a la condición (e), una línea con fecha y rama: «Decisión de Aleks (2026-10-30): el tope de 25.000 bytes se mantiene, porque cada sesión lee este fichero al arrancar; solo se replantea subirlo cuando no quede nada que recortar con las condiciones (a) a (e).»
+>   - La fila de ERRORES-RECURRENTES de §5, con lo de B añadido.
+>   - El registro de cierre en HISTORIA con stable/F38k-margen-pendiente^{commit}.
+> - Commit de estado en main: solo Current Branch (main), Current Feature, Stable Main State y Last Stable Commit, con los tres textos literales del punto 6 de la respuesta a la PARADA, con el sha del merge y la fecha. La Next Action no se toca aquí.
+> - El resto, según RITUAL: merge, tag, make check sellado y push atómico de main y el tag en un solo comando. Si el clasificador niega el push, dame el comando exacto para lanzarlo yo con «!»; no lo rodees. La CI de main tiene que estar en verde antes de borrar nada: consúltala con el sha de 40 caracteres escrito tal cual, sin guion ni bucle. Con la CI de main en completed/success, borra trabajo/margen-pendiente (git branch -d); no hay fix/ remota.
+> - Informe final: sha de main, tag, run de la CI de main, ramas que quedan (solo main y, si sigue, el worktree wt-ci, que no se toca) y tamaño de PROJECT_STATE con wc -c (esperado: 21.784 bytes).
+
 ## Estado
 
-Fases 0, 1 y 2 hechas, cada una con su commit sellado; el revisor (opus) pasado, con sus hallazgos arreglados o contestados (§8.1); las líneas del cierre preparadas (PROJECT_STATE con ellas: 21.784 bytes). Pendiente de Aleks: la comparación del lector sobre el CSV real con «!» (§1.4) y la ejecución 3 con el script 1.2. Rama lista para revisión, NO cerrada.
+Fases 0, 1 y 2 hechas, cada una con su commit sellado; el revisor (opus) pasado, con sus hallazgos arreglados o contestados (§8.1); las líneas del cierre preparadas (PROJECT_STATE con ellas: 21.784 bytes); los arreglos de la revisión del consultor (A.1-A.6 y B) hechos (§9.1). Pendiente de Aleks: la comparación del lector sobre el CSV real con «!» (§1.4) y la ejecución 3 con el script 1.2. Rama lista para revisión, NO cerrada.
