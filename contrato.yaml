@@ -14,7 +14,8 @@ rutas_permitidas:
   - docs/validation/anexos/MARGEN-PENDIENTE/**
   - docs/validation/HOLDOUT-EXPOSICIONES.md  # solo si hay exposicion
   - docs/state/README.md  # solo la condicion (e)
-  - docs/plan/HOJA-DE-RUTA.md  # solo quitar las referencias HER:n de los heredados que salgan
+  - docs/plan/HOJA-DE-RUTA.md  # solo quitar las referencias HER:n de los heredados que salgan, y que su prosa «heredado 2» remita a ENTRADA-MARZO.md (respuesta a la PARADA, punto 7)
+  - docs/runbooks/ENTRADA-MARZO.md  # solo la frase de :32 que remite al heredado 2 (respuesta a la PARADA, punto 7; ampliado el 2026-10-31)
   - docs/encargos/
   - PROJECT_STATE.md
   - docs/state/HISTORIA.md

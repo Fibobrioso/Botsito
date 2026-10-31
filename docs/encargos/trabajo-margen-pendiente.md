@@ -114,3 +114,69 @@ Dado por Aleks (consultor) el 2026-10-30. Copiado tal cual:
 > - Una sola rama abierta: la ingesta de la sesión 6 espera a que esta se cierre.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-10-31)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/margen-pendiente (2026-10-31). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> 0. (a). Todo lo nuevo del paso 8 (constantes, InpMedirMargen, InpEsperaMargenSeg y funciones) va entre Comprobaciones y OnStart, sin prototipos. En las líneas 1 a 758 solo cambian :27, :31 y la cabecera en su sitio, con las mismas 25 líneas. La compilación de la fase 1 lo vuelve a probar, y el informe pega la línea 759 de la 1.2.
+>
+> 1. (a). Se corrigen las dos frases falsas de la cabecera y la de DEMO-FTMO.md:22, y #property description gana el margen de las pendientes. La frase nueva dice la verdad entera: las pendientes de los pasos 3, 4 y 5 van sin stop a propósito y, si una se llena al instante, el script la cierra en cuanto la lee; las demás posiciones llevan stop de protección.
+>
+> 2. (a), con cinco cambios en M2 y M4. Un «sí» o un «no» falsos de M4 acabarían en un ADR, porque la 3 es la única ejecución prevista; así que todo lo que no pruebe la causa sale «no concluyente».
+>    a) La ocupación caída. Si V o P dejan de estar vivas antes de que S se resuelva, S puede llenarse con margen libre de sobra y el lector daría un «no» falso. Con V es físico: su stop común queda a unos 1,5 pips por debajo, S a 1 pip por encima, y en 120 s el precio puede bajar, cerrar V y volver a subir hasta S. Con P, la vía no es la caducidad (15 minutos) sino que el bróker la borre con el nivel de margen tan bajo (stop out o gestor de riesgo de FTMO; el repo no tiene esa cifra). Al resolverse S, el script escribe si la ocupación seguía viva (fila m4_ocupacion_viva, «si» o «no», con su ticket) y el margen libre justo antes de esa lectura. Ocupación caída → «no concluyente: la ocupación cayó antes de que se resolviera S».
+>    b) El «sí» solo con la causa. Al saltar en el servidor, S no devuelve retcode, así que un rechazo o un borrado por otra causa no se distingue a ciegas (tope agregado de volumen, stops inválidos tras un hueco, stop out, una cancelación del cliente). Regla: «sí» solo si S queda sin deal, en estado REJECTED, con un comentario o un motivo del historial que nombre el margen, y con p8_volumen_limite = 0 o el volumen de S más el de la ocupación dentro de ese tope. CANCELED nunca da «sí». Cualquier otro caso de S sin deal → «no concluyente», con el estado y el comentario literales. Verifica en la documentación de MQL5 qué guarda el historial de una orden rechazada al saltar (ORDER_STATE, ORDER_COMMENT, ORDER_REASON u otro) y escribe en el informe qué campo usa la regla. Si ninguno puede nombrar el margen, M4 no da nunca «sí»: lo dices y el lector da «no concluyente» con lo que haya.
+>    c) El llenado parcial. Si el volumen del deal de S es menor que el de S, «no concluyente».
+>    d) M2 por las tres cifras. La documentación solo atribuye las pendientes a ACCOUNT_MARGIN_INITIAL. M2 escribe antes y después ACCOUNT_MARGIN, ACCOUNT_MARGIN_FREE y ACCOUNT_MARGIN_INITIAL, y la regla juzga «carga» por la bajada del margen libre (lo que importa para M4): carga si el libre baja al menos un 10 % del margen calculado. El precio se decide con esa misma bajada, por la mitad de D como en tu propuesta. El informe dice también qué hicieron ACCOUNT_MARGIN e INITIAL.
+>    e) La comprobación antes de esperar, con lo que midió M2. M4 escribe el libre antes y después de colocar S. Si la pendiente reserva su margen, la condición es «libre + lo que reservó S < margen de S al llenar», no «libre < margen de S». Si no se cumple, «no medible».
+>    Tests del lector con cada caso, en los dos sentidos: ocupación viva y caída; S rechazada con el motivo del margen, rechazada con otro motivo, y cancelada; llenado entero y parcial; y M2 con el libre que baja y con el libre que no baja aunque ACCOUNT_MARGIN suba.
+>
+> 3. (a), con el cambio de 2.d: el 10 % se mide en la bajada del margen libre; el precio, por la mitad de la diferencia D, con D ≥ 10 USD.
+>
+> 4. (a): 5,00 USD por lote y lado en el tope, el supuesto conservador del registro (ADR-0071), mientras el CSV de la ejecución 2 no esté congelado. Stops de 13 a 17 puntos. Es un cambio del encargo, que daba 2,50: el informe lo declara así.
+>
+> 5. (a). M (el break even de una venta que salta por el ASK) queda fuera de esta rama y sigue esperando a una prueba posterior. El informe lo dice en «el encargo frente a lo hecho».
+>
+> 6. Ninguna de las cuatro opciones: (d), pero escrita desde ya. «Al final de una frase o de un inciso» no incluye la coma de una enumeración: «Artifact…» se queda entera, y (e) se aplica en lectura estricta, sin el corte más corto de (b). Lo que falta lo pongo yo con las cabeceras del cierre, que escribo yo y que van a ser estas (con el sha y la fecha reales):
+>    - Current Feature: «Ninguna rama abierta. trabajo/margen-pendiente cerrada en main el <fecha> (stable/F38k-margen-pendiente): MedirDemoFTMO 1.2, con el paso 8 (el margen de una pendiente stop), y PROJECT_STATE adelgazado (MARGEN-PENDIENTE.md).»
+>    - Stable Main State: «<sha> · merge de `trabajo/margen-pendiente` (tag `stable/F38k-margen-pendiente`): MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado. Sobre `stable/F38j-respaldo-m1` (4b12a92). Informe docs/validation/MARGEN-PENDIENTE.md; el registro del cierre, al final de HISTORIA.»
+>    - Last Stable Commit: «<sha> · merge: trabajo/margen-pendiente, MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado · tag stable/F38k-margen-pendiente»
+>    Rehaz la previsión con estos tres textos y con la decisión 7, y pega la cifra. Mi auditor la estima en unos 21.755 bytes; mídela tú. Si no baja de 21.800, PARADA.
+>
+> 7. Sale el heredado 2; la deuda de cherry-pick se queda.
+>    - Heredado 2, por (b), con la evidencia corregida: la versión entera del Archivo 1 vive en docs/runbooks/ENTRADA-MARZO.md (verifica que en :45-49), y CLAUDE.md:178-181 lleva lo esencial. Al salir, quedan falsas las frases que remiten a él: ENTRADA-MARZO.md:32 («Lo que falta sigue en PROJECT_STATE.md, pendiente heredado 2») y la prosa «heredado 2» de HOJA-DE-RUTA.md (verifica que en :338 y :499-500), además de HER:2 en las Refs de R5.3. Se amplía el contrato a docs/runbooks/ENTRADA-MARZO.md, en un commit a la vista, solo para esa frase, y las tres pasan a remitir a ENTRADA-MARZO.md, en el mismo commit que saca el heredado. Comprueba la copia contra test_hoja_de_ruta.
+>    - La deuda de cherry-pick se queda: su texto entero (HISTORIA, Archivo 1) dice «la garantia de fondo sigue siendo la CI», que no está en CLAUDE.md ni en ningún runbook, y (b) exige el contenido vivo entero (ERRORES-RECURRENTES, fila de plataforma-adelantada). La opción (a) que recomendabas era contraria al README.
+>
+> 8. (a): fase 1 y fase 2 seguidas, sin otra PARADA salvo que algo medido contradiga una decisión de esta respuesta.
+>
+> Sobre §0.m. Quitar del guion la parte negada no es rodear la guardia si las medidas que quedaron (975 bytes de K y 554 de las candidatas) ya estaban hechas antes de la negativa, porque entonces no se ejecutó lo negado de otra forma. Si se hicieron después, con grep y wc -c, eso es cambiar de vía tras una negativa (DECISIONES-DE-PROCESO.md). El informe escribe el orden real y, en ese caso, lo declara como desviación. El falso positivo, en cualquier caso, es otra aparición de K: va en la fila de ERRORES-RECURRENTES preparada, no en la entrada K.
+>
+> La comprobación de Aleks con «!» sobre el CSV de la ejecución 2 no puede pedir el 3720.77, porque el lector no lo imprime (lo dijo tu fase 0). El criterio es que la salida del lector de main y la de la rama sean idénticas byte a byte. El informe da los dos comandos exactos, con las dos salidas fuera del repo.
+>
+> Para la fila de ERRORES-RECURRENTES del cierre, los errores del consultor que cazaron la fase 0 y el auditor:
+> - (importa) El encargo dio como dato lo que decía el auditor del consultor sin medirlo: que (e) ahorraba de 2.400 a 2.650 bytes (son 2.169); que los stops saldrían de 2 a 4 pips (salen de 1,3 a 2,2); que trece tests leen PROJECT_STATE (lo leen seis y lo nombran trece) y que test_ids_citados lo lee (lo hace knowledge validate); que la comprobación de Aleks diera el margen 3720.77, que el lector no imprime; y citas de línea de test_capa_mt5.py (:143-151 son :142-149; :278 es una cadena de ejemplo). Es la lección del cierre de visor-construccion, repetida: lo que diga el auditor del consultor sobre una cifra, un recuento o un mecanismo va en el encargo como «verifica que…», nunca como dato.
+> - (importa) En el primer borrador de esta respuesta acepté sacar por (b) la deuda de cherry-pick sin comprobar que su texto entero vive en otro sitio, que es lo que exige el README; lo cazó mi auditor antes de entregarla. Lección: antes de aceptar una salida por (b), leer el texto entero en HISTORIA y buscar cada frase.
+> - (menor) El encargo nombró una frase falsa de la cabecera y no vio la segunda («toda posición lleva stop de protección»), falsa ya en la 1.1. Lección: antes de pedir que se corrija un texto, leerlo entero.
+> - (menor) El encargo fijó 2,50 USD de comisión para el tope sin mirar que el registro mantiene 5 como supuesto conservador mientras el CSV no está congelado.
+>
+> Lo que sigue: el commit con esta respuesta y la ampliación del contrato a ENTRADA-MARZO.md; la fase 1 (script, compilación con la línea 759 pegada, lector, tests y runbook); la fase 2 (PROJECT_STATE, con la previsión rehecha); y el informe con las líneas del cierre preparadas sobre una copia, el revisor y la entrega. make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto, y lo lanza Aleks con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-10-31)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 2 de trabajo/margen-pendiente (2026-10-31). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha.
+>
+> Opción 3, con la evidencia escrita en el bloque de HISTORIA, para que la salida no sea juicio sino hecho del repo. El heredado 2 sale por dos condiciones, frase a frase:
+> - «MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE»: (c) SUSTITUIDA. Marzo llegó el 2026-09-30 y no interrumpió nada: entra por el camino de fidelidad, en su turno de la hoja de ruta (REGISTRO-MARZO.md, decisión del consultor del 2026-09-30, §«Marzo entra por el camino de fidelidad» y su aceptación; CLAUDE.md, párrafo «Marzo de 2026 esta RECIBIDO y SIN ABRIR»; R5.3). Verifica esas líneas y cítalas.
+> - «El trader confirmo el 2026-09-21 que no habia visto febrero NI marzo, y backtestea MARZO»: (c) SUSTITUIDA por hechos posteriores: el backtest de marzo está recibido (REGISTRO-MARZO.md) y la confirmación escrita llegó el 2026-10-25 (SESION-05-EXTRACCION.md §3.5); lo de febrero sigue vivo en el heredado 6, que se queda.
+> - El resto (vistos.yaml con visto_el y cobertura_material, fidelidad-2/3, CONFIRM «sin sus palabras, no vale»): (b) REPETIDA, entero en ENTRADA-MARZO.md:45-49.
+> El bloque de HISTORIA va como «# Pendiente heredado SALE», con el texto literal entero y las tres condiciones con su evidencia. Lo demás del punto 7 sigue igual: ENTRADA-MARZO.md:32 y la prosa de la hoja de ruta pasan a remitir a ENTRADA-MARZO.md, HER:2 sale de R5.3, y el contrato se amplía a ENTRADA-MARZO.md solo para esa frase. Esto es distinto de lo que bloqueó el revisor en plataforma-adelantada: entonces se pedía (b) para la línea entera, y (b) no cubría las dos frases; ahora esas dos salen por (c) con su evidencia. Dilo así en el informe.
+>
+> Previsión aceptada: 21.784 bytes. Sigue con la fase 1 y la fase 2 como dice la respuesta a la PARADA.
