@@ -1,0 +1,101 @@
+TOTAL 24393 bytes, 166 lineas
+  L 21    15 [Next Action] ## Next Action
+  L 23   108 [Next Action] **AHORA** (2026-10-08). El orden lo decide el consultor en cada encarg
+  L 25   321 [Next Action] B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (
+  L 27   440 [Next Action] C. La guardia no ve una ruta protegida compuesta por partes dentro de 
+  L 29   208 [Next Action] D. Endurecer la guardia por formas raras de bash, git, awk, sed y Powe
+  L 32   210 [Next Action] F. La sesión 6 con el trader (R4.2), el martes 2026-11-03: la hoja es 
+  L 36   252 [Next Action] T. Transcribir v11 a v14 (backtest de julio en vídeo, 2 h 38 min, con 
+  L 38   118 [Next Action] U. Julio 20-31: solo en vídeo (v14); decidir si se extraen casos del v
+  L 40   889 [Next Action] G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 n
+  L 42   519 [Next Action] I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y captu
+  L 44   214 [Next Action] J. kit hoja falla en main para todo paquete nuevo: busca una pregunta 
+  L 46   881 [Next Action] A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; de
+  L 48   975 [Next Action] K. La guardia exigir_sin_crudo da un falso positivo con una asignación
+  L 50   372 [Next Action] Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16
+  L 52    96 [Next Action] L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`**
+  L 54   101 [Next Action] M. **Pendiente de la demo de FTMO: el break even de una venta que salt
+  L 56   438 [Next Action] N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta e
+  L 58   890 [Next Action] H. En el respaldo M1 el evento de una vela se sella en su cierre, un m
+  L 60   303 [Next Action] R. Decisión de Aleks (2026-10-29): fidelidad por criterios, además de 
+  L 62    41 [Next Action] ### Pendientes heredados (sin verificar)
+  L 64    94 [Next Action] Del Next Action viejo, sin evidencia de estar hechos; texto entero: `d
+  L 65    44 [Next Action] criterio de salida: `docs/state/README.md`.
+  L 67   164 [Next Action] - 2. Marzo: faltan vistos.yaml y el paso a (hoja de ruta, R5.3); la co
+  L 68   113 [Next Action] - 6. FEBRERO NO SE TOCA Y NO SE DESCARGA. Unico mes ciego limpio confi
+  L 69   110 [Next Action] - 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobe
+  L 70   114 [Next Action] - 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico qu
+  L 71   115 [Next Action] - 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstrac
+  L 72    82 [Next Action] - 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, 
+  L 73   133 [Next Action] - 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el a
+  L 96    18 [Technical Debt] ## Technical Debt
+  L 97    88 [Technical Debt] Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/
+  L 98   407 [Technical Debt] - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml`
+  L 99   263 [Technical Debt] - El validador del journal v1 vive en `botsito.mql5bridge`, que `engin
+  L100   266 [Technical Debt] - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la e
+  L101   186 [Technical Debt] - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito
+  L102   313 [Technical Debt] - Que el EA reinicie sus globales tras un cambio de símbolo (el defect
+  L103   770 [Technical Debt] - La guardia de Claude Code no ve una consulta de CI en código cuando 
+  L104   467 [Technical Debt] - Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get
+  L105   152 [Technical Debt] - ADR 0087 (S-15, no existe) sigue en los `ids-inexistentes` del encar
+  L106   229 [Technical Debt] - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_
+  L107   147 [Technical Debt] - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo
+  L108   364 [Technical Debt] - Una zona del productor reutilizada en un escenario nuevo (misma caja
+  L109   153 [Technical Debt] - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el a
+  L110   139 [Technical Debt] - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que
+  L111   107 [Technical Debt] - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 
+  L112   183 [Technical Debt] - `test_visor.py` y `test_preparar_a35.py` hacen leer el M1 de marzo (
+  L113   123 [Technical Debt] - `motor visor --hasta` no recorta las H4 de contexto, las listas ni e
+  L114   267 [Technical Debt] - `arnes.dias_de_mercado` lee para calentar el M1 entero de marzo y de
+  L115   185 [Technical Debt] - El docstring de `engine/freno.py:7-8` dice que el adaptador real de 
+  L117   216 [Technical Debt] - La ingesta asigna la sesión con el reloj del registro y no con el co
+  L118   234 [Technical Debt] - Sin git callan, sin aviso, las comprobaciones que leen git fuera de 
+  L119   220 [Technical Debt] - RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (FundedNext):
+  L120   414 [Technical Debt] - La condición 2 de ADR-0042 §2 (la lectura COMPLETA del libro, declar
+  L121   342 [Technical Debt] - `engine/simulador_config.py` busca el spread supuesto de `llenado.ya
+  L122    74 [Technical Debt] - LA GRAMATICA DEL KIT PASA A LA UNIDAD OPERACION (2026-09-25, ADR-004
+  L123   131 [Technical Debt] - `cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT (2026-09-
+  L124    70 [Technical Debt] - `scripts/v5_criterio.py` SOLO RECONOCE CAJAS DE VENTA (2026-09-23):
+  L125   119 [Technical Debt] - NADA COMPRUEBA MECANICAMENTE QUE EL CUERPO DE UN INFORME CERRADO NO 
+  L126   134 [Technical Debt] - LA SERIE DEL TRADER ES OANDA Y LA NUESTRA DUKASCOPY (2026-09-21, ram
+  L127    92 [Technical Debt] - EL FRACTAL 5/120 NO CAPTURA LO QUE EL TRADER LLAMA ESTRUCTURA (2026-
+  L128   156 [Technical Debt] - LA GUARDIA DE `cobertura_material` EN `universo()` ES MAS ESTRICTA D
+  L129   303 [Technical Debt] - EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA D
+  L130   175 [Technical Debt] - `fecha_grabacion` TIENE QUE SER UN EJE DE PRIMERA CLASE, Y EL DETECT
+  L131   117 [Technical Debt] - F26 lee la diferencia 3,00/3,75 entre la regla y el material como co
+  L132   111 [Technical Debt] - BUSCAR EN EL CORPUS ANTES DE REDACTAR CUALQUIER AMBIGUEDAD, Y ESCRIB
+  L133   214 [Technical Debt] - EL DIA QUE UN CAMINO GUARDE MATERIAL EN `knowledge/cases/<camino>/`,
+  L134   140 [Technical Debt] - `lectura_de_velas` SIGUE LEYENDO EL `config.yaml` DE HOY para el pre
+  L135   215 [Technical Debt] - DOS DIAS DEL UNIVERSO DE LA SESION 1 NO ESTAN EN NINGUNA PARTICION, 
+  L136   226 [Technical Debt] - UNA PREGUNTA ABRE N PARTICIONES Y N LO DECIDE EL DATO, NO EL HUMANO.
+  L137   144 [Technical Debt] - EL FALLBACK DE `leer_fichero` JUZGA UNA CARPETA DESCONOCIDA BAJO LA 
+  L138   184 [Technical Debt] - UN TOKEN NO PUEDE DECLARAR QUIEN LO PRODUCE, Y LOS PREDICADOS DE `fu
+  L139   171 [Technical Debt] - UNA `pregunta` DE AMBIGUEDAD PUEDE NOMBRAR UN INSTANTE DEL CORPUS SI
+  L140    82 [Technical Debt] - EL PUNTO CIEGO DEL DETECTOR DE CONTRADICCIONES, TERCERA APARICION (2
+  L141   109 [Technical Debt] - EL DETECTOR DE CONTRADICCIONES NO VE LOS TEMAS HERMANOS (2026-09-17,
+  L142    95 [Technical Debt] - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del brea
+  L143   118 [Technical Debt] - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (20
+  L144   215 [Technical Debt] - Copia de seguridad de las crudas y los WAV: hecha hasta v10 (2026-10
+  L145   284 [Technical Debt] - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `o
+  L146   269 [Technical Debt] - La guardia no expande las llaves de bash que componen una ruta (`'<r
+  L147   543 [Technical Debt] - Las cotizaciones sin tick del bróker no usan la misma vela. En el ci
+  L149    16 [Reglas vivas] ## Reglas vivas
+  L150   230 [Reglas vivas] Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change 
+  L152    65 [Reglas vivas] ### Change Regimes (must be respected), lo que CLAUDE.md no dice
+  L153   576 [Reglas vivas] - knowledge/cases/holdout/{1,2,3}/ → tres particiones reservadas; cada
+  L155    36 [Reglas vivas] ### Things That Must Not Be Changed
+  L156   108 [Reglas vivas] - Regimenes de cambio de knowledge/. · Pureza de domain/. · Parametros
+  L157   218 [Reglas vivas] - La validación de fidelidad (F26) precede a todo lo que decida operac
+  L158   241 [Reglas vivas] - La firma y el tipo de cuenta (FTMO 2-Step Swing, ADR-0026) no se cam
+   134  (cabecera)
+    24  Current Branch
+   318  Current Feature
+   448  Stable Main State
+   164  Last Stable Commit
+   226  Tests Currently Passing
+  8384  Next Action
+  2148  Known Ambiguities
+ 10746  Technical Debt
+  1493  Reglas vivas
+   157  Completed Features
+   151  Change Log

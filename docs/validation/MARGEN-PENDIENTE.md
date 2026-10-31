@@ -763,6 +763,114 @@ no); qué hacer con «ATENCIÓN: quedan…» con la 1.2 (cerrarlo enseguida); y 
 cada paso». Lo de la ejecución 2 se queda como estaba. `tools/mql5/README.md` y `scripts/README.md`:
 una frase cada uno con el paso 8 (los dos dicen lo que hace el script y lo que lee el lector).
 
+## 2. Fase 2 · PROJECT_STATE (2026-10-31)
+
+- **La condición (e)** entra en `docs/state/README.md` («Que sale de PROJECT_STATE, y con que
+  criterio»), con su fecha y su rama, como excepción declarada a «lo que se queda no se resume ni se
+  reescribe», con el texto literal del encargo y la lectura de la respuesta (punto 6: la coma de una
+  enumeración no cuenta). Lo demás del README, sin tocar.
+- **(e), en lectura estricta**: las 12 líneas de la tabla de 0.h.2, con el mismo corte (guion
+  `fase2.py`, fuera del repo, la misma regla que `prevision.py`); 2.169 bytes. «Artifact…» se queda
+  entera (punto 6). Su texto entero, literal, en `docs/state/HISTORIA.md`, bloque «# Technical Debt
+  ACORTADA · sale de PROJECT_STATE.md en trabajo/margen-pendiente (2026-10-31)», cada línea seguida
+  de lo que queda de ella.
+- **Sale el heredado 2** (punto 7 y PARADA 2), con el bloque «# Pendiente heredado SALE»: su línea, su
+  texto entero del Archivo 1 (`HISTORIA.md:684`, comprobado literal por el guion) y las tres
+  condiciones, frase a frase, con la evidencia verificada (arriba, «Las citas, verificadas»): (c) para
+  «MARZO INTERRUMPE…», (c) para «El trader confirmo el 2026-09-21…» y (b) para el resto, entero en
+  `ENTRADA-MARZO.md:45-49`. En el mismo commit: `HER:2` sale de las Refs de R5.3; la prosa «heredado 2»
+  de R5.3 y de A.3 remite a `docs/runbooks/ENTRADA-MARZO.md` (paso 0); y ENTRADA-MARZO.md:32 deja de
+  decir que lo que falta «sigue en `PROJECT_STATE.md`, pendiente heredado 2» (ahora: «que se lleva
+  aqui, abajo (su salida de PROJECT_STATE, en HISTORIA: hasta el 2026-10-31, `trabajo/margen-pendiente`,
+  fue el pendiente heredado 2 de `PROJECT_STATE.md`)»; el «alli» de la línea siguiente sigue siendo
+  PROJECT_STATE). Ninguna otra mención del heredado 2 queda viva (`grep 'heredado 2\|HER:2'` en la
+  hoja, ENTRADA-MARZO.md y PROJECT_STATE.md: solo la frase nueva del runbook).
+- **La deuda de `cherry-pick` se queda** (punto 7).
+- **Bytes por sección, antes y después** (en la rama; anexo `anexos/MARGEN-PENDIENTE/bytes-por-seccion.txt`;
+  los de `main` por línea, en `anexos/MARGEN-PENDIENTE/bytes-main.txt`):
+
+| sección | antes | después | diferencia |
+|---|---|---|---|
+| Next Action (con los heredados) | 8.384 | 8.220 | −164 |
+| Technical Debt | 10.746 | 8.577 | −2.169 |
+| el resto | 5.322 | 5.322 | 0 |
+| **total (`wc -c`)** | **24.452** | **22.119** | **−2.333** |
+
+  (24.452 en la rama antes de la fase 2: los 24.393 de `main` más la cabecera de la rama abierta y
+  el recuento de tests, 1.795, del mismo largo que 1.777.)
+- Los tests que leen PROJECT_STATE y la hoja de ruta, en verde: `uv run pytest
+  tests/unit/test_hoja_de_ruta.py tests/unit/test_project_state.py tests/unit/test_project_state_rutas.py
+  tests/unit/test_historia.py tests/contract/test_documentos_vivos.py -q` → 33 passed; `uv run botsito
+  state check` → OK.
+
+## 3. Las líneas del cierre, preparadas sobre una copia (sin aplicar en la rama)
+
+Guion `cierre_copia.py` (fuera del repo), sobre copias de `PROJECT_STATE.md` y de la hoja de ruta de
+la rama:
+
+- **Entrada A**: «Cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4) pide un script 1.2,
+  que aún no existe: una rama corta antes de la 3; si no llega, esa medida pasa a la siguiente prueba.»
+  pasa a «La 3 va con el script 1.2 (trabajo/margen-pendiente), que además mide cuándo comprueba MT5 el
+  margen de una pendiente stop (ADR-0081 §4; paso 8, DEMO-FTMO.md).»
+- **Hoja de ruta, A.1** (las líneas reajustadas):
+
+      FTMO-P-D1 §3. El script 1.2 (trabajo/margen-pendiente) mide en la 3 el instante en que MT5
+      comprueba el margen de una pendiente stop (ADR-0081 §4).
+
+- **Hoja de ruta, R6a.6**: «el script 1.2 de MedirDemoFTMO» pasa a «el script 1.2 de MedirDemoFTMO
+  (HECHO, trabajo/margen-pendiente)».
+- **La cabecera del cierre**, con los tres textos del consultor (punto 6), con un sha de 7 caracteres y
+  una fecha de 10 en lugar de `<sha>` y `<fecha>`, y Current Branch = `main`.
+- **PROJECT_STATE de la copia, con todas las líneas del cierre: 21.784 bytes** (`wc -c`), por debajo de
+  21.800 (el auditor del consultor estimaba unos 21.755). La copia pasa `problemas_a` y `problemas_c`
+  de `tests/unit/test_hoja_de_ruta.py` (las dos, `[]`) y las secciones en orden y el tope de
+  `tests/unit/test_project_state.py`.
+
+## 4. El encargo frente a lo hecho
+
+| punto del encargo | hecho |
+|---|---|
+| 0 · Apertura: base comprobada, abrir-rama, encargo, contrato con tramo y riesgo alto, Archivo | Hecho (e441d95; arriba, «Apertura») |
+| 1.a · El script 1.2: pasos 1-7 sin cambios y un paso 8 | Hecho (§1.1, §1.2); 1-7 byte a byte, salvo la versión, la cabecera en su sitio y :28 (punto 1 de la respuesta) |
+| 1.b · PROJECT_STATE a 21.800 o menos con las líneas del cierre | Hecho: 21.784 (§3) |
+| 2 · Fase 0 y PARADA | Hecho (a4be85e) |
+| 3 · El script, compilado, el lector, sus tests, el test estático en rojo y en verde, DEMO-FTMO.md | Hecho (2688f8b; §1) |
+| 4 · README (e), las salidas a HISTORIA, las HER:n, wc -c por sección | Hecho (§2) |
+| 5 · Informe, líneas del cierre, fila de ERRORES-RECURRENTES, revisor | §3, §5 y el informe del revisor, abajo |
+
+**Desviaciones, declaradas:**
+
+1. **La comisión del tope es 5,00 USD por lote y lado, no 2,50** (respuesta, punto 4): el supuesto
+   conservador del registro (ADR-0071) mientras el CSV de la ejecución 2 no esté congelado. Stops de 13
+   a 17 puntos en lugar de los «2 a 4 pips» del encargo.
+2. **`#property description` (:28) cambia**, además de :27 y :31: lo pide el punto 1 de la respuesta.
+3. **M (el break even de una venta que salta por el ASK) queda fuera** (punto 5): la 1.2 no lo mide y
+   sigue esperando a una prueba posterior. A.1 lo nombra; la hoja de ruta no se toca por eso.
+4. **El heredado 2 sale por (c) y (b), frase a frase, no por (b) entero** (PARADA 2): la premisa del
+   punto 7 (que la versión entera vivía en ENTRADA-MARZO.md:45-49) no se cumplía.
+5. **La línea de candidatas a ambigüedad (554 bytes) se midió DESPUÉS de una negativa de la guardia**,
+   con `grep … | wc -c` (arriba, «Sobre §0.m: el orden real»): cambio de vía tras una negativa, aunque
+   la cifra no se usó para nada que se aplicara.
+6. **La regla del «sí» de M4 depende del comentario del historial** (§1.2): si FTMO no nombra el margen
+   en `ORDER_COMMENT`, M4 no puede dar «sí», solo «no» o «no concluyente».
+7. **La comprobación del lector sobre el CSV real la lanza Aleks** con los cuatro comandos de §1.4 (la
+   guardia niega ejecutar el lector cambiado; entrada K), y su criterio es la identidad byte a byte con
+   `main`, no el 3720.77 (respuesta, último párrafo).
+8. **Negativas de la guardia en las fases 1 y 2**: `sed -i … && uv run botsito state check` en una sola
+   llamada («ejecutar `botsito state check`: antes, en el mismo comando, va `sed -i`»); rehecho en dos
+   llamadas, la forma que propone. Ninguna del clasificador.
+
+**Exposiciones:** ninguna en toda la rama. No se leyó material del trader, velas, ticks ni el CSV de
+`data/demo_ftmo/`; `HOLDOUT-EXPOSICIONES.md` no se toca.
+
+## 5. La fila de ERRORES-RECURRENTES, preparada (la escribe el cierre)
+
+Se completa con lo que encuentre el revisor (abajo); lo del consultor, tal como lo dio su respuesta:
+
+| rama | revisor | consultor | lección |
+|---|---|---|---|
+| `trabajo/margen-pendiente` | (tras el revisor) | Cuatro, de la respuesta a la PARADA (2026-10-31): (1) **importa**: el encargo dio como dato lo que decía el auditor del consultor sin medirlo: (e) ahorraba de 2.400 a 2.650 bytes (son 2.169); los stops saldrían de 2 a 4 pips (salen de 1,3 a 2,2); trece tests leen PROJECT_STATE (lo leen seis y lo nombran trece) y `test_ids_citados` lo lee (lo hace `knowledge validate`); la comprobación de Aleks daría el margen 3720.77, que el lector no imprime; y citas de línea de `test_capa_mt5.py` (:143-151 son :142-149; :278 es una cadena de ejemplo). (2) **importa**: en el primer borrador de su respuesta aceptó sacar por (b) la deuda de `cherry-pick` sin comprobar que su texto entero vivía en otro sitio; lo cazó su auditor. (3) **menor**: el encargo nombró una frase falsa de la cabecera y no vio la segunda («toda posición lleva stop de protección»). (4) **menor**: fijó 2,50 USD de comisión para el tope sin mirar que el registro mantiene 5. Y uno de la respuesta misma: (5) **importa**: el punto 7 daba por hecho que la versión entera del heredado 2 vivía en ENTRADA-MARZO.md:45-49, el mismo hueco que bloqueó el revisor de `trabajo/plataforma-adelantada` (b1); lo midió la sesión y salió la PARADA 2. De la sesión: el falso positivo de `crudo` volvió a saltar sobre un guion propio de la carpeta de trabajo (otra aparición de K), y una medida (554 bytes) se hizo con `grep` tras esa negativa | Lo que diga el auditor del consultor sobre una cifra, un recuento o un mecanismo va en el encargo como «verifica que…», nunca como dato (la lección de visor-construccion, repetida). Antes de aceptar una salida por (b), leer el texto entero en HISTORIA y buscar cada frase; y si una rama anterior ya la bloqueó, leer por qué. Antes de pedir que se corrija un texto, leerlo entero. Tras una negativa de la guardia, ni siquiera una medida auxiliar cambia de vía: se apunta el orden. Y una medida que solo prueba el estado («Rejected») no prueba la causa: el «sí» de M4 exige el comentario del margen |
+
 ## Estado
 
-EN CURSO: fase 1 hecha (el script 1.2, el lector, los tests y el runbook); sigue la fase 2 (PROJECT_STATE).
+EN CURSO: fases 1 y 2 hechas; las líneas del cierre, preparadas (21.784 bytes); falta el revisor.

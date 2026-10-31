@@ -333,10 +333,10 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la medida de mayo está en su informe.
 
 ### R5.3 · Marzo
-- **Refs:** HER:2 · ID:ADR-0046 · ID:ADR-0072
+- **Refs:** ID:ADR-0046 · ID:ADR-0072
 - **Qué es:** la entrada de marzo por el camino de fidelidad (`docs/runbooks/ENTRADA-MARZO.md`):
-  marzo en `vistos.yaml` (heredado 2; lo que queda de su paso 0: la confirmación escrita del trader
-  llegó el 2026-10-25, A.3); la columna de fechas por Aleks (paso a); sorteo; huso por velas;
+  marzo en `vistos.yaml` (lo que queda del paso 0 de `docs/runbooks/ENTRADA-MARZO.md`; la
+  confirmación escrita del trader llegó el 2026-10-25, A.3); la columna de fechas por Aleks (paso a); sorteo; huso por velas;
   `libros.yaml` (paso 0 y paso d); ingesta de los `fidelidad-dev`.
 - **Depende de:** la lectura de Aleks (la confirmación del trader ya está: A.3, HECHA).
 - **Quién:** Aleks (fechas, confirmación); la sesión (cada paso, con sus PARADAS).
@@ -496,8 +496,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Hecho cuando:** las respuestas están registradas.
 
 ### A.3 · La agenda con el trader
-- **Refs:** (la parte del heredado 2 que es la confirmación escrita; lo que queda de él vive en R5.3)
-- **Qué es:** la confirmación escrita del trader sobre marzo (heredado 2) y la fecha de la sesión 5.
+- **Refs:** (la confirmación escrita del paso 0 de `docs/runbooks/ENTRADA-MARZO.md`; lo que queda del paso 0 vive en R5.3)
+- **Qué es:** la confirmación escrita del trader sobre marzo (`docs/runbooks/ENTRADA-MARZO.md`, paso 0) y la fecha de la sesión 5.
 - **Depende de:** nada.
 - **Quién:** Aleks.
 - **Hecho cuando:** la confirmación está registrada y la sesión 5 tiene fecha.

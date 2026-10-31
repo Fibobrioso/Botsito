@@ -14177,3 +14177,69 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 52 (2026-10-28).
+
+# Pendiente heredado SALE · sale de PROJECT_STATE.md en trabajo/margen-pendiente (2026-10-31)
+
+Su linea literal en «Pendientes heredados»:
+
+- 2. Marzo: faltan vistos.yaml y el paso a (hoja de ruta, R5.3); la confirmacion escrita del trader llego el 2026-10-25 (A.3 HECHA; SESION-05-EXTRACCION.md §3.5).
+
+Su texto entero (Archivo 1, `HISTORIA.md:684`), literal:
+
+2. MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE. El trader confirmo el 2026-09-21 que no habia visto febrero NI marzo, y backtestea MARZO (lo declara el consultor; no hay captura en el corpus). Al entregarlo: el xlsx al corpus, marzo a `vistos.yaml` con `visto_el` = la fecha en que lo backtesteo citando el commit de entrega, y su `cobertura_material` declarada. Es material del CAMINO DE FIDELIDAD (ADR-0036), para `fidelidad-2` y `fidelidad-3`. La confirmacion por escrito se registra en F09 como CONFIRM sobre el objetivo `paquete <sesion>`: **sin sus palabras, no vale**.
+
+Sale frase a frase, por dos condiciones (respuesta del consultor a la PARADA 2, 2026-10-31,
+`docs/validation/MARGEN-PENDIENTE.md`):
+
+- «MARZO INTERRUMPE LO QUE HAYA EN VUELO CUANDO LLEGUE»: condicion (c) SUSTITUIDA. Marzo llego el
+  2026-09-30 y no interrumpio nada: entra por el camino de fidelidad, en su turno de la hoja de ruta.
+  Evidencia: `docs/validation/REGISTRO-MARZO.md:118` («Fecha de recepcion: 2026-09-30. Contenido: NO
+  ABIERTO.»), `:127` (§4, punto 1, «Marzo entra por el camino de fidelidad») y `:167-169` (la
+  decision del consultor del 2026-09-30 que la ACEPTA); `CLAUDE.md:175-177` («Marzo de 2026 esta
+  RECIBIDO y SIN ABRIR … entra por el camino de fidelidad como mes reservado, en el orden de
+  `docs/runbooks/ENTRADA-MARZO.md`»); y R5.3 de `docs/plan/HOJA-DE-RUTA.md` («### R5.3 · Marzo»).
+- «El trader confirmo el 2026-09-21 que no habia visto febrero NI marzo, y backtestea MARZO»:
+  condicion (c) SUSTITUIDA por hechos posteriores: el backtest de marzo esta recibido
+  (`REGISTRO-MARZO.md:118`) y la confirmacion escrita del trader llego el 2026-10-25
+  (`docs/validation/SESION-05-EXTRACCION.md` §3.5, «"Para cerrar" (v16, sin codigo de voz)»). Lo de
+  febrero sigue vivo en el heredado 6 («FEBRERO NO SE TOCA Y NO SE DESCARGA…»), que se queda.
+- El resto (marzo a `vistos.yaml` con `visto_el` y `cobertura_material`, material del camino de
+  fidelidad para `fidelidad-2` y `fidelidad-3`, y el CONFIRM de F09 «sin sus palabras, no vale»):
+  condicion (b) REPETIDA, entero en `docs/runbooks/ENTRADA-MARZO.md:45-49`; y lo esencial, en
+  `CLAUDE.md:178-181`.
+
+No es lo que bloqueo el revisor de `trabajo/plataforma-adelantada` (b1, 2026-10-18): entonces se pedia
+(b) para la linea entera, y (b) no cubria las dos primeras frases; ahora esas dos salen por (c) con su
+evidencia. En la misma rama, ENTRADA-MARZO.md (paso 0) y la prosa de R5.3 y A.3 de la hoja de ruta
+pasan a remitir a ENTRADA-MARZO.md, y `HER:2` sale de las Refs de R5.3.
+
+# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/margen-pendiente (2026-10-31)
+
+Condicion (e) de `docs/state/README.md` («Que sale de PROJECT_STATE, y con que criterio»; decision
+del consultor del 2026-10-31, en lectura estricta). Cada linea, entera y literal como estaba en
+«Technical Debt», y lo que queda de ella en PROJECT_STATE:
+
+- Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción), y ADR-0078 y ADR-0079 exigen que un mes de construcción no esté en él: la rama que decida llevar a construcción un mes de aquí construye antes la salida, con su ADR. Dueña: la rama de R5.4, diciembre (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2).
+  Queda en PROJECT_STATE: - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción) … (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2; entera en HISTORIA, Technical Debt ACORTADA)
+- El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación: la rama que congele los CSV de las ejecuciones 2 y 3 comprueba el CRLF del CSV 2 en `MQL5\Files` antes de copiarlo (EA-CONEXION.md §0.c).
+  Queda en PROJECT_STATE: - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación … (EA-CONEXION.md §0.c; entera en HISTORIA, Technical Debt ACORTADA)
+- Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) lo comprueban un test estático textual (`globales_sin_reiniciar`, `tests/contract/test_capa_mt5.py`) y la corrida de la demo: el script de pruebas no puede provocar un `REASON_CHARTCHANGE` (EA-CONEXION.md §10).
+  Queda en PROJECT_STATE: - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) … (EA-CONEXION.md §10; entera en HISTORIA, Technical Debt ACORTADA)
+- La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) junto a una vía de salida, ni cuando la vía de salida es un cliente de Python fuera de la lista cerrada del consultor (`aiohttp`); no ve como bucle una espera hecha a nivel de agente (`ScheduleWakeup`, `CronCreate`) con una consulta suelta en cada despertar; y no lee el código bajo `tests/` que se le pasa a pytest (`_analizar_pytest`): un test que esperase a la CI pasaría. Riesgos residuales declarados en trabajo/guardia-ci (GUARDIA-CI.md §5.2 y §9; los fijan `test_riesgo_residual_la_mencion_a_trozos_no_se_ve` y `test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa`); el hueco de `tests/` es anterior a la rama. Para el carril de guardias.
+  Queda en PROJECT_STATE: - La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) … (GUARDIA-CI.md §5.2 y §9; entera en HISTORIA, Technical Debt ACORTADA)
+- Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) sigue ligada al escenario en que nació y sus cierres cuentan en los cartuchos de aquel (zonas.py, `zona_del_punto` liga solo al crearla); ADR-0083 lo hace alcanzable y la fase 4 no lo midió: hace falta la traza por cierre (PUNTO-USADO.md §1.c y §4.f).
+  Queda en PROJECT_STATE: - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) … (PUNTO-USADO.md §1.c y §4.f; entera en HISTORIA, Technical Debt ACORTADA)
+- La condición 2 de ADR-0042 §2 (la lectura COMPLETA del libro, declarada) se comprueba buscando el NOMBRE del fichero en HOLDOUT-EXPOSICIONES (`cases/visto.py:requisitos`): una fila que lo nombra sin declarar la lectura completa la da por cumplida (falso positivo medido con enero, ENTRADA-ENERO.md §0.b). El mecanismo por nombre lo fija ADR-0042 §2: arreglarlo pide una NOTA o un ADR nuevo, no solo código.
+  Queda en PROJECT_STATE: - La condición 2 de ADR-0042 §2 (la lectura COMPLETA del libro, declarada) … (falso positivo medido con enero, ENTRADA-ENERO.md §0.b; entera en HISTORIA, Technical Debt ACORTADA)
+- `engine/simulador_config.py` busca el spread supuesto de `llenado.yaml` por la hora de PARED de Europe/Madrid, no por la rejilla: los días de desfase sale corrido una hora (2026-10-27: 4 de 11 horas, 1 punto de spread distinto; ENTRADA-ENERO.md §0.c). Importará cuando se mida un mes con días de desfase: marzo, del 9 al 27, y octubre.
+  Queda en PROJECT_STATE: - `engine/simulador_config.py` busca el spread supuesto de `llenado.yaml` por la hora de PARED de Europe/Madrid, no por la rejilla … (ENTRADA-ENERO.md §0.c; entera en HISTORIA, Technical Debt ACORTADA)
+- EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21); y (S-14, sesión 5) en los backtests sin vídeo faltan las sesiones que el trader se saltó por ir a break even: un día en que el bot opera y él no puede ser eso, no un no_trade (ACTIVAR-SESION-05.md §0.b.7).
+  Queda en PROJECT_STATE: - EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21); y (S-14, sesión 5) … (ACTIVAR-SESION-05.md §0.b.7; entera en HISTORIA, Technical Debt ACORTADA)
+- UNA PREGUNTA ABRE N PARTICIONES Y N LO DECIDE EL DATO, NO EL HUMANO. BLOQUEANTE ANTES DE LA PRIMERA AUTORIZACION (2026-09-21, medido en la rama de la puerta por pregunta; ADR-0033 enmienda §Lo que NO cierra, ADR-0036 §6).
+  Queda en PROJECT_STATE: - UNA PREGUNTA ABRE N PARTICIONES Y N LO DECIDE EL DATO, NO EL HUMANO … (entera en HISTORIA, Technical Debt ACORTADA)
+- Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos; Grep y `rg` sobre una carpeta que contiene la raíz se deciden como sobre la raíz, suponiendo, sin medirlo, que respetan su `.gitignore`.
+  Queda en PROJECT_STATE: - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos … (entera en HISTORIA, Technical Debt ACORTADA)
+- La guardia no expande las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) ni mira las URL `file:///` (urllib, curl), que leen material protegido en `main` y en la rama (GUARDIA-ALIAS.md §9, b6 y b7): van con la deuda C de la Next Action (rutas compuestas).
+  Queda en PROJECT_STATE: - La guardia no expande las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) ni mira las URL `file:///` (urllib, curl) … (GUARDIA-ALIAS.md §9, b6 y b7; entera en HISTORIA, Technical Debt ACORTADA)
+- Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) usa lo último cerrado antes del instante, que sin ticks es la M1 k-1 o el último tick anterior, y _precio_de_mercado y precio_de_conversion (cierre a mercado y margen) usan la k. Y en un minuto con ticks sin ninguno anterior al instante, estas dos toman el cierre de su vela; el motor no llega a ese caso (RESPALDO-M1.md §0.a y §0.b). Decidirlo es una NOTA o un ADR sobre ADR-0057 §4.
+  Queda en PROJECT_STATE: - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
