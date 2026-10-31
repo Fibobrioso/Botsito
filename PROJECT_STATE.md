@@ -16,7 +16,7 @@ trabajo/margen-pendiente EN CURSO (NA:A, A.1): el script 1.2 de MedirDemoFTMO, c
 4b12a92 · merge: trabajo/respaldo-m1, el respaldo M1 no evalúa contra precios anteriores a la decisión (Z) · tag stable/F38j-respaldo-m1
 
 ## Tests Currently Passing
-1777 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1795 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

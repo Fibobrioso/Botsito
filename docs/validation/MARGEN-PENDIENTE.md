@@ -597,6 +597,172 @@ Los 975 bytes de K salieron de `bytes_ps.py`, que corrió ANTES de la negativa (
 una negativa** (DECISIONES-DE-PROCESO.md), y se declara como desviación. El falso positivo es otra
 aparición de K y va en la fila de ERRORES-RECURRENTES preparada.
 
+## 1. Fase 1 · el script 1.2, el lector, los tests y el runbook (2026-10-31)
+
+### 1.1 El script: lo que cambia en las líneas 1-758
+
+`git diff main -U0 -- tools/mql5/MedirDemoFTMO.mq5`, en las líneas 1-758: la cabecera reescrita EN SU
+SITIO (las mismas 25 líneas: cambian :11-14 y :18-24), `#property version "1.20"` (:27), `#property
+description` con «el margen de las pendientes» (:28, por el punto 1 de la respuesta) y
+`#define VERSION_SCRIPT "1.2"` (:31). Nada más: los pasos 1 a 7 son byte a byte los de `main`. Todo lo
+nuevo va de :793 en adelante, entre `Comprobaciones` y `OnStart`, sin prototipos (punto 0). La línea
+759 de la 1.2:
+
+    if((ENUM_ACCOUNT_TRADE_MODE)AccountInfoInteger(ACCOUNT_TRADE_MODE) != ACCOUNT_TRADE_MODE_DEMO)
+
+La cabecera nueva dice, en SEGURIDAD: «solo EURUSD, numero magico propio, volumen minimo salvo en los
+pasos 6 y 8 (el 8: sus lotes, peor caso <= 1000 USD); toda pendiente lleva caducidad (si el simbolo la
+admite); las de los pasos 3-5 van sin stop a proposito y, si una se llena, se cierra en cuanto se lee;
+toda otra posicion lleva stop» (punto 1). El fuente sigue en ASCII.
+
+### 1.2 El paso 8, tal como quedó
+
+- **Constantes** (`#define`, no inputs: no se cambian desde la ventana de Aceptar): `P8_TOPE_USD`
+  1000; `P8_COMISION_LADO` 5,00 (punto 4: el supuesto conservador del registro, ADR-0071, y no los
+  2,50 del encargo, que es un cambio del encargo); `P8_DESLIZ` 10 puntos; stop entre 10 y 200 puntos;
+  «lejos» 1.000 puntos; «cerca» 10 puntos más el stops level; D mínima de M2, 20 USD; carga, 10 %.
+- **Inputs**, tras `Comprobaciones`: `InpMedirMargen` (true) e `InpEsperaMargenSeg` (120). La sonda
+  de la fase 0 y la compilación de abajo prueban que MQL5 los admite ahí; en la ventana salen al final.
+- **OnStart**: tras el paso 7, `if(ok && InpMedirMargen) ok = MedirMargen(); else if(ok)` escribe
+  `p8_fin = desactivado`. `MedirMargen` limpia antes, escribe el contexto (sin peticiones), y llama a
+  M1, M2, M3 y M4, cada una seguida de su `Limpiar`, también si falla; después, el `Limpiar("al_terminar")`
+  de siempre.
+- **El peor caso** (`PeorCaso`, `StopDelTope`): para cada medida, con las compras que pueden estar a
+  la vez (S y la ocupación en M4; las dos de M3), Σ |OrderCalcProfit(BUY, v, p, p − (s + 10)·point)|
+  + 2 × 5,00 × lotes; el script prueba s de 200 a 10 puntos y se queda el mayor que no pasa de 1.000.
+  Escribe siempre la fila `mN_peor_caso`; si ni 10 puntos caben, `mN_no_medible` y no envía nada.
+  Con 100.000 de libre y 3.720,77 por lote (cifras de la 2; el script las lee en el momento):
+
+| medida | lotes a la vez | stop (c = 5,00) | peor caso |
+|---|---|---|---|
+| M1 | 26,88 | 17 puntos | 26,88 × 27 + 268,80 = 994,56 |
+| M2 | 0,61 | 200 (el máximo) | 0,61 × 210 + 6,10 = 134,20 |
+| M3 | 29,58 | 13 | 29,58 × 23 + 295,80 = 976,14 |
+| M4 · posición | 28,22 | 15 | 28,22 × 25 + 282,20 = 987,70 |
+| M4 · pendientes | 29,57 | 13 | 29,57 × 23 + 295,70 = 975,81 |
+
+- **M2 por las tres cifras** (punto 2.d): escribe antes y después ACCOUNT_MARGIN, ACCOUNT_MARGIN_FREE y
+  ACCOUNT_MARGIN_INITIAL, y decide «carga» por la bajada del LIBRE (≥ 10 % del margen calculado al
+  mercado), con la misma regla que el lector; lo escribe en `m2_carga_script`, que elige la ocupación
+  de M4.
+- **M4** (puntos 2.a, 2.b, 2.c y 2.e): S sin pausa (la ocupación va enseguida); el libre antes de S
+  (`m4_libre_antes_stop`), con S puesta (`m4_libre_tras_stop`; si M2 dijo que carga, espera a que la
+  cuenta lo refleje) y con la ocupación (`m4_libre_tras_ocupar`); lo que reservó S es la diferencia
+  MEDIDA de las dos primeras, y la condición antes de esperar es «libre tras ocupar + reservado < margen
+  de S al llenar»; si no se cumple, `m4_no_medible`. Durante la espera, en cada vuelta lee el libre y si
+  la ocupación sigue viva, y después si S sigue viva; al resolverse S escribe `m4_ocupacion_viva` («si»
+  solo si lo estuvo en TODAS las vueltas, con su ticket) y `m4_libre_al_resolver`. Si S se llena, el
+  volumen de sus deals (`m4_volumen_deal`); si desaparece sin deal, el historial: `m4_estado`
+  (ORDER_STATE), `m4_comentario` (ORDER_COMMENT, literal) y `m4_motivo` (ORDER_REASON).
+- **Qué campo usa la regla del «sí» de M4** (punto 2.b, documentación consultada el 2026-10-31):
+  «General Concepts», <https://www.metatrader5.com/en/terminal/help/trading/general_concept>: «If during
+  pending order activation the corresponding market operation cannot be executed (for example, the free
+  margin on the account is not enough), the pending order will be canceled and moved to history with
+  the "Rejected" status». Es decir, el ESTADO es `ORDER_STATE_REJECTED`, pero el estado solo no nombra
+  la causa. `ORDER_REASON` no tiene ningún valor para el margen (CLIENT, MOBILE, WEB, EXPERT, SL, TP,
+  SO; <https://www.mql5.com/en/docs/constants/tradingconstants/orderproperties>), y la documentación de
+  `HistoryOrderGetString` no dice qué comentario pone el servidor. **La regla usa `ORDER_COMMENT`**:
+  «sí» solo con `ORDER_STATE_REJECTED`, un comentario que nombre el margen (`no money`, `not enough
+  money`, `margin` o `margen`, sin distinguir mayúsculas) y el tope agregado de volumen en 0 o no
+  superado. Si FTMO no escribe nada así en el comentario, M4 no da «sí» nunca: sale «no concluyente»
+  con el estado, el comentario y el motivo literales. (En el foro de MQL5 se cita un «[no money]», que
+  no es documentación: no se usa como dato.)
+- **Peticiones**: el paso 8 suma 12 (M1 2, M2 2, M3 4, M4 4: S, la ocupación y quitar las dos), más lo
+  que pidan los `Limpiar` si queda algo; la 1.2 entera, 46 con stops level 0 (54 con stops level > 0),
+  frente a 34 (42) de la 1.1. Muy por debajo de 2.000 al día (R13) y de 200 órdenes a la vez (como
+  mucho 3).
+- **Tiempo del paso 8**, peor caso: unos 16 s de pausas, hasta 15 s esperando a la cuenta (M2 y dos
+  en M4), hasta 120 s esperando a que salte S y los `Limpiar`: unos 2,5-3 minutos. El script entero,
+  como mucho unos 6.
+
+### 1.3 La compilación
+
+Copia de `tools/mql5/MedirDemoFTMO.mq5` de la rama (sha256 `d2a220a1…619e`) en la carpeta de trabajo,
+`MetaEditor64.exe /compile:"<copia>\MedirDemoFTMO.mq5" /log:"<copia>\compilar.log"`: código de salida 1
+(éxito, al revés), `.ex5` de 82.164 bytes, y la última línea del log:
+
+    Result: 0 errors, 0 warnings, 1122 ms elapsed, cpu='X64 Regular'
+
+(La primera versión montada compiló igual, 0 errors y 0 warnings; la del repo solo cambia un espacio
+de un comentario.)
+
+### 1.4 El lector
+
+- `VERSIONES` gana "1.2"; `ESPERADOS["8_margen"]` = {10008, 10009, 10019}; `m4_resultado` es una
+  observación, como `buy_stop_llenado`.
+- `respuesta_m1` … `respuesta_m4` aplican la regla de la PARADA con los cambios de la respuesta (2.a a
+  2.e y 3): M2 por la bajada del libre y el precio por D/2 con D ≥ 10; M4 «no concluyente» con la
+  ocupación caída, el llenado parcial, S que cabía al llenar, S sin deal que no sea REJECTED con el
+  margen en el comentario o con el tope de volumen superado, y CANCELED nunca «sí».
+- Una sección aparte, «## Paso 8: cuando comprueba MT5 el margen de una pendiente stop (ADR-0081 §4)»,
+  antes de los INESPERADOS y solo si hay un fichero 1.2: por fichero 1.2, el contexto (modo de margen,
+  SYMBOL_MARGIN_HEDGED, pierna mayor, margen inicial, tope agregado, tasas de margen), M1 a M4 y el peor
+  caso de cada una; «paso 8 desactivado» o «el paso 8 no corrio» si toca. Las filas del paso 8 no entran
+  en la tabla «Decision a decision».
+- **Un 1.0 o un 1.1 dan la salida de `main` byte a byte**: el test
+  `test_un_1_0_y_un_1_1_dan_la_salida_de_main_byte_a_byte` compara el sha256 de la salida de la rama
+  con el de la salida del lector de `main` sobre los mismos CSV sintéticos (un 1.0, un 1.1 y una
+  carpeta con los dos), medidos con el lector de `main` antes de cambiarlo (guion `salida_main.py`,
+  fuera del repo): `a02029b8…114c`, `f61f234c…ccbb` y `5f487f6f…48ef`.
+- Un cambio fuera de los 1.0 y 1.1: el mensaje de una versión desconocida dice ahora «lee 1.0 y 1.1 y
+  1.2».
+
+**La comprobación sobre el CSV real** (punto de la respuesta: el criterio es que la salida de `main` y
+la de la rama sean idénticas byte a byte; el lector no imprime el 3720.77). La lanza Aleks con `!`,
+porque la guardia niega ejecutar el lector cambiado (`crudo = ruta.read_bytes()`, entrada K), con las
+dos salidas fuera del repo:
+
+    ! git show main:scripts/leer_demo_ftmo.py > C:/Users/USER/Desktop/comparar-demo/leer_main.py
+    ! uv run python C:/Users/USER/Desktop/comparar-demo/leer_main.py data/demo_ftmo --salida C:/Users/USER/Desktop/comparar-demo/salida_main.txt
+    ! uv run python scripts/leer_demo_ftmo.py data/demo_ftmo --salida C:/Users/USER/Desktop/comparar-demo/salida_rama.txt
+    ! cmp C:/Users/USER/Desktop/comparar-demo/salida_main.txt C:/Users/USER/Desktop/comparar-demo/salida_rama.txt && echo IDENTICAS
+
+(La carpeta `C:/Users/USER/Desktop/comparar-demo/` se crea antes; `cmp` no dice nada si son iguales.)
+
+### 1.5 Los tests
+
+- `tests/unit/test_leer_demo_ftmo.py`: los 9 de antes, sin tocar, y 13 nuevos: la salida de `main`
+  byte a byte (1.0, 1.1 y carpeta); un 1.2 en su sección y no en la tabla; una carpeta con un 1.1 y un
+  1.2; un 1.2 con el paso 8 desactivado; M1 en sus dos sentidos, no concluyente y no medible; M2 con el
+  libre que baja (a la orden y al mercado), con el libre que NO baja aunque ACCOUNT_MARGIN sube, con
+  carga lejos de los dos cálculos y con D < 10; M2 sin la pendiente viva; M3 en sus dos sentidos y no
+  concluyente; M4 llenada entera («no») y parcial; ocupación caída (con llenada y sin deal); rechazada
+  con el margen en el comentario («sí»), con otro motivo, cancelada y con el tope de volumen superado
+  (no concluyente); S que cabía al llenar, no saltó, y «no medible»; y el 10019 del paso 8 no es
+  inesperado.
+- `tests/contract/test_medir_demo_ftmo.py` (nuevo, 9 tests): toda función que rellena una petición
+  `TRADE_ACTION_DEAL` o `TRADE_ACTION_PENDING` lleva `.magic`, `.sl` y, si es pendiente,
+  `PonerCaducidad`, salvo la lista cerrada `SIN_STOP` con su motivo (`EnviarPendiente`, exenta solo del
+  stop: sigue necesitando la caducidad; `CerrarPosicion`); las funciones que envían son exactamente las
+  seis conocidas; la condición DEMO sigue en la 759 y `MedirMargen` va detrás de `Comprobaciones`, en el
+  fuente y en `OnStart`; y cinco roturas en memoria más una función nueva sin stop, que tienen que dar
+  problemas.
+- **En rojo, sobre copias estropeadas en la carpeta de trabajo** (guion `rojo.py`: el test de la rama
+  y el script 1.2 roto, en un árbol desechable cada uno):
+  - sin el `req.sl` de `AbrirCompra` (paso 8): `3 failed, 6 passed`; el principal dice
+    `Left contains one more item: 'AbrirCompra: DEAL sin req.sl (stop de proteccion)'`;
+  - sin el `PonerCaducidad` de `ColocarBuyStop` (paso 8): `3 failed, 6 passed`;
+    `'ColocarBuyStop: PENDING sin PonerCaducidad(req)'`;
+  - con una función nueva `AbrirSinStop` que envía un DEAL sin stop: `2 failed, 7 passed`;
+    `'AbrirSinStop: DEAL sin r.sl (stop de proteccion)'`, y el de la lista de funciones que envían
+    (`At index 1 diff: 'AbrirSinStop' != 'CerrarPosicion'`).
+- **En verde, en la rama**: `uv run pytest tests/unit/test_leer_demo_ftmo.py
+  tests/contract/test_medir_demo_ftmo.py tests/contract/test_capa_mt5.py -q` → 44 passed. ruff format,
+  ruff check y mypy, limpios sobre los tres ficheros de Python.
+- **La guardia y pytest** (fase 0, 0.g): con el lector ya cambiado, `uv run pytest
+  tests/unit/test_leer_demo_ftmo.py …` no lo niega.
+
+### 1.6 El runbook y los README
+
+`docs/runbooks/DEMO-FTMO.md`: el tiempo de la cabecera (con la 1.2, como mucho unos seis minutos); en
+«Lo que hace, y lo que no hace nunca», los lotes grandes del paso 8, los stops de 1,3 a 1,7 pips (y el
+de 20 pips de la pequeña de M2), el tope de 1.000 USD y lo esperable, y la frase de los stops corregida
+(la de :22, punto 1); «Antes de la ejecución 3: el script 1.2» (copiar, F7 con «0 errors», comprobar
+que el CSV y el lector dicen 1.2); las horas de Lima de la 3 (de 03:00 a 12:00 el 2, 4, 5 y 6; el 3
+no); qué hacer con «ATENCIÓN: quedan…» con la 1.2 (cerrarlo enseguida); y el paso 8 en «Lo que mide
+cada paso». Lo de la ejecución 2 se queda como estaba. `tools/mql5/README.md` y `scripts/README.md`:
+una frase cada uno con el paso 8 (los dos dicen lo que hace el script y lo que lee el lector).
+
 ## Estado
 
-EN CURSO: respuestas a la PARADA y a la PARADA 2 copiadas; fase 1 (el script 1.2, el lector, los tests y el runbook) y fase 2 (PROJECT_STATE) seguidas.
+EN CURSO: fase 1 hecha (el script 1.2, el lector, los tests y el runbook); sigue la fase 2 (PROJECT_STATE).
