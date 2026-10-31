@@ -803,7 +803,9 @@ bool Comprobaciones(string &motivo)
 #define P8_RESP          "ADR-0081 D3"
 #define P8_TOPE_USD      1000.0 // peor caso de todo lo que una medida puede tener a la vez
 #define P8_COMISION_LADO 5.00   // USD por lote y lado: supuesto conservador del registro (ADR-0071)
-#define P8_DESLIZ        10     // puntos por operacion: 5 veces el mayor medido (DEMO-EJECUCION-1)
+#define P8_DESLIZ        10     // puntos por operacion (entrada y salida juntas): un SUPUESTO, 2,5 veces
+                                // el peor par medido (+2 y +2 con 0,01 lotes, DEMO-EJECUCION-1); en
+                                // ejecucion a mercado nada lo limita
 #define P8_STOP_MIN      10     // puntos: si el tope no deja este stop, la medida no se hace
 #define P8_STOP_MAX      200    // puntos: el stop de proteccion de los pasos 6 y 7
 #define P8_LEJOS         1000   // puntos sobre el ask: una pendiente que no salta
@@ -891,8 +893,9 @@ double PeorCaso(const double &vols[], const double &precios[], const int n, cons
    return total;
   }
 
-// El mayor stop (puntos, de P8_STOP_MAX a P8_STOP_MIN) cuyo peor caso no pasa del tope; 0 si ni el
-// minimo cabe o no se puede calcular. Escribe la fila <clave>_peor_caso, se coloque o no.
+// El mayor stop (puntos, de P8_STOP_MAX al minimo: P8_STOP_MIN, o mas si el stops level lo pide)
+// cuyo peor caso no pasa del tope; 0 si ni el minimo cabe o no se puede calcular. Escribe la fila
+// <clave>_peor_caso, se coloque o no.
 int StopDelTope(const string clave, const double &vols[], const double &precios[], const int n)
   {
    double lotes = 0.0;
@@ -900,7 +903,8 @@ int StopDelTope(const string clave, const double &vols[], const double &precios[
       lotes += vols[i];
    double peor = -1.0;
    int elegido = 0;
-   for(int s = P8_STOP_MAX; s >= P8_STOP_MIN; s--)
+   int minimo = (int)MathMax(P8_STOP_MIN, g_stops + 1);
+   for(int s = P8_STOP_MAX; s >= minimo; s--)
      {
       peor = PeorCaso(vols, precios, n, s);
       if(peor < 0.0)
@@ -915,7 +919,7 @@ int StopDelTope(const string clave, const double &vols[], const double &precios[
                  Usd(P8_TOPE_USD) + " USD; comision " + Usd(P8_COMISION_LADO) + " por lote y lado; deslizamiento " +
                  IntegerToString(P8_DESLIZ) + " puntos";
    if(elegido == 0)
-      nota = "SIN STOP QUE QUEPA EN EL TOPE (con " + IntegerToString(P8_STOP_MIN) + " puntos: " + Usd(peor) + " USD); " + nota;
+      nota = "SIN STOP QUE QUEPA EN EL TOPE (con " + IntegerToString(minimo) + " puntos: " + Usd(peor) + " USD); " + nota;
    Dato(P8_MED, P8_RESP, clave + "_peor_caso", Usd(peor), nota);
    return elegido;
   }
@@ -956,7 +960,7 @@ bool AbrirCompra(const double volumen, const MqlTick &t, const int stop, MqlTrad
    req.type = ORDER_TYPE_BUY;
    req.price = t.ask;
    req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);
-   req.deviation = P8_DESLIZ;
+   req.deviation = P8_DESLIZ; // solo cuenta en ejecucion instantanea; FTMO es a mercado (paso 1)
    req.type_filling = Llenado();
    req.comment = "MedirDemoFTMO m4 ocupacion";
    bool ok = OrderSend(req, res);
@@ -1466,24 +1470,36 @@ bool MedirM4(const int carga, const int suma)
    return true;
   }
 
+// El tope de cada medida cuenta solo lo que ella envia: si un Limpiar no deja la cuenta vacia, el
+// paso 8 no sigue (lo que quede se sumaria a lo de la medida siguiente).
 bool MedirMargen()
   {
-   Limpiar("antes_paso_8");
+   if(Limpiar("antes_paso_8") != 0)
+     {
+      Dato(P8_MED, "contexto", "p8_fin", "detenido", "quedan ordenes o posiciones del script antes del paso 8");
+      return true;
+     }
    ContextoMargen();
    int carga = -1;
    int suma = -1;
    bool ok = MedirM1();
-   Limpiar("tras_m1");
-   if(ok)
+   bool limpio = (Limpiar("tras_m1") == 0);
+   if(ok && limpio)
       ok = MedirM2(carga);
-   Limpiar("tras_m2");
-   if(ok)
+   if(limpio)
+      limpio = (Limpiar("tras_m2") == 0);
+   if(ok && limpio)
       ok = MedirM3(suma);
-   Limpiar("tras_m3");
-   if(ok)
+   if(limpio)
+      limpio = (Limpiar("tras_m3") == 0);
+   if(ok && limpio)
       ok = MedirM4(carga, suma);
-   Limpiar("tras_m4");
-   Dato(P8_MED, "contexto", "p8_fin", ok ? "hecho" : "incompleto");
+   if(limpio)
+      limpio = (Limpiar("tras_m4") == 0);
+   if(!limpio)
+      Dato(P8_MED, "contexto", "p8_fin", "detenido", "un Limpiar no dejo la cuenta vacia: el paso 8 no siguio");
+   else
+      Dato(P8_MED, "contexto", "p8_fin", ok ? "hecho" : "incompleto");
    return ok;
   }
 

@@ -85,10 +85,11 @@ sino que la acorta:
   El texto entero va literal a HISTORIA, bajo "# Technical Debt ACORTADA · sale de PROJECT_STATE.md
   en <rama> (<fecha>)". No se aplica a una línea si ahorra menos de 60 bytes.
 
-Como se lee (respuesta del consultor a la PARADA de `trabajo/margen-pendiente`, punto 6;
-`docs/validation/MARGEN-PENDIENTE.md`): «al final de una frase o de un inciso» es antes de «. », «; »
-o «: », o tras el «)» que cierra un inciso; la coma de una enumeracion no cuenta. Los 200 bytes se
-miden con el salto de linea; los 160, desde el «- ».
+Como se lee (`docs/validation/MARGEN-PENDIENTE.md`): «al final de una frase o de un inciso» es antes
+de «. », «; » o «: », o tras el «)» que cierra un inciso, y los 200 bytes se miden con el salto de
+linea y los 160 desde el «- » (la lectura estricta que propuso la fase 0, §0.h.2, y que el consultor
+acepto con su prevision); y la coma de una enumeracion no cuenta (respuesta del consultor a la
+PARADA, punto 6).
 
 Y desde el mismo dia (punto Y, `docs/runbooks/RITUAL.md`): TODO cambio de la Next Action que mande
 la orden de cierre -salen las HECHAS, entran las nuevas y cambian las que diga la orden- se hace en

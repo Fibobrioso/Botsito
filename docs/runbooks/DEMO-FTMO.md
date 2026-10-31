@@ -15,10 +15,11 @@ que salte una orden): en total, **como mucho unos seis minutos**.
 ## Lo que hace, y lo que no hace nunca
 
 - **Se niega a correr si la cuenta no es de prueba (DEMO).** En una cuenta real no hace nada.
-- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta), salvo el
-  paso 6: desde la versión 1.1 abre y cierra enseguida una compra de **1,00 lote**, con su stop de
-  protección, para medir la comisión por lote (ADR-0071 §3). Antes de abrir comprueba el margen
-  libre; si no alcanza, no abre y lo escribe en el fichero.
+- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta), salvo en
+  los pasos 6 y 8. En el 6, desde la versión 1.1, abre y cierra enseguida una compra de **1,00
+  lote**, con su stop de protección, para medir la comisión por lote (ADR-0071 §3); antes de abrir
+  comprueba el margen libre y, si no alcanza, no abre y lo escribe en el fichero. El 8, desde la
+  1.2, usa lotes grandes (el punto siguiente).
 - **Desde la versión 1.2, el paso 8 usa lotes GRANDES**, porque mide qué hace MetaTrader cuando no
   hay margen libre: órdenes pendientes de unos 15 a 27 lotes, lejos del precio (100 pips), que se
   borran en cuanto se leen, y, al final, una orden cerca del precio y otra orden o una compra que
@@ -26,10 +27,14 @@ que salte una orden): en total, **como mucho unos seis minutos**.
   Las grandes llevan un stop de protección muy cercano (de 1,3 a 1,7 pips), y la pequeña de en medio
   (menos de un lote), uno de 20 pips; el script los calcula ANTES de enviar para que, aunque todo se llenara y fuera
   hasta su stop, no se pierdan más de **1.000 USD** (la quinta parte de la pérdida diaria máxima de
-  FTMO), contando la comisión y un margen de deslizamiento. Si el stop que sale es menor de un pip,
-  esa medida no se hace y queda escrito en el fichero. Lo normal es no perder casi nada; si la orden
-  cercana se llena, el script la cierra enseguida, y lo esperable es una pérdida de unos cientos de
-  dólares como mucho.
+  FTMO), contando la comisión (5 USD por lote y lado) y **un deslizamiento SUPUESTO de un pip por
+  operación**. Ese pip no es una garantía: sale de tres medidas pequeñas de la ejecución 1 (de 1 y 2
+  décimas de pip), y FTMO ejecuta a mercado, así que en un salto brusco del precio un stop puede
+  llenarse más lejos y la pérdida pasar de esa cifra. Por eso las órdenes grandes viven unos
+  segundos, y el script se lanza lejos de las noticias (paso 1 de «Cada vez»). Si el stop que sale
+  es menor de un pip, esa medida no se hace y queda escrito en el fichero. Lo normal es no perder
+  casi nada; si la orden cercana se llena, el script la cierra enseguida, y lo esperable es una
+  pérdida de unos cientos de dólares como mucho.
 - Pone unas veinte órdenes de prueba (y unas pocas más en el paso 8) y **las borra todas**; abre como
   mucho unas pocas posiciones pequeñas (y, desde la 1.1, la de 1,00 lote del paso 6; desde la 1.2, las
   del paso 8) y **las cierra**. Toda orden de prueba caduca sola a los 15 minutos. Las órdenes de los

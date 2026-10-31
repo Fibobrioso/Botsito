@@ -360,6 +360,7 @@ def _m4(resultado: str = "llenada", viva: str = "si", deal: str = "21.50",
         _p8(66, "m4_libre_tras_ocupar", libre_tras_ocupar),
         _p8(67, "m4_margen_stop", "80000.00"),
         _p8(68, "m4_ocupacion_viva", viva, nota="ticket 123"),
+        _p8(68, "m4_libre_al_resolver", "73950.00"),
     ]
     if resultado == "llenada":
         ls += [
@@ -443,6 +444,22 @@ def test_un_1_2_con_el_paso_8_desactivado_lo_dice(tmp_path: Path) -> None:
     assert "M1 ·" not in texto
 
 
+def test_un_paso_8_detenido_por_un_limpiar_lo_dice(tmp_path: Path) -> None:
+    """El script para el paso 8 si un Limpiar no deja la cuenta vacia (revisor, b1)."""
+    m = _cargar()
+    ls = [ln.replace('"1.1"', '"1.2"', 1) for ln in _version_1_1()]
+    nota = "un Limpiar no dejo la cuenta vacia: el paso 8 no siguio"
+    ls[-2:-2] = [
+        _p8(30, "m1_colocar", "26.88", "10019", "NO_MONEY", "no", "buy_stop", "1.12623"),
+        _linea(31, "limpieza", "quedan_abiertas_tras_m1", "1", version="1.2"),
+        _p8(99, "p8_fin", "detenido", nota=nota),
+    ]
+    texto = m.informe(m.ficheros_de([_csv(tmp_path / "MedirDemoFTMO_20301102_100000.csv", ls)]))
+    assert f"- PASO 8 DETENIDO: {nota}" in texto
+    assert "- M2 · una stop viva carga margen, y a que precio: sin medir" in texto
+    assert "quedan_abiertas_tras_m1 = 1" in texto  # y el aviso de seguridad de siempre
+
+
 def test_m1_en_sus_dos_sentidos_y_no_concluyente(tmp_path: Path) -> None:
     def m1(retcode: str, texto: str, colocada: str) -> str:
         fila = _p8(30, "m1_colocar", "26.88", retcode, texto, colocada, "buy_stop", "1.12623")
@@ -497,7 +514,8 @@ def test_m3_en_sus_dos_sentidos_y_no_concluyente(tmp_path: Path) -> None:
 
 
 def test_m4_llenada_entera_da_no_y_parcial_no_concluye(tmp_path: Path) -> None:
-    assert "no: la llena sin margen libre (a 1.11634)" in _respuesta(_paso_8(tmp_path, _m4()), "M4")
+    no = _respuesta(_paso_8(tmp_path, _m4()), "M4")
+    assert "no: la llena sin margen libre (a 1.11634; libre al resolver 73950.00)" in no
     parcial = _respuesta(_paso_8(tmp_path, _m4(deal="10.00")), "M4")
     assert "no concluyente: llenado parcial" in parcial
 

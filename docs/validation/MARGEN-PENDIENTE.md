@@ -869,8 +869,245 @@ Se completa con lo que encuentre el revisor (abajo); lo del consultor, tal como 
 
 | rama | revisor | consultor | lección |
 |---|---|---|---|
-| `trabajo/margen-pendiente` | (tras el revisor) | Cuatro, de la respuesta a la PARADA (2026-10-31): (1) **importa**: el encargo dio como dato lo que decía el auditor del consultor sin medirlo: (e) ahorraba de 2.400 a 2.650 bytes (son 2.169); los stops saldrían de 2 a 4 pips (salen de 1,3 a 2,2); trece tests leen PROJECT_STATE (lo leen seis y lo nombran trece) y `test_ids_citados` lo lee (lo hace `knowledge validate`); la comprobación de Aleks daría el margen 3720.77, que el lector no imprime; y citas de línea de `test_capa_mt5.py` (:143-151 son :142-149; :278 es una cadena de ejemplo). (2) **importa**: en el primer borrador de su respuesta aceptó sacar por (b) la deuda de `cherry-pick` sin comprobar que su texto entero vivía en otro sitio; lo cazó su auditor. (3) **menor**: el encargo nombró una frase falsa de la cabecera y no vio la segunda («toda posición lleva stop de protección»). (4) **menor**: fijó 2,50 USD de comisión para el tope sin mirar que el registro mantiene 5. Y uno de la respuesta misma: (5) **importa**: el punto 7 daba por hecho que la versión entera del heredado 2 vivía en ENTRADA-MARZO.md:45-49, el mismo hueco que bloqueó el revisor de `trabajo/plataforma-adelantada` (b1); lo midió la sesión y salió la PARADA 2. De la sesión: el falso positivo de `crudo` volvió a saltar sobre un guion propio de la carpeta de trabajo (otra aparición de K), y una medida (554 bytes) se hizo con `grep` tras esa negativa | Lo que diga el auditor del consultor sobre una cifra, un recuento o un mecanismo va en el encargo como «verifica que…», nunca como dato (la lección de visor-construccion, repetida). Antes de aceptar una salida por (b), leer el texto entero en HISTORIA y buscar cada frase; y si una rama anterior ya la bloqueó, leer por qué. Antes de pedir que se corrija un texto, leerlo entero. Tras una negativa de la guardia, ni siquiera una medida auxiliar cambia de vía: se apunta el orden. Y una medida que solo prueba el estado («Rejected») no prueba la causa: el «sí» de M4 exige el comentario del margen |
+| `trabajo/margen-pendiente` | Una pasada, opus (§8): 0 bloquea, 7 importa (a1=b5 la cita de ENTRADA-MARZO:45-49 que la propia rama desplazaba una línea; a2=b4 el deslizamiento justificado con más de lo que dice su fuente y presentado como garantía; b1 `Limpiar` sin comprobar entre medidas; b2 el test estático no negaba un stop a 0, una sobrecarga ni una acción por variable; b3 una frase del runbook que el paso 8 dejaba falsa), 4 menores (a3, a4, b6, b7); arreglados todos salvo a4, contestado (§8.1) | Cuatro, de la respuesta a la PARADA (2026-10-31): (1) **importa**: el encargo dio como dato lo que decía el auditor del consultor sin medirlo: (e) ahorraba de 2.400 a 2.650 bytes (son 2.169); los stops saldrían de 2 a 4 pips (salen de 1,3 a 2,2); trece tests leen PROJECT_STATE (lo leen seis y lo nombran trece) y `test_ids_citados` lo lee (lo hace `knowledge validate`); la comprobación de Aleks daría el margen 3720.77, que el lector no imprime; y citas de línea de `test_capa_mt5.py` (:143-151 son :142-149; :278 es una cadena de ejemplo). (2) **importa**: en el primer borrador de su respuesta aceptó sacar por (b) la deuda de `cherry-pick` sin comprobar que su texto entero vivía en otro sitio; lo cazó su auditor. (3) **menor**: el encargo nombró una frase falsa de la cabecera y no vio la segunda («toda posición lleva stop de protección»). (4) **menor**: fijó 2,50 USD de comisión para el tope sin mirar que el registro mantiene 5. Y uno de la respuesta misma: (5) **importa**: el punto 7 daba por hecho que la versión entera del heredado 2 vivía en ENTRADA-MARZO.md:45-49, el mismo hueco que bloqueó el revisor de `trabajo/plataforma-adelantada` (b1); lo midió la sesión y salió la PARADA 2. De la sesión: el falso positivo de `crudo` volvió a saltar sobre un guion propio de la carpeta de trabajo (otra aparición de K), y una medida (554 bytes) se hizo con `grep` tras esa negativa | Lo que diga el auditor del consultor sobre una cifra, un recuento o un mecanismo va en el encargo como «verifica que…», nunca como dato (la lección de visor-construccion, repetida). Antes de aceptar una salida por (b), leer el texto entero en HISTORIA y buscar cada frase; y si una rama anterior ya la bloqueó, leer por qué. Antes de pedir que se corrija un texto, leerlo entero. Tras una negativa de la guardia, ni siquiera una medida auxiliar cambia de vía: se apunta el orden. Y una medida que solo prueba el estado («Rejected») no prueba la causa: el «sí» de M4 exige el comentario del margen |
+
+## 6. El encargo, punto por punto
+
+El encargo y las dos respuestas, partidos en requisitos. H = hecho; O = hecho de otra forma (declarado
+en §4).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base: main 6948375, merge 4b12a92, tag F38j, CI 40943847054 verde; sin otra rama; wt-ci intacto | H | «Apertura» |
+| 2 | abrir-rama: encargo tal cual, contrato con `tramo: "Carril: lo de Aleks"` y riesgo alto con motivo, Archivo en HISTORIA | H | e441d95; `contrato.yaml`; Archivo 53 |
+| 3 | Rutas del contrato las del encargo; ampliación a ENTRADA-MARZO.md en un commit a la vista | H | `contrato.yaml`; 9d3a532 |
+| 4 | QUÉ NO CAMBIA: src/, mql5/, knowledge/, ningún ADR, pasos 1-7 salvo la versión, la salida del lector para 1.0/1.1, el CSV de data/, el texto de la Next Action, ninguna cifra | H | §7 (`git diff --stat`); §1.1; §1.4 (sha256 de main); PROJECT_STATE: la Next Action solo pierde el heredado 2 (punto 7) |
+| 5 | La rama no ejecuta el script en ninguna cuenta | H | solo compilación en la carpeta de trabajo |
+| 6 | Fase 0 a)-k), medida, con PARADA y «Lo que necesito que decidas» | H | §0, a4be85e |
+| 7 | Respuesta 0: paso 8 entre Comprobaciones y OnStart, sin prototipos; la 759 pegada | H | §1.1 |
+| 8 | Respuesta 1: las dos frases falsas, DEMO-FTMO.md:22 y `#property description` | H | §1.1, §1.6 |
+| 9 | Respuesta 2 (a): M1-M4 con buy stops a 100 pips, M4 según M2/M3 | H | §1.2 |
+| 10 | Respuesta 2.a: ocupación caída → `m4_ocupacion_viva`, libre antes de leer; «no concluyente» | H | §1.2; test `…ocupacion_caida…` |
+| 11 | Respuesta 2.b: «sí» solo REJECTED + comentario del margen + tope de volumen; CANCELED nunca; campo verificado en la documentación | H | §1.2 (el campo es ORDER_COMMENT); test `…si_solo_rechazada…` |
+| 12 | Respuesta 2.c: llenado parcial → no concluyente | H | `respuesta_m4`; test `…llenada_entera…` |
+| 13 | Respuesta 2.d: M2 por las tres cifras, carga por la bajada del libre; el informe dice qué hicieron MARGIN e INITIAL | H | §1.2; el lector imprime los dos deltas en cada respuesta de M2 |
+| 14 | Respuesta 2.e: libre antes y después de S; condición «libre + reservado < margen de S» | H | §1.2; test `…sin_la_condicion…` |
+| 15 | Tests del lector en los dos sentidos de cada caso de 2.a-2.e | H | §1.5 |
+| 16 | Respuesta 3: 10 % en la bajada del libre; precio por D/2 con D ≥ 10 | H | `CARGA_MIN`, `D_MIN`; test M2 |
+| 17 | Respuesta 4: 5,00 USD por lado; declarado como cambio del encargo | O | §1.2; §4, desviación 1 |
+| 18 | Respuesta 5: M fuera; dicho en el encargo frente a lo hecho | H | §4, desviación 3 |
+| 19 | Respuesta 6: (e) estricta, «Artifact…» entera; previsión con las tres cabeceras | H | §2; §3: 21.784 |
+| 20 | Respuesta 7 y PARADA 2: sale el heredado 2 frase a frase, bloque con el texto entero y las tres condiciones; ENTRADA-MARZO.md:32, la prosa de la hoja y HER:2; cherry-pick se queda | O | §2; PARADA 2 |
+| 21 | Respuesta 8: fases 1 y 2 seguidas | H | 2688f8b y el commit de la fase 2 |
+| 22 | §0.m: el orden real y, si toca, la desviación | H | «Sobre §0.m»; §4, desviación 5 |
+| 23 | La comprobación de Aleks: comandos exactos, salidas fuera del repo, identidad byte a byte | H | §1.4 |
+| 24 | Script: VERSION "1.2", version "1.20", paso 8, cabecera sin cambiar el número de líneas antes de :759, diff de 1-7 en el informe | H | §1.1 |
+| 25 | Compilado fuera del repo con la línea «Result:» pegada | H | §1.3 |
+| 26 | Lector: VERSIONES con 1.2; sección aparte solo con un 1.2; 1.0/1.1 byte a byte | H | §1.4; test sha256 |
+| 27 | Tests: M1-M4 en los dos sentidos y no concluyente; 1.2 desactivado; 1.1 como en main; carpeta 1.1 + 1.2 | H | §1.5 |
+| 28 | Test estático en tests/contract/, lista cerrada, niega por defecto, roto a propósito (sin sl del paso 8, sin PonerCaducidad, función nueva) en rojo y en verde | H | §1.5 |
+| 29 | DEMO-FTMO.md: antes de la 3, paso 8, horas de Lima, «ATENCIÓN: quedan…», lo que el paso 8 deja falso y el tiempo | H | §1.6 |
+| 30 | README de tools/mql5 y scripts, solo si nombran lo que hace el script | H | §1.6 |
+| 31 | Fase 2: (e) en el README con fecha y rama; salidas literales a HISTORIA en sus bloques; HER:n; wc -c por sección | H | §2 |
+| 32 | Informe: fase 0, PARADA, respuestas, script, lector, PROJECT_STATE, encargo frente a lo hecho | H | este informe |
+| 33 | Líneas del cierre preparadas y medidas sobre una copia, comprobadas contra test_hoja_de_ruta y test_project_state | H | §3 |
+| 34 | Fila de ERRORES-RECURRENTES preparada | H | §5 |
+| 35 | Revisor (opus) con los cinco alcances, su informe pegado y lo hecho con cada hallazgo | (abajo) | «Informe del revisor» |
+| 36 | Sin fix/ en la CI de Linux: no toca hooks ni rutas | H | §7 |
+| 37 | make check con ruff format, ruff check y mypy antes, en cada commit; mensajes con Write y `-F` | H | cada commit, sellado |
+
+## 7. Lo que no cambia, y los tests nuevos con el código de main
+
+**Lo que no cambia.** `git diff --stat main...HEAD` (tras e2d80a3): 17 ficheros: `PROJECT_STATE.md`,
+`contrato.yaml`, el encargo, `docs/plan/HOJA-DE-RUTA.md`, `docs/runbooks/DEMO-FTMO.md`,
+`docs/runbooks/ENTRADA-MARZO.md`, `docs/state/HISTORIA.md`, `docs/state/README.md`, el informe y sus
+dos anexos, `scripts/README.md`, `scripts/leer_demo_ftmo.py`, `tests/contract/test_medir_demo_ftmo.py`,
+`tests/unit/test_leer_demo_ftmo.py`, `tools/mql5/MedirDemoFTMO.mq5` y `tools/mql5/README.md`. Ninguno
+de `src/`, `mql5/`, `knowledge/`, `docs/adr/`, `data/`, `config/`, `.claude/` ni el `Makefile`. (Repetir
+el diff acotado a esas rutas lo negó la guardia porque el comando nombraba `data`; no se insistió: la
+lista entera de arriba lo muestra.) `uv run python scripts/contrato_rama.py` → 17 ficheros dentro del
+contrato. HISTORIA solo se amplía (`tests/unit/test_historia.py`, en verde en `make check`).
+
+**Los tests nuevos con el código de main** (skill `comparar-con-main`, «Para probar un test con el
+código de main»). Antes: `git status --short` vacío, ramas `main` y `trabajo/margen-pendiente`, 144
+tags, y el worktree `wt-ci` (de otra sesión, «prunable»: no se toca, así que tampoco se hace
+`git worktree prune`). `git worktree add --detach C:/mp/main main` (6948375); los dos ficheros de test
+de la rama copiados dentro del clon; `uv run pytest tests/contract/test_medir_demo_ftmo.py
+tests/unit/test_leer_demo_ftmo.py -q -p no:cacheprovider --tb=no` en el clon:
+
+    .FFFFFF............FFFFFFFFFFFF                                          [100%]
+    18 failed, 13 passed
+
+Fallan los 18 que miden lo nuevo: en el estático, la lista de funciones que envían, la 759 con el
+paso 8 detrás y las cuatro roturas del paso 8 (sus funciones no existen en la 1.1); en el lector, los
+12 del paso 8 (un 1.2 se rechaza por versión). Pasan, como deben, los invariantes que la 1.1 ya
+cumplía (toda función que envía lleva mágico, stop y caducidad; la rotura de `EnviarPendiente`; la
+función nueva sin stop), los 9 tests de antes del lector y el de la salida byte a byte (que es la de
+`main`). En la rama: los 44 de `tests/unit/test_leer_demo_ftmo.py`, `tests/contract/test_medir_demo_ftmo.py`
+y `tests/contract/test_capa_mt5.py`, en verde (§1.5). La guardia no negó pytest en el clon. Después:
+`git worktree remove --force C:/mp/main` (con `--force` porque quedaban los dos tests copiados y la
+`.venv` del clon, sin seguir), y `git worktree list`, `git status --short`, `git branch --list`,
+`git tag -l` (144) y `git ls-remote --heads origin` (solo `main`) iguales que antes. No se leyó
+`data/`: estos tests usan CSV sintéticos en `tmp_path` y el fuente de `tools/mql5/`.
+
+**Sin CI de Linux por `fix/`**: la rama no toca hooks, rutas, sistema de archivos ni `zoneinfo` en el
+código (lo de Lima es una medida del informe), y el encargo lo dice: «el fix/ en la CI de Linux no es
+obligatorio».
+
+
+## 8. Informe del revisor (opus, 2026-10-31), tal cual
+
+## Informe del revisor · trabajo/margen-pendiente · 2026-10-31
+
+Base `6948375` (`git merge-base main HEAD`). Commits e441d95, a4be85e, 9d3a532, 2688f8b y e2d80a3. En el árbol de trabajo, sin commitear, solo `docs/validation/MARGEN-PENDIENTE.md` (secciones 6 y 7: +84/−1).
+
+Veredicto: nada bloquea. Hay 7 hallazgos que importan (2 del eje a y 5 del eje b; uno de ellos se repite en los dos ejes) y 4 menores. La rama todavía no está lista hasta que se resuelvan o se justifiquen.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **La cita de la salida por (b) del heredado 2 apunta a una línea equivocada en el árbol de la propia rama.** El bloque de HISTORIA dice que el resto del heredado está «entero en `docs/runbooks/ENTRADA-MARZO.md:45-49`». Eso era cierto en `main`. Pero el mismo commit e2d80a3 parte la línea :32 de ENTRADA-MARZO en dos, y todo lo de debajo baja una línea. En la rama, :45 está en blanco y la frase clave «`paquete <sesion>`: **sin sus palabras, no vale**.» está en :50, fuera del rango citado. | `git show main:docs/runbooks/ENTRADA-MARZO.md \| sed -n '45,49p'` da el bloque entero. En la rama, `ENTRADA-MARZO.md:45` está vacía y el bloque va de :46 a :50. Lo citan `docs/state/HISTORIA.md:14208` y `MARGEN-PENDIENTE.md:585,781`. HISTORIA solo se amplía, pero estas líneas son de la rama y aún se pueden corregir antes del merge. |
+| a2 | importa | **El deslizamiento del tope se justifica con más de lo que dice su fuente.** El script y el informe dicen «10 puntos por operación (entrada y salida juntas), cinco veces el mayor medido». Problemas: (1) las muestras son tres, con 0,01 lotes: +2 en contra, −2 a favor y +1; (2) la propia fuente dice «Ninguna cifra fija se sostiene con tres muestras de un minuto»; (3) si los 10 puntos cubren entrada y salida, son 2,5 veces 2+2, no cinco; (4) se aplican a 27–30 lotes. El peor caso queda en 975,81–994,56 USD, así que hay de 5 a 24 USD de holgura: menos de un punto con unos 29 lotes. Aun así, el runbook lo presenta como garantía: «aunque todo se llenara y fuera hasta su stop, no se pierdan más de 1.000 USD». Además, `req.deviation = P8_DESLIZ` (:959) no limita nada si FTMO usa ejecución a mercado; no lo pude comprobar (abajo). | `tools/mql5/MedirDemoFTMO.mq5:806` («5 veces el mayor medido»); `MARGEN-PENDIENTE.md:223-225` y la tabla en :636-642; `DEMO-EJECUCION-1.md` fila P7 («tres muestras: +2, −2 y +1 … Ninguna cifra fija se sostiene con tres muestras de un minuto») y fila 54 («−2 (a favor)»); `DEMO-FTMO.md:26-28`. |
+| a3 | menor | **La lectura de (e) del README se atribuye entera al punto 6 de la respuesta, que no la sostiene entera.** El punto 6 solo excluye la coma de una enumeración y pide la lectura estricta. Que «: » cuente como final de frase y que los 160 bytes se midan desde «- » vienen de la PARADA (0.h.2); el consultor los aceptó solo implícitamente («Previsión aceptada»). Dos líneas acortadas cortan en «: » (la del CRLF y la de `simulador_config.py`). | `docs/state/README.md:88-91` («Como se lee (respuesta del consultor … punto 6 …)»); `MARGEN-PENDIENTE.md:311-313` (la regla viene de 0.h.2) y :503. |
+| a4 | menor | En la línea de ADR-0042, el paréntesis conserva «falso positivo medido con enero,» además de la cita del informe con su sección. (e) solo manda conservar esa cita. | `PROJECT_STATE.md` (Technical Debt: «… (falso positivo medido con enero, ENTRADA-ENERO.md §0.b; entera en HISTORIA, …)»); `docs/state/README.md:84`. |
+
+Comprobado sin hallazgos:
+- **Contrato.** `contrato_rama.py` da: «CONTRATO: 17 ficheros dentro del contrato … 2 comprobaciones», exit 0.
+- **Comprobaciones del contrato.**
+  - `uv run pytest tests/unit/test_leer_demo_ftmo.py tests/contract/test_medir_demo_ftmo.py tests/contract/test_capa_mt5.py -q` pasa en verde (44 puntos).
+  - `make check` no lo ejecuté (escribe). Su evidencia es `make-check.log`: «3060 passed», «SELLO: make check en verde sobre el arbol 082c9207aa6883c6b5b71b340e4d725c89d5c570» y «PICO DE MEMORIA … 299 MiB». Ese árbol es exactamente el de e2d80a3 (`git rev-parse e2d80a3^{tree}` da 082c920…).
+  - Lo sin commitear del informe necesitará su propio `make check`.
+- **Trailers `Fuente:`.** Ningún commit toca `knowledge/`.
+- **Holdout y regímenes de cambio.**
+  - `git diff --name-status main...HEAD`: ninguna ruta de `knowledge/`, `data/`, `src/`, `mql5/`, `docs/adr/`, `.claude/`, `config/` ni el Makefile.
+  - HISTORIA solo gana líneas.
+  - Ningún informe de validación que ya estuviera en main cambia.
+  - `HOLDOUT-EXPOSICIONES.md` sin tocar, y el informe declara que no hubo exposición.
+- **Ambigüedades, ADR y la regla de las tres guardias de una `cita`:** no aplican.
+- **Tests de estado.** `test_hoja_de_ruta`, `test_project_state`, `test_project_state_rutas`, `test_historia`, `test_documentos_vivos` y `test_adr`: todos en verde.
+- **Citas comprobadas contra su fuente:**
+  - `REGISTRO-MARZO.md:118`, `:127` y `:167-169`;
+  - `CLAUDE.md:175-177` y `:178-181`;
+  - `HISTORIA.md:684`, idéntica al texto entero del bloque (comprobado en memoria);
+  - `SESION-05-EXTRACCION.md:1062` (§3.5);
+  - `DEMO-EJECUCION-1.md` filas 53, 54 y P7 (lo que falla está en a2).
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 5 importa, 2 menor. Requisitos: 32 hechos, 2 parciales, 0 no hechos (y 3 hechos de otra forma, todos declarados).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base 6948375, tag F38j y CI 40943847054 en verde | Hecho | `MARGEN-PENDIENTE.md:9-16`; merge-base 6948375 |
+| 2 | Contrato: `tramo: "Carril: lo de Aleks"`, riesgo alto con su motivo, sus rutas, y la ampliación a ENTRADA-MARZO en un commit a la vista | Hecho | `contrato.yaml:2,4,18`; 9d3a532 |
+| 3 | Archivo 53 en HISTORIA | Hecho | diff de HISTORIA, «# Archivo 53 · … 6948375» |
+| 4 | Fase 0 a)–k), la PARADA y «Lo que necesito que decidas» | Hecho | `MARGEN-PENDIENTE.md:18-476` |
+| 5 | Las dos respuestas, copiadas tal cual en el encargo y en el informe | Hecho | `diff` de encargo :122-168 frente a informe :481-527, y de :174-182 frente a :561-569: idénticas |
+| 6 | Pasos 1–7 iguales salvo la versión; la cabecera en su sitio con 25 líneas; `#property description` cambiada (punto 1) | Hecho de otra forma (declarado, desviación 2) | `git diff` solo tiene los trozos `@@ -8,27 +8,27`, `@@ -790,6 +790,703` (solo líneas añadidas) y `@@ -828,6 +1525,11` (solo añade la llamada al paso 8) |
+| 7 | La condición DEMO sigue en :759 y el paso 8 va entre Comprobaciones y OnStart, sin prototipos | Hecho | `sed -n 759p` en `main` y en la rama dan la misma línea; `grep -n ACCOUNT_TRADE_MODE_DEMO` → solo :759; MedirMargen en :1469, OnStart en :1490 |
+| 8 | Las dos frases falsas de la cabecera corregidas (punto 1) | Hecho | `MedirDemoFTMO.mq5:18-24` |
+| 9 | VERSION_SCRIPT "1.2" y version "1.20" | Hecho | :27, :31 |
+| 10 | Paso 8 solo tras Comprobaciones | Hecho | `MedirDemoFTMO.mq5:1493-1497,1528-1529`; test `test_la_condicion_demo_sigue_en_la_759_y_el_paso_8_va_detras` |
+| 11 | Toda petición del paso 8 con MAGICO y stop, y la pendiente con caducidad | Hecho | Solo envían ColocarBuyStop (:924-944) y AbrirCompra (:947-965), las dos con `magic` y `sl`; ColocarBuyStop además con PonerCaducidad. Se llaman solo con `stop != 0` (:1095, :1141, :1224, :1319) |
+| 12 | Limpiar en toda salida del paso 8 | Parcial | Se llama en cada salida (:1471-1485), pero se ignora lo que devuelve: ver b1 |
+| 13 | Peor caso antes de colocar o abrir, con pendientes, comisión de 5,00 y deslizamiento, ≤ 1.000 USD | Hecho, con reservas (b1, a2) | StopDelTope va antes de cada envío (:1094, :1140, :1223, :1318). Los volúmenes no cambian entre el cálculo y el envío (v, vS y vO son los mismos), y PeorCaso con EURUSD/USD no depende del nivel de precio |
+| 14 | M4 del mismo lado | Hecho | Todo son BUY o BUY_STOP (:934, :956) |
+| 15 | Peticiones (1.1 frente a 1.2) y tiempo, contados | Hecho | `MARGEN-PENDIENTE.md:670-676` |
+| 16 | M1–M4 con sus filas; respuesta 2.a–2.e (ocupación viva, «sí» solo con REJECTED, comentario del margen y tope de volumen, llenado parcial, M2 por el margen libre, condición «libre + reservado») | Hecho | `MedirDemoFTMO.mq5:1065-1467`; `leer_demo_ftmo.py` `respuesta_m1`…`respuesta_m4` |
+| 17 | Campo del historial que usa la regla, verificado en la documentación | Hecho | `MARGEN-PENDIENTE.md:657-669` (ORDER_COMMENT; ORDER_REASON no tiene valor para el margen) |
+| 18 | Umbrales del punto 3 (10 % sobre el margen libre; D ≥ 10) | Hecho | `CARGA_MIN`, `D_MIN`; en el script, `P8_CARGA` (:812) |
+| 19 | Comisión de 5,00 declarada como cambio del encargo | Hecho de otra forma (declarado) | :805; desviación 1 |
+| 20 | Compilación fuera del repo, con su línea «Result:» | Hecho (no verificable aquí) | `MARGEN-PENDIENTE.md:680-684` |
+| 21 | Lector: VERSIONES con 1.2; sección aparte solo con un fichero 1.2; un 1.0 o 1.1 sale byte a byte como en main | Hecho | Diff del lector: lo nuevo para 1.0/1.1 solo toca claves y mediciones que esos ficheros no tienen. Hashes fijados en el test, y el clon con el lector de main lo pasa (`MARGEN-PENDIENTE.md:941-946`) |
+| 22 | Tests del lector en los dos sentidos, con el paso 8 desactivado y una carpeta 1.1 + 1.2 | Hecho | 13 tests nuevos; en verde |
+| 23 | Test estático: lista cerrada, niega por defecto, roto en rojo y luego en verde | Parcial | Lista cerrada y roturas: sí. Negar por defecto: con huecos, ver b2 |
+| 24 | DEMO-FTMO: 1.2, paso 8, horas de Lima, «ATENCIÓN», tiempo y lo que el paso 8 deja falso | Parcial | Falta corregir una frase: b3 |
+| 25 | README de tools/mql5 y de scripts | Hecho | diff |
+| 26 | Condición (e) en el README, con fecha y rama | Hecho (se añade además «Como se lee»: a3) | `docs/state/README.md:77-91` |
+| 27 | Sale el heredado 2 por (c)+(c)+(b), con texto literal y evidencia; HER:2 y la prosa de la hoja de ruta; ENTRADA-MARZO:32 | Hecho de otra forma (PARADA 2), con la cita a1 | Bloque de HISTORIA literal (comprobado en memoria: la línea está en `main` y el texto es igual a `HISTORIA:684`); diff de HOJA-DE-RUTA |
+| 28 | La deuda de cherry-pick se queda | Hecho | Sigue en la sección Technical Debt |
+| 29 | (e): solo líneas de >200 bytes que ahorran ≥60, arranque literal ≤160, sin cortar una ruta ni un id, en lectura estricta (sin la coma), y «Artifact…» entera | Hecho | Medido en memoria. Las 12 líneas: original de 226 a 770 bytes; arranque de 69 a 152; ahorro de 61 a 578; arranque prefijo literal de la línea de main; ningún corte en una coma de enumeración; «Artifact…» sin tocar |
+| 30 | Texto entero de las líneas acortadas, literal en HISTORIA | Hecho | Las 12 «enteras» están en `main`; las 12 «Queda en» están en la rama |
+| 31 | wc -c por sección, antes y después | Hecho | `MARGEN-PENDIENTE.md:792-797`; `wc -c PROJECT_STATE.md` → 22119 |
+| 32 | Previsión de 21.784 bytes con las tres cabeceras | Hecho | Lo recalculé en memoria sobre la rama (frase de A, Current Branch `main`, los tres textos del consultor con sha de 7 y fecha de 10): **21784** |
+| 33 | Líneas del cierre preparadas (A, A.1 y R6a.6) | Hecho | Las frases de destino existen: `HOJA-DE-RUTA.md:432,479-480`; la de `PROJECT_STATE.md:46` aparece 1 vez |
+| 34 | Fila de ERRORES-RECURRENTES preparada | Hecho | `MARGEN-PENDIENTE.md:866-872` |
+| 35 | «El encargo, punto por punto» (E5) | Hecho (sin commitear) | `MARGEN-PENDIENTE.md:874-917` |
+| 36 | Prueba con el código de main en un clon desechable | Hecho | `MARGEN-PENDIENTE.md:931-951` |
+| 37 | QUÉ NO CAMBIA, y ninguna exposición | Hecho | name-status; `MARGEN-PENDIENTE.md:863-864` |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | **El tope de 1.000 USD da por hecho que Limpiar dejó la cuenta vacía, y nada lo comprueba.** `MedirMargen` llama a `Limpiar("tras_m1"/"tras_m2"/"tras_m3")` y descarta lo que devuelve. Si quedan órdenes o posiciones (por ejemplo, las dos pendientes de M3 de unos 14,8 lotes cada una), M4 coloca encima S y la ocupación (unos 28–30 lotes). StopDelTope solo suma lo que esa medida va a enviar, no lo que ya está abierto con el MAGICO. Una alerta no detiene el script. Arreglo natural: si `Limpiar(...) != 0`, el paso 8 no sigue. | `MedirDemoFTMO.mq5:1476,1479,1482` (se ignora el valor); `:311-341` (Limpiar devuelve `quedan` y solo avisa); `:896-921` (StopDelTope solo cuenta `vols[]`) |
+| b2 | importa | **El test estático no niega por defecto: lo comprobé con tres roturas en memoria.** (1) `req.sl = 0.0;` pasa, porque solo busca el texto `.sl =`. (2) Una sobrecarga con el mismo nombre (por ejemplo `ColocarBuyStop(const double)` sin stop) desaparece: `funciones()` guarda las funciones en un dict por nombre y la segunda pisa a la primera. (3) Una función que pone la acción con una variable (`r.action = acc;`) y llama a OrderSend no se detecta, ni sale en la lista de las que envían. Para negar de verdad haría falta enumerar las funciones que llaman a `OrderSend` y no las que contienen el regex de la acción, y comprobar que el stop no es 0. | `uv run python - <<'EOF' …` (importa el test y estropea el fuente en memoria). Salida: `sl=0: []`, `sobrecarga: []`, `accion por variable: []`, `envian: ['AbrirCompra', 'CerrarPosicion', 'ColocarBuyStop', 'EnviarPendiente', 'MedirComision', 'MedirLlenadoStop']`, `sl anulado: [] True`. Código: `tests/contract/test_medir_demo_ftmo.py:34,37-57,65,71,88` |
+| b3 | importa | **DEMO-FTMO sigue diciendo que el script solo usa el lote mínimo salvo en el paso 6.** El encargo pide corregir lo que el paso 8 deja falso en «Lo que hace…» (los volúmenes y los stops). La viñeta nueva de :22 añade la excepción, pero la frase vieja sigue en pie y, leída sola, es falsa. | `docs/runbooks/DEMO-FTMO.md:18-19` («Solo toca **EURUSD**, con el **lote mínimo** … salvo el paso 6»); encargo :82 |
+| b4 | importa | Es a2 visto desde el encargo: el encargo pide un margen de deslizamiento «con su fuente», y la fuente citada no sostiene la cifra para 27–30 lotes. | ver a2 |
+| b5 | importa | Es a1 visto desde el encargo: la evidencia de (b) del heredado 2 tiene que citar :46-50 de la rama. | ver a1 |
+| b6 | menor | El script escribe `m4_libre_al_resolver`, la lectura más cercana al salto de S, pero el lector no la usa ni la imprime. El «no» de M4 se apoya en el margen libre leído antes de la espera. La respuesta solo pedía escribirla. | `MedirDemoFTMO.mq5:1431`; `leer_demo_ftmo.py`, `respuesta_m4` (no la busca) |
+| b7 | menor | StopDelTope no mira el stops level. Con un stops level de más de 13 puntos, todas las órdenes grandes saldrían con 10016 y el paso 8 entero quedaría «no concluyente». Seguridad no rompe. | `MedirDemoFTMO.mq5:903-913`; `:936` (sl = precio − stop) |
+
+### Lo que no pude comprobar
+- **La compilación** («Result: 0 errors, 0 warnings, 1122 ms») y el `.ex5`: compilar escribe. Lo sustituye la línea pegada en el informe (:684).
+- **La salida del lector sobre el CSV real** de `data/demo_ftmo/`: no se ejecuta nada sobre `data/` (lo lanza Aleks). Lo sustituyen el test de los hashes y la prueba en el clon con el código de main (§7).
+- **Si `req.deviation` limita el deslizamiento en la cuenta de FTMO.** Con ejecución a mercado, MT5 lo ignora; no consulté la documentación (no tengo navegador).
+- **Si los guiones `fase2.py` y `cierre_copia.py` escribieron directamente en el repo, y si se ensayaron en un clon `git worktree`** (CLAUDE.md, «Ensayos aislados»). El informe solo dice «guion fase2.py, fuera del repo».
+- **Que el encargo sea copia literal del prompt:** no tengo el original.
+- **`git log` sobre las rutas protegidas:** la guardia lo negó porque el comando nombraba `data/`; no insistí. Lo sustituye `git diff --name-status main...HEAD`.
+- **Que no hubo exposición:** solo consta la declaración del informe; no hay rastro mecánico que lo pruebe.
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `uv run pytest tests/unit/test_leer_demo_ftmo.py tests/contract/test_medir_demo_ftmo.py tests/contract/test_capa_mt5.py -q`
+4. `ls -la make-check.log && grep -E "SELLO|PICO DE MEMORIA|failed|passed" make-check.log`
+5. `git rev-parse e2d80a3^{tree} 2688f8b^{tree} 9d3a532^{tree}`
+6. `git diff main...HEAD -- tools/mql5/MedirDemoFTMO.mq5` (trozos, `grep '^@@'`, `sed -n 759p` en `main` y en la rama, `grep -n ACCOUNT_TRADE_MODE_DEMO`)
+7. Read de `MedirDemoFTMO.mq5` :146-345 y :860-1544; `grep` de cabeceras de función, `OrderSend` y `.action`, `define P8_` y `deviation`
+8. `git diff main...HEAD -- scripts/leer_demo_ftmo.py`; `grep` de `es_inesperado`, `VERSIONES` y `OBSERVACION`
+9. Read de `tests/contract/test_medir_demo_ftmo.py`; `git diff` de `tests/unit/test_leer_demo_ftmo.py`
+10. `uv run python - <<'EOF'` (roturas del test estático en memoria)
+11. Read de `MARGEN-PENDIENTE.md` (:1-115, :116-265, :285-476, :477-960); `grep '^#'`; `git diff --stat` del informe
+12. `git diff main...HEAD -- PROJECT_STATE.md`; `uv run python - <<'EOF'` (medida de las 12 líneas de (e) contra main)
+13. `git diff main...HEAD -- docs/state/HISTORIA.md` (encabezados y bloques); `git diff` y `grep` de `docs/state/README.md`
+14. `wc -c PROJECT_STATE.md`; `uv run python - <<'EOF'` (previsión del cierre en memoria → 21784)
+15. `uv run pytest tests/unit/test_hoja_de_ruta.py tests/unit/test_project_state.py tests/unit/test_project_state_rutas.py tests/unit/test_historia.py tests/contract/test_documentos_vivos.py tests/unit/test_adr.py -q`
+16. `git diff main...HEAD -- docs/plan/HOJA-DE-RUTA.md docs/runbooks/ENTRADA-MARZO.md`; Read de `ENTRADA-MARZO.md:28-52`; `git show main:docs/runbooks/ENTRADA-MARZO.md | sed -n '45,49p'`; `grep "ENTRADA-MARZO.md:45-49"`
+17. `sed` de `CLAUDE.md:175-181`, `REGISTRO-MARZO.md:118,127,167-169`, `SESION-05-EXTRACCION.md:1062` y `HISTORIA.md:684`
+18. `uv run python - <<'EOF'` (bloques de HISTORIA literales frente a main y la rama)
+19. `git log … -- knowledge/ data/ …` (**negado por la guardia**, no se insistió); `git diff --name-status main...HEAD`
+20. `diff` de las respuestas del consultor, encargo frente a informe (las dos idénticas)
+21. `git diff main...HEAD -- docs/runbooks/DEMO-FTMO.md tools/mql5/README.md scripts/README.md`; `sed -n '14,22p'` de DEMO-FTMO
+22. `grep` de los encabezados de ADR-0081 (D3 = §4); `grep` en HOJA-DE-RUTA (:432, :479-480); `sed` de `DEMO-EJECUCION-1.md` (filas 53, 54, P7)
+
+### 8.1 Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 / b5 | importa | **Arreglado en el origen, sin tocar HISTORIA** (que solo se amplía: `tests/unit/test_historia.py` exige que cada versión commiteada empiece por la de su padre, así que el bloque de e2d80a3 no se puede corregir): la frase nueva de `ENTRADA-MARZO.md:32` vuelve a ocupar UNA línea, y el bloque vuelve a `:45-49`. `sed -n '45,49p'` en `main` y en la rama dan el mismo md5 (`2b5319ac…`), así que la cita de HISTORIA y la del informe vuelven a ser ciertas. El «alli» de :33 sigue siendo PROJECT_STATE («(su salida, en HISTORIA; hasta el 2026-10-31, `trabajo/margen-pendiente`, fue el pendiente heredado 2 de `PROJECT_STATE.md`); el 12 vivio alli…»). |
+| a2 / b4 | importa | **Corregido el texto, no la cifra.** Los 10 puntos se quedan, porque con 20 el stop de M1 saldría de 7 puntos, por debajo del mínimo, y M1 no se mediría. Pero se dicen como lo que son: un SUPUESTO, 2,5 veces el peor par medido (+2 y +2 con 0,01 lotes; `MedirDemoFTMO.mq5`, comentario de `P8_DESLIZ`), y en ejecución a mercado nada lo limita. La ejecución 1 midió `SYMBOL_TRADE_EXECUTION_MARKET` (`DEMO-EJECUCION-1.md:109,151`), y `req.deviation` lleva ahora el comentario de que solo cuenta en ejecución instantánea. En `DEMO-FTMO.md` el tope ya no es una garantía: «un deslizamiento SUPUESTO de un pip por operación. Ese pip no es una garantía … en un salto brusco del precio un stop puede llenarse más lejos y la pérdida pasar de esa cifra». Lo de §0.e y §1.2 («cinco veces el mayor medido») queda corregido por esta fila. |
+| b1 | importa | **Arreglado.** `MedirMargen` comprueba lo que devuelve cada `Limpiar`. Si `antes_paso_8` no deja la cuenta vacía, el paso 8 no empieza. Si no la deja tras M1, M2 o M3, no sigue. En los dos casos escribe `p8_fin = detenido` con su motivo, y el `Limpiar("al_terminar")` de `OnStart` corre igual. El lector imprime «PASO 8 DETENIDO: …», con su test (`test_un_paso_8_detenido_por_un_limpiar_lo_dice`). |
+| b2 | importa | **Arreglado.** El test estático parte de las funciones que llaman a `OrderSend` y lee la acción de su petición. Una acción que no es `TRADE_ACTION_DEAL`/`PENDING`/`REMOVE`/`MODIFY` escrita tal cual (una variable, o ninguna en la función) es un problema. Las sobrecargas se miran aparte (lista, no dict), y un `.sl = 0` no cuenta como stop. Tests nuevos, uno por rotura: `test_rompe_con_un_stop_a_cero`, `test_rompe_con_una_sobrecarga_del_mismo_nombre_sin_stop`, `test_rompe_con_una_accion_puesta_por_variable` y `test_rompe_con_un_ordersend_sin_accion_en_la_funcion`. |
+| b3 | importa | **Arreglado.** `DEMO-FTMO.md`, «Lo que hace…»: «Solo toca **EURUSD**, con el **lote mínimo** …, salvo en los pasos 6 y 8. … El 8, desde la 1.2, usa lotes grandes (el punto siguiente).» |
+| a3 | menor | **Arreglado.** El «Como se lee» del README atribuye cada parte a su fuente: la lectura estricta y la medida de 200 y 160 bytes vienen de la fase 0 (§0.h.2), aceptadas con la previsión, y la coma de la enumeración, del punto 6. |
+| a4 | menor | **Se deja, con motivo.** El paréntesis de la línea de ADR-0042 era «(falso positivo medido con enero, ENTRADA-ENERO.md §0.b)», y esa es la cita de su informe tal como la línea la escribía. Quitarle «falso positivo medido con enero» sería reescribirla, y además el bloque de HISTORIA (e2d80a3) ya registra lo que queda, y no se puede cambiar. |
+| b6 | menor | **Arreglado.** El «no» y el «sí» de M4 enseñan `m4_libre_al_resolver` («libre al resolver …»), sin que decida nada. |
+| b7 | menor | **Arreglado.** El stop mínimo de `StopDelTope` es el mayor de `P8_STOP_MIN` y el stops level más 1. |
+| «Lo que no pude comprobar», guiones | — | `fase2.py` y `cierre_copia.py` se escribieron en la carpeta de trabajo, FUERA del repo. `fase2.py` se ensayó primero sobre copias de PROJECT_STATE y HISTORIA en esa carpeta (`ensayo2/`, misma salida que en el repo: 22.119 bytes, −2.169 y −164), y después se ejecutó sobre el repo con la raíz como argumento (CLAUDE.md, «Ensayos aislados», punto 2), sin `make check` corriendo. `cierre_copia.py` solo lee el repo y escribe las copias en la carpeta de trabajo. No se usó un clon `git worktree` para el ensayo de `fase2.py`: es una desviación menor de «Ensayos aislados», punto 1. |
+
+**Después de los arreglos:** `uv run pytest tests/unit/test_leer_demo_ftmo.py
+tests/contract/test_medir_demo_ftmo.py tests/contract/test_capa_mt5.py -q` → 49 passed. ruff format,
+ruff check y mypy, limpios. La compilación de la versión final (sha256 `f9903c6f…9151`), en la carpeta de
+trabajo: `Result: 0 errors, 0 warnings, 1369 ms elapsed, cpu='X64 Regular'`, con un `.ex5` de 82.348
+bytes. La línea 759 sigue siendo la condición DEMO. Con el código de `main`, en un clon
+`--detach` de nuevo (C:/mp/main, quitado después, con `wt-ci` intacto): **20 failed, 16 passed**. Los
+cuatro tests estáticos nuevos sin stop, de la sobrecarga, la acción por variable y el OrderSend sin
+acción prueban el comprobador sobre roturas en memoria: pasan en los dos lados, salvo el del stop a
+cero, que estropea `AbrirCompra` (no existe en la 1.1). Tests: 1.800 funciones (`state check`).
+PROJECT_STATE: 22.119 bytes en la rama y 21.784 con las líneas del cierre (`cierre_copia.py`, otra
+vez). La fila de ERRORES-RECURRENTES (§5) gana, en «revisor»: «Una pasada (opus): 0 bloquea, 7
+importa (a1=b5, a2=b4, b1, b2, b3), 4 menores (a3, a4, b6, b7); arreglados todos salvo a4, contestado».
 
 ## Estado
 
-EN CURSO: fases 1 y 2 hechas; las líneas del cierre, preparadas (21.784 bytes); falta el revisor.
+Fases 0, 1 y 2 hechas, cada una con su commit sellado; el revisor (opus) pasado, con sus hallazgos arreglados o contestados (§8.1); las líneas del cierre preparadas (PROJECT_STATE con ellas: 21.784 bytes). Pendiente de Aleks: la comparación del lector sobre el CSV real con «!» (§1.4) y la ejecución 3 con el script 1.2. Rama lista para revisión, NO cerrada.

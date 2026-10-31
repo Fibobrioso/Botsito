@@ -428,11 +428,17 @@ def respuesta_m4(filas: Sequence[Fila]) -> str:
     viva = _busca(filas, "m4_ocupacion_viva")
     if viva is None or viva.valor != "si":
         return "no concluyente: la ocupacion cayo antes de que se resolviera S"
+    # el libre leido justo antes de ver resuelta S: se ensena, no decide (la condicion de arriba)
+    al_resolver = _busca(filas, "m4_libre_al_resolver")
+    libre_final = "sin dato" if al_resolver is None else al_resolver.valor
     if res.valor == "llenada":
         vd, vs = _numero(filas, "m4_volumen_deal"), _numero(filas, "m4_volumen_stop")
         if vd is None or vs is None or vd + 1e-9 < vs:
             return f"no concluyente: llenado parcial ({res.nota})"
-        return f"no: la llena sin margen libre (a {res.precio_resultado})"
+        return (
+            f"no: la llena sin margen libre (a {res.precio_resultado}; libre al resolver"
+            f" {libre_final})"
+        )
     estado = _busca(filas, "m4_estado")
     comentario = _busca(filas, "m4_comentario")
     motivo = _busca(filas, "m4_motivo")
@@ -450,7 +456,9 @@ def respuesta_m4(filas: Sequence[Fila]) -> str:
         and COMENTARIO_MARGEN.search(texto_comentario)
         and dentro_del_tope
     ):
-        return f"si: la rechaza al llenar por el margen ({literal})"
+        return (
+            f"si: la rechaza al llenar por el margen ({literal}; libre al resolver {libre_final})"
+        )
     return f"no concluyente: S sin deal ({literal})"
 
 
@@ -499,6 +507,8 @@ def seccion_paso_8(ficheros: dict[str, list[Fila]], nombres: Sequence[str]) -> l
                 lineas.append(f"- peor caso {medida.upper()}: {f.valor} USD ({f.nota})")
         if fin is None:
             lineas.append("- SIN LA FILA p8_fin (cortado)")
+        elif fin.valor == "detenido":
+            lineas.append(f"- PASO 8 DETENIDO: {fin.nota}")
     return lineas
 
 
