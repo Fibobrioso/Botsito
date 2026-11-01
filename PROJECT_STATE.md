@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/margen-pendiente
+main
 
 ## Current Feature
-trabajo/margen-pendiente EN CURSO (NA:A, A.1): el script 1.2 de MedirDemoFTMO, con un paso 8 que mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4), su lectura en scripts/leer_demo_ftmo.py, y PROJECT_STATE adelgazado. Encargo docs/encargos/trabajo-margen-pendiente.md; informe docs/validation/MARGEN-PENDIENTE.md.
+Ninguna rama abierta. trabajo/margen-pendiente cerrada en main el 2026-10-31 (stable/F38k-margen-pendiente): MedirDemoFTMO 1.2, con el paso 8 (el margen de una pendiente stop), y PROJECT_STATE adelgazado (MARGEN-PENDIENTE.md).
 
 ## Stable Main State
-4b12a92 · merge de `trabajo/respaldo-m1` (tag `stable/F38j-respaldo-m1`): el respaldo M1 no evalúa contra precios anteriores a la decisión (Z, R3.5), con la versión anterior en la vela de un cambio (ADR-0051 §5, NOTA); la línea base vigente es anexos/RESPALDO-M1/cuenta-arrastrada.txt. Sobre `stable/F38i-barrido-sesion-6` (89dc902). Informe docs/validation/RESPALDO-M1.md; el registro del cierre, al final de HISTORIA.
+796be27 · merge de `trabajo/margen-pendiente` (tag `stable/F38k-margen-pendiente`): MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado. Sobre `stable/F38j-respaldo-m1` (4b12a92). Informe docs/validation/MARGEN-PENDIENTE.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-4b12a92 · merge: trabajo/respaldo-m1, el respaldo M1 no evalúa contra precios anteriores a la decisión (Z) · tag stable/F38j-respaldo-m1
+796be27 · merge: trabajo/margen-pendiente, MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado · tag stable/F38k-margen-pendiente
 
 ## Tests Currently Passing
 1800 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
