@@ -8,18 +8,38 @@ parámetros**: los valores entran después, en otra rama, con los ficheros delan
 
 El script es `tools/mql5/MedirDemoFTMO.mq5`. Tarda menos de un minuto si la orden del paso 7 salta
 enseguida (44 segundos en la ejecución 1, el 2026-10-09) y como mucho unos tres si no salta: el paso 7
-la espera hasta 120 segundos.
+la espera hasta 120 segundos. **Desde la versión 1.2** (rama `trabajo/margen-pendiente`) el paso 8
+añade de medio minuto a unos dos minutos y medio (su última medida espera hasta otros 120 segundos a
+que salte una orden): en total, **como mucho unos seis minutos**.
 
 ## Lo que hace, y lo que no hace nunca
 
 - **Se niega a correr si la cuenta no es de prueba (DEMO).** En una cuenta real no hace nada.
-- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta), salvo el
-  paso 6: desde la versión 1.1 abre y cierra enseguida una compra de **1,00 lote**, con su stop de
-  protección, para medir la comisión por lote (ADR-0071 §3). Antes de abrir comprueba el margen
-  libre; si no alcanza, no abre y lo escribe en el fichero.
-- Pone unas veinte órdenes de prueba y **las borra todas**; abre como mucho unas pocas posiciones
-  pequeñas (y, desde la 1.1, la de 1,00 lote del paso 6) y **las cierra**.
-  Toda orden de prueba caduca sola a los 15 minutos, y toda posición lleva un stop de protección.
+- Solo toca **EURUSD**, con el **lote mínimo** (0,01 si no dice otra cosa la cuenta), salvo en
+  los pasos 6 y 8. En el 6, desde la versión 1.1, abre y cierra enseguida una compra de **1,00
+  lote**, con su stop de protección, para medir la comisión por lote (ADR-0071 §3); antes de abrir
+  comprueba el margen libre y, si no alcanza, no abre y lo escribe en el fichero. El 8, desde la
+  1.2, usa lotes grandes (el punto siguiente).
+- **Desde la versión 1.2, el paso 8 usa lotes GRANDES**, porque mide qué hace MetaTrader cuando no
+  hay margen libre: órdenes pendientes de unos 15 a 27 lotes, lejos del precio (100 pips), que se
+  borran en cuanto se leen, y, al final, una orden cerca del precio y otra orden o una compra que
+  ocupan el margen (unos 28 a 30 lotes entre todas; las cifras, con unos 100.000 de margen libre).
+  Las grandes llevan un stop de protección muy cercano (de 1,3 a 1,7 pips), y la pequeña de en medio
+  (menos de un lote), uno de 20 pips; el script los calcula ANTES de enviar para que, aunque todo se llenara y fuera
+  hasta su stop, no se pierdan más de **1.000 USD** (la quinta parte de la pérdida diaria máxima de
+  FTMO), contando la comisión (5 USD por lote y lado) y **un deslizamiento SUPUESTO de un pip por
+  operación**. Ese pip no es una garantía: sale de tres medidas pequeñas de la ejecución 1 (de 1 y 2
+  décimas de pip), y FTMO ejecuta a mercado, así que en un salto brusco del precio un stop puede
+  llenarse más lejos y la pérdida pasar de esa cifra. Por eso las órdenes grandes viven unos
+  segundos, y el script se lanza lejos de las noticias (paso 1 de «Cada vez»). Si el stop que sale
+  es menor de un pip, esa medida no se hace y queda escrito en el fichero. Lo normal es no perder
+  casi nada; si la orden cercana se llena, el script la cierra enseguida, y lo esperable es una
+  pérdida de unos cientos de dólares como mucho.
+- Pone unas veinte órdenes de prueba (y unas pocas más en el paso 8) y **las borra todas**; abre como
+  mucho unas pocas posiciones pequeñas (y, desde la 1.1, la de 1,00 lote del paso 6; desde la 1.2, las
+  del paso 8) y **las cierra**. Toda orden de prueba caduca sola a los 15 minutos. Las órdenes de los
+  pasos 3, 4 y 5 van **sin stop a propósito** (solo se juzga su precio): si una se llena al instante,
+  el script cierra la posición en cuanto la lee. Toda otra posición lleva un stop de protección.
 - Al empezar y al terminar busca cualquier orden o posición suya que siga abierta y la quita. Si
   algo se quedara abierto, sale un aviso en pantalla y queda escrito en el fichero.
 
@@ -55,7 +75,10 @@ la espera hasta 120 segundos.
    **«MedirDemoFTMO: terminado (completo)»**.
 6. **Comprobar.** Abajo, en la caja de herramientas (**Ctrl+T**), pestaña **Trading** (*Trade*), no
    tiene que quedar ninguna orden ni posición. Si la ventana dijera **«ATENCIÓN: quedan…»**, en esa pestaña clic derecho
-   sobre cada una → **Cerrar** o **Eliminar**.
+   sobre cada una → **Cerrar** o **Eliminar**. **Con la 1.2, hazlo enseguida**: lo que quede del paso
+   8 puede ser de muchos lotes; su stop de protección limita la pérdida, pero no hay que esperar a
+   que salte. Después, mira que la pestaña quede vacía, copia el fichero como siempre y díselo a la
+   sesión: en el fichero queda en qué medida pasó.
 7. **Si se corta** (se va la conexión, cierras MetaTrader…): vuelve a lanzarlo. Lo primero que hace
    es limpiar lo que quedara de la vez anterior.
 
@@ -97,6 +120,23 @@ con 1,00 lote. Antes de lanzarla:
    `version_script`, tiene que ser `"1.1"`. El lector lo dice también: «(script 1.1)» junto al
    nombre del fichero. Si dice 1.0, el terminal sigue con la versión vieja: repite 1 y 2.
 
+**Antes de la ejecución 3: el script 1.2.** La 2 (2026-10-29) usó la 1.1. Para la 3 hay una versión
+nueva, la 1.2 (rama `trabajo/margen-pendiente`), con los pasos 1 a 7 iguales y un paso 8 que mide
+cuándo comprueba MetaTrader el margen de una orden pendiente stop (ADR-0081 §4). Antes de lanzarla:
+1. vuelve a copiar `tools/mql5/MedirDemoFTMO.mq5` del repositorio a **MQL5 → Scripts**, encima del
+   que hay (paso 4 de «Una vez»);
+2. compílalo otra vez: **F4**, doble clic en **MedirDemoFTMO.mq5**, **F7**, y abajo tiene que decir
+   **0 errors** (paso 5 de «Una vez»);
+3. ejecútalo como siempre, sin cambiar nada en la ventana de **Aceptar**: el paso 8 ya viene activado
+   (`InpMedirMargen`), y al final de la lista aparecen sus dos opciones nuevas;
+4. al terminar, **comprueba que el fichero dice 1.2**: la columna `version_script` tiene que ser
+   `"1.2"`, y el lector dice «(script 1.2)» junto al nombre del fichero y saca una sección nueva,
+   «Paso 8». Si dice 1.1, el terminal sigue con la versión vieja: repite 1 y 2.
+
+**Cuándo, la 3:** el lunes 2, el miércoles 4, el jueves 5 o el viernes 6 de noviembre de 2026, **de
+03:00 a 12:00 hora de Lima** (la franja de 9:00 a 18:00 de España; desde el 25 de octubre España va
+en UTC+1 y Lima en UTC−5, medido con `zoneinfo`). **El martes 3 no**: es la sesión 6 con el trader.
+
 Si puedes, aprovecha una de las tres para mirar en el panel de la cuenta de FTMO **a qué hora se
 recalcula el límite de pérdida diaria**: a medianoche de España o a medianoche del servidor (A-28,
 «verificación explícita»). Apúntalo con la fecha.
@@ -112,6 +152,7 @@ recalcula el límite de pérdida diaria**: a medianoche de España o a medianoch
 | 5 | una pendiente buena, movida al lado equivocado: si se acepta y si la original sigue viva | ADR-0057 d3 |
 | 6 | una compra y un cierre a mercado: la comisión de cada lado, el spread y el deslizamiento (con 1,00 lote desde la 1.1; la 1.0 usaba el lote mínimo) | FTMO-REGLAS R12, DN-3 |
 | 7 | una buy stop muy cerca del precio: a qué precio se llena frente a su nivel | ADR-0057 d1 |
+| 8 (desde la 1.2) | el margen de una pendiente stop, en cuatro medidas: M1, si MetaTrader rechaza al colocarla una pendiente cuyo margen no cabe; M2, si una pendiente viva ocupa margen libre, y a qué precio; M3, si suma las pendientes al colocar otra; M4, si comprueba el margen cuando la pendiente salta. Lotes calculados en el momento, todo del mismo lado (compras) y con el tope de 1.000 USD | ADR-0081 §4 |
 
 **Importante para leerlo:** la hora GMT sale del reloj de este ordenador. Si el ordenador no está en
 hora, el desfase sale mal: comprueba que la hora de Windows está sincronizada antes de lanzarlo.

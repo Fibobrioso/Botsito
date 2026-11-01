@@ -29,7 +29,7 @@ Tiene que salir `1 passed`. Si no, no se empieza.
 
 ## Paso 0 · La entrega, y la primera parada
 
-La entrega, y lo que falta de ella. Lo que falta sigue en `PROJECT_STATE.md`, pendiente heredado 2;
+La entrega, y lo que falta de ella, que se lleva aqui, abajo (su salida, en HISTORIA; hasta el 2026-10-31, `trabajo/margen-pendiente`, fue el pendiente heredado 2 de `PROJECT_STATE.md`);
 el 12 vivio alli hasta el 2026-10-18 (su texto entero, en el Archivo 1 de `docs/state/HISTORIA.md`;
 la linea viva, en el Archivo 37). El xlsx ya esta en el corpus (REGISTRO-MARZO.md §2, punto 1).
 **Faltan** `vistos.yaml`, la confirmacion escrita del trader y el paso a (hoja de ruta, R5.3 y

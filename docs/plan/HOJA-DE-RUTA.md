@@ -333,10 +333,10 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la medida de mayo está en su informe.
 
 ### R5.3 · Marzo
-- **Refs:** HER:2 · ID:ADR-0046 · ID:ADR-0072
+- **Refs:** ID:ADR-0046 · ID:ADR-0072
 - **Qué es:** la entrada de marzo por el camino de fidelidad (`docs/runbooks/ENTRADA-MARZO.md`):
-  marzo en `vistos.yaml` (heredado 2; lo que queda de su paso 0: la confirmación escrita del trader
-  llegó el 2026-10-25, A.3); la columna de fechas por Aleks (paso a); sorteo; huso por velas;
+  marzo en `vistos.yaml` (lo que queda del paso 0 de `docs/runbooks/ENTRADA-MARZO.md`; la
+  confirmación escrita del trader llegó el 2026-10-25, A.3); la columna de fechas por Aleks (paso a); sorteo; huso por velas;
   `libros.yaml` (paso 0 y paso d); ingesta de los `fidelidad-dev`.
 - **Depende de:** la lectura de Aleks (la confirmación del trader ya está: A.3, HECHA).
 - **Quién:** Aleks (fechas, confirmación); la sesión (cada paso, con sus PARADAS).
@@ -429,7 +429,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   según `lote_si_no_cabe` (las dos opciones, con el valor que deje A-57); y el rechazo por margen.
   Con la ejecución 3 de la demo, que mide cuándo comprueba MT5 el margen de una pendiente stop
   (A.1).
-- **Depende de:** R6a.2, R6a.3, el script 1.2 de MedirDemoFTMO y la ejecución 3 de la demo.
+- **Depende de:** R6a.2, R6a.3, el script 1.2 de MedirDemoFTMO (HECHO, trabajo/margen-pendiente) y la ejecución 3 de la demo.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el límite portado pasa los mismos casos que sus tests de Python.
 
@@ -476,8 +476,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   (NA:M); y, del heredado 10, lo que queda: A-28 y el grabador de spread y ticks (F17, PARCIAL).
   La ejecución 2 está hecha (2026-10-29, script 1.1): desfase del servidor 180 minutos; comisión
   2,50 por lado con 1,00 lote; margen 3720,77 con el ask de la apertura, que cuadra con
-  FTMO-P-D1 §3. Falta un script 1.2 para el instante en que MT5 comprueba el margen de una
-  pendiente stop (ADR-0081 §4).
+  FTMO-P-D1 §3. El script 1.2 (trabajo/margen-pendiente) mide en la 3 el instante en que MT5
+  comprueba el margen de una pendiente stop (ADR-0081 §4).
 - **Depende de:** la prueba nueva de FTMO del 2026-10-29.
 - **Quién:** Aleks ejecuta; los dos CSV los congela una sola rama, tras la ejecución 3, que es la
   que decide A-28 con los dos (EA-CONEXION.md, D6).
@@ -496,8 +496,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Hecho cuando:** las respuestas están registradas.
 
 ### A.3 · La agenda con el trader
-- **Refs:** (la parte del heredado 2 que es la confirmación escrita; lo que queda de él vive en R5.3)
-- **Qué es:** la confirmación escrita del trader sobre marzo (heredado 2) y la fecha de la sesión 5.
+- **Refs:** (la confirmación escrita del paso 0 de `docs/runbooks/ENTRADA-MARZO.md`; lo que queda del paso 0 vive en R5.3)
+- **Qué es:** la confirmación escrita del trader sobre marzo (`docs/runbooks/ENTRADA-MARZO.md`, paso 0) y la fecha de la sesión 5.
 - **Depende de:** nada.
 - **Quién:** Aleks.
 - **Hecho cuando:** la confirmación está registrada y la sesión 5 tiene fecha.

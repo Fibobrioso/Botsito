@@ -57,7 +57,9 @@ Operaciones puntuales sin logica de negocio (llaman al paquete botsito o a git).
   repositorio en `--raiz` y escribe solo en `--salida` (`docs/validation/EMBUDO-77.md`).
 - `leer_demo_ftmo.py`: lee los CSV de `tools/mql5/MedirDemoFTMO.mq5` y escribe la tabla de ADR-0057,
   A-27 y las reglas de FTMO con su valor medido por fichero, y el desfase del servidor por fecha
-  (A-28). Marca los retcodes inesperados sin ocultarlos. Solo lee (`docs/runbooks/DEMO-FTMO.md`).
+  (A-28). Marca los retcodes inesperados sin ocultarlos. Desde la 1.2, una seccion aparte con las
+  respuestas del paso 8 (el margen de una pendiente stop, ADR-0081 §4), solo si hay un fichero 1.2.
+  Solo lee (`docs/runbooks/DEMO-FTMO.md`).
 - `viabilidad_trader.py`: las 77 operaciones del trader en construccion frente a las reglas de FTMO
   2-Step Swing 100k, simuladas por el broker sobre ticks y con su salida anotada, con la esperanza en R
   y su intervalo por bootstrap. Solo lee; escribe en `--salida` (`docs/validation/VIABILIDAD-TRADER.md`).

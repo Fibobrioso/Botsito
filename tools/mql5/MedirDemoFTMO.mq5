@@ -8,27 +8,27 @@
 //| scripts/leer_demo_ftmo.py. Instrucciones: docs/runbooks/         |
 //| DEMO-FTMO.md.                                                    |
 //|                                                                  |
-//| 1.1 (rama trabajo/demo-ejecucion-1, 2026-10-09, ADR-0071): el    |
-//| paso 6 abre con InpVolumenComision lotes (1.00), si el volumen   |
-//| es admisible y el margen libre alcanza; y las filas de           |
-//| observacion dicen OBSERVACION y no SIN_RESPUESTA.                |
+//| 1.1 (trabajo/demo-ejecucion-1, ADR-0071): el paso 6 abre con     |
+//| InpVolumenComision lotes; filas OBSERVACION. 1.2 (trabajo/       |
+//| margen-pendiente): paso 8, cuando comprueba MT5 el margen de     |
+//| una pendiente stop (ADR-0081, D3); InpMedirMargen.               |
 //|                                                                  |
 //| SEGURIDAD:                                                       |
 //| - se niega a correr si la cuenta no es DEMO;                     |
-//| - solo EURUSD, solo el volumen minimo (salvo el paso 6, con      |
-//|   InpVolumenComision desde 1.1), numero magico propio;           |
-//| - toda pendiente lleva caducidad (si el simbolo la admite) y     |
-//|   toda posicion lleva stop de proteccion;                        |
-//| - al empezar y al terminar, y tambien si un paso falla, borra    |
-//|   toda pendiente y cierra toda posicion con su numero magico, y  |
-//|   comprueba que no queda ninguna.                                |
+//| - solo EURUSD, numero magico propio, volumen minimo salvo en     |
+//|   los pasos 6 y 8 (el 8: sus lotes, peor caso <= 1000 USD);      |
+//| - toda pendiente lleva caducidad (si el simbolo la admite); las  |
+//|   de los pasos 3-5 van sin stop a proposito y, si una se llena,  |
+//|   se cierra en cuanto se lee; toda otra posicion lleva stop;     |
+//| - al empezar, al terminar y si un paso falla, borra pendientes y |
+//|   cierra posiciones del numero magico, y comprueba que no queda. |
 //+------------------------------------------------------------------+
 #property copyright "Bot v3"
-#property version   "1.10"
-#property description "Mide especificacion, reloj, pendientes mal colocadas, stops level, modificacion y comision en una cuenta DEMO. Solo EURUSD."
+#property version   "1.20"
+#property description "Mide especificacion, reloj, pendientes mal colocadas, stops level, modificacion, comision y el margen de las pendientes en una cuenta DEMO. Solo EURUSD."
 #property script_show_inputs
 
-#define VERSION_SCRIPT "1.1"
+#define VERSION_SCRIPT "1.2"
 #define SIMBOLO        "EURUSD"
 #define MAGICO         57057000
 
@@ -790,6 +790,719 @@ bool Comprobaciones(string &motivo)
    return true;
   }
 
+//+------------------------------------------------------------------+
+//| 8. Cuando comprueba MT5 el margen de una pendiente stop          |
+//|    (1.2, rama trabajo/margen-pendiente; ADR-0081 D3). Va aqui,   |
+//|    tras Comprobaciones, para no mover la linea de la condicion   |
+//|    DEMO que citan ADR-0082 y la capa de mql5/.                   |
+//|    Todo del MISMO lado (compras). Cada medida calcula sus lotes  |
+//|    con OrderCalcMargin y el margen libre del momento, y su stop  |
+//|    de proteccion con el tope de perdida de P8_TOPE_USD.          |
+//+------------------------------------------------------------------+
+#define P8_MED           "8_margen"
+#define P8_RESP          "ADR-0081 D3"
+#define P8_TOPE_USD      1000.0 // peor caso de todo lo que una medida puede tener a la vez
+#define P8_COMISION_LADO 5.00   // USD por lote y lado: supuesto conservador del registro (ADR-0071)
+#define P8_DESLIZ        10     // puntos por operacion (entrada y salida juntas): un SUPUESTO, 2,5 veces
+                                // el peor par medido (+2 y +2 con 0,01 lotes, DEMO-EJECUCION-1); en
+                                // ejecucion a mercado nada lo limita
+#define P8_STOP_MIN      10     // puntos: si el tope no deja este stop, la medida no se hace
+#define P8_STOP_MAX      200    // puntos: el stop de proteccion de los pasos 6 y 7
+#define P8_LEJOS         1000   // puntos sobre el ask: una pendiente que no salta
+#define P8_CERCA         10     // puntos sobre el ask (mas el stops level): la stop S de M4
+#define P8_DIF_MIN       20.0   // USD de diferencia entre el margen a la orden y al mercado (M2)
+#define P8_CARGA         0.10   // fraccion del margen calculado que tiene que bajar el libre (M2)
+#define P8_ESPERA_CUENTA 5000   // ms maximos esperando a que la cuenta refleje una orden
+
+input bool InpMedirMargen     = true; // medir cuando comprueba MT5 el margen de una pendiente (paso 8)
+input int  InpEsperaMargenSeg = 120;  // segundos maximos esperando a que salte la stop de M4 (paso 8)
+
+string Usd(const double v)
+  {
+   return DoubleToString(v, 2);
+  }
+
+string Lotes(const double v)
+  {
+   return DoubleToString(v, 2);
+  }
+
+int DecimalesVolumen()
+  {
+   double paso = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_STEP);
+   if(paso <= 0.0)
+      return 2;
+   return (int)MathMax(0.0, MathRound(-MathLog10(paso)));
+  }
+
+// El menor volumen admitido (minimo, maximo y paso del simbolo) que es >= objetivo; 0 si pasa del maximo.
+double VolumenHaciaArriba(const double objetivo)
+  {
+   double minimo = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_MIN);
+   double maximo = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_MAX);
+   double paso = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_STEP);
+   if(paso <= 0.0 || objetivo <= 0.0)
+      return 0.0;
+   double v = NormalizeDouble(MathCeil(objetivo / paso - 1e-9) * paso, DecimalesVolumen());
+   if(v < minimo)
+      v = minimo;
+   if(v > maximo + 1e-9)
+      return 0.0;
+   return v;
+  }
+
+// El mayor volumen admitido <= objetivo; 0 si queda por debajo del minimo.
+double VolumenHaciaAbajo(const double objetivo)
+  {
+   double minimo = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_MIN);
+   double maximo = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_MAX);
+   double paso = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_STEP);
+   if(paso <= 0.0 || objetivo <= 0.0)
+      return 0.0;
+   double v = NormalizeDouble(MathFloor(objetivo / paso + 1e-9) * paso, DecimalesVolumen());
+   if(v > maximo)
+      v = maximo;
+   if(v < minimo - 1e-9)
+      return 0.0;
+   return v;
+  }
+
+// OrderCalcMargin: el margen de esa orden sola, en la moneda de la cuenta; -1 si no se puede.
+double Margen(const ENUM_ORDER_TYPE tipo, const double volumen, const double precio)
+  {
+   double m = 0.0;
+   if(volumen <= 0.0 || !OrderCalcMargin(tipo, SIMBOLO, volumen, precio, m))
+      return -1.0;
+   return m;
+  }
+
+// El peor caso, en USD, de un conjunto de compras (posiciones o buy stops que pueden llenarse): cada
+// una hasta un stop comun de `stop` puntos bajo su precio, mas P8_DESLIZ puntos, mas la comision de
+// ida y vuelta. OrderCalcProfit no lleva comision: va aparte. -1 si no se puede calcular.
+double PeorCaso(const double &vols[], const double &precios[], const int n, const int stop)
+  {
+   double total = 0.0;
+   for(int i = 0; i < n; i++)
+     {
+      double p = 0.0;
+      double cierre = precios[i] - (stop + P8_DESLIZ) * g_point;
+      if(!OrderCalcProfit(ORDER_TYPE_BUY, SIMBOLO, vols[i], precios[i], cierre, p))
+         return -1.0;
+      total += MathAbs(p) + 2.0 * P8_COMISION_LADO * vols[i];
+     }
+   return total;
+  }
+
+// El mayor stop (puntos, de P8_STOP_MAX al minimo: P8_STOP_MIN, o mas si el stops level lo pide)
+// cuyo peor caso no pasa del tope; 0 si ni el minimo cabe o no se puede calcular. Escribe la fila
+// <clave>_peor_caso, se coloque o no.
+int StopDelTope(const string clave, const double &vols[], const double &precios[], const int n)
+  {
+   double lotes = 0.0;
+   for(int i = 0; i < n; i++)
+      lotes += vols[i];
+   double peor = -1.0;
+   int elegido = 0;
+   int minimo = (int)MathMax(P8_STOP_MIN, g_stops + 1);
+   for(int s = P8_STOP_MAX; s >= minimo; s--)
+     {
+      peor = PeorCaso(vols, precios, n, s);
+      if(peor < 0.0)
+         break;
+      if(peor <= P8_TOPE_USD)
+        {
+         elegido = s;
+         break;
+        }
+     }
+   string nota = "stop " + IntegerToString(elegido) + " puntos; " + Lotes(lotes) + " lotes a la vez; tope " +
+                 Usd(P8_TOPE_USD) + " USD; comision " + Usd(P8_COMISION_LADO) + " por lote y lado; deslizamiento " +
+                 IntegerToString(P8_DESLIZ) + " puntos";
+   if(elegido == 0)
+      nota = "SIN STOP QUE QUEPA EN EL TOPE (con " + IntegerToString(minimo) + " puntos: " + Usd(peor) + " USD); " + nota;
+   Dato(P8_MED, P8_RESP, clave + "_peor_caso", Usd(peor), nota);
+   return elegido;
+  }
+
+// Una buy stop del paso 8: con MAGICO, stop de proteccion y caducidad.
+bool ColocarBuyStop(const double volumen, const double precio, const int stop, const string comentario,
+                    const bool pausar, MqlTradeResult &res)
+  {
+   MqlTradeRequest req;
+   ZeroMemory(req);
+   ZeroMemory(res);
+   req.action = TRADE_ACTION_PENDING;
+   req.symbol = SIMBOLO;
+   req.magic = MAGICO;
+   req.volume = volumen;
+   req.type = ORDER_TYPE_BUY_STOP;
+   req.price = NormalizeDouble(precio, g_digits);
+   req.sl = NormalizeDouble(precio - stop * g_point, g_digits);
+   req.type_filling = Llenado();
+   req.comment = comentario;
+   PonerCaducidad(req);
+   bool ok = OrderSend(req, res);
+   if(pausar)
+      Sleep(InpPausaMs);
+   return ok;
+  }
+
+// Una compra a mercado del paso 8: con MAGICO y stop de proteccion.
+bool AbrirCompra(const double volumen, const MqlTick &t, const int stop, MqlTradeResult &res)
+  {
+   MqlTradeRequest req;
+   ZeroMemory(req);
+   ZeroMemory(res);
+   req.action = TRADE_ACTION_DEAL;
+   req.symbol = SIMBOLO;
+   req.magic = MAGICO;
+   req.volume = volumen;
+   req.type = ORDER_TYPE_BUY;
+   req.price = t.ask;
+   req.sl = NormalizeDouble(t.ask - stop * g_point, g_digits);
+   req.deviation = P8_DESLIZ; // solo cuenta en ejecucion instantanea; FTMO es a mercado (paso 1)
+   req.type_filling = Llenado();
+   req.comment = "MedirDemoFTMO m4 ocupacion";
+   bool ok = OrderSend(req, res);
+   Sleep(InpPausaMs);
+   return ok;
+  }
+
+// Espera (hasta P8_ESPERA_CUENTA ms) a que cambie el margen libre, el usado o el de las pendientes.
+int EsperarCuenta(const double libre, const double usado, const double inicial)
+  {
+   int ms = 0;
+   while(ms < P8_ESPERA_CUENTA)
+     {
+      if(MathAbs(AccountInfoDouble(ACCOUNT_MARGIN_FREE) - libre) > 0.005 ||
+         MathAbs(AccountInfoDouble(ACCOUNT_MARGIN) - usado) > 0.005 ||
+         MathAbs(AccountInfoDouble(ACCOUNT_MARGIN_INITIAL) - inicial) > 0.005)
+        {
+         Sleep(250); // una lectura mas, por si la cuenta se actualiza en dos tiempos
+         return ms + 250;
+        }
+      Sleep(250);
+      ms += 250;
+     }
+   return ms;
+  }
+
+// Lo que paso con una pendiente del paso 8 recien enviada: "si" (viva, y se borra si borrar), "llenada"
+// (y se cierra en cuanto se lee) o "no". En nota, el comentario del servidor y lo que se hizo.
+string Desenlace(const ulong orden, const bool borrar, double &resultado, string &nota)
+  {
+   resultado = 0.0;
+   double vivo = 0.0;
+   if(PendienteViva(orden, vivo))
+     {
+      resultado = vivo;
+      if(borrar)
+         nota += "; borrada con retcode " + IntegerToString(BorrarPendiente(orden));
+      return "si";
+     }
+   ulong posicion = 0;
+   double comision = 0.0;
+   double lleno = PrecioDelLlenado(orden, posicion, comision);
+   if(lleno > 0.0)
+     {
+      resultado = lleno;
+      MqlTradeResult rc;
+      nota += "; SE LLENO; posicion cerrada con retcode " + IntegerToString(CerrarPosicion(posicion, rc));
+      return "llenada";
+     }
+   return "no";
+  }
+
+// El volumen y el precio de lo que lleno una orden (suma de sus deals) y su posicion; 0 si nada.
+double VolumenLlenado(const ulong orden, double &precio, ulong &posicion)
+  {
+   precio = 0.0;
+   posicion = 0;
+   double volumen = 0.0;
+   if(orden == 0)
+      return 0.0;
+   HistorySelect(TimeTradeServer() - 86400, TimeTradeServer() + 3600);
+   for(int i = HistoryDealsTotal() - 1; i >= 0; i--)
+     {
+      ulong deal = HistoryDealGetTicket(i);
+      if(deal == 0 || (ulong)HistoryDealGetInteger(deal, DEAL_ORDER) != orden)
+         continue;
+      volumen += HistoryDealGetDouble(deal, DEAL_VOLUME);
+      precio = HistoryDealGetDouble(deal, DEAL_PRICE);
+      posicion = (ulong)HistoryDealGetInteger(deal, DEAL_POSITION_ID);
+     }
+   return volumen;
+  }
+
+bool PosicionViva(const ulong ticket)
+  {
+   return ticket != 0 && PositionSelectByTicket(ticket);
+  }
+
+//--- contexto del paso 8: lo que dice la cuenta y el simbolo del margen, sin peticiones
+void ContextoMargen()
+  {
+   Dato(P8_MED, "contexto", "p8_modo_margen", EnumToString((ENUM_ACCOUNT_MARGIN_MODE)AccountInfoInteger(ACCOUNT_MARGIN_MODE)));
+   Dato(P8_MED, "contexto", "p8_margen_hedged", DoubleToString(SymbolInfoDouble(SIMBOLO, SYMBOL_MARGIN_HEDGED), 2));
+   Dato(P8_MED, "contexto", "p8_hedged_pierna_mayor", SymbolInfoInteger(SIMBOLO, SYMBOL_MARGIN_HEDGED_USE_LEG) != 0 ? "si" : "no");
+   Dato(P8_MED, "contexto", "p8_margen_inicial", DoubleToString(SymbolInfoDouble(SIMBOLO, SYMBOL_MARGIN_INITIAL), 2));
+   Dato(P8_MED, "contexto", "p8_volumen_limite", DoubleToString(SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_LIMIT), 2));
+   double ini = 0.0, man = 0.0;
+   if(SymbolInfoMarginRate(SIMBOLO, ORDER_TYPE_BUY_STOP, ini, man))
+      Dato(P8_MED, "contexto", "p8_tasa_buy_stop", DoubleToString(ini, 4) + ";" + DoubleToString(man, 4), "inicial;mantenimiento");
+   else
+      Dato(P8_MED, "contexto", "p8_tasa_buy_stop", "sin dato", "SymbolInfoMarginRate fallo (error " + IntegerToString(GetLastError()) + ")");
+   if(SymbolInfoMarginRate(SIMBOLO, ORDER_TYPE_BUY, ini, man))
+      Dato(P8_MED, "contexto", "p8_tasa_buy", DoubleToString(ini, 4) + ";" + DoubleToString(man, 4), "inicial;mantenimiento");
+   else
+      Dato(P8_MED, "contexto", "p8_tasa_buy", "sin dato", "SymbolInfoMarginRate fallo (error " + IntegerToString(GetLastError()) + ")");
+   Dato(P8_MED, "contexto", "p8_equidad", Usd(AccountInfoDouble(ACCOUNT_EQUITY)));
+   Dato(P8_MED, "contexto", "p8_margen_usado", Usd(AccountInfoDouble(ACCOUNT_MARGIN)));
+   Dato(P8_MED, "contexto", "p8_margen_libre", Usd(AccountInfoDouble(ACCOUNT_MARGIN_FREE)));
+   Dato(P8_MED, "contexto", "p8_margen_pendientes", Usd(AccountInfoDouble(ACCOUNT_MARGIN_INITIAL)), "ACCOUNT_MARGIN_INITIAL");
+   Dato(P8_MED, "contexto", "p8_tope_usd", Usd(P8_TOPE_USD));
+   Dato(P8_MED, "contexto", "p8_deslizamiento_puntos", IntegerToString(P8_DESLIZ));
+   Dato(P8_MED, "contexto", "p8_comision_lado_lote", Usd(P8_COMISION_LADO));
+  }
+
+//--- M1: rechaza al COLOCAR una pendiente cuyo margen no cabe en el libre?
+bool MedirM1()
+  {
+   MqlTick t;
+   if(!Cotizacion(t))
+      return false;
+   double libre = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double paso = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_STEP);
+   double m1 = Margen(ORDER_TYPE_BUY, 1.0, t.ask);
+   if(m1 <= 0.0)
+     {
+      Dato(P8_MED, P8_RESP, "m1_no_medible", "si", "no se pudo calcular el margen de 1 lote");
+      return true;
+     }
+   // el menor volumen cuyo margen, al ask (el menor de los dos precios), pasa del libre
+   double v = VolumenHaciaArriba(libre / m1);
+   if(v > 0.0 && Margen(ORDER_TYPE_BUY, v, t.ask) <= libre)
+      v = VolumenHaciaArriba(v + paso);
+   double precio = NormalizeDouble(t.ask + P8_LEJOS * g_point, g_digits);
+   Dato(P8_MED, P8_RESP, "m1_volumen", Lotes(v), "margen al ask " + Usd(Margen(ORDER_TYPE_BUY, v, t.ask)) +
+        "; a la orden " + Usd(Margen(ORDER_TYPE_BUY_STOP, v, precio)) + "; margen libre " + Usd(libre));
+   if(v <= 0.0)
+     {
+      Dato(P8_MED, P8_RESP, "m1_no_medible", "si", "el volumen necesario pasa del maximo por orden");
+      return true;
+     }
+   double vols[1];
+   double precios[1];
+   vols[0] = v;
+   precios[0] = precio;
+   int stop = StopDelTope("m1", vols, precios, 1);
+   if(stop == 0)
+     {
+      Dato(P8_MED, P8_RESP, "m1_no_medible", "si", "el tope de perdida no deja un stop de proteccion");
+      return true;
+     }
+   MqlTradeResult res;
+   ColocarBuyStop(v, precio, stop, "MedirDemoFTMO m1", true, res);
+   double resultado = 0.0;
+   string nota = res.comment;
+   string colocada = Desenlace(res.order, true, resultado, nota);
+   Fila(P8_MED, P8_RESP, "m1_colocar", Lotes(v), res.retcode, colocada, "buy_stop", precio, t.bid, t.ask,
+        resultado, IntegerToString(P8_LEJOS), nota);
+   return true;
+  }
+
+//--- M2: carga margen una stop viva, y a que precio? carga: 1 si, 0 no, -1 no concluyente
+bool MedirM2(int &carga)
+  {
+   carga = -1;
+   MqlTick t;
+   if(!Cotizacion(t))
+      return false;
+   double precio = NormalizeDouble(t.ask + P8_LEJOS * g_point, g_digits);
+   double d1 = Margen(ORDER_TYPE_BUY_STOP, 1.0, precio) - Margen(ORDER_TYPE_BUY, 1.0, t.ask);
+   double m1 = Margen(ORDER_TYPE_BUY, 1.0, t.ask);
+   if(m1 <= 0.0)
+     {
+      Dato(P8_MED, P8_RESP, "m2_no_medible", "si", "no se pudo calcular el margen de 1 lote");
+      return true;
+     }
+   // con diferencia por lote, el volumen que la lleva a P8_DIF_MIN; sin ella, unos 2000 de margen
+   double v = (d1 > 0.0) ? VolumenHaciaArriba(P8_DIF_MIN / d1) : VolumenHaciaArriba(2000.0 / m1);
+   double mo = Margen(ORDER_TYPE_BUY_STOP, v, precio);
+   double mm = Margen(ORDER_TYPE_BUY, v, t.ask);
+   Dato(P8_MED, P8_RESP, "m2_volumen", Lotes(v), "margen a la orden " + Usd(mo) + "; al mercado " + Usd(mm) +
+        "; diferencia " + Usd(mo - mm));
+   if(v <= 0.0)
+     {
+      Dato(P8_MED, P8_RESP, "m2_no_medible", "si", "volumen no admitido");
+      return true;
+     }
+   double vols[1];
+   double precios[1];
+   vols[0] = v;
+   precios[0] = precio;
+   int stop = StopDelTope("m2", vols, precios, 1);
+   if(stop == 0)
+     {
+      Dato(P8_MED, P8_RESP, "m2_no_medible", "si", "el tope de perdida no deja un stop de proteccion");
+      return true;
+     }
+   double usado0 = AccountInfoDouble(ACCOUNT_MARGIN);
+   double libre0 = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double ini0 = AccountInfoDouble(ACCOUNT_MARGIN_INITIAL);
+   MqlTradeResult res;
+   ColocarBuyStop(v, precio, stop, "MedirDemoFTMO m2", false, res);
+   int espera = EsperarCuenta(libre0, usado0, ini0);
+   double usado1 = AccountInfoDouble(ACCOUNT_MARGIN);
+   double libre1 = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double ini1 = AccountInfoDouble(ACCOUNT_MARGIN_INITIAL);
+   double resultado = 0.0;
+   string nota = res.comment;
+   string colocada = Desenlace(res.order, true, resultado, nota);
+   Fila(P8_MED, P8_RESP, "m2_colocar", Lotes(v), res.retcode, colocada, "buy_stop", precio, t.bid, t.ask,
+        resultado, IntegerToString(P8_LEJOS), nota);
+   Dato(P8_MED, P8_RESP, "m2_margen_antes", Usd(usado0), "ACCOUNT_MARGIN");
+   Dato(P8_MED, P8_RESP, "m2_margen_despues", Usd(usado1), "ACCOUNT_MARGIN");
+   Dato(P8_MED, P8_RESP, "m2_libre_antes", Usd(libre0), "ACCOUNT_MARGIN_FREE");
+   Dato(P8_MED, P8_RESP, "m2_libre_despues", Usd(libre1), "ACCOUNT_MARGIN_FREE");
+   Dato(P8_MED, P8_RESP, "m2_inicial_antes", Usd(ini0), "ACCOUNT_MARGIN_INITIAL");
+   Dato(P8_MED, P8_RESP, "m2_inicial_despues", Usd(ini1), "ACCOUNT_MARGIN_INITIAL");
+   Dato(P8_MED, P8_RESP, "m2_calculado_orden", Usd(mo), "OrderCalcMargin al precio de la orden");
+   Dato(P8_MED, P8_RESP, "m2_calculado_mercado", Usd(mm), "OrderCalcMargin al ask al colocar");
+   Dato(P8_MED, P8_RESP, "m2_espera_ms", IntegerToString(espera));
+   // la misma regla que el lector (scripts/leer_demo_ftmo.py, M2): por la bajada del margen libre
+   if(colocada == "si" && mm > 0.0)
+     {
+      double baja = libre0 - libre1;
+      if(baja >= P8_CARGA * mm)
+         carga = 1;
+      else
+         if(MathAbs(baja) < P8_CARGA * mm)
+            carga = 0;
+     }
+   Dato(P8_MED, P8_RESP, "m2_carga_script", IntegerToString(carga), "1 carga, 0 no carga, -1 no concluyente: elige la ocupacion de M4");
+   return true;
+  }
+
+//--- M3: suma las pendientes al colocar otra? suma: 1 si, 0 no, -1 no concluyente
+bool MedirM3(int &suma)
+  {
+   suma = -1;
+   MqlTick t;
+   if(!Cotizacion(t))
+      return false;
+   double libre = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double paso = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_STEP);
+   double precio = NormalizeDouble(t.ask + P8_LEJOS * g_point, g_digits);
+   double m1 = Margen(ORDER_TYPE_BUY, 1.0, t.ask);
+   if(m1 <= 0.0)
+     {
+      Dato(P8_MED, P8_RESP, "m3_no_medible", "si", "no se pudo calcular el margen de 1 lote");
+      return true;
+     }
+   // dos que caben solas (a cualquiera de los dos precios) y no juntas
+   double v = VolumenHaciaArriba(1.10 * libre / (2.0 * m1));
+   if(v > 0.0 && 2.0 * Margen(ORDER_TYPE_BUY, v, t.ask) < 1.10 * libre)
+      v = VolumenHaciaArriba(v + paso);
+   double mo = Margen(ORDER_TYPE_BUY_STOP, v, precio);
+   Dato(P8_MED, P8_RESP, "m3_volumen", Lotes(v), "cada una; margen al ask " + Usd(Margen(ORDER_TYPE_BUY, v, t.ask)) +
+        "; a la orden " + Usd(mo) + "; margen libre " + Usd(libre));
+   double limite = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_LIMIT);
+   if(v <= 0.0 || mo < 0.0 || mo > 0.90 * libre)
+     {
+      Dato(P8_MED, P8_RESP, "m3_no_medible", "si", "no hay un volumen que quepa solo y no junto");
+      return true;
+     }
+   if(limite > 0.0 && 2.0 * v > limite + 1e-9)
+     {
+      Dato(P8_MED, P8_RESP, "m3_no_medible", "si", "las dos pasan del tope agregado de volumen (" + Lotes(limite) + ")");
+      return true;
+     }
+   double vols[2];
+   double precios[2];
+   vols[0] = v;
+   vols[1] = v;
+   precios[0] = precio;
+   precios[1] = precio;
+   int stop = StopDelTope("m3", vols, precios, 2);
+   if(stop == 0)
+     {
+      Dato(P8_MED, P8_RESP, "m3_no_medible", "si", "el tope de perdida no deja un stop de proteccion");
+      return true;
+     }
+   MqlTradeResult r1;
+   ColocarBuyStop(v, precio, stop, "MedirDemoFTMO m3 1", true, r1);
+   double vivo1 = 0.0;
+   bool viva1 = PendienteViva(r1.order, vivo1);
+   Fila(P8_MED, P8_RESP, "m3_colocar_1", Lotes(v), r1.retcode, viva1 ? "si" : "no", "buy_stop", precio, t.bid, t.ask,
+        vivo1, IntegerToString(P8_LEJOS), r1.comment);
+   Dato(P8_MED, P8_RESP, "m3_margen_tras_1", Usd(AccountInfoDouble(ACCOUNT_MARGIN)), "ACCOUNT_MARGIN");
+   Dato(P8_MED, P8_RESP, "m3_libre_tras_1", Usd(AccountInfoDouble(ACCOUNT_MARGIN_FREE)), "ACCOUNT_MARGIN_FREE");
+   if(!viva1)
+      return true; // la primera no esta viva: no concluyente; Limpiar quita lo que haya
+   MqlTradeResult r2;
+   ColocarBuyStop(v, precio, stop, "MedirDemoFTMO m3 2", true, r2);
+   double vivo2 = 0.0;
+   bool viva2 = PendienteViva(r2.order, vivo2);
+   Fila(P8_MED, P8_RESP, "m3_colocar_2", Lotes(v), r2.retcode, viva2 ? "si" : "no", "buy_stop", precio, t.bid, t.ask,
+        vivo2, IntegerToString(P8_LEJOS), r2.comment);
+   if(viva2)
+      suma = 0;
+   else
+      if(r2.retcode == 10019)
+         suma = 1;
+   return true;
+  }
+
+//--- M4: comprueba al LLENAR? Una stop S que cabe al colocarla; se ocupa el margen hasta que no
+//--- cabe; se espera a que salte. La ocupacion la decide lo medido en M2 y M3 (MARGEN-PENDIENTE.md).
+bool MedirM4(const int carga, const int suma)
+  {
+   string m = P8_MED;
+   if(carga < 0)
+     {
+      Dato(m, P8_RESP, "m4_ocupacion", "no_medible", "M2 no concluyente: no se sabe si una pendiente ocupa margen");
+      return true;
+     }
+   if(carga == 1 && suma != 0)
+     {
+      Dato(m, P8_RESP, "m4_ocupacion", "no_medible", suma == 1 ?
+           "las pendientes cargan su margen y MT5 las suma al colocar: una stop que cupo al colocarla sigue cabiendo al saltar, salvo por perdida flotante" :
+           "M3 no concluyente: no se sabe si se puede ocupar el margen con pendientes");
+      return true;
+     }
+   MqlTick t;
+   if(!Cotizacion(t))
+      return false;
+   bool posicion = (carga == 0);
+   double libre0 = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double precioS = NormalizeDouble(t.ask + (MathMax(g_stops, 1) + P8_CERCA) * g_point, g_digits);
+   double precioO = posicion ? t.ask : NormalizeDouble(t.ask + P8_LEJOS * g_point, g_digits);
+   double mS1 = Margen(ORDER_TYPE_BUY, 1.0, precioS);
+   double mO1 = Margen(posicion ? ORDER_TYPE_BUY : ORDER_TYPE_BUY_STOP, 1.0, precioO);
+   if(mS1 <= 0.0 || mO1 <= 0.0)
+     {
+      Dato(m, P8_RESP, "m4_ocupacion", "no_medible", "no se pudo calcular el margen de 1 lote");
+      return true;
+     }
+   double vS, vO;
+   if(posicion)
+     {
+      vS = VolumenHaciaAbajo(0.80 * libre0 / mS1); // S grande, que cabe sola
+      vO = VolumenHaciaArriba(0.25 * libre0 / mO1); // y una compra pequena que deja el libre por debajo
+     }
+   else
+     {
+      vS = VolumenHaciaAbajo(0.20 * libre0 / mS1); // S pequena
+      vO = VolumenHaciaArriba((libre0 - 0.5 * Margen(ORDER_TYPE_BUY, vS, precioS)) / mO1); // pendientes lejos
+     }
+   Dato(m, P8_RESP, "m4_ocupacion", posicion ? "posicion" : "pendientes",
+        posicion ? "M2: la pendiente no carga margen; se ocupa con una compra a mercado del mismo lado" :
+        "M2: la pendiente carga margen y M3: no las suma al colocar; se ocupa con buy stops lejos");
+   Dato(m, P8_RESP, "m4_volumen_stop", Lotes(vS), "margen al llenar " + Usd(Margen(ORDER_TYPE_BUY, vS, precioS)) +
+        "; margen libre " + Usd(libre0));
+   Dato(m, P8_RESP, "m4_volumen_ocupacion", Lotes(vO));
+   double limite = SymbolInfoDouble(SIMBOLO, SYMBOL_VOLUME_LIMIT);
+   if(vS <= 0.0 || vO <= 0.0)
+     {
+      Dato(m, P8_RESP, "m4_no_medible", "si", "volumen no admitido (minimo o maximo por orden)");
+      return true;
+     }
+   if(limite > 0.0 && vS + vO > limite + 1e-9)
+     {
+      Dato(m, P8_RESP, "m4_no_medible", "si", "S y la ocupacion pasan del tope agregado de volumen (" + Lotes(limite) + ")");
+      return true;
+     }
+   double vols[2];
+   double precios[2];
+   vols[0] = vS;
+   vols[1] = vO;
+   precios[0] = precioS;
+   precios[1] = precioO;
+   int stop = StopDelTope("m4", vols, precios, 2);
+   if(stop == 0)
+     {
+      Dato(m, P8_RESP, "m4_no_medible", "si", "el tope de perdida no deja un stop de proteccion");
+      return true;
+     }
+   // S, sin pausa: la ocupacion va enseguida, antes de que el precio llegue a S
+   double usadoA = AccountInfoDouble(ACCOUNT_MARGIN);
+   double libreA = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double iniA = AccountInfoDouble(ACCOUNT_MARGIN_INITIAL);
+   MqlTradeResult rs;
+   ColocarBuyStop(vS, precioS, stop, "MedirDemoFTMO m4 S", false, rs);
+   double vivoS = 0.0;
+   bool vivaS = PendienteViva(rs.order, vivoS);
+   Fila(m, P8_RESP, "m4_colocar_stop", Lotes(vS), rs.retcode, vivaS ? "si" : "no", "buy_stop", precioS, t.bid, t.ask,
+        vivoS, IntegerToString((int)MathRound((precioS - t.ask) / g_point)), rs.comment);
+   if(!vivaS)
+     {
+      double pl = 0.0;
+      ulong ps = 0;
+      double vl = VolumenLlenado(rs.order, pl, ps);
+      Dato(m, P8_RESP, "m4_resultado", vl > 0.0 ? "salto_antes_de_ocupar" : "no_colocada",
+           vl > 0.0 ? "S se lleno antes de ocupar el margen" : "S no se coloco");
+      return true;
+     }
+   // el libre tras S: si la pendiente carga (M2), se espera a que la cuenta lo refleje; si no, se lee
+   // enseguida, para no dar tiempo a que salte
+   if(carga == 1)
+      EsperarCuenta(libreA, usadoA, iniA);
+   double libreS = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double usadoS = AccountInfoDouble(ACCOUNT_MARGIN);
+   double iniS = AccountInfoDouble(ACCOUNT_MARGIN_INITIAL);
+   // la ocupacion
+   MqlTick o;
+   if(!Cotizacion(o))
+      return false;
+   MqlTradeResult ro;
+   if(posicion)
+      AbrirCompra(vO, o, stop, ro);
+   else
+      ColocarBuyStop(vO, precioO, stop, "MedirDemoFTMO m4 ocupacion", true, ro);
+   ulong ticketO = 0;
+   string estadoO = "no";
+   double resO = 0.0;
+   if(posicion)
+     {
+      double pv = 0.0;
+      if(VolumenLlenado(ro.order, pv, ticketO) > 0.0 && PosicionViva(ticketO))
+        {
+         estadoO = "llenada";
+         resO = pv;
+        }
+     }
+   else
+     {
+      double pv = 0.0;
+      if(PendienteViva(ro.order, pv))
+        {
+         ticketO = ro.order;
+         estadoO = "si";
+         resO = pv;
+        }
+     }
+   Fila(m, P8_RESP, "m4_ocupar", Lotes(vO), ro.retcode, estadoO, posicion ? "buy" : "buy_stop", posicion ? o.ask : precioO,
+        o.bid, o.ask, resO, posicion ? "0" : IntegerToString(P8_LEJOS), ro.comment + "; ticket " + IntegerToString((long)ticketO));
+   if(ticketO == 0)
+     {
+      Dato(m, P8_RESP, "m4_no_medible", "si", "la ocupacion no quedo puesta");
+      return true;
+     }
+   double ignora = 0.0;
+   if(!PendienteViva(rs.order, ignora))
+     {
+      double pl = 0.0;
+      ulong ps = 0;
+      Dato(m, P8_RESP, "m4_resultado", "salto_antes_de_ocupar",
+           VolumenLlenado(rs.order, pl, ps) > 0.0 ? "S se lleno mientras se ocupaba el margen" : "S desaparecio mientras se ocupaba el margen");
+      return true;
+     }
+   EsperarCuenta(libreS, usadoS, iniS);
+   double libreO = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+   double margenS = Margen(ORDER_TYPE_BUY, vS, precioS);
+   // lo que reservo S, medido: el libre antes de colocarla menos el libre con ella puesta
+   double reservado = libreA - libreS;
+   Dato(m, P8_RESP, "m4_libre_antes_stop", Usd(libreA), "ACCOUNT_MARGIN_FREE antes de colocar S");
+   Dato(m, P8_RESP, "m4_libre_tras_stop", Usd(libreS), "ACCOUNT_MARGIN_FREE con S puesta, antes de ocupar");
+   Dato(m, P8_RESP, "m4_libre_tras_ocupar", Usd(libreO), "ACCOUNT_MARGIN_FREE con S y la ocupacion puestas");
+   Dato(m, P8_RESP, "m4_margen_stop", Usd(margenS), "OrderCalcMargin de S al llenar, a su precio");
+   if(!(libreO + reservado < margenS))
+     {
+      Dato(m, P8_RESP, "m4_no_medible", "si", "con la ocupacion puesta, S todavia cabe al llenar");
+      return true;
+     }
+   // la espera: en cada vuelta, el libre y si la ocupacion sigue viva, y despues si S sigue viva
+   datetime limite_t = TimeLocal() + InpEsperaMargenSeg;
+   bool resuelta = false;
+   bool viva_siempre = true;
+   double libre_lectura = libreO;
+   while(TimeLocal() < limite_t)
+     {
+      Sleep(500);
+      libre_lectura = AccountInfoDouble(ACCOUNT_MARGIN_FREE);
+      double pv = 0.0;
+      bool vivaO = posicion ? PosicionViva(ticketO) : PendienteViva(ticketO, pv);
+      if(!vivaO)
+         viva_siempre = false;
+      if(!PendienteViva(rs.order, pv))
+        {
+         resuelta = true;
+         break;
+        }
+     }
+   Dato(m, P8_RESP, "m4_ocupacion_viva", viva_siempre ? "si" : "no", "ticket " + IntegerToString((long)ticketO));
+   Dato(m, P8_RESP, "m4_libre_al_resolver", Usd(libre_lectura), "ACCOUNT_MARGIN_FREE justo antes de leer S");
+   MqlTick a;
+   Cotizacion(a);
+   if(!resuelta)
+     {
+      Fila(m, P8_RESP, "m4_resultado", "no_salto", 0, "no", "buy_stop", precioS, a.bid, a.ask, 0, "",
+           "no salto en " + IntegerToString(InpEsperaMargenSeg) + " s", true);
+      return true;
+     }
+   double pl = 0.0;
+   ulong ps = 0;
+   double vl = VolumenLlenado(rs.order, pl, ps);
+   if(vl > 0.0)
+     {
+      Fila(m, P8_RESP, "m4_resultado", "llenada", 0, "llenada", "buy_stop", precioS, a.bid, a.ask, pl, "",
+           "volumen del deal " + Lotes(vl) + " de " + Lotes(vS), true);
+      Dato(m, P8_RESP, "m4_volumen_deal", Lotes(vl));
+      return true;
+     }
+   // sin deal: lo que guarda el historial de la orden
+   string estado = "sin historial";
+   string comentario = "";
+   string motivo = "";
+   HistorySelect(TimeTradeServer() - 86400, TimeTradeServer() + 3600);
+   if(HistoryOrderSelect(rs.order))
+     {
+      estado = EnumToString((ENUM_ORDER_STATE)HistoryOrderGetInteger(rs.order, ORDER_STATE));
+      comentario = HistoryOrderGetString(rs.order, ORDER_COMMENT);
+      motivo = EnumToString((ENUM_ORDER_REASON)HistoryOrderGetInteger(rs.order, ORDER_REASON));
+     }
+   Fila(m, P8_RESP, "m4_resultado", "sin_deal", 0, "no", "buy_stop", precioS, a.bid, a.ask, 0, "",
+        "S desaparecio sin deal", true);
+   Dato(m, P8_RESP, "m4_estado", estado, "ORDER_STATE del historial");
+   Dato(m, P8_RESP, "m4_comentario", comentario, "ORDER_COMMENT del historial, literal");
+   Dato(m, P8_RESP, "m4_motivo", motivo, "ORDER_REASON del historial");
+   return true;
+  }
+
+// El tope de cada medida cuenta solo lo que ella envia: si un Limpiar no deja la cuenta vacia, el
+// paso 8 no sigue (lo que quede se sumaria a lo de la medida siguiente).
+bool MedirMargen()
+  {
+   if(Limpiar("antes_paso_8") != 0)
+     {
+      Dato(P8_MED, "contexto", "p8_fin", "detenido", "quedan ordenes o posiciones del script antes del paso 8");
+      return true;
+     }
+   ContextoMargen();
+   int carga = -1;
+   int suma = -1;
+   bool ok = MedirM1();
+   bool limpio = (Limpiar("tras_m1") == 0);
+   if(ok && limpio)
+      ok = MedirM2(carga);
+   if(limpio)
+      limpio = (Limpiar("tras_m2") == 0);
+   if(ok && limpio)
+      ok = MedirM3(suma);
+   if(limpio)
+      limpio = (Limpiar("tras_m3") == 0);
+   if(ok && limpio)
+      ok = MedirM4(carga, suma);
+   if(limpio)
+      limpio = (Limpiar("tras_m4") == 0);
+   if(!limpio)
+      Dato(P8_MED, "contexto", "p8_fin", "detenido", "un Limpiar no dejo la cuenta vacia: el paso 8 no siguio");
+   else
+      Dato(P8_MED, "contexto", "p8_fin", ok ? "hecho" : "incompleto");
+   return ok;
+  }
+
 void OnStart()
   {
    string motivo = "";
@@ -828,6 +1541,11 @@ void OnStart()
    if(ok) ok = MedirComision();
    if(ok) Limpiar("tras_paso_6");
    if(ok && InpMedirLlenadoStop) ok = MedirLlenadoStop();
+   if(ok && InpMedirMargen)
+      ok = MedirMargen();
+   else
+      if(ok)
+         Dato(P8_MED, "contexto", "p8_fin", "desactivado");
    if(!ok)
       Dato("error", "seguridad", "paso_fallido", "si", "un paso no pudo leer la cotizacion; se limpia y se termina");
    int quedan = Limpiar("al_terminar");

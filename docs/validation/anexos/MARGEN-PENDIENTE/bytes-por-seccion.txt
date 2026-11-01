@@ -1,0 +1,17 @@
+seccion | antes | despues | diferencia
+---|---|---|---
+(cabecera) | 134 | 134 | 0
+Current Branch | 44 | 44 | 0
+Current Feature | 357 | 357 | 0
+Stable Main State | 448 | 448 | 0
+Last Stable Commit | 164 | 164 | 0
+Tests Currently Passing | 226 | 226 | 0
+Next Action | 8384 | 8220 | -164
+Known Ambiguities | 2148 | 2148 | 0
+Technical Debt | 10746 | 8577 | -2169
+Reglas vivas | 1493 | 1493 | 0
+Completed Features | 157 | 157 | 0
+Change Log | 151 | 151 | 0
+TOTAL (wc -c) | 24452 | 22119 | -2333
+lineas acortadas por (e) | 12 | ahorro | 2169
+heredado 2 | 164 | sale | -164

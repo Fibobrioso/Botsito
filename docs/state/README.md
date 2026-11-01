@@ -74,6 +74,28 @@ evidencia, en un bloque por clase: `# Pendiente heredado SALE`, `# Technical Deb
 `# Technical Debt RECLASIFICADA` o `# Regla viva SUSTITUIDA`, seguido de
 `· sale de PROJECT_STATE.md en <rama> (<fecha>)`. En `PROJECT_STATE.md` no queda ni un resumen.
 
+Desde el 2026-10-31 (decision del consultor, `trabajo/margen-pendiente`), y como **excepcion
+declarada** a «lo que se queda no se resume ni se reescribe», una condicion mas, que no saca la linea
+sino que la acorta:
+
+- (e) ACORTADA: una línea de Technical Debt de más de 200 bytes se queda en PROJECT_STATE con su
+  arranque literal, sin reescribir, cortado al final de una frase o de un inciso, en 160 bytes como
+  mucho y nunca dentro de una ruta ni de un id, seguido de " … (entera en HISTORIA, Technical Debt
+  ACORTADA)". Si la línea citaba su informe con su sección, el paréntesis conserva esa cita delante.
+  El texto entero va literal a HISTORIA, bajo "# Technical Debt ACORTADA · sale de PROJECT_STATE.md
+  en <rama> (<fecha>)". No se aplica a una línea si ahorra menos de 60 bytes.
+
+Como se lee (`docs/validation/MARGEN-PENDIENTE.md`): «al final de una frase o de un inciso» es antes
+de «. », «; » o «: », o tras el «)» que cierra un inciso, y los 200 bytes se miden con el salto de
+linea y los 160 desde el «- » (la lectura estricta que propuso la fase 0, §0.h.2, y que el consultor
+acepto con su prevision); y la coma de una enumeracion no cuenta (respuesta del consultor a la
+PARADA, punto 6).
+
+Decisión de Aleks (2026-10-30): el tope de 25.000 bytes se mantiene, porque cada sesión lee este
+fichero al arrancar; solo se replantea subirlo cuando no quede nada que recortar con las condiciones (a)
+a (e). (Escrita el 2026-10-31 en el cierre de `trabajo/margen-pendiente`, por su orden de cierre;
+«este fichero» es `PROJECT_STATE.md`.)
+
 Y desde el mismo dia (punto Y, `docs/runbooks/RITUAL.md`): TODO cambio de la Next Action que mande
 la orden de cierre -salen las HECHAS, entran las nuevas y cambian las que diga la orden- se hace en
 la rama, en el commit que saca el contrato (punto 3); en el commit de estado de `main` la Next
