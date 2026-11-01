@@ -91,6 +91,11 @@ linea y los 160 desde el «- » (la lectura estricta que propuso la fase 0, §0.
 acepto con su prevision); y la coma de una enumeracion no cuenta (respuesta del consultor a la
 PARADA, punto 6).
 
+Decisión de Aleks (2026-10-30): el tope de 25.000 bytes se mantiene, porque cada sesión lee este
+fichero al arrancar; solo se replantea subirlo cuando no quede nada que recortar con las condiciones (a)
+a (e). (Escrita el 2026-10-31 en el cierre de `trabajo/margen-pendiente`, por su orden de cierre;
+«este fichero» es `PROJECT_STATE.md`.)
+
 Y desde el mismo dia (punto Y, `docs/runbooks/RITUAL.md`): TODO cambio de la Next Action que mande
 la orden de cierre -salen las HECHAS, entran las nuevas y cambian las que diga la orden- se hace en
 la rama, en el commit que saca el contrato (punto 3); en el commit de estado de `main` la Next

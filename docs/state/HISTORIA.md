@@ -14243,3 +14243,46 @@ del consultor del 2026-10-31, en lectura estricta). Cada linea, entera y literal
   Queda en PROJECT_STATE: - La guardia no expande las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) ni mira las URL `file:///` (urllib, curl) … (GUARDIA-ALIAS.md §9, b6 y b7; entera en HISTORIA, Technical Debt ACORTADA)
 - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) usa lo último cerrado antes del instante, que sin ticks es la M1 k-1 o el último tick anterior, y _precio_de_mercado y precio_de_conversion (cierre a mercado y margen) usan la k. Y en un minuto con ticks sin ninguno anterior al instante, estas dos toman el cierre de su vela; el motor no llega a ese caso (RESPALDO-M1.md §0.a y §0.b). Decidirlo es una NOTA o un ADR sobre ADR-0057 §4.
   Queda en PROJECT_STATE: - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
+
+# Registro de cierre · `trabajo/margen-pendiente` (2026-10-31)
+
+- Revisión y orden de cierre del consultor del 2026-10-31, dadas por Aleks (copiadas tal cual al
+  final del encargo y en MARGEN-PENDIENTE.md §9.2); primero sus arreglos A.1-A.6 y B, en su commit
+  propio (89c94cd); después Aleks confirmó con `!` que la comparación del lector dio `IDENTICAS`
+  (§1.4) y lanzó `/cerrar-rama trabajo/margen-pendiente`, y la sesión siguió `RITUAL.md`. La rama
+  tuvo dos PARADAS (la fase 0 y la PARADA 2: el heredado 2 no vivía entero en ENTRADA-MARZO.md) y
+  una pasada del revisor (MARGEN-PENDIENTE.md §8; lo hecho, §8.1). Nunca se cerró sin la orden.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action: en la
+  entrada A, la frase del script 1.2 pasa a «La 3 va con el script 1.2 (trabajo/margen-pendiente),
+  que además mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4; paso 8,
+  DEMO-FTMO.md).»; no sale ni entra ninguna letra. La hoja de ruta: A.1 (el script 1.2 mide en la 3
+  el instante del margen) y R6a.6 (el script 1.2, HECHO). `docs/state/README.md`: la decisión de
+  Aleks del 2026-10-30 sobre el tope de 25.000 bytes, junto a la condición (e). La fila de
+  ERRORES-RECURRENTES (§5 del informe, con los hallazgos B del consultor). Y en el informe, §1.4,
+  la comparación del lector hecha por Aleks.
+- **Lo que entra**: `tools/mql5/MedirDemoFTMO.mq5` 1.2, con los pasos 1-7 sin cambios (salvo la
+  versión, la cabecera en su sitio y :28) y un paso 8 (M1-M4: cuándo comprueba MT5 el margen de una
+  pendiente stop; peor caso de cada medida ≤ 1.000 USD con 5,00 de comisión por lado y un
+  deslizamiento SUPUESTO de 10 puntos); la condición DEMO sigue en la 759; `scripts/leer_demo_ftmo.py`
+  lee 1.2 con la regla escrita antes de ejecutar, y da la salida de `main` byte a byte con un 1.0 o
+  un 1.1; `tests/contract/test_medir_demo_ftmo.py` (13 tests) y 14 tests nuevos en
+  `tests/unit/test_leer_demo_ftmo.py`; `docs/runbooks/DEMO-FTMO.md` para la ejecución 3; la
+  condición (e) ACORTADA en `docs/state/README.md`; PROJECT_STATE adelgazado (12 líneas de Technical
+  Debt acortadas y el heredado 2 fuera, con sus bloques arriba). El script no se ejecutó en ninguna
+  cuenta: lo ejecuta Aleks en la ejecución 3.
+- PROJECT_STATE con todas las líneas del cierre: 21.784 bytes medidos sobre una copia (§3; tope de
+  la orden, 21.800).
+- Exposiciones: ninguna. Negativas de la guardia: las de §0.m y §4 (desviaciones 5 y 8), rehechas en
+  la forma que propone su mensaje o declaradas; ninguna del clasificador antes de este commit.
+- Letra del tag: la última cerrada era `stable/F38j-respaldo-m1`; `stable/F38k-*` no existe en local
+  (comprobado antes del commit del contrato) ni en origin (comprobado antes del tag).
+- Tag: `stable/F38k-margen-pendiente`. El merge es `git rev-parse "stable/F38k-margen-pendiente^{commit}"`.
+- Commits de la rama: `e441d95` (chore(rama): abre trabajo/margen-pendiente), `a4be85e` (docs: la
+  fase 0 y la PARADA), `9d3a532` (docs: las respuestas a la PARADA y a la PARADA 2; el contrato a
+  ENTRADA-MARZO.md), `2688f8b` (feat: MedirDemoFTMO 1.2 con el paso 8, su lector y sus tests),
+  `e2d80a3` (docs(state): PROJECT_STATE adelgazado; la condición (e) y la salida del heredado 2),
+  `a90cd45` (fix: los hallazgos del revisor), `89c94cd` (docs: los arreglos de la revisión del
+  consultor), y este (chore(cierre): sale el contrato y entra el registro en HISTORIA).
+- CI de Linux por `fix/`: ninguna (la rama no toca hooks, rutas ni plataforma). La CI de `main`
+  corre tras el push.
+- Informe: `docs/validation/MARGEN-PENDIENTE.md`. Encargo: `docs/encargos/trabajo-margen-pendiente.md`.

@@ -726,6 +726,12 @@ dos salidas fuera del repo:
 
 (La carpeta `C:/Users/USER/Desktop/comparar-demo/` se crea antes; `cmp` no dice nada si son iguales.)
 
+**Hecho por Aleks el 2026-10-31, con los cuatro comandos de arriba tal cual y `!`** (antes de la
+orden de cierre, mientras corría el `make check` de 89c94cd, todo fuera del repo): los dos
+lectores salieron sin error ni salida, y `cmp … && echo IDENTICAS` imprimió `IDENTICAS`. La salida
+de `main` y la de la rama sobre `data/demo_ftmo/` son iguales byte a byte. (Anotado en el commit
+del contrato del cierre.)
+
 ### 1.5 Los tests
 
 - `tests/unit/test_leer_demo_ftmo.py`: los 9 de antes, sin tocar, y 13 nuevos: la salida de `main`
