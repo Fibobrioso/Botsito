@@ -1384,8 +1384,17 @@ en test`.
 ## 10. La CI de Linux
 
 Se empuja la rama a `origin/trabajo/guardia-g1` y a `fix/guardia-g1` (la CI solo corre en `main`,
-`feature/**` y `fix/**`, `.github/workflows/ci.yml`). Los números de run y su resultado, con una
-consulta suelta cada vez, van en el commit siguiente al de esta fase (el del informe del revisor).
+`feature/**` y `fix/**`, `.github/workflows/ci.yml`). Consultada una vez, suelta:
+
+- **Run 41858841083 (#326)**, sobre b0807cc (el commit de la fase 3): `conclusion: failure` con el
+  ÚNICO fallo esperado, `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («ERROR:
+  PROJECT_STATE declara la rama 'trabajo/guardia-g1'; la rama actual es 'fix/guardia-g1'»):
+  `1 failed, 3151 passed, 46 skipped in 366.64s`. Entre los 46 saltados están los de Windows de
+  `test_guardia_alias.py` y los que piden `data/`; **no** está
+  `test_la_comparacion_caso_a_caso_con_la_guardia_de_main`: en la CI corre de verdad (condición iii
+  de la respuesta a la PARADA 2).
+- El commit del informe del revisor se empuja también a `fix/guardia-g1`; su run, en el mensaje final
+  a Aleks (este informe ya no cambia después).
 
 ## 11. El encargo, punto por punto
 
