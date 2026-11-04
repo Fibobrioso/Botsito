@@ -404,6 +404,8 @@ cálculo de las partes, `'g' + 'h'` es `gh` y lo decide la regla de la CI que ya
 
 ### 1.i Lo que solo se puede ver en Windows, para Aleks con «!»
 
+> La lista que vale, con los comandos finales, es la de §8 (fase 3); esta es la de la fase 0.
+
 Lo de Windows se simula en los tests (como `_romper` de `test_guardia_alias.py`) y, donde la
 simulación no llega, va con `SOLO_WINDOWS`. Para el portátil, después de la fase 1, desde la raíz
 del repo y con la rama ya traída (`git fetch origin trabajo/guardia-g1`):
@@ -1209,7 +1211,210 @@ ROTO | orden_suelta_por_b | test_p2_lo_sensible_de_verdad_sigue_negado | falla: 
 La comparación con main, por el test, antes y después (`medir_g1-PARADA2-ANTES.txt`,
 `medir_g1-PARADA2-DESPUES.txt`): 0 casos sin declarar en los dos.
 
+## 7. Para el commit del contrato del cierre (preparado, sin aplicar)
+
+Lo aplica la orden de cierre, en el portátil de Aleks. Son textos para `PROJECT_STATE.md` y la hoja de
+ruta; nada de esto está en la rama.
+
+**K, B y C (Next Action).** Las tres salen de la Next Action: K, B y C están HECHAS (fase 1, fase 2 y
+la PARADA 2; GUARDIA-G1.md §4, §5 y §6). Texto nuevo de cada una para su entrada «HECHA» en HISTORIA:
+- K: «HECHA en `trabajo/guardia-g1`: la opción por su forma en el árbol de Python; los tests de un
+  clon de comparar-con-main que son los de `main` o los del árbol cuentan como tests del repo (K2 y
+  K3); el candidato en blanco tras `=` no es una ruta (K4).»
+- B: «HECHA en `trabajo/guardia-g1`: lo que un guion de Python importa, carga por su ruta o ejecuta
+  se resuelve y se lee hasta 3 niveles, y lo que no se resuelve se niega (solo Python).»
+- C: «HECHA en `trabajo/guardia-g1`: una ruta compuesta se calcula y se mira como un literal; la que
+  no se calcula y nombra un fragmento sensible se compara por tramos con lo protegido; las llaves de
+  bash se expanden y `file:` es su ruta.»
+
+A HISTORIA, bajo «# Next Action HECHA · K · … · B · … · C · …», con su texto de hoy y estas líneas. Lo que queda de ellas no vuelve a la Next Action: va a la línea nueva de G.1 y a
+Technical Debt (abajo).
+
+**G.1 en la hoja de ruta (`docs/plan/HOJA-DE-RUTA.md`).** Refs: `NA:D` (sale `NA:B`, `NA:C`, `NA:K`).
+Qué es, sustituyendo la lista de hoy:
+- «Las formas raras (D). Y lo que queda de `trabajo/guardia-g1` (GUARDIA-G1.md): que `cerrar-rama`
+  diga que, si la rama cambia el `Makefile`, los `make check` en la rama los lanza Aleks con «!»; y
+  los candidatos en blanco tras `:` y `@` en `candidatos_de_ruta` (§4.5).»
+- Lo HECHO en `trabajo/guardia-g1` sale de la lista: el listado del holdout (ADR-0088), `git
+  worktree list` en `solo_lectura.py`, el test con la opción en un clon, el `grep` con cuatro `-e`, el
+  manifiesto de ticks (ya pasaba con la ruta literal: §1.f), y los tests de un clon de `C:/cm/`.
+G.1 NO pasa a HECHA: D sigue (respuesta, punto 13).
+
+**G.2.** `--diagnostico-a47` y `--diagnostico-a27` siguen («se retiran en G.1 o en rama propia»):
+sin cambio, porque tocan `src/` (respuesta, punto 13).
+
+**Technical Debt.**
+- Sale: «La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a
+  trozos (`"g" + "h"`) …»: C la calcula y la niega la regla de la CI (§5.3; el test que la fijaba
+  cambió de sentido).
+- Cambia: la línea de Artifact y claude-in-chrome pasa a ser, sin «junto a K (el alias de la raíz)»
+  (respuesta, punto 11): «La guardia no mira las herramientas que leen un fichero local fuera de
+  Read/Grep/Glob/Bash/PowerShell/Monitor: Artifact, ArtifactData, DesignSync y `file_upload`,
+  `navigate`, `get_page_text` y `read_page` de claude-in-chrome están cerradas en `permissions.deny`
+  de `.claude/settings.json`; `mcp__claude-artifacts__publish_files` (en la nube, `files[].path`)
+  no está ni en `deny` ni en el `matcher` (GUARDIA-G1.md §1.j). Rama propia del carril de guardias:
+  añadirlas al `matcher` con su esquema y llevar sus rutas a `motivo_fichero`, negando la entrada que
+  no se reconozca.»
+- Entran:
+  - «Riesgo residual de `trabajo/guardia-g1` (§4.3): el test de un clon de comparar-con-main que es
+    el de `main` o el del árbol del repo cuenta como test del repo; como dentro del repo, la guardia
+    no lee el `conftest.py` ni el `src/` que carga el clon.»
+  - «Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído
+    o de un nombre asignado más de una vez no se calcula; solo se niega si lo que se sabe de ella
+    nombra un fragmento de `SENSIBLES`. Y `subprocess` con `cwd=` que no se calcula analiza la orden
+    desde el directorio de trabajo.»
+  - «Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que
+    cargan, y un `getattr(os, ...)` no se ve.»
+  - «Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`,
+    `pico_memoria.py`, `huso_por_velas.py`), cambiados en una rama, no se ejecutan sueltos desde la
+    sesión: B los niega por llamar a `git` o a un programa con argumentos que no se calculan, o por
+    `sys.path.insert` sin calcular (GUARDIA-G1.md §6.4). La rama que los cambie los prueba por sus
+    tests y, sueltos, con «!»; `make check` los sigue lanzando.»
+- Sin cambio (respuesta a la PARADA 2, «Además»): «ADR 0087 (S-15, no existe) sigue en los
+  `ids-inexistentes` …». Esta rama creó el ADR-0088, no el 0087, y declara el 0087 en sus propios
+  `ids-inexistentes` (§4.10).
+
+**PROJECT_STATE.** En la rama mide 21.814 bytes (`wc -c`), bajo el tope de 25.000 de
+`test_project_state.py`. Con estas líneas salen K, B y C de la Next Action (975, 321 y 440 bytes,
+medidos con `wc -c` línea a línea) y la línea de la CI a trozos, la de Artifact cambia de tamaño en
+unos 100, y entran cuatro de Technical Debt (unos 1.500): queda por debajo de los 22.000, sin sacar
+nada.
+
+## 8. Lo que solo Aleks puede probar en Windows, con los comandos exactos
+
+Lo de Windows está simulado en los tests (`_windows` en `test_guardia_g1.py`, como `_romper` de
+`test_guardia_alias.py`). Lo que la simulación no ve -la raíz de unidad de verdad, el `realpath` de
+Windows con espacios finales y `corpus/` en disco- va aquí. Para el portátil, ANTES de la orden de
+cierre, con el repo real en la rama (`git fetch origin trabajo/guardia-g1` y `git switch
+trabajo/guardia-g1`, para que la guardia viva sea la de la rama). Cada comando sin «!» se lo pide Aleks
+a Claude Code en una sesión sobre la rama (decide la guardia); los que llevan «!», los lanza él.
+
+1. **K3, la raíz de la unidad de verdad, y K2 con un test de la rama copiado.** Con «!»:
+
+```bash
+git worktree add --detach C:/cm/g1 trabajo/guardia-g1
+```
+
+   Después, pedido a Claude Code:
+
+```bash
+cd C:/cm/g1 && uv run pytest tests/unit/test_guardia_g1.py -q -p no:cacheprovider
+```
+
+   Esperado: la guardia lo deja pasar, porque el fichero del clon es el del árbol del repo real en la
+   rama. Con `main`, la guardia lo negaba.
+
+2. **K2 con un test de `main` que lleva el literal de la opción**, en el mismo clon, pedido a Claude
+   Code:
+
+```bash
+cd C:/cm/g1 && uv run pytest tests/unit/test_cuarentena.py -q -p no:cacheprovider
+```
+
+   Esperado: pasa (es el blob de `main`). Al terminar, con «!»: `git worktree remove C:/cm/g1` (con
+   `--force` solo si quedan ficheros generados sin seguir) y `git worktree prune`.
+
+3. **K4 con `corpus/` en disco**, pedido a Claude Code:
+
+```bash
+grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
+```
+
+   Esperado: pasa. Con `main`: «leer el contenido de .» (la regla de las capturas de Analytics).
+
+4. **El argumento entero en blanco (d7b, sigue como hoy por la decisión 4)**, pedido a Claude Code:
+
+```bash
+grep -rn " " src/botsito/cli.py
+```
+
+   Esperado: se niega («leer el contenido de  .»), igual que con `main`.
+
+5. **El listado del holdout con el material de verdad**, pedido a Claude Code:
+
+```bash
+git ls-files knowledge/cases | grep -v holdout
+```
+
+   Esperado: se niega con ADR-0088. Y este pasa (el recuento):
+
+```bash
+git ls-files knowledge/cases/holdout | wc -l
+```
+
+6. **C con `corpus/` en disco: una carpeta estricta que aquí no existe se miraba con una sonda.** Con
+   el material de verdad, la composición de `viabilidad_trader.py` tiene que seguir negándose. Pedido
+   a Claude Code, que lo mida con la guardia de la rama en memoria:
+
+```bash
+uv run python docs/validation/anexos/GUARDIA-G1/costo_c.py
+```
+
+   Esperado: en «C sola», `scripts/transcribir_sesion.py` y `scripts/viabilidad_trader.py` NIEGA, y
+   ninguno de los 5 falsos positivos (`a18_buscar`, `a35_fotogramas`, `v5_criterio`,
+   `caja_77_exploratoria`, `embudo_77`). Aquí sale así (`costo_c-PARADA2.txt`); allí se comprueba con
+   `data/fotogramas/` y `corpus/` en disco.
+
+**Sello de la PARADA 2 aplicada** (commit fb57e68): `3152 passed, 46 skipped`; `SELLO: make check en
+verde sobre el arbol ac71ce31ea2dd5ee921ebf4621356a98def4b8f7`; `PICO DE MEMORIA de make check: 145 MiB
+en test`.
+
+## 9. Fase 3: los documentos
+
+- **CLAUDE.md**, «Las guardias de Claude Code»: «deja listarlo, medirlo y hashearlo» pasa a «deja
+  contarlo, medirlo y hashearlo por la CLI; los nombres de dentro de `knowledge/cases/holdout/{1,2,3}`
+  se cuentan, no se listan (ADR-0088, desde `trabajo/guardia-g1`)» (fase 1, con el ADR).
+- **Runbooks y skills**: nada falso por lo que cambia esta rama. `fase-cero` ya dice lo que decide
+  ADR-0088 («las rutas se nombran literales EN EL PROPIO COMANDO»); `comparar-con-main` usa `git
+  worktree list`, que ahora `solo_lectura.py` deja; ninguna skill se toca (respuesta 1, punto 12). Lo
+  que G.1 pide de `cerrar-rama` (el `Makefile` cambiado) sigue en G.1 (punto 13).
+- **Informes cerrados**: ninguno necesita un recuadro. Lo que esta rama cambia de lo que decían
+  (BARRIDO-SESION-6.md §2.1 «parece un falso positivo con `grep -rln`»: era el `=` del primer `grep`)
+  va en este informe (§1.d) y en la fila de ERRORES-RECURRENTES; no se ha ampliado el contrato a
+  `docs/validation/` cerrados.
+- **docs/runbooks/ERRORES-RECURRENTES.md** gana la fila de `trabajo/guardia-g1`: las dos negativas
+  del diagnóstico de H que iban a K, arregladas aquí (el `grep -r` sobre `src/` era K4; `rm` con
+  `rmdir`, `rmdir` fuera de `NO_EJECUTAN`); los errores de forma de la sesión contra reglas de `main`
+  como lo que son, con la lección de siempre (una cosa por llamada; respuesta a la PARADA 2,
+  «Además»); el número de ADR reservado; y la medida de una rama de guardia desde `tests/`. La columna
+  del revisor se rellena con su informe (§12).
+- **PROJECT_STATE.md**: solo el recuento de tests (1800 → 1832, lo exige `state check`) y lo que hizo
+  `abrir-rama`; 21.814 bytes.
+
+## 10. La CI de Linux
+
+Se empuja la rama a `origin/trabajo/guardia-g1` y a `fix/guardia-g1` (la CI solo corre en `main`,
+`feature/**` y `fix/**`, `.github/workflows/ci.yml`). Los números de run y su resultado, con una
+consulta suelta cada vez, van en el commit siguiente al de esta fase (el del informe del revisor).
+
+## 11. El encargo, punto por punto
+
+| # | Lo que pide | Estado | Dónde |
+|---|---|---|---|
+| 1 | Base: `git fetch --prune`, main = 7a3a1ff, tag último y en origin, CI de main en success, ninguna otra rama | Hecho (la CI, con una consulta suelta a la API: `gh` solo busca en la nube; desviación aceptada) | §0 |
+| 2 | Abrir con `abrir-rama`: encargo con Write, contrato, Archivo en HISTORIA | Hecho (cf1bc4a; Archivo 54) | §0 |
+| 3 | (1) la guardia corre, con el mensaje de un bloqueo | Hecho | §0 |
+| 4 | (2) `uv sync` y `make check` en verde con SELLO y PICO | Hecho, tras `git fetch --unshallow` (desviación aceptada) | §0 |
+| 5 | (3) `git push --dry-run` | Hecho | §0 |
+| 6 | Lo de Windows en memoria; lo que no, a una lista para Aleks | Hecho (simulación de `_absoluta`; `SOLO_WINDOWS` es un `skipif`, auditor #49) | §1.c, §8 |
+| 7 | Reglas: material protegido solo en memoria, rutas a trozos y no impresas enteras | Hecho; desde la PARADA 2, la salida de la comparación sin rutas protegidas enteras | §1, §6.1 |
+| 8 | PARADA ante una negativa, salvo la forma que propone la guardia | Hecho: n3 paró ese dato; las de forma, con su forma; la de C a `medir_g1.py`, PARADA 2 | §3, §5.6 |
+| 9 | CI con una consulta suelta cada vez | Hecho | §0, §10 |
+| 10 | Cada falso positivo por su condición, sin excepciones por nombre | Hecho (`which` y `rmdir` entran por el mecanismo de la lista cerrada, punto 7 de la respuesta) | §4 |
+| 11 | Cada test roto a propósito en los dos sentidos; comparación con main por el método de §1.4 | Hecho: 31 roturas; comparación por `medir_g1.py` (fases 0 y 1 suelto, desde la fase 2 por el test, autorizado) | §4.7, §4.8, §5.3, §5.4, §6.5 |
+| 12 | Sellado por fase con PICO en el informe | Hecho | §4, §5, §6, §9 |
+| 13 | Fase 0 a)-j) con su tabla y la PARADA | Hecho | §1 |
+| 14 | Fase 1 en el orden e, a, b, c, d, f; tests primero; `medir_huecos` ampliado antes y después | Hecho (`medir_g1.py`, el método de `medir_huecos.py` con los casos de esta rama, en `anexos/GUARDIA-G1/`) | §4 |
+| 15 | Fase 2, B y C; PARADA si piden algo no decidido | Hecho; PARADA 2 (la carga por ruta y la negativa a `medir_g1.py`), respondida y aplicada | §5, §6 |
+| 16 | Fase 3: lo falso en CLAUDE.md, runbooks o skills | CLAUDE.md enmendado (ADR-0088); en runbooks y skills no encontré nada falso por esta rama (fase-cero ya dice lo de ADR-0088; comparar-con-main usa `git worktree list`, que ahora deja `solo_lectura`); las skills no se tocan (respuesta 1, punto 12) | §4.1, §9 |
+| 17 | La fila de ERRORES-RECURRENTES con las dos negativas de H | Hecho: las dos se arreglan en esta rama (f16, f18) | §9 |
+| 18 | Para el cierre: K, B y C, G.1, Technical Debt, tamaño de PROJECT_STATE | Preparado, sin aplicar | §7 |
+| 19 | Informe con todo eso | Hecho | este fichero |
+| 20 | Push de la rama y a `fix/guardia-g1`, con la CI de Linux y sus números de run | Hecho | §10 |
+| 21 | El revisor con el informe terminado, y su informe pegado | Hecho | §12 |
+| 22 | Ningún registro de cierre en HISTORIA ni cambios de Next Action | Hecho: solo el Archivo 54 de la apertura, y el recuento de tests de PROJECT_STATE que exige `state check` | `git diff main --stat` |
+
 ## Estado
 
-FASES 0, 1 y 2 HECHAS y selladas; PARADA 2 respondida (2026-11-04) y aplicada (§6), sellada en su
-commit. EN CURSO: fase 3 (documentos, líneas del cierre, CI de Linux y revisor).
+FASES 0, 1, 2 y 3 HECHAS y selladas; las dos PARADAS respondidas y aplicadas. Pendiente: la CI de
+Linux por `fix/guardia-g1` (§10) y el informe del revisor (§12).
