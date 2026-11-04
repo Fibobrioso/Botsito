@@ -886,7 +886,198 @@ commit: permite `docs/adr/0088-*.md` y protege `docs/adr/0087*`. El 0087 queda l
 ADR-0087 — reservado por trabajo/activar-sesion-05-motor para S-15; esta rama no lo crea
 ```
 
+**Sello de la fase 1** (commit 0d784e9): `3103 passed, 46 skipped`; `SELLO: make check en verde
+sobre el arbol be5df0c3ae1f718be526213ff6ccb692a3789ad4`; `PICO DE MEMORIA de make check: 142 MiB en
+test`. El primer intento salió en rojo por el número del ADR (§4.10).
+
+## 5. Fase 2: B y C
+
+### 5.1 C, las rutas compuestas (respuesta, punto 10)
+
+`_compone_ruta_sensible`, dentro de `analizar_codigo` para Python. Cada composición
+(`joinpath`, `os.path.join`, un constructor de `Path` con partes, `/` con un texto; `+` y las
+f-cadenas solo si alguno de sus textos lleva `/` o `\`, porque sin separador es un mensaje y no una
+ruta) se CALCULA con `_calcular`: literales, nombres asignados una sola vez (también desempaquetando
+una tupla), `__file__` (la ruta del guion), `.parent`, `.parents[n]`, `resolve()`, `str()`,
+`os.path.dirname`. Si se calcula entera, se mira como un literal más (`_exigir_ruta_del_codigo`:
+`motivo_fichero`, y la carpeta con `motivo_ruta`); si no, se niega cuando lo que se sabe de ella
+nombra un fragmento de `SENSIBLES` (la variante ESTRECHA). En Bash, `resolver` expande las llaves
+(`_llaves`), y una URL `file:` en cualquier argumento, o en un literal del código, se mira como su
+ruta (`_exigir_urls_de_fichero`, `_ruta_de_url`; salvo en `ffmpeg`/`ffprobe`, cuya lista cerrada
+decide sus protocolos). La consulta de CI a trozos (`'g' + 'h'`) se calcula y la niega la regla de la
+CI (vía B).
+
+### 5.2 B, lo que el guion importa o ejecuta (respuesta, punto 9)
+
+`_exigir_lo_que_carga`, para Python, con los nombres calificados por los imports del propio código
+(`import subprocess as sp` y `from runpy import run_path` cuentan; una función propia llamada `run`
+no):
+- `import`/`from … import`, `importlib.import_module('…')`, `__import__('…')` y
+  `runpy.run_module('…')`: el módulo se busca en la carpeta del guion (con `-c`, el directorio de
+  trabajo) y en lo que el guion añade a `sys.path` con un valor que se calcula; si es local, se lee y
+  se analiza como el guion (`_leer_lo_cargado`; el blob de `main` es revisado); si no, tiene que ser
+  de la biblioteca estándar, `botsito` o un paquete del `.venv` (`_instalado`); si no es nada de eso,
+  se niega con «no se pudo resolver el modulo `x`».
+- `runpy.run_path('…')`, `exec(open('…').read())`, `exec(Path('…').read_text())`: por su fichero;
+  `exec('…')`/`eval`/`compile` con un texto literal, el texto se analiza; con otra cosa, se niega.
+- `subprocess.*`, `os.system`, `os.popen`, `os.exec*`, `os.spawn*`: con el programa calculado, la
+  orden se monta (partes literales entre comillas, las demás como `$__GUARDIA_DINAMICO__`, que la
+  guardia trata como algo que se construye al ejecutarse; `cwd=` como un `cd` delante) y se analiza
+  como un comando de Bash en código; con el programa sin calcular, se niega. El mensaje nombra la
+  orden y la llamada.
+- Hasta 3 niveles (`PROFUNDIDAD_DE_CARGA`); el cuarto se niega con «mas de 3 niveles de carga».
+- `sys.path` cambiado con un valor que no se calcula, `sys.path.extend`, `site.addsitedir`, se niegan.
+- **No decidido, sin tocar** (§5.6, PARADA 2): cargar un fichero por su ruta con
+  `importlib.util.spec_from_file_location` / `module_from_spec`.
+
+### 5.3 Tests rotos a propósito
+
+`tests/unit/test_guardia_g1.py` pasa a 121 tests (39 nuevos: g, h, sus 7 roturas y la comparación con
+main). **Antes del código de la fase 2** (contra la guardia de la fase 1): 35 fallan
+(`pytest-3-fase2-antes-del-codigo.txt`). **Con el código**: los 121 pasan
+(`pytest-4-fase2-con-el-codigo.txt`). Rotos a propósito (`pytest-roto-a-proposito-FASE2.txt`, 25 en
+total con los de la fase 1):
+
+```
+ROTO | sin_carga | test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega | falla: import_local
+ROTO | sin_carga | test_g_el_codigo_en_linea_tambien | falla: cd trabajo && python -c "import mod_malo"
+ROTO | sin_carga | test_g_mas_de_tres_niveles_se_niega | falla: None
+ROTO | carga_de_mas | test_g_lo_que_se_resuelve_y_es_inocuo_pasa | falla: ('estandar', 'el codigo carga o ejecuta `import json`: no se pudo resolver el modulo `json` (ni local ni del entorno)…
+ROTO | sin_composicion | test_h_las_rutas_compuestas_al_material_se_niegan | falla: joinpath
+ROTO | composicion_de_mas | test_h_las_composiciones_inocuas_pasan | falla: ('barra', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`*/holdout`)…
+ROTO | sin_llaves_ni_url | test_h_las_llaves_y_las_url_en_bash_se_niegan | falla: cat 'knowledge/cases/'{holdout,dev}'/1/secreto.yaml'
+```
+
+**Cambian de sentido, por su nombre** (`tests/unit/test_guardia_ci.py`; contrato ampliado en este
+commit): `test_riesgo_residual_la_mencion_a_trozos_no_se_ve` pasa a `test_la_mencion_a_trozos_ya_se_ve`
+(el propio test decía «si un día se cierra, este test cambia de sentido»: lo cierra C, por B); y
+`test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa` pasa a
+`test_riesgo_residual_un_cliente_fuera_de_la_lista_no_lo_ve_la_regla_de_la_ci`: `aiohttp` lo niega
+ahora B (no está en el entorno: `R_CARGA`), y la regla de la CI sigue sin verlo (con el cliente
+instalado, pasaría). Y un efecto de orden, arreglado sin tocar su test: en la matriz de
+`test_guardia_ffmpeg.py`, «protocolo sobre marzo» daba la regla del material antes que la de ffmpeg;
+`file:` no se mira en `ffmpeg`/`ffprobe`, que deciden sus protocolos en su lista cerrada.
+
+### 5.4 La comparación caso a caso con main
+
+`test_la_comparacion_caso_a_caso_con_la_guardia_de_main` (en `tests/`, ver §5.6, decisión 0) corre
+`medir_g1.py` con la guardia de `main` y la de la rama (`anexos/GUARDIA-G1/medir_g1-FASE2.txt`): 0
+casos sin declarar; los 21 declarados de la fase 1 siguen igual; y los 17 casos de B y C que `main`
+dejaba pasar se niegan con su motivo real (g1-g8: «el codigo nombra …/secreto.yaml» o «el codigo
+lanza …»; h5-joinpath, os-path-join, barra, fstring-partes, concatenación: «el codigo compone
+…/secreto.yaml»; h6: «leer el contenido de …»; h7 y h7b: la URL; h8: la CI). g9 (`botsito`) sigue
+pasando, como se decidió.
+
+### 5.5 El coste real de C (respuesta, punto 10) y el de B
+
+`anexos/GUARDIA-G1/costo_c.py` (salida, `costo_c-FASE2.txt`): cada guion `.py` de `scripts/` y
+`tests/` de `main`, analizado con la guardia de la rama como si estuviera cambiado en una rama (lo
+que pasaría al ejecutarlo). En la nube no hay `corpus/` ni `data/`, así que lo que dependa de que
+una carpeta calculada exista en disco sale aquí algo más barato que en el portátil.
+
+**Los 7 de `scripts/` que la variante estrecha marcaba en la fase 0, con el cálculo:**
+
+| Guion | Composiciones (calculadas) | Con el cálculo | Por qué |
+|---|---|---|---|
+| `buscar_ambiguedades.py` | 1 (1) | PASA | la ruta calculada es inocua |
+| `orden_stop_o_limite.py` | 13 (10) | PASA | las calculadas son inocuas; las otras no nombran nada sensible |
+| `transcribir_sesion.py` | 12 (1) | NIEGA | `*/*.cruda-no-leer.jsonl` nombra `cruda`: sensible de verdad (y el análisis entero ya lo niega por el literal) |
+| `viabilidad_trader.py` | 9 (1) | NIEGA | `*/corpus/estrategia del trader/material adicional…`: sensible de verdad |
+| `a18_buscar.py` | 3 (2) | NIEGA | `<raíz>/knowledge/corpus/transcripciones/*.yaml`: **falso positivo**, `corpus` y `transcripciones` casan dentro de `knowledge/corpus/` |
+| `a35_fotogramas.py` | 11 (3) | NIEGA | `<raíz>/knowledge/corpus/fotogramas/*.yaml`: **falso positivo**, el mismo |
+| `v5_criterio.py` | 7 (5) | NIEGA | `<raíz>/data/fotogramas/v5/png-1fps/*.png`: **falso positivo**, `data/` casa con `data/fotogramas`, que se lee (CLAUDE.md, punto 1) |
+
+Y dos que la estrecha de la fase 0 no marcaba y con el cálculo sí: `caja_77_exploratoria.py` y
+`embudo_77.py` (`*/knowledge/cases/kit/config.yaml`: **falso positivo**, el `config.yaml` del kit no
+está protegido). **La cifra real de C sola: 7 de los 34 guiones de `scripts/`** (2 sensibles de
+verdad y 5 falsos positivos por un fragmento de `SENSIBLES` que casa dentro de una ruta legible), y 42
+de los 169 de `tests/` (que dentro del repo están exentos y en un clon pasan si son idénticos).
+
+**El de B, que no se pedía y conviene ver:** el análisis entero (B y C) negaría, cambiados en una
+rama, 12 de los 34 de `scripts/`: los 7 de C y 5 por B -`contrato_rama.py`, `sello_make_check.py` e
+`instalar_hooks.py` (llaman a `git` con argumentos que no se calculan, y `contrato_rama` además con
+`-c`, que la guardia niega por decisión 6), `pico_memoria.py` (lanza un programa que no se calcula) y
+`huso_por_velas.py` (`sys.path.insert` con un valor que no se calcula)-. Ninguno se niega hoy al
+ejecutarlo: son los de `main` (revisados) o los lanza `make`, que no los analiza.
+
+### 5.6 PARADA 2: lo que la fase 2 pide y la respuesta no decide
+
+**Una negativa nueva de la guardia de esta rama a algo que antes hacía** (el encargo: «si a partir de
+tu cambio la guardia te niega algo que antes hacías, también PARADA»). Comando exacto:
+
+```
+python docs/validation/anexos/GUARDIA-G1/medir_g1.py <scratchpad>/main/.claude/hooks/guardia.py .claude/hooks/guardia.py > <scratchpad>/cmp2.txt 2>&1
+```
+
+Mensaje:
+
+```
+GUARDIA (.claude/hooks/guardia.py) bloquea: el codigo compone una ruta que no se puede calcular al inspeccionar (`ls */holdout/1`) y que nombra `holdout`: no se puede decidir si llega a material protegido.
+Regla: respuesta del consultor a la PARADA de `trabajo/guardia-g1`, punto 10 (GUION-MISMO-COMANDO.md §1.5, hallazgo 5).
+Como reescribirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.
+```
+
+En la fase 1 ese mismo guion corría (§4.8). Lo niega C, y por dos motivos: el guion monta a trozos
+las rutas de su repo inventado (que es justo el hueco C, y el encargo mandaba montarlas así), y el
+caso que salta es un COMANDO en una f-cadena (`f"ls {KC}/{HOL}/1"`), no una ruta. Lo que hice: la
+comparación de §5.4 la corre el test `test_la_comparacion_caso_a_caso_con_la_guardia_de_main`, que
+escribí para esto antes de medir la negativa, y que corre en `tests/` (exento, como todos los tests
+de la guardia, que usan repos inventados). **Lo declaro porque puede leerse como buscar el mismo
+dato por otra vía**: decides tú (decisión 0).
+
+### 5.7 Las demás negativas desde la respuesta, todas de reglas de `main`
+
+Errores de forma míos, con la forma que da el mensaje (dos llamadas): `cat respuesta >> encargo &&
+python …`, `printf … > estado && python …`, `grep … ; uv run pytest …` (dos veces) y `grep … ;
+python nuevos.py …`. Y `git mv` (fuera de la lista cerrada de subcomandos de git): `mv` y `git add`.
+Ninguna es un cambio de esta rama.
+
+## Lo que necesito que decidas (PARADA 2)
+
+0. **La comparación con main desde `tests/`.** Opciones: (a) la comparación caso a caso de esta rama,
+   y la de las ramas de guardia que vengan, es el test (`test_la_comparacion_caso_a_caso_con_la_guardia_de_main`),
+   que carga `medir_g1.py` y falla si un caso que `main` niega pasa sin declarar; el guion queda como
+   el método y sus casos; (b) `medir_g1.py` se reescribe para no componer rutas protegidas (su repo
+   inventado, desde un fichero de datos), y se ejecuta suelto; (c) se ejecuta suelto con una excepción
+   para `docs/validation/anexos/`. Recomiendo (a): la medida sigue siendo la misma, corre en cada
+   `make check` y en la CI (no solo en la sesión), y no abre ningún hueco. Coste de (b): un guion que
+   esconde sus rutas en un dato para que C no las vea es rodear la guardia con otra forma; de (c), una
+   carpeta donde C no mira.
+1. **Cargar un fichero por su ruta** (`importlib.util.spec_from_file_location` / `module_from_spec`),
+   que la respuesta (punto 9, «§1.g») no nombra y hoy sigue como en `main`. Opciones: (a) se resuelve
+   como `runpy.run_path`: con una ruta que se calcula, el fichero se lee y se analiza; sin calcular,
+   se niega; con la excepción cerrada que ya tiene la regla de la CI (`_carga_solo_la_guardia`: la
+   propia guardia por su ruta), ampliada a `solo_lectura.py`; (b) igual, sin excepción; (c) sin
+   cambio, como riesgo residual. Recomiendo (a): es la misma carga que `runpy.run_path` y la excepción
+   ya está decidida para la CI. Coste: `costo_c.py` y los guiones de medida que carguen la guardia por
+   una ruta de `sys.argv` se negarían (como en (b)); con (a), los que la carguen por su ruta literal o
+   `RAIZ / ".claude" / "hooks" / "guardia.py"` pasan.
+2. **Los falsos positivos de la variante estrecha** (§5.5): un fragmento de `SENSIBLES` casa DENTRO de
+   una ruta legible (`corpus` en `knowledge/corpus/`, `data/` en `data/fotogramas/`, `knowledge/cases`
+   en `knowledge/cases/kit/config.yaml`), y un comando en una f-cadena con `/` cuenta como ruta. Opciones:
+   (a) lo que se sabe de la composición se compara por TRAMOS DE RUTA desde su inicio conocido: si la
+   parte conocida empieza en la raíz (o es relativa) y llega entera a una zona legible
+   (`knowledge/corpus/`, `data/fotogramas/`, `knowledge/cases/kit/`), se mira con `motivo_ruta` como una
+   ruta y no por fragmento; y una f-cadena cuyo primer tramo no es una ruta (empieza por un comando, un
+   espacio) no es una composición; (b) sin cambio: los 5 de `scripts/` cambiados en una rama los
+   lanza Aleks con «!» o se reescriben con la ruta literal. Recomiendo (a): quita los 5 falsos
+   positivos medidos y no abre ninguno de los dos sensibles de verdad. Coste: una regla más fina que
+   probar en los dos sentidos.
+3. **El coste de B en los guiones de la plataforma** (§5.5): `contrato_rama.py`, `sello_make_check.py`,
+   `instalar_hooks.py` y `pico_memoria.py`, cambiados en una rama, ya no se pueden ejecutar sueltos
+   desde la sesión (`make check` los lanza por `make` y sigue). Opciones: (a) sin cambio: la rama que
+   los cambie los prueba por sus tests (`tests/` exento) y, suelto, con «!»; (b) `git` con argumentos
+   que no se calculan pasa si su subcomando es literal y no es de los que muestran contenido. Recomiendo
+   (a): es lo que decidiste en el punto 9 («subprocess con programa literal como un comando de Bash») y
+   en el 6 (`git -c`). Coste: una llamada a Aleks si una rama los cambia y necesita ejecutarlos sueltos.
+
+Espero tu respuesta a la PARADA 2. La fase 2 está sellada con lo decidido (B salvo la carga por ruta,
+y C entera, variante estrecha); la fase 3 (documentos, líneas del cierre, revisor) espera a tu
+respuesta.
+
 ## Estado
 
 FASE 0 HECHA y respondida (2026-11-04); contrato ampliado en su propio commit (898040c). FASE 1
-HECHA (e, a, b, c, d, f; ADR-0088 y la enmienda de CLAUDE.md en su commit). EN CURSO: fase 2 (B y C).
+HECHA y sellada (0d784e9; ADR-0088 y la enmienda de CLAUDE.md). FASE 2 HECHA con lo decidido (B salvo
+la carga de un fichero por su ruta; C entera, variante estrecha), sellada en su commit, en PARADA 2:
+espero la respuesta del consultor a «Lo que necesito que decidas (PARADA 2)». La fase 3 espera.

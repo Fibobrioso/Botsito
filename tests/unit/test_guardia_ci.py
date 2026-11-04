@@ -369,13 +369,14 @@ def test_en_codigo_la_mencion_cuenta_con_una_via_de_salida(
     assert _de_la_tabla(g, repo, "Bash", comando) == esperado
 
 
-def test_riesgo_residual_la_mencion_a_trozos_no_se_ve(g: ModuleType, repo: Path) -> None:
-    """RIESGO RESIDUAL DECLARADO (respuesta a la PARADA 3, punto 0; GUARDIA-CI.md y la linea de
-    Technical Debt del cierre): con una via de salida, `"g" + "h"` esconde la mencion y pasa;
-    `analizar_codigo` solo mira rutas compuestas con literales del material, no esto. Si un dia
-    se cierra, este test cambia de sentido."""
+def test_la_mencion_a_trozos_ya_se_ve(g: ModuleType, repo: Path) -> None:
+    """CAMBIA DE SENTIDO en `trabajo/guardia-g1` (fase 2, C y B; GUARDIA-G1.md §5): era
+    `test_riesgo_residual_la_mencion_a_trozos_no_se_ve` (respuesta a la PARADA 3 de guardia-ci,
+    punto 0), que aseguraba que `"g" + "h"` con una via de salida pasaba. Ahora `subprocess` con un
+    programa que se calcula (`'g' + 'h'` es `gh`) se analiza como un comando de Bash en codigo, y
+    ahi toda consulta de la CI se niega."""
     comando = "python -c \"import subprocess; subprocess.run(['g' + 'h', 'run', 'view', '1'])\""
-    assert _de_la_tabla(g, repo, "Bash", comando) == P
+    assert _de_la_tabla(g, repo, "Bash", comando) == E
 
 
 def test_sin_la_excepcion_el_guion_de_la_fase_0_se_niega(
@@ -427,15 +428,20 @@ def test_las_formas_del_revisor(
     assert _de_la_tabla(g, repo, "Bash", comando) == esperado, ident
 
 
-def test_riesgo_residual_un_cliente_fuera_de_la_lista_pasa(g: ModuleType, repo: Path) -> None:
+def test_riesgo_residual_un_cliente_fuera_de_la_lista_no_lo_ve_la_regla_de_la_ci(
+    g: ModuleType, repo: Path
+) -> None:
     """RIESGO RESIDUAL DECLARADO (revisor, b2 K10): un cliente de red de Python fuera de la lista
-    cerrada del consultor (`aiohttp`) no cuenta como via de salida. Ampliarla es decision suya."""
+    cerrada del consultor (`aiohttp`) no cuenta como via de salida. Ampliarla es decision suya.
+    CAMBIA en `trabajo/guardia-g1` (fase 2, B; GUARDIA-G1.md §5): antes PASABA; ahora lo niega B
+    (`R_CARGA`) porque `aiohttp` no se resuelve (ni local ni del entorno). La regla de la CI sigue
+    sin verlo: con el cliente instalado, pasaria."""
     comando = (
         'python -c "import aiohttp, asyncio\nasync def m():\n    while True:\n'
         f"        async with aiohttp.ClientSession() as s: await s.get('{CR}')\n"
         '        await asyncio.sleep(30)"'
     )
-    assert _de_la_tabla(g, repo, "Bash", comando) == P
+    assert _de_la_tabla(g, repo, "Bash", comando) == "R_CARGA"
 
 
 # ------------------------------------------------------------------------------------- Monitor

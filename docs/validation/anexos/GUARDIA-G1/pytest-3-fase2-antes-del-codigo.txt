@@ -1,0 +1,140 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+................................................................FFFFFFFF [ 59%]
+FFFFFFFFFF.FFFF.FFFFFF...................FFFFFFF.                        [100%]
+=================================== FAILURES ===================================
+E   AssertionError: exec_dinamico
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: exec_dinamico
+E   AssertionError: exec_open
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: exec_open
+E   AssertionError: exec_read_text
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: exec_read_text
+E   AssertionError: from_local
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: from_local
+E   AssertionError: git_show_dinamico
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: git_show_dinamico
+E   AssertionError: import_dinamico
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: import_dinamico
+E   AssertionError: import_local
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: import_local
+E   AssertionError: import_sys_path
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: import_sys_path
+E   AssertionError: importlib
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: importlib
+E   AssertionError: no_existe
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: no_existe
+E   AssertionError: os_system
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: os_system
+E   AssertionError: runpy
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: runpy
+E   AssertionError: runpy_alias
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: runpy_alias
+E   AssertionError: subprocess
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: subprocess
+E   AssertionError: subprocess_alias
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: subprocess_alias
+E   AssertionError: subprocess_dinamico
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: subprocess_dinamico
+E   AssertionError: sys_path_dinamico
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:508: AssertionError: sys_path_dinamico
+E   AssertionError: cd trabajo && python -c "import mod_malo"
+    assert None is not None
+     +  where None = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-18/test_g_el_codigo_en_linea_tamb0/repo'), 'cd trabajo && python -c "import mod_malo"')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:517: AssertionError: cd trabajo && python -c "import mod_malo"
+E   AssertionError: None
+    assert (None is not None)
+/home/user/Botsito/tests/unit/test_guardia_g1.py:547: AssertionError: None
+E   AssertionError: barra
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: barra
+E   AssertionError: ci_a_trozos
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: ci_a_trozos
+E   AssertionError: concatenacion
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: concatenacion
+E   AssertionError: fstring_partes
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: fstring_partes
+E   AssertionError: joinpath
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: joinpath
+E   AssertionError: os_path_join
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: os_path_join
+E   AssertionError: sin_calcular
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: sin_calcular
+E   AssertionError: url
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:574: AssertionError: url
+E   AssertionError: cat 'knowledge/cases/'{holdout,dev}'/1/secreto.yaml'
+    assert None is not None
+     +  where None = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-18/test_h_las_llaves_y_las_url_en0/repo'), "cat 'knowledge/cases/'{holdout,dev}'/1/secreto.yaml'")
+/home/user/Botsito/tests/unit/test_guardia_g1.py:583: AssertionError: cat 'knowledge/cases/'{holdout,dev}'/1/secreto.yaml'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_lo_que_carga'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:654: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_lo_que_carga'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_lo_que_carga'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:654: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_lo_que_carga'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_lo_que_carga'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:654: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_lo_que_carga'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_instalado'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:656: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_instalado'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_compone_ruta_sensible'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:658: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_compone_ruta_sensible'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_calcular'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:660: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_calcular'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_ruta_de_url'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:663: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_ruta_de_url'
+=========================== short test summary info ============================
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[exec_dinamico]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[exec_open]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[exec_read_text]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[from_local]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[git_show_dinamico]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[import_dinamico]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[import_local]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[import_sys_path]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[importlib]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[no_existe]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[os_system]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[runpy]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[runpy_alias]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[subprocess]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[subprocess_alias]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[subprocess_dinamico]
+FAILED tests/unit/test_guardia_g1.py::test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega[sys_path_dinamico]
+FAILED tests/unit/test_guardia_g1.py::test_g_el_codigo_en_linea_tambien - Ass...
+FAILED tests/unit/test_guardia_g1.py::test_g_mas_de_tres_niveles_se_niega - A...
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[barra]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[ci_a_trozos]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[concatenacion]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[fstring_partes]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[joinpath]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[os_path_join]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[sin_calcular]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_rutas_compuestas_al_material_se_niegan[url]
+FAILED tests/unit/test_guardia_g1.py::test_h_las_llaves_y_las_url_en_bash_se_niegan
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_carga-test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_carga-test_g_el_codigo_en_linea_tambien]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_carga-test_g_mas_de_tres_niveles_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[carga_de_mas-test_g_lo_que_se_resuelve_y_es_inocuo_pasa]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_composicion-test_h_las_rutas_compuestas_al_material_se_niegan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[composicion_de_mas-test_h_las_composiciones_inocuas_pasan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_llaves_ni_url-test_h_las_llaves_y_las_url_en_bash_se_niegan]

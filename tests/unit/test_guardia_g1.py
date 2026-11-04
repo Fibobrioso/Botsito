@@ -13,7 +13,12 @@ consultor a la PARADA de la fase 0. Un test por punto de la fase 1, en el orden 
   (K3);
 - d) lo que sale de partir un argumento por `=` no es una ruta si queda en blanco (K4);
 - f) `solo_lectura.py` salta las opciones globales de git; `which`, `rmdir` y `PYTHONIOENCODING`
-  entran en sus listas cerradas; lo encadenado y `git -c` siguen como estaban (decididos).
+  entran en sus listas cerradas; lo encadenado y `git -c` siguen como estaban (decididos);
+- g) fase 2, B: lo que un guion de Python importa o ejecuta se resuelve y se lee (hasta 3
+  niveles), y lo que no se resuelve se niega;
+- h) fase 2, C: una ruta compuesta se calcula y se mira como un literal, y la que no se calcula se
+  niega si nombra un fragmento sensible; las llaves de bash se expanden y `file:` es su ruta;
+- y la comparacion caso a caso con la guardia de `main` (`anexos/GUARDIA-G1/medir_g1.py`).
 
 Todo EN MEMORIA, con `decidir`, sobre un repo INVENTADO en `tmp_path` con ficheros FALSOS donde el
 material protegido: nada se ejecuta ni se abre del repo real. Lo que es de Windows (`\\.` como la
@@ -468,6 +473,142 @@ def test_f_lo_decidido_en_guion_mismo_comando_sigue_negado(g: ModuleType, repo: 
         assert _bash(g, repo, comando) is not None, comando
 
 
+# ------------------------------------------- g) B: lo que el guion importa o ejecuta (fase 2)
+def _malo(repo: Path) -> str:
+    """Un modulo local que imprime el fichero FALSO del holdout del repo inventado."""
+    secreto = (repo / SECRETO).as_posix()
+    _escribir(repo, "trabajo/mod_malo.py", f"print(open({secreto!r}).read())\n")
+    _escribir(repo, "trabajo/mod_bueno.py", "X = 1\n")
+    return secreto
+
+
+CARGAS_MALAS = {
+    "import_sys_path": "import sys\nsys.path.insert(0, 'trabajo')\nimport mod_malo\n",
+    "import_local": "import mod_malo\n",  # en la carpeta del guion
+    "from_local": "from mod_malo import x\n",
+    "runpy": "import runpy\nrunpy.run_path('trabajo/mod_malo.py')\n",
+    "runpy_alias": "from runpy import run_path as rp\nrp('trabajo/mod_malo.py')\n",
+    "exec_open": "exec(open('trabajo/mod_malo.py').read())\n",
+    "exec_read_text": "from pathlib import Path\nexec(Path('trabajo/mod_malo.py').read_text())\n",
+    "subprocess": "import subprocess\nsubprocess.run(['python', 'trabajo/mod_malo.py'])\n",
+    "subprocess_alias": "import subprocess as sp\nsp.call(['python', 'trabajo/mod_malo.py'])\n",
+    "os_system": "import os\nos.system('python trabajo/mod_malo.py')\n",
+    "importlib": "import importlib, sys\nsys.path.insert(0, 'trabajo')\n"
+    "importlib.import_module('mod_malo')\n",
+    "import_dinamico": "import importlib, sys\nimportlib.import_module(sys.argv[1])\n",
+    "exec_dinamico": "import sys\nexec(sys.argv[1])\n",
+    "subprocess_dinamico": "import subprocess, sys\nsubprocess.run([sys.argv[1], 'x'])\n",
+    "sys_path_dinamico": "import sys\nsys.path.insert(0, sys.argv[1])\nimport json\n",
+    "no_existe": "import zzz_modulo_que_no_existe_en_ninguna_parte\n",
+    "git_show_dinamico": "import subprocess, sys\nsubprocess.run(['git', 'show', sys.argv[1]])\n",
+}
+
+
+@pytest.mark.parametrize("forma", sorted(CARGAS_MALAS))
+def test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega(
+    g: ModuleType, repo: Path, forma: str
+) -> None:
+    _malo(repo)
+    motivo = _bash(g, repo, _escribe_guion(repo, f"trabajo/b_{forma}.py", CARGAS_MALAS[forma]))
+    assert motivo is not None, forma
+
+
+def test_g_el_codigo_en_linea_tambien(g: ModuleType, repo: Path) -> None:
+    _malo(repo)
+    for comando in (
+        'cd trabajo && python -c "import mod_malo"',
+        "python -c \"import runpy; runpy.run_path('trabajo/mod_malo.py')\"",
+    ):
+        assert _bash(g, repo, comando) is not None, comando
+
+
+def test_g_lo_que_se_resuelve_y_es_inocuo_pasa(g: ModuleType, repo: Path) -> None:
+    _malo(repo)
+    _escribir(repo, "trabajo/n1.py", "import n2\n")
+    _escribir(repo, "trabajo/n2.py", "import n3\n")
+    _escribir(repo, "trabajo/n3.py", "X = 3\n")
+    for nombre, codigo in (
+        ("local", "import mod_bueno\nprint(mod_bueno.X)\n"),
+        ("estandar", "import json\nimport os.path\nfrom pathlib import Path\n"),
+        ("entorno", "import yaml\nimport pytest\n"),  # paquetes del .venv del repo
+        ("botsito", "from botsito.cases.holdout import casos_reservados\n"),
+        ("de_main", "import sys\nsys.path.insert(0, 'scripts')\nimport de_main\n"),
+        ("git", "import subprocess\nsubprocess.run(['git', 'status', '--short'])\n"),
+        ("exec_literal", "exec('x = 1')\n"),
+        ("runpy_inocuo", "import runpy\nrunpy.run_path('trabajo/mod_bueno.py')\n"),
+        ("importlib", "import importlib\nimportlib.import_module('json')\n"),
+        ("tres_niveles", "import n1\n"),  # n1 -> n2 -> n3
+        ("propia_run", "def run(x):\n    return x\nrun('python trabajo/mod_malo.py')\n"),
+    ):
+        guion = _escribe_guion(repo, f"trabajo/ok_{nombre}.py", codigo)
+        assert _bash(g, repo, guion) is None, (nombre, _bash(g, repo, guion))
+
+
+def test_g_mas_de_tres_niveles_se_niega(g: ModuleType, repo: Path) -> None:
+    for i in range(1, 5):
+        _escribir(repo, f"trabajo/m{i}.py", f"import m{i + 1}\n" if i < 4 else "X = 4\n")
+    _escribir(repo, "trabajo/m5.py", "X = 5\n")
+    motivo = _bash(g, repo, _escribe_guion(repo, "trabajo/cuatro.py", "import m1\n"))
+    assert motivo is not None and "niveles" in motivo, motivo
+
+
+# ---------------------------------------------------------- h) C: las rutas compuestas (fase 2)
+PARTES = f"'knowledge', 'cases', '{HOL}', '1', 'secreto.yaml'"
+COMPUESTAS = {
+    "joinpath": f"from pathlib import Path\nprint(Path('.').joinpath({PARTES}).read_text())\n",
+    "os_path_join": f"import os\nprint(open(os.path.join({PARTES})).read())\n",
+    "barra": "from pathlib import Path\n"
+    f"print((Path('knowledge') / 'cases' / '{HOL}' / '1' / 'secreto.yaml').read_text())\n",
+    "fstring": f"zona = '{HOL}'\nprint(open(f'knowledge/cases/{{zona}}/1/secreto.yaml').read())\n",
+    "fstring_partes": "a, b = 'knowledge', 'cases'\n"
+    f"print(open(f'{{a}}/{{b}}/{HOL}/1/secreto.yaml').read())\n",
+    "concatenacion": f"print(open('knowledge' + '/' + 'cases' + '/{HOL}/1/secreto.yaml').read())\n",
+    "sin_calcular": "import sys\nfrom pathlib import Path\n"
+    f"print((Path(sys.argv[1]) / '{HOL}' / '1' / 'secreto.yaml').read_text())\n",
+    "url": "from urllib.request import urlopen\nprint(urlopen('file://REPO/"
+    + SECRETO
+    + "').read())\n",
+    "ci_a_trozos": "import subprocess\nsubprocess.run(['g' + 'h', 'run', 'view', '1'])\n",
+}
+
+
+@pytest.mark.parametrize("forma", sorted(COMPUESTAS))
+def test_h_las_rutas_compuestas_al_material_se_niegan(
+    g: ModuleType, repo: Path, forma: str
+) -> None:
+    codigo = COMPUESTAS[forma].replace("REPO", repo.as_posix())
+    motivo = _bash(g, repo, _escribe_guion(repo, f"c_{forma}.py", codigo))
+    assert motivo is not None, forma
+
+
+def test_h_las_llaves_y_las_url_en_bash_se_niegan(g: ModuleType, repo: Path) -> None:
+    for comando in (
+        f"cat '{KC}/'{{{HOL},dev}}'/1/secreto.yaml'",  # GUARDIA-ALIAS.md §9, b6
+        f"curl file://{(repo / SECRETO).as_posix()}",  # b7
+        f"curl --url=file://{(repo / SECRETO).as_posix()}",
+    ):
+        assert _bash(g, repo, comando) is not None, comando
+
+
+def test_h_las_composiciones_inocuas_pasan(g: ModuleType, repo: Path) -> None:
+    for nombre, codigo in (
+        ("barra", "from pathlib import Path\nprint((Path('docs') / 'a.md').read_text())\n"),
+        ("join", "import os\nprint(open(os.path.join('src', 'botsito', 'x.py')).read())\n"),
+        ("sin_calcular", "import sys\nprint(open(f'{sys.argv[1]}/salida.txt').read())\n"),
+        ("mensaje", f"import sys\nprint('no se lee el {HOL}: ' + sys.argv[1])\n"),
+        ("file", "from pathlib import Path\nprint((Path(__file__).parent / 'docs').exists())\n"),
+        (
+            "raiz",
+            "from pathlib import Path\nRAIZ = Path(__file__).resolve().parent\n"
+            "print((RAIZ / 'docs' / 'a.md').read_text())\n",
+        ),
+    ):
+        guion = _escribe_guion(repo, f"ok_c_{nombre}.py", codigo)
+        assert _bash(g, repo, guion) is None, (nombre, _bash(g, repo, guion))
+    for comando in ("cat '{docs,src}/a.md'", f"curl file://{(repo / 'docs/a.md').as_posix()}"):
+        assert _bash(g, repo, comando) is None, comando
+
+
 # --------------------------------------------------------------- roto a proposito
 def _romper(cual: str, g: ModuleType, s: ModuleType, monkeypatch: pytest.MonkeyPatch) -> None:
     """Rompe a proposito una pieza de esta rama (los dos sentidos de cada una)."""
@@ -519,6 +660,17 @@ def _romper(cual: str, g: ModuleType, s: ModuleType, monkeypatch: pytest.MonkeyP
         monkeypatch.setattr(g, "_nombre_admitido", lambda nombre: True)
         monkeypatch.setattr(g, "_no_ejecuta", lambda prog: True)
         monkeypatch.setattr(g, "GIT_C_CLAVES", {"core.quotepath"})
+    elif cual == "sin_carga":  # g) B quitada: lo que el guion carga vuelve a pasar sin leerse
+        monkeypatch.setattr(g, "_exigir_lo_que_carga", lambda arbol, ctx, guion, vistos: None)
+    elif cual == "carga_de_mas":  # g) nada esta instalado: la biblioteca estandar se niega
+        monkeypatch.setattr(g, "_instalado", lambda nombre, raiz: False)
+    elif cual == "sin_composicion":  # h) C quitada: las rutas a trozos vuelven a pasar
+        monkeypatch.setattr(g, "_compone_ruta_sensible", lambda arbol, ctx, recorre, guion: None)
+    elif cual == "composicion_de_mas":  # h) ninguna composicion se calcula y todas son sensibles
+        monkeypatch.setattr(g, "_calcular", lambda nodo, asig, guion, prof=0: "\x00/" + HOL)
+    elif cual == "sin_llaves_ni_url":  # h) bash sin expandir llaves y sin leer `file:`
+        monkeypatch.setattr(g, "_llaves", lambda patron, limite=256: [patron])
+        monkeypatch.setattr(g, "_ruta_de_url", lambda url: url)
     else:
         raise AssertionError(cual)
 
@@ -542,6 +694,13 @@ ROTURAS = [
     ("subcomando_de_mas", "test_f_solo_lectura_sigue_negando_lo_que_escribe"),
     ("sin_listas_nuevas", "test_f_which_rmdir_y_pythonioencoding_pasan"),
     ("lo_decidido_abierto", "test_f_lo_decidido_en_guion_mismo_comando_sigue_negado"),
+    ("sin_carga", "test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega"),
+    ("sin_carga", "test_g_el_codigo_en_linea_tambien"),
+    ("sin_carga", "test_g_mas_de_tres_niveles_se_niega"),
+    ("carga_de_mas", "test_g_lo_que_se_resuelve_y_es_inocuo_pasa"),
+    ("sin_composicion", "test_h_las_rutas_compuestas_al_material_se_niegan"),
+    ("composicion_de_mas", "test_h_las_composiciones_inocuas_pasan"),
+    ("sin_llaves_ni_url", "test_h_las_llaves_y_las_url_en_bash_se_niegan"),
 ]
 
 # Los parametrizados se rompen con su caso mas representativo.
@@ -549,6 +708,8 @@ PARAMETROS: dict[str, dict[str, Any]] = {
     "test_e_los_listados_del_holdout_se_niegan": {"comando": LISTADOS_DEL_HOLDOUT[0]},
     "test_e_el_recuento_y_lo_literal_pasan": {"comando": RECUENTOS_Y_LITERALES[4]},
     "test_a_la_forma_de_la_opcion_en_python_se_niega": {"forma": "argumento"},
+    "test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega": {"forma": "import_local"},
+    "test_h_las_rutas_compuestas_al_material_se_niegan": {"forma": "joinpath"},
 }
 
 
@@ -570,3 +731,50 @@ def test_roto_a_proposito(
         test(**{n: argumentos[n] for n in nombres})
     primera = str(fallo.value).splitlines()[0] if str(fallo.value) else "AssertionError"
     print(f"ROTO | {rotura} | {nombre} | falla: {primera[:160]}")
+
+
+# ------------------------------------- la comparacion caso a caso con la guardia de `main`
+MEDIR_G1 = RAIZ / "docs" / "validation" / "anexos" / "GUARDIA-G1" / "medir_g1.py"
+
+
+def _de_main(rel: str) -> str | None:
+    env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
+    for ref in ("main", "origin/main"):
+        r = subprocess.run(
+            ["git", "show", f"{ref}:{rel}"],
+            cwd=RAIZ,
+            capture_output=True,
+            encoding="utf-8",
+            check=False,
+            env=env,
+        )
+        if r.returncode == 0:
+            return r.stdout
+    return None
+
+
+def test_la_comparacion_caso_a_caso_con_la_guardia_de_main(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """El metodo de GUION-MISMO-COMANDO.md §1.4 (`anexos/GUARDIA-G1/medir_g1.py`): la guardia de
+    `main` y la de la rama sobre los mismos casos; ningun caso que `main` niega pasa en la rama sin
+    estar en `CAMBIOS_DECLARADOS`. Corre desde `tests/` porque desde la fase 2 (C) la guardia niega
+    ejecutar como guion suelto un fichero que monta rutas protegidas a trozos, que es lo que
+    `medir_g1.py` hace con su repo inventado (GUARDIA-G1.md §5)."""
+    hooks = tmp_path / "main" / ".claude" / "hooks"
+    hooks.mkdir(parents=True)
+    for nombre in ("guardia.py", "solo_lectura.py"):
+        texto = _de_main(f".claude/hooks/{nombre}")
+        if texto is None:
+            pytest.skip("sin `main` ni `origin/main` no hay guardia de main con que comparar")
+        (hooks / nombre).write_text(texto, encoding="utf-8")
+    spec = importlib.util.spec_from_file_location("medir_g1_anexo", MEDIR_G1)
+    assert spec is not None and spec.loader is not None
+    medir = importlib.util.module_from_spec(spec)
+    sys.modules["medir_g1_anexo"] = medir
+    spec.loader.exec_module(medir)
+    monkeypatch.setattr(sys, "argv", ["medir_g1.py", str(hooks / "guardia.py"), str(GUARDIA)])
+    salida = medir.main()
+    impreso = capsys.readouterr().out
+    print(impreso)
+    assert salida == 0, [x for x in impreso.splitlines() if "SIN DECLARARLO" in x]

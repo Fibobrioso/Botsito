@@ -7,6 +7,7 @@ rutas_permitidas:
   - .claude/hooks/solo_lectura.py
   - tests/unit/test_guardia_g1.py
   - tests/unit/test_guardia_claude.py  # el test de ls-files (:1855) cambia de sentido (encargo, punto e)
+  - tests/unit/test_guardia_ci.py  # fase 2: sus dos riesgos residuales cambian de sentido con B y C (ampliado el 2026-11-04, GUARDIA-G1.md §5)
   - docs/validation/GUARDIA-G1.md
   - docs/validation/anexos/GUARDIA-G1/**
   - docs/runbooks/ERRORES-RECURRENTES.md  # fase 3: la fila de las dos negativas de H, si esta rama las arregla
