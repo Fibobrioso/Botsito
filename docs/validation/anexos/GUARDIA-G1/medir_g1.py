@@ -58,6 +58,9 @@ CAMBIOS_DECLARADOS: dict[str, str] = {
     "b3-clon-nuevo": _K2 + " (el test nuevo de la rama, copiado al clon)",
     "b8-clon-barra": _K2,
     "b9-clon-opcion": _K2,
+    "c1-clon-regex": _K2
+    + " (K3: la diferencia solo existe en Windows, porque en Linux main ya lo dejaba pasar;"
+    " por eso la CI de Linux no la vio. Pre-cierre, GUARDIA-G1.md §13)",
     "c1-clon-regex-win": _K2 + " (K3 es K2)",
     "d2-con-r": _K4,
     "d3-barrido-1": _K4,
@@ -244,13 +247,15 @@ def preparar(r: Path, base: Path) -> dict[str, str]:
     escribir(
         r, "h5_concatenacion.py", f"print(open('knowledge' + '/' + 'cases' + '/{HOL}/1/secreto.yaml').read())\n"
     )
+    # `as_uri` y no `file://` + `as_posix`: en Windows eso da `file://C:/...`, otra maquina (§13).
+    url_secreto = Path(secreto).as_uri()
     escribir(
         r,
         "h_url.py",
-        f"from urllib.request import urlopen\nprint(urlopen('file://{secreto}').read())\n",
+        f"from urllib.request import urlopen\nprint(urlopen('{url_secreto}').read())\n",
     )
     escribir(r, "h_ci.py", "import subprocess\nsubprocess.run(['g' + 'h', 'run', 'view', '1'])\n")
-    return {"clon": clon.as_posix(), "secreto": secreto, "base": base.as_posix()}
+    return {"clon": clon.as_posix(), "secreto": secreto, "url_secreto": url_secreto, "base": base.as_posix()}
 
 
 def casos(rutas: dict[str, str]) -> list[tuple[str, str, str, dict[str, object]]]:
@@ -363,7 +368,7 @@ def casos(rutas: dict[str, str]) -> list[tuple[str, str, str, dict[str, object]]
         ("h5-concatenacion", "h", b, {"command": "uv run python h5_concatenacion.py"}),
         ("h6-llaves", "h", b, {"command": f"cat '{KC}/'{{{HOL},dev}}'/1/secreto.yaml'"}),
         ("h7-url-file", "h", b, {"command": "uv run python h_url.py"}),
-        ("h7b-url-file-curl", "h", b, {"command": f"curl file://{rutas['secreto']}"}),
+        ("h7b-url-file-curl", "h", b, {"command": f"curl {rutas['url_secreto']}"}),
         ("h8-ci-a-trozos", "h", b, {"command": "uv run python h_ci.py"}),
     ]
     del ka

@@ -525,7 +525,31 @@ def test_g_el_codigo_en_linea_tambien(g: ModuleType, repo: Path) -> None:
         assert _bash(g, repo, comando) is not None, comando
 
 
-def test_g_lo_que_se_resuelve_y_es_inocuo_pasa(g: ModuleType, repo: Path) -> None:
+def _paquetes_del_venv(repo: Path, *nombres: str) -> None:
+    """Lo que `_instalado` mira en el `.venv` del repo inventado, en vez del `.venv` de `RAIZ`, que
+    un clon no tiene (pre-cierre en Windows, GUARDIA-G1.md §13)."""
+    for nombre in nombres:
+        _escribir(repo, f".venv/Lib/site-packages/{nombre}/__init__.py")
+
+
+def test_g_sin_venv_el_import_de_terceros_se_niega(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """El hermano de `test_g_lo_que_se_resuelve_y_es_inocuo_pasa`: sin `.venv` no se puede resolver
+    un paquete de terceros y se niega por defecto; con el paquete en el `.venv`, pasa."""
+    monkeypatch.setattr(g, "RAIZ", repo)  # el `.venv` de la guardia tampoco cuenta
+    guion = _escribe_guion(repo, "trabajo/sin_venv.py", "import yaml\n")
+    motivo = _bash(g, repo, guion)
+    assert motivo is not None and "no se pudo resolver el modulo `yaml`" in motivo, motivo
+    _paquetes_del_venv(repo, "yaml")
+    assert _bash(g, repo, guion) is None
+
+
+def test_g_lo_que_se_resuelve_y_es_inocuo_pasa(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setattr(g, "RAIZ", repo)  # no depende del `.venv` de la guardia: un clon no tiene
+    _paquetes_del_venv(repo, "yaml", "pytest")
     _malo(repo)
     _escribir(repo, "trabajo/n1.py", "import n2\n")
     _escribir(repo, "trabajo/n2.py", "import n3\n")
@@ -533,7 +557,7 @@ def test_g_lo_que_se_resuelve_y_es_inocuo_pasa(g: ModuleType, repo: Path) -> Non
     for nombre, codigo in (
         ("local", "import mod_bueno\nprint(mod_bueno.X)\n"),
         ("estandar", "import json\nimport os.path\nfrom pathlib import Path\n"),
-        ("entorno", "import yaml\nimport pytest\n"),  # paquetes del .venv del repo
+        ("entorno", "import yaml\nimport pytest\n"),  # paquetes del .venv del repo inventado
         ("botsito", "from botsito.cases.holdout import casos_reservados\n"),
         ("de_main", "import sys\nsys.path.insert(0, 'scripts')\nimport de_main\n"),
         ("git", "import subprocess\nsubprocess.run(['git', 'status', '--short'])\n"),
@@ -568,9 +592,7 @@ COMPUESTAS = {
     "concatenacion": f"print(open('knowledge' + '/' + 'cases' + '/{HOL}/1/secreto.yaml').read())\n",
     "sin_calcular": "import sys\nfrom pathlib import Path\n"
     f"print((Path(sys.argv[1]) / '{HOL}' / '1' / 'secreto.yaml').read_text())\n",
-    "url": "from urllib.request import urlopen\nprint(urlopen('file://REPO/"
-    + SECRETO
-    + "').read())\n",
+    "url": "from urllib.request import urlopen\nprint(urlopen('REPO/" + SECRETO + "').read())\n",
     "ci_a_trozos": "import subprocess\nsubprocess.run(['g' + 'h', 'run', 'view', '1'])\n",
 }
 
@@ -579,18 +601,33 @@ COMPUESTAS = {
 def test_h_las_rutas_compuestas_al_material_se_niegan(
     g: ModuleType, repo: Path, forma: str
 ) -> None:
-    codigo = COMPUESTAS[forma].replace("REPO", repo.as_posix())
+    codigo = COMPUESTAS[forma].replace("REPO", repo.as_uri())
     motivo = _bash(g, repo, _escribe_guion(repo, f"c_{forma}.py", codigo))
-    assert motivo is not None, forma
+    assert motivo is not None and "canonizar" not in motivo, (forma, motivo)
 
 
 def test_h_las_llaves_y_las_url_en_bash_se_niegan(g: ModuleType, repo: Path) -> None:
+    """Con `as_uri` (`file:///C:/...`), la URL bien formada: se niega por la ruta que nombra, no por
+    no poder canonizarla (pre-cierre en Windows, GUARDIA-G1.md §13)."""
     for comando in (
         f"cat '{KC}/'{{{HOL},dev}}'/1/secreto.yaml'",  # GUARDIA-ALIAS.md §9, b6
-        f"curl file://{(repo / SECRETO).as_posix()}",  # b7
-        f"curl --url=file://{(repo / SECRETO).as_posix()}",
+        f"curl {(repo / SECRETO).as_uri()}",  # b7
+        f"curl --url={(repo / SECRETO).as_uri()}",
     ):
-        assert _bash(g, repo, comando) is not None, comando
+        motivo = _bash(g, repo, comando)
+        assert motivo is not None and "canonizar" not in motivo, (comando, motivo)
+
+
+@pytest.mark.skipif(os.name != "nt", reason="el canon de dos barras solo corre en Windows")
+def test_h_la_url_file_mal_formada_sigue_negada(g: ModuleType, repo: Path) -> None:
+    """`file://C:/...`, con dos barras, es un recurso de la maquina `C:`: la guardia no sabe si cae
+    bajo la raiz y lo niega, aunque nombre un fichero inocuo. Negar ahi es el lado seguro (respuesta
+    al pre-cierre, punto 2). Solo en Windows: en Linux `//C:/x` no nombra nada del repo."""
+    bien = (repo / "docs/a.md").as_uri()
+    assert bien.startswith("file:///")
+    mal = "file://" + bien.removeprefix("file:///")
+    motivo = _bash(g, repo, f"curl {mal}")
+    assert motivo is not None and "canonizar" in motivo, motivo
 
 
 def test_h_las_composiciones_inocuas_pasan(g: ModuleType, repo: Path) -> None:
@@ -608,7 +645,7 @@ def test_h_las_composiciones_inocuas_pasan(g: ModuleType, repo: Path) -> None:
     ):
         guion = _escribe_guion(repo, f"ok_c_{nombre}.py", codigo)
         assert _bash(g, repo, guion) is None, (nombre, _bash(g, repo, guion))
-    for comando in ("cat '{docs,src}/a.md'", f"curl file://{(repo / 'docs/a.md').as_posix()}"):
+    for comando in ("cat '{docs,src}/a.md'", f"curl {(repo / 'docs/a.md').as_uri()}"):
         assert _bash(g, repo, comando) is None, comando
 
 

@@ -1285,7 +1285,9 @@ sin cambio, porque tocan `src/` (respuesta, punto 13).
     nombra un fragmento de `SENSIBLES`. Y `subprocess` con `cwd=` que no se calcula analiza la orden
     desde el directorio de trabajo.»
   - «Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que
-    cargan, y un `getattr(os, ...)` no se ve.»
+    cargan, y un `getattr(os, ...)` no se ve. Y en un clon sin .venv (git worktree), un guion de
+    trabajo que importa un paquete de terceros se niega; los tests del clon no, por
+    _test_de_un_clon.»
   - «Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`,
     `pico_memoria.py`, `huso_por_velas.py`), cambiados en una rama, no se ejecutan sueltos desde la
     sesión: B los niega por llamar a `git` o a un programa con argumentos que no se calculan, o por
@@ -1311,6 +1313,11 @@ unos 100, y entran cuatro de Technical Debt (unos 1.500): queda por debajo de lo
 nada.
 
 ## 8. Lo que solo Aleks puede probar en Windows, con los comandos exactos
+
+> **RECUADRO (2026-11-04, pre-cierre).** Estas pruebas encontraron tres fallos que la CI de Linux no
+> podía ver: en `test_guardia_g1.py`, 3 tests rojos en el clon y 2 en el repo real (la guardia acertó
+> en los siete comandos). Causas y arreglos, en §13. Y estos comandos, encadenados con `cd &&`, los
+> niega la guardia de `main` por forma: se lanzaron sueltos, con la ruta del clon como argumento.
 
 Lo de Windows está simulado en los tests (`_windows` en `test_guardia_g1.py`, como `_romper` de
 `test_guardia_alias.py`). Lo que la simulación no ve -la raíz de unidad de verdad, el `realpath` de
@@ -1408,7 +1415,7 @@ en test`.
   como lo que son, con la lección de siempre (una cosa por llamada; respuesta a la PARADA 2,
   «Además»); el número de ADR reservado; y la medida de una rama de guardia desde `tests/`. La columna
   del revisor se rellena con su informe (§12).
-- **PROJECT_STATE.md**: solo el recuento de tests (1800 → 1837 con los tests de los arreglos del revisor, lo exige `state check`) y lo que hizo
+- **PROJECT_STATE.md**: solo el recuento de tests (1800 → 1837 con los tests de los arreglos del revisor, y 1839 con los dos del pre-cierre, §13; lo exige `state check`) y lo que hizo
   `abrir-rama`; 21.814 bytes.
 
 ## 10. La CI de Linux
@@ -1425,6 +1432,9 @@ Se empuja la rama a `origin/trabajo/guardia-g1` y a `fix/guardia-g1` (la CI solo
   de la respuesta a la PARADA 2).
 - El commit del informe del revisor se empuja también a `fix/guardia-g1`; su run, en el mensaje final
   a Aleks (este informe ya no cambia después).
+- **Run 41867739409**, sobre 9537b7b (el commit del informe del revisor): `1 failed, 3160 passed, 46
+  skipped`; el fallo esperado de `state check`. El «ya no cambia» de la línea anterior lo dejó sin
+  efecto el pre-cierre (§13).
 
 ## 11. El encargo, punto por punto
 
@@ -1522,9 +1532,103 @@ holdout) van enmascaradas (`<holdout>`, `<caso>`), por la misma regla que su hal
 Tras los arreglos: `tests/unit/test_guardia_g1.py` tiene 140 tests y 33 roturas en `ROTURAS`, más los
 dos «roto» aparte de B2; los tests de los seis ficheros de la guardia y del revisor, en verde.
 
+## Respuesta del consultor a la PARADA del pre-cierre (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA del pre-cierre de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA del pre-cierre», y aplícala punto por punto en ESTA rama y en esta sesión (Windows, con la guardia de la rama viva).
+>
+> 1. c1-clon-regex: sí, se declara en la lista de la comparación (CAMBIOS_DECLARADOS) como K3, punto 3 de la respuesta a la PARADA, con una línea que diga que la diferencia solo existe en Windows (en Linux main ya lo dejaba pasar) y que por eso la CI de Linux no la vio. Es lo que la rama venía a arreglar.
+> 2. curl file://C:/…: el test estaba mal formado (as_posix da file://C:/…, dos barras, y eso es un recurso de otra máquina). Corrige el test para que monte la URL con Path.as_uri() (file:///C:/…, la forma correcta) y mide: si la guardia lee file:///C:/… como su ruta y el test pasa, listo; si la guardia no la canoniza en Windows, es un defecto de la guardia y se arregla en guardia.py (la ruta tras file:/// se trata como una ruta absoluta de Windows), con su test roto a propósito en los dos sentidos. Y un test nuevo que fije que file://C:/… (mal formada) sigue negada: negar ahí es el lado seguro.
+> 3. import yaml en el clon: la guardia hace lo correcto (sin .venv no puede resolver un paquete de terceros y niega por defecto). Se arregla el TEST, no la guardia: test_g_lo_que_se_resuelve_y_es_inocuo_pasa no puede depender del .venv de RAIZ; que el repo sintético del test lleve lo que _instalado necesita para resolver el paquete (o que el test simule _instalado como simula _absoluta), y que un test hermano fije lo contrario: sin .venv, el import de terceros se niega. Añade a la línea de Technical Debt de B preparada en §7 este riesgo residual: «en un clon sin .venv (git worktree), un guion de trabajo que importa un paquete de terceros se niega; los tests del clon no, por _test_de_un_clon».
+> 4. Dónde y cómo: aquí, en esta rama, en commits sellados con make check > make-check.log 2>&1 EN WINDOWS (el sello de verdad para esta rama; la línea PICO DE MEMORIA al informe). Si la guardia o el clasificador te niegan algo, PARADA, salvo la forma que proponga el mensaje. Después: push a trabajo/guardia-g1 y a fix/guardia-g1 (git push origin trabajo/guardia-g1:refs/heads/fix/guardia-g1), CI de Linux con un gh run view suelto (solo el fallo esperado de state check), y el número de run al §10.
+> 5. El clon: no lo quites todavía. Con el commit nuevo, lo recreas (con «!» lo lanzo yo: git worktree remove C:/cm/g1 y después git worktree add --detach C:/cm/g1 trabajo/guardia-g1) y repites 3a y 3b sueltos; 3a tiene que dar 0 failed en el clon y en el repo real. Luego el punto 4 del pre-cierre (remove y prune, con «!»).
+> 6. §13 del informe, «Pruebas en Windows (2026-11-04)»: la tabla de los siete comandos de hoy, los tres tests rojos con su causa y su arreglo, y la lección, que va también a la fila de ERRORES-RECURRENTES de la rama (columna del consultor, hallazgo «importa», del proceso): «una rama de la guardia hecha en Linux no está lista para revisión hasta que make check pasa en Windows; la CI de Linux no ve lo que depende de la raíz de unidad, de file:/// ni del .venv». Y un recuadro en §8 que diga que el pre-cierre encontró estos tres fallos.
+> 7. Revisor: solo si el punto 2 toca guardia.py, una pasada del revisor acotada al diff de estos commits, pegada en §12 como segunda pasada. Si solo cambian tests, no hace falta.
+>
+> Al terminar, informe en el terminal: commits, sello en Windows (passed y PICO), run de la CI, resultado de 3a y 3b en el clon, y que el clon está quitado. NO cierres: la orden de cierre viene después.
+
+## 13. Pruebas en Windows (2026-11-04)
+
+Con el repo real en la rama (`9537b7b`, `main` en `7a3a1ff`) y la guardia viva de la rama, cada comando
+suelto. El clon `C:/cm/g1` lo creó Aleks con «!».
+
+### 13.1 Los siete comandos
+
+| Paso | Comando | Lo que dijo la guardia | ¿Coincide? |
+|---|---|---|---|
+| 3a | `uv run pytest C:/cm/g1/tests/unit/test_guardia_g1.py -q -p no:cacheprovider` | Pasa. Pytest: **3 failed, 137 passed** | Guardia sí; **los tests no** (§13.2) |
+| 3b | `uv run pytest C:/cm/g1/tests/unit/test_cuarentena.py -q -p no:cacheprovider` | Pasa. Pytest: 40 en verde | Sí |
+| 3c | `grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py` | Pasa; imprime la línea 38 | Sí |
+| 3d | `grep -rn " " src/botsito/cli.py` | Se niega: «leer el contenido de  .» | Sí |
+| 3e | `git ls-files knowledge/cases \| grep -v holdout` | Se niega con ADR-0088 | Sí |
+| 3e | `git ls-files knowledge/cases/holdout \| wc -l` | Pasa; imprime solo un número | Sí |
+| 3f | `uv run python docs/validation/anexos/GUARDIA-G1/costo_c.py` | Pasa. En «C sola», `scripts/transcribir_sesion.py` y `scripts/viabilidad_trader.py` NIEGA; `a18_buscar`, `a35_fotogramas`, `v5_criterio`, `caja_77_exploratoria` y `embudo_77` PASA | Sí |
+
+### 13.2 Los tres tests rojos
+
+El mismo fichero en el repo real, para separar lo del clon: **2 failed, 138 passed**. Ninguno de los
+tres dejaba pasar material protegido.
+
+| Test | Dónde | Causa (medida) | Arreglo |
+|---|---|---|---|
+| `test_la_comparacion_caso_a_caso_con_la_guardia_de_main` | clon y repo real | `c1-clon-regex`: `main` NIEGA (`\.` es en Windows la raíz de la unidad, §1.c) y la rama PASA, sin declarar: en Linux `main` ya lo dejaba pasar, así que la CI de Linux nunca vio la diferencia | Declarado en `CAMBIOS_DECLARADOS` como K3 (punto 1) |
+| `test_h_las_composiciones_inocuas_pasan` | clon y repo real | El test montaba `file://` + `as_posix()`, que en Windows da `file://C:/...`: `//C:/...`, un recurso de otra máquina | El test usa `Path.as_uri()` (punto 2). **La guardia lee `file:///C:/...` como su ruta y no se toca** (`_ruta_de_url`) |
+| `test_g_lo_que_se_resuelve_y_es_inocuo_pasa` | solo el clon | `_instalado` busca el paquete en el `.venv` del repo inventado y en el de `RAIZ`, que aquí es el clon: ninguno tiene `.venv`. La guardia hacía lo correcto | El repo inventado lleva lo que `_instalado` mira (`_paquetes_del_venv`) y `RAIZ` se simula (punto 3) |
+
+**Lo que el arreglo del punto 2 destapó.** La misma URL mal formada estaba en los casos que afirman que
+se NIEGA (`test_h_las_llaves_y_las_url_en_bash_se_niegan`, la `url` de `COMPUESTAS`, y `h7` y `h7b` de
+`medir_g1.py`): en Windows esos casos se negaban por no poder canonizar, no por la ruta protegida que
+nombran. Pasan a `as_uri()`, y los dos tests exigen además que el motivo no sea «canonizar».
+Medido en Windows: `h7b` «`curl` lee la URL file:///<tmp>/repo/<holdout>/1/secreto.yaml».
+
+**Tests nuevos (2; 1837 → 1839):**
+- `test_h_la_url_file_mal_formada_sigue_negada`: `file://C:/...` sigue negada aunque nombre un fichero
+  inocuo. **Solo corre en Windows** (`skipif`): el tratamiento de las dos barras está dentro de `os.name
+  == "nt"` (`_canonica`, `guardia.py:1371`), y en Linux `//C:/x` no nombra nada del repo. Por eso los
+  saltados de la CI de Linux suben de 46 a 47.
+- `test_g_sin_venv_el_import_de_terceros_se_niega`: sin `.venv`, `import yaml` se niega por el módulo; con
+  el paquete en el `.venv`, pasa. Cubre los dos sentidos.
+
+### 13.3 La respuesta, punto por punto
+
+| Punto | Lo hecho | Dónde |
+|---|---|---|
+| 1 | Hecho | `medir_g1.py`, `CAMBIOS_DECLARADOS` |
+| 2 | Hecho, solo en tests: la guardia ya leía `file:///C:/...`. Sin cambio en `guardia.py` | `test_guardia_g1.py`, `medir_g1.py` |
+| 3 | Hecho, y la línea de Technical Debt de B | `test_guardia_g1.py`, §7 |
+| 4 | Sello y CI, en §13.4 | §10, §13.4 |
+| 5 | En §13.4 | §13.4 |
+| 6 | Hecho: esta sección, el recuadro de §8 y la fila de ERRORES-RECURRENTES | §8, §13 |
+| 7 | **No aplica:** `guardia.py` no cambia, así que no hay segunda pasada del revisor | — |
+
+**Negativa de la guardia en esta sesión:** `sed -i "<línea>r <fichero>" docs/validation/GUARDIA-G1.md`,
+para insertar la respuesta aquí: «`sed` con un programa fuera de la lista de lo admitido». Propone
+«el guion, con la herramienta Write»; el texto se insertó con Edit, la vía normal para un informe. No es
+un hallazgo: un error de forma de la sesión contra una regla de `main`.
+
+**Exposiciones: ninguna.** `git ls-files knowledge/cases/holdout | wc -l` da un recuento de ficheros, sin
+nombres; las salidas de los tests y de `costo_c.py` nombran rutas de los guiones y del repo inventado,
+ningún contenido del material.
+
+**Lo que no se midió:** `make check` en Windows antes de este pre-cierre; por eso estos fallos llegaron
+hasta aquí.
+
+### 13.4 Lo que el pre-cierre deja medido
+
+Pendiente del commit siguiente: el sello en Windows, el run de la CI y 3a y 3b en el clon recreado.
+
+### 13.5 La lección
+
+Una rama de la guardia hecha en Linux no está lista para revisión hasta que `make check` pasa en
+Windows; la CI de Linux no ve lo que depende de la raíz de unidad, de `file:///` ni del `.venv`.
+
 ## Estado
 
 Rama lista para revisión, NO cerrada. Fases 0, 1, 2 y 3 hechas y selladas; las dos PARADAS
 respondidas y aplicadas; la CI de Linux de `fix/guardia-g1` (run 41858841083) con solo el fallo
-esperado de `state check` (§10); el revisor pasado y lo hecho con cada hallazgo en §12.1. El cierre lo
+esperado de `state check` (§10); el revisor pasado y lo hecho con cada hallazgo en §12.1. El
+pre-cierre en Windows encontró tres tests rojos, arreglados en los tests (§13). El cierre lo
 ejecuta Aleks en su portátil, con la orden de cierre (líneas preparadas en §7; lo de Windows, §8).
