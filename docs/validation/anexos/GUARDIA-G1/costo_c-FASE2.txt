@@ -1,0 +1,190 @@
+guiones .py de scripts/ y tests/ en main: 203
+
+# scripts/, uno por uno (C sola, y el analisis entero de la rama)
+scripts/a18_buscar.py: 3 composiciones, 2 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/transcripciones/*.yaml`) y que nombra `corpu; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/transcripciones/*.yaml`) y que nombra `corpu
+scripts/a35_fotogramas.py: 11 composiciones, 3 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/fotogramas/*.yaml`) y que nombra `corpus`: n; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/fotogramas/*.yaml`) y que nombra `corpus`: n
+scripts/barrido_dias.py: 1 composiciones, 0 calculadas; C PASA; entero PASA
+scripts/bloque_de_la_caja.py: 7 composiciones, 5 calculadas; C PASA; entero PASA
+scripts/buscar_ambiguedades.py: 1 composiciones, 1 calculadas; C PASA; entero PASA
+scripts/caja_77.py: 8 composiciones, 2 calculadas; C PASA; entero PASA
+scripts/caja_77_exploratoria.py: 6 composiciones, 2 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede ; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede 
+scripts/contrato_rama.py: 3 composiciones, 3 calculadas; C PASA; entero NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' '-c' 'core.quotepath=false' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega co
+scripts/decodificar_png.py: 0 composiciones, 0 calculadas; C PASA; entero PASA
+scripts/embudo_77.py: 6 composiciones, 1 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede ; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede 
+scripts/f35_resultado_r.py: 3 composiciones, 2 calculadas; C PASA; entero PASA
+scripts/ficheros_con_ocultos.py: 2 composiciones, 0 calculadas; C PASA; entero PASA
+scripts/graficos_sesion.py: 12 composiciones, 3 calculadas; C PASA; entero PASA
+scripts/hoja_preguntas.py: 1 composiciones, 0 calculadas; C PASA; entero PASA
+scripts/huso_por_velas.py: 6 composiciones, 1 calculadas; C PASA; entero NIEGA: el codigo carga o ejecuta `sys.path.insert(...)`: cambia `sys.path` con un valor que no se calcula.
+scripts/instalar_hooks.py: 1 composiciones, 0 calculadas; C PASA; entero NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+scripts/instante_llenado.py: 4 composiciones, 2 calculadas; C PASA; entero PASA
+scripts/instante_ticks.py: 7 composiciones, 3 calculadas; C PASA; entero PASA
+scripts/leer_demo_ftmo.py: 0 composiciones, 0 calculadas; C PASA; entero PASA
+scripts/mover_sesion.py: 5 composiciones, 2 calculadas; C PASA; entero PASA
+scripts/orden_stop_o_limite.py: 13 composiciones, 10 calculadas; C PASA; entero PASA
+scripts/pico_memoria.py: 0 composiciones, 0 calculadas; C PASA; entero NIEGA: el codigo carga o ejecuta `subprocess.run(...)`: el programa que lanza no se calcula.
+scripts/repeticion_trader.py: 6 composiciones, 4 calculadas; C PASA; entero PASA
+scripts/sello_make_check.py: 0 composiciones, 0 calculadas; C PASA; entero NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+scripts/sesgo_h4_diagnostico.py: 4 composiciones, 4 calculadas; C PASA; entero PASA
+scripts/ticks_integridad.py: 2 composiciones, 1 calculadas; C PASA; entero PASA
+scripts/ticks_spread.py: 2 composiciones, 1 calculadas; C PASA; entero PASA
+scripts/transcribir_sesion.py: 12 composiciones, 1 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/*.cruda-no-leer.jsonl`) y que nombra `cruda`: no se puede decidir si llega a m; entero NIEGA: el codigo nombra .cruda-NO-LEER.jsonl.
+scripts/v5_criterio.py: 7 composiciones, 5 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/data/fotogramas/v5/png-1fps/*.png`) y que nombra `data/`: no ; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/data/fotogramas/v5/png-1fps/*.png`) y que nombra `data/`: no 
+scripts/verificacion_a21.py: 5 composiciones, 5 calculadas; C PASA; entero PASA
+scripts/verificacion_a21_entradas.py: 5 composiciones, 5 calculadas; C PASA; entero PASA
+scripts/verificacion_a35_a44.py: 6 composiciones, 5 calculadas; C PASA; entero PASA
+scripts/viabilidad_comision.py: 6 composiciones, 2 calculadas; C PASA; entero PASA
+scripts/viabilidad_trader.py: 9 composiciones, 1 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra
+
+# C sola: 49 negados (7 de scripts/, 42 de tests/)
+  scripts/a18_buscar.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/transcripciones/*.yaml`) y que nombra `corpu
+  scripts/a35_fotogramas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/fotogramas/*.yaml`) y que nombra `corpus`: n
+  scripts/caja_77_exploratoria.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede 
+  scripts/embudo_77.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede 
+  scripts/transcribir_sesion.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/*.cruda-no-leer.jsonl`) y que nombra `cruda`: no se puede decidir si llega a m
+  scripts/v5_criterio.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/data/fotogramas/v5/png-1fps/*.png`) y que nombra `data/`: no 
+  scripts/viabilidad_trader.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra
+  tests/contract/test_anterioridad.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/feedback`) y que nombra `knowledge/feedback`: no se puede decidir si
+  tests/contract/test_cobertura.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/solo-el-8.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material 
+  tests/contract/test_ensayo_marzo.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus`) y que nombra `corpus`: no se puede decidir si llega a mater
+  tests/contract/test_import_contracts.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/src/botsito/cases/holdout.py`) y que nombra `holdout`: no se puede decidir si 
+  tests/contract/test_ingesta.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/2026-09-09-sesion-01`) y que nombra `knowledge/cases`: no 
+  tests/contract/test_ingesta_fidelidad.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/contract/test_ingesta_rejilla.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/libro.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material prot
+  tests/contract/test_kit_particiones.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/2026-09-15-sesion-01/particiones.yaml`) y que nombra `know
+  tests/contract/test_libros.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/l.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material protegid
+  tests/contract/test_mes_del_material.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/contract/test_regla_mes_sin_filas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/contract/test_tramos_fuente.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/feedback`) y que nombra `knowledge/feedback`: no se puede decidir si
+  tests/contract/test_visto.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`simbolo: xxxyyy
+  tests/integration/test_fotogramas_ffmpeg.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: no se puede decidir si llega a material proteg
+  tests/regression/test_cuenta_7_de_agosto.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`sin los datos de construccion en data/: *`) y que nombra `data/`: no se puede de
+  tests/unit/test_a18_buscar.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/datos/transcripciones/vx/cruda.jsonl`) y que nombra `transcripciones`: no se p
+  tests/unit/test_arnes_motor.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/unit/test_cases_rejilla.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/fidelidad/xxxyyy-2026-05/ventanas.yaml`) y que nombra `knowled
+  tests/unit/test_cli.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`version: 1
+  tests/unit/test_cli_data.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/manifests`) y que nombra `data/`: no se puede decidir si llega a material
+  tests/unit/test_cuarentena.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/cruda.jsonl`) y que nombra `cruda`: no se puede decidir si llega a material pr
+  tests/unit/test_cuarentena_por_condicion.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/2026-09-15-sesion-01`) y que nombra `knowledge/cases`: no 
+  tests/unit/test_dataset.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/manifests/roto.yml`) y que nombra `data/`: no se puede decidir si llega a
+  tests/unit/test_evidence.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus/tramos_no_citables.yaml`) y que nombra `corpus`: no se puede 
+  tests/unit/test_feedback.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/feedback`) y que nombra `knowledge/feedback`: no se puede decidir si
+  tests/unit/test_filtradas_con_tramos.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus/tramos_no_citables.yaml`) y que nombra `corpus`: no se puede 
+  tests/unit/test_fotogramas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus/fotogramas`) y que nombra `corpus`: no se puede decidir si ll
+  tests/unit/test_guarda_holdout.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<holdout>`) y que nombra `holdout`: no se puede decidir si llega
+  tests/unit/test_guardia_alias.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/x.xlsx.
+  tests/unit/test_guardia_ci.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/v.mp4.
+  tests/unit/test_guardia_claude.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<holdout>/1/x.yaml`) y que nombra `holdout`: no se puede decidir
+  tests/unit/test_guardia_ffmpeg.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/v.mp4.
+  tests/unit/test_historial_sin_git.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/manifests`) y que nombra `data/`: no se puede decidir si llega a material
+  tests/unit/test_huso_por_velas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/marzo.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material prot
+  tests/unit/test_inventario.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: no se puede decidir si llega a material proteg
+  tests/unit/test_kit.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/fidelidad`) y que nombra `knowledge/cases`: no se puede decidi
+  tests/unit/test_pipeline_transcripcion.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: no se puede decidir si llega a material proteg
+  tests/unit/test_puerta_holdout.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/docs/validation/autorizacion-holdout-2.md`) y que nombra `holdout`: no se pued
+  tests/unit/test_retirados.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/s1`) y que nombra `knowledge/cases`: no se puede decidir s
+  tests/unit/test_retrieval.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/*-datos/transcripciones/v1/falso`) y que nombra `transcripciones`: no se puede
+  tests/unit/test_ticks.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/ticks/prueba-ticks.parcial`) y que nombra `data/`: no se puede decidir si
+  tests/unit/test_visor.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+
+# el analisis entero (B y C): 100 negados (12 de scripts/, 88 de tests/)
+  scripts/a18_buscar.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/transcripciones/*.yaml`) y que nombra `corpu
+  scripts/a35_fotogramas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/knowledge/corpus/fotogramas/*.yaml`) y que nombra `corpus`: n
+  scripts/caja_77_exploratoria.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede 
+  scripts/contrato_rama.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' '-c' 'core.quotepath=false' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega co
+  scripts/embudo_77.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/config.yaml`) y que nombra `knowledge/cases`: no se puede 
+  scripts/huso_por_velas.py: NIEGA: el codigo carga o ejecuta `sys.path.insert(...)`: cambia `sys.path` con un valor que no se calcula.
+  scripts/instalar_hooks.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  scripts/pico_memoria.py: NIEGA: el codigo carga o ejecuta `subprocess.run(...)`: el programa que lanza no se calcula.
+  scripts/sello_make_check.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  scripts/transcribir_sesion.py: NIEGA: el codigo nombra .cruda-NO-LEER.jsonl.
+  scripts/v5_criterio.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`/home/user/botsito/data/fotogramas/v5/png-1fps/*.png`) y que nombra `data/`: no 
+  scripts/viabilidad_trader.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra
+  tests/conftest.py: NIEGA: el codigo carga o ejecuta `from tests import ...`: no se pudo resolver el modulo `tests` (ni local ni del entorno).
+  tests/contract/test_anterioridad.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/feedback`) y que nombra `knowledge/feedback`: no se puede decidir si
+  tests/contract/test_cobertura.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/solo-el-8.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material 
+  tests/contract/test_data_manifest_history.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/contract/test_ensayo_marzo.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus`) y que nombra `corpus`: no se puede decidir si llega a mater
+  tests/contract/test_evidence_history.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/contract/test_feedback_history.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/contract/test_fotogramas_history.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/contract/test_import_contracts.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/src/botsito/cases/holdout.py`) y que nombra `holdout`: no se puede decidir si 
+  tests/contract/test_ingesta.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/2026-09-09-sesion-01`) y que nombra `knowledge/cases`: no 
+  tests/contract/test_ingesta_fidelidad.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/contract/test_ingesta_rejilla.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/libro.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material prot
+  tests/contract/test_kit_particiones.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/2026-09-15-sesion-01/particiones.yaml`) y que nombra `know
+  tests/contract/test_libros.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/l.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material protegid
+  tests/contract/test_mes_del_material.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/contract/test_no_business_literals.py: NIEGA: el codigo carga o ejecuta `eval(...)`: el codigo que ejecuta no es literal ni un fichero literal.
+  tests/contract/test_regla_mes_sin_filas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/contract/test_repository_integrity.py: NIEGA: el codigo carga o ejecuta `from tests.unit.test_tree import ...`: no se pudo resolver el modulo `tests.unit.test_tree` (ni local ni del entorno).
+  tests/contract/test_tramos_fuente.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/feedback`) y que nombra `knowledge/feedback`: no se puede decidir si
+  tests/contract/test_transcripcion_history.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/contract/test_visto.py: NIEGA: el codigo nombra Material/backtesting-analytics PRUEBA.xlsx.
+  tests/integration/test_fotogramas_ffmpeg.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: no se puede decidir si llega a material proteg
+  tests/regression/test_cuenta_7_de_agosto.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`sin los datos de construccion en data/: *`) y que nombra `data/`: no se puede de
+  tests/unit/test_a18_buscar.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/datos/transcripciones/vx/cruda.jsonl`) y que nombra `transcripciones`: no se p
+  tests/unit/test_a21_series.py: NIEGA: el codigo carga o ejecuta `from tests.unit.test_estructura_m1 import ...`: no se pudo resolver el modulo `tests.unit.test_estructura_m1` (ni local ni 
+  tests/unit/test_arnes_motor.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l
+  tests/unit/test_cableado.py: NIEGA: el codigo carga o ejecuta `from tests.unit.perfil_stops_level_unknown import ...`: no se pudo resolver el modulo `tests.unit.perfil_stops_level_unknow
+  tests/unit/test_caja_hasta_el_llenado.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_caja_lado_de_ruido.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_cases_rejilla.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/fidelidad/xxxyyy-2026-05/ventanas.yaml`) y que nombra `knowled
+  tests/unit/test_cierres_de_mercado.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_cli.py: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+  tests/unit/test_cli_data.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/manifests`) y que nombra `data/`: no se puede decidir si llega a material
+  tests/unit/test_compilar_mql5.py: NIEGA: el codigo lanza `'git' '-C' "$__GUARDIA_DINAMICO__" 'init' '-q'` (`subprocess.run`), y la guardia lo niega como comando: `git -C` con una ruta dinamic
+  tests/unit/test_contrato_rama.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' '-c' 'user.name=t' '-c' 'user.email=t@t' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardi
+  tests/unit/test_cuarentena.py: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+  tests/unit/test_cuarentena_por_condicion.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/2026-09-15-sesion-01`) y que nombra `knowledge/cases`: no 
+  tests/unit/test_dataset.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/manifests/roto.yml`) y que nombra `data/`: no se puede decidir si llega a
+  tests/unit/test_dos_relojes.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_escenarios_por_sesion.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_estado_sesion.py: NIEGA: el codigo nombra <holdout>/1/caso.yaml.
+  tests/unit/test_evidence.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus/tramos_no_citables.yaml`) y que nombra `corpus`: no se puede 
+  tests/unit/test_feedback.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/feedback`) y que nombra `knowledge/feedback`: no se puede decidir si
+  tests/unit/test_fidelidad_marzo.py: NIEGA: el codigo carga o ejecuta `from tests.unit.test_kit import ...`: no se pudo resolver el modulo `tests.unit.test_kit` (ni local ni del entorno).
+  tests/unit/test_filtradas_con_tramos.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus/tramos_no_citables.yaml`) y que nombra `corpus`: no se puede 
+  tests/unit/test_fotogramas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/corpus/fotogramas`) y que nombra `corpus`: no se puede decidir si ll
+  tests/unit/test_freno_peticiones.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_guarda_holdout.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<holdout>`) y que nombra `holdout`: no se puede decidir si llega
+  tests/unit/test_guardia_alias.py: NIEGA: la ruta `/proc/1/cwd` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae bajo la
+  tests/unit/test_guardia_ci.py: NIEGA: esperar a la CI: `gh run` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera
+  tests/unit/test_guardia_claude.py: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+  tests/unit/test_guardia_ffmpeg.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/v.mp4.
+  tests/unit/test_historia.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/unit/test_historial_sin_git.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/manifests`) y que nombra `data/`: no se puede decidir si llega a material
+  tests/unit/test_hooks_utf8.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/unit/test_huso_por_velas.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/marzo.xlsx`) y que nombra `xlsx`: no se puede decidir si llega a material prot
+  tests/unit/test_inventario.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: no se puede decidir si llega a material proteg
+  tests/unit/test_kit.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/fidelidad`) y que nombra `knowledge/cases`: no se puede decidi
+  tests/unit/test_margen_lote.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_mecha_que_vuelve.py: NIEGA: el codigo carga o ejecuta `from tests.unit.test_estructura_m1 import ...`: no se pudo resolver el modulo `tests.unit.test_estructura_m1` (ni local ni 
+  tests/unit/test_memoria.py: NIEGA: el codigo carga o ejecuta `subprocess.run(...)`: el programa que lanza no se calcula.
+  tests/unit/test_orden_en_el_0_con_mecha.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_orden_stop_pivote.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_perfil_cuenta.py: NIEGA: el codigo carga o ejecuta `from tests.unit.perfil_stops_level_unknown import ...`: no se pudo resolver el modulo `tests.unit.perfil_stops_level_unknow
+  tests/unit/test_pipeline_transcripcion.py: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+  tests/unit/test_preparar_a21.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_preparar_a44.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_puerta_holdout.py: NIEGA: el codigo nombra <holdout>/2/caso-secreto.yaml.
+  tests/unit/test_punto_usado.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_push_atomico.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/unit/test_racha_perdidas.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_reabrir_y_fuente_documental.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/unit/test_renovar_cierres.py: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: reco
+  tests/unit/test_retirados.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/kit/s1`) y que nombra `knowledge/cases`: no se puede decidir s
+  tests/unit/test_retrieval.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/*-datos/transcripciones/v1/falso`) y que nombra `transcripciones`: no se puede
+  tests/unit/test_revisor.py: NIEGA: el codigo carga o ejecuta `subprocess.run(...)`: el programa que lanza no se calcula.
+  tests/unit/test_rn020_retira_pendiente.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_rn035_ventana_fin.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_selector_orden_stop.py: NIEGA: el codigo carga o ejecuta `from tests.unit.perfil_stops_level_unknown import ...`: no se pudo resolver el modulo `tests.unit.perfil_stops_level_unknow
+  tests/unit/test_sello_make_check.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
+  tests/unit/test_sesiones_independientes.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_sesiones_rejilla_h4.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_ticks.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/data/ticks/prueba-ticks.parcial`) y que nombra `data/`: no se puede decidir si
+  tests/unit/test_transcripcion.py: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+  tests/unit/test_ultimo_minuto.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_velas_sin_cuerpo_m1.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_vida_de_la_orden.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
+  tests/unit/test_visor.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/dev`) y que nombra `knowledge/cases`: no se puede decidir si l

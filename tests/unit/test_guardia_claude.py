@@ -1781,7 +1781,9 @@ def test_ejecucion_cuarta_pasada_fija_variable_niega(
         "sort -S 1M docs/a.md",  # `-S` (buffer) no ejecuta
         "awk '/a|b/{print}' docs/a.md",  # la `|` de una regex, no una tuberia
         "awk '{print $1/2, $3/4}' docs/a.md",  # divisiones sin redireccion
-        "find . -exec sha256sum {} +",  # un lector sigue exento
+        # un lector sigue exento; con rutas literales desde `trabajo/guardia-g1`: `find .` desde la
+        # raiz lista el holdout (ADR-0088; ver `test_listar_desde_la_raiz_...`, abajo)
+        "find src -exec sha256sum {} +",
     ],
 )
 def test_ejecucion_cuarta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
@@ -1852,7 +1854,9 @@ def test_ejecucion_quinta_pasada_fija_variable_niega(
 @pytest.mark.parametrize(
     "comando",
     [
-        "git ls-files",  # lectores de git que `main` deja pasar (B5)
+        # lectores de git que `main` deja pasar (B5); `git ls-files` con rutas literales desde
+        # `trabajo/guardia-g1` (sin rutas lista el holdout: `test_listar_desde_la_raiz_...`)
+        "git ls-files src docs",
         "git ls-tree HEAD",
         "git show-ref",
         "git hash-object docs/a.md",
@@ -1867,6 +1871,20 @@ def test_ejecucion_quinta_pasada_fija_variable_niega(
 def test_ejecucion_quinta_pasada_admite(g: ModuleType, repo: Path, comando: str) -> None:
     _ejecucion(repo)
     assert _bash(g, repo, comando) is None, (comando, _bash(g, repo, comando))
+
+
+@pytest.mark.parametrize("comando", ["git ls-files", "find . -exec sha256sum {} +"])
+def test_listar_desde_la_raiz_imprime_los_nombres_del_holdout_y_se_niega(
+    g: ModuleType, repo: Path, comando: str
+) -> None:
+    """CAMBIA DE SENTIDO en `trabajo/guardia-g1` (respuesta del consultor a la PARADA, puntos 0 y
+    1): hasta esa rama `test_ejecucion_quinta_pasada_admite` aseguraba que `git ls-files` sin rutas
+    pasaba, y `test_ejecucion_cuarta_pasada_admite`, que `find . -exec sha256sum {} +`. Los dos
+    listan desde la raiz, que CONTIENE `knowledge/cases/holdout/1`: imprimen sus nombres (ADR-0088).
+    En las listas de admitidos siguen, con rutas literales."""
+    _ejecucion(repo)
+    motivo = _bash(g, repo, comando)
+    assert motivo is not None and "ADR-0088" in motivo, (comando, motivo)
 
 
 @pytest.mark.parametrize("opcion", ["-P", "-L"])

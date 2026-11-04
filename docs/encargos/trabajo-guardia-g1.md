@@ -1,0 +1,202 @@
+# Encargo · trabajo/guardia-g1
+
+Dado por Aleks (consultor) el 2026-11-04. Copiado tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Rama nueva: trabajo/guardia-g1 (NA:K, NA:B y NA:C; carril G.1 de la hoja de ruta), desde main en 7a3a1ff (el commit de estado sobre el merge 796be27, que es al que apunta el tag stable/F38k-margen-pendiente; CI de main run 41258026188). Antes, git fetch --prune. Verifica con git que main es ese commit, que ese tag es el último stable y está en origin, que la CI de main sobre su HEAD está en success (una consulta suelta de gh run view) y que no hay otra rama abierta; si algo no cuadra, para y avísame. Ábrela con la skill abrir-rama: encargo en docs/encargos/, contrato.yaml y archivo en HISTORIA. Copia este prompt tal cual al encargo con la fecha de hoy, con Write (lleva el literal de una opción que la guardia vigila: todo texto que lo lleve va con Write o Edit, y los mensajes de commit que lo lleven, con git commit -F). Tag de cierre: stable/F38l-guardia-g1.
+>
+> DÓNDE CORRES, Y QUÉ CAMBIA POR ESO
+> Esta sesión corre en la nube, en Linux y sin data/ ni corpus/ (la CI de main corre make check entero sin data/, ci.yml:28, así que make check sella igual aquí). Antes de nada, en tu primer mensaje, comprueba y dime: (1) que el hook de la guardia de .claude/ corre en esta sesión: su orden en .claude/settings.json es `PYTHONUTF8=1 python "$CLAUDE_PROJECT_DIR/.claude/hooks/guardia.py"` y necesita un ejecutable `python` en el PATH (no python3); lanza un comando inofensivo que la guardia niega por forma, por ejemplo un make check sin fichero de salida, y enseña el mensaje de bloqueo; si no se bloquea, PARADA: sin guardia no se trabaja); (2) uv sync --locked --group dev y make check > make-check.log 2>&1 en verde con su SELLO y su línea PICO DE MEMORIA; (3) que puedes empujar a origin (git push --dry-run de la rama recién abierta). Lo que no se puede medir en Linux (rutas de Windows, el clon C:/cm/, la raíz de unidad) se mide EN MEMORIA, con decidir() de .claude/hooks/guardia.py y un repo sintético en tmp_path como hace tests/unit/test_guardia_claude.py (_decide y _bash, hacia :127-134), simulando la forma de Windows en los tests; lo que ni así se pueda, se deja listado para que Aleks lo pruebe en su laptop con «!». El cierre NUNCA se hace desde esta sesión: la rama se deja «lista para revisión» y empujada.
+>
+> POR QUÉ ESTA RAMA
+> G.1 lleva desde el 2026-10-11 acumulando falsos positivos (la guardia niega comandos legítimos y la sesión para o busca otra vía) y un hueco prioritario (deja listar la carpeta madre del holdout con un filtro detrás). K dice «rama propia, junto a B o C si cabe». Es puro código con tests y no necesita datos: por eso va ahora, en la nube, mientras la ingesta de la sesión 6 espera a que esta cierre (una sola rama abierta).
+>
+> OBJETIVO
+> Que la guardia deje de negar lo que es legítimo (los falsos positivos de K y de G.1) y niegue lo que hoy deja pasar (listar el holdout con filtro; lo que un guion importa o ejecuta; las rutas compuestas), cada cosa con un test que la rompa a propósito en los dos sentidos, sin aflojar ninguna regla que hoy funciona.
+>
+> QUÉ NO CAMBIA
+> El motor, la spec, parámetros, ambigüedades, feedback, casos, holdout, corpus, data/, mql5/, el Makefile, .github/, .claude/settings.json (salvo que la fase 0 lo pida: PARADA), las reglas de la guardia que no son estas (la de la CI, las formas de ffmpeg, la cuarentena, el alias de la raíz de trabajo/guardia-alias), las skills y la hoja de ruta. D (las formas raras de bash, git, awk, sed y PowerShell, GUION-MISMO-COMANDO.md §1.26) NO entra: sigue en D.
+>
+> REGLAS DE ESTA RAMA
+> - Todo lo que toque material protegido se mide EN MEMORIA, con decidir() contra un repo sintético con ficheros falsos, como hizo trabajo/guardia-alias. Nunca se ejecuta de verdad un comando ni una herramienta sobre material protegido real (aquí no lo hay, pero las rutas protegidas se montan a trozos y no se imprimen enteras en el informe).
+> - Si la guardia o el clasificador niegan un comando, también uno de solo lectura: PARADA con el comando exacto y su mensaje, salvo seguir la forma que la propia guardia propone en su mensaje, declarándolo en el informe. No se busca el mismo dato con otra herramienta. Si a partir de tu cambio la guardia te niega algo que antes hacías, también PARADA.
+> - La CI se consulta con un gh run view suelto cada vez; nunca con un guion ni un bucle.
+> - Una guardia no se rodea: cada falso positivo se arregla nombrando la condición (negar por defecto, sin enumerar casos), nunca con una excepción por nombre de fichero o de comando.
+> - Cada test nuevo se enseña roto a propósito en los dos sentidos (la forma mala negada, la buena pasando) con las dos salidas en el informe, y la comparación caso a caso con la guardia de main con el método de GUION-MISMO-COMANDO.md §1.4 (docs/validation/anexos/GUION-MISMO-COMANDO/medir_huecos.py, ampliado con los casos de esta rama): ningún caso que main niega puede pasar a PASA sin que esta rama lo diga por su nombre y por qué.
+> - Sellado por fase: estadiar → make check > make-check.log 2>&1 → commit, con la línea PICO DE MEMORIA en el informe.
+>
+> FASE 0 · INVENTARIO SIN TOCAR CÓDIGO, CON PARADA
+> Mide cada punto con decidir() sobre el repo sintético y, donde haga falta, sobre el repo real de la rama (solo lectura), y entrega una tabla: punto · comando o guion exacto · lo que la guardia dice hoy (PASA / NIEGA y motivo) · si se reproduce en Linux o solo en Windows · fichero:línea de la guardia que decide · propuesta de condición.
+> a) K1, la variable crudo: CRUDO_PYTHON (.claude/hooks/guardia.py:195) casa con `crudo = ruta.read_bytes()` de scripts/leer_demo_ftmo.py (hoy :107; DEMO-EJECUCION-1.md §3.3 y su revisor, a1) y con dos guiones más de la carpeta de trabajo (prevision.py en MARGEN-PENDIENTE.md :380 y :421; EA-CONEXION.md :437 y :547), que sirven de casos de test: hoy la comprobación del contrato de esa rama no se puede ejecutar. La regla va contra el corpus sin filtrar (la opción de la CLI y su equivalente en Python, CLAUDE.md «Las guardias de Claude Code»): propón cómo nombrar la FORMA de la opción (el parámetro de las funciones de cuarentena.py, no cualquier identificador) y qué pasa con «crudo»: … y "crudo": … en código que no llama a la cuarentena.
+> b) K2, los tests de un clon git worktree add --detach en C:/cm/ (comparar-con-main): la guardia no los reconoce como tests y niega pytest sobre ellos (ENTRADA-JULIO.md §8; ACTIVAR-SESION-05.md §0.f: test_kit.py, test_selector_orden_stop.py y test_renovar_cierres.py; ACTIVAR-SESION-05-MOTOR.md §0.d: pytest desde C:/cm/ y las dos ejecuciones encadenadas). Mide cómo decide hoy la guardia qué es un test (el guion idéntico al de main, GUION-MISMO-COMANDO.md; la exención de tests/) y por qué un clon fuera de la raíz la pierde; propón la condición (por ejemplo, que el fichero sea byte a byte el de main del repo real, se lea de donde se lea), negando por defecto lo que no se pueda comprobar.
+> c) K3, la constante `\.` de un f-string de regex en un fichero de test del clon, que la guardia lee como «la carpeta \.», raíz de la unidad en Windows (CUARENTENA-POR-CONDICION-2.md §2.e). Mide con una ruta simulada de Windows en memoria.
+> d) K4, un grep con un patrón entre comillas que acaba en espacio («leer el contenido de .», BARRIDO-SESION-6.md §4: `"HUSO_CORTE ="` y `"Puntos = "`), y el de ACTIVAR-SESION-04-MOTOR.md (grep -rn --include=*.py con cuatro -e sobre src/ tests/ scripts/ se bloquea y con dos -e pasa). AVISO medido por el consultor el 2026-11-03 con decidir() en Linux sobre el repo sintético de los tests: `grep -n "HUSO_CORTE =" src/botsito/x.py`, `grep -n "Puntos = " src/botsito/x.py` y el grep con cuatro -e PASAN. Es decir, no se reproducen tal cual en Linux ni en el sintético: busca qué lo dispara en Windows o en el repo real (el cwd, la tokenización de la comilla con espacio final, la resolución de los posicionales) antes de proponer nada; si no lo encuentras, dilo y propón el test que lo cazaría en el laptop de Aleks.
+> e) El hueco PRIORITARIO de G.1: `git ls-files knowledge/cases | grep …` (y cualquier listado de la carpeta madre del holdout con un filtro detrás: ls, find, Glob, git ls-tree, Get-ChildItem) pasa hoy (medido por el consultor el 2026-11-03: PASA). ERRORES-RECURRENTES.md lo prohíbe en la lección «(1) Nunca se lista una carpeta que contiene meses reservados…» de las filas de activacion-a42, cases-rejilla («ni filtrada con grep -v») y entorno-code («4.ª vez»), hacia :72-80 y CLAUDE.md dice que la guardia «deja listarlo, medirlo y hashearlo»: contrasta las dos contra ADR-0021 y ADR-0033 y di cuál manda; propón la condición (negar el listado de knowledge/cases/holdout/ y de sus carpetas madre cuando el comando filtra o imprime nombres, dejando el recuento) con sus falsos positivos conocidos (corpus inventory, kit build, casos_reservados). Ten en cuenta que hoy guardia.py:2507 deja pasar ls-files a propósito («lectores que main deja pasar») y test_guardia_claude.py:1855 ASEGURA que pasa: ese test cambia de sentido en esta rama y el informe lo dice por su nombre.
+> f) El resto de G.1 y lo que el auditor del encargo encontró en los informes: solo_lectura.py niega git worktree list (solo lee) y toma como subcomando el primer token sin guion (solo_lectura.py:80), así que niega `git -C <clon> rev-parse` y `git -c k=v …` (ACTIVAR-SESION-05-MOTOR.md, revisor, hacia :1024), justo la vía de comparar-con-main; `git tag -l stable/F38*` negado porque tag no está en GIT_LEE (GUARDIA-CI.md H11, hacia :289-291); `PYTHONIOENCODING=utf-8 python …` negado por no estar en NOMBRES_DE_ENTORNO y el encadenado `grep …; uv run botsito state check` (BARRIDO-SESION-6.md §4, :688-691); la sospecha sobre `grep -rln` sobre una carpeta (BARRIDO-SESION-6.md :540-545); la guardia niega un guion de la carpeta de trabajo que nombre data/manifests/ticks/<manifiesto>.yaml de un mes de construcción aunque Read deja abrir esos manifiestos (CORRIDA-CONSTRUCCION.md §1.j; también VISOR-CONSTRUCCION.md :292, h8); y la negativa a ejecutar, en un clon fuera del repo real, un test de main que lleve el literal de la opción (ENTORNO-CODE.md, G.1). Mide cada uno.
+> g) B, lo que el guion importa o ejecuta (GUION-MISMO-COMANDO.md §0.c): import de un módulo local, runpy, exec(open(…)), subprocess con otro guion, también en código en línea. Inventario de cómo se resuelve un import local (sys.path del guion, el paquete botsito instalado, módulos de la carpeta de trabajo) y propuesta: qué se resuelve y se lee (los que caen en un fichero del repo o del directorio del guion), hasta qué profundidad, y negar por defecto lo que no se pueda resolver.
+> h) C, las rutas compuestas (GUION-MISMO-COMANDO.md §1.5, los seis casos h5-*), más lo que Technical Debt le asigna: las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) y las URL `file:///` (GUARDIA-ALIAS.md §9, b6 y b7, «van con la deuda C») y la consulta de CI montada a trozos (`"g" + "h"`, GUARDIA-CI.md §5.2 y §9), que es la misma familia: analizar_codigo (guardia.py:3780) solo mira literales enteros. Propuesta: negar por defecto un guion que nombra un fragmento sensible (SENSIBLES, :3765) y compone rutas (joinpath, os.path.join, el operador / sobre Path, f-strings, concatenación), con sus falsos positivos medidos sobre los guiones de scripts/ y tests/ de main (cuántos negaría la condición propuesta: la cifra, por fichero).
+> i) Lo que no puedas medir en Linux, en una lista con el comando exacto para que Aleks lo lance en su laptop con «!». Para lo que es de Windows (la raíz de unidad `\.`, C:/cm/), el patrón ya existe: SOLO_WINDOWS y el monkeypatch de os.name / canonización de tests/unit/test_guardia_alias.py (:39-42); úsalo en vez de inventar otro.
+> j) La regla fina de Artifact, ArtifactData, DesignSync y las herramientas de claude-in-chrome que leen un fichero local (Technical Debt: hoy cerradas en permissions.deny; «junto a K»): solo inventario de qué haría falta para mirar sus rutas como un Read; si cabe en esta rama lo dices en la PARADA, si no, queda como deuda con su texto.
+> PARADA con la tabla, las propuestas de condición (una función por regla, negando por defecto) y lo que no sepas clasificar. No escribas código de la guardia antes de mi respuesta.
+>
+> FASE 1 · LOS FALSOS POSITIVOS Y EL HUECO PRIORITARIO (tras mi respuesta)
+> Tests primero, en tests/unit/test_guardia_g1.py (uno por punto, rotos a propósito en los dos sentidos); después el código, lo mínimo, con el porqué y el origen en un comentario. Orden: e), a), b), c), d), f). medir_huecos.py ampliado y su salida antes y después en docs/validation/anexos/GUARDIA-G1/.
+>
+> FASE 2 · B Y C (tras la fase 1 sellada)
+> Igual: tests primero, código mínimo, comparación con main. Si B o C piden una decisión que no esté en mi respuesta a la PARADA, PARADA otra vez, sin escribir código de esa parte.
+>
+> FASE 3 · DOCUMENTOS
+> Lo que la fase 0 encuentre falso en CLAUDE.md, runbooks o skills, corregido aquí (CLAUDE.md «deja listarlo» frente a lo que decida e); si es un informe cerrado, con un recuadro). ERRORES-RECURRENTES.md gana la fila de las dos negativas del diagnóstico de H que van a K (grep -r sobre src/ por la regla de Analytics, falso positivo, y rm encadenado con rmdir; las declaró el consultor el 2026-10-31) si esta rama las arregla; si no, quedan listadas. Para el commit del contrato del cierre, preparado en el informe sin aplicarlo: el texto nuevo de K, B y C (qué pasa a HECHO y qué queda), lo que G.1 gana en la hoja de ruta, y cualquier riesgo residual como línea de Technical Debt. PROJECT_STATE está en 21.784 bytes: si lo de esta rama no cabe bajo 25.000, propón qué sale.
+>
+> INFORME
+> docs/validation/GUARDIA-G1.md: apertura con la base comprobada con git y lo que la nube cambia (punto 1 a 3 de arriba); fase 0 con su tabla y la PARADA; la respuesta del consultor copiada tal cual; por fase, tests rotos a propósito con sus salidas, la comparación con main, los sellos con PICO DE MEMORIA; lo que solo Aleks puede probar en Windows, con los comandos exactos; desviaciones declaradas; el encargo punto por punto.
+>
+> CIERRE DE LA RAMA
+> make check sellado; push de la rama (git push -u origin trabajo/guardia-g1) y además a fix/guardia-g1 (git push origin trabajo/guardia-g1:refs/heads/fix/guardia-g1) con la CI de Linux con solo el fallo esperado de state check; dame los números de run. Después el revisor, lanzado con el informe YA TERMINADO, y su informe pegado al final. Ningún registro de cierre en HISTORIA ni cambios de Next Action más allá de lo que haga abrir-rama: eso va con la orden de cierre, que Aleks ejecuta en su laptop.
+>
+> Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> 0. (a). Un ADR corto en esta rama, con docs/adr/ abierto en el contrato solo para ese fichero y su índice (amplía el contrato en su propio commit y dilo). El ADR nombra la condición, no los casos: «listar los nombres de dentro de knowledge/cases/holdout/{1,2,3} no es abrir (ADR-0021 §1, ADR-0033 §1), pero es una exposición de proceso que la sesión no hace: se cuenta, no se imprime». Y enmienda la frase de CLAUDE.md «deja listarlo, medirlo y hashearlo» a «deja contarlo, medirlo y hashearlo por la CLI», en el mismo commit. Por qué: es lo que CLAUDE.md pide para una prohibición sin ADR, y es la 4.ª exposición.
+> 1. (a), la condición de §1.e entera, con dos añadidos: (i) el test de :1855 cambia de sentido y su nombre nuevo dice lo que asegura; (ii) test_el_ritual_y_los_runbooks_pasan tiene que seguir pasando sin tocar ningún comando: lo comprobé (ningún runbook, skill ni comando del ritual usa git ls-files sin rutas, find ., ls -R ni git ls-tree -r); si en la fase 1 encuentras uno, PARADA antes de cambiarlo. Por qué: la lección es sobre el alcance, no sobre el filtro.
+> 2. (a), la forma de la opción por el árbol de Python y solo --cr… en el texto de Bash y PowerShell. La clave en un dict literal sigue negada (a2, a6), como propones. Por qué: nombra la forma, no la palabra, y quita los grep negados (a7, a8, n3).
+> 3. (a), _test_de_un_clon con el blob de main O el fichero del árbol de trabajo del repo real. Declara en el informe el riesgo que ya dices: el test copiado se fía de lo que dentro del repo ya está exento. Por qué: (b) deja fuera el uso que motiva K2.
+> 4. (a): el candidato vacío o en blanco tras el = no es una ruta; el argumento entero en blanco (d7b) sigue como hoy. Por qué: el = partido es un invento de la guardia; un argumento en blanco sí lo recibe el programa.
+> 5. (a): PYTHONIOENCODING entra en NOMBRES_DE_ENTORNO con su porqué.
+> 6. (a): sin cambio en lo encadenado ni en git -c. Por qué: son reglas decididas en guion-mismo-comando, no falsos positivos.
+> 7. (a): which y rmdir entran en NO_EJECUTAN, cada uno con su porqué en el comentario. Por qué: es el mecanismo de la lista cerrada.
+> 8. (a): solo_lectura.py salta las opciones globales de git (las de GIT_CON_VALOR, con su valor) para encontrar el subcomando; entran worktree list y tag solo para listar; lo demás igual. Por qué: niega lo mismo que escribe y abre la vía de comparar-con-main.
+> 9. (a), §1.g: Python solo, hasta 3 niveles, negar lo no resoluble, subprocess con programa literal como un comando de Bash y no literal negado. El mensaje de la negativa nombra el módulo o la llamada que no pudo resolver, para que la sesión sepa qué forma usar.
+> 10. (a), la variante ESTRECHA con el cálculo previo de la composición, las llaves expandidas y file:// como su ruta. Añade a la fase 2 esta medida: para los 7 guiones de scripts/ que la estrecha marca, qué composición los marca y si con el cálculo la ruta resultante es inocua (es decir, si cambiados en una rama pasarían igual); la cifra real de coste es esa, no 44.
+> 11. (a): j queda como deuda con el texto de §1.j, publish_files incluido, y el puntero «junto a K» desaparece de esa línea en las líneas del cierre.
+> 12. (a): a) y h) tocan CRUDO_PYTHON y la regla de la CI solo en lo que el encargo nombra; las skills no se tocan (lo falso en ellas queda listado para el cierre); los recuadros de informes cerrados amplían el contrato en su commit y se dice.
+> 13. De acuerdo: cerrar-rama y los flags de diagnóstico siguen en G.1, fuera de esta rama, y G.1 no pasa a HECHA.
+>
+> Desviaciones de la apertura: aceptadas y quedan declaradas (la CI consultada con una llamada suelta a la API en vez de gh run view, porque gh solo está permitido para búsquedas en la nube; el git fetch --unshallow del clon).
+>
+> Sigue sin parar: fase 1 en el orden del encargo (e, a, b, c, d, f), con el ADR y la enmienda de CLAUDE.md en el primer commit de la fase; después la fase 2 (B y C) y la fase 3. Tests primero, rotos a propósito en los dos sentidos, medir_g1.py antes y después, make check sellado por fase con PICO DE MEMORIA. Al terminar: push de la rama, push a fix/guardia-g1 con la CI de Linux y sus números de run, el revisor con el informe terminado, y la lista de §1.i para Aleks con los comandos exactos. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto.
+>
+> Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha, y aplícala punto por punto.
+>
+> 0. (a), y queda AUTORIZADO A LA VISTA, no como desviación: la comparación caso a caso con la guardia de main es el test test_la_comparacion_caso_a_caso_con_la_guardia_de_main, que carga medir_g1.py y falla si un caso que main niega pasa sin declarar. Por qué: tests/ corre sin leerse por diseño, con la guarda del holdout como barrera (GUION-MISMO-COMANDO.md §0.c), y la medida pasa a correr en cada make check y en la CI. Con tres condiciones: (i) el informe lo dice así, con la negativa exacta y por qué la guardia tenía razón (medir_g1.py compone rutas protegidas a trozos, que es C); (ii) medir_g1.py no se vuelve a ejecutar suelto desde la sesión: queda como el método y sus casos, y su cabecera dice que se corre por el test; (iii) si el test no encuentra main ni origin/main, salta con el mismo aviso que test_guardia_claude.py (hacia :438), y en la CI tiene que correr de verdad (comprueba que ci.yml trae main: git fetch --tags --force ya está; si hace falta origin/main, PARADA con la línea). Ni el test ni su salida imprimen una ruta protegida entera.
+> 1. (a): spec_from_file_location / module_from_spec se resuelve como runpy.run_path (ruta calculable: se lee y se analiza; no calculable: se niega), con la excepción cerrada de la regla de la CI (_carga_solo_la_guardia) ampliada a solo_lectura.py. Por qué: es la misma carga y la excepción ya está decidida. Si costo_c.py u otro guion de medida carga la guardia por sys.argv, se reescribe con la ruta literal o RAIZ / ".claude" / "hooks" / "guardia.py", y se dice.
+> 2. (a), la comparación por tramos de ruta desde su inicio conocido, y una f-cadena cuyo primer tramo no es una ruta no es una composición de C. Con dos tests que lo cierren en el otro sentido: los dos sensibles de verdad (la cruda de transcribir_sesion.py y el material adicional de viabilidad_trader.py) siguen NIEGA, y una f-cadena que es un COMANDO con un fragmento sensible y partes no calculables (f"cat {a}/{b}/1" en subprocess.run o os.system) sigue negada por B, no por C: que C la suelte no la saca del análisis del comando. Por qué: quita los 5 falsos positivos medidos sin abrir nada.
+> 3. (a): sin cambio en los guiones de la plataforma; la rama que los cambie los prueba por sus tests y, suelto, con «!». Deja la lista de los cinco (contrato_rama, sello_make_check, instalar_hooks, pico_memoria, huso_por_velas) y el porqué de cada uno en el informe, y una línea de Technical Debt preparada para el cierre si crees que alguno lo merece.
+>
+> Además:
+> - ADR-0088 en lugar de 0087: desviación bien declarada (§4.10); en las líneas del cierre, la deuda de «ADR 0087 (S-15, no existe)» no cambia.
+> - Las negativas de §5.7 son errores de forma de la sesión contra reglas de main, no hallazgos: van a la fila de ERRORES-RECURRENTES preparada como lo que son, con la lección de siempre (una cosa por llamada).
+>
+> Sigue sin parar: aplica 1 y 2 con sus tests rotos a propósito en los dos sentidos, medir_g1.py (por el test) antes y después, make check sellado con PICO DE MEMORIA (el sello de la fase 2 que falta en el informe entra aquí). Después la fase 3: documentos, las líneas del cierre (K, B, C con su texto nuevo; G.1 sin pasar a HECHA; la deuda j con publish_files; Technical Debt), la lista de §1.i para Aleks con los comandos exactos, push de la rama y a fix/guardia-g1 con la CI de Linux y sus números de run, y el revisor con el informe YA TERMINADO. Si la guardia niega algo nuevo a partir de tus cambios, PARADA con el comando exacto.
+>
+> Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA del pre-cierre (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA del pre-cierre de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA del pre-cierre», y aplícala punto por punto en ESTA rama y en esta sesión (Windows, con la guardia de la rama viva).
+>
+> 1. c1-clon-regex: sí, se declara en la lista de la comparación (CAMBIOS_DECLARADOS) como K3, punto 3 de la respuesta a la PARADA, con una línea que diga que la diferencia solo existe en Windows (en Linux main ya lo dejaba pasar) y que por eso la CI de Linux no la vio. Es lo que la rama venía a arreglar.
+> 2. curl file://C:/…: el test estaba mal formado (as_posix da file://C:/…, dos barras, y eso es un recurso de otra máquina). Corrige el test para que monte la URL con Path.as_uri() (file:///C:/…, la forma correcta) y mide: si la guardia lee file:///C:/… como su ruta y el test pasa, listo; si la guardia no la canoniza en Windows, es un defecto de la guardia y se arregla en guardia.py (la ruta tras file:/// se trata como una ruta absoluta de Windows), con su test roto a propósito en los dos sentidos. Y un test nuevo que fije que file://C:/… (mal formada) sigue negada: negar ahí es el lado seguro.
+> 3. import yaml en el clon: la guardia hace lo correcto (sin .venv no puede resolver un paquete de terceros y niega por defecto). Se arregla el TEST, no la guardia: test_g_lo_que_se_resuelve_y_es_inocuo_pasa no puede depender del .venv de RAIZ; que el repo sintético del test lleve lo que _instalado necesita para resolver el paquete (o que el test simule _instalado como simula _absoluta), y que un test hermano fije lo contrario: sin .venv, el import de terceros se niega. Añade a la línea de Technical Debt de B preparada en §7 este riesgo residual: «en un clon sin .venv (git worktree), un guion de trabajo que importa un paquete de terceros se niega; los tests del clon no, por _test_de_un_clon».
+> 4. Dónde y cómo: aquí, en esta rama, en commits sellados con make check > make-check.log 2>&1 EN WINDOWS (el sello de verdad para esta rama; la línea PICO DE MEMORIA al informe). Si la guardia o el clasificador te niegan algo, PARADA, salvo la forma que proponga el mensaje. Después: push a trabajo/guardia-g1 y a fix/guardia-g1 (git push origin trabajo/guardia-g1:refs/heads/fix/guardia-g1), CI de Linux con un gh run view suelto (solo el fallo esperado de state check), y el número de run al §10.
+> 5. El clon: no lo quites todavía. Con el commit nuevo, lo recreas (con «!» lo lanzo yo: git worktree remove C:/cm/g1 y después git worktree add --detach C:/cm/g1 trabajo/guardia-g1) y repites 3a y 3b sueltos; 3a tiene que dar 0 failed en el clon y en el repo real. Luego el punto 4 del pre-cierre (remove y prune, con «!»).
+> 6. §13 del informe, «Pruebas en Windows (2026-11-04)»: la tabla de los siete comandos de hoy, los tres tests rojos con su causa y su arreglo, y la lección, que va también a la fila de ERRORES-RECURRENTES de la rama (columna del consultor, hallazgo «importa», del proceso): «una rama de la guardia hecha en Linux no está lista para revisión hasta que make check pasa en Windows; la CI de Linux no ve lo que depende de la raíz de unidad, de file:/// ni del .venv». Y un recuadro en §8 que diga que el pre-cierre encontró estos tres fallos.
+> 7. Revisor: solo si el punto 2 toca guardia.py, una pasada del revisor acotada al diff de estos commits, pegada en §12 como segunda pasada. Si solo cambian tests, no hace falta.
+>
+> Al terminar, informe en el terminal: commits, sello en Windows (passed y PICO), run de la CI, resultado de 3a y 3b en el clon, y que el clon está quitado. NO cierres: la orden de cierre viene después.
+
+## Orden de cierre (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/guardia-g1 (consultor, 2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Orden de cierre», en su propio commit (sellado), antes del commit del contrato. Después, el ritual de docs/runbooks/RITUAL.md con la skill cerrar-rama, que lanzo yo con /cerrar-rama.
+>
+> Revisión del consultor: la rama cumple el encargo, las dos PARADAS y el pre-cierre en Windows (§13). Base de cierre: 45e35cf, con make check en Windows (3209 passed) y la CI de fix/guardia-g1: runs 41884498214 (537b2eb) y 41889496096 (45e35cf), solo el fallo esperado de state check. Un auditor independiente corrió la suite de la guardia y la cuarentena sobre 9537b7b en Linux con la comparación contra main de verdad: 894 passed, 36 skipped, 0 failed.
+>
+> 1. Tag: stable/F38l-guardia-g1. Comprueba antes que no existe ni en local ni en origin. Mensaje del merge: «merge: trabajo/guardia-g1, ADR-0088 (los nombres del holdout se cuentan), los falsos positivos de K y lo que un guion carga o compone (B y C)».
+>
+> 2. Hallazgos del consultor que el revisor no vio, para la fila de ERRORES-RECURRENTES (la columna del consultor pasa a los que ya tiene más estos, y la lección para el revisor gana: «lo que un commit enmascara al final sigue en la historia de la rama y en las constantes de los fuentes: se declara, no se da por quitado»):
+>    - (importa) Tres commits de la rama (42e9dfa, 0d784e9, aa882ab) llevan en los anexos de GUARDIA-G1 el id de un caso reservado, enmascarado en 9537b7b; el mismo id sigue como constante de fixture en medir_g1.py y test_guardia_g1.py, igual que en main (tests/unit/test_guardia_claude.py). El revisor dio B1 por «arreglado» sin nombrar la historia ni los fuentes. No se reescribe la historia (rebase y squash no pasan por la puerta): se declara. Añade a docs/validation/HOLDOUT-EXPOSICIONES.md, con fecha de hoy, una fila que diga que la rama llevó en tres commits el id de un caso reservado tomado de la fixture de main, sin etiqueta ni resultado, enmascarado en la punta, y que el merge conserva la historia; sin escribir el id.
+>    - (importa, del proceso) La rama se declaró «lista para revisión» con make check solo en Linux, y el pre-cierre en Windows encontró tres tests rojos (§13); la lección ya está en la fila. Queda como está.
+>    - (menor) §7 contaba «cuatro» líneas de Technical Debt cuando son siete con la de B del pre-cierre; test_cuarentena.py no estaba en el contrato aunque §8 lo usa; la negativa a sed -i resuelta con Edit (§13.3) se acepta como forma de la casa, no como rodeo. Recuadro en §7.
+>
+> 3. En el commit del contrato (chore(cierre)), además de lo que manda RITUAL.md:
+>    a) PROJECT_STATE.md, Next Action: K, B y C pasan a HECHAS. Salen de PROJECT_STATE a HISTORIA con su texto literal de hoy, bajo «# Next Action HECHA · K · B · C · trabajo/guardia-g1», cada una seguida de su línea de §7 del informe (las tres «HECHA en trabajo/guardia-g1: …»). D no cambia.
+>    b) PROJECT_STATE.md, Technical Debt, tal cual §7 del informe en 45e35cf: sale la línea de la consulta de CI montada a trozos ("g" + "h"); la línea de Artifact/claude-in-chrome se sustituye por el texto de §7 (sin «junto a K»); entran TODAS las líneas de «Entran» de §7 (K2 conftest/src, riesgo residual de C, riesgo residual de B con el añadido del clon sin .venv, los guiones de la plataforma, la excepción de la carga por ruta (A2) y el riesgo residual de ADR-0088 (B7)). La deuda «ADR 0087 (S-15, no existe)» no cambia.
+>    c) docs/plan/HOJA-DE-RUTA.md, G.1: Refs pasa a «NA:D» (salen NA:B, NA:C y NA:K); «Qué es» se sustituye por el texto de §7 («Las formas raras (D). Y lo que queda de trabajo/guardia-g1 (GUARDIA-G1.md): que cerrar-rama diga que, si la rama cambia el Makefile, los make check en la rama los lanza Aleks con «!»; y los candidatos en blanco tras «:» y «@» en candidatos_de_ruta (§4.5).»), y lo HECHO sale de la lista como dice §7. G.1 NO gana Estado HECHA. G.2 no cambia. Su línea M está autorizada por esta orden.
+>    d) docs/validation/HOLDOUT-EXPOSICIONES.md: la fila del punto 2. Autorizada por esta orden.
+>    e) docs/runbooks/ERRORES-RECURRENTES.md: la fila de la rama con los hallazgos del punto 2.
+>    Mide PROJECT_STATE con wc -c ANTES de commitear: hoy 21.814; con estas líneas tiene que quedar por debajo de 22.500. Si pasa de 23.000, PARADA antes de recortar nada.
+>
+> 4. Lo demás, según RITUAL.md: merge --no-ff a main con el mensaje del punto 1, el tag sobre el merge, y el commit de estado, que solo reemplaza Current Branch (main), Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en el punto 3). Current Feature: «Ninguna rama abierta. trabajo/guardia-g1 cerrada en main el 2026-11-04 (stable/F38l-guardia-g1): ADR-0088 (los nombres del holdout se cuentan, no se listan), los falsos positivos de K, lo que un guion importa o carga (B) y las rutas compuestas (C), con los tests de un clon de comparar-con-main (GUARDIA-G1.md). Hecha en Claude Code en la nube; pre-cierre y cierre en el portátil.» Stable Main State y Last Stable Commit, con la forma del cierre anterior. Después: make check sellado, push atómico de main y el tag (yo confirmo la regla ask con «1. Yes»), la CI de main con un gh run view suelto, y, con la CI en verde, el borrado de la rama local y de fix/guardia-g1 y trabajo/guardia-g1 en origin.
+>
+> 5. Informe final: sha de main y del merge, el tag y a qué commit apunta, el run de la CI de main y su resultado, las ramas que quedan en local y en origin (wt-ci ya no está: prune lo quitó, dilo), el tamaño de PROJECT_STATE.md y el siguiente tag (F38m).
+
+## Respuesta del consultor a la PARADA del cierre (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA del cierre de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA del cierre», y aplícala punto por punto.
+>
+> 0. (a): se deshace el merge local. Nada se publicó, así que el tag y el nombre siguen limpios. Lo lanzo yo con «!», en este orden, y tú verificas después que main local es 7a3a1ff, que no existe el tag stable/F38l-guardia-g1 ni en local ni en origin, y que el árbol está limpio:
+>    ! git restore --staged PROJECT_STATE.md
+>    ! git restore PROJECT_STATE.md
+>    ! git tag -d stable/F38l-guardia-g1
+>    ! git reset --hard 7a3a1ff
+>    Es la única vez que se borra un tag: era local, nunca empujado, y lo hago yo a mano.
+> 1. (a): la guardia de referencia de los tres tests es la del tag stable/F38k-margen-pendiente, no la de la rama main. Por qué: es la base real de esta rama, los tags llegan a la CI (ci.yml, git fetch --tags --force) y a los clones de comparar-con-main, y las comparaciones siguen midiendo después del merge. Escribe en la cabecera de medir_g1.py y en el test la regla que fija esto: la referencia es un tag stable/* escrito a mano; la siguiente rama que toque la guardia puede subirla al último stable y, al hacerlo, vacía CAMBIOS_DECLARADOS y vuelve a declarar lo que ese stable niega y la guardia nueva deja pasar. Si el test no encuentra el tag, salta con aviso, como con main; y en la CI tiene que correr de verdad (compruébalo en el log del run: no puede estar entre los saltados).
+> 2. (b): la rama vuelve a 3e8875b (06df5fa era solo local, sin publicar: el chore(cierre) tiene que ser el último commit, RITUAL.md), y encima van, en este orden: (i) fix(guardia-g1) con los tres tests, medir_g1.py, el §13 ampliado con esta PARADA y su causa, y el ensayo del punto 3; (ii) el chore(cierre) de nuevo, con la orden de cierre que ya tienes y la fila de ERRORES-RECURRENTES ganando este hallazgo. Lo lanzo yo con «!»: git switch trabajo/guardia-g1 y git reset --hard 3e8875b (solo local; verifica antes que origin sigue en 45e35cf y que 3e8875b es el commit de la orden de cierre copiada).
+> 3. SÍ, y una cosa más que es la lección de verdad: antes del merge real, el ensayo del merge. En un clon desechable (git worktree add --detach en un directorio temporal, sobre main 7a3a1ff), haz el merge --no-ff de la rama y corre allí make check > make-check-merge.log 2>&1; tiene que salir en verde con los tres tests de la comparación corriendo (no saltados). La salida, al §13. Después, push de la rama y a fix/guardia-g1, un gh run view suelto, y solo con la CI en verde (salvo state check) se repite el cierre.
+> 4. Lección para la fila de ERRORES-RECURRENTES (hallazgo del cierre, importa, del proceso): «un test que compara con main cambia de sentido en cuanto la rama se fusiona; una rama que toque la guardia ensaya make check sobre el merge en un clon desechable antes del merge real». Y para el consultor, en su columna: «antes de dar una orden de cierre de una rama de la guardia, pedir el ensayo del merge; la auditoría corrió la suite sobre la rama y sobre main por separado, nunca sobre el merge». Añade a la línea de G.1 preparada en §7 (el «qué es» de la hoja de ruta) este pendiente: «que cerrar-rama ensaye make check sobre el merge en un clon desechable antes del merge real».
+>
+> Después: la orden de cierre que ya tienes, con dos cambios que aplicas al copiarla: la base pasa a ser el commit del fix (su sha, con make check en Windows y su run de CI de fix/guardia-g1), y el punto 2 gana el hallazgo del punto 4 de esta respuesta. Luego /cerrar-rama, que lanzo yo. NO cierres sin el ensayo del merge en verde.
+
+## Respuesta del consultor a la PARADA del ensayo (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA del ensayo (2026-11-04). Cópiala tal cual al final del encargo y del informe, y aplícala.
+>
+> 0. (c): solo el clon independiente. El worktree no mueve main y no añade nada: no se lanza su make check. Con «!» lo quito yo: git worktree remove --force C:/cm/g1m y git worktree prune. El ensayo que cuenta: con «!» lanzo git clone "C:/Users/USER/Desktop/Bot v3" C:/cm/g1c; en ese clon se ensaya el cierre entero tal como lo hará cerrar-rama (make hooks si hace falta, el sello, merge --no-ff de trabajo/guardia-g1 sobre su main, el tag stable/F38l-guardia-g1 local del clon, PROJECT_STATE.md editado como lo editará el commit de estado) y make check > make-check-merge.log 2>&1 en verde con los tres tests de la comparación corriendo, no saltados. Ese clon no empuja a ningún sitio: antes de nada comprueba que no se ejecuta ningún push desde él (si prefieres, me pides que le quite el remoto con «!»). Al terminar, con «!» lo borro yo. La salida y los comandos, al §13.
+> 1. Sí: en la fila de ERRORES-RECURRENTES y en la línea de G.1 de §7, «en un clon desechable» pasa a «en un clon independiente desechable (git clone, no git worktree: este comparte main)». Y la fila gana, en la columna del consultor: «(importa, del consultor) ordenó el ensayo del merge en un git worktree, que comparte main y no habría cazado el fallo; Claude Code lo midió con un control antes de seguir. Lección: un mecanismo de ensayo se mide antes de ordenarlo (regla 1 del consultor)».
+> 2. Las dos desviaciones, aceptadas: el ensayo en su docs(guardia-g1) aparte del fix, y los dos añadidos (test_la_referencia_es_un_tag_y_no_es_esta_guardia y las etiquetas referencia/arbol de medir_g1.py) se quedan y se declaran en §13.
+>
+> Después, en el orden ya dado: push de la rama y a fix/guardia-g1, un gh run view suelto (solo state check en rojo y la comparación corriendo en el log), el chore(cierre) con la orden de cierre copiada y la fila completa, y entonces /cerrar-rama, que lanzo yo.
+
+## Orden de cierre: los dos cambios de la respuesta a la PARADA del cierre (2026-11-04)
+
+La orden copiada arriba vale con estos dos cambios, que manda el final de esa respuesta:
+
+- **La base de cierre** pasa a ser el fix, `c519262`, con `make check` en Windows (`3210 passed`) y la CI
+  de `fix/guardia-g1`, run 41923830468, solo con el fallo esperado de `state check`.
+- **El punto 2 gana el hallazgo del punto 4 de esa respuesta**: un test que compara con main cambia de
+  sentido en cuanto la rama se fusiona; una rama que toque la guardia ensaya make check sobre el merge
+  en un clon independiente desechable (git clone, no git worktree: este comparte main) antes del merge
+  real (el clon, por la respuesta a la PARADA del ensayo, punto 1). Está en la fila de
+  ERRORES-RECURRENTES, junto a los dos hallazgos para el consultor.

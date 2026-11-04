@@ -1,0 +1,32 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+F.FF.........................FFFFF.                                      [100%]
+=================================== FAILURES ===================================
+E   AssertionError: argv
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:624: AssertionError: argv
+E   AssertionError: ('a18', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`/tmp/pytest-of-root/pytest-28/test_p2_l...ibirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.')
+    assert 'el codigo compone una ruta que no se puede calcular al inspeccionar (`/tmp/pytest-of-root/pytest-28/test_p2_las_rutas...ribirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.' is None
+     +  where 'el codigo compone una ruta que no se puede calcular al inspeccionar (`/tmp/pytest-of-root/pytest-28/test_p2_las_rutas...ribirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.' = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-28/test_p2_las_rutas_legibles_que0/repo'), 'uv run python p2_ok_a18.py')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:653: AssertionError: ('a18', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`/tmp/pytest-of-root/pytest-28/test_p2_l...ibirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.')
+E   AssertionError: ('orden_system', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`cat */holdout/1`) y que nombra...ibirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.')
+    assert ('carga o ejecuta' in 'el codigo compone una ruta que no se puede calcular al inspeccionar (`cat */holdout/1`) y que nombra `holdout`: no se...ribirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.' or 'lanza' in 'el codigo compone una ruta que no se puede calcular al inspeccionar (`cat */holdout/1`) y que nombra `holdout`: no se...ribirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:672: AssertionError: ('orden_system', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`cat */holdout/1`) y que nombra...ibirlo: la ruta LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o la CLI del proyecto.')
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_carga_por_ruta'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:738: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_exigir_carga_por_ruta'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_RUTAS_DE_HOOK'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:742: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_RUTAS_DE_HOOK'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_tramos_protegidos'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:746: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_tramos_protegidos'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_empieza_por_un_programa'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:750: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_empieza_por_un_programa'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_tramos_protegidos'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:744: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_tramos_protegidos'
+=========================== short test summary info ============================
+FAILED tests/unit/test_guardia_g1.py::test_p1_la_carga_por_una_ruta_que_no_se_calcula_o_protegida_se_niega
+FAILED tests/unit/test_guardia_g1.py::test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan
+FAILED tests/unit/test_guardia_g1.py::test_p2_lo_sensible_de_verdad_sigue_negado
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_carga_por_ruta-test_p1_la_carga_por_una_ruta_que_no_se_calcula_o_protegida_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_excepcion_de_hook-test_p1_la_guardia_solo_lectura_y_lo_inocuo_se_cargan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[tramos_de_mas-test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[orden_como_ruta-test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[tramos_ciegos-test_p2_lo_sensible_de_verdad_sigue_negado]

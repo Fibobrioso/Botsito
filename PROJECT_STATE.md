@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-g1
 
 ## Current Feature
-Ninguna rama abierta. trabajo/margen-pendiente cerrada en main el 2026-10-31 (stable/F38k-margen-pendiente): MedirDemoFTMO 1.2, con el paso 8 (el margen de una pendiente stop), y PROJECT_STATE adelgazado (MARGEN-PENDIENTE.md).
+trabajo/guardia-g1 · EN CURSO (abierta el 2026-11-04 desde 7a3a1ff): K, B y C del carril G.1, los falsos positivos y los huecos de la guardia de Claude Code. Encargo docs/encargos/trabajo-guardia-g1.md; informe docs/validation/GUARDIA-G1.md.
 
 ## Stable Main State
 796be27 · merge de `trabajo/margen-pendiente` (tag `stable/F38k-margen-pendiente`): MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado. Sobre `stable/F38j-respaldo-m1` (4b12a92). Informe docs/validation/MARGEN-PENDIENTE.md; el registro del cierre, al final de HISTORIA.
@@ -16,15 +16,11 @@ Ninguna rama abierta. trabajo/margen-pendiente cerrada en main el 2026-10-31 (st
 796be27 · merge: trabajo/margen-pendiente, MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado · tag stable/F38k-margen-pendiente
 
 ## Tests Currently Passing
-1800 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1840 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
 **AHORA** (2026-10-08). El orden lo decide el consultor en cada encargo; cada entrada dice de qué depende.
-
-B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.
-
-C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (joinpath, os.path.join, el operador /, f-strings, concatenación): analizar_codigo solo mira literales enteros y niega lo compuesto solo si el código además recorre directorios (GUION-MISMO-COMANDO.md, hallazgo 5 del consultor). Rama propia: negar por defecto un guion que nombra un fragmento sensible y compone rutas, con un test que lo rompa a propósito.
 
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
@@ -44,8 +40,6 @@ I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de est
 J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
 
 A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2, hecha el 2026-10-29 (script 1.1; CSV en data/demo_ftmo/ sin congelar, el original sigue en MQL5\Files); la 3, del 2026-11-02 al 2026-11-06. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. En la 2, el margen de 1,00 lote cuadra con FTMO-P-D1.md §3. La 3 va con el script 1.2 (trabajo/margen-pendiente), que además mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4; paso 8, DEMO-FTMO.md). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
-
-K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos. Y las dos negativas de ACTIVAR-SESION-05-MOTOR.md §0.d (pytest desde C:/cm/, encadenadas). Y la de CUARENTENA-POR-CONDICION-2.md §2.e: en el clon de comparar-con-main la guardia niega un fichero de test porque «el codigo nombra la carpeta \.» (la constante `\.` de un f-string de regex, que en Windows es la raíz de la unidad), un falso positivo que en el repo real no salta. Y la de BARRIDO-SESION-6.md §4: un grep con un patrón que acaba en espacio da «leer el contenido de .».
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17.
 
@@ -99,8 +93,13 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación … (EA-CONEXION.md §0.c; entera en HISTORIA, Technical Debt ACORTADA)
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) … (EA-CONEXION.md §10; entera en HISTORIA, Technical Debt ACORTADA)
-- La guardia de Claude Code no ve una consulta de CI en código cuando la mención se monta a trozos (`"g" + "h"`) … (GUARDIA-CI.md §5.2 y §9; entera en HISTORIA, Technical Debt ACORTADA)
-- Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome leen un fichero local o una página `file://` fuera del matcher de la guardia: desde trabajo/guardia-ci están cerradas en `permissions.deny` de `.claude/settings.json` (GUARDIA-CI.md, PARADA 2). La regla fina, mirar sus rutas como un Read por si algún día hacen falta, va en su propia rama del carril de guardias, junto a K (el alias de la raíz).
+- La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor: Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome están cerradas en `permissions.deny` de `.claude/settings.json`; `mcp__claude-artifacts__publish_files` (en la nube, `files[].path`) no está ni en `deny` ni en el `matcher` (GUARDIA-G1.md §1.j). Rama propia del carril de guardias: añadirlas al `matcher` con su esquema y llevar sus rutas a `motivo_fichero`, negando la entrada que no se reconozca.
+- Riesgo residual de `trabajo/guardia-g1` (§4.3): el test de un clon de comparar-con-main que es el de `main` o el del árbol del repo cuenta como test del repo; como dentro del repo, la guardia no lee el `conftest.py` ni el `src/` que carga el clon.
+- Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído o de un nombre asignado más de una vez no se calcula; solo se niega si lo que se sabe de ella nombra un fragmento de `SENSIBLES`. Y `subprocess` con `cwd=` que no se calcula analiza la orden desde el directorio de trabajo.
+- Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan, y un `getattr(os, ...)` no se ve. Y en un clon sin .venv (git worktree), un guion de trabajo que importa un paquete de terceros se niega; los tests del clon no, por _test_de_un_clon.
+- Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`, `pico_memoria.py`, `huso_por_velas.py`), cambiados en una rama, no se ejecutan sueltos desde la sesión: B los niega por llamar a `git` o a un programa con argumentos que no se calculan, o por `sys.path.insert` sin calcular (GUARDIA-G1.md §6.4). La rama que los cambie los prueba por sus tests y, sueltos, con «!»; `make check` los sigue lanzando.
+- Riesgo residual de la excepción de la carga por ruta (revisor, A2; GUARDIA-G1.md §6.2): la de la regla de la CI, ampliada a `solo_lectura.py`, vale para CUALQUIER fichero cuya ruta acabe en `.claude/hooks/guardia.py` o `solo_lectura.py`, también fuera del repo, y B no lo lee.
+- Riesgo residual de ADR-0088 (revisor, B7): la guardia niega los listados de `ls`, `dir`, `tree`, `du`, `find`, `git ls-files`, `git ls-tree`, Glob y `Get-ChildItem`; NO los nombres que sacan `git log --name-only`, `git show --name-only`, `git diff --name-only`, `git status --untracked-files=all` o `fd`. Con un caso de verdad dentro de una partición, `git log`/`show`/`diff` sobre esa ruta ya los niega la regla de lectura (`motivo_ruta`); `git status` y `fd`, no. Rama del carril de guardias.
 - ADR 0087 (S-15, no existe) sigue en los `ids-inexistentes` del encargo y del informe de trabajo/activar-sesion-05-motor; lo saca la rama que lo cree.
 - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
@@ -158,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 53 (2026-10-31).
+— ninguna desde el Archivo 54 (2026-11-04).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 53 (2026-10-31).
+— ninguna desde el Archivo 54 (2026-11-04).

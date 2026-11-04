@@ -1,0 +1,193 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+FFFFFFFFFFFFFFFFFFFFFFFFFF.......................F.F.FF.F.F.F.F.FFFFFFFF [ 87%]
+FFFF..FFF.                                                               [100%]
+=================================== FAILURES ===================================
+E   AssertionError: git ls-files knowledge/cases | grep -v holdout
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-files knowledge/cases | grep -v holdout
+E   AssertionError: git ls-files knowledge/cases
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-files knowledge/cases
+E   AssertionError: git ls-files | grep caso
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-files | grep caso
+E   AssertionError: git ls-files '*.yaml'
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-files '*.yaml'
+E   AssertionError: git -C knowledge ls-files cases
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git -C knowledge ls-files cases
+E   AssertionError: git ls-files knowledge/cases > lista.txt
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-files knowledge/cases > lista.txt
+E   AssertionError: ls -R knowledge/cases
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls -R knowledge/cases
+E   AssertionError: ls -laR knowledge
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls -laR knowledge
+E   AssertionError: ls <holdout>/1
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls <holdout>/1
+E   AssertionError: ls <holdout>/1/
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls <holdout>/1/
+E   AssertionError: find knowledge/cases -name '*.yaml'
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: find knowledge/cases -name '*.yaml'
+E   AssertionError: find . -name '*.py'
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: find . -name '*.py'
+E   AssertionError: find knowledge
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: find knowledge
+E   AssertionError: git ls-tree -r --name-only HEAD knowledge/cases
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree -r --name-only HEAD knowledge/cases
+E   AssertionError: git ls-tree -r HEAD
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree -r HEAD
+E   AssertionError: git ls-tree --name-only HEAD <holdout>/1/
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree --name-only HEAD <holdout>/1/
+E   AssertionError: git ls-tree -r HEAD:knowledge/cases
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree -r HEAD:knowledge/cases
+E   AssertionError: tree knowledge
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: tree knowledge
+E   AssertionError: tree
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: tree
+E   AssertionError: du -a knowledge/cases
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: du -a knowledge/cases
+E   AssertionError: du knowledge/cases
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: du knowledge/cases
+E   AssertionError: sha256sum <holdout>/1/*
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: sha256sum <holdout>/1/*
+E   AssertionError: echo <holdout>/*/*
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: echo <holdout>/*/*
+E   AssertionError: cd knowledge/cases && ls -R
+    assert None is not None
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: cd knowledge/cases && ls -R
+E   AssertionError: {'pattern': 'knowledge/cases/**/*.yaml'}
+    assert (None is not None)
+/home/user/Botsito/tests/unit/test_guardia_g1.py:235: AssertionError: {'pattern': 'knowledge/cases/**/*.yaml'}
+E   AssertionError: Get-ChildItem -Recurse knowledge/cases
+    assert (None is not None)
+/home/user/Botsito/tests/unit/test_guardia_g1.py:247: AssertionError: Get-ChildItem -Recurse knowledge/cases
+E   AssertionError: setattr
+    assert (None is not None)
+/home/user/Botsito/tests/unit/test_guardia_g1.py:299: AssertionError: setattr
+E   AssertionError: subindice
+    assert (None is not None)
+/home/user/Botsito/tests/unit/test_guardia_g1.py:299: AssertionError: subindice
+E   AssertionError: leer.py
+    assert 'el codigo que se ejecuta pide el corpus SIN FILTRAR.\nRegla: encargo de `trabajo/cuarentena-por-defecto`: los comando...ores de `crudo=True` son los de `AUTORIZADOS` en `tests/unit/test_cuarentena.py`, cada uno con su motivo, y los tests.' is None
+     +  where 'el codigo que se ejecuta pide el corpus SIN FILTRAR.\nRegla: encargo de `trabajo/cuarentena-por-defecto`: los comando...ores de `crudo=True` son los de `AUTORIZADOS` en `tests/unit/test_cuarentena.py`, cada uno con su motivo, y los tests.' = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-6/test_a_una_variable_con_ese_no0/repo'), 'uv run python leer.py')
+     +    where 'uv run python leer.py' = _escribe_guion(PosixPath('/tmp/pytest-of-root/pytest-6/test_a_una_variable_con_ese_no0/repo'), 'leer.py', 'def leer(ruta):\n    crudo = ruta.read_bytes()\n    return crudo.decode()\n')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:319: AssertionError: leer.py
+E   AssertionError: cd /tmp/pytest-of-root/pytest-6/test_b_los_tests_del_clon_igua0/cm/main && uv run pytest tests/unit/test_recorre.py -q
+    assert 'el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que fichero...erial protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).' is None
+     +  where 'el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que fichero...erial protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).' = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-6/test_b_los_tests_del_clon_igua0/repo'), 'cd /tmp/pytest-of-root/pytest-6/test_b_los_tests_del_clon_igua0/cm/main && uv run pytest tests/unit/test_recorre.py -q')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:341: AssertionError: cd /tmp/pytest-of-root/pytest-6/test_b_los_tests_del_clon_igua0/cm/main && uv run pytest tests/unit/test_recorre.py -q
+E   AssertionError: assert 'el codigo nombra la carpeta \\., que contiene material protegido, y no se puede decidir que abrira dentro.\nRegla: CL...para ver que es (ADR-0038).\nComo reescribirlo: rutas LITERALES de ficheros que se puedan leer, o la CLI del proyecto.' is None
+     +  where 'el codigo nombra la carpeta \\., que contiene material protegido, y no se puede decidir que abrira dentro.\nRegla: CL...para ver que es (ADR-0038).\nComo reescribirlo: rutas LITERALES de ficheros que se puedan leer, o la CLI del proyecto.' = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-6/test_c_la_raiz_de_la_unidad_en0/repo'), 'cd /tmp/pytest-of-root/pytest-6/test_c_la_raiz_de_la_unidad_en0/cm/main && uv run pytest tests/unit/test_regex.py -q')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:374: AssertionError: assert 'el codigo nombra la carpeta \\., que contiene material protegido, y no se puede decidir que abrira dentro.\nRegla: CL...para ver que es (ADR-0038).\nComo reescribirlo: rutas LITERALES de ficheros que se puedan leer, o la CLI del proyecto.' is None
+E   AssertionError: grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
+    assert 'leer el contenido de .\nRegla: CLAUDE.md, «Que se puede mirar y que no», punto 3: las capturas de Analytics de FX Replay, EN BLOQUE y de cualquier mes; una imagen del material adicional no se abre para ver que es (ADR-0038).' is None
+     +  where 'leer el contenido de .\nRegla: CLAUDE.md, «Que se puede mirar y que no», punto 3: las capturas de Analytics de FX Replay, EN BLOQUE y de cualquier mes; una imagen del material adicional no se abre para ver que es (ADR-0038).' = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-6/test_d_un_patron_con_igual_no_0/repo'), 'grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:398: AssertionError: grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
+E   AssertionError: git worktree list
+    assert '`git worktree` cambia el repositorio o sus referencias' is None
+     +  where '`git worktree` cambia el repositorio o sus referencias' = <function motivo at 0x7f1efa9f8180>('git worktree list')
+     +    where <function motivo at 0x7f1efa9f8180> = <module 'solo_lectura' from '/home/user/Botsito/.claude/hooks/solo_lectura.py'>.motivo
+/home/user/Botsito/tests/unit/test_guardia_g1.py:428: AssertionError: git worktree list
+E   AssertionError: which python python3
+    assert 'ejecutar `which`: `which` lanza `python`, y lo que ejecute no se ve por sus argumentos.\nRegla: encargo de `trabajo/g...`tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.' is None
+     +  where 'ejecutar `which`: `which` lanza `python`, y lo que ejecute no se ve por sus argumentos.\nRegla: encargo de `trabajo/g...`tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.' = _bash(<module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'>, PosixPath('/tmp/pytest-of-root/pytest-6/test_f_which_rmdir_y_pythonioe0/repo'), 'which python python3')
+/home/user/Botsito/tests/unit/test_guardia_g1.py:454: AssertionError: which python python3
+E   AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:474: AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+E   AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:474: AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+E   AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:474: AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+E   AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:476: AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+E   AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:476: AttributeError: <class 'guardia_claude.Politica'> has no attribute 'lista_dentro_del_holdout'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_pide_la_opcion'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:478: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_pide_la_opcion'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_pide_la_opcion'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:478: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_pide_la_opcion'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_opcion_en_el_texto'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:480: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_opcion_en_el_texto'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:487: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:489: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:487: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+E   AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:489: AttributeError: <module 'guardia_claude' from '/home/user/Botsito/.claude/hooks/guardia.py'> has no attribute '_test_de_un_clon'
+E   AttributeError: <module 'solo_lectura' from '/home/user/Botsito/.claude/hooks/solo_lectura.py'> has no attribute '_subcomando_git'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:502: AttributeError: <module 'solo_lectura' from '/home/user/Botsito/.claude/hooks/solo_lectura.py'> has no attribute '_subcomando_git'
+E   AttributeError: <module 'solo_lectura' from '/home/user/Botsito/.claude/hooks/solo_lectura.py'> has no attribute '_subcomando_git'
+/home/user/Botsito/tests/unit/test_guardia_g1.py:511: AttributeError: <module 'solo_lectura' from '/home/user/Botsito/.claude/hooks/solo_lectura.py'> has no attribute '_subcomando_git'
+E   KeyError: 'which'
+/home/user/Botsito/.venv/lib/python3.12/site-packages/_pytest/monkeypatch.py:302: KeyError: 'which'
+=========================== short test summary info ============================
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-files knowledge/cases | grep -v holdout]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-files knowledge/cases]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-files | grep caso]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-files '*.yaml']
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git -C knowledge ls-files cases]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-files knowledge/cases > lista.txt]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls -R knowledge/cases]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls -laR knowledge]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls <holdout>/1]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls <holdout>/1/]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[find knowledge/cases -name '*.yaml']
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[find . -name '*.py']
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[find knowledge]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree -r --name-only HEAD knowledge/cases]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree -r HEAD]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree --name-only HEAD <holdout>/1/]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree -r HEAD:knowledge/cases]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[tree knowledge]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[tree]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[du -a knowledge/cases]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[du knowledge/cases]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[sha256sum <holdout>/1/*]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[echo <holdout>/*/*]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[cd knowledge/cases && ls -R]
+FAILED tests/unit/test_guardia_g1.py::test_e_el_glob_que_alcanza_el_holdout_se_niega
+FAILED tests/unit/test_guardia_g1.py::test_e_powershell_que_lista_el_holdout_se_niega
+FAILED tests/unit/test_guardia_g1.py::test_a_la_forma_de_la_opcion_en_python_se_niega[setattr]
+FAILED tests/unit/test_guardia_g1.py::test_a_la_forma_de_la_opcion_en_python_se_niega[subindice]
+FAILED tests/unit/test_guardia_g1.py::test_a_una_variable_con_ese_nombre_y_los_grep_pasan
+FAILED tests/unit/test_guardia_g1.py::test_b_los_tests_del_clon_iguales_al_de_main_o_al_del_repo_pasan
+FAILED tests/unit/test_guardia_g1.py::test_c_la_raiz_de_la_unidad_en_un_test_del_clon_igual_pasa
+FAILED tests/unit/test_guardia_g1.py::test_d_un_patron_con_igual_no_es_una_ruta
+FAILED tests/unit/test_guardia_g1.py::test_f_solo_lectura_deja_leer_git_con_opciones_globales
+FAILED tests/unit/test_guardia_g1.py::test_f_which_rmdir_y_pythonioencoding_pasan
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listado-test_e_los_listados_del_holdout_se_niegan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listado-test_e_el_glob_que_alcanza_el_holdout_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listado-test_e_powershell_que_lista_el_holdout_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[listado_de_mas-test_e_el_recuento_y_lo_literal_pasan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[listado_de_mas-test_e_glob_y_powershell_que_no_alcanzan_el_holdout_pasan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_forma-test_a_la_forma_de_la_opcion_en_python_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_forma-test_a_la_opcion_en_codigo_en_linea_y_en_la_cli_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[regex_de_antes-test_a_una_variable_con_ese_nombre_y_los_grep_pasan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_clon-test_b_los_tests_del_clon_iguales_al_de_main_o_al_del_repo_pasan]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[clon_de_mas-test_b_lo_que_no_es_el_test_del_repo_se_sigue_negando]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_clon-test_c_la_raiz_de_la_unidad_en_un_test_del_clon_igual_pasa]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[clon_de_mas-test_c_la_raiz_de_la_unidad_en_un_test_cambiado_se_niega]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[subcomando_de_antes-test_f_solo_lectura_deja_leer_git_con_opciones_globales]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[subcomando_de_mas-test_f_solo_lectura_sigue_negando_lo_que_escribe]
+FAILED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listas_nuevas-test_f_which_rmdir_y_pythonioencoding_pasan]

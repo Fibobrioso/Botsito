@@ -1,0 +1,196 @@
+[e] e1-ls-files-grep (Bash): git ls-files knowledge/cases | grep -v holdout
+    hoy: PASA
+[e] e2-ls-files (Bash): git ls-files knowledge/cases
+    hoy: PASA
+[e] e3-ls-files-raiz-grep (Bash): git ls-files | grep caso
+    hoy: PASA
+[e] e4-ls-R (Bash): ls -R knowledge/cases
+    hoy: PASA
+[e] e5-ls-particion (Bash): ls <holdout>/1
+    hoy: PASA
+[e] e6-find (Bash): find knowledge/cases -name '*.yaml'
+    hoy: PASA
+[e] e7-ls-tree (Bash): git ls-tree -r --name-only HEAD knowledge/cases
+    hoy: PASA
+[e] e8-tree (Bash): tree knowledge
+    hoy: PASA
+[e] e9-du-a (Bash): du -a knowledge/cases
+    hoy: PASA
+[e] e10-rg-files (Bash): rg --files knowledge/cases
+    hoy: NIEGA: leer el contenido de knowledge/cases.
+[e] e11-grep-rl (Bash): grep -rl x knowledge/cases
+    hoy: NIEGA: leer el contenido de knowledge/cases.
+[e] e12-glob (Glob): knowledge/cases/**/*.yaml
+    hoy: PASA
+[e] e13-glob-path (Glob): **/*.yaml
+    hoy: PASA
+[e] e14-ps-gci (PowerShell): Get-ChildItem -Recurse knowledge/cases
+    hoy: PASA
+[e] e14b-ps-gci-particion (PowerShell): Get-ChildItem <holdout>/1
+    hoy: PASA
+[e] e14c-sha-glob (Bash): sha256sum <holdout>/1/*
+    hoy: PASA
+[e] e14d-ls-tree-directo (Bash): git ls-tree --name-only HEAD <holdout>/1/
+    hoy: PASA
+[e] e14e-find-raiz (Bash): find . -name '*.py'
+    hoy: PASA
+[e] e15-recuento (Bash): git ls-files <holdout> | wc -l
+    hoy: PASA
+[e] e16-literal (Bash): git ls-files knowledge/cases/dev knowledge/cases/kit
+    hoy: PASA
+[e] e17-ls-cases (Bash): ls knowledge/cases
+    hoy: PASA
+[e] e18-ls-holdout (Bash): ls <holdout>
+    hoy: PASA
+[e] e19-glob-py (Glob): **/*.py
+    hoy: PASA
+[e] e20-cli-inventory (Bash): uv run botsito corpus inventory
+    hoy: PASA
+[a] a1-lector-rama (Bash): uv run python scripts/leer_demo.py
+    hoy: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a2-dict-clave (Bash): uv run python k1_dict.py
+    hoy: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a3-kwarg (Bash): uv run python k1_kwarg.py
+    hoy: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a4-kwarg-false (Bash): uv run python k1_kwarg_false.py
+    hoy: PASA
+[a] a5-atributo (Bash): uv run python k1_atributo.py
+    hoy: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a6-expand (Bash): uv run python k1_expand.py
+    hoy: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a7-grep-patron (Bash): grep -n "crudo = " src/botsito/x.py
+    hoy: NIEGA: el comando pide el corpus SIN FILTRAR.
+[a] a8-grep-kwarg (Bash): grep -rn -E "def |crudo=" src/botsito
+    hoy: NIEGA: el comando pide el corpus SIN FILTRAR.
+[a] a9-cli-opcion (Bash): uv run botsito kb find x --crudo
+    hoy: NIEGA: el comando pide el corpus SIN FILTRAR.
+[a] a10-python-c (Bash): python -c "print(dict(crudo=True))"
+    hoy: NIEGA: el comando pide el corpus SIN FILTRAR.
+[b] b1-clon-cd (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_recorre.py -q
+    hoy: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+[b] b2-clon-ruta (Bash): uv run pytest <tmp>/cm/main/tests/unit/test_recorre.py -q
+    hoy: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+[b] b3-clon-nuevo (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_nuevo.py -q
+    hoy: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+[b] b4-clon-cambiado (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_cambiado.py -q
+    hoy: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+[b] b5-clon-sin-rutas (Bash): cd <tmp>/cm/main && uv run pytest -q
+    hoy: NIEGA: ejecutar `pytest`: `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros que la guardia no lee.
+[b] b6-clon-dos (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_recorre.py -q && uv run pytest tests/unit/test_nuevo.py -q
+    hoy: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+[b] b7-repo-tests (Bash): uv run pytest tests/unit/test_recorre.py -q
+    hoy: PASA
+[b] b8-clon-barra (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_barra.py -q
+    hoy: NIEGA: el codigo nombra la carpeta /, que contiene material protegido, y no se puede decidir que abrira dentro.
+[b] b9-clon-opcion (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_opcion.py -q
+    hoy: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[c] c1-clon-regex (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_regex.py -q
+    hoy: PASA
+[c] c1-clon-regex-win (win): cd <tmp>/cm/main && uv run pytest tests/unit/test_regex.py -q
+    hoy: NIEGA: el codigo nombra la carpeta \., que contiene material protegido, y no se puede decidir que abrira dentro.
+[c] c2-repo-regex-win (win): uv run pytest tests/unit/test_regex.py -q
+    hoy: PASA
+[d] d1-sin-r (Bash): grep -n "HUSO_CORTE =" src/botsito/x.py
+    hoy: PASA
+[d] d2-con-r (Bash): grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
+    hoy: NIEGA: leer el contenido de .
+[d] d3-barrido-1 (Bash): grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py; grep -rln "huso_corte" knowledge/cuentas | head -3
+    hoy: NIEGA: leer el contenido de .
+[d] d4-puntos-sin-r (Bash): grep -n "Puntos = " src/botsito/x.py
+    hoy: PASA
+[d] d5-puntos-con-r (Bash): grep -rn "^Puntos\|Puntos = " src/botsito/*.py | head -3
+    hoy: NIEGA: leer el contenido de  .
+[d] d6-cuatro-e (Bash): grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" -e "DIAGNOSTICO-A21" -e "a21=" src/ tests/ scripts/
+    hoy: NIEGA: leer el contenido de .
+[d] d7-dos-e (Bash): grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/ scripts/
+    hoy: PASA
+[d] d7b-patron-espacio (Bash): grep -rn " " src/
+    hoy: NIEGA: leer el contenido de  .
+[d] d8-opcion-ruta (Bash): grep -rn --exclude-dir=<holdout> x src
+    hoy: NIEGA: leer el contenido de <holdout>.
+[d] d9-opcion-ruta-protegida (Bash): cat --x=<holdout>/1/<caso>.yaml
+    hoy: NIEGA: leer el contenido de <holdout>/1/<caso>.yaml.
+[f] f1-sl-worktree-list (solo_lectura): git worktree list
+    hoy: NIEGA: `git worktree` cambia el repositorio o sus referencias
+[f] f2-sl-git-C (solo_lectura): git -C <tmp>/cm/main rev-parse HEAD
+    hoy: NIEGA: `git <tmp>/cm/main` cambia el repositorio o sus referencias
+[f] f3-sl-git-c (solo_lectura): git -c core.quotepath=false log -1
+    hoy: NIEGA: `git core.quotepath=false` cambia el repositorio o sus referencias
+[f] f4-sl-tag-l (solo_lectura): git tag -l 'stable/F38*'
+    hoy: NIEGA: `git tag` cambia el repositorio o sus referencias
+[f] f4b-sl-tag-crea (solo_lectura): git tag stable/x
+    hoy: NIEGA: `git tag` cambia el repositorio o sus referencias
+[f] f4c-sl-git-C-commit (solo_lectura): git -C <tmp>/cm/main commit -m x
+    hoy: NIEGA: `git <tmp>/cm/main` cambia el repositorio o sus referencias
+[f] f3b-guardia-git-c (Bash): git -c core.quotepath=false log -1
+    hoy: NIEGA: ejecutar `git -c core.quotepath`: `git -c core.quotepath=...`: clave fuera de la lista cerrada; muchas ejecutan un programa (`core.sshCommand`, `core.pager`, `core.fsmonitor`...).
+[f] f5-guardia-tag-l (Bash): git tag -l 'stable/F38*'
+    hoy: PASA
+[f] f6-guardia-git-C (Bash): git -C <tmp>/cm/main rev-parse HEAD
+    hoy: PASA
+[f] f7-guardia-worktree-list (Bash): git worktree list
+    hoy: PASA
+[f] f8-pythonioencoding (Bash): PYTHONIOENCODING=utf-8 python scripts/de_main.py
+    hoy: NIEGA: ejecutar `PYTHONIOENCODING=...`: el nombre de entorno `PYTHONIOENCODING` no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`): una variable de entorno puede cambiar que codigo se carga (`PYTHONPATH`, `BASH_ENV`, `LD_PRELOAD`...).
+[f] f9-encadenado (Bash): grep -n x PROJECT_STATE.md; uv run botsito state check
+    hoy: NIEGA: ejecutar `botsito state check`: antes, en el mismo comando, va `grep -n x PROJECT_STATE.md`.
+[f] f9b-encadenado-2 (Bash): uv run botsito state check 2>&1 | tail -8; uv run python scripts/de_main.py | tail -8
+    hoy: NIEGA: ejecutar `python scripts/de_main.py`: antes, en el mismo comando, va `uv run botsito state check`.
+[f] f10-grep-rln (Bash): grep -rln "huso_corte" knowledge/cuentas | head -3
+    hoy: PASA
+[f] f11-manifiesto-literal (Bash): uv run python f_manifiesto.py
+    hoy: PASA
+[f] f12-manifiesto-glob (Bash): uv run python f_manifiesto_glob.py
+    hoy: PASA
+[f] f13-manifiesto-compuesto (Bash): uv run python f_manifiesto_compuesto.py
+    hoy: NIEGA: el codigo nombra la carpeta data, que contiene material protegido, y no se puede decidir que abrira dentro.
+[f] f14-read-manifiesto (Read): data/manifests/ticks/eurusd-ticks-2026-01-1ce59681.yaml
+    hoy: PASA
+[f] f15-which (Bash): which python python3
+    hoy: NIEGA: ejecutar `which`: `which` lanza `python`, y lo que ejecute no se ve por sus argumentos.
+[f] f16-rm-rmdir (Bash): rm x.txt && rmdir vacio
+    hoy: NIEGA: ejecutar `rmdir`: antes, en el mismo comando, va `rm x.txt`.
+[f] f17-rmdir (Bash): rmdir vacio
+    hoy: PASA
+[f] f18-grep-r-src (Bash): grep -rn "HUSO_CORTE =" src/
+    hoy: NIEGA: leer el contenido de .
+[g] g0-control (Bash): uv run python trabajo/mod_malo.py
+    hoy: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g1-import-syspath (Bash): uv run python trabajo/b_import.py
+    hoy: PASA
+[g] g2-import-local (Bash): uv run python trabajo/b_import_local.py
+    hoy: PASA
+[g] g3-runpy (Bash): uv run python trabajo/b_runpy.py
+    hoy: PASA
+[g] g4-exec-open (Bash): uv run python trabajo/b_exec.py
+    hoy: PASA
+[g] g5-subprocess (Bash): uv run python trabajo/b_subprocess.py
+    hoy: PASA
+[g] g6-importlib (Bash): uv run python trabajo/b_importlib.py
+    hoy: PASA
+[g] g7-en-linea-import (Bash): cd trabajo && python -c "import mod_malo"
+    hoy: PASA
+[g] g8-en-linea-runpy (Bash): python -c "import runpy; runpy.run_path('trabajo/mod_malo.py')"
+    hoy: PASA
+[g] g9-botsito (Bash): uv run python trabajo/b_botsito.py
+    hoy: PASA
+[h] h5-joinpath (Bash): uv run python h5_joinpath.py
+    hoy: PASA
+[h] h5-os-path-join (Bash): uv run python h5_os_path_join.py
+    hoy: PASA
+[h] h5-barra (Bash): uv run python h5_barra.py
+    hoy: PASA
+[h] h5-fstring (Bash): uv run python h5_fstring.py
+    hoy: NIEGA: el codigo nombra la carpeta knowledge/cases/, que contiene material protegido, y no se puede decidir que abrira dentro.
+[h] h5-fstring-partes (Bash): uv run python h5_fstring_partes.py
+    hoy: PASA
+[h] h5-concatenacion (Bash): uv run python h5_concatenacion.py
+    hoy: PASA
+[h] h6-llaves (Bash): cat 'knowledge/cases/'{holdout,dev}'/1/secreto.yaml'
+    hoy: PASA
+[h] h7-url-file (Bash): uv run python h_url.py
+    hoy: PASA
+[h] h7b-url-file-curl (Bash): curl file://<tmp>/repo/<holdout>/1/secreto.yaml
+    hoy: PASA
+[h] h8-ci-a-trozos (Bash): uv run python h_ci.py
+    hoy: PASA

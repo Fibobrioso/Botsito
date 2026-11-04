@@ -1,0 +1,54 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+ROTO | sin_listado | test_e_los_listados_del_holdout_se_niegan | falla: git ls-files knowledge/cases | grep -v holdout
+.ROTO | sin_listado | test_e_el_glob_que_alcanza_el_holdout_se_niega | falla: {'pattern': 'knowledge/cases/**/*.yaml'}
+.ROTO | sin_listado | test_e_powershell_que_lista_el_holdout_se_niega | falla: Get-ChildItem -Recurse knowledge/cases
+.ROTO | listado_de_mas | test_e_el_recuento_y_lo_literal_pasan | falla: git ls-files knowledge/cases/dev knowledge/cases/kit
+.ROTO | listado_de_mas | test_e_glob_y_powershell_que_no_alcanzan_el_holdout_pasan | falla: Get-ChildItem docs
+.ROTO | sin_forma | test_a_la_forma_de_la_opcion_en_python_se_niega | falla: argumento
+.ROTO | sin_forma | test_a_la_opcion_en_codigo_en_linea_y_en_la_cli_se_niega | falla: python -c "print(dict(crudo=True))"
+.ROTO | regex_de_antes | test_a_una_variable_con_ese_nombre_y_los_grep_pasan | falla: leer.py
+.ROTO | sin_clon | test_b_los_tests_del_clon_iguales_al_de_main_o_al_del_repo_pasan | falla: cd /tmp/pytest-of-root/pytest-24/test_roto_a_proposito_sin_clon0/cm/main && uv run pytest tests/unit/test_recorre.py -q
+.ROTO | clon_de_mas | test_b_lo_que_no_es_el_test_del_repo_se_sigue_negando | falla: cd /tmp/pytest-of-root/pytest-24/test_roto_a_proposito_clon_de_0/cm/main && uv run pytest tests/unit/test_cambiado.py -q
+.ROTO | sin_clon | test_c_la_raiz_de_la_unidad_en_un_test_del_clon_igual_pasa | falla: assert 'el codigo nombra la carpeta \\., que contiene material protegido, y no se puede decidir que abrira dentro.\nRegla: CL...para ver que es (ADR-0038).\nCom
+.ROTO | clon_de_mas | test_c_la_raiz_de_la_unidad_en_un_test_cambiado_se_niega | falla: None
+.ROTO | candidato_de_antes | test_d_un_patron_con_igual_no_es_una_ruta | falla: grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
+.ROTO | sin_candidato_igual | test_d_lo_que_sigue_siendo_una_ruta_se_mira | falla: grep -rn --exclude-dir=<holdout> x src
+.ROTO | subcomando_de_antes | test_f_solo_lectura_deja_leer_git_con_opciones_globales | falla: git -C /tmp/pytest-of-root/pytest-24/test_roto_a_proposito_subcoman0/cm/main rev-parse HEAD
+.ROTO | subcomando_de_mas | test_f_solo_lectura_sigue_negando_lo_que_escribe | falla: git tag stable/x
+.ROTO | sin_listas_nuevas | test_f_which_rmdir_y_pythonioencoding_pasan | falla: which python python3
+.ROTO | lo_decidido_abierto | test_f_lo_decidido_en_guion_mismo_comando_sigue_negado | falla: grep -n x PROJECT_STATE.md; uv run botsito state check
+.ROTO | sin_carga | test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega | falla: import_local
+.ROTO | sin_carga | test_g_el_codigo_en_linea_tambien | falla: cd trabajo && python -c "import mod_malo"
+.ROTO | sin_carga | test_g_mas_de_tres_niveles_se_niega | falla: None
+.ROTO | carga_de_mas | test_g_lo_que_se_resuelve_y_es_inocuo_pasa | falla: ('estandar', 'el codigo carga o ejecuta `import json`: no se pudo resolver el modulo `json` (ni local ni del entorno)....nComo reescribirlo: el modulo o el guio
+.ROTO | sin_composicion | test_h_las_rutas_compuestas_al_material_se_niegan | falla: joinpath
+.ROTO | composicion_de_mas | test_h_las_composiciones_inocuas_pasan | falla: ('barra', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`*/holdout`) y que nombra `holdout`: n...ibirlo: la ruta LITERAL entera, o parte
+.ROTO | sin_llaves_ni_url | test_h_las_llaves_y_las_url_en_bash_se_niegan | falla: cat 'knowledge/cases/'{holdout,dev}'/1/secreto.yaml'
+.
+==================================== PASSES ====================================
+=========================== short test summary info ============================
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listado-test_e_los_listados_del_holdout_se_niegan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listado-test_e_el_glob_que_alcanza_el_holdout_se_niega]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listado-test_e_powershell_que_lista_el_holdout_se_niega]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[listado_de_mas-test_e_el_recuento_y_lo_literal_pasan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[listado_de_mas-test_e_glob_y_powershell_que_no_alcanzan_el_holdout_pasan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_forma-test_a_la_forma_de_la_opcion_en_python_se_niega]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_forma-test_a_la_opcion_en_codigo_en_linea_y_en_la_cli_se_niega]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[regex_de_antes-test_a_una_variable_con_ese_nombre_y_los_grep_pasan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_clon-test_b_los_tests_del_clon_iguales_al_de_main_o_al_del_repo_pasan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[clon_de_mas-test_b_lo_que_no_es_el_test_del_repo_se_sigue_negando]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_clon-test_c_la_raiz_de_la_unidad_en_un_test_del_clon_igual_pasa]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[clon_de_mas-test_c_la_raiz_de_la_unidad_en_un_test_cambiado_se_niega]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[candidato_de_antes-test_d_un_patron_con_igual_no_es_una_ruta]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_candidato_igual-test_d_lo_que_sigue_siendo_una_ruta_se_mira]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[subcomando_de_antes-test_f_solo_lectura_deja_leer_git_con_opciones_globales]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[subcomando_de_mas-test_f_solo_lectura_sigue_negando_lo_que_escribe]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_listas_nuevas-test_f_which_rmdir_y_pythonioencoding_pasan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[lo_decidido_abierto-test_f_lo_decidido_en_guion_mismo_comando_sigue_negado]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_carga-test_g_lo_que_el_guion_carga_sin_resolver_o_protegido_se_niega]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_carga-test_g_el_codigo_en_linea_tambien]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_carga-test_g_mas_de_tres_niveles_se_niega]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[carga_de_mas-test_g_lo_que_se_resuelve_y_es_inocuo_pasa]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_composicion-test_h_las_rutas_compuestas_al_material_se_niegan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[composicion_de_mas-test_h_las_composiciones_inocuas_pasan]
+PASSED tests/unit/test_guardia_g1.py::test_roto_a_proposito[sin_llaves_ni_url-test_h_las_llaves_y_las_url_en_bash_se_niegan]
