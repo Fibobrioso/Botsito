@@ -34,6 +34,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import re
 import subprocess
 import sys
 from collections.abc import Callable
@@ -270,6 +271,8 @@ RECUENTOS_Y_LITERALES = [
     "ls -R docs",
     f"du -sh {KC}",
     f"stat {KC}/{HOL}/1/README.md",  # medir un fichero NOMBRADO
+    f"ls -d {KC}/{HOL}/?",  # `ls -d` nombra las carpetas, no lo de dentro (revisor, m4)
+    f"ls -d {KC}/{HOL}/1",
     f"sha256sum {SECRETO}",
     "tree docs",
     "uv run botsito corpus inventory",
@@ -787,6 +790,10 @@ def _romper(cual: str, g: ModuleType, s: ModuleType, monkeypatch: pytest.MonkeyP
         monkeypatch.setattr(g, "_lanzado_como_bash", lambda llamada, nombre, asig, guion: "true")
     elif cual == "orden_como_ruta":  # PARADA 2, 2: una orden en una f-cadena vuelve a ser ruta
         monkeypatch.setattr(g, "_empieza_por_un_programa", lambda nodo: False)
+    elif cual == "recuento_con_escritor":  # A1 del revisor: cualquier cosa vale de filtro
+        monkeypatch.setattr(g, "_es_filtro", lambda cmd: True)
+    elif cual == "cadenas_ciegas":  # B4 del revisor: las cadenas literales sin mirar
+        monkeypatch.setattr(g, "CRUDO_PYTHON", re.compile(r"(?!x)x"))
     else:
         raise AssertionError(cual)
 
@@ -823,6 +830,8 @@ ROTURAS = [
     ("orden_como_ruta", "test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan"),
     ("tramos_ciegos", "test_p2_lo_sensible_de_verdad_sigue_negado"),
     ("orden_suelta_por_b", "test_p2_lo_sensible_de_verdad_sigue_negado"),
+    ("recuento_con_escritor", "test_e_un_escritor_en_medio_no_es_un_recuento"),
+    ("cadenas_ciegas", "test_a_la_clave_en_una_cadena_se_niega"),
 ]
 
 # Los parametrizados se rompen con su caso mas representativo.
@@ -875,6 +884,30 @@ def _de_main(rel: str) -> str | None:
     return None
 
 
+def _guardia_de_main(tmp_path: Path) -> Path:
+    """La guardia y `solo_lectura.py` de `main` (o `origin/main`) en `tmp_path`; sin ninguna de las
+    dos ramas, el test salta como `test_guardia_claude.py`."""
+    hooks = tmp_path / "main" / ".claude" / "hooks"
+    hooks.mkdir(parents=True)
+    for nombre in ("guardia.py", "solo_lectura.py"):
+        texto = _de_main(f".claude/hooks/{nombre}")
+        if texto is None:
+            pytest.skip("sin main ni origin/main en este clon")  # como test_guardia_claude.py
+        (hooks / nombre).write_text(texto, encoding="utf-8")
+    return hooks
+
+
+def _medir_g1_con_main(tmp_path: Path) -> tuple[ModuleType, list[str]]:
+    """`medir_g1.py` cargado, y su `argv` con la guardia de `main` y la de la rama."""
+    hooks = _guardia_de_main(tmp_path)
+    spec = importlib.util.spec_from_file_location("medir_g1_anexo", MEDIR_G1)
+    assert spec is not None and spec.loader is not None
+    medir = importlib.util.module_from_spec(spec)
+    sys.modules["medir_g1_anexo"] = medir
+    spec.loader.exec_module(medir)
+    return medir, ["medir_g1.py", str(hooks / "guardia.py"), str(GUARDIA)]
+
+
 def test_la_comparacion_caso_a_caso_con_la_guardia_de_main(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
@@ -883,20 +916,86 @@ def test_la_comparacion_caso_a_caso_con_la_guardia_de_main(
     estar en `CAMBIOS_DECLARADOS`. Corre desde `tests/` porque desde la fase 2 (C) la guardia niega
     ejecutar como guion suelto un fichero que monta rutas protegidas a trozos, que es lo que
     `medir_g1.py` hace con su repo inventado (GUARDIA-G1.md §5)."""
-    hooks = tmp_path / "main" / ".claude" / "hooks"
-    hooks.mkdir(parents=True)
-    for nombre in ("guardia.py", "solo_lectura.py"):
-        texto = _de_main(f".claude/hooks/{nombre}")
-        if texto is None:
-            pytest.skip("sin main ni origin/main en este clon")  # como test_guardia_claude.py
-        (hooks / nombre).write_text(texto, encoding="utf-8")
-    spec = importlib.util.spec_from_file_location("medir_g1_anexo", MEDIR_G1)
-    assert spec is not None and spec.loader is not None
-    medir = importlib.util.module_from_spec(spec)
-    sys.modules["medir_g1_anexo"] = medir
-    spec.loader.exec_module(medir)
-    monkeypatch.setattr(sys, "argv", ["medir_g1.py", str(hooks / "guardia.py"), str(GUARDIA)])
+    medir, argv = _medir_g1_con_main(tmp_path)
+    monkeypatch.setattr(sys, "argv", argv)
     salida = medir.main()
     impreso = capsys.readouterr().out
     print(impreso)
     assert salida == 0, [x for x in impreso.splitlines() if "SIN DECLARARLO" in x]
+
+
+# ------------------------------------------------ lo que encontro el revisor de la rama (§12)
+def test_e_un_escritor_en_medio_no_es_un_recuento(g: ModuleType, repo: Path) -> None:
+    """A1: un `tee` o un `sort -o` entre el listado y el `wc` deja los nombres en un fichero."""
+    for comando in (
+        f"git ls-files {KC} | tee nombres.txt | wc -l",
+        f"git ls-files {KC} | sort -o nombres.txt | wc -l",
+        f"git ls-files {KC} | wc -l > n.txt | grep -c x",
+    ):
+        motivo = _bash(g, repo, comando)
+        assert motivo is not None and "ADR-0088" in motivo, (comando, motivo)
+    assert _bash(g, repo, f"git ls-files {KC} | sort | uniq | wc -l") is None
+
+
+def test_a_la_clave_en_una_cadena_se_niega(g: ModuleType, repo: Path) -> None:
+    """B4: un dato con la clave entre comillas que llega a `**` se negaba en `main` por el regex
+    del texto, y se sigue negando aunque el codigo se mire por su arbol."""
+    codigo = f"import json\ndef f(**k):\n    return k\nf(**json.loads('{{\"{OPC}\": true}}'))\n"
+    motivo = _bash(g, repo, _escribe_guion(repo, "k1_json.py", codigo))
+    assert motivo is not None and "SIN FILTRAR" in motivo, motivo
+
+
+def test_roto_los_tests_que_cambian_de_sentido(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """B2 del revisor: los tests que cambian de sentido en `test_guardia_claude.py` y
+    `test_guardia_ci.py` tambien se rompen a proposito. Con cada pieza quitada, el comando que ese
+    test asegura negado PASA (asi que el test fallaria)."""
+    _malo(repo)
+    with monkeypatch.context() as m:  # test_listar_desde_la_raiz_... (sin el listado)
+        m.setattr(g.Politica, "lista_dentro_del_holdout", lambda self, r, rec: False)
+        assert _bash(g, repo, "git ls-files") is None
+        assert _bash(g, repo, "find . -exec sha256sum {} +") is None
+    with monkeypatch.context() as m:  # test_la_mencion_a_trozos_ya_se_ve (B sin lanzar)
+        m.setattr(g, "_lanzado_como_bash", lambda llamada, nombre, asig, guion: "true")
+        comando = "python -c \"import subprocess; subprocess.run(['g' + 'h', 'run', 'view', '1'])\""
+        assert _bash(g, repo, comando) is None
+    with monkeypatch.context() as m:  # ..._no_lo_ve_la_regla_de_la_ci (todo instalado)
+        m.setattr(g, "_instalado", lambda nombre, raiz: True)
+        assert _bash(g, repo, 'python -c "import aiohttp"') is None
+
+
+def test_roto_la_comparacion_con_main(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """B2 del revisor: sin una entrada de `CAMBIOS_DECLARADOS`, la comparacion caso a caso FALLA
+    (sale con 1 y dice «SIN DECLARARLO»)."""
+    medir, argv = _medir_g1_con_main(tmp_path)
+    monkeypatch.setattr(sys, "argv", argv)
+    monkeypatch.delitem(medir.CAMBIOS_DECLARADOS, "a1-lector-rama")
+    assert medir.main() == 1
+    assert "SIN DECLARARLO" in capsys.readouterr().out
+
+
+MEDIR_HUECOS = RAIZ / "docs" / "validation" / "anexos" / "GUION-MISMO-COMANDO" / "medir_huecos.py"
+
+
+def test_los_casos_de_medir_huecos_frente_a_la_guardia_de_main(
+    tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """B3 del revisor: los casos de `medir_huecos.py` (GUION-MISMO-COMANDO.md §1.4), con la guardia
+    de `main` y la de la rama: ningun caso que `main` niega pasa en la rama. Corre desde `tests/`
+    por lo mismo que la comparacion de `medir_g1.py` (respuesta a la PARADA 2, punto 0)."""
+    hooks = _guardia_de_main(tmp_path)
+    spec = importlib.util.spec_from_file_location("medir_huecos_anexo", MEDIR_HUECOS)
+    assert spec is not None and spec.loader is not None
+    medir = importlib.util.module_from_spec(spec)
+    sys.modules["medir_huecos_anexo"] = medir
+    spec.loader.exec_module(medir)
+    monkeypatch.setattr(sys, "argv", ["medir_huecos.py", str(hooks / "guardia.py"), str(GUARDIA)])
+    salida = medir.main()
+    impreso = capsys.readouterr().out
+    # Sin imprimir la salida: sus comandos nombran el fichero falso del holdout entero. Solo el
+    # resumen, que no lleva rutas.
+    print(impreso.strip().splitlines()[-1])
+    assert salida == 0, impreso.count("!!")

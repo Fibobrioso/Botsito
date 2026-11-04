@@ -26,12 +26,12 @@ E   AssertionError: ls -R knowledge/cases
 E   AssertionError: ls -laR knowledge
     assert None is not None
 /home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls -laR knowledge
-E   AssertionError: ls knowledge/cases/holdout/1
+E   AssertionError: ls <holdout>/1
     assert None is not None
-/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls knowledge/cases/holdout/1
-E   AssertionError: ls knowledge/cases/holdout/1/
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls <holdout>/1
+E   AssertionError: ls <holdout>/1/
     assert None is not None
-/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls knowledge/cases/holdout/1/
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: ls <holdout>/1/
 E   AssertionError: find knowledge/cases -name '*.yaml'
     assert None is not None
 /home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: find knowledge/cases -name '*.yaml'
@@ -47,9 +47,9 @@ E   AssertionError: git ls-tree -r --name-only HEAD knowledge/cases
 E   AssertionError: git ls-tree -r HEAD
     assert None is not None
 /home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree -r HEAD
-E   AssertionError: git ls-tree --name-only HEAD knowledge/cases/holdout/1/
+E   AssertionError: git ls-tree --name-only HEAD <holdout>/1/
     assert None is not None
-/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree --name-only HEAD knowledge/cases/holdout/1/
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree --name-only HEAD <holdout>/1/
 E   AssertionError: git ls-tree -r HEAD:knowledge/cases
     assert None is not None
 /home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: git ls-tree -r HEAD:knowledge/cases
@@ -65,12 +65,12 @@ E   AssertionError: du -a knowledge/cases
 E   AssertionError: du knowledge/cases
     assert None is not None
 /home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: du knowledge/cases
-E   AssertionError: sha256sum knowledge/cases/holdout/1/*
+E   AssertionError: sha256sum <holdout>/1/*
     assert None is not None
-/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: sha256sum knowledge/cases/holdout/1/*
-E   AssertionError: echo knowledge/cases/holdout/*/*
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: sha256sum <holdout>/1/*
+E   AssertionError: echo <holdout>/*/*
     assert None is not None
-/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: echo knowledge/cases/holdout/*/*
+/home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: echo <holdout>/*/*
 E   AssertionError: cd knowledge/cases && ls -R
     assert None is not None
 /home/user/Botsito/tests/unit/test_guardia_g1.py:221: AssertionError: cd knowledge/cases && ls -R
@@ -150,21 +150,21 @@ FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-files knowledge/cases > lista.txt]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls -R knowledge/cases]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls -laR knowledge]
-FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls knowledge/cases/holdout/1]
-FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls knowledge/cases/holdout/1/]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls <holdout>/1]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[ls <holdout>/1/]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[find knowledge/cases -name '*.yaml']
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[find . -name '*.py']
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[find knowledge]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree -r --name-only HEAD knowledge/cases]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree -r HEAD]
-FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree --name-only HEAD knowledge/cases/holdout/1/]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree --name-only HEAD <holdout>/1/]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[git ls-tree -r HEAD:knowledge/cases]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[tree knowledge]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[tree]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[du -a knowledge/cases]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[du knowledge/cases]
-FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[sha256sum knowledge/cases/holdout/1/*]
-FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[echo knowledge/cases/holdout/*/*]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[sha256sum <holdout>/1/*]
+FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[echo <holdout>/*/*]
 FAILED tests/unit/test_guardia_g1.py::test_e_los_listados_del_holdout_se_niegan[cd knowledge/cases && ls -R]
 FAILED tests/unit/test_guardia_g1.py::test_e_el_glob_que_alcanza_el_holdout_se_niega
 FAILED tests/unit/test_guardia_g1.py::test_e_powershell_que_lista_el_holdout_se_niega

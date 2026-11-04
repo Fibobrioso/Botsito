@@ -229,7 +229,15 @@ def exigir_sin_crudo(texto: str, donde: str, es_python: bool | None = None) -> N
         except (SyntaxError, ValueError):
             arbol = None
         if arbol is not None:
-            if _pide_la_opcion(arbol):
+            # El arbol para el codigo, y el regex de antes para cada CADENA literal: un dato con la
+            # clave (`json.loads('{"<opcion>": true}')` que va a `**`) se negaba en `main` y se
+            # sigue negando (revisor de esta rama, B4).
+            cadenas = (
+                c.value
+                for c in ast.walk(arbol)
+                if isinstance(c, ast.Constant) and isinstance(c.value, str)
+            )
+            if _pide_la_opcion(arbol) or any(CRUDO_PYTHON.search(c) for c in cadenas):
                 raise error
             return
     if CRUDO_PYTHON.search(texto):
@@ -2049,6 +2057,9 @@ def _alcances_del_listado(
     punto = Palabra(".")
     if prog in {"ls", "dir", "vdir"}:
         rec = any(re.fullmatch(r"-[a-zA-Z]*R[a-zA-Z]*|--recursive", t) for t in textos)
+        sin_dentro = any(re.fullmatch(r"-[a-zA-Z]*d[a-zA-Z]*|--directory", t) for t in textos)
+        if sin_dentro and not rec:
+            return []  # `ls -d` nombra las carpetas, no lo de dentro (revisor, m4)
         rutas = [a for a in args if not a.texto.startswith("-")]
         return [(r, rec, ctx.cwd) for r in rutas] or [(punto, rec, ctx.cwd)]
     if prog == "tree":
@@ -2083,6 +2094,10 @@ def _solo_sale_un_recuento(cmd: Comando, ctx: Contexto) -> bool:
     while fin + 1 < len(secuencia) and secuencia[fin + 1].tras_tuberia:
         fin += 1
     if fin == i or not secuencia[fin].argv:
+        return False
+    # Todo lo que va entre el listado y el recuento, un filtro que no escribe (`_es_filtro`): un
+    # `tee` o un `sort -o` en medio dejaria los nombres en un fichero (revisor de esta rama, A1).
+    if not all(_es_filtro(c) for c in secuencia[i + 1 : fin + 1]):
         return False
     ultimo = secuencia[fin].argv
     prog = _nombre_de_programa(ultimo[0].texto)
@@ -4562,8 +4577,8 @@ def _ruta_de_url(url: str) -> str:
 # que se resuelve en la carpeta del guion, en una ruta literal de `sys.path` o en el repo se lee y
 # se analiza como el guion; la biblioteca estandar, `botsito` y los paquetes del entorno, como
 # hasta ahora; lo que no se puede resolver, se niega, y el mensaje nombra el modulo o la llamada.
-# Lo que NO decide esta seccion (PARADA 2 de la rama): cargar un fichero por su ruta con
-# `importlib.util.spec_from_file_location`/`module_from_spec`, que sigue como en `main`.
+# Cargar un fichero por su ruta (`importlib.util.spec_from_file_location`, `SourceFileLoader`) lo
+# decidio la PARADA 2 de la rama, punto 1: `_exigir_carga_por_ruta`, como `runpy.run_path`.
 PROFUNDIDAD_DE_CARGA = 3
 R_CARGA = (
     "respuesta del consultor a la PARADA de la fase 0 de `trabajo/guardia-g1`, punto 9: lo que el "

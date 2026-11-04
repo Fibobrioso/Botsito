@@ -22,9 +22,11 @@ SE CORRE POR EL TEST, no suelto (respuesta del consultor a la PARADA 2 de `traba
 punto 0, AUTORIZADO A LA VISTA): `tests/unit/test_guardia_g1.py::test_la_comparacion_caso_a_caso_
 con_la_guardia_de_main` lo carga con la guardia de `main` (o `origin/main`) y la del arbol, y falla si
 un caso que `main` niega pasa sin declarar; asi corre en cada `make check` y en la CI. Desde la fase
-2 de esa rama la guardia niega ejecutarlo suelto desde la sesion, y tiene razon: este guion compone
-rutas protegidas a trozos, que es justo lo que C niega (GUARDIA-G1.md §5.6 y §6). Las fases 0 y 1 lo
-ejecutaron suelto, antes de C. La salida no imprime una ruta protegida entera (`_sin_rutas`).
+2 de esa rama la guardia niega ejecutarlo suelto desde la sesion, y tiene razon: en la fase 2 lo negaba
+C (compone rutas protegidas a trozos); desde la PARADA 2, punto 2, lo niega B (`sys.path.insert` con
+un valor que no se calcula, y dos guardias cargadas por rutas de `sys.argv`): GUARDIA-G1.md §5.6 y
+§6.1. Las fases 0 y 1 lo ejecutaron suelto, antes de C y B. La salida no imprime una ruta protegida
+entera (`_sin_rutas`).
 
 Uso (desde el test): main([..., <guardia de main>, <guardia de la rama>])
 """
@@ -33,6 +35,7 @@ from __future__ import annotations
 
 import importlib.util
 import os
+import re
 import subprocess
 import sys
 import tempfile
@@ -407,10 +410,10 @@ def _sin_rutas(texto: str, base: str) -> str:
         (MAT, "<material>"),
         (MAT.lower(), "<material>"),
         (_p("data", "transcrip" + "ciones"), "<transcripciones>"),
-        ("caso-eurusd-2026-05-04", "<caso reservado>"),
     ):
         texto = texto.replace(ruta, nombre)
-    return texto
+    # Los ids de caso por su forma, sin escribir el del caso reservado (revisor, B1).
+    return re.sub(r"caso-[a-z]+-\d{4}-\d{2}-\d{2}", "<caso>", texto)
 
 
 def main() -> int:

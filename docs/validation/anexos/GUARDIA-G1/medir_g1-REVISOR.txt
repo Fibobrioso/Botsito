@@ -1,0 +1,318 @@
+warning: The `UV_NATIVE_TLS` environment variable is deprecated and will be removed in a future release. Use `UV_SYSTEM_CERTS` instead.
+[e] e1-ls-files-grep (Bash): git ls-files knowledge/cases | grep -v holdout
+    main: PASA
+    rama: NIEGA: `git ls-files knowledge/cases` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e2-ls-files (Bash): git ls-files knowledge/cases
+    main: PASA
+    rama: NIEGA: `git ls-files knowledge/cases` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e3-ls-files-raiz-grep (Bash): git ls-files | grep caso
+    main: PASA
+    rama: NIEGA: `git ls-files` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e4-ls-R (Bash): ls -R knowledge/cases
+    main: PASA
+    rama: NIEGA: `ls -R knowledge/cases` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e5-ls-particion (Bash): ls <holdout>/1
+    main: PASA
+    rama: NIEGA: `ls <holdout>/1` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e6-find (Bash): find knowledge/cases -name '*.yaml'
+    main: PASA
+    rama: NIEGA: `find knowledge/cases -name *.yaml` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e7-ls-tree (Bash): git ls-tree -r --name-only HEAD knowledge/cases
+    main: PASA
+    rama: NIEGA: `git ls-tree -r --name-only` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e8-tree (Bash): tree knowledge
+    main: PASA
+    rama: NIEGA: `tree knowledge` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e9-du-a (Bash): du -a knowledge/cases
+    main: PASA
+    rama: NIEGA: `du -a knowledge/cases` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e10-rg-files (Bash): rg --files knowledge/cases
+    main: NIEGA: leer el contenido de knowledge/cases.
+    rama: NIEGA: leer el contenido de knowledge/cases.
+[e] e11-grep-rl (Bash): grep -rl x knowledge/cases
+    main: NIEGA: leer el contenido de knowledge/cases.
+    rama: NIEGA: leer el contenido de knowledge/cases.
+[e] e12-glob (Glob): knowledge/cases/**/*.yaml
+    main: PASA
+    rama: NIEGA: Glob de `knowledge/cases/**/*.yaml` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e13-glob-path (Glob): **/*.yaml
+    main: PASA
+    rama: NIEGA: Glob de `**/*.yaml` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e14-ps-gci (PowerShell): Get-ChildItem -Recurse knowledge/cases
+    main: PASA
+    rama: NIEGA: PowerShell lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e14b-ps-gci-particion (PowerShell): Get-ChildItem <holdout>/1
+    main: PASA
+    rama: NIEGA: PowerShell lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e14c-sha-glob (Bash): sha256sum <holdout>/1/*
+    main: PASA
+    rama: NIEGA: `sha256sum <holdout>/1/*` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e14d-ls-tree-directo (Bash): git ls-tree --name-only HEAD <holdout>/1/
+    main: PASA
+    rama: NIEGA: `git ls-tree --name-only HEAD` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e14e-find-raiz (Bash): find . -name '*.py'
+    main: PASA
+    rama: NIEGA: `find . -name *.py` lista los nombres de dentro de `<holdout>/{1,2,3}`.
+[e] e15-recuento (Bash): git ls-files <holdout> | wc -l
+    main: PASA
+    rama: PASA
+[e] e16-literal (Bash): git ls-files knowledge/cases/dev knowledge/cases/kit
+    main: PASA
+    rama: PASA
+[e] e17-ls-cases (Bash): ls knowledge/cases
+    main: PASA
+    rama: PASA
+[e] e18-ls-holdout (Bash): ls <holdout>
+    main: PASA
+    rama: PASA
+[e] e19-glob-py (Glob): **/*.py
+    main: PASA
+    rama: PASA
+[e] e20-cli-inventory (Bash): uv run botsito corpus inventory
+    main: PASA
+    rama: PASA
+[a] a1-lector-rama (Bash): uv run python scripts/leer_demo.py
+    main: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+    rama: PASA
+    DECLARADO: punto 2: la forma de la opcion por el arbol de Python; una variable o un grep no la piden
+[a] a2-dict-clave (Bash): uv run python k1_dict.py
+    main: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+    rama: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a3-kwarg (Bash): uv run python k1_kwarg.py
+    main: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+    rama: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a4-kwarg-false (Bash): uv run python k1_kwarg_false.py
+    main: PASA
+    rama: PASA
+[a] a5-atributo (Bash): uv run python k1_atributo.py
+    main: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+    rama: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a6-expand (Bash): uv run python k1_expand.py
+    main: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+    rama: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[a] a7-grep-patron (Bash): grep -n "crudo = " src/botsito/x.py
+    main: NIEGA: el comando pide el corpus SIN FILTRAR.
+    rama: PASA
+    DECLARADO: punto 2: la forma de la opcion por el arbol de Python; una variable o un grep no la piden
+[a] a8-grep-kwarg (Bash): grep -rn -E "def |crudo=" src/botsito
+    main: NIEGA: el comando pide el corpus SIN FILTRAR.
+    rama: PASA
+    DECLARADO: punto 2: la forma de la opcion por el arbol de Python; una variable o un grep no la piden
+[a] a9-cli-opcion (Bash): uv run botsito kb find x --crudo
+    main: NIEGA: el comando pide el corpus SIN FILTRAR.
+    rama: NIEGA: el comando pide el corpus SIN FILTRAR.
+[a] a10-python-c (Bash): python -c "print(dict(crudo=True))"
+    main: NIEGA: el comando pide el corpus SIN FILTRAR.
+    rama: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+[b] b1-clon-cd (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_recorre.py -q
+    main: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+    rama: PASA
+    DECLARADO: punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo
+[b] b2-clon-ruta (Bash): uv run pytest <tmp>/cm/main/tests/unit/test_recorre.py -q
+    main: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+    rama: PASA
+    DECLARADO: punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo
+[b] b3-clon-nuevo (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_nuevo.py -q
+    main: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+    rama: PASA
+    DECLARADO: punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo (el test nuevo de la rama, copiado al clon)
+[b] b4-clon-cambiado (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_cambiado.py -q
+    main: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+    rama: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+[b] b5-clon-sin-rutas (Bash): cd <tmp>/cm/main && uv run pytest -q
+    main: NIEGA: ejecutar `pytest`: `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros que la guardia no lee.
+    rama: NIEGA: ejecutar `pytest`: `pytest` sin rutas fuera de la raiz del repositorio recoge ficheros que la guardia no lee.
+[b] b6-clon-dos (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_recorre.py -q && uv run pytest tests/unit/test_nuevo.py -q
+    main: NIEGA: el codigo recorre directorios que construye al ejecutarse y nombra material sensible: no se puede decidir que ficheros abrira. Como reescribirlo: recorre una ruta LITERAL que no contenga material protegido, o usa la CLI del proyecto (`uv run botsito ...`), que es la puerta (casos_reservados, casos_ocultos).
+    rama: NIEGA: ejecutar `pytest`: antes, en el mismo comando, va `uv run pytest tests/unit/test_recorre.py -q`.
+[b] b7-repo-tests (Bash): uv run pytest tests/unit/test_recorre.py -q
+    main: PASA
+    rama: PASA
+[b] b8-clon-barra (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_barra.py -q
+    main: NIEGA: el codigo nombra la carpeta /, que contiene material protegido, y no se puede decidir que abrira dentro.
+    rama: PASA
+    DECLARADO: punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo
+[b] b9-clon-opcion (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_opcion.py -q
+    main: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
+    rama: PASA
+    DECLARADO: punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo
+[c] c1-clon-regex (Bash): cd <tmp>/cm/main && uv run pytest tests/unit/test_regex.py -q
+    main: PASA
+    rama: PASA
+[c] c1-clon-regex-win (win): cd <tmp>/cm/main && uv run pytest tests/unit/test_regex.py -q
+    main: NIEGA: el codigo nombra la carpeta \., que contiene material protegido, y no se puede decidir que abrira dentro.
+    rama: PASA
+    DECLARADO: punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo (K3 es K2)
+[c] c2-repo-regex-win (win): uv run pytest tests/unit/test_regex.py -q
+    main: PASA
+    rama: PASA
+[d] d1-sin-r (Bash): grep -n "HUSO_CORTE =" src/botsito/x.py
+    main: PASA
+    rama: PASA
+[d] d2-con-r (Bash): grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
+    main: NIEGA: leer el contenido de .
+    rama: PASA
+    DECLARADO: punto 4: lo de detras del `=` en blanco no es una ruta (era la raiz, recursiva)
+[d] d3-barrido-1 (Bash): grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py; grep -rln "huso_corte" knowledge/cuentas | head -3
+    main: NIEGA: leer el contenido de .
+    rama: PASA
+    DECLARADO: punto 4: lo de detras del `=` en blanco no es una ruta (era la raiz, recursiva)
+[d] d4-puntos-sin-r (Bash): grep -n "Puntos = " src/botsito/x.py
+    main: PASA
+    rama: PASA
+[d] d5-puntos-con-r (Bash): grep -rn "^Puntos\|Puntos = " src/botsito/*.py | head -3
+    main: NIEGA: leer el contenido de  .
+    rama: PASA
+    DECLARADO: punto 4: lo de detras del `=` en blanco no es una ruta (era la raiz, recursiva)
+[d] d6-cuatro-e (Bash): grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" -e "DIAGNOSTICO-A21" -e "a21=" src/ tests/ scripts/
+    main: NIEGA: leer el contenido de .
+    rama: PASA
+    DECLARADO: punto 4: lo de detras del `=` en blanco no es una ruta (era la raiz, recursiva)
+[d] d7-dos-e (Bash): grep -rn --include=*.py -e "--diagnostico-a21" -e "diagnostico.a21" src/ tests/ scripts/
+    main: PASA
+    rama: PASA
+[d] d7b-patron-espacio (Bash): grep -rn " " src/
+    main: NIEGA: leer el contenido de  .
+    rama: NIEGA: leer el contenido de  .
+[d] d8-opcion-ruta (Bash): grep -rn --exclude-dir=<holdout> x src
+    main: NIEGA: leer el contenido de <holdout>.
+    rama: NIEGA: leer el contenido de <holdout>.
+[d] d9-opcion-ruta-protegida (Bash): cat --x=<holdout>/1/<caso>.yaml
+    main: NIEGA: leer el contenido de <holdout>/1/<caso>.yaml.
+    rama: NIEGA: leer el contenido de <holdout>/1/<caso>.yaml.
+[f] f1-sl-worktree-list (solo_lectura): git worktree list
+    main: NIEGA: `git worktree` cambia el repositorio o sus referencias
+    rama: PASA
+    DECLARADO: punto 8: solo_lectura salta las opciones globales de git; worktree list y tag para listar
+[f] f2-sl-git-C (solo_lectura): git -C <tmp>/cm/main rev-parse HEAD
+    main: NIEGA: `git <tmp>/cm/main` cambia el repositorio o sus referencias
+    rama: PASA
+    DECLARADO: punto 8: solo_lectura salta las opciones globales de git; worktree list y tag para listar
+[f] f3-sl-git-c (solo_lectura): git -c core.quotepath=false log -1
+    main: NIEGA: `git core.quotepath=false` cambia el repositorio o sus referencias
+    rama: PASA
+    DECLARADO: punto 8: solo_lectura salta las opciones globales de git; worktree list y tag para listar (la guardia principal lo sigue negando: f3b)
+[f] f4-sl-tag-l (solo_lectura): git tag -l 'stable/F38*'
+    main: NIEGA: `git tag` cambia el repositorio o sus referencias
+    rama: PASA
+    DECLARADO: punto 8: solo_lectura salta las opciones globales de git; worktree list y tag para listar
+[f] f4b-sl-tag-crea (solo_lectura): git tag stable/x
+    main: NIEGA: `git tag` cambia el repositorio o sus referencias
+    rama: NIEGA: `git tag` cambia el repositorio o sus referencias
+[f] f4c-sl-git-C-commit (solo_lectura): git -C <tmp>/cm/main commit -m x
+    main: NIEGA: `git <tmp>/cm/main` cambia el repositorio o sus referencias
+    rama: NIEGA: `git commit` cambia el repositorio o sus referencias
+[f] f3b-guardia-git-c (Bash): git -c core.quotepath=false log -1
+    main: NIEGA: ejecutar `git -c core.quotepath`: `git -c core.quotepath=...`: clave fuera de la lista cerrada; muchas ejecutan un programa (`core.sshCommand`, `core.pager`, `core.fsmonitor`...).
+    rama: NIEGA: ejecutar `git -c core.quotepath`: `git -c core.quotepath=...`: clave fuera de la lista cerrada; muchas ejecutan un programa (`core.sshCommand`, `core.pager`, `core.fsmonitor`...).
+[f] f5-guardia-tag-l (Bash): git tag -l 'stable/F38*'
+    main: PASA
+    rama: PASA
+[f] f6-guardia-git-C (Bash): git -C <tmp>/cm/main rev-parse HEAD
+    main: PASA
+    rama: PASA
+[f] f7-guardia-worktree-list (Bash): git worktree list
+    main: PASA
+    rama: PASA
+[f] f8-pythonioencoding (Bash): PYTHONIOENCODING=utf-8 python scripts/de_main.py
+    main: NIEGA: ejecutar `PYTHONIOENCODING=...`: el nombre de entorno `PYTHONIOENCODING` no esta en la lista cerrada (`NOMBRES_DE_ENTORNO`): una variable de entorno puede cambiar que codigo se carga (`PYTHONPATH`, `BASH_ENV`, `LD_PRELOAD`...).
+    rama: PASA
+    DECLARADO: punto 5: PYTHONIOENCODING en NOMBRES_DE_ENTORNO
+[f] f9-encadenado (Bash): grep -n x PROJECT_STATE.md; uv run botsito state check
+    main: NIEGA: ejecutar `botsito state check`: antes, en el mismo comando, va `grep -n x PROJECT_STATE.md`.
+    rama: NIEGA: ejecutar `botsito state check`: antes, en el mismo comando, va `grep -n x PROJECT_STATE.md`.
+[f] f9b-encadenado-2 (Bash): uv run botsito state check 2>&1 | tail -8; uv run python scripts/de_main.py | tail -8
+    main: NIEGA: ejecutar `python scripts/de_main.py`: antes, en el mismo comando, va `uv run botsito state check`.
+    rama: NIEGA: ejecutar `python scripts/de_main.py`: antes, en el mismo comando, va `uv run botsito state check`.
+[f] f10-grep-rln (Bash): grep -rln "huso_corte" knowledge/cuentas | head -3
+    main: PASA
+    rama: PASA
+[f] f11-manifiesto-literal (Bash): uv run python f_manifiesto.py
+    main: PASA
+    rama: PASA
+[f] f12-manifiesto-glob (Bash): uv run python f_manifiesto_glob.py
+    main: PASA
+    rama: PASA
+[f] f13-manifiesto-compuesto (Bash): uv run python f_manifiesto_compuesto.py
+    main: NIEGA: el codigo nombra la carpeta data, que contiene material protegido, y no se puede decidir que abrira dentro.
+    rama: NIEGA: el codigo nombra la carpeta data, que contiene material protegido, y no se puede decidir que abrira dentro.
+[f] f14-read-manifiesto (Read): data/manifests/ticks/eurusd-ticks-2026-01-1ce59681.yaml
+    main: PASA
+    rama: PASA
+[f] f15-which (Bash): which python python3
+    main: NIEGA: ejecutar `which`: `which` lanza `python`, y lo que ejecute no se ve por sus argumentos.
+    rama: PASA
+    DECLARADO: punto 7: which en NO_EJECUTAN (busca, no ejecuta)
+[f] f16-rm-rmdir (Bash): rm x.txt && rmdir vacio
+    main: NIEGA: ejecutar `rmdir`: antes, en el mismo comando, va `rm x.txt`.
+    rama: PASA
+    DECLARADO: punto 7: rmdir en NO_EJECUTAN (la otra negativa de H)
+[f] f17-rmdir (Bash): rmdir vacio
+    main: PASA
+    rama: PASA
+[f] f18-grep-r-src (Bash): grep -rn "HUSO_CORTE =" src/
+    main: NIEGA: leer el contenido de .
+    rama: PASA
+    DECLARADO: punto 4: lo de detras del `=` en blanco no es una ruta (era la raiz, recursiva) (la negativa de H por la regla de Analytics)
+[g] g0-control (Bash): uv run python trabajo/mod_malo.py
+    main: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g1-import-syspath (Bash): uv run python trabajo/b_import.py
+    main: PASA
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g2-import-local (Bash): uv run python trabajo/b_import_local.py
+    main: PASA
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g3-runpy (Bash): uv run python trabajo/b_runpy.py
+    main: PASA
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g4-exec-open (Bash): uv run python trabajo/b_exec.py
+    main: PASA
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g5-subprocess (Bash): uv run python trabajo/b_subprocess.py
+    main: PASA
+    rama: NIEGA: el codigo lanza `'python' 'trabajo/mod_malo.py'` (`subprocess.run`), y la guardia lo niega como comando: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g6-importlib (Bash): uv run python trabajo/b_importlib.py
+    main: PASA
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g7-en-linea-import (Bash): cd trabajo && python -c "import mod_malo"
+    main: PASA
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g8-en-linea-runpy (Bash): python -c "import runpy; runpy.run_path('trabajo/mod_malo.py')"
+    main: PASA
+    rama: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
+[g] g9-botsito (Bash): uv run python trabajo/b_botsito.py
+    main: PASA
+    rama: PASA
+[h] h5-joinpath (Bash): uv run python h5_joinpath.py
+    main: PASA
+    rama: NIEGA: el codigo compone ./<holdout>/1/secreto.yaml.
+[h] h5-os-path-join (Bash): uv run python h5_os_path_join.py
+    main: PASA
+    rama: NIEGA: el codigo compone <holdout>/1/secreto.yaml.
+[h] h5-barra (Bash): uv run python h5_barra.py
+    main: PASA
+    rama: NIEGA: el codigo compone <holdout>/1/secreto.yaml.
+[h] h5-fstring (Bash): uv run python h5_fstring.py
+    main: NIEGA: el codigo nombra la carpeta knowledge/cases/, que contiene material protegido, y no se puede decidir que abrira dentro.
+    rama: NIEGA: el codigo nombra la carpeta knowledge/cases/, que contiene material protegido, y no se puede decidir que abrira dentro.
+[h] h5-fstring-partes (Bash): uv run python h5_fstring_partes.py
+    main: PASA
+    rama: NIEGA: el codigo compone <holdout>/1/secreto.yaml.
+[h] h5-concatenacion (Bash): uv run python h5_concatenacion.py
+    main: PASA
+    rama: NIEGA: el codigo compone <holdout>/1/secreto.yaml.
+[h] h6-llaves (Bash): cat 'knowledge/cases/'{holdout,dev}'/1/secreto.yaml'
+    main: PASA
+    rama: NIEGA: leer el contenido de <holdout>/1/secreto.yaml.
+[h] h7-url-file (Bash): uv run python h_url.py
+    main: PASA
+    rama: NIEGA: el codigo nombra la URL de <tmp>/repo/<holdout>/1/secreto.yaml.
+[h] h7b-url-file-curl (Bash): curl file://<tmp>/repo/<holdout>/1/secreto.yaml
+    main: PASA
+    rama: NIEGA: `curl` lee la URL file://<tmp>/repo/<holdout>/1/secreto.yaml.
+[h] h8-ci-a-trozos (Bash): uv run python h_ci.py
+    main: PASA
+    rama: NIEGA: el codigo lanza `'gh' 'run' 'view' '1'` (`subprocess.run`), y la guardia lo niega como comando: esperar a la CI: `gh run view`: consulta la CI desde un guion o codigo en linea (`bash -c`, un `.sh`), con espera o sin ella.
+
+..

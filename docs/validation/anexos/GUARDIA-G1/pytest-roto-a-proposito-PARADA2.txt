@@ -12,7 +12,7 @@ ROTO | sin_listado | test_e_los_listados_del_holdout_se_niegan | falla: git ls-f
 .ROTO | sin_clon | test_c_la_raiz_de_la_unidad_en_un_test_del_clon_igual_pasa | falla: assert 'el codigo nombra la carpeta \\., que contiene material protegido, y no se puede decidir que abrira dentro.\nRegla: CL...para ver que es (ADR-0038).\nCom
 .ROTO | clon_de_mas | test_c_la_raiz_de_la_unidad_en_un_test_cambiado_se_niega | falla: None
 .ROTO | candidato_de_antes | test_d_un_patron_con_igual_no_es_una_ruta | falla: grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
-.ROTO | sin_candidato_igual | test_d_lo_que_sigue_siendo_una_ruta_se_mira | falla: grep -rn --exclude-dir=knowledge/cases/holdout x src
+.ROTO | sin_candidato_igual | test_d_lo_que_sigue_siendo_una_ruta_se_mira | falla: grep -rn --exclude-dir=<holdout> x src
 .ROTO | subcomando_de_antes | test_f_solo_lectura_deja_leer_git_con_opciones_globales | falla: git -C /tmp/pytest-of-root/pytest-31/test_roto_a_proposito_subcoman0/cm/main rev-parse HEAD
 .ROTO | subcomando_de_mas | test_f_solo_lectura_sigue_negando_lo_que_escribe | falla: git tag stable/x
 .ROTO | sin_listas_nuevas | test_f_which_rmdir_y_pythonioencoding_pasan | falla: which python python3

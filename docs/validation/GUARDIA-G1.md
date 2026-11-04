@@ -43,9 +43,14 @@ en HEAD) el segundo sale en verde y sella el commit de apertura (cf1bc4a):
 SELLO: make check en verde sobre el arbol 3b5f89e17662cbec92a83fea480a63a2d0e9a12b
 DURACION de make check: 490 s en total; por paso (s): test 455, knowledge 33, state 1, types 0, config 0, contracts 0, contrato 0, desellar 0, sellar 0, lint 0
 PICO DE MEMORIA de make check: 142 MiB en `test` (RSS maxima del mayor proceso, linux)
-``` La CI de main corre sin `data/`
-(`.github/workflows/ci.yml`), y aquí tampoco hay `data/` (solo `data/manifests/`, que está en git)
-ni `corpus/`.
+```
+
+La CI de main corre sin `data/` (`.github/workflows/ci.yml`), y aquí tampoco hay `data/` (solo
+`data/manifests/`, que está en git) ni `corpus/`.
+
+**Sello del commit de la fase 0** (42e9dfa; añadido tras el revisor, B5): `3019 passed, 46 skipped`;
+`SELLO: make check en verde sobre el arbol e1569271ca0f0d7dbff4ea241e3838e049fe2b80`; `PICO DE MEMORIA
+de make check: 141 MiB en test`.
 
 **(3) Empujar a origin.** `git push --dry-run -u origin trabajo/guardia-g1` → `* [new branch]
 trabajo/guardia-g1 -> trabajo/guardia-g1`; después el push de verdad, con el commit de apertura.
@@ -1125,6 +1130,11 @@ en cada `make check` y en la CI. Las tres condiciones:
   que C niega, y lo que el encargo mandaba hacer para medir sin nombrar rutas protegidas enteras. Desde
   `tests/`, que corre sin leerse por diseño con la guarda del holdout como barrera
   (GUION-MISMO-COMANDO.md §0.c), la medida es la misma.
+  > **Corrección tras el revisor (A3), con su medida:** después del punto 2 (C por tramos), C ya no lo
+  > niega; lo niega **B**, por el `sys.path.insert` de `medir_g1.py` con un valor que no se calcula
+  > («el codigo carga o ejecuta `sys.path.insert(...)`: cambia `sys.path` con un valor que no se
+  > calcula», medido por el revisor con `decidir()` en memoria). Sigue negado, y con razón: también
+  > carga dos guardias por rutas de `sys.argv`. La cabecera del guion lo dice ya así.
 - **(ii) `medir_g1.py` no se ejecuta suelto.** Su cabecera dice que se corre por el test, con la
   respuesta que lo autoriza; desde aquí no lo he vuelto a ejecutar suelto.
 - **(iii) `main` en la CI.** Sin `main` ni `origin/main`, el test salta con el mismo aviso que
@@ -1143,6 +1153,17 @@ Negativa al comprobarlo, error mío y no de esta rama: `grep -c -i 'knowledge/ca
 adicional\|<id del caso reservado>' <salida>` → «leer el contenido de … Regla: … un caso de una
 particion reservada» (la regla por nombre de `main`, porque el patrón llevaba el id). Lo comprobé sin
 el id (las dos carpetas, y el marcador que lo sustituye).
+
+> **Desviación declarada tras el revisor (B6).** El mensaje entero, con el id sustituido:
+> «GUARDIA (.claude/hooks/guardia.py) bloquea: leer el contenido de
+> knowledge/cases/holdout\|material adicional\|<caso>. Regla: CLAUDE.md, «Que se puede mirar y que
+> no», punto 3: un caso de una particion reservada (`casos_reservados`, `casos_ocultos`) no se lee sin
+> la puerta de ADR-0033.» No trae «Como reescribirlo». No paré: la respuesta a la PARADA 2 pide
+> PARADA ante una negativa NUEVA a partir de los cambios de la rama, y esta es una regla de `main`
+> que disparó un error mío (escribir el id en un comando); pero la regla general del encargo pide
+> PARADA ante cualquier negativa salvo la forma que propone el mensaje, y repetí la comprobación con
+> otro patrón. Es la desviación; el dato (que la salida no nombra rutas protegidas) no cambia ninguna
+> decisión. La fila de ERRORES-RECURRENTES ya no la cuenta como «con la forma del mensaje».
 
 ### 6.2 Cargar un fichero por su ruta (punto 1)
 
@@ -1270,6 +1291,15 @@ sin cambio, porque tocan `src/` (respuesta, punto 13).
     sesión: B los niega por llamar a `git` o a un programa con argumentos que no se calculan, o por
     `sys.path.insert` sin calcular (GUARDIA-G1.md §6.4). La rama que los cambie los prueba por sus
     tests y, sueltos, con «!»; `make check` los sigue lanzando.»
+  - «Riesgo residual de la excepción de la carga por ruta (revisor, A2; GUARDIA-G1.md §6.2): la de
+    la regla de la CI, ampliada a `solo_lectura.py`, vale para CUALQUIER fichero cuya ruta acabe en
+    `.claude/hooks/guardia.py` o `solo_lectura.py`, también fuera del repo, y B no lo lee.»
+  - «Riesgo residual de ADR-0088 (revisor, B7): la guardia niega los listados de `ls`, `dir`,
+    `tree`, `du`, `find`, `git ls-files`, `git ls-tree`, Glob y `Get-ChildItem`; NO los nombres que
+    sacan `git log --name-only`, `git show --name-only`, `git diff --name-only`, `git status
+    --untracked-files=all` o `fd`. Con un caso de verdad dentro de una partición, `git log`/`show`/
+    `diff` sobre esa ruta ya los niega la regla de lectura (`motivo_ruta`); `git status` y `fd`, no.
+    Rama del carril de guardias.»
 - Sin cambio (respuesta a la PARADA 2, «Además»): «ADR 0087 (S-15, no existe) sigue en los
   `ids-inexistentes` …». Esta rama creó el ADR-0088, no el 0087, y declara el 0087 en sus propios
   `ids-inexistentes` (§4.10).
@@ -1378,7 +1408,7 @@ en test`.
   como lo que son, con la lección de siempre (una cosa por llamada; respuesta a la PARADA 2,
   «Además»); el número de ADR reservado; y la medida de una rama de guardia desde `tests/`. La columna
   del revisor se rellena con su informe (§12).
-- **PROJECT_STATE.md**: solo el recuento de tests (1800 → 1832, lo exige `state check`) y lo que hizo
+- **PROJECT_STATE.md**: solo el recuento de tests (1800 → 1837 con los tests de los arreglos del revisor, lo exige `state check`) y lo que hizo
   `abrir-rama`; 21.814 bytes.
 
 ## 10. La CI de Linux
@@ -1410,20 +1440,91 @@ Se empuja la rama a `origin/trabajo/guardia-g1` y a `fix/guardia-g1` (la CI solo
 | 8 | PARADA ante una negativa, salvo la forma que propone la guardia | Hecho: n3 paró ese dato; las de forma, con su forma; la de C a `medir_g1.py`, PARADA 2 | §3, §5.6 |
 | 9 | CI con una consulta suelta cada vez | Hecho | §0, §10 |
 | 10 | Cada falso positivo por su condición, sin excepciones por nombre | Hecho (`which` y `rmdir` entran por el mecanismo de la lista cerrada, punto 7 de la respuesta) | §4 |
-| 11 | Cada test roto a propósito en los dos sentidos; comparación con main por el método de §1.4 | Hecho: 31 roturas; comparación por `medir_g1.py` (fases 0 y 1 suelto, desde la fase 2 por el test, autorizado) | §4.7, §4.8, §5.3, §5.4, §6.5 |
+| 11 | Cada test roto a propósito en los dos sentidos; comparación con main por el método de §1.4 | Hecho: 33 roturas en `ROTURAS` y `test_roto_los_tests_que_cambian_de_sentido` y `test_roto_la_comparacion_con_main` (revisor, B2); comparación por `medir_g1.py` (fases 0 y 1 suelto, desde la fase 2 por el test, autorizado) y por los casos de `medir_huecos.py` (test nuevo tras el revisor, B3) | §4.7, §4.8, §5.3, §5.4, §6.5 |
 | 12 | Sellado por fase con PICO en el informe | Hecho | §4, §5, §6, §9 |
 | 13 | Fase 0 a)-j) con su tabla y la PARADA | Hecho | §1 |
-| 14 | Fase 1 en el orden e, a, b, c, d, f; tests primero; `medir_huecos` ampliado antes y después | Hecho (`medir_g1.py`, el método de `medir_huecos.py` con los casos de esta rama, en `anexos/GUARDIA-G1/`) | §4 |
+| 14 | Fase 1 en el orden e, a, b, c, d, f; tests primero; `medir_huecos` ampliado antes y después | Hecho de otra forma, declarado tras el revisor (B3): `medir_g1.py` es el MÉTODO de `medir_huecos.py` con los casos de esta rama, no `medir_huecos.py` ampliado; los casos de `medir_huecos.py` se comparan aparte con la guardia de `main` en `test_los_casos_de_medir_huecos_frente_a_la_guardia_de_main` («Casos que main niega y la rama deja pasar: 0») | §4 |
 | 15 | Fase 2, B y C; PARADA si piden algo no decidido | Hecho; PARADA 2 (la carga por ruta y la negativa a `medir_g1.py`), respondida y aplicada | §5, §6 |
 | 16 | Fase 3: lo falso en CLAUDE.md, runbooks o skills | CLAUDE.md enmendado (ADR-0088); en runbooks y skills no encontré nada falso por esta rama (fase-cero ya dice lo de ADR-0088; comparar-con-main usa `git worktree list`, que ahora deja `solo_lectura`); las skills no se tocan (respuesta 1, punto 12) | §4.1, §9 |
 | 17 | La fila de ERRORES-RECURRENTES con las dos negativas de H | Hecho: las dos se arreglan en esta rama (f16, f18) | §9 |
 | 18 | Para el cierre: K, B y C, G.1, Technical Debt, tamaño de PROJECT_STATE | Preparado, sin aplicar | §7 |
 | 19 | Informe con todo eso | Hecho | este fichero |
 | 20 | Push de la rama y a `fix/guardia-g1`, con la CI de Linux y sus números de run | Hecho | §10 |
-| 21 | El revisor con el informe terminado, y su informe pegado | Hecho | §12 |
+| 21 | El revisor con el informe terminado, y su informe pegado | Hecho: lanzado con el informe terminado salvo §12; lo que encontró y lo hecho con cada hallazgo, en §12 | §12 |
 | 22 | Ningún registro de cierre en HISTORIA ni cambios de Next Action | Hecho: solo el Archivo 54 de la apertura, y el recuento de tests de PROJECT_STATE que exige `state check` | `git diff main --stat` |
+
+**Sellos que faltaban** (revisor, B5): el del commit de la fase 3 (b0807cc): `3152 passed, 46
+skipped`; `SELLO: make check en verde sobre el arbol 8a26ded048a8266b0d96068311ac2b0d1f57d80b`; `PICO
+DE MEMORIA de make check: 145 MiB en test`. El de 9a090bc (§10): `3152 passed, 46 skipped`; `SELLO:
+make check en verde sobre el arbol 7273988ba12be2fdb4f484ff513f5d2cf7e4523d`; `PICO DE MEMORIA de make
+check: 143 MiB en test`. El del commit de este §12 va en el mensaje final a Aleks.
+
+## 12. Informe del revisor (subagente `revisor`, 2026-11-04)
+
+Lanzado con el informe terminado salvo esta sección (y el §10, que se commiteó, 9a090bc, mientras
+revisaba; lo revisó también). **Pegado tal cual, con UNA alteración declarada:** las rutas protegidas
+enteras que cita como evidencia de B1 (la del caso reservado de la fixture y la del fichero falso del
+holdout) van enmascaradas (`<holdout>`, `<caso>`), por la misma regla que su hallazgo B1 hace cumplir.
+
+> **Informe del revisor · trabajo/guardia-g1 · 2026-11-04**
+>
+> Alcance: base `main` en 7a3a1ff. He revisado los 7 commits que me pasaste y además **9a090bc**, que se commiteó mientras revisaba (solo cambia el §10 del informe, +11/−2). El commit 9a090bc está sellado: `make-check.log` dice `SELLO: make check en verde sobre el arbol 7273988b…`, que es `HEAD^{tree}`, con `3152 passed, 46 skipped` y `PICO DE MEMORIA de make check: 143 MiB en test`. Al terminar, el árbol de trabajo estaba limpio.
+>
+> **Eje (a) · Reglas de la casa.** Resumen: 0 bloquea, 3 importa, 4 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | A1 | importa | **El recuento de ADR-0088 se puede saltar con un escritor en medio de la tubería.** `_solo_sale_un_recuento` solo mira dos cosas: las redirecciones del propio listado y el último programa. Un `tee` o un `sort -o` intermedio escribe los nombres a un fichero y la guardia lo deja pasar. ADR-0088 §2 dice «El recuento sí: una salida que es solo un número» y §4 «La guardia de Claude Code lo hace cumplir». El informe (§4.1) dice «Pasa si la tubería acaba en `wc` … y el listado no escribe a un fichero». Ninguno de los dos se sostiene. | `guardia.py`, `_solo_sale_un_recuento` (diff, hacia las líneas 2280-2300 nuevas). Medido en memoria con `decidir()` sobre el repo real: `'git ls-files knowledge/cases \| tee /tmp/nombres.txt \| wc -l' -> PASA` y `'git ls-files knowledge/cases \| sort -o /tmp/n.txt \| wc -l' -> PASA`. Sin el escritor se niega: `'git ls-files knowledge/cases \| grep -v x' -> NIEGA`. |
+> | A2 | importa | **Riesgo residual de B que no está declarado: la excepción de la ruta del hook vale para cualquier fichero cuya ruta acabe en `.claude/hooks/guardia.py` o `solo_lectura.py`,** también fuera del repo o inexistente. B no lee ese fichero. El §6.2 lo describe («o la ruta calculada acabada así»), pero ninguna línea de Technical Debt del §7 lo recoge. | `guardia.py:4842` y `:5287` (`ruta.endswith("/" + "/".join(r))`). Medido en memoria: `spec_from_file_location("x", "/tmp/otro/.claude/hooks/guardia.py")` + `exec_module` → **PASA**. La misma forma con `/tmp/otro/modulo.py` → NIEGA «no existe al inspeccionar». |
+> | A3 | importa | **El motivo que dan para negar `medir_g1.py` suelto ya no es cierto en HEAD.** §6.1 (i) y la cabecera de `medir_g1.py:25-27` dicen que lo niega C («compone rutas protegidas a trozos, que es justo lo que C niega»). Tras el punto 2 de la PARADA 2, C ya no lo niega: lo niega B, por el `sys.path.insert` de `medir_g1.py:95`. En `analizar_codigo`, C (`_compone_ruta_sensible`) corre antes que B (`guardia.py:4958-4959`), así que si C negara, saldría su motivo. CLAUDE.md: «si la medida la contradice, gana la medida y se dice con su nombre». | Medido en memoria: `'python docs/validation/anexos/GUARDIA-G1/medir_g1.py' -> NIEGA el codigo carga o ejecuta \`sys.path.insert(...)\`: cambia \`sys.path\` con un valor que no se calcula.` |
+> | m1 | menor | Una valla de código mal cerrada: «``` La CI de main corre sin `data/`» no cierra el bloque. Al renderizar, todo lo que va de §0 (3) a §1.i sale como código, hasta la valla de la línea 417. | `GUARDIA-G1.md:46`. Las vallas están en 41, 46, 415 y 417. |
+> | m2 | menor | Comentario desfasado: dice que la carga por ruta «sigue como en `main`», y la PARADA 2 ya la implementó. | `guardia.py:4565-4566` frente a `_exigir_carga_por_ruta`, `:4794` y `:4823`. |
+> | m3 | menor | El `## Estado` sigue diciendo «Pendiente: la CI de Linux … (§10)», y el §10 ya trae el run desde 9a090bc. La fila 21 del §11 da al revisor por «Hecho» antes de que exista el §12. | `GUARDIA-G1.md:1428-1429`, `:1423`. |
+> | m4 | menor | Falso positivo sin declarar: `ls -d knowledge/cases/holdout/?` se niega. Solo imprime `…/1`, `…/2` y `…/3`, que no son nada de dentro. | Medido en memoria: `'ls -d knowledge/cases/holdout/?' -> NIEGA … lista los nombres de dentro`. |
+>
+> Comprobado sin hallazgos: el contrato (`CONTRATO: 34 ficheros dentro del contrato …`); el pytest de los cinco ficheros del contrato (0 líneas `FAILED|ERROR|^E `; solo salta lo de Windows de `test_guardia_alias.py` y `test_guardia_ffmpeg.py:433`); `make check` (el `make-check.log` de 9a090bc, SELLO = árbol de HEAD, línea PICO); los árboles sellados del informe son los de sus commits (cf1bc4a→3b5f89e, 0d784e9→be5df0c, aa882ab→c94cd8c, fb57e68→ac71ce3); trailers `Fuente:` (ningún commit toca `knowledge/spec` ni `knowledge/cases`); regímenes de cambio (nada en `knowledge/`, `data/manifests/` ni corpus; HISTORIA solo gana líneas, `# Archivo 54`; ningún informe cerrado cambia: en `docs/validation/` todo es `A`); ADR-0088 con `## Estado` = `ACTIVE` y su fila en el índice; sin cambios de spec (no aplican las tres guardias de `cita`); holdout: ninguna lectura de material y ninguna exposición que declarar; PROJECT_STATE 21.814 bytes, solo Current Branch y Feature, el recuento (1832 = 1800 + 31 + 1) y el Archivo 54; CLAUDE.md enmendado en el mismo commit que el ADR (0d784e9); tres citas comprobadas contra su fuente (ADR-0033:17 y :42; `test_guardia_alias.py:39-42`, un `skipif`, y `_romper` en `:71`; en `main`, `test_guardia_claude.py:1784`, `:1855` y `:1856`, y `guardia.py:2481` y `:2504-2507`); la CI trae `origin/main` (`ci.yml`, `fetch-depth: 0`).
+>
+> **Eje (b) · Encargo.** Resumen: 1 bloquea, 6 importa, 0 menor. Requisitos: 26 hechos, 7 parciales, 0 no hechos, 1 hecho de otra forma sin declarar, 1 en curso (este informe). Filas: 1 base (Hecho, CI por la API, desviación aceptada); 2 `abrir-rama` (Hecho); 3 lo de la nube (Hecho); 4 Windows en memoria y la lista (Hecho); 5 rutas a trozos y nunca enteras (**Parcial**, B1); 6 PARADA ante una negativa (**Parcial**, B6); 7 CI con consulta suelta (Hecho); 8 falsos positivos por su condición (Hecho); 9 cada test roto a propósito (**Parcial**, B2); 10 comparación con `medir_huecos.py` ampliado (**Hecho de otra forma, sin declarar**, B3); 11 sellado por fase con PICO (**Parcial**, B5); 12 fase 0 (Hecho); 13 las dos respuestas copiadas tal cual (Hecho: `IGUAL1`, `IGUAL2`); 14 ADR y CLAUDE.md, contrato en su commit (Hecho; 0087→0088 declarado en §4.10); 15 e) (**Parcial**, B7; el test con nombre nuevo sí está); 16 a) K1 sin aflojar sin decirlo (**Parcial**, B4); 17 b) y c) (Hecho); 18 d) (Hecho); 19 f) (Hecho); 20 B (Hecho); 21 C y los 7 guiones (Hecho); 22 PARADA 2, punto 0 (**Parcial**: (ii) y (iii) cumplidas; la razón de (i), A3); 23 punto 1 (Hecho); 24 punto 2 (Hecho); 25 punto 3 (Hecho); 26 «Además» (Hecho); 27 j como deuda (Hecho); 28 fase 3, CLAUDE.md y skills (Hecho); 29 fila de ERRORES-RECURRENTES (Hecho); 30 líneas del cierre y PROJECT_STATE (Hecho); 31 pushes y run (Hecho, no verificado por él); 32 revisor (En curso); 33 ningún registro de cierre (Hecho); 34 QUÉ NO CAMBIA (Hecho); 35 el encargo punto por punto (Hecho).
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | B1 | bloquea | **Los anexos imprimen rutas protegidas enteras, entre ellas la de un caso reservado real.** El encargo, en REGLAS: «las rutas protegidas se montan a trozos y no se imprimen enteras en el informe». §6.1 justifica que las salidas de las fases 0 y 1 «son de antes de esta condición», pero la condición está en el encargo desde el principio. Además calla la de la fase 2, que también las lleva. El propio informe (§1, :73-75) dice que ese id es un caso reservado del repo real (`R_CASO`). | `medir_g1-FASE0.txt:111-112`, `medir_g1-FASE1.txt:179-181` y `medir_g1-FASE2.txt:180-182`: `cat --x=<holdout>/1/<caso>.yaml` y «leer el contenido de <holdout>/1/<caso>…». Además `<tmp>/repo/<holdout>/1/secreto.yaml`, 25 veces en FASE2 y otras en FASE0 y FASE1, y `costo_c-FASE2.txt:143` / `costo_c-PARADA2.txt:94` (`<holdout>/1/caso.yaml`). Fila 7 del §11: «Hecho; desde la PARADA 2». |
+> | B2 | importa | **No todos los tests nuevos se enseñan rotos a propósito.** `test_la_comparacion_caso_a_caso_con_la_guardia_de_main` nunca se enseña fallando, por ejemplo quitando una entrada de `CAMBIOS_DECLARADOS`. Tampoco el nuevo `test_listar_desde_la_raiz_…` de `test_guardia_claude.py`, ni los dos de `test_guardia_ci.py` que cambian de sentido. | `ROTURAS` (`test_guardia_g1.py:794-826`) no los nombra. Los anexos `pytest-roto-a-proposito-*.txt` tienen 31 líneas `ROTO \|` y ninguna es de esos tests. |
+> | B3 | importa | **La comparación no es `medir_huecos.py` ampliado, y no se declara como otra forma.** `medir_g1.py` solo lleva los casos de esta rama, más los seis h5. Los ~50 casos de `medir_huecos.py` (b1-b6, v-*, f1-heredoc…) no se vuelven a comparar contra la guardia de la rama. El informe lo presenta como «el método de `medir_huecos.py`, ampliado con los casos de esta rama». | `medir_huecos.py:130-168` frente a `medir_g1.py:253-365`; `GUARDIA-G1.md:67-68` y la fila 14 del §11. |
+> | B4 | importa | **K1 afloja una forma que `main` negaba, y no se dice.** En código Python que se parsea ya no se mira el texto. Una clave entre comillas dentro de una cadena, por ejemplo JSON que llega a `**`, pasaba a negarse en `main` por `CRUDO_PYTHON` y ahora pasa. El informe solo declara aflojado «el literal en un comentario de Python o en un comando de Bash que no ejecuta Python» (§4.2). El objetivo del encargo dice «sin aflojar ninguna regla que hoy funciona». | `guardia.py:208-235` (`exigir_sin_crudo`: con `es_python` y un árbol, `return` sin regex). Medido: código `import json\nf(**json.loads('{"<opción>": true}'))` → «main, regex sobre el texto: NIEGA»; «rama, decidir: PASA». |
+> | B5 | importa | **Faltan en el informe el sello y la línea PICO de dos commits:** el de la fase 0 (42e9dfa) y el de la fase 3 (b0807cc). La fila 12 del §11 dice «Hecho». El de 9a090bc solo está en `make-check.log`, y el §10 dice que el informe «ya no cambia después». | El Grep de `SELLO:\|PICO DE MEMORIA` en `GUARDIA-G1.md` solo da :43-45, :891-892, :1101-1102 y :1358-1359. `git rev-parse b0807cc^{tree}` = 8a26ded…, que no sale en el informe. |
+> | B6 | importa | **Una negativa sin PARADA.** Al comprobar `_sin_rutas`, la guardia negó un `grep` con el id del caso reservado. La sesión lo rehízo sin el id («Lo comprobé sin el id…») en lugar de parar. La fila de ERRORES-RECURRENTES la cuenta como «con la forma que propone el mensaje», pero el informe no copia el mensaje entero (su «Como reescribirlo»), así que no se ve que proponga esa forma. | `GUARDIA-G1.md:1142-1145`; fila `trabajo/guardia-g1` de ERRORES-RECURRENTES, punto (2). |
+> | B7 | importa | **e) pide «cualquier listado de la carpeta madre del holdout».** Siguen pasando formas que imprimen nombres de dentro de las particiones: la historia de git y `fd`. Hoy cada partición solo tiene su README, pero los casos que entren se commitean: `.gitignore` no excluye nada de `holdout`. No figuran como riesgo residual en el §7. | Medido en memoria: `git log --name-only --format= -- knowledge/cases/holdout`, `git show --name-only HEAD -- knowledge/cases`, `git diff --name-only 7a3a1ff~200 -- knowledge/cases`, `git status --short --untracked-files=all` y `fd . knowledge/cases` → **PASA** los cinco. `LISTADORES` y `_alcances_de_git` (diff) solo cubren `ls`/`dir`/`vdir`/`tree`/`du`/`find`, `git ls-files` y `git ls-tree`. |
+>
+> **Lo que no pude comprobar:** el log de la CI (run 41858841083), porque `gh` solo busca en la nube (lo sustituye `ci.yml` y que en local el test no sale entre los saltados); los casos de `medir_huecos.py` contra la guardia de la rama (ejecutarlo escribe un repo temporal y mi Bash no escribe); el mensaje entero de la negativa de B6 (reproducirlo exige escribir el id reservado); si el historial de `knowledge/cases/holdout` contiene nombres (listarlo es lo que ADR-0088 prohíbe); K2/K3 con un `git worktree` real y lo de Windows de verdad; el `push --dry-run` y los pushes. Nota: su primer pytest corrió a la vez que el `make check` de 9a090bc, sin `-p no:cacheprovider` (pudo escribir `.pytest_cache`, que git ignora); ese `make check` acabó en verde. Los demás, con `-p no:cacheprovider`.
+>
+> **Comandos ejecutados** (28; tres negados por reglas de `main` y rehechos con la forma del mensaje: `date` encadenado, un `for` con `$f`, `tail; stat; date` encadenado; y `pytest -o`): `git` de lectura (rama, merge-base, log, diff, status, rev-parse, show), Read del encargo, del contrato, del informe, de `medir_g1.py` y de `make-check.log`; `uv run python scripts/contrato_rama.py`; el pytest de los cinco ficheros (con `-rs` y con `-p no:cacheprovider`); medidas en memoria con `decidir()` (seis llamadas); Grep y `sed` de anexos, de `guardia.py`, de los tests y de las citas; dos `diff` de las respuestas copiadas (`IGUAL1`, `IGUAL2`); `cat .github/workflows/ci.yml`; `wc -c` de PROJECT_STATE.
+
+### 12.1 Lo hecho con cada hallazgo
+
+| # | Gravedad | Lo hecho |
+|---|---|---|
+| A1 | importa | **Arreglado.** `_solo_sale_un_recuento` exige que todo lo que va entre el listado y el recuento sea un filtro que no escribe (`_es_filtro`, la lista cerrada de `main`). Test `test_e_un_escritor_en_medio_no_es_un_recuento` (`tee`, `sort -o` y una redirección: NIEGA; `sort \| uniq \| wc -l`: PASA), roto a propósito con `recuento_con_escritor` |
+| A2 | importa | **Declarado** como riesgo residual en la línea de Technical Debt preparada (§7); es la excepción decidida (punto 1), con su alcance dicho |
+| A3 | importa | **Corregido** en §6.1 (i) (recuadro con la medida del revisor) y en la cabecera de `medir_g1.py`: desde el punto 2 lo niega B, por `sys.path.insert` |
+| m1 | menor | Arreglado (§0) |
+| m2 | menor | Arreglado (comentario de B en `guardia.py`) |
+| m3 | menor | Arreglado (`## Estado` y la fila 21 del §11) |
+| m4 | menor | **Arreglado:** `ls -d` nombra las carpetas, no lo de dentro; `ls -d <holdout>/?` y `ls -d <holdout>/1` pasan (en `RECUENTOS_Y_LITERALES`) |
+| B1 | bloquea | **Arreglado:** todas las salidas del anexo enmascaradas con las sustituciones de `_sin_rutas` (`<holdout>`, `<material>`, `<transcripciones>`, `<caso>`; el id, por su forma, sin escribirlo): 146 sustituciones en 10 ficheros (`enmascarar.py` del scratchpad, que no se commitea). `medir_g1.py` enmascara ya los ids por su forma. En el informe no queda ninguna ruta de dentro de una partición (solo la sonda `caso-eurusd-2000-01-01.yaml`, que no es un caso) |
+| B2 | importa | **Arreglado:** `test_roto_los_tests_que_cambian_de_sentido` (con cada pieza quitada, `git ls-files`, `find . -exec …`, `'g' + 'h'` y `aiohttp` PASAN, así que los tres tests que cambian de sentido fallarían) y `test_roto_la_comparacion_con_main` (sin `a1-lector-rama` en `CAMBIOS_DECLARADOS`, `medir_g1.py` sale con 1 y dice «SIN DECLARARLO») |
+| B3 | importa | **Hecho de otra forma, ahora declarado** (§11, fila 14), y además: `test_los_casos_de_medir_huecos_frente_a_la_guardia_de_main` corre los casos de `medir_huecos.py` con la guardia de `main` y la de la rama: «Casos que main niega y la rama deja pasar: 0» (`pytest-roto-a-proposito-REVISOR.txt`) |
+| B4 | importa | **Arreglado:** en Python que se parsea, el árbol para el código y el regex de antes para cada CADENA literal; test `test_a_la_clave_en_una_cadena_se_niega`, roto a propósito con `cadenas_ciegas` |
+| B5 | importa | **Arreglado:** los sellos de 42e9dfa (§0), b0807cc y 9a090bc (aquí arriba) |
+| B6 | importa | **Declarado** como desviación (§6.1, recuadro, con el mensaje entero y el id sustituido), y corregida la fila de ERRORES-RECURRENTES |
+| B7 | importa | **Declarado** como riesgo residual de ADR-0088 en la línea de Technical Debt preparada (§7): `git log`/`show`/`diff --name-only`, `git status` y `fd`. No lo amplío aquí: son formas que la respuesta a la PARADA no nombra |
+
+Tras los arreglos: `tests/unit/test_guardia_g1.py` tiene 140 tests y 33 roturas en `ROTURAS`, más los
+dos «roto» aparte de B2; los tests de los seis ficheros de la guardia y del revisor, en verde.
 
 ## Estado
 
-FASES 0, 1, 2 y 3 HECHAS y selladas; las dos PARADAS respondidas y aplicadas. Pendiente: la CI de
-Linux por `fix/guardia-g1` (§10) y el informe del revisor (§12).
+Rama lista para revisión, NO cerrada. Fases 0, 1, 2 y 3 hechas y selladas; las dos PARADAS
+respondidas y aplicadas; la CI de Linux de `fix/guardia-g1` (run 41858841083) con solo el fallo
+esperado de `state check` (§10); el revisor pasado y lo hecho con cada hallazgo en §12.1. El cierre lo
+ejecuta Aleks en su portátil, con la orden de cierre (líneas preparadas en §7; lo de Windows, §8).

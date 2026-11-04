@@ -34,20 +34,20 @@ scripts/verificacion_a21.py: 5 composiciones, 5 calculadas; C PASA; entero PASA
 scripts/verificacion_a21_entradas.py: 5 composiciones, 5 calculadas; C PASA; entero PASA
 scripts/verificacion_a35_a44.py: 6 composiciones, 5 calculadas; C PASA; entero PASA
 scripts/viabilidad_comision.py: 6 composiciones, 2 calculadas; C PASA; entero PASA
-scripts/viabilidad_trader.py: 9 composiciones, 1 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus/estrategia del trader/material adicional de su operativa`) y que nombra; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus/estrategia del trader/material adicional de su operativa`) y que nombra
+scripts/viabilidad_trader.py: 9 composiciones, 1 calculadas; C NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra; entero NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra
 
 # C sola: 11 negados (2 de scripts/, 9 de tests/)
   scripts/transcribir_sesion.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/*.cruda-no-leer.jsonl`) y que nombra `cruda`: comparada por tramos con lo prot
-  scripts/viabilidad_trader.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus/estrategia del trader/material adicional de su operativa`) y que nombra
+  scripts/viabilidad_trader.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra
   tests/integration/test_fotogramas_ffmpeg.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: comparada por tramos con lo protegido, puede l
   tests/unit/test_cli.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: comparada por tramos con lo protegido, puede l
-  tests/unit/test_guardia_alias.py: NIEGA: el codigo compone corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/x.xlsx.
-  tests/unit/test_guardia_ci.py: NIEGA: el codigo compone corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4.
-  tests/unit/test_guardia_claude.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/holdout/1/x.yaml`) y que nombra `holdout`: comparada por tramo
-  tests/unit/test_guardia_ffmpeg.py: NIEGA: el codigo compone corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4.
+  tests/unit/test_guardia_alias.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/x.xlsx.
+  tests/unit/test_guardia_ci.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/v.mp4.
+  tests/unit/test_guardia_claude.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<holdout>/1/x.yaml`) y que nombra `holdout`: comparada por tramo
+  tests/unit/test_guardia_ffmpeg.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/v.mp4.
   tests/unit/test_inventario.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: comparada por tramos con lo protegido, puede l
   tests/unit/test_pipeline_transcripcion.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus`) y que nombra `corpus`: comparada por tramos con lo protegido, puede l
-  tests/unit/test_puerta_holdout.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/knowledge/cases/holdout/2/caso-secreto.yaml`) y que nombra `holdout`: comparad
+  tests/unit/test_puerta_holdout.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<holdout>/2/caso-secreto.yaml`) y que nombra `holdout`: comparad
 
 # el analisis entero (B y C): 83 negados (7 de scripts/, 76 de tests/)
   scripts/contrato_rama.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' '-c' 'core.quotepath=false' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega co
@@ -56,7 +56,7 @@ scripts/viabilidad_trader.py: 9 composiciones, 1 calculadas; C NIEGA: el codigo 
   scripts/pico_memoria.py: NIEGA: el codigo carga o ejecuta `subprocess.run(...)`: el programa que lanza no se calcula.
   scripts/sello_make_check.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
   scripts/transcribir_sesion.py: NIEGA: el codigo nombra .cruda-NO-LEER.jsonl.
-  scripts/viabilidad_trader.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/corpus/estrategia del trader/material adicional de su operativa`) y que nombra
+  scripts/viabilidad_trader.py: NIEGA: el codigo compone una ruta que no se puede calcular al inspeccionar (`*/<material>`) y que nombra
   tests/conftest.py: NIEGA: el codigo carga o ejecuta `from tests import ...`: no se pudo resolver el modulo `tests` (ni local ni del entorno).
   tests/contract/test_anterioridad.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
   tests/contract/test_data_manifest_history.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
@@ -91,14 +91,14 @@ scripts/viabilidad_trader.py: 9 composiciones, 1 calculadas; C NIEGA: el codigo 
   tests/unit/test_cuarentena_por_condicion.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' '-c' 'user.name=t' '-c' 'user.email=t@t' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardi
   tests/unit/test_dos_relojes.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
   tests/unit/test_escenarios_por_sesion.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
-  tests/unit/test_estado_sesion.py: NIEGA: el codigo nombra knowledge/cases/holdout/1/caso.yaml.
+  tests/unit/test_estado_sesion.py: NIEGA: el codigo nombra <holdout>/1/caso.yaml.
   tests/unit/test_fidelidad_marzo.py: NIEGA: el codigo carga o ejecuta `from tests.unit.test_kit import ...`: no se pudo resolver el modulo `tests.unit.test_kit` (ni local ni del entorno).
   tests/unit/test_freno_peticiones.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
   tests/unit/test_guarda_holdout.py: NIEGA: el codigo carga o ejecuta `from tests import ...`: no se pudo resolver el modulo `tests` (ni local ni del entorno).
   tests/unit/test_guardia_alias.py: NIEGA: la ruta `/proc/1/cwd` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae bajo la
   tests/unit/test_guardia_ci.py: NIEGA: esperar a la CI: `gh run` y `subprocess`: el codigo menciona la CI y puede salir del proceso para consultarla (un guion o codigo en linea), con espera
   tests/unit/test_guardia_claude.py: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
-  tests/unit/test_guardia_ffmpeg.py: NIEGA: el codigo compone corpus/Estrategia del trader/Material adicional de su operativa/Backtest marzo 2026/v.mp4.
+  tests/unit/test_guardia_ffmpeg.py: NIEGA: el codigo compone <material>/Backtest marzo 2026/v.mp4.
   tests/unit/test_historia.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
   tests/unit/test_historial_sin_git.py: NIEGA: el codigo carga o ejecuta `from tests.unit.test_kit import ...`: no se pudo resolver el modulo `tests.unit.test_kit` (ni local ni del entorno).
   tests/unit/test_hooks_utf8.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
@@ -114,7 +114,7 @@ scripts/viabilidad_trader.py: 9 composiciones, 1 calculadas; C NIEGA: el codigo 
   tests/unit/test_pipeline_transcripcion.py: NIEGA: el codigo que se ejecuta pide el corpus SIN FILTRAR.
   tests/unit/test_preparar_a21.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
   tests/unit/test_preparar_a44.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
-  tests/unit/test_puerta_holdout.py: NIEGA: el codigo nombra knowledge/cases/holdout/2/caso-secreto.yaml.
+  tests/unit/test_puerta_holdout.py: NIEGA: el codigo nombra <holdout>/2/caso-secreto.yaml.
   tests/unit/test_punto_usado.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).
   tests/unit/test_push_atomico.py: NIEGA: el codigo lanza `cd "$__GUARDIA_DINAMICO__" && 'git' "$__GUARDIA_DINAMICO__"` (`subprocess.run`), y la guardia lo niega como comando: ejecutar `git $_
   tests/unit/test_racha_perdidas.py: NIEGA: el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).

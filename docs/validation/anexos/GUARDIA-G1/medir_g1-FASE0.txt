@@ -6,7 +6,7 @@
     hoy: PASA
 [e] e4-ls-R (Bash): ls -R knowledge/cases
     hoy: PASA
-[e] e5-ls-particion (Bash): ls knowledge/cases/holdout/1
+[e] e5-ls-particion (Bash): ls <holdout>/1
     hoy: PASA
 [e] e6-find (Bash): find knowledge/cases -name '*.yaml'
     hoy: PASA
@@ -26,21 +26,21 @@
     hoy: PASA
 [e] e14-ps-gci (PowerShell): Get-ChildItem -Recurse knowledge/cases
     hoy: PASA
-[e] e14b-ps-gci-particion (PowerShell): Get-ChildItem knowledge/cases/holdout/1
+[e] e14b-ps-gci-particion (PowerShell): Get-ChildItem <holdout>/1
     hoy: PASA
-[e] e14c-sha-glob (Bash): sha256sum knowledge/cases/holdout/1/*
+[e] e14c-sha-glob (Bash): sha256sum <holdout>/1/*
     hoy: PASA
-[e] e14d-ls-tree-directo (Bash): git ls-tree --name-only HEAD knowledge/cases/holdout/1/
+[e] e14d-ls-tree-directo (Bash): git ls-tree --name-only HEAD <holdout>/1/
     hoy: PASA
 [e] e14e-find-raiz (Bash): find . -name '*.py'
     hoy: PASA
-[e] e15-recuento (Bash): git ls-files knowledge/cases/holdout | wc -l
+[e] e15-recuento (Bash): git ls-files <holdout> | wc -l
     hoy: PASA
 [e] e16-literal (Bash): git ls-files knowledge/cases/dev knowledge/cases/kit
     hoy: PASA
 [e] e17-ls-cases (Bash): ls knowledge/cases
     hoy: PASA
-[e] e18-ls-holdout (Bash): ls knowledge/cases/holdout
+[e] e18-ls-holdout (Bash): ls <holdout>
     hoy: PASA
 [e] e19-glob-py (Glob): **/*.py
     hoy: PASA
@@ -106,10 +106,10 @@
     hoy: PASA
 [d] d7b-patron-espacio (Bash): grep -rn " " src/
     hoy: NIEGA: leer el contenido de  .
-[d] d8-opcion-ruta (Bash): grep -rn --exclude-dir=knowledge/cases/holdout x src
-    hoy: NIEGA: leer el contenido de knowledge/cases/holdout.
-[d] d9-opcion-ruta-protegida (Bash): cat --x=knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml
-    hoy: NIEGA: leer el contenido de knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml.
+[d] d8-opcion-ruta (Bash): grep -rn --exclude-dir=<holdout> x src
+    hoy: NIEGA: leer el contenido de <holdout>.
+[d] d9-opcion-ruta-protegida (Bash): cat --x=<holdout>/1/<caso>.yaml
+    hoy: NIEGA: leer el contenido de <holdout>/1/<caso>.yaml.
 [f] f1-sl-worktree-list (solo_lectura): git worktree list
     hoy: NIEGA: `git worktree` cambia el repositorio o sus referencias
 [f] f2-sl-git-C (solo_lectura): git -C <tmp>/cm/main rev-parse HEAD
@@ -155,7 +155,7 @@
 [f] f18-grep-r-src (Bash): grep -rn "HUSO_CORTE =" src/
     hoy: NIEGA: leer el contenido de .
 [g] g0-control (Bash): uv run python trabajo/mod_malo.py
-    hoy: NIEGA: el codigo nombra <tmp>/repo/knowledge/cases/holdout/1/secreto.yaml.
+    hoy: NIEGA: el codigo nombra <tmp>/repo/<holdout>/1/secreto.yaml.
 [g] g1-import-syspath (Bash): uv run python trabajo/b_import.py
     hoy: PASA
 [g] g2-import-local (Bash): uv run python trabajo/b_import_local.py
@@ -190,7 +190,7 @@
     hoy: PASA
 [h] h7-url-file (Bash): uv run python h_url.py
     hoy: PASA
-[h] h7b-url-file-curl (Bash): curl file://<tmp>/repo/knowledge/cases/holdout/1/secreto.yaml
+[h] h7b-url-file-curl (Bash): curl file://<tmp>/repo/<holdout>/1/secreto.yaml
     hoy: PASA
 [h] h8-ci-a-trozos (Bash): uv run python h_ci.py
     hoy: PASA
