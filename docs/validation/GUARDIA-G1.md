@@ -686,10 +686,39 @@ HOLDOUT-EXPOSICIONES.
 
 Espero tu respuesta a la PARADA.
 
+
+## Respuesta del consultor a la PARADA (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> 0. (a). Un ADR corto en esta rama, con docs/adr/ abierto en el contrato solo para ese fichero y su índice (amplía el contrato en su propio commit y dilo). El ADR nombra la condición, no los casos: «listar los nombres de dentro de knowledge/cases/holdout/{1,2,3} no es abrir (ADR-0021 §1, ADR-0033 §1), pero es una exposición de proceso que la sesión no hace: se cuenta, no se imprime». Y enmienda la frase de CLAUDE.md «deja listarlo, medirlo y hashearlo» a «deja contarlo, medirlo y hashearlo por la CLI», en el mismo commit. Por qué: es lo que CLAUDE.md pide para una prohibición sin ADR, y es la 4.ª exposición.
+> 1. (a), la condición de §1.e entera, con dos añadidos: (i) el test de :1855 cambia de sentido y su nombre nuevo dice lo que asegura; (ii) test_el_ritual_y_los_runbooks_pasan tiene que seguir pasando sin tocar ningún comando: lo comprobé (ningún runbook, skill ni comando del ritual usa git ls-files sin rutas, find ., ls -R ni git ls-tree -r); si en la fase 1 encuentras uno, PARADA antes de cambiarlo. Por qué: la lección es sobre el alcance, no sobre el filtro.
+> 2. (a), la forma de la opción por el árbol de Python y solo --cr… en el texto de Bash y PowerShell. La clave en un dict literal sigue negada (a2, a6), como propones. Por qué: nombra la forma, no la palabra, y quita los grep negados (a7, a8, n3).
+> 3. (a), _test_de_un_clon con el blob de main O el fichero del árbol de trabajo del repo real. Declara en el informe el riesgo que ya dices: el test copiado se fía de lo que dentro del repo ya está exento. Por qué: (b) deja fuera el uso que motiva K2.
+> 4. (a): el candidato vacío o en blanco tras el = no es una ruta; el argumento entero en blanco (d7b) sigue como hoy. Por qué: el = partido es un invento de la guardia; un argumento en blanco sí lo recibe el programa.
+> 5. (a): PYTHONIOENCODING entra en NOMBRES_DE_ENTORNO con su porqué.
+> 6. (a): sin cambio en lo encadenado ni en git -c. Por qué: son reglas decididas en guion-mismo-comando, no falsos positivos.
+> 7. (a): which y rmdir entran en NO_EJECUTAN, cada uno con su porqué en el comentario. Por qué: es el mecanismo de la lista cerrada.
+> 8. (a): solo_lectura.py salta las opciones globales de git (las de GIT_CON_VALOR, con su valor) para encontrar el subcomando; entran worktree list y tag solo para listar; lo demás igual. Por qué: niega lo mismo que escribe y abre la vía de comparar-con-main.
+> 9. (a), §1.g: Python solo, hasta 3 niveles, negar lo no resoluble, subprocess con programa literal como un comando de Bash y no literal negado. El mensaje de la negativa nombra el módulo o la llamada que no pudo resolver, para que la sesión sepa qué forma usar.
+> 10. (a), la variante ESTRECHA con el cálculo previo de la composición, las llaves expandidas y file:// como su ruta. Añade a la fase 2 esta medida: para los 7 guiones de scripts/ que la estrecha marca, qué composición los marca y si con el cálculo la ruta resultante es inocua (es decir, si cambiados en una rama pasarían igual); la cifra real de coste es esa, no 44.
+> 11. (a): j queda como deuda con el texto de §1.j, publish_files incluido, y el puntero «junto a K» desaparece de esa línea en las líneas del cierre.
+> 12. (a): a) y h) tocan CRUDO_PYTHON y la regla de la CI solo en lo que el encargo nombra; las skills no se tocan (lo falso en ellas queda listado para el cierre); los recuadros de informes cerrados amplían el contrato en su commit y se dice.
+> 13. De acuerdo: cerrar-rama y los flags de diagnóstico siguen en G.1, fuera de esta rama, y G.1 no pasa a HECHA.
+>
+> Desviaciones de la apertura: aceptadas y quedan declaradas (la CI consultada con una llamada suelta a la API en vez de gh run view, porque gh solo está permitido para búsquedas en la nube; el git fetch --unshallow del clon).
+>
+> Sigue sin parar: fase 1 en el orden del encargo (e, a, b, c, d, f), con el ADR y la enmienda de CLAUDE.md en el primer commit de la fase; después la fase 2 (B y C) y la fase 3. Tests primero, rotos a propósito en los dos sentidos, medir_g1.py antes y después, make check sellado por fase con PICO DE MEMORIA. Al terminar: push de la rama, push a fix/guardia-g1 con la CI de Linux y sus números de run, el revisor con el informe terminado, y la lista de §1.i para Aleks con los comandos exactos. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto.
+>
+> Rama lista para revisión, NO cerrada.
+
 ## Estado
 
-FASE 0 HECHA, en PARADA: espero la respuesta del consultor a «Lo que necesito que decidas». Ni una
-línea de la guardia ni de sus tests escrita. Lo único nuevo, además del informe: los dos guiones de
-medida y sus salidas en `docs/validation/anexos/GUARDIA-G1/` (`medir_g1.py`, que amplía el método de
-`medir_huecos.py` con los 98 casos de esta rama y compara `main` con la rama; y `contar_c.py`, la
-cifra de falsos positivos de C).
+FASE 0 HECHA y respondida (2026-11-04). Contrato ampliado en su propio commit (respuesta, punto 0 y
+12): `docs/adr/` se abre SOLO para `docs/adr/0087-*.md` y `docs/adr/README.md`; los demás ADR siguen
+protegidos uno a uno por prefijo, porque los patrones del contrato no admiten corchetes
+(`scripts/contrato_rama.py`, `patron_a_regex`). EN CURSO: fase 1.
