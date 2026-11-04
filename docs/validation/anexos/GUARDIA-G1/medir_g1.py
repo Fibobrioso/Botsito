@@ -15,20 +15,27 @@ Lo que es de Windows se SIMULA en memoria (punto i del encargo): `win` cambia `_
 Windows es `C:\\`. El clon de comparar-con-main (`C:/cm/`) es un `git worktree add --detach` en un
 directorio temporal FUERA del repo sintetico, que es lo que importa de `C:/cm/` (fuera de la raiz).
 
-Con UNA guardia imprime su decision por caso; con DOS (`main` y la rama) imprime las dos y sale con 1
-si algun caso que `main` niega pasa en la rama sin estar en `CAMBIOS_DECLARADOS`.
+Con UNA guardia imprime su decision por caso; con DOS (la de referencia y la del arbol) imprime las
+dos y sale con 1 si algun caso que la referencia niega pasa sin estar en `CAMBIOS_DECLARADOS`.
+
+LA REFERENCIA ES UN TAG `stable/*` ESCRITO A MANO (`GUARDIA_DE_REFERENCIA`, en el test), no la rama
+`main`: en cuanto una rama se fusiona, `main` ya lleva su guardia y la comparacion se hace consigo
+misma (la PARADA del cierre de `trabajo/guardia-g1`, GUARDIA-G1.md §13.6). La siguiente rama que toque
+la guardia puede subirla al ultimo stable y, al hacerlo, vacia `CAMBIOS_DECLARADOS` y vuelve a declarar
+lo que ese stable niega y la guardia nueva deja pasar. Hasta ese cierre la referencia era `main`, y
+por eso los anexos de la rama y el nombre de los tests dicen «main».
 
 SE CORRE POR EL TEST, no suelto (respuesta del consultor a la PARADA 2 de `trabajo/guardia-g1`,
 punto 0, AUTORIZADO A LA VISTA): `tests/unit/test_guardia_g1.py::test_la_comparacion_caso_a_caso_
-con_la_guardia_de_main` lo carga con la guardia de `main` (o `origin/main`) y la del arbol, y falla si
-un caso que `main` niega pasa sin declarar; asi corre en cada `make check` y en la CI. Desde la fase
+con_la_guardia_de_main` lo carga con la guardia de la referencia y la del arbol, y falla si un caso
+que la referencia niega pasa sin declarar; asi corre en cada `make check` y en la CI. Desde la fase
 2 de esa rama la guardia niega ejecutarlo suelto desde la sesion, y tiene razon: en la fase 2 lo negaba
 C (compone rutas protegidas a trozos); desde la PARADA 2, punto 2, lo niega B (`sys.path.insert` con
 un valor que no se calcula, y dos guardias cargadas por rutas de `sys.argv`): GUARDIA-G1.md §5.6 y
 §6.1. Las fases 0 y 1 lo ejecutaron suelto, antes de C y B. La salida no imprime una ruta protegida
 entera (`_sin_rutas`).
 
-Uso (desde el test): main([..., <guardia de main>, <guardia de la rama>])
+Uso (desde el test): main([..., <guardia de referencia>, <guardia del arbol>])
 """
 
 from __future__ import annotations
@@ -437,13 +444,13 @@ def main() -> int:
             decisiones = [decidir(g, sl, repo, rutas["base"], herramienta, entrada) for g, sl in zip(mods, sls)]
             texto = str(entrada.get("command") or entrada.get("pattern") or entrada.get("file_path"))
             print(f"[{punto}] {ident} ({herramienta}): {_sin_rutas(texto, rutas['base'])}")
-            for etiqueta, d in zip(("main", "rama") if len(mods) == 2 else ("hoy",), decisiones):
+            for etiqueta, d in zip(("referencia", "arbol") if len(mods) == 2 else ("hoy",), decisiones):
                 print(f"    {etiqueta}: {_sin_rutas(d, rutas['base'])}")
             if len(mods) == 2 and decisiones[0].startswith("NIEGA") and decisiones[1] == "PASA":
                 if ident in CAMBIOS_DECLARADOS:
                     print(f"    DECLARADO: {CAMBIOS_DECLARADOS[ident]}")
                 else:
-                    print("    *** main lo niega y la rama lo deja pasar SIN DECLARARLO ***")
+                    print("    *** la referencia lo niega y el arbol lo deja pasar SIN DECLARARLO ***")
                     fallo = 1
     return fallo
 

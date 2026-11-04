@@ -1255,7 +1255,8 @@ Technical Debt (abajo).
 Qué es, sustituyendo la lista de hoy:
 - «Las formas raras (D). Y lo que queda de `trabajo/guardia-g1` (GUARDIA-G1.md): que `cerrar-rama`
   diga que, si la rama cambia el `Makefile`, los `make check` en la rama los lanza Aleks con «!»; y
-  los candidatos en blanco tras `:` y `@` en `candidatos_de_ruta` (§4.5).»
+  los candidatos en blanco tras `:` y `@` en `candidatos_de_ruta` (§4.5); y que cerrar-rama ensaye
+  make check sobre el merge en un clon desechable antes del merge real.»
 - Lo HECHO en `trabajo/guardia-g1` sale de la lista: el listado del holdout (ADR-0088), `git
   worktree list` en `solo_lectura.py`, el test con la opción en un clon, el `grep` con cuatro `-e`, el
   manifiesto de ticks (ya pasaba con la ruta literal: §1.f), y los tests de un clon de `C:/cm/`.
@@ -1415,7 +1416,7 @@ en test`.
   como lo que son, con la lección de siempre (una cosa por llamada; respuesta a la PARADA 2,
   «Además»); el número de ADR reservado; y la medida de una rama de guardia desde `tests/`. La columna
   del revisor se rellena con su informe (§12).
-- **PROJECT_STATE.md**: solo el recuento de tests (1800 → 1837 con los tests de los arreglos del revisor, y 1839 con los dos del pre-cierre, §13; lo exige `state check`) y lo que hizo
+- **PROJECT_STATE.md**: solo el recuento de tests (1800 → 1837 con los tests de los arreglos del revisor, 1839 con los dos del pre-cierre, §13, y 1840 con el de la PARADA del cierre, §13.6; lo exige `state check`) y lo que hizo
   `abrir-rama`; 21.814 bytes.
 
 ## 10. La CI de Linux
@@ -1643,6 +1644,50 @@ Todo sobre el commit 537b2eb.
 Una rama de la guardia hecha en Linux no está lista para revisión hasta que `make check` pasa en
 Windows; la CI de Linux no ve lo que depende de la raíz de unidad, de `file:///` ni del `.venv`.
 
+### 13.6 La PARADA del cierre: un test que compara con `main` cambia de sentido al fusionar
+
+**Lo que pasó.** Con la orden de cierre, tras el merge local (`2e85e51`, nunca publicado), el tag y la
+edición de `PROJECT_STATE.md`, `make check` en `main` dio `1 failed, 3207 passed, 1 skipped`:
+`test_roto_la_comparacion_con_main` (`assert medir.main() == 1` daba 0). Nada llegó a origin: Aleks
+deshizo el merge y borró el tag local con «!» (respuesta, punto 0).
+
+**La causa, medida.** La guardia «de `main`» de las comparaciones salía de la rama `main`. Tras el merge
+`main` ya lleva la guardia nueva: la guardia se compara consigo misma, `a1-lector-rama` deja de ser una
+diferencia, y quitar su declaración no hace fallar nada. Ese test fallaría en la CI de `main` y en toda
+rama siguiente. Y los otros dos (`test_la_comparacion_caso_a_caso_con_la_guardia_de_main` y
+`test_los_casos_de_medir_huecos_frente_a_la_guardia_de_main`) seguían en verde sin comparar nada.
+
+**El arreglo (respuesta, punto 1).** La referencia de los tres es `GUARDIA_DE_REFERENCIA =
+"stable/F38k-margen-pendiente"`, un tag escrito a mano (`test_guardia_g1.py`), con la regla en el test y
+en la cabecera de `medir_g1.py`. Su guardia es la de `7a3a1ff` (`git diff --stat
+stable/F38k-margen-pendiente 7a3a1ff -- .claude/hooks`, vacío). Sin el tag, el test salta con aviso.
+Dos añadidos que la respuesta no pedía, declarados:
+- `test_la_referencia_es_un_tag_y_no_es_esta_guardia` (1839 → 1840): la referencia es un tag `stable/*` y
+  su guardia no es la del árbol, porque esa comparación muda es el fallo que no dio ningún rojo. Si una
+  rama sube el tag a un stable con la misma guardia, falla.
+- Las etiquetas de la salida de `medir_g1.py` pasan de `main`/`rama` a `referencia`/`arbol`. Los nombres
+  de los tests y de los anexos ya escritos no cambian: el informe y los anexos los citan.
+
+**La forma de los commits (desviación del punto 2 (i), declarada).** El punto 2 pide el fix con el
+ensayo dentro, y el ensayo necesita el fix ya commiteado: se fusiona un commit. Van en dos: el
+`fix(guardia-g1)` con el código y esta sección, y un `docs(guardia-g1)` con la salida del ensayo (§13.7).
+La base de la orden de cierre es el fix, y su run de CI se anota en el segundo.
+
+### 13.7 El ensayo del merge
+
+**Un límite medido del ensayo que pide el punto 3, y que afecta a la lección.** Un `git worktree`
+COMPARTE con el repo real la referencia `main`, así que tras el merge en el clon `main` sigue en
+`7a3a1ff`. Control, antes del arreglo: en `C:/cm/g1m`, sobre `7a3a1ff`, el merge de `3e8875b` (la rama
+SIN arreglar) y `uv run pytest C:/cm/g1m/tests/unit/test_guardia_g1.py -k
+test_roto_la_comparacion_con_main`: **pasa en verde** (`git -C C:/cm/g1m rev-parse --short main` →
+`7a3a1ff`). Es decir, **el ensayo en `git worktree` no habría cazado el fallo de esta PARADA**; solo lo
+reproduce un clon donde `main` se mueva de verdad. Otros dos hechos: la guardia niega `git clone`
+(«subcomando fuera de la lista cerrada»; no se rodea con un guion), y `pre-merge-commit` rechaza el merge
+también dentro del worktree, porque cada worktree tiene su propio sello: el merge queda a medias, con el
+árbol fusionado en el índice, y `make check` corre sobre ese árbol.
+
+Salida del ensayo: en el commit siguiente.
+
 ## Orden de cierre (2026-11-04)
 
 Copiada tal cual:
@@ -1671,6 +1716,27 @@ Copiada tal cual:
 > 4. Lo demás, según RITUAL.md: merge --no-ff a main con el mensaje del punto 1, el tag sobre el merge, y el commit de estado, que solo reemplaza Current Branch (main), Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en el punto 3). Current Feature: «Ninguna rama abierta. trabajo/guardia-g1 cerrada en main el 2026-11-04 (stable/F38l-guardia-g1): ADR-0088 (los nombres del holdout se cuentan, no se listan), los falsos positivos de K, lo que un guion importa o carga (B) y las rutas compuestas (C), con los tests de un clon de comparar-con-main (GUARDIA-G1.md). Hecha en Claude Code en la nube; pre-cierre y cierre en el portátil.» Stable Main State y Last Stable Commit, con la forma del cierre anterior. Después: make check sellado, push atómico de main y el tag (yo confirmo la regla ask con «1. Yes»), la CI de main con un gh run view suelto, y, con la CI en verde, el borrado de la rama local y de fix/guardia-g1 y trabajo/guardia-g1 en origin.
 >
 > 5. Informe final: sha de main y del merge, el tag y a qué commit apunta, el run de la CI de main y su resultado, las ramas que quedan en local y en origin (wt-ci ya no está: prune lo quitó, dilo), el tamaño de PROJECT_STATE.md y el siguiente tag (F38m).
+
+## Respuesta del consultor a la PARADA del cierre (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA del cierre de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA del cierre», y aplícala punto por punto.
+>
+> 0. (a): se deshace el merge local. Nada se publicó, así que el tag y el nombre siguen limpios. Lo lanzo yo con «!», en este orden, y tú verificas después que main local es 7a3a1ff, que no existe el tag stable/F38l-guardia-g1 ni en local ni en origin, y que el árbol está limpio:
+>    ! git restore --staged PROJECT_STATE.md
+>    ! git restore PROJECT_STATE.md
+>    ! git tag -d stable/F38l-guardia-g1
+>    ! git reset --hard 7a3a1ff
+>    Es la única vez que se borra un tag: era local, nunca empujado, y lo hago yo a mano.
+> 1. (a): la guardia de referencia de los tres tests es la del tag stable/F38k-margen-pendiente, no la de la rama main. Por qué: es la base real de esta rama, los tags llegan a la CI (ci.yml, git fetch --tags --force) y a los clones de comparar-con-main, y las comparaciones siguen midiendo después del merge. Escribe en la cabecera de medir_g1.py y en el test la regla que fija esto: la referencia es un tag stable/* escrito a mano; la siguiente rama que toque la guardia puede subirla al último stable y, al hacerlo, vacía CAMBIOS_DECLARADOS y vuelve a declarar lo que ese stable niega y la guardia nueva deja pasar. Si el test no encuentra el tag, salta con aviso, como con main; y en la CI tiene que correr de verdad (compruébalo en el log del run: no puede estar entre los saltados).
+> 2. (b): la rama vuelve a 3e8875b (06df5fa era solo local, sin publicar: el chore(cierre) tiene que ser el último commit, RITUAL.md), y encima van, en este orden: (i) fix(guardia-g1) con los tres tests, medir_g1.py, el §13 ampliado con esta PARADA y su causa, y el ensayo del punto 3; (ii) el chore(cierre) de nuevo, con la orden de cierre que ya tienes y la fila de ERRORES-RECURRENTES ganando este hallazgo. Lo lanzo yo con «!»: git switch trabajo/guardia-g1 y git reset --hard 3e8875b (solo local; verifica antes que origin sigue en 45e35cf y que 3e8875b es el commit de la orden de cierre copiada).
+> 3. SÍ, y una cosa más que es la lección de verdad: antes del merge real, el ensayo del merge. En un clon desechable (git worktree add --detach en un directorio temporal, sobre main 7a3a1ff), haz el merge --no-ff de la rama y corre allí make check > make-check-merge.log 2>&1; tiene que salir en verde con los tres tests de la comparación corriendo (no saltados). La salida, al §13. Después, push de la rama y a fix/guardia-g1, un gh run view suelto, y solo con la CI en verde (salvo state check) se repite el cierre.
+> 4. Lección para la fila de ERRORES-RECURRENTES (hallazgo del cierre, importa, del proceso): «un test que compara con main cambia de sentido en cuanto la rama se fusiona; una rama que toque la guardia ensaya make check sobre el merge en un clon desechable antes del merge real». Y para el consultor, en su columna: «antes de dar una orden de cierre de una rama de la guardia, pedir el ensayo del merge; la auditoría corrió la suite sobre la rama y sobre main por separado, nunca sobre el merge». Añade a la línea de G.1 preparada en §7 (el «qué es» de la hoja de ruta) este pendiente: «que cerrar-rama ensaye make check sobre el merge en un clon desechable antes del merge real».
+>
+> Después: la orden de cierre que ya tienes, con dos cambios que aplicas al copiarla: la base pasa a ser el commit del fix (su sha, con make check en Windows y su run de CI de fix/guardia-g1), y el punto 2 gana el hallazgo del punto 4 de esta respuesta. Luego /cerrar-rama, que lanzo yo. NO cierres sin el ensayo del merge en verde.
 
 ## Estado
 

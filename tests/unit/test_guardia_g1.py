@@ -18,7 +18,8 @@ consultor a la PARADA de la fase 0. Un test por punto de la fase 1, en el orden 
   niveles), y lo que no se resuelve se niega;
 - h) fase 2, C: una ruta compuesta se calcula y se mira como un literal, y la que no se calcula se
   niega si nombra un fragmento sensible; las llaves de bash se expanden y `file:` es su ruta;
-- y la comparacion caso a caso con la guardia de `main` (`anexos/GUARDIA-G1/medir_g1.py`).
+- y la comparacion caso a caso con la guardia de un tag fijo, `GUARDIA_DE_REFERENCIA`
+  (`anexos/GUARDIA-G1/medir_g1.py`).
 
 Todo EN MEMORIA, con `decidir`, sobre un repo INVENTADO en `tmp_path` con ficheros FALSOS donde el
 material protegido: nada se ejecuta ni se abre del repo real. Lo que es de Windows (`\\.` como la
@@ -901,42 +902,56 @@ def test_roto_a_proposito(
     print(f"ROTO | {rotura} | {nombre} | falla: {primera[:160]}")
 
 
-# ------------------------------------- la comparacion caso a caso con la guardia de `main`
+# ----------------------------- la comparacion caso a caso con la guardia de la referencia
 MEDIR_G1 = RAIZ / "docs" / "validation" / "anexos" / "GUARDIA-G1" / "medir_g1.py"
 
+# La guardia con la que se compara: UN TAG `stable/*` ESCRITO A MANO, no la rama `main`. Con `main`,
+# en cuanto la rama se fusiona la guardia se compara consigo misma: la comparacion no mide nada y el
+# test que la rompe a proposito falla (la PARADA del cierre de `trabajo/guardia-g1`, GUARDIA-G1.md
+# §13.6). LA REGLA: la siguiente rama que toque la guardia puede subirla al ultimo stable y, al
+# hacerlo, vacia `CAMBIOS_DECLARADOS` (`medir_g1.py`) y vuelve a declarar lo que ese stable niega y
+# la guardia nueva deja pasar.
+GUARDIA_DE_REFERENCIA = "stable/F38k-margen-pendiente"
 
-def _de_main(rel: str) -> str | None:
+
+def _de_la_referencia(rel: str) -> str | None:
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
-    for ref in ("main", "origin/main"):
-        r = subprocess.run(
-            ["git", "show", f"{ref}:{rel}"],
-            cwd=RAIZ,
-            capture_output=True,
-            encoding="utf-8",
-            check=False,
-            env=env,
-        )
-        if r.returncode == 0:
-            return r.stdout
-    return None
+    r = subprocess.run(
+        ["git", "show", f"{GUARDIA_DE_REFERENCIA}:{rel}"],
+        cwd=RAIZ,
+        capture_output=True,
+        encoding="utf-8",
+        check=False,
+        env=env,
+    )
+    return r.stdout if r.returncode == 0 else None
 
 
-def _guardia_de_main(tmp_path: Path) -> Path:
-    """La guardia y `solo_lectura.py` de `main` (o `origin/main`) en `tmp_path`; sin ninguna de las
-    dos ramas, el test salta como `test_guardia_claude.py`."""
-    hooks = tmp_path / "main" / ".claude" / "hooks"
+def _guardia_de_referencia(tmp_path: Path) -> Path:
+    """La guardia y `solo_lectura.py` del tag de referencia en `tmp_path`; sin el tag, el test salta
+    con aviso (la CI lo trae: `git fetch --tags --force`, y ahi tiene que correr de verdad)."""
+    hooks = tmp_path / "referencia" / ".claude" / "hooks"
     hooks.mkdir(parents=True)
     for nombre in ("guardia.py", "solo_lectura.py"):
-        texto = _de_main(f".claude/hooks/{nombre}")
+        texto = _de_la_referencia(f".claude/hooks/{nombre}")
         if texto is None:
-            pytest.skip("sin main ni origin/main en este clon")  # como test_guardia_claude.py
+            pytest.skip(f"sin el tag {GUARDIA_DE_REFERENCIA} en este clon")
         (hooks / nombre).write_text(texto, encoding="utf-8")
     return hooks
 
 
-def _medir_g1_con_main(tmp_path: Path) -> tuple[ModuleType, list[str]]:
-    """`medir_g1.py` cargado, y su `argv` con la guardia de `main` y la de la rama."""
-    hooks = _guardia_de_main(tmp_path)
+def test_la_referencia_es_un_tag_y_no_es_esta_guardia(tmp_path: Path) -> None:
+    """Las comparaciones solo miden si la referencia es un tag fijo y su guardia no es la del arbol:
+    una rama movil, o subir el tag a un stable con la misma guardia, las dejaria en verde sin medir
+    nada (la PARADA del cierre, GUARDIA-G1.md §13.6)."""
+    assert re.fullmatch(r"stable/[A-Za-z0-9._-]+", GUARDIA_DE_REFERENCIA), GUARDIA_DE_REFERENCIA
+    hooks = _guardia_de_referencia(tmp_path)
+    assert (hooks / "guardia.py").read_bytes() != GUARDIA.read_bytes()
+
+
+def _medir_g1_con_referencia(tmp_path: Path) -> tuple[ModuleType, list[str]]:
+    """`medir_g1.py` cargado, y su `argv` con la guardia de la referencia y la del arbol."""
+    hooks = _guardia_de_referencia(tmp_path)
     spec = importlib.util.spec_from_file_location("medir_g1_anexo", MEDIR_G1)
     assert spec is not None and spec.loader is not None
     medir = importlib.util.module_from_spec(spec)
@@ -949,11 +964,12 @@ def test_la_comparacion_caso_a_caso_con_la_guardia_de_main(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """El metodo de GUION-MISMO-COMANDO.md §1.4 (`anexos/GUARDIA-G1/medir_g1.py`): la guardia de
-    `main` y la de la rama sobre los mismos casos; ningun caso que `main` niega pasa en la rama sin
-    estar en `CAMBIOS_DECLARADOS`. Corre desde `tests/` porque desde la fase 2 (C) la guardia niega
-    ejecutar como guion suelto un fichero que monta rutas protegidas a trozos, que es lo que
-    `medir_g1.py` hace con su repo inventado (GUARDIA-G1.md §5)."""
-    medir, argv = _medir_g1_con_main(tmp_path)
+    `GUARDIA_DE_REFERENCIA` (hasta el cierre, la de `main`: de ahi el nombre) y la del arbol sobre
+    los mismos casos; ningun caso que la referencia niega pasa sin estar en `CAMBIOS_DECLARADOS`.
+    Corre desde `tests/` porque desde la fase 2 (C) la guardia niega ejecutar como guion suelto un
+    fichero que monta rutas protegidas a trozos, que es lo que `medir_g1.py` hace con su repo
+    inventado (GUARDIA-G1.md §5)."""
+    medir, argv = _medir_g1_con_referencia(tmp_path)
     monkeypatch.setattr(sys, "argv", argv)
     salida = medir.main()
     impreso = capsys.readouterr().out
@@ -1007,7 +1023,7 @@ def test_roto_la_comparacion_con_main(
 ) -> None:
     """B2 del revisor: sin una entrada de `CAMBIOS_DECLARADOS`, la comparacion caso a caso FALLA
     (sale con 1 y dice «SIN DECLARARLO»)."""
-    medir, argv = _medir_g1_con_main(tmp_path)
+    medir, argv = _medir_g1_con_referencia(tmp_path)
     monkeypatch.setattr(sys, "argv", argv)
     monkeypatch.delitem(medir.CAMBIOS_DECLARADOS, "a1-lector-rama")
     assert medir.main() == 1
@@ -1021,9 +1037,9 @@ def test_los_casos_de_medir_huecos_frente_a_la_guardia_de_main(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """B3 del revisor: los casos de `medir_huecos.py` (GUION-MISMO-COMANDO.md §1.4), con la guardia
-    de `main` y la de la rama: ningun caso que `main` niega pasa en la rama. Corre desde `tests/`
-    por lo mismo que la comparacion de `medir_g1.py` (respuesta a la PARADA 2, punto 0)."""
-    hooks = _guardia_de_main(tmp_path)
+    de `GUARDIA_DE_REFERENCIA` y la del arbol: ningun caso que la referencia niega pasa. Corre desde
+    `tests/` por lo mismo que la comparacion de `medir_g1.py` (respuesta a la PARADA 2, punto 0)."""
+    hooks = _guardia_de_referencia(tmp_path)
     spec = importlib.util.spec_from_file_location("medir_huecos_anexo", MEDIR_HUECOS)
     assert spec is not None and spec.loader is not None
     medir = importlib.util.module_from_spec(spec)
