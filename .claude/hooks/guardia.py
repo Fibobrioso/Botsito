@@ -4391,11 +4391,37 @@ def _es_composicion(nodo: ast.AST) -> bool:
         return bool(textos(nodo.left) or textos(nodo.right))
     con_separador = any("/" in t or "\\" in t for t in textos(nodo))
     if isinstance(nodo, ast.BinOp) and isinstance(nodo.op, ast.Add):
-        return con_separador
+        return con_separador and not _empieza_por_un_programa(nodo)
     return (
         isinstance(nodo, ast.JoinedStr)
         and any(isinstance(v, ast.FormattedValue) for v in nodo.values)
         and con_separador
+        and not _empieza_por_un_programa(nodo)
+    )
+
+
+def _empieza_por_un_programa(nodo: ast.AST) -> bool:
+    """Si la cadena empieza por el nombre de un programa y un espacio (`f"cat {a}/{b}/1"`): su
+    primer tramo no es una ruta, es una ORDEN, y no es una composicion de C (PARADA 2 de
+    `trabajo/guardia-g1`, punto 2). Si llega a ejecutarse (`subprocess`, `os.system`) la analiza B
+    como un comando de Bash; C no la saca de ese analisis."""
+    primero = nodo
+    while isinstance(primero, ast.BinOp) and isinstance(primero.op, ast.Add):
+        primero = primero.left
+    if isinstance(primero, ast.JoinedStr):
+        primero = primero.values[0] if primero.values else primero
+    if not (isinstance(primero, ast.Constant) and isinstance(primero.value, str)):
+        return False
+    m = re.match(r"\s*([A-Za-z0-9_.+-]+)\s", primero.value)
+    if not m:
+        return False
+    prog = _nombre_de_programa(m.group(1))
+    return (
+        prog in NO_EJECUTAN
+        or prog in LECTOR_DE_METADATOS
+        or prog in INTERPRETES
+        or prog in SHELLS
+        or prog in EJECUTORES
     )
 
 
@@ -4413,15 +4439,87 @@ def _compone_ruta_sensible(arbol: ast.AST, ctx: Contexto, recorre: bool, guion: 
             continue
         sabido = valor.replace(_DESCONOCIDO, "*").lower()
         fragmento = next((s for s in SENSIBLES if s in sabido), None)
-        if fragmento:
+        motivo = _tramos_protegidos(valor, ctx) if fragmento else None
+        if motivo:
             raise BloqueoError(
                 f"el codigo compone una ruta que no se puede calcular al inspeccionar (`{sabido}`) "
-                f"y que nombra `{fragmento}`: no se puede decidir si llega a material protegido."
-                f"\nRegla: respuesta del consultor a la PARADA de `trabajo/guardia-g1`, punto 10 "
-                "(GUION-MISMO-COMANDO.md §1.5, hallazgo 5).\nComo reescribirlo: la ruta LITERAL "
-                "entera, o partes literales (o nombres asignados una vez a un literal), o la CLI "
-                "del proyecto."
+                f"y que nombra `{fragmento}`: comparada por tramos con lo protegido, puede "
+                f"llegar a material protegido.\nRegla: {motivo}.\nPor que se mira (C): respuesta "
+                "del consultor a las PARADAS de `trabajo/guardia-g1` (fase 0, punto 10; PARADA 2, "
+                "punto 2; GUION-MISMO-COMANDO.md §1.5, hallazgo 5).\nComo reescribirlo: la ruta "
+                "LITERAL entera, o partes literales (o nombres asignados una vez a un literal), o "
+                "la CLI del proyecto."
             )
+
+
+# PARADA 2 de `trabajo/guardia-g1`, punto 2 (respuesta del consultor del 2026-11-04): lo que se
+# sabe de una ruta que no se calcula se compara POR TRAMOS DE RUTA desde su inicio conocido, no por
+# un fragmento de texto: `corpus` dentro de `knowledge/corpus/`, `data/` en `data/fotogramas/` o
+# `knowledge/cases` en `knowledge/cases/kit/config.yaml` negaban rutas legibles (GUARDIA-G1.md §5.5,
+# 5 falsos positivos de `scripts/`). El fragmento sigue haciendo falta para mirar (no se niega mas
+# que en la fase 2); lo que decide es si los tramos llegan a algo protegido.
+_SONDA_DE_ZONA = "x.png"  # una imagen: protegida en el material, el holdout, las hojas y las crudas
+
+
+def _zonas_estrictas(politica: Politica) -> list[str]:
+    """Las zonas donde TODO lo de dentro se protege (las demas, `knowledge/cases`, `data/visor` y
+    `knowledge/feedback`, protegen por el nombre o el contenido de cada fichero)."""
+    por_nombre = {"knowledge/cases", "knowledge/feedback", "data/visor"}
+    return [z for z in politica._zonas() if z not in por_nombre]
+
+
+def _motivo_del_candidato(candidato: str, ctx: Contexto) -> str | None:
+    """Por que una ruta a la que pueden llegar los tramos conocidos esta protegida, o None."""
+    motivo = ctx.politica.motivo_fichero(candidato)
+    if motivo:
+        return motivo
+    if os.path.isdir(candidato):
+        return ctx.politica.motivo_ruta(candidato, recursivo=True)
+    rel = ctx.politica.relativa(candidato)
+    if rel is None or os.path.exists(candidato):
+        return None
+    for zona in _zonas_estrictas(ctx.politica):  # una carpeta de una zona que aqui no existe
+        if rel == zona or rel.startswith(zona + "/") or zona.startswith(rel + "/"):
+            return ctx.politica.motivo_fichero(os.path.join(candidato, _SONDA_DE_ZONA)) or (
+                ctx.politica.motivo_fichero(str(ctx.politica.raiz / zona / _SONDA_DE_ZONA))
+            )
+    return None
+
+
+def _tramos_protegidos(valor: str, ctx: Contexto) -> str | None:
+    """Los tramos conocidos de una ruta que no se calcula, comparados con lo protegido: (1) el
+    prefijo conocido, como una carpeta que se recorre; (2) la cola conocida, empezando en
+    cualquier tramo de una zona protegida; (3) un tramo con una parte desconocida
+    (`*.cruda-no-leer.jsonl`), con un nombre de relleno. Devuelve el primer motivo, o None si
+    ningun tramo llega a nada protegido."""
+    tramos = valor.replace("\\", "/").split("/")
+    con = [i for i, t in enumerate(tramos) if _DESCONOCIDO in t]
+    primero, ultimo = con[0], con[-1]
+    raiz = str(ctx.politica.raiz)
+    relleno = [t.replace(_DESCONOCIDO, "x") if _DESCONOCIDO in t else t for t in tramos]
+    candidatos: list[str] = []
+    if primero > 0:  # (1) el prefijo conocido
+        prefijo = "/".join(tramos[:primero]) or "/"
+        candidatos.append(_absoluta(prefijo, ctx.cwd))
+        candidatos.append(_absoluta("/".join(relleno), ctx.cwd))  # (3) con el relleno
+    cola = [t for t in tramos[ultimo + 1 :] if t]
+    parcial = relleno[ultimo] if tramos[ultimo] != _DESCONOCIDO else ""
+    if parcial:  # (3) un nombre con una parte desconocida, en cualquier sitio
+        candidatos.append(os.path.join(raiz, "x", parcial, *cola))
+        candidatos.append(os.path.join(raiz, "x", parcial))
+    if cola:  # (2) la cola, empezando en cada tramo de cada zona protegida
+        bajo = [t.lower() for t in cola]
+        for zona in ctx.politica._zonas():
+            partes = zona.split("/")
+            for j in range(len(partes)):
+                m = min(len(bajo), len(partes) - j)
+                if bajo[:m] == partes[j : j + m]:
+                    candidatos.append(os.path.join(raiz, *partes[:j], *cola))
+    for candidato in candidatos:
+        motivo = _motivo_del_candidato(_absoluta(candidato, ctx.cwd), ctx)
+        if motivo:
+            return motivo
+    return None
 
 
 def _exigir_ruta_del_codigo(texto: str, ctx: Contexto, recorre: bool, como: str) -> None:
@@ -4692,6 +4790,8 @@ def _exigir_lo_que_carga(
             if _DESCONOCIDO in valor:
                 _niega_carga(f"`{nombre}(...)`", "la ruta del guion no se calcula")
             ficheros.append((_absoluta(valor, ctx.cwd), f"`{nombre}({valor!r})`"))
+        elif nombre in _CARGA_POR_RUTA:
+            _exigir_carga_por_ruta(n, nombre, asignaciones, ctx, guion, ficheros)
         elif nombre in _EJECUTA_TEXTO:
             _exigir_texto_que_se_ejecuta(n, nombre, asignaciones, ctx, guion, vistos, ficheros)
         elif nombre in _LANZADORES or _LANZADORES_OS.match(nombre):
@@ -4709,6 +4809,39 @@ def _exigir_lo_que_carga(
                 ) from exc
     for fichero, que in ficheros:
         _leer_lo_cargado(fichero, que, ctx, vistos)
+
+
+# PARADA 2 de `trabajo/guardia-g1`, punto 1 (respuesta del consultor del 2026-11-04): cargar un
+# fichero por su ruta es la misma carga que `runpy.run_path`: con una ruta que se calcula, el
+# fichero se lee y se analiza; sin calcular, se niega. Con la excepcion cerrada de la regla de la CI
+# (la propia guardia por su ruta, `_es_ruta_de_la_guardia`), ampliada a `solo_lectura.py`.
+_CARGA_POR_RUTA = frozenset({
+    "importlib.util.spec_from_file_location", "importlib.machinery.SourceFileLoader",
+})  # fmt: skip
+
+
+def _exigir_carga_por_ruta(
+    llamada: ast.Call,
+    nombre: str,
+    asignaciones: dict[str, ast.expr | None],
+    ctx: Contexto,
+    guion: str | None,
+    ficheros: list[tuple[str, str]],
+) -> None:
+    clave = "location" if nombre.endswith("spec_from_file_location") else "path"
+    ruta_nodo = llamada.args[1] if len(llamada.args) > 1 else None
+    ruta_nodo = ruta_nodo or next((k.value for k in llamada.keywords if k.arg == clave), None)
+    if ruta_nodo is None:
+        _niega_carga(f"`{nombre}(...)`", "no lleva la ruta del fichero que carga")
+    if _es_ruta_de_la_guardia(ruta_nodo, dict(asignaciones)):
+        return  # la excepcion cerrada: la guardia o `solo_lectura.py` por su ruta
+    valor = _calcular(ruta_nodo, asignaciones, guion)
+    if _DESCONOCIDO in valor:
+        _niega_carga(f"`{nombre}(...)`", "la ruta del fichero que carga no se calcula")
+    normal = valor.replace("\\", "/")
+    if any(normal.endswith("/" + "/".join(r)) or normal == "/".join(r) for r in _RUTAS_DE_HOOK):
+        return  # la misma excepcion, con la ruta calculada (`Path(__file__).parents[2] / ...`)
+    ficheros.append((_absoluta(valor, ctx.cwd), f"`{nombre}(..., {valor!r})`"))
 
 
 def _exigir_texto_que_se_ejecuta(
@@ -5140,14 +5273,18 @@ def _nombre_punteado(nodo: ast.AST) -> str | None:
     return None
 
 
+# Desde `trabajo/guardia-g1` (respuesta a su PARADA 2, punto 1) la excepcion vale tambien para
+# `solo_lectura.py`, el hook de los agentes, que se carga igual: las dos rutas de hook admitidas.
+_RUTAS_DE_HOOK = (_RUTA_DE_LA_GUARDIA, (".claude", "hooks", "solo_lectura.py"))
+
+
 def _es_ruta_de_la_guardia(nodo: ast.expr, asignaciones: dict[str, ast.expr | None]) -> bool:
-    """La ruta literal de la guardia (`".claude/hooks/guardia.py"`, o absoluta acabada asi), o
-    `NOMBRE / ".claude" / "hooks" / "guardia.py"`, o una variable asignada UNA vez a una de las
-    dos. Montada a trozos (`+`, f-cadenas, `join`) no lo es."""
+    """La ruta literal de la guardia o de `solo_lectura.py` (`".claude/hooks/guardia.py"`, o
+    absoluta acabada asi), o `NOMBRE / ".claude" / "hooks" / "guardia.py"`, o una variable asignada
+    UNA vez a una de las dos. Montada a trozos (`+`, f-cadenas, `join`) no lo es."""
     if isinstance(nodo, ast.Constant) and isinstance(nodo.value, str):
         ruta = nodo.value.replace("\\", "/").strip()
-        literal = "/".join(_RUTA_DE_LA_GUARDIA)
-        return ruta == literal or ruta.endswith("/" + literal)
+        return any(ruta == "/".join(r) or ruta.endswith("/" + "/".join(r)) for r in _RUTAS_DE_HOOK)
     if isinstance(nodo, ast.Name):
         valor = asignaciones.pop(nodo.id, None)  # pop: una variable no puede apuntarse a si misma
         return valor is not None and _es_ruta_de_la_guardia(valor, asignaciones)
@@ -5155,13 +5292,12 @@ def _es_ruta_de_la_guardia(nodo: ast.expr, asignaciones: dict[str, ast.expr | No
     while isinstance(nodo, ast.BinOp) and isinstance(nodo.op, ast.Div):
         piezas.insert(0, nodo.right)
         nodo = nodo.left
-    return (
-        isinstance(nodo, ast.Name)
-        and len(piezas) == len(_RUTA_DE_LA_GUARDIA)
+    return isinstance(nodo, ast.Name) and any(
+        len(piezas) == len(r)
         and all(
-            isinstance(p, ast.Constant) and p.value == v
-            for p, v in zip(piezas, _RUTA_DE_LA_GUARDIA, strict=True)
+            isinstance(p, ast.Constant) and p.value == v for p, v in zip(piezas, r, strict=True)
         )
+        for r in _RUTAS_DE_HOOK
     )
 
 

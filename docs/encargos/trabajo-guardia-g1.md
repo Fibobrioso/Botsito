@@ -85,3 +85,24 @@ Copiada tal cual:
 > Sigue sin parar: fase 1 en el orden del encargo (e, a, b, c, d, f), con el ADR y la enmienda de CLAUDE.md en el primer commit de la fase; después la fase 2 (B y C) y la fase 3. Tests primero, rotos a propósito en los dos sentidos, medir_g1.py antes y después, make check sellado por fase con PICO DE MEMORIA. Al terminar: push de la rama, push a fix/guardia-g1 con la CI de Linux y sus números de run, el revisor con el informe terminado, y la lista de §1.i para Aleks con los comandos exactos. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha, y aplícala punto por punto.
+>
+> 0. (a), y queda AUTORIZADO A LA VISTA, no como desviación: la comparación caso a caso con la guardia de main es el test test_la_comparacion_caso_a_caso_con_la_guardia_de_main, que carga medir_g1.py y falla si un caso que main niega pasa sin declarar. Por qué: tests/ corre sin leerse por diseño, con la guarda del holdout como barrera (GUION-MISMO-COMANDO.md §0.c), y la medida pasa a correr en cada make check y en la CI. Con tres condiciones: (i) el informe lo dice así, con la negativa exacta y por qué la guardia tenía razón (medir_g1.py compone rutas protegidas a trozos, que es C); (ii) medir_g1.py no se vuelve a ejecutar suelto desde la sesión: queda como el método y sus casos, y su cabecera dice que se corre por el test; (iii) si el test no encuentra main ni origin/main, salta con el mismo aviso que test_guardia_claude.py (hacia :438), y en la CI tiene que correr de verdad (comprueba que ci.yml trae main: git fetch --tags --force ya está; si hace falta origin/main, PARADA con la línea). Ni el test ni su salida imprimen una ruta protegida entera.
+> 1. (a): spec_from_file_location / module_from_spec se resuelve como runpy.run_path (ruta calculable: se lee y se analiza; no calculable: se niega), con la excepción cerrada de la regla de la CI (_carga_solo_la_guardia) ampliada a solo_lectura.py. Por qué: es la misma carga y la excepción ya está decidida. Si costo_c.py u otro guion de medida carga la guardia por sys.argv, se reescribe con la ruta literal o RAIZ / ".claude" / "hooks" / "guardia.py", y se dice.
+> 2. (a), la comparación por tramos de ruta desde su inicio conocido, y una f-cadena cuyo primer tramo no es una ruta no es una composición de C. Con dos tests que lo cierren en el otro sentido: los dos sensibles de verdad (la cruda de transcribir_sesion.py y el material adicional de viabilidad_trader.py) siguen NIEGA, y una f-cadena que es un COMANDO con un fragmento sensible y partes no calculables (f"cat {a}/{b}/1" en subprocess.run o os.system) sigue negada por B, no por C: que C la suelte no la saca del análisis del comando. Por qué: quita los 5 falsos positivos medidos sin abrir nada.
+> 3. (a): sin cambio en los guiones de la plataforma; la rama que los cambie los prueba por sus tests y, suelto, con «!». Deja la lista de los cinco (contrato_rama, sello_make_check, instalar_hooks, pico_memoria, huso_por_velas) y el porqué de cada uno en el informe, y una línea de Technical Debt preparada para el cierre si crees que alguno lo merece.
+>
+> Además:
+> - ADR-0088 en lugar de 0087: desviación bien declarada (§4.10); en las líneas del cierre, la deuda de «ADR 0087 (S-15, no existe)» no cambia.
+> - Las negativas de §5.7 son errores de forma de la sesión contra reglas de main, no hallazgos: van a la fila de ERRORES-RECURRENTES preparada como lo que son, con la lección de siempre (una cosa por llamada).
+>
+> Sigue sin parar: aplica 1 y 2 con sus tests rotos a propósito en los dos sentidos, medir_g1.py (por el test) antes y después, make check sellado con PICO DE MEMORIA (el sello de la fase 2 que falta en el informe entra aquí). Después la fase 3: documentos, las líneas del cierre (K, B, C con su texto nuevo; G.1 sin pasar a HECHA; la deuda j con publish_files; Technical Debt), la lista de §1.i para Aleks con los comandos exactos, push de la rama y a fix/guardia-g1 con la CI de Linux y sus números de run, y el revisor con el informe YA TERMINADO. Si la guardia niega algo nuevo a partir de tus cambios, PARADA con el comando exacto.
+>
+> Rama lista para revisión, NO cerrada.

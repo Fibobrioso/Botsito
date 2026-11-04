@@ -9,7 +9,7 @@ Lee los ficheros de `main` con `git cat-file --batch` (no del disco) y llama a l
 no ejecuta ninguno. En la nube no hay `corpus/` ni `data/`: lo que dependa de que una carpeta
 calculada exista en disco sale aqui mas barato que en el portatil de Aleks (GUARDIA-G1.md §5).
 
-Uso: python costo_c.py <guardia de la rama>
+Uso: python costo_c.py (desde la raiz del repo; carga `.claude/hooks/guardia.py`)
 """
 
 from __future__ import annotations
@@ -21,8 +21,15 @@ import sys
 from pathlib import Path
 
 
-def cargar(ruta: Path):
-    spec = importlib.util.spec_from_file_location("guardia_costo_c", ruta)
+# La guardia de la rama por su ruta, con la forma de la excepcion cerrada (respuesta del consultor a
+# la PARADA 2 de `trabajo/guardia-g1`, punto 1): antes se cargaba por una ruta de `sys.argv`, que la
+# guardia de la fase 2 niega por no poder calcularla.
+RAIZ = Path(__file__).resolve().parents[4]
+GUARDIA = RAIZ / ".claude" / "hooks" / "guardia.py"
+
+
+def cargar():
+    spec = importlib.util.spec_from_file_location("guardia_costo_c", GUARDIA)
     assert spec is not None and spec.loader is not None
     m = importlib.util.module_from_spec(spec)
     sys.modules["guardia_costo_c"] = m
@@ -46,7 +53,7 @@ def blobs(nombres: list[str]) -> dict[str, str]:
 
 
 def main() -> int:
-    g = cargar(Path(sys.argv[1]).resolve())
+    g = cargar()
     raiz = Path.cwd()
     lista = subprocess.run(
         ["git", "ls-tree", "-r", "--name-only", "main", "--", "scripts", "tests"],

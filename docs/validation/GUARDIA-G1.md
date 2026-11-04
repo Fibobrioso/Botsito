@@ -1075,9 +1075,141 @@ Espero tu respuesta a la PARADA 2. La fase 2 está sellada con lo decidido (B sa
 y C entera, variante estrecha); la fase 3 (documentos, líneas del cierre, revisor) espera a tu
 respuesta.
 
+## Respuesta del consultor a la PARADA 2 (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/guardia-g1 (2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha, y aplícala punto por punto.
+>
+> 0. (a), y queda AUTORIZADO A LA VISTA, no como desviación: la comparación caso a caso con la guardia de main es el test test_la_comparacion_caso_a_caso_con_la_guardia_de_main, que carga medir_g1.py y falla si un caso que main niega pasa sin declarar. Por qué: tests/ corre sin leerse por diseño, con la guarda del holdout como barrera (GUION-MISMO-COMANDO.md §0.c), y la medida pasa a correr en cada make check y en la CI. Con tres condiciones: (i) el informe lo dice así, con la negativa exacta y por qué la guardia tenía razón (medir_g1.py compone rutas protegidas a trozos, que es C); (ii) medir_g1.py no se vuelve a ejecutar suelto desde la sesión: queda como el método y sus casos, y su cabecera dice que se corre por el test; (iii) si el test no encuentra main ni origin/main, salta con el mismo aviso que test_guardia_claude.py (hacia :438), y en la CI tiene que correr de verdad (comprueba que ci.yml trae main: git fetch --tags --force ya está; si hace falta origin/main, PARADA con la línea). Ni el test ni su salida imprimen una ruta protegida entera.
+> 1. (a): spec_from_file_location / module_from_spec se resuelve como runpy.run_path (ruta calculable: se lee y se analiza; no calculable: se niega), con la excepción cerrada de la regla de la CI (_carga_solo_la_guardia) ampliada a solo_lectura.py. Por qué: es la misma carga y la excepción ya está decidida. Si costo_c.py u otro guion de medida carga la guardia por sys.argv, se reescribe con la ruta literal o RAIZ / ".claude" / "hooks" / "guardia.py", y se dice.
+> 2. (a), la comparación por tramos de ruta desde su inicio conocido, y una f-cadena cuyo primer tramo no es una ruta no es una composición de C. Con dos tests que lo cierren en el otro sentido: los dos sensibles de verdad (la cruda de transcribir_sesion.py y el material adicional de viabilidad_trader.py) siguen NIEGA, y una f-cadena que es un COMANDO con un fragmento sensible y partes no calculables (f"cat {a}/{b}/1" en subprocess.run o os.system) sigue negada por B, no por C: que C la suelte no la saca del análisis del comando. Por qué: quita los 5 falsos positivos medidos sin abrir nada.
+> 3. (a): sin cambio en los guiones de la plataforma; la rama que los cambie los prueba por sus tests y, suelto, con «!». Deja la lista de los cinco (contrato_rama, sello_make_check, instalar_hooks, pico_memoria, huso_por_velas) y el porqué de cada uno en el informe, y una línea de Technical Debt preparada para el cierre si crees que alguno lo merece.
+>
+> Además:
+> - ADR-0088 en lugar de 0087: desviación bien declarada (§4.10); en las líneas del cierre, la deuda de «ADR 0087 (S-15, no existe)» no cambia.
+> - Las negativas de §5.7 son errores de forma de la sesión contra reglas de main, no hallazgos: van a la fila de ERRORES-RECURRENTES preparada como lo que son, con la lección de siempre (una cosa por llamada).
+>
+> Sigue sin parar: aplica 1 y 2 con sus tests rotos a propósito en los dos sentidos, medir_g1.py (por el test) antes y después, make check sellado con PICO DE MEMORIA (el sello de la fase 2 que falta en el informe entra aquí). Después la fase 3: documentos, las líneas del cierre (K, B, C con su texto nuevo; G.1 sin pasar a HECHA; la deuda j con publish_files; Technical Debt), la lista de §1.i para Aleks con los comandos exactos, push de la rama y a fix/guardia-g1 con la CI de Linux y sus números de run, y el revisor con el informe YA TERMINADO. Si la guardia niega algo nuevo a partir de tus cambios, PARADA con el comando exacto.
+>
+> Rama lista para revisión, NO cerrada.
+
+**Sello de la fase 2** (commit aa882ab): `3142 passed, 46 skipped`; `SELLO: make check en verde
+sobre el arbol c94cd8cc8577a5d9afdb51ad59e5db07703b83c7`; `PICO DE MEMORIA de make check: 144 MiB en
+test`.
+
+## 6. La PARADA 2, aplicada punto por punto
+
+| Punto | Qué decía | Hecho |
+|---|---|---|
+| 0 | La comparación con main es el test, AUTORIZADO A LA VISTA, con tres condiciones | §6.1 |
+| 1 | `spec_from_file_location`/`module_from_spec` como `runpy.run_path`, con la excepción de la guardia ampliada a `solo_lectura.py`; `costo_c.py` reescrito si carga por `sys.argv` | §6.2 |
+| 2 | C por tramos de ruta; una f-cadena que empieza por una orden no es composición; dos tests en el otro sentido | §6.3 |
+| 3 | Sin cambio en los guiones de la plataforma; la lista de los cinco con su porqué | §6.4 |
+| Además | ADR-0088: la deuda de «ADR 0087 (S-15, no existe)» no cambia; las negativas de §5.7, a la fila de ERRORES-RECURRENTES como errores de forma | §7 y §9 |
+
+### 6.1 La comparación con main es el test (punto 0, autorizado a la vista)
+
+La comparación caso a caso con la guardia de `main` es
+`tests/unit/test_guardia_g1.py::test_la_comparacion_caso_a_caso_con_la_guardia_de_main`: carga
+`docs/validation/anexos/GUARDIA-G1/medir_g1.py`, le da la guardia de `main` (o de `origin/main`) y la
+del árbol, y falla si un caso que `main` niega pasa en la rama sin estar en `CAMBIOS_DECLARADOS`. Corre
+en cada `make check` y en la CI. Las tres condiciones:
+
+- **(i) Por qué la guardia tenía razón.** La negativa exacta está en §5.6. `medir_g1.py` monta a trozos
+  las rutas protegidas de su repo inventado (`_p("knowledge", "cases")`, `"hol" + "dout"`): es justo lo
+  que C niega, y lo que el encargo mandaba hacer para medir sin nombrar rutas protegidas enteras. Desde
+  `tests/`, que corre sin leerse por diseño con la guarda del holdout como barrera
+  (GUION-MISMO-COMANDO.md §0.c), la medida es la misma.
+- **(ii) `medir_g1.py` no se ejecuta suelto.** Su cabecera dice que se corre por el test, con la
+  respuesta que lo autoriza; desde aquí no lo he vuelto a ejecutar suelto.
+- **(iii) `main` en la CI.** Sin `main` ni `origin/main`, el test salta con el mismo aviso que
+  `test_guardia_claude.py` («sin main ni origin/main en este clon»). En la CI, `actions/checkout` con
+  `fetch-depth: 0` trae todas las ramas como `origin/*` (`.github/workflows/ci.yml`, el paso de
+  `checkout`; `git fetch --tags --force` es el siguiente), y el test prueba `main` y luego
+  `origin/main`, como `test_la_guardia_frente_a_la_de_main_caso_a_caso`: corre de verdad. Lo confirma
+  el log de la CI de `fix/guardia-g1` (§10), donde no sale entre los saltados.
+- **Sin rutas protegidas enteras en la salida.** `medir_g1.py` las imprime por su nombre
+  (`_sin_rutas`: `<holdout>`, `<material>`, `<transcripciones>`, `<caso reservado>`). En
+  `medir_g1-PARADA2-ANTES.txt` y `medir_g1-PARADA2-DESPUES.txt`: 0 líneas con la carpeta del holdout
+  o la del material, y el id del caso sustituido 3 veces. Las salidas de las fases 0 y 1 son de antes
+  de esta condición y se quedan como estaban (anexos de su fase).
+
+Negativa al comprobarlo, error mío y no de esta rama: `grep -c -i 'knowledge/cases/holdout\|material
+adicional\|<id del caso reservado>' <salida>` → «leer el contenido de … Regla: … un caso de una
+particion reservada» (la regla por nombre de `main`, porque el patrón llevaba el id). Lo comprobé sin
+el id (las dos carpetas, y el marcador que lo sustituye).
+
+### 6.2 Cargar un fichero por su ruta (punto 1)
+
+`_exigir_carga_por_ruta`, dentro de B: `importlib.util.spec_from_file_location` e
+`importlib.machinery.SourceFileLoader` toman su ruta (el segundo argumento, o `location`/`path`). Si es
+la de la guardia o la de `solo_lectura.py` -`_es_ruta_de_la_guardia`, la excepción cerrada de la regla
+de la CI, ampliada con `_RUTAS_DE_HOOK`; o la ruta calculada acabada así-, pasa; si se calcula, el
+fichero se lee y se analiza como `runpy.run_path`; si no se calcula, o no hay ruta, se niega.
+**`costo_c.py` se reescribió** (lo pide el punto): cargaba la guardia por `sys.argv[1]`; ahora por
+`RAIZ / ".claude" / "hooks" / "guardia.py"`, con `RAIZ = Path(__file__).resolve().parents[4]`, y se
+lanza sin argumentos. `medir_g1.py` también carga guardias por ruta, pero solo corre desde `tests/`.
+
+### 6.3 C por tramos de ruta (punto 2)
+
+`_tramos_protegidos`: si lo que se sabe de una composición que no se calcula nombra un fragmento de
+`SENSIBLES` (sin cambio: no se mira más que en la fase 2), se compara por TRAMOS con lo protegido en
+lugar de negar por el fragmento: (1) el prefijo conocido como una carpeta que se recorre
+(`motivo_ruta`); (2) la cola conocida, empezando en cada tramo de cada zona protegida (`holdout/1/x`
+casa con `knowledge/cases/holdout/1`); (3) un tramo con una parte desconocida, con un nombre de relleno
+(`x.cruda-no-leer.jsonl`). Una carpeta de una zona ESTRICTA (todo lo de dentro protegido: el material,
+el holdout, las hojas, las crudas) que aquí no existe se mira con una sonda (`x.png`): en la nube no hay
+`corpus/`, y en el portátil sí. Y `_empieza_por_un_programa`: un `+` o una f-cadena que empieza por el
+nombre de un programa y un espacio (`f"cat {a}/{b}/1"`) es una orden, no una composición de C; si se
+ejecuta, la sigue analizando B como un comando.
+
+**El coste de C, medido otra vez** (`costo_c-PARADA2.txt`): de 7 a **2 de los 34 guiones de
+`scripts/`**, los dos sensibles de verdad (`transcribir_sesion.py`, la cruda; `viabilidad_trader.py`,
+el material adicional); salen los 5 falsos positivos (`a18_buscar.py`, `a35_fotogramas.py`,
+`v5_criterio.py`, `caja_77_exploratoria.py`, `embudo_77.py`). En `tests/`, de 42 a 9: los repos
+inventados de los tests (`tmp_path / "corpus"`, el holdout de mentira), exentos dentro del repo.
+
+### 6.4 Los guiones de la plataforma (punto 3, sin cambio)
+
+Cambiados en una rama, ninguno se puede ejecutar suelto desde la sesión; se prueban por sus tests
+(`tests/` exento) y, sueltos, los lanza Aleks con «!». `make check` los sigue lanzando por `make`
+(la guardia mira que el `Makefile` sea el de `main`, no lo que ejecuta):
+
+| Guion | Por qué lo niega B |
+|---|---|
+| `scripts/contrato_rama.py` | `subprocess.run(["git", "-c", "core.quotepath=false", *args])`: `git -c` con una clave fuera de `GIT_C_CLAVES` (vacía, decisión 6) y un subcomando que no se calcula |
+| `scripts/sello_make_check.py` | `git` con argumentos que no se calculan: su subcomando no se sabe al inspeccionar |
+| `scripts/instalar_hooks.py` | lo mismo |
+| `scripts/pico_memoria.py` | lanza un programa que no se calcula (el de su línea de órdenes) |
+| `scripts/huso_por_velas.py` | `sys.path.insert` con un valor que no se calcula (es de `SCRIPTS_CON_PUERTA`, pero esa exención solo vale para el blob de `main`) |
+
+Línea de Technical Debt preparada (§7), porque una rama que cambie `contrato_rama.py` o
+`sello_make_check.py` es una rama de la plataforma y lo normal es que quiera probarlos sueltos.
+
+### 6.5 Tests rotos a propósito
+
+`tests/unit/test_guardia_g1.py`: 131 tests (10 nuevos: 4 de los puntos 1 y 2 y 6 roturas). Antes del
+código (los tests contra la guardia de la fase 2, con `git stash` de `guardia.py` y su vuelta): 8
+fallan (`pytest-5-parada2-antes-del-codigo.txt`); el test de la orden ejecutada fallaba porque la
+negaba C y no B. Con el código, los 131 pasan (`pytest-6-parada2-con-el-codigo.txt`). Las roturas
+nuevas (`pytest-roto-a-proposito-PARADA2.txt`, 31 en total):
+
+```
+ROTO | sin_carga_por_ruta | test_p1_la_carga_por_una_ruta_que_no_se_calcula_o_protegida_se_niega | falla: argv
+ROTO | sin_excepcion_de_hook | test_p1_la_guardia_solo_lectura_y_lo_inocuo_se_cargan | falla: ('guardia', "el codigo carga o ejecuta `importlib.util.spec_from_file_location(..., '<tmp>/…
+ROTO | tramos_de_mas | test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan | falla: ('a18', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`<tmp>/…
+ROTO | orden_como_ruta | test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan | falla: ('orden', 'el codigo compone una ruta que no se puede calcular al inspeccionar (`ls */holdout/1`)…
+ROTO | tramos_ciegos | test_p2_lo_sensible_de_verdad_sigue_negado | falla: material
+ROTO | orden_suelta_por_b | test_p2_lo_sensible_de_verdad_sigue_negado | falla: orden_system
+```
+
+La comparación con main, por el test, antes y después (`medir_g1-PARADA2-ANTES.txt`,
+`medir_g1-PARADA2-DESPUES.txt`): 0 casos sin declarar en los dos.
+
 ## Estado
 
-FASE 0 HECHA y respondida (2026-11-04); contrato ampliado en su propio commit (898040c). FASE 1
-HECHA y sellada (0d784e9; ADR-0088 y la enmienda de CLAUDE.md). FASE 2 HECHA con lo decidido (B salvo
-la carga de un fichero por su ruta; C entera, variante estrecha), sellada en su commit, en PARADA 2:
-espero la respuesta del consultor a «Lo que necesito que decidas (PARADA 2)». La fase 3 espera.
+FASES 0, 1 y 2 HECHAS y selladas; PARADA 2 respondida (2026-11-04) y aplicada (§6), sellada en su
+commit. EN CURSO: fase 3 (documentos, líneas del cierre, CI de Linux y revisor).

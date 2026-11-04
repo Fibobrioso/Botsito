@@ -609,6 +609,108 @@ def test_h_las_composiciones_inocuas_pasan(g: ModuleType, repo: Path) -> None:
         assert _bash(g, repo, comando) is None, comando
 
 
+# --------------------------- PARADA 2, punto 1: cargar un fichero por su ruta (como runpy)
+IMP = "import importlib.util\n"
+SPEC = "importlib.util.spec_from_file_location"
+
+
+def test_p1_la_carga_por_una_ruta_que_no_se_calcula_o_protegida_se_niega(
+    g: ModuleType, repo: Path
+) -> None:
+    _malo(repo)
+    for nombre, codigo in (
+        (
+            "argv",
+            IMP + "import sys\n" + SPEC + "('m', sys.argv[1])\n",
+        ),
+        (
+            "malo",
+            IMP + SPEC + "('m', 'trabajo/mod_malo.py')\n",
+        ),
+        (
+            "loader",
+            "from importlib.machinery import SourceFileLoader\n"
+            "SourceFileLoader('m', 'trabajo/mod_malo.py')\n",
+        ),
+        ("sin_ruta", "import importlib.util\nimportlib.util.spec_from_file_location('m')\n"),
+    ):
+        motivo = _bash(g, repo, _escribe_guion(repo, f"trabajo/p1_{nombre}.py", codigo))
+        assert motivo is not None, nombre
+
+
+def test_p1_la_guardia_solo_lectura_y_lo_inocuo_se_cargan(g: ModuleType, repo: Path) -> None:
+    _malo(repo)
+    raiz = (
+        "from pathlib import Path\nimport importlib.util\nRAIZ = Path(__file__).resolve().parent\n"
+    )
+    for nombre, codigo in (
+        (
+            "guardia",
+            raiz + SPEC + "('g', RAIZ / '.claude' / 'hooks' / 'guardia.py')\n",
+        ),
+        (
+            "solo_lectura",
+            raiz + SPEC + "('s', RAIZ / '.claude' / 'hooks' / 'solo_lectura.py')\n",
+        ),
+        (
+            "literal",
+            IMP + SPEC + "('s', '.claude/hooks/solo_lectura.py')\n",
+        ),
+        (
+            "bueno",
+            IMP + SPEC + "('m', 'trabajo/mod_bueno.py')\n",
+        ),
+    ):
+        guion = _escribe_guion(repo, f"trabajo/p1_ok_{nombre}.py", codigo)
+        assert _bash(g, repo, guion) is None, (nombre, _bash(g, repo, guion))
+
+
+# ----------------------------- PARADA 2, punto 2: C por tramos de ruta desde su inicio conocido
+def test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan(
+    g: ModuleType, repo: Path
+) -> None:
+    """Los 5 falsos positivos de `scripts/` (GUARDIA-G1.md §5.5), con su forma: un fragmento de
+    `SENSIBLES` dentro de una ruta legible; y una ORDEN en una f-cadena que no se ejecuta."""
+    cab = (
+        "import sys\nfrom pathlib import Path\n"
+        "RAIZ = Path(__file__).resolve().parent\nx = sys.argv[1]\n"
+    )
+    for nombre, codigo in (
+        (
+            "a18",
+            cab + "print(list(Path(f'{RAIZ}/knowledge/corpus/transcripciones/{x}.yaml').parts))\n",
+        ),
+        ("a35", cab + "print((RAIZ / 'knowledge' / 'corpus' / 'fotogramas' / x).exists())\n"),
+        ("v5", cab + "print(Path(f'{RAIZ}/data/fotogramas/v5/png-1fps/{x}.png').exists())\n"),
+        ("kit", cab + "print(Path(f'{x}/knowledge/cases/kit/config.yaml').exists())\n"),
+        ("orden", cab + f"orden = f'ls {{x}}/{HOL}/1'\nprint(orden)\n"),
+    ):
+        guion = _escribe_guion(repo, f"p2_ok_{nombre}.py", codigo)
+        assert _bash(g, repo, guion) is None, (nombre, _bash(g, repo, guion))
+
+
+def test_p2_lo_sensible_de_verdad_sigue_negado(g: ModuleType, repo: Path) -> None:
+    """Los dos sensibles de verdad de `scripts/` siguen NIEGA por C; y una ORDEN con un fragmento
+    sensible y partes que no se calculan, si se ejecuta, la niega B: que C la suelte no la saca del
+    analisis del comando (PARADA 2, punto 2)."""
+    cab = "import os, subprocess, sys\nfrom pathlib import Path\nx = sys.argv[1]\n"
+    for nombre, codigo in (
+        (
+            "material",
+            cab + "print((Path(x) / 'corp' 'us' / 'Estrategia del trader' / "
+            "'Material adicional de su operativa').exists())\n",
+        ),
+        ("cruda", cab + "print(Path(f'{x}/{x}.cru' 'da-no-leer.jsonl').exists())\n"),
+        ("holdout", cab + f"print((Path(x) / '{HOL}' / '1' / 'secreto.yaml').exists())\n"),
+        ("orden_system", cab + f"os.system(f'cat {{x}}/{HOL}/1')\n"),
+        ("orden_shell", cab + f"subprocess.run(f'cat {{x}}/{HOL}/1', shell=True)\n"),
+    ):
+        motivo = _bash(g, repo, _escribe_guion(repo, f"p2_{nombre}.py", codigo))
+        assert motivo is not None, nombre
+        if nombre.startswith("orden"):
+            assert "carga o ejecuta" in motivo or "lanza" in motivo, (nombre, motivo)
+
+
 # --------------------------------------------------------------- roto a proposito
 def _romper(cual: str, g: ModuleType, s: ModuleType, monkeypatch: pytest.MonkeyPatch) -> None:
     """Rompe a proposito una pieza de esta rama (los dos sentidos de cada una)."""
@@ -671,6 +773,20 @@ def _romper(cual: str, g: ModuleType, s: ModuleType, monkeypatch: pytest.MonkeyP
     elif cual == "sin_llaves_ni_url":  # h) bash sin expandir llaves y sin leer `file:`
         monkeypatch.setattr(g, "_llaves", lambda patron, limite=256: [patron])
         monkeypatch.setattr(g, "_ruta_de_url", lambda url: url)
+    elif cual == "sin_carga_por_ruta":  # PARADA 2, 1: la carga por ruta vuelve a pasar sin leerse
+        monkeypatch.setattr(
+            g, "_exigir_carga_por_ruta", lambda llamada, nombre, asig, ctx, guion, ficheros: None
+        )
+    elif cual == "sin_excepcion_de_hook":  # PARADA 2, 1: ni la guardia se puede cargar
+        monkeypatch.setattr(g, "_RUTAS_DE_HOOK", ())
+    elif cual == "tramos_ciegos":  # PARADA 2, 2: ningun tramo llega a nada: lo sensible pasa
+        monkeypatch.setattr(g, "_tramos_protegidos", lambda valor, ctx: None)
+    elif cual == "tramos_de_mas":  # PARADA 2, 2: todo tramo llega: los falsos positivos vuelven
+        monkeypatch.setattr(g, "_tramos_protegidos", lambda valor, ctx: g.R_HOLDOUT)
+    elif cual == "orden_suelta_por_b":  # PARADA 2, 2: B deja de mirar la orden que C suelta
+        monkeypatch.setattr(g, "_lanzado_como_bash", lambda llamada, nombre, asig, guion: "true")
+    elif cual == "orden_como_ruta":  # PARADA 2, 2: una orden en una f-cadena vuelve a ser ruta
+        monkeypatch.setattr(g, "_empieza_por_un_programa", lambda nodo: False)
     else:
         raise AssertionError(cual)
 
@@ -701,6 +817,12 @@ ROTURAS = [
     ("sin_composicion", "test_h_las_rutas_compuestas_al_material_se_niegan"),
     ("composicion_de_mas", "test_h_las_composiciones_inocuas_pasan"),
     ("sin_llaves_ni_url", "test_h_las_llaves_y_las_url_en_bash_se_niegan"),
+    ("sin_carga_por_ruta", "test_p1_la_carga_por_una_ruta_que_no_se_calcula_o_protegida_se_niega"),
+    ("sin_excepcion_de_hook", "test_p1_la_guardia_solo_lectura_y_lo_inocuo_se_cargan"),
+    ("tramos_de_mas", "test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan"),
+    ("orden_como_ruta", "test_p2_las_rutas_legibles_que_casaban_por_un_fragmento_pasan"),
+    ("tramos_ciegos", "test_p2_lo_sensible_de_verdad_sigue_negado"),
+    ("orden_suelta_por_b", "test_p2_lo_sensible_de_verdad_sigue_negado"),
 ]
 
 # Los parametrizados se rompen con su caso mas representativo.
@@ -766,7 +888,7 @@ def test_la_comparacion_caso_a_caso_con_la_guardia_de_main(
     for nombre in ("guardia.py", "solo_lectura.py"):
         texto = _de_main(f".claude/hooks/{nombre}")
         if texto is None:
-            pytest.skip("sin `main` ni `origin/main` no hay guardia de main con que comparar")
+            pytest.skip("sin main ni origin/main en este clon")  # como test_guardia_claude.py
         (hooks / nombre).write_text(texto, encoding="utf-8")
     spec = importlib.util.spec_from_file_location("medir_g1_anexo", MEDIR_G1)
     assert spec is not None and spec.loader is not None

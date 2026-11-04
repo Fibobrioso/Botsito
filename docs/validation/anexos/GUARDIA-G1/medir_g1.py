@@ -18,9 +18,15 @@ directorio temporal FUERA del repo sintetico, que es lo que importa de `C:/cm/` 
 Con UNA guardia imprime su decision por caso; con DOS (`main` y la rama) imprime las dos y sale con 1
 si algun caso que `main` niega pasa en la rama sin estar en `CAMBIOS_DECLARADOS`.
 
-Uso:
-  python medir_g1.py <guardia.py>
-  python medir_g1.py <guardia de main> <guardia de la rama>
+SE CORRE POR EL TEST, no suelto (respuesta del consultor a la PARADA 2 de `trabajo/guardia-g1`,
+punto 0, AUTORIZADO A LA VISTA): `tests/unit/test_guardia_g1.py::test_la_comparacion_caso_a_caso_
+con_la_guardia_de_main` lo carga con la guardia de `main` (o `origin/main`) y la del arbol, y falla si
+un caso que `main` niega pasa sin declarar; asi corre en cada `make check` y en la CI. Desde la fase
+2 de esa rama la guardia niega ejecutarlo suelto desde la sesion, y tiene razon: este guion compone
+rutas protegidas a trozos, que es justo lo que C niega (GUARDIA-G1.md §5.6 y §6). Las fases 0 y 1 lo
+ejecutaron suelto, antes de C. La salida no imprime una ruta protegida entera (`_sin_rutas`).
+
+Uso (desde el test): main([..., <guardia de main>, <guardia de la rama>])
 """
 
 from __future__ import annotations
@@ -391,6 +397,22 @@ def decidir(g: ModuleType, sl: ModuleType, repo: Path, base: str, herramienta: s
     return "PASA" if not motivo else "NIEGA: " + motivo.splitlines()[0]
 
 
+def _sin_rutas(texto: str, base: str) -> str:
+    """La salida sin ninguna ruta protegida entera (punto 0 de la respuesta a la PARADA 2): el
+    directorio temporal, la carpeta del holdout, la del material y el id del caso reservado de la
+    fixture, por su nombre."""
+    texto = texto.replace(base, "<tmp>")
+    for ruta, nombre in (
+        (f"{KC}/{HOL}", "<holdout>"),
+        (MAT, "<material>"),
+        (MAT.lower(), "<material>"),
+        (_p("data", "transcrip" + "ciones"), "<transcripciones>"),
+        ("caso-eurusd-2026-05-04", "<caso reservado>"),
+    ):
+        texto = texto.replace(ruta, nombre)
+    return texto
+
+
 def main() -> int:
     guardias = [Path(a).resolve() for a in sys.argv[1:]]
     if not 1 <= len(guardias) <= 2:
@@ -406,10 +428,9 @@ def main() -> int:
         for ident, punto, herramienta, entrada in casos(rutas):
             decisiones = [decidir(g, sl, repo, rutas["base"], herramienta, entrada) for g, sl in zip(mods, sls)]
             texto = str(entrada.get("command") or entrada.get("pattern") or entrada.get("file_path"))
-            texto = texto.replace(rutas["base"], "<tmp>")
-            print(f"[{punto}] {ident} ({herramienta}): {texto}")
+            print(f"[{punto}] {ident} ({herramienta}): {_sin_rutas(texto, rutas['base'])}")
             for etiqueta, d in zip(("main", "rama") if len(mods) == 2 else ("hoy",), decisiones):
-                print(f"    {etiqueta}: {d.replace(rutas['base'], '<tmp>')}")
+                print(f"    {etiqueta}: {_sin_rutas(d, rutas['base'])}")
             if len(mods) == 2 and decisiones[0].startswith("NIEGA") and decisiones[1] == "PASA":
                 if ident in CAMBIOS_DECLARADOS:
                     print(f"    DECLARADO: {CAMBIOS_DECLARADOS[ident]}")
