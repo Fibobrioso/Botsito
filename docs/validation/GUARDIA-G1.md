@@ -1234,6 +1234,12 @@ La comparación con main, por el test, antes y después (`medir_g1-PARADA2-ANTES
 
 ## 7. Para el commit del contrato del cierre (preparado, sin aplicar)
 
+> **RECUADRO (2026-11-04, hallazgos menores de la orden de cierre).** Lo que el final de esta sección
+> llama «cuatro» de Technical Debt se quedó corto: el consultor las cuenta como siete con la de B del
+> pre-cierre; contadas aquí, son seis en «Entran», más la de Artifact, que cambia. `tests/unit/test_cuarentena.py`
+> no estaba en el contrato aunque §8 lo usa. Y la negativa a `sed -i`, resuelta con Edit (§13.3), se
+> acepta como forma de la casa, no como rodeo.
+
 Lo aplica la orden de cierre, en el portátil de Aleks. Son textos para `PROJECT_STATE.md` y la hoja de
 ruta; nada de esto está en la rama.
 
@@ -1815,6 +1821,18 @@ Copiada tal cual:
 > 2. Las dos desviaciones, aceptadas: el ensayo en su docs(guardia-g1) aparte del fix, y los dos añadidos (test_la_referencia_es_un_tag_y_no_es_esta_guardia y las etiquetas referencia/arbol de medir_g1.py) se quedan y se declaran en §13.
 >
 > Después, en el orden ya dado: push de la rama y a fix/guardia-g1, un gh run view suelto (solo state check en rojo y la comparación corriendo en el log), el chore(cierre) con la orden de cierre copiada y la fila completa, y entonces /cerrar-rama, que lanzo yo.
+
+## Orden de cierre: los dos cambios de la respuesta a la PARADA del cierre (2026-11-04)
+
+La orden copiada arriba vale con estos dos cambios, que manda el final de esa respuesta:
+
+- **La base de cierre** pasa a ser el fix, `c519262`, con `make check` en Windows (`3210 passed`) y la CI
+  de `fix/guardia-g1`, run 41923830468, solo con el fallo esperado de `state check`.
+- **El punto 2 gana el hallazgo del punto 4 de esa respuesta**: un test que compara con main cambia de
+  sentido en cuanto la rama se fusiona; una rama que toque la guardia ensaya make check sobre el merge
+  en un clon independiente desechable (git clone, no git worktree: este comparte main) antes del merge
+  real (el clon, por la respuesta a la PARADA del ensayo, punto 1). Está en la fila de
+  ERRORES-RECURRENTES, junto a los dos hallazgos para el consultor.
 
 ## Estado
 

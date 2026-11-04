@@ -520,30 +520,12 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ## Carril: guardias y deuda
 
 ### G.1 · La guardia de Claude Code
-- **Refs:** NA:B · NA:C · NA:D · NA:K
-- **Qué es:** lo que importa o ejecuta un guion (B); las rutas compuestas (C); las formas raras (D);
-  el falso positivo de `exigir_sin_crudo` (K, junto a B o C si cabe). Y lo medido en
-  `trabajo/entorno-code` (ENTORNO-CODE.md §6):
-  - **Prioritario dentro de G.1** (consultor, 2026-10-11): la guardia no niega
-    `git ls-files knowledge/cases | grep ...`, listar la carpeta madre del holdout con un filtro
-    detrás (§10.1). Es la 4.ª vez que alguien lo hace, esta vez el propio revisor.
-  - `solo_lectura.py` niega `git worktree list`, que solo lee.
-  - El test del ritual quedó ciego al caso del Makefile cambiado hasta entorno-code (corregido).
-  - La guardia niega ejecutar desde la sesión, en un clon fuera del repo real, un test que lleve
-    `crudo=True`, aunque sea el de `main` (§4.5): «probar un test con el código de `main`», de
-    `comparar-con-main`, no sirve para esos tests.
-  - Que `cerrar-rama` diga que, si la rama cambia el `Makefile`, los `make check` en la rama los
-    lanza Aleks con «!» (§6, aviso para el cierre).
-  - Desde `trabajo/activar-sesion-04-motor` (ACTIVAR-SESION-04-MOTOR.md §6 y §9.3): un falso
-    positivo. `grep -rn --include=*.py` con cuatro `-e` sobre rutas literales (`src/ tests/
-    scripts/`) se bloquea («leer el contenido de .») y el mismo comando con dos `-e` pasa.
-  - Desde `trabajo/corrida-construccion` (CORRIDA-CONSTRUCCION.md §1.j): la guardia niega un
-    guion de la carpeta de trabajo que nombre `data/manifests/ticks/<manifiesto>.yaml` de un mes de
-    construcción, aunque Read deja abrir esos manifiestos; que admita esas rutas literales.
-  - Desde `trabajo/activar-sesion-05` (ACTIVAR-SESION-05.md §0.f; va con K, el clon de
-    `C:/cm/`): la guardia niega como tests los de un clon de `C:/cm/` que globean
-    `knowledge/cases` o recorren directorios: `test_kit.py`, `test_selector_orden_stop.py` y
-    `test_renovar_cierres.py` no se pudieron correr en ese clon.
+- **Refs:** NA:D
+- **Qué es:** Las formas raras (D). Y lo que queda de `trabajo/guardia-g1` (GUARDIA-G1.md): que
+  `cerrar-rama` diga que, si la rama cambia el `Makefile`, los `make check` en la rama los lanza Aleks
+  con «!»; los candidatos en blanco tras `:` y `@` en `candidatos_de_ruta` (§4.5); y que cerrar-rama
+  ensaye make check sobre el merge en un clon independiente desechable (git clone, no git worktree:
+  este comparte main) antes del merge real.
 - **Depende de:** nada.
 - **Quién:** la sesión, en ramas propias.
 - **Hecho cuando:** cada una con su test que la rompe a propósito.

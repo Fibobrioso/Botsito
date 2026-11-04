@@ -14454,3 +14454,70 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 53 (2026-10-31).
+
+# Next Action HECHA · K · B · C · trabajo/guardia-g1
+
+K. La guardia exigir_sin_crudo da un falso positivo con una asignación a una variable llamada crudo (scripts/leer_demo_ftmo.py; DEMO-EJECUCION-1.md). Rama propia, junto a B o C si cabe: que la guardia nombre la forma de la opción, con un test que rompa a propósito los dos sentidos. Y en la misma rama, el arreglo que queda de ENTRADA-JULIO.md §8: que reconozca como tests los de un clon `git worktree add --detach` de comparar-con-main (`C:/cm/`), con su test de los dos sentidos. Y las dos negativas de ACTIVAR-SESION-05-MOTOR.md §0.d (pytest desde C:/cm/, encadenadas). Y la de CUARENTENA-POR-CONDICION-2.md §2.e: en el clon de comparar-con-main la guardia niega un fichero de test porque «el codigo nombra la carpeta \.» (la constante `\.` de un f-string de regex, que en Windows es la raíz de la unidad), un falso positivo que en el repo real no salta. Y la de BARRIDO-SESION-6.md §4: un grep con un patrón que acaba en espacio da «leer el contenido de .».
+
+HECHA en `trabajo/guardia-g1`: la opción por su forma en el árbol de Python; los tests de un clon de comparar-con-main que son los de `main` o los del árbol cuentan como tests del repo (K2 y K3); el candidato en blanco tras `=` no es una ruta (K4).
+
+B. La guardia lee el guion pero no lo que importa o ejecuta a su vez (import de un módulo local, runpy, exec, subprocess con otro guion), ni en un guion ni en el código en línea (GUION-MISMO-COMANDO.md §0.c). Rama propia: decidir qué módulos se resuelven y se leen, negando por defecto lo que no se pueda resolver.
+
+HECHA en `trabajo/guardia-g1`: lo que un guion de Python importa, carga por su ruta o ejecuta se resuelve y se lee hasta 3 niveles, y lo que no se resuelve se niega (solo Python).
+
+C. La guardia no ve una ruta protegida compuesta por partes dentro de un guion (joinpath, os.path.join, el operador /, f-strings, concatenación): analizar_codigo solo mira literales enteros y niega lo compuesto solo si el código además recorre directorios (GUION-MISMO-COMANDO.md, hallazgo 5 del consultor). Rama propia: negar por defecto un guion que nombra un fragmento sensible y compone rutas, con un test que lo rompa a propósito.
+
+HECHA en `trabajo/guardia-g1`: una ruta compuesta se calcula y se mira como un literal; la que no se calcula y nombra un fragmento sensible se compara por tramos con lo protegido; las llaves de bash se expanden y `file:` es su ruta.
+
+# Registro de cierre · `trabajo/guardia-g1` (2026-11-04)
+
+- Revisión y orden de cierre del consultor del 2026-11-04, dadas por Aleks (copiadas tal cual al
+  final del encargo y de GUARDIA-G1.md, en su commit propio, 3e8875b); después Aleks lanzó
+  `/cerrar-rama trabajo/guardia-g1`, y la sesión siguió `RITUAL.md`. La rama se hizo en Claude Code en
+  la nube, con dos PARADAS y una pasada del revisor (GUARDIA-G1.md §12; lo hecho, §12.1); el pre-cierre
+  y el cierre, en el portátil de Aleks. El pre-cierre en Windows (§13) encontró tres tests rojos que la
+  CI de Linux no podía ver, arreglados en los tests sin tocar `guardia.py`. Nunca se cerró sin la orden.
+- **Un primer intento de cierre, sin publicar** (§13.6): tras el merge local `2e85e51`, el tag y el
+  `PROJECT_STATE.md` editado, `make check` en `main` dio rojo: `test_roto_la_comparacion_con_main`,
+  porque la guardia «de `main`» ya era la de la rama. PARADA: Aleks deshizo el merge y borró el tag
+  local con «!» (la única vez, y nunca empujado), y la rama volvió a 3e8875b; el `chore(cierre)` local
+  06df5fa se rehízo con este. El fix fija las comparaciones al tag `stable/F38k-margen-pendiente`. Y el
+  cierre entero se ensayó en un `git clone` con `main` movido de verdad, en verde, con el control con
+  el test sin arreglar en rojo (§13.7); el ensayo en `git worktree` que se ordenó primero no habría
+  cazado el fallo, porque comparte `main` (medido con un control; PARADA del ensayo).
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action: salen K, B
+  y C (arriba); D no cambia. Technical Debt, tal cual GUARDIA-G1.md §7: sale la consulta de CI montada
+  a trozos, cambia la línea de Artifact y claude-in-chrome, y entran las seis de «Entran». La hoja de
+  ruta: G.1 con Refs `NA:D` y su «Qué es» de §7, sin ganar Estado HECHA; G.2 no cambia. La fila de
+  `HOLDOUT-EXPOSICIONES.md` del punto 2 de la orden. La fila de ERRORES-RECURRENTES, con los hallazgos
+  del consultor. Y el recuadro en GUARDIA-G1.md §7.
+- **Lo que entra**: ADR-0088 (los nombres de dentro de `knowledge/cases/holdout/{1,2,3}` se cuentan, no
+  se listan); K (la opción por su forma, los tests de un clon de comparar-con-main, y el candidato en
+  blanco tras `=`); B (lo que un guion de Python importa, carga o ejecuta, hasta 3 niveles); C (las
+  rutas compuestas, las llaves de bash y `file:`); `git worktree list` en `solo_lectura.py`; y
+  `tests/unit/test_guardia_g1.py`, con la comparación caso a caso con la guardia del tag
+  `stable/F38k-margen-pendiente`.
+- **Una exposición declarada** (`HOLDOUT-EXPOSICIONES.md`, 2026-11-04): tres commits de la rama llevan
+  en los anexos el id de un caso reservado, enmascarado en la punta; el merge conserva la historia.
+- Letra del tag: la última cerrada era `stable/F38k-margen-pendiente`; `stable/F38l-guardia-g1` no
+  existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38l-guardia-g1`. El merge es `git rev-parse "stable/F38l-guardia-g1^{commit}"`.
+- Commits de la rama: `cf1bc4a` (chore(rama): abre trabajo/guardia-g1), `42e9dfa` (docs: fase 0, el
+  inventario medido y la PARADA), `898040c` (chore(contrato): docs/adr/ abierto solo para el ADR y su
+  índice; la respuesta a la PARADA), `0d784e9` (feat: fase 1, el listado del holdout y los falsos
+  positivos de K), `aa882ab` (feat: fase 2, B y C, y la PARADA 2), `fb57e68` (feat: la PARADA 2
+  aplicada), `b0807cc` (docs: fase 3, documentos, líneas del cierre y la lista para Aleks), `9a090bc`
+  (docs: la CI de Linux en el informe), `9537b7b` (fix: lo que encontró el revisor, y su informe),
+  `537b2eb` (fix: los tres tests rojos del pre-cierre en Windows), `45e35cf` (docs: el sello en Windows,
+  la CI y 3a y 3b en el clon), `3e8875b` (docs: la orden de cierre), `c519262` (fix: las comparaciones
+  con la guardia de un tag fijo, no con main), `11c817b` (docs: el ensayo del cierre en un clon
+  independiente y la CI del fix), y este (chore(cierre): sale el contrato y entra el registro en
+  HISTORIA).
+- CI de Linux por `fix/guardia-g1`, con el ÚNICO fallo esperado de `state check` en todos: run
+  41858841083 (b0807cc: 1 failed, 3151 passed, 46 skipped), 41867739409 (9537b7b: 1 failed, 3160
+  passed, 46 skipped), 41884498214 (537b2eb: 1 failed, 3161 passed, 47 skipped), 41889496096 (45e35cf:
+  1 failed, 3161 passed, 47 skipped) y 41923830468 (c519262, la base del cierre: 1 failed, 3162 passed,
+  47 skipped, con las tres comparaciones corriendo). La CI de `main` corre tras el push.
+- `make check` en Windows: 3209 passed sobre 537b2eb, 45e35cf y 3e8875b; 3210 passed sobre c519262 y
+  11c817b.
+- Informe: `docs/validation/GUARDIA-G1.md`. Encargo: `docs/encargos/trabajo-guardia-g1.md`.
