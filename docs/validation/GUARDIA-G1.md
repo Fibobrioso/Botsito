@@ -1256,7 +1256,8 @@ Qué es, sustituyendo la lista de hoy:
 - «Las formas raras (D). Y lo que queda de `trabajo/guardia-g1` (GUARDIA-G1.md): que `cerrar-rama`
   diga que, si la rama cambia el `Makefile`, los `make check` en la rama los lanza Aleks con «!»; y
   los candidatos en blanco tras `:` y `@` en `candidatos_de_ruta` (§4.5); y que cerrar-rama ensaye
-  make check sobre el merge en un clon desechable antes del merge real.»
+  make check sobre el merge en un clon independiente desechable (git clone, no git worktree: este
+  comparte main) antes del merge real.»
 - Lo HECHO en `trabajo/guardia-g1` sale de la lista: el listado del holdout (ADR-0088), `git
   worktree list` en `solo_lectura.py`, el test con la opción en un clon, el `grep` con cuatro `-e`, el
   manifiesto de ticks (ya pasaba con la ruta literal: §1.f), y los tests de un clon de `C:/cm/`.
@@ -1440,6 +1441,10 @@ Se empuja la rama a `origin/trabajo/guardia-g1` y a `fix/guardia-g1` (la CI solo
   skipped in 227.67s`; el ÚNICO fallo, el esperado de `state check`
   (`test_state_check_ok_on_real_repo`). Un saltado más que antes: el test de la URL mal formada, que
   solo corre en Windows.
+- **Run 41923830468**, sobre c519262 (el fix de la PARADA del cierre, §13.6): `1 failed, 3162 passed, 47
+  skipped in 285.54s`; el ÚNICO fallo, el esperado de `state check`. **Las tres comparaciones corrieron
+  con el tag:** de `test_guardia_g1.py`, en la lista de saltados del log solo sale
+  `test_guardia_g1.py:622`, la URL mal formada, que solo corre en Windows.
 
 ## 11. El encargo, punto por punto
 
@@ -1673,6 +1678,11 @@ ensayo dentro, y el ensayo necesita el fix ya commiteado: se fusiona un commit. 
 `fix(guardia-g1)` con el código y esta sección, y un `docs(guardia-g1)` con la salida del ensayo (§13.7).
 La base de la orden de cierre es el fix, y su run de CI se anota en el segundo.
 
+**El sello del fix en Windows (c519262):** `3210 passed in 1179.01s (0:19:39)`; `SELLO: make check en verde
+sobre el arbol 3301c22aa761cf5a1d0e3751e1dfe1c9d085fc30`; `PICO DE MEMORIA de make check: 307 MiB en test
+(suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 297 MiB)`. La CI de Linux, run
+41923830468 (§10).
+
 ### 13.7 El ensayo del merge
 
 **Un límite medido del ensayo que pide el punto 3, y que afecta a la lección.** Un `git worktree`
@@ -1686,7 +1696,61 @@ reproduce un clon donde `main` se mueva de verdad. Otros dos hechos: la guardia 
 también dentro del worktree, porque cada worktree tiene su propio sello: el merge queda a medias, con el
 árbol fusionado en el índice, y `make check` corre sobre ese árbol.
 
-Salida del ensayo: en el commit siguiente.
+**Lo decidido (respuesta a la PARADA del ensayo, punto 0): solo el clon independiente.** El `make check`
+del worktree no se lanzó; Aleks quitó `C:/cm/g1m` con «!».
+
+**El ensayo que cuenta**, sobre `c519262`. Comprobado antes que nada empuja: ni el `Makefile` ni sus
+guiones llevan `push`, y en los tests solo es texto; y Aleks le quitó el remoto al clon. La guardia solo
+deja lanzar con «!» lo que está marcado:
+
+| # | Comando | Quién | Salida |
+|---|---|---|---|
+| 1 | `git clone "C:/Users/USER/Desktop/Bot v3" C:/cm/g1c` | Aleks, «!» | clon en `c519262` |
+| 2 | `git -C C:/cm/g1c switch main` | sesión | `main` del clon, en `7a3a1ff` |
+| 3 | `git -C C:/cm/g1c remote remove origin` | Aleks, «!» | sin remoto |
+| 4 | `git -C C:/cm/g1c config user.name` y `user.email` | Aleks, «!» | identidad de ensayo; la guardia niega fijarla |
+| 5 | `switch trabajo/guardia-g1`, `rm contrato.yaml` y `commit` | sesión | como hará el `chore(cierre)` |
+| 6 | `switch main` y `merge --no-ff trabajo/guardia-g1` | sesión | merge `957a6c2` |
+| 7 | `tag -a stable/F38l-guardia-g1` | sesión | tag solo del clon, sobre `957a6c2` |
+| 8 | `PROJECT_STATE.md` con las cuatro cabeceras de la orden, y `git add` | sesión | `M  PROJECT_STATE.md` y nada más |
+| 9 | `cd C:/cm/g1c && make check > C:/cm/make-check-merge.log 2>&1` | Aleks, «!» | **exit 0** |
+
+Salida del paso 9:
+
+```
+CONTRATO: sin contrato.yaml: nada que comprobar
+3199 passed, 11 skipped in 990.84s (0:16:30)
+OK: rama 'main' - funcionalidad actual: Ninguna rama abierta. trabajo/guardia-g1 cerrada en main el 2026-11-04 (stable/F38l-guardia-g1): ...
+SELLO: make check en verde sobre el arbol 27d1d78de42faae0105d3238559e67954ca69608
+PICO DE MEMORIA de make check: 263 MiB en `types` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 253 MiB)
+```
+
+**Los tres tests de la comparación corrieron:** en la lista `SKIPPED` del log no sale ninguno de
+`test_guardia_g1.py`. Los 11 saltados son 1 por el contrato (`test_contrato_rama.py`), 1 por `tokenizers`
+y 9 por `data/`, que el clon no tiene (`test_cuenta_7_de_agosto`, 3; `test_fidelidad_marzo`,
+`test_huecos_motor`, `test_preparar_a35`, `test_selector_orden_stop`, `test_simulacion` y `test_visor`, 1
+cada uno).
+
+**El control: este ensayo sí habría cazado el fallo.** En ese mismo clon, con el test de `3e8875b` (sin
+arreglar) y `main` en el merge: `cd C:/cm/g1c && uv run pytest tests/unit/test_guardia_g1.py -q -p
+no:cacheprovider --tb=line -k test_roto_la_comparacion_con_main` (Aleks, «!»: la guardia lo niega, porque
+ese fichero no es el del árbol y un `git clone` no es un worktree de este repo) da **`AssertionError: assert
+0 == 1`**, y todas las líneas `referencia` y `arbol` coinciden: la guardia comparada consigo misma, que es
+el fallo de §13.6. Igual que en el worktree el mismo test salía en verde.
+
+**Lo que este ensayo no cubre, dicho:**
+- Fue antes del `chore(cierre)` de verdad, por el orden de la respuesta: el clon solo quita el contrato. No
+  lleva la Next Action, el Technical Debt, la hoja de ruta ni la fila de ERRORES-RECURRENTES; ese
+  commit, con esos cambios en un árbol parecido, ya pasó en `06df5fa`, y en el `make check` sobre su merge
+  solo falló el test de §13.6. El `make check` del `chore(cierre)` nuevo lo vuelve a comprobar.
+- Sin hooks: un clon nuevo no los trae, y no se instalaron, así que el merge del ensayo no pasó por
+  `pre-merge-commit`; sus puertas las ve el merge real, que ya pasó esa puerta en `2e85e51`.
+- Sin `data/` ni `corpus/`: los 9 saltados de arriba corren en el repo real, en el `make check` de la rama
+  y en el del commit de estado.
+
+**Las desviaciones de §13.6, aceptadas** (respuesta a la PARADA del ensayo, punto 2): el ensayo va en este
+`docs(guardia-g1)`, aparte del fix, y se quedan `test_la_referencia_es_un_tag_y_no_es_esta_guardia` y las
+etiquetas `referencia`/`arbol` de `medir_g1.py`.
 
 ## Orden de cierre (2026-11-04)
 
@@ -1738,11 +1802,27 @@ Copiada tal cual:
 >
 > Después: la orden de cierre que ya tienes, con dos cambios que aplicas al copiarla: la base pasa a ser el commit del fix (su sha, con make check en Windows y su run de CI de fix/guardia-g1), y el punto 2 gana el hallazgo del punto 4 de esta respuesta. Luego /cerrar-rama, que lanzo yo. NO cierres sin el ensayo del merge en verde.
 
+## Respuesta del consultor a la PARADA del ensayo (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA del ensayo (2026-11-04). Cópiala tal cual al final del encargo y del informe, y aplícala.
+>
+> 0. (c): solo el clon independiente. El worktree no mueve main y no añade nada: no se lanza su make check. Con «!» lo quito yo: git worktree remove --force C:/cm/g1m y git worktree prune. El ensayo que cuenta: con «!» lanzo git clone "C:/Users/USER/Desktop/Bot v3" C:/cm/g1c; en ese clon se ensaya el cierre entero tal como lo hará cerrar-rama (make hooks si hace falta, el sello, merge --no-ff de trabajo/guardia-g1 sobre su main, el tag stable/F38l-guardia-g1 local del clon, PROJECT_STATE.md editado como lo editará el commit de estado) y make check > make-check-merge.log 2>&1 en verde con los tres tests de la comparación corriendo, no saltados. Ese clon no empuja a ningún sitio: antes de nada comprueba que no se ejecuta ningún push desde él (si prefieres, me pides que le quite el remoto con «!»). Al terminar, con «!» lo borro yo. La salida y los comandos, al §13.
+> 1. Sí: en la fila de ERRORES-RECURRENTES y en la línea de G.1 de §7, «en un clon desechable» pasa a «en un clon independiente desechable (git clone, no git worktree: este comparte main)». Y la fila gana, en la columna del consultor: «(importa, del consultor) ordenó el ensayo del merge en un git worktree, que comparte main y no habría cazado el fallo; Claude Code lo midió con un control antes de seguir. Lección: un mecanismo de ensayo se mide antes de ordenarlo (regla 1 del consultor)».
+> 2. Las dos desviaciones, aceptadas: el ensayo en su docs(guardia-g1) aparte del fix, y los dos añadidos (test_la_referencia_es_un_tag_y_no_es_esta_guardia y las etiquetas referencia/arbol de medir_g1.py) se quedan y se declaran en §13.
+>
+> Después, en el orden ya dado: push de la rama y a fix/guardia-g1, un gh run view suelto (solo state check en rojo y la comparación corriendo en el log), el chore(cierre) con la orden de cierre copiada y la fila completa, y entonces /cerrar-rama, que lanzo yo.
+
 ## Estado
 
 Rama lista para revisión, NO cerrada. Fases 0, 1, 2 y 3 hechas y selladas; las dos PARADAS
 respondidas y aplicadas; la CI de Linux de `fix/guardia-g1` (run 41858841083) con solo el fallo
-esperado de `state check` (§10; el último medido, run 41884498214); el revisor pasado y lo hecho con
+esperado de `state check` (§10; el último medido, run 41923830468); el revisor pasado y lo hecho con
 cada hallazgo en §12.1. El pre-cierre en Windows encontró tres tests rojos, arreglados en los tests
-(§13), con `make check` sellado en Windows y 3a y 3b en verde en el clon y en el repo real. El cierre lo
+(§13), con `make check` sellado en Windows y 3a y 3b en verde en el clon y en el repo real. El primer
+intento de cierre paró en `make check` sobre el merge, sin publicar nada (§13.6); arreglado, con el
+cierre entero ensayado en verde en un clon independiente (§13.7). El cierre lo
 ejecuta Aleks en su portátil, con la orden de cierre (líneas preparadas en §7; lo de Windows, §8).

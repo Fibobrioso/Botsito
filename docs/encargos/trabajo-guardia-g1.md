@@ -174,3 +174,17 @@ Copiada tal cual:
 > 4. Lección para la fila de ERRORES-RECURRENTES (hallazgo del cierre, importa, del proceso): «un test que compara con main cambia de sentido en cuanto la rama se fusiona; una rama que toque la guardia ensaya make check sobre el merge en un clon desechable antes del merge real». Y para el consultor, en su columna: «antes de dar una orden de cierre de una rama de la guardia, pedir el ensayo del merge; la auditoría corrió la suite sobre la rama y sobre main por separado, nunca sobre el merge». Añade a la línea de G.1 preparada en §7 (el «qué es» de la hoja de ruta) este pendiente: «que cerrar-rama ensaye make check sobre el merge en un clon desechable antes del merge real».
 >
 > Después: la orden de cierre que ya tienes, con dos cambios que aplicas al copiarla: la base pasa a ser el commit del fix (su sha, con make check en Windows y su run de CI de fix/guardia-g1), y el punto 2 gana el hallazgo del punto 4 de esta respuesta. Luego /cerrar-rama, que lanzo yo. NO cierres sin el ensayo del merge en verde.
+
+## Respuesta del consultor a la PARADA del ensayo (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA del ensayo (2026-11-04). Cópiala tal cual al final del encargo y del informe, y aplícala.
+>
+> 0. (c): solo el clon independiente. El worktree no mueve main y no añade nada: no se lanza su make check. Con «!» lo quito yo: git worktree remove --force C:/cm/g1m y git worktree prune. El ensayo que cuenta: con «!» lanzo git clone "C:/Users/USER/Desktop/Bot v3" C:/cm/g1c; en ese clon se ensaya el cierre entero tal como lo hará cerrar-rama (make hooks si hace falta, el sello, merge --no-ff de trabajo/guardia-g1 sobre su main, el tag stable/F38l-guardia-g1 local del clon, PROJECT_STATE.md editado como lo editará el commit de estado) y make check > make-check-merge.log 2>&1 en verde con los tres tests de la comparación corriendo, no saltados. Ese clon no empuja a ningún sitio: antes de nada comprueba que no se ejecuta ningún push desde él (si prefieres, me pides que le quite el remoto con «!»). Al terminar, con «!» lo borro yo. La salida y los comandos, al §13.
+> 1. Sí: en la fila de ERRORES-RECURRENTES y en la línea de G.1 de §7, «en un clon desechable» pasa a «en un clon independiente desechable (git clone, no git worktree: este comparte main)». Y la fila gana, en la columna del consultor: «(importa, del consultor) ordenó el ensayo del merge en un git worktree, que comparte main y no habría cazado el fallo; Claude Code lo midió con un control antes de seguir. Lección: un mecanismo de ensayo se mide antes de ordenarlo (regla 1 del consultor)».
+> 2. Las dos desviaciones, aceptadas: el ensayo en su docs(guardia-g1) aparte del fix, y los dos añadidos (test_la_referencia_es_un_tag_y_no_es_esta_guardia y las etiquetas referencia/arbol de medir_g1.py) se quedan y se declaran en §13.
+>
+> Después, en el orden ya dado: push de la rama y a fix/guardia-g1, un gh run view suelto (solo state check en rojo y la comparación corriendo en el log), el chore(cierre) con la orden de cierre copiada y la fila completa, y entonces /cerrar-rama, que lanzo yo.
