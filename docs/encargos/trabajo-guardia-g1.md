@@ -124,3 +124,32 @@ Copiada tal cual:
 > 7. Revisor: solo si el punto 2 toca guardia.py, una pasada del revisor acotada al diff de estos commits, pegada en §12 como segunda pasada. Si solo cambian tests, no hace falta.
 >
 > Al terminar, informe en el terminal: commits, sello en Windows (passed y PICO), run de la CI, resultado de 3a y 3b en el clon, y que el clon está quitado. NO cierres: la orden de cierre viene después.
+
+## Orden de cierre (2026-11-04)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/guardia-g1 (consultor, 2026-11-04). Cópiala tal cual al final del encargo y del informe, en «Orden de cierre», en su propio commit (sellado), antes del commit del contrato. Después, el ritual de docs/runbooks/RITUAL.md con la skill cerrar-rama, que lanzo yo con /cerrar-rama.
+>
+> Revisión del consultor: la rama cumple el encargo, las dos PARADAS y el pre-cierre en Windows (§13). Base de cierre: 45e35cf, con make check en Windows (3209 passed) y la CI de fix/guardia-g1: runs 41884498214 (537b2eb) y 41889496096 (45e35cf), solo el fallo esperado de state check. Un auditor independiente corrió la suite de la guardia y la cuarentena sobre 9537b7b en Linux con la comparación contra main de verdad: 894 passed, 36 skipped, 0 failed.
+>
+> 1. Tag: stable/F38l-guardia-g1. Comprueba antes que no existe ni en local ni en origin. Mensaje del merge: «merge: trabajo/guardia-g1, ADR-0088 (los nombres del holdout se cuentan), los falsos positivos de K y lo que un guion carga o compone (B y C)».
+>
+> 2. Hallazgos del consultor que el revisor no vio, para la fila de ERRORES-RECURRENTES (la columna del consultor pasa a los que ya tiene más estos, y la lección para el revisor gana: «lo que un commit enmascara al final sigue en la historia de la rama y en las constantes de los fuentes: se declara, no se da por quitado»):
+>    - (importa) Tres commits de la rama (42e9dfa, 0d784e9, aa882ab) llevan en los anexos de GUARDIA-G1 el id de un caso reservado, enmascarado en 9537b7b; el mismo id sigue como constante de fixture en medir_g1.py y test_guardia_g1.py, igual que en main (tests/unit/test_guardia_claude.py). El revisor dio B1 por «arreglado» sin nombrar la historia ni los fuentes. No se reescribe la historia (rebase y squash no pasan por la puerta): se declara. Añade a docs/validation/HOLDOUT-EXPOSICIONES.md, con fecha de hoy, una fila que diga que la rama llevó en tres commits el id de un caso reservado tomado de la fixture de main, sin etiqueta ni resultado, enmascarado en la punta, y que el merge conserva la historia; sin escribir el id.
+>    - (importa, del proceso) La rama se declaró «lista para revisión» con make check solo en Linux, y el pre-cierre en Windows encontró tres tests rojos (§13); la lección ya está en la fila. Queda como está.
+>    - (menor) §7 contaba «cuatro» líneas de Technical Debt cuando son siete con la de B del pre-cierre; test_cuarentena.py no estaba en el contrato aunque §8 lo usa; la negativa a sed -i resuelta con Edit (§13.3) se acepta como forma de la casa, no como rodeo. Recuadro en §7.
+>
+> 3. En el commit del contrato (chore(cierre)), además de lo que manda RITUAL.md:
+>    a) PROJECT_STATE.md, Next Action: K, B y C pasan a HECHAS. Salen de PROJECT_STATE a HISTORIA con su texto literal de hoy, bajo «# Next Action HECHA · K · B · C · trabajo/guardia-g1», cada una seguida de su línea de §7 del informe (las tres «HECHA en trabajo/guardia-g1: …»). D no cambia.
+>    b) PROJECT_STATE.md, Technical Debt, tal cual §7 del informe en 45e35cf: sale la línea de la consulta de CI montada a trozos ("g" + "h"); la línea de Artifact/claude-in-chrome se sustituye por el texto de §7 (sin «junto a K»); entran TODAS las líneas de «Entran» de §7 (K2 conftest/src, riesgo residual de C, riesgo residual de B con el añadido del clon sin .venv, los guiones de la plataforma, la excepción de la carga por ruta (A2) y el riesgo residual de ADR-0088 (B7)). La deuda «ADR 0087 (S-15, no existe)» no cambia.
+>    c) docs/plan/HOJA-DE-RUTA.md, G.1: Refs pasa a «NA:D» (salen NA:B, NA:C y NA:K); «Qué es» se sustituye por el texto de §7 («Las formas raras (D). Y lo que queda de trabajo/guardia-g1 (GUARDIA-G1.md): que cerrar-rama diga que, si la rama cambia el Makefile, los make check en la rama los lanza Aleks con «!»; y los candidatos en blanco tras «:» y «@» en candidatos_de_ruta (§4.5).»), y lo HECHO sale de la lista como dice §7. G.1 NO gana Estado HECHA. G.2 no cambia. Su línea M está autorizada por esta orden.
+>    d) docs/validation/HOLDOUT-EXPOSICIONES.md: la fila del punto 2. Autorizada por esta orden.
+>    e) docs/runbooks/ERRORES-RECURRENTES.md: la fila de la rama con los hallazgos del punto 2.
+>    Mide PROJECT_STATE con wc -c ANTES de commitear: hoy 21.814; con estas líneas tiene que quedar por debajo de 22.500. Si pasa de 23.000, PARADA antes de recortar nada.
+>
+> 4. Lo demás, según RITUAL.md: merge --no-ff a main con el mensaje del punto 1, el tag sobre el merge, y el commit de estado, que solo reemplaza Current Branch (main), Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en el punto 3). Current Feature: «Ninguna rama abierta. trabajo/guardia-g1 cerrada en main el 2026-11-04 (stable/F38l-guardia-g1): ADR-0088 (los nombres del holdout se cuentan, no se listan), los falsos positivos de K, lo que un guion importa o carga (B) y las rutas compuestas (C), con los tests de un clon de comparar-con-main (GUARDIA-G1.md). Hecha en Claude Code en la nube; pre-cierre y cierre en el portátil.» Stable Main State y Last Stable Commit, con la forma del cierre anterior. Después: make check sellado, push atómico de main y el tag (yo confirmo la regla ask con «1. Yes»), la CI de main con un gh run view suelto, y, con la CI en verde, el borrado de la rama local y de fix/guardia-g1 y trabajo/guardia-g1 en origin.
+>
+> 5. Informe final: sha de main y del merge, el tag y a qué commit apunta, el run de la CI de main y su resultado, las ramas que quedan en local y en origin (wt-ci ya no está: prune lo quitó, dilo), el tamaño de PROJECT_STATE.md y el siguiente tag (F38m).
