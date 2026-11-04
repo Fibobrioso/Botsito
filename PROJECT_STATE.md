@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-g1
 
 ## Current Feature
-Ninguna rama abierta. trabajo/margen-pendiente cerrada en main el 2026-10-31 (stable/F38k-margen-pendiente): MedirDemoFTMO 1.2, con el paso 8 (el margen de una pendiente stop), y PROJECT_STATE adelgazado (MARGEN-PENDIENTE.md).
+trabajo/guardia-g1 · EN CURSO (abierta el 2026-11-04 desde 7a3a1ff): K, B y C del carril G.1, los falsos positivos y los huecos de la guardia de Claude Code. Encargo docs/encargos/trabajo-guardia-g1.md; informe docs/validation/GUARDIA-G1.md.
 
 ## Stable Main State
 796be27 · merge de `trabajo/margen-pendiente` (tag `stable/F38k-margen-pendiente`): MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado. Sobre `stable/F38j-respaldo-m1` (4b12a92). Informe docs/validation/MARGEN-PENDIENTE.md; el registro del cierre, al final de HISTORIA.
@@ -158,8 +158,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 53 (2026-10-31).
+— ninguna desde el Archivo 54 (2026-11-04).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 53 (2026-10-31).
+— ninguna desde el Archivo 54 (2026-11-04).

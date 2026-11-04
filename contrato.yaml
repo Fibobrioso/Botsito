@@ -1,0 +1,32 @@
+rama: trabajo/guardia-g1
+riesgo: medio  # cambia la guardia de Claude Code (.claude/hooks/) y sus tests; no la spec, el motor, ninguna cifra ni material
+artefacto: docs/validation/GUARDIA-G1.md
+tramo: "Carril: guardias y deuda"
+rutas_permitidas:
+  - .claude/hooks/guardia.py
+  - .claude/hooks/solo_lectura.py
+  - tests/unit/test_guardia_g1.py
+  - tests/unit/test_guardia_claude.py  # el test de ls-files (:1855) cambia de sentido (encargo, punto e)
+  - docs/validation/GUARDIA-G1.md
+  - docs/validation/anexos/GUARDIA-G1/**
+  - docs/runbooks/ERRORES-RECURRENTES.md  # fase 3: la fila de las dos negativas de H, si esta rama las arregla
+  - CLAUDE.md  # fase 3: «deja listarlo» frente a lo que decida el punto e
+  - docs/encargos/
+  - PROJECT_STATE.md
+  - docs/state/HISTORIA.md
+rutas_protegidas:
+  - src/
+  - mql5/
+  - knowledge/
+  - data/
+  - config/
+  - docs/adr/
+  - docs/plan/HOJA-DE-RUTA.md
+  - .claude/settings.json
+  - .claude/skills/
+  - .claude/agents/
+  - .github/
+  - Makefile
+comprobaciones:
+  - uv run pytest tests/unit/test_guardia_g1.py tests/unit/test_guardia_claude.py tests/unit/test_guardia_alias.py tests/unit/test_guardia_ci.py tests/unit/test_guardia_ffmpeg.py -q
+  - make check > make-check.log 2>&1
