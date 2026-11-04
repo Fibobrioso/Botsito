@@ -8,7 +8,10 @@ que la SESION abre directamente con sus herramientas.
 Dos familias de reglas:
 
 1. EL CONTENIDO PROTEGIDO no se lee (CLAUDE.md, «Que se puede mirar y que no», punto 3). Se puede
-   listar, medir y hashear -stat, tamano, sha256, `botsito corpus inventory`-, pero no abrir:
+   contar, medir y hashear -stat, tamano, sha256, `botsito corpus inventory`-, pero no abrir; y
+   desde `trabajo/guardia-g1` (ADR-0088) los nombres de dentro de `knowledge/cases/holdout/{1,2,3}`
+   tampoco se listan: un listado que llega dentro, directo, recursivo o por un comodin, se niega
+   (`_lista_nombres_del_holdout`, `_patron_lista_el_holdout`); el recuento pasa:
    - `knowledge/cases/holdout/{1,2,3}/`, salvo su README;
    - los libros del trader (xlsx, csv...) de un mes que no sea de DESARROLLO legible -enero, abril,
      julio y agosto, y solo mientras ninguno tenga un dia reservado-; por mes, porque un agregado
@@ -202,12 +205,100 @@ SIN_MIRAR_CRUDO = re.compile(
 )
 
 
-def exigir_sin_crudo(texto: str, donde: str) -> None:
-    """Bloquea `--crudo` y `crudo=True` en un comando, en su codigo en linea o en un guion."""
+def exigir_sin_crudo(texto: str, donde: str, es_python: bool | None = None) -> None:
+    """Bloquea la opcion que pide el corpus sin filtrar: `--crudo` en cualquier texto, y su
+    equivalente en Python por su FORMA (`_pide_la_opcion`).
+
+    Por que (`trabajo/guardia-g1`, K1; respuesta del consultor a la PARADA, punto 2): el regex de
+    la PALABRA (`CRUDO_PYTHON`) casaba con una variable local de ese nombre (`scripts/
+    leer_demo_ftmo.py`, DEMO-EJECUCION-1.md §3.3) y con el patron de un `grep` (GUARDIA-G1.md §1.a).
+    Ahora: en el texto de un comando de Bash o PowerShell (`es_python` None) solo cuenta la opcion
+    de la CLI; el codigo que ese comando ejecute pasa por `analizar_codigo`, donde la forma de
+    Python significa algo. En codigo Python que se parsea, el arbol; si no se parsea, o no es
+    Python, el regex de antes (negar por defecto)."""
     if SIN_MIRAR_CRUDO.fullmatch(texto):
         return
-    if CRUDO_OPCION.search(texto) or CRUDO_PYTHON.search(texto):
-        raise BloqueoError(f"{donde} pide el corpus SIN FILTRAR.\nRegla: {R_CRUDO}.")
+    error = BloqueoError(f"{donde} pide el corpus SIN FILTRAR.\nRegla: {R_CRUDO}.")
+    if _opcion_en_el_texto(texto):
+        raise error
+    if es_python is None:
+        return
+    if es_python:
+        try:
+            arbol = ast.parse(texto)
+        except (SyntaxError, ValueError):
+            arbol = None
+        if arbol is not None:
+            if _pide_la_opcion(arbol):
+                raise error
+            return
+    if CRUDO_PYTHON.search(texto):
+        raise error
+
+
+NOMBRE_DE_LA_OPCION = "crudo"
+
+
+def _opcion_en_el_texto(texto: str) -> bool:
+    """La opcion de la CLI (o la abreviatura que argparse acepta), en cualquier texto."""
+    return CRUDO_OPCION.search(texto) is not None
+
+
+def _es_falso(nodo: ast.expr | None) -> bool:
+    return isinstance(nodo, ast.Constant) and nodo.value is False
+
+
+def _pide_la_opcion(arbol: ast.AST) -> bool:
+    """La FORMA de la opcion en un arbol de Python, venga de la funcion que venga (no se sabe si
+    llega a una de `cuarentena.py`): un argumento con nombre, una clave de un dict literal (que
+    puede ir a `**`), un atributo o un subindice asignados, y `setattr` con ese nombre, con
+    cualquier valor que no sea el literal `False`. Una variable suelta con ese nombre no es
+    ninguna de estas formas y pasa (K1)."""
+    nombre = NOMBRE_DE_LA_OPCION
+    for n in ast.walk(arbol):
+        if isinstance(n, ast.keyword) and n.arg == nombre and not _es_falso(n.value):
+            return True
+        if isinstance(n, ast.Dict) and any(
+            isinstance(k, ast.Constant) and k.value == nombre and not _es_falso(v)
+            for k, v in zip(n.keys, n.values, strict=False)
+        ):
+            return True
+        if isinstance(n, (ast.Assign, ast.AnnAssign, ast.AugAssign)) and n.value is not None:
+            objetivos = n.targets if isinstance(n, ast.Assign) else [n.target]
+            planos = [x for t in objetivos for x in ast.walk(t)]
+            for t in planos:
+                atributo = isinstance(t, ast.Attribute) and t.attr == nombre
+                subindice = (
+                    isinstance(t, ast.Subscript)
+                    and isinstance(t.slice, ast.Constant)
+                    and t.slice.value == nombre
+                )
+                if (atributo or subindice) and not _es_falso(n.value):
+                    return True
+        if (
+            isinstance(n, ast.Call)
+            and isinstance(n.func, ast.Name)
+            and n.func.id == "setattr"
+            and len(n.args) >= 3
+            and isinstance(n.args[1], ast.Constant)
+            and n.args[1].value == nombre
+            and not _es_falso(n.args[2])
+        ):
+            return True
+    return False
+
+
+R_LISTADO = (
+    "ADR-0088 (`trabajo/guardia-g1`, respuesta del consultor a la PARADA de su fase 0, punto 0): "
+    "listar los nombres de dentro de `knowledge/cases/holdout/{1,2,3}` no es abrir (ADR-0021 §1, "
+    "ADR-0033 §1), pero es una exposicion de proceso que la sesion no hace: se cuenta, no se "
+    "imprime"
+)
+COMO_LISTAR = (
+    "Como reescribirlo: rutas LITERALES que no lo contengan (`git ls-files knowledge/cases/dev "
+    "knowledge/cases/kit`, `find src tests -name ...`), o el recuento (la tuberia acabada en "
+    "`wc -l` o en `grep -c`)."
+)
 
 
 R_BORRAR_REMOTO = (
@@ -218,8 +309,9 @@ R_BORRAR_REMOTO = (
 
 COMO_REESCRIBIR = (
     "Como reescribirlo: rutas LITERALES, sin `$VAR`, `$(...)`, `eval` ni `xargs` delante de un "
-    "lector; un fichero, con la herramienta Read; y para el material protegido solo `stat`, "
-    "`ls`, `du`, `wc -c`, `sha256sum` o `uv run botsito corpus inventory`."
+    "lector; un fichero, con la herramienta Read; y para el material protegido solo medir o "
+    "hashear un fichero NOMBRADO (`stat`, `wc -c`, `sha256sum`), contar (`| wc -l`) o "
+    "`uv run botsito corpus inventory`: los nombres de dentro del holdout no se listan (ADR-0088)."
 )
 
 # ---------------------------------------------------------------------- lo que se lee del repo
@@ -590,6 +682,22 @@ class Politica:
                 if motivo:
                     return motivo
         return None
+
+    def lista_dentro_del_holdout(self, ruta: str, recursivo: bool) -> bool:
+        """Si un LISTADO de `ruta` (canonica) imprime nombres de dentro de
+        `knowledge/cases/holdout/{1,2,3}` (ADR-0088): una de esas carpetas o lo que no sea un
+        fichero dentro de ellas (un fichero NOMBRADO se puede medir y hashear: su nombre ya esta en
+        el comando); y, si el listado es recursivo, cualquier carpeta que las CONTENGA, tambien
+        un ancestro de la raiz. Niega por defecto: no mira si hoy hay algo dentro."""
+        rel = self.relativa(ruta)
+        if rel is None:
+            return recursivo and self.contiene_la_raiz(ruta)
+        for zona in (f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3"):
+            if rel == zona or rel.startswith(zona + "/"):
+                return not os.path.isfile(ruta)
+            if recursivo and (rel == "" or zona.startswith(rel + "/")):
+                return True
+        return False
 
     def motivo_ruta(
         self, ruta: str, recursivo: bool = False, respeta_ignore: bool = False
@@ -1275,7 +1383,11 @@ def _tras_realpath(real: str) -> str:
 def candidatos_de_ruta(valor: str) -> Iterator[str]:
     """Las rutas que puede esconder un argumento: el mismo, `--x=ruta`, `rev:ruta` y `@ruta`."""
     yield valor
-    if "=" in valor:
+    # Lo de detras del `=` solo si no queda en blanco: `_absoluta` quita los espacios y un vacio es
+    # el directorio de trabajo, asi que el patron `"HUSO_CORTE ="` de un `grep -r` recorria la raiz
+    # entera (`trabajo/guardia-g1`, K4, GUARDIA-G1.md §1.d; respuesta del consultor a la PARADA,
+    # punto 4). El argumento ENTERO en blanco sigue mirandose: ese si lo recibe el programa.
+    if "=" in valor and valor.split("=", 1)[1].strip():
         yield valor.split("=", 1)[1]
     m = re.match(r"^[^:/\\]{2,}:(.+)$", valor)
     if m and not m.group(1).startswith("//"):  # `https://...` no es `rev:ruta` (guardia-alias)
@@ -1561,6 +1673,9 @@ def analizar_comando(cmd: Comando, ctx: Contexto, lex: Lexico) -> None:
         _exigir_guion(argv[0], args, cmd, ctx, lex, lenguaje, argv[0].texto)
         return
 
+    if prog != "find":  # `find` lo mira al final de `_analizar_find`, despues de su `-exec`
+        _lista_nombres_del_holdout(prog, args, cmd, ctx, lex)  # ADR-0088 (guardia-g1, punto e)
+
     for destino in cmd.entradas:  # `< fichero` lee su contenido
         _exigir_legible(destino, ctx, lex, "redireccion de entrada")
 
@@ -1758,6 +1873,244 @@ def _exigir_legible(
         motivo = ctx.politica.motivo_ruta(ruta, recursivo=recursivo)
         if motivo:
             raise BloqueoError(f"{que}: {v}.\nRegla: {motivo}.")
+
+
+# ----------------------------------------------------- el listado del holdout (ADR-0088)
+# Por que (`trabajo/guardia-g1`, punto e; respuesta del consultor a la PARADA, puntos 0 y 1): cuatro
+# ramas seguidas listaron la carpeta madre del holdout con un filtro detras (ERRORES-RECURRENTES.md,
+# filas de activacion-a42, cases-rejilla y entorno-code) y la guardia lo dejaba: `ls`, `find`,
+# `git ls-files`... no leen contenido. La condicion es el ALCANCE, no el filtro: un listado que
+# imprime nombres de dentro de `holdout/{1,2,3}` -directo, recursivo desde cualquier carpeta que las
+# contenga, o por un comodin que llegue dentro- se niega; el recuento (`| wc -l`) pasa.
+_COMODIN = re.compile(r"[*?\[]")
+# Lo que guarda una particion son casos: un comodin que casaria con uno se niega aunque hoy la
+# carpeta solo tenga su README (negar por defecto; GUARDIA-G1.md §1.e).
+_SONDA_DEL_HOLDOUT = "caso-eurusd-2000-01-01.yaml"
+LISTADORES = frozenset({"ls", "dir", "vdir", "tree", "du", "find"})
+_LS_TREE_CON_VALOR = {"--format", "--abbrev"}
+_LS_FILES_CON_VALOR = {
+    "-x", "--exclude", "-X", "--exclude-from", "--exclude-per-directory", "--with-tree", "--format",
+}  # fmt: skip
+_TREE_CON_VALOR = {"-L", "-P", "-I", "-o", "-H", "-T", "--filelimit", "--charset", "--sort"}
+_DU_CON_VALOR = {
+    "-d", "--max-depth", "-B", "--block-size", "-t", "--threshold", "--exclude", "-X",
+    "--exclude-from", "--time-style",
+}  # fmt: skip
+
+
+def _llaves(patron: str, limite: int = 256) -> list[str]:
+    """Las llaves de un comodin (`{a,b}`), expandidas como las expande bash o un Glob."""
+    m = re.search(r"\{([^{}]*,[^{}]*)\}", patron)
+    if not m:
+        return [patron]
+    salida: list[str] = []
+    for opcion in m.group(1).split(","):
+        salida += _llaves(patron[: m.start()] + opcion + patron[m.end() :], limite)
+        if len(salida) > limite:
+            break
+    return salida
+
+
+def _patron_a_regex(patron: str) -> re.Pattern[str]:
+    """Un comodin (`**`, `*`, `?`, `[...]`) como regex, sin distinguir mayusculas (negar por
+    defecto: en Windows no se distinguen)."""
+    partes: list[str] = []
+    i = 0
+    while i < len(patron):
+        if patron.startswith("**/", i):
+            partes.append("(?:.*/)?")
+            i += 3
+        elif patron.startswith("**", i):
+            partes.append(".*")
+            i += 2
+        elif patron[i] == "*":
+            partes.append("[^/]*")
+            i += 1
+        elif patron[i] == "?":
+            partes.append("[^/]")
+            i += 1
+        elif patron[i] == "[" and (fin := patron.find("]", i + 2)) != -1:
+            interior = patron[i + 1 : fin]
+            interior = "^" + interior[1:] if interior.startswith("!") else interior
+            partes.append("[" + interior.replace("\\", "\\\\") + "]")
+            i = fin + 1
+        else:
+            partes.append(re.escape(patron[i]))
+            i += 1
+    return re.compile("".join(partes), re.IGNORECASE | re.S)
+
+
+def _candidatos_del_holdout(politica: Politica) -> list[str]:
+    """Las rutas (normalizadas) que un comodin podria nombrar dentro de `holdout/{1,2,3}`: sus
+    ficheros salvo el README de cada una, y la sonda de un caso."""
+    salida: list[str] = []
+    for n in ("1", "2", "3"):
+        zona = politica.raiz / HOLDOUT / n
+        salida.append(_normcase(str(zona / _SONDA_DEL_HOLDOUT)))
+        try:
+            for actual, _dirs, ficheros in os.walk(zona):
+                for f in ficheros:
+                    ruta = os.path.join(actual, f)
+                    if not (f.lower() == "readme.md" and os.path.dirname(ruta) == str(zona)):
+                        salida.append(_normcase(ruta))
+        except OSError:
+            continue
+    return salida
+
+
+def _patron_lista_el_holdout(patron: str, cwd: str, politica: Politica) -> bool:
+    """Si un comodin -de la herramienta Glob, de bash o de PowerShell- imprime nombres de dentro de
+    `holdout/{1,2,3}`: su parte literal es una carpeta cuyo listado los alcanza
+    (`lista_dentro_del_holdout`) y el patron casa con un fichero de dentro, o con la sonda."""
+    for uno in _llaves(patron):
+        normal = _normcase(_absoluta(uno, cwd))
+        tramos = normal.split("/")
+        k = next((i for i, t in enumerate(tramos) if _COMODIN.search(t)), None)
+        if k is None:
+            continue  # sin comodin es una ruta: la decide quien la use
+        base = "/".join(tramos[:k]) or "/"
+        recursivo = k < len(tramos) - 1 or "**" in tramos[k]
+        if not politica.lista_dentro_del_holdout(base, recursivo):
+            continue
+        regex = _patron_a_regex(normal)
+        if any(regex.fullmatch(c) for c in _candidatos_del_holdout(politica)):
+            return True
+    return False
+
+
+def _posicionales(args: list[Palabra], con_valor: set[str]) -> list[Palabra]:
+    """Los argumentos que no son opciones ni el valor de una opcion (`--` cierra las opciones)."""
+    salida: list[Palabra] = []
+    i = 0
+    while i < len(args):
+        t = args[i].texto
+        if t == "--":
+            return salida + list(args[i + 1 :])
+        if t.startswith("-") and t != "-":
+            i += 2 if t in con_valor else 1
+            continue
+        salida.append(args[i])
+        i += 1
+    return salida
+
+
+def _alcances_de_git(
+    args: list[Palabra], ctx: Contexto, lex: Lexico
+) -> list[tuple[Palabra, bool, str]]:
+    """`git ls-files` (siempre recursivo) y `git ls-tree` (con `-r`), con su `-C`."""
+    base, i = ctx.cwd, 0
+    while i < len(args) and args[i].texto.startswith("-"):
+        if args[i].texto == "-C" and i + 1 < len(args):
+            vals = _valores(args[i + 1], ctx, lex)
+            if vals and len(vals) == 1:
+                base = _absoluta(vals[0], base)
+        i += 2 if args[i].texto in GIT_CON_VALOR else 1
+    if i >= len(args):
+        return []
+    sub, resto = args[i].texto, args[i + 1 :]
+    textos = [a.texto for a in resto]
+    if sub == "ls-files":
+        rutas = _posicionales(resto, _LS_FILES_CON_VALOR)
+        # Una ruta de git con comodin o con «magia» (`:(exclude)`) alcanza cualquier carpeta.
+        alcances = [
+            (Palabra(".") if r.texto.startswith(":") or _COMODIN.search(r.texto) else r, True, base)
+            for r in rutas
+        ]
+        return alcances or [(Palabra("."), True, base)]
+    if sub == "ls-tree":
+        recursivo = any(re.fullmatch(r"-[a-zA-Z]*r[a-zA-Z]*", t) for t in textos)
+        posicionales = _posicionales(resto, _LS_TREE_CON_VALOR)
+        if not posicionales:
+            return []
+        arbol, rutas = posicionales[0].texto, posicionales[1:]
+        raiz = str(ctx.politica.raiz)
+        desde = raiz if "--full-tree" in textos or not rutas else base
+        if ":" in arbol and not re.match(r"^[A-Za-z]:[\\/]", arbol):
+            tras = arbol.split(":", 1)[1]
+            desde = _absoluta(tras, base if tras.startswith(("./", "../")) else raiz)
+        return [(r, recursivo, desde) for r in rutas] or [(Palabra("."), recursivo, desde)]
+    return []
+
+
+def _alcances_del_listado(
+    prog: str, args: list[Palabra], ctx: Contexto, lex: Lexico
+) -> list[tuple[Palabra, bool, str]]:
+    """Lo que lista un programa: (ruta, recursivo, desde donde se resuelve)."""
+    textos = [a.texto for a in args]
+    punto = Palabra(".")
+    if prog in {"ls", "dir", "vdir"}:
+        rec = any(re.fullmatch(r"-[a-zA-Z]*R[a-zA-Z]*|--recursive", t) for t in textos)
+        rutas = [a for a in args if not a.texto.startswith("-")]
+        return [(r, rec, ctx.cwd) for r in rutas] or [(punto, rec, ctx.cwd)]
+    if prog == "tree":
+        rutas = _posicionales(args, _TREE_CON_VALOR)
+        return [(r, True, ctx.cwd) for r in rutas] or [(punto, True, ctx.cwd)]
+    if prog == "du":
+        resumen = any(
+            re.fullmatch(r"-[a-zA-Z]*s[a-zA-Z]*|--summarize|--max-depth=0|-d0", t) for t in textos
+        ) or any(a == "-d" and b == "0" for a, b in zip(textos, textos[1:], strict=False))
+        rutas = _posicionales(args, _DU_CON_VALOR)
+        return [(r, not resumen, ctx.cwd) for r in rutas] or [(punto, not resumen, ctx.cwd)]
+    if prog == "find":
+        raices: list[Palabra] = []
+        for a in args:
+            if a.texto.startswith(("-", "(", "!")):
+                break
+            raices.append(a)
+        return [(r, True, ctx.cwd) for r in raices] or [(punto, True, ctx.cwd)]
+    if prog == "git":
+        return _alcances_de_git(args, ctx, lex)
+    return []
+
+
+def _solo_sale_un_recuento(cmd: Comando, ctx: Contexto) -> bool:
+    """Si lo unico que imprime el listado es un numero: su tuberia acaba en `wc` o en `grep -c`, y
+    el listado no manda su salida a un fichero."""
+    if any(d.texto not in DISPOSITIVOS_NULOS | {"&1", "&2", "1", "2"} for _op, d in cmd.salidas):
+        return False
+    secuencia = ctx.secuencia if ctx.secuencia else [cmd]
+    i = ctx.posicion if ctx.secuencia else 0
+    fin = i
+    while fin + 1 < len(secuencia) and secuencia[fin + 1].tras_tuberia:
+        fin += 1
+    if fin == i or not secuencia[fin].argv:
+        return False
+    ultimo = secuencia[fin].argv
+    prog = _nombre_de_programa(ultimo[0].texto)
+    if prog == "wc":
+        return True
+    return prog in {"grep", "egrep", "fgrep"} and any(
+        re.fullmatch(r"-[a-zA-Z]*c[a-zA-Z]*|--count", a.texto) for a in ultimo[1:]
+    )
+
+
+def _lista_nombres_del_holdout(
+    prog: str, args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
+) -> None:
+    """Niega el comando que imprime nombres de dentro de `holdout/{1,2,3}` (ADR-0088): un listador
+    cuyo alcance llega dentro, o un comodin de cualquier argumento que se expande dentro."""
+    alcances = _alcances_del_listado(prog, args, ctx, lex) if prog in LISTADORES | {"git"} else []
+    comodines = [a for a in args if a.glob]
+    if not alcances and not comodines:
+        return
+    if _solo_sale_un_recuento(cmd, ctx):
+        return
+    que = f"`{prog} {' '.join(a.texto for a in args[:3])}`".replace("\x00", "")
+    error = BloqueoError(
+        f"{que} lista los nombres de dentro de `{HOLDOUT}/{{1,2,3}}`.\nRegla: {R_LISTADO}.\n"
+        f"{COMO_LISTAR}"
+    )
+    for palabra, recursivo, desde in alcances:
+        valores = _valores(palabra, ctx, lex)
+        if valores is None:
+            raise error  # una ruta que se construye al ejecutarse: negar por defecto
+        for v in valores:
+            if ctx.politica.lista_dentro_del_holdout(_absoluta(v, desde), recursivo):
+                raise error
+    for palabra in comodines:
+        for v in _valores(Palabra(palabra.texto, glob=False), ctx, lex) or []:
+            if _patron_lista_el_holdout(v, ctx.cwd, ctx.politica):
+                raise error
 
 
 # ------------------------------------------------------------------------------- git, rm, make
@@ -2125,6 +2478,8 @@ def _analizar_find(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexico
                         f"`find {v} {accion} {prog}` lee el contenido de lo que encuentra."
                         f"\nRegla: {motivo}."
                     )
+    # Despues de lo que lanza `-exec` (su regla habla primero): lo que `find` lista (ADR-0088).
+    _lista_nombres_del_holdout("find", args, cmd, ctx, lex)
 
 
 def _analizar_cli(args: list[Palabra], ctx: Contexto, lex: Lexico) -> None:
@@ -2198,8 +2553,12 @@ def _analizar_pytest(args: list[Palabra], cmd: Comando, ctx: Contexto, lex: Lexi
             valores = []
         for v in valores:
             fichero = v.split("::", 1)[0]
-            rel = ctx.politica.relativa(_absoluta(fichero, ctx.cwd))
+            absoluta = _absoluta(fichero, ctx.cwd)
+            rel = ctx.politica.relativa(absoluta)
             if rel is not None and (rel == "tests" or rel.startswith("tests/")):
+                continue
+            # El de un clon de comparar-con-main, como el del repo (guardia-g1, K2).
+            if rel is None and _test_de_un_clon(absoluta, ctx.politica.raiz, con_el_arbol=True):
                 continue
             guiones.append((Palabra(fichero), "python"))
         i += 1
@@ -2486,6 +2845,10 @@ NO_EJECUTAN: dict[str, str] = {
     "chmod": "cambia los permisos de un fichero, no lo lee ni lo ejecuta",
     "jq": "filtra JSON con su propio lenguaje, sin ejecutar programas del sistema",
     "tasklist": "lista los procesos de Windows, no lee ficheros ni ejecuta",
+    # `trabajo/guardia-g1` (respuesta del consultor a la PARADA, punto 7), dos que pidio un
+    # comando real (GUARDIA-G1.md §1.f, f15 y f16):
+    "which": "busca un programa en el PATH y dice donde esta; no lo ejecuta ni lee su contenido",
+    "rmdir": "borra un directorio VACIO; no lee ningun fichero ni ejecuta nada",
 }
 # Los programas que leen un FICHERO DE PROGRAMA con una opcion: ese fichero es codigo de un
 # lenguaje que la guardia no analiza (respuesta del consultor a §1.12: se niegan).
@@ -2549,6 +2912,8 @@ OPCIONES_DE_PROGRAMA: dict[str, set[str]] = {
 # ya exportado. Lista cerrada: los nombres de los 503 comandos reales que no hacen cargar codigo.
 NOMBRES_DE_ENTORNO: dict[str, str] = {
     "PYTHONUTF8": "pide a Python UTF-8 en la consola cp1252 de Windows; no carga codigo",
+    "PYTHONIOENCODING": "elige la codificacion de la entrada y salida estandar de Python; no carga "
+    "codigo (`trabajo/guardia-g1`, respuesta del consultor a la PARADA, punto 5)",
     "BOTSITO_ALLOW_MAIN": "la llave del ritual para el commit de estado en `main` "
     "(`RITUAL.md`); la lee el hook `pre-commit`, no carga codigo",
     # Variables del shell de los 503 (asignaciones sueltas), que guardan una ruta o un valor y no
@@ -3671,6 +4036,8 @@ def _exigir_guion_legible(
     rel = ctx.politica.relativa(ruta)
     if rel is not None and _igual_que_en_main(ctx.politica.raiz, ruta, rel):
         return True
+    if rel is None and _test_de_un_clon(ruta, ctx.politica.raiz, con_el_arbol=False):
+        return True  # el test de `main` en un clon de comparar-con-main (guardia-g1, K2)
     if lenguaje == "make":
         _niega(
             que,
@@ -3762,6 +4129,77 @@ def _igual_que_en_main(raiz: Path, ruta: str, rel: str) -> bool:
     return en_main is not None and git("hash-object", "--", relativa) == en_main
 
 
+def _git_en(raiz: Path, *args: str) -> str | None:
+    try:
+        r = subprocess.run(
+            ["git", "-c", "core.quotepath=false", *args],
+            cwd=raiz,
+            capture_output=True,
+            encoding="utf-8",
+            timeout=10,
+            check=False,
+        )
+    except (OSError, subprocess.SubprocessError):
+        return None
+    return r.stdout.strip() if r.returncode == 0 else None
+
+
+def _test_de_un_clon(ruta: str, raiz: Path, con_el_arbol: bool) -> bool:
+    """Si un fichero de FUERA de la raiz es un test del repo: el de un clon de comparar-con-main
+    (`git worktree add --detach`, en `C:/cm/` en el portatil de Aleks).
+
+    Por que (`trabajo/guardia-g1`, K2 y K3; respuesta del consultor a la PARADA, punto 3): la
+    exencion de `tests/` y `_igual_que_en_main` miran la ruta relativa a la raiz, y fuera de ella el
+    test se leia como codigo sin revisar (ENTRADA-JULIO.md §8, ACTIVAR-SESION-05.md §0.f,
+    CUARENTENA-POR-CONDICION-2.md §2.e). Niega por defecto: cuenta solo si (1) esta en un `git
+    worktree` de ESTE repositorio (su `.git` apunta a `<git comun>/worktrees/`), (2) su ruta en ese
+    worktree empieza por `tests/` y (3) sus bytes son el blob de esa ruta en `main` o, con
+    `con_el_arbol` (la exencion de `pytest`), el fichero de esa ruta en el arbol de trabajo del repo
+    real, que dentro del repo ya esta exento (el test de la rama copiado al clon). Lo que no se
+    pueda comprobar, False. Riesgo declarado (GUARDIA-G1.md §1.b): como dentro del repo, no se lee
+    el `conftest.py` ni el `src/` que carga el clon."""
+    fichero = Path(ruta)
+    if not fichero.is_file():
+        return False
+    comun = _git_en(raiz, "rev-parse", "--git-common-dir")
+    if not comun:
+        return False
+    esperado = _normcase(_canonica(os.path.join(str(raiz), comun, "worktrees")))
+    for padre in fichero.parents:
+        marca = padre / ".git"
+        if marca.is_dir():
+            return False  # otro repositorio, no un worktree de este
+        if not marca.is_file():
+            continue
+        try:
+            m = re.match(r"gitdir:\s*(.+)", marca.read_text(encoding="utf-8").strip())
+        except OSError:
+            return False
+        if not m:
+            return False
+        gitdir = _normcase(_canonica(os.path.join(str(padre), m.group(1).strip())))
+        if not gitdir.startswith(esperado + "/"):
+            return False
+        rel = fichero.relative_to(padre).as_posix()
+        if not rel.startswith("tests/"):
+            return False
+        blob = _git_en(raiz, "hash-object", "--", str(fichero))
+        if not blob:
+            return False
+        en_main = _git_en(raiz, "rev-parse", "--verify", "-q", f"main:{rel}") or _git_en(
+            raiz, "rev-parse", "--verify", "-q", f"origin/main:{rel}"
+        )
+        if blob == en_main:
+            return True
+        del_arbol = raiz.joinpath(*rel.split("/"))
+        return (
+            con_el_arbol
+            and del_arbol.is_file()
+            and _git_en(raiz, "hash-object", "--", str(del_arbol)) == blob
+        )
+    return False
+
+
 SENSIBLES = (
     "corpus",
     "data/",
@@ -3780,7 +4218,7 @@ SENSIBLES = (
 def analizar_codigo(codigo: str, ctx: Contexto, es_python: bool) -> None:
     """Codigo en linea (o un guion sin seguir). Cada literal de texto que sea una ruta se mira; y
     si el codigo recorre directorios o construye rutas con literales sensibles, no se decide."""
-    exigir_sin_crudo(codigo, "el codigo que se ejecuta")
+    exigir_sin_crudo(codigo, "el codigo que se ejecuta", es_python)
     _exigir_codigo_sin_ci(codigo, es_python)
     literales = _literales(codigo, es_python)
     recorre = CODIGO_QUE_RECORRE.search(codigo) is not None
@@ -4348,6 +4786,40 @@ def _variables_powershell(texto: str, ctx: Contexto) -> tuple[str, list[str]]:
     return _VARIABLE_PS.sub(valor, texto), sin_resolver
 
 
+PS_LISTADORES = re.compile(r"(?i)(?:^|[\s;|&(])(get-childitem|gci|ls|dir|tree)(?=$|[\s;|&)])")
+PS_RECURSIVO = re.compile(r"(?i)(?:^|\s)-(?:r|re|rec|recu|recur|recurs|recurse|depth)\b")
+PS_RECUENTO = re.compile(r"(?i)\|\s*(?:measure-object|measure)\b")
+
+
+def _powershell_lista_el_holdout(texto: str, trozos: list[str], ctx: Contexto) -> None:
+    """`Get-ChildItem` (y sus alias) que imprime nombres de dentro de `holdout/{1,2,3}` (ADR-0088;
+    `trabajo/guardia-g1`, punto e): con una ruta que llegue dentro, o recursivo desde una que las
+    contenga; sin ruta, el directorio de trabajo. Lo que acaba en `Measure-Object` es un
+    recuento."""
+    if not PS_LISTADORES.search(texto) or PS_RECUENTO.search(texto):
+        return
+    recursivo = PS_RECURSIVO.search(texto) is not None
+    error = BloqueoError(
+        f"PowerShell lista los nombres de dentro de `{HOLDOUT}/{{1,2,3}}`.\nRegla: {R_LISTADO}."
+        f"\n{COMO_LISTAR}"
+    )
+    rutas: list[str] = []
+    for t in trozos:
+        if not t or t.startswith(("-", "$")):
+            continue
+        limpio = _sin_proveedor(t)
+        if _COMODIN.search(limpio):
+            if _patron_lista_el_holdout(limpio, ctx.cwd, ctx.politica):
+                raise error
+            continue
+        ruta = _absoluta(limpio, ctx.cwd)
+        if os.path.exists(ruta) or ctx.politica.lista_dentro_del_holdout(ruta, False):
+            rutas.append(ruta)
+    for ruta in rutas or [ctx.cwd]:
+        if ctx.politica.lista_dentro_del_holdout(ruta, recursivo):
+            raise error
+
+
 def analizar_powershell(texto: str, ctx: Contexto) -> None:
     """Mas tosco que bash: rutas por las comillas y las palabras; si una es protegida, solo se
     deja pasar si TODOS los comandos del texto son de metadatos."""
@@ -4392,6 +4864,7 @@ def analizar_powershell(texto: str, ctx: Contexto) -> None:
         a or b or c
         for a, b, c in re.findall(r"'([^']*)'|\"([^\"]*)\"|([^\s'\";|&(){}]+)", resuelto)
     ]
+    _powershell_lista_el_holdout(texto, trozos, ctx)
     protegido: str | None = None
     for t in trozos:
         if not t or t.startswith("-") or t.startswith("$"):
@@ -4486,7 +4959,17 @@ def decidir(evento: dict[str, object], politica: Politica) -> str | None:
                 else None
             )
         if herramienta == "Glob":
-            return None  # listar nombres no es abrir (ADR-0021 §1)
+            # Listar nombres no es abrir (ADR-0021 §1), salvo los de dentro del holdout, que se
+            # cuentan y no se imprimen (ADR-0088; `trabajo/guardia-g1`, punto e).
+            patron = str(entrada.get("pattern", ""))
+            base = _absoluta(str(entrada.get("path") or cwd), cwd)
+            completo = patron if os.path.isabs(patron) else os.path.join(base, patron)
+            if _patron_lista_el_holdout(completo, base, politica):
+                return (
+                    f"Glob de `{patron}` lista los nombres de dentro de `{HOLDOUT}/{{1,2,3}}`."
+                    f"\nRegla: {R_LISTADO}.\n{COMO_LISTAR}"
+                )
+            return None
         if herramienta in HERRAMIENTAS_DE_COMANDO:
             if herramienta == "Monitor" and (
                 not isinstance(entrada.get("command"), str) or not set(entrada) <= CLAVES_DE_MONITOR

@@ -56,6 +56,34 @@ R_SOLO_LECTURA = (
 )
 
 
+def _subcomando_git(textos: list[str]) -> tuple[str, list[str]]:
+    """El subcomando de git y lo que va detras, saltando las opciones globales (`-C <dir>`,
+    `-c k=v`, `--git-dir ...`: las de `GIT_CON_VALOR` de la guardia, con su valor).
+
+    Por que (`trabajo/guardia-g1`, respuesta del consultor a la PARADA, punto 8): el primer token
+    sin guion era la ruta de `-C` o el `k=v` de `-c`, y se negaba `git -C <clon> rev-parse`, la via
+    de comparar-con-main (ACTIVAR-SESION-05-MOTOR.md, revisor). Niega lo mismo que escribe."""
+    i = 0
+    while i < len(textos) and textos[i].startswith("-"):
+        i += 2 if textos[i] in guardia.GIT_CON_VALOR else 1
+    if i >= len(textos):
+        return "", []
+    return textos[i], textos[i + 1 :]
+
+
+# `git tag` solo lista sin argumentos o con `-l`/`--list`, y sin ninguna opcion que cree, borre,
+# firme o mueva (`trabajo/guardia-g1`, punto 8; GUARDIA-CI.md H11).
+TAG_QUE_ESCRIBE = re.compile(
+    r"-[a-zA-Z]*[dfasmFu][a-zA-Z]*|--(delete|force|annotate|sign|message|file|local-user|edit)\b.*"
+)
+
+
+def _tag_que_lista(resto: list[str]) -> bool:
+    if any(TAG_QUE_ESCRIBE.fullmatch(t) for t in resto if t not in {"-l", "--list"}):
+        return False
+    return not resto or "-l" in resto or "--list" in resto
+
+
 def motivo(comando: str) -> str | None:
     try:
         lex = guardia.tokenizar(comando)
@@ -76,11 +104,15 @@ def motivo(comando: str) -> str | None:
         if prog in {"sed", "perl"} and any(re.fullmatch(r"-[a-zA-Z]*i\S*", t) for t in textos):
             return f"`{prog} -i` reescribe el fichero"
         if prog == "git":
-            sub = next((t for t in textos if not t.startswith("-")), "")
+            sub, resto = _subcomando_git(textos)
             ramas_que_leen = {"--show-current", "--list", "-a", "-r", "-v", "-vv", "--contains"}
-            if sub == "branch" and set(textos[1:]) <= ramas_que_leen:
+            if sub == "branch" and set(resto) <= ramas_que_leen:
                 continue
-            if sub == "stash" and textos[1:2] == ["list"]:
+            if sub == "stash" and resto[:1] == ["list"]:
+                continue
+            if sub == "worktree" and resto[:1] == ["list"]:
+                continue
+            if sub == "tag" and _tag_que_lista(resto):
                 continue
             if sub not in GIT_LEE:
                 return f"`git {sub}` cambia el repositorio o sus referencias"

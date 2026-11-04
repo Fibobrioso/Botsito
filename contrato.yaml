@@ -11,7 +11,7 @@ rutas_permitidas:
   - docs/validation/anexos/GUARDIA-G1/**
   - docs/runbooks/ERRORES-RECURRENTES.md  # fase 3: la fila de las dos negativas de H, si esta rama las arregla
   - CLAUDE.md  # fase 3: «deja listarlo» frente a lo que decida el punto e
-  - docs/adr/0087-*.md  # respuesta a la PARADA, punto 0: el ADR del listado del holdout (ampliado el 2026-11-04)
+  - docs/adr/0088-*.md  # respuesta a la PARADA, punto 0: el ADR del listado del holdout (ampliado el 2026-11-04; el 0088 y no el 0087, que lo reservan como «aun no existe» ACTIVAR-SESION-05-MOTOR.md:28 y su encargo, GUARDIA-G1.md §4.10)
   - docs/adr/README.md  # su fila del indice (idem)
   - docs/encargos/
   - PROJECT_STATE.md
@@ -22,7 +22,7 @@ rutas_protegidas:
   - knowledge/
   - data/
   - config/
-  # docs/adr/ abierto SOLO para el 0087 y el indice (respuesta a la PARADA, punto 0): los demas, uno a
+  # docs/adr/ abierto SOLO para el 0088 y el indice (respuesta a la PARADA, punto 0): los demas, uno a
   # uno por prefijo (los patrones del contrato no admiten corchetes)
   - docs/adr/000*
   - docs/adr/001*
@@ -39,7 +39,7 @@ rutas_protegidas:
   - docs/adr/0084*
   - docs/adr/0085*
   - docs/adr/0086*
-  - docs/adr/0088*
+  - docs/adr/0087*
   - docs/adr/0089*
   - docs/plan/HOJA-DE-RUTA.md
   - .claude/settings.json

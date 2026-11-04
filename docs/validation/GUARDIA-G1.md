@@ -716,9 +716,177 @@ Copiada tal cual:
 >
 > Rama lista para revisión, NO cerrada.
 
+## 4. Fase 1: los falsos positivos y el hueco prioritario (e, a, b, c, d, f)
+
+### 4.0 La respuesta, punto por punto
+
+| Punto | Qué decía | Hecho |
+|---|---|---|
+| 0 | ADR corto, contrato ampliado en su commit, enmienda de CLAUDE.md en el mismo commit que el ADR | Contrato: commit 898040c. ADR-0088 (`docs/adr/0088-los-nombres-de-dentro-del-holdout-se-cuentan-no-se-listan.md`) y su fila del índice; CLAUDE.md, «Las guardias de Claude Code»: «deja contarlo, medirlo y hashearlo por la CLI; los nombres de dentro de `knowledge/cases/holdout/{1,2,3}` se cuentan, no se listan (ADR-0088…)». Los dos, en el commit de esta fase (el primero de la fase) |
+| 1 | La condición de §1.e entera; `:1855` cambia de sentido con un nombre que dice lo que asegura; `test_el_ritual_y_los_runbooks_pasan` sin tocar ningún comando | §4.1. `test_listar_desde_la_raiz_imprime_los_nombres_del_holdout_y_se_niega`. El test del ritual pasa sin tocarlo (en la suite de `make check`) |
+| 2 | La forma por el árbol; solo `--cr…` en Bash y PowerShell; la clave de dict sigue negada | §4.2 |
+| 3 | `_test_de_un_clon` con el blob de main O el fichero del árbol; declarar el riesgo | §4.3; el riesgo, en su docstring y aquí abajo |
+| 4 | El vacío tras el `=` no es una ruta; el argumento entero en blanco sigue | §4.5 |
+| 5 | `PYTHONIOENCODING` en `NOMBRES_DE_ENTORNO` | §4.6 |
+| 6 | Sin cambio en lo encadenado ni en `git -c` | Sin cambio; `test_f_lo_decidido_en_guion_mismo_comando_sigue_negado` lo fija |
+| 7 | `which` y `rmdir` en `NO_EJECUTAN` | §4.6 |
+| 8 | `solo_lectura.py` salta las opciones globales de git | §4.6 |
+| 9, 10 | B y C | fase 2 |
+| 11 | j como deuda, sin «junto a K» | fase 3 (líneas del cierre) |
+| 12 | a) y h) solo en lo que nombra el encargo; skills sin tocar; recuadros con contrato ampliado | Hecho en esta fase: a) toca `CRUDO_PYTHON` solo como respaldo del código que no se parsea; ninguna skill tocada |
+| 13 | `cerrar-rama` y los flags de diagnóstico siguen en G.1 | Sin tocar |
+
+### 4.1 e) Listar el holdout (ADR-0088)
+
+Una sola condición, `Politica.lista_dentro_del_holdout(ruta, recursivo)`: un listado imprime nombres
+de dentro de `holdout/{1,2,3}` si su ruta es una de esas carpetas o algo de dentro que no sea un
+fichero (un fichero NOMBRADO se mide y se hashea), o, si es recursivo, cualquier carpeta que las
+contenga (también un ancestro de la raíz). La usan:
+- **Bash** (`_lista_nombres_del_holdout`, en `analizar_comando`; para `find`, al final de
+  `_analizar_find`, para que la regla de `-exec` hable primero, como fija la matriz de
+  `test_guardia_ffmpeg.py`): `ls`/`dir`/`vdir` (recursivos con `-R`), `tree`, `du` (salvo `-s`),
+  `find`, `git ls-files` (siempre recursivo; una ruta con comodín o con `:` alcanza todo) y
+  `git ls-tree` (`-r`; `HEAD:<carpeta>`), con `-C`; y un comodín de CUALQUIER argumento
+  (`sha256sum <holdout>/1/*`, `echo …/*/*`). Pasa si la tubería acaba en `wc` o en `grep -c` y el
+  listado no escribe a un fichero (`_solo_sale_un_recuento`).
+- **Glob** (`_patron_lista_el_holdout`): las llaves se expanden; si la parte literal del patrón es
+  una carpeta cuyo listado alcanza el holdout, y el patrón casa con un fichero de dentro (salvo el
+  README de cada partición) o con una sonda de caso (`caso-eurusd-2000-01-01.yaml`, porque es lo que
+  guarda una partición aunque hoy solo tenga su README), se niega. Así `**/*.py` pasa y
+  `knowledge/cases/**/*.yaml` no.
+- **PowerShell** (`_powershell_lista_el_holdout`): `Get-ChildItem` y sus alias, con `-Recurse` (o su
+  abreviatura) o con una ruta de dentro; `| Measure-Object` es un recuento. `gci`, `dir` y `ls` en
+  PowerShell ya los niega main como ejecución.
+- `COMO_REESCRIBIR` ya no manda `ls` para lo protegido, y la cabecera de la guardia lo dice.
+
+**Cambian de sentido, por su nombre** (`tests/unit/test_guardia_claude.py`): `git ls-files` sin
+rutas (`test_ejecucion_quinta_pasada_admite`, `:1855`, el que anunciaba el encargo) y
+`find . -exec sha256sum {} +` (`test_ejecucion_cuarta_pasada_admite`, `:1784`; otro `find .` desde la
+raíz, de los que la respuesta acepta negar). Los dos pasan a
+`test_listar_desde_la_raiz_imprime_los_nombres_del_holdout_y_se_niega`, y en sus listas de
+admitidos quedan con rutas literales (`git ls-files src docs`, `find src -exec sha256sum {} +`).
+`git ls-tree HEAD` (`:1856`, no recursivo) sigue pasando. Ningún comando del ritual ni de los
+runbooks cambió: `test_el_ritual_y_los_runbooks_pasan` pasa en la suite de `make check` (punto 1.ii).
+
+### 4.2 a) La forma de la opción (K1)
+
+`exigir_sin_crudo(texto, donde, es_python)`: en el texto de un comando de Bash o PowerShell solo
+cuenta la opción de la CLI (`_opcion_en_el_texto`, `CRUDO_OPCION`); en código Python que se parsea,
+`_pide_la_opcion` mira el árbol: argumento con nombre, clave de un dict literal, atributo o subíndice
+asignados y `setattr`, con cualquier valor que no sea el literal `False`. Si no se parsea, o no es
+Python, el regex de antes. **Dos formas que main dejaba pasar y ahora se niegan** (salieron al
+escribir los tests): `k['<opción>'] = True` y `setattr(x, '<opción>', 1)`. Lo que se afloja, por su
+nombre: el literal `<opción>=…` en un comentario de Python o en un comando de Bash que no ejecuta
+Python.
+
+### 4.3 b) y c) Los tests de un clon (K2, K3)
+
+`_test_de_un_clon(ruta, raiz, con_el_arbol)`: fuera de la raíz, un fichero cuenta como test del repo
+si está en un `git worktree` de este repositorio (su `.git` apunta a `<git común>/worktrees/`), su
+ruta en él empieza por `tests/` y sus bytes son el blob de `main` o, en `pytest`, el fichero de esa
+ruta en el árbol de trabajo del repo real. Se usa en `_analizar_pytest` (con el árbol) y en
+`_exigir_guion_legible` (solo `main`). K3 se resuelve por aquí (`analizar_codigo` no cambia).
+**Riesgo declarado** (punto 3): el test copiado se fía de lo que dentro del repo ya está exento, ni
+más ni menos; como dentro del repo, no se lee el `conftest.py` ni el `src/` que carga el clon.
+
+### 4.4 c) en Windows
+
+Simulado como en `_romper` de `test_guardia_alias.py`: `_windows` cambia `_absoluta` para que `\.`
+sea un directorio que contiene el repo y el clon. El test igual pasa; el cambiado se niega con «la
+carpeta \.». Lo de Windows de verdad, en §1.i.
+
+### 4.5 d) El vacío tras el `=` (K4)
+
+`candidatos_de_ruta` ya no da lo de detrás del `=` si queda en blanco. Pasan los cuatro comandos de
+los informes (BARRIDO-SESION-6.md :540 y :612, ACTIVAR-SESION-04-MOTOR.md :1384) y la negativa de H
+(`grep -rn "HUSO_CORTE =" src/`); siguen negados `grep -rn " " src/` (el argumento entero en blanco),
+`--exclude-dir=<holdout>`, `cat --x=<fichero del holdout>` y `cat ruta=<fichero del holdout>`.
+**Hallazgo sin arreglar** (la respuesta solo decidió el `=`): `candidatos_de_ruta` parte también por
+`:` (`rev:ruta`) y por `@`; un patrón como `"Puntos: "` daría el mismo candidato en blanco. Queda para
+el cierre como línea de Technical Debt.
+
+### 4.6 f) El resto de G.1
+
+- `NO_EJECUTAN` gana `which` («busca un programa en el PATH… no lo ejecuta») y `rmdir` («borra un
+  directorio VACÍO…»), con su porqué en el comentario; `NOMBRES_DE_ENTORNO` gana `PYTHONIOENCODING`.
+- `solo_lectura.py`: `_subcomando_git` salta las opciones globales (las de `GIT_CON_VALOR` de la
+  guardia, con su valor); entran `worktree list` y `tag` solo para listar (`_tag_que_lista`: sin
+  argumentos o con `-l`/`--list`, y ninguna opción que cree, borre, firme o mueva). Siguen negados
+  `git tag stable/x`, `git -C <clon> commit`, `git -c k=v commit`, `git worktree add/remove`.
+- Sin cambio (punto 6): `grep …; uv run botsito state check`, dos ejecuciones encadenadas y
+  `git -c k=v` en la guardia principal.
+
+### 4.7 Tests rotos a propósito, en los dos sentidos
+
+`tests/unit/test_guardia_g1.py`: 82 tests. **Antes del código** (los tests escritos primero, contra
+la guardia de main): 49 fallan, 33 pasan
+(`anexos/GUARDIA-G1/pytest-1-antes-del-codigo.txt`). **Con el código**: los 82 pasan
+(`pytest-2-con-el-codigo.txt`). **Rotos a propósito** (`test_roto_a_proposito`, 18 casos; salida en
+`pytest-roto-a-proposito-FASE1.txt`): cada pieza nueva, quitada (la forma mala vuelve a pasar) y
+hecha negar o aceptar de más (la buena se niega, o la mala pasa):
+
+```
+ROTO | sin_listado | test_e_los_listados_del_holdout_se_niegan | falla: git ls-files knowledge/cases | grep -v holdout
+ROTO | sin_listado | test_e_el_glob_que_alcanza_el_holdout_se_niega | falla: {'pattern': 'knowledge/cases/**/*.yaml'}
+ROTO | sin_listado | test_e_powershell_que_lista_el_holdout_se_niega | falla: Get-ChildItem -Recurse knowledge/cases
+ROTO | listado_de_mas | test_e_el_recuento_y_lo_literal_pasan | falla: git ls-files knowledge/cases/dev knowledge/cases/kit
+ROTO | listado_de_mas | test_e_glob_y_powershell_que_no_alcanzan_el_holdout_pasan | falla: Get-ChildItem docs
+ROTO | sin_forma | test_a_la_forma_de_la_opcion_en_python_se_niega | falla: argumento
+ROTO | sin_forma | test_a_la_opcion_en_codigo_en_linea_y_en_la_cli_se_niega | falla: python -c "print(dict(<opción>=True))"
+ROTO | regex_de_antes | test_a_una_variable_con_ese_nombre_y_los_grep_pasan | falla: leer.py
+ROTO | sin_clon | test_b_los_tests_del_clon_iguales_al_de_main_o_al_del_repo_pasan | falla: cd <tmp>/cm/main && uv run pytest tests/unit/test_recorre.py -q
+ROTO | clon_de_mas | test_b_lo_que_no_es_el_test_del_repo_se_sigue_negando | falla: cd <tmp>/cm/main && uv run pytest tests/unit/test_cambiado.py -q
+ROTO | sin_clon | test_c_la_raiz_de_la_unidad_en_un_test_del_clon_igual_pasa | falla: assert 'el codigo nombra la carpeta \\., que contiene material protegido…
+ROTO | clon_de_mas | test_c_la_raiz_de_la_unidad_en_un_test_cambiado_se_niega | falla: None
+ROTO | candidato_de_antes | test_d_un_patron_con_igual_no_es_una_ruta | falla: grep -rn "HUSO_CORTE =" src/botsito/engine/perfil_cuenta.py
+ROTO | sin_candidato_igual | test_d_lo_que_sigue_siendo_una_ruta_se_mira | falla: grep -rn --exclude-dir=knowledge/cases/holdout x src
+ROTO | subcomando_de_antes | test_f_solo_lectura_deja_leer_git_con_opciones_globales | falla: git -C <tmp>/cm/main rev-parse HEAD
+ROTO | subcomando_de_mas | test_f_solo_lectura_sigue_negando_lo_que_escribe | falla: git tag stable/x
+ROTO | sin_listas_nuevas | test_f_which_rmdir_y_pythonioencoding_pasan | falla: which python python3
+ROTO | lo_decidido_abierto | test_f_lo_decidido_en_guion_mismo_comando_sigue_negado | falla: grep -n x PROJECT_STATE.md; uv run botsito state check
+```
+
+Tres casos de PowerShell del test se cambiaron al ejecutarlo: `gci -r …`, `dir -Recurse …` y
+`ls <holdout>/1` ya los niega main como ejecución (su lista cerrada de PowerShell está vacía); el test
+usa `Get-ChildItem`, que es lo que llega a la regla nueva.
+
+### 4.8 La comparación caso a caso con la guardia de main
+
+`medir_g1.py <guardia de main> <guardia de la rama>` (`anexos/GUARDIA-G1/medir_g1-FASE1.txt`), sale
+con 0: de los 43 casos que main niega, **21 pasan en la rama, todos declarados** en
+`CAMBIOS_DECLARADOS` con su punto de la respuesta (a1, a7, a8; b1, b2, b3, b8, b9; c1-win; d2, d3,
+d5, d6, f18; f1, f2, f3, f4 en `solo_lectura`; f8; f15; f16). Y **16 que main dejaba pasar se niegan**:
+exactamente los listados del holdout (e1-e9, e12, e13, e14, e14b, e14c, e14d, e14e). B y C (g y h)
+siguen como en main: son la fase 2.
+
+### 4.9 Desviaciones y negativas de la guardia en esta fase
+
+- Tres negativas por encadenar en un mismo comando una copia o un `grep` con una ejecución (`cp …
+  && uv run pytest`, `mkdir … && uv run pytest`, `grep … PROJECT_STATE.md; uv run pytest`) y una por
+  `sed` detrás de `pytest`: errores de forma míos, con la forma que propone el mensaje (dos llamadas,
+  o un filtro de su lista). Y `python -m py_compile` (la guardia solo admite `-m pytest`): un guion
+  con Write ejecutado por su ruta, como dice el mensaje. Ninguna es un cambio de esta rama: son reglas
+  de main.
+- La comparación de §4.8 pide la guardia de `main` en un fichero: `git show main:… > <scratchpad>`,
+  fuera del repo.
+
+### 4.10 El ADR es el 0088, no el 0087 (desviación declarada)
+
+El primer `make check` de esta fase salió en ROJO (exit 2, 5 fallos, todos de la misma comprobación):
+«ERROR: id declarado inexistente que SI existe: docs/encargos/trabajo-activar-sesion-05-motor.md:8:
+ADR-0087» y lo mismo en `docs/validation/ACTIVAR-SESION-05-MOTOR.md:28`. Esa rama dejó escrito
+«ADR-0087 — el ADR que S-15 tendría si existiera la frontera (punto 9); aún no existe», y
+`knowledge validate` exige que un id declarado inexistente siga sin existir. La respuesta del
+consultor no fija el número: el ADR de esta rama pasa a ser el **0088**
+(`docs/adr/0088-los-nombres-de-dentro-del-holdout-se-cuentan-no-se-listan.md`), con sus
+referencias (guardia, tests, CLAUDE.md, índice, este informe), y el contrato cambia en el mismo
+commit: permite `docs/adr/0088-*.md` y protege `docs/adr/0087*`. El 0087 queda libre para S-15:
+
+```ids-inexistentes
+ADR-0087 — reservado por trabajo/activar-sesion-05-motor para S-15; esta rama no lo crea
+```
+
 ## Estado
 
-FASE 0 HECHA y respondida (2026-11-04). Contrato ampliado en su propio commit (respuesta, punto 0 y
-12): `docs/adr/` se abre SOLO para `docs/adr/0087-*.md` y `docs/adr/README.md`; los demás ADR siguen
-protegidos uno a uno por prefijo, porque los patrones del contrato no admiten corchetes
-(`scripts/contrato_rama.py`, `patron_a_regex`). EN CURSO: fase 1.
+FASE 0 HECHA y respondida (2026-11-04); contrato ampliado en su propio commit (898040c). FASE 1
+HECHA (e, a, b, c, d, f; ADR-0088 y la enmienda de CLAUDE.md en su commit). EN CURSO: fase 2 (B y C).

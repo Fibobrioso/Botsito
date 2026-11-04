@@ -34,8 +34,35 @@ from collections.abc import Callable
 from pathlib import Path
 from types import ModuleType
 
-# Los casos que la rama hace pasar A PROPOSITO (se rellena en la fase 1, cada uno con su porque).
-CAMBIOS_DECLARADOS: dict[str, str] = {}
+# Los casos que la rama hace pasar A PROPOSITO, cada uno con su porque (respuesta del consultor a
+# la PARADA de la fase 0, 2026-11-04; GUARDIA-G1.md §4).
+_K1 = "punto 2: la forma de la opcion por el arbol de Python; una variable o un grep no la piden"
+_K2 = "punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo"
+_K4 = "punto 4: lo de detras del `=` en blanco no es una ruta (era la raiz, recursiva)"
+_SL = "punto 8: solo_lectura salta las opciones globales de git; worktree list y tag para listar"
+CAMBIOS_DECLARADOS: dict[str, str] = {
+    "a1-lector-rama": _K1,
+    "a7-grep-patron": _K1,
+    "a8-grep-kwarg": _K1,
+    "b1-clon-cd": _K2,
+    "b2-clon-ruta": _K2,
+    "b3-clon-nuevo": _K2 + " (el test nuevo de la rama, copiado al clon)",
+    "b8-clon-barra": _K2,
+    "b9-clon-opcion": _K2,
+    "c1-clon-regex-win": _K2 + " (K3 es K2)",
+    "d2-con-r": _K4,
+    "d3-barrido-1": _K4,
+    "d5-puntos-con-r": _K4,
+    "d6-cuatro-e": _K4,
+    "f18-grep-r-src": _K4 + " (la negativa de H por la regla de Analytics)",
+    "f1-sl-worktree-list": _SL,
+    "f2-sl-git-C": _SL,
+    "f3-sl-git-c": _SL + " (la guardia principal lo sigue negando: f3b)",
+    "f4-sl-tag-l": _SL,
+    "f8-pythonioencoding": "punto 5: PYTHONIOENCODING en NOMBRES_DE_ENTORNO",
+    "f15-which": "punto 7: which en NO_EJECUTAN (busca, no ejecuta)",
+    "f16-rm-rmdir": "punto 7: rmdir en NO_EJECUTAN (la otra negativa de H)",
+}
 
 
 def _p(*trozos: str) -> str:

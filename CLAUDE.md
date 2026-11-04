@@ -254,8 +254,10 @@ Un hook `PreToolUse` (`.claude/hooks/guardia.py`, desde el 2026-10-01,
 `docs/validation/GUARDIAS-CLAUDE.md`) mira cada Read, Grep, Glob, Bash y PowerShell. **Bloquea leer
 el CONTENIDO del material protegido** del punto 3 -el holdout, los libros de meses con dias
 reservados o sin sortear, las imagenes del material adicional, las hojas de las sesiones, las crudas
-de las sesiones en cuarentena (v7 en adelante) y lo que nombre un caso reservado- y deja listarlo,
-medirlo y hashearlo; y bloquea las operaciones prohibidas que su cabecera enumera (`--no-verify`,
+de las sesiones en cuarentena (v7 en adelante) y lo que nombre un caso reservado- y deja contarlo,
+medirlo y hashearlo por la CLI; los nombres de dentro de `knowledge/cases/holdout/{1,2,3}` se
+cuentan, no se listan (ADR-0088, desde `trabajo/guardia-g1`); y bloquea las operaciones prohibidas
+que su cabecera enumera (`--no-verify`,
 `push --force`, borrar tags o una rama remota que no sea `trabajo/`, `feature/` o `fix/`, ...). Lo
 que cuenta para la sesion:
 - **La CLI ensena el corpus filtrado.** `kb find`, `kb at`, `corpus transcript show`,
