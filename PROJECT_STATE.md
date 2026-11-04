@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/guardia-g1
+main
 
 ## Current Feature
-trabajo/guardia-g1 · EN CURSO (abierta el 2026-11-04 desde 7a3a1ff): K, B y C del carril G.1, los falsos positivos y los huecos de la guardia de Claude Code. Encargo docs/encargos/trabajo-guardia-g1.md; informe docs/validation/GUARDIA-G1.md.
+Ninguna rama abierta. trabajo/guardia-g1 cerrada en main el 2026-11-04 (stable/F38l-guardia-g1): ADR-0088 (los nombres del holdout se cuentan, no se listan), los falsos positivos de K, lo que un guion importa o carga (B) y las rutas compuestas (C), con los tests de un clon de comparar-con-main (GUARDIA-G1.md). Hecha en Claude Code en la nube; pre-cierre y cierre en el portátil.
 
 ## Stable Main State
-796be27 · merge de `trabajo/margen-pendiente` (tag `stable/F38k-margen-pendiente`): MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado. Sobre `stable/F38j-respaldo-m1` (4b12a92). Informe docs/validation/MARGEN-PENDIENTE.md; el registro del cierre, al final de HISTORIA.
+1cbf403 · merge de `trabajo/guardia-g1` (tag `stable/F38l-guardia-g1`): ADR-0088 (los nombres del holdout se cuentan), los falsos positivos de K y lo que un guion carga o compone (B y C). Sobre `stable/F38k-margen-pendiente` (796be27). Informe docs/validation/GUARDIA-G1.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-796be27 · merge: trabajo/margen-pendiente, MedirDemoFTMO 1.2 y PROJECT_STATE adelgazado · tag stable/F38k-margen-pendiente
+1cbf403 · merge: trabajo/guardia-g1, ADR-0088 (los nombres del holdout se cuentan), los falsos positivos de K y lo que un guion carga o compone (B y C) · tag stable/F38l-guardia-g1
 
 ## Tests Currently Passing
 1840 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
