@@ -1435,6 +1435,10 @@ Se empuja la rama a `origin/trabajo/guardia-g1` y a `fix/guardia-g1` (la CI solo
 - **Run 41867739409**, sobre 9537b7b (el commit del informe del revisor): `1 failed, 3160 passed, 46
   skipped`; el fallo esperado de `state check`. El «ya no cambia» de la línea anterior lo dejó sin
   efecto el pre-cierre (§13).
+- **Run 41884498214**, sobre 537b2eb (los arreglos del pre-cierre, §13): `1 failed, 3161 passed, 47
+  skipped in 227.67s`; el ÚNICO fallo, el esperado de `state check`
+  (`test_state_check_ok_on_real_repo`). Un saltado más que antes: el test de la URL mal formada, que
+  solo corre en Windows.
 
 ## 11. El encargo, punto por punto
 
@@ -1599,8 +1603,8 @@ Medido en Windows: `h7b` «`curl` lee la URL file:///<tmp>/repo/<holdout>/1/secr
 | 1 | Hecho | `medir_g1.py`, `CAMBIOS_DECLARADOS` |
 | 2 | Hecho, solo en tests: la guardia ya leía `file:///C:/...`. Sin cambio en `guardia.py` | `test_guardia_g1.py`, `medir_g1.py` |
 | 3 | Hecho, y la línea de Technical Debt de B | `test_guardia_g1.py`, §7 |
-| 4 | Sello y CI, en §13.4 | §10, §13.4 |
-| 5 | En §13.4 | §13.4 |
+| 4 | Hecho: sello en Windows y CI de Linux | §10, §13.4 |
+| 5 | Hecho: 3a y 3b en el clon recreado, y el clon quitado | §13.4 |
 | 6 | Hecho: esta sección, el recuadro de §8 y la fila de ERRORES-RECURRENTES | §8, §13 |
 | 7 | **No aplica:** `guardia.py` no cambia, así que no hay segunda pasada del revisor | — |
 
@@ -1618,7 +1622,21 @@ hasta aquí.
 
 ### 13.4 Lo que el pre-cierre deja medido
 
-Pendiente del commit siguiente: el sello en Windows, el run de la CI y 3a y 3b en el clon recreado.
+Todo sobre el commit 537b2eb.
+
+- **Sello en Windows (el sello de verdad de esta rama):** `3209 passed in 1133.88s (0:18:53)`; `SELLO:
+  make check en verde sobre el arbol 865cbfd627c8f0089b6ca5986e0dee54f38326a8`; `PICO DE MEMORIA de make
+  check: 307 MiB en test (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 297
+  MiB)`. Antes hicieron falta dos pasadas que pararon en el lint, por una línea larga y un formato del
+  test; ninguna llegó a los tests.
+- **CI de Linux:** run 41884498214 (§10), solo el fallo esperado de `state check`.
+- **3a y 3b en el clon recreado** (`C:/cm/g1`, en 537b2eb; lo recreó Aleks con «!»):
+  - `uv run pytest C:/cm/g1/tests/unit/test_guardia_g1.py -q -p no:cacheprovider`: **142 en verde, 0
+    failed**.
+  - `uv run pytest C:/cm/g1/tests/unit/test_cuarentena.py -q -p no:cacheprovider`: 40 en verde, 0 failed.
+  - `uv run pytest tests/unit/test_guardia_g1.py -q -p no:cacheprovider`, en el repo real: 142 en verde, 0
+    failed.
+- **El clon:** quitado por Aleks con «!» (`git worktree remove C:/cm/g1` y `git worktree prune`).
 
 ### 13.5 La lección
 
@@ -1629,6 +1647,7 @@ Windows; la CI de Linux no ve lo que depende de la raíz de unidad, de `file:///
 
 Rama lista para revisión, NO cerrada. Fases 0, 1, 2 y 3 hechas y selladas; las dos PARADAS
 respondidas y aplicadas; la CI de Linux de `fix/guardia-g1` (run 41858841083) con solo el fallo
-esperado de `state check` (§10); el revisor pasado y lo hecho con cada hallazgo en §12.1. El
-pre-cierre en Windows encontró tres tests rojos, arreglados en los tests (§13). El cierre lo
+esperado de `state check` (§10; el último medido, run 41884498214); el revisor pasado y lo hecho con
+cada hallazgo en §12.1. El pre-cierre en Windows encontró tres tests rojos, arreglados en los tests
+(§13), con `make check` sellado en Windows y 3a y 3b en verde en el clon y en el repo real. El cierre lo
 ejecuta Aleks en su portátil, con la orden de cierre (líneas preparadas en §7; lo de Windows, §8).
