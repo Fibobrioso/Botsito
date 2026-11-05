@@ -14688,3 +14688,45 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 54 (2026-11-04).
+
+# Registro de cierre · `trabajo/sesion-06` (2026-11-05)
+
+- Revisión y orden de cierre del consultor del 2026-11-05, dadas por Aleks (copiadas tal cual al
+  final del encargo y de SESION-06-EXTRACCION.md, en su commit propio, 56169a1); después Aleks lanzó
+  `/cerrar-rama trabajo/sesion-06`, y la sesión siguió `RITUAL.md`. Nunca se cerró sin la orden.
+- **Base de cierre: 5bab3ae**, make check sellado con 3210 passed y CI de `fix/sesion-06` run
+  41983104063 con solo el fallo esperado de `state check`: los dos datos vienen del informe final de
+  la sesión, no del repo. 5bab3ae no tiene segunda pasada del revisor ni su sello en el informe;
+  aceptado por el consultor. Un auditor independiente comprobó sobre 5bab3ae (orden de cierre) que
+  ninguna cita de v17 cae en un tramo no citable, que no hay ids de caso ni días reservados nuevos en
+  el diff y que las cinco filas de HOLDOUT-EXPOSICIONES están.
+- **Lo que entra**: la sesión 6 con el trader (2026-11-04) como v17 (1:59:59), en cuarentena, con 12
+  tramos no citables, transcripción, fotogramas (ninguno abierto), 65 ítems de evidencia vivos y la
+  extracción por pregunta. Nada resuelto: ni spec, ni motor, ni casos, ni cifras; ADR-0083 sigue
+  PROVISIONAL.
+- **Decisiones del consultor en la orden** (punto 2; ninguna cambia la rama): a8 aceptado, sin subir
+  a bloquea; el mes del replay del tramo de precaución se deja nombrado, no es exposición; los dos
+  tramos ajenos, ratificados; la fecha de los gráficos NO se pone; S-2, S-3, S-4, S-23/A-46 y la
+  alternancia, en el encargo de la activación; «S-22 de la sesión 4», error del consultor.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action: F se
+  sustituye (no pasa a HECHA: la sesión 6 sigue viva hasta activarse), e I y Q ganan su línea;
+  Technical Debt: cambia la línea de la copia de seguridad y entra la de las skills; R4.2 gana su
+  línea de Estado; y la fila de ERRORES-RECURRENTES, con los hallazgos del consultor.
+- **`PROJECT_STATE.md`, 23.313 bytes en este commit**: 113 por encima de los 23.200 que pedía la orden
+  y por debajo de los 24.000 de su PARADA. Todo lo añadido es texto literal de la orden; no se recorta
+  nada, y queda declarado.
+- **Una negativa de la guardia durante el cierre**, con la forma que propone su mensaje: `git add`
+  encadenado con `botsito state check` en la misma llamada; se partió en dos llamadas.
+- Letra del tag: la última cerrada era `stable/F38l-guardia-g1`; `stable/F38m-sesion-06` no existe en
+  local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38m-sesion-06`. El merge es `git rev-parse "stable/F38m-sesion-06^{commit}"`.
+- Commits de la rama: `6c96499` (chore(rama): abre trabajo/sesion-06), `b2ddfeb` (data: v17 entra en
+  cuarentena, con sus tres silencios SIN AUDIO), `d4d33bd` (data: v17 transcrita, filtrada y con
+  fotogramas; sus seis bloques en cuarentena), `b368016` (docs: la extracción por pregunta, la
+  evidencia y la hoja usada), `5bab3ae` (fix: los hallazgos del revisor), `56169a1` (docs: la orden de
+  cierre), y este (chore(cierre): sale el contrato y entra el registro en HISTORIA).
+- CI de Linux por `fix/sesion-06`, con el ÚNICO fallo esperado de `state check` en los dos: run
+  41976558765 (b368016: 1 failed, 3162 passed, 47 skipped) y 41983104063 (5bab3ae, la base del
+  cierre: 1 failed, 3162 passed, 47 skipped). La CI de `main` corre tras el push.
+- `make check` en Windows sobre 56169a1: 3210 passed, árbol f51372d3, pico de memoria 308 MiB.
+- Informe: `docs/validation/SESION-06-EXTRACCION.md`. Encargo: `docs/encargos/trabajo-sesion-06.md`.
