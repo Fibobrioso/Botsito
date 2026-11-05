@@ -60,3 +60,41 @@ Dado por Aleks (consultor) el 2026-11-04. Copiado tal cual:
 > make check sellado; push a fix/sesion-06 (git push origin trabajo/sesion-06:refs/heads/fix/sesion-06; si el clasificador lo niega, me lo dices y lo lanzo yo con «!») y CI de Linux con solo el fallo esperado de state check; dame el número de run. Después el revisor, lanzado con el informe YA TERMINADO, y su informe pegado al final. Ningún registro de cierre en HISTORIA ni cambios de Next Action más allá de lo que haga abrir-rama: eso va con la orden de cierre.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Orden de cierre (2026-11-05)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/sesion-06 (consultor, 2026-11-05). Cópiala tal cual al final del encargo y del informe, en «Orden de cierre», en su propio commit (sellado), antes del commit del contrato. Después, el ritual de docs/runbooks/RITUAL.md con la skill cerrar-rama, que lanzo yo con /cerrar-rama.
+>
+> Revisión del consultor: la rama cumple el encargo. Base de cierre: 5bab3ae (make check sellado, 3210 passed; CI de fix/sesion-06 run 41983104063, solo el fallo esperado de state check; los dos datos vienen del informe final de la sesión, no del repo, y el registro del cierre los cita así). Un auditor independiente comprobó sobre 5bab3ae que ninguna cita de v17 cae en un tramo no citable, que no hay ids de caso ni días reservados nuevos en el diff y que las cinco filas de HOLDOUT-EXPOSICIONES están.
+>
+> 1. Tag: stable/F38m-sesion-06. Comprueba antes que no existe ni en local ni en origin. Mensaje del merge: «merge: trabajo/sesion-06, la sesión 6 ingerida (v17) y su extracción por pregunta».
+>
+> 2. Decisiones del consultor que el informe deja abiertas (van copiadas aquí para que consten; ninguna cambia la rama):
+>    a) a8 (la línea del margen de diciembre): aceptado como está, sin paráfrasis y declarado; no sube a bloquea.
+>    b) El mes del replay del tramo de precaución 0:06:52–0:08:04 está nombrado en §2.4, §11 y el informe del revisor mientras el motivo del tramo y la fila de HOLDOUT lo evitan: no es exposición (sin día ni cifra), se deja, y va a la fila como menor.
+>    c) Los dos tramos ajenos (1:35:11–1:35:30 y 1:44:19–1:44:30) con «acordado: decisión de la sesión»: los ratifica el consultor en esta orden; el fichero no se toca.
+>    d) La fecha de los gráficos NO se pone (regla 2 de SESION-DE-PREGUNTAS.md sigue). Lo que se le dará en la siguiente tanda es contexto: el H4 y los trazos de M15 del bot, que es otro gráfico y se decide en la activación.
+>    e) S-2, S-3, S-4, S-23/A-46 y la alternancia se deciden en el encargo de la activación, no aquí.
+>    f) «S-22 de la sesión 4» del encargo: error del consultor; era la misma pregunta con el mismo código en la hoja 04 (A-36, RESUELTA), ya cubierta por S-22 de la 6. Nada pendiente.
+>
+> 3. Hallazgos del consultor que el revisor no vio, para la fila de ERRORES-RECURRENTES (columna del consultor):
+>    - (menor, del consultor) el encargo citó «S-22 de la sesión 4» sin leerlo (punto 2.f); lección: un código de sesión se cita leyendo la hoja de esa sesión, nunca de memoria.
+>    - (menor) el enmascarado incoherente del mes del replay (punto 2.b).
+>    - (menor) 5bab3ae no tiene segunda pasada del revisor ni su sello en el informe; aceptado, lo cita el registro del cierre.
+>    Y en la misma fila, lo que §6 d) propone como dos filas: el commit a tramos_no_citables.yaml sin trailer Fuente: que make check no ve hasta el commit siguiente, y la línea de PLANTILLA que abrir-rama no nombra (segunda vez). Lección para la sesión: todo commit que toque knowledge/corpus/tramos_no_citables.yaml lleva Fuente:, y el informe nace con su línea de PLANTILLA.
+>
+> 4. En el commit del contrato (chore(cierre)), además de lo que manda RITUAL.md:
+>    a) PROJECT_STATE.md, Next Action: F se sustituye por el texto a) de §6 del informe, con este añadido al final, antes de «H va después»: «Decisión del consultor (2026-11-05): los gráficos se rehacen SIN fecha; lo que se añade es contexto (H4 y los trazos de M15 del bot), que decide la activación. El trader ofreció un vídeo de cómo mapea (§3.6): si llega, es material nuevo, SIN ABRIR y fuera del repo hasta su rama.» La F de hoy, con su fecha equivocada, se va: no pasa a HECHA (la sesión 6 sigue viva hasta activarse), así que no entra en HISTORIA como HECHA.
+>    b) PROJECT_STATE.md, I gana al final: « En la sesión 6 el trader dijo que aún no lo ha grabado con su voz (declaración de Aleks, SESION-06-EXTRACCION.md §3.5).» Q gana al final: « En la sesión 6 no afirmó que la exportación esté en el Drive (§3.5); Aleks se la vuelve a pedir.»
+>    c) PROJECT_STATE.md, Technical Debt: la línea de la copia de seguridad se sustituye por el texto c) de §6; y entra: «La skill ingerir-sesion no nombra el trailer Fuente: de tramos_no_citables.yaml y abrir-rama no nombra la línea de PLANTILLA del informe (SESION-06-EXTRACCION.md §7, puntos 1 y 3; segunda vez): rama corta de skills.»
+>    d) docs/plan/HOJA-DE-RUTA.md, R4.2: gana la línea de Estado del texto b) de §6. Es un fichero de la puerta del commit del contrato: su línea M está autorizada por esta orden.
+>    e) docs/runbooks/ERRORES-RECURRENTES.md: la fila de la rama, con el revisor (1 bloquea, 17 importa, 5 menor en los dos ejes) y el punto 3.
+>    Mide PROJECT_STATE con wc -c ANTES de commitear: hoy 22.212; con estas líneas tiene que quedar por debajo de 23.200. Si pasa de 24.000, PARADA antes de recortar nada.
+>
+> 5. Lo demás, según RITUAL.md: merge --no-ff a main con el mensaje del punto 1, el tag sobre el merge, y el commit de estado, que solo reemplaza Current Branch (main), Current Feature, Stable Main State y Last Stable Commit. Current Feature: «Ninguna rama abierta. trabajo/sesion-06 cerrada en main el 2026-11-05 (stable/F38m-sesion-06): la sesión 6 con el trader (2026-11-04, v17, 1:59:59) ingerida, en cuarentena, con su extracción por pregunta y 65 ítems de evidencia vivos (SESION-06-EXTRACCION.md). Nada resuelto: la activación la decide el consultor.» Stable Main State y Last Stable Commit, con la forma del cierre anterior. Después: make check sellado, push atómico de main y el tag (yo confirmo la regla ask con «1. Yes»), la CI de main con un gh run view suelto, y, con la CI en verde, el borrado de la rama local y de fix/sesion-06 en origin.
+>
+> 6. Informe final: sha de main y del merge, el tag y a qué commit apunta, el run de la CI de main y su resultado, las ramas que quedan en local y en origin, el tamaño de PROJECT_STATE.md y el siguiente tag (F38n).
