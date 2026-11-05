@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.5.6` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.5.7` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (12)
+## ABIERTA (11)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -51,12 +51,6 @@ Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxim
 Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque para poner el 0 y el 1? RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-16). El 1: «entonces la respuesta sería al punto más alto de todas las velas desde el punto» (ev-v17-010541-05a69879, la opcion c), y en una compra al reves (ev-v17-011328-a701a547): caja_bloque = r6 pasa a CONFIRMED (fb-2026-11-04-sesion-06-a1cc60d0) como DESVIACION declarada de la regla de que las respuestas en parte no fijan nada (precedentes: A-43 en la sesion 4, A-35 en la sesion 5). El 0 no queda claro: no eligio entre ultimo_pivote_m1 y referencia_de_la_toma (SESION-06-EXTRACCION.md §3.4, S-16), y orden_stop_punto sigue DEFAULT_AMBIGUOUS en ultimo_pivote_m1, lectura del consultor bajo esta ambiguedad. SIGUE ABIERTA por el 0, sin registro sobre ella; va a la sesion 7.
 
 Afecta a: `orden_stop_punto`, `caja_bloque`.
-
-### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
-
-Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa», y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al punto mas alto y que todo tiene que desarrollarse mas alla del nivel. RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 1:04:51-1:05:28, S-12b): si el 0 queda justo en la linea del nivel tomado, o por encima en una compra, «es indiferente» y lo importante es validar bien el posible punto de breaker (ev-v15-010451-5b123278); en su ejemplo el 0 queda del lado de ruido y la caja vale. Desde el 2026-10-26 (trabajo/activar-sesion-05-motor) RN-005 lee caja_lado_de_ruido = caja_entera, DEFAULT_AMBIGUOUS bajo esta ambiguedad y LECTURA DEL CONSULTOR (que haga falta la caja ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). SIGUE ABIERTA: la sesion 6 lo confirma con dos dibujos.
-
-Afecta a: `caja_lado_de_ruido`.
 
 ### A-53 · la orden sin llenar cuando el precio toma otra liquidez de M15 · pregunta
 
@@ -134,7 +128,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (38)
+## RESUELTA (39)
 
 ### A-1 · sesgo H4
 
@@ -327,6 +321,12 @@ Afecta a: `entrada_tipo_orden`.
 ¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando? RESUELTA el 2026-11-05 por la sesion 6 (2026-11-04, v17 1:12:54-1:13:13, S-16): «apenas ocurre el rompimiento yo ya voy trazando la caja … tiene que cerrar la vela rompimiento cierra de la vela no importa con mecha o sea con cuerpo» (ev-v17-011254-542726f6, fb-2026-11-04-sesion-06-e0fb393a): la caja se traza con la vela que rompe ya cerrada, sea con mecha o con cuerpo, que es la lectura `cerrada` y lo que el motor hace (solo M1 cerradas, ADR-0028). Mientras no aparece otro punto, «simplemente se mantiene en el punto anterior» (ev-v17-011419-0862662c). caja_se_fija = en_cada_cierre_m1 pasa a CONFIRMED con su fuente de decision (ADR-0074).
 
 Afecta a: `caja_se_fija`.
+
+### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
+
+Para descartar una zona frente al nivel de la liquidez que se tomó, ¿cuenta solo el 0 de la caja o la caja entera? LECTURA CANDIDATA de la sesion 3 (2026-09-29, v9 0:51:23), NO activada: el trader no usa la posicion de la caja frente al nivel tomado como filtro («¿El 0 o el 0? No, no importa», y remite a sus ejemplos). Su respuesta general es que la caja va del punto de breaker al punto mas alto y que todo tiene que desarrollarse mas alla del nivel. RESPONDIDA EN PARTE en la sesion 5 (2026-10-23, v15 1:04:51-1:05:28, S-12b): si el 0 queda justo en la linea del nivel tomado, o por encima en una compra, «es indiferente» y lo importante es validar bien el posible punto de breaker (ev-v15-010451-5b123278); en su ejemplo el 0 queda del lado de ruido y la caja vale. Desde el 2026-10-26 (trabajo/activar-sesion-05-motor) RN-005 lee caja_lado_de_ruido = caja_entera, DEFAULT_AMBIGUOUS bajo esta ambiguedad y LECTURA DEL CONSULTOR (que haga falta la caja ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). RESUELTA el 2026-11-05 por la sesion 6 (2026-11-04, v17 1:25:00-1:25:04, S-17): «quedaría el dibujo B, la caja entera por encima quedaría descartado» (ev-v17-012500-39e18f12, fb-2026-11-04-sesion-06-431635dc): la opcion b, la caja entera; caja_lado_de_ruido = caja_entera pasa a CONFIRMED (fb-2026-11-04-sesion-06-3f466670). Su motivo es otro: la caja de una compra va por debajo del nivel tomado (ev-v17-012441-2ade00be), y sin una toma debajo no se puede trazar la caja (ev-v17-012715-8aaaa59f). Al precisar dijo «es indiferente la verdad», y no entendio la pregunta de cuanto se pasa el 0; de la caja a caballo solo dijo que puede ir «entre» (SESION-06-EXTRACCION.md §3.4, S-17, fuera de un item).
+
+Afecta a: `caja_lado_de_ruido`.
 
 ### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
 

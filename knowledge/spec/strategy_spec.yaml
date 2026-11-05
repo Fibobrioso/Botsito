@@ -1383,7 +1383,14 @@ reglas:
       deduce de su ejemplo, SESION-05-EXTRACCION.md §3.3, fuera del item). Con `solo_el_0`, lo de
       antes. El 1 que se mira es el de la zona del punto, el mismo que llevara la orden
       (engine/zonas.py, ACTIVAR-SESION-05-MOTOR.md §0.b.6). A-50 sigue ABIERTA y la sesion 6 lo
-      confirma con dos dibujos
+      confirma con dos dibujos.
+      DESDE EL 2026-11-05 (sesion 6, S-17; trabajo/activar-sesion-06) A-50 ESTA RESUELTA: «quedaría
+      el dibujo B, la caja entera por encima quedaría descartado» (ev-v17-012500-39e18f12,
+      fb-2026-11-04-sesion-06-431635dc), y caja_lado_de_ruido = caja_entera pasa a CONFIRMED
+      (fb-2026-11-04-sesion-06-3f466670): la forma no cambia. Su motivo es otro: la caja de una
+      compra va por debajo del nivel tomado (ev-v17-012441-2ade00be) y sin una toma debajo no se
+      puede trazar la caja (ev-v17-012715-8aaaa59f); de la caja a caballo solo dijo que puede ir
+      «entre» (SESION-06-EXTRACCION.md §3.4, fuera de un item)
     forma:
       cuando:
         todos_de:

@@ -278,7 +278,8 @@ IDS_RESERVADOS: dict[str, str] = {}
 # rama, ADR-0076), A-57 (la sesion 5, S-5, trabajo/activar-sesion-05: el trader confirmo el
 # DEFAULT de ADR-0081, limitar el lote y entrar) y A-32 (la sesion 5, S-18 de v16: en M1 la mecha
 # siempre vale; la sesion 4 la habia dejado en parte) y A-49 (la sesion 6, S-16,
-# trabajo/activar-sesion-06: la caja con la vela que rompe ya cerrada). El comentario
+# trabajo/activar-sesion-06: la caja con la vela que rompe ya cerrada) y A-50 (la sesion 6, S-17,
+# la misma rama: cuenta la caja entera). El comentario
 # de `test_ambiguedades_reales_y_esquema` cuenta la
 # historia de cada una. Una «en parte» NUNCA entra aqui (`test_una_en_parte_no_entra_en_resueltas`).
 RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
@@ -306,6 +307,7 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
         "A-46",
         "A-47",
         "A-49",
+        "A-50",
         "A-51",
         "A-52",
         "A-57",
@@ -321,8 +323,10 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
 # deja en parte lo vigila `test_la_sesion_5_deja_en_parte_lo_que_dice_su_tabla`
 # (tests/unit/test_en_parte_no_se_cierra.py). A-49 salio el 2026-11-05 (trabajo/activar-sesion-06),
 # con el mismo precedente que A-32: la sesion 6 la resuelve con regla general (S-16,
-# fb-2026-11-04-sesion-06-e0fb393a), y su CONFIRM de la sesion 4 sigue sobre su item.
-EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-44", "A-50", "A-53"})
+# fb-2026-11-04-sesion-06-e0fb393a), y su CONFIRM de la sesion 4 sigue sobre su item. A-50 salio
+# en la misma rama y con el mismo precedente: la sesion 6 la resuelve (S-17,
+# fb-2026-11-04-sesion-06-431635dc).
+EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-44", "A-53"})
 
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:

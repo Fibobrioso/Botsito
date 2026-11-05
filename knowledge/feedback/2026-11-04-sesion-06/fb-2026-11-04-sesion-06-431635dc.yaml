@@ -1,0 +1,19 @@
+id: fb-2026-11-04-sesion-06-431635dc
+sesion: 2026-11-04-sesion-06
+fecha: '2026-11-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-50
+accion: RESOLVE_UNKNOWN
+respuesta_literal: quedaría el dibujo B, la caja entera por encima quedaría descartado
+registrado_por: Aleks · grabacion de la sesion 6 (v17), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-05 (trabajo/activar-sesion-06, encargo A.7 y respuesta a la PARADA,
+  punto 0)
+grabacion: Grabación de pantalla 2026-11-04 142903.mp4
+t0: '1:25:00'
+t1: '1:25:04'
+valor_resultante: 'cuenta la caja entera: descarta el dibujo B, la caja entera por encima del bajo tomado'
+notas: 'S-17 (A-50), opcion b: descarta el dibujo B, la caja entera por encima del bajo tomado (ev-v17-012500-39e18f12)'
+recibido_el: '2026-11-04'
+procedencia: trader_grabado

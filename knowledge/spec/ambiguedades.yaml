@@ -1603,8 +1603,15 @@ ambiguedades:
       ejemplo el 0 queda del lado de ruido y la caja vale. Desde el 2026-10-26
       (trabajo/activar-sesion-05-motor) RN-005 lee caja_lado_de_ruido = caja_entera,
       DEFAULT_AMBIGUOUS bajo esta ambiguedad y LECTURA DEL CONSULTOR (que haga falta la caja
-      ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). SIGUE ABIERTA: la sesion 6 lo
-      confirma con dos dibujos.
+      ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). RESUELTA el 2026-11-05 por la
+      sesion 6 (2026-11-04, v17 1:25:00-1:25:04, S-17): «quedaría el dibujo B, la caja entera por
+      encima quedaría descartado» (ev-v17-012500-39e18f12, fb-2026-11-04-sesion-06-431635dc): la
+      opcion b, la caja entera; caja_lado_de_ruido = caja_entera pasa a CONFIRMED
+      (fb-2026-11-04-sesion-06-3f466670). Su motivo es otro: la caja de una compra va por debajo del
+      nivel tomado (ev-v17-012441-2ade00be), y sin una toma debajo no se puede trazar la caja
+      (ev-v17-012715-8aaaa59f). Al precisar dijo «es indiferente la verdad», y no entendio la
+      pregunta de cuanto se pasa el 0; de la caja a caballo solo dijo que puede ir «entre»
+      (SESION-06-EXTRACCION.md §3.4, S-17, fuera de un item).
     resuelve_en: [F19, F20]
     # NACE el 2026-09-28 (rama trabajo/registrar-embudo, orden del consultor tras
     # docs/validation/EMBUDO-77.md §4, punto 1). RN-005 prohibe abrir cuando la zona se desarrolla
@@ -1632,9 +1639,10 @@ ambiguedades:
       - ev-v9-004721-2e023ac6
       - ev-v9-004919-c6bfb3ee
       - ev-v15-010451-5b123278
+      - ev-v17-012500-39e18f12
     parametros: [caja_lado_de_ruido]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
