@@ -25,10 +25,13 @@ M0 = int(a_minuto(datetime(2030, 1, 15, 8, 0, tzinfo=UTC)))
 VENTA_CON_SUBIDAS = [1000, 990, 980, 985, 990, 995, 1000, 1006, 1013, 1021]
 
 
-def test_el_registro_dice_en_cada_cierre_m1_bajo_a49() -> None:
+def test_el_registro_dice_en_cada_cierre_m1_confirmado_por_a49() -> None:
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-11-05 (trabajo/activar-sesion-06): A-49 esta RESUELTA
+    por la sesion 6 (S-16) y el valor pasa a CONFIRMED, sin ambiguedad_id, con la misma fuente de
+    decision; hasta esa rama era DEFAULT_AMBIGUOUS bajo A-49."""
     p = REGISTRO.parametros["caja_se_fija"]
     assert p.valor == "en_cada_cierre_m1"
-    assert p.estado is Estado.DEFAULT_AMBIGUOUS and p.ambiguedad_id == "A-49"
+    assert p.estado is Estado.CONFIRMED and p.ambiguedad_id is None
     assert p.fuente is not None and (p.fuente.tipo, p.fuente.id) == ("decision", "ADR-0074")
 
 

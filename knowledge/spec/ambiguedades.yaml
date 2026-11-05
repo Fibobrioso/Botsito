@@ -1546,6 +1546,14 @@ ambiguedades:
     titulo: si la caja se traza con la vela del bloque cerrada o en formación
     pregunta: >-
       ¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?
+      RESUELTA el 2026-11-05 por la sesion 6 (2026-11-04, v17 1:12:54-1:13:13, S-16): «apenas
+      ocurre el rompimiento yo ya voy trazando la caja … tiene que cerrar la vela rompimiento cierra
+      de la vela no importa con mecha o sea con cuerpo» (ev-v17-011254-542726f6,
+      fb-2026-11-04-sesion-06-e0fb393a): la caja se traza con la vela que rompe ya cerrada, sea con
+      mecha o con cuerpo, que es la lectura `cerrada` y lo que el motor hace (solo M1 cerradas,
+      ADR-0028). Mientras no aparece otro punto, «simplemente se mantiene en el punto anterior»
+      (ev-v17-011419-0862662c). caja_se_fija = en_cada_cierre_m1 pasa a CONFIRMED con su fuente de
+      decision (ADR-0074).
     resuelve_en: [F20, F21]
     # NACE el 2026-09-28 (rama trabajo/preparar-a47, decision del consultor sobre
     # docs/validation/DISENO-ENTRADA-RUPTURA.md §2.5). Medido en docs/validation/BLOQUE-DE-LA-CAJA.md
@@ -1566,12 +1574,16 @@ ambiguedades:
     # mecanismo del motor sobre esta pregunta; DEFAULT_AMBIGUOUS. Sigue ABIERTA. NO
     # bloqueante, por lo mismo que A-48. El selector `caja_vela` (la vela en formacion) sigue sin
     # nacer: `caja_se_fija` solo decide cuando se recalcula el 1 con velas CERRADAS.
+    # RESUELTA el 2026-11-05 (trabajo/activar-sesion-06): la sesion 6 dice `cerrada`; caja_vela no
+    # hace falta, y caja_se_fija pasa a CONFIRMED a mano (categoria ejecucion, fuente ADR-0074)
     evidencia:
       - ev-v7-002201-2b2f20aa
       - ev-v7-002403-8344331d
+      - ev-v17-011254-542726f6
+      - ev-v17-011419-0862662c
     parametros: [caja_se_fija]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

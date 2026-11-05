@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.5.5` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.5.6` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (13)
+## ABIERTA (12)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -51,12 +51,6 @@ Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxim
 Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque para poner el 0 y el 1? RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-16). El 1: «entonces la respuesta sería al punto más alto de todas las velas desde el punto» (ev-v17-010541-05a69879, la opcion c), y en una compra al reves (ev-v17-011328-a701a547): caja_bloque = r6 pasa a CONFIRMED (fb-2026-11-04-sesion-06-a1cc60d0) como DESVIACION declarada de la regla de que las respuestas en parte no fijan nada (precedentes: A-43 en la sesion 4, A-35 en la sesion 5). El 0 no queda claro: no eligio entre ultimo_pivote_m1 y referencia_de_la_toma (SESION-06-EXTRACCION.md §3.4, S-16), y orden_stop_punto sigue DEFAULT_AMBIGUOUS en ultimo_pivote_m1, lectura del consultor bajo esta ambiguedad. SIGUE ABIERTA por el 0, sin registro sobre ella; va a la sesion 7.
 
 Afecta a: `orden_stop_punto`, `caja_bloque`.
-
-### A-49 · si la caja se traza con la vela del bloque cerrada o en formación · pregunta
-
-¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?
-
-Afecta a: `caja_se_fija`.
 
 ### A-50 · para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera · pregunta
 
@@ -140,7 +134,7 @@ Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minim
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
 
-## RESUELTA (37)
+## RESUELTA (38)
 
 ### A-1 · sesgo H4
 
@@ -327,6 +321,12 @@ Si la liquidez se tomó en una sesión anterior del mismo día (por ejemplo en l
 Cuando pones la orden en el punto de breaker, ¿quieres entrar cuando el precio rompe ese punto o cuando el precio vuelve a él? RESUELTA el 2026-09-29 en la sesion 3 (v9 0:01:24): «aquí queda confirmado que se entra siempre por stop» / «Sí, exacto»: la orden de entrada es una STOP en la ruptura (entrada_tipo_orden = stop_en_ruptura) (fb-2026-09-29-sesion-03-92a38105).
 
 Afecta a: `entrada_tipo_orden`.
+
+### A-49 · si la caja se traza con la vela del bloque cerrada o en formación · pregunta
+
+¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando? RESUELTA el 2026-11-05 por la sesion 6 (2026-11-04, v17 1:12:54-1:13:13, S-16): «apenas ocurre el rompimiento yo ya voy trazando la caja … tiene que cerrar la vela rompimiento cierra de la vela no importa con mecha o sea con cuerpo» (ev-v17-011254-542726f6, fb-2026-11-04-sesion-06-e0fb393a): la caja se traza con la vela que rompe ya cerrada, sea con mecha o con cuerpo, que es la lectura `cerrada` y lo que el motor hace (solo M1 cerradas, ADR-0028). Mientras no aparece otro punto, «simplemente se mantiene en el punto anterior» (ev-v17-011419-0862662c). caja_se_fija = en_cada_cierre_m1 pasa a CONFIRMED con su fuente de decision (ADR-0074).
+
+Afecta a: `caja_se_fija`.
 
 ### A-51 · qué corta la racha de 9 pérdidas seguidas del trader y cuándo vuelve a operar · **BLOQUEANTE** · pregunta
 

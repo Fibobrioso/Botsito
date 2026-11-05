@@ -39,6 +39,14 @@ dejan «en parte» y van a la sesión 5. Si A-49 se cierra, el estado pasa a CON
 fuente, como `reloj_sesiones` con ADR-0069. El testimonio de S-4 se registra sobre A-49 sin
 cerrarla; la forma de ese registro es la PARADA 2 del informe.
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`; el cuerpo no se toca).** A-49 está
+> RESUELTA por la sesión 6 (S-16): «apenas ocurre el rompimiento yo ya voy trazando la caja … tiene
+> que cerrar la vela rompimiento cierra de la vela no importa con mecha o sea con cuerpo»
+> (`ev-v17-011254-542726f6`, `fb-2026-11-04-sesion-06-e0fb393a`): la caja con la vela que rompe ya
+> cerrada, que es lo que hace el motor. Como preveía este apartado, `caja_se_fija` =
+> `en_cada_cierre_m1` pasa a CONFIRMED con esta misma fuente, a mano. Mientras no aparece otro punto
+> la caja «simplemente se mantiene en el punto anterior» (`ev-v17-011419-0862662c`).
+
 ### 3. La cota de peticiones, con un test sintético
 
 Con el 1 expandiéndose, cada cierre de M1 que sube el 1 cuesta dos peticiones (cancelar y colocar,
@@ -63,6 +71,9 @@ la corrida de R3.1. Aquí no corre el arnés.
 
 `caja_bloque` (R6, DEFAULT_AMBIGUOUS bajo A-48), `orden_stop_punto`, la decisión 1 de ADR-0064 y la
 vida de la orden (ADR-0066). A-49 sigue ABIERTA.
+
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** Desde la sesión 6, `caja_bloque` = R6
+> es CONFIRMED (A-48 sigue ABIERTA por el 0) y A-49 está RESUELTA (recuadro de §2).
 
 > **Nota (2026-10-18, ADR-0083, `trabajo/punto-usado`):** la decisión 1 de ADR-0064 sí cambió
 > después, por ADR-0083: el llenado no gasta el punto y, tras una pérdida o un break even, el mismo

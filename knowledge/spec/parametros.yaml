@@ -746,14 +746,20 @@ parametros:
       2026-10-11 el valor era el de la decision 5 de ADR-0064, la lectura mas conservadora. DESDE
       ADR-0074 (2026-10-11, sesion 4, S-4: «si ocurre una vela verde, otra vela verde, pues
       simplemente lo vamos actualizando la caja, mientras no se desarrolle otro punto breaker»,
-      ev-v10-004945-59ebac47) el valor es `en_cada_cierre_m1`, por decision; sigue
-      DEFAULT_AMBIGUOUS bajo A-49 porque A-49 (la caja con la vela cerrada o en formacion) sigue
-      ABIERTA y es el unico estado que admite ambiguedad_id. Lo lee el productor (engine/zonas.py),
-      no una regla
+      ev-v10-004945-59ebac47) el valor es `en_cada_cierre_m1`, por decision; fue DEFAULT_AMBIGUOUS
+      bajo A-49 hasta el 2026-11-05. CONFIRMED DESDE EL 2026-11-05 (trabajo/activar-sesion-06,
+      sesion 6, S-16): A-49 RESUELTA por el trader, «apenas ocurre el rompimiento yo ya voy trazando
+      la caja … tiene que cerrar la vela rompimiento cierra de la vela no importa con mecha o sea con
+      cuerpo» (ev-v17-011254-542726f6, fb-2026-11-04-sesion-06-e0fb393a: la caja con la vela que
+      rompe ya cerrada); mientras no aparece otro punto «simplemente se mantiene en el punto
+      anterior» (ev-v17-011419-0862662c); y al volver a entrar, el 0 y el 1 «vamos a estar en
+      constante actualización» (ev-v17-013815-9cf6f076). Pasa a mano, porque es de categoria
+      ejecucion y feedback apply no la escribe; la fuente sigue siendo la decision (ADR-0074), como
+      lote_si_no_cabe (A-57, sesion 5) y reloj_sesiones (ADR-0069). Lo lee el productor
+      (engine/zonas.py), no una regla
     consumido_por: [ADR-0064, ADR-0074]
-    estado: DEFAULT_AMBIGUOUS
+    estado: CONFIRMED
     valor: en_cada_cierre_m1
-    ambiguedad_id: A-49
     fuente:
       tipo: decision
       id: ADR-0074

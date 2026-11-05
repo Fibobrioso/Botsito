@@ -52,10 +52,11 @@ REGLAS = (
 # (trabajo/activacion-a42, ADR-0069) sale A-42, RESUELTA por S-7 y por escrito. El 2026-10-12
 # (trabajo/activar-sesion-04-motor, ADR-0076) sale A-21, RESUELTA por S-10 de la sesion 4. El
 # 2026-10-26 (trabajo/activar-sesion-05) sale A-32, RESUELTA por S-18 de la sesion 5 (v16), con su
-# bloque «La liquidez de M15», que solo la llevaba a ella; A-57 nunca estuvo en la hoja.
+# bloque «La liquidez de M15», que solo la llevaba a ella; A-57 nunca estuvo en la hoja. El
+# 2026-11-05 (trabajo/activar-sesion-06) sale A-49, RESUELTA por S-16 de la sesion 6.
 ORDEN_SESION_02: tuple[tuple[str, tuple[str, ...]], ...] = (
     ("Lo primero", ("A-35", "A-44", "A-43", "A-24")),
-    ("La orden y el stop", ("A-48", "A-49")),
+    ("La orden y el stop", ("A-48",)),
     ("La gestión de la operación", ("A-13",)),
 )
 ESTADOS_QUE_SE_PREGUNTAN = ("ABIERTA", "DECIDIDA")
