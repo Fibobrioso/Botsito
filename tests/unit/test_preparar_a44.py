@@ -147,7 +147,7 @@ def test_con_el_registro_real_el_tope_es_el_del_dia_en_porcentaje_sobre_el_saldo
 ) -> None:
     """Lo que la sesion 5 fijo (S-4, trabajo/activar-sesion-05): solo el tope del dia, en
     porcentaje (el 4,5 % de la sesion 1 sobre el saldo inicial del dia), sin tope de semana; la
-    magnitud `saldo` es un DEFAULT_AMBIGUOUS bajo A-44 (lectura del consultor) y el reloj del
+    magnitud `saldo` es CONFIRMED desde la sesion 6 (S-1, solo las cerradas) y el reloj del
     reinicio sigue sin decirlo el trader: el corte del perfil, marcado SUPUESTO. Con el valor
     puesto, el diagnostico se rechaza."""
     t = tope_del_registro(registro, HUSO_PERFIL)
@@ -167,9 +167,9 @@ def test_con_el_registro_real_una_caida_en_abierto_que_se_recupera_no_cuenta(
     """El test saldo/equity que pidio el encargo de trabajo/activar-sesion-05 (lo pedia sobre un
     registro sintetico; va sobre el REAL, para que vigile el valor real, y lo sintetico es el
     escenario: hecho de otra forma, declarado en ACTIVAR-SESION-05.md §1.2): con la magnitud leida
-    del registro (saldo, bajo A-44) una posicion abierta que va perdiendo y se recupera no suma
-    perdida del dia; si el registro se leyera como equity, sumaria. Si alguien cambia la magnitud a
-    equity sin pasar por A-44, este test falla."""
+    del registro (saldo, CONFIRMED por la sesion 6) una posicion abierta que va perdiendo y se
+    recupera no suma perdida del dia; si el registro se leyera como equity, sumaria. Si alguien
+    cambia la magnitud a equity sin pasar por A-44, este test falla."""
     t0 = datetime(2030, 1, 15, 8, tzinfo=UTC)
     real = tope_del_registro(registro, HUSO_PERFIL)
     como_equity = TopeTrader(

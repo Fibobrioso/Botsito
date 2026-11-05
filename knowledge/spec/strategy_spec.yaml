@@ -801,8 +801,9 @@ acumuladores:
       perdida acumulada desde el corte del dia de riesgo. Desde el 2026-10-26 (sesion 5, S-4) la
       produce el tope del trader de engine/tope_trader.py con perdida_trader_alcance = dia y
       perdida_trader_unidad = porcentaje; su magnitud es perdida_trader_magnitud (saldo,
-      DEFAULT_AMBIGUOUS bajo A-44, lectura del consultor) y su corte, el del perfil, SUPUESTO
-      mientras perdida_trader_reinicio_huso siga UNKNOWN
+      CONFIRMED desde el 2026-11-05: solo las cerradas, sesion 6, S-1,
+      fb-2026-11-04-sesion-06-a1f5784d) y su corte, el del perfil, SUPUESTO mientras
+      perdida_trader_reinicio_huso siga UNKNOWN
     base: base_calculo_perdida_diaria
     reinicia_con: reloj_dia_riesgo
     cita: fb-2026-09-09-sesion-01-462134c7
@@ -2052,7 +2053,10 @@ reglas:
       DEFAULT_AMBIGUOUS bajo A-44: LECTURA DEL CONSULTOR de la cita de esta regla, «De la cuenta
       basado en el saldo» (fb-2026-09-09-sesion-01-bff260ea), que habla de la base del porcentaje y
       no de si lo abierto cuenta; el trader no lo ha dicho, y es la primera pregunta de la sesion
-      6. Con saldo, una caida en abierto que se recupera no cuenta; con equity contaria
+      6. DESDE EL 2026-11-05 (rama trabajo/activar-sesion-06) LA DIJO EL TRADER: solo las
+      operaciones cerradas (sesion 6, S-1, ev-v17-000218-001b08fb, fb-2026-11-04-sesion-06-a1f5784d),
+      y perdida_trader_magnitud = saldo pasa a CONFIRMED con el mismo valor; lo de arriba sobre la
+      lectura del consultor queda como historia. Con saldo, una caida en abierto que se recupera no cuenta; con equity contaria
       (ACTIVAR-SESION-05.md §0.b.3). El reloj del reinicio sigue UNKNOWN: el motor usa el corte del
       perfil y lo marca SUPUESTO. A-44 SIGUE ABIERTA y bloqueante; fijar los parametros con ella
       abierta es una DESVIACION declarada de la skill activar-sesion por orden del consultor

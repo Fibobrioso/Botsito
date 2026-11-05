@@ -1,0 +1,20 @@
+id: fb-2026-11-04-sesion-06-a1f5784d
+sesion: 2026-11-04-sesion-06
+fecha: '2026-11-04'
+medio: video
+objetivo:
+  tipo: parametro
+  id: perdida_trader_magnitud
+accion: RESOLVE_UNKNOWN
+respuesta_literal: Pues en este caso sería solo cerradas Solo las operaciones cerradas
+registrado_por: Aleks · grabacion de la sesion 6 (v17), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-05 (trabajo/activar-sesion-06, encargo A.1 y respuesta a la PARADA,
+  punto 0)
+grabacion: Grabación de pantalla 2026-11-04 142903.mp4
+t0: 0:02:18
+t1: 0:02:23
+valor_resultante: saldo
+notas: 'S-1 (A-44), opcion a: la perdida del dia que hace parar se cuenta solo con las operaciones cerradas
+  (ev-v17-000218-001b08fb)'
+recibido_el: '2026-11-04'
+procedencia: trader_grabado

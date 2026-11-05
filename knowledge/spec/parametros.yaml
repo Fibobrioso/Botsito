@@ -1461,24 +1461,24 @@ parametros:
     descripcion: >-
       si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas)
       o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni
-      perdida_semana (ADR-0053 §3.3): es A-44. DEFAULT NUESTRO en `saldo` desde el 2026-10-26
-      (rama trabajo/activar-sesion-05, respuesta del consultor a la PARADA, punto 1): es LECTURA
-      DEL CONSULTOR, bajo A-44, que sigue ABIERTA, y no una respuesta del trader. La fuente es lo
-      unico que el trader ha dicho con la palabra «saldo», «De la cuenta basado en el saldo, y que
-      sea en el saldo inicial del día» (fb-2026-09-09-sesion-01-bff260ea, que es un CORRECT sobre
-      perdida_maxima_diaria y habla de la BASE del porcentaje, no de si lo abierto cuenta); en la
-      sesion 5 no lo dijo (S-4: ev-v15-000856-ee8f7ba3 y ev-v15-000913-bdb12f92 dan el alcance y la
-      unidad). Por eso no entra CONFIRMED (precedente orden_stop_punto;
-      docs/runbooks/ERRORES-RECURRENTES.md, trabajo/corrida-construccion, leccion 2). Con `saldo`,
-      una caida en abierto que se recupera no cuenta (medido: ACTIVAR-SESION-05.md §0.b.3). Es la
-      primera pregunta de la sesion 6. Lo lee engine/tope_trader.py (`registro.opcion`, anotado)
-    estado: DEFAULT_AMBIGUOUS
-    valor: saldo
-    ambiguedad_id: A-44
+      perdida_semana (ADR-0053 §3.3): es la magnitud de A-44. LO DIJO EL TRADER en la sesion 6
+      (2026-11-04, S-1, v17 0:02:18): «Pues en este caso sería solo cerradas Solo las operaciones
+      cerradas» (ev-v17-000218-001b08fb, fb-2026-11-04-sesion-06-a1f5784d), y al precisar que pasa
+      si la abierta llega a ese punto: «cerramos nosotros, por lo general si toca ya el stop loss …
+      si se pierde automáticamente y llega al 4.5, tendríamos que en cierta parte parar ese día y
+      continuar al siguiente» (ev-v17-000134-725523bf: por lo general cierra si toca el stop; el dia
+      para y sigue al siguiente). La segunda subpregunta de la hoja (en cada momento o al cierre de
+      la vela) queda sin objeto. Hasta el 2026-11-05 fue DEFAULT NUESTRO en `saldo`, lectura del
+      consultor sobre fb-2026-09-09-sesion-01-bff260ea (la BASE del porcentaje, no si lo abierto
+      cuenta; trabajo/activar-sesion-05): el valor no cambia, cambia quien lo dice. A-44 sigue
+      ABIERTA por el reinicio (S-2). Con `saldo`, una caida en abierto que se recupera no cuenta
+      (medido: ACTIVAR-SESION-05.md §0.b.3). Lo lee engine/tope_trader.py (`registro.opcion`)
     consumido_por: [ADR-0053]
+    estado: CONFIRMED
+    valor: saldo
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-bff260ea
+      id: fb-2026-11-04-sesion-06-a1f5784d
   - nombre: perdida_trader_unidad
     categoria: estrategia
     tipo: enum

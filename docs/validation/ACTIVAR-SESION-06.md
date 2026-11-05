@@ -354,6 +354,34 @@ listado de `knowledge/cases`.
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta del consultor a la PARADA (2026-11-05)
+
+Dada por Aleks (consultor) el 2026-11-05. Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de trabajo/activar-sesion-06 (2026-11-05). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA», con su fecha, y aplícala punto por punto (skill fase-cero). Si al aplicar algo medido lo contradice, PARADA 2.
+>
+> 0. (a). Las notas de cada fb-* solo con lo que trae su ítem, más la palabra «desviación» en el de caja_bloque; los demás ítems y la frase sin ítem van a la descripción del parámetro, a la nota de la ambigüedad o de la regla y al informe. Corrige mi error, y es repetido: el revisor de la sesión 5 lo marcó como bloquea (ERRORES-RECURRENTES.md:37 y :99). Lección para la fila del consultor en el cierre: un registro lleva un ítem y nada más; lo que acompaña va a la descripción.
+> 1. (a). test_una_en_parte_no_entra_en_resueltas se reescribe a propósito: sobre A-49 hay exactamente un registro, el RESOLVE_UNKNOWN de la sesión 6, y el CONFIRM de la sesión 4 sigue sobre su ítem (fb-2026-10-04-sesion-04-35a080e2); el docstring y el comentario de :313-316 lo cuentan, y el commit y el informe dicen que cambia de sentido. Motivo: el trader lo dijo con regla general y A-49 es pregunta, no decisión.
+> 2. (a). Ningún registro sobre A-44, como en las sesiones 3 y 5, con la palabra «desviación» del paso 1 de §4 en la NOTA de ACTIVAR-A35-A44.md y en el informe; el registro sobre el parámetro nuevo va en la rama de motor. Motivo: un RESOLVE_UNKNOWN activo sobre una ABIERTA es justo lo que test_kit vigila, y el cierre de A-44 se decide en la PARADA de la rama de motor.
+> 3. (a). Recuadro fechado junto a §5 de PREPARACION-A35-A44.md con la lectura nueva y sus dos ítems; el cuerpo intacto. Corrige mi error: es un informe cerrado.
+> 4. (a). solo_la_contraria, LECTURA DEL CONSULTOR, con este motivo escrito en la descripción y en el recuadro de ADR-0084: la (a) de ev-v17-001712-dc155b5d descarta cualquier_mecha; entre las dos lecturas que quedan, la que conserva el ejemplo de la sesión 5 (ADR-0084 §1) es solo_la_contraria. El recuadro dice que se aparta de la hoja de la sesión 6 («hace falta ADR») porque el selector y su opción ya existen, y que ev-v15-000553-9d95178a, que contestaba al caso (ii), queda sin CORRECT y en tensión hasta la sesión 7 (C.2). Corrige mi error: «mechas incluidas» y «no corta la racha» son conclusiones de la extracción, no frases del trader; nada de eso va en boca suya. La confirmación de C.2 para la sesión 7 se reescribe con lo que sí dijo: que la mecha de una vela posterior que pasa y vuelve no mueve el alto, y que lo toma la vela de M1 que cierra con cuerpo por encima; y se le pregunta aparte, con el esquema de la sesión 5, si la mecha de la propia vela roja que forma el alto es el alto.
+> 5. (a). Sin CONFIRM: ev-v17-001036-e7bdd027 va a las notas de RN-004 como lo que ya hace «el más reciente» de ADR-0045, dicho sobre su gráfico y con «suponiendo». Corrige mi error: RN-004 no enuncia lo que ese ítem confirma.
+> 6. (a). Las notas de RN-020, RN-004, RN-007, A-35 y A-44, y PROJECT_STATE.md:87, se corrigen en el commit de la respuesta que las deja falsas.
+> 7. (a). Recuadro fechado de una o dos líneas en ADR-0053, ADR-0054, ADR-0064 y ADR-0074, cada uno con su fila del índice, en el commit de su respuesta. Motivo: es el alcance 1 del revisor.
+> 8. (a). S-7 va a C sin pregunta nueva, como contexto de los gráficos 2 a 6; y a §«Para la sesión 7» entran, remitidos sin citar, su juicio sobre los esquemas (SESION-06-EXTRACCION.md §4.1, 16) y el consejo de la trendline (§3.6).
+> 9. (a). En las líneas del cierre: R3.7 gana «y la activación de la sesión 6 (R4.2), rama de motor incluida»; R4.3 depende de la rama de motor y de J si la hoja sale de kit hoja; DEMO-FTMO.md:138 («el martes 3») se corrige en el commit del contrato.
+>
+> Además, de §0:
+> 10. I4: la frase es «A-35 y A-44 quedan con valor en los parámetros que el motor lee, y siguen ABIERTAS», como en ACTIVAR-SESION-05.md; perdida_trader_reinicio_huso, perdida_trader_dia_usd y perdida_trader_semana_usd siguen UNKNOWN y sin efecto, y la nota de A-44 lo dice.
+> 11. I1 e I2: las filas de A-49 y A-50 salen de Known Ambiguities, y el precedente para sacarlas de EN_PARTE_SESION_4 es A-32: el commit lo cita. Corrige mis dos errores de redacción del encargo.
+> 12. M8, M9, M10, M11 y M12: se escriben como lo medido (las dos frases de §3.4 por separado; la 1 «apenas toca», la 4 «apenas cierra», la 5 las dos; la contradicción de A-13 en la descripcion de break_even_condicion y en el texto de A-13; «por lo general» en lo de ev-v17-000134-725523bf; cada ítem de C.7 por lo suyo).
+> 13. Para §«Para la sesión 7», con los recuentos de b.6: la pregunta del break even (C.1) va la primera y el informe dice por qué, 118 de 286 llenadas pasaron por break even; y la de S-19 lleva el recuento de las 37 rechazadas por precio_invalido, para la PARADA de la rama de motor.
+> 14. La negativa de la guardia al auditor (el grep con una URL de fichero en el patrón) queda declarada en el informe como está; no se reescribe el comando.
+>
+> Sigue lo que manda el encargo: un commit por respuesta en el orden de d, knowledge validate antes de make check, Fuente: en el cuerpo con ids que existen, spec_version subida, CI de Linux por fix/activar-sesion-06 con su número de run (gh run view suelto), revisor (opus) con los cinco alcances del encargo y su informe pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
 ## Estado
 
-EN CURSO: fase 0 hecha, en PARADA.
+EN CURSO: respuesta del consultor recibida; se aplica punto por punto.

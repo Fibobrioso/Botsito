@@ -1329,7 +1329,15 @@ ambiguedades:
       y perdida_trader_unidad = porcentaje (fb-2026-10-23-sesion-05-e9559876,
       fb-2026-10-23-sesion-05-1772d9ef). Lo que no dijo: si la perdida cuenta lo abierto
       (perdida_trader_magnitud, DEFAULT_AMBIGUOUS en saldo, lectura del consultor) y con que reloj
-      vuelve a contar. SIGUE ABIERTA.
+      vuelve a contar. RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-1 y S-2): la
+      magnitud, solo las operaciones cerradas («Pues en este caso sería solo cerradas Solo las
+      operaciones cerradas», ev-v17-000218-001b08fb; por lo general cierra si toca el stop, y si
+      llega al 4,5 para ese dia y sigue al siguiente, ev-v17-000134-725523bf):
+      perdida_trader_magnitud = saldo pasa a CONFIRMED (fb-2026-11-04-sesion-06-a1f5784d). A-35 y
+      A-44 quedan con valor en los parametros que el motor lee, y siguen ABIERTAS:
+      perdida_trader_reinicio_huso, perdida_trader_dia_usd y perdida_trader_semana_usd siguen
+      UNKNOWN y sin efecto (los dos de dinero, con la unidad en porcentaje; el del reinicio, con
+      el corte del perfil marcado SUPUESTO). SIGUE ABIERTA y bloqueante por el reinicio (S-2).
     resuelve_en: [F11, F18]
     # NACE EL 2026-09-26 (rama trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks
     # tras la revision del consultor). RN-020 -«el tope porcentual del trader es el unico freno del
