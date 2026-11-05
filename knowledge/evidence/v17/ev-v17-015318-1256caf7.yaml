@@ -1,0 +1,18 @@
+id: ev-v17-015318-1256caf7
+video_id: v17
+t0: '1:53:18'
+t1: '1:53:33'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la roja cierra dentro de la verde sin pasar su mínimo pues en este caso no podríamos nosotros
+  o sea si desde este contexto de aquí no podríamos nosotros trazar aquí como un punto breaker
+afirmacion: si la roja cierra dentro de la verde sin pasar su minimo, el maximo de la verde no se puede
+  trazar como punto de breaker
+tema: mapeo.punto_breaker_la_contraria_tiene_que_romper
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-22. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

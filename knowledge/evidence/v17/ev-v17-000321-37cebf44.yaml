@@ -1,0 +1,19 @@
+id: ev-v17-000321-37cebf44
+video_id: v17
+t0: 0:03:21
+t1: 0:03:42
+modalidad: audio
+tipo: PARAMETER
+cita_literal: la del proveedor de datos que sería try and view o broker también podría ser se maneja en
+  base a eso UTC más 2 si no me equivoco es lo que se suele manejar a ver para confirmar si UTC más 2
+  ahora ahora Madrid.
+afirmacion: «tu hora» es la del proveedor de datos o la del broker, UTC mas 2 si no se equivoca; acaba
+  diciendo «ahora Madrid», sin concretar mas
+tema: riesgo.tope_reinicio_reloj
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'S-2 (A-44), el reloj; con «si no me equivoco». Medido para sus graficos: ADR-0069. docs/validation/SESION-06-EXTRACCION.md'
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

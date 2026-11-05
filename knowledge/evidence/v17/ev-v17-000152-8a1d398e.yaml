@@ -1,0 +1,18 @@
+id: ev-v17-000152-8a1d398e
+video_id: v17
+t0: 0:01:52
+t1: 0:02:02
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Si el trade se pierde o se gana, si se pierde automáticamente y llega al 4.5, tendríamos
+  que en cierta parte parar ese día y continuar al siguiente.
+afirmacion: 'se mira al acabar el trade: si se pierde y se llega al 4,5 se para ese dia y se continua
+  al siguiente'
+tema: riesgo.tope_trader_magnitud_solo_cerradas
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-44). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

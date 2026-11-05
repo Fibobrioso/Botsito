@@ -1,0 +1,17 @@
+id: ev-v17-000559-5a0a1597
+video_id: v17
+t0: 0:05:59
+t1: 0:06:09
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si me vuelves a pedir, por ejemplo de agosto, el de agosto no lo tengo aquí, como te había
+  comentado de la actualización de la cuenta y que había perdido
+afirmacion: 'el replay de agosto no lo tiene en su FX Replay: lo perdio con la actualizacion de la cuenta'
+tema: material.replay_agosto_perdido
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Dicho dentro de S-3; toca NA:Q. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

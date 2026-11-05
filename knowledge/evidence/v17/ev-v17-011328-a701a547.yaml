@@ -1,0 +1,17 @@
+id: ev-v17-011328-a701a547
+video_id: v17
+t0: '1:13:28'
+t1: '1:13:35'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Una compra al revés, exactamente como lo hemos visto en el gráfico, sería el arriba del
+  0 y el 1 abajo.
+afirmacion: 'en una compra es al reves: el 0 arriba y el 1 abajo'
+tema: herramientas.caja.uno_al_punto_mas_alto
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-16 (A-48). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

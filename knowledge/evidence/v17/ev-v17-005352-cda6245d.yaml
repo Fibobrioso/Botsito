@@ -1,0 +1,19 @@
+id: ev-v17-005352-cda6245d
+video_id: v17
+t0: 0:53:52
+t1: 0:54:09
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no bastaría con mecha porque ya hay o sea hay un imbalance entonces si ya hay un rompimiento
+  con cuerpo demasiado fuerte en que sólo bastaría que llegue la mecha para yo poder poner en break y
+  en la operativa
+afirmacion: con un rompimiento con cuerpo muy fuerte, un imbalance, bastaria con que llegue la mecha para
+  poner el break even; la transcripcion dice «no bastaria» al arrancar la frase
+tema: break_even.mecha_con_imbalance
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-13 (A-13), un ejemplo sobre su grafico. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

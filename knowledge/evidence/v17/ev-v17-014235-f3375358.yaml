@@ -1,0 +1,17 @@
+id: ev-v17-014235-f3375358
+video_id: v17
+t0: '1:42:35'
+t1: '1:42:49'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: con qué tipo de orden pues estamos trabajando el stop order si el precio está por encima
+  vamos actualizando o sea el nivel de caja
+afirmacion: sigue siendo orden stop; si el precio esta por encima va actualizando el nivel de la caja
+tema: entrada.orden.precio_mas_alla_del_cero
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-19. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

@@ -1,0 +1,19 @@
+id: ev-v17-013939-860b33e0
+video_id: v17
+t0: '1:39:39'
+t1: '1:40:04'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: entonces tras un stop en un punto vuelvo a entrar en él o sea en el posible punto breaker
+  o sea las veces que las veces que sean necesarias pero el punto breaker tiene que ser avaliado como
+  lo hemos estado mencionando
+afirmacion: tras un stop vuelve a entrar en un punto las veces que sean necesarias, siempre que el punto
+  vuelva a estar validado; no nombra un tope
+tema: reentrada.punto_se_valida_de_nuevo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-18 (ADR-0083 D1). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

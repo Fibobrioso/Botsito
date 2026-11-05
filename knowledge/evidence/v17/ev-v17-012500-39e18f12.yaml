@@ -1,0 +1,16 @@
+id: ev-v17-012500-39e18f12
+video_id: v17
+t0: '1:25:00'
+t1: '1:25:04'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: quedaría el dibujo B, la caja entera por encima quedaría descartado
+afirmacion: descarta el dibujo B, la caja entera por encima del bajo tomado (opcion b de S-17)
+tema: entrada.caja_lado_del_nivel_tomado
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-17 (A-50). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

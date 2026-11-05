@@ -1,0 +1,18 @@
+id: ev-v17-002155-855bdfeb
+video_id: v17
+t0: 0:21:55
+t1: 0:22:17
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: en este caso sería la respuesta c y la vela roja nos permitiría a nosotros si anterior a
+  esta tenemos una vela neutra puedes plantear el máximo por encima de la mecha de la vela neutra
+afirmacion: 'en M15 la vela sin cuerpo entre las verdes y la roja no corta: la roja permite marcar el
+  alto, por encima de la mecha de la vela neutra (opcion c de S-4)'
+tema: liquidez.m15.vela_sin_cuerpo_no_corta_racha
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-35). Hoy M15 usa corta_la_racha. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

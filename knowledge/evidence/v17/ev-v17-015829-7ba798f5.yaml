@@ -1,0 +1,18 @@
+id: ev-v17-015829-7ba798f5
+video_id: v17
+t0: '1:58:29'
+t1: '1:58:37'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: agosto creo que sí creo que está en el drive creo no sé si está allí subido Creo que no
+  está
+afirmacion: de la exportacion de agosto cree que esta en el Drive, no sabe si esta subida, y dice que
+  cree que no
+tema: material.exportacion_agosto
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Para cerrar (NA:Q). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

@@ -9,6 +9,11 @@ inventario, lo que se juntó y lo que quedó fuera, con su porqué: `docs/valida
 > **Antes de grabar: la copia de seguridad de v15 y v16 (crudas y audios, SESION-05-EXTRACCION.md
 > §12) en el Drive de A.4.**
 
+> **RECUADRO (2026-11-05, rama `trabajo/sesion-06`; encargo del consultor, «La hoja que se llevó»,
+> punto 3).** La sesión 6 se celebró el 2026-11-04. La hoja usada, con qué se preguntó, en qué orden y
+> qué no se hizo, está en `docs/sesion-6/HOJA-USADA.md`; lo que contestó el trader, en
+> `docs/validation/SESION-06-EXTRACCION.md`. El cuerpo de este documento queda como estaba.
+
 **La hoja es el PDF del consultor**, hecho con este documento, como en las sesiones 4 y 5. No sale de
 `scripts/hoja_preguntas.py`, que no se toca. Al PDF van, de cada pregunta: el título, «Lo que nos has
 dicho», «Lo que todavía no sabemos», la pregunta con sus opciones, «Para precisar» y «Para confirmar

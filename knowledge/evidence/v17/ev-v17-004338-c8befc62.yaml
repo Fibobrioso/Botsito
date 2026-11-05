@@ -1,0 +1,19 @@
+id: ev-v17-004338-c8befc62
+video_id: v17
+t0: 0:43:38
+t1: 0:43:52
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: la primera sesión que es más claro está ahí pues no hubo toma justamente aquí lo suelta
+  la respuesta no hubo toma de liquidez de m15 es por ello que no se entró
+afirmacion: en el grafico 1, en la primera sesion, no entro porque no hubo toma de liquidez de M15 (opcion
+  a de S-7)
+tema: no_trade.sin_toma_m15
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-7, grafico 1 (sin dia; la clave no entra en esta rama). Dice que no ve claro M15 en el grafico
+  (39:49). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

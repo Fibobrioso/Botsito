@@ -1,0 +1,19 @@
+id: ev-v17-011254-542726f6
+video_id: v17
+t0: '1:12:54'
+t1: '1:13:13'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: apenas ocurre el rompimiento yo ya voy trazando la caja ocurre el rompimiento suponiendo
+  en este caso sería desde aquí hasta aquí ocurre el rompimiento y atraso y cierra la vela ojo con esto
+  tiene que cerrar la vela rompimiento cierra de la vela no importa con mecha o sea con cuerpo
+afirmacion: traza la caja cuando ocurre el rompimiento, y la vela que rompe tiene que haber cerrado, sea
+  con mecha o con cuerpo
+tema: herramientas.caja.trazado_al_cierre_0_y_1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-16 (A-49). Empieza por «apenas» y precisa «tiene que cerrar la vela». docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

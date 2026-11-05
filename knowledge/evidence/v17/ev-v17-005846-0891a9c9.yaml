@@ -1,0 +1,19 @@
+id: ev-v17-005846-0891a9c9
+video_id: v17
+t0: 0:58:46
+t1: 0:59:07
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: este es el punto nuevo más tarde y este sería el que todavía seguiría activo porque para
+  nosotros poder actualizar nuestro punto break posible mundo breaker tendríamos que esperar a que el
+  precio llegue rompa allí
+afirmacion: al explicarlo sobre el dibujo, el punto anterior seguiria activo hasta que el precio rompa
+  y se pueda actualizar al punto nuevo
+tema: entrada.orden.otra_liquidez_se_mueve
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'S-14 (A-53): tira hacia la opcion b, tras haber dicho la a. docs/validation/SESION-06-EXTRACCION.md'
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

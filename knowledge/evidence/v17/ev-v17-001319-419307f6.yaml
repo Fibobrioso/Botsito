@@ -1,0 +1,18 @@
+id: ev-v17-001319-419307f6
+video_id: v17
+t0: 0:13:19
+t1: 0:13:31
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: bueno es que si vuelve al alto eso es indiferente tiene que cerrar con cuerpo o sea tiene
+  que cerrar con cuerpo por encima de la zona lineal de m15
+afirmacion: 'a la pregunta de que mecha mueve el alto de M15 contesta que si vuelve es indiferente: lo
+  que cuenta es cerrar con cuerpo por encima de la zona lineal; no elige entre la contraria y una posterior'
+tema: liquidez.m15.mecha_que_vuelve_indiferente
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-35). Frente a ev-v15-000553-9d95178a. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

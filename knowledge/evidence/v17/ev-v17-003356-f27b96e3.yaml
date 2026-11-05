@@ -1,0 +1,18 @@
+id: ev-v17-003356-f27b96e3
+video_id: v17
+t0: 0:33:56
+t1: 0:34:08
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: tampoco puedo responder esa pregunta como dios y va enfocado a esto aquí que por lo general
+  no lo esperamos
+afirmacion: 'de la orden en el primer punto que se llena antes de la alternancia dice que no puede responder:
+  la pregunta va a algo que por lo general no espera'
+tema: entrada.primer_punto_antes_de_alternancia
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'S-6: no resuelve. docs/validation/SESION-06-EXTRACCION.md'
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

@@ -1,0 +1,18 @@
+id: ev-v17-005730-76652ed8
+video_id: v17
+t0: 0:57:30
+t1: 0:57:39
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Tomar la liquidez más reciente O sea, la quito en ese momento Y espero el punto de la liquidez
+  nueva O sea, la respuesta es la A
+afirmacion: con la orden sin llenar, si el precio toma otra liquidez de M15 la quita en ese momento y
+  espera el punto de la liquidez nueva (opcion a de S-14)
+tema: entrada.orden.otra_liquidez_se_retira
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-14 (A-53). Frente a ev-v10-015831-fb95edf0 y a lo que dice al explicarlo (58:57). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

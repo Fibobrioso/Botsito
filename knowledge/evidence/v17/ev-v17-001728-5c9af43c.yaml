@@ -1,0 +1,17 @@
+id: ev-v17-001728-5c9af43c
+video_id: v17
+t0: 0:17:28
+t1: 0:17:38
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: No, no, eso ya nos es indiferente. La vela que genere el rompimiento o la toma de liquidez
+  de M15 Tiene que hacerlo con cuerpo
+afirmacion: una vez tomado el alto con cuerpo, una mecha posterior ya no lo vuelve a mover
+tema: liquidez.m15.nivel_congelado_al_tomarse
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-35; ADR-0084, el nivel se congela al tomarse). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

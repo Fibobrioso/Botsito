@@ -1,0 +1,16 @@
+id: ev-v17-001036-e7bdd027
+video_id: v17
+t0: 0:10:36
+t1: 0:10:42
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: suponiendo que esto te deja otra vela verde entonces actualizas tu zona lineal de m15 aquí
+afirmacion: si deja otra vela verde en M15 se actualiza la zona lineal a esa vela
+tema: liquidez.m15.zona_se_actualiza_con_otra_vela
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-35), dicho sobre su grafico. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

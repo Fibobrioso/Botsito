@@ -1,0 +1,18 @@
+id: ev-v17-014103-02e0163f
+video_id: v17
+t0: '1:41:03'
+t1: '1:41:37'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si, o sea, se pone la orden igual, aquí ya se activaría la orden, es más, o sea, al ocurrir
+  este rompimiento de aquí, ya a mí me habilita
+afirmacion: con el precio mas alla del 0 al formarse la caja, pone la orden igual; a continuacion duda
+  del 0 del esquema y va a su grafico
+tema: entrada.orden.precio_mas_alla_del_cero
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-19. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a
