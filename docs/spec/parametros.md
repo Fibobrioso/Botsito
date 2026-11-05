@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.5.8` · hash `b80e6f7b6122…`
+`spec_version 18.5.9` · hash `cebcdb360bfd…`
 
 111 en total: 99 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -203,7 +203,7 @@ Opciones: `saldo_actual`, `saldo_inicial_dia`.
 
 ### `break_even_condicion`
 
-si el break even se pone al tocar el nivel o al cierre de la vela (A-4)
+si el break even se pone al tocar el nivel o al cierre de la vela (A-4). CONFIRMED en `tocar` por la sesion 1 («apenas toca»). EN TENSION DESDE LA SESION 6, sin registro ni cambio de valor (trabajo/activar-sesion-06): en S-13 (A-13) empezo por el toque y se corrigio en la misma respuesta, «Apenas toque Se pone en break up No, no no es apenas toque es que la vela la siguiente vela cierre por encima es la condición cierre» (ev-v17-005111-8933dab2), y «la vela tiene que cerrar con un cuerpo por encima … para poder poner en break even» (ev-v17-005200-4f93afa0); sus condiciones, «rompimiento con cuerpo desarrollo de zona de control cierre con cuerpo» (ev-v17-005554-172ecbb2); con la excepcion de un rompimiento muy fuerte, un imbalance, en que bastaria la mecha (ev-v17-005352-cda6245d), y «lo ideal sería dar como un poco de margen» (ev-v17-005454-90ce4feb); con dudas sobre sus ejemplos. En la sesion 1 dijo «apenas toca», en la 4 «apenas cierra» y en la 5 las dos. «Al cierre y con cuerpo» cambiaria este parametro y break_even_criterio_ruptura (dos CORRECT con supersede): es la primera pregunta de la sesion 7
 
 Opciones: `tocar`, `cierre`.
 
@@ -523,7 +523,7 @@ Opciones: `al_darse_el_esquema`, `al_tomarse_la_liquidez`, `al_aparecer_punto_de
 
 ### `orden_pendiente_al_abrir_escenario`
 
-la orden de entrada que sigue pendiente cuando una toma de otra liquidez abre un escenario nuevo en la misma sesion (`abrir_escenario`, RN-004; ADR-0066). `se_mueve`: sigue viva -y se puede llenar en su punto- hasta el primer punto de breaker de la liquidez nueva, donde RN-006 la reubica; es lo que hacia el motor (medido en tests/unit/test_escenarios_por_sesion.py). `se_retira`: se cancela en el instante en que se abre el escenario nuevo. Nunca conviven dos: RN-011 no coloca con una pendiente. PROVISIONAL hasta la pregunta 21 de la sesion 4 («Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden?», A-53). El valor sale de lo unico que dijo el trader de la vida de la orden: «sigue vivo hasta que se desarrolle otra próxima, otro posible punto de breaker» (A-38, fb-2026-09-29-sesion-03-c7fa3068), que habla de la misma liquidez y no de otra. Parametro de la orden del consultor del 2026-10-02 (punto 4); el valor es el comportamiento que el motor ya tenia, no una decision
+la orden de entrada que sigue pendiente cuando una toma de otra liquidez abre un escenario nuevo en la misma sesion (`abrir_escenario`, RN-004; ADR-0066). `se_mueve`: sigue viva -y se puede llenar en su punto- hasta el primer punto de breaker de la liquidez nueva, donde RN-006 la reubica; es lo que hacia el motor (medido en tests/unit/test_escenarios_por_sesion.py). `se_retira`: se cancela en el instante en que se abre el escenario nuevo. Nunca conviven dos: RN-011 no coloca con una pendiente. PROVISIONAL hasta la pregunta 21 de la sesion 4 («Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces con la orden?», A-53). El valor sale de lo unico que dijo el trader de la vida de la orden: «sigue vivo hasta que se desarrolle otra próxima, otro posible punto de breaker» (A-38, fb-2026-09-29-sesion-03-c7fa3068), que habla de la misma liquidez y no de otra. Parametro de la orden del consultor del 2026-10-02 (punto 4); el valor es el comportamiento que el motor ya tenia, no una decision. Tras la sesion 6 (S-14) sigue DEFAULT_AMBIGUOUS en se_mueve, LECTURA DEL CONSULTOR bajo A-53: dijo la letra (a), se_retira, y lo explico hacia la (b) (ev-v17-005730-76948af1, ev-v17-005846-0891a9c9); va a la sesion 7
 
 Opciones: `se_mueve`, `se_retira`.
 
