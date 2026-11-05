@@ -1317,7 +1317,10 @@ reglas:
       «suponiendo»: «suponiendo que esto te deja otra vela verde entonces actualizas tu zona lineal
       de m15 aquí» (ev-v17-001036-e7bdd027), que es lo que ya hace «el mas reciente» de ADR-0045;
       va aqui sin registro, porque esta regla no enuncia lo que ese item confirma (respuesta a la
-      PARADA, punto 5)
+      PARADA, punto 5). Y de la vela sin cuerpo (sesion 6, S-20): su mecha cuenta en M1, pero «si
+      es combinación con contexto de M15 para validar una toma de liquidez de M15, no cuenta»
+      (ev-v17-014644-674966b7), que casa con esta regla y con ADR-0062 §1 (la toma pide cuerpo):
+      sin cambio
     forma:
       cuando:
         todos_de:
@@ -1483,7 +1486,12 @@ reglas:
       (ev-v16-000851-f5ae3b6f). Ni cifra ni parametro de umbral: cuerpo cero es cierre igual a la
       apertura (ADR-0002). A la sesion 6: si se miran las mechas de una vela sin cuerpo (hoy
       cuentan donde cuentan, decision del consultor) y las velas de 1 o 2 puntos, que aqui siguen
-      siendo de su color aunque ev-v16-000851 las meta en el mismo saco
+      siendo de su color aunque ev-v16-000851 las meta en el mismo saco. LO DIJO EL TRADER EN LA
+      SESION 6 (S-20; trabajo/activar-sesion-06, ADR-0085 §3, recuadro del 2026-11-05): una vela de
+      1 o 2 puntos de cuerpo cuenta como cambio de color en el retroceso (ev-v17-014603-63d190df,
+      ev-v17-014736-30d2947b; CORRECT sobre ev-v16-000851-f5ae3b6f,
+      fb-2026-11-04-sesion-06-f2236d1e) y la mecha de una vela sin cuerpo cuenta en M1
+      (ev-v17-014644-674966b7). La forma no cambia: es lo que el motor ya hacia
     forma:
       cuando:
         todos_de:
