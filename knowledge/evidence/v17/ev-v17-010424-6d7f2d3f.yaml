@@ -1,0 +1,17 @@
+id: ev-v17-010424-6d7f2d3f
+video_id: v17
+t0: '1:04:24'
+t1: '1:04:39'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: a ver operas operas enfocándote o sea después de las 7 de las 7 en adelante pero en m1 o
+  sea O sea, antes de las 7 solo se usa para trazo de liquidez.
+afirmacion: se opera de las 7 en adelante, en M1; antes de las 7 solo se usa para trazo de liquidez
+tema: liquidez.m15.tomada_antes_de_las_7
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-15 (A-43). Frente a ev-v10-014613-6cf002b2 y toma_antes_de_la_ventana = cuenta. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

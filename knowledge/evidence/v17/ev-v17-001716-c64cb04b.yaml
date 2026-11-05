@@ -1,0 +1,17 @@
+id: ev-v17-001716-c64cb04b
+video_id: v17
+t0: 0:17:16
+t1: 0:17:22
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La respuesta es sí, cerró con cuerpo por encima del alto de antes.
+afirmacion: una M1 que cierra con cuerpo por encima del alto de antes, aunque por debajo de una mecha
+  posterior, toma la liquidez (opcion a del primer Para precisar de S-3)
+tema: liquidez.m15.toma_sobre_el_alto_de_antes
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-35). Va contra lo que hace hoy ADR-0084, decision del consultor. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

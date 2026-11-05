@@ -1,0 +1,19 @@
+id: ev-v17-005730-76948af1
+video_id: v17
+t0: 0:57:30
+t1: 0:57:41
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Tomar la liquidez más reciente O sea, la quito en ese momento Y espero el punto de la liquidez
+  nueva O sea, la respuesta es la A la A la verdad no, como lo planteé aquí
+afirmacion: dice que la quita en ese momento y espera el punto de la liquidez nueva, y la letra A; a continuacion
+  «la verdad no, como lo planteé aqui», que puede ir por el esquema o por la letra
+tema: entrada.orden.otra_liquidez_se_retira
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-005730-76652ed8
+notas: 'S-14 (A-53). Corregido tras el revisor, a3: la cita se cortaba en la letra. docs/validation/SESION-06-EXTRACCION.md'
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

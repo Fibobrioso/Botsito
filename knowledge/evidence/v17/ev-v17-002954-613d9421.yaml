@@ -1,0 +1,18 @@
+id: ev-v17-002954-613d9421
+video_id: v17
+t0: 0:29:54
+t1: 0:30:23
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: si el primer retroceso, bueno, no existe como tal una alternancia, aunque yo, a ver, me
+  gustaría saber cómo es que tú defines, o sea, lo de alternancia en el precio
+afirmacion: dice que no existe como tal una alternancia en ese retroceso y pregunta como se define la
+  alternancia; no elige opcion
+tema: zona_control.alternancia_definicion_que_pide
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

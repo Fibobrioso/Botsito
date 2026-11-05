@@ -1,0 +1,17 @@
+id: ev-v17-012715-8aaaa59f
+video_id: v17
+t0: '1:27:15'
+t1: '1:27:35'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: frente al nivel tomado descarto la caja cuando por ejemplo en este caso sería el dibujo
+  B o sea si no existe una toma debajo no puedes tú trazar la caja
+afirmacion: 'su razon de descartar el dibujo B: si no existe una toma debajo no se puede trazar la caja'
+tema: entrada.caja_lado_del_nivel_tomado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-17 (A-50). El motivo es la toma, no la caja frente al nivel. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

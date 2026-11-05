@@ -1,0 +1,17 @@
+id: ev-v17-004910-11d48393
+video_id: v17
+t0: 0:49:10
+t1: 0:49:20
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: O sea, el bot ha hecho, suponiendo que ha hecho esta entrada así Pero no me dice los criterios
+  por qué O sea, no veo los trazos de M15 y todo eso
+afirmacion: 'del grafico 2 no decide: no ve los criterios del bot ni los trazos de M15'
+tema: material.graficos_sin_criterios
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'S-8, grafico 2: no resuelve. docs/validation/SESION-06-EXTRACCION.md'
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

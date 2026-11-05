@@ -1,0 +1,18 @@
+id: ev-v17-001543-c92f549c
+video_id: v17
+t0: 0:15:43
+t1: 0:15:53
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Simplemente no podemos validar nosotros esta entrada, o sea, tiene que haber un rompimiento
+  con cuerpo para poder validar
+afirmacion: 'no se puede validar esa entrada: tiene que haber un rompimiento con cuerpo'
+tema: liquidez.m1_mecha_m15_cuerpo
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-001543-6393c5b3
+notas: S-3 (A-35). Corregido tras el revisor, a9. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

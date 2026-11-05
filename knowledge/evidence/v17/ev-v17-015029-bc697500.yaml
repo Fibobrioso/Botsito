@@ -1,0 +1,19 @@
+id: ev-v17-015029-bc697500
+video_id: v17
+t0: '1:50:29'
+t1: '1:50:47'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Entonces, si el punto se rompe con la mecha después de una alternancia, pues, como digo,
+  o sea, que ocurra lo que tenga que suceder, pero claro, antes de eso tiene que cumplirse los criterios
+  de validar el posible punto breaker correctamente, tener la order stop y la caja
+afirmacion: si el punto se rompe con la mecha tras una alternancia, que ocurra lo que tenga que suceder,
+  pero antes tiene que estar validado el punto, con la orden stop y la caja
+tema: entrada.punto_roto_con_mecha_cualquier_color
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-21, la confirmacion. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

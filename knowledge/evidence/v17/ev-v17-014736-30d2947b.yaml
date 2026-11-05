@@ -1,0 +1,19 @@
+id: ev-v17-014736-30d2947b
+video_id: v17
+t0: '1:47:36'
+t1: '1:48:02'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Sí, es que, claro, a ver, una vela de uno o dos puntos con cuerpo en el retroceso, o sea,
+  el retroceso, pues, es válido, o sea, como cambio de color para trazar el punto, y de una vela sin cuerpo
+  sus mechas, pues, también cuentan
+afirmacion: una vela de uno o dos puntos de cuerpo en el retroceso vale como cambio de color para trazar
+  el punto, y las mechas de una vela sin cuerpo cuentan
+tema: zona_control.vela_uno_dos_puntos_cuenta
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-20, la confirmacion. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

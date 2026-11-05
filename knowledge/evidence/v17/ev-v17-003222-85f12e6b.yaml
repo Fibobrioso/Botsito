@@ -1,0 +1,19 @@
+id: ev-v17-003222-85f12e6b
+video_id: v17
+t0: 0:32:22
+t1: 0:32:50
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: más de información desarrollada como digo para poder responder o sea porque estas preguntas
+  van van dirigidas a este punto aquí pero este punto aquí por lo general o sea no operamos nosotros solemos
+  operar pues la liquidez por así decirlo izquierda
+afirmacion: le falta informacion para responder; ese punto por lo general no lo opera, y suele operar
+  la liquidez de la izquierda
+tema: entrada.primer_punto_antes_de_alternancia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

@@ -1,0 +1,17 @@
+id: ev-v17-014603-63d190df
+video_id: v17
+t0: '1:46:03'
+t1: '1:46:20'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: entonces una vela de uno con cambio de color cuenta como cambio de color sería la respuesta
+  c otra cual con lo que hemos explicado aquí o sea influye influye claramente
+afirmacion: en M1 la vela de 1 punto de cuerpo influye; marca la opcion c de S-20
+tema: zona_control.vela_uno_dos_puntos_cuenta
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-20. Frente a ev-v16-000851-f5ae3b6f. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

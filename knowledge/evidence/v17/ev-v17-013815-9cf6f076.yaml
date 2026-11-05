@@ -1,0 +1,18 @@
+id: ev-v17-013815-9cf6f076
+video_id: v17
+t0: '1:38:15'
+t1: '1:38:28'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si al volver a entrar que haces en el 0 y con el 1 de la caja como digo o sea nuevamente
+  lo repito vamos a estar en constante actualización
+afirmacion: al volver a entrar, el 0 y el 1 de la caja estan en constante actualizacion; no dice si es
+  la caja del primer intento o una nueva
+tema: reentrada.caja_se_vuelve_a_trazar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-18 (ADR-0083 D1). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

@@ -1,0 +1,16 @@
+id: ev-v17-002516-426ce5b2
+video_id: v17
+t0: 0:25:16
+t1: 0:25:21
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: Es que aquí no habría entradas En estos retrocesos no habría entradas
+afirmacion: sobre el dibujo de S-5, en esos retrocesos despues de la toma no habria entradas
+tema: entrada.zona_despues_de_la_toma
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5, sobre el esquema, que corrige. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

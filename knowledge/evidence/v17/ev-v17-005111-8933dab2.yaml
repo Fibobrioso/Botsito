@@ -1,0 +1,18 @@
+id: ev-v17-005111-8933dab2
+video_id: v17
+t0: 0:51:11
+t1: 0:51:27
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La respuesta es simple Apenas toque Se pone en break up No, no no es apenas toque es que
+  la vela la siguiente vela cierre por encima es la condición cierre
+afirmacion: 'empieza por apenas toque y se corrige en la misma respuesta: no es al toque, la siguiente
+  vela tiene que cerrar por encima'
+tema: break_even.disparador_cierre_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-13 (A-13). Hoy break_even_condicion = tocar. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

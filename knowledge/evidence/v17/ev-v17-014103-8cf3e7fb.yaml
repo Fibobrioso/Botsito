@@ -1,0 +1,18 @@
+id: ev-v17-014103-8cf3e7fb
+video_id: v17
+t0: '1:41:03'
+t1: '1:41:37'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si, o sea, se pone la orden igual, aquí ya se activaría la orden, es más, o sea, al ocurrir
+  este rompimiento de aquí, ya a mí me habilita
+afirmacion: se pone la orden igual; al ocurrir el rompimiento ya le habilita
+tema: entrada.orden.precio_mas_alla_del_cero
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-014103-02e0163f
+notas: S-19. Corregido tras el revisor, a9. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

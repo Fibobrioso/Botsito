@@ -1,0 +1,17 @@
+id: ev-v17-005554-172ecbb2
+video_id: v17
+t0: 0:55:54
+t1: 0:55:59
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: rompimiento con cuerpo desarrollo de zona de control cierre con cuerpo
+afirmacion: 'las condiciones del break even, en orden: rompimiento con cuerpo, desarrollo de zona de control
+  y cierre con cuerpo'
+tema: break_even.disparador_cierre_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-13 (A-13). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

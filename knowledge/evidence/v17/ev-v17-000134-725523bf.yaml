@@ -1,0 +1,21 @@
+id: ev-v17-000134-725523bf
+video_id: v17
+t0: 0:01:34
+t1: 0:02:02
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: cerramos nosotros, por lo general si toca ya el stop loss por ejemplo, si en el último trade
+  estamos y nos da, o sea, en ese trade se define o si bien llegamos al tope del día que sería ese 0.5
+  adicional que perdemos, se va a dar o sea, en base a Si el trade se pierde o se gana, si se pierde automáticamente
+  y llega al 4.5, tendríamos que en cierta parte parar ese día y continuar al siguiente.
+afirmacion: 'por lo general cierra si toca ya el stop; en ese trade se define: si se pierde y llega al
+  4,5 para ese dia y sigue al siguiente'
+tema: riesgo.tope_trader_magnitud_solo_cerradas
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-000152-8a1d398e
+notas: S-1 (A-44), el primer Para precisar. Corregido tras el revisor, a9. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

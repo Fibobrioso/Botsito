@@ -1,0 +1,17 @@
+id: ev-v17-002250-d6ca3ef8
+video_id: v17
+t0: 0:22:50
+t1: 0:23:04
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: entonces como hemos mencionado con anterioridad la respuesta sería puede ser la mecha de
+  la vela sin cuerpo y si son dos o tres velas sin cuerpo seguidas pues se va a la mecha
+afirmacion: el alto puede ser la mecha de la vela sin cuerpo, tambien con dos o tres seguidas
+tema: liquidez.m15.vela_sin_cuerpo_no_corta_racha
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-35). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

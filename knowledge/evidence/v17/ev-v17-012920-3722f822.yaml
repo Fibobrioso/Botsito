@@ -1,0 +1,18 @@
+id: ev-v17-012920-3722f822
+video_id: v17
+t0: '1:29:20'
+t1: '1:29:28'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: equivocado y no quise decir breakeven eran los equals, o sea los equals más que nada cuando
+  hay equals o sea, eso quería replantearme
+afirmacion: 'corrige lo que dijo en la sesion 5: lo que queria replantearse no era el break even sino
+  los equals'
+tema: reentrada.mismo_nivel_duda
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-18, sobre ev-v15-002029-1ac081ae. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

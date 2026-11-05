@@ -192,6 +192,32 @@ videos:
       cerrar», con respuestas del trader en voz; puede que el trader ensene tambien su replay de
       julio, dias sin precisar; sin cortes de audio
 
+  # LA SESION 6 CON EL TRADER (rama `trabajo/sesion-06`, docs/validation/SESION-06-EXTRACCION.md): un
+  # solo video y un solo dia, id de sesion 2026-11-04-sesion-06, con la hoja de la sesion 06
+  # (docs/sesion-6/HOJA-USADA.md, codigos S-1 a S-23).
+  - video_id: v17
+    fichero: "Grabación de pantalla 2026-11-04 142903.mp4"
+    drive_id: null  # grabacion de sesion: nace en local, no viene de Drive (ADR-0011)
+    bytes: 7574611265
+    fecha_grabacion: "2026-11-04"
+    # PROCEDENCIA (el esquema no tiene campo de notas; va aqui y en `naturaleza`): la sesion 6
+    # entera. Duracion 1:59:59 (7199,2 s), 1844x1062 a 30 fps, audio AAC estereo a 48 kHz. El audio
+    # tiene TRES SILENCIOS seguidos (ffmpeg silencedetect a -50 dB y 30 s, y volumedetect, el
+    # 2026-11-04): de 1:15:43 a 1:18:38, de 1:18:51 a 1:20:05 y de 1:20:07 a 1:21:55 (4543,9 s a
+    # 4914,8 s, con 14 s y 3 s de audio entre ellos). Segun Aleks (2026-11-04) fue una pausa: el
+    # trader se ausento; ninguna respuesta se corta. Estan en tramos_no_citables.yaml. Segun Aleks
+    # (2026-11-04), el trader explico conceptos de las preguntas mostrando su grafico de julio, dias
+    # sin precisar, y dijo que aun no ha grabado diciembre. Lo que se pregunto y lo que se enseno, medido
+    # en la filtrada: SESION-06-EXTRACCION.md §2.4; los graficos no llevan su dia, y su clave no entra.
+    naturaleza: >-
+      sesion 6 con el trader (2026-11-04-sesion-06, hoja de la sesion 06): preguntas del consultor
+      S-1 a S-8 y S-13 a S-23 y las peticiones de «Para cerrar», en el orden de la hoja, con respuestas
+      del trader en voz; S-7 y S-8 sobre los SVG limpio y marcado de los graficos 1 y 2, sin su dia,
+      que Aleks le pasa por WhatsApp y el trader abre en su lado (S-8 queda a medias); S-9 a S-12 no se
+      hicieron; el trader comparte su pantalla, dibuja sobre los esquemas inventados, ensena su grafico
+      de julio, dias sin precisar, y abre un momento el replay de otro mes; con TRES SILENCIOS
+      seguidos, de 1:15:43 a 1:21:55, por una pausa del trader
+
 carpetas:
   - ruta: "_procesado"
     papel: heredado_v2

@@ -1,0 +1,18 @@
+id: ev-v17-015749-e8ff8754
+video_id: v17
+t0: '1:57:49'
+t1: '1:58:02'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: como digo, o sea va a depender si se rompe o no el rango o sea, si se llega a romper el
+  rango, por ejemplo si estamos en rango bajista y llega a romperse por velas tiene que ser H4 para poderlo
+  balear, no nos sirve M15, tiene que ser H4
+afirmacion: depende de si se rompe el rango, y eso se valida en H4, no en M15
+tema: sesgo.toma_de_la_manana_vale_si_continuidad
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-23 (A-46, RESUELTA; no se reabre aqui). docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

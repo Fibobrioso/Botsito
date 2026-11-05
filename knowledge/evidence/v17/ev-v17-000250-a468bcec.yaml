@@ -1,0 +1,21 @@
+id: ev-v17-000250-a468bcec
+video_id: v17
+t0: 0:02:50
+t1: 0:03:15
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La respuesta es la C, la primera sesión del día siguiente, ya que de esa manera pues nosotros,
+  o sea, cada día por lo general estamos trabajando dos sesiones que están planteadas, entonces si en
+  esas dos sesiones se llega al 4.5 obviamente se detiene, pero al día siguiente a la primera sesión nuevamente
+  después seguimos operando.
+afirmacion: tras parar por la perdida del dia, vuelve a la primera sesion del dia siguiente (opcion c
+  de S-2)
+tema: riesgo.tope_vuelve_al_dia_siguiente
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-000250-8c79c37a
+notas: S-2 (A-44). Corregido tras el revisor, a9. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a
