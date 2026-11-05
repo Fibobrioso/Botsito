@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesion-06
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-g1 cerrada en main el 2026-11-04 (stable/F38l-guardia-g1): ADR-0088 (los nombres del holdout se cuentan, no se listan), los falsos positivos de K, lo que un guion importa o carga (B) y las rutas compuestas (C), con los tests de un clon de comparar-con-main (GUARDIA-G1.md). Hecha en Claude Code en la nube; pre-cierre y cierre en el portátil.
+trabajo/sesion-06, EN CURSO: la ingesta de la sesión 6 con el trader (grabada el 2026-11-04, v17) y su extracción por pregunta, sin resolver nada (NA:F, R4.2). Encargo: docs/encargos/trabajo-sesion-06.md; informe: docs/validation/SESION-06-EXTRACCION.md.
 
 ## Stable Main State
 1cbf403 · merge de `trabajo/guardia-g1` (tag `stable/F38l-guardia-g1`): ADR-0088 (los nombres del holdout se cuentan), los falsos positivos de K y lo que un guion carga o compone (B y C). Sobre `stable/F38k-margen-pendiente` (796be27). Informe docs/validation/GUARDIA-G1.md; el registro del cierre, al final de HISTORIA.
@@ -157,8 +157,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 54 (2026-11-04).
+— ninguna desde el Archivo 55 (2026-11-04).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 54 (2026-11-04).
+— ninguna desde el Archivo 55 (2026-11-04).
