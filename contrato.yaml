@@ -1,0 +1,41 @@
+rama: trabajo/activar-sesion-06
+riesgo: alto  # cambia la spec (ambiguedades, parametros, reglas) con registros del trader; cada valor con su Fuente:
+artefacto: docs/validation/ACTIVAR-SESION-06.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/ACTIVAR-SESION-06.md
+  - docs/validation/PREPARACION-A35-A44.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ACTIVAR-A35-A44.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - knowledge/feedback/2026-11-04-sesion-06/
+  - knowledge/spec/
+  - docs/spec/
+  - docs/adr/
+  - tests/unit/
+  - scripts/hoja_preguntas.py
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - src/botsito/engine/
+  - knowledge/evidence/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - knowledge/feedback/2026-09-09-sesion-01/
+  - knowledge/feedback/2026-09-29-sesion-03/
+  - knowledge/feedback/2026-10-04-sesion-04/
+  - knowledge/feedback/2026-10-23-sesion-05/
+  - knowledge/cuentas/
+  - config/
+  - data/manifests/
+  - docs/plan/
+  - docs/adr/0000-template.md
+comprobaciones:
+  - uv run botsito feedback apply --sesion 2026-11-04-sesion-06 --check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito spec docs --escribir
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1

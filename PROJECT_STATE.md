@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-06
 
 ## Current Feature
-Ninguna rama abierta. trabajo/sesion-06 cerrada en main el 2026-11-05 (stable/F38m-sesion-06): la sesión 6 con el trader (2026-11-04, v17, 1:59:59) ingerida, en cuarentena, con su extracción por pregunta y 65 ítems de evidencia vivos (SESION-06-EXTRACCION.md). Nada resuelto: la activación la decide el consultor.
+trabajo/activar-sesion-06, EN CURSO: activar en spec las respuestas de la sesión 6 (R4.2). Encargo docs/encargos/trabajo-activar-sesion-06.md; informe docs/validation/ACTIVAR-SESION-06.md.
 
 ## Stable Main State
 78d560d · merge de `trabajo/sesion-06` (tag `stable/F38m-sesion-06`): la sesión 6 ingerida (v17) y su extracción por pregunta. Sobre `stable/F38l-guardia-g1` (1cbf403). Informe docs/validation/SESION-06-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
@@ -158,8 +158,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 55 (2026-11-04).
+— ninguna desde el Archivo 56 (2026-11-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 55 (2026-11-04).
+— ninguna desde el Archivo 56 (2026-11-05).
