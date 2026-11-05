@@ -106,9 +106,10 @@ def test_la_comprobacion_de_la_lista_no_es_decorativa() -> None:
         "v10": None,
         "v15": None,
         "v16": None,
+        "v17": None,
     }
     assert problemas_de_la_lista(reales) == []
-    assert any("v17: es una sesion" in p for p in problemas_de_la_lista({**reales, "v17": None}))
+    assert any("v18: es una sesion" in p for p in problemas_de_la_lista({**reales, "v18": None}))
     assert any(
         "v7: esta en" in p and "drive_id" in p
         for p in problemas_de_la_lista({**reales, "v7": "abc"})
