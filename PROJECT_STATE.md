@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/sesion-06
+main
 
 ## Current Feature
-trabajo/sesion-06, EN CURSO: la ingesta de la sesión 6 con el trader (grabada el 2026-11-04, v17) y su extracción por pregunta, sin resolver nada (NA:F, R4.2). Encargo: docs/encargos/trabajo-sesion-06.md; informe: docs/validation/SESION-06-EXTRACCION.md.
+Ninguna rama abierta. trabajo/sesion-06 cerrada en main el 2026-11-05 (stable/F38m-sesion-06): la sesión 6 con el trader (2026-11-04, v17, 1:59:59) ingerida, en cuarentena, con su extracción por pregunta y 65 ítems de evidencia vivos (SESION-06-EXTRACCION.md). Nada resuelto: la activación la decide el consultor.
 
 ## Stable Main State
-1cbf403 · merge de `trabajo/guardia-g1` (tag `stable/F38l-guardia-g1`): ADR-0088 (los nombres del holdout se cuentan), los falsos positivos de K y lo que un guion carga o compone (B y C). Sobre `stable/F38k-margen-pendiente` (796be27). Informe docs/validation/GUARDIA-G1.md; el registro del cierre, al final de HISTORIA.
+78d560d · merge de `trabajo/sesion-06` (tag `stable/F38m-sesion-06`): la sesión 6 ingerida (v17) y su extracción por pregunta. Sobre `stable/F38l-guardia-g1` (1cbf403). Informe docs/validation/SESION-06-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-1cbf403 · merge: trabajo/guardia-g1, ADR-0088 (los nombres del holdout se cuentan), los falsos positivos de K y lo que un guion carga o compone (B y C) · tag stable/F38l-guardia-g1
+78d560d · merge: trabajo/sesion-06, la sesión 6 ingerida (v17) y su extracción por pregunta · tag stable/F38m-sesion-06
 
 ## Tests Currently Passing
 1840 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
