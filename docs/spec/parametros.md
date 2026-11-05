@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.5.4` · hash `dc7319da3260…`
+`spec_version 18.5.5` · hash `fe72b37d060b…`
 
 111 en total: 99 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -16,7 +16,7 @@
 | `break_even_condicion` | `tocar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | tocar/cierre |
 | `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
-| `caja_bloque` | `r6` | DEFAULT_AMBIGUOUS · en revision por A-48 | estrategia | `ev-v7-001550-82e5cffc` | que velas dan el 1 de la caja de la orden stop |
+| `caja_bloque` | `r6` | CONFIRMED | estrategia | `fb-2026-11-04-sesion-06-a1cc60d0` | que velas dan el 1 de la caja de la orden stop |
 | `caja_lado_de_ruido` | `caja_entera` | DEFAULT_AMBIGUOUS · en revision por A-50 | estrategia | `ev-v15-010451-5b123278` | que parte de la caja se compara con el nivel tomado para descartarla por el lado de ruido |
 | `caja_se_fija` | `en_cada_cierre_m1` | DEFAULT_AMBIGUOUS · en revision por A-49 | ejecucion | `ADR-0074` | cuando se fija el 1 de la caja de la orden stop |
 | `cartucho_criterio` | `solo_perdida` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-aa2abe65` | que suma al contador |
@@ -231,7 +231,7 @@ desfase base del reloj del servidor, medido en el terminal y no supuesto. En la 
 
 ### `caja_bloque`
 
-el bloque que da el 1 de la caja de cada orden stop, con el 0 en el punto (ADR-0064 §2), con las reglas de docs/validation/CAJA-77.md: `r6`, el extremo opuesto -la maxima en una venta- de las velas desde la que marca el nivel del punto hasta el instante de colocar o reubicar; `r4`, el del tramo de velas contrarias consecutivas que acaba en la ultima contraria; `r1`, el de esa ultima contraria. Es A-48, con las dos lecturas que ADR-0056 §5 documento (ultima_contraria = r1, tramo_de_contrarias = r4) y la de R6. DEFAULT NUESTRO en `r6`, por decision del consultor; la cita es «trazamos el GAN desde el posible punto de breaker hasta el punto mas alto» (v7 0:15:50). Lo lee el productor (engine/zonas.py), no una regla
+el bloque que da el 1 de la caja de cada orden stop, con el 0 en el punto (ADR-0064 §2), con las reglas de docs/validation/CAJA-77.md: `r6`, el extremo opuesto -la maxima en una venta- de las velas desde la que marca el nivel del punto hasta el instante de colocar o reubicar; `r4`, el del tramo de velas contrarias consecutivas que acaba en la ultima contraria; `r1`, el de esa ultima contraria. Es A-48, con las dos lecturas que ADR-0056 §5 documento (ultima_contraria = r1, tramo_de_contrarias = r4) y la de R6. Fue DEFAULT NUESTRO en `r6`, por decision del consultor, con la cita «trazamos el GAN desde el posible punto de breaker hasta el punto mas alto» (v7 0:15:50, ev-v7-001550-82e5cffc), hasta el 2026-11-05. LO DIJO EL TRADER en la sesion 6 (2026-11-04, S-16, v17 1:05:41): «entonces la respuesta sería al punto más alto de todas las velas desde el punto» (ev-v17-010541-05a69879, la opcion c, fb-2026-11-04-sesion-06-a1cc60d0); en una compra, al reves, «el arriba del 0 y el 1 abajo» (ev-v17-011328-a701a547). Pasa a CONFIRMED como DESVIACION declarada de la regla de que las respuestas en parte no fijan nada (precedentes: A-43 en la sesion 4 y A-35 en la sesion 5): A-48 sigue ABIERTA por el 0 (orden_stop_punto), que no eligio. Lo lee el productor (engine/zonas.py), no una regla
 
 Opciones: `r6`, `r4`, `r1`.
 
@@ -535,7 +535,7 @@ Opciones: `se_retira`, `sigue_hasta_ventana_fin`.
 
 ### `orden_stop_punto`
 
-donde nace la orden stop con orden_limite_nace = al_aparecer_punto_de_breaker (ADR-0064 §1). `ultimo_pivote_m1`: el ultimo pivote de M1 contrario al sentido de la entrada -un BAJO en una venta- formado con las M1 cerradas (la funcion de R5 de CAJA-77), que se actualiza con cada pivote nuevo, y RN-006 mueve la orden con el. `referencia_de_la_toma`: el pivote de referencia_del_breaker en la vela de la toma, lo que ADR-0056 §7 llamaba el punto; no se mueve. DEFAULT NUESTRO en el primero, por decision del consultor sobre CAJA-77 §3 (medido en construccion: su 0 localiza la entrada del trader en 36 de 77, y en 56 de 77 es un pivote formado despues de la toma). La cita es la del punto que se actualiza «conforme se desarrolla el precio» (v7 0:22:01). Lo lee el productor (engine/zonas.py), no una regla
+donde nace la orden stop con orden_limite_nace = al_aparecer_punto_de_breaker (ADR-0064 §1). `ultimo_pivote_m1`: el ultimo pivote de M1 contrario al sentido de la entrada -un BAJO en una venta- formado con las M1 cerradas (la funcion de R5 de CAJA-77), que se actualiza con cada pivote nuevo, y RN-006 mueve la orden con el. `referencia_de_la_toma`: el pivote de referencia_del_breaker en la vela de la toma, lo que ADR-0056 §7 llamaba el punto; no se mueve. DEFAULT NUESTRO en el primero, por decision del consultor sobre CAJA-77 §3 (medido en construccion: su 0 localiza la entrada del trader en 36 de 77, y en 56 de 77 es un pivote formado despues de la toma). La cita es la del punto que se actualiza «conforme se desarrolla el precio» (v7 0:22:01). Tras la sesion 6 (S-16) sigue DEFAULT_AMBIGUOUS, LECTURA DEL CONSULTOR bajo A-48: el trader no eligio entre las dos (SESION-06-EXTRACCION.md §3.4) y va a la sesion 7. Lo lee el productor (engine/zonas.py), no una regla
 
 Opciones: `ultimo_pivote_m1`, `referencia_de_la_toma`.
 

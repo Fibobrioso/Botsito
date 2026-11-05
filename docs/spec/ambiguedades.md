@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.5.4` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.5.5` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
@@ -48,7 +48,7 @@ Afecta a: `perdida_maxima_diaria`, `base_calculo_perdida_diaria`, `perdida_maxim
 
 ### A-48 · qué velas forman el bloque de la caja · pregunta
 
-Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque para poner el 0 y el 1?
+Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque para poner el 0 y el 1? RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-16). El 1: «entonces la respuesta sería al punto más alto de todas las velas desde el punto» (ev-v17-010541-05a69879, la opcion c), y en una compra al reves (ev-v17-011328-a701a547): caja_bloque = r6 pasa a CONFIRMED (fb-2026-11-04-sesion-06-a1cc60d0) como DESVIACION declarada de la regla de que las respuestas en parte no fijan nada (precedentes: A-43 en la sesion 4, A-35 en la sesion 5). El 0 no queda claro: no eligio entre ultimo_pivote_m1 y referencia_de_la_toma (SESION-06-EXTRACCION.md §3.4, S-16), y orden_stop_punto sigue DEFAULT_AMBIGUOUS en ultimo_pivote_m1, lectura del consultor bajo esta ambiguedad. SIGUE ABIERTA por el 0, sin registro sobre ella; va a la sesion 7.
 
 Afecta a: `orden_stop_punto`, `caja_bloque`.
 

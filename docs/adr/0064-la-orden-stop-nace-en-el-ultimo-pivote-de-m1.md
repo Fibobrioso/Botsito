@@ -42,6 +42,11 @@ phase: post-F14 (rama `feature/F35-orden-stop-pivote`, F35: la rama 3 de ADR-005
 - **A-49** (la vela del bloque cerrada o en formación) no cambia: solo cuentan las M1 cerradas, que
   es su lectura `cerrada` y lo que exige ADR-0028.
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`; el cuerpo no se toca).** El 1 lo dijo el
+> trader en la sesión 6 (S-16, `ev-v17-010541-05a69879`): `caja_bloque` = `r6` pasa a CONFIRMED
+> (`fb-2026-11-04-sesion-06-a1cc60d0`), como desviación declarada. `orden_stop_punto` sigue
+> DEFAULT_AMBIGUOUS bajo A-48, que sigue ABIERTA por el 0.
+
 ### 3. El stop sigue su parámetro
 
 `stop_fraccion_caja`, con su redondeo (ADR-0061), sobre la caja de §2. **A-18 sigue abierta y no se

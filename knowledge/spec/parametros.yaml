@@ -693,7 +693,9 @@ parametros:
       mueve. DEFAULT NUESTRO en el primero, por decision del consultor sobre CAJA-77 §3 (medido en
       construccion: su 0 localiza la entrada del trader en 36 de 77, y en 56 de 77 es un pivote
       formado despues de la toma). La cita es la del punto que se actualiza «conforme se desarrolla
-      el precio» (v7 0:22:01). Lo lee el productor (engine/zonas.py), no una regla
+      el precio» (v7 0:22:01). Tras la sesion 6 (S-16) sigue DEFAULT_AMBIGUOUS, LECTURA DEL
+      CONSULTOR bajo A-48: el trader no eligio entre las dos (SESION-06-EXTRACCION.md §3.4) y va a
+      la sesion 7. Lo lee el productor (engine/zonas.py), no una regla
     consumido_por: [ADR-0064]
     estado: DEFAULT_AMBIGUOUS
     valor: ultimo_pivote_m1
@@ -712,16 +714,22 @@ parametros:
       de las velas desde la que marca el nivel del punto hasta el instante de colocar o reubicar;
       `r4`, el del tramo de velas contrarias consecutivas que acaba en la ultima contraria; `r1`,
       el de esa ultima contraria. Es A-48, con las dos lecturas que ADR-0056 §5 documento
-      (ultima_contraria = r1, tramo_de_contrarias = r4) y la de R6. DEFAULT NUESTRO en `r6`, por
-      decision del consultor; la cita es «trazamos el GAN desde el posible punto de breaker hasta
-      el punto mas alto» (v7 0:15:50). Lo lee el productor (engine/zonas.py), no una regla
+      (ultima_contraria = r1, tramo_de_contrarias = r4) y la de R6. Fue DEFAULT NUESTRO en `r6`,
+      por decision del consultor, con la cita «trazamos el GAN desde el posible punto de breaker
+      hasta el punto mas alto» (v7 0:15:50, ev-v7-001550-82e5cffc), hasta el 2026-11-05. LO DIJO EL
+      TRADER en la sesion 6 (2026-11-04, S-16, v17 1:05:41): «entonces la respuesta sería al punto
+      más alto de todas las velas desde el punto» (ev-v17-010541-05a69879, la opcion c,
+      fb-2026-11-04-sesion-06-a1cc60d0); en una compra, al reves, «el arriba del 0 y el 1 abajo»
+      (ev-v17-011328-a701a547). Pasa a CONFIRMED como DESVIACION declarada de la regla de que las
+      respuestas en parte no fijan nada (precedentes: A-43 en la sesion 4 y A-35 en la sesion 5):
+      A-48 sigue ABIERTA por el 0 (orden_stop_punto), que no eligio. Lo lee el productor
+      (engine/zonas.py), no una regla
     consumido_por: [ADR-0064]
-    estado: DEFAULT_AMBIGUOUS
+    estado: CONFIRMED
     valor: r6
-    ambiguedad_id: A-48
     fuente:
-      tipo: evidence
-      id: ev-v7-001550-82e5cffc
+      tipo: feedback
+      id: fb-2026-11-04-sesion-06-a1cc60d0
   - nombre: caja_se_fija
     categoria: ejecucion
     tipo: enum
