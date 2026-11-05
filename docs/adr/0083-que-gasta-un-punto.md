@@ -66,6 +66,27 @@ usada y su punto sin gastar, como hasta hoy: esa caja no vuelve, otra sí. EXPIR
 > reentra en el mismo punto tras un stop, si la caja de la reentrada es la del primer intento o una
 > nueva, y qué hace tras un break even; con esquemas, sin días reales.
 
+> **LO QUE DIJO EL TRADER EN LA SESIÓN 6 (2026-11-04, S-18; recuadro del 2026-11-05,
+> `trabajo/activar-sesion-06`, que no reescribe el cuerpo ni el recuadro anterior). D1 SIGUE
+> PROVISIONAL.**
+> - **Tras un stop** vuelve a entrar en el punto «las veces que sean necesarias», siempre que el
+>   punto se vuelva a validar, sin nombrar un tope (`ev-v17-013939-860b33e0`).
+> - **Tras un break even**, también, «si cumple los criterios» (`ev-v17-013806-e8869c2a`).
+> - **Para repetir la misma entrada** «tiene que haber un igual», y con un flujo normal, se gane o
+>   se pierda, el mismo punto no se repite porque el precio sigue desarrollando
+>   (`ev-v17-013009-5e47afdb`).
+> - **El 0 y el 1 al volver a entrar**: «vamos a estar en constante actualización»; si es la caja
+>   del primer intento o una nueva, no lo dice (`ev-v17-013815-9cf6f076`).
+> - **Sobre su duda de la sesión 5** (`ev-v15-002029-1ac081ae`): cree que se equivocó al decir
+>   break even y que lo que quería replantearse eran los equals, dicho con dudas («a lo mejor»,
+>   «qué raro»; `ev-v17-012917-46a2c561`).
+>
+> Que se pueda volver si el punto se valida casa con D1. Pero D1 deja volver a colocar el punto, con
+> la misma caja o con otra, sin pedir un igual, y si esa condición limita D1 no lo contestó.
+> `cartuchos_max` = 3 no se toca: lo dijo en la sesión 1, y en la 6 solo se le leyó. Ningún registro
+> de feedback. **Lo que pasa a la sesión 7:** qué es «un igual», y si la caja de la reentrada es la
+> del primer intento o una nueva.
+
 ### 2. D2 · Cómo lo hace el código
 
 Hoy hay dos marcas en la memoria de la sesión (`engine/zonas.py`): `usadas`, por ZONA (una caja), que
