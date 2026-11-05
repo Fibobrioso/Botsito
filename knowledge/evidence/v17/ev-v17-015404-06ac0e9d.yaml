@@ -1,0 +1,20 @@
+id: ev-v17-015404-06ac0e9d
+video_id: v17
+t0: '1:54:04'
+t1: '1:54:29'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: que lo pase sólo con la mecha exacta no va en m como digo sólo en el contexto de m15 relacional
+  m15 pues con mecha con cuerpo es válido el máximo de la vela verde es mi punto cuando la roja de después
+  haya roto haya roto con mecha con cuerpo pues sus rangos al nivel más bajo de aquí
+afirmacion: el maximo de la verde es su punto cuando la roja de despues ha roto, con mecha o con cuerpo;
+  lo de que valga la mecha lo liga a un «m15» que el ASR deja dudoso
+tema: mapeo.punto_breaker_la_contraria_tiene_que_romper
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-015411-a67c830c
+notas: S-22, la confirmacion. Corregido tras el revisor, a13 y b5. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

@@ -1,0 +1,19 @@
+id: ev-v17-004841-7f53bbb0
+video_id: v17
+t0: 0:48:41
+t1: 0:48:57
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: yo le digo al bot si es posible que cuando plantees esto pongas la fecha para poder pues
+  yo contemplarlo también en el gráfico o sea en el broker
+afirmacion: pide que los graficos lleven la fecha, para poder contemplarlo tambien en su grafico
+tema: material.graficos_piden_fecha
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-004841-b3d07ba4
+notas: S-8, grafico 2. La regla 2 de SESION-DE-PREGUNTAS.md dice sin la fecha visible. Corregido tras
+  el revisor, a9. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

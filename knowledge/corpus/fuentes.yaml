@@ -207,12 +207,15 @@ videos:
     # 4914,8 s, con 14 s y 3 s de audio entre ellos). Segun Aleks (2026-11-04) fue una pausa: el
     # trader se ausento; ninguna respuesta se corta. Estan en tramos_no_citables.yaml. Segun Aleks
     # (2026-11-04), el trader explico conceptos de las preguntas mostrando su grafico de julio, dias
-    # sin precisar, y dijo que aun no ha grabado diciembre.
+    # sin precisar, y dijo que aun no ha grabado diciembre. Lo que se pregunto y lo que se enseno, medido
+    # en la filtrada: SESION-06-EXTRACCION.md §2.4; los graficos no llevan su dia, y su clave no entra.
     naturaleza: >-
       sesion 6 con el trader (2026-11-04-sesion-06, hoja de la sesion 06): preguntas del consultor
-      S-1 a S-23 en el orden de la hoja, salvo las de los graficos y los ejemplos, que segun Aleks no
-      se hicieron (lo mide la extraccion), con respuestas del trader en voz; el trader comparte su
-      grafico y ensena ejemplos de su operativa de julio, dias sin precisar; con TRES SILENCIOS
+      S-1 a S-8 y S-13 a S-23 y las peticiones de «Para cerrar», en el orden de la hoja, con respuestas
+      del trader en voz; S-7 y S-8 sobre los SVG limpio y marcado de los graficos 1 y 2, sin su dia,
+      que Aleks le pasa por WhatsApp y el trader abre en su lado (S-8 queda a medias); S-9 a S-12 no se
+      hicieron; el trader comparte su pantalla, dibuja sobre los esquemas inventados, ensena su grafico
+      de julio, dias sin precisar, y abre un momento el replay de otro mes; con TRES SILENCIOS
       seguidos, de 1:15:43 a 1:21:55, por una pausa del trader
 
 carpetas:

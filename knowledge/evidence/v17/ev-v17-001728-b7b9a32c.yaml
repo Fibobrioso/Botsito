@@ -1,0 +1,21 @@
+id: ev-v17-001728-b7b9a32c
+video_id: v17
+t0: 0:17:28
+t1: 0:17:42
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: No, no, eso ya nos es indiferente. La vela que genere el rompimiento o la toma de liquidez
+  de M15 Tiene que hacerlo con cuerpo Las velas que vengan después, no sé si es indiferente Si luego hace
+  una mecha o demás
+afirmacion: a si una mecha posterior vuelve a mover el alto ya tomado contesta «no» y que ya es indiferente;
+  la vela que toma tiene que hacerlo con cuerpo; de las velas de despues añade «no se si es indiferente»
+tema: liquidez.m15.nivel_congelado_al_tomarse
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-001728-5c9af43c
+notas: 'S-3 (A-35; ADR-0084, el nivel se congela al tomarse). Corregido tras el revisor, a1: la cita se
+  cortaba antes de la duda. docs/validation/SESION-06-EXTRACCION.md'
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

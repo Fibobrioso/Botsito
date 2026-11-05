@@ -1,0 +1,18 @@
+id: ev-v17-000351-331daa6d
+video_id: v17
+t0: 0:03:51
+t1: 0:04:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Si paro un viernes, pues se vuelve a contar desde cero el día lunes. Exactamente, o sea,
+  siempre es de sesión en sesión,
+afirmacion: 'si para un viernes vuelve a contar desde cero el lunes: siempre es de sesion en sesion'
+tema: riesgo.tope_vuelve_al_dia_siguiente
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-000353-84052b99
+notas: S-2 (A-44), el viernes. Corregido tras el revisor, a9. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

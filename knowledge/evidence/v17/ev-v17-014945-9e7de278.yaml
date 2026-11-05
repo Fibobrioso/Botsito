@@ -1,0 +1,19 @@
+id: ev-v17-014945-9e7de278
+video_id: v17
+t0: '1:49:45'
+t1: '1:49:56'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: esta alternancia, o sea la respuesta sería C o sea, y seguir, o sea el flujo, o sea, que
+  apenas toque nos activa la entrada y después haga lo que tenga que hacer
+afirmacion: 'ante la mecha que rompe tras una alternancia marca la opcion c: que apenas toque se activa
+  la entrada'
+tema: entrada.punto_roto_con_mecha_cualquier_color
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-014946-45736f86
+notas: S-21. Hoy RN-009 descarta al colocar con dos zonas. Corregido tras el revisor, a12 y b6. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

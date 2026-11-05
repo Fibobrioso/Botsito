@@ -1,0 +1,20 @@
+id: ev-v17-010321-352430e3
+video_id: v17
+t0: '1:03:21'
+t1: '1:03:41'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Entonces, como hemos visto en el gráfico, solo nos enfocamos, o sea, si vamos a usar el
+  trazo de liquidez en M15, solo nos enfocamos, o sea, para el bias y demás, y saber qué hacer luego,
+  a partir de las 7 a después, pues solo el trazo de liquidez de M15, como hemos visto aquí.
+afirmacion: de M15 solo se enfoca en el bias y en el trazo de liquidez, para saber que hacer a partir
+  de las 7; no elige entre las opciones de S-15
+tema: liquidez.m15.tomada_antes_de_las_7
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-04 (trabajo/sesion-06) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v17-010321-b5b11bcb
+notas: S-15 (A-43). Corregido tras el revisor, a9. docs/validation/SESION-06-EXTRACCION.md
+transcripcion: tr-v17-large-v3-int8-float16-9d44007a

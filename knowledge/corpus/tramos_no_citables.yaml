@@ -514,3 +514,10 @@ tramos:
       conversacion ajena a la operativa, al abrir S-20; no es especificacion y no se cita ni se describe
     acordado: >-
       decision de la sesion, encargo de trabajo/sesion-06 (2026-11-04); docs/validation/SESION-06-EXTRACCION.md
+  - video_id: v17
+    t0: "0:06:52"
+    t1: "0:08:04"
+    motivo: >-
+      precaucion: el trader abre el replay de un mes distinto de abril, julio del 1 al 17, agosto y enero, y nombra un trade de ese mes (respuesta a del encargo: un mes fuera de lo libre se declara no citable); sin dias ni cifras
+    acordado: >-
+      encargo de trabajo/sesion-06 (2026-11-04), «ENTRADAS», a); marcado tras el hallazgo b7 del revisor; ninguna cita de la rama cae dentro; docs/validation/SESION-06-EXTRACCION.md
