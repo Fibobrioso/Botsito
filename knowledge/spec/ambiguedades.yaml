@@ -1358,7 +1358,14 @@ ambiguedades:
       A-44 quedan con valor en los parametros que el motor lee, y siguen ABIERTAS:
       perdida_trader_reinicio_huso, perdida_trader_dia_usd y perdida_trader_semana_usd siguen
       UNKNOWN y sin efecto (los dos de dinero, con la unidad en porcentaje; el del reinicio, con
-      el corte del perfil marcado SUPUESTO). SIGUE ABIERTA y bloqueante por el reinicio (S-2).
+      el corte del perfil marcado SUPUESTO). SIGUE ABIERTA y bloqueante por el reinicio (S-2): eligio
+      la c, al abrir la primera sesion del dia siguiente («La respuesta es la C, la primera sesión
+      del día siguiente», ev-v17-000250-a468bcec), y del viernes, «se vuelve a contar desde cero el
+      día lunes … siempre es de sesión en sesión» (ev-v17-000351-331daa6d). No es una medianoche y
+      no cabe en perdida_trader_reinicio_huso: PARADA de §4 de ACTIVAR-A35-A44.md, que el
+      consultor resuelve con un parametro nuevo y su ADR en la rama de motor, sin registro aqui. El
+      reloj que nombro, «UTC más 2 si no me equivoco … ahora Madrid» (ev-v17-000321-37cebf44), no
+      fija nada: ADR-0069 ya midio Europe/Madrid.
     resuelve_en: [F11, F18]
     # NACE EL 2026-09-26 (rama trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks
     # tras la revision del consultor). RN-020 -«el tope porcentual del trader es el unico freno del
