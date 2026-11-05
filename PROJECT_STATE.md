@@ -16,7 +16,7 @@ trabajo/activar-sesion-06, EN CURSO: activar en spec las respuestas de la sesió
 78d560d · merge: trabajo/sesion-06, la sesión 6 ingerida (v17) y su extracción por pregunta · tag stable/F38m-sesion-06
 
 ## Tests Currently Passing
-1840 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1842 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
