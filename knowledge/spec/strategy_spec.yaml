@@ -1307,7 +1307,17 @@ reglas:
       con cuerpo» de la sesion 4 (ev-v10-012456-9dc1d221) y «se actualiza el de la mecha» de la 5
       hablan de dos cosas, cuando queda TOMADO y que nivel se usa mientras no lo este. Lo de «no
       se tapa con un parametro provisional» de estas notas lo enmienda ADR-0084 en ADR-0045: el
-      mecanismo lo dijo el trader; el valor solo elige su alcance. A-35 sigue ABIERTA
+      mecanismo lo dijo el trader; el valor solo elige su alcance. A-35 sigue ABIERTA.
+      DESDE EL 2026-11-05 (sesion 6, S-3; trabajo/activar-sesion-06, respuesta del consultor a la
+      PARADA, punto 4) liquidez_m15_mecha_que_vuelve esta en solo_la_contraria, LECTURA DEL
+      CONSULTOR bajo A-35 y sin registro: una M1 que cierra con cuerpo por encima del alto de antes
+      SI ha tomado (ev-v17-001712-dc155b5d), asi que la mecha de una M1 posterior ya no mueve el
+      nivel y lo de «el nivel se congela» de arriba deja de aplicarse; la mecha de la propia vela
+      contraria sigue moviendolo (el ejemplo de la sesion 5, ADR-0084 §1). Y sobre su grafico, con
+      «suponiendo»: «suponiendo que esto te deja otra vela verde entonces actualizas tu zona lineal
+      de m15 aquí» (ev-v17-001036-e7bdd027), que es lo que ya hace «el mas reciente» de ADR-0045;
+      va aqui sin registro, porque esta regla no enuncia lo que ese item confirma (respuesta a la
+      PARADA, punto 5)
     forma:
       cuando:
         todos_de:

@@ -972,7 +972,25 @@ ambiguedades:
       2026-10-26 (ADR-0084, trabajo/activar-sesion-05-motor) con el selector
       liquidez_m15_mecha_que_vuelve = cualquier_mecha, LECTURA DEL CONSULTOR: el trader no eligio
       entre la mecha de la vela contraria que forma el alto (su ejemplo) y la de una vela
-      posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. SIGUE ABIERTA.
+      posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. RESPONDIDA EN PARTE
+      en la sesion 6 (2026-11-04, v17, S-3 y S-4). La mecha: si vuelve «eso es indiferente tiene
+      que cerrar con cuerpo … por encima de la zona lineal de m15» (ev-v17-001319-419307f6), sin
+      elegir; una M1 que cierra con cuerpo por encima del alto de antes SI ha tomado («La respuesta
+      es sí, cerró con cuerpo por encima del alto de antes», ev-v17-001712-dc155b5d), «si está
+      conforme al bias» (ev-v17-001610-c43239a9); tras la toma una mecha posterior ya no mueve el
+      alto («No, no, eso ya nos es indiferente», con un «no sé si es indiferente» detras,
+      ev-v17-001728-b7b9a32c); en un bajo, «es todo igual pero al revés» (ev-v17-001847-4e7b7c0b).
+      Con eso liquidez_m15_mecha_que_vuelve pasa a solo_la_contraria, LECTURA DEL CONSULTOR (la (a)
+      descarta cualquier_mecha y, de las dos que quedan, solo_la_contraria conserva el ejemplo de la
+      sesion 5; ADR-0084, recuadro del 2026-11-05), sin registro. La vela sin cuerpo en M15 (S-4):
+      marca la c, «la vela roja nos permitiría a nosotros si anterior a esta tenemos una vela neutra
+      puedes plantear el máximo por encima de la mecha de la vela neutra» (ev-v17-002155-f2c95111);
+      el alto puede ser la mecha de la vela sin cuerpo, tambien con dos o tres seguidas
+      (ev-v17-002250-d6ca3ef8); en un bajo, desde la mecha mas baja (ev-v17-002217-af442f84). Que
+      por eso la vela sin cuerpo no corte la racha en M15 es la conclusion de la extraccion, no una
+      frase suya; el motor hoy la corta (corta_la_racha) y lo que pide va a la rama de motor, sin
+      fijar nada aqui. A-35 y A-44 quedan con valor en los parametros que el motor lee, y siguen
+      ABIERTAS. SIGUE ABIERTA y bloqueante: la sesion 7 confirma con una frase.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
@@ -1016,6 +1034,9 @@ ambiguedades:
     # ADR-0084 lo enmienda ahi, porque la prohibicion era contra un mecanismo inventado y este lo
     # dijo el trader. El nivel se congela en cuanto una M1 lo cruza con el criterio de la toma.
     # Sigue ABIERTA: la sesion 6 pregunta cual de las dos mechas, y el bajo
+    # DESDE EL 2026-11-05 (trabajo/activar-sesion-06, respuesta del consultor a la PARADA, punto 4)
+    # el selector esta en solo_la_contraria, LECTURA DEL CONSULTOR y sin registro: con el, ninguna
+    # mecha de una M1 posterior mueve el nivel, y la congelacion al tomarse deja de aplicarse
     parametros: [liquidez_m15_pivote_formado, liquidez_m15_mecha_que_vuelve]
     contradiccion: null
     estado: ABIERTA
