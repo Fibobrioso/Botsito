@@ -50,7 +50,7 @@ los del encargo); 35 (al colocar también rechazan el cierre de mercado y el fre
 ### Choques del encargo con las skills (ganan ellas, y lo digo)
 
 - **«En parte» no se cierra** (`activar-sesion`, Límites). A-44 se cierra porque su «en parte» de
-  S-2 fue por falta de opción en el enum, no por la respuesta (`SESION-06-EXTRACCION.md:767`, regla
+  S-2 fue por falta de opción en el enum, no por la respuesta (`SESION-06-EXTRACCION.md:768`, regla
   general «sí»): lo decide el consultor en el encargo (fase 1.5) y lo dicen el registro, el docstring
   de los dos tests de control y el recuadro de la extracción.
 - **Lo fijado no se pisa; contra un ADR, PARADA** (`activar-sesion`). Las fases 3 y 4 enmiendan
@@ -63,7 +63,7 @@ los del encargo); 35 (al colocar también rechazan el cierre de mercado y el fre
 
 | Fase | Hoy en el código | Llamadores | Test que lo prueba hoy | Criterio del encargo | ¿Cuadra? |
 |---|---|---|---|---|---|
-| 1 · S-2 | `SeguidorTope.avanzar` corta en la medianoche de `huso_reinicio` (`engine/tope_trader.py:230-240`); sin huso, el del perfil marcado SUPUESTO (`:191-194`) | `SeguidorTope(` solo en `engine/cableado.py:267`; `tope_del_registro` en `cableado` y en `scripts/embudo_77.py:439` (que construye el motor por `cableado`) | `tests/unit/test_preparar_a44.py:145-162` (asierta `huso_supuesto`) y `:254-302` (los cortes) | el seguidor solo lo construye `cableado.py`; `primero` es la apertura en UTC; nadie más lee `perdida_trader_reinicio_huso` | **SÍ** (b.1) |
+| 1 · S-2 | `SeguidorTope.avanzar` corta en la medianoche de `huso_reinicio` (`engine/tope_trader.py:230-240`); sin huso, el del perfil marcado SUPUESTO (`:191-194`) | `SeguidorTope(` solo en `engine/cableado.py:267`; `tope_del_registro` en `cli.py:2398` y `:2521` y en siete guiones de `scripts/` (corregido tras el revisor, a1: decía «en `cableado`», que no lo llama; §l) | `tests/unit/test_preparar_a44.py:145-162` (asierta `huso_supuesto`) y `:254-302` (los cortes) | el seguidor solo lo construye `cableado.py`; `primero` es la apertura en UTC; nadie más lee `perdida_trader_reinicio_huso` | **SÍ** (b.1) |
 | 2 · S-4 | M15 con `corta_la_racha` (`domain/pivotes_m15.py:100-116`); M1 con `no_cuenta` (`domain/estructura_m1.py:135-137`) | `pivote_mas_reciente`: solo `engine/motor.py:156`; `pivotes_formados`: `estructura_m1.py:135` (M1, `no_cuenta`) y dos guiones con M1 sin `sin_cuerpo` | `tests/unit/test_pivotes_m15.py:149` | el único llamador de M15 es `motor.py` y el de M1 pasa `no_cuenta` | **SÍ** (b.1) |
 | 3 · S-22 | el punto se forma con cualquier contraria que cierra tras la racha (`estructura_m1.py:201-224`) | `ultimo_punto_de_ruptura`: `engine/zonas.py:382` (con `hasta = idx_toma + 1` si `orden_stop_punto = referencia_de_la_toma`, `:381`) y `scripts/embudo_77.py:712`; `_pivotes_m1`: `:124` (`referencia_del_breaker`), `:167` (`zonas_de_control`), `:212` | 20 tests en 6 ficheros (b.4) | un único sitio del dominio y los demás usos de `_pivotes_m1` separables sin tocarlos | **NO** en lo que decide: la condición SÍ se puede poner solo en `ultimo_punto_de_ruptura` sin tocar `_pivotes_m1`, pero la decisión deja abierto qué es el punto cuando el último pivote no vale, y choca con la identidad del punto de la toma (PARADA) |
 | 4 · S-19 | el rechazo al colocar marca la caja usada (`primitivas_broker.py:654`) y gasta el punto (`:655-659`) | `marcar_rechazada`: `primitivas_broker.py:639` (no envío), `:659` (rechazo al colocar), `cableado.py:165` (rechazo al llenar); el conjunto lo escribe `zonas.py:422` | `tests/unit/test_punto_usado.py:343` | los únicos que escriben «rechazados» son esos tres y el Rechazo llega a `:655` con su motivo | **NO** en lo que decide: el criterio se cumple, pero la premisa de la decisión no («no marca y la zona sigue viva»: la caja ya está usada en `:654`), y lo que hace el motor después no está decidido (PARADA) |
@@ -505,6 +505,267 @@ larga, dejaba 23.213 bytes, por encima de los 23.000: se acortó.
 - **El tamaño final de PROJECT_STATE**: 22.977 bytes con las líneas del cierre (simulado); en la
   rama, al cerrar este informe, 22.608 bytes.
 
+## j. CI de Linux
+
+- `git push origin trabajo/activar-sesion-06-motor:refs/heads/fix/activar-sesion-06-motor` (la rama
+  local no se toca).
+- **Run 42177503487** sobre b03cbbe (`headSha b03cbbed43d88bfe8e1e999b66402672a773312a`):
+  `completed`, `failure`, con el único fallo aceptado (`gh run view 42177503487 --log-failed`):
+  ```
+  ERROR: PROJECT_STATE declara la rama 'trabajo/activar-sesion-06-motor'; la rama actual es 'fix/activar-sesion-06-motor'
+  FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo - AssertionError: assert 1 == 0
+  1 failed, 3183 passed, 47 skipped in 362.15s (0:06:02)
+  ```
+- La respuesta al revisor añade un commit; su run, en «Estado» (el que cuenta es el del último
+  commit: revisor, b2).
+
+## k. Informe del revisor
+
+Subagente `revisor` (opus), lanzado con la CI de b03cbbe ya terminada y con los cinco alcances del
+encargo y su regla de holdout. Pegado tal cual; no cita ningún tramo no citable (0 retiradas). Solo
+sus títulos bajan un nivel, para caber en esta sección. Sus números de línea del informe
+(«informe:NNN») son los de b03cbbe.
+
+### Informe del revisor · trabajo/activar-sesion-06-motor · 2026-11-06
+
+Rama en b03cbbe, base `main` 04ec025, 7 commits. El árbol de trabajo está limpio. El sello de `make-check.log` es el árbol de HEAD: `SELLO: … da7e8266182bc8af229bc0a20bb32c485a6a292d` = `git rev-parse "HEAD^{tree}"`, `3231 passed`, `PICO DE MEMORIA … 307 MiB`.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 5 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **El inventario de la fase 0 nombra mal a quién llama a `tope_del_registro`.** El informe dice «`tope_del_registro` en `cableado` y en `scripts/embudo_77.py:439`». `cableado.py` no lo llama. Lo llaman `cli.py` y siete guiones más, y todos reciben ahora el modo nuevo. La «deuda de guiones» (§e.3, §f) solo nombra tres. El criterio de la fase 1 (que `SeguidorTope` solo lo construye `cableado` y que nadie más lee `perdida_trader_reinicio_huso`) sí se cumple. | `ACTIVAR-SESION-06-MOTOR.md:66`. Grep de `tope_del_registro` en `src` y `scripts`: `src/botsito/cli.py:2398`, `:2521`; `scripts/bloque_de_la_caja.py:267`, `caja_77_exploratoria.py:137`, `embudo_77.py:439`, `orden_stop_o_limite.py:427` y `:508`, `verificacion_a21.py:75`, `verificacion_a21_entradas.py:174`, `verificacion_a35_a44.py:205`. En `cableado.py`, ninguna llamada. |
+| a2 | importa | **Un test no prueba lo que dice su docstring.** `test_por_el_cableado_el_corte_cae_en_la_apertura_de_la_primera_sesion` dice que corta «con el saldo arrastrado». Pero el mercado de los dos días es plano: `tc._mercado({})`, sin ruta. El BID se queda en BASE = 110.000 y la límite de compra está en ENTRADA = BASE-5, así que nunca se llena (lo saco de leer el código, no lo ejecuté). El saldo no cambia, y `saldo_corte_dia == motor.cuenta.saldo` (el saldo al FINAL del día 2) se cumpliría también con el capital inicial. Lo que sí prueba es el instante del corte (la apertura y no la medianoche). Lo de «arrastrado» solo lo prueban los sintéticos de `SeguidorTope`. | `tests/unit/test_reinicio_tope_trader.py:172`, `:196`; `tests/unit/test_cableado.py:61-62` (BASE, ENTRADA), `:94-114` (`ruta_bid.get(m, bid)`: plano sin ruta) |
+| a3 | menor | El `cuando` de RN-020 lleva historia: «antes de la sesion seis, la medianoche que marca reloj_dia_riesgo». La fecha y el id del ADR los rechazó la guardia de literales (lo dice el informe), y la referencia quedó escrita con letras. La historia ya está en `notas`. | `knowledge/spec/strategy_spec.yaml:2037-2039`; `ACTIVAR-SESION-06-MOTOR.md:373-374` |
+| a4 | menor | Los recuadros dicen «2026-11-05», pero se commitearon el 2026-11-06, y HOLDOUT-EXPOSICIONES fecha ese trabajo el 2026-11-06. | `git log --format='%h %ci'`: ed09769 2026-11-06 00:34, 2a3cf76 01:03, e3adb44 01:32 (-0500); `spec_manifest.yaml` `generado_el: "2026-11-06T05:38:33Z"`; recuadros en ADR-0053 (+141), ADR-0085 (+70), `SESION-06-EXTRACCION.md:795` |
+| a5 | menor | Una cita apunta una línea antes: la fila S-2 de la tabla final de la extracción está en `:768`, no en `:767` (la 767 es S-1). | `ACTIVAR-SESION-06-MOTOR.md:53`; `SESION-06-EXTRACCION.md:767-768` |
+| a6 | menor | `fb-…-c56ec7cf` es de procedencia `trader_grabado`, pero su `valor_resultante` lleva una conclusión de la sesión sobre otras partes: «con S-1 y la sesion 5, ninguna parte de A-44 queda sin regla general». Las `notas` están limpias. | `knowledge/feedback/2026-11-04-sesion-06/fb-2026-11-04-sesion-06-c56ec7cf.yaml:15-16` |
+| a7 | menor | El clon de `main` sigue vivo, aunque el informe dice que se quita al final y la skill `comparar-con-main` lo pide al terminar. | `git worktree list` → `C:/cm/m7  04ec025 (detached HEAD)`; `ACTIVAR-SESION-06-MOTOR.md:179` |
+
+**Comprobado sin hallazgos:**
+- **Contrato:** `contrato_rama.py` da «CONTRATO: 34 ficheros dentro del contrato … exit=0».
+- **Comprobaciones del contrato:**
+  - `feedback apply --sesion 2026-11-04-sesion-06 --check`: «4 parametros; 0 cambian, 4 ya estaban», exit 0.
+  - `knowledge validate`, sin redirigir: todo OK, «199 registros de feedback, historial intacto, commits con Fuente», exit 0.
+  - `spec docs`, sin `--escribir`: «OK: docs/spec coincide con knowledge/spec/».
+  - `make check`: lo sustituye `make-check.log` (sello = árbol de HEAD).
+  - pytest de los 9 ficheros cambiados o nuevos, más `test_kit` y `test_adr`: exit 0.
+- **Trailers `Fuente:`** en el cuerpo de ed09769, 2a3cf76 y e3adb44, con ids que existen (fb-6886938e, fb-c56ec7cf, ADR-0089, ADR-0085 y los tres ev-v17 de S-4).
+- **Holdout:** nada bajo `knowledge/cases/`. Las exposiciones tienen fila el 2026-11-05 (fase 0) y el 2026-11-06 (tras la PARADA). El informe solo da recuentos por mes.
+- **Régimen de cambios:**
+  - `feedback/`: solo `A`.
+  - `evidence/`, `manifests`, `corpus`: sin cambios.
+  - HISTORIA, el encargo y los dos ADR enmendados: solo líneas añadidas.
+  - `SESION-06-EXTRACCION.md` (informe cerrado): solo un recuadro `>` fechado tras la tabla final.
+- **A-44:** `ambiguedades.yaml`, `docs/spec/ambiguedades.md`, la tabla de PROJECT_STATE, RN-020, el registro de parámetros y la hoja con su test van en el MISMO commit (2a3cf76). Las `evidencia` añadidas (000250, 000351) hablan del reinicio, no son de relleno.
+- **ADR-0089:** `## Estado` ACTIVE.
+- **Ningún sitio nuevo con `cita`**, así que las tres guardias de `modelo.py` no aplican.
+- **Ninguna cifra en el código nuevo.**
+- **Citas comprobadas contra su fuente:**
+  - `ERRORES-RECURRENTES.md:108` (el «no corta la racha» atribuido).
+  - `strategy_spec.yaml:2085-2087` en main.
+  - `zonas.py:494-499`.
+  - `primitivas_broker.py:654-659`.
+  - `estructura_m1.py:204-206`.
+  - `test_project_state.py:21`.
+  - `test_agregacion.py:305`.
+  - `HOJA-DE-RUTA.md:653-654`.
+  - `ACTIVAR-A35-A44.md:71` y `:126-127`.
+  - Los tres ítems de S-4 frente al recuadro de ADR-0085.
+- **Ningún ítem de evidencia nuevo** (el punto 10 no aplica).
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 2 importa, 1 menor. Requisitos: 28 hechos, 2 parciales, 4 no hechos (dos en la PARADA y dos pendientes por diseño: el revisor y la línea final).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con abrir-rama: contrato R4, riesgo alto, artefacto | Hecho | `contrato.yaml:2-4`; b2f3562 |
+| 2 | Fase 0 a: la tabla de las cuatro fases | Hecho | informe:62-69 |
+| 3 | b.1: los llamadores pedidos | Hecho (ver a1) | informe:73-92 |
+| 4 | b.2: A-44 parte por parte | Hecho | informe:94-110 |
+| 5 | b.3: los recuentos de las fases 2 y 3, solo recuentos | Hecho; las sumas cuadran (85.985, 1.164, 718, 13; 5.701, 2.950, 3.912) | informe:132-157 |
+| 6 | b.4: qué tests cambian, con la salida de main | Parcial: nombres y recuentos, sin la salida pegada | informe:159-179 |
+| 7 | b.5: flaky, `deadline=None` en commit propio | Hecho | 3f2bef2; `test_valores.py:50-54` |
+| 8 | b.6: PROJECT_STATE < 23.000 | Hecho: 22.608 hoy (`wc -c`) y 22.977 en la simulación del cierre | informe:194-197, :477 |
+| 9 | c: plan de commits | Hecho | informe:199-213 |
+| 10 | d: PARADA commiteada | Hecho | d091c6c; informe:238-306 |
+| 11 | 1.1: `perdida_trader_reinicio`, enum, UNKNOWN → CONFIRMED por RESOLVE_UNKNOWN, notas solo con su ítem | Hecho | `parametros.yaml` (+1573-1595); `fb-…-6886938e.yaml:6-16` |
+| 12 | 1.1: `reinicio_huso` UNKNOWN, «SIN EFECTO con…» | Hecho | `parametros.yaml` (+1605-1607) |
+| 13 | 1.2: corte en la apertura; semana ISO; medianoche igual que antes | Hecho | `tope_trader.py:262-297`; `cableado.py:270-274` |
+| 14 | 1.2: la traza dice el modo, sin SUPUESTO | Hecho | `tope_trader.py:138-143` |
+| 15 | 1.3: ADR-0089, recuadros en ADR-0053 §3.3 y §9, fila del índice | Hecho | `docs/adr/README.md` (filas 0053 y 0089) |
+| 16 | 1.4: test que rompe en main, sintéticos con saldo distinto o igual, viernes → lunes, `test_preparar_a44` cambia de sentido | Hecho (ver a2) | `test_reinicio_tope_trader.py`; `test_preparar_a44.py:148-163` |
+| 17 | 1.5: A-44 RESUELTA (registro, cinco sitios, `test_kit`, hoja, test de control con su motivo, recuadro en la extracción) | Hecho | 2a3cf76; `test_en_parte_no_se_cierra.py:93-110`, `:134-152`; `test_kit.py` |
+| 18 | 2.1: `no_corta_y_cuenta`, las de por delante no entran, docstring «lectura del consultor» | Hecho | `pivotes_m15.py:75-78`, `:108-131` |
+| 19 | 2.2: `motor.py` la pide; los dos guiones como deuda | Hecho | `motor.py:157-168`; informe:402-405 |
+| 20 | 2.3: recuadro en ADR-0085 §2 y su fila | Hecho | ADR-0085 (+70-84); README |
+| 21 | 2.4: tests (:149 cambia de sentido; dos y tres velas sin cuerpo; por delante; por marco; camino real que rompe en main) | Hecho | `test_pivotes_m15.py:150-164`; `test_vela_sin_cuerpo_m15.py` |
+| 22 | 2.5: medida por mes | Hecho | informe:134-140 |
+| 23 | Fase 3 (S-22) | No hecho: en la PARADA, declarado y sin tocar código | informe:243-260 |
+| 24 | Fase 4 (S-19) | No hecho: en la PARADA, declarado y sin tocar código | informe:261-274 |
+| 25 | Sin corrida que cuente; solo `--diagnostico-cuenta-diaria` sobre construcción | Hecho | informe:118-130; `RESPALDO-M1/README.md:5-6` |
+| 26 | Citas solo de los ítems de «Para la rama de motor»; notas de cada registro solo con su ítem | Hecho: solo aparecen 000250, 000351, 002155, 002250 y 002217, todos en `ACTIVAR-SESION-06.md:510-525` | grep de ids añadidos en el diff |
+| 27 | Next Action y hoja de ruta sin tocar; sus líneas, preparadas | Hecho | diff de PS sin Next Action; `docs/plan` fuera del diff; informe §i |
+| 28 | Makefile, `.claude/` y la guardia sin tocar | Hecho | `git diff --name-status` |
+| 29 | Exposiciones el mismo día | Hecho | `HOLDOUT-EXPOSICIONES.md` (+95-96) |
+| 30 | CI de Linux por `fix/`, con el número de run en el informe | Parcial: el run 42177503487 existe sobre b03cbbe (completed; único fallo `test_state_check_ok_on_real_repo`: «la rama actual es 'fix/activar-sesion-06-motor'»), pero el informe no lo trae | informe:471, :510 («Faltan la CI de Linux (§j)») |
+| 31 | El informe del revisor, pegado | No hecho (es este) | — |
+| 32 | Líneas del cierre (F, R4.2, R4.3, Fechas fijas, ERRORES, tamaño) | Hecho. La F no va «una línea por fase»: se acortó por bytes, y está declarado | informe:473-506, :480 |
+| 33 | «Rama lista para revisión, NO cerrada» | No hecho todavía | informe:508-510 |
+| 34 | «El encargo, punto por punto» | Hecho | informe §h |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | **No está pegado «el diff de sentido de cada test con la salida de main y la de la rama» que pide el encargo.** De main solo se pega el ImportError de la recolección, que no enseña ninguna aserción. De la rama no se pega nada: dice «en verde». En la fase 2 el comportamiento se enseñó aparte (`camino_real_f2.py`: None frente a 140). En la fase 1 no hay nada igual: el sentido en main se razona («lo que asertaba el test viejo, que en main pasa»), no se pega. En b.4 la fase 3 da nombres y recuentos sin la salida. | encargo:83, :76; informe:355-363, :417-426, :165-174 |
+| b2 | importa | **El informe no trae la CI, aunque el revisor se lanzó con la CI ya terminada.** La skill pide el revisor «con el informe ya terminado» y dice que «el run que cuenta es el del ÚLTIMO commit». Al añadir §j y §k habrá otro commit y hará falta otro run. | `.claude/skills/entregar-rama/SKILL.md:75-76`; `gh run view 42177503487` → completed / failure, headSha b03cbbe; informe:471, :510 |
+| b3 | menor | **Las fases 3 y 4 se marcan «NO CUADRA», pero el propio informe dice que el criterio escrito de cada una se cumple.** El encargo solo deja fuera las fases «cuya medida NO cuadre». La parada está declarada y argumentada en §d, pero la etiqueta no es exacta. Diría: «cuadra el criterio; se para por …». | encargo:16, :61, :68; informe:68-69, :243-244, :261-262 |
+
+**Lo que el encargo no pedía y la rama hace (todo declarado):**
+- el test de control de la sesión 5 (H2);
+- `perdida_trader_reinicio` en los `parametros` de RN-020 y de A-44;
+- el ítem del viernes en la `evidencia` de A-44;
+- la vuelta a `medianoche_huso` si falta el parámetro (ADR-0089 §2);
+- el texto de A-35 (H4).
+
+**Lo que no se toca** (RN-004, RN-009, break even, caja, cartuchos; A-35, A-48 y A-53 DEFAULT_AMBIGUOUS): el diff de `src/` solo cambia `pivotes_m15.py`, `motor.py` (una llamada), `cableado.py` (`abrir_dia`) y `tope_trader.py`. El diff de `parametros.yaml` solo toca `perdida_trader_*`.
+
+**¿Está justificada la PARADA de las fases 3 y 4?**
+- **Fase 4: sí.** La premisa choca con el código. `marcar_usada` va en `primitivas_broker.py:654`, antes del `isinstance(r, Rechazo)` de `:655`, y `toca_colocar_orden_limite` descarta la zona usada (`zonas.py:494-499`). Sin marcar el rechazo, la misma caja no vuelve. Esperar a «que el 0 quede del lado bueno» es un mecanismo que no existe: hay que decidir no enviar.
+- **Fase 3: defendible.**
+  - La identidad que la frena es real: `ultimo_punto_de_ruptura` con `hasta` en la toma es el pivote de `referencia_del_breaker` (`estructura_m1.py:204-206`, `zonas.py:381`).
+  - Pero hoy no muerde: `orden_stop_punto` está en `ultimo_pivote_m1` (`parametros.yaml:682-696`).
+  - Lo que más pesa es lo medido: el 52 % de los puntos cambia y 20 tests caen, entre ellos la comparación con `scripts/bloque_de_la_caja.py`, que es ruta protegida (`contrato.yaml:36`). Además, el encargo preveía que cambiarían `test_estructura_m1.py:65` y `:219`, y esos no prueban `ultimo_punto_de_ruptura`. Lo comprobé: `:116-127` es `referencia_del_breaker`.
+  - La lectura (a) que recomienda la decisión 0 es la misma que se prototipó. Se podía haber hecho declarándola; parar es la opción prudente en una rama nocturna de motor.
+
+#### Lo que no pude comprobar
+- **Los recuentos de b.3**: salen de guiones y salidas de la carpeta de trabajo, y volver a correr el arnés escribe.
+- **Los 20 tests que caen con el prototipo de la fase 3 y los «0 rotos» de la fase 2**: se midieron con prototipos en un clon.
+- **El `None` frente a `140` de `camino_real_f2.py` en main.**
+- **Los sellos de los commits anteriores a HEAD**: solo está el `make-check.log` actual.
+- **No ejecuté** `make check`, `spec docs --escribir` ni `knowledge validate > log` (escriben). En su lugar: el log existente, `spec docs` sin flag y `validate` sin redirigir.
+- **Que el «Flaky por DeadlineExceeded» del cierre de F38n fuera solo el plazo**: la traza no está en el repo (el propio informe lo dice, :189-190).
+- **Mi propia exposición, para que la sesión la declare** en HOLDOUT-EXPOSICIONES el 2026-11-06:
+  - leí con Read cinco ítems de v17 (000250, 000351, 002155, 002250, 002217);
+  - leí `knowledge/cases/kit/mapa_parametros.yaml` (Grep);
+  - ejecuté pytest de `test_reinicio_tope_trader`, `test_vela_sin_cuerpo_m15`, `test_pivotes_m15`, `test_preparar_a44`, `test_en_parte_no_se_cierra`, `test_hoja_preguntas`, `test_valores`, `test_kit` y `test_adr`;
+  - consulté el log de la CI.
+
+  Ningún caso, libro, imagen, filtrada ni cruda; ninguna fecha de día reservado.
+
+#### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `git log --format='=== %h%n%B' main..HEAD`
+4. `git log --format='%h %s' main..HEAD -- knowledge/spec knowledge/cases`; `git log --format='%h' main..HEAD -- docs/encargos`; `git diff --name-status main...HEAD`
+5. `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml knowledge/spec/strategy_spec.yaml knowledge/spec/spec_manifest.yaml`
+6. `git log -L '/^spec_version/,+1:knowledge/spec/spec_manifest.yaml' main` (filtrado)
+7. `git diff main...HEAD -- src/`
+8. `git diff main...HEAD -- docs/adr/ docs/validation/SESION-06-EXTRACCION.md docs/validation/HOLDOUT-EXPOSICIONES.md`
+9. `git diff main...HEAD -- knowledge/spec/parametros.yaml scripts/hoja_preguntas.py`
+10. `git diff main...HEAD -- PROJECT_STATE.md tests/unit/test_kit.py tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_preguntas.py tests/unit/test_valores.py tests/unit/test_preparar_a44.py tests/unit/test_pivotes_m15.py`
+11. pytest con `PYTHONDONTWRITEBYTECODE`: lo negó la guardia; no lo rodeé.
+12. `uv run pytest -q -p no:cacheprovider` sobre los 7 ficheros, y después los 9 → exit 0
+13. `uv run botsito feedback apply --sesion 2026-11-04-sesion-06 --check`
+14. `uv run botsito knowledge validate`
+15. `uv run botsito spec docs --help`; `uv run botsito spec docs`
+16. `ls -la make-check.log && grep … make-check.log`. Un primer intento llevaba `git write-tree` encadenado por error mío: la guardia lo negó y no se ejecutó.
+17. `git rev-parse "HEAD^{tree}"`; `git log -1 --format='%h %ci' HEAD`
+18. `gh run view 42177503487 --json …`; `gh run view 42177503487 --log-failed | grep …` (dos veces)
+19. `git diff --numstat main...HEAD -- …`; `wc -c PROJECT_STATE.md`
+20. `git diff b2f3562 ed09769 -- docs/encargos/trabajo-activar-sesion-06-motor.md`
+21. `git show --stat` de 2a3cf76, e3adb44 y ed09769
+22. `git log --format='%h %ci' main..HEAD`
+23. `sed`/`grep` de citas (ERRORES-RECURRENTES:108 y :37, ACTIVAR-A35-A44:71 y :125-128, HOJA-DE-RUTA:650-656, test_project_state:21, test_agregacion:303-306); un `for` sobre tres ítems lo negó la guardia y los leí con Read
+24. `grep` de la skill `entregar-rama` y de `comparar-con-main`; `ls .claude/skills/`
+25. `grep -n 0087 PROJECT_STATE.md`
+26. `git worktree list && git branch --list`
+27. Read/Grep: el encargo, `contrato.yaml`, el informe, los dos registros fb nuevos, fb-a1f5784d, fb-146c4789, siete ítems ev-v17, ADR-0089, `tope_trader.py`, `cableado.py`, `motor.py`, `pivotes_m15.py`, `estructura_m1.py`, `zonas.py`, `primitivas_broker.py`, `test_reinicio_tope_trader.py`, `test_vela_sin_cuerpo_m15.py`, `test_cableado.py`, `SESION-06-EXTRACCION.md:760-807`, `ACTIVAR-SESION-06.md:505-550`, `AMBIGUEDADES.md:1-60`, `parametros.yaml` (freno_bucle, orden_stop_punto), `RESPALDO-M1/README.md`, `mapa_parametros.yaml`
+
+## l. Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Corregido en la tabla de §a (fase 1, «Llamadores»): `tope_del_registro` lo llaman `cli.py:2398` y `:2521` y siete guiones (`bloque_de_la_caja.py:267`, `caja_77_exploratoria.py:137`, `embudo_77.py:439`, `orden_stop_o_limite.py:427` y `:508`, `verificacion_a21.py:75`, `verificacion_a21_entradas.py:174`, `verificacion_a35_a44.py:205`), no `cableado`. Todos reciben ahora `reinicio`; ninguno construye `SeguidorTope` (el criterio de la fase 1 sigue cumpliéndose: `SeguidorTope(` solo en `cableado.py`). Los siete guiones, a la deuda de guiones de §f, sin tocarlos. |
+| a2 | importa | Arreglado: `test_por_el_cableado_el_corte_cae_en_la_apertura_de_la_primera_sesion` corre ahora el día 1 con `RUTA_STOP` (la orden se llena y salta el stop: el saldo baja) y aserta que el saldo de fin del día 1 es menor que el del corte inicial y que el corte del día 2 lleva ese saldo; el día 2 no tiene orden (la zona sintética solo se liga en el minuto del día 1). El docstring lo dice. En la rama: verde. |
+| a3 | menor | Se queda: el `cuando` de RN-020 dice «antes de la sesion seis» en letras porque la guardia de literales no admite la fecha ni el id del ADR, y la historia completa está en `notas`. Si el consultor prefiere el `cuando` sin historia, es una línea. |
+| a4 | menor | Declarado: los recuadros y los registros llevan la fecha de la decisión del consultor y del encargo (2026-11-05); los commits son del 2026-11-06 de madrugada (hora local, −0500), y HOLDOUT-EXPOSICIONES fecha el trabajo el día que se hizo. No se cambian. |
+| a5 | menor | Corregido: `SESION-06-EXTRACCION.md:768` (la fila de S-2), en §0. |
+| a6 | menor | Se queda, declarado: `knowledge/feedback/` es SOLO AÑADIR y el registro no se edita. Su `valor_resultante` resume el estado de A-44 tras el registro (lo que el cierre necesita decir), no una frase del trader; la `respuesta_literal` y las `notas` son solo de `ev-v17-000250-a468bcec`. |
+| a7 | menor | Hecho: `git worktree remove --force C:/cm/m7` y `git worktree prune`; `git worktree list` solo da el repo, y `git branch --list`, `main` y la rama. |
+| b1 | importa | Pegadas abajo, en «Las salidas de los tests contra `main` y en la rama». |
+| b2 | importa | §j trae ahora el run de b03cbbe; el commit de esta respuesta lleva su propio run, en «Estado». |
+| b3 | menor | De acuerdo con la etiqueta: en las fases 3 y 4 el criterio escrito CUADRA, y la PARADA es por lo medido que la decisión no zanja (§d lo dice en cada fase). Léase «cuadra el criterio; se para por …». La PARADA commiteada no se reescribe. |
+
+Y la exposición del revisor (lo que él declara: Read de cinco ítems de v17, Grep de
+`knowledge/cases/kit/mapa_parametros.yaml`, pytest de nueve ficheros de test y el log de la CI),
+en la fila del 2026-11-06 de HOLDOUT-EXPOSICIONES.
+
+### Las salidas de los tests contra `main` y en la rama (b1)
+
+Clon `C:/cm/m7` (`git worktree add --detach` de `main`, con `config/settings.local.toml` hacia el
+`data/` real), ya quitado.
+
+**Fase 1.** El test que cambia de sentido, con su versión de `main` en el clon (`git checkout --
+tests/unit/test_preparar_a44.py` dentro del clon), `uv run pytest -q -p no:cacheprovider
+tests/unit/test_preparar_a44.py -k test_con_el_registro_real_el_tope_es_el_del_dia`:
+```
+.                                                                        [100%]
+```
+(pasa en `main`: allí el reinicio es el corte del perfil marcado SUPUESTO). Los ficheros de la rama
+en el clon, la salida de §e.1 (`ImportError` de `MEDIANOCHE_HUSO` y `PRIMERA_SESION_DIA_SIGUIENTE`).
+El comportamiento, con el guion `camino_real_f1.py` de la carpeta de trabajo (el seguidor con el
+registro real del directorio en que corre, lunes y martes sintéticos con la medianoche de Praga en
+medio; la raíz por argumento). En el clon de `main`:
+```
+descripcion: tope del trader: dia, sobre saldo, en porcentaje; dia 4.5 sobre saldo_inicial_dia; reinicio en Europe/Prague; SUPUESTO: reinicio con el huso de corte del perfil (el trader no dijo otro)
+cortes: [('2030-01-14T23:00:00+00:00', 'dia')]
+saldo al corte del dia: 99000
+```
+En la rama:
+```
+descripcion: tope del trader: dia, sobre saldo, en porcentaje; dia 4.5 sobre saldo_inicial_dia; reinicio al abrir la primera sesion del dia siguiente (de sesion en sesion)
+cortes: [('2030-01-15T06:00:00+00:00', 'dia')]
+saldo al corte del dia: 98000
+```
+
+**Fase 2.** En el clon de `main`, la salida de §e.3 (`ImportError` de
+`SIN_CUERPO_NO_CORTA_Y_CUENTA`) y `camino_real_f2.py`: `liquidez_m15(ALTO): None`; en la rama,
+`liquidez_m15(ALTO): 140`.
+
+**En la rama**, los cuatro ficheros (`test_preparar_a44.py`, `test_reinicio_tope_trader.py`,
+`test_vela_sin_cuerpo_m15.py`, `test_pivotes_m15.py`), con el arreglo de a2:
+```
+51 passed in 6.08s
+```
+
+**Fase 3 (b.4, el prototipo que no se commitea).** Los 20 que fallaron en el clon con la lectura (a)
+en `ultimo_punto_de_ruptura` (log de la carpeta de trabajo, `f3_tests.log`):
+```
+FAILED tests/unit/test_caja_hasta_el_llenado.py::test_cada_maximo_nuevo_es_otra_zona_del_mismo_punto_y_el_0_no_se_mueve
+FAILED tests/unit/test_caja_hasta_el_llenado.py::test_la_cota_de_peticiones_con_el_1_expandiendose_no_dispara_el_freno
+FAILED tests/unit/test_caja_lado_de_ruido.py::test_la_caja_entera_del_lado_de_ruido_no_se_opera_con_ninguno[alcista]
+FAILED tests/unit/test_caja_lado_de_ruido.py::test_la_caja_entera_del_lado_de_ruido_no_se_opera_con_ninguno[bajista]
+FAILED tests/unit/test_escenarios_por_sesion.py::test_un_escenario_terminado_no_coloca_mas
+FAILED tests/unit/test_orden_en_el_0_con_mecha.py::test_el_0_es_el_extremo_con_mecha_del_pivote_de_m1
+FAILED tests/unit/test_orden_stop_pivote.py::test_el_punto_es_el_ultimo_bajo_en_una_venta_y_se_actualiza
+FAILED tests/unit/test_orden_stop_pivote.py::test_la_caja_de_r6_r4_y_r1 - ass...
+FAILED tests/unit/test_orden_stop_pivote.py::test_en_las_series_con_velas_sin_cuerpo_la_unica_diferencia_es_el_punto_de_adr_0085[venta]
+FAILED tests/unit/test_orden_stop_pivote.py::test_en_las_series_con_velas_sin_cuerpo_la_unica_diferencia_es_el_punto_de_adr_0085[compra]
+FAILED tests/unit/test_orden_stop_pivote.py::test_son_las_funciones_de_r5_y_r6_de_caja_77[venta]
+FAILED tests/unit/test_orden_stop_pivote.py::test_son_las_funciones_de_r5_y_r6_de_caja_77[compra]
+FAILED tests/unit/test_orden_stop_pivote.py::test_el_productor_liga_una_zona_por_punto_y_no_repite_un_punto_usado
+FAILED tests/unit/test_orden_stop_pivote.py::test_con_la_referencia_de_la_toma_el_punto_no_se_mueve
+FAILED tests/unit/test_orden_stop_pivote.py::test_con_la_caja_recalculada_un_1_nuevo_liga_otra_zona_del_mismo_punto
+FAILED tests/unit/test_velas_sin_cuerpo_m1.py::test_verde_sin_cuerpo_roja_da_el_punto_en_el_maximo_de_la_verde[compra-1]
+FAILED tests/unit/test_velas_sin_cuerpo_m1.py::test_verde_sin_cuerpo_roja_da_el_punto_en_el_maximo_de_la_verde[compra-3]
+FAILED tests/unit/test_velas_sin_cuerpo_m1.py::test_verde_sin_cuerpo_roja_da_el_punto_en_el_maximo_de_la_verde[venta-1]
+FAILED tests/unit/test_velas_sin_cuerpo_m1.py::test_verde_sin_cuerpo_roja_da_el_punto_en_el_maximo_de_la_verde[venta-3]
+FAILED tests/unit/test_velas_sin_cuerpo_m1.py::test_por_el_camino_real_el_productor_liga_la_zona_del_punto
+```
+Con el prototipo de la fase 2 en el mismo clon, los 31 ficheros: `exit=0`, ninguno falla (log
+`f2_tests.log`).
+
 ## Estado
 
-Terminada en lo que cuadró (fases 1 y 2, el cierre de A-44 y el flaky); las fases 3 y 4, en la PARADA (§d) a la espera del consultor. Faltan la CI de Linux (§j) y el revisor (§k), que se añaden abajo.
+Hecho lo que cuadró: fases 1 y 2, el cierre de A-44 y el flaky. Las fases 3 y 4 quedan en la PARADA (§d), con seis decisiones para el consultor. El revisor: 0 bloquea, 4 importa (arreglados), 6 menores (2 arreglados, 4 declarados; §l). CI de Linux: run 42177503487 sobre b03cbbe con el único fallo aceptado; el run del commit de esta respuesta al revisor, que es el último, se da en el mensaje final a Aleks (un informe no puede llevar el run de su propio commit). Rama lista para revisión, NO cerrada.

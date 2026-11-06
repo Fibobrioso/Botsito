@@ -165,11 +165,14 @@ def test_por_el_cableado_el_corte_cae_en_la_apertura_de_la_primera_sesion(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
 ) -> None:
     """Por el cableado real (`MotorCableado.correr_dia`) y el registro real, dos dias seguidos
-    (el mercado sintetico de test_cableado y el mismo desplazado un dia): el primer dia no corta;
-    el segundo corta en la apertura de su primera sesion (las 06:00Z del 2030-01-16, la sesion
-    07-11 de Madrid en invierno) con el saldo arrastrado, y no en la medianoche de Praga que cae
-    entre los dos. Falla con el codigo de `main`."""
-    md1 = tc._mercado({})
+    (el mercado sintetico de test_cableado con RUTA_STOP -la orden del dia 1 se llena y salta el
+    stop, asi que el saldo baja- y el mismo desplazado un dia, sin orden: la zona sintetica solo se
+    liga en el minuto del dia 1): el primer dia no corta; el segundo corta en la apertura de su
+    primera sesion (las 06:00Z del 2030-01-16, la sesion 07-11 de Madrid en invierno) con el saldo
+    arrastrado del dia 1, distinto del capital, y no en la medianoche de Praga que cae entre los
+    dos. Falla con el codigo de `main`. Hasta la respuesta al revisor (a2) el mercado era plano, la
+    orden no se llenaba y el saldo no cambiaba: el test no probaba el arrastre."""
+    md1 = tc._mercado(tc.RUTA_STOP)
     md2 = MercadoDia(
         "caso-x-2030-01-16",
         DIA_2,
@@ -188,12 +191,14 @@ def test_por_el_cableado_el_corte_cae_en_la_apertura_de_la_primera_sesion(
     motor.mercados = {tc.DIA.isoformat(): md1, DIA_2.isoformat(): md2}
     motor.tope = tope_del_registro(registro, HUSO_PERFIL)
     motor.correr_dia(tc._dia())
-    assert motor.seguidor is not None
+    assert motor.seguidor is not None and motor.cuenta is not None
     assert motor.seguidor.dia_de_sesion == tc.DIA and motor.seguidor.cortes == []
+    saldo_fin_dia_1 = motor.cuenta.saldo
+    assert saldo_fin_dia_1 < motor.seguidor.saldo_corte_dia  # el stop del dia 1 costo dinero
     motor.correr_dia(DiaDeMercado(DIA_2, tc.HUSO, tc.SESIONES, DatosMercado(tc._h4_alcista())))
     apertura = datetime.fromtimestamp((tc.MINUTO_INI + MINUTOS_DIA) * MS_POR_MINUTO / 1000, UTC)
     assert motor.seguidor.cortes == [(apertura, DIA)]
-    assert motor.cuenta is not None and motor.seguidor.saldo_corte_dia == motor.cuenta.saldo
+    assert motor.seguidor.saldo_corte_dia == saldo_fin_dia_1
 
 
 DIA_2 = tc.DIA + timedelta(days=1)
