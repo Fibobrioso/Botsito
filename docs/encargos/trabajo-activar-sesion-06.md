@@ -135,3 +135,30 @@ Dada por Aleks (consultor) el 2026-11-05. Copiada tal cual:
 > Sigue lo que manda el encargo: un commit por respuesta en el orden de d, knowledge validate antes de make check, Fuente: en el cuerpo con ids que existen, spec_version subida, CI de Linux por fix/activar-sesion-06 con su número de run (gh run view suelto), revisor (opus) con los cinco alcances del encargo y su informe pegado al final. Si el clasificador niega un push o la guardia un make, dame el comando exacto y lo lanzo yo con «!».
 >
 > Rama lista para revisión, NO cerrada.
+
+## Orden de cierre (2026-11-05)
+
+Dada por Aleks (consultor) el 2026-11-05, tras revisar la rama en `fix/activar-sesion-06` (b0b13d0);
+después Aleks lanzó `/cerrar-rama trabajo/activar-sesion-06`. Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/activar-sesion-06 (consultor, 2026-11-05). Revisada contra el diff completo de la rama (fix/activar-sesion-06, b0b13d0) y el informe con el revisor pegado: se cierra. Sigue RITUAL.md con la skill cerrar-rama; esta orden solo añade lo de abajo. Nada de esto cambia el cuerpo del informe, que está cerrado: lo que entre va en recuadro.
+>
+> Tag: stable/F38n-activar-sesion-06.
+>
+> Hallazgos del consultor que el revisor no vio (ninguno bloquea):
+> - Menor: la F preparada dice «A-35 y A-44 con valor y ABIERTAS»; la frase medida en la fase 0 (I4) es «con valor en los parámetros que el motor lee»: va así en el commit del contrato. Lección para el revisor: cuando el informe corrige una frase del encargo, comprobar que las líneas del cierre la llevan corregida.
+> - Menor: A-49 queda RESUELTA con la lectura «la vela que rompe» = «la vela del bloque»; la doy por buena: la pregunta era cerrada o en formación, la respuesta es cerrada sea cual sea la vela, y las dos opciones de caja_se_fija trabajan con velas cerradas. Un recuadro de una línea en el informe, junto al §de A-49, lo deja dicho.
+> - Para mi columna de ERRORES-RECURRENTES, además de lo que ya recoge el informe: «es indiferente» entre comillas sin ítem (b2 del revisor) va con la lección del punto 0.
+>
+> En el commit del contrato (chore(cierre)), todo lo de «Líneas preparadas para el commit del contrato» del informe, con esto encima:
+> - Next Action F: el texto del informe con la frase corregida de arriba. L gana su frase. La línea de Technical Debt de las llaves de bash y las URL file:/// sale, con su cita (GUARDIA-G1.md); el riesgo residual de C se queda.
+> - Next Action A, entera, sustituida por: «A. Demo de FTMO: las tres ejecuciones de MedirDemoFTMO HECHAS (1: 2026-10-09, script 1.0; 2: 2026-10-29, 1.1; 3: 2026-11-05, 1.2, a las 20:35 del servidor, fuera de la franja de 9 a 18 de España del runbook, con Nueva York abierto). Los tres CSV en data/demo_ftmo/ sin congelar, los originales en MQL5\Files. Falta una rama corta en la laptop, después de la de motor: congelar los tres en data/manifests/, cerrar A-28 con su ADR (desfase 180, 180 y 120 min el 9-oct, el 29-oct y el 5-nov: el servidor sigue el calendario de EE. UU.) y la NOTA del paso 8 en ADR-0081 §4 (M1 no, M2 no, M3 no, M4 no concluyente: el tope por margen lo pone el bot). Opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en corpus/noticias/ como CSV fecha_utc,hora_utc,divisa,evento; stops_cortos.py --noticias <csv> --ventana-min 2 da la medida (MARGEN-LOTE.md §2.b).» Las entradas que salen de la Next Action van a HISTORIA bajo «# Next Action HECHA» con su texto literal (RITUAL, punto 3).
+> - Hoja de ruta: R4.2, R4.3 nueva, R3.6, R3.7 y «Fechas fijas» como dice el informe; en R4.2 los Refs se quedan con A-49 y A-50. DEMO-FTMO.md:138 se corrige en el mismo commit. En el carril de la demo (la entrada que lleva NA:A), el estado pasa a «tres ejecuciones hechas; rama corta pendiente».
+> - ERRORES-RECURRENTES: la fila de la rama con lo del revisor (1 bloquea, 3 importa, 7 menores) y, en la columna del consultor, lo que el informe prepara más la línea de arriba.
+> - PROJECT_STATE.md por debajo de 23.000 bytes; dime el tamaño exacto.
+>
+> Después: merge a main, tag, commit de estado (solo Current Branch, Current Feature, Stable Main State y Last Stable Commit), make check sellado, push atómico de main y el tag en un solo comando (yo confirmo la regla ask con «1. Yes»), CI de main en verde antes de borrar, y borrar trabajo/activar-sesion-06 en local y fix/activar-sesion-06 en origin.
+>
+> Informe final: sha de main, sha del merge, tag y su objeto, run de la CI de main, ramas que quedan en local y en origin, tamaño de PROJECT_STATE.md, y lo que se apartó de esta orden.

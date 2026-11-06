@@ -135,7 +135,9 @@ cuándo comprueba MetaTrader el margen de una orden pendiente stop (ADR-0081 §4
 
 **Cuándo, la 3:** el lunes 2, el miércoles 4, el jueves 5 o el viernes 6 de noviembre de 2026, **de
 03:00 a 12:00 hora de Lima** (la franja de 9:00 a 18:00 de España; desde el 25 de octubre España va
-en UTC+1 y Lima en UTC−5, medido con `zoneinfo`). **El martes 3 no**: es la sesión 6 con el trader.
+en UTC+1 y Lima en UTC−5, medido con `zoneinfo`). La sesión 6 con el trader fue el miércoles 4 (no
+el martes 3, como se preveía), y la ejecución 3 se hizo el jueves 5 (corregido en el cierre de
+`trabajo/activar-sesion-06`).
 
 Si puedes, aprovecha una de las tres para mirar en el panel de la cuenta de FTMO **a qué hora se
 recalcula el límite de pérdida diaria**: a medianoche de España o a medianoche del servidor (A-28,

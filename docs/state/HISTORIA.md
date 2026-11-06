@@ -14898,3 +14898,66 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 55 (2026-11-04).
+
+# Next Action HECHA · F · A · sale de PROJECT_STATE.md en trabajo/activar-sesion-06 (2026-11-05)
+
+Su texto literal; las dos se sustituyen por un texto nuevo en la Next Action (orden de cierre del
+consultor del 2026-11-05):
+
+F. Activar la sesión 6 (R4.2): celebrada el miércoles 2026-11-04 (v17, 1:59:59) e ingerida en trabajo/sesion-06 (SESION-06-EXTRACCION.md, tabla final y §4). Dos PARADAS de §4 de ACTIVAR-A35-A44.md para el consultor: S-2 (la (c) no cabe en perdida_trader_reinicio_huso) y S-3 (la mecha, y la (a) contra ADR-0084). Los gráficos 3 a 6 y el 2 quedan sin contestar: antes de rehacerlos, decidir lo de la fecha (regla 2 de SESION-DE-PREGUNTAS.md). Decisión del consultor (2026-11-05): los gráficos se rehacen SIN fecha; lo que se añade es contexto (H4 y los trazos de M15 del bot), que decide la activación. El trader ofreció un vídeo de cómo mapea (§3.6): si llega, es material nuevo, SIN ABRIR y fuera del repo hasta su rama. H va después de esta activación. R6a en los huecos.
+
+HECHA en `trabajo/activar-sesion-06`: la activación en spec (A-49 y A-50 RESUELTAS; A-35 y A-44 con
+valor en los parámetros que el motor lee, y ABIERTAS); la F nueva apunta a la rama de motor.
+
+A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2, hecha el 2026-10-29 (script 1.1; CSV en data/demo_ftmo/ sin congelar, el original sigue en MQL5\Files); la 3, del 2026-11-02 al 2026-11-06. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. En la 2, el margen de 1,00 lote cuadra con FTMO-P-D1.md §3. La 3 va con el script 1.2 (trabajo/margen-pendiente), que además mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4; paso 8, DEMO-FTMO.md). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
+
+HECHA: las tres ejecuciones de MedirDemoFTMO (la 3, el 2026-11-05, script 1.2); la A nueva apunta a
+la rama corta que congela los tres CSV y cierra A-28.
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/activar-sesion-06 (2026-11-05)
+
+Su texto literal en «Technical Debt», con su evidencia:
+
+- La guardia no expande las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) ni mira las URL `file:///` (urllib, curl) … (GUARDIA-ALIAS.md §9, b6 y b7; entera en HISTORIA, Technical Debt ACORTADA)
+  PAGADA por la C de `trabajo/guardia-g1`: en Bash `resolver` expande las llaves (`_llaves`,
+  `.claude/hooks/guardia.py`) y una URL `file:` se mira como su ruta (GUARDIA-G1.md:911-912 y
+  :1598-1601, con `test_h_las_llaves_y_las_url_en_bash_se_niegan`); ACTIVAR-SESION-06.md §b.8. El
+  «Riesgo residual de C» se queda en PROJECT_STATE.
+
+# Registro de cierre · `trabajo/activar-sesion-06` (2026-11-05)
+
+- Orden de cierre del consultor del 2026-11-05, dada por Aleks tras revisar `fix/activar-sesion-06`
+  en b0b13d0 (copiada tal cual al final del encargo y de ACTIVAR-SESION-06.md, en este commit);
+  después Aleks lanzó `/cerrar-rama trabajo/activar-sesion-06`, y la sesión siguió `RITUAL.md`. Nunca
+  se cerró sin la orden.
+- **Lo que entra**: la sesión 6 activada en spec (spec 18.5.2 → 18.5.10). A-49 y A-50 RESUELTAS (la
+  caja con la vela que rompe ya cerrada; la caja entera); `perdida_trader_magnitud` (`saldo`),
+  `caja_bloque` (`r6`, con desviación declarada: A-48 sigue ABIERTA por el 0) y `caja_lado_de_ruido`
+  (`caja_entera`) CONFIRMED por registro; `caja_se_fija` CONFIRMED a mano (fuente ADR-0074);
+  `liquidez_m15_mecha_que_vuelve` = `solo_la_contraria`, lectura del consultor bajo A-35; un CORRECT
+  sobre `ev-v16-000851-f5ae3b6f` (S-20); recuadros en ADR-0053, 0054, 0064, 0074, 0083, 0084 y 0085 con
+  sus filas del índice; la NOTA de ACTIVAR-A35-A44.md y la candidata de S-2 en recuadro junto a §5 de
+  PREPARACION-A35-A44.md; el test de control de la sesión 6. Seis registros en
+  `knowledge/feedback/2026-11-04-sesion-06/`. A-35 y A-44 siguen ABIERTAS y bloqueantes; nada de
+  `src/`.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action: F y A se
+  sustituyen (sus textos viejos, arriba), L gana su frase y sale la línea de Technical Debt de las
+  llaves de bash y las URL `file:///` (arriba). La hoja de ruta: R4.2 gana su Estado (Refs con A-49 y
+  A-50), entra R4.3, R3.6 y R3.7 ganan «rama de motor incluida», sale la fecha fija de la sesión 6 y
+  A.1 (el carril de la demo, NA:A) gana su Estado. `DEMO-FTMO.md:138` se corrige. El recuadro de A-49
+  en el informe y la orden copiada. La fila de ERRORES-RECURRENTES, con los hallazgos del consultor.
+- **`PROJECT_STATE.md`, 22.569 bytes en este commit**, bajo los 23.000 de la orden.
+- **Desviaciones de la orden**: ninguna en lo que manda. «Fechas fijas» conserva la línea de la
+  ejecución 3 «del 2 al 6 de noviembre» (la orden solo saca la de la sesión 6).
+- Letra del tag: la última cerrada era `stable/F38m-sesion-06`; `stable/F38n-activar-sesion-06` no
+  existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38n-activar-sesion-06`. El merge es `git rev-parse "stable/F38n-activar-sesion-06^{commit}"`.
+- Commits de la rama: `8cb07d6` (chore(rama): abre la rama), `ea05a98` (la fase 0 y la PARADA),
+  `f581b6b` (A-44, la magnitud), `c6108d7` (A-35, la mecha), `663d381` (A-48, `caja_bloque`),
+  `f2e38e8` (A-49 RESUELTA), `63dae7e` (A-50 RESUELTA), `178497f` (S-20), `7f84472` (S-18, ADR-0083),
+  `62a6fe6` (S-2), `274871b` (el test de control), `7c1c067` (las notas de la sesión 7 y el informe),
+  `b0b13d0` (los hallazgos del revisor), y este (chore(cierre): sale el contrato y entra el registro en
+  HISTORIA).
+- CI de Linux por `fix/activar-sesion-06`, con el ÚNICO fallo esperado de `state check` en los dos:
+  run 42132695798 (7c1c067: 1 failed, 3164 passed, 47 skipped) y 42138018008 (b0b13d0: 1 failed, 3164
+  passed, 47 skipped). La CI de `main` corre tras el push.
