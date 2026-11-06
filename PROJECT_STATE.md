@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/activar-sesion-06-motor
+main
 
 ## Current Feature
-trabajo/activar-sesion-06-motor EN CURSO (R4.2, F de la Next Action): el motor de la activación de la sesión 6 (S-2 reinicio del tope del trader, S-4 vela sin cuerpo en M15, S-22 punto de breaker, S-19 precio inválido no gasta el punto). Encargo docs/encargos/trabajo-activar-sesion-06-motor.md; informe docs/validation/ACTIVAR-SESION-06-MOTOR.md.
+Ninguna rama abierta. trabajo/activar-sesion-06-motor cerrada en main el 2026-11-06 (stable/F38o-activar-sesion-06-motor): la sesión 6 en el motor en lo que cuadró (S-2, ADR-0089; S-4 en M15; A-44 RESUELTA). S-22 y S-19 van a la sesión 7.
 
 ## Stable Main State
-df0e672 · merge de `trabajo/activar-sesion-06` (tag `stable/F38n-activar-sesion-06`): la sesión 6 activada en spec. Sobre `stable/F38m-sesion-06` (78d560d). Informe docs/validation/ACTIVAR-SESION-06.md; el registro del cierre, al final de HISTORIA.
+4fa0920 · merge de `trabajo/activar-sesion-06-motor` (tag `stable/F38o-activar-sesion-06-motor`): la sesión 6 en el motor. Sobre `stable/F38n-activar-sesion-06` (df0e672). Informe docs/validation/ACTIVAR-SESION-06-MOTOR.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-df0e672 · merge: trabajo/activar-sesion-06, la sesión 6 activada en spec (A-49 y A-50 RESUELTAS) · tag stable/F38n-activar-sesion-06
+4fa0920 · merge: trabajo/activar-sesion-06-motor, la sesión 6 en el motor (S-2 ADR-0089, S-4 en M15, A-44 RESUELTA) · tag stable/F38o-activar-sesion-06-motor
 
 ## Tests Currently Passing
 1857 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
