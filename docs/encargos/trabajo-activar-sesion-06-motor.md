@@ -1,12 +1,8 @@
 # Encargo · trabajo/activar-sesion-06-motor
 
 Dado por Aleks (consultor) el 2026-11-05, en un solo mensaje. Copiado tal cual (el ADR que el
-encargo manda escribir va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale del bloque en el commit que lo crea):
-
-```ids-inexistentes
-ADR-0089 — el encargo lo manda escribir en la fase 1 (el reinicio del tope del trader); aún no existe
-```
+encargo manda escribir, ADR-0089, fue declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`, hasta el commit de la fase 1, que lo crea):
 
 > Modelo: Opus · Esfuerzo: alto
 >

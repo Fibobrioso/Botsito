@@ -16,7 +16,7 @@ df0e672 · merge de `trabajo/activar-sesion-06` (tag `stable/F38n-activar-sesion
 df0e672 · merge: trabajo/activar-sesion-06, la sesión 6 activada en spec (A-49 y A-50 RESUELTAS) · tag stable/F38n-activar-sesion-06
 
 ## Tests Currently Passing
-1842 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1850 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

@@ -138,6 +138,15 @@ trader, RN-020) no declaran `magnitud` en la spec —saldo o equity— y no se s
 > (`fb-2026-11-04-sesion-06-a1f5784d`). A-44 sigue ABIERTA por el reinicio (S-2), que va a la rama de
 > motor (`docs/validation/ACTIVAR-SESION-06.md`).
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06-motor`, ADR-0089; no reescribe el cuerpo
+> ni lo de arriba).** El reloj del reinicio lo dijo el trader en la sesión 6 (S-2): «la primera
+> sesión del día siguiente» (`ev-v17-000250-a468bcec`), y del viernes, el lunes, «siempre es de
+> sesión en sesión» (`ev-v17-000351-331daa6d`). `perdida_dia` y `perdida_semana` se miden desde el
+> corte que dice `perdida_trader_reinicio` (CONFIRMED `primera_sesion_dia_siguiente`): la apertura
+> de la primera sesión del día siguiente con actividad, y la de la semana en el primer día de la
+> semana con actividad; ya no la medianoche del huso de corte del perfil, y la traza no marca ningún
+> huso SUPUESTO. `perdida_trader_reinicio_huso` queda UNKNOWN y sin efecto.
+
 ### 4. Un solo reloj
 
 **El reloj del simulador es el del perfil de cuenta (`firma_huso_corte`)**, y el cableado
@@ -236,6 +245,12 @@ cual dejas de operar? ¿Cuándo vuelves a empezar a contar?».
 > **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** La magnitud ya es del trader (sesión 6,
 > S-1, `fb-2026-11-04-sesion-06-a1f5784d`; recuadro de §3.3); el reloj del reinicio sigue UNKNOWN y
 > A-44 sigue ABIERTA y bloqueante.
+
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06-motor`, ADR-0089).** El reloj del reinicio
+> ya es del trader (sesión 6, S-2, `ev-v17-000250-a468bcec`): `perdida_trader_reinicio` =
+> `primera_sesion_dia_siguiente`, el corte en la apertura de la primera sesión del día siguiente
+> (recuadro de §3.3). Con eso ninguna parte de la pregunta de A-44 queda sin regla general; su
+> cierre va en su propio commit de la misma rama.
 
 ## Problema que resuelve
 
