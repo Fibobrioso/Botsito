@@ -1576,8 +1576,10 @@ ambiguedades:
       ocurre el rompimiento yo ya voy trazando la caja … tiene que cerrar la vela rompimiento cierra
       de la vela no importa con mecha o sea con cuerpo» (ev-v17-011254-542726f6,
       fb-2026-11-04-sesion-06-e0fb393a): la caja se traza con la vela que rompe ya cerrada, sea con
-      mecha o con cuerpo, que es la lectura `cerrada` y lo que el motor hace (solo M1 cerradas,
-      ADR-0028). Mientras no aparece otro punto, «simplemente se mantiene en el punto anterior»
+      mecha o con cuerpo. La pregunta hablaba de la vela DEL BLOQUE y el trader habla de la vela QUE
+      ROMPE: que eso conteste la pregunta con la lectura `cerrada` (lo que el motor hace: solo M1
+      cerradas, ADR-0028) es LECTURA DEL CONSULTOR, que la extraccion apoya al decir que casa con
+      caja_se_fija (SESION-06-EXTRACCION.md §3.4, S-16). Mientras no aparece otro punto, «simplemente se mantiene en el punto anterior»
       (ev-v17-011419-0862662c). caja_se_fija = en_cada_cierre_m1 pasa a CONFIRMED con su fuente de
       decision (ADR-0074).
     resuelve_en: [F20, F21]
@@ -1635,8 +1637,8 @@ ambiguedades:
       opcion b, la caja entera; caja_lado_de_ruido = caja_entera pasa a CONFIRMED
       (fb-2026-11-04-sesion-06-3f466670). Su motivo es otro: la caja de una compra va por debajo del
       nivel tomado (ev-v17-012441-2ade00be), y sin una toma debajo no se puede trazar la caja
-      (ev-v17-012715-8aaaa59f). Al precisar dijo «es indiferente la verdad», y no entendio la
-      pregunta de cuanto se pasa el 0; de la caja a caballo solo dijo que puede ir «entre»
+      (ev-v17-012715-8aaaa59f). Lo que dijo al precisar, de cuanto se pasa el 0 y de la caja a
+      caballo, no esta en ningun item y se remite sin citarlo
       (SESION-06-EXTRACCION.md §3.4, S-17, fuera de un item).
     resuelve_en: [F19, F20]
     # NACE el 2026-09-28 (rama trabajo/registrar-embudo, orden del consultor tras

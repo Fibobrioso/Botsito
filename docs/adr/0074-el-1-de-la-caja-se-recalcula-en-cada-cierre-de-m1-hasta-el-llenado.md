@@ -43,7 +43,8 @@ cerrarla; la forma de ese registro es la PARADA 2 del informe.
 > RESUELTA por la sesión 6 (S-16): «apenas ocurre el rompimiento yo ya voy trazando la caja … tiene
 > que cerrar la vela rompimiento cierra de la vela no importa con mecha o sea con cuerpo»
 > (`ev-v17-011254-542726f6`, `fb-2026-11-04-sesion-06-e0fb393a`): la caja con la vela que rompe ya
-> cerrada, que es lo que hace el motor. Como preveía este apartado, `caja_se_fija` =
+> cerrada. Que la vela que rompe conteste por la vela del bloque de la pregunta, y por tanto la
+> lectura `cerrada` que hace el motor, es lectura del consultor. Como preveía este apartado, `caja_se_fija` =
 > `en_cada_cierre_m1` pasa a CONFIRMED con esta misma fuente, a mano. Mientras no aparece otro punto
 > la caja «simplemente se mantiene en el punto anterior» (`ev-v17-011419-0862662c`).
 

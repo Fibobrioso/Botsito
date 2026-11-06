@@ -1392,8 +1392,8 @@ reglas:
       fb-2026-11-04-sesion-06-431635dc), y caja_lado_de_ruido = caja_entera pasa a CONFIRMED
       (fb-2026-11-04-sesion-06-3f466670): la forma no cambia. Su motivo es otro: la caja de una
       compra va por debajo del nivel tomado (ev-v17-012441-2ade00be) y sin una toma debajo no se
-      puede trazar la caja (ev-v17-012715-8aaaa59f); de la caja a caballo solo dijo que puede ir
-      «entre» (SESION-06-EXTRACCION.md §3.4, fuera de un item)
+      puede trazar la caja (ev-v17-012715-8aaaa59f); lo que dijo de la caja a caballo no esta en
+      ningun item y se remite sin citarlo (SESION-06-EXTRACCION.md §3.4, S-17)
     forma:
       cuando:
         todos_de:

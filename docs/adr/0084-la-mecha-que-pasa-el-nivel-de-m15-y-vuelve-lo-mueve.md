@@ -95,6 +95,10 @@ provisional solo elige su ALCANCE, que es lectura del consultor y va a la sesió
 consultor, con su nombre: el encargo pidió un DEFAULT_AMBIGUOUS bajo A-35 sin leer ADR-0045 ni
 ADR-0054; antes de proponer un valor provisional bajo una ambigüedad se lee el ADR que la abrió.
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** El valor de este apartado ya no es el
+> vigente: desde la sesión 6 es `solo_la_contraria`, con fuente `ev-v17-001319-419307f6`, lectura del
+> consultor y sin registro (recuadro de §2).
+
 ### 4. Contraste con la sesión 4 y con ADR-0062
 
 - `ev-v10-012456-9dc1d221` («marcas un alto en m15 después el precio lo pasa por poco con la mecha
@@ -168,6 +172,10 @@ registro (ADR-0002) y cambia con un registro del trader.
   fuera del enum falla al leer el registro; las series de M1 no se mueven). Falla con el código
   de `main`: `ACTIVAR-SESION-05-MOTOR.md` §1.1.
 - **Sin arnés y sin material**: velas sintéticas.
+
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** Desde la sesión 6 el registro dice
+> `solo_la_contraria`, fuente `ev-v17-001319-419307f6` (recuadro de §2), spec 18.5.4, y los tres
+> tests de `tests/unit/test_mecha_que_vuelve.py` que leían el valor vigente cambian de sentido.
 
 ## Fecha / fase
 

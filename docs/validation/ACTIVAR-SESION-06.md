@@ -1,6 +1,6 @@
 # ACTIVAR-SESION-06 · Las respuestas de la sesión 6 entran en la spec (R4.2, entrada F)
 
-> PLANTILLA hasta la fase 0: este informe nace EN CURSO y todavía no tiene tabla (SESION-06-EXTRACCION.md §7, punto 1).
+> PLANTILLA hasta la fase 0 (la línea con que nació, SESION-06-EXTRACCION.md §7, punto 1): la tabla de activación ya está, en §«a», y el informe está terminado.
 
 Rama `trabajo/activar-sesion-06`, abierta el 2026-11-05 desde `main` en 0f57738 (commit de estado
 sobre el merge 78d560d, tag `stable/F38m-sesion-06`). Encargo:
@@ -50,7 +50,7 @@ matiz, más 12 herencias que el encargo no recoge. Lo que cambia algo de lo que 
 | M5 | A.3: «no hace falta ADR nuevo» | La hoja de la sesión 6 decía «con (a) … hace falta ADR» (`SESION-06-EXTRACCION.md:334-335`). Con `solo_la_contraria` el selector ya existe y ADR-0084 §2 lo describe: basta el recuadro, pero hay que decir que se aparta de la hoja | decisión 4 |
 | M6 | A.3: CONFIRM sobre RN-004 con `ev-v17-001036-e7bdd027` | Dicho sobre su gráfico, con «suponiendo» (confianza media en el ítem): un ejemplo, no una regla general. Y lo que dice -otra vela verde actualiza la zona- es «el más reciente» de ADR-0045, que RN-004 no enuncia: RN-004 es «la liquidez de M15 se toma con cuerpo» (`strategy_spec.yaml:1236-1248`). En el clon, `feedback pending` lo da como «confirma la regla vigente RN-004, que cita fb-2026-09-09-sesion-01-6e15504f»: confirmaría una frase que el ítem no dice | decisión 5 |
 | M7 | A-50 «y la hoja» | A-50 no está en `ORDEN_SESION_02` (`scripts/hoja_preguntas.py:56-60`): su quinto sitio no toca nada | ninguno |
-| M8 | A.7: «de cuánto se pasa el 0 dijo “es indiferente”» | La extracción los separa: «es indiferente la verdad» (85:49) y «no entiende la pregunta de cuánto se pasa el 0» (86:37-86:41) (`SESION-06-EXTRACCION.md:573-574`); y de la caja a caballo solo dice que puede ir «entre», sin ítem (:575-577) | se remite a §3.4 con esas dos frases |
+| M8 | A.7: «de cuánto se pasa el 0 dijo “es indiferente”» | La extracción separa dos cosas, las dos fuera de un ítem: lo que dijo al precisar (85:49) y que no entiende la pregunta de cuánto se pasa el 0 (86:37-86:41) (`SESION-06-EXTRACCION.md:573-574`); y de la caja a caballo dice una sola palabra, sin ítem (:575-577) | se remite a §3.4 sin citar (corregido tras el revisor, b2) |
 | M9 | C.1: «en las sesiones 1, 4 y 5 dijo las dos cosas» | La extracción: la 1 «apenas toca», la 4 «apenas cierra», la 5 las dos (`SESION-06-EXTRACCION.md:503-506`) | se escribe así |
 | M10 | C.1: «las notas de break_even_condicion» | El parámetro no tiene notas, solo `descripcion` (`parametros.yaml:925-933`); la ambigüedad, `pregunta` y comentarios | va en la `descripcion` y en el texto de A-13 |
 | M11 | A.1: `ev-v17-000134-725523bf`, «cierra al tocar el stop» | El ítem dice «por lo general» | se escribe con esas palabras |
@@ -438,7 +438,7 @@ cruzarlo», igual que sus precedentes.
 
 En `main` (el `make check` de `8cb07d6`, mismo código y spec de `main`: `3210 passed`) los diez pasan;
 en el clon de la fase 0, con los valores nuevos, fallan los diez (§b.4); en la rama, reescritos, pasan
-(cada `make check`: `3210 passed`, y `3211` desde `274871b` por el test de control).
+(cada `make check`: `3210 passed`, y `3212` desde `274871b` por los dos tests de control).
 
 | Test | En `main` | En la rama | Commit |
 |---|---|---|---|
@@ -489,13 +489,13 @@ después): `FAILED tests/unit/test_en_parte_no_se_cierra.py::test_la_sesion_6_de
 | Qué no cambia: nada de `src/`, `Makefile`, `.claude/`, `knowledge/evidence/`, `knowledge/cases/`, `docs/plan/`, `config/` | Hecho | `git diff --name-only main...HEAD` no nombra ninguno; `scripts/contrato_rama.py` en verde en cada `make check` |
 | Nada fijado pisado: `break_even_condicion`, `toma_antes_de_la_ventana`, `cartuchos_max`, A-46 | Hecho | sus valores y estados, sin cambio; solo descripciones y notas |
 | Ninguna «en parte» cerrada; A-35 y A-44 bloqueantes | Hecho | `test_kit.py` (bloqueantes ABIERTAS `{A-35, A-44}`) y el test de control |
-| Ningún registro sobre una «en parte» | Hecho | los siete registros: tres sobre parámetros, dos sobre A-49 y A-50 (RESUELTAS), uno sobre el parámetro de A-50 y un CORRECT sobre evidencia |
+| Ningún registro sobre una «en parte» | Hecho | los seis registros: tres sobre parámetros (`perdida_trader_magnitud`, `caja_bloque` y `caja_lado_de_ruido`), dos sobre A-49 y A-50 (RESUELTAS) y un CORRECT sobre evidencia |
 | Sin arnés y sin medidas agregadas | Hecho | solo recuentos de salidas commiteadas (§b.6) |
 | Citas solo de los 65 ítems vivos | Hecho | ningún `ev-v17-*` fuera de §8 de la extracción; lo demás, remitido a su sección |
-| Registros con `--fecha 2026-11-04 --recibido-el 2026-11-04 --procedencia trader_grabado --medio video` y el t0/t1 de su ítem | Hecho | `knowledge/feedback/2026-11-04-sesion-06/` (siete ficheros) |
+| Registros con `--fecha 2026-11-04 --recibido-el 2026-11-04 --procedencia trader_grabado --medio video` y el t0/t1 de su ítem | Hecho | `knowledge/feedback/2026-11-04-sesion-06/` (seis ficheros) |
 | `spec_version` subida, `spec manifest` y `spec docs`, `knowledge validate`, `Fuente:` | Hecho | 18.5.2 → 18.5.9; los cuerpos de los commits |
 | Las líneas del cierre | Hecho | §«Líneas preparadas» |
-| CI de Linux por `fix/activar-sesion-06` y revisor | abajo | §«CI» y §«Informe del revisor» |
+| CI de Linux por `fix/activar-sesion-06` y revisor | Hecho | §«CI de Linux» y §«Informe del revisor» |
 
 # Para la rama de motor
 
@@ -565,8 +565,8 @@ con esquemas de velas y el marco escrito. Lo que va primero, primero.
    toma la vela de M1 que cierra con cuerpo por encima; ¿sí o no?», y lo mismo en un bajo. Después,
    aparte, con el esquema de la sesión 5 (la vela roja que forma el alto deja una mecha por encima de
    las verdes): «¿el alto es la punta de esa mecha, o el alto de las verdes? (a) la mecha; (b) el de
-   las verdes; (c) otra, ¿cuál?». Y en M15, con una vela sin cuerpo entre las verdes y la roja: «¿la
-   vela sin cuerpo corta la racha? (a) sí; (b) no; (c) otra, ¿cuál?».
+   las verdes; (c) otra, ¿cuál?». (La vela sin cuerpo en M15, S-4, no se repregunta: la resolvió, y
+   la implementa la rama de motor, B.2.)
 3. **A-53 (S-14).** Dijo la letra (a), la quita (`ev-v17-005730-76948af1`), y explicó la (b)
    (`ev-v17-005846-0891a9c9`, `ev-v17-005914-55580dc0`); `orden_pendiente_al_abrir_escenario` sigue
    `se_mueve`, DEFAULT_AMBIGUOUS. **Esquema:** la orden vieja puesta, la toma nueva y el punto nuevo:
@@ -582,7 +582,7 @@ con esquemas de velas y el marco escrito. Lo que va primero, primero.
 6. **ADR-0083 D1 (S-18).** Qué es «un igual» (`ev-v17-013009-5e47afdb`) y, al volver a entrar, si la
    caja es la del primer intento o una nueva (`ev-v17-013815-9cf6f076`), con un esquema de cada caso.
 7. **La alternancia (S-5, S-6, S-21; RN-009).** No comparte la premisa y pide que se defina
-   (`ev-v17-002954-613d9421`); lo que mira es «la liquidez de la izquierda» (`ev-v17-003222-85f12e6b`);
+   (`ev-v17-002954-613d9421`); lo que mira es la liquidez de la izquierda, «solemos operar pues la liquidez por así decirlo izquierda» (`ev-v17-003222-85f12e6b`);
    de lo que pase después, «puede ser muy ruidoso» (`ev-v17-002803-4c5ea744`). RN-009 no cambia. **Sin
    usar la palabra:** tres retrocesos en M1 (sin cambio de color; con uno; con dos) y en cada uno
    «¿dónde pondrías tu punto y cuál descartarías?»; y que diga con sus palabras qué hace que un
@@ -656,7 +656,208 @@ con esquemas de velas y el marco escrito. Lo que va primero, primero.
 
 **El tamaño de `PROJECT_STATE.md`**: 22.934 bytes hoy en la rama (sin las filas de A-49 y A-50 y con el recuento de 1842); con las líneas de arriba y lo que el cierre siempre sustituye (Current Feature, Stable Main State, Last Stable Commit), unos **22.443 bytes**, medido en memoria con un guion de la carpeta de trabajo: bajo los 23.000 del encargo y los 25.000 de `tests/unit/test_project_state.py`.
 
+**La salida del clon de la fase 0** (b5 del revisor), `pytest -q -rf` sobre los 70 ficheros nombrados
+en `C:/cm/s6`, con los valores nuevos y los tests de `main`, el resumen tal cual:
+
+```
+FAILED tests/unit/test_caja_hasta_el_llenado.py::test_el_registro_dice_en_cada_cierre_m1_bajo_a49
+FAILED tests/unit/test_caja_lado_de_ruido.py::test_el_registro_real_y_un_valor_fuera_del_enum
+FAILED tests/unit/test_hoja_preguntas.py::test_cada_pregunta_sale_tal_cual_y_en_su_orden
+FAILED tests/unit/test_hoja_preguntas.py::test_escribe_un_docx_que_se_abre - ...
+FAILED tests/unit/test_kit.py::test_ambiguedades_reales_y_esquema - Assertion...
+FAILED tests/unit/test_kit.py::test_una_en_parte_no_entra_en_resueltas - Asse...
+FAILED tests/unit/test_kit.py::test_project_state_refleja_las_ambiguedades_abiertas
+FAILED tests/unit/test_mecha_que_vuelve.py::test_el_registro_real_trae_el_selector_como_lectura_del_consultor
+FAILED tests/unit/test_mecha_que_vuelve.py::test_por_el_camino_real_las_mechas_mueven_el_nivel_y_la_toma_lo_congela
+FAILED tests/unit/test_mecha_que_vuelve.py::test_un_valor_fuera_del_enum_falla_al_leer_el_registro
+```
+
+y, del segundo: `assert [134, 134, 134] == [137, 138, 138]`. En `main` los diez pasan (el `make check`
+de `8cb07d6`, `3210 passed`), y en la rama, reescritos, también (`3212 passed` en `7c1c067`).
+
+# CI de Linux
+
+`git push origin trabajo/activar-sesion-06:refs/heads/fix/activar-sesion-06` sobre `7c1c067`, sin
+tocar la rama local. **Run 42132695798** (`gh run view 42132695798`, suelto): `X python in 6m39s`, en
+`Run make check`; `gh run view 42132695798 --log-failed`:
+
+```
+ERROR: PROJECT_STATE declara la rama 'trabajo/activar-sesion-06'; la rama actual es 'fix/activar-sesion-06'
+FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo - AssertionError: assert 1 == 0
+1 failed, 3164 passed, 47 skipped in 356.06s (0:05:56)
+```
+
+El único fallo es el aceptado: `state check` por el nombre `fix/`. Los 47 saltados son los que
+necesitan `data/`. El commit de los hallazgos del revisor se vuelve a empujar a `fix/`; su run, en el
+mensaje final (no puede ir en el propio commit).
+
+# Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| b1 | bloquea | La CI estaba corriendo cuando se lanzó el revisor (la skill la pone antes; se lanzaron a la par para no esperar dos veces, y se declara). Su run y su resultado, en §«CI de Linux», que ahora existe. |
+| b2 | importa | Arreglado: las dos frases de §3.4 sin ítem salen de entre comillas en la descripción de `caja_lado_de_ruido`, en A-50 y en las notas de RN-005, y en M8 de §0; se remiten a §3.4 sin citar. spec 18.5.9 → 18.5.10. Lo arrastraba el encargo (A.7 y el punto 12 de la respuesta): va a la columna del consultor. |
+| b3 | importa | Arreglado: la pregunta de M15 sale de C.2; se dice que S-4 no se repregunta porque la resolvió y la implementa la rama de motor (B.2). |
+| a1 | importa | Arreglado: en A-49, en la descripción de `caja_se_fija` y en el recuadro de ADR-0074 §2 se dice que la pregunta hablaba de la vela del bloque y el trader de la vela que rompe, y que leerlo como la lectura `cerrada` es LECTURA DEL CONSULTOR (la extracción dice que casa con `caja_se_fija`). A-49 sigue RESUELTA: si esa lectura vale lo decide el consultor. |
+| a2 | menor | Arreglado: seis registros, no siete. |
+| a3 | menor | Arreglado: 3212, por los dos tests de control. |
+| a4 | menor | Arreglado: una fila más en `HOLDOUT-EXPOSICIONES.md` con los `make check` de la rama, el clon `C:/cm/m6` y la lectura del revisor. |
+| a5 | menor | Arreglado: recuadros de una línea en ADR-0084 §3 e Impacto que remiten al de §2; su fila del índice. |
+| a6 | menor | Arreglado: la línea de PLANTILLA dice que el informe está terminado (conserva la palabra). |
+| b4 | menor | Arreglado: la cita de `ev-v17-003222-85f12e6b` tal como está en el ítem. |
+| b5 | menor | Arreglado: la salida del clon, pegada arriba. |
+
 ## Estado
 
-Rama lista para revisión, NO cerrada: la respuesta del consultor aplicada punto por punto, los diez
-commits sellados, CI de Linux y revisor abajo.
+Rama lista para revisión, NO cerrada: la respuesta del consultor aplicada punto por punto, los
+commits sellados, la CI de Linux con el único fallo aceptado (§«CI de Linux») y los hallazgos del
+revisor arreglados (§«Lo que se hizo con los hallazgos del revisor»).
+
+## Informe del revisor
+
+Pegado tal cual (subagente `revisor`, opus, sobre `7c1c067`); ninguna cita de un tramo no citable que
+retirar. Lo que se hizo con cada hallazgo, en §«Lo que se hizo con los hallazgos del revisor».
+
+### Informe del revisor · trabajo/activar-sesion-06 · 2026-11-05
+
+Revisé HEAD 7c1c067 contra la base 0f57738: 12 commits, 38 ficheros y `git status --short` vacío. El sello de `make-check.log` coincide con el árbol de HEAD.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 5 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | La pregunta de A-49 trata de la vela **del bloque** («¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?»). La cita del trader habla de la vela **que rompe** («tiene que cerrar la vela rompimiento cierra de la vela no importa con mecha o sea con cuerpo»). El texto de cierre equipara las dos («la caja se traza con la vela que rompe ya cerrada … que es la lectura `cerrada`») sin decir que esa equivalencia es una lectura. La da la extracción, no el trader: la extracción solo dice que «casa con `caja_se_fija`». La frase dice más que su cita. Lo mismo pasa en el recuadro de ADR-0074 §2 («que es lo que hace el motor»). | `knowledge/spec/ambiguedades.yaml:1574-1582`; `knowledge/evidence/v17/ev-v17-011254-542726f6.yaml:7-11`; `docs/validation/SESION-06-EXTRACCION.md:562-563`; `docs/adr/0074-…-hasta-el-llenado.md:42-48` |
+| a2 | menor | El informe cuenta «los siete registros» y «(siete ficheros)», pero son seis. Suma dos veces el de `caja_lado_de_ruido`: «tres sobre parámetros … y uno sobre el parámetro de A-50». | `docs/validation/ACTIVAR-SESION-06.md:492`, `:495`; `ls knowledge/feedback/2026-11-04-sesion-06/ \| wc -l` → `6`; `knowledge validate` → `OK: 197 registros de feedback` |
+| a3 | menor | Dice «`3211` desde `274871b` por el test de control», pero 274871b añade dos tests (`test_la_sesion_6_…` y `test_se_rompe_a_proposito_…_sesion_6_…`). El log de HEAD da 3212, y PROJECT_STATE pasa de 1840 a 1842. | `ACTIVAR-SESION-06.md:441`; `make-check.log`: `3212 passed in 1132.51s`; `git diff main...HEAD -- tests/unit/test_en_parte_no_se_cierra.py` |
+| a4 | menor | La fila de HOLDOUT-EXPOSICIONES solo cubre la fase 0. No están declarados los `make check` de los diez commits siguientes (cada uno lee el M1 de marzo para calentar) ni el clon `C:/cm/m6` del test de control. La fila de `trabajo/sesion-06` sí declaraba «Los make check de la rama». | `docs/validation/HOLDOUT-EXPOSICIONES.md:93` (la nueva) frente a `:91` (3); `ACTIVAR-SESION-06.md:465-468` |
+| a5 | menor | ADR-0084 §3 y su Impacto siguen dando el selector como «DEFAULT_AMBIGUOUS en `cualquier_mecha` … fuente `ev-v15-000553-9d95178a`», sin un puntero al recuadro de §2, que es lo que lo cambia. La fila del índice sí está al día. | `docs/adr/0084-…-lo-mueve.md:83-85`, `:155-156`; recuadros en `:58-79` y `:121-124` |
+| a6 | menor | La línea 3 del informe terminado sigue diciendo «PLANTILLA hasta la fase 0: este informe nace EN CURSO y todavía no tiene tabla». | `ACTIVAR-SESION-06.md:3` |
+
+Comprobado sin hallazgos:
+- **El contrato.** `contrato_rama.py` dice `CONTRATO: 38 ficheros dentro del contrato … 5 comprobaciones para el revisor` (exit 0). `feedback apply --sesion 2026-11-04-sesion-06 --check` da 3 `=`, «0 cambian, 3 ya estaban». `knowledge validate` sin redirigir da `exit=0`, con `OK: 197 registros de feedback, historial intacto, commits con Fuente` y `OK: 640 items de evidencia, 0 contradicciones abiertas`. En `make-check.log` están `3212 passed` y `SELLO: … sobre el arbol 1178c1815e0bc26fbe709a3f2696eb6e9c5c81a9`, que es `git rev-parse HEAD^{tree}`, y `PICO DE MEMORIA … 309 MiB`. `spec docs --escribir` escribe, así que no lo lancé; lo sustituye `test_spec_docs_generados.py`, que pasa.
+- **Los trailers `Fuente:`.** Los siete commits que tocan `knowledge/spec` llevan `Fuente:` en el cuerpo. Todos sus ids existen (`ev-v17-*`, `fb-2026-11-04-sesion-06-*`, ADR-0053, 0069, 0074, 0084 y 0085), y ninguno es un sha.
+- **Holdout y material.** Nada toca `knowledge/cases/`. Ningún fotograma, cruda ni libro. Las exposiciones de la fase 0 están declaradas el mismo día.
+- **Regímenes de cambio.**
+  - `knowledge/evidence/`, `data/manifests/` y `knowledge/corpus/` no cambian. `knowledge/feedback/` solo tiene `A` en la carpeta nueva.
+  - Los RESOLVE_UNKNOWN de `caja_bloque`, `caja_lado_de_ruido` y `perdida_trader_magnitud` caen sobre valores DEFAULT_AMBIGUOUS, no fijados por el trader, así que no hacía falta CORRECT.
+  - A-49 y A-50 se cierran con un registro del trader activo sobre la propia ambigüedad. El CORRECT va sobre evidencia.
+  - `feedback pending` no deja nada de la sesión 6 pendiente: las dos pendientes son de las sesiones 3 y 4.
+- **Ambigüedades.** Cada commit que toca `ambiguedades.yaml` toca también `docs/spec/ambiguedades.md`. f2e38e8 y 63dae7e tocan además `PROJECT_STATE.md`: las filas salen. Para A-49 y A-50 están los cinco sitios, el cuarto incluido: ninguna regla nombra A-49 (grep), RN-005 lleva la nota de A-50, A-49 sale de `ORDEN_SESION_02` y A-50 nunca estuvo en la hoja.
+- **ADR.** Los siete solo añaden líneas, su `## Estado` no cambia y `test_adr.py` pasa.
+- **Informes cerrados.** `PREPARACION-A35-A44.md` cambia en 10 líneas, todas añadidas y dentro de un recuadro `>` con fecha y rama.
+- **Las tres guardias de una `cita`.** No aplica: la rama no añade ningún campo `cita`.
+- **Cifras y citas.**
+  - Ninguna forma ejecutable cambia.
+  - Comprobé contra el código `tope_trader.py:189-194`, `:211-212` y `:230-240`, `broker.py:543-555`, `cableado.py:150-166` y `:322-326`, `pivotes_m15.py:67-72` y `:101-112`, `motor.py:158-174`, `test_punto_usado.py:343`, `test_pivotes_m15.py:149` y `test_preparar_a44.py:145-162`: dicen lo que el informe les atribuye.
+  - De §b.6, sin imprimir filas: 118 y 21 líneas `stop_movido`, y 37 líneas `rechazada` con `precio_invalido`; cuadra.
+- **Evidencia nueva.** No aplica: la rama no añade ítems.
+- **Tests concretos en verde:** `test_en_parte_no_se_cierra`, `test_hoja_preguntas`, `test_mecha_que_vuelve`, `test_caja_hasta_el_llenado`, `test_caja_lado_de_ruido`, `test_adr`, `test_project_state`, los tres de `test_kit` que cambian, `test_registro`, `tests/contract/test_provisional_cuelga_de_abierta`, `tests/contract/test_spec_docs_generados`, `test_historia` y `test_reabrir_y_fuente_documental` (103 passed en el último lote).
+- `HISTORIA.md` solo crece (+168/-0, Archivo 56).
+
+#### Eje (b) · Encargo
+Resumen: 1 bloquea, 2 importa, 2 menor. Requisitos: 33 hechos (2 de ellos de otra forma, declarados), 3 parciales, 1 no hecho (el revisor, que es este informe).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con `abrir-rama`: tramo R4, riesgo alto, artefacto, línea de PLANTILLA | Hecho | `contrato.yaml:2-4`; informe `:3` |
+| 2 | Fase 0 a, la tabla de activación | Hecho | informe `:82-106` |
+| 3 | Fase 0 b.1 a b.10 | Hecho | informe `:117-245` |
+| 4 | Fase 0 c, el tamaño de PROJECT_STATE | Hecho | informe `:249-254`; `wc -c` → 22934 hoy |
+| 5 | Fase 0 d, el plan de commits | Hecho | informe `:258-278` |
+| 6 | PARADA con «Lo que necesito que decidas» | Hecho | informe `:299-355` |
+| 7 | Respuesta del consultor copiada tal cual en el encargo y en el informe | Hecho | `md5sum` del encargo `:115-137` y del informe `:361-383`, iguales (`02ef7c95…`) |
+| 8 | A.1: magnitud CONFIRMED por registro; la descripción reescrita; ningún registro sobre A-44 | Hecho | `fb-…-a1f5784d`; `parametros.yaml` (descripción de `perdida_trader_magnitud`) |
+| 9 | A.2: nota de A-44 con tres ítems, la candidata y la NOTA del runbook, en un commit propio | Hecho de otra forma: la candidata en recuadro (punto 3), declarado | 62a6fe6; `ACTIVAR-A35-A44.md:25-39`; `PREPARACION-A35-A44.md:175-183` |
+| 10 | A.3: `solo_la_contraria` a mano, recuadro de ADR-0084 §2 y §5 con su fila, tests | Hecho de otra forma: sin CONFIRM de RN-004 (punto 5), declarado | c6108d7; informe `:479` |
+| 11 | A.4: la nota de A-35 con los tres ítems de S-4 | Hecho | `ambiguedades.yaml` (texto de A-35) |
+| 12 | A.5: `caja_bloque` CONFIRMED, con «desviación» en el registro, la nota y el informe | Hecho | `fb-…-a1cc60d0.yaml:18` («DESVIACION»); `ambiguedades.yaml:1534`; informe `:610-612` |
+| 13 | A.6: A-49 RESUELTA, `caja_se_fija` a mano, cinco sitios, ADR-0074 y la hoja | Hecho (ver a1) | f2e38e8 |
+| 14 | A.7: A-50 RESUELTA, dos registros, cinco sitios, RN-005 | Hecho (ver b2) | 63dae7e |
+| 15 | A.8: el CORRECT con ese `valor_resultante`, recuadro de ADR-0085 §3 y la nota de RN-004 | Hecho | `fb-…-f2236d1e.yaml:18-19`; `strategy_spec.yaml` (notas de RN-004 y RN-007) |
+| 16 | A.9: recuadro de ADR-0083, sin registro, `cartuchos_max` sin tocar | Hecho | 7f84472; `parametros.yaml` no cambia `cartuchos_max` |
+| 17 | A.10: test de control de la sesión 6, con A-35, A-44 y A-48 nombradas | Hecho | `test_en_parte_no_se_cierra.py` +34 líneas; pasa |
+| 18 | B: las cuatro entradas de la rama de motor | Hecho | informe `:500-544` |
+| 19 | C: las diez entradas de la sesión 7, más los puntos 8 y 13 de la respuesta | Hecho (ver b3 y b4) | informe `:546-606` |
+| 20 | D: NA:I y NA:Q, el vídeo de mapeo, la línea de Technical Debt | Hecho | informe §b.8 y `:631-634` |
+| 21 | No se tocan `src/` (engine y domain), Makefile ni `.claude/` | Hecho | `git diff --name-status main...HEAD` |
+| 22 | Nada fijado se pisa (`break_even_condicion`, `toma_antes_de_la_ventana`, `cartuchos_max`, A-46) | Hecho | solo cambian descripción y texto |
+| 23 | Ninguna «en parte» se cierra; A-35 y A-44 siguen bloqueantes | Hecho | `ambiguedades.yaml` (estados); test de control |
+| 24 | Ningún registro sobre una «en parte» | Hecho | seis registros: tres sobre parámetros, A-49, A-50 y el CORRECT |
+| 25 | Sin arnés; solo recuentos de salidas commiteadas | Hecho | informe §b.6 |
+| 26 | Citas solo de los 65 ítems vivos; lo de fuera, remitido sin citar | Parcial | ningún `ev-v17-*` fuera de §8 (`git diff … \| grep -oE 'ev-v17-…' \| sort -u`: 57 ids, todos en `SESION-06-EXTRACCION.md:887-908`); pero ver b2 |
+| 27 | La Next Action y la hoja de ruta no se tocan | Hecho | el diff de `PROJECT_STATE.md` no toca la Next Action; `docs/plan/` no aparece |
+| 28 | Fechas de los registros (alcance 5) | Hecho | los seis tienen `fecha: '2026-11-04'` y `recibido_el: '2026-11-04'`; `t0` y `t1` son los de su ítem |
+| 29 | Cada commit con `spec_version` subida y `Fuente:` en el cuerpo | Hecho | de 18.5.2 a 18.5.9; 62a6fe6 no la sube, y dice por qué |
+| 30 | Tests que cambian de sentido, con la salida de main y la de la rama | Parcial (b5) | informe `:162-172`, `:443-453` |
+| 31 | Exposiciones el mismo día | Hecho (ver a4) | `HOLDOUT-EXPOSICIONES.md:93` |
+| 32 | Los registros en la carpeta nueva | Hecho | `knowledge/feedback/2026-11-04-sesion-06/` |
+| 33 | CI de Linux por `fix/` con su número de run | Parcial (b1) | `git ls-remote --heads origin fix/activar-sesion-06` → `7c1c067…`; el informe no trae run |
+| 34 | El informe del revisor pegado | No hecho todavía (es este) | — |
+| 35 | Líneas preparadas para el commit del contrato | Hecho | informe `:625-657` |
+| 36 | «El encargo, punto por punto» | Hecho | informe `:470-498` |
+| 37 | Estado «Rama lista para revisión, NO cerrada» | Hecho | informe `:659-662` |
+
+Alcances pedidos:
+- **(1)** Hecho. A-49 y A-50 tienen sus cinco sitios, su test (`test_kit.py`) y su `Fuente:`. Ninguna «en parte» se cerró. «Desviación» está en el registro, la nota, la descripción y el informe. ADR-0053, 0054, 0064, 0074, 0083, 0084 y 0085 tienen su recuadro; ver a5.
+- **(2)** Parcial, por b2.
+- **(3)** Hecho: las siete filas del índice están al día (`docs/adr/README.md`, 7 líneas cambiadas).
+- **(4)** Hecho. `liquidez_m15_mecha_que_vuelve` (A-35), `orden_stop_punto` (A-48) y `orden_pendiente_al_abrir_escenario` (A-53) dicen «LECTURA DEL CONSULTOR bajo A-n». Son los únicos DEFAULT_AMBIGUOUS bajo ambigüedades que toca la sesión 6.
+- **(5)** Hecho.
+- **Las notas de cada `fb-*` frente a su ítem:** las seis llevan solo la `afirmacion` de su ítem, más «DESVIACION» en a1cc60d0.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | bloquea | El encargo pide la CI de Linux con su número de run, y la skill `entregar-rama` la pone antes del revisor (paso 7 antes del 8). La rama ya está en `fix/activar-sesion-06`, en 7c1c067, pero el informe no trae ni run ni resultado. Además remite a una sección «§«CI»» que no existe. | `ACTIVAR-SESION-06.md:498`, `:662`; Grep de `CI` en el informe: no hay ninguna sección; `.claude/skills/entregar-rama/SKILL.md:66-76`; `git ls-remote` → `7c1c067… refs/heads/fix/activar-sesion-06` |
+| b2 | importa | El encargo pide que lo que la extracción cuenta fuera de un ítem «se remite a su sección, sin citarlo». Aun así, la spec copia entre comillas palabras del trader que no están en ningún ítem: «es indiferente la verdad» y «entre». En `activar-sesion-05` esto mismo fue b1 (**bloquea**). Atenúa que el propio A.7 del encargo escribió «es indiferente» entre comillas, y que el punto 12 pide «las dos frases de §3.4 por separado». Es texto de la spec, así que se puede corregir; decide el consultor. | `parametros.yaml:781-783`; `ambiguedades.yaml:1638-1639`; `strategy_spec.yaml:1396`; fuente: `SESION-06-EXTRACCION.md:573-577`; precedente: `ERRORES-RECURRENTES.md` (fila de `trabajo/activar-sesion-05`, b1) |
+| b3 | importa | La pregunta C.2 para la sesión 7 añade «Y en M15, con una vela sin cuerpo entre las verdes y la roja: «¿la vela sin cuerpo corta la racha? …»». No lo piden ni C.2 ni el punto 4 de la respuesta, y el informe no lo justifica. Además, B.2 manda a la rama de motor implementar justo eso (S-4 «RESUELVE (c)»), así que se volvería a preguntar algo que el motor ya habría cambiado. | `ACTIVAR-SESION-06.md:568-569` frente a encargo `:52`, punto 4 (`:121`) y B.2 (`:46`) |
+| b4 | menor | «la liquidez de la izquierda» va entre comillas como palabras del trader, pero es la `afirmacion` del ítem. La cita dice «suele operar pues la liquidez por así decirlo izquierda». | `ACTIVAR-SESION-06.md:585`; `ev-v17-003222-85f12e6b.yaml:7-11` |
+| b5 | menor | De los diez tests que cambian de sentido, el informe describe lo que daban en main y en el clon, pero no pega su salida. Solo la pega para el test de control. | `ACTIVAR-SESION-06.md:162-172`, `:443-453` frente a `:465-468`; encargo `:89` |
+
+#### Lo que no pude comprobar
+- **La CI de `fix/activar-sesion-06`.** Sin número de run no hay `gh run view`, y `gh run list` lo niega el clasificador en esta máquina. Solo verifiqué el push, con `ls-remote`.
+- **El `make check`, `knowledge validate` y `feedback apply --check` de cada commit intermedio.** El log solo es el de HEAD. Que `apply --check` propusiera en cada commit solo lo suyo lo dice el informe; no lo puedo reconstruir sin escribir.
+- **Los ensayos de la fase 0 en `C:/cm/s6` y `C:/cm/m6`.** Ya se quitaron; me quedo con lo que cuenta el informe.
+- **Que el encargo copiado sea idéntico al prompt original.** No tengo el original.
+- **Los tests que leen `data/` o que son largos:** el `test_kit.py` entero y `test_preparar_a44.py`. Solo corrí los tres de `test_kit` que cambian de sentido.
+- **Las comprobaciones que escriben**, que no ejecuté: `spec docs --escribir` (lo sustituye `test_spec_docs_generados.py`, en verde), `evidence contradictions` (lo sustituye `knowledge validate`, «0 contradicciones abiertas») y `make check` (lo sustituye `make-check.log` con su SELLO).
+- **El reparto por mes de los 37 rechazos (§b.6).** No lo verifiqué para no imprimir filas.
+- **Si la «vela del bloque» de A-49 y la «vela que rompe» son la misma vela en el método del trader (a1).** Es una cuestión de significado que decide el consultor.
+
+#### Comandos ejecutados
+1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git status --short`
+2. `git diff --stat main...HEAD`; `git diff --name-status main...HEAD`
+3. `uv run python scripts/contrato_rama.py`
+4. `uv run botsito feedback apply --sesion 2026-11-04-sesion-06 --check`
+5. `uv run botsito knowledge validate` (sin redirigir)
+6. Un `for` sobre los registros: negado por la guardia (`for f`). Los leí con Read, uno a uno.
+7. `ls knowledge/evidence/v17/ | wc -l` y `ls` filtrado por ids
+8. `git diff main...HEAD | grep '^+' | grep -oE 'ev-v17-[0-9]{6}-[0-9a-f]{8}' | sort -u`
+9. `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml`
+10. `git log --format='=== %h %s%n%b' main..HEAD -- knowledge/spec knowledge/cases`
+11. `git diff main...HEAD -- PROJECT_STATE.md scripts/hoja_preguntas.py tests/unit/test_hoja_preguntas.py tests/unit/test_kit.py`
+12. `git diff main...HEAD -- knowledge/spec/parametros.yaml`
+13. `grep -n` de nombre, estado y `ambiguedad_id` en `parametros.yaml`
+14. `git diff main...HEAD -- docs/adr/`
+15. `git diff main...HEAD -- docs/validation/PREPARACION-A35-A44.md docs/runbooks/ACTIVAR-A35-A44.md docs/validation/HOLDOUT-EXPOSICIONES.md`
+16. `uv run pytest -p no:cacheprovider -q` sobre `test_en_parte_no_se_cierra`, `test_hoja_preguntas`, `test_mecha_que_vuelve`, `test_caja_hasta_el_llenado`, `test_caja_lado_de_ruido`, `test_adr` y `test_project_state`
+17. `uv run pytest -p no:cacheprovider -q -k "…" tests/unit/test_kit.py` (los tres tests que cambian)
+18. `ls` de cinco ficheros de test
+19. Un pytest con `;` encadenado: negado por la guardia. Relanzado en dos llamadas.
+20. `uv run pytest -p no:cacheprovider -rA` sobre `test_registro`, `tests/contract/test_provisional_cuelga_de_abierta`, `tests/contract/test_spec_docs_generados`, `test_historia` y `test_reabrir_y_fuente_documental` → `103 passed`
+21. `grep` de SELLO, PICO y passed en `make-check.log`; `git rev-parse "HEAD^{tree}"`; `git log -1 --format=%cd HEAD`
+22. `git diff main...HEAD -- tests/unit/test_en_parte_no_se_cierra.py`
+23. `git diff --numstat main...HEAD --` de HISTORIA, PREPARACION, HOLDOUT, el runbook y los ADR
+24. `git diff main...HEAD -- knowledge/spec/strategy_spec.yaml knowledge/spec/spec_manifest.yaml`
+25. `sed -n` de `ERRORES-RECURRENTES.md`; `sed -n` de ADR-0056 y ADR-0070
+26. `sed -n` de `tope_trader.py`; `grep` y `sed` de `test_punto_usado`, `test_pivotes_m15`, `test_preparar_a44`, `broker.py`, `estructura_m1.py` y `motor.py`; `sed` de `pivotes_m15.py`, `estructura_m1.py` y `cableado.py`
+27. `grep -n -i` de CI, revisor y fix/ en `.claude/skills/entregar-rama/SKILL.md`
+28. `git ls-remote --heads origin "fix/activar-sesion-06"`; `git branch -r`
+29. `sed -n` del encargo y del informe, con `md5sum` de los dos bloques
+30. `grep -c precio_invalido|stops_level|stop_movido` en las dos salidas de `RESPALDO-M1`; conteo de tokens de las líneas de rechazo, sin imprimir ninguna
+31. `uv run botsito feedback pending` filtrado con `grep`/`cut`. Un primer intento con `;` fue negado por la guardia y lo relancé en una sola tubería.
+32. `wc -c PROJECT_STATE.md`; `git show main:PROJECT_STATE.md | wc -c`; `grep -n` de la línea de deuda y de `DEMO-FTMO.md:138`
+33. `grep -n` de ADR-0064 (`caja_bloque`); `sed -n '164,172p'` de ADR-0064
+34. `ls knowledge/feedback/2026-11-04-sesion-06/ | wc -l` → 6
+35. `git status --short | wc -l` → 0; `git worktree list`
+36. Read y Grep: `CLAUDE.md` (dado), encargo, `contrato.yaml`, el informe entero, los seis `fb-*`, los ítems de v17 citados y `ev-v16-000851-f5ae3b6f`, `SESION-06-EXTRACCION.md` (`:495-508`, `:560-584`, `:871-908`), `docs/runbooks/AMBIGUEDADES.md`, ADR-0054 (`:105-134`), ADR-0084 (encabezados, `:81-98`, `:153-180`), ADR-0085 (`:60-129`), `ambiguedades.yaml:1520-1619`, `ACTIVAR-A35-A44.md:1-24`; Glob de `ev-v15-002029-1ac081ae.yaml`.
