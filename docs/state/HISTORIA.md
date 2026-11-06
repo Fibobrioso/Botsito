@@ -15126,3 +15126,61 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 56 (2026-11-05).
+
+# Next Action HECHA · F · sale de PROJECT_STATE.md en trabajo/activar-sesion-06-motor (2026-11-06)
+
+Su texto literal; se sustituye por un texto nuevo en la Next Action (orden de cierre del consultor
+del 2026-11-06):
+
+F. Sesión 6 activada en spec (este tag): A-49 y A-50 RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS. Falta trabajo/activar-sesion-06-motor, con la lista de §«Para la rama de motor» (ACTIVAR-SESION-06.md); después H, R y la re-corrida que cuenta (ADR-0070 §3); los gráficos 2 a 6 y la hoja de la sesión 7, en la rama de preparación de la sesión 7, con la lista de §«Para la sesión 7». El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
+
+HECHA en `trabajo/activar-sesion-06-motor`, en lo que cuadró: S-2 (ADR-0089) y S-4 en el motor,
+y A-44 RESUELTA; S-22 y S-19 van a la sesión 7 (ACTIVAR-SESION-06-MOTOR.md §d). La F nueva apunta a
+A, H, R y la re-corrida que cuenta, y después a la preparación de la sesión 7.
+
+# Registro de cierre · `trabajo/activar-sesion-06-motor` (2026-11-06)
+
+- Orden de cierre del consultor del 2026-11-06, dada por Aleks tras revisar
+  `fix/activar-sesion-06-motor` en 3e8cf85 (copiada tal cual al final del encargo y de
+  ACTIVAR-SESION-06-MOTOR.md, en este commit, con su respuesta a la PARADA). Llegó pegada; la
+  sesión empezó a seguir `.claude/skills/cerrar-rama/SKILL.md` y `RITUAL.md`, y con el primer
+  `make check` de este commit en marcha Aleks lanzó `/cerrar-rama trabajo/activar-sesion-06-motor`
+  (se paró ese `make check` para corregir esta frase y se repitió). Nunca se cerró sin la orden.
+- **Lo que entra**: la sesión 6 en el motor, en lo que cuadró (spec 18.5.10 → 18.6.1). S-2: el
+  parámetro `perdida_trader_reinicio` (CONFIRMED `primera_sesion_dia_siguiente`,
+  `fb-2026-11-04-sesion-06-6886938e`) y ADR-0089: el tope del trader se reinicia al abrir la primera
+  sesión del día siguiente (`SeguidorTope.abrir_dia`, llamado desde el cableado). A-44 RESUELTA
+  (`fb-2026-11-04-sesion-06-c56ec7cf`; sus cinco sitios, `test_kit` y los tests de control de las
+  sesiones 5 y 6). S-4: en M15 la vela sin cuerpo no corta la racha y su mecha cuenta
+  (`no_corta_y_cuenta`, recuadro en ADR-0085 §2; 13 de 718 pivotes de M15 cambian). El flaky de
+  `test_valores.py` (solo el plazo). Recuadros en ADR-0053 y ADR-0085 con sus filas del índice; recuadro
+  de corrección en SESION-06-EXTRACCION.md. S-22 y S-19 NO entran: van a la sesión 7 (respuesta a la
+  PARADA, puntos 2 y 3).
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action F se
+  sustituye (su texto viejo, arriba), recortada como prevé la orden; la hoja de ruta: R4.2 gana su
+  Estado, R4.3 gana S-22 y S-19 y pierde la dependencia de la rama de motor, «Fechas fijas» pierde la
+  ejecución 3 de la demo y entra G.6 (`cmp` y `diff` de dos ficheros que no son guiones). El recuadro
+  de corrección de ACTIVAR-SESION-06.md (punto 4 de §«Para la rama de motor»). La orden copiada. La
+  fila de ERRORES-RECURRENTES, con los hallazgos del consultor.
+- **`PROJECT_STATE.md`, 22.819 bytes en este commit**: con la F entera de la orden daba 23.124, por
+  encima de los 23.000; la frase de S-22 y S-19 se recortó a «S-22 y S-19 a la sesión 7 (§d del
+  informe)», como manda la orden.
+- **Desviaciones de la orden**: el Estado de R4.2 nombra el tag (`stable/F38o-activar-sesion-06-motor`)
+  donde §i decía «este tag», porque la hoja de ruta se lee después del cierre; la entrada nueva del
+  carril de guardias es G.6 con los campos de toda entrada (Refs, Qué es, Depende de, Quién, Hecho
+  cuando) y su «Qué es» es el texto de la orden; la nota «HECHA en …» bajo la F vieja, como en los
+  cierres anteriores.
+- Letra del tag: la última cerrada era `stable/F38n-activar-sesion-06`;
+  `stable/F38o-activar-sesion-06-motor` no existe en local ni en origin (comprobado antes de este
+  commit).
+- Tag: `stable/F38o-activar-sesion-06-motor`. El merge es
+  `git rev-parse "stable/F38o-activar-sesion-06-motor^{commit}"`.
+- Commits de la rama: `b2f3562` (chore(rama): abre la rama), `d091c6c` (la fase 0 y la PARADA),
+  `3f2bef2` (el flaky), `ed09769` (fase 1, S-2, ADR-0089), `2a3cf76` (A-44 RESUELTA), `e3adb44` (fase 2,
+  S-4), `b03cbbe` (el informe tras la PARADA y las líneas del cierre), `3e8cf85` (los hallazgos del
+  revisor y su informe pegado), y este (chore(cierre): sale el contrato y entra el registro en
+  HISTORIA).
+- CI de Linux por `fix/activar-sesion-06-motor`, con el ÚNICO fallo esperado de `state check` en los
+  dos: run 42177503487 (b03cbbe: 1 failed, 3183 passed, 47 skipped) y 42183658466 (3e8cf85, intento 2:
+  1 failed, 3183 passed, 47 skipped; el intento 1 se colgó instalando ffmpeg y se canceló). La CI de
+  `main` corre tras el push.

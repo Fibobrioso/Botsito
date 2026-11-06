@@ -769,3 +769,41 @@ Con el prototipo de la fase 2 en el mismo clon, los 31 ficheros: `exit=0`, ningu
 ## Estado
 
 Hecho lo que cuadró: fases 1 y 2, el cierre de A-44 y el flaky. Las fases 3 y 4 quedan en la PARADA (§d), con seis decisiones para el consultor. El revisor: 0 bloquea, 4 importa (arreglados), 6 menores (2 arreglados, 4 declarados; §l). CI de Linux: run 42177503487 sobre b03cbbe con el único fallo aceptado; el run del commit de esta respuesta al revisor, que es el último, se da en el mensaje final a Aleks (un informe no puede llevar el run de su propio commit). Rama lista para revisión, NO cerrada.
+
+## Orden de cierre y respuesta a la PARADA (2026-11-06)
+
+**RECUADRO (2026-11-06, orden de cierre).** Dada por Aleks (consultor) el 2026-11-06, tras revisar
+la rama en `fix/activar-sesion-06-motor` (3e8cf85); llegó pegada, y después Aleks lanzó
+`/cerrar-rama trabajo/activar-sesion-06-motor`. La sesión sigue `docs/runbooks/RITUAL.md`. Su
+«Respuesta a la PARADA (§d)» contesta a las decisiones 0 a 5 de §«Lo que necesito que decidas»;
+se aplica en el commit `chore(cierre)`, y lo que se apartó de la orden, en el registro del cierre
+al final de `docs/state/HISTORIA.md`. Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/activar-sesion-06-motor (consultor, 2026-11-06). Revisada contra el diff de fix/activar-sesion-06-motor (3e8cf85) y el informe con el revisor pegado: se cierra con las fases 1 y 2, el cierre de A-44 y el flaky. Sigue RITUAL.md con la skill cerrar-rama; esta orden solo añade lo de abajo. El informe está cerrado: lo que entre va en recuadro.
+>
+> Tag: stable/F38o-activar-sesion-06-motor.
+>
+> Respuesta a la PARADA (§d), para copiar tal cual en un recuadro fechado al final del informe y del encargo:
+> 0. (a) como lectura del consultor para la rama futura; se pregunta al trader en la sesión 7.
+> 1. (b).
+> 2. NINGUNA de las dos: la fase 3 NO se hace antes de la re-corrida. Motivo: quita el 52 % de los puntos de breaker y deja dos lecturas sin regla del trader (0 y la verde frente a la racha), más el «m15» dudoso de la frase de la mecha; una regla de ese tamaño se confirma en la sesión 7 con esquemas y se hace después en rama propia (los 20 tests y CAJA-77 al estilo de ADR-0085, entonces). Me aparto de la recomendación del informe y lo digo.
+> 3. (c) hasta la sesión 7, con mi lectura apuntada: si el trader dice «espero», 3.a y 4.a. Motivo: «se pone igual, ya me habilita» (ev-v17-014103-8cf3e7fb) suena a entrar, no a esperar: son dos motores distintos y lo decide él. ADR-0083 D1 sigue como está.
+> 4. (a), condicionado a 3.
+> 5. (a): entrada en el carril de guardias de la hoja de ruta (cmp y diff de dos ficheros que no son guiones no se leen como ejecutar).
+>
+> Hallazgos del consultor que el revisor no vio (ninguno bloquea):
+> - Menor: la F preparada lleva «diagH\» y la frase de alternativas de §d; va con el texto de abajo.
+> - Menor: docs/runbooks/ACTIVAR-A35-A44.md:71 y :126-127 siguen diciendo que el reinicio es perdida_trader_reinicio_huso (§f): no se toca en el cierre; lo recojo para la rama de preparación de la sesión 7. Lección para el revisor: cuando una rama cambia el nombre del mecanismo, buscar el nombre viejo en los runbooks, no solo en src/.
+> - Para mi columna de ERRORES-RECURRENTES, además de las cuatro que prepara §i: el informe de F38n (§«Para la rama de motor», punto 4) sitúa el rechazo al colocar en cableado.py:151-165 y es primitivas_broker.py:655-659; recuadro de corrección en ACTIVAR-SESION-06.md junto a ese punto, en este cierre.
+>
+> En el commit del contrato (chore(cierre)), todo lo de §i con esto encima:
+> - Next Action F, sustituida entera por: «F. Sesión 6 ACTIVADA en spec (F38n) y motor (este tag): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 NO se activan hasta la sesión 7 (decisión del consultor, 2026-11-06, ACTIVAR-SESION-06-MOTOR.md §d): S-22 quita el 52 % de los puntos de breaker y deja dos lecturas sin regla (qué punto vale si el último pivote no cumple; la última verde o la racha); S-19 depende de si la orden entra igual o espera a que el 0 quede del lado bueno. Siguiente: la rama corta de la demo (A), H (fase 0: el diagnóstico de H del scratchpad de Claude Code, fuera del repo), R y la re-corrida que cuenta (ADR-0070 §3); después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.» Si con esto PROJECT_STATE pasa de 23.000 bytes, recorta la frase de S-22 y S-19 a «S-22 y S-19 a la sesión 7 (§d del informe)» y dime el tamaño.
+> - Hoja de ruta: R4.2 Estado como en §i, pero terminando en «S-22 y S-19 van a la sesión 7 (R4.3)»; R4.3 gana en su lista S-22 (con el 52 % y las dos lecturas) y S-19 (entra, espera o descarta), y «Depende de» como dice §i; «Fechas fijas» como dice §i; en el carril de guardias, entrada nueva: «cmp y diff de dos ficheros que no son guiones se leen como ejecutar (ACTIVAR-SESION-06-MOTOR.md §b.3): corregir en la próxima rama de guardia».
+> - ERRORES-RECURRENTES: la fila de la rama con lo de §i y §k, y en mi columna las cuatro de §i más la de arriba.
+> - Las entradas que salen de la Next Action van a HISTORIA bajo «# Next Action HECHA» con su texto literal.
+>
+> Después: merge a main, tag, commit de estado (solo Current Branch, Current Feature, Stable Main State y Last Stable Commit), make check sellado, push atómico de main y el tag (yo confirmo «1. Yes»), CI de main en verde antes de borrar, borrar trabajo/activar-sesion-06-motor en local y fix/activar-sesion-06-motor en origin.
+>
+> Informe final: sha de main, sha del merge, tag y su objeto, run de la CI de main, ramas que quedan, tamaño de PROJECT_STATE.md y lo que se apartó de esta orden.

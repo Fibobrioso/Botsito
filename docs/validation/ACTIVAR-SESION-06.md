@@ -548,6 +548,12 @@ test que rompería. Aquí no se tocó código.
    vuelve a colocar en el siguiente cierre de M1 con el 0 actualizado (RN-006). **Rompería:**
    `tests/unit/test_punto_usado.py:343` (`test_el_rechazo_al_colocar_sigue_gastando_el_punto`).
 
+   > **RECUADRO DE CORRECCIÓN (2026-11-06, orden de cierre de `trabajo/activar-sesion-06-motor`).**
+   > El rechazo al colocar no está en `engine/cableado.py:151-165`: está en
+   > `src/botsito/engine/primitivas_broker.py:655-659` (`marcar_rechazada`), y la caja queda usada
+   > antes, en `:654` (`marcar_usada`); medido en ACTIVAR-SESION-06-MOTOR.md §d. El cuerpo de este
+   > punto queda intacto.
+
 # Para la sesión 7
 
 En el lenguaje del trader, sin días ni fechas; cada pregunta, cerrada con opciones y «otra, ¿cuál?»,
