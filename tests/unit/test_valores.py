@@ -1,7 +1,7 @@
 from decimal import Decimal
 
 import pytest
-from hypothesis import given
+from hypothesis import given, settings
 from hypothesis import strategies as st
 
 from botsito.config.registro import cargar_registro
@@ -47,6 +47,11 @@ def test_ida_y_vuelta_porcentaje_fraccion(d: Decimal) -> None:
     assert Porcentaje(d).como_fraccion().como_porcentaje() == Porcentaje(d)
 
 
+# cada ejemplo crea un directorio, escribe un YAML y lo lee: es IO de disco, y el plazo de 200 ms de
+# Hypothesis saltaba de vez en cuando (352 ms y luego 15 ms al repetir, en el cierre de F38n: un
+# `Flaky` por `DeadlineExceeded`). Sin plazo, como tests/unit/test_agregacion.py
+# (trabajo/activar-sesion-06-motor, fase 0 b.5)
+@settings(deadline=None)
 @given(d=st.decimals(min_value=Decimal("0"), max_value=Decimal("1"), places=8))
 def test_ida_y_vuelta_por_yaml_sin_perdida(
     d: Decimal, tmp_path_factory: pytest.TempPathFactory
