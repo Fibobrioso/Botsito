@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/demo-ejecuciones-2-3
 
 ## Current Feature
-Ninguna rama abierta. trabajo/activar-sesion-06-motor cerrada en main el 2026-11-06 (stable/F38o-activar-sesion-06-motor): la sesión 6 en el motor en lo que cuadró (S-2, ADR-0089; S-4 en M15; A-44 RESUELTA). S-22 y S-19 van a la sesión 7.
+trabajo/demo-ejecuciones-2-3 · EN CURSO (abierta el 2026-11-06): congelar las ejecuciones 2 y 3 de MedirDemoFTMO y decidir con un ADR nuevo A-28, la comision, el nivel exacto, la ficha, el deslizamiento y el paso 8. Encargo docs/encargos/trabajo-demo-ejecuciones-2-3.md; informe docs/validation/DEMO-EJECUCIONES-2-3.md.
 
 ## Stable Main State
 4fa0920 · merge de `trabajo/activar-sesion-06-motor` (tag `stable/F38o-activar-sesion-06-motor`): la sesión 6 en el motor. Sobre `stable/F38n-activar-sesion-06` (df0e672). Informe docs/validation/ACTIVAR-SESION-06-MOTOR.md; el registro del cierre, al final de HISTORIA.
@@ -154,8 +154,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 57 (2026-11-05).
+— ninguna desde el Archivo 58 (2026-11-06).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 57 (2026-11-05).
+— ninguna desde el Archivo 58 (2026-11-06).
