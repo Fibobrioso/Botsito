@@ -1,0 +1,19 @@
+id: fb-2026-11-04-sesion-06-c56ec7cf
+sesion: 2026-11-04-sesion-06
+fecha: '2026-11-04'
+medio: video
+objetivo:
+  tipo: ambiguedad
+  id: A-44
+accion: RESOLVE_UNKNOWN
+respuesta_literal: La respuesta es la C, la primera sesión del día siguiente
+registrado_por: Aleks · grabacion de la sesion 6 (v17), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-05 (trabajo/activar-sesion-06-motor, encargo, fase 1.5)
+grabacion: Grabación de pantalla 2026-11-04 142903.mp4
+t0: 0:02:50
+t1: 0:03:15
+valor_resultante: vuelve a contar en la primera sesion del dia siguiente (perdida_trader_reinicio = primera_sesion_dia_siguiente);
+  con S-1 y la sesion 5, ninguna parte de A-44 queda sin regla general
+notas: 'S-2 (A-44), opcion c: vuelve a contar en la primera sesion del dia siguiente (ev-v17-000250-a468bcec)'
+recibido_el: '2026-11-04'
+procedencia: trader_grabado

@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.6.0` · hash `b3c872924e39…`
+`spec_version 18.6.1` · hash `f52a741bb298…`
 
 112 en total: 100 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -557,7 +557,7 @@ perdida acumulada en la semana que detiene la operativa; la base la fija base_ca
 
 ### `perdida_trader_alcance`
 
-si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega. FIJADO EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-e9559876): `dia`, «no solo el del día y las 9 seguidas la respuesta es la A» (ev-v15-000856-ee8f7ba3): el tope del dia y la racha de RN-036, sin tope de semana; con `dia` el motor no lee perdida_maxima_semanal. A-44 SIGUE ABIERTA por la magnitud (perdida_trader_magnitud) y el reloj del reinicio; fijarlo con ella abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
+si el trader deja de operar por una perdida acumulada y en que plazo: en el dia (perdida_maxima_diaria), en la semana (perdida_maxima_semanal), en los dos, o en ninguno (`sin_tope`, que es una respuesta valida: RN-020 nunca bloquea). Es el estado de A-44 -«¿Hay alguna perdida a partir de la cual dejas de operar?»-; sin fijar, el motor se niega. FIJADO EL 2026-10-26 (sesion 5, S-4, fb-2026-10-23-sesion-05-e9559876): `dia`, «no solo el del día y las 9 seguidas la respuesta es la A» (ev-v15-000856-ee8f7ba3): el tope del dia y la racha de RN-036, sin tope de semana; con `dia` el motor no lee perdida_maxima_semanal. A-44 SIGUE ABIERTA por la magnitud (perdida_trader_magnitud) y el reloj del reinicio; fijarlo con ella abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05). A-44 RESUELTA EL 2026-11-05: la magnitud por S-1 y el reloj por S-2 de la sesion 6 (perdida_trader_reinicio, ADR-0089; trabajo/activar-sesion-06-motor)
 
 Opciones: `sin_tope`, `dia`, `semana`, `ambos`.
 
@@ -567,7 +567,7 @@ el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_uni
 
 ### `perdida_trader_magnitud`
 
-si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es la magnitud de A-44. LO DIJO EL TRADER en la sesion 6 (2026-11-04, S-1, v17 0:02:18): «Pues en este caso sería solo cerradas Solo las operaciones cerradas» (ev-v17-000218-001b08fb, fb-2026-11-04-sesion-06-a1f5784d), y al precisar que pasa si la abierta llega a ese punto: «cerramos nosotros, por lo general si toca ya el stop loss … si se pierde automáticamente y llega al 4.5, tendríamos que en cierta parte parar ese día y continuar al siguiente» (ev-v17-000134-725523bf: por lo general cierra si toca el stop; el dia para y sigue al siguiente). La segunda subpregunta de la hoja (en cada momento o al cierre de la vela) queda sin objeto. Hasta el 2026-11-05 fue DEFAULT NUESTRO en `saldo`, lectura del consultor sobre fb-2026-09-09-sesion-01-bff260ea (la BASE del porcentaje, no si lo abierto cuenta; trabajo/activar-sesion-05): el valor no cambia, cambia quien lo dice. A-44 sigue ABIERTA por el reinicio (S-2). Con `saldo`, una caida en abierto que se recupera no cuenta (medido: ACTIVAR-SESION-05.md §0.b.3). Lo lee engine/tope_trader.py (`registro.opcion`)
+si la perdida acumulada que detiene al trader se mide sobre el saldo (operaciones cerradas) o sobre la equity (con las abiertas). La spec no lo declara para perdida_dia ni perdida_semana (ADR-0053 §3.3): es la magnitud de A-44. LO DIJO EL TRADER en la sesion 6 (2026-11-04, S-1, v17 0:02:18): «Pues en este caso sería solo cerradas Solo las operaciones cerradas» (ev-v17-000218-001b08fb, fb-2026-11-04-sesion-06-a1f5784d), y al precisar que pasa si la abierta llega a ese punto: «cerramos nosotros, por lo general si toca ya el stop loss … si se pierde automáticamente y llega al 4.5, tendríamos que en cierta parte parar ese día y continuar al siguiente» (ev-v17-000134-725523bf: por lo general cierra si toca el stop; el dia para y sigue al siguiente). La segunda subpregunta de la hoja (en cada momento o al cierre de la vela) queda sin objeto. Hasta el 2026-11-05 fue DEFAULT NUESTRO en `saldo`, lectura del consultor sobre fb-2026-09-09-sesion-01-bff260ea (la BASE del porcentaje, no si lo abierto cuenta; trabajo/activar-sesion-05): el valor no cambia, cambia quien lo dice. A-44 sigue ABIERTA por el reinicio (S-2) hasta el 2026-11-05, cuando queda RESUELTA con perdida_trader_reinicio (ADR-0089). Con `saldo`, una caida en abierto que se recupera no cuenta (medido: ACTIVAR-SESION-05.md §0.b.3). Lo lee engine/tope_trader.py (`registro.opcion`)
 
 Opciones: `saldo`, `equity`.
 

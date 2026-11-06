@@ -74,7 +74,6 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
-| A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |

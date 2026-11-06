@@ -1495,7 +1495,9 @@ parametros:
       las 9 seguidas la respuesta es la A» (ev-v15-000856-ee8f7ba3): el tope del dia y la racha de
       RN-036, sin tope de semana; con `dia` el motor no lee perdida_maxima_semanal. A-44 SIGUE
       ABIERTA por la magnitud (perdida_trader_magnitud) y el reloj del reinicio; fijarlo con ella
-      abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
+      abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05).
+      A-44 RESUELTA EL 2026-11-05: la magnitud por S-1 y el reloj por S-2 de la sesion 6
+      (perdida_trader_reinicio, ADR-0089; trabajo/activar-sesion-06-motor)
     consumido_por: [ADR-0053]
     estado: CONFIRMED
     valor: dia
@@ -1520,7 +1522,8 @@ parametros:
       la vela) queda sin objeto. Hasta el 2026-11-05 fue DEFAULT NUESTRO en `saldo`, lectura del
       consultor sobre fb-2026-09-09-sesion-01-bff260ea (la BASE del porcentaje, no si lo abierto
       cuenta; trabajo/activar-sesion-05): el valor no cambia, cambia quien lo dice. A-44 sigue
-      ABIERTA por el reinicio (S-2). Con `saldo`, una caida en abierto que se recupera no cuenta
+      ABIERTA por el reinicio (S-2) hasta el 2026-11-05, cuando queda RESUELTA con
+      perdida_trader_reinicio (ADR-0089). Con `saldo`, una caida en abierto que se recupera no cuenta
       (medido: ACTIVAR-SESION-05.md §0.b.3). Lo lee engine/tope_trader.py (`registro.opcion`)
     consumido_por: [ADR-0053]
     estado: CONFIRMED

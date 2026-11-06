@@ -303,6 +303,7 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
         "A-40",
         "A-41",
         "A-42",
+        "A-44",
         "A-45",
         "A-46",
         "A-47",
@@ -325,8 +326,10 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
 # con el mismo precedente que A-32: la sesion 6 la resuelve con regla general (S-16,
 # fb-2026-11-04-sesion-06-e0fb393a), y su CONFIRM de la sesion 4 sigue sobre su item. A-50 salio
 # en la misma rama y con el mismo precedente: la sesion 6 la resuelve (S-17,
-# fb-2026-11-04-sesion-06-431635dc).
-EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-44", "A-53"})
+# fb-2026-11-04-sesion-06-431635dc). A-44 salio el 2026-11-05 (trabajo/activar-sesion-06-motor,
+# ADR-0089), con el mismo precedente: la sesion 6 la resuelve (S-1 la magnitud, S-2 el reloj, con
+# el parametro nuevo perdida_trader_reinicio; fb-2026-11-04-sesion-06-c56ec7cf).
+EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-53"})
 
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
@@ -372,8 +375,9 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     abiertas = {a.id for a in bloqueantes if a.estado == "ABIERTA"}
     # El 2026-10-06 (rama trabajo/activacion-a42, ADR-0069) A-42 queda RESUELTA: las sesiones
     # son las velas H4 de la rejilla de anclaje_h4, y su bloqueo de los meses de invierno pasa a
-    # cases/ (la rama de entrada de marzo).
-    assert abiertas == {"A-35", "A-44"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
+    # cases/ (la rama de entrada de marzo). El 2026-11-05 (trabajo/activar-sesion-06-motor,
+    # ADR-0089) A-44 queda RESUELTA: el reloj del reinicio lo dijo el trader en la sesion 6 (S-2).
+    assert abiertas == {"A-35"}, f"bloqueantes abiertas inesperadas: {sorted(abiertas)}"
     # Las doce de la sesion 1, mas A-20, que el trader cerro por escrito el 2026-09-11 ("solo 1
     # zona control bro. si hay 2 se descarta"): la primera que se cierra fuera de una sesion.
     # Las doce de la sesion 1, mas A-20 (el trader, por escrito, 2026-09-11) y A-14 (respondida
