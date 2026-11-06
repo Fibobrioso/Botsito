@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-06-motor
 
 ## Current Feature
-Ninguna rama abierta. trabajo/activar-sesion-06 cerrada en main el 2026-11-05 (stable/F38n-activar-sesion-06): la sesión 6 activada en spec (A-49 y A-50 RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS). Falta la rama de motor.
+trabajo/activar-sesion-06-motor EN CURSO (R4.2, F de la Next Action): el motor de la activación de la sesión 6 (S-2 reinicio del tope del trader, S-4 vela sin cuerpo en M15, S-22 punto de breaker, S-19 precio inválido no gasta el punto). Encargo docs/encargos/trabajo-activar-sesion-06-motor.md; informe docs/validation/ACTIVAR-SESION-06-MOTOR.md.
 
 ## Stable Main State
 df0e672 · merge de `trabajo/activar-sesion-06` (tag `stable/F38n-activar-sesion-06`): la sesión 6 activada en spec. Sobre `stable/F38m-sesion-06` (78d560d). Informe docs/validation/ACTIVAR-SESION-06.md; el registro del cierre, al final de HISTORIA.
@@ -155,8 +155,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 56 (2026-11-05).
+— ninguna desde el Archivo 57 (2026-11-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 56 (2026-11-05).
+— ninguna desde el Archivo 57 (2026-11-05).
