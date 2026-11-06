@@ -305,6 +305,206 @@ libro, imagen, fotograma, transcripción ni caso; ningún listado de `knowledge/
 
 Mientras, la rama sigue con lo que cuadra: el flaky, la fase 1 con el cierre de A-44 y la fase 2.
 
+## e. Tras la PARADA: lo que se hizo
+
+La PARADA es condicional (encargo, «Esta rama corre sola de noche»): commiteada en d091c6c, la
+rama siguió con lo que cuadra. Las fases 3 y 4 no se tocaron: ni su código ni sus tests.
+
+| Commit | Qué | `make check` (sello, duración, pico) |
+|---|---|---|
+| b2f3562 | La apertura | `1ba8802d…`, 1223 s, 306 MiB (el primero, sin el bloque `ids-inexistentes`, salió en rojo: 5 failed) |
+| d091c6c | Fase 0 y PARADA | `bb23d948…`, 1127 s, 309 MiB |
+| 3f2bef2 | El flaky | `b3140c4e…`, 1197 s, 305 MiB |
+| ed09769 | Fase 1 | `f278f084…`, 1086 s, 307 MiB (el primero salió en rojo: 1 failed, `test_state_check_ok_on_real_repo`, el recuento de tests de PROJECT_STATE sin subir; corregido y repetido) |
+| 2a3cf76 | Cierre de A-44 | `b915dc4b…`, 1164 s, 305 MiB |
+| e3adb44 | Fase 2 | `2bd43dc8…`, 1096 s, 306 MiB |
+
+### e.1 Fase 1 · S-2 (ed09769)
+
+- **Parámetro:** `perdida_trader_reinicio` (estrategia, enum `[medianoche_huso,
+  primera_sesion_dia_siguiente]`, `consumido_por: [ADR-0089]`), nace UNKNOWN y queda CONFIRMED
+  `primera_sesion_dia_siguiente` por `fb-2026-11-04-sesion-06-6886938e` (RESOLVE_UNKNOWN sobre el
+  parámetro, t0 0:02:50, t1 0:03:15, notas solo con `ev-v17-000250-a468bcec`; el del viernes, en la
+  descripción). `feedback apply --check` propuso solo ese (`+ perdida_trader_reinicio`, «1 cambian,
+  3 ya estaban»). `perdida_trader_reinicio_huso` sigue UNKNOWN, «SIN EFECTO con
+  perdida_trader_reinicio = primera_sesion_dia_siguiente». Sin el parámetro, el motor hace lo de
+  antes (medianoche): no se adivina.
+- **Motor:** `engine/tope_trader.py` (`TopeTrader.reinicio`; `tope_del_registro` no lee el huso ni
+  marca SUPUESTO con la primera sesión; `SeguidorTope.abrir_dia` corta el día en la apertura y la
+  semana si cambia la semana ISO respecto al último día con actividad; `avanzar` no corta con ese
+  valor; la descripción dice «reinicio al abrir la primera sesion del dia siguiente (de sesion en
+  sesion)»). `engine/cableado.py`: `abrir_dia(dia.dia, apertura, saldo)` al empezar cada día que
+  corre, con la apertura de `primero` (UTC) y el saldo arrastrado.
+- **ADR-0089** nuevo; recuadros en ADR-0053 §3.3 y §9; filas del índice de 0053 y 0089. El id sale
+  del bloque `ids-inexistentes` del encargo.
+- **Tests:** `tests/unit/test_reinicio_tope_trader.py` (8): bases distintas cuando el saldo cambia
+  entre la medianoche y la apertura, la misma cuando no (con el instante del corte distinto), viernes
+  → lunes, lunes sin sesiones, el mismo día otra vez, la medianoche sin efecto de `abrir_dia`, y los
+  dos que fallan con `main`: el registro real y el cableado real con dos días seguidos (el mercado
+  sintético de `test_cableado` y el mismo desplazado un día; correr dos veces el mismo día no se puede:
+  la cuenta no retrocede).
+- **Cambia de sentido A PROPÓSITO:**
+  `test_preparar_a44.py::test_con_el_registro_real_el_tope_es_el_del_dia_en_porcentaje_sobre_el_saldo`
+  (`:145-166`). Antes: `assert t.huso_supuesto and t.huso_reinicio is HUSO_PERFIL and SUPUESTO_HUSO
+  in t.descripcion()`. Ahora: `assert t.reinicio == PRIMERA_SESION_DIA_SIGUIENTE` y `assert not
+  t.huso_supuesto and SUPUESTO_HUSO not in t.descripcion()`.
+- **Contra `main`** (clon `C:/cm/m7`, `git worktree add --detach` de `main`, con
+  `config/settings.local.toml` hacia el `data/` real y los dos ficheros de test de la rama
+  copiados): `uv run pytest -q tests/unit/test_reinicio_tope_trader.py tests/unit/test_preparar_a44.py`
+  → `exit=2`:
+  ```
+  E   ImportError: cannot import name 'MEDIANOCHE_HUSO' from 'botsito.engine.tope_trader' (C:\cm\m7\src\botsito\engine\tope_trader.py)
+  E   ImportError: cannot import name 'PRIMERA_SESION_DIA_SIGUIENTE' from 'botsito.engine.tope_trader' (C:\cm\m7\src\botsito\engine\tope_trader.py)
+  ERROR tests/unit/test_reinicio_tope_trader.py
+  ERROR tests/unit/test_preparar_a44.py
+  ```
+  En `main` el modo no existe y el corte es la medianoche del huso del perfil marcada SUPUESTO (lo
+  que asertaba el test viejo, que en `main` pasa). En la rama: los 8 nuevos y el fichero entero de
+  `test_preparar_a44.py`, en verde (y en cada `make check`).
+- `spec_version` 18.5.10 → **18.6.0** (parámetro nuevo).
+
+### e.2 El cierre de A-44 (2a3cf76)
+
+- **Registro:** `fb-2026-11-04-sesion-06-c56ec7cf`, RESOLVE_UNKNOWN sobre la ambigüedad, con
+  `ev-v17-000250-a468bcec` (sus notas, solo ese ítem).
+- **Los cinco sitios:** el registro de parámetros (las descripciones de `perdida_trader_alcance` y
+  `perdida_trader_magnitud`, que la daban ABIERTA); `ambiguedades.yaml` (RESUELTA; los dos ítems de
+  S-2 en su `evidencia`; sigue `bloqueante: true`, como A-42 RESUELTA); RN-020 (su `cuando` dice el
+  corte de `perdida_trader_reinicio`, que entra en sus `parametros`, y su nota; la fecha y el id del
+  ADR no caben en el `cuando`: la guardia de literales los rechaza, ADR-0002); la tabla Known
+  Ambiguities de PROJECT_STATE (sale la fila); la hoja de preguntas (`scripts/hoja_preguntas.py`,
+  `ORDEN_SESION_02`) con su test (`test_hoja_preguntas.py`, `ORDEN`).
+- **`test_kit.py`:** bloqueantes ABIERTAS = `{A-35}`; `EN_PARTE_SESION_4` pierde A-44, con su
+  línea en el comentario; `RESUELTAS` la gana.
+- **Los dos tests de control, A PROPÓSITO** (`test_en_parte_no_se_cierra.py`): el de la sesión 6 y
+  el de la sesión 5 (herencia 2 del auditor: el encargo solo nombraba el de la 6). Antes exigían
+  A-44 ABIERTA; ahora exigen las otras ABIERTAS y A-44 RESUELTA, con el motivo en el docstring («la
+  “en parte” de S-2 era por falta de opción en el parámetro, no por la respuesta»). Lo que leen de
+  las tablas no cambia. `test_ninguna_en_parte_esta_resuelta` no necesita cambio: en la última
+  sesión que la nombra (la 6) A-44 sale «resuelve» y «en parte» a la vez, y el lector no la cuenta
+  como «solo en parte».
+- **SESION-06-EXTRACCION.md**, informe cerrado: RECUADRO DE CORRECCIÓN fechado tras la tabla final
+  (§5), sin tocar la tabla ni el cuerpo.
+- `spec_version` 18.6.0 → **18.6.1**. No hizo falta probar nada contra `main`: no hay código.
+
+### e.3 Fase 2 · S-4 (e3adb44)
+
+- **Dominio:** `domain/pivotes_m15.py`, `SIN_CUERPO_NO_CORTA_Y_CUENTA = "no_corta_y_cuenta"`;
+  `_racha_anterior` guarda las de cuerpo cero en un pendiente y las mete en la racha solo cuando
+  aparece otra vela del color: las de por delante de la primera con color no entran. El docstring
+  dice que es LECTURA DEL CONSULTOR y que «no corta la racha» es la conclusión de la extracción
+  (auditor, 15). El valor por defecto sigue siendo `corta_la_racha`; M1 sigue con `no_cuenta`.
+- **Motor:** `engine/motor.py`, `DatosMercado.liquidez_m15` pide `no_corta_y_cuenta`.
+- **ADR-0085:** recuadro fechado en §2 y su fila del índice. El texto de A-35 en
+  `ambiguedades.yaml` deja de decir que el motor la corta (`spec docs --escribir`; el hash de la
+  spec no cambia, porque `ambiguedades.yaml` no entra en él: `spec manifest` dio «hash al dia», y
+  `spec_version` se queda en 18.6.1).
+- **Deuda de guiones** (no se tocan, contrato): `scripts/bloque_de_la_caja.py:204` y
+  `scripts/caja_77_exploratoria.py:175` llaman a `pivotes_formados` sobre M1 sin `sin_cuerpo` (leen
+  con `corta_la_racha` y divergen de `estructura_m1.py`); y `scripts/embudo_77.py` construye el
+  motor por `cableado`, así que hereda la fase 1 y la 2 sin tocarlo.
+- **Tests:** `tests/unit/test_vela_sin_cuerpo_m15.py` (7): una, dos y tres seguidas en un alto
+  (140, la mecha) y en un bajo (90); en medio de la racha (entra); por delante (no entra: el ALTO es
+  el de las verdes, 134); solo velas sin cuerpo antes de la contraria (nada); el test por marco (en
+  M1 el punto no lleva la mecha de la vela sin cuerpo, 1110 y no 1200); y uno por el camino real.
+- **Cambia de sentido A PROPÓSITO:** `test_pivotes_m15.py::test_lo_fijo_y_visible_el_doji_corta_la_racha`,
+  ahora `test_en_m15_el_doji_no_corta_la_racha_y_su_mecha_cuenta`. Antes:
+  `assert pivotes_formados(con_doji, …) == []`. Ahora, con `sin_cuerpo=no_corta_y_cuenta`, un ALTO
+  en 115 (la mecha del doji), y con el valor por defecto, `[]` como antes. En `main` no fallaba (la
+  fase 0 lo midió: el prototipo no rompe ningún test); se reescribe porque lo manda el encargo.
+- **Contra `main`** (el mismo clon `C:/cm/m7`, con `test_vela_sin_cuerpo_m15.py` y
+  `test_pivotes_m15.py` de la rama): `exit=2`,
+  ```
+  E   ImportError: cannot import name 'SIN_CUERPO_NO_CORTA_Y_CUENTA' from 'botsito.domain.pivotes_m15' (C:\cm\m7\src\botsito\domain\pivotes_m15.py)
+  ERROR tests/unit/test_vela_sin_cuerpo_m15.py
+  ERROR tests/unit/test_pivotes_m15.py
+  ```
+  Y para ver el comportamiento y no solo el import, la serie del test por el camino real (V, V, V con
+  alto 134, una vela sin cuerpo con la mecha en 140 y una roja) por `DatosMercado.liquidez_m15` con
+  las lecturas del registro real, con un guion de la carpeta de trabajo (`camino_real_f2.py`, la
+  raíz por argumento): en el clon de `main`, `liquidez_m15(ALTO): None`; en la rama,
+  `liquidez_m15(ALTO): 140`.
+
+## f. Lo que queda para el consultor y la deuda
+
+- **La PARADA (§d), decisiones 0 a 5**: las fases 3 y 4 y la guardia con `cmp`.
+- **Deuda de guiones:** los tres de e.3.
+- **`docs/runbooks/ACTIVAR-A35-A44.md:71` y `:126-127`** siguen diciendo que el reinicio es
+  `perdida_trader_reinicio_huso` (auditor, H9); el contrato no lo tiene en sus rutas y no se tocó.
+- **La deuda «Una zona del productor reutilizada en un escenario nuevo»** (Technical Debt) toca la
+  vida de la zona que S-19 cambiaría (auditor, H10): para la rama que haga la fase 4.
+- **El docstring de cabecera de `engine/tope_trader.py`** sigue contando A-44 como «lo que NO dijo»
+  en su primer párrafo (historia del módulo); la parte del reinicio ya dice los dos modos.
+- **Hallazgo de guardia (menor):** la guardia negó `cmp` sobre dos salidas del arnés (b.3) y un
+  `for` sobre tres ficheros de evidencia (los leí con Read, uno a uno, que es la forma que propone).
+  También negó cargar los tests de la hoja de ruta con una ruta calculada en el simulador del
+  cierre; con rutas literales, como propone, pasó.
+
+## g. Exposiciones tras la PARADA
+
+Fila del 2026-11-06 en `HOLDOUT-EXPOSICIONES.md`, en el commit de este informe: los `make check` de
+la rama (los de la tabla de §e, dos de ellos en rojo, y los de este informe), que leen el M1 de
+marzo como siempre; el clon
+`C:/cm/m7` de `main` con los ficheros de test de la rama copiados (`test_reinicio_tope_trader.py`,
+`test_preparar_a44.py`, `test_vela_sin_cuerpo_m15.py`, `test_pivotes_m15.py`; sintéticos y el
+registro real, sin `data/`); el guion `camino_real_f2.py` (velas sintéticas); el simulador del
+cierre (`PROJECT_STATE.md`, la hoja de ruta y HISTORIA, en memoria); y Read de tres ítems de
+evidencia de v17 (`ev-v17-002155-f2c95111`, `ev-v17-002250-d6ca3ef8`, `ev-v17-002217-af442f84`).
+Ningún día reservado, ninguna operación con su resultado.
+
+## h. El encargo, punto por punto
+
+| Punto | Estado | Dónde |
+|---|---|---|
+| Abrir con `abrir-rama`, base comprobada, contrato R4 riesgo alto | Hecho | «Base comprobada», b2f3562 |
+| Fase 0: auditor, tabla, b.1-b.6, plan, PARADA commiteada | Hecho | §0, §a-§d, d091c6c |
+| Fase 1 · S-2 | Hecha | §e.1, ed09769 |
+| Fase 1.5 · A-44 RESUELTA | Hecha | §e.2, 2a3cf76 |
+| Fase 2 · S-4 | Hecha | §e.3, e3adb44 |
+| Fase 3 · S-22 | NO CUADRA: en la PARADA, sin código | §d, decisiones 0-2 |
+| Fase 4 · S-19 | NO CUADRA: en la PARADA, sin código | §d, decisiones 3-4 |
+| El flaky | Hecho, solo el plazo | b.5, 3f2bef2 |
+| Sin corrida que cuente; solo `--diagnostico-cuenta-diaria` sobre construcción; solo recuentos | Hecho | b.3 |
+| Citas solo de los ítems nombrados; notas de cada registro solo con su ítem | Hecho | e.1, e.2, e.3 |
+| Next Action y hoja de ruta sin tocar; sus líneas, preparadas | Hecho | §i |
+| Makefile, `.claude/` y la guardia sin tocar | Hecho | `git diff main --stat` |
+| CI de Linux por `fix/`, revisor, «Rama lista para revisión, NO cerrada» | ver §j y §k | |
+
+## i. Las líneas preparadas para el commit del contrato del cierre
+
+Simuladas en memoria con el guion `simular_cierre.py` de la carpeta de trabajo (la raíz por
+argumento; sustituciones exactas, cada una una vez; los tests de la hoja de ruta, `a`, `b` y `c`,
+vacíos; los cuatro de `test_project_state`, en verde): **PROJECT_STATE queda en 22.977 bytes** con
+la F nueva y la fila de A-44 ya fuera (el ritual cambia además Current Branch, Current Feature y las
+secciones de `main`, que no se simulan). La primera versión de la F, con cada fase en una frase
+larga, dejaba 23.213 bytes, por encima de los 23.000: se acortó.
+
+- **Next Action F**, sustituida entera:
+  > F. Sesión 6 ACTIVADA en spec (F38n) y motor (este tag): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); S-22 no cuadró: falta qué es el punto si el último pivote no vale (alternativa: decidirlo y hacerlo antes de la re-corrida); S-19 no cuadró: la caja ya está usada (alternativa: no enviar mientras el 0 esté del lado malo); ACTIVAR-SESION-06-MOTOR.md §d. A-44 RESUELTA. Siguiente: H (diagH\ como fase 0), R y la re-corrida que cuenta (ADR-0070 §3); después, la rama de preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto, lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más el 0 como máximo corriente de S-19 y la lectura (b) de S-22). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
+
+  «diagH\» va tal cual lo trae el encargo: no aparece en el repo (auditor, 54) y parece texto roto;
+  lo corrige el consultor.
+- **Hoja de ruta**, R4.2: el segundo «Estado» se sustituye por
+  > - **Estado:** activada en spec (`stable/F38n-activar-sesion-06`) y en el motor en lo que cuadró (este tag, ACTIVAR-SESION-06-MOTOR.md): S-2 y S-4 en el motor y A-44 RESUELTA; S-22 y S-19 quedan en la PARADA de ese informe (§d), a decidir por el consultor.
+
+  No dice «HECHA»: con la F viva, `test_hoja_de_ruta` (b) lo rechaza («NA:F esta HECHA y la letra
+  sigue viva»), medido en la simulación. R4.3, «Depende de:» pasa a «si la hoja sale de `kit hoja`,
+  J.». «Fechas fijas»: la viñeta queda «La ejecución 2, hecha el 2026-10-29 en la prueba creada ese
+  día (NA:A).» (sale «la 3, del 2 al 6 de noviembre»; la ejecución 2 y la 3 iban en la misma viñeta,
+  auditor, 53).
+- **ERRORES-RECURRENTES**, la fila de la rama: en la sesión, el primer `make check` de la apertura
+  en rojo por un id de ADR futuro sin bloque y el de la fase 1 en rojo por el recuento de tests
+  (`state check` antes de `make check`, otra vez); en la columna del consultor: (1) **importa**:
+  la premisa de la fase 4 («no marca, la zona sigue viva») no era la del código (`marcar_usada` va
+  antes del rechazo), y la fase 3 pedía la condición «con las dos lecturas» y no en
+  `referencia_del_breaker`, que con `referencia_de_la_toma` es el mismo pivote; (2) **importa**: «no
+  corta la racha» se volvió a atribuir al trader (`ERRORES-RECURRENTES.md:108`); (3) **menor**: los
+  tests que «cambian de sentido» de la fase 3 (`test_estructura_m1.py:65` y `:219`) prueban otras
+  funciones; (4) **menor**: el encargo citaba un ADR futuro sin el bloque `ids-inexistentes`.
+  La columna del revisor, con lo que encuentre (§k).
+- **El tamaño final de PROJECT_STATE**: 22.977 bytes con las líneas del cierre (simulado); en la
+  rama, al cerrar este informe, 22.608 bytes.
+
 ## Estado
 
-EN CURSO: fase 0 hecha y PARADA condicional commiteada (§d). La rama sigue con lo que cuadra: el flaky, la fase 1 con el cierre de A-44 y la fase 2; las fases 3 y 4 esperan la respuesta del consultor.
+Terminada en lo que cuadró (fases 1 y 2, el cierre de A-44 y el flaky); las fases 3 y 4, en la PARADA (§d) a la espera del consultor. Faltan la CI de Linux (§j) y el revisor (§k), que se añaden abajo.
