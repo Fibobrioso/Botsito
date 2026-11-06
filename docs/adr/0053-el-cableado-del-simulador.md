@@ -132,6 +132,12 @@ trader, RN-020) no declaran `magnitud` en la spec —saldo o equity— y no se s
 > (lectura del consultor sobre `fb-2026-09-09-sesion-01-bff260ea`; primera pregunta de la sesión
 > 6), con A-44 ABIERTA, por orden del consultor (`docs/validation/ACTIVAR-SESION-05.md`).
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`, no reescribe el cuerpo ni la NOTA).** La
+> magnitud la dijo el trader en la sesión 6 (S-1): solo las operaciones cerradas
+> (`ev-v17-000218-001b08fb`); `perdida_trader_magnitud` = `saldo` pasa a CONFIRMED
+> (`fb-2026-11-04-sesion-06-a1f5784d`). A-44 sigue ABIERTA por el reinicio (S-2), que va a la rama de
+> motor (`docs/validation/ACTIVAR-SESION-06.md`).
+
 ### 4. Un solo reloj
 
 **El reloj del simulador es el del perfil de cuenta (`firma_huso_corte`)**, y el cableado
@@ -226,6 +232,10 @@ cual dejas de operar? ¿Cuándo vuelves a empezar a contar?».
 > y corre sin `--diagnostico-a44`. La magnitud (si lo abierto cuenta) va como DEFAULT_AMBIGUOUS
 > `saldo`, lectura del consultor, y el reloj del reinicio sigue UNKNOWN (el motor usa el corte del
 > perfil, SUPUESTO): A-44 sigue ABIERTA y bloqueante, y es lo primero de la sesión 6.
+
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** La magnitud ya es del trader (sesión 6,
+> S-1, `fb-2026-11-04-sesion-06-a1f5784d`; recuadro de §3.3); el reloj del reinicio sigue UNKNOWN y
+> A-44 sigue ABIERTA y bloqueante.
 
 ## Problema que resuelve
 

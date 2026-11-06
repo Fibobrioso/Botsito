@@ -82,6 +82,22 @@ para la sesión 6. Un test por marco dice que el otro no se mueve.
   exigir «cerrar por debajo» sería pedir cuerpo en M1, contra A-32 RESUELTA (en M1 la mecha
   siempre vale). Va a la lista de la sesión 6.
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`; el cuerpo no se toca).** Las dos primeras
+> decisiones de este apartado las dijo el trader en la sesión 6 (S-20) y dejan de ser decisiones
+> del consultor:
+> - una vela de 1 o 2 puntos de cuerpo cuenta como cambio de color en el retroceso: «una vela de
+>   uno con cambio de color cuenta como cambio de color … influye influye claramente»
+>   (`ev-v17-014603-63d190df`) y «una vela de uno o dos puntos con cuerpo en el retroceso … es
+>   válido … como cambio de color para trazar el punto» (`ev-v17-014736-30d2947b`); el ítem de la
+>   sesión 5 que decía lo contrario (`ev-v16-000851-f5ae3b6f`) recibe un CORRECT
+>   (`fb-2026-11-04-sesion-06-f2236d1e`);
+> - la mecha de una vela sin cuerpo cuenta en M1: «en M1 cuenta, la mecha cuenta en M1»
+>   (`ev-v17-014644-674966b7`). Para validar una toma de liquidez de M15, no cuenta (el mismo
+>   ítem), que casa con ADR-0062 §1: la toma pide cuerpo.
+>
+> La tercera, la condición de `ev-v15-004037-a2ab3980`, va a la rama de motor con lo que dijo en
+> S-22 (`docs/validation/ACTIVAR-SESION-06.md`, «Para la rama de motor»).
+
 ### 4. Lo que enmienda, y lo medido en la fase 0 sobre S-10
 
 - **ADR-0076 §2**, la fila «alternancia con cuerpo cero en medio (R, doji, V, R) y breaker V»:

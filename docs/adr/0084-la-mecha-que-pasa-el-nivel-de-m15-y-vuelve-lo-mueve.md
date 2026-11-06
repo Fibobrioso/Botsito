@@ -55,6 +55,29 @@ Dos casos caben en el ítem, y el motor hace los dos según el selector:
   `pivotes_formados` con velas de M1 y no pide ninguna mecha (`no_mueve`), así que la referencia
   del breaker, el punto de la orden y las zonas de control no se mueven (test por marco).
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`, respuesta del consultor a la PARADA,
+> punto 4; el cuerpo no se toca).** En la sesión 6 (S-3) el trader no eligió letra: si la mecha
+> vuelve «eso es indiferente tiene que cerrar con cuerpo … por encima de la zona lineal de m15»
+> (`ev-v17-001319-419307f6`); y una M1 que cierra con cuerpo por encima del alto de antes SÍ ha
+> tomado («La respuesta es sí, cerró con cuerpo por encima del alto de antes»,
+> `ev-v17-001712-dc155b5d`, «si está conforme al bias», `ev-v17-001610-c43239a9`). Esa (a) descarta
+> el caso (ii); de las dos lecturas que quedan, la que conserva el ejemplo de la sesión 5 (§1) es
+> `solo_la_contraria`, y **el selector pasa a `solo_la_contraria`, LECTURA DEL CONSULTOR**, sin
+> registro, bajo A-35, que sigue ABIERTA. Con eso:
+> - **el caso (ii) deja de aplicarse**, y con él la parte que la (a) contradecía (la M1 que cierra con
+>   cuerpo sobre el nivel ORIGINAL ya no era toma si una mecha anterior lo movió);
+> - **«el nivel se congela al tomarse»** ya no es solo decisión del consultor: a si una mecha posterior
+>   lo vuelve a mover contestó «No, no, eso ya nos es indiferente», con un «Las velas que vengan
+>   después, no sé si es indiferente» detrás (`ev-v17-001728-b7b9a32c`). Con `solo_la_contraria` no
+>   hace falta: ninguna M1 posterior lo mueve;
+> - **«en un bajo, en espejo»** deja de ser decisión del consultor: «es todo igual pero al revés»
+>   (`ev-v17-001847-4e7b7c0b`).
+>
+> Se aparta de la hoja de la sesión 6, que decía que con (a) «hace falta ADR»: el selector y su
+> opción ya existen, y basta este recuadro. `ev-v15-000553-9d95178a`, que contestaba al caso (ii),
+> queda **sin CORRECT y en tensión** hasta la sesión 7, que lo confirma
+> (`docs/validation/ACTIVAR-SESION-06.md`, «Para la sesión 7»).
+
 ### 3. El selector: `liquidez_m15_mecha_que_vuelve`, y por qué enmienda ADR-0045
 
 `liquidez_m15_mecha_que_vuelve`, `estrategia`, `enum` `[no_mueve, solo_la_contraria,
@@ -71,6 +94,10 @@ las demás», (2)); este mecanismo lo dijo el trader (`ev-v15-000553-9d95178a`),
 provisional solo elige su ALCANCE, que es lectura del consultor y va a la sesión 6. Error del
 consultor, con su nombre: el encargo pidió un DEFAULT_AMBIGUOUS bajo A-35 sin leer ADR-0045 ni
 ADR-0054; antes de proponer un valor provisional bajo una ambigüedad se lee el ADR que la abrió.
+
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** El valor de este apartado ya no es el
+> vigente: desde la sesión 6 es `solo_la_contraria`, con fuente `ev-v17-001319-419307f6`, lectura del
+> consultor y sin registro (recuadro de §2).
 
 ### 4. Contraste con la sesión 4 y con ADR-0062
 
@@ -94,6 +121,11 @@ ADR-0054; antes de proponer un valor provisional bajo una ambigüedad se lee el 
 - Nada de M1: la vela sin cuerpo en M1 va en el ADR siguiente de esta rama (punto 2 del encargo);
   el punto de la orden, ADR-0064.
 - Ninguna ambigüedad se cierra: A-35 sigue ABIERTA y bloqueante.
+
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** La sesión 6 contestó en parte
+> (recuadro de §2): el valor pasa a `solo_la_contraria`, lectura del consultor, y A-35 sigue ABIERTA
+> y bloqueante; si la mecha de la propia vela contraria es el alto, y la frase que lo cierra, van a la
+> sesión 7.
 
 ## Problema que resuelve
 
@@ -140,6 +172,10 @@ registro (ADR-0002) y cambia con un registro del trader.
   fuera del enum falla al leer el registro; las series de M1 no se mueven). Falla con el código
   de `main`: `ACTIVAR-SESION-05-MOTOR.md` §1.1.
 - **Sin arnés y sin material**: velas sintéticas.
+
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`).** Desde la sesión 6 el registro dice
+> `solo_la_contraria`, fuente `ev-v17-001319-419307f6` (recuadro de §2), spec 18.5.4, y los tres
+> tests de `tests/unit/test_mecha_que_vuelve.py` que leían el valor vigente cambian de sentido.
 
 ## Fecha / fase
 

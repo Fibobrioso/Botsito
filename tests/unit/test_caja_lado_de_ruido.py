@@ -122,11 +122,17 @@ def test_el_0_justo_en_la_linea_es_indiferente_con_los_dos(tmp_path: Path, sesgo
 
 
 def test_el_registro_real_y_un_valor_fuera_del_enum(tmp_path: Path) -> None:
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-11-05 (trabajo/activar-sesion-06): A-50 RESUELTA por
+    la sesion 6 (S-17) y el valor CONFIRMED por su registro; hasta esa rama, DEFAULT_AMBIGUOUS bajo
+    A-50 con la fuente de la sesion 5."""
     reg = cargar_registro(PARAMETROS)
     p = reg.parametros["caja_lado_de_ruido"]
-    assert p.valor == "caja_entera" and p.estado.value == "DEFAULT_AMBIGUOUS"
-    assert p.ambiguedad_id == "A-50" and p.categoria == "estrategia"
-    assert p.fuente is not None and p.fuente.id == "ev-v15-010451-5b123278"
+    assert p.valor == "caja_entera" and p.estado.value == "CONFIRMED"
+    assert p.ambiguedad_id is None and p.categoria == "estrategia"
+    assert p.fuente is not None and (p.fuente.tipo, p.fuente.id) == (
+        "feedback",
+        "fb-2026-11-04-sesion-06-3f466670",
+    )
     texto = PARAMETROS.read_text(encoding="utf-8")
     linea = "    valor: caja_entera\n"
     assert texto.count(linea) == 1

@@ -94,37 +94,48 @@ def _estado() -> EstadoDia:
 
 
 def test_el_registro_real_trae_el_selector_como_lectura_del_consultor(registro: Registro) -> None:
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-11-05 (trabajo/activar-sesion-06, respuesta del
+    consultor a la PARADA, punto 4): tras la sesion 6 (S-3) el valor es `solo_la_contraria`, con la
+    fuente de la sesion 6; hasta entonces, `cualquier_mecha` con la de la sesion 5."""
     p = registro.parametros["liquidez_m15_mecha_que_vuelve"]
-    assert p.valor == CUALQUIER_MECHA and p.estado.value == "DEFAULT_AMBIGUOUS"
+    assert p.valor == SOLO_LA_CONTRARIA and p.estado.value == "DEFAULT_AMBIGUOUS"
     assert p.ambiguedad_id == "A-35"
-    assert p.fuente is not None and p.fuente.id == "ev-v15-000553-9d95178a"
+    assert p.fuente is not None and p.fuente.id == "ev-v17-001319-419307f6"
     assert registro.opcion("liquidez_m15_pivote_formado") == CIERRE_VELA_CONTRARIA
     assert registro.opcion("liquidez_m15_criterio_toma") == "cuerpo"
 
 
-def test_por_el_camino_real_las_mechas_mueven_el_nivel_y_la_toma_lo_congela(
+def test_por_el_camino_real_la_mecha_posterior_no_mueve_el_nivel_y_cualquier_mecha_si(
     registro: Registro,
 ) -> None:
-    """Con el registro vigente (`cualquier_mecha`): en el cierre de cada M1, `liquidez_m15` da el
-    nivel movido por las mechas de hasta esa M1; `alcanza_nivel` lo toca y `cruza` NO lo toma
-    hasta la M1 que cierra sobre el nivel MOVIDO. En `main` el nivel era 134 en los tres cierres y
-    la segunda M1 (cierre 136) ya era la toma."""
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-11-05 (trabajo/activar-sesion-06): con el registro
+    vigente (`solo_la_contraria`), la mecha de una M1 posterior NO mueve el nivel, y la M1 que
+    cierra con cuerpo sobre el alto de antes (136 sobre 134) es la toma, que es la (a) de la
+    sesion 6 (S-3, ev-v17-001712-dc155b5d). Hasta esta rama, con `cualquier_mecha`, el nivel era
+    137, 138 y 138, y esa M1 no tomaba; ese caso sigue aqui, pedido con `cualquier_mecha`."""
     datos = _datos(registro, [*FLUJO_ALCISTA, ROJA], M1_POSTERIORES)
     niveles = [_nivel(datos, FIN_ROJA + k + 1) for k in range(3)]
-    assert niveles == [137, 138, 138]
+    assert niveles == [134, 134, 134]
     prim = primitivas_escritas(registro).predicados
     alcanza, cruza = prim["alcanza_nivel"], prim["cruza"]
     args_c = {"que": "liquidez_m15", "criterio": "liquidez_m15_criterio_toma"}
     e = _estado()
     assert alcanza({"que": "liquidez_m15"}, _momento(datos, 0), e) == Resultado(Tri.SI)
-    assert cruza(args_c, _momento(datos, 0), e) == Resultado(Tri.NO)
-    assert cruza(args_c, _momento(datos, 1), e) == Resultado(Tri.NO)  # 136 no pasa el 137
-    assert cruza(args_c, _momento(datos, 2), e) == Resultado(Tri.SI)  # 141 pasa el 138: la toma
-    # la huella del selector en la traza lleva el nivel movido
-    assert e.anotaciones["07-11"]["liquidez_m15"].startswith("alto 137 formado_en")
-    # y despues de la toma, una mecha mas alta ya no mueve nada: el nivel sigue congelado
+    assert cruza(args_c, _momento(datos, 0), e) == Resultado(Tri.NO)  # 125 no pasa el 134
+    assert cruza(args_c, _momento(datos, 1), e) == Resultado(Tri.SI)  # 136 pasa el 134: la toma
+    assert e.anotaciones["07-11"]["liquidez_m15"].startswith("alto 134 formado_en")
+    # con `cualquier_mecha` (el valor hasta esta rama): las mechas mueven el nivel hasta la toma,
+    # la M1 de 136 no toma y despues de la toma una mecha mas alta ya no mueve nada
+    cualquiera = _datos(registro, [*FLUJO_ALCISTA, ROJA], M1_POSTERIORES, CUALQUIER_MECHA)
+    assert [_nivel(cualquiera, FIN_ROJA + k + 1) for k in range(3)] == [137, 138, 138]
+    e2 = _estado()
+    assert cruza(args_c, _momento(cualquiera, 1), e2) == Resultado(Tri.NO)  # 136 no pasa el 137
+    assert cruza(args_c, _momento(cualquiera, 2), e2) == Resultado(Tri.SI)  # 141 pasa el 138
     con_otra = _datos(
-        registro, [*FLUJO_ALCISTA, ROJA], [*M1_POSTERIORES, _m1(3, 141, 130, alto=150)]
+        registro,
+        [*FLUJO_ALCISTA, ROJA],
+        [*M1_POSTERIORES, _m1(3, 141, 130, alto=150)],
+        CUALQUIER_MECHA,
     )
     assert _nivel(con_otra, FIN_ROJA + 4) == 138
 
@@ -145,7 +156,7 @@ def test_cada_opcion_del_selector_por_el_camino_real(
 
 def test_un_valor_fuera_del_enum_falla_al_leer_el_registro(tmp_path: Path) -> None:
     texto = PARAMETROS.read_text(encoding="utf-8")
-    linea = "    valor: cualquier_mecha\n"
+    linea = "    valor: solo_la_contraria\n"  # el valor vigente desde la sesion 6
     assert texto.count(linea) == 1
     ruta = tmp_path / "parametros.yaml"
     ruta.write_text(texto.replace(linea, "    valor: a_ojo\n"), encoding="utf-8")

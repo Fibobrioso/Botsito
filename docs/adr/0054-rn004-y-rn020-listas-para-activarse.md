@@ -48,6 +48,11 @@ phase: post-F14 (rama `trabajo/preparar-a35-a44`)
 > UNKNOWN (el corte del perfil, SUPUESTO, como dice §2). `--diagnostico-a44` se rechaza y el motor
 > corre a secas; A-44 sigue ABIERTA, con la misma desviación declarada.
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06`, no reescribe la NOTA).** La magnitud ya la
+> dijo el trader (sesión 6, S-1, solo las cerradas: `ev-v17-000218-001b08fb`):
+> `perdida_trader_magnitud` = `saldo` es CONFIRMED (`fb-2026-11-04-sesion-06-a1f5784d`). A-44 sigue
+> ABIERTA por el reinicio.
+
 ### 2. El tope del trader tiene tres estados y es independiente de la firma
 
 - **SIN FIJAR**: el motor se niega (salvo diagnóstico).

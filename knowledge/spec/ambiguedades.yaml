@@ -209,7 +209,15 @@ ambiguedades:
       fb-2026-09-29-sesion-03-2cff5008; RN-014, fb-2026-09-29-sesion-03-9f506366). SIGUE ABIERTA
       por orden del consultor: el corte de audio de v9 de 0:57:00 a 0:58:06 cae al final de su
       respuesta, y lo que pudo tapar se cierra con el audio de respaldo
-      (docs/validation/SESION-03-EXTRACCION.md §2).
+      (docs/validation/SESION-03-EXTRACCION.md §2). RESPONDIDA EN PARTE en la sesion 6 (2026-11-04,
+      v17, S-13), y en contra de lo fijado: al cierre y con cuerpo, corrigiendose en la misma
+      respuesta («no es apenas toque es que la vela la siguiente vela cierre por encima es la
+      condición cierre», ev-v17-005111-8933dab2; ev-v17-005200-4f93afa0; ev-v17-005554-172ecbb2), con
+      la excepcion de un imbalance en que bastaria la mecha (ev-v17-005352-cda6245d) y «un poco de
+      margen» (ev-v17-005454-90ce4feb), con dudas sobre sus ejemplos. En la sesion 1 dijo «apenas
+      toca», en la 4 «apenas cierra» y en la 5 las dos. break_even_condicion = tocar y
+      break_even_criterio_ruptura = mecha siguen CONFIRMED, sin registro: es la primera pregunta de
+      la sesion 7. SIGUE ABIERTA.
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTA (2026-09-25, decision del consultor,
     # rama trabajo/sesion-02):
     # "¿el rompimiento de la zona de control que dispara el break even vale al toque (por un pip) o
@@ -972,7 +980,25 @@ ambiguedades:
       2026-10-26 (ADR-0084, trabajo/activar-sesion-05-motor) con el selector
       liquidez_m15_mecha_que_vuelve = cualquier_mecha, LECTURA DEL CONSULTOR: el trader no eligio
       entre la mecha de la vela contraria que forma el alto (su ejemplo) y la de una vela
-      posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. SIGUE ABIERTA.
+      posterior que lo pasa y vuelve, y la sesion 6 lo pregunta, con el bajo. RESPONDIDA EN PARTE
+      en la sesion 6 (2026-11-04, v17, S-3 y S-4). La mecha: si vuelve «eso es indiferente tiene
+      que cerrar con cuerpo … por encima de la zona lineal de m15» (ev-v17-001319-419307f6), sin
+      elegir; una M1 que cierra con cuerpo por encima del alto de antes SI ha tomado («La respuesta
+      es sí, cerró con cuerpo por encima del alto de antes», ev-v17-001712-dc155b5d), «si está
+      conforme al bias» (ev-v17-001610-c43239a9); tras la toma una mecha posterior ya no mueve el
+      alto («No, no, eso ya nos es indiferente», con un «no sé si es indiferente» detras,
+      ev-v17-001728-b7b9a32c); en un bajo, «es todo igual pero al revés» (ev-v17-001847-4e7b7c0b).
+      Con eso liquidez_m15_mecha_que_vuelve pasa a solo_la_contraria, LECTURA DEL CONSULTOR (la (a)
+      descarta cualquier_mecha y, de las dos que quedan, solo_la_contraria conserva el ejemplo de la
+      sesion 5; ADR-0084, recuadro del 2026-11-05), sin registro. La vela sin cuerpo en M15 (S-4):
+      marca la c, «la vela roja nos permitiría a nosotros si anterior a esta tenemos una vela neutra
+      puedes plantear el máximo por encima de la mecha de la vela neutra» (ev-v17-002155-f2c95111);
+      el alto puede ser la mecha de la vela sin cuerpo, tambien con dos o tres seguidas
+      (ev-v17-002250-d6ca3ef8); en un bajo, desde la mecha mas baja (ev-v17-002217-af442f84). Que
+      por eso la vela sin cuerpo no corte la racha en M15 es la conclusion de la extraccion, no una
+      frase suya; el motor hoy la corta (corta_la_racha) y lo que pide va a la rama de motor, sin
+      fijar nada aqui. A-35 y A-44 quedan con valor en los parametros que el motor lee, y siguen
+      ABIERTAS. SIGUE ABIERTA y bloqueante: la sesion 7 confirma con una frase.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
@@ -1016,6 +1042,9 @@ ambiguedades:
     # ADR-0084 lo enmienda ahi, porque la prohibicion era contra un mecanismo inventado y este lo
     # dijo el trader. El nivel se congela en cuanto una M1 lo cruza con el criterio de la toma.
     # Sigue ABIERTA: la sesion 6 pregunta cual de las dos mechas, y el bajo
+    # DESDE EL 2026-11-05 (trabajo/activar-sesion-06, respuesta del consultor a la PARADA, punto 4)
+    # el selector esta en solo_la_contraria, LECTURA DEL CONSULTOR y sin registro: con el, ninguna
+    # mecha de una M1 posterior mueve el nivel, y la congelacion al tomarse deja de aplicarse
     parametros: [liquidez_m15_pivote_formado, liquidez_m15_mecha_que_vuelve]
     contradiccion: null
     estado: ABIERTA
@@ -1288,6 +1317,12 @@ ambiguedades:
       por la segunda parte: si a las 6:45 la toma, el precio vuelve por encima y a las 7:20 la
       vuelve a tomar, no eligio entre «la de las 7:20 vale» y «esa liquidez ya esta gastada»;
       contesto que la liquidez se va actualizando y se toma «la más reciente». Va a la sesion 5.
+      RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-15), sin contestar si la segunda toma
+      vale: «antes de las 7 solo se usa para trazo de liquidez» y se opera de las 7 en adelante, en
+      M1 (ev-v17-010424-6d7f2d3f); de M15 se enfoca en el bias y en el trazo de liquidez para saber
+      que hacer a partir de las 7 (ev-v17-010321-352430e3). Esa frase no casa a la primera con
+      toma_antes_de_la_ventana = cuenta (CONFIRMED, fb-2026-10-04-sesion-04-c3d0c855), que no se toca:
+      la tension va a la sesion 7, con las horas escritas. SIGUE ABIERTA.
     resuelve_en: [F19, F20]
     # NACE EL 2026-09-25 (rama trabajo/huecos-motor, ADR-0049 H2, decision del consultor). El motor
     # solo tiene eventos entre ventana_inicio y ventana_fin (ADR-0048; las sesiones salen de
@@ -1329,7 +1364,22 @@ ambiguedades:
       y perdida_trader_unidad = porcentaje (fb-2026-10-23-sesion-05-e9559876,
       fb-2026-10-23-sesion-05-1772d9ef). Lo que no dijo: si la perdida cuenta lo abierto
       (perdida_trader_magnitud, DEFAULT_AMBIGUOUS en saldo, lectura del consultor) y con que reloj
-      vuelve a contar. SIGUE ABIERTA.
+      vuelve a contar. RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-1 y S-2): la
+      magnitud, solo las operaciones cerradas («Pues en este caso sería solo cerradas Solo las
+      operaciones cerradas», ev-v17-000218-001b08fb; por lo general cierra si toca el stop, y si
+      llega al 4,5 para ese dia y sigue al siguiente, ev-v17-000134-725523bf):
+      perdida_trader_magnitud = saldo pasa a CONFIRMED (fb-2026-11-04-sesion-06-a1f5784d). A-35 y
+      A-44 quedan con valor en los parametros que el motor lee, y siguen ABIERTAS:
+      perdida_trader_reinicio_huso, perdida_trader_dia_usd y perdida_trader_semana_usd siguen
+      UNKNOWN y sin efecto (los dos de dinero, con la unidad en porcentaje; el del reinicio, con
+      el corte del perfil marcado SUPUESTO). SIGUE ABIERTA y bloqueante por el reinicio (S-2): eligio
+      la c, al abrir la primera sesion del dia siguiente («La respuesta es la C, la primera sesión
+      del día siguiente», ev-v17-000250-a468bcec), y del viernes, «se vuelve a contar desde cero el
+      día lunes … siempre es de sesión en sesión» (ev-v17-000351-331daa6d). No es una medianoche y
+      no cabe en perdida_trader_reinicio_huso: PARADA de §4 de ACTIVAR-A35-A44.md, que el
+      consultor resuelve con un parametro nuevo y su ADR en la rama de motor, sin registro aqui. El
+      reloj que nombro, «UTC más 2 si no me equivoco … ahora Madrid» (ev-v17-000321-37cebf44), no
+      fija nada: ADR-0069 ya midio Europe/Madrid.
     resuelve_en: [F11, F18]
     # NACE EL 2026-09-26 (rama trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks
     # tras la revision del consultor). RN-020 -«el tope porcentual del trader es el unico freno del
@@ -1405,7 +1455,12 @@ ambiguedades:
       la da por válida, porque `liquidez_tomada` no caduca al abrir la sesión (solo `sesgo` caduca).
       RESUELTA el 2026-09-29 en la sesion 3 (v9 0:32:53): cada sesion es «un mundo diferente»
       («Claro, exacto») y «no importa cómo terminó la primera operación»: cada toma nueva de M15
-      abre un escenario, sin tope diario de escenarios (fb-2026-09-29-sesion-03-5021677e).
+      abre un escenario, sin tope diario de escenarios (fb-2026-09-29-sesion-03-5021677e). Dicho en la
+      sesion 6 (2026-11-04, v17, S-23), sin veredicto y sin REOPEN: contesto sobre el sesgo de H4 y
+      el rango, no sobre la toma; si en la mañana ya opero esa toma, «si todavía no se rompe el rango
+      que tenemos planteado, pues seguimos operando» (ev-v17-015726-ce2e42e4), y «va a depender si se
+      rompe o no el rango … tiene que ser H4» (ev-v17-015741-8f9fd638). Sigue RESUELTA; la sesion 7
+      pregunta por la toma.
     resuelve_en: [F19, F20]
     # NACE en la orden de cierre de trabajo/preparar-a21 (ADR-0055 §4). Medido en construccion
     # (docs/validation/VERIFICACION-A21.md §3): 31 sesiones abren con una toma hecha en una sesion
@@ -1473,7 +1528,15 @@ ambiguedades:
     titulo: qué velas forman el bloque de la caja
     pregunta: >-
       Cuando trazas la caja de la entrada en M1, ¿qué vela o velas tomas como bloque para poner el 0 y
-      el 1?
+      el 1? RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-16). El 1: «entonces la respuesta
+      sería al punto más alto de todas las velas desde el punto» (ev-v17-010541-05a69879, la opcion
+      c), y en una compra al reves (ev-v17-011328-a701a547): caja_bloque = r6 pasa a CONFIRMED
+      (fb-2026-11-04-sesion-06-a1cc60d0) como DESVIACION declarada de la regla de que las
+      respuestas en parte no fijan nada (precedentes: A-43 en la sesion 4, A-35 en la sesion 5). El
+      0 no queda claro: no eligio entre ultimo_pivote_m1 y referencia_de_la_toma
+      (SESION-06-EXTRACCION.md §3.4, S-16), y orden_stop_punto sigue DEFAULT_AMBIGUOUS en
+      ultimo_pivote_m1, lectura del consultor bajo esta ambiguedad. SIGUE ABIERTA por el 0, sin
+      registro sobre ella; va a la sesion 7.
     resuelve_en: [F20, F21]
     # NACE el 2026-09-28 (rama trabajo/preparar-a47, decision del consultor sobre
     # docs/validation/DISENO-ENTRADA-RUPTURA.md §2.5, tras docs/validation/BLOQUE-DE-LA-CAJA.md). Con el
@@ -1509,6 +1572,16 @@ ambiguedades:
     titulo: si la caja se traza con la vela del bloque cerrada o en formación
     pregunta: >-
       ¿Trazas la caja cuando la vela del bloque ya ha cerrado, o mientras se está formando?
+      RESUELTA el 2026-11-05 por la sesion 6 (2026-11-04, v17 1:12:54-1:13:13, S-16): «apenas
+      ocurre el rompimiento yo ya voy trazando la caja … tiene que cerrar la vela rompimiento cierra
+      de la vela no importa con mecha o sea con cuerpo» (ev-v17-011254-542726f6,
+      fb-2026-11-04-sesion-06-e0fb393a): la caja se traza con la vela que rompe ya cerrada, sea con
+      mecha o con cuerpo. La pregunta hablaba de la vela DEL BLOQUE y el trader habla de la vela QUE
+      ROMPE: que eso conteste la pregunta con la lectura `cerrada` (lo que el motor hace: solo M1
+      cerradas, ADR-0028) es LECTURA DEL CONSULTOR, que la extraccion apoya al decir que casa con
+      caja_se_fija (SESION-06-EXTRACCION.md §3.4, S-16). Mientras no aparece otro punto, «simplemente se mantiene en el punto anterior»
+      (ev-v17-011419-0862662c). caja_se_fija = en_cada_cierre_m1 pasa a CONFIRMED con su fuente de
+      decision (ADR-0074).
     resuelve_en: [F20, F21]
     # NACE el 2026-09-28 (rama trabajo/preparar-a47, decision del consultor sobre
     # docs/validation/DISENO-ENTRADA-RUPTURA.md §2.5). Medido en docs/validation/BLOQUE-DE-LA-CAJA.md
@@ -1529,12 +1602,16 @@ ambiguedades:
     # mecanismo del motor sobre esta pregunta; DEFAULT_AMBIGUOUS. Sigue ABIERTA. NO
     # bloqueante, por lo mismo que A-48. El selector `caja_vela` (la vela en formacion) sigue sin
     # nacer: `caja_se_fija` solo decide cuando se recalcula el 1 con velas CERRADAS.
+    # RESUELTA el 2026-11-05 (trabajo/activar-sesion-06): la sesion 6 dice `cerrada`; caja_vela no
+    # hace falta, y caja_se_fija pasa a CONFIRMED a mano (categoria ejecucion, fuente ADR-0074)
     evidencia:
       - ev-v7-002201-2b2f20aa
       - ev-v7-002403-8344331d
+      - ev-v17-011254-542726f6
+      - ev-v17-011419-0862662c
     parametros: [caja_se_fija]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1554,8 +1631,15 @@ ambiguedades:
       ejemplo el 0 queda del lado de ruido y la caja vale. Desde el 2026-10-26
       (trabajo/activar-sesion-05-motor) RN-005 lee caja_lado_de_ruido = caja_entera,
       DEFAULT_AMBIGUOUS bajo esta ambiguedad y LECTURA DEL CONSULTOR (que haga falta la caja
-      ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). SIGUE ABIERTA: la sesion 6 lo
-      confirma con dos dibujos.
+      ENTERA del lado de ruido se deduce de su ejemplo, no lo dijo). RESUELTA el 2026-11-05 por la
+      sesion 6 (2026-11-04, v17 1:25:00-1:25:04, S-17): «quedaría el dibujo B, la caja entera por
+      encima quedaría descartado» (ev-v17-012500-39e18f12, fb-2026-11-04-sesion-06-431635dc): la
+      opcion b, la caja entera; caja_lado_de_ruido = caja_entera pasa a CONFIRMED
+      (fb-2026-11-04-sesion-06-3f466670). Su motivo es otro: la caja de una compra va por debajo del
+      nivel tomado (ev-v17-012441-2ade00be), y sin una toma debajo no se puede trazar la caja
+      (ev-v17-012715-8aaaa59f). Lo que dijo al precisar, de cuanto se pasa el 0 y de la caja a
+      caballo, no esta en ningun item y se remite sin citarlo
+      (SESION-06-EXTRACCION.md §3.4, S-17, fuera de un item).
     resuelve_en: [F19, F20]
     # NACE el 2026-09-28 (rama trabajo/registrar-embudo, orden del consultor tras
     # docs/validation/EMBUDO-77.md §4, punto 1). RN-005 prohibe abrir cuando la zona se desarrolla
@@ -1583,9 +1667,10 @@ ambiguedades:
       - ev-v9-004721-2e023ac6
       - ev-v9-004919-c6bfb3ee
       - ev-v15-010451-5b123278
+      - ev-v17-012500-39e18f12
     parametros: [caja_lado_de_ruido]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta
@@ -1659,7 +1744,13 @@ ambiguedades:
       Tienes una orden stop puesta, sin llenar, y el precio toma otra liquidez de M15. ¿Qué haces
       con la orden? (a) la quito en ese momento y espero el punto de la liquidez nueva; (b) la
       dejo, y la muevo cuando aparezca el punto de la liquidez nueva; (c) otra, ¿cuál? Es la
-      pregunta 21 de docs/sesion-4/PREGUNTAS.md.
+      pregunta 21 de docs/sesion-4/PREGUNTAS.md. RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17,
+      S-14): dijo la letra (a), «la quito en ese momento Y espero el punto de la liquidez nueva … la
+      respuesta es la A», con un «la verdad no, como lo planteé aquí» detras
+      (ev-v17-005730-76948af1), y al explicarlo sobre el dibujo el punto anterior seguiria activo
+      hasta que el precio rompa (ev-v17-005846-0891a9c9), que va hacia la (b); en compra y en venta,
+      igual al reves (ev-v17-005914-55580dc0). orden_pendiente_al_abrir_escenario sigue se_mueve,
+      DEFAULT_AMBIGUOUS bajo esta ambiguedad. SIGUE ABIERTA: a la sesion 7, con un esquema.
     resuelve_en: [F20, F22]
     # NACE el 2026-10-02 (rama feature/escenarios-por-sesion, cuarta orden del consultor). Lo unico
     # que dijo el trader de la vida de una orden sin llenar es que «sigue vivo hasta que se

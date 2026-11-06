@@ -217,7 +217,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   en su cierre, y `_peor_del_minuto` marca entera la vela siguiente al avanzar hasta un instante
   redondo (RESPALDO-M1.md §0.a y §0.l). Rama propia con un ADR que enmiende ADR-0051 §5 y
   ADR-0057 §1.
-- **Depende de:** R3.5.
+- **Depende de:** R3.5, y la activación de la sesión 6 (R4.2), rama de motor incluida.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el ADR está aceptado, un test que rompe en `main` pasa en la rama y las dos
   corridas están repetidas.
@@ -239,7 +239,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   sin vídeo, donde el trader se saltaba las sesiones que iban a break even (S-14 de la sesión
   5); (4) las tolerancias de entrada e instante. Los umbrales los fija el consultor en la PARADA
   de esa rama, antes de ver ninguna corrida nueva.
-- **Depende de:** la activación de la sesión 6 (R4.2).
+- **Depende de:** la activación de la sesión 6 (R4.2), rama de motor incluida.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el ADR está aceptado con los umbrales pre-registrados y la medida de los
   cuatro sesgos tiene su informe.
@@ -308,6 +308,21 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la sesión 6 está ingerida y activada.
 - **Estado:** la sesión 6 se celebró el 2026-11-04 (v17) y está ingerida (SESION-06-EXTRACCION.md, stable/F38m-sesion-06). Falta la
   activación, que decide el consultor. De los gráficos 1 a 6 solo se contestó el 1; el 2 quedó a medias y del 3 al 6 no se hicieron.
+- **Estado:** activada en spec (`stable/F38n-activar-sesion-06`, ACTIVAR-SESION-06.md: A-49 y A-50
+  RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS); motor pendiente
+  (trabajo/activar-sesion-06-motor, con la lista de §«Para la rama de motor»).
+
+### R4.3 · Preparar y celebrar la sesión 7
+- **Refs:** NA:F · ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 ·
+  ID:ADR-0083 · ID:RN-009
+- **Qué es:** la lista de ACTIVAR-SESION-06.md §«Para la sesión 7»: el break even (A-13) la
+  primera; A-35 para cerrarla, con la mecha de la vela contraria aparte; A-53; A-43 con las horas
+  escritas; el 0 de A-48; el «igual» y la caja de la reentrada (ADR-0083 D1); la alternancia sin
+  usar la palabra (RN-009, S-21); A-46 por la toma; la frase de la mecha de S-22; y los gráficos 2
+  a 6 rehechos SIN fecha y con el contexto que pidió (los criterios del bot y los trazos de M15).
+- **Depende de:** la rama de motor de la sesión 6 (R4.2) y, si la hoja sale de `kit hoja`, J.
+- **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
+- **Hecho cuando:** la sesión 7 está ingerida y activada.
 
 ## R5 · Fidelidad
 
@@ -484,6 +499,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Quién:** Aleks ejecuta; los dos CSV los congela una sola rama, tras la ejecución 3, que es la
   que decide A-28 con los dos (EA-CONEXION.md, D6).
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
+- **Estado:** tres ejecuciones hechas (la 3, el 2026-11-05, script 1.2); rama corta pendiente
+  (congelar los tres CSV, A-28 con su ADR y la NOTA del paso 8 en ADR-0081 §4; NA:A).
 
 ### A.2 · Las preguntas a FTMO
 - **Refs:** HER:27 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
@@ -635,6 +652,5 @@ sus ambigüedades, sin revisar cada informe a fondo.
 
 - La ejecución 2, hecha el 2026-10-29 en la prueba creada ese día; la 3, del 2 al 6 de noviembre de
   2026 (NA:A).
-- La sesión 6 con el trader, el martes 3 de noviembre de 2026 (NA:F).
 - La semana del 26 al 30 de octubre de 2026 es la primera en que el bot abre a otra hora: Europa ya
   cambió la hora y EE. UU. no (ADR-0069).

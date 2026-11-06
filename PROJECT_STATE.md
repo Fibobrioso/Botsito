@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-06
 
 ## Current Feature
-Ninguna rama abierta. trabajo/sesion-06 cerrada en main el 2026-11-05 (stable/F38m-sesion-06): la sesión 6 con el trader (2026-11-04, v17, 1:59:59) ingerida, en cuarentena, con su extracción por pregunta y 65 ítems de evidencia vivos (SESION-06-EXTRACCION.md). Nada resuelto: la activación la decide el consultor.
+trabajo/activar-sesion-06, EN CURSO: activar en spec las respuestas de la sesión 6 (R4.2). Encargo docs/encargos/trabajo-activar-sesion-06.md; informe docs/validation/ACTIVAR-SESION-06.md.
 
 ## Stable Main State
 78d560d · merge de `trabajo/sesion-06` (tag `stable/F38m-sesion-06`): la sesión 6 ingerida (v17) y su extracción por pregunta. Sobre `stable/F38l-guardia-g1` (1cbf403). Informe docs/validation/SESION-06-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/sesion-06 cerrada en main el 2026-11-05 (stable/F3
 78d560d · merge: trabajo/sesion-06, la sesión 6 ingerida (v17) y su extracción por pregunta · tag stable/F38m-sesion-06
 
 ## Tests Currently Passing
-1840 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1842 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ Ninguna rama abierta. trabajo/sesion-06 cerrada en main el 2026-11-05 (stable/F3
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Activar la sesión 6 (R4.2): celebrada el miércoles 2026-11-04 (v17, 1:59:59) e ingerida en trabajo/sesion-06 (SESION-06-EXTRACCION.md, tabla final y §4). Dos PARADAS de §4 de ACTIVAR-A35-A44.md para el consultor: S-2 (la (c) no cabe en perdida_trader_reinicio_huso) y S-3 (la mecha, y la (a) contra ADR-0084). Los gráficos 3 a 6 y el 2 quedan sin contestar: antes de rehacerlos, decidir lo de la fecha (regla 2 de SESION-DE-PREGUNTAS.md). Decisión del consultor (2026-11-05): los gráficos se rehacen SIN fecha; lo que se añade es contexto (H4 y los trazos de M15 del bot), que decide la activación. El trader ofreció un vídeo de cómo mapea (§3.6): si llega, es material nuevo, SIN ABRIR y fuera del repo hasta su rama. H va después de esta activación. R6a en los huecos.
+F. Sesión 6 activada en spec (este tag): A-49 y A-50 RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS. Falta trabajo/activar-sesion-06-motor, con la lista de §«Para la rama de motor» (ACTIVAR-SESION-06.md); después H, R y la re-corrida que cuenta (ADR-0070 §3); los gráficos 2 a 6 y la hoja de la sesión 7, en la rama de preparación de la sesión 7, con la lista de §«Para la sesión 7». El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
 
 
 
@@ -39,11 +39,11 @@ I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de est
 
 J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
 
-A. **Demo de FTMO: las ejecuciones 2 y 3 de MedirDemoFTMO** (Aleks; detalle en docs/runbooks/DEMO-FTMO.md): la 2, hecha el 2026-10-29 (script 1.1; CSV en data/demo_ftmo/ sin congelar, el original sigue en MQL5\Files); la 3, del 2026-11-02 al 2026-11-06. Miden A-28, el nivel de ADR-0057 §2, deslizamientos, swaps y la comisión con 1,00 lote. En la 2, el margen de 1,00 lote cuadra con FTMO-P-D1.md §3. La 3 va con el script 1.2 (trabajo/margen-pendiente), que además mide cuándo comprueba MT5 el margen de una pendiente stop (ADR-0081 §4; paso 8, DEMO-FTMO.md). Y, opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en `corpus/noticias/` como CSV `fecha_utc,hora_utc,divisa,evento`; `stops_cortos.py --noticias <csv> --ventana-min 2` da la medida (MARGEN-LOTE.md §2.b).
+A. Demo de FTMO: las tres ejecuciones de MedirDemoFTMO HECHAS (1: 2026-10-09, script 1.0; 2: 2026-10-29, 1.1; 3: 2026-11-05, 1.2, a las 20:35 del servidor, fuera de la franja de 9 a 18 de España del runbook, con Nueva York abierto). Los tres CSV en data/demo_ftmo/ sin congelar, los originales en MQL5\Files. Falta una rama corta en la laptop, después de la de motor: congelar los tres en data/manifests/, cerrar A-28 con su ADR (desfase 180, 180 y 120 min el 9-oct, el 29-oct y el 5-nov: el servidor sigue el calendario de EE. UU.) y la NOTA del paso 8 en ADR-0081 §4 (M1 no, M2 no, M3 no, M4 no concluyente: el tope por margen lo pone el bot). Opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en corpus/noticias/ como CSV fecha_utc,hora_utc,divisa,evento; stops_cortos.py --noticias <csv> --ventana-min 2 da la medida (MARGEN-LOTE.md §2.b).
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17. En la sesión 6 no afirmó que la exportación esté en el Drive (§3.5); Aleks se la vuelve a pedir.
 
-L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D).
+L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D). caja_bloque ya no cuelga de ese ítem (sesión 6).
 
 M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
 
@@ -76,15 +76,13 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
 | A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |
-| A-49 | si la caja se traza con la vela del bloque cerrada o en formación | pregunta | no | F20, F21 |
-| A-50 | para descartar una zona frente al nivel tomado, si cuenta solo el 0 de la caja o la caja entera | pregunta | no | F19, F20 |
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
 | A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |
 | A-56 | la regla del objetivo dicha por el trader frente a lo que mide su material | medicion | no | F26 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
-- Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49; C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
+- Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49 (A-49 RESUELTA por la sesión 6); C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
 
 ## Technical Debt
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
@@ -142,7 +140,6 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Copia de seguridad de las crudas y los WAV: hecha hasta v10 (2026-10-22, Drive privado de Aleks, con SHA256SUMS); v15, v16 y v17 según lo que confirme Aleks (SESION-06-EXTRACCION.md §12). Cada sesión nueva se añade tras su ingesta; los vídeos de las sesiones, recomendado, sin hacer.
 - La skill ingerir-sesion no nombra el trailer Fuente: de tramos_no_citables.yaml y abrir-rama no nombra la línea de PLANTILLA del informe (SESION-06-EXTRACCION.md §7, puntos 1 y 3; segunda vez): rama corta de skills.
 - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos … (entera en HISTORIA, Technical Debt ACORTADA)
-- La guardia no expande las llaves de bash que componen una ruta (`'<raíz>/'{a,b}`) ni mira las URL `file:///` (urllib, curl) … (GUARDIA-ALIAS.md §9, b6 y b7; entera en HISTORIA, Technical Debt ACORTADA)
 - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
 
 ## Reglas vivas
@@ -158,8 +155,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 55 (2026-11-04).
+— ninguna desde el Archivo 56 (2026-11-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 55 (2026-11-04).
+— ninguna desde el Archivo 56 (2026-11-05).

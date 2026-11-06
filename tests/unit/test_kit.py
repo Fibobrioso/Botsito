@@ -277,7 +277,9 @@ IDS_RESERVADOS: dict[str, str] = {}
 # (trabajo/activar-sesion-04), A-51 (trabajo/activar-sesion-04-motor, ADR-0077), A-21 (la misma
 # rama, ADR-0076), A-57 (la sesion 5, S-5, trabajo/activar-sesion-05: el trader confirmo el
 # DEFAULT de ADR-0081, limitar el lote y entrar) y A-32 (la sesion 5, S-18 de v16: en M1 la mecha
-# siempre vale; la sesion 4 la habia dejado en parte). El comentario
+# siempre vale; la sesion 4 la habia dejado en parte) y A-49 (la sesion 6, S-16,
+# trabajo/activar-sesion-06: la caja con la vela que rompe ya cerrada) y A-50 (la sesion 6, S-17,
+# la misma rama: cuenta la caja entera). El comentario
 # de `test_ambiguedades_reales_y_esquema` cuenta la
 # historia de cada una. Una «en parte» NUNCA entra aqui (`test_una_en_parte_no_entra_en_resueltas`).
 RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
@@ -304,6 +306,8 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
         "A-45",
         "A-46",
         "A-47",
+        "A-49",
+        "A-50",
         "A-51",
         "A-52",
         "A-57",
@@ -317,8 +321,12 @@ RESUELTAS = frozenset({f"A-{i}" for i in range(1, 13)}) | frozenset(
 # el 2026-10-26 (trabajo/activar-sesion-05): la sesion 4 la dejo en parte y la sesion 5 la resuelve
 # (S-18, v16), asi que una sesion posterior puede cerrar lo que la 4 dejo en parte; lo que la 5
 # deja en parte lo vigila `test_la_sesion_5_deja_en_parte_lo_que_dice_su_tabla`
-# (tests/unit/test_en_parte_no_se_cierra.py).
-EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-44", "A-49", "A-50", "A-53"})
+# (tests/unit/test_en_parte_no_se_cierra.py). A-49 salio el 2026-11-05 (trabajo/activar-sesion-06),
+# con el mismo precedente que A-32: la sesion 6 la resuelve con regla general (S-16,
+# fb-2026-11-04-sesion-06-e0fb393a), y su CONFIRM de la sesion 4 sigue sobre su item. A-50 salio
+# en la misma rama y con el mismo precedente: la sesion 6 la resuelve (S-17,
+# fb-2026-11-04-sesion-06-431635dc).
+EN_PARTE_SESION_4 = frozenset({"A-13", "A-35", "A-43", "A-44", "A-53"})
 
 
 def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
@@ -441,9 +449,13 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
 
 def test_una_en_parte_no_entra_en_resueltas() -> None:
     """Una respuesta «en parte» no cierra una ambiguedad (skill activar-sesion): ninguna de las de
-    la sesion 4 esta en RESUELTAS ni RESUELTA en el YAML, y A-49 -la mezclada, que
-    `test_en_parte_no_se_cierra.py` no vigila- sigue ABIERTA con su CONFIRM de S-4 registrado
-    sobre el item y no sobre ella (trabajo/activar-sesion-04-motor, decision 1)."""
+    la sesion 4 esta en RESUELTAS ni RESUELTA en el YAML. A-49 -la mezclada, que
+    `test_en_parte_no_se_cierra.py` no vigila- siguio ABIERTA con su CONFIRM de S-4 registrado
+    sobre el item y no sobre ella (trabajo/activar-sesion-04-motor, decision 1). CAMBIA DE SENTIDO
+    A PROPOSITO el 2026-11-05 (trabajo/activar-sesion-06, respuesta del consultor a la PARADA,
+    punto 1): la sesion 6 la resuelve con regla general (S-16), asi que sobre A-49 hay EXACTAMENTE
+    un registro, el RESOLVE_UNKNOWN de la sesion 6, y el CONFIRM de la sesion 4 sigue sobre su
+    item. Hasta esa rama el test exigia que no hubiera ninguno."""
     assert not (EN_PARTE_SESION_4 & RESUELTAS), sorted(EN_PARTE_SESION_4 & RESUELTAS)
     estados = {
         a.id: a.estado
@@ -454,7 +466,10 @@ def test_una_en_parte_no_entra_en_resueltas() -> None:
     sobre_a49 = [
         r for r in registros if r.objetivo.tipo == "ambiguedad" and r.objetivo.id == "A-49"
     ]
-    assert sobre_a49 == [], [r.id for r in sobre_a49]
+    assert [(r.id, r.accion, r.sesion) for r in sobre_a49] == [
+        ("fb-2026-11-04-sesion-06-e0fb393a", "RESOLVE_UNKNOWN", "2026-11-04-sesion-06")
+    ]
+    assert estados["A-49"] == "RESUELTA"
     confirm = next(r for r in registros if r.id == "fb-2026-10-04-sesion-04-35a080e2")
     assert (confirm.objetivo.tipo, confirm.objetivo.id, confirm.accion) == (
         "evidence",

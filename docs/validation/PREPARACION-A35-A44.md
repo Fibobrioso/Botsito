@@ -172,6 +172,16 @@ consultor. Ninguna se ha abierto: se llevan a la revisión.
 10. **`sin_tope` contradice la sesión 1** (4,5 % y 9 % CONFIRMED). El runbook lo registra como
     RESOLVE_CONTRADICTION y lo deja al consultor.
 
+> **RECUADRO DE CORRECCIÓN (2026-11-05, `trabajo/activar-sesion-06`; el cuerpo de arriba no se
+> toca).** Una lectura nueva, candidata, de §4 de `docs/runbooks/ACTIVAR-A35-A44.md` (paso 2): a
+> «¿cuándo vuelves a contar?» el trader eligió en la sesión 6 (S-2) la (c), **al abrir la primera
+> sesión del día siguiente**, que no es una medianoche y no cabe en `perdida_trader_reinicio_huso`
+> (un nombre IANA): «La respuesta es la C, la primera sesión del día siguiente … al día siguiente a
+> la primera sesión nuevamente después seguimos operando» (`ev-v17-000250-a468bcec`); y del viernes,
+> «se vuelve a contar desde cero el día lunes … siempre es de sesión en sesión»
+> (`ev-v17-000351-331daa6d`). El consultor decidió (respuesta a la PARADA de esa rama, encargo A.2)
+> un parámetro nuevo con su ADR, en la rama de motor; aquí solo se apunta la candidata.
+
 ## 6. Lo que quedó sin terminar
 
 - **Lo que no se hizo a propósito:** no se tocó la spec ejecutable (`strategy_spec.yaml` solo cambió

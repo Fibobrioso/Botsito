@@ -1,0 +1,23 @@
+id: fb-2026-11-04-sesion-06-f2236d1e
+sesion: 2026-11-04-sesion-06
+fecha: '2026-11-04'
+medio: video
+objetivo:
+  tipo: evidence
+  id: ev-v16-000851-f5ae3b6f
+accion: CORRECT
+respuesta_literal: Sí, es que, claro, a ver, una vela de uno o dos puntos con cuerpo en el retroceso,
+  o sea, el retroceso, pues, es válido, o sea, como cambio de color para trazar el punto, y de una vela
+  sin cuerpo sus mechas, pues, también cuentan
+registrado_por: Aleks · grabacion de la sesion 6 (v17), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-05 (trabajo/activar-sesion-06, encargo A.8 y respuesta a la PARADA,
+  punto 0)
+grabacion: Grabación de pantalla 2026-11-04 142903.mp4
+t0: '1:47:36'
+t1: '1:48:02'
+valor_resultante: una vela de 1 o 2 puntos de cuerpo sí cuenta como cambio de color en el retroceso; la
+  vela sin cuerpo, no
+notas: 'S-20: una vela de uno o dos puntos de cuerpo en el retroceso vale como cambio de color para trazar
+  el punto, y las mechas de una vela sin cuerpo cuentan (ev-v17-014736-30d2947b)'
+recibido_el: '2026-11-04'
+procedencia: trader_grabado

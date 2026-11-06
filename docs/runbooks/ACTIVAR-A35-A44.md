@@ -22,6 +22,22 @@
 > ABIERTAS y bloqueantes: los cinco sitios de §3 no se tocaron para ellas. La medida de §5 y §5.1
 > (la re-corrida con `--simular` y su `diff`) va después de la rama de motor, no en la de spec.
 
+> **NOTA (2026-11-05, rama `trabajo/activar-sesion-06`; el cuerpo no se toca).** Se ejecutó con la
+> sesión 6 (2026-11-04, v17; `docs/validation/ACTIVAR-SESION-06.md`). La magnitud la dijo el trader
+> (S-1, solo las cerradas): `perdida_trader_magnitud` = `saldo` pasa a CONFIRMED por §2
+> (`fb-2026-11-04-sesion-06-a1f5784d`), y la desviación (3) de la NOTA anterior queda cerrada. El
+> reinicio (S-2) cayó en §4: el trader eligió «la primera sesión del día siguiente», que no es una
+> medianoche (`ev-v17-000250-a468bcec`, `ev-v17-000351-331daa6d`). Se hizo el paso 2 (la candidata,
+> en un recuadro junto a §5 de `PREPARACION-A35-A44.md`) y el 3 (el consultor decidió un parámetro
+> nuevo con su ADR, en la rama de motor). **Desviación declarada del paso 1**, por orden del
+> consultor (respuesta a la PARADA, punto 2): ningún registro sobre A-44, como en las sesiones 3 y
+> 5, porque un RESOLVE_UNKNOWN activo sobre una ambigüedad ABIERTA es lo que `tests/unit/test_kit.py`
+> vigila, y el cierre de A-44 se decide en la PARADA de la rama de motor. El reloj que nombró («UTC
+> más 2, si no me equivoco … ahora Madrid», `ev-v17-000321-37cebf44`) no fija nada: ADR-0069 ya midió
+> Europe/Madrid. A-35 sigue en §4 por la mecha (`liquidez_m15_mecha_que_vuelve` = `solo_la_contraria`,
+> lectura del consultor; ADR-0084, recuadro del 2026-11-05). A-35 y A-44 quedan con valor en los
+> parámetros que el motor lee, y siguen ABIERTAS y bloqueantes.
+
 Para ejecutarlo minutos después de la reunión con el trader. Desde `trabajo/preparar-a35-a44`
 (2026-09-26) activar cada regla es **escribir UN valor y correr UN comando**: el mecanismo ya
 está construido y probado; lo único que falta es lo que el trader diga. **Nada de lo que hay aquí

@@ -24,10 +24,11 @@ RAIZ = Path(__file__).resolve().parents[2]
 # 2026-10-02 (rama trabajo/cerrar-a29-a36) sale A-29, RESUELTA por la sesion 3. El 2026-10-06
 # (rama trabajo/activacion-a42, ADR-0069) sale A-42, RESUELTA por S-7 y por escrito. El
 # 2026-10-12 (rama trabajo/activar-sesion-04-motor, ADR-0076) sale A-21, RESUELTA por S-10. El
-# 2026-10-26 (rama trabajo/activar-sesion-05) sale A-32, RESUELTA por S-18 de la sesion 5.
+# 2026-10-26 (rama trabajo/activar-sesion-05) sale A-32, RESUELTA por S-18 de la sesion 5. El
+# 2026-11-05 (rama trabajo/activar-sesion-06) sale A-49, RESUELTA por S-16 de la sesion 6.
 ORDEN = [
     "A-35", "A-44", "A-43", "A-24",
-    "A-48", "A-49",
+    "A-48",
     "A-13",
 ]  # fmt: skip
 

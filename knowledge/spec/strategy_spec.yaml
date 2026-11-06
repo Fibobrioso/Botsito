@@ -801,8 +801,9 @@ acumuladores:
       perdida acumulada desde el corte del dia de riesgo. Desde el 2026-10-26 (sesion 5, S-4) la
       produce el tope del trader de engine/tope_trader.py con perdida_trader_alcance = dia y
       perdida_trader_unidad = porcentaje; su magnitud es perdida_trader_magnitud (saldo,
-      DEFAULT_AMBIGUOUS bajo A-44, lectura del consultor) y su corte, el del perfil, SUPUESTO
-      mientras perdida_trader_reinicio_huso siga UNKNOWN
+      CONFIRMED desde el 2026-11-05: solo las cerradas, sesion 6, S-1,
+      fb-2026-11-04-sesion-06-a1f5784d) y su corte, el del perfil, SUPUESTO mientras
+      perdida_trader_reinicio_huso siga UNKNOWN
     base: base_calculo_perdida_diaria
     reinicia_con: reloj_dia_riesgo
     cita: fb-2026-09-09-sesion-01-462134c7
@@ -1306,7 +1307,20 @@ reglas:
       con cuerpo» de la sesion 4 (ev-v10-012456-9dc1d221) y «se actualiza el de la mecha» de la 5
       hablan de dos cosas, cuando queda TOMADO y que nivel se usa mientras no lo este. Lo de «no
       se tapa con un parametro provisional» de estas notas lo enmienda ADR-0084 en ADR-0045: el
-      mecanismo lo dijo el trader; el valor solo elige su alcance. A-35 sigue ABIERTA
+      mecanismo lo dijo el trader; el valor solo elige su alcance. A-35 sigue ABIERTA.
+      DESDE EL 2026-11-05 (sesion 6, S-3; trabajo/activar-sesion-06, respuesta del consultor a la
+      PARADA, punto 4) liquidez_m15_mecha_que_vuelve esta en solo_la_contraria, LECTURA DEL
+      CONSULTOR bajo A-35 y sin registro: una M1 que cierra con cuerpo por encima del alto de antes
+      SI ha tomado (ev-v17-001712-dc155b5d), asi que la mecha de una M1 posterior ya no mueve el
+      nivel y lo de «el nivel se congela» de arriba deja de aplicarse; la mecha de la propia vela
+      contraria sigue moviendolo (el ejemplo de la sesion 5, ADR-0084 §1). Y sobre su grafico, con
+      «suponiendo»: «suponiendo que esto te deja otra vela verde entonces actualizas tu zona lineal
+      de m15 aquí» (ev-v17-001036-e7bdd027), que es lo que ya hace «el mas reciente» de ADR-0045;
+      va aqui sin registro, porque esta regla no enuncia lo que ese item confirma (respuesta a la
+      PARADA, punto 5). Y de la vela sin cuerpo (sesion 6, S-20): su mecha cuenta en M1, pero «si
+      es combinación con contexto de M15 para validar una toma de liquidez de M15, no cuenta»
+      (ev-v17-014644-674966b7), que casa con esta regla y con ADR-0062 §1 (la toma pide cuerpo):
+      sin cambio
     forma:
       cuando:
         todos_de:
@@ -1372,7 +1386,14 @@ reglas:
       deduce de su ejemplo, SESION-05-EXTRACCION.md §3.3, fuera del item). Con `solo_el_0`, lo de
       antes. El 1 que se mira es el de la zona del punto, el mismo que llevara la orden
       (engine/zonas.py, ACTIVAR-SESION-05-MOTOR.md §0.b.6). A-50 sigue ABIERTA y la sesion 6 lo
-      confirma con dos dibujos
+      confirma con dos dibujos.
+      DESDE EL 2026-11-05 (sesion 6, S-17; trabajo/activar-sesion-06) A-50 ESTA RESUELTA: «quedaría
+      el dibujo B, la caja entera por encima quedaría descartado» (ev-v17-012500-39e18f12,
+      fb-2026-11-04-sesion-06-431635dc), y caja_lado_de_ruido = caja_entera pasa a CONFIRMED
+      (fb-2026-11-04-sesion-06-3f466670): la forma no cambia. Su motivo es otro: la caja de una
+      compra va por debajo del nivel tomado (ev-v17-012441-2ade00be) y sin una toma debajo no se
+      puede trazar la caja (ev-v17-012715-8aaaa59f); lo que dijo de la caja a caballo no esta en
+      ningun item y se remite sin citarlo (SESION-06-EXTRACCION.md §3.4, S-17)
     forma:
       cuando:
         todos_de:
@@ -1465,7 +1486,12 @@ reglas:
       (ev-v16-000851-f5ae3b6f). Ni cifra ni parametro de umbral: cuerpo cero es cierre igual a la
       apertura (ADR-0002). A la sesion 6: si se miran las mechas de una vela sin cuerpo (hoy
       cuentan donde cuentan, decision del consultor) y las velas de 1 o 2 puntos, que aqui siguen
-      siendo de su color aunque ev-v16-000851 las meta en el mismo saco
+      siendo de su color aunque ev-v16-000851 las meta en el mismo saco. LO DIJO EL TRADER EN LA
+      SESION 6 (S-20; trabajo/activar-sesion-06, ADR-0085 §3, recuadro del 2026-11-05): una vela de
+      1 o 2 puntos de cuerpo cuenta como cambio de color en el retroceso (ev-v17-014603-63d190df,
+      ev-v17-014736-30d2947b; CORRECT sobre ev-v16-000851-f5ae3b6f,
+      fb-2026-11-04-sesion-06-f2236d1e) y la mecha de una vela sin cuerpo cuenta en M1
+      (ev-v17-014644-674966b7). La forma no cambia: es lo que el motor ya hacia
     forma:
       cuando:
         todos_de:
@@ -2052,7 +2078,10 @@ reglas:
       DEFAULT_AMBIGUOUS bajo A-44: LECTURA DEL CONSULTOR de la cita de esta regla, «De la cuenta
       basado en el saldo» (fb-2026-09-09-sesion-01-bff260ea), que habla de la base del porcentaje y
       no de si lo abierto cuenta; el trader no lo ha dicho, y es la primera pregunta de la sesion
-      6. Con saldo, una caida en abierto que se recupera no cuenta; con equity contaria
+      6. DESDE EL 2026-11-05 (rama trabajo/activar-sesion-06) LA DIJO EL TRADER: solo las
+      operaciones cerradas (sesion 6, S-1, ev-v17-000218-001b08fb, fb-2026-11-04-sesion-06-a1f5784d),
+      y perdida_trader_magnitud = saldo pasa a CONFIRMED con el mismo valor; lo de arriba sobre la
+      lectura del consultor queda como historia. Con saldo, una caida en abierto que se recupera no cuenta; con equity contaria
       (ACTIVAR-SESION-05.md §0.b.3). El reloj del reinicio sigue UNKNOWN: el motor usa el corte del
       perfil y lo marca SUPUESTO. A-44 SIGUE ABIERTA y bloqueante; fijar los parametros con ella
       abierta es una DESVIACION declarada de la skill activar-sesion por orden del consultor
