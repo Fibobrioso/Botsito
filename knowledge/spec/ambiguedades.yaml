@@ -998,7 +998,11 @@ ambiguedades:
       por eso la vela sin cuerpo no corte la racha en M15 es la conclusion de la extraccion, no una
       frase suya; el motor hoy la corta (corta_la_racha) y lo que pide va a la rama de motor, sin
       fijar nada aqui. A-35 y A-44 quedan con valor en los parametros que el motor lee, y siguen
-      ABIERTAS. SIGUE ABIERTA y bloqueante: la sesion 7 confirma con una frase.
+      ABIERTAS. SIGUE ABIERTA y bloqueante: la sesion 7 confirma con una frase. DESDE EL
+      2026-11-05 (rama trabajo/activar-sesion-06-motor; ADR-0085, recuadro en §2) el motor de M15
+      ya no la corta: pide `no_corta_y_cuenta`, la vela sin cuerpo no corta la racha y su mecha
+      cuenta en el nivel, LECTURA DEL CONSULTOR sobre esos tres items, sin registro ni parametro
+      (el selector es del dominio); A-35 sigue ABIERTA por S-3. A-44 quedo RESUELTA en la misma rama.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
