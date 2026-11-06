@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/activar-sesion-06
+main
 
 ## Current Feature
-trabajo/activar-sesion-06, EN CURSO: activar en spec las respuestas de la sesión 6 (R4.2). Encargo docs/encargos/trabajo-activar-sesion-06.md; informe docs/validation/ACTIVAR-SESION-06.md.
+Ninguna rama abierta. trabajo/activar-sesion-06 cerrada en main el 2026-11-05 (stable/F38n-activar-sesion-06): la sesión 6 activada en spec (A-49 y A-50 RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS). Falta la rama de motor.
 
 ## Stable Main State
-78d560d · merge de `trabajo/sesion-06` (tag `stable/F38m-sesion-06`): la sesión 6 ingerida (v17) y su extracción por pregunta. Sobre `stable/F38l-guardia-g1` (1cbf403). Informe docs/validation/SESION-06-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
+df0e672 · merge de `trabajo/activar-sesion-06` (tag `stable/F38n-activar-sesion-06`): la sesión 6 activada en spec. Sobre `stable/F38m-sesion-06` (78d560d). Informe docs/validation/ACTIVAR-SESION-06.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-78d560d · merge: trabajo/sesion-06, la sesión 6 ingerida (v17) y su extracción por pregunta · tag stable/F38m-sesion-06
+df0e672 · merge: trabajo/activar-sesion-06, la sesión 6 activada en spec (A-49 y A-50 RESUELTAS) · tag stable/F38n-activar-sesion-06
 
 ## Tests Currently Passing
 1842 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
