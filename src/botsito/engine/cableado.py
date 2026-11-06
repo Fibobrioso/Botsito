@@ -267,6 +267,11 @@ class MotorCableado:
             self.seguidor = SeguidorTope(
                 self.tope, _instante(primero * MS_POR_MINUTO - 1), self.cuenta.saldo
             )
+        if self.seguidor is not None:
+            # ADR-0089: con `primera_sesion_dia_siguiente` el tope del trader corta aqui, en la
+            # apertura de la primera sesion del dia (UTC, por la puerta), con el saldo arrastrado;
+            # con `medianoche_huso` no hace nada y sigue cortando `avanzar`
+            self.seguidor.abrir_dia(dia.dia, _instante(primero * MS_POR_MINUTO), self.cuenta.saldo)
         ctx = ContextoDia(
             broker, self.cuenta, self.contrato, md.escala, tope=self.tope, racha=self.racha
         )

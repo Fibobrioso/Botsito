@@ -1495,7 +1495,9 @@ parametros:
       las 9 seguidas la respuesta es la A» (ev-v15-000856-ee8f7ba3): el tope del dia y la racha de
       RN-036, sin tope de semana; con `dia` el motor no lee perdida_maxima_semanal. A-44 SIGUE
       ABIERTA por la magnitud (perdida_trader_magnitud) y el reloj del reinicio; fijarlo con ella
-      abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05)
+      abierta es una DESVIACION declarada de la skill activar-sesion (trabajo/activar-sesion-05).
+      A-44 RESUELTA EL 2026-11-05: la magnitud por S-1 y el reloj por S-2 de la sesion 6
+      (perdida_trader_reinicio, ADR-0089; trabajo/activar-sesion-06-motor)
     consumido_por: [ADR-0053]
     estado: CONFIRMED
     valor: dia
@@ -1520,7 +1522,8 @@ parametros:
       la vela) queda sin objeto. Hasta el 2026-11-05 fue DEFAULT NUESTRO en `saldo`, lectura del
       consultor sobre fb-2026-09-09-sesion-01-bff260ea (la BASE del porcentaje, no si lo abierto
       cuenta; trabajo/activar-sesion-05): el valor no cambia, cambia quien lo dice. A-44 sigue
-      ABIERTA por el reinicio (S-2). Con `saldo`, una caida en abierto que se recupera no cuenta
+      ABIERTA por el reinicio (S-2) hasta el 2026-11-05, cuando queda RESUELTA con
+      perdida_trader_reinicio (ADR-0089). Con `saldo`, una caida en abierto que se recupera no cuenta
       (medido: ACTIVAR-SESION-05.md §0.b.3). Lo lee engine/tope_trader.py (`registro.opcion`)
     consumido_por: [ADR-0053]
     estado: CONFIRMED
@@ -1567,6 +1570,29 @@ parametros:
     estado: UNKNOWN
     minimo: "0"
     consumido_por: [ADR-0053]
+  - nombre: perdida_trader_reinicio
+    categoria: estrategia
+    tipo: enum
+    unidad: cuando vuelve a empezar a contar el trader su perdida del dia (y de la semana)
+    opciones: [medianoche_huso, primera_sesion_dia_siguiente]
+    descripcion: >-
+      con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?», la
+      segunda mitad de A-44-. `medianoche_huso`: en cada medianoche de perdida_trader_reinicio_huso
+      (sin el, del huso de corte del perfil, marcado SUPUESTO) y la semana en la del lunes; es lo que
+      hacia el motor antes de ADR-0089 y lo que hace si este parametro falta.
+      `primera_sesion_dia_siguiente`: en la apertura de la primera sesion del dia siguiente con
+      actividad, con el saldo de ese instante, y la semana en la apertura de la primera sesion del
+      primer dia de la semana con actividad (el lunes, o el siguiente si el lunes no tiene
+      sesiones); no usa ningun huso. Del viernes dijo el trader «se vuelve a contar desde cero el día
+      lunes … siempre es de sesión en sesión» (ev-v17-000351-331daa6d): un viernes no corta el
+      sabado ni el domingo, corta el lunes al abrir. Lo lee engine/tope_trader.py
+      (`registro.opcion`); el corte lo da el cableado con la apertura de cada dia (ADR-0089)
+    consumido_por: [ADR-0089]
+    estado: CONFIRMED
+    valor: primera_sesion_dia_siguiente
+    fuente:
+      tipo: feedback
+      id: fb-2026-11-04-sesion-06-6886938e
   - nombre: perdida_trader_reinicio_huso
     categoria: estrategia
     tipo: texto
@@ -1575,7 +1601,10 @@ parametros:
       con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?»-.
       Si no dice otro, el motor usa el huso de corte del perfil de cuenta y la traza lo marca como
       SUPUESTO; por eso puede quedarse UNKNOWN con el tope fijado. reloj_dia_riesgo dice que el dia
-      de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso
+      de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso.
+      SIN EFECTO con perdida_trader_reinicio = primera_sesion_dia_siguiente (DESDE EL 2026-11-05,
+      sesion 6, S-2; ADR-0089): ese reloj no usa ningun huso, el motor no lee este parametro y se
+      queda UNKNOWN; solo cuenta con `medianoche_huso`
     estado: UNKNOWN
     consumido_por: [ADR-0053]
   - nombre: reloj_dia_riesgo

@@ -2034,8 +2034,9 @@ reglas:
   - id: RN-020
     titulo: el tope porcentual del trader es el unico freno del dia de su operativa
     cuando: >-
-      la perdida acumulada desde el corte que marca reloj_dia_riesgo -la medianoche civil en
-      huso_operativa, que es tambien la de la firma- alcanza perdida_maxima_diaria sobre
+      la perdida acumulada desde el corte del tope del trader -el que dice perdida_trader_reinicio:
+      la apertura de la primera sesion del dia siguiente; antes de la sesion seis, la medianoche que
+      marca reloj_dia_riesgo- alcanza perdida_maxima_diaria sobre
       base_calculo_perdida_diaria, o perdida_maxima_semanal sobre base_calculo_perdida_semanal
     entonces: >-
       se deja de operar hasta el corte siguiente y se retira la orden pendiente que quede
@@ -2045,6 +2046,7 @@ reglas:
       - perdida_maxima_semanal
       - base_calculo_perdida_semanal
       - reloj_dia_riesgo
+      - perdida_trader_reinicio
     cita: fb-2026-09-09-sesion-01-bff260ea
     literal: >-
       De la cuenta basado en el saldo, y que sea en el saldo inicial del día
@@ -2085,7 +2087,14 @@ reglas:
       (ACTIVAR-SESION-05.md §0.b.3). El reloj del reinicio sigue UNKNOWN: el motor usa el corte del
       perfil y lo marca SUPUESTO. A-44 SIGUE ABIERTA y bloqueante; fijar los parametros con ella
       abierta es una DESVIACION declarada de la skill activar-sesion por orden del consultor
-      (respuesta a la PARADA, puntos 0 y 1). DESDE EL 2026-10-26 (rama
+      (respuesta a la PARADA, puntos 0 y 1). DESDE EL 2026-11-05 (rama
+      trabajo/activar-sesion-06-motor, ADR-0089) EL RELOJ LO DIJO EL TRADER: «la primera sesión del
+      día siguiente» (sesion 6, S-2, ev-v17-000250-a468bcec), y del viernes, el lunes, «siempre es
+      de sesión en sesión» (ev-v17-000351-331daa6d): perdida_trader_reinicio =
+      primera_sesion_dia_siguiente (fb-2026-11-04-sesion-06-6886938e), el corte cae en la apertura
+      de la primera sesion del dia siguiente y la traza ya no marca ningun huso SUPUESTO; lo de
+      arriba sobre el reloj queda como historia. A-44 queda RESUELTA
+      (fb-2026-11-04-sesion-06-c56ec7cf). DESDE EL 2026-10-26 (rama
       trabajo/activar-sesion-05-motor, ADR-0086) ESTA REGLA TAMBIEN RETIRA LA ORDEN PENDIENTE que
       quede al llegar al tope (`retirar_ordenes_pendientes`, la accion de RN-036): DECISION DEL
       CONSULTOR con el modelo y el motivo de ADR-0077 §3 -el broker la llenaria por ticks mientras

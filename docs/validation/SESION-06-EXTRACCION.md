@@ -792,6 +792,14 @@ Por códigos de la hoja (23): se hicieron 19 y no se hicieron 4 (S-9 a S-12). De
 S-20); **en parte** 12 (S-2, S-3, el nivel se congela, S-18, S-7, S-5, S-13, S-14, S-15, S-19, S-21 y S-22); **no resuelve** 2 (S-8 y S-6); **a decidir**,
 sin veredicto, 1 (S-23). Más «Para cerrar».
 
+> **RECUADRO DE CORRECCIÓN del 2026-11-05 (`trabajo/activar-sesion-06-motor`; la tabla y el cuerpo
+> no se tocan).** La fila de S-2 dice «en parte … no cabe en el parámetro: PARADA de §4», con regla
+> general «sí»: la «en parte» lo era por falta de opción en el parámetro, no por la respuesta. La
+> rama de motor añade la opción (`perdida_trader_reinicio = primera_sesion_dia_siguiente`, ADR-0089,
+> `fb-2026-11-04-sesion-06-6886938e`) y, con S-1, A-44 queda RESUELTA
+> (`fb-2026-11-04-sesion-06-c56ec7cf`; `ACTIVAR-SESION-06-MOTOR.md`, fase 1). Las demás filas no
+> cambian.
+
 ## 6. Para la orden de cierre (preparado, sin aplicar)
 
 Nada de esto se aplica en la rama (encargo, «Cierre de la rama»).

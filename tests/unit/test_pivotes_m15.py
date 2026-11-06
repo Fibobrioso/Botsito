@@ -16,6 +16,7 @@ from botsito.domain.pivotes_m15 import (
     INICIO_VELA_CONTRARIA,
     LECTURAS,
     NO_MUEVE,
+    SIN_CUERPO_NO_CORTA_Y_CUENTA,
     SOLO_LA_CONTRARIA,
     PivoteError,
     color,
@@ -146,12 +147,21 @@ def test_el_mas_reciente_del_lado_pedido_manda() -> None:
     )
 
 
-def test_lo_fijo_y_visible_el_doji_corta_la_racha() -> None:
-    """Un doji no es de ningun color: no es contraria y corta la racha. Hasta el 2026-10-26 este
-    test se llamaba `test_lo_fijo_y_visible_doji_y_mecha_de_la_contraria` y mezclaba el doji (que
-    no cambia) con la mecha de la contraria (que cambia con ADR-0084): se parte en dos."""
-    con_doji = [_m15(0, 100, 110), _m15(1, 110, 110), _m15(2, 110, 100)]
-    assert pivotes_formados(con_doji, None, CIERRE_VELA_CONTRARIA, int(con_doji[-1].fin)) == []
+def test_en_m15_el_doji_no_corta_la_racha_y_su_mecha_cuenta() -> None:
+    """Un doji no es de ningun color y no es contraria. CAMBIA DE SENTIDO A PROPOSITO el 2026-11-05
+    (trabajo/activar-sesion-06-motor, fase 2; ADR-0085, recuadro del 2026-11-05 en §2): hasta
+    entonces se llamaba `test_lo_fijo_y_visible_el_doji_corta_la_racha` y asertaba que en M15 el
+    doji cortaba la racha; desde la sesion 6 (S-4) el motor de M15 pide `no_corta_y_cuenta`, y V,
+    doji, R da el ALTO, con la mecha del doji dentro del extremo. El valor por defecto sigue siendo
+    `corta_la_racha` (lo usan los guiones de M1 que no pasan `sin_cuerpo`): con el, nada. Hasta el
+    2026-10-26 se llamaba `test_lo_fijo_y_visible_doji_y_mecha_de_la_contraria`."""
+    con_doji = [_m15(0, 100, 110), _m15(1, 110, 110, alto=115), _m15(2, 110, 100)]
+    fin = int(con_doji[-1].fin)
+    (p,) = pivotes_formados(
+        con_doji, None, CIERRE_VELA_CONTRARIA, fin, sin_cuerpo=SIN_CUERPO_NO_CORTA_Y_CUENTA
+    )
+    assert (p.lado, p.nivel) == (ALTO, 115)  # la mecha del doji, por encima de la verde (112)
+    assert pivotes_formados(con_doji, None, CIERRE_VELA_CONTRARIA, fin) == []
 
 
 ROJA_CON_MECHA = _m15(3, 130, 118, alto=140)  # la mecha supera el 134 de la racha

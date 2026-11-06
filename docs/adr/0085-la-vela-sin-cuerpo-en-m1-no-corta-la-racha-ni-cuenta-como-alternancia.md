@@ -67,6 +67,22 @@ vela de después que forma el alto o el bajo, y eso `pivotes_m15` ya lo hacía (
 Si en M15 una vela sin cuerpo entre la racha y la contraria corta o no la racha es una pregunta
 para la sesión 6. Un test por marco dice que el otro no se mueve.
 
+> **RECUADRO del 2026-11-05 (`trabajo/activar-sesion-06-motor`, fase 2; el cuerpo no se toca).**
+> «M15 no cambia» deja de valer: la sesión 6 (S-4) contestó la pregunta. El trader dijo que el alto
+> puede ser la mecha de la vela sin cuerpo que va antes de la roja, «puedes plantear el máximo por
+> encima de la mecha de la vela neutra» (`ev-v17-002155-f2c95111`); también con dos o tres sin
+> cuerpo seguidas, «se va a la mecha» (`ev-v17-002250-d6ca3ef8`); y en un bajo, «trazaríamos desde
+> la mecha más baja» (`ev-v17-002217-af442f84`). Que por eso la vela sin cuerpo no corte la racha
+> en M15 es la conclusión de la extracción, no una frase suya, y la regla escrita es LECTURA DEL
+> CONSULTOR (encargo, fase 2): una tercera lectura de `sin_cuerpo`, `no_corta_y_cuenta`, en la que
+> la vela de cuerpo cero ni corta la racha ni es contraria y SÍ entra en ella, así que su mecha
+> cuenta en el nivel; las de cuerpo cero por delante de la primera vela con color no entran. La
+> pide el único llamador de M15 (`engine/motor.py`, `DatosMercado.liquidez_m15`); M1 sigue con
+> `no_cuenta` y el valor por defecto sigue siendo `corta_la_racha`. Sin ADR nuevo: el selector
+> existía y este apartado dejaba M15 a la sesión 6. Medido en la fase 0 de esa rama, con el arnés
+> en diagnóstico sobre construcción: cambian 13 de los 718 pivotes de M15 que el motor consulta
+> (`ACTIVAR-SESION-06-MOTOR.md`, b.3).
+
 ### 3. DECISIONES DEL CONSULTOR
 
 - **La mecha de una vela sin cuerpo sigue contando donde hoy cuenta**: romper un nivel (`_pasa`,

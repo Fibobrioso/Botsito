@@ -30,6 +30,7 @@ from botsito.engine.tope_trader import (
     ORIGEN_FIRMA,
     ORIGEN_TRADER,
     PORCENTAJE,
+    PRIMERA_SESION_DIA_SIGUIENTE,
     SALDO,
     SEMANA,
     SIN_TOPE,
@@ -147,15 +148,19 @@ def test_con_el_registro_real_el_tope_es_el_del_dia_en_porcentaje_sobre_el_saldo
 ) -> None:
     """Lo que la sesion 5 fijo (S-4, trabajo/activar-sesion-05): solo el tope del dia, en
     porcentaje (el 4,5 % de la sesion 1 sobre el saldo inicial del dia), sin tope de semana; la
-    magnitud `saldo` es CONFIRMED desde la sesion 6 (S-1, solo las cerradas) y el reloj del
-    reinicio sigue sin decirlo el trader: el corte del perfil, marcado SUPUESTO. Con el valor
-    puesto, el diagnostico se rechaza."""
+    magnitud `saldo` es CONFIRMED desde la sesion 6 (S-1, solo las cerradas). Con el valor
+    puesto, el diagnostico se rechaza. CAMBIA DE SENTIDO A PROPOSITO el 2026-11-05
+    (trabajo/activar-sesion-06-motor, ADR-0089): el reloj del reinicio lo dijo el trader en la
+    sesion 6 (S-2, «la primera sesión del día siguiente»), `perdida_trader_reinicio` =
+    `primera_sesion_dia_siguiente`, que no usa huso; hasta entonces este test asertaba el corte del
+    perfil marcado SUPUESTO (`huso_supuesto`)."""
     t = tope_del_registro(registro, HUSO_PERFIL)
     assert (t.alcance, t.magnitud, t.unidad) == (DIA, SALDO, PORCENTAJE)
     assert t.aplica_dia and not t.aplica_semana
     assert (t.tope_dia, t.tope_semana) == (Decimal("4.5"), None)
     assert t.base_dia == "saldo_inicial_dia"
-    assert t.huso_supuesto and t.huso_reinicio is HUSO_PERFIL and SUPUESTO_HUSO in t.descripcion()
+    assert t.reinicio == PRIMERA_SESION_DIA_SIGUIENTE
+    assert not t.huso_supuesto and SUPUESTO_HUSO not in t.descripcion()
     assert t.diagnostico is None
     with pytest.raises(TopeRechazadoError, match="ya esta fijado"):
         tope_del_registro(registro, HUSO_PERFIL, Diagnostico(a44=diagnostico.A44_SIN_TOPE))

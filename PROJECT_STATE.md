@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-06-motor
 
 ## Current Feature
-Ninguna rama abierta. trabajo/activar-sesion-06 cerrada en main el 2026-11-05 (stable/F38n-activar-sesion-06): la sesión 6 activada en spec (A-49 y A-50 RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS). Falta la rama de motor.
+trabajo/activar-sesion-06-motor EN CURSO (R4.2, F de la Next Action): el motor de la activación de la sesión 6 (S-2 reinicio del tope del trader, S-4 vela sin cuerpo en M15, S-22 punto de breaker, S-19 precio inválido no gasta el punto). Encargo docs/encargos/trabajo-activar-sesion-06-motor.md; informe docs/validation/ACTIVAR-SESION-06-MOTOR.md.
 
 ## Stable Main State
 df0e672 · merge de `trabajo/activar-sesion-06` (tag `stable/F38n-activar-sesion-06`): la sesión 6 activada en spec. Sobre `stable/F38m-sesion-06` (78d560d). Informe docs/validation/ACTIVAR-SESION-06.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ df0e672 · merge de `trabajo/activar-sesion-06` (tag `stable/F38n-activar-sesion
 df0e672 · merge: trabajo/activar-sesion-06, la sesión 6 activada en spec (A-49 y A-50 RESUELTAS) · tag stable/F38n-activar-sesion-06
 
 ## Tests Currently Passing
-1842 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1857 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ df0e672 · merge: trabajo/activar-sesion-06, la sesión 6 activada en spec (A-49
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 activada en spec (este tag): A-49 y A-50 RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS. Falta trabajo/activar-sesion-06-motor, con la lista de §«Para la rama de motor» (ACTIVAR-SESION-06.md); después H, R y la re-corrida que cuenta (ADR-0070 §3); los gráficos 2 a 6 y la hoja de la sesión 7, en la rama de preparación de la sesión 7, con la lista de §«Para la sesión 7». El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (este tag): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 a la sesión 7 (§d del informe). Siguiente: la rama corta de la demo (A), H (fase 0: el diagnóstico de H del scratchpad de Claude Code, fuera del repo), R y la re-corrida que cuenta (ADR-0070 §3); después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
 
 
 
@@ -74,7 +74,6 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
-| A-44 | magnitud y corte del tope de pérdida propio del trader (perdida_dia, perdida_semana) | pregunta | si | F11, F18 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |
 | A-53 | la orden sin llenar cuando el precio toma otra liquidez de M15 | pregunta | no | F20, F22 |
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
@@ -155,8 +154,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 56 (2026-11-05).
+— ninguna desde el Archivo 57 (2026-11-05).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 56 (2026-11-05).
+— ninguna desde el Archivo 57 (2026-11-05).

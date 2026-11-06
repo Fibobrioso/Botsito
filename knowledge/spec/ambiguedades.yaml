@@ -998,7 +998,11 @@ ambiguedades:
       por eso la vela sin cuerpo no corte la racha en M15 es la conclusion de la extraccion, no una
       frase suya; el motor hoy la corta (corta_la_racha) y lo que pide va a la rama de motor, sin
       fijar nada aqui. A-35 y A-44 quedan con valor en los parametros que el motor lee, y siguen
-      ABIERTAS. SIGUE ABIERTA y bloqueante: la sesion 7 confirma con una frase.
+      ABIERTAS. SIGUE ABIERTA y bloqueante: la sesion 7 confirma con una frase. DESDE EL
+      2026-11-05 (rama trabajo/activar-sesion-06-motor; ADR-0085, recuadro en §2) el motor de M15
+      ya no la corta: pide `no_corta_y_cuenta`, la vela sin cuerpo no corta la racha y su mecha
+      cuenta en el nivel, LECTURA DEL CONSULTOR sobre esos tres items, sin registro ni parametro
+      (el selector es del dominio); A-35 sigue ABIERTA por S-3. A-44 quedo RESUELTA en la misma rama.
     resuelve_en: [F19, F20]
     # PREGUNTA ANTERIOR, SUSTITUIDA PORQUE SUGERIA RESPUESTAS (2026-09-24, decision del consultor):
     # "dijiste que la liquidez de M15 se marca sobre un pivote "ya formado", no sobre las velas que
@@ -1379,7 +1383,15 @@ ambiguedades:
       no cabe en perdida_trader_reinicio_huso: PARADA de §4 de ACTIVAR-A35-A44.md, que el
       consultor resuelve con un parametro nuevo y su ADR en la rama de motor, sin registro aqui. El
       reloj que nombro, «UTC más 2 si no me equivoco … ahora Madrid» (ev-v17-000321-37cebf44), no
-      fija nada: ADR-0069 ya midio Europe/Madrid.
+      fija nada: ADR-0069 ya midio Europe/Madrid. RESUELTA el 2026-11-05 (rama
+      trabajo/activar-sesion-06-motor, ADR-0089): la opcion que faltaba es el parametro nuevo
+      perdida_trader_reinicio = primera_sesion_dia_siguiente (fb-2026-11-04-sesion-06-6886938e), el
+      motor corta en la apertura de la primera sesion del dia siguiente, y con eso ninguna parte de
+      la pregunta queda sin regla general: alcance y unidad (sesion 5), magnitud (S-1), cifra y base
+      (sesion 1) y reinicio (S-2, fb-2026-11-04-sesion-06-c56ec7cf). La «en parte» de S-2 lo era por
+      falta de opcion en el parametro, no por la respuesta (SESION-06-EXTRACCION.md §5, regla general
+      «sí»). Quedan UNKNOWN y SIN EFECTO perdida_trader_reinicio_huso (con la primera sesion),
+      perdida_trader_dia_usd y perdida_trader_semana_usd (con porcentaje).
     resuelve_en: [F11, F18]
     # NACE EL 2026-09-26 (rama trabajo/cableado-simulador, ADR-0053 §9, orden de cierre de Aleks
     # tras la revision del consultor). RN-020 -«el tope porcentual del trader es el unico freno del
@@ -1400,6 +1412,8 @@ ambiguedades:
       - ev-v9-011128-a267338b
       - ev-v9-011139-a26a5b11
       - ev-v9-011206-148fc7f9
+      - ev-v17-000250-a468bcec
+      - ev-v17-000351-331daa6d
     # Los seis `perdida_trader_*` son los campos que la respuesta fija, SIN VALOR (UNKNOWN) desde
     # el 2026-09-26 (rama trabajo/preparar-a35-a44): alcance (sin_tope | dia | semana | ambos),
     # magnitud, unidad, las cifras en dinero y el huso del reinicio (docs/runbooks/ACTIVAR-A35-A44.md)
@@ -1410,10 +1424,13 @@ ambiguedades:
     # perdida_maxima_semanal queda CONFIRMED y sin efecto, sin CORRECT. Fijar con la ambiguedad
     # ABIERTA es una DESVIACION declarada de la skill activar-sesion y del runbook §1, por orden del
     # consultor (punto 0), para que el arnes corra sin --diagnostico-a44. Para la sesion 6, en este
-    # orden: la magnitud (¿cuenta lo abierto?) y el reloj con el que vuelve a contar
-    parametros: [perdida_maxima_diaria, base_calculo_perdida_diaria, perdida_maxima_semanal, base_calculo_perdida_semanal, perdida_trader_alcance, perdida_trader_magnitud, perdida_trader_unidad, perdida_trader_dia_usd, perdida_trader_semana_usd, perdida_trader_reinicio_huso]
+    # orden: la magnitud (¿cuenta lo abierto?) y el reloj con el que vuelve a contar.
+    # RESUELTA el 2026-11-05 (trabajo/activar-sesion-06-motor, ADR-0089, encargo fase 1.5): la
+    # magnitud la dijo en S-1 y el reloj en S-2; perdida_trader_reinicio nace para el reloj. Sigue
+    # bloqueante: lo es de RN-020, y una RESUELTA bloqueante ya no bloquea (como A-42)
+    parametros: [perdida_maxima_diaria, base_calculo_perdida_diaria, perdida_maxima_semanal, base_calculo_perdida_semanal, perdida_trader_alcance, perdida_trader_magnitud, perdida_trader_unidad, perdida_trader_dia_usd, perdida_trader_semana_usd, perdida_trader_reinicio, perdida_trader_reinicio_huso]
     contradiccion: null
-    estado: ABIERTA
+    estado: RESUELTA
     decision: null
     decidida_el: null
     clase: pregunta

@@ -34,6 +34,7 @@ from botsito.domain.pivotes_m15 import (
     CUALQUIER_MECHA,
     MECHAS_QUE_VUELVEN,
     NO_MUEVE,
+    SIN_CUERPO_NO_CORTA_Y_CUENTA,
     Pivote,
     nivel_con_mecha_que_vuelve,
     pivote_mas_reciente,
@@ -161,6 +162,9 @@ class DatosMercado:
             lado,
             self._n_m15_cerradas(instante),
             self.mecha_que_vuelve,
+            # sesion 6, S-4 (ADR-0085, recuadro del 2026-11-05 en §2): en M15 la vela sin cuerpo
+            # no corta la racha y su mecha cuenta en el nivel
+            SIN_CUERPO_NO_CORTA_Y_CUENTA,
         )
         if p is None or self.mecha_que_vuelve != CUALQUIER_MECHA:
             return p

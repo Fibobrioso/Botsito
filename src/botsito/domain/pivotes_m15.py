@@ -36,7 +36,9 @@ Lo que NO esta documentado y aqui se deja FIJO Y VISIBLE, sin decidirlo por el t
 ambiguedad en `docs/validation/PREPARACION-A35-A44.md`): el nivel es el extremo de la racha de
 velas del mismo color inmediatamente anterior a la contraria (con `no_mueve`, la mecha de la propia
 vela contraria no lo mueve; desde ADR-0084 la mueve segun el selector); una vela sin cuerpo
-(cierre igual a la apertura) no es de ningun color, no es contraria y corta la racha; y con la
+(cierre igual a la apertura) no es de ningun color, no es contraria y corta la racha (con
+`corta_la_racha`, el valor por defecto; el motor de M15 pide desde la sesion 6 `no_corta_y_cuenta`,
+y el de M1 `no_cuenta`: ADR-0085); y con la
 lectura `inicio_vela_contraria` el pivote es el ESTADO en cada instante: si la vela en curso
 vuelve a su color, el pivote desaparece (P9 dice «voy marcando»).
 
@@ -64,12 +66,15 @@ NO_MUEVE = "no_mueve"
 SOLO_LA_CONTRARIA = "solo_la_contraria"
 CUALQUIER_MECHA = "cualquier_mecha"
 MECHAS_QUE_VUELVEN = (NO_MUEVE, SOLO_LA_CONTRARIA, CUALQUIER_MECHA)
-# Que hace una vela sin cuerpo con la racha (ADR-0085): en M15, `corta_la_racha` (lo de siempre, y
-# el valor por defecto); en M1, `no_cuenta` (no corta la racha, no es contraria, no forma pivote y
-# no entra en el extremo: sesion 5, S-8 y S-19), que piden los llamadores de domain/estructura_m1.py
+# Que hace una vela sin cuerpo con la racha (ADR-0085): `corta_la_racha` (lo de siempre, y el valor
+# por defecto); en M1, `no_cuenta` (no corta la racha, no es contraria, no forma pivote y no entra
+# en el extremo: sesion 5, S-8 y S-19), que piden los llamadores de domain/estructura_m1.py; y desde
+# la sesion 6 (S-4; ADR-0085, recuadro del 2026-11-05 en §2), en M15, `no_corta_y_cuenta`: no corta
+# la racha, no es contraria y SI entra en ella, asi que su extremo -su mecha- cuenta en el nivel
 SIN_CUERPO_CORTA = "corta_la_racha"
 SIN_CUERPO_NO_CUENTA = "no_cuenta"
-SIN_CUERPO = (SIN_CUERPO_CORTA, SIN_CUERPO_NO_CUENTA)
+SIN_CUERPO_NO_CORTA_Y_CUENTA = "no_corta_y_cuenta"
+SIN_CUERPO = (SIN_CUERPO_CORTA, SIN_CUERPO_NO_CUENTA, SIN_CUERPO_NO_CORTA_Y_CUENTA)
 
 
 class PivoteError(ValueError):
@@ -102,13 +107,25 @@ def _racha_anterior(
 ) -> list[Vela]:
     """Las velas consecutivas de color `signo` que terminan justo antes del indice `hasta`. Con
     `sin_cuerpo = no_cuenta` (ADR-0085, M1) una vela de cuerpo cero en medio ni corta la racha ni
-    entra en ella (su extremo no cuenta)."""
+    entra en ella (su extremo no cuenta). Con `no_corta_y_cuenta` (M15, sesion 6, S-4) la vela de
+    cuerpo cero ni corta la racha ni es contraria y SI entra en ella, una o varias seguidas, entre
+    la racha y la contraria o en medio de la racha; las que quedan por DELANTE de la primera vela
+    con color no entran: la racha empieza en una vela con color. Es LECTURA DEL CONSULTOR
+    (encargo de trabajo/activar-sesion-06-motor, fase 2): el trader dijo que el alto puede ser la
+    mecha de la vela sin cuerpo, tambien con dos o tres seguidas, y en un bajo desde la mecha mas
+    baja (ev-v17-002155-f2c95111, ev-v17-002250-d6ca3ef8, ev-v17-002217-af442f84); que por eso no
+    corte la racha es la conclusion de la extraccion, no una frase suya."""
     racha: list[Vela] = []
+    pendientes: list[Vela] = []  # las de cuerpo cero vistas desde la ultima vela con color
     i = hasta - 1
     while i >= 0:
         c = color(velas[i])
         if c == signo:
+            racha.extend(pendientes)
+            pendientes = []
             racha.append(velas[i])
+        elif c == 0 and sin_cuerpo == SIN_CUERPO_NO_CORTA_Y_CUENTA:
+            pendientes.append(velas[i])
         elif not (c == 0 and sin_cuerpo == SIN_CUERPO_NO_CUENTA):
             break
         i -= 1
@@ -213,8 +230,9 @@ def pivotes_formados(
     `instante` construida SOLO con las M1 cerradas hasta el (None si no hay ninguna).
     `mecha_que_vuelve` es el selector de ADR-0084: con `no_mueve` (lo de siempre, y lo que piden
     los llamadores de M1) la mecha de la contraria no mueve el nivel. `sin_cuerpo` es lo de
-    ADR-0085: con `corta_la_racha` (lo de siempre, M15) la vela sin cuerpo corta la racha; con
-    `no_cuenta` (M1) ni la corta ni entra en el extremo."""
+    ADR-0085: con `corta_la_racha` (lo de siempre, y el valor por defecto) la vela sin cuerpo corta
+    la racha; con `no_cuenta` (M1) ni la corta ni entra en el extremo; con `no_corta_y_cuenta` (M15
+    desde la sesion 6) no la corta y entra en el extremo."""
     n = len(cerradas) if n is None else n
     _comprobar(cerradas, n, en_curso, lectura, instante, mecha_que_vuelve, sin_cuerpo)
     for a, b in zip(cerradas[:n], cerradas[1:n], strict=False):
@@ -313,6 +331,7 @@ __all__ = [
     "NO_MUEVE",
     "SIN_CUERPO",
     "SIN_CUERPO_CORTA",
+    "SIN_CUERPO_NO_CORTA_Y_CUENTA",
     "SIN_CUERPO_NO_CUENTA",
     "SOLO_LA_CONTRARIA",
     "Pivote",

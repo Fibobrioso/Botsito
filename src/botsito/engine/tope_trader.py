@@ -16,8 +16,20 @@ parametro UNKNOWN del registro hasta que el trader responda:
   huso del reinicio, que si el trader no dice otra cosa es el corte del perfil y la traza lo marca
   como SUPUESTO.
 
-Los acumuladores `perdida_dia` y `perdida_semana` se miden desde el ultimo corte: el diario, cada
-medianoche del huso de reinicio; el semanal, la medianoche del lunes. La base del porcentaje es la
+Los acumuladores `perdida_dia` y `perdida_semana` se miden desde el ultimo corte, y CUANDO corta lo
+dice `perdida_trader_reinicio` (ADR-0089, sesion 6, S-2):
+
+- `medianoche_huso` (lo de antes de ADR-0089, y lo que hace el motor si el parametro es UNKNOWN):
+  el diario, cada medianoche del huso de reinicio; el semanal, la medianoche del lunes.
+- `primera_sesion_dia_siguiente`: «la primera sesión del día siguiente» (`ev-v17-000250-a468bcec`).
+  El diario corta en la apertura de la primera sesion del dia siguiente CON ACTIVIDAD (el primer
+  dia que el motor corre), con el saldo de ese instante; el semanal, en la apertura de la primera
+  sesion del primer dia de la semana con actividad: el lunes, o el siguiente si el lunes no tiene
+  sesiones. Un viernes no corta el sabado ni el domingo: corta el lunes al abrir, «siempre es de
+  sesión en sesión» (`ev-v17-000351-331daa6d`). No usa ningun huso: la apertura llega en UTC desde
+  el cableado (`dia.limites()`, ADR-0069), y por eso la traza no marca ningun huso SUPUESTO.
+
+La base del porcentaje es la
 que declara la spec para cada uno (`saldo_inicial_dia` = el saldo al corte del dia;
 `saldo_inicial_semana` = el saldo al corte de la semana; `saldo_actual` = el saldo en el instante
 de la lectura). Ningun campo de la firma (`firma_*`) se reutiliza.
@@ -48,6 +60,7 @@ P_MAGNITUD = "perdida_trader_magnitud"
 P_UNIDAD = "perdida_trader_unidad"
 P_DIA_USD = "perdida_trader_dia_usd"
 P_SEMANA_USD = "perdida_trader_semana_usd"
+P_REINICIO = "perdida_trader_reinicio"
 P_REINICIO_HUSO = "perdida_trader_reinicio_huso"
 P_DIA_PCT = "perdida_maxima_diaria"
 P_SEMANA_PCT = "perdida_maxima_semanal"
@@ -68,12 +81,17 @@ UNIDADES = (PORCENTAJE, USD)
 BASE_SALDO_ACTUAL = "saldo_actual"
 BASE_INICIAL_DIA = "saldo_inicial_dia"
 BASE_INICIAL_SEMANA = "saldo_inicial_semana"
+# Las opciones de `perdida_trader_reinicio` (ADR-0089): cuando corta el conteo del trader
+MEDIANOCHE_HUSO = "medianoche_huso"
+PRIMERA_SESION_DIA_SIGUIENTE = "primera_sesion_dia_siguiente"
+REINICIOS = (MEDIANOCHE_HUSO, PRIMERA_SESION_DIA_SIGUIENTE)
 
 ACUMULADOR_DIA = "perdida_dia"
 ACUMULADOR_SEMANA = "perdida_semana"
 ORIGEN_TRADER = "trader"
 ORIGEN_FIRMA = "firma"
 SUPUESTO_HUSO = "SUPUESTO: reinicio con el huso de corte del perfil (el trader no dijo otro)"
+REINICIO_DE_SESION = "reinicio al abrir la primera sesion del dia siguiente (de sesion en sesion)"
 
 
 class TopeSinFijarError(ValueError):
@@ -95,9 +113,10 @@ class TopeTrader:
     tope_semana: Decimal | None
     base_dia: str  # saldo_inicial_dia | saldo_actual
     base_semana: str  # saldo_inicial_semana | saldo_actual | saldo_inicial_dia
-    huso_reinicio: ZoneInfo
-    huso_supuesto: bool  # el huso vino del perfil, no del trader
+    huso_reinicio: ZoneInfo  # solo con `medianoche_huso`
+    huso_supuesto: bool  # el huso vino del perfil, no del trader (nunca con la primera sesion)
     diagnostico: str | None = None  # el modo hipotetico, si lo hay
+    reinicio: str = MEDIANOCHE_HUSO  # medianoche_huso | primera_sesion_dia_siguiente (ADR-0089)
 
     @property
     def aplica_dia(self) -> bool:
@@ -116,9 +135,12 @@ class TopeTrader:
             partes.append(f"dia {self.tope_dia} sobre {self.base_dia}")
         if self.aplica_semana:
             partes.append(f"semana {self.tope_semana} sobre {self.base_semana}")
-        partes.append(f"reinicio en {self.huso_reinicio.key}")
-        if self.huso_supuesto:
-            partes.append(SUPUESTO_HUSO)
+        if self.reinicio == PRIMERA_SESION_DIA_SIGUIENTE:
+            partes.append(REINICIO_DE_SESION)
+        else:
+            partes.append(f"reinicio en {self.huso_reinicio.key}")
+            if self.huso_supuesto:
+                partes.append(SUPUESTO_HUSO)
         if self.diagnostico:
             partes.append(f"[{self.diagnostico}]")
         return "; ".join(partes)
@@ -188,10 +210,16 @@ def tope_del_registro(
             if unidad == PORCENTAJE
             else registro.decimal(P_SEMANA_USD)
         )
-    try:
-        huso, supuesto = huso_canonico(registro.texto(P_REINICIO_HUSO)), False
-    except ParametroDesconocidoError:
-        huso, supuesto = huso_perfil, True
+    # ADR-0089: con `primera_sesion_dia_siguiente` el corte no usa ningun huso y
+    # perdida_trader_reinicio_huso no se lee (SIN EFECTO); sin el parametro, la medianoche de antes
+    reinicio = _leer_opcion(registro, P_REINICIO) or MEDIANOCHE_HUSO
+    if reinicio == PRIMERA_SESION_DIA_SIGUIENTE:
+        huso, supuesto = huso_perfil, False
+    else:
+        try:
+            huso, supuesto = huso_canonico(registro.texto(P_REINICIO_HUSO)), False
+        except ParametroDesconocidoError:
+            huso, supuesto = huso_perfil, True
     return TopeTrader(
         alcance,
         magnitud,
@@ -202,6 +230,7 @@ def tope_del_registro(
         registro.opcion(P_BASE_SEMANA),
         huso,
         supuesto,
+        reinicio=reinicio,
     )
 
 
@@ -226,9 +255,37 @@ class SeguidorTope:
         self.saldo_corte_dia = saldo
         self.saldo_corte_semana = saldo
         self.cortes: list[tuple[datetime, str]] = []  # (instante UTC, "dia" | "semana")
+        # con `primera_sesion_dia_siguiente` (ADR-0089): el dia de sesiones del ultimo corte; None
+        # hasta que el cableado abre el primero
+        self.dia_de_sesion: date | None = None
+
+    def abrir_dia(self, dia: date, apertura: datetime, saldo: Decimal) -> None:
+        """Con `primera_sesion_dia_siguiente` (ADR-0089), el cableado llama aqui al empezar cada
+        dia que corre, con la apertura de su primera sesion (UTC) y el saldo de ese instante. El
+        primer dia no corta (el corte es el saldo con que nacio el seguidor); cada dia posterior
+        corta el dia en su apertura y, si es de otra semana ISO que el ultimo dia con actividad,
+        tambien la semana: un viernes corta el lunes al abrir, o el primer dia de la semana que
+        tenga sesiones. Con `medianoche_huso` no hace nada: corta `avanzar`."""
+        if self.tope.reinicio != PRIMERA_SESION_DIA_SIGUIENTE:
+            return
+        anterior = self.dia_de_sesion
+        if anterior is not None and dia <= anterior:
+            return
+        self.dia_de_sesion = dia
+        if anterior is None:
+            return
+        instante = apertura.astimezone(UTC)
+        self.saldo_corte_dia = saldo
+        self.cortes.append((instante, DIA))
+        if dia.isocalendar()[:2] != anterior.isocalendar()[:2]:
+            self.saldo_corte_semana = saldo
+            self.cortes.append((instante, SEMANA))
 
     def avanzar(self, instante: datetime, saldo: Decimal) -> None:
-        """Corta los dias (y las semanas) que `instante` cruce, con el saldo de ese momento."""
+        """Con `medianoche_huso`, corta los dias (y las semanas) que `instante` cruce, con el saldo
+        de ese momento. Con `primera_sesion_dia_siguiente` no hace nada: corta `abrir_dia`."""
+        if self.tope.reinicio == PRIMERA_SESION_DIA_SIGUIENTE:
+            return
         siguiente = self.dia + timedelta(days=1)
         while _medianoche(siguiente, self.tope.huso_reinicio) <= instante:
             self.dia = siguiente
@@ -284,6 +341,10 @@ __all__ = [
     "DIA",
     "EQUITY",
     "MAGNITUDES",
+    "MEDIANOCHE_HUSO",
+    "PRIMERA_SESION_DIA_SIGUIENTE",
+    "REINICIOS",
+    "REINICIO_DE_SESION",
     "ORIGEN_FIRMA",
     "ORIGEN_TRADER",
     "PORCENTAJE",

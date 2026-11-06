@@ -90,17 +90,24 @@ def test_la_sesion_5_deja_en_parte_lo_que_dice_su_tabla() -> None:
     A-13 y A-53-, y que lo que la 5 da como «resuelve» (A-57 y A-32) no esta entre ellas. Con el
     primer test del fichero, una «en parte» de la sesion 5 metida en RESUELTAS de
     ambiguedades.yaml hace fallar `test_ninguna_en_parte_esta_resuelta`; sin este, aquel podria
-    pasar leyendo una tabla vacia de la 5."""
+    pasar leyendo una tabla vacia de la 5. CAMBIA A PROPOSITO el 2026-11-05
+    (trabajo/activar-sesion-06-motor, encargo fase 1.5): A-44 sale de las que exige ABIERTAS. La
+    sesion 6 la resuelve -S-1 la magnitud; S-2 el reloj, cuya «en parte» lo era por falta de
+    opcion en el parametro y no por la respuesta (regla general «sí»), y que la rama de motor da
+    con `perdida_trader_reinicio` (ADR-0089)-, el mismo precedente que A-32 sobre la sesion 4.
+    La tabla de la 5 sigue dandola en parte: eso no cambia."""
     sesion_5 = RAIZ / "docs" / "validation" / "SESION-05-EXTRACCION.md"
     assert sesion_5 in EXTRACCIONES
     textos = [sesion_5.read_text(encoding="utf-8")]
     en_parte = solo_en_parte(textos)
     assert {"A-13", "A-35", "A-43", "A-44", "A-53"} <= en_parte
     assert not {"A-32", "A-57"} & en_parte
-    # y las cinco siguen ABIERTAS en el YAML: ninguna «en parte» de la 5 se cerro en la rama
+    # y las cuatro siguen ABIERTAS en el YAML: ninguna «en parte» de la 5 se cerro sin que una
+    # sesion posterior la resolviera (A-44 la resuelve la 6)
     estados = _estados()
-    assert all(estados[aid] == "ABIERTA" for aid in ("A-13", "A-35", "A-43", "A-44", "A-53"))
+    assert all(estados[aid] == "ABIERTA" for aid in ("A-13", "A-35", "A-43", "A-53"))
     assert estados["A-32"] == "RESUELTA" and estados["A-57"] == "RESUELTA"
+    assert estados["A-44"] == "RESUELTA"
 
 
 def test_se_rompe_a_proposito_si_una_en_parte_de_la_sesion_5_figura_resuelta() -> None:
@@ -124,7 +131,12 @@ def test_la_sesion_6_deja_en_parte_lo_que_dice_su_tabla() -> None:
     parte, S-4 resuelve) y A-44 (S-1 resuelve, S-2 en parte) salen MEZCLADAS y A-48 «resuelve» (el
     1), asi que el lector de arriba no las vigila: este test exige, nombrandolas, que las seis
     sigan ABIERTAS en ambiguedades.yaml, y que A-49 y A-50, lo que la sesion 6 resuelve y la rama
-    cerro, esten RESUELTAS."""
+    cerro, esten RESUELTAS. CAMBIA A PROPOSITO el 2026-11-05 (trabajo/activar-sesion-06-motor,
+    encargo fase 1.5): A-44 sale de las que exige ABIERTAS y pasa a las RESUELTAS. Su «en parte» de
+    S-2 era por falta de opcion en el parametro (`perdida_trader_reinicio_huso` es un huso, y el
+    trader dijo «la primera sesión del día siguiente»), no por la respuesta, que tiene regla
+    general; la rama de motor anade la opcion (ADR-0089) y la cierra con
+    fb-2026-11-04-sesion-06-c56ec7cf. Quedan cinco ABIERTAS."""
     assert SESION_6 in EXTRACCIONES
     texto = SESION_6.read_text(encoding="utf-8")
     en_parte = solo_en_parte([texto])
@@ -134,9 +146,10 @@ def test_la_sesion_6_deja_en_parte_lo_que_dice_su_tabla() -> None:
     assert "resuelve" in v["A-48"]
     assert not {"A-35", "A-44", "A-48", "A-49", "A-50"} & en_parte
     estados = _estados()
-    abiertas = ("A-13", "A-35", "A-43", "A-44", "A-48", "A-53")
+    abiertas = ("A-13", "A-35", "A-43", "A-48", "A-53")
     assert {aid: estados[aid] for aid in abiertas} == dict.fromkeys(abiertas, "ABIERTA")
     assert estados["A-49"] == "RESUELTA" and estados["A-50"] == "RESUELTA"
+    assert estados["A-44"] == "RESUELTA"
 
 
 def test_se_rompe_a_proposito_si_una_en_parte_de_la_sesion_6_figura_resuelta() -> None:

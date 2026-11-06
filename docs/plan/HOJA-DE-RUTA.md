@@ -308,9 +308,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la sesión 6 está ingerida y activada.
 - **Estado:** la sesión 6 se celebró el 2026-11-04 (v17) y está ingerida (SESION-06-EXTRACCION.md, stable/F38m-sesion-06). Falta la
   activación, que decide el consultor. De los gráficos 1 a 6 solo se contestó el 1; el 2 quedó a medias y del 3 al 6 no se hicieron.
-- **Estado:** activada en spec (`stable/F38n-activar-sesion-06`, ACTIVAR-SESION-06.md: A-49 y A-50
-  RESUELTAS; A-35 y A-44 con valor en los parámetros que el motor lee, y ABIERTAS); motor pendiente
-  (trabajo/activar-sesion-06-motor, con la lista de §«Para la rama de motor»).
+- **Estado:** activada en spec (`stable/F38n-activar-sesion-06`) y en el motor en lo que cuadró
+  (`stable/F38o-activar-sesion-06-motor`, ACTIVAR-SESION-06-MOTOR.md): S-2 y S-4 en el motor y
+  A-44 RESUELTA; S-22 y S-19 van a la sesión 7 (R4.3).
 
 ### R4.3 · Preparar y celebrar la sesión 7
 - **Refs:** NA:F · ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 ·
@@ -320,7 +320,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   escritas; el 0 de A-48; el «igual» y la caja de la reentrada (ADR-0083 D1); la alternancia sin
   usar la palabra (RN-009, S-21); A-46 por la toma; la frase de la mecha de S-22; y los gráficos 2
   a 6 rehechos SIN fecha y con el contexto que pidió (los criterios del bot y los trazos de M15).
-- **Depende de:** la rama de motor de la sesión 6 (R4.2) y, si la hoja sale de `kit hoja`, J.
+  Y, de ACTIVAR-SESION-06-MOTOR.md §d (orden de cierre del 2026-11-06): S-22, cuándo el máximo de
+  la verde es punto de breaker, que con la condición quita el 52 % de los puntos (2.950 de 5.701)
+  y deja dos lecturas sin regla (qué punto vale si el último pivote no cumple; la última verde o
+  la racha); y S-19, tras un rechazo por precio inválido la orden entra igual, espera a que el 0
+  quede del lado bueno o se descarta. Las dos, con esquemas.
+- **Depende de:** si la hoja sale de `kit hoja`, J.
 - **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 7 está ingerida y activada.
 
@@ -618,6 +623,14 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   docs/validation/CUARENTENA-POR-CONDICION-2.md: la coma y el punto, por la sonda sobre el código de
   main en un clon, §2.b y §2.e).
 
+### G.6 · `cmp` y `diff` de dos ficheros que no son guiones
+- **Refs:** —
+- **Qué es:** cmp y diff de dos ficheros que no son guiones se leen como ejecutar
+  (ACTIVAR-SESION-06-MOTOR.md §b.3): corregir en la próxima rama de guardia.
+- **Depende de:** nada.
+- **Quién:** la sesión, en la próxima rama de guardia.
+- **Hecho cuando:** su test que la rompe a propósito.
+
 ## Carril: material reservado que no se toca
 
 - Febrero de 2026 (heredado 6): no se toca ni se descarga.
@@ -650,7 +663,6 @@ sus ambigüedades, sin revisar cada informe a fondo.
 
 ## Fechas fijas
 
-- La ejecución 2, hecha el 2026-10-29 en la prueba creada ese día; la 3, del 2 al 6 de noviembre de
-  2026 (NA:A).
+- La ejecución 2, hecha el 2026-10-29 en la prueba creada ese día (NA:A).
 - La semana del 26 al 30 de octubre de 2026 es la primera en que el bot abre a otra hora: Europa ya
   cambió la hora y EE. UU. no (ADR-0069).
