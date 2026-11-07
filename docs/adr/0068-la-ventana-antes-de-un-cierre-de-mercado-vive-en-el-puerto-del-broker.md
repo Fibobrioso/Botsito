@@ -13,6 +13,12 @@ phase: post-F14 (rama `feature/cierres-de-mercado`, A3 e) de «Pendientes hereda
 > `ninguno`), el cierre del viernes cae entre las 21:55 y las 23:55 de Madrid, y su ventana nunca
 > toca la operativa. Las dos horas de margen y el mínimo de dos horas son de R15 y están CONFIRMED.
 > Es una tarea autónoma: el consultor no lo ha revisado todavía.
+>
+> **(2) YA NO ES PROVISIONAL (ADR-0090 §1, 2026-11-06, `trabajo/demo-ejecuciones-2-3`; recuadro que
+> no reescribe el cuerpo).** A-28 está DECIDIDA con la medida: el servidor va 120 minutos por
+> delante de UTC en invierno y cambia de hora con EE. UU. (`broker_dst` = `us`). El huso
+> `America/New_York` del calendario queda confirmado y ningún cierre cambia. `cierre_pendientes`
+> (1) sigue PROVISIONAL bajo A-55.
 
 ## Decision
 

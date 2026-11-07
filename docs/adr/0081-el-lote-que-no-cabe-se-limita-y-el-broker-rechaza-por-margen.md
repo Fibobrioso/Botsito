@@ -102,6 +102,16 @@ el lote que se coloca puede quedar por debajo del de RN-011 por este ADR. No se 
 
 ### 4. D3 · El bróker simulado rechaza por margen al colocar y al llenar, con una sola función
 
+> **ENMENDADO POR ADR-0090 §4 (2026-11-06, `trabajo/demo-ejecuciones-2-3`; recuadro que no reescribe
+> el cuerpo).** La ejecución 3 de la demo midió lo que este punto da por hecho, y lo desmiente en la
+> prueba de FTMO: la tasa de margen de la buy stop es 0;0, una pendiente stop sin margen libre SE
+> COLOCA (M1 «no»), una stop viva NO carga margen (M2 «no») y dos no se suman al colocar (M3 «no»);
+> si MT5 comprueba el margen al llenar sigue sin medir (M4 «no concluyente», `no_salto`). El límite
+> del lote del bot (D1-D2) no cambia. La reserva de margen por pendiente stop y la comprobación al
+> colocar del bróker simulado quedan como SUPUESTO CONSERVADOR declarado, sin efecto medido en
+> construcción, y se deciden antes de R6a.6 (Technical Debt); el pre-vuelo de R6a.7 lee la tasa de
+> margen de las pendientes en la cuenta real (`SymbolInfoMarginRate`).
+
 El bróker (`engine/broker.py`) hace de FTMO (ADR-0052): **rechaza por margen aunque el bot calcule
 bien**. El margen de una orden es la fórmula de forex de la documentación de MetaTrader 5
 («Margin Calculation for Retail Forex, Futures»,

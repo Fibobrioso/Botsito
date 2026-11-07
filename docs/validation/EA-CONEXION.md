@@ -173,6 +173,13 @@ añade el `\r` que falte delante de un `\n` (<https://www.mql5.com/en/docs/files
 `StringToCharArray` con `count=-1` copia también el 0 final, que hay que quitar
 (<https://www.mql5.com/en/docs/convert/stringtochararray>; medido: 13 elementos para 12 bytes).
 
+> **CORRECCIÓN (2026-11-06, `trabajo/demo-ejecuciones-2-3`, DEMO-EJECUCIONES-2-3.md §0.b y
+> ADR-0090; recuadro que no reescribe el cuerpo).** Explicado, y no había contradicción: el CSV de la
+> ejecución 1 es CRLF en sus 60 líneas, igual que el original de `MQL5\Files`. El «0 retornos de
+> carro» de `grep -c $'\r'` es el `grep` de Git para Windows, que quita el CR del final de línea salvo
+> con `-U` (`grep -U -c -P '\r'` da 60 sobre el mismo fichero). Lo medido aquí -el modo texto ANSI
+> escribe CRLF- es lo que hay en los tres CSV.
+
 **Por qué el CSV de la ejecución 1 salió con LF sigue sin explicarse, y ahora contradice una medida.**
 El fichero que sigue en `MQL5\Files` (`MedirDemoFTMO_20261009_153552.csv`) tiene 0 retornos de carro
 (`grep -c $'\r'`) y el sha256 congelado (`86f0df8b…3c6e`); pero el mismo modo de apertura, en el mismo

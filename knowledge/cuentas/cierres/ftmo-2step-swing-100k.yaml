@@ -5,9 +5,10 @@
 #
 # Cada hora declara su huso. El servidor de FTMO cierra EURUSD a las 23:55 y abre a las 00:05 de su
 # reloj. Segun la Trading Update del 5-mar-2026 (el 8 de marzo pasa de GMT+2 a GMT+3 con EE. UU.), su
-# reloj cambia de hora con EE. UU., asi que aqui se escribe en America/New_York. PROVISIONAL: es lo
-# que A-28 (broker_dst) mide observando una transicion, y sigue abierta; se revisa con ella. Con
-# cualquier lectura de A-28 el cierre del viernes cae despues de las 21:55 de Madrid (ADR-0068).
+# reloj cambia de hora con EE. UU., asi que aqui se escribe en America/New_York. Revisado con A-28
+# (2026-11-06, ADR-0090): A-28 esta DECIDIDA con la medida -broker_offset_base 120, broker_dst us,
+# observado en la transicion de octubre-, asi que el huso de este calendario ya no es PROVISIONAL y
+# ningun cierre cambia. El cierre del viernes cae despues de las 21:55 de Madrid (ADR-0068).
 #
 # Regimen: versionado. Cada cierre que entra cita la Trading Update de FTMO (o la medida) de donde
 # sale, y `cubre` solo se alarga cuando se han revisado las Trading Updates del tramo nuevo. Fuera

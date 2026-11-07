@@ -15,6 +15,11 @@ y la primera operacion de ese dia pasa de 50 (su stop queda por debajo de 1 pip,
 broker la rechaza por `volumen_max_lotes`. Esta regresion es del corte de la cuenta, no del volumen,
 asi que se repite con el tope que tenia el perfil hasta ese dia, 100, DECLARADO aqui
 (`VOLUMEN_MAX_DE_LA_REGRESION`); lo que hace el bot con ese rechazo es el pendiente 37 (A-18).
+
+Desde ADR-0090 (2026-11-06) la comision del perfil es la medida, 2,50 USD por lote y lado, y con
+ella la cuenta de ese dia NO se suspende: la regresion del corte se repite con la tarifa que
+tenia el perfil hasta entonces, 5, DECLARADA aqui (`COMISION_DE_LA_REGRESION`), y la consecuencia
+de la medida tiene su propio test.
 """
 
 from __future__ import annotations
@@ -42,6 +47,8 @@ CASO = "caso-eurusd-2026-08-07"
 DESFASE_PUNTOS = 2  # OANDA - Dukascopy (BLOQUE-DE-LA-CAJA.md §2.3)
 # el tope del perfil hasta ADR-0071 (la web de FTMO); el medido, 50, rechaza la primera operacion
 VOLUMEN_MAX_DE_LA_REGRESION = Decimal(100)
+# la tarifa supuesta hasta ADR-0090; se conserva para que el corte en el pico tenga un caso real
+COMISION_DE_LA_REGRESION = Decimal(5)
 
 
 def _mercado() -> simulacion.MercadoDia:
@@ -124,13 +131,11 @@ def test_con_el_perfil_real_una_operacion_que_pasa_el_volumen_se_rechaza_por_mar
     assert b.abrir_conocida("t2", lado, entrada, cabe, stop, objetivo, ms, "caso").abierta
 
 
-def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
-    """La regresion del CORTE de la cuenta, no del volumen ni del margen: las cuatro operaciones del
-    trader se repiten con el lote del 0,5 % aunque pase de los 50 lotes (tope subido a 100, como
-    declara VOLUMEN_MAX_DE_LA_REGRESION) y aunque pida mas margen del que hay a 1:30. Por eso el
-    broker se construye con `apalancamiento=None` EXPLICITO: sin apalancamiento no mide margen
-    (ADR-0081 §4, respuesta del consultor a la PARADA, punto 2), y lo que hace el bot con ese lote
-    lo decide ADR-0081 en el cableado, no aqui."""
+def _cuenta_del_dia(comision_por_lote: Decimal | None) -> tuple[cuenta.ResultadoFase, Decimal]:
+    """Las cuatro operaciones del trader del 7 de agosto repetidas por el broker, con el tope de
+    volumen de la regresion y sin margen, y juzgadas por `evaluar_fase`. Con `comision_por_lote`
+    la regresion declara su tarifa; con None, la del perfil real. Devuelve el juicio y la tarifa
+    usada."""
     md = _mercado()
     registro = cargar_registro(RAIZ / "knowledge" / "spec" / "parametros.yaml")
     perfil = cargar_perfil(RAIZ / "knowledge" / "cuentas" / "ftmo-2step-swing-100k.yaml")
@@ -142,6 +147,8 @@ def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
         volumen_max_lotes=VOLUMEN_MAX_DE_LA_REGRESION,
         apalancamiento=None,
     )
+    if comision_por_lote is not None:
+        reglas_broker = dataclasses.replace(reglas_broker, comision_por_lote=comision_por_lote)
     b = Broker(reglas_broker, cfg, md.mercado(), contrato, md.escala)
     assert md.operaciones_trader is not None and len(md.operaciones_trader) == 4
     for i, op in enumerate(md.operaciones_trader, 1):
@@ -153,9 +160,36 @@ def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
     operaciones = b.operaciones_cerradas()
     # el broker deja la marca del tick que cierra en el instante del cierre: la entrada del fallo
     assert all(any(m.instante == o.cierre.instante for m in o.marcas) for o in operaciones)
+    return cuenta.evaluar_fase(operaciones, reglas_fase, contrato), reglas_broker.comision_por_lote
 
-    r = cuenta.evaluar_fase(operaciones, reglas_fase, contrato)
+
+def test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico() -> None:
+    """La regresion del CORTE de la cuenta, no del volumen ni del margen ni de la tarifa: las
+    cuatro operaciones del trader se repiten con el lote del 0,5 % aunque pase de los 50 lotes
+    (tope subido a 100, como declara VOLUMEN_MAX_DE_LA_REGRESION) y aunque pida mas margen del que
+    hay a 1:30. Por eso el broker se construye con `apalancamiento=None` EXPLICITO: sin
+    apalancamiento no mide margen (ADR-0081 §4, respuesta del consultor a la PARADA, punto 2), y lo
+    que hace el bot con ese lote lo decide ADR-0081 en el cableado, no aqui. Y con
+    COMISION_DE_LA_REGRESION (5 por lado): con la tarifa medida la cuenta de ese dia no se suspende
+    (el test de abajo), y sin ella el corte en el tick del pico se quedaria sin un caso real que lo
+    pruebe (ADR-0090 §3)."""
+    r, _ = _cuenta_del_dia(COMISION_DE_LA_REGRESION)
 
     assert r.estado is cuenta.EstadoCuenta.SUSPENDIDA
     assert r.motivo.startswith("perdida diaria"), r.motivo
     assert r.instante == datetime(2026, 8, 7, 12, 30, 1, 312000, tzinfo=UTC)
+
+
+def test_con_la_comision_medida_la_cuenta_del_7_de_agosto_no_se_suspende() -> None:
+    """La consecuencia de la medida (ADR-0090 §3), escrita en un test: con el perfil real, 2,50
+    USD por lote y lado, las mismas cuatro operaciones pagan 1.096 USD menos de comision y la cuenta
+    de ese dia queda EN_CURSO, con la peor equidad del dia en 95.515,78, por encima del limite
+    diario de 95.000. Con 5 por lado (la regresion de arriba) se suspendia a 94.485,53."""
+    r, comision = _cuenta_del_dia(None)
+
+    assert r.estado is cuenta.EstadoCuenta.EN_CURSO, r.motivo
+    assert comision == Decimal("2.50")
+    dias = [d for d in r.dias if d.equity_minima is not None]
+    assert len(dias) == 1
+    assert dias[0].limite_dia == 95000
+    assert dias[0].equity_minima == Decimal("95515.78")

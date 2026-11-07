@@ -397,7 +397,8 @@ ambiguedades:
       reglamento, no el panel -"Account balance at midnight CE(S)T of the previous day"-. El corte
       es la medianoche CIVIL centroeuropea, que es el reloj del trader (huso_operativa), y no la del
       servidor, que era nuestro default. reloj_dia_riesgo pasa a `civil_operativa`, CONFIRMED. Lo
-      que SI queda por medir -el reloj del servidor, que ya no decide el corte- es A-28
+      que SI quedaba por medir -el reloj del servidor, que ya no decide el corte- era A-28,
+      DECIDIDA el 2026-11-06 por ADR-0090
     resuelve_en: [F11, F33]
     evidencia:
       - ev-v6-020029-aa86963a
@@ -670,8 +671,9 @@ ambiguedades:
       gratuita de FTMO (CSV congelado en data/manifests/demo_ftmo/, sha256 86f0df8b): digits 5,
       contrato 100000, lote minimo 0.01, paso 0.01 y stops level 0 (filas 6, 8, 9, 11 y 4), los
       mismos valores que se conservaban de FundedNext. El freeze level es 0, el lote maximo 50 y
-      los modos de llenado FOK e IOC. Las ejecuciones 2 y 3 y el pre-vuelo de F33 vuelven a leer
-      la ficha; una diferencia la reabre con otro ADR
+      los modos de llenado FOK e IOC. Las ejecuciones 2 y 3 (2026-10-29 y 2026-11-05) leyeron la
+      misma ficha (ADR-0090 §6); el pre-vuelo de F33 la vuelve a leer, y una diferencia la reabre
+      con otro ADR
     resuelve_en: [F17, F33]
     # el instrumento leido en pantalla y el lotaje de la prueba de fondeo, que es lo que estas
     # especificaciones convierten en lotes. Hasta el 2026-10-03 citaba tambien la firma que se eligio
@@ -714,7 +716,14 @@ ambiguedades:
       cae a medianoche CE(S)T y NO a la medianoche del servidor. Las dos se separan una hora (el
       servidor va a GMT+2/+3 y CE(S)T a GMT+1/+2) y equivocarse cuesta la cuenta. reloj_dia_riesgo
       se queda CONFIRMED en `civil_operativa` por el reglamento (ADR-0027); si el panel dijera otra
-      cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS
+      cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS.
+      DECIDIDA el 2026-11-06 por ADR-0090 con las tres ejecuciones de MedirDemoFTMO en la prueba
+      gratuita de FTMO (manifiestos en data/manifests/demo_ftmo/, sha256 86f0df8b, 1b82f61b y
+      59565621): desfase servidor - GMT de 180, 180 y 120 minutos el 2026-10-09, el 2026-10-29 y el
+      2026-11-05 (fila 31 de las tres). El 29-oct discrimina -Europa ya habia cambiado de hora, EE.
+      UU. no- y solo casa con broker_offset_base 120 y broker_dst `us`. La VERIFICACION EXPLICITA
+      del panel no la hace ninguna ejecucion ni la ha declarado Aleks: sale de aqui a una linea
+      propia de la Next Action, con su texto entero (ADR-0090 §1)
     resuelve_en: [F17]
     # la vela H4 que el trader ve abrir a las 23 (la medianoche del servidor que anclaje_h4 supone)
     # y lo que dice del cambio de hora. Hasta el 2026-10-03 citaba tambien la firma elegida entonces
@@ -734,9 +743,9 @@ ambiguedades:
         literal: "El calendario del +DST: NO ENCONTRADA"
     parametros: [broker_offset_base, broker_dst]
     contradiccion: null
-    estado: ABIERTA
-    decision: null
-    decidida_el: null
+    estado: DECIDIDA
+    decision: ADR-0090
+    decidida_el: '2026-11-06'
     clase: medicion
     bloqueante: false
   - id: A-29

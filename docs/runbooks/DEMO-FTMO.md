@@ -27,7 +27,8 @@ que salte una orden): en total, **como mucho unos seis minutos**.
   Las grandes llevan un stop de protección muy cercano (de 1,3 a 1,7 pips), y la pequeña de en medio
   (menos de un lote), uno de 20 pips; el script los calcula ANTES de enviar para que, aunque todo se llenara y fuera
   hasta su stop, no se pierdan más de **1.000 USD** (la quinta parte de la pérdida diaria máxima de
-  FTMO), contando la comisión (5 USD por lote y lado) y **un deslizamiento SUPUESTO de un pip por
+  FTMO), contando la comisión (5 USD por lote y lado en el script, el doble de los 2,50 medidos en
+  las ejecuciones 2 y 3, ADR-0090: más caro, del lado seguro) y **un deslizamiento SUPUESTO de un pip por
   operación**. Ese pip no es una garantía: sale de tres medidas pequeñas de la ejecución 1 (de 1 y 2
   décimas de pip), y FTMO ejecuta a mercado, así que en un salto brusco del precio un stop puede
   llenarse más lejos y la pérdida pasar de esa cifra. Por eso las órdenes grandes viven unos
@@ -94,9 +95,11 @@ vez). Para ver la tabla:
 **Por qué ahí y no en `knowledge/`.** `data/` es donde el repositorio guarda los datos medidos en
 bruto, fuera de git (`.gitignore`), como las velas y los ticks; lo que entra en git es su manifiesto
 con el hash, en `data/manifests/`, que es inmutable. `knowledge/evidence/` no sirve: es para items
-de evidencia del corpus con su esquema y su cita, no para ficheros de una plataforma. Cuando estén
-los tres CSV, la rama que los use congela su hash en un manifiesto y, desde ahí, cambia los
-parámetros con su fuente. El script no escribe el login de la cuenta: el fichero no lleva datos
+de evidencia del corpus con su esquema y su cita, no para ficheros de una plataforma. Los tres CSV
+están congelados en `data/manifests/demo_ftmo/` (la 1 en `trabajo/demo-ejecucion-1`, la 2 y la 3 en
+`trabajo/demo-ejecuciones-2-3`), y lo que fijan entró en los parámetros con su fuente (ADR-0071 y
+ADR-0090). Los tres son CRLF: para contar retornos de carro en Git Bash hace falta `grep -U`, porque
+sin `-U` el `grep` de Git para Windows los quita y cuenta 0 (ADR-0090, «La medida»). El script no escribe el login de la cuenta: el fichero no lleva datos
 personales.
 
 ## Cuándo: tres veces
@@ -106,6 +109,20 @@ personales.
 | 1 | **esta semana**, y en cualquier caso antes del domingo **25 de octubre** | todo lo que no depende de la fecha, y el desfase del reloj en horario de verano |
 | 2 | entre el **lunes 26 y el viernes 30 de octubre** | Europa ya cambió de hora (el 25) y Nueva York todavía no: el desfase dice qué calendario sigue el servidor (A-28) |
 | 3 | después del **domingo 1 de noviembre** | Nueva York ya cambió: confirma el horario de invierno |
+
+**Las tres, hechas** (ADR-0071 y ADR-0090; horas comprobadas con `zoneinfo`):
+
+| vez | cuándo (servidor) | España / Lima | script | prueba | lo que dio el reloj |
+|---|---|---|---|---|---|
+| 1 | 2026-10-09 15:35 | 14:35 / 07:35, dentro de la franja | 1.0 | la del 2026-10-08 | 180 min (los dos calendarios dan 180) |
+| 2 | 2026-10-29 19:40 | 17:40 / 11:40, dentro de la franja | 1.1 | la del 2026-10-29 | 180 min: sigue a Nueva York (con Europa habría dado 120) |
+| 3 | 2026-11-05 20:35 | 19:35 / 13:35, **fuera de la franja** de 9 a 18 de España | 1.2 | la del 2026-10-29 | 120 min: horario de invierno |
+
+La 3 corrió con Nueva York abierto (13:35 EST) y Londres ya cerrado (18:35 GMT): la hora puede
+afectar al spread, al deslizamiento y al llenado de los pasos 6 y 7, y no afecta al desfase, a la
+comisión ni a la ficha. Con las tres, A-28 quedó DECIDIDA (el servidor va 120 minutos por delante de
+UTC en invierno y cambia de hora con EE. UU.) y la comisión medida es 2,50 USD por lote y lado.
+**No hay más ejecuciones previstas.**
 
 **Antes de la ejecución 2: el script 1.1.** La ejecución 1 (2026-10-09) usó la versión 1.0. Para la
 2 hay una versión nueva, la 1.1 (rama `trabajo/demo-ejecucion-1`, ADR-0071), que mide la comisión
@@ -139,9 +156,10 @@ en UTC+1 y Lima en UTC−5, medido con `zoneinfo`). La sesión 6 con el trader f
 el martes 3, como se preveía), y la ejecución 3 se hizo el jueves 5 (corregido en el cierre de
 `trabajo/activar-sesion-06`).
 
-Si puedes, aprovecha una de las tres para mirar en el panel de la cuenta de FTMO **a qué hora se
-recalcula el límite de pérdida diaria**: a medianoche de España o a medianoche del servidor (A-28,
-«verificación explícita»). Apúntalo con la fecha.
+**Pendiente, sin ejecución:** mirar en el panel de la cuenta de FTMO **a qué hora se recalcula el
+límite de pérdida diaria**: a medianoche de España o a medianoche del servidor. Era la «verificación
+explícita» de A-28; ninguna de las tres la hizo, y desde ADR-0090 es una línea propia para ti en la
+Next Action. Apúntalo con la fecha y la hora, mientras la prueba del 2026-10-29 siga viva.
 
 ## Lo que mide cada paso
 
@@ -182,6 +200,16 @@ de la cuenta no se escribe aquí: el repositorio es público.
   (`docs/validation/DEMO-EJECUCION-1.md` §0.c). Si la cuenta Swing de verdad es también de hedging
   no se supone: es una pregunta para FTMO (la misma sección).
 
+## La prueba del 2026-10-29
+
+Lo que declara Aleks (2026-11-06, en el chat del consultor; `trabajo/demo-ejecuciones-2-3`): una
+prueba gratuita nueva, creada el 2026-10-29, la misma clase de cuenta (2-Step, Swing, USD, 100.000,
+MetaTrader 5, servidor FTMO-Demo). En ella corrieron la ejecución 2 (ese mismo día, script 1.1) y la
+3 (2026-11-05, script 1.2), las dos «completo» y sin nada abierto al terminar; los CSV se copiaron
+tal cual, sin abrirlos con Excel, y los originales siguen en **MQL5 → Files** (la sesión midió el
+2026-11-06 que coinciden byte a byte con las copias). Que la 3 fuera en esta prueba lo dice el
+encargo del consultor; los CSV no traen el número de cuenta.
+
 ## El EA de conexión (R6a.1)
 
 Es el primer EA de la capa de MetaTrader que **nunca opera**: no envía, no modifica ni cancela
@@ -203,6 +231,9 @@ abajo se queda como el procedimiento de esa corrida.
 **Por qué esas horas.** La medianoche del servidor cae por la tarde en Lima: hasta el 25 de octubre
 el servidor va 3 horas por delante de GMT, y son **las 16:00 de Lima** (medido el 20: el cambio de día
 llegó a las 16:00:48). Desde el 25 serán las 16:00 o las 17:00 (justo lo que mide A-28).
+*(Medido después, ADR-0090: el servidor siguió a EE. UU., así que del 25 de octubre al 1 de
+noviembre la medianoche del servidor siguió a las 16:00 de Lima, y desde el 1 de noviembre cae a las
+17:00.)*
 
 **No hay que copiar ni compilar nada.** La sesión deja el EA arreglado compilado en la carpeta de
 datos del terminal: **MQL5 → Experts → Botsito → Botsito.ex5** (instalado el 2026-10-20). En

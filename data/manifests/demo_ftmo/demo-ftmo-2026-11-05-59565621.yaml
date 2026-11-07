@@ -1,0 +1,34 @@
+# Escrito a mano en la rama trabajo/demo-ejecuciones-2-3 (2026-11-06): no hay comando que lo genere.
+# INMUTABLE: no editar; otro CSV es otro manifiesto. Esquema: data/manifests/README.md, «Demo de FTMO».
+# La version 1.2 tiene dos contenidos en la historia (2688f8b y a90cd45); el commit es a90cd45 porque
+# el .mq5 de MQL5/Scripts del terminal tiene ese sha256 y el .ex5 se compilo el 2026-11-05 a las 13:34
+# de Lima, un minuto antes de la ejecucion (DEMO-EJECUCIONES-2-3.md, «El encargo frente al repo»).
+schema_demo_ftmo: 1
+dataset_id: demo-ftmo-2026-11-05-59565621
+ejecucion: 3
+fichero:
+  ruta: demo_ftmo/MedirDemoFTMO_20261105_203519.csv
+  bytes: 18991
+  sha256: 595656215c0efa679c54b661382b87b42609a35a39b1ca00b8d281b22f294924
+  filas: 115
+  fin_de_linea: CRLF
+script:
+  ruta: tools/mql5/MedirDemoFTMO.mq5
+  version: '1.2'
+  sha256: f9903c6f3ef62e29c17d77d9306343af91612218c398a161c83936f977859151
+  commit: a90cd4567ccad92ee053f65630caf5588fc33cfb
+cuenta:
+  servidor: FTMO-Demo
+  empresa: FTMO Global Markets Ltd
+  moneda: USD
+  tipo: prueba gratuita creada el 2026-10-29 (2-Step, Swing, 100.000, MT5)
+  build_terminal: 6230
+hora_servidor_primera: '2026.11.05 20:35:19'
+hora_servidor_ultima: '2026.11.05 20:38:44'
+hora_gmt_primera: '2026.11.05 18:35:19'
+terminado: completo
+quedan_abiertas_al_terminar: 0
+declarado_por: Aleks, 2026-11-06 (copiado tal cual de MQL5/Files, sin abrir con Excel; terminado «completo» y sin nada abierto; el original sigue alli y la sesion midio el mismo sha256)
+congelado_el: '2026-11-06'
+rama: trabajo/demo-ejecuciones-2-3
+informe: docs/validation/DEMO-EJECUCIONES-2-3.md

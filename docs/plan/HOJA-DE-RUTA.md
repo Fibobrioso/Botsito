@@ -422,7 +422,9 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** colocar, modificar y cancelar órdenes stop sin duplicarlas nunca, con sus códigos de
   retorno; y, al arrancar, reconstruir órdenes, posiciones y journal contra la cuenta, con el test
   «reinicio a media jornada» (MASTER_PLAN §H.2; ADR-0082 §5). La reconciliación demo-backtest
-  sigue en F34.
+  sigue en F34. Su journal registra, con la cotización del instante, qué hace el servidor con una
+  pendiente colocada en el nivel exacto (ADR-0057 §2, PROVISIONAL tras las tres ejecuciones de la
+  demo; ADR-0090 §5).
 - **Depende de:** R6a.1 y R6a.2.
 - **Quién:** la sesión, con el encargo del consultor; Aleks ejecuta en la demo.
 - **Hecho cuando:** el reinicio a media jornada no duplica nada en la demo.
@@ -451,7 +453,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   según `lote_si_no_cabe` (las dos opciones, con el valor que deje A-57); y el rechazo por margen.
   Con la ejecución 3 de la demo, que mide cuándo comprueba MT5 el margen de una pendiente stop
   (A.1).
-- **Depende de:** R6a.2, R6a.3, el script 1.2 de MedirDemoFTMO (HECHO, trabajo/margen-pendiente) y la ejecución 3 de la demo.
+- **Depende de:** R6a.2, R6a.3, el script 1.2 de MedirDemoFTMO (HECHO, trabajo/margen-pendiente), la ejecución 3 de la demo (HECHA, ADR-0090 §4: M1-M3 no, M4 sin medir) y la decisión sobre la reserva de margen del bróker simulado (Technical Debt).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el límite portado pasa los mismos casos que sus tests de Python.
 
@@ -461,10 +463,21 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   en el tag stable vigente, y el hash de la spec solo cuando el EA la lleve (desde F29); el desfase
   del reloj con la tabla, `ACCOUNT_MARGIN_MODE`, y `SymbolInfo`/`AccountInfo` con el perfil; y aborta
   si algo no cuadra (MASTER_PLAN §H y §H.2). Antes de comparar `ACCOUNT_MARGIN_MODE`, el parámetro
-  del modo de margen se crea con su fuente, la respuesta de FTMO sobre la cuenta Swing (A.2).
-- **Depende de:** R6a.1 a R6a.6.
+  del modo de margen se crea con su fuente, la respuesta de FTMO sobre la cuenta Swing (A.2). El
+  desfase se compara con 120 y `us` (ADR-0090 §1), y lee la tasa de margen de las pendientes stop
+  (`SymbolInfoMarginRate`), que en la prueba es 0 y la cuenta Swing no garantiza (ADR-0090 §4).
+- **Depende de:** R6a.1 a R6a.6 y R6a.8.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el pre-vuelo aborta en la demo ante cada discrepancia provocada.
+
+### R6a.8 · La rejilla H4 real en el journal
+- **Refs:** ID:ADR-0090 · ID:ADR-0027 · F:F33
+- **Qué es:** el EA de R6a.1 escribe en el journal de la demo la hora de apertura de las velas H4
+  (`iTime`), para medir `anclaje_h4` contra la rejilla real del servidor (ADR-0027 §4; ADR-0090 §2).
+- **Depende de:** R6a.1.
+- **Quién:** la sesión, con el encargo del consultor; Aleks pone el EA en la demo.
+- **Hecho cuando:** el journal trae las aperturas H4 de una semana con un cambio de día y caen a las
+  17:00 de Nueva York, o se abre una ambigüedad.
 
 ## R6 · Plataforma
 
@@ -492,10 +505,10 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ## Carril: lo de Aleks
 
 ### A.1 · Las ejecuciones 2 y 3 de la demo de FTMO
-- **Refs:** NA:A · NA:M · ID:A-28 · HER:10 · F:F17
+- **Refs:** ID:A-28 · ID:ADR-0090 · F:F17
 - **Qué es:** las ejecuciones 2 y 3 de MedirDemoFTMO (A-28, el nivel exacto de ADR-0057, los
-  deslizamientos y los swaps); el BE de una venta que salta por el ASK
-  (NA:M); y, del heredado 10, lo que queda: A-28 y el grabador de spread y ticks (F17, PARCIAL).
+  deslizamientos y los swaps); el BE de una venta que salta por el ASK; y, del heredado 10, lo
+  que queda: A-28 y el grabador de spread y ticks (F17, PARCIAL).
   La ejecución 2 está hecha (2026-10-29, script 1.1): desfase del servidor 180 minutos; comisión
   2,50 por lado con 1,00 lote; margen 3720,77 con el ask de la apertura, que cuadra con
   FTMO-P-D1 §3. El script 1.2 (trabajo/margen-pendiente) mide en la 3 el instante en que MT5
@@ -504,8 +517,9 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Quién:** Aleks ejecuta; los dos CSV los congela una sola rama, tras la ejecución 3, que es la
   que decide A-28 con los dos (EA-CONEXION.md, D6).
 - **Hecho cuando:** los dos CSV están congelados y A-28 decidida.
-- **Estado:** tres ejecuciones hechas (la 3, el 2026-11-05, script 1.2); rama corta pendiente
-  (congelar los tres CSV, A-28 con su ADR y la NOTA del paso 8 en ADR-0081 §4; NA:A).
+- **Estado:** HECHA (`trabajo/demo-ejecuciones-2-3`, ADR-0090; DEMO-EJECUCIONES-2-3.md): los tres
+  CSV congelados, A-28 DECIDIDA, la comisión a 2,50 por lado y ADR-0081 §4 enmendado. Lo que queda
+  (el panel, el BE por el ASK y el grabador) pasa a A.5.
 
 ### A.2 · Las preguntas a FTMO
 - **Refs:** HER:27 · ID:A-54 · ID:A-55 · ID:ADR-0068 · ID:ADR-0071
@@ -542,6 +556,15 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Estado:** HECHA (2026-10-22, Aleks: data/transcripciones/v6 a v10 (158 ficheros) y SHA256SUMS-v6-v10.txt (158 líneas, una por fichero) en una carpeta privada de su Google Drive).
 
 ## Carril: guardias y deuda
+
+### A.5 · Lo que queda de la demo de FTMO
+- **Refs:** NA:A · NA:M · HER:10 · F:F17
+- **Qué es:** el panel del límite diario (NA:A); el BE de una venta que salta por el ASK (NA:M,
+  ADR-0065 §6); y el grabador de spread y ticks de F17 (heredado 10), que también mide el
+  deslizamiento (ADR-0090 §7).
+- **Depende de:** una prueba gratuita de FTMO viva.
+- **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
+- **Hecho cuando:** el panel declarado, M medida y el grabador hecho.
 
 ### G.1 · La guardia de Claude Code
 - **Refs:** NA:D
@@ -652,7 +675,7 @@ sus ambigüedades, sin revisar cada informe a fondo.
 | F:F18, F:F19, F:F20, F:F21 | HECHA, con ambigüedades abiertas | `MOTOR-SESGO-H4.md`, `LIQUIDEZ-M15.md`, `BREAKER-M1.md`, `BE-AL-TICK.md` |
 | F:F14 | PARCIAL: casos y particiones, sin cierre formal | `CASOS-AGOSTO-ABRIL.md`, `GUARDA-DE-HOLDOUT.md` |
 | F:F16 | PARCIAL: ticks congelados en CSV, no Parquet | `TICKS-LLENADO.md` |
-| F:F17 | PARCIAL: el script de medición, no el grabador | `DEMO-EJECUCION-1.md` |
+| F:F17 | PARCIAL: el script de medición (tres ejecuciones, ADR-0071 y ADR-0090), no el grabador | `DEMO-EJECUCION-1.md`, `DEMO-EJECUCIONES-2-3.md` |
 | F:F22 | PARCIAL: el motor es un intérprete de la spec | `ARNES-MOTOR.md` |
 | F:F23 | PARCIAL: bucle y reloj, sin journal | `ARNES-MOTOR.md` |
 | F:F24 | PARCIAL: broker, llenado y cuenta, sin contador de N | `CABLEADO-SIMULADOR.md` |
@@ -663,6 +686,5 @@ sus ambigüedades, sin revisar cada informe a fondo.
 
 ## Fechas fijas
 
-- La ejecución 2, hecha el 2026-10-29 en la prueba creada ese día (NA:A).
-- La semana del 26 al 30 de octubre de 2026 es la primera en que el bot abre a otra hora: Europa ya
-  cambió la hora y EE. UU. no (ADR-0069).
+- La prueba gratuita de FTMO del 2026-10-29 vence (si dura 14 días, como la del 2026-10-08) hacia
+  el 12 de noviembre de 2026: el panel (NA:A) va antes.

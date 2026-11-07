@@ -24,6 +24,15 @@ phase: post-F13
    **verifica** contra la rejilla H4 real del servidor de FTMO en la misma medición. Si no coincide
    —por ejemplo, si el servidor cambia de hora con el calendario europeo—, se abre una ambigüedad y
    el valor no se toca por su cuenta.
+
+   > **ENMIENDA de «en la misma medición» (ADR-0090 §2, 2026-11-06, `trabajo/demo-ejecuciones-2-3`;
+   > recuadro que no reescribe el cuerpo).** A-28 se decidió con 120 y `us` midiendo el desfase, y
+   > ninguna ejecución de MedirDemoFTMO lee una vela. Con ese reloj, la medianoche del servidor cae a
+   > las 17:00 de Nueva York todos los días de 2026 y 2027, pero es una DERIVACIÓN del modelo, no la
+   > verificación contra la rejilla H4 real que pide este punto. Esa la mide R6a.8, «La rejilla H4
+   > real en el journal»: el EA escribe en el journal de la demo la hora de apertura de las velas H4
+   > (`iTime`), antes de R6a.7 y de F33.
+   > `anclaje_h4` no cambia de valor ni de estado.
 5. **A-19 queda CERRADA como DECIDIDA**, con este ADR como `decision`. Era una verificación y no un
    juicio del trader, y el reglamento la contesta.
 6. **La semana de riesgo del trader corta con el mismo reloj.** `perdida_maxima_semanal` es un freno
