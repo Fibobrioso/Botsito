@@ -1,5 +1,5 @@
 rama: trabajo/metodo-fidelidad-rentabilidad
-riesgo: medio  # rama de metodo: ADR-0092 (enmienda ADR-0043 y ADR-0070), criterio puro fuera del motor en cases/ y guiones de medida; el motor no cambia (en engine/ solo lo que autorice la respuesta del consultor a la PARADA, y entonces se amplia en un commit)
+riesgo: medio  # rama de metodo: ADR-0092 (enmienda ADR-0043, ADR-0070 y ADR-0053 §6), criterio puro fuera del motor en cases/ y guiones de medida; el motor no decide ni llena nada distinto. Ampliado en la fase 1, punto 1, por la respuesta del consultor del 2026-11-07: punto 10 (engine/arnes.py y cableado.py, SOLO salida; el riesgo sigue medio) y punto 6 (el recuadro en ADR-0053 §6)
 artefacto: docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md
 tramo: "R3 · Una corrida del arnés sobre toda la construcción"
 rutas_permitidas:
@@ -8,18 +8,25 @@ rutas_permitidas:
   - docs/validation/HOLDOUT-EXPOSICIONES.md
   - docs/adr/0043-criterio-de-fidelidad-en-desarrollo.md
   - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
+  - docs/adr/0053-el-cableado-del-simulador.md
   - docs/adr/0092-*.md
   - docs/adr/README.md
   - docs/plan/MASTER_PLAN.md
   - docs/validation/PREREGISTRO.md
   - knowledge/cases/criterio_fidelidad.yaml
   - src/botsito/cases/criterio_fidelidad.py
+  - src/botsito/engine/arnes.py
+  - src/botsito/engine/cableado.py
   - tests/
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
 rutas_protegidas:
-  - src/botsito/engine/
+  - src/botsito/engine/broker.py
+  - src/botsito/engine/llenado.py
+  - src/botsito/engine/cuenta.py
+  - src/botsito/engine/primitivas_broker.py
+  - src/botsito/engine/motor.py
   - knowledge/spec/
   - knowledge/cuentas/
   - knowledge/simulador/

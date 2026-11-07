@@ -16,6 +16,14 @@
 > parte de estrategia espera); de F31, las órdenes idempotentes, el veto de la firma salvo RN-032,
 > el journal y la reconstrucción del estado al arrancar; y de F33, el pre-vuelo. Su orden vive en
 > el tramo R6a de `docs/plan/HOJA-DE-RUTA.md`.
+>
+> **NOTA (2026-11-07, rama `trabajo/metodo-fidelidad-rentabilidad`, ADR-0092).** La condición
+> necesaria para todo lo que decida operaciones en vivo es la RENTABILIDAD pre-registrada de
+> ADR-0092 (§3), medida una vez sobre meses que el bot no ha visto (§5), y no F26: la fidelidad, por
+> operación y por criterios, es la herramienta de construcción, y F26 queda como diagnóstico que se
+> informa en el memorando. F27 (sensibilidad y ventaja, DSR, N declarado) sigue, y F35 sigue
+> dependiendo de ella y siendo el memorando y la decisión humana. La fila de F30 (que depende de
+> F26) y la del pre-registro en §H las actualiza G. El cuerpo no se toca.
 
 Version Markdown del plan (la version completa con detalle de cada funcionalidad esta en
 `MASTER_PLAN.html`, instantanea congelada del 2026-09-03; este Markdown manda cuando difieren). Deriva del informe de investigacion
