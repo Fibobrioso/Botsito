@@ -15348,3 +15348,58 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 57 (2026-11-05).
+
+# Next Action HECHA · A · sale de PROJECT_STATE.md en trabajo/demo-ejecuciones-2-3 (2026-11-06)
+
+Su texto literal; la letra se reutiliza para la línea nueva del panel (orden de cierre del consultor
+del 2026-11-06):
+
+A. Demo de FTMO: las tres ejecuciones de MedirDemoFTMO HECHAS (1: 2026-10-09, script 1.0; 2: 2026-10-29, 1.1; 3: 2026-11-05, 1.2, a las 20:35 del servidor, fuera de la franja de 9 a 18 de España del runbook, con Nueva York abierto). Los tres CSV en data/demo_ftmo/ sin congelar, los originales en MQL5\Files. Falta una rama corta en la laptop, después de la de motor: congelar los tres en data/manifests/, cerrar A-28 con su ADR (desfase 180, 180 y 120 min el 9-oct, el 29-oct y el 5-nov: el servidor sigue el calendario de EE. UU.) y la NOTA del paso 8 en ADR-0081 §4 (M1 no, M2 no, M3 no, M4 no concluyente: el tope por margen lo pone el bot). Opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en corpus/noticias/ como CSV fecha_utc,hora_utc,divisa,evento; stops_cortos.py --noticias <csv> --ventana-min 2 da la medida (MARGEN-LOTE.md §2.b).
+
+HECHA en `trabajo/demo-ejecuciones-2-3`: los CSV de las ejecuciones 2 y 3 congelados (la 1 lo estaba
+desde el 2026-10-09), A-28 DECIDIDA por ADR-0090 (120 y `us`) y ADR-0081 §4 ENMENDADO (no una nota);
+además, la comisión del perfil a 2,50 por lado. Lo «Opcional» de las noticias pasa a la A nueva.
+
+# Registro de cierre · `trabajo/demo-ejecuciones-2-3` (2026-11-06)
+
+- Orden de cierre del consultor del 2026-11-06, dada por Aleks tras revisar la rama en bf87245
+  (copiada tal cual al final del encargo y de DEMO-EJECUCIONES-2-3.md, en este commit). Llegó
+  pegada y la sesión la confirmó (informe de bf87245: 86.671 bytes, con «## 3. El revisor»; el tag
+  no existía); después Aleks lanzó `/cerrar-rama trabajo/demo-ejecuciones-2-3`. Nunca se cerró sin
+  la orden.
+- **Lo que entra**: los manifiestos de las ejecuciones 2 y 3 de MedirDemoFTMO
+  (`data/manifests/demo_ftmo/`) y un test de su `dataset_id`; ADR-0090 (A-28 DECIDIDA con 120 y `us`;
+  la comisión medida, 2,50 USD por lote y lado; ADR-0081 §4 enmendado: en la prueba una pendiente stop
+  no carga margen; el nivel exacto sigue PROVISIONAL; los swaps no cambian; `anclaje_h4`, una
+  derivación hasta R6a.8), con recuadros en ADR-0027, 0057, 0068, 0071, 0081 y 0082 y sus filas del
+  índice; recuadros de corrección en DEMO-EJECUCION-1.md y EA-CONEXION.md §0.c (el CSV de la 1
+  siempre fue CRLF: el LF era el `grep` de Git para Windows sin `-U`); la spec 18.6.1 → 18.6.3
+  (`broker_offset_base` y `broker_dst` CONFIRMED, A-28 en sus sitios y `test_kit`); el perfil
+  (`firma_comision_usd_por_lote` 2.50 y las descripciones de los swaps), la regresión del 7 de agosto
+  con su tarifa declarada (`COMISION_DE_LA_REGRESION` = 5) y el test de la tarifa medida (la cuenta
+  de ese día ya no se suspende); el yaml de cierres; DEMO-FTMO.md.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action A sale
+  (arriba) y entra la A del panel con lo «Opcional»; F reescrita con el texto de la orden y su cola
+  literal; heredados 10 y 27; Technical Debt: sale la del CRLF por (a), entran la de la reserva de
+  margen del bróker simulado y la de los docstrings de `viabilidad_trader.py` y
+  `viabilidad_comision.py`. La hoja de ruta: A.1 HECHA, entran A.5 y R6a.8, cambian R6a.3, R6a.6,
+  R6a.7 y F:F17, y en «Fechas fijas» salen las dos líneas pasadas y entra el vencimiento de la prueba.
+  La orden copiada. La fila de ERRORES-RECURRENTES.
+- **`PROJECT_STATE.md`, 22.970 bytes en este commit**: con la F de la orden daba 23.037, por encima
+  de los 23.000; se acortó la línea de Current Feature de la rama («cierre en curso»), que en `main`
+  sustituye la de la orden. Ninguna línea de la orden se recortó.
+- **Desviaciones de la orden**: ninguna en el texto; el recorte de arriba, en una línea que la orden
+  no fija.
+- Letra del tag: la última cerrada era `stable/F38o-activar-sesion-06-motor`;
+  `stable/F38p-demo-ejecuciones-2-3` no existe en local ni en origin (comprobado antes de este
+  commit).
+- Tag: `stable/F38p-demo-ejecuciones-2-3`. El merge es
+  `git rev-parse "stable/F38p-demo-ejecuciones-2-3^{commit}"`.
+- Commits de la rama: `fd368ee` (chore(rama): abre la rama), `49805c3` (la fase 0, con dos PARADAS),
+  `dedc121` (los manifiestos de la 2 y la 3), `c1a2798` (ADR-0090 y sus recuadros), `d53bb2d` (A-28
+  DECIDIDA en la spec), `86dfa75` (DEMO-FTMO.md), `7f912db` (la fase 1 y la PARADA abierta), `ebfe8d7`
+  (la respuesta a la PARADA y los swaps), `1e97079` (la comisión a 2,50 y las dos regresiones),
+  `d344334` (la respuesta aplicada en el informe), `bf87245` (los hallazgos del revisor y su informe
+  pegado), y este (chore(cierre): sale el contrato y entra el registro en HISTORIA).
+- CI: ninguna en la rama (no toca hooks, rutas, `.claude/` ni `src/`; encargo, sin `fix/`). La CI de
+  `main` corre tras el push.

@@ -943,6 +943,44 @@ desechable de d344334 (`git worktree add --detach C:/cm/h HEAD`):
 PROJECT_STATE.md` = 22.869 bytes**, por debajo de 23.000. El clon, quitado después (`git worktree
 remove --force C:/cm/h`, `git worktree prune`; `git worktree list` solo da el repo).
 
+## Orden de cierre del consultor (2026-11-06)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/demo-ejecuciones-2-3 (consultor, 2026-11-06). Sigue la skill cerrar-rama y docs/runbooks/RITUAL.md con todas sus puertas. Antes de nada, confirma que el informe que vas a cerrar es el de bf87245 (86.671 bytes y la sección «## 3. El revisor»).
+>
+> Tag: stable/F38p-demo-ejecuciones-2-3 (comprueba que no existe ni en local ni en origin).
+> Mensaje del merge: «merge: trabajo/demo-ejecuciones-2-3, las ejecuciones 2 y 3 de la demo congeladas, A-28 DECIDIDA (ADR-0090: 120 y us), la comisión a 2,50 por lado y ADR-0081 §4 enmendado».
+>
+> Hallazgos del consultor que el revisor no vio: ninguno. La fila de ERRORES-RECURRENTES es la de §1.4 del informe, con la columna del revisor rellena con su resumen de §3 (1 bloquea, 2 importa, 1 menor, y qué se hizo con cada uno, §3.1). Lección para el revisor: ninguna nueva.
+>
+> Commit del contrato (chore(cierre)), en la rama: todo lo de RITUAL más las líneas de §0.h del informe, con la R6a.3 (b1) y la deuda de los docstrings (b2) de §3.1, tal como se probaron en §3.2. Con estas decisiones:
+> 1. Next Action:
+>    - A sale HECHA a HISTORIA, con su texto literal.
+>    - Entra la A nueva de §0.h: el panel del límite diario, más lo «Opcional» de las noticias.
+>    - M se queda igual.
+>    - F se reescribe así: «F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 a la sesión 7 (§d de ACTIVAR-SESION-06-MOTOR.md). Siguiente: H (fase 0: el diagnóstico de H del scratchpad de Claude Code, fuera del repo, medido con la comisión de 5: se vuelve a medir sobre el main de F38p), R y la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3); después, la preparación de la sesión 7». Todo lo que va detrás de «la preparación de la sesión 7» se copia literal de la F actual, sin tocarlo.
+> 2. Heredados 10 y 27: como en §0.h.
+> 3. Technical Debt:
+>    - Sale la del CRLF, por (a).
+>    - Entran la de la reserva de margen del bróker simulado (D7(c)) y la de los docstrings de los dos guiones (b2).
+>    - NO entra la del fin_de_linea: LF del manifiesto de la ejecución 1: no le queda nada que hacer, y la verdad vive en ADR-0090 y en los recuadros de DEMO-EJECUCION-1.md y EA-CONEXION.md.
+>    - Tampoco entra deuda por el swap cobrado a medianoche de huso_corte: vive en ADR-0090 §6 y no tiene efecto mientras ninguna operación pase la noche.
+> 4. Hoja de ruta, como en §0.h y §3.1:
+>    - A.1 pasa a HECHA.
+>    - Entran A.5 y R6a.8.
+>    - Cambian R6a.3, R6a.6, R6a.7 y F:F17.
+>    - En «Fechas fijas» salen las dos líneas ya pasadas («La ejecución 2, hecha el 2026-10-29…» y «La semana del 26 al 30 de octubre…») y entra la del vencimiento de la prueba hacia el 12-nov, con su «sin comprobar».
+>    - test_hoja_de_ruta y test_project_state en verde, y PROJECT_STATE por debajo de 23.000 bytes.
+>
+> Commit de estado en main, después del tag: solo Current Branch (main), Current Feature, Stable Main State y Last Stable Commit; ni la Next Action, ni Change Log, ni Completed Features. Current Feature: «Ninguna rama abierta. trabajo/demo-ejecuciones-2-3 cerrada en main el <fecha del cierre> (stable/F38p-demo-ejecuciones-2-3): las ejecuciones 2 y 3 de la demo congeladas; A-28 DECIDIDA (ADR-0090: 120 y us); la comisión del perfil a 2,50 por lado; ADR-0081 §4 enmendado.»
+>
+> make check sellado, y push atómico (git push --atomic origin main stable/F38p-demo-ejecuciones-2-3); Aleks confirma la regla ask. La CI que cuenta es la del commit docs(state) de main, y tiene que estar en verde antes de borrar la rama local. No hay fix/ que borrar.
+>
+> Informe final: sha de main, sha del merge, tag, número del run de la CI de main y su resultado, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.md con wc -c.
+
 ## Estado
 
 HECHA en la rama (2026-11-06): fase 0, PARADA con dos decisiones, respuesta del consultor aplicada punto por punto, revisor pasado y sus hallazgos arreglados o declarados (§3.1). Sin CI: la rama no toca hooks, rutas, `.claude/` ni `src/`. No se cierra: el cierre es de Aleks, con orden explícita.

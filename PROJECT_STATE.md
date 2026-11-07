@@ -7,7 +7,7 @@
 trabajo/demo-ejecuciones-2-3
 
 ## Current Feature
-trabajo/demo-ejecuciones-2-3 · EN CURSO (abierta el 2026-11-06): ejecuciones 2 y 3 congeladas, ADR-0090, A-28 DECIDIDA y la comision a 2,50 por lado; la PARADA, contestada y aplicada; revisor pasado. Lista para revisión, NO cerrada. Encargo docs/encargos/trabajo-demo-ejecuciones-2-3.md; informe docs/validation/DEMO-EJECUCIONES-2-3.md.
+trabajo/demo-ejecuciones-2-3 · EN CURSO (abierta el 2026-11-06): ejecuciones 2 y 3 congeladas, ADR-0090, A-28 DECIDIDA y la comision a 2,50 por lado; cierre en curso. Encargo docs/encargos/trabajo-demo-ejecuciones-2-3.md; informe docs/validation/DEMO-EJECUCIONES-2-3.md.
 
 ## Stable Main State
 4fa0920 · merge de `trabajo/activar-sesion-06-motor` (tag `stable/F38o-activar-sesion-06-motor`): la sesión 6 en el motor. Sobre `stable/F38n-activar-sesion-06` (df0e672). Informe docs/validation/ACTIVAR-SESION-06-MOTOR.md; el registro del cierre, al final de HISTORIA.
@@ -25,7 +25,7 @@ trabajo/demo-ejecuciones-2-3 · EN CURSO (abierta el 2026-11-06): ejecuciones 2 
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (este tag): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 a la sesión 7 (§d del informe). Siguiente: la rama corta de la demo (A), H (fase 0: el diagnóstico de H del scratchpad de Claude Code, fuera del repo), R y la re-corrida que cuenta (ADR-0070 §3); después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 a la sesión 7 (§d de ACTIVAR-SESION-06-MOTOR.md). Siguiente: H (fase 0: el diagnóstico de H del scratchpad de Claude Code, fuera del repo, medido con la comisión de 5: se vuelve a medir sobre el main de F38p), R y la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3); después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
 
 
 
@@ -39,7 +39,7 @@ I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de est
 
 J. kit hoja falla en main para todo paquete nuevo: busca una pregunta nacida de A-9 que el cuestionario de hoy ya no trae (CASES-REJILLA.md). Rama propia antes de la próxima sesión con el trader que use la hoja.
 
-A. Demo de FTMO: las tres ejecuciones de MedirDemoFTMO HECHAS (1: 2026-10-09, script 1.0; 2: 2026-10-29, 1.1; 3: 2026-11-05, 1.2, a las 20:35 del servidor, fuera de la franja de 9 a 18 de España del runbook, con Nueva York abierto). Los tres CSV en data/demo_ftmo/ sin congelar, los originales en MQL5\Files. Falta una rama corta en la laptop, después de la de motor: congelar los tres en data/manifests/, cerrar A-28 con su ADR (desfase 180, 180 y 120 min el 9-oct, el 29-oct y el 5-nov: el servidor sigue el calendario de EE. UU.) y la NOTA del paso 8 en ADR-0081 §4 (M1 no, M2 no, M3 no, M4 no concluyente: el tope por margen lo pone el bot). Opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en corpus/noticias/ como CSV fecha_utc,hora_utc,divisa,evento; stops_cortos.py --noticias <csv> --ventana-min 2 da la medida (MARGEN-LOTE.md §2.b).
+A. Para Aleks, en el panel de la prueba gratuita de FTMO: a qué hora se recalcula el límite de pérdida diaria, con fecha y hora (la «verificación explícita» que A-28 llevaba dentro, ADR-0090 §1). Medianoche de España: reloj_dia_riesgo no cambia. Medianoche del servidor: se reabre A-19 y reloj_dia_riesgo vuelve a DEFAULT_AMBIGUOUS (ADR-0027). Opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en corpus/noticias/ como CSV fecha_utc,hora_utc,divisa,evento; stops_cortos.py --noticias <csv> --ventana-min 2 da la medida (MARGEN-LOTE.md §2.b).
 
 Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión 4; ADR-0073 §5); Aleks le pide su exportación; hasta que llegue, los casos dev de agosto siguen saliendo del xlsx; al llegar, entra por su propia rama (libros.yaml solo se amplía) y ADR-0040/A-56 se revisan. Julio ya entró por su xlsx (ADR-0078); su exportación cubre solo del 1 al 17. En la sesión 6 no afirmó que la exportación esté en el Drive (§3.5); Aleks se la vuelve a pedir.
 
@@ -62,8 +62,8 @@ criterio de salida: `docs/state/README.md`.
 - 7. JUNIO, LA GUARDIA Y LOS ONCE DIAS. La guardia de `stable/F14-cobertura` saca junio del universo de un…
 - 8. EL BRIEF PARA ABRIR LOS 4 `dev` DE SEPTIEMBRE, que es lo unico que se puede abrir de ese material y no se…
 - 9. LA CITA QUE YA TENEMOS CON UN PROBLEMA, y no es una deuda abstracta: RE-DESCARGAR UN MES ROMPE `kit build`…
-- 10. De la demo de FTMO quedan A-28 y el grabador de spread y ticks, F17 (NA:A).
-- 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); A-28 va con A.
+- 10. De la demo de FTMO queda el grabador de spread y ticks, F17.
+- 27. Para Aleks con FTMO: la «maximum capital allocation rule» y el asterisco de «USD/LOT*» (hoja de ruta, A.2); la medida de ADR-0090 §3 casa con leer «commission: 5» como ida y vuelta.
 ## Known Ambiguities
 Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/state/README.md`.
 
@@ -86,7 +86,8 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
 - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción) … (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2; entera en HISTORIA, Technical Debt ACORTADA)
 - El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
-- El modo texto ANSI de MT5 (build 6230) escribe CRLF y el CSV de la ejecución 1 de MedirDemoFTMO tiene LF, sin explicación … (EA-CONEXION.md §0.c; entera en HISTORIA, Technical Debt ACORTADA)
+- El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4); la prueba de FTMO no (tasa de margen de la buy stop 0, ADR-0090 §4). Sin efecto medido en construcción (DEMO-EJECUCIONES-2-3.md §0.f). Se decide antes de R6a.6, que no la porta al EA sin esa decisión.
+- Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») dicen la comisión del perfil de antes de ADR-0090 (2,50 por lado): se corrigen en la rama que vuelva a correr esos guiones (DEMO-EJECUCIONES-2-3.md §3.1).
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) … (EA-CONEXION.md §10; entera en HISTORIA, Technical Debt ACORTADA)
 - La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor: Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome están cerradas en `permissions.deny` de `.claude/settings.json`; `mcp__claude-artifacts__publish_files` (en la nube, `files[].path`) no está ni en `deny` ni en el `matcher` (GUARDIA-G1.md §1.j). Rama propia del carril de guardias: añadirlas al `matcher` con su esquema y llevar sus rutas a `motivo_fichero`, negando la entrada que no se reconozca.
