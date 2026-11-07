@@ -1,0 +1,5 @@
+H viva en la copia simulada? True
+a: []
+b: []
+c: []
+PROJECT_STATE con las lineas del cierre: 22794 bytes; los cuatro tests de test_project_state: ok

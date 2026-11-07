@@ -7,7 +7,7 @@
 trabajo/sello-respaldo-m1
 
 ## Current Feature
-trabajo/sello-respaldo-m1, EN CURSO desde el 2026-11-07 (encargo `docs/encargos/trabajo-sello-respaldo-m1.md`, informe `docs/validation/SELLO-RESPALDO-M1.md`): la marca de _peor_del_minuto (e2) y los eventos del respaldo M1 sellados en el cierre de su vela (H de la Next Action).
+trabajo/sello-respaldo-m1, EN CURSO desde el 2026-11-07 (H de la Next Action; informe docs/validation/SELLO-RESPALDO-M1.md).
 
 ## Stable Main State
 8f43d38 · merge de `trabajo/demo-ejecuciones-2-3` (tag `stable/F38p-demo-ejecuciones-2-3`), sobre `stable/F38o-activar-sesion-06-motor` (4fa0920). Informe docs/validation/DEMO-EJECUCIONES-2-3.md; el registro del cierre, al final de HISTORIA.
