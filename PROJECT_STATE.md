@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/demo-ejecuciones-2-3
+main
 
 ## Current Feature
-trabajo/demo-ejecuciones-2-3 · EN CURSO (abierta el 2026-11-06): ejecuciones 2 y 3 congeladas, ADR-0090, A-28 DECIDIDA y la comision a 2,50 por lado; cierre en curso. Encargo docs/encargos/trabajo-demo-ejecuciones-2-3.md; informe docs/validation/DEMO-EJECUCIONES-2-3.md.
+Ninguna rama abierta. trabajo/demo-ejecuciones-2-3 cerrada en main el 2026-11-06 (stable/F38p-demo-ejecuciones-2-3): las ejecuciones 2 y 3 de la demo congeladas; A-28 DECIDIDA (ADR-0090: 120 y us); la comisión del perfil a 2,50 por lado; ADR-0081 §4 enmendado.
 
 ## Stable Main State
-4fa0920 · merge de `trabajo/activar-sesion-06-motor` (tag `stable/F38o-activar-sesion-06-motor`): la sesión 6 en el motor. Sobre `stable/F38n-activar-sesion-06` (df0e672). Informe docs/validation/ACTIVAR-SESION-06-MOTOR.md; el registro del cierre, al final de HISTORIA.
+8f43d38 · merge de `trabajo/demo-ejecuciones-2-3` (tag `stable/F38p-demo-ejecuciones-2-3`), sobre `stable/F38o-activar-sesion-06-motor` (4fa0920). Informe docs/validation/DEMO-EJECUCIONES-2-3.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-4fa0920 · merge: trabajo/activar-sesion-06-motor, la sesión 6 en el motor (S-2 ADR-0089, S-4 en M15, A-44 RESUELTA) · tag stable/F38o-activar-sesion-06-motor
+8f43d38 · merge: trabajo/demo-ejecuciones-2-3, las ejecuciones 2 y 3 de la demo congeladas, A-28 DECIDIDA (ADR-0090: 120 y us), la comisión a 2,50 por lado y ADR-0081 §4 enmendado · tag stable/F38p-demo-ejecuciones-2-3
 
 ## Tests Currently Passing
 1861 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
