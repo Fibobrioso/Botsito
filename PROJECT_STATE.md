@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/metodo-fidelidad-rentabilidad
 
 ## Current Feature
-Ninguna rama abierta. trabajo/sello-respaldo-m1 cerrada en main el 2026-11-07 (stable/F38q-sello-respaldo-m1): (e2) y el sello del respaldo M1 en el último milisegundo de su vela (ADR-0091); en once días de desarrollo, 2 operaciones nuevas del bot.
+trabajo/metodo-fidelidad-rentabilidad, EN CURSO desde el 2026-11-07 (R de la Next Action; R3.7 de la hoja de ruta; encargo docs/encargos/trabajo-metodo-fidelidad-rentabilidad.md; informe docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md).
 
 ## Stable Main State
 18f548e · merge de `trabajo/sello-respaldo-m1` (tag `stable/F38q-sello-respaldo-m1`), sobre `stable/F38p-demo-ejecuciones-2-3` (8f43d38). Informe docs/validation/SELLO-RESPALDO-M1.md; el registro del cierre, al final de HISTORIA.
@@ -153,8 +153,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 59 (2026-11-07).
+— ninguna desde el Archivo 60 (2026-11-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 59 (2026-11-07).
+— ninguna desde el Archivo 60 (2026-11-07).

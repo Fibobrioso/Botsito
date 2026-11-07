@@ -1,0 +1,42 @@
+rama: trabajo/metodo-fidelidad-rentabilidad
+riesgo: medio  # rama de metodo: ADR-0092 (enmienda ADR-0043 y ADR-0070), criterio puro fuera del motor en cases/ y guiones de medida; el motor no cambia (en engine/ solo lo que autorice la respuesta del consultor a la PARADA, y entonces se amplia en un commit)
+artefacto: docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md
+tramo: "R3 · Una corrida del arnés sobre toda la construcción"
+rutas_permitidas:
+  - docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md
+  - docs/validation/anexos/METODO-FIDELIDAD-RENTABILIDAD/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/adr/0043-criterio-de-fidelidad-en-desarrollo.md
+  - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
+  - docs/adr/0092-*.md
+  - docs/adr/README.md
+  - docs/plan/MASTER_PLAN.md
+  - docs/validation/PREREGISTRO.md
+  - knowledge/cases/criterio_fidelidad.yaml
+  - src/botsito/cases/criterio_fidelidad.py
+  - tests/
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/botsito/engine/
+  - knowledge/spec/
+  - knowledge/cuentas/
+  - knowledge/simulador/
+  - knowledge/corpus/
+  - knowledge/evidence/
+  - Makefile
+  - .claude/
+  - tools/mql5/
+  - corpus/
+  - data/manifests/
+  - docs/adr/0000-template.md
+  - docs/validation/RESPALDO-M1.md
+  - docs/validation/anexos/RESPALDO-M1/
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION/
+  - docs/validation/SELLO-RESPALDO-M1.md
+comprobaciones:
+  - uv run botsito state check
+  - uv run python scripts/contrato_rama.py
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - make check > make-check.log 2>&1
