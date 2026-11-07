@@ -88,8 +88,8 @@ operar**. No se decide aquí. Ya hay un caso real: la primera operación del tra
 > reescribe el cuerpo).** Con 1,00 lote, las ejecuciones 2 y 3 cobraron −2,50 al abrir y −2,50 al
 > cerrar (filas 54 y 55 de las dos): 2,50 USD por lote y lado, proporcional al volumen (los 0,03 de
 > la 1 con 0,01 lotes son 0,025 redondeado). El 5 por lado de este punto era el doble de lo medido;
-> ADR-0090 lo fija en 2,50 (el cambio del perfil va con la respuesta a la decisión 3 de
-> DEMO-EJECUCIONES-2-3.md).
+> ADR-0090 lo fija en 2,50, y con él el simulador deja de suspender cuentas que con la tarifa
+> medida no se suspenden (ADR-0090 §3).
 
 - **Medido** (filas 53 y 54): −0,03 USD en la apertura y −0,03 en el cierre de una compra de 0,01
   lotes.

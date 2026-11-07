@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.6.2` · hash `f082aa3ce356…`
+`spec_version 18.6.3` · hash `0557a9dbe945…`
 
 112 en total: 102 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -179,7 +179,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 
 ### `anclaje_h4`
 
-donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirmo broker_dst en la demo de FundedNext. En FTMO, A-28 midio el reloj (120 y `us`, ADR-0090) y con el la medianoche del servidor cae a las 17:00 de Nueva York todos los dias de 2026 y 2027; eso es una DERIVACION, no la verificacion contra la rejilla H4 real que pide ADR-0027 §4, que sigue SIN HACER: la mide R6a, con el EA escribiendo en el journal de la demo la hora de apertura de las velas H4 (iTime), antes de R6a.7 y de F33. Si no coincide se abre ambiguedad y este valor no se toca por su cuenta (ADR-0027, recuadro de ADR-0090). El trader lo ve como las 23:00 en su pantalla, que va en Europe/Madrid (huso_grafico), y es cierto 337 dias al año; los otros 28 -en 2026, del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017). DESDE EL 2026-10-06 (ADR-0069, A-42 RESUELTA) las dos sesiones del trader son las velas de ESTA rejilla que empiezan en ancla + 8 h y ancla + 12 h: en su grafico, 07-11 y 11-15 esos 337 dias y 06-10 y 10-14 los otros 28
+donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirmo broker_dst en la demo de FundedNext. En FTMO, A-28 midio el reloj (120 y `us`, ADR-0090) y con el la medianoche del servidor cae a las 17:00 de Nueva York todos los dias de 2026 y 2027; eso es una DERIVACION, no la verificacion contra la rejilla H4 real que pide ADR-0027 §4, que sigue SIN HACER: la mide R6a.8 («La rejilla H4 real en el journal»), con el EA escribiendo en el journal de la demo la hora de apertura de las velas H4 (iTime), antes de R6a.7 y de F33. Si no coincide se abre ambiguedad y este valor no se toca por su cuenta (ADR-0027, recuadro de ADR-0090). El trader lo ve como las 23:00 en su pantalla, que va en Europe/Madrid (huso_grafico), y es cierto 337 dias al año; los otros 28 -en 2026, del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017). DESDE EL 2026-10-06 (ADR-0069, A-42 RESUELTA) las dos sesiones del trader son las velas de ESTA rejilla que empiezan en ancla + 8 h y ancla + 12 h: en su grafico, 07-11 y 11-15 esos 337 dias y 06-10 y 10-14 los otros 28
 
 ### `base_calculo_objetivo`
 
@@ -225,7 +225,7 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `broker_dst`
 
-con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario. MEDIDO observando la transicion (ADR-0090, A-28 DECIDIDA): el 2026-10-29, con Europa ya en horario de invierno (desde el 25) y Nueva York todavia en el de verano (hasta el 1-nov), el desfase fue 180 minutos, que con `eu` habria sido 120; el 2026-10-09 (180) y el 2026-11-05 (120) concuerdan. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil. Con 120 y `us`, la medianoche del servidor cae a las 17:00 de Nueva York todos los dias (anclaje_h4): es una derivacion, y la rejilla real la mide R6a (ADR-0090 §2). Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
+con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario. MEDIDO observando la transicion (ADR-0090, A-28 DECIDIDA): el 2026-10-29, con Europa ya en horario de invierno (desde el 25) y Nueva York todavia en el de verano (hasta el 1-nov), el desfase fue 180 minutos, que con `eu` habria sido 120; el 2026-10-09 (180) y el 2026-11-05 (120) concuerdan. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil. Con 120 y `us`, la medianoche del servidor cae a las 17:00 de Nueva York todos los dias (anclaje_h4): es una derivacion, y la rejilla real la mide R6a.8 (ADR-0090 §2). Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 
 Opciones: `us`, `eu`, `ninguno`.
 

@@ -384,17 +384,20 @@ parametros:
     tipo: decimal
     unidad: USD por lote
     descripcion: >-
-      R12: API «commission: 5, commissionType: flat_USD»; la web lo muestra como «USD/LOT*». Se
-      cobra en cada lado (firma_comision_por_lado), asi que este perfil carga 5 por lado. La demo
-      de FTMO (2026-10-09, ADR-0071 §3) EXCLUYE 5 por lado como hecho: cobro 0,03 por lado con
-      0,01 lotes, de una tarifa entre 2,01 y 3,99 segun el redondeo. El valor no cambia: queda
-      como supuesto CONSERVADOR, mas caro que cualquier tarifa compatible, hasta medirla con 1,00
-      lote en la ejecucion 2
+      R12: MEDIDA en la prueba gratuita de FTMO con 1,00 lote: -2,50 USD al abrir y -2,50 al cerrar
+      en las ejecuciones 2 (2026-10-29) y 3 (2026-11-05) de MedirDemoFTMO (filas 54 y 55 de las dos,
+      ADR-0090 §3); los -0,03 por lado de la ejecucion 1 con 0,01 lotes son 0,025 redondeado al
+      centimo. Se cobra en cada lado (firma_comision_por_lado). La API dice «commission: 5,
+      commissionType: flat_USD» y la web «USD/LOT*»: la medida casa con leer ese 5 como el lote de ida
+      y vuelta, la mitad en cada lado, que es lo que dijo FTMO el 2026-09-29; el asterisco sigue
+      preguntado (A.2). Hasta el 2026-11-06 el perfil cargaba 5 por lado, el supuesto conservador de
+      ADR-0071 §3: el doble de lo medido, y con el el simulador suspendia cuentas que con la tarifa
+      medida no se suspenden (ADR-0090 §3)
     estado: CONFIRMED
-    valor: "5"
+    valor: "2.50"
     minimo: "0"
     consumido_por: [F24]
-    fuente: {tipo: decision, id: ADR-0050}
+    fuente: {tipo: decision, id: ADR-0090}
   - nombre: firma_comision_por_lado
     categoria: prop_firm
     tipo: booleano
@@ -404,8 +407,8 @@ parametros:
       2026-10-09, -0,03 USD en la apertura y -0,03 en el cierre de 0,01 lotes (filas 53 y 54 del
       CSV de la ejecucion 1, ADR-0071 §3), como dijo FTMO el 2026-09-29 (50 % al abrir y 50 % al
       cerrar en MT5). Hasta entonces era un supuesto conservador del consultor (2026-09-25); hasta
-      el 2026-09-26, UNKNOWN. La tarifa por lote NO la fija esa medida (firma_comision_usd_por_lote).
-      Lo consume el broker simulado
+      el 2026-09-26, UNKNOWN. La tarifa por lote NO la fija esa medida: la fijaron las ejecuciones 2
+      y 3 con 1,00 lote (firma_comision_usd_por_lote, ADR-0090). Lo consume el broker simulado
     estado: CONFIRMED
     valor: true
     consumido_por: [F24]

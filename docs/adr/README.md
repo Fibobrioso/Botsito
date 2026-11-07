@@ -31,7 +31,7 @@ Una decision por fichero, `NNNN-titulo.md`, con el formato de `0000-template.md`
 | 0024 | La ventana no se amplia a Nueva York (A-15), y la referencia para medir es Dukascopy (A-23; A-16 se parte y conserva la medicion) | ACTIVE |
 | 0025 | El reparto de mayo no se toca: 6 dias dev y 13 de holdout (6/4/3), y junio sale del universo de F14 | ACTIVE |
 | 0026 | La prop firm es FTMO, reto 2-Step, tipo de cuenta Swing | ACTIVE |
-| 0027 | Los relojes con FTMO: el dia de riesgo es el dia civil del trader | ACTIVE (recuadro de ADR-0090 en §4: la rejilla H4 real la mide R6a) |
+| 0027 | Los relojes con FTMO: el dia de riesgo es el dia civil del trader | ACTIVE (recuadro de ADR-0090 en §4: la rejilla H4 real la mide R6a.8) |
 | 0028 | El reloj del motor: tres fases, y el riesgo va por tick | ACTIVE (con nota del 2026-09-16: el punto 5 aplicado y el 4 precisado por ADR-0032) |
 | 0029 | Lado del precio y redondeo de niveles | ACTIVE |
 | 0030 | El motor interpreta la `forma`; las primitivas se escriben a mano | ACTIVE |

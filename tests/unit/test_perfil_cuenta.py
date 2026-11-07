@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import re
 from datetime import UTC, date, datetime, time, timedelta
+from decimal import Decimal
 from pathlib import Path
 
 import pytest
@@ -201,16 +202,18 @@ def test_un_fichero_que_no_pasa_el_registro_no_es_un_perfil(tmp_path: Path) -> N
         cargar_perfil(ruta)
 
 
-def test_la_comision_por_lado_esta_medida_y_su_importe_sigue_conservador(
-    ftmo: PerfilCuenta,
-) -> None:
+def test_la_comision_por_lado_y_su_importe_estan_medidos(ftmo: PerfilCuenta) -> None:
     """Hasta el 2026-10-09 se cobraba en CADA lado por decision del consultor (2026-09-25), como
-    supuesto conservador. Desde ADR-0071 esta MEDIDO en la demo de FTMO (filas 53 y 54): sigue en
-    true, cita su ADR, y el importe por lote (5) no cambia: es el supuesto conservador."""
+    supuesto conservador. Desde ADR-0071 el cobro por lado esta MEDIDO en la demo de FTMO (filas 53
+    y 54 de la ejecucion 1). Desde ADR-0090 (2026-11-06) tambien el importe: 2,50 USD por lote y
+    lado, medido con 1,00 lote en las ejecuciones 2 y 3 (filas 54 y 55); el 5 de antes era el
+    supuesto conservador, el doble de lo medido."""
     assert ftmo.booleano("firma_comision_por_lado") is True
     p = ftmo.registro.parametros["firma_comision_por_lado"]
     assert p.fuente is not None and p.fuente.id == "ADR-0071"
     assert "MEDIDO" in p.descripcion and "53 y 54" in " ".join(p.descripcion.split())
-    assert ftmo.decimal("firma_comision_usd_por_lote") == 5
+    assert ftmo.decimal("firma_comision_usd_por_lote") == Decimal("2.50")
     importe = ftmo.registro.parametros["firma_comision_usd_por_lote"]
-    assert "CONSERVADOR" in importe.descripcion
+    assert importe.estado.name == "CONFIRMED"
+    assert importe.fuente is not None and importe.fuente.id == "ADR-0090"
+    assert "54 y 55" in " ".join(importe.descripcion.split())

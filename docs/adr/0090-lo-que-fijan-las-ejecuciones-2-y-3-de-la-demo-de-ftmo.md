@@ -87,9 +87,10 @@ a las 17:00 de Nueva York **todos los días**. Es una derivación del modelo: co
 calendario de EE. UU., el servidor es Nueva York + 7 h siempre, así que no podía salir otra cosa. No
 es la medida que pide ADR-0027 §4 -«se verifica contra la rejilla H4 real del servidor de FTMO»-,
 porque ninguna ejecución lee una vela. `anclaje_h4` no cambia de valor ni de estado. **La rejilla
-real la mide la capa de R6a con el EA escribiendo en el journal de la demo la hora de apertura de
-las velas H4 (`iTime`), antes de R6a.7 y de F33** (recuadro en ADR-0027 §4, que enmienda «en la
-misma medición»).
+real la mide R6a.8, «La rejilla H4 real en el journal»** (entrada nueva de la hoja de ruta, que
+depende de R6a.1 y de la que dependen R6a.7 y F33): el EA escribe en el journal de la demo la hora
+de apertura de las velas H4 (`iTime`). Recuadro en ADR-0027 §4, que enmienda «en la misma
+medición».
 
 ### 3. La comisión: 2,50 USD por lote y lado
 
@@ -103,9 +104,14 @@ misma medición»).
 - **Una consecuencia medida antes de cambiarlo** (informe §0.e): la cuenta del 7 de agosto de 2026
   (construcción, cuatro operaciones del trader repetidas con el tope de volumen subido a 100 y sin
   margen) se suspendía por pérdida diaria con 5 (peor equidad 94.485,53, 514,47 bajo el límite de
-  95.000) y con 2,50 no (95.515,78, 515,78 por encima). La regresión que fija ese corte
-  (`tests/regression/test_cuenta_7_de_agosto.py`) no fija un importe ni un saldo, así que el cambio
-  del perfil y sus tests espera a la respuesta del consultor (informe, decisión 3).
+  95.000) y con 2,50 no (95.515,78, 515,78 por encima). **Con 5 USD por lado el simulador
+  suspendía cuentas que con la tarifa medida no se suspenden: las corridas anteriores a esta rama
+  eran pesimistas en las suspensiones, y la re-corrida que cuenta (ADR-0070 §3) es la primera con
+  la tarifa medida.** La regresión del corte (`tests/regression/test_cuenta_7_de_agosto.py`) declara
+  su tarifa, `COMISION_DE_LA_REGRESION` = 5, como ya declaraba su volumen máximo, para que el corte
+  en el tick del pico siga teniendo un caso real; y un test nuevo del mismo fichero fija que con el
+  perfil real la cuenta de ese día queda EN_CURSO con la peor equidad en 95.515,78 (respuesta del
+  consultor a la PARADA, punto 3).
 - **Cómo se lee el «commission: 5» de la API** (R12, FTMO-REGLAS.md): 5 USD por lote **de ida y
   vuelta**, la mitad en cada lado, que es lo que FTMO dijo el 2026-09-29 («50 % al abrir, 50 % al
   cerrar»). Es una lectura compatible con la medida, no una respuesta de FTMO: el asterisco de
@@ -249,7 +255,7 @@ tres medidas dejan una sola opción. La comisión es un importe medido dos veces
 - La 1: la medida desmiente lo que §4 da por hecho y lo que modela el bróker simulado; una nota lo
   dejaría escrito como verdad.
 - La 2: un valor conservador sin medir tenía sentido sin medida; con ella, duplica el coste.
-- La 3: la rejilla no es la pregunta de A-28, y medirla es trabajo del EA (R6a).
+- La 3: la rejilla no es la pregunta de A-28, y medirla es trabajo del EA (R6a.8).
 
 ## Impacto
 
@@ -258,9 +264,10 @@ tres medidas dejan una sola opción. La comisión es un importe medido dos veces
   frases que A-28 dejaba en futuro; `anclaje_h4` y `reloj_dia_riesgo` sin cambio de valor ni de
   estado, con su descripción reescrita. `ambiguedades.yaml`: A-28 DECIDIDA. `spec_version` y
   `docs/spec/` regenerados.
-- `knowledge/cuentas/ftmo-2step-swing-100k.yaml`: `firma_comision_usd_por_lote` 2.50 (tras la
-  decisión 3 del informe); el yaml de cierres, su cabecera.
-- Tests: la comisión, `test_kit` y uno nuevo para el `dataset_id` de los manifiestos de la demo.
+- `knowledge/cuentas/ftmo-2step-swing-100k.yaml`: `firma_comision_usd_por_lote` 2.50; la
+  descripción de los dos swaps; el yaml de cierres, su cabecera.
+- Tests: la comisión, `test_kit`, uno nuevo para el `dataset_id` de los manifiestos de la demo, y la
+  regresión del 7 de agosto con su tarifa declarada más el test de la tarifa medida.
 - Recuadros: ADR-0081 §4 (enmienda), ADR-0071 §3 y §4, ADR-0057 §2, ADR-0027 §4, ADR-0068 (el
   huso del calendario) y ADR-0082 (A.1); y DEMO-EJECUCION-1.md y EA-CONEXION.md §0.c (el LF).
 - Ningún cambio en `src/`, en `tools/mql5/` ni en `scripts/leer_demo_ftmo.py`.

@@ -16,7 +16,7 @@ trabajo/demo-ejecuciones-2-3 · EN CURSO, en PARADA (abierta el 2026-11-06): eje
 4fa0920 · merge: trabajo/activar-sesion-06-motor, la sesión 6 en el motor (S-2 ADR-0089, S-4 en M15, A-44 RESUELTA) · tag stable/F38o-activar-sesion-06-motor
 
 ## Tests Currently Passing
-1860 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1861 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
