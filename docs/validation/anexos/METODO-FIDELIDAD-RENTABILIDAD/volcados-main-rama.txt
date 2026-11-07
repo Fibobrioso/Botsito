@@ -1,0 +1,14 @@
+fichero | sha256 main | sha256 rama | sha256 de la rama hasta la seccion nueva | igual a main
+volcado-hueco.txt | 5a3878781676f7a6 | 1c59d0d6308f3e13 | 5a3878781676f7a6 | True
+volcado-stop.txt | 02d0872ac4678050 | 00066d7f443f4c63 | 02d0872ac4678050 | True
+volcado-viva.txt | 89cb70b85dcfafc0 | 752c15450648c7a6 | 89cb70b85dcfafc0 | True
+
+lo que la rama anade en volcado-stop.txt:
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.09978 | stop | salto_el_stop | 25.90 | -440.30 | 129.50 | 0.00 | -569.80 | 414.40 | -1.375
+posiciones: 1; PnL neto total (USD): -569.80
+
+sin el criterio de ADR-0092 (corrida sin criterio_fidelidad.yaml): ni cascada ni rentabilidad
+

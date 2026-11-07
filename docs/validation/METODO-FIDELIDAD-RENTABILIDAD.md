@@ -741,6 +741,105 @@ Antes de escribir nada, medí lo que la respuesta afirma del repo (CLAUDE.md, «
 - La respuesta del consultor, copiada tal cual al final del encargo y de este informe, va en este
   mismo commit y no en uno propio: así cada `make check` (unos 21 minutos) sella un punto.
 
+### 1.2 Punto 2: el yaml, las funciones puras y la salida del arnés
+
+**`knowledge/cases/criterio_fidelidad.yaml`** (ADR-0002): `tolerancia_stop_puntos: 3` y el bloque
+`rentabilidad` con los trece campos de la respuesta, con los valores de la respuesta y ninguno más
+(`fase: fondeada`, `n_minimo: 100`, `esperanza_minima_r: "0.10"`, `percentil_remuestreo: 5`,
+`replicas_remuestreo: 10000`, `semilla_remuestreo: 20261107`, `perdida_diaria_max: "0.03"`,
+`perdida_total_max: "0.06"`, `deslizamiento: pendiente_F17`, `percentil_deslizamiento_f17: 90`,
+`meses` de 2025-06 a 2025-11, `extension` de 2025-05 a 2025-01 y `vistos_rentabilidad: []`); la
+cabecera cita la NOTA de ADR-0043 «Cambios». Ningún campo existente cambia.
+
+**`src/botsito/cases/criterio_fidelidad.py`**, todo puro:
+- la carga: `cargar_criterio` exige `tolerancia_stop_puntos` (entero positivo, como la de entrada) y
+  el bloque entero (`_rentabilidad`). Validadores nuevos, porque `_fraccion` solo admite 0..1 y
+  `_entero` rechaza textos: `_decimal` (un número escrito como TEXTO, para que `0.10` no se lea en
+  coma flotante), `_percentil` (1 a 99), `_meses_validos` (AAAA-MM, sin repetir); y tres
+  comprobaciones de conjunto: `meses` no vacío, ningún mes a la vez en `meses` y `extension`, y
+  ninguno de construcción ni de medida;
+- `Operacion` gana `stop` opcional (None en el bot); `Criterio` gana `tolerancia_stop_puntos` y
+  `rentabilidad`, con None por defecto solo para los criterios sintéticos de los tests de antes
+  (ocho construyen `Criterio` por posición; `cargar_criterio` los exige);
+- la cascada (ADR-0092 §2): `OrdenCriterio`, `cascada_por_criterios` y `cascada_por_mes`, con los
+  escalones `SIN_ORDEN`, `ENTRADA_FUERA`, `STOP_FUERA`, `SIN_STOP` (un caso sin stop; no hay
+  ninguno en construcción), `NO_LLENADA` («en el nivel, no llenada»), `LLENADA_FUERA` y `COMPLETA`;
+- la rentabilidad (§3): `PosicionCerrada`, `r_neto`, `esperanza_r`, `percentil_por_dias` (con
+  reemplazo, tantos días como los corridos, con o sin operaciones; percentil de rango inferior;
+  determinista por la semilla), `perdida_diaria_maxima` y `equity_minima_del_tramo` (sobre la curva
+  de equity), `medir_rentabilidad` y `veredicto_rentabilidad` («insuficiente» sin N, «no pasa» con
+  un motivo por letra, «pendiente de F17» con todo cumplido mientras el deslizamiento lo esté);
+- el deslizamiento (§4): `con_deslizamiento`, `curva_con_deslizamiento`, `punto_de_equilibrio` y
+  `veredicto_con_f17` (la mediana restada a cada llenado afectado, b) a e) otra vez sobre la curva
+  recompuesta, y la esperanza con el percentil 90 > 0).
+
+**`src/botsito/engine/arnes.py` y `cableado.py`, SOLO salida** (punto 10):
+- `arnes._operacion` lleva el stop del caso (los 75 casos dev de construcción con operaciones lo
+  traen: `grep -l 'stop:' knowledge/cases/dev/*.yaml | wc -l` = 75 de 75);
+- `MotorCableado` gana `operaciones_trader` y `criterio`, que rellena `construir_motor_cableado`
+  con lo que ya recibía (los días y el criterio). Así la cascada tiene las operaciones del trader
+  y las órdenes del bot sin tocar `cli.py`, que no está en el contrato. Ninguna decisión los lee;
+- una sección nueva AL FINAL del informe de la simulación, «## El metodo de ADR-0092 (solo
+  salida…)»: «### Posiciones» (una tabla nueva y no siete columnas más en «### Ordenes», que ya
+  lleva diecisiete: lo dice el punto 10, «lo dices»), «### Fidelidad por criterios» (la cascada por
+  mes y en total, y las órdenes sin trader) y «### Rentabilidad» (a) a f), el veredicto y el punto
+  de equilibrio), marcada DIAGNÓSTICO sobre construcción. El PnL bruto usa la misma función que la
+  cuenta (`cuenta.pnl`); la comisión, como la carga `_a_la_cuenta`; el riesgo, como la anotación
+  de la orden (`primitivas_broker._margen_al_colocar`: lote × distancia / escala × contrato).
+
+**Tests** (sintéticos): `tests/unit/test_criterio_campos_adr0092.py` (26: el yaml real carga; sin
+cada campo nuevo no carga; valores mal formados no cargan), que importa SOLO lo que ya existía en
+`main` para que allí rompa por lo que mide; y `tests/unit/test_metodo_adr0092.py` (30: cada escalón
+de la cascada, el desempate, las órdenes sin trader, el emparejamiento por operación igual con y sin
+stop, el stop en `arnes._operacion`, R neto, remuestreo, drawdown, el veredicto por letra, el
+deslizamiento y F17, y la salida del motor sobre el día sintético de `test_cableado.py`: la sección
+va al final y lo de antes no cambia; la tabla de posiciones cuadra con la cuenta, `neto ==
+saldo − capital`; sin criterio lo dice y con él saca cascada y rentabilidad). Los tests de
+antes que tocan el criterio, el arnés y el cableado siguen en verde (`test_criterio_fidelidad`,
+`test_umbral_mayo`, `test_diferencias_por_operacion`, `test_cableado`, `test_arnes_motor`,
+`test_huecos_motor`, `test_visor`, `test_simulacion`, `test_cuenta_7_de_agosto`,
+`test_selector_orden_stop`, `test_ensayo_marzo` y `tests/contract/`), y `lint-imports`: 4 kept.
+`Tests Currently Passing` de PROJECT_STATE pasa de 1880 a 1903 funciones de test (`state check`).
+
+**Regresión contra `main`** (skill `comparar-con-main`), sin ninguna corrida del arnés:
+- estado del repo antes y después: `git branch --list` = `main` y la rama; 151 tags; `origin` solo
+  `refs/heads/main`; `git worktree list` sin clones al acabar. En `C:/cm` hay restos de ramas
+  anteriores que no son de esta y no se tocaron;
+- clon `C:/cm/mf` (`git worktree add --detach … main`, e01e28c) con los dos ficheros de test de la
+  rama copiados dentro: `test_criterio_campos_adr0092.py` da **1 passed y 25 failed, todos «DID NOT
+  RAISE CriterioError»** (el yaml de `main`, sin los campos, carga);
+  `test_metodo_adr0092.py` **no se colecciona**: `ImportError: cannot import name 'COMPLETA'`.
+  Salidas en `anexos/METODO-FIDELIDAD-RENTABILIDAD/tests-campos-con-main.txt` y
+  `tests-metodo-con-main.txt`. Ningún test lee `data/`, así que el clon no llevó `settings.local.toml`;
+- **la salida existente, byte a byte**: el lado «rama» no puede ser HEAD porque el punto 2 aún no
+  está commiteado (la skill pide la rama commiteada; desvío declarado): es un segundo clon
+  `C:/cm/rf` (`--detach HEAD`, 56eb235) con los cuatro ficheros cambiados del punto 2 copiados. En
+  los dos, el mismo volcado del informe de la simulación sobre el día sintético con tres rutas
+  (stop, hueco y viva). El volcado es AUTOCONTENIDO (`montar_volcado.py` copia las líneas 1-225 de
+  `test_cableado.py`, sin su import de `tests.unit`), porque la guardia niega ejecutar en un clon un
+  test que no está en el repo y carga `tests.unit` («no se pudo resolver el modulo
+  `tests.unit.test_cableado`»); es lo que propone su mensaje, no un rodeo. Resultado
+  (`comparar_volcados.py`, `volcados-main-rama.txt`):
+
+  | fichero | sha256 main | sha256 rama | sha256 de la rama hasta la sección nueva | igual |
+  |---|---|---|---|---|
+  | volcado-hueco.txt | 5a3878781676f7a6 | 1c59d0d6308f3e13 | 5a3878781676f7a6 | sí |
+  | volcado-stop.txt | 02d0872ac4678050 | 00066d7f443f4c63 | 02d0872ac4678050 | sí |
+  | volcado-viva.txt | 89cb70b85dcfafc0 | 752c15450648c7a6 | 89cb70b85dcfafc0 | sí |
+
+  Lo único que cambia es la sección nueva al final; sin criterio en el motor sintético, dice «sin
+  el criterio de ADR-0092». La fila de la ruta stop: compra límite de 25,90 lotes, bruto −440,30,
+  comisión 129,50 (2,50 por lote y lado), neto −569,80, riesgo 414,40, R neto −1,375. Son cifras
+  de un día SINTÉTICO de 2030, no del bot sobre construcción;
+- los dos clones, quitados con `git worktree remove --force` (llevaban los tests copiados y los
+  volcados, sin seguir) y `git worktree prune`. Las salidas, pasadas a LF (salían con CRLF).
+
+**Lo que queda del punto 11** (sesgo 3): la cifra sin las operaciones del bot de break even en los
+libros sin vídeo necesita saber qué días son de un libro sin vídeo, y la respuesta no nombra dónde
+vive esa lista (ningún campo del yaml la lleva). No la invento en `src/` ni añado un campo que la
+respuesta no lista: PARADA 2, punto 1. La re-corrida va después de `trabajo/cuenta-por-mes`, así que
+no bloquea nada de esta rama.
+
 ## PARADA 2 · La NOTA de PREREGISTRO.md no se puede commitear con `test_puerta_holdout` en verde
 
 Lo medido: arriba, en 1.1. El texto de la NOTA que pedía el punto 12, tal como lo escribí (no está
@@ -766,11 +865,22 @@ en el repo):
    está en ADR-0092 §13, y (b) y (c) aflojan una guardia del holdout para meter una nota. Coste de
    (a): hasta G, PREREGISTRO.md no nombra ADR-0092. Coste de (b): el test deja de distinguir «vacío»
    de «sin commitear» en el repo real.
+1. Dónde vive la lista de los libros sin vídeo del punto 11 (enero, agosto y abril salvo el 29;
+   julio, provisional como grabado hasta T). Opciones: (a) un bloque nuevo en
+   `criterio_fidelidad.yaml`, `material_sin_video: {meses: ["2026-01", "2026-04", "2026-08"],
+   dias_con_video: ["2026-04-29"], provisionales_con_video: ["2026-07"], fuente:
+   ACTIVAR-SESION-05.md §0.b.7}`, y la línea en la salida del arnés en esta rama; (b) lo mismo, pero
+   la línea y el bloque los hace `trabajo/cuenta-por-mes`, que va antes de la re-corrida; (c) un
+   campo por libro en `knowledge/corpus/libros.yaml`, que es solo-añadir y no lo admite para los
+   libros ya commiteados. Recomiendo (a): la clasificación ya está medida, y la re-corrida la
+   necesita escrita antes; la función pura que filtra no hace falta escribirla aparte: es `medir`
+   sobre las operaciones del bot sin las de break even de esos días. Coste de (b): una rama de motor
+   corta carga con algo que no es del motor. Coste de (c): no se puede.
 
 Sigo con lo demás de la fase 1 mientras tanto, como dice el encargo.
 
 ## Estado
 
-FASE 1 EN CURSO, con la PARADA 2 abierta (la NOTA de PREREGISTRO.md, que no bloquea lo demás):
-punto 1 hecho; faltan el 2 (yaml, funciones puras y salida del arnés), el 3 (A-16
-y los recuentos) y el 4 (el informe y las líneas del cierre); después, el revisor.
+FASE 1 EN CURSO, con la PARADA 2 abierta (la NOTA de PREREGISTRO.md y la lista del punto 11, que no
+bloquean lo demás): puntos 1 y 2 hechos; faltan el 3 (A-16 y los recuentos) y el 4 (el informe y
+las líneas del cierre); después, el revisor.

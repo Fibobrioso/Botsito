@@ -16,7 +16,7 @@ trabajo/metodo-fidelidad-rentabilidad, EN CURSO desde el 2026-11-07 (R de la Nex
 18f548e · merge: trabajo/sello-respaldo-m1, (e2) y el sello del respaldo M1 en el ultimo milisegundo de su vela (ADR-0091); en once dias de desarrollo, 2 operaciones nuevas del bot · tag stable/F38q-sello-respaldo-m1
 
 ## Tests Currently Passing
-1880 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1903 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

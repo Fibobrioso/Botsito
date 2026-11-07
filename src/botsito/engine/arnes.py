@@ -122,12 +122,17 @@ def validar_meses(criterio: Criterio, meses: Sequence[str]) -> tuple[str, ...]:
 
 
 def _operacion(dia: str, op: Mapping[str, Any]) -> Operacion:
+    # el stop del caso, para la fidelidad por criterios (ADR-0092 §2; respuesta del consultor a la
+    # PARADA de trabajo/metodo-fidelidad-rentabilidad, punto 10): el emparejamiento por operacion
+    # de ADR-0043 no lo mira
+    stop = op.get("stop")
     return Operacion(
         dia=dia,
         sesion=str(op["sesion"]),
         direccion=str(op["direccion"]),
         instante=datetime.fromisoformat(str(op["instante_utc"])),
         entrada=Decimal(str(op["entrada"])),
+        stop=Decimal(str(stop)) if stop is not None else None,
     )
 
 
