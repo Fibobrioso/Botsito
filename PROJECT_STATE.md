@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/sello-respaldo-m1
+main
 
 ## Current Feature
-trabajo/sello-respaldo-m1, EN CURSO desde el 2026-11-07 (H de la Next Action; informe docs/validation/SELLO-RESPALDO-M1.md).
+Ninguna rama abierta. trabajo/sello-respaldo-m1 cerrada en main el 2026-11-07 (stable/F38q-sello-respaldo-m1): (e2) y el sello del respaldo M1 en el último milisegundo de su vela (ADR-0091); en once días de desarrollo, 2 operaciones nuevas del bot.
 
 ## Stable Main State
-8f43d38 · merge de `trabajo/demo-ejecuciones-2-3` (tag `stable/F38p-demo-ejecuciones-2-3`), sobre `stable/F38o-activar-sesion-06-motor` (4fa0920). Informe docs/validation/DEMO-EJECUCIONES-2-3.md; el registro del cierre, al final de HISTORIA.
+18f548e · merge de `trabajo/sello-respaldo-m1` (tag `stable/F38q-sello-respaldo-m1`), sobre `stable/F38p-demo-ejecuciones-2-3` (8f43d38). Informe docs/validation/SELLO-RESPALDO-M1.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-8f43d38 · merge: trabajo/demo-ejecuciones-2-3, las ejecuciones 2 y 3 de la demo congeladas, A-28 DECIDIDA (ADR-0090: 120 y us), la comisión a 2,50 por lado y ADR-0081 §4 enmendado · tag stable/F38p-demo-ejecuciones-2-3
+18f548e · merge: trabajo/sello-respaldo-m1, (e2) y el sello del respaldo M1 en el ultimo milisegundo de su vela (ADR-0091); en once dias de desarrollo, 2 operaciones nuevas del bot · tag stable/F38q-sello-respaldo-m1
 
 ## Tests Currently Passing
 1880 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
