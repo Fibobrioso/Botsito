@@ -1,0 +1,127 @@
+FFFFF......FFFF.....F.......FF...........F..F........FF.F.F.FF..         [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert [] == [(18946945199...respaldo_m1')]
+      
+      Right contains one more item: (1894694519999, 'llenada', 'v', 'respaldo_m1')
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:122: AssertionError: assert [] == [(18946945199...respaldo_m1')]
+E   AssertionError: assert 'cancelada' == 'llenada'
+      
+      - llenada
+      + cancelada
+C:\cm\m\tests\unit\test_sello_respaldo.py:147: AssertionError: assert 'cancelada' == 'llenada'
+E   AssertionError: assert 'cancelada' == 'llenada'
+      
+      - llenada
+      + cancelada
+C:\cm\m\tests\unit\test_sello_respaldo.py:168: AssertionError: assert 'cancelada' == 'llenada'
+E   AssertionError: assert 1894752000000 == (1894752000000 - 1)
+     +  where 1894752000000 = Posicion(id='pos-o', orden_id='o', lado='compra', lotes=Decimal('1'), entrada=1000, stop=980, objetivo=1030, abierta_m...=None, break_even_nivel=None, break_even_desde_ms=0, marcas=[(1894752059999, 1000)], swaps=[], deslizamiento_entrada=0).abierta_ms
+     +  and   1894752000000 = _ms(31579200)
+C:\cm\m\tests\unit\test_sello_respaldo.py:187: AssertionError: assert 1894752000000 == (1894752000000 - 1)
+E   AssertionError: assert ('stop', 1894752000000) == ('stop', 1894751999999)
+      
+      At index 1 diff: 1894752000000 != 1894751999999
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:207: AssertionError: assert ('stop', 1894752000000) == ('stop', 1894751999999)
+E   AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
+      
+      Omitting 2 identical items, use -vv to show
+      Differing items:
+      {'pos-o': [(1894694520000, 988), (1894694580000, 980), (1894694640000, 982)]} != {'pos-o': [(1894694579999, 988), (1894694580000, 980), (1894694640000, 982)]}
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:355: AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
+E   AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
+      
+      Omitting 2 identical items, use -vv to show
+      Differing items:
+      {'pos-o': [(1894694520000, 988), (1894694580000, 980), (1894694640000, 982)]} != {'pos-o': [(1894694579999, 988), (1894694580000, 980), (1894694640000, 982)]}
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:355: AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
+E   AssertionError: assert ('stop', 'res...1894694820000) == ('stop', 'res...1894694819999)
+      
+      At index 2 diff: 1894694820000 != 1894694819999
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:431: AssertionError: assert ('stop', 'res...1894694820000) == ('stop', 'res...1894694819999)
+E   AssertionError: assert ('cancelada', 1894694639999) == ('rechazada', 1894694639999)
+      
+      At index 0 diff: 'cancelada' != 'rechazada'
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:458: AssertionError: assert ('cancelada', 1894694639999) == ('rechazada', 1894694639999)
+E   AssertionError: assert (1894694520000, 'respaldo_m1') == (1894694519999, 'respaldo_m1')
+      
+      At index 0 diff: 1894694520000 != 1894694519999
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_broker.py:235: AssertionError: assert (1894694520000, 'respaldo_m1') == (1894694519999, 'respaldo_m1')
+E   AssertionError: assert [(18946945200...respaldo_m1')] == [(18946945199...respaldo_m1')]
+      
+      At index 0 diff: (1894694520000, 'llenada', 'v', 'respaldo_m1') != (1894694519999, 'llenada', 'v', 'respaldo_m1')
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_broker_ordenes_stop.py:150: AssertionError: assert [(18946945200...respaldo_m1')] == [(18946945199...respaldo_m1')]
+E   AssertionError: limite
+    assert ('stop', 1894694640000) == ('stop', 1894694639999)
+      
+      At index 1 diff: 1894694640000 != 1894694639999
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_broker_ordenes_stop.py:180: AssertionError: limite
+E   AssertionError: assert 1894694460000 == (1894694460000 - 1)
+     +  where 1894694460000 = Evento(tipo='stop', instante_ms=1894694460000, precio=990, fuente='respaldo_m1', minuto=31578240).instante_ms
+     +  and   1894694460000 = _ms((31578240 + 1))
+C:\cm\m\tests\unit\test_llenado.py:115: AssertionError: assert 1894694460000 == (1894694460000 - 1)
+E   AssertionError: assert (Evento(tipo='llenado', instante_ms=1894694520000, precio=1000, fuente='respaldo_m1', minuto=31578241) is not None and ('respaldo_m1...1894694520000) == ('respaldo_m1...1894694519999)
+      
+      At index 2 diff: 1894694520000 != 1894694519999
+      Use -v to get more diff)
+C:\cm\m\tests\unit\test_llenado.py:157: AssertionError: assert (Evento(tipo='llenado', instante_ms=1894694520000, precio=1000, fuente='respaldo_m1', minuto=31578241) is not None and ('respaldo_m1...1894694520000) == ('respaldo_m1...1894694519999)
+E   AssertionError: assert (None, None, None) == ('stop', 990, 1894694459999)
+      
+      At index 0 diff: None != 'stop'
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_respaldo_m1_decision.py:185: AssertionError: assert (None, None, None) == ('stop', 990, 1894694459999)
+E   AssertionError: assert [(18946945800...respaldo_m1')] == [(18946945799...respaldo_m1')]
+      
+      At index 0 diff: (1894694580000, 'llenada', 'o', 'respaldo_m1') != (1894694579999, 'llenada', 'o', 'respaldo_m1')
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_respaldo_m1_decision.py:209: AssertionError: assert [(18946945800...respaldo_m1')] == [(18946945799...respaldo_m1')]
+E   AssertionError: assert [(18946945200...respaldo_m1')] == [(18946945199...respaldo_m1')]
+      
+      At index 0 diff: (1894694520000, 'llenada', 'v', 'respaldo_m1') != (1894694519999, 'llenada', 'v', 'respaldo_m1')
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_respaldo_m1_decision.py:232: AssertionError: assert [(18946945200...respaldo_m1')] == [(18946945199...respaldo_m1')]
+E   AssertionError: assert (True and 1894694520000 == (1894694520000 - 1))
+     +  where True = Posicion(id='pos-v', orden_id='v', lado='venta', lotes=Decimal('1'), entrada=995, stop=1020, objetivo=950, abierta_ms=...=None, break_even_nivel=None, break_even_desde_ms=0, marcas=[(1894694520000, 1024)], swaps=[], deslizamiento_entrada=0).abierta
+     +  and   1894694520000 = Posicion(id='pos-v', orden_id='v', lado='venta', lotes=Decimal('1'), entrada=995, stop=1020, objetivo=950, abierta_ms=...=None, break_even_nivel=None, break_even_desde_ms=0, marcas=[(1894694520000, 1024)], swaps=[], deslizamiento_entrada=0).abierta_ms
+     +  and   1894694520000 = _ms((31578240 + 2))
+C:\cm\m\tests\unit\test_respaldo_m1_decision.py:262: AssertionError: assert (True and 1894694520000 == (1894694520000 - 1))
+E   AssertionError: assert ('stop', 'res...1894694460000) == ('stop', 'res...1894694459999)
+      
+      At index 2 diff: 1894694460000 != 1894694459999
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_peor_del_minuto.py:76: AssertionError: assert ('stop', 'res...1894694460000) == ('stop', 'res...1894694459999)
+E   assert [(18946944000...4460000, 900)] == [(18946944599...4519999, 900)]
+      
+      At index 0 diff: (1894694400000, 995) != (1894694459999, 995)
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_peor_del_minuto.py:95: assert [(18946944000...4460000, 900)] == [(18946944599...4519999, 900)]
+=========================== short test summary info ===========================
+FAILED tests/unit/test_sello_respaldo.py::test_la_vela_en_cuyo_cierre_el_motor_cancela_la_orden_la_llena_antes
+FAILED tests/unit/test_sello_respaldo.py::test_el_fin_del_dia_evalua_la_ultima_vela_antes_de_cerrar_y_cancelar
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_vela_que_acaba_en_la_ventana_se_sella_fuera_de_ella
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia
+FAILED tests/unit/test_sello_respaldo.py::test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap
+FAILED tests/unit/test_sello_respaldo.py::test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas[cortes0]
+FAILED tests/unit/test_sello_respaldo.py::test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas[cortes1]
+FAILED tests/unit/test_sello_respaldo.py::test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_vela_del_stop
+FAILED tests/unit/test_sello_respaldo.py::test_sin_ticks_un_rechazo_al_llenar_gasta_el_punto_en_el_cierre_de_la_vela_del_llenado
+FAILED tests/unit/test_broker.py::test_el_respaldo_m1_llena_cierra_y_marca_sin_ticks
+FAILED tests/unit/test_broker_ordenes_stop.py::test_el_respaldo_m1_llena_al_nivel_o_a_la_apertura_si_la_vela_abre_pasada
+FAILED tests/unit/test_broker_ordenes_stop.py::test_misma_vela_la_stop_sigue_la_convencion_de_la_limite
+FAILED tests/unit/test_llenado.py::test_una_m1_con_stop_y_objetivo_a_la_vez
+FAILED tests/unit/test_llenado.py::test_un_tramo_sin_ticks_cae_al_respaldo_y_queda_marcado
+FAILED tests/unit/test_respaldo_m1_decision.py::test_en_el_cierre_la_vela_se_evalua_antes_de_mover_el_stop_o_modificar_la_orden
+FAILED tests/unit/test_respaldo_m1_decision.py::test_la_vela_de_una_modificacion_no_llena_la_version_nueva
+FAILED tests/unit/test_respaldo_m1_decision.py::test_una_pendiente_de_antes_de_una_vela_sin_ticks_se_llena_en_esa_vela
+FAILED tests/unit/test_respaldo_m1_decision.py::test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente
+FAILED tests/unit/test_peor_del_minuto.py::test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el
+FAILED tests/unit/test_peor_del_minuto.py::test_una_expiracion_en_un_instante_redondo_no_marca_la_vela_siguiente
+20 failed, 44 passed in 1.91s

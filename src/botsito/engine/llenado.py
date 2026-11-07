@@ -10,13 +10,13 @@ viene en `Configuracion`, que el broker lee de `knowledge/simulador/llenado.yaml
 - Con ticks, el orden real: gana el primer tick que cumpla; si el mismo tick cumple stop y objetivo,
   gana el stop (§3). Un evento nunca se evalua contra el tick en el que se decidio: solo contra los
   posteriores (`desde_ms` exclusivo).
-- Sin ticks en un minuto, el RESPALDO M1: pesimista, el stop primero, y el evento en el CIERRE de
-  la vela, marcado `respaldo_m1` (§3, §5). Un stop se llena a su nivel salvo que la vela abra mas
-  alla: entonces a la apertura (§4, deslizamiento de hueco). Una vela solo evalua lo que ya estaba
-  decidido cuando EMPEZO (`decidido_ms`, NOTA de §5 del 2026-10-29): lo decidido despues de su
-  inicio no se evalua contra ella, cuyos precios pueden ser anteriores a la decision; si habia una
-  version anterior decidida a tiempo (el stop antes de moverlo, la orden antes de modificarla), esa
-  vela se evalua con ella (ADR-0065 §4).
+- Sin ticks en un minuto, el RESPALDO M1: pesimista, el stop primero, y el evento en el ULTIMO
+  milisegundo de la vela (ADR-0091; antes, en su cierre), marcado `respaldo_m1` (§3, §5). Un stop
+  se llena a su nivel salvo que la vela abra mas alla: entonces a la apertura (§4, deslizamiento de
+  hueco). Una vela solo evalua lo que ya estaba decidido cuando EMPEZO (`decidido_ms`, NOTA de §5
+  del 2026-10-29): lo decidido despues de su inicio no se evalua contra ella, cuyos precios pueden
+  ser anteriores a la decision; si habia una version anterior decidida a tiempo (el stop antes de
+  moverlo, la orden antes de modificarla), esa vela se evalua con ella (ADR-0065 §4).
 - Sin deslizamiento fijo salvo que la configuracion lo declare (§4).
 - La ORDEN STOP DE ENTRADA (ADR-0056 §2, ADR-0057) salta al tocar su nivel y se llena al precio
   del tick que la dispara, como el stop de una posicion; y una pendiente del lado equivocado del
@@ -123,6 +123,14 @@ def _fin_ms(vela: Vela) -> int:
     return int(vela.fin) * MS_POR_MINUTO
 
 
+def _sello_ms(vela: Vela) -> int:
+    """El instante de un evento del respaldo M1: el ULTIMO milisegundo de la vela (ADR-0091 §1), el
+    mismo en que decide el motor en su cierre (`cableado.py`, `instante * 60000 - 1`). El `avanzar`
+    de ese cierre evalua la vela ANTES de que el motor decida; con el sello en el fin de la vela, lo
+    que el motor cancelaba o cerraba en ese cierre no se evaluaba nunca contra ella."""
+    return _fin_ms(vela) - 1
+
+
 def _nivel_de_la_vela(
     vela: Vela, decidido_ms: int, nivel: int, anterior: tuple[int, int] | None
 ) -> int | None:
@@ -181,7 +189,7 @@ def primer_llenado_limite(
                     return Evento(LLENADO, int(t.instante), precio, TICKS, MinutoUtc(m))
             continue
         vela = mercado.m1(m)
-        if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
+        if vela is None or _sello_ms(vela) <= desde_ms or _sello_ms(vela) > hasta_ms:
             continue
         nivel = _nivel_de_la_vela(vela, decidido, precio, anterior)
         if nivel is None:
@@ -190,7 +198,7 @@ def primer_llenado_limite(
         # compra: el ASK mas bajo de la vela es la minima BID mas el spread; venta: la maxima BID
         extremo = int(vela.minima) + spread if lado == "compra" else int(vela.maxima)
         if _pasa(extremo, nivel, sentido, config.limite_llena_al_toque):
-            return Evento(LLENADO, _fin_ms(vela), nivel, RESPALDO_M1, MinutoUtc(m))
+            return Evento(LLENADO, _sello_ms(vela), nivel, RESPALDO_M1, MinutoUtc(m))
     return None
 
 
@@ -211,9 +219,9 @@ def primer_llenado_stop(
     llena al precio del tick que la dispara, mas el deslizamiento fijo de la configuracion (DN-3):
     si el tick llega ya pasado el nivel (hueco), a ese precio, peor que el nivel, nunca al nivel.
     Respaldo M1 (solo para depurar, ADR-0051 §8): la vela es BID y el ASK es BID mas el spread
-    supuesto; al nivel, o a la APERTURA si la vela abre ya pasada; sellado al cierre de la vela,
-    como la limite. La misma convencion que el stop de una posicion (§4); y, como la limite, con
-    `decidido_ms` y `anterior` para el nivel de cada vela (`_nivel_de_la_vela`)."""
+    supuesto; al nivel, o a la APERTURA si la vela abre ya pasada; sellado en su ultimo ms
+    (ADR-0091), como la limite. La misma convencion que el stop de una posicion (§4); y, como la
+    limite, con `decidido_ms` y `anterior` para el nivel de cada vela (`_nivel_de_la_vela`)."""
     if hasta_ms <= desde_ms:
         return None
     decidido = desde_ms if decidido_ms is None else decidido_ms
@@ -237,7 +245,7 @@ def primer_llenado_stop(
                     )
             continue
         vela = mercado.m1(m)
-        if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
+        if vela is None or _sello_ms(vela) <= desde_ms or _sello_ms(vela) > hasta_ms:
             continue
         nivel = _nivel_de_la_vela(vela, decidido, precio, anterior)
         if nivel is None:
@@ -249,7 +257,7 @@ def primer_llenado_stop(
             hueco = abre > nivel if compra else abre < nivel
             return Evento(
                 LLENADO,
-                _fin_ms(vela),
+                _sello_ms(vela),
                 _deslizar_entrada(abre if hueco else nivel, compra, config),
                 RESPALDO_M1,
                 MinutoUtc(m),
@@ -324,7 +332,7 @@ def primera_salida(
                     return Evento(OBJETIVO, int(t.instante), objetivo, TICKS, MinutoUtc(m))
             continue
         vela = mercado.m1(m)
-        if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
+        if vela is None or _sello_ms(vela) <= desde_ms or _sello_ms(vela) > hasta_ms:
             continue
         nivel = _nivel_de_la_vela(vela, decidido, stop, anterior)
         if nivel is None:
@@ -342,13 +350,13 @@ def primera_salida(
             precio = abre if salta else nivel
             return Evento(
                 STOP,
-                _fin_ms(vela),
+                _sello_ms(vela),
                 _con_deslizamiento(precio, larga, config),
                 RESPALDO_M1,
                 MinutoUtc(m),
             )
         if _pasa(mejor, objetivo, 1 if larga else -1, config.limite_llena_al_toque):
-            return Evento(OBJETIVO, _fin_ms(vela), objetivo, RESPALDO_M1, MinutoUtc(m))
+            return Evento(OBJETIVO, _sello_ms(vela), objetivo, RESPALDO_M1, MinutoUtc(m))
     return None
 
 

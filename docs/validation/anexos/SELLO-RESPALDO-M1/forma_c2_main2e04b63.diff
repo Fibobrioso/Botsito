@@ -1,0 +1,124 @@
+diff --git a/src/botsito/engine/broker.py b/src/botsito/engine/broker.py
+index 8c62eff..a577dbe 100644
+--- a/src/botsito/engine/broker.py
++++ b/src/botsito/engine/broker.py
+@@ -930,7 +930,7 @@ class Broker:
+             if not p.abierta:
+                 continue
+             desde = (
+-                p.marcas[-1][0] // MS_POR_MINUTO + 1 if p.marcas else p.abierta_ms // MS_POR_MINUTO
++                p.marcas[-1][0] // MS_POR_MINUTO + 1 if p.marcas else (p.abierta_ms + 1) // MS_POR_MINUTO
+             )
+             for m in range(desde, hasta_ms // MS_POR_MINUTO + 1):
+                 peor = self._peor_del_minuto(p.lado, m, p.abierta_ms, hasta_ms)
+@@ -952,7 +952,7 @@ class Broker:
+                 return None
+             return min(valores) if lado == "compra" else max(valores)
+         vela = self.mercado.m1(minuto)
+-        if vela is None or int(vela.fin) * MS_POR_MINUTO > hasta_ms + MS_POR_MINUTO:
++        if vela is None or int(vela.inicio) * MS_POR_MINUTO >= hasta_ms:
+             return None
+         spread = self.config.spread_supuesto(MinutoUtc(minuto))
+         return int(vela.minima) if lado == "compra" else int(vela.maxima) + spread
+diff --git a/src/botsito/engine/cableado.py b/src/botsito/engine/cableado.py
+index efe23e1..f3bba24 100644
+--- a/src/botsito/engine/cableado.py
++++ b/src/botsito/engine/cableado.py
+@@ -466,7 +466,7 @@ class MotorCableado:
+         """Las posiciones abiertas del dia en el formato del criterio (ADR-0043, ADR-0048 §4)."""
+         salida: list[OperacionCriterio] = []
+         for p in sorted(broker.posiciones.values(), key=lambda x: x.abierta_ms):
+-            minuto = p.abierta_ms // MS_POR_MINUTO
++            minuto = (p.abierta_ms + 1) // MS_POR_MINUTO
+             sesion = next((n for n, d, h in limites if d <= minuto < h), None)
+             if sesion is None:
+                 continue
+diff --git a/src/botsito/engine/llenado.py b/src/botsito/engine/llenado.py
+index d3321ea..3100215 100644
+--- a/src/botsito/engine/llenado.py
++++ b/src/botsito/engine/llenado.py
+@@ -123,6 +123,10 @@ def _fin_ms(vela: Vela) -> int:
+     return int(vela.fin) * MS_POR_MINUTO
+ 
+ 
++def _sello_ms(vela: Vela) -> int:
++    return _fin_ms(vela) - 1
++
++
+ def _nivel_de_la_vela(
+     vela: Vela, decidido_ms: int, nivel: int, anterior: tuple[int, int] | None
+ ) -> int | None:
+@@ -181,7 +185,7 @@ def primer_llenado_limite(
+                     return Evento(LLENADO, int(t.instante), precio, TICKS, MinutoUtc(m))
+             continue
+         vela = mercado.m1(m)
+-        if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
++        if vela is None or _sello_ms(vela) <= desde_ms or _sello_ms(vela) > hasta_ms:
+             continue
+         nivel = _nivel_de_la_vela(vela, decidido, precio, anterior)
+         if nivel is None:
+@@ -190,7 +194,7 @@ def primer_llenado_limite(
+         # compra: el ASK mas bajo de la vela es la minima BID mas el spread; venta: la maxima BID
+         extremo = int(vela.minima) + spread if lado == "compra" else int(vela.maxima)
+         if _pasa(extremo, nivel, sentido, config.limite_llena_al_toque):
+-            return Evento(LLENADO, _fin_ms(vela), nivel, RESPALDO_M1, MinutoUtc(m))
++            return Evento(LLENADO, _sello_ms(vela), nivel, RESPALDO_M1, MinutoUtc(m))
+     return None
+ 
+ 
+@@ -237,7 +241,7 @@ def primer_llenado_stop(
+                     )
+             continue
+         vela = mercado.m1(m)
+-        if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
++        if vela is None or _sello_ms(vela) <= desde_ms or _sello_ms(vela) > hasta_ms:
+             continue
+         nivel = _nivel_de_la_vela(vela, decidido, precio, anterior)
+         if nivel is None:
+@@ -249,7 +253,7 @@ def primer_llenado_stop(
+             hueco = abre > nivel if compra else abre < nivel
+             return Evento(
+                 LLENADO,
+-                _fin_ms(vela),
++                _sello_ms(vela),
+                 _deslizar_entrada(abre if hueco else nivel, compra, config),
+                 RESPALDO_M1,
+                 MinutoUtc(m),
+@@ -324,7 +328,7 @@ def primera_salida(
+                     return Evento(OBJETIVO, int(t.instante), objetivo, TICKS, MinutoUtc(m))
+             continue
+         vela = mercado.m1(m)
+-        if vela is None or _fin_ms(vela) <= desde_ms or _fin_ms(vela) > hasta_ms:
++        if vela is None or _sello_ms(vela) <= desde_ms or _sello_ms(vela) > hasta_ms:
+             continue
+         nivel = _nivel_de_la_vela(vela, decidido, stop, anterior)
+         if nivel is None:
+@@ -342,13 +346,13 @@ def primera_salida(
+             precio = abre if salta else nivel
+             return Evento(
+                 STOP,
+-                _fin_ms(vela),
++                _sello_ms(vela),
+                 _con_deslizamiento(precio, larga, config),
+                 RESPALDO_M1,
+                 MinutoUtc(m),
+             )
+         if _pasa(mejor, objetivo, 1 if larga else -1, config.limite_llena_al_toque):
+-            return Evento(OBJETIVO, _fin_ms(vela), objetivo, RESPALDO_M1, MinutoUtc(m))
++            return Evento(OBJETIVO, _sello_ms(vela), objetivo, RESPALDO_M1, MinutoUtc(m))
+     return None
+ 
+ 
+diff --git a/src/botsito/engine/primitivas_broker.py b/src/botsito/engine/primitivas_broker.py
+index 50bc4b8..5227aa0 100644
+--- a/src/botsito/engine/primitivas_broker.py
++++ b/src/botsito/engine/primitivas_broker.py
+@@ -276,7 +276,7 @@ def primitivas_cableadas(
+         p = vivas[0]
+         try:
+             # las M1 cerradas desde la que contiene el llenado: solo lo de despues de la entrada
+-            m1 = momento.datos.m1_entre(p.abierta_ms // MS_POR_MINUTO, int(momento.instante))
++            m1 = momento.datos.m1_entre((p.abierta_ms + 1) // MS_POR_MINUTO, int(momento.instante))
+         except AttributeError:
+             return NoImplementada("predicado:se_completa_zona_de_control:sin M1")
+         k = zona_posterior_completada(m1, p.lado, criterio)

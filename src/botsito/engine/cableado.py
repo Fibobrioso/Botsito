@@ -49,6 +49,7 @@ from botsito.engine.broker import (
     Broker,
     Peticion,
     ReglasBroker,
+    minuto_de_apertura,
     peticiones_por_dia,
 )
 from botsito.engine.calendario_cierres import (
@@ -466,7 +467,7 @@ class MotorCableado:
         """Las posiciones abiertas del dia en el formato del criterio (ADR-0043, ADR-0048 §4)."""
         salida: list[OperacionCriterio] = []
         for p in sorted(broker.posiciones.values(), key=lambda x: x.abierta_ms):
-            minuto = p.abierta_ms // MS_POR_MINUTO
+            minuto = minuto_de_apertura(p)  # la sesion, la de la vela siguiente (ADR-0091 §2)
             sesion = next((n for n, d, h in limites if d <= minuto < h), None)
             if sesion is None:
                 continue

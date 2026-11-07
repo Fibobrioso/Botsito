@@ -1,0 +1,15 @@
+forma: e2 | botsito de: C:\cm\h\src\botsito
+S1 eventos al decidir en el cierre de M0: []
+S1 sin posicion tras el cierre de M0
+S1 tras el cierre de M0+1: abierta True | marcas: [('M0+2 -1ms', 1000)]
+S2 m1_entre del break even en el cierre de M0+1 (instante M0+2): inicios ['M0+1'] (la vela del llenado es M0)
+S3 llenado en la vela M0+2 (la ultima de 07-11): abierta M0+3 -> sesion 11-15
+S4 fin del dia en M0+2 -1ms | eventos: [('M0+0', 'llenada', 'p', 'conocida'), ('M0+2 -1ms', 'manual', 'p', 'respaldo_m1')]
+S4 cierres: [('p', 'manual', 990, 'M0+2 -1ms')]
+S5 al decidir en el cierre de M0+2 (W = M0+2 ): [('M0+0', 'llenada', 'p', 'conocida')] | orden: cancelada | cierres: [('M0+2', 'o')]
+S5 marcas de la posicion viva p: [('M0+1 -1ms', 1005), ('M0+2 -1ms', 990), ('M0+3 -1ms', 900)]
+S6 eventos hasta el cierre de M0+1: [] | la orden: cancelada | historial: [('M0+0', 'colocada'), ('M0+2 -1ms', 'cancelada')]
+S7 marcas: [('M0+1 -1ms', 989)] | cerrada en M0+1 | marcas dentro de la operacion: [('08:00:59.999', '989')]
+S7b expiracion en M0+1 (redondo), marcas de la viva: [('M0+1 -1ms', 995), ('M0+2 -1ms', 900)]
+S8 en M0+1 -1ms | cotizacion: (1000, 1003, 'respaldo_m1') | _precio_de_mercado compra: (1010, 'respaldo_m1') | precio_de_conversion compra: (1013, 'respaldo_m1')
+S9 abierta 0 ms respecto a la medianoche | swaps: [] | dia local de la apertura: 2030-01-16

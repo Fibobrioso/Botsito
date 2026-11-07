@@ -107,6 +107,20 @@ dentro del minuto).
 > la vela de cada apertura deja de evaluarse en el respaldo; `trabajo/respaldo-m1` no la vuelve a
 > correr.
 
+> **ENMENDADO POR ADR-0091 (2026-11-07, `trabajo/sello-respaldo-m1`, H de la Next Action; recuadro
+> que no reescribe el cuerpo ni la NOTA).** El instante de un evento del respaldo deja de ser el
+> CIERRE de la vela: es su **último milisegundo, k fin − 1 ms**, así que el `avanzar` del cierre en
+> que decide el motor (k fin − 1 ms, ADR-0053 §5) evalúa la vela k ANTES de que decida, y lo que el
+> motor cancela o cierra en ese cierre ya no se queda sin evaluar contra ella (27 cancelaciones en
+> once días de desarrollo, 2 que su vela habría llenado: SELLO-RESPALDO-M1.md §0.c). Donde la NOTA
+> dice «el instante del evento (sigue en el cierre de la vela, como dice este punto y ADR-0057 §1)»,
+> vale ADR-0091 §1. La condición de la NOTA (una vela solo evalúa lo decidido cuando EMPEZÓ) no
+> cambia; **la versión anterior** (`Orden.anterior`, `Posicion.stop_anterior`) se queda, pero desde
+> el motor ya no se alcanza: la vela que contiene el cambio ya se evaluó, con la versión vigente,
+> antes del cambio (ADR-0091 §6). Los lectores del minuto de apertura, neutros, con el «+ 1» solo
+> para lo sellado por el respaldo (`fuente_apertura == RESPALDO_M1`, ADR-0091 §2). Solo los minutos
+> sin ticks: con ticks no cambia nada (§8).
+
 ### 6. El spread
 
 **Con ticks, el spread es el de cada tick** (ASK − BID), y no hace falta suponer nada. **Sin

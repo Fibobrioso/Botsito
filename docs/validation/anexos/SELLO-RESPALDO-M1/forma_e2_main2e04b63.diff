@@ -1,0 +1,15 @@
+diff --git a/src/botsito/engine/broker.py b/src/botsito/engine/broker.py
+index 8c62eff..fcf2741 100644
+--- a/src/botsito/engine/broker.py
++++ b/src/botsito/engine/broker.py
+@@ -952,7 +952,9 @@ class Broker:
+                 return None
+             return min(valores) if lado == "compra" else max(valores)
+         vela = self.mercado.m1(minuto)
+-        if vela is None or int(vela.fin) * MS_POR_MINUTO > hasta_ms + MS_POR_MINUTO:
++        # sin ticks, la vela cuenta si EMPIEZA antes de `hasta` (le queda al menos 1 ms dentro): al
++        # avanzar a un instante redondo no se marca la vela que empieza en el (NA:H, (e2))
++        if vela is None or int(vela.inicio) * MS_POR_MINUTO >= hasta_ms:
+             return None
+         spread = self.config.spread_supuesto(MinutoUtc(minuto))
+         return int(vela.minima) if lado == "compra" else int(vela.maxima) + spread

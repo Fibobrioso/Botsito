@@ -28,6 +28,12 @@ vela del llenado, la misma que la límite (la salida se mira desde la vela sigui
 guarda el deslizamiento de la entrada, en puntos en contra (`Posicion.deslizamiento_entrada`); en
 una límite es siempre 0. Código: `engine/llenado.py`, `primer_llenado_stop`.
 
+> **ENMENDADO POR ADR-0091 (2026-11-07, `trabajo/sello-respaldo-m1`; recuadro que no reescribe el
+> cuerpo).** Con el respaldo M1, el llenado de la orden stop ya no se sella «al cierre de la vela»:
+> se sella en su **último milisegundo** (k fin − 1 ms), como la límite y la salida de una posición
+> (ADR-0091 §1). Para la vela del llenado sigue la misma convención que la límite: la salida se mira
+> desde la vela siguiente.
+
 ### 2. «Lado equivocado» es estricto; el nivel exacto no lo es
 
 > **SIGUE PROVISIONAL tras las tres ejecuciones de la demo (ADR-0090 §5, 2026-11-06,

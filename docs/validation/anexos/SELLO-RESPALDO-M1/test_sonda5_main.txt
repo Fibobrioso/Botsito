@@ -1,0 +1,28 @@
+============================= test session starts =============================
+platform win32 -- Python 3.12.10, pytest-9.1.1, pluggy-1.6.0
+rootdir: C:\cm\h
+configfile: pyproject.toml
+plugins: hypothesis-6.167.1
+collected 4 items
+
+tests\unit\test_peor_del_minuto.py FF..                                  [100%]
+
+================================== FAILURES ===================================
+____ test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el ____
+tests\unit\test_peor_del_minuto.py:75: in test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el
+    assert p.marcas == [(_ms(M0 + 1) - 1, 989)]
+E   assert [(18946944599...4460000, 900)] == [(1894694459999, 989)]
+E     
+E     Left contains one more item: (1894694460000, 900)
+E     Use -v to get more diff
+____ test_una_expiracion_en_un_instante_redondo_no_marca_la_vela_siguiente ____
+tests\unit\test_peor_del_minuto.py:93: in test_una_expiracion_en_un_instante_redondo_no_marca_la_vela_siguiente
+    assert b.posiciones["p"].marcas == [(_ms(M0 + 1) - 1, 995), (_ms(M0 + 2) - 1, 900)]
+E   assert [(18946944000...4460000, 900)] == [(18946944599...4519999, 900)]
+E     
+E     At index 0 diff: (1894694400000, 995) != (1894694459999, 995)
+E     Use -v to get more diff
+=========================== short test summary info ===========================
+FAILED tests/unit/test_peor_del_minuto.py::test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el
+FAILED tests/unit/test_peor_del_minuto.py::test_una_expiracion_en_un_instante_redondo_no_marca_la_vela_siguiente
+========================= 2 failed, 2 passed in 0.41s =========================

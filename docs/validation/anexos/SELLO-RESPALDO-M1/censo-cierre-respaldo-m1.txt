@@ -1,0 +1,29 @@
+# RESPALDO-M1/diaria.DIAGNOSTICO.cuenta=diaria.txt: cancelaciones del bot en el cierre de una M1 sin ticks
+## filas: 26
+  dia | sesion | orden | colocada UTC | cancelada UTC | M1 k | donde
+  2026-01-14 | 07-11 | o6 | colocada 07:55:59.999Z | cancelada 07:56:59.999Z | M1 k 07:56Z | hora perdida
+  2026-01-14 | 07-11 | o7 | colocada 07:56:59.999Z | cancelada 07:57:59.999Z | M1 k 07:57Z | hora perdida
+  2026-01-23 | 11-15 | o27 | colocada 11:00:59.999Z | cancelada 11:01:59.999Z | M1 k 11:01Z | hora perdida
+  2026-01-23 | 11-15 | o28 | colocada 11:01:59.999Z | cancelada 11:03:59.999Z | M1 k 11:03Z | hora perdida
+  2026-04-03 | 11-15 | o15 | colocada 09:47:59.999Z | cancelada 09:48:59.999Z | M1 k 09:48Z | hora perdida
+  2026-04-03 | 11-15 | o16 | colocada 09:48:59.999Z | cancelada 09:51:59.999Z | M1 k 09:51Z | hora perdida
+  2026-04-06 | 11-15 | o10 | colocada 09:57:59.999Z | cancelada 10:00:59.999Z | M1 k 10:00Z | hora perdida
+  2026-04-06 | 11-15 | o12 | colocada 10:47:59.999Z | cancelada 10:50:59.999Z | M1 k 10:50Z | hora perdida
+  2026-04-07 | 11-15 | o28 | colocada 10:25:59.999Z | cancelada 10:26:59.999Z | M1 k 10:26Z | hora perdida
+  2026-04-22 | 07-11 | o9 | colocada 07:48:59.999Z | cancelada 07:51:59.999Z | M1 k 07:51Z | hora perdida
+  2026-04-22 | 11-15 | o13 | colocada 09:59:59.999Z | cancelada 10:00:59.999Z | M1 k 10:00Z | hora perdida
+  2026-04-23 | 07-11 | o2 | colocada 05:02:59.999Z | cancelada 05:04:59.999Z | M1 k 05:04Z | hora perdida
+  2026-04-23 | 07-11 | o3 | colocada 05:04:59.999Z | cancelada 05:05:59.999Z | M1 k 05:05Z | hora perdida
+  2026-04-23 | 07-11 | o4 | colocada 05:05:59.999Z | cancelada 05:06:59.999Z | M1 k 05:06Z | hora perdida
+  2026-04-23 | 07-11 | o5 | colocada 05:06:59.999Z | cancelada 05:07:59.999Z | M1 k 05:07Z | hora perdida
+  2026-04-23 | 07-11 | o6 | colocada 05:07:59.999Z | cancelada 05:08:59.999Z | M1 k 05:08Z | hora perdida
+  2026-04-23 | 07-11 | o7 | colocada 05:08:59.999Z | cancelada 05:09:59.999Z | M1 k 05:09Z | hora perdida
+  2026-04-23 | 07-11 | o8 | colocada 05:09:59.999Z | cancelada 05:13:59.999Z | M1 k 05:13Z | hora perdida
+  2026-04-23 | 07-11 | o9 | colocada 05:13:59.999Z | cancelada 05:15:59.999Z | M1 k 05:15Z | hora perdida
+  2026-07-10 | 07-11 | o2 | colocada 05:26:59.999Z | cancelada 05:27:59.999Z | M1 k 05:27Z | hora perdida
+  2026-07-10 | 07-11 | o3 | colocada 05:27:59.999Z | cancelada 05:28:59.999Z | M1 k 05:28Z | hora perdida
+  2026-07-16 | 11-15 | o13 | colocada 10:59:59.999Z | cancelada 11:00:59.999Z | M1 k 11:00Z | hora perdida
+  2026-07-16 | 11-15 | o14 | colocada 11:00:59.999Z | cancelada 11:01:59.999Z | M1 k 11:01Z | hora perdida
+  2026-08-17 | 11-15 | o18 | colocada 11:19:59.999Z | cancelada 11:20:59.999Z | M1 k 11:20Z | hora perdida
+  2026-08-17 | 11-15 | o19 | colocada 11:20:59.999Z | cancelada 11:22:59.999Z | M1 k 11:22Z | hora perdida
+  2026-08-20 | 07-11 | o13 | colocada 07:42:59.999Z | cancelada 07:44:59.999Z | M1 k 07:44Z | hora perdida
