@@ -15567,3 +15567,59 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 58 (2026-11-06).
+
+# Next Action HECHA · H · el sello del respaldo M1 · sale de PROJECT_STATE.md en trabajo/sello-respaldo-m1 (2026-11-07)
+
+Su texto literal (la letra ya tenía un registro HECHA, el de RN-007, del 2026-10-26; este lleva su fecha, DECISIONES-DE-PROCESO.md:29):
+
+H. En el respaldo M1 el evento de una vela se sella en su cierre, un milisegundo después de que el motor decida (ADR-0051 §5, ADR-0057 §1). Por eso la vela k no se evalúa para lo que vivía en ella cuando el motor actúa en su cierre (22 de 1002 cancelaciones en la corrida diaria de recorrida-construccion, RESPALDO-M1.md §0.l), y _peor_del_minuto marca entera la vela siguiente cuando se avanza hasta un instante redondo. Rama propia con un ADR que enmiende esos dos ADR. Antes de decidir, se mide lo que el auditor de RESPALDO-M1 encontró en la forma «sellar en k fin - 1»: las marcas y m1_entre del break even empiezan a contar la vela del llenado, cambia la sesión de un llenado en la última vela de 07-11, cambian el fin de la ventana y el borde de ADR-0068, y rompen 5 tests de main por el milisegundo. Va antes de la próxima corrida del arnés que cuente (ADR-0070 §3).
+
+HECHA en `trabajo/sello-respaldo-m1` (docs/validation/SELLO-RESPALDO-M1.md): ADR-0091 sella el evento del respaldo M1 en el último milisegundo de su vela (enmienda ADR-0051 §5, ADR-0057 §1, ADR-0068 §2 y ADR-0083 D2), con los lectores del minuto de apertura neutros, y (e2) corrige la marca de `_peor_del_minuto`. En once días de desarrollo, 27 cancelaciones en el cierre de una M1 sin ticks, 2 que su vela llenaba: 2 operaciones nuevas del bot, verificadas con el visor por caso. Las dos corridas que pedía R3.6 pasan a la re-corrida que cuenta, después de R3.7.
+
+# Next Action HECHA · A · el panel del límite diario · sale de PROJECT_STATE.md en trabajo/sello-respaldo-m1 (2026-11-07)
+
+Su texto literal; se sustituye por un texto nuevo en la Next Action (orden de cierre de trabajo/sello-respaldo-m1):
+
+A. Para Aleks, en el panel de la prueba gratuita de FTMO: a qué hora se recalcula el límite de pérdida diaria, con fecha y hora (la «verificación explícita» que A-28 llevaba dentro, ADR-0090 §1). Medianoche de España: reloj_dia_riesgo no cambia. Medianoche del servidor: se reabre A-19 y reloj_dia_riesgo vuelve a DEFAULT_AMBIGUOUS (ADR-0027). Opcional: Aleks, el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en corpus/noticias/ como CSV fecha_utc,hora_utc,divisa,evento; stops_cortos.py --noticias <csv> --ventana-min 2 da la medida (MARGEN-LOTE.md §2.b).
+
+HECHA por declaración de Aleks del 2026-11-07, comprobada por el consultor en su captura. En Account MetriX de la prueba gratuita en curso (inicio 28/10/26, fin 11/11/26), el aviso de «Pérdida permitida del día» decía «La Pérdida Permitida de hoy se restablecerá en: 06:25:45» hacia las 11:34 de Lima (16:34 UTC) del sábado 2026-11-07. El recálculo cae, por tanto, hacia las 23:00 UTC, las 00:00 de España (CET), y no a la medianoche del servidor (22:00 UTC, las 17:00 de Lima). Coincide con FTMO-REGLAS R2 (00:00 CE(S)T): reloj_dia_riesgo sigue CONFIRMED en civil_operativa y A-19 no se reabre (ADR-0090 §1, ADR-0027).
+
+# Registro de cierre · `trabajo/sello-respaldo-m1` (2026-11-07)
+
+- Orden de cierre del consultor del 2026-11-07, dada por Aleks tras revisar la rama en 13b8e78
+  (copiada tal cual al final de SELLO-RESPALDO-M1.md, en este commit). Llegó pegada; la sesión
+  preparó el cierre sin tocar el repo (el tag no existía en local ni en origin; las líneas,
+  simuladas sobre una copia) y esperó; después Aleks lanzó `/cerrar-rama trabajo/sello-respaldo-m1`.
+  Nunca se cerró sin la orden.
+- **Lo que entra**: (e2), `_peor_del_minuto` no marca la vela que empieza en el instante hasta el que
+  se avanza; ADR-0091 (ACTIVE): el evento del respaldo M1 se sella en el último milisegundo de su
+  vela (k fin − 1 ms), con `minuto_de_apertura` (el «+ 1» solo para lo sellado por el respaldo) en
+  las marcas, los swaps, el día, la sesión y el break even por velas, y los lectores de `cerrada_ms`
+  en el instante sellado; recuadros en ADR-0051 §5, 0057 §1, 0068 §2 y 0083 D2 y sus filas del
+  índice; `tests/unit/test_peor_del_minuto.py` y `tests/unit/test_sello_respaldo.py` nuevos, y los
+  tests de `main` que fijaban el sello en k fin, reescritos. En once días de desarrollo, 27
+  cancelaciones en el cierre de una M1 sin ticks, 2 que su vela llenaba: 2 operaciones nuevas del
+  bot, verificadas con el visor por caso. Ninguna corrida del arnés ni cifra agregada.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action H sale
+  HECHA y la A sale HECHA (arriba), entra la A nueva (lo opcional de las noticias) y F se reescribe;
+  Technical Debt: la copia de seguridad, hasta v17, y entra la del panel declarado y los cuatro
+  textos que siguen diciendo que está pendiente. La hoja de ruta: R3.6 HECHA (sin `NA:H`), las dos
+  corridas a R3.7 y a la re-corrida que cuenta, R5.2 sin `NA:H`, A.4 ampliada con v15 a v17, A.5 con
+  el panel HECHO y «Fechas fijas» con el fin de la prueba el 2026-11-11. La orden copiada. La fila de
+  ERRORES-RECURRENTES.
+- **`PROJECT_STATE.md`**: 22.177 bytes en este commit (con la Current Feature de la rama); con la del
+  cierre, unos 22.300. Ninguna línea de la orden se recortó.
+- **Desviaciones de la orden**: ninguna.
+- Letra del tag: la última cerrada era `stable/F38p-demo-ejecuciones-2-3`;
+  `stable/F38q-sello-respaldo-m1` no existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38q-sello-respaldo-m1`. El merge es
+  `git rev-parse "stable/F38q-sello-respaldo-m1^{commit}"`.
+- Commits de la rama: `13d9ad3` (chore(rama): abre la rama), `460595f` (la fase 0: el censo da (c2),
+  PARADA con el plan), `dacd533` (fix(broker): (e2) y su test), `91aa179` (el informe de la primera
+  entrega y el revisor), `cdffbfb` (la respuesta a la PARADA y el contrato ampliado), `3252548`
+  (ADR-0091 y sus recuadros), `7eda14d` (feat(broker): (c2) con los tests), `155221e` (la verificación
+  de los once días, el informe de la fase 2 y la segunda pasada del revisor), `13b8e78`
+  (fix(broker): el «+ 1» solo para el respaldo y la vela k que se vuelve a mirar), y este
+  (chore(cierre): sale el contrato y entra el registro en HISTORIA).
+- CI: ninguna en la rama (toca `src/` del motor, no hooks, rutas, `.claude/` ni plataforma; orden de
+  cierre, punto 2: sin `fix/`). La CI de `main` corre tras el push.

@@ -1366,3 +1366,49 @@ HOLDOUT-EXPOSICIONES.
 Fases 0, 1 y 2 hechas, y el commit e) de la respuesta a la entrega: el «+ 1» de `minuto_de_apertura` solo para lo sellado por el respaldo, y la vela k que se vuelve a mirar, con su test. Los once días verificados siguen dando lo que dio el prototipo. Ninguna corrida del arnés ni cifra agregada.
 
 Rama lista para revisión, NO cerrada.
+
+## Orden de cierre del consultor (2026-11-07)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/sello-respaldo-m1 (consultor, 2026-11-07). Cópiala tal cual en el informe (sección nueva al final) y prepara el cierre según docs/runbooks/RITUAL.md y la skill cerrar-rama. NO ejecutes el cierre hasta que Aleks escriba /cerrar-rama solo.
+>
+> 0. Revisión del commit e) (13b8e78): aceptado.
+>    - El punto 2: gana la medida; el test aparte que rompe en main por la marca, y no por los eventos, se queda.
+>    - abrir_conocida NO rechaza la fuente respaldo_m1. Porqué: sus tres llamadores pasan «caso», es código nuevo fuera del alcance, y el caso teórico ya queda escrito en ADR-0091 y en el docstring.
+>
+> 1. Tag: stable/F38q-sello-respaldo-m1. Antes, comprueba que no existe ni en local ni en origin (RITUAL.md:211-217).
+>
+> 2. CI: la rama no se ha empujado y no toca hooks, .claude/, rutas ni plataforma: sin fix/. Tras el push atómico de main y del tag, la CI de main en verde antes de borrar la rama local.
+>
+> 3. Fila de ERRORES-RECURRENTES (la de §3, con estos cambios):
+>    - Columna del revisor: «Tres pasadas, opus»; la tercera, la corta tras e) (0 bloquea, 2 importa, 2 menor, todos arreglados en e)).
+>    - Columna del consultor, añade:
+>      (6) (menor) El punto 2 de la respuesta a la entrega de la fase 2 afirmó, sin medirlo, que la invariancia de partición pasaría en los dos lados; en instantes redondos rompe en main por la marca que corrige (e2). Lección: lo que «pasa en los dos lados» se mide antes de escribirlo (regla de oro 1).
+>      (7) (menor) La misma respuesta citó «Broker.abrir», que no existe (es abrir_conocida), por leer una firma sin su nombre. Lección: un nombre del código se lee antes de citarlo (regla de oro 8).
+>    - Columna «Que se le escapo», añade:
+>      (10) (importa) Ninguna de las dos primeras pasadas del revisor vio que el «+ 1» de minuto_de_apertura (7eda14d) movía de minuto un llenado por tick en el ms .999 y una apertura conocida en k fin − 1; lo levantó Claude Code al pedir decisión. Lección para el revisor: cuando un ADR declara un lector «neutro», se comprueba por cada fuente posible del dato (ticks, respaldo, apertura conocida), no solo por la del cambio.
+>
+> 4. Next Action, en el commit chore(cierre) de la rama:
+>    a) H sale HECHA, con el registro y el texto de §0.g. F, como en §0.g.
+>    b) A sale HECHA: su texto literal, tal como está hoy en PROJECT_STATE.md:42, pasa a HISTORIA bajo «# Next Action HECHA · A · el panel del límite diario · sale de PROJECT_STATE.md en trabajo/sello-respaldo-m1 (2026-11-07)», con «Su texto literal; se sustituye por un texto nuevo en la Next Action (orden de cierre de trabajo/sello-respaldo-m1)» y este párrafo:
+>       «HECHA por declaración de Aleks del 2026-11-07, comprobada por el consultor en su captura. En Account MetriX de la prueba gratuita en curso (inicio 28/10/26, fin 11/11/26), el aviso de «Pérdida permitida del día» decía «La Pérdida Permitida de hoy se restablecerá en: 06:25:45» hacia las 11:34 de Lima (16:34 UTC) del sábado 2026-11-07. El recálculo cae, por tanto, hacia las 23:00 UTC, las 00:00 de España (CET), y no a la medianoche del servidor (22:00 UTC, las 17:00 de Lima). Coincide con FTMO-REGLAS R2 (00:00 CE(S)T): reloj_dia_riesgo sigue CONFIRMED en civil_operativa y A-19 no se reabre (ADR-0090 §1, ADR-0027).»
+>       La A nueva, en la Next Action: «A. Opcional, para Aleks: el calendario de las noticias restringidas de FTMO (FAQ «Can I trade news?») de los meses de construcción, en corpus/noticias/ como CSV fecha_utc,hora_utc,divisa,evento; stops_cortos.py --noticias <csv> --ventana-min 2 da la medida (MARGEN-LOTE.md §2.b). El panel del límite diario quedó declarado el 2026-11-07 (HISTORIA, Next Action HECHA · A).»
+>       Verifica que esa parte «Opcional» es literal frente a PROJECT_STATE.md:42.
+>    c) Technical Debt:
+>       - La línea de la copia de seguridad (PROJECT_STATE.md:139) se sustituye por: «Copia de seguridad de las crudas y los WAV: hecha hasta v17 (v6 a v10 el 2026-10-22; v15 a v17 el 2026-11-07: data/transcripciones/v15, v16 y v17 y las carpetas sesion-05-audio y sesion-06-audio del Escritorio, 146 ficheros con SHA256SUMS-v15-v17.txt de 146 líneas; Drive privado de Aleks, declaración de Aleks comprobada por el consultor en su Drive). Cada sesión nueva se añade tras su ingesta; los vídeos de las sesiones, recomendado, sin hacer.»
+>       - Entra: «El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A), pero siguen diciendo que está pendiente DEMO-FTMO.md:159-162, la descripción de reloj_dia_riesgo (parametros.yaml:1646-1651), ADR-0090 §1 (:71-75) y FTMO-REGLAS.md:253-254 (informe cerrado: con recuadro). Se corrigen en la próxima rama que toque knowledge/spec, con su régimen de cambio.»
+>
+> 5. Hoja de ruta, en el mismo commit:
+>    a) R3.6, R3.7 y R5.2, como en §0.g.
+>    b) A.4: el Refs dice «hecha hasta v17» en lugar de «hecha hasta v10». En «Qué es», la frase «falta v6 (la sesión 1), y el texto de la deuda no dice nada de v7–v10» se sustituye por «cada sesión nueva se añade tras su ingesta». Al «Estado» se le añade: «Ampliada el 2026-11-07 con v15 a v17 (146 ficheros y SHA256SUMS-v15-v17.txt, en la misma carpeta privada).»
+>    c) A.5: en «Qué es», «el panel del límite diario (NA:A)» pasa a «el panel del límite diario, HECHO el 2026-11-07 (medianoche de España; NA:A queda con lo opcional de las noticias)». En «Depende de»: «una prueba gratuita de FTMO viva (la que está en curso termina el 2026-11-11)». En «Hecho cuando»: «el panel declarado (HECHO el 2026-11-07), M medida y el grabador hecho».
+>    d) «Fechas fijas»: la línea del vencimiento «hacia el 12 de noviembre» se sustituye por «La prueba gratuita de FTMO en curso termina el 11 de noviembre de 2026 (Account MetriX: inicio 28/10/26, fin 11/11/26); lo que queda de A.5 (NA:M y F17) pide una prueba viva.»
+>
+> 6. Antes del commit, simula sobre una copia (simular_cierre.py, test_hoja_de_ruta y test_project_state) y mide PROJECT_STATE con wc -c: por debajo de 23.000. Si lo pasa, PARADA con la cifra y no recortes nada por tu cuenta. Busca con grep que no quede en PROJECT_STATE ni en la hoja de ruta ninguna «Siguiente: H», ningún «hacia el 12» ni ningún NA:H vivo.
+>
+> 7. Después, el ritual sin cambios: merge a main, tag, commit de estado que solo reemplaza las cuatro líneas de cabecera (la Next Action ya cambió en la rama), make check sellado, push atómico de main y del tag (Aleks confirma la regla ask con «1. Yes»), CI de main en verde y borrar la rama local.
+>
+> 8. Informe final: sha de main, merge, tag, run de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.

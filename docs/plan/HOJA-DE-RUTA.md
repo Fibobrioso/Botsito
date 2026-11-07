@@ -211,7 +211,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   decisión, y la que cuenta sigue en «no».
 
 ### R3.6 · El respaldo M1 sella en el cierre, después de que el motor decida
-- **Refs:** NA:H · ID:ADR-0051 · ID:ADR-0057
+- **Refs:** ID:ADR-0091 · ID:ADR-0051 · ID:ADR-0057
 - **Qué es:** el evento de una vela del respaldo se sella en su cierre, un milisegundo después
   de que el motor decida: la vela no se evalúa para lo que vivía en ella cuando el motor actúa
   en su cierre, y `_peor_del_minuto` marca entera la vela siguiente al avanzar hasta un instante
@@ -219,8 +219,13 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   ADR-0057 §1.
 - **Depende de:** R3.5, y la activación de la sesión 6 (R4.2), rama de motor incluida.
 - **Quién:** la sesión, con el encargo del consultor.
-- **Hecho cuando:** el ADR está aceptado, un test que rompe en `main` pasa en la rama y las dos
-  corridas están repetidas.
+- **Hecho cuando:** el ADR está aceptado, los tests que rompen en `main` pasan en la rama y los
+  once días del censo, verificados con el visor por caso, dan lo que dio el prototipo. Las dos
+  corridas que pedía pasan a R3.7 y a la re-corrida que cuenta (ADR-0070 §3).
+- **Estado:** HECHA (`trabajo/sello-respaldo-m1`; SELLO-RESPALDO-M1.md): ADR-0091 sella el
+  evento del respaldo en el último milisegundo de su vela, con los lectores del minuto de
+  apertura neutros, y (e2) corrige la marca de `_peor_del_minuto`; en once días de desarrollo,
+  2 operaciones nuevas del bot y las demás idénticas.
 
 ### R3.7 · Método: rentabilidad como puerta, fidelidad por criterios y los sesgos de la cifra
 - **Refs:** NA:R · ID:ADR-0043 · ID:ADR-0070 · ID:A-16 · F:F27
@@ -238,7 +243,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   porque RN-032 congela la cuenta desde el 2026-01-20 (RESPALDO-M1.md §4.5); (3) el material
   sin vídeo, donde el trader se saltaba las sesiones que iban a break even (S-14 de la sesión
   5); (4) las tolerancias de entrada e instante. Los umbrales los fija el consultor en la PARADA
-  de esa rama, antes de ver ninguna corrida nueva.
+  de esa rama, antes de ver ninguna corrida nueva. Después, la re-corrida que cuenta (ADR-0070
+  §3) repite las dos corridas que pedía R3.6, ya con el sello de ADR-0091.
 - **Depende de:** la activación de la sesión 6 (R4.2), rama de motor incluida.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el ADR está aceptado con los umbrales pre-registrados y la medida de los
@@ -349,8 +355,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
 - **Depende de:** la corrida que cuenta (R4.1; ADR-0070 §3) con un "sí", y el ADR propio de la
-  rama de medida (ADR-0070 §6); NA:H, el sello del respaldo M1 (R3.6); y NA:R, el
-  método (R3.7).
+  rama de medida (ADR-0070 §6); y NA:R, el método (R3.7). El sello del respaldo M1 (R3.6)
+  está HECHO (ADR-0091).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la medida de mayo está en su informe.
 
@@ -547,24 +553,24 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   R5.3.
 
 ### A.4 · La copia de seguridad
-- **Refs:** (Technical Debt de PROJECT_STATE, «Copia de seguridad de las crudas y los WAV: hecha hasta v10»)
-- **Qué es:** las crudas y los WAV fuera de la máquina: falta v6 (la sesión 1), y el texto de la
-  deuda no dice nada de v7–v10.
+- **Refs:** (Technical Debt de PROJECT_STATE, «Copia de seguridad de las crudas y los WAV: hecha hasta v17»)
+- **Qué es:** las crudas y los WAV fuera de la máquina: cada sesión nueva se añade tras su ingesta.
 - **Depende de:** nada. **Fecha límite: antes de grabar la próxima sesión con el trader.**
 - **Quién:** Aleks (el consultor no tiene acceso a su máquina ni a su Drive).
 - **Hecho cuando:** v6 a v10 están en Drive con su SHA256SUMS.
-- **Estado:** HECHA (2026-10-22, Aleks: data/transcripciones/v6 a v10 (158 ficheros) y SHA256SUMS-v6-v10.txt (158 líneas, una por fichero) en una carpeta privada de su Google Drive).
+- **Estado:** HECHA (2026-10-22, Aleks: data/transcripciones/v6 a v10 (158 ficheros) y SHA256SUMS-v6-v10.txt (158 líneas, una por fichero) en una carpeta privada de su Google Drive). Ampliada el 2026-11-07 con v15 a v17 (146 ficheros y SHA256SUMS-v15-v17.txt, en la misma carpeta privada).
 
 ## Carril: guardias y deuda
 
 ### A.5 · Lo que queda de la demo de FTMO
 - **Refs:** NA:A · NA:M · HER:10 · F:F17
-- **Qué es:** el panel del límite diario (NA:A); el BE de una venta que salta por el ASK (NA:M,
+- **Qué es:** el panel del límite diario, HECHO el 2026-11-07 (medianoche de España; NA:A queda con
+  lo opcional de las noticias); el BE de una venta que salta por el ASK (NA:M,
   ADR-0065 §6); y el grabador de spread y ticks de F17 (heredado 10), que también mide el
   deslizamiento (ADR-0090 §7).
-- **Depende de:** una prueba gratuita de FTMO viva.
+- **Depende de:** una prueba gratuita de FTMO viva (la que está en curso termina el 2026-11-11).
 - **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
-- **Hecho cuando:** el panel declarado, M medida y el grabador hecho.
+- **Hecho cuando:** el panel declarado (HECHO el 2026-11-07), M medida y el grabador hecho.
 
 ### G.1 · La guardia de Claude Code
 - **Refs:** NA:D
@@ -686,5 +692,5 @@ sus ambigüedades, sin revisar cada informe a fondo.
 
 ## Fechas fijas
 
-- La prueba gratuita de FTMO del 2026-10-29 vence (si dura 14 días, como la del 2026-10-08) hacia
-  el 12 de noviembre de 2026: el panel (NA:A) va antes.
+- La prueba gratuita de FTMO en curso termina el 11 de noviembre de 2026 (Account MetriX: inicio
+  28/10/26, fin 11/11/26); lo que queda de A.5 (NA:M y F17) pide una prueba viva.
