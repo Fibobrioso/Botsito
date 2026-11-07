@@ -20,6 +20,7 @@ import dataclasses
 from collections.abc import Mapping
 from datetime import UTC, datetime
 from decimal import Decimal
+from types import SimpleNamespace
 from typing import Any
 from zoneinfo import ZoneInfo
 
@@ -28,10 +29,10 @@ import pytest
 from botsito.config.registro import Registro, cargar_registro
 from botsito.data.velas import a_minuto
 from botsito.domain.cierres import CalendarioCierres, Cierre, ReglasCierres
-from botsito.domain.ticks import MS_POR_MINUTO
+from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
-from botsito.engine import primitivas_broker, zonas
+from botsito.engine import cableado, primitivas_broker, zonas
 from botsito.engine.broker import (
     CANCELADA,
     LLENADA,
@@ -67,7 +68,16 @@ def _vela(minuto: int, o: int, h: int, low: int, c: int) -> Vela:
     return Vela(MinutoUtc(minuto), Puntos(o), Puntos(h), Puntos(low), Puntos(c), 1)
 
 
-def _broker(m1: list[Vela], cierres: ReglasCierres | None = None, **reglas: Any) -> Broker:
+def _tick(ms: int, bid: int) -> Tick:
+    return Tick(MilisegundoUtc(ms), Puntos(bid + SPREAD), Puntos(bid), 0, 0)
+
+
+def _broker(
+    m1: list[Vela],
+    cierres: ReglasCierres | None = None,
+    ticks: tuple[Tick, ...] = (),
+    **reglas: Any,
+) -> Broker:
     base = ReglasBroker(
         volumen_max_lotes=Decimal(10),
         ordenes_simultaneas_max=10,
@@ -82,11 +92,19 @@ def _broker(m1: list[Vela], cierres: ReglasCierres | None = None, **reglas: Any)
     return Broker(
         dataclasses.replace(base, **reglas),
         Configuracion(False, 0, lambda _m: SPREAD),
-        Mercado((), m1),
+        Mercado(ticks, m1),
         UNO,
         1,
         stops_level_diagnostico=0,
     )
+
+
+def _sesion_del_bot(b: Broker, limites: list[tuple[str, int, int]]) -> list[str]:
+    """La sesion de cada posicion, como la lee el cableado (`_operaciones_del_bot`, que no usa
+    `self`): sin construir el motor."""
+    dia = SimpleNamespace(dia=datetime(2030, 1, 15, tzinfo=UTC).date())
+    ops = cableado.MotorCableado._operaciones_del_bot(None, b, None, dia, limites)  # type: ignore[arg-type]
+    return [o.sesion for o in ops]
 
 
 # ------------------------------------------------------------- en el broker: rompen en main
@@ -204,6 +222,137 @@ def test_la_marca_de_la_vela_del_llenado_no_se_toma() -> None:
     b.avanzar(_cierre(M0 + 1))
     p = b.posiciones["pos-o"]
     assert p.abierta and p.marcas == [(_cierre(M0 + 1), 1000)]
+
+
+LIMITES = [("07-11", M0 - 240, M0 + 1), ("11-15", M0 + 1, M0 + 241)]  # 07-11 acaba con M0
+
+
+def test_un_llenado_del_respaldo_en_la_ultima_vela_de_una_sesion_es_de_la_siguiente() -> None:
+    """S3 (ADR-0091 §2): la venta stop se llena con la M0, la ultima vela de 07-11. Sellado en su
+    ultimo milisegundo, el llenado sigue siendo de la vela siguiente para la sesion: 11-15, como
+    cuando se sellaba en el fin de M0. Pasa en `main` y en la rama."""
+    b = _broker([_vela(M0, 1008, 1009, 990, 995), _vela(M0 + 1, 995, 999, 994, 996)])
+    b.colocar_stop("v", "venta", 1000, UNO, 1020, 950, _ms(M0))
+    b.avanzar(_cierre(M0 + 1))
+    assert b.posiciones["pos-v"].fuente_apertura == RESPALDO_M1
+    assert _sesion_del_bot(b, LIMITES) == ["11-15"]
+
+
+# ------------------------------------- con ticks y fuera del respaldo: como en main (ADR-0091 §2)
+
+
+def test_un_llenado_por_tick_en_el_ultimo_ms_de_un_minuto_conserva_su_minuto_y_su_sesion() -> None:
+    """ADR-0091 §2 (respuesta del consultor a la entrega, punto 1): el «+ 1» de `minuto_de_apertura`
+    es SOLO para lo sellado por el respaldo. Un tick en el milisegundo .999 de M0 (la ultima vela de
+    07-11) llena la limite: la posicion es de M0, su peor marca de M0 es ese tick y su sesion es
+    07-11, como en `main`. Con el «+ 1» para todos (7eda14d) pasaba a M0+1 y a 11-15."""
+    ticks = (_tick(_ms(M0, 10), 1010), _tick(_ms(M0 + 1) - 1, 1000))
+    b = _broker(
+        [_vela(M0, 1010, 1011, 1000, 1000), _vela(M0 + 1, 1010, 1012, 1008, 1011)], ticks=ticks
+    )
+    b.colocar_limite("o", "compra", 1004, UNO, 990, 1030, _ms(M0))  # el ASK del tick, 1003
+    b.avanzar(_cierre(M0 + 1))
+    p = b.posiciones["pos-o"]
+    assert (p.abierta_ms, p.fuente_apertura) == (_ms(M0 + 1) - 1, "ticks")
+    assert p.marcas[0] == (_ms(M0 + 1) - 1, 1000)
+    assert _sesion_del_bot(b, LIMITES) == ["07-11"]
+
+
+def test_un_llenado_por_tick_en_el_ultimo_ms_antes_del_corte_paga_el_swap_y_es_de_ese_dia() -> None:
+    """Lo mismo en el ultimo milisegundo antes de la medianoche de `huso_corte` (UTC): el llenado
+    por tick vivio el corte, paga su swap y la posicion es del dia 15 (una orden colocada ya el dia
+    16 no choca con `posiciones_dia_max` = 1), como en `main`. Con el «+ 1» para todos (7eda14d) no
+    pagaba el swap y era del dia 16."""
+    n = int(a_minuto(datetime(2030, 1, 16, 0, 0, tzinfo=UTC)))
+    ticks = (_tick(_ms(n - 1, 10), 1010), _tick(_ms(n) - 1, 1000))
+    m1 = [_vela(n - 1, 1010, 1011, 1000, 1000), _vela(n, 1010, 1012, 1008, 1011)]
+    b = _broker(m1, ticks=ticks, swap_largo_puntos=Decimal(1), posiciones_dia_max=1)
+    b.colocar_limite("o", "compra", 1004, UNO, 990, 1030, _ms(n - 1))  # el ASK del tick, 1003
+    b.avanzar(_cierre(n))
+    p = b.posiciones["pos-o"]
+    assert (p.abierta_ms, p.fuente_apertura) == (_ms(n) - 1, "ticks")
+    assert [t for t, _ in p.swaps] == [_ms(n)]
+    b.colocar_limite("x", "compra", 990, UNO, 980, 1030, _cierre(n))
+    assert b.ordenes["x"].estado == "colocada"
+
+
+def test_una_apertura_conocida_en_el_cierre_menos_1_ms_se_comporta_como_en_main() -> None:
+    """Una apertura que no viene del respaldo (`abrir_conocida`, fuente `conocida` por defecto) en
+    el cierre de M0 menos 1 ms, sin ticks: la posicion es de M0, la vela M0 se marca (la lectura
+    pesimista de siempre) y su sesion es 07-11, como en `main`. Con el «+ 1» para todos (7eda14d)
+    no se marcaba M0 y pasaba a 11-15."""
+    b = _broker([_vela(M0, 1004, 1006, 995, 1000), _vela(M0 + 1, 1000, 1002, 998, 1001)])
+    b.abrir_conocida("p", "compra", 1000, UNO, 980, 1030, _cierre(M0))
+    b.avanzar(_cierre(M0 + 1))
+    p = b.posiciones["p"]
+    assert p.fuente_apertura == "conocida"
+    assert p.marcas[0] == (_cierre(M0), 995)
+    assert _sesion_del_bot(b, LIMITES) == ["07-11"]
+
+
+# ------------------------- la vela k que se vuelve a mirar: partir el avance no cambia nada
+
+
+def _escenario() -> Broker:
+    """Sin ticks: una limite de compra en 1000, una venta stop en 985 y una larga abierta en 1005
+    con stop 990, todas desde el inicio de M0; las velas llenan la limite en M0+1, tocan el stop de
+    la larga en M0+2 y llenan la venta stop en M0+3."""
+    m1 = [
+        _vela(M0, 1010, 1012, 1006, 1008),
+        _vela(M0 + 1, 1008, 1009, 995, 998),
+        _vela(M0 + 2, 998, 1000, 988, 992),
+        _vela(M0 + 3, 992, 993, 980, 984),
+        _vela(M0 + 4, 984, 986, 982, 985),
+    ]
+    b = _broker(m1)
+    b.colocar_limite("o", "compra", 1000, UNO, 970, 1060, _ms(M0))
+    b.colocar_stop("v", "venta", 985, UNO, 1000, 940, _ms(M0))
+    b.abrir_conocida("p", "compra", 1005, UNO, 990, 1060, _ms(M0))
+    return b
+
+
+def _partido_y_de_una_vez(cortes: list[int]) -> tuple[Broker, Broker]:
+    de_una_vez = _escenario()
+    de_una_vez.avanzar(_ms(M0 + 5))
+    partido = _escenario()
+    for corte in cortes:
+        partido.avanzar(corte)
+    assert len(de_una_vez.traza().eventos) >= 4  # el escenario no es trivial
+    return partido, de_una_vez
+
+
+def _marcas(b: Broker) -> dict[str, list[tuple[int, int]]]:
+    return {k: p.marcas for k, p in b.posiciones.items()}
+
+
+def test_partir_el_avance_en_cada_cierre_da_los_mismos_eventos_y_las_mismas_marcas() -> None:
+    """ADR-0091 §1 (respuesta a la entrega, punto 2): con el sello en k fin - 1 ms = `ahora`, el
+    «ahora - 1» deja que el `avanzar` siguiente vuelva a mirar la vela k para lo que no cambio. Si
+    nadie actua entre medias, avanzar de cierre en cierre (k fin - 1 ms, como el motor) da
+    EXACTAMENTE los mismos eventos (instante, tipo, id, fuente) y las mismas marcas que avanzar de
+    una vez. Pasa en `main` y en la rama."""
+    partido, de_una_vez = _partido_y_de_una_vez([_cierre(k) for k in range(M0, M0 + 5)])
+    assert partido.traza().eventos == de_una_vez.traza().eventos
+    assert _marcas(partido) == _marcas(de_una_vez)
+
+
+@pytest.mark.parametrize(
+    "cortes",
+    [
+        [_ms(M0 + 2), _ms(M0 + 3), _ms(M0 + 5)],  # en el fin de cada vela (instantes redondos)
+        [_cierre(M0 + 1), _ms(M0 + 2), _cierre(M0 + 3), _ms(M0 + 5)],  # mezclados
+    ],
+)
+def test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas(
+    cortes: list[int],
+) -> None:
+    """Lo mismo partiendo en instantes REDONDOS (el fin de una vela). Los eventos son los mismos en
+    `main` y en la rama; las marcas solo con (e2): en `main`, avanzar hasta un instante redondo
+    marcaba entera la vela que empieza en el (la marca adelantada de `_peor_del_minuto`), y partir
+    ahi cambiaba las marcas. ROMPE en `main` por la marca, no por los eventos."""
+    partido, de_una_vez = _partido_y_de_una_vez(cortes)
+    assert partido.traza().eventos == de_una_vez.traza().eventos
+    assert _marcas(partido) == _marcas(de_una_vez)
 
 
 # --------------------------------------------- ADR-0083 D2 por el cableado, sin ticks: rompen

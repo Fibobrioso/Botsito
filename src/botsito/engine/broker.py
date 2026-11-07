@@ -276,12 +276,17 @@ class Posicion:
 
 def minuto_de_apertura(p: Posicion) -> int:
     """El minuto al que PERTENECE la apertura de una posicion, para lo que viene despues de ella
-    (ADR-0091 §2): el respaldo sella el llenado de la vela k en su ultimo milisegundo (k fin - 1),
-    y lo de despues -las marcas, los swaps, el dia de la posicion, su sesion, el break even por
-    velas- sigue empezando en la vela siguiente, como cuando se sellaba en k fin. El «+ 1» es la
-    convencion de `_sesion_de` con `colocada_ms` (`cableado.py`); un llenado por tick en el ms .999
-    de un minuto cae tambien en el siguiente."""
-    return (p.abierta_ms + 1) // MS_POR_MINUTO
+    (ADR-0091 §2). SOLO lo sellado por el respaldo (`fuente_apertura == RESPALDO_M1`, la unica
+    fuente que las tres funciones del respaldo ponen a un llenado) lleva el «+ 1»: el respaldo sella
+    el llenado de la vela k en su ultimo milisegundo (k fin - 1), y lo de despues -las marcas, los
+    swaps, el dia de la posicion, su sesion, el break even por velas- sigue empezando en la vela
+    siguiente, como cuando se sellaba en k fin. Cualquier otra apertura (un tick, aunque caiga en el
+    ms .999 de un minuto; `abrir_conocida` con su fuente `conocida` o `caso`) es de su minuto, como
+    antes del ADR. La condicion mira la cadena: `abrir_conocida` con `fuente=RESPALDO_M1` llevaria
+    el «+ 1», y nadie lo hace."""
+    if p.fuente_apertura == RESPALDO_M1:
+        return (p.abierta_ms + 1) // MS_POR_MINUTO
+    return p.abierta_ms // MS_POR_MINUTO
 
 
 @dataclass(frozen=True)

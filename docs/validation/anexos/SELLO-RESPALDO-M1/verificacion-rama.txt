@@ -1,6 +1,6 @@
 # prototipo_sello.py, forma rama
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-01-14.html
-TIEMPO: 5.8 s para 1 dias
+TIEMPO: 4.9 s para 1 dias
 ## 2026-01-14
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | compra | 05:59:59.999Z | cancelada | 06:00:59.999Z | M1 k con ticks
@@ -25,7 +25,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o9 | 07-11 | compra | 08:01:30.033Z (ticks) | M1 08:01Z | stop (ticks) | 08:02:53.289Z | -1.12
   o10 | 07-11 | compra | 08:03:50.562Z (ticks) | M1 08:03Z | objetivo (ticks) | 08:04:45.018Z | 3.60
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-01-23.html
-TIEMPO: 10.1 s para 1 dias
+TIEMPO: 8.8 s para 1 dias
 ## 2026-01-23
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | compra | 06:08:59.999Z | cancelada | 06:10:59.999Z | M1 k con ticks
@@ -64,7 +64,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o10 | 07-11 | compra | 06:55:52.515Z (ticks) | M1 06:55Z | stop (ticks) | 06:56:06.907Z | -1.00
   o29 | 11-15 | venta | 11:03:59.999Z (respaldo_m1) | M1 11:03Z | stop (respaldo_m1) | 11:08:59.999Z | -1.00
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-03.html
-TIEMPO: 6.1 s para 1 dias
+TIEMPO: 7.0 s para 1 dias
 ## 2026-04-03
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | venta | 05:51:59.999Z | cancelada | 05:53:59.999Z | M1 k con ticks
@@ -98,7 +98,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o21 | 11-15 | compra | 11:43:37.172Z (ticks) | M1 11:43Z | stop (ticks) | 12:09:04.872Z | -0.23
   o25 | 11-15 | compra | 12:41:05.338Z (ticks) | M1 12:41Z | stop (ticks) | 12:46:30.059Z | -0.08
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-06.html
-TIEMPO: 7.4 s para 1 dias
+TIEMPO: 7.8 s para 1 dias
 ## 2026-04-06
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | compra | 06:27:59.999Z | cancelada | 06:28:59.999Z | M1 k con ticks
@@ -118,7 +118,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o6 | 07-11 | compra | 08:57:01.307Z (ticks) | M1 08:57Z | manual (ticks) | 08:58:59.999Z | -0.28
   o11 | 11-15 | compra | 10:01:59.999Z (respaldo_m1) | M1 10:01Z | stop (respaldo_m1) | 10:14:59.999Z | 0.00
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-07.html
-TIEMPO: 7.4 s para 1 dias
+TIEMPO: 7.8 s para 1 dias
 ## 2026-04-07
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | venta | 04:59:59.999Z | llenada | 05:00:33.503Z | 
@@ -159,7 +159,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o6 | 07-11 | venta | 06:31:14.164Z (ticks) | M1 06:31Z | stop (ticks) | 06:33:07.479Z | -1.00
   o32 | 11-15 | compra | 10:32:59.999Z (respaldo_m1) | M1 10:32Z | stop (respaldo_m1) | 10:37:59.999Z | -1.00
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-22.html
-TIEMPO: 8.0 s para 1 dias
+TIEMPO: 7.6 s para 1 dias
 ## 2026-04-22
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | venta | 05:09:59.999Z | cancelada | 05:12:59.999Z | M1 k con ticks
@@ -189,7 +189,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o3 | 07-11 | venta | 05:15:02.197Z (ticks) | M1 05:15Z | stop (ticks) | 05:16:09.723Z | -1.29
   o8 | 07-11 | venta | 07:45:59.999Z (respaldo_m1) | M1 07:45Z | stop (respaldo_m1) | 07:47:59.999Z | -1.00
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-23.html
-TIEMPO: 4.7 s para 1 dias
+TIEMPO: 4.3 s para 1 dias
 ## 2026-04-23
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | venta | 04:59:59.999Z | llenada | 05:00:59.999Z | 
@@ -213,7 +213,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o11 | 07-11 | venta | 06:49:36.248Z (ticks) | M1 06:49Z | stop (ticks) | 06:51:50.533Z | 0.00
   o14 | 07-11 | venta | 06:55:12.773Z (ticks) | M1 06:55Z | objetivo (ticks) | 07:03:08.603Z | 3.56
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-07-10.html
-TIEMPO: 6.9 s para 1 dias
+TIEMPO: 7.0 s para 1 dias
 ## 2026-07-10
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | compra | 05:19:59.999Z | rechazada | 05:19:59.999Z | 
@@ -240,7 +240,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o11 | 07-11 | compra | 07:59:02.973Z (ticks) | M1 07:59Z | stop (ticks) | 08:00:02.862Z | -1.11
   o15 | 11-15 | venta | 10:58:43.421Z (ticks) | M1 10:58Z | stop (ticks) | 11:01:55.088Z | -1.00
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-07-16.html
-TIEMPO: 7.6 s para 1 dias
+TIEMPO: 8.3 s para 1 dias
 ## 2026-07-16
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | compra | 05:45:59.999Z | cancelada | 05:47:59.999Z | M1 k con ticks
@@ -269,7 +269,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o12 | 11-15 | compra | 09:35:57.617Z (ticks) | M1 09:35Z | objetivo (ticks) | 09:44:42.079Z | 3.67
   o21 | 11-15 | compra | 12:40:41.881Z (ticks) | M1 12:40Z | stop (ticks) | 12:43:04.285Z | -1.03
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-08-17.html
-TIEMPO: 6.3 s para 1 dias
+TIEMPO: 6.5 s para 1 dias
 ## 2026-08-17
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | compra | 04:59:59.999Z | llenada | 05:00:01.510Z | 
@@ -299,7 +299,7 @@ posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada
   o16 | 11-15 | compra | 10:12:19.726Z (ticks) | M1 10:12Z | stop (ticks) | 10:22:26.262Z | 0.00
   o18 | 11-15 | compra | 10:42:34.365Z (ticks) | M1 10:42Z | stop (ticks) | 10:50:02.699Z | -0.20
 OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-08-20.html
-TIEMPO: 6.4 s para 1 dias
+TIEMPO: 6.5 s para 1 dias
 ## 2026-08-20
 ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
   o1 | stop | venta | 05:57:59.999Z | cancelada | 05:58:59.999Z | M1 k con ticks

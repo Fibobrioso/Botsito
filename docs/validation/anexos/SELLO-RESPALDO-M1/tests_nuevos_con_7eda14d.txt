@@ -1,0 +1,35 @@
+.......FFF.....                                                          [100%]
+================================== FAILURES ===================================
+E   assert (1894694519999, 1008) == (1894694459999, 1000)
+      
+      At index 0 diff: 1894694519999 != 1894694459999
+      Use -v to get more diff
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_sello_respaldo.py:257: assert (1894694519999, 1008) == (1894694459999, 1000)
+E   assert [] == [1894752000000]
+      
+      Right contains one more item: 1894752000000
+      Use -v to get more diff
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_sello_respaldo.py:274: assert [] == [1894752000000]
+E   assert (1894694519999, 998) == (1894694459999, 995)
+      
+      At index 0 diff: 1894694519999 != 1894694459999
+      Use -v to get more diff
+C:\Users\USER\Desktop\Bot v3\tests\unit\test_sello_respaldo.py:289: assert (1894694519999, 998) == (1894694459999, 995)
+=================================== PASSES ====================================
+=========================== short test summary info ===========================
+PASSED tests/unit/test_sello_respaldo.py::test_la_vela_en_cuyo_cierre_el_motor_cancela_la_orden_la_llena_antes
+PASSED tests/unit/test_sello_respaldo.py::test_el_fin_del_dia_evalua_la_ultima_vela_antes_de_cerrar_y_cancelar
+PASSED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_vela_que_acaba_en_la_ventana_se_sella_fuera_de_ella
+PASSED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia
+PASSED tests/unit/test_sello_respaldo.py::test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap
+PASSED tests/unit/test_sello_respaldo.py::test_la_marca_de_la_vela_del_llenado_no_se_toma
+PASSED tests/unit/test_sello_respaldo.py::test_un_llenado_del_respaldo_en_la_ultima_vela_de_una_sesion_es_de_la_siguiente
+PASSED tests/unit/test_sello_respaldo.py::test_partir_el_avance_da_los_mismos_eventos_y_las_mismas_marcas[cortes0]
+PASSED tests/unit/test_sello_respaldo.py::test_partir_el_avance_da_los_mismos_eventos_y_las_mismas_marcas[cortes1]
+PASSED tests/unit/test_sello_respaldo.py::test_partir_el_avance_da_los_mismos_eventos_y_las_mismas_marcas[cortes2]
+PASSED tests/unit/test_sello_respaldo.py::test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_vela_del_stop
+PASSED tests/unit/test_sello_respaldo.py::test_sin_ticks_un_rechazo_al_llenar_gasta_el_punto_en_el_cierre_de_la_vela_del_llenado
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_por_tick_en_el_ultimo_ms_de_un_minuto_conserva_su_minuto_y_su_sesion
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_por_tick_en_el_ultimo_ms_antes_del_corte_paga_el_swap_y_es_de_ese_dia
+FAILED tests/unit/test_sello_respaldo.py::test_una_apertura_conocida_en_el_cierre_menos_1_ms_se_comporta_como_en_main
+3 failed, 12 passed in 1.52s

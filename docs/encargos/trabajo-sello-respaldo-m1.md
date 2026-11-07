@@ -93,3 +93,41 @@ Copiada tal cual:
 > Revisor (opus) otra vez, con estos alcances: reglas de la casa; esta respuesta punto por punto; que los once días coincidan con el prototipo; que cada lector de abierta_ms y cerrada_ms esté decidido en el ADR; ninguna corrida agregada; ningún día fuera de enero, abril, julio y agosto; exposiciones declaradas. Pega su informe al final.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la entrega de la fase 2 (2026-11-07)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la entrega de la fase 2 de trabajo/sello-respaldo-m1 (2026-11-07). Cópiala tal cual en el informe, en una sección nueva tras la del revisor, y aplícala punto por punto. NUNCA cierra. No empujes nada.
+>
+> Veredicto: la fase 2 cumple los puntos 0 a 11 de la respuesta a la PARADA. Quedan dos arreglos; el primero viene de un error mío.
+>
+> 1. El «+ 1» se aplica SOLO a los llenados del respaldo. minuto_de_apertura(p) devuelve (p.abierta_ms + 1) // MS_POR_MINUTO si p.fuente_apertura == RESPALDO_M1 (llenado.py:42), y p.abierta_ms // MS_POR_MINUTO en cualquier otro caso, como en main. Porqué: el punto 1 pedía neutralidad completa, y la fórmula que escribí la rompe con ticks (el ms .999) y con cualquier apertura en k fin − 1 que no venga del respaldo. Ante el porqué del punto 1, cede su letra.
+>    - Antes de escribirlo, verifica que una posición llenada por el respaldo lleva exactamente RESPALDO_M1 en fuente_apertura en las tres funciones del respaldo. Si otra fuente también se sella en k fin − 1, entra en la condición con su porqué en el ADR.
+>    - Tests, escritos primero y vistos fallar contra el código de 7eda14d: (i) un llenado por tick en el ms .999 de un minuto conserva el minuto, la sesión, el swap y el día de main, este último con el .999 justo antes de la medianoche de huso_corte; (ii) una apertura en k fin − 1 con una fuente que no es del respaldo (Broker.abrir con su fuente por defecto) se comporta igual que en main. Los dos pasan en main y en la rama arreglada. Cita por nombre los tests de c) que siguen fijando que el llenado del respaldo empieza en la vela siguiente.
+>    - ADR-0091: reescribe la NOTA de cabecera (líneas 12-16) y §2 (líneas 52-54). Con ticks no cambia nada; el «+ 1» es solo para lo sellado por el respaldo, con la condición escrita. El docstring de minuto_de_apertura (broker.py:277-284), igual.
+>
+> 2. Repetición de la vela k: test propio, sin cambiar código. Porqué: hoy el invariante solo lo sostiene la lectura del código.
+>    - (a) Invariancia de partición, en minutos sin ticks, con pendientes stop y límite y una posición abierta: si nadie actúa entre medias, avanzar(k fin) seguido de avanzar(k+1 fin) da exactamente los mismos eventos (instante, tipo, id, fuente) y las mismas marcas que avanzar(k+1 fin) de una vez. Si el fichero ya usa Hypothesis, con Hypothesis.
+>    - (b) Cita por nombre los tests que ya fijan las guardias de lo que SÍ cambia en el cierre de k: la orden colocada o modificada en él (ultimo_cambio_ms), el stop movido (stop_movido_ms y stop_anterior) y la posición abierta con la vela k (decidido). El que falte se escribe.
+>    - Pasan en los dos lados; el informe lo dice, y ADR-0091 §1 lo recoge en una línea con los nombres de los tests.
+>
+> 3. Las desviaciones, aceptadas:
+>    - (a) Los lectores de cerrada_ms del swap no son neutros. Es lo que permitía el punto 1 (cada uno con su porqué), y el respaldo sella la salida antes del corte, que es cuando ocurre.
+>    - (b) El punto 6 vive en ADR-0091 §4.
+>    - (c) Las dos negativas de la guardia, resueltas con la forma que propone su mensaje, no rodean nada. Verifica que el informe trae los comandos exactos de las dos; si no, añádelos a §0.k o §7.
+>
+> 4. Fila de ERRORES-RECURRENTES preparada para el cierre. Añade este error del consultor: (importa) el punto 1 de la respuesta a la PARADA escribió una fórmula, «(abierta_ms + 1) // 60000», en lugar de la condición (solo lo sellado por el respaldo), y rompía la neutralidad con ticks; lo levantó Claude Code al pedir decisión. Lección: una regla del motor se escribe con su condición, no con su fórmula (regla de oro 3), y el revisor comprueba lo «neutro» también por el camino de los ticks.
+>
+> 5. Un commit e), fix(broker), con los puntos 1 y 2, y con el ritual de siempre: estadiar, uv run botsito state check, make check > make-check.log 2>&1, leer el log (exit 0, ningún failed y la línea SELLO), y ruff format, ruff check y mypy sobre lo tocado. Además:
+>    - comparar-con-main otra vez, con la salida pegada y los recuentos nuevos;
+>    - la verificación de los once días con el visor por caso (nunca --todos ni --meses): tienen que seguir idénticos al prototipo; si alguno cambia, PARADA solo para ese día, con el diff;
+>    - las líneas del cierre, probadas de nuevo sobre la copia, con wc -c de PROJECT_STATE por debajo de 23.000.
+>
+> 6. Revisor (opus), pasada corta, con estos alcances: los puntos 1 a 4 de esta respuesta; que minuto_de_apertura es neutro con ticks y con toda apertura en k fin − 1 que no sea del respaldo (que busque todas las que puedan darse); que ADR-0091 ya no dice que con ticks algo cambia; ninguna corrida agregada y las exposiciones declaradas. Pega su informe al final.
+>
+> CI: solo toca src/ del motor; sin fix/.
+>
+> Rama lista para revisión, NO cerrada.

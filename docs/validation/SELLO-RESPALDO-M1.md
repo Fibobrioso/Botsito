@@ -474,7 +474,7 @@ pasa a la columna del consultor, la (1) se corrige (no hubo un «plan del 2026-1
 error de la regla D2. La columna del revisor resume sus dos pasadas (§6 y §8); el cierre la
 completa si el consultor encuentra algo después.
 
-| `trabajo/sello-respaldo-m1` | Dos pasadas, opus. La primera, sobre dacd533 con los cinco alcances del encargo (§6; lo hecho, §6.1): reglas 0 bloquea, 1 importa, 1 menor; encargo 0 bloquea, 5 importa, 3 menor; todos arreglados: a1 (el clon sin declarar en la fila de exposiciones), b1 (los lectores de `cerrada_ms`, del minuto del evento y del resultado de `_peor_del_minuto`), b2 (la marca mueve también el margen libre), b3 (ADR-0083 D2 sin contrastar), b4 (las líneas de main frente a las de la rama), b5 (la regresión sin la lista de ficheros) y los cuatro menores. La segunda, tras la fase 2, con los alcances de la respuesta (§8) | (1) **(importa, del consultor)** la respuesta del 2026-10-29 (RESPALDO-M1.md:485) mandaba a H «las dos corridas del arnés», y R3.7 pide fijar los umbrales de R antes de ver ninguna corrida nueva. Lección: antes de mandar una corrida, mirar si hay un umbral pendiente de pre-registrar. (2) **(importa, del consultor)** el encargo llamó «eventos del respaldo» a 22 cancelaciones del bot y las mandó sacar de la salida equivocada (la diaria de RESPALDO-M1, que no es la que las contó y que tiene, aparte, 22 eventos del respaldo de verdad). Lección: una cifra heredada se cita con QUÉ cuenta y SOBRE QUÉ salida, y una lista que va a decidir algo se saca del código vigente, no de una salida vieja. Señal: el mismo número en dos sitios con nombres distintos. (3) **(menor, del consultor)** el encargo citó «el plan del 2026-11-01» cuando las dos corridas de R3.6 vienen de la respuesta del 2026-10-29: corregido en (1). (4) **(menor, del consultor)** la regla D2 prohibía implementar (c2) en la rama que ya era la de H, y costó una PARADA más. Lección: la regla de una PARADA condicional decide el camino, no la rama en la que se hace | (5) **Una lista vieja solo elige días**: la de RESPALDO-M1 daba 26, y main da 27 en esos días, con ids renumerados; el censo se hizo con el visor sobre main. (6) **La guardia y los prototipos en memoria**: `exec` de una fuente, `git apply`, `sys.path` calculado, `PYTHONPATH` y `spec_from_file_location` con la ruta por parámetro se niegan; las formas que pasan son funciones literales escritas en el guion, Edit en el clon y rutas literales en la llamada. Señal: un prototipo que parchea por texto. (7) **Un test que importa `tests.unit` solo corre en un clon si es idéntico al del repo** (la guardia lo resuelve contra el repo): en el clon de la rama, con el fichero aún sin copiar al repo, se negó; copiado, corrió en el de main. (8) **Un test de respaldo que copia uno de ticks puede no medir lo mismo**: sin ticks, la stop se llena al nivel salvo hueco, y el rechazo al llenar de D3b necesitó una vela que abriera ya pasada |
+| `trabajo/sello-respaldo-m1` | Dos pasadas, opus. La primera, sobre dacd533 con los cinco alcances del encargo (§6; lo hecho, §6.1): reglas 0 bloquea, 1 importa, 1 menor; encargo 0 bloquea, 5 importa, 3 menor; todos arreglados: a1 (el clon sin declarar en la fila de exposiciones), b1 (los lectores de `cerrada_ms`, del minuto del evento y del resultado de `_peor_del_minuto`), b2 (la marca mueve también el margen libre), b3 (ADR-0083 D2 sin contrastar), b4 (las líneas de main frente a las de la rama), b5 (la regresión sin la lista de ficheros) y los cuatro menores. La segunda, tras la fase 2, con los alcances de la respuesta (§8) | (1) **(importa, del consultor)** la respuesta del 2026-10-29 (RESPALDO-M1.md:485) mandaba a H «las dos corridas del arnés», y R3.7 pide fijar los umbrales de R antes de ver ninguna corrida nueva. Lección: antes de mandar una corrida, mirar si hay un umbral pendiente de pre-registrar. (2) **(importa, del consultor)** el encargo llamó «eventos del respaldo» a 22 cancelaciones del bot y las mandó sacar de la salida equivocada (la diaria de RESPALDO-M1, que no es la que las contó y que tiene, aparte, 22 eventos del respaldo de verdad). Lección: una cifra heredada se cita con QUÉ cuenta y SOBRE QUÉ salida, y una lista que va a decidir algo se saca del código vigente, no de una salida vieja. Señal: el mismo número en dos sitios con nombres distintos. (3) **(menor, del consultor)** el encargo citó «el plan del 2026-11-01» cuando las dos corridas de R3.6 vienen de la respuesta del 2026-10-29: corregido en (1). (4) **(menor, del consultor)** la regla D2 prohibía implementar (c2) en la rama que ya era la de H, y costó una PARADA más. Lección: la regla de una PARADA condicional decide el camino, no la rama en la que se hace. (5) **(importa, del consultor)** el punto 1 de la respuesta a la PARADA escribió una fórmula, «(abierta_ms + 1) // 60000», en lugar de la condición (solo lo sellado por el respaldo), y rompía la neutralidad con ticks; lo levantó Claude Code al pedir decisión. Lección: una regla del motor se escribe con su condición, no con su fórmula (regla de oro 3), y el revisor comprueba lo «neutro» también por el camino de los ticks | (6) **Una lista vieja solo elige días**: la de RESPALDO-M1 daba 26, y main da 27 en esos días, con ids renumerados; el censo se hizo con el visor sobre main. (7) **La guardia y los prototipos en memoria**: `exec` de una fuente, `git apply`, `sys.path` calculado, `PYTHONPATH` y `spec_from_file_location` con la ruta por parámetro se niegan; las formas que pasan son funciones literales escritas en el guion, Edit en el clon y rutas literales en la llamada. Señal: un prototipo que parchea por texto. (8) **Un test que importa `tests.unit` solo corre en un clon si es idéntico al del repo** (la guardia lo resuelve contra el repo): en el clon de la rama, con el fichero aún sin copiar al repo, se negó; copiado, corrió en el de main. (9) **Un test de respaldo que copia uno de ticks puede no medir lo mismo**: sin ticks, la stop se llena al nivel salvo hueco, y el rechazo al llenar de D3b necesitó una vela que abriera ya pasada |
 
 ## 4. Los commits de la rama
 
@@ -1020,8 +1020,349 @@ el mismo nivel y el mismo `decidido` dan lo mismo, y lo decidido en el cierre ll
 los 29 ficheros de §4.1 con (c2) escrito a mano y dio los mismos 10 rotos de §0.d, más la sonda 5 de
 la rama, que entonces cerraba en el sello viejo (se reescribió en 7eda14d); no se guardó a fichero.
 
+## Respuesta del consultor a la entrega de la fase 2 (2026-11-07)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la entrega de la fase 2 de trabajo/sello-respaldo-m1 (2026-11-07). Cópiala tal cual en el informe, en una sección nueva tras la del revisor, y aplícala punto por punto. NUNCA cierra. No empujes nada.
+>
+> Veredicto: la fase 2 cumple los puntos 0 a 11 de la respuesta a la PARADA. Quedan dos arreglos; el primero viene de un error mío.
+>
+> 1. El «+ 1» se aplica SOLO a los llenados del respaldo. minuto_de_apertura(p) devuelve (p.abierta_ms + 1) // MS_POR_MINUTO si p.fuente_apertura == RESPALDO_M1 (llenado.py:42), y p.abierta_ms // MS_POR_MINUTO en cualquier otro caso, como en main. Porqué: el punto 1 pedía neutralidad completa, y la fórmula que escribí la rompe con ticks (el ms .999) y con cualquier apertura en k fin − 1 que no venga del respaldo. Ante el porqué del punto 1, cede su letra.
+>    - Antes de escribirlo, verifica que una posición llenada por el respaldo lleva exactamente RESPALDO_M1 en fuente_apertura en las tres funciones del respaldo. Si otra fuente también se sella en k fin − 1, entra en la condición con su porqué en el ADR.
+>    - Tests, escritos primero y vistos fallar contra el código de 7eda14d: (i) un llenado por tick en el ms .999 de un minuto conserva el minuto, la sesión, el swap y el día de main, este último con el .999 justo antes de la medianoche de huso_corte; (ii) una apertura en k fin − 1 con una fuente que no es del respaldo (Broker.abrir con su fuente por defecto) se comporta igual que en main. Los dos pasan en main y en la rama arreglada. Cita por nombre los tests de c) que siguen fijando que el llenado del respaldo empieza en la vela siguiente.
+>    - ADR-0091: reescribe la NOTA de cabecera (líneas 12-16) y §2 (líneas 52-54). Con ticks no cambia nada; el «+ 1» es solo para lo sellado por el respaldo, con la condición escrita. El docstring de minuto_de_apertura (broker.py:277-284), igual.
+>
+> 2. Repetición de la vela k: test propio, sin cambiar código. Porqué: hoy el invariante solo lo sostiene la lectura del código.
+>    - (a) Invariancia de partición, en minutos sin ticks, con pendientes stop y límite y una posición abierta: si nadie actúa entre medias, avanzar(k fin) seguido de avanzar(k+1 fin) da exactamente los mismos eventos (instante, tipo, id, fuente) y las mismas marcas que avanzar(k+1 fin) de una vez. Si el fichero ya usa Hypothesis, con Hypothesis.
+>    - (b) Cita por nombre los tests que ya fijan las guardias de lo que SÍ cambia en el cierre de k: la orden colocada o modificada en él (ultimo_cambio_ms), el stop movido (stop_movido_ms y stop_anterior) y la posición abierta con la vela k (decidido). El que falte se escribe.
+>    - Pasan en los dos lados; el informe lo dice, y ADR-0091 §1 lo recoge en una línea con los nombres de los tests.
+>
+> 3. Las desviaciones, aceptadas:
+>    - (a) Los lectores de cerrada_ms del swap no son neutros. Es lo que permitía el punto 1 (cada uno con su porqué), y el respaldo sella la salida antes del corte, que es cuando ocurre.
+>    - (b) El punto 6 vive en ADR-0091 §4.
+>    - (c) Las dos negativas de la guardia, resueltas con la forma que propone su mensaje, no rodean nada. Verifica que el informe trae los comandos exactos de las dos; si no, añádelos a §0.k o §7.
+>
+> 4. Fila de ERRORES-RECURRENTES preparada para el cierre. Añade este error del consultor: (importa) el punto 1 de la respuesta a la PARADA escribió una fórmula, «(abierta_ms + 1) // 60000», en lugar de la condición (solo lo sellado por el respaldo), y rompía la neutralidad con ticks; lo levantó Claude Code al pedir decisión. Lección: una regla del motor se escribe con su condición, no con su fórmula (regla de oro 3), y el revisor comprueba lo «neutro» también por el camino de los ticks.
+>
+> 5. Un commit e), fix(broker), con los puntos 1 y 2, y con el ritual de siempre: estadiar, uv run botsito state check, make check > make-check.log 2>&1, leer el log (exit 0, ningún failed y la línea SELLO), y ruff format, ruff check y mypy sobre lo tocado. Además:
+>    - comparar-con-main otra vez, con la salida pegada y los recuentos nuevos;
+>    - la verificación de los once días con el visor por caso (nunca --todos ni --meses): tienen que seguir idénticos al prototipo; si alguno cambia, PARADA solo para ese día, con el diff;
+>    - las líneas del cierre, probadas de nuevo sobre la copia, con wc -c de PROJECT_STATE por debajo de 23.000.
+>
+> 6. Revisor (opus), pasada corta, con estos alcances: los puntos 1 a 4 de esta respuesta; que minuto_de_apertura es neutro con ticks y con toda apertura en k fin − 1 que no sea del respaldo (que busque todas las que puedan darse); que ADR-0091 ya no dice que con ticks algo cambia; ninguna corrida agregada y las exposiciones declaradas. Pega su informe al final.
+>
+> CI: solo toca src/ del motor; sin fix/.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 9. La respuesta aplicada: el commit e) (2026-11-07)
+
+### 9.1 Punto por punto
+
+| # | Lo que manda | Hecho | Dónde |
+|---|---|---|---|
+| 1 | El «+ 1» solo para lo sellado por el respaldo, con la condición; verificar antes las fuentes; tests escritos primero y vistos fallar contra 7eda14d; ADR-0091 (cabecera y §2) y el docstring | Hecho | §9.2; `broker.py`, `minuto_de_apertura`; ADR-0091 cabecera y §2; recuadro de ADR-0051 y fila del índice, también |
+| 2 | La vela k que se vuelve a mirar: un test de partición; citar las guardias de lo que sí cambia; pasan en los dos lados; una línea en ADR-0091 §1 | Hecho, **con una corrección medida**: la partición en instantes REDONDOS rompe en `main` | §9.3 |
+| 3 | Las desviaciones, aceptadas; los comandos exactos de las dos negativas en el informe | Hecho | §9.4 |
+| 4 | La fila de ERRORES-RECURRENTES con el error del consultor | Hecho | §3, columna del consultor, (5) |
+| 5 | El commit e), sellado; comparar-con-main otra vez; la verificación de los once días; las líneas del cierre otra vez | Hecho | §9.5, §9.6; `simular-cierre.txt` (21.860 bytes; 21.986 con el Current Feature del cierre) |
+| 6 | El revisor, pasada corta | Hecho | §10 |
+| CI | Sin fix/ | Cumplido | solo `src/botsito/engine/broker.py` entre lo de la plataforma |
+
+### 9.2 El «+ 1», solo para el respaldo (punto 1)
+
+**Las fuentes, verificadas antes de escribir la condición.** Una posición nace en dos sitios:
+
+- `Broker._aplicar`, al llenar una orden (`Posicion(..., instante, evento.fuente, ...)`): la fuente
+  es la del `Evento`, y de las tres funciones del respaldo solo `primer_llenado_limite` y
+  `primer_llenado_stop` llenan, las dos con `RESPALDO_M1` (`llenado.py:201` y `:262`; la constante,
+  `llenado.py:42`); `primera_salida` (`:355`, `:359`) cierra, no abre. Con ticks, `TICKS`, con el
+  instante del tick;
+- `Broker.abrir_conocida` (el «Broker.abrir» de la respuesta: no hay otro), con su `fuente`, por
+  defecto `"conocida"`; sus tres llamadores fuera de los tests (`scripts/repeticion_trader.py:157`,
+  `scripts/viabilidad_comision.py:179`, `scripts/viabilidad_trader.py:397`) pasan `"caso"`, y su
+  instante es el que reciben.
+
+Ninguna otra fuente se sella en k fin − 1 ms: la condición es `fuente_apertura == RESPALDO_M1`, sin
+más (ADR-0091 §2).
+
+**Los tests, escritos primero y vistos fallar con el código de 7eda14d**
+(`anexos/SELLO-RESPALDO-M1/tests_nuevos_con_7eda14d.txt`, `3 failed, 12 passed`; ese anexo es de
+antes de partir en dos el test de la partición, §9.3, y lo nombra con su nombre de entonces):
+
+```
+tests/unit/test_sello_respaldo.py:257: assert (1894694519999, 1008) == (1894694459999, 1000)
+tests/unit/test_sello_respaldo.py:274: assert [] == [1894752000000]
+tests/unit/test_sello_respaldo.py:289: assert (1894694519999, 998) == (1894694459999, 995)
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_por_tick_en_el_ultimo_ms_de_un_minuto_conserva_su_minuto_y_su_sesion
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_por_tick_en_el_ultimo_ms_antes_del_corte_paga_el_swap_y_es_de_ese_dia
+FAILED tests/unit/test_sello_respaldo.py::test_una_apertura_conocida_en_el_cierre_menos_1_ms_se_comporta_como_en_main
+```
+
+- (i) `test_un_llenado_por_tick_en_el_ultimo_ms_de_un_minuto_conserva_su_minuto_y_su_sesion` (la
+  marca de su minuto y la sesión 07-11) y
+  `test_un_llenado_por_tick_en_el_ultimo_ms_antes_del_corte_paga_el_swap_y_es_de_ese_dia` (el swap
+  y el día, con el .999 justo antes de la medianoche de `huso_corte`);
+- (ii) `test_una_apertura_conocida_en_el_cierre_menos_1_ms_se_comporta_como_en_main`
+  (`abrir_conocida` con su fuente por defecto, en k fin − 1 ms: la marca de M0 y la sesión 07-11).
+
+Al escribirlos, una primera versión de (i) no llenaba: la límite de compra se llena si el ASK baja
+ESTRICTAMENTE del precio (`limite_llena_al_toque` falso), y el tick daba un ASK igual. Se corrigió el
+precio de la orden (1004 frente a un ASK de 1003) antes de verlos fallar por su razón. Con la
+condición en `minuto_de_apertura`, los tres pasan en la rama y en `main` (§9.5).
+
+**Siguen fijando que el llenado del respaldo empieza en la vela siguiente**:
+`test_la_marca_de_la_vela_del_llenado_no_se_toma` (S1),
+`test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia` (S9) y uno
+nuevo de e), `test_un_llenado_del_respaldo_en_la_ultima_vela_de_una_sesion_es_de_la_siguiente` (S3,
+la sesión; pasa en los dos lados).
+
+### 9.3 La vela k que se vuelve a mirar (punto 2)
+
+`test_sello_respaldo.py` no usa Hypothesis: casos fijos. El escenario (`_escenario`): sin ticks,
+una límite de compra, una venta stop y una larga abierta desde el inicio de M0, con velas que llenan
+la límite, tocan el stop de la larga y llenan la venta stop (cuatro eventos). Partir el avance y
+avanzar de una vez se comparan en eventos (instante, tipo, id, fuente) y marcas.
+
+**Gana la medida** (CLAUDE.md, «Como se trabaja»): la respuesta decía que los dos tests pasarían en
+los dos lados, y la medida en el clon de `main` dice otra cosa. **Partir en cada cierre menos 1 ms,
+como el motor, pasa en `main` y en la rama**
+(`test_partir_el_avance_en_cada_cierre_da_los_mismos_eventos_y_las_mismas_marcas`). **Partir en
+instantes REDONDOS** (`avanzar(k fin)` seguido de `avanzar(k+1 fin)`, lo que pide la respuesta, y un
+caso mezclado) da los mismos eventos en los dos lados, pero **en `main` cambia las marcas**: es la
+marca adelantada que corrige (e2), que en `main` marca entera la vela que empieza en el instante
+redondo. Por eso es un test aparte,
+`test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas` (dos casos), que rompe
+en `main` por la marca y no por los eventos. En la rama los tres casos pasan. Es la misma
+invariancia que pedía la respuesta, medida en los dos lados; no cambia ninguna decisión, y no hay
+PARADA.
+
+**Las guardias de lo que sí cambia en el cierre de k**, que ya existían
+(`tests/unit/test_respaldo_m1_decision.py`):
+
+| Lo que cambia en el cierre de k | Lo que lo guarda | Test |
+|---|---|---|
+| la orden colocada en él | `ultimo_cambio_ms` | `test_una_stop_colocada_en_el_cierre_de_una_m1_sin_ticks_no_se_llena_con_esa_vela` y `test_una_limite_colocada_en_el_cierre_de_una_m1_sin_ticks_no_se_llena_con_esa_vela` |
+| la orden modificada en él | `ultimo_cambio_ms` y `anterior` | `test_la_vela_de_una_modificacion_no_llena_la_version_nueva` |
+| el stop movido en él | `stop_movido_ms` y `stop_anterior` | `test_el_stop_movido_en_el_cierre_de_una_m1_sin_ticks_no_salta_con_esa_vela` (y `stop_anterior` a media vela: `test_la_vela_del_stop_movido_que_toca_el_stop_original_sale_por_el_sin_break_even`) |
+| la posición abierta con la vela k | `decidido = abierta_ms` | `test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente` |
+
+No faltaba ninguno. Los de colocar y mover pasan en los dos lados; el de modificar y el de la
+posición abierta llevan el «− 1» del sello nuevo y rompen en `main` por el milisegundo (son de los 8
+de §7.2). ADR-0091 §1 lo recoge con los nombres.
+
+### 9.4 Las dos negativas de la guardia, con su comando (punto 3c)
+
+1. En el clon de la rama (`C:/cm/r`), con `test_sello_respaldo.py` aún sin copiar al repo:
+
+       cd C:/cm/r && uv run pytest -q -p no:cacheprovider --tb=short tests/unit/test_sello_respaldo.py tests/unit/test_respaldo_m1_decision.py tests/unit/test_llenado.py tests/unit/test_broker.py tests/unit/test_broker_ordenes_stop.py tests/unit/test_peor_del_minuto.py 2>&1 | grep -E "^E |FAILED|passed|failed|Error" | head -30
+
+   → «GUARDIA (.claude/hooks/guardia.py) bloquea: el codigo carga o ejecuta `from tests.unit import
+   ...`: no se pudo resolver el modulo `tests.unit` (ni local ni del entorno).» Lo que se hizo: ese
+   fichero se corrió en el repo y, ya copiado e idéntico, en el clon de `main`; los demás, en el
+   clon de la rama sin él. Ninguna medida dejó de hacerse.
+2. Las líneas del cierre, con los módulos de test cargados por una ruta que se calculaba:
+
+       PYTHONPATH=. uv run python -B docs/validation/anexos/SELLO-RESPALDO-M1/simular_cierre.py
+
+   → «ejecutar `PYTHONPATH=...`: el nombre de entorno `PYTHONPATH` no esta en la lista cerrada»;
+
+       uv run python -B -c "import runpy; runpy.run_path('docs/validation/anexos/SELLO-RESPALDO-M1/simular_cierre.py', run_name='__main__')"
+
+   → «el codigo carga o ejecuta `from tests.unit import ...`: no se pudo resolver el modulo
+   `tests.unit`»; y con `spec_from_file_location(nombre, ruta)` dentro de una función
+   (`_cargar("thr", "tests/unit/test_hoja_de_ruta.py")`):
+
+       uv run python -B docs/validation/anexos/SELLO-RESPALDO-M1/simular_cierre.py
+
+   → «el codigo carga o ejecuta `importlib.util.spec_from_file_location(...)`: la ruta del fichero
+   que carga no se calcula».
+   Lo que se hizo, la forma que propone el mensaje: las dos rutas, literales en la llamada
+   (`simular_cierre.py`).
+
+Las de la fase 0 (`exec`, `git apply`, `sys.path`) están en §0.k.
+
+### 9.5 Contra `main` (skill comparar-con-main, otra vez)
+
+Clon desechable `C:/cm/m` (`git worktree add --detach … main`, sin `data/`), con los seis ficheros de
+test de la rama que tocan el sello copiados; el comando de §7.2. Exit 1, **`20 failed, 44 passed`**
+(`tests_rama_con_main.txt`): los 18 de §7.2 y los dos casos de la partición en instantes redondos.
+
+```
+FAILED …::test_la_vela_en_cuyo_cierre_el_motor_cancela_la_orden_la_llena_antes
+FAILED …::test_el_fin_del_dia_evalua_la_ultima_vela_antes_de_cerrar_y_cancelar
+FAILED …::test_un_llenado_en_la_vela_que_acaba_en_la_ventana_se_sella_fuera_de_ella
+FAILED …::test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia
+FAILED …::test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap
+FAILED …::test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas[cortes0]
+FAILED …::test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas[cortes1]
+FAILED …::test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_vela_del_stop
+FAILED …::test_sin_ticks_un_rechazo_al_llenar_gasta_el_punto_en_el_cierre_de_la_vela_del_llenado
+FAILED …::test_el_respaldo_m1_llena_cierra_y_marca_sin_ticks
+FAILED …::test_el_respaldo_m1_llena_al_nivel_o_a_la_apertura_si_la_vela_abre_pasada
+FAILED …::test_misma_vela_la_stop_sigue_la_convencion_de_la_limite
+FAILED …::test_una_m1_con_stop_y_objetivo_a_la_vez
+FAILED …::test_un_tramo_sin_ticks_cae_al_respaldo_y_queda_marcado
+FAILED …::test_en_el_cierre_la_vela_se_evalua_antes_de_mover_el_stop_o_modificar_la_orden
+FAILED …::test_la_vela_de_una_modificacion_no_llena_la_version_nueva
+FAILED …::test_una_pendiente_de_antes_de_una_vela_sin_ticks_se_llena_en_esa_vela
+FAILED …::test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente
+FAILED …::test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el
+FAILED …::test_una_expiracion_en_un_instante_redondo_no_marca_la_vela_siguiente
+20 failed, 44 passed in 1.91s
+```
+
+**Pasan en `main` y en la rama**, entre otros: los tres del punto 1
+(`test_un_llenado_por_tick_en_el_ultimo_ms_de_un_minuto_conserva_su_minuto_y_su_sesion`,
+`test_un_llenado_por_tick_en_el_ultimo_ms_antes_del_corte_paga_el_swap_y_es_de_ese_dia`,
+`test_una_apertura_conocida_en_el_cierre_menos_1_ms_se_comporta_como_en_main`), S3, S1, la
+partición en cada cierre y los dos de la secuencia a media vela. El clon, retirado
+(`git worktree list` = solo el repo).
+
+### 9.6 Los once días otra vez (punto 5)
+
+`prototipo_sello.py rama` con el código de e), los mismos once días, una llamada al visor por día:
+**sin cabeceras, idéntico a `prototipo-c2.txt`** (`diff` vacío; `verificacion-rama.txt`, ahora de
+e)). Ningún llenado por tick en el .999 cambia nada en ellos. Sin PARADA.
+
+### 9.7 El commit
+
+| Commit | Qué | `make check` |
+|---|---|---|
+| (este) | e) `fix(broker)`: `minuto_de_apertura` con su condición, los seis tests nuevos, ADR-0091 (cabecera, §1, §2, «Impacto»), el recuadro de ADR-0051 y la fila del índice, el informe (§3, §9, §10) y las exposiciones; «Tests Currently Passing» 1880 | el del commit |
+
+## 10. El revisor, tercera pasada (corta)
+
+Subagente `revisor` (opus), pasada corta, sobre 155221e más el commit e) sin estadiar, con los
+alcances del punto 6 de la respuesta a la entrega. Pegado tal cual (0 retiradas):
+
+> ## Informe del revisor · trabajo/sello-respaldo-m1 (commit e), sin estadiar, sobre 155221e) · 2026-11-07
+>
+> Pasada corta, con los alcances del punto 6 de la «Respuesta del consultor a la entrega de la fase 2» (SELLO-RESPALDO-M1.md:1023-1059) y la comprobación extra de la partición en instantes redondos. No escribí nada en el repo.
+>
+> Resultado: **0 bloquea, 2 importa, 2 menor.** Lo pedido está hecho. Lo que queda es de forma: un índice de anexos desfasado, una frase del ADR y del docstring que dice algo más de lo que hace el código, y dos detalles del informe.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 0 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | El índice de anexos tiene un recuento que su fichero ya no sostiene, y le falta el anexo nuevo. `README.md` de los anexos dice que `tests_rama_con_main.txt` da `18 failed, 39 passed`, pero ese fichero, regenerado en e), da `20 failed, 44 passed`. Además el README no nombra `tests_nuevos_con_7eda14d.txt`, y el README no está entre lo modificado. | `docs/validation/anexos/SELLO-RESPALDO-M1/README.md:50-52` frente a `tests_rama_con_main.txt:127`. `grep -n "tests_nuevos_con_7eda14d" README.md` no devuelve nada. `git status --short` no lista el README. |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py` da «CONTRATO: 48 ficheros dentro del contrato … 4 comprobaciones», exit 0.
+> - **`state check`.** `uv run botsito state check` da «OK: rama 'trabajo/sello-respaldo-m1' …», con el 1880 del working tree.
+> - **Rutas protegidas.** `git diff --name-status main -- knowledge/ data/manifests/ .claude/ Makefile` sale vacío: ni holdout, ni evidencia, ni feedback, ni la spec. Por eso no hay trailers `Fuente:` que revisar.
+> - **`HOLDOUT-EXPOSICIONES.md`.** Solo se añade una línea, la fila del commit e) (`git diff -U0` sin líneas `-`).
+> - **ADR.** El `## Estado` de 0091 es `ACTIVE`, y `tests/unit/test_adr.py` y `test_project_state.py` pasan (9 puntos, sin F).
+> - **Formato y tipos de lo tocado** (`broker.py`, `test_sello_respaldo.py`). `ruff format --check` da «2 files already formatted», `ruff check` da «All checks passed!» y `mypy` da «Success: no issues found in 2 source files».
+> - **Informes cerrados.** `SELLO-RESPALDO-M1.md` es el informe abierto de la propia rama: no aplica el recuadro de corrección.
+> - **PROJECT_STATE.** Pasa de 1874 a 1880 funciones, que son las 6 funciones nuevas del diff. Pesa 22.853 bytes, igual que en HEAD.
+>
+> ### Eje (b) · Encargo (la respuesta a la entrega de la fase 2)
+> Resumen: 0 bloquea, 1 importa, 2 menor. Requisitos: 12 hechos, 0 parciales, 0 no hechos (dos de ellos con desviación declarada).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | P1: `minuto_de_apertura` con la condición `fuente_apertura == RESPALDO_M1` | Hecho | `broker.py:285-287` (diff del working tree) |
+> | 2 | P1: verificar antes la fuente en las tres funciones del respaldo | Hecho | `llenado.py:201` y `:262` dan `RESPALDO_M1`; `:355` y `:359` son salidas; las ramas con ticks dan `TICKS` (`:189`, `:243`). Coincide con SELLO-RESPALDO-M1.md:1077-1090. |
+> | 3 | P1 (i): tick en el ms .999, con minuto, sesión, swap y día (este con el .999 justo antes de la medianoche de `huso_corte`) | Hecho | `test_sello_respaldo.py`: `test_un_llenado_por_tick_en_el_ultimo_ms_de_un_minuto_conserva_su_minuto_y_su_sesion` y `…_antes_del_corte_paga_el_swap_y_es_de_ese_dia`. `huso_corte=UTC` (`:85`). |
+> | 4 | P1 (ii): apertura en k fin − 1 con la fuente por defecto | Hecho de otra forma, declarado: `abrir_conocida` hace de «Broker.abrir», que no existe | `test_una_apertura_conocida_en_el_cierre_menos_1_ms_se_comporta_como_en_main`; declarado en SELLO-RESPALDO-M1.md:1084 |
+> | 5 | P1: escritos primero y vistos fallar contra 7eda14d | Hecho | `tests_nuevos_con_7eda14d.txt`: 3 failed en `:257`, `:274` y `:289`, que son las líneas actuales de esos asserts. Ver m1. |
+> | 6 | P1: pasan en main y en la rama | Hecho | En la rama, 64 tests de los seis ficheros, sin F (mi pytest). En main, ninguno de los tres figura entre los 20 FAILED de `tests_rama_con_main.txt:107-126`. |
+> | 7 | P1: citar los tests de c) del respaldo «vela siguiente» | Hecho | ADR-0091:67-70; SELLO-RESPALDO-M1.md:1116-1120 |
+> | 8 | P1: cabecera y §2 de ADR-0091, y el docstring | Hecho (ver b1) | ADR-0091:11-16 y :47-53; `broker.py:277-284` |
+> | 9 | P2 (a): invariancia de partición sin ticks, con stop, límite y posición abierta | Hecho | `_escenario`, `test_partir_el_avance_en_cada_cierre_…` y `test_partir_el_avance_en_instantes_redondos_…[2 casos]`. El fichero no usa Hypothesis. |
+> | 10 | P2 (b): citar las guardias de lo que cambia en el cierre de k | Hecho | Tabla en SELLO-RESPALDO-M1.md:1145-1150. Los seis nombres existen (`test_respaldo_m1_decision.py:87, 97, 116, 137, 196, 249`). |
+> | 11 | P2: «pasan en los dos lados», con una línea en ADR-0091 §1 | Hecho, con desviación medida y declarada | La partición en instantes redondos y 2 de las guardias rompen en main. Declarado en SELLO-RESPALDO-M1.md:1129-1140 y :1152-1154, y en ADR-0091:31-41. Ver «Partición en instantes redondos». |
+> | 12 | P3 (c): comandos exactos de las dos negativas | Hecho (ver m2) | SELLO-RESPALDO-M1.md:1156-1180 |
+> | 13 | P4: fila de ERRORES-RECURRENTES con el error del consultor | Hecho | SELLO-RESPALDO-M1.md:477, punto (5): copia literal del texto del consultor |
+> | — | Copia de la respuesta, en el encargo y en el informe | Idénticas | Comparadas con Python: `True 4869 4869` |
+> | — | P5: ruff, mypy, comparar-con-main, once días, líneas del cierre | Hecho (lo que no escribe) | Ruff y mypy, arriba. `verificacion-rama.txt` contra `prototipo-c2.txt` sin cabeceras da `True 310 310`. En `verificacion-rama.txt` solo cambian las líneas `TIEMPO`. |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | El ADR y el docstring dicen que `abrir_conocida` queda en su minuto «con su fuente `conocida` o la que se le dé», pero la condición mira solo la cadena de la fuente: `abrir_conocida(..., fuente="respaldo_m1")` llevaría el «+ 1». Hoy nadie lo hace: los tres llamadores pasan `"caso"` y ningún test pasa `respaldo_m1`. Es una afirmación que el código no sostiene. O se acota el texto («salvo `respaldo_m1`, que nadie pasa»), o `abrir_conocida` rechaza esa fuente. | ADR-0091:51-52, «`abrir_conocida`, con su fuente `conocida` o la que se le dé), `p.abierta_ms // 60000`». `broker.py:285`, `if p.fuente_apertura == RESPALDO_M1:`. `broker.py:650` y `:667-668`: la fuente es un parámetro libre. Llamadores: `scripts/repeticion_trader.py:166`, `viabilidad_comision.py:180` y `viabilidad_trader.py:398` pasan `"caso"`. El Grep multilínea `abrir_conocida\([^)]*(RESPALDO_M1\|respaldo_m1)` no da coincidencias. |
+> | m1 | menor | `tests_nuevos_con_7eda14d.txt` es de una versión anterior de la partición: `test_partir_el_avance_da_los_mismos_eventos_y_las_mismas_marcas[cortes0..2]`, que ya no existe con ese nombre. §9.2 cita el anexo sin decirlo. Los tres FAILED y sus líneas sí coinciden con el fichero actual. | `tests_nuevos_con_7eda14d.txt`, líneas PASSED de `test_partir_el_avance_da_…`, frente a `grep -n partir_el_avance` del test |
+> | m2 | menor | En la segunda negativa, el tercer intento (`spec_from_file_location` dentro de una función) se describe, pero no trae su comando exacto. Lo exacto lo pedía el punto 3c. | SELLO-RESPALDO-M1.md:1175-1176 |
+>
+> **Alcance 2: dónde se abre una posición, con qué fuente y en qué instante.** Solo hay dos sitios en `src/`, y ninguno en `scripts/` construye `Posicion`.
+> 1. `Broker._aplicar`, LLENADA (`broker.py:887-891`). La fuente es `evento.fuente`, y el evento solo sale de `primer_llenado_stop` o de `primer_llenado_limite` (`broker.py:776-788`):
+>    - con ticks, `TICKS` con el instante del tick;
+>    - sin ticks, `RESPALDO_M1` con `_sello_ms` = k fin − 1 (`llenado.py:131`).
+> 2. `Broker.abrir_conocida` (`broker.py:641-672`): la fuente y el instante son los que recibe.
+> - `_precio_de_mercado`, que da `RESPALDO_M1`, solo se usa en el cierre manual (`:634`): no abre posiciones.
+> - Los demás cambios contra main no tocan el camino de los ticks:
+>   - en `llenado.py` solo cambian las ramas de vela;
+>   - `_peor_del_minuto` (e2) solo cambia la rama sin ticks;
+>   - `_swaps` y `_limite_infringido` pasan de `abierta_ms` a `minuto*60000`, y con huso de minutos enteros da el mismo día.
+> - Para una `abrir_conocida` en k fin − 1 sin ticks, la vela k tampoco evaluaba la salida en main, porque `_nivel_de_la_vela` devuelve None si `inicio < decidido` (`llenado.py:141-145`).
+> - **Ninguna apertura se escapa de la condición, salvo el caso teórico de b1.**
+>
+> **Alcance 3.** ADR-0091 ya no dice que con ticks algo cambie: `grep -n -i "tick\|\.999"` en 0091 solo da «con ticks no cambia nada» (líneas 14, 50-53, 85 y 181). En 0057, 0068 y 0083 no aparece «.999», y el recuadro de 0051 (:120-122) y el índice (README:96) dicen «con ticks no cambia nada».
+>
+> **Alcance 4.** No hay corrida del arnés ni cifras agregadas en §9: solo recuentos de tests y la comparación por día de los once días dev. La fila de exposiciones del commit e) está declarada.
+>
+> **Partición en instantes redondos: lo que dice el informe es cierto.** Los dos casos fallan en main en `test_sello_respaldo.py:355` (`tests_rama_con_main.txt:33` y `:40`), que es `assert _marcas(partido) == _marcas(de_una_vez)`. El assert de eventos, en la línea 354, pasó.
+> - La diferencia es solo la primera marca de `pos-o`: `(1894694520000, 988)` frente a `(1894694579999, 988)`.
+> - 1894694520000 es `_ms(M0+2)`, el corte redondo. En el main de esa versión, la condición `vela.fin*60000 > hasta+60000` deja marcar entera la vela que empieza en `hasta`: es la marca adelantada que corrige (e2).
+> - El punto 2 decía «pasan en los dos lados» y la letra no se cumple, pero está declarado como «Gana la medida» (§9.1 fila 2, §9.3) y recogido en ADR-0091:34-35. No es un hallazgo.
+>
+> ### Lo que no pude comprobar
+> - **El `make check` de e).** Hay que estadiar y el comando escribe. `make-check.log` es de 155221e: «3250 passed», «SELLO … 8fccb52d…», «PICO DE MEMORIA … 307 MiB». El de e) está por hacer.
+> - **Los tests nuevos contra 7eda14d, y la rama contra main.** Los dos necesitan cambiar el código o montar un clon. Me baso en los anexos. En la prueba del día del test (i), el fallo contra 7eda14d se para en `:274` (el swap), así que el assert del día no se vio fallar.
+> - **`simular_cierre.py`.** Escribe en un directorio temporal. `simular-cierre.txt` no cambió, y PROJECT_STATE pesa lo mismo que en HEAD (22.853, de 1874 a 1880): es coherente, pero no lo he vuelto a correr.
+> - **Los once días con el visor.** `prototipo_sello.py` está excluido: solo comparé los ficheros.
+> - **Que los comandos de §9.4 sean literalmente los que se ejecutaron.** Haría falta el transcript.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`, `git log --format='%h %s' main..HEAD`, `git status --short` y `git diff --stat`
+> 2. `git diff` de `broker.py`, `docs/adr/`, `PROJECT_STATE.md` y `HOLDOUT-EXPOSICIONES.md`; `git diff` de `tests/unit/test_sello_respaldo.py` y del encargo
+> 3. `grep -n "^#"` y Read de SELLO-RESPALDO-M1.md (:371-394, :840-874, :1020-1239); `grep` de «negativa», «guardia», «.999» y «con ticks»; `sed -n '23,39p'`
+> 4. `cat` y `grep` de `tests_rama_con_main.txt` y `tests_nuevos_con_7eda14d.txt`; `git diff` de `verificacion-rama.txt`; `git diff -U0` del informe, de las exposiciones y de verificación
+> 5. `sed -n` de `test_sello_respaldo.py` (:340-357, :257, :274, :289); `grep` de los nombres de test citados en `tests/unit/*.py`
+> 6. `uv run pytest -q -p no:cacheprovider` de los seis ficheros del sello (dos veces) y de `test_adr.py` y `test_project_state.py`
+> 7. Grep en `src/` y `scripts/`: `Posicion(`, `abrir_conocida`, `fuente_apertura`, `minuto_de_apertura`, `RESPALDO_M1`, `Evento(`, `_precio_de_mercado`, `.posiciones[` y `abierta_ms + 1`; Grep multilínea de `abrir_conocida` con `respaldo_m1`
+> 8. Read de `broker.py` (:636-705, :765-794, :840-1019) y de `llenado.py` (:126-156, :160-265); `sed` de los tres scripts llamadores
+> 9. `git diff main --` de `src/`, `cableado.py`, `primitivas_broker.py`, las líneas de código de `broker.py` y `llenado.py`
+> 10. Read de ADR-0091 entero; `grep` de tick y .999 en 0091, 0051, 0057, 0068 y 0083
+> 11. `uv run ruff format --check`, `uv run ruff check` y `uv run mypy` sobre `broker.py` y el test
+> 12. `uv run python scripts/contrato_rama.py`; `cat contrato.yaml`; `uv run botsito state check`
+> 13. `ls` y `grep` de `make-check.log`
+> 14. `uv run python -B -c` para comparar la respuesta copiada en encargo e informe, y `verificacion-rama.txt` con `prototipo-c2.txt` (solo lee e imprime)
+> 15. `git log` de `simular-cierre.txt`, `cat` de ese fichero, `grep` de las escrituras en `simular_cierre.py`, `wc -c` de PROJECT_STATE (working tree y HEAD)
+> 16. `git diff --name-status main` sobre `knowledge/`, `data/manifests/`, `.claude/`, `Makefile` y `docs/validation/`; Read de `anexos/SELLO-RESPALDO-M1/README.md`
+> 17. Dos negativas de guardia, sin rodear nada:
+>    - `solo_lectura` me negó un `git diff … > "$TMPDIR/x"` que escribí por error; lo repetí sin redirección;
+>    - `guardia.py` negó `sed … ; uv run pytest …` en el mismo comando; lo partí en dos llamadas, como propone su mensaje.
+>
+> **Lo que miré, para que la sesión lo declare:**
+> - Las salidas de los anexos `tests_rama_con_main.txt`, `tests_nuevos_con_7eda14d.txt`, `simular-cierre.txt` y `README.md`.
+> - `verificacion-rama.txt` y `prototipo-c2.txt`, cargados en memoria para compararlos. Solo vi el diff de `TIEMPO` y algunas líneas de contexto (órdenes y posiciones por día, con instantes y R, de días dev, sin precios).
+> - `make-check.log`, `contrato.yaml`, el encargo, el informe, cinco ADR y el código del motor.
+> - pytest de ocho ficheros sintéticos, ruff, mypy (escribe su caché, que no está en git), `state check` y `contrato_rama.py`.
+>
+> No abrí holdout, corpus, crudas, fotogramas, libros ni casos. No listé `knowledge/cases`. No corrí el arnés ni `prototipo_sello.py`.
+
+### 10.1 Lo que se hizo con los hallazgos de la tercera pasada
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado**: el README de los anexos da `20 failed, 44 passed` para `tests_rama_con_main.txt` (y el recuento de antes, con su sección) y nombra `tests_nuevos_con_7eda14d.txt` |
+| b1 | importa | **Arreglado en el texto** (la forma que el propio revisor ofrece): ADR-0091 §2 y el docstring de `minuto_de_apertura` dicen que la condición mira la cadena de la fuente, que `abrir_conocida` con `fuente="respaldo_m1"` llevaría el «+ 1», que hoy nadie lo hace (los tres llamadores pasan `"caso"`) y que quien lo haga declara que la selló el respaldo. Que `abrir_conocida` rechace esa fuente sería código nuevo que la respuesta no pide: queda para el consultor |
+| m1 | menor | **Arreglado**: §9.2 y el README dicen que `tests_nuevos_con_7eda14d.txt` es de antes de partir el test de la partición, con su nombre de entonces |
+| m2 | menor | **Arreglado**: §9.4 lleva el comando exacto del tercer intento, con la forma de la llamada que se negó |
+
+**Lo que no pudo comprobar**: el `make check` de e) es el del commit (§9.7). El assert del día del
+test (i), contra 7eda14d, no se vio fallar porque el del swap va antes; con la condición, en la rama
+y en `main`, pasan los dos. Lo que miró, en la fila del 2026-11-07 del commit e) de
+HOLDOUT-EXPOSICIONES.
+
 ## Estado
 
-Fase 0 (460595f), fase 1 ((e2), dacd533) y fase 2 ((c2) con ADR-0091: cdffbfb, 3252548, 7eda14d y el commit del informe) hechas. D2 dio (c2) y la respuesta del consultor del 2026-11-07 lo mandó implementar aquí; los once días verificados dan lo que dio el prototipo. Ninguna corrida del arnés ni cifra agregada.
+Fases 0, 1 y 2 hechas, y el commit e) de la respuesta a la entrega: el «+ 1» de `minuto_de_apertura` solo para lo sellado por el respaldo, y la vela k que se vuelve a mirar, con su test. Los once días verificados siguen dando lo que dio el prototipo. Ninguna corrida del arnés ni cifra agregada.
 
 Rama lista para revisión, NO cerrada.

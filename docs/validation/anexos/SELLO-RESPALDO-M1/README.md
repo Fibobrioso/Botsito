@@ -48,7 +48,12 @@ idénticas (salvo la línea `TIEMPO`).
   `verificacion-rama.txt` (los once días; idéntico a `prototipo-c2.txt` sin las cabeceras) y, con
   `comparar_formas.py`, `censo-main-rama.txt`.
 - `tests_rama_con_main.txt`: los seis ficheros de test de la rama que tocan el sello, en un clon de
-  `main` (`C:/cm/m`): `18 failed, 39 passed` (`SELLO-RESPALDO-M1.md` §7.2; repetido tras la segunda
-  pasada del revisor con el test del swap al cierre).
+  `main` (`C:/cm/m`): `20 failed, 44 passed` tras el commit e) (`SELLO-RESPALDO-M1.md` §9.5; antes,
+  `18 failed, 39 passed`, §7.2).
+- `tests_nuevos_con_7eda14d.txt` (commit e): `test_sello_respaldo.py` con los tests nuevos del punto 1
+  de la respuesta a la entrega, contra el código de 7eda14d: `3 failed, 12 passed` (§9.2). Es de
+  antes de partir el test de la partición en dos (el de los cierres y el de los instantes
+  redondos): el nombre `test_partir_el_avance_da_los_mismos_eventos_y_las_mismas_marcas` ya no
+  existe.
 - `simular_cierre.py`, reescrito para el cierre con H HECHA (§0.g) → `simular-cierre.txt`. La
   versión de la PARADA (H reescrita) está en el historial (460595f).

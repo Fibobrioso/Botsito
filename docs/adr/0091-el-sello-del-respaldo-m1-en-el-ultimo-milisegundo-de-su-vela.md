@@ -8,12 +8,12 @@ phase: post-F14 (rama `trabajo/sello-respaldo-m1`, R3.6 de la hoja de ruta; H de
 
 > Decisión del consultor del 2026-11-07 (respuesta a la PARADA de `trabajo/sello-respaldo-m1`,
 > puntos 0 a 7), sobre lo medido en `docs/validation/SELLO-RESPALDO-M1.md` §0. Recuadros en ADR-0051
-> §5 (y su NOTA del 2026-10-29), ADR-0057 §1, ADR-0068 §2 y ADR-0083 D2, y fila del índice. **El
-> sello solo cambia los minutos SIN ticks**: el bot en vivo opera con ticks (ADR-0051 §8), y el
-> respaldo M1 solo cubre los minutos que no los tienen (en construcción, las horas perdidas de los
-> manifiestos). **Con ticks, una sola cosa** (§2): el «+ 1» de `minuto_de_apertura` lleva al minuto
-> siguiente un llenado por TICK en el milisegundo .999 de un minuto (su sesión, su swap, su día y
-> la marca de ese minuto); no está medido, y en vivo es el caso raro de un tick en ese milisegundo.
+> §5 (y su NOTA del 2026-10-29), ADR-0057 §1, ADR-0068 §2 y ADR-0083 D2, y fila del índice. **Solo
+> cambia lo sellado por el respaldo M1, es decir, los minutos SIN ticks**: el bot en vivo opera con
+> ticks (ADR-0051 §8), y el respaldo M1 solo cubre los minutos que no los tienen (en construcción,
+> las horas perdidas de los manifiestos). **Con ticks no cambia nada**: el «+ 1» de
+> `minuto_de_apertura` es solo para las posiciones con `fuente_apertura == RESPALDO_M1` (§2;
+> respuesta del consultor a la entrega de la fase 2, punto 1).
 
 ## Decision
 
@@ -28,14 +28,32 @@ motor cancelaba o cerraba en ese cierre no se evaluaba nunca contra la vela en q
 la vela k se evalúa en el `avanzar` del cierre de k, ANTES de que el motor decida. `Mercado.cotizacion`,
 que también usa `_fin_ms`, no cambia (sigue en la deuda de las cotizaciones sin tick, ADR-0057 §4).
 La condición de Z (ADR-0051 §5, NOTA del 2026-10-29: la vela solo evalúa lo decidido cuando
-EMPEZÓ) no cambia.
+EMPEZÓ) no cambia. **La vela k que se vuelve a mirar**: con el sello en k fin − 1 ms = `ahora`, el
+«ahora − 1» deja que el `avanzar` siguiente vuelva a mirar la vela k para lo que no cambió; partir
+el avance no cambia nada (`test_partir_el_avance_en_cada_cierre_da_los_mismos_eventos_y_las_mismas_marcas`,
+y `test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas`, que en `main`
+rompía solo por la marca adelantada que corrige (e2)), y lo que sí cambia en el cierre de k lleva su
+instante en `desde` y la deja fuera: la orden colocada (`test_respaldo_m1_decision.py`:
+`test_una_stop_colocada_en_el_cierre_de_una_m1_sin_ticks_no_se_llena_con_esa_vela` y
+`test_una_limite_colocada_…`), la modificada (`test_la_vela_de_una_modificacion_no_llena_la_version_nueva`),
+el stop movido (`test_el_stop_movido_en_el_cierre_de_una_m1_sin_ticks_no_salta_con_esa_vela`) y
+la posición abierta con la vela k
+(`test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente`).
 
 ### 2. Los lectores del minuto de apertura: neutros
 
 El ADR cambia QUÉ VELA SE EVALÚA, no a qué minuto ni a qué día pertenece un llenado. Un llenado del
 respaldo sellado en k fin − 1 ms sigue siendo, para todo lo que viene después, de la vela siguiente,
-como cuando se sellaba en k fin. Una sola definición, `minuto_de_apertura(p)` =
-`(p.abierta_ms + 1) // 60000` (`engine/broker.py`), la leen:
+como cuando se sellaba en k fin. Una sola definición, `minuto_de_apertura(p)` (`engine/broker.py`),
+con su CONDICIÓN: si la posición la abrió un llenado del respaldo (`p.fuente_apertura ==
+RESPALDO_M1`, la única fuente que las tres funciones del respaldo ponen a un llenado,
+`engine/llenado.py:42`), `(p.abierta_ms + 1) // 60000`; con cualquier otra apertura (un tick, aunque
+caiga en el milisegundo .999 de un minuto; `abrir_conocida`, con su fuente por defecto `conocida` o
+`caso`, la que pasan sus tres llamadores), `p.abierta_ms // 60000`, como antes del ADR. La
+condición mira la cadena de la fuente: un `abrir_conocida(..., fuente="respaldo_m1")` llevaría el
+«+ 1»; hoy nadie lo hace (revisor, tercera pasada, b1), y quien lo haga declara que esa apertura la
+selló el respaldo. Ninguna otra fuente se sella en k fin − 1 ms: los
+ticks llevan su instante y `abrir_conocida` el que recibe. La leen:
 
 - `Broker._marcar_hasta`: el primer minuto que se marca (la vela del llenado no se marca: sus precios
   pueden ser anteriores al llenado);
@@ -49,10 +67,13 @@ como cuando se sellaba en k fin. Una sola definición, `minuto_de_apertura(p)` =
 **Se quedan en el instante sellado**, porque son un instante y no un minuto: las comisiones de la
 apertura (`Broker._operacion`), el instante de la operación para el criterio de fidelidad
 (`cableado.py`, `_operaciones_del_bot`), la apertura de la `Operacion`, el detalle del visor y la
-tabla «### Ordenes». El «+ 1» mueve también un llenado por TICK en el milisegundo .999 de un minuto
-al minuto siguiente: es la misma convención que `_sesion_de` aplica a `colocada_ms`
-(`cableado.py`), y un tick en .999 cae en el último milisegundo de su minuto. No está medido (ver
-la cabecera).
+tabla «### Ordenes». Lo fijan, en `tests/unit/test_sello_respaldo.py`, para el respaldo (empieza en
+la vela siguiente): `test_la_marca_de_la_vela_del_llenado_no_se_toma`,
+`test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia` y
+`test_un_llenado_del_respaldo_en_la_ultima_vela_de_una_sesion_es_de_la_siguiente`; y para lo que
+no es del respaldo (como en `main`): `test_un_llenado_por_tick_en_el_ultimo_ms_de_un_minuto_conserva_su_minuto_y_su_sesion`,
+`test_un_llenado_por_tick_en_el_ultimo_ms_antes_del_corte_paga_el_swap_y_es_de_ese_dia` y
+`test_una_apertura_conocida_en_el_cierre_menos_1_ms_se_comporta_como_en_main`.
 
 **Leen `abierta_ms` y no cambian, sin tocarlos** (revisor, segunda pasada, b1), con su porqué:
 
@@ -165,8 +186,8 @@ las cotizaciones; el límite declarado contradice lo medido.
   k fin − 1 ms = `ahora`, el «ahora − 1» deja que el `avanzar` siguiente vuelva a mirar la vela k
   para lo que no cambió en el cierre (una pendiente que no llenó, una posición cuyo stop no tocó):
   es la misma vela con el mismo nivel y el mismo `decidido`, y da lo mismo; lo que se decidió en
-  el cierre (colocar, modificar, mover, llenar) lleva su instante en `desde` y la deja fuera. No
-  está medido con un test propio.
+  el cierre (colocar, modificar, mover, llenar) lleva su instante en `desde` y la deja fuera. Lo
+  fijan los tests de §1.
 - Las líneas citadas de `engine/` son las del código con este ADR (`trabajo/sello-respaldo-m1`).
 - **La repetición del trader sin ticks** (ADR-0051 §8) cambia otra vez: no se vuelve a correr.
 

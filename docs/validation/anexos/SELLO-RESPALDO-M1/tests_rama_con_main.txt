@@ -1,44 +1,53 @@
-Using CPython 3.12.10 interpreter at: C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe
-Creating virtual environment at: .venv
-   Building botsito @ file:///C:/cm/m
-      Built botsito @ file:///C:/cm/m
-Installed 25 packages in 1.75s
-FFFFF.FF.....F.......FF...........F..F........FF.F.F.FF..                [100%]
+FFFFF......FFFF.....F.......FF...........F..F........FF.F.F.FF..         [100%]
 ================================== FAILURES ===================================
 E   AssertionError: assert [] == [(18946945199...respaldo_m1')]
       
       Right contains one more item: (1894694519999, 'llenada', 'v', 'respaldo_m1')
       Use -v to get more diff
-C:\cm\m\tests\unit\test_sello_respaldo.py:104: AssertionError: assert [] == [(18946945199...respaldo_m1')]
+C:\cm\m\tests\unit\test_sello_respaldo.py:122: AssertionError: assert [] == [(18946945199...respaldo_m1')]
 E   AssertionError: assert 'cancelada' == 'llenada'
       
       - llenada
       + cancelada
-C:\cm\m\tests\unit\test_sello_respaldo.py:129: AssertionError: assert 'cancelada' == 'llenada'
+C:\cm\m\tests\unit\test_sello_respaldo.py:147: AssertionError: assert 'cancelada' == 'llenada'
 E   AssertionError: assert 'cancelada' == 'llenada'
       
       - llenada
       + cancelada
-C:\cm\m\tests\unit\test_sello_respaldo.py:150: AssertionError: assert 'cancelada' == 'llenada'
+C:\cm\m\tests\unit\test_sello_respaldo.py:168: AssertionError: assert 'cancelada' == 'llenada'
 E   AssertionError: assert 1894752000000 == (1894752000000 - 1)
      +  where 1894752000000 = Posicion(id='pos-o', orden_id='o', lado='compra', lotes=Decimal('1'), entrada=1000, stop=980, objetivo=1030, abierta_m...=None, break_even_nivel=None, break_even_desde_ms=0, marcas=[(1894752059999, 1000)], swaps=[], deslizamiento_entrada=0).abierta_ms
      +  and   1894752000000 = _ms(31579200)
-C:\cm\m\tests\unit\test_sello_respaldo.py:169: AssertionError: assert 1894752000000 == (1894752000000 - 1)
+C:\cm\m\tests\unit\test_sello_respaldo.py:187: AssertionError: assert 1894752000000 == (1894752000000 - 1)
 E   AssertionError: assert ('stop', 1894752000000) == ('stop', 1894751999999)
       
       At index 1 diff: 1894752000000 != 1894751999999
       Use -v to get more diff
-C:\cm\m\tests\unit\test_sello_respaldo.py:189: AssertionError: assert ('stop', 1894752000000) == ('stop', 1894751999999)
+C:\cm\m\tests\unit\test_sello_respaldo.py:207: AssertionError: assert ('stop', 1894752000000) == ('stop', 1894751999999)
+E   AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
+      
+      Omitting 2 identical items, use -vv to show
+      Differing items:
+      {'pos-o': [(1894694520000, 988), (1894694580000, 980), (1894694640000, 982)]} != {'pos-o': [(1894694579999, 988), (1894694580000, 980), (1894694640000, 982)]}
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:355: AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
+E   AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
+      
+      Omitting 2 identical items, use -vv to show
+      Differing items:
+      {'pos-o': [(1894694520000, 988), (1894694580000, 980), (1894694640000, 982)]} != {'pos-o': [(1894694579999, 988), (1894694580000, 980), (1894694640000, 982)]}
+      Use -v to get more diff
+C:\cm\m\tests\unit\test_sello_respaldo.py:355: AssertionError: assert {'p': [(18946...699999, 989)]} == {'p': [(18946...699999, 989)]}
 E   AssertionError: assert ('stop', 'res...1894694820000) == ('stop', 'res...1894694819999)
       
       At index 2 diff: 1894694820000 != 1894694819999
       Use -v to get more diff
-C:\cm\m\tests\unit\test_sello_respaldo.py:282: AssertionError: assert ('stop', 'res...1894694820000) == ('stop', 'res...1894694819999)
+C:\cm\m\tests\unit\test_sello_respaldo.py:431: AssertionError: assert ('stop', 'res...1894694820000) == ('stop', 'res...1894694819999)
 E   AssertionError: assert ('cancelada', 1894694639999) == ('rechazada', 1894694639999)
       
       At index 0 diff: 'cancelada' != 'rechazada'
       Use -v to get more diff
-C:\cm\m\tests\unit\test_sello_respaldo.py:309: AssertionError: assert ('cancelada', 1894694639999) == ('rechazada', 1894694639999)
+C:\cm\m\tests\unit\test_sello_respaldo.py:458: AssertionError: assert ('cancelada', 1894694639999) == ('rechazada', 1894694639999)
 E   AssertionError: assert (1894694520000, 'respaldo_m1') == (1894694519999, 'respaldo_m1')
       
       At index 0 diff: 1894694520000 != 1894694519999
@@ -100,6 +109,8 @@ FAILED tests/unit/test_sello_respaldo.py::test_el_fin_del_dia_evalua_la_ultima_v
 FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_vela_que_acaba_en_la_ventana_se_sella_fuera_de_ella
 FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia
 FAILED tests/unit/test_sello_respaldo.py::test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap
+FAILED tests/unit/test_sello_respaldo.py::test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas[cortes0]
+FAILED tests/unit/test_sello_respaldo.py::test_partir_el_avance_en_instantes_redondos_da_los_mismos_eventos_y_marcas[cortes1]
 FAILED tests/unit/test_sello_respaldo.py::test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_vela_del_stop
 FAILED tests/unit/test_sello_respaldo.py::test_sin_ticks_un_rechazo_al_llenar_gasta_el_punto_en_el_cierre_de_la_vela_del_llenado
 FAILED tests/unit/test_broker.py::test_el_respaldo_m1_llena_cierra_y_marca_sin_ticks
@@ -113,4 +124,4 @@ FAILED tests/unit/test_respaldo_m1_decision.py::test_una_pendiente_de_antes_de_u
 FAILED tests/unit/test_respaldo_m1_decision.py::test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente
 FAILED tests/unit/test_peor_del_minuto.py::test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el
 FAILED tests/unit/test_peor_del_minuto.py::test_una_expiracion_en_un_instante_redondo_no_marca_la_vela_siguiente
-18 failed, 39 passed in 5.14s
+20 failed, 44 passed in 1.91s
