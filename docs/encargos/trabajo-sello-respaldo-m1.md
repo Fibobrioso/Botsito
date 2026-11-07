@@ -1,16 +1,15 @@
 # Encargo · trabajo/sello-respaldo-m1
 
-Dado por Aleks (consultor) el 2026-11-07, en un solo mensaje. Copiado tal cual (el bloque
-`ids-inexistentes` es el que trae el propio encargo; declara ADR-0091, que crea la fase 1 si la
-regla D2 da «límite del respaldo», y sale en el mismo commit que lo crea):
+Dado por Aleks (consultor) el 2026-11-07, en un solo mensaje. Copiado tal cual, salvo el bloque
+`ids-inexistentes` que traía tras su primer párrafo, que declaraba ADR-0091 hasta que existiera:
+salió en el commit que lo crea (fase 2, punto b; respuesta del consultor, puntos 0 y 7). Decía:
+«ADR-0091 — lo crea la fase 1 de esta rama si la regla D2 da «límite del respaldo»; el bloque sale
+en el mismo commit que lo crea (si no se crea, el bloque se queda y el informe lo dice)». Al final,
+la respuesta del consultor a la PARADA, también tal cual:
 
 > Modelo: Opus · Esfuerzo: alto
 >
 > Encargo del consultor (2026-11-07) · trabajo/sello-respaldo-m1 · tramo «R3 · Una corrida del arnés sobre toda la construcción» (R3.6 de la hoja de ruta; H de la Next Action). Rama de noche: corre sola, con las decisiones por adelantado y PARADA condicional. NUNCA cierra.
->
-> ```ids-inexistentes
-> ADR-0091 — lo crea la fase 1 de esta rama si la regla D2 da «límite del respaldo»; el bloque sale en el mismo commit que lo crea (si no se crea, el bloque se queda y el informe lo dice)
-> ```
 >
 > Rama nueva: trabajo/sello-respaldo-m1, desde main tras el cierre de trabajo/demo-ejecuciones-2-3. Antes de nada, comprueba con git que main es el commit docs(state) de ese cierre, que el tag stable/F38p-demo-ejecuciones-2-3 apunta a su merge, que la CI de main de ese commit está en verde (un gh run view suelto, sin bucle) y que no queda otra rama. Si algo de eso falla, PARA sin tocar nada y dilo. Ábrela con abrir-rama: contrato con tramo "R3 · Una corrida del arnés sobre toda la construcción" (entre comillas), riesgo alto (toca el respaldo M1 del bróker simulado), artefacto docs/validation/SELLO-RESPALDO-M1.md. El recorrido lo mandan fase-cero, comparar-con-main y entregar-rama; si chocan con este encargo, ganan ellas y lo dices. Antes de usar el número 0091, grep de «0091» en docs/ y en Technical Debt.
 >

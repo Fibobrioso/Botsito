@@ -116,6 +116,15 @@ Con este ADR (PUNTO-USADO.md §1.c, la vía):
   bucle de `correr_dia` es el único sitio que ya tiene el bróker, el contexto y el estado, y donde
   los hechos del bróker llegan al intérprete (`estado.broker = broker.hechos()`).
 
+> **NOTA DE ADR-0091 (2026-11-07, `trabajo/sello-respaldo-m1`; recuadro que no reescribe el
+> cuerpo).** Con el respaldo M1, el evento de la vela k se sella en k fin − 1 ms y lo procesa el
+> `avanzar` del cierre de k (`cableado.correr_dia`: `broker.avanzar(hasta_ms)`, `_a_la_cuenta` y
+> `_el_punto_tras_el_evento`, en ese orden, antes del intérprete). Así que un rechazo al llenar
+> gasta el punto, y un stop u objetivo sin ganancia libera la zona, **en el cierre de k**, un cierre
+> ANTES que con el sello en k fin; la reentrada por D5 sale en ese mismo cierre, y D4 ve la posición
+> abierta en el cierre de la vela que la llenó (ADR-0091 §4). Lo que gasta y lo que libera no
+> cambia. Con ticks no cambia nada.
+
 ### 3. D3 · Los dos tests que rompen en `main`, y los que pasan en los dos
 
 `tests/unit/test_punto_usado.py`, por el cableado real con la spec real y el productor real de la

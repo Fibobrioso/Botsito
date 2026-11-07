@@ -54,6 +54,14 @@ cuenta.
 - **Más allá de la letra de R15**, y declarado: se niega también con el mercado cerrado (el servidor
   rechazaría la orden) y fuera de lo que cubre el calendario (abstenerse).
 
+> **NOTA DE ADR-0091 (2026-11-07, `trabajo/sello-respaldo-m1`; recuadro que no reescribe el
+> cuerpo).** Con el respaldo M1, un llenado en la vela que acaba en W (el inicio de la ventana) se
+> sella en **W − 1 ms**, fuera de la ventana: R15 prohíbe abrir desde dos horas antes y §1 mete W
+> dentro, así que W − 1 ms todavía está fuera. Antes se sellaba en W, y la cancelación al empezar la
+> ventana (que va antes que cualquier llenado de ese instante) se lo comía. La vela transcurre entera
+> antes de W. La pendiente que siga viva se sigue cancelando al empezar la ventana, como dice este
+> punto. Con ticks no cambia nada.
+
 ### 3. Instantes absolutos; el huso, en cada hora declarada
 
 La ventana es una duración antes de un instante, en milisegundos UTC, y nunca depende de un reloj de

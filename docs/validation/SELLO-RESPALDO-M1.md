@@ -4,11 +4,10 @@ Rama `trabajo/sello-respaldo-m1`, abierta el 2026-11-07 desde `main` (2e04b63, c
 sobre el merge 8f43d38 del tag `stable/F38p-demo-ejecuciones-2-3`). Encargo:
 `docs/encargos/trabajo-sello-respaldo-m1.md`. Tramo «R3 · Una corrida del arnés sobre toda la
 construcción» (R3.6 de la hoja de ruta; H de la Next Action). Rama de noche, con las decisiones del
-consultor por adelantado (D1-D5) y PARADA condicional.
-
-```ids-inexistentes
-ADR-0091 — el número que el encargo reserva para el ADR del sello; D2 dio (c2) y esta rama NO lo crea: aquí solo va su borrador (§2), y el ADR lo escribe la rama de (c2)
-```
+consultor por adelantado (D1-D5) y PARADA condicional. **Tras la PARADA, la respuesta del consultor
+del 2026-11-07 (§7) manda implementar (c2) en esta rama, con ADR-0091**: lo de §1 y §2 que dice que
+el ADR no se crea aquí queda sin efecto. El bloque `ids-inexistentes` que declaraba ADR-0091 salió en
+el commit que lo crea.
 
 ## Base comprobada al abrir (2026-11-07)
 
