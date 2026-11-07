@@ -574,6 +574,105 @@ fase 1 sin esperar** en todo lo que no dependa de ellas (puntos 1, 2, 3 y 5; el 
    el punto 4 de la fase 1 (la comisión en el perfil y sus tests) espera**; ADR-0090 dice la tarifa
    medida y el valor del perfil se cambia en el commit del punto 4.
 
+## 1. Fase 1 · lo hecho sin esperar (2026-11-06)
+
+La PARADA es condicional (encargo): sigo con lo que no depende de las decisiones 1 y 3. Un commit por
+punto; antes de cada uno, estadiar, `uv run botsito state check`, `make check > make-check.log 2>&1`
+y leer el log (exit 0, ningún `failed`, la línea `SELLO`); `ruff format`, `ruff check` y `mypy` sobre
+el único `.py` nuevo o cambiado de cada punto.
+
+| punto | commit | qué | `make check` |
+|---|---|---|---|
+| fase 0 | 49805c3 | el informe con la fase 0 | 3231 passed, SELLO `8142589c…` |
+| 1 | dedc121 | los manifiestos de la 2 y la 3 + `tests/unit/test_manifiestos_demo_ftmo.py` (recuento de PROJECT_STATE 1857 → 1860) | 3236 passed, SELLO `f7571ccd…` |
+| 2 | c1a2798 | ADR-0090; recuadros en ADR-0081 §4 (enmienda), ADR-0071 §3 y §4, ADR-0057 §2, ADR-0027 §4, ADR-0068 y ADR-0082; filas del índice; recuadros en DEMO-EJECUCION-1.md y EA-CONEXION.md §0.c (decisión 0); sale el bloque `ids-inexistentes` del encargo y del informe; el contrato se amplía a esos dos informes | 3236 passed, SELLO `4a75f6af…` |
+| 3 | d53bb2d | A-28 DECIDIDA en sus sitios, `broker_offset_base` 120 y `broker_dst` `us` CONFIRMED, las frases de g), `test_kit`, `spec_version` 18.6.1 → 18.6.2, `spec manifest` y `spec docs`, el yaml de cierres; trailer `Fuente: ADR-0090` | 3236 passed, SELLO `6d9da3ca…` |
+| 4 | — | **espera a la decisión 3**: la comisión en el perfil y sus tests | — |
+| 5 | 86dfa75 | `docs/runbooks/DEMO-FTMO.md`: las tres ejecuciones con su hora («Cuándo: tres veces»), la prueba del 2026-10-29, el panel como pendiente, los CSV congelados y el `grep -U` | 3236 passed, SELLO `27b16e72…` |
+
+### 1.1 Los tests que rompen a propósito, contra `main` (comparar-con-main)
+
+Mecanismo de la skill: el test de la rama, copiado en el clon `C:/cm/m` (`git worktree add --detach
+C:/cm/m main`) y ejecutado allí. La guardia solo deja ejecutar en el clon un test IDÉNTICO al del
+árbol del repo o al de `main` (negativas 4 y 5 de abajo), así que cada test se copia al clon después
+de escribirlo en la rama.
+
+**A-28 entre las DECIDIDAS de `test_kit` (falla en `main`):**
+
+```
+$ cd C:/cm/m && uv run pytest -q -p no:cacheprovider tests/unit/test_kit.py
+E       AssertionError: assert {'A-15', 'A-1..., 'A-24', ...} == {'A-15', 'A-1..., 'A-24', ...}
+E         Extra items in the right set:
+E         'A-28'
+FAILED tests/unit/test_kit.py::test_ambiguedades_reales_y_esquema - Assertion...
+```
+
+En la rama pasa (dentro de los `make check` de los puntos 3 y 5).
+
+**El sufijo del `dataset_id` de un manifiesto de la demo** (no había test; `tests/unit/test_manifiestos_demo_ftmo.py`
+es nuevo). Con un manifiesto cuyo sufijo no casa, copiado solo en el clon `C:/cm/r` junto al test
+de la rama:
+
+```
+$ cd C:/cm/r && uv run pytest -q -p no:cacheprovider tests/unit/test_manifiestos_demo_ftmo.py
+E       Left contains one more item: "sufijo '00000000' no son los 8 primeros del sha256 ('59565621')"
+FAILED tests/unit/test_manifiestos_demo_ftmo.py::test_el_dataset_id_casa_con_el_sha256_y_la_fecha[demo-ftmo-2026-11-05-00000000.yaml-]
+```
+
+Con los tres manifiestos reales, 5 passed (en la rama). Además, `test_un_sufijo_que_no_casa_se_caza`
+prueba el comprobador con un sufijo y una fecha falsos sin tocar ningún fichero.
+
+**La comisión a 2,50 por lado (falla con 5):** escrita y probada en el clon de `main`
+(`test_la_comision_por_lado_y_su_importe_estan_medidos`, que pide 2.50, CONFIRMED, fuente
+ADR-0090 y las filas 54 y 55), pero no ejecutable allí hasta que exista en la rama, y entra en la
+rama con el punto 4, que espera a la decisión 3. Su salida contra `main` se pega en ese commit.
+
+### 1.2 El encargo, punto por punto
+
+| punto del encargo | estado | dónde |
+|---|---|---|
+| Rama con abrir-rama, base comprobada, contrato (tramo, riesgo alto, artefacto) | hecho | «Base comprobada al abrir»; fd368ee |
+| grep de «0090» en docs/ y Technical Debt antes de usarlo | hecho: libre (auditor, 4; sesión) | §«El encargo frente al repo» |
+| FASE 0 a) a h) | hecho | §0.a-§0.h |
+| D1 manifiestos | hecho; la 1.2 se ata a a90cd45 por el `.mq5` del terminal (auditor, 42) | dedc121 |
+| D2 originales y deuda del CRLF | hecho: coinciden, la deuda se explica (artefacto de `grep`) y sale por (a) en el cierre | §0.b; ADR-0090 |
+| D3 A-28 DECIDIDA | hecho | d53bb2d; ADR-0090 §1 |
+| D4 anclaje_h4 como derivación | hecho; la medida, en R6a (decisión 2) | ADR-0090 §2; recuadro de ADR-0027 §4 |
+| D5 el panel | Aleks no lo declaró: línea propia preparada (§0.h), `reloj_dia_riesgo` apunta a ella | d53bb2d |
+| D6 comisión | **PARADA (decisión 3)**: ADR-0090 §3 y el recuadro de ADR-0071 §3 escritos; el perfil y sus tests esperan | §0.e |
+| D7 paso 8 | hecho: ADR-0090 ENMIENDA ADR-0081 §4; (a)-(d); f sin rechazos; (c) y (d) entre las líneas del cierre | ADR-0090 §4; §0.f; §0.h |
+| D8 nivel exacto | hecho: PROVISIONAL, recuadros en ADR-0057 §2 y ADR-0071 §4 | ADR-0090 §5 |
+| D9 ficha y swaps | ficha: coincide (tabla); **swaps: PARADA (decisión 1)** | ADR-0090 §6 |
+| D10 deslizamiento | hecho: sin cambio, observaciones registradas | ADR-0090 §7 |
+| D11 la hora de la 3 | hecho, con `zoneinfo` | §0.c.3; ADR-0090; DEMO-FTMO.md |
+| D12 M y el grabador | siguen vivos: A.5 preparada | §0.h |
+| Herencias del encargo | cumplidas o dichas en §«El encargo frente al repo»; añadidas ADR-0068 y ADR-0082 | c1a2798 |
+| Tests que rompen a propósito | `test_kit` y el del `dataset_id`, pegados; el de la comisión, con el punto 4 | §1.1 |
+| CI | la rama no toca hooks, rutas, `.claude/` ni `src/`: sin `fix/` | — |
+| Revisor | **no pasado todavía**: va cuando las dos PARADAS estén contestadas y aplicadas, para que revise la rama entera | — |
+| «Rama lista para revisión» | **no**: faltan el punto 4 y los swaps | — |
+
+### 1.3 Negativas de la guardia en la fase 1 (además de las de la fase 0)
+
+4. `uv run pytest … tests` sobre todo el directorio en el clon: «tests es un directorio: la guardia no
+   sabe que ficheros ejecutara». Se pasaron los ficheros nombrados (§0.e).
+5. `pytest` en el clon de `main` con un test cambiado que aún no estaba en la rama: «el codigo nombra
+   la carpeta /…» y «no se pudo resolver el modulo `tests.unit.perfil_stops_level_unknown`». Es el
+   riesgo residual de `trabajo/guardia-g1` que ya está en Technical Debt: el test del clon solo se
+   ejecuta si es el de `main` o el del árbol del repo. Se escribió primero en la rama.
+6. Varios comandos compuestos (`wc -c … && pytest`, `rm … && make check`, `git add … && state
+   check`, dos guiones en una llamada): partidos en llamadas sueltas, como propone la guardia.
+
+### 1.4 La fila de ERRORES-RECURRENTES, preparada (la escribe el cierre)
+
+| Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
+|---|---|---|---|
+| `trabajo/demo-ejecuciones-2-3` | (tras su pasada) | **(importa, del consultor)** la orden de cierre de F38n escribió en la Next Action «los tres CSV en data/demo_ftmo/ sin congelar» (y en la hoja de ruta «congelar los tres CSV»), cuando la 1 está congelada desde el 2026-10-09. Lección: antes de dar por pendiente un paso, buscar su artefacto (aquí, `data/manifests/demo_ftmo/`). **(menor)** el resumen del consultor del 2026-11-06 dio «deslizamiento 0», y la 2 trae 2,0 puntos en contra al abrir a mercado. Lección: una cifra de un CSV se lee por ejecución, no se resume. **(importa)** el plan del consultor era una NOTA en ADR-0081 §4, cuando la medida desmiente lo que §4 da por hecho y lo que modela el bróker simulado; lo cazó su auditor antes de entregar el encargo. Lección: antes de decidir entre nota y enmienda, leer qué da por hecho el ADR y qué hace el código. **(importa, de la sesión, fase 0)** el LF de la ejecución 1, medido dos veces con `grep -c $'\r'` (DEMO-EJECUCION-1 y EA-CONEXION) y apuntado en un manifiesto inmutable, era el `grep` de Git para Windows, que quita el CR sin `-U`. Lección: un recuento de bytes se hace leyendo bytes (o con `grep -U`), no con un `grep` de texto. **(importa, del encargo)** D6 contaba con que la comisión solo rompería tests de importe o de saldo, y rompe la regresión del corte del 7 de agosto (§0.e). Lección: antes de cambiar un coste, medir qué estado de cuenta cambia con él. | (tras la revisión) |
+
+### 1.5 Lo que no pude medir, añadido en la fase 1
+
+- La salida contra `main` del test de la comisión: va con el punto 4 (§1.1).
+
 ## Estado
 
-EN CURSO: fase 0 entregada (2026-11-06). Dos PARADAS condicionales (decisiones 1 y 3); la fase 1 sigue sin esperar en los puntos 1, 2, 3 y 5, y el 4 espera a la respuesta.
+EN CURSO, en PARADA (2026-11-06): fase 0 entregada y fase 1 hecha en sus puntos 1, 2, 3 y 5. Esperan a la respuesta del consultor la decisión 1 (los swaps) y la decisión 3 (la regresión del 7 de agosto con la comisión medida), y con ella el punto 4. Después: el revisor y la entrega. NO lista para revisión.

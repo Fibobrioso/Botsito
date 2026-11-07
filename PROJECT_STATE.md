@@ -7,7 +7,7 @@
 trabajo/demo-ejecuciones-2-3
 
 ## Current Feature
-trabajo/demo-ejecuciones-2-3 · EN CURSO (abierta el 2026-11-06): congelar las ejecuciones 2 y 3 de MedirDemoFTMO y decidir con un ADR nuevo A-28, la comision, el nivel exacto, la ficha, el deslizamiento y el paso 8. Encargo docs/encargos/trabajo-demo-ejecuciones-2-3.md; informe docs/validation/DEMO-EJECUCIONES-2-3.md.
+trabajo/demo-ejecuciones-2-3 · EN CURSO, en PARADA (abierta el 2026-11-06): ejecuciones 2 y 3 congeladas, ADR-0090 y A-28 DECIDIDA; esperan los swaps y la comision en el perfil (decisiones 1 y 3 del informe). Encargo docs/encargos/trabajo-demo-ejecuciones-2-3.md; informe docs/validation/DEMO-EJECUCIONES-2-3.md.
 
 ## Stable Main State
 4fa0920 · merge de `trabajo/activar-sesion-06-motor` (tag `stable/F38o-activar-sesion-06-motor`): la sesión 6 en el motor. Sobre `stable/F38n-activar-sesion-06` (df0e672). Informe docs/validation/ACTIVAR-SESION-06-MOTOR.md; el registro del cierre, al final de HISTORIA.
