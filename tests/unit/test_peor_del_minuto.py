@@ -63,15 +63,17 @@ def _broker(m1: list[Vela]) -> Broker:
 
 
 def test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el() -> None:
-    """La sonda 5: una larga en 1000 con stop 990 salta por el respaldo en el sello de M0 (el fin
-    de M0, que baja a 989). M0+1 baja a 900, pero empieza justo en ese instante: no se ha visto
-    nada de ella. En `main` su minima entraba como marca en el fin de M0 y, como la posicion
-    cierra ahi, dentro de la operacion."""
+    """La sonda 5: una larga en 1000 con stop 990 salta por el respaldo en el sello de M0 (M0 baja
+    a 989). M0+1 baja a 900, pero empieza en el instante redondo hasta el que se avanza: no se ha
+    visto nada de ella. En `main` su minima entraba como marca en el fin de M0 y, como la posicion
+    cerraba ahi, dentro de la operacion. Desde ADR-0091 el stop se sella en el ultimo milisegundo de
+    M0 (antes, en su fin)."""
     b = _broker([_vela(M0, 1000, 1001, 989, 1000), _vela(M0 + 1, 1000, 1001, 900, 950)])
     b.abrir_conocida("p", "compra", 1000, UNO, 990, 1030, _ms(M0))
     b.avanzar(_ms(M0 + 1))
     p = b.posiciones["p"]
-    assert (p.motivo_cierre, p.fuente_cierre, p.cerrada_ms) == (STOP, RESPALDO_M1, _ms(M0 + 1))
+    sello = _ms(M0 + 1) - 1
+    assert (p.motivo_cierre, p.fuente_cierre, p.cerrada_ms) == (STOP, RESPALDO_M1, sello)
     assert p.marcas == [(_ms(M0 + 1) - 1, 989)]
     assert [int(m.precio) for m in b.operaciones_cerradas()[0].marcas] == [989]
 

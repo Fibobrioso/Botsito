@@ -38,6 +38,7 @@ from botsito.engine.broker import (
     Rechazo,
     limitar_lote,
     margen_requerido,
+    minuto_de_apertura,
 )
 from botsito.engine.cuenta import CuentaViva
 from botsito.engine.entrada import STOP_EN_RUPTURA
@@ -275,8 +276,9 @@ def primitivas_cableadas(
             return Resultado(Tri.NO)
         p = vivas[0]
         try:
-            # las M1 cerradas desde la que contiene el llenado: solo lo de despues de la entrada
-            m1 = momento.datos.m1_entre(p.abierta_ms // MS_POR_MINUTO, int(momento.instante))
+            # las M1 cerradas desde la del minuto de apertura: la del tick que llena o, con el
+            # respaldo, la siguiente a la vela del llenado (ADR-0091 §2)
+            m1 = momento.datos.m1_entre(minuto_de_apertura(p), int(momento.instante))
         except AttributeError:
             return NoImplementada("predicado:se_completa_zona_de_control:sin M1")
         k = zona_posterior_completada(m1, p.lado, criterio)

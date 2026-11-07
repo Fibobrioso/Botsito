@@ -220,18 +220,19 @@ def test_la_equity_de_la_cuenta_es_el_saldo_mas_el_flotante_del_broker_en_cada_m
 
 
 def test_el_respaldo_m1_llena_cierra_y_marca_sin_ticks() -> None:
-    """Sin ningun tick: la limite se llena en el cierre de la M1 que pasa el precio, el stop salta
-    en la M1 que lo toca -pesimista- y todo queda marcado como respaldo."""
+    """Sin ningun tick: la limite se llena en el ultimo milisegundo de la M1 que pasa el precio
+    (ADR-0091 §1; antes, en su cierre), el stop salta en la M1 que lo toca -pesimista- y todo queda
+    marcado como respaldo."""
     m1 = [
         _vela(M0, 1010, 1012, 1005, 1008),  # ASK minimo 1005 + 3 = 1008: no pasa 1000
-        _vela(M0 + 1, 1006, 1007, 996, 1000),  # ASK minimo 999 < 1000: llena al cierre
+        _vela(M0 + 1, 1006, 1007, 996, 1000),  # ASK minimo 999 < 1000: llena en su ultimo ms
         _vela(M0 + 2, 1000, 1025, 985, 1000),  # stop 990 y objetivo 1020 en la misma vela: stop
     ]
     b = _broker([], m1)
     b.colocar_limite("o", "compra", 1000, UNO, 990, 1020, _ms(M0))
     b.avanzar(_ms(M0 + 3))
     p = b.posiciones["pos-o"]
-    assert (p.abierta_ms, p.fuente_apertura) == (_ms(M0 + 2), RESPALDO_M1)
+    assert (p.abierta_ms, p.fuente_apertura) == (_ms(M0 + 2) - 1, RESPALDO_M1)
     assert (p.motivo_cierre, p.precio_cierre, p.fuente_cierre) == (STOP, 990, RESPALDO_M1)
     assert b.traza().por_fuente() == {TICKS: 0, RESPALDO_M1: 2}
 

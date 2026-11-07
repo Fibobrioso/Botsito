@@ -112,7 +112,7 @@ def test_una_m1_con_stop_y_objetivo_a_la_vez() -> None:
         990,
         RESPALDO_M1,
     )
-    assert respaldo.instante_ms == _ms(M0 + 1)  # el CIERRE de la vela
+    assert respaldo.instante_ms == _ms(M0 + 1) - 1  # el ultimo ms de la vela (ADR-0091 §1)
     # el mismo tick que cruza stop y objetivo (hueco): gana el stop, al precio del tick
     salto = [Tick(MilisegundoUtc(_ms(M0, 5)), Puntos(1013), Puntos(985), 0, 0)]
     ev = primera_salida("compra", 990, 1010, _ms(M0), _ms(M0 + 1), Mercado(salto, []), cfg)
@@ -148,7 +148,8 @@ def test_el_hueco_del_respaldo_llena_el_stop_a_la_apertura_y_el_deslizamiento_fi
 
 def test_un_tramo_sin_ticks_cae_al_respaldo_y_queda_marcado() -> None:
     """Minuto 0 con ticks que no llenan; minuto 1 SIN ticks con una M1 que si: el evento sale del
-    respaldo, marcado, en el cierre de esa vela; y el spread supuesto se aplica al ASK."""
+    respaldo, marcado, en el ultimo milisegundo de esa vela (ADR-0091 §1; antes, en su cierre); y el
+    spread supuesto se aplica al ASK."""
     ticks = [_tick(M0, 10, 1005)]
     m1 = [_vela(M0, 1005, 1006, 1004, 1005), _vela(M0 + 1, 1004, 1005, 996, 1000)]
     mercado = Mercado(ticks, m1)
@@ -156,7 +157,7 @@ def test_un_tramo_sin_ticks_cae_al_respaldo_y_queda_marcado() -> None:
     assert ev is not None and (ev.fuente, ev.minuto, ev.instante_ms) == (
         RESPALDO_M1,
         M0 + 1,
-        _ms(M0 + 2),
+        _ms(M0 + 2) - 1,
     )
     # con spread supuesto 5, el ASK minimo es 996 + 5 = 1001: no pasa por debajo de 1000
     cfg5 = Configuracion(False, 0, lambda _m: 5)

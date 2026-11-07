@@ -6,7 +6,12 @@ son anteriores a la decision; la vela del stop movido se evalua con el stop ANTE
 que se decide ya no contaba. Velas y ticks SINTETICOS de 2030; contrato 1 y escala 1.
 
 Los ocho del primer bloque ROMPEN en `main` (que evalua la vela de la decision); los del segundo
-pasan en los dos lados: lo que la condicion no puede cambiar."""
+pasan en los dos lados: lo que la condicion no puede cambiar.
+
+Desde ADR-0091 (`trabajo/sello-respaldo-m1`) el evento del respaldo se sella en el ultimo
+milisegundo de su vela y no en su cierre: los instantes esperados llevan el «- 1», y los dos tests
+de la version anterior mueven o modifican A MEDIA VELA, donde se sigue alcanzando (en el cierre la
+vela ya se evaluo: un test nuevo lo fija)."""
 
 from __future__ import annotations
 
@@ -15,11 +20,13 @@ from datetime import UTC, datetime
 from decimal import Decimal
 from zoneinfo import ZoneInfo
 
+import pytest
+
 from botsito.data.velas import a_minuto
 from botsito.domain.ticks import MS_POR_MINUTO, MilisegundoUtc, Tick
 from botsito.domain.valores import Puntos
 from botsito.domain.velas import MinutoUtc, Vela
-from botsito.engine.broker import LLENADA, Broker, ReglasBroker
+from botsito.engine.broker import LLENADA, Broker, BrokerError, ReglasBroker
 from botsito.engine.llenado import (
     RESPALDO_M1,
     STOP,
@@ -119,30 +126,36 @@ def test_el_stop_movido_en_el_cierre_de_una_m1_sin_ticks_no_salta_con_esa_vela()
     assert p.abierta and p.stop == 1000
 
 
+def _vela_del_sello(ms: int) -> int:
+    """El minuto de la vela cuyo evento del respaldo se sello en `ms`: con el sello de ADR-0091
+    (k fin - 1 ms) y con el de antes (k fin) da la misma vela, asi que un test que lo usa pasa en
+    los dos lados."""
+    return (ms + 1) // MS_POR_MINUTO - 1
+
+
 def test_la_vela_del_stop_movido_que_toca_el_stop_original_sale_por_el_sin_break_even() -> None:
     """ADR-0065 §4: una M1 que pasa el nivel y toca el stop original sale por el stop original,
-    pesimista, y no hay break even. M0 baja a 985 (por debajo de 990) y en su cierre el motor mueve
-    el stop a 1000: sale a 990, clasificada como stop entero. En `main` sale a 1000, break even."""
+    pesimista, y no hay break even. M0 baja a 985 (por debajo de 990) y A MEDIA VELA (quien decide
+    a media vela: la repeticion del trader) el stop pasa a 1000: sale a 990, clasificada como stop
+    entero. Desde ADR-0091 el motor ya no llega aqui (decide en el cierre, y la vela ya se evaluo):
+    el test pasa en `main` y en la rama (antes movia el stop en el cierre de M0, ADR-0091 §6)."""
     b = _broker([], [_vela(M0, 1004, 1015, 985, 1010), _vela(M0 + 1, 1010, 1012, 1008, 1011)])
     b.abrir_conocida("p", "compra", 1000, UNO, 990, 1030, _ms(M0))
-    b.avanzar(_cierre(M0))
-    b.mover_stop("p", 1000, _cierre(M0))
+    b.avanzar(_ms(M0, 30))
+    b.mover_stop("p", 1000, _ms(M0, 30))
     b.avanzar(_ms(M0 + 2))
     p = b.posiciones["p"]
-    assert (p.motivo_cierre, p.precio_cierre, p.cerrada_ms, p.fuente_cierre) == (
-        STOP,
-        990,
-        _ms(M0 + 1),
-        RESPALDO_M1,
-    )
+    assert p.cerrada_ms is not None and _vela_del_sello(p.cerrada_ms) == M0
+    assert (p.motivo_cierre, p.precio_cierre, p.fuente_cierre) == (STOP, 990, RESPALDO_M1)
     movido = p.stop_original is not None
     assert clasificar_cierre(STOP, movido, Decimal(-10)) == SALTO_EL_STOP != BREAK_EVEN
 
 
 def test_la_vela_de_una_modificacion_se_evalua_con_la_orden_anterior() -> None:
-    """Limite de compra en 1000 colocada al empezar M0; en el cierre de M0+1 se modifica a 995. La
+    """Limite de compra en 1000 colocada al empezar M0; A MEDIA VELA de M0+1 se modifica a 995. La
     M0+1 lleva el ASK a 998: llena la orden ANTERIOR (1000), a su precio, con su stop y su objetivo,
-    al fin de M0+1. En `main` la M0+1 se evalua con 995 y no llena."""
+    en el sello de M0+1. Pasa en `main` y en la rama (antes modificaba en el cierre de M0+1, donde
+    desde ADR-0091 la vela ya se evaluo: ADR-0091 §6)."""
     m1 = [
         _vela(M0, 1010, 1012, 1005, 1010),
         _vela(M0 + 1, 1008, 1010, 995, 1000),
@@ -150,16 +163,39 @@ def test_la_vela_de_una_modificacion_se_evalua_con_la_orden_anterior() -> None:
     ]
     b = _broker([], m1)
     b.colocar_limite("o", "compra", 1000, UNO, 990, 1030, _ms(M0))
-    b.avanzar(_cierre(M0 + 1))
-    b.modificar("o", _cierre(M0 + 1), precio=995, stop=985, objetivo=1025)
-    assert b.avanzar(_ms(M0 + 3)) == [(_ms(M0 + 2), LLENADA, "o", RESPALDO_M1)]
+    b.avanzar(_ms(M0 + 1, 30))
+    b.modificar("o", _ms(M0 + 1, 30), precio=995, stop=985, objetivo=1025)
+    ((instante, tipo, id_, fuente),) = b.avanzar(_ms(M0 + 3))
+    assert (_vela_del_sello(instante), tipo, id_, fuente) == (M0 + 1, LLENADA, "o", RESPALDO_M1)
     p = b.posiciones["pos-o"]
-    assert (p.entrada, p.stop, p.objetivo, p.abierta_ms) == (1000, 990, 1030, _ms(M0 + 2))
+    assert (p.entrada, p.stop, p.objetivo, p.abierta_ms) == (1000, 990, 1030, instante)
+
+
+def test_en_el_cierre_la_vela_se_evalua_antes_de_mover_el_stop_o_modificar_la_orden() -> None:
+    """ADR-0091 §6: el motor decide en el cierre de la M1 menos 1 ms, y el `avanzar` de ese cierre
+    ya evaluo la vela, con la version vigente. Si M0 toca el stop 990, la posicion ya salio cuando
+    el motor quiere moverlo; si M0+1 llena la limite en 1000, ya esta llena cuando quiere
+    modificarla. En `main` la vela aun no se habia evaluado: la posicion seguia viva y la orden,
+    pendiente."""
+    b = _broker([], [_vela(M0, 1004, 1015, 985, 1010), _vela(M0 + 1, 1010, 1012, 1008, 1011)])
+    b.abrir_conocida("p", "compra", 1000, UNO, 990, 1030, _ms(M0))
+    b.avanzar(_cierre(M0))
+    p = b.posiciones["p"]
+    assert (p.motivo_cierre, p.precio_cierre, p.cerrada_ms) == (STOP, 990, _cierre(M0))
+    with pytest.raises(BrokerError):
+        b.mover_stop("p", 1000, _cierre(M0))
+    m1 = [_vela(M0, 1010, 1012, 1005, 1010), _vela(M0 + 1, 1008, 1010, 995, 1000)]
+    b = _broker([], m1)
+    b.colocar_limite("o", "compra", 1000, UNO, 990, 1030, _ms(M0))
+    assert b.avanzar(_cierre(M0 + 1)) == [(_cierre(M0 + 1), LLENADA, "o", RESPALDO_M1)]
+    with pytest.raises(BrokerError):
+        b.modificar("o", _cierre(M0 + 1), precio=995, stop=985, objetivo=1025)
 
 
 def test_la_vela_de_una_modificacion_no_llena_la_version_nueva() -> None:
-    """Al reves: la M0+1 cruza el precio NUEVO (1010) y no el anterior (1000). No se llena en M0+1;
-    se llena en M0+2, que tambien lo cruza. En `main`, al fin de M0+1."""
+    """Al reves: la M0+1 cruza el precio NUEVO (1010) y no el anterior (1000). No se llena en M0+1
+    (desde ADR-0091 se evalua en el cierre de M0+1, antes de modificar, con el anterior); se llena
+    en M0+2, que tambien lo cruza, en su ultimo milisegundo. En `main`, al fin de M0+1."""
     m1 = [
         _vela(M0, 1012, 1014, 1009, 1012),
         _vela(M0 + 1, 1012, 1013, 1005, 1008),  # ASK minimo 1008: pasa 1010, no 1000
@@ -169,7 +205,7 @@ def test_la_vela_de_una_modificacion_no_llena_la_version_nueva() -> None:
     b.colocar_limite("o", "compra", 1000, UNO, 990, 1030, _ms(M0))
     b.avanzar(_cierre(M0 + 1))
     b.modificar("o", _cierre(M0 + 1), precio=1010, stop=1000, objetivo=1040)
-    assert b.avanzar(_ms(M0 + 3)) == [(_ms(M0 + 3), LLENADA, "o", RESPALDO_M1)]
+    assert b.avanzar(_ms(M0 + 3)) == [(_ms(M0 + 3) - 1, LLENADA, "o", RESPALDO_M1)]
     assert b.posiciones["pos-o"].entrada == 1010
 
 
@@ -188,11 +224,11 @@ def test_sin_instante_decidido_la_funcion_pura_niega_por_defecto() -> None:
 
 def test_una_pendiente_de_antes_de_una_vela_sin_ticks_se_llena_en_esa_vela() -> None:
     """Colocada en el cierre de M0, sigue pendiente durante M0+1, que la cruza: se llena con la M1
-    de M0+1, al fin de M0+1."""
+    de M0+1, en su ultimo milisegundo (ADR-0091 §1; antes, al fin de M0+1)."""
     b = _broker([], [_vela(M0, 1010, 1011, 1005, 1008), _vela(M0 + 1, 1008, 1009, 990, 995)])
     b.avanzar(_cierre(M0))
     b.colocar_stop("v", "venta", 995, UNO, 1010, 950, _cierre(M0))
-    assert b.avanzar(_ms(M0 + 2)) == [(_ms(M0 + 2), LLENADA, "v", RESPALDO_M1)]
+    assert b.avanzar(_ms(M0 + 2)) == [(_ms(M0 + 2) - 1, LLENADA, "v", RESPALDO_M1)]
 
 
 def test_el_tick_del_ultimo_evento_puede_llenar_otra_pendiente() -> None:
@@ -222,9 +258,9 @@ def test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente(
     b.colocar_stop("v", "venta", 995, UNO, 1020, 950, _cierre(M0))
     b.avanzar(_ms(M0 + 2))
     p = b.posiciones["pos-v"]
-    assert p.abierta and p.abierta_ms == _ms(M0 + 2)
+    assert p.abierta and p.abierta_ms == _ms(M0 + 2) - 1  # el sello de ADR-0091 §1
     b.avanzar(_ms(M0 + 3))
-    assert (p.motivo_cierre, p.cerrada_ms) == (STOP, _ms(M0 + 3))
+    assert (p.motivo_cierre, p.cerrada_ms) == (STOP, _ms(M0 + 3) - 1)
 
 
 def test_con_ticks_el_instante_de_la_decision_ya_no_contaba() -> None:

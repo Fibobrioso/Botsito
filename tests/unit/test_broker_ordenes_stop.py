@@ -146,7 +146,8 @@ def test_el_respaldo_m1_llena_al_nivel_o_a_la_apertura_si_la_vela_abre_pasada() 
     velas = [_vela(M0, 1012, 1015, 1008, 1010), _vela(M0 + 1, 1008, 1009, 998, 999)]
     b = _broker([], velas)
     b.colocar_stop("v", "venta", 1000, UNO, 1020, 950, _ms(M0 + 1))
-    assert b.avanzar(_ms(M0 + 2)) == [(_ms(M0 + 2), LLENADA, "v", RESPALDO_M1)]
+    # sellado en el ultimo milisegundo de la vela (ADR-0091 §1; antes, en su cierre)
+    assert b.avanzar(_ms(M0 + 2)) == [(_ms(M0 + 2) - 1, LLENADA, "v", RESPALDO_M1)]
     assert (b.posiciones["pos-v"].entrada, b.posiciones["pos-v"].deslizamiento_entrada) == (1000, 0)
     hueco = [_vela(M0, 1012, 1015, 1008, 1010), _vela(M0 + 1, 995, 996, 990, 991)]
     b2 = _broker([], hueco)
@@ -159,8 +160,9 @@ def test_el_respaldo_m1_llena_al_nivel_o_a_la_apertura_si_la_vela_abre_pasada() 
 
 
 def test_misma_vela_la_stop_sigue_la_convencion_de_la_limite() -> None:
-    """Respaldo M1: el llenado se sella al cierre de la vela y la salida solo se mira desde la
-    siguiente, igual para una limite que para una stop. Con ticks, el orden real."""
+    """Respaldo M1: el llenado se sella en el ultimo milisegundo de la vela (ADR-0091 §1; antes, en
+    su cierre) y la salida solo se mira desde la siguiente, igual para una limite que para una
+    stop. Con ticks, el orden real."""
     for tipo, previa in ((TIPO_LIMITE, 990), (TIPO_STOP, 1010)):
         velas = [
             _vela(M0, previa, previa + 1, previa - 1, previa),
@@ -175,7 +177,7 @@ def test_misma_vela_la_stop_sigue_la_convencion_de_la_limite() -> None:
         p = b.posiciones["pos-o"]
         assert p.abierta, f"{tipo}: la salida no se mira en la vela del llenado"
         b.avanzar(_ms(M0 + 4))
-        assert (p.motivo_cierre, p.cerrada_ms) == (STOP, _ms(M0 + 4)), tipo
+        assert (p.motivo_cierre, p.cerrada_ms) == (STOP, _ms(M0 + 4) - 1), tipo
     # con ticks: se llena a los 20 s y el stop salta a los 40 s del mismo minuto
     ticks = [_tick(M0, 0, 1010), _tick(M0, 20, 1000), _tick(M0, 40, 1017)]
     b = _broker(ticks)

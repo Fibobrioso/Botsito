@@ -274,6 +274,16 @@ class Posicion:
         return self.cerrada_ms is None
 
 
+def minuto_de_apertura(p: Posicion) -> int:
+    """El minuto al que PERTENECE la apertura de una posicion, para lo que viene despues de ella
+    (ADR-0091 §2): el respaldo sella el llenado de la vela k en su ultimo milisegundo (k fin - 1),
+    y lo de despues -las marcas, los swaps, el dia de la posicion, su sesion, el break even por
+    velas- sigue empezando en la vela siguiente, como cuando se sellaba en k fin. El «+ 1» es la
+    convencion de `_sesion_de` con `colocada_ms` (`cableado.py`); un llenado por tick en el ms .999
+    de un minuto cae tambien en el siguiente."""
+    return (p.abierta_ms + 1) // MS_POR_MINUTO
+
+
 @dataclass(frozen=True)
 class Rechazo:
     instante_ms: int
@@ -929,9 +939,8 @@ class Broker:
         for p in self.posiciones.values():
             if not p.abierta:
                 continue
-            desde = (
-                p.marcas[-1][0] // MS_POR_MINUTO + 1 if p.marcas else p.abierta_ms // MS_POR_MINUTO
-            )
+            # la vela del llenado no se marca: sus precios pueden ser anteriores a el (ADR-0091 §2)
+            desde = p.marcas[-1][0] // MS_POR_MINUTO + 1 if p.marcas else minuto_de_apertura(p)
             for m in range(desde, hasta_ms // MS_POR_MINUTO + 1):
                 peor = self._peor_del_minuto(p.lado, m, p.abierta_ms, hasta_ms)
                 if peor is None:
@@ -961,7 +970,9 @@ class Broker:
 
     def _swaps(self, p: Posicion, hasta_ms: int) -> None:
         """Un swap por cada corte diario del perfil que la posicion cruce viva."""
-        ultimo = p.swaps[-1][0] if p.swaps else p.abierta_ms
+        # desde el minuto de la apertura: un llenado del respaldo en la ultima vela antes del corte
+        # no paga el swap de ese corte (ADR-0091 §2)
+        ultimo = p.swaps[-1][0] if p.swaps else minuto_de_apertura(p) * MS_POR_MINUTO
         dia = _dia_local(ultimo, self.reglas.huso_corte) + timedelta(days=1)
         corte = _medianoche_ms(dia, self.reglas.huso_corte)
         while corte <= hasta_ms:
@@ -1089,8 +1100,10 @@ class Broker:
         if vivas >= r.ordenes_simultaneas_max:
             return "ordenes_simultaneas_max"
         dia = _dia_local(instante_ms, r.huso_corte)
-        hoy = sum(
-            1 for p in self.posiciones.values() if _dia_local(p.abierta_ms, r.huso_corte) == dia
+        hoy = sum(  # el dia de la posicion, el de su minuto de apertura (ADR-0091 §2)
+            1
+            for p in self.posiciones.values()
+            if _dia_local(minuto_de_apertura(p) * MS_POR_MINUTO, r.huso_corte) == dia
         )
         if hoy >= r.posiciones_dia_max:
             return "posiciones_dia_max"
