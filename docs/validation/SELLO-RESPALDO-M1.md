@@ -443,7 +443,8 @@ Por la PARADA condicional del encargo («si da (c2), aplica solo D1 en la fase 1
 | Commit | Qué | `make check` |
 |---|---|---|
 | 13d9ad3 | apertura: encargo, contrato, Archivo 59 | sello `833d532f…`, 3237 passed |
-| (este) | fase 0: este informe, los anexos, la fila de exposiciones y el recorte de Current Feature | — |
+| 460595f | fase 0: este informe, los anexos, la fila de exposiciones y el recorte de Current Feature | sello `9eadefec…`, 3237 passed |
+| (este) | fase 1, punto 1: (e2) en `broker.py:955` (el diff de §0.f, idéntico al medido en el clon) y `tests/unit/test_peor_del_minuto.py` (4 tests; 2 rompen en main, salida en §0.f); «Tests Currently Passing» de 1861 a 1865 | — |
 
 ## Estado
 
