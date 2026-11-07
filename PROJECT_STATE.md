@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sello-respaldo-m1
 
 ## Current Feature
-Ninguna rama abierta. trabajo/demo-ejecuciones-2-3 cerrada en main el 2026-11-06 (stable/F38p-demo-ejecuciones-2-3): las ejecuciones 2 y 3 de la demo congeladas; A-28 DECIDIDA (ADR-0090: 120 y us); la comisión del perfil a 2,50 por lado; ADR-0081 §4 enmendado.
+trabajo/sello-respaldo-m1, EN CURSO desde el 2026-11-07 (encargo `docs/encargos/trabajo-sello-respaldo-m1.md`, informe `docs/validation/SELLO-RESPALDO-M1.md`): la marca de _peor_del_minuto (e2) y los eventos del respaldo M1 sellados en el cierre de su vela (H de la Next Action).
 
 ## Stable Main State
 8f43d38 · merge de `trabajo/demo-ejecuciones-2-3` (tag `stable/F38p-demo-ejecuciones-2-3`), sobre `stable/F38o-activar-sesion-06-motor` (4fa0920). Informe docs/validation/DEMO-EJECUCIONES-2-3.md; el registro del cierre, al final de HISTORIA.
@@ -154,8 +154,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 58 (2026-11-06).
+— ninguna desde el Archivo 59 (2026-11-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 58 (2026-11-06).
+— ninguna desde el Archivo 59 (2026-11-07).

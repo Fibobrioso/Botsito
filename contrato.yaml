@@ -1,0 +1,29 @@
+rama: trabajo/sello-respaldo-m1
+riesgo: alto  # toca el respaldo M1 del broker simulado (la marca de _peor_del_minuto) y puede enmendar ADR-0051 §5 y ADR-0057 §1
+artefacto: docs/validation/SELLO-RESPALDO-M1.md
+tramo: "R3 · Una corrida del arnés sobre toda la construcción"
+rutas_permitidas:
+  - docs/validation/SELLO-RESPALDO-M1.md
+  - docs/validation/anexos/SELLO-RESPALDO-M1/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - src/botsito/engine/broker.py
+  - tests/
+  - docs/adr/
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - knowledge/
+  - Makefile
+  - .claude/
+  - tools/mql5/
+  - corpus/
+  - data/manifests/
+  - docs/adr/0000-template.md
+  - docs/validation/RESPALDO-M1.md
+  - docs/validation/anexos/RESPALDO-M1/
+comprobaciones:
+  - uv run botsito state check
+  - uv run python scripts/contrato_rama.py
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - make check > make-check.log 2>&1
