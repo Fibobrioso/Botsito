@@ -724,10 +724,55 @@ alcances del encargo. Pegado tal cual (no cita ningún tramo no citable: 0 retir
 Lo que el revisor no pudo comprobar: la CI de main la comprobó la sesión al abrir («Base comprobada
 al abrir»: run 42342344212, success); el `make check` del árbol final es el del último commit (§4).
 
+## Respuesta del consultor a la PARADA (2026-11-07)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/sello-respaldo-m1 (2026-11-07). Cópiala tal cual en el informe (skill fase-cero) y aplícala punto por punto. Puede correr sin supervisión: decisiones por adelantado y PARADA condicional. NUNCA cierra.
+>
+> 0. (c2) se implementa EN ESTA RAMA, en una fase 2 con ADR-0091. Porqué: es el trabajo de la entrada H, no depende de R, y hay precedente de ampliar el contrato con un ADR tras una PARADA (ENTRADA-ENERO.md:635). Quedan sin efecto, por escrito en el informe: la segunda mitad de la regla D2 del encargo («NO se implementa en esta rama esta noche»), la frase del informe «el ADR lo escribe la rama de (c2)» y la línea F de §0.g, que se reescribe. El contrato se amplía en un commit propio con src/, tests/, los ADR 0051, 0057, 0068, 0083 y el nuevo 0091, y el bloque ids-inexistentes de ADR-0091 sale en el commit que lo crea. Riesgo: alto.
+> 1. Lectores del minuto de apertura: (a), neutralidad completa. Los tres de diagH más broker.py:962 (swap) y :1091 (día local) leen (abierta_ms + 1) // 60000; el instante de comisiones y criterio se queda en el sellado. Porqué: el ADR cambia qué vela se evalúa, no a qué minuto ni a qué día pertenece un llenado. Test de S9 en los dos lados. Lo mismo para los lectores de cerrada_ms de §0.e: cada uno, neutral o no, con su porqué en una línea del ADR.
+> 2. Fin del día y borde de ADR-0068: (a), se aceptan. Las dos velas transcurren enteras antes de su borde. NOTA en ADR-0068 §2: con el respaldo, un llenado en la vela que acaba en W se sella en W − 1 ms, fuera de la ventana (R15 prohíbe abrir desde dos horas antes y ADR-0068 §1 mete W dentro); la pendiente sigue cancelándose al empezar la ventana. Test en los dos lados para S4 y S5.
+> 3. Versión anterior (Orden.anterior, Posicion.stop_anterior): (a), se queda, con la NOTA en ADR-0051 §5 de que desde el motor ya no se alcanza. Porqué: retirarla es otra rama.
+> 4. Los dos tests de secuencia: (a), reescritos a media vela, más uno nuevo en el cierre que fije que la vela se evalúa antes de mover o modificar.
+> 5. Universo del censo: (a), los once días bastan; la re-corrida que cuenta verá el resto. Ninguna corrida del arnés ni cifra agregada en esta rama, como en el encargo.
+> 6. ADR-0083 D2 (hallazgo del auditor del consultor): con (c2), un rechazo al llenar gasta el punto, y un stop u objetivo sin ganancia libera la zona, un cierre ANTES; D4 ve la posición abierta un cierre antes. Va con test propio en los dos lados (el rechazo gasta en el cierre de k; la liberación y la reentrada por D5 llegan en el cierre de k) y como punto (6) del ADR, con fichero:línea de cableado.correr_dia.
+> 7. ADR-0091: el borrador de §2 con lo de arriba, estado ACTIVE, recuadros en ADR-0051 §5 (y su NOTA del 2026-10-29), ADR-0057 §1, ADR-0068 §2 y ADR-0083 D2, filas del índice. Lo medido de §0.c entra como alcance (27 cancelaciones en 11 días de desarrollo, 2 operaciones nuevas), sin ninguna cifra agregada sobre un mes. Escribe también que el bot en vivo opera con ticks (ADR-0051 §8) y el respaldo solo cubre minutos sin ticks.
+> 8. Verificación tras implementar, con el visor por caso (nunca --todos ni --meses): los once días de §0.c con el código de la rama dan exactamente lo que dio el prototipo (las 2 operaciones nuevas, −1,00 R cada una, y las demás idénticas a main). Si algún día difiere del prototipo, PARADA solo para ese día, con el diff.
+> 9. Tests que rompen a propósito en main y pasan en la rama (comparar-con-main, salida pegada): el llenado de la vela k de una orden cancelada en su cierre; S4 y S5; S9; el de ADR-0083 D2; los 8 del milisegundo reescritos. Los dos de la secuencia, reescritos a media vela, pasan en los dos lados y el informe lo dice.
+> 10. Hoja de ruta, líneas preparadas para el cierre: R3.6 pasa a HECHA en esta rama con su «Hecho cuando» corregido (el ADR aceptado, los tests que rompen en main, los once días verificados); las «dos corridas repetidas» salen de R3.6 y pasan a R3.7 y a la re-corrida que cuenta (ADR-0070 §3), porque R3.7 pide pre-registrar los umbrales antes de ver ninguna corrida nueva. H sale HECHA. F se reescribe: siguiente R, después la re-corrida que cuenta, la primera con la comisión medida y el sello de ADR-0091. Probadas sobre una copia, con wc -c por debajo de 23.000.
+> 11. Fila de ERRORES-RECURRENTES preparada, con estos errores del consultor añadidos a los de §3: (importa) el encargo llamó «eventos del respaldo» a 22 cancelaciones del bot y las mandó sacar de la salida equivocada (la lección (2) de §3 pasa a la columna del consultor); (menor) citó «el plan del 2026-11-01» cuando las dos corridas de R3.6 vienen de la respuesta del consultor del 2026-10-29 (RESPALDO-M1.md:485): se corrige la lección (1); (menor) la regla D2 prohibía implementar (c2) en la rama que ya era la de H, y costó una PARADA más. Lección: la regla de una PARADA condicional decide el camino, no la rama en la que se hace.
+>
+> FASE 2, un commit por punto, cada uno con estadiar, uv run botsito state check, make check > make-check.log 2>&1, leer el log (exit 0, ningún failed y la línea SELLO), y ruff format, ruff check y mypy sobre lo tocado:
+> a) El contrato ampliado.
+> b) ADR-0091 y sus recuadros (sale el bloque ids-inexistentes).
+> c) Las tres funciones del respaldo y los lectores (puntos 1 y 6), con los tests nuevos y los reescritos.
+> d) La verificación del punto 8 y el informe, con §0.g y §3 reescritos y las líneas del cierre probadas sobre la copia.
+> Si la guardia niega algo legítimo, PARADA para eso con el comando exacto, y sigue con lo demás.
+>
+> CI: toca src/ del motor; no toca hooks, rutas, .claude/ ni plataforma: sin fix/. Si tocaras alguno, fix/<rama> y el run.
+>
+> Revisor (opus) otra vez, con estos alcances: reglas de la casa; esta respuesta punto por punto; que los once días coincidan con el prototipo; que cada lector de abierta_ms y cerrada_ms esté decidido en el ADR; ninguna corrida agregada; ningún día fuera de enero, abril, julio y agosto; exposiciones declaradas. Pega su informe al final.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 7. La respuesta aplicada: fase 2 (desde el 2026-11-07)
+
+**Quedan sin efecto, por escrito** (respuesta, punto 0):
+- la segunda mitad de la regla D2 del encargo, «NO se implementa en esta rama esta noche»: (c2) se
+  implementa aquí, en la fase 2, con ADR-0091;
+- la frase del bloque `ids-inexistentes` de la cabecera de este informe, «el ADR lo escribe la rama
+  de (c2)», y lo mismo en §1, punto 2, y en §2 («no se crea en esta rama»): lo escribe esta rama, en
+  el commit b), que quita los dos bloques;
+- la línea F de §0.g, y con ella H y R3.6 de §0.g: se reescriben en d) (punto 10).
+
+**El contrato, ampliado** en el commit a) (este): `src/botsito/engine/` (en vez de solo
+`broker.py`), los ADR 0051, 0057, 0068 y 0083, el nuevo 0091 y el índice `docs/adr/README.md`, en
+lugar de `docs/adr/` entero; riesgo alto, con el motivo nuevo en su comentario.
+
 ## Estado
 
-Fase 0 entregada (460595f); D2 dio (c2): **PARADA con el plan** (§2), con seis decisiones para el
-consultor. Fase 1 hecha en lo que el encargo deja hacer con (c2): (e2) y su test (dacd533). ADR-0091
-no se crea. Ninguna corrida del arnés ni cifra agregada.
-
-Rama lista para revisión, NO cerrada.
+EN CURSO: fase 2 (la respuesta del consultor del 2026-11-07, §7). Fase 0 (460595f) y fase 1
+(dacd533, (e2)) hechas; el informe de la primera entrega, 91aa179.
