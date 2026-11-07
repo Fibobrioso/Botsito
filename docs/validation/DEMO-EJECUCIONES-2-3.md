@@ -574,6 +574,34 @@ fase 1 sin esperar** en todo lo que no dependa de ellas (puntos 1, 2, 3 y 5; el 
    el punto 4 de la fase 1 (la comisión en el perfil y sus tests) espera**; ADR-0090 dice la tarifa
    medida y el valor del perfil se cambia en el commit del punto 4.
 
+## Respuesta del consultor a la PARADA (2026-11-06)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/demo-ejecuciones-2-3 (2026-11-06). Cópiala tal cual en el informe (skill fase-cero) y aplícala punto por punto.
+>
+> 0. Fin de línea de la ejecución 1: (a), como lo hiciste. El manifiesto no se toca, ADR-0090 lo corrige y DEMO-EJECUCION-1.md y EA-CONEXION.md §0.c llevan su recuadro. Porqué: un informe cerrado que afirma algo falso se corrige con un recuadro, y el sha256 del manifiesto sigue fijando los bytes buenos.
+>
+> 1. Swaps: (a), el valor del perfil no cambia. Porqué: un swap cambia cada día y no se fija con una lectura (ADR-0071 §5). Añadidos:
+>    - ADR-0090 registra las tres lecturas con su fecha y sustituye el «pendiente de la decisión 1» por esta decisión.
+>    - La descripción de firma_swap_largo_puntos y de firma_swap_corto_puntos dice que su valor es el de la API del 2026-09-25, que cambia con la fecha (las tres lecturas de la demo, en ADR-0090) y que no se renueva porque no decide nada. Trailer Fuente: ADR-0090.
+>    - Verifica, y escribe en ADR-0090 con fichero:línea, que ninguna operación del bot puede seguir abierta a la medianoche del servidor (la ventana de la operativa y el cierre un minuto antes del fin de la H4). Si alguna puede, PARADA solo para esto.
+>    - Que no se reabre A-27 lo dejas dicho en una línea, citando sus cinco parámetros.
+>
+> 2. La rejilla H4 real: (a), una entrada nueva R6a.8 «La rejilla H4 real en el journal», que depende de R6a.1 y de la que dependen R6a.7 y F33. Porqué: R6a.1 se cerró con su «Hecho cuando» cumplido. Va como línea preparada para el cierre. ADR-0090 y la descripción de anclaje_h4 citan R6a.8 por su nombre en el commit del punto 4, y test_hoja_de_ruta tiene que pasar con la línea aplicada sobre la copia.
+>
+> 3. La regresión del 7 de agosto: (a). La regresión declara COMISION_DE_LA_REGRESION = 5, igual que VOLUMEN_MAX_DE_LA_REGRESION y por el mismo camino (dataclasses.replace), con un comentario de una línea: es la tarifa supuesta hasta ADR-0090, y se conserva para que el corte en el tick del pico siga teniendo un caso real que lo pruebe. Test nuevo en el mismo fichero: con el perfil real (2,50 por lado), la cuenta de ese día queda EN_CURSO y su peor equidad es 95.515,78. Porqué: no se pierde la regresión del corte y la consecuencia de la medida queda escrita en un test.
+>    - El informe y ADR-0090 dicen, en una línea, que con 5 USD por lado el simulador suspendía cuentas que con la tarifa medida no se suspenden. Las corridas anteriores a esta rama eran pesimistas en las suspensiones, y la re-corrida que cuenta (ADR-0070 §3) es la primera con la tarifa medida.
+>    - Punto 4 de la fase 1: la comisión a 2,50 en el perfil, las dos regresiones, R6a.8 en ADR-0090 y anclaje_h4, en un commit con Fuente: ADR-0090. Los dos tests que rompen a propósito (2,50 frente a 5 en test_perfil_cuenta y EN_CURSO frente a SUSPENDIDA), con su salida contra main pegada (comparar-con-main).
+>
+> 4. Fila de ERRORES-RECURRENTES preparada: añade, del consultor, «(menor) D9 metió los swaps entre los datos que tenían que coincidir, cuando ADR-0071 §5 ya dice que cambian con la fecha, y costó una PARADA. Lección: antes de poner un valor en una comparación de igualdad, mirar si el repo lo da por variable».
+>
+> 5. Lo que sigue: el punto 4, make check en cada commit, el revisor (opus, con los alcances del encargo, más las dos regresiones y que la comisión no aparezca con 5 en ningún documento vivo salvo la constante declarada) y la entrega con entregar-rama, que incluye las líneas del cierre aplicadas sobre una copia y la previsión de PROJECT_STATE con wc -c. Al terminar, quita los clones C:\cm\m y C:\cm\r con git worktree remove y dilo en el informe. Si de aquí sale otra PARADA, es solo para lo suyo: sigue con lo demás. Nunca cierres.
+>
+> Rama lista para revisión, NO cerrada.
+
 ## 1. Fase 1 · lo hecho sin esperar (2026-11-06)
 
 La PARADA es condicional (encargo): sigo con lo que no depende de las decisiones 1 y 3. Un commit por

@@ -415,7 +415,10 @@ parametros:
     tipo: decimal
     unidad: puntos por lote y noche, con signo
     descripcion: >-
-      R12: API «swapLong: -9.49, swapType: points», fila de EURUSD
+      R12: API «swapLong: -9.49, swapType: points», fila de EURUSD, leida el 2026-09-25. Un swap
+      cambia con la fecha: las tres ejecuciones de la demo leyeron -9,41 (2026-10-09), -9,74
+      (2026-10-29) y -10,06 (2026-11-05) (ADR-0090 §6). No se renueva porque no decide nada: el bot
+      cierra toda operacion antes del fin de su vela H4 (RN-002), asi que ninguna cruza la noche
     estado: CONFIRMED
     valor: "-9.49"
     consumido_por: [F24]
@@ -425,7 +428,10 @@ parametros:
     tipo: decimal
     unidad: puntos por lote y noche, con signo
     descripcion: >-
-      R12: API «swapShort: 0.36, swapType: points», fila de EURUSD
+      R12: API «swapShort: 0.36, swapType: points», fila de EURUSD, leida el 2026-09-25. Un swap
+      cambia con la fecha: las tres ejecuciones de la demo leyeron 0,10 (2026-10-09), 0,42
+      (2026-10-29) y 0,40 (2026-11-05) (ADR-0090 §6). No se renueva porque no decide nada: el bot
+      cierra toda operacion antes del fin de su vela H4 (RN-002), asi que ninguna cruza la noche
     estado: CONFIRMED
     valor: "0.36"
     consumido_por: [F24]

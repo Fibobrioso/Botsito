@@ -183,11 +183,37 @@ filas 34-37, 43-46, 49 y 51: 10015).
 | swap largo (16) | −9,49 | −9,41 | −9,74 | −10,06 |
 | swap corto (17) | 0,36 | 0,10 | 0,42 | 0,40 |
 
-**Todo coincide salvo los swaps**: A-27 no se reabre (ADR-0071 §6 la ata a sus cinco valores, que se
-repiten). **Los swaps no coinciden con el perfil en ninguna de las tres** (−9,49 y 0,36, CONFIRMED
-con fuente ADR-0050, de la web del 2026-09-25): el encargo manda parar ahí, y lo que se haga con
-ellos queda PENDIENTE de la respuesta del consultor (DEMO-EJECUCIONES-2-3.md, «Lo que necesito que
-decidas», 1). Hasta entonces el perfil no cambia, como ya decía ADR-0071 §5: cambian con la fecha.
+**Todo coincide salvo los swaps. A-27 no se reabre:** sus cinco parámetros (`instrumento_digitos` 5,
+`instrumento_contrato` 100000, `instrumento_lote_minimo` 0.01, `instrumento_lote_paso` 0.01 e
+`instrumento_stops_level` 0) se repiten en la 2 y la 3, y ADR-0071 §6 ata la reapertura a ellos.
+
+**Los swaps: el valor del perfil no cambia** (respuesta del consultor a la PARADA, punto 1). Las
+tres lecturas, con su fecha: largo −9,41 (2026-10-09), −9,74 (2026-10-29) y −10,06 (2026-11-05);
+corto 0,10, 0,42 y 0,40 los mismos días; el perfil dice −9,49 y 0,36, la API leída el 2026-09-25
+(fuente ADR-0050). Un swap cambia cada día y no se fija con una lectura (ADR-0071 §5); no se
+renueva porque no decide nada, y su descripción lo dice.
+
+**Por qué no decide nada: ninguna operación del bot puede seguir abierta a la medianoche del
+servidor** (verificado en el repo):
+- RN-002 (`knowledge/spec/strategy_spec.yaml:910-966`) cierra a mercado toda operación abierta
+  cuando a su vela H4 le queda `cierre_h4_antelacion` (1 minuto) o menos, y también al alcanzar
+  `ventana_fin`; su forma, `:954-964`, con `cierre_forzoso_fin_ventana` = `si`
+  (`parametros.yaml:387-397`) y `cierre_h4_antelacion` = 1 (`:398-415`). El predicado es `vence_vela_h4` (`engine/primitivas.py:142-151`),
+  que da SÍ también en el propio límite, para que nada llenado en el último minuto cruce a la vela
+  siguiente.
+- La rejilla H4 empieza en `anclaje_h4` = 17:00 de Nueva York, que con 120 y `us` es la medianoche
+  del servidor (§2): **la medianoche del servidor es una frontera de la rejilla H4**, así que ninguna
+  operación puede cruzarla viva. Y la ventana de la operativa son las dos velas H4 que empiezan en
+  ancla + 8 h y ancla + 12 h (`sesiones_primera_vela_h4` = 3, `parametros.yaml:262-276`;
+  `ventana_inicio` y `ventana_fin`, `:354-386`; ADR-0069): lo último que puede estar abierto se cierra un minuto antes de las 16:00 del servidor,
+  ocho horas antes de su medianoche.
+- RN-035 (`strategy_spec.yaml:968-1041`) retira además la orden sin llenar en el mismo minuto, y
+  RN-037 (`:1043-1074`) no deja colocar ninguna en él.
+
+Una diferencia de modelo, sin efecto: el bróker simulado cobra el swap a la medianoche de
+`huso_corte` del perfil (`engine/broker.py:960-973`), no a la del servidor, que es donde MT5 hace el
+rollover. Con ninguna operación viva en ninguna de las dos medianoches, no cambia nada; queda dicho
+por si un día el bot pasara la noche.
 
 ### 7. El deslizamiento: observaciones, no un modelo
 
