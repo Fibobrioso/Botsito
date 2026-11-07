@@ -425,7 +425,12 @@ Las escribe el consultor en su orden de cierre; aquí van preparadas y probadas 
 - **Entra** (decisión 0): «El manifiesto inmutable de la ejecución 1 de la demo declara
   `fin_de_linea: LF` y el CSV es CRLF (ADR-0090): ningún código lo lee; un manifiesto nuevo de esa
   ejecución no tiene sentido, así que la verdad vive en ADR-0090.» (O no entra, si el consultor lo
-  da por pagado con el ADR y los recuadros.)
+  da por pagado con el ADR y los recuadros; la respuesta, punto 0, no lo dice, y la copia de §2.2 y
+  §3.2 se probó sin ella.)
+- **Entra** (revisor, b2): «Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en
+  cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») dicen la comisión del perfil de
+  antes de ADR-0090 (2,50 por lado): se corrigen en la rama que vuelva a correr esos guiones
+  (DEMO-EJECUCIONES-2-3.md §3.1).»
 
 **Known Ambiguities**: la fila de A-28 sale EN LA RAMA (D3), no en el cierre.
 
@@ -453,6 +458,9 @@ Las escribe el consultor en su orden de cierre; aquí van preparadas y probadas 
   > - **Quién:** la sesión, con el encargo del consultor; Aleks pone el EA en la demo.
   > - **Hecho cuando:** el journal trae las aperturas H4 de una semana con un cambio de día y
   >   coinciden con 17:00 de Nueva York, o se abre una ambigüedad.
+- **R6a.3** (D8; revisor, b1) → al final de «Qué es»: «Su journal registra, con la cotización del
+  instante, qué hace el servidor con una pendiente colocada en el nivel exacto (ADR-0057 §2,
+  PROVISIONAL tras las tres ejecuciones de la demo; ADR-0090 §5).» Sus Refs ya traen ID:ADR-0057.
 - **R6a.6** → Depende de: «… el script 1.2 de MedirDemoFTMO (HECHO, trabajo/margen-pendiente), la
   ejecución 3 de la demo (HECHA, ADR-0090 §4: M1-M3 no, M4 sin medir) y la decisión sobre la reserva
   de margen del bróker simulado (Technical Debt).»
@@ -667,18 +675,21 @@ rama con el punto 4, que espera a la decisión 3. Su salida contra `main` se peg
 | D3 A-28 DECIDIDA | hecho | d53bb2d; ADR-0090 §1 |
 | D4 anclaje_h4 como derivación | hecho; la medida, en R6a (decisión 2) | ADR-0090 §2; recuadro de ADR-0027 §4 |
 | D5 el panel | Aleks no lo declaró: línea propia preparada (§0.h), `reloj_dia_riesgo` apunta a ella | d53bb2d |
-| D6 comisión | **PARADA (decisión 3)**: ADR-0090 §3 y el recuadro de ADR-0071 §3 escritos; el perfil y sus tests esperan | §0.e |
+| D6 comisión | PARADA (decisión 3), contestada: hecho con la respuesta, punto 3 (2,50 en el perfil, la regresión con su tarifa declarada y el test de la tarifa medida) | §0.e; 1e97079; §2 |
 | D7 paso 8 | hecho: ADR-0090 ENMIENDA ADR-0081 §4; (a)-(d); f sin rechazos; (c) y (d) entre las líneas del cierre | ADR-0090 §4; §0.f; §0.h |
 | D8 nivel exacto | hecho: PROVISIONAL, recuadros en ADR-0057 §2 y ADR-0071 §4 | ADR-0090 §5 |
-| D9 ficha y swaps | ficha: coincide (tabla); **swaps: PARADA (decisión 1)** | ADR-0090 §6 |
+| D9 ficha y swaps | ficha: coincide (tabla); swaps: PARADA (decisión 1), contestada: el perfil no cambia y se dice por qué (respuesta, punto 1) | ADR-0090 §6; ebfe8d7 |
 | D10 deslizamiento | hecho: sin cambio, observaciones registradas | ADR-0090 §7 |
 | D11 la hora de la 3 | hecho, con `zoneinfo` | §0.c.3; ADR-0090; DEMO-FTMO.md |
 | D12 M y el grabador | siguen vivos: A.5 preparada | §0.h |
 | Herencias del encargo | cumplidas o dichas en §«El encargo frente al repo»; añadidas ADR-0068 y ADR-0082 | c1a2798 |
 | Tests que rompen a propósito | `test_kit` y el del `dataset_id`, pegados; el de la comisión, con el punto 4 | §1.1 |
 | CI | la rama no toca hooks, rutas, `.claude/` ni `src/`: sin `fix/` | — |
-| Revisor | **no pasado todavía**: va cuando las dos PARADAS estén contestadas y aplicadas, para que revise la rama entera | — |
-| «Rama lista para revisión» | **no**: faltan el punto 4 y los swaps | — |
+| Revisor | pasado tras aplicar la respuesta, sobre la rama entera; su informe y lo hecho con cada hallazgo | §3 |
+| «Rama lista para revisión» | sí, tras los arreglos del revisor y el último `make check` | `## Estado` |
+
+*(Tabla escrita antes de la respuesta a la PARADA y puesta al día tras ella; la respuesta, punto por
+punto, está en §2.)*
 
 ### 1.3 Negativas de la guardia en la fase 1 (además de las de la fase 0)
 
@@ -717,7 +728,7 @@ rama con el punto 4, que espera a la decisión 3. Su salida contra `main` se peg
 | 3. El informe y ADR-0090 dicen que con 5 el simulador suspendía cuentas que con la tarifa medida no; las corridas anteriores eran pesimistas; la re-corrida que cuenta es la primera con la tarifa medida | hecho | ADR-0090 §3; este informe, abajo |
 | 3. Punto 4 en un commit con `Fuente: ADR-0090`; los dos tests que rompen a propósito con su salida contra `main` | hecho | 1e97079; §2.1 |
 | 4. Fila de ERRORES-RECURRENTES con la línea del consultor sobre D9 | hecho | §1.4 |
-| 5. make check en cada commit, revisor, entrega, clones quitados | hecho | §2.3, §3 |
+| 5. make check en cada commit, revisor, entrega, clones quitados | hecho (el revisor y sus arreglos, en §3) | §2.3, §3 |
 
 **Lo que dice la tarifa medida de las corridas de antes:** con 5 USD por lado el simulador suspendía
 cuentas que con la tarifa medida (2,50) no se suspenden; las corridas del arnés anteriores a esta rama
@@ -775,6 +786,165 @@ list` solo da el repo, `git status --short` vacío, `git branch --list` = `main`
 -l` cuenta 149, como al empezar. Nada se empujó: sin CI (la rama no toca hooks, rutas, `.claude/` ni
 `src/`, encargo).
 
+## 3. El revisor (subagente `revisor`, opus, 2026-11-06)
+
+Lanzado sobre 1e97079 más lo estadiado entonces (el informe y PROJECT_STATE), con los alcances del
+encargo y de la respuesta (punto 5). Su informe, tal cual (ninguna cita de un tramo no citable que
+retirar):
+
+> ## Informe del revisor · trabajo/demo-ejecuciones-2-3 · 2026-11-06
+>
+> Base `a46eadd` (merge-base). 9 commits (`fd368ee`…`1e97079`) más lo estadiado: `PROJECT_STATE.md` (Current Feature) y `docs/validation/DEMO-EJECUCIONES-2-3.md` (+77/−3). No escribí nada. Las redirecciones a `%TEMP%` las negó `solo_lectura.py`, así que `knowledge validate` y el lector corrieron con la salida por pantalla.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | menor | ADR-0090 dice que la fórmula del margen de M1 «da 100.010,24, el 100.010,25 del CSV con el redondeo de MT5». La cuenta da 100.010,25: 26,71 × 100.000 × 1,12329 / 30 = 26,71 × 3.744,30 = 100.010,253. No hay diferencia de redondeo que explicar. | `docs/adr/0090-…-demo-de-ftmo.md:157-158`; CSV de la 3, fila 74: «margen al ask 100010.25» (`data/demo_ftmo/MedirDemoFTMO_20261105_203519.csv:75`) |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `scripts/contrato_rama.py` → «CONTRATO: 31 ficheros dentro del contrato de trabajo/demo-ejecuciones-2-3 (riesgo alto, artefacto …, tramo 'Carril: lo de Aleks', 5 comprobaciones para el revisor)».
+> - **Lector.** `uv run python scripts/leer_demo_ftmo.py data/demo_ftmo` sale idéntico al pegado en el informe, §0.a (tres «completo», A-28 180/180/120, paso 8 M1-M3 «no» y M4 «no concluyente», ningún retcode inesperado, ningún aviso).
+> - **`knowledge validate`.** Todo OK: 8 manifiestos válidos con el historial intacto, 57 ambigüedades, «875 documentos: todo id citado existe». Solo los AVISO de siempre.
+> - **Comprobaciones que escriben.** `spec docs --escribir` y `make check` no las ejecuté. En su lugar: `tests/contract/test_spec_docs_generados.py` pasa, igual que `test_hoja_de_ruta`, `test_project_state`, `test_adr` y `test_historia`.
+> - **Trailers `Fuente:`.** Los dos commits que tocan `knowledge/spec` (`d53bb2d`, `1e97079`) llevan `Fuente: ADR-0090` en el cuerpo, y ADR-0090 existe. `ebfe8d7` toca solo `knowledge/cuentas`, que no está en `DIRECTORIOS_CON_FUENTE` (`comun/historial.py:33`), y aun así lo lleva.
+> - **Holdout y material.** `knowledge/cases/`, `knowledge/evidence/`, `knowledge/feedback/` y `knowledge/corpus/` no cambian. La rama no lee material del trader. El caso del 7 de agosto es de agosto, mes de desarrollo.
+> - **Régimenes de cambio.** `git diff --name-status` sobre `data/manifests` da solo dos `A`. El manifiesto de la 1 sale intacto del diff.
+> - **A-28 en sus cinco sitios** (todos en `d53bb2d`, con `docs/spec/ambiguedades.md` regenerado):
+>   - el registro: `broker_offset_base` = 120 y `broker_dst` = `us`, CONFIRMED con fuente ADR-0090 (`parametros.yaml:140-183`);
+>   - `ambiguedades.yaml`: A-28 DECIDIDA, `decision: ADR-0090`;
+>   - Known Ambiguities: la fila de A-28 sale de `PROJECT_STATE.md`;
+>   - regla de la spec y hoja de preguntas: no la citan (grep de A-28 en `strategy_spec.yaml`, `hoja_preguntas.py` y `test_hoja_preguntas.py`: 0);
+>   - `test_kit.py:409-430`: A-28 entre las DECIDIDAS, con decisión y clase.
+>   - `spec_version` 18.6.1 → 18.6.2 → 18.6.3.
+> - **ADR.** El `## Estado` de ADR-0090 es `ACTIVE` (`:280-282`). Los recuadros de 0027, 0057, 0068, 0071, 0081 y 0082 solo añaden líneas `>`, y sus filas del índice están puestas.
+> - **Informes cerrados.** `DEMO-EJECUCION-1.md` (+8/−0) y `EA-CONEXION.md` (+7/−0): solo un recuadro `>` con fecha y rama junto al pasaje que corrigen.
+> - **Inmutabilidad y esquema de los manifiestos.**
+>   - Los dos nuevos tienen todos los campos de `data/manifests/README.md:66-75`.
+>   - sha256, bytes y filas, medidos: 1b82f61b…823d, 10167 bytes, 61 líneas (60 filas); 59565621…4924, 18991 bytes, 116 líneas (115 filas).
+>   - El sha256 del `.mq5` casa con su commit: `git show d48150e:` da 6e148bc4…, y `a90cd45:` da f9903c6f… (el de `2688f8b` es otro, d2a220a1…).
+>   - CRLF medido con `grep -U -c -P '\r'`: 60, 61 y 116. Sin `-U`, la 1 da 0, como dice el informe.
+> - **Cifras.** Ninguna forma ejecutable nueva. Los números nuevos están en descripciones.
+> - **Citas del informe y del ADR**, comprobadas contra su fuente:
+>   - `simulacion.py:140` (`comision_por_lote`);
+>   - `broker.py:1023-1027` (la reserva de las stop);
+>   - `broker.py:851-862` (`libre_extra`);
+>   - `primitivas_broker.py:543`;
+>   - `broker.py:960-973` (el swap por `huso_corte`);
+>   - RN-002 (`strategy_spec.yaml:910-966`) y `vence_vela_h4` (`primitivas.py:142-151`);
+>   - las filas del CSV en §0.a: 27/29, 31-33, 39-42, 53-55, 58, 65-66, 74-76, 81-86, 94, 97 y 111 de la 3, y las equivalentes de la 2 y la 1.
+> - **Las dos regresiones** (`tests/regression/test_cuenta_7_de_agosto.py`):
+>   - `COMISION_DE_LA_REGRESION = Decimal(5)` (`:51`), con su comentario de una línea, entra por `dataclasses.replace` (`:150-151`), igual que `VOLUMEN_MAX_DE_LA_REGRESION`;
+>   - la regresión del corte conserva SUSPENDIDA, el motivo y el instante 12:30:01.312 (`:166-180`);
+>   - el test nuevo pide EN_CURSO, 2,50, `limite_dia` 95000 y `equity_minima` 95515.78 (`:183-195`);
+>   - `pytest` de los dos ficheros y de los manifiestos: 9 passed, sin `skipped`; con `test_perfil_cuenta` y `test_kit`, todo verde.
+> - **`src/`.** `git diff --stat main...HEAD -- src/ tools/ scripts/ .claude/ Makefile knowledge/simulador …` sale vacío, y el árbol de trabajo tampoco toca `src/`.
+> - **Clones.** `git worktree list` solo da el repo.
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 2 importa, 0 menor. Requisitos: 27 hechos, 2 parciales, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Abrir con abrir-rama: base, contrato (tramo, riesgo alto, artefacto), Archivo 58 | Hecho | `fd368ee`; `contrato.yaml:1-4`; informe:7-14 |
+> | 2 | grep de «0090» antes de usarlo | Hecho | informe:663 |
+> | 3 | F0 a) el lector pegado y contrastado | Hecho | informe:25-117; mi ejecución coincide |
+> | 4 | F0 b) originales frente a copias (sha, bytes, CR) | Hecho | informe:131-138. Los originales de `MQL5\Files` no los he visto: ver «no pude» |
+> | 5 | F0 c) tabla medida → decisión | Hecho | informe:162-175 |
+> | 6 | F0 d) lectores y camino de la comisión con fichero:línea | Hecho | informe:252-279; citas verificadas |
+> | 7 | F0 e) tests que rompen a 2,50 | Hecho | informe:281-314 |
+> | 8 | F0 f) rechazos por `margen_libre`, sin ejecutar | Hecho | `grep -c margen_libre` en los cuatro anexos: 0 los cuatro |
+> | 9 | F0 g) todas las frases vivas que quedan falsas | **Parcial** | faltan las de `scripts/` (b2) |
+> | 10 | F0 h) líneas del cierre y previsión de PS por debajo de 23.000 | **Parcial** | informe:386-487 y :760-768 (22.575). Falta la línea de D8 (b1) |
+> | 11 | D1 manifiestos | Hecho | `data/manifests/demo_ftmo/demo-ftmo-2026-10-29-1b82f61b.yaml`, `…-11-05-59565621.yaml` |
+> | 12 | D2 originales y deuda del CRLF | Hecho | informe:137-158; línea de salida en :417-420 |
+> | 13 | D3 A-28 DECIDIDA, regla de lectura, reloj del PC, journal 10800 s | Hecho | ADR-0090 §1; `d53bb2d` |
+> | 14 | D4 anclaje_h4 como derivación, recuadro en ADR-0027 §4 | Hecho | ADR-0090 §2; `parametros.yaml:322-331`; ADR-0027 recuadro |
+> | 15 | D5 panel: línea propia; `reloj_dia_riesgo` apunta a ella | Hecho | informe:396-403; `parametros.yaml:1645-1651` |
+> | 16 | D6 comisión 2,50, recuadro ADR-0071 §3, «commission: 5», heredado 27 | Hecho | perfil:384-400; ADR-0090 §3 |
+> | 17 | D7 enmienda ADR-0081 §4, (a)-(d), f sin rechazos, una sola orden viva | Hecho | ADR-0090 §4; recuadro y fila del índice de 0081; informe:328-341 |
+> | 18 | D7 (c) y (d) entre las líneas del cierre | Hecho | informe:421-424 y :459-462 |
+> | 19 | D8 PROVISIONAL, tres patrones, recuadros en 0057 §2 y 0071 §4 | Hecho | ADR-0090 §5; recuadros |
+> | 20 | D8 «Línea preparada: lo observa el journal de R6a…» | **No hecho** (contado en el 10) | b1 |
+> | 21 | D9 tabla de la ficha | Hecho | ADR-0090 §6 |
+> | 22 | D10 deslizamiento: observaciones | Hecho | ADR-0090 §7 |
+> | 23 | D11 hora de la 3, en el informe, ADR-0090 y DEMO-FTMO.md | Hecho | informe:250; ADR-0090:30-33; DEMO-FTMO «Las tres, hechas» |
+> | 24 | D12 M y F17 vivos | Hecho | A.5 preparada, informe:437-444 |
+> | 25 | Fase 1, un commit por punto (1-5), en orden | Hecho | `dedc121`, `c1a2798`, `d53bb2d`, `1e97079`, `86dfa75`. El 5 va antes que el 4 por la PARADA, y está declarado (informe:618-619) |
+> | 26 | Tests que rompen a propósito: test_kit, dataset_id, comisión y EN_CURSO, con su salida contra main | Hecho | informe:628-651 y :743-753 |
+> | 27 | Respuesta 0-1: recuadros, swaps (descripciones, «no decide nada» con fichero:línea, A-27 con sus cinco) | Hecho | perfil:418-437; ADR-0090 §6 |
+> | 28 | Respuesta 2: R6a.8 por su nombre en ADR-0090 y anclaje_h4, en el commit del punto 4 | Hecho | `1e97079` toca 0090, 0027 y `parametros.yaml` |
+> | 29 | Respuesta 3-5: constante, test nuevo, línea de «pesimistas», fila de ERRORES con D9, clones quitados | Hecho | informe:722-725, :698, :770-776; `git worktree list` |
+> | 30 | Respuesta copiada tal cual en el informe y en el encargo | Hecho | `diff` de encargo:84-106 contra informe:581-603 → IGUALES |
+> | 31 | NO cambia: src/, strategy_spec, .mq5, leer_demo_ftmo.py, anclaje_h4 y reloj_dia_riesgo (valor y estado), manifiesto 1 | Hecho | diff vacío; en `parametros.yaml` solo cambian valor y estado de `broker_*` |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | bloquea | D8 pide una línea preparada para el cierre: «lo observa el journal de R6a cuando el EA coloque órdenes en demo». Las líneas del cierre de §0.h (Next Action, heredados, Technical Debt, A.1, A.5, R6a.1/.6/.7/.8, F:F17, «Fechas fijas») no la traen. Solo está como frase en ADR-0090 §5 y en los recuadros. | encargo:52; informe:386-469 (grep de «nivel exacto» en el informe solo da :45, :169, :518 y :672) |
+> | b2 | importa | Dos frases de `scripts/` quedan falsas con la comisión a 2,50 y §0.g no las recoge (su tabla de la comisión solo mira `scripts/README.md:67`). `viabilidad_trader.py:11` dice «la comisión del perfil (5 USD por lote en cada lado, R12)», y el guion lee el perfil al correr (`:240` `cargar_perfil(...)`, `:435` `reglas_broker.comision_por_lote`). `viabilidad_comision.py:46` dice «10 (perfil)» como ida y vuelta, y el perfil ahora da 5. `scripts/` está fuera de `rutas_permitidas`: o se dicen en el informe con su salida (deuda o recuadro), o se amplía el contrato. | `scripts/viabilidad_trader.py:11`, `:240`, `:435`; `scripts/viabilidad_comision.py:46`; informe:368-378 |
+> | b3 | importa | «El encargo, punto por punto» (§1.2) se quedó como estaba antes de la PARADA: D6 «PARADA (decisión 3)», D9 «swaps: PARADA», revisor «no pasado todavía», «Rama lista»: «no: faltan el punto 4 y los swaps». La tabla de §2 tampoco la sustituye del todo: su fila 5 da «hecho» al revisor (que corre ahora) y remite a un «§3» que no existe. | informe:670, :673, :680-681, :720; el informe acaba en `## Estado` (:778), sin §3 |
+>
+> Lo que la rama hace y el encargo no pide, todo declarado:
+> - recuadros en ADR-0068 y ADR-0082 (informe:508, :512);
+> - `spec_version` 18.6.3 en el punto 4 (:731-732);
+> - el test nuevo comprueba el estado antes que la tarifa (:728-730);
+> - el swap del simulador se cobra en `huso_corte` (:733-736);
+> - en DEMO-FTMO.md, la sección «La prueba del 2026-10-29» y la nota bajo «Por qué esas horas» (D11 lo pide).
+>
+> ### Lo que no pude comprobar
+> - **`make check` del estadiado actual.** Está corriendo: `make-check.log` va por el 35 %, sin `SELLO` ni `PICO DE MEMORIA` todavía. De los commits anteriores solo tengo lo que dice el informe (informe:614-619).
+> - **Los originales de `MQL5\Files`** (sha y CR, informe §0.b). Están fuera del repo y no los abrí. Me fío de la medida del informe y del sha de las copias, que sí verifiqué.
+> - **Las líneas del cierre aplicadas sobre la copia** (test_hoja_de_ruta y test_project_state en verde, 22.575 bytes, §2.2). Los clones ya están quitados, y aplicarlas escribe.
+> - **Los comandos `comparar-con-main`** (§1.1 y §2.1). Hacen falta clones, que escriben: me quedo con lo pegado.
+> - **Fechas reservadas.** En el informe, ADR-0090, DEMO-FTMO.md, los manifiestos y el test nuevo no sale ningún día de partición, ni de marzo, mayo, junio o septiembre como dato de mercado (grep). Solo hay fechas de lectura de documentos (2026-09-25, la API; 2026-09-29, lo que dijo FTMO) y el rango de la derivación 2026-01-01..2027-12-31, sin datos por día.
+> - **La constante del tope de MedirDemoFTMO 1.2** (`tools/mql5/MedirDemoFTMO.mq5:805`, «supuesto conservador del registro (ADR-0071)»). Mi juicio es que vale: es código congelado, con su sha en el manifiesto de la 3, y DEMO-FTMO.md:30 y ADR-0090 §3 ya declaran que es el doble de lo medido.
+> - **Frases históricas con 5 por lado** (ADR-0050:78, ADR-0071 §3 con su recuadro, `docs/nocturno/BRECHA-EN-VIVO.md:256`, informes cerrados). Quedan como historia, sin hallazgo.
+> - **Salidas del arnés posteriores a RESPALDO-M1.** La corrida de `ACTIVAR-SESION-06-MOTOR.md:118-130` no se commiteó, así que §0.f lee lo más reciente que hay en el repo.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. `uv run python scripts/contrato_rama.py`
+> 3. `git diff --stat main...HEAD -- src/ tools/ scripts/ .claude/ Makefile knowledge/simulador knowledge/evidence knowledge/feedback knowledge/cases knowledge/corpus knowledge/spec/strategy_spec.yaml; git diff --name-status main...HEAD -- data/manifests knowledge/evidence knowledge/feedback knowledge/corpus; git diff --stat -- src/; git diff --cached --stat`
+> 4. `uv run python scripts/leer_demo_ftmo.py data/demo_ftmo` (con `> fichero`, negado por solo_lectura; repetido a stdout)
+> 5. `uv run botsito knowledge validate` (ídem)
+> 6. `sha256sum` y `wc -c -l` de los tres CSV; `file`; `head -c 200 … | od -c`; `od -c … | grep -c '\\r'`
+> 7. `git show d48150e|a90cd45|2688f8b|main:tools/mql5/MedirDemoFTMO.mq5 | sha256sum`; `git log -- tools/mql5/MedirDemoFTMO.mq5`
+> 8. `grep -c -P '\r'` y `grep -U -c -P '\r'` sobre los tres CSV
+> 9. `git diff --cached -- PROJECT_STATE.md`; `git diff main...HEAD -- PROJECT_STATE.md`
+> 10. `git diff main...HEAD -- knowledge/spec/ambiguedades.yaml tests/unit/test_kit.py knowledge/spec/spec_manifest.yaml`
+> 11. `git show --stat --format='%h %s%n%b' d53bb2d | 1e97079 | ebfe8d7`
+> 12. `git log --format='%h %s' main..HEAD -- knowledge/spec knowledge/cases`; `ls docs/adr | grep 0090`; `git diff --name-status main...HEAD -- docs/adr`
+> 13. `git diff main...HEAD` de los ADR 0027, 0057, 0068, 0071, 0081, 0082 y README; de DEMO-EJECUCION-1.md y EA-CONEXION.md; de DEMO-FTMO.md; de `knowledge/cuentas/` y `test_perfil_cuenta.py`; de `test_cuenta_7_de_agosto.py`; de `parametros.yaml`
+> 14. `uv run pytest -q -p no:cacheprovider tests/regression/test_cuenta_7_de_agosto.py tests/unit/test_perfil_cuenta.py tests/unit/test_manifiestos_demo_ftmo.py tests/unit/test_kit.py -rs`; luego `-v` de los dos primeros (9 passed)
+> 15. `uv run botsito spec docs --help`
+> 16. `uv run pytest -q -p no:cacheprovider tests/contract/test_spec_docs_generados.py tests/unit/test_hoja_de_ruta.py tests/unit/test_project_state.py tests/unit/test_adr.py tests/unit/test_historia.py`
+> 17. `ls -la make-check.log && tail -5 make-check.log`
+> 18. `grep -c "margen_libre"` en los cuatro anexos de RESPALDO-M1 y RECORRIDA-CONSTRUCCION; `git log --since=2026-10-29 -- 'docs/validation/anexos/*'`
+> 19. `sed -n` de `broker.py`, `primitivas_broker.py`, `simulacion.py`, `strategy_spec.yaml`, `primitivas.py`, `parametros.yaml`, `DEMO-FTMO.md`, `MASTER_PLAN.md`, `viabilidad_trader.py` y `viabilidad_comision.py`
+> 20. `diff <(sed -n 84,106p encargo) <(sed -n 581,603p informe)`
+> 21. `wc -c PROJECT_STATE.md`; `git show HEAD:PROJECT_STATE.md | wc -c`; `git worktree list`; `git branch --list`
+> 22. Grep (herramienta) de la comisión con 5, de A-28, de «la rama que congele» / «sin congelar», de fechas reservadas y de «nivel exacto». Read del encargo, el contrato, el informe, ADR-0090, los tres manifiestos, los tres CSV, los dos tests y ADR-0050:70-84.
+
+### 3.1 Lo que se hizo con los hallazgos del revisor
+
+| # | gravedad | qué se hizo |
+|---|---|---|
+| b1 | bloquea | **Arreglado.** Línea preparada para R6a.3 (§0.h, «Hoja de ruta»): su journal registra, con la cotización del instante, qué hace el servidor con una pendiente en el nivel exacto (ADR-0057 §2, PROVISIONAL tras las tres ejecuciones; ADR-0090 §5). Probada sobre la copia junto a las demás (§3.2). |
+| b2 | importa | **Declarado, sin tocar `scripts/`** (fuera del contrato y del encargo; un guion cambiado deja de ser el de `main` para la guardia). `viabilidad_trader.py:11` dice «5 USD por lote en cada lado» y el guion lee el perfil al correr (`:240`, `:435`): desde ADR-0090 la cifra del docstring es falsa, el cálculo no. `viabilidad_comision.py:46` llama «(perfil)» al 10 de ida y vuelta, que era el perfil hasta ADR-0090; el guion fija sus tres tarifas y no lee la del perfil (`:147`). Línea nueva de Technical Debt preparada (§0.h): los dos docstrings se corrigen en la rama que vuelva a correr esos guiones. |
+| b3 | importa | **Arreglado.** §1.2 actualizada con lo hecho tras la respuesta (D6, D9, revisor, «Rama lista») y con una nota de que la respuesta punto por punto está en §2; la fila 5 de la tabla de §2 remite a §3, que ahora existe. |
+| a1 | menor | **Arreglado** en ADR-0090 §4: 26,71 × 100.000 × 1,12329 / 30 = 100.010,25, el del CSV, sin redondeo que explicar. |
+
+### 3.2 Las líneas del cierre, por tercera vez sobre una copia
+
+Con la de R6a.3 (b1) y la deuda de los docstrings (b2) añadidas al guion `cierre_copia.py`, en un clon
+desechable de d344334 (`git worktree add --detach C:/cm/h HEAD`):
+`tests/unit/test_hoja_de_ruta.py` y `tests/unit/test_project_state.py` **todo verde**, y **`wc -c
+PROJECT_STATE.md` = 22.869 bytes**, por debajo de 23.000. El clon, quitado después (`git worktree
+remove --force C:/cm/h`, `git worktree prune`; `git worktree list` solo da el repo).
+
 ## Estado
 
-Fase 0, PARADA y respuesta aplicada punto por punto (2026-11-06). Pendiente solo el revisor y su informe pegado.
+HECHA en la rama (2026-11-06): fase 0, PARADA con dos decisiones, respuesta del consultor aplicada punto por punto, revisor pasado y sus hallazgos arreglados o declarados (§3.1). Sin CI: la rama no toca hooks, rutas, `.claude/` ni `src/`. No se cierra: el cierre es de Aleks, con orden explícita.
+
+Rama lista para revisión, NO cerrada.

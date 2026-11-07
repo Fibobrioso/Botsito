@@ -155,7 +155,7 @@ M4 queda declarado sin medir y no abre ambigüedad.
 
 **La fórmula del margen** (ADR-0081 §4; FTMO-P-D1.md §3) casa con las dos notas del paso 6: 1,00 ×
 100.000 × 1,11623 / 30 = 3.720,77 (la 2) y 1,12329 → 3.744,30 (la 3); y la de M1, 26,71 lotes al
-ask 1,12329, da 100.010,24, el 100.010,25 del CSV con el redondeo de MT5.
+ask 1,12329, da 100.010,25 (26,71 × 3.744,30), el mismo del CSV (fila 74).
 
 ### 5. El nivel exacto (ADR-0057 §2): sigue PROVISIONAL
 
