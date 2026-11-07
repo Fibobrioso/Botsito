@@ -117,8 +117,9 @@ dentro del minuto).
 > vale ADR-0091 §1. La condición de la NOTA (una vela solo evalúa lo decidido cuando EMPEZÓ) no
 > cambia; **la versión anterior** (`Orden.anterior`, `Posicion.stop_anterior`) se queda, pero desde
 > el motor ya no se alcanza: la vela que contiene el cambio ya se evaluó, con la versión vigente,
-> antes del cambio (ADR-0091 §6). Los lectores del minuto de apertura, neutros (ADR-0091 §2). Solo
-> los minutos sin ticks: con ticks no cambia nada (§8).
+> antes del cambio (ADR-0091 §6). Los lectores del minuto de apertura, neutros (ADR-0091 §2). El
+> sello, solo en los minutos sin ticks (§8); con ticks, solo el «+ 1» de esos lectores, que lleva al
+> minuto siguiente un llenado por tick en el milisegundo .999 (ADR-0091, cabecera).
 
 ### 6. El spread
 

@@ -271,36 +271,39 @@ FAILED tests/unit/test_peor_del_minuto.py::test_una_expiracion_en_un_instante_re
 
 ### 0.g Las líneas del cierre (preparadas sobre una copia; no aplicadas en la rama)
 
-En el caso que dio D2, (c2). Simuladas con `simular_cierre.py` (en memoria, contra
-`test_hoja_de_ruta` y `test_project_state`; `simular-cierre.txt`): `a: [] b: [] c: []`, los cuatro
-tests de `test_project_state` en verde y **PROJECT_STATE en 22.794 bytes** (por debajo de 23.000).
-Esa cifra lleva el Current Feature de la rama (125 bytes); el que escribe el cierre, con la forma
-del de main, medía 263: **unos 22.930 bytes** tras el cierre, todavía por debajo de 23.000 con un
-margen de unos 70 (revisor, b7).
+**Reescrito el 2026-11-07 tras la respuesta del consultor (punto 10)**: la versión de la PARADA
+(H reescrita, F con «la rama de (c2)», R3.6 sin HECHA) queda sin efecto y está en el historial
+(460595f). Simuladas con `simular_cierre.py` (en memoria, contra `test_hoja_de_ruta` y
+`test_project_state`; `simular-cierre.txt`): `a: [] b: [] c: []`, los cuatro tests de
+`test_project_state` en verde, **PROJECT_STATE en 21.860 bytes** con las líneas del cierre y
+**21.986** con un Current Feature del cierre con la forma del de `main` (por debajo de 23.000).
 
-- **H no sale HECHA: se queda reescrita.** «H. El respaldo M1 sella el evento de una vela en su
-  cierre, un milisegundo después de que el motor decida (ADR-0051 §5, ADR-0057 §1), así que la vela
-  k no se evalúa para la orden que el motor cancela en su cierre. Medido con el código de main, día a
-  día con el visor: en 11 días de construcción, 2 de esas cancelaciones en una M1 sin ticks las
-  habría llenado su vela, y con la forma (c2) (sellar en k fin - 1, con los lectores del minuto de
-  apertura en «+ 1») son 2 operaciones nuevas del bot (SELLO-RESPALDO-M1.md §0.c). Rama propia con un
-  ADR que enmiende esos dos ADR (borrador en SELLO-RESPALDO-M1.md §PARADA): 10 tests de main
-  reescritos, los lectores de §0.e y las NOTAS que pida la decisión del consultor. La marca
-  adelantada de _peor_del_minuto ya está corregida, (e2) en trabajo/sello-respaldo-m1. Va antes de
-  la re-corrida que cuenta (ADR-0070 §3).» (Sin el número del ADR: un id que no existe en
-  PROJECT_STATE rompe `knowledge validate`.)
-- **F**: «Siguiente: H, la rama de (c2) con su ADR (SELLO-RESPALDO-M1.md, la PARADA), R y la
-  re-corrida que cuenta (ADR-0070 §3), con las dos corridas que pedía R3.6 y la primera con la
-  comisión medida (ADR-0090 §3);» en lugar de «Siguiente: H (fase 0: el diagnóstico de H …), R y la
-  re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3);».
-- **R3.6**: en «Qué es», «La marca de `_peor_del_minuto` ya está corregida ((e2),
-  `trabajo/sello-respaldo-m1`); queda el sello, la forma (c2), que cambia operaciones del bot
-  (SELLO-RESPALDO-M1.md §0.c).»; y su «Hecho cuando», **sin las dos corridas**: «el ADR está aceptado
-  y un test que rompe en `main` pasa en la rama. Las dos corridas pasan a la re-corrida que cuenta,
-  después de R3.7 (regla del consultor del 2026-11-07: los umbrales de R se fijan antes de ver
-  ninguna corrida nueva).»
-- **R3.7**: no hace falta tocarla (ya dice «antes de ver ninguna corrida nueva», HOJA:240-241).
-- **R5.2**: sigue con `NA:H` (H sigue viva; el auditor, herencia 1).
+- **H sale HECHA**, de PROJECT_STATE a HISTORIA, con su registro (el segundo de la letra H; el
+  primero, RN-007, del 2026-10-26, y este lleva fecha, DECISIONES-DE-PROCESO.md:29):
+  `# Next Action HECHA · H · el sello del respaldo M1 · sale de PROJECT_STATE.md en
+  trabajo/sello-respaldo-m1 (2026-11-07)`, con el texto literal de H y «HECHA en
+  `trabajo/sello-respaldo-m1` (docs/validation/SELLO-RESPALDO-M1.md): ADR-0091 sella el evento del
+  respaldo M1 en el último milisegundo de su vela (enmienda ADR-0051 §5, ADR-0057 §1, ADR-0068 §2 y
+  ADR-0083 D2), con los lectores del minuto de apertura neutros, y (e2) corrige la marca de
+  `_peor_del_minuto`. En once días de desarrollo, 27 cancelaciones en el cierre de una M1 sin
+  ticks, 2 que su vela llenaba: 2 operaciones nuevas del bot, verificadas con el visor por caso.
+  Las dos corridas que pedía R3.6 pasan a la re-corrida que cuenta, después de R3.7.»
+- **F**: «Siguiente: R y después la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión
+  medida (ADR-0090 §3) y con el sello del respaldo de ADR-0091;» en lugar de «Siguiente: H (fase 0:
+  el diagnóstico de H …), R y la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión
+  medida (ADR-0090 §3);».
+- **R3.6**: `Refs` sin `NA:H` (`ID:ADR-0091 · ID:ADR-0051 · ID:ADR-0057`); «Hecho cuando: el ADR
+  está aceptado, los tests que rompen en `main` pasan en la rama y los once días del censo,
+  verificados con el visor por caso, dan lo que dio el prototipo. Las dos corridas que pedía pasan a
+  R3.7 y a la re-corrida que cuenta (ADR-0070 §3).»; y «Estado: HECHA (`trabajo/sello-respaldo-m1`;
+  SELLO-RESPALDO-M1.md): ADR-0091 sella el evento del respaldo en el último milisegundo de su vela,
+  con los lectores del minuto de apertura neutros, y (e2) corrige la marca de `_peor_del_minuto`; en
+  once días de desarrollo, 2 operaciones nuevas del bot y las demás idénticas.»
+- **R3.7**: al final de «Qué es», «Después, la re-corrida que cuenta (ADR-0070 §3) repite las dos
+  corridas que pedía R3.6, ya con el sello de ADR-0091.» (su «Hecho cuando» no cambia: los umbrales
+  se pre-registran antes de ver ninguna corrida nueva).
+- **R5.2**: sin `NA:H` («…rama de medida (ADR-0070 §6); y NA:R, el método (R3.7). El sello del
+  respaldo M1 (R3.6) está HECHO (ADR-0091).»).
 - **Technical Debt**: nada nuevo.
 - **La fila de ERRORES-RECURRENTES**, preparada en §3.
 
@@ -319,15 +322,15 @@ correctas, 1 incorrecta y 16 con matiz; 8 herencias**. Lo que cambia lo que se h
 | 26, 28, 30 | «(e2) no rompe nada», «rompe 10», «unos 6 lectores» | MATIZ | §0.a: medidos más anchos aquí (29 ficheros) y los lectores, completos en §0.e |
 | 36 | «(o censo_respaldo.py, si sirve)» | MATIZ | No sirve: censa eventos del respaldo, no cancelaciones. Guion nuevo `censo_cierre.py` |
 | 38 | PROJECT_STATE «por debajo de 23.000» | MATIZ | El tope del repo es 25.000; el 23.000 es la alerta del consultor. El PROJECT_STATE de la apertura medía 23.008: recortado en esta rama (Current Feature) |
-| 42 | el bloque `ids-inexistentes` | MATIZ | Solo exime en su documento: este informe lleva el suyo, porque cita ADR-0091 en el borrador. Con (c2), el del encargo y el de este informe se quedan (el ADR no se crea) |
+| 42 | el bloque `ids-inexistentes` | MATIZ | Solo exime en su documento: este informe lleva el suyo, porque cita ADR-0091 en el borrador. Con (c2), el del encargo y el de este informe se quedan (el ADR no se crea). **Sin efecto desde la fase 2 (§7)**: el ADR se creó en 3252548 y los dos bloques salieron en ese commit |
 | 43 | «el plan del 2026-11-01 mandaba a H "las dos corridas del arnés"» | MATIZ | No hay ningún plan del 2026-11-01 en el repo: las dos corridas de H vienen de la respuesta del consultor del 2026-10-29 (RESPALDO-M1.md:485 = HOJA:222-223), y diagH también las pedía (§4.5, §5). La fila de §3 se escribe con la fecha que el consultor da y esta nota |
-| H1 | R5.2 depende de `NA:H` | herencia | Con (c2), H sigue viva y R5.2 no cambia (§0.g) |
+| H1 | R5.2 depende de `NA:H` | herencia | Con (c2), H sigue viva y R5.2 no cambia (§0.g). **Sin efecto desde la fase 2 (§7)**: H sale HECHA y R5.2 pierde `NA:H` (§0.g reescrito) |
 | H3 | el visor no conecta `--diagnostico-cuenta-diaria` | herencia | Con `--caso`, la cuenta se construye sobre un solo día: equivale a la diaria para ese día (§0.c; en 2026-01-14 el visor reproduce o6 y o7 de la diaria con sus instantes) |
 | H4 | lo que diagH midió y d) no lista (S9; el motor ve el respaldo un cierre antes; la versión anterior inalcanzable; las NOTAS de 0068 y 0053) | herencia | §0.d y §2 |
 | H5 | el test de (e2) cubre S7 y S7b, y además la ventana S5 | herencia | El test lleva S7 (sonda 5) y S7b; S5 es la misma condición en otro llamador (`_proxima_ventana`): no se añade un test por llamador |
 | H6 | `test_las_negativas_por_la_cli` lee `knowledge/cases/criterio_fidelidad.yaml` | herencia | No está entre los 29 ficheros corridos en el clon; lo corre `make check` en la rama, como siempre |
 | H7 | saber si las canceladas se habrían llenado exige el mercado de esos días | herencia | Leído por el visor, declarado (§0.j) |
-| H8 | si H sale HECHA, su registro HECHA es el segundo | herencia | No sale HECHA |
+| H8 | si H sale HECHA, su registro HECHA es el segundo | herencia | No sale HECHA. **Sin efecto desde la fase 2 (§7)**: sale HECHA, con el segundo registro de la letra, con fecha (§0.g) |
 
 Las búsquedas de «a H», «para H», «NA:H» y «R3.6» en RESPALDO-M1.md, ACTIVAR-SESION-06*.md y el final
 de HISTORIA no dejan nada más para H que lo de arriba (el auditor: «su única condición, ir después de
@@ -350,6 +353,7 @@ la activación de la sesión 6, está cumplida»).
 - **`censo_cierre.py` original**: perdido; el reconstruido reproduce su cifra (22) sobre la misma
   salida, pero no se puede comparar línea a línea.
 - **La suite entera con (c2)**: solo los 29 ficheros que tocan el bróker; (c2) no se implementa.
+  **Sin efecto desde la fase 2 (§7)**: (c2) se implementó en 7eda14d y la suite entera pasa (3249).
 
 ### 0.j Exposiciones
 
@@ -464,11 +468,13 @@ Por la PARADA condicional del encargo («si da (c2), aplica solo D1 en la fase 1
 
 ## 3. La fila de ERRORES-RECURRENTES (preparada para el cierre)
 
-Cuatro columnas, como la tabla de destino (`ERRORES-RECURRENTES.md:50`; revisor, b8): la del
-revisor resume §6; la del consultor después la rellena el cierre; la última lleva lo que el encargo
-pide y lo aprendido.
+Cuatro columnas, como la tabla de destino (`ERRORES-RECURRENTES.md:50`; revisor, b8). **Reescrita el
+2026-11-07 con el punto 11 de la respuesta del consultor**: la lección (2) de la versión anterior
+pasa a la columna del consultor, la (1) se corrige (no hubo un «plan del 2026-11-01») y entra el
+error de la regla D2. La columna del revisor resume sus dos pasadas (§6 y §8); el cierre la
+completa si el consultor encuentra algo después.
 
-| `trabajo/sello-respaldo-m1` | Una pasada, opus, sobre dacd533 más el informe sin estadiar, con los cinco alcances del encargo (SELLO-RESPALDO-M1.md §6; lo hecho, §6.1). Reglas: 0 bloquea, 1 importa, 1 menor; encargo: 0 bloquea, 5 importa, 3 menor. Arreglados: a1 (el clon sin declarar en la fila de exposiciones), b1 (los lectores de `cerrada_ms`, del minuto del evento y del resultado de `_peor_del_minuto`), b2 (la marca mueve también el margen libre), b3 (ADR-0083 D2 sin contrastar), b4 (las líneas de main frente a las de la rama), b5 (la regresión sin la lista de ficheros) y los cuatro menores | (los rellena el cierre) | (1) **(importa, del consultor)** el plan del 2026-11-01 mandaba a H "las dos corridas del arnés", y R3.7 pide fijar los umbrales de R antes de ver ninguna corrida nueva. Lección: antes de mandar una corrida, mirar si hay un umbral pendiente de pre-registrar. (Nota del auditor: en el repo, esas dos corridas vienen de la respuesta del 2026-10-29, RESPALDO-M1.md:485; no hay un plan del 2026-11-01.) (2) **(Del consultor)** El encargo llamó «eventos del respaldo» a 22 cancelaciones del bot, y mandó sacarlos de una salida (la diaria de RESPALDO-M1) que no es la que los contó y que tiene, aparte, 22 eventos del respaldo de verdad. Lección: una cifra heredada se cita con QUÉ cuenta y SOBRE QUÉ salida, y una lista que va a decidir algo se saca del código vigente, no de una salida vieja. Señal: el mismo número en dos sitios con nombres distintos. (3) **Una lista vieja solo elige días**: la de RESPALDO-M1 daba 26, y main da 27 en esos días, con ids renumerados; el censo se hizo con el visor sobre main. (4) **La guardia y los prototipos en memoria**: `exec` de una fuente, `git apply`, `sys.path` calculado, `PYTHONPATH` y `spec_from_file_location` con la ruta por parámetro se niegan; las formas que pasan son funciones literales escritas en el guion, Edit en el clon y rutas literales en la llamada. Señal: un prototipo que parchea por texto. |
+| `trabajo/sello-respaldo-m1` | Dos pasadas, opus. La primera, sobre dacd533 con los cinco alcances del encargo (§6; lo hecho, §6.1): reglas 0 bloquea, 1 importa, 1 menor; encargo 0 bloquea, 5 importa, 3 menor; todos arreglados: a1 (el clon sin declarar en la fila de exposiciones), b1 (los lectores de `cerrada_ms`, del minuto del evento y del resultado de `_peor_del_minuto`), b2 (la marca mueve también el margen libre), b3 (ADR-0083 D2 sin contrastar), b4 (las líneas de main frente a las de la rama), b5 (la regresión sin la lista de ficheros) y los cuatro menores. La segunda, tras la fase 2, con los alcances de la respuesta (§8) | (1) **(importa, del consultor)** la respuesta del 2026-10-29 (RESPALDO-M1.md:485) mandaba a H «las dos corridas del arnés», y R3.7 pide fijar los umbrales de R antes de ver ninguna corrida nueva. Lección: antes de mandar una corrida, mirar si hay un umbral pendiente de pre-registrar. (2) **(importa, del consultor)** el encargo llamó «eventos del respaldo» a 22 cancelaciones del bot y las mandó sacar de la salida equivocada (la diaria de RESPALDO-M1, que no es la que las contó y que tiene, aparte, 22 eventos del respaldo de verdad). Lección: una cifra heredada se cita con QUÉ cuenta y SOBRE QUÉ salida, y una lista que va a decidir algo se saca del código vigente, no de una salida vieja. Señal: el mismo número en dos sitios con nombres distintos. (3) **(menor, del consultor)** el encargo citó «el plan del 2026-11-01» cuando las dos corridas de R3.6 vienen de la respuesta del 2026-10-29: corregido en (1). (4) **(menor, del consultor)** la regla D2 prohibía implementar (c2) en la rama que ya era la de H, y costó una PARADA más. Lección: la regla de una PARADA condicional decide el camino, no la rama en la que se hace | (5) **Una lista vieja solo elige días**: la de RESPALDO-M1 daba 26, y main da 27 en esos días, con ids renumerados; el censo se hizo con el visor sobre main. (6) **La guardia y los prototipos en memoria**: `exec` de una fuente, `git apply`, `sys.path` calculado, `PYTHONPATH` y `spec_from_file_location` con la ruta por parámetro se niegan; las formas que pasan son funciones literales escritas en el guion, Edit en el clon y rutas literales en la llamada. Señal: un prototipo que parchea por texto. (7) **Un test que importa `tests.unit` solo corre en un clon si es idéntico al del repo** (la guardia lo resuelve contra el repo): en el clon de la rama, con el fichero aún sin copiar al repo, se negó; copiado, corrió en el de main. (8) **Un test de respaldo que copia uno de ticks puede no medir lo mismo**: sin ticks, la stop se llena al nivel salvo hueco, y el rechazo al llenar de D3b necesitó una vela que abriera ya pasada |
 
 ## 4. Los commits de la rama
 
@@ -516,7 +522,7 @@ pide y lo aprendido.
 | 1 | Comprobar con git la base (main = docs(state) del cierre, el tag en su merge, la CI de main en verde con un `gh run view` suelto, ninguna otra rama); si falla, PARAR | Hecho | «Base comprobada al abrir» |
 | 2 | Abrir con `abrir-rama`: contrato con el tramo entre comillas, riesgo alto, artefacto SELLO-RESPALDO-M1.md | Hecho | 13d9ad3; `contrato.yaml` |
 | 3 | El recorrido lo mandan fase-cero, comparar-con-main y entregar-rama; si chocan, ganan ellas | Hecho, sin choque | fase-cero: §0 y §2 con «Lo que necesito que decidas»; comparar-con-main: el clon `C:/cm/h` (§0.d, §0.f); entregar-rama: §6 |
-| 4 | grep de «0091» en docs/ y en Technical Debt antes de usar el número | Hecho (el auditor, 6): solo en el encargo; los demás «0091» de docs/ son ids `ev-v15-000913-…` y precios. ADR-0091 no se crea (D2 dio (c2)); este informe lo cita en el borrador con su bloque `ids-inexistentes` | §0.h; cabecera |
+| 4 | grep de «0091» en docs/ y en Technical Debt antes de usar el número | Hecho (el auditor, 6): solo en el encargo; los demás «0091» de docs/ son ids `ev-v15-000913-…` y precios. ADR-0091 no se crea (D2 dio (c2)); este informe lo cita en el borrador con su bloque `ids-inexistentes`. **Sin efecto desde la fase 2 (§7)**: se creó en 3252548 | §0.h; cabecera |
 | 5 | Objetivo: decidir y aplicar (e2) y qué se hace con los 22 | Hecho | (e2): fase 1, punto 1; los 22: D2 → (c2), PARADA (§2) |
 | 6 | NO cambia: la estrategia, strategy_spec, parametros, el perfil, ADR-0053, nada de knowledge/ | Cumplido | `git diff main --stat`: `src/botsito/engine/broker.py`, el test nuevo y documentos; ADR-0053 sin NOTA (§0.f) |
 | 7 | Solo días de desarrollo, comprobados con `casos_reservados(repo)` y declarados el mismo día | Hecho | §0.b (0 por día y por mes); HOLDOUT-EXPOSICIONES.md, fila del 2026-11-07 |
@@ -536,7 +542,7 @@ pide y lo aprendido.
 | 21 | d) H medido con (c2) y los tests de main que rompe | Hecho: 10 | §0.d |
 | 22 | e) los lectores con fichero:línea | Hecho | §0.e |
 | 23 | f) (e2): el diff, los tests que rompe y la sonda 5 como test que rompe en main y pasa con (e2) | Hecho | §0.f |
-| 24 | g) las líneas del cierre sobre una copia, con test_hoja_de_ruta y test_project_state y la previsión de bytes < 23.000 | Hecho: 22.794 bytes | §0.g; `simular-cierre.txt` |
+| 24 | g) las líneas del cierre sobre una copia, con test_hoja_de_ruta y test_project_state y la previsión de bytes < 23.000 | Hecho: 22.794 bytes en la primera entrega; tras la fase 2, 21.860 (21.986 con el Current Feature del cierre) | §0.g; `simular-cierre.txt` |
 | 25 | D1: (e2) pase lo que pase; PARADA solo si rompe un test de main o cambia algo más que la marca | Hecho, sin PARADA | §0.f; fase 1, punto 1 |
 | 26 | D2: la regla de los 22 | Aplicada: 2 cambian una operación → (c2) → PARADA con el plan, sin implementar | §0.c; §2 |
 | 27 | D3: (d) descartada | Cumplido: no se midió ni se toca | §0.a |
@@ -757,21 +763,265 @@ Copiada tal cual:
 >
 > Rama lista para revisión, NO cerrada.
 
-## 7. La respuesta aplicada: fase 2 (desde el 2026-11-07)
+## 7. La respuesta aplicada: fase 2 (2026-11-07)
 
 **Quedan sin efecto, por escrito** (respuesta, punto 0):
 - la segunda mitad de la regla D2 del encargo, «NO se implementa en esta rama esta noche»: (c2) se
   implementa aquí, en la fase 2, con ADR-0091;
-- la frase del bloque `ids-inexistentes` de la cabecera de este informe, «el ADR lo escribe la rama
-  de (c2)», y lo mismo en §1, punto 2, y en §2 («no se crea en esta rama»): lo escribe esta rama, en
-  el commit b), que quita los dos bloques;
-- la línea F de §0.g, y con ella H y R3.6 de §0.g: se reescriben en d) (punto 10).
+- la frase del bloque `ids-inexistentes` que encabezaba este informe, «el ADR lo escribe la rama de
+  (c2)», y lo mismo en §1, punto 2, y en §2 («no se crea en esta rama»): lo escribe esta rama, en el
+  commit b), que quitó los dos bloques (el del encargo y el de este informe);
+- la línea F de §0.g, y con ella H y R3.6: §0.g está reescrito (punto 10).
 
-**El contrato, ampliado** en el commit a) (este): `src/botsito/engine/` (en vez de solo
-`broker.py`), los ADR 0051, 0057, 0068 y 0083, el nuevo 0091 y el índice `docs/adr/README.md`, en
-lugar de `docs/adr/` entero; riesgo alto, con el motivo nuevo en su comentario.
+### 7.1 Punto por punto
+
+| # | Lo que manda la respuesta | Hecho | Dónde |
+|---|---|---|---|
+| 0 | (c2) en esta rama, fase 2, con ADR-0091; lo que queda sin efecto, por escrito; el contrato ampliado en su commit (src/, tests/, ADR 0051, 0057, 0068, 0083 y 0091); el bloque sale en el commit del ADR; riesgo alto | Hecho | arriba; cdffbfb (a): `src/botsito/engine/`, `tests/`, los cinco ADR y el índice; 3252548 (b) |
+| 1 | Lectores del minuto de apertura, neutralidad completa: los tres de diagH más el swap y el día local con `(abierta_ms + 1) // 60000`; comisiones y criterio en el sellado; test de S9 en los dos lados; los de `cerrada_ms`, cada uno con su porqué en el ADR | Hecho, con una sola definición, `broker.minuto_de_apertura`, que leen `_marcar_hasta`, `_swaps`, `_limite_infringido`, `cableado._operaciones_del_bot` y el break even por velas. Los de `cerrada_ms`, en el instante sellado y **no neutros** en el swap del cierre (una posición que sale por la última vela antes del corte no paga su swap: no vivió más allá), cada uno con su línea en ADR-0091 §3. **S9 rompe en `main`** (por el sello, `abierta_ms` = corte − 1 ms) y fija la neutralidad del swap y del día: «en los dos lados» se lee así, y el punto 9 lo pone entre los que rompen | 7eda14d; ADR-0091 §2-§3; `test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia` |
+| 2 | Fin del día y borde de ADR-0068 aceptados; NOTA en ADR-0068 §2; tests de S4 y S5 | Hecho | ADR-0091 §5; recuadro en ADR-0068 §2; los dos tests rompen en `main` |
+| 3 | La versión anterior se queda, con la NOTA en ADR-0051 §5 de que desde el motor ya no se alcanza | Hecho | recuadro en ADR-0051 §5; ADR-0091 §6 |
+| 4 | Los dos tests de secuencia, a media vela, y uno nuevo en el cierre | Hecho | `test_respaldo_m1_decision.py`: los dos, a media vela (pasan en `main` y en la rama), y `test_en_el_cierre_la_vela_se_evalua_antes_de_mover_el_stop_o_modificar_la_orden` (rompe en `main`) |
+| 5 | Los once días bastan; ninguna corrida del arnés ni cifra agregada | Cumplido | §7.3 |
+| 6 | ADR-0083 D2: el rechazo al llenar gasta, y el stop u objetivo sin ganancia libera, un cierre antes; D4 un cierre antes; test propio en los dos lados; punto (6) del ADR con fichero:línea de `cableado.correr_dia` | Hecho. **Va en ADR-0091 §4, no en un §6**: el borrador numeraba en una lista, y el ADR lo ordena por tema (§6 es la versión anterior); lleva `engine/cableado.py:305`, `:306` y `:308`, las de la rama (en la primera versión, las de `main`: revisor, segunda pasada, b2) | recuadro en ADR-0083 D2; dos tests por el cableado sin ticks, que rompen en `main` |
+| 7 | ADR-0091 ACTIVE con el borrador y lo de arriba; recuadros en ADR-0051 §5 (y su NOTA), 0057 §1, 0068 §2 y 0083 D2; filas del índice; el alcance medido sin cifra agregada sobre un mes; que el bot en vivo opera con ticks | Hecho | `docs/adr/0091-el-sello-del-respaldo-m1-en-el-ultimo-milisegundo-de-su-vela.md` (§7, el alcance: 27 cancelaciones y 2 operaciones en once días); `docs/adr/README.md` |
+| 8 | Verificación con el visor por caso: los once días dan lo que dio el prototipo; si alguno difiere, PARADA para ese día | Hecho, **sin PARADA**: idénticos línea a línea | §7.3 |
+| 9 | Tests que rompen en `main` y pasan en la rama, con su salida; los dos de la secuencia pasan en los dos lados | Hecho | §7.2 |
+| 10 | Las líneas del cierre: R3.6 HECHA, las dos corridas a R3.7 y a la re-corrida que cuenta, H HECHA, F reescrita; probadas sobre una copia, < 23.000 | Hecho: 21.860 bytes, y 21.986 con un Current Feature del cierre | §0.g; `simular-cierre.txt` |
+| 11 | La fila de ERRORES-RECURRENTES con los errores del consultor añadidos | Hecho | §3 |
+| a-d | Un commit por punto, cada uno sellado, con ruff format, ruff check y mypy antes | Hecho | §7.4 |
+| CI | Sin fix/ (no se tocan hooks, rutas, `.claude/` ni plataforma) | Cumplido | `git diff --stat main...HEAD` |
+| Revisor | Otra pasada, opus, con los alcances de la respuesta; su informe, pegado | Hecho | §8 |
+
+### 7.2 Los tests, contra `main`
+
+En un clon desechable de `main` (`C:/cm/m`, `git worktree add --detach`, sin `data/`), con los seis
+ficheros de test de la rama que tocan el sello copiados dentro (skill comparar-con-main):
+
+    uv run pytest -p no:cacheprovider -q -rf --tb=line tests/unit/test_sello_respaldo.py tests/unit/test_broker.py tests/unit/test_broker_ordenes_stop.py tests/unit/test_llenado.py tests/unit/test_respaldo_m1_decision.py tests/unit/test_peor_del_minuto.py
+
+Exit 1, **18 FAILED** (`anexos/SELLO-RESPALDO-M1/tests_rama_con_main.txt`, repetido tras la
+segunda pasada del revisor con el test del swap al cierre y la línea de resumen; la primera vez
+fueron 17, sin ese test). La salida, recortada:
+
+```
+FAILED tests/unit/test_sello_respaldo.py::test_la_vela_en_cuyo_cierre_el_motor_cancela_la_orden_la_llena_antes
+FAILED tests/unit/test_sello_respaldo.py::test_el_fin_del_dia_evalua_la_ultima_vela_antes_de_cerrar_y_cancelar
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_vela_que_acaba_en_la_ventana_se_sella_fuera_de_ella
+FAILED tests/unit/test_sello_respaldo.py::test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia_de_dia
+FAILED tests/unit/test_sello_respaldo.py::test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap
+FAILED tests/unit/test_sello_respaldo.py::test_sin_ticks_el_punto_se_libera_y_se_vuelve_a_colocar_en_el_cierre_de_la_vela_del_stop
+FAILED tests/unit/test_sello_respaldo.py::test_sin_ticks_un_rechazo_al_llenar_gasta_el_punto_en_el_cierre_de_la_vela_del_llenado
+FAILED tests/unit/test_broker.py::test_el_respaldo_m1_llena_cierra_y_marca_sin_ticks
+FAILED tests/unit/test_broker_ordenes_stop.py::test_el_respaldo_m1_llena_al_nivel_o_a_la_apertura_si_la_vela_abre_pasada
+FAILED tests/unit/test_broker_ordenes_stop.py::test_misma_vela_la_stop_sigue_la_convencion_de_la_limite
+FAILED tests/unit/test_llenado.py::test_una_m1_con_stop_y_objetivo_a_la_vez
+FAILED tests/unit/test_llenado.py::test_un_tramo_sin_ticks_cae_al_respaldo_y_queda_marcado
+FAILED tests/unit/test_respaldo_m1_decision.py::test_en_el_cierre_la_vela_se_evalua_antes_de_mover_el_stop_o_modificar_la_orden
+FAILED tests/unit/test_respaldo_m1_decision.py::test_la_vela_de_una_modificacion_no_llena_la_version_nueva
+FAILED tests/unit/test_respaldo_m1_decision.py::test_una_pendiente_de_antes_de_una_vela_sin_ticks_se_llena_en_esa_vela
+FAILED tests/unit/test_respaldo_m1_decision.py::test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente
+FAILED tests/unit/test_peor_del_minuto.py::test_avanzar_a_un_instante_redondo_no_marca_la_vela_que_empieza_en_el
+FAILED tests/unit/test_peor_del_minuto.py::test_una_expiracion_en_un_instante_redondo_no_marca_la_vela_siguiente
+18 failed, 39 passed in 5.14s
+```
+
+| Qué | Tests que rompen en `main` |
+|---|---|
+| (c2), nuevos (`test_sello_respaldo.py`) | la vela en cuyo cierre el motor cancela la orden la llena antes (S6); el fin del día evalúa la última vela (S4); el llenado en la vela que acaba en la ventana se sella fuera de ella (S5); S9; la salida en la última vela antes del corte no paga ese swap (ADR-0091 §3, tras la segunda pasada del revisor); y los dos de ADR-0083 D2 por el cableado sin ticks (el punto se libera y se vuelve a colocar en el cierre de la vela del stop; el rechazo al llenar lo gasta en el cierre de la vela del llenado) |
+| (c2), los 8 del milisegundo, reescritos | `test_broker.py::test_el_respaldo_m1_llena_cierra_y_marca_sin_ticks`; `test_broker_ordenes_stop.py::test_el_respaldo_m1_llena_al_nivel_o_a_la_apertura_si_la_vela_abre_pasada` y `::test_misma_vela_la_stop_sigue_la_convencion_de_la_limite`; `test_llenado.py::test_una_m1_con_stop_y_objetivo_a_la_vez` y `::test_un_tramo_sin_ticks_cae_al_respaldo_y_queda_marcado`; `test_respaldo_m1_decision.py::test_la_vela_de_una_modificacion_no_llena_la_version_nueva`, `::test_una_pendiente_de_antes_de_una_vela_sin_ticks_se_llena_en_esa_vela` y `::test_la_salida_tras_un_llenado_del_respaldo_se_mira_desde_la_vela_siguiente` |
+| (c2), el nuevo del cierre | `test_respaldo_m1_decision.py::test_en_el_cierre_la_vela_se_evalua_antes_de_mover_el_stop_o_modificar_la_orden` |
+| (e2), de la fase 1 | los dos de `test_peor_del_minuto.py` que ya rompían (la sonda 5, que ahora cierra en el sello nuevo, y la S7b) |
+
+**Pasan en `main` y en la rama**: los dos de la secuencia reescritos a media vela
+(`test_la_vela_del_stop_movido_que_toca_el_stop_original_sale_por_el_sin_break_even` y
+`test_la_vela_de_una_modificacion_se_evalua_con_la_orden_anterior`), S1 (la marca de la vela del
+llenado no se toma) y los demás de esos ficheros. En la rama, los seis ficheros pasan enteros, y la
+suite entera también (3249 passed en el `make check` de 7eda14d). Con (c2) solo, sin (e2), la sonda 5
+ya no rompería: la salida del respaldo se sella antes del instante redondo; la S7b (la expiración en
+el instante redondo) sigue fijando (e2). En la rama, `test_sello_respaldo.py` tiene 8 tests y pasan todos.
+
+**Lo que la guardia negó, y cómo se hizo**: en el clon de la rama (`C:/cm/r`) la guardia no resolvió
+`from tests.unit import …` de `test_sello_respaldo.py`, que aún no estaba en el repo; ese fichero se
+corrió en el repo y, ya copiado, en el clon de `main`, donde sí corrió (el mismo fichero que el del
+repo). Los demás, en el clon de la rama. Ninguna medida dejó de hacerse.
+
+### 7.3 La verificación del punto 8 (el visor por caso, con el código de la rama)
+
+`prototipo_sello.py` con la forma nueva `rama` (nada parcheado: el código commiteado en 7eda14d; la
+sesión de cada posición, leída con `minuto_de_apertura`), sobre los MISMOS once días de la fase 0, y
+nada más (`motor visor --caso <id> --simular`, una llamada por día; ni `--todos` ni `--meses`):
+
+    uv run python -B docs/validation/anexos/SELLO-RESPALDO-M1/prototipo_sello.py rama <carpeta fuera del repo> 2026-01-14 2026-01-23 2026-04-03 2026-04-06 2026-04-07 2026-04-22 2026-04-23 2026-07-10 2026-07-16 2026-08-17 2026-08-20
+
+→ `verificacion-rama.txt`, exit 0. **Sin sus líneas de cabecera (`#`, `OK:` y `TIEMPO`), `diff`
+contra `prototipo-c2.txt` sale vacío: los once días dan EXACTAMENTE lo que dio el prototipo**, orden
+a orden y posición a posición, con sus instantes y su R. Y `comparar_formas.py` de main frente a la
+rama (`censo-main-rama.txt`) es el de main frente al prototipo con otro nombre de fichero: las 2
+operaciones nuevas (2026-01-23, venta en la vela de las 11:03, −1,00 R; 2026-07-10, compra en la de
+las 05:27, −1,00 R) y las demás operaciones de los once días idénticas a main. Ningún día difiere:
+no hay PARADA.
+
+### 7.4 Los commits de la fase 2
+
+| Commit | Qué | `make check` |
+|---|---|---|
+| cdffbfb | a) la respuesta copiada y el contrato ampliado | sello `7dbf0937…`, 3241 passed |
+| 3252548 | b) ADR-0091, los cuatro recuadros, el índice; salen los dos bloques `ids-inexistentes` | sello `9ede7820…`, 3241 passed |
+| 7eda14d | c) las tres funciones del respaldo y los lectores, con los tests nuevos y los reescritos; «Tests Currently Passing» 1873 | sello `27ef41ab…`, **3249 passed** |
+| (este) | d) la verificación, el informe (§0.g y §3 reescritos, §7, §8), las líneas del cierre probadas y lo hecho con la segunda pasada del revisor: ADR-0091 y los recuadros corregidos, el test del swap al cierre y los docstrings; «Tests Currently Passing» 1874 | el del último commit |
+
+## 8. El revisor, segunda pasada
+
+Subagente `revisor` (opus), segunda pasada, sobre cdffbfb, 3252548 y 7eda14d más el punto d) sin
+estadiar, con los alcances de la respuesta del consultor. Pegado tal cual (no cita ningún tramo no
+citable: 0 retiradas):
+
+> ## Informe del revisor · trabajo/sello-respaldo-m1 (segunda pasada, tras la fase 2) · 2026-11-07
+>
+> Qué revisé: los commits cdffbfb (a), 3252548 (b) y 7eda14d (c) sobre main 2e04b63, y el punto d), que sigue sin estadiar (el informe, HOLDOUT-EXPOSICIONES.md, el README de los anexos, `prototipo_sello.py`, `simular_cierre.py` y sus salidas). No escribí nada en el repo. No ejecuté ni el arnés ni `prototipo_sello.py`, ni volví a correr el visor.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 3 importa, 2 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | **«Con ticks no cambia nada» choca con lo que dice el propio ADR-0091.** ADR-0091 §2 reconoce que el «+ 1» también mueve al minuto siguiente un llenado por TICK en el milisegundo .999. Sin embargo, la cabecera de ADR-0091, su fila del índice y los recuadros de ADR-0051, 0068 y 0083 dicen que solo cambian los minutos sin ticks. Con ticks, ese «+ 1» cambia cuatro cosas: la sesión de un llenado en el último ms de una sesión, el swap de una posición llenada a las 23:59:59.999 locales que pasa la noche (deja de pagarlo), el día de `posiciones_dia_max` y la marca de su minuto. Ningún test ni sonda lo mide; el informe ya lo daba por «no medido aquí» en §0.a. | ADR-0091:12 «**Solo cambia los minutos SIN ticks**» frente a ADR-0091:49-51 «El «+ 1» mueve también un llenado por TICK en el milisegundo .999 de un minuto al minuto siguiente». ADR-0051, recuadro: «Solo los minutos sin ticks: con ticks no cambia nada (§8)». ADR-0083 y ADR-0068, recuadros: «Con ticks no cambia nada». `docs/adr/README.md`, fila 0091: «solo los minutos sin ticks». `broker.py:975`: `ultimo = … minuto_de_apertura(p) * MS_POR_MINUTO`. SELLO-RESPALDO-M1.md:67: «no medido aquí». |
+> | a2 | importa | **El cambio no neutro del swap al cierre está escrito en el ADR, pero sin medir.** Con el sello nuevo, una posición que sale por el respaldo en la última vela antes de un corte ya no paga el swap de ese corte. ADR-0091 §3 lo afirma («con el sello en k fin lo pagaba»), pero ningún test lo fija y no cae en los once días: el prototipo no imprime swaps. Es un cambio de coste de la cuenta, y CLAUDE.md pide medir antes de escribir cómo se comporta un mecanismo. El código sostiene lo que dice el ADR (`_aplicar` llama a `_marcar_hasta(instante)` y, con él, a `_swaps(p, instante)` antes de `_cerrar`; y el corte se cobra solo si `corte <= hasta_ms`), así que lo que falta es el test, no la razón. | ADR-0091:60-63. `broker.py:837`, `:950`, `:978`, `:1127`. `test_sello_respaldo.py` solo tiene S9, que es el swap de la APERTURA (`:155-173`). Grep de `cerrada` en ese fichero: solo `:131` y `:267`, ninguno con swaps. |
+> | a3 | importa | **Varios pasajes del informe contradicen ya la fase 2 y no están marcados como sin efecto.** §7 deja sin efecto la regla D2, la frase del bloque, §1 punto 2, §2 y la línea F. Siguen vigentes en el texto, sin marca: H1 «H sigue viva y R5.2 no cambia» y H8 «No sale HECHA», cuando §0.g dice ahora que H sale HECHA y que R5.2 pierde `NA:H`; §0.i «(c2) no se implementa»; la fila 42 de §0.h; y en §5 la fila 4 («ADR-0091 no se crea») y la fila 24 («22.794 bytes»). El informe no es un informe cerrado, así que se puede corregir. | SELLO-RESPALDO-M1.md:325, :327, :333, :355, :524, :544, frente a :281 («**H sale HECHA**») y :305 (R5.2 sin `NA:H`). Lista de lo que queda sin efecto: :767-773. |
+> | a4 | menor | **`prototipo_sello.py`, que d) toca, no pasa `ruff check`: 6 errores E501.** Vienen de la fase 0: el lint de `make check` solo cubre `src tests scripts .claude/hooks`. Aun así, la respuesta pide «ruff format, ruff check y mypy sobre lo tocado». | `uv run ruff check docs/validation/anexos/SELLO-RESPALDO-M1/prototipo_sello.py docs/validation/anexos/SELLO-RESPALDO-M1/simular_cierre.py` → «Found 6 errors» (líneas 1, 7, 14, 17, 26 y 32). `git show 460595f:…/prototipo_sello.py \| head -1` ya traía la línea 1 larga. `Makefile:36-37`. |
+> | a5 | menor | **El docstring del módulo `test_respaldo_m1_decision.py` sigue diciendo que «los ocho del primer bloque ROMPEN en `main`».** Dos de esos ocho, los de la secuencia reescritos a media vela, pasan ahora en el `main` actual. El párrafo añadido lo matiza, pero no corrige la frase. | `tests/unit/test_respaldo_m1_decision.py:8` frente a §7.2 (SELLO-RESPALDO-M1.md:811-813: «Pasan en `main` y en la rama: los dos de la secuencia»). |
+>
+> Comprobado sin hallazgos:
+> - **El contrato.** `uv run python scripts/contrato_rama.py`: «CONTRATO: 46 ficheros dentro del contrato de trabajo/sello-respaldo-m1 (riesgo alto, artefacto docs/validation/SELLO-RESPALDO-M1.md, tramo 'R3 · Una corrida del arnés sobre toda la construcción', 4 comprobaciones para el revisor)», exit 0. `rutas_permitidas` cubre src/botsito/engine/, tests/, los cinco ADR y el índice.
+> - **Las comprobaciones del contrato.**
+>   - `uv run botsito state check`: OK, exit 0.
+>   - `knowledge validate`, a stdout: todo OK, con los dos AVISO de siempre, exit 0.
+>   - `make check`: no lo corrí. `make-check.log`: «3249 passed in 1230.51s», «SELLO: … 27ef41ab5f94e53122c60380a93e73ab7d22f329», «PICO DE MEMORIA … 308 MiB». `git rev-parse` de los árboles da cdffbfb = 7dbf0937…, 3252548 = 9ede7820… y 7eda14d = 27ef41ab…, como dice la tabla de §7.4.
+>   - **El punto d) todavía no tiene sello**: le falta su `make check`.
+> - **Trailers `Fuente:`.** `git log … main..HEAD -- knowledge/spec knowledge/cases` sale vacío.
+> - **Holdout.** Ningún fichero de holdout. `casos_reservados(repo)`, contado por mí: 34 en total, los 34 con el prefijo `caso-eurusd-2026-`; 0 en los once días y en 2026-08-07; 0 en enero, abril, julio y agosto.
+> - **Regímenes de cambio.**
+>   - `git diff --name-status main...HEAD` sobre knowledge/, data/manifests/, .claude/, Makefile y tools/: vacío.
+>   - HISTORIA.md: 164+/0−. HOLDOUT-EXPOSICIONES.md: 2+/0− commiteado y 1+/0− sin estadiar.
+>   - Los ADR 0051, 0057, 0068 y 0083 solo ganan recuadros (13, 6, 8 y 9 líneas, ninguna borrada), junto al pasaje que corrigen.
+> - **ADR.** 0091 tiene `## Estado` = `ACTIVE`; `test_adr.py`, `test_hoja_de_ruta.py` y `test_project_state.py` pasan (exit 0). El índice tiene la fila 0091 y las cuatro de los ADR enmendados.
+> - **Informes cerrados.** No cambia ninguno.
+> - **Tres guardias de una `cita`.** No aplica.
+> - **Cifras.** El código solo añade `± 1` ms estructurales; no entra ningún literal de negocio.
+> - **Ensayos.**
+>   - `git worktree list` ya solo muestra el repo; `git branch -a` da main y la rama; hay 150 tags.
+>   - `prototipo_sello.py` comprueba que la carpeta de páginas queda fuera del repo (`:257-258`).
+>   - `simular_cierre.py` escribe solo en un `TemporaryDirectory`.
+> - **Citas comprobadas contra su fuente.**
+>   - RESPALDO-M1.md:485: «Hecho cuando: … las dos corridas están repetidas».
+>   - DECISIONES-DE-PROCESO.md:29: la regla de la letra reutilizada, con fecha.
+>   - ENTRADA-ENERO.md:635: el contrato ampliado con un ADR en una fase posterior.
+>   - El docstring de `minuto_de_apertura` frente a `_sesion_de` (`cableado.py:828-834`).
+> - **CRLF.** `simular-cierre.txt` lleva CRLF en la copia de trabajo (5 CR), pero `.gitattributes` tiene `* text=auto eol=lf`: se guarda con LF en el índice.
+>
+> ### Eje (b) · La respuesta del consultor a la PARADA
+> Resumen: 0 bloquea, 2 importa, 2 menor. Requisitos: 14 hechos, 2 parciales, 0 no hechos, 1 pendiente (d) y 1 en curso (este revisor).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 0 | (c2) en esta rama, fase 2; lo que queda sin efecto, por escrito; el contrato ampliado en su commit; el bloque `ids-inexistentes` sale en el commit del ADR; riesgo alto | Hecho (ver a3) | §7:767-773; cdffbfb toca `contrato.yaml`; el grep de `ids-inexistentes` en HEAD solo da menciones narrativas; `contrato.yaml:2` |
+> | 1 | Neutralidad completa: los tres de diagH, el swap y el día local con `(abierta_ms+1)//60000`; comisiones y criterio en el sellado; test de S9; los de `cerrada_ms`, cada uno con su porqué en el ADR | **Parcial** | Código: `broker.py:284`, `:943`, `:975`, `:1106`; `cableado.py:470`; `primitivas_broker.py:281`; comisiones en `:1122-1125` y criterio en `cableado.py:479`, sin tocar. Los de `cerrada_ms`, en ADR-0091 §3. Faltan lectores de `abierta_ms` en el ADR: b1 |
+> | 2 | S4 y S5 aceptados; NOTA en ADR-0068 §2; tests | Hecho | ADR-0091 §5; el recuadro de ADR-0068; `test_sello_respaldo.py:108-152`, los dos FAILED en `tests_rama_con_main.txt` |
+> | 3 | La versión anterior se queda, con NOTA en ADR-0051 §5 | Hecho | recuadro en ADR-0051; ADR-0091 §6 |
+> | 4 | Los dos tests de secuencia a media vela, y uno nuevo en el cierre | Hecho | diff de `test_respaldo_m1_decision.py` (`_ms(M0, 30)`, `_ms(M0+1, 30)`); `test_en_el_cierre_la_vela_se_evalua_antes…`, FAILED en main |
+> | 5 | Bastan los once días; ninguna corrida ni cifra agregada | Hecho | Grep de `motor arnes\|--todos\|--meses\|diagnostico-cuenta-diaria` en los anexos: nada. `prototipo_sello.py:273-276` solo llama a `motor visor --caso … --simular`. El «27 en 11 días» es lo que autoriza el punto 7 |
+> | 6 | ADR-0083 D2 con test propio, y el punto en el ADR con fichero:línea de `cableado.correr_dia` | **Parcial** | Los dos tests (`test_sello_respaldo.py:250-295`) rompen en main. El fichero:línea del ADR no cuadra: b2 |
+> | 7 | ADR-0091 ACTIVE, recuadros en los cuatro, filas del índice, alcance sin cifra de mes, el bot en vivo con ticks | Hecho (ver a1) | ADR-0091:12-13 y §7; diff de README.md |
+> | 8 | Los once días, con el código de la rama, dan lo que dio el prototipo | **Hecho, comprobado** | `verificacion-rama.txt` frente a `prototipo-c2.txt` sin las líneas `#`, `OK:` y `TIEMPO`: 310 líneas cada uno, iguales (`a==b True`, diff vacío). 11 secciones `## `, 11 `OK:`. `comparar_formas.py` main frente a rama, vuelto a correr: 2761 bytes, como `censo-main-rama.txt`, que solo difiere de `censo-main-c2.txt` en el nombre del fichero. Operaciones distintas solo en 01-23 (venta, M1 11:03Z, −1.00) y 07-10 (compra, M1 05:27Z, −1.00) |
+> | 9 | Los tests que rompen en main pasan en la rama, con la salida pegada; los dos de secuencia pasan en los dos lados | Hecho (ver b4) | `tests_rama_con_main.txt`: 17 FAILED (6 nuevos, 8 del ms, el del cierre y los 2 de (e2)). En la rama, los 7 ficheros con `test_punto_usado` dan exit 0 |
+> | 10 | Las líneas del cierre probadas sobre una copia, por debajo de 23.000 | Hecho | Vuelto a correr: «H viva en la copia? False; H HECHA en HISTORIA? True; NA:H en la hoja simulada? False / a: [] b: [] c: [] / 21860 bytes …; 21986 …; ok», igual que `simular-cierre.txt` |
+> | 11 | La fila de ERRORES-RECURRENTES con los errores del consultor | Hecho | §3:476: (1) corregida con la fecha del 2026-10-29, (2) en la columna del consultor, (3) y (4) nuevas |
+> | a | El contrato ampliado, sellado | Hecho | cdffbfb, árbol 7dbf0937… |
+> | b | ADR y recuadros; sale el bloque | Hecho | 3252548, árbol 9ede7820… |
+> | c | Funciones y lectores, con los tests | Hecho | 7eda14d, árbol 27ef41ab… = el SELLO de `make-check.log`, 3249 passed |
+> | d | La verificación, el informe con §0.g y §3 reescritos, las líneas probadas | Pendiente | `git status --short`: 6 M y 2 ??, sin estadiar ni sellar |
+> | CI | Sin fix/ | Hecho | La rama no toca .claude/, Makefile, tools/, hooks ni plataforma |
+> | Rev | El revisor, con su informe pegado | En curso | Es este informe; §8 sigue con «REVISOR2» |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | **Alcance 4: ADR-0091 no decide todos los lectores de `abierta_ms` de src/botsito/engine/.** §2 decide los cinco que pasan a `minuto_de_apertura` y los que se quedan en el instante sellado (comisiones, criterio, apertura de la `Operacion`, visor, «### Ordenes»). Faltan cuatro: **`_mover`** (`vigente_desde = p.abierta_ms`, la versión anterior del stop); **`_proximo_evento`**, con su `desde` (`max(ahora−1, abierta_ms, …)`) y su `decidido = p.abierta_ms`, que lo excluye de la vela del llenado; **`_marcar_hasta` → `_peor_del_minuto(…, p.abierta_ms, …)`** (el filtro de ticks); y las claves de orden de `cableado.py`. §0.e del informe sí los nombraba. «Lo que no cambia» del ADR («el «ahora − 1», la vela de la salida tras un llenado») cubre `:793` de forma implícita, pero ni `:725`, ni `:795`, ni `:945`. Por mi lectura, los tres son neutros (`_nivel_de_la_vela` compara `inicio >= decidido`, y k fin − 1 sigue por debajo del inicio de k+1), pero el ADR no lo dice ni da su porqué. | Grep de `abierta_ms\|cerrada_ms\|minuto_de_apertura` en src/botsito/engine: `broker.py:725`, `:793`, `:795`, `:945`; `cableado.py:469`, `:689`. ADR-0091:30-51 y :143-144. `llenado.py:140-142`. |
+> | b2 | importa | **Los fichero:línea de `cableado.py` en ADR-0091 son los de main, no los del código que el ADR describe.** 7eda14d añade `minuto_de_apertura,` en `cableado.py:52`, y todo lo de debajo baja una línea. El punto 6 pedía expresamente «fichero:línea de cableado.correr_dia», y es justo la lección heredada de RESPALDO-M1.md:494. §7.1, fila 6, repite las mismas líneas. | ADR-0091:22 `:302` (en la rama, `hasta_ms` está en `:303`); :74-75 `:304`, `:305` y `:307` (en la rama, `broker.avanzar` en `:305`, `_a_la_cuenta` en `:306` y `_el_punto_tras_el_evento` en `:308`); :84 `:355` (en la rama, `fin_ms` en `:356`). `git show main:src/botsito/engine/cableado.py \| sed -n '302,307p;355p'` da las líneas que cita el ADR. SELLO-RESPALDO-M1.md:785. |
+> | b3 | menor | **ADR-0091 §4 remite a «la verificación de §7»**, y el §7 del propio ADR es «Alcance medido». La verificación está en SELLO-RESPALDO-M1.md §7.3. | ADR-0091:73 frente a ADR-0091:100. |
+> | b4 | menor | **El punto 9 pide la salida «pegada», y §7.2 solo nombra los tests con una tabla.** La salida está solo en el anexo, que además no trae la línea de resumen de pytest: los 17 salen de contar las líneas FAILED. En la fase 0 sí se pegó un extracto (§0.f:258-266). | SELLO-RESPALDO-M1.md:802-809; `tail -3 tests_rama_con_main.txt`: la línea de puntos y FAILED, sin «17 failed». |
+>
+> Lo que la rama hace y la respuesta no pide, declarado:
+> - `test_peor_del_minuto.py` se reescribe en 7eda14d. Con (c2), la sonda 5 rompe en main ya por el milisegundo, y quien sigue fijando (e2) es la S7b. Está dicho en §7.2:815-817.
+> - `minuto_de_apertura` es una función única. Está dicho en §7.1, fila 1.
+>
+> Lo que la respuesta dice que no se toca: knowledge/, strategy_spec, parametros, ADR-0053, corpus y holdout. Ninguno aparece en `git diff --name-status main...HEAD`.
+>
+> ### Lo que no pude comprobar
+> - **El `make check` del árbol final del punto d)**: escribe. Hace falta antes del commit de d).
+> - **Que los clones `C:/cm/r` y `C:/cm/m` fueran como los describe la fila de exposiciones**, y qué dieron en `C:/cm/r` los 29 ficheros de §4.1: el informe no lo registra y los clones ya no existen.
+> - **Que `verificacion-rama.txt` salga de una ejecución real con el código de 7eda14d**: no volví a correr el visor, como se me indicó. Lo apoya que coincide byte a byte con `prototipo-c2.txt` sin las cabeceras, y que `prototipo_sello.py` no parchea nada en la forma `rama` (`aplicar`: `if forma in ("main", "rama"): return`).
+> - **Una sospecha sin demostrar:** con el sello en k fin − 1 = `ahora`, el «ahora − 1» de `_proximo_evento` (`broker.py:777`, `:793`) hace que el `avanzar` siguiente vuelva a evaluar la vela k para las órdenes y posiciones que no cambiaron. Por mi lectura da siempre el mismo resultado (misma vela, mismo nivel, mismo `decidido`), pero no lo he medido, y el ADR dice que el «ahora − 1» «no cambia».
+> - **El efecto de a1 con ticks reales** (cuántos llenados por tick caen en .999): necesitaría datos y una corrida.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`; `git merge-base main HEAD`; `git log --format='%h %s' main..HEAD`; `git diff --stat main...HEAD`; `git status --short`
+> 2. Read: el encargo, `contrato.yaml` y `SELLO-RESPALDO-M1.md` entero
+> 3. `uv run python scripts/contrato_rama.py`; `uv run botsito state check`
+> 4. `git diff --stat`; `git diff` de HOLDOUT-EXPOSICIONES.md, el README, `simular-cierre.txt` y `prototipo_sello.py`
+> 5. `wc -l` y `head -12` de `verificacion-rama.txt` y `prototipo-c2.txt`; comparación en memoria sin cabeceras (`uv run python -c`, difflib)
+> 6. `grep` de `^## `, `^OK:` y de las líneas con R en `verificacion-rama.txt`; `cat censo-main-rama.txt`
+> 7. `head -30` y `grep` de IO de `comparar_formas.py`; `uv run python -B …/comparar_formas.py prototipo-main.txt verificacion-rama.txt` (a /dev/null y a `wc -c`; el `| diff -` lo negó la guardia y no lo rodeé); `wc -c` y `diff censo-main-c2.txt censo-main-rama.txt`
+> 8. `git diff main...HEAD -- src/`; Grep de `abierta_ms|cerrada_ms|minuto_de_apertura` en src/botsito/engine; Grep de `_sesion_de`
+> 9. Read: ADR-0091 entero; `broker.py:715-804`, `:828-855`, `:855-902`, `:900-989`, `:1110-1144`; `cableado.py:296-359`; `llenado.py:134-157`; `prototipo_sello.py:186-205` y `:240-287`; `simular_cierre.py`; `tests/unit/test_sello_respaldo.py`; `.gitattributes`
+> 10. `git diff main...HEAD` de los cuatro ADR enmendados y del índice; `git diff main...HEAD` de los cuatro ficheros de test reescritos; `git diff dacd533 7eda14d -- tests/unit/test_peor_del_minuto.py`
+> 11. `grep FAILED/passed`, `head` y `tail` de `tests_rama_con_main.txt`
+> 12. `uv run pytest -p no:cacheprovider -q` de test_sello_respaldo, test_broker, test_broker_ordenes_stop, test_llenado, test_respaldo_m1_decision, test_peor_del_minuto y test_punto_usado (exit 0); y de test_adr, test_hoja_de_ruta y test_project_state (exit 0)
+> 13. `grep SELLO|PICO|passed|failed make-check.log`; `git rev-parse` de los árboles de cdffbfb, 3252548 y 7eda14d; `ls -la make-check.log`
+> 14. `git diff --name-status main...HEAD` sobre knowledge/, data/manifests/, .claude/, Makefile, tools/, docs/validation/, docs/state/ y docs/adr/; `git log … -- knowledge/spec knowledge/cases`; `git diff --numstat` de HISTORIA, HOLDOUT-EXPOSICIONES y los ADR
+> 15. `git worktree list`; `git branch -a`; `git tag -l | wc -l`
+> 16. `grep` de las operaciones de escritura en `simular_cierre.py`; `uv run python -B …/simular_cierre.py`
+> 17. Recuento de CR con Python en siete ficheros de los anexos (el `grep -c -U $'\r'` lo negó la guardia; el `git config` lo negó solo_lectura)
+> 18. Comparación con Python de las dos copias de la respuesta del consultor (encargo e informe): iguales, 6124 caracteres cada una
+> 19. `uv run python -c` con `casos_reservados`, solo recuentos
+> 20. `git show --stat` de cdffbfb, 3252548 y 7eda14d; `git grep ids-inexistentes HEAD -- …`
+> 21. Grep en el informe de «No sale HECHA|H sigue viva|22.794|no se implementa|no se crea|Va al borrador»
+> 22. `sed` de RESPALDO-M1.md:483-487, DECISIONES-DE-PROCESO.md:29 y ENTRADA-ENERO.md:633-637
+> 23. `git diff main...HEAD -- PROJECT_STATE.md`; `wc -c PROJECT_STATE.md`
+> 24. `uv run botsito knowledge validate` (a stdout)
+> 25. `uv run ruff check` y `ruff format --check` de `prototipo_sello.py` y `simular_cierre.py`; `git show 460595f:…/prototipo_sello.py | head -1`; `grep ruff|lint Makefile`
+> 26. `git show main:src/botsito/engine/cableado.py | sed -n '302,307p;355p'`; `git show 3252548:… | sed -n '304,307p'`
+>
+> ### Lo que la sesión tiene que declarar de esta pasada (no lo puedo escribir yo)
+> - **Salidas del prototipo.** Leí `verificacion-rama.txt` y `prototipo-c2.txt` (cabeceras, la comparación en memoria y un grep de las líneas con R) y `censo-main-rama.txt` y `censo-main-c2.txt`. Son órdenes y operaciones con instantes y R, por día, de los once días dev, sin precios.
+> - **Guiones.** Ejecuté `comparar_formas.py` (main frente a rama) y `simular_cierre.py` (PROJECT_STATE, la hoja de ruta y HISTORIA en memoria, con una copia temporal fuera del repo).
+> - **Recuentos.** Conté `casos_reservados`, solo recuentos: 34 en total; 0 en los once días, en 2026-08-07 y en los cuatro meses.
+> - **Tests y validación.** Ejecuté pytest de diez ficheros (sintéticos, con la spec y el registro reales en `test_punto_usado` y en los tests del cableado) y `knowledge validate`.
+> - **Lecturas.** Leí `tests_rama_con_main.txt`, `make-check.log` (grep), el código de src/botsito/engine, los ADR 0051, 0057, 0068, 0083 y 0091, y tres pasajes de RESPALDO-M1.md, DECISIONES-DE-PROCESO.md y ENTRADA-ENERO.md.
+> - **Lo que no toqué.** Ningún holdout, corpus, cruda, fotograma, libro, caso ni diagH; ningún listado de `knowledge/cases`; ninguna corrida del arnés.
+
+### 8.1 Lo que se hizo con los hallazgos de la segunda pasada
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado en el texto**: la cabecera de ADR-0091, su §2, la fila del índice y el recuadro de ADR-0051 dicen ahora que el SELLO solo cambia los minutos sin ticks y que, con ticks, lo único que cambia es el «+ 1» de `minuto_de_apertura` en un llenado por tick en el ms .999 (su sesión, su swap, su día y la marca de ese minuto), sin medir. Los recuadros de ADR-0068 y ADR-0083 hablan solo del sello, y para el sello «con ticks no cambia nada» es cierto: no se tocan. El código sigue la letra de la respuesta (punto 1: «leen (abierta_ms + 1) // 60000»); limitar el «+ 1» a las aperturas del respaldo sería una desviación, y queda para el consultor si la quiere |
+| a2 | importa | **Arreglado**: `test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap` (rompe en `main`, que lo pagaba; pasa en la rama) y ADR-0091 §3 lo nombra |
+| a3 | importa | **Arreglado**: H1, H8, la fila 42 de §0.h, §0.i y las filas 4 y 24 de §5, cada una con «Sin efecto desde la fase 2 (§7)» y lo que vale ahora |
+| a4 | menor | **Arreglado**: `prototipo_sello.py` lleva `# ruff: noqa: E501` a nivel de fichero, como `simular_cierre.py` (las líneas largas son el comando de uso y rutas literales); `ruff check` de los dos, en verde. `censo_cierre.py` y `comparar_formas.py` (fase 0, no tocados en d) conservan una línea larga cada uno: el lint de `make check` no cubre `docs/` |
+| a5 | menor | **Arreglado**: el docstring dice que los ocho rompían en el `main` de antes de `trabajo/respaldo-m1`, y que contra el de ADR-0091 los dos de la versión anterior pasan |
+| b1 | importa | **Arreglado**: ADR-0091 §2 lleva una lista nueva, «Leen `abierta_ms` y no cambian, sin tocarlos», con `_proximo_evento` (`desde` y `decidido`), `_mover` (`vigente_desde`), el filtro de ticks de `_peor_del_minuto` y el orden de las posiciones del cableado, cada uno con su porqué |
+| b2 | importa | **Arreglado**: las líneas de `cableado.py` en ADR-0091 son las de la rama (`:303`, `:305`, `:306`, `:308`, `:356`), y el «Impacto» lo dice; §7.1, fila 6, también |
+| b3 | menor | **Arreglado**: ADR-0091 §4 remite a SELLO-RESPALDO-M1.md §7.3 |
+| b4 | menor | **Arreglado**: los 18 FAILED pegados en §7.2, con la línea de resumen (`18 failed, 39 passed`), de una ejecución repetida en un clon de `main` nuevo (`C:/cm/m`, ya retirado) |
+
+**La sospecha del «ahora − 1»**: escrita en el «Impacto» de ADR-0091 con su porqué (la misma vela,
+el mismo nivel y el mismo `decidido` dan lo mismo, y lo decidido en el cierre lleva su instante en
+`desde`), y declarada sin test propio. **Lo que no pudo comprobar de los clones**: `C:/cm/r` corrió
+los 29 ficheros de §4.1 con (c2) escrito a mano y dio los mismos 10 rotos de §0.d, más la sonda 5 de
+la rama, que entonces cerraba en el sello viejo (se reescribió en 7eda14d); no se guardó a fichero.
 
 ## Estado
 
-EN CURSO: fase 2 (la respuesta del consultor del 2026-11-07, §7). Fase 0 (460595f) y fase 1
-(dacd533, (e2)) hechas; el informe de la primera entrega, 91aa179.
+Fase 0 (460595f), fase 1 ((e2), dacd533) y fase 2 ((c2) con ADR-0091: cdffbfb, 3252548, 7eda14d y el commit del informe) hechas. D2 dio (c2) y la respuesta del consultor del 2026-11-07 lo mandó implementar aquí; los once días verificados dan lo que dio el prototipo. Ninguna corrida del arnés ni cifra agregada.
+
+Rama lista para revisión, NO cerrada.

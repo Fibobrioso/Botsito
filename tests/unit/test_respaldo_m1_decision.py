@@ -5,13 +5,14 @@ son anteriores a la decision; la vela del stop movido se evalua con el stop ANTE
 §4) y la de una orden modificada, con su version anterior. Con ticks no cambia nada: el tick en
 que se decide ya no contaba. Velas y ticks SINTETICOS de 2030; contrato 1 y escala 1.
 
-Los ocho del primer bloque ROMPEN en `main` (que evalua la vela de la decision); los del segundo
-pasan en los dos lados: lo que la condicion no puede cambiar.
+Los ocho del primer bloque rompian en el `main` de antes de `trabajo/respaldo-m1` (que evaluaba la
+vela de la decision); los del segundo pasan en los dos lados: lo que la condicion no puede cambiar.
 
 Desde ADR-0091 (`trabajo/sello-respaldo-m1`) el evento del respaldo se sella en el ultimo
 milisegundo de su vela y no en su cierre: los instantes esperados llevan el «- 1», y los dos tests
 de la version anterior mueven o modifican A MEDIA VELA, donde se sigue alcanzando (en el cierre la
-vela ya se evaluo: un test nuevo lo fija)."""
+vela ya se evaluo: un test nuevo lo fija). Contra el `main` de ADR-0091 (2e04b63), esos dos pasan;
+los demas que llevan el «- 1» y el nuevo del cierre, no (SELLO-RESPALDO-M1.md §7.2)."""
 
 from __future__ import annotations
 

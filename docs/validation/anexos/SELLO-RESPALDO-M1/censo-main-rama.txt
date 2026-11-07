@@ -1,0 +1,34 @@
+# prototipo-main.txt frente a verificacion-rama.txt, por dia
+## 2026-01-14: operaciones IGUALES; ordenes iguales
+## 2026-01-23: operaciones DISTINTAS; ordenes distintas
+  solo en verificacion-rama.txt: 11-15 | venta | M1 11:03Z | stop (respaldo_m1) | -1.00
+  orden solo en prototipo-main.txt: stop | venta | 11:01:59.999Z | cancelada | 11:03 | M1 k sin ticks; la LLENARIA
+  orden solo en verificacion-rama.txt: stop | venta | 11:01:59.999Z | llenada | 11:03 | 
+## 2026-04-03: operaciones IGUALES; ordenes iguales
+## 2026-04-06: operaciones IGUALES; ordenes distintas
+  orden solo en prototipo-main.txt: stop | compra | 10:00:59.999Z | llenada | 10:02 | 
+  orden solo en verificacion-rama.txt: stop | compra | 10:00:59.999Z | llenada | 10:01 | 
+## 2026-04-07: operaciones IGUALES; ordenes distintas
+  orden solo en prototipo-main.txt: stop | compra | 10:31:59.999Z | llenada | 10:33 | 
+  orden solo en verificacion-rama.txt: stop | compra | 10:31:59.999Z | llenada | 10:32 | 
+## 2026-04-22: operaciones IGUALES; ordenes distintas
+  orden solo en prototipo-main.txt: stop | venta | 07:44:59.999Z | llenada | 07:46 | 
+  orden solo en prototipo-main.txt: stop | venta | 07:48:59.999Z | cancelada | 07:51 | M1 k sin ticks; no la llena
+  orden solo en verificacion-rama.txt: stop | venta | 07:44:59.999Z | llenada | 07:45 | 
+  orden solo en verificacion-rama.txt: stop | venta | 07:47:59.999Z | cancelada | 07:51 | M1 k sin ticks; no la llena
+## 2026-04-23: operaciones IGUALES; ordenes distintas
+  orden solo en prototipo-main.txt: stop | venta | 04:59:59.999Z | llenada | 05:01 | 
+  orden solo en verificacion-rama.txt: stop | venta | 04:59:59.999Z | llenada | 05:00 | 
+  orden solo en verificacion-rama.txt: stop | venta | 05:01:59.999Z | cancelada | 05:02 | M1 k sin ticks; no la llena
+## 2026-07-10: operaciones DISTINTAS; ordenes distintas
+  solo en verificacion-rama.txt: 07-11 | compra | M1 05:27Z | stop (respaldo_m1) | -1.00
+  orden solo en prototipo-main.txt: stop | compra | 05:26:59.999Z | cancelada | 05:27 | M1 k sin ticks; la LLENARIA
+  orden solo en verificacion-rama.txt: stop | compra | 05:26:59.999Z | llenada | 05:27 | 
+## 2026-07-16: operaciones IGUALES; ordenes iguales
+## 2026-08-17: operaciones IGUALES; ordenes iguales
+## 2026-08-20: operaciones IGUALES; ordenes distintas
+  orden solo en prototipo-main.txt: stop | venta | 06:59:59.999Z | llenada | 07:02 | 
+  orden solo en prototipo-main.txt: stop | venta | 07:44:59.999Z | llenada | 07:47 | 
+  orden solo en verificacion-rama.txt: stop | venta | 06:59:59.999Z | llenada | 07:01 | 
+  orden solo en verificacion-rama.txt: stop | venta | 07:44:59.999Z | llenada | 07:46 | 
+  orden solo en verificacion-rama.txt: stop | venta | 07:58:59.999Z | cancelada | 07:59 | M1 k sin ticks; no la llena

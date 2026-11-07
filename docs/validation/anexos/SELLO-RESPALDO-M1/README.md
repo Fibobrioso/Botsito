@@ -40,3 +40,15 @@ Los once días: 2026-01-14, 01-23, 04-03, 04-06, 04-07, 04-22, 04-23, 07-10, 07-
 
 Las tres salidas del prototipo se repitieron tras el `ruff format` de los guiones y salieron
 idénticas (salvo la línea `TIEMPO`).
+
+## Fase 2 (respuesta del consultor del 2026-11-07: (c2) con ADR-0091 en esta rama)
+
+- `prototipo_sello.py` lleva una cuarta forma, `rama`: nada parcheado, el código commiteado de la
+  rama, para la verificación del punto 8 (las tres de antes son para el código de `main`) →
+  `verificacion-rama.txt` (los once días; idéntico a `prototipo-c2.txt` sin las cabeceras) y, con
+  `comparar_formas.py`, `censo-main-rama.txt`.
+- `tests_rama_con_main.txt`: los seis ficheros de test de la rama que tocan el sello, en un clon de
+  `main` (`C:/cm/m`): `18 failed, 39 passed` (`SELLO-RESPALDO-M1.md` §7.2; repetido tras la segunda
+  pasada del revisor con el test del swap al cierre).
+- `simular_cierre.py`, reescrito para el cierre con H HECHA (§0.g) → `simular-cierre.txt`. La
+  versión de la PARADA (H reescrita) está en el historial (460595f).

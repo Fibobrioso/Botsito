@@ -1,5 +1,5 @@
-H viva en la copia simulada? True
+H viva en la copia? False; H HECHA en HISTORIA? True; NA:H en la hoja simulada? False
 a: []
 b: []
 c: []
-PROJECT_STATE con las lineas del cierre: 22794 bytes; los cuatro tests de test_project_state: ok
+PROJECT_STATE con las lineas del cierre: 21860 bytes (wc -c de la copia); con el Current Feature del cierre: 21986; los cuatro tests de test_project_state: ok

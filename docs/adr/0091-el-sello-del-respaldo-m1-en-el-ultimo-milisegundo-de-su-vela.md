@@ -8,9 +8,12 @@ phase: post-F14 (rama `trabajo/sello-respaldo-m1`, R3.6 de la hoja de ruta; H de
 
 > Decisión del consultor del 2026-11-07 (respuesta a la PARADA de `trabajo/sello-respaldo-m1`,
 > puntos 0 a 7), sobre lo medido en `docs/validation/SELLO-RESPALDO-M1.md` §0. Recuadros en ADR-0051
-> §5 (y su NOTA del 2026-10-29), ADR-0057 §1, ADR-0068 §2 y ADR-0083 D2, y fila del índice. **Solo
-> cambia los minutos SIN ticks**: el bot en vivo opera con ticks (ADR-0051 §8), y el respaldo M1 solo
-> cubre los minutos que no los tienen (en construcción, las horas perdidas de los manifiestos).
+> §5 (y su NOTA del 2026-10-29), ADR-0057 §1, ADR-0068 §2 y ADR-0083 D2, y fila del índice. **El
+> sello solo cambia los minutos SIN ticks**: el bot en vivo opera con ticks (ADR-0051 §8), y el
+> respaldo M1 solo cubre los minutos que no los tienen (en construcción, las horas perdidas de los
+> manifiestos). **Con ticks, una sola cosa** (§2): el «+ 1» de `minuto_de_apertura` lleva al minuto
+> siguiente un llenado por TICK en el milisegundo .999 de un minuto (su sesión, su swap, su día y
+> la marca de ese minuto); no está medido, y en vivo es el caso raro de un tick en ese milisegundo.
 
 ## Decision
 
@@ -19,7 +22,7 @@ phase: post-F14 (rama `trabajo/sello-respaldo-m1`, R3.6 de la hoja de ruta; H de
 En las tres funciones del respaldo de `engine/llenado.py` (`primer_llenado_limite`,
 `primer_llenado_stop`, `primera_salida`), el instante de un evento de la vela k es **k fin − 1 ms**
 (`_sello_ms`), y una vela entra si ese instante cae en `(desde, hasta]`. Antes era k fin, un
-milisegundo DESPUÉS de que el motor decidiera en el cierre de k (`cableado.py:302`,
+milisegundo DESPUÉS de que el motor decidiera en el cierre de k (`engine/cableado.py:303`,
 `hasta_ms = instante · 60000 − 1`): el `avanzar` de ese cierre no llegaba a la vela k, y lo que el
 motor cancelaba o cerraba en ese cierre no se evaluaba nunca contra la vela en que aún vivía. Ahora
 la vela k se evalúa en el `avanzar` del cierre de k, ANTES de que el motor decida. `Mercado.cotizacion`,
@@ -48,7 +51,22 @@ apertura (`Broker._operacion`), el instante de la operación para el criterio de
 (`cableado.py`, `_operaciones_del_bot`), la apertura de la `Operacion`, el detalle del visor y la
 tabla «### Ordenes». El «+ 1» mueve también un llenado por TICK en el milisegundo .999 de un minuto
 al minuto siguiente: es la misma convención que `_sesion_de` aplica a `colocada_ms`
-(`cableado.py`), y un tick en .999 cae en el último milisegundo de su minuto.
+(`cableado.py`), y un tick en .999 cae en el último milisegundo de su minuto. No está medido (ver
+la cabecera).
+
+**Leen `abierta_ms` y no cambian, sin tocarlos** (revisor, segunda pasada, b1), con su porqué:
+
+- `Broker._proximo_evento`, la salida (`desde = max(ahora − 1, abierta_ms, stop_movido_ms)` y
+  `decidido = abierta_ms`): con la apertura en k fin − 1 ms, la vela del llenado sigue fuera de la
+  salida (su sello no es posterior a `desde`), y la siguiente, k + 1, empieza después de
+  `decidido`, así que `_nivel_de_la_vela` la evalúa con el stop de nacimiento, como antes;
+- `Broker._mover` (`vigente_desde`, el instante desde el que vale el stop anterior): un instante, no
+  un minuto; lo compara `_nivel_de_la_vela` con el inicio de una vela, y k fin − 1 ms sigue por
+  debajo del inicio de k + 1;
+- `Broker._marcar_hasta` → `_peor_del_minuto(lado, m, abierta_ms, hasta)`: el filtro de ticks
+  `abierta_ms <= tick <= hasta`; sin ticks no se usa, y con ticks no cambia;
+- el orden de las posiciones en `cableado._operaciones_del_bot` y en `detalle_para_visor`: solo
+  ordena.
 
 ### 3. Los lectores de `cerrada_ms`: en el instante sellado
 
@@ -60,7 +78,8 @@ porqué:
 - Los swaps hasta el cierre (`Broker._operacion`, `instante <= cerrada_ms`) y `_marcar_hasta(instante)`
   antes de cerrar: **no neutros**. Una posición que sale por la última vela antes de un corte sale
   ANTES del corte, y no paga su swap; con el sello en k fin lo pagaba, aunque la vela que la cerró
-  acabara en el corte. Es lo correcto: la posición no vivió más allá de su vela.
+  acabara en el corte. Es lo correcto: la posición no vivió más allá de su vela. Lo fija un test
+  (`test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap`), que rompe en `main`.
 - Las marcas dentro de la operación (`abierta_ms <= ms <= cerrada_ms`): la marca de la vela k se toma
   en k fin − 1 ms y sigue dentro.
 - El cierre de la `Operacion` y el visor (`cableado.py`, `detalle_para_visor`): el instante sellado.
@@ -70,9 +89,10 @@ porqué:
 El motor ve el evento del respaldo de la vela k en el cierre de k, no en el siguiente. Todo lo que
 decide a partir de él llega un cierre antes:
 
-- la orden siguiente se coloca un cierre antes (en la verificación de §7, 2026-04-22, 04-23 y 08-20);
-- **ADR-0083 D2** (`cableado.correr_dia`: `broker.avanzar(hasta_ms)` en `engine/cableado.py:304`,
-  `_a_la_cuenta` en `:305` y `_el_punto_tras_el_evento` en `:307`, antes del intérprete): un
+- la orden siguiente se coloca un cierre antes (en la verificación de SELLO-RESPALDO-M1.md §7.3,
+  2026-04-22, 04-23 y 08-20);
+- **ADR-0083 D2** (`cableado.correr_dia`: `broker.avanzar(hasta_ms)` en `engine/cableado.py:305`,
+  `_a_la_cuenta` en `:306` y `_el_punto_tras_el_evento` en `:308`, antes del intérprete): un
   rechazo al llenar gasta el punto, y un stop u objetivo sin ganancia libera la zona, en el cierre
   de k; la reentrada por D5 sale en ese mismo cierre;
 - **D4** (RN-011, `operacion_abierta`): la posición abierta se ve en el cierre de k.
@@ -81,7 +101,7 @@ decide a partir de él llega un cierre antes:
 
 Se aceptan. Las dos velas transcurren enteras antes de su borde:
 
-- **el fin del día** (`cableado.correr_dia`, `fin_ms = ultimo · 60000 − 1`, `engine/cableado.py:355`): la última vela de la
+- **el fin del día** (`cableado.correr_dia`, `fin_ms = ultimo · 60000 − 1`, `engine/cableado.py:356`): la última vela de la
   ventana se evalúa en el `avanzar(fin_ms)`, antes de cerrar lo vivo y cancelar lo pendiente; una
   pendiente que esa vela cruza se llena, y una posición cuyo stop toca sale por él;
 - **el borde de ADR-0068**: un llenado en la vela que acaba en W (el inicio de la ventana prohibida)
@@ -141,7 +161,13 @@ las cotizaciones; el límite declarado contradice lo medido.
 - **Tests**: `tests/unit/test_sello_respaldo.py` (nuevo) y los diez de `main` que fijaban el sello en
   k fin, reescritos (SELLO-RESPALDO-M1.md §7).
 - **Lo que no cambia**: los ticks, el `desde` exclusivo, el «ahora − 1», la vela de la salida tras un
-  llenado (ADR-0051 §3, su NOTA), `Mercado.cotizacion`, el reloj del motor (ADR-0053).
+  llenado (ADR-0051 §3, su NOTA), `Mercado.cotizacion`, el reloj del motor (ADR-0053). Con el sello en
+  k fin − 1 ms = `ahora`, el «ahora − 1» deja que el `avanzar` siguiente vuelva a mirar la vela k
+  para lo que no cambió en el cierre (una pendiente que no llenó, una posición cuyo stop no tocó):
+  es la misma vela con el mismo nivel y el mismo `decidido`, y da lo mismo; lo que se decidió en
+  el cierre (colocar, modificar, mover, llenar) lleva su instante en `desde` y la deja fuera. No
+  está medido con un test propio.
+- Las líneas citadas de `engine/` son las del código con este ADR (`trabajo/sello-respaldo-m1`).
 - **La repetición del trader sin ticks** (ADR-0051 §8) cambia otra vez: no se vuelve a correr.
 
 ## Fecha / fase

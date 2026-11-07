@@ -17,7 +17,11 @@ escribir aqui sobre el `main` de hoy):
   los tres lectores del minuto de apertura con `(abierta_ms + 1)`: `_marcar_hasta` (`broker.py:933`),
   la sesion de la posicion (`cableado.py:469`) y el break even por velas
   (`primitivas_broker.py:279`, aqui con la vela del llenado fuera de la lista que reciben
-  `zona_posterior_completada` y `nivel_de_activacion_posterior`, que es lo que hace el «+ 1»).
+  `zona_posterior_completada` y `nivel_de_activacion_posterior`, que es lo que hace el «+ 1»);
+- `rama` (fase 2, la verificacion del punto 8 de la respuesta del consultor): nada parcheado, el
+  codigo commiteado de la rama con ADR-0091, y la sesion de cada posicion leida como la lee la rama
+  (`minuto_de_apertura`). Las tres de arriba son para el codigo de `main`: sobre el de la rama, `e2`
+  y `c2` parchearian dos veces.
 
 Solo dias `dev` de construccion, por la compuerta del visor (un caso oculto se niega sin leerse). Por
 dia, nunca agregado: las ordenes (tipo, lado, colocada, resultado e instante), las posiciones
@@ -28,6 +32,7 @@ vela). No imprime precios.
     uv run python -B docs/validation/anexos/SELLO-RESPALDO-M1/prototipo_sello.py <forma> <carpeta> <AAAA-MM-DD> [...]
 """
 
+# ruff: noqa: E501  (la cabecera lleva el comando de uso y rutas literales, como simular_cierre.py)
 from __future__ import annotations
 
 import sys
@@ -44,7 +49,7 @@ from botsito.engine import arnes, broker, cableado, llenado, primitivas_broker
 from botsito.engine.cableado import OperacionCriterio, _precio
 
 REPO = Path.cwd()
-FORMAS = ("main", "e2", "c2")
+FORMAS = ("main", "e2", "c2", "rama")
 DEL_RESPALDO = {"primer_llenado_limite", "primer_llenado_stop", "primera_salida"}
 ORIGINAL_FIN_MS = llenado._fin_ms
 ORIGINAL_ZONA = primitivas_broker.zona_posterior_completada
@@ -165,7 +170,7 @@ def aplicar(forma: str) -> None:
         ACTUAL.append(self)
 
     broker.Broker.__init__ = init  # type: ignore[method-assign]  # solo registra el broker del dia
-    if forma == "main":
+    if forma in ("main", "rama"):
         return
     broker.Broker._peor_del_minuto = peor_del_minuto_e2  # type: ignore[assignment,method-assign]
     if forma == "e2":
@@ -228,7 +233,7 @@ def informe(motor: cableado.MotorCableado, dia: str) -> None:
         )
     print("posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R")
     for p in sorted(b.posiciones.values(), key=lambda x: (x.abierta_ms, x.id)):
-        a = p.abierta_ms + 1 if FORMA == "c2" else p.abierta_ms
+        a = p.abierta_ms + 1 if FORMA in ("c2", "rama") else p.abierta_ms
         minuto = a // MS_POR_MINUTO
         sesion = next((n for n, d, h in limites if d <= minuto < h), "fuera")
         stop0 = b.ordenes[p.orden_id].stop if p.orden_id in b.ordenes else p.stop

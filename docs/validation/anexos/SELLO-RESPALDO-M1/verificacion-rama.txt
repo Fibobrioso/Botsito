@@ -1,0 +1,344 @@
+# prototipo_sello.py, forma rama
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-01-14.html
+TIEMPO: 5.8 s para 1 dias
+## 2026-01-14
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | compra | 05:59:59.999Z | cancelada | 06:00:59.999Z | M1 k con ticks
+  o2 | stop | compra | 06:00:59.999Z | llenada | 06:01:10.917Z | 
+  o3 | stop | compra | 06:01:59.999Z | llenada | 06:02:00.327Z | 
+  o4 | stop | compra | 06:02:59.999Z | rechazada | 06:02:59.999Z | 
+  o5 | stop | compra | 06:04:59.999Z | llenada | 06:05:00.996Z | 
+  o6 | stop | compra | 07:55:59.999Z | cancelada | 07:56:59.999Z | M1 k sin ticks; no la llena
+  o7 | stop | compra | 07:56:59.999Z | cancelada | 07:57:59.999Z | M1 k sin ticks; no la llena
+  o8 | stop | compra | 07:57:59.999Z | cancelada | 08:00:59.999Z | M1 k con ticks
+  o9 | stop | compra | 08:00:59.999Z | llenada | 08:01:30.033Z | 
+  o10 | stop | compra | 08:02:59.999Z | llenada | 08:03:50.562Z | 
+  o11 | stop | compra | 11:01:59.999Z | cancelada | 11:04:59.999Z | M1 k con ticks
+  o12 | stop | compra | 11:04:59.999Z | cancelada | 11:05:59.999Z | M1 k con ticks
+  o13 | stop | compra | 11:05:59.999Z | cancelada | 11:06:59.999Z | M1 k con ticks
+  o14 | stop | compra | 11:06:59.999Z | cancelada | 11:08:59.999Z | M1 k con ticks
+  o15 | stop | compra | 11:08:59.999Z | cancelada | 11:09:59.999Z | M1 k con ticks
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o2 | 07-11 | compra | 06:01:10.917Z (ticks) | M1 06:01Z | stop (ticks) | 06:01:27.139Z | -1.25
+  o3 | 07-11 | compra | 06:02:00.327Z (ticks) | M1 06:02Z | stop (ticks) | 06:02:04.216Z | -1.25
+  o5 | 07-11 | compra | 06:05:00.996Z (ticks) | M1 06:05Z | stop (ticks) | 06:05:01.417Z | -1.00
+  o9 | 07-11 | compra | 08:01:30.033Z (ticks) | M1 08:01Z | stop (ticks) | 08:02:53.289Z | -1.12
+  o10 | 07-11 | compra | 08:03:50.562Z (ticks) | M1 08:03Z | objetivo (ticks) | 08:04:45.018Z | 3.60
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-01-23.html
+TIEMPO: 10.1 s para 1 dias
+## 2026-01-23
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | compra | 06:08:59.999Z | cancelada | 06:10:59.999Z | M1 k con ticks
+  o2 | stop | compra | 06:10:59.999Z | cancelada | 06:11:59.999Z | M1 k con ticks
+  o3 | stop | compra | 06:11:59.999Z | cancelada | 06:12:59.999Z | M1 k con ticks
+  o4 | stop | compra | 06:12:59.999Z | cancelada | 06:13:59.999Z | M1 k con ticks
+  o5 | stop | compra | 06:13:59.999Z | cancelada | 06:15:59.999Z | M1 k con ticks
+  o6 | stop | compra | 06:15:59.999Z | llenada | 06:17:57.133Z | 
+  o7 | stop | compra | 06:18:59.999Z | cancelada | 06:19:59.999Z | M1 k con ticks
+  o8 | stop | compra | 06:19:59.999Z | llenada | 06:22:40.618Z | 
+  o9 | stop | compra | 06:50:59.999Z | llenada | 06:53:22.955Z | 
+  o10 | stop | compra | 06:54:59.999Z | llenada | 06:55:52.515Z | 
+  o11 | stop | compra | 06:56:59.999Z | cancelada | 06:59:59.999Z | M1 k con ticks
+  o12 | stop | compra | 07:20:59.999Z | cancelada | 07:23:59.999Z | M1 k con ticks
+  o13 | stop | compra | 07:23:59.999Z | cancelada | 07:24:59.999Z | M1 k con ticks
+  o14 | stop | compra | 07:24:59.999Z | cancelada | 07:25:59.999Z | M1 k con ticks
+  o15 | stop | compra | 07:25:59.999Z | cancelada | 07:26:59.999Z | M1 k con ticks
+  o16 | stop | compra | 07:26:59.999Z | cancelada | 07:27:59.999Z | M1 k con ticks
+  o17 | stop | compra | 07:27:59.999Z | cancelada | 07:28:59.999Z | M1 k con ticks
+  o18 | stop | compra | 07:28:59.999Z | cancelada | 07:29:59.999Z | M1 k con ticks
+  o19 | stop | compra | 07:29:59.999Z | rechazada | 07:29:59.999Z | 
+  o20 | stop | compra | 08:09:59.999Z | cancelada | 08:11:59.999Z | M1 k con ticks
+  o21 | stop | compra | 08:11:59.999Z | cancelada | 08:14:59.999Z | M1 k con ticks
+  o22 | stop | compra | 08:14:59.999Z | cancelada | 08:15:59.999Z | M1 k con ticks
+  o23 | stop | compra | 08:15:59.999Z | cancelada | 08:17:59.999Z | M1 k con ticks
+  o24 | stop | compra | 08:17:59.999Z | cancelada | 08:18:59.999Z | M1 k con ticks
+  o25 | stop | compra | 08:18:59.999Z | cancelada | 08:19:59.999Z | M1 k con ticks
+  o26 | stop | venta | 10:51:59.999Z | cancelada | 10:52:59.999Z | M1 k con ticks
+  o27 | stop | venta | 10:52:59.999Z | cancelada | 10:57:59.999Z | M1 k con ticks
+  o28 | stop | venta | 11:00:59.999Z | cancelada | 11:01:59.999Z | M1 k sin ticks; no la llena
+  o29 | stop | venta | 11:01:59.999Z | llenada | 11:03:59.999Z | 
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o6 | 07-11 | compra | 06:17:57.133Z (ticks) | M1 06:17Z | stop (ticks) | 06:18:04.097Z | -1.00
+  o8 | 07-11 | compra | 06:22:40.618Z (ticks) | M1 06:22Z | stop (ticks) | 06:25:06.901Z | -1.05
+  o9 | 07-11 | compra | 06:53:22.955Z (ticks) | M1 06:53Z | stop (ticks) | 06:54:35.983Z | -1.00
+  o10 | 07-11 | compra | 06:55:52.515Z (ticks) | M1 06:55Z | stop (ticks) | 06:56:06.907Z | -1.00
+  o29 | 11-15 | venta | 11:03:59.999Z (respaldo_m1) | M1 11:03Z | stop (respaldo_m1) | 11:08:59.999Z | -1.00
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-03.html
+TIEMPO: 6.1 s para 1 dias
+## 2026-04-03
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | venta | 05:51:59.999Z | cancelada | 05:53:59.999Z | M1 k con ticks
+  o2 | stop | venta | 05:53:59.999Z | cancelada | 05:54:59.999Z | M1 k con ticks
+  o3 | stop | venta | 05:54:59.999Z | cancelada | 05:57:59.999Z | M1 k con ticks
+  o4 | stop | venta | 05:57:59.999Z | cancelada | 05:58:59.999Z | M1 k con ticks
+  o5 | stop | venta | 05:58:59.999Z | cancelada | 06:08:59.999Z | M1 k con ticks
+  o6 | stop | venta | 06:08:59.999Z | cancelada | 06:09:59.999Z | M1 k con ticks
+  o7 | stop | venta | 06:09:59.999Z | cancelada | 06:10:59.999Z | M1 k con ticks
+  o8 | stop | venta | 06:10:59.999Z | cancelada | 06:11:59.999Z | M1 k con ticks
+  o9 | stop | venta | 06:11:59.999Z | cancelada | 06:12:59.999Z | M1 k con ticks
+  o10 | stop | venta | 06:12:59.999Z | cancelada | 06:13:59.999Z | M1 k con ticks
+  o11 | stop | venta | 06:13:59.999Z | llenada | 06:15:00.303Z | 
+  o12 | stop | venta | 06:47:59.999Z | cancelada | 06:48:59.999Z | M1 k con ticks
+  o13 | stop | venta | 06:48:59.999Z | cancelada | 06:49:59.999Z | M1 k con ticks
+  o14 | stop | venta | 06:49:59.999Z | cancelada | 06:50:59.999Z | M1 k con ticks
+  o15 | stop | venta | 06:50:59.999Z | llenada | 06:54:47.659Z | 
+  o16 | stop | compra | 09:47:59.999Z | cancelada | 09:48:59.999Z | M1 k sin ticks; no la llena
+  o17 | stop | compra | 09:48:59.999Z | cancelada | 09:51:59.999Z | M1 k sin ticks; no la llena
+  o18 | stop | compra | 09:51:59.999Z | rechazada | 09:51:59.999Z | 
+  o19 | stop | compra | 11:36:59.999Z | cancelada | 11:37:59.999Z | M1 k con ticks
+  o20 | stop | compra | 11:37:59.999Z | cancelada | 11:39:59.999Z | M1 k con ticks
+  o21 | stop | compra | 11:39:59.999Z | llenada | 11:43:37.172Z | 
+  o22 | stop | compra | 12:31:59.999Z | cancelada | 12:35:59.999Z | M1 k con ticks
+  o23 | stop | compra | 12:35:59.999Z | cancelada | 12:36:59.999Z | M1 k con ticks
+  o24 | stop | compra | 12:36:59.999Z | cancelada | 12:37:59.999Z | M1 k con ticks
+  o25 | stop | compra | 12:37:59.999Z | llenada | 12:41:05.338Z | 
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o11 | 07-11 | venta | 06:15:00.303Z (ticks) | M1 06:15Z | stop (ticks) | 06:17:20.510Z | -1.00
+  o15 | 07-11 | venta | 06:54:47.659Z (ticks) | M1 06:54Z | stop (ticks) | 06:56:45.670Z | -0.07
+  o21 | 11-15 | compra | 11:43:37.172Z (ticks) | M1 11:43Z | stop (ticks) | 12:09:04.872Z | -0.23
+  o25 | 11-15 | compra | 12:41:05.338Z (ticks) | M1 12:41Z | stop (ticks) | 12:46:30.059Z | -0.08
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-06.html
+TIEMPO: 7.4 s para 1 dias
+## 2026-04-06
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | compra | 06:27:59.999Z | cancelada | 06:28:59.999Z | M1 k con ticks
+  o2 | stop | compra | 06:28:59.999Z | cancelada | 06:29:59.999Z | M1 k con ticks
+  o3 | stop | compra | 06:29:59.999Z | cancelada | 06:30:59.999Z | M1 k con ticks
+  o4 | stop | compra | 06:30:59.999Z | cancelada | 06:31:59.999Z | M1 k con ticks
+  o5 | stop | compra | 06:31:59.999Z | llenada | 06:32:00.594Z | 
+  o6 | stop | compra | 08:53:59.999Z | llenada | 08:57:01.307Z | 
+  o7 | stop | compra | 09:54:59.999Z | cancelada | 09:55:59.999Z | M1 k con ticks
+  o8 | stop | compra | 09:55:59.999Z | cancelada | 09:56:59.999Z | M1 k con ticks
+  o9 | stop | compra | 09:56:59.999Z | cancelada | 09:57:59.999Z | M1 k con ticks
+  o10 | stop | compra | 09:57:59.999Z | cancelada | 10:00:59.999Z | M1 k sin ticks; no la llena
+  o11 | stop | compra | 10:00:59.999Z | llenada | 10:01:59.999Z | 
+  o12 | stop | compra | 10:47:59.999Z | cancelada | 10:50:59.999Z | M1 k sin ticks; no la llena
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o5 | 07-11 | compra | 06:32:00.594Z (ticks) | M1 06:32Z | stop (ticks) | 06:37:05.311Z | -1.06
+  o6 | 07-11 | compra | 08:57:01.307Z (ticks) | M1 08:57Z | manual (ticks) | 08:58:59.999Z | -0.28
+  o11 | 11-15 | compra | 10:01:59.999Z (respaldo_m1) | M1 10:01Z | stop (respaldo_m1) | 10:14:59.999Z | 0.00
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-07.html
+TIEMPO: 7.4 s para 1 dias
+## 2026-04-07
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | venta | 04:59:59.999Z | llenada | 05:00:33.503Z | 
+  o2 | stop | venta | 05:00:59.999Z | rechazada | 05:00:59.999Z | 
+  o3 | stop | venta | 05:01:59.999Z | cancelada | 05:07:59.999Z | M1 k con ticks
+  o4 | stop | venta | 05:07:59.999Z | llenada | 05:09:27.936Z | 
+  o5 | stop | venta | 06:29:59.999Z | cancelada | 06:30:59.999Z | M1 k con ticks
+  o6 | stop | venta | 06:30:59.999Z | llenada | 06:31:14.164Z | 
+  o7 | stop | venta | 06:33:59.999Z | cancelada | 06:34:59.999Z | M1 k con ticks
+  o8 | stop | venta | 06:34:59.999Z | cancelada | 06:35:59.999Z | M1 k con ticks
+  o9 | stop | venta | 06:35:59.999Z | cancelada | 06:36:59.999Z | M1 k con ticks
+  o10 | stop | venta | 06:36:59.999Z | cancelada | 06:37:59.999Z | M1 k con ticks
+  o11 | stop | venta | 06:37:59.999Z | cancelada | 06:38:59.999Z | M1 k con ticks
+  o12 | stop | venta | 06:38:59.999Z | cancelada | 06:41:59.999Z | M1 k con ticks
+  o13 | stop | venta | 07:49:59.999Z | cancelada | 07:51:59.999Z | M1 k con ticks
+  o14 | stop | venta | 08:02:59.999Z | cancelada | 08:05:59.999Z | M1 k con ticks
+  o15 | stop | venta | 08:05:59.999Z | cancelada | 08:06:59.999Z | M1 k con ticks
+  o16 | stop | venta | 08:06:59.999Z | cancelada | 08:07:59.999Z | M1 k con ticks
+  o17 | stop | venta | 08:07:59.999Z | cancelada | 08:08:59.999Z | M1 k con ticks
+  o18 | stop | venta | 08:08:59.999Z | cancelada | 08:09:59.999Z | M1 k con ticks
+  o19 | stop | venta | 08:09:59.999Z | cancelada | 08:10:59.999Z | M1 k con ticks
+  o20 | stop | venta | 08:10:59.999Z | cancelada | 08:11:59.999Z | M1 k con ticks
+  o21 | stop | venta | 08:11:59.999Z | cancelada | 08:13:59.999Z | M1 k con ticks
+  o22 | stop | venta | 08:13:59.999Z | cancelada | 08:14:59.999Z | M1 k con ticks
+  o23 | stop | venta | 08:14:59.999Z | cancelada | 08:18:59.999Z | M1 k con ticks
+  o24 | stop | venta | 08:46:59.999Z | cancelada | 08:50:59.999Z | M1 k con ticks
+  o25 | stop | venta | 08:52:59.999Z | cancelada | 08:53:59.999Z | M1 k con ticks
+  o26 | stop | venta | 08:53:59.999Z | cancelada | 08:54:59.999Z | M1 k con ticks
+  o27 | stop | venta | 08:54:59.999Z | cancelada | 08:55:59.999Z | M1 k con ticks
+  o28 | stop | compra | 10:21:59.999Z | cancelada | 10:22:59.999Z | M1 k sin ticks; no la llena
+  o29 | stop | compra | 10:22:59.999Z | cancelada | 10:23:59.999Z | M1 k sin ticks; no la llena
+  o30 | stop | compra | 10:23:59.999Z | cancelada | 10:24:59.999Z | M1 k sin ticks; no la llena
+  o31 | stop | compra | 10:24:59.999Z | rechazada | 10:24:59.999Z | 
+  o32 | stop | compra | 10:31:59.999Z | llenada | 10:32:59.999Z | 
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o1 | 07-11 | venta | 05:00:33.503Z (ticks) | M1 05:00Z | stop (ticks) | 05:00:34.137Z | -1.00
+  o4 | 07-11 | venta | 05:09:27.936Z (ticks) | M1 05:09Z | stop (ticks) | 05:14:13.954Z | -0.33
+  o6 | 07-11 | venta | 06:31:14.164Z (ticks) | M1 06:31Z | stop (ticks) | 06:33:07.479Z | -1.00
+  o32 | 11-15 | compra | 10:32:59.999Z (respaldo_m1) | M1 10:32Z | stop (respaldo_m1) | 10:37:59.999Z | -1.00
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-22.html
+TIEMPO: 8.0 s para 1 dias
+## 2026-04-22
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | venta | 05:09:59.999Z | cancelada | 05:12:59.999Z | M1 k con ticks
+  o2 | stop | venta | 05:12:59.999Z | cancelada | 05:13:59.999Z | M1 k con ticks
+  o3 | stop | venta | 05:13:59.999Z | llenada | 05:15:02.197Z | 
+  o4 | stop | venta | 05:16:59.999Z | cancelada | 05:19:59.999Z | M1 k con ticks
+  o5 | stop | venta | 05:19:59.999Z | cancelada | 05:20:59.999Z | M1 k con ticks
+  o6 | stop | venta | 05:20:59.999Z | cancelada | 05:21:59.999Z | M1 k con ticks
+  o7 | stop | venta | 05:21:59.999Z | cancelada | 05:25:59.999Z | M1 k con ticks
+  o8 | stop | venta | 07:44:59.999Z | llenada | 07:45:59.999Z | 
+  o9 | stop | venta | 07:47:59.999Z | cancelada | 07:51:59.999Z | M1 k sin ticks; no la llena
+  o10 | stop | compra | 09:54:59.999Z | cancelada | 09:55:59.999Z | M1 k con ticks
+  o11 | stop | compra | 09:55:59.999Z | cancelada | 09:58:59.999Z | M1 k con ticks
+  o12 | stop | compra | 09:58:59.999Z | cancelada | 09:59:59.999Z | M1 k con ticks
+  o13 | stop | compra | 09:59:59.999Z | cancelada | 10:00:59.999Z | M1 k sin ticks; no la llena
+  o14 | stop | compra | 10:00:59.999Z | rechazada | 10:00:59.999Z | 
+  o15 | stop | compra | 11:35:59.999Z | cancelada | 11:36:59.999Z | M1 k con ticks
+  o16 | stop | compra | 11:36:59.999Z | cancelada | 11:37:59.999Z | M1 k con ticks
+  o17 | stop | compra | 11:37:59.999Z | cancelada | 11:38:59.999Z | M1 k con ticks
+  o18 | stop | compra | 11:38:59.999Z | cancelada | 11:39:59.999Z | M1 k con ticks
+  o19 | stop | compra | 11:39:59.999Z | cancelada | 11:40:59.999Z | M1 k con ticks
+  o20 | stop | compra | 11:40:59.999Z | cancelada | 11:41:59.999Z | M1 k con ticks
+  o21 | stop | compra | 11:41:59.999Z | cancelada | 11:42:59.999Z | M1 k con ticks
+  o22 | stop | compra | 11:42:59.999Z | cancelada | 11:43:59.999Z | M1 k con ticks
+  o23 | stop | compra | 11:43:59.999Z | cancelada | 11:45:59.999Z | M1 k con ticks
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o3 | 07-11 | venta | 05:15:02.197Z (ticks) | M1 05:15Z | stop (ticks) | 05:16:09.723Z | -1.29
+  o8 | 07-11 | venta | 07:45:59.999Z (respaldo_m1) | M1 07:45Z | stop (respaldo_m1) | 07:47:59.999Z | -1.00
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-04-23.html
+TIEMPO: 4.7 s para 1 dias
+## 2026-04-23
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | venta | 04:59:59.999Z | llenada | 05:00:59.999Z | 
+  o2 | stop | venta | 05:01:59.999Z | cancelada | 05:02:59.999Z | M1 k sin ticks; no la llena
+  o3 | stop | venta | 05:02:59.999Z | cancelada | 05:04:59.999Z | M1 k sin ticks; no la llena
+  o4 | stop | venta | 05:04:59.999Z | cancelada | 05:05:59.999Z | M1 k sin ticks; no la llena
+  o5 | stop | venta | 05:05:59.999Z | cancelada | 05:06:59.999Z | M1 k sin ticks; no la llena
+  o6 | stop | venta | 05:06:59.999Z | cancelada | 05:07:59.999Z | M1 k sin ticks; no la llena
+  o7 | stop | venta | 05:07:59.999Z | cancelada | 05:08:59.999Z | M1 k sin ticks; no la llena
+  o8 | stop | venta | 05:08:59.999Z | cancelada | 05:09:59.999Z | M1 k sin ticks; no la llena
+  o9 | stop | venta | 05:09:59.999Z | cancelada | 05:13:59.999Z | M1 k sin ticks; no la llena
+  o10 | stop | venta | 05:13:59.999Z | cancelada | 05:15:59.999Z | M1 k sin ticks; no la llena
+  o11 | stop | venta | 06:47:59.999Z | llenada | 06:49:36.248Z | 
+  o12 | stop | venta | 06:51:59.999Z | cancelada | 06:52:59.999Z | M1 k con ticks
+  o13 | stop | venta | 06:52:59.999Z | cancelada | 06:54:59.999Z | M1 k con ticks
+  o14 | stop | venta | 06:54:59.999Z | llenada | 06:55:12.773Z | 
+  o15 | stop | venta | 07:07:59.999Z | cancelada | 07:14:59.999Z | M1 k con ticks
+  o16 | stop | venta | 12:13:59.999Z | cancelada | 12:17:59.999Z | M1 k con ticks
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o1 | 07-11 | venta | 05:00:59.999Z (respaldo_m1) | M1 05:00Z | stop (respaldo_m1) | 05:01:59.999Z | -1.14
+  o11 | 07-11 | venta | 06:49:36.248Z (ticks) | M1 06:49Z | stop (ticks) | 06:51:50.533Z | 0.00
+  o14 | 07-11 | venta | 06:55:12.773Z (ticks) | M1 06:55Z | objetivo (ticks) | 07:03:08.603Z | 3.56
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-07-10.html
+TIEMPO: 6.9 s para 1 dias
+## 2026-07-10
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | compra | 05:19:59.999Z | rechazada | 05:19:59.999Z | 
+  o2 | stop | compra | 05:21:59.999Z | rechazada | 05:21:59.999Z | 
+  o3 | stop | compra | 05:26:59.999Z | llenada | 05:27:59.999Z | 
+  o4 | stop | compra | 07:07:59.999Z | cancelada | 07:08:59.999Z | M1 k con ticks
+  o5 | stop | compra | 07:08:59.999Z | rechazada | 07:08:59.999Z | 
+  o6 | stop | compra | 07:11:59.999Z | llenada | 07:14:10.108Z | 
+  o7 | stop | compra | 07:48:59.999Z | llenada | 07:50:14.460Z | 
+  o8 | stop | compra | 07:55:59.999Z | cancelada | 07:56:59.999Z | M1 k con ticks
+  o9 | stop | compra | 07:56:59.999Z | cancelada | 07:57:59.999Z | M1 k con ticks
+  o10 | stop | compra | 07:57:59.999Z | cancelada | 07:58:59.999Z | M1 k con ticks
+  o11 | stop | compra | 07:58:59.999Z | llenada | 07:59:02.973Z | 
+  o12 | stop | compra | 08:54:59.999Z | cancelada | 08:57:59.999Z | M1 k con ticks
+  o13 | stop | venta | 10:52:59.999Z | cancelada | 10:53:59.999Z | M1 k con ticks
+  o14 | stop | venta | 10:53:59.999Z | cancelada | 10:57:59.999Z | M1 k con ticks
+  o15 | stop | venta | 10:57:59.999Z | llenada | 10:58:43.421Z | 
+  o16 | stop | venta | 11:01:59.999Z | cancelada | 11:02:59.999Z | M1 k con ticks
+  o17 | stop | venta | 12:14:59.999Z | cancelada | 12:17:59.999Z | M1 k con ticks
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o3 | 07-11 | compra | 05:27:59.999Z (respaldo_m1) | M1 05:27Z | stop (respaldo_m1) | 05:30:59.999Z | -1.00
+  o6 | 07-11 | compra | 07:14:10.108Z (ticks) | M1 07:14Z | stop (ticks) | 07:15:18.396Z | -1.00
+  o7 | 07-11 | compra | 07:50:14.460Z (ticks) | M1 07:50Z | stop (ticks) | 07:55:49.389Z | -1.00
+  o11 | 07-11 | compra | 07:59:02.973Z (ticks) | M1 07:59Z | stop (ticks) | 08:00:02.862Z | -1.11
+  o15 | 11-15 | venta | 10:58:43.421Z (ticks) | M1 10:58Z | stop (ticks) | 11:01:55.088Z | -1.00
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-07-16.html
+TIEMPO: 7.6 s para 1 dias
+## 2026-07-16
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | compra | 05:45:59.999Z | cancelada | 05:47:59.999Z | M1 k con ticks
+  o2 | stop | compra | 05:47:59.999Z | cancelada | 05:48:59.999Z | M1 k con ticks
+  o3 | stop | compra | 05:48:59.999Z | cancelada | 05:49:59.999Z | M1 k con ticks
+  o4 | stop | compra | 05:49:59.999Z | cancelada | 05:50:59.999Z | M1 k con ticks
+  o5 | stop | compra | 05:50:59.999Z | cancelada | 05:53:59.999Z | M1 k con ticks
+  o6 | stop | compra | 05:53:59.999Z | llenada | 05:55:58.327Z | 
+  o7 | stop | compra | 08:06:59.999Z | cancelada | 08:09:59.999Z | M1 k con ticks
+  o8 | stop | compra | 08:09:59.999Z | cancelada | 08:11:59.999Z | M1 k con ticks
+  o9 | stop | compra | 08:11:59.999Z | cancelada | 08:13:59.999Z | M1 k con ticks
+  o10 | stop | compra | 09:32:59.999Z | cancelada | 09:33:59.999Z | M1 k con ticks
+  o11 | stop | compra | 09:33:59.999Z | cancelada | 09:34:59.999Z | M1 k con ticks
+  o12 | stop | compra | 09:34:59.999Z | llenada | 09:35:57.617Z | 
+  o13 | stop | compra | 10:59:59.999Z | cancelada | 11:00:59.999Z | M1 k sin ticks; no la llena
+  o14 | stop | compra | 11:00:59.999Z | cancelada | 11:01:59.999Z | M1 k sin ticks; no la llena
+  o15 | stop | compra | 11:01:59.999Z | rechazada | 11:01:59.999Z | 
+  o16 | stop | compra | 11:04:59.999Z | rechazada | 11:04:59.999Z | 
+  o17 | stop | compra | 12:34:59.999Z | cancelada | 12:35:59.999Z | M1 k con ticks
+  o18 | stop | compra | 12:35:59.999Z | cancelada | 12:36:59.999Z | M1 k con ticks
+  o19 | stop | compra | 12:36:59.999Z | cancelada | 12:37:59.999Z | M1 k con ticks
+  o20 | stop | compra | 12:37:59.999Z | cancelada | 12:39:59.999Z | M1 k con ticks
+  o21 | stop | compra | 12:39:59.999Z | llenada | 12:40:41.881Z | 
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o6 | 07-11 | compra | 05:55:58.327Z (ticks) | M1 05:55Z | stop (ticks) | 05:56:17.707Z | -1.00
+  o12 | 11-15 | compra | 09:35:57.617Z (ticks) | M1 09:35Z | objetivo (ticks) | 09:44:42.079Z | 3.67
+  o21 | 11-15 | compra | 12:40:41.881Z (ticks) | M1 12:40Z | stop (ticks) | 12:43:04.285Z | -1.03
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-08-17.html
+TIEMPO: 6.3 s para 1 dias
+## 2026-08-17
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | compra | 04:59:59.999Z | llenada | 05:00:01.510Z | 
+  o2 | stop | compra | 05:08:59.999Z | cancelada | 05:10:59.999Z | M1 k con ticks
+  o3 | stop | compra | 05:10:59.999Z | cancelada | 05:11:59.999Z | M1 k con ticks
+  o4 | stop | compra | 05:11:59.999Z | cancelada | 05:13:59.999Z | M1 k con ticks
+  o5 | stop | compra | 08:50:59.999Z | cancelada | 08:51:59.999Z | M1 k con ticks
+  o6 | stop | compra | 08:51:59.999Z | cancelada | 08:52:59.999Z | M1 k con ticks
+  o7 | stop | compra | 08:52:59.999Z | cancelada | 08:53:59.999Z | M1 k con ticks
+  o8 | stop | compra | 08:53:59.999Z | cancelada | 08:54:59.999Z | M1 k con ticks
+  o9 | stop | compra | 08:54:59.999Z | cancelada | 08:55:59.999Z | M1 k con ticks
+  o10 | stop | compra | 08:55:59.999Z | cancelada | 08:58:59.999Z | M1 k con ticks
+  o11 | stop | compra | 10:04:59.999Z | cancelada | 10:05:59.999Z | M1 k con ticks
+  o12 | stop | compra | 10:05:59.999Z | cancelada | 10:06:59.999Z | M1 k con ticks
+  o13 | stop | compra | 10:06:59.999Z | cancelada | 10:08:59.999Z | M1 k con ticks
+  o14 | stop | compra | 10:08:59.999Z | cancelada | 10:09:59.999Z | M1 k con ticks
+  o15 | stop | compra | 10:09:59.999Z | cancelada | 10:10:59.999Z | M1 k con ticks
+  o16 | stop | compra | 10:10:59.999Z | llenada | 10:12:19.726Z | 
+  o17 | stop | compra | 10:40:59.999Z | cancelada | 10:41:59.999Z | M1 k con ticks
+  o18 | stop | compra | 10:41:59.999Z | llenada | 10:42:34.365Z | 
+  o19 | stop | compra | 11:19:59.999Z | cancelada | 11:20:59.999Z | M1 k sin ticks; no la llena
+  o20 | stop | compra | 11:20:59.999Z | cancelada | 11:22:59.999Z | M1 k sin ticks; no la llena
+  o21 | stop | compra | 11:22:59.999Z | rechazada | 11:22:59.999Z | 
+  o22 | stop | compra | 11:27:59.999Z | rechazada | 11:27:59.999Z | 
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o1 | 07-11 | compra | 05:00:01.510Z (ticks) | M1 05:00Z | stop (ticks) | 05:08:36.447Z | -1.00
+  o16 | 11-15 | compra | 10:12:19.726Z (ticks) | M1 10:12Z | stop (ticks) | 10:22:26.262Z | 0.00
+  o18 | 11-15 | compra | 10:42:34.365Z (ticks) | M1 10:42Z | stop (ticks) | 10:50:02.699Z | -0.20
+OK: C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\1a9c2925-3d32-486a-82c3-ac050c997b8c\scratchpad\paginas\rama\caso-eurusd-2026-08-20.html
+TIEMPO: 6.4 s para 1 dias
+## 2026-08-20
+ordenes: id | tipo | lado | colocada | resultado | instante del resultado | M1 k
+  o1 | stop | venta | 05:57:59.999Z | cancelada | 05:58:59.999Z | M1 k con ticks
+  o2 | stop | venta | 05:58:59.999Z | cancelada | 06:00:59.999Z | M1 k con ticks
+  o3 | stop | venta | 06:00:59.999Z | llenada | 06:02:00.566Z | 
+  o4 | stop | venta | 06:10:59.999Z | cancelada | 06:11:59.999Z | M1 k con ticks
+  o5 | stop | venta | 06:46:59.999Z | cancelada | 06:47:59.999Z | M1 k con ticks
+  o6 | stop | venta | 06:47:59.999Z | cancelada | 06:52:59.999Z | M1 k con ticks
+  o7 | stop | venta | 06:52:59.999Z | cancelada | 06:54:59.999Z | M1 k con ticks
+  o8 | stop | venta | 06:54:59.999Z | cancelada | 06:55:59.999Z | M1 k con ticks
+  o9 | stop | venta | 06:55:59.999Z | cancelada | 06:57:59.999Z | M1 k con ticks
+  o10 | stop | venta | 06:57:59.999Z | cancelada | 06:58:59.999Z | M1 k con ticks
+  o11 | stop | venta | 06:58:59.999Z | cancelada | 06:59:59.999Z | M1 k con ticks
+  o12 | stop | venta | 06:59:59.999Z | llenada | 07:01:59.999Z | 
+  o13 | stop | venta | 07:42:59.999Z | cancelada | 07:44:59.999Z | M1 k sin ticks; no la llena
+  o14 | stop | venta | 07:44:59.999Z | llenada | 07:46:59.999Z | 
+  o15 | stop | venta | 07:58:59.999Z | cancelada | 07:59:59.999Z | M1 k sin ticks; no la llena
+  o16 | stop | venta | 07:59:59.999Z | cancelada | 08:01:59.999Z | M1 k con ticks
+  o17 | stop | venta | 08:42:59.999Z | cancelada | 08:44:59.999Z | M1 k con ticks
+  o18 | stop | venta | 08:44:59.999Z | llenada | 08:47:50.835Z | 
+  o19 | stop | compra | 10:48:59.999Z | cancelada | 10:49:59.999Z | M1 k con ticks
+  o20 | stop | compra | 10:49:59.999Z | llenada | 10:50:01.754Z | 
+  o21 | stop | compra | 10:50:59.999Z | cancelada | 10:51:59.999Z | M1 k con ticks
+  o22 | stop | compra | 10:51:59.999Z | cancelada | 10:52:59.999Z | M1 k con ticks
+  o23 | stop | compra | 10:52:59.999Z | cancelada | 10:53:59.999Z | M1 k con ticks
+  o24 | stop | compra | 10:53:59.999Z | cancelada | 10:54:59.999Z | M1 k con ticks
+  o25 | stop | compra | 10:54:59.999Z | cancelada | 10:56:59.999Z | M1 k con ticks
+  o26 | stop | compra | 10:56:59.999Z | cancelada | 10:58:59.999Z | M1 k con ticks
+  o27 | stop | compra | 10:58:59.999Z | llenada | 11:00:03.111Z | 
+  o28 | stop | compra | 11:44:59.999Z | cancelada | 11:45:59.999Z | M1 k con ticks
+  o29 | stop | compra | 11:45:59.999Z | cancelada | 11:47:59.999Z | M1 k con ticks
+  o30 | stop | compra | 11:47:59.999Z | cancelada | 11:48:59.999Z | M1 k con ticks
+  o31 | stop | compra | 11:48:59.999Z | llenada | 11:49:09.102Z | 
+  o32 | stop | compra | 11:51:59.999Z | cancelada | 11:52:59.999Z | M1 k con ticks
+posiciones: orden | sesion | lado | abierta | vela de entrada | salida | cerrada | R
+  o3 | 07-11 | venta | 06:02:00.566Z (ticks) | M1 06:02Z | stop (ticks) | 06:10:22.394Z | -1.00
+  o12 | 07-11 | venta | 07:01:59.999Z (respaldo_m1) | M1 07:01Z | stop (respaldo_m1) | 07:33:59.999Z | 0.00
+  o14 | 07-11 | venta | 07:46:59.999Z (respaldo_m1) | M1 07:46Z | stop (respaldo_m1) | 07:58:59.999Z | -1.00
+  o18 | 07-11 | venta | 08:47:50.835Z (ticks) | M1 08:47Z | stop (ticks) | 08:51:17.002Z | -1.00
+  o20 | 11-15 | compra | 10:50:01.754Z (ticks) | M1 10:50Z | stop (ticks) | 10:50:38.132Z | -1.00
+  o27 | 11-15 | compra | 11:00:03.111Z (ticks) | M1 11:00Z | stop (ticks) | 11:05:32.855Z | -1.00
+  o31 | 11-15 | compra | 11:49:09.102Z (ticks) | M1 11:49Z | stop (ticks) | 11:51:06.361Z | -1.00

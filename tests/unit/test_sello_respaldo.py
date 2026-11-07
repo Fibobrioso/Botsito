@@ -6,9 +6,9 @@ ROMPEN en `main` (que sellaba en k fin): la vela en cuyo cierre el motor cancela
 llena (S6 del diagnostico de H); el fin del dia evalua la ultima vela (S4); un llenado en la vela
 que acaba en el inicio de una ventana de ADR-0068 se sella fuera de ella (S5); un llenado en la
 ultima vela antes del corte se sella en el corte menos 1 ms y sigue sin pagar ese swap ni cambiar
-de dia (S9); y ADR-0083 D2 por el cableado: el punto se libera, y se vuelve a colocar, en el
-cierre de la vela del stop (no en el siguiente), y un rechazo al llenar lo gasta en el cierre de
-la vela del llenado.
+de dia (S9); una SALIDA en esa vela ya no paga el swap del corte (ADR-0091 §3); y ADR-0083 D2
+por el cableado: el punto se libera, y se vuelve a colocar, en el cierre de la vela del stop (no
+en el siguiente), y un rechazo al llenar lo gasta en el cierre de la vela del llenado.
 
 Pasan en los dos lados: la marca de la vela del llenado no se toma (S1, la neutralidad de
 `minuto_de_apertura`, ADR-0091 §2). Velas SINTETICAS de 2030; las del bróker con contrato 1 y escala
@@ -171,6 +171,24 @@ def test_un_llenado_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap_ni_cambia
     b.colocar_limite("x", "compra", 990, UNO, 980, 1030, _cierre(n))
     assert b.ordenes["x"].estado == RECHAZADA  # posiciones_dia_max: la posicion es del dia 16
     assert b.traza().rechazos[-1].motivo == "posiciones_dia_max"
+
+
+def test_una_salida_en_la_ultima_vela_antes_del_corte_no_paga_ese_swap() -> None:
+    """ADR-0091 §3 (los lectores de `cerrada_ms`, NO neutros en el swap): una larga viva desde
+    antes del corte (huso UTC) sale por su stop con la ultima vela antes de la medianoche. La salida
+    se sella en la medianoche menos 1 ms: la posicion no vivio mas alla de su vela y no paga el swap
+    de ese corte. En `main` se sellaba en la medianoche y lo pagaba."""
+    n = int(a_minuto(datetime(2030, 1, 16, 0, 0, tzinfo=UTC)))
+    m1 = [_vela(n - k, 1005, 1006, 1004, 1005) for k in (5, 4, 3, 2)]
+    m1 += [_vela(n - 1, 1005, 1006, 985, 990), _vela(n, 990, 991, 989, 990)]
+    b = _broker(m1, swap_largo_puntos=Decimal(1))
+    b.abrir_conocida("p", "compra", 1000, UNO, 990, 1030, _ms(n - 5))
+    for k in range(n - 5, n + 1):
+        b.avanzar(_cierre(k))
+    p = b.posiciones["p"]
+    assert (p.motivo_cierre, p.cerrada_ms) == (STOP, _ms(n) - 1)
+    assert p.swaps == []
+    assert not [c for c in b.operaciones_cerradas()[0].cargos if c.concepto == "swap"]
 
 
 # ------------------------------------------------------------- en el broker: pasan en los dos
