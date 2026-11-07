@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.6.1` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 18.6.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (10)
+## ABIERTA (9)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -17,16 +17,6 @@ Afecta a: `break_even_criterio_ruptura`.
 ### A-16 · cuanto se separan las velas de Oanda de las de Dukascopy · medicion
 
 ¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23
-
-### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion
-
-MEDICION, no pregunta al trader. ¿cuanto va el reloj del servidor de FTMO por delante de UTC en horario estandar, y con que calendario cambia de hora: el de Nueva York, el europeo o ninguno? La ficha de FTMO dice "GMT+2 +DST" sin nombrar el calendario, y lo que midio la demo de FundedNext (120 minutos, calendario de Nueva York) no se hereda (ADR-0026). Desde ADR-0027 este reloj ya no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor y si anclaje_h4 (17:00 Nueva York) cae de verdad en su medianoche. COMPROBAR EL CALENDARIO EXIGE OBSERVAR UNA TRANSICION de hora en el terminal, asi que esta ambiguedad NO SE CIERRA ANTES DEL CAMBIO DE HORA DE OCTUBRE: el desfase base se puede medir cualquier dia, la regla de horario de verano no. VERIFICACION EXPLICITA (añadida el 2026-09-14 al validar la rama): confirmar EN EL PANEL de la prueba gratuita de FTMO que el corte del dia de riesgo -cuando se recalcula el limite diario- cae a medianoche CE(S)T y NO a la medianoche del servidor. Las dos se separan una hora (el servidor va a GMT+2/+3 y CE(S)T a GMT+1/+2) y equivocarse cuesta la cuenta. reloj_dia_riesgo se queda CONFIRMED en `civil_operativa` por el reglamento (ADR-0027); si el panel dijera otra cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS
-
-Afecta a: `broker_offset_base`, `broker_dst`.
-
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST».
-
-Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 
@@ -80,7 +70,7 @@ Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa
 
 Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Impacto»: «Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00.».
 
-## DECIDIDA (7)
+## DECIDIDA (8)
 
 ### A-15 · alcance de la ventana operativa · cerrada por `ADR-0024` el 2026-09-12
 
@@ -96,7 +86,7 @@ Afecta a: `filtro_noticias`.
 
 ### A-19 · cuando empieza el dia y la semana de riesgo · cerrada por `ADR-0027` el 2026-09-14
 
-DESCARTADA una via el 2026-09-12: la pestaña `Prop firm` de FX Replay no la tiene el trader configurada con FundedNext, asi que no hay atajo. Sigue siendo el panel de la cuenta (F17). ¿en que reloj cae la medianoche que reinicia el tope diario del 4,5 % y el domingo que reinicia el semanal: el del servidor del broker, que cambia con el calendario de Nueva York, o el del grafico? Hay que verificarlo en el panel de la cuenta, no suponerlo. DECIDIDA el 2026-09-14 por ADR-0027: con la firma elegida (ADR-0026) la contesta el reglamento, no el panel -"Account balance at midnight CE(S)T of the previous day"-. El corte es la medianoche CIVIL centroeuropea, que es el reloj del trader (huso_operativa), y no la del servidor, que era nuestro default. reloj_dia_riesgo pasa a `civil_operativa`, CONFIRMED. Lo que SI queda por medir -el reloj del servidor, que ya no decide el corte- es A-28
+DESCARTADA una via el 2026-09-12: la pestaña `Prop firm` de FX Replay no la tiene el trader configurada con FundedNext, asi que no hay atajo. Sigue siendo el panel de la cuenta (F17). ¿en que reloj cae la medianoche que reinicia el tope diario del 4,5 % y el domingo que reinicia el semanal: el del servidor del broker, que cambia con el calendario de Nueva York, o el del grafico? Hay que verificarlo en el panel de la cuenta, no suponerlo. DECIDIDA el 2026-09-14 por ADR-0027: con la firma elegida (ADR-0026) la contesta el reglamento, no el panel -"Account balance at midnight CE(S)T of the previous day"-. El corte es la medianoche CIVIL centroeuropea, que es el reloj del trader (huso_operativa), y no la del servidor, que era nuestro default. reloj_dia_riesgo pasa a `civil_operativa`, CONFIRMED. Lo que SI quedaba por medir -el reloj del servidor, que ya no decide el corte- era A-28, DECIDIDA el 2026-11-06 por ADR-0090
 
 Afecta a: `reloj_dia_riesgo`.
 
@@ -116,11 +106,21 @@ Cuando en M15 ves varias zonas de liquidez posibles, ¿cuál eliges y por qué? 
 
 ### A-27 · las especificaciones de EURUSD en FTMO · medicion · cerrada por `ADR-0071` el 2026-10-09
 
-MEDICION, no pregunta al trader. ¿que digits, tamaño de contrato, lote minimo, paso de lote y stops level tiene EURUSD en la cuenta de FTMO? Los cinco se midieron el 2026-09-05 en una demo de FundedNext, la firma que ADR-0026 descarta, y se conservan como DEFAULT declarado porque EURUSD tiene las mismas especificaciones en casi cualquier broker: no se heredan como medicion. El que mas puede diferir es el stops level, que en FundedNext valia 0 y dejaba RN-026 sin activarse nunca. Se mide en la prueba gratuita de FTMO con SymbolInfo* (junto con el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y el pre-vuelo de F33 aborta si la cuenta real dice otra cosa. DECIDIDA el 2026-10-09 por ADR-0071 con la ejecucion 1 de MedirDemoFTMO en la prueba gratuita de FTMO (CSV congelado en data/manifests/demo_ftmo/, sha256 86f0df8b): digits 5, contrato 100000, lote minimo 0.01, paso 0.01 y stops level 0 (filas 6, 8, 9, 11 y 4), los mismos valores que se conservaban de FundedNext. El freeze level es 0, el lote maximo 50 y los modos de llenado FOK e IOC. Las ejecuciones 2 y 3 y el pre-vuelo de F33 vuelven a leer la ficha; una diferencia la reabre con otro ADR
+MEDICION, no pregunta al trader. ¿que digits, tamaño de contrato, lote minimo, paso de lote y stops level tiene EURUSD en la cuenta de FTMO? Los cinco se midieron el 2026-09-05 en una demo de FundedNext, la firma que ADR-0026 descarta, y se conservan como DEFAULT declarado porque EURUSD tiene las mismas especificaciones en casi cualquier broker: no se heredan como medicion. El que mas puede diferir es el stops level, que en FundedNext valia 0 y dejaba RN-026 sin activarse nunca. Se mide en la prueba gratuita de FTMO con SymbolInfo* (junto con el lote maximo, el freeze level y los modos de llenado, que el registro todavia no guarda) y el pre-vuelo de F33 aborta si la cuenta real dice otra cosa. DECIDIDA el 2026-10-09 por ADR-0071 con la ejecucion 1 de MedirDemoFTMO en la prueba gratuita de FTMO (CSV congelado en data/manifests/demo_ftmo/, sha256 86f0df8b): digits 5, contrato 100000, lote minimo 0.01, paso 0.01 y stops level 0 (filas 6, 8, 9, 11 y 4), los mismos valores que se conservaban de FundedNext. El freeze level es 0, el lote maximo 50 y los modos de llenado FOK e IOC. Las ejecuciones 2 y 3 (2026-10-29 y 2026-11-05) leyeron la misma ficha (ADR-0090 §6); el pre-vuelo de F33 la vuelve a leer, y una diferencia la reabre con otro ADR
 
 Afecta a: `instrumento_digitos`, `instrumento_contrato`, `instrumento_lote_minimo`, `instrumento_lote_paso`, `instrumento_stops_level`.
 
 Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R11: «Lote mínimo, paso de lote, stops level, freeze level y modos de llenado: NO ENCONTRADA».
+
+### A-28 · el reloj del servidor de FTMO y su regla de horario de verano · medicion · cerrada por `ADR-0090` el 2026-11-06
+
+MEDICION, no pregunta al trader. ¿cuanto va el reloj del servidor de FTMO por delante de UTC en horario estandar, y con que calendario cambia de hora: el de Nueva York, el europeo o ninguno? La ficha de FTMO dice "GMT+2 +DST" sin nombrar el calendario, y lo que midio la demo de FundedNext (120 minutos, calendario de Nueva York) no se hereda (ADR-0026). Desde ADR-0027 este reloj ya no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor y si anclaje_h4 (17:00 Nueva York) cae de verdad en su medianoche. COMPROBAR EL CALENDARIO EXIGE OBSERVAR UNA TRANSICION de hora en el terminal, asi que esta ambiguedad NO SE CIERRA ANTES DEL CAMBIO DE HORA DE OCTUBRE: el desfase base se puede medir cualquier dia, la regla de horario de verano no. VERIFICACION EXPLICITA (añadida el 2026-09-14 al validar la rama): confirmar EN EL PANEL de la prueba gratuita de FTMO que el corte del dia de riesgo -cuando se recalcula el limite diario- cae a medianoche CE(S)T y NO a la medianoche del servidor. Las dos se separan una hora (el servidor va a GMT+2/+3 y CE(S)T a GMT+1/+2) y equivocarse cuesta la cuenta. reloj_dia_riesgo se queda CONFIRMED en `civil_operativa` por el reglamento (ADR-0027); si el panel dijera otra cosa, se reabre A-19 y el parametro vuelve a DEFAULT_AMBIGUOUS. DECIDIDA el 2026-11-06 por ADR-0090 con las tres ejecuciones de MedirDemoFTMO en la prueba gratuita de FTMO (manifiestos en data/manifests/demo_ftmo/, sha256 86f0df8b, 1b82f61b y 59565621): desfase servidor - GMT de 180, 180 y 120 minutos el 2026-10-09, el 2026-10-29 y el 2026-11-05 (fila 31 de las tres). El 29-oct discrimina -Europa ya habia cambiado de hora, EE. UU. no- y solo casa con broker_offset_base 120 y broker_dst `us`. La VERIFICACION EXPLICITA del panel no la hace ninguna ejecucion ni la ha declarado Aleks: sale de aqui a una linea propia de la Next Action, con su texto entero (ADR-0090 §1)
+
+Afecta a: `broker_offset_base`, `broker_dst`.
+
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «Platform server time: MetaTrader 4, MetaTrader 5 = GMT+2 +DST».
+
+Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fuente», fila R10: «El calendario del +DST: NO ENCONTRADA».
 
 ## RESUELTA (40)
 

@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.6.1` · hash `f52a741bb298…`
+`spec_version 18.6.2` · hash `f082aa3ce356…`
 
-112 en total: 100 con valor y 12 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+112 en total: 102 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -16,6 +16,8 @@
 | `break_even_condicion` | `tocar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-0ccafcba` | tocar/cierre |
 | `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
+| `broker_dst` | `us` | CONFIRMED | broker | `ADR-0090` | que calendario de cambio de hora sigue el servidor |
+| `broker_offset_base` | `120` | CONFIRMED | broker | `ADR-0090` | minutos que el reloj del servidor va por delante de UTC en horario estandar |
 | `caja_bloque` | `r6` | CONFIRMED | estrategia | `fb-2026-11-04-sesion-06-a1cc60d0` | que velas dan el 1 de la caja de la orden stop |
 | `caja_lado_de_ruido` | `caja_entera` | CONFIRMED | estrategia | `fb-2026-11-04-sesion-06-3f466670` | que parte de la caja se compara con el nivel tomado para descartarla por el lado de ruido |
 | `caja_se_fija` | `en_cada_cierre_m1` | CONFIRMED | ejecucion | `ADR-0074` | cuando se fija el 1 de la caja de la orden stop |
@@ -113,8 +115,6 @@
 
 No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno de estos revienta, y eso es lo correcto.
 
-- **`broker_dst`** (broker) — con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
-- **`broker_offset_base`** (broker) — desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
 - **`objetivo_extension`** (estrategia) — hasta donde se extiende el objetivo; solo si objetivo_extension_activa
 - **`perdida_trader_dia_usd`** (estrategia) — el tope de perdida del dia en dinero, si el trader lo da asi (perdida_trader_unidad = usd); con `porcentaje` no se lee
 - **`perdida_trader_reinicio_huso`** (estrategia) — con que reloj vuelve a contar el trader su perdida -«¿Cuando vuelves a empezar a contar?»-. Si no dice otro, el motor usa el huso de corte del perfil de cuenta y la traza lo marca como SUPUESTO; por eso puede quedarse UNKNOWN con el tope fijado. reloj_dia_riesgo dice que el dia de riesgo es la medianoche civil de huso_operativa: si el trader confirma, aqui va ese huso. SIN EFECTO con perdida_trader_reinicio = primera_sesion_dia_siguiente (DESDE EL 2026-11-05, sesion 6, S-2; ADR-0089): ese reloj no usa ningun huso, el motor no lee este parametro y se queda UNKNOWN; solo cuenta con `medianoche_huso`
@@ -131,6 +131,8 @@ No es que falte rellenarlos: es el comportamiento. El motor que intente leer uno
 Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un valor que nadie usa y nadie vigila (F12).
 
 - `anclaje_h4` → F15
+- `broker_dst` → F17, F24, F33
+- `broker_offset_base` → F17, F24, F33
 - `caja_bloque` → ADR-0064
 - `caja_se_fija` → ADR-0064, ADR-0074
 - `cierre_pendientes` → ADR-0068
@@ -177,7 +179,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 
 ### `anclaje_h4`
 
-donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirmo broker_dst en la demo de FundedNext. En FTMO esta SIN VERIFICAR: se contrasta con su rejilla H4 real al medir A-28, y si no coincide se abre ambiguedad y este valor no se toca por su cuenta (ADR-0027). El trader lo ve como las 23:00 en su pantalla, que va en Europe/Madrid (huso_grafico), y es cierto 337 dias al año; los otros 28 -en 2026, del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017). DESDE EL 2026-10-06 (ADR-0069, A-42 RESUELTA) las dos sesiones del trader son las velas de ESTA rejilla que empiezan en ancla + 8 h y ancla + 12 h: en su grafico, 07-11 y 11-15 esos 337 dias y 06-10 y 10-14 los otros 28
+donde empieza la rejilla H4. Es la medianoche del servidor, que por convencion de los brokers se escribe 17:00 America/New_York (ADR-0005) y que sigue el calendario de Nueva York, como confirmo broker_dst en la demo de FundedNext. En FTMO, A-28 midio el reloj (120 y `us`, ADR-0090) y con el la medianoche del servidor cae a las 17:00 de Nueva York todos los dias de 2026 y 2027; eso es una DERIVACION, no la verificacion contra la rejilla H4 real que pide ADR-0027 §4, que sigue SIN HACER: la mide R6a, con el EA escribiendo en el journal de la demo la hora de apertura de las velas H4 (iTime), antes de R6a.7 y de F33. Si no coincide se abre ambiguedad y este valor no se toca por su cuenta (ADR-0027, recuadro de ADR-0090). El trader lo ve como las 23:00 en su pantalla, que va en Europe/Madrid (huso_grafico), y es cierto 337 dias al año; los otros 28 -en 2026, del 8 al 28 de marzo y del 25 al 31 de octubre, cuando la UE y EE.UU. no cambian la hora el mismo dia- lo ve a las 22:00. Escrito como una hora de un huso FIJO, el ancla caia una hora antes todo el invierno y repartia mal todas las velas H4, que es de donde sale el sesgo (ADR-0017). DESDE EL 2026-10-06 (ADR-0069, A-42 RESUELTA) las dos sesiones del trader son las velas de ESTA rejilla que empiezan en ancla + 8 h y ancla + 12 h: en su grafico, 07-11 y 11-15 esos 337 dias y 06-10 y 10-14 los otros 28
 
 ### `base_calculo_objetivo`
 
@@ -223,13 +225,13 @@ Opciones: `mecha`, `cuerpo`.
 
 ### `broker_dst`
 
-con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario, asi que se mide en su demo (A-28). Comprobarlo exige OBSERVAR UNA TRANSICION de hora, y por eso A-28 no se cierra antes del cambio de octubre. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil; si decide si anclaje_h4 (17:00 Nueva York) cae de verdad en la medianoche del servidor. Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
+con que calendario cambia la hora el servidor. El de FundedNext seguia el de Nueva York (valor `us` en su demo) y NO se hereda (ADR-0026): la ficha de FTMO dice "GMT+2 +DST" sin nombrar calendario. MEDIDO observando la transicion (ADR-0090, A-28 DECIDIDA): el 2026-10-29, con Europa ya en horario de invierno (desde el 25) y Nueva York todavia en el de verano (hasta el 1-nov), el desfase fue 180 minutos, que con `eu` habria sido 120; el 2026-10-09 (180) y el 2026-11-05 (120) concuerdan. Desde ADR-0027 este reloj ya no mueve el dia de riesgo, que es civil. Con 120 y `us`, la medianoche del servidor cae a las 17:00 de Nueva York todos los dias (anclaje_h4): es una derivacion, y la rejilla real la mide R6a (ADR-0090 §2). Este reloj y huso_grafico son DOS RELOJES DISTINTOS: este es el del servidor donde se ejecuta, aquel el de la pantalla donde el trader decide
 
 Opciones: `us`, `eu`, `ninguno`.
 
 ### `broker_offset_base`
 
-desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion: se mide en su demo (A-28). Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
+desfase base del reloj del servidor, medido en el terminal y no supuesto. En la demo de FundedNext valia 120 (GMT+2 en horario estandar) y NO se hereda (ADR-0026). FTMO declara "GMT+2 +DST" en su ficha de cuenta, que es una descripcion y no una medicion. MEDIDO en su prueba gratuita (ADR-0090, A-28 DECIDIDA): desfase servidor - GMT de 180, 180 y 120 minutos el 2026-10-09, el 2026-10-29 y el 2026-11-05 (fila 31 de las tres ejecuciones de MedirDemoFTMO), que con broker_dst solo casan con 120 en horario estandar. Desde ADR-0027 no decide el dia de riesgo, que es civil; decide la rejilla de velas del servidor
 
 ### `caja_bloque`
 
@@ -295,7 +297,7 @@ Opciones: `fondeada`, `demo`, `propia`.
 
 ### `cuenta_pruebas`
 
-cuenta en la que se prueba el funcionamiento antes de la fondeada: la prueba gratuita de FTMO (ADR-0026), donde se miden A-27 y A-28. La demo de FundedNext del 2026-09-05 ya no cuenta
+cuenta en la que se prueba el funcionamiento antes de la fondeada: la prueba gratuita de FTMO (ADR-0026), donde se midieron A-27 y A-28 (ADR-0071 y ADR-0090). La demo de FundedNext del 2026-09-05 ya no cuenta
 
 Opciones: `fondeada`, `demo`, `propia`.
 
@@ -329,7 +331,7 @@ Opciones: `ftmo`, `fundednext`.
 
 ### `firma_apalancamiento`
 
-apalancamiento del tipo Swing en forex (el Standard admite mas). Limita el lote: el margen es lotes x instrumento_contrato x precio / este numero, y con riesgo_por_operacion sobre la cuenta un stop muy corto pide mas margen del que hay (ADR-0026, impacto; FTMO-P-D1.md §2: con todo el saldo caben 27,27 lotes a 1,10). Lo comprueba el BROKER SIMULADO desde ADR-0081 (2026-10-17): rechazo `margen_libre` al colocar y al llenar, y el bot limita el lote al que cabe (lote_margen_libre_fraccion). Hasta entonces nadie lo comprobaba («F21 lo comprueba con la distribucion real de cajas» no era verdad). La ejecucion 2 de la demo (del 26 al 30 de octubre de 2026, entrada A de la Next Action) comprobara la formula con MargenAlcanza (FTMO-P-D1.md §3) y el pre-vuelo de F33 lo volvera a leer; el valor que lee el codigo es el del perfil, igual que este
+apalancamiento del tipo Swing en forex (el Standard admite mas). Limita el lote: el margen es lotes x instrumento_contrato x precio / este numero, y con riesgo_por_operacion sobre la cuenta un stop muy corto pide mas margen del que hay (ADR-0026, impacto; FTMO-P-D1.md §2: con todo el saldo caben 27,27 lotes a 1,10). Lo comprueba el BROKER SIMULADO desde ADR-0081 (2026-10-17): rechazo `margen_libre` al colocar y al llenar, y el bot limita el lote al que cabe (lote_margen_libre_fraccion). Hasta entonces nadie lo comprobaba («F21 lo comprueba con la distribucion real de cajas» no era verdad). Las ejecuciones 2 y 3 de la demo comprobaron la formula (FTMO-P-D1.md §3; ADR-0090 §4): 3720,77 USD de margen para 1,00 lote al ask 1,11623 y 3744,30 al 1,12329, lotes x 100000 x precio / 30 exactos, con apalancamiento 30 leido en las dos; el pre-vuelo de F33 lo volvera a leer; el valor que lee el codigo es el del perfil, igual que este
 
 ### `firma_base_perdida_diaria`
 
@@ -409,7 +411,7 @@ el corte del freno de peticiones (ADR-0067): desde aqui, ese dia el broker niega
 
 ### `huso_grafico`
 
-como se ETIQUETAN las horas en la pantalla del trader, que es el grafico de FX Replay: Europe/Madrid, CON su cambio de hora (UTC+1 en invierno, UTC+2 en verano). MEDIDO el 2026-10-06 (ADR-0069; docs/validation/RELOJ-INVIERNO.md §5 y ACTIVACION-A42.md §4): en enero el eje de su grafico casa con Dukascopy con UTC+1, mediana 2-4 puntos en tres fotogramas (con UTC+2, 33-151), y sus capturas de graficos H4 de octubre y noviembre de 2024 ponen el ancla de 17:00 America/New_York a las 22:00 y a las 23:00 segun la semana, que es Europe/Madrid y no un UTC+2 fijo. Del 2026-09-25 al 2026-10-06 valio Etc/GMT-2 (ADR-0039) por el "14:29:59 UTC+2" del fotograma de enero de v4 (ABRIL-Y-LA-CAJA.md R0): ese reloj es el del pie, va con el replay y ensena el desfase de hoy, no el del eje. Antes valia Europe/Madrid (ADR-0017 §4), con la premisa de que la plataforma muestra su hora local, que era la buena. El trader lo nombra por su desfase de verano: "De UTC más 2, de 7, claro" (ev-v4-011425-ae028b78) y, por escrito el 2026-10-06, "etc+2 madrid" y "UTC+2"; por eso la fuente es la decision que cita la medida, no su frase (ADR-0069 §3), y por eso es de categoria `ejecucion` desde el 2026-10-06: el registro exige que un valor de estrategia lo diga el trader (tests/unit/test_registro.py), y este lo dice la medida. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante, para nombrar las horas NOMINALES de la ventana (ventana_inicio y ventana_fin declaran este huso) y para pintar las horas como el las ve. NINGUNA regla cuelga de este parametro: las sesiones las fija el reloj que dice reloj_sesiones (desde ADR-0069, la rejilla de anclaje_h4) y el dia de riesgo, huso_operativa. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se mide en la demo de FTMO (A-28), ni el huso de un libro del trader, que se declara por libro (ADR-0039, knowledge/corpus/libros.yaml)
+como se ETIQUETAN las horas en la pantalla del trader, que es el grafico de FX Replay: Europe/Madrid, CON su cambio de hora (UTC+1 en invierno, UTC+2 en verano). MEDIDO el 2026-10-06 (ADR-0069; docs/validation/RELOJ-INVIERNO.md §5 y ACTIVACION-A42.md §4): en enero el eje de su grafico casa con Dukascopy con UTC+1, mediana 2-4 puntos en tres fotogramas (con UTC+2, 33-151), y sus capturas de graficos H4 de octubre y noviembre de 2024 ponen el ancla de 17:00 America/New_York a las 22:00 y a las 23:00 segun la semana, que es Europe/Madrid y no un UTC+2 fijo. Del 2026-09-25 al 2026-10-06 valio Etc/GMT-2 (ADR-0039) por el "14:29:59 UTC+2" del fotograma de enero de v4 (ABRIL-Y-LA-CAJA.md R0): ese reloj es el del pie, va con el replay y ensena el desfase de hoy, no el del eje. Antes valia Europe/Madrid (ADR-0017 §4), con la premisa de que la plataforma muestra su hora local, que era la buena. El trader lo nombra por su desfase de verano: "De UTC más 2, de 7, claro" (ev-v4-011425-ae028b78) y, por escrito el 2026-10-06, "etc+2 madrid" y "UTC+2"; por eso la fuente es la decision que cita la medida, no su frase (ADR-0069 §3), y por eso es de categoria `ejecucion` desde el 2026-10-06: el registro exige que un valor de estrategia lo diga el trader (tests/unit/test_registro.py), y este lo dice la medida. Sirve para traducir lo que el dice -"la vela empieza a las 23"- a un instante, para nombrar las horas NOMINALES de la ventana (ventana_inicio y ventana_fin declaran este huso) y para pintar las horas como el las ve. NINGUNA regla cuelga de este parametro: las sesiones las fija el reloj que dice reloj_sesiones (desde ADR-0069, la rejilla de anclaje_h4) y el dia de riesgo, huso_operativa. Y NO es el reloj del servidor, que va en broker_offset_base + broker_dst y se midio en la demo de FTMO (A-28, ADR-0090), ni el huso de un libro del trader, que se declara por libro (ADR-0039, knowledge/corpus/libros.yaml)
 
 ### `huso_operativa`
 
@@ -421,23 +423,23 @@ instrumento sobre el que opera la primera version. Sale de la evidencia, no de u
 
 ### `instrumento_contrato`
 
-tamano del contrato; con el se convierte el riesgo en lotes. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 8 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+tamano del contrato; con el se convierte el riesgo en lotes. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 8 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 lo repitieron (ADR-0090) y el pre-vuelo de F33 lo vuelve a leer.
 
 ### `instrumento_digitos`
 
-digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 6 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+digits del simbolo; con 5 un punto es 0,00001 y un pip son 10 puntos. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 6 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 lo repitieron (ADR-0090) y el pre-vuelo de F33 lo vuelve a leer.
 
 ### `instrumento_lote_minimo`
 
-lote minimo que admite el broker; por debajo, la operacion se rechaza. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 9 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+lote minimo que admite el broker; por debajo, la operacion se rechaza. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 9 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 lo repitieron (ADR-0090) y el pre-vuelo de F33 lo vuelve a leer.
 
 ### `instrumento_lote_paso`
 
-escalon del lote; el lotaje calculado se redondea a un multiplo de este paso. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 11 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer.
+escalon del lote; el lotaje calculado se redondea a un multiplo de este paso. Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 11 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 lo repitieron (ADR-0090) y el pre-vuelo de F33 lo vuelve a leer.
 
 ### `instrumento_stops_level`
 
-distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2). Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 4 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 y el pre-vuelo de F33 lo vuelven a leer. El stops level SI cambia de un broker a otro, y con 0 RN-026 no se activa nunca
+distancia minima a la que el broker admite un stop o un limite. Si la spec pide uno mas cerca, la respuesta es ABSTENERSE, nunca aproximar (MASTER_PLAN H.2). Medido en la prueba gratuita de FTMO el 2026-10-09 (ejecucion 1 de MedirDemoFTMO, fila 4 del CSV, ADR-0071), con el mismo valor que se conservaba de FundedNext; A-27 DECIDIDA. Las ejecuciones 2 y 3 lo repitieron (ADR-0090) y el pre-vuelo de F33 lo vuelve a leer. El stops level SI cambia de un broker a otro, y con 0 RN-026 no se activa nunca
 
 ### `intentos_tras_toma_nueva`
 
@@ -621,7 +623,7 @@ Opciones: `si`, `no`.
 
 ### `reloj_dia_riesgo`
 
-en que reloj cae la medianoche que reinicia el tope diario, y el corte que reinicia el semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. `civil_operativa` es la medianoche en huso_operativa, el reloj civil del trader. Es lo que dice el reglamento de FTMO -"Account balance at midnight CE(S)T of the previous day"- y CE(S)T tiene hoy las mismas reglas de horario de verano que Europe/Madrid (ADR-0027). Hasta el 2026-09-14 valia `servidor`, un DEFAULT NUESTRO sin verificar (A-19), y la opcion `grafico` se sustituye por esta: el grafico del trader esta en ese mismo huso y serian dos puertas para el mismo instante. COINCIDENCIA DECLARADA, no obvia: la base del trader (base_calculo_perdida_diaria = saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026). FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj. Se queda CONFIRMED por el reglamento, y ADEMAS se comprueba en el panel de la prueba gratuita de FTMO dentro de A-28: la medianoche del servidor y la CE(S)T se separan una hora y equivocarse cuesta la cuenta
+en que reloj cae la medianoche que reinicia el tope diario, y el corte que reinicia el semanal. Sin esto, "el saldo inicial del dia" no dice cuando empieza el dia. `civil_operativa` es la medianoche en huso_operativa, el reloj civil del trader. Es lo que dice el reglamento de FTMO -"Account balance at midnight CE(S)T of the previous day"- y CE(S)T tiene hoy las mismas reglas de horario de verano que Europe/Madrid (ADR-0027). Hasta el 2026-09-14 valia `servidor`, un DEFAULT NUESTRO sin verificar (A-19), y la opcion `grafico` se sustituye por esta: el grafico del trader esta en ese mismo huso y serian dos puertas para el mismo instante. COINCIDENCIA DECLARADA, no obvia: la base del trader (base_calculo_perdida_diaria = saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026). FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj. Se queda CONFIRMED por el reglamento, y ADEMAS se comprueba en el panel de la prueba gratuita de FTMO: la medianoche del servidor y la CE(S)T se separan una hora y equivocarse cuesta la cuenta. Esa comprobacion iba dentro de A-28; desde ADR-0090 (A-28 DECIDIDA por su desfase y su calendario) es una linea propia para Aleks en la Next Action, con el mismo texto: si el panel dijera medianoche del servidor, se reabre A-19 y este parametro vuelve a DEFAULT_AMBIGUOUS
 
 Opciones: `servidor`, `civil_operativa`.
 

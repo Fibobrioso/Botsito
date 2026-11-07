@@ -71,7 +71,6 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 |---|---|---|---|---|
 | A-13 | break even al toque o con cuerpo | pregunta | no | F11, F23, F26 |
 | A-16 | cuanto se separan las velas de Oanda de las de Dukascopy | medicion | no | F26 |
-| A-28 | el reloj del servidor de FTMO y su regla de horario de verano | medicion | no | F17 |
 | A-35 | cuándo un pivote de M15 está formado | pregunta | si | F19, F20 |
 | A-43 | si una liquidez de M15 tomada antes de las 7 cuenta para operar después | pregunta | no | F19, F20 |
 | A-48 | qué velas forman el bloque de la caja | pregunta | no | F20, F21 |

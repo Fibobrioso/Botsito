@@ -403,7 +403,8 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
     # Y ADR-0026/ADR-0027 (2026-09-14) le suman dos al cambiar de firma: A-17 (la ventana de
     # noticias deja de importar con una cuenta Swing) y A-19 (el corte del dia de riesgo lo escribe
     # el reglamento de FTMO: medianoche CE(S)T). A-22 sigue DECIDIDA por ADR-0022, con su enmienda.
-    # Y ADR-0071 (2026-10-09) le suma A-27, la ficha de EURUSD medida en la demo de FTMO.
+    # Y ADR-0071 (2026-10-09) le suma A-27, la ficha de EURUSD medida en la demo de FTMO; y ADR-0090
+    # (2026-11-06) A-28, el reloj del servidor medido en las tres ejecuciones.
     assert {a.id for a in ambs if a.estado == "DECIDIDA"} == {
         "A-15",
         "A-17",
@@ -412,17 +413,21 @@ def test_ambiguedades_reales_y_esquema(tmp_path: Path) -> None:
         "A-23",
         "A-24",
         "A-27",
+        "A-28",
     }
     assert next(a for a in ambs if a.id == "A-16").estado == "ABIERTA"
     # A-27 y A-28 son MEDICIONES del entorno de FTMO, partidas como se partio A-16. La ficha del
-    # simbolo se midio en la ejecucion 1 de la demo (ADR-0071, DECIDIDA); el reloj del servidor
-    # sigue sin valor: su calendario de cambio de hora exige las ejecuciones 2 y 3.
+    # simbolo se midio en la ejecucion 1 de la demo (ADR-0071); el reloj del servidor, en las tres:
+    # 180, 180 y 120 minutos el 9-oct, el 29-oct y el 5-nov solo casan con 120 y el calendario de
+    # EE. UU. (ADR-0090). Las dos DECIDIDAS, y las dos por su ADR.
     assert {a.id: a.estado for a in ambs if a.id in ("A-27", "A-28")} == {
         "A-27": "DECIDIDA",
-        "A-28": "ABIERTA",
+        "A-28": "DECIDIDA",
     }
     a27 = next(a for a in ambs if a.id == "A-27")
     assert (a27.decision, a27.clase) == ("ADR-0071", "medicion")
+    a28 = next(a for a in ambs if a.id == "A-28")
+    assert (a28.decision, a28.clase) == ("ADR-0090", "medicion")
     assert next(a for a in ambs if a.id == "A-10").contradiccion == "stop.nivel"
     ruta = tmp_path / "amb.yaml"
     for malo, msg in (
