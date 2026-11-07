@@ -84,6 +84,13 @@ operar**. No se decide aquí. Ya hay un caso real: la primera operación del tra
 
 ### 3. La comisión: el importe no cambia; cobrarla en cada lado queda CONFIRMADO
 
+> **MEDIDA LA TARIFA (ADR-0090 §3, 2026-11-06, `trabajo/demo-ejecuciones-2-3`; recuadro que no
+> reescribe el cuerpo).** Con 1,00 lote, las ejecuciones 2 y 3 cobraron −2,50 al abrir y −2,50 al
+> cerrar (filas 54 y 55 de las dos): 2,50 USD por lote y lado, proporcional al volumen (los 0,03 de
+> la 1 con 0,01 lotes son 0,025 redondeado). El 5 por lado de este punto era el doble de lo medido;
+> ADR-0090 lo fija en 2,50 (el cambio del perfil va con la respuesta a la decisión 3 de
+> DEMO-EJECUCIONES-2-3.md).
+
 - **Medido** (filas 53 y 54): −0,03 USD en la apertura y −0,03 en el cierre de una compra de 0,01
   lotes.
 - **Lo que fija:** `firma_comision_por_lado` = true queda CONFIRMADO como hecho medido: se cobra en
@@ -101,6 +108,11 @@ operar**. No se decide aquí. Ya hay un caso real: la primera operación del tra
   `trabajo/demo-ejecucion-1`).
 
 ### 4. Lo medido de ADR-0057, y lo que sigue PROVISIONAL
+
+> **LAS EJECUCIONES 2 Y 3 (ADR-0090 §5, 2026-11-06; recuadro que no reescribe el cuerpo).** El
+> nivel exacto (§2) dio tres patrones distintos en las tres ejecuciones y SIGUE PROVISIONAL: el
+> script no registra la cotización del servidor en el instante de la comprobación y no hay más
+> ejecuciones previstas; lo observará el journal de R6a. §1 y §3 se repiten en la 2 y la 3.
 
 - **§1, la stop de entrada se llena al precio del tick y nunca mejor que el nivel:** coincide (filas
   56-57: una buy stop a 1.11999 se llenó a 1.12000, un punto en contra). Una observación; no dice qué

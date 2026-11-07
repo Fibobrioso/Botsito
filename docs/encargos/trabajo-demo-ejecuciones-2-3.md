@@ -1,16 +1,13 @@
 # Encargo · trabajo/demo-ejecuciones-2-3
 
 Dado por Aleks (consultor) el 2026-11-06, en un solo mensaje. Copiado tal cual (el ADR que el
-encargo manda escribir, ADR-0090, va declarado en el bloque `ids-inexistentes` del propio encargo,
-como exige `knowledge validate`, hasta el commit de la fase 1 que lo crea):
+encargo manda escribir, ADR-0090, fue declarado aquí en el bloque `ids-inexistentes` que el propio
+encargo traía, como exige `knowledge validate`, hasta el commit del punto 2 de la fase 1, que lo
+crea y quita ese bloque, como el encargo manda):
 
 > Modelo: Opus · Esfuerzo: alto
 >
 > Encargo del consultor (2026-11-06) · trabajo/demo-ejecuciones-2-3 · tramo «Carril: lo de Aleks» (A.1 de la hoja de ruta; A de la Next Action)
->
-> ```ids-inexistentes
-> ADR-0090 — lo crea la fase 1 de esta rama; este bloque sale en el mismo commit que lo crea
-> ```
 >
 > Rama nueva: trabajo/demo-ejecuciones-2-3, desde main (a46eadd, commit de estado sobre el merge 4fa0920 del tag stable/F38o-activar-sesion-06-motor; CI de main en verde, run 42300034254: compruébalo con un gh run view suelto, sin guion). Ábrela con la skill abrir-rama: base comprobada con git, contrato con tramo: "Carril: lo de Aleks" (entre comillas), riesgo alto (cambia un valor que lee el bróker simulado y que mueve el saldo de la cuenta simulada), artefacto docs/validation/DEMO-EJECUCIONES-2-3.md. El recorrido lo mandan las skills fase-cero, comparar-con-main y entregar-rama; si este encargo y ellas chocan, ganan ellas y lo dices. Es rama de laptop: necesita data/demo_ftmo/ y los originales de MQL5\Files. Antes de usar el número 0090, grep de «0090» en docs/ y en Technical Debt (lección de F38l). Si el informe cita ADR-0090 antes de que exista, lleva su propio bloque ids-inexistentes, que sale en el mismo commit.
 >

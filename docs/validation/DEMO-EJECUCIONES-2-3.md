@@ -13,10 +13,6 @@ sobre el merge 4fa0920 del tag `stable/F38o-activar-sesion-06-motor`). Encargo:
   `a46eaddc424d99c9caaf7eba5afd6af052894095`.
 - `git branch --list` solo daba `main`; `git ls-remote --heads origin "fix/*"` vacio.
 
-```ids-inexistentes
-ADR-0090 — lo crea el punto 2 de la fase 1 de esta rama; este bloque sale en el mismo commit
-```
-
 ## 0. Fase 0 · inventario sin tocar knowledge/, docs/adr/ ni src/ (2026-11-06)
 
 «Fila N» es la columna `fila` del CSV (la línea N+1 del fichero, con la cabecera), como en

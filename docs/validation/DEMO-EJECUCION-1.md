@@ -45,6 +45,14 @@ manifiesto se escribe a mano, con el esquema nuevo que documenta `data/manifests
 - `knowledge validate` solo carga como dataset de velas los manifiestos de la raíz
   (`data/dataset.py`, `manifiestos`: `p.parent == carpeta`), así que una subcarpeta no le choca.
 
+> **CORRECCIÓN (2026-11-06, `trabajo/demo-ejecuciones-2-3`, DEMO-EJECUCIONES-2-3.md §0.b y
+> ADR-0090; recuadro que no reescribe el cuerpo).** El CSV NO es LF: es CRLF en sus 60 líneas, como
+> el script lo escribe y como EA-CONEXION.md §0.c midió que escribe el modo texto de MT5. El «0
+> retornos de carro» de abajo es un artefacto de la medida: el `grep` de Git para Windows quita el CR
+> del final de línea salvo con `-U` (sobre este mismo fichero, `grep -c -P '\r'` da 0 y
+> `grep -U -c -P '\r'` da 60). El sha256 es el congelado, así que el fichero no cambió nunca. El
+> `fin_de_linea: LF` del manifiesto (inmutable) es falso por lo mismo; ningún código lo lee.
+
 **Una cosa que el repositorio no puede comprobar:** el CSV tiene fin de línea LF (0 retornos de carro,
 medido con `grep -c $'\r'`), y el script escribe `\r\n` en cada línea
 (`tools/mql5/MedirDemoFTMO.mq5:118` y `:132`). O el modo texto de MetaTrader lo cambió al escribir, o

@@ -5,6 +5,8 @@ tramo: "Carril: lo de Aleks"
 rutas_permitidas:
   - docs/validation/DEMO-EJECUCIONES-2-3.md
   - docs/validation/anexos/DEMO-EJECUCIONES-2-3/
+  - docs/validation/DEMO-EJECUCION-1.md
+  - docs/validation/EA-CONEXION.md
   - data/manifests/demo_ftmo/
   - docs/adr/
   - knowledge/spec/ambiguedades.yaml

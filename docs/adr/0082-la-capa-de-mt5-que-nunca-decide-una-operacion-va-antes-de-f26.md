@@ -153,6 +153,11 @@ El tramo R6a de `docs/plan/HOJA-DE-RUTA.md`:
 Las ejecuciones 2 y 3 de la demo y A-28 siguen en el carril de Aleks (A.1): R6a.1 lee el desfase
 del reloj, no lo decide.
 
+> **HECHAS (ADR-0090, 2026-11-06, `trabajo/demo-ejecuciones-2-3`; recuadro que no reescribe el
+> cuerpo).** Las ejecuciones 2 y 3 están congeladas y A-28 DECIDIDA (120 y `us`); el pre-vuelo de
+> R6a.7 compara el desfase con esos valores y lee además la tasa de margen de las pendientes stop
+> (ADR-0090 §4).
+
 > **CORRECCIÓN (2026-10-19, rama `trabajo/ea-conexion`, respuesta del consultor a la PARADA de su
 > fase 0, punto 0).** En R6a.1, «la comprobación de `ACCOUNT_MARGIN_MODE`» al arrancar queda en
 > **leerlo y registrarlo en el journal, sin abortar**. Motivo: no hay ningún valor con fuente con el

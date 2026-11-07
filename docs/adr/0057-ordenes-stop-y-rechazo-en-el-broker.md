@@ -30,6 +30,15 @@ una límite es siempre 0. Código: `engine/llenado.py`, `primer_llenado_stop`.
 
 ### 2. «Lado equivocado» es estricto; el nivel exacto no lo es
 
+> **SIGUE PROVISIONAL tras las tres ejecuciones de la demo (ADR-0090 §5, 2026-11-06,
+> `trabajo/demo-ejecuciones-2-3`; recuadro que no reescribe el cuerpo).** En el nivel exacto, la 1
+> dejó viva la sell stop, rechazó la buy stop y la buy limit y llenó la sell limit; la 2 dejó vivas
+> la sell stop y la sell limit, llenó la buy limit, y la buy stop estaba viva al leerla pero su
+> borrado devolvió 10013; la 3 llenó las dos stop y dejó vivas las dos
+> limit. MedirDemoFTMO no registra la cotización del servidor en el instante de la comprobación, así
+> que no puede distinguir una regla de un precio que se movió, y no hay más ejecuciones previstas. El
+> simulador no cambia; lo observa el journal de R6a cuando el EA coloque órdenes en la demo.
+
 Con la cotización del momento de colocar: una LÍMITE de venta por debajo del BID o de compra por
 encima del ASK (el precio ya la pasó), y una STOP de venta por encima del BID o de compra por
 debajo del ASK. **Una pendiente en el nivel exacto no es lado equivocado**: la límite espera y la
