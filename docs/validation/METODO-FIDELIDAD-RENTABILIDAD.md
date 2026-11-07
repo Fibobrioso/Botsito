@@ -840,6 +840,58 @@ vive esa lista (ningún campo del yaml la lleva). No la invento en `src/` ni añ
 respuesta no lista: PARADA 2, punto 1. La re-corrida va después de `trabajo/cuenta-por-mes`, así que
 no bloquea nada de esta rama.
 
+### 1.3 Punto 3: A-16 medida, y los recuentos de c), d) y e) con su guion
+
+**La exposición, antes de correr nada** (punto 13): fila del 2026-11-07, «la fase 1», en
+`HOLDOUT-EXPOSICIONES.md`, con sus cuatro partes. Los `make check` y los dos clones del punto 2 ya
+se habían hecho cuando la escribí: van declarados el mismo día, pero después, y la fila lo dice.
+`medir_a16.py` y los recuentos se declararon antes de ejecutarlos (la fila estaba estadiada).
+
+**A-16** (`anexos/METODO-FIDELIDAD-RENTABILIDAD/medir_a16.py . --filas`, exit 0, salida
+`medir-a16.txt`; el diseño, el de 0.f con la respuesta, punto 9). Lo que mide es lo que hace el
+TRADER contra los datos, no el bot. Por la compuerta del arnés: 76 días dev de construcción, 69 con
+operaciones, 198 operaciones; ninguna sin M1 en su minuto. Distancia en puntos de la entrada del
+trader (Oanda, FX Replay) al rango de la M1 BID de Dukascopy del minuto del llenado, y al tick más
+cercano de ese minuto:
+
+| mes | N | mediana M1 | p90 M1 | dentro del rango M1 | mediana tick del lado | p90 tick del lado | mediana tick dos lados | p90 tick dos lados | sin ticks en su minuto |
+|---|---|---|---|---|---|---|---|---|---|
+| 2026-01 | 54 | 0 | 0 | 94,4 % | 0 | 1 | 0 | 0 | 2 |
+| 2026-04 | 35 | 0 | 1 | 85,7 % | 0 | 1 | 0 | 0 | 2 |
+| 2026-07 | 67 | 0 | 0 | 91,0 % | 0 | 1 | 0 | 0 | 4 |
+| 2026-08 | 42 | 0 | 0 | 97,6 % | 0 | 1 | 0 | 0 | 0 |
+| **total** | **198** | **0** | **0** | **92,4 %** | **0** | **1** | **0** | **0** | **8** |
+
+Fuera del rango M1 quedan 15 de 198: 9 a 1 punto, 4 a 2, 1 a 3 y 1 a 4 (recuento de las filas
+por operación de `medir-a16.txt`). **La regla escrita antes de medir** (respuesta, punto 7; ADR-0092
+§9): mediana M1 0 frente a 3 puntos y 92,4 % dentro frente al 50 %: **no se dispara**. No nace
+ninguna línea de Technical Debt por ella, y la tolerancia no cambia. A-16 queda ABIERTA con
+`resuelve_en: [F26]` (punto 8): esta rama no toca `knowledge/spec/`. Lo que la medida dice y lo que
+no:
+- dice que la entrada del trader EXISTIÓ, en 183 de 198 operaciones, dentro de la vela de Dukascopy
+  del minuto de su llenado, y a 1-4 puntos en las otras 15; con ticks, la mediana al tick más
+  cercano del lado del llenado es 0 y el p90 es 1 punto;
+- no compara velas con velas ni la ruptura de un nivel por una milésima, que es la pregunta de A-16
+  (`ambiguedades.yaml:291-292`): para eso siguen las medidas previas (`BLOQUE-DE-LA-CAJA.md` §2.3,
+  mediana +2 puntos con OANDA por encima; `VIABILIDAD-TRADER.md` §4, 4 casos a 5-11 puntos), que
+  ADR-0092 §10 nombra. Una vela de un minuto tiene rango de varios puntos: estar dentro no quiere
+  decir que las dos series marquen el mismo precio en el mismo instante.
+
+**Los recuentos de c), d) y e)**, ahora con su guion en el anexo:
+- c) y e): `recuentos_vistos.py anexos/RESPALDO-M1` → `recuentos-vistos.txt`, sobre las dos
+  salidas ya vistas: las mismas cifras que 0.c y 0.e (165 de 198 operaciones del trader en días con
+  la cuenta congelada en `cuenta-arrastrada.txt`; las tablas de Δ, partidas por lado);
+- c): `huecos_material.py .` → `huecos-material.txt`: tres huecos y cuatro tramos, como en 0.c;
+- la compuerta: `recuento_compuerta.py .` → `recuento-compuerta.txt`: 34 casos reservados y 34
+  ocultos, todos en 2026-05, 2026-06 y 2026-09; 0 en los cuatro meses de construcción; 76 días dev y
+  198 operaciones;
+- d) no tiene recuento: el encargo pide decir cómo se obtiene el desenlace, sin calcular la métrica
+  (0.d), y desde el punto 2 lo da la columna «desenlace» de «### Posiciones». La métrica del
+  sesgo 3 espera a la PARADA 2, punto 1.
+
+Los docstrings de `scripts/viabilidad_trader.py` y `viabilidad_comision.py` (Technical Debt) no se
+tocan: esta rama no corrió esos guiones.
+
 ## PARADA 2 · La NOTA de PREREGISTRO.md no se puede commitear con `test_puerta_holdout` en verde
 
 Lo medido: arriba, en 1.1. El texto de la NOTA que pedía el punto 12, tal como lo escribí (no está
@@ -882,5 +934,5 @@ Sigo con lo demás de la fase 1 mientras tanto, como dice el encargo.
 ## Estado
 
 FASE 1 EN CURSO, con la PARADA 2 abierta (la NOTA de PREREGISTRO.md y la lista del punto 11, que no
-bloquean lo demás): puntos 1 y 2 hechos; faltan el 3 (A-16 y los recuentos) y el 4 (el informe y
-las líneas del cierre); después, el revisor.
+bloquean lo demás): puntos 1, 2 y 3 hechos; falta el 4 (el informe y las líneas del cierre);
+después, el revisor.

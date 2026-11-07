@@ -1,0 +1,33 @@
+=== cuenta-arrastrada.txt
+ultimo dia con alguna orden del bot: 2026-01-20; dias de la curva posteriores: 63
+saldo final en esos dias (todos iguales): ['90652.9300000']
+operaciones del trader en la salida: 198
+operaciones del trader en dias posteriores a 2026-01-20: 165
+  por mes: 2026-01 21, 2026-04 35, 2026-07 67, 2026-08 42
+operaciones del trader el propio 2026-01-20: 1
+dias con alguna orden del bot: 13
+PAREJA: 7
+  |Δentrada| puntos: 0-3 7, 4-5 0, 6-10 0, >10 0
+  |Δinstante| min:   0-15 7, 16-30 0, >30 0
+SIN PAREJA, bot mas cercano (todas): 23
+  |Δentrada| puntos: 0-3 1, 4-5 2, 6-10 5, >10 15
+  |Δinstante| min:   0-15 12, 16-30 4, >30 7
+SIN PAREJA, bot mas cercano del MISMO lado: 23
+  |Δentrada| puntos: 0-3 1, 4-5 2, 6-10 5, >10 15
+  |Δinstante| min:   0-15 12, 16-30 4, >30 7
+SIN PAREJA, bot mas cercano del OTRO lado: 0
+  |Δentrada| puntos: 0-3 0, 4-5 0, 6-10 0, >10 0
+  |Δinstante| min:   0-15 0, 16-30 0, >30 0
+=== diaria.DIAGNOSTICO.cuenta=diaria.txt
+PAREJA: 40
+  |Δentrada| puntos: 0-3 40, 4-5 0, 6-10 0, >10 0
+  |Δinstante| min:   0-15 40, 16-30 0, >30 0
+SIN PAREJA, bot mas cercano (todas): 136
+  |Δentrada| puntos: 0-3 6, 4-5 13, 6-10 21, >10 96
+  |Δinstante| min:   0-15 46, 16-30 26, >30 64
+SIN PAREJA, bot mas cercano del MISMO lado: 106
+  |Δentrada| puntos: 0-3 6, 4-5 12, 6-10 20, >10 68
+  |Δinstante| min:   0-15 44, 16-30 22, >30 40
+SIN PAREJA, bot mas cercano del OTRO lado: 30
+  |Δentrada| puntos: 0-3 0, 4-5 1, 6-10 1, >10 28
+  |Δinstante| min:   0-15 2, 16-30 4, >30 24
