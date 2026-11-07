@@ -695,12 +695,86 @@ rama con el punto 4, que espera a la decisión 3. Su salida contra `main` se peg
 
 | Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
 |---|---|---|---|
-| `trabajo/demo-ejecuciones-2-3` | (tras su pasada) | **(importa, del consultor)** la orden de cierre de F38n escribió en la Next Action «los tres CSV en data/demo_ftmo/ sin congelar» (y en la hoja de ruta «congelar los tres CSV»), cuando la 1 está congelada desde el 2026-10-09. Lección: antes de dar por pendiente un paso, buscar su artefacto (aquí, `data/manifests/demo_ftmo/`). **(menor)** el resumen del consultor del 2026-11-06 dio «deslizamiento 0», y la 2 trae 2,0 puntos en contra al abrir a mercado. Lección: una cifra de un CSV se lee por ejecución, no se resume. **(importa)** el plan del consultor era una NOTA en ADR-0081 §4, cuando la medida desmiente lo que §4 da por hecho y lo que modela el bróker simulado; lo cazó su auditor antes de entregar el encargo. Lección: antes de decidir entre nota y enmienda, leer qué da por hecho el ADR y qué hace el código. **(importa, de la sesión, fase 0)** el LF de la ejecución 1, medido dos veces con `grep -c $'\r'` (DEMO-EJECUCION-1 y EA-CONEXION) y apuntado en un manifiesto inmutable, era el `grep` de Git para Windows, que quita el CR sin `-U`. Lección: un recuento de bytes se hace leyendo bytes (o con `grep -U`), no con un `grep` de texto. **(importa, del encargo)** D6 contaba con que la comisión solo rompería tests de importe o de saldo, y rompe la regresión del corte del 7 de agosto (§0.e). Lección: antes de cambiar un coste, medir qué estado de cuenta cambia con él. | (tras la revisión) |
+| `trabajo/demo-ejecuciones-2-3` | (tras su pasada) | **(importa, del consultor)** la orden de cierre de F38n escribió en la Next Action «los tres CSV en data/demo_ftmo/ sin congelar» (y en la hoja de ruta «congelar los tres CSV»), cuando la 1 está congelada desde el 2026-10-09. Lección: antes de dar por pendiente un paso, buscar su artefacto (aquí, `data/manifests/demo_ftmo/`). **(menor)** el resumen del consultor del 2026-11-06 dio «deslizamiento 0», y la 2 trae 2,0 puntos en contra al abrir a mercado. Lección: una cifra de un CSV se lee por ejecución, no se resume. **(importa)** el plan del consultor era una NOTA en ADR-0081 §4, cuando la medida desmiente lo que §4 da por hecho y lo que modela el bróker simulado; lo cazó su auditor antes de entregar el encargo. Lección: antes de decidir entre nota y enmienda, leer qué da por hecho el ADR y qué hace el código. **(importa, de la sesión, fase 0)** el LF de la ejecución 1, medido dos veces con `grep -c $'\r'` (DEMO-EJECUCION-1 y EA-CONEXION) y apuntado en un manifiesto inmutable, era el `grep` de Git para Windows, que quita el CR sin `-U`. Lección: un recuento de bytes se hace leyendo bytes (o con `grep -U`), no con un `grep` de texto. **(importa, del encargo)** D6 contaba con que la comisión solo rompería tests de importe o de saldo, y rompe la regresión del corte del 7 de agosto (§0.e). Lección: antes de cambiar un coste, medir qué estado de cuenta cambia con él. **(menor, del consultor)** D9 metió los swaps entre los datos que tenían que coincidir, cuando ADR-0071 §5 ya dice que cambian con la fecha, y costó una PARADA. Lección: antes de poner un valor en una comparación de igualdad, mirar si el repo lo da por variable. | (tras la revisión) |
 
 ### 1.5 Lo que no pude medir, añadido en la fase 1
 
 - La salida contra `main` del test de la comisión: va con el punto 4 (§1.1).
 
+## 2. Tras la respuesta a la PARADA (2026-11-06)
+
+| punto de la respuesta | hecho | dónde |
+|---|---|---|
+| 0. Fin de línea de la 1: (a) | ya estaba hecho así (c1a2798) | ADR-0090, «La medida»; recuadros en DEMO-EJECUCION-1.md y EA-CONEXION.md §0.c |
+| 1. Swaps: (a) | hecho | ebfe8d7 |
+| 1. ADR-0090 registra las tres lecturas con su fecha y sustituye el «pendiente» | hecho | ADR-0090 §6 |
+| 1. Descripción de `firma_swap_largo_puntos` y `firma_swap_corto_puntos` (la API del 2026-09-25, cambia con la fecha, no se renueva porque no decide nada), con `Fuente: ADR-0090` | hecho | perfil, ebfe8d7 |
+| 1. Verificar que ninguna operación del bot puede seguir abierta a la medianoche del servidor, con fichero:línea | **verificado, sin PARADA**: RN-002 (`strategy_spec.yaml:910-966`, forma `:954-964`; `vence_vela_h4`, `engine/primitivas.py:142-151`) cierra un minuto antes del fin de cada H4 (`cierre_h4_antelacion` 1, `parametros.yaml:398-415`; `cierre_forzoso_fin_ventana` `si`, `:387-397`), y la medianoche del servidor es frontera de la rejilla H4 (`anclaje_h4`, 17:00 de Nueva York con 120 y `us`). La ventana acaba a las 16:00 del servidor (`sesiones_primera_vela_h4` 3, `:262-276`) | ADR-0090 §6 |
+| 1. A-27 no se reabre, en una línea con sus cinco parámetros | hecho | ADR-0090 §6 |
+| 2. R6a.8, línea preparada; ADR-0090 y `anclaje_h4` la citan por su nombre en el commit del punto 4; `test_hoja_de_ruta` pasa sobre la copia | hecho (también en ADR-0027 §4, `broker_dst` y la fila 0027 del índice, que decían «R6a») | punto 4; §2.2 |
+| 3. `COMISION_DE_LA_REGRESION = 5` por `dataclasses.replace`, con su comentario de una línea | hecho | `tests/regression/test_cuenta_7_de_agosto.py:50-51` y `_cuenta_del_dia` (`:134-163`) |
+| 3. Test nuevo: con el perfil real la cuenta del día queda EN_CURSO y su peor equidad es 95.515,78 | hecho: `test_con_la_comision_medida_la_cuenta_del_7_de_agosto_no_se_suspende` | mismo fichero |
+| 3. El informe y ADR-0090 dicen que con 5 el simulador suspendía cuentas que con la tarifa medida no; las corridas anteriores eran pesimistas; la re-corrida que cuenta es la primera con la tarifa medida | hecho | ADR-0090 §3; este informe, abajo |
+| 3. Punto 4 en un commit con `Fuente: ADR-0090`; los dos tests que rompen a propósito con su salida contra `main` | hecho | 1e97079; §2.1 |
+| 4. Fila de ERRORES-RECURRENTES con la línea del consultor sobre D9 | hecho | §1.4 |
+| 5. make check en cada commit, revisor, entrega, clones quitados | hecho | §2.3, §3 |
+
+**Lo que dice la tarifa medida de las corridas de antes:** con 5 USD por lado el simulador suspendía
+cuentas que con la tarifa medida (2,50) no se suspenden; las corridas del arnés anteriores a esta rama
+eran pesimistas en las suspensiones, y la re-corrida que cuenta (ADR-0070 §3) es la primera con la
+tarifa medida. El caso que lo enseña: la cuenta del 7 de agosto (§0.e).
+
+**Desviaciones, declaradas:**
+- Para que la salida contra `main` enseñe «EN_CURSO frente a SUSPENDIDA», el test nuevo comprueba el
+  estado ANTES que la tarifa: con la tarifa primero, en `main` fallaba por `Decimal('5') ==
+  Decimal('2.50')` sin llegar al estado.
+- `spec_version` 18.6.2 → 18.6.3 en el punto 4: las descripciones de `anclaje_h4` y `broker_dst`
+  (R6a.8 por su nombre) cambian el hash de la spec (`spec manifest`: «el hash no coincide»).
+- El bróker simulado cobra el swap a la medianoche de `huso_corte` (`broker.py:960-973`), no a la del
+  servidor: hallazgo de la verificación del punto 1, sin efecto (ninguna operación cruza ninguna de
+  las dos medianoches), escrito en ADR-0090 §6. No abro deuda: no cambia nada mientras el bot no pase
+  la noche.
+
+### 2.1 Los dos tests que rompen a propósito, contra `main`
+
+En el clon `C:/cm/m` (`main`), con los dos ficheros de test de la rama copiados idénticos (la guardia
+solo deja ejecutar en el clon un test igual al del árbol del repo):
+
+```
+$ cd C:/cm/m && uv run pytest -q -p no:cacheprovider tests/unit/test_perfil_cuenta.py
+E       AssertionError: assert Decimal('5') == Decimal('2.50')
+E        +  where Decimal('5') = decimal('firma_comision_usd_por_lote')
+FAILED tests/unit/test_perfil_cuenta.py::test_la_comision_por_lado_y_su_importe_estan_medidos
+
+$ cd C:/cm/m && uv run pytest -q -p no:cacheprovider tests/regression/test_cuenta_7_de_agosto.py
+E       AssertionError: perdida diaria: equity 94485.5300000 por debajo del limite del dia 95000 (saldo al corte 100000) [marca de t4]
+E       assert <EstadoCuenta.SUSPENDIDA: 'SUSPENDIDA'> is <EstadoCuenta.EN_CURSO: 'EN_CURSO'>
+FAILED tests/regression/test_cuenta_7_de_agosto.py::test_con_la_comision_medida_la_cuenta_del_7_de_agosto_no_se_suspende
+```
+
+En `main` la regresión del corte (`test_la_cuenta_del_7_de_agosto_marca_la_perdida_diaria_en_el_pico`)
+pasa también: con su tarifa declarada es la misma cuenta. En la rama pasan los cuatro de la regresión
+y los del perfil (`uv run pytest -q tests/unit/test_perfil_cuenta.py tests/regression/test_cuenta_7_de_agosto.py`,
+sin `skipped`: los datos de construcción están en `data/`), y dentro del `make check` del punto 4.
+
+### 2.2 Las líneas del cierre, otra vez sobre una copia, y la previsión de PROJECT_STATE
+
+Las de §0.h, con R6a.8 tal como la fija la respuesta (punto 2), aplicadas por un guion del
+scratchpad (`cierre_copia.py`) a `PROJECT_STATE.md` y `docs/plan/HOJA-DE-RUTA.md` de un clon
+desechable de 1e97079 (`git worktree add --detach C:/cm/h HEAD`), que ya tiene ADR-0090:
+
+- `uv run pytest -q tests/unit/test_hoja_de_ruta.py tests/unit/test_project_state.py`: **todo verde**;
+- **`wc -c PROJECT_STATE.md` = 22.575 bytes** en la copia (22.730 en la rama hoy), por debajo de los
+  23.000 del encargo y de los 25.000 del test. El `Current Feature` del cierre lo escribe el consultor.
+
+### 2.3 Los clones, quitados
+
+`git worktree remove --force C:/cm/h`, `C:/cm/m` y `C:/cm/r` (con `--force` porque llevaban sus
+`config/settings.local.toml` y los `.venv`, sin seguir) y `git worktree prune`. Después: `git worktree
+list` solo da el repo, `git status --short` vacío, `git branch --list` = `main` y la rama, y `git tag
+-l` cuenta 149, como al empezar. Nada se empujó: sin CI (la rama no toca hooks, rutas, `.claude/` ni
+`src/`, encargo).
+
 ## Estado
 
-EN CURSO, en PARADA (2026-11-06): fase 0 entregada y fase 1 hecha en sus puntos 1, 2, 3 y 5. Esperan a la respuesta del consultor la decisión 1 (los swaps) y la decisión 3 (la regresión del 7 de agosto con la comisión medida), y con ella el punto 4. Después: el revisor y la entrega. NO lista para revisión.
+Fase 0, PARADA y respuesta aplicada punto por punto (2026-11-06). Pendiente solo el revisor y su informe pegado.
