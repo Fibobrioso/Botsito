@@ -949,6 +949,14 @@ Con `anexos/METODO-FIDELIDAD-RENTABILIDAD/simular_cierre.py` (en memoria; salida
   simulada? False`; `a: []`, `b: []`, `c: []`; PROJECT_STATE con las líneas del cierre **22.349
   bytes**, y con el Current Feature del cierre **22.411** (los cuatro tests de `test_project_state`
   pasan); por debajo de 23.000. Hoy, en la rama, `wc -c PROJECT_STATE.md` = 22.286.
+- *(Actualizado con la orden de cierre del consultor, punto 6.)* Con la línea de G de §9, la de
+  Technical Debt del punto 4.e, el «Depende de» de R5.6 del punto 5 (sin R5.2) y las CUATRO líneas
+  de cabecera del cierre (Current Branch, Current Feature, Stable Main State y Last Stable Commit,
+  con un sha de relleno de 7 caracteres), `simular-cierre.txt` da: `a: []`, `b: []`, `c: []`;
+  «Siguiente: R» en la copia, False; R5.2 en el «Depende de» de R5.6, False; ninguna línea `R.` en
+  la Next Action; PROJECT_STATE con las líneas del cierre **22.651 bytes** y con las cuatro de
+  cabecera **22.764** (`wc -c` de la copia), por debajo de 23.000. En la hoja de ruta de hoy quedan
+  dos `NA:R` (R3.7 y R5.2), que las líneas del cierre quitan: en la copia simulada, ninguno.
 
 ## El encargo, punto por punto
 
@@ -999,7 +1007,7 @@ Con `anexos/METODO-FIDELIDAD-RENTABILIDAD/simular_cierre.py` (en memoria; salida
 | 43 | Respuesta: F, R3.7 HECHA, la entrada de R3 y la de R5 en las líneas del cierre | Hecho | §1.4 |
 | 44 | Respuesta: la fila de ERRORES-RECURRENTES con el hallazgo de la sección | Hecho | abajo |
 | 45 | CI: sin fix/ (no toca hooks, rutas, .claude/ ni plataforma) | Hecho | ningún fichero de esos en el diff |
-| 46 | El revisor (opus) con los seis alcances, y su informe pegado | Hecho | §8 |
+| 46 | El revisor (opus) con los siete alcances, y su informe pegado | Hecho | §8 *(corregido por la orden de cierre, punto 3: decía «seis»)* |
 
 ## Desviaciones, declaradas
 
@@ -1423,3 +1431,60 @@ y sus hallazgos arreglados o contestados. No queda ninguna PARADA abierta. Sin C
 no toca hooks, rutas, `.claude/` ni plataforma. Ninguna corrida del arnés en toda la rama.
 
 Rama lista para revisión, NO cerrada.
+
+## Orden de cierre del consultor (2026-11-07)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/metodo-fidelidad-rentabilidad (consultor, 2026-11-07). Cópiala tal cual en el informe (sección nueva al final, «Orden de cierre del consultor (2026-11-07)») y prepara el cierre según docs/runbooks/RITUAL.md y la skill cerrar-rama. NO ejecutes el cierre hasta que Aleks escriba /cerrar-rama solo.
+>
+> 0. Revisión: aceptada la rama entera hasta 49c12eb, con la fase 1 (§1.1 a §1.4), la respuesta a la PARADA 2 aplicada (§9) y las dos pasadas del revisor (§8, §10) con sus arreglos. Verifica con git log que 49c12eb es la punta de la rama y di cuántos commits hay en git log main..trabajo/metodo-fidelidad-rentabilidad, con sus sha, antes del merge (RITUAL.md). Aceptadas las doce desviaciones declaradas y la validación de fecha de dias_con_video que añadiste. Lo único que no doy por bueno sin lección: en la fase 1, los make check y los dos clones del punto 2, y en la PARADA 2 un clon, se hicieron antes de escribir su fila de exposición; quedaron declarados el mismo día, que es lo que exige ADR-0021 (punto 4 de su Decision), pero el punto 13 pedía «antes». Va a la fila (punto 3).
+>
+> 1. Tag: stable/F38r-metodo-fidelidad-rentabilidad. Antes, comprueba que no existe ni en local ni en origin, y que el último tag es stable/F38q-sello-respaldo-m1.
+>
+> 2. CI: la rama no se ha empujado y no toca hooks, .claude/, rutas ni plataforma: sin fix/. Tras el push atómico de main y del tag, la CI de main en verde antes de borrar la rama local.
+>
+> 3. Fila de ERRORES-RECURRENTES: la preparada en «La fila de ERRORES-RECURRENTES», con estos cambios:
+>    - Columna del revisor: «Dos pasadas, opus». La primera, la que ya describe; la segunda, corta, sobre la PARADA 2 (§10: 0 bloquea, 2 importa, 1 menor, arreglados en 49c12eb).
+>    - Columna del consultor: los cuatro que ya lleva, y añade (d) (menor) El auditor independiente del consultor corrió, en el clon del consultor fuera del repo de Aleks, un grep recursivo desde la raíz que recorrió knowledge/cases/holdout/ (0 coincidencias, nada impreso; declarado, punto 4.f). Lección: la plantilla del auditor prohíbe grep y find recursivos desde la raíz del clon; se buscan solo las carpetas permitidas, nombradas.
+>    - Columna «Que se le escapo», añade: (8) (menor) En la fase 1 (los make check y dos clones de comparar-con-main) y otra vez en la PARADA 2 (un clon), se trabajó antes de escribir la fila en HOLDOUT-EXPOSICIONES; quedó declarado el mismo día, pero después. Lección: la fila de exposición se escribe y se estadía antes del primer clon, make check o lectura, también en una PARADA corta.
+>    - Y corrige en el informe la fila 46 de la tabla del encargo, que dice «seis alcances» del revisor cuando §8 dice siete.
+>
+> 4. Next Action, en el commit chore(cierre) de la rama, con el registro de cierre de HISTORIA («# Registro de cierre · trabajo/metodo-fidelidad-rentabilidad (2026-11-07)», RITUAL.md), la salida de contrato.yaml y la fila del punto 3. Como lo simula anexos/METODO-FIDELIDAD-RENTABILIDAD/simular_cierre.py en 49c12eb (§1.4 con la línea de G de §9), con dos cambios (c y e):
+>    a) R sale HECHA: su texto literal, tal como está hoy en PROJECT_STATE.md:52, pasa a HISTORIA bajo «# Next Action HECHA · R · el método de juicio del bot · sale de PROJECT_STATE.md en trabajo/metodo-fidelidad-rentabilidad (2026-11-07)», con el párrafo que ya trae el guion.
+>    b) F, con «Siguiente: la rama de la cuenta por mes (ADR-0092, trabajo/cuenta-por-mes) y después la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091 y el método de ADR-0092;» y el resto de F igual.
+>    c) G, con la línea del guion (A-16 medida y ABIERTA; G rellena PREREGISTRO.md con lo de ADR-0092 §13 y en el mismo commit cambia test_puerta_holdout; MASTER_PLAN §H y la fila de F30).
+>    d) La segunda línea de «Things That Must Not Be Changed» (PROJECT_STATE.md:151), con la redacción del punto 5 de la respuesta a la PARADA, literal.
+>    e) Technical Debt: la línea del panel de FTMO (PROJECT_STATE.md:141), la que termina en «Se corrigen en la próxima rama que toque knowledge/spec, con su régimen de cambio.», gana al final: «Esa rama cierra también A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).» Verifica antes que ese final es literal; si no lo es, PARADA con el texto. Nada más entra ni sale de Technical Debt.
+>    f) HOLDOUT-EXPOSICIONES.md, una fila del 2026-11-07: «El auditor independiente del consultor (Claude en el chat) corrió grep -rn F38r sobre un clon superficial de main e01e28c en su espacio de trabajo, fuera del repo de Aleks; la búsqueda recorrió knowledge/cases/holdout/, sin ninguna coincidencia y sin imprimir nada de ahí. No abre ninguna partición (no se leyó ninguna etiqueta ni ninguna cifra).»
+>
+> 5. Hoja de ruta, en el mismo commit y como en el guion: R3.7 HECHA (sale NA:R, entra ID:ADR-0092); R3.8 nueva (la cuenta por mes, antes de la re-corrida); R5.1 con A-16 medida y ABIERTA; R5.2 sin NA:R y dependiendo de R3.8; R5.6 nueva (la rentabilidad, la puerta para operar en vivo, con las condiciones del punto 4 de la respuesta), con UN cambio: su «Depende de» no cita R5.2 (que es medir mayo, y la puerta no depende de mayo). Queda: «R5.1 (G) y la re-corrida que cuenta, después de R3.8, con su línea «habilita medir» en sí (ADR-0070 punto 5; ADR-0092 §5).»
+>
+> 6. Antes del commit, corre simular_cierre.py otra vez sobre una copia, con los cambios de 4.e y 5 y con las CUATRO líneas de cabecera del cierre (Current Branch, Current Feature, Stable Main State y Last Stable Commit), más test_hoja_de_ruta y test_project_state, y mide PROJECT_STATE con wc -c: por debajo de 23.000 (con solo el Current Feature dio 22.561). Si lo pasa, PARADA con la cifra, sin recortar nada por tu cuenta. Busca con grep que no quede viva la letra R en la Next Action, ningún NA:R en la hoja de ruta, ningún «Siguiente: R» y ningún R5.2 en el «Depende de» de R5.6. Actualiza en §1.4 las cifras de la simulación, que siguen siendo las de antes de la PARADA 2.
+>
+> 7. Después, el ritual sin cambios: merge a main, tag, commit de estado que solo reemplaza las cuatro líneas de cabecera (la Next Action ya cambió en la rama), make check sellado, push atómico de main y del tag (Aleks confirma la regla ask con «1. Yes»), CI de main en verde y borrar la rama local.
+>
+> 8. Informe final: sha de main, merge, tag, run de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.
+
+### Preparación del cierre (2026-11-07), sin ejecutarlo
+
+- **Punto 0.** `git log -1 --format=%h trabajo/metodo-fidelidad-rentabilidad` = 49c12eb (la punta). `git
+  log main..trabajo/metodo-fidelidad-rentabilidad`: **7 commits**, 49c12eb, 4ed6922, 1b10082,
+  47a526c, 56eb235, 9b7fa7f y 1380b6c (antes de este commit de la orden, que será el octavo).
+- **Punto 1.** `git tag -l 'stable/F38r*'` y `git ls-remote --tags origin 'stable/F38r*'`: vacíos;
+  el último tag, `stable/F38q-sello-respaldo-m1`.
+- **Punto 3.** La fila 46 de «El encargo, punto por punto» dice ya «siete alcances». La fila de
+  ERRORES-RECURRENTES con los cambios del punto 3 la escribe `cerrar-rama` en el commit
+  `chore(cierre)`.
+- **Punto 4.e.** El final de `PROJECT_STATE.md:141` es literal: `grep -c 'Se corrigen en la
+  próxima rama que toque knowledge/spec, con su régimen de cambio\.$' PROJECT_STATE.md` = 1. No hay
+  PARADA.
+- **Punto 6.** `simular_cierre.py` (con 4.e, 5 y las cuatro líneas de cabecera): `a: []`, `b: []`,
+  `c: []`; ningún «Siguiente: R», ningún R5.2 en el «Depende de» de R5.6, ninguna línea `R.` en la
+  Next Action ni ningún `NA:R` en la hoja simulada; PROJECT_STATE **22.764 bytes** con las cuatro
+  líneas de cabecera, por debajo de 23.000. No hay PARADA. §1.4 lleva las cifras nuevas.
+- **Lo demás** (el commit `chore(cierre)` con 4.a a 4.f, la hoja de ruta del punto 5, el registro
+  de HISTORIA, la salida de `contrato.yaml`, el merge, el tag, el commit de estado, el push, la CI y
+  el borrado de la rama) espera a que Aleks escriba `/cerrar-rama`.

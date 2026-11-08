@@ -87,6 +87,12 @@ ps = cambiar(
     "- La validación de fidelidad (F26) precede a todo lo que decida operaciones en vivo (F29, F30 y lo de F31-F32 que dependa de ellos); la capa de plataforma de ADR-0082, que nunca decide una operación, puede ir antes.",
     "- La rentabilidad pre-registrada de ADR-0092, medida una vez sobre meses que el bot no ha visto, precede a todo lo que decida operaciones en vivo (F29, F30 y lo de F31-F32 que dependa de ellos), y la fidelidad sigue siendo la herramienta de construcción; la capa de plataforma de ADR-0082, que nunca decide una operación, puede ir antes.",
 )
+# Technical Debt, la linea del panel de FTMO (orden de cierre, punto 4.e): gana su final; nada mas
+ps = cambiar(
+    ps,
+    "Se corrigen en la próxima rama que toque knowledge/spec, con su régimen de cambio.\n",
+    "Se corrigen en la próxima rama que toque knowledge/spec, con su régimen de cambio. Esa rama cierra también A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).\n",
+)
 
 # --- La hoja de ruta
 hoja = cambiar(
@@ -142,7 +148,7 @@ hoja = cambiar(
     "  según los heredados 7 y 9; el riesgo del spread supuesto por la hora de pared (Technical Debt)\n"
     "  en noviembre y en la extensión de invierno; y la construcción en el umbral de ADR-0070. La\n"
     "  puerta no da «pasa» antes de F17 (el deslizamiento, heredado 10).\n"
-    "- **Depende de:** R5.1 (G) y la re-corrida que cuenta en el umbral de ADR-0070 (R3.8 y R5.2).\n"
+    "- **Depende de:** R5.1 (G) y la re-corrida que cuenta, después de R3.8, con su línea «habilita medir» en sí (ADR-0070 punto 5; ADR-0092 §5).\n"
     "- **Quién:** la sesión, con el encargo del consultor; la decisión de operar, Aleks (F35).\n"
     "- **Hecho cuando:** la medida está en su informe con el veredicto de ADR-0092 §3 y §4.\n",
 )
@@ -157,14 +163,49 @@ print(
 print("a:", thr.problemas_a(ps, hoja))
 print("b:", thr.problemas_b(ps, hoja, historia, ids, funciones))
 print("c:", thr.problemas_c(ps))
-cf_actual = ps.split("## Current Feature\n", 1)[1].split("\n\n", 1)[0]
-cf_cierre = (
-    "Ninguna rama abierta. trabajo/metodo-fidelidad-rentabilidad cerrada en main el 2026-11-0X "
+# las comprobaciones de grep de la orden de cierre, punto 6
+r56 = hoja.split("### R5.6 ", 1)[1].split("\n### ", 1)[0]
+depende_r56 = next(x for x in r56.splitlines() if x.startswith("- **Depende de:**"))
+print(
+    f"«Siguiente: R» en la copia? {'Siguiente: R ' in ps or 'Siguiente: R,' in ps}; "
+    f"R5.2 en el «Depende de» de R5.6? {'R5.2' in depende_r56}; "
+    f"línea R. en la Next Action? {any(x.startswith('R. ') for x in ps.splitlines())}"
+)
+
+
+def _seccion(texto: str, titulo: str, nuevo: str) -> str:
+    """Sustituye el cuerpo (una linea) de una seccion `## titulo` de PROJECT_STATE."""
+    viejo = texto.split(f"## {titulo}\n", 1)[1].split("\n\n", 1)[0]
+    return cambiar(texto, f"## {titulo}\n{viejo}\n", f"## {titulo}\n{nuevo}\n")
+
+
+# las CUATRO lineas de cabecera que escribe el ritual (orden de cierre, punto 6), con la forma de
+# las de main y un sha de 7 caracteres de relleno
+SHA = "xxxxxxx"
+ps_cierre = _seccion(ps, "Current Branch", "main")
+ps_cierre = _seccion(
+    ps_cierre,
+    "Current Feature",
+    "Ninguna rama abierta. trabajo/metodo-fidelidad-rentabilidad cerrada en main el 2026-11-07 "
     "(stable/F38r-metodo-fidelidad-rentabilidad): el método con el que se juzga al bot (ADR-0092), "
     "fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en "
-    "vivo; A-16 medida."
+    "vivo; A-16 medida.",
 )
-ps_cierre = ps.replace(cf_actual, cf_cierre, 1)
+ps_cierre = _seccion(
+    ps_cierre,
+    "Stable Main State",
+    f"{SHA} · merge de `trabajo/metodo-fidelidad-rentabilidad` (tag "
+    "`stable/F38r-metodo-fidelidad-rentabilidad`), sobre `stable/F38q-sello-respaldo-m1` (18f548e). "
+    "Informe docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md; el registro del cierre, al final de "
+    "HISTORIA.",
+)
+ps_cierre = _seccion(
+    ps_cierre,
+    "Last Stable Commit",
+    f"{SHA} · merge: trabajo/metodo-fidelidad-rentabilidad, el método con el que se juzga al bot "
+    "(ADR-0092): fidelidad por criterios para construir y rentabilidad pre-registrada como puerta "
+    "para operar en vivo; A-16 medida · tag stable/F38r-metodo-fidelidad-rentabilidad",
+)
 with tempfile.TemporaryDirectory() as tmp:
     copia = Path(tmp)
     (copia / "PROJECT_STATE.md").write_text(ps, encoding="utf-8", newline="\n")
@@ -176,8 +217,8 @@ with tempfile.TemporaryDirectory() as tmp:
     (copia / "PROJECT_STATE.md").write_text(ps_cierre, encoding="utf-8", newline="\n")
     tamano_cierre = (copia / "PROJECT_STATE.md").stat().st_size
     print(
-        f"PROJECT_STATE con las lineas del cierre: {tamano} bytes (wc -c de la copia); con el "
-        f"Current Feature del cierre: {tamano_cierre}; los cuatro tests de test_project_state: ok"
+        f"PROJECT_STATE con las lineas del cierre: {tamano} bytes (wc -c de la copia); con "
+        f"las cuatro lineas de cabecera del cierre: {tamano_cierre}; los cuatro tests de test_project_state: ok"
     )
     if max(tamano, tamano_cierre) >= 23_000:
         print("POR ENCIMA de la alerta de 23.000 del consultor", file=sys.stderr)
