@@ -15786,3 +15786,52 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 59 (2026-11-07).
+
+# Next Action HECHA · R · el método de juicio del bot · sale de PROJECT_STATE.md en trabajo/metodo-fidelidad-rentabilidad (2026-11-07)
+
+Su texto literal (la letra ya tenía un registro HECHA, el de trabajo/ventana-ev-v9-003456, del 2026-10-05; este lleva su fecha, DECISIONES-DE-PROCESO.md:29):
+
+R. Decisión de Aleks (2026-10-29): fidelidad por criterios, además de por operación, y rentabilidad pre-registrada como puerta para operar en vivo. Rama de método con ADR (enmienda ADR-0043 y ADR-0070) y medida de los sesgos de la cifra de fidelidad, antes de la próxima corrida que cuente (R3.7).
+
+HECHA en `trabajo/metodo-fidelidad-rentabilidad` (docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md): ADR-0092 (enmienda ADR-0043, ADR-0070 y ADR-0053 §6) fija la fidelidad por criterios (en cascada contra las órdenes del bot, sin umbral) como herramienta de construcción y la rentabilidad como puerta para operar en vivo, pre-registrada por el consultor antes de ninguna corrida nueva: N ≥ 100, esperanza ≥ +0,10 R neta, percentil 5 del remuestreo por días > 0, pérdida diaria < 3 %, equity ≥ 94 %, sin suspensión, en la fase fondeada, sobre junio-noviembre de 2025 una sola vez y con el deslizamiento pendiente de F17; una cuenta por mes en construcción (trabajo/cuenta-por-mes). A-16 medida en construcción (mediana 0 puntos, el 92,4 % dentro de la M1 de Dukascopy): la regla del punto 7 no se dispara y A-16 sigue ABIERTA.
+
+# Registro de cierre · `trabajo/metodo-fidelidad-rentabilidad` (2026-11-07)
+
+- Orden de cierre del consultor del 2026-11-07, dada por Aleks tras revisar la rama hasta 49c12eb
+  (copiada tal cual al final de METODO-FIDELIDAD-RENTABILIDAD.md, en 0ff0695). La sesión preparó el
+  cierre sin ejecutarlo (el tag no existía en local ni en origin; las líneas, simuladas sobre una
+  copia) y esperó; después Aleks lanzó `/cerrar-rama trabajo/metodo-fidelidad-rentabilidad`.
+- **Lo que entra**: ADR-0092 (ACTIVE): la fidelidad, por operación y por criterios (cascada contra
+  las órdenes del bot, sin umbral), es la herramienta de construcción, y la RENTABILIDAD
+  pre-registrada es la condición necesaria para operar en vivo (R neto; N ≥ 100, esperanza ≥ +0,10 R,
+  percentil 5 del remuestreo por días > 0, pérdida diaria < 3 %, equity ≥ 94 %, sin suspensión; fase
+  fondeada; junio a noviembre de 2025 una vez, con su extensión; deslizamiento pendiente de F17 con
+  su regla); una cuenta por mes en construcción (la implementa `trabajo/cuenta-por-mes`). Recuadros
+  en ADR-0043, ADR-0070 y ADR-0053 §6; NOTA en MASTER_PLAN; `criterio_fidelidad.yaml` con
+  `tolerancia_stop_puntos`, el bloque `rentabilidad` y `material_sin_video`; las funciones puras en
+  `cases/criterio_fidelidad.py`; en `engine/` solo salida (el stop del caso, «### Posiciones», la
+  cascada, la rentabilidad y el material sin vídeo, marcadas diagnóstico); un golden de `main` en
+  `tests/golden/informe_simulacion/`. A-16 medida en construcción (mediana 0 puntos, 92,4 % dentro
+  de la M1 de Dukascopy) y ABIERTA. Ninguna corrida del arnés ni cifra agregada nueva del bot.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; la Next Action R sale
+  HECHA (arriba), F y G se reescriben, la segunda línea de «Things That Must Not Be Changed» toma
+  la redacción del punto 5 de la respuesta y la línea del panel de FTMO en Technical Debt gana el
+  cierre de A-16; la hoja de ruta: R3.7 HECHA, R3.8 y R5.6 nuevas, R5.1 y R5.2 al día; la fila de
+  HOLDOUT-EXPOSICIONES del punto 4.f; la fila de ERRORES-RECURRENTES.
+- **`PROJECT_STATE.md`**: 22.651 bytes en este commit; con las cuatro líneas de cabecera del cierre,
+  22.764 (simulado). Ninguna línea de la orden se recortó.
+- **Desviaciones de la orden**: ninguna.
+- Letra del tag: la última cerrada era `stable/F38q-sello-respaldo-m1`;
+  `stable/F38r-metodo-fidelidad-rentabilidad` no existe en local ni en origin (comprobado antes de
+  este commit).
+- Tag: `stable/F38r-metodo-fidelidad-rentabilidad`. El merge es
+  `git rev-parse "stable/F38r-metodo-fidelidad-rentabilidad^{commit}"`.
+- Commits de la rama: `1380b6c` (chore(rama): abre la rama), `9b7fa7f` (la fase 0 y la PARADA),
+  `56eb235` (ADR-0092, recuadros, NOTA de MASTER_PLAN y la respuesta), `47a526c` (el yaml, las
+  funciones puras y la salida del arnés), `1b10082` (A-16 medida y los recuentos), `4ed6922` (las
+  líneas del cierre, el revisor y sus arreglos), `49c12eb` (la respuesta a la PARADA 2:
+  material_sin_video y las réplicas descartadas, y la segunda pasada del revisor), `0ff0695` (la
+  orden de cierre copiada y el cierre preparado), y este (chore(cierre): sale el contrato y entra el
+  registro en HISTORIA).
+- CI: ninguna en la rama (no toca hooks, rutas, `.claude/` ni plataforma; orden de cierre, punto 2:
+  sin `fix/`). La CI de `main` corre tras el push.
