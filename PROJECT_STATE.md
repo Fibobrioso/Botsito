@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/cuenta-por-mes
+main
 
 ## Current Feature
-trabajo/cuenta-por-mes, EN CURSO desde el 2026-11-07 (F de la Next Action; R3.8 de la hoja de ruta; encargo docs/encargos/trabajo-cuenta-por-mes.md; informe docs/validation/CUENTA-POR-MES.md).
+Ninguna rama abierta. trabajo/cuenta-por-mes cerrada en main el 2026-11-08 (stable/F38s-cuenta-por-mes): una cuenta por mes en el motor (ADR-0092 §8): la cuenta, el seguidor del tope, la racha y el primer toque empiezan de nuevo al cambiar de mes.
 
 ## Stable Main State
-a1907fa · merge de `trabajo/metodo-fidelidad-rentabilidad` (tag `stable/F38r-metodo-fidelidad-rentabilidad`), sobre `stable/F38q-sello-respaldo-m1` (18f548e). Informe docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md; el registro del cierre, al final de HISTORIA.
+41d47b3 · merge de `trabajo/cuenta-por-mes` (tag `stable/F38s-cuenta-por-mes`), sobre `stable/F38r-metodo-fidelidad-rentabilidad` (a1907fa). Informe docs/validation/CUENTA-POR-MES.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-a1907fa · merge: trabajo/metodo-fidelidad-rentabilidad, el método con el que se juzga al bot (ADR-0092): fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en vivo; A-16 medida · tag stable/F38r-metodo-fidelidad-rentabilidad
+41d47b3 · merge: trabajo/cuenta-por-mes, una cuenta por mes en el motor (ADR-0092 §8): la cuenta, el seguidor del tope, la racha y el primer toque empiezan de nuevo al cambiar de mes · tag stable/F38s-cuenta-por-mes
 
 ## Tests Currently Passing
 1925 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
