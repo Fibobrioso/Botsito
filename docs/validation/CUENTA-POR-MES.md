@@ -166,6 +166,48 @@ encargo.
   (`:178`) no se toca.
 - Ningún cuerpo reescrito. ADR-0070 punto 3, sin tocar (PARADA condicional, punto 3).
 
+### Punto 2 · El motor: la condición, el reinicio y la conservación (D1, D2, D3; D6 (1)-(4) y (6))
+
+- `MotorCableado` gana dos atributos de estado interno (D2): `mes_en_curso`, el AAAA-MM de la
+  clave del último día corrido, y `cuentas_cerradas`, la lista ordenada de `CuentaDelMes` (D3: mes,
+  estado, motivo, instante, saldo, equity, días de trading, primer toque, la racha al cierre y la
+  curva). En `correr_dia`, justo donde ya se reiniciaba la diaria: con `cuenta_diaria`, lo de hoy y
+  nada más; si no, cuando el mes del día es distinto de `mes_en_curso`, la cuenta en curso se
+  fotografía en `cuentas_cerradas` y `cuenta`, `seguidor` y `primero_en_tocar` vuelven a `None`
+  (nacen de nuevo unas líneas más abajo, por el mismo código de siempre: la cuenta desde el capital
+  del perfil). **La racha no se toca** (PARADA condicional, punto 1). Ninguna opción ni campo de
+  configuración nuevo; `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA`, intacta.
+- `curva_de_equity` sigue dando la curva de la cuenta en curso (un mes: la de siempre); la parte
+  común sale a `_curva_de`, que usa también la foto. `cuentas_del_tramo(motor)` da las cerradas más
+  la en curso, para la salida del punto 3. Ninguna decisión lee las cerradas.
+- Tests nuevos, sintéticos (`tests/unit/test_cuenta_por_mes.py`, con los escenarios en
+  `tests/unit/escenarios_cuenta_por_mes.py`, el día de 2030 de `test_cableado.py` desplazado a
+  enero y febrero de 2030 con el `_mercado_del_dia` de `test_racha_perdidas.py`): (1) enero se
+  suspende por el salto de 2.000 puntos y febrero vuelve a operar con el lote del capital, igual que
+  febrero corrido solo, y la cuenta de enero queda conservada; (2) con el tope del registro, el
+  seguidor de febrero nace con el capital y sin cortes y el primer toque de febrero es de febrero;
+  la racha, un `xfail` estricto con D1 tal cual y un test con lo de hoy (sigue: 2); (3) dos días
+  del mismo mes y (4) la diaria con dos meses: el informe ENTERO es el de `main`, por golden; y la
+  diaria no conserva cuentas y su primer toque sigue siendo el de enero; (6) el visor:
+  `detalle_para_visor` del primer día de febrero da el saldo y la equity de febrero corrido solo;
+  y uno más, el mes por la clave (15 y 16 de enero, 12 y 13 de febrero: una sola cuenta cerrada,
+  con dos días).
+- **Los goldens de `main`**, en `tests/golden/cuenta_por_mes/` (los dos de D6 (3) y (4)) y
+  `tests/golden/metodo_adr0092/` (los de la sección de ADR-0092 del punto 3, con el criterio real),
+  y la salida de `main` del escenario que cambia, en `anexos/CUENTA-POR-MES/main/`: generados en un
+  clon desacoplado de `main` (`git worktree add --detach C:/cm/cpm main`, 8aeed0b) con los dos
+  ficheros de test de la rama copiados dentro, por `PYTHONUTF8=1 uv run pytest -q -s
+  tests/unit/test_cuenta_por_mes.py::test_el_volcado_de_los_escenarios > C:/cm/volcado-main.txt`
+  (exit 0) y `anexos/CUENTA-POR-MES/partir_volcado.py` (7 ficheros). Primero lo intenté con un
+  guion que importaba `tests.unit`, y la guardia lo negó (no resuelve `from tests.unit import ...`
+  desde un guion; no se rodea: se rehízo por pytest). El primer volcado salió en cp1252 (el «§»):
+  se repitió con `PYTHONUTF8=1`.
+- En `main`, el escenario de dos meses deja febrero congelado: «estado: SUSPENDIDA», la curva de
+  febrero sin equity mínima y ningún evento de febrero (`anexos/CUENTA-POR-MES/main/dos-meses.txt`).
+- `ruff format`, `ruff check` y `mypy` en verde sobre lo tocado; los tests de cableado, racha,
+  a44, tope, margen, método y arnés, en verde con el código de la rama. La comparación de los
+  tests nuevos con el código de `main`, sobre la rama commiteada, va en el punto 3.
+
 ## Estado
 
 EN CURSO.

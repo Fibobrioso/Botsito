@@ -1,0 +1,32 @@
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:03:40+00:00 | 1.09995 | 2030-01-15T09:58:59.999000+00:00 | 1.09989 | manual | perdida | 25.90 | -155.40 | 129.50 | 0.00 | -284.90 | 414.40 | -0.688
+posiciones: 1; PnL neto total (USD): -284.90
+
+### Fidelidad por criterios (ADR-0092 §1 y §2; diagnostico de construccion, sin umbral)
+CUENTA: cada operacion del trader de los dias corridos, por el ULTIMO escalon que alcanza contra las ordenes que el bot coloco en su (dia, sesion, direccion), llenadas o no; sobre esta salida
+tolerancias: entrada 3 puntos, stop 3 puntos, llenado 15 min
+mes | sin orden del bot en su (dia, sesion, direccion) | orden, con la entrada fuera de tolerancia | entrada, con el stop fuera de tolerancia | entrada; el caso no trae stop | en el nivel, no llenada | en el nivel, llenada fuera de tolerancia de instante | las cuatro piezas | total
+2030-01 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+total | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+ordenes del bot en un (dia, sesion, direccion) sin ninguna operacion del trader: 0
+el sesgo de H4, derivado y aparte: la linea «por operacion del trader» de la seccion de RN-003; la liquidez de M15: no comparable con el material de los casos
+
+### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)
+libros sin video: 2026-01, 2026-04, 2026-08, salvo 2026-04-29; cuentan como CON video, provisionales hasta que T lo compruebe: 2026-07 (fuente: ACTIVAR-SESION-05.md §0.b.7)
+operaciones del bot quitadas (break_even en un dia sin video): 0
+cascada sin ellas, total | sin orden del bot en su (dia, sesion, direccion) 0 | orden, con la entrada fuera de tolerancia 0 | entrada, con el stop fuera de tolerancia 0 | entrada; el caso no trae stop 0 | en el nivel, no llenada 0 | en el nivel, llenada fuera de tolerancia de instante 0 | las cuatro piezas 1
+esperanza sin ellas (media del R neto, 1 operaciones): -0.688
+
+### Rentabilidad (ADR-0092 §3; DIAGNOSTICO sobre construccion, ADR-0092 §6: la puerta solo se mide sobre 2025-06, 2025-07, 2025-08, 2025-09, 2025-10, 2025-11, fase fondeada)
+FASE de esta corrida: -
+a) N (operaciones llenadas y cerradas): 1
+b) esperanza (media del R neto): -0.688
+c) percentil 5 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 1 dias): -0.688; replicas descartadas por no tener ninguna operacion: 0 de 10000
+d) perdida diaria maxima (equity, base saldo_corte_diario): 0.28 % del capital inicial
+e) equity minima del tramo: 99.72 % del capital inicial
+f) suspendida: no
+criterios a) a f): insuficiente (a) N = 1, por debajo de 100)
+deslizamiento por llenado afectado que lleva la esperanza a 0.10 R (ADR-0092 §4, sin decidir nada): -12.60 puntos

@@ -213,6 +213,27 @@ def _motivo_de_cancelacion(
     return f"{donde}reglas disparadas en ese cierre: {reglas}"
 
 
+DiaDeCurva = tuple[str, Decimal, Decimal, Decimal | None]  # dia, saldo al corte, final, minima
+
+
+@dataclass(frozen=True)
+class CuentaDelMes:
+    """Una cuenta mensual cerrada al cambiar de mes (ADR-0092 §8 y su NOTA): su mes, su veredicto,
+    su saldo y su equity finales, sus dias de trading, su primer toque, su racha al cierre y su
+    curva. SOLO SALIDA: ninguna decision la lee."""
+
+    mes: str
+    estado: EstadoCuenta
+    motivo: str
+    instante: datetime | None
+    saldo: Decimal
+    equity: Decimal
+    dias_de_trading: int
+    primero_en_tocar: tuple[str, str, int] | None
+    racha: str  # la descripcion de la racha de RN-036 al cerrar el mes
+    curva: tuple[DiaDeCurva, ...]
+
+
 @dataclass
 class MotorCableado:
     """El motor real cableado al broker y a la cuenta. `zonas_de` es la puerta para una estrategia
@@ -238,15 +259,22 @@ class MotorCableado:
     stops_level_diagnostico: int | None = None  # A-27 en diagnostico (ADR-0057)
     tipo_orden: str | None = None  # A-47 fijado o en diagnostico; sin el, la limite de siempre
     # DIAGNOSTICO: la cuenta empieza de cero cada dia, sin arrastrar saldo ni frenos (revision de
-    # F35); por defecto se arrastra, ADR-0053 §6
+    # F35); por defecto se arrastra dentro de cada mes y empieza de nuevo al cambiar de mes, una
+    # cuenta por mes (ADR-0092 §8 y su NOTA, que enmienda ADR-0053 §6)
     cuenta_diaria: bool = False
     cuenta: CuentaViva | None = None
     seguidor: SeguidorTope | None = None
-    # la racha de perdidas seguidas del trader (RN-036, A-51; ADR-0077): persiste entre dias como
-    # la cuenta y el seguidor del tope, y se reinicia con `cuenta_diaria` como ellos
+    # la racha de perdidas seguidas del trader (RN-036, A-51; ADR-0077): persiste entre dias, y
+    # entre meses mientras la PARADA condicional 1 de CUENTA-POR-MES.md no se responda; se
+    # reinicia con `cuenta_diaria` como la cuenta y el seguidor del tope
     racha: SeguidorRacha | None = None
-    # el primer limite que se toco en toda la corrida: (origen, cual, instante ms)
+    # el primer limite que se toco en la cuenta en curso: (origen, cual, instante ms); con
+    # `cuenta_diaria`, el de toda la corrida
     primero_en_tocar: tuple[str, str, int] | None = None
+    # ADR-0092 §8: el mes (AAAA-MM de la clave del dia) del ultimo dia corrido y, en orden, las
+    # cuentas cerradas al cambiar de mes. SOLO SALIDA: ninguna decision las lee
+    mes_en_curso: str | None = None
+    cuentas_cerradas: list[CuentaDelMes] = field(default_factory=list)
     trazas_broker: dict[str, TrazaBroker] = field(default_factory=dict)
     brokers: dict[str, Broker] = field(default_factory=dict)
     estados: dict[str, EstadoDia] = field(default_factory=dict)  # el EstadoDia de cada dia corrido
@@ -273,8 +301,16 @@ class MotorCableado:
         limites = [(n, int(a), int(b)) for n, a, b in dia.limites()]  # por la puerta (ADR-0069)
         primero = min(d for _, d, _ in limites)
         ultimo = max(h for _, _, h in limites)
+        mes = clave[:7]
         if self.cuenta_diaria:
             self.cuenta, self.seguidor, self.racha = None, None, None
+        elif self.mes_en_curso is not None and mes != self.mes_en_curso:
+            # una cuenta por mes (ADR-0092 §8 y su NOTA): la del mes anterior se cierra y se
+            # conserva para la salida; la cuenta, el seguidor del tope y el primer toque empiezan
+            # de nuevo. La racha de RN-036, no: PARADA condicional 1 de CUENTA-POR-MES.md
+            self.cuentas_cerradas.append(self._cuenta_del_mes(self.mes_en_curso))
+            self.cuenta, self.seguidor, self.primero_en_tocar = None, None, None
+        self.mes_en_curso = mes
         if self.cuenta is None:
             self.cuenta = CuentaViva(self.reglas_fase, self.contrato, primero * MS_POR_MINUTO - 1)
         if self.racha is None:
@@ -510,9 +546,27 @@ class MotorCableado:
         return tuple(salida)
 
     def veredicto(self) -> tuple[EstadoCuenta, str, datetime | None]:
+        """El de la cuenta en curso: con varios meses, la del ultimo (las demas, en
+        `cuentas_cerradas`)."""
         if self.cuenta is None:
             return EstadoCuenta.EN_CURSO, "sin dias corridos", None
         return self.cuenta.estado, self.cuenta.motivo, self.cuenta.instante
+
+    def _cuenta_del_mes(self, mes: str) -> CuentaDelMes:
+        """La foto de la cuenta en curso, para conservarla al cerrar su mes (ADR-0092 §8)."""
+        assert self.cuenta is not None
+        return CuentaDelMes(
+            mes=mes,
+            estado=self.cuenta.estado,
+            motivo=self.cuenta.motivo,
+            instante=self.cuenta.instante,
+            saldo=self.cuenta.saldo,
+            equity=self.cuenta.equity,
+            dias_de_trading=self.cuenta.dias_de_trading,
+            primero_en_tocar=self.primero_en_tocar,
+            racha=self.racha.descripcion() if self.racha is not None else "sin dias corridos",
+            curva=tuple(_curva_de(self.cuenta, self.trazas_broker)),
+        )
 
 
 def comprobar_reloj_unico(
@@ -558,18 +612,31 @@ def zona_sintetica(id: str, lado: str, entrada: int, extremo: int, por: str) -> 
     return Zona(id, lado, entrada, extremo, por)
 
 
-def curva_de_equity(motor: MotorCableado) -> list[tuple[str, Decimal, Decimal, Decimal | None]]:
-    """(dia, saldo al corte, saldo final, equity minima) por dia CORRIDO. La cuenta corta todos
-    los dias de calendario que cruza entre dos dias corridos (el limite diario se recalcula cada
-    dia), pero solo se listan los dias con mercado: la curva no nombra ningun dia que la corrida no
-    haya leido."""
-    if motor.cuenta is None:
-        return []
+def _curva_de(cuenta: CuentaViva, trazas: Mapping[str, TrazaBroker]) -> list[DiaDeCurva]:
     return [
         (d.dia.isoformat(), d.saldo_corte, d.saldo_final, d.equity_minima)
-        for d in motor.cuenta.cerrar_dia_en_curso()
-        if d.dia.isoformat() in motor.trazas_broker
+        for d in cuenta.cerrar_dia_en_curso()
+        if d.dia.isoformat() in trazas
     ]
+
+
+def curva_de_equity(motor: MotorCableado) -> list[DiaDeCurva]:
+    """(dia, saldo al corte, saldo final, equity minima) por dia CORRIDO de la cuenta en curso:
+    con varios meses, la del ultimo (las de los meses cerrados, en `cuentas_cerradas`; ADR-0092
+    §8). La cuenta corta todos los dias de calendario que cruza entre dos dias corridos (el limite
+    diario se recalcula cada dia), pero solo se listan los dias con mercado: la curva no nombra
+    ningun dia que la corrida no haya leido."""
+    if motor.cuenta is None:
+        return []
+    return _curva_de(motor.cuenta, motor.trazas_broker)
+
+
+def cuentas_del_tramo(motor: MotorCableado) -> list[CuentaDelMes]:
+    """Las cuentas mensuales de la corrida, en orden: las cerradas y la que esta en curso
+    (ADR-0092 §8). Con un solo mes, o con `cuenta_diaria`, una sola: la en curso."""
+    if motor.cuenta is None or motor.mes_en_curso is None:
+        return list(motor.cuentas_cerradas)
+    return [*motor.cuentas_cerradas, motor._cuenta_del_mes(motor.mes_en_curso)]
 
 
 def instante_de(minuto: int) -> datetime:
@@ -1411,6 +1478,7 @@ __all__ = [
     "DEPURACION",
     "NOMBRE_MOTOR",
     "CableadoError",
+    "CuentaDelMes",
     "MotorCableado",
     "Sesion",
     "TrazaBroker",
@@ -1418,6 +1486,7 @@ __all__ = [
     "comprobar_que_cubre",
     "comprobar_reloj_unico",
     "construir_motor_cableado",
+    "cuentas_del_tramo",
     "curva_de_equity",
     "detalle_para_visor",
     "informe_simulacion",
