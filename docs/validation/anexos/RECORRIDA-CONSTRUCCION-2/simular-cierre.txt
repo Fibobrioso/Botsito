@@ -1,0 +1,7 @@
+letras vivas en la copia: A D F G I J L M N Q T U; F viva? True; NA:F en R3.9? False; R3.9 HECHA? True
+a: []
+b: []
+c: []
+R5.2 cita R3.9? True; R4.1 en su «Depende de»? False
+R5.6 «Depende de» sin cambiar? True
+PROJECT_STATE con las lineas del cierre: 22837 bytes (st_size de la copia, los mismos que wc -c); con las cuatro lineas de cabecera del cierre: 22761; los cuatro tests de test_project_state, sobre las dos: ok

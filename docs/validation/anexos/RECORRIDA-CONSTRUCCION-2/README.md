@@ -80,6 +80,10 @@ leen salidas commiteadas:
   §0.i dejó a la re-corrida (D6).
   `uv run python -B docs/validation/anexos/SELLO-RESPALDO-M1/censo_cierre.py <salida>`
   → `censo-cierre-cuenta-por-mes.txt` y `censo-cierre-diaria.txt`.
+- `simular_cierre.py`: las líneas del cierre (RECORRIDA-CONSTRUCCION-2.md §6), en memoria sobre
+  copias, contra `test_hoja_de_ruta` y `test_project_state`; en el repo no escribe nada.
+  `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/simular_cierre.py`
+  → `simular-cierre.txt`.
 - `test_humo.py`: sus tests de humo, sobre salidas sintéticas y en los dos sentidos; `make check` no
   los recoge (`testpaths = ["tests"]`):
   `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/test_humo.py -q`.

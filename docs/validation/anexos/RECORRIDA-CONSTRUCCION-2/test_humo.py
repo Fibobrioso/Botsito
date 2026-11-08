@@ -265,7 +265,9 @@ def test_el_resumen_de_la_lista_suma_solo_las_llenadas() -> None:
 def test_antes_del_dia_caza_una_fecha_y_un_minuto_anteriores_y_deja_los_del_dia(
     tmp_path: Path,
 ) -> None:
-    # minutos UTC desde 1970: 29583840 = 2026-04-01 08:00; 29580000 = 2026-03-29 16:00
+    # minutos UTC desde 1970: 29583840 = 2026-04-01 08:00. Las filas «malas» son del 2026-04-02 con
+    # algo del 2026-04-01 (dos dias dev), y la fecha fuera de la construccion, de 2030 (sintetica):
+    # ninguna fecha de un mes con dias reservados (revisor, b1)
     buena = tmp_path / "buena.txt"
     buena.write_text(
         "2026-04-01 | 07-11 | o1 | 2026-04-01T08:00:59.999000+00:00 | 110000@29583840\n",
@@ -273,11 +275,11 @@ def test_antes_del_dia_caza_una_fecha_y_un_minuto_anteriores_y_deja_los_del_dia(
     )
     assert antes_del_dia.main([buena]) == 0
     for mala in (
-        "2026-04-01 | 07-11 | o1 | 2026-03-31T23:00:00+00:00 | x\n",
-        "2026-04-01 | 07-11 | o1 | x | 110000@29580000\n",
-        "nota suelta con una fecha de mayo, 2026-05-14\n",
-        f"{ROTULO}2026-04-01 | 07-11 | o1 | 2026-03-31T23:00:00+00:00 | x\n",
-        "P4 sin orden: trader | 2026-04-01 | 07-11 | compra | 2026-03-31T23:00:00+00:00 | 1\n",
+        "2026-04-02 | 07-11 | o1 | 2026-04-01T23:00:00+00:00 | x\n",
+        "2026-04-02 | 07-11 | o1 | x | 110000@29583840\n",
+        "nota suelta con una fecha sintetica, 2030-02-14\n",
+        f"{ROTULO}2026-04-02 | 07-11 | o1 | 2026-04-01T23:00:00+00:00 | x\n",
+        "P4 sin orden: trader | 2026-04-02 | 07-11 | compra | 2026-04-01T23:00:00+00:00 | 1\n",
     ):
         ruta = tmp_path / "mala.txt"
         ruta.write_text(mala, encoding="utf-8")

@@ -136,8 +136,8 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > decide nada) y la cuenta por mes (ADR-0092 §8). Ninguna de las cuatro cuentas mensuales acabó
    > SUSPENDIDA (las cuatro EN_CURSO, `PRIMERO EN TOCAR UN LIMITE: ninguno`); RN-032 dispara en 25 de
    > las 152 sesiones (19 de las 104 con operaciones del trader: 3 en enero, 2 en julio, 14 en
-   > agosto, desde el 2026-08-19), y con él se bloquea `abrir_operacion` en 18 de esas 19; en la
-   > cuenta de agosto el bot no llena ninguna orden desde el 2026-08-19 (11 días de trading de 21).
+   > agosto, desde el 2026-08-19); en la cuenta de agosto el bot no llena ninguna orden desde el
+   > 2026-08-19 (11 días de trading de 21).
    > Por el punto 4, se sigue construyendo y mayo no se toca.
 
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
