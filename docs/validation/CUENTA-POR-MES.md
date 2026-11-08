@@ -365,7 +365,8 @@ test_project_state, sobre las dos: ok».]
    mes», pero con la PARADA condicional 1 abierta la racha no va por cuenta, sigue entre meses. La
    cabecera da la racha de toda la corrida, como hoy, y la línea de cada bloque («al cerrar el
    mes») da la acumulada hasta ese mes. Si el consultor responde «la racha también», la cabecera
-   pasa a «por cuenta: ver cada mes» en el mismo commit.
+   pasa a «por cuenta: ver cada mes» en el mismo commit. [Sin objeto desde la respuesta a la
+   PARADA, punto 1: la cabecera dice «por cuenta: ver cada mes».]
 8. **Los tests del punto 3, en otro fichero** (tras el revisor, a4 y b1): las dos pruebas de las
    piezas puras de `criterio_fidelidad.py` van en `tests/unit/test_cuenta_por_mes_metodo.py`, para
    que `test_cuenta_por_mes.py` solo importe lo que existe en `main` y se pueda correr allí.
@@ -383,9 +384,9 @@ test_project_state, sobre las dos: ok».]
 ### Las líneas del cierre
 
 Las del punto 4, literales en `anexos/CUENTA-POR-MES/simular_cierre.py`. Y la fila de
-ERRORES-RECURRENTES, preparada (se completa con lo que encuentren el revisor y el consultor):
+ERRORES-RECURRENTES, preparada (reescrita con el punto 4 de la respuesta del consultor a la PARADA):
 
-| `trabajo/cuenta-por-mes` | (el revisor, abajo) | (1) **(menor)** El encargo puso la racha de RN-036 en la lista de lo que empieza de nuevo cada mes sin medir el texto de la spec, que la describe «contando en TODOS los dias de la corrida» (PARADA condicional 1). Lección: una decisión que reinicia un acumulador de la spec se mide contra la `descripcion` de ese acumulador antes de escribirla. (2) **(menor)** D7 nombró cuatro guiones con un rótulo que solo tiene uno. Lección: un literal se busca con grep antes de citarlo en una lista. (3) **(menor, de la sesión)** La fila de exposición, tarde otra vez (desviación 1), y un fichero escrito en el repo con `make check` corriendo (desviación 2). Lección: la fila va en el mismo turno en que se abre la rama, antes del primer `make check`; y mientras corre `make check`, los borradores van a la carpeta de trabajo. |
+| `trabajo/cuenta-por-mes` | (las pasadas del revisor, abajo) | (c) **(importa)** D1 decidió reiniciar la racha sin leer la descripción del acumulador `racha_perdidas`, que decía que contaba en todos los días de la corrida; costó la PARADA condicional 1. Lección: antes de decidir que un estado se reinicia, se lee dónde se define. (d) **(menor)** D7 nombró cuatro guiones con un rótulo que solo llevaba uno, tomado del auditor sin leerlo; ganó el repo. (e) **(menor)** El primer borrador de la respuesta a la PARADA escribía en la spec «al cambiar de mes empieza de cero» como regla de la racha, y no ordenaba subir `spec_version` ni regenerar el manifiesto; lo cazó el auditor del consultor antes de entregar. | (a) **(importa: se repite en la rama siguiente a la que la apuntó)** El trabajo del 2026-11-07 (apertura y primer `make check`) empezó sin su fila de HOLDOUT-EXPOSICIONES, que se escribió el 2026-11-08, cuando la lección 8 de F38r pedía escribirla antes. Lección: una lección que se rompe en la rama siguiente pide una guardia, no otra lección (Technical Debt, en el cierre). (b) **(menor)** Se escribió un fichero en el repo mientras corría `make check` y se borró antes de que acabara, así que la huella no lo vio. Lección: con `make check` corriendo no se escribe nada en el repo (CLAUDE.md, «Ensayos aislados», regla 3), tampoco algo que se vaya a borrar; lo que no es del repo va a la carpeta de trabajo de la sesión, como los logs (lección 4 de F38r). |
 
 ## El encargo, punto por punto
 
@@ -400,7 +401,7 @@ ERRORES-RECURRENTES, preparada (se completa con lo que encuentren el revisor y e
 | 7 | Ninguna corrida del arnés ni cifra agregada nueva del bot | Hecho | solo días sintéticos de 2030; ningún `motor arnes` |
 | 8 | Herencias: NOTAs en ADR-0050 H6 y ADR-0049 | Hecho | punto 1 (12c4861) |
 | 9 | Herencias: buscar «cuenta por mes», «R3.8», … y añadir lo que falte | Hecho | fase 0, b) y e): `racha.py`, ADR-0077, la spec y ADR-0070 (PARADA condicional 1 y 3) |
-| 10 | D1: lo que empieza de nuevo | **Parcial** | la cuenta, el seguidor y el primer toque, sí; la racha, en PARADA condicional 1 |
+| 10 | D1: lo que empieza de nuevo | Hecho (tras la respuesta a la PARADA) | la cuenta, el seguidor y el primer toque; la racha, con la respuesta, punto 1 |
 | 11 | D2: en `correr_dia`, como condición; el estado, atributo del motor | Hecho | `cableado.py`, `correr_dia` |
 | 12 | D3: las cuentas cerradas, en orden, con todo; la diaria no conserva | Hecho | `CuentaDelMes`; `test_con_la_diaria_no_se_conserva_ninguna_cuenta` |
 | 13 | D4: con un mes, byte a byte; con varios, cabecera y bloques; la diaria, igual | Hecho (formato del bloque, desviación 5) | goldens; `test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta` |
@@ -411,7 +412,7 @@ ERRORES-RECURRENTES, preparada (se completa con lo que encuentren el revisor y e
 | 18 | Fase 0 a)-e), commiteada sola | Hecho | f66ce24 |
 | 19 | Fase 1, un commit por punto, con state check, `make check`, ruff y mypy | Hecho | 12c4861, 8d7b359, 1912f77 y el del punto 4 |
 | 20 | La fila de HOLDOUT-EXPOSICIONES antes del primer clon / `make check` de cada día | **Parcial** (revisor, b3) | la del 7, tarde (desviación 1); la del 8, antes |
-| 21 | Punto 4: las líneas del cierre sobre una copia; tests de la hoja y de PS en verde; `wc -c` con las cuatro cabeceras; PARADA si pasa de 23.000 | Hecho | 22.878 y 22.812 bytes (tras el revisor): sin PARADA |
+| 21 | Punto 4: las líneas del cierre sobre una copia; tests de la hoja y de PS en verde; `wc -c` con las cuatro cabeceras; PARADA si pasa de 23.000 | Hecho, con PARADA 4 | 22.878 y 22.812 bytes tras el revisor; 23.274 y 23.228 con las líneas de la respuesta a la PARADA: PARADA 4 |
 | 22 | Sin `fix/`: no toca hooks, rutas, `.claude/` ni plataforma | Hecho | `git diff --stat`: nada de eso |
 | 23 | Informe con todo, y el revisor (opus) con los siete alcances, pegado al final | Hecho | abajo |
 | 24 | Rama lista para revisión, NO cerrada | Hecho | `## Estado` |
@@ -601,13 +602,129 @@ Lo que la rama hace y el encargo no pide, todo declarado: dos campos nuevos en `
 
 Recuento total: 0 bloquea, 8 importa (6 del eje a y 2 del eje b), 4 menor (1 del eje a y 3 del eje b).
 
+## Respuesta del consultor a la PARADA (2026-11-08), tal cual
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de trabajo/cuenta-por-mes (2026-11-08). Cópiala tal cual al informe con la skill fase-cero, bajo «Respuesta del consultor a la PARADA», antes de tocar nada. Antes del primer make check o clon de hoy, la fila de HOLDOUT-EXPOSICIONES del 2026-11-08, escrita y estadiada.
+>
+> 1. La racha de RN-036: SÍ, empieza de cero con cada cuenta nueva del recorrido, igual que hoy empieza de cero con cada cuenta de la diaria (ADR-0077 §3: «con la misma regla de cuenta_diaria»; cableado.py la reinicia junto a la cuenta y el seguidor). No es una regla de calendario ni cambia lo que dijo el trader: la racha vive lo que vive la cuenta; dentro de una cuenta sigue de un día a otro y de una semana a otra, solo una ganadora la corta y al día siguiente de parar vuelve a cero. En construcción hay una cuenta por mes (ADR-0092 §8) y en los meses no vistos una sola, arrastrada (ADR-0092 §5), así que allí la racha también se arrastra. Extender ADR-0092 §8 a la racha es decisión del consultor y se escribe así. Porqué: el trader operó entre enero y abril días que no corremos; la racha de enero no es la que llevaba al empezar abril, y cero es la única lectura que no inventa pérdidas.
+>    En UN commit, con el trailer Fuente: ADR-0092 ADR-0077 fb-2026-10-23-sesion-05-978be13f ev-v10-010804-5b6ad1a3:
+>    a) la descripción del acumulador racha_perdidas (strategy_spec.yaml): «contando en TODOS los dias de la corrida» pasa a «contando en todos los dias que corre la misma cuenta (ADR-0077 §3): empieza de cero con cada cuenta nueva del recorrido (una por mes en construccion, ADR-0092 §8; una sola, arrastrada, en los meses no vistos, §5)»; y «el calendario no la reinicia (racha_perdidas_reinicio = nunca)» pasa a «el calendario no la reinicia; al dia operativo siguiente al de la detencion vuelve a cero (racha_perdidas_reinicio = tras_la_detencion)», el valor CONFIRMED desde la sesión 5 (esa descripción estaba desfasada). Ningún `reinicia_con`, cita ni literal cambia;
+>    b) las notas de RN-036: una frase al final con lo mismo de a);
+>    c) una NOTA en ADR-0077 §3, donde dice que SeguidorRacha persiste entre días como la cuenta: «y como ella, empieza de nuevo con cada cuenta del recorrido (ADR-0092 §8)»; y la NOTA de ADR-0092 §8 de esta rama nombra la racha con el resto de lo que se reinicia (verifica cómo la dejaste y ajústala);
+>    d) el texto de engine/racha.py y del comentario de MotorCableado que lo digan;
+>    e) la condición de mes reinicia también la racha en correr_dia, y el test xfail estricto pasa a test normal (y rompe en main);
+>    f) el manifiesto de la spec: las notas y la descripción entran en su hash (spec/manifiesto.py), así que spec_version sube de parche (redacción) según la regla de spec_manifest.yaml, uv run botsito spec manifest --escribir y, DESPUÉS, uv run botsito spec docs --escribir, como en trabajo/activar-sesion-05-motor. El contrato amplía sus rutas permitidas a knowledge/spec/strategy_spec.yaml, knowledge/spec/spec_manifest.yaml, docs/spec/ y docs/adr/0077-*.md, con este punto como fuente.
+>    Con esto la cabecera vuelve a lo que decía D4 («por cuenta: ver cada mes») y su test.
+>
+>    La deuda de Technical Debt que nombra «la próxima rama que toque knowledge/spec» (los cuatro textos del panel de FTMO y el cierre de A-16; ADR-0092 §10 los ata con una «y») NO la paga esta rama. Me aparto a sabiendas de la lección de trabajo/guardia-alias en ERRORES-RECURRENTES (una rama que toca la ruta dueña de una deuda la recoge), por dos razones: esta rama toca knowledge/spec solo para una redacción ligada a su motor, y cerrar A-16 tiene su propio recorrido por AMBIGUEDADES.md. La preparación de la sesión 7 no sirve de dueña porque, por precedente, no toca la spec. Decisión del consultor: en el cierre la línea pasa a nombrar a su dueño, la primera rama de activación tras la sesión 7 (S-22 y S-19), que toca la spec por definición. Queda «Se corrigen en la primera rama de activación tras la sesión 7 (S-22 y S-19), con su régimen de cambio; trabajo/cuenta-por-mes tocó knowledge/spec solo para la racha (ADR-0092 §8) y no la paga, decisión del consultor del 2026-11-08. Esa rama cierra también A-16 …», con el resto igual. Prepáralo en simular_cierre.py.
+>
+> 2. El motivo de f): SÍ, condicional como lo dejaste (con una cuenta, el texto de siempre; con varias, «alguna cuenta»). Así la guardia de un mes sigue byte a byte.
+>
+> 3. El recuadro de ADR-0070 punto 3: aquí, en la rama, en el mismo commit que la NOTA de ADR-0077, igual que el de ADR-0053 §6: «Implementado en trabajo/cuenta-por-mes (2026-11-08)».
+>
+> 4. Las dos reglas rotas quedan declaradas como están y van a la fila de ERRORES-RECURRENTES:
+>    (a) (importa: se repite en la rama siguiente a la que la apuntó) El trabajo del 2026-11-07 (apertura y primer make check) empezó sin su fila de HOLDOUT-EXPOSICIONES, que se escribió el 2026-11-08, cuando la lección 8 de F38r pedía escribirla antes. Lección: una lección que se rompe en la rama siguiente pide una guardia, no otra lección. Entra en Technical Debt, en el cierre: «make check, en una rama trabajo/*, no sella si HOLDOUT-EXPOSICIONES.md no tiene una fila con la fecha del día (cada make check lee el M1 de marzo, RESPALDO-M1.md): guardia pendiente, propuesta en trabajo/cuenta-por-mes (CUENTA-POR-MES.md)».
+>    (b) (menor) Se escribió un fichero en el repo mientras corría make check y se borró antes de que acabara, así que la huella no lo vio. Lección: con make check corriendo no se escribe nada en el repo (CLAUDE.md, «Ensayos aislados», regla 3), tampoco algo que se vaya a borrar; lo que no es del repo va a la carpeta de trabajo de la sesión, como los logs (lección 4 de F38r).
+>    Y del consultor, en su columna: (c) (importa) D1 decidió reiniciar la racha sin leer la descripción del acumulador racha_perdidas, que decía que contaba en todos los días de la corrida; costó esta PARADA. Lección: antes de decidir que un estado se reinicia, se lee dónde se define. (d) (menor) D7 nombró cuatro guiones con un rótulo que solo llevaba uno, tomado del auditor sin leerlo; gana el repo, como hiciste. (e) (menor) El primer borrador de esta respuesta escribía en la spec «al cambiar de mes empieza de cero» como regla de la racha, y no ordenaba subir spec_version ni regenerar el manifiesto; lo cazó el auditor del consultor antes de entregar.
+>
+> Al terminar: make check sellado, el revisor con alcance sobre esta PARADA (que dentro de una cuenta la racha haga lo de main; que la cabecera y la diaria sigan como dicen D4 y D1; que la regla del trader no cambie más allá de a) y b); que el manifiesto y spec docs estén al día), su informe pegado y «Rama lista para revisión, NO cerrada». No cierres.
+
+### Cómo se aplicó, punto por punto
+
+Antes de nada, la fila de HOLDOUT-EXPOSICIONES del 2026-11-08 para esta parte (la tercera de ese
+día), escrita y estadiada antes del primer clon y del primer `make check` de hoy. Después, la
+respuesta, copiada tal cual al final del encargo y aquí arriba.
+
+**1. La racha de RN-036, con cada cuenta nueva del recorrido.** En un commit, con el trailer
+`Fuente: ADR-0092 ADR-0077 fb-2026-10-23-sesion-05-978be13f ev-v10-010804-5b6ad1a3`:
+- a) `strategy_spec.yaml`, la `descripcion` de `racha_perdidas`: las dos frases sustituidas con el
+  texto de la respuesta, literal; `base`, `reinicia_con` y `cita`, sin tocar.
+- b) RN-036, `notas`: una frase al final («DESDE EL 2026-11-08 (trabajo/cuenta-por-mes, decision
+  del consultor) la racha cuenta en todos los dias que corre la misma cuenta (ADR-0077 §3) y empieza
+  de cero con cada cuenta nueva del recorrido (una por mes en construccion, ADR-0092 §8; una sola,
+  arrastrada, en los meses no vistos, §5)»). `cuando`, `entonces`, `literal`, `cita` y `forma`, sin
+  tocar.
+- c) ADR-0077 §3: una NOTA bajo la viñeta de `racha_perdidas`, con la frase de la respuesta. La NOTA
+  de ADR-0092 §8 de esta rama decía que la racha quedaba pendiente; ahora la nombra con lo demás
+  que se reinicia, con la cita de ADR-0077 §3 y la decisión del consultor. Las filas del índice de
+  0077, 0070 y 0092 en `docs/adr/README.md` lo dicen.
+- d) `engine/racha.py`: el docstring del módulo dice que la racha empieza de nuevo con cada cuenta y
+  que quien la reinicia es `correr_dia`, no el módulo. Ningún código del módulo cambia.
+  `cableado.py`: el comentario del atributo `racha` y el de la condición de mes.
+- e) `correr_dia`: al cambiar de mes, `self.racha = None`, como la cuenta y el seguidor; la diaria
+  sigue como estaba. El test xfail estricto pasa a ser un test normal,
+  `test_la_racha_empieza_de_cero_en_el_mes_nuevo` (una pérdida en enero y otra en febrero dan 1 en
+  febrero, y la cuenta de enero cierra con «1 seguidas»). Sustituye a `test_hasta_la_respuesta_…`
+  `test_dentro_de_una_cuenta_la_racha_sigue_de_un_dia_a_otro`: dos pérdidas en dos días de enero
+  dan 2, lo mismo que `main`. **Con el código de `main`** (clon desacoplado `C:/cm/cpm2`, con el
+  fichero de test y el módulo de escenarios de la rama;
+  `anexos/CUENTA-POR-MES/main/rompe-en-main-racha.txt`), el de la racha rompe por lo que mide:
+  `assert ... .racha == 1` con 2. El de dentro de una cuenta pasa. Los demás salen como antes: los
+  goldens pasan y los de cambio rompen.
+- La cabecera vuelve a lo que decía D4: con varias cuentas, «RACHA DE PERDIDAS (RN-036, A-51): por
+  cuenta: ver cada mes», y su test lo comprueba. La desviación 7 queda sin objeto.
+- f) `spec_version` 18.6.3 → 18.6.4 (parche: una redacción, regla de `spec_manifest.yaml`).
+  Después, `uv run botsito spec manifest --escribir` (hash `0c0ac0b1aada…`) y, después de él,
+  `uv run botsito spec docs --escribir` (los cuatro de `docs/spec/`). `knowledge validate`: OK.
+- El contrato amplía sus rutas permitidas en el mismo commit, con la respuesta como fuente:
+  `knowledge/spec/strategy_spec.yaml`, `knowledge/spec/spec_manifest.yaml`, `docs/spec/`,
+  ADR-0077 y, por el punto 3, ADR-0070. También **`src/botsito/engine/racha.py`**, que la respuesta
+  manda tocar (d) sin nombrarlo entre las rutas. `knowledge/spec/` deja de estar protegida entera:
+  siguen protegidos `parametros.yaml`, `glossary.yaml` y `ambiguedades.yaml`.
+- Regresión: el volcado de los escenarios corrido en la rama da las cinco salidas de un mes y de la
+  diaria con el mismo sha256 que sus goldens de `main` (`00b8204b…`, `649818441641…`,
+  `7b825a9a…`, `87f47c04…`, `b7c6390e…`). Las dos de dos meses
+  (`anexos/CUENTA-POR-MES/rama/dos-meses*.txt` y sus `diff-*`) cambian solo en la racha de
+  febrero al cerrar el mes, que pasa de «2 seguidas» a «1 seguidas».
+- La deuda del panel de FTMO y de A-16 no la paga esta rama. En el cierre, su línea nombra a su
+  dueño con el texto de la respuesta, preparado en `simular_cierre.py`. El Estado de R3.8 en la hoja
+  de ruta, y las cabeceras del cierre, nombran la racha.
+
+**2. El motivo de f), condicional.** Queda como estaba: nada que hacer.
+
+**3. El recuadro de ADR-0070 punto 3**: «Implementado en `trabajo/cuenta-por-mes` (2026-11-08).»,
+en el mismo commit que la NOTA de ADR-0077.
+
+**4. Las reglas rotas, a ERRORES-RECURRENTES.** La fila preparada (arriba, «Las líneas del
+cierre») se reescribe con (a) y (b) de la sesión y (c), (d) y (e) del consultor, en su columna. La
+línea de Technical Debt de la guardia de la fila de exposición, literal, va en `simular_cierre.py`.
+
+### PARADA 4 · PROJECT_STATE pasa de 23.000 bytes con las líneas del cierre
+
+`simular_cierre.py`, con las dos líneas nuevas de Technical Debt de esta respuesta (la del panel de
+FTMO, que nombra a su dueño, y la de la guardia de la fila de exposición), da: «a: [] b: [] c: []»;
+**PROJECT_STATE con las lineas del cierre: 23274 bytes; con las cuatro lineas de cabecera del
+cierre: 23228**. Los cuatro tests de `test_project_state` pasan, porque el tope es 25.000. El
+encargo (punto 4) dice: «si con las líneas del cierre pasa de 23.000, PARADA con la cifra y una
+propuesta de recorte por los criterios de docs/state/README.md; no recortes nada por tu cuenta».
+No he recortado nada.
+
+Candidatas por la condición (e), ACORTADA: líneas de Technical Debt de más de 200 bytes que no son
+de esta rama, cortadas al final de una frase o de un inciso en 160 bytes como mucho, medidas con el
+guion de la carpeta de trabajo sobre el PROJECT_STATE de la rama:
+- la de la guardia y las herramientas que leen fuera de Read/Grep/Glob/Bash/PowerShell/Monitor:
+  579 → 162 bytes, **ahorra 417**;
+- la del riesgo residual de ADR-0088 (revisor, B7): 498 → 94, ahorra 404;
+- la de la copia de seguridad de las crudas y los WAV: 456 → 161, ahorra 295.
+
+## Lo que necesito que decidas
+4. Recorte de PROJECT_STATE en el cierre. Opciones: (a) acortar por (e) solo la línea de la guardia
+   y las herramientas: el cierre queda en unos 22.857 bytes (22.811 con las cabeceras), con su texto
+   entero a HISTORIA bajo «# Technical Debt ACORTADA»; (b) acortar las dos primeras (unos 22.453);
+   (c) no recortar y cerrar en 23.274, por debajo del tope de 25.000. Recomiendo (a): es una sola
+   línea, ajena a esta rama, y deja PROJECT_STATE por debajo de 23.000. Coste de (b): una línea más
+   que se lee en HISTORIA y no al arrancar. Coste de (c): rompe la alerta de 23.000 del encargo.
+
 ## Estado
 
-LISTA PARA REVISIÓN (2026-11-08). La cuenta es una por mes en `MotorCableado.correr_dia`: la
-cuenta, el seguidor del tope y el primer toque empiezan de nuevo al cambiar de mes; dentro de un
-mes, con un mes y con la diaria, la salida es la de `main` byte a byte. Quedan para el consultor
-las tres PARADAS condicionales: (1) la racha de RN-036, que hoy sigue entre meses; (2) el motivo de
-f), aplicado condicional; (3) el recuadro de ADR-0070 punto 3, sin tocar. Ninguna corrida del
-arnés. Sin `fix/`: no toca la plataforma.
+LISTA PARA REVISIÓN (2026-11-08, tras la respuesta del consultor a la PARADA). La cuenta es una por
+mes en `MotorCableado.correr_dia`: la cuenta, el seguidor del tope, la racha de RN-036 y el primer
+toque empiezan de nuevo al cambiar de mes; dentro de un mes, con un mes y con la diaria, la salida
+es la de `main` byte a byte. La spec (la descripción de `racha_perdidas` y las notas de RN-036)
+dice lo mismo, en 18.6.4. Queda para el consultor la PARADA 4: PROJECT_STATE pasa de 23.000 bytes
+con las líneas del cierre (23.274), con su propuesta de recorte; no se ha recortado nada. Ninguna
+corrida del arnés. Sin `fix/`: no toca la plataforma.
 
 Rama lista para revisión, NO cerrada.

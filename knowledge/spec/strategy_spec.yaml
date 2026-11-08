@@ -845,11 +845,14 @@ acumuladores:
     cita: fb-2026-09-09-sesion-01-e3eedcaa
   racha_perdidas:
     descripcion: >-
-      perdidas seguidas del trader desde la ultima ganadora, contando en TODOS los dias de la
-      corrida: la lleva `engine/racha.py` junto a la cuenta, nunca en el estado del dia (ADR-0077
-      §3). Una perdida es lo mismo que gasta un cartucho en RN-016 (la base, cartucho_criterio); un
-      break even no suma ni corta; solo una ganadora la pone a cero (racha_perdidas_corte); el
-      calendario no la reinicia (racha_perdidas_reinicio = nunca). Da SI contra racha_perdidas_max
+      perdidas seguidas del trader desde la ultima ganadora, contando en todos los dias que corre
+      la misma cuenta (ADR-0077 §3): empieza de cero con cada cuenta nueva del recorrido (una por
+      mes en construccion, ADR-0092 §8; una sola, arrastrada, en los meses no vistos, §5): la
+      lleva `engine/racha.py` junto a la cuenta, nunca en el estado del dia (ADR-0077 §3). Una
+      perdida es lo mismo que gasta un cartucho en RN-016 (la base, cartucho_criterio); un break
+      even no suma ni corta; solo una ganadora la pone a cero (racha_perdidas_corte); el
+      calendario no la reinicia; al dia operativo siguiente al de la detencion vuelve a cero
+      (racha_perdidas_reinicio = tras_la_detencion). Da SI contra racha_perdidas_max
       solo en el dia operativo en que cayo la perdida que la alcanzo (ADR-0077 §5)
     base: cartucho_criterio
     reinicia_con: racha_perdidas_reinicio
@@ -2160,7 +2163,11 @@ reglas:
       racha sigue de un dia a otro, como dijo la sesion 4 (ev-v10-010804-5b6ad1a3, con su
       reserva). A-51 sigue RESUELTA: no cambia lo que la cerro, solo la lectura que el ADR
       declaraba provisional. Lo que esta regla cuenta y cuando detiene no cambia; engine/racha.py
-      pone la racha a cero en el primer instante del dia operativo siguiente a la detencion
+      pone la racha a cero en el primer instante del dia operativo siguiente a la detencion.
+      DESDE EL 2026-11-08 (trabajo/cuenta-por-mes, decision del consultor) la racha cuenta en
+      todos los dias que corre la misma cuenta (ADR-0077 §3) y empieza de cero con cada cuenta
+      nueva del recorrido (una por mes en construccion, ADR-0092 §8; una sola, arrastrada, en los
+      meses no vistos, §5)
     forma:
       cuando:
         cualquiera_de:

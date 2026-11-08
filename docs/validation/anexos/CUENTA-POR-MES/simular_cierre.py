@@ -65,6 +65,20 @@ ps = cambiar(
     "nunca la diaria (VISOR-CONSTRUCCION.md §4.3).\n"
     "- `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).\n",
 )
+# Technical Debt: la linea del panel de FTMO nombra a su dueno (respuesta del consultor a la PARADA,
+# punto 1, ultimo parrafo)
+ps = cambiar(
+    ps,
+    "Se corrigen en la próxima rama que toque knowledge/spec, con su régimen de cambio. Esa rama cierra también A-16",
+    "Se corrigen en la primera rama de activación tras la sesión 7 (S-22 y S-19), con su régimen de cambio; trabajo/cuenta-por-mes tocó knowledge/spec solo para la racha (ADR-0092 §8) y no la paga, decisión del consultor del 2026-11-08. Esa rama cierra también A-16",
+)
+# Technical Debt: la guardia de la fila de exposiciones (respuesta del consultor, punto 4.a)
+ps = cambiar(
+    ps,
+    "arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).\n",
+    "arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).\n"
+    "- make check, en una rama trabajo/*, no sella si HOLDOUT-EXPOSICIONES.md no tiene una fila con la fecha del día (cada make check lee el M1 de marzo, RESPALDO-M1.md): guardia pendiente, propuesta en trabajo/cuenta-por-mes (CUENTA-POR-MES.md).\n",
+)
 
 # --- La hoja de ruta
 hoja = cambiar(
@@ -79,8 +93,8 @@ hoja = cambiar(
     "- **Hecho cuando:** la cuenta empieza de nuevo en cada mes de construcción, con su test, y la\n"
     "  re-corrida que cuenta puede correr.\n"
     "- **Estado:** HECHA (`trabajo/cuenta-por-mes`; CUENTA-POR-MES.md): en `MotorCableado.correr_dia`,\n"
-    "  al cambiar de mes empiezan de nuevo la cuenta, el seguidor del tope y el primer toque (NOTA de\n"
-    "  ADR-0092 §8), con sus tests sintéticos; la diaria, intacta.\n",
+    "  al cambiar de mes empiezan de nuevo la cuenta, el seguidor del tope, la racha y el primer\n"
+    "  toque (NOTA de ADR-0092 §8), con sus tests sintéticos; la diaria, intacta.\n",
 )
 hoja = cambiar(
     hoja,
@@ -132,7 +146,7 @@ ps_cierre = _seccion(
     "Current Feature",
     "Ninguna rama abierta. trabajo/cuenta-por-mes cerrada en main el 2026-11-0X "
     "(stable/F38s-cuenta-por-mes): una cuenta por mes en el motor (ADR-0092 §8): la cuenta, el "
-    "seguidor del tope y el primer toque empiezan de nuevo al cambiar de mes.",
+    "seguidor del tope, la racha y el primer toque empiezan de nuevo al cambiar de mes.",
 )
 ps_cierre = _seccion(
     ps_cierre,
@@ -145,7 +159,7 @@ ps_cierre = _seccion(
     ps_cierre,
     "Last Stable Commit",
     f"{SHA} · merge: trabajo/cuenta-por-mes, una cuenta por mes en el motor (ADR-0092 §8): la "
-    "cuenta, el seguidor del tope y el primer toque empiezan de nuevo al cambiar de mes · tag "
+    "cuenta, el seguidor del tope, la racha y el primer toque empiezan de nuevo al cambiar de mes · tag "
     "stable/F38s-cuenta-por-mes",
 )
 with tempfile.TemporaryDirectory() as tmp:

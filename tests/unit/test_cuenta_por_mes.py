@@ -3,8 +3,8 @@ SINTETICO sobre el dia de 2030 de `test_cableado.py` desplazado a otros dias: ni
 ninguna corrida del arnes.
 
 Lo que empieza de nuevo al cambiar de mes: la cuenta, desde el capital del perfil, el seguidor del
-tope del trader y el primero en tocar un limite. La racha de RN-036 queda PENDIENTE de la PARADA
-condicional de CUENTA-POR-MES.md (punto 1): hasta la respuesta, sigue. Dentro de un mes, y con
+tope del trader, la racha de RN-036 (respuesta del consultor a la PARADA de CUENTA-POR-MES.md,
+punto 1: vive lo que vive la cuenta) y el primero en tocar un limite. Dentro de un mes, y con
 `--diagnostico-cuenta-diaria`, la salida es la de `main` (8aeed0b), congelada en
 `tests/golden/cuenta_por_mes/` (y la seccion de ADR-0092 con un mes, en
 `tests/golden/metodo_adr0092/`) por `test_el_volcado_de_los_escenarios`, corrido con `-s` en un
@@ -16,7 +16,8 @@ que miden: `test_el_segundo_mes_vuelve_a_operar_desde_el_capital` (en `main` feb
 SUSPENDIDO y no coloca), `test_el_seguidor_del_tope_y_el_primer_toque_...` (en `main` el seguidor
 corta con el saldo de enero y el primer toque sigue siendo el de enero),
 `test_el_visor_ve_el_saldo_del_mes_nuevo_desde_el_capital`,
-`test_la_cuenta_cambia_por_el_mes_de_la_clave_...` y los dos de la salida con varios meses. Los
+`test_la_cuenta_cambia_por_el_mes_de_la_clave_...`, `test_la_racha_empieza_de_cero_en_el_mes_nuevo`
+(en `main` da 2) y los dos de la salida con varios meses. Los
 goldens pasan en `main`."""
 
 from __future__ import annotations
@@ -121,30 +122,28 @@ def test_el_seguidor_del_tope_y_el_primer_toque_empiezan_de_cero_en_el_mes_nuevo
     assert enero.primero_en_tocar is not None and _ms_del_dia(enero.primero_en_tocar[2]) == ENE
 
 
-@pytest.mark.xfail(
-    strict=True,
-    reason="PARADA condicional 1 de CUENTA-POR-MES.md: la racha de RN-036 no se reinicia al "
-    "cambiar de mes hasta que el consultor responda (la spec la describe en todos los dias)",
-)
 def test_la_racha_empieza_de_cero_en_el_mes_nuevo(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
 ) -> None:
-    """D1 tal como lo escribio el consultor: una perdida en enero y otra en febrero dan una racha
-    de 1 en febrero. Hoy da 2 (ver el test siguiente)."""
+    """Respuesta del consultor a la PARADA, punto 1.e: una perdida en enero y otra en febrero dan
+    una racha de 1 en febrero, y la de enero se queda en su cuenta cerrada. En `main` da 2."""
     plan = ((esc.ENE_1, tc.RUTA_STOP), (esc.FEB_1, tc.RUTA_STOP))
     motor = esc.motor_de(registro, vocabulario, plan)
     esc.correr(motor, plan)
     assert motor.racha is not None and motor.racha.racha == 1
+    [enero] = motor.cuentas_cerradas
+    assert enero.racha.startswith("1 seguidas")
 
 
-def test_hasta_la_respuesta_la_racha_sigue_de_un_mes_a_otro(
+def test_dentro_de_una_cuenta_la_racha_sigue_de_un_dia_a_otro(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
 ) -> None:
-    plan = ((esc.ENE_1, tc.RUTA_STOP), (esc.FEB_1, tc.RUTA_STOP))
+    """Dentro de un mes la racha hace lo de `main`: dos perdidas en dos dias de enero dan 2 (pasa
+    tambien en `main`)."""
+    plan = ((esc.ENE_1, tc.RUTA_STOP), (esc.ENE_2, tc.RUTA_STOP))
     motor = esc.motor_de(registro, vocabulario, plan)
     esc.correr(motor, plan)
     assert motor.racha is not None and motor.racha.racha == 2
-    assert len(motor.cuentas_cerradas) == 1  # la cuenta si empezo de nuevo
 
 
 # ------------------------------------------------------------------------ D6 (3) y (4)
@@ -250,8 +249,8 @@ def test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta(
     texto = esc.informe(registro, vocabulario, esc.DOS_MESES, False)
     lineas = texto.splitlines()
     assert "CUENTA: UNA POR MES (ADR-0092 §8): 2 cuentas" in lineas
-    # la racha, de toda la corrida mientras la PARADA condicional 1 siga abierta (revisor, b2)
-    assert "RACHA DE PERDIDAS (RN-036, A-51): 2 seguidas; la ultima el 2030-02-12" in lineas
+    # la racha va con la cuenta (respuesta a la PARADA, punto 1): la cabecera remite a cada mes
+    assert "RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes" in lineas
     assert "PRIMERO EN TOCAR UN LIMITE: por cuenta: ver cada mes" in lineas
     assert "### Veredicto de la cuenta sobre el tramo" not in lineas
     i_ene, i_feb = lineas.index("### Cuenta de 2030-01"), lineas.index("### Cuenta de 2030-02")

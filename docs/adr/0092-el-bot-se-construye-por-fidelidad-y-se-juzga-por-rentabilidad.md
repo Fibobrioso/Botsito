@@ -208,12 +208,13 @@ meses, y `cableado.py`, que guarda la cuenta entre días; METODO-FIDELIDAD-RENTA
 > al cambiar de mes, en `MotorCableado.correr_dia`, con una condición y no con una opción: el mes
 > (el AAAA-MM de la clave del día corrido, la misma de `mercados` y `trazas_broker`) del día que se
 > va a correr es distinto del del último día corrido. Empiezan de nuevo **la cuenta, desde el
-> capital del perfil, el seguidor del tope del trader y el «primero en tocar un límite»**, que pasa
-> a ser de cada cuenta mensual: el seguidor va con la cuenta (con la diaria, «nace cada día con la
-> cuenta», ADR-0089) y el primer toque es un hecho de cada cuenta. La racha de pérdidas de RN-036, que el encargo pone en la
-> misma lista, queda pendiente de la respuesta del consultor a la PARADA condicional de
-> `docs/validation/CUENTA-POR-MES.md`, porque la spec la describe «contando en TODOS los dias de la
-> corrida»: hasta esa respuesta no se reinicia. Nada más: el bróker y el estado de estrategia ya
+> capital del perfil, el seguidor del tope del trader, la racha de pérdidas de RN-036 y el
+> «primero en tocar un límite»**, que pasa a ser de cada cuenta mensual: el seguidor va con la
+> cuenta (con la diaria, «nace cada día con la cuenta», ADR-0089), la racha vive lo que vive la
+> cuenta (ADR-0077 §3, «con la misma regla de `cuenta_diaria`»; decisión del consultor del
+> 2026-11-08, respuesta a la PARADA de `docs/validation/CUENTA-POR-MES.md`: dentro de una cuenta
+> sigue de un día a otro, y en los meses no vistos, con una sola cuenta arrastrada, se arrastra
+> con ella) y el primer toque es un hecho de cada cuenta. Nada más: el bróker y el estado de estrategia ya
 > empiezan de cero cada día. Las cuentas cerradas se conservan en orden, solo para la salida;
 > ninguna decisión las lee. `--diagnostico-cuenta-diaria` no cambia: reinicia cada día la cuenta, el
 > seguidor y la racha, su primer toque sigue siendo de toda la corrida, y la condición de mes no

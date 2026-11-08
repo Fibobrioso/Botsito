@@ -22,7 +22,7 @@ curva de equity (dia | saldo al corte | saldo final | equity minima):
 
 ### Cuenta de 2030-02
 PRIMERO EN TOCAR UN LIMITE: ninguno
-RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 2 seguidas; la ultima el 2030-02-12
+RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 1 seguidas; la ultima el 2030-02-12
 estado: EN_CURSO
 motivo: sin objetivo alcanzado ni limite infringido
 instante: -

@@ -266,9 +266,9 @@ class MotorCableado:
     cuenta_diaria: bool = False
     cuenta: CuentaViva | None = None
     seguidor: SeguidorTope | None = None
-    # la racha de perdidas seguidas del trader (RN-036, A-51; ADR-0077): persiste entre dias, y
-    # entre meses mientras la PARADA condicional 1 de CUENTA-POR-MES.md no se responda; se
-    # reinicia con `cuenta_diaria` como la cuenta y el seguidor del tope
+    # la racha de perdidas seguidas del trader (RN-036, A-51; ADR-0077): persiste entre dias
+    # como la cuenta y, como ella, empieza de nuevo con cada cuenta del recorrido: al cambiar de
+    # mes (ADR-0092 §8; NOTA de ADR-0077 §3) y, con `cuenta_diaria`, cada dia
     racha: SeguidorRacha | None = None
     # el primer limite que se toco en la cuenta en curso: (origen, cual, instante ms); con
     # `cuenta_diaria`, el de toda la corrida
@@ -308,10 +308,11 @@ class MotorCableado:
             self.cuenta, self.seguidor, self.racha = None, None, None
         elif self.mes_en_curso is not None and mes != self.mes_en_curso:
             # una cuenta por mes (ADR-0092 §8 y su NOTA): la del mes anterior se cierra y se
-            # conserva para la salida; la cuenta, el seguidor del tope y el primer toque empiezan
-            # de nuevo. La racha de RN-036, no: PARADA condicional 1 de CUENTA-POR-MES.md
+            # conserva para la salida; la cuenta, el seguidor del tope, la racha de RN-036 (que
+            # vive lo que vive la cuenta, NOTA de ADR-0077 §3) y el primer toque empiezan de nuevo
             self.cuentas_cerradas.append(self._cuenta_del_mes(self.mes_en_curso))
-            self.cuenta, self.seguidor, self.primero_en_tocar = None, None, None
+            self.cuenta, self.seguidor, self.racha = None, None, None
+            self.primero_en_tocar = None
         self.mes_en_curso = mes
         if self.cuenta is None:
             self.cuenta = CuentaViva(self.reglas_fase, self.contrato, primero * MS_POR_MINUTO - 1)
@@ -863,10 +864,15 @@ def informe_simulacion(motor: MotorCableado) -> str:
         f"DIAS CORRIDOS: {len(dias)}",
         "TOPE DEL TRADER (RN-020, A-44): "
         + (motor.tope.descripcion() if motor.tope is not None else "sin fijar: hueco con nombre"),
-        # la racha NO va por cuenta mientras la PARADA condicional 1 de CUENTA-POR-MES.md siga
-        # abierta: sigue entre meses, y la cabecera da la de toda la corrida, como siempre
+        # la racha va con la cuenta (ADR-0092 §8, NOTA de ADR-0077 §3): con varias, la de cada mes
         "RACHA DE PERDIDAS (RN-036, A-51): "
-        + (motor.racha.descripcion() if motor.racha is not None else "sin dias corridos"),
+        + (
+            POR_CUENTA
+            if varias
+            else motor.racha.descripcion()
+            if motor.racha is not None
+            else "sin dias corridos"
+        ),
         "PRIMERO EN TOCAR UN LIMITE: "
         + (POR_CUENTA if varias else _primero_en_tocar(motor.primero_en_tocar)),
     ]

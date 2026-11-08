@@ -20,6 +20,13 @@ rutas_permitidas:
   - docs/adr/0050-el-simulador-la-capa-de-cuenta.md
   - docs/adr/0049-los-huecos-del-arnes.md
   - docs/adr/README.md
+  # ampliadas por la respuesta del consultor a la PARADA (2026-11-08), puntos 1 y 3: la racha
+  - src/botsito/engine/racha.py
+  - knowledge/spec/strategy_spec.yaml
+  - knowledge/spec/spec_manifest.yaml
+  - docs/spec/
+  - docs/adr/0077-la-racha-de-perdidas-seguidas-del-trader-rn036.md
+  - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
   - tests/
   - docs/encargos/
   - docs/state/HISTORIA.md
@@ -31,7 +38,9 @@ rutas_protegidas:
   - src/botsito/engine/primitivas_broker.py
   - src/botsito/engine/motor.py
   - src/botsito/engine/arnes.py
-  - knowledge/spec/
+  - knowledge/spec/parametros.yaml
+  - knowledge/spec/glossary.yaml
+  - knowledge/spec/ambiguedades.yaml
   - knowledge/cuentas/
   - knowledge/simulador/
   - knowledge/cases/
