@@ -705,13 +705,15 @@ Candidatas por la condición (e), ACORTADA: líneas de Technical Debt de más de
 de esta rama, cortadas al final de una frase o de un inciso en 160 bytes como mucho, medidas con el
 guion de la carpeta de trabajo sobre el PROJECT_STATE de la rama:
 - la de la guardia y las herramientas que leen fuera de Read/Grep/Glob/Bash/PowerShell/Monitor:
-  579 → 162 bytes, **ahorra 417**;
+  579 → 162 bytes, **ahorra 417**; [corregido por la orden de cierre: con la cita «GUARDIA-G1.md
+  §1.j» que (e) obliga a conservar, 579 → 183 bytes, ahorra 396, medido abajo];
 - la del riesgo residual de ADR-0088 (revisor, B7): 498 → 94, ahorra 404;
 - la de la copia de seguridad de las crudas y los WAV: 456 → 161, ahorra 295.
 
 ## Lo que necesito que decidas
 4. Recorte de PROJECT_STATE en el cierre. Opciones: (a) acortar por (e) solo la línea de la guardia
-   y las herramientas: el cierre queda en unos 22.857 bytes (22.811 con las cabeceras), con su texto
+   y las herramientas: el cierre queda en unos 22.857 bytes (22.811 con las cabeceras) [corregido:
+   22.878 y 22.832 con la cita, medido abajo], con su texto
    entero a HISTORIA bajo «# Technical Debt ACORTADA»; (b) acortar las dos primeras (unos 22.453);
    (c) no recortar y cerrar en 23.274, por debajo del tope de 25.000. Recomiendo (a): es una sola
    línea, ajena a esta rama, y deja PROJECT_STATE por debajo de 23.000. Coste de (b): una línea más
@@ -849,3 +851,67 @@ segunda pasada del revisor (0 bloquea, 1 importa, 2 menor) está pegada arriba, 
 corrida del arnés. Sin `fix/`: no toca la plataforma.
 
 Rama lista para revisión, NO cerrada.
+
+## Respuesta a la PARADA 4 y orden de cierre del consultor (2026-11-08)
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Respuesta a la PARADA 4 y orden de cierre de trabajo/cuenta-por-mes (consultor, 2026-11-08). Cópiala tal cual en el informe (sección nueva al final, «Respuesta a la PARADA 4 y orden de cierre del consultor (2026-11-08)») y prepara el cierre según docs/runbooks/RITUAL.md y la skill cerrar-rama. NO ejecutes el cierre hasta que Aleks escriba /cerrar-rama solo. Si hoy aún no hay fila de HOLDOUT-EXPOSICIONES, escríbela y estadíala antes del primer make check; va en el commit de la orden copiada o en el chore(cierre), nunca en main después del tag. Si /cerrar-rama llega otro día, la fila de ese día va en el chore(cierre).
+>
+> PARADA 4: (a). En el cierre se acorta por la condición (e) de docs/state/README.md solo la línea de Technical Debt de la guardia y las herramientas que leen fuera de Read/Grep/Glob/Bash/PowerShell/Monitor. Queda literal así: «- La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor … (GUARDIA-G1.md §1.j; entera en HISTORIA, Technical Debt ACORTADA)». Es la forma del precedente (las líneas ya acortadas de PROJECT_STATE) y conserva la cita que (e) obliga a conservar. Su texto entero va literal a HISTORIA bajo «# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/cuenta-por-mes (2026-11-08)», con la forma del bloque anterior de esa clase («Condicion (e)…» y «Queda en PROJECT_STATE: …»). Corrige en el informe la cifra de la PARADA 4: con la cita, la línea pesa 183 bytes y el ahorro es de 396, no de 417; el cierre queda en unos 22.878 bytes (22.832 con las cabeceras), según midió el auditor del consultor. Mídelo tú. Porqué: es una sola línea, de otra rama, y deja PROJECT_STATE por debajo de 23.000 sin sacar nada.
+>
+> 0. Revisión: aceptada la rama revisada hasta ce0d3c8, más el commit de esta orden copiada. Incluye la fase 0, la fase 1, la respuesta a la PARADA aplicada, las ocho desviaciones declaradas y las dos pasadas del revisor con sus arreglos. Antes del merge, di con git log cuántos commits hay en git log main..trabajo/cuenta-por-mes, con sus sha (RITUAL.md).
+>
+> 1. Tag: stable/F38s-cuenta-por-mes. Antes, comprueba que no existe ni en local ni en origin, y que el último tag es stable/F38r-metodo-fidelidad-rentabilidad.
+>
+> 2. CI: la rama no se ha empujado y no toca hooks, .claude/, rutas ni plataforma: sin fix/. Tras el push atómico de main y del tag, la CI de main en verde antes de borrar la rama local.
+>
+> 3. Fila de ERRORES-RECURRENTES: la preparada en «Las líneas del cierre», con la columna del revisor rellena (RITUAL.md pide dónde están en el informe y qué se hizo con ellos): «Dos pasadas, opus. La primera: 0 bloquea, 8 importa, 4 menor (CUENTA-POR-MES.md, «Lo que se hizo con los hallazgos del revisor»); la segunda, sobre la respuesta a la PARADA: 0 bloquea, 1 importa, 2 menor («Lo que se hizo con los hallazgos de la segunda pasada del revisor»). Todo arreglado salvo a1 y a2 de la primera, declarados como desviaciones 1 y 2, y a2 de la segunda, que dejó el sha en el informe sin reescribir el anexo». La columna del consultor lleva (c), (d) y (e), y «Que se le escapo», (a) y (b), como están.
+>
+> 4. Next Action y Technical Debt, en el commit chore(cierre) de la rama. Ese commit lleva además el registro de cierre de HISTORIA («# Registro de cierre · `trabajo/cuenta-por-mes` (2026-11-08)», RITUAL.md), la salida de contrato.yaml, la fila del punto 3 y la fila de HOLDOUT-EXPOSICIONES si va ahí. El contenido es exactamente el que simula anexos/CUENTA-POR-MES/simular_cierre.py en ce0d3c8, entero; la lista que sigue no es cerrada:
+>    - F con «Siguiente: la re-corrida que cuenta …»;
+>    - la línea del visor reescrita a solo lo de la diaria;
+>    - la línea del panel de FTMO con su dueño nuevo;
+>    - la línea nueva de la guardia de la fila de exposición;
+>    - la línea nueva de curva_con_deslizamiento y veredicto_con_f17 por cuenta (revisor, a6);
+>    - y lo demás que haga el guion.
+>    A eso se suma el acortamiento de la PARADA 4.
+>
+> 5. Hoja de ruta, en el mismo commit: lo que simula el guion (R3.8 HECHA, sin NA:F en sus Refs; R5.2 y R5.6 sin la dependencia de R3.8 ya hecha). Además, una entrada nueva al final de «## R7 · Demo y sombra», con la forma de las demás entradas:
+>    «### R7.2 · Otros activos, después de que el bot sea funcional
+>    - **Refs:** F:F35 · ID:ADR-0092
+>    - **Qué es:** idea de Aleks (2026-11-07): con el bot de EURUSD validado y operando, añadir otros activos, oro y NASDAQ, en los que el trader ya está entrando. Cada activo con su propia fidelidad, su holdout y su puerta de rentabilidad (ADR-0092): no hereda la validación de EURUSD. El material del trader de esos mercados, si llega antes, se guarda SIN ABRIR y fuera del repo hasta su rama.
+>    - **Depende de:** R7.1 (F35).
+>    - **Quién:** el consultor la planifica cuando F35 esté decidida; Claude Code, por ramas.
+>    - **Hecho cuando:** el primer activo nuevo pasa su propia puerta de rentabilidad.
+>    - **Estado:** idea, sin rama.»
+>
+> 6. Antes del commit, corre una copia del guion en la carpeta de trabajo de la sesión, no en el anexo del repo, con el acortamiento y R7.2. Incluye las CUATRO líneas de cabecera del cierre, test_hoja_de_ruta y test_project_state, y mide PROJECT_STATE con wc -c: tiene que quedar por debajo de 23.000. Si lo pasa, PARADA con la cifra, sin recortar nada más por tu cuenta. Busca con grep que no quede en la Next Action «la rama de la cuenta por mes» como siguiente, ni R3.8 como dependencia pendiente en la hoja de ruta.
+>
+> 7. Después, el ritual sin cambios: merge a main, tag, commit de estado que solo reemplaza las cuatro líneas de cabecera, make check sellado, push atómico de main y del tag (Aleks confirma la regla ask con «1. Yes»), CI de main en verde y borrar la rama local.
+>
+> 8. Informe final: sha de main, merge, tag, run de la CI de main, ramas que quedan (local y origin) y tamaño de PROJECT_STATE.
+
+### Preparado (2026-11-08), sin ejecutar el cierre
+
+- La fila de HOLDOUT-EXPOSICIONES de esta parte, escrita y estadiada antes del primer `make
+  check`, va en el commit de esta orden copiada.
+- La cifra de la PARADA 4, corregida arriba entre corchetes, sin borrar la de antes.
+- Punto 6: una copia del guion en la carpeta de trabajo de la sesión, fuera del repo: el de
+  ce0d3c8 más el acortamiento y R7.2 (R7.2 envuelta a la anchura de las demás entradas, con el
+  texto de la orden). Salida:
+
+```
+linea acortada: 579 -> 183 bytes, ahorra 396
+R7.2 en la copia? True; R3.8 en algun «Depende de»? False
+F viva en la copia? True; NA:F en R3.8? False; R3.8 HECHA? True
+a: []
+b: []
+c: []
+«la rama de la cuenta por mes» en la copia? False; R3.8 como dependencia pendiente de R5.2? False; R3.8 en el «Depende de» de R5.6? False
+PROJECT_STATE con las lineas del cierre: 22878 bytes (st_size de la copia, los mismos que wc -c); con las cuatro lineas de cabecera del cierre: 22832; los cuatro tests de test_project_state, sobre las dos: ok
+```
+
+  Por debajo de 23.000: no hay PARADA. Las cifras son las del auditor del consultor. El test de
+  la hoja entero, con R7.2 escrita, corre en el `make check` del chore(cierre).
+- El cierre espera a `/cerrar-rama` de Aleks.
