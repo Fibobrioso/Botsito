@@ -1,0 +1,30 @@
+rama: trabajo/recorrida-construccion-2
+riesgo: medio  # rama de medida: no toca src/ ni knowledge/; escribe las salidas de la re-corrida que cuenta, guiones de anexos y una NOTA en ADR-0070 §3 y otra en ACTIVAR-A35-A44.md §5
+artefacto: docs/validation/RECORRIDA-CONSTRUCCION-2.md
+tramo: "R3 · Una corrida del arnés sobre toda la construcción"
+rutas_permitidas:
+  - docs/validation/RECORRIDA-CONSTRUCCION-2.md
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
+  - docs/runbooks/ACTIVAR-A35-A44.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/
+  - tests/
+  - knowledge/
+  - scripts/
+  - Makefile
+  - .claude/
+  - tools/mql5/
+  - corpus/
+  - data/manifests/
+  - docs/validation/anexos/RESPALDO-M1/
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION/
+comprobaciones:
+  - uv run botsito state check
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1

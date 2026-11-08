@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/recorrida-construccion-2
 
 ## Current Feature
-Ninguna rama abierta. trabajo/cuenta-por-mes cerrada en main el 2026-11-08 (stable/F38s-cuenta-por-mes): una cuenta por mes en el motor (ADR-0092 §8): la cuenta, el seguidor del tope, la racha y el primer toque empiezan de nuevo al cambiar de mes.
+trabajo/recorrida-construccion-2, EN CURSO desde el 2026-11-08 (F de la Next Action: la re-corrida que cuenta, ADR-0070 §3; encargo docs/encargos/trabajo-recorrida-construccion-2.md; informe docs/validation/RECORRIDA-CONSTRUCCION-2.md).
 
 ## Stable Main State
 41d47b3 · merge de `trabajo/cuenta-por-mes` (tag `stable/F38s-cuenta-por-mes`), sobre `stable/F38r-metodo-fidelidad-rentabilidad` (a1907fa). Informe docs/validation/CUENTA-POR-MES.md; el registro del cierre, al final de HISTORIA.
@@ -153,8 +153,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 61 (2026-11-07).
+— ninguna desde el Archivo 62 (2026-11-08).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 61 (2026-11-07).
+— ninguna desde el Archivo 62 (2026-11-08).
