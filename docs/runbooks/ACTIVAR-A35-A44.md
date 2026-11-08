@@ -243,6 +243,8 @@ Lo mismo si el trader responde a medias, con un ejemplo o en dos sentidos (`SESI
 > no se toca, y el `diff` entre las dos está en `anexos/RESPALDO-M1/diff-linea-base.txt`
 > (`docs/validation/RESPALDO-M1.md` §4).
 
+> **NOTA (2026-11-08, rama `trabajo/recorrida-construccion-2`; el cuerpo y las NOTAS anteriores no se tocan).** Desde esta rama la línea base vigente es `docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt` (la re-corrida que cuenta, una cuenta por mes: «no», cobertura 15,7 %, precisión 13,9 %; ADR-0070 §3, NOTA del 2026-11-08), con su `diff` contra la anterior en `anexos/RECORRIDA-CONSTRUCCION-2/diff-linea-base.txt`; **desviación declarada:** el `motor visor --caso` de este bloque no se ejecutó en esa rama (encargo del consultor, D7: el visor no se abre y los días que haga falta mirar los pide el consultor en la respuesta a la PARADA 2), como declaró la NOTA del 2026-10-27; la del 2026-10-29 no lo declaró.
+
 ```
 uv run botsito motor arnes --simular --salida arnes-activado.txt
 diff docs/validation/CABLEADO-SIMULADOR-LINEA-BASE.txt arnes-activado.txt

@@ -121,6 +121,25 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > cuenta. El umbral, la lista cerrada y la línea «habilita medir…» (punto 5) no cambian.
    > Implementado en `trabajo/cuenta-por-mes` (2026-11-08).
 
+   > **NOTA del 2026-11-08 (`trabajo/recorrida-construccion-2`, no reescribe el cuerpo, las NOTAS
+   > ni el recuadro anteriores).** La re-corrida que cuenta por este punto, con una cuenta por mes
+   > (el recuadro de arriba), sin ningún `--diagnostico-*`, con `--simular` y sobre toda la
+   > construcción (76 días dev, 198 operaciones del trader), da
+   > `habilita medir el conjunto de medida (2026-05) (ADR-0070): no (cobertura 15.7 % por debajo de 70.0 %; precision 13.9 % por debajo de 60.0 %)`.
+   > Desde esta rama la línea base vigente es anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt
+   > (en `docs/validation/`); la de `anexos/RESPALDO-M1/` no se toca, y el `diff` entre las dos está
+   > en `anexos/RECORRIDA-CONSTRUCCION-2/diff-linea-base.txt` (`docs/validation/RECORRIDA-CONSTRUCCION-2.md`
+   > §3). Entró en el motor desde la línea base anterior: la spec de la sesión 6 (F38n, entre otros
+   > `liquidez_m15_mecha_que_vuelve` en `solo_la_contraria`) y su motor (F38o: ADR-0089 y ADR-0085
+   > §2); la comisión medida (ADR-0090 §3, 2,50 USD por lote y lado en lugar de 5) y el calendario
+   > de cierres de F38p; el sello del respaldo M1 (ADR-0091); la salida del método (ADR-0092, que no
+   > decide nada) y la cuenta por mes (ADR-0092 §8). Ninguna de las cuatro cuentas mensuales acabó
+   > SUSPENDIDA (las cuatro EN_CURSO, `PRIMERO EN TOCAR UN LIMITE: ninguno`); RN-032 dispara en 25 de
+   > las 152 sesiones (19 de las 104 con operaciones del trader: 3 en enero, 2 en julio, 14 en
+   > agosto, desde el 2026-08-19), y con él se bloquea `abrir_operacion` en 18 de esas 19; en la
+   > cuenta de agosto el bot no llena ninguna orden desde el 2026-08-19 (11 días de trading de 21).
+   > Por el punto 4, se sigue construyendo y mayo no se toca.
+
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
 
