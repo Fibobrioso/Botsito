@@ -15996,3 +15996,64 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 60 (2026-11-07).
+
+# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/cuenta-por-mes (2026-11-08)
+
+Condicion (e) de `docs/state/README.md` («Que sale de PROJECT_STATE, y con que criterio»; respuesta
+del consultor a la PARADA 4 de `trabajo/cuenta-por-mes`, opción (a)). La linea, entera y literal como
+estaba en «Technical Debt», y lo que queda de ella en PROJECT_STATE:
+
+- La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor: Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome están cerradas en `permissions.deny` de `.claude/settings.json`; `mcp__claude-artifacts__publish_files` (en la nube, `files[].path`) no está ni en `deny` ni en el `matcher` (GUARDIA-G1.md §1.j). Rama propia del carril de guardias: añadirlas al `matcher` con su esquema y llevar sus rutas a `motivo_fichero`, negando la entrada que no se reconozca.
+  Queda en PROJECT_STATE: - La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor … (GUARDIA-G1.md §1.j; entera en HISTORIA, Technical Debt ACORTADA)
+
+# Registro de cierre · `trabajo/cuenta-por-mes` (2026-11-08)
+
+- Respuesta a la PARADA 4 y orden de cierre del consultor del 2026-11-08, dada por Aleks tras
+  revisar la rama hasta ce0d3c8 (copiada tal cual al final de CUENTA-POR-MES.md, en b33bfad). La
+  sesión preparó el cierre sin ejecutarlo (las líneas, medidas sobre una copia del guion en la
+  carpeta de trabajo) y esperó; después Aleks lanzó `/cerrar-rama trabajo/cuenta-por-mes`.
+- **Lo que entra**: una cuenta por mes en el motor (ADR-0092 §8 y su NOTA). En
+  `MotorCableado.correr_dia`, al cambiar el AAAA-MM de la clave del día, empiezan de nuevo la
+  cuenta (desde el capital del perfil), el seguidor del tope del trader, la racha de RN-036 y el
+  primer toque. Es una condición del recorrido, no una opción: `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA`
+  no cambia, y `--diagnostico-cuenta-diaria` sigue byte a byte. Las cuentas cerradas se conservan
+  solo para la salida, que lleva un bloque por cuenta. En la sección de ADR-0092, d) y e) van por
+  cuenta, con su mes, y el motivo de f) es condicional (`medir_por_cuentas`). Con un mes, la
+  salida es la de `main` byte a byte (goldens en `tests/golden/cuenta_por_mes/` y
+  `tests/golden/metodo_adr0092/`). La racha, por decisión del consultor (respuesta a la PARADA,
+  punto 1): la descripción de `racha_perdidas` y las notas de RN-036, spec 18.6.4; NOTA en
+  ADR-0077 §3. NOTAs en ADR-0050 H6 y ADR-0049 H6; «Implementado» en los recuadros de ADR-0053 §6
+  y ADR-0070 punto 3. Ninguna corrida del arnés ni cifra agregada nueva del bot: todo con días
+  sintéticos de 2030.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`. En la Next Action, F se
+  reescribe («Siguiente: la re-corrida que cuenta …», F sigue viva). En Technical Debt:
+  - la línea del visor queda solo con lo de la diaria;
+  - la del panel de FTMO nombra a su dueño, la primera rama de activación tras la sesión 7;
+  - entran dos líneas, la de `curva_con_deslizamiento` y `veredicto_con_f17` por cuenta, y la de la
+    guardia de la fila de exposición;
+  - la de la guardia y las herramientas se acorta por (e) (arriba).
+
+  En la hoja de ruta, R3.8 queda HECHA y sin `NA:F`, R5.2 y R5.6 dejan de depender de R3.8, y
+  entra R7.2 (otros activos). Entran también la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 22.878 bytes en este commit; con las cuatro líneas de cabecera del cierre,
+  22.832 (simulado; las mismas cifras que el auditor del consultor).
+- **Desviaciones de la orden**: ninguna. R7.2 va con el texto de la orden, envuelto a la anchura de
+  las demás entradas.
+- Letra del tag: la última cerrada era `stable/F38r-metodo-fidelidad-rentabilidad`;
+  `stable/F38s-cuenta-por-mes` no existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38s-cuenta-por-mes`. El merge es
+  `git rev-parse "stable/F38s-cuenta-por-mes^{commit}"`.
+- Commits de la rama:
+  - `15b1374`: chore(rama), abre la rama;
+  - `f66ce24`: la fase 0 y la PARADA condicional;
+  - `12c4861`: las NOTAs de los ADR (D8);
+  - `8d7b359`: el motor, la cuenta por mes;
+  - `1912f77`: la salida (D4, D5) y D7;
+  - `fdc93f5`: las líneas del cierre y el encargo punto por punto;
+  - `853554b`: el revisor y sus arreglos;
+  - `a56f871`: la respuesta a la PARADA, la racha y la spec 18.6.4;
+  - `ce0d3c8`: la segunda pasada del revisor;
+  - `b33bfad`: la orden de cierre copiada y el cierre medido;
+  - y este, chore(cierre): sale el contrato y entra el registro en HISTORIA.
+- CI: ninguna en la rama (no toca hooks, rutas, `.claude/` ni plataforma; orden de cierre, punto 2:
+  sin `fix/`). La CI de `main` corre tras el push.
