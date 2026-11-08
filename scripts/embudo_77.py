@@ -902,7 +902,7 @@ def informe_vida(filas: Sequence[Mapping[str, Any]], resumen: Mapping[str, Any])
     cuenta = (
         "CUENTA REINICIADA CADA DIA (diagnostico)"
         if resumen.get("cuenta_diaria")
-        else "cuenta arrastrada entre dias (ADR-0053 §6)"
+        else "cuenta arrastrada dentro de cada mes, una cuenta por mes (ADR-0092 §8)"
     )
     lineas = [
         f"# Embudo de las 77 con la VIDA DE LA ORDEN STOP (ADR-0064), A-21 = {resumen['a21']} "

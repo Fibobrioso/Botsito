@@ -16,13 +16,26 @@ Rompen en `main` por lo que miden: `test_el_segundo_mes_vuelve_a_operar_desde_el
 
 from __future__ import annotations
 
+import dataclasses
 from datetime import UTC, datetime
 from decimal import Decimal
+from fractions import Fraction
 from typing import Any
 from zoneinfo import ZoneInfo
 
 import pytest
 
+from botsito.cases.criterio_fidelidad import (
+    BASE_SALDO_CORTE,
+    NO_PASA,
+    CuentaDelTramo,
+    MedidaRentabilidad,
+    cargar_criterio,
+    equity_minima_del_tramo,
+    medir_por_cuentas,
+    perdida_diaria_maxima,
+    veredicto_rentabilidad,
+)
 from botsito.config.registro import Registro, cargar_registro
 from botsito.engine import cableado
 from botsito.engine.cuenta import EstadoCuenta
@@ -32,6 +45,9 @@ from tests.unit import escenarios_cuenta_por_mes as esc
 from tests.unit import test_cableado as tc
 
 GOLDEN = tc.RAIZ / "tests" / "golden" / "cuenta_por_mes"
+_RENT = cargar_criterio(tc.RAIZ).rentabilidad
+assert _RENT is not None
+RENT = _RENT
 ENE, FEB = esc.ENE_1.isoformat(), esc.FEB_1.isoformat()
 
 
@@ -226,3 +242,119 @@ def test_la_cuenta_cambia_por_el_mes_de_la_clave_y_no_por_los_dias_que_pasan(
     assert [d for d, *_ in enero.curva] == [ENE, esc.ENE_2.isoformat()]
     assert motor.cuenta is not None and motor.cuenta.dias_de_trading == 2
     assert [d for d, *_ in cableado.curva_de_equity(motor)] == [FEB, esc.FEB_2.isoformat()]
+
+
+# ------------------------------------------------------------------- D6 (5): la salida, D4 y D5
+
+GOLDEN_METODO = tc.RAIZ / "tests" / "golden" / "metodo_adr0092"
+
+
+def test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """D4: la cabecera dice cuantas cuentas y remite la racha y el primer toque a cada mes; el
+    veredicto, el saldo, los dias, el primer toque, la racha al cierre y la curva van por mes, en
+    orden; el veredicto del tramo entero ya no sale. En `main` sale un solo veredicto, SUSPENDIDA,
+    con febrero dentro de la curva de enero (`anexos/CUENTA-POR-MES/main/dos-meses.txt`)."""
+    texto = esc.informe(registro, vocabulario, esc.DOS_MESES, False)
+    lineas = texto.splitlines()
+    assert "CUENTA: UNA POR MES (ADR-0092 §8): 2 cuentas" in lineas
+    assert "RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes" in lineas
+    assert "PRIMERO EN TOCAR UN LIMITE: por cuenta: ver cada mes" in lineas
+    assert "### Veredicto de la cuenta sobre el tramo" not in lineas
+    i_ene, i_feb = lineas.index("### Cuenta de 2030-01"), lineas.index("### Cuenta de 2030-02")
+    assert i_ene < i_feb
+    enero, febrero = (
+        lineas[i_ene:i_feb],
+        lineas[
+            i_feb : lineas.index("### Eventos del broker (dia | instante UTC | tipo | id | fuente)")
+        ],
+    )
+    assert "estado: SUSPENDIDA" in enero and "estado: EN_CURSO" in febrero
+    assert any(x.startswith("PRIMERO EN TOCAR UN LIMITE: firma") for x in enero)
+    assert "PRIMERO EN TOCAR UN LIMITE: ninguno" in febrero
+    assert "dias de trading: 1" in enero and "dias de trading: 1" in febrero
+    assert any(x.startswith("RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: ") for x in enero)
+    # la curva de cada cuenta solo nombra los dias de su mes; la de febrero empieza en el capital
+    assert [x for x in enero if x.startswith("2030-")] == [
+        x for x in enero if x.startswith(f"{ENE} |")
+    ]
+    [fila_feb] = [x for x in febrero if x.startswith(f"{FEB} |")]
+    assert fila_feb.split(" | ")[1] == "100000"
+
+
+def test_con_un_mes_la_seccion_de_adr0092_es_la_de_main(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """D5: la guardia nueva, con el criterio REAL en el motor (a) a f) salen enteros) y el dia
+    sintetico con las tres rutas: la seccion es byte a byte la de `main`."""
+    for nombre, ruta in sorted(esc.RUTAS_METODO.items()):
+        de_main = (GOLDEN_METODO / f"main-{nombre}.txt").read_text(encoding="utf-8")
+        assert esc.seccion_de_un_dia(registro, vocabulario, ruta) == de_main, nombre
+
+
+def test_con_varios_meses_d_y_e_son_por_cuenta_y_f_dice_cual(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """D5: la cascada y la esperanza, sobre todas las operaciones; d) y e), la peor cuenta y su
+    mes; f), si alguna cuenta entro en SUSPENDIDA y cual."""
+    texto = esc.informe_dos_meses_con_criterio(registro, vocabulario)
+    lineas = esc.seccion_metodo(texto).splitlines()
+    assert "a) N (operaciones llenadas y cerradas): 2" in lineas
+    d = next(x for x in lineas if x.startswith("d) "))
+    e = next(x for x in lineas if x.startswith("e) "))
+    f = next(x for x in lineas if x.startswith("f) "))
+    assert ", por cuenta: " in d and d.endswith("la peor, la cuenta de 2030-01")
+    assert ", por cuenta: " in e and e.endswith("la peor, la cuenta de 2030-01")
+    assert f == "f) alguna cuenta entro en SUSPENDIDA: si (2030-01)"
+    # la cascada, sobre las operaciones de los dos meses juntas
+    total = next(x for x in lineas if x.startswith("total | "))
+    assert total.split(" | ")[-1] == "2"
+
+
+CAPITAL = Decimal(100_000)
+
+
+def _cuenta(mes: str, minima: str, suspendida: bool = False) -> CuentaDelTramo:
+    dia = f"{mes}-15"
+    return CuentaDelTramo(mes, ((dia, CAPITAL, Decimal(minima), Decimal(minima)),), suspendida)
+
+
+def test_medir_por_cuentas_da_la_peor_y_su_mes_y_las_cifras_de_la_curva_seguida() -> None:
+    """d) y e) son un maximo y un minimo por dia: por cuenta salen las cifras de la curva de todos
+    los dias seguida (lo nuevo es el mes); a igualdad, la primera cuenta."""
+    cuentas = [
+        _cuenta("2030-01", "97000"),
+        _cuenta("2030-02", "95000", True),
+        _cuenta("2030-03", "95000"),
+    ]
+    m = medir_por_cuentas(cuentas, CAPITAL, BASE_SALDO_CORTE)
+    seguida = [x for c in cuentas for x in c.curva]
+    assert m.perdida_diaria_maxima == perdida_diaria_maxima(seguida, CAPITAL, BASE_SALDO_CORTE)
+    assert m.equity_minima == equity_minima_del_tramo(seguida, CAPITAL) == Fraction(95, 100)
+    assert (m.mes_perdida_diaria, m.mes_equity_minima) == ("2030-02", "2030-02")
+    assert m.meses_suspendidos == ("2030-02",)
+    vacia = medir_por_cuentas([], CAPITAL, BASE_SALDO_CORTE)
+    assert (vacia.equity_minima, vacia.mes_equity_minima, vacia.meses_suspendidos) == (
+        Fraction(1),
+        None,
+        (),
+    )
+
+
+def test_el_motivo_de_f_con_una_cuenta_es_el_de_siempre_y_con_varias_dice_cuales() -> None:
+    """PARADA condicional 2: con una cuenta, el texto de `main`; con varias, «alguna cuenta»."""
+    base = MedidaRentabilidad(
+        n=RENT.n_minimo,
+        esperanza=Decimal(1),
+        percentil_remuestreo=Decimal(1),
+        perdida_diaria_maxima=Fraction(0),
+        equity_minima=Fraction(1),
+        suspendida=True,
+    )
+    una = veredicto_rentabilidad(base, RENT)
+    assert una.estado == NO_PASA and una.motivos == ("f) la cuenta entro en SUSPENDIDA",)
+    varias = veredicto_rentabilidad(
+        dataclasses.replace(base, cuentas=3, meses_suspendidos=("2030-01", "2030-03")), RENT
+    )
+    assert varias.motivos == ("f) alguna cuenta entro en SUSPENDIDA (2030-01, 2030-03)",)

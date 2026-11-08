@@ -208,6 +208,81 @@ encargo.
   a44, tope, margen, método y arnés, en verde con el código de la rama. La comparación de los
   tests nuevos con el código de `main`, sobre la rama commiteada, va en el punto 3.
 
+#### Los tests del punto 2 con el código de `main`, sobre la rama commiteada (8d7b359)
+
+En el clon `C:/cm/cpm` (`main` 8aeed0b), con `tests/unit/escenarios_cuenta_por_mes.py`,
+`tests/unit/test_cuenta_por_mes.py` y los goldens de la rama copiados dentro:
+`PYTHONUTF8=1 uv run pytest -q -p no:cacheprovider -rA tests/unit/test_cuenta_por_mes.py`, exit
+1 (salida entera en `anexos/CUENTA-POR-MES/main/rompe-en-main-punto-2.txt`). Rompen POR LO QUE
+MIDEN:
+- `test_el_segundo_mes_vuelve_a_operar_desde_el_capital`: `assert 0 == 1`, las operaciones de
+  febrero; en `main` RN-031 y RN-032 prohíben y febrero no coloca.
+- `test_el_seguidor_del_tope_y_el_primer_toque_...`: `assert [(2030-02-12 06:00, 'dia'), ...] ==
+  []`; en `main` el seguidor corta el día y la semana al abrir febrero con el saldo de enero.
+- `test_el_visor_ve_el_saldo_del_mes_nuevo_desde_el_capital`: `48070.5000000 == 99430.2000000`;
+  en `main` el visor ve el saldo suspendido de enero.
+
+Pasan en `main`, como deben: los dos goldens (`dentro-de-un-mes`, `diaria-dos-meses`) y el volcado;
+el `xfail` estricto de la racha es `XFAIL` también en `main` (allí tampoco se reinicia). Los otros
+cuatro fallan en `main` por `AttributeError: 'MotorCableado' object has no attribute
+'cuentas_cerradas'`: prueban la conservación de D3 (y que la diaria y un mes no conserven nada),
+que en `main` no existe; no son los que prueban el reinicio.
+
+### Punto 3 · La salida (D4, D5) y los textos de D7
+
+- `informe_simulacion`: con un solo mes, o con la diaria, el código de siempre, sin tocar (el `if`
+  nuevo solo envuelve el bloque del veredicto y la curva). Con varios meses (hay cuentas
+  cerradas): en la cabecera «RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes», «PRIMERO
+  EN TOCAR UN LIMITE: por cuenta: ver cada mes» y «CUENTA: UNA POR MES (ADR-0092 §8): N cuentas»
+  (tras el primer toque, donde va la línea de la diaria); y en vez de «### Veredicto de la cuenta
+  sobre el tramo» y «### Curva de equity», un bloque «### Cuenta de AAAA-MM» por cuenta, en orden,
+  con su primer toque, su racha al cerrar el mes, estado, motivo, instante, saldo, equity, días de
+  trading y su curva, con las mismas líneas que el tramo entero (la curva va con su rótulo en
+  minúsculas dentro del bloque, sin `###` propio).
+- `_informe_metodo` (D5): la cascada, la esperanza, la tabla de posiciones, el material sin vídeo,
+  el remuestreo y el punto de equilibrio, como hoy, sobre todo. Con varios meses, d) y e) por
+  cuenta con `medir_por_cuentas` (nueva y pura en `criterio_fidelidad.py`, con su test) y la línea
+  dice la peor y de qué mes; f) dice «alguna cuenta entro en SUSPENDIDA: si (AAAA-MM)» o «no». La
+  función confirma la medida de la fase 0, d) (i): las cifras de la peor cuenta son las de la curva
+  de todos los días seguida (`test_medir_por_cuentas_...`). El motivo del veredicto, como dice la
+  PARADA condicional 2: con una cuenta, el de `main`; con varias, «f) alguna cuenta entro en
+  SUSPENDIDA (meses)». Para eso `MedidaRentabilidad` gana dos campos con valor por defecto
+  (`cuentas = 1`, `meses_suspendidos = ()`): es más que «el motivo y una función pura», y se dice
+  aquí (desviación 3).
+- La guardia nueva de D5: `tests/golden/metodo_adr0092/main-{hueco,stop,viva}.txt`, la sección
+  generada en `main` con el criterio real en el motor y una operación del trader por posición, y
+  `test_con_un_mes_la_seccion_de_adr0092_es_la_de_main`. El golden de
+  `tests/golden/informe_simulacion/` no se ha tocado (ruta protegida del contrato) y
+  `test_lo_que_ya_salia_es_byte_a_byte_lo_de_main` sigue en verde.
+- D6 (5): `test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta` y
+  `test_con_varios_meses_d_y_e_son_por_cuenta_y_f_dice_cual`.
+- Los textos de D7: la ayuda de `--diagnostico-cuenta-diaria` (`cli.py`), el comentario de
+  `diagnostico.py`, los comentarios de `MotorCableado` (punto 2) y los rótulos de
+  `scripts/embudo_77.py:905` y `scripts/f35_resultado_r.py:81`, a «arrastrada dentro de cada mes,
+  una cuenta por mes (ADR-0092 §8)»; nada más de los guiones. `orden_stop_o_limite.py` y
+  `caja_77_exploratoria.py` no llevan rótulo: no se tocan (fase 0, b).
+- **Regresión contra `main` por hash** (los siete ficheros del volcado de los escenarios, `main`
+  en el clon y la rama en el repo, con `partir_volcado.py`):
+
+| Fichero | sha256 main (16) | sha256 rama (16) | ¿Igual? |
+|---|---|---|---|
+| `cuenta_por_mes/main-dentro-de-un-mes.txt` | 7b825a9a07853c64 | 7b825a9a07853c64 | sí |
+| `cuenta_por_mes/main-diaria-dos-meses.txt` | 649818441641fc1a | 649818441641fc1a | sí |
+| `metodo_adr0092/main-hueco.txt` | 00b8204b5254e080 | 00b8204b5254e080 | sí |
+| `metodo_adr0092/main-stop.txt` | 87f47c046f8b083c | 87f47c046f8b083c | sí |
+| `metodo_adr0092/main-viva.txt` | b7c6390eee622012 | b7c6390eee622012 | sí |
+| `anexo/dos-meses.txt` | 0a03f0f898a2b302 | 8df71537ec0a750e | no, a propósito |
+| `anexo/dos-meses-con-criterio.txt` | 1ad9b4a03db51634 | ff56a15e68dfa0aa | no, a propósito |
+
+  Los dos que difieren, en `anexos/CUENTA-POR-MES/main/` y `rama/`, con su `diff` en
+  `diff-dos-meses.txt` y `diff-dos-meses-con-criterio.txt`: la cabecera, los dos bloques, febrero
+  que opera desde 100.000 (su orden, sus dos eventos, su petición y su posición) y d), e) y f) por
+  cuenta; a) pasa de 1 a 2 y las réplicas descartadas de 2454 a 0 porque febrero ahora tiene una
+  operación. Nada más. Son cifras de un día SINTÉTICO de 2030, no del bot sobre material.
+- `ruff format`, `ruff check` y `mypy` en verde sobre lo tocado de `src/` y `tests/`. `mypy` sobre
+  `scripts/embudo_77.py` y `scripts/f35_resultado_r.py` da 7 errores, los mismos en `main` (medido
+  en el clon): anteriores a la rama, en líneas que no se tocan.
+
 ## Estado
 
 EN CURSO.

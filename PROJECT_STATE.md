@@ -16,7 +16,7 @@ a1907fa · merge de `trabajo/metodo-fidelidad-rentabilidad` (tag `stable/F38r-me
 a1907fa · merge: trabajo/metodo-fidelidad-rentabilidad, el método con el que se juzga al bot (ADR-0092): fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en vivo; A-16 medida · tag stable/F38r-metodo-fidelidad-rentabilidad
 
 ## Tests Currently Passing
-1920 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1925 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

@@ -78,7 +78,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     lineas = [
         "# Resultado por operacion en R: el bot frente al trader (DIAGNOSTICO, no es fidelidad)",
         "cuenta del bot: "
-        + ("REINICIADA CADA DIA" if resumen.get("cuenta_diaria") else "arrastrada entre dias"),
+        + (
+            "REINICIADA CADA DIA"
+            if resumen.get("cuenta_diaria")
+            else "arrastrada dentro de cada mes, una cuenta por mes (ADR-0092 §8)"
+        ),
         f"dias con operaciones: BOT {len(dias_bot)}, TRADER {len(dias_trader)}, los dos "
         f"{len(comunes)}",
         "",
