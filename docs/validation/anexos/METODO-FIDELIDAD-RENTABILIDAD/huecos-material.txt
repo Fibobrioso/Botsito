@@ -1,0 +1,5 @@
+dias corridos: 76; orden de la corrida: 2026-01-02 .. 2026-08-31 (por fecha)
+hueco entre 2026-01-30 y 2026-04-01: 0 dias de mercado sin correr en meses de construccion; meses fuera de la construccion por medio: 2026-02, 2026-03
+hueco entre 2026-04-29 y 2026-07-01: 1 dias de mercado sin correr en meses de construccion; meses fuera de la construccion por medio: 2026-05, 2026-06
+hueco entre 2026-07-17 y 2026-08-03: 10 dias de mercado sin correr en meses de construccion
+huecos: 3; tramos de dias seguidos: 4

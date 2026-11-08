@@ -1,0 +1,464 @@
+.FFFFFFFFFFFFFFFFFFFFFFFFF                                               [100%]
+================================== FAILURES ===================================
+__________________ test_sin_la_tolerancia_del_stop_no_carga ___________________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_la_tolerancia_del_sto0')
+
+    def test_sin_la_tolerancia_del_stop_no_carga(tmp_path: Path) -> None:
+>       with pytest.raises(CriterioError, match="tolerancia_stop_puntos"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:67: Failed
+_________________ test_sin_el_bloque_de_rentabilidad_no_carga _________________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_el_bloque_de_rentabil0')
+
+    def test_sin_el_bloque_de_rentabilidad_no_carga(tmp_path: Path) -> None:
+>       with pytest.raises(CriterioError, match="rentabilidad"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:72: Failed
+_________________ test_sin_un_campo_del_bloque_no_carga[fase] _________________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n0')
+campo = 'fase'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+_______________ test_sin_un_campo_del_bloque_no_carga[n_minimo] _______________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n1')
+campo = 'n_minimo'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+__________ test_sin_un_campo_del_bloque_no_carga[esperanza_minima_r] __________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n2')
+campo = 'esperanza_minima_r'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+_________ test_sin_un_campo_del_bloque_no_carga[percentil_remuestreo] _________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n3')
+campo = 'percentil_remuestreo'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+_________ test_sin_un_campo_del_bloque_no_carga[replicas_remuestreo] __________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n4')
+campo = 'replicas_remuestreo'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+__________ test_sin_un_campo_del_bloque_no_carga[semilla_remuestreo] __________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n5')
+campo = 'semilla_remuestreo'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+__________ test_sin_un_campo_del_bloque_no_carga[perdida_diaria_max] __________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n6')
+campo = 'perdida_diaria_max'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+__________ test_sin_un_campo_del_bloque_no_carga[perdida_total_max] ___________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n7')
+campo = 'perdida_total_max'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+____________ test_sin_un_campo_del_bloque_no_carga[deslizamiento] _____________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n8')
+campo = 'deslizamiento'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+_____ test_sin_un_campo_del_bloque_no_carga[percentil_deslizamiento_f17] ______
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n9')
+campo = 'percentil_deslizamiento_f17'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+________________ test_sin_un_campo_del_bloque_no_carga[meses] _________________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n10')
+campo = 'meses'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+______________ test_sin_un_campo_del_bloque_no_carga[extension] _______________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n11')
+campo = 'extension'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+_________ test_sin_un_campo_del_bloque_no_carga[vistos_rentabilidad] __________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_sin_un_campo_del_bloque_n12')
+campo = 'vistos_rentabilidad'
+
+    @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
+    def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
+>       with pytest.raises(CriterioError, match=campo):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:78: Failed
+_______ test_un_valor_mal_formado_no_carga[tolerancia_stop_puntos-"3"] ________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c0')
+campo = 'tolerancia_stop_puntos', valor = '"3"'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+_________ test_un_valor_mal_formado_no_carga[esperanza_minima_r-0.10] _________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c1')
+campo = 'esperanza_minima_r', valor = '0.10'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+________ test_un_valor_mal_formado_no_carga[esperanza_minima_r-"diez"] ________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c2')
+campo = 'esperanza_minima_r', valor = '"diez"'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+________ test_un_valor_mal_formado_no_carga[perdida_diaria_max-"1.5"] _________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c3')
+campo = 'perdida_diaria_max', valor = '"1.5"'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+________ test_un_valor_mal_formado_no_carga[percentil_remuestreo-100] _________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c4')
+campo = 'percentil_remuestreo', valor = '100'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+_______ test_un_valor_mal_formado_no_carga[deslizamiento-medido_a_ojo] ________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c5')
+campo = 'deslizamiento', valor = 'medido_a_ojo'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+____________ test_un_valor_mal_formado_no_carga[meses-["2025-13"]] ____________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c6')
+campo = 'meses', valor = '["2025-13"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+________________ test_un_valor_mal_formado_no_carga[meses-[]] _________________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c7')
+campo = 'meses', valor = '[]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+__________ test_un_valor_mal_formado_no_carga[extension-["2025-06"]] __________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c8')
+campo = 'extension', valor = '["2025-06"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+____________ test_un_valor_mal_formado_no_carga[meses-["2026-04"]] ____________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4325/test_un_valor_mal_formado_no_c9')
+campo = 'meses', valor = '["2026-04"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("tolerancia_stop_puntos", '"3"'),  # un texto, no un entero
+            ("esperanza_minima_r", "0.10"),  # un numero de coma flotante, no un texto
+            ("esperanza_minima_r", '"diez"'),
+            ("perdida_diaria_max", '"1.5"'),  # fuera de 0..1
+            ("percentil_remuestreo", "100"),
+            ("deslizamiento", "medido_a_ojo"),
+            ("meses", '["2025-13"]'),
+            ("meses", "[]"),
+            ("extension", '["2025-06"]'),  # el mismo mes en meses y en extension
+            ("meses", '["2026-04"]'),  # un mes de construccion
+        ],
+    )
+    def test_un_valor_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:98: Failed
+=========================== short test summary info ===========================
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_la_tolerancia_del_stop_no_carga
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_el_bloque_de_rentabilidad_no_carga
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[fase]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[n_minimo]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[esperanza_minima_r]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[percentil_remuestreo]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[replicas_remuestreo]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[semilla_remuestreo]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[perdida_diaria_max]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[perdida_total_max]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[deslizamiento]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[percentil_deslizamiento_f17]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[meses]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[extension]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_un_campo_del_bloque_no_carga[vistos_rentabilidad]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[tolerancia_stop_puntos-"3"]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[esperanza_minima_r-0.10]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[esperanza_minima_r-"diez"]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[perdida_diaria_max-"1.5"]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[percentil_remuestreo-100]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[deslizamiento-medido_a_ojo]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[meses-["2025-13"]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[meses-[]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[extension-["2025-06"]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_un_valor_mal_formado_no_carga[meses-["2026-04"]]

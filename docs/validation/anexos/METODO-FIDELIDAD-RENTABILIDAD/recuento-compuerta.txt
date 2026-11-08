@@ -1,0 +1,11 @@
+casos_reservados: 34 ({'2026-05': 13, '2026-06': 11, '2026-09': 10})
+casos_ocultos: 34 ({'2026-05': 13, '2026-06': 11, '2026-09': 10})
+  2026-04: reservados 0, ocultos 0
+  2026-07: reservados 0, ocultos 0
+  2026-08: reservados 0, ocultos 0
+  2026-01: reservados 0, ocultos 0
+  2026-04: dias dev 21, operaciones del trader 35
+  2026-07: dias dev 13, operaciones del trader 67
+  2026-08: dias dev 21, operaciones del trader 42
+  2026-01: dias dev 21, operaciones del trader 54
+total: dias dev 76, operaciones del trader 198

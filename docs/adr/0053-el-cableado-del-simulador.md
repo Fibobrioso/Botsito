@@ -178,6 +178,14 @@ intravela en la primera marca que cruce; exige evaluar el gate dentro de `Broker
 
 ### 6. Estado entre días
 
+> **ENMENDADO POR ADR-0092 (2026-11-07, `trabajo/metodo-fidelidad-rentabilidad`; recuadro que no
+> reescribe el cuerpo).** En la corrida que cuenta sobre construcción (y sobre mayo cuando se mida)
+> la cuenta es **una por mes**: persiste dentro de cada mes y empieza de nuevo al cambiar de mes, en
+> vez de arrastrarse entre meses no contiguos (ADR-0092 §8). En la medida de rentabilidad sobre los
+> meses no vistos, que son seguidos, la cuenta persiste en todo el tramo, como dice el cuerpo
+> (ADR-0092 §5). Lo implementa `trabajo/cuenta-por-mes`; hasta entonces el código hace lo que dice
+> el cuerpo.
+
 La cuenta PERSISTE en todo el tramo (ADR-0050, ADR-0049 H6): un `CuentaViva` por corrida, con sus
 cortes diarios, su límite total y sus días de trading. El estado de estrategia empieza cada día de
 cero (`EstadoDia` nuevo; PROVISIONAL, ADR-0049 H6), y el bróker también: una orden pendiente o una

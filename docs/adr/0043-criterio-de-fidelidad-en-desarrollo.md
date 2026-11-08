@@ -24,8 +24,20 @@ se fija AQUÍ, antes de escribir una línea del motor. Texto literal del consult
   - las operaciones del bot en días sin ninguna del trader se informan aparte y no puntúan
     (ADR-0016);
   - se informa también la distribución de Δinstante (cuántas en el mismo minuto) y de Δentrada.
+
+  > **ENMENDADO POR ADR-0092 (2026-11-07, `trabajo/metodo-fidelidad-rentabilidad`; recuadro que no
+  > reescribe el cuerpo).** El criterio por operación de arriba no cambia (unidad, emparejamiento,
+  > métricas, 3 puntos y 15 minutos). Se mide además la fidelidad por CRITERIOS, pieza a pieza
+  > (sesión y dirección, entrada, stop e instante; el sesgo de H4, derivado y aparte), en cascada
+  > contra las órdenes del bot, sin umbral de paso (ADR-0092 §1 y §2). La fidelidad es la
+  > herramienta de construcción; la puerta para operar en vivo es la rentabilidad (ADR-0092 §3).
 - **Fuera del criterio hasta que se resuelva su ambigüedad:** stop (A-18, A-31), TP y resultado
   (ADR-0037 §7), gestión (A-13, A-33).
+
+  > **ENMENDADO POR ADR-0092 (2026-11-07; recuadro que no reescribe el cuerpo).** A-18 y A-31 están
+  > RESUELTAS: el stop entra en la fidelidad por criterios, con su tolerancia
+  > (`tolerancia_stop_puntos`, ADR-0092 §1). En el criterio por operación sigue fuera. TP, resultado
+  > y gestión siguen fuera de la fidelidad; el resultado entra en la rentabilidad (ADR-0092 §3).
 - **Conjuntos:**
   - construcción = abril y agosto;
     > **NOTA del 2026-10-13 (ADR-0078, no reescribe el cuerpo).** Desde ADR-0078 la
@@ -47,6 +59,14 @@ se fija AQUÍ, antes de escribir una línea del motor. Texto literal del consult
 - **Cambios:** este criterio no se modifica una vez que el motor produzca su primera salida sobre el
   conjunto de medida, salvo con un ADR nuevo que diga por qué y declare quemado lo que se haya
   visto.
+
+  > **NOTA de ADR-0092 (2026-11-07, `trabajo/metodo-fidelidad-rentabilidad`; no reescribe el
+  > cuerpo).** Esta cláusula se dispara con la primera salida del motor sobre el conjunto de MEDIDA
+  > (mayo), y esa salida no se ha producido: ninguna salida commiteada lleva 2026-05 en su CONJUNTO y
+  > el arnés niega todo mes de medida (ADR-0092 §12). ADR-0092 enmienda el criterio SIN quemar mayo.
+  > Lo que obliga a declarar lo visto de las corridas de CONSTRUCCIÓN es ADR-0070 punto 4, y
+  > ADR-0092 §12 lo declara. La cabecera de `knowledge/cases/criterio_fidelidad.yaml`, que copia esta
+  > frase, cita esta NOTA.
 
 **Cómo se implementa.**
 - **Las cifras** viven en `knowledge/cases/criterio_fidelidad.yaml` (ADR-0002).

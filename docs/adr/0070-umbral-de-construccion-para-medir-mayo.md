@@ -112,8 +112,22 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > entre las dos está en `anexos/RESPALDO-M1/diff-linea-base.txt` (`docs/validation/RESPALDO-M1.md`
    > §4). Por el punto 4, se sigue construyendo y mayo no se toca.
 
+   > **ENMENDADO POR ADR-0092 (2026-11-07, `trabajo/metodo-fidelidad-rentabilidad`; recuadro que no
+   > reescribe el cuerpo ni las NOTAS).** Una condición nueva de la corrida que cuenta: en
+   > construcción (y en mayo cuando se mida) la cuenta es **una por mes**, no arrastrada entre meses
+   > no contiguos (ADR-0092 §8, que enmienda también ADR-0053 §6). Es una condición del recorrido,
+   > no una opción: `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` no cambia y `--diagnostico-cuenta-diaria`
+   > sigue siendo diagnóstico. La implementa `trabajo/cuenta-por-mes`, antes de la re-corrida que
+   > cuenta. El umbral, la lista cerrada y la línea «habilita medir…» (punto 5) no cambian.
+
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.
+
+   > **NOTA de ADR-0092 (2026-11-07; no reescribe el cuerpo).** ADR-0092 no cambia el umbral; cambia
+   > una condición de la corrida (el camino de la cuenta, arriba) y añade la fidelidad por criterios
+   > y la rentabilidad como puerta para operar en vivo. Declara lo visto en su §12: las corridas de
+   > construcción commiteadas (las dos que cuentan, de RECORRIDA-CONSTRUCCION y de RESPALDO-M1, con
+   > sus diagnósticos, y las de diagnóstico anteriores) y lo que el consultor vio antes de decidir.
 5. **Dónde viven las cifras y quién lo dice.** Tres campos nuevos en `criterio_fidelidad.yaml`,
    `umbral_construccion_para_medir_cobertura: "0.70"`,
    `umbral_construccion_para_medir_precision: "0.60"` (ADR-0002: ninguna cifra en `src/`) y

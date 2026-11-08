@@ -228,7 +228,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   2 operaciones nuevas del bot y las demás idénticas.
 
 ### R3.7 · Método: rentabilidad como puerta, fidelidad por criterios y los sesgos de la cifra
-- **Refs:** NA:R · ID:ADR-0043 · ID:ADR-0070 · ID:A-16 · F:F27
+- **Refs:** ID:ADR-0092 · ID:ADR-0043 · ID:ADR-0070 · ID:A-16 · F:F27
 - **Qué es:** Decisión de Aleks del 2026-10-29. La fidelidad se mide por CRITERIOS (la misma
   liquidez de M15, la misma caja, el mismo punto y la misma entrada, pieza a pieza) además de por
   operación entera, y la RENTABILIDAD pasa a ser la puerta para operar en vivo, con su criterio
@@ -249,6 +249,21 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el ADR está aceptado con los umbrales pre-registrados y la medida de los
   cuatro sesgos tiene su informe.
+- **Estado:** HECHA (`trabajo/metodo-fidelidad-rentabilidad`; METODO-FIDELIDAD-RENTABILIDAD.md):
+  ADR-0092 fija la fidelidad por criterios para construir y la rentabilidad como puerta para
+  operar en vivo, con sus umbrales; A-16 medida (mediana 0 puntos, 92,4 % dentro de la M1).
+
+### R3.8 · Una cuenta por mes en la corrida que cuenta
+- **Refs:** NA:F · ID:ADR-0092 · ID:ADR-0053 · ID:ADR-0070
+- **Qué es:** en construcción (y en mayo cuando se mida) la cuenta es una por mes, no
+  arrastrada entre meses no contiguos (ADR-0092 §8, que enmienda ADR-0053 §6 y la condición
+  de la corrida que cuenta de ADR-0070); una condición del recorrido, no una opción:
+  `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` no cambia. Rama de motor corta, `trabajo/cuenta-por-mes`,
+  ANTES de la re-corrida que cuenta, con un test que rompe en `main`.
+- **Depende de:** R3.7.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** la cuenta empieza de nuevo en cada mes de construcción, con su test, y la
+  re-corrida que cuenta puede correr.
 
 ## R4 · La sesión 5 con el trader y su activación
 
@@ -342,7 +357,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** rellenar PREREGISTRO.md (métrica, umbral, partición, autorización); arreglar que una
   pregunta abre N particiones (rama de código en la puerta); decidir qué conjunto es el universo
   (los dos días de la sesión 1 sin partición); A-56 medida, o declarada conocida, para puntuar el
-  objetivo; A-16 (Oanda frente a Dukascopy), que se mide antes, en R3.7; y, al elegir los
+  objetivo; A-16 (Oanda frente a Dukascopy), medida en R3.7 (METODO-FIDELIDAD-RENTABILIDAD.md
+  §1.3) y ABIERTA; y, al elegir los
   libros que miden, que en los
   backtests sin vídeo faltan las sesiones que el trader se saltó por ir a break even (S-14,
   sesión 5; ACTIVAR-SESION-05.md §0.b.7).
@@ -355,8 +371,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
 - **Depende de:** la corrida que cuenta (R4.1; ADR-0070 §3) con un "sí", y el ADR propio de la
-  rama de medida (ADR-0070 §6); y NA:R, el método (R3.7). El sello del respaldo M1 (R3.6)
-  está HECHO (ADR-0091).
+  rama de medida (ADR-0070 §6); y la cuenta por mes (R3.8). El sello del respaldo M1 (R3.6)
+  y el método (R3.7, ADR-0092) están HECHOS.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la medida de mayo está en su informe.
 
@@ -386,6 +402,20 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R5.1, R5.2 y R5.3.
 - **Quién:** la sesión; la autorización de abrir, Aleks.
 - **Hecho cuando:** F26 y F27 tienen informe con su cifra contra el umbral pre-registrado.
+
+### R5.6 · La rentabilidad, la puerta para operar en vivo
+- **Refs:** NA:G · NA:N · HER:7 · HER:9 · HER:10 · ID:ADR-0092 · F:F27
+- **Qué es:** la medida de rentabilidad de ADR-0092 §3, UNA vez, sobre junio a noviembre de
+  2025 (y su extensión, de uno en uno y solo si N no llega), en la fase fondeada y con la cuenta
+  arrastrada, por su propia rama con su ADR y su comando (ADR-0070 punto 6: hoy no existe).
+  Antes: la spec sellada en PREREGISTRO (G); el calendario de cierres renovado hacia atrás hasta
+  enero de 2025 (NA:N, condición 1); las velas M1 y los ticks de esos meses, bajados y declarados
+  según los heredados 7 y 9; el riesgo del spread supuesto por la hora de pared (Technical Debt)
+  en noviembre y en la extensión de invierno; y la construcción en el umbral de ADR-0070. La
+  puerta no da «pasa» antes de F17 (el deslizamiento, heredado 10).
+- **Depende de:** R5.1 (G) y la re-corrida que cuenta, después de R3.8, con su línea «habilita medir» en sí (ADR-0070 punto 5; ADR-0092 §5).
+- **Quién:** la sesión, con el encargo del consultor; la decisión de operar, Aleks (F35).
+- **Hecho cuando:** la medida está en su informe con el veredicto de ADR-0092 §3 y §4.
 
 ## R6a · La capa de MT5 que no decide operaciones (ADR-0082)
 

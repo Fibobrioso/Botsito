@@ -3,14 +3,21 @@
 # Las cifras viven aqui y no en `src/` (ADR-0002); las lee `cases/criterio_fidelidad.py`. Este
 # criterio NO se modifica una vez que el motor produzca su primera salida sobre el conjunto de
 # medida, salvo con un ADR nuevo que diga por que y declare quemado lo que se haya visto.
+# NOTA de ADR-0092 en ADR-0043 «Cambios» (2026-11-07): esa clausula se dispara con la primera
+# salida del motor sobre la MEDIDA, que no se ha producido; declarar lo visto de las corridas de
+# construccion lo exige ADR-0070 punto 4, y ADR-0092 §12 lo declara. Mayo no se quema.
 #
-# Esto NO es el PREREGISTRO del holdout: es el umbral de DESARROLLO sobre material `dev`.
+# Esto NO es el PREREGISTRO del holdout: es el umbral de DESARROLLO sobre material `dev`. Desde
+# ADR-0092 lleva tambien el criterio de RENTABILIDAD (el bloque `rentabilidad`, al final).
 adr: ADR-0043
 # |Δentrada| en puntos. Un punto es 0,00001 en EURUSD (`domain/velas.py`: 100000 puntos por unidad).
 tolerancia_entrada_puntos: 3
 # |Δinstante de llenado| en minutos. El instante del caso ES el llenado
 # (docs/validation/INSTANTE-LLENADO-SALIDA.txt).
 tolerancia_instante_min: 15
+# |Δstop| en puntos, para la fidelidad por CRITERIOS (ADR-0092 §1 y §2): el mismo valor y la misma
+# razon que la entrada, porque los dos son un nivel leido en otra serie (A-16).
+tolerancia_stop_puntos: 3
 # Puntos por unidad de precio: el `escala` de los datasets eurusd-m1 (data/manifests).
 escala_puntos: 100000
 # Sobre el conjunto de MEDIDA.
@@ -39,3 +46,41 @@ perfil_para_medir: ftmo-2step-swing-100k
 # sobre el que trabajar (cinco corren el arnes); quien reordene la lista los mueve a la vez.
 construccion: ["2026-04", "2026-07", "2026-08", "2026-01"]
 medida: ["2026-05"]
+# LA RENTABILIDAD, la puerta para operar en vivo (ADR-0092 §3 a §5), pre-registrada por el
+# consultor el 2026-11-07 ANTES de ninguna corrida nueva. Se mide UNA vez, sobre `meses` (y su
+# `extension`, de uno en uno y solo si N no llega), en la fase `fase` del perfil, con la cuenta
+# arrastrada en todo el tramo. Esos meses NO van en meses_reservados.yaml (tapa por numero de mes
+# en cualquier ano) ni en `construccion` o `medida`; el arnes los niega como a todo lo que no es
+# construccion. Si no pasa, se escriben en `vistos_rentabilidad` y no vuelven a medir.
+# EL MATERIAL SIN VIDEO (ADR-0092 §11; respuesta del consultor a la PARADA 2 del 2026-11-07, punto
+# 1): en los backtests sin video el trader se saltaba las sesiones que iban a acabar en break even
+# (S-14, ev-v15-011912-0ae32588, ev-v16-003421-b824b770). Los libros de construccion SIN video, por
+# mes, con los dias que si estan grabados; julio cuenta como CON video mientras sea provisional,
+# hasta que T lo compruebe. Si llega la exportacion de agosto con video (Q) o T comprueba julio, el
+# bloque se cambia en la rama que lo traiga, con su fuente. Solo diagnostico: ningun umbral lo lee.
+material_sin_video:
+  meses: ["2026-01", "2026-04", "2026-08"]
+  dias_con_video: ["2026-04-29"]
+  provisionales_con_video: ["2026-07"]
+  fuente: ACTIVAR-SESION-05.md §0.b.7
+rentabilidad:
+  adr: ADR-0092
+  fase: fondeada
+  # a) operaciones llenadas, como minimo
+  n_minimo: 100
+  # b) la media del R neto (comision del perfil y swaps), como minimo
+  esperanza_minima_r: "0.10"
+  # c) el percentil de la media del R neto por remuestreo POR DIAS de mercado tiene que ser > 0
+  percentil_remuestreo: 5
+  replicas_remuestreo: 10000
+  semilla_remuestreo: 20261107
+  # d) ningun dia la perdida diaria (magnitud y base de la firma) llega a esta fraccion del capital
+  perdida_diaria_max: "0.03"
+  # e) la menor equity del tramo no baja del capital menos esta fraccion
+  perdida_total_max: "0.06"
+  # el deslizamiento no tiene modelo (llenado.yaml en 0): pendiente de F17, con la regla de §4
+  deslizamiento: pendiente_F17
+  percentil_deslizamiento_f17: 90
+  meses: ["2025-06", "2025-07", "2025-08", "2025-09", "2025-10", "2025-11"]
+  extension: ["2025-05", "2025-04", "2025-03", "2025-02", "2025-01"]
+  vistos_rentabilidad: []

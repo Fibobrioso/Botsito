@@ -19,14 +19,25 @@ entonces toda la salida lo dice. SOLO CONSTRUCCION, por la compuerta del arnes (
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time
 from decimal import Decimal
 from pathlib import Path
 from typing import Any
 
-from botsito.cases.criterio_fidelidad import Criterio
+from botsito.cases.criterio_fidelidad import (
+    ESCALONES,
+    Criterio,
+    OrdenCriterio,
+    PosicionCerrada,
+    cascada_por_criterios,
+    cascada_por_mes,
+    esperanza_r,
+    medir_rentabilidad,
+    punto_de_equilibrio,
+    veredicto_rentabilidad,
+)
 from botsito.cases.criterio_fidelidad import Operacion as OperacionCriterio
 from botsito.cases.paquete import Config
 from botsito.comun.husos import huso_canonico
@@ -57,14 +68,24 @@ from botsito.engine.calendario_cierres import (
     cargar_calendario,
     ruta_calendario,
 )
-from botsito.engine.cuenta import CuentaViva, EstadoCuenta, ReglasFase, reglas_de_fase
+from botsito.engine.cuenta import (
+    MAGNITUD_EQUITY,
+    CuentaViva,
+    EstadoCuenta,
+    Marca,
+    ReglasFase,
+    pnl,
+    reglas_de_fase,
+)
+from botsito.engine.cuenta import Operacion as OperacionCuenta
 from botsito.engine.diagnostico import DiagnosticoRechazadoError
 from botsito.engine.freno import Corte
 from botsito.engine.interprete import EstadoDia, Interprete, Momento, ReglaEjecutable
-from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, Configuracion
+from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, TIPO_STOP, Configuracion
 from botsito.engine.motor import DiaDeMercado, ResultadoDia, Sesion, TrazaSesion
 from botsito.engine.perfil_cuenta import PerfilCuenta, cargar_perfil
 from botsito.engine.primitivas_broker import (
+    BREAK_EVEN,
     GANANCIA,
     ContextoDia,
     EventoBroker,
@@ -229,6 +250,12 @@ class MotorCableado:
     trazas_broker: dict[str, TrazaBroker] = field(default_factory=dict)
     brokers: dict[str, Broker] = field(default_factory=dict)
     estados: dict[str, EstadoDia] = field(default_factory=dict)  # el EstadoDia de cada dia corrido
+    # SOLO SALIDA (ADR-0092 §2 y §3; respuesta del consultor a la PARADA de
+    # trabajo/metodo-fidelidad-rentabilidad, punto 10): las operaciones del trader de los dias
+    # pedidos y el criterio, para la cascada por criterios y la rentabilidad del informe. Ninguna
+    # decision ni ningun llenado los lee; vacios, la seccion de ADR-0092 lo dice
+    operaciones_trader: tuple[OperacionCriterio, ...] = ()
+    criterio: Criterio | None = None
 
     def __post_init__(self) -> None:
         comprobar_reloj_unico(self.registro, self.reglas_fase, self.mercados)
@@ -620,6 +647,8 @@ def construir_motor_cableado(
         limpia=limpia,
         stops_level_diagnostico=stops_level_diagnostico,
         tipo_orden=tipo_orden,
+        operaciones_trader=tuple(op for d in dias for op in d.operaciones),
+        criterio=criterio,
     )
 
 
@@ -791,7 +820,12 @@ def informe_simulacion(motor: MotorCableado) -> str:
         "huecos con nombre (primitivas sin contrato que se pidieron): "
         + (", ".join(sorted(huecos)) if huecos else "ninguno"),
     ]
-    return "\n".join(lineas + _informe_ordenes(motor) + _informe_peticiones(motor)) + "\n"
+    return (
+        "\n".join(
+            lineas + _informe_ordenes(motor) + _informe_peticiones(motor) + _informe_metodo(motor)
+        )
+        + "\n"
+    )
 
 
 # ------------------------------------------- la vida de la orden (R3.1, PARADA 2, punto 1.b)
@@ -1070,6 +1104,306 @@ def _informe_cierres(motor: MotorCableado) -> list[str]:
             lineas.append(f"{dia} | {k.instante_ms} | {k.motivo} | {k.tipo} | {k.id}")
     if len(lineas) == 3:
         lineas.append("ninguna peticion negada ni ninguna pendiente cancelada")
+    return lineas
+
+
+# --------------------------------------------- el metodo de ADR-0092 (SOLO SALIDA, punto 10)
+#
+# Al FINAL del informe de la simulacion, para que todo lo que ya salia siga igual byte a byte: la
+# tabla de posiciones (desenlace, PnL bruto, comision, swaps, PnL neto, riesgo al colocar y R neto),
+# la cascada de la fidelidad por criterios contra las ordenes y las metricas de rentabilidad,
+# marcadas DIAGNOSTICO sobre construccion (ADR-0092 §6). Una tabla nueva y no siete columnas mas en
+# «### Ordenes», que ya lleva diecisiete: una posicion es una orden llenada, y la tabla se lee
+# sola. Solo LEE el broker, la cuenta y la traza; las cuentas son las funciones puras de
+# `cases/criterio_fidelidad.py`. Ninguna decision ni ningun llenado lee nada de esto.
+
+CABECERA_POSICIONES = (
+    "### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | "
+    "cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | "
+    "comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)"
+)
+CABECERA_METODO = (
+    "## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)"
+)
+
+
+@dataclass(frozen=True)
+class FilaPosicion:
+    dia: str
+    sesion: str
+    id: str
+    orden_id: str
+    lado: str
+    tipo_orden: str
+    llenada: datetime
+    entrada: Decimal
+    cerrada: datetime
+    precio_cierre: Decimal
+    cierre: str  # el motivo del broker: stop, objetivo o manual
+    desenlace: str  # el de `clasificar_cierre` (ADR-0053 §2): el mecanismo, no un PnL cero
+    lotes: Decimal
+    bruto: Decimal
+    comision: Decimal
+    swaps: Decimal
+    neto: Decimal
+    riesgo: Decimal
+    posicion: PosicionCerrada
+
+
+def posiciones_del_bot(motor: MotorCableado) -> list[FilaPosicion]:
+    """Cada posicion cerrada, con lo que la cuenta cobro: el PnL bruto con la misma funcion que la
+    cuenta (`cuenta.pnl`), la comision como la carga `_a_la_cuenta` (al llenar y, si
+    `comision_por_lado`, al cerrar), los swaps cargados hasta el cierre, y el riesgo al colocar
+    como lo mide la anotacion de la orden (lote x distancia al stop / escala x contrato). Por dia
+    y por instante de apertura. Una posicion sin cierre (no deberia quedar ninguna: el fin del dia
+    cierra todo) no sale."""
+    salida: list[FilaPosicion] = []
+    rb = motor.reglas_broker
+    for dia in sorted(motor.trazas_broker):
+        broker = motor.brokers.get(dia)
+        tb = motor.trazas_broker[dia]
+        if broker is None:
+            continue
+        escala = broker.escala
+        for p in sorted(broker.posiciones.values(), key=lambda x: (x.abierta_ms, x.id)):
+            if p.cerrada_ms is None or p.precio_cierre is None or p.motivo_cierre is None:
+                continue
+            o = broker.ordenes.get(p.orden_id)
+            if o is None:
+                continue
+            entrada, cierre = _precio(p.entrada, escala), _precio(p.precio_cierre, escala)
+            apertura = Marca(_instante(p.abierta_ms), entrada)
+            bruto = pnl(
+                OperacionCuenta(p.id, p.lado, p.lotes, apertura, apertura), cierre, motor.contrato
+            )
+            comision = rb.comision_por_lote * p.lotes * (2 if rb.comision_por_lado else 1)
+            swaps = sum((imp for t, imp in p.swaps if t <= p.cerrada_ms), Decimal(0))
+            neto = bruto - comision - swaps
+            riesgo = o.lotes * Decimal(abs(o.precio - o.stop)) / escala * motor.contrato
+            signo = 1 if p.lado == "compra" else -1
+            desenlace = clasificar_cierre(
+                p.motivo_cierre,
+                p.stop_original is not None,
+                Decimal(signo * (p.precio_cierre - p.entrada)),
+            )
+            minuto = minuto_de_apertura(p)
+            sesion = next((n for n, d, h in tb.limites if d <= minuto < h), SIN_MEDIDA)
+            salida.append(
+                FilaPosicion(
+                    dia, sesion, p.id, p.orden_id, p.lado, o.tipo, _instante(p.abierta_ms),
+                    entrada, _instante(p.cerrada_ms), cierre, p.motivo_cierre, desenlace,
+                    p.lotes, bruto, comision, swaps, neto, riesgo,
+                    PosicionCerrada(
+                        dia, neto, riesgo, o.tipo == TIPO_STOP, p.motivo_cierre, p.lotes,
+                        motor.contrato / escala,
+                    ),
+                )
+            )  # fmt: skip
+    return salida
+
+
+def ordenes_para_la_cascada(
+    motor: MotorCableado, excluir: Collection[tuple[str, str]] = frozenset()
+) -> list[OrdenCriterio]:
+    """Cada orden que el bot coloco, llenada o no, con su sesion (la de `### Ordenes`), su entrada,
+    su stop y, si se lleno, el instante del llenado (ADR-0092 §2). `excluir`: (dia, id de orden)
+    que no entran (las del sesgo 3, ADR-0092 §11)."""
+    salida: list[OrdenCriterio] = []
+    for dia in sorted(motor.trazas_broker):
+        broker = motor.brokers.get(dia)
+        tb = motor.trazas_broker[dia]
+        if broker is None:
+            continue
+        llenada_en = {p.orden_id: p.abierta_ms for p in broker.posiciones.values()}
+        for o in sorted(broker.ordenes.values(), key=lambda o: (o.colocada_ms, o.id)):
+            if (dia, o.id) in excluir:
+                continue
+            llenado = llenada_en.get(o.id)
+            salida.append(
+                OrdenCriterio(
+                    dia,
+                    _sesion_de(o.colocada_ms, tb.limites),
+                    o.lado,
+                    _instante(o.colocada_ms),
+                    _precio(o.precio, broker.escala),
+                    _precio(o.stop, broker.escala),
+                    _instante(llenado) if llenado is not None else None,
+                )
+            )
+    return salida
+
+
+def _pct(f: Any) -> str:
+    return f"{float(f) * 100:.2f} %"
+
+
+def _fila_posicion(f: FilaPosicion) -> str:
+    r = f"{f.neto / f.riesgo:.3f}" if f.riesgo > 0 else "sin definir (riesgo no positivo)"
+    campos = (
+        f.dia,
+        f.sesion,
+        f.id,
+        f.orden_id,
+        f.lado,
+        f.tipo_orden,
+        f.llenada.isoformat(),
+        str(f.entrada),
+        f.cerrada.isoformat(),
+        str(f.precio_cierre),
+        f.cierre,
+        f.desenlace,
+        str(f.lotes),
+        _moneda(f.bruto),
+        _moneda(f.comision),
+        _moneda(f.swaps),
+        _moneda(f.neto),
+        _moneda(f.riesgo),
+        r,
+    )
+    return " | ".join(campos)
+
+
+def _informe_sin_video(
+    motor: MotorCableado, filas: Sequence[FilaPosicion], criterio: Criterio
+) -> list[str]:
+    """ADR-0092 §11 (PARADA 2, punto 1): DIAGNOSTICO. La cascada y la esperanza sin las
+    operaciones del bot de desenlace `break_even` (el mecanismo de `clasificar_cierre`, no un PnL
+    cero) en los dias de los libros sin video de `material_sin_video`; un mes provisional cuenta
+    como CON video. Ningun umbral lo lee."""
+    m = criterio.material_sin_video
+    lineas = [
+        "",
+        "### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)",
+    ]
+    if m is None or criterio.tolerancia_stop_puntos is None:
+        return [*lineas, "sin el bloque material_sin_video: no se mide"]
+    quitadas = {
+        (f.dia, f.orden_id) for f in filas if f.desenlace == BREAK_EVEN and m.sin_video(f.dia)
+    }
+    cascada = cascada_por_criterios(
+        motor.operaciones_trader,
+        ordenes_para_la_cascada(motor, excluir=quitadas),
+        criterio.tolerancias,
+        criterio.tolerancia_stop_puntos,
+    )
+    total = cascada_por_mes(cascada).get("total")
+    sin_be = [f.posicion for f in filas if f.riesgo > 0 and (f.dia, f.orden_id) not in quitadas]
+    esperanza = esperanza_r(sin_be)
+    provisionales = ", ".join(m.provisionales_con_video) or "ninguno"
+    return [
+        *lineas,
+        f"libros sin video: {', '.join(m.meses)}, salvo "
+        f"{', '.join(m.dias_con_video) or 'ningun dia'}; cuentan como CON video, provisionales "
+        f"hasta que T lo compruebe: {provisionales} (fuente: {m.fuente})",
+        f"operaciones del bot quitadas (break_even en un dia sin video): {len(quitadas)}",
+        "cascada sin ellas, total | "
+        + (
+            " | ".join(f"{e} {total[e]}" for e in ESCALONES)
+            if total is not None
+            else "ninguna operacion del trader"
+        ),
+        f"esperanza sin ellas (media del R neto, {len(sin_be)} operaciones): "
+        + ("sin definir" if esperanza is None else f"{esperanza:.3f}"),
+    ]
+
+
+def _informe_metodo(motor: MotorCableado) -> list[str]:
+    filas = posiciones_del_bot(motor)
+    lineas = ["", CABECERA_METODO, "", CABECERA_POSICIONES]
+    lineas += [_fila_posicion(f) for f in filas]
+    if not filas:
+        lineas.append("ninguna")
+    lineas.append(
+        f"posiciones: {len(filas)}; PnL neto total (USD): "
+        f"{_moneda(sum((f.neto for f in filas), Decimal(0)))}"
+    )
+    criterio = motor.criterio
+    if criterio is None or criterio.tolerancia_stop_puntos is None or criterio.rentabilidad is None:
+        lineas += [
+            "",
+            "sin el criterio de ADR-0092 (corrida sin criterio_fidelidad.yaml): ni cascada ni "
+            "rentabilidad",
+        ]
+        return lineas
+    tol = criterio.tolerancias
+    cascada = cascada_por_criterios(
+        motor.operaciones_trader,
+        ordenes_para_la_cascada(motor),
+        tol,
+        criterio.tolerancia_stop_puntos,
+    )
+    lineas += [
+        "",
+        "### Fidelidad por criterios (ADR-0092 §1 y §2; diagnostico de construccion, sin umbral)",
+        "CUENTA: cada operacion del trader de los dias corridos, por el ULTIMO escalon que alcanza "
+        "contra las ordenes que el bot coloco en su (dia, sesion, direccion), llenadas o no; sobre "
+        "esta salida",
+        f"tolerancias: entrada {tol.entrada_puntos} puntos, stop {criterio.tolerancia_stop_puntos} "
+        f"puntos, llenado {tol.instante_min} min",
+        "mes | " + " | ".join(ESCALONES) + " | total",
+    ]
+    por_mes = cascada_por_mes(cascada)
+    for mes in [m for m in sorted(por_mes) if m != "total"] + ["total"]:
+        if mes not in por_mes:
+            continue
+        c = por_mes[mes]
+        lineas.append(
+            f"{mes} | " + " | ".join(str(c[e]) for e in ESCALONES) + f" | {sum(c.values())}"
+        )
+    if not cascada.pasos:
+        lineas.append("ninguna operacion del trader")
+    lineas += [
+        "ordenes del bot en un (dia, sesion, direccion) sin ninguna operacion del trader: "
+        f"{cascada.ordenes_sin_trader}",
+        "el sesgo de H4, derivado y aparte: la linea «por operacion del trader» de la seccion de "
+        "RN-003; la liquidez de M15: no comparable con el material de los casos",
+    ]
+    lineas += _informe_sin_video(motor, filas, criterio)
+    r = criterio.rentabilidad
+    reglas = motor.reglas_fase
+    dias = sorted(motor.trazas_broker)
+    curva = [(d, c, f, m) for d, c, f, m in curva_de_equity(motor)]
+    suspendida = motor.cuenta is not None and motor.cuenta.estado is EstadoCuenta.SUSPENDIDA
+    posiciones = [f.posicion for f in filas if f.riesgo > 0]
+    lineas += [
+        "",
+        "### Rentabilidad (ADR-0092 §3; DIAGNOSTICO sobre construccion, ADR-0092 §6: la puerta "
+        f"solo se mide sobre {', '.join(r.meses)}, fase {r.fase})",
+        f"FASE de esta corrida: {motor.fase or '-'}",
+    ]
+    if reglas.magnitud_vigilada != MAGNITUD_EQUITY:
+        lineas.append(
+            f"sin medir: la firma vigila {reglas.magnitud_vigilada} y la curva da la equity minima"
+        )
+        return lineas
+    medida = medir_rentabilidad(
+        posiciones, dias, curva, reglas.capital_inicial, reglas.base_perdida_diaria, suspendida, r
+    )
+    veredicto = veredicto_rentabilidad(medida, r)
+    equilibrio = punto_de_equilibrio(posiciones, r.esperanza_minima_r)
+    lineas += [
+        f"a) N (operaciones llenadas y cerradas): {medida.n}",
+        "b) esperanza (media del R neto): "
+        + ("sin definir" if medida.esperanza is None else f"{medida.esperanza:.3f}"),
+        f"c) percentil {r.percentil_remuestreo} de la media del R neto, por remuestreo por dias "
+        f"({r.replicas_remuestreo} replicas, semilla {r.semilla_remuestreo}, {len(dias)} dias): "
+        + (
+            "sin definir"
+            if medida.percentil_remuestreo is None
+            else f"{medida.percentil_remuestreo:.3f}"
+        )
+        + f"; replicas descartadas por no tener ninguna operacion: {medida.replicas_descartadas} "
+        f"de {r.replicas_remuestreo}",
+        f"d) perdida diaria maxima ({reglas.magnitud_vigilada}, base "
+        f"{reglas.base_perdida_diaria}): {_pct(medida.perdida_diaria_maxima)} del capital inicial",
+        f"e) equity minima del tramo: {_pct(medida.equity_minima)} del capital inicial",
+        f"f) suspendida: {'si' if medida.suspendida else 'no'}",
+        f"criterios a) a f): {veredicto.estado}"
+        + (f" ({'; '.join(veredicto.motivos)})" if veredicto.motivos else ""),
+        "deslizamiento por llenado afectado que lleva la esperanza a "
+        f"{r.esperanza_minima_r} R (ADR-0092 §4, sin decidir nada): "
+        + ("sin definir" if equilibrio is None else f"{equilibrio:.2f} puntos"),
+    ]
     return lineas
 
 

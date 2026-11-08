@@ -1,0 +1,157 @@
+Using CPython 3.12.10 interpreter at: C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe
+Creating virtual environment at: .venv
+   Building botsito @ file:///C:/cm/mf3
+      Built botsito @ file:///C:/cm/mf3
+Installed 25 packages in 2.07s
+FFFFFFF                                                                  [100%]
+================================== FAILURES ===================================
+_____________ test_sin_el_bloque_del_material_sin_video_no_carga ______________
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4336/test_sin_el_bloque_del_materia0')
+
+    def test_sin_el_bloque_del_material_sin_video_no_carga(tmp_path: Path) -> None:
+>       with pytest.raises(CriterioError, match="material_sin_video"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:95: Failed
+_____ test_el_material_sin_video_mal_formado_no_carga[meses-["2026-05"]] ______
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4336/test_el_material_sin_video_mal0')
+campo = 'meses', valor = '["2026-05"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("meses", '["2026-05"]'),  # un mes que no es de construccion (es de medida)
+            ("dias_con_video", '["2026-05-12"]'),  # un dia que no es de construccion
+            ("dias_con_video", '["2026-07-01"]'),  # un dia de construccion fuera de `meses`
+            ("provisionales_con_video", '["2026-08"]'),  # en `meses` y en provisionales a la vez
+            ("provisionales_con_video", '["2026-03"]'),  # un mes que no es de construccion
+            ("dias_con_video", '["2026-04-31"]'),  # no es una fecha
+        ],
+    )
+    def test_el_material_sin_video_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError, match="material_sin_video|dias_con_video|provisionales"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:111: Failed
+_ test_el_material_sin_video_mal_formado_no_carga[dias_con_video-["2026-05-12"]] _
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4336/test_el_material_sin_video_mal1')
+campo = 'dias_con_video', valor = '["2026-05-12"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("meses", '["2026-05"]'),  # un mes que no es de construccion (es de medida)
+            ("dias_con_video", '["2026-05-12"]'),  # un dia que no es de construccion
+            ("dias_con_video", '["2026-07-01"]'),  # un dia de construccion fuera de `meses`
+            ("provisionales_con_video", '["2026-08"]'),  # en `meses` y en provisionales a la vez
+            ("provisionales_con_video", '["2026-03"]'),  # un mes que no es de construccion
+            ("dias_con_video", '["2026-04-31"]'),  # no es una fecha
+        ],
+    )
+    def test_el_material_sin_video_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError, match="material_sin_video|dias_con_video|provisionales"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:111: Failed
+_ test_el_material_sin_video_mal_formado_no_carga[dias_con_video-["2026-07-01"]] _
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4336/test_el_material_sin_video_mal2')
+campo = 'dias_con_video', valor = '["2026-07-01"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("meses", '["2026-05"]'),  # un mes que no es de construccion (es de medida)
+            ("dias_con_video", '["2026-05-12"]'),  # un dia que no es de construccion
+            ("dias_con_video", '["2026-07-01"]'),  # un dia de construccion fuera de `meses`
+            ("provisionales_con_video", '["2026-08"]'),  # en `meses` y en provisionales a la vez
+            ("provisionales_con_video", '["2026-03"]'),  # un mes que no es de construccion
+            ("dias_con_video", '["2026-04-31"]'),  # no es una fecha
+        ],
+    )
+    def test_el_material_sin_video_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError, match="material_sin_video|dias_con_video|provisionales"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:111: Failed
+_ test_el_material_sin_video_mal_formado_no_carga[provisionales_con_video-["2026-08"]] _
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4336/test_el_material_sin_video_mal3')
+campo = 'provisionales_con_video', valor = '["2026-08"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("meses", '["2026-05"]'),  # un mes que no es de construccion (es de medida)
+            ("dias_con_video", '["2026-05-12"]'),  # un dia que no es de construccion
+            ("dias_con_video", '["2026-07-01"]'),  # un dia de construccion fuera de `meses`
+            ("provisionales_con_video", '["2026-08"]'),  # en `meses` y en provisionales a la vez
+            ("provisionales_con_video", '["2026-03"]'),  # un mes que no es de construccion
+            ("dias_con_video", '["2026-04-31"]'),  # no es una fecha
+        ],
+    )
+    def test_el_material_sin_video_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError, match="material_sin_video|dias_con_video|provisionales"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:111: Failed
+_ test_el_material_sin_video_mal_formado_no_carga[provisionales_con_video-["2026-03"]] _
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4336/test_el_material_sin_video_mal4')
+campo = 'provisionales_con_video', valor = '["2026-03"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("meses", '["2026-05"]'),  # un mes que no es de construccion (es de medida)
+            ("dias_con_video", '["2026-05-12"]'),  # un dia que no es de construccion
+            ("dias_con_video", '["2026-07-01"]'),  # un dia de construccion fuera de `meses`
+            ("provisionales_con_video", '["2026-08"]'),  # en `meses` y en provisionales a la vez
+            ("provisionales_con_video", '["2026-03"]'),  # un mes que no es de construccion
+            ("dias_con_video", '["2026-04-31"]'),  # no es una fecha
+        ],
+    )
+    def test_el_material_sin_video_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError, match="material_sin_video|dias_con_video|provisionales"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:111: Failed
+_ test_el_material_sin_video_mal_formado_no_carga[dias_con_video-["2026-04-31"]] _
+
+tmp_path = WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4336/test_el_material_sin_video_mal5')
+campo = 'dias_con_video', valor = '["2026-04-31"]'
+
+    @pytest.mark.parametrize(
+        ("campo", "valor"),
+        [
+            ("meses", '["2026-05"]'),  # un mes que no es de construccion (es de medida)
+            ("dias_con_video", '["2026-05-12"]'),  # un dia que no es de construccion
+            ("dias_con_video", '["2026-07-01"]'),  # un dia de construccion fuera de `meses`
+            ("provisionales_con_video", '["2026-08"]'),  # en `meses` y en provisionales a la vez
+            ("provisionales_con_video", '["2026-03"]'),  # un mes que no es de construccion
+            ("dias_con_video", '["2026-04-31"]'),  # no es una fecha
+        ],
+    )
+    def test_el_material_sin_video_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+>       with pytest.raises(CriterioError, match="material_sin_video|dias_con_video|provisionales"):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       Failed: DID NOT RAISE CriterioError
+
+tests\unit\test_criterio_campos_adr0092.py:111: Failed
+=========================== short test summary info ===========================
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_sin_el_bloque_del_material_sin_video_no_carga
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_el_material_sin_video_mal_formado_no_carga[meses-["2026-05"]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_el_material_sin_video_mal_formado_no_carga[dias_con_video-["2026-05-12"]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_el_material_sin_video_mal_formado_no_carga[dias_con_video-["2026-07-01"]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_el_material_sin_video_mal_formado_no_carga[provisionales_con_video-["2026-08"]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_el_material_sin_video_mal_formado_no_carga[provisionales_con_video-["2026-03"]]
+FAILED tests/unit/test_criterio_campos_adr0092.py::test_el_material_sin_video_mal_formado_no_carga[dias_con_video-["2026-04-31"]]
