@@ -694,9 +694,11 @@ Antes de escribir nada, medí lo que la respuesta afirma del repo (CLAUDE.md, «
   meter un mes de 2025 taparía su número también en 2026. Cierto.
 - El calendario de cierres empieza el 2025-12-04 (`knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml:18-22`). Cierto.
 - `firma_fases` = `"reto verificacion fondeada"` (`ftmo-2step-swing-100k.yaml:86`). Cierto.
-- `data/manifests/` solo tiene 2026 (eurusd-m1 de 2026-01 a 2026-09 y ticks de los cuatro meses de
-  construcción). Cierto.
-- F30 depende de F26 (`MASTER_PLAN.md:124`). Cierto.
+- `data/manifests/` solo tiene 2026 (eurusd-m1 de 2026-01 y de 2026-03 a 2026-09, sin febrero, y
+  ticks de los cuatro meses de construcción). Cierto. *(Corregido tras el revisor, a6: decía «de
+  2026-01 a 2026-09».)*
+- F30 depende de F26 (`MASTER_PLAN.md:124` en `main`; `:132` en la rama, tras la NOTA nueva). Cierto.
+  *(Corregido tras el revisor, a3.)*
 - VIABILIDAD-TRADER.md §2 es «Esperanza en R, con intervalo del 95 % por bootstrap» (`:85`). Cierto.
 - Los heredados 7 y 9 (`HISTORIA.md:698` y `:701`), verificados como pide el punto 4: los dos tocan
   la descarga de 2025. El 7, porque la guardia de `stable/F14-cobertura` saca junio del universo de
@@ -774,8 +776,12 @@ cabecera cita la NOTA de ADR-0043 «Cambios». Ningún campo existente cambia.
   recompuesta, y la esperanza con el percentil 90 > 0).
 
 **`src/botsito/engine/arnes.py` y `cableado.py`, SOLO salida** (punto 10):
-- `arnes._operacion` lleva el stop del caso (los 75 casos dev de construcción con operaciones lo
-  traen: `grep -l 'stop:' knowledge/cases/dev/*.yaml | wc -l` = 75 de 75);
+- `arnes._operacion` lleva el stop del caso: los 75 ficheros de `knowledge/cases/dev/` lo traen
+  (`grep -l 'stop:' knowledge/cases/dev/*.yaml | wc -l` = 75 de 75), y de ellos 69 son los días de
+  construcción con operaciones (`medir-a16.txt:2`) y 6 son días dev de mayo, que es MEDIDA. Ese
+  `grep` leyó el contenido de esos 6 casos de mayo (solo cuántos llevan la clave; ni nombres ni
+  valores): leerlos no necesita puerta (ADR-0025 §4), y se declara en HOLDOUT-EXPOSICIONES el mismo
+  día. *(Corregido tras el revisor, a2: decía «los 75 casos dev de construcción con operaciones».)*
 - `MotorCableado` gana `operaciones_trader` y `criterio`, que rellena `construir_motor_cableado`
   con lo que ya recibía (los días y el criterio). Así la cascada tiene las operaciones del trader
   y las órdenes del bot sin tocar `cli.py`, que no está en el contrato. Ninguna decisión los lee;
@@ -789,7 +795,8 @@ cabecera cita la NOTA de ADR-0043 «Cambios». Ningún campo existente cambia.
 
 **Tests** (sintéticos): `tests/unit/test_criterio_campos_adr0092.py` (26: el yaml real carga; sin
 cada campo nuevo no carga; valores mal formados no cargan), que importa SOLO lo que ya existía en
-`main` para que allí rompa por lo que mide; y `tests/unit/test_metodo_adr0092.py` (30: cada escalón
+`main` para que allí rompa por lo que mide; y `tests/unit/test_metodo_adr0092.py` (30, y 33 con
+el test del golden de `main` que se añadió tras el revisor: cada escalón
 de la cascada, el desempate, las órdenes sin trader, el emparejamiento por operación igual con y sin
 stop, el stop en `arnes._operacion`, R neto, remuestreo, drawdown, el veredicto por letra, el
 deslizamiento y F17, y la salida del motor sobre el día sintético de `test_cableado.py`: la sección
@@ -799,7 +806,7 @@ antes que tocan el criterio, el arnés y el cableado siguen en verde (`test_crit
 `test_umbral_mayo`, `test_diferencias_por_operacion`, `test_cableado`, `test_arnes_motor`,
 `test_huecos_motor`, `test_visor`, `test_simulacion`, `test_cuenta_7_de_agosto`,
 `test_selector_orden_stop`, `test_ensayo_marzo` y `tests/contract/`), y `lint-imports`: 4 kept.
-`Tests Currently Passing` de PROJECT_STATE pasa de 1880 a 1903 funciones de test (`state check`).
+`Tests Currently Passing` de PROJECT_STATE pasa de 1880 a 1903 funciones de test (`state check`), y a 1904 con el test del golden.
 
 **Regresión contra `main`** (skill `comparar-con-main`), sin ninguna corrida del arnés:
 - estado del repo antes y después: `git branch --list` = `main` y la rama; 151 tags; `origin` solo
@@ -833,6 +840,14 @@ antes que tocan el criterio, el arnés y el cableado siguen en verde (`test_crit
   de un día SINTÉTICO de 2030, no del bot sobre construcción;
 - los dos clones, quitados con `git worktree remove --force` (llevaban los tests copiados y los
   volcados, sin seguir) y `git worktree prune`. Las salidas, pasadas a LF (salían con CRLF).
+- **Repetida tras el revisor (b4), con la rama ya commiteada**: clones `C:/cm/mf2` (`main`,
+  e01e28c) y `C:/cm/rf2` (`--detach HEAD`, 1b10082, que lleva el punto 2 commiteado, sin copiar
+  nada). Los mismos seis hashes de la tabla de arriba, en los dos lados: la copia de la primera
+  vez era el código que se commiteó. `volcados-main-rama.txt` es ya esta salida. Los tres
+  volcados de `main` quedan congelados en `tests/golden/informe_simulacion/main-{hueco,stop,viva}.txt`
+  (con su línea en `tests/golden/README.md`), y `test_lo_que_ya_salia_es_byte_a_byte_lo_de_main`
+  exige que la salida de la rama empiece EXACTAMENTE por ellos: es el test del punto 10 que compara
+  con `main` y no con la propia rama.
 
 **Lo que queda del punto 11** (sesgo 3): la cifra sin las operaciones del bot de break even en los
 libros sin vídeo necesita saber qué días son de un libro sin vídeo, y la respuesta no nombra dónde
@@ -892,6 +907,146 @@ no:
 Los docstrings de `scripts/viabilidad_trader.py` y `viabilidad_comision.py` (Technical Debt) no se
 tocan: esta rama no corrió esos guiones.
 
+### 1.4 Punto 4: las líneas del cierre, probadas sobre una copia (no aplicadas en la rama)
+
+Con `anexos/METODO-FIDELIDAD-RENTABILIDAD/simular_cierre.py` (en memoria; salida en
+`simular-cierre.txt`), sustituciones exactas sobre PROJECT_STATE, la hoja de ruta y HISTORIA:
+
+- **PROJECT_STATE.md**
+  - sale **R** (`PROJECT_STATE.md:52`), con su registro nuevo al final de HISTORIA: «# Next Action
+    HECHA · R · el método de juicio del bot · sale de PROJECT_STATE.md en
+    trabajo/metodo-fidelidad-rentabilidad (fecha)». La letra ya tenía uno, del 2026-10-05
+    (`HISTORIA.md:4689`), y el nuevo lleva su fecha (`DECISIONES-DE-PROCESO.md:29`). El texto del
+    registro resume ADR-0092 y la medida de A-16, como está en el guion;
+  - **F**, con el texto de la respuesta: «Siguiente: la rama de la cuenta por mes (ADR-0092,
+    trabajo/cuenta-por-mes) y después la re-corrida que cuenta (ADR-0070 §3), la primera con la
+    comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091 y el método de ADR-0092;», y
+    el resto de F igual;
+  - **G**: «… ADR-0073) y A-16.» pasa a «… ADR-0073) y A-16 (medida en R3.7, sigue ABIERTA). Y lo
+    de ADR-0092: PREREGISTRO §«Que tiene que llevar» y MASTER_PLAN §H (y la fila de F30) con la
+    rentabilidad (ADR-0092 §13).»;
+  - **la segunda Regla viva** (`PROJECT_STATE.md:151`), con la redacción del punto 5, tal cual;
+  - **Technical Debt**: no nace ninguna línea. La regla del punto 7 no se disparó (§1.3), y lo que
+    queda pendiente (la NOTA de PREREGISTRO y la lista del sesgo 3) es la PARADA 2, no una deuda.
+- **La hoja de ruta**
+  - R3.7: `NA:R` sale de sus Refs (entra `ID:ADR-0092`) y gana «Estado: HECHA»;
+  - **R3.8 nueva**, «Una cuenta por mes en la corrida que cuenta» (Refs `NA:F · ID:ADR-0092 ·
+    ID:ADR-0053 · ID:ADR-0070`; depende de R3.7): `trabajo/cuenta-por-mes`, antes de la re-corrida;
+  - R5.1: «A-16 …, que se mide antes, en R3.7» pasa a «A-16 …, medida en R3.7
+    (METODO-FIDELIDAD-RENTABILIDAD.md §1.3) y ABIERTA»;
+  - R5.2: sale `NA:R`; depende también de la cuenta por mes (R3.8), y el sello (R3.6) y el método
+    (R3.7, ADR-0092) están HECHOS;
+  - **R5.6 nueva**, «La rentabilidad, la puerta para operar en vivo» (Refs `NA:G · NA:N · HER:7 ·
+    HER:9 · HER:10 · ID:ADR-0092 · F:F27`), con las condiciones del punto 4: junio a noviembre de
+    2025 y su extensión, la fase fondeada, la spec sellada en PREREGISTRO (G), el calendario
+    renovado hacia atrás (N), los datos según los heredados 7 y 9, el riesgo del spread supuesto
+    por la hora de pared, la construcción en el umbral de ADR-0070, y que no da «pasa» antes de F17;
+  - las dos corridas de R3.6 siguen en la re-corrida que cuenta (R3.7, «Qué es»: no se tocan).
+- **Salida de la simulación:** `R viva en la copia? False; R HECHA en HISTORIA? True; NA:R en la hoja
+  simulada? False`; `a: []`, `b: []`, `c: []`; PROJECT_STATE con las líneas del cierre **22.349
+  bytes**, y con el Current Feature del cierre **22.411** (los cuatro tests de `test_project_state`
+  pasan); por debajo de 23.000. Hoy, en la rama, `wc -c PROJECT_STATE.md` = 22.286.
+
+## El encargo, punto por punto
+
+| # | Requisito (encargo y respuesta) | Estado | Dónde |
+|---|---|---|---|
+| 1 | Base: main e01e28c, tag a 18f548e, CI 42400168427 verde, ninguna otra rama | Hecho | §0 |
+| 2 | Abrir con abrir-rama: contrato con tramo, riesgo medio, artefacto | Hecho | `contrato.yaml`; commit 1380b6c |
+| 3 | grep de «0092» antes de usarlo; revisar /model | Hecho | §0 |
+| 4 | Ninguna corrida del arnés ni cifra agregada nueva del bot | Hecho | ningún `motor arnes` en la rama; las cifras del bot que salen son recuentos sobre salidas ya vistas (§0.c, §0.e) y las de un día SINTÉTICO de 2030 (§1.2) |
+| 5 | NO cambia: decisiones, llenados, bróker, estrategia, spec, parámetros, perfil, tolerancias | Hecho | `git diff --stat main...HEAD`: ninguno de esos ficheros; los volcados del punto 2, idénticos hasta la sección nueva |
+| 6 | PREREGISTRO no se rellena | Hecho | no se toca (PARADA 2) |
+| 7 | Herencia R3.7 entera (cuatro sesgos, NOTA de MASTER_PLAN, F35, lo visto) | Hecho | §0.c a §0.f, §1.3; ADR-0092 §7 y §12; NOTA de MASTER_PLAN |
+| 8 | Herencia RESPALDO-M1 §4.5 y su orden de cierre, punto 2 | Hecho | §0.c (165 de 198) |
+| 9 | Herencia R5.1 y A-16: medida, sin cerrarla salvo decisión | Hecho | §1.3; A-16 ABIERTA (punto 8) |
+| 10 | Herencia ACTIVAR-SESION-05 §0.b.7 y S-14 | Hecho | §0.d; ADR-0092 §11 |
+| 11 | Herencia ADR-0090 §3 y §7, ADR-0051 §4: el deslizamiento | Hecho | ADR-0092 §4; funciones del punto 2 |
+| 12 | ADR-0043 «Cambios» y ADR-0070 §4: sin quemar mayo; declarar lo visto; no escribir «quemado por ADR-0043» | Hecho | ADR-0092 §12; NOTA en ADR-0043; `grep "quemado por ADR-0043"` en los ADR, el plan, el yaml y este informe: solo esta fila, que lo cita (y el encargo copiado) |
+| 13 | Reglas vivas: el mecanismo contra optimizar y la redacción de la segunda | Hecho | ADR-0092 §6 y §7; la regla, en las líneas del cierre (§1.4) |
+| 14 | MASTER_PLAN §0, la NOTA de ADR-0082, F26, F27, F35, §H; condiciones previas de F26 nombradas | Hecho | §0.g; NOTA nueva; ADR-0092 §7 |
+| 15 | Las dos corridas de R3.6 siguen en la re-corrida | Hecho | §1.4 |
+| 16 | Docstrings de viabilidad y deuda del panel de FTMO: no se pagan | Hecho | §1.3; no se toca `knowledge/spec/` |
+| 17 | Búsqueda de «R3.7», «NA:R», «método», «rentabilidad»… | Hecho | §0.i |
+| 18 | Fase 0, puntos a) a i), sin tocar código ni knowledge | Hecho | §0.a a §0.k; commit 9b7fa7f |
+| 19 | PARADA y espera | Hecho | «Lo que necesito que decidas»; respuesta copiada tal cual |
+| 20 | Respuesta copiada tal cual con fase-cero | Hecho | final del encargo y de este informe |
+| 21 | Fase 1, punto 1: ADR-0092, recuadros, NOTAS, índice, Fuente, ids-inexistentes fuera | Hecho de otra forma | §1.1, commit 56eb235. La NOTA de PREREGISTRO no entra: PARADA 2, punto 0 |
+| 22 | Fase 1, punto 2: yaml, funciones puras, salida del arnés, tests, uno que rompe en main | Hecho | §1.2, commit del punto 2; 25 tests fallan en main y uno no se colecciona |
+| 23 | Punto 2: un test que fija que la salida de decisiones no cambia, y que el emparejamiento da lo mismo con y sin stop | Hecho | `test_la_seccion_nueva_va_al_final_y_lo_que_ya_salia_no_cambia`, `test_el_emparejamiento_por_operacion_da_lo_mismo_con_el_stop_que_sin_el`; la regresión de hashes |
+| 24 | Fase 1, punto 3: A-16 con su guion, salida y exposición; recuentos de c), d) y e) | Hecho | §1.3 |
+| 25 | Fase 1, punto 4: el informe con las líneas del cierre sobre la copia | Hecho | §1.4 |
+| 26 | Un commit por punto, con estadiar, state check, make check y su log | Hecho de otra forma | puntos 1, 2 y 3 en sus commits (56eb235, 47a526c, 1b10082); el punto 4 va en el MISMO commit que el informe del revisor y lo que se hizo con sus hallazgos, para sellar una vez (desviación 12) |
+| 27 | ruff format, ruff check y mypy sobre lo tocado | Hecho | §1.2 |
+| 28 | Respuesta, punto 0: las piezas y la tolerancia del stop | Hecho | ADR-0092 §1; yaml |
+| 29 | Respuesta, punto 1: la cascada contra las órdenes, por mes y en total | Hecho | ADR-0092 §2; `cascada_por_criterios`; «### Fidelidad por criterios» |
+| 30 | Respuesta, punto 2: el criterio de rentabilidad a) a f) | Hecho | ADR-0092 §3; `veredicto_rentabilidad` |
+| 31 | Respuesta, punto 3: la regla del deslizamiento y el punto de equilibrio | Hecho | ADR-0092 §4; `veredicto_con_f17`, `punto_de_equilibrio` |
+| 32 | Respuesta, punto 4: los meses, la fase, la extensión, dónde viven, las condiciones | Hecho | ADR-0092 §5; yaml; R5.6 en las líneas del cierre |
+| 33 | Respuesta, punto 5: el papel de la fidelidad; la línea «habilita medir» y sus tests no cambian | Hecho | ADR-0092 §7; `habilita_medir` y `test_umbral_mayo.py` sin tocar |
+| 34 | Respuesta, punto 6: una cuenta por mes, enmienda de ADR-0053 §6 y de ADR-0070; la implementa otra rama | Hecho | ADR-0092 §8; recuadros; R3.8 |
+| 35 | Respuesta, punto 7: las tolerancias quedan y la regla de A-16 | Hecho | ADR-0092 §9; no se dispara (§1.3) |
+| 36 | Respuesta, punto 8: A-16 ABIERTA y las medidas previas nombradas | Hecho | ADR-0092 §10; §1.3 |
+| 37 | Respuesta, punto 9: el diseño de A-16 | Hecho | `medir_a16.py` |
+| 38 | Respuesta, punto 10: engine solo salida; contrato ampliado en un commit | Hecho | §1.1 y §1.2 |
+| 39 | Respuesta, punto 11: la cifra sin los break even de los libros sin vídeo | Parcial | ADR-0092 §11 lo fija; dónde vive la lista de libros, PARADA 2, punto 1 |
+| 40 | Respuesta, punto 12: NOTAS en MASTER_PLAN y PREREGISTRO | Parcial | MASTER_PLAN, sí; PREREGISTRO, PARADA 2, punto 0 |
+| 41 | Respuesta, punto 13: las exposiciones | Hecho de otra forma | la fila de la fase 1; los `make check` y los clones del punto 2 se declararon el mismo día pero después (§1.3) |
+| 42 | Respuesta: los campos del yaml, validados; un yaml sin ellos no carga; la cabecera cita la NOTA | Hecho | §1.2 |
+| 43 | Respuesta: F, R3.7 HECHA, la entrada de R3 y la de R5 en las líneas del cierre | Hecho | §1.4 |
+| 44 | Respuesta: la fila de ERRORES-RECURRENTES con el hallazgo de la sección | Hecho | abajo |
+| 45 | CI: sin fix/ (no toca hooks, rutas, .claude/ ni plataforma) | Hecho | ningún fichero de esos en el diff |
+| 46 | El revisor (opus) con los seis alcances, y su informe pegado | Hecho | §8 |
+
+## Desviaciones, declaradas
+
+1. **La NOTA de PREREGISTRO.md no está** (punto 12): con el fichero cambiado sin commitear,
+   `test_puerta_holdout` falla y `make check` no sella. PARADA 2, punto 0.
+2. **La lista de los libros sin vídeo no se escribe** (punto 11): la respuesta no dice dónde vive.
+   PARADA 2, punto 1.
+3. **La respuesta del consultor y el contrato ampliado van en el commit del punto 1**, y no en
+   commits propios: un `make check` por punto.
+4. **Las exposiciones (1) y (2) de la fila de la fase 1 se declararon después de hacerlas**, el
+   mismo día (§1.3). El punto 13 pedía «antes de correr nada».
+5. **El lado «rama» de la regresión byte a byte** es un clon de HEAD con los cuatro ficheros del
+   punto 2 copiados, porque el punto aún no estaba commiteado (la skill pide la rama commiteada), y
+   el volcado es autocontenido porque la guardia niega un test fuera del repo que importe
+   `tests.unit` (§1.2).
+6. **Tres `make check` en la apertura** por dos trampas ya conocidas (el id futuro y un log sin
+   seguir; §0).
+7. **Los campos nuevos de `Criterio` llevan `None` por defecto**, para no tocar los ocho tests que
+   lo construyen por posición; `cargar_criterio` los exige, y es la única vía del arnés.
+8. **`MotorCableado` gana `operaciones_trader` y `criterio`**, que no nombra el punto 10, para que
+   la cascada se escriba sin tocar `cli.py`, que no está en el contrato. Solo salida.
+9. **El bloque `rentabilidad` del yaml lleva una clave `adr: ADR-0092`** que la respuesta no lista,
+   como la de arriba del fichero (`adr: ADR-0043`). No se carga ni se valida: solo dice de dónde
+   sale el bloque (revisor, a7).
+10. **La forma del remuestreo por días la elegí yo** donde la respuesta no la detalla (con
+    reemplazo, tantos días como los corridos, media agrupada, percentil de rango inferior). Va
+    escrita en ADR-0092 §3 c) y la confirma el consultor: PARADA 2, punto 2 (revisor, b6).
+11. **El test del golden de `main`** (`tests/golden/informe_simulacion/`), añadido tras el revisor
+    (b4): no lo pedía el encargo, pero es el único test del repo que compara con la salida de
+    `main` y no con la de la propia rama.
+12. **El punto 4 no tiene commit propio**: el `make check` que lo sellaba empezó antes de que la
+    guardia negara el `git add` (iba encadenado con `state check`), así que lo paré sin esperar a
+    que no sellara (revisor, a1), y el punto 4 va con el informe del revisor y sus arreglos en un
+    solo commit sellado.
+
+## Lo que no pude medir (fase 1)
+
+- La cascada, la rentabilidad y la tabla de posiciones sobre la CONSTRUCCIÓN: exigen una corrida
+  del arnés, prohibida aquí. Solo están probadas sobre el día sintético y en los tests. La primera
+  salida real es la de la re-corrida que cuenta, después de `trabajo/cuenta-por-mes`.
+- Si RN-032 seguiría congelando la cuenta con el motor de hoy (0.k).
+- El remuestreo con 10.000 réplicas sobre 76 días y decenas de operaciones: cuánto tarda en la
+  corrida real. En los tests corre con 200 y 500 réplicas.
+
+## La fila de ERRORES-RECURRENTES (preparada para el cierre; la escribe `cerrar-rama`)
+
+| Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
+|---|---|---|---|
+| `trabajo/metodo-fidelidad-rentabilidad` | Una pasada, opus, con los siete alcances del encargo (§8; lo hecho, §8.1): reglas 1 bloquea (a1, el `make check` sobre un árbol sin estadiar, ya parado), 1 importa (a2, los 6 casos dev de mayo en un `grep` sin declarar), 5 menor; encargo 1 bloquea (b1, la NOTA de PREREGISTRO: PARADA 2), 3 importa (b2, lo visto incompleto: el visor y lo derivado; b3, la letra e) del consultor cambiada a c) sin decirlo; b4, el test «byte a byte» comparaba la rama consigo misma: entra un golden de `main`), 2 menor. Todos arreglados o contestados | (1) **(menor, del consultor; su auditor no lo vio)** el encargo situó la línea «habilita medir…» en ADR-0070 §3, y es el punto 5. Lección: un número de sección se cita leído, no del borrador. | (2) **Un test de la puerta del holdout ata PREREGISTRO.md a HEAD**: ningún commit puede cambiar ese fichero con `make check` en verde, ni para una NOTA. Señal: una ruta que la puerta lee con `_commiteado_y_sin_cambios`. (3) **El informe cita su ADR futuro en el título**: el bloque `ids-inexistentes` exime el id solo en el documento que lo lleva, y el encargo lo trae, el informe no. (4) **Un log en la raíz rompe el sello** aunque `make check` salga en verde: los logs de las comprobaciones van fuera del repo. (5) **Una letra del consultor no se «corrige» al pasarla al ADR** sin declararlo (b3): se copia, y si parece un error, se pregunta. (6) **Un test de «la salida no cambia» que compara la rama consigo misma no prueba nada** (b4): la referencia es la salida de `main`, congelada como golden. (7) **Una orden encadenada que la guardia niega no ejecuta NINGUNA de sus partes**: el `git add` no se hizo y el `make check` siguiente corrió sobre un árbol sin estadiar (a1). |
+
 ## PARADA 2 · La NOTA de PREREGISTRO.md no se puede commitear con `test_puerta_holdout` en verde
 
 Lo medido: arriba, en 1.1. El texto de la NOTA que pedía el punto 12, tal como lo escribí (no está
@@ -928,11 +1083,176 @@ en el repo):
    necesita escrita antes; la función pura que filtra no hace falta escribirla aparte: es `medir`
    sobre las operaciones del bot sin las de break even de esos días. Coste de (b): una rama de motor
    corta carga con algo que no es del motor. Coste de (c): no se puede.
+2. La forma del remuestreo de ADR-0092 §3 c), que la respuesta no detalla y que escribí yo
+   (revisor, b6). Opciones: (a) la de `percentil_por_dias`, ya escrita en ADR-0092 §3 c): cada
+   réplica sortea con reemplazo tantos días como los corridos, con o sin operaciones, y toma la
+   media AGRUPADA del R neto de todas sus operaciones; percentil de rango inferior; `random.Random`
+   con la semilla; (b) la media de las medias diarias, solo sobre días con operaciones; (c) remuestrear
+   operaciones y no días. Recomiendo (a): los días sin operaciones existen en vivo (pesan en el
+   número de operaciones de cada réplica) y la media agrupada es la misma esperanza de b). Coste de
+   (b): un día con una operación pesa como uno con diez. Coste de (c): no es «por días», y deja
+   fuera que los resultados de un mismo día se parecen.
 
 Sigo con lo demás de la fase 1 mientras tanto, como dice el encargo.
 
+## 8. El revisor
+
+Subagente `revisor` (opus), lanzado con el informe terminado y el punto 4 estadiado, con los siete
+alcances del encargo (reglas de la casa; el encargo y la respuesta; ninguna corrida del arnés ni
+cifra agregada nueva del bot; ningún umbral que salga de la rama; el motor no cambia; todo día
+leído de construcción y declarado; lo «visto» de ADR-0092 frente a lo commiteado). Su informe, tal
+cual (no cita ningún tramo no citable: ninguna retirada):
+
+> ## Informe del revisor · trabajo/metodo-fidelidad-rentabilidad · 2026-11-07
+>
+> Rama `trabajo/metodo-fidelidad-rentabilidad`, base `e01e28c`. Hay cinco commits (1380b6c, 9b7fa7f, 56eb235, 47a526c, 1b10082). El punto 4 está estadiado en el índice: el informe y los dos ficheros `simular_cierre.py` y `simular-cierre.txt`.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 1 bloquea, 1 importa, 5 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | bloquea (para el commit del punto 4) | El `make check` que está corriendo empezó antes de que se estadiaran los dos ficheros del punto 4. CLAUDE.md dice que, mientras corre `make check`, lo que haya que escribir en el repositorio espera, y `git add` escribe el índice. La huella hará fallar el sello, así que ese commit no se puede hacer con esta corrida: hay que relanzar `make check`. | `make-check.log:5` dice «CONTRATO: 32 ficheros dentro del contrato…». Ahora `uv run python scripts/contrato_rama.py` da «CONTRATO: 34 ficheros». El contrato cuenta `git diff --cached` (`scripts/contrato_rama.py:203`). En el gitStatus del arranque los dos ficheros salían como `??`; ahora `git status --porcelain` da `A  …/simular-cierre.txt` y `A  …/simular_cierre.py`. La huella está en `scripts/sello_make_check.py:12-18`. |
+> | a2 | importa | Dos problemas en la misma frase del informe. (1) Dice «los 75 casos dev de construcción con operaciones lo traen», y no es así: los 75 ficheros de `knowledge/cases/dev/` incluyen 6 de mayo, que es medida y no construcción. Los de construcción con operaciones son 69. (2) Ese `grep` leyó el contenido de los 6 casos dev de mayo. Leerlos está permitido sin puerta (ADR-0025 §4), pero no está declarado: las dos filas del 2026-11-07 dicen «nada de un mes reservado» y «los días leídos son de construcción». | `METODO-FIDELIDAD-RENTABILIDAD.md:777-778`. Medido con `ls knowledge/cases/dev/` por mes: 21 de 2026-01, 16 de 2026-04, **6 de 2026-05**, 13 de 2026-07 y 19 de 2026-08. `medir-a16.txt:2` da «dias dev con operaciones: 69». Las filas están en `HOLDOUT-EXPOSICIONES.md` (diff, filas +102 y +103). |
+> | a3 | menor | `MASTER_PLAN.md:124` es la línea de F30 en `main`. En la rama, con la NOTA añadida, es la `:132`, y la `:124` es F23. | `METODO-FIDELIDAD-RENTABILIDAD.md:699`. En la rama, `sed -n 124p` da «\| F23 …» y `grep -n "\| F30 "` da 132. `git show main:docs/plan/MASTER_PLAN.md`, línea 124, da F30. |
+> | a4 | menor | Dos filas de «El encargo, punto por punto» no se sostienen hoy. La fila 26 dice «cuatro commits de fase 1 sellados» y el cuarto no está commiteado. La fila 46 dice «Hecho \| §8» y el informe no tiene §8; el propio Estado dice «Falta el revisor (§8)». | `METODO-FIDELIDAD-RENTABILIDAD.md:964`, `:984` y `:1065`. `grep -n "§8\|## 8"` no encuentra ninguna sección 8. |
+> | a5 | menor | La fila de exposiciones de la fase 1 declara la M1 y los ticks «de cada uno de los 76 días dev». El guion salta los días sin operaciones, así que lee 69. Declara de más, no de menos. | `HOLDOUT-EXPOSICIONES.md`, fila +103. `medir_a16.py:105-106` (`if not d.operaciones: continue`). |
+> | a6 | menor | El informe dice que hay M1 «de 2026-01 a 2026-09», y no hay manifiesto de 2026-02. | `METODO-FIDELIDAD-RENTABILIDAD.md:697-698`. `ls data/manifests/` da 01, 03, 04, 05, 06, 07, 08 y 09. |
+> | a7 | menor | El bloque `rentabilidad` del yaml lleva una clave `adr: ADR-0092` que no está entre los campos que listó el consultor. Es inocua, pero no se declara. | `knowledge/cases/criterio_fidelidad.yaml`, diff, línea `+  adr: ADR-0092`. |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `contrato_rama.py` sale con exit 0. `state check` da «OK: rama 'trabajo/metodo-fidelidad-rentabilidad' …».
+> - **knowledge validate** (a la consola, sin el log en la raíz): exit 0, con «OK: 924 documentos: todo id citado existe…» y «OK: 57 ambiguedades registradas…».
+> - **pytest de 12 ficheros:** `test_adr`, `test_criterio_campos_adr0092`, `test_metodo_adr0092`, `test_puerta_holdout`, `test_umbral_mayo`, `test_criterio_fidelidad`, `test_cableado`, `test_no_business_literals`, `test_hoja_de_ruta`, `test_project_state`, `test_historia` y `test_diferencias_por_operacion`. Salen 211 puntos en la barra y ninguna F ni E (esta configuración no imprime la línea de resumen).
+> - **Trailer `Fuente:`.** El único commit que toca `knowledge/cases` (47a526c) lleva «Fuente: ADR-0092, ADR-0043, ADR-0070», en el cuerpo y con ids que existen.
+> - **Holdout.** Nada bajo `knowledge/cases/holdout/` en `git diff --name-status`.
+> - **Régimen de cambios.** Ni evidence, ni feedback, ni manifests, ni transcripciones, ni fotogramas, ni `libros.yaml` en el diff. `ambiguedades.yaml` no cambia, y A-16 sigue ABIERTA en la línea 302.
+> - **ADR.** `## Estado` empieza por ACTIVE en 0092 (:344), 0043, 0053 y 0070. Los recuadros de 0043, 0053 y 0070, la NOTA de MASTER_PLAN, HISTORIA (Archivo 60) y HOLDOUT-EXPOSICIONES solo añaden líneas: 0 líneas `-`.
+> - **Ningún informe cerrado tocado.** Ningún sitio nuevo con `cita`.
+> - **Citas comprobadas contra su fuente:**
+>   - `holdout.py:634` (`tapados = {int(mes[5:7]) …}`);
+>   - `ftmo-2step-swing-100k.yaml:86` (`valor: "reto verificacion fondeada"`);
+>   - `cierres/ftmo-2step-swing-100k.yaml:18-22` (`desde: "2025-12-04"`);
+>   - `test_puerta_holdout.py:39` («sigue vacio»);
+>   - `holdout.py:124-134` y `:156-158`;
+>   - `HISTORIA.md:4689` (el registro de R del 2026-10-05);
+>   - `DECISIONES-DE-PROCESO.md:29`, que existe en `docs/runbooks/`;
+>   - A-18 y A-31, RESUELTAS (`ambiguedades.yaml:382` y `:859`), como dice el recuadro de ADR-0043.
+> - **Cifras.** Las del yaml son exactamente las de la respuesta: `tolerancia_stop_puntos` 3, `fondeada`, 100, "0.10", 5, 10000, 20261107, "0.03", "0.06", `pendiente_F17`, 90, los meses 2025-06 a 2025-11, la extensión 2025-05 a 2025-01 y `[]`.
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 3 importa, 2 menor. Requisitos: 24 hechos, 2 parciales, 1 no hecho (en PARADA 2), 2 hechos de otra forma.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Abrir la rama: contrato con tramo, riesgo medio y artefacto; encargo copiado; Archivo 60 | Hecho | `contrato.yaml:1-4`; commit 1380b6c; `+# Archivo 60` |
+> | 2 | Fase 0, puntos a) a i), sin tocar código ni knowledge, y la PARADA | Hecho | informe §0.a-§0.k y «Lo que necesito que decidas» (:501); 9b7fa7f solo toca el informe y HOLDOUT-EXPOSICIONES |
+> | 3 | La respuesta, copiada tal cual en el informe y al final del encargo | Hecho | `diff` del encargo (:64-116) con el informe (:635-687) da IGUALES |
+> | 4 | P1: ADR-0092 con recuadros en ADR-0043 y ADR-0070, más ADR-0053 §6 | Hecho | diff de los cuatro ADR |
+> | 5 | P1: NOTA en la cabecera de MASTER_PLAN, junto a la de ADR-0082 | Hecho | `MASTER_PLAN.md:19-26`, justo tras la NOTA de ADR-0082 |
+> | 6 | P1 / respuesta, punto 12: NOTA en PREREGISTRO.md | **No hecho (PARADA 2)** | ver b1 |
+> | 7 | P1: fila del índice, `Fuente:`, bloque ids-inexistentes fuera | Hecho | `docs/adr/README.md` +1; 56eb235 lleva «Fuente: ADR-0043, …»; el bloque solo queda citado en `encargos:4` y `:48` |
+> | 8 | P1: contrato ampliado a arnes.py y cableado.py en un commit | Hecho de otra forma (declarado) | `contrato.yaml:2,18-19`, en 56eb235; desviación 3 |
+> | 9 | P2: yaml con los campos nuevos; un yaml sin ellos no carga | Hecho | `criterio_fidelidad.py:299-369`; en main, 25 tests fallan con «DID NOT RAISE» (`tests-campos-con-main.txt`) |
+> | 10 | P2: funciones puras: cascada, R neto, remuestreo, drawdown, N, punto de equilibrio, F17 | Hecho | `criterio_fidelidad.py:372+`; 30 tests sintéticos |
+> | 11 | P2 / punto 10: «### Posiciones» con desenlace, bruto, comisión, swaps, neto, riesgo y R neto; la cascada; la rentabilidad marcada «diagnóstico» | Hecho | `cableado.py:1116-1355` (CABECERA_POSICIONES, `_informe_metodo`) |
+> | 12 | Punto 10: el criterio lleva el stop (`arnes._operacion`) | Hecho | `arnes.py:124-136`; test en `test_metodo_adr0092.py:171-174` |
+> | 13 | Punto 10: test de que la salida existente no cambia byte a byte, y emparejamiento igual con y sin stop | Parcial | ver b4; `test_metodo_adr0092.py:157-168` (stop) y `:359-369` |
+> | 14 | P2: al menos un test que rompe en main, con su salida pegada | Hecho | `tests-campos-con-main.txt`; `tests-metodo-con-main.txt` («ImportError: cannot import name 'COMPLETA'») |
+> | 15 | P3: A-16 con su guion, su salida y la exposición previa | Hecho | `medir_a16.py`, `medir-a16.txt`, fila +103 |
+> | 16 | Punto 9: M1 BID, tick del lado y de los dos lados, N, mediana, p90, dentro del rango, por mes y en total, sin ticks, sin mes anterior | Hecho | `medir_a16.py:104-152`; `tipo_precio: BID` en el manifiesto; `simulacion.py:194-206` (solo la ventana del día) |
+> | 17 | Punto 7: la regla escrita antes de medir | Hecho | ADR-0092 §9; `medir_a16.py:157`; no se dispara (mediana 0, 92,4 %) |
+> | 18 | Punto 8: A-16 ABIERTA, knowledge/spec sin tocar, las medidas previas nombradas | Hecho | `ambiguedades.yaml:302`; ADR-0092 §10 |
+> | 19 | P3: recuentos de c), d) y e) con su guion | Hecho | `recuentos-vistos.txt` («165» en :5), `huecos-material.txt`, `recuento-compuerta.txt` |
+> | 20 | P4: líneas del cierre sobre una copia; test_hoja_de_ruta y test_project_state; menos de 23.000 bytes | Hecho | `simular-cierre.txt:1-5` (a, b y c vacíos; 22.349 y 22.411 bytes) |
+> | 21 | Cierre: F con el texto de la respuesta, R3.7 HECHA, R3.8, R5.6, segunda Regla viva | Hecho | `simular_cierre.py:73-148` |
+> | 22 | Punto 11: la cifra sin los break even de los libros sin vídeo | Parcial (declarado, PARADA 2 punto 1) | informe §1.2 (:837-841) |
+> | 23 | Punto 13: exposiciones antes de correr nada | Hecho de otra forma (declarado) | fila +103: (1) y (2) declarados después, el mismo día; desviación 4 |
+> | 24 | Alcance: ninguna corrida del arnés ni cifra agregada nueva del bot | Hecho (en lo que el repo deja ver) | `grep -rln "CONJUNTO\|motor arnes"` en el anexo no da nada; las cifras del bot son recuentos sobre RESPALDO-M1 o del día sintético de 2030 (`volcados-main-rama.txt:10`) |
+> | 25 | Alcance: ninguna cifra de umbral sale de la rama | Hecho | eje (a), última viñeta; los números de `medir_a16.py:42-43` son los del punto 7 |
+> | 26 | Alcance: el motor no cambia | Hecho | el diff de engine/ solo toca `arnes.py` y `cableado.py`; `grep operaciones_trader\|\.criterio\b` en src/: solo `cableado.py:255,648,1269,1279` (salida); `volcados-main-rama.txt:2-4` da «igual a main» True ×3 hasta la sección nueva |
+> | 27 | Alcance: todo día leído es de construcción y está declarado | Parcial | ver a2 (los 6 casos dev de mayo) |
+> | 28 | Alcance: lo «visto» del §12 coincide con las salidas commiteadas | Parcial | ver b2 |
+> | 29 | Informe con «El encargo, punto por punto», desviaciones, lo no medido y la fila de ERRORES-RECURRENTES | Hecho | :935, :986, :1007, :1016 |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | bloquea (está declarado; se resuelve con la respuesta del consultor) | Falta la NOTA de PREREGISTRO.md que piden el punto 12 y la fase 1, punto 1. El motivo está bien medido: `test_puerta_holdout` exige «sigue vacio», y con el fichero cambiado sin commitear la puerta da «no esta commiteado tal como esta en el arbol». Como el sello es del árbol estadiado, ningún commit puede cambiar ese fichero con el test en verde. La rama no está lista hasta que el consultor conteste la PARADA 2. | `holdout.py:124-134` (`_commiteado_y_sin_cambios`) y `:156-158`; `test_puerta_holdout.py:34-39`; las 6 particiones salen de `holdout.py:57` (RESERVADAS); la PARADA 2 está en el informe, :1022-1059 |
+> | b2 | importa | ADR-0092 §12 no declara un conjunto de salidas del bot sobre construcción que ya están commiteadas: las 20 páginas y trazas del visor de `anexos/VISOR-CONSTRUCCION/dias/`. Son DIAGNÓSTICO, con órdenes y operaciones del bot y del trader por día. Tampoco nombra los censos derivados (`RECORRIDA-CONSTRUCCION/costes-y-sesiones.txt`, `RESPALDO-M1/censo-respaldo.txt`). El grep de `CONJUNTO: construccion` no los ve porque no llevan esa línea. | `ls …/VISOR-CONSTRUCCION/dias/` da 20 de cada tipo: `pagina.txt`, `traza.txt`, `contexto.txt` y `ticks.txt`. La cabecera de `2026-01-08.pagina.txt:3-5` dice «DIAGNOSTICO-… · operaciones del trader 4, del bot 1». Las páginas entraron en el commit 304da27. La lista del ADR está en `0092-…md:244-258`. |
+> | b3 | importa | En «Lo visto, declarado», el ADR cambia sin decirlo la letra que escribió el consultor. La respuesta, en L, dice «el criterio **e)** y la forma del remuestreo se parecen a lo que VIABILIDAD-TRADER hace»; el ADR dice «el criterio **c)** de §3». Puede ser una corrección razonable, pero toca la declaración de lo visto y no está entre las desviaciones. | `encargos/…:68` y `METODO-…md:639` («el criterio e)»), frente a `0092-…md:241` («el criterio c) de §3»); la lista de desviaciones (:986-1005) no lo menciona |
+> | b4 | importa | El test que pedía el punto 10 («la salida existente no cambia byte a byte») compara la salida de la rama con la misma salida de la rama, quitando `_informe_metodo` por monkeypatch. Así no puede detectar un cambio de decisión, porque las dos salidas salen del mismo motor. La comparación con main está en un anexo, y su lado «rama» fue un clon de 56eb235 con los ficheros copiados (desviación 5), no el commit 47a526c. Que ninguna decisión lee los campos nuevos sí se ve en el código. | `test_metodo_adr0092.py:359-369`; `volcados-main-rama.txt`; desviación 5 (:996-999) |
+> | b5 | menor | El riesgo al colocar se vuelve a escribir en línea, en vez de reutilizar el cálculo que ya existe. La respuesta pedía «no una fórmula nueva». La fórmula es la misma que la de `_margen_al_colocar` y el test la cuadra en el día sintético. | `cableado.py:1179`, frente a `primitivas_broker.py:573-578`; `test_metodo_adr0092.py:383` |
+> | b6 | menor | La forma del remuestreo la eligió la rama: réplicas de len(días) días con reemplazo, incluidos los días sin operaciones; media agrupada; percentil `floor(p·(n−1)/100)`. Está en el informe §1.2, pero no en ADR-0092 §3, que es lo que pre-registra la puerta. | `criterio_fidelidad.py` (`percentil_por_dias`, docstring del diff :311-337); `METODO-…md:768-769`; `0092-…md:78-79` |
+>
+> Lo que el encargo dice que no se toca está intacto: `git diff --name-status main...HEAD` no trae `broker.py`, `llenado.py`, `cuenta.py`, `primitivas_broker.py`, `motor.py`, `knowledge/spec/`, `knowledge/cuentas/`, `knowledge/simulador/`, `knowledge/corpus/`, `strategy_spec.yaml`, `parametros.yaml`, `PREREGISTRO.md`, `cli.py`, `.claude/` ni el Makefile. Las ocho desviaciones declaradas cuadran con el código; la 7 se ve en `criterio_fidelidad.py:367-368` (`cargar_criterio` exige los campos) y la 8 en que `cli.py` no aparece en el diff.
+>
+> ### Lo que no pude comprobar
+> - **El `make check` en curso.** Todavía no tiene la línea `SELLO` ni la de `PICO DE MEMORIA`, y no lo corrí. Por a1, espero que no selle.
+> - **Los `make check` de los commits 1 a 3.** Sus logs ya no están. Que sellaron solo se infiere de que el hook dejó commitear.
+> - **El fallo de `test_puerta_holdout` con la NOTA estadiada.** Reproducirlo exige escribir PREREGISTRO.md. El mecanismo lo verifiqué leyendo el código (b1).
+> - **Que no hubo ninguna corrida del arnés fuera del repo.** Solo puedo ver que no hay ninguna salida commiteada nueva.
+> - **La afirmación de que la guardia niega ejecutar en un clon un test que importa `tests.unit`** (desviación 5), y cuánto tardan 10.000 réplicas.
+> - **Exposiciones de esta pasada del revisor, para que la sesión las declare el mismo día:**
+>   - un `grep -l 'stop:'` y un `ls` contado por mes sobre `knowledge/cases/dev/`, que incluyen los 6 casos dev de mayo (permitido por ADR-0025 §4, sin imprimir fechas);
+>   - 12 líneas de la cabecera de `VISOR-CONSTRUCCION/dias/2026-01-08.pagina.txt`, día de construcción;
+>   - lectura de `recuentos-vistos.txt`, `recuento-compuerta.txt`, `huecos-material.txt`, `medir_a16.py`, la cabecera de `medir-a16.txt`, `volcados-main-rama.txt` y la cola de los dos `tests-*-con-main.txt`;
+>   - `knowledge validate`, `state check`, `contrato_rama.py` y pytest de 12 ficheros sintéticos.
+>   - Ninguna filtrada, cruda, fotograma, libro ni caso reservado; ningún listado de `knowledge/cases/holdout`.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`, `git merge-base main HEAD`, `git log --format='%h %s' main..HEAD`, `git diff --stat main...HEAD`, `git status --short`, `git diff --cached --stat`
+> 2. Read de `docs/encargos/trabajo-metodo-fidelidad-rentabilidad.md`, `contrato.yaml`, `METODO-FIDELIDAD-RENTABILIDAD.md:620-1066` y `docs/adr/0092-…md`
+> 3. `uv run python scripts/contrato_rama.py`
+> 4. `uv run botsito state check`
+> 5. `uv run botsito knowledge validate 2>&1 | tail -15`
+> 6. `git log --format='%h%n%B----' main..HEAD -- knowledge/spec knowledge/cases`; `git diff --name-status main...HEAD`; `git log --name-status main..HEAD`
+> 7. Grep de `^## Estado` en los ADR 0092, 0043, 0070 y 0053 (el primer intento, encadenado con pytest, lo negó la guardia y lo partí en dos llamadas)
+> 8. `uv run pytest -q -p no:cacheprovider` sobre 7 ficheros y después sobre 12 (lista en el eje a)
+> 9. `git diff main...HEAD -- knowledge/cases/criterio_fidelidad.yaml`, `-- src/botsito/cases/criterio_fidelidad.py` (grep de números), `-- src/botsito/engine/arnes.py` y `-- src/botsito/engine/cableado.py`
+> 10. Grep y Read en `engine/` (`_margen_al_colocar`, `_a_la_cuenta`, `por operacion del trader`, `por_operacion`), `cableado.py:425-484`, `primitivas_broker.py:540-600`, `arnes.py:395-444` y `cli.py:2410-2459`
+> 11. `grep -n "^def test_"` en los dos tests nuevos; Read de `test_metodo_adr0092.py:150-408`
+> 12. Read de `medir_a16.py`, `volcados-main-rama.txt`, el `README.md` del anexo, `recuentos-vistos.txt`, `recuento-compuerta.txt`, `huecos-material.txt`, `simular-cierre.txt` y `simular_cierre.py`; Grep de `mercado_de_construccion` en `simulacion.py`
+> 13. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md`
+> 14. `grep -rlE '^(\[[^]]*\] )?CONJUNTO: construccion' docs/validation/`; `grep -rl 'CONJUNTO: construccion' docs/validation/`; `ls anexos/SELLO-RESPALDO-M1/`
+> 15. `grep -rlE '^## Por sesion|…' docs/validation/ --include=*.txt`; `head -12` de `VISOR-CONSTRUCCION/dias/2026-01-08.pagina.txt`; `ls` de VISOR-CONSTRUCCION y de su carpeta `dias` contados por tipo; `ls docs/validation/anexos/`
+> 16. `diff` de la respuesta en el encargo (:64-116) con la del informe (:635-687)
+> 17. `grep` de «ids-inexistentes», «quemado por ADR-0043» y «criterio e)\|criterio c)»
+> 18. `git diff main...HEAD` de los ADR 0043, 0053 y 0070, MASTER_PLAN y el README de los ADR; `git diff -U4` de MASTER_PLAN; `git diff` de PROJECT_STATE
+> 19. Grep de A-18, A-31 y A-16 en `ambiguedades.yaml` (un `awk` lo negó la guardia; lo sustituí por Grep)
+> 20. Read de `test_puerta_holdout.py:1-60`, `holdout.py:90-170` y Grep de RESERVADAS
+> 21. `git status --porcelain=v1`, `git diff --cached --name-status` y `cat make-check.log | head -20`; Grep y Read de `sello_make_check.py` y de `contrato_rama.py`
+> 22. Comprobación de citas: `sed -n` de `holdout.py:634`, del yaml del perfil, de `MASTER_PLAN.md:124` en la rama y en main, de `HISTORIA.md:4689`, de `cierres/…yaml:18-22` y de `docs/runbooks/DECISIONES-DE-PROCESO.md:29`
+> 23. `ls knowledge/cases/dev/` contado por mes; `grep -l 'stop:' knowledge/cases/dev/*.yaml | wc -l`; `head -3 medir-a16.txt`
+> 24. `ls data/manifests/`; `grep -i bid` en los manifiestos M1
+> 25. `tail` de `tests-campos-con-main.txt` y de `tests-metodo-con-main.txt`
+> 26. `git log -1 --format=%B` de 56eb235 y de 1b10082
+> 27. `git diff main...HEAD` de los cinco documentos de solo añadir: líneas `-` = 0
+
+### 8.1 Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | bloquea | Ya visto antes de que llegara: la guardia negó el `git add` del punto 4 (iba encadenado con `state check`), el `make check` arrancó sobre un árbol sin estadiar y lo paré. El punto 4 entra en el commit de este §8, con un `make check` nuevo y sellado (desviación 12) |
+| a2 | importa | Arreglado: la frase de §1.2 dice ahora 75 ficheros, 69 de construcción con operaciones y 6 de mayo; y la lectura de esos 6 casos de mayo (solo un recuento) está declarada en una fila nueva del 2026-11-07 en HOLDOUT-EXPOSICIONES, con la del revisor |
+| a3 | menor | Arreglado: `MASTER_PLAN.md:124` en `main` y `:132` en la rama |
+| a4 | menor | Arreglado: la fila 26 dice que el punto 4 va con este §8 («Hecho de otra forma»), y la 46 apunta ya a un §8 que existe |
+| a5 | menor | Arreglado en la fila de la fase 1: 69 días dev con operaciones, de los 76 |
+| a6 | menor | Arreglado: M1 de 2026-01 y de 2026-03 a 2026-09, sin febrero |
+| a7 | menor | Declarado como desviación 9; la clave no se carga |
+| b1 | bloquea | Es la PARADA 2, punto 0, y la contesta el consultor: la rama no puede cambiar PREREGISTRO.md sin aflojar `test_puerta_holdout`, y eso no lo decide la sesión. Lo que el fichero tendrá que llevar está escrito en ADR-0092 §13 y en la NOTA de MASTER_PLAN |
+| b2 | importa | Arreglado en ADR-0092 §12: entran las páginas, trazas, contextos y ticks del visor de los 20 días de `anexos/VISOR-CONSTRUCCION/dias/` y todo lo derivado de las corridas que está commiteado en sus anexos (patrones, censos, costes, listas de S-14, entradas antes de la alternancia, diffs de la línea base), con la forma en que se buscó |
+| b3 | importa | Arreglado: el error era mío. La respuesta dice «el criterio e)», y e) es lo que VIABILIDAD-TRADER §3 comprueba con el trader (las reglas de FTMO, escenario a escenario). ADR-0092 §12 dice ya «el criterio e)», como en L |
+| b4 | importa | Arreglado de dos formas. (1) La regresión se repitió con la rama COMMITEADA (`C:/cm/rf2`, 1b10082, sin copiar nada) frente a `main` (`C:/cm/mf2`): los mismos seis hashes, así que la copia de la primera vez era el código commiteado. (2) Los tres volcados de `main` quedan congelados en `tests/golden/informe_simulacion/`, y el test nuevo `test_lo_que_ya_salia_es_byte_a_byte_lo_de_main` exige que la salida de la rama empiece exactamente por ellos: compara con `main` y no consigo misma, y un cambio de decisión o de llenado en el día sintético lo rompería (desviación 11) |
+| b5 | menor | Contestado, sin cambio: el riesgo de `_margen_al_colocar` se calcula dentro de un cierre de `primitivas_cableadas` (`primitivas_broker.py:558-582`), así que no se puede llamar desde fuera, y sacarlo a una función tocaría `primitivas_broker.py`, que el contrato protege. La fórmula es la misma y la cuadra `test_la_tabla_de_posiciones_cuadra_con_la_cuenta` |
+| b6 | menor | Arreglado y llevado al consultor: la forma exacta del remuestreo está ya en ADR-0092 §3 c), dicha como lectura de la rama, y la PARADA 2, punto 2, le pide que la confirme (desviación 10) |
+
 ## Estado
 
-FASE 1 EN CURSO, con la PARADA 2 abierta (la NOTA de PREREGISTRO.md y la lista del punto 11, que no
-bloquean lo demás): puntos 1, 2 y 3 hechos; falta el 4 (el informe y las líneas del cierre);
-después, el revisor.
+FASE 1 HECHA (puntos 1 a 4) y revisada (§8), con la **PARADA 2 abierta** para el consultor: (0) la
+NOTA de PREREGISTRO.md, que la rama no puede commitear sin aflojar `test_puerta_holdout`; (1)
+dónde vive la lista de los libros sin vídeo del sesgo 3; (2) la confirmación de la forma del
+remuestreo de ADR-0092 §3 c). Ninguna bloquea el método: el ADR, el yaml, las funciones, la salida
+del arnés, A-16 y los recuentos están hechos y sellados. Sin CI por `fix/`: la rama no toca hooks,
+rutas, `.claude/` ni plataforma.
+
+Rama lista para revisión, NO cerrada.

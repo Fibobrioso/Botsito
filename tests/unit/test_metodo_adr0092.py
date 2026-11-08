@@ -56,7 +56,9 @@ from botsito.engine.primitivas_broker import SALTO_EL_STOP
 from botsito.spec.modelo import cargar_vocabulario
 from tests.unit.test_cableado import (
     ENTRADA,
+    RUTA_HUECO,
     RUTA_STOP,
+    RUTA_VIVA,
     SPEC,
     _dia,
     _mercado,
@@ -354,6 +356,28 @@ def _corrido(registro: Registro, vocabulario: dict[str, dict[str, Any]]) -> cabl
     motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
     motor.correr_dia(_dia())
     return motor
+
+
+GOLDEN = REPO / "tests" / "golden" / "informe_simulacion"
+
+
+@pytest.mark.parametrize(
+    ("nombre", "ruta"), [("hueco", RUTA_HUECO), ("stop", RUTA_STOP), ("viva", RUTA_VIVA)]
+)
+def test_lo_que_ya_salia_es_byte_a_byte_lo_de_main(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]], nombre: str, ruta: Any
+) -> None:
+    """Contra la salida de `main` (e01e28c) CONGELADA en `tests/golden/informe_simulacion/`: la
+    misma corrida sintetica, con el codigo de la rama, da exactamente lo de `main` hasta la seccion
+    de ADR-0092, que va despues. Un cambio de decision o de llenado en el dia sintetico cambiaria
+    las ordenes, los eventos o la curva, y este test lo veria (revisor de la rama, b4)."""
+    motor = _motor(registro, vocabulario, _mercado(ruta))
+    motor.correr_dia(_dia())
+    texto = cableado.informe_simulacion(motor)
+    de_main = (GOLDEN / f"main-{nombre}.txt").read_text(encoding="utf-8")
+    assert cableado.CABECERA_METODO not in de_main
+    assert texto.startswith(de_main)
+    assert texto[len(de_main) :].startswith("\n" + cableado.CABECERA_METODO)
 
 
 def test_la_seccion_nueva_va_al_final_y_lo_que_ya_salia_no_cambia(

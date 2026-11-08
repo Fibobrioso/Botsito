@@ -76,7 +76,14 @@ solo si se cumplen todas:**
 - a) N ≥ `n_minimo` (100) operaciones llenadas;
 - b) esperanza (media del R neto) ≥ `esperanza_minima_r` (+0,10 R);
 - c) el percentil `percentil_remuestreo` (5) de la media del R neto, por remuestreo POR DÍAS de
-  mercado (`replicas_remuestreo` 10.000 réplicas, `semilla_remuestreo` 20261107), es > 0;
+  mercado (`replicas_remuestreo` 10.000 réplicas, `semilla_remuestreo` 20261107), es > 0. La forma,
+  como la implementa `percentil_por_dias` (lectura de la rama de lo que la respuesta no detalla;
+  la confirma el consultor en la PARADA 2 del informe, punto 2): cada réplica sortea con reemplazo
+  tantos días como días de mercado corridos, con o sin operaciones; su cifra es la media del R
+  neto de TODAS las operaciones de los días sorteados (agrupada, no la media de las medias de cada
+  día); una réplica sin operaciones no cuenta; el percentil es el de rango inferior,
+  floor(percentil × (n − 1) / 100) sobre las medias ordenadas; el generador es `random.Random`
+  de Python con la semilla;
 - d) en ningún día la pérdida diaria, en la magnitud y con la base que vigila la firma
   (`firma_magnitud_vigilada`, `firma_base_perdida_diaria`), llega a `perdida_diaria_max` (el 3 %)
   del capital inicial. El límite de la firma es el 5 %: 2 puntos de margen;
@@ -238,7 +245,7 @@ Por ADR-0070 punto 4 («cambiarlo exige un ADR nuevo que declare lo visto»):
   de `VIABILIDAD-TRADER.md` §2 y `VIABILIDAD-COMISION.md`. No existe ninguna esperanza en R del BOT
   ni ninguna cifra suya sobre mes alguno fuera de construcción. Lo que se apoya en algo de eso, lo
   dice: el camino de la cuenta (§8) sale de un hecho del código, no de la cifra, pero la cifra se
-  vio; el criterio c) de §3 y la forma del remuestreo se parecen a lo que VIABILIDAD-TRADER hace con
+  vio; el criterio e) y la forma del remuestreo se parecen a lo que VIABILIDAD-TRADER hace con
   el trader, y por eso el umbral de esperanza del bot es más alto que el borde estrecho que ahí se
   mide; las tolerancias no cambian.
 - **Las salidas del arnés sobre construcción commiteadas antes de este ADR**, todas ya vistas:
@@ -252,10 +259,18 @@ Por ADR-0070 punto 4 («cambiarlo exige un ADR nuevo que declare lo visto»):
     `CABLEADO-SIMULADOR-LINEA-BASE.txt`, `HUECOS-MOTOR-LINEA-BASE.txt`,
     `ORDEN-STOP-O-LIMITE-SALIDA.txt`, `PREPARACION-A21-SALIDA.txt`, `SESGO-H4-DIAGNOSTICO.txt`,
     `VERIFICACION-A21-SALIDA.txt` y `VERIFICACION-A35-A44-SALIDA.txt`;
-  - y lo que vio el visor por caso en los once días dev de `anexos/SELLO-RESPALDO-M1/`.
-  (La lista es la de `grep -rlE '^(\[[^]]*\] )?CONJUNTO: construccion' docs/validation/` del
-  2026-11-07, más los ficheros de diagnóstico de los anexos; las corridas que no dejaron salida
-  commiteada se citan en el informe de su rama.)
+  - las páginas, trazas, contextos y ticks del visor sobre 20 días de construcción de
+    `anexos/VISOR-CONSTRUCCION/dias/` (DIAGNÓSTICO, con órdenes y operaciones del bot y del
+    trader por día), y lo que vio el visor por caso en los once días dev de
+    `anexos/SELLO-RESPALDO-M1/` (sus prototipos y censos);
+  - y todo lo DERIVADO de esas salidas y commiteado en sus anexos: los patrones (`patrones*.txt`),
+    los censos (`censo-respaldo.txt`, `censo-cierre-*.txt`), `costes-y-sesiones.txt`,
+    `entradas-antes-alternancia.txt`, las listas de S-14 (`lista-s14.txt`, `sesiones-s14.txt`) y
+    los `diff-linea-base.txt`.
+  (La lista sale de `grep -rlE '^(\[[^]]*\] )?CONJUNTO: construccion' docs/validation/` del
+  2026-11-07, más los ficheros de diagnóstico, las páginas del visor y lo derivado de los anexos
+  (revisor de la rama, b2); las corridas que no dejaron salida commiteada se citan en el informe de
+  su rama.)
 - **Mayo no se ha visto.** Ninguna salida del motor sobre el conjunto de medida: ninguna salida
   commiteada lleva 2026-05 en su CONJUNTO, ningún comando lleva `--meses 2026-05`, y el arnés niega
   todo mes de medida (`engine/arnes.py`, `validar_meses`). La cláusula «Cambios» de ADR-0043 se
