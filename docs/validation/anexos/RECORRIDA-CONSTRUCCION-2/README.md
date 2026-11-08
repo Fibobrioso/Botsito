@@ -55,7 +55,31 @@ con 1 cuando hay diferencias: no es un fallo):
   dirección de una orden no llenada, que se lee de su caja) lo dice su docstring, y comprueba lo
   que cuenta contra la cascada que imprime cada salida.
   `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/para_clasificar.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt "docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/diaria.DIAGNOSTICO.cuenta=diaria.txt"`
-  → `para-clasificar.txt`.
+  → `para-clasificar.txt`. Al final, un resumen por mes de las órdenes sin trader (añadido en la
+  fase 2, antes de commitear las salidas).
+
+Añadidos en la fase 2 (para D5, D6 y D3, y para el alcance 4 del revisor), con la misma regla: solo
+leen salidas commiteadas:
+
+- `resumen_corrida.py`: lo que una salida imprime, repartido por mes, y lo que no imprime y se
+  deriva de ella (la equity mínima y la peor pérdida diaria de CADA cuenta, con las funciones del
+  criterio; RN-032 por las sesiones de «Por sesion»). Su docstring dice qué es derivado.
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/resumen_corrida.py <salida>`
+  → `resumen-cuenta-por-mes.txt` y `resumen-diaria.txt` (las dos de esta rama) y
+  `resumen-respaldo-m1-arrastrada.txt` y `resumen-respaldo-m1-diaria.txt` (las dos de
+  `anexos/RESPALDO-M1/`, para comparar).
+- `diff_por_seccion.py`: un `diff` repartido por sección y por mes, sin imprimir ninguna línea.
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/diff_por_seccion.py <vieja> <nueva> <diff>`
+  → `diff-linea-base-por-seccion.txt` y `diff-diaria-por-seccion.txt`.
+- `antes_del_dia.py`: la regla «(antes del dia)» sobre los ficheros de esta carpeta (ninguna fecha
+  ni ningún `nivel@minuto` anterior al día de su fila; ninguna fecha fuera de la construcción).
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/antes_del_dia.py <ficheros>`
+  → `antes-del-dia.txt`.
+- `docs/validation/anexos/SELLO-RESPALDO-M1/censo_cierre.py`, el de `main` y en su sitio (no se
+  copia): las cancelaciones del bot en el cierre de una M1 sin ticks, las que SELLO-RESPALDO-M1.md
+  §0.i dejó a la re-corrida (D6).
+  `uv run python -B docs/validation/anexos/SELLO-RESPALDO-M1/censo_cierre.py <salida>`
+  → `censo-cierre-cuenta-por-mes.txt` y `censo-cierre-diaria.txt`.
 - `test_humo.py`: sus tests de humo, sobre salidas sintéticas y en los dos sentidos; `make check` no
   los recoge (`testpaths = ["tests"]`):
   `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/test_humo.py -q`.
@@ -88,7 +112,14 @@ $ uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION/test_humo.py -v -p
 ============================= 10 passed in 0.52s ==============================
 ```
 
-El segundo es el original, en su sitio e idéntico al de `main`: cubre lo que la copia no trae
+En la fase 2, con los tests de `resumen_sin_trader` y de `antes_del_dia.py` añadidos:
+
+```
+$ uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/test_humo.py -v -p no:cacheprovider
+============================= 13 passed in 0.78s ==============================
+```
+
+El segundo de arriba es el original, en su sitio e idéntico al de `main`: cubre lo que la copia no trae
 (`test_la_lectura_vieja_rompe_sin_rotulo` y los de `entradas_antes_alternancia.py`).
 
 Las líneas `TIEMPO` y `MEMORIA` de cada corrida van por pantalla, no al fichero: están en el informe

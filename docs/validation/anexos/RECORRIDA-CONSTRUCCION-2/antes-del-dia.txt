@@ -1,0 +1,16 @@
+cuenta-por-mes.txt: 2661 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+diaria.DIAGNOSTICO.cuenta=diaria.txt: 3053 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+diff-linea-base.txt: 3005 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+diff-diaria.txt: 3291 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+patrones-cuenta-por-mes.txt: 414 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+patrones-diaria.txt: 460 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+para-clasificar.txt: 623 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+resumen-cuenta-por-mes.txt: 0 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+resumen-diaria.txt: 0 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+resumen-respaldo-m1-arrastrada.txt: 0 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+resumen-respaldo-m1-diaria.txt: 0 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+censo-cierre-cuenta-por-mes.txt: 24 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+censo-cierre-diaria.txt: 28 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+diff-linea-base-por-seccion.txt: 0 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+diff-diaria-por-seccion.txt: 0 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion
+README.md: 1 filas con dia; 0 lineas con algo antes del dia o fuera de la construccion

@@ -1,0 +1,24 @@
+# diff-diaria.txt: RESPALDO-M1/diaria.DIAGNOSTICO.cuenta=diaria.txt -> RECORRIDA-CONSTRUCCION-2/diaria.DIAGNOSTICO.cuenta=diaria.txt
+# lineas: vieja 3492, nueva 3957; quitadas 1488, puestas 1953
+seccion | quitadas | puestas | quitadas por mes | puestas por mes
+## Criterio de fidelidad | 4 | 4 | - 4 | - 4
+## Embudo sobre el grafo de hechos | 2 | 2 | - 2 | - 2
+## Reglas disparadas por sesion | 15 | 15 | - 15 | - 15
+## Avisos de orden dentro de una clase | 11 | 34 | - 11 | - 34
+## Por sesion | 16 | 16 | 2026-01 5, 2026-04 2, 2026-07 5, 2026-08 4 | 2026-01 5, 2026-04 2, 2026-07 5, 2026-08 4
+### Resumen por mes | 4 | 4 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1 | 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1
+### Embudo por mes: primer hecho del camino que falta en las sesiones con operaciones del trader y sin operacion del bot | 2 | 1 | 2026-01 2 | 2026-01 1
+### Por operacion | 43 | 59 | 2026-01 11, 2026-04 12, 2026-07 15, 2026-08 5 | 2026-01 18, 2026-04 13, 2026-07 18, 2026-08 10
+## Simulacion | 2 | 2 | - 2 | - 2
+### Veredicto de la cuenta sobre el tramo | 2 | 2 | - 2 | - 2
+### Curva de equity | 1 | 1 | 2026-08 1 | 2026-08 1
+### Eventos del broker | 264 | 296 | - 2, 2026-01 82, 2026-04 61, 2026-07 41, 2026-08 78 | - 2, 2026-01 97, 2026-04 66, 2026-07 46, 2026-08 85
+### Ordenes | 1078 | 1137 | - 1, 2026-01 307, 2026-04 265, 2026-07 205, 2026-08 300 | - 1, 2026-01 328, 2026-04 282, 2026-07 207, 2026-08 319
+### Rechazos por motivo | 2 | 2 | 2026-04 1, 2026-08 1 | 2026-04 1, 2026-08 1
+### Peticiones al servidor | 42 | 42 | 2026-01 12, 2026-04 11, 2026-07 9, 2026-08 10 | 2026-01 12, 2026-04 11, 2026-07 9, 2026-08 10
+### Los cierres de mercado | 0 | 1 | - | - 1
+## El metodo de ADR-0092 | 0 | 2 | - | - 2
+### Posiciones | 0 | 305 | - | - 3, 2026-01 88, 2026-04 71, 2026-07 57, 2026-08 86
+### Fidelidad por criterios | 0 | 12 | - | - 8, 2026-01 1, 2026-04 1, 2026-07 1, 2026-08 1
+### Material sin video | 0 | 6 | - | - 6
+### Rentabilidad | 0 | 10 | - | - 10

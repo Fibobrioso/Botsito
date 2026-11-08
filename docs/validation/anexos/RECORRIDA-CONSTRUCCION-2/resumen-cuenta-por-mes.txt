@@ -1,0 +1,94 @@
+# Resumen de cuenta-por-mes.txt (D5 y D6; solo lee la salida)
+
+## Reglas disparadas por sesion (literal, las que D6 nombra)
+- RN-016: 5 de 152; 5 de 104
+- RN-032: 25 de 152; 19 de 104
+- RN-035: 2 de 152; 2 de 104
+- RN-036: 6 de 152; 4 de 104
+- RN-037: 152 de 152; 104 de 104
+- RN-020: no sale en la seccion (0 sesiones)
+
+## Por sesion (las sesiones con operaciones del trader), por mes
+mes | sesiones | detenido_por_tope:si | detenido_por_tope_total:si | detenido_por_cartuchos:si | detenido_por_racha:si | RN-032 disparada | RN-032 y prohibida:abrir_operacion | RN-020 disparada | RN-036 disparada
+2026-01 | 30 | 0 | 0 | 2 | 1 | 3 | 3 | 0 | 1
+2026-04 | 23 | 0 | 0 | 0 | 1 | 0 | 0 | 0 | 1
+2026-07 | 25 | 0 | 0 | 3 | 1 | 2 | 2 | 0 | 1
+2026-08 | 26 | 0 | 0 | 0 | 1 | 14 | 13 | 0 | 1
+RN-032 disparada, primer y ultimo dia por mes: 2026-01 2026-01-13 a 2026-01-30; 2026-07 2026-07-17 a 2026-07-17; 2026-08 2026-08-19 a 2026-08-31
+
+## Cuentas: lo literal del bloque y lo derivado de su curva
+### 2026-01
+  PRIMERO EN TOCAR UN LIMITE: ninguno
+  RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 7 seguidas; la ultima el 2026-01-29
+  estado: EN_CURSO
+  motivo: sin objetivo alcanzado ni limite infringido
+  instante: -
+  saldo final: 90946.9100000
+  equity final: 90946.9100000
+  dias de trading: 21
+  DERIVADO: dias en la curva 21; equity minima 90.71 % del capital (el 2026-01-30); peor perdida diaria 4.31 % del capital (el 2026-01-13)
+### 2026-04
+  PRIMERO EN TOCAR UN LIMITE: ninguno
+  RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 0 seguidas; la ultima el 2026-04-28
+  estado: EN_CURSO
+  motivo: sin objetivo alcanzado ni limite infringido
+  instante: -
+  saldo final: 93989.6000000
+  equity final: 93989.6000000
+  dias de trading: 21
+  DERIVADO: dias en la curva 21; equity minima 92.78 % del capital (el 2026-04-29); peor perdida diaria 1.80 % del capital (el 2026-04-09)
+### 2026-07
+  PRIMERO EN TOCAR UN LIMITE: ninguno
+  RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 3 seguidas; la ultima el 2026-07-17
+  estado: EN_CURSO
+  motivo: sin objetivo alcanzado ni limite infringido
+  instante: -
+  saldo final: 90682.7400000
+  equity final: 90682.7400000
+  dias de trading: 12
+  DERIVADO: dias en la curva 13; equity minima 90.68 % del capital (el 2026-07-17); peor perdida diaria 2.46 % del capital (el 2026-07-14)
+### 2026-08
+  PRIMERO EN TOCAR UN LIMITE: ninguno
+  RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 3 seguidas; la ultima el 2026-08-18
+  estado: EN_CURSO
+  motivo: sin objetivo alcanzado ni limite infringido
+  instante: -
+  saldo final: 90892.0800000
+  equity final: 90892.0800000
+  dias de trading: 11
+  DERIVADO: dias en la curva 21; equity minima 90.75 % del capital (el 2026-08-18); peor perdida diaria 1.88 % del capital (el 2026-08-03)
+
+## Ordenes, por mes: resultado y motivo de la cancelacion (su texto hasta el «:»)
+2026-01 | cancelada 292, llenada 88, rechazada 8
+  2026-01 | cancelada: en el ultimo tramo de la vela H4; reglas disparadas en ese cierre | 1
+  2026-01 | cancelada: reglas disparadas en ese cierre | 291
+  2026-01 | rechazada: precio_invalido | 8
+2026-04 | cancelada 255, llenada 70, rechazada 11
+  2026-04 | cancelada: reglas disparadas en ese cierre | 255
+  2026-04 | rechazada: precio_invalido | 11
+2026-07 | cancelada 170, llenada 53, rechazada 9
+  2026-07 | cancelada: reglas disparadas en ese cierre | 170
+  2026-07 | rechazada: precio_invalido | 9
+2026-08 | cancelada 154, llenada 36, rechazada 4
+  2026-08 | cancelada: en el ultimo tramo de la vela H4; reglas disparadas en ese cierre | 1
+  2026-08 | cancelada: reglas disparadas en ese cierre | 153
+  2026-08 | rechazada: precio_invalido | 4
+
+## Posiciones, por mes: tipo de orden, desenlace, comision y PnL neto (USD)
+2026-01 | posiciones 88 | tipo stop 88 | desenlace break_even 22, ganancia 17, perdida 1, salto_el_stop 48 | comision 9539.20 | PnL neto -9053.09
+2026-04 | posiciones 70 | tipo stop 70 | desenlace break_even 26, ganancia 10, perdida 1, salto_el_stop 33 | comision 7209.10 | PnL neto -6010.40
+2026-07 | posiciones 53 | tipo stop 53 | desenlace break_even 11, ganancia 7, salto_el_stop 35 | comision 5940.15 | PnL neto -9317.26
+2026-08 | posiciones 36 | tipo stop 36 | desenlace break_even 15, ganancia 1, salto_el_stop 20 | comision 4138.45 | PnL neto -9107.92
+
+## Eventos del broker, por mes: tipo y fuente
+2026-01 | llenada/respaldo_m1 4, llenada/ticks 84, manual/ticks 2, objetivo/ticks 16, stop/respaldo_m1 4, stop/ticks 66, stop_movido/respaldo_m1 1, stop_movido/ticks 32
+2026-04 | llenada/respaldo_m1 3, llenada/ticks 67, manual/ticks 2, objetivo/ticks 9, stop/respaldo_m1 3, stop/ticks 56, stop_movido/respaldo_m1 1, stop_movido/ticks 32
+2026-07 | llenada/respaldo_m1 1, llenada/ticks 52, objetivo/ticks 7, stop/respaldo_m1 1, stop/ticks 45, stop_movido/ticks 18
+2026-08 | llenada/ticks 36, manual/ticks 1, stop/ticks 35, stop_movido/ticks 16
+
+## Peticiones al servidor, por mes: total y maximo diario
+2026-01 | dias 21 | total 715 | maximo 66
+2026-04 | dias 21 | total 626 | maximo 64
+2026-07 | dias 13 | total 420 | maximo 53
+2026-08 | dias 21 | total 365 | maximo 57
+total | 2126

@@ -1,0 +1,58 @@
+# Resumen de diaria.DIAGNOSTICO.cuenta=diaria.txt (D5 y D6; solo lee la salida)
+
+## Reglas disparadas por sesion (literal, las que D6 nombra)
+- RN-016: 4 de 152; 4 de 104
+- RN-032: 3 de 152; 3 de 104
+- RN-035: 4 de 152; 4 de 104
+- RN-037: 152 de 152; 104 de 104
+- RN-020: no sale en la seccion (0 sesiones)
+- RN-036: no sale en la seccion (0 sesiones)
+
+## Por sesion (las sesiones con operaciones del trader), por mes
+mes | sesiones | detenido_por_tope:si | detenido_por_tope_total:si | detenido_por_cartuchos:si | detenido_por_racha:si | RN-032 disparada | RN-032 y prohibida:abrir_operacion | RN-020 disparada | RN-036 disparada
+2026-01 | 30 | 0 | 0 | 2 | 0 | 1 | 1 | 0 | 0
+2026-04 | 23 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+2026-07 | 25 | 0 | 0 | 1 | 0 | 0 | 0 | 0 | 0
+2026-08 | 26 | 0 | 0 | 1 | 0 | 2 | 2 | 0 | 0
+RN-032 disparada, primer y ultimo dia por mes: 2026-01 2026-01-13 a 2026-01-13; 2026-08 2026-08-20 a 2026-08-24
+
+## Cuentas: lo literal del bloque y lo derivado de su curva
+### tramo
+  estado: EN_CURSO
+  motivo: sin objetivo alcanzado ni limite infringido
+  instante: -
+  saldo final: 98434.1200000
+  equity final: 98434.1200000
+  dias de trading: 1
+  DERIVADO: dias en la curva 1; equity minima 98.17 % del capital (el 2026-08-31); peor perdida diaria 1.83 % del capital (el 2026-08-31)
+
+## Ordenes, por mes: resultado y motivo de la cancelacion (su texto hasta el «:»)
+2026-01 | cancelada 278, llenada 81, rechazada 8
+  2026-01 | cancelada: en el ultimo tramo de la vela H4; reglas disparadas en ese cierre | 1
+  2026-01 | cancelada: reglas disparadas en ese cierre | 277
+  2026-01 | rechazada: precio_invalido | 8
+2026-04 | cancelada 260, llenada 69, rechazada 10
+  2026-04 | cancelada: reglas disparadas en ese cierre | 260
+  2026-04 | rechazada: precio_invalido | 10
+2026-07 | cancelada 188, llenada 54, rechazada 9
+  2026-07 | cancelada: reglas disparadas en ese cierre | 188
+  2026-07 | rechazada: precio_invalido | 9
+2026-08 | cancelada 280, llenada 82, rechazada 10
+  2026-08 | cancelada: en el ultimo tramo de la vela H4; reglas disparadas en ese cierre | 3
+  2026-08 | cancelada: reglas disparadas en ese cierre | 277
+  2026-08 | rechazada: precio_invalido | 10
+
+## Posiciones, por mes: tipo de orden, desenlace, comision y PnL neto (USD)
+
+## Eventos del broker, por mes: tipo y fuente
+2026-01 | llenada/respaldo_m1 3, llenada/ticks 78, manual/ticks 2, objetivo/ticks 16, stop/respaldo_m1 3, stop/ticks 60, stop_movido/respaldo_m1 1, stop_movido/ticks 31
+2026-04 | llenada/respaldo_m1 4, llenada/ticks 65, manual/ticks 2, objetivo/ticks 8, stop/respaldo_m1 4, stop/ticks 55, stop_movido/respaldo_m1 2, stop_movido/ticks 30
+2026-07 | llenada/ticks 54, objetivo/ticks 7, stop/ticks 47, stop_movido/ticks 21
+2026-08 | llenada/respaldo_m1 2, llenada/ticks 80, manual/ticks 1, objetivo/ticks 5, stop/respaldo_m1 2, stop/ticks 74, stop_movido/respaldo_m1 1, stop_movido/ticks 32
+
+## Peticiones al servidor, por mes: total y maximo diario
+2026-01 | dias 21 | total 679 | maximo 66
+2026-04 | dias 21 | total 633 | maximo 55
+2026-07 | dias 13 | total 460 | maximo 73
+2026-08 | dias 21 | total 686 | maximo 54
+total | 2458

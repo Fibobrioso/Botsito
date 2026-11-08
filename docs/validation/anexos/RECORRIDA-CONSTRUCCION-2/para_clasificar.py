@@ -378,7 +378,37 @@ def main(ruta1: Path, ruta2: Path) -> int:
         print(f)
     if not lista:
         print("ninguna")
+    print()
+    print("## Resumen de la lista anterior, por mes (sin conclusiones)")
+    for linea in resumen_sin_trader(lista):
+        print(linea)
     return 1 if problemas else 0
+
+
+def resumen_sin_trader(lista: list[str]) -> list[str]:
+    """Por mes: ordenes, llenadas, la suma del R neto de las llenadas, sus desenlaces, cuantas
+    movieron el stop y sus patrones."""
+    por_mes: dict[str, list[list[str]]] = defaultdict(list)
+    for f in lista:
+        c = f.split(" | ")
+        por_mes[c[0][:7]].append(c)
+        por_mes["total"].append(c)
+    salida = []
+    for mes in [m for m in sorted(por_mes) if m != "total"] + ["total"]:
+        filas = por_mes[mes]
+        llenadas = [c for c in filas if c[4] == LLENADA]
+        suma_r = sum((Decimal(c[5]) for c in llenadas if c[5] != "-"), Decimal(0))
+        desenlaces = Counter(c[6] for c in llenadas)
+        patrones_ = Counter(c[8].split(" [")[0] for c in llenadas)
+        salida.append(
+            f"{mes} | ordenes {len(filas)} | llenadas {len(llenadas)} | suma del R neto "
+            f"{suma_r:.3f}"
+            f" | stop movido {sum(c[7] == 'si' for c in llenadas)} | desenlaces "
+            + ", ".join(f"{k} {v}" for k, v in sorted(desenlaces.items()))
+            + " | patrones "
+            + ", ".join(f"{k} {v}" for k, v in sorted(patrones_.items()))
+        )
+    return salida
 
 
 if __name__ == "__main__":

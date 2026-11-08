@@ -24,6 +24,7 @@ from types import ModuleType
 AQUI = Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI))
 
+import antes_del_dia  # noqa: E402
 import horas_perdidas  # noqa: E402
 import para_clasificar as pc  # noqa: E402
 import patrones  # noqa: E402
@@ -237,3 +238,47 @@ def test_la_orden_sin_trader_lleva_r_desenlace_y_stop_movido(tmp_path: Path) -> 
     # con la clave del trader, no sale
     salida = pc.leer_salida(_salida())
     assert pc.bot_sin_trader(salida, {(DIA, "07-11", "compra")}, []) == []
+
+
+def test_el_resumen_de_la_lista_suma_solo_las_llenadas() -> None:
+    lista = [
+        "2026-04-01 | 07-11 | compra | o1 | llenada | 2.750 | objetivo | si | P6 donde [en dia]",
+        "2026-04-01 | 07-11 | compra | o2 | cancelada | - | - | - | - (no llenada)",
+        "2026-07-01 | 07-11 | venta | o1 | llenada | -1.000 | salto_el_stop | no | P5 de mas",
+    ]
+    abril, julio, total = pc.resumen_sin_trader(lista)
+    assert abril.startswith(
+        "2026-04 | ordenes 2 | llenadas 1 | suma del R neto 2.750 | stop movido 1"
+    )
+    assert "patrones P6 donde 1" in abril
+    assert julio.startswith(
+        "2026-07 | ordenes 1 | llenadas 1 | suma del R neto -1.000 | stop movido 0"
+    )
+    assert total.startswith(
+        "total | ordenes 3 | llenadas 2 | suma del R neto 1.750 | stop movido 1"
+    )
+
+
+# ------------------------------------------------------------ antes_del_dia.py, en los dos sentidos
+
+
+def test_antes_del_dia_caza_una_fecha_y_un_minuto_anteriores_y_deja_los_del_dia(
+    tmp_path: Path,
+) -> None:
+    # minutos UTC desde 1970: 29583840 = 2026-04-01 08:00; 29580000 = 2026-03-29 16:00
+    buena = tmp_path / "buena.txt"
+    buena.write_text(
+        "2026-04-01 | 07-11 | o1 | 2026-04-01T08:00:59.999000+00:00 | 110000@29583840\n",
+        encoding="utf-8",
+    )
+    assert antes_del_dia.main([buena]) == 0
+    for mala in (
+        "2026-04-01 | 07-11 | o1 | 2026-03-31T23:00:00+00:00 | x\n",
+        "2026-04-01 | 07-11 | o1 | x | 110000@29580000\n",
+        "nota suelta con una fecha de mayo, 2026-05-14\n",
+        f"{ROTULO}2026-04-01 | 07-11 | o1 | 2026-03-31T23:00:00+00:00 | x\n",
+        "P4 sin orden: trader | 2026-04-01 | 07-11 | compra | 2026-03-31T23:00:00+00:00 | 1\n",
+    ):
+        ruta = tmp_path / "mala.txt"
+        ruta.write_text(mala, encoding="utf-8")
+        assert antes_del_dia.main([ruta]) == 1, mala
