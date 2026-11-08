@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/metodo-fidelidad-rentabilidad
+main
 
 ## Current Feature
-trabajo/metodo-fidelidad-rentabilidad, EN CURSO desde el 2026-11-07 (R de la Next Action; R3.7 de la hoja de ruta; encargo docs/encargos/trabajo-metodo-fidelidad-rentabilidad.md; informe docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md).
+Ninguna rama abierta. trabajo/metodo-fidelidad-rentabilidad cerrada en main el 2026-11-07 (stable/F38r-metodo-fidelidad-rentabilidad): el método con el que se juzga al bot (ADR-0092), fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en vivo; A-16 medida.
 
 ## Stable Main State
-18f548e · merge de `trabajo/sello-respaldo-m1` (tag `stable/F38q-sello-respaldo-m1`), sobre `stable/F38p-demo-ejecuciones-2-3` (8f43d38). Informe docs/validation/SELLO-RESPALDO-M1.md; el registro del cierre, al final de HISTORIA.
+a1907fa · merge de `trabajo/metodo-fidelidad-rentabilidad` (tag `stable/F38r-metodo-fidelidad-rentabilidad`), sobre `stable/F38q-sello-respaldo-m1` (18f548e). Informe docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-18f548e · merge: trabajo/sello-respaldo-m1, (e2) y el sello del respaldo M1 en el ultimo milisegundo de su vela (ADR-0091); en once dias de desarrollo, 2 operaciones nuevas del bot · tag stable/F38q-sello-respaldo-m1
+a1907fa · merge: trabajo/metodo-fidelidad-rentabilidad, el método con el que se juzga al bot (ADR-0092): fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en vivo; A-16 medida · tag stable/F38r-metodo-fidelidad-rentabilidad
 
 ## Tests Currently Passing
 1910 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
