@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/cuenta-por-mes
 
 ## Current Feature
-Ninguna rama abierta. trabajo/metodo-fidelidad-rentabilidad cerrada en main el 2026-11-07 (stable/F38r-metodo-fidelidad-rentabilidad): el método con el que se juzga al bot (ADR-0092), fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en vivo; A-16 medida.
+trabajo/cuenta-por-mes, EN CURSO desde el 2026-11-07 (F de la Next Action; R3.8 de la hoja de ruta; encargo docs/encargos/trabajo-cuenta-por-mes.md; informe docs/validation/CUENTA-POR-MES.md).
 
 ## Stable Main State
 a1907fa · merge de `trabajo/metodo-fidelidad-rentabilidad` (tag `stable/F38r-metodo-fidelidad-rentabilidad`), sobre `stable/F38q-sello-respaldo-m1` (18f548e). Informe docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md; el registro del cierre, al final de HISTORIA.
@@ -151,8 +151,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 60 (2026-11-07).
+— ninguna desde el Archivo 61 (2026-11-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 60 (2026-11-07).
+— ninguna desde el Archivo 61 (2026-11-07).
