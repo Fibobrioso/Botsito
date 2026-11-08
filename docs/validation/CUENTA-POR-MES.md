@@ -414,7 +414,7 @@ ERRORES-RECURRENTES, preparada (reescrita con el punto 4 de la respuesta del con
 | 20 | La fila de HOLDOUT-EXPOSICIONES antes del primer clon / `make check` de cada día | **Parcial** (revisor, b3) | la del 7, tarde (desviación 1); la del 8, antes |
 | 21 | Punto 4: las líneas del cierre sobre una copia; tests de la hoja y de PS en verde; `wc -c` con las cuatro cabeceras; PARADA si pasa de 23.000 | Hecho, con PARADA 4 | 22.878 y 22.812 bytes tras el revisor; 23.274 y 23.228 con las líneas de la respuesta a la PARADA: PARADA 4 |
 | 22 | Sin `fix/`: no toca hooks, rutas, `.claude/` ni plataforma | Hecho | `git diff --stat`: nada de eso |
-| 23 | Informe con todo, y el revisor (opus) con los siete alcances, pegado al final | Hecho | abajo |
+| 23 | Informe con todo, y el revisor (opus) con los siete alcances, pegado al final | Hecho | abajo: la primera pasada y, tras la respuesta a la PARADA, la segunda |
 | 24 | Rama lista para revisión, NO cerrada | Hecho | `## Estado` |
 
 ## Lo que se hizo con los hallazgos del revisor
@@ -717,6 +717,126 @@ guion de la carpeta de trabajo sobre el PROJECT_STATE de la rama:
    línea, ajena a esta rama, y deja PROJECT_STATE por debajo de 23.000. Coste de (b): una línea más
    que se lee en HISTORIA y no al arrancar. Coste de (c): rompe la alerta de 23.000 del encargo.
 
+### La guardia de la fila de exposición: la propuesta (respuesta del consultor, punto 4.a; revisor, b1)
+
+En una rama `trabajo/*`, `make check` no sella si `docs/validation/HOLDOUT-EXPOSICIONES.md` no
+tiene una fila cuya primera celda sea la fecha del día (`| AAAA-MM-DD |`, la fecha local de la
+máquina). La comprobación iría en la fase del contrato de `make check`, junto a `contrato_rama.py`:
+lee el fichero del árbol estadiado (no del de trabajo) y busca la fila. El motivo, en el mensaje:
+cada `make check` lee el M1 de marzo para calentar (RESPALDO-M1.md). En `main` y en el ritual de
+cierre no se exige. Lo que no cubre: que la fila se escriba ANTES del primer clon o de la primera
+lectura del día. Eso solo lo ve quien trabaja. Es una rama de plataforma: toca `Makefile` o
+`scripts/`, y lleva `fix/` para la CI de Linux.
+
+### Lo que se hizo con los hallazgos de la segunda pasada del revisor
+
+- **a1 (importa), la rama declarada lista sin el informe de esta pasada.** Arreglado: el informe va
+  pegado abajo, y la fila 23 de «El encargo, punto por punto» nombra las dos pasadas.
+- **a2 (menor), el anexo que rompe en `main` no dice contra qué commit se corrió.** Corrió en el
+  clon desacoplado `C:/cm/cpm2`, creado con `git worktree add --detach C:/cm/cpm2 main` sobre
+  `main` 8aeed0b («HEAD is now at 8aeed0b docs(state): trabajo/metodo-fidelidad-rentabilidad,
+  cerrada en main …»), y quitado después. El anexo es la salida de pytest tal cual, con `-rA`:
+  5 PASSED y 9 FAILED. El último bloque es la lista corta de resultados, que con `-q -rA` no
+  trae la línea de recuento. No se reescribe el anexo: el sha queda dicho aquí.
+- **b1 (menor), «propuesta» sin propuesta.** Arreglado: el párrafo de arriba.
+
+## Informe del revisor, segunda pasada (subagente `revisor`, opus, 2026-11-08), tal cual
+
+## Informe del revisor · trabajo/cuenta-por-mes · respuesta a la PARADA · 2026-11-08
+
+Esta pasada mira solo el commit a56f871, con base en 853554b. El árbol estaba limpio: `git status --short` no devolvió nada.
+
+**Resumen:** 0 bloquea, 1 importa, 2 menores. Dentro de una cuenta la racha hace lo mismo que en `main`. La cabecera y la diaria siguen como dicen D4 y D1. La regla del trader solo cambia en a) y b). El manifiesto y los documentos de la spec están al día.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | El commit ya declara la rama lista sin el informe de esta pasada del revisor. CLAUDE.md («Como se trabaja») pide pasar el revisor y pegar su informe antes de declararla lista. Además, la fila 23 de la tabla dice que el revisor está pegado («Hecho \| abajo»), pero ese es el de la pasada anterior. Si este informe se pega antes de entregar, el hallazgo desaparece. Si se entrega así, bloquea. | `docs/validation/CUENTA-POR-MES.md:722` («LISTA PARA REVISIÓN (2026-11-08, tras la respuesta del consultor a la PARADA)») y `:730` («Rama lista para revisión, NO cerrada»); `:417` (fila 23); el último encabezado del informe es `## Estado` (`:720`), sin informe del revisor después de `:605` |
+| a2 | menor | El anexo nuevo que muestra el test roto en `main` no dice contra qué commit se corrió ni trae la línea de resumen de pytest. Termina en la lista de FAILED. El informe nombra el clon `C:/cm/cpm2` pero tampoco da su sha. | `tail -5 docs/validation/anexos/CUENTA-POR-MES/main/rompe-en-main-racha.txt` acaba en `FAILED ...test_con_varios_meses_d_y_e_son_por_cuenta_y_f_dice_cual`; `grep "8aeed0b\|passed\|failed in"` sobre el anexo no encuentra nada; `CUENTA-POR-MES.md:661-663` |
+
+**Comprobado sin hallazgos:**
+- **El contrato.** `uv run python scripts/contrato_rama.py` da «CONTRATO: 48 ficheros dentro del contrato de trabajo/cuenta-por-mes (riesgo alto, …, 3 comprobaciones para el revisor)», con exit 0.
+- **`uv run botsito state check`.** Da OK, con exit 0.
+- **El `make check`.** No lo ejecuté; hay evidencia de que pasó:
+  - en el log de la carpeta de trabajo: «3343 passed», «SELLO: make check en verde sobre el arbol 79ca4d3fec1d80c354fb84b7ea6a4dc0b95a9ac0» y «PICO DE MEMORIA … 308 MiB»;
+  - `git rev-parse a56f871^{tree}` da `79ca4d3fec1d80c354fb84b7ea6a4dc0b95a9ac0`, el mismo árbol.
+- **Las rutas nuevas del contrato.** Están en `contrato.yaml:23-29`, con un comentario que da la respuesta como fuente. `knowledge/spec/` deja de estar protegida entera; siguen protegidos `parametros.yaml`, `glossary.yaml` y `ambiguedades.yaml` (`:41-43`). `racha.py` entra en las rutas permitidas aunque la respuesta no lo nombre ahí, y el informe lo declara en `:673`.
+- **El trailer `Fuente:`.** Va en el cuerpo: `Fuente: ADR-0092 ADR-0077 fb-2026-10-23-sesion-05-978be13f ev-v10-010804-5b6ad1a3`. Los cuatro ids existen: los dos ADR en `docs/adr/0092-*.md` y `docs/adr/0077-*.md`, el fb en `knowledge/feedback/2026-10-23-sesion-05/fb-2026-10-23-sesion-05-978be13f.yaml` y el ev en `knowledge/evidence/v10/ev-v10-010804-5b6ad1a3.yaml`.
+- **Regímenes de cambio.** `git diff --name-status main...HEAD` sobre `knowledge/evidence`, `knowledge/feedback`, `data/manifests`, `knowledge/corpus` y `knowledge/cases` sale vacío. De `knowledge/` solo cambian `strategy_spec.yaml` y `spec_manifest.yaml`. No se toca nada de holdout ni de `cases`.
+- **HOLDOUT-EXPOSICIONES.** El commit solo añade una línea: la fila del 2026-11-08 de esta parte, con clon, `make check`, spec manifest y docs, `simular_cierre` y el revisor. Dice que no hay ninguna corrida del arnés.
+- **Los ADR.** El `## Estado` de 0077, 0070 y 0092 no cambia; solo se añaden NOTA y recuadro.
+- **Las tres guardias de una `cita`.** No aplica: el commit no añade ningún sitio con `cita`.
+- **Spec y documentos en el mismo commit.** `strategy_spec.yaml`, `spec_manifest.yaml` y los cuatro de `docs/spec/` cambian juntos.
+- **Los goldens.** Ni `tests/golden/informe_simulacion/` ni ningún otro golden cambia en a56f871 (`git diff --stat 853554b a56f871 -- tests/golden/` sale vacío).
+- **Tres citas del informe contra su fuente:**
+  - «con la misma regla de `cuenta_diaria`» está en `docs/adr/0077-…:48`;
+  - el valor `tras_la_detencion`, CONFIRMED, está en `knowledge/spec/parametros.yaml:1428-1429`;
+  - los cinco sha256 de los goldens del informe (`00b8204b…`, `649818441641…`, `7b825a9a…`, `87f47c04…`, `b7c6390e…`) coinciden con lo que da `sha256sum`.
+
+### Eje (b) · La respuesta del consultor a la PARADA
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 15 hechos, 1 parcial, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Copiar la respuesta tal cual al informe y al encargo | Hecho | `diff` de `trabajo-cuenta-por-mes.md:55-80` contra `CUENTA-POR-MES.md:607-632`: IGUALES |
+| 2 | La fila de HOLDOUT-EXPOSICIONES del 2026-11-08 antes del primer `make check` o clon | Hecho (la hora no se puede comprobar, ver abajo) | La fila añadida en `HOLDOUT-EXPOSICIONES.md`, «declarada ANTES del primer make check y del primer clon de esta parte» |
+| 3 | 1.a: la descripción de `racha_perdidas`, sus dos frases literales | Hecho | Diff de `strategy_spec.yaml:848-856`: las dos frases coinciden con la respuesta; `base`, `reinicia_con` y `cita` no cambian |
+| 4 | 1.b: una frase al final de las notas de RN-036 | Hecho | `strategy_spec.yaml`, hunk `@@ -2160`: solo se añade «DESDE EL 2026-11-08 …»; `forma`, `cuando`, `entonces`, `literal` y `cita` no cambian |
+| 5 | 1.c: la NOTA en ADR-0077 §3 y la NOTA de ADR-0092 §8 nombrando la racha | Hecho | `docs/adr/0077-…:52-56` («y como ella, empieza de nuevo con cada cuenta del recorrido (ADR-0092 §8)»); el diff de ADR-0092 §8 quita lo de «queda pendiente» y nombra la racha |
+| 6 | 1.d: el docstring de `racha.py` y el comentario de MotorCableado | Hecho | `git diff main...HEAD -- src/botsito/engine/racha.py`: solo el docstring (5 líneas añadidas, 1 quitada); `cableado.py:269-271` y `:309-312` |
+| 7 | 1.e: la condición de mes reinicia la racha; el xfail pasa a ser un test normal y rompe en `main` | Hecho | `cableado.py:313` (`self.cuenta, self.seguidor, self.racha = None, None, None`); el xfail se quita en `test_cuenta_por_mes.py`; en el anexo de `main`: `assert … racha == 1` falla con 2, FAILED `test_la_racha_empieza_de_cero_en_el_mes_nuevo` y PASSED `test_dentro_de_una_cuenta_la_racha_sigue_de_un_dia_a_otro` |
+| 8 | 1.f: `spec_version` sube de parche; el manifiesto y después los documentos | Hecho | `spec_manifest.yaml`: 18.6.3 → 18.6.4; `uv run botsito spec manifest` da «OK: hash al dia (0c0ac0b1aada…)»; `uv run botsito spec docs` da «OK: docs/spec coincide con knowledge/spec/». Los dos son el modo de comprobación sin `--escribir`, leído en `cli.py:869-891` y `:851` |
+| 9 | 1.f: el contrato amplía sus rutas con el punto como fuente | Hecho (con `racha.py` y ADR-0070 de más, declarados) | `contrato.yaml:23-29`; `CUENTA-POR-MES.md:671-675` |
+| 10 | Todo el punto 1 en un solo commit, con el trailer | Hecho | `git show --stat a56f871` |
+| 11 | La cabecera vuelve a D4 («por cuenta: ver cada mes»), con su test | Hecho | `cableado.py:868-875`; `test_cuenta_por_mes.py` asierta la línea; 30 passed |
+| 12 | El último párrafo del punto 1: la línea de deuda del panel de FTMO, que nombra a su dueño, en `simular_cierre.py` | Hecho, literal | En `simular_cierre.py`, el `cambiar` nuevo; `assert count == 1` pasa al correr el guion |
+| 13 | Punto 2: el motivo de f), condicional y sin cambios | Hecho | `criterio_fidelidad.py` no aparece en `git show --stat a56f871` |
+| 14 | Punto 3: el recuadro de ADR-0070 punto 3, en el mismo commit que la NOTA de 0077 | Hecho | `docs/adr/0070-…:122` («Implementado en `trabajo/cuenta-por-mes` (2026-11-08).»); los dos están en a56f871 |
+| 15 | Punto 4: la fila de ERRORES-RECURRENTES con (a)-(e) en sus columnas, y la línea de Technical Debt de 4.a en `simular_cierre.py` | Hecho | `CUENTA-POR-MES.md:389`: (c), (d) y (e) en la columna «Hallazgos del consultor despues», (a) y (b) en «Que se le escapo» (cabecera en `ERRORES-RECURRENTES.md:50`); la línea de 4.a es literal en `simular_cierre.py`, con «- » delante y un punto final, como el resto de la lista |
+| 16 | El último párrafo de la respuesta: `make check` sellado, el revisor pegado y «Rama lista» | Parcial | Sellado: sí (ver a1 del eje a). El informe del revisor de esta pasada todavía no está pegado (a1) |
+
+**Las cuatro cosas que el orquestador pidió comprobar:**
+1. **Dentro de una cuenta, la racha hace lo de `main`.** De `racha.py` solo cambia el docstring. En `cableado.py`, las líneas de racha que cambian frente a `main` son solo el reinicio en la rama del cambio de mes (`:313`), el campo de la cuenta cerrada y la cabecera. El test `test_dentro_de_una_cuenta_la_racha_sigue_de_un_dia_a_otro` da 2 y pasa también en `main` (anexo, PASSED).
+2. **La cabecera y la diaria siguen D4 y D1.** Con varias cuentas, la cabecera da `POR_CUENTA` (`cableado.py:870`). Con un mes o con la diaria, `cuentas_cerradas` queda vacío (`varias=False`) y la línea es la de `main`. Con la diaria no cambia nada (`cableado.py:307-308`, sin tocar). Los tests `test_la_salida_es_la_de_main[dentro-de-un-mes]`, `[diaria-dos-meses]` y `test_con_un_mes_la_seccion_de_adr0092_es_la_de_main` están en verde (30 passed), y los sha256 de los goldens coinciden.
+3. **La regla del trader no cambia más allá de a) y b).** El diff de `strategy_spec.yaml` tiene dos hunks: la `descripcion` y las `notas`. Ningún `reinicia_con`, `cita`, `literal`, `forma`, `cuando` ni `entonces` cambia.
+4. **El manifiesto y los documentos de la spec, al día.** Ver el requisito 8.
+
+**PARADA 4, reproducida.** `simular_cierre.py` da «a: [] b: [] c: []» y «PROJECT_STATE con las lineas del cierre: 23274 bytes …; con las cuatro lineas de cabecera del cierre: 23228; los cuatro tests de test_project_state … ok», y además «POR ENCIMA de la alerta de 23.000». Escribe solo en un `tempfile.TemporaryDirectory()` (`simular_cierre.py:165-173`). Las tres candidatas al recorte cuadran por orden de magnitud con lo que mide `awk` en `PROJECT_STATE.md` (líneas 89: 578, 95: 497 y 135: 455 caracteres). El informe trae la pregunta en «Lo que necesito que decidas», punto 4, con tres opciones y lo que cuesta cada una.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | menor | La línea de Technical Debt de 4.a remite a una «propuesta en trabajo/cuenta-por-mes (CUENTA-POR-MES.md)», pero el informe solo trae la frase del consultor copiada, sin diseño de la guardia. El texto es literal del consultor y se puede leer como suyo; se apunta por si se quiere un párrafo de propuesta. | En `CUENTA-POR-MES.md`, la búsqueda `no sella si\|guardia pendiente\|propuesta` solo encuentra la cita del consultor (`:628`) y la propuesta de recorte (`:701`, `:727`) |
+
+### Lo que no pude comprobar
+- **Que la fila de HOLDOUT-EXPOSICIONES del 2026-11-08 se escribiera y estadiara antes del primer clon o `make check` de esta parte.** Git solo ve el commit, no a qué hora se estadió.
+- **El `make check`.** No lo ejecuté porque escribe. La evidencia es el log de la carpeta de trabajo: SELLO sobre el mismo árbol que a56f871, y PICO 308 MiB.
+- **Que el anexo que rompe en `main` se corriera de verdad sobre `main` 8aeed0b.** El anexo no trae el sha (a2).
+- **Los bytes exactos de las candidatas al recorte de la PARADA 4.** El guion que las midió está en la carpeta de trabajo de la sesión. Yo medí caracteres con `awk`, no bytes.
+
+### Comandos ejecutados
+1. `git show --stat --format='%h%n%B' a56f871` y `git status --short`
+2. `git show a56f871 -- src/botsito/engine/racha.py src/botsito/engine/cableado.py knowledge/spec/strategy_spec.yaml knowledge/spec/spec_manifest.yaml contrato.yaml tests/unit/test_cuenta_por_mes.py`
+3. `grep -n "Respuesta del consultor a la PARADA"` en el encargo y el informe; Read del encargo entero y de `CUENTA-POR-MES.md` desde la línea 590
+4. `diff <(sed -n 55,80p encargo) <(sed -n 607,632p informe)` (IGUALES); `git diff 853554b a56f871 -- docs/encargos/… | grep '^-'`
+5. `git show a56f871 --format= -- docs/adr/ docs/validation/HOLDOUT-EXPOSICIONES.md …/simular_cierre.py docs/spec/ …/diff-dos-meses*.txt` y Read de su salida
+6. `sed -n 290,330p` y `sed -n 850,880p` de `cableado.py`; `git diff main...HEAD -- src/botsito/engine/racha.py`
+7. Grep y `sed` de `spec_manifest`/`spec_docs` en `src/botsito/cli.py`
+8. `uv run botsito spec manifest`; `uv run botsito spec docs`; `uv run python scripts/contrato_rama.py`; `uv run botsito state check`
+9. `uv run python -B -m pytest -p no:cacheprovider tests/unit/test_cuenta_por_mes.py tests/unit/test_cuenta_por_mes_metodo.py tests/unit/test_racha_perdidas.py` (30 passed). Un intento anterior con `| tr -d '\r'` lo negó la guardia; se rehízo sin el filtro, no se rodeó.
+10. `grep` de SELLO, PICO y passed en `make-check.log`; `git rev-parse a56f871^{tree}`; `ls -la` del log
+11. `grep` de `def cambiar`, `write_text` y `tempfile` en `simular_cierre.py`; `uv run python -B docs/validation/anexos/CUENTA-POR-MES/simular_cierre.py 2>&1 | tail -15`
+12. Grep de ERRORES-RECURRENTES y de la propuesta en el informe; Read de `CUENTA-POR-MES.md:340-439`; `grep` de la cabecera de la tabla de `ERRORES-RECURRENTES.md`
+13. `ls` y `grep -rl` de los ids del trailer; Grep y Read de `racha_perdidas_reinicio` en `parametros.yaml`; `git diff --stat main...HEAD -- knowledge/`; `git diff --name-status main...HEAD` sobre evidence, feedback, manifests, corpus y cases
+14. Read de `contrato.yaml`
+15. `git diff --stat main...HEAD -- tests/golden/` y `853554b a56f871`; `sed -n 38,56p` de ADR-0077; `grep "## Estado"` de 0077, 0070 y 0092
+16. `grep -nE` y `tail`/`ls` del anexo `rompe-en-main-racha.txt`
+17. `grep "^## \|^### "` del informe; `git diff 853554b a56f871 -- CUENTA-POR-MES.md | grep '^-'`
+18. `sha256sum` de `tests/golden/cuenta_por_mes/*.txt` y `tests/golden/metodo_adr0092/*.txt`
+19. `awk` de las líneas largas de Technical Debt en `PROJECT_STATE.md`
+20. `git diff main...HEAD -- src/botsito/engine/cableado.py | grep "^[-+].*racha"`
+
 ## Estado
 
 LISTA PARA REVISIÓN (2026-11-08, tras la respuesta del consultor a la PARADA). La cuenta es una por
@@ -724,7 +844,8 @@ mes en `MotorCableado.correr_dia`: la cuenta, el seguidor del tope, la racha de 
 toque empiezan de nuevo al cambiar de mes; dentro de un mes, con un mes y con la diaria, la salida
 es la de `main` byte a byte. La spec (la descripción de `racha_perdidas` y las notas de RN-036)
 dice lo mismo, en 18.6.4. Queda para el consultor la PARADA 4: PROJECT_STATE pasa de 23.000 bytes
-con las líneas del cierre (23.274), con su propuesta de recorte; no se ha recortado nada. Ninguna
+con las líneas del cierre (23.274), con su propuesta de recorte; no se ha recortado nada. La
+segunda pasada del revisor (0 bloquea, 1 importa, 2 menor) está pegada arriba, con lo hecho. Ninguna
 corrida del arnés. Sin `fix/`: no toca la plataforma.
 
 Rama lista para revisión, NO cerrada.
