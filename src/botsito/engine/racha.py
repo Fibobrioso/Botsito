@@ -1,6 +1,10 @@
 """La racha de perdidas seguidas del trader (RN-036, A-51; ADR-0077): el acumulador
 `racha_perdidas`, que PERSISTE entre dias como la cuenta (ADR-0053 §6) y vive junto al
-`SeguidorTope`, nunca en `EstadoDia`.
+`SeguidorTope`, nunca en `EstadoDia`. Y como la cuenta, empieza de nuevo con cada cuenta nueva
+del recorrido: una por mes en construccion (ADR-0092 §8; la NOTA de ADR-0077 §3), una sola,
+arrastrada, en los meses no vistos (ADR-0092 §5), y una por dia con `cuenta_diaria`. Quien la
+reinicia es `MotorCableado.correr_dia`, junto a la cuenta y el seguidor del tope; este modulo
+no sabe de meses.
 
 Lo que dijo el trader en la sesion 4 (S-8), ya en el registro:
 

@@ -1,0 +1,598 @@
+FFF...FF.FFF.F                                                           [100%]
+================================== FAILURES ===================================
+____________ test_el_segundo_mes_vuelve_a_operar_desde_el_capital _____________
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_el_segundo_mes_vuelve_a_operar_desde_el_capital(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        """Enero: el salto de 2.000 puntos suspende la cuenta por la perdida total (como el test del
+        hueco de test_cableado). Febrero: cuenta nueva desde el capital, el bot vuelve a colocar con el
+        lote del capital y su dia da lo mismo que corrido solo. En `main`, febrero sigue SUSPENDIDO,
+        RN-031 prohibe y no hay ninguna operacion."""
+        motor = esc.motor_de(registro, vocabulario, esc.DOS_MESES)
+        r_ene, r_feb = esc.correr(motor, esc.DOS_MESES)
+        capital = motor.reglas_fase.capital_inicial
+        assert len(r_ene.operaciones) == 1
+        saldo_ene = motor.trazas_broker[ENE].saldo_fin
+        assert saldo_ene is not None and saldo_ene < capital * Decimal("0.9")
+        # febrero opera, con el lote del riesgo del capital (0,5 % de 100.000 sobre 16 puntos)
+>       assert len(r_feb.operaciones) == 1
+E       AssertionError: assert 0 == 1
+E        +  where 0 = len(())
+E        +    where () = ResultadoDia(dia='2030-02-12', operaciones=(), sesiones={'07-11': TrazaSesion(fijados=[(31618440, 'RN-031', 'detenido_... ('gate', ('RN-031', 'RN-032', 'RN-037')), ('gate', ('RN-001', 'RN-031', 'RN-032')), ('gate', ('RN-031', 'RN-032'))})}).operaciones
+
+tests\unit\test_cuenta_por_mes.py:85: AssertionError
+_ test_el_seguidor_del_tope_y_el_primer_toque_empiezan_de_cero_en_el_mes_nuevo _
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_el_seguidor_del_tope_y_el_primer_toque_empiezan_de_cero_en_el_mes_nuevo(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        """Con el tope del trader del registro (A-44 RESUELTA) y el hueco los dos meses: en febrero
+        el seguidor nace con el capital y no corta nada en su primer dia, y el primer toque de la cuenta
+        de febrero es de febrero. En `main` el seguidor corta el dia y la semana al abrir febrero con
+        el saldo de enero, y el primer toque se queda en enero (febrero ni siquiera coloca)."""
+        plan = ((esc.ENE_1, tc.RUTA_HUECO), (esc.FEB_1, tc.RUTA_HUECO))
+        motor = esc.motor_de(registro, vocabulario, plan)
+        motor.tope = tope_del_registro(registro, ZoneInfo("Europe/Prague"))
+        esc.correr(motor, plan)
+        capital = motor.reglas_fase.capital_inicial
+        assert motor.seguidor is not None
+>       assert motor.seguidor.cortes == []
+E       AssertionError: assert [(datetime.da...c), 'semana')] == []
+E         
+E         Left contains 2 more items, first extra item: (datetime.datetime(2030, 2, 12, 6, 0, tzinfo=datetime.timezone.utc), 'dia')
+E         Use -v to get more diff
+
+tests\unit\test_cuenta_por_mes.py:117: AssertionError
+________________ test_la_racha_empieza_de_cero_en_el_mes_nuevo ________________
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_la_racha_empieza_de_cero_en_el_mes_nuevo(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        """Respuesta del consultor a la PARADA, punto 1.e: una perdida en enero y otra en febrero dan
+        una racha de 1 en febrero, y la de enero se queda en su cuenta cerrada. En `main` da 2."""
+        plan = ((esc.ENE_1, tc.RUTA_STOP), (esc.FEB_1, tc.RUTA_STOP))
+        motor = esc.motor_de(registro, vocabulario, plan)
+        esc.correr(motor, plan)
+>       assert motor.racha is not None and motor.racha.racha == 1
+E       AssertionError: assert (SeguidorRacha(reloj=RelojSesiones(opcion='rejilla_h4', huso_visible='Europe/Madrid', anclaje=HoraLocal(hora='17:00', h...to=9, cierres=[(1894694800000, 'salto_el_stop', 'primer_esquema'), (1897114000000, 'salto_el_stop', 'primer_esquema')]) is not None and 2 == 1)
+E        +  where SeguidorRacha(reloj=RelojSesiones(opcion='rejilla_h4', huso_visible='Europe/Madrid', anclaje=HoraLocal(hora='17:00', h...to=9, cierres=[(1894694800000, 'salto_el_stop', 'primer_esquema'), (1897114000000, 'salto_el_stop', 'primer_esquema')]) = MotorCableado(vocabulario={'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con ...'}}, memoria={'zona_de_entrada': {'por_sesion': {'07-11': {'usadas': set()}}}})}, operaciones_trader=(), criterio=None).racha
+E        +  and   2 = SeguidorRacha(reloj=RelojSesiones(opcion='rejilla_h4', huso_visible='Europe/Madrid', anclaje=HoraLocal(hora='17:00', h...to=9, cierres=[(1894694800000, 'salto_el_stop', 'primer_esquema'), (1897114000000, 'salto_el_stop', 'primer_esquema')]).racha
+E        +    where SeguidorRacha(reloj=RelojSesiones(opcion='rejilla_h4', huso_visible='Europe/Madrid', anclaje=HoraLocal(hora='17:00', h...to=9, cierres=[(1894694800000, 'salto_el_stop', 'primer_esquema'), (1897114000000, 'salto_el_stop', 'primer_esquema')]) = MotorCableado(vocabulario={'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con ...'}}, memoria={'zona_de_entrada': {'por_sesion': {'07-11': {'usadas': set()}}}})}, operaciones_trader=(), criterio=None).racha
+
+tests\unit\test_cuenta_por_mes.py:133: AssertionError
+______________ test_con_la_diaria_no_se_conserva_ninguna_cuenta _______________
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_con_la_diaria_no_se_conserva_ninguna_cuenta(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        plan, _ = esc.ESCENARIOS_MAIN["diaria-dos-meses"]
+        motor = esc.motor_de(registro, vocabulario, plan, cuenta_diaria=True)
+        esc.correr(motor, plan)
+>       assert motor.cuentas_cerradas == []
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'MotorCableado' object has no attribute 'cuentas_cerradas'
+
+tests\unit\test_cuenta_por_mes.py:169: AttributeError
+______________ test_dentro_de_un_mes_no_se_cierra_ninguna_cuenta ______________
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_dentro_de_un_mes_no_se_cierra_ninguna_cuenta(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        plan, _ = esc.ESCENARIOS_MAIN["dentro-de-un-mes"]
+        motor = esc.motor_de(registro, vocabulario, plan)
+        esc.correr(motor, plan)
+>       assert motor.cuentas_cerradas == []
+               ^^^^^^^^^^^^^^^^^^^^^^
+E       AttributeError: 'MotorCableado' object has no attribute 'cuentas_cerradas'
+
+tests\unit\test_cuenta_por_mes.py:180: AttributeError
+__________ test_el_visor_ve_el_saldo_del_mes_nuevo_desde_el_capital ___________
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_el_visor_ve_el_saldo_del_mes_nuevo_desde_el_capital(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        """El visor con --simular corre `correr_dia` dia a dia y lee el saldo por
+        `detalle_para_visor` (TrazaBroker.saldo_fin): el primer dia de febrero parte del capital. En
+        `main` lleva el saldo suspendido de enero."""
+        motor = esc.motor_de(registro, vocabulario, esc.DOS_MESES)
+        esc.correr(motor, esc.DOS_MESES)
+        ene = cableado.detalle_para_visor(motor, ENE)
+        feb = cableado.detalle_para_visor(motor, FEB)
+        solo = cableado.detalle_para_visor(_solo_febrero(registro, vocabulario), FEB)
+        assert ene is not None and feb is not None and solo is not None
+>       assert feb.saldo_fin == solo.saldo_fin and feb.equity_fin == solo.equity_fin
+E       AssertionError: assert (Decimal('48070.5000000') == Decimal('99430.2000000'))
+E        +  where Decimal('48070.5000000') = DetalleBroker(ordenes=(), posiciones=(), eventos=(), rechazos=0, huecos=(), saldo_fin=Decimal('48070.5000000'), equity_fin=Decimal('48070.5000000'), depuracion=None, zonas=()).saldo_fin
+E        +  and   Decimal('99430.2000000') = DetalleBroker(ordenes=(OrdenVisor(id='o1', lado='compra', precio=Decimal('1.09995'), lotes=Decimal('25.90'), stop=Deci...hazos=0, huecos=(), saldo_fin=Decimal('99430.2000000'), equity_fin=Decimal('99430.2000000'), depuracion=None, zonas=()).saldo_fin
+
+tests\unit\test_cuenta_por_mes.py:210: AssertionError
+__ test_la_cuenta_cambia_por_el_mes_de_la_clave_y_no_por_los_dias_que_pasan ___
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_la_cuenta_cambia_por_el_mes_de_la_clave_y_no_por_los_dias_que_pasan(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        """Del 15 al 16 de enero no cambia nada; del 16 de enero al 12 de febrero, si; del 12 al 13
+        de febrero, no: el mes es el AAAA-MM de la clave del dia corrido."""
+        plan = (
+            (esc.ENE_1, tc.RUTA_STOP),
+            (esc.ENE_2, tc.RUTA_STOP),
+            (esc.FEB_1, tc.RUTA_STOP),
+            (esc.FEB_2, tc.RUTA_STOP),
+        )
+        motor = esc.motor_de(registro, vocabulario, plan)
+        esc.correr(motor, plan)
+        # primero lo que tambien se mide en `main` (alli la curva lleva los cuatro dias y la cuenta
+        # cuatro dias de trading)
+>       assert [d for d, *_ in cableado.curva_de_equity(motor)] == [FEB, esc.FEB_2.isoformat()]
+E       AssertionError: assert ['2030-01-15'... '2030-02-13'] == ['2030-02-12', '2030-02-13']
+E         
+E         At index 0 diff: '2030-01-15' != '2030-02-12'
+E         Left contains 2 more items, first extra item: '2030-02-12'
+E         Use -v to get more diff
+
+tests\unit\test_cuenta_por_mes.py:230: AssertionError
+_________ test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta __________
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        """D4: la cabecera dice cuantas cuentas y remite el primer toque a cada mes; el
+        veredicto, el saldo, los dias, el primer toque, la racha al cierre y la curva van por mes, en
+        orden; el veredicto del tramo entero ya no sale. En `main` sale un solo veredicto, SUSPENDIDA,
+        con febrero dentro de la curva de enero (`anexos/CUENTA-POR-MES/main/dos-meses.txt`)."""
+        texto = esc.informe(registro, vocabulario, esc.DOS_MESES, False)
+        lineas = texto.splitlines()
+>       assert "CUENTA: UNA POR MES (ADR-0092 §8): 2 cuentas" in lineas
+E       AssertionError: assert 'CUENTA: UNA POR MES (ADR-0092 §8): 2 cuentas' in ['', '## Simulacion (ADR-0053)', 'MOTOR: spec vigente + broker simulado (ADR-0053)', 'PERFIL: -; FASE: -', 'DIAS CORRIDOS: 2', 'TOPE DEL TRADER (RN-020, A-44): sin fijar: hueco con nombre', ...]
+
+tests\unit\test_cuenta_por_mes.py:251: AssertionError
+__________ test_con_varios_meses_d_y_e_son_por_cuenta_y_f_dice_cual ___________
+
+registro = Registro(parametros={'instrumento_digitos': Parametro(nombre='instrumento_digitos', categoria='instrumento', tipo='ent...='A-54', valor=5), 'freno_bucle_minutos': LecturaAmbigua(nombre='freno_bucle_minutos', ambiguedad_id='A-54', valor=1)})
+vocabulario = {'predicados': {'rompe': {'descripcion': 'el sujeto supera el extremo de la referencia, con el criterio declarado', 'a...sobrevive al evento (ADR-0032)', 'origen': 'regla', 'produce': ['RN-011', 'RN-015'], 'consume': ['RN-015']}, ...}, ...}
+
+    def test_con_varios_meses_d_y_e_son_por_cuenta_y_f_dice_cual(
+        registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    ) -> None:
+        """D5: la cascada y la esperanza, sobre todas las operaciones; d) y e), la peor cuenta y su
+        mes; f), si alguna cuenta entro en SUSPENDIDA y cual."""
+        texto = esc.informe_dos_meses_con_criterio(registro, vocabulario)
+        lineas = esc.seccion_metodo(texto).splitlines()
+>       assert "a) N (operaciones llenadas y cerradas): 2" in lineas
+E       AssertionError: assert 'a) N (operaciones llenadas y cerradas): 2' in ['', '## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)', '', '### Posiciones (dia | s...90 | -51800.00 | 129.50 | 0.00 | -51929.50 | 414.40 | -125.312', 'posiciones: 1; PnL neto total (USD): -51929.50', ...]
+
+tests\unit\test_cuenta_por_mes.py:294: AssertionError
+=================================== PASSES ====================================
+______________________ test_el_volcado_de_los_escenarios ______________________
+---------------------------- Captured stdout call -----------------------------
+<<<VOLCADO cuenta_por_mes/main-dentro-de-un-mes.txt>>>
+
+## Simulacion (ADR-0053)
+MOTOR: spec vigente + broker simulado (ADR-0053)
+PERFIL: -; FASE: -
+DIAS CORRIDOS: 2
+TOPE DEL TRADER (RN-020, A-44): sin fijar: hueco con nombre
+RACHA DE PERDIDAS (RN-036, A-51): 2 seguidas; la ultima el 2030-01-16
+PRIMERO EN TOCAR UN LIMITE: ninguno
+
+### Veredicto de la cuenta sobre el tramo
+estado: EN_CURSO
+motivo: sin objetivo alcanzado ni limite infringido
+instante: -
+saldo final: 98863.4800000
+equity final: 98863.4800000
+dias de trading: 2
+
+### Curva de equity (dia | saldo al corte | saldo final | equity minima)
+2030-01-15 | 100000 | 99430.2000000 | 99430.2000000
+2030-01-16 | 99430.2000000 | 98863.4800000 | 98863.4800000
+
+### Eventos del broker (dia | instante UTC | tipo | id | fuente)
+2030-01-15 | 2030-01-15T08:06:20+00:00 | llenada | o1 | ticks
+2030-01-15 | 2030-01-15T08:06:40+00:00 | stop | pos-o1 | ticks
+2030-01-16 | 2030-01-16T08:06:20+00:00 | llenada | o1 | ticks
+2030-01-16 | 2030-01-16T08:06:40+00:00 | stop | pos-o1 | ticks
+
+eventos: 4; por fuente: respaldo_m1 0, ticks 4
+rechazos del broker: 0
+huecos con nombre (primitivas sin contrato que se pidieron): ninguno
+
+### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD) | riesgo (% del saldo) | lote del riesgo | limite | punto | caja 1)
+2030-01-15 | 07-11 | o1 | 2030-01-15T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-01-15T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+2030-01-16 | 07-11 | o1 | 2030-01-16T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-01-16T08:06:20+00:00 | 25.76 | 16 | 94455.91 | 99430.20 | 0.415 | 31.07 | margen | - | -
+ordenes: llenada 2
+
+### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del riesgo)
+ninguna
+no enviadas: 0
+
+### Rechazos por motivo (mes | motivo | peticion | rechazos)
+ninguno
+
+### Peticiones al servidor (R13; dia de la firma en Europe/Prague)
+LECTURA: colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, emitidas por el bot; solo se mide, nada frena
+dia | total | colocar | modificar | cancelar | cerrar | rechazadas
+2030-01-15 | 1 | 1 | 0 | 0 | 0 | 0
+2030-01-16 | 1 | 1 | 0 | 0 | 0 | 0
+maximo diario: 1 (2030-01-16); firma_mensajes_dia_max: 2000
+
+### El freno de peticiones (ADR-0067)
+umbrales: aviso 1000, corte 1500, bucle 5 iguales en 1 min
+ningun aviso ni ninguna peticion negada
+
+### Los cierres de mercado (ADR-0068)
+calendario: sin calendario: el broker no comprueba los cierres
+ninguna peticion negada ni ninguna pendiente cancelada
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.09978 | stop | salto_el_stop | 25.90 | -440.30 | 129.50 | 0.00 | -569.80 | 414.40 | -1.375
+2030-01-16 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-16T08:06:20+00:00 | 1.09995 | 2030-01-16T08:06:40+00:00 | 1.09978 | stop | salto_el_stop | 25.76 | -437.92 | 128.80 | 0.00 | -566.72 | 412.16 | -1.375
+posiciones: 2; PnL neto total (USD): -1136.52
+
+sin el criterio de ADR-0092 (corrida sin criterio_fidelidad.yaml): ni cascada ni rentabilidad
+<<<FIN>>>
+<<<VOLCADO cuenta_por_mes/main-diaria-dos-meses.txt>>>
+
+## Simulacion (ADR-0053)
+MOTOR: spec vigente + broker simulado (ADR-0053)
+PERFIL: -; FASE: -
+DIAS CORRIDOS: 2
+TOPE DEL TRADER (RN-020, A-44): sin fijar: hueco con nombre
+RACHA DE PERDIDAS (RN-036, A-51): 1 seguidas; la ultima el 2030-02-12
+PRIMERO EN TOCAR UN LIMITE: firma (perdida diaria) en 2030-01-15T08:06:40+00:00
+CUENTA: REINICIADA CADA DIA (diagnostico): el veredicto, el saldo y la curva son solo del ultimo dia corrido
+
+### Veredicto de la cuenta sobre el tramo
+estado: EN_CURSO
+motivo: sin objetivo alcanzado ni limite infringido
+instante: -
+saldo final: 99430.2000000
+equity final: 99430.2000000
+dias de trading: 1
+
+### Curva de equity (dia | saldo al corte | saldo final | equity minima)
+2030-02-12 | 100000 | 99430.2000000 | 99430.2000000
+
+### Eventos del broker (dia | instante UTC | tipo | id | fuente)
+2030-01-15 | 2030-01-15T08:06:20+00:00 | llenada | o1 | ticks
+2030-01-15 | 2030-01-15T08:06:40+00:00 | stop | pos-o1 | ticks
+2030-02-12 | 2030-02-12T08:06:20+00:00 | llenada | o1 | ticks
+2030-02-12 | 2030-02-12T08:06:40+00:00 | stop | pos-o1 | ticks
+
+eventos: 4; por fuente: respaldo_m1 0, ticks 4
+rechazos del broker: 0
+huecos con nombre (primitivas sin contrato que se pidieron): ninguno
+
+### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD) | riesgo (% del saldo) | lote del riesgo | limite | punto | caja 1)
+2030-01-15 | 07-11 | o1 | 2030-01-15T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-01-15T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+2030-02-12 | 07-11 | o1 | 2030-02-12T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-02-12T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+ordenes: llenada 2
+
+### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del riesgo)
+ninguna
+no enviadas: 0
+
+### Rechazos por motivo (mes | motivo | peticion | rechazos)
+ninguno
+
+### Peticiones al servidor (R13; dia de la firma en Europe/Prague)
+LECTURA: colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, emitidas por el bot; solo se mide, nada frena
+dia | total | colocar | modificar | cancelar | cerrar | rechazadas
+2030-01-15 | 1 | 1 | 0 | 0 | 0 | 0
+2030-02-12 | 1 | 1 | 0 | 0 | 0 | 0
+maximo diario: 1 (2030-02-12); firma_mensajes_dia_max: 2000
+
+### El freno de peticiones (ADR-0067)
+umbrales: aviso 1000, corte 1500, bucle 5 iguales en 1 min
+ningun aviso ni ninguna peticion negada
+
+### Los cierres de mercado (ADR-0068)
+calendario: sin calendario: el broker no comprueba los cierres
+ninguna peticion negada ni ninguna pendiente cancelada
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.07995 | stop | salto_el_stop | 25.90 | -51800.00 | 129.50 | 0.00 | -51929.50 | 414.40 | -125.312
+2030-02-12 | 07-11 | pos-o1 | o1 | compra | limite | 2030-02-12T08:06:20+00:00 | 1.09995 | 2030-02-12T08:06:40+00:00 | 1.09978 | stop | salto_el_stop | 25.90 | -440.30 | 129.50 | 0.00 | -569.80 | 414.40 | -1.375
+posiciones: 2; PnL neto total (USD): -52499.30
+
+sin el criterio de ADR-0092 (corrida sin criterio_fidelidad.yaml): ni cascada ni rentabilidad
+<<<FIN>>>
+<<<VOLCADO metodo_adr0092/main-hueco.txt>>>
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.07995 | stop | salto_el_stop | 25.90 | -51800.00 | 129.50 | 0.00 | -51929.50 | 414.40 | -125.312
+posiciones: 1; PnL neto total (USD): -51929.50
+
+### Fidelidad por criterios (ADR-0092 §1 y §2; diagnostico de construccion, sin umbral)
+CUENTA: cada operacion del trader de los dias corridos, por el ULTIMO escalon que alcanza contra las ordenes que el bot coloco en su (dia, sesion, direccion), llenadas o no; sobre esta salida
+tolerancias: entrada 3 puntos, stop 3 puntos, llenado 15 min
+mes | sin orden del bot en su (dia, sesion, direccion) | orden, con la entrada fuera de tolerancia | entrada, con el stop fuera de tolerancia | entrada; el caso no trae stop | en el nivel, no llenada | en el nivel, llenada fuera de tolerancia de instante | las cuatro piezas | total
+2030-01 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+total | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+ordenes del bot en un (dia, sesion, direccion) sin ninguna operacion del trader: 0
+el sesgo de H4, derivado y aparte: la linea «por operacion del trader» de la seccion de RN-003; la liquidez de M15: no comparable con el material de los casos
+
+### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)
+libros sin video: 2026-01, 2026-04, 2026-08, salvo 2026-04-29; cuentan como CON video, provisionales hasta que T lo compruebe: 2026-07 (fuente: ACTIVAR-SESION-05.md §0.b.7)
+operaciones del bot quitadas (break_even en un dia sin video): 0
+cascada sin ellas, total | sin orden del bot en su (dia, sesion, direccion) 0 | orden, con la entrada fuera de tolerancia 0 | entrada, con el stop fuera de tolerancia 0 | entrada; el caso no trae stop 0 | en el nivel, no llenada 0 | en el nivel, llenada fuera de tolerancia de instante 0 | las cuatro piezas 1
+esperanza sin ellas (media del R neto, 1 operaciones): -125.312
+
+### Rentabilidad (ADR-0092 §3; DIAGNOSTICO sobre construccion, ADR-0092 §6: la puerta solo se mide sobre 2025-06, 2025-07, 2025-08, 2025-09, 2025-10, 2025-11, fase fondeada)
+FASE de esta corrida: -
+a) N (operaciones llenadas y cerradas): 1
+b) esperanza (media del R neto): -125.312
+c) percentil 5 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 1 dias): -125.312; replicas descartadas por no tener ninguna operacion: 0 de 10000
+d) perdida diaria maxima (equity, base saldo_corte_diario): 51.93 % del capital inicial
+e) equity minima del tramo: 48.07 % del capital inicial
+f) suspendida: si
+criterios a) a f): insuficiente (a) N = 1, por debajo de 100)
+deslizamiento por llenado afectado que lleva la esperanza a 0.10 R (ADR-0092 §4, sin decidir nada): -2006.60 puntos
+<<<FIN>>>
+<<<VOLCADO metodo_adr0092/main-stop.txt>>>
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.09978 | stop | salto_el_stop | 25.90 | -440.30 | 129.50 | 0.00 | -569.80 | 414.40 | -1.375
+posiciones: 1; PnL neto total (USD): -569.80
+
+### Fidelidad por criterios (ADR-0092 §1 y §2; diagnostico de construccion, sin umbral)
+CUENTA: cada operacion del trader de los dias corridos, por el ULTIMO escalon que alcanza contra las ordenes que el bot coloco en su (dia, sesion, direccion), llenadas o no; sobre esta salida
+tolerancias: entrada 3 puntos, stop 3 puntos, llenado 15 min
+mes | sin orden del bot en su (dia, sesion, direccion) | orden, con la entrada fuera de tolerancia | entrada, con el stop fuera de tolerancia | entrada; el caso no trae stop | en el nivel, no llenada | en el nivel, llenada fuera de tolerancia de instante | las cuatro piezas | total
+2030-01 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+total | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+ordenes del bot en un (dia, sesion, direccion) sin ninguna operacion del trader: 0
+el sesgo de H4, derivado y aparte: la linea «por operacion del trader» de la seccion de RN-003; la liquidez de M15: no comparable con el material de los casos
+
+### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)
+libros sin video: 2026-01, 2026-04, 2026-08, salvo 2026-04-29; cuentan como CON video, provisionales hasta que T lo compruebe: 2026-07 (fuente: ACTIVAR-SESION-05.md §0.b.7)
+operaciones del bot quitadas (break_even en un dia sin video): 0
+cascada sin ellas, total | sin orden del bot en su (dia, sesion, direccion) 0 | orden, con la entrada fuera de tolerancia 0 | entrada, con el stop fuera de tolerancia 0 | entrada; el caso no trae stop 0 | en el nivel, no llenada 0 | en el nivel, llenada fuera de tolerancia de instante 0 | las cuatro piezas 1
+esperanza sin ellas (media del R neto, 1 operaciones): -1.375
+
+### Rentabilidad (ADR-0092 §3; DIAGNOSTICO sobre construccion, ADR-0092 §6: la puerta solo se mide sobre 2025-06, 2025-07, 2025-08, 2025-09, 2025-10, 2025-11, fase fondeada)
+FASE de esta corrida: -
+a) N (operaciones llenadas y cerradas): 1
+b) esperanza (media del R neto): -1.375
+c) percentil 5 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 1 dias): -1.375; replicas descartadas por no tener ninguna operacion: 0 de 10000
+d) perdida diaria maxima (equity, base saldo_corte_diario): 0.57 % del capital inicial
+e) equity minima del tramo: 99.43 % del capital inicial
+f) suspendida: no
+criterios a) a f): insuficiente (a) N = 1, por debajo de 100)
+deslizamiento por llenado afectado que lleva la esperanza a 0.10 R (ADR-0092 §4, sin decidir nada): -23.60 puntos
+<<<FIN>>>
+<<<VOLCADO metodo_adr0092/main-viva.txt>>>
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:03:40+00:00 | 1.09995 | 2030-01-15T09:58:59.999000+00:00 | 1.09989 | manual | perdida | 25.90 | -155.40 | 129.50 | 0.00 | -284.90 | 414.40 | -0.688
+posiciones: 1; PnL neto total (USD): -284.90
+
+### Fidelidad por criterios (ADR-0092 §1 y §2; diagnostico de construccion, sin umbral)
+CUENTA: cada operacion del trader de los dias corridos, por el ULTIMO escalon que alcanza contra las ordenes que el bot coloco en su (dia, sesion, direccion), llenadas o no; sobre esta salida
+tolerancias: entrada 3 puntos, stop 3 puntos, llenado 15 min
+mes | sin orden del bot en su (dia, sesion, direccion) | orden, con la entrada fuera de tolerancia | entrada, con el stop fuera de tolerancia | entrada; el caso no trae stop | en el nivel, no llenada | en el nivel, llenada fuera de tolerancia de instante | las cuatro piezas | total
+2030-01 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+total | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+ordenes del bot en un (dia, sesion, direccion) sin ninguna operacion del trader: 0
+el sesgo de H4, derivado y aparte: la linea «por operacion del trader» de la seccion de RN-003; la liquidez de M15: no comparable con el material de los casos
+
+### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)
+libros sin video: 2026-01, 2026-04, 2026-08, salvo 2026-04-29; cuentan como CON video, provisionales hasta que T lo compruebe: 2026-07 (fuente: ACTIVAR-SESION-05.md §0.b.7)
+operaciones del bot quitadas (break_even en un dia sin video): 0
+cascada sin ellas, total | sin orden del bot en su (dia, sesion, direccion) 0 | orden, con la entrada fuera de tolerancia 0 | entrada, con el stop fuera de tolerancia 0 | entrada; el caso no trae stop 0 | en el nivel, no llenada 0 | en el nivel, llenada fuera de tolerancia de instante 0 | las cuatro piezas 1
+esperanza sin ellas (media del R neto, 1 operaciones): -0.688
+
+### Rentabilidad (ADR-0092 §3; DIAGNOSTICO sobre construccion, ADR-0092 §6: la puerta solo se mide sobre 2025-06, 2025-07, 2025-08, 2025-09, 2025-10, 2025-11, fase fondeada)
+FASE de esta corrida: -
+a) N (operaciones llenadas y cerradas): 1
+b) esperanza (media del R neto): -0.688
+c) percentil 5 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 1 dias): -0.688; replicas descartadas por no tener ninguna operacion: 0 de 10000
+d) perdida diaria maxima (equity, base saldo_corte_diario): 0.28 % del capital inicial
+e) equity minima del tramo: 99.72 % del capital inicial
+f) suspendida: no
+criterios a) a f): insuficiente (a) N = 1, por debajo de 100)
+deslizamiento por llenado afectado que lleva la esperanza a 0.10 R (ADR-0092 §4, sin decidir nada): -12.60 puntos
+<<<FIN>>>
+<<<VOLCADO anexo/dos-meses.txt>>>
+
+## Simulacion (ADR-0053)
+MOTOR: spec vigente + broker simulado (ADR-0053)
+PERFIL: -; FASE: -
+DIAS CORRIDOS: 2
+TOPE DEL TRADER (RN-020, A-44): sin fijar: hueco con nombre
+RACHA DE PERDIDAS (RN-036, A-51): 1 seguidas; la ultima el 2030-01-15
+PRIMERO EN TOCAR UN LIMITE: firma (perdida diaria) en 2030-01-15T08:06:40+00:00
+
+### Veredicto de la cuenta sobre el tramo
+estado: SUSPENDIDA
+motivo: perdida diaria: equity 48070.5000000 por debajo del limite del dia 95000 (saldo al corte 100000); perdida total: equity 48070.5000000 por debajo del limite total 90000
+instante: 2030-01-15T08:06:40+00:00
+saldo final: 48070.5000000
+equity final: 48070.5000000
+dias de trading: 1
+
+### Curva de equity (dia | saldo al corte | saldo final | equity minima)
+2030-01-15 | 100000 | 48070.5000000 | 48070.5000000
+2030-02-12 | 48070.5000000 | 48070.5000000 | -
+
+### Eventos del broker (dia | instante UTC | tipo | id | fuente)
+2030-01-15 | 2030-01-15T08:06:20+00:00 | llenada | o1 | ticks
+2030-01-15 | 2030-01-15T08:06:40+00:00 | stop | pos-o1 | ticks
+
+eventos: 2; por fuente: respaldo_m1 0, ticks 2
+rechazos del broker: 0
+huecos con nombre (primitivas sin contrato que se pidieron): ninguno
+
+### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD) | riesgo (% del saldo) | lote del riesgo | limite | punto | caja 1)
+2030-01-15 | 07-11 | o1 | 2030-01-15T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-01-15T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+ordenes: llenada 1
+
+### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del riesgo)
+ninguna
+no enviadas: 0
+
+### Rechazos por motivo (mes | motivo | peticion | rechazos)
+ninguno
+
+### Peticiones al servidor (R13; dia de la firma en Europe/Prague)
+LECTURA: colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, emitidas por el bot; solo se mide, nada frena
+dia | total | colocar | modificar | cancelar | cerrar | rechazadas
+2030-01-15 | 1 | 1 | 0 | 0 | 0 | 0
+2030-02-12 | 0 | 0 | 0 | 0 | 0 | 0
+maximo diario: 1 (2030-01-15); firma_mensajes_dia_max: 2000
+
+### El freno de peticiones (ADR-0067)
+umbrales: aviso 1000, corte 1500, bucle 5 iguales en 1 min
+ningun aviso ni ninguna peticion negada
+
+### Los cierres de mercado (ADR-0068)
+calendario: sin calendario: el broker no comprueba los cierres
+ninguna peticion negada ni ninguna pendiente cancelada
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.07995 | stop | salto_el_stop | 25.90 | -51800.00 | 129.50 | 0.00 | -51929.50 | 414.40 | -125.312
+posiciones: 1; PnL neto total (USD): -51929.50
+
+sin el criterio de ADR-0092 (corrida sin criterio_fidelidad.yaml): ni cascada ni rentabilidad
+<<<FIN>>>
+<<<VOLCADO anexo/dos-meses-con-criterio.txt>>>
+
+## Simulacion (ADR-0053)
+MOTOR: spec vigente + broker simulado (ADR-0053)
+PERFIL: -; FASE: -
+DIAS CORRIDOS: 2
+TOPE DEL TRADER (RN-020, A-44): sin fijar: hueco con nombre
+RACHA DE PERDIDAS (RN-036, A-51): 1 seguidas; la ultima el 2030-01-15
+PRIMERO EN TOCAR UN LIMITE: firma (perdida diaria) en 2030-01-15T08:06:40+00:00
+
+### Veredicto de la cuenta sobre el tramo
+estado: SUSPENDIDA
+motivo: perdida diaria: equity 48070.5000000 por debajo del limite del dia 95000 (saldo al corte 100000); perdida total: equity 48070.5000000 por debajo del limite total 90000
+instante: 2030-01-15T08:06:40+00:00
+saldo final: 48070.5000000
+equity final: 48070.5000000
+dias de trading: 1
+
+### Curva de equity (dia | saldo al corte | saldo final | equity minima)
+2030-01-15 | 100000 | 48070.5000000 | 48070.5000000
+2030-02-12 | 48070.5000000 | 48070.5000000 | -
+
+### Eventos del broker (dia | instante UTC | tipo | id | fuente)
+2030-01-15 | 2030-01-15T08:06:20+00:00 | llenada | o1 | ticks
+2030-01-15 | 2030-01-15T08:06:40+00:00 | stop | pos-o1 | ticks
+
+eventos: 2; por fuente: respaldo_m1 0, ticks 2
+rechazos del broker: 0
+huecos con nombre (primitivas sin contrato que se pidieron): ninguno
+
+### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD) | riesgo (% del saldo) | lote del riesgo | limite | punto | caja 1)
+2030-01-15 | 07-11 | o1 | 2030-01-15T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-01-15T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+ordenes: llenada 1
+
+### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del riesgo)
+ninguna
+no enviadas: 0
+
+### Rechazos por motivo (mes | motivo | peticion | rechazos)
+ninguno
+
+### Peticiones al servidor (R13; dia de la firma en Europe/Prague)
+LECTURA: colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, emitidas por el bot; solo se mide, nada frena
+dia | total | colocar | modificar | cancelar | cerrar | rechazadas
+2030-01-15 | 1 | 1 | 0 | 0 | 0 | 0
+2030-02-12 | 0 | 0 | 0 | 0 | 0 | 0
+maximo diario: 1 (2030-01-15); firma_mensajes_dia_max: 2000
+
+### El freno de peticiones (ADR-0067)
+umbrales: aviso 1000, corte 1500, bucle 5 iguales en 1 min
+ningun aviso ni ninguna peticion negada
+
+### Los cierres de mercado (ADR-0068)
+calendario: sin calendario: el broker no comprueba los cierres
+ninguna peticion negada ni ninguna pendiente cancelada
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.07995 | stop | salto_el_stop | 25.90 | -51800.00 | 129.50 | 0.00 | -51929.50 | 414.40 | -125.312
+posiciones: 1; PnL neto total (USD): -51929.50
+
+### Fidelidad por criterios (ADR-0092 §1 y §2; diagnostico de construccion, sin umbral)
+CUENTA: cada operacion del trader de los dias corridos, por el ULTIMO escalon que alcanza contra las ordenes que el bot coloco en su (dia, sesion, direccion), llenadas o no; sobre esta salida
+tolerancias: entrada 3 puntos, stop 3 puntos, llenado 15 min
+mes | sin orden del bot en su (dia, sesion, direccion) | orden, con la entrada fuera de tolerancia | entrada, con el stop fuera de tolerancia | entrada; el caso no trae stop | en el nivel, no llenada | en el nivel, llenada fuera de tolerancia de instante | las cuatro piezas | total
+2030-01 | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+total | 0 | 0 | 0 | 0 | 0 | 0 | 1 | 1
+ordenes del bot en un (dia, sesion, direccion) sin ninguna operacion del trader: 0
+el sesgo de H4, derivado y aparte: la linea «por operacion del trader» de la seccion de RN-003; la liquidez de M15: no comparable con el material de los casos
+
+### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)
+libros sin video: 2026-01, 2026-04, 2026-08, salvo 2026-04-29; cuentan como CON video, provisionales hasta que T lo compruebe: 2026-07 (fuente: ACTIVAR-SESION-05.md §0.b.7)
+operaciones del bot quitadas (break_even en un dia sin video): 0
+cascada sin ellas, total | sin orden del bot en su (dia, sesion, direccion) 0 | orden, con la entrada fuera de tolerancia 0 | entrada, con el stop fuera de tolerancia 0 | entrada; el caso no trae stop 0 | en el nivel, no llenada 0 | en el nivel, llenada fuera de tolerancia de instante 0 | las cuatro piezas 1
+esperanza sin ellas (media del R neto, 1 operaciones): -125.312
+
+### Rentabilidad (ADR-0092 §3; DIAGNOSTICO sobre construccion, ADR-0092 §6: la puerta solo se mide sobre 2025-06, 2025-07, 2025-08, 2025-09, 2025-10, 2025-11, fase fondeada)
+FASE de esta corrida: -
+a) N (operaciones llenadas y cerradas): 1
+b) esperanza (media del R neto): -125.312
+c) percentil 5 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, 2 dias): -125.312; replicas descartadas por no tener ninguna operacion: 2454 de 10000
+d) perdida diaria maxima (equity, base saldo_corte_diario): 51.93 % del capital inicial
+e) equity minima del tramo: 48.07 % del capital inicial
+f) suspendida: si
+criterios a) a f): insuficiente (a) N = 1, por debajo de 100)
+deslizamiento por llenado afectado que lleva la esperanza a 0.10 R (ADR-0092 §4, sin decidir nada): -2006.60 puntos
+<<<FIN>>>
+
+=========================== short test summary info ===========================
+PASSED tests/unit/test_cuenta_por_mes.py::test_dentro_de_una_cuenta_la_racha_sigue_de_un_dia_a_otro
+PASSED tests/unit/test_cuenta_por_mes.py::test_la_salida_es_la_de_main[dentro-de-un-mes]
+PASSED tests/unit/test_cuenta_por_mes.py::test_la_salida_es_la_de_main[diaria-dos-meses]
+PASSED tests/unit/test_cuenta_por_mes.py::test_el_volcado_de_los_escenarios
+PASSED tests/unit/test_cuenta_por_mes.py::test_con_un_mes_la_seccion_de_adr0092_es_la_de_main
+FAILED tests/unit/test_cuenta_por_mes.py::test_el_segundo_mes_vuelve_a_operar_desde_el_capital
+FAILED tests/unit/test_cuenta_por_mes.py::test_el_seguidor_del_tope_y_el_primer_toque_empiezan_de_cero_en_el_mes_nuevo
+FAILED tests/unit/test_cuenta_por_mes.py::test_la_racha_empieza_de_cero_en_el_mes_nuevo
+FAILED tests/unit/test_cuenta_por_mes.py::test_con_la_diaria_no_se_conserva_ninguna_cuenta
+FAILED tests/unit/test_cuenta_por_mes.py::test_dentro_de_un_mes_no_se_cierra_ninguna_cuenta
+FAILED tests/unit/test_cuenta_por_mes.py::test_el_visor_ve_el_saldo_del_mes_nuevo_desde_el_capital
+FAILED tests/unit/test_cuenta_por_mes.py::test_la_cuenta_cambia_por_el_mes_de_la_clave_y_no_por_los_dias_que_pasan
+FAILED tests/unit/test_cuenta_por_mes.py::test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta
+FAILED tests/unit/test_cuenta_por_mes.py::test_con_varios_meses_d_y_e_son_por_cuenta_y_f_dice_cual

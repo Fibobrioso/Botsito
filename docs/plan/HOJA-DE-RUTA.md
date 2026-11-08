@@ -254,7 +254,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   operar en vivo, con sus umbrales; A-16 medida (mediana 0 puntos, 92,4 % dentro de la M1).
 
 ### R3.8 · Una cuenta por mes en la corrida que cuenta
-- **Refs:** NA:F · ID:ADR-0092 · ID:ADR-0053 · ID:ADR-0070
+- **Refs:** ID:ADR-0092 · ID:ADR-0053 · ID:ADR-0070
 - **Qué es:** en construcción (y en mayo cuando se mida) la cuenta es una por mes, no
   arrastrada entre meses no contiguos (ADR-0092 §8, que enmienda ADR-0053 §6 y la condición
   de la corrida que cuenta de ADR-0070); una condición del recorrido, no una opción:
@@ -264,6 +264,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la cuenta empieza de nuevo en cada mes de construcción, con su test, y la
   re-corrida que cuenta puede correr.
+- **Estado:** HECHA (`trabajo/cuenta-por-mes`; CUENTA-POR-MES.md): en `MotorCableado.correr_dia`,
+  al cambiar de mes empiezan de nuevo la cuenta, el seguidor del tope, la racha y el primer
+  toque (NOTA de ADR-0092 §8), con sus tests sintéticos; la diaria, intacta.
 
 ## R4 · La sesión 5 con el trader y su activación
 
@@ -371,8 +374,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
 - **Depende de:** la corrida que cuenta (R4.1; ADR-0070 §3) con un "sí", y el ADR propio de la
-  rama de medida (ADR-0070 §6); y la cuenta por mes (R3.8). El sello del respaldo M1 (R3.6)
-  y el método (R3.7, ADR-0092) están HECHOS.
+  rama de medida (ADR-0070 §6). El sello del respaldo M1 (R3.6), el método (R3.7, ADR-0092)
+  y la cuenta por mes (R3.8) están HECHOS.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la medida de mayo está en su informe.
 
@@ -413,7 +416,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   según los heredados 7 y 9; el riesgo del spread supuesto por la hora de pared (Technical Debt)
   en noviembre y en la extensión de invierno; y la construcción en el umbral de ADR-0070. La
   puerta no da «pasa» antes de F17 (el deslizamiento, heredado 10).
-- **Depende de:** R5.1 (G) y la re-corrida que cuenta, después de R3.8, con su línea «habilita medir» en sí (ADR-0070 punto 5; ADR-0092 §5).
+- **Depende de:** R5.1 (G) y la re-corrida que cuenta, con su línea «habilita medir» en sí (ADR-0070 punto 5; ADR-0092 §5).
 - **Quién:** la sesión, con el encargo del consultor; la decisión de operar, Aleks (F35).
 - **Hecho cuando:** la medida está en su informe con el veredicto de ADR-0092 §3 y §4.
 
@@ -537,6 +540,18 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   en R6a.1 y R6a.5).
 - **Quién:** la sesión; el despliegue y la decisión, Aleks.
 - **Hecho cuando:** F35 tiene su memorando.
+
+### R7.2 · Otros activos, después de que el bot sea funcional
+- **Refs:** F:F35 · ID:ADR-0092
+- **Qué es:** idea de Aleks (2026-11-07): con el bot de EURUSD validado y operando, añadir otros
+  activos, oro y NASDAQ, en los que el trader ya está entrando. Cada activo con su propia
+  fidelidad, su holdout y su puerta de rentabilidad (ADR-0092): no hereda la validación de
+  EURUSD. El material del trader de esos mercados, si llega antes, se guarda SIN ABRIR y fuera
+  del repo hasta su rama.
+- **Depende de:** R7.1 (F35).
+- **Quién:** el consultor la planifica cuando F35 esté decidida; Claude Code, por ramas.
+- **Hecho cuando:** el primer activo nuevo pasa su propia puerta de rentabilidad.
+- **Estado:** idea, sin rama.
 
 ## Carril: lo de Aleks
 

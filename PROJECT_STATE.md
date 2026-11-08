@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/cuenta-por-mes
 
 ## Current Feature
-Ninguna rama abierta. trabajo/metodo-fidelidad-rentabilidad cerrada en main el 2026-11-07 (stable/F38r-metodo-fidelidad-rentabilidad): el método con el que se juzga al bot (ADR-0092), fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en vivo; A-16 medida.
+trabajo/cuenta-por-mes, EN CURSO desde el 2026-11-07 (F de la Next Action; R3.8 de la hoja de ruta; encargo docs/encargos/trabajo-cuenta-por-mes.md; informe docs/validation/CUENTA-POR-MES.md).
 
 ## Stable Main State
 a1907fa · merge de `trabajo/metodo-fidelidad-rentabilidad` (tag `stable/F38r-metodo-fidelidad-rentabilidad`), sobre `stable/F38q-sello-respaldo-m1` (18f548e). Informe docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ a1907fa · merge de `trabajo/metodo-fidelidad-rentabilidad` (tag `stable/F38r-me
 a1907fa · merge: trabajo/metodo-fidelidad-rentabilidad, el método con el que se juzga al bot (ADR-0092): fidelidad por criterios para construir y rentabilidad pre-registrada como puerta para operar en vivo; A-16 medida · tag stable/F38r-metodo-fidelidad-rentabilidad
 
 ## Tests Currently Passing
-1910 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1925 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ a1907fa · merge: trabajo/metodo-fidelidad-rentabilidad, el método con el que s
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 a la sesión 7 (§d de ACTIVAR-SESION-06-MOTOR.md). Siguiente: la rama de la cuenta por mes (ADR-0092, trabajo/cuenta-por-mes) y después la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091 y el método de ADR-0092; después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 a la sesión 7 (§d de ACTIVAR-SESION-06-MOTOR.md). Siguiente: la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091, el método de ADR-0092 y la cuenta por mes; después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
 
 
 
@@ -86,7 +86,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») dicen la comisión del perfil de antes de ADR-0090 (2,50 por lado): se corrigen en la rama que vuelva a correr esos guiones (DEMO-EJECUCIONES-2-3.md §3.1).
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) … (EA-CONEXION.md §10; entera en HISTORIA, Technical Debt ACORTADA)
-- La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor: Artifact, ArtifactData, DesignSync y `file_upload`, `navigate`, `get_page_text` y `read_page` de claude-in-chrome están cerradas en `permissions.deny` de `.claude/settings.json`; `mcp__claude-artifacts__publish_files` (en la nube, `files[].path`) no está ni en `deny` ni en el `matcher` (GUARDIA-G1.md §1.j). Rama propia del carril de guardias: añadirlas al `matcher` con su esquema y llevar sus rutas a `motivo_fichero`, negando la entrada que no se reconozca.
+- La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor … (GUARDIA-G1.md §1.j; entera en HISTORIA, Technical Debt ACORTADA)
 - Riesgo residual de `trabajo/guardia-g1` (§4.3): el test de un clon de comparar-con-main que es el de `main` o el del árbol del repo cuenta como test del repo; como dentro del repo, la guardia no lee el `conftest.py` ni el `src/` que carga el clon.
 - Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído o de un nombre asignado más de una vez no se calcula; solo se niega si lo que se sabe de ella nombra un fragmento de `SENSIBLES`. Y `subprocess` con `cwd=` que no se calcula analiza la orden desde el directorio de trabajo.
 - Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan, y un `getattr(os, ...)` no se ve. Y en un clon sin .venv (git worktree), un guion de trabajo que importa un paquete de terceros se niega; los tests del clon no, por _test_de_un_clon.
@@ -97,7 +97,9 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
 - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) … (PUNTO-USADO.md §1.c y §4.f; entera en HISTORIA, Technical Debt ACORTADA)
-- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el arnés sí, :2437): con `--todos` arrastra la cuenta (VISOR-CONSTRUCCION.md §4.3).
+- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2558; el arnés sí, :2438): con `--todos --simular` corre una cuenta por mes como el arnés (ADR-0092 §8), nunca la diaria (VISOR-CONSTRUCCION.md §4.3).
+- `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).
+- make check, en una rama trabajo/*, no sella si HOLDOUT-EXPOSICIONES.md no tiene una fila con la fecha del día (cada make check lee el M1 de marzo, RESPALDO-M1.md): guardia pendiente, propuesta en trabajo/cuenta-por-mes (CUENTA-POR-MES.md).
 - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
 - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
 - `test_visor.py` y `test_preparar_a35.py` hacen leer el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18 y 2026-10-26; VISOR-CONSTRUCCION.md §4.3).
@@ -136,7 +138,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - La skill ingerir-sesion no nombra el trailer Fuente: de tramos_no_citables.yaml y abrir-rama no nombra la línea de PLANTILLA del informe (SESION-06-EXTRACCION.md §7, puntos 1 y 3; segunda vez): rama corta de skills.
 - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos … (entera en HISTORIA, Technical Debt ACORTADA)
 - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
-- El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A), pero siguen diciendo que está pendiente DEMO-FTMO.md:159-162, la descripción de reloj_dia_riesgo (parametros.yaml:1646-1651), ADR-0090 §1 (:71-75) y FTMO-REGLAS.md:253-254 (informe cerrado: con recuadro). Se corrigen en la próxima rama que toque knowledge/spec, con su régimen de cambio. Esa rama cierra también A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).
+- El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A), pero siguen diciendo que está pendiente DEMO-FTMO.md:159-162, la descripción de reloj_dia_riesgo (parametros.yaml:1646-1651), ADR-0090 §1 (:71-75) y FTMO-REGLAS.md:253-254 (informe cerrado: con recuadro). Se corrigen en la primera rama de activación tras la sesión 7 (S-22 y S-19), con su régimen de cambio; trabajo/cuenta-por-mes tocó knowledge/spec solo para la racha (ADR-0092 §8) y no la paga, decisión del consultor del 2026-11-08. Esa rama cierra también A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
@@ -151,8 +153,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 60 (2026-11-07).
+— ninguna desde el Archivo 61 (2026-11-07).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 60 (2026-11-07).
+— ninguna desde el Archivo 61 (2026-11-07).

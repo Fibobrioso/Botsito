@@ -1,0 +1,4 @@
+tests que corren el motor cableado: 89
+motores con mas de un mes: 0
+meses vistos en total: ['2026-04', '2030-01']
+exit de pytest: 0

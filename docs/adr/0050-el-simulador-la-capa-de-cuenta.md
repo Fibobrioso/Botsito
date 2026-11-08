@@ -48,6 +48,8 @@ Del 2026-09-25, recogidas en `PROJECT_STATE.md` (Next Action 26) sobre las pregu
   cada día de cero. Una ejecución de la capa de cuenta cubre TODA la fase: el saldo del corte de
   cada medianoche es el saldo con el que terminó el día anterior, el límite total no se reinicia
   nunca y los días de trading se acumulan. La capa de cuenta no toca ningún estado de estrategia.
+  > NOTA (2026-11-07, `trabajo/cuenta-por-mes`): en construcción la cuenta persiste dentro de cada
+  > mes y empieza de nuevo al cambiar de mes (ADR-0092 §8 y su NOTA).
 - **H4: el gate DESCONOCIDO sigue estricto.** Esta capa no enchufa nada al motor de estrategia: los
   diez gates que hoy prohíben `abrir_operacion` siguen prohibiendo hasta que el bróker y el cableado
   los hagan evaluables. Sin ticks, el camino intravela será pesimista por OHLC de M1; con ticks, el

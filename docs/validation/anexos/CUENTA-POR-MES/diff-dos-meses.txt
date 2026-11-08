@@ -1,0 +1,56 @@
+7,8c7,9
+< RACHA DE PERDIDAS (RN-036, A-51): 1 seguidas; la ultima el 2030-01-15
+< PRIMERO EN TOCAR UN LIMITE: firma (perdida diaria) en 2030-01-15T08:06:40+00:00
+---
+> RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes
+> PRIMERO EN TOCAR UN LIMITE: por cuenta: ver cada mes
+> CUENTA: UNA POR MES (ADR-0092 §8): 2 cuentas
+10c11,13
+< ### Veredicto de la cuenta sobre el tramo
+---
+> ### Cuenta de 2030-01
+> PRIMERO EN TOCAR UN LIMITE: firma (perdida diaria) en 2030-01-15T08:06:40+00:00
+> RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 1 seguidas; la ultima el 2030-01-15
+17,18c20
+< 
+< ### Curva de equity (dia | saldo al corte | saldo final | equity minima)
+---
+> curva de equity (dia | saldo al corte | saldo final | equity minima):
+20c22,33
+< 2030-02-12 | 48070.5000000 | 48070.5000000 | -
+---
+> 
+> ### Cuenta de 2030-02
+> PRIMERO EN TOCAR UN LIMITE: ninguno
+> RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 1 seguidas; la ultima el 2030-02-12
+> estado: EN_CURSO
+> motivo: sin objetivo alcanzado ni limite infringido
+> instante: -
+> saldo final: 99430.2000000
+> equity final: 99430.2000000
+> dias de trading: 1
+> curva de equity (dia | saldo al corte | saldo final | equity minima):
+> 2030-02-12 | 100000 | 99430.2000000 | 99430.2000000
+24a38,39
+> 2030-02-12 | 2030-02-12T08:06:20+00:00 | llenada | o1 | ticks
+> 2030-02-12 | 2030-02-12T08:06:40+00:00 | stop | pos-o1 | ticks
+26c41
+< eventos: 2; por fuente: respaldo_m1 0, ticks 2
+---
+> eventos: 4; por fuente: respaldo_m1 0, ticks 4
+32c47,48
+< ordenes: llenada 1
+---
+> 2030-02-12 | 07-11 | o1 | 2030-02-12T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-02-12T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+> ordenes: llenada 2
+45,46c61,62
+< 2030-02-12 | 0 | 0 | 0 | 0 | 0 | 0
+< maximo diario: 1 (2030-01-15); firma_mensajes_dia_max: 2000
+---
+> 2030-02-12 | 1 | 1 | 0 | 0 | 0 | 0
+> maximo diario: 1 (2030-02-12); firma_mensajes_dia_max: 2000
+60c76,77
+< posiciones: 1; PnL neto total (USD): -51929.50
+---
+> 2030-02-12 | 07-11 | pos-o1 | o1 | compra | limite | 2030-02-12T08:06:20+00:00 | 1.09995 | 2030-02-12T08:06:40+00:00 | 1.09978 | stop | salto_el_stop | 25.90 | -440.30 | 129.50 | 0.00 | -569.80 | 414.40 | -1.375
+> posiciones: 2; PnL neto total (USD): -52499.30

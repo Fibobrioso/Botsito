@@ -1,0 +1,79 @@
+
+## Simulacion (ADR-0053)
+MOTOR: spec vigente + broker simulado (ADR-0053)
+PERFIL: -; FASE: -
+DIAS CORRIDOS: 2
+TOPE DEL TRADER (RN-020, A-44): sin fijar: hueco con nombre
+RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes
+PRIMERO EN TOCAR UN LIMITE: por cuenta: ver cada mes
+CUENTA: UNA POR MES (ADR-0092 §8): 2 cuentas
+
+### Cuenta de 2030-01
+PRIMERO EN TOCAR UN LIMITE: firma (perdida diaria) en 2030-01-15T08:06:40+00:00
+RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 1 seguidas; la ultima el 2030-01-15
+estado: SUSPENDIDA
+motivo: perdida diaria: equity 48070.5000000 por debajo del limite del dia 95000 (saldo al corte 100000); perdida total: equity 48070.5000000 por debajo del limite total 90000
+instante: 2030-01-15T08:06:40+00:00
+saldo final: 48070.5000000
+equity final: 48070.5000000
+dias de trading: 1
+curva de equity (dia | saldo al corte | saldo final | equity minima):
+2030-01-15 | 100000 | 48070.5000000 | 48070.5000000
+
+### Cuenta de 2030-02
+PRIMERO EN TOCAR UN LIMITE: ninguno
+RACHA DE PERDIDAS (RN-036, A-51) al cerrar el mes: 1 seguidas; la ultima el 2030-02-12
+estado: EN_CURSO
+motivo: sin objetivo alcanzado ni limite infringido
+instante: -
+saldo final: 99430.2000000
+equity final: 99430.2000000
+dias de trading: 1
+curva de equity (dia | saldo al corte | saldo final | equity minima):
+2030-02-12 | 100000 | 99430.2000000 | 99430.2000000
+
+### Eventos del broker (dia | instante UTC | tipo | id | fuente)
+2030-01-15 | 2030-01-15T08:06:20+00:00 | llenada | o1 | ticks
+2030-01-15 | 2030-01-15T08:06:40+00:00 | stop | pos-o1 | ticks
+2030-02-12 | 2030-02-12T08:06:20+00:00 | llenada | o1 | ticks
+2030-02-12 | 2030-02-12T08:06:40+00:00 | stop | pos-o1 | ticks
+
+eventos: 4; por fuente: respaldo_m1 0, ticks 4
+rechazos del broker: 0
+huecos con nombre (primitivas sin contrato que se pidieron): ninguno
+
+### Ordenes (dia | sesion | id | colocada UTC | precio | resultado | motivo | instante del resultado | lote | distancia (puntos) | margen requerido (USD) | margen libre al colocar (USD) | riesgo (% del saldo) | lote del riesgo | limite | punto | caja 1)
+2030-01-15 | 07-11 | o1 | 2030-01-15T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-01-15T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+2030-02-12 | 07-11 | o1 | 2030-02-12T07:59:59.999000+00:00 | 1.09995 | llenada | - | 2030-02-12T08:06:20+00:00 | 25.90 | 16 | 94969.26 | 100000.00 | 0.414 | 31.25 | margen | - | -
+ordenes: llenada 2
+
+### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del riesgo)
+ninguna
+no enviadas: 0
+
+### Rechazos por motivo (mes | motivo | peticion | rechazos)
+ninguno
+
+### Peticiones al servidor (R13; dia de la firma en Europe/Prague)
+LECTURA: colocar, modificar, cancelar y cerrar, aceptadas o rechazadas, emitidas por el bot; solo se mide, nada frena
+dia | total | colocar | modificar | cancelar | cerrar | rechazadas
+2030-01-15 | 1 | 1 | 0 | 0 | 0 | 0
+2030-02-12 | 1 | 1 | 0 | 0 | 0 | 0
+maximo diario: 1 (2030-02-12); firma_mensajes_dia_max: 2000
+
+### El freno de peticiones (ADR-0067)
+umbrales: aviso 1000, corte 1500, bucle 5 iguales en 1 min
+ningun aviso ni ninguna peticion negada
+
+### Los cierres de mercado (ADR-0068)
+calendario: sin calendario: el broker no comprueba los cierres
+ninguna peticion negada ni ninguna pendiente cancelada
+
+## El metodo de ADR-0092 (solo salida: ninguna decision ni ningun llenado lo lee)
+
+### Posiciones (dia | sesion | id | orden | lado | tipo de orden | llenada UTC | entrada | cierre UTC | precio de cierre | cierre | desenlace | lote | PnL bruto (USD) | comision (USD) | swaps (USD) | PnL neto (USD) | riesgo al colocar (USD) | R neto)
+2030-01-15 | 07-11 | pos-o1 | o1 | compra | limite | 2030-01-15T08:06:20+00:00 | 1.09995 | 2030-01-15T08:06:40+00:00 | 1.07995 | stop | salto_el_stop | 25.90 | -51800.00 | 129.50 | 0.00 | -51929.50 | 414.40 | -125.312
+2030-02-12 | 07-11 | pos-o1 | o1 | compra | limite | 2030-02-12T08:06:20+00:00 | 1.09995 | 2030-02-12T08:06:40+00:00 | 1.09978 | stop | salto_el_stop | 25.90 | -440.30 | 129.50 | 0.00 | -569.80 | 414.40 | -1.375
+posiciones: 2; PnL neto total (USD): -52499.30
+
+sin el criterio de ADR-0092 (corrida sin criterio_fidelidad.yaml): ni cascada ni rentabilidad

@@ -184,7 +184,8 @@ intravela en la primera marca que cruce; exige evaluar el gate dentro de `Broker
 > vez de arrastrarse entre meses no contiguos (ADR-0092 §8). En la medida de rentabilidad sobre los
 > meses no vistos, que son seguidos, la cuenta persiste en todo el tramo, como dice el cuerpo
 > (ADR-0092 §5). Lo implementa `trabajo/cuenta-por-mes`; hasta entonces el código hace lo que dice
-> el cuerpo.
+> el cuerpo. Implementado en `trabajo/cuenta-por-mes` (2026-11-07; lo que empieza de nuevo, en la
+> NOTA de ADR-0092 §8).
 
 La cuenta PERSISTE en todo el tramo (ADR-0050, ADR-0049 H6): un `CuentaViva` por corrida, con sus
 cortes diarios, su límite total y sus días de trading. El estado de estrategia empieza cada día de

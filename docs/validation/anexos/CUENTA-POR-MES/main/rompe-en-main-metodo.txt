@@ -1,0 +1,15 @@
+
+=================================== ERRORS ====================================
+__________ ERROR collecting tests/unit/test_cuenta_por_mes_metodo.py __________
+ImportError while importing test module 'C:\cm\cpm2\tests\unit\test_cuenta_por_mes_metodo.py'.
+Hint: make sure your test modules/packages have valid Python names.
+Traceback:
+C:\Users\USER\AppData\Local\Programs\Python\Python312\Lib\importlib\__init__.py:90: in import_module
+    return _bootstrap._gcd_import(name[level:], package, level)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+tests\unit\test_cuenta_por_mes_metodo.py:13: in <module>
+    from botsito.cases.criterio_fidelidad import (
+E   ImportError: cannot import name 'CuentaDelTramo' from 'botsito.cases.criterio_fidelidad' (C:\cm\cpm2\src\botsito\cases\criterio_fidelidad.py)
+=========================== short test summary info ===========================
+ERROR tests/unit/test_cuenta_por_mes_metodo.py
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!

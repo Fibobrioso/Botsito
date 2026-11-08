@@ -675,6 +675,42 @@ def equity_minima_del_tramo(curva: Sequence[DiaCurva], capital: Decimal) -> Frac
     return Fraction(min(peor, capital)) / Fraction(capital)
 
 
+@dataclass(frozen=True)
+class CuentaDelTramo:
+    """Una cuenta mensual (ADR-0092 §8): su mes, su curva y si entro en SUSPENDIDA."""
+
+    mes: str
+    curva: tuple[DiaCurva, ...]
+    suspendida: bool
+
+
+@dataclass(frozen=True)
+class MedidaPorCuentas:
+    perdida_diaria_maxima: Fraction
+    mes_perdida_diaria: str | None  # el de la peor cuenta; None sin cuentas
+    equity_minima: Fraction
+    mes_equity_minima: str | None
+    meses_suspendidos: tuple[str, ...]
+
+
+def medir_por_cuentas(
+    cuentas: Sequence[CuentaDelTramo], capital: Decimal, base: str
+) -> MedidaPorCuentas:
+    """ADR-0092 §3 d), e) y f) con una cuenta por mes (§8): d) y e) de cada cuenta contra el capital
+    inicial del perfil, el mismo para todas, y la peor con su mes (a igualdad, la primera); f), los
+    meses de las que entraron en SUSPENDIDA. Como d) y e) son un maximo y un minimo por dia, la peor
+    cuenta da la misma cifra que la curva de todos los dias seguida: lo nuevo es el mes."""
+    if not cuentas:
+        return MedidaPorCuentas(Fraction(0), None, Fraction(1), None, ())
+    d = [(perdida_diaria_maxima(c.curva, capital, base), c.mes) for c in cuentas]
+    e = [(equity_minima_del_tramo(c.curva, capital), c.mes) for c in cuentas]
+    peor_d = max(d, key=lambda x: x[0])
+    peor_e = min(e, key=lambda x: x[0])
+    return MedidaPorCuentas(
+        peor_d[0], peor_d[1], peor_e[0], peor_e[1], tuple(c.mes for c in cuentas if c.suspendida)
+    )
+
+
 BASE_SALDO_CORTE = "saldo_corte_diario"
 BASE_CAPITAL = "saldo_inicial_cuenta"
 BASES_PERDIDA_DIARIA = frozenset({BASE_SALDO_CORTE, BASE_CAPITAL})
@@ -694,6 +730,10 @@ class MedidaRentabilidad:
     equity_minima: Fraction
     suspendida: bool
     replicas_descartadas: int = 0  # replicas sin ninguna operacion (PARADA 2, punto 2)
+    # una cuenta por mes (ADR-0092 §8): cuantas cuentas mide y los meses de las que entraron en
+    # SUSPENDIDA, para el motivo de f); con una, el de siempre
+    cuentas: int = 1
+    meses_suspendidos: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -763,7 +803,11 @@ def veredicto_rentabilidad(
             f"{_por_ciento(1 - criterio.perdida_total_max)}"
         )
     if medida.suspendida:
-        motivos.append("f) la cuenta entro en SUSPENDIDA")
+        motivos.append(
+            "f) la cuenta entro en SUSPENDIDA"
+            if medida.cuentas == 1
+            else f"f) alguna cuenta entro en SUSPENDIDA ({', '.join(medida.meses_suspendidos)})"
+        )
     if motivos:
         return VeredictoRentabilidad(NO_PASA, tuple(motivos))
     if criterio.deslizamiento == DESLIZAMIENTO_PENDIENTE_F17 and not deslizamiento_medido:
@@ -890,6 +934,7 @@ __all__ = [
     "Criterio",
     "CriterioError",
     "CriterioRentabilidad",
+    "CuentaDelTramo",
     "curva_con_deslizamiento",
     "DESLIZAMIENTO_PENDIENTE_F17",
     "emparejar",
@@ -903,8 +948,10 @@ __all__ = [
     "LLENADA_FUERA",
     "MaterialSinVideo",
     "Medida",
+    "MedidaPorCuentas",
     "MedidaRentabilidad",
     "medir",
+    "medir_por_cuentas",
     "medir_rentabilidad",
     "NO_LLENADA",
     "NO_PASA",

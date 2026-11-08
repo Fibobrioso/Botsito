@@ -2322,8 +2322,9 @@ def _opciones_diagnostico(parser: argparse.ArgumentParser) -> None:
         "--diagnostico-cuenta-diaria",
         action="store_true",
         help="con --simular, la cuenta simulada empieza de cero cada dia en vez de arrastrarse "
-        "(ADR-0053 §6), para medir el bot sin que los frenos de la firma corten el tramo; "
-        "etiquetado DIAGNOSTICO-CUENTA-diaria; no cuenta para nada",
+        "dentro de cada mes (una cuenta por mes, ADR-0092 §8), para medir el bot sin que los "
+        "frenos de la firma corten el tramo; etiquetado DIAGNOSTICO-CUENTA-diaria; no cuenta para "
+        "nada",
     )
 
 

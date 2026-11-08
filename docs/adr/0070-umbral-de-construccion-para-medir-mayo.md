@@ -119,6 +119,7 @@ punto J de la Next Action). Informe: `docs/validation/UMBRAL-MAYO.md`.
    > no una opción: `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` no cambia y `--diagnostico-cuenta-diaria`
    > sigue siendo diagnóstico. La implementa `trabajo/cuenta-por-mes`, antes de la re-corrida que
    > cuenta. El umbral, la lista cerrada y la línea «habilita medir…» (punto 5) no cambian.
+   > Implementado en `trabajo/cuenta-por-mes` (2026-11-08).
 
 4. **Si no llega, se sigue construyendo y mayo no se toca.** El umbral no se relaja después de ver
    una corrida: cambiarlo exige un ADR nuevo que declare lo visto.

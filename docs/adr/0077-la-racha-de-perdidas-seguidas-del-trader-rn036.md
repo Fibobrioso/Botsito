@@ -49,6 +49,11 @@ cero (`racha_perdidas_corte`).
   y con la misma regla de `cuenta_diaria` (en diagnóstico, se reinicia cada día). RN-036 no lee
   ningún parámetro de A-44 y corre sin `--diagnostico-a44` (medido: `tests/unit/test_racha_perdidas.py`
   corre el cableado con `tope=None`).
+  > **NOTA (2026-11-08, `trabajo/cuenta-por-mes`; no reescribe el cuerpo).** Donde dice que
+  > `SeguidorRacha` persiste entre días como la cuenta: y como ella, empieza de nuevo con cada
+  > cuenta del recorrido (ADR-0092 §8). En construcción, una cuenta por mes; en los meses no
+  > vistos, una sola, arrastrada (ADR-0092 §5). Decisión del consultor del 2026-11-08 (respuesta a
+  > la PARADA de `docs/validation/CUENTA-POR-MES.md`, punto 1): lo que dijo el trader no cambia.
 - **RN-036** (gate): cuando `racha_perdidas` alcanza `racha_perdidas_max`, o mientras
   `detenido_por_racha` esté encendido, prohíbe `abrir_operacion`, fija `detenido_por_racha` a
   `hasta_el_dia_siguiente` y **retira la orden pendiente que quede** (`retirar_ordenes_pendientes`,

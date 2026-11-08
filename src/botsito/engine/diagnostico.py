@@ -33,7 +33,8 @@ ETIQUETA_A27 = "DIAGNOSTICO-A27"
 # A-47 (rama trabajo/selector-orden-stop, ADR-0056 §1): el tipo de la orden de entrada
 ETIQUETA_A47 = "DIAGNOSTICO-A47"
 # La cuenta reiniciada cada dia (revision del consultor de F35, ADR-0064): la corrida normal
-# arrastra la cuenta entre dias (ADR-0053 §6) y sus frenos cortan el tramo; esta, no, para
+# arrastra la cuenta entre los dias de cada mes, una cuenta por mes (ADR-0092 §8, que enmienda
+# ADR-0053 §6), y sus frenos cortan el mes; esta, no, para
 # medir el bot sin el camino de la cuenta. No es una ambiguedad: no lleva `A`
 ETIQUETA_CUENTA = "DIAGNOSTICO-CUENTA"
 # Los modos hipoteticos de A-44: sin tope (el trader dice que no tiene) o un MARCADOR que no es un
