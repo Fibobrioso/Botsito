@@ -863,14 +863,10 @@ def informe_simulacion(motor: MotorCableado) -> str:
         f"DIAS CORRIDOS: {len(dias)}",
         "TOPE DEL TRADER (RN-020, A-44): "
         + (motor.tope.descripcion() if motor.tope is not None else "sin fijar: hueco con nombre"),
+        # la racha NO va por cuenta mientras la PARADA condicional 1 de CUENTA-POR-MES.md siga
+        # abierta: sigue entre meses, y la cabecera da la de toda la corrida, como siempre
         "RACHA DE PERDIDAS (RN-036, A-51): "
-        + (
-            POR_CUENTA
-            if varias
-            else motor.racha.descripcion()
-            if motor.racha is not None
-            else "sin dias corridos"
-        ),
+        + (motor.racha.descripcion() if motor.racha is not None else "sin dias corridos"),
         "PRIMERO EN TOCAR UN LIMITE: "
         + (POR_CUENTA if varias else _primero_en_tocar(motor.primero_en_tocar)),
     ]

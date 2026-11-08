@@ -133,7 +133,11 @@ encargo.
    (`knowledge/spec/strategy_spec.yaml:847-853`, protegido por el encargo), el trader dijo «la
    racha sigue de un día a otro y una semana otra» (`parametros.yaml:1416-1426`) y ADR-0077 §3 la
    ata a la cuenta «PERSISTE entre días como la cuenta» (`:46-49`), igual que `racha.py:1-3`
-   (fuera de las rutas). ADR-0092 §8 solo habla de «la cuenta». **Aplicado mientras tanto: la racha
+   (fuera de las rutas). ADR-0092 §8 solo habla de «la cuenta». [Matiz del revisor, a5: esa
+   descripción de la spec nombra `racha_perdidas_reinicio = nunca`, y el valor vigente del registro
+   es `tras_la_detencion` desde el 2026-10-26 (S-21, `fb-2026-10-23-sesion-05-978be13f`): la spec
+   ya estaba desfasada en `main`. La conclusión no cambia: ninguno de los dos valores reinicia la
+   racha por el calendario.] **Aplicado mientras tanto: la racha
    NO se reinicia al cambiar de mes** (lo de hoy); la cuenta, el seguidor y el primero en tocar,
    sí. **Propuesta:** aplicar D1 entero, porque ADR-0077 §3 la hace vivir «como la cuenta» y en
    vivo la cuenta nunca salta de enero a abril; eso pide, en el mismo commit, una NOTA en ADR-0077
@@ -226,13 +230,18 @@ Pasan en `main`, como deben: los dos goldens (`dentro-de-un-mes`, `diaria-dos-me
 el `xfail` estricto de la racha es `XFAIL` también en `main` (allí tampoco se reinicia). Los otros
 cuatro fallan en `main` por `AttributeError: 'MotorCableado' object has no attribute
 'cuentas_cerradas'`: prueban la conservación de D3 (y que la diaria y un mes no conserven nada),
-que en `main` no existe; no son los que prueban el reinicio.
+que en `main` no existe; no son los que prueban el reinicio. [Corrección tras el revisor, b1: uno
+de los cuatro, `test_la_cuenta_cambia_por_el_mes_de_la_clave_...`, sí prueba la condición de mes;
+se reordenó para que en `main` falle por lo que mide, y la corrida final contra `main`, con los tests
+del punto 3, va en «Lo que se hizo con los hallazgos del revisor».]
 
 ### Punto 3 · La salida (D4, D5) y los textos de D7
 
 - `informe_simulacion`: con un solo mes, o con la diaria, el código de siempre, sin tocar (el `if`
   nuevo solo envuelve el bloque del veredicto y la curva). Con varios meses (hay cuentas
-  cerradas): en la cabecera «RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes», «PRIMERO
+  cerradas): en la cabecera «RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes» [cambiado
+  tras el revisor, b2: mientras siga la PARADA condicional 1, la cabecera da la racha de toda la
+  corrida, como siempre; desviación 7], «PRIMERO
   EN TOCAR UN LIMITE: por cuenta: ver cada mes» y «CUENTA: UNA POR MES (ADR-0092 §8): N cuentas»
   (tras el primer toque, donde va la línea de la diaria); y en vez de «### Veredicto de la cuenta
   sobre el tramo» y «### Curva de equity», un bloque «### Cuenta de AAAA-MM» por cuenta, en orden,
@@ -297,7 +306,16 @@ c: []
 PROJECT_STATE con las lineas del cierre: 22682 bytes (wc -c de la copia); con las cuatro lineas de cabecera del cierre: 22616; los tests de test_project_state: ok
 ```
 
+[Tras el revisor (a6, b5) el guion añade una línea de Technical Debt (abajo) y pasa los cuatro tests
+de `test_project_state` también sobre la copia con las cuatro cabeceras; su salida final: «a: [] b:
+[] c: []», «PROJECT_STATE con las lineas del cierre: 22878 bytes (st_size de la copia, los mismos
+que wc -c); con las cuatro lineas de cabecera del cierre: 22812; los cuatro tests de
+test_project_state, sobre las dos: ok».]
+
 **Por debajo de 23.000: no hace falta recorte.** Las líneas, literales en el guion:
+- **Technical Debt, una línea nueva** (revisor, a6): «`curva_con_deslizamiento` y
+  `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre
+  cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).»
 - **F**: «Siguiente: la rama de la cuenta por mes (ADR-0092, trabajo/cuenta-por-mes) y después la
   re-corrida que cuenta …» pasa a «Siguiente: la re-corrida que cuenta (ADR-0070 §3), la primera
   con la comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091, el método de ADR-0092 y
@@ -343,6 +361,14 @@ PROJECT_STATE con las lineas del cierre: 22682 bytes (wc -c de la copia); con la
    como `###` propio, para que el bloque sea uno solo; y la racha lleva «al cerrar el mes».
 6. **D7, los guiones**: dos de los cuatro que nombra el encargo no llevan el rótulo y uno no
    construye el motor (fase 0, e) 1): se cambiaron los dos rótulos que existen.
+7. **D4, la línea de la racha en la cabecera** (tras el revisor, b2): D4 pide «por cuenta: ver cada
+   mes», pero con la PARADA condicional 1 abierta la racha no va por cuenta, sigue entre meses. La
+   cabecera da la racha de toda la corrida, como hoy, y la línea de cada bloque («al cerrar el
+   mes») da la acumulada hasta ese mes. Si el consultor responde «la racha también», la cabecera
+   pasa a «por cuenta: ver cada mes» en el mismo commit.
+8. **Los tests del punto 3, en otro fichero** (tras el revisor, a4 y b1): las dos pruebas de las
+   piezas puras de `criterio_fidelidad.py` van en `tests/unit/test_cuenta_por_mes_metodo.py`, para
+   que `test_cuenta_por_mes.py` solo importe lo que existe en `main` y se pueda correr allí.
 
 ### Lo que no se pudo medir
 
@@ -384,12 +410,204 @@ ERRORES-RECURRENTES, preparada (se completa con lo que encuentren el revisor y e
 | 17 | D8: NOTA en ADR-0092 §8 y su fila del índice; NOTAs en 0050 y 0049; «Implementado» en el recuadro de 0053 | Hecho | 12c4861 |
 | 18 | Fase 0 a)-e), commiteada sola | Hecho | f66ce24 |
 | 19 | Fase 1, un commit por punto, con state check, `make check`, ruff y mypy | Hecho | 12c4861, 8d7b359, 1912f77 y el del punto 4 |
-| 20 | La fila de HOLDOUT-EXPOSICIONES antes del primer clon / `make check` de cada día | **Hecho de otra forma** | la del 7, tarde (desviación 1); la del 8, antes |
-| 21 | Punto 4: las líneas del cierre sobre una copia; tests de la hoja y de PS en verde; `wc -c` con las cuatro cabeceras; PARADA si pasa de 23.000 | Hecho | 22.682 y 22.616 bytes: sin PARADA |
+| 20 | La fila de HOLDOUT-EXPOSICIONES antes del primer clon / `make check` de cada día | **Parcial** (revisor, b3) | la del 7, tarde (desviación 1); la del 8, antes |
+| 21 | Punto 4: las líneas del cierre sobre una copia; tests de la hoja y de PS en verde; `wc -c` con las cuatro cabeceras; PARADA si pasa de 23.000 | Hecho | 22.878 y 22.812 bytes (tras el revisor): sin PARADA |
 | 22 | Sin `fix/`: no toca hooks, rutas, `.claude/` ni plataforma | Hecho | `git diff --stat`: nada de eso |
 | 23 | Informe con todo, y el revisor (opus) con los siete alcances, pegado al final | Hecho | abajo |
 | 24 | Rama lista para revisión, NO cerrada | Hecho | `## Estado` |
 
+## Lo que se hizo con los hallazgos del revisor
+
+Ninguno bloquea. Uno por uno:
+
+- **a1 (importa), la fila del 2026-11-07 escrita el 8.** Sin arreglo en la rama: está declarada
+  (desviación 1 y la propia fila) y lo expuesto fue «ninguna». Decide el consultor; va en la fila
+  de ERRORES-RECURRENTES preparada.
+- **a2 (importa), un fichero escrito con `make check` corriendo.** Sin arreglo posible: declarado
+  (desviación 2); la huella cuadró. Va en la fila de ERRORES-RECURRENTES.
+- **a3 (importa), `generar_goldens.py` citado y no existe.** Arreglado: el docstring de
+  `test_cuenta_por_mes.py`, el de `escenarios_cuenta_por_mes.py` y la fila de HOLDOUT-EXPOSICIONES
+  del 2026-11-08 nombran ya lo que se hizo (`test_el_volcado_de_los_escenarios` por `pytest -s` y
+  `partir_volcado.py`); la fila lo dice con «revisor, a3». La fila es de esta rama, no está en `main`.
+- **a4 (importa), «los goldens pasan en `main`» y el fichero no importa en `main`.** Arreglado: las
+  dos pruebas de las piezas puras salen a `tests/unit/test_cuenta_por_mes_metodo.py`, y
+  `test_cuenta_por_mes.py` solo importa lo que existe en `main` (desviación 8). Medido abajo.
+- **a5 (importa), la PARADA 1 sin el valor vigente del registro.** Añadido el matiz en la PARADA
+  condicional, punto 1: la spec ya estaba desfasada en `main` (`nunca` frente a `tras_la_detencion`);
+  la conclusión no cambia.
+- **a6 (importa), la deuda de `curva_con_deslizamiento` / `veredicto_con_f17` sin anotar.** Entra
+  una línea de Technical Debt en las líneas del cierre (`simular_cierre.py` y punto 4); con ella
+  PROJECT_STATE queda en 22.878 bytes.
+- **a7 (menor), «como la cuenta» mal atribuido en la NOTA de ADR-0092 §8.** Arreglado: la NOTA cita
+  ahora lo que dice ADR-0089:59 («nace cada día con la cuenta», del seguidor con la diaria). La
+  NOTA es de esta rama.
+- **b1 (importa), los tests del punto 3 sin correr contra `main`.** Arreglado. En un clon desacoplado
+  de `main` (`C:/cm/cpm2`, 8aeed0b) con los tres ficheros de test y los goldens del árbol de
+  trabajo, idénticos a los de este commit: `PYTHONUTF8=1 uv run pytest -q -p no:cacheprovider -rA
+  tests/unit/test_cuenta_por_mes.py`, exit 1 (`anexos/CUENTA-POR-MES/main/rompe-en-main-final.txt`):
+  - PASSED en `main`: los dos goldens, el volcado y
+    `test_con_un_mes_la_seccion_de_adr0092_es_la_de_main`; XFAIL, la racha.
+  - FAILED por lo que miden: `test_el_segundo_mes_vuelve_a_operar_desde_el_capital` (`assert 0 ==
+    1`), `test_el_seguidor_del_tope_y_el_primer_toque_...` (los cortes de febrero),
+    `test_el_visor_ve_el_saldo_del_mes_nuevo_desde_el_capital` (`48070.5000000 == 99430.2000000`),
+    `test_la_cuenta_cambia_por_el_mes_de_la_clave_...` (la curva lleva los cuatro días: `['2030-01-15'
+    ... '2030-02-13'] == ['2030-02-12', '2030-02-13']`, ya reordenado),
+    `test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta` (no hay «CUENTA: UNA POR MES») y
+    `test_con_varios_meses_d_y_e_son_por_cuenta_y_f_dice_cual` (a) N es 1, no 2).
+  - FAILED por `AttributeError` (`cuentas_cerradas`), los de D3: `test_hasta_la_respuesta_...` (tras
+    pasar `racha == 2`, que en `main` también es 2), `test_con_la_diaria_no_se_conserva_...` y
+    `test_dentro_de_un_mes_no_se_cierra_...`.
+  - Y `test_cuenta_por_mes_metodo.py` en `main`: exit 2, `ImportError: cannot import name
+    'CuentaDelTramo'` (`main/rompe-en-main-metodo.txt`): lo que prueba no existe allí.
+  Juntos los dos ficheros en una sola llamada, pytest salió con exit 2 sin correr nada (el error de
+  importación corta la recogida): por eso van por separado. Corregida también la frase del punto 2
+  que decía que ninguno de los cuatro de `AttributeError` probaba el reinicio.
+- **b2 (importa), la cabecera dice «por cuenta» de la racha.** Arreglado en el código: con varios
+  meses la cabecera da la racha de toda la corrida, como siempre, mientras siga la PARADA 1
+  (desviación 7); su test aserta «2 seguidas; la ultima el 2030-02-12».
+- **b3 (menor), la fila 20 de la tabla.** Cambiada a «Parcial».
+- **b4 (menor), las filas 23 y 24 sin revisor ni Estado.** Este apartado, el informe del revisor
+  abajo y `## Estado`.
+- **b5 (menor), `simular_cierre.py`.** Pasa ya los cuatro tests de `test_project_state` también con
+  las cuatro cabeceras y dice que mide con `st_size` (los mismos bytes que `wc -c`). La línea de
+  Estado de R3.8 sigue diciendo HECHA: su «Hecho cuando» («la cuenta empieza de nuevo en cada mes …,
+  con su test») se cumple con la racha pendiente; si el consultor responde «la racha también», la
+  línea lo añade en ese commit (punto 4).
+
+En la rama, con lo arreglado: `ruff format`, `ruff check` y `mypy` en verde sobre lo tocado, y
+`pytest` de `test_cuenta_por_mes.py`, `test_cuenta_por_mes_metodo.py`, `test_metodo_adr0092.py`,
+`test_racha_perdidas.py` y `test_cableado.py` en verde (1 XFAIL, la racha). No se volvió a pasar el
+revisor: los arreglos son los que él pidió, uno por uno.
+
+## Informe del revisor (subagente `revisor`, opus, 2026-11-08), tal cual
+
+## Informe del revisor · trabajo/cuenta-por-mes · 2026-11-08
+
+Base: `git merge-base main HEAD` = 8aeed0b. Commits revisados: 15b1374, f66ce24, 12c4861, 8d7b359 y 1912f77, más lo estadiado del punto 4 (`docs/validation/CUENTA-POR-MES.md` M y `docs/validation/anexos/CUENTA-POR-MES/simular_cierre.py` A). No he escrito nada en el repo.
+
+Resumen: ningún bloquea. 8 importa y 4 menor entre los dos ejes. Cinco de los importa son de forma o de citas. Los que tocan el fondo son tres: los tests del punto 3 no se corrieron contra main (b1), la cabecera dice «por cuenta» de la racha aunque la racha no va por cuenta (b2), y la deuda de `curva_con_deslizamiento`/`veredicto_con_f17` no está anotada en ningún sitio (a6). La PARADA condicional está justificada en sus tres puntos.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 6 importa, 1 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | La exposición del 2026-11-07 no se declaró ese día: la fila se escribió el 2026-11-08. CLAUDE.md pide declararla «el mismo dia, siempre» (ADR-0021 §4) y la lección 8 de F38r, antes del primer `make check`. Lo pongo en importa y no en bloquea por tres razones: está declarado (desviación 1 y la propia fila lo dice), todo lo expuesto fue «ninguna» y en la rama ya no tiene arreglo. Decide el consultor. | `docs/validation/HOLDOUT-EXPOSICIONES.md`, fila 2026-11-07 de la rama: «Las tres cosas se hicieron ANTES de esta fila … la fila se escribe el 2026-11-08»; `CUENTA-POR-MES.md:322-326` |
+| a2 | importa | Se escribió un fichero en el repo con `make check` corriendo (CLAUDE.md, «Ensayos aislados», punto 3). Está declarado y la huella cuadró, pero es una regla rota. | `CUENTA-POR-MES.md:327-331` (desviación 2) |
+| a3 | importa | Tres sitios citan un guion que no existe, `docs/validation/anexos/CUENTA-POR-MES/generar_goldens.py`. El informe dice que ese guion lo negó la guardia y que los goldens salieron por `pytest -s` + `partir_volcado.py`. La fila de exposición dice, por tanto, con qué herramienta se hizo algo que no se hizo así. | `tests/unit/test_cuenta_por_mes.py:9`; `tests/unit/escenarios_cuenta_por_mes.py:3-4`; `HOLDOUT-EXPOSICIONES.md`, fila 2026-11-08: «genera los goldens (`generar_goldens.py`)»; `ls docs/validation/anexos/CUENTA-POR-MES/` → `diff-dos-meses-con-criterio.txt diff-dos-meses.txt main medir_meses.py meses-fase0.txt partir_volcado.py rama simular_cierre.py` |
+| a4 | importa | El docstring del test dice «Los dos goldens pasan en `main`». Eso era verdad del fichero de 8d7b359. El fichero final importa `CuentaDelTramo` y `medir_por_cuentas`, que no existen en main, así que en main el módulo entero falla al importar. | `tests/unit/test_cuenta_por_mes.py:15` y `:28-38`; `git show 8d7b359:tests/unit/test_cuenta_por_mes.py` no importa nada de `criterio_fidelidad`; las dos clases las añade `git diff main...HEAD -- src/botsito/cases/criterio_fidelidad.py` |
+| a5 | importa | La PARADA 1 se apoya en el texto de la spec («el calendario no la reinicia (racha_perdidas_reinicio = nunca)») y en la cita del trader de la opción `nunca`. No dice que el valor vigente del registro es `tras_la_detencion` (desde el 2026-10-26, S-21), ni que la descripción de la spec está desfasada frente al registro (desfase que ya estaba en main). La conclusión se sostiene igual, porque el calendario sigue sin reiniciarla, pero la cita describe una opción que ya no es la vigente. | `knowledge/spec/strategy_spec.yaml:852`; `knowledge/spec/parametros.yaml`, `racha_perdidas_reinicio`: «valor: tras_la_detencion», fuente `fb-2026-10-23-sesion-05-978be13f`; `CUENTA-POR-MES.md:131-136` |
+| a6 | importa | «Anotado como deuda, sin tocarlos» (e) 8: `curva_con_deslizamiento`/`veredicto_con_f17` arrastrarían `previo` entre cuentas). No está anotado en ningún sitio más que el informe: ni en Technical Debt ni en las líneas del cierre de `simular_cierre.py`. | `CUENTA-POR-MES.md:118-120`; Grep `curva_con_deslizamiento\|veredicto_con_f17` en `*.md`: solo CUENTA-POR-MES.md:118 y METODO-FIDELIDAD-RENTABILIDAD.md; `git diff main...HEAD -- PROJECT_STATE.md` no lo añade |
+| a7 | menor | La NOTA de ADR-0092 §8 pone entre comillas «como la cuenta» y la atribuye a «ADR-0053 §6, ADR-0089». Esa frase no está en ninguno de los dos. ADR-0089:59 dice «el seguidor nace cada día con la cuenta»; la frase literal es de ADR-0077 §3, sobre la racha. | `docs/adr/0092-…md`, NOTA de §8; `grep -n "como la cuenta" docs/adr/0089-*.md docs/adr/0053-*.md` → sin coincidencias |
+
+Comprobado sin hallazgos:
+- **Contrato.** `contrato_rama.py`: «CONTRATO: 35 ficheros dentro del contrato de trabajo/cuenta-por-mes (riesgo alto, … 3 comprobaciones para el revisor)». `botsito state check`: «OK: rama 'trabajo/cuenta-por-mes' …».
+- **`make check`.** El del punto 4 está corriendo: `make-check.log` va por el 15 % de pytest, con «SELLO: borrado el anterior», y todavía no hay línea SELLO ni PICO DE MEMORIA. Los cuatro commits anteriores pasaron el hook, que exige el sello.
+- **Trailers `Fuente:`.** No hacen falta: `git log main..HEAD -- knowledge` sale vacío y la rama no toca `knowledge/spec` ni `knowledge/cases`.
+- **Holdout.** Nada tocado; ningún libro, imagen, fotograma ni cruda en la rama.
+- **Regímenes de cambio.**
+  - `knowledge/`, `data/manifests/` y `tests/golden/informe_simulacion/`: sin cambios.
+  - `HOLDOUT-EXPOSICIONES.md`: solo dos líneas añadidas.
+  - `HISTORIA.md` (161/0) y el encargo (51/0): solo añaden.
+  - Ningún informe cerrado de `docs/validation/` se toca.
+  - `arnes.py`, `cuenta.py` y `racha.py`: diff vacío.
+- **ADR.** No se crea ninguno. Los cuatro tocados solo ganan NOTAs o recuadros, sin tocar el cuerpo ni el `## Estado`.
+- **Tres guardias de una `cita`.** No aplica: no hay ningún sitio nuevo con `cita`.
+- **Cifras.** No entra ningún literal de negocio en la forma ejecutable.
+- **Evidencia nueva.** No hay ningún ítem nuevo.
+- **Tres citas del informe, comprobadas contra su fuente:** `strategy_spec.yaml:847-853`, ADR-0077:46 («PERSISTE entre días como la cuenta») y `test_hoja_de_ruta.py:144-145` («esta HECHA y la letra sigue viva»). Las tres cuadran. También cuadran `criterio_fidelidad.py:657-675` (d y e son un máximo y un mínimo por día) y `racha.py:1-3`.
+
+### Eje (b) · Encargo
+Resumen: 0 bloquea, 2 importa, 3 menor. Requisitos: 19 hechos (3 de ellos de otra forma, declarados), 3 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base: main 8aeed0b, tag en a1907fa, CI 42440794180, ninguna otra rama | Hecho | merge-base = 8aeed0b; informe §0 |
+| 2 | abrir-rama: contrato (tramo entre comillas, riesgo alto, artefacto, rutas), encargo y Archivo 61 | Hecho | `contrato.yaml:1-26`; 15b1374 |
+| 3 | No cambia nada de lo prohibido (estrategia, bróker, llenado, `cuenta.py`, spec, registro, perfiles, simulador, criterio.yaml, `OPCIONES_…`) | Hecho | `git diff --name-status main...HEAD -- knowledge/` vacío; `arnes.py`/`cuenta.py`/`racha.py` sin diff |
+| 4 | Ninguna corrida del arnés ni cifra agregada del bot | Hecho | Solo días de 2030 (`escenarios_cuenta_por_mes.py:19-22`). En el espía de la fase 0, `2026-04` es un test de main de un solo mes, de desarrollo |
+| 5 | NOTAs de una línea en ADR-0050 H6 y ADR-0049 | Hecho | Diff de los dos ADR, en 12c4861 |
+| 6 | Búsqueda de «cuenta por mes», «R3.8», … y añadir lo que falte | Hecho | Fase 0 b) y e); en `src/` y `scripts/` solo quedan las menciones de la red de seguridad (`cableado.py:141,194`) y `racha.py:2` (en PARADA 1) |
+| 7 | D1, el reinicio | Parcial (PARADA 1, justificada) | `cableado.py:307-315`: cuenta, seguidor y primer toque a `None`; la racha no se toca |
+| 8 | D2: condición en `correr_dia`, estado como atributo, sin opción | Hecho | `cableado.py:276-279` (`mes_en_curso`, `cuentas_cerradas`) y `:306-315` |
+| 9 | D3: cuentas conservadas en orden con todo; la diaria no conserva | Hecho | `CuentaDelMes` (`cableado.py:221-236`); `test_con_la_diaria_no_se_conserva_ninguna_cuenta` |
+| 10 | D4: con un mes, byte a byte; con varios, cabecera y bloques; la diaria igual | Hecho de otra forma (desviación 5, declarada) | `cableado.py:857-907`; goldens `cuenta_por_mes/`; `test_metodo_adr0092` en verde |
+| 11 | D5: d) y e) por cuenta, f) alguna, función pura con su test, golden de main y test | Hecho de otra forma (PARADA 2 y desviación 3, declaradas) | `medir_por_cuentas`; `tests/golden/metodo_adr0092/`; los hashes de la tabla del informe coinciden |
+| 12 | D6 (1)-(4) y (6), sintéticos, que rompan en main, con la salida contra main en el anexo | Hecho | `rompe-en-main-punto-2.txt:23` (`assert 0 == 1`), `:47-49` (cortes), `:120` (48070.5 frente a 99430.2) |
+| 13 | D6 (5) contra main | Parcial | No hay salida contra main de los tests del punto 3 (ver b1) |
+| 14 | D7: textos de `cli.py`, `diagnostico.py`, comentarios del motor y rótulos de los guiones; los seis tests sin cambiar | Hecho de otra forma (desviación 6, declarada) | Diff de `cli.py:2324-2327`, `diagnostico.py:35-38`, `embudo_77.py:905`, `f35_resultado_r.py:81-85`; `tests/` solo añade ficheros |
+| 15 | D8: NOTA en 0092 §8 con su fila del índice, NOTAs en 0050/0049, «Implementado» en el recuadro de 0053 | Hecho | 12c4861 |
+| 16 | Fase 0 a)-e), commiteada sola | Hecho | f66ce24: el informe y dos anexos de medida |
+| 17 | PARADA condicional: lo que no cuadra para, lo demás sigue | Hecho | Las tres justificadas (abajo) |
+| 18 | Fase 1, un commit por punto | Hecho | 12c4861, 8d7b359, 1912f77 y el punto 4 estadiado |
+| 19 | Fila de HOLDOUT-EXPOSICIONES antes del primer clon o `make check` de cada día | Parcial | La del 7, tarde (a1); la del 8, antes |
+| 20 | Punto 4: líneas del cierre sobre una copia, tests en verde, bytes, PARADA si pasa de 23.000 | Hecho | Lo ejecuté: «a: [] b: [] c: [] … 22682 bytes … 22616; los tests de test_project_state: ok» |
+| 21 | Sin `fix/` (no toca hooks, rutas, `.claude/` ni plataforma) | Hecho | `git diff --stat` |
+| 22 | Informe completo y «El encargo, punto por punto» | Hecho | `CUENTA-POR-MES.md:364-391` |
+
+Sobre la PARADA condicional, que se pidió comprobar:
+- **Punto 1 (la racha), justificado.** La spec dice «contando en TODOS los dias de la corrida … el calendario no la reinicia» (`strategy_spec.yaml:848-852`, ruta protegida), y ADR-0092 §8 solo habla de «la cuenta». Le falta el matiz de a5.
+- **Punto 2 (el motivo de f), justificado.** D5 reescribe el motivo sin condición y D4/D5 piden «con un solo mes, igual que hoy». Lo aplicado, el texto de main con una cuenta y el nuevo con varias, cumple las dos cosas (`criterio_fidelidad.py:806-810`).
+- **Punto 3 (ADR-0070), justificado.** El recuadro de ADR-0070 punto 3 dice en futuro «La implementa `trabajo/cuenta-por-mes`» (`docs/adr/0070-…md:120`); el fichero no está en las rutas y D8 no lo nombra.
+
+Dentro de un mes, nada cambia:
+- El único código nuevo en `correr_dia` es el `elif`, que solo entra si `mes != self.mes_en_curso`, y la asignación `self.mes_en_curso = mes` (`cableado.py:306-315`).
+- `informe_simulacion` toma el camino de siempre cuando `cuentas_cerradas` está vacía (`:857`, `:888-907`).
+- `cerrar_dia_en_curso` es pura (`cuenta.py:543-553`), así que la foto no muta la cuenta.
+- El golden `main-dentro-de-un-mes.txt` pasa en main (`rompe-en-main-punto-2.txt:543`) y en la rama (mi pytest).
+
+El reinicio y la diaria:
+- Con `cuenta_diaria`, la rama hace exactamente lo de main (`:307-308`) y no conserva nada.
+- `primero_en_tocar` sigue siendo de toda la corrida (`test_con_la_diaria_no_se_conserva_ninguna_cuenta`).
+- El golden `main-diaria-dos-meses.txt` pasa en main y en la rama.
+- El seguidor renace con `self.cuenta.saldo` de la cuenta nueva (`:332-335`).
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | D6 pide la salida contra main de los tests. Los del punto 3 (`test_con_varios_meses_la_salida_lleva_un_bloque_por_cuenta`, `test_con_varios_meses_d_y_e_…`, `test_medir_por_cuentas_…`, `test_el_motivo_de_f_…`) no se corrieron contra main. Con el fichero final ni siquiera se puede: falla al importar (a4). Solo hay evidencia indirecta, `anexos/…/main/dos-meses*.txt`. Aun así la tabla marca D6 como «Hecho» (fila 15). Además, el informe dice que los cuatro fallos por `AttributeError` «no son los que prueban el reinicio». No es exacto en un caso: `test_la_cuenta_cambia_por_el_mes_de_la_clave_y_no_por_los_dias_que_pasan` sí prueba la condición de mes, y en main falla por el atributo que no existe, no por lo que mide. | `CUENTA-POR-MES.md:225-229` y `:382`; `rompe-en-main-punto-2.txt:145` y `:553`; `test_cuenta_por_mes.py:227-244` |
+| b2 | importa | Con varios meses, la cabecera dice «RACHA DE PERDIDAS (RN-036, A-51): por cuenta: ver cada mes». Por la PARADA 1, la racha no es por cuenta: sigue acumulándose entre meses, y la línea de cada bloque («al cerrar el mes») da el acumulado de toda la corrida. Es el texto literal de D4, pero bajo lo aplicado induce a error, y el informe no lo declara. | `cableado.py:866-873` y `_bloque_de_cuenta` (`:834`); `test_hasta_la_respuesta_la_racha_sigue_de_un_mes_a_otro` (racha == 2 con dos cuentas) |
+| b3 | menor | La fila 20 de la tabla pone «Hecho de otra forma» para la fila de exposición tardía. No es otra forma: la del 7 no se hizo a tiempo, así que sería «Parcial» o «No hecho». | `CUENTA-POR-MES.md:387` |
+| b4 | menor | Las filas 23 y 24 ponen «Hecho» (el revisor pegado, `## Estado`) mientras el informe sigue en «EN CURSO.» y sin el informe del revisor. | `CUENTA-POR-MES.md:390-395` |
+| b5 | menor | `simular_cierre.py` comprueba con las cuatro cabeceras del cierre solo `test_project_state_cabe_en_el_tope`; las secciones y la rama declarada, solo sobre la copia sin cabeceras. Además rotula «wc -c» lo que mide con `stat().st_size` (dan los mismos bytes). Y la línea de Estado de R3.8 la da por HECHA aunque la PARADA 1 siga abierta; solo el texto queda condicionado (`:317-318`). | `simular_cierre.py` estadiado, bloque `with tempfile…`; `CUENTA-POR-MES.md:317-318` |
+
+Lo que la rama hace y el encargo no pide, todo declarado: dos campos nuevos en `MedidaRentabilidad` (desviación 3) y el test extra del mes por la clave. Lo que el encargo dice que no se toca está intacto (fila 3).
+
+### Lo que no pude comprobar
+- El SELLO y el PICO DE MEMORIA del `make check` del punto 4: estaba corriendo y no lo esperé.
+- Los tests del punto 3 con el código de main: haría falta un clon, que escribe.
+- Que el encargo sea copia literal del mensaje de Aleks: no tengo el original.
+- `git write-tree` del árbol estadiado: escribe en la base de objetos, así que no lo ejecuté.
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short && git diff --cached --stat`
+2. `uv run python scripts/contrato_rama.py` (un primer intento, encadenado con un grep, lo negó la guardia; lo repetí solo)
+3. `uv run botsito state check`
+4. `ls -la make-check.log && tail -5 make-check.log`
+5. `git diff main...HEAD -- src/botsito/engine/cableado.py`
+6. `grep` de las aserciones de `docs/validation/anexos/CUENTA-POR-MES/main/rompe-en-main-punto-2.txt` y `ls` de los anexos
+7. `git diff main...HEAD -- src/botsito/cases/criterio_fidelidad.py src/botsito/cli.py src/botsito/engine/diagnostico.py scripts/`
+8. `git diff main...HEAD -- docs/adr/ docs/validation/HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md`
+9. `git diff --name-status main...HEAD -- knowledge/ data/manifests/ tests/golden/informe_simulacion/ docs/validation/`; `git diff --cached --name-status`
+10. `git diff --numstat main...HEAD -- docs/state/HISTORIA.md docs/encargos/`; `git log main..HEAD -- knowledge`; diff de `arnes.py`/`cuenta.py`/`racha.py` | `wc -l` (0)
+11. `git show :docs/validation/anexos/CUENTA-POR-MES/simular_cierre.py`
+12. `uv run python -B docs/validation/anexos/CUENTA-POR-MES/simular_cierre.py` (en memoria; su copia va a una carpeta temporal fuera del repo)
+13. `grep cuenta_diaria src/botsito/cli.py`, `grep "visor no conecta" PROJECT_STATE.md` y `sed -n 2555,2560p src/botsito/cli.py`
+14. `git show 8d7b359:tests/unit/test_cuenta_por_mes.py | sed -n 17,45p` y `git diff 8d7b359 1912f77 --stat -- tests/`
+15. `uv run python -B -m pytest -q -p no:cacheprovider tests/unit/test_cuenta_por_mes.py tests/unit/test_metodo_adr0092.py`: todo verde, con 1 XFAIL (la racha)
+16. `sed` de `test_hoja_de_ruta.py:142-146`, `parametros.yaml:1400-1440`, `criterio_fidelidad.py:655-676`, `racha.py:1-4` y `test_project_state.py:19-22`
+17. `grep` de «como la cuenta», «PERSISTE» y «seguidor» en ADR-0089 y ADR-0053; `grep` de las menciones viejas en `src/`, `scripts/`, PROJECT_STATE y HOJA-DE-RUTA
+18. `git show --stat f66ce24 12c4861`; `tail` y `grep SELLO` de `make-check.log`
+19. Read: el encargo, `contrato.yaml`, `CUENTA-POR-MES.md`, `test_cuenta_por_mes.py`, `escenarios_cuenta_por_mes.py`, `strategy_spec.yaml:838-859`, ADR-0092:192-207, ADR-0070:110-123 y `cableado.py:296-335`; Grep en `cuenta.py`, `engine/` y `tests/`
+
+Recuento total: 0 bloquea, 8 importa (6 del eje a y 2 del eje b), 4 menor (1 del eje a y 3 del eje b).
+
 ## Estado
 
-EN CURSO.
+LISTA PARA REVISIÓN (2026-11-08). La cuenta es una por mes en `MotorCableado.correr_dia`: la
+cuenta, el seguidor del tope y el primer toque empiezan de nuevo al cambiar de mes; dentro de un
+mes, con un mes y con la diaria, la salida es la de `main` byte a byte. Quedan para el consultor
+las tres PARADAS condicionales: (1) la racha de RN-036, que hoy sigue entre meses; (2) el motivo de
+f), aplicado condicional; (3) el recuadro de ADR-0070 punto 3, sin tocar. Ninguna corrida del
+arnés. Sin `fix/`: no toca la plataforma.
+
+Rama lista para revisión, NO cerrada.

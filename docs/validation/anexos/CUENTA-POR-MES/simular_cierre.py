@@ -58,6 +58,13 @@ ps = cambiar(
     "- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2557; el arnés sí, :2437): con `--todos` arrastra la cuenta (VISOR-CONSTRUCCION.md §4.3).\n",
     "- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2558; el arnés sí, :2438): con `--todos --simular` corre una cuenta por mes como el arnés (ADR-0092 §8), nunca la diaria (VISOR-CONSTRUCCION.md §4.3).\n",
 )
+# Technical Debt: una linea nueva, tras la del visor (revisor, a6)
+ps = cambiar(
+    ps,
+    "nunca la diaria (VISOR-CONSTRUCCION.md §4.3).\n",
+    "nunca la diaria (VISOR-CONSTRUCCION.md §4.3).\n"
+    "- `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).\n",
+)
 
 # --- La hoja de ruta
 hoja = cambiar(
@@ -150,12 +157,15 @@ with tempfile.TemporaryDirectory() as tmp:
     tps.test_project_state_cabe_en_el_tope(copia)
     tamano = (copia / "PROJECT_STATE.md").stat().st_size
     (copia / "PROJECT_STATE.md").write_text(ps_cierre, encoding="utf-8", newline="\n")
+    tps.test_project_state_exists(copia)
+    tps.test_project_state_has_required_sections_in_order(copia)
+    tps.test_project_state_declares_a_branch(copia)
     tps.test_project_state_cabe_en_el_tope(copia)
     tamano_cierre = (copia / "PROJECT_STATE.md").stat().st_size
     print(
-        f"PROJECT_STATE con las lineas del cierre: {tamano} bytes (wc -c de la copia); con "
-        f"las cuatro lineas de cabecera del cierre: {tamano_cierre}; los tests de "
-        "test_project_state: ok"
+        f"PROJECT_STATE con las lineas del cierre: {tamano} bytes (st_size de la copia, los mismos "
+        f"que wc -c); con las cuatro lineas de cabecera del cierre: {tamano_cierre}; los cuatro "
+        "tests de test_project_state, sobre las dos: ok"
     )
     if max(tamano, tamano_cierre) >= 23_000:
         print("POR ENCIMA de la alerta de 23.000 del consultor", file=sys.stderr)

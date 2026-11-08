@@ -1,7 +1,8 @@
 """Escenarios SINTETICOS de `trabajo/cuenta-por-mes` (ADR-0092 §8 y su NOTA): el dia sintetico de
 `test_cableado.py` desplazado a otros dias de 2030, de uno o de dos meses. Solo usa lo que ya existe
 en `main` (8aeed0b), para que los goldens de `main` se generen con este MISMO codigo copiado a su
-clon (`docs/validation/anexos/CUENTA-POR-MES/generar_goldens.py`). Ninguna fecha real."""
+clon (`volcado`, abajo, y `docs/validation/anexos/CUENTA-POR-MES/partir_volcado.py`). Ninguna fecha
+real."""
 
 from __future__ import annotations
 

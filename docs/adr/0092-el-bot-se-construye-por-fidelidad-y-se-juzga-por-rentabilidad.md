@@ -209,8 +209,8 @@ meses, y `cableado.py`, que guarda la cuenta entre días; METODO-FIDELIDAD-RENTA
 > (el AAAA-MM de la clave del día corrido, la misma de `mercados` y `trazas_broker`) del día que se
 > va a correr es distinto del del último día corrido. Empiezan de nuevo **la cuenta, desde el
 > capital del perfil, el seguidor del tope del trader y el «primero en tocar un límite»**, que pasa
-> a ser de cada cuenta mensual: los dos primeros viven «como la cuenta» (ADR-0053 §6, ADR-0089) y el
-> primer toque es un hecho de cada cuenta. La racha de pérdidas de RN-036, que el encargo pone en la
+> a ser de cada cuenta mensual: el seguidor va con la cuenta (con la diaria, «nace cada día con la
+> cuenta», ADR-0089) y el primer toque es un hecho de cada cuenta. La racha de pérdidas de RN-036, que el encargo pone en la
 > misma lista, queda pendiente de la respuesta del consultor a la PARADA condicional de
 > `docs/validation/CUENTA-POR-MES.md`, porque la spec la describe «contando en TODOS los dias de la
 > corrida»: hasta esa respuesta no se reinicia. Nada más: el bróker y el estado de estrategia ya
