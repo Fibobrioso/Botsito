@@ -52,6 +52,17 @@ medida: ["2026-05"]
 # arrastrada en todo el tramo. Esos meses NO van en meses_reservados.yaml (tapa por numero de mes
 # en cualquier ano) ni en `construccion` o `medida`; el arnes los niega como a todo lo que no es
 # construccion. Si no pasa, se escriben en `vistos_rentabilidad` y no vuelven a medir.
+# EL MATERIAL SIN VIDEO (ADR-0092 §11; respuesta del consultor a la PARADA 2 del 2026-11-07, punto
+# 1): en los backtests sin video el trader se saltaba las sesiones que iban a acabar en break even
+# (S-14, ev-v15-011912-0ae32588, ev-v16-003421-b824b770). Los libros de construccion SIN video, por
+# mes, con los dias que si estan grabados; julio cuenta como CON video mientras sea provisional,
+# hasta que T lo compruebe. Si llega la exportacion de agosto con video (Q) o T comprueba julio, el
+# bloque se cambia en la rama que lo traiga, con su fuente. Solo diagnostico: ningun umbral lo lee.
+material_sin_video:
+  meses: ["2026-01", "2026-04", "2026-08"]
+  dias_con_video: ["2026-04-29"]
+  provisionales_con_video: ["2026-07"]
+  fuente: ACTIVAR-SESION-05.md §0.b.7
 rentabilidad:
   adr: ADR-0092
   fase: fondeada

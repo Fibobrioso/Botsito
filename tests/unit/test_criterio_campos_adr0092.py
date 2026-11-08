@@ -32,23 +32,32 @@ CAMPOS_DEL_BLOQUE = (
 
 
 def _copia(
-    tmp_path: Path, quitar: str | None = None, cambiar: dict[str, str] | None = None
+    tmp_path: Path,
+    quitar: str | None = None,
+    cambiar: dict[str, str] | None = None,
+    bloque: str | None = None,
 ) -> Path:
     """El yaml real con una linea quitada (por su clave, con o sin sangria) o cambiada. Quitar
-    `rentabilidad` quita el bloque entero."""
+    `rentabilidad` o `material_sin_video` quita el bloque entero. Con `bloque`, una clave
+    sangrada solo se toca dentro de ese bloque (`meses` vive en dos)."""
     cambiar = cambiar or {}
     salida: list[str] = []
     en_bloque_quitado = False
+    actual = ""
     for linea in (REPO / FICHERO_CRITERIO).read_text(encoding="utf-8").splitlines():
         clave = linea.split(":", 1)[0].strip()
         sangrada = linea.startswith(" ")
+        comentario = linea.lstrip().startswith("#")
+        if not sangrada and not comentario and linea.strip():
+            actual = clave
         if en_bloque_quitado and sangrada:
             continue
         en_bloque_quitado = False
-        if quitar is not None and clave == quitar and not linea.lstrip().startswith("#"):
+        aqui = bloque is None or not sangrada or actual == bloque
+        if quitar is not None and clave == quitar and not comentario and aqui:
             en_bloque_quitado = not sangrada
             continue
-        if clave in cambiar and not linea.lstrip().startswith("#"):
+        if clave in cambiar and not comentario and aqui:
             sangria = linea[: len(linea) - len(linea.lstrip())]
             salida.append(f"{sangria}{clave}: {cambiar[clave]}")
             continue
@@ -76,7 +85,31 @@ def test_sin_el_bloque_de_rentabilidad_no_carga(tmp_path: Path) -> None:
 @pytest.mark.parametrize("campo", CAMPOS_DEL_BLOQUE)
 def test_sin_un_campo_del_bloque_no_carga(tmp_path: Path, campo: str) -> None:
     with pytest.raises(CriterioError, match=campo):
-        cargar_criterio(_copia(tmp_path, quitar=campo))
+        cargar_criterio(_copia(tmp_path, quitar=campo, bloque="rentabilidad"))
+
+
+# --------------------------- material_sin_video (respuesta del consultor a la PARADA 2, punto 1)
+
+
+def test_sin_el_bloque_del_material_sin_video_no_carga(tmp_path: Path) -> None:
+    with pytest.raises(CriterioError, match="material_sin_video"):
+        cargar_criterio(_copia(tmp_path, quitar="material_sin_video"))
+
+
+@pytest.mark.parametrize(
+    ("campo", "valor"),
+    [
+        ("meses", '["2026-05"]'),  # un mes que no es de construccion (es de medida)
+        ("dias_con_video", '["2026-05-12"]'),  # un dia que no es de construccion
+        ("dias_con_video", '["2026-07-01"]'),  # un dia de construccion fuera de `meses`
+        ("provisionales_con_video", '["2026-08"]'),  # en `meses` y en provisionales a la vez
+        ("provisionales_con_video", '["2026-03"]'),  # un mes que no es de construccion
+        ("dias_con_video", '["2026-04-31"]'),  # no es una fecha
+    ],
+)
+def test_el_material_sin_video_mal_formado_no_carga(tmp_path: Path, campo: str, valor: str) -> None:
+    with pytest.raises(CriterioError, match="material_sin_video|dias_con_video|provisionales"):
+        cargar_criterio(_copia(tmp_path, cambiar={campo: valor}, bloque="material_sin_video"))
 
 
 @pytest.mark.parametrize(

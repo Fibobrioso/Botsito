@@ -19,7 +19,7 @@ entonces toda la salida lo dice. SOLO CONSTRUCCION, por la compuerta del arnes (
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from datetime import UTC, date, datetime, time
 from decimal import Decimal
@@ -33,6 +33,7 @@ from botsito.cases.criterio_fidelidad import (
     PosicionCerrada,
     cascada_por_criterios,
     cascada_por_mes,
+    esperanza_r,
     medir_rentabilidad,
     punto_de_equilibrio,
     veredicto_rentabilidad,
@@ -84,6 +85,7 @@ from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, TIPO_STOP
 from botsito.engine.motor import DiaDeMercado, ResultadoDia, Sesion, TrazaSesion
 from botsito.engine.perfil_cuenta import PerfilCuenta, cargar_perfil
 from botsito.engine.primitivas_broker import (
+    BREAK_EVEN,
     GANANCIA,
     ContextoDia,
     EventoBroker,
@@ -1200,9 +1202,12 @@ def posiciones_del_bot(motor: MotorCableado) -> list[FilaPosicion]:
     return salida
 
 
-def ordenes_para_la_cascada(motor: MotorCableado) -> list[OrdenCriterio]:
+def ordenes_para_la_cascada(
+    motor: MotorCableado, excluir: Collection[tuple[str, str]] = frozenset()
+) -> list[OrdenCriterio]:
     """Cada orden que el bot coloco, llenada o no, con su sesion (la de `### Ordenes`), su entrada,
-    su stop y, si se lleno, el instante del llenado (ADR-0092 §2)."""
+    su stop y, si se lleno, el instante del llenado (ADR-0092 §2). `excluir`: (dia, id de orden)
+    que no entran (las del sesgo 3, ADR-0092 §11)."""
     salida: list[OrdenCriterio] = []
     for dia in sorted(motor.trazas_broker):
         broker = motor.brokers.get(dia)
@@ -1211,6 +1216,8 @@ def ordenes_para_la_cascada(motor: MotorCableado) -> list[OrdenCriterio]:
             continue
         llenada_en = {p.orden_id: p.abierta_ms for p in broker.posiciones.values()}
         for o in sorted(broker.ordenes.values(), key=lambda o: (o.colocada_ms, o.id)):
+            if (dia, o.id) in excluir:
+                continue
             llenado = llenada_en.get(o.id)
             salida.append(
                 OrdenCriterio(
@@ -1254,6 +1261,50 @@ def _fila_posicion(f: FilaPosicion) -> str:
         r,
     )
     return " | ".join(campos)
+
+
+def _informe_sin_video(
+    motor: MotorCableado, filas: Sequence[FilaPosicion], criterio: Criterio
+) -> list[str]:
+    """ADR-0092 §11 (PARADA 2, punto 1): DIAGNOSTICO. La cascada y la esperanza sin las
+    operaciones del bot de desenlace `break_even` (el mecanismo de `clasificar_cierre`, no un PnL
+    cero) en los dias de los libros sin video de `material_sin_video`; un mes provisional cuenta
+    como CON video. Ningun umbral lo lee."""
+    m = criterio.material_sin_video
+    lineas = [
+        "",
+        "### Material sin video (ADR-0092 §11; DIAGNOSTICO, ningun umbral lo lee)",
+    ]
+    if m is None or criterio.tolerancia_stop_puntos is None:
+        return [*lineas, "sin el bloque material_sin_video: no se mide"]
+    quitadas = {
+        (f.dia, f.orden_id) for f in filas if f.desenlace == BREAK_EVEN and m.sin_video(f.dia)
+    }
+    cascada = cascada_por_criterios(
+        motor.operaciones_trader,
+        ordenes_para_la_cascada(motor, excluir=quitadas),
+        criterio.tolerancias,
+        criterio.tolerancia_stop_puntos,
+    )
+    total = cascada_por_mes(cascada).get("total")
+    sin_be = [f.posicion for f in filas if f.riesgo > 0 and (f.dia, f.orden_id) not in quitadas]
+    esperanza = esperanza_r(sin_be)
+    provisionales = ", ".join(m.provisionales_con_video) or "ninguno"
+    return [
+        *lineas,
+        f"libros sin video: {', '.join(m.meses)}, salvo "
+        f"{', '.join(m.dias_con_video) or 'ningun dia'}; cuentan como CON video, provisionales "
+        f"hasta que T lo compruebe: {provisionales} (fuente: {m.fuente})",
+        f"operaciones del bot quitadas (break_even en un dia sin video): {len(quitadas)}",
+        "cascada sin ellas, total | "
+        + (
+            " | ".join(f"{e} {total[e]}" for e in ESCALONES)
+            if total is not None
+            else "ninguna operacion del trader"
+        ),
+        f"esperanza sin ellas (media del R neto, {len(sin_be)} operaciones): "
+        + ("sin definir" if esperanza is None else f"{esperanza:.3f}"),
+    ]
 
 
 def _informe_metodo(motor: MotorCableado) -> list[str]:
@@ -1307,6 +1358,7 @@ def _informe_metodo(motor: MotorCableado) -> list[str]:
         "el sesgo de H4, derivado y aparte: la linea «por operacion del trader» de la seccion de "
         "RN-003; la liquidez de M15: no comparable con el material de los casos",
     ]
+    lineas += _informe_sin_video(motor, filas, criterio)
     r = criterio.rentabilidad
     reglas = motor.reglas_fase
     dias = sorted(motor.trazas_broker)
@@ -1339,7 +1391,9 @@ def _informe_metodo(motor: MotorCableado) -> list[str]:
             "sin definir"
             if medida.percentil_remuestreo is None
             else f"{medida.percentil_remuestreo:.3f}"
-        ),
+        )
+        + f"; replicas descartadas por no tener ninguna operacion: {medida.replicas_descartadas} "
+        f"de {r.replicas_remuestreo}",
         f"d) perdida diaria maxima ({reglas.magnitud_vigilada}, base "
         f"{reglas.base_perdida_diaria}): {_pct(medida.perdida_diaria_maxima)} del capital inicial",
         f"e) equity minima del tramo: {_pct(medida.equity_minima)} del capital inicial",

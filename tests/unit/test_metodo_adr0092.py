@@ -6,6 +6,7 @@ motor corre sobre el dia sintetico de 2030 de `test_cableado.py`."""
 
 from __future__ import annotations
 
+import dataclasses
 from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from fractions import Fraction
@@ -28,6 +29,7 @@ from botsito.cases.criterio_fidelidad import (
     STOP_FUERA,
     CriterioError,
     CriterioRentabilidad,
+    MaterialSinVideo,
     MedidaRentabilidad,
     Operacion,
     OrdenCriterio,
@@ -46,13 +48,14 @@ from botsito.cases.criterio_fidelidad import (
     perdida_diaria_maxima,
     punto_de_equilibrio,
     r_neto,
+    remuestreo_por_dias,
     veredicto_con_f17,
     veredicto_rentabilidad,
 )
 from botsito.config.registro import Registro, cargar_registro
 from botsito.engine import arnes, cableado
 from botsito.engine.cuenta import EstadoCuenta
-from botsito.engine.primitivas_broker import SALTO_EL_STOP
+from botsito.engine.primitivas_broker import BREAK_EVEN, SALTO_EL_STOP
 from botsito.spec.modelo import cargar_vocabulario
 from tests.unit.test_cableado import (
     ENTRADA,
@@ -429,3 +432,69 @@ def test_sin_criterio_la_seccion_lo_dice_y_con_el_saca_cascada_y_rentabilidad(
     assert "a) N (operaciones llenadas y cerradas): 1" in texto
     assert f"criterios a) a f): {INSUFICIENTE}" in texto
     assert motor.veredicto()[0] is EstadoCuenta.EN_CURSO
+
+
+# ------------------------------- la respuesta del consultor a la PARADA 2 (puntos 1 y 2)
+
+
+def test_un_dia_es_sin_video_si_su_mes_lo_es_y_el_no_esta_grabado() -> None:
+    m = CRITERIO_REAL.material_sin_video
+    assert m is not None
+    assert m.sin_video("2026-04-28") and m.sin_video("2026-01-15") and m.sin_video("2026-08-03")
+    assert not m.sin_video("2026-04-29")  # el dia grabado de abril (v5)
+    assert not m.sin_video("2026-07-08")  # julio, provisional: cuenta como CON video
+
+
+def test_el_remuestreo_cuenta_las_replicas_sin_ninguna_operacion() -> None:
+    # una operacion en d1 entre cuatro dias: una replica de cuatro dias sin d1 no tiene ninguna
+    ps = [_p("d1", "50")]
+    dias = ["d1", "d2", "d3", "d4"]
+    percentil, descartadas = remuestreo_por_dias(ps, dias, replicas=400, semilla=3, percentil=5)
+    assert percentil == Decimal("0.5")
+    # la probabilidad de no sacar d1 en cuatro sorteos es (3/4)^4, un 31,6 %
+    assert 80 < descartadas < 170
+    assert percentil_por_dias(ps, dias, replicas=400, semilla=3, percentil=5) == percentil
+    con_todo = [_p(d, "50") for d in dias]
+    assert remuestreo_por_dias(con_todo, dias, replicas=50, semilla=3, percentil=5)[1] == 0
+
+
+def test_la_seccion_del_material_sin_video_quita_los_break_even_de_esos_dias(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    motor = _corrido(registro, vocabulario)
+    fila = cableado.posiciones_del_bot(motor)[0]
+    o = cableado.ordenes_para_la_cascada(motor)[0]
+    motor.operaciones_trader = (
+        Operacion(fila.dia, fila.sesion, "compra", fila.llenada, o.entrada, o.stop),
+    )
+    sin_video = dataclasses.replace(
+        CRITERIO_REAL,
+        material_sin_video=MaterialSinVideo(("2030-01",), (), ("2030-02",), "sintetico"),
+    )
+    # la posicion del dia sintetico salta el stop: no es break_even y no se quita
+    lineas = cableado._informe_sin_video(motor, [fila], sin_video)
+    assert "operaciones del bot quitadas (break_even en un dia sin video): 0" in lineas
+    # la misma, como si hubiera acabado en break_even: se quita, y su orden sale de la cascada
+    be = dataclasses.replace(fila, desenlace=BREAK_EVEN)
+    lineas = cableado._informe_sin_video(motor, [be], sin_video)
+    assert "operaciones del bot quitadas (break_even en un dia sin video): 1" in lineas
+    cascada = next(x for x in lineas if x.startswith("cascada sin ellas"))
+    assert f"{SIN_ORDEN} 1" in cascada and f"{COMPLETA} 0" in cascada
+    assert any(x.startswith("esperanza sin ellas") and "0 operaciones" in x for x in lineas)
+    # un dia grabado no quita nada
+    grabado = dataclasses.replace(
+        CRITERIO_REAL,
+        material_sin_video=MaterialSinVideo(("2030-01",), (fila.dia,), (), "sintetico"),
+    )
+    lineas = cableado._informe_sin_video(motor, [be], grabado)
+    assert "operaciones del bot quitadas (break_even en un dia sin video): 0" in lineas
+
+
+def test_la_salida_dice_las_replicas_descartadas_y_la_seccion_del_material_sin_video(
+    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    motor = _corrido(registro, vocabulario)
+    motor.criterio = CRITERIO_REAL
+    texto = cableado.informe_simulacion(motor)
+    assert "### Material sin video (ADR-0092 §11; DIAGNOSTICO" in texto
+    assert "replicas descartadas por no tener ninguna operacion: 0 de 10000" in texto

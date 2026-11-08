@@ -922,9 +922,12 @@ Con `anexos/METODO-FIDELIDAD-RENTABILIDAD/simular_cierre.py` (en memoria; salida
     trabajo/cuenta-por-mes) y después la re-corrida que cuenta (ADR-0070 §3), la primera con la
     comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091 y el método de ADR-0092;», y
     el resto de F igual;
-  - **G**: «… ADR-0073) y A-16.» pasa a «… ADR-0073) y A-16 (medida en R3.7, sigue ABIERTA). Y lo
-    de ADR-0092: PREREGISTRO §«Que tiene que llevar» y MASTER_PLAN §H (y la fila de F30) con la
-    rentabilidad (ADR-0092 §13).»;
+  - **G**: «… ADR-0073) y A-16.» pasa a «… ADR-0073) y A-16 (medida en R3.7, sigue ABIERTA). G
+    rellena PREREGISTRO.md con lo de ADR-0092 §13 (borrador de la NOTA en
+    METODO-FIDELIDAD-RENTABILIDAD.md, PARADA 2), y en el mismo commit cambia test_puerta_holdout,
+    que ata ese fichero a HEAD (_commiteado_y_sin_cambios); y MASTER_PLAN §H (y la fila de F30) con
+    la rentabilidad.» *(Actualizada con la respuesta a la PARADA 2, punto 0; con ella, 22.499 y
+    22.561 bytes, §9.)*;
   - **la segunda Regla viva** (`PROJECT_STATE.md:151`), con la redacción del punto 5, tal cual;
   - **Technical Debt**: no nace ninguna línea. La regla del punto 7 no se disparó (§1.3), y lo que
     queda pendiente (la NOTA de PREREGISTRO y la lista del sesgo 3) es la PARADA 2, no una deuda.
@@ -989,8 +992,8 @@ Con `anexos/METODO-FIDELIDAD-RENTABILIDAD/simular_cierre.py` (en memoria; salida
 | 36 | Respuesta, punto 8: A-16 ABIERTA y las medidas previas nombradas | Hecho | ADR-0092 §10; §1.3 |
 | 37 | Respuesta, punto 9: el diseño de A-16 | Hecho | `medir_a16.py` |
 | 38 | Respuesta, punto 10: engine solo salida; contrato ampliado en un commit | Hecho | §1.1 y §1.2 |
-| 39 | Respuesta, punto 11: la cifra sin los break even de los libros sin vídeo | Parcial | ADR-0092 §11 lo fija; dónde vive la lista de libros, PARADA 2, punto 1 |
-| 40 | Respuesta, punto 12: NOTAS en MASTER_PLAN y PREREGISTRO | Parcial | MASTER_PLAN, sí; PREREGISTRO, PARADA 2, punto 0 |
+| 39 | Respuesta, punto 11: la cifra sin los break even de los libros sin vídeo | Hecho (tras la PARADA 2, punto 1) | §9: el bloque `material_sin_video` y la sección DIAGNÓSTICO del arnés |
+| 40 | Respuesta, punto 12: NOTAS en MASTER_PLAN y PREREGISTRO | Hecho de otra forma (PARADA 2, punto 0) | MASTER_PLAN, sí; PREREGISTRO no se toca por decisión del consultor: la NOTA queda como borrador para G |
 | 41 | Respuesta, punto 13: las exposiciones | Hecho de otra forma | la fila de la fase 1; los `make check` y los clones del punto 2 se declararon el mismo día pero después (§1.3) |
 | 42 | Respuesta: los campos del yaml, validados; un yaml sin ellos no carga; la cabecera cita la NOTA | Hecho | §1.2 |
 | 43 | Respuesta: F, R3.7 HECHA, la entrada de R3 y la de R5 en las líneas del cierre | Hecho | §1.4 |
@@ -1045,7 +1048,7 @@ Con `anexos/METODO-FIDELIDAD-RENTABILIDAD/simular_cierre.py` (en memoria; salida
 
 | Rama | Hallazgos del revisor | Hallazgos del consultor despues | Que se le escapo |
 |---|---|---|---|
-| `trabajo/metodo-fidelidad-rentabilidad` | Una pasada, opus, con los siete alcances del encargo (§8; lo hecho, §8.1): reglas 1 bloquea (a1, el `make check` sobre un árbol sin estadiar, ya parado), 1 importa (a2, los 6 casos dev de mayo en un `grep` sin declarar), 5 menor; encargo 1 bloquea (b1, la NOTA de PREREGISTRO: PARADA 2), 3 importa (b2, lo visto incompleto: el visor y lo derivado; b3, la letra e) del consultor cambiada a c) sin decirlo; b4, el test «byte a byte» comparaba la rama consigo misma: entra un golden de `main`), 2 menor. Todos arreglados o contestados | (1) **(menor, del consultor; su auditor no lo vio)** el encargo situó la línea «habilita medir…» en ADR-0070 §3, y es el punto 5. Lección: un número de sección se cita leído, no del borrador. | (2) **Un test de la puerta del holdout ata PREREGISTRO.md a HEAD**: ningún commit puede cambiar ese fichero con `make check` en verde, ni para una NOTA. Señal: una ruta que la puerta lee con `_commiteado_y_sin_cambios`. (3) **El informe cita su ADR futuro en el título**: el bloque `ids-inexistentes` exime el id solo en el documento que lo lleva, y el encargo lo trae, el informe no. (4) **Un log en la raíz rompe el sello** aunque `make check` salga en verde: los logs de las comprobaciones van fuera del repo. (5) **Una letra del consultor no se «corrige» al pasarla al ADR** sin declararlo (b3): se copia, y si parece un error, se pregunta. (6) **Un test de «la salida no cambia» que compara la rama consigo misma no prueba nada** (b4): la referencia es la salida de `main`, congelada como golden. (7) **Una orden encadenada que la guardia niega no ejecuta NINGUNA de sus partes**: el `git add` no se hizo y el `make check` siguiente corrió sobre un árbol sin estadiar (a1). |
+| `trabajo/metodo-fidelidad-rentabilidad` | Una pasada, opus, con los siete alcances del encargo (§8; lo hecho, §8.1): reglas 1 bloquea (a1, el `make check` sobre un árbol sin estadiar, ya parado), 1 importa (a2, los 6 casos dev de mayo en un `grep` sin declarar), 5 menor; encargo 1 bloquea (b1, la NOTA de PREREGISTRO: PARADA 2), 3 importa (b2, lo visto incompleto: el visor y lo derivado; b3, la letra e) del consultor cambiada a c) sin decirlo; b4, el test «byte a byte» comparaba la rama consigo misma: entra un golden de `main`), 2 menor. Todos arreglados o contestados | (1) **(menor, del consultor; su auditor no lo vio)** el encargo situó la línea «habilita medir…» en ADR-0070 §3, y es el punto 5. Lección: un número de sección se cita leído, no del borrador. Y tres más, menores, de la respuesta a la PARADA 2 (punto 3): (a) la respuesta a la PARADA ordenó una NOTA en PREREGISTRO.md sin medir que `test_puerta_holdout` ata ese fichero a HEAD. Lección: antes de ordenar que se escriba en un fichero que lee una puerta, se mide qué comprueba la puerta. (b) Pidió la cifra del sesgo 3 sin decir dónde vive la lista que necesita. Lección: una métrica que pide un dato nombra dónde vive ese dato. (c) Pidió un remuestreo sin fijar su forma. Lección: un estadístico pre-registrado lleva su forma entera, no solo su nombre. | (2) **Un test de la puerta del holdout ata PREREGISTRO.md a HEAD**: ningún commit puede cambiar ese fichero con `make check` en verde, ni para una NOTA. Señal: una ruta que la puerta lee con `_commiteado_y_sin_cambios`. (3) **El informe cita su ADR futuro en el título**: el bloque `ids-inexistentes` exime el id solo en el documento que lo lleva, y el encargo lo trae, el informe no. (4) **Un log en la raíz rompe el sello** aunque `make check` salga en verde: los logs de las comprobaciones van fuera del repo. (5) **Una letra del consultor no se «corrige» al pasarla al ADR** sin declararlo (b3): se copia, y si parece un error, se pregunta. (6) **Un test de «la salida no cambia» que compara la rama consigo misma no prueba nada** (b4): la referencia es la salida de `main`, congelada como golden. (7) **Una orden encadenada que la guardia niega no ejecuta NINGUNA de sus partes**: el `git add` no se hizo y el `make check` siguiente corrió sobre un árbol sin estadiar (a1). |
 
 ## PARADA 2 · La NOTA de PREREGISTRO.md no se puede commitear con `test_puerta_holdout` en verde
 
@@ -1246,13 +1249,177 @@ cual (no cita ningún tramo no citable: ninguna retirada):
 | b5 | menor | Contestado, sin cambio: el riesgo de `_margen_al_colocar` se calcula dentro de un cierre de `primitivas_cableadas` (`primitivas_broker.py:558-582`), así que no se puede llamar desde fuera, y sacarlo a una función tocaría `primitivas_broker.py`, que el contrato protege. La fórmula es la misma y la cuadra `test_la_tabla_de_posiciones_cuadra_con_la_cuenta` |
 | b6 | menor | Arreglado y llevado al consultor: la forma exacta del remuestreo está ya en ADR-0092 §3 c), dicha como lectura de la rama, y la PARADA 2, punto 2, le pide que la confirme (desviación 10) |
 
+
+## Respuesta del consultor a la PARADA 2 (2026-11-07)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/metodo-fidelidad-rentabilidad (2026-11-07). Cópiala tal cual al informe con la skill fase-cero, bajo «Respuesta del consultor a la PARADA 2».
+>
+> 0. PREREGISTRO.md: (a). No se toca en esta rama y test_puerta_holdout no se afloja. Lo que tendrá que llevar ya está en ADR-0092 §13 y en la NOTA de MASTER_PLAN; tu texto de la NOTA se queda en el informe como borrador para G. Línea para el cierre, en G de la Next Action: «G rellena PREREGISTRO.md con lo de ADR-0092 §13 (borrador de la NOTA en METODO-FIDELIDAD-RENTABILIDAD.md, PARADA 2), y en el mismo commit cambia test_puerta_holdout, que ata ese fichero a HEAD (_commiteado_y_sin_cambios)».
+> Porqué: una guardia del holdout no se afloja para meter una nota; G tiene que tocar ese test de todos modos.
+>
+> 1. La lista de libros sin vídeo: (a), en esta rama. Un bloque material_sin_video en knowledge/cases/criterio_fidelidad.yaml con la forma que propones (meses 2026-01, 2026-04 y 2026-08; dias_con_video 2026-04-29; provisionales_con_video 2026-07; fuente ACTIVAR-SESION-05.md §0.b.7). Lo carga cargar_criterio, que exige cuatro cosas:
+> - que los meses y los días sean de construcción;
+> - que ningún día de dias_con_video caiga fuera de meses;
+> - que ningún mes esté a la vez en meses y en provisionales;
+> - que el bloque exista: un yaml sin él no carga.
+> Julio cuenta como CON vídeo mientras sea provisional, hasta que T lo compruebe, y la línea de la salida lo dice. En la sección de ADR-0092 del informe del arnés entra una línea marcada DIAGNÓSTICO: la cascada y la esperanza sin las operaciones del bot de desenlace break_even en los días de esos libros, y cuántas se quitaron. Va con su test sintético, que tiene que romper en main, y con la salida contra main pegada. El commit lleva el trailer Fuente: ADR-0092 ev-v15-011912-0ae32588 ev-v16-003421-b824b770 (S-14). Si llega la exportación de agosto con vídeo (Q) o T comprueba julio, el bloque se cambia en la rama que lo traiga, con su fuente.
+> Porqué: la clasificación ya está medida y la re-corrida tiene que encontrarla escrita.
+>
+> 2. El remuestreo: (a), confirmado tal como está en ADR-0092 §3 c) y en percentil_por_dias:
+> - con reemplazo, tantos días como los corridos, con o sin operaciones;
+> - la media agrupada del R neto;
+> - el índice floor(p·(n−1)/100) sobre las medias ordenadas;
+> - random.Random con la semilla.
+> Una réplica sin ninguna operación no cuenta. Añade una cosa: la línea de rentabilidad de la salida dice cuántas réplicas se descartaron por eso, sobre las 10.000. ADR-0092 §3 c) dice que la forma la fijó el consultor en esta PARADA 2.
+> Porqué: los días sin operaciones existen en vivo, y la media agrupada es la misma esperanza de b).
+>
+> 3. La fila de ERRORES-RECURRENTES gana tres hallazgos del consultor (menor los tres), además del del número de sección:
+> (a) La respuesta a la PARADA ordenó una NOTA en PREREGISTRO.md sin medir que test_puerta_holdout ata ese fichero a HEAD. Lección: antes de ordenar que se escriba en un fichero que lee una puerta, se mide qué comprueba la puerta.
+> (b) Pidió la cifra del sesgo 3 sin decir dónde vive la lista que necesita. Lección: una métrica que pide un dato nombra dónde vive ese dato.
+> (c) Pidió un remuestreo sin fijar su forma. Lección: un estadístico pre-registrado lleva su forma entera, no solo su nombre.
+>
+> Al terminar: make check sellado, el revisor con alcance solo sobre lo de esta PARADA 2, su informe pegado, y el Estado del informe a «Rama lista para revisión, NO cerrada». No cierres.
+
+## 9. La respuesta a la PARADA 2, aplicada (2026-11-07)
+
+| Punto | Qué se hizo | Dónde |
+|---|---|---|
+| 0 | PREREGISTRO.md no se toca y `test_puerta_holdout` no se afloja; el texto de la NOTA queda en la PARADA 2 de este informe como borrador para G. La línea de G para el cierre es la de la respuesta, en `simular_cierre.py` | `simular-cierre.txt`: a, b y c vacíos; PROJECT_STATE en 22.499 bytes con las líneas del cierre y 22.561 con el Current Feature del cierre |
+| 1 | El bloque `material_sin_video` en el yaml, con la forma propuesta; `cargar_criterio` exige las cuatro cosas (el bloque existe; meses y días de construcción; ningún día con vídeo fuera de `meses`; ningún mes en `meses` y en provisionales a la vez) y, además, que cada día sea una fecha válida. `MaterialSinVideo.sin_video(dia)`: un mes provisional (julio) cuenta como CON vídeo. En la salida del arnés, «### Material sin video (ADR-0092 §11; DIAGNOSTICO…)»: los libros y el provisional con su fuente, cuántas operaciones del bot se quitaron (desenlace `break_even` en un día sin vídeo), la cascada sin ellas (sin sus órdenes) y la esperanza sin ellas. ADR-0092 §11 y §13 lo escriben | yaml; `criterio_fidelidad.py` (`MaterialSinVideo`, `_material_sin_video`); `cableado.py` (`_informe_sin_video`; `ordenes_para_la_cascada` gana `excluir`) |
+| 1, tests | `test_criterio_campos_adr0092.py`: sin el bloque no carga, y seis formas mal formadas no cargan (`_copia` gana `bloque`, porque `meses` vive ya en dos bloques); `test_metodo_adr0092.py`: `sin_video` sobre el yaml real, y la sección sobre el día sintético: sin break even no quita nada; con la misma posición marcada `break_even` quita 1 y su orden sale de la cascada; con el día grabado no quita nada | **contra `main`** (clon `C:/cm/mf3`, e01e28c, quitado después): los 7 tests del material fallan con «DID NOT RAISE CriterioError» (`anexos/…/tests-material-con-main.txt`), y `test_metodo_adr0092.py` no se colecciona en `main` (ImportError: `cannot import name 'COMPLETA'`; `anexos/…/tests-metodo-con-main-parada2.txt`, añadido tras el revisor, b1) |
+| 2 | La forma del remuestreo, confirmada: ADR-0092 §3 c) dice que la fijó el consultor en esta PARADA 2. `remuestreo_por_dias` devuelve el percentil y las réplicas descartadas (`percentil_por_dias` sigue dando lo mismo); `MedidaRentabilidad.replicas_descartadas`; la línea c) de la salida dice «replicas descartadas por no tener ninguna operacion: N de 10000» | test `test_el_remuestreo_cuenta_las_replicas_sin_ninguna_operacion` y `test_la_salida_dice_las_replicas_descartadas_y_la_seccion_del_material_sin_video` |
+| 3 | La fila de ERRORES-RECURRENTES gana los tres hallazgos del consultor, menores | «La fila de ERRORES-RECURRENTES» |
+
+Lo que ya salía no cambia: `test_lo_que_ya_salia_es_byte_a_byte_lo_de_main` (el golden de `main`)
+sigue en verde, porque la sección nueva va dentro de la de ADR-0092, al final. `Tests Currently
+Passing` pasa a 1910 funciones. El commit lleva el trailer `Fuente: ADR-0092 ev-v15-011912-0ae32588
+ev-v16-003421-b824b770` (los dos ítems existen en `knowledge/evidence/`). Ninguna corrida del arnés.
+
+## 10. El revisor, segunda pasada (alcance: la respuesta a la PARADA 2)
+
+Subagente `revisor` (opus), sobre lo estadiado antes del `make check`. Su informe, tal cual (no cita
+ningún tramo no citable):
+
+> ## Informe del revisor · trabajo/metodo-fidelidad-rentabilidad · 2026-11-07 (segunda pasada, alcance: la respuesta a la PARADA 2)
+>
+> Lo revisado son los cambios estadiados sin commitear (`git diff --cached`, 13 ficheros). No lancé `make check`, no hay ningún commit nuevo, y no he escrito nada.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | En el árbol estadiado el informe de la rama no termina en su estado. El diff quita el `## Estado` y su párrafo («Rama lista para revisión, NO cerrada.») y no pone otro: el informe acaba en la tabla y el párrafo de §9. CLAUDE.md pide «Un informe por rama en `docs/validation/`, con su estado al final», y la respuesta del consultor pide expresamente ese Estado al terminar. Es de esperar si se va a escribir después de pegar este informe, pero tiene que estar antes del `make check` del commit. | `git diff --cached -U0 -- docs/validation/METODO-FIDELIDAD-RENTABILIDAD.md`: el hunk `@@ -1249 +1251,0 @@` borra `## Estado` y `@@ -1258 …` borra `Rama lista para revisión, NO cerrada.`. Lo último que queda es `METODO-FIDELIDAD-RENTABILIDAD.md:1297-1300` («… Ninguna corrida del arnés.»). |
+> | a2 | menor | Si `dias_con_video` no es una lista de textos, el error dice «es una lista de meses AAAA-MM», pero ese campo lleva días. Pasa porque `_material_sin_video` reutiliza `_meses`. | `src/botsito/cases/criterio_fidelidad.py:363` (`dias = _meses(bloque, "dias_con_video")`) → `:262` (el mensaje). |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py` → «CONTRATO: 39 ficheros dentro del contrato de trabajo/metodo-fidelidad-rentabilidad (riesgo medio, …, 4 comprobaciones para el revisor)». Ningún fichero fuera.
+> - **`knowledge validate`.** Todo OK (37 reglas, 57 ambigüedades, 199 feedback «commits con Fuente», 640 ítems «historial intacto»). Solo salen los dos AVISOS de siempre sobre configs congelados.
+> - **`state check`.** OK, rama y funcionalidad actual.
+> - **Los ids del trailer existen:**
+>   - `knowledge/evidence/v15/ev-v15-011912-0ae32588.yaml:1`
+>   - `knowledge/evidence/v16/ev-v16-003421-b824b770.yaml:1`
+>   - `docs/adr/0092-…md`
+>
+>   Los dos ítems son del tema `material.backtests_viejos_saltaban_be` (S-14), así que no son de relleno.
+> - **ADR-0092.** `## Estado` dice `ACTIVE` (`:367-369`).
+> - **Lo que no se toca.** Contra `main`, `git diff --name-status main -- PREREGISTRO.md tests/unit/test_puerta_holdout.py` sale vacío. Los ficheros de `tests/golden/` no están en lo estadiado: los trajo el commit anterior.
+> - **Holdout.** `git diff --cached --name-status main | grep -c holdout/` → 0.
+> - **El motor no cambia.**
+>   - En `cableado.py` solo hay salida nueva y un parámetro `excluir` que por defecto va vacío (`ordenes_para_la_cascada`).
+>   - En `criterio_fidelidad.py`, `percentil_por_dias` delega en `remuestreo_por_dias` y da el mismo valor (`test_metodo_adr0092.py:456`).
+>   - El golden sigue en verde: `test_lo_que_ya_salia_es_byte_a_byte_lo_de_main[hueco|stop|viva]` pasa, y es parte de los 70 passed de abajo.
+> - **Ninguna corrida del arnés, ninguna cifra real.** Los anexos nuevos son sintéticos o de tests. El cambio de `PROJECT_STATE.md` es solo el recuento: 1904 → 1910, y cuadra con +2 funciones en `test_criterio_campos_adr0092.py` y +4 en `test_metodo_adr0092.py`.
+> - **HOLDOUT-EXPOSICIONES.** Hay una fila nueva del 2026-11-07 para la PARADA 2: clon `C:/cm/mf3` sin `data/`, `simular_cierre.py`, el revisor y el `make check`, sin nada reservado.
+> - **Recuadros.** El informe no estaba cerrado en `main` (nace en esta rama), así que no hace falta recuadro.
+>
+> ### Eje (b) · Encargo (la respuesta a la PARADA 2)
+> Resumen: 0 bloquea, 1 importa, 0 menor. Requisitos: 15 hechos, 1 parcial, 0 no hechos. El trailer (requisito 10) solo se podrá ver tras el commit.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | 0: PREREGISTRO.md no se toca | Hecho | `git diff --name-status main -- PREREGISTRO.md` vacío; `git diff --cached --name-only main \| grep -c PREREGISTRO` → 0 |
+> | 2 | 0: `test_puerta_holdout` no cambia | Hecho | Mismo diff, vacío; `test_puerta_holdout.py` pasa |
+> | 3 | 0: la línea de G es la de la respuesta | Hecho | `simular_cierre.py:82`: el texto de la respuesta, literal, desde «G rellena PREREGISTRO.md…» hasta «(_commiteado_y_sin_cambios)», seguido del resto de G que ya estaba («; y MASTER_PLAN §H (y la fila de F30) con la rentabilidad.»). `simular-cierre.txt`: a, b y c vacíos, 22.499 y 22.561 bytes, y lo mismo en el informe (`:925-930`) |
+> | 4 | 1: el bloque `material_sin_video` con la forma pedida | Hecho | `knowledge/cases/criterio_fidelidad.yaml:61-65`: meses 2026-01, 2026-04 y 2026-08; `dias_con_video` 2026-04-29; `provisionales_con_video` 2026-07; fuente `ACTIVAR-SESION-05.md §0.b.7` |
+> | 5 | 1: exige que meses y días sean de construcción | Hecho | `_material_sin_video`, el bucle contra `construccion`. Test: `mal_formado[meses-["2026-05"]]`, `[dias_con_video-["2026-05-12"]]` y `[provisionales_con_video-["2026-03"]]` pasan. Los días se comprueban por su mes |
+> | 6 | 1: ningún día con vídeo fuera de `meses` | Hecho | Mismo fichero, el bucle `dia[:7] not in meses`. Test: `[dias_con_video-["2026-07-01"]]` |
+> | 7 | 1: ningún mes en `meses` y en provisionales a la vez | Hecho | `set(meses) & set(provisionales)`. Test: `[provisionales_con_video-["2026-08"]]` |
+> | 8 | 1: sin el bloque no carga | Hecho | `test_sin_el_bloque_del_material_sin_video_no_carga` pasa. Además valida que cada día sea una fecha real (`[dias_con_video-["2026-04-31"]]`), y el informe lo declara en `:1292` |
+> | 9 | 1: julio provisional cuenta como CON vídeo, y la salida lo dice | Hecho | `MaterialSinVideo.sin_video` solo mira `meses`. Test: `test_metodo_adr0092.py:445` (`not m.sin_video("2026-07-08")`). La línea de salida «cuentan como CON video, provisionales hasta que T lo compruebe: …» está en `cableado.py`, dentro de `_informe_sin_video` |
+> | 10 | 1: la línea DIAGNÓSTICO dentro de la sección de ADR-0092, con la cascada y la esperanza sin los `break_even` de esos días y cuántas se quitaron | Hecho | `cableado.py:1266-1307`: la cabecera «### Material sin video (ADR-0092 §11; DIAGNOSTICO, …)» en `:1276`, el filtro en `:1281` y la llamada desde `_informe_metodo` en `:1361`. Al quitar una orden, su operación del trader pasa a SIN_ORDEN (test `:482`). El informe lo declara: «la cascada sin ellas (sin sus órdenes)», `:1292` |
+> | 11 | 1: test sintético que rompe en `main` | Hecho | `test_la_seccion_del_material_sin_video_quita_los_break_even_de_esos_dias` (`test_metodo_adr0092.py:461`) importa `MaterialSinVideo` y `remuestreo_por_dias` (`:32`, `:51`), que en `main` no existen |
+> | 12 | 1: la salida contra `main` pegada | Parcial | Ver b1 |
+> | 13 | 1: trailer `Fuente: ADR-0092 ev-v15-011912-0ae32588 ev-v16-003421-b824b770` | No comprobable aún | Todavía no hay commit. Los tres ids existen (eje a) |
+> | 14 | 2: ADR-0092 §3 c) dice que la forma la fijó el consultor en la PARADA 2 | Hecho | `docs/adr/0092-…md:79-86`: «**La forma la fijó el consultor en la PARADA 2**…», con las cuatro partes de la respuesta y «una réplica sin ninguna operación no cuenta» |
+> | 15 | 2: la línea c) dice las réplicas descartadas sobre las 10.000 | Hecho | `cableado.py:1395-1396`. Test: `test_metodo_adr0092.py:500` («… 0 de 10000»). El recuento sale de `remuestreo_por_dias` (`descartadas = replicas - len(medias)`), y `:448-458` lo prueba |
+> | 16 | 3: los tres hallazgos (a), (b) y (c), menores, en la fila preparada de ERRORES-RECURRENTES, además del del número de sección | Hecho | `METODO-FIDELIDAD-RENTABILIDAD.md:1051`, columna «Hallazgos del consultor despues»: el (1) de la sección y «Y tres más, menores, … (a) … (b) … (c) …», con las lecciones literales |
+> | — | La respuesta, copiada tal cual en el encargo y en el informe | Hecho | `diff` de `encargo:122-150` contra `informe:1257-1285` → IGUALES |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | La respuesta pide el test sintético de la línea DIAGNÓSTICO «con la salida contra main pegada». El anexo solo trae la ejecución en `main` de `test_criterio_campos_adr0092.py` (los 7 tests del bloque, «DID NOT RAISE»). Los tests de la sección DIAGNÓSTICO y de las réplicas descartadas viven en `test_metodo_adr0092.py`, y de ese fichero no hay ninguna salida pegada. El informe afirma que «no se colecciona en `main` (ImportError)» sin anexo que lo respalde. La afirmación es plausible por los imports (`test_metodo_adr0092.py:32`, `:51`), pero no está pegada. | `tests-material-con-main.txt`: 157 líneas, y su resumen (`:151-157`) solo nombra `test_criterio_campos_adr0092.py`. `grep -n "test_metodo\|ImportError"` no encuentra nada. La afirmación está en `METODO-FIDELIDAD-RENTABILIDAD.md:1293` |
+>
+> No hay nada que la rama haga sin que lo pida la respuesta, salvo la validación de fecha real de `dias_con_video`, que el informe declara en `:1292`. Lo que la respuesta dice que no se toca está intacto (requisitos 1 y 2).
+>
+> ### Lo que no pude comprobar
+> - **El trailer `Fuente:` del commit:** el commit no existe todavía. Los ids sí existen.
+> - **El `make check` de la PARADA 2:** escribe, y tenía orden de no lanzarlo. No hay sello que mirar en este árbol.
+> - **Que `test_metodo_adr0092.py` falle en `main` por ImportError:** comprobarlo exige un clon de `main`, y crearlo escribe. Solo tengo los imports del test.
+> - **`simular_cierre.py`:** no lo ejecuté. Escribe un `PROJECT_STATE.md` en un `TemporaryDirectory` (`simular_cierre.py:168-176`). Comprobé el texto de la línea G en el guion y la salida commiteada en `simular-cierre.txt`, no una ejecución nueva.
+> - **Si la fila de HOLDOUT-EXPOSICIONES se escribió antes del clon `mf3`:** el orden en el tiempo no se ve en el diff.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`; `git status --short`; `git diff --cached --stat`
+> 2. Grep de «PARADA 2» en el encargo; Read de `docs/encargos/trabajo-metodo-fidelidad-rentabilidad.md:110-151`
+> 3. `git diff --cached` del yaml, `criterio_fidelidad.py`, `cableado.py`, `simular_cierre.py`, `simular-cierre.txt`, HOLDOUT-EXPOSICIONES, PROJECT_STATE y `docs/adr/`
+> 4. Un `git ls-files … | grep` y un `find . -maxdepth 3`: los dos los negó la guardia (listarían `holdout/`). Los rehíce con rutas literales y recuentos.
+> 5. `git diff --name-status main -- PREREGISTRO.md tests/unit/test_puerta_holdout.py tests/golden docs/runbooks/ERRORES-RECURRENTES.md`; `git diff --cached --name-status main | grep -c holdout/`
+> 6. `ls knowledge/evidence | grep …`, `ls docs/adr | grep 0092`, `grep -n PREREGISTRO tests/unit/test_puerta_holdout.py`, `git diff --cached --name-only main | grep -c PREREGISTRO`
+> 7. Grep `^id:` de los dos ítems en `knowledge/evidence`; `grep -n tema|afirmacion|cita_literal` de los dos yaml
+> 8. `grep` de `_meses`, `_meses_validos` y `FilaPosicion`; Read de `cableado.py:1310-1420`
+> 9. `grep -rl informe_simulacion tests`; `grep -rln golden tests/unit`
+> 10. `uv run pytest -q tests/unit/test_metodo_adr0092.py tests/unit/test_criterio_campos_adr0092.py tests/unit/test_puerta_holdout.py tests/unit/test_cableado.py` → todo en verde
+> 11. `uv run pytest -rA tests/unit/test_metodo_adr0092.py tests/unit/test_criterio_campos_adr0092.py` → 70 passed, exit=0
+> 12. `grep` de `def test_`/`golden` en `test_metodo_adr0092.py`; Read de `:360-501`
+> 13. `head` y `grep` de `tests-material-con-main.txt`; `wc -l`
+> 14. Grep de los encabezados del informe; Read de `:1040-1110` y `:1230-1300`
+> 15. `diff` de la respuesta copiada en el encargo contra el informe; `grep -c "DID NOT RAISE"`; `grep` de Estado; `grep` de escrituras en `simular_cierre.py`
+> 16. `grep Estado` del informe; `git show HEAD:…METODO… | tail`; `sed -n 160,172p simular_cierre.py`
+> 17. `git diff --cached -- …METODO… | grep "^-"`; `git show HEAD:… | grep "^## "`; `git diff --cached -U0 …METODO… | sed -n 1,40p`
+> 18. `uv run python scripts/contrato_rama.py`; `uv run botsito knowledge validate`; `uv run botsito state check`
+> 19. `grep` de líneas para la evidencia (imports del test, `cableado.py`, yaml, ADR §3 c) y `## Estado`); Read de `0092-…md:366-369`
+>
+> **Lo que leí, para que lo declares:**
+> - documentos: el encargo (`:110-151`), el informe (`:1040-1110` y `:1230-1300`), ADR-0092 (el diff y `:366-369`) y los diffs estadiados de PROJECT_STATE y HOLDOUT-EXPOSICIONES;
+> - código y tests de la rama: `criterio_fidelidad.py`, `cableado.py`, `test_metodo_adr0092.py:360-501` y `test_puerta_holdout.py` (solo el `grep` de PREREGISTRO);
+> - `knowledge/cases/criterio_fidelidad.yaml` (el diff);
+> - los anexos `simular_cierre.py` (el diff y `:160-172`), `simular-cierre.txt` y `tests-material-con-main.txt`;
+> - de `ev-v15-011912-0ae32588` y `ev-v16-003421-b824b770`, las líneas `id`, `tema`, `afirmacion` y `cita_literal`;
+> - `knowledge validate`, `state check`, `contrato_rama.py` y pytest de 4 ficheros sintéticos.
+>
+> No abrí ningún libro, imagen, fotograma, transcripción, cruda ni caso reservado, ni listé `knowledge/cases/holdout`.
+
+### 10.1 Lo que se hizo con los hallazgos
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Hecho: el `## Estado` va otra vez al final del informe, debajo de esta sección, antes del `make check` |
+| a2 | menor | Arreglado: `dias_con_video` se valida con su propio mensaje («es una lista de dias AAAA-MM-DD») en vez de reutilizar `_meses` |
+| b1 | importa | Arreglado: la salida de `test_metodo_adr0092.py` en el clon de `main` (`C:/cm/mf3`; se había guardado en `C:/cm/mf3-metodo.txt` al correrlo) va pegada en `anexos/METODO-FIDELIDAD-RENTABILIDAD/tests-metodo-con-main-parada2.txt`: `ImportError: cannot import name 'COMPLETA'`, y §9 la cita |
+
+La fila de HOLDOUT-EXPOSICIONES de la PARADA 2 se escribió antes de lanzar el revisor y el `make
+check`, y después del clon `C:/cm/mf3`: como en la fase 1, el clon quedó declarado el mismo día pero
+después. Lo que leyó el revisor está añadido a esa fila.
+
 ## Estado
 
-FASE 1 HECHA (puntos 1 a 4) y revisada (§8), con la **PARADA 2 abierta** para el consultor: (0) la
-NOTA de PREREGISTRO.md, que la rama no puede commitear sin aflojar `test_puerta_holdout`; (1)
-dónde vive la lista de los libros sin vídeo del sesgo 3; (2) la confirmación de la forma del
-remuestreo de ADR-0092 §3 c). Ninguna bloquea el método: el ADR, el yaml, las funciones, la salida
-del arnés, A-16 y los recuentos están hechos y sellados. Sin CI por `fix/`: la rama no toca hooks,
-rutas, `.claude/` ni plataforma.
+FASE 1 HECHA y la respuesta a la PARADA 2 aplicada (§9), con las dos pasadas del revisor (§8 y §10)
+y sus hallazgos arreglados o contestados. No queda ninguna PARADA abierta. Sin CI por `fix/`: la rama
+no toca hooks, rutas, `.claude/` ni plataforma. Ninguna corrida del arnés en toda la rama.
 
 Rama lista para revisión, NO cerrada.

@@ -76,14 +76,14 @@ solo si se cumplen todas:**
 - a) N ≥ `n_minimo` (100) operaciones llenadas;
 - b) esperanza (media del R neto) ≥ `esperanza_minima_r` (+0,10 R);
 - c) el percentil `percentil_remuestreo` (5) de la media del R neto, por remuestreo POR DÍAS de
-  mercado (`replicas_remuestreo` 10.000 réplicas, `semilla_remuestreo` 20261107), es > 0. La forma,
-  como la implementa `percentil_por_dias` (lectura de la rama de lo que la respuesta no detalla;
-  la confirma el consultor en la PARADA 2 del informe, punto 2): cada réplica sortea con reemplazo
-  tantos días como días de mercado corridos, con o sin operaciones; su cifra es la media del R
-  neto de TODAS las operaciones de los días sorteados (agrupada, no la media de las medias de cada
-  día); una réplica sin operaciones no cuenta; el percentil es el de rango inferior,
-  floor(percentil × (n − 1) / 100) sobre las medias ordenadas; el generador es `random.Random`
-  de Python con la semilla;
+  mercado (`replicas_remuestreo` 10.000 réplicas, `semilla_remuestreo` 20261107), es > 0. **La
+  forma la fijó el consultor en la PARADA 2** de `trabajo/metodo-fidelidad-rentabilidad` (punto 2),
+  tal como la implementa `percentil_por_dias` (`remuestreo_por_dias`): cada réplica sortea con
+  reemplazo tantos días como días de mercado corridos, con o sin operaciones; su cifra es la media
+  del R neto de TODAS las operaciones de los días sorteados (agrupada, no la media de las medias de
+  cada día); una réplica sin ninguna operación no cuenta, y la salida dice cuántas se descartaron
+  por eso sobre las 10.000; el percentil es el de rango inferior, floor(percentil × (n − 1) / 100)
+  sobre las medias ordenadas; el generador es `random.Random` de Python con la semilla;
 - d) en ningún día la pérdida diaria, en la magnitud y con la base que vigila la firma
   (`firma_magnitud_vigilada`, `firma_base_perdida_diaria`), llega a `perdida_diaria_max` (el 3 %)
   del capital inicial. El límite de la firma es el 5 %: 2 puntos de margen;
@@ -232,6 +232,15 @@ operaciones del bot que acabaron en break even (el desenlace `break_even` de `cl
 mecanismo, no un PnL cero) en los libros sin vídeo: enero, agosto y abril salvo el 29. Julio,
 provisional como grabado hasta T (R2.4). Es diagnóstico: no entra en ningún umbral.
 
+La lista vive en el bloque `material_sin_video` de `criterio_fidelidad.yaml` (`meses`,
+`dias_con_video`, `provisionales_con_video`, `fuente`; PARADA 2, punto 1), y `cargar_criterio`
+exige que el bloque exista, que sus meses y días sean de construcción, que ningún día con vídeo
+caiga fuera de `meses` y que ningún mes esté a la vez en `meses` y en `provisionales_con_video`. Un
+mes provisional cuenta como CON vídeo, y la salida lo dice. La sección de ADR-0092 del informe del
+arnés lleva la línea DIAGNÓSTICO: la cascada y la esperanza sin esas operaciones, y cuántas se
+quitaron. Si llega la exportación de agosto con vídeo (Q) o T comprueba julio, el bloque se cambia
+en la rama que lo traiga, con su fuente (S-14: `ev-v15-011912-0ae32588`, `ev-v16-003421-b824b770`).
+
 ### 12. Lo visto, declarado
 
 Por ADR-0070 punto 4 («cambiarlo exige un ADR nuevo que declare lo visto»):
@@ -283,7 +292,8 @@ Por ADR-0070 punto 4 («cambiarlo exige un ADR nuevo que declare lo visto»):
   `tolerancia_stop_puntos: 3` y el bloque `rentabilidad` (`fase`, `n_minimo`, `esperanza_minima_r`,
   `percentil_remuestreo`, `replicas_remuestreo`, `semilla_remuestreo`, `perdida_diaria_max`,
   `perdida_total_max`, `deslizamiento`, `percentil_deslizamiento_f17`, `meses`, `extension`,
-  `vistos_rentabilidad`), cargados y validados por `cargar_criterio`; un yaml sin ellos no carga.
+  `vistos_rentabilidad`), y el bloque `material_sin_video` (§11), cargados y validados por
+  `cargar_criterio`; un yaml sin ellos no carga.
 - `PREREGISTRO.md`, para la rentabilidad (la ampliación de «Que tiene que llevar» y de la fila de
   `MASTER_PLAN.md` §H es de G): la métrica y su cálculo (§3); los umbrales; los meses, la extensión y
   por qué esos (§5); la fase; el hash de la spec sellada y el sha de `src/` (§5); el tratamiento del

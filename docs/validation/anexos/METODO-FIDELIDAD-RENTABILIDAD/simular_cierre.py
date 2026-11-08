@@ -79,7 +79,7 @@ ps = cambiar(
 ps = cambiar(
     ps,
     "la regla del objetivo frente al material, ADR-0073) y A-16.",
-    "la regla del objetivo frente al material, ADR-0073) y A-16 (medida en R3.7, sigue ABIERTA). Y lo de ADR-0092: PREREGISTRO §«Que tiene que llevar» y MASTER_PLAN §H (y la fila de F30) con la rentabilidad (ADR-0092 §13).",
+    "la regla del objetivo frente al material, ADR-0073) y A-16 (medida en R3.7, sigue ABIERTA). G rellena PREREGISTRO.md con lo de ADR-0092 §13 (borrador de la NOTA en METODO-FIDELIDAD-RENTABILIDAD.md, PARADA 2), y en el mismo commit cambia test_puerta_holdout, que ata ese fichero a HEAD (_commiteado_y_sin_cambios); y MASTER_PLAN §H (y la fila de F30) con la rentabilidad.",
 )
 # la segunda Regla viva, con la redaccion del punto 5
 ps = cambiar(

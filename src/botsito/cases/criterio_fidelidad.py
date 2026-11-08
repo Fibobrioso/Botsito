@@ -28,7 +28,7 @@ import re
 from collections import Counter
 from collections.abc import Sequence
 from dataclasses import dataclass, replace
-from datetime import datetime
+from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
 from fractions import Fraction
 from pathlib import Path
@@ -81,6 +81,8 @@ class Criterio:
     # antes, que no los usan.
     tolerancia_stop_puntos: int | None = None
     rentabilidad: CriterioRentabilidad | None = None
+    # ADR-0092 §11 (PARADA 2, punto 1): los libros de construccion sin video, para el sesgo 3
+    material_sin_video: MaterialSinVideo | None = None
 
 
 @dataclass(frozen=True)
@@ -329,6 +331,63 @@ def _rentabilidad(doc: dict[str, object]) -> CriterioRentabilidad:
     return r
 
 
+_DIA = re.compile(r"\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])", re.ASCII)
+
+
+@dataclass(frozen=True)
+class MaterialSinVideo:
+    """El bloque `material_sin_video` (ADR-0092 §11): los meses de construccion cuyo libro NO esta
+    grabado en video, los dias de esos meses que SI lo estan, y los meses que cuentan como grabados
+    mientras sea provisional (julio, hasta que T lo compruebe)."""
+
+    meses: tuple[str, ...]
+    dias_con_video: tuple[str, ...]
+    provisionales_con_video: tuple[str, ...]
+    fuente: str
+
+    def sin_video(self, dia: str) -> bool:
+        """Si el dia es de un libro sin video: su mes lo esta y el no esta grabado. Un mes
+        provisional cuenta como CON video."""
+        return dia[:7] in self.meses and dia not in self.dias_con_video
+
+
+def _material_sin_video(doc: dict[str, object], construccion: Sequence[str]) -> MaterialSinVideo:
+    """Las cuatro comprobaciones de la PARADA 2, punto 1: el bloque existe; los meses y los dias son
+    de construccion; ningun dia con video cae fuera de `meses`; ningun mes esta a la vez en `meses`
+    y en `provisionales_con_video`."""
+    bloque = doc.get("material_sin_video")
+    if not isinstance(bloque, dict):
+        raise CriterioError(f"{FICHERO_CRITERIO}: falta el bloque material_sin_video (ADR-0092)")
+    meses = _meses_validos(bloque, "meses")
+    provisionales = _meses_validos(bloque, "provisionales_con_video")
+    valor = bloque.get("dias_con_video")
+    if not isinstance(valor, list) or not all(isinstance(d, str) for d in valor):
+        raise CriterioError(f"{FICHERO_CRITERIO}: dias_con_video es una lista de dias AAAA-MM-DD")
+    dias = tuple(valor)
+    for dia in dias:
+        try:
+            valida = _DIA.fullmatch(dia) is not None and date.fromisoformat(dia).isoformat() == dia
+        except ValueError:
+            valida = False
+        if not valida:
+            raise CriterioError(f"{FICHERO_CRITERIO}: dias_con_video: {dia!r} no es AAAA-MM-DD")
+    for mes in (*meses, *provisionales, *(d[:7] for d in dias)):
+        if mes not in construccion:
+            raise CriterioError(
+                f"{FICHERO_CRITERIO}: material_sin_video: {mes} no es un mes de construccion"
+            )
+    for dia in dias:
+        if dia[:7] not in meses:
+            raise CriterioError(
+                f"{FICHERO_CRITERIO}: dias_con_video: {dia} no cae en material_sin_video.meses"
+            )
+    if set(meses) & set(provisionales):
+        raise CriterioError(
+            f"{FICHERO_CRITERIO}: un mes no puede estar en meses y en provisionales_con_video"
+        )
+    return MaterialSinVideo(meses, dias, provisionales, _texto(bloque, "fuente"))
+
+
 def cargar_criterio(repo: Path) -> Criterio:
     try:
         doc = leer_yaml(repo / FICHERO_CRITERIO)
@@ -366,6 +425,7 @@ def cargar_criterio(repo: Path) -> Criterio:
         perfil_para_medir=_texto(doc, "perfil_para_medir"),
         tolerancia_stop_puntos=_entero(doc, "tolerancia_stop_puntos"),
         rentabilidad=rentabilidad,
+        material_sin_video=_material_sin_video(doc, construccion),
     )
 
 
@@ -540,13 +600,29 @@ def percentil_por_dias(
     semilla: int,
     percentil: int,
 ) -> Decimal | None:
-    """ADR-0092 §3 c): el percentil de la media del R neto por remuestreo POR DIAS de mercado. Cada
-    replica sortea con reemplazo tantos dias como `dias` (todos los dias de mercado corridos, con o
-    sin operaciones) y toma la media del R neto de todas las operaciones de los dias sorteados; una
-    replica sin operaciones no cuenta. El percentil es el de rango inferior sobre las medias
-    ordenadas: el indice floor(percentil / 100 * (n - 1)). Determinista por la semilla."""
+    """ADR-0092 §3 c): el percentil de la media del R neto por remuestreo POR DIAS de mercado (la
+    forma la fijo el consultor en la PARADA 2 de trabajo/metodo-fidelidad-rentabilidad). Ver
+    `remuestreo_por_dias`, que dice ademas cuantas replicas se descartaron."""
+    return remuestreo_por_dias(
+        posiciones, dias, replicas=replicas, semilla=semilla, percentil=percentil
+    )[0]
+
+
+def remuestreo_por_dias(
+    posiciones: Sequence[PosicionCerrada],
+    dias: Sequence[str],
+    *,
+    replicas: int,
+    semilla: int,
+    percentil: int,
+) -> tuple[Decimal | None, int]:
+    """(percentil, replicas descartadas). Cada replica sortea con reemplazo tantos dias como
+    `dias` (todos los dias de mercado corridos, con o sin operaciones) y toma la media AGRUPADA del
+    R neto de todas las operaciones de los dias sorteados; una replica sin ninguna operacion no
+    cuenta y se cuenta como descartada. El percentil es el de rango inferior sobre las medias
+    ordenadas: el indice floor(percentil * (n - 1) / 100). `random.Random` con la semilla."""
     if not posiciones or not dias:
-        return None
+        return None, 0
     por_dia: dict[str, list[Decimal]] = {d: [] for d in dias}
     for p in posiciones:
         if p.dia not in por_dia:
@@ -563,10 +639,11 @@ def percentil_por_dias(
             n += k
         if n:
             medias.append(total / n)
+    descartadas = replicas - len(medias)
     if not medias:
-        return None
+        return None, descartadas
     medias.sort()
-    return medias[(percentil * (len(medias) - 1)) // _POR_CIEN]
+    return medias[(percentil * (len(medias) - 1)) // _POR_CIEN], descartadas
 
 
 DiaCurva = tuple[str, Decimal, Decimal, Decimal | None]  # dia, saldo al corte, final, equity minima
@@ -616,6 +693,7 @@ class MedidaRentabilidad:
     perdida_diaria_maxima: Fraction
     equity_minima: Fraction
     suspendida: bool
+    replicas_descartadas: int = 0  # replicas sin ninguna operacion (PARADA 2, punto 2)
 
 
 @dataclass(frozen=True)
@@ -633,19 +711,21 @@ def medir_rentabilidad(
     suspendida: bool,
     criterio: CriterioRentabilidad,
 ) -> MedidaRentabilidad:
+    percentil, descartadas = remuestreo_por_dias(
+        posiciones,
+        dias,
+        replicas=criterio.replicas_remuestreo,
+        semilla=criterio.semilla_remuestreo,
+        percentil=criterio.percentil_remuestreo,
+    )
     return MedidaRentabilidad(
         n=len(posiciones),
         esperanza=esperanza_r(posiciones),
-        percentil_remuestreo=percentil_por_dias(
-            posiciones,
-            dias,
-            replicas=criterio.replicas_remuestreo,
-            semilla=criterio.semilla_remuestreo,
-            percentil=criterio.percentil_remuestreo,
-        ),
+        percentil_remuestreo=percentil,
         perdida_diaria_maxima=perdida_diaria_maxima(curva, capital, base),
         equity_minima=equity_minima_del_tramo(curva, capital),
         suspendida=suspendida,
+        replicas_descartadas=descartadas,
     )
 
 
@@ -821,6 +901,7 @@ __all__ = [
     "habilita_medir",
     "INSUFICIENTE",
     "LLENADA_FUERA",
+    "MaterialSinVideo",
     "Medida",
     "MedidaRentabilidad",
     "medir",
@@ -838,6 +919,7 @@ __all__ = [
     "PosicionCerrada",
     "punto_de_equilibrio",
     "r_neto",
+    "remuestreo_por_dias",
     "Simulacion",
     "SIN_ORDEN",
     "SIN_STOP",

@@ -114,3 +114,37 @@ Copiada tal cual:
 > Lo demás de la fase 1, como dice el encargo (un commit por punto, sin ninguna corrida del arnés). En las líneas del cierre (0.h): F reescrita a «Siguiente: la rama de la cuenta por mes (ADR-0092, trabajo/cuenta-por-mes) y después la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091 y el método de ADR-0092;», con el resto de F igual; en la hoja de ruta, R3.7 HECHA, una entrada nueva en R3 para la cuenta por mes antes de la re-corrida, y en R5 la medida de rentabilidad sobre junio-noviembre de 2025 con las condiciones del punto 4. Fila de ERRORES-RECURRENTES preparada con este hallazgo del consultor, que su auditor no vio: el encargo situó la línea «habilita medir…» en ADR-0070 §3 y es el punto 5 (menor; lección: un número de sección se cita leído, no del borrador).
 >
 > Sigue la fase 1. Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-11-07)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/metodo-fidelidad-rentabilidad (2026-11-07). Cópiala tal cual al informe con la skill fase-cero, bajo «Respuesta del consultor a la PARADA 2».
+>
+> 0. PREREGISTRO.md: (a). No se toca en esta rama y test_puerta_holdout no se afloja. Lo que tendrá que llevar ya está en ADR-0092 §13 y en la NOTA de MASTER_PLAN; tu texto de la NOTA se queda en el informe como borrador para G. Línea para el cierre, en G de la Next Action: «G rellena PREREGISTRO.md con lo de ADR-0092 §13 (borrador de la NOTA en METODO-FIDELIDAD-RENTABILIDAD.md, PARADA 2), y en el mismo commit cambia test_puerta_holdout, que ata ese fichero a HEAD (_commiteado_y_sin_cambios)».
+> Porqué: una guardia del holdout no se afloja para meter una nota; G tiene que tocar ese test de todos modos.
+>
+> 1. La lista de libros sin vídeo: (a), en esta rama. Un bloque material_sin_video en knowledge/cases/criterio_fidelidad.yaml con la forma que propones (meses 2026-01, 2026-04 y 2026-08; dias_con_video 2026-04-29; provisionales_con_video 2026-07; fuente ACTIVAR-SESION-05.md §0.b.7). Lo carga cargar_criterio, que exige cuatro cosas:
+> - que los meses y los días sean de construcción;
+> - que ningún día de dias_con_video caiga fuera de meses;
+> - que ningún mes esté a la vez en meses y en provisionales;
+> - que el bloque exista: un yaml sin él no carga.
+> Julio cuenta como CON vídeo mientras sea provisional, hasta que T lo compruebe, y la línea de la salida lo dice. En la sección de ADR-0092 del informe del arnés entra una línea marcada DIAGNÓSTICO: la cascada y la esperanza sin las operaciones del bot de desenlace break_even en los días de esos libros, y cuántas se quitaron. Va con su test sintético, que tiene que romper en main, y con la salida contra main pegada. El commit lleva el trailer Fuente: ADR-0092 ev-v15-011912-0ae32588 ev-v16-003421-b824b770 (S-14). Si llega la exportación de agosto con vídeo (Q) o T comprueba julio, el bloque se cambia en la rama que lo traiga, con su fuente.
+> Porqué: la clasificación ya está medida y la re-corrida tiene que encontrarla escrita.
+>
+> 2. El remuestreo: (a), confirmado tal como está en ADR-0092 §3 c) y en percentil_por_dias:
+> - con reemplazo, tantos días como los corridos, con o sin operaciones;
+> - la media agrupada del R neto;
+> - el índice floor(p·(n−1)/100) sobre las medias ordenadas;
+> - random.Random con la semilla.
+> Una réplica sin ninguna operación no cuenta. Añade una cosa: la línea de rentabilidad de la salida dice cuántas réplicas se descartaron por eso, sobre las 10.000. ADR-0092 §3 c) dice que la forma la fijó el consultor en esta PARADA 2.
+> Porqué: los días sin operaciones existen en vivo, y la media agrupada es la misma esperanza de b).
+>
+> 3. La fila de ERRORES-RECURRENTES gana tres hallazgos del consultor (menor los tres), además del del número de sección:
+> (a) La respuesta a la PARADA ordenó una NOTA en PREREGISTRO.md sin medir que test_puerta_holdout ata ese fichero a HEAD. Lección: antes de ordenar que se escriba en un fichero que lee una puerta, se mide qué comprueba la puerta.
+> (b) Pidió la cifra del sesgo 3 sin decir dónde vive la lista que necesita. Lección: una métrica que pide un dato nombra dónde vive ese dato.
+> (c) Pidió un remuestreo sin fijar su forma. Lección: un estadístico pre-registrado lleva su forma entera, no solo su nombre.
+>
+> Al terminar: make check sellado, el revisor con alcance solo sobre lo de esta PARADA 2, su informe pegado, y el Estado del informe a «Rama lista para revisión, NO cerrada». No cierres.
