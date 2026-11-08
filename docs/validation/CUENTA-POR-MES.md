@@ -152,6 +152,20 @@ encargo.
    en las rutas. **No tocado. Propuesta:** la misma coletilla «Implementado en
    trabajo/cuenta-por-mes (2026-11-07)» al final de su recuadro, en esta rama o en el cierre.
 
+## Fase 1
+
+### Punto 1 · Los textos de D8
+
+- ADR-0092 §8: una NOTA (2026-11-07) con la lista de lo que empieza de nuevo al cambiar de mes, la
+  condición, el porqué, la diaria intacta y la medida de §5 sin existir todavía. La racha va en la
+  NOTA como PENDIENTE de la PARADA condicional, punto 1: la NOTA dice lo que hace el código.
+- `docs/adr/README.md`: la fila de 0092 nombra la NOTA.
+- ADR-0053 §6: el recuadro gana al final «Implementado en `trabajo/cuenta-por-mes` (2026-11-07; …)».
+- ADR-0050 H6 (§2) y ADR-0049 H6: una NOTA de una línea cada uno, que remite a ADR-0092 §8. En
+  ADR-0049 va tras el párrafo de la decisión de H6 (`:132-136`); el resumen de alternativas
+  (`:178`) no se toca.
+- Ningún cuerpo reescrito. ADR-0070 punto 3, sin tocar (PARADA condicional, punto 3).
+
 ## Estado
 
 EN CURSO.

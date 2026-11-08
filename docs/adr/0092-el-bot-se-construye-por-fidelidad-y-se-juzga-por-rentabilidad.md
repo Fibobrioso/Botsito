@@ -204,6 +204,23 @@ propia, ANTES de la re-corrida que cuenta** (`trabajo/cuenta-por-mes`, con un te
 abril, y hoy el arrastre entre meses no contiguos es un hecho del código (`cli.py`, que ordena los
 meses, y `cableado.py`, que guarda la cuenta entre días; METODO-FIDELIDAD-RENTABILIDAD.md §0.c).
 
+> **NOTA (2026-11-07, `trabajo/cuenta-por-mes`; no reescribe el cuerpo).** Lo que empieza de nuevo
+> al cambiar de mes, en `MotorCableado.correr_dia`, con una condición y no con una opción: el mes
+> (el AAAA-MM de la clave del día corrido, la misma de `mercados` y `trazas_broker`) del día que se
+> va a correr es distinto del del último día corrido. Empiezan de nuevo **la cuenta, desde el
+> capital del perfil, el seguidor del tope del trader y el «primero en tocar un límite»**, que pasa
+> a ser de cada cuenta mensual: los dos primeros viven «como la cuenta» (ADR-0053 §6, ADR-0089) y el
+> primer toque es un hecho de cada cuenta. La racha de pérdidas de RN-036, que el encargo pone en la
+> misma lista, queda pendiente de la respuesta del consultor a la PARADA condicional de
+> `docs/validation/CUENTA-POR-MES.md`, porque la spec la describe «contando en TODOS los dias de la
+> corrida»: hasta esa respuesta no se reinicia. Nada más: el bróker y el estado de estrategia ya
+> empiezan de cero cada día. Las cuentas cerradas se conservan en orden, solo para la salida;
+> ninguna decisión las lee. `--diagnostico-cuenta-diaria` no cambia: reinicia cada día la cuenta, el
+> seguidor y la racha, su primer toque sigue siendo de toda la corrida, y la condición de mes no
+> hace nada ni conserva cuentas. La medida de rentabilidad sobre los meses no vistos (§5), que se
+> quiere arrastrada en todo el tramo, no existe todavía: su rama dirá, con su ADR, cómo se arrastra
+> allí.
+
 ### 9. Las tolerancias por operación quedan, y la regla de A-16
 
 Los 3 puntos y los 15 minutos de ADR-0043 quedan (la respuesta, punto 7). Regla escrita ANTES de

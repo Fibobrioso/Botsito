@@ -136,6 +136,9 @@ velas con la búsqueda hacia atrás. El estado de estrategia entre días —cart
 liquidez y las órdenes— **queda pendiente de A-25, A-30 y A-38**, y se decide con ellas en el ADR
 del simulador.
 
+> NOTA (2026-11-07, `trabajo/cuenta-por-mes`): en construcción la cuenta persiste dentro de cada mes
+> y empieza de nuevo al cambiar de mes (ADR-0092 §8 y su NOTA).
+
 ## Problema que resuelve
 
 ADR-0048 registró seis huecos «y no inventó» ninguno, que era lo correcto en aquella rama. Pero un
