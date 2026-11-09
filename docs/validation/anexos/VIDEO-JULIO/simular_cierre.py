@@ -75,9 +75,11 @@ R24_HECHA = """### R2.4 · Julio en vídeo
 - **Hecho cuando:** v11 a v14 están transcritos y comparados con el xlsx, y los días 20 a 31 tienen
   decisión escrita.
 - **Estado:** HECHA (`trabajo/video-julio`, `stable/F38u-video-julio`; VIDEO-JULIO.md): v11 a v14
-  transcritos y comparados con el libro (67 operaciones, ninguna lo contradice; julio sigue
-  provisional en `material_sin_video`); de los días 20 a 31 no se sacan casos del vídeo (decisión
-  del consultor del 2026-11-09). Los huecos del ASR, en R2.5.
+  transcritos; v11 a v13, comparados con el libro de los días 1 a 17, operación por operación: de
+  67, 40 aparecen en el vídeo (5 coinciden en lo que se lee), ninguna lo contradice, 3 no aparecen
+  (las ventas de la tarde del 10, que no se grabó) y 24 no se pudieron comprobar (huecos del ASR o
+  sin ver). Julio sigue provisional en `material_sin_video`. De los días 20 a 31 (v14, sin libro)
+  no se sacan casos del vídeo (decisión del consultor del 2026-11-09). Los huecos del ASR, en R2.5.
 
 """
 m = re.search(r"(?ms)^### R2\.4 · Julio en vídeo\n.*?(?=^#{2,3} )", hoja)
@@ -108,7 +110,8 @@ R25 = """### R2.5 · Los huecos del ASR en el vídeo de julio
 - **Depende de:** R2.4 (HECHA).
 - **Quién:** la sesión, con encargo del consultor.
 - **Hecho cuando:** los huecos están retranscritos y medidos, y F5 tiene decisión con ellos.
-- Prioridad baja, en los huecos: no va antes de R4.4 ni de la preparación de la sesión 7.
+- Prioridad baja, en los huecos: no va antes de R4.4 (las trazas), de las láminas ni de la
+  preparación de la sesión 7.
 
 """
 psv = sustituir(ps2, "\nG. PREREGISTRO.md", "\n" + V_PS + "\n\nG. PREREGISTRO.md")

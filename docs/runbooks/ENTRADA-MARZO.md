@@ -203,7 +203,8 @@ DESPUES del sorteo:
    («dia de marzo visto en el fotograma fr-v13-8c1e06fb/10000 antes del sorteo»), `exposicion`
    (la fila de HOLDOUT-EXPOSICIONES del 2026-11-09), `adr: ADR-0041` y `retirado_el`; corre
    `uv run botsito knowledge validate > knowledge-validate.log 2>&1` (sin `ERROR`: la huella es de
-   un reservado) y lo commitea con `Fuente: ADR-0041`. El reparto no se toca y ningun dia sustituye
+   un reservado; `knowledge-validate.log` se borra y no se commitea) y lo commitea con
+   `Fuente: ADR-0041`. El reparto no se toca y ningun dia sustituye
    a un retirado (ADR-0041 §2 y §5); la diferencia se escribe en `retirados.yaml` y en el informe
    de la rama de marzo.
 

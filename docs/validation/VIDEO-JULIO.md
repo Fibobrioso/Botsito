@@ -777,11 +777,17 @@ como V. (La primera versión, solo con T fuera, en 8a08da4.)
    viejo ya pone la letra (Technical Debt, punto 8).
 2. **R2.4 HECHA**, sin letras vivas: `Refs: NA:T · NA:U · ID:ADR-0078` (las dos, en HISTORIA);
    «Depende de: R2.1 (HECHA).» (sale «NA:U depende de NA:T»); y un «Estado:» «HECHA
-   (`trabajo/video-julio`, `stable/F38u-video-julio`; VIDEO-JULIO.md): v11 a v14 transcritos y
-   comparados con el libro (67 operaciones, ninguna lo contradice; julio sigue provisional en
-   `material_sin_video`); de los días 20 a 31 no se sacan casos del vídeo (decisión del consultor
-   del 2026-11-09). Los huecos del ASR, en R2.5». «Qué es», «Quién» y «Hecho cuando», como están.
-   El texto entero, en `simular_cierre.py` (`R24_HECHA`).
+   (`trabajo/video-julio`, `stable/F38u-video-julio`; VIDEO-JULIO.md): v11 a v14 transcritos; v11 a
+   v13, comparados con el libro de los días 1 a 17, operación por operación: de 67, 40 aparecen en
+   el vídeo (5 coinciden en lo que se lee), ninguna lo contradice, 3 no aparecen (las ventas de la
+   tarde del 10, que no se grabó) y 24 no se pudieron comprobar (huecos del ASR o sin ver). Julio
+   sigue provisional en `material_sin_video`. De los días 20 a 31 (v14, sin libro) no se sacan
+   casos del vídeo (decisión del consultor del 2026-11-09). Los huecos del ASR, en R2.5» (al día
+   tras el revisor, a1: la primera versión decía «comparados con el libro (67 operaciones, ninguna
+   lo contradice)», que callaba las 3 que no aparecen y las 24 sin comprobar). «Qué es», «Quién» y
+   «Hecho cuando», como están; **sale la última viñeta**, «Va antes de la preparación de la sesión
+   7 (...)», que en una entrada HECHA ya no ordena nada (revisor, b4). El texto entero, en
+   `simular_cierre.py` (`R24_HECHA`).
 3. **U, HECHA con la decisión del consultor** (respuesta a la PARADA final, punto 3): no se sacan
    casos del vídeo de los días 20 a 31, porque un caso necesita su libro (ADR-0042 §2; ADR-0078
    §3), el stop casi nunca se lee y tres días están enteros en huecos del ASR (§6). La voz de v14 sí
@@ -819,7 +825,20 @@ como V. (La primera versión, solo con T fuera, en 8a08da4.)
    volver a decidir F5 (material_sin_video de julio). No va antes de las trazas, de las láminas ni
    de la preparación de la sesión 7.» Con R2.4 HECHA, NA:V no puede ir en R2.4: va en una entrada
    nueva de la hoja de ruta, **R2.5 · Los huecos del ASR en el vídeo de julio** (`Refs: NA:V ·
-   ID:ADR-0078`; «Depende de: R2.4 (HECHA).»; texto entero en `simular_cierre.py`, `R25`).
+   ID:ADR-0078`; «Depende de: R2.4 (HECHA).»; texto entero en `simular_cierre.py`, `R25`). Dos
+   cosas que decide el consultor (revisor, b2 y b3):
+   - **La letra.** V está libre en la Next Action y en la hoja de ruta, pero HISTORIA ya tiene dos
+     «# Next Action HECHA · V ·» (`trabajo/guion-mismo-comando`, 2026-10-08, y
+     `trabajo/recorrida-construccion`, 2026-10-27): cuando esta entrada se cierre, su encabezado
+     tendrá que decir de qué V es, como los de T y U del punto 1. Cualquier letra libre de hoy
+     tiene el mismo problema si ya se usó; la que no se haya usado nunca no lo tiene.
+   - **El sitio.** La respuesta a la PARADA 4 dice «carril de infraestructura», y **la hoja de ruta
+     no tiene ese carril**: solo «Carril: lo de Aleks» y «Carril: guardias y deuda». Propongo R2
+     («Material de construcción») porque lo que la entrada cambia es lo que se sabe del material de
+     julio (los huecos de v12 a v14 y F5); la alternativa es «Carril: guardias y deuda», porque
+     toca una herramienta (`corpus transcribe`). Ni la respuesta ni el test exigen uno u otro.
+     (Al día tras el revisor, b3: R2.5 nombra también las láminas entre lo que va antes, como la
+     entrada V.)
 8. **Technical Debt, carril de guardias** (cuatro líneas):
    - «La guardia no niega leer con Read las crudas de `data/transcripciones/` de un vídeo sin
      cuarentena ni tramos» (encargo).
@@ -984,8 +1003,7 @@ Copiado tal cual (también en el encargo):
 - **Lo que ya estaba escrito** (declarado aquí): la fila de marzo de HOLDOUT-EXPOSICIONES (2026-11-09)
   y el punto 0 de §11 dicen de cuántos días de marzo eran las velas con marcas, y el resumen final
   del chat lo repitió. No dicen fechas ni cuántas marcas. Desde esta respuesta no se repite en
-  ningún sitio; las filas y el texto de antes no se tocan. Si el consultor quiere que se quite
-  también eso, se hace con un recuadro.
+  ningún sitio; las filas y el texto de antes no se tocan sin su decisión: es la pregunta de §11.4.
 - **Las citas de v13 que ahora caen en el tramo**: la voz de v13 0:00:06 («La última vez nos
   quedamos en el 10 de julio creo», §2, §2.1 y la fila de marzo) y el principio de la candidata #8
   de F7 (v13 0:00:29-0:05:28). No pueden pasar a evidencia; la #8 se citaría desde 0:00:35.
@@ -1026,6 +1044,22 @@ cambiado.
   dicen de qué T y de qué U son, F con su (1) fuera y la preparación de la sesión 7 heredando lo de
   T, la entrada del VAD con F5 y su R2.5, cuatro líneas de Technical Debt y el tag F38u. Simulado
   otra vez en memoria, con y sin la entrada del VAD: `a`, `b` y `c` vacías las dos veces.
+
+### 11.4 Lo que necesito que decidas (tras la respuesta a la PARADA final)
+
+1. **Cuántos días de marzo** (revisor, b1). El punto 0 dice «Ni las fechas ni la cantidad de
+   marcas se escriben en el repo». La fila de marzo de HOLDOUT-EXPOSICIONES (2026-11-09) y el
+   punto 0 de §11 dicen de **cuántos días** eran las velas con marcas (no las fechas ni cuántas
+   marcas); el resumen del chat lo repitió. Ni esa fila ni §11 están todavía en `main`, pero sí en
+   los commits de la rama (`8a08da4` y anteriores), que el merge lleva a la historia. Opciones:
+   (a) **antes del cierre, la rama quita el número** de la fila y de §11 (sin recuadro, porque no
+   están cerrados en `main`; el historial de la rama lo conserva igual); (b) se queda como está:
+   un recuento de días sin fechas no dice cuáles retirar. **Recomiendo (a)**: la regla del punto 0
+   apunta a que nada de ese fotograma quede escrito, cuesta una línea, y deja el texto de `main`
+   limpio aunque el historial no lo esté. Coste de (a): un `make check` más.
+2. **La letra y el sitio de la entrada del VAD** (§10, punto 7; revisor, b2 y b3): V (reutilizada
+   en HISTORIA) u otra letra; R2.5 en «Material de construcción» (recomendado) o una entrada en
+   «Carril: guardias y deuda».
 
 ## 12. Las exposiciones de cada día (revisor, b3 y b8)
 
@@ -1550,7 +1584,139 @@ Copiado tal cual:
 > 20. `uv run python -c '...'`: simulación en memoria de la propuesta de R2.4 con las funciones de `tests/unit/test_hoja_de_ruta.py`, sin escribir nada
 > 21. Read y Grep sobre el encargo, `contrato.yaml`, VIDEO-JULIO.md, `fuentes.yaml:110-157`, `test_hoja_de_ruta.py`, `HOJA-DE-RUTA.md` (R2.4), HISTORIA (encabezados «HECHA · T/U»), ADR-0072, ENTRADA-JULIO.md (sha), `filas_hasta_t.py`, `operaciones_julio.py` y los guiones de `anexos/RECORRIDA-CONSTRUCCION-2/` (para el precedente de argv)
 
+### 14.3 Segunda pasada del revisor (2026-11-09; pasada corta, la respuesta a la PARADA final)
+
+Sobre `dda8153`, `76cf147` y lo que fue `e77b66e` (entonces estadiado). Ningún «bloquea».
+
+| # | Gravedad | Hecho |
+|---|---|---|
+| a1 | importa | **Arreglado**: el «Estado:» propuesto de R2.4 da los cinco números (40 aparecen, 5 coinciden, 0 contradicen, 3 no aparecen, 24 sin comprobar) y dice que v14 no tiene libro (§10.2, `R24_HECHA`) |
+| a2 | menor | **Arreglado**: el paso b2 de ENTRADA-MARZO dice que `knowledge-validate.log` se borra y no se commitea |
+| a3 | menor | **Arreglado**: el comentario de `riesgo` de `contrato.yaml` dice que el bloque `material_sin_video` no cambia |
+| a4 | menor | **Se deja**: `simular_cierre.py` carga el test por una ruta literal relativa porque la guardia solo deja cargar así (su comentario lo dice); solo lee |
+| b1 | importa | **A la decisión del consultor**: §11.4, punto 1, con recomendación (quitar el número antes del cierre); el texto de §11.1 ya no ofrece un recuadro |
+| b2 | importa | **Declarado** en §10.7: V ya está dos veces en HISTORIA; la letra, al consultor (§11.4, punto 2) |
+| b3 | importa | **Declarado** en §10.7: la hoja de ruta no tiene «carril de infraestructura»; R2 propuesto, con la alternativa; R2.5 nombra las láminas. Al consultor (§11.4, punto 2) |
+| b4 | menor | **Declarado** en §10.2: sale la viñeta «Va antes de la preparación de la sesión 7» |
+
+Con los arreglos, `simular_cierre.py` da otra vez `a: []`, `b: []` y `c: []` en las dos variantes
+(`simular-cierre.txt`, sobre `e77b66e`). La fila de ERRORES-RECURRENTES cuenta las dos pasadas.
+
+### 14.4 El informe de la segunda pasada, tal cual
+
+> ## Informe del revisor · trabajo/video-julio · 2026-11-09 (pasada corta: lo que cambió desde 8a08da4)
+>
+> Alcance: dda8153 (punto 0), 76cf147 (punto 6) y lo estadiado sin commitear (`git diff --cached`: ERRORES-RECURRENTES.md, VIDEO-JULIO.md, simular-cierre.txt, simular_cierre.py). No escribí nada en el repo. No abrí ningún fotograma ni leí ninguna transcripción.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | El «Estado:» de R2.4 que se propone para el cierre afirma más de lo que el informe sostiene. Dice «v11 a v14 transcritos y comparados con el libro (67 operaciones, ninguna lo contradice…)». Pero v14 no tiene libro, y de las 67 operaciones 3 están en NO APARECE (las ventas de la tarde del 10, con las que el consultor da por no cumplido el «todo está grabado» de S-25), 8 en NO LOCALIZABLE y 16 sin ver. «Ninguna lo contradice» solo es cierto en sentido literal (CONTRADICE = 0), y va a quedar en la hoja de ruta para siempre. | `docs/validation/anexos/VIDEO-JULIO/simular_cierre.py:77-80` y `VIDEO-JULIO.md:781` frente a `VIDEO-JULIO.md:552` («**67** \| **5** \| **35 (11)** \| **3** \| **0** \| **8** \| **16**») y `:859` («24 de las 67 no están comprobadas…») |
+> | a2 | menor | El paso b2 de ENTRADA-MARZO manda escribir `knowledge-validate.log` en la raíz y commitear, pero no dice que se borre. El mismo runbook sí lo dice en los pasos a y c. El fichero no está en `.gitignore`: si se queda sin seguir, `make check` no sella. | `docs/runbooks/ENTRADA-MARZO.md:205` frente a `:106` («se borra y no se commitea») y `:291` (`rm … knowledge-validate.log`); `git check-ignore -v knowledge-validate.log` sale con exit 1 (solo se ignora `/make-check.log`, `.gitignore:25`) |
+> | a3 | menor | El comentario de `riesgo` del contrato sigue diciendo que la rama «cambia … el bloque material_sin_video de criterio_fidelidad.yaml (F5)». Tras el punto 1 eso ya es falso. | `contrato.yaml:2`; `git diff --name-status main...HEAD` no trae `criterio_fidelidad.yaml` |
+> | a4 | menor | `simular_cierre.py` toma los datos de la raíz que recibe por argumento, pero carga el módulo del test por una ruta relativa al directorio actual. Si se ejecuta desde otro sitio con la raíz correcta, falla o carga otro test. Como solo lee, no rompe la regla 2, y el comentario lo explica. | `simular_cierre.py:26` (`RAIZ = Path(sys.argv[1])`) frente a `:30` (`"tests/unit/test_hoja_de_ruta.py"`) |
+>
+> Comprobado sin hallazgos:
+> - **Contrato**: `scripts/contrato_rama.py` dice «CONTRATO: 29 ficheros dentro del contrato … 3 comprobaciones», exit 0. `botsito state check` sale OK, exit 0. Las dos ampliaciones de dda8153 (ENTRADA-MARZO.md y tramos_no_citables.yaml, más test_guardia_claude.py) están comentadas en `contrato.yaml`, y el informe declara la del test como desviación (§11.1).
+> - **`test_los_tramos_del_repo_real`**: pasa (1 passed, exit 0).
+> - **`knowledge validate`**: ninguna línea `ERROR` («OK: 5 dias retirados del holdout, cada uno de un reservado…»).
+> - **Trailer `Fuente:`**: ningún commit de la rama toca `knowledge/spec` ni `knowledge/cases` (el log sale vacío). dda8153 lleva `Fuente: ADR-0038, ADR-0041` y 76cf147 `Fuente: ADR-0078`, en el cuerpo y con ids que existen. Que fuera de spec y cases no hay exigencia mecánica está verificado (`historial.py:33`). Que los commits anteriores de tramos llevan `Fuente: ADR-0021`, también (git log, 5 de 5).
+> - **Regímenes de cambio**: transcripciones y fotogramas, solo `A`. Sin cambios en evidence, feedback, data/manifests, libros.yaml ni manifest.yaml. HOLDOUT-EXPOSICIONES solo gana una fila (+1). En ERRORES-RECURRENTES cambia solo la fila de la rama.
+> - **HOLDOUT-EXPOSICIONES**: hay fila del 2026-11-09 para la respuesta (`HOLDOUT-EXPOSICIONES.md:127`).
+> - **ADR**: no hay ninguno nuevo. No se añade ningún sitio con `cita`. No entra ninguna cifra en la forma ejecutable.
+> - **Citas del informe, cinco contrastadas contra su fuente, todas ciertas**:
+>   - `holdout.py:395-397`: `huella_de_caso` es el sha256 del id.
+>   - `holdout.py:486-508`: el mensaje «solo se retira un dia que esta en una particion reservada».
+>   - `historial.py:33`: `DIRECTORIOS_CON_FUENTE`.
+>   - `cli.py:560-566`: `frames show` imprime la ruta y después filtra solo el segmento.
+>   - `guardia.py:563-591`: `motivo_fichero` mira los tramos solo bajo transcripciones.
+>   - Además `test_hoja_de_ruta.py:60-61` (`letras_hechas`, un conjunto) y ADR-0041 §2, §4 y §5 tal como los cita el paso b2.
+> - **Guiones del anexo**: `simular_cierre.py` recibe la raíz por argumento y no escribe. Su salida actual coincide byte a byte en contenido con `simular-cierre.txt` (a, b y c vacías en las dos variantes; letras ADFGIJLMNQ y ADFGIJLMNQV; PS de 22839 y 23268 bytes).
+>
+> ### Eje (b) · Encargo (respuesta del consultor a la PARADA final)
+> Resumen: 0 bloquea, 3 importa, 1 menor. Requisitos: 20 hechos, 1 parcial, 1 no hecho (el último paso, que todavía no toca).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | La respuesta copiada tal cual en el encargo y en el informe | Hecho | Comparé los dos bloques `>` por programa: 36 líneas en cada uno, iguales (`True`) |
+> | 2 | 0(a): paso de retirada en ENTRADA-MARZO, justo después del sorteo, con ADR-0041, la referencia del fotograma y su fila | Hecho | `ENTRADA-MARZO.md:109` (paso b, el sorteo) → `:176-211` (b2) → `:213` (paso c). Nombra fidelidad-2/3 y dev, huellas, Aleks (ADR-0072) y la PARADA B2 |
+> | 3 | 0: con su propio commit | Hecho | dda8153 |
+> | 4 | 0(b): tramo v13 de 0:00:00 hasta el primer fotograma ya abierto que confirma julio (≤0:00:35), con su motivo | Hecho | `tramos_no_citables.yaml:524-535`. `VIDEO-JULIO.md:316`: `/35000` «Fri 10 Jul '26 15:00». Entre 10000 y 35000 no se cita ningún otro fotograma de v13 en el informe |
+> | 5 | 0(b): el trailer Fuente que pida el repo, verificado | Hecho | §11.1 y el cuerpo de dda8153 (`Fuente: ADR-0038, ADR-0041`) |
+> | 6 | 0(b): el 10000 no se vuelve a abrir | Hecho (declarado) | `HOLDOUT-EXPOSICIONES.md:127`. No lo puedo comprobar de forma independiente (ver abajo) |
+> | 7 | 0(c): medir `frames show` y la guardia; si no niegan, línea de TD | Hecho | §11.1 (la guardia niega `frames show`; no niega el Read del PNG; la CLI sola no niega) y §10.8, cuarta línea |
+> | 8 | 0: ni fechas ni cantidad de marcas en el repo, el chat o un commit | Parcial | b1 |
+> | 9 | 0: ERRORES-RECURRENTES, hallazgo del consultor «bloquea» con su lección | Hecho | Fila de `trabajo/video-julio` estadiada (`ERRORES-RECURRENTES.md:115`): «Del consultor, bloquea» y lección (6) |
+> | 10 | 1: material_sin_video, goldens y test_criterio_campos sin tocar | Hecho | `git diff --name-status main...HEAD` no trae ninguno |
+> | 11 | 1: las tres ventas del 10 quedan en NO APARECE | Hecho | `VIDEO-JULIO.md:516`, `:546` |
+> | 12 | 1: la decisión de F5, a la entrada del VAD | Hecho | §10.7; `simular_cierre.py:95-100` |
+> | 13 | 1: pregunta de la tarde del 10 para la sesión 7 | Hecho | §10.4; `F_NUEVO`, `simular_cierre.py:60` |
+> | 14 | 2: clases de T aceptadas; las 5 de error nuestro, a trazas; nota P5; pregunta de sesión 7 | Hecho | §10.4; §11.3; `F_NUEVO` (1) y (3) |
+> | 15 | 3: U HECHA, sin casos del vídeo de los días 20-31 | Hecho | §10.2-3; `R24_HECHA` |
+> | 16 | 4: aquí no se crea ningún ítem; #1, #2, #3 y #10 a la sesión 7; #6 y #9 a trazas | Hecho | Sin cambios en `knowledge/evidence/`; §10.4 |
+> | 17 | 5: ERRORES, Analytics como hallazgo de la sesión «importa», con la lección para el revisor | Hecho | Fila estadiada: «De la sesión, importa» y lección (7) |
+> | 18 | 6: fuentes.yaml (naturaleza y comentario :116-118) en un commit propio, solo lo comprobado, sin marzo; corpus inventory | Hecho | 76cf147 (solo `fuentes.yaml` y el informe). `fuentes.yaml:116-121`, `:127-162`. manifest.yaml sin cambios. Lo que dijo el trader de v14 se queda, declarado (§11.2) |
+> | 19 | 7: simulación con T y U HECHAS, R2.4 HECHA sin letras vivas | Hecho | Lo reproduje: «T y U fuera: True … a: [] b: [] c: [] … R2.4 HECHA: True», en las dos variantes |
+> | 20 | 7: encabezados de HISTORIA que distingan la T y la U nuevas de las de octubre | Hecho | §10.1; `simular_cierre.py:87-92`. Los dos casan con `letras_hechas`; HISTORIA:4986 y :6184 verificados |
+> | 21 | 7: F, el (1) sale y la preparación de la sesión 7 hereda; tres o cuatro líneas de TD; tag F38u, sin push | Hecho | `F_NUEVO`; §10.8 (cuatro líneas); §10.12. `git tag -l` da como último `stable/F38t-recorrida-construccion-2` |
+> | 22 | Revisor (pasada corta) y «Rama lista para revisión, NO cerrada» | No hecho (le toca después de este informe) | `VIDEO-JULIO.md`, «## Estado»: «EN CURSO… Faltan el revisor (pasada corta) y su informe». La fila de ERRORES-RECURRENTES sigue diciendo «Una pasada»: hay que ponerla al día con esta |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | **Sigue escrito en el repo de cuántos días de marzo eran las velas con marcas** (no repito el número). El punto 0 dice «Ni las fechas ni la cantidad de marcas se escriben en el repo». El informe lo declara y lo deja al consultor, pero el remedio que propone, «se hace con un recuadro», no lo quita: por la regla de la casa un recuadro de corrección deja el cuerpo intacto. Además, ni esa fila ni el §11 están cerrados en `main` (los añade esta rama), así que la decisión es posible antes del cierre. Hace falta una pregunta explícita al consultor, no una oferta condicional. | `HOLDOUT-EXPOSICIONES.md:123` («…con marcas del trader sobre velas de [N] días de marzo»); `VIDEO-JULIO.md` §11.1, «Lo que ya estaba escrito» («Si el consultor quiere que se quite también eso, se hace con un recuadro») |
+> | b2 | importa | **La letra V que se propone para la entrada del VAD también está reutilizada en HISTORIA**, dos veces. El consultor avisó de ese riesgo para T y U (punto 7). §10.7 solo dice «V no está en ninguna entrada de la hoja de ruta». `letras_hechas` ya contiene V, así que cuando esa entrada se cierre, su encabezado tendrá que distinguirse de los dos viejos. El informe no lo declara. | `grep "^# Next Action HECHA · [TUV] " docs/state/HISTORIA.md` da `6736: …· V · … trabajo/guion-mismo-comando (2026-10-08)` y `13340: …· V · … trabajo/recorrida-construccion (2026-10-27)`; `VIDEO-JULIO.md` §10.7 |
+> | b3 | importa | **R2.5 es una entrada nueva de la hoja de ruta que la respuesta no pide, y su sitio no está justificado.** El informe la deduce («con R2.4 HECHA, NA:V no puede ir en R2.4»), pero la coloca en el tramo R2 «Material de construcción». La respuesta a la PARADA 4 pedía esa entrada «en el carril de infraestructura», un carril que no existe en la hoja de ruta (solo hay «lo de Aleks» y «guardias y deuda»). El informe no dice por qué R2 ni que no hay ese carril. Además, R2.5 dice «no va antes de R4.4 ni de la preparación de la sesión 7» y se deja las láminas, que la entrada V de la Next Action sí nombra. | `simular_cierre.py:102-111` (R25, línea 111) frente a `:99-100`; `HOJA-DE-RUTA.md:607` y `:659` (los dos únicos «## Carril»); `VIDEO-JULIO.md:1364`, `:1378` (la cita de la PARADA 4: «carril de infraestructura») |
+> | b4 | menor | `R24_HECHA` borra la última viñeta de R2.4, «- Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8 y RUMBO-2026-11.md)». §10.2 enumera lo que cambia (Refs, Depende de, Estado) y lo que queda («Qué es», «Quién» y «Hecho cuando», como están) sin nombrar esa viñeta. | `HOJA-DE-RUTA.md:137` frente a `simular_cierre.py:66-82`; `VIDEO-JULIO.md` §10.2 |
+>
+> ### Lo que no pude comprobar
+> - **La medida de que la guardia no niega el Read del PNG** (§11.1 c). Pasarle a `guardia.py` un JSON por una tubería lo niega la propia guardia («la guardia solo deja ejecutar codigo si es SEGURO…»; pide un guion escrito con Write). Yo no puedo crear ficheros. Queda la medida declarada por la sesión y mi lectura del código: `guardia.py:563-591` solo mira los tramos bajo transcripciones, lo que es coherente con lo medido.
+> - **Que `corpus frames show --video v13 --t 0:00:10` imprima la ruta sin la guardia.** No lo ejecuté (cae en el tramo y la guardia lo niega). Solo lo leí en `cli.py:548-566`.
+> - **Que `fr-v13-8c1e06fb/10000` no se haya vuelto a abrir.** Solo hay declaraciones (`HOLDOUT-EXPOSICIONES.md:127`, cuerpo de dda8153). No hay rastro mecánico que lo pruebe.
+> - **El `make check` del árbol estadiado.** Está corriendo (`make-check.log` iba por el 15 % a las 10:17), así que no hay `SELLO` ni `PICO DE MEMORIA` de lo estadiado. Las dos filas de §9 de dda8153 y 76cf147 coinciden con sus mensajes de commit (`e1d8a539…`, `2dee9fc0…`, 310 MiB, 3343 passed). El primer intento en rojo de dda8153 solo consta en el mensaje del commit y en §9.
+> - **`corpus inventory`**: no lo ejecuté porque escribe `manifest.yaml`. La evidencia de que no cambia es que `manifest.yaml` no aparece en `git diff --name-status main...HEAD` ni en 76cf147.
+> - **`git write-tree`**: no se ejecutó (escribe en la base de objetos).
+> - **Una nota**: corrí un `pytest` de un único test con `-p no:cacheprovider` mientras corría `make check`. Puede haber escrito `__pycache__`, que está ignorado. No escribe nada que siga git.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git log --format='%h %s' 8a08da4..HEAD && git diff 8a08da4 --stat && git diff --cached --stat && git status --short`
+> 2. `git diff 8a08da4 -- contrato.yaml docs/encargos/trabajo-video-julio.md tests/unit/test_guardia_claude.py docs/validation/HOLDOUT-EXPOSICIONES.md docs/runbooks/ERRORES-RECURRENTES.md`
+> 3. `git diff 8a08da4 -- docs/runbooks/ENTRADA-MARZO.md knowledge/corpus/tramos_no_citables.yaml knowledge/corpus/fuentes.yaml && git log --format='%h%n%B%n----' 8a08da4..HEAD`
+> 4. `git diff 8a08da4 -- docs/validation/VIDEO-JULIO.md`
+> 5. `uv run python scripts/contrato_rama.py; cat contrato.yaml`
+> 6. `git diff --name-status main...HEAD; git diff --cached --name-status; git show --stat --format='%h' 76cf147 dda8153; git log --format='%h' 8a08da4..HEAD -- knowledge/spec knowledge/cases`
+> 7. `uv run python docs/validation/anexos/VIDEO-JULIO/simular_cierre.py "C:/Users/USER/Desktop/Bot v3"`
+> 8. Read `docs/validation/anexos/VIDEO-JULIO/simular_cierre.py`
+> 9. `cat simular-cierre.txt; grep -n "^# Next Action HECHA · [TUV] " docs/state/HISTORIA.md; grep -n "NA:V\|^### R2\|^### R4.4\|^## R3" docs/plan/HOJA-DE-RUTA.md; grep -n "^[A-Z]\. " PROJECT_STATE.md | cut -c1-80`
+> 10. `grep -n "^## " ENTRADA-MARZO.md; sed -n 390,400p` y `sed -n 480,510p src/botsito/cases/holdout.py`; grep sobre ADR-0041 (glob equivocado); `ls knowledge/cases/`
+> 11. `ls docs/adr | grep 0041`; grep de los campos en `holdout.py` y en `retirados.yaml`
+> 12. `grep -n` y `sed -n 21,31p` sobre `docs/adr/0041-un-dia-reservado-expuesto-sale-del-holdout.md`; grep de `caso-` en `src/botsito/cases/`
+> 13. `grep -n -o "8c1e06fb/[0-9]*" VIDEO-JULIO.md | sort | uniq`; Read de `VIDEO-JULIO.md:300-329`
+> 14. `grep -n "MARZO DE 2026" HOLDOUT-EXPOSICIONES.md | cut -c1-900`
+> 15. `sed -n 30,35p historial.py; sed -n 548,570p cli.py; sed -n 560,592p .claude/hooks/guardia.py`
+> 16. `grep -n -i fuente tramos_no_citables.yaml; git log … --format=trailers …` (el bucle con `$(git show …)` lo negó la guardia; lo rehíce sin él)
+> 17. `sed -n 1,3p tramos_no_citables.yaml; git log -5 --format='== %h' main -- knowledge/corpus/tramos_no_citables.yaml`
+> 18. `git log -5 --format='== %h%n%B' main -- knowledge/corpus/tramos_no_citables.yaml | grep -i "^== \|^Fuente"`
+> 19. `uv run python -c "…"` (compara los dos bloques de la respuesta, solo lectura)
+> 20. `grep -n "^| Rama\|^|---" ERRORES-RECURRENTES.md`
+> 21. `echo '{…Read del PNG…}' | python .claude/hooks/guardia.py`: **negado por la guardia**, no se ejecutó
+> 22. `grep -n "67 \|ninguna lo contradice\|lo contradice" VIDEO-JULIO.md`; Read de `VIDEO-JULIO.md:535-556`
+> 23. `grep -n "^### \|^## " HOJA-DE-RUTA.md; grep -n -i "láminas" HOJA-DE-RUTA.md`
+> 24. `grep -n -i carril PROJECT_STATE.md; grep -n -i infraestructura HOJA-DE-RUTA.md PROJECT_STATE.md VIDEO-JULIO.md`
+> 25. `grep -n log .gitignore; git check-ignore -v knowledge-validate.log`
+> 26. `grep -n "\.log" ENTRADA-MARZO.md`
+> 27. `grep -n "fidelidad-[0-9d]" ENTRADA-MARZO.md`
+> 28. `git tag -l "stable/F38*" | sort | tail -4; grep -n -i "next tag\|siguiente tag" PROJECT_STATE.md`
+> 29. `ls -l make-check.log; tail -3 make-check.log`
+> 30. `uv run botsito state check`
+> 31. `uv run pytest -q -p no:cacheprovider tests/unit/test_guardia_claude.py -k test_los_tramos_del_repo_real`
+> 32. `uv run botsito knowledge validate 2>&1 | grep -c ERROR; …`: **negado por la guardia** (dos ejecuciones en un comando); repetido como `uv run botsito knowledge validate 2>&1 | grep -E "ERROR|^OK" | head -5`
+> 33. `sed -n 55,63p tests/unit/test_hoja_de_ruta.py`
+> 34. Read de `docs/plan/HOJA-DE-RUTA.md:126-138`
+
 ## Estado
-**EN CURSO**: aplicando la respuesta del consultor a la PARADA final (2026-11-09); hecho el punto
-0 (§11.1), el 6 (§11.2, `fuentes.yaml`) y los puntos 1 a 5 y 7 (§11.3 y §10). Faltan el revisor
-(pasada corta) y su informe. No se cierra nada sin la orden de Aleks.
+**Rama lista para revisión, NO cerrada.** Aplicada la respuesta del consultor a la PARADA final
+(§11.1 a §11.3) y la segunda pasada del revisor (§14.3). Quedan dos decisiones del consultor
+(§11.4): cuántos días de marzo quedan escritos, y la letra y el sitio de la entrada del VAD. Next
+tag: F38u. Ningún push. No se cierra nada sin la orden de Aleks.

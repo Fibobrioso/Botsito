@@ -1,5 +1,6 @@
 # uv run python docs/validation/anexos/VIDEO-JULIO/simular_cierre.py "C:/Users/USER/Desktop/Bot v3"
-# (segunda version, T y U HECHAS; sobre 76cf147, 2026-11-09; en memoria, sin escribir)
+# (segunda version, T y U HECHAS, con los arreglos del revisor a1 y b3; sobre e77b66e,
+# 2026-11-09; en memoria, sin escribir)
 ## sin la entrada del VAD
 T y U fuera: True
 a: []

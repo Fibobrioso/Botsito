@@ -1,5 +1,5 @@
 rama: trabajo/video-julio
-riesgo: medio  # rama de medida: transcribe y extrae fotogramas de v11-v14 (manifiestos nuevos, inmutables), cambia la naturaleza de v11-v14 en fuentes.yaml y el bloque material_sin_video de criterio_fidelidad.yaml (F5); no toca src/, spec, evidencia, feedback, casos ni repartos
+riesgo: medio  # rama de medida: transcribe y extrae fotogramas de v11-v14 (manifiestos nuevos, inmutables), cambia la naturaleza de v11-v14 en fuentes.yaml; el bloque material_sin_video de criterio_fidelidad.yaml (F5) no cambia, por la respuesta a la PARADA final; no toca src/, spec, evidencia, feedback, casos ni repartos
 artefacto: docs/validation/VIDEO-JULIO.md
 tramo: "R2 · Material de construcción"
 rutas_permitidas:
