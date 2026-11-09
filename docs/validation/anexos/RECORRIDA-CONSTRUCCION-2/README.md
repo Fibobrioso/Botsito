@@ -84,6 +84,24 @@ leen salidas commiteadas:
   copias, contra `test_hoja_de_ruta` y `test_project_state`; en el repo no escribe nada.
   `uv run python -B docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/simular_cierre.py`
   → `simular-cierre.txt`.
+Añadidos en la fase 3 (respuesta del consultor a la PARADA 2):
+
+- `caja_stop.py` (punto 2): el stop del trader, leído de los casos dev por la compuerta del arnés,
+  frente al de la orden del bot, con los signos y la regla de los dos tercios que su docstring
+  explica.
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/caja_stop.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/para-clasificar.txt`
+  → `caja-stop.txt`.
+- `visor_sesiones.py` (punto 3): lo que las nueve páginas de `data/visor/` (ignoradas por git; las
+  escriben los nueve `motor visor --simular --caso` del punto 3) dicen de cada sesión, comparado con
+  la corrida 1, en horas de pared y sin precios.
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/visor_sesiones.py data/visor docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt`
+  → `visor-sesiones.txt`.
+- `recuento_clases.py` (§8): los recuentos por patrón, mes y sesión del visor.
+  `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/recuento_clases.py docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/patrones-cuenta-por-mes.txt`
+  → `recuento-clases.txt`.
+- `salida_comun.py`: lo que comparten `caja_stop.py` y `visor_sesiones.py`, sin importar ningún
+  otro guion de la carpeta. Así la cadena de carga del test de humo cabe en los tres niveles que
+  admite la guardia; un test comprueba que lee las órdenes igual que `para_clasificar.py`.
 - `test_humo.py`: sus tests de humo, sobre salidas sintéticas y en los dos sentidos; `make check` no
   los recoge (`testpaths = ["tests"]`):
   `uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/test_humo.py -q`.
@@ -122,6 +140,9 @@ En la fase 2, con los tests de `resumen_sin_trader` y de `antes_del_dia.py` aña
 $ uv run pytest docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/test_humo.py -v -p no:cacheprovider
 ============================= 13 passed in 0.78s ==============================
 ```
+
+En la fase 3, con los de `caja_stop.py`, `visor_sesiones.py` y `salida_comun.py`:
+`21 passed in 0.81s` (el mismo comando).
 
 El segundo de arriba es el original, en su sitio e idéntico al de `main`: cubre lo que la copia no trae
 (`test_la_lectura_vieja_rompe_sin_rotulo` y los de `entradas_antes_alternancia.py`).

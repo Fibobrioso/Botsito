@@ -491,10 +491,13 @@ la peor (d) 4,31 %, cuenta de enero; e) 90,68 %, julio), y coinciden. «0 seguid
 
 **RN-032** (sin columna propia; de «Por sesion», las sesiones con operaciones del trader, columna
 `disparadas`). La cuarta columna cuenta COINCIDENCIAS, no causas: sesiones con RN-032 disparada y,
-en la misma línea, `bloqueadas` con `prohibida:abrir_operacion`, que es siempre de RN-015 y sale en
-96 de las 104 sesiones haya RN-032 o no (revisor, a1; RECORRIDA-CONSTRUCCION.md §2.2, a4):
+en la misma línea, `bloqueadas` con `prohibida:abrir_operacion`, que es la acción de RN-015
+(`colocar_orden_limite`) bloqueada por un gate que la línea no nombra, y sale en 96 de las 104
+sesiones haya RN-032 o no (revisor, a1; RECORRIDA-CONSTRUCCION.md §2.2, a4). *Corregido tras la
+respuesta del consultor a la PARADA 2, punto 9: la redacción del a1 decía «que es siempre de
+RN-015».*
 
-| mes | sesiones | RN-032 disparada | de ellas, con `prohibida:abrir_operacion` (de RN-015) | primer y último día |
+| mes | sesiones | RN-032 disparada | de ellas, con la acción de RN-015 bloqueada (`prohibida:abrir_operacion`) | primer y último día |
 |---|---|---|---|---|
 | 2026-01 | 30 | 3 | 3 | 2026-01-13 a 2026-01-30 |
 | 2026-04 | 23 | 0 | 0 | — |
@@ -781,8 +784,10 @@ sobre las salidas.
 
 ## Las exposiciones de cada día
 
-Un solo día de trabajo, el 2026-11-08: las dos filas de esta rama en `HOLDOUT-EXPOSICIONES.md` (la de
-la apertura y la de lo que no nombraba). Ninguna etiqueta ni cifra del bot de un día reservado; nada
+Un solo día de trabajo, el 2026-11-08: seis filas de esta rama en `HOLDOUT-EXPOSICIONES.md`, tres de
+las fases 0 a 2 (la de la apertura, la de lo que no nombraba y la de la entrega) y tres de la fase 3
+(la de la apertura de la fase, la de lo que no nombraba y la de los recuentos que pidió el revisor,
+a3). Ninguna etiqueta ni cifra del bot de un día reservado; nada
 de mayo; `antes_del_dia.py` da 0 líneas con algo anterior al día de su fila o fuera de la
 construcción en los 16 ficheros de la carpeta.
 
@@ -795,7 +800,9 @@ construcción en los 16 ficheros de la carpeta.
 | `686a8b3` (fase 1) | `3e666d1f…` | 3343 passed |
 | `7918f29` (salidas) | `e84906ac…` | 3343 passed, 1434 s |
 | `83727c3` (NOTAS de D2 y D7) | `151ff208…` | 3343 passed, 1303 s |
-| (entrega: este informe, `simular_cierre.py` y el revisor) | ver «Estado» | — |
+| `d77b0a9` (entrega de la PARADA 2) | `d5b66a09…` | 3343 passed, 1378 s |
+| fase 3, antes de los arreglos del revisor | `51e3f58b…` | 3343 passed; no se commiteó: los arreglos lo cambiaron |
+| fase 3 (PARADA 3) | ver el log del commit | ver «Estado» |
 
 ## Lo que necesito que decidas (PARADA 2)
 
@@ -1085,9 +1092,489 @@ calendario».)
 | b7 | La línea del calendario ya no se copia en §3.1. |
 | Lo que no pudo comprobar | La CI: `gh run view 42502468946` en la apertura (`success`). D10: el `sha256` igual de las dos, en la fase 2. El sello de la entrega: abajo, «Los make check de la rama». |
 
+## Respuesta del consultor a la PARADA 2 (2026-11-08)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/recorrida-construccion-2 (2026-11-08). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha, y aplícala punto por punto (skill fase-cero). Abre una fase 3 en esta misma rama: la clasificación tiene que estar hecha antes de preparar la sesión 7 (hoja de ruta, el muro), así que no se deja para la rama de la preparación. NUNCA cierra.
+>
+> ANTES DE NADA
+> - La fila del día en HOLDOUT-EXPOSICIONES.md, escrita y estadiada ANTES del primer make check, de la primera lectura de casos dev y del primer visor de esta fase (lección 8 de F38r): casos_reservados(repo) por recuento, y que ninguno de los días que se leen aparece en él (su ausencia dice «no reservado», que es lo que hace falta; no dice «sin partición»); los casos dev de construcción de los cuatro meses (el stop del trader); los nueve visores del punto 3 y lo que calientan (el M1 entero de marzo para los días de abril y de junio para los de julio, por recuento; enero, desde su propio mes); los guiones nuevos de anexos y el revisor. Si el trabajo pasa la medianoche, el día nuevo tiene su fila antes de su primer make check.
+> - Se amplía la autorización expresa del encargo SOLO a los nueve comandos del visor del punto 3, escritos exactamente así. Ningún motor arnes más.
+>
+> 1. LA CLASIFICACIÓN PROVISIONAL POR PATRONES (decisión del consultor, 2026-11-08). Va al informe en un §8 nuevo, «La clasificación», como tabla con una fila por patrón: filas, clase, evidencia y destino. La fase 3 la completa con las medidas de los puntos 2 y 3, aplicando las reglas que aquí se fijan antes de medir; no se cambia ninguna clase por tu cuenta.
+>    a) T0 (31): pareja. Nada.
+>    b) P4 (25): 22 son de agosto, desde el 2026-08-19, cuando la cuenta de agosto deja de llenar con la equity cerca del 90 % (§1.4); en la diaria, agosto da 3. Clase «efecto de la cuenta»: ni error del motor ni regla desconocida, sale cuando bajen las pérdidas del bot. Di qué gate prohíbe abrir desde ese día, si la salida lo trae (por su definición debería ser RN-032: la pérdida total más el riesgo de la operación llega al límite menos el margen, strategy_spec.yaml); la línea `RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion` es la acción de RN-015 que un gate bloquea, no una prohibición de RN-015, y no nombra el gate. Si la salida no lo trae, escribe «la cuenta de agosto deja de llenar» sin regla. Las 3 restantes (una en enero, abril y julio): sin clase, en la lista del punto 4.
+>    c) P7 (4): el trader vuelve a entrar en la misma zona y el bot no. patrones.py no comprueba que la operación del bot esté ya emparejada (lo infiere: _ops_bot mezcla emparejadas y sueltas, y el docstring no dice lo que hace el código); compruébalo en las 4 filas contra «Por operacion». Clase «error nuestro conocido»: la deuda de RN-019 de Technical Debt (no dispara nunca en el motor; la acción reentrar no está escrita, PUNTO-USADO.md §1.h). Verifica en la salida que en esas 4 sesiones el bot no tenía una reentrada que RN-016 negara; si alguna la tenía, o la operación del bot no estaba emparejada, dilo y pasa a sin clase. Destino: la rama de RN-019, que no es esta.
+>    d) La caja: las 44 operaciones con la entrada a 3 puntos o menos y el stop fuera, y las 24 de P2 con la entrada a 4-10 puntos. Clase según la regla del punto 2.
+>    e) P1 (44, en 21 sesiones; 42 con el sesgo del bot al contrario y 2 insuficiente), P3 (54; 42 a más de 20 puntos), las 16 de P2 a más de 10 puntos, P5 (153; 120 del mismo lado) y P6 (63): sin clase hasta el punto 3 y, en julio, hasta T (punto 5). Nota que no clasifica: 20 de las 44 P1 son de julio, el único mes con vídeo, y P6 se concentra en abril (33), mes sin vídeo, donde S-14 dice que el trader se saltaba en sus backtests las sesiones que iban a acabar en break even (ACTIVAR-SESION-05.md §0.b.7); eso se mide, no se supone (punto 3).
+>
+> 2. LA CAJA: EL STOP DEL TRADER DE LOS CASOS DEV (decisión 0 de tu PARADA: opción b, aquí y no en la preparación de la sesión 7). Un guion de anexos (caja_stop.py, con su test de humo que rompa en los dos sentidos) que lee el stop de cada operación del trader de los casos dev de construcción (comprobado antes con casos_reservados y declarado) y, para las 64 operaciones con la entrada dentro en la corrida 1 y las 40 de P2, escribe por operación: entrada y stop del trader, entrada y stop de la orden del bot que ya nombra para-clasificar.txt (de «Ordenes» y «Posiciones»), Δentrada y Δstop con signo (positivo = el del bot más lejos de la entrada que el del trader, en la dirección de la operación), y el cociente entre la distancia entrada-stop del bot y la del trader. Además, de las 6 «en el nivel, no llenada», el motivo literal de la salida (cancelada por qué regla, o caducada). Salida a anexos/RECORRIDA-CONSTRUCCION-2/caja-stop.txt, con su resumen: la distribución de Δstop y del cociente, y cuántas tienen cada signo.
+>    Regla, fijada antes de medir: si al menos dos tercios de las 44 con el stop fuera tienen el mismo signo de Δstop, la diferencia es SISTEMÁTICA y la clase es «la caja: regla desconocida», con A-48 (qué velas forman el bloque de la caja, y el 0, S-16, punto 5 de «Para la sesión 7»): entra en la hoja de la sesión 7 con un esquema inventado. Con menos de dos tercios es DISPERSA: sin clase, y dos de ellas van al visor como ejemplo en la rama de la preparación. Lo mismo, con la misma regla y por separado, para el signo de Δentrada de las 24 de P2 a 4-10 puntos. Antes de dar la clase, mira si el redondeo del stop (alejándose de la entrada, al punto) o la comisión explican la diferencia; si la explican, la clase es «error nuestro» y PARADA 3 con la evidencia.
+>
+> 3. EL VISOR, NUEVE SESIONES (decisión 1: opción b; S-10 se mide aquí). Elegidas por el consultor entre las que más filas tienen de cada patrón, fuera del 1 de abril y del 1 de julio y sin «posible M». Una vez cada comando, la salida a data/visor/ (ignorada por git; nada del visor se commitea):
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-06
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-07
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-15
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-01-22
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-02
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-04-13
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-01-13
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-04-15
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-14
+>    Las sesiones y su porqué: P1, 2026-07-06 07-11, 2026-07-07 07-11 y 11-15, 2026-07-15 11-15 y 2026-01-22 11-15; P3, 2026-07-02 11-15 y 2026-04-13 07-11; P5, 2026-01-13 07-11; P6, 2026-04-15 11-15; la caja (P2), 2026-07-14 11-15.
+>    a) Primero, por sesión: si las órdenes del visor son las de la corrida 1 en esa sesión (ids, instantes, entradas, stops). Si alguna no coincide (el visor con un solo caso empieza la cuenta desde el capital y la corrida 1 la trae del mes), dilo con la diferencia y usa la corrida 1 como verdad.
+>    b) P1: el sesgo del bot, de qué H4 sale (por su hora de cierre y su color, sin precios; si es de un día anterior, dilo así), y el paso de RN-003 y de domain/sesgo.py que lo decide, con ADR-0080 si salta una H4 por el color.
+>    c) P3, P5 y P6: cada escenario de la sesión (ADR-0066 §1 y §2: una toma nueva abre escenario cuando el vigente terminó; con el vigente vivo decide intentos_tras_toma_nueva; tope max_escenarios_por_sesion), de qué toma de M15 sale, sus puntos y zonas, qué orden coloca cada uno y, si el trader entró en un nivel que el bot formó y no usó, qué regla lo descartó (el breaker de S-22, la alternancia RN-009, A-53 con se_mueve, RN-016). En la de P6 de abril, si la sesión acaba en break even para el bot (S-14).
+>    d) S-10 (ADR-0085 §4): en las nueve sesiones, si cada orden del bot nace en el primer punto tras la toma o en otro.
+>    e) Cada caso, marcado «regla aplicada como está escrita» o «no», con su evidencia (regla, fichero:línea, instante). Si alguno es «no» (el motor no aplica la spec como dice), PARADA 3 en eso antes del revisor y sigue con lo demás. Si todos son «sí», sigue sin parar.
+>    Ninguna línea del informe imprime una vela, un precio, un nivel ni un instante anteriores al día dev del caso.
+>
+> 4. LA TABLA DE §8, COMPLETA. Con 2 y 3 aplicados, cada patrón queda en una de estas clases: «error nuestro» (el motor no aplica la spec, o la spec lee mal lo que el trader dijo y está citado), «regla desconocida» (el motor aplica la spec y el trader hizo otra cosa: pregunta para la sesión 7, que redacto yo), «efecto de la cuenta», «material» (S-14 y días sin vídeo) o «sin clase hasta T». Para cada fila, el destino: una rama nombrada, la hoja de la sesión 7, T o ninguno. Una lista aparte con las filas sin clase que no cubre ni el visor ni T. Sin cambiar nada de lo decidido en el punto 1.
+>
+> 5. EL ORDEN DE LO QUE SIGUE (decisión del consultor). T (trabajo/video-julio, ENTRADA-JULIO.md §5) pasa por delante de la preparación de la sesión 7: julio es el mes con más operaciones del trader (67), el único con vídeo, y en él están 20 de las 44 P1 y cinco de las nueve sesiones del visor; su voz explica cada entrada y cada descarte, y lo que aclare no gasta tiempo de la sesión. Va en las líneas del cierre (punto 6).
+>
+> 6. LAS LÍNEAS DEL CIERRE, rehechas y medidas sobre una copia (no las apliques):
+>    - Next Action, F, con este texto exacto y la cifra literal del veredicto: «F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7 (§d de ACTIVAR-SESION-06-MOTOR.md). La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; la clasificación, en su §8). Siguiente: T, con la voz del trader sobre julio; después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; ACTIVAR-SESION-06.md §«Para la sesión 7», S-22 y S-19 con sus esquemas y el 52 %, y lo que deje §8); J antes si la hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.» Ninguna letra sale ni entra.
+>    - Hoja de ruta: R3.9 como la preparaste, con «Hecho cuando: el veredicto literal está en el informe y en ADR-0070 §3, la línea base vigente es la suya y cada diferencia tiene su clase o su destino (§8)» y el Estado HECHA con el veredicto y el recuento de §8 por clase. R5.2 cita R3.9 en lugar de R4.1. R5.6 sin cambio. En la entrada de T, una línea: «Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8, respuesta a la PARADA 2)».
+>    - Technical Debt: nada, salvo lo que la PARADA 3 decida.
+>    - PROJECT_STATE con las líneas aplicadas y las cuatro cabeceras en forma corta (decisión 3: opción a): por debajo de 23.000 bytes, medido con wc -c sobre una copia, con test_hoja_de_ruta y test_project_state en verde. Si pasa de 23.000, PARADA con la cifra; no recortes nada por tu cuenta.
+>
+> 7. LAS OTRAS DOS DECISIONES DE TU PARADA. La 2: opción a, no hay NOTA en §5.1 de ACTIVAR-A35-A44.md; la de §5 basta (D7). La 3: opción a, la forma corta.
+>
+> 8. LA DESVIACIÓN 9 (el id con la fecha de la sesión 3 en cuatro commits): de acuerdo, no se reescribe la historia. Es la fecha de la sesión grabada, no un día de mercado ni una cifra del bot, y el mismo id está en knowledge/spec/parametros.yaml de main. Queda declarada como está.
+>
+> 9. LA FILA DE ERRORES-RECURRENTES. A tus lecciones de §7 añade, en «del consultor», estos tres, todos menores, con su lección:
+>    (a) D6 dijo que enero era la cuarta cuenta: el orden de los meses lo pone arnes.validar_meses, que los ordena, y lo leí en el encargo de F38s sin aplicarlo. Lección: el orden de un recorrido se lee en el código que lo fija, no en el yaml que lo lista.
+>    (b) D8 pidió el escalón entero de la cascada por operación sin comprobar que la salida trae el stop del trader. Lección: antes de pedir una tabla por operación desde una salida, se comprueba que la salida trae cada campo.
+>    (c) D6 pidió S-10 desde la salida, y la salida no trae la toma ni las zonas. La misma lección que (b).
+>    Y uno para el revisor (menor): su a1 dejó escrito en §1.4 que `prohibida:abrir_operacion` «es siempre de RN-015»; es la acción de RN-015 bloqueada por un gate, y la línea no nombra cuál. Corrige §1.4 con esa frase (la NOTA de ADR-0070, si dice lo mismo, también, en su commit). Lección para el revisor: al corregir una atribución, se lee la regla en strategy_spec.yaml antes de escribir la nueva.
+>    Y lo que el revisor no vio, si tu revisión del punto 10 encuentra algo.
+>
+> 10. EL REVISOR (opus), sobre la fase 3, con estos alcances: (1) que caja-stop.txt dice lo que dicen los casos dev y las salidas, comprobado a mano en cinco operaciones (dos con el stop fuera de cada signo y una no llenada), y que la regla de dos tercios se aplicó tal como está escrita; (2) que en las nueve sesiones las órdenes del visor coinciden con las de la corrida 1, o la diferencia está dicha; (3) que cada «regla aplicada como está escrita» tiene su evidencia, comprobada en tres casos; (4) que §8 no cambia ninguna clase del punto 1 y que cada fila tiene destino; (5) que ningún texto commiteado lleva algo anterior al día dev del caso ni fechas de días reservados; (6) que nada de src/, tests/, knowledge/, scripts/ ni .claude/ cambia. Su informe, pegado al final; arregla lo que bloquee o importe, o di por qué no.
+>
+> PARADA 3 · ENTREGA: commitea la respuesta, los guiones con su test, caja-stop.txt, §8, el informe y el revisor, y para. Con eso escribo la orden de cierre y, en el encargo de la preparación de la sesión 7, las preguntas que salgan de §8.
+>
+> make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanza Aleks con «!».
+>
+> Rama lista para revisión, NO cerrada.
+
+## Fase 3 · la respuesta del consultor a la PARADA 2, aplicada punto por punto (2026-11-08)
+
+**Antes de nada.** La fila del día en HOLDOUT-EXPOSICIONES, escrita y estadiada a las 17:49:09, antes
+de cualquier lectura de casos dev, visor o `make check` de la fase. Con un guion de la carpeta de
+trabajo, que solo imprime recuentos: `casos_reservados` da 34 y `casos_ocultos` 34. De los 76 días
+dev de construcción hay **0** en cada uno, y de los nueve del visor (los nueve son dev de
+construcción), también **0**. Su ausencia dice «no reservado», no «sin partición». Una segunda fila
+nombra lo que la primera cubría solo en general (`visor_sesiones.py`, `recuento_clases.py`,
+`salida_comun.py` y la lectura de spec y código); se escribió después de correrlos, el mismo día y
+antes del primer `make check` de la fase.
+
+### F3.1 · P4 (punto 1.b)
+
+- **Desde el 2026-08-19 las P4 son 19, no 22.** Las 22 de agosto incluyen 3 anteriores al 19: dos
+  del 2026-08-10, sesión 11-15, con `detenido_por_racha`, y una del 2026-08-14, sesión 07-11, sin
+  `orden_dimensionada` (`recuento-clases.txt`; las filas, en `patrones-cuenta-por-mes.txt`). Gana la
+  medida: las 19 desde el 19 van a «efecto de la cuenta», como decidió el consultor, y las 3
+  anteriores, a la lista sin clase.
+- **El gate.** La salida lleva RN-032 entre las `disparadas` de las **14 sesiones con trader** del
+  2026-08-19 al 2026-08-31 (14 de 14), con `bot 0` en las 14. En 13 de ellas, la línea `bloqueadas`
+  es `RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion`, que no nombra el gate; en la
+  otra, `ninguna`. Escrito así: **la cuenta de agosto deja de llenar desde el 2026-08-19; RN-032
+  dispara en cada una de sus 14 sesiones con trader («disparadas») y la línea de bloqueadas no dice
+  qué gate prohíbe abrir**. Por su definición (`strategy_spec.yaml:2536-2544`: «la perdida acumulada
+  de la firma … mas el riesgo de la operacion … llega al limite menos firma_margen_seguridad … no se
+  abre esa operacion»), es el candidato. La salida no lo prueba.
+- Las otras 3: una de enero (2026-01-08 11-15), una de abril (2026-04-21 07-11) y una de julio
+  (2026-07-08 11-15). Sin clase, a la lista.
+
+### F3.2 · P7 (punto 1.c)
+
+Las 4 filas, comprobadas contra «Por operacion»: la operación del bot más cercana de cada una **es
+la pareja de OTRA operación del trader** (fila T0 `PAREJA bot <instante> <entrada>`) y no sale como
+fila del bot suelta. Son: 2026-07-10 07-11 (la del bot de las 07:14:10, pareja de la del trader de
+las 07:10:50), 2026-07-10 11-15, dos filas (la del bot de las 10:58:43, pareja de la de las
+10:58:40), y 2026-01-02 11-15 (la del bot de las 13:28:06, pareja de la de las 13:28:15). Horas UTC
+de la salida. En las tres sesiones, RN-016 no está entre las `disparadas` y
+`detenido_por_cartuchos` es `no`: el bot no tenía ninguna reentrada que RN-016 negara. **Clase
+«error nuestro conocido»** (la deuda de RN-019 de Technical Debt, PUNTO-USADO.md §1.h), como decidió
+el consultor. Destino: la rama de RN-019.
+
+### F3.3 · La caja (punto 2): `caja_stop.py` → `caja-stop.txt`
+
+El stop del trader sale de los casos dev, por la compuerta del arnés
+(`arnes.dias_de_construccion`). La orden del bot es la de `para-clasificar.txt` (sus «Ordenes»: precio
+y distancia; el stop, desde los dos). Los signos van en el docstring: Δ > 0 cuando la cifra del bot
+está más allá de la del trader, del lado del stop. Para Δentrada uso la misma orientación, porque la
+frase del consultor no la fija para la entrada; la regla de los dos tercios solo mira si los signos
+coinciden, así que la orientación no cambia la clase.
+
+- **Las 64 con la entrada dentro**, comprobadas contra la cascada impresa: 44 con el stop fuera, 6
+  en el nivel no llenadas y 14 con las cuatro piezas. Las tres cifras coinciden con
+  «### Fidelidad por criterios».
+- **Las 44 con el stop fuera: Δstop > 0 en 18 y < 0 en 26** (59 %, por debajo de dos tercios): **DISPERSA**.
+  Δstop va de −26 a +35 puntos (mediana −5); el cociente de distancias, de 0,21 a 9,25 (mediana 0,83).
+- **Antes de la clase.** El redondeo del stop al punto mueve 1 punto como mucho, así que solo podría
+  explicar las que están a 4 puntos exactos: son **7 de 44** (4 con +4 y 3 con −4). Quitando las 7,
+  quedan 14 frente a 23 de 37 (62,2 %); quitando solo las 4 positivas, las únicas que el redondeo
+  «alejándose de la entrada» puede dar, quedan 14 frente a 26 de 40 (65,0 %), a 1,7 puntos del
+  umbral. Dispersa en las dos cuentas. *Corregido tras el revisor de la fase 3 (a1): la primera
+  redacción decía que 26 de 37 no llegaba a dos tercios, y llega (70,3 %).* La comisión no mueve
+  ningún precio. **No explican la diferencia: ni «error nuestro» ni PARADA por esto.**
+- **La medida del signo** (revisor, b3): stop contra stop, «del lado del stop», no la diferencia de
+  distancias que dice la frase del consultor. En las 44 dan el mismo signo, porque la diferencia de
+  distancias es Δstop − Δentrada, con |Δentrada| ≤ 3 < 4 ≤ |Δstop|.
+- **El cruce con los patrones** (revisor, b4): de las 44, 20 son T0, 11 P3, 11 P2 y 2 P7 (medido con
+  un guion de la carpeta de trabajo sobre `caja-stop.txt` y las filas de los patrones). Una misma
+  operación lleva su clase de patrón en §8 y, aparte, la de la caja.
+- **Las 40 P2**: 24 a 4-10 puntos y 16 a más de 10, las del consultor. En las 24: **Δentrada > 0 en 10
+  y < 0 en 14** (58 %): **DISPERSA**. Por mes, las 24 son 8 de enero, 5 de abril, 7 de julio y 4 de
+  agosto; las 16 de más de 10, 9 de enero y 7 de julio.
+- **Las 6 no llenadas**: canceladas las seis, `reglas disparadas en ese cierre: …`. Las reglas de cada
+  una van en su fila de `caja-stop.txt`: RN-006, RN-011, RN-015 y RN-027 en las seis, y RN-004 o
+  RN-005 en cuatro de ellas.
+- Las dos, **sin clase**; dos de cada grupo van al visor como ejemplo en la rama de la preparación
+  (regla del punto 2).
+
+### F3.4 · El visor, nueve sesiones (punto 3): `visor_sesiones.py` → `visor-sesiones.txt`
+
+Los nueve comandos del punto 3, tal cual, una vez cada uno: `exit=0` los nueve, entre 2,2 y 8,6 s;
+la salida, en `data/visor/`, ignorada por git. Las horas del visor son de pared (Europe/Madrid).
+
+**Lo que el visor NO muestra, medido** (va a la PARADA 3): no nombra las tomas de M15 (RN-004 fija
+`liquidez_tomada=si` en cada cierre, sin nivel) ni los escenarios. De los gates, solo los frenos:
+cuando salta uno, la tabla de hechos lo dice minuto a minuto (`RN-016 | detenido_por_cartuchos |
+hasta_cartuchos_reinicio`). Cuando la prohibición de abrir no viene de un freno, solo se ve
+`RN-015 | orden_dimensionada | no` y no qué regla la fija. En la tabla de hechos y en los títulos del
+gráfico de 04-13 solo salen RN-003, RN-004 (155), RN-011 (345) y RN-015 (345). Por eso (c) y (e) solo
+se pueden hacer en parte, y (d) suponiendo una toma por sesión (la primera).
+
+**(a) Las órdenes del visor frente a las de la corrida 1**: iguales en id, colocación, precio, stop y
+estado en ocho de los nueve días. **2026-07-15: el visor tiene 5 más** (o25 a o29), porque en la
+corrida 1 la sesión 11-15 acaba en `detenido_por_racha:si` (RN-036 entre las disparadas), tras la
+pérdida de o24, con la racha que arrastra la cuenta de julio. El visor empieza el día desde el
+capital, sin esa racha, y sigue. Como dice el punto 3.a, manda la corrida 1.
+
+**(b) P1, el sesgo** (el lado que anota `domain/sesgo.py` y el color de la H4 que decide en el gráfico,
+el rectángulo marcado «rompe esta H4», sin precios):
+
+| Sesión | Sesgo del bot | H4 que decide | Color | Paso de `sesgo.py` (RN-003, `strategy_spec.yaml:1079`) | Trader |
+|---|---|---|---|---|---|
+| 2026-07-06 07-11 | bajista, 46 puntos | la que abre a las 03:00 del día, contra la anterior, que es de un día anterior | baja | ruptura de un extremo con su color, `sesgo.py:124-127` | 4 compras |
+| 2026-07-07 07-11 | bajista, 25 puntos | la de las 03:00 del día, contra la anterior, de un día anterior | baja | `sesgo.py:124-127` | 4 compras |
+| 2026-07-07 11-15 | bajista, 106 puntos | la de las 07:00, contra la de las 03:00 (las dos del día) | baja | `sesgo.py:124-127` | 4 compras |
+| 2026-07-15 11-15 | bajista, 126 puntos, doble ruptura | la de las 07:00, contra la de las 03:00 | baja | doble ruptura, decide el color, `sesgo.py:110-115` (ADR-0060) | 4 compras |
+| 2026-01-22 11-15 | alcista, **2 puntos** | la de las 07:00, contra la de las 03:00 | sube | `sesgo.py:124-127` | 3 ventas |
+
+En las cinco, `1 H4 miradas`: ninguna H4 saltada por color (ADR-0080 D1 no actúa). El bot solo forma
+zonas del lado de su sesgo: en las cinco sesiones, «ninguna zona del bot de su lado formada antes»
+para cada operación del trader. Las tres sesiones de julio con trader en 07-11 o 11-15 tampoco tienen
+órdenes del bot del lado del trader. **Regla aplicada como está escrita: sí** en las cinco, con esta
+evidencia: el lado anotado es el del color de la H4 que decide, como piden RN-003 y `sesgo.py`. La
+ruptura en puntos es la que anota el motor; sin precios no la recalculo.
+
+**(c) P3, P5, P6 y la caja (P2):**
+
+| Sesión | Lo medido | Regla aplicada como está escrita |
+|---|---|---|
+| 2026-07-02 11-15 (P3) | Sesgo alcista. 120 zonas de compra formadas, 21 órdenes (5 llenadas: o7 en break even; o10, o22, o23 y o25 con el stop saltado). Cuatro entradas del trader caen a 0-1 puntos de una zona que el bot formó en la sesión, sin ninguna orden en esa entrada antes (hora de pared). **A las 14:10:00 y a las 14:23:05**, el bot está detenido por RN-016: `detenido_por_cartuchos | hasta_cartuchos_reinicio` de las 14:08 al final, tras la tercera pérdida del barrido (o22, o23 y o25, desde las 14:01; la de o10 era de un barrido anterior), con `cartuchos_max = 3` «por barrido de liquidez». **A las 12:25:50 y a las 12:45:20**, RN-011 dimensiona la zona (`zona:140`, `zona:149`) y RN-015 queda en `no`, sin ningún freno en esos cierres y sin posición viva. | **sí** las de las 14:10 y 14:23 (RN-016, `strategy_spec.yaml:1861-1867`; hechos de las 14:08 a las 15:00); **no comprobable con el visor** las de las 12:25 y 12:45 (no dice qué gate prohíbe) |
+| 2026-04-13 07-11 (P3) | Sesgo alcista, 5 H4 miradas: la que decide es de un día anterior. 129 zonas, 14 órdenes. Las tres entradas del trader, a 2 puntos de zonas del bot (zona:59, :60 y :107) sin orden. A las 08:47, RN-011 da `zona:59` y RN-015 `no`; no había ninguna posición viva (pos-o5 cerró a las 07:08), así que no es RN-018. | **no comprobable con el visor** (el gate) |
+| 2026-01-13 07-11 (P5) | Sesgo bajista, 2 H4 miradas: la que decide es de un día anterior. 79 zonas, 19 órdenes, 7 llenadas: 5 con el stop saltado y 2 en break even. Las tres primeras pérdidas (o5, o6 y o7; la última cierra a las 08:46:47) agotan `cartuchos_max = 3`: el visor da `RN-016 | detenido_por_cartuchos | hasta_cartuchos_reinicio` de las 08:47 a las 08:58 (12 cierres) y el freno se levanta antes de o8 (colocada a las 08:58:59), como dice `cartuchos_reinicio = siguiente_liquidez_m15`. Después llenan o9 (pérdida), o14 (break even), o17 (pérdida) y o19 (break even): dos pérdidas en los barridos siguientes, menos de tres, y ningún freno más. La racha (`racha_perdidas_max = 9`) no llega. El trader opera una vez, a las 08:42:25, a 5 puntos de la zona de o7. | **sí** (RN-016, `strategy_spec.yaml:1861-1867`; hechos de las 08:47 a las 08:58). Lo que no se ve es la toma que levanta el freno |
+| 2026-04-15 11-15 (P6) | El trader no opera ese día. Sesgo alcista. 123 zonas, 15 órdenes, 5 llenadas: pos-o19, o28 y o29 en break even, pos-o24 y o27 con el stop saltado; la sesión acaba en **−3,626 R** para el bot (su R neto en «Posiciones»: −0,096, −1,400, −1,600, −0,391 y −0,139). **No acaba en break even**: la sesión no es de las de S-14. Dos pérdidas, menos de `cartuchos_max`: ningún freno tenía que saltar, y no salta ninguno. | **sí en lo que se ve** (ningún freno debía saltar y ninguno salta); por qué entra en cada zona, sin las tomas, no se ve |
+| 2026-07-14 11-15 (P2, la caja) | Sesgo alcista, doble ruptura (decide el color). 110 zonas, 7 órdenes, 3 llenadas. De las seis entradas del trader: a las 12:33:40, a 2 puntos de zona:116, donde o14 se colocó a las 12:31:59 y se llenó a las 12:33:30 (la T0 de la sesión); las otras, a 0-4 puntos de zonas del bot sin orden (11:35:15, 11:48:20 y 13:06:45) o a 19-21 puntos. En la sesión hay tres pérdidas (o10 y o12, que cierran a las 11:23 y a las 11:29, y o14, a las 12:35) y RN-016 no aparece en ningún hecho (0 filas). Si las tres son del mismo barrido, el freno tendría que saltar a las 12:36; con un barrido nuevo entre o12 y o14, no. Sin las tomas no se puede saber. | **no comprobable con el visor**: el gate de las tres sin orden, y si las tres pérdidas son del mismo barrido |
+
+**(d) S-10** (ADR-0085 §4), en las nueve sesiones. Suponiendo que la toma es la primera
+`liquidez_tomada=si` de la sesión, **la primera orden de cada sesión con órdenes nace en la primera
+zona formada desde esa toma** (o1, o7, o22, o5, o1, o1, o15 y o8 en sus sesiones). **Todas las
+demás nacen en zonas posteriores**: en cada zona nueva se cancela la anterior y se coloca otra
+(RN-006 entre las disparadas), y unas pocas se recolocan sobre una zona anterior sin formar ninguna
+nueva («sin zona formada en su cierre»). Si dentro de la sesión hubo tomas nuevas, el visor no las
+deja ver.
+
+**(e) Resumen:** «sí» en las cinco de P1, en 01-13 (P5) y en lo que se ve de 04-15 (P6); 07-02 (P3),
+«sí» en dos de sus cuatro entradas del trader y «no comprobable» en las otras dos; 04-13 (P3) y 07-14
+(P2), «no comprobable con el visor». **Ninguna «no»**: en lo que se ve, el motor no se aparta de la
+spec. La PARADA 3 sale de lo que no se ve (abajo, decisión 0), y en 07-14 con una pregunta concreta:
+si tres pérdidas del mismo barrido tendrían que haber parado al bot a las 12:36.
+
+**`antes_del_dia.py` sobre lo nuevo de la fase 3** (revisor, a4): 0 líneas en `caja-stop.txt`,
+`visor-sesiones.txt`, `recuento-clases.txt`, `simular-cierre.txt`, el README y los cuatro guiones
+nuevos. Su límite: en `visor-sesiones.txt` el día va en los encabezados `## AAAA-MM-DD`, así que el
+guion no compara sus horas con él («0 filas con dia»). El revisor las revisó a mano y todas son del
+día del caso. Sobre el informe entero marca 6 líneas: fechas de documentos de octubre y la del
+apéndice A, todas de antes de la fase 3.
+
+### F3.5 · §8 · La clasificación
+
+Sobre las 414 filas de `patrones-cuenta-por-mes.txt` (corrida 1). Los recuentos, en
+`recuento-clases.txt`; las clases del punto 1, sin cambiar ninguna.
+
+| Patrón | Filas | Clase | Evidencia | Destino |
+|---|---|---|---|---|
+| T0 | 31 | pareja | `patrones-cuenta-por-mes.txt` | ninguno |
+| P4, agosto desde el 2026-08-19 | 19 | efecto de la cuenta | F3.1: la cuenta de agosto deja de llenar; RN-032 en las `disparadas` de sus 14 sesiones con trader; la línea de bloqueadas no nombra el gate | ninguno (sale cuando bajen las pérdidas del bot) |
+| P4, las demás | 6 | sin clase | F3.1 (3 de agosto antes del 19, 1 de enero, 1 de abril, 1 de julio) | lista |
+| P7 | 4 | error nuestro conocido | F3.2: el bot ya emparejado y ninguna reentrada negada por RN-016 | la rama de RN-019 |
+| P1, julio | 20 | sin clase hasta T | F3.4 (b): en las 4 sesiones de julio del visor, sesgo «sí» | T |
+| P1, 2026-01-22 11-15 | 3 | sin clase: «regla desconocida», «material» o A-16, a decidir | F3.4 (b): sesgo alcista por una ruptura de 2 puntos de la H4 de las 07:00, con su color; regla aplicada «sí»; el trader vende; libro sin vídeo; 2 puntos es la discrepancia de serie de A-16 (ABIERTA) | PARADA 3, decisión 3 (*corregido tras el revisor de la fase 3, b1: la primera versión la ponía en «regla desconocida»*) |
+| P1, el resto | 21 | sin clase | sin sesión en el visor; 2 de ellas, de 2026-08-27 07-11, dentro del periodo en que la cuenta de agosto no llena (`bot 0`; revisor, para el consultor) | lista |
+| P2, a 4-10 puntos | 24 | sin clase (la caja, DISPERSA) | F3.3: 10 frente a 14 | dos al visor en la rama de la preparación |
+| P2, a más de 10 puntos | 16 | julio (7): sin clase hasta T; enero (9): sin clase | F3.3 | T / lista |
+| P3, julio | 15 | sin clase hasta T | F3.4 (c), 2026-07-02: no comprobable | T |
+| P3, el resto | 39 | sin clase | F3.4 (c), 2026-04-13: no comprobable | lista (y PARADA 3, decisión 0) |
+| P5, julio | 37 | sin clase hasta T | F3.4 (c): las de 2026-07-02, 07-07, 07-14 y 07-15 son de sesiones de julio del visor | T |
+| P5, 2026-01-13 07-11 | 7 | sin clase: «regla desconocida» o «material», a decidir | F3.4 (c): regla aplicada «sí» (RN-016 y su reinicio); el trader opera una vez en un libro sin vídeo | PARADA 3, decisión 3 |
+| P5, el resto | 109 | sin clase | sin sesión en el visor (salvo 1 fila de 2026-04-13, no comprobable) | lista |
+| P6, julio | 2 | sin clase hasta T | — | T |
+| P6, 2026-04-15 11-15 | 5 | sin clase: «regla desconocida» o «material», a decidir | F3.4 (c): «sí» en lo que se ve; la sesión acaba en −3,626 R (no es S-14); el trader no opera ese día, libro sin vídeo | PARADA 3, decisión 3 |
+| P6, el resto | 56 | sin clase | sin sesión en el visor | lista |
+| La caja: las 44 con el stop fuera (cruce de la cascada, no un patrón: van también en las filas de arriba) | 44 | sin clase (DISPERSA) | F3.3: 18 frente a 26; el redondeo explica 7 como mucho; la comisión, ninguna | dos al visor en la rama de la preparación |
+
+**Por clase, sobre las 414 filas:** 31 pareja, 19 efecto de la cuenta, 4 error nuestro conocido, 81
+sin clase hasta T (julio: P1 20, P2 de más de 10 puntos 7, P3 15, P5 37, P6 2) y 279 sin clase (con
+las 3 de 2026-01-22, las 7 de 2026-01-13 y las 5 de 2026-04-15 de la decisión 3). Ninguna en
+«regla desconocida» ni en «material» hasta que decidas la 3: la única sesión de P6 medida no es de
+S-14.
+
+**La lista aparte: las filas sin clase que no cubren ni el visor ni T** (279 en total): P4 6; P1 24
+(enero 7, con las 3 de 2026-01-22; abril 9; agosto 8); P2 33 (las 24 de 4-10 puntos y las 9 de enero de más de 10); P3 39
+(enero 21, abril 12, agosto 6, con las 3 de 2026-04-13 que el visor miró sin poder cerrar); P5 116
+(enero 66, abril 29, agosto 21; incluye las 7 de 2026-01-13 de la decisión 3); P6 61 (enero 15,
+abril 33, agosto 13; incluye las 5 de 2026-04-15 de la decisión 3).
+
+### F3.6 · Los puntos 5 a 9
+
+- **5 y 6, el orden y las líneas del cierre**, rehechas y medidas con `simular_cierre.py` sobre
+  copias. F lleva el texto exacto del punto 6. R3.9 lleva el «Hecho cuando» del punto 6 y el Estado
+  con el veredicto y el recuento por clase. R5.2 cita R3.9 y R5.6 no cambia. En R2.4 (T) entra la
+  línea «Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8, respuesta a la
+  PARADA 2)». Resultado: `a: []`, `b: []`, `c: []`, F viva y ninguna letra sale ni entra (vivas: `A D
+  F G I J L M N Q T U`); **PROJECT_STATE, 22.773 bytes con las líneas aplicadas y 22.697 con las
+  cuatro cabeceras cortas**, con los cuatro tests de `test_project_state` en verde
+  (`simular-cierre.txt`). Technical Debt: nada.
+- **7**: sin NOTA en §5.1 y cabeceras en forma corta; hecho así.
+- **8**: la desviación 9 queda declarada como está.
+- **9**: §1.4 corregido («la acción de RN-015 bloqueada por un gate, que la línea no nombra»). La NOTA
+  de ADR-0070 ya no lo decía (se quitó en la entrega, a1). Las lecciones del consultor y la del
+  revisor, en §7 (abajo).
+
+### F3.7 · Lo que añade la fase 3 a la fila de ERRORES-RECURRENTES (§7)
+
+Del consultor, menores:
+- (a) D6 dijo que enero era la cuarta cuenta. Lección: el orden de un recorrido se lee en el código
+  que lo fija, no en el yaml que lo lista.
+- (b) D8 pidió el escalón entero de la cascada por operación sin comprobar que la salida trae el stop
+  del trader. Lección: antes de pedir una tabla por operación desde una salida, se comprueba que la
+  salida trae cada campo.
+- (c) D6 pidió S-10 desde la salida, y la salida no trae ni la toma ni las zonas. La misma lección.
+- Y de esta fase, el mismo patrón: el punto 3 pidió al visor el escenario, la toma y la regla que
+  descartó cada nivel, y el visor no muestra ni tomas, ni escenarios, ni el gate de cada cierre
+  (F3.4). La lección es la de (b), ahora aplicada al visor.
+
+Para el revisor, menor: su a1 dejó escrito que `prohibida:abrir_operacion` «es siempre de RN-015».
+Lección: al corregir una atribución, se lee la regla en `strategy_spec.yaml` antes de escribir la
+nueva.
+
+De la sesión:
+- Medido en esta fase: la guardia niega un test cuya cadena de carga pasa de tres niveles (test →
+  `caja_stop` → `para_clasificar` → `patrones` → `horas_perdidas`). Se resolvió con lo que propone
+  la propia guardia: lo común pasa a `salida_comun.py`, sin importaciones locales, y un test
+  comprueba que lee igual que `para_clasificar`.
+- Las 22 P4 «desde el 19» eran 19. Las juntó el §4 de esta rama («P4 22 frente a 3, … donde la
+  cuenta de agosto deja de llenar desde el 2026-08-19») y la respuesta del consultor lo copió
+  (revisor, b5). Lección: una cifra que se va a usar como regla se mide con su condición, no con la
+  frase que la acompañaba. El Estado de R3.9 (19 y 279) se rehace si la decisión 1 sale (b).
+
+### F3.8 · La respuesta a la PARADA 2, punto por punto (revisor de la fase 3, b2)
+
+| Punto | Lo pedido | Estado | Evidencia |
+|---|---|---|---|
+| Antes de nada | Fila del día antes de casos dev, visor y `make check`; recuento de reservados | Hecho | F3 (17:49:09); 0 de 76 y 0 de 9; segunda y tercera fila, declaradas |
+| Antes de nada | Autorización solo a los nueve visores | Hecho | Nueve comandos, una vez cada uno (F3.4) |
+| 1.a | T0, pareja | Hecho | §8 |
+| 1.b | P4, efecto de la cuenta; el gate; las 3 restantes | Hecho de otra forma, declarado: 19 desde el 19, y 6 a la lista | F3.1; PARADA 3, decisión 1 |
+| 1.c | P7, comprobado contra «Por operacion» y RN-016 | Hecho | F3.2 |
+| 1.d y 2 | La caja: `caja_stop.py`, test en los dos sentidos, regla de los dos tercios, redondeo y comisión, las 6 no llenadas | Hecho | F3.3; `caja-stop.txt`; `test_humo.py` |
+| 1.e | Las sin clase, hasta el punto 3 y, en julio, hasta T | Hecho | §8 |
+| 3.a | Visor frente a corrida 1 | Hecho | F3.4 (a) |
+| 3.b | P1: sesgo, H4, color, paso de RN-003 y `sesgo.py` | Hecho | F3.4 (b) |
+| 3.c | Escenarios, tomas, regla que descartó | Parcial, declarado: el visor no muestra tomas, escenarios ni el gate de lo que no es un freno | F3.4 (c); PARADA 3, decisión 0 |
+| 3.d | S-10 | Parcial, declarado: con una toma por sesión | F3.4 (d) |
+| 3.e | «Regla aplicada como está escrita» con evidencia; PARADA si alguna es «no» | Hecho: ninguna «no»; «no comprobable» declarado | F3.4 (e) |
+| 4 | §8 completo, con destino, y la lista aparte | Hecho | F3.5 |
+| 5 | T antes de la sesión 7 | Hecho, en las líneas del cierre | F3.6 |
+| 6 | Líneas del cierre rehechas y medidas | Hecho: 22.773 y 22.697 bytes | `simular-cierre.txt` |
+| 7 | Decisiones 2 y 3 de la PARADA 2 | Hecho | F3.6 |
+| 8 | Desviación 9, declarada | Hecho | F3.6 |
+| 9 | Fila de ERRORES-RECURRENTES; §1.4 | Hecho de otra forma: en F3.7, para la fila del cierre | F3.7; §1.4 |
+| 10 | Revisor | Hecho | Apéndice C |
+| PARADA 3 | Commitear y parar | Hecho | el commit de la fase 3 |
+
+### Lo que necesito que decidas (PARADA 3)
+
+0. **Lo que el visor no deja ver: las tomas, los escenarios y el gate de las prohibiciones que no son
+   un freno.** Por eso (c) y (e) quedan «no comprobables» en 04-13, en 07-14 y en dos entradas de
+   07-02, y (d) se apoya en una toma por sesión. Opciones:
+   (a) dejarlo así y que la rama de la preparación de la sesión 7 lo cubra con el visor a ojo en los
+   días que elijas;
+   (b) un guion que corra el motor EN PROCESO sobre esos tres días y observe la traza de cada cierre
+   (las tomas de RN-004 con su nivel, los escenarios de ADR-0066 y qué regla fija cada prohibición),
+   sin cambiar lo que devuelve, como `medir_f2_f3.py` de ACTIVAR-SESION-06-MOTOR. Corre el motor, así
+   que necesita tu autorización expresa.
+   Recomiendo (b), en su propia rama corta antes de la preparación de la sesión 7: es lo único que
+   convierte esas «no comprobable» en «sí» o «no», y en 07-14 hay una pregunta concreta (si tres
+   pérdidas del mismo barrido tenían que parar al bot). Si alguna sale «no», es error nuestro, y
+   conviene saberlo antes de preguntar al trader. Coste de (a): esas sesiones sin clase y preguntas a
+   la sesión 7 que quizá sean errores nuestros.
+1. **Las 3 P4 de agosto anteriores al 19** (dos con `detenido_por_racha` el 2026-08-10). Opciones:
+   (a) sin clase, en la lista, como están; (b) «efecto de la cuenta», porque la racha de RN-036 es
+   de la cuenta de agosto. Recomiendo (a): la regla del punto 1.b habla del 19, y cambiarla es tuyo.
+2. **El signo de Δentrada** (F3.3). Opciones: (a) la orientación del docstring de `caja_stop.py`; (b)
+   la contraria. Recomiendo (a): la clase no cambia. Coste de (b): ninguno.
+3. **P1 de 2026-01-22 11-15 (3 filas), P5 de 2026-01-13 07-11 (7 filas) y P6 de 2026-04-15 11-15
+   (5 filas).** En 01-22 hay además una tercera lectura: la ruptura de 2 puntos que decide el sesgo
+   cae en la discrepancia de serie de A-16 (ABIERTA; `sesgo.py:61-62`), así que el trader pudo ver
+   otra vela; el bot no tuvo toma ni zonas en la sesión (revisor de la fase 3, b1). En las tres el motor aplica la regla
+   como está escrita y el trader casi no opera: una vez, o ninguna, en libros sin vídeo. Encaja en las
+   dos clases del punto 4. Opciones: (a) «material» (días sin vídeo), sin pregunta; (b) «regla
+   desconocida», pregunta para la sesión 7 (¿por qué paras tras una entrada, o no entras en todo el
+   día?); (c) sin clase hasta medir más días así. Recomiendo (c): son dos sesiones, y la medida de
+   S-14 en P6 (que la sesión acabe en break even) aquí da que no. Coste de (a) o (b): clasificar 63
+   + 116 filas por dos sesiones.
+
+Espero tu respuesta a la PARADA 3.
+
+## Apéndice C · El informe del revisor de la fase 3 (opus, 2026-11-08), tal cual
+
+> ## Informe del revisor · trabajo/recorrida-construccion-2 (fase 3, lo estadiado sobre d77b0a9) · 2026-11-08
+>
+> Encontré dos hallazgos que importan, uno por eje, y siete menores. Ninguno bloquea. Ninguno cambia una clase del punto 1, pero los dos cambian lo que el informe afirma. El primero es una cuenta: «26 de 37 no llega a dos tercios» es falso, porque 26/37 son el 70,3 %. La conclusión sigue en pie con los signos medidos. El segundo es la clase «regla desconocida» de 2026-01-22: el informe la pone sin plantear la alternativa que sí plantea en dos sesiones iguales, y la ruptura de 2 puntos cae en la discrepancia abierta de A-16.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 3 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia | Qué hacer |
+> |---|---|---|---|---|
+> | a1 | importa | Una afirmación que su cifra no sostiene. En F3.3 el informe dice: «Aunque se quitaran, el signo sigue disperso (por cualquiera de los dos lados, 26 de 37 o 19 de 37 no llegan a dos tercios)». Pero 26/37 = 70,3 %, que sí llega a dos tercios (66,7 %). La conclusión se sostiene por otra cuenta. De las 7 a 4 puntos exactos, 4 tienen Δstop +4 y 3 tienen −4. Quitando las 7 quedan 14 frente a 23 de 37 (62,2 %). Si solo cuenta el redondeo «alejándose de la entrada», que solo puede dar positivos, se quitan las 4 positivas y quedan 14 frente a 26 de 40 (65,0 %), justo por debajo del umbral. | `docs/validation/RECORRIDA-CONSTRUCCION-2.md:1215-1218`. En `caja-stop.txt`, Δstop ±4 en las líneas 20 (−4), 21 (+4), 29 (+4), 36 (+4), 42 (−4), 43 (−4) y 58 (+4). | Cambiar la frase por las dos cuentas medidas (62 % y 65 %) y decir que la segunda queda a 1,7 puntos del umbral. |
+> | a2 | menor | «Las exposiciones de cada día» sigue diciendo «las dos filas de esta rama». Ahora son cinco: tres de las fases 0 a 2 y dos de la fase 3. | `RECORRIDA-CONSTRUCCION-2.md:787-790`. `git diff --cached -- docs/validation/HOLDOUT-EXPOSICIONES.md` añade dos filas a las tres que ya había. | Actualizar en la fase 3: es el informe propio de la rama y no está cerrado en `main`. |
+> | a3 | menor | La fila 1 de la fase 3 en HOLDOUT-EXPOSICIONES dice «por el recuento: marzo… entero y holdout-3 (los días de junio)» sin ningún número. La respuesta pedía lo que calientan los visores «por recuento». | `HOLDOUT-EXPOSICIONES.md`, la fila añadida en la línea 86 del diff estadiado (columna «por el recuento»). | Dar el número de días reservados cuyas velas se leen, igual que se dan 34/34 para `casos_reservados` y `casos_ocultos`. Es una fila del día, así que solo se puede añadir otra. |
+> | a4 | menor | F3 no dice que se pasara `antes_del_dia.py` sobre los ficheros nuevos. Yo lo pasé: da 0 líneas en `caja-stop.txt`, `visor-sesiones.txt`, `recuento-clases.txt` y los cuatro guiones nuevos. Sobre el informe entero marca 6 líneas «fecha fuera de la construccion» (69, 840, 862, 866 y 885 dos veces), todas anteriores a la fase 3, ya commiteadas y en lo que vio el revisor de la fase 2 (desviación 9 y Apéndice A). Ninguna está en lo estadiado. Ojo: el guion no mira las horas de `visor-sesiones.txt` («0 filas con dia»), porque sus días van en encabezados `## AAAA-MM-DD`. Esas horas las revisé a mano: todas son del día del caso. | La salida de `antes_del_dia.py` (comando 26). | Declarar la pasada en F3, con el límite sobre `visor-sesiones.txt`. |
+>
+> Comprobado sin hallazgos:
+> - (6) Nada cambia en `src/`, `tests/`, `knowledge/`, `scripts/` ni `.claude/`. `git diff main --stat` y `git diff --cached --stat` sobre esas rutas salen vacíos. Los 14 ficheros estadiados están todos en `rutas_permitidas` del contrato.
+> - (5) En las líneas añadidas no hay ninguna fecha de mes reservado (2025/2026-02, 03, 05, 06, 09, 10, 11, 12). La única fecha que aparece es 2026-11-08, el día de trabajo, 11 veces.
+>   - Las H4 de un día anterior van tapadas: «de un día anterior» y «abre un dia anterior», sin hora (`RECORRIDA-CONSTRUCCION-2.md:1252-1253, 1270-1271`; `visor-sesiones.txt:151, 180`).
+>   - Las horas y los bloques de `visor-sesiones.txt` son del día del caso.
+>   - Los instantes de `caja-stop.txt` son todos del día de su fila.
+> - HOLDOUT-EXPOSICIONES solo añade líneas.
+> - La respuesta a la PARADA 2 está copiada idéntica en el encargo y en el informe: md5 `0448c7f0…` en las dos, quitando la línea en blanco final del informe.
+> - §1.4 está corregido con la frase del punto 9. ADR-0070 no nombra RN-015.
+> - No hay ADR nuevos ni informes cerrados de `main` tocados. `RECORRIDA-CONSTRUCCION-2.md` no está en `main`.
+> - Las citas del informe coinciden con su fuente:
+>   - `strategy_spec.yaml:1861-1867` (RN-016) y `:2536-2544` (RN-032);
+>   - `sesgo.py:110-115` (doble ruptura por color) y `:124-127` (una ruptura con su color);
+>   - `cartuchos_max = 3` en `parametros.yaml:1109`;
+>   - `cartucho_criterio = solo_perdida`: el break even cuenta por mecanismo, así que pos-o28 de 04-15 no suma, y el «ningún freno debía saltar» se sostiene.
+> - El informe acaba en su estado: «Rama lista para revisión, NO cerrada».
+>
+> ### Eje (b) · Encargo de la fase 3 (respuesta a la PARADA 2)
+> Resumen: 0 bloquea, 1 importa, 4 menor. Requisitos: 22 hechos, 3 parciales (declarados), 1 no hecho, 2 hechos de otra forma (declarados), 1 pendiente (el commit).
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | La fila de HOLDOUT, estadiada antes de casos dev, visor y make check | Hecho | Fila de la línea 86 del diff. Los nueve HTML de `data/visor/` son de 17:53:15 a 17:54:19; el informe estadió la fila a las 17:49:09 (`:1162`). |
+> | 2 | Solo los nueve comandos del visor, una vez cada uno | Hecho | Nueve ficheros de hoy, en el orden del consultor, uno por día (`ls --time-style=full-iso data/visor/`). |
+> | 3 | 1.a T0 (31): pareja | Hecho | §8, `:1296`. En `recuento-clases.txt` T0 suma 7+8+14+2 = 31. |
+> | 4 | 1.b P4: la clase, el gate, las 3 restantes | Hecho de otra forma, declarado (decisión 1 de la PARADA 3) | 19 desde el 19, comprobadas a mano (`patrones-cuenta-por-mes.txt:281-302` sin 297 y 298). Las 3 anteriores: 08-10 ×2 con `detenido_por_racha` (`:254-255`) y 08-14 con `orden_dimensionada:no` (`:273`). RN-032 está en `disparadas` en las 14 sesiones del 19 al 31, con `bot 0`; en 13 bloqueadas sale RN-015 y en una «ninguna» (`cuenta-por-mes.txt:814-827`). |
+> | 5 | 1.c P7 contra «Por operacion» y RN-016 | Hecho | `patrones-cuenta-por-mes.txt:177-178, 183-185, 308-309`: el bot más cercano es la PAREJA de otra operación del trader. RN-016 no está en `disparadas` y `detenido_por_cartuchos:no` en 01-02 11-15, 07-10 07-11 y 07-10 11-15 (`cuenta-por-mes.txt:725, 790-791`). |
+> | 6 | 2. `caja_stop.py`, con un test de humo que rompa en los dos sentidos | Hecho | `test_humo.py`, diff estadiado: signos en compra y en venta, borde de dos tercios en SISTEMATICA y DISPERSA. Lo vuelvo a correr y da los mismos resúmenes y las mismas 122 líneas que `caja-stop.txt`. |
+> | 7 | 2. Campos por operación y resumen | Hecho | Comprobadas a mano cinco operaciones (abajo). |
+> | 8 | 2. Regla de los dos tercios aplicada como está escrita | Hecho | 18/26 de 44 (59 %) y 10/14 de 24 (58 %): DISPERSA las dos (`caja-stop.txt:72, 121`). Recontadas a mano; los meses de las 24 y las 16 coinciden. |
+> | 9 | 2. Redondeo y comisión antes de dar la clase | Parcial | La conclusión es correcta y la cuenta que la sostiene no: ver a1. |
+> | 10 | 2. Motivo literal de las 6 no llenadas | Hecho | `caja-stop.txt:7, 32, 40, 56, 60, 69`, igual que en «Ordenes» (o24 de 07-13 en `cuenta-por-mes.txt:2867`). |
+> | 11 | 3.a Órdenes del visor frente a la corrida 1 | Hecho | Iguales en ocho días. 07-15 tiene o25 a o29 de más, y en la corrida 1 la sesión 11-15 acaba en `detenido_por_racha:si` con RN-036 (`cuenta-por-mes.txt:797`), tras pos-o24 (`:3456`). `visor_sesiones.py` vuelto a correr: 255 líneas, las mismas. |
+> | 12 | 3.b P1: sesgo, la H4 que decide, su color y el paso de `sesgo.py` | Hecho | Comprobado en 07-15 11-15: el rect `decide` contiene el rect `baja`, con doble ruptura a la vista y RN-003 en `bajista` (HTML). |
+> | 13 | 3.c Escenarios, tomas y regla que descartó | Parcial, declarado (decisión 0 de la PARADA 3) | `:1233-1239`. Confirmo que en 04-13 solo salen RN-003 (2), RN-004 (155), RN-011 (345) y RN-015 (345). |
+> | 14 | 3.c P6 de abril: ¿acaba en break even? | Hecho | Las R netas suman −3,626 (`cuenta-por-mes.txt:3372-3376`). |
+> | 15 | 3.d S-10 | Parcial, declarado (supone una toma por sesión) | `visor-sesiones.txt`: las primeras órdenes son o1, o7, o22, o5, o1, o1, o15 y o8. Coinciden. |
+> | 16 | 3.e «Regla aplicada como está escrita», con evidencia | Hecho, con un tercer estado «no comprobable» declarado | Tres casos comprobados (abajo). |
+> | 17 | 3. Ningún instante anterior al día dev | Hecho | Ver eje (a), (5). |
+> | 18 | 4. Tabla de §8 completa, con destino, y la lista aparte | Hecho | Cada fila tiene destino. Las filas suman 414. Por clase: 31+19+4+3+81+276 = 414. La lista: 6+21+33+39+116+61 = 276. Todo recontado contra `recuento-clases.txt`. |
+> | 19 | 5. T antes de la sesión 7 | Hecho | `simular_cierre.py`: F y la línea en R2.4. |
+> | 20 | 6. Las líneas del cierre, medidas | Hecho | F es el texto exacto del punto 6. Vuelto a correr: la salida es idéntica a `simular-cierre.txt` (22.773 y 22.697 bytes, menos de 23.000; a, b y c vacíos). |
+> | 21 | 7. Decisiones 2 y 3 | Hecho | F3.6, `:1335`. |
+> | 22 | 8. Desviación 9 | Hecho | `:1336`. |
+> | 23 | 9. Las lecciones del consultor y la del revisor | Hecho de otra forma (en F3.7, no dentro de §7) | `:1341-1363`. |
+> | 24 | 9. Corregir §1.4 (y la NOTA de ADR-0070 si hace falta) | Hecho | Diff estadiado, líneas 9-18. ADR-0070 no nombra RN-015. |
+> | 25 | Copia de la respuesta, tal cual, en el encargo y en el informe | Hecho | md5 igual. |
+> | 26 | Tabla «El encargo, punto por punto» de la fase 3 | No hecho | Ver b1. |
+> | 27 | 10. Revisor, informe pegado al final | En curso | Este informe. |
+> | 28 | PARADA 3: commitear y parar | Pendiente | Está estadiado, sin commit; el make check de la fase 3 no se ve todavía. |
+>
+> Las cinco operaciones de la caja, a mano (stop del trader del caso dev; orden del bot de `cuenta-por-mes.txt`, con stop = precio ∓ distancia). Todas coinciden con `caja-stop.txt`:
+> - 01-02 12:12:20, venta, stop fuera, positiva: o9, 1.17243 con 37 puntos, da stop 1.17280. Δstop +35, cociente 9,25.
+> - 08-03 09:46:15, venta, stop fuera, positiva: o23, 16 puntos, da 1.15292. Δstop +8, cociente 1,60.
+> - 04-01 12:30:20, compra, stop fuera, negativa: o7, 14 puntos, da 1.15956. Δstop −19, cociente 0,42.
+> - 07-16 06:00:10, compra, stop fuera, negativa: o6, 11 puntos, da 1.14641. Δstop −19, cociente 0,34.
+> - 07-13 11:25:05, no llenada: o24, 21 puntos, da 1.14256. Δstop −3; el motivo coincide literalmente.
+>
+> Los stops del trader salen de `knowledge/cases/dev/caso-eurusd-2026-{01-02,08-03,04-01,07-16,07-13}.yaml`.
+>
+> Las tres «regla aplicada: sí», a mano:
+> - **07-15 11-15, el sesgo:** en el SVG de la H4, el rect «11-15: bajista, rompe esta H4» contiene una vela `baja` que rompe los dos extremos de la anterior. Corresponde a `sesgo.py:110-115`.
+> - **07-02, RN-016:** `detenido_por_cartuchos=hasta_cartuchos_reinicio` de 14:08 a 15:00 (53 cierres). La tercera pérdida del barrido, pos-o25, cierra a las 12:07:23 UTC = 14:07 de pared (`cuenta-por-mes.txt:3417-3419`).
+> - **01-13, RN-016:** de 08:47 a 08:58, 12 cierres. pos-o7 cierra a las 07:46:47 UTC = 08:46 de pared (`:3279`). Después llenan o9 y o17 (pérdidas) y o14 y o19 (break even), como dice el informe.
+>
+> | # | Gravedad | Hallazgo | Evidencia | Qué hacer |
+> |---|---|---|---|---|
+> | b1 | importa | En §8, la fila P1 de 2026-01-22 11-15 (3 filas) va a «regla desconocida», con destino la hoja de la sesión 7. Hay dos problemas. **(i)** Las sesiones 01-13 (P5) y 04-15 (P6) están en la misma situación: regla «sí» y un libro sin vídeo. Para esas dos el informe dice que «encaja en las dos clases del punto 4» y las lleva a la decisión 3 de la PARADA. La de 01-22, que también es de enero (sin vídeo, o sea «material» según el punto 4), la cierra la sesión sin plantear la alternativa. **(ii)** La única evidencia es «ruptura de 2 puntos». Eso cae justo en la zona que `sesgo.py:61-62` y A-16 (ABIERTA) llaman discrepancia entre la serie del trader y la nuestra («2 puntos de mediana», `ambiguedades.yaml:288-302`). La cita no sostiene que «el trader hizo otra cosa» frente a la regla: pudo ver otra vela. Además el bot no tuvo toma ni zonas en la sesión. | `RECORRIDA-CONSTRUCCION-2.md:1256, 1301, 1386-1392`. `visor-sesiones.txt:99-102`. | Pasar 01-22 a la decisión 3 (o a una decisión propia), con A-16 nombrada como tercera lectura. Rehacer en consecuencia el recuento por clase de §8 y el Estado de R3.9 en `simular_cierre.py`. |
+> | b2 | importa | No hay tabla «El encargo, punto por punto» para la fase 3. La de `:736` es de la fase 2. F3.1 a F3.7 van punto por punto en prosa, pero sin el estado de cada requisito (Hecho, Parcial, Hecho de otra forma) que pide la skill `entregar-rama`. | `RECORRIDA-CONSTRUCCION-2.md:1160-1394`: no hay tabla. | Añadir la tabla en F3. Puede partir de la de requisitos de arriba. |
+> | b3 | menor | La convención de Δstop no es literalmente la del consultor. El consultor pide «el del bot más lejos de la entrada» (distancias). El guion mide stop contra stop, «del lado del stop». Para las 44 da el mismo signo, porque la diferencia de distancias es Δstop − Δentrada, con \|Δentrada\| ≤ 3 < 4 ≤ \|Δstop\|. Pero no se declara. | `caja_stop.py:25-31`; `RECORRIDA-CONSTRUCCION-2.md:1204-1208`. | Una frase en F3.3: es otra medida y da el mismo signo en las 44, por esa desigualdad. |
+> | b4 | menor | Las 44 de la caja se cruzan con filas que ya tienen clase y no se dice cuántas. Por ejemplo, 07-10 07:17:40 y 01-02 13:21:50 son P7, «error nuestro conocido» (`caja-stop.txt:47, 8`). Y la de 07-02 11:59:30 parece la T0, «pareja», de esa sesión (`:41`; `recuento-clases.txt:54`). Así una misma operación sale como «sin clase (DISPERSA)» y con otra clase a la vez. | `RECORRIDA-CONSTRUCCION-2.md:1313`. | Decir cuántas de las 44 caen en cada patrón. |
+> | b5 | menor | La lección «Las 22 P4 “desde el 19” eran 19: una cifra del consultor se mide antes de copiarla» atribuye el origen al consultor. Pero fue el §4 de la propia rama el que puso juntos «P4 22» y «deja de llenar desde el 2026-08-19». Además, el Estado de R3.9 ya lleva el 19 y el 276, y eso cambia si la decisión 1 de la PARADA 3 sale (b). | `RECORRIDA-CONSTRUCCION-2.md:644-645, 1363`; `simular_cierre.py`, R39. | Nombrar el §4 en la lección. Avisar de que R3.9 se rehace según la decisión 1. |
+> | b6 | menor | 3.b pide «el paso de RN-003» y la tabla de P1 solo cita `sesgo.py`, sin la línea de RN-003 en `strategy_spec.yaml`. | `RECORRIDA-CONSTRUCCION-2.md:1250-1256`. | Añadir la línea de RN-003. |
+>
+> Lo que la rama hace y el encargo no pide:
+> - `salida_comun.py`, para no pasar de los tres niveles de carga que deja la guardia. Está declarado y justificado (`:1359-1362`; README).
+> - La lista de lo que el visor no muestra. Está declarada y va a la PARADA 3.
+>
+> Las dos cosas están dichas. Nada de lo que el encargo dice que no se toca aparece en el diff: ni ningún motor arnes ni nada del visor commiteado. `data/` está ignorado.
+>
+> Sobre la pregunta (4), P4 19 frente a 22: no cambia ninguna clase. Aplica la definición del consultor tal como está escrita: «desde el 2026-08-19, cuando la cuenta deja de llenar». Lo medido lo confirma: las 3 anteriores tienen otra causa, racha y `orden_dimensionada:no` con la cuenta todavía llenando. Las deja sin clase y pide la decisión 1. Está bien llevado. Aparte, para el consultor: 2 filas P1 del 2026-08-27 07-11 caen dentro del periodo sin llenar, con `bot 0` (`patrones-cuenta-por-mes.txt:297-298`), y siguen en la lista como P1.
+>
+> ### Lo que no pude comprobar
+> - **El make check y el sello de la fase 3.** No se ejecuta (escribe) y no leí `make-check.log`, porque está en la raíz y el alcance la excluye. La tabla «Los make check de la rama» (`:792-801`) no recoge ni la entrega (d77b0a9) ni la fase 3.
+> - **`scripts/contrato_rama.py` y `botsito state check`.** Quedan fuera de lo que se me permitió ejecutar.
+> - **El recuento 34/34 de `casos_reservados`/`casos_ocultos` y el 0 de los días leídos.** Sale de un guion de la carpeta de trabajo de la sesión, fuera del repo.
+> - **`test_humo.py` (21 passed).** No lo corrí: pytest escribe caché y tmp_path. Leí los tests nuevos y cubren los dos sentidos.
+> - **La hora real del estadiado de la fila de HOLDOUT (17:49:09).** Solo puedo decir que los nueve HTML son posteriores.
+>
+> (La lista de comandos del revisor, 20 entradas, queda en su transcripción: git de lectura, Read y Grep de rutas literales, las páginas de `data/visor/`, `uv run python -B` de `simular_cierre.py`, `caja_stop.py`, `visor_sesiones.py` y `antes_del_dia.py`; y cuatro formas que negaron las guardias y no reescribió para rodearlas: un `for`, una redirección a la carpeta de trabajo, `| md5sum` y un comando compuesto.)
+
+## Lo hecho con cada hallazgo del revisor de la fase 3
+
+| # | Lo hecho |
+|---|---|
+| a1 | F3.3 corregido con las dos cuentas medidas: quitando las 7 a 4 puntos, 14 frente a 23 de 37 (62,2 %); quitando solo las 4 positivas, 14 frente a 26 de 40 (65,0 %), a 1,7 puntos del umbral. Dispersa en las dos. |
+| a2 | «Las exposiciones de cada día»: cinco filas (tres de las fases 0 a 2 y dos de la fase 3) y una sexta con lo que pide a3. |
+| a3 | Fila nueva en HOLDOUT-EXPOSICIONES con los recuentos: junio, 11 días reservados (holdout-3, `casos_reservados`); marzo, mes reservado entero sin sortear (`meses_reservados.yaml`; 0 en `casos_reservados`, porque no tiene partición). |
+| a4 | F3 declara la pasada de `antes_del_dia.py` sobre los ficheros nuevos y su límite sobre `visor-sesiones.txt` (horas revisadas por el revisor a mano). |
+| b1 | 01-22 pasa a la decisión 3 con A-16 como tercera lectura; §8 y el Estado de R3.9 se rehacen: 0 «regla desconocida» y 279 sin clase. |
+| b2 | Tabla F3.8, la respuesta a la PARADA 2 punto por punto. |
+| b3 | Frase en F3.3: medido stop contra stop; da el mismo signo que la diferencia de distancias en las 44, porque \|Δentrada\| ≤ 3 < 4 ≤ \|Δstop\|. |
+| b4 | De las 44 con el stop fuera: 20 son T0, 11 P3, 11 P2 y 2 P7 (medido con un guion de la carpeta de trabajo). Dicho en §8. |
+| b5 | La lección nombra el §4 de la rama, y F3.6 avisa de que R3.9 se rehace según la decisión 1. |
+| b6 | La tabla de P1 cita RN-003 (`strategy_spec.yaml:1079`). |
+| Para el consultor | Las 2 filas P1 de 2026-08-27 07-11, dentro del periodo sin llenar de agosto, dichas en §8 (P1, el resto). |
+| No pudo comprobar | El `make check` de la fase 3 y su sello: tabla «Los make check de la rama» completada. |
+
 ## Estado
 
-**Rama lista para revisión, NO cerrada.** PARADA 2: la entrega para mirar. La clasificación de
-las diferencias es del consultor; nada de esta rama entra en la hoja de la sesión 7 por su
-cuenta. El revisor (apéndice B): 0 bloquea, 5 importa, 4 menor; todo arreglado o declarado en
-«Lo hecho con cada hallazgo del revisor».
+**Rama lista para revisión, NO cerrada.** PARADA 3: la entrega de la fase 3 (respuesta del
+consultor a la PARADA 2): la caja medida (dispersa en los dos grupos), las nueve sesiones del
+visor (ninguna «no»; tres con partes «no comprobables», decisión 0), §8 con su recuento por clase
+y las líneas del cierre rehechas y medidas. El revisor de la fase 3 (apéndice C): 0 bloquea, 2 importa, 7 menor; todo arreglado o declarado en
+«Lo hecho con cada hallazgo del revisor de la fase 3». Nada de esta
+rama entra en la hoja de la sesión 7 por su cuenta.

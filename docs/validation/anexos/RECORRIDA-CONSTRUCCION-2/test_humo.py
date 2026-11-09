@@ -18,6 +18,8 @@ un test de `horas_perdidas.py`, que el original no probaba, y los de `para_clasi
 from __future__ import annotations
 
 import sys
+from decimal import Decimal
+from fractions import Fraction
 from pathlib import Path
 from types import ModuleType
 
@@ -25,9 +27,12 @@ AQUI = Path(__file__).resolve().parent
 sys.path.insert(0, str(AQUI))
 
 import antes_del_dia  # noqa: E402
+import caja_stop  # noqa: E402
 import horas_perdidas  # noqa: E402
 import para_clasificar as pc  # noqa: E402
 import patrones  # noqa: E402
+import salida_comun  # noqa: E402
+import visor_sesiones  # noqa: E402
 
 ROTULO = "[DIAGNOSTICO-CUENTA-diaria] "
 POR_SESION = (
@@ -284,3 +289,77 @@ def test_antes_del_dia_caza_una_fecha_y_un_minuto_anteriores_y_deja_los_del_dia(
         ruta = tmp_path / "mala.txt"
         ruta.write_text(mala, encoding="utf-8")
         assert antes_del_dia.main([ruta]) == 1, mala
+
+
+# ------------------------------------------ caja_stop.py y visor_sesiones.py, en los dos sentidos
+
+
+def test_el_stop_de_una_orden_va_por_debajo_en_compra_y_por_encima_en_venta() -> None:
+    p = Decimal("1.10000")
+    assert caja_stop.stop_de(p, 20, "compra") == Decimal("1.09980")
+    assert caja_stop.stop_de(p, 20, "venta") == Decimal("1.10020")
+    assert caja_stop.stop_de(p, 20, None) is None
+
+
+def test_el_signo_es_positivo_hacia_el_stop_en_los_dos_lados() -> None:
+    # compra: el stop del bot 5 puntos mas abajo que el del trader -> +5; mas arriba -> -5
+    assert caja_stop.hacia_el_stop("compra", Decimal("1.09975"), Decimal("1.09980")) == 5
+    assert caja_stop.hacia_el_stop("compra", Decimal("1.09985"), Decimal("1.09980")) == -5
+    # venta: al reves
+    assert caja_stop.hacia_el_stop("venta", Decimal("1.10025"), Decimal("1.10020")) == 5
+    assert caja_stop.hacia_el_stop("venta", Decimal("1.10015"), Decimal("1.10020")) == -5
+
+
+def test_el_cociente_es_la_distancia_del_bot_sobre_la_del_trader() -> None:
+    q = caja_stop.cociente(Decimal("1.1"), Decimal("1.0997"), Decimal("1.1"), Decimal("1.0998"))
+    assert q == Fraction(3, 2)
+
+
+def test_la_regla_de_los_dos_tercios_en_su_borde() -> None:
+    # 2 de 3 con el mismo signo: SISTEMATICA (al menos dos tercios); 3 de 5: DISPERSA
+    assert caja_stop.clase([1, 1, -1])[0] == "SISTEMATICA"
+    assert caja_stop.clase([-4, -1, 2])[0] == "SISTEMATICA"
+    assert caja_stop.clase([1, 1, 1, -1, -1])[0] == "DISPERSA"
+    assert caja_stop.clase([1, -1, 0])[:4] == ("DISPERSA", 1, 1, 1)
+    assert caja_stop.clase([])[0] == "sin filas"
+
+
+def test_el_cierre_de_una_orden_es_un_segundo_despues_de_su_hora() -> None:
+    assert visor_sesiones._cierre("10:10:59") == "10:11:00"
+    assert visor_sesiones._cierre("06:59:59") == "07:00:00"
+
+
+def test_el_color_de_la_h4_es_el_del_rectangulo_marcado() -> None:
+    pagina = (
+        '<svg class="h4"><g class="h4"><rect class="sube" x="10" y="1" width="5" height="1"/>'
+        '<rect class="baja" x="20" y="1" width="5" height="1"/></g>'
+        '<rect class="decide" x="19.5" y="0" width="6" height="9"><title>07-11: bajista, rompe '
+        "esta H4</title></rect></svg>"
+    )
+    p = visor_sesiones._Texto()
+    p.feed(pagina)
+    assert visor_sesiones.color_de_la_h4(p, "07-11") == "baja"
+    assert visor_sesiones.color_de_la_h4(p, "11-15") == "sin marca en el grafico"
+
+
+def test_salida_comun_lee_las_ordenes_como_para_clasificar() -> None:
+    """La misma direccion y el mismo precio que `para_clasificar.leer_salida`, con la orden llenada
+    (manda la posicion) y sin llenar (manda la caja), y la caja por encima da venta."""
+    for texto in (_salida(), _salida(llenada=False), _salida(llenada=False, caja="1.10030")):
+        de_pc = {(o.dia, o.id): (o.direccion, o.precio) for o in pc.leer_salida(texto).ordenes}
+        de_comun = {k: (o.direccion, o.precio) for k, o in salida_comun.ordenes_de(texto).items()}
+        assert de_pc == de_comun
+    [o] = salida_comun.ordenes_de(_salida(llenada=False, caja="1.10030")).values()
+    assert (o.direccion, o.stop) == ("venta", Decimal("1.10022"))
+
+
+def test_la_hora_de_una_h4_de_un_dia_anterior_no_se_escribe() -> None:
+    linea = "rompe la H4 que abre a las {} contra la anterior"
+    # una 11-15 que decide con la de las 07:00 del dia: se escribe
+    assert visor_sesiones.antes_del_dia(linea.format("07:00"), "11:00:00") == linea.format("07:00")
+    # una 07-11 que decide con la de las 11:00 o las 23:00: son de un dia anterior
+    for hora in ("11:00", "23:00"):
+        assert "abre un dia anterior" in visor_sesiones.antes_del_dia(
+            linea.format(hora), "07:00:00"
+        )
+        assert hora not in visor_sesiones.antes_del_dia(linea.format(hora), "07:00:00")

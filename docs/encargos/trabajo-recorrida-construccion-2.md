@@ -98,3 +98,72 @@ Dado por Aleks (consultor) el 2026-11-08, en un solo mensaje. Copiado tal cual:
 > - Nada se escribe en el repo mientras corre make check; lo que no es del repo va a la carpeta de trabajo de la sesión.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-11-08)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/recorrida-construccion-2 (2026-11-08). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 2», con su fecha, y aplícala punto por punto (skill fase-cero). Abre una fase 3 en esta misma rama: la clasificación tiene que estar hecha antes de preparar la sesión 7 (hoja de ruta, el muro), así que no se deja para la rama de la preparación. NUNCA cierra.
+>
+> ANTES DE NADA
+> - La fila del día en HOLDOUT-EXPOSICIONES.md, escrita y estadiada ANTES del primer make check, de la primera lectura de casos dev y del primer visor de esta fase (lección 8 de F38r): casos_reservados(repo) por recuento, y que ninguno de los días que se leen aparece en él (su ausencia dice «no reservado», que es lo que hace falta; no dice «sin partición»); los casos dev de construcción de los cuatro meses (el stop del trader); los nueve visores del punto 3 y lo que calientan (el M1 entero de marzo para los días de abril y de junio para los de julio, por recuento; enero, desde su propio mes); los guiones nuevos de anexos y el revisor. Si el trabajo pasa la medianoche, el día nuevo tiene su fila antes de su primer make check.
+> - Se amplía la autorización expresa del encargo SOLO a los nueve comandos del visor del punto 3, escritos exactamente así. Ningún motor arnes más.
+>
+> 1. LA CLASIFICACIÓN PROVISIONAL POR PATRONES (decisión del consultor, 2026-11-08). Va al informe en un §8 nuevo, «La clasificación», como tabla con una fila por patrón: filas, clase, evidencia y destino. La fase 3 la completa con las medidas de los puntos 2 y 3, aplicando las reglas que aquí se fijan antes de medir; no se cambia ninguna clase por tu cuenta.
+>    a) T0 (31): pareja. Nada.
+>    b) P4 (25): 22 son de agosto, desde el 2026-08-19, cuando la cuenta de agosto deja de llenar con la equity cerca del 90 % (§1.4); en la diaria, agosto da 3. Clase «efecto de la cuenta»: ni error del motor ni regla desconocida, sale cuando bajen las pérdidas del bot. Di qué gate prohíbe abrir desde ese día, si la salida lo trae (por su definición debería ser RN-032: la pérdida total más el riesgo de la operación llega al límite menos el margen, strategy_spec.yaml); la línea `RN-015:accion:colocar_orden_limite:prohibida:abrir_operacion` es la acción de RN-015 que un gate bloquea, no una prohibición de RN-015, y no nombra el gate. Si la salida no lo trae, escribe «la cuenta de agosto deja de llenar» sin regla. Las 3 restantes (una en enero, abril y julio): sin clase, en la lista del punto 4.
+>    c) P7 (4): el trader vuelve a entrar en la misma zona y el bot no. patrones.py no comprueba que la operación del bot esté ya emparejada (lo infiere: _ops_bot mezcla emparejadas y sueltas, y el docstring no dice lo que hace el código); compruébalo en las 4 filas contra «Por operacion». Clase «error nuestro conocido»: la deuda de RN-019 de Technical Debt (no dispara nunca en el motor; la acción reentrar no está escrita, PUNTO-USADO.md §1.h). Verifica en la salida que en esas 4 sesiones el bot no tenía una reentrada que RN-016 negara; si alguna la tenía, o la operación del bot no estaba emparejada, dilo y pasa a sin clase. Destino: la rama de RN-019, que no es esta.
+>    d) La caja: las 44 operaciones con la entrada a 3 puntos o menos y el stop fuera, y las 24 de P2 con la entrada a 4-10 puntos. Clase según la regla del punto 2.
+>    e) P1 (44, en 21 sesiones; 42 con el sesgo del bot al contrario y 2 insuficiente), P3 (54; 42 a más de 20 puntos), las 16 de P2 a más de 10 puntos, P5 (153; 120 del mismo lado) y P6 (63): sin clase hasta el punto 3 y, en julio, hasta T (punto 5). Nota que no clasifica: 20 de las 44 P1 son de julio, el único mes con vídeo, y P6 se concentra en abril (33), mes sin vídeo, donde S-14 dice que el trader se saltaba en sus backtests las sesiones que iban a acabar en break even (ACTIVAR-SESION-05.md §0.b.7); eso se mide, no se supone (punto 3).
+>
+> 2. LA CAJA: EL STOP DEL TRADER DE LOS CASOS DEV (decisión 0 de tu PARADA: opción b, aquí y no en la preparación de la sesión 7). Un guion de anexos (caja_stop.py, con su test de humo que rompa en los dos sentidos) que lee el stop de cada operación del trader de los casos dev de construcción (comprobado antes con casos_reservados y declarado) y, para las 64 operaciones con la entrada dentro en la corrida 1 y las 40 de P2, escribe por operación: entrada y stop del trader, entrada y stop de la orden del bot que ya nombra para-clasificar.txt (de «Ordenes» y «Posiciones»), Δentrada y Δstop con signo (positivo = el del bot más lejos de la entrada que el del trader, en la dirección de la operación), y el cociente entre la distancia entrada-stop del bot y la del trader. Además, de las 6 «en el nivel, no llenada», el motivo literal de la salida (cancelada por qué regla, o caducada). Salida a anexos/RECORRIDA-CONSTRUCCION-2/caja-stop.txt, con su resumen: la distribución de Δstop y del cociente, y cuántas tienen cada signo.
+>    Regla, fijada antes de medir: si al menos dos tercios de las 44 con el stop fuera tienen el mismo signo de Δstop, la diferencia es SISTEMÁTICA y la clase es «la caja: regla desconocida», con A-48 (qué velas forman el bloque de la caja, y el 0, S-16, punto 5 de «Para la sesión 7»): entra en la hoja de la sesión 7 con un esquema inventado. Con menos de dos tercios es DISPERSA: sin clase, y dos de ellas van al visor como ejemplo en la rama de la preparación. Lo mismo, con la misma regla y por separado, para el signo de Δentrada de las 24 de P2 a 4-10 puntos. Antes de dar la clase, mira si el redondeo del stop (alejándose de la entrada, al punto) o la comisión explican la diferencia; si la explican, la clase es «error nuestro» y PARADA 3 con la evidencia.
+>
+> 3. EL VISOR, NUEVE SESIONES (decisión 1: opción b; S-10 se mide aquí). Elegidas por el consultor entre las que más filas tienen de cada patrón, fuera del 1 de abril y del 1 de julio y sin «posible M». Una vez cada comando, la salida a data/visor/ (ignorada por git; nada del visor se commitea):
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-06
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-07
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-15
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-01-22
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-02
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-04-13
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-01-13
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-04-15
+>    uv run botsito motor visor --simular --caso caso-eurusd-2026-07-14
+>    Las sesiones y su porqué: P1, 2026-07-06 07-11, 2026-07-07 07-11 y 11-15, 2026-07-15 11-15 y 2026-01-22 11-15; P3, 2026-07-02 11-15 y 2026-04-13 07-11; P5, 2026-01-13 07-11; P6, 2026-04-15 11-15; la caja (P2), 2026-07-14 11-15.
+>    a) Primero, por sesión: si las órdenes del visor son las de la corrida 1 en esa sesión (ids, instantes, entradas, stops). Si alguna no coincide (el visor con un solo caso empieza la cuenta desde el capital y la corrida 1 la trae del mes), dilo con la diferencia y usa la corrida 1 como verdad.
+>    b) P1: el sesgo del bot, de qué H4 sale (por su hora de cierre y su color, sin precios; si es de un día anterior, dilo así), y el paso de RN-003 y de domain/sesgo.py que lo decide, con ADR-0080 si salta una H4 por el color.
+>    c) P3, P5 y P6: cada escenario de la sesión (ADR-0066 §1 y §2: una toma nueva abre escenario cuando el vigente terminó; con el vigente vivo decide intentos_tras_toma_nueva; tope max_escenarios_por_sesion), de qué toma de M15 sale, sus puntos y zonas, qué orden coloca cada uno y, si el trader entró en un nivel que el bot formó y no usó, qué regla lo descartó (el breaker de S-22, la alternancia RN-009, A-53 con se_mueve, RN-016). En la de P6 de abril, si la sesión acaba en break even para el bot (S-14).
+>    d) S-10 (ADR-0085 §4): en las nueve sesiones, si cada orden del bot nace en el primer punto tras la toma o en otro.
+>    e) Cada caso, marcado «regla aplicada como está escrita» o «no», con su evidencia (regla, fichero:línea, instante). Si alguno es «no» (el motor no aplica la spec como dice), PARADA 3 en eso antes del revisor y sigue con lo demás. Si todos son «sí», sigue sin parar.
+>    Ninguna línea del informe imprime una vela, un precio, un nivel ni un instante anteriores al día dev del caso.
+>
+> 4. LA TABLA DE §8, COMPLETA. Con 2 y 3 aplicados, cada patrón queda en una de estas clases: «error nuestro» (el motor no aplica la spec, o la spec lee mal lo que el trader dijo y está citado), «regla desconocida» (el motor aplica la spec y el trader hizo otra cosa: pregunta para la sesión 7, que redacto yo), «efecto de la cuenta», «material» (S-14 y días sin vídeo) o «sin clase hasta T». Para cada fila, el destino: una rama nombrada, la hoja de la sesión 7, T o ninguno. Una lista aparte con las filas sin clase que no cubre ni el visor ni T. Sin cambiar nada de lo decidido en el punto 1.
+>
+> 5. EL ORDEN DE LO QUE SIGUE (decisión del consultor). T (trabajo/video-julio, ENTRADA-JULIO.md §5) pasa por delante de la preparación de la sesión 7: julio es el mes con más operaciones del trader (67), el único con vídeo, y en él están 20 de las 44 P1 y cinco de las nueve sesiones del visor; su voz explica cada entrada y cada descarte, y lo que aclare no gasta tiempo de la sesión. Va en las líneas del cierre (punto 6).
+>
+> 6. LAS LÍNEAS DEL CIERRE, rehechas y medidas sobre una copia (no las apliques):
+>    - Next Action, F, con este texto exacto y la cifra literal del veredicto: «F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7 (§d de ACTIVAR-SESION-06-MOTOR.md). La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; la clasificación, en su §8). Siguiente: T, con la voz del trader sobre julio; después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; ACTIVAR-SESION-06.md §«Para la sesión 7», S-22 y S-19 con sus esquemas y el 52 %, y lo que deje §8); J antes si la hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.» Ninguna letra sale ni entra.
+>    - Hoja de ruta: R3.9 como la preparaste, con «Hecho cuando: el veredicto literal está en el informe y en ADR-0070 §3, la línea base vigente es la suya y cada diferencia tiene su clase o su destino (§8)» y el Estado HECHA con el veredicto y el recuento de §8 por clase. R5.2 cita R3.9 en lugar de R4.1. R5.6 sin cambio. En la entrada de T, una línea: «Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8, respuesta a la PARADA 2)».
+>    - Technical Debt: nada, salvo lo que la PARADA 3 decida.
+>    - PROJECT_STATE con las líneas aplicadas y las cuatro cabeceras en forma corta (decisión 3: opción a): por debajo de 23.000 bytes, medido con wc -c sobre una copia, con test_hoja_de_ruta y test_project_state en verde. Si pasa de 23.000, PARADA con la cifra; no recortes nada por tu cuenta.
+>
+> 7. LAS OTRAS DOS DECISIONES DE TU PARADA. La 2: opción a, no hay NOTA en §5.1 de ACTIVAR-A35-A44.md; la de §5 basta (D7). La 3: opción a, la forma corta.
+>
+> 8. LA DESVIACIÓN 9 (el id con la fecha de la sesión 3 en cuatro commits): de acuerdo, no se reescribe la historia. Es la fecha de la sesión grabada, no un día de mercado ni una cifra del bot, y el mismo id está en knowledge/spec/parametros.yaml de main. Queda declarada como está.
+>
+> 9. LA FILA DE ERRORES-RECURRENTES. A tus lecciones de §7 añade, en «del consultor», estos tres, todos menores, con su lección:
+>    (a) D6 dijo que enero era la cuarta cuenta: el orden de los meses lo pone arnes.validar_meses, que los ordena, y lo leí en el encargo de F38s sin aplicarlo. Lección: el orden de un recorrido se lee en el código que lo fija, no en el yaml que lo lista.
+>    (b) D8 pidió el escalón entero de la cascada por operación sin comprobar que la salida trae el stop del trader. Lección: antes de pedir una tabla por operación desde una salida, se comprueba que la salida trae cada campo.
+>    (c) D6 pidió S-10 desde la salida, y la salida no trae la toma ni las zonas. La misma lección que (b).
+>    Y uno para el revisor (menor): su a1 dejó escrito en §1.4 que `prohibida:abrir_operacion` «es siempre de RN-015»; es la acción de RN-015 bloqueada por un gate, y la línea no nombra cuál. Corrige §1.4 con esa frase (la NOTA de ADR-0070, si dice lo mismo, también, en su commit). Lección para el revisor: al corregir una atribución, se lee la regla en strategy_spec.yaml antes de escribir la nueva.
+>    Y lo que el revisor no vio, si tu revisión del punto 10 encuentra algo.
+>
+> 10. EL REVISOR (opus), sobre la fase 3, con estos alcances: (1) que caja-stop.txt dice lo que dicen los casos dev y las salidas, comprobado a mano en cinco operaciones (dos con el stop fuera de cada signo y una no llenada), y que la regla de dos tercios se aplicó tal como está escrita; (2) que en las nueve sesiones las órdenes del visor coinciden con las de la corrida 1, o la diferencia está dicha; (3) que cada «regla aplicada como está escrita» tiene su evidencia, comprobada en tres casos; (4) que §8 no cambia ninguna clase del punto 1 y que cada fila tiene destino; (5) que ningún texto commiteado lleva algo anterior al día dev del caso ni fechas de días reservados; (6) que nada de src/, tests/, knowledge/, scripts/ ni .claude/ cambia. Su informe, pegado al final; arregla lo que bloquee o importe, o di por qué no.
+>
+> PARADA 3 · ENTREGA: commitea la respuesta, los guiones con su test, caja-stop.txt, §8, el informe y el revisor, y para. Con eso escribo la orden de cierre y, en el encargo de la preparación de la sesión 7, las preguntas que salgan de §8.
+>
+> make check en verde antes de cada commit, con ruff format, ruff check y mypy antes sobre lo tocado. Si la guardia o el clasificador niegan algo, PARADA con el comando exacto y lo lanza Aleks con «!».
+>
+> Rama lista para revisión, NO cerrada.

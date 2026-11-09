@@ -50,15 +50,16 @@ def cambiar(texto: str, viejo: str, nuevo: str) -> str:
 
 # --- PROJECT_STATE: F, con el texto del encargo y el veredicto literal resumido en una linea
 F_VIEJA = next(x for x in ps.splitlines() if x.startswith("F. "))
+# el texto EXACTO de la respuesta del consultor a la PARADA 2, punto 6
 F_NUEVA = (
     "F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7 (§d de "
-    "ACTIVAR-SESION-06-MOTOR.md). La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md; "
-    "veredicto «no» (cobertura 15.7 % por debajo de 70.0 %; precision 13.9 % por debajo de 60.0 %); "
-    "línea base vigente anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Siguiente: la "
-    "preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md "
-    "§«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %, más lo que la clasificación de "
-    "la re-corrida añada, RECORRIDA-CONSTRUCCION-2.md §5); J antes si la hoja sale de kit hoja. El "
-    "vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos."
+    "ACTIVAR-SESION-06-MOTOR.md). La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: "
+    "«no», cobertura 15.7 % y precisión 13.9 %; línea base "
+    "anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; la clasificación, en su §8). Siguiente: T, "
+    "con la voz del trader sobre julio; después, la preparación de la sesión 7 (hoja + gráficos 2 a "
+    "6 con contexto; ACTIVAR-SESION-06.md §«Para la sesión 7», S-22 y S-19 con sus esquemas y el "
+    "52 %, y lo que deje §8); J antes si la hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN "
+    "ABRIR y fuera del repo. R6a en los huecos."
 )
 ps = cambiar(ps, F_VIEJA + "\n", F_NUEVA + "\n")
 
@@ -74,10 +75,22 @@ R39 = (
     "- **Depende de:** R3.7 y R3.8 (HECHAS).\n"
     "- **Quién:** la sesión, con el encargo del consultor; la clasificación, el consultor.\n"
     "- **Hecho cuando:** el veredicto literal está en el informe y en ADR-0070 §3, la línea base\n"
-    "  vigente es la suya y cada diferencia tiene su clase.\n"
+    "  vigente es la suya y cada diferencia tiene su clase o su destino (§8).\n"
     "- **Estado:** HECHA (`trabajo/recorrida-construccion-2`; RECORRIDA-CONSTRUCCION-2.md): «no»\n"
     "  (cobertura 15,7 %, precisión 13,9 %); línea base vigente\n"
-    "  `anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt`.\n"
+    "  `anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt`. §8, por clase, sobre las 414 filas de\n"
+    "  los patrones: 31 pareja, 19 efecto de la cuenta, 4 error nuestro conocido (RN-019), 81 sin\n"
+    "  clase hasta T y 279 sin clase; la caja, dispersa.\n"
+)
+# R2.4 (T, el vídeo de julio): la línea del punto 6
+hoja = cambiar(
+    hoja,
+    "- **Hecho cuando:** v11 a v14 están transcritos y comparados con el xlsx, y los días 20 a 31 tienen\n"
+    "  decisión escrita.\n",
+    "- **Hecho cuando:** v11 a v14 están transcritos y comparados con el xlsx, y los días 20 a 31 tienen\n"
+    "  decisión escrita.\n"
+    "- Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8, respuesta a la\n"
+    "  PARADA 2).\n",
 )
 hoja = cambiar(
     hoja,
