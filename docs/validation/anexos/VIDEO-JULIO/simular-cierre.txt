@@ -1,0 +1,19 @@
+# uv run python docs/validation/anexos/VIDEO-JULIO/simular_cierre.py "C:/Users/USER/Desktop/Bot v3"
+# (segunda version, T y U HECHAS, con los arreglos del revisor a1 y b3; sobre e77b66e,
+# 2026-11-09; en memoria, sin escribir)
+## sin la entrada del VAD
+T y U fuera: True
+a: []
+b: []
+c: []
+letras vivas tras el cierre: ADFGIJLMNQ
+R2.4 HECHA: True
+bytes de PROJECT_STATE: 22839
+## con la entrada del VAD (V)
+T y U fuera: True
+a: []
+b: []
+c: []
+letras vivas tras el cierre: ADFGIJLMNQV
+R2.4 HECHA: True
+bytes de PROJECT_STATE: 23268

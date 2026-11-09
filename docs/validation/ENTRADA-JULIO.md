@@ -617,6 +617,17 @@ eurusd-ticks-2026-07-6e7dc7cd coincide con el disco (hashes)`.
 
 ## 5. Fase 5 · el vídeo
 
+> **RECUADRO DE CORRECCIÓN (2026-11-08, rama `trabajo/video-julio`; informe `VIDEO-JULIO.md`
+> §0.5).** La propuesta de abajo dice «transcribir v11 a v14 [...] con el guion de `main` y su
+> cuarentena». **Era un error.** `scripts/transcribir_sesion.py` no sirve para un vídeo que no es
+> una sesión: `tramos_del_video` falla cerrado si el vídeo no está en `SESIONES_EN_CUARENTENA` ni
+> en `EXCEPCIONES` (`scripts/transcribir_sesion.py:556-567`), y además es un postproceso que exige
+> un `--audio` con el sha de una transcripción ya registrada, no un transcriptor. La vía es
+> `uv run botsito corpus transcribe --video <v>`; la cuarentena por condición se aplica al LEER,
+> por la CLI filtrada. Y «extraer fotogramas SOLO por instantes localizados» se precisa: `corpus
+> frames extract` extrae la cobertura completa a 1 fps; lo que ADR-0038 limita a un instante
+> localizado es ABRIR un fotograma. El cuerpo de esta sección no se toca.
+
 Hecha dentro de la fase 3 (desviación declarada en §3): v11 a v14 en `fuentes.yaml` con su
 `drive_id`, sus bytes (iguales a los de Drive) y su `naturaleza` («backtest de julio del trader en
 FX Replay, material de desarrollo», y que la correspondencia con el xlsx es lo que dice el trader,

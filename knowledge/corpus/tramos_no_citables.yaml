@@ -521,3 +521,15 @@ tramos:
       precaucion: el trader abre el replay de un mes distinto de abril, julio del 1 al 17, agosto y enero, y nombra un trade de ese mes (respuesta a del encargo: un mes fuera de lo libre se declara no citable); sin dias ni cifras
     acordado: >-
       encargo de trabajo/sesion-06 (2026-11-04), «ENTRADAS», a); marcado tras el hallazgo b7 del revisor; ninguna cita de la rama cae dentro; docs/validation/SESION-06-EXTRACCION.md
+  - video_id: v13
+    t0: "0:00:00"
+    t1: "0:00:35"
+    motivo: >-
+      precaucion: el replay ensena el backtest de marzo del trader, sin sortear. Desde el arranque
+      de la grabacion hasta el primer instante en que un fotograma ya abierto situa el replay en
+      julio (fr-v13-8c1e06fb/35000); sin dias ni marcas
+    acordado: >-
+      respuesta del consultor a la PARADA final de trabajo/video-julio (2026-11-09), punto 0 (b);
+      la exposicion, en docs/validation/HOLDOUT-EXPOSICIONES.md (2026-11-09, el fotograma
+      fr-v13-8c1e06fb/10000, que no se vuelve a abrir); ADR-0038 y ADR-0041;
+      docs/validation/VIDEO-JULIO.md

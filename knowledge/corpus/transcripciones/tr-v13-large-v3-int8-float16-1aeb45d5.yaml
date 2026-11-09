@@ -1,0 +1,82 @@
+# GENERADO por `botsito corpus transcribe`. INMUTABLE: no editar; una retranscripcion es otro manifiesto con reemplaza_a.
+carpeta: transcripciones/v13/large-v3-int8-float16
+corte:
+  max_s: 780.0
+  min_s: 420.0
+  muestras_s: 16000
+  objetivo_s: 600.0
+  silencio_minimo_s: 0.5
+  umbral_db: -35.0
+cortes_forzados_m: []
+descartados: 0
+duracion_video_s: 2449.266
+duracion_wav_s: 2449.173
+ffmpeg: 9.0.1-full_build-www.gyan.dev
+fichero_video: Material adicional de su operativa/Backtest Julio 2026/2026-10-04 09-45-43.mkv
+fragmentos:
+- fin_m: 9505343
+  indice: 0
+  inicio_m: 0
+- fin_m: 19135646
+  indice: 1
+  inicio_m: 9505343
+- fin_m: 28745041
+  indice: 2
+  inicio_m: 19135646
+- fin_m: 39186773
+  indice: 3
+  inicio_m: 28745041
+generado_el: '2026-11-09T03:48:26Z'
+glosario_sha256_inicial: 6a1da3cafac46e6b7b002adffac36a664fa0867e43d5a09d7bc174ccdd3cc743
+hueco_transcripcion_s: 30.0
+huecos:
+- desde_ms: 349400
+  hasta_ms: 393830
+  ms: 44430
+- desde_ms: 398850
+  hasta_ms: 678253
+  ms: 279403
+- desde_ms: 1183303
+  hasta_ms: 1291417
+  ms: 108114
+- desde_ms: 1842705
+  hasta_ms: 2133425
+  ms: 290720
+motor:
+  beam_size: 5
+  compute_type: int8_float16
+  condition_on_previous_text: false
+  ctranslate2: 4.8.2
+  dispositivo: cuda
+  faster_whisper: 1.2.1
+  gpu: NVIDIA GeForce GTX 1650, 610.62
+  hotwords: null
+  idioma: es
+  initial_prompt_sha256: 327e1ef9ad176500d2878faf7776199a3dec1cfda445f516f23c1edda48ee120
+  initial_prompt_tokens: 96
+  modelo: large-v3
+  modelo_ruta: C:\Users\USER\.cache\huggingface\hub\models--Systran--faster-whisper-large-v3\snapshots\edaa852ec7e145841d8ffdb056a99866b5f0a478
+  modelo_sha256: 69f74147e3334731bc3a76048724833325d2ec74642fb52620eda87352e3d4f1
+  motor: faster-whisper
+  nvidia_cublas_cu12: 12.9.2.10
+  nvidia_cudnn_cu12: 9.25.1.1
+  python: 3.12.10
+  temperature: 0.0
+  vad_filter: true
+  word_timestamps: true
+ms_con_habla: 1695520
+muestras: 39186773
+recortados: 0
+schema_version: 1
+segmentos: 31
+senales:
+  baja_prob: 0
+  compresion: 0
+  no_habla: 0
+  repeticion: 0
+sha256_cruda: 1aeb45d5016168cd1c79ec5d2a084dcd947e8e72ae5a580703195c1a28c267eb
+sha256_video: 8dc7efa12e264f64652179d6cfce1be8f84c3626baccf77576f8541d62b0c1ff
+sha256_wav: 8bb6dc58f38edf3f489c324b10931e776a9060673cf8218af219722ec86a5f14
+silencios_detectados: 415
+transcripcion_id: tr-v13-large-v3-int8-float16-1aeb45d5
+video_id: v13
