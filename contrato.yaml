@@ -9,6 +9,8 @@ rutas_permitidas:
   - docs/runbooks/ERRORES-RECURRENTES.md
   - docs/adr/0070-umbral-de-construccion-para-medir-mayo.md
   - docs/runbooks/ACTIVAR-A35-A44.md
+  # ampliada por la respuesta del consultor a la PARADA 3 y orden de cierre (2026-11-08), C0
+  - docs/plan/RUMBO-2026-11.md
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
