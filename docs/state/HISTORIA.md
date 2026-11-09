@@ -16655,3 +16655,37 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 63 (2026-11-08).
+
+# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/trazas-ablacion (2026-11-09)
+
+Condicion (e) de `docs/state/README.md` («Que sale de PROJECT_STATE, y con que criterio»; encargo
+de `trabajo/trazas-ablacion`, F1). Cada linea, entera y literal como estaba en «Technical Debt», y
+lo que queda de ella en PROJECT_STATE (el corte valido mas largo de 160 bytes como mucho; medido
+en TRAZAS-ABLACION.md, F1):
+
+- El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4); la prueba de FTMO no (tasa de margen de la buy stop 0, ADR-0090 §4). Sin efecto medido en construcción (DEMO-EJECUCIONES-2-3.md §0.f). Se decide antes de R6a.6, que no la porta al EA sin esa decisión.
+  Queda en PROJECT_STATE: - El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4) … (DEMO-EJECUCIONES-2-3.md §0.f; entera en HISTORIA, Technical Debt ACORTADA)
+
+- Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») dicen la comisión del perfil de antes de ADR-0090 (2,50 por lado): se corrigen en la rama que vuelva a correr esos guiones (DEMO-EJECUCIONES-2-3.md §3.1).
+  Queda en PROJECT_STATE: - Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») … (DEMO-EJECUCIONES-2-3.md §3.1; entera en HISTORIA, Technical Debt ACORTADA)
+
+- Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído o de un nombre asignado más de una vez no se calcula; solo se niega si lo que se sabe de ella nombra un fragmento de `SENSIBLES`. Y `subprocess` con `cwd=` que no se calcula analiza la orden desde el directorio de trabajo.
+  Queda en PROJECT_STATE: - Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído o de un nombre asignado más de una vez no se calcula … (entera en HISTORIA, Technical Debt ACORTADA)
+
+- Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan, y un `getattr(os, ...)` no se ve. Y en un clon sin .venv (git worktree), un guion de trabajo que importa un paquete de terceros se niega; los tests del clon no, por _test_de_un_clon.
+  Queda en PROJECT_STATE: - Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan, y un `getattr(os, ...)` no se ve … (entera en HISTORIA, Technical Debt ACORTADA)
+
+- Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`, `pico_memoria.py`, `huso_por_velas.py`), cambiados en una rama, no se ejecutan sueltos desde la sesión: B los niega por llamar a `git` o a un programa con argumentos que no se calculan, o por `sys.path.insert` sin calcular (GUARDIA-G1.md §6.4). La rama que los cambie los prueba por sus tests y, sueltos, con «!»; `make check` los sigue lanzando.
+  Queda en PROJECT_STATE: - Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`, `pico_memoria.py`, `huso_por_velas.py`) … (GUARDIA-G1.md §6.4; entera en HISTORIA, Technical Debt ACORTADA)
+
+- Riesgo residual de la excepción de la carga por ruta (revisor, A2; GUARDIA-G1.md §6.2): la de la regla de la CI, ampliada a `solo_lectura.py`, vale para CUALQUIER fichero cuya ruta acabe en `.claude/hooks/guardia.py` o `solo_lectura.py`, también fuera del repo, y B no lo lee.
+  Queda en PROJECT_STATE: - Riesgo residual de la excepción de la carga por ruta (revisor, A2; GUARDIA-G1.md §6.2) … (entera en HISTORIA, Technical Debt ACORTADA)
+
+- Riesgo residual de ADR-0088 (revisor, B7): la guardia niega los listados de `ls`, `dir`, `tree`, `du`, `find`, `git ls-files`, `git ls-tree`, Glob y `Get-ChildItem`; NO los nombres que sacan `git log --name-only`, `git show --name-only`, `git diff --name-only`, `git status --untracked-files=all` o `fd`. Con un caso de verdad dentro de una partición, `git log`/`show`/`diff` sobre esa ruta ya los niega la regla de lectura (`motivo_ruta`); `git status` y `fd`, no. Rama del carril de guardias.
+  Queda en PROJECT_STATE: - Riesgo residual de ADR-0088 (revisor, B7) … (entera en HISTORIA, Technical Debt ACORTADA)
+
+- Copia de seguridad de las crudas y los WAV: hecha hasta v17 (v6 a v10 el 2026-10-22; v15 a v17 el 2026-11-07: data/transcripciones/v15, v16 y v17 y las carpetas sesion-05-audio y sesion-06-audio del Escritorio, 146 ficheros con SHA256SUMS-v15-v17.txt de 146 líneas; Drive privado de Aleks, declaración de Aleks comprobada por el consultor en su Drive). Cada sesión nueva se añade tras su ingesta; los vídeos de las sesiones, recomendado, sin hacer.
+  Queda en PROJECT_STATE: - Copia de seguridad de las crudas y los WAV … (entera en HISTORIA, Technical Debt ACORTADA)
+
+- El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A), pero siguen diciendo que está pendiente DEMO-FTMO.md:159-162, la descripción de reloj_dia_riesgo (parametros.yaml:1646-1651), ADR-0090 §1 (:71-75) y FTMO-REGLAS.md:253-254 (informe cerrado: con recuadro). Se corrigen en la primera rama de activación tras la sesión 7 (S-22 y S-19), con su régimen de cambio; trabajo/cuenta-por-mes tocó knowledge/spec solo para la racha (ADR-0092 §8) y no la paga, decisión del consultor del 2026-11-08. Esa rama cierra también A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).
+  Queda en PROJECT_STATE: - El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A) … (entera en HISTORIA, Technical Debt ACORTADA)

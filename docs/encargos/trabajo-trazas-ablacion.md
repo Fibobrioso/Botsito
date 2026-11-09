@@ -107,3 +107,48 @@ Dado por Aleks (consultor) el 2026-11-09. Copiado tal cual:
 > CI: la rama escribe ficheros nuevos en data/ y puede tocar el nombrado de rutas de diagnostico.py, así que por RITUAL.md se empuja como fix/trabajo-trazas-ablacion y pasa la CI de Linux antes de declararla lista; da el número de run. El único fallo aceptado es el de state check por el nombre fix/.
 > REVISOR (agente revisor), con estos alcances: (1) que nada cambie lo que el motor decide (golden y mutación); (2) que `motor arnes` y `motor visor` no cambien, y la etiqueta y el nombrado de la salida; (3) el holdout y HOLDOUT-EXPOSICIONES; (4) el recorte frente a (a)-(e), línea a línea; (5) que las clases de 07-03 citen S-18 y A-32 y los hechos de la bitácora; (6) que ninguna salida nueva lleve R, PnL ni porcentajes. Su informe, pegado al final del tuyo.
 > Termina con la PARADA final con las clases para que yo decida, y la frase «Rama lista para revisión, NO cerrada.»
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-09)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/trazas-ablacion (2026-11-09). Cópiala tal cual al informe con la skill fase-cero y aplícala punto por punto.
+>
+> 0. El enganche. Campo observador opcional en MotorCableado para lo que no es del intérprete (tomas, escenarios, zonas, puntos, órdenes): de acuerdo. Pero el gate que prohíbe NO se deduce del orden de las disparadas: se apunta en el intérprete, en el sitio donde se prohíbe. Por qué: deducirlo del orden es la clase de error del revisor a1 de RECORRIDA-CONSTRUCCION-2 (atribuir a RN-032 el bloqueo de RN-015), y no cubre el caso que tú mismo mediste, un gate DESCONOCIDO que bloquea sin disparar: en interprete.py, quizas_prohibidos (:323-335) se rehace en cada pasada y no_implementadas acumula sin la pasada, así que no se puede reconstruir después. Cómo:
+>    - el Evento gana un registro de quién prohíbe cada efecto (los gates que dispararon y lo prohibieron, en _ejecutar hacia :260) y, en cada acción bloqueada, qué gates lo hicieron, también los desconocidos de esa pasada (hacia :270-274). quizas_prohibidos puede pasar a llevar los ids, sin cambiar qué se bloquea;
+>    - es solo registro: nada lo lee para decidir. Un test lo fija sobre el fixture, con un gate que dispara y uno desconocido prohibiendo lo mismo: salen los dos;
+>    - la prueba de que no cambia ninguna decisión es la de F4.1: motor arnes con el código de la rama da un diff de 0 bytes contra cuenta-por-mes.txt.
+>    Cambia lo que dije en el encargo (sin tocar el intérprete): lo dejo escrito como desviación decidida por mí.
+>
+> 1. Etiqueta y nombre: DIAGNOSTICO-DECISIONES con nombrado propio, y nombre_etiquetado arreglado para que «DIAGNOSTICO-A» solo acepte una ambigüedad (A seguida de cifras) y rechace todo lo demás, con su test que rompe en main. De acuerdo.
+>
+> 2. La relectura de 07-03: de acuerdo con medir el punto, su vela, la vela de M1 del llenado (con o sin cuerpo) y si la línea viene de M15. Añade dos datos por orden:
+>    (a) si el llenado ocurrió ANTES o DESPUÉS de la primera vela de M1 que cierra más allá del punto;
+>    (b) qué toma de M15 abrió el escenario y si su vela cerró con cuerpo.
+>    Las clases propuestas quedan así:
+>    - error nuestro: el punto o la toma tratan como de M1 una línea de M15, o la toma de M15 se dio con mecha;
+>    - contradicción con lo fijado: el punto es un pivote de M1 y el llenado fue con mecha, contra la voz de v12 y con S-18 a favor del bot;
+>    - y, si (a) dice que el bot entra antes de que ninguna M1 cierre más allá, propones además «regla desconocida: cuándo se coloca la orden respecto de la ruptura» (toca ADR-0064 y orden_limite_nace). No se cambia nada: decido yo en la PARADA final.
+>
+> 3. El subcomando: motor decisiones, de acuerdo. --carpeta es obligatorio y la raíz sale de ese argumento (CLAUDE.md, «Ensayos aislados», punto 2), con un test que niega una carpeta fuera de data/. Perfil y fase, los mismos por defecto que la línea base; sin --depuracion.
+>
+> 4. Los tests de F2 y F3 sobre el fixture sintético de test_cableado.py: de acuerdo. Ningún test lee meses reales. La prueba sobre la construcción entera es F4.
+>
+> 5. El Marcador: sin fila, declarado en el informe como excepción a HOJA-DE-RUTA.md:817, con el motivo (la corrida base repite la línea base con diff de 0 bytes y no es una corrida nueva; las ablaciones son diagnóstico). La orden de cierre lo dirá.
+>
+> 6. Un solo proceso, de acuerdo, con dos condiciones:
+>    - cada ablación con un motor y un estado nuevos; las velas y los ticks pueden compartirse solo si son de lectura. Antes de las 32, la base corrida dos veces en el mismo proceso tiene que dar recuentos idénticos entre sí y a los de F4.1;
+>    - el umbral de 1,5 GiB: si lo pasa, un proceso por ablación, dicho.
+>
+> 7. El control. El conjunto de control NO es mi lista de 11: lo calcula la bitácora de la base, como las VIGENTE que en toda la construcción ni disparan ni quedan desconocidas en ningún evento. Ese conjunto tiene que dar delta cero; si alguna no lo da, PARADA. RN-008 (que toca la memoria del día al evaluarse) y cualquiera que quede fuera del control se miden como las demás y se explican.
+>
+> 8. Herencias de tu auditor:
+>    - traza_por_cierre.py se queda como está. El informe dice qué cubre la bitácora de lo que hacía y en qué se diferencia (cuenta por mes frente a día suelto);
+>    - la deuda de la zona reutilizada (PUNTO-USADO.md §1.c y §4.f) entra en el análisis de 07-14: di, con la bitácora, si sus cierres contaron en los cartuchos de otro escenario y si eso explica que RN-016 no frenara;
+>    - la carpeta desde un argumento, en el punto 3; los tests sin meses reales, en el punto 4.
+>
+> 9. Correcciones mías al encargo, que apuntas como desviaciones: la rama de CI es fix/trazas-ablacion (RITUAL.md:102), no fix/trabajo-trazas-ablacion; NA:F no aparece en ningún sitio del bloque de R4.4 al proponerla HECHA; las corridas pueden llevar unas 4 h.
+>
+> 10. Sigue. Haz F1 ya, en su commit. Después F2, F3 y F4 sin esperarme, con la PARADA condicional: paras solo si el diff de F4.1 no da 0 bytes, si la base repetida en proceso no cuadra, si alguna regla del control no da delta cero o si el diseño del punto 0 no puede ser solo registro. Si todo cuadra, sigue con F5 hasta la PARADA final, el revisor (agente revisor) y «Rama lista para revisión, NO cerrada». Antes de la primera corrida de cada día, su fila en HOLDOUT-EXPOSICIONES.md.
