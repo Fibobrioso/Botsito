@@ -527,5 +527,59 @@ Las formas de la lista cerrada de la guardia, sobre los `.mkv` (desde su carpeta
 - Propuesta para la deuda del carril de guardias: la forma de medida de ffmpeg no admite `-ss` y
   `-t` sobre un tramo, que la medida de un hueco necesita.
 
+**Respuesta a la PARADA 2 (2026-11-09):** Aleks lanzó con «!» el primero de los cuatro comandos:
+`mean_volume: -38.6 dB` para el hueco de v14 de 340,460 s (718,6 s). Cubierto por silencio 0 y
+|−38,6 − (−39,0)| = 0,4 dB < 10 dB: **el hueco NO es silencio; el ASR se saltó voz en v14.** Con
+un hueco basta (la regla: «si algún hueco [...] lo cumple, se retranscribe ese vídeo»); los otros
+tres no se midieron. Se aplica 1.3: v14 y también v13 (la respuesta nombra los dos; v13 no tiene
+huecos de 5 minutos, pero su texto por minuto es igual de bajo, §1), uno a uno, con
+`--objetivo-s 300 --min-s 180 --max-s 420`, y se queda la versión que cubra con texto más minutos
+de los huecos.
+
+### 1.7 La retranscripción (1.3) y la PARADA 4 (2026-11-09)
+
+`uv run botsito corpus transcribe --video <v> --reemplaza-a <tr-id> --objetivo-s 300 --min-s 180 --max-s 420`,
+v14 y luego v13, uno a uno, sin `make check` a la vez:
+
+| Vídeo | Versión | Segmentos | Fragmentos (con 0 segmentos) | Palabras (CLI filtrada) | Ocultos (a/b/c) | Huecos > 30 s |
+|---|---|---|---|---|---|---|
+| v13 | `tr-v13-large-v3-int8-float16-1aeb45d5` (vieja) | 31 | 4 | 645 | 0 | 4 (44+279+108+291 s) |
+| v13 | `tr-v13-large-v3-int8-float16-7f5333a0` (nueva, activa) | 24 | 8 (0) | 926 | 0 | 6 (267+245+193+109+203+273 s) |
+| v14 | `tr-v14-large-v3-int8-float16-2253ec10` (vieja) | 29 | 6 | 565 | 0 | 5 (719+44+573+537+323 s) |
+| v14 | `tr-v14-large-v3-int8-float16-1d289df6` (nueva, activa) | 47 | 12 (5) | 584 | 0 | 7 (310+567+44+573+537+317+36 s) |
+
+- **Cuánto de los huecos viejos cubre la nueva con texto:** v13, unos 96 s de 722 s (44 del
+  primero, 34 del segundo, 0 del tercero, 18 del cuarto); v14, en los cuatro huecos de 5 minutos o
+  más, unos 163 s de 2151 s (158 del primero, 0 del segundo y del tercero, 5 del cuarto). **A
+  cambio, la nueva pierde texto donde la vieja lo tenía**: v13, de 29 a 296 s, de 703 a 896 s y de
+  1305 a 1508 s; v14, de 24 a 334 s.
+- `uv run botsito corpus transcript check`: `OK: 24 transcripciones coherentes con el disco y el
+  glosario`. Los dos manifiestos nuevos, sin editar los anteriores, en su commit.
+- **SHA256SUMS** (respuesta, punto 2): `C:\Users\USER\Desktop\SHA256SUMS-v11-v14.txt`, **116
+  líneas**, las transcripciones activas y las reemplazadas de v11 a v14 (las dos carpetas de v13 y
+  de v14) y el audio de cada vídeo.
+- **La regla de 1.3:** «Se queda la transcripción que cubra con texto más minutos de los huecos»
+  da la nueva en los dos (96 s y 163 s frente a 0); «Si la nueva tampoco los cubre, PARADA con lo
+  medido: entonces Aleks escucha un minuto» se cumple también: la nueva cubre un 13 % (v13) y un
+  8 % (v14) de los huecos. **PARADA 4.**
+
+### Lo que necesito que decidas (PARADA 4)
+
+0. Que Aleks escuche un minuto (respuesta a la PARADA 1, 1.3). Propuesta: v14 de 0:10:00 a
+   0:11:00 (dentro del hueco de 340-1059 s en las dos versiones y del de 335-902 s de la nueva) y
+   decir si el trader habla. Si habla, el problema es del ASR con este audio (faster-whisper con
+   `vad_filter`, el VAD de Silero), no de los parámetros de corte, y la siguiente prueba sería otra
+   configuración del motor, que `corpus transcribe` no expone (`src/` protegido): rama propia.
+1. Qué versión queda activa. La nueva lo es por `--reemplaza-a`; la regla la elige por los huecos,
+   pero pierde texto que la vieja tenía. Opciones: (a) se queda la nueva como activa (la regla
+   literal) y, para los tramos que solo tiene la vieja, se cita la vieja por su id
+   (`transcript show --transcripcion <id>`, `cli.py:2964`); (b) la vieja es la de referencia en F2 a
+   F7, citada siempre por su id, y la nueva solo para los tramos que añade (un manifiesto
+   reemplazado no se puede volver a activar sin otra retranscripción). Recomiendo (a): las dos
+   versiones quedan en el repo, la CLI filtrada lee cualquiera, y cada cita dice de cuál sale.
+
+**Mientras tanto** sigue lo que no depende de esto (respuesta, 1.4): v11 y v12. F3 espera la
+PARADA 3.
+
 ## Estado
 EN CURSO · PARADA 2 (los cuatro comandos de §1.6, para Aleks) y PARADA 3 (el piloto de F3, §3.1)
