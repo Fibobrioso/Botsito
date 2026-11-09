@@ -722,6 +722,15 @@ los tres goldens y a `test_criterio_campos_adr0092.py` (respuesta a la fase 0, p
 tocaron; y el encargo pedía cambiar la naturaleza de v11-v14 en `fuentes.yaml` «en el mismo commit»
 que F5, que no hubo.
 
+**Tras la respuesta a la PARADA final (2026-11-09)** entran, por orden del consultor:
+`docs/runbooks/ENTRADA-MARZO.md` (el paso b2), `knowledge/corpus/tramos_no_citables.yaml` (el
+tramo de v13), `tests/unit/test_guardia_claude.py` (lo esperado de `test_los_tramos_del_repo_real`,
+§11.1), `knowledge/corpus/fuentes.yaml` (la naturaleza de v11-v14, §11.2), la segunda versión de
+`anexos/VIDEO-JULIO/simular_cierre.py` y su salida, y la fila de ERRORES-RECURRENTES. Siguen sin
+tocarse `src/`, `knowledge/spec/`, `knowledge/evidence/`, `knowledge/feedback/`,
+`knowledge/cases/` (con `criterio_fidelidad.yaml`), `manifest.yaml` (`corpus inventory` no lo
+cambia), `libros.yaml`, `scripts/`, `.claude/` y los goldens.
+
 ## 9. Los `make check` de la rama
 
 | Commit | Exit | Passed | SELLO | PICO DE MEMORIA |
@@ -733,63 +742,101 @@ que F5, que no hubo.
 | `3b99e5c` F3 parcial | 0 | 3343 | `f4c27680…` | 311 MiB |
 | `1b75f94` F3 de v12, F4 de 1-10 y F7 | 0 | 3343 | `0ea9c384…` | 309 MiB |
 | `47f808a` la entrega (antes del revisor) | 0 | 3343 | `bb7391a9…` | 308 MiB |
-| los arreglos del revisor | en el mensaje de su commit | | | |
+| `8a08da4` los arreglos del revisor | 0 | 3343 | `ceea8340…` | 310 MiB |
+| `dda8153` PARADA final, punto 0 (primer intento) | **2** | 3342 y **1 failed** (`test_los_tramos_del_repo_real`, §11.1) | no | — |
+| `dda8153` PARADA final, punto 0 | 0 | 3343 | `e1d8a539…` | 310 MiB |
+| `76cf147` PARADA final, punto 6 | 0 | 3343 | `2dee9fc0…` | 310 MiB |
+| los puntos 1 a 5 y 7, y el revisor | en el mensaje de sus commits | | | |
 
-Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
+Ningún `failed` en ninguno que se commiteara (el del primer intento del punto 0 se arregló antes
+del commit). Los tests no cambian: 3343 en todos.
 
 ## 10. Propuestas para la orden de cierre (cada una comprobada contra `test_hoja_de_ruta`)
 
-1. **T sale de la Next Action, HECHA**, con un registro nuevo en HISTORIA. HISTORIA ya tiene
-   «# Next Action HECHA · T · sale de PROJECT_STATE.md en trabajo/respuestas-ftmo (2026-10-05)»
-   (línea 4986) y «· U ·» (6184), de otras letras T y U reutilizadas. Encabezado propuesto, con el
-   formato de las más recientes: **«# Next Action HECHA · T · el vídeo de julio · sale de
-   PROJECT_STATE.md en trabajo/video-julio (<fecha del cierre>)»**. `letras_hechas` usa un
-   conjunto (`test_hoja_de_ruta.py:60-61`): no ve que falte el registro nuevo, porque el viejo ya
-   pone la T. **Deuda del carril de guardias**: «`test_hoja_de_ruta` no distingue un registro
-   «HECHA · T» de una letra reutilizada del de la T vigente».
-2. **R2.4 reescrita.** U sigue viva, así que R2.4 no puede ir HECHA, y con T fuera de la Next
-   Action **NA:T no puede aparecer en ningún sitio del bloque** (`problemas_b` mira las
-   referencias del bloque entero, no solo «Refs:»: revisor, b1). Hoy NA:T está en «Refs:», en
-   «Qué es» y en «Depende de». El texto propuesto, entero, está en
-   `anexos/VIDEO-JULIO/simular_cierre.py` (`R24_NUEVA`): **Refs: NA:U · ID:ADR-0078**; «Qué es» sin
-   «(NA:T)»; un «Estado:» «la transcripción y la comparación están hechas en trabajo/video-julio
-   (VIDEO-JULIO.md); falta la decisión de los días 20 a 31 (NA:U)»; «Depende de: R2.1 (HECHA).»;
-   «Quién» y «Hecho cuando», solo con los días 20 a 31. **Simulado en memoria** con las funciones
-   del test, junto con los puntos 1, 3 y 4 (`simular-cierre.txt`): `a: []`, `b: []`, `c: []`,
-   letras vivas tras el cierre ADFGIJLMNQU. (La primera versión de esta propuesta llevaba «(NA:T)»
-   en el Estado y no se había simulado.)
-3. **U**, con la decisión del consultor tras la PARADA final (§6); su «Depende de T» sale. U ya no
-   espera a la rama del VAD (decisión del consultor tras el minuto de escucha).
-4. **F**: el punto (1) («T, la voz del trader sobre julio») sale, y (2)-(4) pasan a ser (1)-(3).
+Al día con la respuesta del consultor a la PARADA final (2026-11-09; puntos 1 a 4 y 7). La orden de
+cierre solo toca contrato, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE y HOJA-DE-RUTA (punto 6 de
+esa respuesta): `fuentes.yaml` ya está al día en la rama (§11.2). **Simulado en memoria** con las
+funciones del test (`anexos/VIDEO-JULIO/simular_cierre.py`, segunda versión, y
+`simular-cierre.txt`): los puntos 1 a 4, sin y con la entrada del VAD del punto 7, dan `a: []`,
+`b: []` y `c: []` las dos veces; letras vivas tras el cierre, ADFGIJLMNQ, o ADFGIJLMNQV con el VAD
+como V. (La primera versión, solo con T fuera, en 8a08da4.)
+
+1. **T y U salen de la Next Action, HECHAS las dos**, cada una con su registro en HISTORIA.
+   HISTORIA ya tiene «# Next Action HECHA · T · sale de PROJECT_STATE.md en
+   trabajo/respuestas-ftmo (2026-10-05)» (línea 4986) y «# Next Action HECHA · U · sale de
+   PROJECT_STATE.md en trabajo/respaldo-a11 (2026-10-07)» (6184), de otras T y U. Encabezados
+   propuestos, que dicen de cuál son:
+   - **«# Next Action HECHA · T · el vídeo de julio, v11 a v14 (no la T de
+     trabajo/respuestas-ftmo) · sale de PROJECT_STATE.md en trabajo/video-julio (<fecha del
+     cierre>)»**;
+   - **«# Next Action HECHA · U · julio del 20 al 31, sin casos del vídeo (no la U de
+     trabajo/respaldo-a11) · sale de PROJECT_STATE.md en trabajo/video-julio (<fecha del
+     cierre>)»**.
+   `letras_hechas` lee `^# Next Action HECHA · ([A-Z]) ·` en un conjunto
+   (`test_hoja_de_ruta.py:60-61`): los dos casan, y no ve que falte el registro nuevo, porque el
+   viejo ya pone la letra (Technical Debt, punto 8).
+2. **R2.4 HECHA**, sin letras vivas: `Refs: NA:T · NA:U · ID:ADR-0078` (las dos, en HISTORIA);
+   «Depende de: R2.1 (HECHA).» (sale «NA:U depende de NA:T»); y un «Estado:» «HECHA
+   (`trabajo/video-julio`, `stable/F38u-video-julio`; VIDEO-JULIO.md): v11 a v14 transcritos y
+   comparados con el libro (67 operaciones, ninguna lo contradice; julio sigue provisional en
+   `material_sin_video`); de los días 20 a 31 no se sacan casos del vídeo (decisión del consultor
+   del 2026-11-09). Los huecos del ASR, en R2.5». «Qué es», «Quién» y «Hecho cuando», como están.
+   El texto entero, en `simular_cierre.py` (`R24_HECHA`).
+3. **U, HECHA con la decisión del consultor** (respuesta a la PARADA final, punto 3): no se sacan
+   casos del vídeo de los días 20 a 31, porque un caso necesita su libro (ADR-0042 §2; ADR-0078
+   §3), el stop casi nunca se lee y tres días están enteros en huecos del ASR (§6). La voz de v14 sí
+   se puede citar como evidencia.
+4. **F**: el punto (1) («T, la voz del trader sobre julio») sale y (2)-(4) pasan a (1)-(3). Texto
+   propuesto, en `simular_cierre.py` (`F_NUEVO`): «(1) trazas del motor y ablación por regla (RUMBO
+   §2), que confirman o reclasifican las 5 filas de «error nuestro» del vídeo de julio
+   (VIDEO-JULIO.md §4); (2) láminas del bot a la estética de FX Replay (RUMBO §3); (3) la
+   preparación de la sesión 7 con el método nuevo y su ADR (RUMBO §1), con los días de §8, la
+   clasificación de las 81 filas del vídeo de julio (VIDEO-JULIO.md §4), sus dos preguntas
+   técnicas (la tarde del 10 de julio; las entradas válidas que el trader deja sin tomar en el
+   backtest) y los ítems de evidencia de F7 #1, #2, #3 y #10.» Lo que hereda la preparación de la
+   sesión 7 (respuesta a la PARADA final, puntos 1, 2 y 4):
+   - **Bloque técnico, dos preguntas**: «la tarde del 10 de julio no está en el vídeo y el libro
+     tiene tres ventas; ¿se grabó en otra parte?» (punto 1) y «¿en el backtest dejas entradas
+     válidas sin tomar? ¿cuándo y por qué?» (punto 2).
+   - **La clasificación de T de las 81 filas** (§4.1 y §4.2), aceptada por el consultor: 35 regla
+     desconocida (30 del rango de H4), 5 error nuestro (sospecha), 4 material incompleto, 37 sin
+     clase. **Nota para P5**: hasta que el trader explique F7 #10 (v14 0:42:02, «no le voy a tomar
+     para no afectar al muestreo»), una «operación de más» del bot no se da por error.
+   - **Los ítems de evidencia de F7 #1 y #2** (el rango de H4 y qué lo rompe), **#3 y #10**, citados
+     por su id de transcripción (§7). Los de #6 y #9, la rama de trazas, si los necesita.
+   - **La rama de trazas** confirma o reclasifica las 5 de error nuestro (la ruptura del breaker
+     en M1 con cuerpo, 3 de julio).
 5. **El Marcador no cambia**: no hay corrida.
-6. **Las filas de §8 de RECORRIDA-CONSTRUCCION-2.md que reclasifique la PARADA**, para la rama que
-   use la clasificación (las trazas y la preparación de la sesión 7): las 81 de §4 de este informe,
-   con la clase que decida el consultor.
+6. **Las filas de §8 de RECORRIDA-CONSTRUCCION-2.md**: la clase de T de las 81 es la de §4 de este
+   informe (punto 4); `RECORRIDA-CONSTRUCCION-2.md` no se toca (es un informe cerrado en `main`).
 7. **Entrada nueva de la Next Action, carril de infraestructura, prioridad baja, en los huecos**
-   (respuesta a la PARADA 4, punto 5, y decisión tras el minuto de escucha): «Exponer en `corpus
-   transcribe` la configuración del VAD (o su desactivación), con tests; retranscribir v12, v13 y
-   v14 con `--reemplaza-a`; volver a medir en los huecos lo de F2, F3, F4 y F6 de
-   trabajo/video-julio. No va antes de las trazas, de las láminas ni de la preparación de la sesión
-   7.» **Condición de entrada (propuesta): va**, porque el minuto de Aleks dice que el trader habla
-   en un hueco («bias bajista», una frase corta que el VAD se saltó). La letra, la que asigne el
-   consultor (hoy están libres, entre otras, la V y la W).
-8. **Technical Debt, carril de guardias** (tres líneas; la cuarta, de la respuesta a la PARADA
-   final, punto 0 (c), al final de la lista):
+   (respuesta a la PARADA 4, punto 5; decisión tras el minuto de escucha; y respuesta a la PARADA
+   final, punto 1, que le pasa la decisión de F5). Texto propuesto, simulado con la letra V (la
+   asigna el consultor; V no está en ninguna entrada de la hoja de ruta): «V. Los huecos del ASR en
+   el vídeo de julio (prioridad baja, en los huecos): exponer en corpus transcribe la
+   configuración del VAD (o su desactivación), con tests; retranscribir v12, v13 y v14 con
+   --reemplaza-a; volver a medir en los huecos lo de F2, F3, F4 y F6 de VIDEO-JULIO.md y, con eso,
+   volver a decidir F5 (material_sin_video de julio). No va antes de las trazas, de las láminas ni
+   de la preparación de la sesión 7.» Con R2.4 HECHA, NA:V no puede ir en R2.4: va en una entrada
+   nueva de la hoja de ruta, **R2.5 · Los huecos del ASR en el vídeo de julio** (`Refs: NA:V ·
+   ID:ADR-0078`; «Depende de: R2.4 (HECHA).»; texto entero en `simular_cierre.py`, `R25`).
+8. **Technical Debt, carril de guardias** (cuatro líneas):
    - «La guardia no niega leer con Read las crudas de `data/transcripciones/` de un vídeo sin
      cuarentena ni tramos» (encargo).
    - «La forma de medida de ffmpeg de la guardia no admite `-ss`/`-t` sobre un tramo de un vídeo
      del corpus: falso positivo de la lista cerrada de GUARDIA-FFMPEG» (respuesta a la PARADA 2).
-   - La de `test_hoja_de_ruta` y las letras reutilizadas (punto 1).
+   - «`test_hoja_de_ruta` no distingue un registro «HECHA · T» de una letra reutilizada del de la
+     T vigente» (punto 1).
    - «Un fotograma dentro de un tramo no citable se puede abrir: la guardia niega `corpus frames
      show` en el tramo, pero no el Read del PNG por su ruta, y la CLI imprime la ruta» (medido,
-     §11.1).
+     §11.1; respuesta a la PARADA final, punto 0 c).
 9. **«hasta que T lo compruebe» en `src/`** (`cableado.py:1408`, `criterio_fidelidad.py:341`) y la
    línea 18 de los tres goldens: siguen siendo verdad mientras `material_sin_video` no cambie (§5);
-   los cambia la rama que cambie el bloque.
+   los cambia la rama que cambie el bloque (la del punto 7, si F5 cambia allí).
 10. **G de la Next Action** («qué libro viene de vídeo, ACTIVAR-SESION-05.md §0.b.7») puede apuntar
     también a este informe (§3.5 y §5).
-11. **La naturaleza de v11 a v14 en `fuentes.yaml`** y el comentario de sus líneas 116-118: al día
-    con lo medido en §2.1, si el consultor elige la opción (a) del punto 6 de la PARADA final.
+11. **`fuentes.yaml`**: ya no es del cierre; hecho en la rama (§11.2).
+12. **Tag**: `stable/F38u-video-julio`. Ningún push hasta la orden de cierre.
 
 ## 11. PARADA final · Lo que necesito que decidas
 
@@ -957,6 +1004,28 @@ Después, `uv run botsito corpus inventory`: «OK: manifiesto escrito · heredad
 ficheros, 71,348,208,794 bytes», exit 0, y **`manifest.yaml` no cambia** (`git diff --stat` solo
 trae `fuentes.yaml`): el manifiesto no copia la naturaleza, y los ficheros del corpus no han
 cambiado.
+
+### 11.3 Cómo se aplican los puntos 1 a 5 y 7
+
+- **Punto 1 (F5).** Nada cambia: `material_sin_video`, los goldens y
+  `test_criterio_campos_adr0092.py`, como en `main` (el contrato los permitía; no se tocaron). Las
+  tres ventas del 10 de julio en 11-15 quedan NO APARECE. La decisión de F5 pasa a la entrada nueva
+  del VAD (§10, punto 7); la pregunta del bloque técnico de la sesión 7, en §10, punto 4.
+- **Punto 2 (F4).** Las 81 filas quedan con la clase de T de §4.1 y §4.2: 35 regla desconocida (30
+  del rango de H4), 5 error nuestro (sospecha), 4 material incompleto, 37 sin clase. Las 5 de error
+  nuestro, a la rama de trazas; la nota para P5 y la pregunta técnica de la sesión 7, en §10,
+  punto 4.
+- **Punto 3 (U).** U sale HECHA: no se sacan casos del vídeo de los días 20 a 31 (§10, puntos 2 y 3).
+- **Punto 4 (F7).** Ningún ítem creado. #1, #2, #3 y #10, para la rama de la preparación de la
+  sesión 7; #6 y #9, si la rama de trazas los necesita (§10, punto 4). #8 empieza dentro del tramo
+  no citable nuevo de v13 (§11.1): se citaría desde 0:00:35.
+- **Punto 5 (desviaciones).** (a) y (b), aceptadas. La vista de Analytics de julio, evitable: entra
+  en ERRORES-RECURRENTES como hallazgo de la sesión, «importa», con su lección para el revisor; y el
+  hallazgo del consultor del punto 0, «bloquea», con la suya. Las dos, en la fila de la rama.
+- **Punto 7 (cierre).** §10, al día: T y U HECHAS, R2.4 HECHA, dos encabezados de HISTORIA que
+  dicen de qué T y de qué U son, F con su (1) fuera y la preparación de la sesión 7 heredando lo de
+  T, la entrada del VAD con F5 y su R2.5, cuatro líneas de Technical Debt y el tag F38u. Simulado
+  otra vez en memoria, con y sin la entrada del VAD: `a`, `b` y `c` vacías las dos veces.
 
 ## 12. Las exposiciones de cada día (revisor, b3 y b8)
 
@@ -1483,4 +1552,5 @@ Copiado tal cual:
 
 ## Estado
 **EN CURSO**: aplicando la respuesta del consultor a la PARADA final (2026-11-09); hecho el punto
-0 (§11.1) y el 6 (§11.2, `fuentes.yaml`). Faltan los puntos 1 a 5 y 7, el revisor y su informe. No se cierra nada sin la orden de Aleks.
+0 (§11.1), el 6 (§11.2, `fuentes.yaml`) y los puntos 1 a 5 y 7 (§11.3 y §10). Faltan el revisor
+(pasada corta) y su informe. No se cierra nada sin la orden de Aleks.
