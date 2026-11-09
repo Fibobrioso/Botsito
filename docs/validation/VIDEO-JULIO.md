@@ -944,6 +944,20 @@ Copiado tal cual (también en el encargo):
   de F7 (v13 0:00:29-0:05:28). No pueden pasar a evidencia; la #8 se citaría desde 0:00:35.
 - **HOLDOUT-EXPOSICIONES**: una fila del 2026-11-09 con lo de hoy (ningún fotograma abierto).
 
+### 11.2 Cómo se aplica el punto 6 (commit propio)
+
+`knowledge/corpus/fuentes.yaml`: la naturaleza de v11 a v14 y el comentario de su bloque, al día
+con lo comprobado (§2.1 y §3), sin fechas de marzo: v11, del 1 al 3; v12, del 3 al 10 por la
+mañana; v13, la tarde del 10 ya pasada, sin grabar, y del 13 al 17, con el arranque de otro
+backtest del trader en sus primeros segundos (tramo no citable) y la vista de Analytics al final;
+v14, del 20 al 31; el libro, en Europe/Madrid, coincide con el vídeo donde se lee. Lo que el
+trader dijo de v14 (que no exportó el xlsx y ya no puede) se queda, atribuido a él, como estaba.
+Después, `uv run botsito corpus inventory`: «OK: manifiesto escrito · heredado_v2: 477 ficheros,
+117,626,282 bytes · material_adicional: 73 ficheros, 6,850,662 bytes · video_original: 17
+ficheros, 71,348,208,794 bytes», exit 0, y **`manifest.yaml` no cambia** (`git diff --stat` solo
+trae `fuentes.yaml`): el manifiesto no copia la naturaleza, y los ficheros del corpus no han
+cambiado.
+
 ## 12. Las exposiciones de cada día (revisor, b3 y b8)
 
 Todas declaradas en `HOLDOUT-EXPOSICIONES.md` el mismo día; aquí, el resumen y el inventario de
@@ -1469,5 +1483,4 @@ Copiado tal cual:
 
 ## Estado
 **EN CURSO**: aplicando la respuesta del consultor a la PARADA final (2026-11-09); hecho el punto
-0 (§11.1). Faltan la naturaleza de v11-v14 en `fuentes.yaml` (punto 6, commit propio), los puntos
-1 a 5 y 7, el revisor y su informe. No se cierra nada sin la orden de Aleks.
+0 (§11.1) y el 6 (§11.2, `fuentes.yaml`). Faltan los puntos 1 a 5 y 7, el revisor y su informe. No se cierra nada sin la orden de Aleks.
