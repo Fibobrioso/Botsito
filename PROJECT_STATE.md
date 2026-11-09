@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/video-julio
+main
 
 ## Current Feature
-trabajo/video-julio · EN CURSO (abierta el 2026-11-08): T, el vídeo de julio (v11-v14), R2.4. Encargo docs/encargos/trabajo-video-julio.md; informe docs/validation/VIDEO-JULIO.md.
+Ninguna rama abierta. trabajo/video-julio cerrada en main el 2026-11-09 (stable/F38u-video-julio): la voz del trader sobre julio; T y U hechas.
 
 ## Stable Main State
-86f306a · merge de `trabajo/recorrida-construccion-2` (tag `stable/F38t-recorrida-construccion-2`), sobre `stable/F38s-cuenta-por-mes` (41d47b3). Informe docs/validation/RECORRIDA-CONSTRUCCION-2.md; el registro del cierre, al final de HISTORIA.
+129ea33 · merge de `trabajo/video-julio` (tag `stable/F38u-video-julio`), sobre `stable/F38t-recorrida-construccion-2` (86f306a). Informe docs/validation/VIDEO-JULIO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-86f306a · merge: trabajo/recorrida-construccion-2, la re-corrida que cuenta (ADR-0070 §3): «no» (cobertura 15,7 %, precisión 13,9 %) · tag stable/F38t-recorrida-construccion-2
+129ea33 · merge: trabajo/video-julio, la voz del trader sobre julio (v11-v14) · tag stable/F38u-video-julio
 
 ## Tests Currently Passing
 1925 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
