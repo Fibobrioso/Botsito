@@ -1,0 +1,652 @@
+# Para clasificar (D8). Corrida 1: cuenta-por-mes.txt; corrida 2: diaria.DIAGNOSTICO.cuenta=diaria.txt
+# Comprobacion contra la cascada que imprime cada salida (dos primeros escalones uno a
+# uno, los cinco ultimos sumados) y contra sus ordenes sin trader: coincide
+
+## Resumen por mes (operaciones del trader por escalon; ordenes del bot sin trader)
+mes | corrida | sin orden del bot en su (dia, sesion, direccion) | orden, con la entrada fuera de tolerancia | entrada dentro (el stop del trader no esta en la salida) | ordenes del bot sin trader
+2026-01 | 1 | 8 | 25 | 21 | 79
+2026-04 | 1 | 9 | 13 | 13 | 193
+2026-07 | 1 | 20 | 22 | 25 | 34
+2026-08 | 1 | 30 | 7 | 5 | 119
+total | 1 | 67 | 67 | 64 | 425
+2026-01 | 2 | 8 | 25 | 21 | 79
+2026-04 | 2 | 9 | 13 | 13 | 207
+2026-07 | 2 | 20 | 22 | 25 | 55
+2026-08 | 2 | 11 | 12 | 19 | 185
+total | 2 | 48 | 72 | 78 | 526
+
+## Operaciones del trader
+dia | sesion | lado | instante UTC | entrada | escalon corrida 1 | orden corrida 1 | patron corrida 1 | primer hecho que falta (corrida 1) | escalon corrida 2 | patron corrida 2 | video | hora perdida
+2026-01-02 | 07-11 | compra | 2026-01-02T07:38:25+00:00 | 1.17357 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-01-02 | 07-11 | compra | 2026-01-02T08:34:25+00:00 | 1.17293 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-01-02 | 11-15 | venta | 2026-01-02T12:12:20+00:00 | 1.17241 | entrada dentro (el stop del trader no esta en la salida) | o9 llenada, llenada a 75.8 min del trader | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-01-02 | 11-15 | venta | 2026-01-02T12:20:20+00:00 | 1.17232 | entrada dentro (el stop del trader no esta en la salida) | o8 cancelada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-01-02 | 11-15 | venta | 2026-01-02T12:45:20+00:00 | 1.1726 | orden, con la entrada fuera de tolerancia | o9 llenada, llenada a 42.8 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-02 | 11-15 | venta | 2026-01-02T13:21:50+00:00 | 1.17246 | entrada dentro (el stop del trader no esta en la salida) | o9 llenada, llenada a 6.3 min del trader | P7 entradas repetidas | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P7 entradas repetidas | sin video | no
+2026-01-02 | 11-15 | venta | 2026-01-02T13:28:15+00:00 | 1.17242 | entrada dentro (el stop del trader no esta en la salida) | o9 llenada, llenada a 0.1 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-01-05 | 07-11 | venta | 2026-01-05T06:25:05+00:00 | 1.16858 | entrada dentro (el stop del trader no esta en la salida) | o4 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-01-05 | 07-11 | venta | 2026-01-05T06:48:25+00:00 | 1.16899 | orden, con la entrada fuera de tolerancia | o12 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-05 | 07-11 | venta | 2026-01-05T07:00:05+00:00 | 1.16907 | orden, con la entrada fuera de tolerancia | o16 llenada, llenada a 93.1 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-05 | 07-11 | venta | 2026-01-05T08:33:50+00:00 | 1.16914 | orden, con la entrada fuera de tolerancia | o16 llenada, llenada a 0.7 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-05 | 11-15 | venta | 2026-01-05T10:57:45+00:00 | 1.1687 | entrada dentro (el stop del trader no esta en la salida) | o22 cancelada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | posible M (hora perdida 2026-01-05T10Z)
+2026-01-05 | 11-15 | venta | 2026-01-05T11:04:15+00:00 | 1.16889 | entrada dentro (el stop del trader no esta en la salida) | o26 cancelada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | posible M (hora perdida 2026-01-05T10Z)
+2026-01-06 | 07-11 | compra | 2026-01-06T09:22:00+00:00 | 1.17171 | orden, con la entrada fuera de tolerancia | o16 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-07 | 07-11 | venta | 2026-01-07T06:34:15+00:00 | 1.16932 | entrada dentro (el stop del trader no esta en la salida) | o2 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-01-08 | 07-11 | compra | 2026-01-08T08:21:25+00:00 | 1.16746 | orden, con la entrada fuera de tolerancia | o6 rechazada | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-08 | 07-11 | compra | 2026-01-08T08:28:15+00:00 | 1.16756 | entrada dentro (el stop del trader no esta en la salida) | o6 rechazada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-01-08 | 07-11 | compra | 2026-01-08T08:58:55+00:00 | 1.16728 | orden, con la entrada fuera de tolerancia | o6 rechazada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-08 | 11-15 | venta | 2026-01-08T13:29:05+00:00 | 1.1675 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P4 sin orden | sin video | no
+2026-01-09 | 07-11 | venta | 2026-01-09T09:07:50+00:00 | 1.16486 | entrada dentro (el stop del trader no esta en la salida) | o7 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-01-12 | 11-15 | compra | 2026-01-12T13:03:45+00:00 | 1.16821 | entrada dentro (el stop del trader no esta en la salida) | o8 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-01-13 | 07-11 | venta | 2026-01-13T07:42:25+00:00 | 1.16603 | entrada dentro (el stop del trader no esta en la salida) | o8 cancelada | P2 entrada | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-01-13 | 11-15 | compra | 2026-01-13T11:12:20+00:00 | 1.16662 | entrada dentro (el stop del trader no esta en la salida) | o20 llenada, llenada a 9.5 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-01-13 | 11-15 | compra | 2026-01-13T12:45:15+00:00 | 1.16615 | orden, con la entrada fuera de tolerancia | o24 llenada, llenada a 0.3 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-13 | 11-15 | compra | 2026-01-13T13:14:55+00:00 | 1.16553 | orden, con la entrada fuera de tolerancia | o27 cancelada | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-14 | 07-11 | compra | 2026-01-14T06:03:15+00:00 | 1.16422 | entrada dentro (el stop del trader no esta en la salida) | o3 llenada, llenada a 1.2 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-01-15 | 07-11 | venta | 2026-01-15T08:42:10+00:00 | 1.1634 | orden, con la entrada fuera de tolerancia | o9 cancelada | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-16 | 07-11 | venta | 2026-01-16T07:20:15+00:00 | 1.16108 | orden, con la entrada fuera de tolerancia | o6 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-19 | 07-11 | compra | 2026-01-19T08:32:40+00:00 | 1.16203 | orden, con la entrada fuera de tolerancia | o12 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-19 | 11-15 | venta | 2026-01-19T10:15:50+00:00 | 1.1627 | entrada dentro (el stop del trader no esta en la salida) | o23 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-01-19 | 11-15 | venta | 2026-01-19T13:25:05+00:00 | 1.16326 | entrada dentro (el stop del trader no esta en la salida) | o32 llenada, llenada a 0.2 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-01-19 | 11-15 | venta | 2026-01-19T13:36:00+00:00 | 1.16332 | orden, con la entrada fuera de tolerancia | o32 llenada, llenada a 10.7 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-20 | 11-15 | compra | 2026-01-20T13:32:20+00:00 | 1.17228 | entrada dentro (el stop del trader no esta en la salida) | o12 cancelada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-01-21 | 07-11 | venta | 2026-01-21T06:56:45+00:00 | 1.1723 | orden, con la entrada fuera de tolerancia | o5 llenada, llenada a 10.3 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-21 | 07-11 | venta | 2026-01-21T09:32:10+00:00 | 1.171 | entrada dentro (el stop del trader no esta en la salida) | o8 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-01-21 | 11-15 | venta | 2026-01-21T11:55:35+00:00 | 1.1717 | orden, con la entrada fuera de tolerancia | o18 llenada, llenada a 22.8 min del trader | P3 otra zona | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-22 | 11-15 | venta | 2026-01-22T11:13:50+00:00 | 1.16968 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-01-22 | 11-15 | venta | 2026-01-22T11:51:30+00:00 | 1.17026 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-01-22 | 11-15 | venta | 2026-01-22T12:27:45+00:00 | 1.17082 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-01-23 | 07-11 | compra | 2026-01-23T07:00:05+00:00 | 1.1743 | orden, con la entrada fuera de tolerancia | o12 cancelada | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-23 | 07-11 | compra | 2026-01-23T07:31:15+00:00 | 1.1738 | orden, con la entrada fuera de tolerancia | o18 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-23 | 07-11 | compra | 2026-01-23T08:23:00+00:00 | 1.1732 | entrada dentro (el stop del trader no esta en la salida) | o25 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-01-23 | 11-15 | venta | 2026-01-23T11:52:10+00:00 | 1.17382 | orden, con la entrada fuera de tolerancia | o29 llenada, llenada a 48.2 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | posible M (hora perdida 2026-01-23T11Z)
+2026-01-23 | 11-15 | venta | 2026-01-23T12:55:35+00:00 | 1.17428 | orden, con la entrada fuera de tolerancia | o29 llenada, llenada a 111.6 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | posible M (hora perdida 2026-01-23T11Z)
+2026-01-26 | 07-11 | compra | 2026-01-26T08:01:30+00:00 | 1.18456 | orden, con la entrada fuera de tolerancia | o12 llenada, llenada a 11.6 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-27 | 07-11 | compra | 2026-01-27T08:42:50+00:00 | 1.18547 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-01-27 | 07-11 | compra | 2026-01-27T08:45:45+00:00 | 1.18547 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-01-28 | 07-11 | compra | 2026-01-28T07:54:45+00:00 | 1.19885 | entrada dentro (el stop del trader no esta en la salida) | o8 llenada, llenada a 0.0 min del trader | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-01-29 | 07-11 | compra | 2026-01-29T07:50:05+00:00 | 1.19717 | orden, con la entrada fuera de tolerancia | o17 llenada, llenada a 54.7 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-29 | 07-11 | compra | 2026-01-29T08:59:50+00:00 | 1.19675 | entrada dentro (el stop del trader no esta en la salida) | o16 rechazada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-01-29 | 11-15 | venta | 2026-01-29T13:01:15+00:00 | 1.19601 | orden, con la entrada fuera de tolerancia | o30 llenada, llenada a 6.2 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-01-30 | 07-11 | venta | 2026-01-30T08:08:25+00:00 | 1.19381 | orden, con la entrada fuera de tolerancia | o3 llenada, llenada a 33.0 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-30 | 11-15 | venta | 2026-01-30T11:21:05+00:00 | 1.19323 | orden, con la entrada fuera de tolerancia | o9 llenada, llenada a 26.6 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-01-30 | 11-15 | venta | 2026-01-30T12:04:10+00:00 | 1.19503 | orden, con la entrada fuera de tolerancia | o9 llenada, llenada a 69.7 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-04-01 | 11-15 | compra | 2026-04-01T12:30:20+00:00 | 1.1597 | entrada dentro (el stop del trader no esta en la salida) | o7 llenada, llenada a 0.1 min del trader | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-04-03 | 07-11 | compra | 2026-04-03T05:27:10+00:00 | 1.15306 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-03 | 11-15 | compra | 2026-04-03T11:43:35+00:00 | 1.15419 | entrada dentro (el stop del trader no esta en la salida) | o21 llenada, llenada a 0.0 min del trader | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-04-06 | 07-11 | compra | 2026-04-06T06:34:15+00:00 | 1.15238 | entrada dentro (el stop del trader no esta en la salida) | o5 llenada, llenada a 2.2 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-04-09 | 07-11 | venta | 2026-04-09T07:12:50+00:00 | 1.16659 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-09 | 11-15 | venta | 2026-04-09T09:15:30+00:00 | 1.16748 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-10 | 07-11 | compra | 2026-04-10T06:33:55+00:00 | 1.16862 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-10 | 07-11 | compra | 2026-04-10T08:05:45+00:00 | 1.16798 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-13 | 07-11 | compra | 2026-04-13T06:47:45+00:00 | 1.16802 | orden, con la entrada fuera de tolerancia | o12 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-04-13 | 07-11 | compra | 2026-04-13T06:50:00+00:00 | 1.16802 | orden, con la entrada fuera de tolerancia | o12 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-04-13 | 07-11 | compra | 2026-04-13T08:21:35+00:00 | 1.16936 | orden, con la entrada fuera de tolerancia | o15 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-04-13 | 11-15 | compra | 2026-04-13T10:26:50+00:00 | 1.16858 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-13 | 11-15 | compra | 2026-04-13T12:02:20+00:00 | 1.16857 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-14 | 07-11 | compra | 2026-04-14T06:23:35+00:00 | 1.17596 | entrada dentro (el stop del trader no esta en la salida) | o7 llenada, llenada a 0.1 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-04-14 | 11-15 | compra | 2026-04-14T12:06:35+00:00 | 1.17944 | entrada dentro (el stop del trader no esta en la salida) | o16 llenada, llenada a 0.8 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-04-16 | 07-11 | compra | 2026-04-16T06:13:30+00:00 | 1.18033 | orden, con la entrada fuera de tolerancia | o7 llenada, llenada a 2.0 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-04-16 | 11-15 | venta | 2026-04-16T11:13:10+00:00 | 1.17855 | entrada dentro (el stop del trader no esta en la salida) | o17 cancelada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-04-17 | 07-11 | venta | 2026-04-17T08:10:00+00:00 | 1.17816 | orden, con la entrada fuera de tolerancia | o4 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-04-17 | 07-11 | venta | 2026-04-17T08:36:10+00:00 | 1.17842 | entrada dentro (el stop del trader no esta en la salida) | o2 llenada, llenada a 0.1 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-04-21 | 07-11 | venta | 2026-04-21T05:12:55+00:00 | 1.17788 | orden, con la entrada fuera de tolerancia | o5 cancelada | P4 sin orden | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P4 sin orden | sin video | no
+2026-04-22 | 07-11 | venta | 2026-04-22T08:02:15+00:00 | 1.17553 | orden, con la entrada fuera de tolerancia | o3 llenada, llenada a 167.2 min del trader | P3 otra zona | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-04-22 | 07-11 | venta | 2026-04-22T08:19:00+00:00 | 1.17566 | orden, con la entrada fuera de tolerancia | o3 llenada, llenada a 184.0 min del trader | P3 otra zona | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-04-23 | 07-11 | venta | 2026-04-23T05:30:00+00:00 | 1.17018 | orden, con la entrada fuera de tolerancia | o15 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | posible M (hora perdida 2026-04-23T05Z)
+2026-04-23 | 07-11 | venta | 2026-04-23T05:53:30+00:00 | 1.17038 | orden, con la entrada fuera de tolerancia | o12 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | posible M (hora perdida 2026-04-23T05Z)
+2026-04-23 | 07-11 | venta | 2026-04-23T06:49:35+00:00 | 1.17072 | entrada dentro (el stop del trader no esta en la salida) | o11 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-04-24 | 07-11 | venta | 2026-04-24T06:44:30+00:00 | 1.16826 | entrada dentro (el stop del trader no esta en la salida) | o8 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-04-24 | 11-15 | venta | 2026-04-24T11:06:25+00:00 | 1.17034 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-24 | 11-15 | venta | 2026-04-24T11:30:35+00:00 | 1.17165 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-04-27 | 11-15 | compra | 2026-04-27T11:45:35+00:00 | 1.17416 | entrada dentro (el stop del trader no esta en la salida) | o16 cancelada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-04-27 | 11-15 | compra | 2026-04-27T12:00:00+00:00 | 1.17417 | entrada dentro (el stop del trader no esta en la salida) | o16 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-04-28 | 07-11 | venta | 2026-04-28T08:12:05+00:00 | 1.17022 | entrada dentro (el stop del trader no esta en la salida) | o4 llenada, llenada a 0.2 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-04-29 | 07-11 | venta | 2026-04-29T07:55:40+00:00 | 1.17064 | orden, con la entrada fuera de tolerancia | o6 llenada, llenada a 41.6 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video (dia con video de un libro sin video) | no
+2026-04-29 | 07-11 | venta | 2026-04-29T07:58:35+00:00 | 1.17064 | orden, con la entrada fuera de tolerancia | o6 llenada, llenada a 44.5 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video (dia con video de un libro sin video) | no
+2026-04-29 | 11-15 | venta | 2026-04-29T09:36:25+00:00 | 1.17031 | entrada dentro (el stop del trader no esta en la salida) | o13 cancelada | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video (dia con video de un libro sin video) | no
+2026-04-29 | 11-15 | venta | 2026-04-29T11:02:00+00:00 | 1.17066 | orden, con la entrada fuera de tolerancia | o15 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video (dia con video de un libro sin video) | no
+2026-07-01 | 07-11 | compra | 2026-07-01T06:15:55+00:00 | 1.14042 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-01 | 07-11 | compra | 2026-07-01T07:33:05+00:00 | 1.13958 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-01 | 11-15 | venta | 2026-07-01T10:59:05+00:00 | 1.13984 | entrada dentro (el stop del trader no esta en la salida) | o8 cancelada | P2 entrada | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | con video, provisional | no
+2026-07-02 | 11-15 | compra | 2026-07-02T09:34:25+00:00 | 1.14102 | orden, con la entrada fuera de tolerancia | o9 cancelada | P3 otra zona | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-02 | 11-15 | compra | 2026-07-02T10:25:50+00:00 | 1.14069 | orden, con la entrada fuera de tolerancia | o14 cancelada | P3 otra zona | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-02 | 11-15 | compra | 2026-07-02T10:45:20+00:00 | 1.14068 | orden, con la entrada fuera de tolerancia | o14 cancelada | P3 otra zona | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-02 | 11-15 | compra | 2026-07-02T11:59:30+00:00 | 1.14039 | entrada dentro (el stop del trader no esta en la salida) | o22 llenada, llenada a 1.5 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-02 | 11-15 | compra | 2026-07-02T12:10:00+00:00 | 1.13996 | orden, con la entrada fuera de tolerancia | o25 llenada, llenada a 4.9 min del trader | P2 entrada | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-02 | 11-15 | compra | 2026-07-02T12:23:05+00:00 | 1.13976 | orden, con la entrada fuera de tolerancia | o25 llenada, llenada a 18.0 min del trader | P3 otra zona | todos los hechos del camino producidos; frenos producidos: detenido_por_cartuchos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-03 | 07-11 | compra | 2026-07-03T07:24:00+00:00 | 1.14528 | orden, con la entrada fuera de tolerancia | o3 cancelada | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-03 | 07-11 | compra | 2026-07-03T07:43:00+00:00 | 1.14502 | entrada dentro (el stop del trader no esta en la salida) | o11 llenada, llenada a 0.1 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-03 | 11-15 | compra | 2026-07-03T10:02:00+00:00 | 1.14423 | orden, con la entrada fuera de tolerancia | o17 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-06 | 07-11 | compra | 2026-07-06T06:22:05+00:00 | 1.14252 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-06 | 07-11 | compra | 2026-07-06T06:29:45+00:00 | 1.14234 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-06 | 07-11 | compra | 2026-07-06T06:33:55+00:00 | 1.14244 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-06 | 07-11 | compra | 2026-07-06T08:51:10+00:00 | 1.14172 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-06 | 11-15 | compra | 2026-07-06T10:11:25+00:00 | 1.1413 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 07-11 | compra | 2026-07-07T05:02:50+00:00 | 1.14372 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 07-11 | compra | 2026-07-07T05:17:40+00:00 | 1.14347 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 07-11 | compra | 2026-07-07T05:50:00+00:00 | 1.14293 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 07-11 | compra | 2026-07-07T06:14:00+00:00 | 1.14262 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 11-15 | compra | 2026-07-07T10:01:35+00:00 | 1.14256 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 11-15 | compra | 2026-07-07T10:08:05+00:00 | 1.14262 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 11-15 | compra | 2026-07-07T11:51:25+00:00 | 1.14331 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-07 | 11-15 | compra | 2026-07-07T11:57:35+00:00 | 1.14336 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-08 | 07-11 | compra | 2026-07-08T07:19:15+00:00 | 1.14203 | entrada dentro (el stop del trader no esta en la salida) | o2 llenada, llenada a 0.1 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-08 | 11-15 | compra | 2026-07-08T11:43:35+00:00 | 1.14039 | orden, con la entrada fuera de tolerancia | o14 cancelada | P4 sin orden | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P4 sin orden | con video, provisional | no
+2026-07-09 | 07-11 | compra | 2026-07-09T07:59:00+00:00 | 1.14338 | orden, con la entrada fuera de tolerancia | o6 llenada, llenada a 6.7 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-09 | 11-15 | compra | 2026-07-09T11:02:05+00:00 | 1.1424 | orden, con la entrada fuera de tolerancia | o16 cancelada | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-10 | 07-11 | compra | 2026-07-10T05:36:35+00:00 | 1.14382 | entrada dentro (el stop del trader no esta en la salida) | o3 llenada, llenada a 8.6 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | posible M (hora perdida 2026-07-10T05Z)
+2026-07-10 | 07-11 | compra | 2026-07-10T05:45:20+00:00 | 1.14382 | entrada dentro (el stop del trader no esta en la salida) | o3 llenada, llenada a 17.3 min del trader | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | con video, provisional | posible M (hora perdida 2026-07-10T05Z)
+2026-07-10 | 07-11 | compra | 2026-07-10T07:10:50+00:00 | 1.14398 | entrada dentro (el stop del trader no esta en la salida) | o6 llenada, llenada a 3.3 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-10 | 07-11 | compra | 2026-07-10T07:17:40+00:00 | 1.14396 | entrada dentro (el stop del trader no esta en la salida) | o4 cancelada | P7 entradas repetidas | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P7 entradas repetidas | con video, provisional | no
+2026-07-10 | 07-11 | compra | 2026-07-10T07:50:15+00:00 | 1.14406 | entrada dentro (el stop del trader no esta en la salida) | o7 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-10 | 07-11 | compra | 2026-07-10T08:01:25+00:00 | 1.14378 | orden, con la entrada fuera de tolerancia | o11 llenada, llenada a 2.4 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-10 | 07-11 | compra | 2026-07-10T08:28:15+00:00 | 1.14342 | entrada dentro (el stop del trader no esta en la salida) | o12 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | con video, provisional | no
+2026-07-10 | 07-11 | compra | 2026-07-10T08:42:50+00:00 | 1.14331 | orden, con la entrada fuera de tolerancia | o12 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-10 | 11-15 | venta | 2026-07-10T10:55:30+00:00 | 1.14339 | entrada dentro (el stop del trader no esta en la salida) | o15 llenada, llenada a 3.2 min del trader | P7 entradas repetidas | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P7 entradas repetidas | con video, provisional | no
+2026-07-10 | 11-15 | venta | 2026-07-10T10:56:25+00:00 | 1.14338 | entrada dentro (el stop del trader no esta en la salida) | o15 llenada, llenada a 2.3 min del trader | P7 entradas repetidas | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P7 entradas repetidas | con video, provisional | no
+2026-07-10 | 11-15 | venta | 2026-07-10T10:58:40+00:00 | 1.14338 | entrada dentro (el stop del trader no esta en la salida) | o15 llenada, llenada a 0.1 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-13 | 07-11 | venta | 2026-07-13T05:17:55+00:00 | 1.14066 | entrada dentro (el stop del trader no esta en la salida) | o10 llenada, llenada a 0.1 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-13 | 11-15 | compra | 2026-07-13T09:44:05+00:00 | 1.14295 | entrada dentro (el stop del trader no esta en la salida) | o20 rechazada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | con video, provisional | no
+2026-07-13 | 11-15 | compra | 2026-07-13T09:54:45+00:00 | 1.14296 | entrada dentro (el stop del trader no esta en la salida) | o20 rechazada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | con video, provisional | no
+2026-07-13 | 11-15 | compra | 2026-07-13T11:25:05+00:00 | 1.14278 | entrada dentro (el stop del trader no esta en la salida) | o24 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | con video, provisional | no
+2026-07-14 | 07-11 | compra | 2026-07-14T06:30:30+00:00 | 1.13878 | entrada dentro (el stop del trader no esta en la salida) | o2 llenada, llenada a 10.4 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-14 | 07-11 | compra | 2026-07-14T06:55:30+00:00 | 1.13876 | entrada dentro (el stop del trader no esta en la salida) | o7 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-14 | 11-15 | compra | 2026-07-14T09:35:15+00:00 | 1.13976 | orden, con la entrada fuera de tolerancia | o13 cancelada | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-14 | 11-15 | compra | 2026-07-14T09:48:20+00:00 | 1.13984 | orden, con la entrada fuera de tolerancia | o13 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-14 | 11-15 | compra | 2026-07-14T10:29:05+00:00 | 1.13953 | orden, con la entrada fuera de tolerancia | o14 llenada, llenada a 4.4 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-14 | 11-15 | compra | 2026-07-14T10:33:40+00:00 | 1.13961 | entrada dentro (el stop del trader no esta en la salida) | o14 llenada, llenada a 0.2 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-14 | 11-15 | compra | 2026-07-14T10:44:05+00:00 | 1.1394 | orden, con la entrada fuera de tolerancia | o14 llenada, llenada a 10.6 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-14 | 11-15 | compra | 2026-07-14T11:06:45+00:00 | 1.13923 | orden, con la entrada fuera de tolerancia | o14 llenada, llenada a 33.2 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-15 | 07-11 | compra | 2026-07-15T05:06:55+00:00 | 1.14368 | entrada dentro (el stop del trader no esta en la salida) | o13 cancelada | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-15 | 07-11 | compra | 2026-07-15T07:12:25+00:00 | 1.1431 | entrada dentro (el stop del trader no esta en la salida) | o15 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | con video, provisional | no
+2026-07-15 | 11-15 | compra | 2026-07-15T10:05:50+00:00 | 1.1418 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-15 | 11-15 | compra | 2026-07-15T10:45:45+00:00 | 1.14142 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-15 | 11-15 | compra | 2026-07-15T12:00:55+00:00 | 1.14146 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-15 | 11-15 | compra | 2026-07-15T12:14:10+00:00 | 1.14092 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-07-16 | 07-11 | compra | 2026-07-16T06:00:10+00:00 | 1.14654 | entrada dentro (el stop del trader no esta en la salida) | o6 llenada, llenada a 4.2 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-16 | 11-15 | compra | 2026-07-16T09:36:00+00:00 | 1.14624 | orden, con la entrada fuera de tolerancia | o12 llenada, llenada a 0.0 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-16 | 11-15 | compra | 2026-07-16T11:19:40+00:00 | 1.1462 | entrada dentro (el stop del trader no esta en la salida) | o16 rechazada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | con video, provisional | posible M (hora perdida 2026-07-16T11Z)
+2026-07-16 | 11-15 | compra | 2026-07-16T11:55:40+00:00 | 1.1467 | orden, con la entrada fuera de tolerancia | o14 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | posible M (hora perdida 2026-07-16T11Z)
+2026-07-17 | 07-11 | venta | 2026-07-17T05:46:05+00:00 | 1.14409 | entrada dentro (el stop del trader no esta en la salida) | o10 llenada, llenada a 0.0 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | con video, provisional | no
+2026-07-17 | 07-11 | venta | 2026-07-17T06:27:45+00:00 | 1.14498 | orden, con la entrada fuera de tolerancia | o22 llenada, llenada a 4.8 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-17 | 07-11 | venta | 2026-07-17T06:45:05+00:00 | 1.1449 | orden, con la entrada fuera de tolerancia | o22 llenada, llenada a 12.5 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | con video, provisional | no
+2026-07-17 | 07-11 | venta | 2026-07-17T07:05:35+00:00 | 1.14508 | orden, con la entrada fuera de tolerancia | o22 llenada, llenada a 33.0 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | con video, provisional | no
+2026-07-17 | 11-15 | venta | 2026-07-17T11:44:50+00:00 | 1.14332 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | con video, provisional | no
+2026-08-03 | 07-11 | venta | 2026-08-03T06:03:05+00:00 | 1.15364 | orden, con la entrada fuera de tolerancia | o2 llenada, llenada a 14.3 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-08-03 | 07-11 | venta | 2026-08-03T06:07:40+00:00 | 1.15362 | orden, con la entrada fuera de tolerancia | o2 llenada, llenada a 18.9 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-03 | 11-15 | venta | 2026-08-03T09:46:15+00:00 | 1.15274 | entrada dentro (el stop del trader no esta en la salida) | o23 cancelada | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-08-03 | 11-15 | venta | 2026-08-03T09:52:50+00:00 | 1.1528 | entrada dentro (el stop del trader no esta en la salida) | o15 llenada, llenada a 0.9 min del trader | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-03 | 11-15 | venta | 2026-08-03T12:03:25+00:00 | 1.1532 | entrada dentro (el stop del trader no esta en la salida) | o30 llenada, llenada a 0.2 min del trader | P2 entrada | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-08-03 | 11-15 | venta | 2026-08-03T12:10:55+00:00 | 1.15322 | orden, con la entrada fuera de tolerancia | o30 llenada, llenada a 7.3 min del trader | P2 entrada | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-08-04 | 11-15 | venta | 2026-08-04T11:34:50+00:00 | 1.15184 | orden, con la entrada fuera de tolerancia | o19 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-06 | 07-11 | venta | 2026-08-06T06:07:25+00:00 | 1.15488 | entrada dentro (el stop del trader no esta en la salida) | o6 cancelada | T0 pareja | - | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-07 | 07-11 | venta | 2026-08-07T05:14:55+00:00 | 1.15248 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-07 | 11-15 | venta | 2026-08-07T11:47:55+00:00 | 1.15318 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-07 | 11-15 | venta | 2026-08-07T12:09:10+00:00 | 1.15346 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-07 | 11-15 | venta | 2026-08-07T12:14:55+00:00 | 1.15345 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-10 | 11-15 | compra | 2026-08-10T11:57:15+00:00 | 1.15503 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-08-10 | 11-15 | compra | 2026-08-10T12:38:45+00:00 | 1.15484 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos; frenos producidos: detenido_por_racha | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-08-11 | 07-11 | compra | 2026-08-11T08:08:55+00:00 | 1.1533 | orden, con la entrada fuera de tolerancia | o5 llenada, llenada a 16.3 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-12 | 07-11 | compra | 2026-08-12T05:25:20+00:00 | 1.1533 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-13 | 07-11 | venta | 2026-08-13T07:33:55+00:00 | 1.15204 | orden, con la entrada fuera de tolerancia | o1 cancelada | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-13 | 07-11 | venta | 2026-08-13T07:49:40+00:00 | 1.15247 | entrada dentro (el stop del trader no esta en la salida) | o5 cancelada | P3 otra zona | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-08-14 | 07-11 | compra | 2026-08-14T06:30:10+00:00 | 1.15404 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P4 sin orden | sin video | no
+2026-08-17 | 07-11 | compra | 2026-08-17T05:17:15+00:00 | 1.15842 | orden, con la entrada fuera de tolerancia | o1 llenada, llenada a 17.2 min del trader | P3 otra zona | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-19 | 11-15 | compra | 2026-08-19T09:03:00+00:00 | 1.15984 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P4 sin orden | sin video | no
+2026-08-19 | 11-15 | compra | 2026-08-19T11:46:15+00:00 | 1.1603 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | orden_dimensionada[productoras sin cumplirse] | sin orden del bot en su (dia, sesion, direccion) | P4 sin orden | sin video | no
+2026-08-20 | 07-11 | compra | 2026-08-20T05:47:10+00:00 | 1.16709 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-20 | 11-15 | compra | 2026-08-20T11:00:00+00:00 | 1.16976 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-20 | 11-15 | compra | 2026-08-20T11:49:10+00:00 | 1.16868 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-21 | 07-11 | compra | 2026-08-21T05:32:55+00:00 | 1.1692 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-21 | 11-15 | compra | 2026-08-21T11:56:10+00:00 | 1.1699 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P3 otra zona | sin video | no
+2026-08-24 | 11-15 | venta | 2026-08-24T11:29:50+00:00 | 1.16674 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-25 | 07-11 | venta | 2026-08-25T06:16:30+00:00 | 1.16564 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-08-25 | 07-11 | venta | 2026-08-25T06:37:00+00:00 | 1.16573 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-25 | 07-11 | venta | 2026-08-25T08:48:30+00:00 | 1.1665 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-25 | 11-15 | venta | 2026-08-25T11:55:00+00:00 | 1.16622 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P2 entrada | sin video | no
+2026-08-26 | 07-11 | venta | 2026-08-26T05:49:25+00:00 | 1.16652 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | T0 pareja | sin video | no
+2026-08-26 | 07-11 | venta | 2026-08-26T07:03:00+00:00 | 1.1668 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-08-26 | 07-11 | venta | 2026-08-26T08:31:15+00:00 | 1.16752 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | orden, con la entrada fuera de tolerancia | P3 otra zona | sin video | no
+2026-08-26 | 11-15 | compra | 2026-08-26T11:26:30+00:00 | 1.16621 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-27 | 07-11 | venta | 2026-08-27T08:04:45+00:00 | 1.16562 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-27 | 07-11 | venta | 2026-08-27T08:12:25+00:00 | 1.1656 | sin orden del bot en su (dia, sesion, direccion) | - | P1 sesgo | todos los hechos del camino producidos | sin orden del bot en su (dia, sesion, direccion) | P1 sesgo | sin video | no
+2026-08-27 | 11-15 | venta | 2026-08-27T12:13:40+00:00 | 1.16422 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-28 | 11-15 | venta | 2026-08-28T10:42:10+00:00 | 1.16458 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+2026-08-31 | 07-11 | compra | 2026-08-31T06:30:15+00:00 | 1.15878 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | P2 entrada | sin video | no
+2026-08-31 | 07-11 | compra | 2026-08-31T06:58:10+00:00 | 1.15879 | sin orden del bot en su (dia, sesion, direccion) | - | P4 sin orden | todos los hechos del camino producidos | entrada dentro (el stop del trader no esta en la salida) | T0 pareja | sin video | no
+
+## Ordenes del bot en un (dia, sesion, direccion) sin operacion del trader (corrida 1)
+dia | sesion | direccion | orden | resultado | R neto | desenlace | stop movido | patron
+2026-01-06 | 11-15 | venta | o17 | cancelada | - | - | - | - (no llenada)
+2026-01-06 | 11-15 | venta | o18 | cancelada | - | - | - | - (no llenada)
+2026-01-06 | 11-15 | venta | o19 | cancelada | - | - | - | - (no llenada)
+2026-01-06 | 11-15 | venta | o20 | llenada | -0.462 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-01-06 | 11-15 | venta | o21 | cancelada | - | - | - | - (no llenada)
+2026-01-06 | 11-15 | venta | o22 | cancelada | - | - | - | - (no llenada)
+2026-01-06 | 11-15 | venta | o23 | llenada | -1.750 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-06 | 11-15 | venta | o24 | llenada | 3.083 | ganancia | no | P6 donde el trader no opero [en sesion]
+2026-01-07 | 11-15 | venta | o11 | llenada | -1.242 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-07 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o15 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o16 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o17 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o18 | llenada | -1.833 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-07 | 11-15 | venta | o19 | rechazada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o20 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o21 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o22 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o23 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o24 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o25 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o26 | cancelada | - | - | - | - (no llenada)
+2026-01-07 | 11-15 | venta | o27 | cancelada | - | - | - | - (no llenada)
+2026-01-09 | 11-15 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-01-09 | 11-15 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-01-09 | 11-15 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-01-09 | 11-15 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-01-09 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-01-09 | 11-15 | venta | o13 | llenada | -1.089 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-14 | 11-15 | compra | o11 | cancelada | - | - | - | - (no llenada)
+2026-01-14 | 11-15 | compra | o12 | cancelada | - | - | - | - (no llenada)
+2026-01-14 | 11-15 | compra | o13 | cancelada | - | - | - | - (no llenada)
+2026-01-14 | 11-15 | compra | o14 | cancelada | - | - | - | - (no llenada)
+2026-01-14 | 11-15 | compra | o15 | cancelada | - | - | - | - (no llenada)
+2026-01-15 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-01-15 | 11-15 | venta | o14 | llenada | -0.370 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-01-16 | 11-15 | compra | o9 | cancelada | - | - | - | - (no llenada)
+2026-01-16 | 11-15 | compra | o10 | cancelada | - | - | - | - (no llenada)
+2026-01-16 | 11-15 | compra | o11 | cancelada | - | - | - | - (no llenada)
+2026-01-16 | 11-15 | compra | o12 | cancelada | - | - | - | - (no llenada)
+2026-01-16 | 11-15 | compra | o13 | cancelada | - | - | - | - (no llenada)
+2026-01-16 | 11-15 | compra | o14 | cancelada | - | - | - | - (no llenada)
+2026-01-16 | 11-15 | compra | o15 | cancelada | - | - | - | - (no llenada)
+2026-01-16 | 11-15 | compra | o16 | llenada | -1.625 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-16 | 11-15 | compra | o17 | llenada | 2.375 | ganancia | si | P6 donde el trader no opero [en sesion]
+2026-01-16 | 11-15 | compra | o18 | llenada | -0.185 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-01-22 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-01-22 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-01-22 | 07-11 | venta | o3 | llenada | 3.333 | ganancia | si | P6 donde el trader no opero [en sesion]
+2026-01-22 | 07-11 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-01-22 | 07-11 | venta | o5 | llenada | -1.312 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-22 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o3 | llenada | -1.778 | salto_el_stop | no | P5 de mas [otro lado]
+2026-01-27 | 07-11 | venta | o4 | llenada | 3.111 | ganancia | si | P5 de mas [otro lado]
+2026-01-27 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o9 | llenada | 3.429 | ganancia | si | P5 de mas [otro lado]
+2026-01-27 | 07-11 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 07-11 | venta | o11 | llenada | -1.107 | salto_el_stop | no | P5 de mas [otro lado]
+2026-01-27 | 07-11 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o15 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o16 | llenada | -0.294 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-01-27 | 11-15 | venta | o17 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o18 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o19 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o20 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o21 | cancelada | - | - | - | - (no llenada)
+2026-01-27 | 11-15 | venta | o22 | llenada | -1.357 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-27 | 11-15 | venta | o23 | llenada | -1.208 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-01-28 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-01-28 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-04-01 | 07-11 | compra | o1 | cancelada | - | - | - | - (no llenada)
+2026-04-01 | 07-11 | compra | o2 | llenada | -1.227 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-04-01 | 07-11 | compra | o3 | cancelada | - | - | - | - (no llenada)
+2026-04-01 | 07-11 | compra | o4 | cancelada | - | - | - | - (no llenada)
+2026-04-01 | 07-11 | compra | o5 | llenada | -0.077 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-02 | 11-15 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-04-02 | 11-15 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-04-02 | 11-15 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-04-02 | 11-15 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-04-02 | 11-15 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-02 | 11-15 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-04-02 | 11-15 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-02 | 11-15 | venta | o8 | llenada | -0.171 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-02 | 11-15 | venta | o9 | llenada | 1.250 | ganancia | si | P6 donde el trader no opero [en dia]
+2026-04-03 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o11 | llenada | -3.000 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-03 | 07-11 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-04-03 | 07-11 | venta | o15 | llenada | -0.500 | break_even | si | P5 de mas [otro lado]
+2026-04-06 | 11-15 | compra | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-06 | 11-15 | compra | o8 | cancelada | - | - | - | - (no llenada)
+2026-04-06 | 11-15 | compra | o9 | cancelada | - | - | - | - (no llenada)
+2026-04-06 | 11-15 | compra | o10 | cancelada | - | - | - | - (no llenada)
+2026-04-06 | 11-15 | compra | o11 | llenada | -0.385 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-06 | 11-15 | compra | o12 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o1 | llenada | -2.250 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-07 | 07-11 | venta | o2 | rechazada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o4 | llenada | -0.750 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-07 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o6 | llenada | -1.312 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-07 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o15 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o16 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o17 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o18 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o19 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o20 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o21 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o22 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o23 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o24 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o25 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o26 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 07-11 | venta | o27 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 11-15 | compra | o28 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 11-15 | compra | o29 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 11-15 | compra | o30 | cancelada | - | - | - | - (no llenada)
+2026-04-07 | 11-15 | compra | o31 | rechazada | - | - | - | - (no llenada)
+2026-04-07 | 11-15 | compra | o32 | llenada | -1.278 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-08 | 07-11 | compra | o1 | cancelada | - | - | - | - (no llenada)
+2026-04-08 | 07-11 | compra | o2 | cancelada | - | - | - | - (no llenada)
+2026-04-08 | 07-11 | compra | o3 | cancelada | - | - | - | - (no llenada)
+2026-04-08 | 07-11 | compra | o4 | llenada | 3.429 | ganancia | si | P6 donde el trader no opero [en dia]
+2026-04-08 | 07-11 | compra | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-08 | 07-11 | compra | o6 | llenada | -1.226 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-08 | 11-15 | compra | o7 | llenada | 3.500 | ganancia | si | P6 donde el trader no opero [en dia]
+2026-04-09 | 07-11 | compra | o1 | rechazada | - | - | - | - (no llenada)
+2026-04-09 | 07-11 | compra | o2 | llenada | -1.375 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-09 | 07-11 | compra | o3 | cancelada | - | - | - | - (no llenada)
+2026-04-09 | 07-11 | compra | o4 | cancelada | - | - | - | - (no llenada)
+2026-04-09 | 07-11 | compra | o5 | llenada | -1.385 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-09 | 07-11 | compra | o6 | llenada | -1.438 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-09 | 11-15 | compra | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-09 | 11-15 | compra | o8 | llenada | 3.610 | ganancia | si | P5 de mas [otro lado]
+2026-04-10 | 11-15 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o3 | llenada | -0.068 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-10 | 11-15 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o8 | llenada | -1.333 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-04-10 | 11-15 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o10 | llenada | -0.263 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-10 | 11-15 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o15 | cancelada | - | - | - | - (no llenada)
+2026-04-10 | 11-15 | venta | o16 | llenada | -0.147 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-13 | 11-15 | venta | o16 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o17 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o18 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o19 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o20 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o21 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o22 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o23 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o24 | llenada | -1.116 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-13 | 11-15 | venta | o25 | cancelada | - | - | - | - (no llenada)
+2026-04-13 | 11-15 | venta | o26 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o8 | llenada | -0.114 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-15 | 07-11 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 07-11 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o15 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o16 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o17 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o18 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o19 | llenada | -0.096 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-15 | 11-15 | compra | o20 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o21 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o22 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o23 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o24 | llenada | -1.400 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-15 | 11-15 | compra | o25 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o26 | cancelada | - | - | - | - (no llenada)
+2026-04-15 | 11-15 | compra | o27 | llenada | -1.600 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-15 | 11-15 | compra | o28 | llenada | -0.391 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-15 | 11-15 | compra | o29 | llenada | -0.139 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-20 | 07-11 | compra | o1 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 07-11 | compra | o2 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 07-11 | compra | o3 | llenada | -2.000 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-20 | 07-11 | compra | o4 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 07-11 | compra | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 07-11 | compra | o6 | llenada | -1.417 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-04-20 | 11-15 | compra | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 11-15 | compra | o8 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 11-15 | compra | o9 | llenada | -0.122 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-20 | 11-15 | compra | o10 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 11-15 | compra | o11 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 11-15 | compra | o12 | cancelada | - | - | - | - (no llenada)
+2026-04-20 | 11-15 | compra | o13 | llenada | -0.261 | break_even | si | P6 donde el trader no opero [en dia]
+2026-04-21 | 11-15 | venta | o6 | llenada | -0.294 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-21 | 11-15 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-21 | 11-15 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-04-21 | 11-15 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-04-21 | 11-15 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-04-21 | 11-15 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-04-21 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-04-21 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-04-23 | 11-15 | venta | o16 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o24 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o25 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o26 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o27 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o28 | llenada | -1.227 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-24 | 11-15 | compra | o29 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o30 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o31 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o32 | cancelada | - | - | - | - (no llenada)
+2026-04-24 | 11-15 | compra | o33 | llenada | -1.545 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-24 | 11-15 | compra | o34 | llenada | -1.294 | salto_el_stop | no | P5 de mas [otro lado]
+2026-04-24 | 11-15 | compra | o35 | cancelada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o1 | rechazada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o2 | llenada | -1.556 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-04-27 | 07-11 | compra | o3 | llenada | -1.667 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-04-27 | 07-11 | compra | o4 | llenada | -0.556 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-27 | 07-11 | compra | o5 | rechazada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o6 | rechazada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o8 | cancelada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o9 | cancelada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o10 | cancelada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o11 | cancelada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o12 | llenada | -1.400 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-04-27 | 07-11 | compra | o13 | rechazada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o14 | cancelada | - | - | - | - (no llenada)
+2026-04-27 | 07-11 | compra | o15 | cancelada | - | - | - | - (no llenada)
+2026-04-28 | 11-15 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-04-28 | 11-15 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-04-28 | 11-15 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-04-28 | 11-15 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-04-28 | 11-15 | venta | o9 | llenada | -0.156 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-04-28 | 11-15 | venta | o10 | llenada | -1.114 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-07-01 | 07-11 | venta | o1 | llenada | -4.250 | salto_el_stop | no | P5 de mas [otro lado]
+2026-07-01 | 07-11 | venta | o2 | llenada | -1.636 | salto_el_stop | no | P5 de mas [otro lado]
+2026-07-01 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-07-01 | 07-11 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-07-01 | 07-11 | venta | o5 | llenada | -1.556 | salto_el_stop | no | P5 de mas [otro lado]
+2026-07-02 | 07-11 | compra | o1 | cancelada | - | - | - | - (no llenada)
+2026-07-02 | 07-11 | compra | o2 | cancelada | - | - | - | - (no llenada)
+2026-07-02 | 07-11 | compra | o3 | llenada | -1.500 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-07-02 | 07-11 | compra | o4 | llenada | -0.455 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-07-07 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 07-11 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 07-11 | venta | o6 | llenada | -1.462 | salto_el_stop | no | P5 de mas [otro lado]
+2026-07-07 | 11-15 | venta | o7 | llenada | -1.400 | salto_el_stop | no | P5 de mas [otro lado]
+2026-07-07 | 11-15 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o11 | llenada | -0.857 | break_even | si | P5 de mas [otro lado]
+2026-07-07 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o15 | llenada | -1.625 | salto_el_stop | no | P5 de mas [otro lado]
+2026-07-07 | 11-15 | venta | o16 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o17 | llenada | -1.294 | salto_el_stop | no | P5 de mas [otro lado]
+2026-07-07 | 11-15 | venta | o18 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o19 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o20 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o21 | cancelada | - | - | - | - (no llenada)
+2026-07-07 | 11-15 | venta | o22 | llenada | 3.000 | ganancia | si | P5 de mas [otro lado]
+2026-07-15 | 11-15 | venta | o22 | cancelada | - | - | - | - (no llenada)
+2026-07-15 | 11-15 | venta | o23 | cancelada | - | - | - | - (no llenada)
+2026-07-15 | 11-15 | venta | o24 | llenada | -1.250 | salto_el_stop | no | P5 de mas [otro lado]
+2026-08-04 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-08-04 | 07-11 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o1 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o2 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o3 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o4 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o5 | rechazada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o6 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o7 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o8 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o9 | llenada | -1.750 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-08-05 | 07-11 | compra | o10 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o11 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o12 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 07-11 | compra | o13 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 11-15 | compra | o14 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 11-15 | compra | o15 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 11-15 | compra | o16 | cancelada | - | - | - | - (no llenada)
+2026-08-05 | 11-15 | compra | o17 | llenada | -1.667 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-08-06 | 11-15 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-08-06 | 11-15 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-08-06 | 11-15 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-08-06 | 11-15 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-08-06 | 11-15 | venta | o11 | llenada | -0.625 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-08-06 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-08-06 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-08-06 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-08-06 | 11-15 | venta | o15 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o1 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o2 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o3 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o4 | llenada | -1.714 | salto_el_stop | no | P5 de mas [otro lado]
+2026-08-07 | 07-11 | compra | o5 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o6 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o7 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o8 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o9 | rechazada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o10 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o11 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o12 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o13 | llenada | -0.286 | break_even | si | P5 de mas [otro lado]
+2026-08-07 | 07-11 | compra | o14 | llenada | -0.385 | break_even | si | P5 de mas [otro lado]
+2026-08-07 | 07-11 | compra | o15 | cancelada | - | - | - | - (no llenada)
+2026-08-07 | 07-11 | compra | o16 | llenada | -0.417 | break_even | si | P5 de mas [otro lado]
+2026-08-07 | 11-15 | compra | o17 | llenada | -0.500 | break_even | si | P5 de mas [otro lado]
+2026-08-10 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o2 | llenada | -0.625 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-08-10 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o4 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-08-10 | 07-11 | venta | o12 | llenada | -1.500 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-08-11 | 11-15 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-08-11 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-08-11 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-08-11 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-08-11 | 11-15 | venta | o15 | llenada | -1.238 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-08-11 | 11-15 | venta | o16 | llenada | -0.286 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-08-11 | 11-15 | venta | o17 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o3 | llenada | -1.625 | salto_el_stop | no | P5 de mas [otro lado]
+2026-08-12 | 07-11 | venta | o4 | llenada | -1.625 | salto_el_stop | no | P5 de mas [otro lado]
+2026-08-12 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o8 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o9 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o10 | llenada | -1.857 | salto_el_stop | no | P5 de mas [otro lado]
+2026-08-12 | 07-11 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 07-11 | venta | o13 | llenada | -1.625 | salto_el_stop | no | P5 de mas [otro lado]
+2026-08-12 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 11-15 | venta | o15 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 11-15 | venta | o16 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 11-15 | venta | o17 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 11-15 | venta | o18 | cancelada | - | - | - | - (no llenada)
+2026-08-12 | 11-15 | venta | o19 | llenada | -1.571 | salto_el_stop | no | P6 donde el trader no opero [en sesion]
+2026-08-12 | 11-15 | venta | o20 | cancelada | - | - | - | - (no llenada)
+2026-08-13 | 11-15 | venta | o10 | cancelada | - | - | - | - (no llenada)
+2026-08-13 | 11-15 | venta | o11 | cancelada | - | - | - | - (no llenada)
+2026-08-13 | 11-15 | venta | o12 | cancelada | - | - | - | - (no llenada)
+2026-08-13 | 11-15 | venta | o13 | cancelada | - | - | - | - (no llenada)
+2026-08-13 | 11-15 | venta | o14 | cancelada | - | - | - | - (no llenada)
+2026-08-13 | 11-15 | venta | o15 | cancelada | - | - | - | - (no llenada)
+2026-08-13 | 11-15 | venta | o16 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o11 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o12 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o13 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o14 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o15 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o16 | llenada | -0.294 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-08-17 | 11-15 | compra | o17 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o18 | llenada | -0.778 | break_even | si | P6 donde el trader no opero [en sesion]
+2026-08-17 | 11-15 | compra | o19 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o20 | cancelada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o21 | rechazada | - | - | - | - (no llenada)
+2026-08-17 | 11-15 | compra | o22 | rechazada | - | - | - | - (no llenada)
+2026-08-18 | 07-11 | venta | o1 | cancelada | - | - | - | - (no llenada)
+2026-08-18 | 07-11 | venta | o2 | cancelada | - | - | - | - (no llenada)
+2026-08-18 | 07-11 | venta | o3 | cancelada | - | - | - | - (no llenada)
+2026-08-18 | 07-11 | venta | o4 | llenada | -1.625 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-08-18 | 07-11 | venta | o5 | cancelada | - | - | - | - (no llenada)
+2026-08-18 | 07-11 | venta | o6 | cancelada | - | - | - | - (no llenada)
+2026-08-18 | 07-11 | venta | o7 | cancelada | - | - | - | - (no llenada)
+2026-08-18 | 07-11 | venta | o8 | llenada | -1.778 | salto_el_stop | no | P6 donde el trader no opero [en dia]
+2026-08-18 | 07-11 | venta | o9 | llenada | -0.400 | break_even | si | P6 donde el trader no opero [en dia]
+
+## Resumen de la lista anterior, por mes (sin conclusiones)
+2026-01 | ordenes 79 | llenadas 19 | suma del R neto -0.281 | stop movido 8 | desenlaces break_even 4, ganancia 5, salto_el_stop 10 | patrones P5 de mas 4, P6 donde el trader no opero 15
+2026-04 | ordenes 193 | llenadas 43 | suma del R neto -25.861 | stop movido 21 | desenlaces break_even 17, ganancia 4, salto_el_stop 22 | patrones P5 de mas 10, P6 donde el trader no opero 33
+2026-07 | ordenes 34 | llenadas 12 | suma del R neto -14.285 | stop movido 3 | desenlaces break_even 2, ganancia 1, salto_el_stop 9 | patrones P5 de mas 10, P6 donde el trader no opero 2
+2026-08 | ordenes 119 | llenadas 22 | suma del R neto -24.171 | stop movido 10 | desenlaces break_even 10, salto_el_stop 12 | patrones P5 de mas 9, P6 donde el trader no opero 13
+total | ordenes 425 | llenadas 96 | suma del R neto -64.598 | stop movido 42 | desenlaces break_even 33, ganancia 10, salto_el_stop 53 | patrones P5 de mas 33, P6 donde el trader no opero 63

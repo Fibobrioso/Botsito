@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/recorrida-construccion-2
 
 ## Current Feature
-Ninguna rama abierta. trabajo/cuenta-por-mes cerrada en main el 2026-11-08 (stable/F38s-cuenta-por-mes): una cuenta por mes en el motor (ADR-0092 §8): la cuenta, el seguidor del tope, la racha y el primer toque empiezan de nuevo al cambiar de mes.
+trabajo/recorrida-construccion-2, EN CURSO desde el 2026-11-08 (F de la Next Action: la re-corrida que cuenta, ADR-0070 §3; encargo docs/encargos/trabajo-recorrida-construccion-2.md; informe docs/validation/RECORRIDA-CONSTRUCCION-2.md).
 
 ## Stable Main State
 41d47b3 · merge de `trabajo/cuenta-por-mes` (tag `stable/F38s-cuenta-por-mes`), sobre `stable/F38r-metodo-fidelidad-rentabilidad` (a1907fa). Informe docs/validation/CUENTA-POR-MES.md; el registro del cierre, al final de HISTORIA.
@@ -25,7 +25,7 @@ Ninguna rama abierta. trabajo/cuenta-por-mes cerrada en main el 2026-11-08 (stab
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o): S-2, el tope del trader se reinicia al abrir la primera sesión del día siguiente (ADR-0089); S-4, en M15 la vela sin cuerpo no corta la racha y su mecha cuenta (ADR-0085 §2); A-44 RESUELTA. S-22 y S-19 a la sesión 7 (§d de ACTIVAR-SESION-06-MOTOR.md). Siguiente: la re-corrida que cuenta (ADR-0070 §3), la primera con la comisión medida (ADR-0090 §3), el sello del respaldo de ADR-0091, el método de ADR-0092 y la cuenta por mes; después, la preparación de la sesión 7 (hoja + gráficos 2 a 6 con contexto; lista en ACTIVAR-SESION-06.md §«Para la sesión 7», más S-22 y S-19 con sus esquemas y el 52 %). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo. R6a en los huecos.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; clasificación en §8: 31 pareja, 19 efecto de la cuenta, 4 RN-019, 81 hasta T, 279 sin clase). El rumbo y el método desde aquí: docs/plan/RUMBO-2026-11.md (R0.3 de la hoja de ruta). Siguiente, en este orden: (1) T, la voz del trader sobre julio; (2) trazas del motor y ablación por regla (RUMBO §2); (3) láminas del bot a la estética de FX Replay (RUMBO §3); (4) la preparación de la sesión 7 con el método nuevo y su ADR (RUMBO §1), con los días de §8. J antes si la hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de elegir los días. R6a y RUMBO §5 en los huecos.
 
 
 
@@ -153,8 +153,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 61 (2026-11-07).
+— ninguna desde el Archivo 62 (2026-11-08).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 61 (2026-11-07).
+— ninguna desde el Archivo 62 (2026-11-08).

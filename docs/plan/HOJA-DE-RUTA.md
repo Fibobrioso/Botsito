@@ -39,6 +39,15 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la rama se cierra en `main`.
 - **Estado:** HECHA (`stable/F37l-entorno-code`; docs/validation/ENTORNO-CODE.md).
 
+### R0.3 · El rumbo desde la re-corrida (2026-11-08)
+- **Refs:** ID:ADR-0092 · ID:ADR-0070 · NA:F
+- **Qué es:** docs/plan/RUMBO-2026-11.md manda sobre el orden de F y define el método de las
+  sesiones y de las activaciones hasta que un ADR lo recoja.
+- **Depende de:** R3.9.
+- **Quién:** el consultor y Aleks.
+- **Hecho cuando:** los ADR de RUMBO §1 y §4 existen.
+- **Estado:** ABIERTA.
+
 ## R1 · Activar la sesión 4
 
 ### R1.1 · Las respuestas de la sesión 4 entran en la spec
@@ -125,6 +134,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   de los días 20 a 31, el consultor.
 - **Hecho cuando:** v11 a v14 están transcritos y comparados con el xlsx, y los días 20 a 31 tienen
   decisión escrita.
+- Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8 y RUMBO-2026-11.md).
 
 ## R3 · Una corrida del arnés sobre toda la construcción
 
@@ -268,6 +278,23 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   al cambiar de mes empiezan de nuevo la cuenta, el seguidor del tope, la racha y el primer
   toque (NOTA de ADR-0092 §8), con sus tests sintéticos; la diaria, intacta.
 
+### R3.9 · La re-corrida que cuenta: comisión medida, sello, sesión 6, método y cuenta por mes
+- **Refs:** ID:ADR-0070 · ID:ADR-0090 · ID:ADR-0091 · ID:ADR-0092
+- **Qué es:** la corrida del arnés que cuenta por ADR-0070 §3 sobre toda la construcción, la
+  primera con la comisión medida (ADR-0090 §3), el sello del respaldo M1 (ADR-0091), el motor
+  de la sesión 6, la salida del método de ADR-0092 y una cuenta por mes (ADR-0092 §8), con su
+  diagnóstico de cuenta diaria y los dos `diff` contra la línea base anterior; la materia que
+  el consultor clasifica (error nuestro o regla desconocida).
+- **Depende de:** R3.7 y R3.8 (HECHAS).
+- **Quién:** la sesión, con el encargo del consultor; la clasificación, el consultor.
+- **Hecho cuando:** el veredicto literal está en el informe y en ADR-0070 §3, la línea base
+  vigente es la suya y cada diferencia tiene su clase o su destino (§8).
+- **Estado:** HECHA (`trabajo/recorrida-construccion-2`; RECORRIDA-CONSTRUCCION-2.md): «no»
+  (cobertura 15,7 %, precisión 13,9 %); línea base vigente
+  `anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt`. §8, por clase, sobre las 414 filas de
+  los patrones: 31 pareja, 19 efecto de la cuenta, 4 error nuestro conocido (RN-019), 81 sin
+  clase hasta T y 279 sin clase; la caja, dispersa.
+
 ## R4 · La sesión 5 con el trader y su activación
 
 ### R4.1 · Preparar, celebrar y activar la sesión 5
@@ -353,6 +380,19 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 7 está ingerida y activada.
 
+### R4.4 · Trazas del motor y ablación por regla
+- **Refs:** NA:F · ID:ADR-0092
+- **Qué es:** lo de RUMBO-2026-11.md §2: el registro por día y sesión de las tomas de M15, los
+  escenarios (ADR-0066), las zonas y los puntos, la orden de cada uno y la regla que fija cada
+  prohibición, y un diagnóstico etiquetado del arnés que apaga una regla a la vez. Primeros días:
+  04-13, 07-14 y 07-02 (RECORRIDA-CONSTRUCCION-2.md §8, pendiente con dueño).
+- **Depende de:** R3.9.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el diagnóstico etiquetado da, por regla, qué parejas y qué operaciones de más
+  cambian al apagarla, y el registro por día trae tomas, escenarios, zonas y la regla de cada
+  prohibición.
+- **Estado:** ABIERTA.
+
 ## R5 · Fidelidad
 
 ### R5.1 · Las condiciones previas de F26
@@ -373,7 +413,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Refs:** ID:ADR-0070 · ID:ADR-0043
 - **Qué es:** medir mayo, el conjunto de medida de ADR-0043, cuando la corrida de R3 llegue al
   umbral (ADR-0070).
-- **Depende de:** la corrida que cuenta (R4.1; ADR-0070 §3) con un "sí", y el ADR propio de la
+- **Depende de:** la corrida que cuenta (R3.9; ADR-0070 §3) con un "sí", y el ADR propio de la
   rama de medida (ADR-0070 §6). El sello del respaldo M1 (R3.6), el método (R3.7, ADR-0092)
   y la cuenta por mes (R3.8) están HECHOS.
 - **Quién:** la sesión, con el encargo del consultor.
@@ -520,12 +560,23 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 
 ## R6 · Plataforma
 
+### R6.0 · Decisión de arquitectura en vivo
+- **Refs:** ID:ADR-0082 · F:F29 · F:F30 · F:F32
+- **Qué es:** lo de RUMBO-2026-11.md §4: Python decide y MT5 solo ejecuta por la capa de R6a, o
+  la estrategia portada a MQL5 con paridad; se decide con medida en la demo, con los puntos de
+  pivote pre-registrados en el mismo ADR.
+- **Depende de:** la demo de R6a.
+- **Quién:** el consultor escribe el ADR con la medida; Aleks decide.
+- **Hecho cuando:** el ADR está ACTIVE.
+- **Estado:** ABIERTA.
+
 ### R6.1 · Del modelo a MQL5
 - **Refs:** F:F28 · F:F29 · F:F30 · F:F31 · F:F32
 - **Qué es:** parámetros y fixtures generados, dominio en MQL5, el harness Python-MQL5, el EA con
   órdenes idempotentes, y la paridad con el Strategy Tester.
-- **Depende de:** F29, F30 y lo de F31-F32 que decide operaciones dependen de R5.5 (ADR-0082, que
-  enmienda MASTER_PLAN §0); lo demás de F31 vive en R6a.
+- **Depende de:** F29, F30 y lo de F31-F32 que decide operaciones dependen de la rentabilidad
+  pre-registrada de R5.6 (ADR-0092 §7, que movió la puerta de la fidelidad a la rentabilidad;
+  ADR-0082, que enmienda MASTER_PLAN §0); lo demás de F31 vive en R6a.
 - **Quién:** la sesión, con los encargos del consultor.
 - **Hecho cuando:** F32 cerrada con su paridad medida.
 
@@ -734,6 +785,20 @@ sus ambigüedades, sin revisar cada informe a fondo.
 | F:F33 | PARCIAL: entorno de la demo, cierres y freno | `DEMO-EJECUCION-1.md`, `RENOVAR-CIERRES.md` |
 | F:F26 | SIN EMPEZAR (preparada) | `PREREGISTRO.md`, sin rellenar |
 | F:F27, F:F28, F:F29, F:F30, F:F31, F:F32, F:F34, F:F35 | SIN EMPEZAR | sin código ni informe |
+
+## Marcador
+
+Una fila por corrida del arnés sobre toda la construcción (cobertura y precisión en %).
+
+| Fecha | Informe | Corrida que cuenta (cobertura / precisión) | Diaria (cobertura / precisión) | Esperanza del bot (diagnóstico) | Operaciones de más |
+|---|---|---|---|---|---|
+| 2026-10-14 | CORRIDA-CONSTRUCCION.md | 0.5 / 2.6 (con diagnóstico de A-35 y A-44: no contaba) | 6.1 / 12.8 | — | — |
+| 2026-10-27 | RECORRIDA-CONSTRUCCION.md | 3.5 / 13.2 | 20.7 / 15.6 | — | — |
+| 2026-10-29 | RESPALDO-M1.md | 3.5 / 13.2 | 20.2 / 15.4 | — | — |
+| 2026-11-08 | RECORRIDA-CONSTRUCCION-2.md | 15.7 / 13.9 | 20.2 / 14.6 | -0.533 | 425 |
+
+Cada rama que corra el arnés sobre toda la construcción añade su fila en su orden de cierre.
+Diagnóstico de construcción (ADR-0092 §6): ninguna cifra de aquí justifica una rama.
 
 ## Fechas fijas
 

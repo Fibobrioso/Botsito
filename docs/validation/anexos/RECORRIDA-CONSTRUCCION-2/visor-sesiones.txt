@@ -1,0 +1,255 @@
+# Las nueve sesiones del visor (respuesta a la PARADA 2, punto 3); horas de pared
+
+## 2026-07-06
+(a) ordenes del dia: visor 0, corrida 1 0; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-07-06 07-11 · P1
+(b) Sesgo anotado por el motor: bajista (domain/sesgo.py: bajista, 1 H4 miradas, ruptura de 46 puntos, rompe la H4 que abre a las 03:00 contra la anterior)
+    color de la H4 que decide, en el grafico: baja
+    primera liquidez_tomada=si (RN-004): ninguna; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): ninguna
+    zonas formadas en la sesion: 0 (); ordenes: 0 ()
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+(c) operaciones del trader en la sesion: 4
+    trader compra 08:22:05: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 08:29:45: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 08:33:55: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 10:51:10: ninguna zona del bot de su lado formada antes en la sesion
+
+## 2026-07-07
+(a) ordenes del dia: visor 22, corrida 1 22; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-07-07 07-11 · P1
+(b) Sesgo anotado por el motor: bajista (domain/sesgo.py: bajista, 1 H4 miradas, ruptura de 25 puntos, rompe la H4 que abre a las 03:00 contra la anterior)
+    color de la H4 que decide, en el grafico: baja
+    primera liquidez_tomada=si (RN-004): 10:11; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 21 (venta 21); ordenes: 6 (cancelada 5, llenada 1)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o1 venta cancelada colocada 10:10:59: zona:1 (bloque desde 10:08:00, formada 10:11:00) · primera: si
+    o2 venta cancelada colocada 10:12:59: zona:2 (bloque desde 10:08:00, formada 10:13:00) · primera: no
+    o3 venta cancelada colocada 10:21:59: zona:4 (bloque desde 10:19:00, formada 10:22:00) · primera: no
+    o4 venta cancelada colocada 10:22:59: zona:5 (bloque desde 10:19:00, formada 10:23:00) · primera: no
+    o5 venta cancelada colocada 10:23:59: zona:6 (bloque desde 10:19:00, formada 10:24:00) · primera: no
+    o6 venta llenada colocada 10:24:59: zona:7 (bloque desde 10:23:00, formada 10:25:00) · primera: no
+(c) operaciones del trader en la sesion: 4
+    trader compra 07:02:50: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 07:17:40: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 07:50:00: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 08:14:00: ninguna zona del bot de su lado formada antes en la sesion
+
+### 2026-07-07 11-15 · P1
+(b) Sesgo anotado por el motor: bajista (domain/sesgo.py: bajista, 1 H4 miradas, ruptura de 106 puntos, rompe la H4 que abre a las 07:00 contra la anterior)
+    color de la H4 que decide, en el grafico: baja
+    primera liquidez_tomada=si (RN-004): 12:33; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 71 (venta 71); ordenes: 16 (cancelada 11, llenada 5)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o7 venta llenada colocada 12:32:59: zona:22 (bloque desde 12:30:00, formada 12:33:00) · primera: si
+    o8 venta cancelada colocada 12:37:59: zona:23 (bloque desde 12:35:00, formada 12:38:00) · primera: no
+    o9 venta cancelada colocada 12:38:59: zona:24 (bloque desde 12:35:00, formada 12:39:00) · primera: no
+    o10 venta cancelada colocada 12:40:59: zona:25 (bloque desde 12:35:00, formada 12:41:00) · primera: no
+    o11 venta llenada colocada 12:42:59: zona:26 (bloque desde 12:41:00, formada 12:43:00) · primera: no
+    o12 venta cancelada colocada 13:19:59: zona:47 (bloque desde 13:17:00, formada 13:20:00) · primera: no
+    o13 venta cancelada colocada 13:21:59: zona:48 (bloque desde 13:17:00, formada 13:22:00) · primera: no
+    o14 venta cancelada colocada 13:22:59: zona:49 (bloque desde 13:17:00, formada 13:23:00) · primera: no
+    o15 venta llenada colocada 13:25:59: zona:50 (bloque desde 13:25:00, formada 13:26:00) · primera: no
+    o16 venta cancelada colocada 13:27:59: zona:51 (bloque desde 13:27:00, formada 13:28:00) · primera: no
+    o17 venta llenada colocada 13:28:59: zona:52 (bloque desde 13:27:00, formada 13:29:00) · primera: no
+    o18 venta cancelada colocada 14:29:59: zona:80 (bloque desde 14:24:00, formada 14:30:00) · primera: no
+    o19 venta cancelada colocada 14:30:59: zona:81 (bloque desde 14:24:00, formada 14:31:00) · primera: no
+    o20 venta cancelada colocada 14:31:59: zona:82 (bloque desde 14:31:00, formada 14:32:00) · primera: no
+    o21 venta cancelada colocada 14:32:59: zona:83 (bloque desde 14:31:00, formada 14:33:00) · primera: no
+    o22 venta llenada colocada 14:34:59: zona:84 (bloque desde 14:33:00, formada 14:35:00) · primera: no
+(c) operaciones del trader en la sesion: 4
+    trader compra 12:01:35: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 12:08:05: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 13:51:25: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 13:57:35: ninguna zona del bot de su lado formada antes en la sesion
+
+## 2026-07-15
+(a) ordenes del dia: visor 29, corrida 1 24; DIFERENCIAS:
+    o25: en el visor y no en la corrida 1
+    o26: en el visor y no en la corrida 1
+    o27: en el visor y no en la corrida 1
+    o28: en el visor y no en la corrida 1
+    o29: en el visor y no en la corrida 1
+
+### 2026-07-15 11-15 · P1
+(b) Sesgo anotado por el motor: bajista (domain/sesgo.py: bajista, 1 H4 miradas, ruptura de 126 puntos, doble ruptura: decide el color, rompe la H4 que abre a las 07:00 contra la anterior)
+    color de la H4 que decide, en el grafico: baja
+    primera liquidez_tomada=si (RN-004): 14:32; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 15 (venta 15); ordenes: 8 (cancelada 6, llenada 2)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o22 venta cancelada colocada 14:31:59: zona:121 (bloque desde 14:27:00, formada 14:32:00) · primera: si
+    o23 venta cancelada colocada 14:32:59: zona:122 (bloque desde 14:27:00, formada 14:33:00) · primera: no
+    o24 venta llenada colocada 14:36:59: zona:123 (bloque desde 14:35:00, formada 14:37:00) · primera: no
+    o25 venta llenada colocada 14:37:59: sin zona formada en su cierre (recolocada sobre una zona anterior) · primera: -
+    o26 venta cancelada colocada 14:42:59: zona:125 (bloque desde 14:39:00, formada 14:43:00) · primera: no
+    o27 venta cancelada colocada 14:43:59: zona:126 (bloque desde 14:39:00, formada 14:44:00) · primera: no
+    o28 venta cancelada colocada 14:44:59: zona:127 (bloque desde 14:39:00, formada 14:45:00) · primera: no
+    o29 venta cancelada colocada 14:45:59: zona:128 (bloque desde 14:39:00, formada 14:46:00) · primera: no
+(c) operaciones del trader en la sesion: 4
+    trader compra 12:05:50: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 12:45:45: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 14:00:55: ninguna zona del bot de su lado formada antes en la sesion
+    trader compra 14:14:10: ninguna zona del bot de su lado formada antes en la sesion
+
+## 2026-01-22
+(a) ordenes del dia: visor 6, corrida 1 6; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-01-22 11-15 · P1
+(b) Sesgo anotado por el motor: alcista (domain/sesgo.py: alcista, 1 H4 miradas, ruptura de 2 puntos, rompe la H4 que abre a las 07:00 contra la anterior)
+    color de la H4 que decide, en el grafico: sube
+    primera liquidez_tomada=si (RN-004): ninguna; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): ninguna
+    zonas formadas en la sesion: 0 (); ordenes: 0 ()
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+(c) operaciones del trader en la sesion: 3
+    trader venta 12:13:50: ninguna zona del bot de su lado formada antes en la sesion
+    trader venta 12:51:30: ninguna zona del bot de su lado formada antes en la sesion
+    trader venta 13:27:45: ninguna zona del bot de su lado formada antes en la sesion
+
+## 2026-07-02
+(a) ordenes del dia: visor 25, corrida 1 25; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-07-02 11-15 · P3
+(b) Sesgo anotado por el motor: alcista (domain/sesgo.py: alcista, 1 H4 miradas, ruptura de 327 puntos, rompe la H4 que abre a las 07:00 contra la anterior)
+    color de la H4 que decide, en el grafico: sube
+    primera liquidez_tomada=si (RN-004): 11:08; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 120 (compra 120); ordenes: 21 (cancelada 16, llenada 5)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o5 compra cancelada colocada 11:07:59: zona:101 (bloque desde 11:06:00, formada 11:08:00) · primera: si
+    o6 compra cancelada colocada 11:11:59: zona:102 (bloque desde 11:10:00, formada 11:12:00) · primera: no
+    o7 compra llenada colocada 11:12:59: zona:103 (bloque desde 11:10:00, formada 11:13:00) · primera: no
+    o8 compra cancelada colocada 12:02:59: sin zona formada en su cierre (recolocada sobre una zona anterior) · primera: -
+    o9 compra cancelada colocada 12:04:59: zona:129 (bloque desde 12:03:00, formada 12:05:00) · primera: no
+    o10 compra llenada colocada 12:06:59: zona:130 (bloque desde 12:06:00, formada 12:07:00) · primera: no
+    o11 compra cancelada colocada 13:47:59: zona:178 (bloque desde 13:43:00, formada 13:48:00) · primera: no
+    o12 compra cancelada colocada 13:48:59: zona:179 (bloque desde 13:43:00, formada 13:49:00) · primera: no
+    o13 compra cancelada colocada 13:49:59: zona:180 (bloque desde 13:43:00, formada 13:50:00) · primera: no
+    o14 compra cancelada colocada 13:50:59: zona:181 (bloque desde 13:49:00, formada 13:51:00) · primera: no
+    o15 compra cancelada colocada 13:51:59: zona:182 (bloque desde 13:49:00, formada 13:52:00) · primera: no
+    o16 compra cancelada colocada 13:52:59: zona:183 (bloque desde 13:49:00, formada 13:53:00) · primera: no
+    o17 compra cancelada colocada 13:53:59: zona:184 (bloque desde 13:49:00, formada 13:54:00) · primera: no
+    o18 compra cancelada colocada 13:54:59: zona:185 (bloque desde 13:49:00, formada 13:55:00) · primera: no
+    o19 compra cancelada colocada 13:56:59: zona:186 (bloque desde 13:49:00, formada 13:57:00) · primera: no
+    o20 compra cancelada colocada 13:57:59: zona:187 (bloque desde 13:49:00, formada 13:58:00) · primera: no
+    o21 compra cancelada colocada 13:58:59: zona:188 (bloque desde 13:49:00, formada 13:59:00) · primera: no
+    o22 compra llenada colocada 14:00:59: zona:189 (bloque desde 13:59:00, formada 14:01:00) · primera: no
+    o23 compra llenada colocada 14:01:59: sin zona formada en su cierre (recolocada sobre una zona anterior) · primera: -
+    o24 compra cancelada colocada 14:02:59: zona:190 (bloque desde 13:59:00, formada 14:03:00) · primera: no
+    o25 compra llenada colocada 14:03:59: zona:191 (bloque desde 13:59:00, formada 14:04:00) · primera: no
+(c) operaciones del trader en la sesion: 6
+    trader compra 11:34:25: zona mas cercana zona:103 formada 11:13:00, a 34 puntos; ordenes en esa entrada antes: o6 cancelada 11:11:59, o7 llenada 11:12:59
+    trader compra 12:25:50: zona mas cercana zona:140 formada 12:24:00, a 0 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 12:45:20: zona mas cercana zona:148 formada 12:39:00, a 1 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 13:59:30: zona mas cercana zona:188 formada 13:59:00, a 22 puntos; ordenes en esa entrada antes: o14 cancelada 13:50:59, o15 cancelada 13:51:59, o16 cancelada 13:52:59, o17 cancelada 13:53:59, o18 cancelada 13:54:59, o19 cancelada 13:56:59, o20 cancelada 13:57:59, o21 cancelada 13:58:59
+    trader compra 14:10:00: zona mas cercana zona:194 formada 14:10:00, a 0 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 14:23:05: zona mas cercana zona:203 formada 14:23:00, a 0 puntos; ordenes en esa entrada antes: ninguna
+
+## 2026-04-13
+(a) ordenes del dia: visor 26, corrida 1 26; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-04-13 07-11 · P3
+(b) Sesgo anotado por el motor: alcista (domain/sesgo.py: alcista, 5 H4 miradas, ruptura de 320 puntos, rompe la H4 que abre un dia anterior contra la anterior)
+    color de la H4 que decide, en el grafico: sube
+    primera liquidez_tomada=si (RN-004): 07:00; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 129 (compra 129); ordenes: 15 (cancelada 13, llenada 1, rechazada 1)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o1 compra cancelada colocada 06:59:59: zona:1 (bloque desde 06:55:00, formada 07:00:00) · primera: si
+    o2 compra cancelada colocada 07:00:59: zona:2 (bloque desde 06:55:00, formada 07:01:00) · primera: no
+    o3 compra cancelada colocada 07:01:59: zona:3 (bloque desde 06:55:00, formada 07:02:00) · primera: no
+    o4 compra cancelada colocada 07:03:59: zona:4 (bloque desde 07:02:00, formada 07:04:00) · primera: no
+    o5 compra llenada colocada 07:04:59: zona:5 (bloque desde 07:02:00, formada 07:05:00) · primera: no
+    o6 compra cancelada colocada 08:37:59: zona:51 (bloque desde 08:32:00, formada 08:38:00) · primera: no
+    o7 compra cancelada colocada 08:38:59: zona:52 (bloque desde 08:38:00, formada 08:39:00) · primera: no
+    o8 compra cancelada colocada 08:39:59: zona:53 (bloque desde 08:38:00, formada 08:40:00) · primera: no
+    o9 compra cancelada colocada 08:40:59: zona:54 (bloque desde 08:39:00, formada 08:41:00) · primera: no
+    o10 compra cancelada colocada 08:41:59: zona:55 (bloque desde 08:39:00, formada 08:42:00) · primera: no
+    o11 compra cancelada colocada 08:42:59: zona:56 (bloque desde 08:39:00, formada 08:43:00) · primera: no
+    o12 compra cancelada colocada 08:43:59: zona:57 (bloque desde 08:39:00, formada 08:44:00) · primera: no
+    o13 compra cancelada colocada 10:06:59: zona:100 (bloque desde 10:02:00, formada 10:07:00) · primera: no
+    o14 compra rechazada colocada 10:10:59: zona:102 (bloque desde 10:09:00, formada 10:11:00) · primera: no
+    o15 compra cancelada colocada 10:11:59: zona:103 (bloque desde 10:10:00, formada 10:12:00) · primera: no
+(c) operaciones del trader en la sesion: 3
+    trader compra 08:47:45: zona mas cercana zona:59 formada 08:47:00, a 2 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 08:50:00: zona mas cercana zona:60 formada 08:49:00, a 2 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 10:21:35: zona mas cercana zona:107 formada 10:17:00, a 2 puntos; ordenes en esa entrada antes: ninguna
+
+## 2026-01-13
+(a) ordenes del dia: visor 29, corrida 1 29; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-01-13 07-11 · P5
+(b) Sesgo anotado por el motor: bajista (domain/sesgo.py: bajista, 2 H4 miradas, ruptura de 67 puntos, rompe la H4 que abre un dia anterior contra la anterior)
+    color de la H4 que decide, en el grafico: baja
+    primera liquidez_tomada=si (RN-004): 08:31; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 79 (venta 79); ordenes: 19 (cancelada 12, llenada 7)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o1 venta cancelada colocada 08:30:59: zona:1 (bloque desde 08:29:00, formada 08:31:00) · primera: si
+    o2 venta cancelada colocada 08:31:59: zona:2 (bloque desde 08:29:00, formada 08:32:00) · primera: no
+    o3 venta cancelada colocada 08:32:59: zona:3 (bloque desde 08:29:00, formada 08:33:00) · primera: no
+    o4 venta cancelada colocada 08:33:59: zona:4 (bloque desde 08:29:00, formada 08:34:00) · primera: no
+    o5 venta llenada colocada 08:34:59: zona:5 (bloque desde 08:33:00, formada 08:35:00) · primera: no
+    o6 venta llenada colocada 08:35:59: sin zona formada en su cierre (recolocada sobre una zona anterior) · primera: -
+    o7 venta llenada colocada 08:39:59: zona:7 (bloque desde 08:37:00, formada 08:40:00) · primera: no
+    o8 venta cancelada colocada 08:58:59: zona:14 (bloque desde 08:56:00, formada 08:59:00) · primera: no
+    o9 venta llenada colocada 09:01:59: zona:15 (bloque desde 09:00:00, formada 09:02:00) · primera: no
+    o10 venta cancelada colocada 09:04:59: zona:17 (bloque desde 09:02:00, formada 09:05:00) · primera: no
+    o11 venta cancelada colocada 09:05:59: zona:18 (bloque desde 09:02:00, formada 09:06:00) · primera: no
+    o12 venta cancelada colocada 10:00:59: sin zona formada en su cierre (recolocada sobre una zona anterior) · primera: -
+    o13 venta cancelada colocada 10:03:59: zona:46 (bloque desde 10:00:00, formada 10:04:00) · primera: no
+    o14 venta llenada colocada 10:05:59: zona:47 (bloque desde 10:04:00, formada 10:06:00) · primera: no
+    o15 venta cancelada colocada 10:32:59: zona:63 (bloque desde 10:29:00, formada 10:33:00) · primera: no
+    o16 venta cancelada colocada 10:33:59: zona:64 (bloque desde 10:29:00, formada 10:34:00) · primera: no
+    o17 venta llenada colocada 10:34:59: zona:65 (bloque desde 10:33:00, formada 10:35:00) · primera: no
+    o18 venta cancelada colocada 10:35:59: zona:66 (bloque desde 10:33:00, formada 10:36:00) · primera: no
+    o19 venta llenada colocada 10:36:59: zona:67 (bloque desde 10:33:00, formada 10:37:00) · primera: no
+(c) operaciones del trader en la sesion: 1
+    trader venta 08:42:25: zona mas cercana zona:7 formada 08:40:00, a 5 puntos; ordenes en esa entrada antes: o7 llenada 08:39:59
+
+## 2026-04-15
+(a) ordenes del dia: visor 29, corrida 1 29; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-04-15 11-15 · P6
+(b) Sesgo anotado por el motor: alcista (domain/sesgo.py: alcista, 1 H4 miradas, ruptura de 24 puntos, rompe la H4 que abre a las 07:00 contra la anterior)
+    color de la H4 que decide, en el grafico: sube
+    primera liquidez_tomada=si (RN-004): 11:04; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 123 (compra 123); ordenes: 15 (cancelada 10, llenada 5)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o15 compra cancelada colocada 11:03:59: zona:124 (bloque desde 11:01:00, formada 11:04:00) · primera: si
+    o16 compra cancelada colocada 11:08:59: zona:126 (bloque desde 11:06:00, formada 11:09:00) · primera: no
+    o17 compra cancelada colocada 11:09:59: zona:127 (bloque desde 11:06:00, formada 11:10:00) · primera: no
+    o18 compra cancelada colocada 11:10:59: zona:128 (bloque desde 11:06:00, formada 11:11:00) · primera: no
+    o19 compra llenada colocada 11:11:59: zona:129 (bloque desde 11:10:00, formada 11:12:00) · primera: no
+    o20 compra cancelada colocada 12:23:59: zona:167 (bloque desde 12:20:00, formada 12:24:00) · primera: no
+    o21 compra cancelada colocada 12:26:59: zona:168 (bloque desde 12:20:00, formada 12:27:00) · primera: no
+    o22 compra cancelada colocada 12:27:59: zona:169 (bloque desde 12:20:00, formada 12:28:00) · primera: no
+    o23 compra cancelada colocada 12:28:59: zona:170 (bloque desde 12:20:00, formada 12:29:00) · primera: no
+    o24 compra llenada colocada 12:31:59: zona:171 (bloque desde 12:30:00, formada 12:32:00) · primera: no
+    o25 compra cancelada colocada 12:33:59: zona:172 (bloque desde 12:30:00, formada 12:34:00) · primera: no
+    o26 compra cancelada colocada 12:34:59: zona:173 (bloque desde 12:30:00, formada 12:35:00) · primera: no
+    o27 compra llenada colocada 12:35:59: zona:174 (bloque desde 12:34:00, formada 12:36:00) · primera: no
+    o28 compra llenada colocada 12:36:59: zona:175 (bloque desde 12:34:00, formada 12:37:00) · primera: no
+    o29 compra llenada colocada 13:47:59: zona:214 (bloque desde 13:43:00, formada 13:48:00) · primera: no
+(c) operaciones del trader en la sesion: 0
+
+## 2026-07-14
+(a) ordenes del dia: visor 14, corrida 1 14; IGUALES en id, colocacion, precio, stop y estado
+
+### 2026-07-14 11-15 · P2 (la caja)
+(b) Sesgo anotado por el motor: alcista (domain/sesgo.py: alcista, 1 H4 miradas, ruptura de 92 puntos, doble ruptura: decide el color, rompe la H4 que abre a las 07:00 contra la anterior)
+    color de la H4 que decide, en el grafico: sube
+    primera liquidez_tomada=si (RN-004): 11:19; vuelve a «no» dentro de la sesion: no; Acciones bloqueadas (regla: accion, motivo): RN-015: accion:colocar_orden_limite: prohibida:abrir_operacion
+    zonas formadas en la sesion: 110 (compra 110); ordenes: 7 (cancelada 4, llenada 3)
+(d) S-10, orden por orden: zona de la que nace · ¿la primera desde la toma?
+    o8 compra cancelada colocada 11:18:59: zona:77 (bloque desde 11:14:00, formada 11:19:00) · primera: si
+    o9 compra cancelada colocada 11:19:59: zona:78 (bloque desde 11:14:00, formada 11:20:00) · primera: no
+    o10 compra llenada colocada 11:20:59: zona:79 (bloque desde 11:19:00, formada 11:21:00) · primera: no
+    o11 compra cancelada colocada 11:23:59: sin zona formada en su cierre (recolocada sobre una zona anterior) · primera: -
+    o12 compra llenada colocada 11:24:59: zona:80 (bloque desde 11:19:00, formada 11:25:00) · primera: no
+    o13 compra cancelada colocada 12:27:59: zona:115 (bloque desde 12:17:00, formada 12:28:00) · primera: no
+    o14 compra llenada colocada 12:31:59: zona:116 (bloque desde 12:30:00, formada 12:32:00) · primera: no
+(c) operaciones del trader en la sesion: 6
+    trader compra 11:35:15: zona mas cercana zona:87 formada 11:35:00, a 2 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 11:48:20: zona mas cercana zona:89 formada 11:39:00, a 0 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 12:29:05: zona mas cercana zona:87 formada 11:35:00, a 21 puntos; ordenes en esa entrada antes: ninguna
+    trader compra 12:33:40: zona mas cercana zona:116 formada 12:32:00, a 2 puntos; ordenes en esa entrada antes: o14 llenada 12:31:59
+    trader compra 12:44:05: zona mas cercana zona:116 formada 12:32:00, a 19 puntos; ordenes en esa entrada antes: o14 llenada 12:31:59
+    trader compra 13:06:45: zona mas cercana zona:132 formada 13:02:00, a 4 puntos; ordenes en esa entrada antes: ninguna
