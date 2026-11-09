@@ -14,6 +14,11 @@ rutas_permitidas:
   - knowledge/corpus/manifest.yaml
   - knowledge/cases/criterio_fidelidad.yaml
   - tests/unit/test_metodo_adr0092.py
+  # ampliada por la respuesta del consultor a la fase 0 (2026-11-08), punto 2
+  - tests/golden/metodo_adr0092/main-hueco.txt
+  - tests/golden/metodo_adr0092/main-stop.txt
+  - tests/golden/metodo_adr0092/main-viva.txt
+  - tests/unit/test_criterio_campos_adr0092.py
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md

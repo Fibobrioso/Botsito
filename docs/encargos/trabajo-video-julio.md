@@ -147,3 +147,23 @@ Dado por Aleks (consultor) el 2026-11-08. Copiado tal cual:
 >   · las candidatas de F7;
 >   · cualquier desviación.
 > Termina con «Rama lista para revisión, NO cerrada». No se cierra nada sin la orden de Aleks.
+
+## Respuesta del consultor a las cuatro preguntas de la fase 0 (2026-11-08)
+
+Copiada tal cual:
+
+> Respuesta del consultor a las cuatro preguntas de la fase 0 de trabajo/video-julio (2026-11-08). Cópiala tal cual en el informe, en su sección, y aplícala. No pares la rama: sigue con todo.
+>
+> 1. La decisión 1 de la PARADA de v16: opción (a), con este alcance.
+>    - Sigue en pie para su objeto. El tramo v16 0:30:41-0:31:37 sigue siendo no citable. Su número no se escribe en ningún sitio como dato de v16, ni se compara con lo que dé v14 (y la decisión 5 tampoco cambia).
+>    - No alcanza a v14. La decisión 1 se tomó bajo la cautela de «julio del 18 en adelante», que este encargo levanta para v11-v14 por ADR-0078 §3 y porque julio no tiene días en ninguna partición. Lo que v14 enseñe, días incluidos, se mide en v14 como fuente propia y se escribe en el informe (F2 y F6).
+>    - La fila de HOLDOUT-EXPOSICIONES sigue diciendo solo «20 a 31», como manda el encargo.
+>    - No hace falta la PARADA parcial: sigue con F1 a F7.
+>
+> 2. F5: de acuerdo con los goldens, y la segunda vía tampoco para.
+>    - Los tres tests/golden/metodo_adr0092/main-*.txt fijan en su línea 18 el valor viejo («provisionales hasta que T lo compruebe: 2026-07»). Se regeneran en el commit de F5 por el procedimiento documentado (test_cuenta_por_mes.py:10, test_el_volcado_de_los_escenarios con -s), nunca a mano. El diff tiene que ser solo esa línea; si cambia cualquier otra, PARADA. Amplía el contrato a esos tres ficheros.
+>    - Si F5 sale por la segunda vía, test_criterio_campos_adr0092.py:104 no fija el valor viejo: comprueba la regla «un día con vídeo cuyo mes no está en meses» y usa julio de ejemplo. Con julio en meses ya no queda ningún mes de construcción fuera de meses, así que se rehace ese caso para que siga probando la MISMA regla: la copia del criterio lleva meses sin un mes de construcción y dias_con_video con un día de ese mes. Antes de commitear, demuestra que el caso rehecho falla si se quita esa comprobación de cargar_criterio (en un clon desechable con git worktree add, como manda CLAUDE.md) y pega la salida en el informe. Amplía el contrato a ese test. PARADA solo si rompe cualquier otra cosa.
+>
+> 3. F4 de dos ficheros: de acuerdo. Las 39 filas P5 y P6 van sin primer hecho ni frenos, y el informe lo dice.
+>
+> 4. Los ocultos, por motivo a, b o c: de acuerdo. Nada sin filtrar.
