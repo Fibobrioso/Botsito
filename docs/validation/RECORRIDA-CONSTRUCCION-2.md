@@ -1318,19 +1318,44 @@ Sobre las 414 filas de `patrones-cuenta-por-mes.txt` (corrida 1). Los recuentos,
 | P4, las demás | 6 | sin clase | F3.1 (3 de agosto antes del 19, 1 de enero, 1 de abril, 1 de julio) | lista |
 | P7 | 4 | error nuestro conocido | F3.2: el bot ya emparejado y ninguna reentrada negada por RN-016 | la rama de RN-019 |
 | P1, julio | 20 | sin clase hasta T | F3.4 (b): en las 4 sesiones de julio del visor, sesgo «sí» | T |
-| P1, 2026-01-22 11-15 | 3 | sin clase: «regla desconocida», «material» o A-16, a decidir | F3.4 (b): sesgo alcista por una ruptura de 2 puntos de la H4 de las 07:00, con su color; regla aplicada «sí»; el trader vende; libro sin vídeo; 2 puntos es la discrepancia de serie de A-16 (ABIERTA) | PARADA 3, decisión 3 (*corregido tras el revisor de la fase 3, b1: la primera versión la ponía en «regla desconocida»*) |
+| P1, 2026-01-22 11-15 | 3 | sin clase hasta medir más días; **candidato a material** y **toca A-16** (respuesta a la PARADA 3, A.3) | F3.4 (b): sesgo alcista por una ruptura de 2 puntos de la H4 de las 07:00, con su color; regla aplicada «sí»; el trader vende; libro sin vídeo; 2 puntos es la discrepancia de serie de A-16 (ABIERTA) | la lista de días del trader para la sesión 7 (*corregido tras el revisor de la fase 3, b1: la primera versión la ponía en «regla desconocida»*) |
 | P1, el resto | 21 | sin clase | sin sesión en el visor; 2 de ellas, de 2026-08-27 07-11, dentro del periodo en que la cuenta de agosto no llena (`bot 0`; revisor, para el consultor) | lista |
 | P2, a 4-10 puntos | 24 | sin clase (la caja, DISPERSA) | F3.3: 10 frente a 14 | dos al visor en la rama de la preparación |
 | P2, a más de 10 puntos | 16 | julio (7): sin clase hasta T; enero (9): sin clase | F3.3 | T / lista |
 | P3, julio | 15 | sin clase hasta T | F3.4 (c), 2026-07-02: no comprobable | T |
 | P3, el resto | 39 | sin clase | F3.4 (c), 2026-04-13: no comprobable | lista (y PARADA 3, decisión 0) |
 | P5, julio | 37 | sin clase hasta T | F3.4 (c): las de 2026-07-02, 07-07, 07-14 y 07-15 son de sesiones de julio del visor | T |
-| P5, 2026-01-13 07-11 | 7 | sin clase: «regla desconocida» o «material», a decidir | F3.4 (c): regla aplicada «sí» (RN-016 y su reinicio); el trader opera una vez en un libro sin vídeo | PARADA 3, decisión 3 |
+| P5, 2026-01-13 07-11 | 7 | sin clase hasta medir más días; **candidato a material** (A.3) | F3.4 (c): regla aplicada «sí» (RN-016 y su reinicio); el trader opera una vez en un libro sin vídeo | la lista de días del trader para la sesión 7 |
 | P5, el resto | 109 | sin clase | sin sesión en el visor (salvo 1 fila de 2026-04-13, no comprobable) | lista |
 | P6, julio | 2 | sin clase hasta T | — | T |
-| P6, 2026-04-15 11-15 | 5 | sin clase: «regla desconocida» o «material», a decidir | F3.4 (c): «sí» en lo que se ve; la sesión acaba en −3,626 R (no es S-14); el trader no opera ese día, libro sin vídeo | PARADA 3, decisión 3 |
+| P6, 2026-04-15 11-15 | 5 | sin clase hasta medir más días; **candidato a material** (A.3) | F3.4 (c): «sí» en lo que se ve; la sesión acaba en −3,626 R (no es S-14); el trader no opera ese día, libro sin vídeo | la lista de días del trader para la sesión 7 |
 | P6, el resto | 56 | sin clase | sin sesión en el visor | lista |
-| La caja: las 44 con el stop fuera (cruce de la cascada, no un patrón: van también en las filas de arriba) | 44 | sin clase (DISPERSA) | F3.3: 18 frente a 26; el redondeo explica 7 como mucho; la comisión, ninguna | dos al visor en la rama de la preparación |
+| La caja: las 44 con el stop fuera (cruce de la cascada, no un patrón: van también en las filas de arriba) | 44 | sin clase: DISPERSA (y DISPERSA también en las 24 P2 de 4-10 puntos) | F3.3: 18 frente a 26; el redondeo explica 7 como mucho; la comisión, ninguna | dos al visor en la rama de la preparación |
+
+**La caja, dispersa en los dos grupos** (respuesta a la PARADA 3, A.3). Un hecho medido: en las 44
+con el stop fuera, el cociente entre la distancia entrada-stop del bot y la del trader se aleja de 1
+en los dos sentidos: **de 0,21 a 9,25, con mediana 0,83** (`caja-stop.txt`, «cociente de las de stop
+fuera»). Así que la pregunta para el trader no es «¿tu stop queda más lejos o más cerca?», sino «¿de
+qué sale tu stop?» (A-48). Ejemplos para la lista de días del trader (el de mayor y el de menor
+cociente de cada grupo, fuera del 1 de abril y del 1 de julio y sin «posible M»; `ejemplos.py` de
+la carpeta de trabajo, sobre `caja-stop.txt` y `para-clasificar.txt`):
+
+| Grupo | Cociente | Operación del trader (UTC) |
+|---|---|---|
+| stop fuera, menor | 0,21 | 2026-07-02 11-15, compra, 11:59:30 |
+| stop fuera, mayor | 9,25 | 2026-01-02 11-15, venta, 12:12:20 |
+| P2 a 4-10 puntos, menor | 0,38 | 2026-07-10 07-11, compra, 08:01:25 |
+| P2 a 4-10 puntos, mayor | 2,25 | 2026-01-02 11-15, venta, 12:12:20 (la misma operación que la de mayor cociente con el stop fuera: tres operaciones distintas) |
+
+**La lista de días del trader para la sesión 7** (A.3): 2026-01-22 11-15 (P1; candidato a material,
+toca A-16), 2026-01-13 07-11 (P5; candidato a material), 2026-04-15 11-15 (P6; candidato a
+material), y los de la caja: 2026-07-02 11-15, 2026-01-02 11-15 y 2026-07-10 07-11. Todos de
+construcción, comprobados en la fase 3 contra `casos_reservados` (0 de los 76 días dev).
+
+**Pendiente con dueño** (A.0): la pregunta de 2026-07-14 11-15, si las tres pérdidas sin RN-016 (o10,
+o12 y o14) son del mismo barrido, y lo no comprobable de 2026-04-13 y 2026-07-02. Dueño: la rama de
+trazas del motor y ablación por regla (F, punto 2; R4.x de la hoja de ruta; RUMBO-2026-11.md §2),
+que los mide sobre esos tres días. En esta rama no se mide nada más.
 
 **Por clase, sobre las 414 filas:** 31 pareja, 19 efecto de la cuenta, 4 error nuestro conocido, 81
 sin clase hasta T (julio: P1 20, P2 de más de 10 puntos 7, P3 15, P5 37, P6 2) y 279 sin clase (con
@@ -1570,6 +1595,60 @@ Espero tu respuesta a la PARADA 3.
 | Para el consultor | Las 2 filas P1 de 2026-08-27 07-11, dentro del periodo sin llenar de agosto, dichas en §8 (P1, el resto). |
 | No pudo comprobar | El `make check` de la fase 3 y su sello: tabla «Los make check de la rama» completada. |
 
+## Respuesta del consultor a la PARADA 3 y orden de cierre (2026-11-08)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA 3 de trabajo/recorrida-construccion-2 y ORDEN DE CIERRE (2026-11-08). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA 3 y orden de cierre», con su fecha, y aplícala punto por punto. Aleks escribirá /cerrar-rama trabajo/recorrida-construccion-2 solo, en una línea, cuando hayas respondido a este mensaje.
+>
+> A. LAS CUATRO DECISIONES DE LA PARADA 3
+> 0. El guion que corra el motor en proceso (tomas, escenarios, zonas y la regla que fija cada prohibición) NO va en esta rama: es la primera pieza de la rama de trazas del motor que entra en la Next Action con este cierre (F, punto 2), y ahí se mide sobre 04-13, 07-14 y 07-02, con la pregunta de 07-14 (tres pérdidas sin RN-016: ¿del mismo barrido?) escrita en el informe de esta rama, §8, como pendiente con dueño. Aquí: nada más que leer.
+> 1. Los 3 P4 de agosto anteriores al 19: sin clase. De acuerdo.
+> 2. La orientación del signo de Δentrada: la del guion. De acuerdo.
+> 3. 01-22 (P1), 01-13 (P5) y 04-15 (P6): sin clase hasta medir más días; en §8 quedan marcados «candidatos a material» y 01-22 también «toca A-16». Los tres van a la lista de días para el trader de la sesión 7 (F, punto 4).
+> Con la caja DISPERSA en los dos grupos, §8 lo dice así y añade una línea que sí es un hecho medido: en las 44 el cociente entre la distancia entrada-stop del bot y la del trader se aleja de 1 en los dos sentidos (verifica y da el recorrido y la mediana de caja-stop.txt), así que la pregunta para el trader no es «¿tu stop queda más lejos o más cerca?» sino «¿de qué sale tu stop?» (A-48). Dos ejemplos de cada grupo, los de mayor y menor cociente fuera del 1 de abril y del 1 de julio y sin «posible M», a la lista de días del trader.
+>
+> B. HALLAZGOS DEL CONSULTOR PARA ERRORES-RECURRENTES (del consultor, los dos menores)
+> (a) La respuesta a la PARADA 2 dijo que 22 P4 de agosto eran desde el 19; eran 19 (3 anteriores). Lección: un recuento condicionado («desde tal día») se cuenta sobre el fichero antes de escribirlo, no se iguala al total del mes.
+> (b) La respuesta a la PARADA 2 pidió al visor las tomas de M15, los escenarios y la regla que prohíbe abrir, y el visor no los enseña. Misma lección que (b) y (c) de la PARADA 2: antes de pedir una lectura a una herramienta, se comprueba qué campos da. Tres veces en una rama: va como patrón, y la fila lo dice.
+> Del revisor, nada que añadir por mi parte en esta fase. Tus cuatro lecciones de §7 y las dos del revisor de la fase 2 quedan.
+>
+> C0. ANTES DEL CIERRE, UN COMMIT PROPIO EN LA RAMA: docs/plan/RUMBO-2026-11.md (contenido en C, al final), con el contrato ampliado solo a ese fichero en el mismo commit, make check en verde. El commit chore(cierre) solo admite los cinco ficheros del ritual (contrato, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE y HOJA-DE-RUTA; la puerta de git status de RITUAL.md lo exige), así que el documento nuevo no puede entrar ahí.
+>
+> C. EL COMMIT DEL CONTRATO (chore(cierre), uno solo, RITUAL punto 1 a 4)
+> - Sale contrato.yaml. Entra el registro del cierre en HISTORIA con stable/F38t-recorrida-construccion-2^{commit}, la fila de ERRORES-RECURRENTES (B más §7), y los cambios de la Next Action y de la hoja de ruta de abajo.
+> - Next Action. Ninguna letra sale ni entra (todas las letras A-Z se han usado ya: no se abre ninguna). F se reescribe así, con las cifras literales de §8 y sin paráfrasis:
+>   «F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; clasificación en §8: 31 pareja, 19 efecto de la cuenta, 4 RN-019, 81 hasta T, 279 sin clase). El rumbo y el método desde aquí: docs/plan/RUMBO-2026-11.md (R0.3 de la hoja de ruta). Siguiente, en este orden: (1) T, la voz del trader sobre julio; (2) trazas del motor y ablación por regla (RUMBO §2); (3) láminas del bot a la estética de FX Replay (RUMBO §3); (4) la preparación de la sesión 7 con el método nuevo y su ADR (RUMBO §1), con los días de §8. J antes si la hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de elegir los días. R6a y RUMBO §5 en los huecos.»
+> - Hoja de ruta (docs/plan/HOJA-DE-RUTA.md), en el mismo commit:
+>   · R3.9 nueva tras R3.8, HECHA, como la preparaste en §6, con el recuento de §8 por clase en el Estado. En todo su bloque no aparece NA:F ni ninguna letra viva (una entrada HECHA que cite una letra viva rompe test_hoja_de_ruta).
+>   · R5.2 «Depende de» cita R3.9 en lugar de R4.1. R5.6 sin cambio.
+>   · En R2.4 (T), una línea: «Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8 y RUMBO-2026-11.md).»
+>   · En R0, una entrada nueva, numerada después de la última de R0: «R0.3 · El rumbo desde la re-corrida (2026-11-08)», Refs ID:ADR-0092 · ID:ADR-0070 · NA:F, Qué es: «docs/plan/RUMBO-2026-11.md manda sobre el orden de F y define el método de las sesiones y de las activaciones hasta que un ADR lo recoja», Depende de: R3.9, Quién: el consultor y Aleks, Hecho cuando: los ADR de RUMBO §1 y §4 existen, Estado: ABIERTA.
+>   · En R4, una entrada nueva tras la última: «R4.x · Trazas del motor y ablación por regla», Refs NA:F · ID:ADR-0092, Qué es: lo de RUMBO §2, Depende de: R3.9, Quién: la sesión con el encargo del consultor, Hecho cuando: el diagnóstico etiquetado da, por regla, qué parejas y qué operaciones de más cambian al apagarla, y el registro por día trae tomas, escenarios, zonas y la regla de cada prohibición, Estado: ABIERTA.
+>   · En R6.1, la línea que dice que F29, F30 y lo de F31-F32 que decide operaciones dependen de R5.5 pasa a decir que dependen de la rentabilidad pre-registrada de R5.6 (ADR-0092 §7, que movió la puerta de la fidelidad a la rentabilidad); el resto de R6.1 no cambia.
+>   · En R6, una entrada nueva antes de R6.1: «R6.0 · Decisión de arquitectura en vivo», Refs ID:ADR-0082 · F:F29 · F:F30 · F:F32, Qué es: lo de RUMBO §4, Depende de: la demo de R6a, Quién: el consultor escribe el ADR con la medida; Aleks decide, Hecho cuando: el ADR está ACTIVE, Estado: ABIERTA.
+>   · Una sección nueva «## Marcador» antes de «## Fechas fijas»: una tabla con una fila por corrida sobre toda la construcción: fecha, informe, corrida que cuenta (cobertura, precisión), diaria (cobertura, precisión), esperanza del bot (diagnóstico), operaciones de más. Filas, verificadas en cada informe antes de escribirlas: 2026-10-14 CORRIDA-CONSTRUCCION (que cuenta 0.5/—; diaria 6.1/12.8); 2026-10-27 RECORRIDA-CONSTRUCCION (3.5/13.2; diaria 20.7/15.6); 2026-10-29 RESPALDO-M1 (3.5/13.2; 20.2/15.4); 2026-11-08 RECORRIDA-CONSTRUCCION-2 (15.7/13.9; 20.2/14.6; -0.533; 425). Debajo, una línea: «Cada rama que corra el arnés sobre toda la construcción añade su fila en su orden de cierre. Diagnóstico de construcción (ADR-0092 §6): ninguna cifra de aquí justifica una rama.»
+>   · test_hoja_de_ruta en verde con todo ello (valida también lo que está fuera de los ###: en la tabla del Marcador no va ninguna referencia NA:, HER:, ID: ni F:). Si algo no pasa, PARADA con el mensaje del test: no se adapta el test ni se salta nada.
+> - docs/plan/RUMBO-2026-11.md (el commit propio de C0), con este contenido tal cual (cabecera: «# Rumbo desde la re-corrida que cuenta (2026-11-08) · decisión de Aleks y del consultor; manda sobre el orden de F hasta que sus ADR lo recojan. Cifras: RECORRIDA-CONSTRUCCION-2.md.»):
+>   §0 Lo medido que lo motiva. Tres corridas diarias comparables: 6.1 % (14-oct), 20.2 % (28-oct), 20.2 % (8-nov, tras activar la sesión 6 entera, con 40 parejas antes y después). Esperanza del bot en construcción -0.533 R (diagnóstico). 425 órdenes del bot sin operación del trader, 96 llenadas, -64.6 R: la mitad de la pérdida. 44 operaciones con la misma entrada y otro stop (caja DISPERSA). P6 por mes: abril 33, julio 2, enero 15, agosto 13; julio es el único mes con vídeo.
+>   §1 Método de las sesiones y de las activaciones (ADR en la rama de la preparación de la sesión 7; cambia SESION-DE-PREGUNTAS.md). (a) Las preguntas salen de diferencias medidas (§8 de la corrida vigente), cada una con las filas que puede mover; como mucho seis técnicas por sesión, primero las que más filas mueven y las que tocan el dinero (A-35, A-13). (b) Bloque de días: el trader primero marca y opera el día en FX Replay con pantalla y audio (qué ve, qué descarta); después ve lo que el bot marcó y ejecutó, con la sustentación en su idioma (sesgo de H4, liquidez de M15, caja, 0 y 0,8; nunca ids de reglas), recortado al instante de la decisión y sin resultados; corrige; y se le pregunta «¿siempre, solo este caso, o de qué depende?». Solo días de construcción, comprobados con casos_reservados y declarados; nunca el 1 de abril ni el 1 de julio ni horas perdidas; si sale material reservado, se reconduce y el tramo es no citable. (c) Cada respuesta se escribe primero como test sobre casos de construcción que rompe en main. (d) Cada activación declara ANTES qué filas de §8 debería convertir en pareja y corre un mes de construcción en la rama (unos 90 s) con su delta de parejas y de operaciones de más frente a la línea base; la cifra dice si la respuesta se entendió, nunca ajusta un parámetro (ADR-0092 §6; Reglas vivas). (e) Clases de la clasificación: error nuestro, regla desconocida, efecto de la cuenta, material incompleto (S-14: libros sin vídeo), sin clase. La precisión se lee de verdad solo sobre meses con vídeo.
+>   §2 Trazas del motor y ablación por regla (rama de motor corta, sin tocar decisiones). Registro por día y sesión: tomas de M15, escenarios (ADR-0066), zonas y puntos, orden colocada por cada uno, y la regla que fija cada prohibición (no solo los frenos). Diagnóstico etiquetado del arnés que apague una regla a la vez y diga qué parejas y qué operaciones de más cambian; fuera de la lista cerrada, con rótulo DIAGNOSTICO, nunca la corrida que cuenta. Primeros días: 04-13, 07-14 (tres pérdidas sin RN-016) y 07-02.
+>   §3 Láminas (rama de código, usa §2). Por sesión: H4 con el sesgo, M15 con la liquidez, M1 con la caja, sus niveles, la orden y el stop, a la estética de FX Replay, recortado al instante de la decisión, con la sustentación en el idioma del trader debajo. Sin fechas visibles para el trader cuando el día no sea de construcción (nunca ocurre: solo construcción). Salida fuera de git.
+>   §4 Arquitectura en vivo (ADR, antes de F29). Opción A: Python decide y MT5 solo ejecuta por la capa de R6a (ADR-0082). Opción B: la estrategia portada a MQL5 (F29, F30) con paridad (F32). Se decide con medida en la demo: latencia del puente, reconexión, qué pasa si el proceso cae con una orden viva, y el coste en meses de B. Puntos de pivote pre-registrados en el mismo ADR: si tras activar la sesión 7 la precisión en meses con vídeo y el R de las parejas (§5) no mejoran, el objetivo pasa a un bot de alta precisión sobre los setups que sí reproducimos, y la puerta sigue siendo ADR-0092.
+>   §5 En los huecos. Velas M1 y ticks de Dukascopy de 2025 (junio a noviembre) para R5.6, sin abrir nada. La tabla del R de las 31 parejas frente al R del trader en las mismas operaciones (los casos dev traen el stop; el resultado del trader, de su libro de días dev): si las parejas pierden con costes reales, el problema es de ejecución y no de decisión. La sombra temprana: el motor de hoy en una demo de FTMO, solo registrando, para destapar la plataforma antes de que el bot sea fiel. Un make check rápido para commits intermedios, con el completo antes del push y del merge, medido antes (qué parte del tiempo son los tests que leen el M1 de marzo). La banda de remuestreo por días para la cobertura, como la de la rentabilidad.
+>   §6 Reparto del esfuerzo hasta fin de año: dos ramas de fidelidad (§1-§3) por cada una de infraestructura; cada rama de fidelidad declara antes qué filas mueve.
+> - Technical Debt: nada sale ni entra.
+> - PROJECT_STATE con todo aplicado, medido con wc -c sobre una copia con las cuatro cabeceras cortas: por debajo de 25.000 (tope del test) y, si puede, de 23.000; si queda entre 23.000 y 25.000, sigue y dilo; si pasa de 25.000, PARADA con la cifra sin recortar nada.
+> - make check en verde, con ruff format, ruff check y mypy antes sobre lo tocado.
+>
+> D. EL CIERRE (RITUAL 2 a 6, skill cerrar-rama): merge a main, tag stable/F38t-recorrida-construccion-2, commit de estado que solo reemplaza Current Branch, Current Feature, Stable Main State y Last Stable Commit (la Next Action ya cambió en C), make check sellado, push atómico de main y el tag (Aleks confirma «1. Yes»), CI de main en verde antes de borrar, y borrar la rama local. No hay fix/ que borrar. Nunca --no-verify, push --force ni borrar tags.
+>
+> E. INFORME FINAL, en el chat: sha de main, tag, run de la CI de main y su estado, ramas que quedan (solo main), tamaño de PROJECT_STATE, número de commits de la rama (incluidos el de C0 y el chore(cierre)), el registro de HISTORIA (línea de su encabezado), que el contrato salió, las filas de HOLDOUT-EXPOSICIONES de la rama (cuántas y de qué día), y git diff stable/F38s-cuenta-por-mes..main --stat resumido: nada de src/, tests/, knowledge/ ni .claude/.
+>
+> Si la guardia o el clasificador niegan algo, no lo rodees: PARADA con el comando exacto y lo lanza Aleks con «!».
+
 ## Estado
 
 **Rama lista para revisión, NO cerrada.** PARADA 3: la entrega de la fase 3 (respuesta del
@@ -1578,3 +1657,9 @@ visor (ninguna «no»; tres con partes «no comprobables», decisión 0), §8 co
 y las líneas del cierre rehechas y medidas. El revisor de la fase 3 (apéndice C): 0 bloquea, 2 importa, 7 menor; todo arreglado o declarado en
 «Lo hecho con cada hallazgo del revisor de la fase 3». Nada de esta
 rama entra en la hoja de la sesión 7 por su cuenta.
+
+**Desde la respuesta del consultor a la PARADA 3 y la orden de cierre (2026-11-08):** sus cuatro
+decisiones, aplicadas en §8 (A.0 a A.3: los candidatos a material, «toca A-16», la línea del cociente,
+los ejemplos de la caja, la lista de días para el trader y la pregunta de 07-14 como pendiente con
+dueño). Después, en commit propio, `docs/plan/RUMBO-2026-11.md` (C0). El resto de la orden (el
+`chore(cierre)` y el ritual) lo lanza Aleks con `/cerrar-rama`.
