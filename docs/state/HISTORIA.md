@@ -16433,3 +16433,60 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 62 (2026-11-08).
+
+# Next Action HECHA · T · trabajo/video-julio · 2026-11-09
+
+T. Transcribir v11 a v14 (backtest de julio en vídeo, 2 h 38 min, con audio), comprobar qué días cubre cada uno, compararlos con el xlsx en los días 1 a 17 y con las horas del libro (el primero en Europe/Madrid); en su rama (ENTRADA-JULIO.md §5).
+
+# Next Action HECHA · U · trabajo/video-julio · 2026-11-09
+
+U. Julio 20-31: solo en vídeo (v14); decidir si se extraen casos del vídeo, tras transcribir v11-v14. Depende de T.
+
+# Registro de cierre · `trabajo/video-julio` (2026-11-09)
+
+- Orden de cierre del consultor del 2026-11-09, dada por Aleks tras la segunda pasada del revisor,
+  con sus decisiones sobre VIDEO-JULIO.md §11.4: el número de días de marzo se queda; la entrada
+  del VAD es la C, con R2.5 en «R2 · Material de construcción». Después, Aleks lanzó
+  `/cerrar-rama trabajo/video-julio`.
+- **Lo que entra**: v11 a v14 transcritos (seis manifiestos de transcripción, con las dos
+  retranscripciones de v13 y v14) y con fotogramas (cuatro manifiestos); qué días cubre cada vídeo
+  (v11, del 1 al 3; v12, del 3 al 10 por la mañana; v13, la tarde del 10 ya pasada, sin grabar, y
+  del 13 al 17; v14, del 20 al 31); la comparación con el libro de los días 1 a 17, operación por
+  operación (67: COINCIDE 5, APARECE 35, NO APARECE 3, CONTRADICE 0, NO LOCALIZABLE 8, sin ver 16);
+  la clase de T de las 81 filas de RECORRIDA-CONSTRUCCION-2.md §8 (35 regla desconocida, 5 error
+  nuestro, 4 material incompleto, 37 sin clase), aceptada por el consultor; U sin casos del vídeo;
+  11 candidatas a evidencia (ninguna creada); `material_sin_video` sin cambiar (julio, provisional);
+  la naturaleza de v11-v14 en `fuentes.yaml`; un tramo no citable de precaución en v13
+  (0:00:00-0:00:35: el arranque enseña el backtest de marzo del trader, sin sortear) y el paso b2 de
+  ENTRADA-MARZO.md (la retirada de esos días tras el sorteo, por ADR-0041); el recuadro de
+  ENTRADA-JULIO.md §5; y `test_guardia_claude.py::test_los_tramos_del_repo_real` con v13. Dos
+  exposiciones declaradas en HOLDOUT-EXPOSICIONES (un fotograma de la sesión de marzo y la vista de
+  Analytics de julio, con sus cifras, ninguna usada). Nada de `src/`, `knowledge/spec/`,
+  `knowledge/evidence/`, `knowledge/feedback/`, `knowledge/cases/`, `scripts/` ni `.claude/`.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; T y U salen de la Next
+  Action (arriba, con su texto literal) y entra la C; en F sale el (1) y la preparación de la
+  sesión 7 hereda lo de T (VIDEO-JULIO.md §10.4); cuatro líneas de Technical Debt del carril de
+  guardias; en la hoja de ruta, R2.4 HECHA y R2.5 nueva (NA:C). Entran también la fila de
+  ERRORES-RECURRENTES y este registro. Comprobado en memoria antes del `make check`, con las
+  funciones de `tests/unit/test_hoja_de_ruta.py` sobre los ficheros de este commit: T y U cuentan
+  como HECHAS, y `a`, `b` y `c` salen vacías.
+- **`PROJECT_STATE.md`**: 23.959 bytes en este commit.
+- Letra del tag: la última cerrada era `stable/F38t-recorrida-construccion-2`;
+  `stable/F38u-video-julio` no existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38u-video-julio`. El merge es `git rev-parse "stable/F38u-video-julio^{commit}"`.
+- Commits de la rama:
+  - `dfe8b44` chore(rama): abre trabajo/video-julio (encargo, contrato y Archivo 63 de PROJECT_STATE)
+  - `c87cff5` fase 0, respuesta del consultor, F1 (v11-v14 transcritos y extraídos) y PARADA 1
+  - `8c47a72` respuesta a la PARADA 1, medidas de audio, piloto de F3 y PARADAS 2 y 3
+  - `2c1116d` retranscripción de v13 y v14 (1.3) y PARADA 4
+  - `3b99e5c` respuesta a las PARADAS 2 y 3, criterio de F3 y F3 parcial (días 1-10)
+  - `1b75f94` F3 de v12 (días 1-10), F4 de los días 1-10 y F7
+  - `47f808a` respuesta a la PARADA 4, F2-F6 completos, cierre del informe y PARADA final
+  - `8a08da4` los hallazgos del revisor, su informe tal cual y «Rama lista para revisión, NO cerrada»
+  - `dda8153` respuesta a la PARADA final, punto 0: la retirada de marzo y el tramo de precaución de v13
+  - `76cf147` data(corpus): la naturaleza de v11 a v14, con lo comprobado
+  - `e77b66e` respuesta a la PARADA final, puntos 1 a 5 y 7: las propuestas de cierre con T y U HECHAS
+  - `1e9589d` segunda pasada del revisor, su informe tal cual y «Rama lista para revisión, NO cerrada»
+  - y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- CI: ninguna run de la rama (no toca hooks, rutas ni código de plataforma; no se empujó como
+  `fix/`). La CI que cuenta es la de `main` tras el push.

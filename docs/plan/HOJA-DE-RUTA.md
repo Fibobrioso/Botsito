@@ -129,12 +129,29 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   uno y compararlos con el xlsx en los días 1 a 17 y con las horas del libro (NA:T); y, tras eso,
   decidir si se extraen casos del vídeo para los días 20 a 31, que solo están en v14 (NA:U;
   ADR-0078 §3).
-- **Depende de:** R2.1 (HECHA); NA:U depende de NA:T.
+- **Depende de:** R2.1 (HECHA).
 - **Quién:** la transcripción y la comparación, la sesión con encargo del consultor; la decisión
   de los días 20 a 31, el consultor.
 - **Hecho cuando:** v11 a v14 están transcritos y comparados con el xlsx, y los días 20 a 31 tienen
   decisión escrita.
-- Va antes de la preparación de la sesión 7 (RECORRIDA-CONSTRUCCION-2.md §8 y RUMBO-2026-11.md).
+- **Estado:** HECHA (`trabajo/video-julio`, `stable/F38u-video-julio`; VIDEO-JULIO.md): v11 a v14
+  transcritos; v11 a v13, comparados con el libro de los días 1 a 17, operación por operación: de
+  67, 40 aparecen en el vídeo (5 coinciden en lo que se lee), ninguna lo contradice, 3 no aparecen
+  (las ventas de la tarde del 10, que no se grabó) y 24 no se pudieron comprobar (huecos del ASR o
+  sin ver). Julio sigue provisional en `material_sin_video`. De los días 20 a 31 (v14, sin libro)
+  no se sacan casos del vídeo (decisión del consultor del 2026-11-09). Los huecos del ASR, en R2.5.
+
+### R2.5 · La voz que el ASR se salta (v12 a v14)
+- **Refs:** NA:C · ID:ADR-0078
+- **Qué es:** el VAD de `corpus transcribe` se salta frases cortas del trader (VIDEO-JULIO.md §1.7
+  y el minuto de escucha de Aleks). Exponer su configuración, retranscribir v12 a v14 y volver a
+  medir en los huecos F2, F3, F4 y F6; con eso se vuelve a decidir F5 (`material_sin_video` de
+  julio).
+- **Depende de:** R2.4 (HECHA).
+- **Quién:** la sesión, con encargo del consultor.
+- **Hecho cuando:** los huecos están retranscritos y medidos, y F5 tiene decisión con ellos.
+- Prioridad baja, en los huecos: no va antes de R4.4 (las trazas), de las láminas ni de la
+  preparación de la sesión 7.
 
 ## R3 · Una corrida del arnés sobre toda la construcción
 
