@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/recorrida-construccion-2
+main
 
 ## Current Feature
-trabajo/recorrida-construccion-2, EN CURSO desde el 2026-11-08 (F de la Next Action: la re-corrida que cuenta, ADR-0070 §3; encargo docs/encargos/trabajo-recorrida-construccion-2.md; informe docs/validation/RECORRIDA-CONSTRUCCION-2.md).
+Ninguna rama abierta. trabajo/recorrida-construccion-2 cerrada en main el 2026-11-08 (stable/F38t-recorrida-construccion-2): la re-corrida que cuenta (ADR-0070 §3): «no» (cobertura 15,7 %, precisión 13,9 %).
 
 ## Stable Main State
-41d47b3 · merge de `trabajo/cuenta-por-mes` (tag `stable/F38s-cuenta-por-mes`), sobre `stable/F38r-metodo-fidelidad-rentabilidad` (a1907fa). Informe docs/validation/CUENTA-POR-MES.md; el registro del cierre, al final de HISTORIA.
+86f306a · merge de `trabajo/recorrida-construccion-2` (tag `stable/F38t-recorrida-construccion-2`), sobre `stable/F38s-cuenta-por-mes` (41d47b3). Informe docs/validation/RECORRIDA-CONSTRUCCION-2.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-41d47b3 · merge: trabajo/cuenta-por-mes, una cuenta por mes en el motor (ADR-0092 §8): la cuenta, el seguidor del tope, la racha y el primer toque empiezan de nuevo al cambiar de mes · tag stable/F38s-cuenta-por-mes
+86f306a · merge: trabajo/recorrida-construccion-2, la re-corrida que cuenta (ADR-0070 §3): «no» (cobertura 15,7 %, precisión 13,9 %) · tag stable/F38t-recorrida-construccion-2
 
 ## Tests Currently Passing
 1925 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
