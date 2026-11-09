@@ -1,0 +1,38 @@
+rama: trabajo/trazas-ablacion
+riesgo: alto  # toca el motor: un observador pasivo (la bitácora) y la ablación de una regla en el conjunto que recibe el intérprete, por un subcomando nuevo de `motor`; lo que el motor decide no cambia (golden y mutación)
+artefacto: docs/validation/TRAZAS-ABLACION.md
+tramo: "R4 · La sesión 5 con el trader y su activación"
+rutas_permitidas:
+  - src/botsito/engine/
+  - src/botsito/cli.py
+  - tests/
+  - docs/validation/TRAZAS-ABLACION.md
+  - docs/validation/anexos/TRAZAS-ABLACION/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/adr/0092-el-bot-se-construye-por-fidelidad-y-se-juzga-por-rentabilidad.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - knowledge/spec/
+  - knowledge/cases/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/corpus/
+  - src/botsito/domain/
+  - src/botsito/spec/
+  - scripts/
+  - Makefile
+  - .claude/
+  - tools/mql5/
+  - corpus/
+  - data/manifests/
+  - docs/validation/RECORRIDA-CONSTRUCCION-2.md
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/
+  - docs/validation/VIDEO-JULIO.md
+  - docs/validation/anexos/VIDEO-JULIO/
+  - docs/plan/
+comprobaciones:
+  - uv run botsito state check
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1

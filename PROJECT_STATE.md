@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/trazas-ablacion
 
 ## Current Feature
-Ninguna rama abierta. trabajo/video-julio cerrada en main el 2026-11-09 (stable/F38u-video-julio): la voz del trader sobre julio; T y U hechas.
+trabajo/trazas-ablacion, EN CURSO: F (1), la bitácora de decisiones del motor y la ablación (R4.4). Encargo docs/encargos/trabajo-trazas-ablacion.md; informe docs/validation/TRAZAS-ABLACION.md.
 
 ## Stable Main State
 129ea33 · merge de `trabajo/video-julio` (tag `stable/F38u-video-julio`), sobre `stable/F38t-recorrida-construccion-2` (86f306a). Informe docs/validation/VIDEO-JULIO.md; el registro del cierre, al final de HISTORIA.
@@ -155,8 +155,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 63 (2026-11-08).
+— ninguna desde el Archivo 64 (2026-11-09).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 63 (2026-11-08).
+— ninguna desde el Archivo 64 (2026-11-09).
