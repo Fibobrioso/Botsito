@@ -233,3 +233,46 @@ Copiada tal cual:
 > - El piloto vale con dos COINCIDE (2 y 10 de julio, Δ 0) y la confirmación de que el libro está en Europe/Madrid.
 >
 > Sigue sin parar hasta la PARADA final: lo que quede de F2, F3 con este criterio, F4 a F7, el SHA256SUMS en el Escritorio y el revisor.
+
+## Respuesta del consultor a la PARADA 4 (2026-11-09)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 4 de trabajo/video-julio (2026-11-09). Cópiala tal cual en el informe, en su sección, y aplícala. No hay más PARADAS por el ASR: sigue hasta la PARADA final.
+>
+> 0. El minuto de escucha no bloquea la rama. Aleks escuchará v14 de 0:10:00 a 0:11:00 cuando pueda y te dirá en un mensaje aparte lo que oye. Apúntalo en el informe cuando llegue, y con eso escribe la propuesta del punto 5. No se retranscribe nada más en esta rama: si el trader habla, el problema es la configuración del VAD, que corpus transcribe no expone y que vive en src/.
+>
+> 1. Versión activa: opción (a).
+>    - La nueva queda activa.
+>    - Donde solo la vieja tiene texto, se cita la vieja por su id (transcript show --transcripcion <id>), y cada cita del informe dice de qué id sale.
+>    - Para localizar fotogramas vale el texto de cualquiera de las dos versiones: las dos transcriben el mismo vídeo, y lo que localiza una cuenta como localizado (ADR-0038 §1).
+>
+> 2. Una operación que cae en un hueco sin texto en ninguna de las dos versiones va como NO LOCALIZABLE (HUECO DEL ASR), separada de NO APARECE. En los huecos no se abre ningún fotograma: muestrear está prohibido (ADR-0038). Las 3 «sin ver» del 10 de julio se cuentan igual que NO LOCALIZABLE en F5: no están comprobadas.
+>
+> 3. F5 tiene una tercera salida.
+>    - La primera vía exige que ninguna operación de los 13 días sea NO LOCALIZABLE ni «sin ver». Si alguna lo es, el bloque material_sin_video NO cambia: julio sigue provisional y los goldens no se tocan. Que una operación no esté comprobada no quiere decir que no esté grabada, y ADR-0092 §11 solo cambia el bloque si T lo comprueba.
+>    - La segunda vía (julio a meses) solo si hay alguna NO APARECE o CONTRADICE de verdad. En ese caso, PARADA con la lista, porque decidir qué días son sin vídeo con huecos de por medio lo decide el consultor.
+>    - El informe da, por día, cuántas operaciones hay en cada categoría.
+>
+> 4. F4 de los días 13 a 17 y F6 de los días 20 a 31, con lo que hay.
+>    - Una fila sin voz en ninguna versión va como «sin clase (voz no transcrita)».
+>    - Un día de F6 sin voz ni fotograma localizado va como «sin datos (hueco del ASR)».
+>    - U espera a la rama del punto 5, y el informe lo propone así para el cierre.
+>
+> 5. Para la orden de cierre, propone una entrada nueva de la Next Action, del carril de infraestructura y después de T:
+>    - exponer en corpus transcribe la configuración del VAD (o su desactivación), con tests;
+>    - retranscribir v12, v13 y v14 con --reemplaza-a;
+>    - volver a medir en los huecos lo de F2, F3, F4 y F6 de esta rama.
+>    Pon tu propuesta de condición de entrada: si el minuto de Aleks dice que el trader habla, la entrada va; si dice que solo hay música o silencio, no va, y el informe dice que el trader opera callado en esos tramos.
+>
+> Sigue: F2, F3 y F4 de los días 13 a 17, F5 con el punto 3, F6, el cierre del informe, el revisor y la PARADA final.
+
+## El minuto de escucha y la decisión del consultor (2026-11-09)
+
+Copiado tal cual:
+
+> El minuto de escucha (Aleks, 2026-11-09): en v14 de 0:10:00 a 0:11:00 el trader solo dice «bias bajista», y se oye a Aleks toser; no hay más voz. Apúntalo en el informe (respuesta a la PARADA 4, punto 0).
+> Decisión del consultor con eso:
+> - El trader habla en los huecos, pero poco: el VAD se salta frases cortas como esa. La entrada nueva del punto 5 va a la propuesta de cierre, en el carril de infraestructura y con prioridad baja, en los huecos: no va antes de las trazas, de las láminas ni de la preparación de la sesión 7.
+> - U ya NO espera a esa rama. El stop no se ve en el vídeo, así que un caso de los días 20 a 31 sacado del vídeo no tendría stop. U lo decide el consultor en la PARADA final con lo que dé F6: quita del informe la frase «U espera a la rama del punto 5».
+> Sigue hasta la PARADA final.

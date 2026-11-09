@@ -293,6 +293,50 @@ comprobado con `env`), sin ningún `make check` a la vez; GPU GTX 1650 de 4 GB.
 - **Cifras de resultados dichas en voz** (no se copian ni se usan, encargo): v11 0:03:06 y
   0:09:31, v13 0:19:11.
 
+### 2.1 El mapa completo, por vídeo (2026-11-09)
+
+Cada día, con el instante en que empieza o en que se ve por primera vez, el fotograma que lo fecha
+y la voz que lo acompaña. v13 y v14: versión nueva (activa) o vieja, según cuál tenga el texto.
+
+| Vídeo | Día de julio | Desde | Cómo se fecha |
+|---|---|---|---|
+| v11 | 1 (mié) | 0:00:01 | voz «backtesting del mes de julio»; `fr-v11-b83d5164/125000` («Wed 01 Jul '26» en el eje) |
+| v11 | 2 (jue) | 0:10:01 | voz «nos adelantamos a H4»; `…/605000` (cierre del 1) y `…/890000` («Thu 02 Jul '26») |
+| v11 → v12 | 3 (vie) | v11 0:19:26 | voz «continuamos con la siguiente»; `…/1180000` (H4 hasta el viernes); sigue en v12 hasta ~0:07:50 (`fr-v12-3eeb8cf9/75000`, «Fri 03 Jul '26») |
+| v12 | 6 (lun) | ~0:08:00 | `fr-v12-3eeb8cf9/482000` («Mon 06 Jul '26 07:00») |
+| v12 | 7 (mar) | ~0:12:00-0:14:00 | `…/840000` («Tue 07 Jul '26») |
+| v12 | 8 (mié) | ~0:20:05 | voz «continuamos con la siguiente sesión»; `…/1330000` («Wed 08 Jul '26 11:00») |
+| v12 | 9 (jue) | ~0:24:52 | voz «Vamos a 4H»; `…/1590000` («Thu 09 Jul '26») |
+| v12 | 10 (vie), hasta las 11:00 | ~0:29:07 | `…/1870000` y `…/2000000` («Fri 10 Jul '26»); `…/2216000` (0:36:56, H4: el replay en el 10 a las 11:00); la voz: «Descanso [...] Y regreso» (0:35:31-0:36:53) |
+| v13 | (marzo) | 0:00:10 | `fr-v13-8c1e06fb/10000`: **la sesión del backtest de marzo de 2026**, cerrada y declarada (HOLDOUT-EXPOSICIONES, 2026-11-09) |
+| v13 | 10 (vie), la sesión 11-15 ya pasada | 0:00:35 | `…/35000` (M15, «Fri 10 Jul '26 15:00»: la sesión 11-15 del 10 sin ninguna marca); voz (vieja `tr-v13-…1aeb45d5`) «La última vez nos quedamos en el 10 de julio creo» |
+| v13 | 13 (lun) | antes de 0:05:30 | `…/330000` y `…/397000` («Mon 13 Jul '26») |
+| v13 | 14 (mar) | ~0:10:44 | `…/650000`, `…/760000`, `…/898000` («Tue 14 Jul '26») |
+| v13 | 15 (mié) | ~0:21:31 | voz «vamos a definir el bias, al cista»; `…/1295000` (H4, el replay al empezar el 15) y `…/1512000` («Wed 15 Jul '26») |
+| v13 | 16 (jue) | antes de 0:29:27 | `…/1770000` y `…/1830000` («Thu 16 Jul '26») |
+| v13 | 17 (vie) | ~0:35:15 | voz «el bias es el bajista»; `…/2250000` (sin fecha en el eje; por continuidad) |
+| v13 | — | 0:40:42 | `…/2442000`: **la vista de Analytics de julio**, declarada con sus cifras (HOLDOUT-EXPOSICIONES, 2026-11-09); ninguna se usa |
+| v14 | 20 (lun) | 0:00:00 | voz «Nos quedamos en el día 17. Continuamos con el día 20.»; `fr-v14-5688e08b/15000` (H4, el replay al empezar el 20) |
+| v14 | 21 (mar) | antes de 0:15:01 | `…/905000` («Tue 21 Jul '26 07:00») |
+| v14 | 22 (mié) | 0:23:16 | voz «continuamos con el siguiente día»; `…/1402000` (M15, «Wed 22 Jul '26») |
+| v14 | 23 (jue), 24 (vie) | (hueco del ASR, 0:23:23-0:32:57 en las dos versiones) | `…/1980000` (0:33:00) ya está en «Fri 24 Jul '26» por la tarde |
+| v14 | 27 (lun) | (hueco del ASR, 0:33:05-0:42:02) | — |
+| v14 | 28 (mar) | antes de 0:42:02 | `…/2526000` («Tue 28 Jul '26») |
+| v14 | 29 (mié) | antes de 0:49:47 | `…/2990000` («Wed 29 Jul '26») |
+| v14 | 30 (jue) | antes de 0:55:40 | `…/3342000` («Thu 30 Jul '26») |
+| v14 | 31 (vie) | antes de 0:57:24 | `…/3445000` («Fri 31 Jul '26»); voz «quedaría así de todo julio» (0:59:37) |
+
+**Frente a lo que dijo el trader** (v11-v13 del 1 al 17, v14 desde el 20; S-25):
+
+- **Los 13 días del 1 al 17 están en v11-v13, y en ese orden**; v14 empieza el 20 y llega al 31.
+  Lo que dijo el trader se confirma en lo grueso.
+- **Pero no todo está grabado**: la sesión 11-15 del 10 de julio, la que tiene las tres ventas del
+  libro, se ve ya pasada al empezar v13 (0:00:35), sin ninguna marca; v12 acaba en el 10 a las
+  11:00 con un «Descanso». S-25 («todo está grabado») no se cumple para esa sesión.
+- **Un vídeo trae otro tramo**: v13 enseña al empezar, durante segundos, la sesión del backtest
+  de **marzo de 2026** (0:00:10) y acaba en la vista de Analytics de julio (0:40:42). No es PARADA
+  (la voz no comenta operaciones de marzo; respuesta a la PARADA 1, punto 0); va a la PARADA final.
+
 ## 3. F3 · El vídeo frente al libro, días 1 a 17
 
 ### 3.0 El criterio (del consultor, escrito antes de abrir nada)
@@ -429,7 +473,7 @@ Fuente de las operaciones: `anexos/VIDEO-JULIO/operaciones-julio.txt` (`operacio
 | 07-10 | 1-2 | 07:36:35, 07:45:20 | compras | APARECE | v12/1870000-1896000: caja larga cuyo borde izquierdo está en la marca «07:36» del eje, hasta ~07:51, y trazos del flujo del trader |
 | 07-10 | 3-5 | 09:10-09:50 | compras | sin ver | v12/1960000 (0:32:40): trazos del trader, pero la captura no enseña el eje de horas |
 | 07-10 | 6 | 10:01:25 | compra 1.14378 | **COINCIDE** | v12/2000000: «Closed [...] Buy 100000 at 1.14378», cursor 10:00 |
-| 07-10 | 7-11 | 10:28-12:58 | 2 compras, 3 ventas | en v13 | espera la PARADA 4 |
+| 07-10 | 7-11 | 10:28-12:58 | 2 compras, 3 ventas | §3.4 | (escrito antes de la PARADA 4 como «en v13»: la #7 y la #8 salen en marcas de v12 y v13, y las tres ventas NO APARECEN) |
 
 **Recuento parcial (35 operaciones de los días 1 a 10 en v11/v12, sin las cinco del 10 que están
 en v13):** COINCIDE 7 (dos con el minuto no legible); APARECE 21 (5 de ellas débiles, solo
@@ -452,6 +496,74 @@ es otro indicio, con los de §1.6, de que se saltó voz.
 de ese tramo), y los días 10 (tarde) a 17 en v13, que esperan la PARADA 4. Fotogramas abiertos
 hasta aquí: **42** (12 del día 2026-11-08 y 30 del 2026-11-09: 10 de v11 y 20 de v12), todos por instante localizado; ninguno
 con el cursor fuera de julio, marcas sobre otro mes ni panel de operaciones o de estadística.
+
+### 3.4 F3 en los días 10 (tarde) a 17 (v12 al final y v13; 2026-11-09)
+
+Con la respuesta a la PARADA 4: NO LOCALIZABLE (HUECO DEL ASR) aparte; los fotogramas se localizan
+con el texto de cualquiera de las dos versiones de v13; en los huecos no se abre nada.
+
+| Día | # | Madrid | Libro | Categoría | En el vídeo |
+|---|---|---|---|---|---|
+| 07-10 | 7 | 10:28:15 | compra 1.14342 | APARECE | `fr-v13-8c1e06fb/35000` (M15 del 10): marca «be» ~10:25; `fr-v12-3eeb8cf9/2216000` (H4): marcas en la vela de 07:00-11:00 del 10 |
+| 07-10 | 8 | 10:42:50 | compra 1.14331 | APARECE (débil) | las mismas marcas, sin minuto |
+| 07-10 | 9-11 | 12:55:30, 12:56:25, 12:58:40 | **ventas** 1.14339, 1.14338, 1.14338 | **NO APARECE** | v12 acaba en el 10 a las 11:00 («Descanso», 0:35:31); `fr-v13-8c1e06fb/35000` (0:00:35) enseña la sesión 11-15 del 10 ya pasada **sin ninguna marca**, y `…/1295000` (H4) tampoco tiene marcas en la vela de 11:00-15:00 del 10 |
+| 07-13 | 1 | 07:17:55 | venta 1.14066 | APARECE | `…/330000`: caja de Gann ~07:10-07:20; voz (nueva) 0:00:06 «sabemos que es bajista [...] tomar 3 bajistas» y 0:05:26 «lo ganamos» |
+| 07-13 | 2-3 | 11:44:05, 11:54:45 | compras | APARECE (débil) | `…/1295000` (H4): marca «be» en la vela de 11:00-15:00 del 13; en `…/397000` (0:06:37, cursor ~12:16) aún no había marca: el trader volvió atrás después |
+| 07-13 | 4 | 13:25:05 | compra 1.14278 | **NO LOCALIZABLE (HUECO DEL ASR)** | 0:06:39-0:10:44: hueco en las dos versiones |
+| 07-14 | 1 | 08:30:30 | compra 1.13878 | APARECE | `…/760000`: trazos del trader 08:15-08:25, cursor ~08:30 |
+| 07-14 | 2 | 08:55:30 | compra 1.13876 | sin ver | — |
+| 07-14 | 3 | 11:35:15 | compra 1.13976 | APARECE | `…/898000`: «Position Updated · Stop loss moved to 1.13975» (~11:36): el break even a 1 punto de la entrada del libro |
+| 07-14 | 4 | 11:48:20 | compra 1.13984 | sin ver | `…/1090000`: un «be» hacia las 11:40, más bien de la #3 |
+| 07-14 | 5-6 | 12:29:05, 12:33:40 | compras | APARECE (débil) | `…/1090000`: trazos del trader ~12:24-12:36 |
+| 07-14 | 7 | 12:44:05 | compra 1.1394 | APARECE | `…/1090000`: caja larga y caja de Gann ~12:41-12:49 |
+| 07-14 | 8 | 13:06:45 | compra 1.13923 | sin ver | — |
+| 07-15 | 1-2 | 07:06:55, 09:12:25 | compras | sin ver | (`…/1295000`, H4: marcas el 15, sin minuto) |
+| 07-15 | 3-6 | 12:05-14:14 | compras | sin ver | `…/1512000` (0:25:12): la sesión 11-15 del 15 hasta pasadas las 13:05 sin marcas todavía; el trader explica («la primera entrada sería aquí»); no se puede decir que no aparezcan |
+| 07-16 | 1 | 08:00:10 | compra 1.14654 | APARECE | `…/1770000`: herramienta de posición larga desde las 08:00 (cursor 08:08), «Stop: 0.00032 (0.028%)» = **32 puntos, el stop del libro**; `…/1830000`: «be» a las 08:00 |
+| 07-16 | 2-4 | 11:36:00, 13:19:40, 13:55:40 | compras | **NO LOCALIZABLE (HUECO DEL ASR)** | 0:30:42-0:35:15: hueco en las dos versiones |
+| 07-17 | 1 | 07:46:05 | venta 1.14409 | sin ver | — |
+| 07-17 | 2 | 08:27:45 | venta 1.14498 | APARECE (débil) | `…/2250000`: trazos del trader ~08:23-08:28 (sin fecha en el eje; el 17 por continuidad); voz (nueva) 0:35:15 «el bias es el bajista» |
+| 07-17 | 3-5 | 08:45, 09:05, 13:44 | ventas | sin ver | — |
+
+### 3.5 F3, por día (los 13 días, 67 operaciones)
+
+| Día | Operaciones | COINCIDE | APARECE (débil) | NO APARECE | CONTRADICE | NO LOCALIZABLE | sin ver |
+|---|---|---|---|---|---|---|---|
+| 07-01 | 3 | 1 | 2 (0) | 0 | 0 | 0 | 0 |
+| 07-02 | 6 | 1 | 5 (1) | 0 | 0 | 0 | 0 |
+| 07-03 | 3 | 2 | 1 (0) | 0 | 0 | 0 | 0 |
+| 07-06 | 5 | 0 | 2 (0) | 0 | 0 | 3 | 0 |
+| 07-07 | 8 | 1 | 7 (4) | 0 | 0 | 0 | 0 |
+| 07-08 | 2 | 0 | 2 (0) | 0 | 0 | 0 | 0 |
+| 07-09 | 2 | 1 | 0 | 0 | 0 | 1 | 0 |
+| 07-10 | 11 | 1 | 4 (1) | **3** | 0 | 0 | 3 |
+| 07-13 | 4 | 0 | 3 (2) | 0 | 0 | 1 | 0 |
+| 07-14 | 8 | 0 | 5 (2) | 0 | 0 | 0 | 3 |
+| 07-15 | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
+| 07-16 | 4 | 0 | 1 (0) | 0 | 0 | 3 | 0 |
+| 07-17 | 5 | 0 | 1 (1) | 0 | 0 | 0 | 4 |
+| **Total** | **67** | **7** | **33 (11)** | **3** | **0** | **8** | **16** |
+
+- **Ninguna operación CONTRADICE al libro.** En las 7 COINCIDE la entrada leída en el aviso es la
+  del libro (Δ 0), y el stop, en las 4 en que sale (07-03 #1 y #3, 07-16 #1 como distancia;
+  07-07 #3 como precio), también (Δ 0).
+- **El libro está en Europe/Madrid**: en las 7 COINCIDE y en las APARECE con minuto (07-10 #1 en
+  la marca «07:36»; 07-16 #1 a las 08:00), el eje de pared del replay cae en `instante_utc` + 2 h.
+- **En el vídeo y no en el libro** (sin resolver): 8 de julio, caja larga ~11:05-11:25.
+
+## 5. F5 · `material_sin_video` (2026-11-09)
+
+Con el punto 3 de la respuesta a la PARADA 4:
+
+- **Primera vía: no.** Hay 8 NO LOCALIZABLE y 16 sin ver (operaciones no comprobadas).
+- **Segunda vía: sí**, porque hay **3 NO APARECE de verdad**: las tres ventas del 10 de julio en
+  11-15 (12:55:30, 12:56:25 y 12:58:40 Madrid). La sesión se ve en el vídeo (v13 0:00:35, M15; y en
+  el H4 de v13 0:21:35) y no tiene ni caja, ni marca, ni voz. **Es la PARADA que pide el punto 3**,
+  con esta lista; va a la PARADA final, porque decidir qué días son sin vídeo con huecos de por
+  medio lo decide el consultor.
+- **Por eso el bloque `material_sin_video` NO cambia en esta rama**, ni los tres goldens, ni
+  `test_criterio_campos_adr0092.py`, ni la naturaleza de v11-v14 en `fuentes.yaml` (que el
+  encargo ataba al commit de F5). Lo que la PARADA final propone para cada uno, en §10.
 
 ## 4. F4 · Las 81 filas (reproducidas; la clasificación espera F2 y F3)
 
@@ -509,6 +621,55 @@ ruptura del breaker en M1 con cuerpo y no con mecha. No se toca nada aquí.
 intentos 2); error nuestro (sospecha) 5; material incompleto 1; sin clase 15; hasta la PARADA 4,
 2.
 
+### 4.2 Los días 13 a 17, y las dos del 10 que esperaban (31 filas; 2026-11-09)
+
+Con el punto 4 de la respuesta a la PARADA 4: una fila sin voz en ninguna de las dos versiones va
+como «sin clase (voz no transcrita)». Voz de v13: nueva `tr-v13-…7f5333a0` o vieja `tr-v13-…1aeb45d5`.
+
+| Sesión | Filas | La voz del trader (vídeo, h:mm:ss, id) | Lo que hizo el bot | Clase propuesta | Por qué |
+|---|---|---|---|---|---|
+| 07-10 07-11 **[hora perdida]** | P3 ×2 (10:28, 10:42) | — (v12 0:33:18-0:35:31, hueco del ASR) | compras a 32 y 43 puntos, 29-44 min antes (o12 cancelada) | **sin clase (voz no transcrita)** | sin voz en ninguna versión |
+| 07-13 07-11 | P5 (venta del bot 09:13) | v13 0:05:26 (nueva): «Ahí está protegida la entrada, lo ganamos, se desarrolla el flujo de precio y no, no hay entrada.» | venta 115 min después de la del trader, a 10 puntos | **sin clase** | el trader dice que después no hay entrada; el bot entra: a preguntar solo si se repite |
+| 07-13 11-15 | P2 Δ11 (11:44), P3 (13:25), P5 ×3 (11:02, 11:55, 12:38) | v13 0:06:25-0:06:38 (nueva): «nos vamos a la siguiente sesión de las 11. Ya de por sí sabemos que estamos en un rango alcista»; después, hueco hasta 0:10:44 en las dos versiones | compras a 3-69 puntos (o20, o24) | **sin clase (voz no transcrita)** | la sesión entera cae en el hueco |
+| 07-14 11-15 | P2 Δ21 (11:35), P2 Δ19 (12:44), P3 ×2 (11:48, 13:06), P5 ×2 (11:21, 11:26) | v13 0:18:08 (nueva): «Bueno, aquí otro boolean, break even, desarrollación de control, nos saca» | compras a 13-36 puntos (o13 cancelada, o14 llenada) | **sin clase** (a la rama de trazas) | 07-14 es día de la rama de trazas (RUMBO §2: «tres pérdidas sin RN-016»); la voz no da más |
+| 07-15 07-11 | P3 (09:12), P5 ×3 (07:04 Δ2, 07:16, 08:45) | v13 0:21:31 (vieja y nueva) es ya la sesión de las 11; la de 7-11 cae en el hueco 0:21:45-0:25:08 de la nueva y solo la cubre un segmento largo de la vieja sin nada sobre ella | compra a 2 puntos y 3 min de la del trader (07:04), y otras de más | **sin clase (voz no transcrita)** | sin voz sobre esa sesión |
+| 07-15 11-15 | P1 ×4 (12:05, 12:45, 14:00, 14:14) y P5 otro lado (venta del bot 14:37) | v13 0:21:31 (nueva): «Y luego continuamos, vamos a definir el bias, al cista, vale, entonces, al cista porque ya sabemos el rango, no ha sido roto» | sesgo bajista; vende a 7-95 puntos; frenos `detenido_por_racha` | **regla desconocida** | el rango de H4 |
+| 07-16 11-15 | P5 (11:35 Δ6) | — (0:30:42-0:35:15, hueco en las dos versiones) | compra a 6 puntos y 2 s de la del trader | **sin clase** | casi pareja (6 puntos) |
+| 07-16 11-15 **[hora perdida]** | P3 ×2 (13:19 «misma entrada, otra hora», 13:55) y P5 (14:40), las tres «posible M» | — (el mismo hueco) | compra 45-81 min después y 48-98 puntos más abajo | **material incompleto** | la hora de ticks perdida de las 11h UTC (13:00-14:00 en Madrid) cae en esas filas; respaldo M1 |
+| 07-17 07-11 | P2 Δ15 (08:27), P3 (09:05), P5 (08:32) | v13 0:35:15 (nueva): «este era el último rango que teníamos, vale, este era el último rango, luego es roto, una vela roja [...] entonces nos enfocamos en los carteles bajistas, el buy es el bajista» | venta a 15 puntos y 4 min 47 s de la del trader (o22 llenada) | **sin clase** | casi pareja (15 puntos); el resto, otra zona |
+| 07-17 11-15 | P1 sesgo **alcista** (su venta de 13:44) | la misma (0:35:15): para el trader el rango de H4 ya es bajista | sesgo alcista; ninguna operación | **regla desconocida** | el rango de H4, en el otro sentido |
+
+**Recuento de las 81 filas, con §4.1:** regla desconocida **35** (el rango de H4 **30**: 1, 6, 7,
+15 y 17 de julio; los dos esquemas 3; seguir tras tres pérdidas 2); error nuestro (sospecha) 5;
+material incompleto 4; sin clase 37 (de ellas, voz no transcrita 13: 07-09 11-15 ×2, 07-10 ×2,
+07-13 11-15 ×5 y 07-15 07-11 ×4; a la rama de trazas 13: 07-02 11-15 ×5, 07-03 11-15 ×2 y 07-14
+×6; y 11 casi parejas o de más).
+
+## 6. F6 · Los días 20 a 31 (v14; para que el consultor decida U)
+
+Ni casos, ni `libros.yaml`, ni reparto. Voz de v14: nueva `tr-v14-…1d289df6` o vieja
+`tr-v14-…2253ec10`. Las cifras de resultados que el trader dice no se copian.
+
+| Día | En v14 | Operaciones que narra el trader | Fotograma localizado | Qué se lee |
+|---|---|---|---|---|
+| 20 (lun) | 0:00:00-~0:15:00 | 1: (vieja) 0:00:22 «Llega a sacar en break even [...] Vale, vamos a dejarlo en loss»; casi todo el día cae en un hueco (0:05:40-0:15:01 en las dos) | `…/15000` (H4) | el día; nada de la operación |
+| 21 (mar) | ~0:15:00-0:23:16 | 3-4: 0:15:01 «aquí la entrada pero me sacaría en B»; 0:19:25-0:19:59 «esto es break even [...] esta entrada es un break even»; 0:21:10 «te genera el segundo esquema, esto valida, break even»; y 0:23:01-0:23:12 una descartada («no cumple ninguno de los dos esquemas [...] no tomamos la entrada») | `…/905000`; `…/1402000` (cinco marcas «be» del 21) | **ejemplo 1**: día (Tue 21), dirección (venta) y entrada (1.14219) en el aviso «Closed your open position · Sell 100000 at 1.14219»; ni el stop ni el minuto del llenado |
+| 22 (mié) | 0:23:16- | 0: la voz solo fija el lado («el bias es [alcista] [...] 3 [alcistas]») y entra en un hueco | `…/1402000` (la sesión 07-11 del 22 en curso) | el día |
+| 23 (jue) | hueco | **sin datos (hueco del ASR)** | — | — |
+| 24 (vie) | hueco | **sin datos (hueco del ASR)** | (`…/1980000`, 0:33:00, ya en la tarde del 24, sin marcas a la vista) | — |
+| 27 (lun) | hueco (0:33:05-0:42:02) | **sin datos (hueco del ASR)** | — | — |
+| 28 (mar) | ~0:42:02 | 3: «aquí hay una entrada que claramente lleva por debajo, break even [...] aquí también hay una entrada [...] aquí hay una entrada que no le voy a tomar para no afectar al mostreo» (dos tomadas y una dejada a propósito) | `…/2526000` | el día y la hora; sin marcas de posición a la vista |
+| 29 (mié) | ~0:49:47 | 1: «aquí también hay otra entrada» | `…/2990000` | **ejemplo 2**: el día (Wed 29) y dos marcas «be» a ~10:40 y ~11:50; ni dirección, ni entrada, ni stop |
+| 30 (jue) | ~0:54:46-0:55:49 | 1 (dudosa): «directamente no hay ningún punto en el que nos apoyemos para tomar la entrada. / Así que lo dejamos pasar. / Mira, aquí tenemos una entrada. / Entrada sin value.» | `…/3342000` | el día y la hora; una línea de liquidez, sin posición |
+| 31 (vie) | ~0:56:50-0:59:37 | 1: «Vamos a una toma de liquidez allí / Que me saca en B»; y «aquí no hay entrada [...] en esta sesión», «no hay entradas» | `…/3445000` | el día y la hora; sin posición |
+
+- **Recuento:** de los 10 días laborables, **3 sin datos** (23, 24 y 27, enteros en huecos del
+  ASR), el 22 casi sin nada, y **10 u 11 operaciones narradas** en los otros seis, casi todas break even.
+- **Qué daría un caso sacado del vídeo:** el día y la hora siempre; la dirección y la entrada solo
+  cuando sale el aviso de cierre (ejemplo 1); el stop solo a veces y como distancia o como precio
+  movido (§3.3), nunca garantizado. Un caso de los días 20 a 31 sacado de v14 no tendría stop en la
+  mayoría de las operaciones, y no hay libro con qué contrastarlo.
+
 ## 7. F7 · Candidatas a evidencia (no se crea ningún ítem)
 
 De la transcripción filtrada; v13 y v14, de las versiones viejas (`tr-v13-…1aeb45d5`,
@@ -530,6 +691,119 @@ De la transcripción filtrada; v13 y v14, de las versiones viejas (`tr-v13-…1a
 
 **Cifras de resultados dichas en voz** (no se copian ni se usan): v11 0:03:06 y 0:09:31, v13
 0:19:11.
+
+## 8. Lo que NO cambia, medido
+
+`git diff main --stat` antes del commit de la entrega (22 ficheros, 2615 inserciones, 4
+borrados): `PROJECT_STATE.md`, `contrato.yaml`, el encargo, `docs/state/HISTORIA.md` (el Archivo
+63), `ENTRADA-JULIO.md` (el recuadro, 11 líneas), `HOLDOUT-EXPOSICIONES.md`, este informe, cinco
+ficheros de `anexos/VIDEO-JULIO/` y los diez manifiestos nuevos de `knowledge/corpus/` (seis de
+transcripción, con las dos retranscripciones de v13 y v14, y cuatro de fotogramas). **Nada de**
+`src/`, `knowledge/spec/`, `knowledge/evidence/`, `knowledge/feedback/`, `knowledge/cases/`
+(tampoco `criterio_fidelidad.yaml`: F5 no cambia el bloque), `knowledge/corpus/fuentes.yaml`
+(la naturaleza de v11-v14 iba con el commit de F5), `libros.yaml`, `scripts/`, `tests/` ni los
+goldens. Ningún arnés, motor ni visor corrido. **Desviación declarada:** el contrato se amplió a
+los tres goldens y a `test_criterio_campos_adr0092.py` (respuesta a la fase 0, punto 2) y no se
+tocaron; y el encargo pedía cambiar la naturaleza de v11-v14 en `fuentes.yaml` «en el mismo commit»
+que F5, que no hubo.
+
+## 9. Los `make check` de la rama
+
+| Commit | Exit | Passed | SELLO | PICO DE MEMORIA |
+|---|---|---|---|---|
+| `dfe8b44` apertura | 0 | 3343 | `6b27818b…` | 307 MiB |
+| `c87cff5` fase 0 y F1 | 0 | 3343 | `dad9f2d4…` | 309 MiB |
+| `8c47a72` PARADAS 2 y 3 | 0 | 3343 | `52e2157b…` | 308 MiB |
+| `2c1116d` retranscripción y PARADA 4 | 0 | 3343 | `0cd803ec…` | 309 MiB |
+| `3b99e5c` F3 parcial | 0 | 3343 | `f4c27680…` | 311 MiB |
+| `1b75f94` F3 de v12, F4 de 1-10 y F7 | 0 | 3343 | `0ea9c384…` | 309 MiB |
+| la entrega | (abajo) | | | |
+
+Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
+
+## 10. Propuestas para la orden de cierre (cada una comprobada contra `test_hoja_de_ruta`)
+
+1. **T sale de la Next Action, HECHA**, con un registro nuevo en HISTORIA. HISTORIA ya tiene
+   «# Next Action HECHA · T · sale de PROJECT_STATE.md en trabajo/respuestas-ftmo (2026-10-05)»
+   (línea 4986) y «· U ·» (6184), de otras letras T y U reutilizadas. Encabezado propuesto, con el
+   formato de las más recientes: **«# Next Action HECHA · T · el vídeo de julio · sale de
+   PROJECT_STATE.md en trabajo/video-julio (<fecha del cierre>)»**. `letras_hechas` usa un
+   conjunto (`test_hoja_de_ruta.py:60-61`): no ve que falte el registro nuevo, porque el viejo ya
+   pone la T. **Deuda del carril de guardias**: «`test_hoja_de_ruta` no distingue un registro
+   «HECHA · T» de una letra reutilizada del de la T vigente».
+2. **R2.4 reescrita.** U sigue viva, así que R2.4 no puede ir HECHA, y con T fuera de la Next
+   Action no puede citar NA:T («no es una letra viva»). Propuesta: **Refs: NA:U · ID:ADR-0078**, y
+   un «Estado:» que diga: «la transcripción y la comparación (NA:T) están HECHAS en
+   trabajo/video-julio (VIDEO-JULIO.md); falta la decisión de los días 20 a 31 (NA:U)». «Depende
+   de:» queda en R2.1 (HECHA). Por la regla de `test_hoja_de_ruta.py:143-149` (una entrada no
+   HECHA solo cita letras vivas) debería pasar con NA:U viva; **no lo simulé en esta rama**: lo
+   comprueba el cierre con su simulación en memoria, antes de editar.
+3. **U**, con la decisión del consultor tras la PARADA final (§6); su «Depende de T» sale. U ya no
+   espera a la rama del VAD (decisión del consultor tras el minuto de escucha).
+4. **F**: el punto (1) («T, la voz del trader sobre julio») sale, y (2)-(4) pasan a ser (1)-(3).
+5. **El Marcador no cambia**: no hay corrida.
+6. **Las filas de §8 de RECORRIDA-CONSTRUCCION-2.md que reclasifique la PARADA**, para la rama que
+   use la clasificación (las trazas y la preparación de la sesión 7): las 81 de §4 de este informe,
+   con la clase que decida el consultor.
+7. **Entrada nueva de la Next Action, carril de infraestructura, prioridad baja, en los huecos**
+   (respuesta a la PARADA 4, punto 5, y decisión tras el minuto de escucha): «Exponer en `corpus
+   transcribe` la configuración del VAD (o su desactivación), con tests; retranscribir v12, v13 y
+   v14 con `--reemplaza-a`; volver a medir en los huecos lo de F2, F3, F4 y F6 de
+   trabajo/video-julio. No va antes de las trazas, de las láminas ni de la preparación de la sesión
+   7.» **Condición de entrada (propuesta): va**, porque el minuto de Aleks dice que el trader habla
+   en un hueco («bias bajista», una frase corta que el VAD se saltó). La letra, la que asigne el
+   consultor (hoy están libres, entre otras, la V y la W).
+8. **Technical Debt, carril de guardias** (tres líneas):
+   - «La guardia no niega leer con Read las crudas de `data/transcripciones/` de un vídeo sin
+     cuarentena ni tramos» (encargo).
+   - «La forma de medida de ffmpeg de la guardia no admite `-ss`/`-t` sobre un tramo de un vídeo
+     del corpus: falso positivo de la lista cerrada de GUARDIA-FFMPEG» (respuesta a la PARADA 2).
+   - La de `test_hoja_de_ruta` y las letras reutilizadas (punto 1).
+9. **«hasta que T lo compruebe» en `src/`** (`cableado.py:1408`, `criterio_fidelidad.py:341`) y la
+   línea 18 de los tres goldens: siguen siendo verdad mientras `material_sin_video` no cambie (§5);
+   los cambia la rama que cambie el bloque.
+10. **G de la Next Action** («qué libro viene de vídeo, ACTIVAR-SESION-05.md §0.b.7») puede apuntar
+    también a este informe (§3.5 y §5).
+
+## 11. PARADA final · Lo que necesito que decidas
+
+0. **La fila de marzo** (HOLDOUT-EXPOSICIONES, 2026-11-09). v13 0:00:10 enseñó, unos segundos, la
+   sesión del backtest de marzo de 2026 del trader, con marcas suyas sobre velas de dos días de
+   marzo; marzo está recibido, sin abrir y sin sortear. Se cerró sin describir. Opciones: (a) esos
+   dos días se tratan como vistos y salen del sorteo de marzo (te los digo en privado si los
+   quieres); (b) no cambia nada: unas marcas sin cifras en un fotograma no son una etiqueta.
+   Recomiendo (a), por prudencia: son dos días de un mes que todavía no se ha sorteado, y sacarlos
+   cuesta poco. Coste de (b): ninguno medible, pero el sorteo de marzo tendría dos días ya vistos.
+1. **F5: la segunda vía.** Hay 3 NO APARECE de verdad (las tres ventas del 10 de julio en 11-15:
+   la sesión se ve en el vídeo y no tiene ninguna marca) y 24 operaciones no comprobadas (8 NO
+   LOCALIZABLE y 16 sin ver). Opciones: (a) julio pasa a `meses` y `dias_con_video` lleva los días
+   en que todas sus operaciones son COINCIDE o APARECE: 07-01, 07-02, 07-03, 07-07 y 07-08 (cinco
+   días; los otros ocho tienen alguna sin comprobar o, el 10, NO APARECE); (b) julio sigue
+   provisional y el bloque no cambia hasta la rama del VAD, que puede convertir no comprobadas en
+   comprobadas. Recomiendo (b): 24 de las 67 no están comprobadas por un límite del instrumento
+   (el ASR), y el 10 es un solo día con una sesión no grabada; con (a), ocho días contarían «sin
+   vídeo» sin que se haya medido que lo sean. Coste de (b): julio sigue provisional.
+2. **Las 81 filas de F4** (§4.1 y §4.2), por clase propuesta: regla desconocida 35 (el rango de H4
+   30, con su pregunta; los dos esquemas 3; seguir tras tres pérdidas 2); error nuestro (sospecha)
+   5 (07-03 07-11: la ruptura del breaker con cuerpo); material incompleto 4 (07-10 07:45 y las
+   tres del 16 en la hora perdida); sin clase 37 (13 sin voz transcrita, 13 a la rama de trazas,
+   11 casi parejas o de más). Las [1-jul] (6 filas) no van a la sesión 7 (RUMBO §1 b).
+3. **U** (§6): de los días 20 a 31, 3 sin datos, el 22 casi, y 10 u 11 operaciones narradas en
+   los otros seis; un caso del vídeo tendría día y hora, la dirección y la entrada solo si sale el
+   aviso de cierre, y el stop casi nunca. Opciones: (a) no se extraen casos de los días 20 a 31;
+   (b) se extraen solo los que tengan día, dirección, entrada y stop legibles. Recomiendo (a): sin
+   libro con qué contrastar y sin stop en la mayoría, no serían casos completos (una fila sin stop
+   no produce caso en ningún libro).
+4. **Las candidatas de F7** (§7, 11 tramos): cuáles pasan a evidencia. Recomiendo, primero, la 1
+   y la 2 (el rango de H4, para la pregunta que más filas mueve) y la 10 (las entradas que el
+   trader deja a propósito «para no afectar al muestreo», que cambia cómo se leen las operaciones
+   de más del bot).
+5. **Desviaciones:** (a) los ocho manifiestos de F1 en el commit de la fase 0 (aceptada); (b) la
+   PARADA 3 decía que el stop no se leía nunca, y sí se lee a veces (§3.3, corregido); (c) «COINCIDE
+   (minuto no legible)» en dos operaciones (07-03 #3, 07-09 #1); (d) F5 no se aplicó (la segunda
+   vía es PARADA); el contrato se amplió a tests que no se tocaron y la naturaleza de v11-v14 en
+   `fuentes.yaml` sigue igual; (e) la vista de Analytics de julio en v13 0:40:42, no prevista por
+   la voz, declarada con sus cifras; (f) el fotograma de marzo (punto 0).
 
 ## PARADA 1 · un fotograma de julio enseña velas de meses anteriores (2026-11-08)
 
@@ -793,5 +1067,66 @@ Para cada operación de los 13 casos dev de julio (`instante_utc` es el llenado;
   CONTRADICE y ninguna NO APARECE; si no, segunda vía, con `dias_con_video` = los días en que se
   cumple.
 
+## Respuesta del consultor a la PARADA 4 (2026-11-09)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 4 de trabajo/video-julio (2026-11-09). Cópiala tal cual en el informe, en su sección, y aplícala. No hay más PARADAS por el ASR: sigue hasta la PARADA final.
+>
+> 0. El minuto de escucha no bloquea la rama. Aleks escuchará v14 de 0:10:00 a 0:11:00 cuando pueda y te dirá en un mensaje aparte lo que oye. Apúntalo en el informe cuando llegue, y con eso escribe la propuesta del punto 5. No se retranscribe nada más en esta rama: si el trader habla, el problema es la configuración del VAD, que corpus transcribe no expone y que vive en src/.
+>
+> 1. Versión activa: opción (a).
+>    - La nueva queda activa.
+>    - Donde solo la vieja tiene texto, se cita la vieja por su id (transcript show --transcripcion <id>), y cada cita del informe dice de qué id sale.
+>    - Para localizar fotogramas vale el texto de cualquiera de las dos versiones: las dos transcriben el mismo vídeo, y lo que localiza una cuenta como localizado (ADR-0038 §1).
+>
+> 2. Una operación que cae en un hueco sin texto en ninguna de las dos versiones va como NO LOCALIZABLE (HUECO DEL ASR), separada de NO APARECE. En los huecos no se abre ningún fotograma: muestrear está prohibido (ADR-0038). Las 3 «sin ver» del 10 de julio se cuentan igual que NO LOCALIZABLE en F5: no están comprobadas.
+>
+> 3. F5 tiene una tercera salida.
+>    - La primera vía exige que ninguna operación de los 13 días sea NO LOCALIZABLE ni «sin ver». Si alguna lo es, el bloque material_sin_video NO cambia: julio sigue provisional y los goldens no se tocan. Que una operación no esté comprobada no quiere decir que no esté grabada, y ADR-0092 §11 solo cambia el bloque si T lo comprueba.
+>    - La segunda vía (julio a meses) solo si hay alguna NO APARECE o CONTRADICE de verdad. En ese caso, PARADA con la lista, porque decidir qué días son sin vídeo con huecos de por medio lo decide el consultor.
+>    - El informe da, por día, cuántas operaciones hay en cada categoría.
+>
+> 4. F4 de los días 13 a 17 y F6 de los días 20 a 31, con lo que hay.
+>    - Una fila sin voz en ninguna versión va como «sin clase (voz no transcrita)».
+>    - Un día de F6 sin voz ni fotograma localizado va como «sin datos (hueco del ASR)».
+>    - U espera a la rama del punto 5, y el informe lo propone así para el cierre.
+>
+> 5. Para la orden de cierre, propone una entrada nueva de la Next Action, del carril de infraestructura y después de T:
+>    - exponer en corpus transcribe la configuración del VAD (o su desactivación), con tests;
+>    - retranscribir v12, v13 y v14 con --reemplaza-a;
+>    - volver a medir en los huecos lo de F2, F3, F4 y F6 de esta rama.
+>    Pon tu propuesta de condición de entrada: si el minuto de Aleks dice que el trader habla, la entrada va; si dice que solo hay música o silencio, no va, y el informe dice que el trader opera callado en esos tramos.
+>
+> Sigue: F2, F3 y F4 de los días 13 a 17, F5 con el punto 3, F6, el cierre del informe, el revisor y la PARADA final.
+
+### El minuto de escucha y la decisión del consultor (2026-11-09)
+
+Copiado tal cual:
+
+> El minuto de escucha (Aleks, 2026-11-09): en v14 de 0:10:00 a 0:11:00 el trader solo dice «bias bajista», y se oye a Aleks toser; no hay más voz. Apúntalo en el informe (respuesta a la PARADA 4, punto 0).
+> Decisión del consultor con eso:
+> - El trader habla en los huecos, pero poco: el VAD se salta frases cortas como esa. La entrada nueva del punto 5 va a la propuesta de cierre, en el carril de infraestructura y con prioridad baja, en los huecos: no va antes de las trazas, de las láminas ni de la preparación de la sesión 7.
+> - U ya NO espera a esa rama. El stop no se ve en el vídeo, así que un caso de los días 20 a 31 sacado del vídeo no tendría stop. U lo decide el consultor en la PARADA final con lo que dé F6: quita del informe la frase «U espera a la rama del punto 5».
+> Sigue hasta la PARADA final.
+
+### Cómo se aplica
+
+- **Punto 0:** el minuto de Aleks, arriba: en v14 0:10:00-0:11:00 el trader dice «bias bajista»
+  (una frase corta que ningún ASR transcribió) y no hay más voz. **El trader habla en los huecos,
+  pero poco.** No se retranscribe nada más.
+- **Punto 1:** la nueva queda activa; las citas de v13 y v14 dicen su id; los fotogramas se
+  localizan con el texto de cualquiera de las dos versiones.
+- **Punto 2:** NO LOCALIZABLE (HUECO DEL ASR), separada de NO APARECE; en F5 las tres «sin ver» del
+  10 cuentan como no comprobadas.
+- **Punto 3:** F5 con tres salidas (§5).
+- **Punto 4:** F4 de los días 13 a 17 y F6, con lo que hay. U NO espera a la rama del VAD (decisión
+  del consultor tras el minuto de escucha): la decide el consultor en la PARADA final con F6. Un
+  matiz medido que la decisión debe tener delante: el stop **sí** sale a veces en el vídeo, como
+  precio («Stop loss moved to X») o como distancia (la herramienta de posición), §3.3; no en
+  todas las operaciones.
+- **Punto 5:** la entrada del VAD, en las propuestas para la orden de cierre, carril de
+  infraestructura, prioridad baja, en los huecos (§9).
+
 ## Estado
-EN CURSO · PARADA 2 (los cuatro comandos de §1.6, para Aleks) y PARADA 3 (el piloto de F3, §3.1)
+EN CURSO
