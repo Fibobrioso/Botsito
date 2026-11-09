@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/video-julio
 
 ## Current Feature
-Ninguna rama abierta. trabajo/recorrida-construccion-2 cerrada en main el 2026-11-08 (stable/F38t-recorrida-construccion-2): la re-corrida que cuenta (ADR-0070 §3): «no» (cobertura 15,7 %, precisión 13,9 %).
+trabajo/video-julio · EN CURSO (abierta el 2026-11-08): T, el vídeo de julio (v11-v14), R2.4. Encargo docs/encargos/trabajo-video-julio.md; informe docs/validation/VIDEO-JULIO.md.
 
 ## Stable Main State
 86f306a · merge de `trabajo/recorrida-construccion-2` (tag `stable/F38t-recorrida-construccion-2`), sobre `stable/F38s-cuenta-por-mes` (41d47b3). Informe docs/validation/RECORRIDA-CONSTRUCCION-2.md; el registro del cierre, al final de HISTORIA.
@@ -153,8 +153,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 62 (2026-11-08).
+— ninguna desde el Archivo 63 (2026-11-08).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 62 (2026-11-08).
+— ninguna desde el Archivo 63 (2026-11-08).

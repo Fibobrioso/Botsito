@@ -1,0 +1,39 @@
+rama: trabajo/video-julio
+riesgo: medio  # rama de medida: transcribe y extrae fotogramas de v11-v14 (manifiestos nuevos, inmutables), cambia la naturaleza de v11-v14 en fuentes.yaml y el bloque material_sin_video de criterio_fidelidad.yaml (F5); no toca src/, spec, evidencia, feedback, casos ni repartos
+artefacto: docs/validation/VIDEO-JULIO.md
+tramo: "R2 · Material de construcción"
+rutas_permitidas:
+  - docs/validation/VIDEO-JULIO.md
+  - docs/validation/anexos/VIDEO-JULIO/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/validation/ENTRADA-JULIO.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - knowledge/corpus/transcripciones/
+  - knowledge/corpus/fotogramas/
+  - knowledge/corpus/fuentes.yaml
+  - knowledge/corpus/manifest.yaml
+  - knowledge/cases/criterio_fidelidad.yaml
+  - tests/unit/test_metodo_adr0092.py
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - src/
+  - knowledge/spec/
+  - knowledge/evidence/
+  - knowledge/feedback/
+  - knowledge/cases/dev/
+  - knowledge/cases/holdout/
+  - knowledge/corpus/libros.yaml
+  - scripts/
+  - Makefile
+  - .claude/
+  - tools/mql5/
+  - corpus/
+  - data/manifests/
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/
+  - docs/validation/RECORRIDA-CONSTRUCCION-2.md
+comprobaciones:
+  - uv run botsito state check
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1

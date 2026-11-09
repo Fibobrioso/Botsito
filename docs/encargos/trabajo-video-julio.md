@@ -1,0 +1,149 @@
+# Encargo · trabajo/video-julio
+
+Dado por Aleks (consultor) el 2026-11-08. Copiado tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Encargo del consultor (2026-11-08): rama trabajo/video-julio, la entrada T de la Next Action (R2.4 de docs/plan/HOJA-DE-RUTA.md; ENTRADA-JULIO.md §5), la primera del orden de docs/plan/RUMBO-2026-11.md. Ábrela con la skill abrir-rama y copia este encargo tal cual en docs/encargos/trabajo-video-julio.md. Trabaja en la laptop (hacen falta el corpus, los vídeos y la GPU). Antes de empezar, comprueba con /model que estás en Opus 5.5 con esfuerzo alto.
+>
+> BASE (compruébala con git al abrir, como manda abrir-rama): main y origin/main en 5a54b46, commit de estado sobre el merge 86f306a, tag stable/F38t-recorrida-construccion-2 (el último «- Tag:» de HISTORIA); CI de main sobre 5a54b46: run 42550658681 en verde; ninguna otra rama local ni remota. Si algo no cuadra, PARADA antes del primer commit.
+>
+> OBJETIVO, en una frase: oír al trader sobre julio. Se transcriben v11 a v14, se comprueba qué días cubre cada vídeo y se compara el vídeo con los casos del libro de julio (días 1 a 17), operación por operación y hora por hora. Con eso se prepara la clasificación de las 81 filas de julio que RECORRIDA-CONSTRUCCION-2.md §8 dejó «sin clase hasta T», y el inventario de los días 20 a 31, que solo están en v14 y que el consultor necesita para decidir U.
+>
+> QUÉ NO CAMBIA
+> - No se tocan src/, knowledge/spec/, knowledge/evidence/, knowledge/feedback/, knowledge/cases/dev/ ni ningún reparto, ni libros.yaml, parámetros, umbrales o tolerancias.
+> - Los tests no cambian, salvo los que enumeran el corpus (0.3) y el que fija el valor antiguo de material_sin_video (F5).
+> - No se corre el arnés, ni el motor, ni el visor. El lado del bot sale de lo ya commiteado en docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/ (para-clasificar.txt, patrones-cuenta-por-mes.txt, visor-sesiones.txt).
+> - Lo único de knowledge/ que cambia:
+>   · los manifiestos nuevos de transcripciones y fotogramas (inmutables desde su commit);
+>   · la naturaleza de v11 a v14 y el comentario de knowledge/corpus/fuentes.yaml:116-118, más lo que corpus inventory regenere de ellos;
+>   · el bloque material_sin_video de knowledge/cases/criterio_fidelidad.yaml (F5).
+> - Fuera de knowledge/: el informe y su anexo, HOLDOUT-EXPOSICIONES.md y un RECUADRO DE CORRECCIÓN en ENTRADA-JULIO.md §5. El recuadro dice que la frase «con el guion de main y su cuarentena» era un error: scripts/transcribir_sesion.py falla cerrado con un vídeo que no es una sesión, y la vía es `corpus transcribe`. El cuerpo del informe no se toca.
+> - El contrato cubre exactamente eso.
+>
+> LO QUE SE PUEDE MIRAR (CLAUDE.md, «Que se puede mirar y que no»)
+> - Julio es construcción (ADR-0078). En la fase 0, compruébalo para el mes ENTERO, también del 18 al 31:
+>   · casos_reservados(repo) y casos_ocultos(repo) por día, contando y sin imprimir ids;
+>   · que 7 está en cases.holdout.meses_libres (hoy deberían salir 1, 4, 7, 8, 10 y 11: verifícalo).
+> - LOS DÍAS 20 A 31 SE MIRAN EN ESTA RAMA. Decisión del consultor del 2026-11-08, con estos motivos:
+>   · no tienen libro y no son construcción, pero tampoco reservados: julio no tiene ningún día en ninguna partición y está en vistos.yaml;
+>   · ADR-0078 §3 manda decidir qué se hace con ellos DESPUÉS de transcribir v11 a v14.
+>   La cautela de las sesiones 5 y 6 («julio del 18 en adelante», PARADA o no citable) fue una decisión para esas sesiones y no sale de ningún ADR. Queda levantada para v11 a v14. Siguen en pie dos cosas:
+>   · los tramos no citables ya escritos, entre ellos v16 0:30:41-0:31:37;
+>   · la decisión 5 de la respuesta a la PARADA de v16 (SESION-05-EXTRACCION.md): el dato de ese tramo no se usa.
+>   Lo que v14 cubra se mide en v14, como fuente propia. Si algo tapa los días 20 a 31 (un tramo, la guardia o la CLI), PARADA: no se rodea.
+> - EL TEXTO SE LEE SOLO POR LA CLI FILTRADA: uv run botsito corpus transcript show, uv run botsito kb find, uv run botsito kb at.
+>   · Nunca con Read, Grep, cat ni guiones propios sobre data/transcripciones/. Ni la guardia ni tests/unit/test_cuarentena.py lo impiden para v11-v14 (auditor del consultor): es una regla de este encargo, por MIRAR-EL-MATERIAL.md (la CLI es la vía de lectura desde F36l).
+>   · Propón para el cierre una línea de Technical Debt del carril de guardias: «la guardia no niega leer con Read las crudas de data/transcripciones/ de un vídeo sin cuarentena ni tramos».
+>   · La cuarentena por condición tapa los meses no libres (hoy 2, 3, 5, 6, 9 y 12), las fechas numéricas, un día de la semana con número y «backtest» con la abreviatura de un mes tapado, más el segmento anterior y el siguiente. NO tapa un día de julio dicho con palabras.
+>   · Di en el informe cuántos segmentos ocultó cada vídeo y por qué motivo, sin el texto.
+> - FOTOGRAMAS: solo por instante localizado antes en la transcripción (ADR-0038).
+>   · Se abren con uv run botsito corpus frames show --video <v> --t h:mm:ss [--n N] y Read sobre la ruta que imprime.
+>   · Antes de abrir uno, comprueba con transcript show que en ±30 s no hay ningún segmento oculto. Si lo hay, ese instante no se abre y se apunta.
+>   · Ninguna vista de Analytics ni panel de estadística, de ningún mes. FX Replay la enseña a veces dentro del vídeo: si la transcripción habla de estadísticas o del resultado del mes, ahí no se abre nada.
+>   · Si un fotograma abierto así trae un agregado o una vista de Analytics, se declara el mismo día con sus cifras en HOLDOUT-EXPOSICIONES.md y ninguna se usa (ADR-0038 §2).
+>   · Si enseña un gráfico de un mes que no sea julio de 2026, se cierra, no se describe, y PARADA con el vídeo y el instante.
+> - Las seis capturas de resumen de Backtest Julio 2026 siguen sin abrirse.
+> - Las cifras de resultados que el trader diga en voz (del mes o de una racha) no se copian ni se usan: se dice dónde están.
+> - HOLDOUT-EXPOSICIONES.md lleva una fila por cada día de trabajo de la rama, escrita ANTES del primer make check de ese día (cada make check lee el M1 de marzo y calienta con el de junio: Technical Debt). La fila dice lo de julio que se leyó ese día:
+>   · qué vídeos se transcribieron;
+>   · cuántos fotogramas se abrieron y de qué vídeos;
+>   · que se vieron los días 20 a 31 en v14, sin números de días en la fila más allá de «20 a 31».
+>
+> FASE 0 (skill fase-cero, con el agente auditor-encargo sobre este encargo). No se escribe en el repo salvo la apertura.
+> 0.1 La base y lo de julio de arriba. Los cuatro .mkv de corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/ con los bytes y el sha256 de ENTRADA-JULIO.md §0.d (sha256sum, sin abrir nada). Si alguno no coincide, PARADA.
+> 0.2 Antes de usar cada herramienta o salida, escribe qué campos da, medido sobre una ejecución. Es la lección de F38t: tres veces se pidió a una herramienta algo que no daba. Las de esta rama:
+>   · corpus transcribe, transcript show, frames extract y frames show;
+>   · los casos de julio (knowledge/cases/dev/caso-eurusd-2026-07-*.yaml);
+>   · para-clasificar.txt, patrones-cuenta-por-mes.txt y visor-sesiones.txt.
+>   Ya medido por el auditor del consultor, verifícalo: para-clasificar.txt no trae la regla que explica una orden del bot, solo los frenos pegados al «primer hecho que falta».
+> 0.3 Qué cambia al registrar cuatro transcripciones y cuatro extracciones: qué tests o guardias cuentan o listan transcripciones, fotogramas o vídeos, y qué regenera corpus inventory al cambiar una naturaleza en fuentes.yaml. Los tests que solo enumeran el corpus se ponen al día en el mismo commit, diciendo por qué.
+> 0.4 Qué tests leen material_sin_video y las validaciones de cargar_criterio. Se sabe que test_metodo_adr0092.py:445 afirma que 2026-07-08 cuenta como grabado; mira también test_criterio_campos_adr0092.py. Di qué rompería cada una de las dos salidas de F5.
+> 0.5 Herencias: busca «video-julio», «rama del vídeo», «rama que transcriba», «lo comprueba la rama» y «hasta T» en PROJECT_STATE, el final de HISTORIA, docs/validation/, docs/adr/, knowledge/corpus/fuentes.yaml y knowledge/cases/*.yaml. Todo lo que se deje a esta rama entra en ella, o se dice por qué no. Las conocidas:
+>   · ENTRADA-JULIO.md §5 y §8;
+>   · ADR-0078 §3;
+>   · fuentes.yaml:116-155;
+>   · ADR-0092 §11 y el comentario de criterio_fidelidad.yaml (julio cuenta como grabado de forma provisional hasta T);
+>   · RECORRIDA-CONSTRUCCION-2.md §8 (81 filas, destino T, y la pendiente con dueño de 07-02 y 07-14);
+>   · S-25 de la sesión 5 (SESION-05-EXTRACCION.md, «S-25 · El Excel de julio y los tres primeros vídeos»): el trader cree que el Excel exporta los tres primeros vídeos y dice que «todo está grabado»; F2 y F3 lo contrastan.
+> 0.6 Tiempo esperado. Las transcripciones de las sesiones tuvieron factor 0,20 (v17) y 0,32 (v16): estima los cuatro vídeos. Da también el PICO DE MEMORIA del último make check.
+> Si todo cuadra con este encargo, NO pares: escribe la fase 0 en el informe y sigue. PARADA solo si algo no cuadra, con la decisión que necesitas y tu recomendación.
+>
+> F1 · TRANSCRIPCIÓN Y FOTOGRAMAS
+> Uno a uno, nunca dos a la vez ni mientras corre un make check. Si los lanzas en segundo plano, arranca Claude Code con CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1.
+>   uv run botsito corpus transcribe --video v11      (luego v12, v13 y v14)
+>   uv run botsito corpus frames extract --video v11  (luego v12, v13 y v14)
+>   uv run botsito corpus transcript check
+>   uv run botsito corpus frames check
+> - Si la guardia niega algo legítimo, no se rodea: PARADA con el comando exacto, y lo lanza Aleks con «!».
+> - Los manifiestos nuevos van en su commit, sin editar.
+> - Fuera de git, para Aleks: SHA256SUMS-v11-v14.txt con cada fichero de data/transcripciones/v11..v14 (ruta y sha256), en la carpeta de trabajo. El informe dice dónde está y cuántas líneas tiene, para que lo suba a «botsito copia a4».
+>
+> F2 · QUÉ CUBRE CADA VÍDEO
+> Por vídeo, con la transcripción filtrada y con fotogramas localizados cuando la voz no baste: los días de julio que el trader opera o comenta, en orden, con el instante en que empieza cada uno. Contrástalo con lo que dijo (v11-v13 del 1 al 17; v14 desde el 20; S-25). Si un vídeo trae días de otro tramo, o algún día del 1 al 17 no aparece, se dice; no es PARADA.
+>
+> F3 · EL VÍDEO FRENTE AL LIBRO, DÍAS 1 A 17
+> Antes de abrir nada, escribe en el informe este criterio, que fija el consultor:
+> - La unidad son las operaciones de los 13 casos dev de julio. Para cada una: ¿aparece en el vídeo? Si aparece: día, dirección, entrada y stop leídos en pantalla, y la hora del gráfico.
+> - «Coincide» quiere decir:
+>   · mismo día y misma dirección;
+>   · entrada y stop a 3 puntos o menos (tolerancia_entrada_puntos y tolerancia_stop_puntos de criterio_fidelidad.yaml). El libro y el gráfico son la misma serie de FX Replay, así que toda diferencia se apunta con su cifra;
+>   · la hora del gráfico, en Europe/Madrid (UTC+2 en julio, ADR-0069), en el mismo minuto que instante_utc + 2 h. instante_utc es el llenado.
+> - Las operaciones que el vídeo enseña y no están en los casos, y las de los casos que no se ven en el vídeo, se listan aparte, sin resolverlas.
+> - Con lo medido, confirma o refuta que el libro está en Europe/Madrid (ENTRADA-JULIO.md §3.b). Es la comprobación de las «horas del libro» de T.
+> Primero un piloto con tres operaciones de 2026-07-02 11-15. Si se localizan al menos dos con fecha, entrada y stop legibles, sigue con el mes entero; si no, PARADA con lo que viste y una propuesta.
+> Los guiones van en docs/validation/anexos/VIDEO-JULIO/, con su salida.
+>
+> F4 · LAS 81 FILAS «SIN CLASE HASTA T»
+> Son las de RECORRIDA-CONSTRUCCION-2.md §8: P1 20, P2 de más de 10 puntos 7, P3 15, P5 37 y P6 2, en 22 sesiones de los 13 días. Reprodúcelas con un guion del anexo sobre patrones-cuenta-por-mes.txt y para-clasificar.txt, y PARADA si no salen 81.
+> Agrupadas por sesión, para cada fila:
+>   · lo que el trader dice y hace en el vídeo en ese tramo: cita literal de la transcripción filtrada, con vídeo y h:mm:ss, y el fotograma si lo abriste;
+>   · lo que hizo el bot, según para-clasificar.txt: el bot más cercano, Δentrada, Δinstante, el primer hecho que falta y los frenos;
+>   · una clase PROPUESTA de RUMBO-2026-11.md §1 (e) (error nuestro, regla desconocida, efecto de la cuenta, material incompleto o sin clase), con su porqué en una línea. Tú propones; la clase la decide el consultor en la PARADA.
+> Además:
+> - Si propones «regla desconocida»: la pregunta para el trader en su idioma (sesgo de H4, liquidez de M15, caja, 0 y 0,8; nunca ids de reglas) y las filas que podría mover (RUMBO §1 a). No se escribe en ningún yaml.
+> - Si propones «error nuestro»: qué pieza del motor sospechas, sin tocarla. Va a la rama de trazas (R4.x).
+> - 07-02 y 07-14 están también en la pendiente con dueño de §8, que es de la rama de trazas. Aquí solo va lo que dice el trader; el motor lo mide esa rama.
+> - Marca las filas del 1 de julio y las de sesiones con una hora de ticks perdida (verifica: 07-10 05h, 07-14 12h y 07-16 11h UTC, ENTRADA-JULIO.md §4).
+> - Ninguna cifra de resultados del bot más allá de las que ya trae para-clasificar.txt.
+>
+> F5 · MATERIAL_SIN_VIDEO
+> ADR-0092 §11 dice: «si T comprueba julio, el bloque se cambia en la rama que lo traiga, con su fuente». Con lo medido en F2 y F3:
+> - si los 13 días dev están grabados en v11-v13 y ninguna operación de los casos que se ve en el vídeo deja de coincidir, 2026-07 sale de provisionales_con_video;
+> - si no, 2026-07 pasa a meses y dias_con_video lleva los días de julio grabados que coinciden.
+> En los dos casos:
+> - fuente: VIDEO-JULIO.md §<sección>, y el comentario del bloque, al día;
+> - un commit propio con «Fuente: ADR-0092» en el cuerpo del mensaje;
+> - en el mismo commit, la naturaleza de v11 a v14 en fuentes.yaml y su comentario dicen lo comprobado;
+> - se actualiza el test que fija el valor antiguo (test_metodo_adr0092.py:445 u otro que fije exactamente ese valor). Si rompe cualquier otro test o cargar_criterio, PARADA con el mensaje.
+>
+> F6 · LOS DÍAS 20 A 31 (para que el consultor decida U; no se extrae ningún caso)
+> Por día: cuántas operaciones narra el trader en v14, y si en un fotograma localizado se leen día, dirección, entrada, stop y hora (cuéntalo; dos ejemplos como mucho). Ni casos, ni libros.yaml, ni reparto.
+>
+> F7 · CANDIDATAS A EVIDENCIA
+> Los tramos de v11-v14 que sostendrían una regla o una respuesta (por ejemplo, el porqué de un descarte), con vídeo y h:mm:ss. No se crea ningún ítem: el consultor decide cuáles en la PARADA.
+>
+> INFORME: docs/validation/VIDEO-JULIO.md (plantilla _template.md). Lleva:
+> - la base y la fase 0;
+> - las cuatro transcripciones: id, segmentos y ocultos por motivo;
+> - F2 a F7 con sus tablas;
+> - lo que NO cambia, medido con git diff main --stat;
+> - las exposiciones de cada día;
+> - los make check de la rama: exit, passed, SELLO y PICO DE MEMORIA;
+> - las propuestas para la orden de cierre, cada una comprobada contra test_hoja_de_ruta:
+>   · T sale de la Next Action, HECHA. HISTORIA ya tiene un «Next Action HECHA · T» del 2026-10-05 y un «· U», y el test usa un conjunto, así que el registro nuevo lleva un encabezado que lo distinga (propón cuál). Que el test no vea su falta va también a la deuda del carril de guardias;
+>   · R2.4 reescrita. Si U sigue viva, R2.4 no puede ir HECHA ni citar NA:T: propón el texto, por ejemplo R2.4 con solo NA:U y un Estado que diga que T está hecha, o lo que pase el test;
+>   · U, con la decisión del consultor tras la PARADA; su «Depende de T» sale;
+>   · F: el punto (1) sale y el resto se renumera;
+>   · el Marcador no cambia, porque no hay corrida;
+>   · las filas de §8 de RECORRIDA-CONSTRUCCION-2.md que reclasifique la PARADA, para la rama que use la clasificación;
+>   · la línea de Technical Debt de la lectura de las crudas (arriba).
+> Commits en el orden de CLAUDE.md: estadiar → make check > make-check.log 2>&1 → leer exit 0, ningún failed y la línea SELLO → commit. Nunca --no-verify. Los mensajes, escritos con Write y git commit -F. Nada escribe mientras corre make check.
+>
+> AL TERMINAR: el agente revisor (.claude/agents/revisor.md) con el alcance de este encargo. Su informe va tal cual al final del informe, con lo hecho con cada hallazgo.
+> Después, PARADA final con lo que tiene que decidir el consultor:
+>   · la clase de cada fila de F4, agrupadas por sesión y por clase propuesta;
+>   · U (F6);
+>   · las candidatas de F7;
+>   · cualquier desviación.
+> Termina con «Rama lista para revisión, NO cerrada». No se cierra nada sin la orden de Aleks.
