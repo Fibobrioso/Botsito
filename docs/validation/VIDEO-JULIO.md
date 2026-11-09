@@ -419,19 +419,22 @@ Fuente de las operaciones: `anexos/VIDEO-JULIO/operaciones-julio.txt` (`operacio
 | 07-06 | 5 | 12:11:25 | compra 1.1413 | APARECE | v12/690000: «Position Updated · Stop loss moved to 1.1413» (~12:15): el break even a la entrada del libro |
 | 07-07 | 1-2 | 07:02, 07:17 | compras | APARECE (débil) | v12/840000: trazos del trader sobre ~07:00-07:21 |
 | 07-07 | 3 | 07:50:00 | compra 1.14293 | **COINCIDE** | v12/840000: «Stop order executed · Buy 100000 at 1.14293», vela ~07:50; «Stop loss moved to 1.14284» = el stop del libro |
-| 07-07 | 4 | 08:14:00 | compra 1.14262 | sin ver | — |
+| 07-07 | 4 | 08:14:00 | compra 1.14262 | APARECE | v12/900000-915000: caja larga (orden pendiente) colocada con el cursor en ~08:13 |
 | 07-07 | 5-6 | 12:01, 12:08 | compras | APARECE | v12/1199000: caja larga ~11:53-12:11 |
 | 07-07 | 7-8 | 13:51, 13:57 | compras | APARECE (débil) | v12/1199000: trazos del trader ~13:46-13:51 |
 | 07-08 | 1 | 09:19:15 | compra 1.14203 | APARECE | v12/1330000: caja larga ~09:18-09:27 |
-| 07-08 | 2 | 13:43:35 | compra 1.14039 | sin ver | v12/1428000 (cursor 13:47): el precio cae de 13:40 a 13:47, sin caja todavía |
-| 07-09 | 1-2 | 09:59, 13:02 | compras | sin ver | v12/1747000 (H4): marcas del trader el 9 de julio, sin minuto |
-| 07-10 | 1-5 | 07:36-09:50 | compras | sin ver | — |
+| 07-08 | 2 | 13:43:35 | compra 1.14039 | APARECE | v12/1442000: «Order Added · Stop loss added!» con el cursor en ~13:41 |
+| 07-09 | 1 | 09:59:00 | compra 1.14338 | **COINCIDE (minuto no legible)** | v12/1590000: «Closed [...] Buy 100000 at 1.14338» con el cursor en ~10:06; v12/1658000: caja larga ~09:45-10:00 |
+| 07-09 | 2 | 13:02:05 | compra 1.1424 | **no localizable** | su tramo de v12 (1661-1746 s) es un hueco del ASR; v12/1658000 (0:27:38) está aún en las 11:00 |
+| 07-10 | 1-2 | 07:36:35, 07:45:20 | compras | APARECE | v12/1870000-1896000: caja larga cuyo borde izquierdo está en la marca «07:36» del eje, hasta ~07:51, y trazos del flujo del trader |
+| 07-10 | 3-5 | 09:10-09:50 | compras | sin ver | v12/1960000 (0:32:40): trazos del trader, pero la captura no enseña el eje de horas |
 | 07-10 | 6 | 10:01:25 | compra 1.14378 | **COINCIDE** | v12/2000000: «Closed [...] Buy 100000 at 1.14378», cursor 10:00 |
 | 07-10 | 7-11 | 10:28-12:58 | 2 compras, 3 ventas | en v13 | espera la PARADA 4 |
 
 **Recuento parcial (35 operaciones de los días 1 a 10 en v11/v12, sin las cinco del 10 que están
-en v13):** COINCIDE 6 (una con el minuto no legible); APARECE 17 (5 de ellas débiles, solo
-trazos); CONTRADICE 0; sin ver o no localizables 12. **Ninguna operación contradice al libro.**
+en v13):** COINCIDE 7 (dos con el minuto no legible); APARECE 21 (5 de ellas débiles, solo
+trazos); CONTRADICE 0; no localizables 4 (tres del 6 y una del 9, en huecos del ASR de v12); sin
+ver 3 (el 10, de 09:10 a 09:50). **Ninguna operación contradice al libro.**
 El stop legible coincide en las tres en que sale (Δ 0).
 
 **En el vídeo y no en el libro** (sin resolver): 8 de julio, caja larga ~11:05-11:25
@@ -441,9 +444,13 @@ El stop legible coincide en las tres en que sale (Δ 0).
 15:00) cae en `instante_utc` + 2 h. **El libro de julio está en Europe/Madrid**, como dijo
 ENTRADA-JULIO.md §3.b por las velas.
 
-**Lo que falta de F3:** las «sin ver» de los días 7 a 10 en v12 (más fotogramas en los segmentos
-con voz), y los días 10 (tarde) a 17 en v13, que esperan la PARADA 4. Fotogramas abiertos hasta
-aquí: **34** (12 del día 2026-11-08 y 22 del 2026-11-09: 10 de v11 y 12 de v12), todos por instante localizado; ninguno
+**En v12, los huecos del ASR tapan operaciones del libro**: 481-610 s (las tres del 6 de julio de
+08:22 a 08:34) y 1661-1746 s (la del 9 a las 13:02). Que el ASR calle justo donde el trader opera
+es otro indicio, con los de §1.6, de que se saltó voz.
+
+**Lo que falta de F3:** las tres del 10 de 09:10 a 09:50 (sin eje en el único instante localizado
+de ese tramo), y los días 10 (tarde) a 17 en v13, que esperan la PARADA 4. Fotogramas abiertos
+hasta aquí: **42** (12 del día 2026-11-08 y 30 del 2026-11-09: 10 de v11 y 20 de v12), todos por instante localizado; ninguno
 con el cursor fuera de julio, marcas sobre otro mes ni panel de operaciones o de estadística.
 
 ## 4. F4 · Las 81 filas (reproducidas; la clasificación espera F2 y F3)
@@ -454,6 +461,75 @@ del trader» de `para-clasificar.txt`; sale con 1 si no son 81) → `anexos/VIDE
 (P2 con |Δentrada| > 10 puntos: hay 8 con 10 o más y una con exactamente 10), en 13 días. Cada
 fila lleva su hora de Madrid para buscarla en el vídeo. Cuatro filas llevan la marca «posible M»
 de una hora de ticks perdida (07-10 05h y 07-16 11h UTC); la de 07-14 12h no toca ninguna fila.
+
+### 4.1 Los días 1 a 10 (52 filas en 14 sesiones; los días 13 a 17, 29 filas en 8 sesiones, esperan la PARADA 4)
+
+Lo del bot sale de `filas-hasta-t.txt` (bot o trader más cercano, Δentrada y Δinstante de
+`patrones-cuenta-por-mes.txt`; orden, primer hecho y frenos de `para-clasificar.txt`; las filas P5
+y P6 son órdenes del bot y van sin primer hecho ni frenos). La voz, de la transcripción filtrada
+(v11 `tr-v11-…d5da10be`, v12 `tr-v12-…cb502503`). Las clases son PROPUESTAS (RUMBO §1 e); las
+decide el consultor. Marcas: **[1-jul]** filas del 1 de julio (RUMBO §1 b: no van a la sesión 7);
+**[hora perdida]** sesión con una hora de ticks perdida que toca la fila.
+
+| Sesión | Filas | La voz del trader (vídeo, h:mm:ss) | Lo que hizo el bot | Clase propuesta | Por qué |
+|---|---|---|---|---|---|
+| 07-01 07-11 **[1-jul]** | P1 ×2 (sus compras 08:15, 09:33); P5 otro lado ×3 (ventas del bot 07:00-07:11) | v11 0:00:38-0:00:53: «A ver, este es nuestro rango / Por lo general, como no ha sido mitigado / Ni por debajo por una vela bajista / Ni por arriba por una vela alcista / Para actualizar el rango / Entonces nosotros nos enfocamos en buscar / Traits alcistas» | sesgo bajista; vende a 42-43 puntos y 64-76 min de sus compras; frenos: `detenido_por_cartuchos` | **regla desconocida** | el trader fija el lado por un RANGO de H4 que dura mientras no lo rompa una vela del color contrario; el bot, por la ruptura de la H4 anterior (RN-003) |
+| 07-01 11-15 **[1-jul]** | P5 mismo lado ×1 (venta del bot 12:58:16) | v11 0:05:44-0:06:09: «Como todavía no se ha roto nuestro rango, entonces nosotros todavía nos planteamos traer alcistas [...] nos enfocamos en buscar 3 alcistas»; y el trader VENDE a las 12:59 (caja de venta en v11/525000, F3) | venta a 7 puntos y 48 s de la del trader | **sin clase** | casi pareja (7 puntos, fuera de 3); la voz dice compras y la pantalla una venta: a preguntar solo si se repite (es el 1 de julio) |
+| 07-02 07-11 | P6 ×2 (compras del bot 07:37, 07:40; el trader no opera) | v11 0:10:52-0:11:18: «Y después tenemos esta, pero que el precio no llegó a romper por debajo en M1 [...] No hay entrada por el hecho de que no nos genera ninguno de los esquemas [...] y como esto de aquí no es ninguno de los esquemas, no se tradea» | dos compras donde el trader no ve entrada | **regla desconocida** | el trader descarta por «ninguno de los dos esquemas»; el bot entra |
+| 07-02 11-15 | P3 ×3 (11:34, 12:25, 12:45) y P5 ×2 (11:13, 12:07) | v11 0:12:03-0:12:22: «este flujo de órdenes invalida el segundo esquema y el primer esquema, Entonces no hay entrada, No se toma este trade»; 0:13:58-0:14:16: «esta es una zona de punto breaker válida vale pero se actualiza»; 0:15:22-0:15:26: «lo ideal es esto, o sea, trazar el punto correcto» | compras en otras zonas, a 26-35 puntos y 18-38 min; órdenes o9 y o14 canceladas; frenos `detenido_por_cartuchos` | **sin clase** (a la rama de trazas) | la voz dice que la zona buena es el punto breaker «que se actualiza»; qué zona usó el bot solo lo dicen las trazas (07-02 es día de la rama de trazas, RUMBO §2) |
+| 07-02 11-15 | P2 Δ43 (14:10) y P3 (14:23) | v11 0:16:06-0:16:25: «este es un break-even perdón, encontramos aquí, yo activa, retrocede, sube, break-even»; la voz no habla de un tope de intentos | bot detenido por RN-016 (`detenido_por_cartuchos`) desde las 14:08, tras tres pérdidas | **regla desconocida** | el trader sigue entrando tras tres pérdidas en el barrido; el bot no (cartuchos). Pendiente con dueño de §8: el motor lo mide la rama de trazas |
+| 07-02 11-15 | P5 ×2 (14:02, 14:05) | (la misma) | compras a 0 puntos (14:02, frente a la del trader de 13:59) y a 43 | **sin clase** | la de 14:02 es casi pareja (Δ0, 2 min 39 s); la de 14:05, de más |
+| 07-03 07-11 | P2 Δ17 (09:24) y P5 ×4 (08:02, 08:03, 09:24, 09:35) | v12 0:00:15-0:00:58: «aquí no había entrada porque es con mecha, sabemos que tiene que ser con cuerpo [...] aquí sí que tenemos una entrada vale porque nos genera un breaker con cuerpo y aquí está la zona de liquidez» | compras 80 min antes y a 15-30 puntos; una a 17 puntos y 42 s de la del trader (o3 cancelada) | **error nuestro (sospecha)** | la voz exige la ruptura del breaker en M1 CON CUERPO; si el bot entra con mecha, la pieza sospechosa es la que valida esa ruptura. Lo mide la rama de trazas |
+| 07-03 11-15 | P5 (11:13) y P3 (12:02) | v12 0:03:19-0:04:35: «todavía no ha sido roto el breaker, entonces nos enfocamos [...] nosotros igual si se desarrolla el precio pues vamos actualizando, o sea empieza aquí, no rompe, actualiza aquí» | compra 48 min antes y 72 puntos más arriba (o17 cancelada) | **sin clase** (a la rama de trazas) | el trader «va actualizando» la zona; el bot se queda en la primera |
+| 07-06 07-11 | P1 ×4 (08:22, 08:29, 08:33, 10:51) | v12 0:06:27-0:06:47: «como no ha sido roto hasta ahora por debajo para buscar operativos bajistas con una vela roja con mechago en cuerpo entonces ni por arriba con una vela verde para poder actualizar rango alcista nuevamente entonces nosotros como está dentro del rango alcista nos enfocamos todavía en buscar operativas alcistas» (las tres de las 08:22-08:33 caen en un hueco del ASR de v12) | sesgo bajista; ninguna operación; `orden_dimensionada[productoras sin cumplirse]` | **regla desconocida** | el rango de H4 (como el 1 de julio) |
+| 07-06 11-15 | P1 (12:11) | v12 0:10:10: «no se rompe el rango todavía, entonces, nos enfocamos en 3 alcistas» | igual | **regla desconocida** | el rango de H4 |
+| 07-07 07-11 y 11-15 | P1 ×8 (sus ocho compras: 07:02, 07:17, 07:50, 08:14, 12:01, 12:08, 13:51, 13:57) y P5 otro lado ×6 (ventas del bot 10:26-14:35) | v12 0:10:49 y 0:17:25-0:17:38 (un segmento del ASR que cruza del 6 al 7: el fotograma de 0:11:30 aún es el 6): «El CISA [alcista], ok, porque, mira, no sé cuantos días, tres días, dos días creo que lo / han mantenido, primera vez que veo esto, interesante, entonces, nos enfocamos ahí / en tres alcistas» | sesgo bajista; ventas a 18-67 puntos | **regla desconocida** | el rango de H4 que dura días |
+| 07-08 07-11 | P5 (10:25) | v12 0:20:05: «aquí liquidez, liquidez, no tenemos entrada, no hay punto breaker de ruptura aquí, pero igual con este desarrollo de este order flow, invalidaría» | compra 66 min después y 86 puntos más abajo | **regla desconocida** | sin punto breaker de ruptura no hay entrada |
+| 07-09 07-11 | P5 ×2 (09:52 Δ4, 10:45) | v12 0:25:24-0:27:32: «nos enfocamos en alcistas [...] el enfoque es alcista todavía» | compras a 4 puntos y 7 min antes de la del trader, y otra de más | **sin clase** | la primera es casi pareja; la segunda, de más |
+| 07-09 11-15 | P5 (12:59) y P2 Δ13 (13:02) | — (su tramo, 1661-1746 s de v12, es un hueco del ASR) | compra a 13 puntos y 3 min antes (o16 cancelada) | **sin clase** | sin voz del trader en ese tramo |
+| 07-10 07-11 **[hora perdida]** | P3 misma entrada otra hora (07:45, «posible M»), P5 (09:59 Δ4), P3 ×2 (10:28, 10:42) | v12 0:30:49: «la condición o sea aquí cuando se completa esta zona de aquí o sea por encima cierra esto esta zona de control se desarrolla se pone en break even la entrada»; las de 10:28 y 10:42 están en v13 (espera la PARADA 4) | compra a 3 puntos y 17 min antes (07:45); compra a 4 puntos y 2 min antes (09:59); o12 cancelada | 07:45: **material incompleto**; 09:59: **sin clase**; 10:28 y 10:42: **hasta la PARADA 4** | la de 07:45 cae junto a la hora perdida de las 05h UTC (respaldo M1); la de 09:59 es casi pareja |
+
+**Las preguntas para el trader (si el consultor confirma «regla desconocida»), en su idioma:**
+
+1. **El rango de H4** (24 filas: las del 1, 6 y 7 de julio): «Cuando dices que el rango de H4 no ha
+   sido mitigado y sigues buscando compras, ¿qué vela marca ese rango? ¿Una vela roja que rompe
+   solo la vela anterior, pero no el mínimo del rango, te cambia el lado? ¿Cuántos días puede
+   durar un rango?» (RUMBO §1 a: es la que más filas mueve.)
+2. **Los dos esquemas** (3 filas: 07-02 07-11 y 07-08): «Cuando dices que no hay entrada porque no se
+   forma ninguno de los dos esquemas, ¿qué tiene que tener la zona para que valga? ¿Y sin un punto
+   breaker de ruptura, nunca hay entrada?»
+3. **Seguir tras tres pérdidas** (2 filas, 07-02 14:10 y 14:23): «El 2 de julio seguiste entrando
+   en la misma sesión después de tres pérdidas. ¿Hay un número de intentos por barrido de
+   liquidez, o depende de algo?»
+
+**«Error nuestro» (sospecha), para la rama de trazas (R4.4):** 07-03 07-11, la validación de la
+ruptura del breaker en M1 con cuerpo y no con mecha. No se toca nada aquí.
+
+**Recuento de los días 1 a 10 (52 filas):** regla desconocida 29 (rango de H4 24, esquemas 3,
+intentos 2); error nuestro (sospecha) 5; material incompleto 1; sin clase 15; hasta la PARADA 4,
+2.
+
+## 7. F7 · Candidatas a evidencia (no se crea ningún ítem)
+
+De la transcripción filtrada; v13 y v14, de las versiones viejas (`tr-v13-…1aeb45d5`,
+`tr-v14-…2253ec10`), citables por su id con `--transcripcion` (PARADA 4).
+
+| # | Vídeo, h:mm:ss | Lo que dice | Lo que sostendría |
+|---|---|---|---|
+| 1 | v11 0:00:38-0:00:53 | «este es nuestro rango / Por lo general, como no ha sido mitigado / Ni por debajo por una vela bajista / Ni por arriba por una vela alcista / Para actualizar el rango / Entonces nosotros nos enfocamos en buscar / Traits alcistas» | el sesgo por un rango de H4 no mitigado (24 filas de F4) |
+| 2 | v11 0:05:44-0:06:09 | «Si en caso esta vela roja hubiera roto con mecha o con cuerpo por debajo de esta vela, hubiéramos trazado nuestro rango bajista y esta operativa sería bajista» | qué rompe el rango: mecha o cuerpo |
+| 3 | v12 0:06:27-0:07:13 | «...como está dentro del rango alcista nos enfocamos todavía en buscar operativas alcistas / es que es muy pero muy pero muy importante y es lo principal yo diría que un 70% o sea que uno defina bien el rango el / el bias» | el peso del sesgo en el método |
+| 4 | v11 0:02:16-0:02:48 | «este punto de aquí nos queda invalidado por el hecho de que aquí hay un breaker o sea bueno este retroceso complejo no debería de darse [...] la zona de control dentro de esto tiene que ser limpia si no no es válido» | el descarte de una zona por un retroceso complejo |
+| 5 | v11 0:11:03-0:11:18 | «No hay entrada por el hecho de que no nos genera ninguno de los esquemas [...] como esto de aquí no es ninguno de los esquemas, no se tradea» | el porqué de un descarte: los dos esquemas |
+| 6 | v12 0:00:15-0:00:58 | «aquí no había entrada porque es con mecha, sabemos que tiene que ser con cuerpo [...] aquí sí que tenemos una entrada vale porque nos genera un breaker con cuerpo» | la ruptura del breaker en M1, con cuerpo |
+| 7 | v12 0:17:55-0:18:47 | «se ve roto, vale, pero nos saca, unicuel, si es unicuel, podemos reentrar [...] Como es un equal, aquí se valida / Este punto de liquidez / Este punto de breaker, mejor dicho» | la reentrada tras un stop en un mínimo igual (cartuchos, RN-016) |
+| 8 | v12 0:30:49 y v13 0:00:29-0:05:28 (vieja) | «cuando se completa esta zona de aquí [...] esta zona de control se desarrolla se pone en break even la entrada»; «apenas se desarrolla la zona de control nosotros tomamos en break even, que yo no lo haga no significa que no se deba hacer [...] es una de las condiciones más importantes, o sea el break even» | cuándo se pasa a break even, y que en el backtest no siempre lo hace |
+| 9 | v14 0:20:10 (vieja) | «el break even se termina por encima, entonces ahí ubicas el punto de break even, si lo tomas por aquí no te va a dar para que pongas break even [...] se termina con cuerpo por encima, es una validación para que puedas poner break even» | la condición del break even: cierre con cuerpo por encima |
+| 10 | v14 0:42:02 (vieja) | «aquí hay una entrada que no le voy a tomar para no afectar al mostreo» | **que el trader deja de tomar entradas válidas en el backtest a propósito**: afecta a la lectura de las operaciones de más del bot (P5) |
+| 11 | v13 0:17:34-0:17:57 (vieja) | «el rr 13 lo calculamos [...] para calcular el lotaje y todo eso pues claramente [...] se efectúa desde 0.8 y aquí ya para tener ese 0.75 de beneficio adicional» | el 0,8 y el lotaje (lineamiento del stop 0,8) |
+
+**Cifras de resultados dichas en voz** (no se copian ni se usan): v11 0:03:06 y 0:09:31, v13
+0:19:11.
 
 ## PARADA 1 · un fotograma de julio enseña velas de meses anteriores (2026-11-08)
 
