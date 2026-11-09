@@ -1,0 +1,7 @@
+# uv run python docs/validation/anexos/VIDEO-JULIO/simular_cierre.py "C:/Users/USER/Desktop/Bot v3"
+# (sobre 47f808a mas el arreglo de los anexos, 2026-11-09; en memoria, sin escribir)
+cambios en PROJECT_STATE: T fuera
+a: []
+b: []
+c: []
+letras vivas tras el cierre: ADFGIJLMNQU

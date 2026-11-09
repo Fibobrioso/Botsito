@@ -13,7 +13,8 @@ Las filas P5 y P6 son ordenes del bot: para-clasificar no les da primer hecho ni
 Imprime agrupado por (dia, sesion) y, en cada fila, la hora de Madrid (UTC+2 en julio, ADR-0069)
 para buscarla en el video. Ninguna cifra de resultados del bot.
 
-Uso: uv run python docs/validation/anexos/VIDEO-JULIO/filas_hasta_t.py
+Uso (la raiz del repositorio y el fichero de salida, por argumento: CLAUDE.md, «Ensayos aislados»):
+  uv run python docs/validation/anexos/VIDEO-JULIO/filas_hasta_t.py <raiz> <salida>
 """
 
 from __future__ import annotations
@@ -24,11 +25,13 @@ from collections import Counter, defaultdict
 from datetime import datetime, timedelta
 from pathlib import Path
 
-RAIZ = Path(__file__).resolve().parents[4]
+if len(sys.argv) != 3:
+    sys.exit("uso: filas_hasta_t.py <raiz del repositorio> <fichero de salida>")
+RAIZ = Path(sys.argv[1]).resolve()
+SALIDA = Path(sys.argv[2]).resolve()
 ANEXO = RAIZ / "docs" / "validation" / "anexos" / "RECORRIDA-CONSTRUCCION-2"
 ESPERADAS = {"P1": 20, "P2": 7, "P3": 15, "P5": 37, "P6": 2}
 RE_FILA = re.compile(r"^(P\d) ([^\[]+?) \[([^\]]*)\](?: \[([^\]]*)\])?: (trader|bot) \| (.+)$")
-SALIDA = Path(__file__).resolve().parent / "filas-hasta-t.txt"
 RE_DELTA = re.compile(r"Δentrada ([+-]?\d+) puntos")
 
 

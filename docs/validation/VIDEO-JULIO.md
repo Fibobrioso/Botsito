@@ -256,12 +256,15 @@ comprobado con `env`), sin ningún `make check` a la vez; GPU GTX 1650 de 4 GB.
   de `data/transcripciones/v11..v14`), en
   `C:\Users\USER\AppData\Local\Temp\claude\d82effbe86c6c5d6\bbf57367-ba2b-448c-8dc7-164f862fb2f7\scratchpad\SHA256SUMS-v11-v14.txt`
   (carpeta temporal de la sesión: conviene copiarlo antes de subirlo a «botsito copia a4»).
+  **Superado** (respuesta a la PARADA 1, punto 2): el que vale es
+  `C:\Users\USER\Desktop\SHA256SUMS-v11-v14.txt`, 116 líneas, con las transcripciones activas y
+  las reemplazadas (§1.7).
 - **Los manifiestos nuevos** (cuatro de transcripción en `knowledge/corpus/transcripciones/`,
   cuatro de fotogramas en `knowledge/corpus/fotogramas/`), sin editar, en el commit de la fase 0 y
   F1. **Desviación:** el encargo los quiere en su commit; van con la fase 0 porque `make check` no
   sella con ficheros sin estadiar, y la fase 0 ya estaba escrita cuando acabó F1; el commit lo dice.
 
-## 2. F2 · Qué cubre cada vídeo, por la voz (parcial: los fotogramas esperan la PARADA 1)
+## 2. F2 · Qué cubre cada vídeo (primero por la voz; el mapa completo, en §2.1)
 
 | Vídeo | Lo que dice la voz sobre los días | Instante |
 |---|---|---|
@@ -287,11 +290,12 @@ comprobado con `env`), sin ningún `make check` a la vez; GPU GTX 1650 de 4 GB.
 | v12 | 0:33:20 | `…/2000000` | viernes 10 de julio |
 
 - v11 empieza el 1 de julio y llega al 3; v12 llega al 10 (la voz de v13, «nos quedamos en el 10
-  de julio», lo confirma). Qué días cubre v12 al empezar (6 o 7) no se ha leído todavía.
+  de julio», lo confirma). v12 empieza todavía en el 3 de julio (§2.1).
 - **Fotogramas abiertos hasta aquí: 12** (8 de v11, 4 de v12), uno de ellos el de la PARADA 1.
 
 - **Cifras de resultados dichas en voz** (no se copian ni se usan, encargo): v11 0:03:06 y
-  0:09:31, v13 0:19:11.
+  0:09:31, v13 0:19:11, y v13 0:35:43 (nueva; 0:35:36 en la vieja), que coinciden con cifras de la
+  vista de Analytics (revisor, b4).
 
 ### 2.1 El mapa completo, por vídeo (2026-11-09)
 
@@ -314,7 +318,7 @@ y la voz que lo acompaña. v13 y v14: versión nueva (activa) o vieja, según cu
 | v13 | 14 (mar) | ~0:10:44 | `…/650000`, `…/760000`, `…/898000` («Tue 14 Jul '26») |
 | v13 | 15 (mié) | ~0:21:31 | voz «vamos a definir el bias, al cista»; `…/1295000` (H4, el replay al empezar el 15) y `…/1512000` («Wed 15 Jul '26») |
 | v13 | 16 (jue) | antes de 0:29:27 | `…/1770000` y `…/1830000` («Thu 16 Jul '26») |
-| v13 | 17 (vie) | ~0:35:15 | voz «el bias es el bajista»; `…/2250000` (sin fecha en el eje; por continuidad) |
+| v13 | 17 (vie) | ~0:35:15 | voz «el buy [bias] es el bajista»; `…/2250000` (sin fecha en el eje; por continuidad) |
 | v13 | — | 0:40:42 | `…/2442000`: **la vista de Analytics de julio**, declarada con sus cifras (HOLDOUT-EXPOSICIONES, 2026-11-09); ninguna se usa |
 | v14 | 20 (lun) | 0:00:00 | voz «Nos quedamos en el día 17. Continuamos con el día 20.»; `fr-v14-5688e08b/15000` (H4, el replay al empezar el 20) |
 | v14 | 21 (mar) | antes de 0:15:01 | `…/905000` («Tue 21 Jul '26 07:00») |
@@ -439,7 +443,10 @@ y el eje de precios sigue sin verse. Las cantidades en dinero de esas etiquetas 
 posición es cuándo la DIBUJÓ el trader, no cuándo se llenó (3 de julio #3: caja desde las 11:54,
 llenado 12:02). El minuto del llenado solo se lee si el aviso de ejecución sale con la vela de la
 entrada bajo el cursor. Cuando la entrada coincide y el llenado cae dentro de la caja pero el
-minuto no se lee, la tabla dice «COINCIDE (minuto no legible)».
+minuto no se lee, la operación va a **APARECE (entrada leída, minuto no legible)**, como dice el
+criterio escrito antes en §3.2 («si no, se dice "hora compatible" y la operación no puede ir a
+COINCIDE»). (Corregido tras el revisor, b5: la primera versión las ponía en «COINCIDE (minuto no
+legible)».)
 
 Fuente de las operaciones: `anexos/VIDEO-JULIO/operaciones-julio.txt` (`operaciones_julio.py`,
 13 casos, 67 operaciones). Fotogramas: `fr-v11-b83d5164/<ms>` y `fr-v12-3eeb8cf9/<ms>`.
@@ -457,7 +464,7 @@ Fuente de las operaciones: `anexos/VIDEO-JULIO/operaciones-julio.txt` (`operacio
 | 07-02 | 6 | 14:23:05 | compra 1.13976 | APARECE | v11/1160000: caja larga ~14:16-14:38 |
 | 07-03 | 1 | 09:24:00 | compra 1.14528 | **COINCIDE** | v12/100000-134000: «Closed [...] Buy 100000 at 1.14528», caja desde ~09:24, cursor 09:23; «Stop: 0.00018» = 18 puntos, el stop del libro |
 | 07-03 | 2 | 09:43:00 | compra 1.14502 | APARECE | v12/190000: caja larga desde ~09:42-09:43 |
-| 07-03 | 3 | 12:02:00 | compra 1.14423 | **COINCIDE (minuto no legible)** | v12/320000: «Closed [...] Buy 100000 at 1.14423»; «Stop: 0.00019» = 19 puntos, el stop del libro; caja 11:54-12:05 |
+| 07-03 | 3 | 12:02:00 | compra 1.14423 | APARECE (entrada leída Δ 0, minuto no legible) | v12/320000: «Closed [...] Buy 100000 at 1.14423»; «Stop: 0.00019» = 19 puntos, el stop del libro; caja 11:54-12:05 |
 | 07-06 | 1-3 | 08:22-08:34 | compras | sin buscar: **no localizable** | su tramo de v12 (481-610 s) es un hueco del ASR: ningún segmento lo cubre y no se abre (ADR-0038) |
 | 07-06 | 4 | 10:51:10 | compra 1.14172 | APARECE | v12/615000 y 690000: caja larga ~10:50-11:00 |
 | 07-06 | 5 | 12:11:25 | compra 1.1413 | APARECE | v12/690000: «Position Updated · Stop loss moved to 1.1413» (~12:15): el break even a la entrada del libro |
@@ -468,7 +475,7 @@ Fuente de las operaciones: `anexos/VIDEO-JULIO/operaciones-julio.txt` (`operacio
 | 07-07 | 7-8 | 13:51, 13:57 | compras | APARECE (débil) | v12/1199000: trazos del trader ~13:46-13:51 |
 | 07-08 | 1 | 09:19:15 | compra 1.14203 | APARECE | v12/1330000: caja larga ~09:18-09:27 |
 | 07-08 | 2 | 13:43:35 | compra 1.14039 | APARECE | v12/1442000: «Order Added · Stop loss added!» con el cursor en ~13:41 |
-| 07-09 | 1 | 09:59:00 | compra 1.14338 | **COINCIDE (minuto no legible)** | v12/1590000: «Closed [...] Buy 100000 at 1.14338» con el cursor en ~10:06; v12/1658000: caja larga ~09:45-10:00 |
+| 07-09 | 1 | 09:59:00 | compra 1.14338 | APARECE (entrada leída Δ 0, minuto no legible) | v12/1590000: «Closed [...] Buy 100000 at 1.14338» con el cursor en ~10:06; v12/1658000: caja larga ~09:45-10:00 |
 | 07-09 | 2 | 13:02:05 | compra 1.1424 | **no localizable** | su tramo de v12 (1661-1746 s) es un hueco del ASR; v12/1658000 (0:27:38) está aún en las 11:00 |
 | 07-10 | 1-2 | 07:36:35, 07:45:20 | compras | APARECE | v12/1870000-1896000: caja larga cuyo borde izquierdo está en la marca «07:36» del eje, hasta ~07:51, y trazos del flujo del trader |
 | 07-10 | 3-5 | 09:10-09:50 | compras | sin ver | v12/1960000 (0:32:40): trazos del trader, pero la captura no enseña el eje de horas |
@@ -476,15 +483,15 @@ Fuente de las operaciones: `anexos/VIDEO-JULIO/operaciones-julio.txt` (`operacio
 | 07-10 | 7-11 | 10:28-12:58 | 2 compras, 3 ventas | §3.4 | (escrito antes de la PARADA 4 como «en v13»: la #7 y la #8 salen en marcas de v12 y v13, y las tres ventas NO APARECEN) |
 
 **Recuento parcial (35 operaciones de los días 1 a 10 en v11/v12, sin las cinco del 10 que están
-en v13):** COINCIDE 7 (dos con el minuto no legible); APARECE 21 (5 de ellas débiles, solo
-trazos); CONTRADICE 0; no localizables 4 (tres del 6 y una del 9, en huecos del ASR de v12); sin
+en v13):** COINCIDE 5; APARECE 23 (dos con la entrada leída y el minuto no legible; 5 débiles,
+solo trazos); CONTRADICE 0; no localizables 4 (tres del 6 y una del 9, en huecos del ASR de v12); sin
 ver 3 (el 10, de 09:10 a 09:50). **Ninguna operación contradice al libro.**
 El stop legible coincide en las tres en que sale (Δ 0).
 
 **En el vídeo y no en el libro** (sin resolver): 8 de julio, caja larga ~11:05-11:25
 (v12/1428000).
 
-**La hora del libro:** en las 6 COINCIDE el eje de pared del replay (sesiones a las 07:00, 11:00 y
+**La hora del libro:** en las 5 COINCIDE el eje de pared del replay (sesiones a las 07:00, 11:00 y
 15:00) cae en `instante_utc` + 2 h. **El libro de julio está en Europe/Madrid**, como dijo
 ENTRADA-JULIO.md §3.b por las velas.
 
@@ -522,7 +529,7 @@ con el texto de cualquiera de las dos versiones de v13; en los huecos no se abre
 | 07-16 | 1 | 08:00:10 | compra 1.14654 | APARECE | `…/1770000`: herramienta de posición larga desde las 08:00 (cursor 08:08), «Stop: 0.00032 (0.028%)» = **32 puntos, el stop del libro**; `…/1830000`: «be» a las 08:00 |
 | 07-16 | 2-4 | 11:36:00, 13:19:40, 13:55:40 | compras | **NO LOCALIZABLE (HUECO DEL ASR)** | 0:30:42-0:35:15: hueco en las dos versiones |
 | 07-17 | 1 | 07:46:05 | venta 1.14409 | sin ver | — |
-| 07-17 | 2 | 08:27:45 | venta 1.14498 | APARECE (débil) | `…/2250000`: trazos del trader ~08:23-08:28 (sin fecha en el eje; el 17 por continuidad); voz (nueva) 0:35:15 «el bias es el bajista» |
+| 07-17 | 2 | 08:27:45 | venta 1.14498 | APARECE (débil) | `…/2250000`: trazos del trader ~08:23-08:28 (sin fecha en el eje; el 17 por continuidad); voz (nueva) 0:35:15 «el buy [bias] es el bajista» (este fotograma se localizó por el segmento 0:35:43, que lee cifras del mes: corrección en HOLDOUT-EXPOSICIONES, revisor a2) |
 | 07-17 | 3-5 | 08:45, 09:05, 13:44 | ventas | sin ver | — |
 
 ### 3.5 F3, por día (los 13 días, 67 operaciones)
@@ -531,23 +538,31 @@ con el texto de cualquiera de las dos versiones de v13; en los huecos no se abre
 |---|---|---|---|---|---|---|---|
 | 07-01 | 3 | 1 | 2 (0) | 0 | 0 | 0 | 0 |
 | 07-02 | 6 | 1 | 5 (1) | 0 | 0 | 0 | 0 |
-| 07-03 | 3 | 2 | 1 (0) | 0 | 0 | 0 | 0 |
+| 07-03 | 3 | 1 | 2 (0) | 0 | 0 | 0 | 0 |
 | 07-06 | 5 | 0 | 2 (0) | 0 | 0 | 3 | 0 |
 | 07-07 | 8 | 1 | 7 (4) | 0 | 0 | 0 | 0 |
 | 07-08 | 2 | 0 | 2 (0) | 0 | 0 | 0 | 0 |
-| 07-09 | 2 | 1 | 0 | 0 | 0 | 1 | 0 |
+| 07-09 | 2 | 0 | 1 (0) | 0 | 0 | 1 | 0 |
 | 07-10 | 11 | 1 | 4 (1) | **3** | 0 | 0 | 3 |
 | 07-13 | 4 | 0 | 3 (2) | 0 | 0 | 1 | 0 |
 | 07-14 | 8 | 0 | 5 (2) | 0 | 0 | 0 | 3 |
 | 07-15 | 6 | 0 | 0 | 0 | 0 | 0 | 6 |
 | 07-16 | 4 | 0 | 1 (0) | 0 | 0 | 3 | 0 |
 | 07-17 | 5 | 0 | 1 (1) | 0 | 0 | 0 | 4 |
-| **Total** | **67** | **7** | **33 (11)** | **3** | **0** | **8** | **16** |
+| **Total** | **67** | **5** | **35 (11)** | **3** | **0** | **8** | **16** |
 
-- **Ninguna operación CONTRADICE al libro.** En las 7 COINCIDE la entrada leída en el aviso es la
-  del libro (Δ 0), y el stop, en las 4 en que sale (07-03 #1 y #3, 07-16 #1 como distancia;
-  07-07 #3 como precio), también (Δ 0).
-- **El libro está en Europe/Madrid**: en las 7 COINCIDE y en las APARECE con minuto (07-10 #1 en
+(Tras el revisor, b5: 07-03 #3 y 07-09 #1, con la entrada leída a Δ 0 pero el minuto del llenado
+no legible, van a APARECE por el criterio de §3.2; la primera versión daba 7 COINCIDE y 33
+APARECE.)
+
+- **Ninguna operación CONTRADICE al libro.** En las 7 operaciones con la entrada leída en un aviso
+  (las 5 COINCIDE y las dos APARECE de arriba) es la del libro (Δ 0), y el stop, en las 4 en que
+  sale (07-03 #1 y #3, 07-16 #1 como distancia; 07-07 #3 como precio), también (Δ 0). El aviso
+  «Entry price moved to 1.13978» de 07-01 #2 (libro 1.13958, 20 puntos) no es un llenado: es una
+  orden pendiente que el trader mueve a las ~09:16, 17 minutos antes del llenado del libro (09:33);
+  el criterio compara la entrada «leída en el aviso de cierre», y por eso no va a CONTRADICE
+  (revisor, b6).
+- **El libro está en Europe/Madrid**: en las 5 COINCIDE y en las APARECE con minuto (07-10 #1 en
   la marca «07:36»; 07-16 #1 a las 08:00), el eje de pared del replay cae en `instante_utc` + 2 h.
 - **En el vídeo y no en el libro** (sin resolver): 8 de julio, caja larga ~11:05-11:25.
 
@@ -565,7 +580,7 @@ Con el punto 3 de la respuesta a la PARADA 4:
   `test_criterio_campos_adr0092.py`, ni la naturaleza de v11-v14 en `fuentes.yaml` (que el
   encargo ataba al commit de F5). Lo que la PARADA final propone para cada uno, en §10.
 
-## 4. F4 · Las 81 filas (reproducidas; la clasificación espera F2 y F3)
+## 4. F4 · Las 81 filas (reproducidas en §4, clasificadas en §4.1 y §4.2)
 
 `anexos/VIDEO-JULIO/filas_hasta_t.py` (lee `patrones-cuenta-por-mes.txt` y la tabla «Operaciones
 del trader» de `para-clasificar.txt`; sale con 1 si no son 81) → `anexos/VIDEO-JULIO/filas-hasta-t.txt`:
@@ -574,7 +589,7 @@ del trader» de `para-clasificar.txt`; sale con 1 si no son 81) → `anexos/VIDE
 fila lleva su hora de Madrid para buscarla en el vídeo. Cuatro filas llevan la marca «posible M»
 de una hora de ticks perdida (07-10 05h y 07-16 11h UTC); la de 07-14 12h no toca ninguna fila.
 
-### 4.1 Los días 1 a 10 (52 filas en 14 sesiones; los días 13 a 17, 29 filas en 8 sesiones, esperan la PARADA 4)
+### 4.1 Los días 1 a 10 (52 filas en 14 sesiones; los días 13 a 17, 29 filas en 8 sesiones, en §4.2)
 
 Lo del bot sale de `filas-hasta-t.txt` (bot o trader más cercano, Δentrada y Δinstante de
 `patrones-cuenta-por-mes.txt`; orden, primer hecho y frenos de `para-clasificar.txt`; las filas P5
@@ -618,8 +633,8 @@ decide el consultor. Marcas: **[1-jul]** filas del 1 de julio (RUMBO §1 b: no v
 ruptura del breaker en M1 con cuerpo y no con mecha. No se toca nada aquí.
 
 **Recuento de los días 1 a 10 (52 filas):** regla desconocida 29 (rango de H4 24, esquemas 3,
-intentos 2); error nuestro (sospecha) 5; material incompleto 1; sin clase 15; hasta la PARADA 4,
-2.
+intentos 2); error nuestro (sospecha) 5; material incompleto 1; sin clase 15; y 2 (07-10 10:28 y
+10:42) que se clasifican en §4.2.
 
 ### 4.2 Los días 13 a 17, y las dos del 10 que esperaban (31 filas; 2026-11-09)
 
@@ -628,14 +643,14 @@ como «sin clase (voz no transcrita)». Voz de v13: nueva `tr-v13-…7f5333a0` o
 
 | Sesión | Filas | La voz del trader (vídeo, h:mm:ss, id) | Lo que hizo el bot | Clase propuesta | Por qué |
 |---|---|---|---|---|---|
-| 07-10 07-11 **[hora perdida]** | P3 ×2 (10:28, 10:42) | — (v12 0:33:18-0:35:31, hueco del ASR) | compras a 32 y 43 puntos, 29-44 min antes (o12 cancelada) | **sin clase (voz no transcrita)** | sin voz en ninguna versión |
+| 07-10 07-11 | P3 ×2 (10:28, 10:42; `filas-hasta-t.txt`: «hora perdida: no») | — (v12 0:33:18-0:35:31, hueco del ASR) | compras a 32 y 43 puntos, 29-44 min antes (o12 cancelada) | **sin clase (voz no transcrita)** | sin voz en ninguna versión |
 | 07-13 07-11 | P5 (venta del bot 09:13) | v13 0:05:26 (nueva): «Ahí está protegida la entrada, lo ganamos, se desarrolla el flujo de precio y no, no hay entrada.» | venta 115 min después de la del trader, a 10 puntos | **sin clase** | el trader dice que después no hay entrada; el bot entra: a preguntar solo si se repite |
 | 07-13 11-15 | P2 Δ11 (11:44), P3 (13:25), P5 ×3 (11:02, 11:55, 12:38) | v13 0:06:25-0:06:38 (nueva): «nos vamos a la siguiente sesión de las 11. Ya de por sí sabemos que estamos en un rango alcista»; después, hueco hasta 0:10:44 en las dos versiones | compras a 3-69 puntos (o20, o24) | **sin clase (voz no transcrita)** | la sesión entera cae en el hueco |
 | 07-14 11-15 | P2 Δ21 (11:35), P2 Δ19 (12:44), P3 ×2 (11:48, 13:06), P5 ×2 (11:21, 11:26) | v13 0:18:08 (nueva): «Bueno, aquí otro boolean, break even, desarrollación de control, nos saca» | compras a 13-36 puntos (o13 cancelada, o14 llenada) | **sin clase** (a la rama de trazas) | 07-14 es día de la rama de trazas (RUMBO §2: «tres pérdidas sin RN-016»); la voz no da más |
 | 07-15 07-11 | P3 (09:12), P5 ×3 (07:04 Δ2, 07:16, 08:45) | v13 0:21:31 (vieja y nueva) es ya la sesión de las 11; la de 7-11 cae en el hueco 0:21:45-0:25:08 de la nueva y solo la cubre un segmento largo de la vieja sin nada sobre ella | compra a 2 puntos y 3 min de la del trader (07:04), y otras de más | **sin clase (voz no transcrita)** | sin voz sobre esa sesión |
 | 07-15 11-15 | P1 ×4 (12:05, 12:45, 14:00, 14:14) y P5 otro lado (venta del bot 14:37) | v13 0:21:31 (nueva): «Y luego continuamos, vamos a definir el bias, al cista, vale, entonces, al cista porque ya sabemos el rango, no ha sido roto» | sesgo bajista; vende a 7-95 puntos; frenos `detenido_por_racha` | **regla desconocida** | el rango de H4 |
 | 07-16 11-15 | P5 (11:35 Δ6) | — (0:30:42-0:35:15, hueco en las dos versiones) | compra a 6 puntos y 2 s de la del trader | **sin clase** | casi pareja (6 puntos) |
-| 07-16 11-15 **[hora perdida]** | P3 ×2 (13:19 «misma entrada, otra hora», 13:55) y P5 (14:40), las tres «posible M» | — (el mismo hueco) | compra 45-81 min después y 48-98 puntos más abajo | **material incompleto** | la hora de ticks perdida de las 11h UTC (13:00-14:00 en Madrid) cae en esas filas; respaldo M1 |
+| 07-16 11-15 **[hora perdida]** | P3 ×2 (13:19 «misma entrada, otra hora», 13:55) y P5 (14:40), las tres «posible M» | — (el mismo hueco) | compra 45-81 min después y 48-98 puntos más abajo | **material incompleto** | las tres llevan la marca «posible M» de la fuente (`patrones-cuenta-por-mes.txt`) por la hora de ticks perdida de las 11h UTC (13:00-14:00 en Madrid): las de 13:19 y 13:55 caen dentro; la del bot de 14:40 cae fuera de esa hora y lleva la marca porque la trae la fuente (por qué, no lo medí) |
 | 07-17 07-11 | P2 Δ15 (08:27), P3 (09:05), P5 (08:32) | v13 0:35:15 (nueva): «este era el último rango que teníamos, vale, este era el último rango, luego es roto, una vela roja [...] entonces nos enfocamos en los carteles bajistas, el buy es el bajista» | venta a 15 puntos y 4 min 47 s de la del trader (o22 llenada) | **sin clase** | casi pareja (15 puntos); el resto, otra zona |
 | 07-17 11-15 | P1 sesgo **alcista** (su venta de 13:44) | la misma (0:35:15): para el trader el rango de H4 ya es bajista | sesgo alcista; ninguna operación | **regla desconocida** | el rango de H4, en el otro sentido |
 
@@ -690,7 +705,7 @@ De la transcripción filtrada; v13 y v14, de las versiones viejas (`tr-v13-…1a
 | 11 | v13 0:17:34-0:17:57 (vieja) | «el rr 13 lo calculamos [...] para calcular el lotaje y todo eso pues claramente [...] se efectúa desde 0.8 y aquí ya para tener ese 0.75 de beneficio adicional» | el 0,8 y el lotaje (lineamiento del stop 0,8) |
 
 **Cifras de resultados dichas en voz** (no se copian ni se usan): v11 0:03:06 y 0:09:31, v13
-0:19:11.
+0:19:11 y v13 0:35:43 (nueva; 0:35:36 en la vieja).
 
 ## 8. Lo que NO cambia, medido
 
@@ -717,7 +732,8 @@ que F5, que no hubo.
 | `2c1116d` retranscripción y PARADA 4 | 0 | 3343 | `0cd803ec…` | 309 MiB |
 | `3b99e5c` F3 parcial | 0 | 3343 | `f4c27680…` | 311 MiB |
 | `1b75f94` F3 de v12, F4 de 1-10 y F7 | 0 | 3343 | `0ea9c384…` | 309 MiB |
-| la entrega | (abajo) | | | |
+| `47f808a` la entrega (antes del revisor) | 0 | 3343 | `bb7391a9…` | 308 MiB |
+| los arreglos del revisor | en el mensaje de su commit | | | |
 
 Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
 
@@ -732,12 +748,16 @@ Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
    pone la T. **Deuda del carril de guardias**: «`test_hoja_de_ruta` no distingue un registro
    «HECHA · T» de una letra reutilizada del de la T vigente».
 2. **R2.4 reescrita.** U sigue viva, así que R2.4 no puede ir HECHA, y con T fuera de la Next
-   Action no puede citar NA:T («no es una letra viva»). Propuesta: **Refs: NA:U · ID:ADR-0078**, y
-   un «Estado:» que diga: «la transcripción y la comparación (NA:T) están HECHAS en
-   trabajo/video-julio (VIDEO-JULIO.md); falta la decisión de los días 20 a 31 (NA:U)». «Depende
-   de:» queda en R2.1 (HECHA). Por la regla de `test_hoja_de_ruta.py:143-149` (una entrada no
-   HECHA solo cita letras vivas) debería pasar con NA:U viva; **no lo simulé en esta rama**: lo
-   comprueba el cierre con su simulación en memoria, antes de editar.
+   Action **NA:T no puede aparecer en ningún sitio del bloque** (`problemas_b` mira las
+   referencias del bloque entero, no solo «Refs:»: revisor, b1). Hoy NA:T está en «Refs:», en
+   «Qué es» y en «Depende de». El texto propuesto, entero, está en
+   `anexos/VIDEO-JULIO/simular_cierre.py` (`R24_NUEVA`): **Refs: NA:U · ID:ADR-0078**; «Qué es» sin
+   «(NA:T)»; un «Estado:» «la transcripción y la comparación están hechas en trabajo/video-julio
+   (VIDEO-JULIO.md); falta la decisión de los días 20 a 31 (NA:U)»; «Depende de: R2.1 (HECHA).»;
+   «Quién» y «Hecho cuando», solo con los días 20 a 31. **Simulado en memoria** con las funciones
+   del test, junto con los puntos 1, 3 y 4 (`simular-cierre.txt`): `a: []`, `b: []`, `c: []`,
+   letras vivas tras el cierre ADFGIJLMNQU. (La primera versión de esta propuesta llevaba «(NA:T)»
+   en el Estado y no se había simulado.)
 3. **U**, con la decisión del consultor tras la PARADA final (§6); su «Depende de T» sale. U ya no
    espera a la rama del VAD (decisión del consultor tras el minuto de escucha).
 4. **F**: el punto (1) («T, la voz del trader sobre julio») sale, y (2)-(4) pasan a ser (1)-(3).
@@ -764,14 +784,19 @@ Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
    los cambia la rama que cambie el bloque.
 10. **G de la Next Action** («qué libro viene de vídeo, ACTIVAR-SESION-05.md §0.b.7») puede apuntar
     también a este informe (§3.5 y §5).
+11. **La naturaleza de v11 a v14 en `fuentes.yaml`** y el comentario de sus líneas 116-118: al día
+    con lo medido en §2.1, si el consultor elige la opción (a) del punto 6 de la PARADA final.
 
 ## 11. PARADA final · Lo que necesito que decidas
 
 0. **La fila de marzo** (HOLDOUT-EXPOSICIONES, 2026-11-09). v13 0:00:10 enseñó, unos segundos, la
    sesión del backtest de marzo de 2026 del trader, con marcas suyas sobre velas de dos días de
    marzo; marzo está recibido, sin abrir y sin sortear. Se cerró sin describir. Opciones: (a) esos
-   dos días se tratan como vistos y salen del sorteo de marzo (te los digo en privado si los
-   quieres); (b) no cambia nada: unas marcas sin cifras en un fotograma no son una etiqueta.
+   dos días se tratan como vistos y salen del sorteo de marzo; **los días los lee Aleks** en el
+   fotograma `fr-v13-8c1e06fb/10000` (`uv run botsito corpus frames show --video v13 --t 0:00:10`),
+   como manda ADR-0072 para las fechas de un backtest: la sesión no los escribe ni los pasa
+   (corregido tras el revisor, a3); (b) no cambia nada: unas marcas sin cifras en un fotograma no
+   son una etiqueta.
    Recomiendo (a), por prudencia: son dos días de un mes que todavía no se ha sorteado, y sacarlos
    cuesta poco. Coste de (b): ninguno medible, pero el sorteo de marzo tendría dos días ya vistos.
 1. **F5: la segunda vía.** Hay 3 NO APARECE de verdad (las tres ventas del 10 de julio en 11-15:
@@ -799,11 +824,72 @@ Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
    trader deja a propósito «para no afectar al muestreo», que cambia cómo se leen las operaciones
    de más del bot).
 5. **Desviaciones:** (a) los ocho manifiestos de F1 en el commit de la fase 0 (aceptada); (b) la
-   PARADA 3 decía que el stop no se leía nunca, y sí se lee a veces (§3.3, corregido); (c) «COINCIDE
-   (minuto no legible)» en dos operaciones (07-03 #3, 07-09 #1); (d) F5 no se aplicó (la segunda
+   PARADA 3 decía que el stop no se leía nunca, y sí se lee a veces (§3.3, corregido); (c) dos
+   operaciones con la entrada leída y el minuto no legible (07-03 #3, 07-09 #1) iban a «COINCIDE
+   (minuto no legible)»; tras el revisor van a APARECE, como dice el criterio de §3.2; (d) F5 no se aplicó (la segunda
    vía es PARADA); el contrato se amplió a tests que no se tocaron y la naturaleza de v11-v14 en
-   `fuentes.yaml` sigue igual; (e) la vista de Analytics de julio en v13 0:40:42, no prevista por
-   la voz, declarada con sus cifras; (f) el fotograma de marzo (punto 0).
+   `fuentes.yaml` sigue igual (punto 6); (e) la vista de Analytics de julio en v13 0:40:42,
+   declarada con sus cifras; la primera fila decía que no se podía prever, y la voz había leído
+   cinco minutos antes cifras de esa vista (v13 0:35:43, «20, 33, 37, 34»), y por ese mismo
+   segmento se localizó otro fotograma (`…/2250000`, un gráfico del 17 sin estadística):
+   corrección en HOLDOUT-EXPOSICIONES (revisor, a2). Decide si fue evitable; (f) el fotograma de
+   marzo (punto 0); (g) la fila del recuento de fotogramas del 2026-11-08 se escribió pasada la
+   medianoche, en el commit del 2026-11-09 (revisor, a5): las exposiciones de ese día sí estaban
+   declaradas antes de su primer `make check`, el recuento llegó tarde.
+6. **La naturaleza de v11 a v14 en `fuentes.yaml`** (herencia de 0.5; revisor, b7). Hoy dice «no
+   comprobado: lo comprueba la rama que lo transcriba», y la rama ya lo comprobó (§2.1). El
+   encargo ataba ese cambio al commit de F5, que no hubo. Opciones: (a) la orden de cierre la pone
+   al día en su commit, con lo medido en §2.1 (v11-v13: los 13 días del 1 al 17, en orden, salvo la
+   sesión 11-15 del 10, que no está grabada; v14: del 20 al 31); (b) la cambia la rama que cambie
+   `material_sin_video`. Recomiendo (a): el texto actual es falso desde esta rama, y la naturaleza
+   no la lee ningún umbral.
+
+## 12. Las exposiciones de cada día (revisor, b3 y b8)
+
+Todas declaradas en `HOLDOUT-EXPOSICIONES.md` el mismo día; aquí, el resumen y el inventario de
+fotogramas abiertos, uno por uno (`<vídeo>/<t_ms>`; los ids de extracción, en §1).
+
+**2026-11-08** (filas: el trabajo del día, el fotograma de la PARADA 1, las velas de contexto y el
+cierre del día): los `make check` de la rama (M1 de marzo y calentamiento con junio, Technical
+Debt); los 13 casos dev de julio y las salidas de `anexos/RECORRIDA-CONSTRUCCION-2/`; la
+transcripción de v11 a v14 y su lectura por la CLI filtrada; `volumedetect` y `silencedetect` sobre
+v11, v13 y v14; los cuatro `.mkv` por `sha256sum`; y **12 fotogramas**: v11 5000, 605000, 890000,
+905000, 920000, 930000, 1160000, 1180000; v12 20000, 615000, 1330000, 2000000.
+
+**2026-11-09** (filas: el trabajo del día, marzo, Analytics de julio, la corrección de la de
+Analytics y el cierre del día): la retranscripción de v13 y v14; un `volumedetect` por hueco
+lanzado por Aleks; y **53 fotogramas**: v11 125000, 135000, 195000, 215000, 235000, 525000,
+1010000, 1020000, 1080000, 1110000 (10); v12 75000, 100000, 134000, 190000, 320000, 482000,
+690000, 840000, 900000, 915000, 1076000, 1199000, 1428000, 1442000, 1590000, 1658000, 1747000,
+1870000, 1896000, 1960000, 2216000 (21); v13 10000, 35000, 330000, 397000, 650000, 760000, 898000,
+1090000, 1295000, 1512000, 1770000, 1830000, 2250000, 2442000 (14); v14 15000, 905000, 1402000,
+1980000, 2526000, 2990000, 3342000, 3445000 (8). Dos de ellos, declarados aparte: v13 10000 (la
+sesión de marzo) y v13 2442000 (Analytics de julio, con sus cifras).
+
+**Total de la rama: 65 fotogramas** (v11 18, v12 25, v13 14, v14 8). El revisor identificó 62 en
+el texto del informe (v11 17, v12 23): uno de v11 y dos de v12 iban dentro de rangos o sin nombrar
+(b8); esta lista los nombra todos. Ninguno con el cursor del replay fuera de julio salvo v13
+10000; ninguno con panel de operaciones o de estadística salvo v13 2442000.
+
+## 13. El encargo, punto por punto (revisor, b2)
+
+| Punto del encargo | Estado | Dónde |
+|---|---|---|
+| Abrir con abrir-rama, base comprobada, encargo tal cual | hecho | Base; `docs/encargos/trabajo-video-julio.md` |
+| Lo que se puede mirar: julio entero comprobado, días 20 a 31, CLI filtrada, fotogramas localizados, Analytics, capturas de resumen sin abrir | hecho, con dos exposiciones declaradas (marzo y Analytics) | §0.1, §12, HOLDOUT-EXPOSICIONES |
+| HOLDOUT-EXPOSICIONES, una fila por día antes del primer `make check` | hecho (el recuento del 08 llegó tarde: §11.5 g) | §12 |
+| FASE 0, 0.1 a 0.6 y auditor | hecho | §0 |
+| F1: transcribir, extraer, checks, SHA256SUMS | hecho; los manifiestos en el commit de la fase 0 (aceptado) | §1, §1.7 |
+| F2: qué cubre cada vídeo y contraste con S-25 | hecho | §2, §2.1 |
+| F3: criterio antes, piloto, operación por operación, Europe/Madrid | hecho; criterio de la PARADA 3 | §3 |
+| F4: 81 filas reproducidas, voz, bot, clase, preguntas, error nuestro, marcas | hecho | §4, §4.1, §4.2 |
+| F5: `material_sin_video` | **no aplicado**: la segunda vía es PARADA (punto 3 de la respuesta a la PARADA 4) | §5, §11.1 |
+| F6: días 20 a 31 | hecho | §6 |
+| F7: candidatas | hecho | §7 |
+| Recuadro en ENTRADA-JULIO §5 | hecho | ENTRADA-JULIO.md §5 |
+| Informe: lo que no cambia, `make check`, propuestas de cierre comprobadas contra `test_hoja_de_ruta` | hecho (la de R2.4, simulada tras el revisor) | §8, §9, §10 |
+| Revisor y su informe tal cual | hecho | §14 |
+| PARADA final y «Rama lista para revisión, NO cerrada» | hecho | §11, Estado |
 
 ## PARADA 1 · un fotograma de julio enseña velas de meses anteriores (2026-11-08)
 
@@ -1126,7 +1212,162 @@ Copiado tal cual:
   precio («Stop loss moved to X») o como distancia (la herramienta de posición), §3.3; no en
   todas las operaciones.
 - **Punto 5:** la entrada del VAD, en las propuestas para la orden de cierre, carril de
-  infraestructura, prioridad baja, en los huecos (§9).
+  infraestructura, prioridad baja, en los huecos (§10).
+
+## 14. Informe del revisor (2026-11-09, sobre 47f808a)
+
+### 14.1 Lo que se hizo con cada hallazgo
+
+| # | Gravedad | Hecho |
+|---|---|---|
+| a1 | bloquea | **Arreglado.** `filas_hasta_t.py` y `operaciones_julio.py` reciben la raíz y la salida por argumento; vueltos a correr hacia la carpeta de trabajo, sus salidas son idénticas a las commiteadas (sha256 `67b8aefc…` y `9c930ce5…`). El guion nuevo `simular_cierre.py` recibe la raíz por argumento y no escribe |
+| a2 | importa | **Corregido con una fila nueva** en HOLDOUT-EXPOSICIONES (la voz había leído cifras de la vista en v13 0:35:43; y el fotograma v13 2250000 se localizó por ese segmento); a la PARADA final (§11.5 e) |
+| a3 | importa | **Corregido**: la opción (a) del punto 0 de la PARADA final dice que los días los lee Aleks en el fotograma (ADR-0072); la sesión no los escribe ni los pasa |
+| a4 | importa | **Corregido**: la fila de marzo cita el segmento entero, con «o el backtesting de julio», y el id de la versión |
+| a5 | menor | **Declarado** (§11.5 g); la fila no se cambia |
+| b1 | bloquea | **Arreglado**: la propuesta de R2.4 quita NA:T de todo el bloque (Refs, Qué es, Depende de, Estado); simulada en memoria con las funciones del test (`anexos/VIDEO-JULIO/simular_cierre.py` y `simular-cierre.txt`): a, b y c vacías |
+| b2 | importa | **Hecho**: §13 |
+| b3 | importa | **Hecho**: §12 |
+| b4 | importa | **Hecho**: v13 0:35:43 (0:35:36 en la vieja) en las dos listas de cifras dichas en voz |
+| b5 | importa | **Arreglado**: las dos «COINCIDE (minuto no legible)» van a APARECE por el criterio de §3.2: COINCIDE 5, APARECE 35; las frases que contaban 6 o 7 COINCIDE, al día |
+| b6 | importa | **Discutido** en §3.5: «Entry price moved to 1.13978» es una orden pendiente movida 17 min antes del llenado, no un llenado; el criterio compara la entrada del aviso de cierre |
+| b7 | importa | **Hecho**: punto 6 de la PARADA final y propuesta 11 de §10 |
+| b8 | importa | **Hecho**: inventario de los 65 fotogramas en §12 |
+| m1 | menor | **Hecho**: §9 |
+| m2 | menor | **Hecho** en lo que cambiaba el sentido: el SHA256SUMS de §1, los títulos de §2 y §4, «v12 al empezar», §4.1 y la referencia a §10. El orden de las secciones (§5 antes de §4, §3.2 y las respuestas al final) se deja: cada parte se escribió cuando llegó su respuesta |
+| m3 | menor | **Hecho**: «el buy [bias] es el bajista», literal |
+| m4 | menor | **Hecho**: fuera la marca [hora perdida] de 07-10 10:28/10:42; la de 07-16 14:40 explicada por la fuente |
+
+### 14.2 El informe, tal cual
+
+> ## Informe del revisor · trabajo/video-julio · 2026-11-09
+>
+> HEAD 47f808a, base 5a54b46 (`git merge-base main HEAD`). Árbol limpio. 7 commits, 22 ficheros (`git diff --stat main...HEAD`: 2728 inserciones, 4 borrados).
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 1 bloquea, 3 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | **bloquea** | Los dos guiones nuevos que escriben sacan la raíz y la salida de `__file__`, no de un argumento ni de una variable de entorno. Eso rompe la regla 2 de «Ensayos aislados» de CLAUDE.md («La raíz [...] de cualquier script que escriba, sale de un argumento o de una variable de entorno»). Los guiones de `anexos/RECORRIDA-CONSTRUCCION-2/` reciben las rutas por `sys.argv`. El riesgo para el que existe la regla (un `sed` que escribe en el repo real) aquí no se da, pero la letra sí se rompe. El arreglo es trivial: rutas por argv. | `docs/validation/anexos/VIDEO-JULIO/filas_hasta_t.py:27,31,135` (`RAIZ = Path(__file__).resolve().parents[4]`, `SALIDA = Path(__file__)...`, `SALIDA.write_text`); `operaciones_julio.py:19,21,41`. Precedente: `anexos/RECORRIDA-CONSTRUCCION-2/patrones.py:217`, `para_clasificar.py:415` (`sys.argv`) |
+> | a2 | importa | Fila de Analytics de julio: la vista se abrió junto a una voz que lee las cifras del mes, y la fila de exposición lo niega. La fila dice que el segmento «no habla de estadísticas ni de resultados: la vista no se podía prever». Pero el segmento anterior, que la CLI enseña en la ventana de 0:40:41, lee unos números que coinciden con las cifras que la propia fila declara (20/33 operaciones, 37,74 %). CLAUDE.md, punto 3, prohíbe las capturas de Analytics «de cualquier mes», y el encargo manda no abrir nada donde la voz hable del resultado del mes. La exposición está declarada el mismo día y con sus cifras (ADR-0038 §2). Lo que no sostiene la evidencia es el «no se podía prever». Hay que corregir la fila con una fila nueva, y que el consultor decida si fue accidental. | `transcript show --video v13 --t0 0:40:30 --t1 0:40:50` → `[0:35:43.436] de esta manera, 20, 33, 37, 34, es que es una locura, vale, nada, luego más tarde continuaré` / `[0:40:41.626] Finalizando el Baltasim de Julio`. Versión vieja: `[0:35:36.515] 20, 33, 37, 34`, `[0:40:29.305] break-ins, que es una locura`. Fila en `docs/validation/HOLDOUT-EXPOSICIONES.md` (2026-11-09, Analytics): «Total Trades 72 (20/33) [...] Win Rate 37,74 %» |
+> | a3 | importa | La PARADA final, punto 0 (a), ofrece «te los digo en privado si los quieres»: la sesión pasaría al consultor los dos días de marzo con marcas del trader. ADR-0072 dice que la sesión no lee las fechas de un backtest y que el consultor las recibe «de Aleks», nunca de otra fuente. La respuesta a la PARADA 1 dice «se cierra, no se describe». | `docs/validation/VIDEO-JULIO.md:772-773`; `docs/adr/0072-quien-lee-la-columna-de-fechas-y-los-tres-papeles.md:20-22,27` |
+> | a4 | importa | La fila de marzo cita la voz sin ser literal: quita «o el backtesting de julio,» sin poner `[...]`. Justo ese fragmento es el que indica que el trader estaba eligiendo entre sus sesiones de backtest, que es por qué se vio marzo. | Fila 2026-11-09 de marzo: «La última vez nos quedamos en el 10 de julio creo, sería ese de aquí, vamos a darle continuidad». CLI (`--transcripcion tr-v13-…1aeb45d5`): `[0:00:06.480] La última vez nos quedamos en el 10 de julio creo, o el backtesting de julio, sería ese de aquí, vamos a darle continuidad` |
+> | a5 | menor | El recuento de fotogramas del 2026-11-08 («cierre del día», 12 fotogramas) se commiteó el 2026-11-09 a las 00:36 (-0500). El commit anterior (8c47a72, 00:05) no lo traía. Las exposiciones genéricas de ese día sí se declararon a tiempo; solo el recuento llegó tarde. | `git log --stat`: 2c1116d añade «cierre del día 2026-11-08» y «trabajo del día 2026-11-09»; 8c47a72 solo añade la fila «tras la respuesta a la PARADA 1» |
+>
+> Comprobado sin hallazgos:
+> - `uv run python scripts/contrato_rama.py` → `CONTRATO: 22 ficheros dentro del contrato de trabajo/video-julio (riesgo medio, ...)`, exit 0.
+> - `uv run botsito state check` → `OK: rama 'trabajo/video-julio' ...`, exit 0.
+> - `make check`: no lo ejecuté. `make-check.log` dice `3343 passed`, `SELLO: make check en verde sobre el arbol bb7391a9b9888d09761a229a6396a0b2d4183a5f` (igual a `git show -s --format=%T HEAD`), `PICO DE MEMORIA de make check: 308 MiB`, `exit=0`.
+> - Trailers `Fuente:`: ningún commit toca `knowledge/spec` ni `knowledge/cases`, así que no aplica.
+> - Holdout: nada de `knowledge/cases/holdout/` en el diff.
+> - Regímenes: en `knowledge/corpus/transcripciones/` y `fotogramas/` solo hay `A` (10 manifiestos). Las dos retranscripciones llevan `reemplaza_a` y los manifiestos viejos están intactos. Ni `data/manifests/` ni `libros.yaml` cambian.
+> - Ni evidencia, ni feedback, ni ambigüedades, ni ADR, ni sitios con `cita` nuevos.
+> - `src/`, `scripts/`, `tests/` y los goldens no cambian.
+> - El recuadro de ENTRADA-JULIO.md §5 tiene solo líneas añadidas, con `>`, fecha y rama.
+> - Segmentos de los manifiestos (120/111/31/24/29/47) y `n_fotogramas` (1261/2221/2450/3588) cuadran con §1 y §1.7.
+> - Ningún aviso `OCULTOS` en v13 ni en v14 enteros (grep -c = 0).
+> - Citas comprobadas contra la CLI filtrada, literales: v11 0:00:38-0:00:53, v11 0:05:44-0:06:09, v13 0:05:26 (nueva), v13 0:06:25-0:06:38 (nueva), v13 0:21:31 (nueva), v13 0:17:34-0:17:57 (vieja), v13 0:00:29 y 0:05:19 (vieja, F7 #8), v14 0:00:00 (vieja), v14 0:20:10 (vieja), v14 0:42:02 (vieja), v14 0:59:37 (nueva).
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 7 importa, 4 menor. Requisitos: 34 hechos, 5 parciales, 1 no hecho, 1 hecho de otra forma (aceptado), 1 pendiente.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base comprobada con git | Hecho | VIDEO-JULIO.md:7-12 |
+> | 2 | 0.1 sha y bytes de los cuatro .mkv | Hecho | :25-30; coinciden con ENTRADA-JULIO.md:441-444 |
+> | 3 | Julio entero, reservados y ocultos por recuento, meses_libres | Hecho | :34-40 |
+> | 4 | 0.2 campos de cada herramienta | Hecho | :44-86 |
+> | 5 | 0.3 qué cambia al registrar | Hecho | :90-104 |
+> | 6 | 0.4 material_sin_video y las dos salidas | Hecho | :108-123; comprobado `test_metodo_adr0092.py:445`, `main-hueco.txt:18`, `test_criterio_campos_adr0092.py:104` |
+> | 7 | 0.5 herencias: todo entra o se dice por qué no | Parcial | fuentes.yaml queda abierto (b7) |
+> | 8 | 0.6 tiempo y pico | Hecho | :147-151 |
+> | 9 | Auditor-encargo | Hecho | :155-180 |
+> | 10 | F1: transcribir y extraer, uno a uno | Hecho | :230-247 |
+> | 11 | F1: transcript check y frames check | Hecho | :241-243, :975 |
+> | 12 | Manifiestos en su commit | Hecho de otra forma | aceptado (respuesta a la PARADA 1) |
+> | 13 | SHA256SUMS en el Escritorio y su número de líneas | Hecho | `wc -l` = 116 = :977-979 |
+> | 14 | Ocultos por vídeo y motivo | Hecho | :237-240, :963-968 |
+> | 15 | PARADA 1, puntos 1.1 a 1.3: medidas, regla antes de medir, retranscripción | Hecho | §1.5-§1.7 |
+> | 16 | F2: mapa por vídeo y contraste con S-25 | Hecho | §2.1, :301-338 |
+> | 17 | F3: criterio escrito antes, piloto | Hecho | §3.0, §3.1, §3.2 |
+> | 18 | F3: categorías por operación y por día (PARADA 4, punto 3) | Hecho | §3.5; recalculé cada fila de §3.3/§3.4 y cuadra: 7/33 (11)/3/0/8/16 = 67 |
+> | 19 | Lo que se ve en el vídeo y no en el libro, aparte | Hecho | :484-485, :552 |
+> | 20 | Confirmar Europe/Madrid | Hecho, con afirmación de más | b5 |
+> | 21 | Guiones del anexo con su salida | Hecho | `operaciones_julio.py` y su .txt (regla de la raíz: a1) |
+> | 22 | F4: 81 reproducidas, PARADA si no | Hecho | `filas-hasta-t.txt:2-3` |
+> | 23 | F4: voz, bot y clase por fila | Hecho | Recalculado: 52 en §4.1 + 31 en §4.2; 35/5/4/37 y sus subtotales cuadran |
+> | 24 | F4: preguntas, error nuestro, 07-02/07-14, marcas | Hecho | :604-618 |
+> | 25 | F5 con el punto 3 de la PARADA 4 | Hecho | :556-566: no cambia el bloque; los 3 NO APARECE van a PARADA con su lista |
+> | 26 | F6 por día, dos ejemplos | Hecho | :653-671; 10-11 operaciones en seis días, cuadra |
+> | 27 | F7 candidatas | Hecho | :678-690 |
+> | 28 | Cifras de resultados dichas en voz: decir dónde están | Parcial | b4 |
+> | 29 | Lo que no cambia, con `git diff` | Hecho | §8 |
+> | 30 | Informe: «las exposiciones de cada día» | Parcial | b3 |
+> | 31 | Informe: los make check de la rama | Parcial | §9: la fila de la entrega está vacía (menor m1) |
+> | 32 | Propuestas de cierre comprobadas contra test_hoja_de_ruta | Parcial | b1 |
+> | 33 | Technical Debt: crudas, ffmpeg y letras reutilizadas | Hecho | :756-761 |
+> | 34 | Fila de HOLDOUT por día, antes del primer make check | Hecho | a5 |
+> | 35 | Recuadro en ENTRADA-JULIO §5 | Hecho | diff |
+> | 36 | Las respuestas del consultor, tal cual en el informe y en el encargo | Hecho | `diff` de los cinco bloques: idénticos |
+> | 37 | Quitar «U espera a la rama del punto 5» | Hecho | solo queda dentro de la cita del consultor (:1093) |
+> | 38 | Propuesta del VAD con su condición de entrada | Hecho | :748-755 |
+> | 39 | PARADA final con lo pedido | Hecho | §11 |
+> | 40 | Tabla «El encargo, punto por punto» | No hecho | b2 |
+> | 41 | Contrato ampliado a los goldens y al test | Hecho | contrato.yaml:17-21 |
+> | 42 | Revisor y «Rama lista para revisión, NO cerrada» | Pendiente | en curso (Estado: EN CURSO, :1132) |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | **bloquea** | La propuesta de R2.4 no pasa `test_hoja_de_ruta`. `problemas_b` mira las referencias de TODO el bloque, no solo la línea `Refs:`. El «Estado:» propuesto lleva «(NA:T)», y con T fuera de la Next Action eso falla. Además, «Qué es» (HOJA-DE-RUTA.md:129) y «Depende de» (:132) llevan hoy NA:T, y la propuesta no dice que se quiten. El informe reconoce «no lo simulé en esta rama», y el encargo pide cada propuesta «comprobada contra test_hoja_de_ruta». | `test_hoja_de_ruta.py:141-149` (`referencias(bloque)`). Simulación en memoria (`uv run python -c`, sin escribir): con el Estado propuesto → `['R2 «R2.4 · Julio en vídeo»: NA:T no es una letra viva de la Next Action']`; sin NA:T en ningún sitio del bloque → `[]`; `problemas_a` y `problemas_c` → `[]`. VIDEO-JULIO.md:734-740 |
+> | b2 | importa | Falta la tabla «El encargo, punto por punto» (skill `entregar-rama`; el encargo pedía FASE 0). | Grep de «punto por punto»: solo «### 0.9 Cómo se aplica, punto por punto» (:215) |
+> | b3 | importa | El encargo pide en el informe «las exposiciones de cada día», y no hay sección. Están repartidas (§2.1, §3.3:497, §11.0) y en HOLDOUT-EXPOSICIONES. El informe no da el total de fotogramas (12 + 53). | Grep de encabezados de VIDEO-JULIO.md: ninguna sección de exposiciones |
+> | b4 | importa | Faltan unas cifras de resultados dichas en voz en la lista de «dónde están»: v13 0:35:36 (vieja) / 0:35:43 (nueva), «20, 33, 37, 34». La lista solo trae v11 0:03:06, v11 0:09:31 y v13 0:19:11. | VIDEO-JULIO.md:293-294, :692-693; CLI en a2 |
+> | b5 | importa | «COINCIDE (minuto no legible)» va contra el criterio que el propio informe escribió antes («si no, se dice "hora compatible" y la operación no puede ir a COINCIDE») y contra la definición del consultor («el mismo minuto»). Con el criterio escrito serían 5 COINCIDE y 35 APARECE. Está declarado como desviación (c), pero :550 afirma que «en las 7 COINCIDE [...] el eje cae en instante_utc + 2 h», y en dos el minuto no se lee. Además :487 dice «en las 6 COINCIDE» cuando :479 cuenta 7. | VIDEO-JULIO.md:1062-1064, :442, :460, :471, :479, :487, :550, :803 |
+> | b6 | importa | 07-01 #2 va como APARECE con un aviso «Entry price moved to 1.13978», y el libro dice 1.13958: 20 puntos. El criterio dice CONTRADICE si la entrada está a más de 3 puntos. Puede ser una orden pendiente movida antes del llenado, pero el informe no lo discute. | VIDEO-JULIO.md:450; criterio en :1057-1058 |
+> | b7 | importa | §5 promete «Lo que la PARADA final propone para cada uno, en §10», y §10 no dice nada de la naturaleza de v11-v14 en `fuentes.yaml`. Esa herencia de 0.5 queda con un texto que la rama deja falso («no comprobado: lo comprueba la rama que lo transcriba»), y nadie la recoge. | VIDEO-JULIO.md:564-566, §10 (:724-766); `knowledge/corpus/fuentes.yaml:116-118, 127, 136, 145, 155` |
+> | b8 | importa | El recuento de fotogramas abiertos no se puede rastrear. Declarados: 12 + 53 = 65 (v11 8+10, v12 4+21, v13 14, v14 8). En el informe se identifican 62 distintos: v11 17, v12 23, v13 14, v14 8. Faltan 3, posiblemente dentro de rangos como «215000-235000» o «100000-134000». La fila de HOLDOUT es vinculante: conviene un inventario por fotograma. | `grep -o` de referencias `…/<ms>` en VIDEO-JULIO.md (salida en «Comandos») |
+> | m1 | menor | §9: la fila de la entrega dice «(abajo)» y abajo no hay nada. El log dice exit 0, 3343 passed, SELLO `bb7391a9…` y 308 MiB. | VIDEO-JULIO.md:720; `make-check.log:84,108,110,111` |
+> | m2 | menor | Texto superado sin poner al día. §1 da el SHA256SUMS en la carpeta temporal con 64 líneas; §2 «(parcial: los fotogramas esperan la PARADA 1)» y «Qué días cubre v12 al empezar (6 o 7) no se ha leído»; §4 «la clasificación espera F2 y F3»; §4.1 «esperan la PARADA 4» y «hasta la PARADA 4, 2»; «(§9)» por §10. Además, §5 va antes que §4, y §3.2 está al final. | :255-258, :264, :289-290, :568, :577, :602, :620-622, :1129 |
+> | m3 | menor | «el bias es el bajista» se da como cita, pero la transcripción dice «el buy es el bajista». | :317, :525; CLI `[0:35:15.436] ... el buy es el bajista` |
+> | m4 | menor | Se marca [hora perdida] en 07-10 10:28/10:42, y el anexo dice «hora perdida: no». En 07-16, la fila de las 14:40 se explica porque la hora de 13:00-14:00 «cae en esas filas», y las 14:40 caen fuera; la marca «posible M» le viene de la fuente. | VIDEO-JULIO.md:631, :638; `filas-hasta-t.txt:82-83,120` |
+>
+> Lo que la rama hace y el encargo no pide: nada relevante. `recuento_julio.py` va en el anexo y solo lee. El contrato permite `docs/runbooks/ERRORES-RECURRENTES.md`, que no se toca.
+> Lo que el encargo dice que NO se toca (`src/`, spec, evidencia, feedback, cases/dev, libros.yaml, tests): intacto según el diff.
+>
+> ### Lo que no pude comprobar
+> - El contenido de los fotogramas (no se abren): ni lo que se lee en cada uno, ni si el de marzo trae lo que dice la fila, ni las cifras de Analytics.
+> - Si la regla de §1.5 se escribió antes de medir: va en el mismo commit que las medidas (8c47a72).
+> - Las salidas `mean_volume` de Aleks: están en la conversación, no en el repo.
+> - Si algún fotograma se abrió mientras corría un `make check`. Los tiempos son compatibles con las dos cosas: 1b75f94 a las 02:05 y la entrega a las 02:46, con un make check de 20:38.
+> - El contenido de `C:\Users\USER\Desktop\SHA256SUMS-v11-v14.txt`: solo conté las líneas.
+> - El minuto de escucha de Aleks.
+> - `make check`, `filas_hasta_t.py` y `operaciones_julio.py` (escriben): no los ejecuté. Uso como evidencia `make-check.log` y las cabeceras de las salidas commiteadas.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. `uv run python scripts/contrato_rama.py`
+> 3. `uv run botsito state check`
+> 4. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md docs/validation/ENTRADA-JULIO.md PROJECT_STATE.md`
+> 5. `grep -o -E "(fr-v1[1-4]-[0-9a-f]{8}|v1[1-4]|…)/[0-9]{4,7}(-[0-9]{4,7})?" docs/validation/VIDEO-JULIO.md | sort | uniq -c`
+> 6. Un `for` sobre los commits: lo negó la guardia, y lo sustituí por el 7.
+> 7. `git log --format='==== %h %ad %s' --date=iso --stat main..HEAD`
+> 8. `ls -la make-check.log && grep -n -E "SELLO|PICO DE MEMORIA|passed|failed|HUELLA|exit" make-check.log | tail -20 && git show -s --format='%T' HEAD`
+> 9. `diff <(sed -n ...) <(sed -n ...)` de los cinco bloques de respuestas del consultor (encargo frente a informe)
+> 10. `head -4` y `grep -n -A6 "^## 2026-07-01 07-11"` sobre `filas-hasta-t.txt`; `grep -n -E "posible M|^OK|07-10|07-16"` sobre el mismo fichero
+> 11. `uv run botsito corpus transcript show --help`: la guardia lo negó
+> 12. `uv run botsito corpus transcript show` en estas ventanas: v11 0:00:36-0:00:55; v11 0:05:40-0:06:12; v13 0:05:20-0:05:35; v14 0:41:55-0:42:40 (vieja); v13 0:17:30-0:18:00 (vieja); v13 0:00:25-0:00:35 (vieja); v13 0:00:30-0:06:40 (vieja); v13 0:06:00-0:06:45; v13 0:21:25-0:21:50; v14 0:00:00-0:00:30 (vieja); v14 0:59:00-0:59:50 (nueva y vieja); v14 0:20:00-0:20:30 (vieja); v13 0:40:30-0:40:50 (vieja y nueva); v13 0:38:00-0:40:30 (vieja); v13 0:35:40-0:35:50; v12 0:07:40-0:10:20
+> 13. `uv run botsito corpus transcript show --video v13 --t0 0:00:00 --t1 0:41:00 | grep -i -c -E "oculto|motivo"` (y lo mismo con v14 0:00:00-1:00:00)
+> 14. `git show 2c1116d -- docs/validation/HOLDOUT-EXPOSICIONES.md | grep "^+|"` y lo mismo con 8c47a72
+> 15. `git diff --name-status main...HEAD -- knowledge/ data/manifests/ tests/ src/ scripts/`; `git log --format=%h main..HEAD -- knowledge/spec knowledge/cases knowledge/evidence knowledge/feedback knowledge/corpus/libros.yaml`
+> 16. `grep -H -E "^(segmentos|...)"` sobre los manifiestos nuevos
+> 17. `sed -n` sobre `main-hueco.txt:18`, `test_metodo_adr0092.py:440-447`, `test_criterio_campos_adr0092.py:100-106`, `criterio_fidelidad.yaml:55-66`, `PROJECT_STATE.md:28,36,38`, `cuarentena.py:558-563`
+> 18. `ls -la` y `wc -l` sobre `C:/Users/USER/Desktop/SHA256SUMS-v11-v14.txt`
+> 19. `grep -n` sobre `recuento_julio.py`
+> 20. `uv run python -c '...'`: simulación en memoria de la propuesta de R2.4 con las funciones de `tests/unit/test_hoja_de_ruta.py`, sin escribir nada
+> 21. Read y Grep sobre el encargo, `contrato.yaml`, VIDEO-JULIO.md, `fuentes.yaml:110-157`, `test_hoja_de_ruta.py`, `HOJA-DE-RUTA.md` (R2.4), HISTORIA (encabezados «HECHA · T/U»), ADR-0072, ENTRADA-JULIO.md (sha), `filas_hasta_t.py`, `operaciones_julio.py` y los guiones de `anexos/RECORRIDA-CONSTRUCCION-2/` (para el precedente de argv)
 
 ## Estado
-EN CURSO
+**Rama lista para revisión, NO cerrada.** Termina en la PARADA final (§11): marzo (0), F5 (1), las
+81 filas (2), U (3), F7 (4), las desviaciones (5) y la naturaleza de v11-v14 (6). No se cierra
+nada sin la orden de Aleks.

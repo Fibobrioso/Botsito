@@ -5,7 +5,8 @@ Lee solo `knowledge/cases/dev/caso-eurusd-2026-07-*.yaml` (construccion, ADR-007
 instante UTC (el llenado) y la hora de Madrid (UTC+2 en julio, ADR-0069). Escribe
 `operaciones-julio.txt` junto a este guion, en UTF-8 y con \\n.
 
-Uso: uv run python docs/validation/anexos/VIDEO-JULIO/operaciones_julio.py
+Uso (la raiz del repositorio y el fichero de salida, por argumento: CLAUDE.md, «Ensayos aislados»):
+  uv run python docs/validation/anexos/VIDEO-JULIO/operaciones_julio.py <raiz> <salida>
 """
 
 from __future__ import annotations
@@ -16,9 +17,11 @@ from pathlib import Path
 
 import yaml
 
-RAIZ = Path(__file__).resolve().parents[4]
+if len(sys.argv) != 3:
+    sys.exit("uso: operaciones_julio.py <raiz del repositorio> <fichero de salida>")
+RAIZ = Path(sys.argv[1]).resolve()
+SALIDA = Path(sys.argv[2]).resolve()
 DEV = RAIZ / "knowledge" / "cases" / "dev"
-SALIDA = Path(__file__).resolve().parent / "operaciones-julio.txt"
 
 
 def main() -> int:
