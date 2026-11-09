@@ -276,3 +276,44 @@ Copiado tal cual:
 > - El trader habla en los huecos, pero poco: el VAD se salta frases cortas como esa. La entrada nueva del punto 5 va a la propuesta de cierre, en el carril de infraestructura y con prioridad baja, en los huecos: no va antes de las trazas, de las láminas ni de la preparación de la sesión 7.
 > - U ya NO espera a esa rama. El stop no se ve en el vídeo, así que un caso de los días 20 a 31 sacado del vídeo no tendría stop. U lo decide el consultor en la PARADA final con lo que dé F6: quita del informe la frase «U espera a la rama del punto 5».
 > Sigue hasta la PARADA final.
+
+## Respuesta del consultor a la PARADA final (2026-11-09)
+
+Copiado tal cual:
+
+> Respuesta del consultor a la PARADA final de trabajo/video-julio (2026-11-09). Cópiala tal cual en el informe, en su sección, y aplícala. Después, revisor (pasada corta, con el alcance de esta respuesta) y «Rama lista para revisión, NO cerrada».
+>
+> 0. Marzo (v13 0:00:10, fr-v13-8c1e06fb/10000).
+>    - La vía es ADR-0041 (un día reservado expuesto sale del holdout y no se sustituye), no sacar los días del sorteo antes. Hoy no se puede retirar: un retirado tiene que ser un caso reservado (ADR-0041 §4; problemas_de_retirados) y marzo no está sorteado. Por eso se retira DESPUÉS del sorteo, en la rama de marzo: los días expuestos que caigan en fidelidad-2 o fidelidad-3 entran en knowledge/cases/retirados.yaml por su huella; si caen en fidelidad-dev, no hace falta nada.
+>    - Los días los lee Aleks en el fotograma, como pide ADR-0072. Ni las fechas ni la cantidad de marcas se escriben en el repo, en el chat ni en un commit; a la sesión de marzo solo le llegan las huellas.
+>    - En esta rama, con su propio commit:
+>      (a) añade a docs/runbooks/ENTRADA-MARZO.md, justo después del paso del sorteo, el paso de la retirada, con lo de arriba, la referencia del fotograma, su fila de HOLDOUT-EXPOSICIONES y ADR-0041;
+>      (b) declara en knowledge/corpus/tramos_no_citables.yaml un tramo de precaución en v13, desde 0:00:00 hasta el primer instante en que un fotograma ya abierto confirma la sesión de julio (como mucho 0:00:35, §2.1). Motivo: «el replay enseña el backtest de marzo del trader, sin sortear». El fotograma 10000 NO se vuelve a abrir. Con el trailer Fuente: que pida el repo (verifícalo; ADR-0038);
+>      (c) mide si con ese tramo `corpus frames show --video v13 --t 0:00:10` y la guardia niegan el fotograma. Si no lo niegan, propón para el cierre una línea de Technical Debt del carril de guardias: «un fotograma dentro de un tramo no citable se puede abrir».
+>    - Entra en ERRORES-RECURRENTES como hallazgo DEL CONSULTOR, «bloquea»: la respuesta a la PARADA 1, punto 0, dejó abrir fotogramas donde el replay aún no estaba localizado en julio. Lección: un fotograma de un backtest solo se abre después de que la voz o un fotograma ya abierto sitúen ese tramo en el mes permitido, y nunca en el arranque de una grabación.
+>
+> 1. F5: de acuerdo. material_sin_video no cambia: julio sigue provisional, y los goldens y test_criterio_campos_adr0092 no se tocan.
+>    - Las tres ventas del 10 de julio en 11-15 son NO APARECE: la sesión se ve pasada y sin marcas, así que el «todo está grabado» de S-25 no se cumple para ella.
+>    - La decisión de F5 pasa a la entrada nueva del VAD (§10): con los huecos medidos de nuevo, F5 se vuelve a decidir allí. Añádelo a esa propuesta.
+>    - Para la sesión 7, bloque técnico: «la tarde del 10 de julio no está en el vídeo y el libro tiene tres ventas; ¿se grabó en otra parte?».
+>
+> 2. F4: el consultor acepta las clases propuestas de las 81 filas como clasificación de T: 35 regla desconocida (30 de ellas, el rango de H4), 5 error nuestro (sospecha), 4 material incompleto y 37 sin clase.
+>    - Las 5 de error nuestro (la ruptura del breaker en M1 con cuerpo, 3 de julio) van a la rama de trazas, que las confirma o las reclasifica.
+>    - Las 37 sin clase siguen sin clase. Hay una nota para P5: F7 #10 (v14 0:42:02, «no le voy a tomar para no afectar al muestreo») dice que el trader deja entradas válidas sin tomar en el backtest. Hasta que él lo explique, una «operación de más» del bot no se da por error. Va a la sesión 7 como pregunta técnica: «¿en el backtest dejas entradas válidas sin tomar? ¿cuándo y por qué?».
+>
+> 3. U: no se sacan casos del vídeo para los días 20 a 31. Un caso necesita su libro (ADR-0042 §2; ADR-0078 §3), el stop casi nunca se lee y tres días están enteros en huecos del ASR. U sale HECHA con esta decisión. La voz de v14 sí se puede citar como evidencia.
+>
+> 4. F7: aquí no se crea ningún ítem. La rama de la preparación de la sesión 7 crea los de #1 y #2 (el rango de H4 y qué lo rompe), #3 y #10, citados por su id de transcripción. Los de #6 y #9, si la rama de trazas los necesita.
+>
+> 5. Desviaciones: aceptadas las dos primeras (los manifiestos en el commit de la fase 0; el stop, que sí se lee a veces). La vista de Analytics de julio (v13 0:40:42) era evitable: el encargo prohibía abrir fotogramas donde la voz habla del resultado del mes. No hay daño de holdout (julio es construcción) y está bien declarada, sin usar sus cifras. Entra en ERRORES-RECURRENTES como hallazgo de la sesión, «importa», con la lección para el revisor: la voz que lee cifras del mes marca el tramo, y desde ahí no se abre ningún fotograma hasta que la voz vuelva a un día concreto.
+>
+> 6. fuentes.yaml: la naturaleza de v11 a v14 y su comentario (:116-118) se ponen al día AHORA, en un commit propio de la rama, no en el cierre. El cierre solo admite contrato, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE y HOJA-DE-RUTA. Escribe lo comprobado y nada más:
+>    - v11, del 1 al 3; v12, del 3 al 10 por la mañana; v13, la tarde del 10 ya pasada, sin grabar, y del 13 al 17, con el arranque de otro backtest en sus primeros segundos y la vista de Analytics al final; v14, del 20 al 31;
+>    - el libro está en Europe/Madrid y coincide donde se lee;
+>    - lo que regenere corpus inventory.
+>    Sin fechas de marzo.
+>
+> 7. Cierre: vuelve a simular las propuestas de §10 contra test_hoja_de_ruta con T y U HECHAS las dos: R2.4 queda HECHA, sin letras vivas. Cuidado con el encabezado de HISTORIA, que ya tiene «Next Action HECHA · T» y «· U» de octubre: propón encabezados que los distingan.
+>    - En la entrada F: (1) sale, y la (4), la preparación de la sesión 7, hereda las preguntas de los puntos 1 y 2 y los ítems del punto 4.
+>    - Las tres o cuatro líneas de Technical Debt del carril de guardias, en el informe.
+>    - Next tag: F38u. No hay push hasta la orden de cierre.

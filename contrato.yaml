@@ -19,6 +19,12 @@ rutas_permitidas:
   - tests/golden/metodo_adr0092/main-stop.txt
   - tests/golden/metodo_adr0092/main-viva.txt
   - tests/unit/test_criterio_campos_adr0092.py
+  # ampliada por la respuesta del consultor a la PARADA final (2026-11-09), punto 0 (a) y (b)
+  - docs/runbooks/ENTRADA-MARZO.md
+  - knowledge/corpus/tramos_no_citables.yaml
+  # y su consecuencia medida: el test que fija los tramos que vigila la guardia (make check rojo
+  # sin el; VIDEO-JULIO.md §11.1)
+  - tests/unit/test_guardia_claude.py
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md

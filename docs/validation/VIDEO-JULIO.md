@@ -773,12 +773,16 @@ Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
    7.» **Condición de entrada (propuesta): va**, porque el minuto de Aleks dice que el trader habla
    en un hueco («bias bajista», una frase corta que el VAD se saltó). La letra, la que asigne el
    consultor (hoy están libres, entre otras, la V y la W).
-8. **Technical Debt, carril de guardias** (tres líneas):
+8. **Technical Debt, carril de guardias** (tres líneas; la cuarta, de la respuesta a la PARADA
+   final, punto 0 (c), al final de la lista):
    - «La guardia no niega leer con Read las crudas de `data/transcripciones/` de un vídeo sin
      cuarentena ni tramos» (encargo).
    - «La forma de medida de ffmpeg de la guardia no admite `-ss`/`-t` sobre un tramo de un vídeo
      del corpus: falso positivo de la lista cerrada de GUARDIA-FFMPEG» (respuesta a la PARADA 2).
    - La de `test_hoja_de_ruta` y las letras reutilizadas (punto 1).
+   - «Un fotograma dentro de un tramo no citable se puede abrir: la guardia niega `corpus frames
+     show` en el tramo, pero no el Read del PNG por su ruta, y la CLI imprime la ruta» (medido,
+     §11.1).
 9. **«hasta que T lo compruebe» en `src/`** (`cableado.py:1408`, `criterio_fidelidad.py:341`) y la
    línea 18 de los tres goldens: siguen siendo verdad mientras `material_sin_video` no cambie (§5);
    los cambia la rama que cambie el bloque.
@@ -843,6 +847,102 @@ Ningún `failed` en ninguno. Los tests no cambian: 3343 en todos.
    sesión 11-15 del 10, que no está grabada; v14: del 20 al 31); (b) la cambia la rama que cambie
    `material_sin_video`. Recomiendo (a): el texto actual es falso desde esta rama, y la naturaleza
    no la lee ningún umbral.
+
+## Respuesta del consultor a la PARADA final (2026-11-09)
+
+Copiado tal cual (también en el encargo):
+
+> Respuesta del consultor a la PARADA final de trabajo/video-julio (2026-11-09). Cópiala tal cual en el informe, en su sección, y aplícala. Después, revisor (pasada corta, con el alcance de esta respuesta) y «Rama lista para revisión, NO cerrada».
+>
+> 0. Marzo (v13 0:00:10, fr-v13-8c1e06fb/10000).
+>    - La vía es ADR-0041 (un día reservado expuesto sale del holdout y no se sustituye), no sacar los días del sorteo antes. Hoy no se puede retirar: un retirado tiene que ser un caso reservado (ADR-0041 §4; problemas_de_retirados) y marzo no está sorteado. Por eso se retira DESPUÉS del sorteo, en la rama de marzo: los días expuestos que caigan en fidelidad-2 o fidelidad-3 entran en knowledge/cases/retirados.yaml por su huella; si caen en fidelidad-dev, no hace falta nada.
+>    - Los días los lee Aleks en el fotograma, como pide ADR-0072. Ni las fechas ni la cantidad de marcas se escriben en el repo, en el chat ni en un commit; a la sesión de marzo solo le llegan las huellas.
+>    - En esta rama, con su propio commit:
+>      (a) añade a docs/runbooks/ENTRADA-MARZO.md, justo después del paso del sorteo, el paso de la retirada, con lo de arriba, la referencia del fotograma, su fila de HOLDOUT-EXPOSICIONES y ADR-0041;
+>      (b) declara en knowledge/corpus/tramos_no_citables.yaml un tramo de precaución en v13, desde 0:00:00 hasta el primer instante en que un fotograma ya abierto confirma la sesión de julio (como mucho 0:00:35, §2.1). Motivo: «el replay enseña el backtest de marzo del trader, sin sortear». El fotograma 10000 NO se vuelve a abrir. Con el trailer Fuente: que pida el repo (verifícalo; ADR-0038);
+>      (c) mide si con ese tramo `corpus frames show --video v13 --t 0:00:10` y la guardia niegan el fotograma. Si no lo niegan, propón para el cierre una línea de Technical Debt del carril de guardias: «un fotograma dentro de un tramo no citable se puede abrir».
+>    - Entra en ERRORES-RECURRENTES como hallazgo DEL CONSULTOR, «bloquea»: la respuesta a la PARADA 1, punto 0, dejó abrir fotogramas donde el replay aún no estaba localizado en julio. Lección: un fotograma de un backtest solo se abre después de que la voz o un fotograma ya abierto sitúen ese tramo en el mes permitido, y nunca en el arranque de una grabación.
+>
+> 1. F5: de acuerdo. material_sin_video no cambia: julio sigue provisional, y los goldens y test_criterio_campos_adr0092 no se tocan.
+>    - Las tres ventas del 10 de julio en 11-15 son NO APARECE: la sesión se ve pasada y sin marcas, así que el «todo está grabado» de S-25 no se cumple para ella.
+>    - La decisión de F5 pasa a la entrada nueva del VAD (§10): con los huecos medidos de nuevo, F5 se vuelve a decidir allí. Añádelo a esa propuesta.
+>    - Para la sesión 7, bloque técnico: «la tarde del 10 de julio no está en el vídeo y el libro tiene tres ventas; ¿se grabó en otra parte?».
+>
+> 2. F4: el consultor acepta las clases propuestas de las 81 filas como clasificación de T: 35 regla desconocida (30 de ellas, el rango de H4), 5 error nuestro (sospecha), 4 material incompleto y 37 sin clase.
+>    - Las 5 de error nuestro (la ruptura del breaker en M1 con cuerpo, 3 de julio) van a la rama de trazas, que las confirma o las reclasifica.
+>    - Las 37 sin clase siguen sin clase. Hay una nota para P5: F7 #10 (v14 0:42:02, «no le voy a tomar para no afectar al muestreo») dice que el trader deja entradas válidas sin tomar en el backtest. Hasta que él lo explique, una «operación de más» del bot no se da por error. Va a la sesión 7 como pregunta técnica: «¿en el backtest dejas entradas válidas sin tomar? ¿cuándo y por qué?».
+>
+> 3. U: no se sacan casos del vídeo para los días 20 a 31. Un caso necesita su libro (ADR-0042 §2; ADR-0078 §3), el stop casi nunca se lee y tres días están enteros en huecos del ASR. U sale HECHA con esta decisión. La voz de v14 sí se puede citar como evidencia.
+>
+> 4. F7: aquí no se crea ningún ítem. La rama de la preparación de la sesión 7 crea los de #1 y #2 (el rango de H4 y qué lo rompe), #3 y #10, citados por su id de transcripción. Los de #6 y #9, si la rama de trazas los necesita.
+>
+> 5. Desviaciones: aceptadas las dos primeras (los manifiestos en el commit de la fase 0; el stop, que sí se lee a veces). La vista de Analytics de julio (v13 0:40:42) era evitable: el encargo prohibía abrir fotogramas donde la voz habla del resultado del mes. No hay daño de holdout (julio es construcción) y está bien declarada, sin usar sus cifras. Entra en ERRORES-RECURRENTES como hallazgo de la sesión, «importa», con la lección para el revisor: la voz que lee cifras del mes marca el tramo, y desde ahí no se abre ningún fotograma hasta que la voz vuelva a un día concreto.
+>
+> 6. fuentes.yaml: la naturaleza de v11 a v14 y su comentario (:116-118) se ponen al día AHORA, en un commit propio de la rama, no en el cierre. El cierre solo admite contrato, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE y HOJA-DE-RUTA. Escribe lo comprobado y nada más:
+>    - v11, del 1 al 3; v12, del 3 al 10 por la mañana; v13, la tarde del 10 ya pasada, sin grabar, y del 13 al 17, con el arranque de otro backtest en sus primeros segundos y la vista de Analytics al final; v14, del 20 al 31;
+>    - el libro está en Europe/Madrid y coincide donde se lee;
+>    - lo que regenere corpus inventory.
+>    Sin fechas de marzo.
+>
+> 7. Cierre: vuelve a simular las propuestas de §10 contra test_hoja_de_ruta con T y U HECHAS las dos: R2.4 queda HECHA, sin letras vivas. Cuidado con el encabezado de HISTORIA, que ya tiene «Next Action HECHA · T» y «· U» de octubre: propón encabezados que los distingan.
+>    - En la entrada F: (1) sale, y la (4), la preparación de la sesión 7, hereda las preguntas de los puntos 1 y 2 y los ítems del punto 4.
+>    - Las tres o cuatro líneas de Technical Debt del carril de guardias, en el informe.
+>    - Next tag: F38u. No hay push hasta la orden de cierre.
+
+### 11.1 Cómo se aplica el punto 0 (commit propio)
+
+- **(a) ENTRADA-MARZO.md**: un paso nuevo, «Paso b2 · La retirada de los dias de marzo ya vistos
+  en un video», justo después del paso b (el sorteo): la vía de ADR-0041 después del sorteo; los
+  días los lee Aleks en el fotograma (ADR-0072); a la sesión solo le llegan las huellas
+  (`holdout.huella_de_caso`); `retirados.yaml` con sus cuatro campos y `Fuente: ADR-0041`; un día en
+  `fidelidad-dev` no necesita nada; la referencia `fr-v13-8c1e06fb/10000`, su fila de
+  HOLDOUT-EXPOSICIONES y una PARADA B2 si una huella no casa. **Lo que la respuesta afirma de un
+  mecanismo, medido antes de escribirlo**: `holdout.problemas_de_retirados`
+  (`src/botsito/cases/holdout.py:486-508`) rechaza la huella que no sea de un caso de
+  `casos_reservados` («solo se retira un dia que esta en una particion reservada (ADR-0041)»), y
+  la huella es el sha256 del id del caso (`holdout.py:395-397`). Cierto.
+- **(b) El tramo de precaución**: `tramos_no_citables.yaml`, v13 de 0:00:00 a **0:00:35**, el
+  primer instante en que un fotograma ya abierto sitúa el replay en julio (`fr-v13-8c1e06fb/35000`,
+  «Fri 10 Jul '26 15:00», §2.1); entre 0:00:10 y 0:00:35 no se abrió ninguno. El motivo, el de la
+  respuesta, sin días ni marcas. El fotograma 10000 no se ha vuelto a abrir. **El trailer
+  `Fuente:`**: el repo no lo exige mecánicamente fuera de `knowledge/spec/` y `knowledge/cases/`
+  (`DIRECTORIOS_CON_FUENTE`, `src/botsito/comun/historial.py:33`), pero la cabecera del fichero dice
+  que «cada commit cita `Fuente:`» y sus commits anteriores llevan `Fuente: ADR-0021`; este lleva
+  `Fuente: ADR-0038` y `ADR-0041`. Con el tramo, `knowledge validate` sale sin `ERROR` y
+  `scripts/ficheros_con_ocultos.py` dice «OK: .claude/hooks/ficheros_con_ocultos.txt coincide» (no
+  hay propuestas de v13).
+  **Desviación declarada (contrato ampliado):** el primer `make check` con el tramo salió con
+  exit 2 y un `failed`, `tests/unit/test_guardia_claude.py::test_los_tramos_del_repo_real`, que
+  fija los tramos que vigila la guardia (hasta hoy solo los de v6): el tramo nuevo añade v13. Se
+  añadió `"v13": [(0, 35_000)]` a lo esperado, con una línea en su docstring, como hizo
+  `trabajo/cuarentena-por-condicion` con sus tramos de precaución, y el contrato se amplió a ese
+  test. No cambia ninguna guardia: el test describe el repo. Efecto en la guardia: los ficheros de
+  texto de `data/transcripciones/v13/` ya no se leen con Read (la rama nunca los leyó así; la CLI
+  filtrada sigue igual fuera del tramo).
+- **(c) La medida**:
+  - **`corpus frames show --video v13 --t 0:00:10`: lo niega la guardia** (exit 2): «`botsito
+    corpus frames show --video v13` en 0:00:10-0:00:10 puede imprimir un tramo no citable de v13».
+    La CLI sola, sin la guardia, no lo niega: imprime la ruta del PNG y solo filtra el segmento de
+    la transcripción (`src/botsito/cli.py:560-566`; leído en el código, no ejecutado, porque la
+    guardia no deja).
+  - **Abrir el PNG por su ruta con Read: la guardia NO lo niega.** Medido sin abrirlo, pasándole a
+    `.claude/hooks/guardia.py` por la entrada estándar la llamada de Read que haría la sesión sobre
+    `data/fotogramas/v13/png-1fps/000010000.png`: exit 0, sin mensaje. Control con la misma vía: la
+    llamada de Bash a `frames show` de arriba sale con exit 2 y su mensaje. La guardia mira los
+    tramos en las transcripciones (`motivo_fichero`, `.claude/hooks/guardia.py:563-591`), no en
+    `data/fotogramas/`.
+  - Por eso va a las propuestas de cierre (§10, punto 8) la línea de Technical Debt: **«un
+    fotograma dentro de un tramo no citable se puede abrir»** (la guardia niega `frames show` en el
+    tramo, pero no el Read del PNG por su ruta, y la CLI imprime la ruta).
+- **Lo que ya estaba escrito** (declarado aquí): la fila de marzo de HOLDOUT-EXPOSICIONES (2026-11-09)
+  y el punto 0 de §11 dicen de cuántos días de marzo eran las velas con marcas, y el resumen final
+  del chat lo repitió. No dicen fechas ni cuántas marcas. Desde esta respuesta no se repite en
+  ningún sitio; las filas y el texto de antes no se tocan. Si el consultor quiere que se quite
+  también eso, se hace con un recuadro.
+- **Las citas de v13 que ahora caen en el tramo**: la voz de v13 0:00:06 («La última vez nos
+  quedamos en el 10 de julio creo», §2, §2.1 y la fila de marzo) y el principio de la candidata #8
+  de F7 (v13 0:00:29-0:05:28). No pueden pasar a evidencia; la #8 se citaría desde 0:00:35.
+- **HOLDOUT-EXPOSICIONES**: una fila del 2026-11-09 con lo de hoy (ningún fotograma abierto).
 
 ## 12. Las exposiciones de cada día (revisor, b3 y b8)
 
@@ -1368,6 +1468,6 @@ Copiado tal cual:
 > 21. Read y Grep sobre el encargo, `contrato.yaml`, VIDEO-JULIO.md, `fuentes.yaml:110-157`, `test_hoja_de_ruta.py`, `HOJA-DE-RUTA.md` (R2.4), HISTORIA (encabezados «HECHA · T/U»), ADR-0072, ENTRADA-JULIO.md (sha), `filas_hasta_t.py`, `operaciones_julio.py` y los guiones de `anexos/RECORRIDA-CONSTRUCCION-2/` (para el precedente de argv)
 
 ## Estado
-**Rama lista para revisión, NO cerrada.** Termina en la PARADA final (§11): marzo (0), F5 (1), las
-81 filas (2), U (3), F7 (4), las desviaciones (5) y la naturaleza de v11-v14 (6). No se cierra
-nada sin la orden de Aleks.
+**EN CURSO**: aplicando la respuesta del consultor a la PARADA final (2026-11-09); hecho el punto
+0 (§11.1). Faltan la naturaleza de v11-v14 en `fuentes.yaml` (punto 6, commit propio), los puntos
+1 a 5 y 7, el revisor y su informe. No se cierra nada sin la orden de Aleks.

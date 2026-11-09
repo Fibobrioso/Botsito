@@ -173,6 +173,43 @@ MISMO commit, con `Fuente: ADR-0046` y la semilla en el mensaje.
 > sortear**: se informa y decide el consultor. `fidelidad build` ya se niega a repetir un id con
 > carpeta, ancla o historial.
 
+## Paso b2 · La retirada de los dias de marzo ya vistos en un video
+
+Escrito el 2026-11-09 en la rama `trabajo/video-julio` (respuesta del consultor a su PARADA final,
+punto 0). Un video del backtest de julio, v13, ensena en sus primeros segundos la sesion de FX
+Replay del backtest de MARZO de 2026 del trader, con marcas suyas: el fotograma
+`fr-v13-8c1e06fb/10000` (v13 0:00:10), declarado en `docs/validation/HOLDOUT-EXPOSICIONES.md`
+(2026-11-09, «un fotograma con el cursor del replay en MARZO DE 2026»). Ese tramo de v13 es no
+citable desde la misma rama (`knowledge/corpus/tramos_no_citables.yaml`, v13 0:00:00-0:00:35).
+
+**La via es ADR-0041** (un dia reservado expuesto sale del holdout y no se sustituye), no sacar los
+dias del sorteo antes: un retirado tiene que ser un caso reservado (ADR-0041 §4;
+`holdout.problemas_de_retirados` rechaza en `knowledge validate` la huella que no sea de un caso de
+una particion reservada), y antes del paso b marzo no tiene casos. Por eso la retirada va aqui,
+DESPUES del sorteo:
+
+1. **Los dias los lee Aleks en el fotograma** (ADR-0072), en su terminal:
+   `uv run botsito corpus frames show --video v13 --t 0:00:10` le da la ruta del PNG. **La sesion
+   no abre ese fotograma** (no se vuelve a abrir; y la guardia niega ese `frames show`, porque cae
+   en el tramo no citable). Ni las fechas ni la cantidad de marcas se escriben en el repositorio,
+   en el chat ni en un commit.
+2. **Aleks mira en que particion cae cada uno de esos dias**, con el reparto recien sorteado
+   (`particiones.yaml` del paso b). Si un dia cae en `fidelidad-dev`, no hace falta nada: no es
+   reservado.
+3. **Por cada dia que caiga en `fidelidad-2` o `fidelidad-3`**, Aleks calcula la huella del id de
+   su caso (`holdout.huella_de_caso`: el sha256 del id, `caso-eurusd-2026-03-*`) y **a la sesion
+   solo le llega la huella**, nunca el id ni la fecha.
+4. **La sesion anade cada huella a `knowledge/cases/retirados.yaml`** (SOLO ANADIR), con `motivo`
+   («dia de marzo visto en el fotograma fr-v13-8c1e06fb/10000 antes del sorteo»), `exposicion`
+   (la fila de HOLDOUT-EXPOSICIONES del 2026-11-09), `adr: ADR-0041` y `retirado_el`; corre
+   `uv run botsito knowledge validate > knowledge-validate.log 2>&1` (sin `ERROR`: la huella es de
+   un reservado) y lo commitea con `Fuente: ADR-0041`. El reparto no se toca y ningun dia sustituye
+   a un retirado (ADR-0041 §2 y §5); la diferencia se escribe en `retirados.yaml` y en el informe
+   de la rama de marzo.
+
+> **PARADA B2.** Si una huella no casa con ningun caso reservado, `knowledge validate` lo dice y
+> la sesion para: no se corrige a mano ni se pide la fecha.
+
 ## Paso c · El huso, por velas, con la herramienta
 
 Primero el CONTROL, sobre ABRIL -nunca mayo-, con la herramienta tal como esta commiteada:
