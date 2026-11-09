@@ -523,6 +523,86 @@ después: −2.116. Al final de HISTORIA, el bloque «# Technical Debt ACORTADA 
 en trabajo/trazas-ablacion (2026-11-09)», con cada línea entera y lo que queda. La Next Action no se
 ha tocado.
 
+## F2 y F3 · La bitácora y la ablación (2026-11-09)
+
+**Los tests primero.** `tests/unit/test_decisiones.py` se escribió antes que el código y se ejecutó
+sin él: `ERROR tests/unit/test_decisiones.py` (colección: no existía `engine/decisiones.py`). Con el
+código de la bitácora y de la ablación escrito y `diagnostico.py` todavía como en `main`, falló uno
+solo, el de `nombre_etiquetado` («DID NOT RAISE ValueError» con «DIAGNOSTICO-ABLACION-RN-007»): es
+el test que rompe en `main` del punto 1. Ningún test lee velas ni ticks reales: todos van sobre el
+día sintético de 2030 de `test_cableado.py` (punto 4).
+
+**Lo que cambia en `src/`:**
+- `engine/interprete.py` (punto 0, **desviación decidida por el consultor**: el encargo decía «sin
+  tocar el intérprete»). El `Evento` gana tres campos de SOLO REGISTRO: `prohibido_por` (efecto →
+  gates que dispararon y lo prohibieron, en orden, apuntado en `_ejecutar` junto a
+  `prohibidos.update`), `quizas_por` (efecto → gates que quedaron DESCONOCIDOS y lo prohibirían, en
+  alguna pasada) y `bloqueada_por` (por cada acción bloqueada, los gates de ESA pasada: los que
+  dispararon y los desconocidos, con su clase). `quizas_prohibidos` pasa de conjunto de efectos a
+  diccionario efecto → ids: se sigue mirando con `in`, así que bloquea exactamente lo mismo. La
+  línea `evento.prohibidos.update(...)` y la `bloqueadas` no cambian. Nada lee los tres campos para
+  decidir (los lee solo `engine/decisiones.py`).
+- `engine/cableado.py`: el tipo `Cierre` y el campo `MotorCableado.observador` (None por defecto),
+  llamado al final de cada cierre de M1, después de la traza y de las cancelaciones, con lo que el
+  motor ya decidió. Con None, el bucle es el de antes.
+- `engine/decisiones.py` (nuevo): la `Bitacora` (el observador), la ablación (`sin_regla`,
+  `motor_nuevo`), el `Resumen` de una corrida, `comparar` y `correr_diagnostico`, que encadena la
+  base con la bitácora, la base repetida sin ella, el control y las ablaciones. Su docstring lleva lo
+  de ADR-0092 §6 para la ablación (F3).
+- `engine/diagnostico.py`: `nombre_etiquetado` solo acepta «DIAGNOSTICO-A<cifras>-<valor>» y la de
+  la cuenta; cualquier otra, `ValueError` (punto 1).
+- `cli.py`: `motor decisiones` (punto 3): `--carpeta` (obligatoria, dentro de `data/`, fuera de
+  `data/manifests/`), `--meses`, `--bitacora`, `--ablacion` / `--ablacion-vigentes`. Sin
+  `_opciones_diagnostico` ni `_opciones_simulacion`: corre lo mismo que `motor arnes --simular` sin
+  opciones (perfil y fase por defecto, sin depuración). No llama a `arnes.informe` ni a
+  `habilita_medir`: no da veredicto, no escribe el informe del arnés y no puede habilitar medir.
+  `motor arnes` y `motor visor` no cambian (`test_la_seccion_no_anade_ninguna_opcion_al_comando`
+  sigue igual y en verde).
+- `docs/adr/0092-…md`: la NOTA en §6 (F3), sin tocar el cuerpo.
+
+**Lo que dice la bitácora**, por día y sesión, solo lo que CAMBIA en cada cierre de M1, con la hora
+de pared y la UTC de ese cierre: la toma de M15 (el pivote, su nivel y su hora de formación, la M1
+de la toma con o/h/l/c y si cierra pasada la línea, es decir, con cuerpo); los escenarios que se
+abren y terminan; cada zona (lado, 0 y 1, el punto y la vela contraria que lo forma, y si su nivel
+es el de la toma de M15 o el de una liquidez de M15 de ese instante); por qué una zona no tuvo orden
+(zona usada, punto gastado, escenario terminado, orden pendiente o posición abierta, colocación
+bloqueada, qué disparó); los hechos que cambian y la regla que los fija; cada prohibición con TODOS
+sus gates; cada acción bloqueada con los gates de esa pasada; cada orden (tipo, lado, zona, precio,
+stop, objetivo, lote) y cada cambio de estado; los llenados con (a) del punto 2: si ocurren ANTES o
+DESPUÉS de la primera M1 que cierra más allá del precio desde que se colocó la orden, y si la M1 del
+llenado cierra más allá (cuerpo) o no (mecha); y los cierres de posiciones con su motivo.
+
+**Frente a `traza_por_cierre.py`** (punto 8, que se queda como está): cubre lo que aquel daba (las
+disparadas, los efectos prohibidos, las bloqueadas con su regla, la toma de RN-004 y su pivote, la
+zona de cada orden) y añade el gate de cada prohibición (que aquel deducía), los escenarios, los
+puntos, la línea de M15 y la vida de cada orden. La diferencia de fondo: aquel corre UN día suelto,
+como el visor, desde el capital, sustituyendo métodos de clase en el proceso; la bitácora va dentro
+de la corrida entera con la cuenta por mes, por un campo del motor y solo en la corrida que la pide.
+
+**Los tests** (14 funciones; 16 casos):
+- F2: con la bitácora el motor decide lo mismo en tres rutas (stop, hueco que suspende la cuenta y
+  posición viva): mismas operaciones, trazas, eventos del bróker, órdenes y cuenta; **la mutación**:
+  un observador que enciende `detenido_por_cartuchos` un minuto antes de la zona cambia lo decidido y
+  la comparación lo ve; un gate que dispara (RN-009) y uno DESCONOCIDO (RN-005) prohibiendo lo mismo
+  salen los dos en `bloqueada_por` y en la línea de la bitácora; determinismo byte a byte; sin mirar
+  al futuro (con el mercado cortado un minuto después del llenado, las líneas hasta ese cierre son
+  las mismas); etiqueta en cada línea y nada de R, dinero ni porcentajes.
+- F3: `nombre_etiquetado`; la carpeta fuera de `data/` (y `data/manifests/`, y `data/../x`) se niega;
+  los nombres llevan DIAGNOSTICO; el parser de `motor decisiones` tiene exactamente sus seis opciones
+  y `--carpeta` es obligatoria; un id DESCARTADA y uno inexistente dan un error que los nombra; sin
+  ablación, la lista es la de `motor arnes` (32), y con ella falta solo esa regla; `motor_nuevo` no
+  arrastra nada de una corrida anterior y comparte los mercados; y, de punta a punta, la base, la
+  base repetida (igual), el control calculado por la bitácora con una regla suya que da «sin delta»,
+  y RN-015 que pierde la pareja.
+- Un hallazgo del fixture, no del motor: el `toca_colocar_orden_limite` sintético de
+  `test_cableado.py` guarda en una clausura que ya dio SÍ, así que solo coloca en la PRIMERA corrida
+  del proceso. Los tests que corren el mismo día dos veces usan uno sin estado (`_sin_estado`). Las
+  primitivas reales se crean de nuevo cada día (`primitivas_cableadas`, `cableado.py:370`); F4 lo
+  comprueba con la base repetida.
+
+**La prueba de que no cambia ninguna decisión sobre la construcción entera es F4.1** (punto 0):
+`motor arnes --simular` con el código de la rama, diff contra `cuenta-por-mes.txt`.
+
 ## Estado
 
 EN CURSO (2026-11-09): respuesta del consultor a la PARADA de la fase 0 recibida y copiada arriba;

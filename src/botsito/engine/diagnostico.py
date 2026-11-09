@@ -15,6 +15,7 @@ Es una regla del proyecto, no del trader: la lectura la elige el trader, no el a
 
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -159,6 +160,10 @@ def etiquetar_html(html: str, etiquetas: tuple[str, ...]) -> str:
 # mas el rotulo triple de diagnostico pasaban de ahi. La guarda va antes de leer una sola vela.
 LIMITE_RUTA_WINDOWS = 259
 PREFIJO_ETIQUETA = "DIAGNOSTICO-A"
+# la etiqueta de una ambiguedad: «DIAGNOSTICO-A», su numero y su valor. Hasta la rama
+# trabajo/trazas-ablacion bastaba con empezar por «DIAGNOSTICO-A», y «DIAGNOSTICO-ABLACION-RN-007»
+# salia en silencio como `aBLACION=RN-007` (respuesta del consultor a su fase 0, punto 1)
+_ETIQUETA_AMBIGUEDAD = re.compile(r"DIAGNOSTICO-A(\d+)-(.+)", re.ASCII)
 MARCA_FICHERO = "DIAGNOSTICO"
 
 
@@ -176,8 +181,9 @@ def nombre_etiquetado(ruta: Path, etiquetas: tuple[str, ...]) -> Path:
         return ruta
     partes = []
     for e in etiquetas:
-        if e.startswith(PREFIJO_ETIQUETA):
-            partes.append("a" + e.removeprefix(PREFIJO_ETIQUETA).replace("-", "=", 1))
+        ambiguedad = _ETIQUETA_AMBIGUEDAD.fullmatch(e)
+        if ambiguedad is not None:
+            partes.append(f"a{ambiguedad.group(1)}={ambiguedad.group(2)}")
         elif e.startswith(ETIQUETA_CUENTA + "-"):
             partes.append("cuenta=" + e.removeprefix(ETIQUETA_CUENTA + "-"))
         else:

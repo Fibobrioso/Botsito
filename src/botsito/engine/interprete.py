@@ -129,6 +129,16 @@ class Evento:
     bloqueadas: set[tuple[str, str, str]] = field(default_factory=set)  # (regla, accion, motivo)
     prohibidos: set[str] = field(default_factory=set)
     permitidos: set[str] = field(default_factory=set)  # se registra y no cambia nada (H5)
+    # SOLO REGISTRO (rama trabajo/trazas-ablacion, respuesta del consultor a la fase 0, punto 0):
+    # quien prohibe cada efecto, apuntado donde se prohibe; nada lo lee para decidir. Los gates que
+    # dispararon y lo prohibieron, en orden; los gates DESCONOCIDOS que lo prohibirian, en alguna
+    # pasada; y, por cada accion bloqueada, los gates que la bloquearon en ESA pasada, los que
+    # dispararon y los desconocidos: (gate, "dispara" | "desconocido")
+    prohibido_por: dict[str, list[str]] = field(default_factory=dict)
+    quizas_por: dict[str, list[str]] = field(default_factory=dict)
+    bloqueada_por: dict[tuple[str, str, str], tuple[tuple[str, str], ...]] = field(
+        default_factory=dict
+    )
 
 
 # --------------------------------------------------------------------------------- logica
@@ -254,11 +264,13 @@ class Interprete:
         momento: Momento,
         estado: EstadoDia,
         evento: Evento,
-        quizas_prohibidos: set[str],
+        quizas_prohibidos: Mapping[str, list[str]],
     ) -> None:
         entonces = regla.entonces
         evento.prohibidos.update(str(e) for e in entonces.get("prohibe", []) or [])
         evento.permitidos.update(str(e) for e in entonces.get("permite", []) or [])
+        for e in entonces.get("prohibe", []) or []:
+            evento.prohibido_por.setdefault(str(e), []).append(regla.id)  # solo registro
         for paso in entonces.get("hace", []) or []:
             if not isinstance(paso, Mapping) or len(paso) != 1:
                 raise InterpreteError(f"{regla.id}: accion invalida {paso!r}")
@@ -268,10 +280,14 @@ class Interprete:
                 raise InterpreteError(f"{regla.id}: accion {nombre!r} no declarada en la spec")
             efecto = declarada.get("efecto")
             if efecto and efecto in evento.prohibidos:
-                evento.bloqueadas.add((regla.id, f"accion:{nombre}", f"prohibida:{efecto}"))
+                clave = (regla.id, f"accion:{nombre}", f"prohibida:{efecto}")
+                evento.bloqueadas.add(clave)
+                evento.bloqueada_por[clave] = _quien_prohibe(evento, quizas_prohibidos, efecto)
                 continue
             if efecto and efecto in quizas_prohibidos:
-                evento.bloqueadas.add((regla.id, f"accion:{nombre}", f"gate desconocido:{efecto}"))
+                clave = (regla.id, f"accion:{nombre}", f"gate desconocido:{efecto}")
+                evento.bloqueadas.add(clave)
+                evento.bloqueada_por[clave] = _quien_prohibe(evento, quizas_prohibidos, efecto)
                 continue
             primitiva = self.primitivas.acciones.get(str(nombre))
             if primitiva is None:
@@ -320,7 +336,9 @@ class Interprete:
                     evento.caducados.append(nombre)
         disparadas: set[str] = set()
         while True:
-            quizas_prohibidos: set[str] = set()
+            # efecto -> gates DESCONOCIDOS de esta pasada que lo prohibirian. Bloquea lo mismo que
+            # el conjunto de efectos de antes (se mira con `in`); los ids son solo registro
+            quizas_prohibidos: dict[str, list[str]] = {}
             disparo = False
             for regla in orden:
                 if regla.id in disparadas:
@@ -330,9 +348,11 @@ class Interprete:
                 if r.valor is Tri.DESCONOCIDO:
                     evento.no_implementadas.update((regla.id, f) for f in faltan)
                     if regla.clase == "gate":
-                        quizas_prohibidos.update(
-                            str(e) for e in regla.entonces.get("prohibe", []) or []
-                        )
+                        for e in regla.entonces.get("prohibe", []) or []:
+                            quizas_prohibidos.setdefault(str(e), []).append(regla.id)
+                            vistos = evento.quizas_por.setdefault(str(e), [])
+                            if regla.id not in vistos:
+                                vistos.append(regla.id)  # solo registro
                     continue
                 if r.valor is Tri.SI:
                     otras = self._empatadas(orden, regla, disparadas, momento, estado)
@@ -345,6 +365,16 @@ class Interprete:
                     break
             if not disparo:
                 return evento
+
+
+def _quien_prohibe(
+    evento: Evento, quizas_prohibidos: Mapping[str, list[str]], efecto: str
+) -> tuple[tuple[str, str], ...]:
+    """SOLO REGISTRO: los gates que prohiben `efecto` en el instante del bloqueo, los que
+    dispararon y los desconocidos de la pasada en curso, en orden."""
+    return tuple((g, "dispara") for g in evento.prohibido_por.get(efecto, [])) + tuple(
+        (g, "desconocido") for g in quizas_prohibidos.get(efecto, [])
+    )
 
 
 def _empate_inocuo(primera: ReglaEjecutable, otras: Sequence[ReglaEjecutable]) -> bool:

@@ -2597,6 +2597,111 @@ def motor_visor(repo: Path, args: argparse.Namespace) -> int:
     return 0
 
 
+def motor_decisiones(repo: Path, args: argparse.Namespace) -> int:
+    """DIAGNOSTICO de construccion (`engine/decisiones.py`): la bitacora de decisiones de los dias
+    pedidos y la ablacion de reglas VIGENTE, sobre la misma corrida que `motor arnes --simular` (la
+    cuenta por mes, el perfil y la fase por defecto, sin depuracion). No escribe el informe del
+    arnes, no da veredicto y no puede habilitar medir; solo escribe en `--carpeta`, dentro de
+    data/, ficheros con DIAGNOSTICO en el nombre y en cada linea. Sus recuentos no justifican
+    ninguna rama de spec ni de motor (NOTA de ADR-0092 §6)."""
+    import time
+
+    from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
+    from botsito.cases.holdout import HoldoutCerradoError
+    from botsito.cases.paquete import cargar_config
+    from botsito.comun.memoria import pico_del_proceso
+    from botsito.config.registro import cargar_registro
+    from botsito.data.dataset import DatasetError
+    from botsito.engine import arnes, cableado, decisiones, diagnostico, entrada, tope_trader, zonas
+    from botsito.engine.interprete import reglas_ejecutables
+    from botsito.engine.relojes import reloj_de_las_sesiones
+    from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
+
+    inicio = time.perf_counter()
+
+    def avisar(texto: str) -> None:
+        print(
+            f"{decisiones.PREFIJO_LINEA}{texto} ({time.perf_counter() - inicio:.1f} s; pico "
+            f"{pico_del_proceso() / 2**20:.1f} MiB)",
+            flush=True,
+        )
+
+    try:
+        # la carpeta y los ids, ANTES de leer una sola vela
+        carpeta = decisiones.comprobar_carpeta(repo, Path(args.carpeta))
+        spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
+        reglas_spec = cargar_reglas(spec)
+        reglas = reglas_ejecutables(reglas_spec)
+        vigentes = decisiones.ids_vigentes(reglas_spec)
+        if args.ablacion_vigentes:
+            ablaciones: list[str] = list(vigentes)
+        else:
+            ablaciones = [x.strip() for x in (args.ablacion or "").split(",") if x.strip()]
+        for quitar in ablaciones:
+            decisiones.sin_regla(reglas, quitar, vigentes)
+        criterio = cargar_criterio(repo)
+        meses = args.meses.split(",") if args.meses else list(criterio.construccion)
+        arnes.validar_meses(criterio, meses)
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
+        vocabulario = cargar_vocabulario(spec)
+        dias = arnes.dias_de_construccion(repo, criterio, meses)
+        detalle = [x.strip() for x in (args.bitacora or "").split(",") if x.strip()]
+        fuera = sorted(set(detalle) - {d.dia for d in dias})
+        if fuera:
+            raise decisiones.DecisionesError(
+                f"--bitacora {', '.join(fuera)}: no es un dia de los meses pedidos de construccion"
+            )
+        # lo mismo que `motor arnes --simular` sin ninguna opcion de diagnostico
+        diag = diagnostico.Diagnostico()
+        lectura = diagnostico.lectura_pivote(registro, diag)
+        perfil_cuenta = cableado.perfil_del_repo(repo, None)
+        tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
+        limpia = zonas.lectura_limpia(registro)
+        tipo_orden = entrada.lectura_tipo_orden(registro, None)
+        mercado = arnes.dias_de_mercado(
+            repo, _carpeta_datos(repo), config, registro, dias,
+            reloj_de_las_sesiones(registro), lectura,
+        )  # fmt: skip
+        plantilla = cableado.construir_motor_cableado(
+            repo, _carpeta_datos(repo), criterio, config, registro, vocabulario, reglas, dias,
+            perfil_cuenta, None, False, tope, limpia, stops_level_diagnostico=None,
+            tipo_orden=tipo_orden,
+        )  # fmt: skip
+        avisar("datos cargados")
+        en_orden = tuple(sorted(set(meses)))
+
+        def correr(motor: Any) -> list[Any]:
+            corrida = arnes.correr(cableado.NOMBRE_MOTOR, en_orden, dias, mercado, motor)
+            return [op for r in corrida.resultados for op in r.operaciones]
+
+        try:
+            salida = decisiones.correr_diagnostico(
+                plantilla, reglas, vigentes, correr,
+                [op for d in dias for op in d.operaciones], criterio.tolerancias,
+                detalle, ablaciones, avisar,
+            )  # fmt: skip
+            codigo = 0
+        except decisiones.ParadaError as exc:
+            salida, codigo = exc.salida, 4
+            print(f"PARADA: {exc}", file=sys.stderr)
+    except (arnes.ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    except HoldoutCerradoError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 3
+    carpeta.mkdir(parents=True, exist_ok=True)
+    for nombre, texto in sorted(salida.items()):
+        (carpeta / nombre).write_text(texto, encoding="utf-8", newline="\n")
+        print(f"OK: {carpeta / nombre}")
+    print(
+        f"TIEMPO: {time.perf_counter() - inicio:.1f} s; MEMORIA: pico del proceso de "
+        f"{pico_del_proceso() / 2**20:.1f} MiB"
+    )
+    return codigo
+
+
 def _carpeta_datos(repo: Path) -> Path:
     """`[rutas].data` (config/ajustes.carpeta_datos); un TOML roto aborta con ERROR."""
     from botsito.config.ajustes import AjustesError, carpeta_datos
@@ -3118,6 +3223,28 @@ def build_parser() -> argparse.ArgumentParser:
     )
     _opciones_simulacion(mt_visor)
     _opciones_diagnostico(mt_visor)
+    mt_dec = motor_sub.add_parser(
+        "decisiones",
+        help="DIAGNOSTICO de construccion: la bitacora de decisiones del motor y la ablacion de "
+        "reglas VIGENTE; no da veredicto ni habilita medir",
+    )
+    mt_dec.add_argument(
+        "--carpeta",
+        required=True,
+        help="carpeta de salida, dentro de data/ (ignorada por git); los ficheros llevan "
+        "DIAGNOSTICO en el nombre y en cada linea",
+    )
+    mt_dec.add_argument(
+        "--meses", help="AAAA-MM separados por comas; por defecto, los de construccion"
+    )
+    mt_dec.add_argument(
+        "--bitacora", help="dias AAAA-MM-DD separados por comas: su bitacora de decisiones"
+    )
+    abl = mt_dec.add_mutually_exclusive_group()
+    abl.add_argument("--ablacion", help="ids de reglas VIGENTE separados por comas, una a una")
+    abl.add_argument(
+        "--ablacion-vigentes", action="store_true", help="todas las VIGENTE, una a una"
+    )
     casos = sub.add_parser(
         "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
     )
@@ -3347,6 +3474,8 @@ def main(argv: list[str] | None = None) -> int:
         return motor_arnes(args.repo, args)
     if args.cmd == "motor" and args.motor_cmd == "visor":
         return motor_visor(args.repo, args)
+    if args.cmd == "motor" and args.motor_cmd == "decisiones":
+        return motor_decisiones(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "ingerir":
         return casos_ingerir(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "check":

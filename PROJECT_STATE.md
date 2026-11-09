@@ -16,7 +16,7 @@ trabajo/trazas-ablacion, EN CURSO: F (1), la bitácora de decisiones del motor y
 129ea33 · merge: trabajo/video-julio, la voz del trader sobre julio (v11-v14) · tag stable/F38u-video-julio
 
 ## Tests Currently Passing
-1925 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1939 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
