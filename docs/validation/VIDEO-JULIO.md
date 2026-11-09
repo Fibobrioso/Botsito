@@ -274,8 +274,112 @@ comprobado con `env`), sin ningún `make check` a la vez; GPU GTX 1650 de 4 GB.
   v14 empieza el 20 y llega al final del mes. **Que v13 llegue al 17 no lo dice la voz** (termina
   con «trataré de finalizarlo») y que v14 empiece en el 20 lo dice el trader. Los días exactos de
   v11, v12 y el final de v13, y los de v14, por fotogramas, tras la PARADA 1.
+**Lo que añaden los fotogramas (localizados, §3.1):**
+
+| Vídeo | Instante | Fotograma | Día en el eje |
+|---|---|---|---|
+| v11 | 0:10:05 (empieza el día 2) | `fr-v11-b83d5164/605000` | M15 al cierre del miércoles 1 de julio (15:00) |
+| v11 | 0:14:50-0:19:20 | `…/890000` a `…/1160000` | jueves 2 de julio |
+| v11 | 0:19:40 (empieza otro día) | `…/1180000` | H4; la reproducción llega al viernes (3 de julio) |
+| v12 | 0:00:20 | `fr-v12-3eeb8cf9/20000` | no se lee (ventana de OBS delante) |
+| v12 | 0:10:15 | `…/615000` | no se lee |
+| v12 | 0:22:10 (sesión 11-15) | `…/1330000` | miércoles 8 de julio |
+| v12 | 0:33:20 | `…/2000000` | viernes 10 de julio |
+
+- v11 empieza el 1 de julio y llega al 3; v12 llega al 10 (la voz de v13, «nos quedamos en el 10
+  de julio», lo confirma). Qué días cubre v12 al empezar (6 o 7) no se ha leído todavía.
+- **Fotogramas abiertos hasta aquí: 12** (8 de v11, 4 de v12), uno de ellos el de la PARADA 1.
+
 - **Cifras de resultados dichas en voz** (no se copian ni se usan, encargo): v11 0:03:06 y
   0:09:31, v13 0:19:11.
+
+## 3. F3 · El vídeo frente al libro, días 1 a 17
+
+### 3.0 El criterio (del consultor, escrito antes de abrir nada)
+
+- La unidad son las operaciones de los 13 casos dev de julio. Para cada una: ¿aparece en el
+  vídeo? Si aparece: día, dirección, entrada y stop leídos en pantalla, y la hora del gráfico.
+- «Coincide» = mismo día y misma dirección; entrada y stop a 3 puntos o menos
+  (`tolerancia_entrada_puntos` y `tolerancia_stop_puntos` de `criterio_fidelidad.yaml`; toda
+  diferencia se apunta con su cifra, porque el libro y el gráfico son la misma serie de FX
+  Replay); la hora del gráfico, en Europe/Madrid (UTC+2 en julio, ADR-0069), en el mismo minuto
+  que `instante_utc` + 2 h (`instante_utc` es el llenado).
+- Las operaciones que el vídeo enseña y no están en los casos, y las de los casos que no se ven,
+  se listan aparte, sin resolverlas.
+- Con lo medido se confirma o refuta que el libro está en Europe/Madrid (ENTRADA-JULIO.md §3.b).
+- Primero un piloto con tres operaciones de 2026-07-02 11-15: si se localizan al menos dos con
+  fecha, entrada y stop legibles, sigue el mes entero; si no, PARADA.
+- Cómo se localiza un instante: por la transcripción filtrada (una entrada, un «0.80», un «loss»,
+  un «break even» dichos en voz), y antes de abrir se comprueba que no hay ningún segmento oculto
+  a ±30 s (en v11-v14 no hay ninguno en todo el vídeo, §1).
+
+### 3.1 El piloto: 2026-07-02, sesión 11-15, en v11 (2026-11-08)
+
+**Dónde está el día.** v11 0:10:01 «continuamos en M15, bueno nos adelantamos a H4» abre un día
+nuevo; el fotograma `fr-v11-b83d5164/605000` (M15) tiene el cursor al final del miércoles 1 de julio
+(«Wed 01 Jul '26 15:00» en el eje) y los separadores de sesión a las 07:00, 11:00 y 15:00. Las
+entradas del 2 de julio en 11-15 caen entre 0:12:56 y 0:19:26 (un segmento del ASR, de 0:16:25 a
+0:19:26, cubre tres minutos: «estas dos sesiones ya finalizaron»).
+
+Los seis fotogramas del piloto (ningún segmento oculto en v11):
+
+| Fotograma | Localizado en | Lo que se lee |
+|---|---|---|
+| `fr-v11-b83d5164/890000` (0:14:50) | 0:14:22 «si nos vamos a 5 segundos» | gráfico de 5 s, «Thu 02 Jul '26 11:28:30» en el eje; ninguna cifra de orden |
+| `fr-v11-b83d5164/905000` (0:15:05) | el mismo segmento | 5 s; aviso «Order Added · Take profit added!», sin cifras; la caja de la posición a la derecha |
+| `fr-v11-b83d5164/920000` (0:15:20) | 0:15:22 «trazar el punto correcto» | M1, «Thu 02 Jul '26 11:00» en el eje; aviso **«Closed your open position on EURUSD · Buy 100000 at 1.14102 · 100000 closed from avg entry 1.14102 · now flat»**; caja larga (verde sobre rojo) desde hacia las 11:34 |
+| `fr-v11-b83d5164/930000` (0:15:30) | 0:15:26 «tenemos un win» | M1, el cursor en «Thu 02 Jul '26 11:32»; la misma caja, que empieza hacia las 11:34 |
+| `fr-v11-b83d5164/1160000` (0:19:20) | 0:16:25 «estas dos sesiones ya finalizaron» | M1, «Thu 02 Jul '26 15:00»; dos marcas «be» del trader hacia las 12:25-12:31, una zona tachada hacia las 14:00 y una caja larga con niveles 0,25/0,5/0,8 hacia las 14:15-14:35 |
+
+Frente al caso `caso-eurusd-2026-07-02` (seis compras en 11-15, en Madrid 11:34, 12:25, 12:45,
+13:59, 14:10 y 14:23):
+
+- **La primera (09:34:25 UTC = 11:34:25 Madrid, compra, entrada 1.14102, stop 1.1409): día,
+  dirección y entrada COINCIDEN** (1.14102 en el aviso de cierre, Δ 0 puntos); la caja empieza en
+  el minuto 11:34 del eje de M1, leído a ojo de la posición de la caja (no hay etiqueta de hora en
+  la caja). **El stop no se lee.**
+- Las otras cinco: hay marcas del trader en las horas de cuatro de ellas (dos «be» hacia las
+  12:25-12:31, la zona tachada hacia las 14:00, la caja hacia las 14:15-14:35), pero **ni la
+  entrada ni el stop se leen**: la grabación no enseña el eje de precios (el gráfico llega al
+  borde derecho de la captura) y los avisos de FX Replay dicen la entrada solo al CERRAR una
+  posición, sin el stop ni el precio de salida.
+- **La hora del libro.** El eje del gráfico va en la hora de pared del replay (separadores de
+  sesión a las 07:00, 11:00 y 15:00, que son las sesiones de Madrid), y la caja de la primera
+  compra empieza a las 11:34 de ese eje, con el llenado del libro a las 09:34:25 UTC. Eso
+  **confirma Europe/Madrid** (UTC+2 en julio) para el libro en esta operación; una sola
+  operación con hora de caja leída a ojo.
+
+**Fuera del piloto, en F2 (v12 0:33:20, `fr-v12-3eeb8cf9/2000000`, junto al segmento 0:33:17
+«nos salta en B»):** M1, «Fri 10 Jul '26 10:00» en el eje; aviso **«Closed your open position on
+EURUSD · Buy 100000 at 1.14378 · 100000 closed from avg entry 1.14378 · now flat»**. En
+`caso-eurusd-2026-07-10`, la sexta compra: entrada 1.14378 (Δ 0 puntos), llenado 08:01:25 UTC =
+10:01:25 Madrid; la vela de la entrada está junto a las 10:00 del eje. **Día, dirección y entrada
+coinciden; hora compatible con Europe/Madrid (con UTC estaría a las 08:01, dos horas antes del
+cursor). El stop (1.14354) no se lee.**
+
+**Resultado del piloto: 1 operación de 3 con fecha y entrada legibles; 0 con el stop legible**
+(y una más fuera del piloto, la del 10 de julio, igual: entrada sí, stop no). El
+umbral del encargo («al menos dos con fecha, entrada y stop legibles») no se cumple: **PARADA 3**.
+
+### Lo que necesito que decidas (PARADA 3)
+
+0. Cómo sigue F3 sin el stop en pantalla. Opciones: (a) F3 compara por día, dirección, hora del
+   eje (al minuto, cuando la caja o una marca lo permiten) y la entrada SOLO cuando un aviso de
+   cierre la trae; el stop se apunta «no legible» en todas; «coincide» queda en lo que se puede
+   leer, y el informe dice cuántas operaciones tienen cada campo; (b) se buscan más instantes por
+   operación (los avisos de cierre de cada posición, segundos después de que el trader diga
+   «loss», «win» o «break even») para subir el número de entradas leídas, con el mismo stop
+   «no legible»; (c) F3 se queda en el piloto y el resto espera a otra fuente (que el trader grabe
+   con el eje de precios a la vista, o una exportación con el stop). Recomiendo (a)+(b): el día, la
+   dirección, la hora y la entrada cuando sale son lo que el vídeo da, y bastan para F2, para la
+   hora del libro y para saber qué operaciones del libro se ven; el stop lo da el libro, no el vídeo.
+   Coste de (c): F3 y F5 quedan sin medir.
+1. F5 depende de «coincide». Con el stop no legible, ninguna operación puede cumplir el criterio
+   completo del encargo. Opciones: (a) F5 usa «coincide» sin el stop (día, dirección, hora y la
+   entrada cuando se lee) y el informe lo dice; (b) F5 no cambia el bloque hasta que haya una
+   fuente con el stop, y `material_sin_video` se queda como está. Recomiendo (a), con la regla
+   escrita en el informe ANTES de contar: lo que ADR-0092 §11 quiere saber es si el libro está
+   grabado en vídeo, y eso lo dicen el día, la dirección y la hora.
 
 ## 4. F4 · Las 81 filas (reproducidas; la clasificación espera F2 y F3)
 
@@ -334,5 +438,94 @@ salvo que el trader haya dibujado o comentado operaciones de esos días.
 comprobaciones), y se sellan y commitean la fase 0 y F1. F2 por la VOZ queda leída (abajo); F3,
 F6 y la parte de F4 que necesita pantalla esperan la respuesta.
 
+## Respuesta del consultor a la PARADA 1 (2026-11-08)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA 1 de trabajo/video-julio (2026-11-08). Cópiala tal cual en el informe, en su sección, y aplícala. Desviación aceptada: los ocho manifiestos de F1 van en el commit de la fase 0 (c87cff5).
+>
+> 0. Qué cuenta como «un gráfico de un mes que no sea julio». Opción (a), precisada:
+>    - Las velas de contexto de otros meses, a la izquierda de un gráfico de julio, se pueden ver. Las velas no son holdout (ADR-0021 §1; CLAUDE.md, «Que se puede mirar y que no», punto 2). No se describen, no se comparan con nada y no se usan. Se declaran una vez en la fila del día de HOLDOUT-EXPOSICIONES («fotogramas de v11-v14 con velas de contexto de meses anteriores a julio, sin marcas del trader»).
+>    - Lo que NO se mira de otro mes:
+>      · el cursor del replay situado fuera de julio de 2026;
+>      · las marcas del trader (cajas, niveles, líneas, órdenes o posiciones) sobre velas de un día que no sea de julio de 2026;
+>      · cualquier panel de operaciones o de estadística.
+>      Si un fotograma lo trae, se cierra, no se describe, se apunta vídeo e instante y se declara el mismo día. No es PARADA: sigue con el siguiente instante localizado.
+>    - PARADA solo si el trader opera o comenta en voz operaciones de otro mes. Es un tramo que podría tener que ir a tramos_no_citables.yaml, y eso lo decide el consultor.
+>
+> 1. El poco texto de v13 y v14: ni (a) ni (b). Primero se mide, sin que Aleks escuche nada:
+>    1.1 Con ffmpeg (las formas de GUARDIA-FFMPEG.md: volumedetect y silencedetect=noise=-50dB:d=30), sobre v11 como control y sobre v13 y v14:
+>        - el volumen medio del vídeo entero;
+>        - los silencios de 30 s o más;
+>        - el volumen medio de cada hueco sin texto de 5 minutos o más (con -ss y -t sobre el hueco).
+>        Si la guardia niega el comando, PARADA con el comando exacto y lo lanza Aleks con «!».
+>    1.2 Regla de decisión, escrita en el informe ANTES de medir:
+>        - si los huecos de v13 o v14 no son silencio (menos de la mitad de su duración cae en un silencio de silencedetect y su volumen medio está a menos de 10 dB del de v11), el ASR se saltó voz;
+>        - si son silencio, el texto es el que hay, y el informe dice dónde no habla el trader.
+>    1.3 Si el ASR se saltó voz: retranscribe v13 y v14 con uv run botsito corpus transcribe --video v13 --reemplaza-a <su tr-id> --objetivo-s 300 --min-s 180 --max-s 420 (y lo mismo con v14). Uno a uno, nunca mientras corre un make check.
+>        - Se queda la transcripción que cubra con texto más minutos de los huecos.
+>        - Si la nueva tampoco los cubre, PARADA con lo medido: entonces Aleks escucha un minuto.
+>        - Los manifiestos nuevos, en su commit, sin editar los anteriores.
+>        - transcript check en verde, y el número de segmentos y de ocultos por motivo de las dos versiones, en el informe.
+>    1.4 Haz 1.1 a 1.3 antes de F2 y F4 de los días de v13 y v14. El piloto de F3 (2026-07-02, en v11) y lo de v11 y v12 no esperan.
+>
+> 2. El SHA256SUMS:
+>    - Regenéralo al final de F1 o de 1.3, con las transcripciones que queden activas y también las reemplazadas.
+>    - Escríbelo en C:\Users\USER\Desktop\SHA256SUMS-v11-v14.txt (fuera del repo y de la carpeta temporal).
+>    - El informe dice cuántas líneas tiene.
+>
+> Sigue sin parar hasta la PARADA final: F2, F3 con el piloto, F4 a F7 y el revisor.
+
+### 1.5 Los huecos de v13 y v14: la regla, escrita ANTES de medir (respuesta a la PARADA 1, punto 1.2)
+
+Un **hueco** es un tramo sin texto de 5 minutos o más del manifiesto de transcripción (`huecos`,
+`hueco_transcripcion_s: 30`). Para cada hueco de v13 y v14:
+
+- **cubierto por silencio** = la suma de su intersección con los silencios de
+  `silencedetect=noise=-50dB:d=30` sobre el vídeo entero, dividida por su duración;
+- **volumen del hueco** = `mean_volume` de `volumedetect` sobre el hueco (`-ss` inicio, `-t`
+  duración);
+- **referencia** = `mean_volume` de `volumedetect` sobre v11 entero (el control, el vídeo con más
+  texto por minuto).
+
+**El hueco NO es silencio (el ASR se saltó voz) si cubierto por silencio < 0,5 Y
+|volumen del hueco − referencia| < 10 dB.** Si algún hueco de v13 o v14 lo cumple, se retranscribe
+ese vídeo (1.3). Si no, el hueco es silencio: el texto es el que hay y F2 dice dónde no habla el
+trader.
+
+### 1.6 Lo medido (1.1), y la PARADA 2: el volumen de cada hueco lo lanza Aleks
+
+Las formas de la lista cerrada de la guardia, sobre los `.mkv` (desde su carpeta, rutas literales):
+
+| Vídeo | `mean_volume` (vídeo entero) | `max_volume` | Silencios ≥ 30 s a −50 dB |
+|---|---|---|---|
+| v11 (control) | −39,0 dB | −4,9 dB | ninguno |
+| v13 | −41,8 dB | −7,9 dB | ninguno |
+| v14 | −40,0 dB | −1,4 dB | ninguno |
+
+- **Cubierto por silencio = 0 en todos los huecos** (no hay ningún silencio de 30 s o más en ningún
+  vídeo): la primera condición de la regla (< 0,5) se cumple en todos. La decisión depende solo del
+  volumen de cada hueco.
+- **Huecos de 5 minutos o más** (manifiesto de transcripción): **v13, ninguno** (sus cuatro
+  huecos duran 44, 279, 108 y 291 s), así que la regla no se aplica a v13 y su texto es el que
+  hay. **v14, cuatro**: 340,460 s (718,6 s), 1403,718 s (573,3 s), 1985,272 s (536,8 s) y
+  2669,988 s (322,8 s); el de 1226,108 s dura 44 s.
+- **El volumen de cada hueco necesita `-ss`/`-t`, y la guardia lo niega** («`ffmpeg -ss` antes
+  de `-i`: solo las opciones generales»; GUARDIA-FFMPEG.md §1, punto 2). No se rodea (respuesta,
+  1.1): **PARADA 2**. Los cuatro comandos, para que Aleks los lance con «!»:
+
+```
+! ffmpeg -hide_banner -nostdin -ss 340.460 -t 718.647 -i "C:/Users/USER/Desktop/Bot v3/corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/2026-10-04 12-40-14.mkv" -vn -sn -dn -af volumedetect -f null - 2>&1 | grep mean_volume
+! ffmpeg -hide_banner -nostdin -ss 1403.718 -t 573.284 -i "C:/Users/USER/Desktop/Bot v3/corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/2026-10-04 12-40-14.mkv" -vn -sn -dn -af volumedetect -f null - 2>&1 | grep mean_volume
+! ffmpeg -hide_banner -nostdin -ss 1985.272 -t 536.786 -i "C:/Users/USER/Desktop/Bot v3/corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/2026-10-04 12-40-14.mkv" -vn -sn -dn -af volumedetect -f null - 2>&1 | grep mean_volume
+! ffmpeg -hide_banner -nostdin -ss 2669.988 -t 322.817 -i "C:/Users/USER/Desktop/Bot v3/corpus/Estrategia del trader/Material adicional de su operativa/Backtest Julio 2026/2026-10-04 12-40-14.mkv" -vn -sn -dn -af volumedetect -f null - 2>&1 | grep mean_volume
+```
+
+- Con la referencia de v11 (−39,0 dB), un hueco con `mean_volume` por encima de −49,0 dB es «no
+  silencio» y v14 se retranscribe (1.3). Mientras, sigue lo que no espera (1.4): el piloto de F3 y
+  v11/v12.
+- Propuesta para la deuda del carril de guardias: la forma de medida de ffmpeg no admite `-ss` y
+  `-t` sobre un tramo, que la medida de un hueco necesita.
+
 ## Estado
-EN CURSO · PARADA 1
+EN CURSO · PARADA 2 (los cuatro comandos de §1.6, para Aleks) y PARADA 3 (el piloto de F3, §3.1)

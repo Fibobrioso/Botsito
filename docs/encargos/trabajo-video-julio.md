@@ -167,3 +167,41 @@ Copiada tal cual:
 > 3. F4 de dos ficheros: de acuerdo. Las 39 filas P5 y P6 van sin primer hecho ni frenos, y el informe lo dice.
 >
 > 4. Los ocultos, por motivo a, b o c: de acuerdo. Nada sin filtrar.
+
+## Respuesta del consultor a la PARADA 1 (2026-11-08)
+
+Copiada tal cual (y en `docs/validation/VIDEO-JULIO.md`, «Respuesta del consultor a la PARADA 1»):
+
+> Respuesta del consultor a la PARADA 1 de trabajo/video-julio (2026-11-08). Cópiala tal cual en el informe, en su sección, y aplícala. Desviación aceptada: los ocho manifiestos de F1 van en el commit de la fase 0 (c87cff5).
+>
+> 0. Qué cuenta como «un gráfico de un mes que no sea julio». Opción (a), precisada:
+>    - Las velas de contexto de otros meses, a la izquierda de un gráfico de julio, se pueden ver. Las velas no son holdout (ADR-0021 §1; CLAUDE.md, «Que se puede mirar y que no», punto 2). No se describen, no se comparan con nada y no se usan. Se declaran una vez en la fila del día de HOLDOUT-EXPOSICIONES («fotogramas de v11-v14 con velas de contexto de meses anteriores a julio, sin marcas del trader»).
+>    - Lo que NO se mira de otro mes:
+>      · el cursor del replay situado fuera de julio de 2026;
+>      · las marcas del trader (cajas, niveles, líneas, órdenes o posiciones) sobre velas de un día que no sea de julio de 2026;
+>      · cualquier panel de operaciones o de estadística.
+>      Si un fotograma lo trae, se cierra, no se describe, se apunta vídeo e instante y se declara el mismo día. No es PARADA: sigue con el siguiente instante localizado.
+>    - PARADA solo si el trader opera o comenta en voz operaciones de otro mes. Es un tramo que podría tener que ir a tramos_no_citables.yaml, y eso lo decide el consultor.
+>
+> 1. El poco texto de v13 y v14: ni (a) ni (b). Primero se mide, sin que Aleks escuche nada:
+>    1.1 Con ffmpeg (las formas de GUARDIA-FFMPEG.md: volumedetect y silencedetect=noise=-50dB:d=30), sobre v11 como control y sobre v13 y v14:
+>        - el volumen medio del vídeo entero;
+>        - los silencios de 30 s o más;
+>        - el volumen medio de cada hueco sin texto de 5 minutos o más (con -ss y -t sobre el hueco).
+>        Si la guardia niega el comando, PARADA con el comando exacto y lo lanza Aleks con «!».
+>    1.2 Regla de decisión, escrita en el informe ANTES de medir:
+>        - si los huecos de v13 o v14 no son silencio (menos de la mitad de su duración cae en un silencio de silencedetect y su volumen medio está a menos de 10 dB del de v11), el ASR se saltó voz;
+>        - si son silencio, el texto es el que hay, y el informe dice dónde no habla el trader.
+>    1.3 Si el ASR se saltó voz: retranscribe v13 y v14 con uv run botsito corpus transcribe --video v13 --reemplaza-a <su tr-id> --objetivo-s 300 --min-s 180 --max-s 420 (y lo mismo con v14). Uno a uno, nunca mientras corre un make check.
+>        - Se queda la transcripción que cubra con texto más minutos de los huecos.
+>        - Si la nueva tampoco los cubre, PARADA con lo medido: entonces Aleks escucha un minuto.
+>        - Los manifiestos nuevos, en su commit, sin editar los anteriores.
+>        - transcript check en verde, y el número de segmentos y de ocultos por motivo de las dos versiones, en el informe.
+>    1.4 Haz 1.1 a 1.3 antes de F2 y F4 de los días de v13 y v14. El piloto de F3 (2026-07-02, en v11) y lo de v11 y v12 no esperan.
+>
+> 2. El SHA256SUMS:
+>    - Regenéralo al final de F1 o de 1.3, con las transcripciones que queden activas y también las reemplazadas.
+>    - Escríbelo en C:\Users\USER\Desktop\SHA256SUMS-v11-v14.txt (fuera del repo y de la carpeta temporal).
+>    - El informe dice cuántas líneas tiene.
+>
+> Sigue sin parar hasta la PARADA final: F2, F3 con el piloto, F4 a F7 y el revisor.
