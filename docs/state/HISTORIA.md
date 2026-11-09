@@ -16220,3 +16220,53 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 61 (2026-11-07).
+
+# Registro de cierre · `trabajo/recorrida-construccion-2` (2026-11-08)
+
+- Respuesta del consultor a la PARADA 3 y orden de cierre del 2026-11-08, dada por Aleks (copiada tal
+  cual al final del encargo y de RECORRIDA-CONSTRUCCION-2.md, en 85607ad), más dos hallazgos del
+  consultor añadidos antes del cierre ((c) y (d) de la fila de ERRORES-RECURRENTES). Después, Aleks
+  lanzó `/cerrar-rama trabajo/recorrida-construccion-2`.
+- **Lo que entra**: la re-corrida que cuenta por ADR-0070 §3, la primera con la comisión medida
+  (ADR-0090 §3), el sello del respaldo M1 (ADR-0091), el motor de la sesión 6, la salida del método
+  de ADR-0092 y una cuenta por mes (ADR-0092 §8). Veredicto literal: `habilita medir el conjunto de
+  medida (2026-05) (ADR-0070): no (cobertura 15.7 % por debajo de 70.0 %; precision 13.9 % por
+  debajo de 60.0 %)`; repetida, idéntica byte a byte. La salida es la línea base vigente
+  (`docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt`), con la diaria de
+  diagnóstico, los dos `diff` contra RESPALDO-M1, los patrones de las dos corridas, la lista «Para
+  clasificar», la caja (`caja_stop.py`: dispersa en los dos grupos), las nueve sesiones del visor
+  (ninguna regla aplicada en contra de la spec; tres con partes no comprobables) y la clasificación
+  de §8 por clase: 31 pareja, 19 efecto de la cuenta, 4 error nuestro conocido (RN-019), 81 sin
+  clase hasta T y 279 sin clase. NOTAs en ADR-0070 §3 y en ACTIVAR-A35-A44.md §5 (la del visor,
+  con la desviación declarada). `docs/plan/RUMBO-2026-11.md` (C0, en 312c9a4). Nada de `src/`,
+  `tests/`, `knowledge/`, `scripts/` ni `.claude/`.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; en la Next Action, F se
+  reescribe con el texto de la orden (F sigue viva; ninguna letra sale ni entra); en la hoja de
+  ruta, R3.9 HECHA, R0.3 (el rumbo), R4.4 (trazas del motor y ablación por regla), R6.0 (la
+  decisión de arquitectura en vivo), R5.2 cita R3.9, R6.1 depende de la rentabilidad de R5.6, la
+  línea de T en R2.4 y la sección «Marcador». Entran también la fila de ERRORES-RECURRENTES y este
+  registro. Technical Debt: nada.
+- **`PROJECT_STATE.md`**: 22.986 bytes en este commit; con las cuatro líneas de cabecera del cierre,
+  22.910 (simulado).
+- **Desviaciones de la orden**, las dos por la regla de medir antes de escribir: la fila del
+  2026-10-14 del Marcador lleva «0.5 / 2.6 (con diagnóstico de A-35 y A-44: no contaba)» en lugar
+  de «0.5/—» (CORRIDA-CONSTRUCCION.md:617); y RUMBO-2026-11.md §0 va tal cual con una nota al
+  final: la diaria de RESPALDO-M1 es del 29-oct, no del 28. R4.x de la orden es R4.4.
+- Letra del tag: la última cerrada era `stable/F38s-cuenta-por-mes`;
+  `stable/F38t-recorrida-construccion-2` no existe en local ni en origin (comprobado antes de este
+  commit).
+- Tag: `stable/F38t-recorrida-construccion-2`. El merge es
+  `git rev-parse "stable/F38t-recorrida-construccion-2^{commit}"`.
+- Commits de la rama:
+  - `5eca8e3`: chore(rama), abre la rama;
+  - `46e69c5`: la fase 0, con D1 a D12 y el auditor;
+  - `686a8b3`: el README de anexos y los guiones, antes de correr;
+  - `7918f29`: las salidas, los dos `diff` y lo que se lee de ellos;
+  - `83727c3`: las NOTAS de D2 y D7;
+  - `d77b0a9`: el informe entero y el revisor; PARADA 2;
+  - `356d52f`: la fase 3, §8 y el segundo revisor; PARADA 3;
+  - `85607ad`: la respuesta a la PARADA 3 y la orden de cierre, aplicadas en §8;
+  - `312c9a4`: RUMBO-2026-11.md (C0);
+  - y este, chore(cierre): sale el contrato y entra el registro en HISTORIA.
+- CI: ninguna en la rama (no toca hooks, rutas, `.claude/` ni plataforma: sin `fix/`). La CI de
+  `main` corre tras el push.
