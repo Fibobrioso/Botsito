@@ -381,6 +381,71 @@ umbral del encargo («al menos dos con fecha, entrada y stop legibles») no se c
    escrita en el informe ANTES de contar: lo que ADR-0092 §11 quiere saber es si el libro está
    grabado en vídeo, y eso lo dicen el día, la dirección y la hora.
 
+### 3.3 F3 en los días de v11 y v12 (PARCIAL, 2026-11-09)
+
+**CORRECCIÓN de lo que dijo la PARADA 3 («el stop no se lee en ninguna»), medida después del
+piloto:** el stop SÍ sale en pantalla en dos formas. (1) Como PRECIO, en el aviso «Order Updated ·
+Stop loss moved to X» o «Position Updated · Stop loss moved to X» cuando el trader lo coloca o lo
+mueve: 7 de julio #3, «Stop loss moved to 1.14284» = el stop del libro (Δ 0). (2) Como DISTANCIA,
+en las etiquetas de la herramienta de posición cuando el trader la selecciona («Stop: 0.00018
+(0.016%)»): 3 de julio #1, 18 puntos = libro; 3 de julio #3, 19 puntos = libro. No sale en todas,
+y el eje de precios sigue sin verse. Las cantidades en dinero de esas etiquetas no se copian.
+
+**Una precisión del criterio (desviación para el consultor):** el borde izquierdo de la caja de
+posición es cuándo la DIBUJÓ el trader, no cuándo se llenó (3 de julio #3: caja desde las 11:54,
+llenado 12:02). El minuto del llenado solo se lee si el aviso de ejecución sale con la vela de la
+entrada bajo el cursor. Cuando la entrada coincide y el llenado cae dentro de la caja pero el
+minuto no se lee, la tabla dice «COINCIDE (minuto no legible)».
+
+Fuente de las operaciones: `anexos/VIDEO-JULIO/operaciones-julio.txt` (`operaciones_julio.py`,
+13 casos, 67 operaciones). Fotogramas: `fr-v11-b83d5164/<ms>` y `fr-v12-3eeb8cf9/<ms>`.
+
+| Día | # | Madrid | Libro | Categoría | En el vídeo |
+|---|---|---|---|---|---|
+| 07-01 | 1 | 08:15:55 | compra 1.14042 | **COINCIDE** | v11/125000: «Stop order executed · Buy 100000 at 1.14042», vela de las 08:15 |
+| 07-01 | 2 | 09:33:05 | compra 1.13958 | APARECE | v11/215000-235000: caja de Gann desde 09:17, el precio la atraviesa hacia 09:31; voz «tenemos otro loss» (0:03:06); aviso «Entry price moved to 1.13978» (v11/195000) |
+| 07-01 | 3 | 12:59:05 | **venta** 1.13984 | APARECE | v11/525000: caja de VENTA proyectada desde ~13:05 con el cursor en ~12:58; la voz de la sesión dice «trades alcistas» (0:05:44) |
+| 07-02 | 1 | 11:34:25 | compra 1.14102 | **COINCIDE** | v11/920000-930000: «Closed [...] Buy 100000 at 1.14102», caja desde 11:34 |
+| 07-02 | 2 | 12:25:50 | compra 1.14069 | APARECE | v11/1010000: marca «be» del trader en ~12:25 |
+| 07-02 | 3 | 12:45:20 | compra 1.14068 | APARECE | v11/1010000-1020000: «Order Added · Stop loss added!» (~12:43) y «Take profit moved to 1.14175» (~12:45); 107 puntos al objetivo frente a 36 al stop del libro, 1:3 |
+| 07-02 | 4 | 13:59:30 | compra 1.14039 | APARECE (débil) | v11/1080000: solo trazos del trader sobre 13:52-14:03; sin caja ni aviso |
+| 07-02 | 5 | 14:10:00 | compra 1.13996 | APARECE | v11/1080000-1110000: «Order Added · Take profit added!» (~14:06) y caja de Gann 14:05-14:15 |
+| 07-02 | 6 | 14:23:05 | compra 1.13976 | APARECE | v11/1160000: caja larga ~14:16-14:38 |
+| 07-03 | 1 | 09:24:00 | compra 1.14528 | **COINCIDE** | v12/100000-134000: «Closed [...] Buy 100000 at 1.14528», caja desde ~09:24, cursor 09:23; «Stop: 0.00018» = 18 puntos, el stop del libro |
+| 07-03 | 2 | 09:43:00 | compra 1.14502 | APARECE | v12/190000: caja larga desde ~09:42-09:43 |
+| 07-03 | 3 | 12:02:00 | compra 1.14423 | **COINCIDE (minuto no legible)** | v12/320000: «Closed [...] Buy 100000 at 1.14423»; «Stop: 0.00019» = 19 puntos, el stop del libro; caja 11:54-12:05 |
+| 07-06 | 1-3 | 08:22-08:34 | compras | sin buscar: **no localizable** | su tramo de v12 (481-610 s) es un hueco del ASR: ningún segmento lo cubre y no se abre (ADR-0038) |
+| 07-06 | 4 | 10:51:10 | compra 1.14172 | APARECE | v12/615000 y 690000: caja larga ~10:50-11:00 |
+| 07-06 | 5 | 12:11:25 | compra 1.1413 | APARECE | v12/690000: «Position Updated · Stop loss moved to 1.1413» (~12:15): el break even a la entrada del libro |
+| 07-07 | 1-2 | 07:02, 07:17 | compras | APARECE (débil) | v12/840000: trazos del trader sobre ~07:00-07:21 |
+| 07-07 | 3 | 07:50:00 | compra 1.14293 | **COINCIDE** | v12/840000: «Stop order executed · Buy 100000 at 1.14293», vela ~07:50; «Stop loss moved to 1.14284» = el stop del libro |
+| 07-07 | 4 | 08:14:00 | compra 1.14262 | sin ver | — |
+| 07-07 | 5-6 | 12:01, 12:08 | compras | APARECE | v12/1199000: caja larga ~11:53-12:11 |
+| 07-07 | 7-8 | 13:51, 13:57 | compras | APARECE (débil) | v12/1199000: trazos del trader ~13:46-13:51 |
+| 07-08 | 1 | 09:19:15 | compra 1.14203 | APARECE | v12/1330000: caja larga ~09:18-09:27 |
+| 07-08 | 2 | 13:43:35 | compra 1.14039 | sin ver | v12/1428000 (cursor 13:47): el precio cae de 13:40 a 13:47, sin caja todavía |
+| 07-09 | 1-2 | 09:59, 13:02 | compras | sin ver | v12/1747000 (H4): marcas del trader el 9 de julio, sin minuto |
+| 07-10 | 1-5 | 07:36-09:50 | compras | sin ver | — |
+| 07-10 | 6 | 10:01:25 | compra 1.14378 | **COINCIDE** | v12/2000000: «Closed [...] Buy 100000 at 1.14378», cursor 10:00 |
+| 07-10 | 7-11 | 10:28-12:58 | 2 compras, 3 ventas | en v13 | espera la PARADA 4 |
+
+**Recuento parcial (35 operaciones de los días 1 a 10 en v11/v12, sin las cinco del 10 que están
+en v13):** COINCIDE 6 (una con el minuto no legible); APARECE 17 (5 de ellas débiles, solo
+trazos); CONTRADICE 0; sin ver o no localizables 12. **Ninguna operación contradice al libro.**
+El stop legible coincide en las tres en que sale (Δ 0).
+
+**En el vídeo y no en el libro** (sin resolver): 8 de julio, caja larga ~11:05-11:25
+(v12/1428000).
+
+**La hora del libro:** en las 6 COINCIDE el eje de pared del replay (sesiones a las 07:00, 11:00 y
+15:00) cae en `instante_utc` + 2 h. **El libro de julio está en Europe/Madrid**, como dijo
+ENTRADA-JULIO.md §3.b por las velas.
+
+**Lo que falta de F3:** las «sin ver» de los días 7 a 10 en v12 (más fotogramas en los segmentos
+con voz), y los días 10 (tarde) a 17 en v13, que esperan la PARADA 4. Fotogramas abiertos hasta
+aquí: **34** (12 del día 2026-11-08 y 22 del 2026-11-09: 10 de v11 y 12 de v12), todos por instante localizado; ninguno
+con el cursor fuera de julio, marcas sobre otro mes ni panel de operaciones o de estadística.
+
 ## 4. F4 · Las 81 filas (reproducidas; la clasificación espera F2 y F3)
 
 `anexos/VIDEO-JULIO/filas_hasta_t.py` (lee `patrones-cuenta-por-mes.txt` y la tabla «Operaciones
@@ -530,8 +595,12 @@ Las formas de la lista cerrada de la guardia, sobre los `.mkv` (desde su carpeta
 **Respuesta a la PARADA 2 (2026-11-09):** Aleks lanzó con «!» el primero de los cuatro comandos:
 `mean_volume: -38.6 dB` para el hueco de v14 de 340,460 s (718,6 s). Cubierto por silencio 0 y
 |−38,6 − (−39,0)| = 0,4 dB < 10 dB: **el hueco NO es silencio; el ASR se saltó voz en v14.** Con
-un hueco basta (la regla: «si algún hueco [...] lo cumple, se retranscribe ese vídeo»); los otros
-tres no se midieron. Se aplica 1.3: v14 y también v13 (la respuesta nombra los dos; v13 no tiene
+un hueco basta (la regla: «si algún hueco [...] lo cumple, se retranscribe ese vídeo»). Después
+Aleks lanzó el segundo: `mean_volume: -41.4 dB` para el hueco de 1403,718 s (573,3 s); |−41,4 −
+(−39,0)| = 2,4 dB < 10 dB: tampoco es silencio. El tercero: `mean_volume: -41.5 dB` para el hueco
+de 1985,272 s (536,8 s); 2,5 dB: tampoco. El cuarto: `mean_volume: -42.1 dB` para el hueco de
+2669,988 s (322,8 s); 3,1 dB: tampoco. **Los cuatro huecos de v14 de 5 minutos o más tienen un
+volumen medio a menos de 3,1 dB del de v11 y ningún silencio de 30 s: ninguno es silencio.** Se aplica 1.3: v14 y también v13 (la respuesta nombra los dos; v13 no tiene
 huecos de 5 minutos, pero su texto por minuto es igual de bajo, §1), uno a uno, con
 `--objetivo-s 300 --min-s 180 --max-s 420`, y se queda la versión que cubra con texto más minutos
 de los huecos.
@@ -580,6 +649,73 @@ v14 y luego v13, uno a uno, sin `make check` a la vez:
 
 **Mientras tanto** sigue lo que no depende de esto (respuesta, 1.4): v11 y v12. F3 espera la
 PARADA 3.
+
+## Respuesta del consultor a las PARADAS 2 y 3 (2026-11-09)
+
+Copiada tal cual:
+
+> Respuesta del consultor a las PARADAS 2 y 3 de trabajo/video-julio (2026-11-09). Cópiala tal cual en el informe, en su sección, y aplícala.
+>
+> PARADA 2. Aleks acaba de lanzar con «!» los cuatro comandos de §1.6, y sus líneas mean_volume están arriba en esta conversación. Cópialas al informe y aplica la regla de decisión escrita antes de medir: el umbral es -49,0 dB, a 10 dB del -39,0 de v11.
+> - Si algún hueco de v14 da más de -49,0 dB, retranscribe v14 con el punto 1.3 de la respuesta a la PARADA 1 (--reemplaza-a, --objetivo-s 300, --min-s 180, --max-s 420), con su manifiesto en su commit. Se queda la transcripción que cubra con texto más minutos de los huecos. Si la nueva tampoco los cubre, PARADA con lo medido.
+> - Si ninguno pasa de -49,0 dB, el texto es el que hay, y el informe dice dónde no habla el trader.
+> - El volumen no distingue voz de música. El informe lo dice al lado de la decisión, sin cambiar la regla.
+> - La negativa de la guardia a ffmpeg con -ss/-t sobre un vídeo del corpus es un falso positivo de la lista cerrada de GUARDIA-FFMPEG. Va como línea de Technical Debt del carril de guardias en las propuestas para la orden de cierre. Aquí no se toca la guardia.
+>
+> PARADA 3. La grabación no enseña el eje de precios y el stop nunca se ve: es un límite del instrumento, medido en el piloto, no un resultado. F3 sigue con (a) más (b), y este criterio se escribe en el informe ANTES de comparar el resto:
+> - Tres categorías por operación de los 13 casos:
+>   · COINCIDE: día, dirección y hora en Europe/Madrid (el mismo minuto que instante_utc + 2 h), con la entrada leída en el aviso de cierre a 3 puntos o menos;
+>   · APARECE SIN ENTRADA LEGIBLE: día, dirección y hora por la marca del trader o por su voz, sin cifra de entrada (para cada operación busca antes su aviso de cierre);
+>   · NO APARECE.
+>   Además, CONTRADICE: aparece con otra dirección, a otra hora, o con la entrada a más de 3 puntos.
+> - El stop va como «no legible» en todas, y el informe dice que el vídeo no sirve para el stop: la caja dispersa (A-48) se le pregunta al trader en directo en la sesión 7.
+> - Las operaciones del vídeo que no están en los casos se listan aparte, como dice el encargo.
+> - F5 cuenta así:
+>   · primera vía (julio sale de provisionales_con_video): las operaciones de los 13 días están todas en COINCIDE o en APARECE, ninguna CONTRADICE y ninguna está en NO APARECE;
+>   · si no, segunda vía, y dias_con_video lleva los días en que se cumple eso.
+>   Es lo que pregunta material_sin_video (S-14): si las sesiones del libro están grabadas. El stop no cambia esa respuesta.
+> - El piloto vale con dos COINCIDE (2 y 10 de julio, Δ 0) y la confirmación de que el libro está en Europe/Madrid.
+>
+> Sigue sin parar hasta la PARADA final: lo que quede de F2, F3 con este criterio, F4 a F7, el SHA256SUMS en el Escritorio y el revisor.
+
+### Cómo se aplica
+
+- **PARADA 2:** las cuatro líneas `mean_volume` de Aleks están en §1.6 (−38,6, −41,4, −41,5 y
+  −42,1 dB). Las cuatro pasan de −49,0 dB: v14 se retranscribió ya (§1.7, antes de esta
+  respuesta, por la regla escrita) y la nueva tampoco cubre los huecos: es la **PARADA 4** (§1.7),
+  que sigue abierta. **El volumen no distingue voz de música**: la decisión «el ASR se saltó voz»
+  es la de la regla escrita, y lo que suena en los huecos puede ser música o ruido de fondo; por
+  eso la PARADA 4 pide escuchar un minuto. La negativa de la guardia a `-ss`/`-t`, a las propuestas
+  para la orden de cierre (Technical Debt, carril de guardias).
+- **PARADA 3:** el criterio, abajo (§3.2), escrito antes de comparar el resto. El piloto vale
+  (dos COINCIDE, el libro en Europe/Madrid).
+- **Orden:** por 1.4 de la respuesta a la PARADA 1, F2 y F4 de los días de v13 y v14 esperan la
+  PARADA 4; F3 empieza por los días de v11 y v12 (1, 2, 3, 6, 7, 8, 9 y 10).
+
+### 3.2 El criterio de F3 (respuesta a la PARADA 3), escrito ANTES de comparar el resto
+
+Para cada operación de los 13 casos dev de julio (`instante_utc` es el llenado; Madrid = UTC+2):
+
+- **COINCIDE**: el mismo día, la misma dirección y la hora en el mismo minuto que `instante_utc`
+  + 2 h, leída en el eje del gráfico junto a la caja o la marca del trader; y la entrada leída en el
+  aviso de cierre de FX Replay a 3 puntos o menos del libro.
+- **APARECE SIN ENTRADA LEGIBLE**: día, dirección y hora por la marca del trader (caja de posición,
+  «be», niveles) o por su voz, sin cifra de entrada; antes se busca su aviso de cierre en los
+  segundos siguientes a que el trader diga «loss», «win», «B» o «break even».
+- **NO APARECE**: la sesión del día se ve en el vídeo y la operación no tiene ni caja, ni marca, ni
+  voz a su hora; o el día no se ve.
+- **CONTRADICE**: aparece con otra dirección, a otra hora (otro minuto) o con la entrada a más de
+  3 puntos.
+- **El stop: «no legible» en todas.** El vídeo no sirve para el stop: la grabación no enseña el
+  eje de precios y los avisos no lo traen; la caja dispersa (A-48) se le pregunta al trader en
+  directo en la sesión 7.
+- La hora a ojo: la posición de la caja en el eje se lee al minuto solo si el eje de M1 o de 5 s
+  tiene marcas cada pocos minutos; si no, se dice «hora compatible» y la operación no puede ir a
+  COINCIDE.
+- Las operaciones del vídeo que no están en los casos, aparte, sin resolverlas.
+- **F5:** primera vía si las operaciones de los 13 días están todas en COINCIDE o APARECE, ninguna
+  CONTRADICE y ninguna NO APARECE; si no, segunda vía, con `dias_con_video` = los días en que se
+  cumple.
 
 ## Estado
 EN CURSO · PARADA 2 (los cuatro comandos de §1.6, para Aleks) y PARADA 3 (el piloto de F3, §3.1)

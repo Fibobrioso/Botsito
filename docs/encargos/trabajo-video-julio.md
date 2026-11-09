@@ -205,3 +205,31 @@ Copiada tal cual (y en `docs/validation/VIDEO-JULIO.md`, «Respuesta del consult
 >    - El informe dice cuántas líneas tiene.
 >
 > Sigue sin parar hasta la PARADA final: F2, F3 con el piloto, F4 a F7 y el revisor.
+
+## Respuesta del consultor a las PARADAS 2 y 3 (2026-11-09)
+
+Copiada tal cual:
+
+> Respuesta del consultor a las PARADAS 2 y 3 de trabajo/video-julio (2026-11-09). Cópiala tal cual en el informe, en su sección, y aplícala.
+>
+> PARADA 2. Aleks acaba de lanzar con «!» los cuatro comandos de §1.6, y sus líneas mean_volume están arriba en esta conversación. Cópialas al informe y aplica la regla de decisión escrita antes de medir: el umbral es -49,0 dB, a 10 dB del -39,0 de v11.
+> - Si algún hueco de v14 da más de -49,0 dB, retranscribe v14 con el punto 1.3 de la respuesta a la PARADA 1 (--reemplaza-a, --objetivo-s 300, --min-s 180, --max-s 420), con su manifiesto en su commit. Se queda la transcripción que cubra con texto más minutos de los huecos. Si la nueva tampoco los cubre, PARADA con lo medido.
+> - Si ninguno pasa de -49,0 dB, el texto es el que hay, y el informe dice dónde no habla el trader.
+> - El volumen no distingue voz de música. El informe lo dice al lado de la decisión, sin cambiar la regla.
+> - La negativa de la guardia a ffmpeg con -ss/-t sobre un vídeo del corpus es un falso positivo de la lista cerrada de GUARDIA-FFMPEG. Va como línea de Technical Debt del carril de guardias en las propuestas para la orden de cierre. Aquí no se toca la guardia.
+>
+> PARADA 3. La grabación no enseña el eje de precios y el stop nunca se ve: es un límite del instrumento, medido en el piloto, no un resultado. F3 sigue con (a) más (b), y este criterio se escribe en el informe ANTES de comparar el resto:
+> - Tres categorías por operación de los 13 casos:
+>   · COINCIDE: día, dirección y hora en Europe/Madrid (el mismo minuto que instante_utc + 2 h), con la entrada leída en el aviso de cierre a 3 puntos o menos;
+>   · APARECE SIN ENTRADA LEGIBLE: día, dirección y hora por la marca del trader o por su voz, sin cifra de entrada (para cada operación busca antes su aviso de cierre);
+>   · NO APARECE.
+>   Además, CONTRADICE: aparece con otra dirección, a otra hora, o con la entrada a más de 3 puntos.
+> - El stop va como «no legible» en todas, y el informe dice que el vídeo no sirve para el stop: la caja dispersa (A-48) se le pregunta al trader en directo en la sesión 7.
+> - Las operaciones del vídeo que no están en los casos se listan aparte, como dice el encargo.
+> - F5 cuenta así:
+>   · primera vía (julio sale de provisionales_con_video): las operaciones de los 13 días están todas en COINCIDE o en APARECE, ninguna CONTRADICE y ninguna está en NO APARECE;
+>   · si no, segunda vía, y dias_con_video lleva los días en que se cumple eso.
+>   Es lo que pregunta material_sin_video (S-14): si las sesiones del libro están grabadas. El stop no cambia esa respuesta.
+> - El piloto vale con dos COINCIDE (2 y 10 de julio, Δ 0) y la confirmación de que el libro está en Europe/Madrid.
+>
+> Sigue sin parar hasta la PARADA final: lo que quede de F2, F3 con este criterio, F4 a F7, el SHA256SUMS en el Escritorio y el revisor.
