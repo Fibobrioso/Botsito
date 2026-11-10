@@ -108,6 +108,11 @@ ORDEN_SE_MUEVE = "se_mueve"
 ORDEN_SE_RETIRA = "se_retira"
 HECHO_DETENIDO = "detenido_por_cartuchos"
 TERMINADO_POR_GANANCIA = "ganancia"
+# SOLO REGISTRO (rama trabajo/laminas; respuesta del consultor a la PARADA de la fase 0, punto 2):
+# las zonas de control que conto RN-009 en el ultimo cierre en que lo evaluo, como
+# `instante|nivel@inicio,...` (el instante del cierre; cada pivote, por su nivel y el inicio de su
+# vela contraria). Nada la lee para decidir: la leen las laminas (`engine/laminas.py`).
+ANOTACION_ZONAS_CONTROL = "zonas_de_control"
 # Las opciones de `caja_lado_de_ruido` (A-50): que parte de la caja se compara con el nivel tomado
 # en RN-005. DEFAULT_AMBIGUOUS en `caja_entera`, lectura del consultor (sesion 5, S-12b).
 SOLO_EL_0 = "solo_el_0"
@@ -466,7 +471,7 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
     def zonas_desarrolladas_superan(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
     ) -> Resultado | NoImplementada:
-        from botsito.domain.estructura_m1 import zonas_de_control
+        from botsito.domain.estructura_m1 import pivotes_de_control
 
         toma = _anotar_toma(momento.datos, momento, estado)
         if toma is None:
@@ -476,9 +481,14 @@ def primitivas_zona(registro: Registro, limpia: str) -> dict[str, Any]:
         idx_toma = next((k for k, v in enumerate(m1) if int(v.fin) == toma["instante"]), None)
         if idx_toma is None or idx_toma >= len(m1) - 1:
             return Resultado(Tri.NO)
-        return Resultado(
-            Tri.SI if zonas_de_control(m1, idx_toma, len(m1) - 1, toma["lado"]) > tope else Tri.NO
-        )
+        pivotes = pivotes_de_control(m1, idx_toma, len(m1) - 1, toma["lado"])
+        if momento.sesion is not None:
+            # SOLO REGISTRO: cuales conto, para las laminas; no decide nada
+            estado.anotaciones.setdefault(momento.sesion, {})[ANOTACION_ZONAS_CONTROL] = (
+                f"{int(momento.instante)}|"
+                + ",".join(f"{p.nivel}@{int(p.contraria_inicio)}" for p in pivotes)
+            )
+        return Resultado(Tri.SI if len(pivotes) > tope else Tri.NO)
 
     def toca_colocar_orden_limite(
         args: Mapping[str, Any], momento: Momento, estado: EstadoDia
@@ -580,6 +590,7 @@ def zonas_del_dia(estado: EstadoDia) -> dict[str, Zona]:
 
 
 __all__ = [
+    "ANOTACION_ZONAS_CONTROL",
     "ESCENARIOS",
     "INTENTOS_SIGUEN",
     "INTENTOS_VUELVEN",

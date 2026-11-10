@@ -2702,6 +2702,117 @@ def motor_decisiones(repo: Path, args: argparse.Namespace) -> int:
     return codigo
 
 
+def motor_laminas(repo: Path, args: argparse.Namespace) -> int:
+    """DIAGNOSTICO de construccion (`engine/laminas.py`, rama trabajo/laminas): las laminas del bot
+    de las sesiones pedidas, sobre la misma corrida que `motor decisiones` (toda la construccion, la
+    cuenta por mes, el perfil y la fase por defecto, sin depuracion). La salida va SOLO a
+    `--salida`, fuera del repositorio y vacia, y todo se calcula antes de escribir el primer
+    fichero. Hasta que el ADR del metodo cambie la regla 2 de SESION-DE-PREGUNTAS.md, las laminas
+    no se ensenan al trader (docs/runbooks/LAMINAS.md)."""
+    import time
+
+    from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
+    from botsito.cases.holdout import HoldoutCerradoError, casos_ocultos
+    from botsito.cases.paquete import cargar_config
+    from botsito.comun.memoria import pico_del_proceso
+    from botsito.config.registro import cargar_registro
+    from botsito.corpus.cuarentena import dias_de_casos
+    from botsito.data.dataset import DatasetError
+    from botsito.engine import arnes, cableado, diagnostico, entrada, laminas, tope_trader, zonas
+    from botsito.engine.interprete import reglas_ejecutables
+    from botsito.engine.relojes import reloj_de_las_sesiones
+    from botsito.spec.modelo import cargar_reglas, cargar_vocabulario
+
+    inicio = time.perf_counter()
+
+    def avisar(texto: str) -> None:
+        print(
+            f"LAMINAS | {texto} ({time.perf_counter() - inicio:.1f} s; pico "
+            f"{pico_del_proceso() / 2**20:.1f} MiB)",
+            flush=True,
+        )
+
+    try:
+        # la salida y las sesiones, ANTES de leer una sola vela
+        destino = laminas.comprobar_salida(Path(args.salida), repo)
+        pedidas = laminas.pedidas_de(args.sesiones)
+        spec = repo / "knowledge" / "spec" / "strategy_spec.yaml"
+        reglas = reglas_ejecutables(cargar_reglas(spec))
+        criterio = cargar_criterio(repo)
+        meses = list(criterio.construccion)
+        registro = cargar_registro(repo / "knowledge" / "spec" / "parametros.yaml")
+        config = cargar_config(repo / "knowledge" / "cases" / "kit" / "config.yaml")
+        vocabulario = cargar_vocabulario(spec)
+        reloj = reloj_de_las_sesiones(registro)
+        puerta = laminas.puerta_de(
+            config.cobertura, meses, dias_de_casos(casos_ocultos(repo)), reloj.huso_visible
+        )
+        dias = arnes.dias_de_construccion(repo, criterio, meses)
+        dev = {d.dia for d in dias}
+        fuera = [p.n for p in pedidas if p.dia not in dev]
+        if fuera:
+            raise laminas.LaminaError(
+                f"sesiones {fuera}: el dia no es dev de los meses de construccion"
+            )
+        # lo mismo que `motor arnes --simular` sin ninguna opcion de diagnostico
+        diag = diagnostico.Diagnostico()
+        lectura_pivote = diagnostico.lectura_pivote(registro, diag)
+        perfil_cuenta = cableado.perfil_del_repo(repo, None)
+        tope = tope_trader.tope_del_registro(registro, perfil_cuenta.huso_corte(), diag)
+        limpia = zonas.lectura_limpia(registro)
+        tipo_orden = entrada.lectura_tipo_orden(registro, None)
+        mercado = arnes.dias_de_mercado(
+            repo, _carpeta_datos(repo), config, registro, dias, reloj, lectura_pivote
+        )
+        limites = {
+            p.dia: tuple((n, int(a), int(b)) for n, a, b in mercado[p.dia].limites())
+            for p in pedidas
+        }
+        plantilla = cableado.construir_motor_cableado(
+            repo, _carpeta_datos(repo), criterio, config, registro, vocabulario, reglas, dias,
+            perfil_cuenta, None, False, tope, limpia, stops_level_diagnostico=None,
+            tipo_orden=tipo_orden,
+        )  # fmt: skip
+        laminas.comprobar_pedidas(
+            pedidas, dev, puerta, limites,
+            {p.dia: plantilla.mercados[p.dia].horas_perdidas for p in pedidas},
+        )  # fmt: skip
+        lectura = laminas.Lectura(
+            registro.opcion("liquidez_m15_criterio_toma"),
+            registro.fraccion("stop_fraccion_caja").valor,
+            registro.entero("zonas_control_max_por_esquema"),
+            registro.hora("anclaje_h4"),
+            registro.opcion("perdida_trader_reinicio"),
+        )
+        avisar("datos cargados")
+        en_orden = tuple(sorted(set(meses)))
+
+        def correr(motor: Any) -> list[Any]:
+            corrida = arnes.correr(cableado.NOMBRE_MOTOR, en_orden, dias, mercado, motor)
+            return [op for r in corrida.resultados for op in r.operaciones]
+
+        ficheros, resumen = laminas.generar(
+            plantilla, reglas, correr, pedidas, limites,
+            [op for d in dias for op in d.operaciones], criterio.tolerancias, puerta, lectura,
+            avisar,
+        )  # fmt: skip
+    except (arnes.ConjuntoError, CriterioError, DatasetError, ValueError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    except HoldoutCerradoError as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 3
+    escritos = laminas.escribir(ficheros, destino)
+    for linea in resumen:
+        print(f"LAMINAS | {linea}")
+    print(f"OK: {len(escritos)} ficheros en {destino}")
+    print(
+        f"TIEMPO: {time.perf_counter() - inicio:.1f} s; MEMORIA: pico del proceso de "
+        f"{pico_del_proceso() / 2**20:.1f} MiB"
+    )
+    return 0
+
+
 def _carpeta_datos(repo: Path) -> Path:
     """`[rutas].data` (config/ajustes.carpeta_datos); un TOML roto aborta con ERROR."""
     from botsito.config.ajustes import AjustesError, carpeta_datos
@@ -3245,6 +3356,21 @@ def build_parser() -> argparse.ArgumentParser:
     abl.add_argument(
         "--ablacion-vigentes", action="store_true", help="todas las VIGENTE, una a una"
     )
+    mt_lam = motor_sub.add_parser(
+        "laminas",
+        help="DIAGNOSTICO de construccion: las laminas del bot (H4, M15 y M1 con la sustentacion) "
+        "de las sesiones pedidas, fuera del repositorio; no se ensenan al trader todavia",
+    )
+    mt_lam.add_argument(
+        "--sesiones",
+        required=True,
+        help="dia:sesion separados por comas (AAAA-MM-DD:nombre de la sesion de los datos)",
+    )
+    mt_lam.add_argument(
+        "--salida",
+        required=True,
+        help="carpeta de salida FUERA del repositorio, inexistente o vacia (no se pisa)",
+    )
     casos = sub.add_parser(
         "casos", help="la biblioteca de casos: el detalle por operacion del trader (F14a)"
     )
@@ -3476,6 +3602,8 @@ def main(argv: list[str] | None = None) -> int:
         return motor_visor(args.repo, args)
     if args.cmd == "motor" and args.motor_cmd == "decisiones":
         return motor_decisiones(args.repo, args)
+    if args.cmd == "motor" and args.motor_cmd == "laminas":
+        return motor_laminas(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "ingerir":
         return casos_ingerir(args.repo, args)
     if args.cmd == "casos" and args.casos_cmd == "check":

@@ -298,6 +298,178 @@ Dada por Aleks (consultor) el 2026-11-10, tal cual (también al final de `docs/e
   - El motivo de RN-005 es el nuevo.
   - La tabla entera, con la fuente de cada frase (fichero:línea), va en el informe de F3 para el alcance (4) del revisor. Sobre RN-016: una pérdida por equal no gasta intento (strategy_spec.yaml:1874-1876), y la cuenta empieza de cero con cada liquidez nueva.
 
+## F2 y F3 · Los tests y el subcomando (2026-11-10)
+
+Van en un solo commit de código (tests y código juntos), después del commit del contrato. Los tests se escribieron con el código, sobre fixtures sintéticos. Ninguno lee un mes real.
+
+### Lo que se añade como registro (puntos 1 y 2 de la respuesta)
+
+- **`domain/sesgo.py`.**
+  - `ResultadoSesgo` gana `vela_que_fija` (el inicio de la H4 que fija el sesgo, o None) y `h4_saltadas`: por cada saltada, su inicio y su motivo, de la más reciente a la más antigua. Los motivos son `SALTADA_COLOR_CONTRARIO`, `SALTADA_NEUTRA_SIMPLE` y `SALTADA_NEUTRA_DOBLE`.
+  - El bucle es el mismo. Solo apunta lo que ya tenía en la mano.
+- **`engine/primitivas.py`.** `sesgo_h4_al_abrir` lo anota en `sesgo_h4_vela` y en `sesgo_h4_saltadas` (`inicio:motivo,...`).
+  - Las saltadas se anotan, como sus recuentos, solo cuando las hay.
+  - La vela se anota o se quita en cada evaluación.
+- **`domain/estructura_m1.py`.** `pivotes_de_control` devuelve los pivotes que contaba `zonas_de_control`, y esta pasa a ser su longitud.
+- **`engine/zonas.py`.** El predicado de RN-009, `zonas_desarrolladas_superan`, anota `zonas_de_control = instante|nivel@inicio,...` y decide con `len(pivotes) > tope`, que es el mismo número que antes.
+- **Nada de esto lo lee una decisión.** `tests/unit/test_laminas_registro.py` lo comprueba de tres formas:
+  - compara el sesgo y sus contadores, y `zonas_de_control`, contra copias literales de las funciones de `main`;
+  - lo hace sobre los casos de `test_sesgo_h4.py` y de `test_estructura_m1.py` (los de 0, 1 y 2 zonas), y sobre 400 series al azar de cada una (Hypothesis);
+  - los tests de sesgo y de estructura que ya existían pasan sin tocarlos.
+- **La prueba de fondo son F4.1 y F4.2.**
+
+### El código
+
+- **`src/botsito/engine/laminas.py`:**
+  - la `Puerta` del punto 6;
+  - el `Recolector`, que es el observador;
+  - la `Foto` congelada y sus partes;
+  - la elección de las láminas (a) y (b), con `decisiones.resumir`;
+  - la tabla de frases;
+  - `componer` (de la foto al dibujo y la sustentación);
+  - la regex de fechas, ids y dinero;
+  - `generar`, que corre la base con el recolector y la repite sin él;
+  - la salida.
+- **`src/botsito/engine/laminas_svg.py`:** el SVG y el HTML, que solo reciben una `Composicion`.
+- **`src/botsito/cli.py`:** `motor laminas --sesiones día:sesión,... --salida <fuera del repo>`.
+  - Las dos opciones son obligatorias.
+  - No comparte `_opciones_simulacion` ni `_opciones_diagnostico`.
+  - `motor arnes`, `motor visor` y `motor decisiones` conservan sus opciones, comparadas con las de `main` en `test_arnes_visor_y_decisiones_tienen_las_mismas_opciones_que_en_main`.
+  - No hace falta tocar `pyproject.toml`: import-linter mantiene sus 4 contratos.
+
+**Las constantes de dibujo (punto 7 de la respuesta).**
+- `DIAS_H4 = 4`, `DIAS_M15 = 1` y `MINUTOS_ANTES_M1 = 60` (`laminas.py:49-51`).
+- Los marcos de 240 y 15 minutos son `MINUTOS_H4` y `MINUTOS_M15` de `cases/ventanas.py`, los mismos con que el arnés agrega.
+- Ninguna decide nada.
+
+**Las exenciones de `test_no_business_literals` (punto 9 del encargo), una por línea:**
+- `laminas.py:935` y `:936`: `Decimal("0.25")` y `Decimal("0.5")`, los rótulos del Fibonacci de la caja.
+- `laminas_svg.py:48`: la opacidad `"0.25"` del relleno de la H4 que fija el sesgo. Esta tercera no la preveía el encargo: el «25 %» de la tabla de colores es el literal 0.25, que el test prohíbe.
+- El 0,8 sale de `stop_fraccion_caja` (`registro.fraccion(...).valor`).
+- El huso, de `RelojSesiones.huso_visible`.
+- El anclaje, de `anclaje_h4`.
+
+**Lo que cambia frente al diseño aprobado (§0.3), y por qué:**
+- **No hay cotejo entre `orden_limite_pendiente` y las órdenes vivas.** El hecho del bróker se calcula ANTES de que el motor decida en ese cierre (`cableado.py:399`), y la orden se coloca después: en la foto de una colocación no casan nunca. Las órdenes vivas salen de la copia de las órdenes.
+- **Lo que no es vela y nace fuera de la ventana lleva frase propia.** La regla aprobada dice que la sustentación diga «viene de antes de la ventana», y estas son sus frases:
+  - «La vela H4 que fija el sesgo viene de antes de la ventana.»
+  - «La toma de la liquidez de M15 viene de antes de la ventana.»
+  - «Liquidez de M15 tomada a las {HH:MM}: la línea que toma viene de antes de la ventana.»
+  - «{n} líneas de M15 de esta sesión vienen de antes de la ventana.»
+  - «La caja viene de antes de la ventana.»
+  - «El punto de breaker viene de antes de la ventana.»
+- **Las frases tienen singular y plural** («una vela», «{n} velas»; «un stop», «{n} stops»).
+- **Las saltadas solo se dicen con un sesgo que tenga lado.** Con «Sin sesgo de H4» la frase del sesgo ya cubre las velas miradas.
+- **La comprobación de ids no distingue mayúsculas, salvo la R.** La R aislada solo cuenta en mayúscula, porque el radio de los círculos del SVG (`r="5"`) casaba.
+
+### La tabla de frases, con su fuente
+
+Todas las frases están en `src/botsito/engine/laminas.py:455-603`.
+
+*Hechos* (el vocabulario, `knowledge/spec/strategy_spec.yaml:669-768`):
+
+| Frase (clave en `laminas.py`) | Fuente |
+|---|---|
+| `FRASE_SESGO` (:461), alcista, bajista, insuficiente y ambiguo, con la variante de doble ruptura | el hecho `sesgo` (strategy_spec.yaml:680), RN-003 (:1079) y `ResultadoSesgo.doble_ruptura` (`domain/sesgo.py`); la anotación `sesgo_h4_doble_ruptura` (primitivas.py:65) |
+| `FRASE_SALTADAS` (:475), por motivo | `ResultadoSesgo.h4_saltadas` y los tres recuentos (`domain/sesgo.py`, ADR-0080 D1 y D3, ADR-0075); las anotaciones de primitivas.py:70-78 |
+| `FRASE_FIJA_FUERA` (:491) | `sesgo_h4_vela` fuera de las H4 dibujadas (punto 6 del encargo) |
+| `FRASE_DETENIDO` (:492): cartuchos, tope total y racha | los hechos de strategy_spec.yaml:746, :734 y :757, fijados por RN-016 (:1912), RN-031 (:2532) y RN-036 (:2179) |
+| `FRASE_TOPE_POR_REGLA` (:499): RN-020 o RN-029 | `detenido_por_tope` (strategy_spec.yaml:723), fijado por RN-020 (:2116) y por RN-029 (:2427), según `Evento.fijados` del cierre en que se encendió (`Recolector._origen`); el «hasta la primera sesión del día siguiente», de `perdida_trader_reinicio = primera_sesion_dia_siguiente` (parametros.yaml:1593-1612; ADR-0089); con otro valor, error |
+| `orden_dimensionada` | sin frase, a propósito (`HECHOS_SIN_FRASE`; strategy_spec.yaml:713) |
+| `FRASE_TOMA` (:508), «con cuerpo / con mecha» y «por debajo del bajo / por encima del alto» | la toma del escenario (`zonas.py:214-219`: instante, nivel, lado y pivote) y `liquidez_m15_criterio_toma`, que nombra la forma de RN-004 (strategy_spec.yaml:1331) |
+| `FRASE_SIN_TOMA` (:518) | la sesión sin escenarios (`zonas.py:222-232`, `_abrir`) |
+| `FRASE_ESCENARIO` (:519) | `escenario["n"]` (`zonas.py:227`) |
+
+*Lo que se enseña siempre:*
+
+| Frase | Fuente |
+|---|---|
+| `FRASE_ESQUEMA` (:524) | `Zona.por` (`zonas.py:148`) |
+| `FRASE_CAJA` (:528) | `Zona.entrada` y `Zona.extremo` (`zonas.py:146-147`) |
+| `FRASE_PUNTO` (:530) | `punto_de_zona` = «nivel@inicio» (`zonas.py:393` y `:412`) |
+| `FRASE_ORDEN` (:533): coloca, mueve, pendiente | `Orden.precio`, `stop` y `objetivo` (`broker.py:224-264`); «el 0 de la caja» se comprueba (`precio == Zona.entrada`, o error); el 0,8, de `stop_fraccion_caja` |
+| `FRASE_CERRADAS` (:542) con `CIERRE_ANTES` (:541) | `Posicion.motivo_cierre` (`broker.py:255` y `:934`): `stop` y `objetivo` (`llenado.py:44-45`) y `manual` (`broker.py:95`, «a mercado»); otro valor, error |
+| `FRASE_RETIRADAS` (:543) y `FRASE_RECHAZADAS` (:547) | `Orden.estado` `cancelada` y `expirada`, y `rechazada` (`broker.py:92-94`) |
+| `FRASE_STOPS_LIQUIDEZ` (:551) | las posiciones cerradas en el stop cuya zona es del escenario vigente (`ctx.zona_de_orden`, `escenario["zonas"]`). Una pérdida por equal no gasta intento (strategy_spec.yaml:1874-1876), y la cuenta empieza de cero con cada liquidez nueva (`abrir_escenario`, en `acciones_escenario`, `zonas.py:270-322`). La frase cuenta stops, no intentos |
+
+*Gates* (`MOTIVO_GATE`, :559; las 15 VIGENTE con `prohibe`, comprobadas contra la spec por `test_la_tabla_de_gates_es_la_de_las_vigente_que_prohiben`), con «No abre: …» o «No abre porque no puede descartar que …» (`FRASE_PROHIBE`, :580; `Evento.prohibido_por` y `quizas_por`) y «Iba a colocar la orden y no la coloca: …» (`FRASE_BLOQUEO`, :584; `Evento.bloqueada_por`):
+
+| Gate | Fuente |
+|---|---|
+| RN-001, RN-037, RN-033, RN-005, RN-008, RN-009, RN-016, RN-018, RN-020, RN-036, RN-022, RN-026, RN-029, RN-031 y RN-032 | strategy_spec.yaml:863, :1046, :1183, :1347, :1508, :1546, :1861, :1978, :2037, :2121, :2208, :2271, :2372, :2490 y :2536 |
+
+- **RN-009 lleva los números:** `{n}` sale de la anotación `zonas_de_control` del mismo cierre (si es de otro instante, error) y `{m}` de `zonas_control_max_por_esquema`.
+- **RN-005** usa la palabra del trader: «ruido», de ev-v3-001600-ed45b091 y ev-v3-001725-bca9714b, como pidió la respuesta.
+
+*Por qué no hay orden* (`_sin_orden`; solo en el tipo b sin orden viva):
+
+| Frase | Fuente |
+|---|---|
+| `FRASE_OPERACION_ABIERTA` (:592) | `operacion_abierta` del bróker (`broker.py:738-745`) |
+| `FRASE_TERMINADO` (:593) | `escenario["terminado"] == "ganancia"` (`zonas.TERMINADO_POR_GANANCIA`, `zonas.py:110`); otro valor, error |
+| `FRASE_SIN_CAJA` (:596) | `escenario["zonas"]` vacío |
+| `FRASE_SIN_PUNTO` (:600) | la zona sin `punto_de_zona` |
+| `FRASE_USADA` (:601) | `usadas` (`zonas.py:435-448`) |
+| `FRASE_PUNTO_GASTADO` (:602) | `rechazados` (`zonas.py:420-432`) |
+| `FRASE_NO_ENVIADA` (:591) con `LIMITE_NO_ENVIO` (:585) | `ctx.no_enviadas` del cierre (`primitivas_broker.py:639`) y los límites `volumen`, `margen` y `minimo` (`broker.py:174-176`), con o sin `no_operar:` (`primitivas_broker.py:635-637`); otro, error |
+| `FRASE_NO_TOCABA` (:603) | caja con punto, ninguna causa de arriba y ni RN-011 ni RN-015 en `Evento.disparadas`; si alguna dispara sin causa, error |
+
+### Los tests (35 funciones nuevas; 1975 en total)
+
+- **`tests/unit/test_laminas_registro.py`:** el registro del dominio, como se dice arriba.
+- **`tests/unit/test_laminas_svg.py`:** el dibujo y las frases sobre fotos hechas a mano. Prueba:
+  - que cada marca sale con su clase y la sustentación entera;
+  - que el dibujo corta por `foto.corte` aunque la foto traiga velas posteriores (la mutación es un dibujo que no corta);
+  - que lo nacido antes de la ventana no se dibuja ni da precio;
+  - la orden colocada y la viva, y la que no está en el 0 (error);
+  - lo de antes del corte;
+  - las causas de «sin orden»;
+  - RN-009 con sus números, y el error si la anotación no es del corte;
+  - el HTML sin script ni fechas y determinista;
+  - los colores de la tabla única.
+- **`tests/unit/test_laminas.py`:** el día sintético de `test_cableado.py`. Una estrategia sintética abre el escenario y liga dos zonas con sus puntos con las funciones de `engine/zonas.py` (`_abrir`, `_ligar_al_escenario`), sobre una liquidez de M15 de verdad de los datos sintéticos. Prueba:
+  - el golden con y sin recolector, y la mutación de un recolector que cambia el estado;
+  - que la foto no mira al futuro, y la mutación de la referencia viva (un `broker` guardado en vez de copiado ve la segunda orden, que nace una hora después);
+  - que salen exactamente dos láminas (la orden llenada y la operación del trader sin pareja; la segunda orden, retirada sin llenarse, no tiene lámina), en orden y sin dibujar la operación del trader;
+  - las clases de las marcas;
+  - sin fechas, ids ni dinero, y determinista;
+  - la regex de fechas («3 de mayo» casa y «otro rango mayor» no);
+  - la puerta y su recorte;
+  - un día oculto, que hace fallar la corrida entera;
+  - las negativas antes de correr (día no dev, oculto, sesión inexistente, hora perdida dentro);
+  - los tramos de `cobertura_material`, con el 30 de abril fuera;
+  - la tabla de gates contra la spec;
+  - ninguna frase con ids, dinero ni fechas, y ninguna con «el único freno»;
+  - el tope según la regla que lo encendió, y su error;
+  - una causa sin frase, que da error;
+  - la salida dentro del repo o no vacía;
+  - la CLI, que niega la salida en el repo antes de leer nada;
+  - las opciones del subcomando y las de los otros tres;
+  - el test de importaciones: de los módulos que deciden, las láminas solo importan constantes.
+- **Las lecciones de ERRORES-RECURRENTES.md:103:**
+  - los tests prueban la constante real (los tramos de `cobertura_material` del repo);
+  - miden en la salida lo que enseña cada marca, no solo la geometría;
+  - y pasan por la tubería entera de `generar` sobre el fixture, del motor a los ficheros.
+
+  **Hay una desviación:** `main()` de la CLI solo se prueba con la negativa de la salida. La corrida entera por la CLI necesita las velas reales, y la hacen F4.3 y su ensayo.
+
+## F4 · Las corridas (2026-11-10)
+
+Las declara la fila de hoy de HOLDOUT-EXPOSICIONES («las corridas de F4»), escrita antes de la primera. Las corridas van una a una, ninguna junto a un `make check`, y todas con el código de F2 y F3 antes de commitearlo.
+
+**F4.1.**
+- Orden: `uv run botsito motor arnes --simular --salida data/laminas/base.txt`.
+- El primer intento hizo la corrida entera y falló al escribir, porque la carpeta `data/laminas/` no existía y el arnés no la crea. Es un error mío, no del código. Creé la carpeta con `mkdir -p data/laminas` y la repetí.
+- Resultado: `TIEMPO: 321.7 s; MEMORIA: pico del proceso de 640.0 MiB`, exit 0.
+- `diff data/laminas/base.txt docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt | wc -c` da **0**: los dos ficheros tienen 588 978 bytes.
+
+**F4.2.**
+- Orden: `uv run botsito motor decisiones --carpeta data/laminas/bitacora --bitacora 2026-04-13,2026-07-02,2026-07-03,2026-07-14`.
+- La base y la base repetida dan `(31, 192, 24, 1150, 0, 32, 0)`.
+- Resultado: `TIEMPO: 595.1 s; MEMORIA: pico del proceso de 638.1 MiB`, exit 0.
+- El diff de cada `bitacora.DIAGNOSTICO.<día>.txt` contra el de `docs/validation/anexos/TRAZAS-ABLACION/` da **0** bytes en los cuatro.
+- La anotación nueva de RN-009 y las del sesgo no salen en la bitácora (la bitácora no las lee), y el arnés da los mismos bytes.
+
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
 > ## Auditoría del encargo · trabajo/laminas · 2026-11-10
@@ -427,4 +599,4 @@ Dada por Aleks (consultor) el 2026-11-10, tal cual (también al final de `docs/e
 
 ## Estado
 
-EN CURSO (2026-11-10): la respuesta del consultor a la PARADA de la fase 0, copiada y aplicada punto por punto; F1 hecha (daed48b); el contrato, ampliado a domain/sesgo.py y domain/estructura_m1.py; siguen F2 (los tests), F3 (el subcomando) y F4 (las corridas).
+EN CURSO (2026-11-10): F1 hecha (daed48b); el contrato, ampliado (b7d5d6d); F2 y F3, el código y sus tests; F4.1 y F4.2 a 0 bytes. Siguen F4.3 (el ensayo en el clon y las láminas de las diez sesiones), la CI por fix/laminas y el revisor.
