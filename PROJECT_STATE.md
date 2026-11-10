@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/trazas-ablacion
+main
 
 ## Current Feature
-trabajo/trazas-ablacion, EN CURSO: F (1), la bitácora de decisiones del motor y la ablación (R4.4). Encargo docs/encargos/trabajo-trazas-ablacion.md; informe docs/validation/TRAZAS-ABLACION.md.
+Ninguna rama abierta. trabajo/trazas-ablacion cerrada en main el 2026-11-09 (stable/F38v-trazas-ablacion): motor decisiones, la bitácora y la ablación por regla; R4.4 hecha.
 
 ## Stable Main State
-129ea33 · merge de `trabajo/video-julio` (tag `stable/F38u-video-julio`), sobre `stable/F38t-recorrida-construccion-2` (86f306a). Informe docs/validation/VIDEO-JULIO.md; el registro del cierre, al final de HISTORIA.
+76bbe09 · merge de `trabajo/trazas-ablacion` (tag `stable/F38v-trazas-ablacion`), sobre `stable/F38u-video-julio` (129ea33). Informe docs/validation/TRAZAS-ABLACION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-129ea33 · merge: trabajo/video-julio, la voz del trader sobre julio (v11-v14) · tag stable/F38u-video-julio
+76bbe09 · merge: trabajo/trazas-ablacion, motor decisiones (bitácora y ablación por regla) y las clases de 04-13, 07-02, 07-03 y 07-14 · tag stable/F38v-trazas-ablacion
 
 ## Tests Currently Passing
 1939 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
