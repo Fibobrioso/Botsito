@@ -1,0 +1,82 @@
+"""Condicion (e) de docs/state/README.md sobre las lineas de Technical Debt de PROJECT_STATE.md.
+
+Para cada linea pedida (por su arranque), busca el corte valido MAS LARGO: al final de una frase o
+de un inciso (antes de ". ", "; " o ": ", o tras un ")" que cierra un inciso), con 160 bytes como
+mucho desde el "- ", sin cortar dentro de una ruta o un id (comillas invertidas abiertas o
+parentesis sin cerrar). Anade la marca, con la cita del informe delante si se da y no va ya en el
+corte. Comprueba que ahorra 60 bytes o mas (los 200 se miden con el salto de linea).
+
+Uso: acortar.py <PROJECT_STATE.md> <salida.json> [--escribir <historia_bloque.md> <rama> <fecha>]
+"""
+
+import json
+import sys
+from pathlib import Path
+
+MARCA = "entera en HISTORIA, Technical Debt ACORTADA)"
+# arranque literal de la linea -> cita del informe con su seccion (o None)
+PEDIDAS = {
+    "- El bróker simulado reserva margen": "DEMO-EJECUCIONES-2-3.md §0.f",
+    "- Los docstrings de `scripts/viabilidad_trader.py:11`": "DEMO-EJECUCIONES-2-3.md §3.1",
+    "- Riesgo residual de C (§5)": None,
+    "- Riesgo residual de B (§5)": None,
+    "- Los guiones de la plataforma": "GUARDIA-G1.md §6.4",
+    "- Riesgo residual de la excepción de la carga por ruta": "GUARDIA-G1.md §6.2",
+    "- Riesgo residual de ADR-0088": None,
+    "- Copia de seguridad de las crudas y los WAV": None,
+    "- El panel de FTMO quedó declarado": None,
+}
+
+
+def nbytes(s: str) -> int:
+    return len(s.encode("utf-8"))
+
+
+def cortes(linea: str) -> list[str]:
+    salida = []
+    for i in range(len(linea)):
+        pre = linea[:i]
+        if nbytes(pre) > 160 or not pre.strip("- "):
+            continue
+        siguiente = linea[i : i + 2]
+        valido = siguiente in (". ", "; ", ": ") or (pre.endswith(")") and linea[i : i + 1] in (" ", ",", ".", ";", ":"))
+        if not valido:
+            continue
+        if pre.count("`") % 2 or pre.count("(") != pre.count(")") or pre.count("«") != pre.count("»"):
+            continue
+        salida.append(pre)
+    return salida
+
+
+def main() -> int:
+    ps = Path(sys.argv[1]).read_text(encoding="utf-8")
+    lineas = ps.split("\n")
+    resultado = []
+    for arranque, cita in PEDIDAS.items():
+        idx = [k for k, l in enumerate(lineas) if l.startswith(arranque)]
+        if len(idx) != 1:
+            print("NO UNICA", arranque, idx)
+            return 1
+        k = idx[0]
+        linea = lineas[k]
+        opciones = cortes(linea)
+        if not opciones:
+            print("SIN CORTE", arranque)
+            return 1
+        pre = max(opciones, key=nbytes)
+        cola = f" … ({cita}; {MARCA}" if cita and cita not in pre else f" … ({MARCA}"
+        nueva = pre + cola
+        antes, despues = nbytes(linea + "\n"), nbytes(nueva + "\n")
+        ahorro = antes - despues
+        print(f"L{k + 1}: {antes} -> {despues} (ahorra {ahorro}; corte {nbytes(pre)} bytes)")
+        print("   ", nueva)
+        if antes <= 200 or ahorro < 60:
+            print("   NO APLICA (e)")
+            continue
+        resultado.append({"linea": k + 1, "entera": linea, "queda": nueva, "ahorro": ahorro})
+    Path(sys.argv[2]).write_text(json.dumps(resultado, ensure_ascii=False, indent=1), encoding="utf-8")
+    print("total ahorro", sum(r["ahorro"] for r in resultado), "en", len(resultado), "lineas")
+    return 0
+
+
+sys.exit(main())

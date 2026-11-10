@@ -1,0 +1,30 @@
+"""Lineas de la bitacora de un dia en torno a unas horas de pared (HH:MM), sin las de zonas sin orden,
+y el ultimo estado de prohibicion y de escenario antes de cada hora."""
+import sys
+from pathlib import Path
+
+ruta, sesion, horas = Path(sys.argv[1]), sys.argv[2], sys.argv[3].split(",")
+lineas = [ln.split(" | ", 1)[1] for ln in ruta.read_text(encoding="utf-8").splitlines()]
+lineas = [ln for ln in lineas if f" {sesion} " in ln.split(" | ")[0]]
+
+
+def hm(ln: str) -> str:
+    return ln.split(" | ")[0].split()[2]
+
+
+def menos(h: str, m: int) -> str:
+    hh, mm = map(int, h.split(":"))
+    t = hh * 60 + mm - m
+    return f"{t // 60:02d}:{t % 60:02d}"
+
+
+for h in horas:
+    print(f"=== {sesion} {h}")
+    previas = [ln for ln in lineas if hm(ln) <= h]
+    for clave in ("prohibido ", "deja de estar prohibido", "escenario ", "toma de M15", "orden o"):
+        ult = [ln for ln in previas if ln.split(" | ", 1)[1].startswith(clave)]
+        if ult:
+            print("  ultimo:", ult[-1])
+    for ln in lineas:
+        if menos(h, 2) <= hm(ln) <= menos(h, -2) and "sin orden" not in ln and "ligada" not in ln:
+            print("  ", ln)

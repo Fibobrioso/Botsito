@@ -1,0 +1,26 @@
+"""Mide las lineas de PROJECT_STATE.md por seccion: bytes con salto, y si ya estan acortadas."""
+import sys
+from pathlib import Path
+
+texto = Path(sys.argv[1]).read_bytes().decode("utf-8")
+seccion = None
+MARCA = "(entera en HISTORIA, Technical Debt ACORTADA)"
+filas = []
+for n, linea in enumerate(texto.split("\n"), 1):
+    if linea.startswith("## "):
+        seccion = linea[3:]
+        continue
+    b = len((linea + "\n").encode("utf-8"))
+    filas.append((seccion, n, b, MARCA in linea, linea))
+por_sec = {}
+for s, n, b, a, l in filas:
+    por_sec[s] = por_sec.get(s, 0) + b
+for s, t in por_sec.items():
+    print(f"{t:6d}  {s}")
+print("---- Technical Debt > 200 bytes sin acortar")
+k = 0
+for s, n, b, a, l in filas:
+    if s == "Technical Debt" and b > 200 and not a:
+        k += 1
+        print(f"L{n} {b} | {l[:110]}")
+print("total", k)

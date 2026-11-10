@@ -1,0 +1,32 @@
+"""Resumen por regla de ablacion.DIAGNOSTICO.vigentes.txt: la linea de recuentos y cuantas lineas
+de cada clase (pareja que se gana/pierde, de mas que aparece/desaparece, dia sin trader...)."""
+import re
+import sys
+from collections import Counter, OrderedDict
+from pathlib import Path
+
+ruta = Path(sys.argv[1])
+detalle = set(sys.argv[2].split(",")) if len(sys.argv) > 2 else set()
+patron = re.compile(r"^DIAGNOSTICO-DECISIONES \| \[(control|medida)\] sin (RN-\d+) \| (.*)$")
+por = OrderedDict()
+for ln in ruta.read_text(encoding="utf-8").splitlines():
+    m = patron.match(ln)
+    if not m:
+        continue
+    tipo, rid, resto = m.groups()
+    d = por.setdefault(rid, {"tipo": tipo, "recuento": None, "clases": Counter(), "lineas": []})
+    if ":" in resto.split(" ")[0] or resto.startswith(("pareja", "de mas que", "en dia", "cuentas", "error")):
+        clase = resto.split(":", 1)[0]
+        d["clases"][clase] += 1
+        d["lineas"].append(resto)
+    elif d["recuento"] is None:
+        d["recuento"] = resto
+    else:
+        d["lineas"].append(resto)
+for rid, d in por.items():
+    print(f"{rid} [{d['tipo']}] {d['recuento']}")
+    for c, n in d["clases"].items():
+        print(f"    {c}: {n}")
+    if rid in detalle:
+        for x in d["lineas"]:
+            print("      ", x)

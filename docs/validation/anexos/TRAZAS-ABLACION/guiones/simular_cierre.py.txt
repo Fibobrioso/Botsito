@@ -1,0 +1,55 @@
+"""Simula en memoria las propuestas para la orden de cierre de trabajo/trazas-ablacion y pasa las
+funciones de tests/unit/test_hoja_de_ruta.py (problemas_a/b/c/d) sobre las copias. No escribe nada.
+Ademas, un mutante: R4.4 HECHA conservando NA:F tiene que dar un problema en problemas_b."""
+import sys
+from pathlib import Path
+
+import importlib.util
+
+RAIZ = Path(sys.argv[1])
+_spec = importlib.util.spec_from_file_location(
+    "test_hoja_de_ruta", "C:/Users/USER/Desktop/Bot v3/tests/unit/test_hoja_de_ruta.py")
+t = importlib.util.module_from_spec(_spec)
+_spec.loader.exec_module(t)
+
+ps = (RAIZ / "PROJECT_STATE.md").read_text(encoding="utf-8")
+hoja = (RAIZ / "docs/plan/HOJA-DE-RUTA.md").read_text(encoding="utf-8")
+historia = (RAIZ / "docs/state/HISTORIA.md").read_text(encoding="utf-8")
+propuesta = Path(sys.argv[2]).read_text(encoding="utf-8")
+
+
+def trozo(nombre: str) -> str:
+    return propuesta.split(f"<<{nombre}>>\n", 1)[1].split("\n<<FIN>>", 1)[0]
+
+
+f_vieja = next(ln for ln in ps.splitlines() if ln.startswith("F. "))
+f_nueva = trozo("F")
+assert f_nueva.startswith("F. ")
+ps2 = ps.replace(f_vieja, f_nueva)
+ps2 = ps2.replace("\n## Reglas vivas", "\n" + trozo("TD") + "\n\n## Reglas vivas", 1)
+assert ps2.count(trozo("TD")) == 1
+
+ini = hoja.index("### R4.4 · ")
+fin = hoja.index("\n## R5 ", ini)
+r44_vieja = hoja[ini:fin]
+r44_nueva = trozo("R44")
+hoja2 = hoja[:ini] + r44_nueva + hoja[fin:]
+# el mutante: la misma entrada HECHA, pero con NA:F en sus Refs
+mut = r44_nueva.replace("- **Refs:** ", "- **Refs:** NA:F · ", 1)
+hoja_mut = hoja[:ini] + mut + hoja[fin:]
+
+ids, funcs = t._ids_existentes(), t._funcionalidades()
+estados = t._estados_de_ambiguedades(
+    (RAIZ / "knowledge/spec/ambiguedades.yaml").read_text(encoding="utf-8"))
+ext = t._extracciones()
+print("NA:F en el bloque nuevo de R4.4:", "NA:F" in r44_nueva)
+print("refs del bloque nuevo:", sorted(t.refs_de_la_entrada(r44_nueva)))
+print("HECHA en el bloque nuevo:", bool(t.HECHA.search(r44_nueva)))
+print("letras vivas tras la F nueva:", sorted(t.entradas_vivas(ps2)))
+print("problemas_a:", t.problemas_a(ps2, hoja2))
+print("problemas_b:", t.problemas_b(ps2, hoja2, historia, ids, funcs))
+print("problemas_c:", t.problemas_c(ps2))
+print("problemas_d:", t.problemas_d(hoja2, ext, estados))
+print("mutante (HECHA con NA:F), problemas_b:", t.problemas_b(ps2, hoja_mut, historia, ids, funcs))
+print("sin cambios (repo actual), problemas_b:", t.problemas_b(ps, hoja, historia, ids, funcs))
+print("bytes de PROJECT_STATE:", len(ps.encode()), "->", len(ps2.encode()), "(tope 25000)")

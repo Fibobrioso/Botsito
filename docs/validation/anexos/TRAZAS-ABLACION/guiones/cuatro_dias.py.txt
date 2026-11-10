@@ -1,0 +1,27 @@
+"""Los cuatro dias de la rama frente a casos_reservados y casos_ocultos: solo recuentos, sin ids."""
+from pathlib import Path
+
+from botsito.cases.criterio_fidelidad import cargar_criterio
+from botsito.cases.holdout import casos_ocultos, casos_reservados
+from botsito.engine.arnes import dias_de_construccion
+
+repo = Path(".")
+DIAS = ("2026-04-13", "2026-07-02", "2026-07-03", "2026-07-14")
+res = casos_reservados(repo)
+ocu = casos_ocultos(repo)
+print("casos_reservados:", len(res), "claves; casos_ocultos:", len(ocu), "claves")
+
+
+def toca(claves, dia):
+    return sum(1 for k in claves if dia in str(k)) + sum(1 for v in claves.values() if dia in str(v))
+
+
+for d in DIAS:
+    print(d, "reservados que lo nombran:", toca(res, d), "| ocultos que lo nombran:", toca(ocu, d))
+criterio = cargar_criterio(repo)
+print("meses de construccion:", list(criterio.construccion))
+dias = dias_de_construccion(repo, criterio, list(criterio.construccion))
+fechas = {d.dia for d in dias}
+print("dias de construccion:", len(fechas))
+for d in DIAS:
+    print(d, "en construccion:", d in fechas)

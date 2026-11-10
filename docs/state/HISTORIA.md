@@ -16689,3 +16689,8 @@ en TRAZAS-ABLACION.md, F1):
 
 - El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A), pero siguen diciendo que está pendiente DEMO-FTMO.md:159-162, la descripción de reloj_dia_riesgo (parametros.yaml:1646-1651), ADR-0090 §1 (:71-75) y FTMO-REGLAS.md:253-254 (informe cerrado: con recuadro). Se corrigen en la primera rama de activación tras la sesión 7 (S-22 y S-19), con su régimen de cambio; trabajo/cuenta-por-mes tocó knowledge/spec solo para la racha (ADR-0092 §8) y no la paga, decisión del consultor del 2026-11-08. Esa rama cierra también A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).
   Queda en PROJECT_STATE: - El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A) … (entera en HISTORIA, Technical Debt ACORTADA)
+
+# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/trazas-ablacion (2026-11-09), la que F1 se dejó (revisor, b4)
+
+- Riesgo residual de `trabajo/guardia-g1` (§4.3): el test de un clon de comparar-con-main que es el de `main` o el del árbol del repo cuenta como test del repo; como dentro del repo, la guardia no lee el `conftest.py` ni el `src/` que carga el clon.
+  Queda en PROJECT_STATE: - Riesgo residual de `trabajo/guardia-g1` (§4.3) … (entera en HISTORIA, Technical Debt ACORTADA)

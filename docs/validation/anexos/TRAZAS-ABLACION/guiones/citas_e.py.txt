@@ -1,0 +1,42 @@
+"""Ahorro de (e) conservando la cita del informe en el parentesis, para las lineas que la llevan.
+Mismo corte que acortar.py. Solo lee. Uso: citas_e.py <PROJECT_STATE.md>"""
+import sys
+from pathlib import Path
+
+MARCA = "entera en HISTORIA, Technical Debt ACORTADA)"
+CITAS = {
+    "- El validador del journal v1": "EA-CONEXION.md, respuesta a la PARADA, punto 4",
+    "- El visor no conecta": "VISOR-CONSTRUCCION.md §4.3",
+    "- `arnes.dias_de_mercado`": "CORRIDA-CONSTRUCCION.md §1.c",
+    "- Sin git callan": "docs/validation/HISTORIAL-SIN-GIT.md §3 y §6.1",
+    "- RN-029 a RN-032 citan": "docs/validation/REABRIR-Y-FUENTE-DOCUMENTAL.md §4.4",
+    "- La skill ingerir-sesion": "SESION-06-EXTRACCION.md §7, puntos 1 y 3",
+}
+
+
+def nbytes(s: str) -> int:
+    return len(s.encode("utf-8"))
+
+
+def cortes(linea: str) -> list[str]:
+    salida = []
+    for i in range(len(linea)):
+        pre = linea[:i]
+        if nbytes(pre) > 160 or not pre.strip("- "):
+            continue
+        sig = linea[i : i + 2]
+        valido = sig in (". ", "; ", ": ") or (pre.endswith(")") and linea[i : i + 1] in (" ", ",", ".", ";", ":"))
+        if not valido:
+            continue
+        if pre.count("`") % 2 or pre.count("(") != pre.count(")") or pre.count("«") != pre.count("»"):
+            continue
+        salida.append(pre)
+    return salida
+
+
+for linea in Path(sys.argv[1]).read_text(encoding="utf-8").split("\n"):
+    for arranque, cita in CITAS.items():
+        if linea.startswith(arranque):
+            pre = max(cortes(linea), key=nbytes)
+            nueva = pre + f" … ({cita}; {MARCA}"
+            print(f"{arranque[:30]:30s} {nbytes(linea + chr(10))} -> {nbytes(nueva + chr(10))}: ahorra {nbytes(linea) - nbytes(nueva)}")

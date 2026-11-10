@@ -85,7 +85,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) … (EA-CONEXION.md §10; entera en HISTORIA, Technical Debt ACORTADA)
 - La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor … (GUARDIA-G1.md §1.j; entera en HISTORIA, Technical Debt ACORTADA)
-- Riesgo residual de `trabajo/guardia-g1` (§4.3): el test de un clon de comparar-con-main que es el de `main` o el del árbol del repo cuenta como test del repo; como dentro del repo, la guardia no lee el `conftest.py` ni el `src/` que carga el clon.
+- Riesgo residual de `trabajo/guardia-g1` (§4.3) … (entera en HISTORIA, Technical Debt ACORTADA)
 - Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído o de un nombre asignado más de una vez no se calcula … (entera en HISTORIA, Technical Debt ACORTADA)
 - Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan, y un `getattr(os, ...)` no se ve … (entera en HISTORIA, Technical Debt ACORTADA)
 - Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`, `pico_memoria.py`, `huso_por_velas.py`) … (GUARDIA-G1.md §6.4; entera en HISTORIA, Technical Debt ACORTADA)

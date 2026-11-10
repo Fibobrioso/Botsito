@@ -1,0 +1,63 @@
+"""Cruza las lineas de la ablacion con las filas de §8 (patrones-cuenta-por-mes.txt).
+
+Para cada regla: las parejas que se ganan, con la clase de la fila del trader en §8 (P1/P2/P3...);
+las que se pierden (T0 en §8); y las de mas / en dia sin trader que DESAPARECEN, con su clase de §8
+(P5/P6). Las que aparecen no estan en §8 (no eran operaciones de la base)."""
+import re
+import sys
+from collections import Counter, defaultdict
+from pathlib import Path
+
+abl, pat = Path(sys.argv[1]), Path(sys.argv[2])
+filas = {}
+for ln in pat.read_text(encoding="utf-8").splitlines():
+    if ":" not in ln or " | " not in ln:
+        continue
+    etiqueta, resto = ln.split(": ", 1)
+    campos = [c.strip() for c in resto.split(" | ")]
+    if len(campos) < 6:
+        continue
+    quien, dia, sesion, direccion, instante, entrada = campos[:6]
+    hms = instante[11:19]
+    clave = (quien, dia, sesion, direccion, hms, float(entrada))
+    filas[clave] = etiqueta.split(" [")[0] + ("" if "[" not in etiqueta else " [" + etiqueta.split(" [", 1)[1].split("]")[0] + "]")
+
+op = r"(\d{4}-\d\d-\d\d) (\d\d-\d\d) (compra|venta) (\d\d:\d\d:\d\d) ([\d.]+)"
+r_pareja = re.compile(rf"pareja que se (gana|pierde): trader {op} con bot {op}")
+r_bot = re.compile(rf"(de mas que|en dia sin trader,) (aparece|desaparece): {op}")
+r_linea = re.compile(r"^DIAGNOSTICO-DECISIONES \| \[(?:control|medida)\] sin (RN-\d+) \| (.*)$")
+
+por = defaultdict(lambda: defaultdict(Counter))
+faltan = []
+for ln in abl.read_text(encoding="utf-8").splitlines():
+    m = r_linea.match(ln)
+    if not m:
+        continue
+    rid, resto = m.groups()
+    if (p := r_pareja.match(resto)):
+        g = p.groups()
+        clave = ("trader", g[1], g[2], g[3], g[4], float(g[5]))
+        et = filas.get(clave)
+        if et is None:
+            faltan.append((rid, resto))
+            et = "?"
+        por[rid][f"pareja que se {g[0]}"][et] += 1
+    elif (b := r_bot.match(resto)):
+        g = b.groups()
+        tipo = "de mas" if g[0] == "de mas que" else "dia sin trader"
+        if g[1] == "desaparece":
+            clave = ("bot", g[2], g[3], g[4], g[5], float(g[6]))
+            et = filas.get(clave)
+            if et is None:
+                faltan.append((rid, resto))
+                et = "?"
+        else:
+            et = "nueva"
+        por[rid][f"{tipo} que {g[1]}"][et] += 1
+for rid, d in por.items():
+    print(rid)
+    for k, c in d.items():
+        print(f"    {k}: " + "; ".join(f"{e} x{n}" for e, n in sorted(c.items())))
+print("sin fila de §8:", len(faltan))
+for x in faltan[:20]:
+    print("   ", x)
