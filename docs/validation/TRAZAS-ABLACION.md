@@ -1382,10 +1382,25 @@ Ficheros clave:
 | b10 | menor | El Apéndice B existe (es este) |
 | b11 | menor | A la PARADA final como decisión 7 |
 
+## Decisiones del consultor a la PARADA final (2026-11-09), tal cual
+
+De la orden de cierre del consultor del 2026-11-09, punto 1:
+
+> 1. Decisiones de la PARADA final (cópialas al final del informe, en un commit propio antes del cierre, con la fecha):
+>    0. o4, o6 y o8 de 07-03 07-11 (y la P2 del trader de las 09:24, con o6): «contradicción con lo fijado» (voz de v12 frente a S-18). F7 #6 lo crea la rama de la preparación de la sesión 7, como ya estaba decidido.
+>    a. La «regla desconocida» de cuándo se coloca la orden NO es clase de fila: es la pregunta 1 de 5.5, sobre ADR-0064 y orden_limite_nace, y va a la sesión 7a.
+>    b. Ninguna fila de 07-03 como «error nuestro». La comparación con niveles de M15 anteriores de la sesión (y la distancia de 4 puntos entre 1.14496 y la toma en 1.14500) no se hace en otra rama: la lámina de 07-03 enseña las líneas de M15 de la sesión y el trader lo ve en el bloque de días.
+>    c. Las 13 «a la rama de trazas»: sin clase, con el gate RN-009. La pregunta 2 de 5.5 (qué zonas cuentan como zonas de control de un esquema; A-20 RESUELTA en el número) va a la sesión 7a entre las primeras.
+>    d. La pendiente con dueño de RECORRIDA-CONSTRUCCION-2.md:1355-1358, cerrada con los hechos de 5.3.
+>    e. La zona que se queda en el escenario anterior, como Technical Debt, sin tocar el motor.
+>    f. Las propuestas de 5.6: (b) R4.4 HECHA y las tres líneas de Technical Debt de (c), tal cual. El texto de F de (a) NO: va el de abajo, punto 3.
+>    g. El lote y el desenlace, en la bitácora: de acuerdo.
+>    h. La línea de los skills, entera: de acuerdo.
+
 ## Estado
 
 LISTA PARA REVISIÓN (2026-11-09): F1 a F5 hechos, sin ninguna PARADA condicional del punto 10; el
-revisor pasó y sus hallazgos están corregidos o declarados (Apéndice B); CI de Linux, run 42740007047 sobre 9469bbf (empujado por Aleks a `fix/trazas-ablacion`): `make check` con 1 failed, 3310 passed, 48 skipped; el único fallo, el esperado de `RITUAL.md`: `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/trazas-ablacion'; la rama actual es 'fix/trazas-ablacion'»). Espera
-la decisión del consultor sobre la PARADA final (decisiones 0 a 8) y la orden de cierre.
+revisor pasó y sus hallazgos están corregidos o declarados (Apéndice B); CI de Linux, run 42740007047 sobre 9469bbf (empujado por Aleks a `fix/trazas-ablacion`): `make check` con 1 failed, 3310 passed, 48 skipped; el único fallo, el esperado de `RITUAL.md`: `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/trazas-ablacion'; la rama actual es 'fix/trazas-ablacion'»). Las
+decisiones del consultor a la PARADA final, arriba (2026-11-09), con su orden de cierre.
 
 Rama lista para revisión, NO cerrada.
