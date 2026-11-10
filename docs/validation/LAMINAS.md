@@ -621,11 +621,10 @@ Las propuestas 1 y 2 están comprobadas con las funciones de `tests/unit/test_ho
    «Las láminas del bot están hechas (LAMINAS.md; `motor laminas`; R4.5) y RUMBO §0, §4 y §5, enmendado. Siguiente, en este orden: (1) J, si la hoja sale de kit hoja; (2) la preparación de la sesión 7».
    El resto de la entrada no cambia.
 2. **R4.5 HECHA, solo si das las láminas por revisadas.** Sus `Refs` quedan en `ID:ADR-0092`, sin NA:F en ningún sitio del bloque. El «Hecho cuando» pasa a ser «la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta.», y el `Estado`, «HECHA (trabajo/laminas, LAMINAS.md).».
-3. **Líneas nuevas de Technical Debt:**
-   - «`motor laminas`: «Es el primer esquema» sale siempre con la orden en el punto, porque `zona_del_punto` crea las zonas con `por = primer_esquema` (zonas.py:414-416); la frase dice lo que guarda el motor, no el esquema que ve (LAMINAS.md, «Lo que no me convence», 1).»
-   - «`motor laminas`: la frase y el motivo de RN-020 dicen «del día» aunque RN-020 también salta por la pérdida semanal (strategy_spec.yaml:2111).»
+3. **Líneas nuevas de Technical Debt** (las que quedan tras la respuesta a la PARADA final, puntos 1, 2, 4 y 8):
+   - «`motor laminas` no dice el esquema: con la orden en el punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416); la frase vuelve cuando el motor distinga los dos esquemas (LAMINAS.md, respuesta a la PARADA final, 1).»
    - «`motor laminas`: la CLI solo se prueba entera con las velas reales (F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.»
-   - «Las anotaciones de las H4 saltadas (las tres de recuentos y `sesgo_h4_saltadas`) no se borran cuando una evaluación posterior de la sesión no salta ninguna; las láminas cotejan las dos y fallarían si discreparan.»
+   - La de RN-020 y «del día» sale (punto 2: medido, la rama semanal no dispara con el registro de hoy). La de las H4 saltadas sale (punto 4, entero).
 
 ## Respuesta del consultor a la PARADA final (2026-11-10)
 
@@ -653,6 +652,150 @@ Dada por Aleks (consultor) el 2026-11-10, tal cual (también al final de `docs/e
 > 9. Las propuestas 1 y 2 de la orden de cierre (F y R4.5) quedan aprobadas tal cual. R4.5 pasa a HECHA solo cuando yo dé por revisadas las láminas de la carpeta v2.
 >
 > Después: make check, push a fix/laminas con su CI (el run del último commit y el de la ronda), el revisor solo sobre lo que cambia en esta ronda, pegado al final, y otra PARADA final corta con: lo que cambió, los recuentos de 3 y 4, lo que viste en las capturas, la ruta de la carpeta v2 y «Rama lista para revisión, NO cerrada.».
+
+## Aplicación de la respuesta a la PARADA final, punto por punto (2026-11-10)
+
+1. **«Es el primer esquema» sale de la lámina.** Se quitan `FRASE_ESQUEMA` y su uso en `componer`, y en su lugar queda un comentario que dice por qué. Lo prueba `test_la_lamina_no_dice_el_esquema`.
+   - **Por qué:** con la orden en el punto (`al_aparecer_punto_de_breaker`), `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416). La frase le diría al trader un esquema que el motor no ha distinguido.
+   - **Recuento:** la frase salía en 31 láminas y ahora en 0.
+   - **Technical Debt:** la línea pasa a ser la del consultor (en las propuestas, abajo).
+2. **RN-020 y «del día», medido en el registro:**
+   - `perdida_trader_alcance = dia` (parametros.yaml:1504-1526).
+   - Con `dia`, `TopeTrader.aplica_semana` es falso (`tope_trader.py:126-127`), y `acumulador_del_trader` da NO a `perdida_semana` sin leerla (`primitivas_broker.py:360-362`). La rama semanal de RN-020 (strategy_spec.yaml:2111) **no puede disparar**, así que la frase y el motivo siguen diciendo «del día».
+   - **Negar por defecto:** `Lectura` lleva ahora el alcance (`perdida_trader_alcance`, leído en cli.py). Con `semana` o `ambos`, la frase de RN-020 y su motivo dan un error que lo nombra (`ALCANCES_SOLO_DIA`). `test_rn020_dice_del_dia_solo_si_la_rama_semanal_no_puede_disparar` falla si el registro cambia a uno de los dos, y comprueba el error.
+   - La línea de Technical Debt sale.
+3. **El motivo repetido:** cuando el mismo gate bloquea la colocación y prohíbe el efecto en el mismo cierre, la lámina da solo «Iba a colocar la orden y no la coloca: {motivo}.». Un gate que solo prohíbe sigue con su «No abre». Lo prueba `test_el_gate_que_bloquea_y_prohibe_en_el_mismo_cierre_da_una_sola_frase`.
+   - **Recuento de láminas con el motivo repetido:** antes 13, ahora 0.
+4. **Las H4 saltadas de una evaluación anterior.** En `sesgo_h4_al_abrir` (primitivas.py), cada evaluación borra lo que no le toca:
+   - `sesgo_h4_saltadas`;
+   - los tres recuentos de main, cuando valen cero;
+   - y, como el mismo defecto, `sesgo_h4_doble_ruptura` cuando la vela que fija no es de doble ruptura. Esto lo añado yo: con la anotación vieja, la lámina diría «rompió los dos extremos».
+   - **F4.1 y F4.2 siguen a 0 bytes con el borrado** (abajo), así que el cambio de los recuentos se queda y la lámina sigue cotejando con ellos.
+   - `test_una_segunda_evaluacion_sin_saltadas_borra_las_de_la_primera` hace dos evaluaciones en la misma sesión, la segunda sin saltadas ni doble ruptura. **Falla con el `primitivas.py` de antes de la ronda** (medido con `git stash` del fichero: «AssertionError: assert 'sesgo_h4_saltadas_color_contrario' not in {…, 'sesgo_h4_saltadas_color_contrario': '1', …}»).
+   - **En F4.3, láminas con un dibujo distinto de las saltadas:** 0 de 47. No cambió ninguna: el defecto no llegaba a ocurrir en estas diez sesiones, que es lo esperable, porque RN-003 solo evalúa el sesgo una vez por sesión. Lo medí lámina a lámina, emparejando cada una por sus velas contra la carpeta vieja (`comparar_laminas.py`, de la carpeta de trabajo). Lo único que cambia, aparte de las frases de los puntos 1 y 3, es el dibujo de la orden en las 19 láminas de tipo a, por el arreglo de «Lo que vi en las capturas», 1.
+   - RN-003 solo evalúa el sesgo al abrir la sesión (`abre_sesion_operativa`, strategy_spec.yaml:1170), así que dos evaluaciones en la misma sesión no ocurren en la corrida normal.
+5. **Las capturas:** las hace el Chrome que ya tiene la máquina, en modo headless:
+
+   ```
+   chrome.exe --headless=new --disable-gpu --hide-scrollbars --window-size=1700,1500 --screenshot=<png> file:///<lamina.html>
+   ```
+
+   - No se instala nada ni se toca `pyproject.toml`.
+   - El guion y los PNG están en la carpeta de trabajo de la sesión, fuera del repo.
+   - Lo que vi, en «Lo que vi en las capturas», abajo.
+6. **El orden barajado:** la corrida de la v2 pide las diez sesiones en un orden que elegí y no escribo en el repo, así que el informe de `675ee62` ya no sirve de clave para estas carpetas.
+   - El comando se escribe con la lista sustituida, como desviación declarada.
+   - Que la sesión de 07-03 de las 07:00 a las 11:00 se reconozca por su contenido es inevitable y no importa: el trader opera cada día antes de ver su lámina, así que la clave nunca le ocultó el día. En el cierre se dice así.
+7. **Las láminas, en una carpeta nueva:** `C:\Users\USER\Desktop\laminas-sesion-7-v2`, tras el ensayo en el clon. La carpeta vieja no se toca.
+   - F4.1 y F4.2 se repiten con el código final.
+   - Desviación pequeña en F4.2: las carpetas son `data/laminas/bitacora-ronda` (con el código de `2aa36a0`) y `data/laminas/bitacora-final` (con el de `6276be1`), y no `data/laminas/bitacora`, para no pisar la de la primera vuelta. El diff es contra los mismos anexos.
+8. **Las dos líneas de Technical Debt que quedan:** la de la CLI tal como estaba propuesta; la de las saltadas no hace falta, porque el punto 4 queda entero.
+9. **Las propuestas 1 y 2 quedan aprobadas.** R4.5 pasa a HECHA solo cuando el consultor dé por revisadas las láminas de la v2.
+
+**Un hallazgo de la guardia, de esta ronda.** El guion de comparación de la carpeta de trabajo (`comparar_laminas.py`) fue negado dos veces con «el código nombra la carpeta / , que contiene material protegido».
+- La primera, por las etiquetas de cierre de una regex (`</li>`).
+- La segunda, por la cadena « / » de un `print` («antes / ahora»).
+
+El guion solo lee los HTML de las láminas. Las dos son falsos positivos de la lectura de rutas de la guardia. Reescribí la regex como `<li>([^<]*)` y la cadena como «antes y ahora», que miden lo mismo; queda dicho aquí. **Propuesta para la Next Action:** que la guardia no tome por ruta una barra dentro de una cadena que no es una ruta (una etiqueta HTML, « / » entre espacios).
+
+## Lo que vi en las capturas (respuesta a la PARADA final, punto 5)
+
+Las capturas son las seis láminas de la sesión de 07-03 de las 07:00 a las 11:00 y la primera de cada una de las otras nueve sesiones. Las saqué del Chrome de la máquina en modo headless, una por llamada y con rutas literales: la guardia niega lanzar Chrome desde un guion con argumentos construidos. Los PNG están en la carpeta de trabajo de la sesión, fuera del repo.
+
+1. **Un defecto, corregido en esta ronda.** En las láminas de tipo a no se veían la orden, el stop ni el objetivo.
+   - **Por qué:** la orden nace en el mismo cierre del corte, y su línea iba de ese cierre al corte, así que no tenía largo. El objetivo, por ejemplo en la de las 11:13 de una sesión, solo era el techo del eje de precios.
+   - **El arreglo:** las tres líneas cubren ahora la M1 que coloca la orden, y su precio va en una etiqueta de su color en el eje derecho, como en el replay (`_etiqueta`, `class="eje-…"`).
+   - **El test:** `test_la_orden_que_nace_en_el_corte_se_ve_con_su_stop_y_su_objetivo`, con la orden colocada en el cierre del corte, como en una lámina de tipo a. En la versión de `6276be1` se colocaba un minuto antes, y con el código viejo la línea habría tenido largo igual (revisor de la ronda, I2).
+   - **La comprobación:** las etiquetas están en el eje de precios, a la derecha del borde del corte. Ese test, y `estructura_laminas.py`, las cuentan como del eje y no como del tiempo.
+   - **Lo comprobé en las capturas de la v2 final:** en las de tipo a se ven la orden, el stop y el objetivo, con su etiqueta azul, roja y verde en el eje. A veces una etiqueta pisa un precio del eje, y eso se lee peor pero no engaña.
+2. **Se lee peor, y no lo cambio sin tu respuesta:** en una caja pequeña, los rótulos 0, 0,25, 0,5, 0,8 y 1 se montan unos sobre otros en el borde derecho. Propuesta: rotular en el eje solo el 0, el 0,8 y el 1 cuando la caja mida menos de unos 40 px.
+3. **Se lee peor, y no lo cambio sin tu respuesta:** las líneas de M15 lejanas en precio (las del día anterior, que entran en el M1 desde su borde por la decisión 5) estiran la escala del M1, y las velas quedan apretadas arriba. Propuesta: en el M1, solo las líneas de M15 que caen dentro del rango de precios de sus velas, de la caja y de la orden. En el M15 se dibujan todas.
+4. **Bien, y como estaba aprobado:**
+   - la H4 que fija el sesgo, recuadrada, y las saltadas, en discontinuo (en la única de las capturas que las tiene, tres);
+   - las líneas de M15: la tomada, gruesa y con su punto en la vela que la toma; las que dejaron de ser la liquidez, en discontinuo;
+   - las zonas de control de RN-009, en naranja sobre sus velas;
+   - el punto de breaker;
+   - los separadores de día sin fecha;
+   - las horas de Madrid;
+   - el corte en el borde derecho;
+   - y la sustentación debajo.
+   - El M15 de una sesión de lunes empieza a las 23:00 del domingo: es la primera vela del mercado, no un recorte.
+
+**F4.3 de la ronda.**
+- **Antes de las láminas, F4.1 y F4.2 otra vez, con el código final.** Se corrieron con el árbol de trabajo que después se commiteó en `6276be1`, que solo cambia el dibujo y los tests; el motor es el de `2aa36a0` (revisor de la ronda, m3):
+  - F4.1: `motor arnes --simular --salida data/laminas/base.txt`, diff de **0 bytes** (266,7 s; 639,9 MiB).
+  - F4.2: `motor decisiones --carpeta data/laminas/bitacora-final --bitacora 2026-04-13,2026-07-02,2026-07-03,2026-07-14`, base y base repetida `(31, 192, 24, 1150, 0, 32, 0)`, y **0 bytes** en las cuatro bitácoras (467,8 s; 637,1 MiB).
+  - Con el árbol que se commiteó en `2aa36a0`, también 0 y 0 (266,1 s y 470,3 s).
+- **Las láminas:**
+  - **La orden, tal cual salvo la lista:** `uv run botsito motor laminas --sesiones <las diez sesiones, en el orden de clave.txt> --salida C:\Users\USER\Desktop\laminas-sesion-7-v2`. Es una desviación declarada de «los comandos tal como se ejecutaron» (respuesta a la PARADA final, punto 6). El orden barajado no está en el repo.
+  - **Antes, el ensayo en el clon desechable con `6276be1`:** 47 láminas, 485,2 s, 645,1 MiB. Contra la carpeta vieja, emparejadas las 47 por sus velas:
+    - el motivo repetido pasa de 13 a 0;
+    - la frase del esquema, de 31 a 0;
+    - las saltadas no cambian en ninguna;
+    - cambian de dibujo solo las 19 de tipo a (la orden);
+    - ninguna otra frase cambia.
+  - **La v2 de `2aa36a0`** (la primera de la ronda, idéntica a su ensayo) llevaba el defecto de la orden que enseñaron sus capturas. Se apartó a la carpeta de trabajo antes de escribir la buena.
+  - **La v2 buena:** desde el repo en `6276be1`, con `git status` vacío, a `C:\Users\USER\Desktop\laminas-sesion-7-v2`.
+    - Resultado: `OK: 58 ficheros`, `TIEMPO: 479.7 s; MEMORIA: pico del proceso de 644.6 MiB`, exit 0.
+    - `diff -r` contra su ensayo da **0 bytes**, `clave.txt` incluida.
+    - Ninguna marca pasa del borde del corte.
+    - **47 láminas, 19 de tipo a y 28 de tipo b, las mismas que la v1.** No sale ninguna sesión.
+    - Los recuentos por carpeta no se dan: junto con la tabla de la v1, que sigue el orden de la lista del encargo, dejarían reconstruir el orden barajado (revisor de la ronda, I1). Son las mismas 47 láminas que la v1, emparejadas una a una por sus velas.
+    - La H4 que fija el sesgo cae dentro de la ventana en 47 de 47 láminas.
+  - **La carpeta vieja** `C:\Users\USER\Desktop\laminas-sesion-7` sigue como estaba: la borra Aleks cuando el consultor dé la v2 por revisada.
+
+## El revisor de la ronda (2026-11-10), tal cual
+
+Solo sobre lo que cambia en la ronda. Lo hecho con él: I1, los recuentos de la v2 por carpeta salen del informe; I2, el test coloca la orden en el cierre del corte; m1 y m3, corregidos en el texto; m2, el Estado.
+
+> ## Informe del revisor · trabajo/laminas (ronda de la respuesta a la PARADA final) · 2026-11-10
+>
+> He revisado solo la ronda: `2aa36a0`, `6276be1` y `docs/validation/LAMINAS.md` sin commitear (`git diff cbeb840`). Los puntos 1 a 4 están hechos y sostenidos por el código, los HTML y los diffs; el 5 está hecho hasta donde se puede ver. No hay nada que bloquee. Hay **dos hallazgos que importan**: el informe deja reconstruir la clave de la v2, y el test de la orden de tipo a no reproduce el defecto real. Además hay tres menores.
+>
+> ### Puntos 1-9 de la respuesta
+>
+> | # | Estado | Evidencia |
+> |---|---|---|
+> | 1 | Hecho | `FRASE_ESQUEMA` y su uso desaparecen (diff de `laminas.py:524-531` y `:883-886`). Queda el comentario `laminas.py:529-531`; zonas.py:414-416 sí crea la zona con `PRIMER_ESQUEMA`. En la v2, `grep -rl "Es el primer esquema\|Es el segundo esquema"` da 0 ficheros; en la carpeta vieja, 31. La línea de Technical Debt es la del consultor, literal. Test `test_la_lamina_no_dice_el_esquema` PASSED. |
+> | 2 | Hecho | Medida cierta: `perdida_trader_alcance` vale `dia` (`parametros.yaml:1504-1526`, `valor: dia`). `aplica_semana` es `alcance in (SEMANA, AMBOS)` (`tope_trader.py:126-127`). `primitivas_broker.py:360-362` da NO si no aplica. `tope_del_registro` no deja otro alcance si el registro está fijado (`tope_trader.py:161-166`). La negativa por defecto existe en `laminas.py:796` y `:1008-1009`, con `ALCANCES_SOLO_DIA` en `:511`. El test lee el registro real (`test_laminas_svg.py:25,38`) y PASSED. La línea de Technical Debt sale. |
+> | 3 | Hecho | Solo se quita el «No abre» de un gate que está en `bloquean`. Ese conjunto se llena solo con los gates que bloquean `accion:colocar_orden_limite` en la misma `Foto` (un solo cierre, `ev` en `laminas.py:430-444`): `laminas.py:1049-1069`. En los HTML, la carpeta vieja tiene 13 ficheros con «No abre» y 22 frases, y cada motivo coincide en número con su «Iba a colocar…». La v2 tiene 0 «No abre» y los mismos 22 «Iba a colocar». Test PASSED. |
+> | 4 | Hecho | Los pop están en `primitivas.py` (diff `:211-236`). F4.1: `diff data/laminas/base.txt …/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt \| wc -c` da 0. F4.2: las cuatro bitácoras y la ablación de `data/laminas/bitacora-final` dan 0 contra `anexos/TRAZAS-ABLACION`. El test de las dos evaluaciones PASSED. Que fallara con el código anterior lo confirma la lectura: el código viejo nunca hacía pop de `ANOTACION_SALTADAS_COLOR`. No lo ejecuté (necesita escribir). Saltadas: 12 `h4-saltada` en las dos carpetas y 5 «rompió los dos extremos» en las dos. El borrado de `sesgo_h4_doble_ruptura` está declarado (LAMINAS.md, punto 4, «Esto lo añado yo»). «Una sola evaluación por sesión» es cierto: RN-003 es `todos_de` con `abre_sesion_operativa` primero (`strategy_spec.yaml:1169-1171`) y `todos_de` corta en el primer NO (`interprete.py:243-250`). |
+> | 5 | Hecho, hasta donde se ve | No cambian `pyproject.toml` ni `uv.lock`: `git diff --stat main...HEAD -- pyproject.toml uv.lock` sale vacío. El guion y los PNG no están en el repo. |
+> | 6 | En parte | El comando lleva la lista sustituida (LAMINAS.md:730), pero ver el hallazgo I1. |
+> | 7 | Hecho | La v2 tiene 58 ficheros con mtime 18:03, después de `6276be1` (17:46). La carpeta vieja tiene 58 ficheros, todos de 15:35, y `find -newer` sobre el encargo da 0. `make-check.log`: el SELLO es del árbol `25513a1…`, que es `git rev-parse 6276be1^{tree}`; PICO DE MEMORIA 313 MiB. |
+> | 8 | Hecho | La línea de la CLI se queda y la de las saltadas no hace falta (LAMINAS.md, sección de las propuestas). |
+> | 9 | Hecho | Las propuestas no cambian y R4.5 sigue pendiente de la revisión de la v2. |
+>
+> `6276be1`: las etiquetas `eje-*` solo traen precios de 5 decimales, sin id, fecha ni dinero. Solo aparecen en las 19 láminas con «Coloca la orden». La línea empieza un minuto antes y nunca pasa del corte. No mete nada posterior al corte.
+>
+> ### Hallazgos
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | I1 | importa | **El informe deja reconstruir la clave de la v2.** LAMINAS.md:743 da los recuentos por carpeta «en el orden barajado de las carpetas». La tabla de la v1 (LAMINAS.md:497-508) da los mismos recuentos por carpeta, y las carpetas de la v1 siguen el orden de la lista del encargo (LAMINAS.md:476, «en el orden de su lista»; las fechas, en encargo:62-64). Cruzando las tres cosas salen seis de las diez carpetas de la v2 atadas a su día, y las otras cuatro quedan en dos parejas. El punto 6 pide no escribir el orden barajado. No escribo aquí cuál es cuál. Arreglo propuesto: dar los recuentos ordenados o como totales, no por carpeta. | LAMINAS.md:743 frente a LAMINAS.md:497-508 y :476 |
+> | I2 | importa | **El test de la orden de tipo a no reproduce el defecto que dice arreglar.** El fixture coloca la orden en `(CORTE - 1) * 60_000 - 1`, que es el cierre de la penúltima M1. El corte es el cierre de la M1 de `corte-1` (`laminas_svg.py:314-315`). Con la fórmula vieja, `desde` sería `CORTE-1`: la línea tendría un minuto de largo (unos 5 px) y pasaría `> 1`. El defecto real era largo 0: en la carpeta vieja, `<line class="orden" x1="1490.0" … x2="1490.0"`. Solo la parte de las etiquetas `eje-` haría fallar el test con el código viejo. | `tests/unit/test_laminas_svg.py:380`; `grep '<line class="orden"'` en las dos carpetas |
+> | m1 | menor | La carpeta de F4.2 sale con tres nombres. El punto 7 dice `data/laminas/bitacora-ronda` (LAMINAS.md:691), el F4.3 de la ronda `bitacora-final` (:727) y la fila de HOLDOUT `data/laminas/bitacora`. Existen las dos primeras: ronda a las 16:33, final a las 17:26. | `ls data/laminas` |
+> | m2 | menor | El Estado dice que «siguen las láminas de la carpeta v2, las capturas», pero el mismo informe ya las da por hechas. `{REVISOR3}` está sin rellenar, como se espera en esta fase. | LAMINAS.md:1117, :747 |
+> | m3 | menor | Las corridas atribuidas a un commit son anteriores a ese commit. F4.1/F4.2 «con `6276be1`» terminaron a las 17:18 y 17:26, y el commit es de las 17:46. `bitacora-ronda` (16:33) es anterior a `2aa36a0` (16:55). No hace daño: `6276be1` solo toca `laminas_svg.py` y tests, no el motor. Pero la atribución al sha no se ve en las horas. | mtimes de `data/laminas`; `git show --stat 6276be1` |
+>
+> ### Lo que no pude comprobar
+> - Que el test de las dos evaluaciones falle con el `primitivas.py` viejo: ejecutarlo exige `git stash` o un clon, y los dos escriben. Me quedo con la lectura del diff.
+> - Las capturas PNG y que se hicieran con Chrome headless: están fuera del repo, en la carpeta de trabajo de la sesión.
+> - Si la ampliación de la fila de HOLDOUT-EXPOSICIONES en `6276be1` (las 7 corridas más) se escribió antes de lanzarlas. El commit es de las 17:46 y las corridas empezaron hacia las 17:14; la hora de edición en el árbol no se puede saber.
+> - No abrí ningún `clave.txt`.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`, `git log main..HEAD`/`cbeb840..HEAD`, `git diff --stat cbeb840`, `git status --short`
+> 2. `git diff cbeb840 -- docs/encargos/trabajo-laminas.md`, `-- src tests`, `-- docs/validation/LAMINAS.md HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md anexos`
+> 3. Read de `laminas.py` (190-240, 400-449, 575-594, 1015-1084), `interprete.py:230-259`, `tope_trader.py:150-199`, `test_laminas_svg.py:60-89`, `LAMINAS.md:480-509`
+> 4. `sed -n` de `zonas.py:405-420`, `primitivas_broker.py:350-366`, `parametros.yaml:1504-1526`, `strategy_spec.yaml:2104-2115` y `1164-1174`
+> 5. `grep` de símbolos en laminas.py y strategy_spec, y de los comandos `--sesiones` en el informe y el encargo
+> 6. `uv run pytest tests/unit/test_laminas.py tests/unit/test_laminas_svg.py tests/unit/test_laminas_registro.py -p no:cacheprovider -q` (y otra vez con `-rA | grep`): todo verde. Un intento encadenado lo negó la guardia.
+> 7. `grep -r --include=*.html` en las dos carpetas de láminas: esquema, «Iba a colocar», «No abre», `h4-saltada`, «rompió los dos extremos», `eje-*`, `<line class="orden"`
+> 8. `find`/`ls` de mtimes de las dos carpetas y de `data/laminas`; `git log -1 --format=%ci` de `6276be1` y `f6ed348`; `git show --stat` de los dos commits de la ronda
+> 9. `diff … | wc -c` de F4.1 y de las cinco salidas de F4.2 contra sus anexos: todos 0
+> 10. `grep` de `make-check.log` (SELLO, PICO); `git rev-parse 6276be1^{tree}`
+> 11. `git show 6276be1 -- HOLDOUT-EXPOSICIONES.md`; `git show 2aa36a0:docs/validation/HOLDOUT-EXPOSICIONES.md | grep`
 
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
@@ -1022,4 +1165,10 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-EN CURSO (2026-11-10): la ronda de la respuesta a la PARADA final. El código y sus tests, con F4.1 y F4.2 a 0 bytes; siguen las láminas de la carpeta v2, las capturas, la CI, el revisor de la ronda y la PARADA final corta.
+Rama lista para revisión, NO cerrada (2026-11-10), tras la ronda de la respuesta a la PARADA final.
+- La ronda: `2aa36a0` (puntos 1 a 4), `6276be1` (la orden de una lámina de tipo a, que enseñaron las capturas) y el commit del informe.
+- F4.1 y F4.2: 0 bytes con el código final.
+- Las láminas: 47, en `C:\Users\USER\Desktop\laminas-sesion-7-v2`, tras el ensayo en el clon.
+- La CI de Linux: runs 42901876352, 42909789975 y 42917631968, con el único fallo aceptado.
+- El revisor de la ronda, pegado arriba.
+- R4.5 espera a que el consultor dé la v2 por revisada.

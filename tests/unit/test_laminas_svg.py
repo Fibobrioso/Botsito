@@ -377,7 +377,7 @@ def test_la_orden_que_nace_en_el_corte_se_ve_con_su_stop_y_su_objetivo() -> None
     import re as _re
 
     orden = laminas.OrdenFoto(
-        "o1", "compra", 110_010, 109_986, 110_100, (CORTE - 1) * 60_000 - 1, "colocada", "07-11",
+        "o1", "compra", 110_010, 109_986, 110_100, CORTE * 60_000 - 1, "colocada", "07-11",
         "zona:1",
     )  # fmt: skip
     f = foto_base(ordenes=(orden,), colocadas=frozenset({"o1"}))
