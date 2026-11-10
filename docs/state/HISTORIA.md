@@ -16694,3 +16694,49 @@ en TRAZAS-ABLACION.md, F1):
 
 - Riesgo residual de `trabajo/guardia-g1` (§4.3): el test de un clon de comparar-con-main que es el de `main` o el del árbol del repo cuenta como test del repo; como dentro del repo, la guardia no lee el `conftest.py` ni el `src/` que carga el clon.
   Queda en PROJECT_STATE: - Riesgo residual de `trabajo/guardia-g1` (§4.3) … (entera en HISTORIA, Technical Debt ACORTADA)
+
+# Registro de cierre · `trabajo/trazas-ablacion` (2026-11-09)
+
+- Orden de cierre del consultor del 2026-11-09, dada por Aleks tras la revisión, con sus decisiones
+  sobre la PARADA final de TRAZAS-ABLACION.md (copiadas al final del informe en su commit). Después,
+  Aleks lanzó `/cerrar-rama trabajo/trazas-ablacion`.
+- **Lo que entra**: `motor decisiones` (`engine/decisiones.py`, nuevo), la bitácora de decisiones
+  por día y sesión y la ablación por id de las 32 reglas VIGENTE, sin R, dinero ni porcentajes; el
+  registro, solo como registro, de los gates que prohíben en el intérprete (`prohibido_por`,
+  `quizas_por`, `bloqueada_por`; desviación decidida por el consultor) y el campo
+  `MotorCableado.observador`; `nombre_etiquetado` solo con A+cifras; 14 funciones de test nuevas
+  (`tests/unit/test_decisiones.py`, sobre el día sintético); la NOTA de ADR-0092 §6; el recorte de
+  PROJECT_STATE (F1, 23.876 -> 21.760 bytes, y la línea de guardia-g1 tras el revisor, -> 21.608);
+  las corridas: F4.1 con un diff de 0 bytes contra la línea base, F4.2 (la bitácora de 04-13, 07-02,
+  07-03 y 07-14, al anexo) y F4.3 (la ablación de las 32; el control y RN-007, RN-021 y RN-022 con
+  delta cero); y las clases de F5, decididas por el consultor. Dos filas en HOLDOUT-EXPOSICIONES
+  del 2026-11-09 (la apertura y las 37 corridas sobre construcción). Nada de
+  `knowledge/`, `scripts/` ni `.claude/`.
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; en la Next Action, F se
+  sustituye por el texto de la orden (no sale ni entra ninguna otra letra) y entran tres líneas de
+  Technical Debt (TRAZAS-ABLACION.md 5.6 c); en la hoja de ruta, R4.4 HECHA (sin NA:F en su
+  bloque), R4.3 sustituida (sesión 7 en dos días, 7a y 7b), R4.5 y R5.7 nuevas, R6.0 HECHA
+  (ADR-0082 §4, confirmado por Aleks el 2026-11-09), el «Hecho cuando» de R0.3, la prueba gratuita
+  de FTMO en A.5 y en «Fechas fijas», y la excepción del Marcador. Entran también la fila de
+  ERRORES-RECURRENTES y este registro. Comprobado en memoria antes del `make check`, con las
+  funciones de `tests/unit/test_hoja_de_ruta.py`: `a`, `b`, `c` y `d` salen vacías y las letras
+  vivas no cambian (A, C, D, F, G, I, J, L, M, N, Q).
+- **`PROJECT_STATE.md`**: 22.457 bytes en este commit.
+- Letra del tag: la última cerrada era `stable/F38u-video-julio`; `stable/F38v-trazas-ablacion` no
+  existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38v-trazas-ablacion`. El merge es `git rev-parse "stable/F38v-trazas-ablacion^{commit}"`.
+- Commits de la rama:
+  - `29561ef` chore(rama): abre trabajo/trazas-ablacion (encargo, contrato y Archivo 64 de PROJECT_STATE)
+  - `50c2664` fase 0, inventario medido, auditor y PARADA con siete decisiones
+  - `5d281ed` F1, el recorte de PROJECT_STATE (23.876 -> 21.760 bytes) y la respuesta a la fase 0
+  - `1f95caf` F2 y F3, la bitácora de decisiones y la ablación por regla (`motor decisiones`)
+  - `4ac3810` F4 y F5, las corridas, la ablación de las 32 VIGENTE y las clases propuestas
+  - `9469bbf` el revisor, pegado tal cual, y sus hallazgos corregidos o declarados
+  - `2cc5d3a` la CI de Linux y el estado final, lista para revisión
+  - `add10ff` las decisiones del consultor a la PARADA final, copiadas al informe
+  - y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- CI: run 42740007047 de `fix/trazas-ablacion` sobre `9469bbf`: `make check` con 1 failed, 3310
+  passed y 48 skipped; el único fallo, el esperado de RITUAL.md (`test_state_check_ok_on_real_repo`,
+  por el nombre `fix/`). `2cc5d3a` y los posteriores solo tocan el informe, HOLDOUT, HISTORIA,
+  ERRORES-RECURRENTES, PROJECT_STATE y la hoja de ruta (comprobado con `git diff --stat`). La CI que
+  cuenta es la de `main` tras el push.

@@ -45,7 +45,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   sesiones y de las activaciones hasta que un ADR lo recoja.
 - **Depende de:** R3.9.
 - **Quién:** el consultor y Aleks.
-- **Hecho cuando:** los ADR de RUMBO §1 y §4 existen.
+- **Hecho cuando:** el ADR de RUMBO §1 existe (el de §4 es ADR-0082, confirmado por Aleks el
+  2026-11-09).
 - **Estado:** ABIERTA.
 
 ## R1 · Activar la sesión 4
@@ -380,25 +381,16 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   (`stable/F38o-activar-sesion-06-motor`, ACTIVAR-SESION-06-MOTOR.md): S-2 y S-4 en el motor y
   A-44 RESUELTA; S-22 y S-19 van a la sesión 7 (R4.3).
 
-### R4.3 · Preparar y celebrar la sesión 7
-- **Refs:** NA:F · ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 ·
-  ID:ADR-0083 · ID:RN-009
-- **Qué es:** la lista de ACTIVAR-SESION-06.md §«Para la sesión 7»: el break even (A-13) la
-  primera; A-35 para cerrarla, con la mecha de la vela contraria aparte; A-53; A-43 con las horas
-  escritas; el 0 de A-48; el «igual» y la caja de la reentrada (ADR-0083 D1); la alternancia sin
-  usar la palabra (RN-009, S-21); A-46 por la toma; la frase de la mecha de S-22; y los gráficos 2
-  a 6 rehechos SIN fecha y con el contexto que pidió (los criterios del bot y los trazos de M15).
-  Y, de ACTIVAR-SESION-06-MOTOR.md §d (orden de cierre del 2026-11-06): S-22, cuándo el máximo de
-  la verde es punto de breaker, que con la condición quita el 52 % de los puntos (2.950 de 5.701)
-  y deja dos lecturas sin regla (qué punto vale si el último pivote no cumple; la última verde o
-  la racha); y S-19, tras un rechazo por precio inválido la orden entra igual, espera a que el 0
-  quede del lado bueno o se descarta. Las dos, con esquemas.
-- **Depende de:** si la hoja sale de `kit hoja`, J.
-- **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
-- **Hecho cuando:** la sesión 7 está ingerida y activada.
+### R4.3 · Preparar, celebrar y activar la sesión 7 (en dos días, 7a y 7b)
+- **Refs:** NA:F · ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 · ID:A-20 · ID:ADR-0083 · ID:ADR-0064 · ID:RN-009
+- **Qué es:** con el método de RUMBO §1: como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Por la cantidad de lo que apunta aquí (la lista de ACTIVAR-SESION-06.md §«Para la sesión 7», lo heredado de VIDEO-JULIO.md §4 y §10 y lo de TRAZAS-ABLACION.md §5.5) se parte en dos días; el reparto definitivo lo hace la rama de preparación con las filas que mueve cada pregunta. Punto de partida, decidido por el consultor el 2026-11-09: 7a, el rango de H4 (antes, todo lo que el trader ya dijo: ev-v9-000902-25db5bf5, strategy_spec.yaml en la regla del último rango y su reserva «suponiendo que no haya otro rango mayor», S-23 de la sesión 6, F7 #1 y #2), qué zonas cuentan como zonas de control del esquema (RN-009; A-20 ya fija el número), cuándo se coloca la orden respecto de la ruptura del punto (ADR-0064), el break even (A-13), A-35, las entradas válidas que deja sin tomar (F7 #10) y los dos esquemas, más el bloque de días; 7b, S-22 y S-19, el «igual» y la caja de la reentrada (ADR-0083 D1, con F7 #7 y las 4 filas de RN-019 en una sola pregunta), A-53, A-43 con las horas escritas, el 0 de A-48 y, si caben, seguir tras tres pérdidas, la alternancia (RN-009, S-21), A-46 por la toma y la tarde del 10 de julio. La rama de preparación escribe el ADR del método y pre-registra los puntos de pivote: el esquema de tres salidas sobre julio que aceptó Aleks el 2026-11-09 (dos mínimos: parejas que suben y operaciones de más que bajan; los dos, se sigue; uno, una sesión más; ninguno, se pivota), con la línea base de RECORRIDA-CONSTRUCCION-2 y lo ya visto declarado (ADR-0092 §12), y las cifras en un yaml.
+- **Depende de:** R4.4 y R4.5; J, si la hoja sale de `kit hoja`; el vídeo de mapeo del trader, si llega antes.
+- **Quién:** la sesión prepara con el consultor; Aleks celebra los dos días con el trader; el consultor propone los números del pivote y Aleks los aprueba.
+- **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO y A-16 la paga la activación de 7b (la de S-22 y S-19).
+- **Estado:** ABIERTA.
 
 ### R4.4 · Trazas del motor y ablación por regla
-- **Refs:** NA:F · ID:ADR-0092
+- **Refs:** ID:ADR-0092 · ID:ADR-0064 · ID:ADR-0066
 - **Qué es:** lo de RUMBO-2026-11.md §2: el registro por día y sesión de las tomas de M15, los
   escenarios (ADR-0066), las zonas y los puntos, la orden de cada uno y la regla que fija cada
   prohibición, y un diagnóstico etiquetado del arnés que apaga una regla a la vez. Primeros días:
@@ -408,6 +400,17 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** el diagnóstico etiquetado da, por regla, qué parejas y qué operaciones de más
   cambian al apagarla, y el registro por día trae tomas, escenarios, zonas y la regla de cada
   prohibición.
+- **Estado:** HECHA (`trabajo/trazas-ablacion`; TRAZAS-ABLACION.md): `motor decisiones` da la
+  bitácora por día y sesión (con el gate de cada prohibición apuntado en el intérprete, solo como
+  registro) y la ablación de las 32 VIGENTE; la base repite la línea base con un diff de 0 bytes y
+  el control da delta cero. Las clases de 04-13, 07-02, 07-03 y 07-14, las de la PARADA final.
+
+### R4.5 · Las láminas del bot
+- **Refs:** NA:F · ID:ADR-0092
+- **Qué es:** lo de RUMBO §3: por cada día del bloque de la sesión, la lámina de lo que hizo el bot con su sustentación (la bitácora de `motor decisiones`: toma de M15, escenario, zona, punto y orden), recortada al instante de decidir y sin resultados, con las líneas de M15 de la sesión (lo pide la clase de 07-03 de TRAZAS-ABLACION.md). La clave lámina-día no entra al repo.
+- **Depende de:** R4.4.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** las láminas de los días de la sesión 7a están hechas y revisadas por el consultor.
 - **Estado:** ABIERTA.
 
 ## R5 · Fidelidad
@@ -476,6 +479,14 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R5.1 (G) y la re-corrida que cuenta, con su línea «habilita medir» en sí (ADR-0070 punto 5; ADR-0092 §5).
 - **Quién:** la sesión, con el encargo del consultor; la decisión de operar, Aleks (F35).
 - **Hecho cuando:** la medida está en su informe con el veredicto de ADR-0092 §3 y §4.
+
+### R5.7 · El R de las parejas (diagnóstico)
+- **Refs:** ID:ADR-0092
+- **Qué es:** lo de RUMBO §5: si el bot gana cuando sí replica al trader. Dos fases: el R del bot en sus parejas, de la corrida; después el del trader en las mismas operaciones, que pide leer la columna de resultado de los días dev de su libro (la ingesta no lo guarda: cases/ingesta.py), con su declaración el mismo día. Diagnóstico de construcción: no justifica ninguna rama (ADR-0092 §6).
+- **Depende de:** nada; va en los huecos.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** las dos fases están en un informe.
+- **Estado:** ABIERTA.
 
 ## R6a · La capa de MT5 que no decide operaciones (ADR-0082)
 
@@ -579,13 +590,13 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 
 ### R6.0 · Decisión de arquitectura en vivo
 - **Refs:** ID:ADR-0082 · F:F29 · F:F30 · F:F32
-- **Qué es:** lo de RUMBO-2026-11.md §4: Python decide y MT5 solo ejecuta por la capa de R6a, o
-  la estrategia portada a MQL5 con paridad; se decide con medida en la demo, con los puntos de
-  pivote pre-registrados en el mismo ADR.
-- **Depende de:** la demo de R6a.
+- **Qué es:** lo de RUMBO-2026-11.md §4. La decisión la tomó ADR-0082 §4: la capa y el bot final
+  son un EA de MQL5; se descarta que Python decida en vivo, por el tope de peticiones. Aleks la
+  confirmó el 2026-11-09. Si la revisión de los ingenieros reabre algo, será con un ADR nuevo.
+- **Depende de:** nada.
 - **Quién:** el consultor escribe el ADR con la medida; Aleks decide.
-- **Hecho cuando:** el ADR está ACTIVE.
-- **Estado:** ABIERTA.
+- **Hecho cuando:** ADR-0082 ACTIVE.
+- **Estado:** HECHA (ADR-0082 §4; confirmado por Aleks el 2026-11-09).
 
 ### R6.1 · Del modelo a MQL5
 - **Refs:** F:F28 · F:F29 · F:F30 · F:F31 · F:F32
@@ -681,7 +692,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   lo opcional de las noticias); el BE de una venta que salta por el ASK (NA:M,
   ADR-0065 §6); y el grabador de spread y ticks de F17 (heredado 10), que también mide el
   deslizamiento (ADR-0090 §7).
-- **Depende de:** una prueba gratuita de FTMO viva (la que está en curso termina el 2026-11-11).
+- **Depende de:** una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
 - **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
 - **Hecho cuando:** el panel declarado (HECHO el 2026-11-07), M medida y el grabador hecho.
 
@@ -817,7 +828,10 @@ Una fila por corrida del arnés sobre toda la construcción (cobertura y precisi
 Cada rama que corra el arnés sobre toda la construcción añade su fila en su orden de cierre.
 Diagnóstico de construcción (ADR-0092 §6): ninguna cifra de aquí justifica una rama.
 
+2026-11-09, TRAZAS-ABLACION.md: sin fila, por excepción a la regla de arriba decidida por el consultor: la corrida base repite la línea base con un diff de 0 bytes y las ablaciones son diagnóstico.
+
 ## Fechas fijas
 
 - La prueba gratuita de FTMO en curso termina el 11 de noviembre de 2026 (Account MetriX: inicio
   28/10/26, fin 11/11/26); lo que queda de A.5 (NA:M y F17) pide una prueba viva.
+- Una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
