@@ -26,8 +26,8 @@ for sesion in sorted(p for p in raiz.iterdir() if p.is_dir()):
         for marca in MARCAS:
             con[marca] += bool(re.search(rf'class="{marca}[ "]', texto))
         for etiqueta in re.findall(r"<(?:line|rect|circle|text)\b[^>]*>", texto):
-            if 'class="precio"' in etiqueta or 'width="1600"' in etiqueta:
-                continue
+            if 'class="precio"' in etiqueta or 'class="eje-' in etiqueta or 'width="1600"' in etiqueta:
+                continue  # el eje derecho (sus precios y los de la orden) y el fondo
             xs = [float(x) for x in re.findall(r'\s(?:x|x1|x2|cx)="([\d.]+)"', etiqueta)]
             ancho = re.search(r'\swidth="([\d.]+)"', etiqueta)
             if ancho and etiqueta.startswith("<rect"):

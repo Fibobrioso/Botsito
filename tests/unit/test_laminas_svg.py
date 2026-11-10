@@ -368,3 +368,23 @@ def test_el_gate_que_bloquea_y_prohibe_en_el_mismo_cierre_da_una_sola_frase() ->
     assert f"Iba a colocar la orden y no la coloca: {ruido}." in comp.frases
     assert f"No abre: {ruido}." not in comp.frases
     assert "No abre: no hay sesgo de H4 claro." in comp.frases
+
+
+def test_la_orden_que_nace_en_el_corte_se_ve_con_su_stop_y_su_objetivo() -> None:
+    """Lo enseno la captura (respuesta a la PARADA final, punto 5): en una lamina de tipo a la
+    orden se coloca en el mismo cierre del corte, y sus tres lineas no tenian largo. Ahora cubren
+    la M1 que la coloca y llevan su precio en el eje derecho."""
+    import re as _re
+
+    orden = laminas.OrdenFoto(
+        "o1", "compra", 110_010, 109_986, 110_100, (CORTE - 1) * 60_000 - 1, "colocada", "07-11",
+        "zona:1",
+    )  # fmt: skip
+    f = foto_base(ordenes=(orden,), colocadas=frozenset({"o1"}))
+    texto, _ = _pagina(f, laminas.TIPO_A, "o1")
+    for clase in ("orden", "stop", "objetivo"):
+        linea = _re.search(rf'<line class="{clase}" x1="([\d.]+)" y1="[\d.]+" x2="([\d.]+)"', texto)
+        assert linea is not None and float(linea.group(2)) - float(linea.group(1)) > 1, clase
+        assert f'class="eje-{clase}"' in texto, clase
+    for valor in ("1.10010", "1.09986", "1.10100"):
+        assert f">{valor}<" in texto, valor

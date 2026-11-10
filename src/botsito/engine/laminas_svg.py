@@ -252,14 +252,29 @@ def _m1(p: _Panel, d: Dibujo) -> list[str]:
                 f'height="8" fill="{COLOR["control"]}"/>'
             )
     for o in d.ordenes:
-        desde = (o.colocada_ms + 1) // MS_POR_MINUTO
+        # desde el INICIO de la M1 que la coloca: en una lamina de tipo a la orden nace en el
+        # mismo cierre del corte, y desde su cierre la linea no tendria largo (lo enseno la
+        # captura de la respuesta a la PARADA final, punto 5); y su precio, en el eje derecho
+        desde = (o.colocada_ms + 1) // MS_POR_MINUTO - 1
         for clase, nivel, color, extra in (
             ("orden", o.precio, COLOR["orden"], 'stroke-width="3"'),
             ("stop", o.stop, COLOR["stop"], 'stroke-width="2" stroke-dasharray="6 4"'),
             ("objetivo", o.objetivo, COLOR["objetivo"], 'stroke-width="2" stroke-dasharray="6 4"'),
         ):
             partes.append(_horizontal(p, clase, nivel, desde, d.corte, color, extra))
+            partes.append(_etiqueta(p, clase, nivel, color, d.escala))
     return partes
+
+
+def _etiqueta(p: _Panel, clase: str, nivel: int, color: str, escala: int) -> str:
+    """El precio de una linea de la orden en el eje derecho, sobre su color (como el replay)."""
+    y = p.y(nivel)
+    return (
+        f'<rect class="eje-{clase}" x="{_f(p.derecha + 2)}" y="{_f(y - 8)}" width="78" '
+        f'height="16" fill="{color}"/>'
+        f'<text class="eje-{clase}" x="{_f(p.derecha + 6)}" y="{_f(y + 4)}" font-size="12" '
+        f'fill="{COLOR["fondo"]}">{precio(nivel, escala)}</text>'
+    )
 
 
 def svg(d: Dibujo) -> str:

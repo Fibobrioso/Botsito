@@ -361,8 +361,8 @@ def test_las_marcas_salen_con_su_clase_y_ninguna_a_la_derecha_del_corte(
         assert clase in a, clase
     derecha = 1600 - 110
     for etiqueta in re.findall(r"<(?:line|rect|circle|text)\b[^>]*>", a):
-        if 'class="precio"' in etiqueta or 'width="1600"' in etiqueta:
-            continue  # los precios del eje derecho y el fondo
+        if 'class="precio"' in etiqueta or 'class="eje-' in etiqueta or 'width="1600"' in etiqueta:
+            continue  # los precios del eje derecho (los del eje y los de la orden) y el fondo
         xs = [float(x) for x in re.findall(r'\s(?:x|x1|x2|cx)="([\d.]+)"', etiqueta)]
         ancho = re.search(r'\swidth="([\d.]+)"', etiqueta)
         if ancho and etiqueta.startswith("<rect"):
