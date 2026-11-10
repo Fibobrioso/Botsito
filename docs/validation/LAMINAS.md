@@ -11,11 +11,366 @@
 - CI de main sobre `e5394c57e57a9488b8042f33b03c292142eb034e` (check-runs): `python completed success`, run 42759493730.
 - `git branch --list -a`: solo `main` (y `origin/main`); `git ls-remote --heads origin`: solo `refs/heads/main`.
 - Sesión arrancada con `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` (medido: `echo $CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP` da `1`); modelo Opus 5.5, esfuerzo alto.
+- La apertura: commit `chore(rama): abre trabajo/laminas …`, `make check` 3359 passed, SELLO sobre `692ec4de`, pico 309 MiB.
 
 ## La decisión de los gráficos 2 a 6 (del consultor, 2026-11-08, con RUMBO §3)
 
 ACTIVAR-SESION-06.md §«Para la sesión 7», punto 10, dice que los gráficos 2 a 6 (S-8 a S-12) «se rehacen SIN fecha y con el contexto que pidió». No se rehacen: los sustituyen las láminas del bot, que llevan ese contexto, y el bloque de días de la sesión 7 (RUMBO §1 b). ACTIVAR-SESION-06.md es un informe cerrado y no se toca: la decisión queda escrita aquí y en el encargo, y la recogerá la orden de cierre.
 
+**Hasta que el ADR del método cambie la regla 2 de `docs/runbooks/SESION-DE-PREGUNTAS.md`, las láminas no se enseñan al trader**: la regla 2 corta los gráficos antes de la colocación y prohíbe la orden, el stop y el objetivo, que la lámina enseña.
+
+## 0. Fase 0 (2026-11-10)
+
+Hecha con la skill `fase-cero`: el encargo, contrastado por el agente `auditor-encargo` (su informe, tal cual, en el Apéndice A), y el inventario medido. **No se ha escrito código.** F1 está retenida por un punto que no casa (§0.10).
+
+### 0.1 La base y lo de mirar
+
+- La base: arriba.
+- **Las diez sesiones frente a la compuerta** (guion `diez_sesiones.py` de la carpeta de trabajo; solo recuentos y sí/no, sin ids): `casos_reservados(repo)` y `casos_ocultos(repo)` dan 34 claves cada uno (34 días); los meses de construcción son `2026-04, 2026-07, 2026-08, 2026-01`; `dias_de_construccion` da 76 días dev. **Los siete días de las diez sesiones son dev, y ninguno está oculto ni reservado.** De los seis días de calendario que van del quinto anterior al propio día (lo que pueden tocar las ventanas en Madrid y en UTC), en 04-13, 07-06, 07-07, 07-15 y 07-17 no hay ninguno oculto ni reservado; en 07-02 y 07-03, uno de junio en cada caso. Junio no es construcción, así que el recorte del punto 6 deja fuera esos días igual (la H4 y la M15 de 07-02 y 07-03 empiezan el 1 de julio a las 00:00 UTC, las 02:00 de Madrid).
+- **Horas perdidas** (`docs/validation/anexos/RESPALDO-M1/horas_perdidas.py:18-24`, 18 horas; en código, `MercadoDia.horas_perdidas`, que llena `_ticks_del_dia` de `engine/simulacion.py:166-180`): **ninguna de las diez sesiones tiene una dentro**. Pero las ventanas de dos sí las tocan, y faltan ticks, no velas M1 (auditor, afirmación 50): la de H4 de 07-15 11-15 contiene 2026-07-14T12Z, y las de H4 y M15 de 07-17 11-15 contienen 2026-07-16T11Z. El punto 6 excluye solo las horas perdidas DENTRO de la sesión, así que estas dos se quedan. Decisión 9.
+- La 07-14 11-15 sigue fuera por el encargo (la hora 12Z cae dentro de la sesión: de 09Z a 13Z).
+
+### 0.2 Qué da cada pieza, medido sobre una ejecución
+
+La medida: **una corrida del motor cableado solo sobre julio** (la misma preparación que `motor decisiones`), declarada antes en HOLDOUT-EXPOSICIONES, con un observador que imprime nombres de campos y tipos (guion `campos_cierre.py` de la carpeta de trabajo): 6253 cierres observados en 13 días.
+
+**Lo que recibe el observador (`Cierre`, `engine/cableado.py:221-237`):** `dia` str, `instante` int (minuto UTC del cierre de M1), `sesion` str, `huso` str, `escala` int, `evento` (`Evento`), `estado` (`EstadoDia`), `broker` (`Broker`), `ctx` (`ContextoDia`) y `datos` (`DatosMercado`). Lo llama `correr_dia` en cada cierre, después de decidir (`cableado.py:442-449`), y **solo en los cierres de las sesiones** (el bucle va del primer al último minuto de `dia.limites()`, `:326-391`). `estado`, `broker` y `ctx` son los objetos vivos del motor; `Orden` y `Posicion` son dataclasses mutables (`broker.py:224-264`), y la memoria de zonas lleva `set` y `dict` que el motor sigue cambiando. Medido en 2026-07-03:
+- `estado.memoria["zona_de_entrada"]`: `por_sesion` y `zonas`. En cada sesión: `escenarios` (list), `toma` (dict), `puntos` (dict), `punto_de_zona` (dict de id de zona a `"nivel@inicio"`), `usadas` (set) y, en 9 cierres, `esquema` (`Esquema`). Cada escenario: `n`, `toma`, `zonas` (set) y `terminado` (None o str). Cada toma: `instante`, `nivel`, `lado` y `pivote` (lado, nivel, formado). `zonas`: `Zona` con `id, lado, entrada (el 0), extremo (el 1), por (primer_esquema o segundo_esquema), desde, formada`.
+- `estado.anotaciones` por sesión: `sesgo_h4`, `liquidez_m15`, `liquidez_m15_alcanzada` (y, cuando las hay, `sesgo_h4_doble_ruptura` y las tres de saltadas, que en 07-03 no salen).
+- `estado.hechos`: `sesgo`, `liquidez_tomada`; `estado.broker`: `operacion_abierta`, `orden_limite_pendiente`.
+- `broker.ordenes`: `Orden` con `id, lado, precio, lotes, stop, objetivo, colocada_ms, expira_ms, estado, ultimo_cambio_ms, historial (instante, estado), tipo, anterior` (la versión antes de la última modificación). `broker.posiciones`: `Posicion` con, entre otros, `orden_id, entrada, stop, objetivo, abierta_ms, cerrada_ms, motivo_cierre, precio_cierre`.
+- `ctx`: entre otros, `zona_de_orden`, `sesion_de_orden`, `no_enviadas` (instante, zona, motivo, lote del riesgo) y `zonas`.
+- `evento`: `disparadas`, `fijados`, `prohibido_por`, `quizas_por`, `bloqueadas` y `bloqueada_por` (los gates, de F38v).
+
+**Lo que junta `motor decisiones` (`engine/decisiones.py`, la bitácora):** escribe TEXTO por cierre: la toma con su M1, los escenarios, cada zona con su 0, su 1 y su punto, la orden con precio, stop y objetivo, los hechos que cambian, las prohibiciones con sus gates, los bloqueos y el llenado. La liquidez de M15 la lee con `c.datos.liquidez_m15(c.instante, lado)` (`decisiones.py:406`, verificado), pero **solo en `_linea_m15`, al nacer una zona, y solo para compararla por igualdad con el 0 de la zona**: no la guarda ni da la lista de líneas de la sesión (auditor, afirmación 22). `_sin_orden` (`:446-465`) compone sus motivos como texto suelto. Las parejas: `resumir` llama a `emparejar` del criterio (`:183-211`) con las mismas operaciones puntuables que `medir`.
+
+**Cómo saca el visor las parejas y las operaciones del trader (`engine/visor.py:308-382`):** corre el motor **sobre el día suelto** (`self.motor.correr_dia(mercado)`, `:325`), **recalcula el sesgo de cada sesión con su propio código** (`_sesgo_de_sesion`, `:336-339`) y empareja con `medir` sobre ese día (`:362-366`). Son los dos defectos que la lámina no puede heredar: el día suelto (la cuenta por mes no llega) y el recálculo. La lámina toma las parejas de `medir` sobre la corrida entera (lo que hace el arnés en `medida_de`, `arnes.py:268-271`, y lo que llama T0 `patrones.py:18`: «filas del trader con PAREJA») y el sesgo de las anotaciones del motor.
+
+**Qué hace `scripts/graficos_sesion.py`:** las ventanas (`:73-77`, `:199-203`: H4 desde las 00:00 de Madrid de cuatro días antes, M15 desde las 00:00 del día anterior, M1 desde una hora antes de la sesión, todo hasta el corte; la primera vela agregada que empieza antes del recorte no se dibuja, `:211-214`); el recorte (`recorte` y `permitido`, `:123-146`: cada minuto, en Madrid y en UTC, en un día de la tabla `CONSTRUCCION` de `:67-72` y fuera de `casos_ocultos`, y si el corte no cumple, error); la última puerta (`comprobar`, `:220-233`); las fechas (`_RE_FECHA`, **en `:247-252`**, no en :265-270 como dice el encargo; los meses van sin `\b`, así que «mayor» casa con «mayo»); y el SVG (`:265-341`) y la escritura, que se niega dentro del repo y no pisa ficheros (`:347-374`). Lee las velas del mes del día con `cargar_ventana`, sin el mes anterior.
+
+**Lo que de los puntos 1 a 4 de «La lámina» no da hoy ninguna pieza:**
+1. **Qué H4 fijó el sesgo y cuáles saltó, y por qué.** `ResultadoSesgo` (`domain/sesgo.py:56-76`) solo da contadores; la anotación, también (`primitivas.py:203-213`). Además, `velas_miradas` (cuántas miró hasta decidir) no se anota. Decisión 1.
+2. **Las líneas de M15 de la sesión y dónde acaban.** Nada las acumula: `liquidez_m15` da el pivote más reciente de cada lado en un instante (`engine/motor.py:150-176`). Se pueden acumular desde el observador, leyendo esa misma función en cada cierre; la toma, de la memoria (`toma.pivote`). Decisión 4.
+3. **Qué zonas de control contó RN-009.** El predicado (`zonas.py:466-481`) llama a `zonas_de_control` (`domain/estructura_m1.py:153-171`), que solo devuelve un número, y no lo guarda. Decisión 2.
+4. **Una lista cerrada de causas de «por qué no hay orden».** Hoy es texto (`_sin_orden`). La tabla de §0.3 la cierra con causas estructuradas.
+5. **Una foto del instante.** Nada copia el estado: la bitácora escribe texto en el instante. La lámina necesita copiarlo (§0.3, «el enganche»).
+6. **Con cuerpo o con mecha.** No va en la memoria, pero lo dice la forma de RN-004 (`cruza: {criterio: liquidez_m15_criterio_toma}`, `strategy_spec.yaml:1331`): la opción del registro que el motor usó (hoy `cuerpo`).
+
+### 0.3 El diseño que propongo
+
+**El subcomando y sus opciones.** `motor laminas --sesiones 2026-07-06:07-11,2026-07-06:11-15,... --salida <carpeta fuera del repo>`, las dos obligatorias. `--sesiones` lleva pares `día:sesión`, con la sesión por el nombre que traen los datos (`config.sesiones`). No lleva `--meses` ni ninguna opción de diagnóstico: corre siempre la corrida de `motor decisiones` (toda la construcción, la cuenta por mes, el perfil y la fase por defecto, sin depuración), porque el emparejamiento sale de la corrida entera. No comparte `_opciones_simulacion` ni `_opciones_diagnostico`, así que `OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA` y `test_la_seccion_no_anade_ninguna_opcion_al_comando` no cambian.
+
+**Dónde vive el código e import-linter.** `src/botsito/engine/laminas.py` (el recolector, la selección, la foto, la tabla de frases y la puerta del punto 6) y `src/botsito/engine/laminas_svg.py` (el dibujo y el HTML), más el subcomando en `cli.py`. `engine` ya importa `cases`, `data`, `spec` y `domain` (pyproject.toml:95-117), y `viewer` está por encima: **no hace falta tocar `pyproject.toml`**. Si se aprueban las decisiones 1 y 2, el contrato se amplía en un commit a `src/botsito/domain/sesgo.py` y `src/botsito/domain/estructura_m1.py` (dominio puro: import-linter lo deja).
+
+**Cómo se engancha sin cambiar lo que el motor devuelve.** El recolector es el `observador` de `MotorCableado`, como la bitácora, y entra por `decisiones.motor_nuevo(plantilla, reglas, recolector)`: no hay campo nuevo en `MotorCableado` (las listas de `CAMPOS_DE_CONFIGURACION` y `CAMPOS_DE_ESTADO`, `decisiones.py:121-134`, no cambian). En los días pedidos, y solo en ellos, hace dos cosas, las dos con COPIAS:
+- en cada cierre acumula las líneas de M15 (`datos.liquidez_m15` de los dos lados) y la vida de cada orden de la sesión (cuándo se colocó y cuándo cambió de precio);
+- en los cierres en que una orden se coloca o cambia de precio, y en los cortes de tipo b (que se conocen antes de correr, por las operaciones del trader), saca una FOTO: un dataclass congelado con las velas de la ventana hasta el corte (tuplas de `Vela`, que son inmutables), los hechos, las anotaciones, la memoria de la sesión convertida a tuplas y frozensets, las órdenes y posiciones como tuplas de valores, las prohibiciones y bloqueos del evento y lo que se sabía antes del corte. Nada guarda una referencia a `estado`, `broker`, `ctx` ni a la memoria.
+Al terminar la corrida, con las parejas de `medir` sobre la corrida entera, elige las fotos (punto 2) y dibuja solo desde ellas. Propongo además que corra la base dos veces, como `motor decisiones`, la segunda sin recolector, y que salga con error sin escribir nada si los recuentos no son iguales (decisión 10).
+
+**Qué láminas.** (a) Por cada orden de la sesión que acabó llenada: la foto del último cierre en que se colocó o se movió al precio al que se llenó (`Orden.precio` en ese cierre igual al de la posición), que siempre es anterior al llenado, porque el llenado ocurre en el `avanzar` de un minuto posterior. (b) Por cada operación del trader de la sesión sin pareja: la foto del cierre `t` más tardío con `t · 60 000 < entrada en ms` (la última M1 cerrada estrictamente antes de su entrada; decisión 8). Sin la operación del trader. Las dos, en orden de hora dentro de la sesión.
+
+**Las ventanas y el negar por defecto (punto 6).** Las ventanas de `graficos_sesion.py` (H4: cuatro días; M15: el día anterior; M1: una hora antes de la sesión, con el inicio de la sesión de `DiaDeMercado.limites()`, la puerta de ADR-0069), con las velas en formación de H4 y M15 hechas con las M1 hasta el corte y `agregar` con `anclaje_h4` del registro. Las velas salen de `c.datos`, que son las que el arnés cargó por la API del manifiesto. La puerta: cada minuto, en el huso que da el registro y en UTC, cae en un tramo de construcción y fuera de `casos_ocultos`; los tramos, de `cobertura_material` (decisión 3). Lo que no es vela se dibuja o se nombra con su precio solo si su instante de nacimiento está permitido y dentro de la ventana (decisión 5): la H4 que fija el sesgo, por su inicio; una línea de M15, por la vela contraria de su pivote; una zona, por el cierre de su breaker (`formada`); el punto, por la vela que lo forma; la toma, por su M1. Si no cumple, no se dibuja ni da precio, y la sustentación dice «viene de antes de la ventana». Un día pedido que no sea dev de construcción, uno oculto, una sesión con una hora perdida dentro, un corte que no cumpla o una causa sin frase: error que lo nombra, y no se escribe nada (todo se calcula en memoria antes del primer fichero).
+
+**La salida (punto 7).** `--salida` obligatoria; se niega si resuelve dentro del repo (con su test) y si existe y no está vacía (no pisa). Dentro: `sesion-NN/indice.html` y `sesion-NN/lamina-NN.html` (NN, el orden de `--sesiones` y el de la hora), y `clave.txt` en la raíz (código → día, sesión, corte y tipo a/b), que no entra al repo ni al informe. Cada nombre y cada byte de los HTML pasan por la regex de fechas antes de escribir.
+
+**El formato (punto 8).** Un HTML por lámina con un SVG escrito por el código, sin JavaScript, sin `<title>`, `<metadata>` ni comentarios, y deterministas (orden fijo, formato de números fijo, sin reloj). Tres paneles uno sobre otro (H4, M15 y M1), los precios en el eje derecho, las horas de Madrid de ese día abajo, el corte en el borde derecho (la última vela, la del corte, como en el replay) y la sustentación debajo. La regex de fechas: `\d{4}-\d{1,2}-\d{1,2}`, `\b\d{1,2}/\d{1,2}\b`, `\b\d{1,2}-\d{1,2}\b` y los meses en castellano e inglés CON `\b` (`\b(enero|…|diciembre|january|…|december)\b`, sin mayúsculas): «3 de mayo» casa y «otro rango mayor» no. Por eso la lámina nunca escribe el nombre de la sesión («07-11» casaría como DD-MM): dice «la sesión de las HH:MM a las HH:MM», con las horas de los datos.
+
+**El punto 9.** El 0,8: `registro.decimal("stop_fraccion_caja")`, también para su rótulo; el huso: `Cierre.huso` (el `huso_visible` del reloj del registro); el anclaje: `registro.hora("anclaje_h4")`; las horas de las sesiones: `DiaDeMercado.limites()`. Los rótulos 0,25 y 0,5 van como `Decimal("0.25")  # no-negocio: rótulo del Fibonacci, solo dibujo` y `Decimal("0.5")  # no-negocio: …`, una línea cada uno, declaradas en el informe. Nada copia los literales de `graficos_sesion.py` (`ZoneInfo("Europe/Madrid")`, las horas).
+
+**La tabla de frases (punto 4), entera.** La clave la usa el código; la salida solo lleva la frase. Sin ids, sin lote, sin R, sin dinero y sin porcentajes. `{…}` son huecos que se llenan con precios, horas o recuentos del instante.
+
+*Hechos (el vocabulario de la spec: `sesgo`, `liquidez_tomada`, `orden_dimensionada`, los cuatro `detenido_por_*` y los dos del bróker):*
+
+| Clave | Frase |
+|---|---|
+| `sesgo=alcista` | «Sesgo de H4 alcista: la vela H4 que lo fija rompió el alto de la anterior y cerró verde.» (con doble ruptura: «rompió los dos extremos de la anterior y cerró verde») |
+| `sesgo=bajista` | «Sesgo de H4 bajista: la vela H4 que lo fija rompió el bajo de la anterior y cerró roja.» (con doble ruptura: «… los dos extremos … y cerró roja») |
+| `sesgo=insuficiente` | «Sin sesgo de H4: ninguna de las velas H4 que mira hacia atrás rompe un extremo de la anterior cerrando de ese color.» |
+| `sesgo=ambiguo` | «Sesgo de H4 ambiguo.» (sin productor desde ADR-0075; está porque el vocabulario lo declara) |
+| saltadas, color contrario | «Antes de esa vela saltó {n} velas H4 que rompieron un extremo y cerraron del color contrario.» |
+| saltadas, sin cuerpo | «… {n} que rompieron un extremo y cerraron sin cuerpo.» |
+| saltadas, dos extremos sin cuerpo | «… {n} que rompieron los dos extremos y cerraron sin cuerpo.» |
+| la H4 que fija, fuera de la ventana | «La vela H4 que fija el sesgo viene de antes de la ventana.» |
+| `liquidez_tomada=si` | «Liquidez de M15 tomada: una vela de M1 cerró con {cuerpo / mecha} por {debajo del bajo / encima del alto} de M15 en {precio}, a las {HH:MM}.» (cuerpo o mecha: la opción del registro que nombra la forma de RN-004; otra opción, error) |
+| sin `liquidez_tomada` | «Todavía no ha tomado la liquidez de M15 en esta sesión.» |
+| `orden_dimensionada` | sin frase visible, a propósito: es la marca interna de la orden preparada, y la orden se enseña aparte |
+| `detenido_por_cartuchos` | «Ya ha gastado sus intentos en esta liquidez: espera otra liquidez de M15.» |
+| `detenido_por_tope` | «Ha llegado al tope del día del trader: no abre más hasta el corte del día.» |
+| `detenido_por_tope_total` | «La cuenta ha llegado a su freno total: no opera más.» |
+| `detenido_por_racha` | «Tras la racha de pérdidas seguidas del trader, no opera más hoy.» |
+| `operacion_abierta` | «Tiene una operación abierta.» |
+| `orden_limite_pendiente` | la orden viva (abajo) |
+
+*Gates VIGENTE que pueden prohibir (los 15 de la spec con `prohibe`, medidos con `listas_frases.py`). La frase es el motivo; con `[dispara]` sale «No abre: {motivo}.», con `[desconocido]` «No abre porque no puede descartar que {motivo}.», y en un bloqueo, «Iba a colocar la orden y no la coloca: {motivo}.»:*
+
+| Gate | Motivo |
+|---|---|
+| RN-001 | «está fuera de la ventana de la sesión» |
+| RN-037 | «es el último minuto antes de que cierre la vela H4 de la sesión» |
+| RN-033 | «no hay sesgo de H4 claro» |
+| RN-005 | «lo que se forma está en el lado de ruido de la liquidez de M15» |
+| RN-008 | «no se da ninguno de los dos esquemas de entrada» |
+| RN-009 | «el esquema tiene más zonas de control de las que admite ({n}, y admite {m})» (los números, si se aprueba la decisión 2; `m` del registro) |
+| RN-016 | «ya ha gastado sus intentos en esta liquidez» |
+| RN-018 | «ya tiene una operación abierta, y no opera en paralelo» |
+| RN-020 | «ha llegado al tope del día del trader» |
+| RN-036 | «viene de la racha de pérdidas seguidas del trader» |
+| RN-022 | «la situación no encaja en lo que sabe hacer» |
+| RN-026 | «el bróker no admite el stop donde toca» |
+| RN-029 | «ha saltado el freno diario de la cuenta» |
+| RN-031 | «ha saltado el freno total de la cuenta» |
+| RN-032 | «el riesgo de la operación no cabe antes del límite de la cuenta» |
+
+*Por qué no hay orden (una enumeración cerrada en el código; cada causa sale de un campo de la foto, nunca de un texto):*
+
+| Causa | De dónde sale | Frase |
+|---|---|---|
+| sin sesgo | `hechos["sesgo"]` no es alcista ni bajista | la del hecho |
+| sin toma | sin `liquidez_tomada` en la sesión | «Todavía no ha tomado la liquidez de M15 en esta sesión.» |
+| sin caja | el escenario vigente sin zonas | «Ha tomado la liquidez, pero aún no se ha formado ninguna caja con su breaker en este escenario.» |
+| caja sin punto | la zona sin `punto_de_zona` | «La caja no tiene punto de breaker.» |
+| caja usada | la zona en `usadas` | «Esa caja ya tuvo su orden.» |
+| punto gastado | el punto en `rechazados` | «Ese punto ya se gastó: el bróker rechazó la orden.» |
+| escenario terminado | `terminado == ganancia` (el único valor del código, `zonas.TERMINADO_POR_GANANCIA`) | «Este escenario ya terminó con una ganadora: espera otra liquidez de M15.» |
+| operación abierta | `operacion_abierta` | «Tiene una operación abierta.» |
+| colocación bloqueada | `evento.bloqueada_por` de `colocar_orden_limite` | «Iba a colocar la orden y no la coloca: {motivo del gate}.» |
+| no enviada | `ctx.no_enviadas` en el corte, con el límite (`volumen`, `margen`, `minimo` de `broker.py:174-176`, y `no_operar`) | «Iba a colocar la orden y no la envía: no cabe en la cuenta ({por el volumen máximo / por el margen / por debajo del mínimo}).» |
+| no tocaba | caja con punto, nada de lo anterior, y ni RN-011 ni RN-015 disparan | «Con la caja formada, todavía no le toca colocar la orden.» |
+| fuera de la sesión | RN-001 | la del gate |
+
+*Lo que se enseña siempre (hechos del instante, en el orden en que se leen):*
+
+| Clave | Frase |
+|---|---|
+| esquema | «Es el {primer / segundo} esquema.» (`Zona.por`; otro valor, error) |
+| escenario | «Escenario {n} de la sesión.» |
+| la caja | «La caja va de {precio del 0} (el 0) a {precio del 1} (el 1).» |
+| el punto | «El punto de breaker está en {precio}, de la vela de las {HH:MM}.» |
+| la orden colocada (tipo a) | «Coloca la orden de {compra / venta} en {precio}, el 0 de la caja, con el stop en {precio} (el {0,8} redondeado) y el objetivo en {precio}.» |
+| la orden movida (tipo a) | «Mueve la orden de {compra / venta} a {precio}, …» (igual) |
+| la orden viva (tipo b) | «Tiene una orden de {compra / venta} pendiente en {precio}, …» (igual) |
+| antes del corte, cerradas | «Antes, en esta sesión: {n} cerradas en el stop, {n} en el objetivo y {n} a mercado.» (solo las que salen, por `motivo_cierre`; otro valor, error) |
+| antes del corte, retiradas | «{n} órdenes anteriores se retiraron sin llenarse.» (`cancelada`, `expirada`) / «el bróker rechazó {n}» (`rechazada`) |
+| en la liquidez | «En esta liquidez ya lleva {n} stops.» |
+
+Quedan fuera de la lámina, por ser posteriores al corte: el llenado, la cancelación, el cierre y su motivo, el stop o el objetivo alcanzados y el resultado de lo que la lámina enseña.
+
+**La tabla de colores (la primera; la ajustan Aleks y el consultor al revisar).** Una sola tabla de constantes en `laminas_svg.py`, de `graficos_sesion.py` (velas) y del visor (`visor.py:732-745`):
+
+| Qué | Color |
+|---|---|
+| fondo / rejilla / separador de día | `#ffffff` / `#eeeeee` / `#cccccc` discontinuo |
+| vela verde / roja / sin cuerpo | `#26a69a` / `#ef5350` / `#9e9e9e` |
+| la H4 que fija el sesgo | recuadro `#f39c12`, relleno al 25 % |
+| las H4 saltadas por el color | contorno `#7f8c8d` discontinuo |
+| línea de M15 de un alto / de un bajo | `#3b6fd6` / `#8e44ad` |
+| la tomada / la que dejó de ser la liquidez | trazo grueso con un punto en la M1 que la toma / discontinua |
+| la caja de compra / de venta | `#2e8b57` / `#c0392b`, relleno al 16 % |
+| niveles 0,25, 0,5 y 0,8 | `#888888` fino, rotulados a la derecha |
+| la orden (el 0) | `#1f4e9c`, grueso |
+| el stop / el objetivo | `#c0392b` / `#2e8b57`, discontinuos |
+| el punto de breaker | `#1565c0`, marca en su vela |
+| texto y ejes | `#444444` y `#666666` |
+
+**Cómo se prueba cada punto de «La lámina».** 1, una sola fuente: el render solo recibe fotos (su firma no admite `Cierre`), un test de importaciones prohíbe a `laminas*.py` importar `domain.sesgo`, `domain.estructura_m1`, `domain.pivotes_m15` y `engine.zonas` para algo que no sean constantes, y la mutación de la referencia viva (F2). 2: un día sintético con una orden llenada, una cancelada y una operación del trader sin pareja da exactamente dos láminas, en orden. 3: el SVG lleva cada elemento con su clase (la H4 que fija, las líneas, la caja, los rótulos, la orden, el stop y el objetivo) y ninguno a la derecha del corte. 4: la tabla cerrada contra la spec y el código, y las regex de ids y dinero. 5: la regex con «3 de mayo» y «otro rango mayor», y todos los bytes y nombres. 6: días y elementos fuera de la puerta. 7: la salida dentro del repo. 8: dos ejecuciones dan los mismos bytes, y sin `<script>`. 9: `test_no_business_literals` en verde con las dos exenciones.
+
+### 0.4 Los tests
+
+Propongo **dos fixtures sintéticos**, ninguno lee un mes real:
+- **Fotos hechas a mano** para el dibujo y las frases (`tests/unit/test_laminas_svg.py`): una foto con todo -sesgo con saltadas, toma, dos líneas de M15, caja, punto, orden- y otra con elementos nacidos antes de la ventana. El dibujo no ve más que la foto, así que «sin mirar al futuro» se prueba dando al render una foto cuyas velas, órdenes y tomas siguen después del corte (el render debe cortar por `foto.corte`): la mutación es un render que no corta.
+- **El día sintético de `test_decisiones.py` ampliado** para el recolector (`tests/unit/test_laminas.py`): las zonas sintéticas siguen inyectadas, y una primitiva sintética escribe la toma, el escenario y el punto en la memoria con las mismas funciones de `engine/zonas.py` que usa el motor (`_abrir`, `punto_de_zona`), así que la forma de la memoria es la real. Con el `toca_colocar_orden_limite` sin estado (Technical Debt) para el determinismo y el golden. La mutación de la referencia viva: un recolector que guarda `c.estado` y dibuja al final enseña un hecho posterior al corte (un freno encendido después), y el test falla.
+- El golden: con y sin recolector, el `ResultadoDia`, las órdenes, las posiciones y la traza del bróker son iguales; y un recolector que muta el estado lo rompe (como `test_decisiones.py:122-135`).
+- `motor arnes`, `motor visor` y `motor decisiones`: sus opciones, comparadas con las de main por el parser (como `test_la_seccion_no_anade_ninguna_opcion_al_comando`).
+- Las lecciones de `graficos_sesion.py` (ERRORES-RECURRENTES.md:103; auditor, «lo que el repo pide» 4): los tests prueban la constante real (los tramos que da `cobertura_material`), pasan por `main()` (el subcomando entero sobre el fixture) y miden en la salida lo que cada marca enseña, no solo la geometría.
+
+### 0.5 Herencias
+
+Buscado («lámina», «gráficos 2 a 6», «trazos de M15», «R4.5» y «graficos_sesion») en PROJECT_STATE, el final de HISTORIA, docs/validation/, docs/adr/, docs/plan/ y docs/runbooks/:
+- **Lo que esta rama recoge:** RUMBO §3 y R4.5 (las láminas); la decisión b de TRAZAS-ABLACION.md:1392 (las líneas de M15 de 07-03, y también en el M1); SESION-06-EXTRACCION.md:448-457 y :727 (el trader pidió «los criterios del bot y los trazos de M15», y `graficos_sesion.py` no los dibuja); :1246 (la fecha no se pone: la lámina no la lleva); RECORRIDA-CONSTRUCCION-2.md:698 («hoja + gráficos 2 a 6 con contexto»), sustituido por la decisión de arriba; ERRORES-RECURRENTES.md:103 (las lecciones de los tests del guion, en §0.4).
+- **Lo que no recoge, y por qué:** S-7 (el gráfico 1) «va como contexto de los gráficos 2 a 6» (ACTIVAR-SESION-06.md:611-613; auditor): al sustituirlos, adónde va S-7 lo decide la rama de la preparación, que elige los días (decisión 11). VIDEO-JULIO.md:798-840 solo ordena (las láminas van antes de C): nada que hacer aquí.
+- **Las tres líneas de Technical Debt:**
+  - «`motor visor --hasta` no recorta las H4 de contexto, las listas ni el resumen del bróker» (PROJECT_STATE.md:104): **la lámina no lo hereda**, porque todo -los tres paneles, las órdenes, las posiciones y el texto- sale de una foto tomada en el corte, y los tests de F2 lo prueban. **No se paga aquí**: el código del visor es otro (`visor.py:974-1008`).
+  - «El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10)» (:102): la lámina las enseña si se aprueba la decisión 1. **No se paga aquí**: el visor recalcula el sesgo con su propio código (`_sesgo_de_sesion`); la anotación nueva le serviría, pero cambiar el visor no es de este encargo.
+  - «La zona que RN-005 liga al escenario vigente … se queda en el escenario anterior» (:144): no se toca; la lámina de 07-03 de las 09:35 enseña lo que hizo el motor.
+
+### 0.6 El tiempo y la memoria
+
+- El último `make check` (la apertura): 22 min 9 s, **PICO DE MEMORIA 309 MiB** en `test`.
+- Las corridas de TRAZAS-ABLACION (las más parecidas): F4.1, 364,9 s y 636,2 MiB; F4.2 (dos corridas), 565,6 s y 633,3 MiB (TRAZAS-ABLACION.md:645-646).
+- Estimación para esta rama: F4.1, unos 6 min; F4.2, unos 10 min; `motor laminas` de las diez sesiones, dos corridas (con la decisión 10), unos 10-12 min y algo más de memoria que F4.2 por las fotos (velas de la ventana por foto: tuplas de referencias a velas que ya están cargadas); y el ensayo en el clon desechable, otro tanto. Una a la vez, nunca junto a un `make check`. El clon necesita su `config/settings.local.toml` con `[rutas].data` absoluto (skill `comparar-con-main`; auditor, 5).
+
+### 0.7 El encargo frente al repo (auditor-encargo, informe tal cual en el Apéndice A)
+
+75 afirmaciones: 64 correctas, 1 incorrecta y 10 con matiz. Lo que cambia algo:
+- **INCORRECTA (26):** la regex de fechas está en `graficos_sesion.py:247-252`, no en :265-270. El fondo es cierto.
+- **Matiz que retiene F1 (63):** §0.10.
+- **Matiz (21, 22, 74):** las H4 saltadas y las líneas de M15 no las da ninguna pieza (§0.2), y añadirlas como registro toca `src/botsito/domain/`, que el contrato protege: decisiones 1 y 2.
+- **Matiz (50):** las horas perdidas en las ventanas de 07-15 y 07-17 (§0.1; decisión 9).
+- **Matiz (55):** §0 de RUMBO llama «comparables» a las cuatro corridas, y la del 14-oct se corrió con `--diagnostico-a35` y `--diagnostico-a44` (CORRIDA-CONSTRUCCION.md:618). Ya lo decía RUMBO; el recuadro no lo empeora. Lo digo y no lo toco.
+- **Matiz (9, 24, 29, 71):** «sin extenderla» es paráfrasis del informe de la sesión 6, no literal; T0 sale de un guion de anexo, y en `src/` lo equivalente es `medir`; BARRIDO:247 nombra la fila de 07-02, y lo de 07-03 se deduce; el revisor b3 pidió los comandos y el texto de los guiones fue cómo se cumplió. Ninguno cambia lo que se pide.
+- **Lo que el repo pide y el encargo no dice:** un campo nuevo de `MotorCableado` iría en las listas de `decisiones.py:121-134` (el diseño no añade ninguno); los literales de `TEXTOS_PROHIBIDOS` («07:00», «11:00», «15:00», «17:00», «23:00», «1:3», EURUSD, FTMO) y el 100000 no pueden ir en la tabla de frases ni en los rótulos (no van); las ventanas son literales en el guion (decisión 7); y el margen de PROJECT_STATE para las líneas nuevas de Technical Debt del cierre es de unos 2.500 bytes (22.494 de 25.000).
+
+### 0.8 Lo que no pude medir
+
+- La forma de la memoria en un `rechazado` o en un escenario terminado con su motivo en la ejecución medida: 07-03 no trae rechazos (`rechazados` no sale en §0.2). Lo que se sabe es del código (`zonas.py:420-427`, `primitivas_broker.py:741`).
+- Cuántas H4 que fijan el sesgo caen fuera de la ventana de cuatro días en las diez sesiones: `sesgo_h4_tope_velas` vale 60 (unos diez días de H4) y `velas_miradas` no se anota (decisión 1); se mide en F4.3.
+
+### 0.9 Exposiciones del día
+
+Dos filas de hoy en HOLDOUT-EXPOSICIONES.md: la de la apertura (el `make check`, que lee el M1 de marzo y calienta con el de junio) y la de la corrida de medida de 0.2 (julio, con el M1 de junio para calentar; `casos_reservados` y `casos_ocultos`, por recuento). Ninguna transcripción, ningún fotograma, ningún libro, ninguna operación del trader leída fuera de la compuerta (la corrida de 0.2 imprime el recuento de parejas de julio, 14, y nada de sus filas).
+
+### 0.10 F1, retenida: una referencia no casa
+
+Verificado contra el repo, punto por punto:
+- §0: 6.1 % (14-oct): CORRIDA-CONSTRUCCION.md:610 y RUMBO, nota (:48). 20.7 % (27-oct), la diaria de RECORRIDA-CONSTRUCCION: RECORRIDA-CONSTRUCCION.md:653 («41/198 (20.7 %)»), corrida el 2026-10-27 (HOLDOUT-EXPOSICIONES, filas de ese día). La de RESPALDO-M1, el 29-oct: RUMBO, nota (:49-51), y HOLDOUT-EXPOSICIONES, fila del 2026-10-29. 20.2 % y 40 parejas el 8-nov: RECORRIDA-CONSTRUCCION-2.md:565 y :575. **Casa.**
+- §4: ADR-0082 §4 (D4, :65-83): la capa es el EA de MQL5, y «se descarta el EA que recibe las decisiones de Python, porque exige un puente en vivo que choca con el tope de peticiones». R6.0 HECHA, confirmada por Aleks el 2026-11-09 (HOJA-DE-RUTA.md:591-599). Los puntos de pivote, a R4.3 (HOJA:384-386). ADR-0092 es la puerta para operar en vivo (ADR-0092 §3). **Casa.**
+- §5: A.5 (HOJA:689-697, la demo de FTMO y F17) y R5.7 (HOJA:483-489, el R de las parejas) **casan**. **No casa del todo: «el motor de Python no corre en una demo de FTMO sin un puente en vivo, que ADR-0082 §4 descarta»**. Lo que ADR-0082 §4 descarta (:80-82) es «el EA que recibe las decisiones de Python», y el motivo es el puente. La sombra temprana de RUMBO §5 (:39) es el motor «solo registrando», sin mandar decisiones. Que el ADR descarte también un puente que solo lee es más de lo que su texto dice (CLAUDE.md: «Nada afirma más de lo que su cita sostiene»). El encargo manda PARADA en ese caso y no corregirlo: **F1 no se commitea hasta tu respuesta (decisión 0).**
+
+## Lo que necesito que decidas
+
+0. **F1, el recuadro de §5.** Opciones: (a) lo commiteo literal, si das por bueno que ADR-0082 §4 descarta también un puente que solo lee; (b) me das el texto corregido (por ejemplo, que la sombra necesita un puente en vivo y que ADR-0082 §4 descarta el EA que recibe decisiones de Python por ese puente; o un ADR que lo diga) y lo commiteo literal. Recomiendo (b): el recuadro, tal como está, atribuye al ADR un descarte que no escribe. Coste de (a): una cita que dice más que su fuente, en un documento que lee `ids_citados.py`. §0 y §4 casan; F1 va en un solo commit, así que espera entero.
+1. **Qué H4 fijó el sesgo y cuáles saltó (ADR-0080 §10).** Opciones: (a) registro en el dominio: `ResultadoSesgo` gana el inicio de la vela que fija y, por cada saltada, su inicio y su motivo (el bucle ya los tiene; nada los lee para decidir), y `sesgo_h4_al_abrir` los anota; amplía el contrato a `src/botsito/domain/sesgo.py`; (b) solo en engine: anotar `velas_miradas`, que identifica exactamente la vela que fija y las saltadas, pero sin saber por qué se saltó cada una (la lámina diría los recuentos por motivo); (c) nada nuevo: solo los recuentos en el texto, sin marcar velas. Recomiendo (a): es lo que el encargo pide («las que saltó por el color») sin recalcular nada. Coste de (b): no distingue el color de la vela sin cuerpo cuando hay de las dos; de (c): la H4 que fija no se ve.
+2. **Qué zonas de control contó RN-009.** Opciones: (a) registro: en `domain/estructura_m1.py`, una función que devuelve los pivotes que cuenta (`zonas_de_control` pasa a ser su longitud, el mismo número), y el predicado de RN-009 los anota con el instante en que los evaluó; se dibujan en el M1 y la frase da «{n}, y admite {m}»; amplía el contrato a ese fichero; (b) solo el número en el texto, sin dibujarlas. Recomiendo (a): la pregunta 2 de la 7a (TRAZAS-ABLACION.md 5.5) es qué zonas cuenta el trader, y la lámina enseñaría cuáles contó el bot. Coste de (b): el trader ve «contó dos» sin ver cuáles.
+3. **De dónde salen los tramos de construcción del punto 6.** Opciones: (a) de `cobertura_material` de `knowledge/cases/kit/config.yaml` para los meses de `criterio.construccion` (enero del 2 al 30, abril del 1 al 29, julio del 1 al 17, agosto del 1 al 31); (b) una tabla en el código con la regla 2 tal cual, como `graficos_sesion.py:67-72` (abril hasta el 30). Recomiendo (a): sale de los datos, y es igual o más estricta que la regla 2 (abril pierde el 30, que no toca ninguna de las diez). Coste de (b): un literal más que hay que mantener a mano cuando entre un mes.
+4. **Qué líneas de M15 y hasta dónde.** Opciones: (a) las que el motor tuvo como liquidez de cada lado en algún cierre de la sesión hasta el corte; cada una desde la vela contraria de su pivote hasta la M1 que la toma (la del lado del sesgo, de la toma del motor), o, si dejó de ser la liquidez sin tomarse, hasta el último cierre en que lo era, en discontinuo; o hasta el corte; (b) igual, pero las que dejaron de ser la liquidez llegan también hasta el corte. Recomiendo (a): es lo que vio el motor, y «sin extenderla» (§3.6). Coste de (b): líneas que el motor ya no miraba parecen vivas.
+5. **El instante de nacimiento de lo que no es vela, y en qué panel.** Opciones: (a) cada elemento se dibuja si su nacimiento está permitido y dentro de la ventana del panel más ancho en que se dibuja, y en los paneles más estrechos entra desde el borde izquierdo (una línea de M15 nacida ayer se ve en el M1 desde su borde); (b) panel a panel: lo que nace antes de la ventana de un panel no sale en ese panel. Recomiendo (a): con (b), las líneas de M15 casi nunca saldrían en el M1, que es lo que pidió la decisión b de TRAZAS para 07-03. Coste de (a): ninguno para el holdout (el nacimiento sigue en la puerta).
+6. **El sesgo de 07-02 y 07-03, que lo fija una H4 de junio.** Opciones: (a) la lámina dice el sesgo («alcista») y «la vela H4 que lo fija viene de antes de la ventana», sin dibujarla ni dar su precio; (b) no dice ni el sentido. Recomiendo (a): el sentido ya lo dice la orden (compra o venta), las velas no son holdout (ADR-0021 §1) y el encargo lo prevé así (punto 6). Coste de (b): la lámina de una compra sin decir por qué compra.
+7. **Las ventanas (cuatro días, un día, una hora) y los 240 y 15 minutos.** Opciones: (a) constantes de dibujo en `laminas.py`, declaradas, porque no deciden nada (los marcos salen de `MINUTOS_H4` y `MINUTOS_M15` del código de agregación); (b) parámetros del registro. Recomiendo (a): no son reglas del trader. Coste de (b): tres parámetros nuevos en `knowledge/spec/`, que esta rama no toca.
+8. **Los cortes.** (a) tipo a, el último cierre en que la orden se colocó o se movió al precio del llenado; tipo b, el cierre `t` más tardío con `t · 60 000 < entrada en ms`; (b) en el tipo b, admitir `≤` (si la entrada cae justo en el cierre de la M1). Recomiendo (a): estrictamente antes de su entrada. Coste de (b): ninguno práctico; es el borde.
+9. **Más H4 para los días del rango, y las horas perdidas de las ventanas.** Opciones: (a) cuatro días; en F4.3, por lámina, si la H4 que fija el sesgo cae dentro, y si alguna cae fuera, lo enseño en la PARADA final para que decidas con eso; las ventanas de 07-15 y 07-17 con horas sin ticks se dibujan igual (las velas M1 están) y se dice en el informe; (b) más días de H4 en las sesiones del rango ya ahora. Recomiendo (a): se decide con la medida. Coste de (b): un número a ojo.
+10. **Comprobar en la propia herramienta que el recolector no cambia la corrida.** Opciones: (a) dos corridas por invocación, como `motor decisiones`: la base con el recolector y la base otra vez sin él; si los recuentos no son iguales, error y no se escribe nada; (b) una sola corrida, con la prueba en los tests, F4.1 y F4.2. Recomiendo (a): niega por defecto en cada uso. Coste: unos 5-6 min más por invocación.
+11. **S-7, el gráfico 1, que «va como contexto de los gráficos 2 a 6».** Opciones: (a) lo decide la rama de la preparación, que elige los días; (b) se decide aquí. Recomiendo (a): esta rama no elige días.
+12. **El nombre, las opciones, la tabla de frases y la de colores** (§0.3). Opciones: (a) las apruebas como están, o con lo que cambies; (b) otra forma de pedir las sesiones (un fichero, como `graficos_sesion.py --dias`). Recomiendo (a), con `--sesiones día:sesión`: una línea de comando que se copia al informe tal cual.
+
+Espero tu respuesta a la PARADA.
+
+## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
+
+> ## Auditoría del encargo · trabajo/laminas · 2026-11-10
+>
+> Resumen: he comprobado 75 afirmaciones. 64 son correctas, 1 es incorrecta y 10 tienen matiz. Hay 8 cosas que el repo pide y el encargo no recoge, más una que no aplica.
+>
+> No ejecuté pytest, make, `uv run` ni Python, y no escribí nada en el repo. La guardia me negó un `for f` que contaba líneas de los anexos de TRAZAS-ABLACION: no lo rodeé, y el dato sale de TRAZAS-ABLACION.md:1227.
+>
+> ### Afirmaciones
+> | # | Afirmación (del encargo) | Veredicto | Evidencia |
+> |---|---|---|---|
+> | 1 | La rama es el punto (1) de F, que es R4.5 (RUMBO §3), en el tramo R4 | CORRECTA | PROJECT_STATE.md:28 «(1) las láminas del bot (R4.5)»; HOJA-DE-RUTA.md:408-414 (Refs NA:F); contrato.yaml `tramo` es igual al `##` de HOJA:316 |
+> | 2 | main y origin/main están en e5394c5, sobre el merge 76bbe09; el tag stable/F38v es el último «- Tag:» | CORRECTA | `git rev-parse main origin/main` da e5394c57… dos veces; `stable/F38v-trazas-ablacion^{commit}` da 76bbe099; HISTORIA.md:16727 |
+> | 3 | No hay ninguna otra rama y stable/F38w-laminas no existe | CORRECTA (en local) | `git branch -a`: main, trabajo/laminas y origin/main; `git tag -l "stable/F38w*"` sale vacío |
+> | 4 | `motor decisiones` da la misma corrida con la cuenta por mes | CORRECTA | cli.py:2601-2603 y :2655 («lo mismo que motor arnes --simular») |
+> | 5 | ACTIVAR-SESION-06 §«Para la sesión 7», punto 10: «se rehacen SIN fecha y con el contexto que pidió» | CORRECTA | ACTIVAR-SESION-06.md:609-610 |
+> | 6 | La decisión de sustituir los gráficos 2 a 6 solo estaba en el chat | CORRECTA | No aparece en PROJECT_STATE, HOJA ni validation/. SESION-06-EXTRACCION.md:1246 y :1257 todavía dicen «se rehacen» |
+> | 7 | ev-v17-004910-11d48393: «no me dice los criterios por qué, o sea, no veo los trazos de M15» | CORRECTA | knowledge/evidence/v17/ev-v17-004910-11d48393.yaml:7-9 (la puntuación la añade el encargo; es del gráfico 2) |
+> | 8 | Lo de S-18, «me des un contexto un poco más claro […] de lo que ha ocurrido antes», está en §3.6 | CORRECTA | SESION-06-EXTRACCION.md:686-688 |
+> | 9 | La trendline hasta donde haya rompimiento, sin extenderla (§3.6, 45:00-46:08) | MATIZ | SESION-06-EXTRACCION.md:691-692. Solo «[45:26] yo suelo utilizar la trendline por defecto» es literal; «hasta donde haya rompimiento y sin extenderla» es paráfrasis de la sesión. Dibujar desde el pivote hasta la vela que toma es lectura del encargo |
+> | 10 | Decisión b de TRAZAS: la lámina de 07-03 enseña las líneas de M15; 1.14496 está a 4 puntos de 1.14500 | CORRECTA | TRAZAS-ABLACION.md:1392 y :819 |
+> | 11 | OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA está en arnes.py:80 | CORRECTA | arnes.py:80-82 |
+> | 12 | test_la_seccion_no_anade_ninguna_opcion_al_comando está en :341 | CORRECTA | test_diferencias_por_operacion.py:341-345 |
+> | 13 | `_opciones_diagnostico` no la usa `motor decisiones` | CORRECTA | cli.py:2282; solo la llaman :3199 (arnes) y :3225 (visor) |
+> | 14 | La bitácora de los cuatro días del anexo es la salida de F4.2 | CORRECTA | anexos/TRAZAS-ABLACION/bitacora.DIAGNOSTICO.{2026-04-13,07-02,07-03,07-14}.txt; TRAZAS:1227 (mismo sha256 que data/) |
+> | 15 | graficos_sesion.py es el precedente (BARRIDO §2.2) | CORRECTA | BARRIDO-SESION-6.md:547; SESION-DE-PREGUNTAS.md:96-98 |
+> | 16 | La regla 2 corta ANTES de la colocación y prohíbe enseñar la orden, el stop y el objetivo | CORRECTA | SESION-DE-PREGUNTAS.md:21-28 |
+> | 17 | La regla 2 la cambia el ADR del método, en la rama de preparación de la sesión 7 | CORRECTA | RUMBO-2026-11.md:13; HOJA:386 |
+> | 18 | El observador de MotorCableado está en cableado.py:311 | CORRECTA | cableado.py:308-311 |
+> | 19 | El Cierre que recibe el observador lleva el bróker y el estado vivos | CORRECTA | cableado.py:221-237 y :444-448 (son los objetos del motor) |
+> | 20 | F38v añadió los gates solo como registro | CORRECTA | HISTORIA.md:16704-16706 |
+> | 21 | ADR-0080 §10 solo anota CUÁNTAS H4 se saltaron, no cuáles | MATIZ | ADR-0080:166-179; domain/sesgo.py:69-76 (`ResultadoSesgo`, solo contadores). Saber cuáles exige tocar `src/botsito/domain/`, que contrato.yaml protege, o recalcular, que el punto 1 prohíbe. ADR-0080:178-179 lo asigna a «la rama de comprobaciones en el visor» |
+> | 22 | `motor decisiones` ya lee la liquidez de M15 de cada lado (`c.datos.liquidez_m15`) | MATIZ | decisiones.py:406 la llama solo dentro de `_linea_m15`, al nacer una zona, para comparar por igualdad, y no la escribe. motor.py:150-152 devuelve el pivote más reciente ya formado de cada lado en ese instante. No da la lista de líneas de la sesión ni la vela que toma cada una, que es lo que pide el punto 3 |
+> | 23 | `_sin_orden` compone los motivos sueltos y los frenos salen por otro camino | CORRECTA | decisiones.py:446-465 (texto); `ctx.no_enviadas` en :499-502 |
+> | 24 | El tipo b es la operación que patrones.py no llama T0 (ADR-0043) | MATIZ | patrones.py:18: T0 = «filas del trader con PAREJA». Es un guion de anexo que lee el texto del arnés; desde src/ lo equivalente es `emparejar` de cases.criterio_fidelidad (decisiones.py:40) |
+> | 25 | Ventanas: H4 desde 4 días antes, M15 desde el día anterior, M1 desde una hora antes; la última vela, en formación | CORRECTA | graficos_sesion.py:18-21, :73-77, :199-203 |
+> | 26 | La regex de fechas está en graficos_sesion.py:265-270 | INCORRECTA | La regex `_RE_FECHA` está en :247-252; :265-270 es `_panel` |
+> | 27 | Esa regex busca los meses sin límite de palabra, y «mayor» casa con «mayo» | CORRECTA | graficos_sesion.py:249-250 (sin `\b` en los meses) |
+> | 28 | Días de construcción: abril, julio del 1 al 17, agosto y enero del 2 al 30 | CORRECTA | SESION-DE-PREGUNTAS.md:21-22; ADR-0078:7; ADR-0079:7 |
+> | 29 | BARRIDO:247, la H4 recortada a principios de julio, «es el caso de 07-02 y 07-03» | MATIZ | :247 habla de la fila 18, que es 2026-07-02 07-11 (BARRIDO:232). 07-03 no se nombra; se deduce porque su H4 también empieza en junio |
+> | 30 | RECORRIDA-CONSTRUCCION.md:1628: «su contexto de H4 y M15 puede venir del día anterior…» | CORRECTA | :1628, punto 2 de la respuesta del consultor |
+> | 31 | La lista de horas perdidas está en anexos/RESPALDO-M1/horas_perdidas.py | CORRECTA | :18-24; idéntico (md5) en cinco anexos; RECORRIDA-CONSTRUCCION-2.md:98-103 |
+> | 32 | `_ticks_del_dia` está en simulacion.py:166 | CORRECTA | simulacion.py:166-180 |
+> | 33 | La salida va fuera del repo («Antes», paso 6) | CORRECTA | SESION-DE-PREGUNTAS.md:94-95 |
+> | 34 | Ensayos aislados, puntos 1 y 2 (worktree; la raíz por argumento) | CORRECTA | CLAUDE.md, «Ensayos aislados» |
+> | 35 | `comprobar_carpeta` exige que la salida esté dentro de data/ | CORRECTA | decisiones.py:62-76 |
+> | 36 | BARRIDO-SESION-6 lo ensayó en un worktree | CORRECTA | HOLDOUT-EXPOSICIONES.md:80 (`git worktree add --detach C:/cm/graficos 09afe20`) |
+> | 37 | test_no_business_literals mira todo src/botsito/ | CORRECTA | test_no_business_literals.py:3 (salvo config/registro.py) |
+> | 38 | El 0,8 se lee del registro (`stop_fraccion_caja`) | CORRECTA | parametros.yaml:602-611 |
+> | 39 | El literal "Europe/Madrid" está prohibido | CORRECTA | test_no_business_literals.py:43 |
+> | 40 | 0,25 y 0,5 llevan la exención `# no-negocio: <motivo>`, una por línea | CORRECTA | :25-26, :112, :125 |
+> | 41 | graficos_sesion.py usa `(i + 0.5) * paso` y `ZoneInfo("Europe/Madrid")` | CORRECTA | graficos_sesion.py:292 y :61 |
+> | 42 | `dias_de_construccion`, `casos_ocultos` y `casos_reservados` existen | CORRECTA | arnes.py:139; cases/holdout.py:351 y :456 |
+> | 43 | Cada corrida y cada make check calientan con el M1 de marzo y el de junio (Technical Debt) | CORRECTA | PROJECT_STATE.md:105 |
+> | 44 | Rango de H4: 07-06 (dos sesiones), 07-07 (dos), 07-15 11-15 y 07-17 11-15 | CORRECTA | VIDEO-JULIO.md:611-613, :651 y :655, todas «regla desconocida / el rango de H4» |
+> | 45 | 07-17 07-11 es «sin clase»; el 1 de julio nunca | CORRECTA | VIDEO-JULIO.md:654; RUMBO:17 |
+> | 46 | Zonas de control: 04-13 07-11, 07-02 11-15 y 07-03 11-15 (5.2, 5.3 y 5.5 punto 2) | CORRECTA | TRAZAS:878-880, :894-896, :951-956 |
+> | 47 | 07-14 11-15 tiene cuatro filas con gate RN-009 | CORRECTA | TRAZAS:881 |
+> | 48 | Hora perdida 2026-07-14T12Z = 14:00 de Madrid, dentro de la sesión | CORRECTA | horas_perdidas.py:22. En julio Madrid es UTC+2, así que 12Z son las 14:00, y la sesión 11-15 va de 09Z a 13Z |
+> | 49 | 07-03 07-11 entra por cuándo se coloca la orden (ADR-0064, 5.1 y 5.5 punto 1) | CORRECTA | TRAZAS:802-822, :945-950; título de ADR-0064 |
+> | 50 | Ninguna de las diez sesiones tiene una hora perdida | MATIZ | Ninguno de los días 04-13, 07-02, 07-03, 07-06, 07-07, 07-15 y 07-17 está en horas_perdidas.py:18-24. Pero la H4 de 07-15 11-15 contiene 07-14T12Z, y la H4 y la M15 de 07-17 11-15 contienen 07-16T11Z. Faltan ticks, no velas M1 |
+> | 51 | El día sintético de test_cableado no tiene toma, escenario, caja ni punto (la zona va inyectada) | CORRECTA | test_cableado.py:137-150 |
+> | 52 | La línea de Technical Debt del `toca_colocar_orden_limite` con clausura | CORRECTA | PROJECT_STATE.md:146; test_cableado.py:141-149 |
+> | 53 | Las tres líneas de Technical Debt de 0.5, tal como las cita | CORRECTA | PROJECT_STATE.md:104, :102 y :144 |
+> | 54 | La lámina de 07-03 a las 09:35 enseña lo que hizo el motor | CORRECTA | PROJECT_STATE.md:144; TRAZAS:822, :840-845 |
+> | 55 | F1 §0: 6.1 % (14-oct), y que las cuatro corridas son «comparables» | MATIZ | CORRIDA-CONSTRUCCION.md:610; RUMBO:48. Esa corrida 2 se hizo con `--diagnostico-a35` y `--diagnostico-a44` (CORRIDA-CONSTRUCCION:618); lo de «comparables» ya estaba en RUMBO |
+> | 56 | 20.7 % (27-oct), diaria de RECORRIDA-CONSTRUCCION | CORRECTA | RECORRIDA-CONSTRUCCION.md:603, :636, :653 |
+> | 57 | La diaria de RESPALDO-M1 se corrió el 29-oct (nota final), con 20.2 % | CORRECTA | RESPALDO-M1.md:765; HOLDOUT-EXPOSICIONES.md:85; RUMBO:49-51 |
+> | 58 | 20.2 % (8-nov), con 40 parejas antes y después | CORRECTA | RECORRIDA-CONSTRUCCION-2.md:565 y :575 («Parejas 40 (40)») |
+> | 59 | F1 §4: ADR-0082 §4 fija el EA y descarta que el EA reciba decisiones de Python por el puente y el tope de peticiones | CORRECTA | ADR-0082:65-83 |
+> | 60 | R6.0 está HECHA, confirmada el 2026-11-09 | CORRECTA | HOJA:591-599 |
+> | 61 | Los puntos de pivote van a R4.3, con el esquema de tres salidas | CORRECTA | HOJA:386; PROJECT_STATE.md:28 |
+> | 62 | La puerta para operar en vivo sigue siendo ADR-0092 | CORRECTA | HOJA:469-481; RUMBO:35 |
+> | 63 | F1 §5: «el motor de Python no corre en una demo de FTMO sin un puente en vivo, que ADR-0082 §4 descarta» | MATIZ | ADR-0082:80-82 descarta «el EA que recibe las decisiones de Python». La sombra temprana solo registra y no manda decisiones; extender el descarte a ella dice más que la cita |
+> | 64 | La capa de R6a y el grabador F17 en una prueba gratuita nueva (A.5) | CORRECTA | HOJA:689-697 |
+> | 65 | La tabla del R de las parejas es R5.7 | CORRECTA | HOJA:483-489 |
+> | 66 | validation/ids_citados.py lee todo docs/ | CORRECTA | src/botsito/validation/ids_citados.py:67-71 |
+> | 67 | F4.1: diff contra RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt | CORRECTA | El fichero existe; TRAZAS:654-656 dio 0 bytes; `grep -c "cuenta-por-mes\|data/"` en él da 0, así que el nombre de la salida no entra en el diff |
+> | 68 | F4.2 tiene la misma forma que TRAZAS:646 | CORRECTA | TRAZAS-ABLACION.md:646 |
+> | 69 | La CI se empuja como fix/laminas (RITUAL:102) y el único fallo aceptado es el de state check | CORRECTA | RITUAL.md:102-107 |
+> | 70 | La mutación de test_decisiones.py:123-135 | CORRECTA | test_decisiones.py:122-135 |
+> | 71 | El revisor b3 de TRAZAS pidió «el texto de cada guion» | MATIZ | b3 pidió los comandos (TRAZAS:1251). El texto en el anexo fue cómo se cumplió (:1055-1058, :1375) |
+> | 72 | BARRIDO, respuesta a la PARADA, punto 5: sin fechas | CORRECTA | BARRIDO-SESION-6.md:469 |
+> | 73 | La lección de F38t y F38u (medir los campos antes de usar una pieza) | CORRECTA | ERRORES-RECURRENTES.md:115 |
+> | 74 | «El contrato cubre exactamente eso»; «dónde vive el código» se propone en la fase 0 | MATIZ | contrato.yaml solo permite src/botsito/engine/ y cli.py, y protege domain/, spec/ y pyproject.toml. El encargo habla de «fuera de src/ y tests/», que es más amplio. Con ese contrato, el código ya tiene que vivir en engine |
+> | 75 | Los ids ADR-0043, ADR-0064, ADR-0069, ADR-0080, ADR-0082, ADR-0092 y RN-009 existen y tratan lo que dice el encargo | CORRECTA | docs/adr/0043, 0064, 0069, 0080, 0082 y 0092; strategy_spec.yaml:1546-1547 (RN-009, zonas de control) |
+>
+> ### Lo que el repo pide y el encargo no recoge
+> | # | Qué | Dónde lo pide | Evidencia |
+> |---|---|---|---|
+> | 1 | Todo campo nuevo de MotorCableado (por ejemplo, el registro para la lámina) tiene que ir en CAMPOS_DE_CONFIGURACION o en CAMPOS_DE_ESTADO; si no, `motor_nuevo` y su test fallan | engine/decisiones.py | decisiones.py:118-150 |
+> | 2 | El registro de qué H4 se saltaron por el color vive en domain/sesgo.py, que el contrato protege. Esa pieza del punto 3 exige ampliar el contrato (domain es puro: import-linter lo deja) o una PARADA | contrato.yaml; ADR-0080 §10 | domain/sesgo.py:56-76; pyproject.toml:68-79 |
+> | 3 | S-7 (gráfico 1) «va como contexto de los gráficos 2 a 6». Al sustituirlos, el encargo no dice adónde va S-7 | ACTIVAR-SESION-06.md §«Para la sesión 7», punto 10 | :611-613 |
+> | 4 | Lecciones del guion precedente: los tests no probaban la constante real, `main()` ni los alias de recorrer carpetas; el test del SVG era solo geométrico; lo que una marca enseña se mide antes en la salida | ERRORES-RECURRENTES (barrido-sesion-6) | ERRORES-RECURRENTES.md:103 |
+> | 5 | El clon desechable no tiene data/: necesita su config/settings.local.toml con `[rutas].data` absoluto | skill comparar-con-main | .claude/skills/comparar-con-main/SKILL.md:32, :53; cli.py:2705-2712 |
+> | 6 | TEXTOS_PROHIBIDOS también incluye «07:00», «11:00», «15:00», «17:00», «23:00», «1:3», EURUSD y FTMO, y NUMEROS_PROHIBIDOS el 100000. La tabla de frases y los rótulos no pueden llevarlos literales | test_no_business_literals | :18-45 |
+> | 7 | Las ventanas (4 días, 1 día, 1 hora, 240 y 15 minutos) son literales en el guion. CLAUDE.md, «Las cifras van en el registro» (ADR-0002), pide decidir si son parámetros o solo dibujo; el test de hoy no las caza | CLAUDE.md; ADR-0002 | graficos_sesion.py:73-77 |
+> | 8 | PROJECT_STATE mide 22.494 bytes y el tope es 25.000: las líneas de Technical Debt nuevas del cierre tienen unos 2.500 bytes de margen | test_project_state | `wc -c PROJECT_STATE.md` |
+> | 9 | (No aplica.) Las tres guardias de modelo.py: no se añade ningún sitio con `cita` y spec/ está protegido. import-linter: engine puede importar cases, spec y data, y viewer está por encima de engine. No hace falta tocar pyproject si el código vive en engine | CLAUDE.md; pyproject | pyproject.toml:95-117 |
+>
+> ### Comandos del encargo
+> | # | Comando | Existe y se ejecuta así | Evidencia |
+> |---|---|---|---|
+> | 1 | `uv run botsito motor arnes --simular --salida data/laminas/base.txt` | Sí | cli.py:3185-3199; `--simular` en :2333-2334 |
+> | 2 | `uv run botsito motor decisiones --carpeta data/laminas/bitacora --bitacora 2026-04-13,2026-07-02,2026-07-03,2026-07-14` | Sí. `--carpeta` tiene que estar dentro de data/ y cada día de `--bitacora` tiene que ser un día dev de construcción | cli.py:3226-3242, :2631, :2649-2654 |
+> | 3 | `motor laminas` | Todavía no existe; lo crea F3 | cli.py:3183-3247 (solo arnes, visor y decisiones) |
+> | 4 | `git push origin trabajo/laminas:refs/heads/fix/laminas` | Sí, en la forma de RITUAL | RITUAL.md:102 |
+> | 5 | `casos_reservados(repo)` y `casos_ocultos(repo)` | Son funciones; su forma de uso está en SESION-DE-PREGUNTAS | holdout.py:351, :456; SESION-DE-PREGUNTAS.md:71 |
+> | 6 | Las funciones de test_hoja_de_ruta.py sobre una copia | Existen `problemas_a` a `problemas_d` | test_hoja_de_ruta.py:121-187 |
+> | 7 | `CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1` y `/model` | No son del repo; la variable está en CLAUDE.md, «Trampas medidas» | — |
+>
+> **Tramo:** R4 existe. R4.5 lleva NA:F, depende de R4.4, que está HECHA (HOJA:403), y es la siguiente según el orden de F (PROJECT_STATE.md:28). No se adelanta nada.
+>
+> ### Lo que no pude comprobar
+> - **La CI de main (run 42759493730):** no tengo `gh`. La sesión dice haberlo medido en docs/validation/LAMINAS.md:12.
+> - **casos_reservados y casos_ocultos de las diez sesiones:** no ejecuté Python, por la restricción de no escribir cachés. Lo que sí medí, contando: cada uno de los siete días tiene 1 caso en knowledge/cases/dev (`ls | grep -c`); `grep -c` de esos días en retirados.yaml da 0; meses_reservados.yaml no nombra 2026-01, 04, 07 ni 08.
+> - **Ramas y tags en origin:** no consulté la red; solo las refs locales.
+> - **La guardia me negó un `for f`** con `wc -l` sobre los anexos de TRAZAS. No lo rodeé.
+> - **Si el sesgo se puede enseñar en 07-02 y 07-03:** allí el sesgo lo fija una H4 de junio (reservado; se lee para calentar). El encargo dice solo que esa H4 no se dibuja y que «viene de antes de la ventana»; si decir «sesgo alcista» enseña algo de junio no lo decide ningún ADR que yo haya encontrado (ADR-0021 §1 dice que las velas no son holdout).
+> - **La copia del encargo frente al chat**, y las decisiones del 2026-11-09 dadas en el chat.
+>
+> ### Lo más grave
+> 1. **Dos piezas del punto 3 no las da hoy ninguna pieza, y la forma prevista para añadirlas choca con el contrato.** «Las H4 que saltó por el color» solo existen como contadores en `domain/sesgo.py` (`ResultadoSesgo`), y `src/botsito/domain/` está en las rutas protegidas de contrato.yaml. «Las líneas de M15 de la sesión, desde el pivote hasta la vela que las toma» tampoco salen del motor: `liquidez_m15` solo devuelve el pivote más reciente de cada lado en el instante (motor.py:150), y la bitácora solo lo compara por igualdad (decisiones.py:401-411). Hay que acumularlo desde el observador o registrarlo en el motor, y cualquier campo nuevo de MotorCableado tiene que clasificarse en decisiones.py:121-134. Sin una decisión sobre el contrato, la lámina queda entre recalcular (prohibido) y PARADA.
+> 2. **F1 tiene una referencia que no casa del todo.** El recuadro de §5 atribuye a ADR-0082 §4 el descarte de una sombra que solo registra, y lo que el ADR descarta es el EA que recibe decisiones de Python (ADR-0082:80-82). El propio encargo manda PARADA si una referencia de F1 no casa.
+> 3. **La cita de la regex es falsa en el número de línea:** está en graficos_sesion.py:247-252, no en :265-270. El fondo es cierto: los meses van sin `\b`.
+> 4. **Ninguna de las diez sesiones tiene una hora perdida dentro de la sesión**, pero 07-15 11-15 y 07-17 11-15 las tienen en su ventana de H4 o M15 (07-14T12Z y 07-16T11Z). Ahí faltan ticks, no velas, así que el punto 6 tal como está escrito no las saca; conviene decirlo en la fase 0.
+
 ## Estado
 
-EN CURSO: rama abierta; la fase 0 está por hacer.
+PARADA de la fase 0 (2026-11-10): el diseño, la tabla de frases y la de colores esperan la respuesta del consultor; F1, retenida por la decisión 0. Ni una línea de código.
