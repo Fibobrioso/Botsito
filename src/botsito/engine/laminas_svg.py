@@ -295,8 +295,8 @@ def pagina(comp: Composicion, k: int, cabecera: str) -> str:
         '<!DOCTYPE html>\n<html lang="es">\n<head>\n<meta charset="utf-8">\n'
         f"<style>{ESTILO}</style>\n</head>\n<body>\n"
         f"<h1>Lámina {k}</h1>\n"
-        f"<p>{html.escape(cabecera)}. Corte: al cierre de la vela de M1 de las "
-        f"{hora(d.corte - 1, d.huso)}.</p>\n"
+        f"<p>{html.escape(cabecera)}. Corte: a las {hora(d.corte, d.huso)}, al cierre de la vela "
+        f"de M1 de las {hora(d.corte - 1, d.huso)}.</p>\n"
         f"{svg(d)}\n"
         f"<h2>Lo que tenía el bot en ese instante</h2>\n<ul>\n{frases}\n</ul>\n"
         "</body>\n</html>\n"

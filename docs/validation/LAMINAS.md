@@ -470,6 +470,19 @@ Las declara la fila de hoy de HOLDOUT-EXPOSICIONES («las corridas de F4»), esc
 - El diff de cada `bitacora.DIAGNOSTICO.<día>.txt` contra el de `docs/validation/anexos/TRAZAS-ABLACION/` da **0** bytes en los cuatro.
 - La anotación nueva de RN-009 y las del sesgo no salen en la bitácora (la bitácora no las lee), y el arnés da los mismos bytes.
 
+**F4.3, el ensayo en el clon desechable (con el código de `3f800b5`).**
+- El clon se creó con `git worktree add --detach <carpeta de trabajo>/wt-laminas HEAD`, con su `config/settings.local.toml` (`[rutas].data = "C:/Users/USER/Desktop/Bot v3/data"`, absoluto).
+- La orden, desde el clon: `uv run botsito motor laminas --sesiones 2026-07-06:07-11,2026-07-06:11-15,2026-07-07:07-11,2026-07-07:11-15,2026-07-15:11-15,2026-07-17:11-15,2026-04-13:07-11,2026-07-02:11-15,2026-07-03:11-15,2026-07-03:07-11 --salida <carpeta de trabajo>/ensayo-laminas`.
+- La base con y sin el recolector da `(31, 192, 24, 1150, 0, 32, 0)` las dos veces.
+- Salieron 47 láminas en 58 ficheros: `TIEMPO: 580.6 s; MEMORIA: pico del proceso de 646.0 MiB`, exit 0.
+- `git status` sale vacío en el repo y en el clon: nada se escribió dentro de ninguno de los dos.
+- **Lo que destapó: un error mío, ya corregido.** En 23 láminas salía «La caja viene de antes de la ventana» con la caja recién formada. La caja de la orden que se coloca en el corte nace en ese mismo cierre: `Zona.formada` es el cierre del breaker, no el inicio de una vela. La comprobación del nacimiento exigía «antes del corte» sobre ese cierre. Ahora compara su M1 (`formada - 1`), y lo prueba `test_la_caja_que_nace_en_el_propio_cierre_del_corte_se_dibuja`.
+- **La cabecera dice ahora las dos horas,** el corte y la vela («Corte: a las 08:02, al cierre de la vela de M1 de las 08:01»). La toma dice la hora del cierre, y la cabecera solo decía la de la vela.
+- **Contra la bitácora de 2026-07-03 del anexo de TRAZAS-ABLACION:**
+  - las órdenes y sus precios casan con las de la bitácora;
+  - las «3 órdenes anteriores se retiraron sin llenarse» de las 08:01 y de las 11:12 casan con o1-o3 y o12-o14 canceladas;
+  - el punto de 1.14496 a 4 puntos de la toma en 1.14500 sale en la lámina de las 08:01 (decisión b de TRAZAS-ABLACION).
+
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
 > ## Auditoría del encargo · trabajo/laminas · 2026-11-10

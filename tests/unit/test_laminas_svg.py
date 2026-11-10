@@ -158,6 +158,20 @@ def test_el_dibujo_corta_por_el_corte_aunque_la_foto_traiga_velas_despues() -> N
     assert sucio == limpio
 
 
+def test_la_caja_que_nace_en_el_propio_cierre_del_corte_se_dibuja() -> None:
+    """El ensayo de F4.3 lo destapo: la caja de la orden que se coloca en el corte nace en ese
+    mismo cierre (`formada` = el corte, el cierre del breaker), y su vela es la ultima M1."""
+    zona = laminas.ZonaFoto(
+        "zona:1", "compra", 110_010, 109_980, "primer_esquema", CORTE - 3, CORTE
+    )
+    texto, comp = _pagina(foto_base(zonas=(zona,)))
+    assert "La caja va de 1.10010 (el 0) a 1.09980 (el 1)." in comp.frases
+    assert 'class="caja compra"' in texto
+    fuera = dataclasses.replace(zona, formada=SESION - 60)  # su vela, antes de la ventana de M1
+    _, comp = _pagina(foto_base(zonas=(fuera,)))
+    assert "La caja viene de antes de la ventana." in comp.frases
+
+
 def test_lo_nacido_antes_de_la_ventana_no_se_dibuja_ni_da_precio() -> None:
     """Las dos lineas y la H4 que fija nacen antes de sus ventanas: no salen, y la sustentacion
     dice que vienen de antes. La toma, dentro, sale sin el precio de la linea."""

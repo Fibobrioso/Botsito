@@ -728,6 +728,7 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
     frases: list[str] = []
 
     def dentro(nacimiento: int | None, desde: int) -> bool:
+        """`nacimiento` es el INICIO de la vela en que nace (no un cierre)."""
         return nacimiento is not None and desde <= nacimiento < f.corte
 
     # el sesgo y sus H4
@@ -866,7 +867,8 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
         if zona.por not in FRASE_ESQUEMA:
             raise LaminaError(f"esquema {zona.por!r} sin frase")
         frases.append(FRASE_ESQUEMA[zona.por])
-        if dentro(zona.formada, f.desde_m1):
+        # `formada` es el cierre del breaker: nace en la M1 que empieza un minuto antes
+        if zona.formada is not None and dentro(zona.formada - 1, f.desde_m1):
             caja = zona
             niveles = _niveles(zona, lectura)
             frases.append(
