@@ -106,3 +106,41 @@ Dado por Aleks (consultor) el 2026-11-10. Copiado tal cual:
 > CI: la rama escribe ficheros fuera del repo y añade un subcomando, así que por RITUAL.md se empuja como fix/laminas (RITUAL.md:102) y pasa la CI de Linux antes de declararla lista; da el número de run. El único fallo aceptado es el de state check por el nombre fix/.
 > REVISOR (agente revisor), con estos alcances: (1) que nada cambie lo que el motor decide (F4.1, F4.2, golden y mutación); (2) que `motor arnes`, `motor visor` y `motor decisiones` no cambien; (3) el corte: nada posterior al instante en ninguna lámina, ni en el dibujo ni en el texto, y ninguna referencia viva del Cierre; (4) sin fechas, ids, lote, R, dinero ni porcentajes, la tabla de frases cerrada y las exenciones de test_no_business_literals; (5) el holdout, el negar por defecto (también de lo que no es vela) y HOLDOUT-EXPOSICIONES; (6) que F1 sea literal y deje intacto el texto de debajo de cada recuadro. Su informe, pegado al final del tuyo.
 > Termina con la PARADA final: dónde están las láminas para que las revise (Aleks las pondrá a mi alcance), lo que no te convenza de ellas, y las propuestas para la orden de cierre, cada una comprobada con las funciones de tests/unit/test_hoja_de_ruta.py sobre una copia: el texto nuevo de F (sale el (1); F sigue viva, así que ningún encabezado de HECHA); R4.5 HECHA, sin NA:F en ningún sitio de su bloque, solo si yo las doy por revisadas, con su «Hecho cuando» reescrito («la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta»), porque los días de la 7a los elige la rama de la preparación, que depende de R4.5; y las líneas de Technical Debt nuevas. Y la frase «Rama lista para revisión, NO cerrada.»
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA de la fase 0», con su fecha, y aplícala punto por punto (skill fase-cero). Buena fase 0: el diseño queda aprobado con los cambios de abajo.
+>
+> 0. F1: (b). Tenías razón: ADR-0082 §4 solo descarta por escrito el EA que recibe las decisiones de Python. Commitea F1 con este texto para §5 (sustituye al del encargo) y con §0 ampliado con el matiz 55 del auditor; §4 queda literal como estaba. Verifica de nuevo las referencias nuevas antes del commit y, si alguna no casa, PARADA.
+>    - §0:
+>      > **Enmienda del 2026-11-10** (trabajo/laminas; decisión del consultor del 2026-11-09, precisada en la respuesta a la PARADA de la fase 0). Son cuatro corridas diarias, no tres: faltaba la del 27-oct (RECORRIDA-CONSTRUCCION.md, diaria 20.7 %), y la de RESPALDO-M1.md se corrió el 29-oct (nota final). Léase: «Cuatro corridas diarias: 6.1 % (14-oct), 20.7 % (27-oct), 20.2 % (29-oct) y 20.2 % (8-nov, tras activar la sesión 6 entera, con 40 parejas antes y después).» La del 14-oct se corrió con los diagnósticos de A-35 y A-44 (CORRIDA-CONSTRUCCION.md:574 y :618), así que no es del todo comparable con las otras tres. El resto de §0 no cambia.
+>    - §5:
+>      > **Enmienda del 2026-11-10** (trabajo/laminas; decisión del consultor del 2026-11-09, precisada en la respuesta a la PARADA de la fase 0). La «sombra temprana» no se hace. Para correr el motor de Python en una demo de FTMO, aunque solo registrara, haría falta un puente en vivo entre Python y el MT5. ADR-0082 §4 descarta por escrito el EA que recibe las decisiones de Python; un puente que solo lea no lo nombra, pero las razones del mismo §4 valen igual para él: una capa en Python habría que tirarla al llegar F29, y un bucle de Python que sondea gasta presupuesto de peticiones. Solo lo abriría un ADR nuevo. En su lugar van la capa de R6a y el grabador F17, en una prueba gratuita nueva de FTMO (A.5 de la hoja de ruta). La tabla del R de las parejas es R5.7. El resto de §5 no cambia.
+> 1. (a). Registro en domain/sesgo.py: ResultadoSesgo gana el inicio de la vela que fija y, por cada saltada, su inicio y su motivo, y sesgo_h4_al_abrir los anota. Nada los lee para decidir. Amplía el contrato a ese fichero en un commit propio, antes del código, con su motivo. Los tests de sesgo que ya existen pasan sin tocarlos, y uno nuevo comprueba que, sobre los mismos casos, el sesgo y los contadores salen idénticos con los campos nuevos.
+> 2. (a). En domain/estructura_m1.py, la función que devuelve los pivotes que cuenta, con zonas_de_control = su longitud. Un test comprueba que el número sale igual que antes en todos los casos de los tests actuales (y en uno con 0, 1 y 2 zonas). Mismo commit de contrato que el punto 1. F4.1 y F4.2 a 0 bytes siguen siendo la prueba de fondo.
+> 3. (a), de cobertura_material. El 30 de abril queda fuera (el libro no lo cubre, config.yaml:72-76), aunque la regla 2 diga «abril». No toques la regla 2: la diferencia la recoge el ADR del método. Dilo en el informe.
+> 4. (a).
+> 5. (a). El nacimiento sigue en la puerta: lo que nace en un minuto no permitido no sale en ningún panel.
+> 6. (a).
+> 7. (a), constantes de dibujo declaradas en el informe.
+> 8. (a), estrictamente antes.
+> 9. (a). En F4.3, por lámina: si la H4 que fija el sesgo cae dentro de la ventana. Si en alguna sesión del rango cae fuera en más de la mitad de sus láminas, lo enseñas en la PARADA final con la cifra; no amplíes la ventana sin respuesta.
+> 10. (a). Los 5-6 minutos más valen la pena.
+> 11. (a). S-7 lo decide la rama de la preparación.
+> 12. (a): `motor laminas --sesiones día:sesión,... --salida <fuera del repo>`, y la tabla de colores como primera versión. La tabla de frases queda aprobada con estos cambios:
+>    - detenido_por_tope lo fijan dos reglas: RN-020 (la pérdida máxima del día del trader) y RN-029 (el freno diario de la cuenta), y RN-020 lee ese mismo hecho en su `cuando` (strategy_spec.yaml:2112). La lámina dice quién lo fijó según la regla que lo fijó (evento.fijados del cierre en que se encendió, guardado en la foto), nunca por el hecho solo ni porque RN-020 salga disparada:
+>      · de RN-020: «Ha llegado a la pérdida máxima del día del trader: no abre más hasta la primera sesión del día siguiente.» (perdida_trader_reinicio = primera_sesion_dia_siguiente, parametros.yaml:1593-1612; ADR-0089);
+>      · de RN-029: «Ha saltado el freno diario de la cuenta: no abre más hasta el cambio de día de la cuenta.»;
+>      · si la foto no permite saber cuál de las dos: error que lo nombra (negar por defecto).
+>      El motivo del gate RN-020 pasa a ser «ha llegado a la pérdida máxima del día del trader», con la misma regla de origen. Ninguna frase hereda «el único freno del día» del título de RN-020, que ya no es cierto por RN-036 y RN-029.
+>    - «Escenario {n} de la sesión.» lleva jerga del repo. Cámbiala por «Sigue la liquidez de M15 número {n} de esta sesión.». Si esa liquidez se tomó antes de la ventana (toma_antes_de_la_ventana = cuenta), la frase de la toma ya dice «viene de antes de la ventana».
+>    - RN-005: «ruido» es palabra del trader (ev-v3-001600-ed45b091, «por debajo de esta liquidez de m15 es ruido»; ev-v3-001725-bca9714b), pero «lado de ruido» no. Motivo: «lo que se forma queda en la zona de ruido de la liquidez de M15, donde no se busca entrada».
+>    - RN-016: la frase vale. El informe dice que una pérdida por equal no gasta intento (strategy_spec.yaml:1874-1876) y que la cuenta empieza de cero con cada liquidez nueva.
+>    - En el informe, cada frase de la tabla lleva su fuente (la regla o el campo, con fichero:línea), y el revisor la comprueba con el alcance (4).
+>    Resto de la tabla, aprobada tal cual.
+>
+> Lo demás de la fase 0 queda aprobado como está (§0.3 y §0.4: el enganche por decisiones.motor_nuevo sin campo nuevo en MotorCableado, las fotos congeladas, los dos fixtures, el test de importaciones y el ensayo en el clon con su settings.local.toml). Sigue con F2, F3 y F4 con la PARADA condicional del encargo, y termina con la PARADA final como dice el encargo.

@@ -5,6 +5,9 @@ tramo: "R4 · La sesión 5 con el trader y su activación"
 rutas_permitidas:
   - src/botsito/engine/
   - src/botsito/cli.py
+  # respuesta del consultor a la PARADA de la fase 0 (2026-11-10), puntos 1 y 2: solo REGISTRO (la H4 que fija el sesgo y las saltadas; los pivotes que cuenta RN-009), nada lo lee para decidir
+  - src/botsito/domain/sesgo.py
+  - src/botsito/domain/estructura_m1.py
   - tests/
   - docs/validation/LAMINAS.md
   - docs/validation/anexos/LAMINAS/
@@ -23,7 +26,6 @@ rutas_protegidas:
   - tools/mql5/
   - corpus/
   - data/manifests/
-  - src/botsito/domain/
   - src/botsito/spec/
   - docs/plan/HOJA-DE-RUTA.md
   - docs/runbooks/SESION-DE-PREGUNTAS.md
