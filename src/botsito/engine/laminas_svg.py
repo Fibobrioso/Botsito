@@ -246,8 +246,9 @@ def _m1(p: _Panel, d: Dibujo) -> list[str]:
     for inicio, nivel in d.control:
         x = p.centro(inicio)
         if x is not None:
-            partes.append(
-                f'<rect class="zona-control" x="{_f(x - 4)}" y="{_f(p.y(nivel) - 4)}" width="8" '
+            partes.append(  # sin pasar del borde del corte (revisor, b-m3)
+                f'<rect class="zona-control" x="{_f(min(x - 4, p.derecha - 8))}" '
+                f'y="{_f(p.y(nivel) - 4)}" width="8" '
                 f'height="8" fill="{COLOR["control"]}"/>'
             )
     for o in d.ordenes:

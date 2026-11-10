@@ -57,6 +57,11 @@ H4 = agregar(list(M1), 240, REGISTRO.hora("anclaje_h4"))
 FIJA, SALTADA_1, SALTADA_2 = (int(v.inicio) for v in H4[-5:-2])
 TOMA = CORTE - 30
 FORMADO = CORTE - 185
+# los niveles de las dos lineas: el extremo de una M1 de la ventana de M15 anterior a que se
+# formen, como en la corrida (el nivel de un pivote es el extremo de su racha; revisor, b-I3)
+ALTO_M15 = int(M1[CORTE - 305 - DESDE].maxima)
+BAJO_M15 = int(M1[CORTE - 210 - DESDE].minima)
+PRECIO_BAJO = laminas.precio(BAJO_M15, ESCALA)
 
 
 def foto_base(**cambios: Any) -> laminas.Foto:
@@ -82,7 +87,7 @@ def foto_base(**cambios: Any) -> laminas.Foto:
         ),
         escenarios=(
             laminas.EscenarioFoto(
-                1, laminas.TomaFoto(TOMA, "compra", "bajo", 109_990, FORMADO), ("zona:1",), None
+                1, laminas.TomaFoto(TOMA, "compra", "bajo", BAJO_M15, FORMADO), ("zona:1",), None
             ),
         ),
         zonas=(
@@ -98,8 +103,8 @@ def foto_base(**cambios: Any) -> laminas.Foto:
         movidas=frozenset(),
         posiciones=(),
         lineas=(
-            laminas.LineaM15("alto", 110_060, CORTE - 300, CORTE - 290, CORTE - 280, CORTE - 100),
-            laminas.LineaM15("bajo", 109_990, CORTE - 200, FORMADO, CORTE - 180, CORTE),
+            laminas.LineaM15("alto", ALTO_M15, CORTE - 300, CORTE - 290, CORTE - 280, CORTE - 100),
+            laminas.LineaM15("bajo", BAJO_M15, CORTE - 200, FORMADO, CORTE - 180, CORTE),
         ),
         prohibido=(),
         quizas=(),
@@ -142,7 +147,7 @@ def test_la_sustentacion_de_la_foto_con_todo() -> None:
         "Antes de esa vela saltó 2 velas H4 que rompieron un extremo y cerraron del color "
         "contrario.",
         "Liquidez de M15 tomada: una vela de M1 cerró con cuerpo por debajo del bajo de M15 en "
-        "1.09990, a las 09:30.",
+        f"{PRECIO_BAJO}, a las 09:30.",
         "Sigue la liquidez de M15 número 1 de esta sesión.",
         "Es el primer esquema.",
         "La caja va de 1.10010 (el 0) a 1.09980 (el 1).",
@@ -172,12 +177,26 @@ def test_la_caja_que_nace_en_el_propio_cierre_del_corte_se_dibuja() -> None:
     assert "La caja viene de antes de la ventana." in comp.frases
 
 
+def test_una_linea_cuyo_nivel_solo_lo_marca_una_vela_de_antes_no_sale() -> None:
+    """Revisor, b-I3: la contraria de la linea nace dentro, pero ninguna M1 de la ventana de M15
+    marca su nivel antes de que se forme (lo marcaria la racha de antes de la ventana): la linea no
+    se dibuja ni da precio, y la toma de esa linea dice que viene de antes."""
+    nivel = BAJO_M15 - 500  # ninguna M1 del zigzag llega ahi
+    lineas = (laminas.LineaM15("bajo", nivel, CORTE - 200, FORMADO, CORTE - 180, CORTE),)
+    toma = laminas.TomaFoto(TOMA, "compra", "bajo", nivel, FORMADO)
+    f = foto_base(lineas=lineas, escenarios=(laminas.EscenarioFoto(1, toma, ("zona:1",), None),))
+    texto, comp = _pagina(f)
+    assert "linea-m15" not in texto and laminas.precio(nivel, ESCALA) not in texto
+    assert "Una línea de M15 de esta sesión viene de antes de la ventana." in comp.frases
+    assert any("la línea que toma viene de antes de la ventana" in x for x in comp.frases)
+
+
 def test_lo_nacido_antes_de_la_ventana_no_se_dibuja_ni_da_precio() -> None:
     """Las dos lineas y la H4 que fija nacen antes de sus ventanas: no salen, y la sustentacion
     dice que vienen de antes. La toma, dentro, sale sin el precio de la linea."""
     f = foto_base(desde_m15=CORTE - 150, desde_h4=SALTADA_2)
     texto, comp = _pagina(f)
-    assert "linea-m15" not in texto and 'class="h4-fija"' not in texto and "1.09990" not in texto
+    assert "linea-m15" not in texto and 'class="h4-fija"' not in texto and PRECIO_BAJO not in texto
     assert "La vela H4 que fija el sesgo viene de antes de la ventana." in comp.frases
     assert "2 líneas de M15 de esta sesión vienen de antes de la ventana." in comp.frases
     assert any(

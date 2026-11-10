@@ -228,33 +228,90 @@ def _recolectado(
     return rec
 
 
+FRENO = "detenido_por_racha"
+FRENO_EN = SEGUNDA + 5  # despues de la segunda orden y antes del corte de tipo b
+
+
+class ConFreno(laminas.Recolector):
+    """El recolector de verdad, y despues de el un observador que enciende un freno en FRENO_EN:
+    algo del ESTADO que cambia despues del corte de la primera lamina (revisor, b-I2)."""
+
+    def __call__(self, c: Cierre) -> None:
+        super().__call__(c)
+        if c.instante == FRENO_EN:
+            c.estado.hechos[FRENO] = "hasta_el_dia_siguiente"
+
+
+class Vivo(ConFreno):
+    """La MUTACION: guarda el cierre vivo de la colocacion de o1 para hacer su foto al final, como
+    haria un dibujo que guardara la referencia en vez de copiar (revisor, b-I1)."""
+
+    def __call__(self, c: Cierre) -> None:
+        super().__call__(c)
+        if c.instante == MINUTO_ZONA:
+            self.cierre_vivo = c
+
+    def foto_al_final(self) -> laminas.Foto:
+        f = self.fotos_a[(CLAVE, "o1")]
+        return self._foto(self._dias[CLAVE], self.cierre_vivo, f.colocadas, f.movidas, ())
+
+
+def lo_del_futuro(f: laminas.Foto) -> list[str]:
+    """Lo que la foto de la colocacion de o1 (corte MINUTO_ZONA) no puede llevar: todo nace
+    despues. Es la comprobacion que la mutacion tiene que romper."""
+    malo = []
+    if any(int(v.inicio) >= f.corte for v in f.m1):
+        malo.append("velas posteriores al corte")
+    if f.orden("o2") is not None:
+        malo.append("la segunda orden, que nace una hora despues")
+    if f.posiciones:
+        malo.append("el llenado de o1")
+    if f.hecho(FRENO) is not None:
+        malo.append("el freno, que se enciende despues")
+    if any(e.zonas != ("zona:1",) for e in f.escenarios) or f.zona("zona:2") is not None:
+        malo.append("la segunda caja, ligada al escenario despues")
+    return malo
+
+
+def _con(registro: Registro, vocabulario: dict[str, Any], clase: type) -> Any:
+    motor = _plantilla(registro, vocabulario)
+    rec = clase(_limites(registro, vocabulario), {CLAVE: frozenset({TRADER_B})}, PUERTA)
+    motor.observador = rec
+    motor.correr_dia(_dia(registro, _mercado(RUTA)))
+    return rec
+
+
 def test_la_foto_no_mira_al_futuro(registro: Registro, vocabulario: dict[str, Any]) -> None:
-    rec = _recolectado(registro, vocabulario)
+    """Despues del corte de la primera lamina cambian el broker (o1 se llena, nace o2), la memoria
+    (zona:2 entra en el escenario) y el estado (se enciende un freno): su foto no lleva nada. La de
+    tipo b, posterior, si lleva lo que ya habia pasado."""
+    rec = _con(registro, vocabulario, ConFreno)
     a = rec.fotos_a[(CLAVE, "o1")]
     assert a.corte == MINUTO_ZONA and a.orden("o1").estado == "colocada"
-    assert all(int(v.inicio) < a.corte for v in a.m1) and int(a.m1[-1].inicio) == a.corte - 1
-    assert not a.posiciones and a.orden("o2") is None  # ni el llenado ni la segunda
+    assert int(a.m1[-1].inicio) == a.corte - 1
+    assert lo_del_futuro(a) == []
     b = rec.fotos_b[(CLAVE, TRADER_B)]
-    assert b.orden("o2") is not None and b.orden("o2").estado == "colocada"
+    # el freno de la racha (RN-036) retira la orden pendiente: en el corte b, o2 ya esta cancelada
+    assert b.orden("o2") is not None and b.orden("o2").estado == "cancelada"
+    assert b.hecho(FRENO) is not None and b.zona("zona:2") is not None
     assert all(int(v.inicio) < TRADER_B for v in b.m1)
     assert all(p.cerrada_ms is None or p.cerrada_ms < TRADER_B * 60_000 for p in b.posiciones)
 
 
-def test_un_recolector_con_la_referencia_viva_ve_el_futuro_y_el_test_lo_caza(
+def test_la_mutacion_de_la_referencia_viva_rompe_la_comprobacion(
     registro: Registro, vocabulario: dict[str, Any]
 ) -> None:
-    """La mutacion de la referencia viva: guardar el `broker` del cierre en vez de copiarlo deja en
-    la foto de la colocacion de o1 la orden o2, que nace una hora despues."""
-
-    class Vivo(laminas.Recolector):
-        def __call__(self, c: Cierre) -> None:
-            super().__call__(c)
-            if c.instante == MINUTO_ZONA:
-                self.vivo = c.broker
-
-    rec = _recolectado(registro, vocabulario, Vivo)
-    assert rec.fotos_a[(CLAVE, "o1")].orden("o2") is None
-    assert "o2" in rec.vivo.ordenes  # lo que habria visto un dibujo hecho al final
+    """La mutacion se EJECUTA: la foto hecha al final desde el cierre guardado lleva las cuatro
+    cosas posteriores al corte, y `lo_del_futuro` las caza; la foto copiada en su instante,
+    ninguna."""
+    rec = _con(registro, vocabulario, Vivo)
+    assert lo_del_futuro(rec.fotos_a[(CLAVE, "o1")]) == []
+    assert lo_del_futuro(rec.foto_al_final()) == [
+        "la segunda orden, que nace una hora despues",
+        "el llenado de o1",
+        "el freno, que se enciende despues",
+        "la segunda caja, ligada al escenario despues",
+    ]
 
 
 # --------------------------------------------------------------------------------- las laminas
@@ -278,7 +335,10 @@ def test_salen_exactamente_la_de_la_orden_llenada_y_la_del_trader_sin_pareja_en_
     assert "En esta liquidez ya lleva un stop." in b
     # la operacion del trader no se dibuja: ni su direccion ni su precio
     assert "1.10077" not in b and "de venta" not in b
-    assert resumen == ["sesion-01: 2 laminas; la H4 que fija el sesgo, dentro en 0 y fuera en 2"]
+    assert resumen == [
+        "sesion-01: 2 laminas (1 de tipo a y 1 de tipo b); la H4 que fija el sesgo, dentro "
+        "en 0 y fuera en 2"
+    ]
 
 
 def test_las_marcas_salen_con_su_clase_y_ninguna_a_la_derecha_del_corte(
@@ -291,8 +351,14 @@ def test_las_marcas_salen_con_su_clase_y_ninguna_a_la_derecha_del_corte(
                   'class="toma"'):  # fmt: skip
         assert clase in a, clase
     derecha = 1600 - 110
-    for x in re.findall(r'\sx2?="([\d.]+)"', a):
-        assert float(x) <= derecha + 1e-6 or float(x) >= derecha + 8  # los precios del eje
+    for etiqueta in re.findall(r"<(?:line|rect|circle|text)\b[^>]*>", a):
+        if 'class="precio"' in etiqueta or 'width="1600"' in etiqueta:
+            continue  # los precios del eje derecho y el fondo
+        xs = [float(x) for x in re.findall(r'\s(?:x|x1|x2|cx)="([\d.]+)"', etiqueta)]
+        ancho = re.search(r'\swidth="([\d.]+)"', etiqueta)
+        if ancho and etiqueta.startswith("<rect"):
+            xs.append(xs[0] + float(ancho.group(1)))
+        assert all(x <= derecha + 0.05 for x in xs), etiqueta
 
 
 def test_sin_fechas_ids_ni_dinero_y_determinista(
@@ -408,6 +474,36 @@ def test_la_tabla_de_gates_es_la_de_las_vigente_que_prohiben() -> None:
         and ((getattr(r, "forma", None) or {}).get("entonces") or {}).get("prohibe")
     }  # fmt: skip
     assert set(laminas.MOTIVO_GATE) == prohiben and len(prohiben) == 15
+
+
+def test_cada_hecho_del_vocabulario_tiene_su_frase_o_su_motivo(
+    vocabulario: dict[str, dict[str, Any]],
+) -> None:
+    """La tabla cerrada de los hechos se enumera desde la spec (revisor, b-B4): cada hecho de regla
+    esta en la tabla, con frase o sin ella a proposito, y cada hecho del broker, en su lectura.
+    Quitar una frase de la tabla rompe este test."""
+    hechos = vocabulario["hechos"]
+    de_regla = {n for n, h in hechos.items() if h.get("origen") == "regla"}
+    de_broker = {n for n, h in hechos.items() if h.get("origen") == "broker"}
+    tratados = {
+        laminas.HECHO_SESGO, laminas.HECHO_LIQUIDEZ, laminas.HECHO_TOPE,
+        *laminas.HECHOS_SIN_FRASE, *laminas.FRASE_DETENIDO,
+    }  # fmt: skip
+    assert de_regla == tratados
+    assert de_broker == {laminas.BROKER_OPERACION, laminas.BROKER_PENDIENTE}
+    assert {s for s, _ in laminas.FRASE_SESGO} == {"alcista", "bajista", "insuficiente", "ambiguo"}
+    assert set(laminas.FRASE_TOPE_POR_REGLA) == {"RN-020", "RN-029"}
+
+
+@pytest.mark.parametrize("hecho", sorted(laminas.FRASE_DETENIDO))
+def test_cada_freno_dice_su_frase(registro: Registro, hecho: str) -> None:
+    from tests.unit.test_laminas_svg import foto_base
+
+    f = foto_base(hechos=(("sesgo", "alcista"), (hecho, "si")))
+    comp = laminas.componer(
+        laminas.Lamina(laminas.Pedida(1, CLAVE, "07-11"), laminas.TIPO_B, f), _lectura(registro)
+    )
+    assert laminas.FRASE_DETENIDO[hecho] in comp.frases
 
 
 def test_ninguna_frase_lleva_ids_dinero_ni_fechas() -> None:

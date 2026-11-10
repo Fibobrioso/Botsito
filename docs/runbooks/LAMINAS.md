@@ -21,8 +21,8 @@ uv run botsito motor laminas --sesiones 2026-07-03:07-11,2026-07-03:11-15 --sali
   comando no pisa nada. Si no se cumple, sale con error sin leer una vela.
 - Corre la misma corrida que `motor decisiones`: toda la construcción, la cuenta por mes, el perfil
   y la fase por defecto, sin depuración. La corre DOS veces, con y sin el recolector. Si las dos no
-  dan lo mismo, sale con error y no escribe nada. Tarda unos 12-15 minutos; se lanza sola, nunca
-  junto a un `make check`.
+  dan lo mismo, sale con error y no escribe nada. Tarda unos 9-11 minutos (medido: 520-659 s, con
+  un pico de unos 645 MiB); se lanza sola, nunca junto a un `make check`.
 - Antes de cada día de corridas, una fila en `docs/validation/HOLDOUT-EXPOSICIONES.md`: calienta
   con el M1 de marzo y de junio, como el arnés.
 - Para ensayar, primero en un clon desechable (`git worktree add` en un directorio temporal, con su
@@ -48,5 +48,8 @@ dibujar la operación del trader.
 - Un día que no sea dev de construcción, uno de `casos_ocultos`, una sesión con una hora perdida
   dentro, un corte fuera de los tramos de `cobertura_material` (abril, hasta el 29) o una causa sin
   frase en la tabla cerrada: error que lo nombra, y no se escribe nada.
-- Lo que nace antes de la ventana de su panel (la H4 que fija el sesgo, una línea de M15, la caja,
-  el punto) no se dibuja ni da precio; la sustentación dice que viene de antes de la ventana.
+- Lo que no es vela se dibuja si nace dentro de la ventana del panel MÁS ANCHO en que se dibuja, y
+  en los más estrechos entra desde el borde izquierdo (una línea de M15 nacida antes de la ventana
+  de M1 sale en el M1 desde su borde). Lo que nace antes de esa ventana (la H4 que fija el sesgo,
+  una línea de M15 o el nivel de su pivote, la caja, el punto) no se dibuja ni da precio; la
+  sustentación dice que viene de antes de la ventana.

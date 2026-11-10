@@ -731,6 +731,19 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
         """`nacimiento` es el INICIO de la vela en que nace (no un cierre)."""
         return nacimiento is not None and desde <= nacimiento < f.corte
 
+    def linea_dentro(ln: LineaM15) -> bool:
+        """Una linea de M15 nace con su vela contraria, pero su nivel es el extremo de la racha
+        de antes (el pivote de origen, punto 6 del encargo): sale solo si las dos cosas estan en
+        la ventana de M15, la contraria y una M1 que marque ese nivel antes de que se forme
+        (revisor, b-I3). Si una M1 de la ventana lo marca, el precio ya se ve en una vela."""
+        if not dentro(ln.contraria_inicio, f.desde_m15):
+            return False
+        return any(
+            f.desde_m15 <= int(v.inicio) < ln.formado_en
+            and int(v.maxima if ln.lado == ALTO else v.minima) == ln.nivel
+            for v in f.m1
+        )
+
     # el sesgo y sus H4
     sesgo = f.hecho(HECHO_SESGO)
     anotado = f.anotacion(ANOTACION_SESGO)
@@ -793,7 +806,7 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
     lineas: list[LineaDibujada] = []
     fuera = 0
     for ln in f.lineas:
-        if not dentro(ln.contraria_inicio, f.desde_m15):
+        if not linea_dentro(ln):
             fuera += 1
             continue
         t = tomas.get((ln.lado, ln.nivel, ln.formado_en))
@@ -816,15 +829,15 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
         t = escenario.toma
         if lectura.criterio_toma not in CRITERIO_TOMA or t.pivote_lado not in LADO_TOMA:
             raise LaminaError(f"toma con {lectura.criterio_toma}/{t.pivote_lado}: sin frase")
-        linea_dentro = any(
+        toma_con_linea = any(
             (ln.lado, ln.nivel, ln.formado_en)
             == (t.pivote_lado, t.pivote_nivel, t.pivote_formado)
-            and dentro(ln.contraria_inicio, f.desde_m15)
+            and linea_dentro(ln)
             for ln in f.lineas
         )  # fmt: skip
         if not dentro(t.instante - 1, f.desde_m15):
             frases.append(FRASE_TOMA_FUERA)
-        elif not linea_dentro:
+        elif not toma_con_linea:
             frases.append(FRASE_TOMA_LINEA_FUERA.format(hora=hora(t.instante, f.huso)))
         else:
             toma = (t.instante - 1, t.pivote_nivel)
@@ -1221,9 +1234,10 @@ def generar(
         texto = indice(cabecera, entradas)
         comprobar_texto("indice.html", texto)
         ficheros[f"{carpeta}/indice.html"] = texto
+        de_a = sum(1 for lam in elegidas[p] if lam.tipo == TIPO_A)
         resumen.append(
-            f"{carpeta}: {len(elegidas[p])} laminas; la H4 que fija el sesgo, dentro en {dentro} y "
-            f"fuera en {fuera}"
+            f"{carpeta}: {len(elegidas[p])} laminas ({de_a} de tipo a y {len(elegidas[p]) - de_a} "
+            f"de tipo b); la H4 que fija el sesgo, dentro en {dentro} y fuera en {fuera}"
         )
     ficheros["clave.txt"] = "\n".join(clave) + "\n"
     for nombre in ficheros:
