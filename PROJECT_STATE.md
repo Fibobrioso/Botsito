@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/laminas
 
 ## Current Feature
-Ninguna rama abierta. trabajo/trazas-ablacion cerrada en main el 2026-11-09 (stable/F38v-trazas-ablacion): motor decisiones, la bitácora y la ablación por regla; R4.4 hecha.
+trabajo/laminas, EN CURSO: F (1), las láminas del bot (R4.5) y la enmienda de RUMBO §0, §4 y §5. Encargo docs/encargos/trabajo-laminas.md; informe docs/validation/LAMINAS.md.
 
 ## Stable Main State
 76bbe09 · merge de `trabajo/trazas-ablacion` (tag `stable/F38v-trazas-ablacion`), sobre `stable/F38u-video-julio` (129ea33). Informe docs/validation/TRAZAS-ABLACION.md; el registro del cierre, al final de HISTORIA.
@@ -158,8 +158,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 64 (2026-11-09).
+— ninguna desde el Archivo 65 (2026-11-10).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 64 (2026-11-09).
+— ninguna desde el Archivo 65 (2026-11-10).

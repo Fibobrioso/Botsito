@@ -1,0 +1,42 @@
+rama: trabajo/laminas
+riesgo: alto  # se engancha al observador del motor (registro nuevo, nada lo lee para decidir) y anade un subcomando de `motor` que escribe fuera del repo; lo que el motor decide no cambia (F4.1, F4.2, golden y mutacion)
+artefacto: docs/validation/LAMINAS.md
+tramo: "R4 · La sesión 5 con el trader y su activación"
+rutas_permitidas:
+  - src/botsito/engine/
+  - src/botsito/cli.py
+  - tests/
+  - docs/validation/LAMINAS.md
+  - docs/validation/anexos/LAMINAS/
+  - docs/runbooks/LAMINAS.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/plan/RUMBO-2026-11.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - knowledge/
+  - scripts/
+  - .claude/
+  - Makefile
+  - pyproject.toml
+  - tools/mql5/
+  - corpus/
+  - data/manifests/
+  - src/botsito/domain/
+  - src/botsito/spec/
+  - docs/plan/HOJA-DE-RUTA.md
+  - docs/runbooks/SESION-DE-PREGUNTAS.md
+  - docs/validation/ACTIVAR-SESION-06.md
+  - docs/validation/TRAZAS-ABLACION.md
+  - docs/validation/anexos/TRAZAS-ABLACION/
+  - docs/validation/VIDEO-JULIO.md
+  - docs/validation/anexos/VIDEO-JULIO/
+  - docs/validation/RECORRIDA-CONSTRUCCION.md
+  - docs/validation/RECORRIDA-CONSTRUCCION-2.md
+  - docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/
+  - docs/validation/BARRIDO-SESION-6.md
+comprobaciones:
+  - uv run botsito state check
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
