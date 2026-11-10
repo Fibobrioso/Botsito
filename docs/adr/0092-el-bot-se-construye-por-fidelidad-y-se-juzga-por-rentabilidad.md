@@ -169,6 +169,14 @@ tenía ADR: sale de `MASTER_PLAN.md` §0):
   ninguna rama de spec o de motor se justifica con ellas: las ramas de spec citan al trader (`ev-`,
   `fb-`), nunca una cifra de rentabilidad.
 
+> **NOTA (2026-11-09, `trabajo/trazas-ablacion`; no reescribe el cuerpo).** Este §6 se aplica
+> también a la ablación por regla de `motor decisiones` (`engine/decisiones.py`): sus recuentos
+> —qué parejas trader-bot y qué operaciones del bot cambian al quitar una regla VIGENTE— son
+> diagnóstico de construcción, y ninguna rama de spec o de motor se justifica con ellos; las ramas
+> de spec citan al trader (`ev-`, `fb-`). Cómo se convierte una respuesta del trader en regla lo
+> fijará el ADR del método (RUMBO-2026-11.md §1, la rama de la preparación de la sesión 7); esta
+> NOTA no lo adelanta.
+
 ### 7. El papel de la fidelidad, de F26, F27 y F35
 
 (La respuesta, punto 5.)

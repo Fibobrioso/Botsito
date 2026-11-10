@@ -82,7 +82,7 @@ from botsito.engine.cuenta import (
 from botsito.engine.cuenta import Operacion as OperacionCuenta
 from botsito.engine.diagnostico import DiagnosticoRechazadoError
 from botsito.engine.freno import Corte
-from botsito.engine.interprete import EstadoDia, Interprete, Momento, ReglaEjecutable
+from botsito.engine.interprete import EstadoDia, Evento, Interprete, Momento, ReglaEjecutable
 from botsito.engine.llenado import OBJETIVO, RESPALDO_M1, STOP, TICKS, TIPO_STOP, Configuracion
 from botsito.engine.motor import DiaDeMercado, ResultadoDia, Sesion, TrazaSesion
 from botsito.engine.perfil_cuenta import PerfilCuenta, cargar_perfil
@@ -219,6 +219,25 @@ DiaDeCurva = tuple[str, Decimal, Decimal, Decimal | None]  # dia, saldo al corte
 
 
 @dataclass(frozen=True)
+class Cierre:
+    """SOLO SALIDA (rama trabajo/trazas-ablacion): lo que ve el `observador` de `MotorCableado` al
+    final de cada cierre de M1, DESPUES de que el motor lo haya decidido. Los objetos son los del
+    motor: el observador solo los LEE (lo exige `tests/unit/test_decisiones.py`, con una mutacion
+    que hace fallar la comparacion)."""
+
+    dia: str  # AAAA-MM-DD, la clave del dia
+    instante: int  # minuto UTC del cierre de M1
+    sesion: str | None
+    huso: str  # el reloj de pared en que se pintan las horas
+    escala: int
+    evento: Evento
+    estado: EstadoDia
+    broker: Broker
+    ctx: ContextoDia
+    datos: Any  # los `DatosMercado` del dia
+
+
+@dataclass(frozen=True)
 class CuentaDelMes:
     """Una cuenta mensual cerrada al cambiar de mes (ADR-0092 §8 y su NOTA): su mes, su veredicto,
     su saldo y su equity finales, sus dias de trading, su primer toque, su racha al cierre y su
@@ -286,6 +305,10 @@ class MotorCableado:
     # decision ni ningun llenado los lee; vacios, la seccion de ADR-0092 lo dice
     operaciones_trader: tuple[OperacionCriterio, ...] = ()
     criterio: Criterio | None = None
+    # SOLO SALIDA (rama trabajo/trazas-ablacion; respuesta del consultor a la fase 0, punto 0): un
+    # observador pasivo que recibe cada cierre de M1 ya decidido (`Cierre`); con None, el de
+    # siempre, el motor es el de antes byte a byte. Lo pone `motor decisiones`; nada lo lee
+    observador: Callable[[Cierre], None] | None = None
 
     def __post_init__(self) -> None:
         comprobar_reloj_unico(self.registro, self.reglas_fase, self.mercados)
@@ -416,6 +439,14 @@ class MotorCableado:
                     )
                     tb.cancelaciones.append((pet.instante_ms, pet.id, motivo))
             peticiones_vistas = len(peticiones)
+            if self.observador is not None:
+                # SOLO SALIDA: el cierre ya decidido, para la bitacora (`engine/decisiones.py`)
+                self.observador(
+                    Cierre(
+                        clave, instante, sesion, dia.huso, md.escala, evento, estado, broker, ctx,
+                        dia.datos,
+                    )
+                )  # fmt: skip
             ctx.eventos = []
             instante += 1
         # fin del dia: lo que quede vivo o pendiente se cierra y se cuenta (§6)
@@ -1561,6 +1592,7 @@ __all__ = [
     "DEPURACION",
     "NOMBRE_MOTOR",
     "CableadoError",
+    "Cierre",
     "CuentaDelMes",
     "MotorCableado",
     "Sesion",

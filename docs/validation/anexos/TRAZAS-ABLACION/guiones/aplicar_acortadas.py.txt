@@ -1,0 +1,31 @@
+"""Aplica las lineas acortadas: PROJECT_STATE.md las sustituye y HISTORIA.md recibe el bloque."""
+import json
+import sys
+from pathlib import Path
+
+ps_ruta, hist_ruta, datos_ruta = (Path(a) for a in sys.argv[1:4])
+datos = json.loads(datos_ruta.read_text(encoding="utf-8"))
+lineas = ps_ruta.read_text(encoding="utf-8").split("\n")
+for d in datos:
+    k = d["linea"] - 1
+    assert lineas[k] == d["entera"], d["linea"]
+    lineas[k] = d["queda"]
+ps_ruta.write_text("\n".join(lineas), encoding="utf-8", newline="\n")
+
+bloque = [
+    "",
+    "# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/trazas-ablacion (2026-11-09)",
+    "",
+    "Condicion (e) de `docs/state/README.md` («Que sale de PROJECT_STATE, y con que criterio»; encargo",
+    "de `trabajo/trazas-ablacion`, F1). Cada linea, entera y literal como estaba en «Technical Debt», y",
+    "lo que queda de ella en PROJECT_STATE (el corte valido mas largo de 160 bytes como mucho; medido",
+    "en TRAZAS-ABLACION.md, F1):",
+    "",
+]
+for d in datos:
+    bloque.append(d["entera"])
+    bloque.append("  Queda en PROJECT_STATE: " + d["queda"])
+    bloque.append("")
+h = hist_ruta.read_text(encoding="utf-8").rstrip("\n")
+hist_ruta.write_text(h + "\n" + "\n".join(bloque), encoding="utf-8", newline="\n")
+print("ok", len(datos))

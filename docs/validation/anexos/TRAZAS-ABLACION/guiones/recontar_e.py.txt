@@ -1,0 +1,45 @@
+"""Recuento de la condicion (e) sobre TODAS las lineas de Technical Debt de PROJECT_STATE.md de mas
+de 200 bytes sin la marca, con el mismo criterio de corte que acortar.py (bytes, no caracteres).
+Solo lee. Uso: recontar_e.py <PROJECT_STATE.md>"""
+import sys
+from pathlib import Path
+
+MARCA = "entera en HISTORIA, Technical Debt ACORTADA)"
+
+
+def nbytes(s: str) -> int:
+    return len(s.encode("utf-8"))
+
+
+def cortes(linea: str) -> list[str]:
+    salida = []
+    for i in range(len(linea)):
+        pre = linea[:i]
+        if nbytes(pre) > 160 or not pre.strip("- "):
+            continue
+        sig = linea[i : i + 2]
+        valido = sig in (". ", "; ", ": ") or (pre.endswith(")") and linea[i : i + 1] in (" ", ",", ".", ";", ":"))
+        if not valido:
+            continue
+        if pre.count("`") % 2 or pre.count("(") != pre.count(")") or pre.count("«") != pre.count("»"):
+            continue
+        salida.append(pre)
+    return salida
+
+
+texto = Path(sys.argv[1]).read_text(encoding="utf-8")
+sec = None
+for n, linea in enumerate(texto.split("\n"), 1):
+    if linea.startswith("## "):
+        sec = linea[3:]
+        continue
+    if sec != "Technical Debt" or MARCA in linea or nbytes(linea + "\n") <= 200:
+        continue
+    ops = cortes(linea)
+    if not ops:
+        print(f"L{n} {nbytes(linea + chr(10))} SIN CORTE | {linea[:70]}")
+        continue
+    pre = max(ops, key=nbytes)
+    nueva = pre + f" … ({MARCA}"
+    ahorro = nbytes(linea + "\n") - nbytes(nueva + "\n")
+    print(f"L{n} {nbytes(linea + chr(10))} ahorra {ahorro:4d} {'APLICA' if ahorro >= 60 else 'no'} | corte {nbytes(pre)}: {pre[:90]}")

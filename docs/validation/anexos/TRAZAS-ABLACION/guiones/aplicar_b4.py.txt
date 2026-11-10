@@ -1,0 +1,25 @@
+"""Acorta por (e) la linea de guardia-g1 de PROJECT_STATE.md y anade su texto entero al final de
+HISTORIA.md, en un bloque nuevo (HISTORIA solo se amplia). Uso: aplicar_b4.py <PS> <HISTORIA>"""
+import sys
+from pathlib import Path
+
+ps_r, hi_r = Path(sys.argv[1]), Path(sys.argv[2])
+ps = ps_r.read_text(encoding="utf-8")
+ARR = "- Riesgo residual de `trabajo/guardia-g1` (§4.3)"
+lineas = ps.split("\n")
+idx = [k for k, l in enumerate(lineas) if l.startswith(ARR + ":")]
+assert len(idx) == 1, idx
+entera = lineas[idx[0]]
+queda = ARR + " … (entera en HISTORIA, Technical Debt ACORTADA)"
+lineas[idx[0]] = queda
+ps_r.write_text("\n".join(lineas), encoding="utf-8", newline="\n")
+hi = hi_r.read_text(encoding="utf-8")
+assert hi.endswith("\n")
+bloque = (
+    "\n# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/trazas-ablacion (2026-11-09),"
+    " la que F1 se dejó (revisor, b4)\n\n"
+    f"{entera}\n"
+    f"  Queda en PROJECT_STATE: {queda}\n"
+)
+hi_r.write_text(hi + bloque, encoding="utf-8", newline="\n")
+print(len((entera + "\n").encode()), "->", len((queda + "\n").encode()))

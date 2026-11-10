@@ -1,0 +1,909 @@
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:00 (05:00Z) | hecho sesgo: - -> alcista (RN-003)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:33 (05:33Z) | toma de M15: el bajo de M15 en 1.13837 (formado 06:45 (04:45Z)), para compra; M1 de la toma (cierra 07:33 (05:33Z)) o/h/l/c 1.13837/1.13841/1.13833/1.13834: CIERRA pasada la linea (cuerpo)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:33 (05:33Z) | escenario 1 abierto, con la toma de 07:33 (05:33Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:33 (05:33Z) | zona:1 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13845, 1 = 1.13833; punto 1.13845, vela contraria que lo forma: la que abre a las 07:30 (05:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:33 (05:33Z) | hecho liquidez_tomada: - -> si (RN-004)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:33 (05:33Z) | orden o1 (stop, compra) en zona:1: precio 1.13845, stop 1.13835, objetivo 1.13881, lote 24.92; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:34 (05:34Z) | zona:2 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13845, 1 = 1.13815; punto 1.13845, vela contraria que lo forma: la que abre a las 07:30 (05:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:34 (05:34Z) | orden o1: colocada -> cancelada a las 07:33:59 (05:33:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:34 (05:34Z) | orden o2 (stop, compra) en zona:2: precio 1.13845, stop 1.13821, objetivo 1.13935, lote 20.73; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:37 (05:37Z) | zona:3 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13837, 1 = 1.13823; punto 1.13837, vela contraria que lo forma: la que abre a las 07:36 (05:36Z); linea de M15: SI: es el nivel de la toma de M15
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:37 (05:37Z) | orden o2: colocada -> cancelada a las 07:36:59 (05:36:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:37 (05:37Z) | orden o3 (stop, compra) en zona:3: precio 1.13837, stop 1.13825, objetivo 1.13879, lote 24.92; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:38 (05:38Z) | zona:4 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13837, 1 = 1.13822; punto 1.13837, vela contraria que lo forma: la que abre a las 07:36 (05:36Z); linea de M15: SI: es el nivel de la toma de M15
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:38 (05:38Z) | zona:4 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:38 (05:38Z) | prohibido abrir_operacion por: RN-018 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:38 (05:38Z) | orden o3: colocada -> llenada a las 07:37:32 (05:37:32Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:38 (05:38Z) | llenado de o3 (zona:3) a 1.13837: ANTES de que ninguna M1 cierre mas alla del precio desde que se coloco; la M1 del llenado NO cierra mas alla (mecha)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:39 (05:39Z) | zona:5 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13835, 1 = 1.13822; punto 1.13835, vela contraria que lo forma: la que abre a las 07:38 (05:38Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:39 (05:39Z) | zona:5 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:40 (05:40Z) | deja de estar prohibido abrir_operacion
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:40 (05:40Z) | orden o4 (stop, compra) en zona:5: precio 1.13835, stop 1.13824, objetivo 1.13874, lote 24.81; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:40 (05:40Z) | posicion pos-o3 cerrada por stop a las 07:39:47 (05:39:47Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:41 (05:41Z) | prohibido abrir_operacion por: RN-009 [dispara], RN-018 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:41 (05:41Z) | orden o4: colocada -> llenada a las 07:40:20 (05:40:20Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:41 (05:41Z) | llenado de o4 (zona:5) a 1.13835: ANTES de que ninguna M1 cierre mas alla del precio desde que se coloco; la M1 del llenado CIERRA mas alla (cuerpo)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:43 (05:43Z) | zona:6 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13851, 1 = 1.13837; punto 1.13851, vela contraria que lo forma: la que abre a las 07:42 (05:42Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:43 (05:43Z) | zona:6 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:46 (05:46Z) | zona:7 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13851, 1 = 1.13834; punto 1.13851, vela contraria que lo forma: la que abre a las 07:42 (05:42Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:46 (05:46Z) | zona:7 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:49 (05:49Z) | zona:8 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13851, 1 = 1.13846; punto 1.13851, vela contraria que lo forma: la que abre a las 07:48 (05:48Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:49 (05:49Z) | zona:8 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:49 (05:49Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara], RN-018 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:50 (05:50Z) | zona:9 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13851, 1 = 1.13837; punto 1.13851, vela contraria que lo forma: la que abre a las 07:48 (05:48Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:50 (05:50Z) | zona:9 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:50 (05:50Z) | prohibido abrir_operacion por: RN-009 [dispara], RN-018 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:52 (05:52Z) | zona:10 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13857, 1 = 1.13840; punto 1.13857, vela contraria que lo forma: la que abre a las 07:51 (05:51Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:52 (05:52Z) | zona:10 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:52 (05:52Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara], RN-018 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:55 (05:55Z) | zona:11 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13857, 1 = 1.13839; punto 1.13857, vela contraria que lo forma: la que abre a las 07:51 (05:51Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:55 (05:55Z) | zona:11 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:56 (05:56Z) | zona:12 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13857, 1 = 1.13832; punto 1.13857, vela contraria que lo forma: la que abre a las 07:51 (05:51Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:56 (05:56Z) | zona:12 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:56 (05:56Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:56 (05:56Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:56 (05:56Z) | posicion pos-o4 cerrada por stop a las 07:55:00 (05:55:00Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:57 (05:57Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:58 (05:58Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:59 (05:59Z) | zona:13 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13861, 1 = 1.13854; punto 1.13861, vela contraria que lo forma: la que abre a las 07:58 (05:58Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:59 (05:59Z) | zona:13 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:59 (05:59Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 07:59 (05:59Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:00 (06:00Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:01 (06:01Z) | zona:14 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13861, 1 = 1.13853; punto 1.13861, vela contraria que lo forma: la que abre a las 07:58 (05:58Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:01 (06:01Z) | zona:14 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:01 (06:01Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:02 (06:02Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:03 (06:03Z) | zona:15 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13885, 1 = 1.13865; punto 1.13885, vela contraria que lo forma: la que abre a las 08:02 (06:02Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:03 (06:03Z) | zona:15 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:03 (06:03Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:04 (06:04Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:05 (06:05Z) | zona:16 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13894, 1 = 1.13883; punto 1.13894, vela contraria que lo forma: la que abre a las 08:04 (06:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:05 (06:05Z) | zona:16 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:05 (06:05Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:06 (06:06Z) | zona:17 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13894, 1 = 1.13880; punto 1.13894, vela contraria que lo forma: la que abre a las 08:04 (06:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:06 (06:06Z) | zona:17 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:06 (06:06Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:07 (06:07Z) | zona:18 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13894, 1 = 1.13873; punto 1.13894, vela contraria que lo forma: la que abre a las 08:04 (06:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:07 (06:07Z) | zona:18 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:07 (06:07Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:08 (06:08Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:09 (06:09Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:10 (06:10Z) | zona:19 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13916, 1 = 1.13875; punto 1.13916, vela contraria que lo forma: la que abre a las 08:09 (06:09Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:10 (06:10Z) | zona:19 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:10 (06:10Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:11 (06:11Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:12 (06:12Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:13 (06:13Z) | zona:20 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13905, 1 = 1.13889; punto 1.13905, vela contraria que lo forma: la que abre a las 08:12 (06:12Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:13 (06:13Z) | zona:20 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:13 (06:13Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:14 (06:14Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:15 (06:15Z) | zona:21 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13912, 1 = 1.13889; punto 1.13912, vela contraria que lo forma: la que abre a las 08:14 (06:14Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:15 (06:15Z) | zona:21 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:15 (06:15Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:16 (06:16Z) | zona:22 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13912, 1 = 1.13885; punto 1.13912, vela contraria que lo forma: la que abre a las 08:14 (06:14Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:16 (06:16Z) | zona:22 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:16 (06:16Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:17 (06:17Z) | zona:23 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13912, 1 = 1.13876; punto 1.13912, vela contraria que lo forma: la que abre a las 08:14 (06:14Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:17 (06:17Z) | zona:23 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:17 (06:17Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:18 (06:18Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:19 (06:19Z) | zona:24 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13912, 1 = 1.13870; punto 1.13912, vela contraria que lo forma: la que abre a las 08:14 (06:14Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:19 (06:19Z) | zona:24 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:19 (06:19Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:20 (06:20Z) | zona:25 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13912, 1 = 1.13861; punto 1.13912, vela contraria que lo forma: la que abre a las 08:14 (06:14Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:20 (06:20Z) | zona:25 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:20 (06:20Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:21 (06:21Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:22 (06:22Z) | zona:26 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13885, 1 = 1.13863; punto 1.13885, vela contraria que lo forma: la que abre a las 08:21 (06:21Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:22 (06:22Z) | zona:26 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:22 (06:22Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:23 (06:23Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:24 (06:24Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:25 (06:25Z) | zona:27 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13879, 1 = 1.13874; punto 1.13879, vela contraria que lo forma: la que abre a las 08:24 (06:24Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:25 (06:25Z) | zona:27 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:25 (06:25Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:26 (06:26Z) | zona:28 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13879, 1 = 1.13867; punto 1.13879, vela contraria que lo forma: la que abre a las 08:24 (06:24Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:26 (06:26Z) | zona:28 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:26 (06:26Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:27 (06:27Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:28 (06:28Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:29 (06:29Z) | zona:29 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13877, 1 = 1.13867; punto 1.13877, vela contraria que lo forma: la que abre a las 08:28 (06:28Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:29 (06:29Z) | zona:29 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:29 (06:29Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:30 (06:30Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:31 (06:31Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:32 (06:32Z) | zona:30 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13875, 1 = 1.13867; punto 1.13875, vela contraria que lo forma: la que abre a las 08:31 (06:31Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:32 (06:32Z) | zona:30 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:32 (06:32Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:33 (06:33Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:34 (06:34Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:35 (06:35Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:36 (06:36Z) | zona:31 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13889, 1 = 1.13879; punto 1.13889, vela contraria que lo forma: la que abre a las 08:35 (06:35Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:36 (06:36Z) | zona:31 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:36 (06:36Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:37 (06:37Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:38 (06:38Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:39 (06:39Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:40 (06:40Z) | zona:32 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13894, 1 = 1.13884; punto 1.13894, vela contraria que lo forma: la que abre a las 08:39 (06:39Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:40 (06:40Z) | zona:32 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:40 (06:40Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:41 (06:41Z) | zona:33 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13894, 1 = 1.13883; punto 1.13894, vela contraria que lo forma: la que abre a las 08:39 (06:39Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:41 (06:41Z) | zona:33 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:41 (06:41Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:42 (06:42Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:43 (06:43Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:44 (06:44Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:45 (06:45Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:46 (06:46Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:47 (06:47Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:48 (06:48Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:49 (06:49Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:50 (06:50Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:51 (06:51Z) | zona:34 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13998, 1 = 1.13947; punto 1.13998, vela contraria que lo forma: la que abre a las 08:50 (06:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:51 (06:51Z) | zona:34 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:51 (06:51Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:52 (06:52Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:53 (06:53Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:54 (06:54Z) | zona:35 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13998, 1 = 1.13945; punto 1.13998, vela contraria que lo forma: la que abre a las 08:50 (06:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:54 (06:54Z) | zona:35 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:54 (06:54Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:55 (06:55Z) | zona:36 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13998, 1 = 1.13943; punto 1.13998, vela contraria que lo forma: la que abre a las 08:50 (06:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:55 (06:55Z) | zona:36 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:55 (06:55Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:56 (06:56Z) | zona:37 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13998, 1 = 1.13940; punto 1.13998, vela contraria que lo forma: la que abre a las 08:50 (06:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:56 (06:56Z) | zona:37 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:56 (06:56Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:57 (06:57Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:58 (06:58Z) | zona:38 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13971, 1 = 1.13946; punto 1.13971, vela contraria que lo forma: la que abre a las 08:57 (06:57Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:58 (06:58Z) | zona:38 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:58 (06:58Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:59 (06:59Z) | zona:39 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13971, 1 = 1.13944; punto 1.13971, vela contraria que lo forma: la que abre a las 08:57 (06:57Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:59 (06:59Z) | zona:39 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 08:59 (06:59Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:00 (07:00Z) | zona:40 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13955, 1 = 1.13942; punto 1.13955, vela contraria que lo forma: la que abre a las 08:59 (06:59Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:00 (07:00Z) | zona:40 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:00 (07:00Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:01 (07:01Z) | zona:41 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13955, 1 = 1.13916; punto 1.13955, vela contraria que lo forma: la que abre a las 08:59 (06:59Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:01 (07:01Z) | zona:41 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:01 (07:01Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:02 (07:02Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:03 (07:03Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:04 (07:04Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:05 (07:05Z) | zona:42 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13939, 1 = 1.13925; punto 1.13939, vela contraria que lo forma: la que abre a las 09:04 (07:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:05 (07:05Z) | zona:42 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:05 (07:05Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:06 (07:06Z) | zona:43 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13939, 1 = 1.13913; punto 1.13939, vela contraria que lo forma: la que abre a las 09:04 (07:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:06 (07:06Z) | zona:43 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:06 (07:06Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:07 (07:07Z) | zona:44 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13939, 1 = 1.13905; punto 1.13939, vela contraria que lo forma: la que abre a las 09:04 (07:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:07 (07:07Z) | zona:44 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:07 (07:07Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:08 (07:08Z) | zona:45 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13939, 1 = 1.13904; punto 1.13939, vela contraria que lo forma: la que abre a las 09:04 (07:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:08 (07:08Z) | zona:45 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:08 (07:08Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:09 (07:09Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:10 (07:10Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:11 (07:11Z) | zona:46 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13946, 1 = 1.13915; punto 1.13946, vela contraria que lo forma: la que abre a las 09:10 (07:10Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:11 (07:11Z) | zona:46 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:11 (07:11Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:12 (07:12Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:13 (07:13Z) | zona:47 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13970, 1 = 1.13953; punto 1.13970, vela contraria que lo forma: la que abre a las 09:12 (07:12Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:13 (07:13Z) | zona:47 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:13 (07:13Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:14 (07:14Z) | zona:48 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13970, 1 = 1.13941; punto 1.13970, vela contraria que lo forma: la que abre a las 09:12 (07:12Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:14 (07:14Z) | zona:48 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:14 (07:14Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:15 (07:15Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:16 (07:16Z) | zona:49 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13958, 1 = 1.13943; punto 1.13958, vela contraria que lo forma: la que abre a las 09:15 (07:15Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:16 (07:16Z) | zona:49 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:16 (07:16Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:17 (07:17Z) | zona:50 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13958, 1 = 1.13933; punto 1.13958, vela contraria que lo forma: la que abre a las 09:15 (07:15Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:17 (07:17Z) | zona:50 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:17 (07:17Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:18 (07:18Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:19 (07:19Z) | zona:51 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13949, 1 = 1.13933; punto 1.13949, vela contraria que lo forma: la que abre a las 09:18 (07:18Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:19 (07:19Z) | zona:51 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:19 (07:19Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:20 (07:20Z) | zona:52 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13949, 1 = 1.13929; punto 1.13949, vela contraria que lo forma: la que abre a las 09:18 (07:18Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:20 (07:20Z) | zona:52 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:20 (07:20Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:21 (07:21Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:22 (07:22Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:23 (07:23Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:24 (07:24Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:25 (07:25Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:26 (07:26Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:27 (07:27Z) | zona:53 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13996, 1 = 1.13972; punto 1.13996, vela contraria que lo forma: la que abre a las 09:26 (07:26Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:27 (07:27Z) | zona:53 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:27 (07:27Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:28 (07:28Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:29 (07:29Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:30 (07:30Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:31 (07:31Z) | zona:54 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14014, 1 = 1.13984; punto 1.14014, vela contraria que lo forma: la que abre a las 09:30 (07:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:31 (07:31Z) | zona:54 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:31 (07:31Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:32 (07:32Z) | zona:55 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14014, 1 = 1.13978; punto 1.14014, vela contraria que lo forma: la que abre a las 09:30 (07:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:32 (07:32Z) | zona:55 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:32 (07:32Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:33 (07:33Z) | zona:56 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14014, 1 = 1.13973; punto 1.14014, vela contraria que lo forma: la que abre a las 09:30 (07:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:33 (07:33Z) | zona:56 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:33 (07:33Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:34 (07:34Z) | zona:57 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14014, 1 = 1.13967; punto 1.14014, vela contraria que lo forma: la que abre a las 09:30 (07:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:34 (07:34Z) | zona:57 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:34 (07:34Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:35 (07:35Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:36 (07:36Z) | zona:58 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13978, 1 = 1.13965; punto 1.13978, vela contraria que lo forma: la que abre a las 09:35 (07:35Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:36 (07:36Z) | zona:58 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:36 (07:36Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:37 (07:37Z) | zona:59 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.13978, 1 = 1.13960; punto 1.13978, vela contraria que lo forma: la que abre a las 09:35 (07:35Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:37 (07:37Z) | zona:59 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:37 (07:37Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:38 (07:38Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:39 (07:39Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:40 (07:40Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:41 (07:41Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:42 (07:42Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:43 (07:43Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:44 (07:44Z) | zona:60 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14071, 1 = 1.14048; punto 1.14071, vela contraria que lo forma: la que abre a las 09:43 (07:43Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:44 (07:44Z) | zona:60 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:44 (07:44Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:45 (07:45Z) | zona:61 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14071, 1 = 1.14047; punto 1.14071, vela contraria que lo forma: la que abre a las 09:43 (07:43Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:45 (07:45Z) | zona:61 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:45 (07:45Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:46 (07:46Z) | zona:62 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14062, 1 = 1.14030; punto 1.14062, vela contraria que lo forma: la que abre a las 09:45 (07:45Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:46 (07:46Z) | zona:62 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:46 (07:46Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:47 (07:47Z) | zona:63 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14062, 1 = 1.14024; punto 1.14062, vela contraria que lo forma: la que abre a las 09:45 (07:45Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:47 (07:47Z) | zona:63 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:47 (07:47Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:48 (07:48Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:49 (07:49Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:50 (07:50Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:51 (07:51Z) | zona:64 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14045, 1 = 1.14034; punto 1.14045, vela contraria que lo forma: la que abre a las 09:50 (07:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:51 (07:51Z) | zona:64 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:51 (07:51Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:52 (07:52Z) | zona:65 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14045, 1 = 1.14030; punto 1.14045, vela contraria que lo forma: la que abre a las 09:50 (07:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:52 (07:52Z) | zona:65 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:52 (07:52Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:53 (07:53Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:54 (07:54Z) | zona:66 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14085, 1 = 1.14053; punto 1.14085, vela contraria que lo forma: la que abre a las 09:53 (07:53Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:54 (07:54Z) | zona:66 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:54 (07:54Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:55 (07:55Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:56 (07:56Z) | zona:67 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14092, 1 = 1.14066; punto 1.14092, vela contraria que lo forma: la que abre a las 09:55 (07:55Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:56 (07:56Z) | zona:67 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:56 (07:56Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:57 (07:57Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:58 (07:58Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 09:59 (07:59Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:00 (08:00Z) | zona:68 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14089, 1 = 1.14069; punto 1.14089, vela contraria que lo forma: la que abre a las 09:59 (07:59Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:00 (08:00Z) | zona:68 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:00 (08:00Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:01 (08:01Z) | zona:69 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14089, 1 = 1.14067; punto 1.14089, vela contraria que lo forma: la que abre a las 09:59 (07:59Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:01 (08:01Z) | zona:69 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:01 (08:01Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:02 (08:02Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:03 (08:03Z) | zona:70 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14104, 1 = 1.14075; punto 1.14104, vela contraria que lo forma: la que abre a las 10:02 (08:02Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:03 (08:03Z) | zona:70 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:03 (08:03Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:04 (08:04Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:05 (08:05Z) | zona:71 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14148, 1 = 1.14136; punto 1.14148, vela contraria que lo forma: la que abre a las 10:04 (08:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:05 (08:05Z) | zona:71 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:05 (08:05Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:06 (08:06Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:07 (08:07Z) | zona:72 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14175, 1 = 1.14140; punto 1.14175, vela contraria que lo forma: la que abre a las 10:06 (08:06Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:07 (08:07Z) | zona:72 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:07 (08:07Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:08 (08:08Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:09 (08:09Z) | zona:73 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14175, 1 = 1.14133; punto 1.14175, vela contraria que lo forma: la que abre a las 10:06 (08:06Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:09 (08:09Z) | zona:73 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:09 (08:09Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:10 (08:10Z) | zona:74 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14175, 1 = 1.14126; punto 1.14175, vela contraria que lo forma: la que abre a las 10:06 (08:06Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:10 (08:10Z) | zona:74 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:10 (08:10Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:11 (08:11Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:12 (08:12Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:13 (08:13Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:14 (08:14Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:15 (08:15Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:16 (08:16Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:17 (08:17Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:18 (08:18Z) | zona:75 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14179, 1 = 1.14153; punto 1.14179, vela contraria que lo forma: la que abre a las 10:17 (08:17Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:18 (08:18Z) | zona:75 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:18 (08:18Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:19 (08:19Z) | zona:76 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14179, 1 = 1.14152; punto 1.14179, vela contraria que lo forma: la que abre a las 10:17 (08:17Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:19 (08:19Z) | zona:76 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:19 (08:19Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:20 (08:20Z) | zona:77 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14179, 1 = 1.14151; punto 1.14179, vela contraria que lo forma: la que abre a las 10:17 (08:17Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:20 (08:20Z) | zona:77 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:20 (08:20Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:21 (08:21Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:22 (08:22Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:23 (08:23Z) | zona:78 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14179, 1 = 1.14169; punto 1.14179, vela contraria que lo forma: la que abre a las 10:22 (08:22Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:23 (08:23Z) | zona:78 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:23 (08:23Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:24 (08:24Z) | zona:79 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14179, 1 = 1.14168; punto 1.14179, vela contraria que lo forma: la que abre a las 10:22 (08:22Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:24 (08:24Z) | zona:79 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:24 (08:24Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:25 (08:25Z) | zona:80 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14179, 1 = 1.14148; punto 1.14179, vela contraria que lo forma: la que abre a las 10:22 (08:22Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:25 (08:25Z) | zona:80 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:25 (08:25Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:26 (08:26Z) | zona:81 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14179, 1 = 1.14135; punto 1.14179, vela contraria que lo forma: la que abre a las 10:22 (08:22Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:26 (08:26Z) | zona:81 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:26 (08:26Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:27 (08:27Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:28 (08:28Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:29 (08:29Z) | zona:82 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14170, 1 = 1.14152; punto 1.14170, vela contraria que lo forma: la que abre a las 10:28 (08:28Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:29 (08:29Z) | zona:82 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:29 (08:29Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:30 (08:30Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:31 (08:31Z) | zona:83 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14169, 1 = 1.14147; punto 1.14169, vela contraria que lo forma: la que abre a las 10:30 (08:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:31 (08:31Z) | zona:83 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:31 (08:31Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:32 (08:32Z) | zona:84 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14169, 1 = 1.14141; punto 1.14169, vela contraria que lo forma: la que abre a las 10:30 (08:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:32 (08:32Z) | zona:84 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:32 (08:32Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:33 (08:33Z) | zona:85 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14169, 1 = 1.14134; punto 1.14169, vela contraria que lo forma: la que abre a las 10:30 (08:30Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:33 (08:33Z) | zona:85 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:33 (08:33Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:34 (08:34Z) | zona:86 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14150, 1 = 1.14128; punto 1.14150, vela contraria que lo forma: la que abre a las 10:33 (08:33Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:34 (08:34Z) | zona:86 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:34 (08:34Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:35 (08:35Z) | zona:87 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14150, 1 = 1.14126; punto 1.14150, vela contraria que lo forma: la que abre a las 10:33 (08:33Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:35 (08:35Z) | zona:87 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:35 (08:35Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:36 (08:36Z) | zona:88 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14161, 1 = 1.14126; punto 1.14161, vela contraria que lo forma: la que abre a las 10:35 (08:35Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:36 (08:36Z) | zona:88 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:36 (08:36Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:37 (08:37Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:38 (08:38Z) | zona:89 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14175, 1 = 1.14143; punto 1.14175, vela contraria que lo forma: la que abre a las 10:37 (08:37Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:38 (08:38Z) | zona:89 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:38 (08:38Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:39 (08:39Z) | zona:90 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14175, 1 = 1.14139; punto 1.14175, vela contraria que lo forma: la que abre a las 10:37 (08:37Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:39 (08:39Z) | zona:90 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:39 (08:39Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:40 (08:40Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:41 (08:41Z) | zona:91 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14164, 1 = 1.14145; punto 1.14164, vela contraria que lo forma: la que abre a las 10:40 (08:40Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:41 (08:41Z) | zona:91 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:41 (08:41Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:42 (08:42Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:43 (08:43Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:44 (08:44Z) | zona:92 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14188, 1 = 1.14163; punto 1.14188, vela contraria que lo forma: la que abre a las 10:43 (08:43Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:44 (08:44Z) | zona:92 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:44 (08:44Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:45 (08:45Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:46 (08:46Z) | zona:93 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14188, 1 = 1.14154; punto 1.14188, vela contraria que lo forma: la que abre a las 10:43 (08:43Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:46 (08:46Z) | zona:93 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:46 (08:46Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:47 (08:47Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:48 (08:48Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:49 (08:49Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:50 (08:50Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:51 (08:51Z) | zona:94 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14210, 1 = 1.14184; punto 1.14210, vela contraria que lo forma: la que abre a las 10:50 (08:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:51 (08:51Z) | zona:94 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:51 (08:51Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:52 (08:52Z) | zona:95 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14210, 1 = 1.14173; punto 1.14210, vela contraria que lo forma: la que abre a las 10:50 (08:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:52 (08:52Z) | zona:95 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:52 (08:52Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:53 (08:53Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:54 (08:54Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:55 (08:55Z) | zona:96 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14204, 1 = 1.14176; punto 1.14204, vela contraria que lo forma: la que abre a las 10:54 (08:54Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:55 (08:55Z) | zona:96 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:55 (08:55Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:56 (08:56Z) | zona:97 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14204, 1 = 1.14175; punto 1.14204, vela contraria que lo forma: la que abre a las 10:54 (08:54Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:56 (08:56Z) | zona:97 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:56 (08:56Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:57 (08:57Z) | zona:98 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14189, 1 = 1.14175; punto 1.14189, vela contraria que lo forma: la que abre a las 10:56 (08:56Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:57 (08:57Z) | zona:98 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:57 (08:57Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:58 (08:58Z) | zona:99 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14189, 1 = 1.14170; punto 1.14189, vela contraria que lo forma: la que abre a las 10:56 (08:56Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:58 (08:58Z) | zona:99 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:58 (08:58Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:59 (08:59Z) | zona:100 (compra) ligada en la sesion 07-11, escenario 1: 0 = 1.14189, 1 = 1.14166; punto 1.14189, vela contraria que lo forma: la que abre a las 10:56 (08:56Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:59 (08:59Z) | zona:100 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:59 (08:59Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara], RN-037 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 07-11 10:59 (08:59Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara], RN-037 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:00 (09:00Z) | hecho liquidez_tomada: si -> - (sin regla en este cierre)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:08 (09:08Z) | toma de M15: el bajo de M15 en 1.14126 (formado 10:45 (08:45Z)), para compra; M1 de la toma (cierra 11:08 (09:08Z)) o/h/l/c 1.14134/1.14134/1.14097/1.14111: CIERRA pasada la linea (cuerpo)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:08 (09:08Z) | escenario 1 abierto, con la toma de 11:08 (09:08Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:08 (09:08Z) | zona:101 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14155, 1 = 1.14097; punto 1.14155, vela contraria que lo forma: la que abre a las 11:06 (09:06Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:08 (09:08Z) | hecho liquidez_tomada: - -> si (RN-004)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:08 (09:08Z) | orden o5 (stop, compra) en zona:101: precio 1.14155, stop 1.14108, objetivo 1.14329, lote 10.52; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:12 (09:12Z) | zona:102 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14136, 1 = 1.14116; punto 1.14136, vela contraria que lo forma: la que abre a las 11:11 (09:11Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:12 (09:12Z) | orden o5: colocada -> cancelada a las 11:11:59 (09:11:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:12 (09:12Z) | orden o6 (stop, compra) en zona:102: precio 1.14136, stop 1.14120, objetivo 1.14196, lote 24.71; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:13 (09:13Z) | zona:103 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14136, 1 = 1.14109; punto 1.14136, vela contraria que lo forma: la que abre a las 11:11 (09:11Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:13 (09:13Z) | orden o6: colocada -> cancelada a las 11:12:59 (09:12:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:13 (09:13Z) | orden o7 (stop, compra) en zona:103: precio 1.14136, stop 1.14114, objetivo 1.14217, lote 22.49; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:14 (09:14Z) | prohibido abrir_operacion por: RN-018 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:14 (09:14Z) | orden o7: colocada -> llenada a las 11:13:30 (09:13:30Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:14 (09:14Z) | llenado de o7 (zona:103) a 1.14136: ANTES de que ninguna M1 cierre mas alla del precio desde que se coloco; la M1 del llenado CIERRA mas alla (cuerpo)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:15 (09:15Z) | zona:104 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14138, 1 = 1.14125; punto 1.14138, vela contraria que lo forma: la que abre a las 11:14 (09:14Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:15 (09:15Z) | zona:104 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:16 (09:16Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:16 (09:16Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:16 (09:16Z) | posicion pos-o7 cerrada por stop a las 11:15:54 (09:15:54Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:17 (09:17Z) | zona:105 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14140, 1 = 1.14127; punto 1.14140, vela contraria que lo forma: la que abre a las 11:16 (09:16Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:17 (09:17Z) | zona:105 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:17 (09:17Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:17 (09:17Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:18 (09:18Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:19 (09:19Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:20 (09:20Z) | zona:106 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14159, 1 = 1.14143; punto 1.14159, vela contraria que lo forma: la que abre a las 11:19 (09:19Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:20 (09:20Z) | zona:106 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:20 (09:20Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:21 (09:21Z) | zona:107 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14159, 1 = 1.14135; punto 1.14159, vela contraria que lo forma: la que abre a las 11:19 (09:19Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:21 (09:21Z) | zona:107 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:21 (09:21Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:22 (09:22Z) | zona:108 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14159, 1 = 1.14126; punto 1.14159, vela contraria que lo forma: la que abre a las 11:19 (09:19Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:22 (09:22Z) | zona:108 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:22 (09:22Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:22 (09:22Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:23 (09:23Z) | zona:109 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14142, 1 = 1.14121; punto 1.14142, vela contraria que lo forma: la que abre a las 11:22 (09:22Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:23 (09:23Z) | zona:109 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:23 (09:23Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:24 (09:24Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:25 (09:25Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:26 (09:26Z) | zona:110 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14148, 1 = 1.14121; punto 1.14148, vela contraria que lo forma: la que abre a las 11:25 (09:25Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:26 (09:26Z) | zona:110 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:26 (09:26Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:27 (09:27Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:28 (09:28Z) | zona:111 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14148, 1 = 1.14108; punto 1.14148, vela contraria que lo forma: la que abre a las 11:25 (09:25Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:28 (09:28Z) | zona:111 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:28 (09:28Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:29 (09:29Z) | zona:112 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14148, 1 = 1.14095; punto 1.14148, vela contraria que lo forma: la que abre a las 11:25 (09:25Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:29 (09:29Z) | zona:112 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:29 (09:29Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:30 (09:30Z) | zona:113 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14148, 1 = 1.14093; punto 1.14148, vela contraria que lo forma: la que abre a las 11:25 (09:25Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:30 (09:30Z) | zona:113 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:30 (09:30Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:31 (09:31Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:32 (09:32Z) | zona:114 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14148, 1 = 1.14089; punto 1.14148, vela contraria que lo forma: la que abre a las 11:25 (09:25Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:32 (09:32Z) | zona:114 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:32 (09:32Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:33 (09:33Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:34 (09:34Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:35 (09:35Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:36 (09:36Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:37 (09:37Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:38 (09:38Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:39 (09:39Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:40 (09:40Z) | zona:115 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14139, 1 = 1.14120; punto 1.14139, vela contraria que lo forma: la que abre a las 11:39 (09:39Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:40 (09:40Z) | zona:115 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:40 (09:40Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:41 (09:41Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:42 (09:42Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:43 (09:43Z) | zona:116 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14133, 1 = 1.14123; punto 1.14133, vela contraria que lo forma: la que abre a las 11:42 (09:42Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:43 (09:43Z) | zona:116 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:43 (09:43Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:44 (09:44Z) | zona:117 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14133, 1 = 1.14113; punto 1.14133, vela contraria que lo forma: la que abre a las 11:42 (09:42Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:44 (09:44Z) | zona:117 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:44 (09:44Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:45 (09:45Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:46 (09:46Z) | zona:118 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14133, 1 = 1.14111; punto 1.14133, vela contraria que lo forma: la que abre a las 11:42 (09:42Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:46 (09:46Z) | zona:118 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:46 (09:46Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:47 (09:47Z) | zona:119 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14127, 1 = 1.14111; punto 1.14127, vela contraria que lo forma: la que abre a las 11:46 (09:46Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:47 (09:47Z) | zona:119 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:47 (09:47Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:48 (09:48Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:49 (09:49Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:50 (09:50Z) | zona:120 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14132, 1 = 1.14115; punto 1.14132, vela contraria que lo forma: la que abre a las 11:49 (09:49Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:50 (09:50Z) | zona:120 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:50 (09:50Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:51 (09:51Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:52 (09:52Z) | zona:121 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14142, 1 = 1.14125; punto 1.14142, vela contraria que lo forma: la que abre a las 11:51 (09:51Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:52 (09:52Z) | zona:121 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:52 (09:52Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:53 (09:53Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:54 (09:54Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:55 (09:55Z) | zona:122 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14142, 1 = 1.14112; punto 1.14142, vela contraria que lo forma: la que abre a las 11:51 (09:51Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:55 (09:55Z) | zona:122 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:55 (09:55Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:56 (09:56Z) | zona:123 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14142, 1 = 1.14111; punto 1.14142, vela contraria que lo forma: la que abre a las 11:51 (09:51Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:56 (09:56Z) | zona:123 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:56 (09:56Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:57 (09:57Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:58 (09:58Z) | zona:124 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14138, 1 = 1.14121; punto 1.14138, vela contraria que lo forma: la que abre a las 11:57 (09:57Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:58 (09:58Z) | zona:124 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:58 (09:58Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:59 (09:59Z) | zona:125 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14138, 1 = 1.14117; punto 1.14138, vela contraria que lo forma: la que abre a las 11:57 (09:57Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:59 (09:59Z) | zona:125 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 11:59 (09:59Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:00 (10:00Z) | zona:126 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14138, 1 = 1.14097; punto 1.14138, vela contraria que lo forma: la que abre a las 11:57 (09:57Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:00 (10:00Z) | zona:126 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:00 (10:00Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:01 (10:01Z) | zona:127 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14138, 1 = 1.14085; punto 1.14138, vela contraria que lo forma: la que abre a las 11:57 (09:57Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:01 (10:01Z) | zona:127 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:01 (10:01Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:02 (10:02Z) | toma de M15: el bajo de M15 en 1.14089 (formado 11:45 (09:45Z)), para compra; M1 de la toma (cierra 12:02 (10:02Z)) o/h/l/c 1.14093/1.14093/1.14081/1.14086: CIERRA pasada la linea (cuerpo)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:02 (10:02Z) | escenario 2 abierto, con la toma de 12:02 (10:02Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:02 (10:02Z) | zona:128 (compra) ligada en la sesion 11-15, escenario 1: 0 = 1.14138, 1 = 1.14081; punto 1.14138, vela contraria que lo forma: la que abre a las 11:57 (09:57Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:02 (10:02Z) | zona:128 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:02 (10:02Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:03 (10:03Z) | deja de estar prohibido abrir_operacion
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:03 (10:03Z) | orden o8 (stop, compra) en zona:128: precio 1.14138, stop 1.14092, objetivo 1.14309, lote 10.74; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:05 (10:05Z) | zona:129 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14109, 1 = 1.14076; punto 1.14109, vela contraria que lo forma: la que abre a las 12:04 (10:04Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:05 (10:05Z) | orden o8: colocada -> cancelada a las 12:04:59 (10:04:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:05 (10:05Z) | orden o9 (stop, compra) en zona:129: precio 1.14109, stop 1.14082, objetivo 1.14208, lote 18.30; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:07 (10:07Z) | zona:130 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14095, 1 = 1.14086; punto 1.14095, vela contraria que lo forma: la que abre a las 12:06 (10:06Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:07 (10:07Z) | orden o9: colocada -> cancelada a las 12:06:59 (10:06:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:07 (10:07Z) | orden o10 (stop, compra) en zona:130: precio 1.14095, stop 1.14087, objetivo 1.14122, lote 24.69; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:08 (10:08Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:08 (10:08Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:08 (10:08Z) | orden o10: colocada -> llenada a las 12:07:11 (10:07:11Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:08 (10:08Z) | llenado de o10 (zona:130) a 1.14095: ANTES de que ninguna M1 cierre mas alla del precio desde que se coloco; la M1 del llenado CIERRA mas alla (cuerpo)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:08 (10:08Z) | posicion pos-o10 cerrada por stop a las 12:07:26 (10:07:26Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:09 (10:09Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:10 (10:10Z) | zona:131 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14099, 1 = 1.14087; punto 1.14099, vela contraria que lo forma: la que abre a las 12:09 (10:09Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:10 (10:10Z) | zona:131 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:10 (10:10Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:11 (10:11Z) | zona:132 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14099, 1 = 1.14083; punto 1.14099, vela contraria que lo forma: la que abre a las 12:09 (10:09Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:11 (10:11Z) | zona:132 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:11 (10:11Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:12 (10:12Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:13 (10:13Z) | zona:133 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14099, 1 = 1.14081; punto 1.14099, vela contraria que lo forma: la que abre a las 12:09 (10:09Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:13 (10:13Z) | zona:133 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:13 (10:13Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:14 (10:14Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:15 (10:15Z) | zona:134 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14088, 1 = 1.14071; punto 1.14088, vela contraria que lo forma: la que abre a las 12:14 (10:14Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:15 (10:15Z) | zona:134 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:15 (10:15Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:16 (10:16Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:17 (10:17Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:18 (10:18Z) | zona:135 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14078, 1 = 1.14070; punto 1.14078, vela contraria que lo forma: la que abre a las 12:17 (10:17Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:18 (10:18Z) | zona:135 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:18 (10:18Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:19 (10:19Z) | zona:136 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14078, 1 = 1.14065; punto 1.14078, vela contraria que lo forma: la que abre a las 12:17 (10:17Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:19 (10:19Z) | zona:136 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:19 (10:19Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:20 (10:20Z) | zona:137 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14078, 1 = 1.14062; punto 1.14078, vela contraria que lo forma: la que abre a las 12:17 (10:17Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:20 (10:20Z) | zona:137 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:20 (10:20Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:21 (10:21Z) | zona:138 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14070, 1 = 1.14052; punto 1.14070, vela contraria que lo forma: la que abre a las 12:20 (10:20Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:21 (10:21Z) | zona:138 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:21 (10:21Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:22 (10:22Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:23 (10:23Z) | zona:139 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14069, 1 = 1.14052; punto 1.14069, vela contraria que lo forma: la que abre a las 12:22 (10:22Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:23 (10:23Z) | zona:139 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:23 (10:23Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:24 (10:24Z) | zona:140 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14069, 1 = 1.14050; punto 1.14069, vela contraria que lo forma: la que abre a las 12:22 (10:22Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:24 (10:24Z) | zona:140 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:24 (10:24Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:25 (10:25Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:26 (10:26Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:27 (10:27Z) | zona:141 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14069, 1 = 1.14056; punto 1.14069, vela contraria que lo forma: la que abre a las 12:26 (10:26Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:27 (10:27Z) | zona:141 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:27 (10:27Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:28 (10:28Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:29 (10:29Z) | zona:142 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14078, 1 = 1.14058; punto 1.14078, vela contraria que lo forma: la que abre a las 12:28 (10:28Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:29 (10:29Z) | zona:142 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:29 (10:29Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:30 (10:30Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:31 (10:31Z) | zona:143 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14078, 1 = 1.14057; punto 1.14078, vela contraria que lo forma: la que abre a las 12:28 (10:28Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:31 (10:31Z) | zona:143 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:31 (10:31Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:32 (10:32Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:33 (10:33Z) | zona:144 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14078, 1 = 1.14054; punto 1.14078, vela contraria que lo forma: la que abre a las 12:28 (10:28Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:33 (10:33Z) | zona:144 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:33 (10:33Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:34 (10:34Z) | zona:145 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14078, 1 = 1.14049; punto 1.14078, vela contraria que lo forma: la que abre a las 12:28 (10:28Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:34 (10:34Z) | zona:145 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:34 (10:34Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:35 (10:35Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:36 (10:36Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:37 (10:37Z) | zona:146 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14067, 1 = 1.14049; punto 1.14067, vela contraria que lo forma: la que abre a las 12:36 (10:36Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:37 (10:37Z) | zona:146 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:37 (10:37Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:38 (10:38Z) | zona:147 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14067, 1 = 1.14042; punto 1.14067, vela contraria que lo forma: la que abre a las 12:36 (10:36Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:38 (10:38Z) | zona:147 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:38 (10:38Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:39 (10:39Z) | zona:148 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14067, 1 = 1.14030; punto 1.14067, vela contraria que lo forma: la que abre a las 12:36 (10:36Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:39 (10:39Z) | zona:148 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:39 (10:39Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:40 (10:40Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:41 (10:41Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:42 (10:42Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:43 (10:43Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:44 (10:44Z) | zona:149 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14065, 1 = 1.14044; punto 1.14065, vela contraria que lo forma: la que abre a las 12:43 (10:43Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:44 (10:44Z) | zona:149 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:44 (10:44Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:45 (10:45Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:46 (10:46Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:47 (10:47Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:48 (10:48Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:49 (10:49Z) | zona:150 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14084, 1 = 1.14065; punto 1.14084, vela contraria que lo forma: la que abre a las 12:48 (10:48Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:49 (10:49Z) | zona:150 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:49 (10:49Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:50 (10:50Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:51 (10:51Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:52 (10:52Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:53 (10:53Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:54 (10:54Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:55 (10:55Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:56 (10:56Z) | zona:151 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14100, 1 = 1.14076; punto 1.14100, vela contraria que lo forma: la que abre a las 12:55 (10:55Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:56 (10:56Z) | zona:151 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:56 (10:56Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:57 (10:57Z) | zona:152 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14100, 1 = 1.14068; punto 1.14100, vela contraria que lo forma: la que abre a las 12:55 (10:55Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:57 (10:57Z) | zona:152 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:57 (10:57Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:58 (10:58Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 12:59 (10:59Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:00 (11:00Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:01 (11:01Z) | zona:153 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14112, 1 = 1.14095; punto 1.14112, vela contraria que lo forma: la que abre a las 13:00 (11:00Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:01 (11:01Z) | zona:153 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:01 (11:01Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:01 (11:01Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:02 (11:02Z) | zona:154 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14112, 1 = 1.14082; punto 1.14112, vela contraria que lo forma: la que abre a las 13:00 (11:00Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:02 (11:02Z) | zona:154 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:02 (11:02Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:02 (11:02Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:03 (11:03Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:04 (11:04Z) | zona:155 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14096, 1 = 1.14092; punto 1.14096, vela contraria que lo forma: la que abre a las 13:03 (11:03Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:04 (11:04Z) | zona:155 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:04 (11:04Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:04 (11:04Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:05 (11:05Z) | zona:156 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14096, 1 = 1.14086; punto 1.14096, vela contraria que lo forma: la que abre a las 13:03 (11:03Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:05 (11:05Z) | zona:156 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:05 (11:05Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:05 (11:05Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:06 (11:06Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:07 (11:07Z) | zona:157 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14096, 1 = 1.14080; punto 1.14096, vela contraria que lo forma: la que abre a las 13:03 (11:03Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:07 (11:07Z) | zona:157 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:07 (11:07Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:08 (11:08Z) | zona:158 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14096, 1 = 1.14075; punto 1.14096, vela contraria que lo forma: la que abre a las 13:03 (11:03Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:08 (11:08Z) | zona:158 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:08 (11:08Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:09 (11:09Z) | zona:159 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14096, 1 = 1.14070; punto 1.14096, vela contraria que lo forma: la que abre a las 13:03 (11:03Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:09 (11:09Z) | zona:159 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:09 (11:09Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:10 (11:10Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:11 (11:11Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:12 (11:12Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:13 (11:13Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:14 (11:14Z) | zona:160 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14116, 1 = 1.14097; punto 1.14116, vela contraria que lo forma: la que abre a las 13:13 (11:13Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:14 (11:14Z) | zona:160 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:14 (11:14Z) | prohibido abrir_operacion por: RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:14 (11:14Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:15 (11:15Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:16 (11:16Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:17 (11:17Z) | zona:161 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14111, 1 = 1.14100; punto 1.14111, vela contraria que lo forma: la que abre a las 13:16 (11:16Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:17 (11:17Z) | zona:161 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:17 (11:17Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:18 (11:18Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:19 (11:19Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:20 (11:20Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:21 (11:21Z) | zona:162 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14146, 1 = 1.14119; punto 1.14146, vela contraria que lo forma: la que abre a las 13:20 (11:20Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:21 (11:21Z) | zona:162 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:21 (11:21Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:22 (11:22Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:23 (11:23Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:24 (11:24Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:25 (11:25Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:26 (11:26Z) | zona:163 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14140, 1 = 1.14119; punto 1.14140, vela contraria que lo forma: la que abre a las 13:25 (11:25Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:26 (11:26Z) | zona:163 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:26 (11:26Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:27 (11:27Z) | zona:164 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14140, 1 = 1.14112; punto 1.14140, vela contraria que lo forma: la que abre a las 13:25 (11:25Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:27 (11:27Z) | zona:164 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:27 (11:27Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:28 (11:28Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:29 (11:29Z) | zona:165 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14130, 1 = 1.14117; punto 1.14130, vela contraria que lo forma: la que abre a las 13:28 (11:28Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:29 (11:29Z) | zona:165 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:29 (11:29Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:30 (11:30Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:31 (11:31Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:32 (11:32Z) | zona:166 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14142, 1 = 1.14135; punto 1.14142, vela contraria que lo forma: la que abre a las 13:31 (11:31Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:32 (11:32Z) | zona:166 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:32 (11:32Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:33 (11:33Z) | zona:167 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14142, 1 = 1.14129; punto 1.14142, vela contraria que lo forma: la que abre a las 13:31 (11:31Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:33 (11:33Z) | zona:167 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:33 (11:33Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:34 (11:34Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:35 (11:35Z) | zona:168 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14142, 1 = 1.14118; punto 1.14142, vela contraria que lo forma: la que abre a las 13:31 (11:31Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:35 (11:35Z) | zona:168 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:35 (11:35Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:36 (11:36Z) | zona:169 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14142, 1 = 1.14115; punto 1.14142, vela contraria que lo forma: la que abre a las 13:31 (11:31Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:36 (11:36Z) | zona:169 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:36 (11:36Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:37 (11:37Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:38 (11:38Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:39 (11:39Z) | zona:170 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14124, 1 = 1.14116; punto 1.14124, vela contraria que lo forma: la que abre a las 13:38 (11:38Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:39 (11:39Z) | zona:170 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:39 (11:39Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:40 (11:40Z) | zona:171 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14124, 1 = 1.14109; punto 1.14124, vela contraria que lo forma: la que abre a las 13:38 (11:38Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:40 (11:40Z) | zona:171 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:40 (11:40Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:41 (11:41Z) | zona:172 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14124, 1 = 1.14101; punto 1.14124, vela contraria que lo forma: la que abre a las 13:38 (11:38Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:41 (11:41Z) | zona:172 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:41 (11:41Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:42 (11:42Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-005 [dispara], RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:43 (11:43Z) | zona:173 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14110, 1 = 1.14082; punto 1.14110, vela contraria que lo forma: la que abre a las 13:42 (11:42Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:43 (11:43Z) | zona:173 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:43 (11:43Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:43 (11:43Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:44 (11:44Z) | zona:174 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14110, 1 = 1.14078; punto 1.14110, vela contraria que lo forma: la que abre a las 13:42 (11:42Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:44 (11:44Z) | zona:174 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:44 (11:44Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:45 (11:45Z) | zona:175 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14086, 1 = 1.14076; punto 1.14086, vela contraria que lo forma: la que abre a las 13:44 (11:44Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:45 (11:45Z) | zona:175 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:45 (11:45Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:46 (11:46Z) | zona:176 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14086, 1 = 1.14070; punto 1.14086, vela contraria que lo forma: la que abre a las 13:44 (11:44Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:46 (11:46Z) | zona:176 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:46 (11:46Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:47 (11:47Z) | toma de M15: el bajo de M15 en 1.14070 (formado 13:30 (11:30Z)), para compra; M1 de la toma (cierra 13:47 (11:47Z)) o/h/l/c 1.14073/1.14074/1.14067/1.14068: CIERRA pasada la linea (cuerpo)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:47 (11:47Z) | escenario 3 abierto, con la toma de 13:47 (11:47Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:47 (11:47Z) | zona:177 (compra) ligada en la sesion 11-15, escenario 2: 0 = 1.14086, 1 = 1.14067; punto 1.14086, vela contraria que lo forma: la que abre a las 13:44 (11:44Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:47 (11:47Z) | zona:177 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:47 (11:47Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:48 (11:48Z) | zona:178 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14086, 1 = 1.14064; punto 1.14086, vela contraria que lo forma: la que abre a las 13:44 (11:44Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:48 (11:48Z) | deja de estar prohibido abrir_operacion
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:48 (11:48Z) | orden o11 (stop, compra) en zona:178: precio 1.14086, stop 1.14068, objetivo 1.14152, lote 24.62; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:49 (11:49Z) | zona:179 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14086, 1 = 1.14057; punto 1.14086, vela contraria que lo forma: la que abre a las 13:44 (11:44Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:49 (11:49Z) | orden o11: colocada -> cancelada a las 13:48:59 (11:48:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:49 (11:49Z) | orden o12 (stop, compra) en zona:179: precio 1.14086, stop 1.14062, objetivo 1.14173, lote 20.52; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:50 (11:50Z) | zona:180 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14086, 1 = 1.14052; punto 1.14086, vela contraria que lo forma: la que abre a las 13:44 (11:44Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:50 (11:50Z) | orden o12: colocada -> cancelada a las 13:49:59 (11:49:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:50 (11:50Z) | orden o13 (stop, compra) en zona:180: precio 1.14086, stop 1.14058, objetivo 1.14188, lote 17.59; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:51 (11:51Z) | zona:181 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14051; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:51 (11:51Z) | orden o13: colocada -> cancelada a las 13:50:59 (11:50:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:51 (11:51Z) | orden o14 (stop, compra) en zona:181: precio 1.14061, stop 1.14053, objetivo 1.14091, lote 24.62; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:52 (11:52Z) | zona:182 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14042; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:52 (11:52Z) | orden o14: colocada -> cancelada a las 13:51:59 (11:51:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:52 (11:52Z) | orden o15 (stop, compra) en zona:182: precio 1.14061, stop 1.14045, objetivo 1.14118, lote 24.62; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:53 (11:53Z) | zona:183 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14038; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:53 (11:53Z) | orden o15: colocada -> cancelada a las 13:52:59 (11:52:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:53 (11:53Z) | orden o16 (stop, compra) en zona:183: precio 1.14061, stop 1.14042, objetivo 1.14130, lote 24.62; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:54 (11:54Z) | zona:184 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14027; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:54 (11:54Z) | orden o16: colocada -> cancelada a las 13:53:59 (11:53:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:54 (11:54Z) | orden o17 (stop, compra) en zona:184: precio 1.14061, stop 1.14033, objetivo 1.14163, lote 17.59; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:55 (11:55Z) | zona:185 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14024; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:55 (11:55Z) | orden o17: colocada -> cancelada a las 13:54:59 (11:54:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:55 (11:55Z) | orden o18 (stop, compra) en zona:185: precio 1.14061, stop 1.14031, objetivo 1.14172, lote 16.42; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:57 (11:57Z) | zona:186 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14017; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:57 (11:57Z) | orden o18: colocada -> cancelada a las 13:56:59 (11:56:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:57 (11:57Z) | orden o19 (stop, compra) en zona:186: precio 1.14061, stop 1.14025, objetivo 1.14193, lote 13.68; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:58 (11:58Z) | zona:187 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14005; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:58 (11:58Z) | orden o19: colocada -> cancelada a las 13:57:59 (11:57:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:58 (11:58Z) | orden o20 (stop, compra) en zona:187: precio 1.14061, stop 1.14016, objetivo 1.14229, lote 10.94; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:59 (11:59Z) | zona:188 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14061, 1 = 1.14004; punto 1.14061, vela contraria que lo forma: la que abre a las 13:50 (11:50Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:59 (11:59Z) | orden o20: colocada -> cancelada a las 13:58:59 (11:58:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 13:59 (11:59Z) | orden o21 (stop, compra) en zona:188: precio 1.14061, stop 1.14015, objetivo 1.14232, lote 10.71; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:01 (12:01Z) | zona:189 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14039, 1 = 1.14031; punto 1.14039, vela contraria que lo forma: la que abre a las 14:00 (12:00Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:01 (12:01Z) | orden o21: colocada -> cancelada a las 14:00:59 (12:00:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:01 (12:01Z) | orden o22 (stop, compra) en zona:189: precio 1.14039, stop 1.14032, objetivo 1.14063, lote 24.62; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:02 (12:02Z) | orden o22: colocada -> llenada a las 14:01:00 (12:01:00Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:02 (12:02Z) | llenado de o22 (zona:189) a 1.14039: ANTES de que ninguna M1 cierre mas alla del precio desde que se coloco; la M1 del llenado NO cierra mas alla (mecha)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:02 (12:02Z) | orden o23 (stop, compra) en zona:189: precio 1.14039, stop 1.14032, objetivo 1.14063, lote 24.55; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:02 (12:02Z) | posicion pos-o22 cerrada por stop a las 14:01:49 (12:01:49Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:03 (12:03Z) | zona:190 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14039, 1 = 1.14023; punto 1.14039, vela contraria que lo forma: la que abre a las 14:00 (12:00Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:03 (12:03Z) | orden o23: colocada -> llenada a las 14:02:09 (12:02:09Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:03 (12:03Z) | llenado de o23 (zona:189) a 1.14039: ANTES de que ninguna M1 cierre mas alla del precio desde que se coloco; la M1 del llenado NO cierra mas alla (mecha)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:03 (12:03Z) | orden o24 (stop, compra) en zona:190: precio 1.14039, stop 1.14026, objetivo 1.14087, lote 24.48; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:03 (12:03Z) | posicion pos-o23 cerrada por stop a las 14:02:30 (12:02:30Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:04 (12:04Z) | zona:191 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14039, 1 = 1.14004; punto 1.14039, vela contraria que lo forma: la que abre a las 14:00 (12:00Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:04 (12:04Z) | orden o24: colocada -> cancelada a las 14:03:59 (12:03:59Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:04 (12:04Z) | orden o25 (stop, compra) en zona:191: precio 1.14039, stop 1.14011, objetivo 1.14144, lote 17.49; estado colocada
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:05 (12:05Z) | prohibido abrir_operacion por: RN-009 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:06 (12:06Z) | zona:192 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14031, 1 = 1.14012; punto 1.14031, vela contraria que lo forma: la que abre a las 14:05 (12:05Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:06 (12:06Z) | zona:192 sin orden en este cierre: hay una posicion abierta; disparan ni RN-011 ni RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:06 (12:06Z) | prohibido abrir_operacion por: RN-009 [dispara], RN-018 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:06 (12:06Z) | orden o25: colocada -> llenada a las 14:05:03 (12:05:03Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:06 (12:06Z) | llenado de o25 (zona:191) a 1.14039: ANTES de que ninguna M1 cierre mas alla del precio desde que se coloco; la M1 del llenado NO cierra mas alla (mecha)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:08 (12:08Z) | zona:193 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14021, 1 = 1.13988; punto 1.14021, vela contraria que lo forma: la que abre a las 14:07 (12:07Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:08 (12:08Z) | zona:193 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:08 (12:08Z) | hecho detenido_por_cartuchos: - -> hasta_cartuchos_reinicio (RN-016)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:08 (12:08Z) | prohibido abrir_operacion por: RN-009 [dispara], RN-016 [dispara], RN-001 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:08 (12:08Z) | prohibido buscar_entradas por: RN-001 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:08 (12:08Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-009 [dispara], RN-016 [dispara], RN-001 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:08 (12:08Z) | posicion pos-o25 cerrada por stop a las 14:07:23 (12:07:23Z)
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:09 (12:09Z) | prohibido abrir_operacion por: RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:09 (12:09Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:10 (12:10Z) | zona:194 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.13996, 1 = 1.13982; punto 1.13996, vela contraria que lo forma: la que abre a las 14:09 (12:09Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:10 (12:10Z) | zona:194 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:10 (12:10Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:11 (12:11Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:12 (12:12Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:13 (12:13Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:14 (12:14Z) | zona:195 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14010, 1 = 1.13992; punto 1.14010, vela contraria que lo forma: la que abre a las 14:13 (12:13Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:14 (12:14Z) | zona:195 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:14 (12:14Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:15 (12:15Z) | zona:196 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14010, 1 = 1.13985; punto 1.14010, vela contraria que lo forma: la que abre a las 14:13 (12:13Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:15 (12:15Z) | zona:196 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:15 (12:15Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:16 (12:16Z) | zona:197 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14010, 1 = 1.13980; punto 1.14010, vela contraria que lo forma: la que abre a las 14:13 (12:13Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:16 (12:16Z) | zona:197 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:16 (12:16Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:17 (12:17Z) | zona:198 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.13998, 1 = 1.13974; punto 1.13998, vela contraria que lo forma: la que abre a las 14:16 (12:16Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:17 (12:17Z) | zona:198 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:17 (12:17Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:18 (12:18Z) | zona:199 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.13998, 1 = 1.13969; punto 1.13998, vela contraria que lo forma: la que abre a las 14:16 (12:16Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:18 (12:18Z) | zona:199 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:18 (12:18Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:19 (12:19Z) | zona:200 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.13998, 1 = 1.13968; punto 1.13998, vela contraria que lo forma: la que abre a las 14:16 (12:16Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:19 (12:19Z) | zona:200 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:19 (12:19Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:20 (12:20Z) | zona:201 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.13976, 1 = 1.13954; punto 1.13976, vela contraria que lo forma: la que abre a las 14:19 (12:19Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:20 (12:20Z) | zona:201 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:20 (12:20Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:21 (12:21Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:22 (12:22Z) | zona:202 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.13976, 1 = 1.13955; punto 1.13976, vela contraria que lo forma: la que abre a las 14:21 (12:21Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:22 (12:22Z) | zona:202 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:22 (12:22Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:23 (12:23Z) | zona:203 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.13976, 1 = 1.13953; punto 1.13976, vela contraria que lo forma: la que abre a las 14:21 (12:21Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:23 (12:23Z) | zona:203 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:23 (12:23Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:24 (12:24Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:25 (12:25Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:26 (12:26Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:27 (12:27Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:28 (12:28Z) | zona:204 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14013, 1 = 1.13992; punto 1.14013, vela contraria que lo forma: la que abre a las 14:27 (12:27Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:28 (12:28Z) | zona:204 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:28 (12:28Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:29 (12:29Z) | zona:205 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14013, 1 = 1.13987; punto 1.14013, vela contraria que lo forma: la que abre a las 14:27 (12:27Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:29 (12:29Z) | zona:205 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:29 (12:29Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:30 (12:30Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:31 (12:31Z) | zona:206 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14013, 1 = 1.13986; punto 1.14013, vela contraria que lo forma: la que abre a las 14:27 (12:27Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:31 (12:31Z) | zona:206 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:31 (12:31Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:32 (12:32Z) | zona:207 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14404, 1 = 1.13986; punto 1.14404, vela contraria que lo forma: la que abre a las 14:31 (12:31Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:32 (12:32Z) | zona:207 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:32 (12:32Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:33 (12:33Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:34 (12:34Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:35 (12:35Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:36 (12:36Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:37 (12:37Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:38 (12:38Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:39 (12:39Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:40 (12:40Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:41 (12:41Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:42 (12:42Z) | zona:208 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14686, 1 = 1.14565; punto 1.14686, vela contraria que lo forma: la que abre a las 14:41 (12:41Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:42 (12:42Z) | zona:208 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:42 (12:42Z) | prohibido abrir_operacion por: RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:42 (12:42Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:43 (12:43Z) | zona:209 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14686, 1 = 1.14562; punto 1.14686, vela contraria que lo forma: la que abre a las 14:41 (12:41Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:43 (12:43Z) | zona:209 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:43 (12:43Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:44 (12:44Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:45 (12:45Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:46 (12:46Z) | zona:210 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14717, 1 = 1.14633; punto 1.14717, vela contraria que lo forma: la que abre a las 14:45 (12:45Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:46 (12:46Z) | zona:210 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:46 (12:46Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:47 (12:47Z) | zona:211 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14717, 1 = 1.14631; punto 1.14717, vela contraria que lo forma: la que abre a las 14:45 (12:45Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:47 (12:47Z) | zona:211 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:47 (12:47Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:48 (12:48Z) | zona:212 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14717, 1 = 1.14559; punto 1.14717, vela contraria que lo forma: la que abre a las 14:45 (12:45Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:48 (12:48Z) | zona:212 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:48 (12:48Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:49 (12:49Z) | zona:213 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14717, 1 = 1.14550; punto 1.14717, vela contraria que lo forma: la que abre a las 14:45 (12:45Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:49 (12:49Z) | zona:213 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:49 (12:49Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:50 (12:50Z) | zona:214 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14610, 1 = 1.14550; punto 1.14610, vela contraria que lo forma: la que abre a las 14:49 (12:49Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:50 (12:50Z) | zona:214 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:50 (12:50Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:51 (12:51Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:52 (12:52Z) | zona:215 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14610, 1 = 1.14535; punto 1.14610, vela contraria que lo forma: la que abre a las 14:49 (12:49Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:52 (12:52Z) | zona:215 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:52 (12:52Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:53 (12:53Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:54 (12:54Z) | zona:216 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14627, 1 = 1.14536; punto 1.14627, vela contraria que lo forma: la que abre a las 14:53 (12:53Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:54 (12:54Z) | zona:216 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:54 (12:54Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:55 (12:55Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:56 (12:56Z) | zona:217 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14627, 1 = 1.14527; punto 1.14627, vela contraria que lo forma: la que abre a las 14:53 (12:53Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:56 (12:56Z) | zona:217 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:56 (12:56Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:57 (12:57Z) | zona:218 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14627, 1 = 1.14519; punto 1.14627, vela contraria que lo forma: la que abre a las 14:53 (12:53Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:57 (12:57Z) | zona:218 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:57 (12:57Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:58 (12:58Z) | zona:219 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14627, 1 = 1.14492; punto 1.14627, vela contraria que lo forma: la que abre a las 14:53 (12:53Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:58 (12:58Z) | zona:219 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:58 (12:58Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:59 (12:59Z) | zona:220 (compra) ligada en la sesion 11-15, escenario 3: 0 = 1.14627, 1 = 1.14482; punto 1.14627, vela contraria que lo forma: la que abre a las 14:53 (12:53Z); linea de M15: no: ningun nivel de M15 de ese instante
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:59 (12:59Z) | zona:220 sin orden en este cierre: la colocacion se bloqueo (abajo); disparan RN-011, RN-015
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:59 (12:59Z) | prohibido abrir_operacion por: RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara], RN-037 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 14:59 (12:59Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara], RN-037 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 15:00 (13:00Z) | prohibido abrir_operacion por: RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]
+DIAGNOSTICO-DECISIONES | 2026-07-02 11-15 15:00 (13:00Z) | RN-015 no ejecuta accion:colocar_orden_limite (prohibida:abrir_operacion): la prohiben RN-001 [dispara], RN-005 [dispara], RN-009 [dispara], RN-016 [dispara]

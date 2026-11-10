@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/trazas-ablacion
 
 ## Current Feature
-Ninguna rama abierta. trabajo/video-julio cerrada en main el 2026-11-09 (stable/F38u-video-julio): la voz del trader sobre julio; T y U hechas.
+trabajo/trazas-ablacion, EN CURSO: F (1), la bitácora de decisiones del motor y la ablación (R4.4). Encargo docs/encargos/trabajo-trazas-ablacion.md; informe docs/validation/TRAZAS-ABLACION.md.
 
 ## Stable Main State
 129ea33 · merge de `trabajo/video-julio` (tag `stable/F38u-video-julio`), sobre `stable/F38t-recorrida-construccion-2` (86f306a). Informe docs/validation/VIDEO-JULIO.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/video-julio cerrada en main el 2026-11-09 (stable/
 129ea33 · merge: trabajo/video-julio, la voz del trader sobre julio (v11-v14) · tag stable/F38u-video-julio
 
 ## Tests Currently Passing
-1925 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1939 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ Ninguna rama abierta. trabajo/video-julio cerrada en main el 2026-11-09 (stable/
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; clasificación en §8: 31 pareja, 19 efecto de la cuenta, 4 RN-019, 81 hasta T, 279 sin clase). El rumbo y el método desde aquí: docs/plan/RUMBO-2026-11.md (R0.3 de la hoja de ruta). Siguiente, en este orden: (1) trazas del motor y ablación por regla (RUMBO §2), que confirman o reclasifican las 5 filas de «error nuestro» del vídeo de julio (VIDEO-JULIO.md §4); (2) láminas del bot a la estética de FX Replay (RUMBO §3); (3) la preparación de la sesión 7 con el método nuevo y su ADR (RUMBO §1), con los días de §8, la clasificación de las 81 filas del vídeo de julio (VIDEO-JULIO.md §4), sus dos preguntas técnicas (la tarde del 10 de julio; las entradas válidas que el trader deja sin tomar en el backtest) y los ítems de evidencia de F7 #1, #2, #3 y #10. J antes si la hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de elegir los días. R6a y RUMBO §5 en los huecos.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla están hechas (TRAZAS-ABLACION.md; `motor decisiones`; clases en su PARADA final). El rumbo: docs/plan/RUMBO-2026-11.md (R0.3) con las correcciones del consultor del 2026-11-09 recogidas en R4.3, R4.5 y R6.0 de la hoja de ruta. Siguiente, en este orden: (1) las láminas del bot (R4.5), con la enmienda de RUMBO §0, §4 y §5 en un commit propio; (2) J, si la hoja sale de kit hoja; (3) la preparación de la sesión 7, partida en 7a y 7b (R4.3): el ADR del método (RUMBO §1), el pre-registro de los puntos de pivote (esquema de tres salidas sobre julio que aceptó Aleks el 2026-11-09; los números los propone el consultor con la línea base), los ítems de evidencia de F7 #1, #2, #3, #6 y #10 y lo que el trader ya dijo del rango de H4. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de elegir los días. C, R5.7 y R6a en los huecos.
 
 
 
@@ -80,17 +80,17 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
 - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción) … (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2; entera en HISTORIA, Technical Debt ACORTADA)
 - El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
-- El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4); la prueba de FTMO no (tasa de margen de la buy stop 0, ADR-0090 §4). Sin efecto medido en construcción (DEMO-EJECUCIONES-2-3.md §0.f). Se decide antes de R6a.6, que no la porta al EA sin esa decisión.
-- Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») dicen la comisión del perfil de antes de ADR-0090 (2,50 por lado): se corrigen en la rama que vuelva a correr esos guiones (DEMO-EJECUCIONES-2-3.md §3.1).
+- El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4) … (DEMO-EJECUCIONES-2-3.md §0.f; entera en HISTORIA, Technical Debt ACORTADA)
+- Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») … (DEMO-EJECUCIONES-2-3.md §3.1; entera en HISTORIA, Technical Debt ACORTADA)
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
 - Que el EA reinicie sus globales tras un cambio de símbolo (el defecto de la demo del 2026-10-20) … (EA-CONEXION.md §10; entera en HISTORIA, Technical Debt ACORTADA)
 - La guardia no mira las herramientas que leen un fichero local fuera de Read/Grep/Glob/Bash/PowerShell/Monitor … (GUARDIA-G1.md §1.j; entera en HISTORIA, Technical Debt ACORTADA)
-- Riesgo residual de `trabajo/guardia-g1` (§4.3): el test de un clon de comparar-con-main que es el de `main` o el del árbol del repo cuenta como test del repo; como dentro del repo, la guardia no lee el `conftest.py` ni el `src/` que carga el clon.
-- Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído o de un nombre asignado más de una vez no se calcula; solo se niega si lo que se sabe de ella nombra un fragmento de `SENSIBLES`. Y `subprocess` con `cwd=` que no se calcula analiza la orden desde el directorio de trabajo.
-- Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan, y un `getattr(os, ...)` no se ve. Y en un clon sin .venv (git worktree), un guion de trabajo que importa un paquete de terceros se niega; los tests del clon no, por _test_de_un_clon.
-- Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`, `pico_memoria.py`, `huso_por_velas.py`), cambiados en una rama, no se ejecutan sueltos desde la sesión: B los niega por llamar a `git` o a un programa con argumentos que no se calculan, o por `sys.path.insert` sin calcular (GUARDIA-G1.md §6.4). La rama que los cambie los prueba por sus tests y, sueltos, con «!»; `make check` los sigue lanzando.
-- Riesgo residual de la excepción de la carga por ruta (revisor, A2; GUARDIA-G1.md §6.2): la de la regla de la CI, ampliada a `solo_lectura.py`, vale para CUALQUIER fichero cuya ruta acabe en `.claude/hooks/guardia.py` o `solo_lectura.py`, también fuera del repo, y B no lo lee.
-- Riesgo residual de ADR-0088 (revisor, B7): la guardia niega los listados de `ls`, `dir`, `tree`, `du`, `find`, `git ls-files`, `git ls-tree`, Glob y `Get-ChildItem`; NO los nombres que sacan `git log --name-only`, `git show --name-only`, `git diff --name-only`, `git status --untracked-files=all` o `fd`. Con un caso de verdad dentro de una partición, `git log`/`show`/`diff` sobre esa ruta ya los niega la regla de lectura (`motivo_ruta`); `git status` y `fd`, no. Rama del carril de guardias.
+- Riesgo residual de `trabajo/guardia-g1` (§4.3) … (entera en HISTORIA, Technical Debt ACORTADA)
+- Riesgo residual de C (§5): una ruta compuesta a través de una función propia, de un dato leído o de un nombre asignado más de una vez no se calcula … (entera en HISTORIA, Technical Debt ACORTADA)
+- Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan, y un `getattr(os, ...)` no se ve … (entera en HISTORIA, Technical Debt ACORTADA)
+- Los guiones de la plataforma (`contrato_rama.py`, `sello_make_check.py`, `instalar_hooks.py`, `pico_memoria.py`, `huso_por_velas.py`) … (GUARDIA-G1.md §6.4; entera en HISTORIA, Technical Debt ACORTADA)
+- Riesgo residual de la excepción de la carga por ruta (revisor, A2; GUARDIA-G1.md §6.2) … (entera en HISTORIA, Technical Debt ACORTADA)
+- Riesgo residual de ADR-0088 (revisor, B7) … (entera en HISTORIA, Technical Debt ACORTADA)
 - ADR 0087 (S-15, no existe) sigue en los `ids-inexistentes` del encargo y del informe de trabajo/activar-sesion-05-motor; lo saca la rama que lo cree.
 - RN-019 no dispara nunca en el motor: su forma pide `por: activacion_sin_ruptura` y la orden stop lleva `por = primer_esquema` (zonas.py); nada produce ese `por`, y la acción `reentrar` no está escrita (PUNTO-USADO.md §1.h).
 - La nota de RN-019 (strategy_spec.yaml, hacia :1840) dice que A-31 lo pregunta, y A-31 está RESUELTA desde el 2026-09-29 (PUNTO-USADO.md §1.h).
@@ -136,11 +136,14 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - EL DETECTOR DE CONTRADICCIONES NO VE LOS TEMAS HERMANOS (2026-09-17, rama del breaker de M1, informe §5).
 - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
 - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
-- Copia de seguridad de las crudas y los WAV: hecha hasta v17 (v6 a v10 el 2026-10-22; v15 a v17 el 2026-11-07: data/transcripciones/v15, v16 y v17 y las carpetas sesion-05-audio y sesion-06-audio del Escritorio, 146 ficheros con SHA256SUMS-v15-v17.txt de 146 líneas; Drive privado de Aleks, declaración de Aleks comprobada por el consultor en su Drive). Cada sesión nueva se añade tras su ingesta; los vídeos de las sesiones, recomendado, sin hacer.
+- Copia de seguridad de las crudas y los WAV … (entera en HISTORIA, Technical Debt ACORTADA)
 - La skill ingerir-sesion no nombra el trailer Fuente: de tramos_no_citables.yaml y abrir-rama no nombra la línea de PLANTILLA del informe (SESION-06-EXTRACCION.md §7, puntos 1 y 3; segunda vez): rama corta de skills.
 - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos … (entera en HISTORIA, Technical Debt ACORTADA)
 - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
-- El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A), pero siguen diciendo que está pendiente DEMO-FTMO.md:159-162, la descripción de reloj_dia_riesgo (parametros.yaml:1646-1651), ADR-0090 §1 (:71-75) y FTMO-REGLAS.md:253-254 (informe cerrado: con recuadro). Se corrigen en la primera rama de activación tras la sesión 7 (S-22 y S-19), con su régimen de cambio; trabajo/cuenta-por-mes tocó knowledge/spec solo para la racha (ADR-0092 §8) y no la paga, decisión del consultor del 2026-11-08. Esa rama cierra también A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).
+- El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A) … (entera en HISTORIA, Technical Debt ACORTADA)
+- La zona que RN-005 liga al escenario vigente en el mismo cierre de M1 en que RN-004 abre uno nuevo se queda en el escenario anterior, y su stop cuenta en los cartuchos de ese (2026-07-03 09:23 y 09:35, zona:46 y zona:51; TRAZAS-ABLACION.md F5): la deuda de la zona reutilizada de PUNTO-USADO.md §1.c y §4.f en su forma directa; no se toca sin la regla del trader.
+- La comparación de `motor decisiones` mira cada operación por (día, sesión, lado, instante, entrada) y no su lote, su stop ni su objetivo: un cambio de lote solo se ve si mueve las no enviadas, los rechazos o las cuentas suspendidas (TRAZAS-ABLACION.md F4.3).
+- El `toca_colocar_orden_limite` sintético de tests/unit/test_cableado.py guarda en una clausura que ya dio SÍ y solo coloca en la primera corrida del proceso; los tests que corren el día dos veces usan uno sin estado (TRAZAS-ABLACION.md F2).
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
@@ -155,8 +158,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 63 (2026-11-08).
+— ninguna desde el Archivo 64 (2026-11-09).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 63 (2026-11-08).
+— ninguna desde el Archivo 64 (2026-11-09).

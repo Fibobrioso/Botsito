@@ -1,0 +1,26 @@
+<<F>>
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; clasificación en §8: 31 pareja, 19 efecto de la cuenta, 4 RN-019, 81 hasta T, 279 sin clase). Las trazas del motor y la ablación por regla están hechas (TRAZAS-ABLACION.md; `motor decisiones`), con las clases que decidió el consultor en su PARADA final. El rumbo y el método desde aquí: docs/plan/RUMBO-2026-11.md (R0.3 de la hoja de ruta). Siguiente, en este orden: (1) láminas del bot a la estética de FX Replay (RUMBO §3); (2) la preparación de la sesión 7 con el método nuevo y su ADR (RUMBO §1), con los días de §8, la clasificación de las 81 filas del vídeo de julio (VIDEO-JULIO.md §4), sus dos preguntas técnicas (la tarde del 10 de julio; las entradas válidas que el trader deja sin tomar en el backtest), las dos de TRAZAS-ABLACION.md (cuándo se coloca la orden respecto de la ruptura del punto; qué zonas cuentan como zonas de control del esquema) y los ítems de evidencia de F7 #1, #2, #3 y #10. J antes si la hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de elegir los días. R6a y RUMBO §5 en los huecos.
+<<FIN>>
+<<TD>>
+- La zona que RN-005 liga al escenario vigente en el mismo cierre de M1 en que RN-004 abre uno nuevo se queda en el escenario anterior, y su stop cuenta en los cartuchos de ese (2026-07-03 09:23 y 09:35, zona:46 y zona:51; TRAZAS-ABLACION.md F5): la deuda de la zona reutilizada de PUNTO-USADO.md §1.c y §4.f en su forma directa; no se toca sin la regla del trader.
+- La comparación de `motor decisiones` mira cada operación por (día, sesión, lado, instante, entrada) y no su lote, su stop ni su objetivo: un cambio de lote solo se ve si mueve las no enviadas, los rechazos o las cuentas suspendidas (TRAZAS-ABLACION.md F4.3).
+- El `toca_colocar_orden_limite` sintético de tests/unit/test_cableado.py guarda en una clausura que ya dio SÍ y solo coloca en la primera corrida del proceso; los tests que corren el día dos veces usan uno sin estado (TRAZAS-ABLACION.md F2).
+<<FIN>>
+<<R44>>
+### R4.4 · Trazas del motor y ablación por regla
+- **Refs:** ID:ADR-0092 · ID:ADR-0064 · ID:ADR-0066
+- **Qué es:** lo de RUMBO-2026-11.md §2: el registro por día y sesión de las tomas de M15, los
+  escenarios (ADR-0066), las zonas y los puntos, la orden de cada uno y la regla que fija cada
+  prohibición, y un diagnóstico etiquetado del arnés que apaga una regla a la vez. Primeros días:
+  04-13, 07-14 y 07-02 (RECORRIDA-CONSTRUCCION-2.md §8, pendiente con dueño).
+- **Depende de:** R3.9.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** el diagnóstico etiquetado da, por regla, qué parejas y qué operaciones de más
+  cambian al apagarla, y el registro por día trae tomas, escenarios, zonas y la regla de cada
+  prohibición.
+- **Estado:** HECHA (`trabajo/trazas-ablacion`; TRAZAS-ABLACION.md): `motor decisiones` da la
+  bitácora por día y sesión (con el gate de cada prohibición apuntado en el intérprete, solo como
+  registro) y la ablación de las 32 VIGENTE; la base repite la línea base con un diff de 0 bytes y
+  el control da delta cero. Las clases de 04-13, 07-02, 07-03 y 07-14, las de la PARADA final.
+
+<<FIN>>
