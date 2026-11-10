@@ -80,6 +80,7 @@ def _lectura(registro: Registro) -> laminas.Lectura:
         registro.entero("zonas_control_max_por_esquema"),
         registro.hora("anclaje_h4"),
         registro.opcion("perdida_trader_reinicio"),
+        registro.opcion("perdida_trader_alcance"),
     )
 
 

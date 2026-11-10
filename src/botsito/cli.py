@@ -2783,6 +2783,7 @@ def motor_laminas(repo: Path, args: argparse.Namespace) -> int:
             registro.entero("zonas_control_max_por_esquema"),
             registro.hora("anclaje_h4"),
             registro.opcion("perdida_trader_reinicio"),
+            registro.opcion("perdida_trader_alcance"),
         )
         avisar("datos cargados")
         en_orden = tuple(sorted(set(meses)))

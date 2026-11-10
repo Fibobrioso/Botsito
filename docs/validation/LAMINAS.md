@@ -627,6 +627,33 @@ Las propuestas 1 y 2 están comprobadas con las funciones de `tests/unit/test_ho
    - «`motor laminas`: la CLI solo se prueba entera con las velas reales (F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.»
    - «Las anotaciones de las H4 saltadas (las tres de recuentos y `sesgo_h4_saltadas`) no se borran cuando una evaluación posterior de la sesión no salta ninguna; las láminas cotejan las dos y fallarían si discreparan.»
 
+## Respuesta del consultor a la PARADA final (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10, tal cual (también al final de `docs/encargos/trabajo-laminas.md`):
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA final», con su fecha, y aplícala punto por punto (skill fase-cero). La rama está bien hecha: F1, el registro del dominio (lo he leído entero: solo anota, y F4.1 y F4.2 a 0 bytes lo confirman) y el diseño cumplen lo aprobado. Pero no la cierro todavía, por dos motivos: aún no he visto ninguna lámina dibujada, ni tú tampoco, y tres de tus cuatro reparos se arreglan aquí en poco y no deben pasar a deuda, porque son frases que le dirían al trader algo que no es cierto. Una ronda corta, en esta rama:
+>
+> 1. «Es el primer esquema» sale de la lámina. Tal como está, le diría al trader un esquema que el motor no ha distinguido (zonas.py:414-416). Quita la frase y su clave de la tabla, con su test, y escribe en el informe por qué. La línea de Technical Debt cambia a: «`motor laminas` no dice el esquema: con la orden en el punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416); la frase vuelve cuando el motor distinga los dos esquemas (LAMINAS.md, respuesta a la PARADA final, 1).»
+> 2. RN-020 y «del día». Mide en el registro si, con los valores de hoy, la rama semanal de RN-020 (strategy_spec.yaml:2111, `perdida_maxima_semanal` con `perdida_trader_alcance`) puede disparar.
+>    - Si no puede: la frase sigue diciendo «del día», y un test falla si el registro cambia de forma que la semanal pueda disparar (negar por defecto).
+>    - Si puede: la lámina dice cuál de los dos acumuladores llegó al tope, y si la foto no lo permite saber, la frase es «Ha llegado a la pérdida máxima del trader: no abre más hasta el corte siguiente.».
+>    En los dos casos, la línea de Technical Debt sale.
+> 3. El motivo repetido: cuando el bloqueo de la acción y la prohibición del efecto vienen del mismo gate en el mismo cierre, la lámina da una sola frase, «Iba a colocar la orden y no la coloca: {motivo}.». Con su test, y con el recuento de las láminas afectadas (hoy 13) antes y después.
+> 4. Las H4 saltadas que se quedan de una evaluación anterior. Esto no va a deuda: la lámina las cotejaría y, si las dos anotaciones se quedan viejas a la vez, casarían y dibujaría como saltadas unas H4 que la evaluación vigente no saltó, sin dar error.
+>    - En primitivas.py, `sesgo_h4_saltadas` se borra (pop) cuando la evaluación no salta ninguna, como ya hace `sesgo_h4_vela`.
+>    - Los tres recuentos de main, igual: se borran cuando valen cero. Solo si F4.1 y F4.2 siguen a 0 bytes; si alguno cambia, deshaces el cambio de los recuentos, la lámina deja de cotejar con ellos y, en su lugar, comprueba que toda saltada es anterior a la vela que fija; y lo dices.
+>    - Un test con dos evaluaciones en la misma sesión, la segunda sin saltadas, que falla con el código de hoy.
+>    - En F4.3 dices en cuántas de las láminas cambió el dibujo de las saltadas. Si cambió alguna, el defecto estaba ocurriendo de verdad, y lo dices.
+> 5. Lo de verlas dibujadas: las miro yo, cuando Aleks conecte a mi chat la carpeta nueva (punto 7); las abro con un navegador en mi lado. Si en la laptop ya tienes una forma de hacer capturas de un HTML local sin instalar nada en el proyecto (compruébalo; no añadas dependencias ni toques pyproject.toml), haz una de cada lámina de 07-03 07-11 y de una de cada sesión, con el guion en la carpeta de trabajo y no en el repo, y míralas antes de la PARADA. Si no la tienes, dilo y sigue sin ellas.
+> 6. Punto 13 de tu PARADA: (b), y es barato porque hay que regenerarlas igual. La corrida nueva pide las diez sesiones en un orden barajado que eliges tú y no escribes en el repo, así que el informe de 675ee62 deja de servir de clave para estas carpetas. El comando del informe se escribe con la lista sustituida por «<las diez sesiones, en el orden de clave.txt>», como desviación declarada de «los comandos tal como se ejecutaron». Que 07-03 07-11 se reconozca por su contenido es inevitable y no importa: el trader opera cada día antes de ver su lámina, así que la clave nunca le ocultó el día. En el cierre se dice así.
+> 7. Regenera las 47 (o las que salgan) en una carpeta nueva, C:\Users\USER\Desktop\laminas-sesion-7-v2, tras el ensayo en el clon, como antes. La carpeta vieja no se toca: la borra Aleks cuando yo dé la nueva por revisada. Repite F4.1 y F4.2 a 0 bytes con el código final.
+> 8. Las otras dos líneas de Technical Debt (la CLI solo se prueba entera con velas reales; y la de las saltadas, solo si el punto 4 se queda a medias) quedan como las propones.
+> 9. Las propuestas 1 y 2 de la orden de cierre (F y R4.5) quedan aprobadas tal cual. R4.5 pasa a HECHA solo cuando yo dé por revisadas las láminas de la carpeta v2.
+>
+> Después: make check, push a fix/laminas con su CI (el run del último commit y el de la ronda), el revisor solo sobre lo que cambia en esta ronda, pegado al final, y otra PARADA final corta con: lo que cambió, los recuentos de 3 y 4, lo que viste en las capturas, la ruta de la carpeta v2 y «Rama lista para revisión, NO cerrada.».
+
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
 > ## Auditoría del encargo · trabajo/laminas · 2026-11-10
@@ -995,12 +1022,4 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-Rama lista para revisión, NO cerrada (2026-11-10).
-- F1: `daed48b`.
-- El contrato: `b7d5d6d`.
-- El código: `3f800b5`, el arreglo `675ee62` y lo del revisor `f6ed348`.
-- F4.1 y F4.2: 0 bytes.
-- F4.3: las 47 láminas de las diez sesiones en `C:\Users\USER\Desktop\laminas-sesion-7`, tras tres ensayos en el clon.
-- La CI de Linux: runs 42881622332 y 42893354923, con el único fallo aceptado.
-- El revisor: dos pasadas, en el Apéndice B.
-- Esperan la revisión del consultor las decisiones 13 y 14 y las propuestas de cierre.
+EN CURSO (2026-11-10): la ronda de la respuesta a la PARADA final. El código y sus tests, con F4.1 y F4.2 a 0 bytes; siguen las láminas de la carpeta v2, las capturas, la CI, el revisor de la ronda y la PARADA final corta.

@@ -208,8 +208,13 @@ def primitivas_escritas(
         if momento.sesion is not None:
             anotaciones = estado.anotaciones.setdefault(momento.sesion, {})
             anotaciones[ANOTACION_SESGO] = r.sesgo.value
+            # Cada anotacion dice lo de ESTA evaluacion: la que no toca se borra, para que no se
+            # quede la de una evaluacion anterior de la sesion (respuesta del consultor a la
+            # PARADA final de trabajo/laminas, punto 4)
             if r.doble_ruptura:
                 anotaciones[ANOTACION_DOBLE_RUPTURA] = "si"
+            else:
+                anotaciones.pop(ANOTACION_DOBLE_RUPTURA, None)
             for anotacion, saltadas in (
                 (ANOTACION_SALTADAS_COLOR, r.saltadas_color_contrario),
                 (ANOTACION_SALTADAS_NEUTRA_SIMPLE, r.saltadas_neutras_simples),
@@ -217,6 +222,8 @@ def primitivas_escritas(
             ):
                 if saltadas:
                     anotaciones[anotacion] = str(saltadas)
+                else:
+                    anotaciones.pop(anotacion, None)
             if r.vela_que_fija is None:
                 anotaciones.pop(ANOTACION_SESGO_VELA, None)
             else:
@@ -225,6 +232,8 @@ def primitivas_escritas(
                 anotaciones[ANOTACION_SESGO_SALTADAS] = ",".join(
                     f"{int(inicio)}:{motivo}" for inicio, motivo in r.h4_saltadas
                 )
+            else:
+                anotaciones.pop(ANOTACION_SESGO_SALTADAS, None)
         # Siempre SI: alcista, bajista, ambiguo o insuficiente son los cuatro valores del hecho
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})

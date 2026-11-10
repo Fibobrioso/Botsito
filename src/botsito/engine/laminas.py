@@ -229,6 +229,7 @@ class Lectura:
     zonas_max: int
     anclaje: Any  # HoraLocal
     reinicio_trader: str
+    alcance_trader: str  # perdida_trader_alcance: con semana o ambos, RN-020 no es solo «del dia»
 
 
 # ---------------------------------------------------------------------------------- el recolector
@@ -504,6 +505,10 @@ FRASE_TOPE_POR_REGLA = {
 }
 HECHO_TOPE = "detenido_por_tope"
 REINICIO_TRADER = "primera_sesion_dia_siguiente"  # el valor que la frase de RN-020 da por cierto
+# Con estos alcances la rama semanal de RN-020 no dispara (`acumulador_del_trader` da NO a
+# `perdida_semana`, primitivas_broker.py:360-362), y la frase y el motivo dicen «del dia» con
+# verdad; con `semana` o `ambos`, error que lo nombra (respuesta a la PARADA final, punto 2)
+ALCANCES_SOLO_DIA = ("dia", "sin_tope")
 HECHOS_SIN_FRASE = ("orden_dimensionada",)  # la marca interna de la orden preparada
 FRASE_TOMA = (
     "Liquidez de M15 tomada: una vela de M1 cerró con {criterio} por {lado} de M15 en {precio}, a "
@@ -521,10 +526,9 @@ FRASE_LINEAS_FUERA = (
     "Una línea de M15 de esta sesión viene de antes de la ventana.",
     "{n} líneas de M15 de esta sesión vienen de antes de la ventana.",
 )
-FRASE_ESQUEMA = {
-    "primer_esquema": "Es el primer esquema.",
-    "segundo_esquema": "Es el segundo esquema.",
-}
+# Sin frase del esquema (respuesta del consultor a la PARADA final, punto 1): con la orden en el
+# punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416), asi que
+# decirlo seria afirmar un esquema que el motor no ha distinguido. Vuelve cuando lo distinga.
 FRASE_CAJA = "La caja va de {cero} (el 0) a {uno} (el 1)."
 FRASE_CAJA_FUERA = "La caja viene de antes de la ventana."
 FRASE_PUNTO = "El punto de breaker está en {precio}, de la vela de las {hora}."
@@ -789,6 +793,8 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
                 raise LaminaError(f"{h}: no se sabe que regla lo encendio ({', '.join(reglas)})")
             if reglas[0] == "RN-020" and lectura.reinicio_trader != REINICIO_TRADER:
                 raise LaminaError(f"perdida_trader_reinicio = {lectura.reinicio_trader}: sin frase")
+            if reglas[0] == "RN-020" and lectura.alcance_trader not in ALCANCES_SOLO_DIA:
+                raise LaminaError(f"perdida_trader_alcance = {lectura.alcance_trader}: sin frase")
             frases.append(FRASE_TOPE_POR_REGLA[reglas[0]])
         elif h in FRASE_DETENIDO:
             frases.append(FRASE_DETENIDO[h])
@@ -877,9 +883,6 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
     niveles: tuple[tuple[str, int], ...] = ()
     punto: tuple[int, int] | None = None
     if zona is not None:
-        if zona.por not in FRASE_ESQUEMA:
-            raise LaminaError(f"esquema {zona.por!r} sin frase")
-        frases.append(FRASE_ESQUEMA[zona.por])
         # `formada` es el cierre del breaker: nace en la M1 que empieza un minuto antes
         if zona.formada is not None and dentro(zona.formada - 1, f.desde_m1):
             caja = zona
@@ -1002,6 +1005,8 @@ def _antes(f: Foto, propias: set[str], escenario: EscenarioFoto | None) -> list[
 def _motivo(gate: str, contadas: int | None, lectura: Lectura) -> str:
     if gate not in MOTIVO_GATE:
         raise LaminaError(f"el gate {gate} no tiene frase")
+    if gate == "RN-020" and lectura.alcance_trader not in ALCANCES_SOLO_DIA:
+        raise LaminaError(f"perdida_trader_alcance = {lectura.alcance_trader}: RN-020 sin frase")
     if gate == GATE_ZONAS_CONTROL:
         if contadas is None:
             raise LaminaError(f"{gate} sin las zonas de control anotadas en el corte")
@@ -1041,9 +1046,11 @@ def _sin_orden(
                 causas.append(FRASE_USADA)
             if punto is not None and punto in f.rechazados:
                 causas.append(FRASE_PUNTO_GASTADO)
+    bloquean: set[str] = set()  # los gates que bloquean la colocacion en este cierre
     for _, accion, _, gates in f.bloqueos:
         if accion == ACCION_COLOCAR:
             causas += [FRASE_BLOQUEO.format(motivo=_motivo(g, contadas, lectura)) for g, _ in gates]
+            bloquean |= {g for g, _ in gates}
     for _, _, motivo in f.no_enviadas:
         partes = motivo.removeprefix(PREFIJO_NO_OPERAR).split("+")
         if not partes or any(p not in LIMITE_NO_ENVIO for p in partes):
@@ -1054,9 +1061,11 @@ def _sin_orden(
     for efectos, tipo in ((f.prohibido, "dispara"), (f.quizas, "desconocido")):
         for efecto, prohiben in efectos:
             if efecto in EFECTOS:
+                # el que ya bloqueo la colocacion no se repite (respuesta a la PARADA final, 3)
                 causas += [
                     FRASE_PROHIBE[tipo].format(motivo=_motivo(g, contadas, lectura))
                     for g in prohiben
+                    if g not in bloquean
                 ]
     if not causas and not hay:
         if zona is None or any(r in f.disparadas for r in REGLAS_QUE_COLOCAN):

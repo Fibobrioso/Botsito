@@ -35,6 +35,7 @@ LECTURA = laminas.Lectura(
     REGISTRO.entero("zonas_control_max_por_esquema"),
     REGISTRO.hora("anclaje_h4"),
     REGISTRO.opcion("perdida_trader_reinicio"),
+    REGISTRO.opcion("perdida_trader_alcance"),
 )
 
 
@@ -149,7 +150,6 @@ def test_la_sustentacion_de_la_foto_con_todo() -> None:
         "Liquidez de M15 tomada: una vela de M1 cerró con cuerpo por debajo del bajo de M15 en "
         f"{PRECIO_BAJO}, a las 09:30.",
         "Sigue la liquidez de M15 número 1 de esta sesión.",
-        "Es el primer esquema.",
         "La caja va de 1.10010 (el 0) a 1.09980 (el 1).",
         "El punto de breaker está en 1.10010, de la vela de las 09:40.",
         "Con la caja formada, todavía no le toca colocar la orden.",
@@ -320,3 +320,51 @@ def test_los_colores_salen_de_la_tabla_unica() -> None:
     usados = set(re.findall(r"#[0-9a-f]{6}", texto))
     assert usados <= set(laminas_svg.COLOR.values())
     assert Decimal(laminas_svg.OPACIDAD_CAJA) < 1
+
+
+# ------------------------------------------------- la respuesta a la PARADA final (puntos 1 a 3)
+
+
+def test_la_lamina_no_dice_el_esquema() -> None:
+    """Punto 1: con la orden en el punto, toda zona nace con `por = primer_esquema`
+    (zonas.py:414-416), asi que la lamina no dice un esquema que el motor no ha distinguido."""
+    assert not hasattr(laminas, "FRASE_ESQUEMA")
+    for por in ("primer_esquema", "segundo_esquema"):
+        zona = dataclasses.replace(foto_base().zonas[0], por=por)
+        _, comp = _pagina(foto_base(zonas=(zona,)))
+        assert not [x for x in comp.frases if x.startswith("Es el ")]
+
+
+def test_rn020_dice_del_dia_solo_si_la_rama_semanal_no_puede_disparar() -> None:
+    """Punto 2: con el registro de hoy la rama semanal de RN-020 no dispara; si el alcance pasa a
+    incluir la semana, la frase «del dia» falla con su nombre (negar por defecto)."""
+    assert LECTURA.alcance_trader in laminas.ALCANCES_SOLO_DIA
+    f = foto_base(prohibido=(("abrir_operacion", ("RN-020",)),))
+    _, comp = _pagina(f)
+    assert "No abre: ha llegado a la pérdida máxima del día del trader." in comp.frases
+    for alcance in ("semana", "ambos"):
+        lectura = dataclasses.replace(LECTURA, alcance_trader=alcance)
+        with pytest.raises(laminas.LaminaError, match="perdida_trader_alcance"):
+            laminas.componer(_lamina(f), lectura)
+        tope = foto_base(
+            hechos=(("detenido_por_tope", "hasta_el_corte_siguiente"), ("sesgo", "alcista")),
+            origen=(("detenido_por_tope", ("RN-020",)),),
+        )
+        with pytest.raises(laminas.LaminaError, match="perdida_trader_alcance"):
+            laminas.componer(_lamina(tope), lectura)
+
+
+def test_el_gate_que_bloquea_y_prohibe_en_el_mismo_cierre_da_una_sola_frase() -> None:
+    """Punto 3: el bloqueo de la colocacion y la prohibicion del efecto por el MISMO gate en el
+    mismo cierre dan solo «Iba a colocar la orden y no la coloca»; otro gate que solo prohibe
+    sigue con su «No abre»."""
+    bloqueo = (("RN-015", "accion:colocar_orden_limite", "prohibida:abrir_operacion",
+                (("RN-005", "dispara"),)),)  # fmt: skip
+    f = foto_base(bloqueos=bloqueo, prohibido=(("abrir_operacion", ("RN-005", "RN-033")),))
+    _, comp = _pagina(f)
+    ruido = (
+        "lo que se forma queda en la zona de ruido de la liquidez de M15, donde no se busca entrada"
+    )
+    assert f"Iba a colocar la orden y no la coloca: {ruido}." in comp.frases
+    assert f"No abre: {ruido}." not in comp.frases
+    assert "No abre: no hay sesgo de H4 claro." in comp.frases

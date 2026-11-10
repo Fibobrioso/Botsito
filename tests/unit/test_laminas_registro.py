@@ -8,6 +8,7 @@ azar (Hypothesis). La prueba de fondo son F4.1 y F4.2 a 0 bytes."""
 from __future__ import annotations
 
 from collections.abc import Sequence
+from pathlib import Path
 
 from hypothesis import given, settings
 from hypothesis import strategies as st
@@ -322,3 +323,50 @@ def test_al_azar_las_zonas_de_control_salen_como_en_main(
     n = _zonas_de_main(m1, desde, hasta, lado)
     assert zonas_de_control(m1, desde, hasta, lado) == n
     assert len(pivotes_de_control(m1, desde, hasta, lado)) == n
+
+
+# ------------------------------------------------ la respuesta a la PARADA final, punto 4
+
+
+def test_una_segunda_evaluacion_sin_saltadas_borra_las_de_la_primera() -> None:
+    """Dos evaluaciones de `sesgo_h4_al_abrir` en la misma sesion: la primera salta una H4 por el
+    color y fija con doble ruptura, la segunda no salta ninguna ni es doble. Despues de la segunda
+    no puede quedar ninguna anotacion de la primera: si quedaran la lista y su recuento a la vez,
+    casarian y la lamina dibujaria como saltada una H4 que la evaluacion vigente no salto. Con el
+    codigo de 675ee62 este test falla (solo se escribian, nunca se borraban)."""
+    from botsito.config.registro import cargar_registro
+    from botsito.engine.interprete import EstadoDia, Momento
+    from botsito.engine.motor import DatosMercado
+    from botsito.engine.primitivas import (
+        ANOTACION_DOBLE_RUPTURA,
+        ANOTACION_SALTADAS_COLOR,
+        ANOTACION_SESGO_SALTADAS,
+        ANOTACION_SESGO_VELA,
+        primitivas_escritas,
+    )
+
+    registro = cargar_registro(
+        Path(__file__).resolve().parents[2] / "knowledge" / "spec" / "parametros.yaml"
+    )
+    sesgo = primitivas_escritas(registro).predicados["sesgo_h4_al_abrir"]
+    args = {"que": "vela_h4_previa", "contra": "extremo_de_la_h4_anterior",
+            "criterio": "sesgo_h4_criterio_ruptura", "tope": "sesgo_h4_tope_velas"}  # fmt: skip
+    estado = EstadoDia()
+    # la primera: la ultima rompe arriba y cierra roja (saltada por el color); la anterior rompe
+    # los dos extremos y cierra verde (doble ruptura)
+    primera = [
+        h4(0, 110, 100),
+        h4(1, 112, 99, abierta=101, cierre=108),
+        h4(2, 114, 104, abierta=112, cierre=105),
+    ]
+    sesgo(args, Momento(MinutoUtc(FIN), "07-11", True, DatosMercado(primera)), estado)
+    anot = estado.anotaciones["07-11"]
+    assert anot[ANOTACION_SALTADAS_COLOR] == "1" and ANOTACION_SESGO_SALTADAS in anot
+    assert anot[ANOTACION_DOBLE_RUPTURA] == "si" and ANOTACION_SESGO_VELA in anot
+    # la segunda: rompe arriba y cierra verde, de un solo extremo; nada saltado
+    segunda = [h4(0, 110, 100), h4(1, 112, 101)]
+    sesgo(args, Momento(MinutoUtc(2 * H4), "07-11", True, DatosMercado(segunda)), estado)
+    anot = estado.anotaciones["07-11"]
+    assert ANOTACION_SALTADAS_COLOR not in anot and ANOTACION_SESGO_SALTADAS not in anot
+    assert ANOTACION_DOBLE_RUPTURA not in anot
+    assert anot[ANOTACION_SESGO_VELA] == str(H4)
