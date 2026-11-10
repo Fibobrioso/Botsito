@@ -233,13 +233,18 @@ FRENO_EN = SEGUNDA + 5  # despues de la segunda orden y antes del corte de tipo 
 
 
 class ConFreno(laminas.Recolector):
-    """El recolector de verdad, y despues de el un observador que enciende un freno en FRENO_EN:
-    algo del ESTADO que cambia despues del corte de la primera lamina (revisor, b-I2)."""
+    """El recolector de verdad, y despues de el un observador que en FRENO_EN enciende un freno y
+    abre un escenario con una toma de M15 nueva: el ESTADO y la memoria cambian despues del corte
+    de la primera lamina (revisor, b-I2)."""
 
     def __call__(self, c: Cierre) -> None:
         super().__call__(c)
         if c.instante == FRENO_EN:
             c.estado.hechos[FRENO] = "hasta_el_dia_siguiente"
+            # y una toma de M15 nueva, que abre otro escenario despues del corte
+            toma = {"instante": c.instante, "nivel": BASE - 40, "lado": "compra",
+                    "pivote": ("bajo", BASE - 40, c.instante - 1)}  # fmt: skip
+            zonas._abrir(c.estado, c.sesion, toma)
 
 
 class Vivo(ConFreno):
@@ -270,6 +275,8 @@ def lo_del_futuro(f: laminas.Foto) -> list[str]:
         malo.append("el freno, que se enciende despues")
     if any(e.zonas != ("zona:1",) for e in f.escenarios) or f.zona("zona:2") is not None:
         malo.append("la segunda caja, ligada al escenario despues")
+    if len(f.escenarios) != 1:
+        malo.append("la toma de M15 nueva, que abre otro escenario despues")
     return malo
 
 
@@ -301,7 +308,7 @@ def test_la_foto_no_mira_al_futuro(registro: Registro, vocabulario: dict[str, An
 def test_la_mutacion_de_la_referencia_viva_rompe_la_comprobacion(
     registro: Registro, vocabulario: dict[str, Any]
 ) -> None:
-    """La mutacion se EJECUTA: la foto hecha al final desde el cierre guardado lleva las cuatro
+    """La mutacion se EJECUTA: la foto hecha al final desde el cierre guardado lleva las cinco
     cosas posteriores al corte, y `lo_del_futuro` las caza; la foto copiada en su instante,
     ninguna."""
     rec = _con(registro, vocabulario, Vivo)
@@ -311,6 +318,7 @@ def test_la_mutacion_de_la_referencia_viva_rompe_la_comprobacion(
         "el llenado de o1",
         "el freno, que se enciende despues",
         "la segunda caja, ligada al escenario despues",
+        "la toma de M15 nueva, que abre otro escenario despues",
     ]
 
 
