@@ -603,7 +603,435 @@ de la corrida entera con la cuenta por mes, por un campo del motor y solo en la 
 **La prueba de que no cambia ninguna decisión sobre la construcción entera es F4.1** (punto 0):
 `motor arnes --simular` con el código de la rama, diff contra `cuenta-por-mes.txt`.
 
+## F4 · Las corridas (2026-11-09)
+
+Una a la vez, ninguna junto a un `make check`, todas sobre construcción (2026-01, 2026-04, 2026-07
+y 2026-08) por la compuerta del arnés, declaradas antes de la primera en `HOLDOUT-EXPOSICIONES.md`
+(su fila del 2026-11-09). Las tres terminaron antes de medianoche. Las salidas viven en
+`data/trazas-ablacion/` (fuera de git); las que entran al repo, en
+`docs/validation/anexos/TRAZAS-ABLACION/` (sin CR, comprobado con `grep -U -c -P "\r"`: 0 en las
+seis).
+
+| Corrida | Comando, tal como se ejecutó (desde la raíz del repo) | Tiempo | Pico |
+|---|---|---|---|
+| F4.1 | `uv run botsito motor arnes --simular --salida data/trazas-ablacion/cuenta-por-mes.txt > data/trazas-ablacion/f41-pantalla.txt 2>&1` | 364,9 s | 636,2 MiB |
+| F4.2 | `uv run botsito motor decisiones --carpeta data/trazas-ablacion/bitacora --bitacora 2026-04-13,2026-07-02,2026-07-03,2026-07-14 > data/trazas-ablacion/f42-pantalla.txt 2>&1` | 565,6 s | 633,3 MiB |
+| F4.3 | `uv run botsito motor decisiones --carpeta data/trazas-ablacion/ablacion --ablacion-vigentes > data/trazas-ablacion/f43-pantalla.txt 2>&1` | 8297,6 s | 632,9 MiB |
+
+Las tres salieron con `exit=0`. Muy por debajo de 1,5 GiB: no hizo falta un proceso por ablación
+(punto 6).
+
+### F4.1 · La base frente a la línea base
+
+`diff` de `data/trazas-ablacion/cuenta-por-mes.txt` contra
+`docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt`: **0 bytes**; el mismo
+sha256 en los dos, `e6ca305ba31c6307f405d963a8eb043a66d85fafd8262a1806abd53075798054`. Es la prueba
+del punto 0: con el registro nuevo del intérprete y el campo `observador` (en `None`), `motor arnes`
+decide lo mismo sobre la construcción entera. No hay PARADA.
+
+### F4.2 · La bitácora de los cuatro días, y la base repetida
+
+En un proceso: la base con la bitácora y, después, la base repetida sin ella, cada una con su motor y
+su estado nuevos (`motor_nuevo`). Recuentos (parejas, de más, fuera, órdenes, no enviadas, rechazos,
+cuentas suspendidas): **(31, 192, 24, 1150, 0, 32, 0)** en las dos, «igual: si». Cuadran con F4.1
+(871 canceladas + 247 llenadas + 32 rechazadas = 1150 órdenes; los rechazos, 8 + 11 + 9 + 4 por
+mes) y con §8 de RECORRIDA-CONSTRUCCION-2 (T0: 31; P6 en día: 24; P5 153 + P6 en sesión 39 = 192).
+No hay PARADA.
+
+Las sesiones enteras de 2026-04-13, 07-02, 07-03 y 07-14 van al anexo
+(`bitacora.DIAGNOSTICO.<día>.txt`), con `ablacion.DIAGNOSTICO.base.txt` (los recuentos y lo que
+hace cada regla en la base).
+
+**El control, calculado por la bitácora de la base** (punto 7): las VIGENTE que en los 36.556
+eventos de la construcción ni disparan ni quedan desconocidas son **RN-008, RN-010, RN-019, RN-020,
+RN-026, RN-029, RN-030 y RN-031** (8). De la lista de 11 del encargo salen RN-007, RN-021 y RN-022,
+que quedan DESCONOCIDAS en los 36.556 eventos: no disparan, pero se evalúan sin respuesta, así que
+no son control por la definición del punto 7; se miden como las demás (y dan delta cero, abajo).
+
+Lo que hace cada regla en la base (`ablacion.DIAGNOSTICO.base.txt`; «bloquea» = acciones que
+quedan bloqueadas con esa regla entre los gates de su pasada):
+
+| Regla | Clase | Dispara | Desconocida | Bloquea |
+|---|---|---|---|---|
+| RN-001 | gate | 591 | 0 | 464 |
+| RN-002 | terminal | 5 | 0 | 0 |
+| RN-035 | disparador | 2 | 0 | 0 |
+| RN-037 | gate | 152 | 0 | 117 |
+| RN-003 | disparador | 152 | 0 | 0 |
+| RN-033 | gate | 240 | 0 | 0 |
+| RN-004 | disparador | 6681 | 0 | 0 |
+| RN-005 | gate | 10212 | 0 | 8149 |
+| RN-006 | disparador | 869 | 0 | 0 |
+| RN-007 | disparador | 0 | 36556 | 0 |
+| RN-008 | gate | 0 | 0 | 0 |
+| RN-009 | gate | 20513 | 0 | 17772 |
+| RN-010 | disparador | 0 | 0 | 0 |
+| RN-011 | disparador | 19598 | 0 | 0 |
+| RN-012 | disparador | 210 | 210 | 0 |
+| RN-014 | disparador | 66 | 0 | 0 |
+| RN-015 | disparador | 19598 | 0 | 0 |
+| RN-016 | gate | 516 | 0 | 404 |
+| RN-017 | disparador | 35 | 0 | 0 |
+| RN-034 | disparador | 35 | 0 | 0 |
+| RN-018 | gate | 1698 | 0 | 0 |
+| RN-019 | disparador | 0 | 0 | 0 |
+| RN-020 | gate | 0 | 0 | 0 |
+| RN-036 | gate | 814 | 0 | 723 |
+| RN-021 | disparador | 0 | 36556 | 0 |
+| RN-022 | fallback | 0 | 36556 | 0 |
+| RN-026 | gate | 0 | 0 | 0 |
+| RN-027 | gate | 19597 | 0 | 0 |
+| RN-029 | gate | 0 | 0 | 0 |
+| RN-030 | terminal | 0 | 0 | 0 |
+| RN-031 | gate | 0 | 0 | 0 |
+| RN-032 | gate | 5246 | 0 | 3202 |
+
+### F4.3 · La ablación de las 32 VIGENTE
+
+Un proceso: la base, la base repetida (las dos, (31, 192, 24, 1150, 0, 32, 0), «igual: si») y las
+32, una a una, cada una con su motor y su estado nuevos. **Las 8 del control dan «sin delta»**
+(`[control]` en el fichero), y también RN-007, RN-021 y RN-022: **las 11 del encargo dan delta
+cero**. Ninguna corrida falló ni se detuvo; ninguna cuenta quedó suspendida. No hay PARADA.
+
+Salida entera: `anexos/TRAZAS-ABLACION/ablacion.DIAGNOSTICO.vigentes.txt` (cada línea de delta con
+su operación: día, sesión, lado, instante en UTC y entrada). Las filas de §8 se cruzaron con
+`patrones-cuenta-por-mes.txt` por (quién, día, sesión, lado, instante, entrada): **todas las
+operaciones que cambian tienen su fila** (0 sin fila); las que APARECEN no están en §8 porque no
+eran de la base.
+
+Las columnas: parejas que se ganan (la clase de la fila del trader en §8) y que se pierden (todas
+son T0 en §8); «de más» = operaciones del bot sin pareja en un día con operaciones del trader (P5 y
+P6 en sesión de §8); «día sin trader» = P6 en día; Δ órdenes = órdenes colocadas frente a 1150.
+«Re-emparejada»: la misma fila del trader sale como perdida con un bot y ganada con otro.
+
+| Regla | Parejas que se ganan | Parejas que se pierden | De más: aparecen / desaparecen | Día sin trader: aparecen / desaparecen | Δ órdenes | Otros recuentos |
+|---|---|---|---|---|---|---|
+| RN-001 | 0 | 0 | 0 / 0 | 0 / 0 | +1 | — |
+| RN-002 | 0 | 0 | 0 / 3 (P5 mismo lado 1, P6 en sesión 2) | 0 / 1 | −27 | rechazos 32 → 30 |
+| RN-035 | 0 | 0 | 1 / 2 (P6 en sesión 2) | 1 / 0 | −9 | rechazos 32 → 30 |
+| RN-037 | 0 | 0 | 0 / 0 | 0 / 0 | +3 | — |
+| RN-003 | 0 | 31 (todas) | 0 / 192 (todas) | 0 / 24 (todas) | −1150 | el bot no opera |
+| RN-033 | sin delta | | | | | |
+| RN-004 | 0 | 31 (todas) | 0 / 192 (todas) | 0 / 24 (todas) | −1150 | el bot no opera |
+| RN-005 | 0 | 0 | 23 / 2 (P5 mismo lado 1, P6 en sesión 1) | 1 / 2 | +42 | rechazos 32 → 35 |
+| RN-006 | 3 filas nuevas (P3 ×2, P7 ×1) y 2 re-emparejadas | 24 (22 sin las 2 re-emparejadas) | 137 / 156 (P5 mismo lado 99, P5 otro lado 26, P6 en sesión 31) | 9 / 21 | −898 | parejas 31 → 12; rechazos 32 → 8 |
+| RN-007 | sin delta | | | | | |
+| RN-008 | sin delta (control) | | | | | |
+| RN-009 | 18 filas nuevas (P2 ×7, P3 ×10, P7 ×1) y 2 re-emparejadas | 15 (13 sin las 2 re-emparejadas) | 144 / 88 (P5 mismo lado 55, P5 otro lado 14, P6 en sesión 19) | 29 / 9 | +229 | parejas 31 → 36; rechazos 32 → 75 |
+| RN-010 | sin delta (control) | | | | | |
+| RN-011 | 0 | 31 (todas) | 0 / 192 (todas) | 0 / 24 (todas) | −1150 | el bot no opera |
+| RN-012 | sin delta | | | | | |
+| RN-014 | 0 | 3 | 4 / 20 (P5 mismo lado 13, P5 otro lado 4, P6 en sesión 3) | 1 / 2 | −105 | rechazos 32 → 27 |
+| RN-015 | 0 | 31 (todas) | 0 / 192 (todas) | 0 / 24 (todas) | −1150 | el bot no opera |
+| RN-016 | sin delta | | | | | |
+| RN-017 | sin delta | | | | | |
+| RN-034 | 0 | 0 | 0 / 0 | 0 / 0 | +2 | — |
+| RN-018 | sin delta | | | | | |
+| RN-019 | sin delta (control) | | | | | |
+| RN-020 | sin delta (control) | | | | | |
+| RN-036 | 0 | 1 | 6 / 3 (P5 mismo lado 3) | 0 / 1 | +4 | — |
+| RN-021 | sin delta | | | | | |
+| RN-022 | sin delta | | | | | |
+| RN-026 | sin delta (control) | | | | | |
+| RN-027 | sin delta | | | | | |
+| RN-029 | sin delta (control) | | | | | |
+| RN-030 | sin delta (control) | | | | | |
+| RN-031 | sin delta (control) | | | | | |
+| RN-032 | 0 | 0 | 1 / 0 | 2 / 0 | +9 | — |
+
+**Las que quedan fuera del control y dan delta cero, explicadas** (punto 7; lo medido es solo que
+quitarlas no cambia los recuentos ni ninguna operación):
+- RN-007 y RN-021 (disparadores) y RN-022 (fallback): DESCONOCIDAS en todos los eventos. Un
+  disparador desconocido no ejecuta su acción, y RN-022 no es un gate, así que no entra en los
+  `quizas_prohibidos` de la pasada de gates; quitarlas no cambia nada.
+- RN-017: solo `permite` (`buscar_entradas`); un permiso no bloquea ni coloca.
+- RN-018 y RN-033: gates que disparan (1698 y 240) y bloquean 0 acciones en la base: en los
+  eventos en que disparan, su prohibición no alcanza a ninguna acción.
+- RN-016: bloquea 404 acciones, y quitarla no cambia ninguna operación ni ninguna orden. En
+  los dos instantes que mira F5 (07-02 14:10 y 14:23) prohíben también RN-001 y RN-009. Que ocurra
+  lo mismo en las 404 es lo que dice la ablación, no algo medido acción por acción.
+- RN-012 (`realizar_perdida`) y RN-027 (`redondear_lote`): actúan sobre el lote. La comparación
+  mira la operación (día, sesión, lado, instante y entrada), no el lote, el stop ni el objetivo:
+  **no pueden dar delta por construcción**, y que el lote no cambie no está medido (Technical Debt
+  propuesta, en F5).
+- RN-008 (control): ni dispara ni queda desconocida en ningún evento (toca la memoria del día al
+  evaluarse, punto 7): su ablación da «sin delta».
+
+Las que dan delta solo en órdenes (RN-001 +1, RN-034 +2, RN-037 +3) colocan órdenes de más que no
+llegan a operación ni a rechazo: ninguna operación cambia.
+## F5 · Las clases propuestas (2026-11-09)
+
+Todo sale de la bitácora de F4.2 (anexo `anexos/TRAZAS-ABLACION/bitacora.DIAGNOSTICO.<día>.txt`),
+que es la corrida con la cuenta por mes (la misma que F4.1). Horas de pared (Europe/Madrid, verano:
+UTC+2), como en VIDEO-JULIO.md §4; entre paréntesis, la UTC. Las clases son PROPUESTAS: las decide el
+consultor en la PARADA final. Ninguna operación de más del bot se llama error (VIDEO-JULIO.md §10,
+punto 4).
+
+### 5.1 La tensión de 07-03, sesión 07-11 (las 5 filas de «error nuestro (sospecha)»)
+
+Lo fijado, de donde se mide: A-32 RESUELTA por la sesión 5 (S-18; `ambiguedades.yaml:864-898`): «en
+M1 la mecha siempre vale»; la única ruptura que pide cuerpo es la que habilita la zona lineal de
+liquidez de M15, y una línea que viene de M15 cuenta como de M15 aunque se mire en M1.
+`breaker_m1_criterio_ruptura = mecha`, CONFIRMED (`parametros.yaml:501-518`); la toma de M15 se pide
+con cuerpo (`liquidez_m15_criterio_toma = cuerpo`). Y lo que hace el motor (fase 0, 0.2b): la orden
+es una STOP en el último pivote de M1 contrario a la entrada (`orden_limite_nace =
+al_aparecer_punto_de_breaker`, `orden_stop_punto = ultimo_pivote_m1`; ADR-0064), que se llena en el
+tick que lo toca; para la spec, «la orden stop solo abre cuando el precio rompe el punto, que es el
+esquema 1» (`strategy_spec.yaml:1528-1531`).
+
+Las cuatro órdenes del bot que tocan esas cinco filas (las cuatro P5, y la P2 del trader de las 09:24,
+cuyo bot más cercano es o6):
+
+| Orden (fila) | (b) Toma de M15 que abrió su escenario | (i) Vela de la toma | Punto (ii) y su vela | (iii) ¿Línea de M15? | (a) Llenado frente a la primera M1 que cierra más allá | M1 del llenado |
+|---|---|---|---|---|---|---|
+| o4 (P5 08:02) | escenario 1: el bajo de M15 en 1.14500 (formado 07:45), toma a las 07:57 | cierra 1.14497: **con cuerpo** | 1.14496, la vela contraria que abre a las 08:01 | no | llenada 08:02:06: **ANTES** de que ninguna M1 cierre más allá | **mecha** (no cierra más allá) |
+| o5 (P5 08:03) | escenario 1, la misma toma | con cuerpo | 1.14496, la misma vela | no | llenada 08:03:31: **ANTES** | **cuerpo** (cierra más allá) |
+| o6 (P5 09:24 y P2 del trader 09:24, Δ17) | escenario 2: el bajo de M15 en 1.14512 (formado 08:45), toma a las 09:23 | cierra 1.14510: con cuerpo | 1.14545, la vela contraria que abre a las 09:14 | no | llenada 09:24:42: **ANTES** | **mecha** |
+| o8 (P5 09:35) | **escenario 2** (la toma de las 09:23), aunque a las 09:35 se abre el 3 con el bajo de M15 en 1.14507 | con cuerpo (las dos tomas) | 1.14517, la vela contraria que abre a las 09:34 | no | llenada 09:35:41: **ANTES** | **mecha** |
+
+Un hecho de más, de la bitácora: zona:46 (09:23) y zona:51 (09:35, la de o8) se ligan al escenario
+ANTERIOR en el mismo cierre de M1 en que RN-004 abre uno nuevo: los gates se evalúan antes que los
+disparadores (`CLASES_EN_ORDEN`), RN-005 llama a `zona_del_punto`, que liga la zona al escenario
+vigente, y RN-004 abre el escenario nuevo después en ese mismo evento. Así, el stop de o8 (09:37:06)
+cuenta en los cartuchos del escenario 2, no del 3. Es la deuda de la zona reutilizada de PUNTO-USADO.md
+§1.c y §4.f, vista aquí en su forma más directa (no se toca: cambiaría lo que el motor decide).
+
+**Las clases, con el criterio del punto 2 de la respuesta a la fase 0:**
+- «error nuestro» (el punto o la toma tratan como de M1 una línea de M15, o la toma de M15 se dio con
+  mecha): **no aplica a ninguna**. Las tres tomas cierran pasada la línea (con cuerpo) y ningún punto
+  coincide con un nivel de M15 de su instante (ni con la toma, ni con la liquidez de M15 de cada lado).
+- «contradicción con lo fijado» (el punto es un pivote de M1 y el llenado fue con mecha, contra la voz
+  de v12 y con S-18 a favor del bot): **o4, o6 y o8** (y, con o6, la fila P2 del trader de las 09:24).
+  La voz de v12 0:00:15-0:00:58 («aquí no había entrada porque es con mecha, sabemos que tiene que ser
+  con cuerpo [...] aquí sí que tenemos una entrada vale porque nos genera un breaker con cuerpo»,
+  VIDEO-JULIO.md §4.1 y §7 #6) pide cuerpo; S-18 dice que en M1 la mecha vale.
+- **o5**: el llenado es al tick, ANTES de que cierre ninguna M1 más allá, pero su propia M1 cierra más
+  allá (cuerpo). No es «contradicción» por la vela; sí entra en la tercera.
+- «regla desconocida: cuándo se coloca la orden respecto de la ruptura» (toca ADR-0064 y
+  `orden_limite_nace`): **las cuatro**. En las cuatro el bot entra en el tick que toca el punto, antes
+  de que ninguna M1 haya cerrado más allá, mientras que la voz habla de que el breaker «se genera con
+  cuerpo» antes de haber entrada.
+
+Para la sesión 7, como hecho medido y sin sugerir la respuesta: «El 3 de julio, entre las 08:02 y las
+09:35, el bot compró cuatro veces con una orden stop en el último pivote de M1, que se llenó en el
+tick que tocaba ese nivel; en tres de las cuatro, la vela de un minuto en que se llenó no cerró por
+encima del nivel. En el vídeo dices que ahí no había entrada porque era con mecha y que tiene que ser
+con cuerpo. ¿En qué momento colocas la orden respecto de esa ruptura, y qué vela tiene que cerrar?»
+
+### 5.2 Las 13 «a la rama de trazas» (VIDEO-JULIO.md §4.1 y §4.2)
+
+| Sesión | Filas | Lo que dice la bitácora | Clase propuesta |
+|---|---|---|---|
+| 07-02 11-15 | P3 ×3 (trader 11:34, 12:25, 12:45) | en los tres instantes RN-011 dimensiona una zona del escenario vigente y RN-015 queda **bloqueado por RN-009** (las zonas de control desarrolladas superan `zonas_control_max_por_esquema`), sin ningún otro gate; el escenario 1 (toma 11:08) en la de 11:34 y el 2 (toma 12:02) en las de 12:25 y 12:45 | **sin clase** con un hecho nuevo: el gate que deja al bot fuera es RN-009. Va a la lista de la sesión 7 como pregunta sobre cuántas zonas de control admite el esquema (sin sugerir la respuesta) |
+| 07-02 11-15 | P5 ×2 (bot 11:13 = o7, 12:07 = o10) | o7: escenario 1 (toma de 11:08, el bajo de M15 en 1.14126, con cuerpo), llenada 11:13:30, ANTES de que cierre ninguna M1 más allá, y su M1 cierra más allá (cuerpo); o10: escenario 2 (toma de 12:02, bajo 1.14089, con cuerpo), llenada 12:07:11, ANTES, su M1 con cuerpo | **sin clase** (operaciones de más; la nota de P5) |
+| 07-03 11-15 | P5 (bot 11:13 = o15) y P3 (trader 12:02) | o15: escenario 1 (toma de 11:08, bajo 1.14503, con cuerpo), llenada 11:13:34, ANTES, su M1 con mecha; a las 12:02, RN-015 bloqueado por **RN-009** | o15: **sin clase** (de más); la P3 de 12:02: **sin clase**, gate RN-009 (la misma pregunta) |
+| 07-14 11-15 | P2 Δ21 (11:35), P2 Δ19 (12:44), P3 ×2 (11:48, 13:06) | en los cuatro instantes RN-015 bloqueado por **RN-009**; escenario 1 (toma 11:19) en las de 11:35 y 11:48; escenario 2 (toma 12:27) en las de 12:44 y 13:06 | **sin clase**, gate RN-009 |
+| 07-14 11-15 | P5 ×2 (bot 11:21 = o10, 11:26 = o12) | escenario 1, toma de 11:19 (bajo 1.13990, con cuerpo); llenadas 11:21:03 y 11:26:44, ANTES de que cierre ninguna M1 más allá, las dos con mecha; las dos, stop | **sin clase** (de más) |
+
+### 5.3 La pendiente con dueño (RECORRIDA-CONSTRUCCION-2.md:1355-1358)
+
+- **07-14 11-15 (o10, o12 y o14): no son del mismo barrido.** o10 y o12 son del escenario 1 (la toma
+  de las 11:19 del bajo de M15 en 1.13990, formado a las 11:15; zonas 79 y 80, escenario 1); o14 es
+  del escenario 2 (la toma de las 12:27 del bajo de M15 en 1.13948, formado a las 12:00; zona 116,
+  escenario 2). Dos pérdidas en el escenario 1 y una en el 2, menos de `cartuchos_max = 3` en
+  cada uno: RN-016 no tenía que saltar, y no salta (aplicado como está escrito: **sí**). La deuda de
+  la zona reutilizada no actúa aquí: las tres zonas son de su propio escenario (o11 reusa zona:79
+  dentro del escenario 1, que es lo de ADR-0083). A las 12:36, tras el stop de o14, el siguiente
+  intento lo bloquea RN-009.
+- **04-13 07-11, 08:47: el gate es RN-009.** RN-011 dimensiona zona:59 (escenario 2) y RN-015 no coloca
+  porque lo prohíbe RN-009, solo él (también a las 08:46, 08:48, 08:49 y 08:50). Sin posición viva.
+- **07-02 11-15, 12:25 y 12:45: el gate es RN-009**, solo él, sobre zona:140 y zona:149 (escenario 2).
+- **07-02 14:10 y 14:23** (ya «sí» en la recorrida): los prohíben **tres** gates, RN-001, RN-009 y
+  RN-016. RN-016 por los cartuchos (`detenido_por_cartuchos` desde las 14:08, tras o22, o23 y o25 del
+  escenario 3, la toma de las 13:47); RN-001 porque su forma incluye `detenido_por_cartuchos`; y RN-009
+  por su cuenta. El visor solo dejaba ver el freno.
+
+**Lo que añade la ablación a 5.2 y 5.3** (F4.3, instantes en UTC como en el fichero): sin RN-009,
+de las filas con gate RN-009 ganan pareja **la P3 del trader de 07-02 a las 12:25** (10:25:50Z, con
+un bot a las 10:21:52Z) y **las dos P3 de 04-13 a las 08:47 y a las 08:50** (06:47:45Z y 06:50:00Z,
+con bots a las 06:47:46Z y 06:50:00Z). Las de 07-02 a las 11:34 y 12:45, la de 07-03 a las 12:02 y
+las cuatro de 07-14 no ganan pareja ni sin RN-009: ahí no basta con quitar ese gate. Es un hecho de
+la corrida, no una clase: no dice que RN-009 esté mal (sin RN-009 también se pierden 13 parejas de
+la base).
+
+### 5.4 De la ablación: las filas que mueve cada regla con delta (sin conclusiones)
+
+Ninguna línea dice «quitar la regla»: la ablación dice qué pasa al apagarla, no si está bien. Las
+operaciones de más que aparecen no se llaman error (VIDEO-JULIO.md §10, punto 4; F7 #10).
+- **RN-003, RN-004, RN-011, RN-015**: sin ellas el bot no opera (la toma, el escenario, el
+  dimensionado y la colocación): se pierden las 31 T0, las 192 de más y las 24 de día sin trader.
+- **RN-009** (zonas de control por esquema): gana 18 filas del trader, P2 de 01-02 12:20:20Z,
+  01-15 08:42:10Z, 01-19 13:36:00Z, 07-09 07:59:00Z y 11:02:05Z, 08-03 06:03:05Z y 09:46:15Z; P3
+  de 01-05 06:25:05Z y 06:48:25Z, 01-06 09:22:00Z, 01-16 07:20:15Z, 01-19 08:32:40Z y 10:15:50Z,
+  04-13 06:47:45Z y 06:50:00Z, 07-02 10:25:50Z y 08-04 11:34:50Z; P7 de 07-10 07:17:40Z. Pierde
+  13 T0: 04-17 08:36:10Z, 04-23 06:49:35Z, 04-24 06:44:30Z, 04-28 08:12:05Z, 04-29 09:36:25Z,
+  07-10 07:50:15Z y 10:58:40Z, 07-14 06:30:30Z, 06:55:30Z y 10:33:40Z, 07-15 05:06:55Z, 07-16
+  06:00:10Z y 07-17 05:46:05Z (y re-empareja 01-14 06:03:15Z y 07-10 05:36:35Z). 144 de más
+  aparecen y 88 desaparecen; 29 y 9 en días sin trader; +229 órdenes; rechazos 32 → 75.
+- **RN-006** (reubicar la orden): gana 3 filas (P3 de 01-21 09:32:10Z y 07-13 11:25:05Z; P7 de
+  07-10 07:17:40Z) y pierde 22 T0 (re-empareja 01-14 06:03:15Z y 07-10 07:10:50Z); 137 de más
+  aparecen y 156 desaparecen; 9 y 21 en días sin trader; −898 órdenes; rechazos 32 → 8.
+- **RN-014** (mover el stop): pierde 3 T0 (01-09 09:07:50Z, 07-16 06:00:10Z, 07-17 05:46:05Z); 4 de
+  más aparecen y 20 desaparecen; 1 y 2 en días sin trader; −105 órdenes; rechazos 32 → 27.
+- **RN-036**: pierde 1 T0 (07-17 05:46:05Z); 6 de más aparecen y 3 desaparecen (P5 mismo lado); 1
+  de día sin trader desaparece; +4 órdenes.
+- **RN-005** (el punto en el lado del 0): 23 de más aparecen y 2 desaparecen (P5 mismo lado 1, P6 en
+  sesión 1); 1 y 2 en días sin trader; +42 órdenes; rechazos 32 → 35; ninguna pareja cambia.
+- **RN-002** (cierre a mercado): 3 de más desaparecen (P5 mismo lado 1, P6 en sesión 2: 01-30
+  10:54:26Z, 08-17 10:12:19Z y 10:42:34Z) y 1 de día sin trader (08-18 07:11:38Z); −27 órdenes;
+  rechazos 32 → 30.
+- **RN-035** (retirar la orden): 1 de más aparece (01-27 10:02:32Z) y 2 desaparecen (P6 en sesión,
+  08-17 10:12:19Z y 10:42:34Z); 1 de día sin trader aparece (08-18 07:32:00Z); −9 órdenes;
+  rechazos 32 → 30.
+- **RN-032**: 1 de más aparece y 2 de día sin trader aparecen (08-18 07:32:00Z y 09:36:18Z); +9
+  órdenes.
+- **RN-001** (+1), **RN-034** (+2) y **RN-037** (+3): solo órdenes; ninguna operación cambia.
+
+### 5.5 Lo que va a la sesión 7, como hecho medido y sin sugerir la respuesta
+
+1. **Cuándo se coloca la orden respecto de la ruptura del punto** (de 5.1): «El 3 de julio, entre
+   las 08:02 y las 09:35, el bot compró cuatro veces con una orden stop en el último pivote de M1,
+   que se llenó en el tick que tocaba ese nivel; en tres de las cuatro, la vela de un minuto en que
+   se llenó no cerró por encima del nivel. En el vídeo dices que ahí no había entrada porque era con
+   mecha y que tiene que ser con cuerpo. ¿En qué momento colocas la orden respecto de esa ruptura, y
+   qué vela tiene que cerrar?»
+2. **Cuántas zonas de control admite el esquema** (de 5.2 y 5.3): «El 13 de abril a las 08:47, el 2
+   de julio a las 11:34, 12:25 y 12:45, el 3 de julio a las 12:02 y el 14 de julio a las 11:35,
+   11:48, 12:44 y 13:06, el bot iba a poner la orden de una zona y no la puso porque contaba más
+   zonas de control desarrolladas que las que admite el esquema. ¿Cuántas zonas de control dejas que
+   se desarrollen antes de dejar de buscar entrada en ese esquema, y cómo las cuentas?»
+
+### 5.6 Propuestas para la orden de cierre, comprobadas sobre una copia
+
+Comprobadas en memoria (sin escribir nada en el repo) con las funciones de
+`tests/unit/test_hoja_de_ruta.py`, cargado por su ruta: `problemas_a`, `problemas_b`, `problemas_c` y
+`problemas_d` dan **[]** con las tres propuestas aplicadas a la vez; y un mutante (R4.4 HECHA
+conservando `NA:F`) da en `problemas_b` «R4 «R4.4 · Trazas del motor y ablación por regla»: NA:F
+esta HECHA y la letra sigue viva». F sigue viva (y sigue en los Refs de R0.3, R4.2, R4.3 y G.4);
+`PROJECT_STATE.md` pasaría de 21.760 a 22.735 bytes (tope 25.000). Las letras vivas no cambian
+(A, C, D, F, G, I, J, L, M, N, Q).
+
+**(a) El texto nuevo de F** (sale el (1); F sigue viva, ningún encabezado de HECHA):
+
+> F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que
+> cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea
+> base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt; clasificación en §8: 31 pareja, 19 efecto
+> de la cuenta, 4 RN-019, 81 hasta T, 279 sin clase). Las trazas del motor y la ablación por regla
+> están hechas (TRAZAS-ABLACION.md; `motor decisiones`), con las clases que decidió el consultor en
+> su PARADA final. El rumbo y el método desde aquí: docs/plan/RUMBO-2026-11.md (R0.3 de la hoja de
+> ruta). Siguiente, en este orden: (1) láminas del bot a la estética de FX Replay (RUMBO §3); (2) la
+> preparación de la sesión 7 con el método nuevo y su ADR (RUMBO §1), con los días de §8, la
+> clasificación de las 81 filas del vídeo de julio (VIDEO-JULIO.md §4), sus dos preguntas técnicas
+> (la tarde del 10 de julio; las entradas válidas que el trader deja sin tomar en el backtest), las
+> dos de TRAZAS-ABLACION.md (cuándo se coloca la orden respecto de la ruptura del punto; cuántas
+> zonas de control admite el esquema) y los ítems de evidencia de F7 #1, #2, #3 y #10. J antes si la
+> hoja sale de kit hoja. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de
+> elegir los días. R6a y RUMBO §5 en los huecos.
+
+(Las cifras «15.7 %» y «13.9 %» son las que ya trae la F de `main`; esta rama no publica ninguna.)
+
+**(b) R4.4 HECHA**, sin `NA:F` en ningún sitio de su bloque (como R3.8), con estas dos líneas
+cambiadas y el resto igual:
+
+> - **Refs:** ID:ADR-0092 · ID:ADR-0064 · ID:ADR-0066
+> - **Estado:** HECHA (`trabajo/trazas-ablacion`; TRAZAS-ABLACION.md): `motor decisiones` da la
+>   bitácora por día y sesión (con el gate de cada prohibición apuntado en el intérprete, solo como
+>   registro) y la ablación de las 32 VIGENTE; la base repite la línea base con un diff de 0 bytes y
+>   el control da delta cero. Las clases de 04-13, 07-02, 07-03 y 07-14, las de la PARADA final.
+
+**(c) Las líneas de Technical Debt nuevas:**
+
+> - La zona que RN-005 liga al escenario vigente en el mismo cierre de M1 en que RN-004 abre uno
+>   nuevo se queda en el escenario anterior, y su stop cuenta en los cartuchos de ese (2026-07-03
+>   09:23 y 09:35, zona:46 y zona:51; TRAZAS-ABLACION.md F5): la deuda de la zona reutilizada de
+>   PUNTO-USADO.md §1.c y §4.f en su forma directa; no se toca sin la regla del trader.
+> - La comparación de `motor decisiones` mira la operación (día, sesión, lado, instante, entrada) y no
+>   el lote, el stop ni el objetivo: RN-012 y RN-027 no pueden dar delta por construcción
+>   (TRAZAS-ABLACION.md F4.3).
+> - El `toca_colocar_orden_limite` sintético de tests/unit/test_cableado.py guarda en una clausura
+>   que ya dio SÍ y solo coloca en la primera corrida del proceso; los tests que corren el día dos
+>   veces usan uno sin estado (TRAZAS-ABLACION.md F2).
+
+## El encargo frente a lo hecho
+
+| Pieza del encargo | Hecho | Dónde |
+|---|---|---|
+| (a) La bitácora por día y sesión: tomas, escenarios, zonas, puntos, la orden de cada uno o por qué no, y el gate de cada prohibición | sí | F2; anexo `bitacora.DIAGNOSTICO.<día>.txt` |
+| (b) La ablación de las 32 VIGENTE, una a una | sí | F3, F4.3; anexo `ablacion.DIAGNOSTICO.vigentes.txt` |
+| (c) 04-13, 07-02, 07-03 y 07-14 medidos, con las clases propuestas | sí | F5 (5.1 a 5.3) |
+| (d) El recorte de PROJECT_STATE | sí | F1 |
+| `motor arnes` y `motor visor` sin cambios | sí | F2/F3; F4.1 (diff de 0 bytes) |
+| Ninguna salida nueva con R, PnL ni porcentajes; DIAGNOSTICO en el nombre y en cada línea, con test | sí | F3 (`test_decisiones.py`) |
+| Sin tocar `knowledge/spec/`, `knowledge/cases/`, evidencia ni feedback; ningún ítem de evidencia | sí | `git diff main --stat` |
+| RECORRIDA-CONSTRUCCION-2 y VIDEO-JULIO sin tocar | sí | ídem (solo se leen) |
+| Ninguna transcripción ni fotograma | sí | — |
+| Solo construcción, por la compuerta; HOLDOUT antes de la primera corrida del día | sí | HOLDOUT-EXPOSICIONES.md, dos filas del 2026-11-09 |
+| La Next Action no se toca | sí | solo propuestas (5.6) |
+| Revisor con los 6 alcances, pegado al final | ver abajo | Apéndice B |
+
+## Desviaciones
+
+1. **El intérprete se tocó** (`engine/interprete.py`), aunque el encargo decía «sin tocar el
+   intérprete»: lo decidió el consultor (respuesta a la fase 0, punto 0), solo como registro, y la
+   prueba de que no cambia ninguna decisión es F4.1 (diff de 0 bytes).
+2. **Sin fila en el Marcador**, como excepción a `docs/plan/HOJA-DE-RUTA.md:817` (punto 5): la
+   corrida base repite la línea base con un diff de 0 bytes y no es una corrida nueva; las
+   ablaciones son diagnóstico. La orden de cierre lo dirá.
+3. **La rama de CI es `fix/trazas-ablacion`** (`RITUAL.md:102`), no `fix/trabajo-trazas-ablacion`
+   (punto 9).
+4. **`NA:F` fuera de todo el bloque de R4.4** al proponerla HECHA, no solo de sus Refs (punto 9;
+   5.6 b).
+5. **Las corridas llevaron unas 3 h** (F4.1 6 min, F4.2 9,5 min, F4.3 2 h 18 min), dentro de las ~4 h
+   del punto 9.
+6. **El control son 8 reglas, no las 11 del encargo** (punto 7): lo calculó la bitácora; RN-007,
+   RN-021 y RN-022 quedan desconocidas en todos los eventos y salen del control, y dan delta cero
+   igual.
+7. **Error mío, corregido**: en la fase 0 conté 25 líneas de Technical Debt candidatas por (e) donde
+   eran 22 (tres ya acortadas llevan la marca tras una cita); corregido en F1.
+
+## Los `make check` de la rama
+
+| Commit | Resultado |
+|---|---|
+| apertura (29561efd) | 3343 passed, SELLO sobre 35974bc4, pico 310 MiB |
+| fase 0 (50c26648) | el primero, rojo (5 failed: `knowledge validate` por citar un ADR inexistente, el 0087); el segundo, 3343 passed, SELLO sobre 17767f27, pico 310 MiB |
+| F1 (5d281ed7) | 3343 passed, SELLO sobre 39d13681, pico 309 MiB |
+| F2 y F3 (1f95cafe) | 3359 passed, SELLO sobre f237a9ed, pico 310 MiB |
+| F4 y F5 (este) | en el mensaje del commit |
+
+## PARADA final · Las clases, para que decidas
+
+Todas son PROPUESTAS; ninguna operación de más se llama error.
+
+0. **07-03 07-11, o4, o6 y o8 (y la P2 del trader de las 09:24, con o6): «contradicción con lo
+   fijado»** (punto de M1, llenado con mecha; v12 pide cuerpo, S-18 y A-32 dan la mecha por buena
+   en M1). Opciones: (a) contradicción con lo fijado; (b) sin clase hasta la sesión 7. Recomiendo
+   (a): es lo que mide la bitácora con el criterio del punto 2. Coste de (b): la tensión entre v12
+   y S-18 se queda sin nombre en la lista de la sesión 7.
+1. **07-03 07-11, o4, o5, o6 y o8: además, «regla desconocida: cuándo se coloca la orden respecto
+   de la ruptura»** (las cuatro se llenan ANTES de que ninguna M1 cierre más allá del punto).
+   Opciones: (a) sí, y la pregunta 1 de 5.5 a la sesión 7; (b) no. Recomiendo (a): es la condición
+   que pusiste en el punto 2 y se cumple en las cuatro. Coste de (b): ADR-0064 y
+   `orden_limite_nace` siguen sin la voz del trader en este punto.
+2. **07-03 07-11, «error nuestro»: ninguna.** Las tres tomas cierran con cuerpo y ningún punto es
+   una línea de M15. Opciones: (a) ninguna fila es «error nuestro»; (b) mantener la sospecha.
+   Recomiendo (a): lo dice la bitácora fila a fila. Coste de (b): ninguno medido que la sostenga.
+3. **Las 13 «a la rama de trazas»: sin clase**, con el hecho del gate (RN-009 en las de las horas
+   del trader de 07-02, 07-03 y 07-14) y las P5 como operaciones de más. Opciones: (a) sin clase, y
+   la pregunta 2 de 5.5 a la sesión 7; (b) otra clase. Recomiendo (a): no hay voz del trader sobre
+   cuántas zonas de control admite el esquema.
+4. **La pendiente con dueño**: 07-14 (o10, o12 y o14 no son del mismo barrido; RN-016 aplicado como
+   está escrito: sí); 04-13 08:47 y 07-02 12:25 y 12:45, gate RN-009; 07-02 14:10 y 14:23, tres
+   gates (RN-001, RN-009 y RN-016). Opciones: (a) cerrada con estos hechos; (b) seguir abierta.
+   Recomiendo (a): cada pregunta de RECORRIDA-CONSTRUCCION-2.md:1355-1358 tiene su respuesta medida.
+5. **La zona ligada al escenario anterior (07-03 09:23 y 09:35)**: Technical Debt (5.6 c), sin tocar
+   el motor. Opciones: (a) Technical Debt; (b) rama de motor ya. Recomiendo (a): cambiaría lo que
+   el motor decide sin una regla del trader.
+6. **Las propuestas de cierre (5.6)**: F nueva, R4.4 HECHA y tres líneas de Technical Debt, todas
+   comprobadas con `test_hoja_de_ruta.py`. Las aplica la orden de cierre, si las das por buenas.
+
 ## Estado
 
-EN CURSO (2026-11-09): respuesta del consultor a la PARADA de la fase 0 recibida y copiada arriba;
-F1 en curso; F2 a F5 sin esperar, con la PARADA condicional del punto 10.
+EN CURSO (2026-11-09): F1 a F5 hechos, sin ninguna PARADA condicional del punto 10 (F4.1 con diff
+de 0 bytes, la base repetida igual, el control con delta cero, el punto 0 solo registro). Falta la
+CI por `fix/trazas-ablacion` y el revisor; después, la PARADA final de arriba.

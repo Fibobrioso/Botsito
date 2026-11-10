@@ -1,0 +1,36 @@
+DIAGNOSTICO-DECISIONES | base: parejas, de mas, fuera, ordenes, no enviadas, rechazos, cuentas suspendidas = (31, 192, 24, 1150, 0, 32, 0)
+DIAGNOSTICO-DECISIONES | base repetida en el mismo proceso, sin bitacora: (31, 192, 24, 1150, 0, 32, 0); igual: si
+DIAGNOSTICO-DECISIONES | control (VIGENTE que ni disparan ni quedan desconocidas en la base): RN-008, RN-010, RN-019, RN-020, RN-026, RN-029, RN-030, RN-031
+DIAGNOSTICO-DECISIONES | eventos observados: 36556
+DIAGNOSTICO-DECISIONES | RN-001: dispara en 591 eventos; desconocida en 0; bloquea 464 acciones
+DIAGNOSTICO-DECISIONES | RN-002: dispara en 5 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-035: dispara en 2 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-037: dispara en 152 eventos; desconocida en 0; bloquea 117 acciones
+DIAGNOSTICO-DECISIONES | RN-003: dispara en 152 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-033: dispara en 240 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-004: dispara en 6681 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-005: dispara en 10212 eventos; desconocida en 0; bloquea 8149 acciones
+DIAGNOSTICO-DECISIONES | RN-006: dispara en 869 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-007: dispara en 0 eventos; desconocida en 36556; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-008: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-009: dispara en 20513 eventos; desconocida en 0; bloquea 17772 acciones
+DIAGNOSTICO-DECISIONES | RN-010: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-011: dispara en 19598 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-012: dispara en 210 eventos; desconocida en 210; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-014: dispara en 66 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-015: dispara en 19598 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-016: dispara en 516 eventos; desconocida en 0; bloquea 404 acciones
+DIAGNOSTICO-DECISIONES | RN-017: dispara en 35 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-034: dispara en 35 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-018: dispara en 1698 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-019: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-020: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-036: dispara en 814 eventos; desconocida en 0; bloquea 723 acciones
+DIAGNOSTICO-DECISIONES | RN-021: dispara en 0 eventos; desconocida en 36556; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-022: dispara en 0 eventos; desconocida en 36556; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-026: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-027: dispara en 19597 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-029: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-030: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-031: dispara en 0 eventos; desconocida en 0; bloquea 0 acciones
+DIAGNOSTICO-DECISIONES | RN-032: dispara en 5246 eventos; desconocida en 0; bloquea 3202 acciones
