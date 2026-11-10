@@ -1048,9 +1048,9 @@ b2).
 | 30 | F5: preguntas a la sesión 7 como hecho medido y sin sugerir la respuesta | Hecho, corregidas tras el revisor (b7 y a2) | 5.5 |
 | 31 | F5: propuestas de cierre comprobadas con `test_hoja_de_ruta.py` sobre una copia | Hecho | 5.6; guion en el anexo |
 | 32 | Informe con el encargo frente a lo hecho, las desviaciones y los comandos tal como se ejecutaron | Hecho (comandos completados tras el revisor, b3 y b9) | esta tabla; «Desviaciones»; «Los guiones y comandos» |
-| 33 | CI de Linux por `fix/trazas-ablacion` | Pendiente: la lanza Aleks con `!` tras este commit | «Estado» |
+| 33 | CI de Linux por `fix/trazas-ablacion` | Hecho: run 42740007047 sobre 9469bbf (empujado por Aleks a `fix/trazas-ablacion`): `make check` con 1 failed, 3310 passed, 48 skipped; el único fallo, el esperado de `RITUAL.md`: `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/trazas-ablacion'; la rama actual es 'fix/trazas-ablacion'») | «Estado» |
 | 34 | Revisor con los 6 alcances, pegado al final | Hecho | Apéndice B |
-| 35 | PARADA final con las clases y «Rama lista para revisión, NO cerrada.» | Hecho la PARADA; la frase, tras la CI | «PARADA final»; «Estado» |
+| 35 | PARADA final con las clases y «Rama lista para revisión, NO cerrada.» | Hecho | «PARADA final»; «Estado» |
 
 ## Los guiones y comandos de la sesión (revisor, b3)
 
@@ -1109,7 +1109,8 @@ sobre `PROJECT_STATE.md` y `HISTORIA.md`, con la ruta por argumento). `<sp>` es 
 | F1 (5d281ed7) | 3343 passed, SELLO sobre 39d13681, pico 309 MiB |
 | F2 y F3 (1f95cafe) | 3359 passed, SELLO sobre f237a9ed, pico 310 MiB |
 | F4 y F5 (4ac3810) | 3359 passed, SELLO sobre 3c66a635, pico 309 MiB |
-| correcciones del revisor (este) | en el mensaje del commit |
+| correcciones del revisor (9469bbf) | 3359 passed, SELLO sobre 2cade966, pico 309 MiB |
+| la CI y el estado final (este) | en el mensaje del commit |
 
 ## PARADA final · Las clases, para que decidas
 
@@ -1369,7 +1370,7 @@ Ficheros clave:
 | a1 | importa | Corregido en F4.3 y en la Technical Debt propuesta (5.6 c): un lote distinto solo se ve si mueve las no enviadas, los rechazos o las cuentas suspendidas; lo medido es el delta cero |
 | a2 | importa | Corregido: A-20 RESUELTA (una zona de control; con dos se descarta) citada en 5.2, 5.5, la F propuesta y la PARADA; la pregunta 2 pasa a qué zonas cuenta el trader como de control |
 | a3 | menor | Corregido: Δ órdenes incluye las rechazadas al colocar |
-| b1 | bloquea | Commit de F4/F5 hecho; la CI por `fix/trazas-ablacion` la lanza Aleks con `!` tras este commit; la frase final, después |
+| b1 | bloquea | Commits de F4/F5 (4ac3810) y de las correcciones (9469bbf); CI, run 42740007047, con solo el fallo esperado; la frase final, en «Estado» |
 | b2 | importa | Hecho: «El encargo, punto por punto», 35 requisitos con su estado |
 | b3 | importa | Hecho: «Los guiones y comandos de la sesión», con el texto de cada guion en el anexo |
 | b4 | importa | Corregido: la línea de guardia-g1 acortada (252 → 100 bytes, al final de HISTORIA en su bloque); y recontadas por (e), con el mismo guion, TODAS las líneas de más de 200 bytes (corrección de F1). Mi error: la elegí a mano entre las 22 y la di por de menos de 60 |
@@ -1383,6 +1384,8 @@ Ficheros clave:
 
 ## Estado
 
-EN CURSO (2026-11-09): F1 a F5 hechos, sin ninguna PARADA condicional del punto 10; el revisor pasó
-y sus hallazgos están corregidos o declarados (Apéndice B). Falta la CI por `fix/trazas-ablacion`,
-que lanza Aleks con `!`; después, la PARADA final de arriba.
+LISTA PARA REVISIÓN (2026-11-09): F1 a F5 hechos, sin ninguna PARADA condicional del punto 10; el
+revisor pasó y sus hallazgos están corregidos o declarados (Apéndice B); CI de Linux, run 42740007047 sobre 9469bbf (empujado por Aleks a `fix/trazas-ablacion`): `make check` con 1 failed, 3310 passed, 48 skipped; el único fallo, el esperado de `RITUAL.md`: `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/trazas-ablacion'; la rama actual es 'fix/trazas-ablacion'»). Espera
+la decisión del consultor sobre la PARADA final (decisiones 0 a 8) y la orden de cierre.
+
+Rama lista para revisión, NO cerrada.
