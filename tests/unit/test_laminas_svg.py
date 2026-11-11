@@ -642,3 +642,42 @@ def test_en_el_m1_de_cerca_no_entra_la_linea_que_acabo_antes_del_tramo() -> None
         en_panel(texto, "linea-m15 bajo tomada", 2)
         == en_panel(base, "linea-m15 bajo tomada", 2) + 1
     )
+
+
+def test_el_punto_de_la_toma_no_se_dibuja_fuera_del_panel() -> None:
+    """Lo enseno la captura de la tercera v4: en el M1 de cerca la linea tomada puede quedar un
+    punto por encima de la escala (va como marca de borde), y el punto de la toma se dibujaba
+    fuera del panel, junto al titulo. Fuera de la escala no se dibuja; dentro, si."""
+    d = _dibujo(foto_base())
+    assert d.toma is not None
+    panel = laminas_svg._Panel(laminas_svg.tramo_de_cerca(d), laminas_svg.MARCO_CERCA, 900, ())
+    for nivel, dibujado in ((panel.hi + 1, False), (panel.lo - 1, False), (panel.hi, True)):
+        otro = dataclasses.replace(d, toma=(d.toma[0], nivel))
+        texto = "".join(laminas_svg._lineas_m15(panel, otro, ()))
+        assert ('class="toma"' in texto) is dibujado, nivel
+
+
+def test_los_rotulos_y_las_marcas_de_borde_van_delante_de_las_velas() -> None:
+    """Lo enseno la captura de la tercera v4: en el M1 de cerca las velas son anchas y tapaban los
+    rotulos de la caja y las marcas de borde. Van detras de todas las velas de su panel y con un
+    borde del color del fondo."""
+    import re as _re
+
+    orden = laminas.OrdenFoto(
+        "o1", "compra", 110_010, 109_986, 110_400, CORTE * 60_000 - 1, "colocada", "07-11", "zona:1"
+    )
+    f = foto_base(ordenes=(orden,), colocadas=frozenset({"o1"}))
+    texto, _ = _pagina(f, laminas.TIPO_A, "o1")
+    cerca = 3 * laminas_svg.ALTO_PANEL
+    elementos = _re.findall(
+        r"<(?:rect|text) class=\"([\w-]+)[^\"]*\"[^>]*\by=\"([\d.]+)\"[^>]*>", texto
+    )
+    del_cerca = [(i, c) for i, (c, y) in enumerate(elementos) if float(y) >= cerca]
+    ultima_vela = max(i for i, c in del_cerca if c == "vela")
+    delante = [i for i, c in del_cerca if c in ("rotulo", "objetivo-fuera", "m15-fuera")]
+    assert any(c == "rotulo" for _, c in del_cerca) and any(
+        c == "objetivo-fuera" for _, c in del_cerca
+    )
+    assert delante and min(delante) > ultima_vela
+    for e in _re.findall(r'<text class="(?:rotulo|objetivo-fuera|m15-fuera)[^>]*>', texto):
+        assert laminas_svg.HALO in e
