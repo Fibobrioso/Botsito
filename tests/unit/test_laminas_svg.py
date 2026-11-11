@@ -585,13 +585,10 @@ def test_la_linea_tomada_lleva_su_precio_en_el_m1_de_cerca_y_las_marcas_no_se_mo
     apilan."""
     import re as _re
 
-    d = _dibujo(foto_base())
-    tomada = [ln for ln in d.lineas if ln.tomada]
-    assert tomada
-    for marco, con_precio in ((laminas_svg.MARCO_CERCA, True), ("M1", False)):
-        panel = laminas_svg._Panel(M1[-60:], marco, 3 * laminas_svg.ALTO_PANEL, (tomada[0].nivel,))
-        texto = "".join(laminas_svg._lineas_m15(panel, d, tomada))
-        assert ('class="eje-linea-tomada"' in texto) is con_precio, marco
+    texto, _ = _pagina(foto_base())
+    assert en_panel(texto, "eje-linea-tomada", 3) == 2  # su rect y su texto, en el M1 de cerca
+    assert en_panel(texto, "eje-linea-tomada", 2) == 0  # en el M1, no
+    assert _re.search(rf'<text class="eje-linea-tomada"[^>]*>{PRECIO_BAJO}</text>', texto)
     panel = _panel_m1()
     lejos = [
         laminas.LineaDibujada("alto", panel.hi + 500, CORTE - 200, CORTE, False, False),
@@ -600,3 +597,48 @@ def test_la_linea_tomada_lleva_su_precio_en_el_m1_de_cerca_y_las_marcas_no_se_mo
     marcas = laminas_svg._fuera(panel, lejos, ESCALA)
     ys = [float(_re.search(r' y="([\d.]+)"', m).group(1)) for m in marcas]  # type: ignore[union-attr]
     assert len(set(ys)) == 2
+
+
+def test_las_etiquetas_del_eje_no_se_montan_y_cada_una_lleva_su_precio() -> None:
+    """Lo enseno la captura de la segunda v4: dos etiquetas del eje una encima de otra. Tres en el
+    mismo nivel quedan a ALTO_ETIQUETA, cada una con su precio; y la que se saldria por abajo se
+    sube desde el borde."""
+    import re as _re
+
+    p = _panel_m1()
+    alto = laminas_svg.ALTO_ETIQUETA
+    pedidas = [
+        ("orden", p.lo + 50, "#000"), ("linea-tomada", p.lo + 50, "#111"),
+        ("stop", p.lo + 49, "#222"),
+    ]  # fmt: skip
+    partes, ys = laminas_svg._etiquetas(p, pedidas, ESCALA)
+    assert sorted(ys) == ys and all(b - a >= alto for a, b in zip(ys, ys[1:], strict=False))
+    assert ys[-1] <= p.y0 + laminas_svg.ALTO_PANEL - alto / 2
+    texto = "".join(partes)
+    for clase, nivel, _ in pedidas:
+        assert _re.search(
+            rf'<text class="eje-{clase}"[^>]*>{laminas.precio(nivel, ESCALA)}<', texto
+        )
+    # una sola, en su sitio
+    _, solo = laminas_svg._etiquetas(p, [("orden", p.lo + 50, "#000")], ESCALA)
+    assert solo == [p.y(p.lo + 50)]
+
+
+def test_en_el_m1_de_cerca_no_entra_la_linea_que_acabo_antes_del_tramo() -> None:
+    """Lo enseno la captura de la segunda v4: una linea tomada que acabo antes del tramo del M1 de
+    cerca no se ve alli, y ni su precio en el eje ni su marca de borde se dibujan; en el M1, si."""
+    d = _dibujo(foto_base())
+    tramo = laminas_svg.tramo_de_cerca(d)
+    nivel = int(min(v.minima for v in tramo)) + 1
+    antes = laminas.LineaDibujada(
+        "bajo", nivel, int(tramo[0].inicio) - 50, int(tramo[0].inicio) - 5, True, False
+    )
+    texto = laminas_svg.svg(dataclasses.replace(d, lineas=(*d.lineas, antes)))
+    base = laminas_svg.svg(d)
+    assert en_panel(texto, "linea-m15 bajo tomada", 3) == en_panel(base, "linea-m15 bajo tomada", 3)
+    assert en_panel(texto, "eje-linea-tomada", 3) == en_panel(base, "eje-linea-tomada", 3)
+    assert en_panel(texto, "m15-fuera", 3) == en_panel(base, "m15-fuera", 3)
+    assert (
+        en_panel(texto, "linea-m15 bajo tomada", 2)
+        == en_panel(base, "linea-m15 bajo tomada", 2) + 1
+    )

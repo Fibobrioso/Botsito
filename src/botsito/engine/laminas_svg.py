@@ -72,6 +72,8 @@ PANELES = 4  # H4, M15, M1 y M1 de cerca
 MARCO_CERCA = "M1 de cerca"
 ANCHO_MARCA = 90  # dos marcas de borde a menos de esto en x, en el mismo borde, se apilan
 
+EtiquetaEje = tuple[str, int, str]  # una etiqueta del eje: su clase, su nivel y su color
+
 
 def _f(x: float) -> str:
     return f"{x:.1f}"
@@ -195,10 +197,6 @@ def _lineas_m15(p: _Panel, d: Dibujo, lineas: Sequence[LineaDibujada]) -> list[s
                 p, f"linea-m15 {ln.lado} {estado}", ln.nivel, ln.desde, ln.hasta, color, extra
             )
         )
-        if ln.tomada and p.marco == MARCO_CERCA:
-            # en el M1 de cerca, la linea tomada lleva su precio en el eje, como la orden: asi se
-            # leen separados la liquidez y el 0 (captura de la v4)
-            partes.append(_etiqueta(p, "linea-tomada", ln.nivel, color, d.escala))
     if d.toma is not None:
         inicio, nivel = d.toma
         x = p.centro(inicio) if p.marco.startswith("M1") else p.x(inicio + 1)
@@ -371,23 +369,59 @@ def _m1(p: _Panel, d: Dibujo) -> list[str]:
             ("stop", o.stop, COLOR["stop"], 'stroke-width="2" stroke-dasharray="6 4"'),
             ("objetivo", o.objetivo, COLOR["objetivo"], 'stroke-width="2" stroke-dasharray="6 4"'),
         ):
-            if p.lo <= nivel <= p.hi:
+            if p.lo <= nivel <= p.hi:  # su precio en el eje lo pone `_etiquetas`
                 partes.append(_horizontal(p, clase, nivel, desde, d.corte, color, extra))
-                partes.append(_etiqueta(p, clase, nivel, color, d.escala))
             else:  # en el M1 de cerca, el objetivo suele quedar fuera de su escala
                 partes.append(_marca(p, f"{clase}-fuera", nivel, p.x(desde), color, d.escala))
     return partes
 
 
-def _etiqueta(p: _Panel, clase: str, nivel: int, color: str, escala: int) -> str:
-    """El precio de una linea de la orden en el eje derecho, sobre su color (como el replay)."""
-    y = p.y(nivel)
+def _etiqueta(p: _Panel, clase: str, nivel: int, color: str, escala: int, y: float) -> str:
+    """El precio de una linea en el eje derecho, sobre su color (como el replay), en la `y`."""
     return (
         f'<rect class="eje-{clase}" x="{_f(p.derecha + 2)}" y="{_f(y - ALTO_ETIQUETA / 2)}" '
         f'width="78" height="{ALTO_ETIQUETA}" fill="{color}"/>'
         f'<text class="eje-{clase}" x="{_f(p.derecha + 6)}" y="{_f(y + 4)}" font-size="12" '
         f'fill="{COLOR["fondo"]}">{precio(nivel, escala)}</text>'
     )
+
+
+def _pedidas(p: _Panel, d: Dibujo, tomadas: Sequence[LineaDibujada] = ()) -> list[EtiquetaEje]:
+    """Las etiquetas del eje de un panel: la orden, el stop y el objetivo que caben en su escala, y
+    las lineas de M15 tomadas que se le pasen (en el M1 de cerca, para leer separados la liquidez y
+    el 0: captura de la v4)."""
+    pedidas: list[EtiquetaEje] = []
+    for o in d.ordenes:
+        for clase, nivel in (("orden", o.precio), ("stop", o.stop), ("objetivo", o.objetivo)):
+            if p.lo <= nivel <= p.hi:
+                pedidas.append((clase, nivel, COLOR[clase]))
+    for ln in tomadas:
+        color = COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"]
+        pedidas.append(("linea-tomada", ln.nivel, color))
+    return pedidas
+
+
+def _etiquetas(
+    p: _Panel, pedidas: Sequence[EtiquetaEje], escala: int
+) -> tuple[list[str], list[float]]:
+    """Las etiquetas del eje, cada una con su precio, sin montarse: de arriba abajo, la que caeria
+    a menos de ALTO_ETIQUETA de la anterior baja lo que haga falta; si la ultima se sale por abajo,
+    se suben desde el borde (captura de la v4: dos etiquetas una encima de otra). Devuelve lo que
+    se dibuja y las y donde quedan, que la rejilla no escribe."""
+    orden = sorted(pedidas, key=lambda x: (p.y(x[1]), x[0]))
+    ys: list[float] = []
+    for _, nivel, _ in orden:
+        y = p.y(nivel)
+        ys.append(max(y, ys[-1] + ALTO_ETIQUETA) if ys else y)
+    fondo = p.y0 + ALTO_PANEL - ALTO_ETIQUETA / 2
+    for i in range(len(ys) - 1, -1, -1):
+        tope = fondo if i == len(ys) - 1 else ys[i + 1] - ALTO_ETIQUETA
+        ys[i] = min(ys[i], tope)
+    partes = [
+        _etiqueta(p, clase, nivel, color, escala, y)
+        for (clase, nivel, color), y in zip(orden, ys, strict=True)
+    ]
+    return partes, ys
 
 
 def svg(d: Dibujo) -> str:
@@ -405,8 +439,11 @@ def svg(d: Dibujo) -> str:
     for o in d.ordenes:
         niveles_cerca += [o.precio, o.stop]
     cerca = _Panel(tramo_de_cerca(d), MARCO_CERCA, ALTO_PANEL * 3, niveles_cerca)
-    en_cerca = tuple(ln for ln in d.lineas if cerca.lo <= ln.nivel <= cerca.hi)
-    fuera_cerca = tuple(ln for ln in d.lineas if ln not in en_cerca)
+    # en el M1 de cerca, solo las lineas que llegan al tramo: una que acabo antes no se ve, y ni su
+    # precio en el eje ni su marca de borde tienen a que referirse (captura de la v4)
+    vistas = tuple(ln for ln in d.lineas if ln.hasta > cerca.inicios[0])
+    en_cerca = tuple(ln for ln in vistas if cerca.lo <= ln.nivel <= cerca.hi)
+    fuera_cerca = tuple(ln for ln in vistas if ln not in en_cerca)
     alto = ALTO_PANEL * PANELES
     partes = [
         f'<svg xmlns="http://www.w3.org/2000/svg" width="{ANCHO}" height="{alto}" '
@@ -415,15 +452,13 @@ def svg(d: Dibujo) -> str:
     ]
     partes += _h4(h4, d) + _velas(h4, d.huso, d.escala)
     partes += _velas(m15, d.huso, d.escala) + _lineas_m15(m15, d, d.lineas)
-    ocupadas = [m1.y(n) for o in d.ordenes for n in (o.precio, o.stop, o.objetivo)]
+    etiquetas, ocupadas = _etiquetas(m1, _pedidas(m1, d), d.escala)
     partes += _m1(m1, d) + _velas(m1, d.huso, d.escala, ocupadas) + _lineas_m15(m1, d, en_m1)
-    partes += _fuera(m1, fuera_m1, d.escala)
-    ocupadas = [
-        cerca.y(n) for o in d.ordenes for n in (o.precio, o.stop, o.objetivo)
-        if cerca.lo <= n <= cerca.hi
-    ] + [cerca.y(ln.nivel) for ln in en_cerca if ln.tomada]  # fmt: skip
+    partes += _fuera(m1, fuera_m1, d.escala) + etiquetas
+    tomadas = [ln for ln in en_cerca if ln.tomada]
+    etiquetas, ocupadas = _etiquetas(cerca, _pedidas(cerca, d, tomadas), d.escala)
     partes += _m1(cerca, d) + _velas(cerca, d.huso, d.escala, ocupadas)
-    partes += _lineas_m15(cerca, d, en_cerca) + _fuera(cerca, fuera_cerca, d.escala)
+    partes += _lineas_m15(cerca, d, en_cerca) + _fuera(cerca, fuera_cerca, d.escala) + etiquetas
     partes.append("</svg>")
     return "\n".join(partes)
 
