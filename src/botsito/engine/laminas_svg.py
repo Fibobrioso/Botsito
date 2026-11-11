@@ -68,6 +68,9 @@ TAMANO_MARCA = 10  # la de las marcas de las lineas de M15 que quedan fuera del 
 VELAS_CERCA_MAX = 60  # como mucho, las ultimas 60 velas hasta el corte
 VELAS_CERCA_SIN_TOMA = 30  # sin toma, las 30 ultimas
 VELAS_ANTES_DEL_CONTROL = 15  # desde 15 velas antes de la primera zona de control, si es anterior
+VELAS_CERCA_MIN = (
+    15  # como poco, las 15 ultimas (respuesta del consultor tras revisar la v4, punto 1)
+)
 PANELES = 4  # H4, M15, M1 y M1 de cerca
 MARCO_CERCA = "M1 de cerca"
 ANCHO_MARCA = 90  # dos marcas de borde a menos de esto en x, en el mismo borde, se apilan
@@ -219,6 +222,17 @@ def lineas_del_m1(d: Dibujo) -> tuple[tuple[LineaDibujada, ...], tuple[LineaDibu
     la PARADA final de la ronda, punto 2): dentro, las que caen en el rango de precios de las velas
     del M1, de la caja y de la orden, ampliado por arriba y por abajo una altura de caja (sin caja,
     un decimo del rango); y la que el motor tomo, siempre."""
+    lo, hi = rango_del_m1(d)
+    dentro = tuple(ln for ln in d.lineas if ln.tomada or lo <= ln.nivel <= hi)
+    return dentro, tuple(ln for ln in d.lineas if ln not in dentro)
+
+
+def rango_del_m1(d: Dibujo) -> tuple[int, int]:
+    """El rango con que `lineas_del_m1` decide que lineas de M15 quedan fuera del M1: el de las
+    velas, la caja y la orden, ampliado una altura de caja (sin caja, un decimo del rango). Con el
+    mismo rango decide su lado la marca de borde de la que queda fuera, no con la escala del panel,
+    que estiran las zonas de control y el punto (revisor de la ronda de dibujo, m1; respuesta del
+    consultor tras revisar la v4, punto 2)."""
     precios = [int(v.maxima) for v in d.m1] + [int(v.minima) for v in d.m1]
     if d.caja is not None:
         precios += [d.caja.entrada, d.caja.extremo]
@@ -226,17 +240,24 @@ def lineas_del_m1(d: Dibujo) -> tuple[tuple[LineaDibujada, ...], tuple[LineaDibu
         precios += [o.precio, o.stop, o.objetivo]
     hi, lo = max(precios), min(precios)
     margen = abs(d.caja.entrada - d.caja.extremo) if d.caja is not None else (hi - lo) // 10
-    dentro = tuple(ln for ln in d.lineas if ln.tomada or lo - margen <= ln.nivel <= hi + margen)
-    return dentro, tuple(ln for ln in d.lineas if ln not in dentro)
+    return lo - margen, hi + margen
 
 
 def _marca(
-    p: _Panel, clase: str, nivel: int, x: float, color: str, escala: int, fila: int = 0
+    p: _Panel,
+    clase: str,
+    nivel: int,
+    x: float,
+    color: str,
+    escala: int,
+    fila: int = 0,
+    arriba: bool | None = None,
 ) -> str:
     """Una marca pequena en el borde de arriba o de abajo de un panel para un nivel que no cabe en
     su escala: su precio y una flecha hacia donde esta. `fila` la aparta del borde cuando otra
-    marca cae en el mismo sitio."""
-    arriba = nivel > p.hi
+    marca cae en el mismo sitio; `arriba`, si se da, decide el lado (si no, la escala del panel)."""
+    if arriba is None:
+        arriba = nivel > p.hi
     apartada = fila * (TAMANO_MARCA + 2)
     y = (
         p.y0 + MARGEN_SUP + TAMANO_MARCA + apartada
@@ -254,11 +275,18 @@ def _marca(
 
 
 def _fuera(
-    p: _Panel, lineas: Sequence[LineaDibujada], escala: int, otras: Sequence[Marca] = ()
+    p: _Panel,
+    lineas: Sequence[LineaDibujada],
+    escala: int,
+    otras: Sequence[Marca] = (),
+    techo: int | None = None,
 ) -> list[str]:
     """Una marca de borde por cada linea de M15 que no cabe en el panel, del color de su lado, y las
     `otras` del panel (la del objetivo, de `_m1`). Dos en el mismo borde y casi en la misma x se
-    apilan, sean de la clase que sean, para que no se monten (capturas y revisor de la v4)."""
+    apilan, sean de la clase que sean, para que no se monten (capturas y revisor de la v4). El lado
+    se decide contra `techo`, el alto del rango con que se dejaron fuera (en el M1, el de
+    `rango_del_m1`); sin el, contra la escala del panel, que en el M1 de cerca es ese rango."""
+    tope = p.hi if techo is None else techo
     marcas: list[Marca] = [
         (
             f"m15-fuera {ln.lado}", ln.nivel, p.x(ln.desde),
@@ -269,17 +297,18 @@ def _fuera(
     partes: list[str] = []
     puestas: list[tuple[bool, float]] = []
     for clase, nivel, x, color in sorted(marcas, key=lambda m: (m[2], m[1], m[0])):
-        arriba = nivel > p.hi
+        arriba = nivel > tope
         fila = sum(1 for a, xp in puestas if a == arriba and abs(xp - x) < ANCHO_MARCA)
         puestas.append((arriba, x))
-        partes.append(_marca(p, clase, nivel, x, color, escala, fila))
+        partes.append(_marca(p, clase, nivel, x, color, escala, fila, arriba))
     return partes
 
 
 def tramo_de_cerca(d: Dibujo) -> tuple[Vela, ...]:
     """Las velas del panel «M1 de cerca» (respuesta del consultor tras revisar la v3, punto 1): de
     la M1 de la toma -o de 15 velas antes de la primera zona de control que se dibuja, si es
-    anterior- hasta el corte, como mucho 60 (si no, las 60 ultimas); sin toma, las 30 ultimas. Un
+    anterior- hasta el corte, como mucho 60 (si no, las 60 ultimas) y como poco 15 (si no, las 15
+    ultimas: respuesta del consultor tras revisar la v4, punto 1); sin toma, las 30 ultimas. Un
     subconjunto de las velas del M1, que ya pasaron la puerta."""
     velas = d.m1
     inicios = [int(v.inicio) for v in velas]
@@ -289,6 +318,7 @@ def tramo_de_cerca(d: Dibujo) -> tuple[Vela, ...]:
     controles = [bisect.bisect_left(inicios, i) for i, _ in d.control if i in inicios]
     if controles:
         desde = min(desde, min(controles) - VELAS_ANTES_DEL_CONTROL)
+    desde = min(desde, len(velas) - VELAS_CERCA_MIN)
     desde = max(desde, 0, len(velas) - VELAS_CERCA_MAX)
     return tuple(velas[desde:])
 
@@ -477,7 +507,7 @@ def svg(d: Dibujo) -> str:
     etiquetas, ocupadas = _etiquetas(m1, _pedidas(m1, d), d.escala)
     detras, delante, marcas = _m1(m1, d)
     partes += detras + _velas(m1, d.huso, d.escala, ocupadas) + _lineas_m15(m1, d, en_m1)
-    partes += delante + _fuera(m1, fuera_m1, d.escala, marcas) + etiquetas
+    partes += delante + _fuera(m1, fuera_m1, d.escala, marcas, rango_del_m1(d)[1]) + etiquetas
     tomadas = [ln for ln in en_cerca if ln.tomada]
     etiquetas, ocupadas = _etiquetas(cerca, _pedidas(cerca, d, tomadas), d.escala)
     detras, delante, marcas = _m1(cerca, d)

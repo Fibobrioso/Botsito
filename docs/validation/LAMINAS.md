@@ -625,7 +625,9 @@ Las propuestas 1 y 2 están comprobadas con las funciones de `tests/unit/test_ho
    - «`motor laminas` no dice el esquema: con la orden en el punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416); la frase vuelve cuando el motor distinga los dos esquemas (LAMINAS.md, respuesta a la PARADA final, 1).»
    - «`motor laminas`: la CLI solo se prueba entera con las velas reales (F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.»
    - La de RN-020 y «del día» sale (punto 2: medido, la rama semanal no dispara con el registro de hoy). La de las H4 saltadas sale (punto 4, entero).
-   - «`motor laminas`: la marca de borde de una línea de M15 que queda fuera del M1 decide su lado con el máximo de la escala del M1, que estiran también las zonas de control y el punto; una línea por encima del rango del M1 pero por debajo de ese máximo saldría con la flecha hacia abajo. No ocurre en la v3 (LAMINAS.md, revisor de la ronda de dibujo, m1).»
+   - La de la flecha de la marca de borde del M1 (revisor de la ronda de dibujo, m1) sale: está arreglada (respuesta tras revisar la v4, punto 2).
+   - **El falso positivo de la guardia** (respuesta tras revisar la v4, punto 6): «la guardia de Claude Code toma por ruta una barra dentro de una cadena que no es una ruta, como una etiqueta HTML (`</li>`) en una regex o « / » entre espacios en un texto, y niega un guion que solo lee HTML de láminas (LAMINAS.md, lo que vi en las capturas de la respuesta a la PARADA final).»
+4. **La fila de ERRORES-RECURRENTES del cierre lleva un hallazgo menor** (respuesta tras revisar la v4, punto 6). En la respuesta a la PARADA final, para que la guardia no tomara por ruta una regex y una cadena de un guion de medida, las reescribí. Eso es rodearla (CLAUDE.md, «Una guardia no se rodea»), aunque el guion solo leía HTML de láminas y lo declaré. Ante una negativa así se para y se dice.
 
 ## Respuesta del consultor a la PARADA final (2026-11-10)
 
@@ -855,7 +857,7 @@ El código solo cambia en `src/botsito/engine/laminas_svg.py`, con sus tests en 
 
 ## El revisor de la ronda de dibujo (2026-11-10), tal cual
 
-Solo sobre esta ronda: 0 bloquea, 0 importa, 2 menores. Lo hecho con ellos: m2, el Estado, al día; m1, la flecha de una marca que podría apuntar al lado equivocado en un caso que no aparece en la v3, queda como línea propuesta de Technical Debt (abajo). Arreglarlo ahora cambiaría el código después de la v3.
+Solo sobre esta ronda: 0 bloquea, 0 importa, 2 menores. Lo hecho con ellos: m2, el Estado, al día; m1, la flecha de una marca que podría apuntar al lado equivocado en un caso que no aparece en la v3, queda como línea propuesta de Technical Debt (abajo). Arreglarlo ahora cambiaría el código después de la v3. (Después: arreglada en la ronda tras revisar la v4, punto 2, y la línea de Technical Debt sale.)
 
 > ## Informe del revisor · trabajo/laminas · última ronda de dibujo (c166093 + LAMINAS.md sin commitear) · 2026-11-10
 >
@@ -1079,6 +1081,25 @@ Lo que no pudo comprobar (la `clave.txt`, los logs, que los tests fallen con el 
 > 20. `git cat-file -e main:docs/validation/LAMINAS.md`; `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md | grep -c '^-[^-]'` (la forma con `data` en la lista de rutas la negó la guardia)
 > 21. `grep -n` de los números de línea de los hallazgos menores
 > 22. `ls -ld --time-style=full-iso` de las carpetas v1 a v4
+
+## Respuesta del consultor tras revisar la v4 (2026-11-11)
+
+Dada por Aleks (consultor) el 2026-11-11, tal cual (también al final de `docs/encargos/trabajo-laminas.md`):
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor tras revisar la v4 de trabajo/laminas (2026-11-11). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor tras revisar la v4», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> He revisado la v4: las 47 dibujadas en un navegador, a fondo 07-03 a las 08:02, 07-03 a las 09:35 y la de 04-13 con «3, y admite 1», y el texto de todas pasado por las regex de los puntos 4 y 5 (limpio). El panel «M1 de cerca» hace lo que tenía que hacer: la toma en 1.14500 y el 0 en 1.14496 se ven separados, con sus precios, las tres zonas de control se distinguen una a una y las horas ya van por la apertura de la vela. Las láminas quedan revisadas, salvo dos detalles que se arreglan aquí:
+>
+> 1. Un mínimo de 15 velas en el M1 de cerca. Si el tramo que da la regla de la ronda anterior tiene menos de 15, empieza 15 velas antes del corte; el tope de 60 sigue igual. Con su test. Las dos láminas que hoy tienen 1 y 2 velas quedan con 15; di en el informe cuántas cambian.
+> 2. La m1 del revisor de la ronda de dibujo no va a deuda. La marca de borde de una línea de M15 que queda fuera del M1 decide su lado contra el mismo rango con el que se decidió dejarla fuera, no contra el máximo de la escala, que estiran las zonas de control y el punto (laminas_svg.py:207-211 y :224). Aplica lo mismo en el M1 de cerca, si tiene el mismo defecto. Con un test de ▲ y otro de ▼, incluido el caso del revisor. La línea de Technical Debt propuesta sale.
+> 3. Lo demás se queda como está y va al informe, sin deuda nueva: en la lámina que dice 18 zonas de control, el M1 de cerca enseña 14, porque el tope de 60 velas deja 4 fuera y el M1 las enseña todas; y las marcas de borde con una vela detrás se leen.
+> 4. Regenera tras el ensayo en el clon, en C:\Users\USER\Desktop\laminas-sesion-7-v5, con el mismo orden barajado y la misma clave (diff, sin abrirla). F4.1 y F4.2 no se repiten si el diff no sale de engine/laminas.py, engine/laminas_svg.py, sus tests y los documentos.
+> 5. El revisor, sobre todo lo posterior a su última pasada (58de6ce y esta ronda), con su informe pegado al final.
+> 6. Sobre el hallazgo de la guardia de la ronda anterior: reescribir la regex y la cadena del guion para que la guardia no las tomara por ruta es rodearla (CLAUDE.md, «Una guardia no se rodea»), aunque el guion solo leía HTML de láminas y lo declaraste. La próxima vez se para y se dice. Va como hallazgo menor en la fila de ERRORES del cierre, y el falso positivo, a Technical Debt (orden de cierre).
+>
+> Después: make check, push a fix/laminas con su CI y una PARADA corta con el resultado del make check, el run de la CI, lo que diga el revisor, los recuentos de los puntos 1 y 2, la ruta de la v5 y «Rama lista para revisión, NO cerrada.».
 
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
@@ -1448,4 +1469,4 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-LISTA PARA REVISIÓN (2026-11-11): la ronda tras revisar la v3, hecha. El M1 de cerca, el convenio de las horas, la frase de las saltadas, la v4 de `58de6ce`, sus capturas, la CI y el revisor de la ronda, con lo que encontró. Rama lista para revisión, NO cerrada.
+EN CURSO (2026-11-11): la ronda tras revisar la v4 (el mínimo de 15 velas del M1 de cerca y el lado de las marcas de borde del M1): el código y sus tests; siguen la v5, la CI, el revisor y la PARADA corta.

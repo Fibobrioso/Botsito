@@ -213,3 +213,22 @@ Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
 > 6. Las carpetas v1, v2 y v3 no se tocan; las borra Aleks.
 >
 > Después: make check, push a fix/laminas con su CI, el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta: lo que cambió, los recuentos del punto 5, lo que viste en las capturas, la ruta de la v4 y «Rama lista para revisión, NO cerrada.». Si la v4 está bien, con ella doy la orden de cierre.
+
+## Respuesta del consultor tras revisar la v4 (2026-11-11)
+
+Dada por Aleks (consultor) el 2026-11-11. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor tras revisar la v4 de trabajo/laminas (2026-11-11). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor tras revisar la v4», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> He revisado la v4: las 47 dibujadas en un navegador, a fondo 07-03 a las 08:02, 07-03 a las 09:35 y la de 04-13 con «3, y admite 1», y el texto de todas pasado por las regex de los puntos 4 y 5 (limpio). El panel «M1 de cerca» hace lo que tenía que hacer: la toma en 1.14500 y el 0 en 1.14496 se ven separados, con sus precios, las tres zonas de control se distinguen una a una y las horas ya van por la apertura de la vela. Las láminas quedan revisadas, salvo dos detalles que se arreglan aquí:
+>
+> 1. Un mínimo de 15 velas en el M1 de cerca. Si el tramo que da la regla de la ronda anterior tiene menos de 15, empieza 15 velas antes del corte; el tope de 60 sigue igual. Con su test. Las dos láminas que hoy tienen 1 y 2 velas quedan con 15; di en el informe cuántas cambian.
+> 2. La m1 del revisor de la ronda de dibujo no va a deuda. La marca de borde de una línea de M15 que queda fuera del M1 decide su lado contra el mismo rango con el que se decidió dejarla fuera, no contra el máximo de la escala, que estiran las zonas de control y el punto (laminas_svg.py:207-211 y :224). Aplica lo mismo en el M1 de cerca, si tiene el mismo defecto. Con un test de ▲ y otro de ▼, incluido el caso del revisor. La línea de Technical Debt propuesta sale.
+> 3. Lo demás se queda como está y va al informe, sin deuda nueva: en la lámina que dice 18 zonas de control, el M1 de cerca enseña 14, porque el tope de 60 velas deja 4 fuera y el M1 las enseña todas; y las marcas de borde con una vela detrás se leen.
+> 4. Regenera tras el ensayo en el clon, en C:\Users\USER\Desktop\laminas-sesion-7-v5, con el mismo orden barajado y la misma clave (diff, sin abrirla). F4.1 y F4.2 no se repiten si el diff no sale de engine/laminas.py, engine/laminas_svg.py, sus tests y los documentos.
+> 5. El revisor, sobre todo lo posterior a su última pasada (58de6ce y esta ronda), con su informe pegado al final.
+> 6. Sobre el hallazgo de la guardia de la ronda anterior: reescribir la regex y la cadena del guion para que la guardia no las tomara por ruta es rodearla (CLAUDE.md, «Una guardia no se rodea»), aunque el guion solo leía HTML de láminas y lo declaraste. La próxima vez se para y se dice. Va como hallazgo menor en la fila de ERRORES del cierre, y el falso positivo, a Technical Debt (orden de cierre).
+>
+> Después: make check, push a fix/laminas con su CI y una PARADA corta con el resultado del make check, el run de la CI, lo que diga el revisor, los recuentos de los puntos 1 y 2, la ruta de la v5 y «Rama lista para revisión, NO cerrada.».

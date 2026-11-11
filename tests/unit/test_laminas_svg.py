@@ -698,3 +698,43 @@ def test_la_marca_del_objetivo_se_apila_con_las_de_m15() -> None:
     assert len(ys) == 2
     assert any('class="objetivo-fuera"' in m for m in marcas)
     assert any('class="m15-fuera bajo"' in m for m in marcas)
+
+
+# ------------------------------------------- la respuesta tras revisar la v4 (puntos 1 y 2)
+
+
+def test_el_m1_de_cerca_tiene_como_poco_15_velas() -> None:
+    """Punto 1: si el tramo de la regla tiene menos de 15 velas, empieza 15 velas antes del corte;
+    si tiene 15 o mas, no cambia; y el tope de 60 sigue."""
+    d = _dibujo(foto_base())
+    assert d.toma is not None
+    for desde, velas in ((CORTE - 1, 15), (CORTE - 3, 15), (CORTE - 14, 15), (CORTE - 20, 20)):
+        tramo = laminas_svg.tramo_de_cerca(dataclasses.replace(d, toma=(desde, d.toma[1])))
+        assert len(tramo) == velas, desde
+        assert int(tramo[-1].inicio) == CORTE - 1
+    lejos = laminas_svg.tramo_de_cerca(dataclasses.replace(d, toma=(CORTE - 300, d.toma[1])))
+    assert len(lejos) == laminas_svg.VELAS_CERCA_MAX
+
+
+def _con_linea_y_control(lado: str, nivel: int, control: int) -> str:
+    d = _dibujo(foto_base())
+    linea = laminas.LineaDibujada(lado, nivel, CORTE - 200, CORTE, False, False)
+    otro = dataclasses.replace(
+        d, lineas=(*d.lineas, linea), control=((int(d.m1[-5].inicio), control),)
+    )
+    assert linea in laminas_svg.lineas_del_m1(otro)[1]  # queda fuera del M1
+    return laminas_svg.svg(otro)
+
+
+def test_la_marca_de_borde_del_m1_decide_su_lado_con_el_rango_que_la_deja_fuera() -> None:
+    """Punto 2 (la m1 del revisor de la ronda de dibujo): una linea por encima del rango con que se
+    deja fuera del M1, pero por debajo del alto de la escala, que estira una zona de control, va
+    arriba con ▲; y la simetrica, abajo con ▼. Antes se decidia contra la escala: salia ▼."""
+    d = _dibujo(foto_base())
+    lo, hi = laminas_svg.rango_del_m1(d)
+    arriba = _con_linea_y_control("alto", hi + 3, hi + 100)
+    assert f">▲ {laminas.precio(hi + 3, ESCALA)}<" in arriba
+    assert f">▼ {laminas.precio(hi + 3, ESCALA)}<" not in arriba
+    abajo = _con_linea_y_control("bajo", lo - 3, lo - 100)
+    assert f">▼ {laminas.precio(lo - 3, ESCALA)}<" in abajo
+    assert f">▲ {laminas.precio(lo - 3, ESCALA)}<" not in abajo
