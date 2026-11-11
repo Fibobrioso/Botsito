@@ -625,6 +625,7 @@ Las propuestas 1 y 2 están comprobadas con las funciones de `tests/unit/test_ho
    - «`motor laminas` no dice el esquema: con la orden en el punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416); la frase vuelve cuando el motor distinga los dos esquemas (LAMINAS.md, respuesta a la PARADA final, 1).»
    - «`motor laminas`: la CLI solo se prueba entera con las velas reales (F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.»
    - La de RN-020 y «del día» sale (punto 2: medido, la rama semanal no dispara con el registro de hoy). La de las H4 saltadas sale (punto 4, entero).
+   - «`motor laminas`: la marca de borde de una línea de M15 que queda fuera del M1 decide su lado con el máximo de la escala del M1, que estiran también las zonas de control y el punto; una línea por encima del rango del M1 pero por debajo de ese máximo saldría con la flecha hacia abajo. No ocurre en la v3 (LAMINAS.md, revisor de la ronda de dibujo, m1).»
 
 ## Respuesta del consultor a la PARADA final (2026-11-10)
 
@@ -813,6 +814,94 @@ Dada por Aleks (consultor) el 2026-11-10, tal cual (también al final de `docs/e
 > 6. Las carpetas v1 y v2 no se tocan; las borra Aleks.
 >
 > Después: make check, push a fix/laminas con su CI (el run de 1d42881 y el de esta ronda), el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta con lo que cambió, los tres recuentos, lo que viste en las capturas, la ruta de la v3 y «Rama lista para revisión, NO cerrada.». Yo reviso la v3 y doy la orden de cierre.
+
+## Aplicación de la respuesta a la PARADA final de la ronda, punto por punto (2026-11-10)
+
+El código solo cambia en `src/botsito/engine/laminas_svg.py`, con sus tests en `tests/unit/test_laminas_svg.py` (commit `c166093`). Por eso F4.1 y F4.2 no se repiten (punto 4). Fuera de eso cambian el informe, la respuesta copiada en el encargo, la fila de HOLDOUT-EXPOSICIONES y el recuento de tests de PROJECT_STATE.
+
+1. **Los rótulos de la caja.** `rotulos_visibles` aplica tu regla con la altura de la letra (`TAMANO_ROTULO`, la constante con que se escriben):
+   - los cinco;
+   - si dos quedan a menos de esa altura, el 0, el del stop y el 1;
+   - si aun así se montan, el 0 y el 1.
+
+   Las líneas de los niveles se dibujan siempre. Lo prueba `test_los_rotulos_de_la_caja_siguen_la_regla`, con niveles puestos a píxeles conocidos.
+   - **Con el stop en el 0,8, el caso intermedio no puede darse.** El paso más corto entre los cinco rótulos es el del 0,8 al 1 (dos décimas de la caja), y ese paso sigue entre los tres. Así que, cuando los cinco se montan, los tres también. El test lo prueba aparte, con niveles sueltos.
+2. **Las líneas de M15 en el M1.** `lineas_del_m1` decide cuáles se dibujan:
+   - entran las que caen en el rango de las velas del M1, la caja y la orden, ampliado por arriba y por abajo una altura de caja (sin caja, un décimo del rango);
+   - la tomada, siempre;
+   - las demás van como una marca en el borde de arriba o de abajo, con «▲» o «▼», su precio y el color de su lado (`class="m15-fuera …"`).
+
+   En el M15 se dibujan todas. Lo prueba `test_las_lineas_de_m15_lejanas_van_como_marca_en_el_m1_y_la_tomada_siempre`. **En la lámina de 07-03 con la orden en 1.14496** (la captura): la línea tomada de 1.14500 se ve en el M1 junto a la orden y el punto en 1.14496, y la línea lejana del día anterior va como «▼ 1.14366» abajo.
+3. **Los precios de la rejilla:** el que caería bajo una etiqueta de la orden, el stop o el objetivo (a menos de `ALTO_ETIQUETA`) no se escribe. Lo prueba `test_el_precio_de_la_rejilla_bajo_una_etiqueta_de_la_orden_no_se_escribe`, sobre un panel y sobre una lámina de tipo a.
+4. **La v3:** en `C:\Users\USER\Desktop\laminas-sesion-7-v3`, tras el ensayo en el clon, con el mismo orden barajado de la v2. Su `clave.txt` es idéntica a la de la v2 (`diff`, 0 bytes; no se abrió).
+   - La orden, tal cual salvo la lista: `uv run botsito motor laminas --sesiones <las diez sesiones, en el orden de clave.txt> --salida C:\Users\USER\Desktop\laminas-sesion-7-v3`.
+   - Base con y sin el recolector, `(31, 192, 24, 1150, 0, 32, 0)`.
+   - Ensayo: 612,9 s y 646,2 MiB. La v3: 552,6 s y 644,7 MiB.
+   - `diff -r` de la v3 contra su ensayo: 0 bytes.
+   - 47 láminas, 19 de tipo a y 28 de tipo b. Las frases no cambian en ninguna.
+5. **Los recuentos, de la v2 a la v3, sin recuentos por carpeta.** Las 47 láminas se emparejan por su cabecera y sus velas de H4, que esta ronda no toca. Lo mide `comparar_v3.py`, de la carpeta de trabajo, que solo lee los HTML.
+   - **Punto 1:** cambian de rótulos 29 láminas, que ahora llevan el 0 y el 1. 2 conservan los cinco. 16 no tienen caja.
+   - **Punto 2:** cambian de líneas de M15 en el M1 3 láminas, con una marca en el borde cada una. En esas 3 cambia la escala del M1.
+   - **Punto 3:** en 16 láminas se deja de escribir algún precio de la rejilla bajo una etiqueta de la orden. Cambian de rejilla 19; las otras 3 son las del cambio de escala del punto 2.
+6. **Las carpetas v1 y v2 no se tocan.**
+
+**Lo que vi en las capturas de la v3** (las seis láminas de 07-03 de las 07:00 a las 11:00 y la primera de cada otra sesión, con Chrome en modo headless, fuera del repo):
+- se ven la línea tomada y el punto de 07-03;
+- los rótulos de las cajas pequeñas ya no se montan;
+- las etiquetas de la orden ya no tapan precios de la rejilla;
+- la marca de la línea lejana se lee.
+
+**Lo único que no queda limpio:** una marca de borde que nace en el extremo izquierdo pisa un poco las primeras velas. Se lee, y no lo toco sin tu respuesta.
+
+## El revisor de la ronda de dibujo (2026-11-10), tal cual
+
+Solo sobre esta ronda: 0 bloquea, 0 importa, 2 menores. Lo hecho con ellos: m2, el Estado, al día; m1, la flecha de una marca que podría apuntar al lado equivocado en un caso que no aparece en la v3, queda como línea propuesta de Technical Debt (abajo). Arreglarlo ahora cambiaría el código después de la v3.
+
+> ## Informe del revisor · trabajo/laminas · última ronda de dibujo (c166093 + LAMINAS.md sin commitear) · 2026-11-10
+>
+> Resumen: 0 bloquea, 0 importa, 2 menor. Los seis puntos están hechos. Los recuentos del informe salen iguales al medirlos sobre los HTML.
+>
+> ### Los puntos 1 a 6
+> | # | Estado | Evidencia |
+> |---|---|---|
+> | 1 Rótulos | **Hecho** | `rotulos_visibles` (`src/botsito/engine/laminas_svg.py:237-247`) escribe primero los cinco; si no caben, el 0, `niveles[-2]` (el stop, según `laminas._niveles`) y el 1; si tampoco, el 0 y el 1. La condición es `b - a >= TAMANO_ROTULO`, y `TAMANO_ROTULO` es la constante que da la altura de la letra (`font-size`) del rótulo, no un umbral a ojo. Las líneas de los niveles se dibujan siempre, con `for _, nivel in d.niveles` separado del bucle de los rótulos. Lo prueban `test_los_rotulos_de_la_caja_siguen_la_regla` y la aserción `count('class="nivel"') == 5`. El informe avisa de que, con el stop en el 0,8, el caso de tres rótulos no puede darse, porque el paso más corto (del 0,8 al 1) sigue entre los tres. El razonamiento es correcto y la v3 lo confirma: 2 láminas con cinco rótulos, 29 con dos y ninguna con tres. |
+> | 2 Líneas de M15 en el M1 | **Hecho** | `lineas_del_m1` (`:202-215`) toma el rango de las velas del M1, la caja y la orden. Lo amplía una altura de caja, o `(hi-lo)//10` si no hay caja. La línea con `ln.tomada` entra siempre. Las demás van a `_fuera` (`:218-234`): una marca con ▲ o ▼, su precio y el color de su lado. En el M15 se dibujan todas: `_lineas_m15(m15, d, d.lineas)`. Lo prueba `test_las_lineas_de_m15_lejanas_...`. |
+> | 3 Rejilla | **Hecho** | `_velas` se salta el precio de la rejilla que queda a menos de `ALTO_ETIQUETA` de una etiqueta (`:124`). Las etiquetas son las de la orden, el stop y el objetivo (`:361`). Hay test sobre un panel y sobre una lámina de tipo a. En los 47 HTML de la v3 he comprobado que ningún precio de la rejilla del M1 cae bajo una etiqueta: 0 solapes. |
+> | 4 Diff de la ronda | **Hecho** | `git diff --name-status 1d42881 c166093` solo trae `laminas_svg.py`, `test_laminas_svg.py`, `LAMINAS.md`, el encargo, `HOLDOUT-EXPOSICIONES.md` y `PROJECT_STATE.md`. Lo único que cambia en `PROJECT_STATE.md` es 1984 → 1987, que cuadra con los 3 tests nuevos. `engine/laminas.py` no cambia, y fuera del propio fichero solo importa `laminas_svg` `laminas.py:1189` (`indice, pagina`). Así que F4.1 y F4.2 no dependen del cambio, y el informe y la fila de exposiciones lo declaran. |
+> | 5 Recuentos | **Hecho, y salen exactos** | Empareje v2 y v3 por la misma ruta relativa. Las cabeceras, las velas de H4 y las frases son idénticas en las 47. Rótulos: cambian 29, quedan 2 con cinco y 16 sin caja. Líneas de M15 en el M1: cambian 3, con una marca cada una. Rejilla del M1: cambian 19; en 16 se ha quitado algún precio y en 3 aparecen precios nuevos porque cambia la escala. Todo coincide con el informe, que solo da recuentos globales, ninguno por carpeta. |
+> | 6 v1 y v2 | **Hecho** | Las dos carpetas tienen 58 ficheros cada una. Las fechas de modificación son únicas por carpeta: la v1, 15:35; la v2, 18:03, anterior a `1d42881` (18:34) y a `c166093` (22:07). Las de la v3 son de las 22:27. |
+>
+> **La línea de 1.14500 en el M1 (v3):** hay dos láminas con la orden en 1.14496. En las dos, la línea `linea-m15 bajo tomada` está en el panel M1 en y1=702.9. Interpolando la rejilla del M1 (1.14508 en 690.8, 1.14469 en 750.0), ese y corresponde a 1.14500, así que la línea se dibuja. La línea lejana va como `▼ 1.14366`, y 1.14366 queda por debajo del mínimo de la rejilla (1.14390), así que la flecha apunta bien.
+>
+> **Lo posterior al corte, ids, fechas y dinero:** la marca nueva solo lleva una flecha y un precio, y su x se recorta a `p.derecha`. `lineas_del_m1` solo usa `d.m1`, `d.caja` y `d.ordenes`, que ya vienen cortados en el `Dibujo`. Un grep de fechas ISO, €, $, USD, EUR, `zona:N`, `ev-`, `fb-`, lote, % y beneficio o pérdida sobre los HTML de la v3 no encuentra nada.
+>
+> ### Hallazgos
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | m1 | menor | La flecha de una marca podría apuntar al lado equivocado en un caso que no aparece en la v3. La escala del M1 incluye también `d.control` y `d.punto` (`laminas_svg.py:348`), pero el rango de entrada de `lineas_del_m1` no (`:207-211`). La marca decide el lado con `arriba = ln.nivel > p.hi` (`:224`). Una línea por encima del rango ampliado, pero por debajo de un `p.hi` estirado por una zona de control, iría abajo con ▼. No ocurre en ninguna de las 3 marcas de la v3, todas ▼ y bien orientadas, y ningún test cubre la marca ▼. | código citado; medición: las 3 marcas `▼ 1.14366` están por debajo del mínimo de su rejilla |
+> | m2 | menor | El `## Estado` de LAMINAS.md, sin commitear, dice «siguen la v3, sus capturas, la CI, el revisor…», pero la sección nueva ya da la v3 y las capturas por hechas. Queda el marcador `{REVISOR4}`, como se espera en esta fase. Es la misma observación que hizo el revisor anterior (m2). | `docs/validation/LAMINAS.md:1225` y `:855` |
+>
+> Lo que ya está declarado en el informe no lo cuento como hallazgo: la marca del borde izquierdo pisa un poco las primeras velas (las 3 marcas están en x=20.0).
+>
+> ### Lo que no pude comprobar
+> - Que la línea lejana sea «del día anterior», como dice el informe. Comprobarlo exige ligar el HTML con el día, y me pediste no decir qué carpeta es qué día.
+> - Las capturas de Chrome y el ensayo en el clon (los 0 bytes de `diff -r`, los tiempos y la memoria): están en la carpeta de trabajo de la sesión, y repetirlo exige escribir.
+> - Que la `clave.txt` de la v2 y la de la v3 son idénticas: no la abrí, por orden tuya.
+> - Las fechas de modificación no prueban que nadie leyera la v1 o la v2; solo prueban que no se escribió en ellas.
+>
+> ### Comandos ejecutados
+> 1. `git log --format='%h %s' 1d42881..c166093`, `git diff --stat 1d42881 c166093`, `git status --short`
+> 2. `git diff 1d42881 c166093 -- src/botsito/engine/laminas_svg.py`, `-- docs/encargos/... PROJECT_STATE.md docs/validation/HOLDOUT-EXPOSICIONES.md`, `-- tests/unit/test_laminas_svg.py`
+> 3. `git diff -- docs/validation/LAMINAS.md`, `git diff 1d42881 -- docs/validation/LAMINAS.md` (las líneas quitadas: solo el Estado)
+> 4. `sed -n` y `grep -n` sobre `laminas_svg.py` y `laminas.py` (`_Panel`, `Dibujo`, `_niveles`, etiquetas)
+> 5. `uv run pytest tests/unit/test_laminas_svg.py tests/unit/test_laminas.py -p no:cacheprovider -q -rA`: 44 PASSED, exit=0
+> 6. `ls -la` y `find -printf` de fechas sobre las tres carpetas del Escritorio, sin abrir `clave.txt`
+> 7. Tres guiones de Python por stdin (`uv run python -`) que solo leen los HTML de la v2 y la v3: emparejado y recuentos, búsqueda de 1.14496 y 1.14500, y orientación de las marcas
+> 8. Un grep de fechas, ids y dinero sobre los HTML de la v3
+> 9. `grep -rn laminas_svg src/`, `git diff --name-status 1d42881 c166093`, `git log -3 --format='%h %ci %s'`
+>
+> (Un intento con `uv run --project` lo bloqueó la guardia; lo repetí con `cd` al repositorio y `uv run python -`, que es la forma que la guardia acepta.)
+
 
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
@@ -1182,4 +1271,9 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-EN CURSO (2026-11-10): la última ronda de dibujo (respuesta a la PARADA final de la ronda): el código y sus tests; siguen la v3, sus capturas, la CI, el revisor de la ronda y la PARADA final corta.
+Rama lista para revisión, NO cerrada (2026-11-10), tras la última ronda de dibujo.
+- El código: `c166093`, solo dibujo; F4.1 y F4.2 no se repiten.
+- Las láminas: 47, en `C:\Users\USER\Desktop\laminas-sesion-7-v3`, con el mismo orden barajado y la misma clave que la v2, tras el ensayo en el clon.
+- La CI de Linux: runs 42924429984 (`1d42881`) y 42950585500 (`c166093`), con el único fallo aceptado.
+- El revisor de la ronda, pegado arriba.
+- Esperan la revisión de la v3 y la orden de cierre.
