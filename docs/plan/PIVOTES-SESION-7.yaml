@@ -1,0 +1,69 @@
+# El pivote de la sesión 7, PRE-REGISTRADO antes de activar nada (ADR-0093 §6; RUMBO-2026-11.md
+# §4, enmienda del 2026-11-10; esquema aceptado por Aleks el 2026-11-09; números propuestos por el
+# consultor y aprobados por Aleks el 2026-11-11). Los textos son los de D5 del encargo de
+# trabajo/preparacion-sesion-7, literales; `matices_medidos` es lo que añadió la fase 0.
+# NO SE EDITA: tests/unit/test_pivotes_sesion_7.py fija su sha256, así que cambiar una cifra exige
+# cambiar ese test a la vista en el mismo commit.
+pre_registrado_el: "2026-11-11"
+decision: ADR-0093
+mes: "2026-07"
+que_se_mide: >-
+  la primera corrida de ADR-0070 §3 (con una cuenta por mes, ADR-0092 §8, y el
+  criterio_fidelidad.yaml vigente) después de activar la 7b, incluida la rama de S-22 y S-19. Solo
+  julio de 2026, el único mes con vídeo.
+linea_base:
+  fuente: >-
+    RECORRIDA-CONSTRUCCION-2.md §1.1 y §4, sobre anexos/RECORRIDA-CONSTRUCCION-2/patrones-cuenta-por-mes.txt.
+  parejas_de_julio: 14
+  parejas_de_julio_definicion: Parejas de julio (T0, el criterio de ADR-0043).
+  operaciones_de_mas_de_julio: 39
+  operaciones_de_mas_de_julio_p5: 37
+  operaciones_de_mas_de_julio_p6: 2
+  operaciones_de_mas_de_julio_definicion: >-
+    Operaciones de más de julio (operaciones del bot, llenadas, sin pareja en un día con
+    operaciones del trader: P5 más P6 en sesión; TRAZAS-ABLACION.md:730-731): 39 (P5 37, P6 2).
+  no_confundir: >-
+    No es la columna «Operaciones de más» del Marcador de la hoja de ruta, que cuenta las órdenes
+    del bot en un (día, sesión, dirección) sin operación del trader (425 en total): el yaml lo dice
+    para que nadie las confunda.
+minimos:
+  minimo_1_parejas_de_julio_al_menos: 19
+  minimo_2_operaciones_de_mas_de_julio_como_mucho: 33
+salidas:
+  se_cumplen_los_dos: se sigue
+  se_cumple_uno: >-
+    una sesión más con el trader con el mismo método, y tras su activación se vuelve a leer con
+    estos mismos números
+  no_se_cumple_ninguno: >-
+    se pivota: el objetivo pasa a un bot de alta precisión sobre los setups que sí reproducimos
+    (RUMBO §4), y la puerta para operar en vivo sigue siendo ADR-0092.
+contingencia: >-
+  si en esa corrida la cuenta de julio acaba SUSPENDIDA o deja de llenar por un freno de la cuenta
+  antes del 17, el pivote se lee sobre la corrida diaria de contexto, y el informe lo dice.
+por_que: >-
+  las preguntas de 7a y 7b pueden mover en julio unas 29 filas del trader (las 30 del rango de H4
+  de VIDEO-JULIO.md §4.2 sin sus 10 P5, que son del bot, más las 8 con el gate RN-009 de
+  TRAZAS-ABLACION.md 5.2 y la P2 de 2026-07-03 07-11). En julio, de las 46 operaciones del trader
+  con una operación del bot del mismo lado en su sesión (T0 + P2 + P3 + P7 = 14 + 14 + 15 + 3), 14
+  son pareja, un 30 %: a esa tasa, 29 filas darían unas 9 parejas, y el mínimo pide algo más de la
+  mitad, 5. Las de más bajan si el sesgo de H4 deja de mandar al bot al otro lado (las 10 P5 del
+  rango) y si cambia la colocación de 07-03 07-11 (o4, o5, o6 y o8); la ablación de RN-009 dice que
+  una respuesta sobre las zonas de control también puede añadir de más y quitar parejas, y por eso
+  el mínimo 2 es de un 15 %. Si el trader confirma que deja entradas válidas sin tomar (F7 #10), el
+  mínimo 2 puede fallar sin que el bot esté mal: la salida de ese caso es «una sesión más», no el
+  pivote.
+matices_medidos: >-
+  La fase 0 midió 14, 39 y 46 sobre el anexo (PREPARACION-SESION-7.md §0.3 y §0.7;
+  anexos/PREPARACION-SESION-7/pivote-julio.txt). Las 30 filas del rango salen de VIDEO-JULIO.md
+  §4.1 y §4.2 juntas (:657). De las 20 del trader, 2 son del 1 de julio (las P1 de 2026-07-01
+  07-11), que no va a la sesión como día; de las 8 del gate RN-009, 4 son de 2026-07-14 11-15, que
+  tampoco va (una hora perdida dentro): las preguntas son abstractas y las mueven igual. 29 × 14/46
+  = 8,8; (39 − 33) / 39 = 15,4 %. Julio está en `provisionales_con_video` de criterio_fidelidad.yaml.
+lo_visto: >-
+  al estilo de ADR-0092 §12: el consultor leyó RECORRIDA-CONSTRUCCION-2.md con sus anexos,
+  TRAZAS-ABLACION.md con la ablación por regla y sus filas, VIDEO-JULIO.md §4 (las clases de las 81
+  filas de julio) y revisó las 47 láminas de C:\Users\USER\Desktop\laminas-sesion-7-v5. Las
+  corridas posteriores a RECORRIDA-CONSTRUCCION-2 sobre toda la construcción (TRAZAS-ABLACION y
+  LAMINAS) repiten su línea base a 0 bytes.
+adr_0092_6: >-
+  el pivote decide el método (seguir, una sesión más, pivotar), nunca un parámetro de la spec.

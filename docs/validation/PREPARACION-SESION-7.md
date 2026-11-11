@@ -519,6 +519,22 @@ guarda Aleks):
 **Dónde están:** `C:\Users\USER\Desktop\laminas-sesion-7a\`, con `sesion-01` a `sesion-06`, cada una
 con su `indice.html`, y `clave.txt` en la raíz. Ninguna sesión salió con error: no hay PARADA.
 
+## F2 · El pivote (2026-11-11)
+
+- `docs/plan/PIVOTES-SESION-7.yaml`: D5 del encargo, literal (con sus tildes), en sus claves: `que_se_mide`,
+  `linea_base` (14 parejas, 39 operaciones de más, P5 37 y P6 2, la fuente, la definición de cada
+  cifra y que no son las 425 del Marcador), `minimos` (≥ 19 y ≤ 33), las tres `salidas`,
+  `contingencia`, `por_que`, `lo_visto` y `adr_0092_6`. Lo que añadió la fase 0 (las 2 filas del 1
+  de julio y las 4 de 2026-07-14 dentro de las 29; 8,8 y 15,4 %; julio en `provisionales_con_video`)
+  va aparte, en `matices_medidos`, para que el texto de D5 quede como está. sha256
+  `cef25e632b8edb529968a2036b5b43c91e0138e57650bcf3d97f3e5776797eef`, 4552 bytes, LF.
+- `tests/unit/test_pivotes_sesion_7.py`: (1) el sha256, escrito en el test; (2) las cifras, el mes,
+  `decision: ADR-0093`, las tres salidas en su orden y que no falte ningún texto, leído con
+  `comun/yaml_estricto.leer_yaml`; (3) y (4) **rompen a propósito**: una copia con el mínimo 1 a 18
+  (o el 2 a 34) cambia el sha256 y la comprobación devuelve exactamente ese problema. `uv run pytest
+  tests/unit/test_pivotes_sesion_7.py -q`: 4 passed.
+- `PROJECT_STATE.md`, «Tests Currently Passing»: 1998 → 2002 (`state check`).
+
 ## Estado
 
 EN CURSO: fase 0 respondida (arriba); F1 y F6 hechos; F2 a F5, el informe, la CI de `fix/` y el

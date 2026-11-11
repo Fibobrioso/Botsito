@@ -16,7 +16,7 @@ b9904c5 · merge de `trabajo/laminas` (tag `stable/F38w-laminas`), sobre `stable
 b9904c5 · merge: trabajo/laminas, motor laminas (las laminas del bot de las sesiones pedidas, con el M1 de cerca) y la enmienda de RUMBO §0, §4 y §5 · tag stable/F38w-laminas
 
 ## Tests Currently Passing
-1998 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2002 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
