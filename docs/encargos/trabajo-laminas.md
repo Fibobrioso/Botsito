@@ -188,3 +188,28 @@ Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
 > 6. Las carpetas v1 y v2 no se tocan; las borra Aleks.
 >
 > Después: make check, push a fix/laminas con su CI (el run de 1d42881 y el de esta ronda), el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta con lo que cambió, los tres recuentos, lo que viste en las capturas, la ruta de la v3 y «Rama lista para revisión, NO cerrada.». Yo reviso la v3 y doy la orden de cierre.
+
+## Respuesta del consultor tras revisar la v3 (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de la última ronda de dibujo de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor tras revisar la v3», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> He revisado la v3: las 47 dibujadas en un navegador y vistas juntas (ninguna rota), cuatro a fondo (07-03 a las 08:02, una de RN-009 de 07-03 11-15, una del rango de 07-06 y la de 04-13 con tres saltadas), y el texto de todas pasado por las regex del punto 4 y del punto 5 (sin fechas, ids, lote, R, dinero ni porcentajes). Lo que se aprobó está bien. La H4 que fija el sesgo, las saltadas, las líneas de M15 con la tomada, el punto, las etiquetas del eje y la sustentación casan con la bitácora de 07-03. Pero hay dos cosas que impiden usarlas para lo que sirven, que es que el trader corrija la caja del bot y diga qué zonas de control cuenta (las preguntas de la 7a). Una ronda más, solo en engine/laminas.py, engine/laminas_svg.py, sus tests y el informe:
+>
+> 1. Un panel nuevo, «M1 de cerca», debajo del M1 y encima de la sustentación. Con stops de pip y medio, en el M1 de dos horas la caja mide unos pocos píxeles: en 07-03 a las 08:02 la caja, el punto y la toma se amontonan en el borde, y en las láminas de RN-009 las zonas de control naranjas no se distinguen. El panel:
+>    - Va del M1 de la toma (o de 15 velas antes de la primera zona de control que dibuje, si es anterior) hasta el corte, con un máximo de 60 velas. Si es más largo, empieza 60 velas antes del corte; sin toma, son las 30 últimas velas.
+>    - La escala se ajusta a las velas de ese tramo, la caja, la orden y el stop. Todo lo que quede fuera (el objetivo, las líneas de M15 lejanas) va como marca de borde, con su precio y una flecha, como ya hace el M1.
+>    - Lleva lo mismo que el M1, en esa escala: la caja con sus rótulos (con la regla de la ronda anterior, que aquí casi siempre dejará los cinco), el punto de breaker, la vela de la toma, las líneas de M15 que entren, las zonas de control de RN-009 que contó el motor en ese cierre y la orden, el stop y el objetivo con sus etiquetas.
+>    - Mismo recorte y mismas puertas que el M1 (punto 6 del encargo): es un subconjunto de lo que ya se dibuja, y nada nace fuera de la ventana.
+>    - Con sus tests: el tramo, el tope de 60, la escala y ninguna marca a la derecha del corte.
+>    - En las capturas, compruébalo en 07-03 a las 08:02: la línea de 1.14500 y el 0 en 1.14496 tienen que verse separados, con sus precios. Y en una lámina de RN-009 de las que dicen «3, y admite 1», las tres zonas de control, una a una.
+> 2. Las horas de la sustentación, con un solo convenio: toda hora que nombra una vela es la de su apertura, como la rotula FX Replay. Hoy la toma dice «una vela de M1 cerró … a las 07:57», que es el cierre de la vela de las 07:56, mientras que el punto dice «de la vela de las 08:01», que es la apertura. En la bitácora de 07-03 la M1 de la toma «cierra 07:57». La frase de la toma pasa a ser «La vela de M1 de las {HH:MM} cerró con {cuerpo / mecha} por {debajo del bajo / encima del alto} de M15 en {precio}.». Repasa cada frase con hora de la tabla con el mismo criterio, di en el informe cuáles cambian, y añade un test que fije el convenio. La cabecera («Corte: a las 08:02, al cierre de la vela de M1 de las 08:01») ya lo cumple y se queda.
+> 3. Menor: «Antes de esa vela saltó 3 velas H4…» pasa a «Antes de esa vela, el bot se saltó {n} velas H4…» (y en singular, «se saltó una vela H4…»).
+> 4. Regenera tras el ensayo en el clon, en C:\Users\USER\Desktop\laminas-sesion-7-v4, con el mismo orden barajado y la misma clave (compárala con diff, sin abrirla). F4.1 y F4.2 no se repiten si el diff de la ronda no sale de engine/laminas.py, engine/laminas_svg.py, sus tests y el informe; si sale, se repiten a 0 bytes. Haz las capturas de la ronda anterior más las dos del punto 1, y míralas.
+> 5. En el informe: cuántas láminas llevan el panel nuevo (todas, salvo que alguna no tenga tramo; di cuál y por qué), cuántas frases cambian de hora y el recuento de zonas de control que se ven en el panel frente al que dice la frase, en las láminas de RN-009. Sin recuentos por carpeta.
+> 6. Las carpetas v1, v2 y v3 no se tocan; las borra Aleks.
+>
+> Después: make check, push a fix/laminas con su CI, el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta: lo que cambió, los recuentos del punto 5, lo que viste en las capturas, la ruta de la v4 y «Rama lista para revisión, NO cerrada.». Si la v4 está bien, con ella doy la orden de cierre.

@@ -475,17 +475,22 @@ FRASE_SESGO = {
 # por motivo de la saltada (`domain.sesgo`): (una, varias)
 FRASE_SALTADAS = {
     "color_contrario": (
-        "Antes de esa vela saltó una vela H4 que rompió un extremo y cerró del color contrario.",
-        "Antes de esa vela saltó {n} velas H4 que rompieron un extremo y cerraron del color "
+        "Antes de esa vela, el bot se saltó una vela H4 que rompió un extremo y cerró del color "
+        "contrario.",
+        "Antes de esa vela, el bot se saltó {n} velas H4 que rompieron un extremo y cerraron del "
+        "color "
         "contrario.",
     ),
     "neutra_simple": (
-        "Antes de esa vela saltó una vela H4 que rompió un extremo y cerró sin cuerpo.",
-        "Antes de esa vela saltó {n} velas H4 que rompieron un extremo y cerraron sin cuerpo.",
+        "Antes de esa vela, el bot se saltó una vela H4 que rompió un extremo y cerró sin cuerpo.",
+        "Antes de esa vela, el bot se saltó {n} velas H4 que rompieron un extremo y cerraron sin "
+        "cuerpo.",
     ),
     "neutra_doble": (
-        "Antes de esa vela saltó una vela H4 que rompió los dos extremos y cerró sin cuerpo.",
-        "Antes de esa vela saltó {n} velas H4 que rompieron los dos extremos y cerraron sin "
+        "Antes de esa vela, el bot se saltó una vela H4 que rompió los dos extremos y cerró sin "
+        "cuerpo.",
+        "Antes de esa vela, el bot se saltó {n} velas H4 que rompieron los dos extremos y cerraron "
+        "sin "
         "cuerpo.",
     ),
 }
@@ -510,14 +515,14 @@ REINICIO_TRADER = "primera_sesion_dia_siguiente"  # el valor que la frase de RN-
 # verdad; con `semana` o `ambos`, error que lo nombra (respuesta a la PARADA final, punto 2)
 ALCANCES_SOLO_DIA = ("dia", "sin_tope")
 HECHOS_SIN_FRASE = ("orden_dimensionada",)  # la marca interna de la orden preparada
-FRASE_TOMA = (
-    "Liquidez de M15 tomada: una vela de M1 cerró con {criterio} por {lado} de M15 en {precio}, a "
-    "las {hora}."
-)
+# Toda hora que nombra una vela es la de su APERTURA, como la rotula FX Replay (respuesta del
+# consultor tras revisar la v3, punto 2); la cabecera nombra el corte y la vela, cada uno el suyo
+FRASE_TOMA = "La vela de M1 de las {hora} cerró con {criterio} por {lado} de M15 en {precio}."
 CRITERIO_TOMA = {"cuerpo": "cuerpo", "mecha": "mecha"}
 LADO_TOMA = {BAJO: "debajo del bajo", ALTO: "encima del alto"}
 FRASE_TOMA_LINEA_FUERA = (
-    "Liquidez de M15 tomada a las {hora}: la línea que toma viene de antes de la ventana."
+    "La vela de M1 de las {hora} tomó la liquidez de M15: la línea que toma viene de antes de la "
+    "ventana."
 )
 FRASE_TOMA_FUERA = "La toma de la liquidez de M15 viene de antes de la ventana."
 FRASE_SIN_TOMA = "Todavía no ha tomado la liquidez de M15 en esta sesión."
@@ -844,13 +849,13 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
         if not dentro(t.instante - 1, f.desde_m15):
             frases.append(FRASE_TOMA_FUERA)
         elif not toma_con_linea:
-            frases.append(FRASE_TOMA_LINEA_FUERA.format(hora=hora(t.instante, f.huso)))
+            frases.append(FRASE_TOMA_LINEA_FUERA.format(hora=hora(t.instante - 1, f.huso)))
         else:
             toma = (t.instante - 1, t.pivote_nivel)
             frases.append(
                 FRASE_TOMA.format(
                     criterio=CRITERIO_TOMA[lectura.criterio_toma], lado=LADO_TOMA[t.pivote_lado],
-                    precio=precio(t.pivote_nivel, f.escala), hora=hora(t.instante, f.huso),
+                    precio=precio(t.pivote_nivel, f.escala), hora=hora(t.instante - 1, f.huso),
                 )
             )  # fmt: skip
         frases.append(FRASE_ESCENARIO.format(n=escenario.n))

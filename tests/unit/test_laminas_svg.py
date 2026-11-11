@@ -65,6 +65,18 @@ BAJO_M15 = int(M1[CORTE - 210 - DESDE].minima)
 PRECIO_BAJO = laminas.precio(BAJO_M15, ESCALA)
 
 
+def en_panel(texto: str, clase: str, k: int) -> int:
+    """Cuantos elementos con `class` que empieza por `clase` caen en el panel k (0 H4, 1 M15, 2 M1,
+    3 M1 de cerca), por su primera coordenada vertical."""
+    import re as _re
+
+    n = 0
+    for e in _re.findall(rf'<(?:line|rect|circle|text) class="{clase}[^"]*"[^>]*>', texto):
+        y = float(_re.search(r'\s(?:y|y1|cy)="([\d.]+)"', e).group(1))  # type: ignore[union-attr]
+        n += k * laminas_svg.ALTO_PANEL <= y < (k + 1) * laminas_svg.ALTO_PANEL
+    return n
+
+
 def foto_base(**cambios: Any) -> laminas.Foto:
     f = laminas.Foto(
         dia="2030-01-15",
@@ -139,7 +151,7 @@ def test_la_foto_con_todo_dibuja_cada_marca_con_su_clase() -> None:
     # la caja de la foto con todo es pequena: sus rotulos siguen la regla de `rotulos_visibles`
     for rotulo in (">0<", ">1<"):
         assert rotulo in texto, rotulo
-    assert texto.count('class="nivel"') == 5  # las lineas de los niveles, siempre
+    assert en_panel(texto, "nivel", 2) == 5 and en_panel(texto, "nivel", 3) == 5  # siempre
     assert comp.fija_dentro is True
 
 
@@ -147,10 +159,9 @@ def test_la_sustentacion_de_la_foto_con_todo() -> None:
     _, comp = _pagina(foto_base())
     assert comp.frases == (
         "Sesgo de H4 alcista: la vela H4 que lo fija rompió el alto de la anterior y cerró verde.",
-        "Antes de esa vela saltó 2 velas H4 que rompieron un extremo y cerraron del color "
-        "contrario.",
-        "Liquidez de M15 tomada: una vela de M1 cerró con cuerpo por debajo del bajo de M15 en "
-        f"{PRECIO_BAJO}, a las 09:30.",
+        "Antes de esa vela, el bot se saltó 2 velas H4 que rompieron un extremo y cerraron del "
+        "color contrario.",
+        f"La vela de M1 de las 09:29 cerró con cuerpo por debajo del bajo de M15 en {PRECIO_BAJO}.",
         "Sigue la liquidez de M15 número 1 de esta sesión.",
         "La caja va de 1.10010 (el 0) a 1.09980 (el 1).",
         "El punto de breaker está en 1.10010, de la vela de las 09:40.",
@@ -202,7 +213,9 @@ def test_lo_nacido_antes_de_la_ventana_no_se_dibuja_ni_da_precio() -> None:
     assert "La vela H4 que fija el sesgo viene de antes de la ventana." in comp.frases
     assert "2 líneas de M15 de esta sesión vienen de antes de la ventana." in comp.frases
     assert any(
-        x.startswith("Liquidez de M15 tomada a las 09:30: la línea que toma viene de antes")
+        x.startswith(
+            "La vela de M1 de las 09:29 tomó la liquidez de M15: la línea que toma viene de antes"
+        )
         for x in comp.frases
     )
     assert comp.fija_dentro is False
@@ -291,7 +304,7 @@ def test_rn009_dice_cuantas_zonas_conto_y_las_dibuja() -> None:
         f"No abre: el esquema tiene más zonas de control de las que admite (2, y admite {m})."
         in comp.frases
     )
-    assert texto.count('class="zona-control"') == 2
+    assert en_panel(texto, "zona-control", 2) == 2 and en_panel(texto, "zona-control", 3) == 2
     viejo = dict(anot)
     viejo["zonas_de_control"] = f"{CORTE - 1}|110000@{CORTE - 15}"
     with pytest.raises(laminas.LaminaError, match="RN-009"):
@@ -437,13 +450,14 @@ def test_las_lineas_de_m15_lejanas_van_como_marca_en_el_m1_y_la_tomada_siempre()
         escenarios=(laminas.EscenarioFoto(1, toma, ("zona:1",), None),),
     )  # fmt: skip
     texto, _ = _pagina(f)
-    assert texto.count('class="linea-m15 alto viva"') == 1  # solo en el M15
-    assert texto.count('class="linea-m15 bajo tomada"') == 2  # en el M15 y en el M1
+    assert en_panel(texto, "linea-m15 alto viva", 1) == 1  # en el M15
+    assert en_panel(texto, "linea-m15 alto viva", 2) == 0  # en el M1, no
+    assert en_panel(texto, "linea-m15 bajo tomada", 2) == 1  # la tomada, en el M1 siempre
     assert f">▲ {laminas.precio(lejos_alto, ESCALA)}<" in texto
-    assert 'class="m15-fuera alto"' in texto and "m15-fuera bajo" not in texto
+    assert en_panel(texto, "m15-fuera alto", 2) == 1 and en_panel(texto, "m15-fuera bajo", 2) == 0
     # y las que caen dentro del rango, como antes: la foto con todo no tiene ninguna marca
     base, _ = _pagina(foto_base())
-    assert "m15-fuera" not in base and base.count('class="linea-m15 bajo tomada"') == 2
+    assert en_panel(base, "m15-fuera", 2) == 0 and en_panel(base, "linea-m15 bajo tomada", 2) == 1
 
 
 def test_el_precio_de_la_rejilla_bajo_una_etiqueta_de_la_orden_no_se_escribe() -> None:
@@ -477,3 +491,88 @@ def test_el_precio_de_la_rejilla_bajo_una_etiqueta_de_la_orden_no_se_escribe() -
     ]
     alto = laminas_svg.ALTO_ETIQUETA
     assert etiquetas and all(abs(y - (e + alto / 2)) >= alto for y in rejilla_m1 for e in etiquetas)
+
+
+# ------------------------------------------- la respuesta tras revisar la v3 (puntos 1 a 3)
+
+
+def _dibujo(
+    f: laminas.Foto, tipo: str = laminas.TIPO_B, orden: str | None = None
+) -> laminas.Dibujo:
+    return laminas.componer(_lamina(f, tipo, orden), LECTURA).dibujo
+
+
+def test_el_tramo_del_m1_de_cerca() -> None:
+    """Punto 1: desde la M1 de la toma hasta el corte; desde 15 velas antes de la primera zona de
+    control si es anterior; como mucho 60 velas; sin toma, las 30 ultimas."""
+    d = _dibujo(foto_base())
+    tramo = laminas_svg.tramo_de_cerca(d)
+    assert int(tramo[0].inicio) == TOMA - 1 and int(tramo[-1].inicio) == CORTE - 1
+    anot = dict(foto_base().anotaciones)
+    anot["zonas_de_control"] = f"{CORTE}|110000@{CORTE - 40}"
+    con_control = _dibujo(foto_base(anotaciones=tuple(sorted(anot.items()))))
+    assert int(laminas_svg.tramo_de_cerca(con_control)[0].inicio) == CORTE - 40 - 15
+    anot["zonas_de_control"] = f"{CORTE}|110000@{CORTE - 100}"
+    lejos = _dibujo(foto_base(anotaciones=tuple(sorted(anot.items()))))
+    tramo = laminas_svg.tramo_de_cerca(lejos)
+    assert len(tramo) == laminas_svg.VELAS_CERCA_MAX and int(tramo[-1].inicio) == CORTE - 1
+    sin_toma = _dibujo(foto_base(escenarios=()))
+    assert len(laminas_svg.tramo_de_cerca(sin_toma)) == laminas_svg.VELAS_CERCA_SIN_TOMA
+
+
+def test_la_escala_del_m1_de_cerca_y_lo_que_queda_fuera() -> None:
+    """Punto 1: la escala son las velas del tramo, la caja, la orden y el stop; el objetivo, lejos,
+    va como marca de borde con su precio; nada a la derecha del corte."""
+    import re as _re
+
+    orden = laminas.OrdenFoto(
+        "o1", "compra", 110_010, 109_986, 110_400, CORTE * 60_000 - 1, "colocada", "07-11", "zona:1"
+    )
+    f = foto_base(ordenes=(orden,), colocadas=frozenset({"o1"}))
+    texto, _ = _pagina(f, laminas.TIPO_A, "o1")
+    d = _dibujo(f, laminas.TIPO_A, "o1")
+    tramo = laminas_svg.tramo_de_cerca(d)
+    precios = [int(v.maxima) for v in tramo] + [int(v.minima) for v in tramo]
+    precios += [110_010, 109_980, 109_986]
+    assert f">▲ {laminas.precio(110_400, ESCALA)}<" in texto
+    assert en_panel(texto, "objetivo-fuera", 3) == 1 and en_panel(texto, "objetivo", 2) == 1
+    assert en_panel(texto, "orden", 3) == 1 and en_panel(texto, "stop", 3) == 1
+    cerca = 3 * laminas_svg.ALTO_PANEL
+    ys = [float(y) for y in _re.findall(r'<text class="precio" x="[\d.]+" y="([\d.]+)"', texto)]
+    assert any(y > cerca for y in ys)
+    # la escala: el mas alto y el mas bajo del tramo, la caja, la orden y el stop
+    rejilla = [
+        x
+        for y, x in _re.findall(r'<text class="precio" x="[\d.]+" y="([\d.]+)"[^>]*>([^<]*)', texto)
+        if float(y) > cerca
+    ]
+    assert (
+        laminas.precio(max(precios), ESCALA) in rejilla
+        or laminas.precio(min(precios), ESCALA) in rejilla
+    )
+    derecha = laminas_svg.ANCHO - laminas_svg.MARGEN_DER
+    for etiqueta in _re.findall(r"<(?:line|rect|circle|text)\b[^>]*>", texto):
+        if 'class="precio"' in etiqueta or 'class="eje-' in etiqueta or 'width="1600"' in etiqueta:
+            continue
+        xs = [float(x) for x in _re.findall(r'\s(?:x|x1|x2|cx)="([\d.]+)"', etiqueta)]
+        ancho = _re.search(r'\swidth="([\d.]+)"', etiqueta)
+        if ancho and etiqueta.startswith("<rect"):
+            xs.append(xs[0] + float(ancho.group(1)))
+        assert all(x <= derecha + 0.05 for x in xs), etiqueta
+
+
+def test_toda_hora_que_nombra_una_vela_es_la_de_su_apertura() -> None:
+    """Punto 2: la toma, el punto y la toma con la linea de antes nombran la vela por su apertura,
+    como FX Replay; la cabecera nombra el corte y la vela, cada uno el suyo."""
+    texto, comp = _pagina(foto_base())
+    assert (
+        f"La vela de M1 de las 09:29 cerró con cuerpo por debajo del bajo de M15 en {PRECIO_BAJO}."
+        in comp.frases
+    )
+    assert "El punto de breaker está en 1.10010, de la vela de las 09:40." in comp.frases
+    assert "Corte: a las 10:00, al cierre de la vela de M1 de las 09:59." in texto
+    _, fuera = _pagina(foto_base(desde_m15=CORTE - 150))
+    assert any(
+        x.startswith("La vela de M1 de las 09:29 tomó la liquidez de M15") for x in fuera.frases
+    )
+    assert not [x for x in comp.frases + fuera.frases if ", a las " in x]

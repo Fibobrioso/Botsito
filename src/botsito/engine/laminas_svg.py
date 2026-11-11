@@ -64,6 +64,11 @@ MARGEN_INF = 30
 TAMANO_ROTULO = 11  # la altura de la letra de los rotulos de la caja
 ALTO_ETIQUETA = 16  # la de las etiquetas de la orden en el eje derecho
 TAMANO_MARCA = 10  # la de las marcas de las lineas de M15 que quedan fuera del M1
+# El panel «M1 de cerca» (respuesta del consultor tras revisar la v3, punto 1): constantes de dibujo
+VELAS_CERCA_MAX = 60  # como mucho, las ultimas 60 velas hasta el corte
+VELAS_CERCA_SIN_TOMA = 30  # sin toma, las 30 ultimas
+VELAS_ANTES_DEL_CONTROL = 15  # desde 15 velas antes de la primera zona de control, si es anterior
+PANELES = 4  # H4, M15, M1 y M1 de cerca
 
 
 def _f(x: float) -> str:
@@ -190,7 +195,7 @@ def _lineas_m15(p: _Panel, d: Dibujo, lineas: Sequence[LineaDibujada]) -> list[s
         )
     if d.toma is not None:
         inicio, nivel = d.toma
-        x = p.centro(inicio) if p.marco == "M1" else p.x(inicio + 1)
+        x = p.centro(inicio) if p.marco.startswith("M1") else p.x(inicio + 1)
         if x is not None:
             partes.append(
                 f'<circle class="toma" cx="{_f(x)}" cy="{_f(p.y(nivel))}" r="5" '
@@ -215,23 +220,47 @@ def lineas_del_m1(d: Dibujo) -> tuple[tuple[LineaDibujada, ...], tuple[LineaDibu
     return dentro, tuple(ln for ln in d.lineas if ln not in dentro)
 
 
+def _marca(p: _Panel, clase: str, nivel: int, x: float, color: str, escala: int) -> str:
+    """Una marca pequena en el borde de arriba o de abajo de un panel para un nivel que no cabe en
+    su escala: su precio y una flecha hacia donde esta."""
+    arriba = nivel > p.hi
+    y = p.y0 + MARGEN_SUP + TAMANO_MARCA if arriba else p.y0 + ALTO_PANEL - MARGEN_INF - 3
+    x = max(x, float(MARGEN_IZQ))
+    ancla = "end" if x > p.derecha - 80 else "start"
+    x = min(x, p.derecha)
+    flecha = "▲" if arriba else "▼"
+    return (
+        f'<text class="{clase}" x="{_f(x)}" y="{_f(y)}" font-size="{TAMANO_MARCA}" '
+        f'text-anchor="{ancla}" fill="{color}">{flecha} {precio(nivel, escala)}</text>'
+    )
+
+
 def _fuera(p: _Panel, lineas: Sequence[LineaDibujada], escala: int) -> list[str]:
-    """Una marca pequena en el borde de arriba o de abajo del M1 por cada linea de M15 que no cabe:
-    su precio y una flecha hacia donde esta, del color de su lado."""
-    partes = []
-    for ln in lineas:
-        color = COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"]
-        arriba = ln.nivel > p.hi
-        y = p.y0 + MARGEN_SUP + TAMANO_MARCA if arriba else p.y0 + ALTO_PANEL - MARGEN_INF - 3
-        x = max(p.x(ln.desde), float(MARGEN_IZQ))
-        ancla = "end" if x > p.derecha - 80 else "start"
-        x = min(x, p.derecha)
-        flecha = "▲" if arriba else "▼"
-        partes.append(
-            f'<text class="m15-fuera {ln.lado}" x="{_f(x)}" y="{_f(y)}" font-size="{TAMANO_MARCA}" '
-            f'text-anchor="{ancla}" fill="{color}">{flecha} {precio(ln.nivel, escala)}</text>'
+    """Una marca de borde por cada linea de M15 que no cabe en el panel, del color de su lado."""
+    return [
+        _marca(
+            p, f"m15-fuera {ln.lado}", ln.nivel, p.x(ln.desde),
+            COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"], escala,
         )
-    return partes
+        for ln in lineas
+    ]  # fmt: skip
+
+
+def tramo_de_cerca(d: Dibujo) -> tuple[Vela, ...]:
+    """Las velas del panel «M1 de cerca» (respuesta del consultor tras revisar la v3, punto 1): de
+    la M1 de la toma -o de 15 velas antes de la primera zona de control que se dibuja, si es
+    anterior- hasta el corte, como mucho 60 (si no, las 60 ultimas); sin toma, las 30 ultimas. Un
+    subconjunto de las velas del M1, que ya pasaron la puerta."""
+    velas = d.m1
+    inicios = [int(v.inicio) for v in velas]
+    if d.toma is None:
+        return tuple(velas[-VELAS_CERCA_SIN_TOMA:])
+    desde = bisect.bisect_left(inicios, d.toma[0])
+    controles = [bisect.bisect_left(inicios, i) for i, _ in d.control if i in inicios]
+    if controles:
+        desde = min(desde, min(controles) - VELAS_ANTES_DEL_CONTROL)
+    desde = max(desde, 0, len(velas) - VELAS_CERCA_MAX)
+    return tuple(velas[desde:])
 
 
 def rotulos_visibles(p: _Panel, niveles: Sequence[tuple[str, int]]) -> tuple[tuple[str, int], ...]:
@@ -325,8 +354,11 @@ def _m1(p: _Panel, d: Dibujo) -> list[str]:
             ("stop", o.stop, COLOR["stop"], 'stroke-width="2" stroke-dasharray="6 4"'),
             ("objetivo", o.objetivo, COLOR["objetivo"], 'stroke-width="2" stroke-dasharray="6 4"'),
         ):
-            partes.append(_horizontal(p, clase, nivel, desde, d.corte, color, extra))
-            partes.append(_etiqueta(p, clase, nivel, color, d.escala))
+            if p.lo <= nivel <= p.hi:
+                partes.append(_horizontal(p, clase, nivel, desde, d.corte, color, extra))
+                partes.append(_etiqueta(p, clase, nivel, color, d.escala))
+            else:  # en el M1 de cerca, el objetivo suele quedar fuera de su escala
+                partes.append(_marca(p, f"{clase}-fuera", nivel, p.x(desde), color, d.escala))
     return partes
 
 
@@ -351,16 +383,30 @@ def svg(d: Dibujo) -> str:
     h4 = _Panel(d.h4, "H4", 0, ())
     m15 = _Panel(d.m15, "M15", ALTO_PANEL, niveles_m15)
     m1 = _Panel(d.m1, "M1", ALTO_PANEL * 2, niveles_m1)
+    # el M1 de cerca: su escala, las velas del tramo, la caja, la orden y el stop
+    niveles_cerca = [d.caja.entrada, d.caja.extremo] if d.caja is not None else []
+    for o in d.ordenes:
+        niveles_cerca += [o.precio, o.stop]
+    cerca = _Panel(tramo_de_cerca(d), "M1 de cerca", ALTO_PANEL * 3, niveles_cerca)
+    en_cerca = tuple(ln for ln in d.lineas if cerca.lo <= ln.nivel <= cerca.hi)
+    fuera_cerca = tuple(ln for ln in d.lineas if ln not in en_cerca)
+    alto = ALTO_PANEL * PANELES
     partes = [
-        f'<svg xmlns="http://www.w3.org/2000/svg" width="{ANCHO}" height="{ALTO_PANEL * 3}" '
-        f'viewBox="0 0 {ANCHO} {ALTO_PANEL * 3}" font-family="sans-serif">',
-        f'<rect x="0" y="0" width="{ANCHO}" height="{ALTO_PANEL * 3}" fill="{COLOR["fondo"]}"/>',
+        f'<svg xmlns="http://www.w3.org/2000/svg" width="{ANCHO}" height="{alto}" '
+        f'viewBox="0 0 {ANCHO} {alto}" font-family="sans-serif">',
+        f'<rect x="0" y="0" width="{ANCHO}" height="{alto}" fill="{COLOR["fondo"]}"/>',
     ]
     partes += _h4(h4, d) + _velas(h4, d.huso, d.escala)
     partes += _velas(m15, d.huso, d.escala) + _lineas_m15(m15, d, d.lineas)
     ocupadas = [m1.y(n) for o in d.ordenes for n in (o.precio, o.stop, o.objetivo)]
     partes += _m1(m1, d) + _velas(m1, d.huso, d.escala, ocupadas) + _lineas_m15(m1, d, en_m1)
     partes += _fuera(m1, fuera_m1, d.escala)
+    ocupadas = [
+        cerca.y(n) for o in d.ordenes for n in (o.precio, o.stop, o.objetivo)
+        if cerca.lo <= n <= cerca.hi
+    ]  # fmt: skip
+    partes += _m1(cerca, d) + _velas(cerca, d.huso, d.escala, ocupadas)
+    partes += _lineas_m15(cerca, d, en_cerca) + _fuera(cerca, fuera_cerca, d.escala)
     partes.append("</svg>")
     return "\n".join(partes)
 
