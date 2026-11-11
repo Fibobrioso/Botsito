@@ -16908,3 +16908,114 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 64 (2026-11-09).
+
+# Registro de cierre · `trabajo/laminas` (2026-11-11)
+
+- Orden de cierre de Aleks del 2026-11-11, tras la revisión del consultor, con la nota del consultor
+  que la precede: relanzar la CI de `fix/laminas` sobre `d721fa7` hasta tres veces, y que la línea
+  de la guardia recoja también el caso de `$'\r'`. Las dos, copiadas tal cual al final del encargo y
+  del informe en `f2a02d0`. Después, Aleks lanzó `/cerrar-rama trabajo/laminas`.
+- **Lo que entra**: `motor laminas` (`engine/laminas.py` y `engine/laminas_svg.py`, nuevos, y su
+  subcomando en `cli.py`). Son las láminas del bot de las sesiones pedidas, en HTML con SVG:
+  - recortadas al instante de decidir y sin resultados, con la sustentación en el lenguaje del
+    trader y las horas por la apertura de cada vela, como FX Replay;
+  - cuatro paneles: H4, M15, M1 y «M1 de cerca». El último va de la toma al corte, con entre 15 y 60
+    velas y su propia escala;
+  - un recolector pasivo sobre `MotorCableado.observador`;
+  - la puerta y el recorte del punto 6 del encargo;
+  - la salida fuera del repo, por un argumento obligatorio, con la clave en `clave.txt` y el orden
+    de las carpetas barajado y sin escribir en el repo.
+
+  Entran también:
+  - las anotaciones de `domain/sesgo.py`, `domain/estructura_m1.py`, `engine/primitivas.py` y
+    `engine/zonas.py`, que no cambian ninguna decisión;
+  - la enmienda de RUMBO §0, §4 y §5 (`daed48b`);
+  - `docs/runbooks/LAMINAS.md` y los guiones de `docs/validation/anexos/LAMINAS/`;
+  - los tests: `test_laminas.py`, `test_laminas_svg.py` y `test_laminas_registro.py`;
+  - las filas de HOLDOUT-EXPOSICIONES del 2026-11-10 y del 2026-11-11.
+
+  Nada de `knowledge/`, `scripts/` ni `.claude/`.
+- **Las corridas**:
+  - F4.1 y F4.2, con un diff de 0 bytes: la base, con y sin el recolector, da
+    `(31, 192, 24, 1150, 0, 32, 0)`.
+  - F4.3: 47 láminas de las 10 sesiones candidatas de la 7a, 19 de tipo a y 28 de tipo b, en
+    cinco versiones fuera del repo. La buena es la v5, de `43d4bc3`, en
+    `C:\Users\USER\Desktop\laminas-sesion-7-v5`. Las v1 a v4 las borra Aleks.
+- **La decisión de los gráficos 2 a 6** (del consultor, 2026-11-08, con RUMBO §3; LAMINAS.md):
+  - ACTIVAR-SESION-06.md §«Para la sesión 7», punto 10, pedía rehacerlos sin fecha. No se rehacen:
+    los sustituyen las láminas, que llevan ese contexto, y el bloque de días de la sesión 7.
+  - Las láminas no se enseñan al trader hasta que el ADR del método cambie la regla 2 de
+    SESION-DE-PREGUNTAS.md, que corta los gráficos antes de la colocación y prohíbe la orden, el
+    stop y el objetivo.
+- **La clave y el orden barajado** (respuesta del consultor a la PARADA final, punto 6):
+  - el informe de `675ee62` dejó en el historial la lista de `--sesiones` en su orden, que es la
+    clave de las carpetas de la v1. No sirve para las carpetas barajadas de la v2 a la v5.
+  - Que 07-03 07-11 se reconozca por su contenido no importa: el trader opera cada día antes de
+    ver su lámina, así que la clave nunca le ocultó el día.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - en la Next Action, F lleva el texto de la propuesta 1 de LAMINAS.md, con las dos frases de la
+    orden tras «enmendado.». No sale ni entra ninguna letra;
+  - entran tres líneas de Technical Debt: el esquema, la CLI y la guardia, esta con el caso de
+    `$'\r'` y el puntero corregido tras el revisor;
+  - en la hoja de ruta, R4.5 queda HECHA, sin NA:F en su bloque y con el «Hecho cuando» de la
+    orden;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+
+  Comprobado en memoria antes del `make check`, con las funciones de
+  `tests/unit/test_hoja_de_ruta.py`: `a`, `b`, `c` y `d` salen vacías, y las letras vivas no
+  cambian.
+- **`PROJECT_STATE.md`**: 23.770 bytes en este commit.
+- Letra del tag: la última cerrada era `stable/F38v-trazas-ablacion`; `stable/F38w-laminas` no existe
+  en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38w-laminas`. El merge es `git rev-parse "stable/F38w-laminas^{commit}"`.
+- Commits de la rama:
+  - `73668c1` chore(rama): abre trabajo/laminas (encargo, contrato y Archivo 65 de PROJECT_STATE)
+  - `6b5f069` la fase 0: el inventario medido, el diseño y la PARADA
+  - `daed48b` la enmienda de RUMBO §0, §4 y §5 (decisiones del 2026-11-09), en un commit propio
+  - `b7d5d6d` el contrato se amplía a `domain/sesgo.py` y `domain/estructura_m1.py`
+  - `3f800b5` F2 y F3: `motor laminas`, las láminas de las sesiones pedidas
+  - `675ee62` la caja que nace en el cierre del corte se dibuja; la cabecera, con las dos horas
+  - `f6ed348` lo que encontró el revisor en su primera pasada
+  - `cbeb840` F4.3, la CI, el revisor y la PARADA final
+  - `2aa36a0` la respuesta a la PARADA final, puntos 1 a 4 (el esquema, RN-020, el motivo repetido y las saltadas)
+  - `6276be1` la orden de una lámina de tipo a se ve, con su precio en el eje
+  - `1d42881` el informe de esa ronda, sus capturas, la v2 y su revisor
+  - `c166093` la última ronda de dibujo: los rótulos, las líneas de M15 en el M1 y la rejilla del eje
+  - `ea08ae2` el informe de esa ronda, la v3, sus capturas y su revisor
+  - `1a9c922` el panel «M1 de cerca», las horas por la apertura de la vela y la frase de las saltadas
+  - `2178a65` el precio de la línea tomada en el M1 de cerca y las marcas de borde apiladas
+  - `1d40323` las etiquetas del eje sin montarse; en el M1 de cerca, solo las líneas que llegan al tramo
+  - `1201262` el punto de la toma dentro del panel; rótulos y marcas de borde delante de las velas
+  - `58de6ce` la marca de borde del objetivo se apila con las de M15 (revisor, b-i1)
+  - `824d574` el informe de la ronda tras revisar la v3, la v4 y su revisor
+  - `43d4bc3` 15 velas como poco en el M1 de cerca y el lado de las marcas de borde del M1
+  - `d721fa7` el informe de la ronda tras revisar la v4, la v5 y su revisor
+  - `f2a02d0` la orden de cierre, copiada tal cual, y la CI de `d721fa7`
+  - `d9d467a` la fila de HOLDOUT-EXPOSICIONES del día del cierre, con sus `make check`
+  - y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **CI**: los runs de `fix/laminas`. En todos los que corrieron `make check`, el único fallo es el
+  esperado de RITUAL.md (`test_state_check_ok_on_real_repo`, por el nombre `fix/`):
+
+  | Run | Commit | Resultado |
+  |---|---|---|
+  | 42881622332 | `675ee62` | 1 failed, 3347 passed, 48 skipped |
+  | 42893354923 | `f6ed348` | 1 failed, 3352 passed, 48 skipped |
+  | 42901876352 | `cbeb840` | 1 failed, 3352 passed, 48 skipped |
+  | 42909789975 | `2aa36a0` | 1 failed, 3356 passed, 48 skipped |
+  | 42917631968 | `6276be1` | 1 failed, 3357 passed, 48 skipped |
+  | 42924429984 | `1d42881` | 1 failed, 3357 passed, 48 skipped |
+  | 42950585500 | `c166093` | 1 failed, 3360 passed, 48 skipped |
+  | 42956144513 | `ea08ae2` | 1 failed, 3360 passed, 48 skipped |
+  | 42961299280 | `1a9c922` | 1 failed, 3363 passed, 48 skipped |
+  | 42966334841 | `2178a65` | 1 failed, 3364 passed, 48 skipped |
+  | 42970555589 | `1d40323` | 1 failed, 3366 passed, 48 skipped |
+  | 42974511672 | `1201262` | 1 failed, 3368 passed, 48 skipped |
+  | 42980390492 | `58de6ce` | 1 failed, 3369 passed, 48 skipped |
+  | 42985112624 | `824d574` | 1 failed, 3369 passed, 48 skipped |
+  | 43044973233 | `43d4bc3` | cancelado dos veces, colgado 20 minutos en `apt-get install ffmpeg`, sin llegar a `make check` (un fallo del runner) |
+  | 43054735685 | `d721fa7` | intentos 1 y 2, cancelados igual; **intento 3: 1 failed, 3371 passed, 48 skipped**. Es el run que pidió la nota de la orden |
+
+  El código de `43d4bc3` está dentro de `d721fa7`. `f2a02d0` y los posteriores solo tocan el encargo,
+  el informe, HOLDOUT, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE y la hoja de ruta (comprobado con
+  `git diff --stat`). La CI que cuenta es la de `main` tras el push.

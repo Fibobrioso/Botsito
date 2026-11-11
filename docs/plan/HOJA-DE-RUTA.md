@@ -406,12 +406,12 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
   el control da delta cero. Las clases de 04-13, 07-02, 07-03 y 07-14, las de la PARADA final.
 
 ### R4.5 · Las láminas del bot
-- **Refs:** NA:F · ID:ADR-0092
+- **Refs:** ID:ADR-0092
 - **Qué es:** lo de RUMBO §3: por cada día del bloque de la sesión, la lámina de lo que hizo el bot con su sustentación (la bitácora de `motor decisiones`: toma de M15, escenario, zona, punto y orden), recortada al instante de decidir y sin resultados, con las líneas de M15 de la sesión (lo pide la clase de 07-03 de TRAZAS-ABLACION.md). La clave lámina-día no entra al repo.
 - **Depende de:** R4.4.
 - **Quién:** la sesión, con el encargo del consultor.
-- **Hecho cuando:** las láminas de los días de la sesión 7a están hechas y revisadas por el consultor.
-- **Estado:** ABIERTA.
+- **Hecho cuando:** la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta.
+- **Estado:** HECHA (trabajo/laminas, LAMINAS.md).
 
 ## R5 · Fidelidad
 
