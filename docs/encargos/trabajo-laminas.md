@@ -171,3 +171,20 @@ Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
 > 9. Las propuestas 1 y 2 de la orden de cierre (F y R4.5) quedan aprobadas tal cual. R4.5 pasa a HECHA solo cuando yo dé por revisadas las láminas de la carpeta v2.
 >
 > Después: make check, push a fix/laminas con su CI (el run del último commit y el de la ronda), el revisor solo sobre lo que cambia en esta ronda, pegado al final, y otra PARADA final corta con: lo que cambió, los recuentos de 3 y 4, lo que viste en las capturas, la ruta de la carpeta v2 y «Rama lista para revisión, NO cerrada.».
+
+## Respuesta del consultor a la PARADA final de la ronda (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de la ronda de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA final de la ronda», con su fecha, y aplícala punto por punto (skill fase-cero). Buena ronda. El borrado de sesgo_h4_doble_ruptura queda aprobado, y la orden de tipo a que no se veía es justo lo que solo encuentra la revisión visual. Una última ronda de dibujo, sin tocar el motor:
+>
+> 1. Los rótulos de la caja: aprobado, con esta regla. Cuando dos rótulos quedan a menos de la altura de su letra, se dejan solo el 0, el 0,8 y el 1. Si aun así se montan (una caja diminuta), solo el 0 y el 1. Las líneas de los niveles se dibujan siempre. Lo que digo es la condición, no un umbral en píxeles a ojo; la altura de la letra es la constante de dibujo que ya usas. Con su test.
+> 2. Las líneas de M15 lejanas en el M1: en el M1 se dibujan las que caen dentro del rango de precios de sus velas, de la caja y de la orden, ampliado por arriba y por abajo una altura de caja (o, sin caja, un 10 % del rango). Las que quedan fuera no se dibujan, pero tampoco desaparecen: van como una marca pequeña en el borde de arriba o de abajo del M1, con su precio y una flecha hacia donde están, del color de su lado. En el M15 se dibujan todas, como hasta ahora. La línea que el motor tomó se dibuja siempre en el M1, aunque estire la escala. Con su test. La de 07-03 (1.14500, con el punto en 1.14496) tiene que verse en el M1: compruébalo en su captura.
+> 3. Las etiquetas del eje que pisan un precio del eje: cuando una etiqueta de la orden, el stop o el objetivo cae sobre un precio de la rejilla del eje, ese precio de la rejilla no se escribe. Con su test.
+> 4. Regenera tras el ensayo en el clon, en una carpeta nueva, C:\Users\USER\Desktop\laminas-sesion-7-v3, con el mismo orden barajado de la v2: es el mismo conjunto, y así la clave no cambia. Haz las mismas capturas que en la ronda y míralas. F4.1 y F4.2 no hace falta repetirlas si el diff de la ronda no toca nada fuera de engine/laminas_svg.py, sus tests y el informe; si toca otra cosa, se repiten a 0 bytes.
+> 5. En el informe: cuántas láminas cambian de rótulos (punto 1), cuántas de líneas de M15 en el M1 (punto 2) y cuántas de etiquetas (punto 3). Sin recuentos por carpeta, como dijo el revisor.
+> 6. Las carpetas v1 y v2 no se tocan; las borra Aleks.
+>
+> Después: make check, push a fix/laminas con su CI (el run de 1d42881 y el de esta ronda), el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta con lo que cambió, los tres recuentos, lo que viste en las capturas, la ruta de la v3 y «Rama lista para revisión, NO cerrada.». Yo reviso la v3 y doy la orden de cierre.

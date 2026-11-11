@@ -136,8 +136,10 @@ def test_la_foto_con_todo_dibuja_cada_marca_con_su_clase() -> None:
                   'class="punto"', 'class="toma"', 'class="corte"'):  # fmt: skip
         assert clase in texto, clase
     assert texto.count('class="h4-saltada"') == 2
-    for rotulo in (">0<", ">0,25<", ">0,5<", ">0,8<", ">1<"):
+    # la caja de la foto con todo es pequena: sus rotulos siguen la regla de `rotulos_visibles`
+    for rotulo in (">0<", ">1<"):
         assert rotulo in texto, rotulo
+    assert texto.count('class="nivel"') == 5  # las lineas de los niveles, siempre
     assert comp.fija_dentro is True
 
 
@@ -388,3 +390,90 @@ def test_la_orden_que_nace_en_el_corte_se_ve_con_su_stop_y_su_objetivo() -> None
         assert f'class="eje-{clase}"' in texto, clase
     for valor in ("1.10010", "1.09986", "1.10100"):
         assert f">{valor}<" in texto, valor
+
+
+# ---------------------------------- la respuesta a la PARADA final de la ronda (puntos 1 a 3)
+
+
+def _panel_m1() -> laminas_svg._Panel:
+    return laminas_svg._Panel(M1[-240:], "M1", 2 * laminas_svg.ALTO_PANEL, ())
+
+
+def test_los_rotulos_de_la_caja_siguen_la_regla() -> None:
+    """Punto 1: los cinco si caben; si dos quedan a menos de la altura de su letra, el 0, el del
+    stop y el 1; si aun asi se montan, el 0 y el 1. Con niveles puestos a pixeles conocidos."""
+    p = _panel_m1()
+    por_pixel = p.rango / (laminas_svg.ALTO_PANEL - laminas_svg.MARGEN_SUP - laminas_svg.MARGEN_INF)
+
+    def niveles(*pixeles: float) -> list[tuple[str, int]]:
+        rotulos = ("0", "0,25", "0,5", "0,8", "1")
+        return [(r, int(p.hi - px * por_pixel)) for r, px in zip(rotulos, pixeles, strict=True)]
+
+    def visibles(*pixeles: float) -> list[str]:
+        return [r for r, _ in laminas_svg.rotulos_visibles(p, niveles(*pixeles))]
+
+    assert visibles(0, 20, 40, 60, 80) == ["0", "0,25", "0,5", "0,8", "1"]
+    assert visibles(0, 4, 8, 40, 60) == ["0", "0,8", "1"]  # el 0,25 y el 0,5 se montan
+    assert visibles(0, 2, 4, 6, 8) == ["0", "1"]  # una caja diminuta
+    assert visibles(0, 2, 4, 6, 7) == ["0", "1"]  # aunque el 0 y el 1 se monten, se quedan
+
+
+def test_las_lineas_de_m15_lejanas_van_como_marca_en_el_m1_y_la_tomada_siempre() -> None:
+    """Punto 2: una linea de M15 cuyo nivel queda lejos del rango del M1 (velas, caja y orden,
+    ampliado una altura de caja) no se dibuja en el M1: va como una marca en el borde, con su
+    precio y una flecha; en el M15 se dibuja. La tomada se dibuja en el M1 aunque quede lejos."""
+    lejos_alto, lejos_bajo = 113_000, 107_000
+    m1 = list(M1)
+    i, j = CORTE - 500 - DESDE, CORTE - 400 - DESDE  # en la ventana de M15, antes de la de M1
+    m1[i] = dataclasses.replace(m1[i], maxima=Puntos(lejos_alto))
+    m1[j] = dataclasses.replace(m1[j], minima=Puntos(lejos_bajo))
+    lineas = (
+        laminas.LineaM15("alto", lejos_alto, CORTE - 495, CORTE - 490, CORTE - 480, CORTE),
+        laminas.LineaM15("bajo", lejos_bajo, CORTE - 395, CORTE - 390, CORTE - 380, CORTE),
+    )
+    toma = laminas.TomaFoto(TOMA, "compra", "bajo", lejos_bajo, CORTE - 390)
+    f = foto_base(
+        m1=tuple(m1), lineas=lineas,
+        escenarios=(laminas.EscenarioFoto(1, toma, ("zona:1",), None),),
+    )  # fmt: skip
+    texto, _ = _pagina(f)
+    assert texto.count('class="linea-m15 alto viva"') == 1  # solo en el M15
+    assert texto.count('class="linea-m15 bajo tomada"') == 2  # en el M15 y en el M1
+    assert f">▲ {laminas.precio(lejos_alto, ESCALA)}<" in texto
+    assert 'class="m15-fuera alto"' in texto and "m15-fuera bajo" not in texto
+    # y las que caen dentro del rango, como antes: la foto con todo no tiene ninguna marca
+    base, _ = _pagina(foto_base())
+    assert "m15-fuera" not in base and base.count('class="linea-m15 bajo tomada"') == 2
+
+
+def test_el_precio_de_la_rejilla_bajo_una_etiqueta_de_la_orden_no_se_escribe() -> None:
+    """Punto 3: con una etiqueta de la orden sobre un precio de la rejilla del eje, ese precio no
+    se escribe; los demas, si."""
+    p = _panel_m1()
+    rejilla = [p.lo + p.rango * k // 4 for k in range(5)]
+    escritos = [x for x in laminas_svg._velas(p, HUSO, ESCALA) if 'class="precio"' in x]
+    assert len(escritos) == 5
+    tapados = laminas_svg._velas(p, HUSO, ESCALA, [p.y(rejilla[2])])
+    precios = [x for x in tapados if 'class="precio"' in x]
+    assert len(precios) == 4 and f">{laminas.precio(rejilla[2], ESCALA)}<" not in "".join(precios)
+    # y en una lamina de tipo a, ningun precio de la rejilla del M1 bajo una etiqueta
+    orden = laminas.OrdenFoto(
+        "o1", "compra", 110_010, 109_986, 110_100, CORTE * 60_000 - 1, "colocada", "07-11",
+        "zona:1",
+    )  # fmt: skip
+    texto, _ = _pagina(
+        foto_base(ordenes=(orden,), colocadas=frozenset({"o1"})), laminas.TIPO_A, "o1"
+    )
+    import re as _re
+
+    m1_desde = 2 * laminas_svg.ALTO_PANEL
+    etiquetas = [
+        float(y) for y in _re.findall(r'<rect class="eje-[a-z]+" x="[\d.]+" y="([\d.]+)"', texto)
+    ]
+    rejilla_m1 = [
+        float(y) - 4
+        for y in _re.findall(r'<text class="precio" x="[\d.]+" y="([\d.]+)"', texto)
+        if float(y) > m1_desde
+    ]
+    alto = laminas_svg.ALTO_ETIQUETA
+    assert etiquetas and all(abs(y - (e + alto / 2)) >= alto for y in rejilla_m1 for e in etiquetas)

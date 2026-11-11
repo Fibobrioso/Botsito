@@ -19,7 +19,14 @@ from zoneinfo import ZoneInfo
 from botsito.domain.pivotes_m15 import ALTO
 from botsito.domain.ticks import MS_POR_MINUTO
 from botsito.domain.velas import Vela
-from botsito.engine.laminas import Composicion, Dibujo, LaminaError, hora, precio
+from botsito.engine.laminas import (
+    Composicion,
+    Dibujo,
+    LaminaError,
+    LineaDibujada,
+    hora,
+    precio,
+)
 
 # ---------------------------------------------------------------------- la tabla de colores
 
@@ -54,6 +61,9 @@ MARGEN_IZQ = 20
 MARGEN_DER = 110
 MARGEN_SUP = 30
 MARGEN_INF = 30
+TAMANO_ROTULO = 11  # la altura de la letra de los rotulos de la caja
+ALTO_ETIQUETA = 16  # la de las etiquetas de la orden en el eje derecho
+TAMANO_MARCA = 10  # la de las marcas de las lineas de M15 que quedan fuera del M1
 
 
 def _f(x: float) -> str:
@@ -98,7 +108,10 @@ class _Panel:
         return None
 
 
-def _velas(p: _Panel, huso: str, escala: int) -> list[str]:
+def _velas(p: _Panel, huso: str, escala: int, ocupadas: Sequence[float] = ()) -> list[str]:
+    """Las velas, la rejilla de precios del eje derecho y las horas. Un precio de la rejilla que
+    caeria bajo una etiqueta de la orden (`ocupadas`, sus y) no se escribe (respuesta del consultor
+    a la PARADA final de la ronda, punto 3)."""
     tz = ZoneInfo(huso)
     partes = [
         f'<text class="marco" x="{MARGEN_IZQ}" y="{p.y0 + 20}" font-size="18" '
@@ -108,6 +121,8 @@ def _velas(p: _Panel, huso: str, escala: int) -> list[str]:
     ]
     for k in range(5):
         nivel = p.lo + p.rango * k // 4
+        if any(abs(p.y(nivel) - y) < ALTO_ETIQUETA for y in ocupadas):
+            continue
         partes.append(
             f'<text class="precio" x="{ANCHO - MARGEN_DER + 8}" y="{_f(p.y(nivel) + 4)}" '
             f'font-size="12" fill="{COLOR["ejes"]}">{precio(nivel, escala)}</text>'
@@ -156,9 +171,9 @@ def _horizontal(
     )
 
 
-def _lineas_m15(p: _Panel, d: Dibujo) -> list[str]:
+def _lineas_m15(p: _Panel, d: Dibujo, lineas: Sequence[LineaDibujada]) -> list[str]:
     partes = []
-    for ln in d.lineas:
+    for ln in lineas:
         color = COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"]
         estado = "tomada" if ln.tomada else "dejo" if ln.dejo else "viva"
         extra = (
@@ -182,6 +197,53 @@ def _lineas_m15(p: _Panel, d: Dibujo) -> list[str]:
                 f'fill="{COLOR["texto"]}"/>'
             )
     return partes
+
+
+def lineas_del_m1(d: Dibujo) -> tuple[tuple[LineaDibujada, ...], tuple[LineaDibujada, ...]]:
+    """Las lineas de M15 que se dibujan en el M1 y las que quedan fuera (respuesta del consultor a
+    la PARADA final de la ronda, punto 2): dentro, las que caen en el rango de precios de las velas
+    del M1, de la caja y de la orden, ampliado por arriba y por abajo una altura de caja (sin caja,
+    un decimo del rango); y la que el motor tomo, siempre."""
+    precios = [int(v.maxima) for v in d.m1] + [int(v.minima) for v in d.m1]
+    if d.caja is not None:
+        precios += [d.caja.entrada, d.caja.extremo]
+    for o in d.ordenes:
+        precios += [o.precio, o.stop, o.objetivo]
+    hi, lo = max(precios), min(precios)
+    margen = abs(d.caja.entrada - d.caja.extremo) if d.caja is not None else (hi - lo) // 10
+    dentro = tuple(ln for ln in d.lineas if ln.tomada or lo - margen <= ln.nivel <= hi + margen)
+    return dentro, tuple(ln for ln in d.lineas if ln not in dentro)
+
+
+def _fuera(p: _Panel, lineas: Sequence[LineaDibujada], escala: int) -> list[str]:
+    """Una marca pequena en el borde de arriba o de abajo del M1 por cada linea de M15 que no cabe:
+    su precio y una flecha hacia donde esta, del color de su lado."""
+    partes = []
+    for ln in lineas:
+        color = COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"]
+        arriba = ln.nivel > p.hi
+        y = p.y0 + MARGEN_SUP + TAMANO_MARCA if arriba else p.y0 + ALTO_PANEL - MARGEN_INF - 3
+        x = max(p.x(ln.desde), float(MARGEN_IZQ))
+        ancla = "end" if x > p.derecha - 80 else "start"
+        x = min(x, p.derecha)
+        flecha = "▲" if arriba else "▼"
+        partes.append(
+            f'<text class="m15-fuera {ln.lado}" x="{_f(x)}" y="{_f(y)}" font-size="{TAMANO_MARCA}" '
+            f'text-anchor="{ancla}" fill="{color}">{flecha} {precio(ln.nivel, escala)}</text>'
+        )
+    return partes
+
+
+def rotulos_visibles(p: _Panel, niveles: Sequence[tuple[str, int]]) -> tuple[tuple[str, int], ...]:
+    """Los rotulos de la caja que se escriben (respuesta del consultor a la PARADA final de la
+    ronda, punto 1): los cinco; si dos quedan a menos de la altura de su letra, el 0, el del stop y
+    el 1; si aun asi se montan, el 0 y el 1. `niveles` va en el orden de `laminas._niveles`: 0,
+    0,25, 0,5, el del stop y 1."""
+    for elegidos in (tuple(niveles), (niveles[0], niveles[-2], niveles[-1])):
+        ys = sorted(p.y(n) for _, n in elegidos)
+        if all(b - a >= TAMANO_ROTULO for a, b in zip(ys, ys[1:], strict=False)):
+            return elegidos
+    return (niveles[0], niveles[-1])
 
 
 def _h4(p: _Panel, d: Dibujo) -> list[str]:
@@ -219,7 +281,7 @@ def _m1(p: _Panel, d: Dibujo) -> list[str]:
             f'<rect class="caja {z.lado}" x="{_f(x1)}" y="{_f(y1)}" width="{_f(p.derecha - x1)}" '
             f'height="{_f(max(y2 - y1, 1))}" fill="{color}" fill-opacity="{OPACIDAD_CAJA}"/>'
         )
-        for rotulo, nivel in d.niveles:
+        for _, nivel in d.niveles:
             partes.append(
                 _horizontal(
                     p,
@@ -231,9 +293,11 @@ def _m1(p: _Panel, d: Dibujo) -> list[str]:
                     'stroke-width="1"',
                 )
             )
+        for rotulo, nivel in rotulos_visibles(p, d.niveles):
             partes.append(
                 f'<text class="rotulo" x="{_f(p.derecha - 4)}" y="{_f(p.y(nivel) - 3)}" '
-                f'font-size="11" text-anchor="end" fill="{COLOR["nivel"]}">{rotulo}</text>'
+                f'font-size="{TAMANO_ROTULO}" text-anchor="end" fill="{COLOR["nivel"]}">'
+                f"{rotulo}</text>"
             )
     if d.punto is not None:
         inicio, nivel = d.punto
@@ -270,8 +334,8 @@ def _etiqueta(p: _Panel, clase: str, nivel: int, color: str, escala: int) -> str
     """El precio de una linea de la orden en el eje derecho, sobre su color (como el replay)."""
     y = p.y(nivel)
     return (
-        f'<rect class="eje-{clase}" x="{_f(p.derecha + 2)}" y="{_f(y - 8)}" width="78" '
-        f'height="16" fill="{color}"/>'
+        f'<rect class="eje-{clase}" x="{_f(p.derecha + 2)}" y="{_f(y - ALTO_ETIQUETA / 2)}" '
+        f'width="78" height="{ALTO_ETIQUETA}" fill="{color}"/>'
         f'<text class="eje-{clase}" x="{_f(p.derecha + 6)}" y="{_f(y + 4)}" font-size="12" '
         f'fill="{COLOR["fondo"]}">{precio(nivel, escala)}</text>'
     )
@@ -279,7 +343,8 @@ def _etiqueta(p: _Panel, clase: str, nivel: int, color: str, escala: int) -> str
 
 def svg(d: Dibujo) -> str:
     niveles_m15 = [ln.nivel for ln in d.lineas]
-    niveles_m1 = list(niveles_m15) + [n for _, n in d.niveles]
+    en_m1, fuera_m1 = lineas_del_m1(d)
+    niveles_m1 = [ln.nivel for ln in en_m1] + [n for _, n in d.niveles]
     niveles_m1 += [n for _, n in d.control] + ([d.punto[1]] if d.punto else [])
     for o in d.ordenes:
         niveles_m1 += [o.precio, o.stop, o.objetivo]
@@ -292,8 +357,10 @@ def svg(d: Dibujo) -> str:
         f'<rect x="0" y="0" width="{ANCHO}" height="{ALTO_PANEL * 3}" fill="{COLOR["fondo"]}"/>',
     ]
     partes += _h4(h4, d) + _velas(h4, d.huso, d.escala)
-    partes += _velas(m15, d.huso, d.escala) + _lineas_m15(m15, d)
-    partes += _m1(m1, d) + _velas(m1, d.huso, d.escala) + _lineas_m15(m1, d)
+    partes += _velas(m15, d.huso, d.escala) + _lineas_m15(m15, d, d.lineas)
+    ocupadas = [m1.y(n) for o in d.ordenes for n in (o.precio, o.stop, o.objetivo)]
+    partes += _m1(m1, d) + _velas(m1, d.huso, d.escala, ocupadas) + _lineas_m15(m1, d, en_m1)
+    partes += _fuera(m1, fuera_m1, d.escala)
     partes.append("</svg>")
     return "\n".join(partes)
 
