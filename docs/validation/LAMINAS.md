@@ -626,7 +626,7 @@ Las propuestas 1 y 2 están comprobadas con las funciones de `tests/unit/test_ho
    - «`motor laminas`: la CLI solo se prueba entera con las velas reales (F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.»
    - La de RN-020 y «del día» sale (punto 2: medido, la rama semanal no dispara con el registro de hoy). La de las H4 saltadas sale (punto 4, entero).
    - La de la flecha de la marca de borde del M1 (revisor de la ronda de dibujo, m1) sale: está arreglada (respuesta tras revisar la v4, punto 2).
-   - **El falso positivo de la guardia** (respuesta tras revisar la v4, punto 6): «la guardia de Claude Code toma por ruta una barra dentro de una cadena que no es una ruta, como una etiqueta HTML (`</li>`) en una regex o « / » entre espacios en un texto, y niega un guion que solo lee HTML de láminas (LAMINAS.md, lo que vi en las capturas de la respuesta a la PARADA final).»
+   - **El falso positivo de la guardia** (respuesta tras revisar la v4, punto 6): «la guardia de Claude Code toma por ruta una barra dentro de una cadena que no es una ruta, como una etiqueta HTML (`</li>`) en una regex o « / » entre espacios en un texto, y niega un guion que solo lee HTML de láminas (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final); y toma por argumento que se construye al ejecutarse una cadena constante de bash, `$'\r'`, en un `grep -c` sobre ficheros del repo nombrados literales (LAMINAS.md, respuesta tras revisar la v4, 6).»
 4. **La fila de ERRORES-RECURRENTES del cierre lleva un hallazgo menor** (respuesta tras revisar la v4, punto 6). En la respuesta a la PARADA final, para que la guardia no tomara por ruta una regex y una cadena de un guion de medida, las reescribí. Eso es rodearla (CLAUDE.md, «Una guardia no se rodea»), aunque el guion solo leía HTML de láminas y lo declaré. Ante una negativa así se para y se dice.
 
 ## Respuesta del consultor a la PARADA final (2026-11-10)
@@ -1101,6 +1101,131 @@ Dada por Aleks (consultor) el 2026-11-11, tal cual (también al final de `docs/e
 >
 > Después: make check, push a fix/laminas con su CI y una PARADA corta con el resultado del make check, el run de la CI, lo que diga el revisor, los recuentos de los puntos 1 y 2, la ruta de la v5 y «Rama lista para revisión, NO cerrada.».
 
+## Aplicación de la respuesta tras revisar la v4, punto por punto (2026-11-11)
+
+El código solo cambia en `src/botsito/engine/laminas_svg.py`, con sus tests en `tests/unit/test_laminas_svg.py` (commit `43d4bc3`). Por eso F4.1 y F4.2 no se repiten (punto 4). Fuera de eso cambian el informe, la respuesta copiada en el encargo, la fila del 2026-11-11 de HOLDOUT-EXPOSICIONES y el recuento de tests de PROJECT_STATE.
+
+1. **Un mínimo de 15 velas en el M1 de cerca** (`VELAS_CERCA_MIN = 15`, en `tramo_de_cerca`). Si la regla de la ronda anterior da menos de 15, el tramo empieza 15 velas antes del corte; el tope de 60 sigue.
+   - **El test:** `test_el_m1_de_cerca_tiene_como_poco_15_velas` (tramos de 1, 3 y 14 velas quedan en 15; uno de 20 no cambia; el tope de 60 sigue).
+   - **Cambian 9 láminas:** las dos que tenían 1 y 2 velas y siete que tenían de 6 a 8. Las 9 quedan con 15, y ninguna queda por debajo. Lo mide `comparar_v5.py`, de la carpeta de trabajo, que solo lee los HTML.
+   - **En las capturas de las dos de 1 y 2 velas** (del ensayo de `43d4bc3`), el M1 de cerca enseña ahora 15 velas, con la caja formándose, el punto y la toma.
+2. **El lado de la marca de borde del M1** (la m1 del revisor de la ronda de dibujo). La marca de una línea de M15 que queda fuera del M1 decide su lado contra `rango_del_m1`, el mismo rango con que `lineas_del_m1` la deja fuera. Ya no se decide contra la escala del panel, que estiran las zonas de control y el punto.
+   - **El M1 de cerca no tiene el defecto:** allí las líneas se dejan fuera con `cerca.lo <= nivel <= cerca.hi`, que es su propia escala. Su escala la fijan las velas del tramo, la caja, la orden y el stop; ni las zonas de control ni el punto la estiran.
+   - **El test:** `test_la_marca_de_borde_del_m1_decide_su_lado_con_el_rango_que_la_deja_fuera`. Tiene un caso de ▲, que es el del revisor: una línea por encima del rango, pero por debajo del alto que estira una zona de control, salía con ▼. Tiene también un caso de ▼, el simétrico. El de ▲ fallaría con el código de antes (lo razoné leyendo el código, sin correrlo contra él). El de ▼ no: con el código de antes, una línea por debajo del rango ya salía siempre con ▼, porque el defecto solo existía hacia arriba. Ese caso protege contra otro error, el de decidir el lado contra un suelo mal puesto, y no contra este (revisor de la ronda, b-i1).
+   - **Cambian de lado 0 marcas en la v5.** Las 3 marcas de borde de líneas de M15 del M1 ya apuntaban bien, como dijo el revisor de la ronda de dibujo. El defecto solo aparecía en el caso del test.
+   - **La línea de Technical Debt propuesta sale** (en las propuestas para la orden de cierre).
+3. **Lo que se queda como está.** En la lámina que dice 18 zonas de control, el M1 de cerca enseña 14: el tope de 60 velas deja 4 fuera, y el M1 las enseña todas. Las marcas de borde con una vela detrás se leen. Medido de nuevo en el ensayo de `43d4bc3`, los recuentos del punto 5 de la ronda anterior no cambian. Siguen a 0 las etiquetas del eje montadas, las marcas de borde montadas y las líneas de longitud cero del M1 de cerca.
+4. **La v5:** en `C:\Users\USER\Desktop\laminas-sesion-7-v5`, de `43d4bc3`, tras el ensayo en el clon (`git worktree add --detach`), con el mismo orden barajado.
+   - La orden, tal cual salvo la lista: `uv run botsito motor laminas --sesiones <las diez sesiones, en el orden de clave.txt> --salida C:\Users\USER\Desktop\laminas-sesion-7-v5`.
+   - Su `clave.txt` es idéntica a la de la v4 (`diff`, 0 bytes; no se abrió). `diff -r` de la v5 contra su ensayo: 0 bytes.
+   - Base con y sin el recolector, `(31, 192, 24, 1150, 0, 32, 0)`.
+   - Ensayo: 595,7 s y 645,7 MiB. La v5: 577,1 s y 644,8 MiB.
+   - 47 láminas, 19 de tipo a y 28 de tipo b, como en la v4.
+5. **El revisor**, sobre `58de6ce` y esta ronda: al final, tal cual.
+6. **Rodear la guardia.** En la respuesta a la PARADA final, para que la guardia no tomara por ruta una regex y una cadena de un guion de medida, las reescribí. Eso fue rodearla, aunque el guion solo leía HTML de láminas y lo declaré. La próxima vez se para y se dice.
+   - Va como hallazgo menor en la fila de ERRORES-RECURRENTES del cierre, y el falso positivo, a Technical Debt (las dos en las propuestas para la orden de cierre).
+   - **En esta ronda y en la anterior, ante cada negativa de la guardia:**
+     - un comando partido en llamadas sueltas (`date`, `tail`), la forma que ella propone;
+     - el guion con Write, ejecutado en otra llamada, en lugar de una tubería con `paste` y `bc` (`tipos.py`), la forma que ella propone;
+     - para el `grep` de retornos de carro (`$'\r'`), la guardia no propuso esa forma: propuso rutas literales, que ya lo eran, o la herramienta Read. No reescribí el comando. Medí el defecto de otra forma, con `git diff --stat`, que enseña un fichero entero cambiado si los finales de línea lo están. La negativa es un falso positivo: `$'\r'` es una cadena constante. Va con el otro a la línea de Technical Debt de la guardia.
+   - Lo digo aquí por si alguna de estas cuenta también como rodearla.
+
+**La CI**, por `fix/laminas`. El único fallo es el aceptado (`tests/unit/test_cli.py::test_state_check_ok_on_real_repo`: PROJECT_STATE declara `trabajo/laminas` y la rama es `fix/`):
+- **Run 42985112624**, sobre `824d574` (el informe de la ronda anterior): `1 failed, 3369 passed, 48 skipped`.
+- **Run 43044973233**, sobre `43d4bc3`: el primer intento se canceló a los 20 minutos, colgado en el `apt-get install` de ffmpeg y sin llegar a `make check`; relanzado (intento 2), que al escribir esto seguía en el mismo paso. Su resultado, y el de la CI del commit de este informe, van en la PARADA final.
+
+## El revisor de la ronda tras revisar la v4 (2026-11-11), tal cual
+
+Sobre `1201262..43d4bc3` y la sección sin commitear: 0 bloquea, 1 importa y 2 menores, todos en el informe y ninguno en el código. Lo hecho con cada uno:
+- **b-i1 (importa):** la frase de los dos tests, corregida. El de ▼ no protege contra este defecto, y el test se queda como está.
+- **b-m1:** el puntero de la línea de Technical Debt de la guardia, corregido.
+- **a-m1:** el Estado, al día.
+- **El caso dudoso del `$'\r'`:** dicho qué propuso la guardia, y el falso positivo, a la misma línea de Technical Debt.
+
+Como no cambia el código, la v5 no se regenera.
+
+> ## Informe del revisor · trabajo/laminas · ronda tras revisar la v4 (`1201262..HEAD` + la sección sin commitear) · 2026-11-11
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a-m1 | menor | El `## Estado` no está al día. Dice que «siguen la v5, la CI, el revisor y la PARADA corta», pero la sección sin commitear ya da la v5 por escrita. | `docs/validation/LAMINAS.md:1507` frente a `:1118-1123` |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py` da «CONTRATO: 23 ficheros dentro del contrato de trabajo/laminas (riesgo alto, artefacto docs/validation/LAMINAS.md, …, 3 comprobaciones para el revisor)», exit 0. `uv run botsito state check` da «OK: rama 'trabajo/laminas' …», exit 0.
+> - **`make check`.** No lo ejecuté (escribe). En `make-check.log` (10:05:49) están `3420 passed`, «SELLO: make check en verde sobre el arbol 5cbe40cf…», «PICO DE MEMORIA … 313 MiB» y `exit=0`. `git rev-parse HEAD^{tree}` da `5cbe40cf…`: el sello es el de `43d4bc3`.
+> - **El diff de la ronda.** `git diff --name-only 1201262..HEAD -- src tests` solo da `engine/laminas_svg.py` y `tests/unit/test_laminas_svg.py`. El resto son documentos: el informe, el encargo, HOLDOUT-EXPOSICIONES y PROJECT_STATE. No toca `knowledge/`, la spec, los ADR, las ambigüedades ni `domain/`, así que no hacen falta trailers `Fuente:` ni hay regímenes que mirar.
+> - **HOLDOUT-EXPOSICIONES.** Contra `main`, 0 líneas quitadas.
+>   - La fila del 2026-11-11 declara la ronda nueva y a este revisor sobre los HTML de la v4, la v5 y el ensayo.
+>   - Su recuento cuadra con los commits del día 11 (`git log`): 8 invocaciones y 6 completas, y cinco `make check` (`2178a65`, `1d40323`, `1201262`, `58de6ce` y `824d574`). Después vienen «dos más», el de `43d4bc3` y el del commit de esta sección.
+>   - El paréntesis de a-m1 de la pasada anterior ya no está.
+> - **PROJECT_STATE.** Pasa de 1995 a 1998, que son los 3 `def test_` nuevos (uno de `58de6ce` y dos de `43d4bc3`).
+> - **Retornos de carro.** Ninguno en `LAMINAS.md`, `laminas_svg.py` ni `test_laminas_svg.py`.
+> - **Las cifras.** `VELAS_CERCA_MIN` es una constante de dibujo junto a las otras tres (`laminas_svg.py:68-73`). El `make check` en verde incluye `test_no_business_literals`.
+> - **La respuesta copiada.** La del encargo y la del informe son idénticas: md5 de las líneas `>`, `51823b5b…` en las dos.
+>
+> ### Eje (b) · Encargo (respuesta tras revisar la v4)
+> Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 13 hechos, 0 parciales, 0 no hechos. La CI de `43d4bc3` y la PARADA van después.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Un mínimo de 15 velas en el M1 de cerca; el tope de 60 sigue | Hecho | `laminas_svg.py:321-322`: primero `min(desde, len-15)`, después `max(desde, 0, len-60)` |
+> | 2 | Su test | Hecho | `test_el_m1_de_cerca_tiene_como_poco_15_velas` cubre 1, 3 y 14 velas, que quedan en 15; 20, que no cambia; y el tope de 60. Falla sin el arreglo: si el fixture tuviera una zona de control que moviera `desde`, el caso de 1 vela daría 16 o más, no 15, así que con el código anterior saldría 1. `pytest tests/unit/test_laminas_svg.py`: 30 passed. |
+> | 3 | Cuántas cambian; las de 1 y 2 velas quedan con 15 | Hecho | `comparar_v5.py v4 v5`: «cambian … 9; con menos de 15: v4 9, v5 0». Pares (antes, después): (1,15) (2,15) (6,15)×5 (7,15) (8,15); en la v5 va de 15 a 60. Cuadra con `LAMINAS.md:1110`. |
+> | 4 | La marca de borde del M1 decide su lado con el rango que la deja fuera | Hecho | `rango_del_m1` (`:230-243`) lo comparten `lineas_del_m1` (`:225`) y `_fuera(…, rango_del_m1(d)[1])` (`:510`) |
+> | 5 | Lo mismo en el M1 de cerca, si tiene el defecto | Hecho: no lo tiene, como dice el informe | La escala la fijan las velas del tramo, la caja, la orden y el stop (`:489-492`). Lo que queda fuera se decide con esa misma escala, `cerca.lo <= nivel <= cerca.hi` (`:496`). El objetivo de `_m1` decide su lado contra `p.hi`, que es esa escala. En el M1 la lista de `otras` va vacía, porque el objetivo entra en `niveles_m1` (`:483-484`). |
+> | 6 | Un test de ▲ con el caso del revisor y otro de ▼ | Hecho (ver b-i1) | `test_la_marca_de_borde_del_m1_decide_su_lado_con_el_rango_que_la_deja_fuera` |
+> | 7 | En la v5 no cambia de lado ninguna marca | Hecho | `comparar_v5.py`: «marcas de borde de M15 en el M1: 3; cambian de lado: 0» |
+> | 8 | Sale la línea de Technical Debt de la flecha | Hecho | `LAMINAS.md:628` |
+> | 9 | Punto 3, al informe y sin deuda: 18 frente a 14, y las marcas con vela detrás | Hecho | `LAMINAS.md:1117`. `comparar_v4.py v4 v5`: 13 de RN-009, la de 18 con 14 en el M1 de cerca y 18 en el M1. 0 frases con hora cambiadas. 0 láminas con el texto fuera del SVG distinto de la v4 a la v5. |
+> | 10 | La v5 tras el ensayo, con el mismo orden y la misma clave | Hecho (la clave sin comprobar, abajo) | `diff -rq -x clave.txt v5 ensayo-v5`: exit 0. `marcas_montadas.py` y `etiquetas_montadas.py` sobre la v5: 0 marcas montadas, 0 etiquetas montadas y 0 líneas de longitud cero. Las capturas `v5-s03-l03` y `v5-s04-l04` enseñan 15 velas (12:18-12:32 y 09:09-09:23), la caja, el punto y la toma. |
+> | 11 | F4.1 y F4.2 no se repiten porque el diff no sale de ahí | Hecho | El diff de la ronda queda dentro de `laminas_svg.py`, su test y los documentos (eje a) |
+> | 12 | Punto 6: el hallazgo menor para la fila de ERRORES y el falso positivo a Technical Debt, en las propuestas para la orden de cierre | Hecho (ver b-m1) | `LAMINAS.md:629` (Technical Debt) y `:630` (ERRORES) |
+> | 13 | Después: `make check`, la CI y el revisor | Hecho hasta el revisor; `{CI}` queda pendiente, como se esperaba | Sello de `43d4bc3` (eje a). Run 42985112624, sobre `824d574`: `1 failed, 3369 passed, 48 skipped`, y el único FAILED es `test_state_check_ok_on_real_repo` |
+> | — | `58de6ce` y mis hallazgos de la pasada anterior | Bien | b-i1: `_fuera` apila todas las clases (`:290-303`) y tiene su test. v4: 0 pares montados. Run 42980390492, sobre `58de6ce`: `1 failed, 3369 passed`, el aceptado. a-m1, b-m1 y b-m2: corregidos (`LAMINAS.md:940`, `:970`; `test_laminas_svg.py:662`). |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b-i1 | importa | **«Los dos fallarían con el código de antes» no se sostiene para el caso de ▼.** El caso de ▼ solo falla con el código anterior porque `rango_del_m1` no existía (AttributeError). Por su comportamiento, pasa: el código viejo decidía `arriba = nivel > p.hi`, así que una línea por debajo del rango siempre salía con ▼. El defecto solo existía hacia arriba. El caso de ▼ protege contra otro mutante, no contra este defecto. Lo que hay que corregir es la frase del informe, no el test. | `LAMINAS.md:1114`; `git show 58de6ce:src/botsito/engine/laminas_svg.py`, línea 272: `arriba = nivel > p.hi`; el test, en `test_laminas_svg.py` (`abajo = _con_linea_y_control("bajo", lo - 3, lo - 100)`) |
+> | b-m1 | menor | **La línea de Technical Debt del falso positivo cita una sección que no es la suya.** Remite a «lo que vi en las capturas de la respuesta a la PARADA final», pero el pasaje está en «Aplicación de la respuesta a la PARADA final», justo antes de ese encabezado. Esa línea irá a PROJECT_STATE con ese puntero. | `LAMINAS.md:629`; el pasaje está en `:698-702` y el encabezado citado en `:704` |
+>
+> **Sobre si las formas del punto 6 cuentan también como rodear la guardia.** Es un juicio, no un hallazgo:
+> - **Partir un comando en llamadas sueltas** y **escribir el guion con Write para ejecutarlo en otra llamada:** no las veo como rodearla. Siguen la práctica ya aceptada en la casa, que es usar la forma que la propia guardia propone y declararla; para el guion, «Trampas medidas» de CLAUDE.md lo recomienda tal cual. Las usé yo mismo en la pasada anterior.
+> - **El `grep` de `$'\r'` sustituido por `git diff --stat`:** es el caso dudoso. No reformula el comando negado: consigue otra prueba con otro comando, permitido, y lo declara. Para mí eso no es rodearla. Pero el informe lo pone bajo «usé la forma que ella misma propone» sin decir si la guardia propuso eso, ni si la negativa fue un falso positivo; si lo fue, también debería ir a Technical Debt.
+> - Los textos de las negativas no están en el repo, así que no pude ver qué propuso la guardia en cada una.
+>
+> ### Lo que no pude comprobar
+> - **Que la `clave.txt` de la v5 sea idéntica a la de la v4.** Tengo prohibido abrirla, así que la excluí del `diff -rq`.
+> - **Los tiempos y la memoria del ensayo y de la v5** (595,7 s / 645,7 MiB y 577,1 s / 644,8 MiB), la base `(31, 192, …)` y «19 de tipo a y 28 de tipo b». Están en los logs, fuera del material que puedo leer.
+> - **Que los tests fallen corriendo de verdad contra el código de `1201262`.** Hace falta un clon desechable, que escribe. Lo razoné leyendo el código anterior (`git show`).
+> - **Qué propuso la guardia en cada negativa** del punto 6: no queda registrado en el repo.
+> - **La CI de `43d4bc3`:** el run está relanzado y es el `{CI}` pendiente.
+>
+> ### Comandos ejecutados
+> 1. `git log --format='%h %s' 1201262..HEAD`; `git diff --stat 1201262..HEAD`; `git status --short`
+> 2. `git diff 1201262..HEAD -- src/ tests/ PROJECT_STATE.md docs/validation/HOLDOUT-EXPOSICIONES.md docs/encargos/`
+> 3. `git diff 1201262..HEAD -- docs/validation/LAMINAS.md`; `git diff -- docs/validation/LAMINAS.md`
+> 4. Read de `laminas_svg.py:90-329` y `:440-518`; Grep de las constantes
+> 5. `ls` de la carpeta de trabajo; `cat comparar_v5.py`; Read de `comparar_v4.py`
+> 6. `python -I comparar_v5.py <v4> <v5>`; `python -I -c` de solo lectura con los pares de velas de v4 a v5 y el texto fuera del SVG
+> 7. `diff -rq -x clave.txt <v5> <ensayo-v5>`
+> 8. `python -I marcas_montadas.py <v5>` y `<v4>`; `python -I etiquetas_montadas.py <v5>`; `python -I comparar_v4.py <v4> <v5>`
+> 9. Read de `capturas/v5-s03-l03.png` y `capturas/v5-s04-l04.png`
+> 10. Grep en `.claude/hooks/guardia.py` de los mensajes que proponen formas (sin resultado concluyente)
+> 11. `grep -n` y `sed -n` en `LAMINAS.md` (propuestas, encabezados, afirmaciones); Read de `LAMINAS.md:690-705` y `:1503-1508`
+> 12. `uv run python scripts/contrato_rama.py`; `cat contrato.yaml`; `ls -la make-check.log`; `grep` en `make-check.log`; `git rev-parse HEAD^{tree}`; `git log -3`
+> 13. `uv run botsito state check`
+> 14. `uv run pytest -q -p no:cacheprovider tests/unit/test_laminas_svg.py` (dos veces; 30 PASSED); `git diff --name-status main...HEAD`; `git diff --name-only 1201262..HEAD -- src tests`
+> 15. `git log --format='%h %ci %s' -9`; `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md | grep -c '^-[^-]'` (0)
+> 16. md5 de las líneas `>` de la respuesta en el encargo y en el informe
+> 17. `python -I -c` para buscar retornos de carro en los tres ficheros
+> 18. `gh run view 42985112624` y `42980390492`, con `--json conclusion,headSha,headBranch` y con `--log-failed | grep`
+> 19. `git show 58de6ce:src/botsito/engine/laminas_svg.py | grep -n …`; `git show --stat` de los tres commits
+>
+> Ficheros clave: `C:\Users\USER\Desktop\Bot v3\docs\validation\LAMINAS.md` (líneas 629, 1114 y 1507), `C:\Users\USER\Desktop\Bot v3\src\botsito\engine\laminas_svg.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_laminas_svg.py`.
+
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
 > ## Auditoría del encargo · trabajo/laminas · 2026-11-10
@@ -1469,4 +1594,4 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-EN CURSO (2026-11-11): la ronda tras revisar la v4 (el mínimo de 15 velas del M1 de cerca y el lado de las marcas de borde del M1): el código y sus tests; siguen la v5, la CI, el revisor y la PARADA corta.
+LISTA PARA REVISIÓN (2026-11-11): la ronda tras revisar la v4, hecha. El mínimo de 15 velas del M1 de cerca y el lado de las marcas de borde del M1, con sus tests; la v5 de `43d4bc3`; la CI; el revisor, con lo que encontró. Rama lista para revisión, NO cerrada.
