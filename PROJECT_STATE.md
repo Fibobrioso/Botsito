@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/laminas
+main
 
 ## Current Feature
-trabajo/laminas, EN CURSO: F (1), las láminas del bot (R4.5) y la enmienda de RUMBO §0, §4 y §5. Encargo docs/encargos/trabajo-laminas.md; informe docs/validation/LAMINAS.md.
+Ninguna rama abierta. trabajo/laminas cerrada en main el 2026-11-11 (stable/F38w-laminas): motor laminas, las láminas del bot de las sesiones pedidas, y la enmienda de RUMBO §0, §4 y §5; R4.5 hecha.
 
 ## Stable Main State
-76bbe09 · merge de `trabajo/trazas-ablacion` (tag `stable/F38v-trazas-ablacion`), sobre `stable/F38u-video-julio` (129ea33). Informe docs/validation/TRAZAS-ABLACION.md; el registro del cierre, al final de HISTORIA.
+b9904c5 · merge de `trabajo/laminas` (tag `stable/F38w-laminas`), sobre `stable/F38v-trazas-ablacion` (76bbe09). Informe docs/validation/LAMINAS.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-76bbe09 · merge: trabajo/trazas-ablacion, motor decisiones (bitácora y ablación por regla) y las clases de 04-13, 07-02, 07-03 y 07-14 · tag stable/F38v-trazas-ablacion
+b9904c5 · merge: trabajo/laminas, motor laminas (las laminas del bot de las sesiones pedidas, con el M1 de cerca) y la enmienda de RUMBO §0, §4 y §5 · tag stable/F38w-laminas
 
 ## Tests Currently Passing
 1998 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
