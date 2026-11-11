@@ -1,0 +1,16 @@
+id: ev-v14-004404-ab0281c6
+video_id: v14
+t0: 0:44:04
+t1: 0:44:11
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: aquí hay una entrada que no le voy a tomar para no afectar al mostreo
+afirmacion: en el backtest el trader ve una entrada y no la toma para no afectar al muestreo
+tema: backtest.entradas_sin_tomar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-11 (trabajo/preparacion-sesion-7) · version filtrada leida
+  por la sesion, sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'F7 #10 de VIDEO-JULIO.md §7 («mostreo» es el ASR de «muestreo»). docs/validation/PREPARACION-SESION-7.md'
+transcripcion: tr-v14-large-v3-int8-float16-1d289df6

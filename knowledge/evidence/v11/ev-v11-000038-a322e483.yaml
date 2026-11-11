@@ -1,0 +1,19 @@
+id: ev-v11-000038-a322e483
+video_id: v11
+t0: 0:00:38
+t1: 0:00:53
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: A ver, este es nuestro rango Por lo general, como no ha sido mitigado Ni por debajo por
+  una vela bajista Ni por arriba por una vela alcista Para actualizar el rango Entonces nosotros nos enfocamos
+  en buscar Traits alcistas
+afirmacion: el trader busca compras porque su rango de H4 no ha sido mitigado ni por debajo por una vela
+  bajista ni por arriba por una vela alcista que actualice el rango
+tema: sesgo.h4.rango
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-11 (trabajo/preparacion-sesion-7) · version filtrada leida
+  por la sesion, sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'F7 #1 de VIDEO-JULIO.md §7 («Traits» es el ASR de «trades»). docs/validation/PREPARACION-SESION-7.md'
+transcripcion: tr-v11-large-v3-int8-float16-d5da10be

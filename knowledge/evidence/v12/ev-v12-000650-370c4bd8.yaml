@@ -1,0 +1,18 @@
+id: ev-v12-000650-370c4bd8
+video_id: v12
+t0: 0:06:50
+t1: 0:07:07
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: es que es muy pero muy pero muy importante y es lo principal yo diría que un 70% o sea que
+  uno defina bien el rango el el bias
+afirmacion: para el trader, definir bien el rango, el sesgo, es lo principal del metodo; lo cifra en un
+  70 %
+tema: sesgo.h4.importancia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-11 (trabajo/preparacion-sesion-7) · version filtrada leida
+  por la sesion, sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: 'F7 #3 de VIDEO-JULIO.md §7. docs/validation/PREPARACION-SESION-7.md'
+transcripcion: tr-v12-large-v3-int8-float16-cb502503

@@ -663,9 +663,8 @@ def test_la_hoja_06_tiene_los_23_codigos_con_su_texto(m: ModuleType) -> None:
     assert m.CODIGOS_DE_SESION_TEXTO["06"] == titulos
 
 
-def test_la_sesion_en_curso_es_la_06(m: ModuleType) -> None:
-    """La hoja por defecto de `--sesion`: la de la sesion 6 (2026-10-28, antes de grabar)."""
-    assert m.SESION_EN_CURSO == "06"
+def test_la_hoja_06_sigue_en_hojas(m: ModuleType) -> None:
+    """La 06 no cambia: sigue en HOJAS con su orden (era la sesion en curso hasta el 2026-11-11)."""
     assert m.HOJAS["06"] is m.ORDEN_SESION_06
 
 
@@ -685,3 +684,81 @@ def test_la_filtrada_de_la_06_agrupa_con_su_hoja(m: ModuleType) -> None:
     lineas, _ = m.lineas_filtradas(_segs(m, textos), m.codigos_validos("06"))
     texto = m.version_filtrada(lineas, "prueba", m.HOJAS["06"])
     assert texto.index("## S-7\n") < texto.index("## S-13") < texto.index("## S-23")
+
+
+# ---------------------------------- las hojas 07 y 08 (la sesion 7 en dos dias, 7a y 7b; ADR-0093)
+
+PREGUNTAS_7A = RAIZ / "docs" / "sesion-7" / "PREGUNTAS-7A.md"
+PREGUNTAS_7B = RAIZ / "docs" / "sesion-7" / "PREGUNTAS-7B.md"
+
+
+def _titulos_de(ruta: Path) -> dict[str, str]:
+    """El titulo de cada pregunta de un documento de la sesion 7 (la negrita «**S-n. ...**») con la
+    primera letra en minuscula, como en la 06."""
+    texto = ruta.read_text(encoding="utf-8")
+    titulos = {f"S-{n}": " ".join(t.split()) for n, t in _RE_TITULO.findall(texto)}
+    return {codigo: t[0].lower() + t[1:] for codigo, t in titulos.items()}
+
+
+def _problemas_de_hoja(orden: tuple[str, ...], textos: dict[str, str], ruta: Path) -> list[str]:
+    """Lo que no casa entre una hoja del guion y su documento: un codigo de mas o de menos, otro
+    orden o otro texto."""
+    titulos = _titulos_de(ruta)
+    salida = [f"{c}: no esta en {ruta.name}" for c in orden if c not in titulos]
+    salida += [f"{c}: esta en {ruta.name} y no en la hoja" for c in titulos if c not in orden]
+    if not salida and list(titulos) != list(orden):
+        salida.append("otro orden")
+    salida += [f"{c}: otro texto" for c in orden if c in titulos and textos.get(c) != titulos[c]]
+    return salida
+
+
+def test_la_sesion_en_curso_es_la_07(m: ModuleType) -> None:
+    """La hoja por defecto de `--sesion`: la de la 7a (sesion-07), desde el 2026-11-11, antes de
+    grabar. Sustituye A PROPOSITO a test_la_sesion_en_curso_es_la_06 (encargo de
+    `trabajo/preparacion-sesion-7`, D2: a "08" la pasa la rama de activacion de la 7a)."""
+    assert m.SESION_EN_CURSO == "07"
+    assert m.HOJAS["07"] is m.ORDEN_SESION_07
+    assert m.HOJAS["08"] is m.ORDEN_SESION_08
+
+
+def test_la_hoja_07_es_la_de_preguntas_7a(m: ModuleType) -> None:
+    """S-1 a S-6, en el orden del documento y con sus titulos."""
+    assert list(m.ORDEN_SESION_07) == [f"S-{n}" for n in range(1, 7)]
+    assert (
+        _problemas_de_hoja(m.ORDEN_SESION_07, m.CODIGOS_DE_SESION_TEXTO["07"], PREGUNTAS_7A) == []
+    )
+    assert m.CODIGOS_DE_SESION_TEXTO["07"] == _titulos_de(PREGUNTAS_7A)
+
+
+def test_la_hoja_08_es_la_de_preguntas_7b(m: ModuleType) -> None:
+    """S-1 a S-7 (las seis tecnicas y la de material del final), con sus titulos."""
+    assert list(m.ORDEN_SESION_08) == [f"S-{n}" for n in range(1, 8)]
+    assert (
+        _problemas_de_hoja(m.ORDEN_SESION_08, m.CODIGOS_DE_SESION_TEXTO["08"], PREGUNTAS_7B) == []
+    )
+    assert m.CODIGOS_DE_SESION_TEXTO["08"] == _titulos_de(PREGUNTAS_7B)
+
+
+def test_un_codigo_de_la_hoja_que_no_esta_en_el_documento_rompe(m: ModuleType) -> None:
+    """Rompe a proposito: la hoja 07 con un S-7 de mas, que PREGUNTAS-7A.md no tiene."""
+    orden = (*m.ORDEN_SESION_07, "S-7")
+    textos = {**m.CODIGOS_DE_SESION_TEXTO["07"], "S-7": "una pregunta que no esta"}
+    assert _problemas_de_hoja(orden, textos, PREGUNTAS_7A) == ["S-7: no esta en PREGUNTAS-7A.md"]
+
+
+def test_la_06_no_cambia_con_la_07_y_la_08(m: ModuleType) -> None:
+    """Los codigos se cuentan por sesion: S-23 vale en la 06 y no en la 07 ni en la 08."""
+    v06, v07, v08 = m.codigos_validos("06"), m.codigos_validos("07"), m.codigos_validos("08")
+    assert "S-23" in v06
+    assert "S-23" not in v07 and "S-23" not in v08
+    assert "S-7" not in v07 and "S-7" in v08
+    assert m.codigo_en("pregunta ese seis", v07) == "S-6"
+    assert m.codigo_en("pregunta ese siete", v07) is None
+    assert m.codigo_en("pregunta ese siete", v08) == "S-7"
+
+
+def test_la_filtrada_de_la_07_agrupa_con_su_hoja(m: ModuleType) -> None:
+    textos = ["pregunta ese cinco", "a", "pregunta ese uno", "b"]
+    lineas, _ = m.lineas_filtradas(_segs(m, textos), m.codigos_validos("07"))
+    texto = m.version_filtrada(lineas, "prueba", m.HOJAS["07"])
+    assert texto.index("## S-1\n") < texto.index("## S-5")

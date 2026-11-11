@@ -138,6 +138,13 @@ ORDEN_SESION_06 = (
     "S-10", "S-11", "S-12", "S-13", "S-14", "S-15", "S-16", "S-17",
     "S-18", "S-19", "S-20", "S-21", "S-22", "S-23",
 )  # fmt: skip
+# La sesion 7 se graba en dos dias con dos ids (ADR-0093; encargo de
+# `trabajo/preparacion-sesion-7`, D2): la 7a es `<AAAA-MM-DD>-sesion-07` y la 7b
+# `<AAAA-MM-DD>-sesion-08`. La hoja 07 son las seis preguntas tecnicas de
+# docs/sesion-7/PREGUNTAS-7A.md; la 08, las seis de docs/sesion-7/PREGUNTAS-7B.md y la de material
+# del final (S-7). Los codigos son de cada id, NO de la 06. Entran antes de grabar.
+ORDEN_SESION_07 = ("S-1", "S-2", "S-3", "S-4", "S-5", "S-6")
+ORDEN_SESION_08 = ("S-1", "S-2", "S-3", "S-4", "S-5", "S-6", "S-7")
 # Los codigos de sesion con su texto, POR SESION: el mismo codigo vuelve con otro texto (S-1 era en
 # la 03 «como decide el sesgo del dia» y en la 04 es la pregunta 1 de PREGUNTAS.md), asi que un
 # diccionario comun se pisaria. Los de la 03 se definieron en la revision del consultor del
@@ -240,6 +247,24 @@ CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
         "S-22": "para que el máximo de la verde sea tu punto, ¿qué tiene que hacer la roja?",
         "S-23": "una toma de la mañana, y por la tarde el mismo sesgo",
     },
+    # los de la 07 y la 08, los titulos de docs/sesion-7/PREGUNTAS-7A.md y PREGUNTAS-7B.md, igual
+    "07": {
+        "S-1": "qué vela es tu rango de H4, y cuándo lo das por actualizado",
+        "S-2": "cuándo pasas el stop a la entrada",
+        "S-3": "qué zonas cuentas como zonas de control de un esquema",
+        "S-4": "la mecha que pasa tu alto de M15, y la vela que lo toma",
+        "S-5": "en qué momento pones la orden respecto de la ruptura de tu punto",
+        "S-6": "las entradas que dejas sin tomar en el backtest",
+    },
+    "08": {
+        "S-1": "de qué sale tu stop",
+        "S-2": "para que el máximo de la verde sea tu punto, qué tiene que hacer la roja",
+        "S-3": "el precio ya está más allá del 0 cuando se forma la caja",
+        "S-4": "volver a entrar en el mismo punto: el «igual» y la caja",
+        "S-5": "la orden sin llenar cuando el precio toma otra liquidez de M15",
+        "S-6": "la liquidez tomada antes de las 7",
+        "S-7": "una tarde que no está en el vídeo",
+    },
 }
 # La hoja con la que se agrupa la version filtrada de cada sesion (`--sesion`).
 HOJAS: dict[str, tuple[str, ...]] = {
@@ -248,8 +273,12 @@ HOJAS: dict[str, tuple[str, ...]] = {
     "04": ORDEN_SESION_04,
     "05": ORDEN_SESION_05,
     "06": ORDEN_SESION_06,
+    "07": ORDEN_SESION_07,
+    "08": ORDEN_SESION_08,
 }
-SESION_EN_CURSO = "06"
+# La 07 hasta grabar la 7a; a "08" la pasa la rama de activacion de la 7a, antes de grabar la 7b
+# (encargo de `trabajo/preparacion-sesion-7`, D2).
+SESION_EN_CURSO = "07"
 
 
 # ------------------------------------------------------------------------------ cuarentena

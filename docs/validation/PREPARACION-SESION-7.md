@@ -535,6 +535,83 @@ con su `indice.html`, y `clave.txt` en la raíz. Ninguna sesión salió con erro
   tests/unit/test_pivotes_sesion_7.py -q`: 4 passed.
 - `PROJECT_STATE.md`, «Tests Currently Passing»: 1998 → 2002 (`state check`).
 
+## F3 · La evidencia (2026-11-11)
+
+Con `evidence new`, la vía medida en §0.5 (respuesta a la PARADA, punto 0), una llamada por ítem;
+cada cita, copiada de la transcripción filtrada (`corpus transcript show`) y localizada por la
+verificación de citas antes de escribir. Las notas solo llevan lo de su propia cita (punto 15): de
+dónde sale (F7 #n de VIDEO-JULIO.md §7), el ASR de una palabra de la cita si hace falta, y este
+informe.
+
+| F7 | Ítem | Vídeo, ventana | Transcripción | Tema · valor |
+|---|---|---|---|---|
+| #1 | `ev-v11-000038-a322e483` | v11 0:00:38-0:00:53 | activa (`tr-v11-…-d5da10be`) | `sesgo.h4.rango` |
+| #2 | `ev-v11-000550-b140027d` | v11 0:05:50-0:06:00 | activa | `sesgo.h4.rango` · `mecha` |
+| #3 | `ev-v12-000650-370c4bd8` | v12 0:06:50-0:07:07 | activa (`tr-v12-…-cb502503`) | `sesgo.h4.importancia` |
+| #6 | `ev-v12-000015-7fc04520` | v12 0:00:15-0:00:58 | activa | `entrada.breaker_m1_con_cuerpo` · `cuerpo` |
+| #10 | `ev-v14-004404-ab0281c6` | v14 0:44:04-0:44:11 | **activa** (`tr-v14-…-1d289df6`), punto 0 | `backtest.entradas_sin_tomar` |
+
+- `uv run botsito evidence contradictions`: `0 contradicciones abiertas`. #2 comparte tema y valor
+  con el ítem de v9 del rango, así que no abre ninguna; #6 tiene tema propio.
+- **La contradicción de F7 #6** (punto 15): la voz de v12 pide la ruptura del breaker en M1 con
+  cuerpo (`ev-v12-000015-7fc04520`) y la sesión 5 fijó que en M1 la mecha vale
+  (`ev-v16-000234-9a4fa375`, S-18, A-32 RESUELTA). TRAZAS-ABLACION la clasificó «contradicción con
+  lo fijado» (decisiones de su PARADA final, punto 0). Va aquí y en «Para Aleks» de S-5 de la 7a,
+  que la pregunta; no en las notas del ítem, y `_contradicciones.yaml` no la ve (temas distintos:
+  el punto ciego de los temas hermanos, Technical Debt).
+- **El trailer `Fuente:`**: el repo no lo pide para `knowledge/evidence/`
+  (`DIRECTORIOS_CON_FUENTE`, `comun/historial.py:33`: solo `knowledge/spec/` y `knowledge/cases/`);
+  el commit lo lleva igual, con los cinco ids, como las ramas de extracción.
+
+## F4 · Las preguntas (2026-11-11)
+
+`docs/sesion-7/PREGUNTAS-7A.md` y `docs/sesion-7/PREGUNTAS-7B.md`, en la forma de
+`docs/sesion-6/PREGUNTAS.md`, con el reparto, los días y las reservas de la respuesta a la PARADA
+(puntos 1 a 4):
+
+- **7a (sesion-07)**: S-1 el rango de H4, S-2 el break even (A-13), S-3 las zonas de control
+  (RN-009), S-4 A-35, S-5 la colocación (ADR-0064) y S-6 las entradas que deja sin tomar (F7 #10).
+  El bloque de días (§1, «Para Aleks»): 2026-07-07 11-15, 2026-07-02 11-15, 2026-07-03 07-11 y
+  2026-07-15 11-15, con 2026-04-13 07-11 y 2026-07-06 07-11 de reserva, qué pregunta sirve cada una
+  y los pasos de ADR-0093 §2. Sin la clave de las láminas.
+- **7b (sesion-08)**: S-1 de qué sale el stop (A-48), S-2 S-22, S-3 S-19, S-4 el «igual» y la caja
+  de la reentrada (ADR-0083 D1), S-5 A-53 y S-6 A-43; S-7, la tarde que no está en el vídeo, al
+  final y fuera de las seis. El bloque de días: 2026-01-13 07-11, 2026-04-15 11-15, 2026-01-07 07-11 y
+  2026-01-19 11-15, con 2026-01-21 07-11, 2026-01-22 11-15 y 2026-07-16 07-11 de reserva. El recuadro
+  de D4 arriba, y al final (§3) B-7 a B-10 con sus filas.
+- **Ninguna pregunta lleva días ni fechas.** Las de TRAZAS-ABLACION.md 5.5 nombraban días y horas
+  («El 3 de julio, entre las 08:02 y las 09:35…», «El 13 de abril a las 08:47…»): se reescribieron en
+  abstracto, con esquemas inventados (S-3 y S-5 de la 7a); los días van al bloque, y los dice Aleks.
+  La de material (S-7 de la 7b) no nombra el día: «Aleks te dice cuál»; el día va en su «Para
+  Aleks». Tampoco se nombra el mes en lo que va al PDF («tu backtest grabado en vídeo»).
+- **Lo que nos has dicho**, solo con ítems citables y su id, y cada cita copiada de su ítem; dos
+  citas largas llevan `[...]` (la de `ev-v16-000234-9a4fa375` en S-5 de la 7a y la de
+  `ev-v4-001909-54ac2edd` en S-3, que ya lo trae).
+- Lo ya decidido no se repregunta: en S-1 de la 7a, «con mecha o con cuerpo» (decidido; su ítem,
+  `ev-v11-000550-b140027d`, se creó igual como cita y no va a la hoja); en S-3, cuántas zonas
+  (A-20); en S-4, la vela sin cuerpo de M15 (S-4 de la sesión 6). B-10 dice que A-46 no se reabre.
+- Al escribir «Para Aleks» se midieron dos cosas que §0.3 daba de otra forma: `caja_bloque` = `r6`
+  está CONFIRMED, no DEFAULT_AMBIGUOUS (`parametros.yaml:748-749`); y en A-35 cada opción cae en una
+  de las tres de `liquidez_m15_mecha_que_vuelve` (`no_mueve`, `solo_la_contraria`, `cualquier_mecha`;
+  `:555`).
+
+## F5 · Las hojas 07 y 08 (2026-11-11)
+
+- `scripts/transcribir_sesion.py`: `ORDEN_SESION_07` (S-1 a S-6) y `ORDEN_SESION_08` (S-1 a S-7),
+  `CODIGOS_DE_SESION_TEXTO["07"]` y `["08"]` con los títulos de PREGUNTAS-7A.md y PREGUNTAS-7B.md
+  (primera letra en minúscula, como la 06), `HOJAS["07"]` y `["08"]`, y `SESION_EN_CURSO = "07"`.
+  La 06 no cambia.
+- `tests/unit/test_transcribir_sesion.py`: `test_la_sesion_en_curso_es_la_06` se sustituye A
+  PROPÓSITO por `test_la_hoja_06_sigue_en_hojas` y `test_la_sesion_en_curso_es_la_07` (con su
+  motivo en el docstring: D2); nuevos `test_la_hoja_07_es_la_de_preguntas_7a` y
+  `test_la_hoja_08_es_la_de_preguntas_7b` (leen los títulos de cada documento con el mismo
+  `_RE_TITULO` de la 05 y la 06), `test_la_06_no_cambia_con_la_07_y_la_08`,
+  `test_la_filtrada_de_la_07_agrupa_con_su_hoja`, y **el que rompe a propósito**,
+  `test_un_codigo_de_la_hoja_que_no_esta_en_el_documento_rompe` (la hoja 07 con un S-7 de más da
+  `S-7: no esta en PREGUNTAS-7A.md`). `uv run pytest tests/unit/test_transcribir_sesion.py -q`:
+  todo en verde; ruff, limpio tras `ruff format`.
+- «Tests Currently Passing»: 2002 → 2008 (`state check`).
+
 ## Estado
 
 EN CURSO: fase 0 respondida (arriba); F1 y F6 hechos; F2 a F5, el informe, la CI de `fix/` y el
