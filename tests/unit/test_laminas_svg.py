@@ -659,8 +659,8 @@ def test_el_punto_de_la_toma_no_se_dibuja_fuera_del_panel() -> None:
 
 def test_los_rotulos_y_las_marcas_de_borde_van_delante_de_las_velas() -> None:
     """Lo enseno la captura de la tercera v4: en el M1 de cerca las velas son anchas y tapaban los
-    rotulos de la caja y las marcas de borde. Van detras de todas las velas de su panel y con un
-    borde del color del fondo."""
+    rotulos de la caja y las marcas de borde. Se escriben en el SVG despues de todas las velas de
+    su panel (asi quedan delante) y con un borde del color del fondo."""
     import re as _re
 
     orden = laminas.OrdenFoto(
@@ -681,3 +681,20 @@ def test_los_rotulos_y_las_marcas_de_borde_van_delante_de_las_velas() -> None:
     assert delante and min(delante) > ultima_vela
     for e in _re.findall(r'<text class="(?:rotulo|objetivo-fuera|m15-fuera)[^>]*>', texto):
         assert laminas_svg.HALO in e
+
+
+def test_la_marca_del_objetivo_se_apila_con_las_de_m15() -> None:
+    """Lo encontro el revisor en la v4: la marca de borde del objetivo y la de una linea de M15
+    caian en el mismo sitio del M1 de cerca, porque solo se apilaban las de M15 entre si. Ahora se
+    apilan todas las del panel, sean de la clase que sean."""
+    import re as _re
+
+    p = _panel_m1()
+    abajo = [laminas.LineaDibujada("bajo", p.lo - 5, CORTE - 200, CORTE, False, False)]
+    objetivo = [("objetivo-fuera", p.lo - 10, p.x(CORTE - 200), "#000")]
+    marcas = laminas_svg._fuera(p, abajo, ESCALA, objetivo)
+    assert len(marcas) == 2
+    ys = {float(_re.search(r' y="([\d.]+)"', m).group(1)) for m in marcas}  # type: ignore[union-attr]
+    assert len(ys) == 2
+    assert any('class="objetivo-fuera"' in m for m in marcas)
+    assert any('class="m15-fuera bajo"' in m for m in marcas)

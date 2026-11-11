@@ -16,7 +16,7 @@ trabajo/laminas, EN CURSO: F (1), las láminas del bot (R4.5) y la enmienda de R
 76bbe09 · merge: trabajo/trazas-ablacion, motor decisiones (bitácora y ablación por regla) y las clases de 04-13, 07-02, 07-03 y 07-14 · tag stable/F38v-trazas-ablacion
 
 ## Tests Currently Passing
-1995 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+1996 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

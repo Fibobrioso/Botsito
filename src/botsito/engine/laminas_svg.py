@@ -73,6 +73,7 @@ MARCO_CERCA = "M1 de cerca"
 ANCHO_MARCA = 90  # dos marcas de borde a menos de esto en x, en el mismo borde, se apilan
 
 EtiquetaEje = tuple[str, int, str]  # una etiqueta del eje: su clase, su nivel y su color
+Marca = tuple[str, int, float, str]  # una marca de borde: su clase, su nivel, su x y su color
 # un borde del color del fondo alrededor de las letras de los rotulos y de las marcas de borde, que
 # se dibujan encima de las velas: asi se leen aunque caigan sobre una (capturas de la v4)
 HALO = f'stroke="{COLOR["fondo"]}" stroke-width="3" paint-order="stroke"'
@@ -252,17 +253,26 @@ def _marca(
     )
 
 
-def _fuera(p: _Panel, lineas: Sequence[LineaDibujada], escala: int) -> list[str]:
-    """Una marca de borde por cada linea de M15 que no cabe en el panel, del color de su lado. Dos
-    en el mismo borde y casi en la misma x se apilan, para que no se monten (captura de la v4)."""
+def _fuera(
+    p: _Panel, lineas: Sequence[LineaDibujada], escala: int, otras: Sequence[Marca] = ()
+) -> list[str]:
+    """Una marca de borde por cada linea de M15 que no cabe en el panel, del color de su lado, y las
+    `otras` del panel (la del objetivo, de `_m1`). Dos en el mismo borde y casi en la misma x se
+    apilan, sean de la clase que sean, para que no se monten (capturas y revisor de la v4)."""
+    marcas: list[Marca] = [
+        (
+            f"m15-fuera {ln.lado}", ln.nivel, p.x(ln.desde),
+            COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"],
+        )
+        for ln in lineas
+    ] + list(otras)  # fmt: skip
     partes: list[str] = []
     puestas: list[tuple[bool, float]] = []
-    for ln in sorted(lineas, key=lambda x: (x.desde, x.nivel)):
-        arriba, x = ln.nivel > p.hi, p.x(ln.desde)
+    for clase, nivel, x, color in sorted(marcas, key=lambda m: (m[2], m[1], m[0])):
+        arriba = nivel > p.hi
         fila = sum(1 for a, xp in puestas if a == arriba and abs(xp - x) < ANCHO_MARCA)
         puestas.append((arriba, x))
-        color = COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"]
-        partes.append(_marca(p, f"m15-fuera {ln.lado}", ln.nivel, x, color, escala, fila))
+        partes.append(_marca(p, clase, nivel, x, color, escala, fila))
     return partes
 
 
@@ -319,12 +329,14 @@ def _h4(p: _Panel, d: Dibujo) -> list[str]:
     return partes
 
 
-def _m1(p: _Panel, d: Dibujo) -> tuple[list[str], list[str]]:
+def _m1(p: _Panel, d: Dibujo) -> tuple[list[str], list[str], list[Marca]]:
     """Lo del M1 que va detras de las velas (la caja, sus niveles, el punto, las zonas de control y
-    las lineas de la orden) y lo que va delante, para que ninguna vela lo tape: los rotulos de la
-    caja y las marcas de borde de la orden (capturas de la v4)."""
+    las lineas de la orden), lo que va delante, para que ninguna vela lo tape (los rotulos de la
+    caja), y las marcas de borde de la orden, que dibuja `_fuera` junto a las de M15 para que se
+    apilen con ellas (capturas y revisor de la v4)."""
     partes: list[str] = []
     delante: list[str] = []
+    marcas: list[Marca] = []
     if d.caja is not None:
         z = d.caja
         color = COLOR["caja_compra"] if z.lado == "compra" else COLOR["caja_venta"]
@@ -381,8 +393,8 @@ def _m1(p: _Panel, d: Dibujo) -> tuple[list[str], list[str]]:
             if p.lo <= nivel <= p.hi:  # su precio en el eje lo pone `_etiquetas`
                 partes.append(_horizontal(p, clase, nivel, desde, d.corte, color, extra))
             else:  # en el M1 de cerca, el objetivo suele quedar fuera de su escala
-                delante.append(_marca(p, f"{clase}-fuera", nivel, p.x(desde), color, d.escala))
-    return partes, delante
+                marcas.append((f"{clase}-fuera", nivel, p.x(desde), color))
+    return partes, delante, marcas
 
 
 def _etiqueta(p: _Panel, clase: str, nivel: int, color: str, escala: int, y: float) -> str:
@@ -463,14 +475,14 @@ def svg(d: Dibujo) -> str:
     partes += _velas(m15, d.huso, d.escala) + _lineas_m15(m15, d, d.lineas)
     # en el M1 y en el M1 de cerca: detras, las velas, las lineas; y delante, lo que no se tapa
     etiquetas, ocupadas = _etiquetas(m1, _pedidas(m1, d), d.escala)
-    detras, delante = _m1(m1, d)
+    detras, delante, marcas = _m1(m1, d)
     partes += detras + _velas(m1, d.huso, d.escala, ocupadas) + _lineas_m15(m1, d, en_m1)
-    partes += delante + _fuera(m1, fuera_m1, d.escala) + etiquetas
+    partes += delante + _fuera(m1, fuera_m1, d.escala, marcas) + etiquetas
     tomadas = [ln for ln in en_cerca if ln.tomada]
     etiquetas, ocupadas = _etiquetas(cerca, _pedidas(cerca, d, tomadas), d.escala)
-    detras, delante = _m1(cerca, d)
+    detras, delante, marcas = _m1(cerca, d)
     partes += detras + _velas(cerca, d.huso, d.escala, ocupadas) + _lineas_m15(cerca, d, en_cerca)
-    partes += delante + _fuera(cerca, fuera_cerca, d.escala) + etiquetas
+    partes += delante + _fuera(cerca, fuera_cerca, d.escala, marcas) + etiquetas
     partes.append("</svg>")
     return "\n".join(partes)
 

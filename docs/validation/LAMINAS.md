@@ -928,6 +928,59 @@ Dada por Aleks (consultor) el 2026-11-10, tal cual (también al final de `docs/e
 >
 > Después: make check, push a fix/laminas con su CI, el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta: lo que cambió, los recuentos del punto 5, lo que viste en las capturas, la ruta de la v4 y «Rama lista para revisión, NO cerrada.». Si la v4 está bien, con ella doy la orden de cierre.
 
+## Aplicación de la respuesta tras revisar la v3, punto por punto (2026-11-10 y 2026-11-11)
+
+El código solo cambia en `src/botsito/engine/laminas.py` (frases) y `src/botsito/engine/laminas_svg.py` (dibujo), con sus tests: commits `1a9c922`, `2178a65`, `1d40323` y `1201262`. Por eso F4.1 y F4.2 no se repiten (punto 4). Fuera de eso cambian el informe, la respuesta copiada en el encargo, las filas de HOLDOUT-EXPOSICIONES y el recuento de tests de PROJECT_STATE.
+
+1. **El panel «M1 de cerca»**, debajo del M1 y encima de la sustentación (`1a9c922`).
+   - **El tramo (`tramo_de_cerca`):** va de la M1 de la toma (o de 15 velas antes de la primera zona de control que se dibuja, si es anterior) al corte, con un máximo de 60 velas. Si es más largo, empieza 60 velas antes del corte; sin toma, son las 30 últimas.
+   - **La escala:** las velas del tramo, la caja, la orden y el stop. Lo que queda fuera (el objetivo, las líneas de M15 lejanas) va como marca de borde, con su precio y una flecha (`objetivo-fuera`, `m15-fuera`).
+   - **Lleva lo mismo que el M1:** la caja con sus rótulos (con la regla de la ronda anterior), el punto, la vela de la toma, las líneas de M15 que llegan al tramo, las zonas de control y la orden con sus etiquetas. Es un subconjunto de las velas y de los elementos del M1, que ya pasaron la puerta.
+   - **Las constantes de dibujo:** `VELAS_CERCA_MAX = 60`, `VELAS_CERCA_SIN_TOMA = 30` y `VELAS_ANTES_DEL_CONTROL = 15`.
+   - **Los tests:** `test_el_tramo_del_m1_de_cerca` (el tramo, el de la zona de control, el tope de 60 y sin toma) y `test_la_escala_del_m1_de_cerca_y_lo_que_queda_fuera` (la escala, el objetivo como marca y nada a la derecha del corte). El test de las marcas de `test_laminas.py` recorre ahora los cuatro paneles.
+   - **Lo que enseñaron las capturas, en tres vueltas.** Cada una se arregló con su test, y con su ensayo de nuevo en un clon. La v4 de cada vuelta se apartó o se cortó antes de escribir la buena.
+
+     | Vuelta | Lo que se vio | El arreglo | Su test |
+     |---|---|---|---|
+     | Capturas de la primera v4 (`1a9c922`), escrita y después apartada a la carpeta de trabajo de la sesión | en el M1 de cerca la línea tomada no llevaba su precio, y la respuesta pide verla con él junto al 0; dos marcas de borde en el mismo sitio se montaban | `2178a65`: la línea tomada lleva su etiqueta en el eje del M1 de cerca; las marcas de borde se apilan | `test_la_linea_tomada_lleva_su_precio_en_el_m1_de_cerca_y_las_marcas_no_se_montan` |
+     | Capturas del ensayo de `2178a65` (su v4 se cortó tras cargar los datos, sin escribir nada) | la lámina de RN-009 «3, y admite 1» tenía dos etiquetas una encima de otra, y una era de una línea que acabó antes del tramo. Medido en las 47 láminas con `etiquetas_montadas.py`, de la carpeta de trabajo, que solo lee los HTML: 9 pares de etiquetas montadas en el M1 de cerca, en 6 láminas, todos con la etiqueta que trajo `2178a65`; 10 líneas tomadas de longitud cero en el M1 de cerca; y 7 pares en el M1 (orden, stop y objetivo juntos, ya en la v3) | `1d40323`: las etiquetas del eje de cada panel se colocan juntas sin montarse, cada una con su precio (también las del M1); en el M1 de cerca solo entran las líneas que llegan al tramo. En los ensayos de `1d40323` y `1201262`: 0 pares montados en los dos paneles y 0 líneas de longitud cero | `test_las_etiquetas_del_eje_no_se_montan_y_cada_una_lleva_su_precio`, `test_en_el_m1_de_cerca_no_entra_la_linea_que_acabo_antes_del_tramo` |
+     | Capturas del ensayo de `1d40323` (su v4 se cortó igual) | el punto negro de la toma, fuera del panel junto a su título, cuando la línea tomada queda un punto por encima de la escala; las velas anchas del M1 de cerca tapaban los rótulos de la caja y las marcas de borde | `1201262`: el punto no se dibuja fuera de la escala; rótulos y marcas de borde van delante de las velas, con un borde del color del fondo (`HALO`) | `test_el_punto_de_la_toma_no_se_dibuja_fuera_del_panel`, `test_los_rotulos_y_las_marcas_de_borde_van_delante_de_las_velas` |
+
+2. **Las horas, con un solo convenio:** toda hora que nombra una vela es la de su apertura, como FX Replay. Cambian dos frases de la tabla:
+   - **la de la toma:** «La vela de M1 de las {HH:MM} cerró con {cuerpo / mecha} por {debajo del bajo / encima del alto} de M15 en {precio}.»;
+   - **la de la toma con la línea de antes de la ventana:** «La vela de M1 de las {HH:MM} tomó la liquidez de M15: la línea que toma viene de antes de la ventana.». Antes decía «Liquidez de M15 tomada a las {HH:MM}: …», con la hora del cierre. Reescribirla con la vela delante es mío, para que la hora nombre a la vela.
+   - **Ya cumplían el convenio y no cambian:** la del punto («de la vela de las {HH:MM}», su apertura) y la cabecera, que nombra el corte y la vela cada uno por lo suyo. No hay más frases con hora en la tabla.
+   - **El test:** `test_toda_hora_que_nombra_una_vela_es_la_de_su_apertura`.
+3. **Las saltadas:** «Antes de esa vela, el bot se saltó {n} velas H4…», y en singular «se saltó una vela H4…».
+4. **La v4:** en `C:\Users\USER\Desktop\laminas-sesion-7-v4`, de `1201262`, tras el ensayo en el clon (`git worktree add --detach`), con el mismo orden barajado.
+   - La orden, tal cual salvo la lista: `uv run botsito motor laminas --sesiones <las diez sesiones, en el orden de clave.txt> --salida C:\Users\USER\Desktop\laminas-sesion-7-v4`.
+   - Su `clave.txt` es idéntica a la de la v3 (`diff`, 0 bytes; no se abrió). `diff -r` de la v4 contra su ensayo: 0 bytes.
+   - Base con y sin el recolector, `(31, 192, 24, 1150, 0, 32, 0)`.
+   - Ensayo: 480,2 s y 646,4 MiB. La v4: 484,5 s y 644,0 MiB.
+   - 47 láminas, 19 de tipo a y 28 de tipo b, como en la v3.
+5. **Los recuentos, de la v3 a la v4, sin recuentos por carpeta.** Las 47 láminas se emparejan por su cabecera y sus velas de H4. Lo mide `comparar_v4.py`, de la carpeta de trabajo, que solo lee los HTML. Las cifras son las mismas en los tres ensayos de esta ronda: los arreglos del punto 1 son de dibujo y no cambian ni frases ni zonas.
+   - **Llevan el panel nuevo las 47.** Ninguna se queda sin tramo.
+   - **Cambian de hora 32 frases,** todas de la toma; la de la línea de antes de la ventana no sale en ninguna de las 47. Cambian de redacción 4 frases de las saltadas.
+   - **Las zonas de control, en las 13 láminas de RN-009:** en 12, el M1 de cerca enseña tantas como dice la frase (3, 3, 3, 4, 5, 6, 6, 7, 8, 9, 11 y 11). En la que dice 18, el M1 de cerca enseña 14: las otras 4 quedan antes de las 60 velas del tope. En el M1 se ven las 18.
+6. **Las carpetas v1, v2 y v3 no se tocan.**
+
+**Lo que vi en las capturas de la v4.** Son 16: las de la ronda anterior más las dos del punto 1. Las tomé con Chrome en modo headless sobre el ensayo de `1201262`, fuera del repo; con 0 bytes de `diff -r`, son los mismos HTML que la v4.
+- **07-03 a las 08:02:** en el M1 de cerca, la línea tomada de 1.14500 (etiqueta violeta) y el 0 en 1.14496 (etiqueta azul) se ven separados, cada uno con su precio. El tramo empieza en la vela de la toma, la de las 07:56, como dice la frase.
+- **La de RN-009 «3, y admite 1»:** las tres zonas de control se ven una a una en el M1 de cerca (las de las 08:39, 08:44 y 08:46). La línea tomada lleva una sola etiqueta, la de 1.16862, que es la de la frase.
+- **La de RN-009 que dice 18:** el M1 de cerca enseña 14, por el tope de 60 velas.
+- **Lo que ya no pasa:** etiquetas montadas, el punto de la toma fuera del panel, y rótulos o marcas tapados.
+- **Lo que no queda limpio:**
+  - **Las marcas de borde** caen dentro del dibujo, donde llegan las velas que fijan la escala, y en varias de las 16 capturas (al menos 5, sobre todo en el borde izquierdo) tienen una vela o una línea detrás. Con el borde del color del fondo se leen, pero no quedan limpias. Sacarlas al margen de arriba choca con el título del panel; no lo toco sin tu respuesta.
+  - **Una lámina de tipo a tiene un tramo de 2 velas:** la toma es de la vela anterior a la que coloca. El panel cumple la regla, pero enseña dos velas muy anchas. Si quieres un mínimo de velas, es una línea más en `tramo_de_cerca`.
+
+**La CI de esta ronda**, por `fix/laminas`. En todas, el único fallo es el aceptado (`tests/unit/test_cli.py::test_state_check_ok_on_real_repo`: PROJECT_STATE declara `trabajo/laminas` y la rama es `fix/`):
+- **Run 42961299280**, sobre `1a9c922`: `1 failed, 3363 passed, 48 skipped`.
+- **Run 42966334841**, sobre `2178a65`: `1 failed, 3364 passed, 48 skipped`.
+- **Run 42970555589**, sobre `1d40323`: `1 failed, 3366 passed, 48 skipped`.
+- **Run 42974511672**, sobre `1201262`: `1 failed, 3368 passed, 48 skipped`.
+
+{REVISOR5}
+
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
 > ## Auditoría del encargo · trabajo/laminas · 2026-11-10
@@ -1296,4 +1349,4 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-EN CURSO (2026-11-10): la ronda tras revisar la v3 (el M1 de cerca, el convenio de las horas, la frase de las saltadas): el código y sus tests; siguen la v4, sus capturas, la CI, el revisor de la ronda y la PARADA final corta.
+EN CURSO (2026-11-11): la ronda tras revisar la v3, hecha (el M1 de cerca, el convenio de las horas, la frase de las saltadas, la v4 de `1201262`, sus capturas y la CI); sigue el revisor de la ronda.
