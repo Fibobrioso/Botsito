@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/preparacion-sesion-7
 
 ## Current Feature
-Ninguna rama abierta. trabajo/laminas cerrada en main el 2026-11-11 (stable/F38w-laminas): motor laminas, las láminas del bot de las sesiones pedidas, y la enmienda de RUMBO §0, §4 y §5; R4.5 hecha.
+EN CURSO: trabajo/preparacion-sesion-7, F (2), R4.3: la preparación de la sesión 7 en 7a (sesion-07) y 7b (sesion-08), con el ADR del método, el pivote pre-registrado, las preguntas, los días y las láminas de la 7a. Encargo docs/encargos/trabajo-preparacion-sesion-7.md; informe docs/validation/PREPARACION-SESION-7.md.
 
 ## Stable Main State
 b9904c5 · merge de `trabajo/laminas` (tag `stable/F38w-laminas`), sobre `stable/F38v-trazas-ablacion` (76bbe09). Informe docs/validation/LAMINAS.md; el registro del cierre, al final de HISTORIA.
@@ -161,8 +161,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 65 (2026-11-10).
+— ninguna desde el Archivo 66 (2026-11-11).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 65 (2026-11-10).
+— ninguna desde el Archivo 66 (2026-11-11).
