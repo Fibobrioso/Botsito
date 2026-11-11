@@ -1226,6 +1226,64 @@ Como no cambia el código, la v5 no se regenera.
 >
 > Ficheros clave: `C:\Users\USER\Desktop\Bot v3\docs\validation\LAMINAS.md` (líneas 629, 1114 y 1507), `C:\Users\USER\Desktop\Bot v3\src\botsito\engine\laminas_svg.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_laminas_svg.py`.
 
+## Orden de cierre (2026-11-11)
+
+Dada por Aleks el 2026-11-11, con la nota del consultor que la precede, tal cual (los dos textos llegaron juntos):
+
+> Antes de preparar el cierre (2026-11-11, consultor): la ronda queda aprobada, y la v5 es la buena. Pero la CI de Linux no ha corrido make check sobre el código de esta ronda: los runs 43044973233 y 43054735685 se colgaron en apt-get install ffmpeg, un fallo del runner y no del código. Relanza la CI de fix/laminas sobre d721fa7, la punta de la rama. Si vuelve a colgarse, espera a que la mate el timeout del job (20 min) y relánzala, hasta tres intentos. La orden de cierre de abajo solo se prepara cuando un run sobre d721fa7, o sobre un commit posterior que solo toque documentos, termine make check con el único fallo aceptado de state check. Ese run entra en el registro de HISTORIA. Si a la tercera sigue colgado, PARADA, sin preparar nada. Un cambio en la línea de la guardia del punto 4 de la orden: que recoja también el caso de $'\r' que dejaste en el informe, con el puntero que corregiste tras el revisor.
+>
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> ORDEN DE CIERRE de trabajo/laminas (Aleks, tras la revisión del consultor del 2026-11-11). Cópiala tal cual al final del encargo y del informe, en «Orden de cierre», con su fecha, y prepara el cierre con la skill cerrar-rama, que sigue docs/runbooks/RITUAL.md con todas sus puertas (también CONTRATO sin contrato.yaml en el make check del cierre, state check en la ventana C y la CI del HEAD de main). No ejecutes el cierre hasta que yo escriba /cerrar-rama trabajo/laminas.
+>
+> Tag: stable/F38w-laminas. Antes de crearlo, comprueba que no existe ni en local ni en origin (RITUAL.md:214); el último «- Tag:» de HISTORIA es stable/F38v-trazas-ablacion.
+>
+> Antes del commit del contrato, en un commit propio de la rama: la fila de HOLDOUT-EXPOSICIONES.md del día del cierre (los make check del cierre leen el M1 de marzo y calientan con el de junio), escrita antes del primer make check de ese día, si aún no está.
+>
+> El commit «chore(cierre): sale el contrato y entra el registro en HISTORIA» lleva solo contrato.yaml (sale), HISTORIA.md, ERRORES-RECURRENTES.md, PROJECT_STATE.md y HOJA-DE-RUTA.md (RITUAL.md:155-170):
+> 1. HISTORIA: el registro con el formato de RITUAL.md:125-136 (el de F38v como modelo):
+>    - stable/F38w-laminas^{commit} en lugar del sha;
+>    - la lista de commits de la rama, con su sha corto y de qué trata cada uno, más este;
+>    - los runs de la CI de fix/laminas, cada uno con su commit y su resultado, y que los commits posteriores al último run solo tocan documentos, si es así;
+>    - F4.1 y F4.2 a 0 bytes, y las 47 láminas (19 de tipo a y 28 de tipo b);
+>    - la decisión de los gráficos 2 a 6;
+>    - y lo del punto 6 de la respuesta a la PARADA final: la clave que dejó en el historial el informe de 675ee62 no sirve para las carpetas barajadas, y que 07-03 07-11 se reconozca por su contenido no importa, porque el trader opera cada día antes de ver su lámina.
+>    No lleva encabezado «# Next Action HECHA»: F sigue viva.
+> 2. La Next Action F: entra el texto que propusiste (LAMINAS.md, «Propuestas para la orden de cierre», 1), con dos frases más tras «enmendado.»: «Los gráficos 2 a 6 de ACTIVAR-SESION-06.md (§«Para la sesión 7», punto 10) no se rehacen: los sustituyen las láminas. Las láminas no se enseñan al trader hasta que el ADR del método cambie la regla 2 de SESION-DE-PREGUNTAS.md; la preparación genera con `motor laminas` las de los días que elija.». El resto de F no cambia.
+> 3. HOJA-DE-RUTA, R4.5: Refs ID:ADR-0092, sin NA:F en ningún sitio de su bloque; «Hecho cuando: la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta.»; Estado «HECHA (trabajo/laminas, LAMINAS.md).». Compruébalo, con el texto de F y las líneas nuevas de PROJECT_STATE, con problemas_a a problemas_d de tests/unit/test_hoja_de_ruta.py sobre copias, antes del commit.
+> 4. PROJECT_STATE, Technical Debt, tres líneas nuevas:
+>    - la del esquema, tal como la propusiste;
+>    - la de la CLI, tal como la propusiste, con «(LAMINAS.md, F4.3)» en lugar de «(F4.3)»;
+>    - «La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios): dos falsos positivos en un guion que solo leía las láminas (LAMINAS.md, hallazgo de la guardia); su arreglo va al carril de guardias, con fix/.»
+>    La de la flecha no entra (bloque 1, punto 2). Da el tamaño final de PROJECT_STATE, que tiene que quedar por debajo de 25.000 bytes.
+> 5. ERRORES-RECURRENTES, la fila de la rama, con las cuatro columnas de la tabla (ERRORES-RECURRENTES.md:50) y el modelo del revisor como piden sus líneas 14-16 (revisor.md):
+>    - Errores del consultor que llegaron a la rama y la obligaron a cambiar algo: 3, 1 que importa y 2 menores. Consultor en Opus 5.5. El resto de matices del auditor-encargo no cambiaron nada.
+>      · Importa: el recuadro de RUMBO §5 del encargo atribuía a ADR-0082 §4 el descarte de un puente que solo lee, y el ADR solo descarta el EA que recibe decisiones de Python. Lo paró la fase 0. Lección: un recuadro que cita un ADR copia su verbo y su objeto, no una consecuencia que el consultor saca de él.
+>      · Menor: la regex de fechas de graficos_sesion.py, citada en :265-270, está en :247-252.
+>      · Menor: «la liquidez de M15 de cada lado ya la lee motor decisiones», cuando solo la lee al nacer una zona y no la guarda.
+>    - Lo que el revisor no vio y vio el consultor, revisando las láminas dibujadas: 2, los dos importa.
+>      · La caja de pip y medio no se veía en el M1 de dos horas. Lección para el revisor: una salida dibujada se mira a la escala en que se usa, y se pregunta si se ve lo que tiene que enseñar, no solo si su estructura es correcta.
+>      · La toma se nombraba por el cierre de su vela y el punto por la apertura. Lección: cada hora de un texto para el trader se coteja con la vela que nombra, como la rotula FX Replay.
+>    - Lo que el revisor vio y aceptó como deuda justificada, y el consultor reclasificó: las anotaciones de las H4 saltadas que no se borraban. Lección: un defecto que puede dibujar algo falso sin dar error no es deuda.
+>    - De la sesión, menor: reescribió la regex y una cadena de un guion para que la guardia no las viera, aunque lo declaró. Lección: si la guardia bloquea algo legítimo, se para y se dice; no se reescribe para que no lo vea.
+>    - Todas las pasadas del revisor, por gravedad, con dónde está cada hallazgo y qué se hizo (RITUAL.md:132-136).
+> 6. Nada más entra en ese commit.
+>
+> Después, el ritual de siempre:
+> - merge a main, tag y commit de estado (solo Current Branch, Current Feature, Stable Main State y Last Stable Commit; la Next Action ya cambió en el commit del contrato);
+> - make check sellado, y push atómico de main y el tag (Aleks confirma con «1. Yes»);
+> - CI de main en verde;
+> - y el borrado: trabajo/laminas es solo local (git branch -d), y fix/laminas se borra del remoto con git push origin --delete y se comprueba con ls-remote (RITUAL.md:330-339).
+>
+> Informe final: sha de main, tag, run de la CI de main, el número de commits de la rama (con el chore(cierre)), ramas que quedan (solo main), tamaño de PROJECT_STATE en bytes y que git stash list sale vacío (si queda alguna entrada, PARADA: no la borres sin decírmelo).
+
+**La CI que pide la nota, sobre `d721fa7`** (run 43054735685):
+- **El primer intento se colgó** en `apt-get install ffmpeg` y lo mató el timeout del job, a las 16:25 UTC.
+- **Primer relanzamiento (intento 2):** igual, a las 16:47 UTC.
+- **Segundo relanzamiento (intento 3):** `apt-get` tardó 9 minutos, pero terminó. `make check` dio `1 failed, 3371 passed, 48 skipped`, y el único fallo es el aceptado, `test_state_check_ok_on_real_repo`.
+
+Así que la orden se prepara. Este run entra en el registro de HISTORIA. Los commits posteriores a `d721fa7` solo tocan documentos.
+
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
 > ## Auditoría del encargo · trabajo/laminas · 2026-11-10
@@ -1594,4 +1652,4 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-LISTA PARA REVISIÓN (2026-11-11): la ronda tras revisar la v4, hecha. El mínimo de 15 velas del M1 de cerca y el lado de las marcas de borde del M1, con sus tests; la v5 de `43d4bc3`; la CI; el revisor, con lo que encontró. Rama lista para revisión, NO cerrada.
+LISTA PARA EL CIERRE (2026-11-11): la ronda tras revisar la v4, aprobada, y la v5, la buena. La CI de `d721fa7` corrió `make check` con solo el fallo aceptado (run 43054735685, intento 3). La orden de cierre está copiada y el cierre, preparado. Se ejecuta cuando Aleks escriba /cerrar-rama trabajo/laminas. Rama NO cerrada.
