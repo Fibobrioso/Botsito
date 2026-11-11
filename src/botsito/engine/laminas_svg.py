@@ -69,6 +69,8 @@ VELAS_CERCA_MAX = 60  # como mucho, las ultimas 60 velas hasta el corte
 VELAS_CERCA_SIN_TOMA = 30  # sin toma, las 30 ultimas
 VELAS_ANTES_DEL_CONTROL = 15  # desde 15 velas antes de la primera zona de control, si es anterior
 PANELES = 4  # H4, M15, M1 y M1 de cerca
+MARCO_CERCA = "M1 de cerca"
+ANCHO_MARCA = 90  # dos marcas de borde a menos de esto en x, en el mismo borde, se apilan
 
 
 def _f(x: float) -> str:
@@ -193,6 +195,10 @@ def _lineas_m15(p: _Panel, d: Dibujo, lineas: Sequence[LineaDibujada]) -> list[s
                 p, f"linea-m15 {ln.lado} {estado}", ln.nivel, ln.desde, ln.hasta, color, extra
             )
         )
+        if ln.tomada and p.marco == MARCO_CERCA:
+            # en el M1 de cerca, la linea tomada lleva su precio en el eje, como la orden: asi se
+            # leen separados la liquidez y el 0 (captura de la v4)
+            partes.append(_etiqueta(p, "linea-tomada", ln.nivel, color, d.escala))
     if d.toma is not None:
         inicio, nivel = d.toma
         x = p.centro(inicio) if p.marco.startswith("M1") else p.x(inicio + 1)
@@ -220,11 +226,19 @@ def lineas_del_m1(d: Dibujo) -> tuple[tuple[LineaDibujada, ...], tuple[LineaDibu
     return dentro, tuple(ln for ln in d.lineas if ln not in dentro)
 
 
-def _marca(p: _Panel, clase: str, nivel: int, x: float, color: str, escala: int) -> str:
+def _marca(
+    p: _Panel, clase: str, nivel: int, x: float, color: str, escala: int, fila: int = 0
+) -> str:
     """Una marca pequena en el borde de arriba o de abajo de un panel para un nivel que no cabe en
-    su escala: su precio y una flecha hacia donde esta."""
+    su escala: su precio y una flecha hacia donde esta. `fila` la aparta del borde cuando otra
+    marca cae en el mismo sitio."""
     arriba = nivel > p.hi
-    y = p.y0 + MARGEN_SUP + TAMANO_MARCA if arriba else p.y0 + ALTO_PANEL - MARGEN_INF - 3
+    apartada = fila * (TAMANO_MARCA + 2)
+    y = (
+        p.y0 + MARGEN_SUP + TAMANO_MARCA + apartada
+        if arriba
+        else p.y0 + ALTO_PANEL - MARGEN_INF - 3 - apartada
+    )
     x = max(x, float(MARGEN_IZQ))
     ancla = "end" if x > p.derecha - 80 else "start"
     x = min(x, p.derecha)
@@ -236,14 +250,17 @@ def _marca(p: _Panel, clase: str, nivel: int, x: float, color: str, escala: int)
 
 
 def _fuera(p: _Panel, lineas: Sequence[LineaDibujada], escala: int) -> list[str]:
-    """Una marca de borde por cada linea de M15 que no cabe en el panel, del color de su lado."""
-    return [
-        _marca(
-            p, f"m15-fuera {ln.lado}", ln.nivel, p.x(ln.desde),
-            COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"], escala,
-        )
-        for ln in lineas
-    ]  # fmt: skip
+    """Una marca de borde por cada linea de M15 que no cabe en el panel, del color de su lado. Dos
+    en el mismo borde y casi en la misma x se apilan, para que no se monten (captura de la v4)."""
+    partes: list[str] = []
+    puestas: list[tuple[bool, float]] = []
+    for ln in sorted(lineas, key=lambda x: (x.desde, x.nivel)):
+        arriba, x = ln.nivel > p.hi, p.x(ln.desde)
+        fila = sum(1 for a, xp in puestas if a == arriba and abs(xp - x) < ANCHO_MARCA)
+        puestas.append((arriba, x))
+        color = COLOR["m15_alto"] if ln.lado == ALTO else COLOR["m15_bajo"]
+        partes.append(_marca(p, f"m15-fuera {ln.lado}", ln.nivel, x, color, escala, fila))
+    return partes
 
 
 def tramo_de_cerca(d: Dibujo) -> tuple[Vela, ...]:
@@ -387,7 +404,7 @@ def svg(d: Dibujo) -> str:
     niveles_cerca = [d.caja.entrada, d.caja.extremo] if d.caja is not None else []
     for o in d.ordenes:
         niveles_cerca += [o.precio, o.stop]
-    cerca = _Panel(tramo_de_cerca(d), "M1 de cerca", ALTO_PANEL * 3, niveles_cerca)
+    cerca = _Panel(tramo_de_cerca(d), MARCO_CERCA, ALTO_PANEL * 3, niveles_cerca)
     en_cerca = tuple(ln for ln in d.lineas if cerca.lo <= ln.nivel <= cerca.hi)
     fuera_cerca = tuple(ln for ln in d.lineas if ln not in en_cerca)
     alto = ALTO_PANEL * PANELES
@@ -404,7 +421,7 @@ def svg(d: Dibujo) -> str:
     ocupadas = [
         cerca.y(n) for o in d.ordenes for n in (o.precio, o.stop, o.objetivo)
         if cerca.lo <= n <= cerca.hi
-    ]  # fmt: skip
+    ] + [cerca.y(ln.nivel) for ln in en_cerca if ln.tomada]  # fmt: skip
     partes += _m1(cerca, d) + _velas(cerca, d.huso, d.escala, ocupadas)
     partes += _lineas_m15(cerca, d, en_cerca) + _fuera(cerca, fuera_cerca, d.escala)
     partes.append("</svg>")

@@ -546,10 +546,11 @@ def test_la_escala_del_m1_de_cerca_y_lo_que_queda_fuera() -> None:
         for y, x in _re.findall(r'<text class="precio" x="[\d.]+" y="([\d.]+)"[^>]*>([^<]*)', texto)
         if float(y) > cerca
     ]
-    assert (
-        laminas.precio(max(precios), ESCALA) in rejilla
-        or laminas.precio(min(precios), ESCALA) in rejilla
-    )
+    # cada precio que se escribe es uno de los cinco de la rejilla de esa escala (los que caen bajo
+    # una etiqueta no se escriben, punto 3 de la ronda anterior)
+    hi, lo = max(precios), min(precios)
+    esperados = {laminas.precio(lo + (hi - lo) * k // 4, ESCALA) for k in range(5)}
+    assert rejilla and set(rejilla) <= esperados
     derecha = laminas_svg.ANCHO - laminas_svg.MARGEN_DER
     for etiqueta in _re.findall(r"<(?:line|rect|circle|text)\b[^>]*>", texto):
         if 'class="precio"' in etiqueta or 'class="eje-' in etiqueta or 'width="1600"' in etiqueta:
@@ -576,3 +577,26 @@ def test_toda_hora_que_nombra_una_vela_es_la_de_su_apertura() -> None:
         x.startswith("La vela de M1 de las 09:29 tomó la liquidez de M15") for x in fuera.frases
     )
     assert not [x for x in comp.frases + fuera.frases if ", a las " in x]
+
+
+def test_la_linea_tomada_lleva_su_precio_en_el_m1_de_cerca_y_las_marcas_no_se_montan() -> None:
+    """Lo enseno la captura de la v4: en el M1 de cerca, la linea tomada lleva su precio en el eje
+    (en el M1, no: alli se montaria con el de la orden); y dos marcas de borde en el mismo sitio se
+    apilan."""
+    import re as _re
+
+    d = _dibujo(foto_base())
+    tomada = [ln for ln in d.lineas if ln.tomada]
+    assert tomada
+    for marco, con_precio in ((laminas_svg.MARCO_CERCA, True), ("M1", False)):
+        panel = laminas_svg._Panel(M1[-60:], marco, 3 * laminas_svg.ALTO_PANEL, (tomada[0].nivel,))
+        texto = "".join(laminas_svg._lineas_m15(panel, d, tomada))
+        assert ('class="eje-linea-tomada"' in texto) is con_precio, marco
+    panel = _panel_m1()
+    lejos = [
+        laminas.LineaDibujada("alto", panel.hi + 500, CORTE - 200, CORTE, False, False),
+        laminas.LineaDibujada("alto", panel.hi + 900, CORTE - 200, CORTE, False, False),
+    ]
+    marcas = laminas_svg._fuera(panel, lejos, ESCALA)
+    ys = [float(_re.search(r' y="([\d.]+)"', m).group(1)) for m in marcas]  # type: ignore[union-attr]
+    assert len(set(ys)) == 2
