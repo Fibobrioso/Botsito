@@ -150,24 +150,30 @@ def bloque_de_origen(m1: Sequence[Vela], idx_breaker: int, lado: str) -> tuple[i
     return i, i + 1
 
 
-def zonas_de_control(m1: Sequence[Vela], desde: int, hasta: int, lado: str) -> int:
-    """Cuantas zonas de control deja el retroceso entre la toma (`desde`, exclusivo) y el breaker
+def pivotes_de_control(m1: Sequence[Vela], desde: int, hasta: int, lado: str) -> tuple[Pivote, ...]:
+    """Las zonas de control que deja el retroceso entre la toma (`desde`, exclusivo) y el breaker
     (`hasta`, inclusivo): los pivotes de M1 en el sentido de la entrada -BAJOS en una compra- que se
     forman DESPUES de la primera vela del impulso. El extremo del barrido (el bajo que la toma
-    deja) no es una zona de control del retroceso: es la propia toma."""
+    deja) no es una zona de control del retroceso: es la propia toma. Devuelve los pivotes para el
+    REGISTRO de RN-009 (rama trabajo/laminas; respuesta del consultor a la fase 0, punto 2)."""
     signo = _signo(lado)
     sentido = BAJO if lado == COMPRA else ALTO
     if hasta <= desde:
-        return 0
+        return ()
     primer_impulso = next((k for k in range(desde + 1, hasta + 1) if color(m1[k]) == signo), None)
     if primer_impulso is None:
-        return 0
+        return ()
     instante = int(m1[hasta].fin)
-    n = 0
-    for p in _pivotes_m1(m1, instante, hasta + 1):
-        if p.lado == sentido and int(p.contraria_inicio) > int(m1[primer_impulso].inicio):
-            n += 1
-    return n
+    return tuple(
+        p
+        for p in _pivotes_m1(m1, instante, hasta + 1)
+        if p.lado == sentido and int(p.contraria_inicio) > int(m1[primer_impulso].inicio)
+    )
+
+
+def zonas_de_control(m1: Sequence[Vela], desde: int, hasta: int, lado: str) -> int:
+    """Cuantas zonas de control deja el retroceso: las de `pivotes_de_control`."""
+    return len(pivotes_de_control(m1, desde, hasta, lado))
 
 
 def mecha_mas_alla_del_extremo(
@@ -390,6 +396,7 @@ __all__ = [
     "extremo_de_la_caja",
     "mecha_mas_alla_del_extremo",
     "nivel_de_activacion_posterior",
+    "pivotes_de_control",
     "referencia_del_breaker",
     "ultimo_punto_de_ruptura",
     "zona_posterior_completada",

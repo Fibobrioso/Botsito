@@ -1,0 +1,285 @@
+# Encargo · trabajo/laminas
+
+Dado por Aleks (consultor) el 2026-11-10. Copiado tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Encargo del consultor (2026-11-10): rama trabajo/laminas, el punto (1) de la entrada F de la Next Action (R4.5 de docs/plan/HOJA-DE-RUTA.md; docs/plan/RUMBO-2026-11.md §3), tramo R4. Ábrela con la skill abrir-rama, con riesgo alto (se engancha al observador del motor), y copia este encargo tal cual en docs/encargos/trabajo-laminas.md. Trabaja en la laptop (hacen falta las velas, los ticks y el arnés) y arranca Claude Code con CLAUDE_CODE_DISABLE_BG_SHELL_PRESSURE_REAP=1. Antes de empezar, comprueba con /model que estás en Opus 5.5 con esfuerzo alto.
+>
+> BASE (compruébala con git al abrir, como manda abrir-rama): main y origin/main en e5394c5, commit de estado sobre el merge 76bbe09, tag stable/F38v-trazas-ablacion (el último «- Tag:» de HISTORIA); CI de main sobre e5394c5: run 42759493730 en verde (compruébalo, yo no pude); ninguna otra rama local ni remota; stable/F38w-laminas no existe. Si algo no cuadra, PARADA antes del primer commit.
+>
+> OBJETIVO, en una frase: que el trader vea lo que hizo el bot y por qué, en su idioma, recortado al instante de decidir. Tres piezas:
+> (a) un subcomando nuevo de `motor` (el nombre lo propones en la fase 0; yo lo llamo `motor laminas`) que, para las sesiones de construcción que se le pidan, escribe las láminas del bot a partir de la misma corrida con la cuenta por mes que da `motor decisiones`;
+> (b) las láminas de las diez sesiones candidatas de la 7a (lista abajo), para que yo las revise;
+> (c) la enmienda de RUMBO-2026-11.md §0, §4 y §5, en un commit propio (F1, texto literal abajo).
+>
+> UNA DECISIÓN QUE ENTRA AL REPO CON ESTE ENCARGO (del consultor, 2026-11-08, con RUMBO §3; hasta hoy solo estaba en el chat, así que no la busques antes)
+> ACTIVAR-SESION-06.md §«Para la sesión 7», punto 10, dice que los gráficos 2 a 6 (S-8 a S-12) «se rehacen SIN fecha y con el contexto que pidió». No se rehacen: los sustituyen las láminas del bot, que llevan ese contexto, y el bloque de días de la sesión 7 (RUMBO §1 b). ACTIVAR-SESION-06.md es un informe cerrado y no se toca: la decisión queda escrita aquí y en tu informe, y la recogerá la orden de cierre.
+>
+> LO QUE PIDIÓ EL TRADER (herencias que la lámina cumple)
+> - En la sesión 6, del gráfico 2: «no me dice los criterios por qué, o sea, no veo los trazos de M15» (ev-v17-004910-11d48393). La lámina lleva los criterios del bot y los trazos de M15.
+> - Dicho en S-18, sobre su esquema: «me des un contexto un poco más claro […] de lo que ha ocurrido antes» (SESION-06-EXTRACCION.md §3.6). Las ventanas de cada marco lo dan.
+> - Su consejo para marcar la liquidez (§3.6, 45:00-46:08): la trendline hasta donde haya rompimiento, sin extenderla. Las líneas de M15 se dibujan desde su pivote hasta la vela que las toma, o hasta el corte si no se han tomado.
+> - TRAZAS-ABLACION.md, decisión b de la PARADA final: la lámina de 07-03 enseña las líneas de M15 de la sesión, para que el trader vea el punto 1.14496 a 4 puntos de la toma en 1.14500. Esa comparación no se mide en ninguna rama. Decido además que esas líneas se dibujen también sobre el M1, que es donde se ve la distancia.
+>
+> QUÉ NO CAMBIA
+> - Nada de lo que el motor decide ni de cómo se llena. No se tocan knowledge/ (spec, cases, evidence, feedback), scripts/ ni .claude/.
+> - `motor arnes`, `motor visor` y `motor decisiones` siguen igual: mismas opciones y misma salida. El subcomando nuevo no comparte _opciones_diagnostico, así que OPCIONES_QUE_NO_CAMBIAN_LA_CORRIDA (src/botsito/engine/arnes.py:80) y test_la_seccion_no_anade_ninguna_opcion_al_comando (tests/unit/test_diferencias_por_operacion.py:341) siguen intactos. La bitácora de texto de los cuatro días del anexo de TRAZAS-ABLACION no cambia (F4.2). Si el diseño no puede cumplir esto, PARADA.
+> - scripts/graficos_sesion.py no se toca: es el precedente (BARRIDO-SESION-6.md §2.2), y de él se toman el negar por defecto, las ventanas y el «sin fechas».
+> - docs/runbooks/SESION-DE-PREGUNTAS.md no se toca. Su regla 2 todavía dice que los gráficos se cortan ANTES de la colocación y prohíbe enseñar la orden, el stop y el objetivo. La cambia el ADR del método, en la rama de la preparación de la sesión 7 (RUMBO §1). Hasta entonces las láminas no se enseñan al trader, y el informe lo dice.
+> - Informes cerrados (ACTIVAR-SESION-06, TRAZAS-ABLACION, VIDEO-JULIO, RECORRIDA-CONSTRUCCION, RECORRIDA-CONSTRUCCION-2, BARRIDO-SESION-6): no se tocan.
+> - Fuera de src/ y tests/ solo entran: el informe docs/validation/LAMINAS.md y su carpeta docs/validation/anexos/LAMINAS/ (el texto de cada guion de la sesión, como pidió el revisor b3 de TRAZAS-ABLACION); un runbook corto docs/runbooks/LAMINAS.md (cómo se generan y qué no se enseña); HOLDOUT-EXPOSICIONES.md; RUMBO-2026-11.md (solo F1); lo que escribe abrir-rama (el encargo, el contrato y el Archivo de HISTORIA) y el número de «Tests Currently Passing» que pide state check. Si hace falta tocar pyproject.toml por import-linter, lo dices en la fase 0. El contrato cubre exactamente eso.
+>
+> LA LÁMINA (decidido por mí; en la fase 0 propones cómo y lo que choque con el código, sin cambiar el qué)
+> 1. Una sola fuente. Todo lo que la lámina atribuye al bot (sesgo, toma de M15, liquidez de cada lado, caja, punto, orden, stop, objetivo y por qué no colocó) sale de la corrida del motor, por el observador de MotorCableado (src/botsito/engine/cableado.py:311) o por lo que ya junta `motor decisiones`. La lámina nunca recalcula una decisión con código propio: un dibujo que no casara con el motor sería peor que no tenerlo. Las velas se leen por la API del manifiesto, la misma del arnés.
+>    - El Cierre que recibe el observador lleva el bróker y el estado VIVOS: lo que la lámina necesite se copia en ese instante, nunca se guarda una referencia para dibujar al final (eso vería el futuro).
+>    - Lo que el observador no vea hoy se añade solo como registro, como hizo F38v con los gates: nada lo lee para decidir, y lo prueban F4.1 y F4.2. Un caso conocido: ADR-0080 §10 solo anota CUÁNTAS H4 saltó el sesgo por el color, no cuáles. La liquidez de M15 de cada lado ya la lee `motor decisiones` (c.datos.liquidez_m15); verifícalo.
+> 2. Qué láminas hay, en orden de hora dentro de cada sesión:
+>    (a) por cada orden del bot que se llenó en la sesión, una lámina cortada en el último cierre de M1 en que el motor colocó esa orden, o la movió, al nivel en que se llenó; siempre antes del llenado. Las órdenes que se cancelan sin llenarse no tienen lámina propia;
+>    (b) por cada operación del trader de la sesión que el criterio (ADR-0043) no empareja con una del bot (la que patrones.py de RECORRIDA-CONSTRUCCION-2 no llama T0), una lámina cortada en la última M1 cerrada antes de su entrada, con lo que el bot tenía en ese instante: su orden viva, si la había, o por qué no tenía ninguna. La operación del trader NO se dibuja: él acaba de operar ese día.
+>    El emparejamiento sale de la misma corrida, nunca de un día suelto.
+> 3. Qué dibuja: tres paneles, H4, M15 y M1, con las ventanas de graficos_sesion.py (H4 desde las 00:00 de Madrid de cuatro días antes; M15 desde las 00:00 del día anterior; M1 desde una hora antes de la sesión; la última vela de H4 y de M15, en formación, hasta el corte), recortadas por el punto 6. Si para los días del rango de H4 hace falta más H4, lo propones en la fase 0.
+>    - H4: la vela que fijó el sesgo del bot y las que saltó por el color.
+>    - M15: las líneas de liquidez, como arriba, con la tomada marcada (con cuerpo o con mecha, como la vio el motor).
+>    - M1: la caja con sus niveles rotulados como en su Fibonacci (0, 0,25, 0,5, 0,8 y 1); el punto de breaker; la orden en el 0; el stop en el 0,8 redondeado; el objetivo; y las líneas de M15 de la sesión.
+> 4. La sustentación, debajo, en el idioma del trader (sesgo de H4, liquidez de M15, toma con cuerpo, caja, 0, 0,8, breaker, zona de control, esquema). Sale de una tabla cerrada de frases: cada hecho, cada gate VIGENTE que puede prohibir y cada motivo de «por qué no hay orden». Hoy no existe una lista cerrada de esos motivos (`_sin_orden` de engine/decisiones.py los compone sueltos y los frenos salen por otro camino): la fase 0 la saca del código, y la lámina mapea causas estructuradas, nunca texto. Si aparece una causa sin frase, error que la nombra, sin escribir nada (negar por defecto). En la fase 0 me das la tabla entera para aprobarla.
+>    - Nunca lleva: ids (RN-, A- con cifras, ADR-, S- con cifras, zona:, o con cifras, pos-, ev-, fb-), el lote, R, dinero ni porcentajes.
+>    - Nada posterior al corte: ni llenada, cancelada, cerrada, stop, objetivo alcanzado, ganancia o pérdida de lo que la lámina enseña.
+>    - Lo anterior al corte sí puede salir, dicho como él lo diría y sin R ni dinero (por ejemplo, que en esa liquidez ya hubo tres stops).
+> 5. Sin fechas, como graficos_sesion.py (BARRIDO-SESION-6.md, respuesta a la PARADA, punto 5): ni en el texto, ni en los atributos, ni en <title>, <metadata> o comentarios, ni en los nombres de fichero (lamina-NN.html y un índice por sesión). Horas de Madrid de ese día (ADR-0069). La clave (código → día, sesión, corte y tipo a/b) va solo en clave.txt, en la carpeta de salida: no entra al repo ni al informe. Ojo con la regex de fechas de graficos_sesion.py (:265-270): busca los nombres de mes sin límite de palabra, y «rango mayor» casaría con «mayo». La tuya va con límites de palabra, y un test lo fija: «3 de mayo» casa y «otro rango mayor» no.
+> 6. Negar por defecto, como D6 a de graficos_sesion.py: todo minuto con una vela en la lámina, contado a la vez en Madrid y en UTC, cae en un día de construcción de la regla 2 de SESION-DE-PREGUNTAS.md (abril, julio del 1 al 17, agosto y enero del 2 al 30) y no está en casos_ocultos; la ventana se recorta hacia atrás hasta el primer minuto que no cumple. Y no solo las velas: todo lo demás que se dibuja o se nombra con su precio (la H4 que fijó el sesgo, el pivote de origen de una línea de M15, un nivel) y nace fuera de esa ventana no se dibuja ni da su precio; la sustentación dice solo que viene de antes de la ventana. Es el caso de 07-02 y 07-03, con la H4 recortada al principio de julio (BARRIDO-SESION-6.md:247), y es el motivo por el que se excluyen el 1 de abril y el 1 de julio (RECORRIDA-CONSTRUCCION.md:1628: «su contexto de H4 y M15 puede venir del día anterior, que es reservado o fuera de construcción»). Un día pedido que no cumple, o una sesión con una hora perdida (sin ticks; la lista, en anexos/RESPALDO-M1/horas_perdidas.py, y en código _ticks_del_dia de src/botsito/engine/simulacion.py:166), hace salir con error sin escribir nada: todo se calcula antes del primer fichero.
+> 7. La salida, fuera del repositorio (SESION-DE-PREGUNTAS.md, «Antes», paso 6): la raíz sale de un argumento obligatorio (CLAUDE.md, «Ensayos aislados», punto 2) y el subcomando se niega a escribir dentro del repo, con su test. No reutilices decisiones.comprobar_carpeta, que exige lo contrario (dentro de data/). Antes de escribir en el Escritorio, ensáyalo en un clon desechable con git worktree add (punto 1 de la misma regla), como hizo BARRIDO-SESION-6. Para la F4: C:\Users\USER\Desktop\laminas-sesion-7.
+> 8. El formato: HTML autocontenido con SVG escrito por el propio código, solo biblioteca estándar, sin JavaScript ni dependencias nuevas; dos ejecuciones dan los mismos bytes. «A la estética de FX Replay» es la disposición: los precios en el eje derecho, los niveles rotulados, las tres temporalidades y el corte como su replay. Los colores van en una tabla única de constantes, y propones la primera en la fase 0 a partir de graficos_sesion.py y del visor. En esta rama no se abre ningún fotograma para copiar colores: los ajustamos Aleks y yo al revisar.
+> 9. Las cifras (CLAUDE.md, «Las cifras van en el registro»; tests/contract/test_no_business_literals.py, que mira todo src/botsito/): el 0,8 se lee del registro (stop_fraccion_caja); el huso, de donde lo lee el repo, nunca el literal "Europe/Madrid"; las horas de las sesiones, de los datos. Los rótulos 0,25 y 0,5 son solo dibujo y no deciden nada: van con la exención `# no-negocio: <motivo>` del propio test, una por línea y declaradas en el informe. Si copias código de dibujo de graficos_sesion.py, mira que no arrastre literales prohibidos (usa (i + 0.5) * paso y ZoneInfo("Europe/Madrid")).
+>
+> LO QUE SE PUEDE MIRAR (CLAUDE.md, «Que se puede mirar y que no»)
+> - Solo construcción, por la compuerta del arnés (dias_de_construccion y casos_ocultos). En la fase 0, compruébalo para las diez sesiones con casos_reservados(repo) y casos_ocultos(repo), contando y sin imprimir ids.
+> - Cada corrida del arnés y cada make check calientan con el M1 de marzo y el de junio (Technical Debt). HOLDOUT-EXPOSICIONES.md lleva una fila por cada día de trabajo de la rama, escrita ANTES de la primera corrida o del primer make check de ese día, con cuántas corridas se hicieron y de qué clase.
+> - No se lee ninguna transcripción ni ningún fotograma. Lo que dijo el trader se cita de los informes y de knowledge/evidence/.
+> - Las operaciones del trader de los días de construcción se leen solo por la compuerta, y la lámina no las enseña (punto 2 b).
+>
+> LAS DIEZ SESIONES DE LA F4 (candidatas a la 7a; la elección final y el reparto entre 7a y 7b los hace la rama de la preparación)
+> - El rango de H4 (VIDEO-JULIO.md §4.1 y §4.2, regla desconocida «el rango de H4»): 2026-07-06 07-11 y 11-15; 2026-07-07 07-11 y 11-15; 2026-07-15 11-15; 2026-07-17 11-15. No entra 2026-07-17 07-11, que VIDEO-JULIO clasifica «sin clase». Nunca el 1 de julio.
+> - Las zonas de control (RN-009; TRAZAS-ABLACION.md 5.2, 5.3 y 5.5 punto 2): 2026-04-13 07-11; 2026-07-02 11-15; 2026-07-03 11-15. No entra 2026-07-14 11-15, aunque tiene cuatro filas con gate RN-009: tiene una hora perdida dentro de la sesión (2026-07-14T12Z, las 14:00 de Madrid; horas_perdidas.py). Lo que se haga con ella lo decide la rama de la preparación.
+> - Cuándo se coloca la orden (ADR-0064) y las líneas de M15 (5.1 y 5.5 punto 1): 2026-07-03 07-11.
+> Si alguna más no cumple el punto 6, sale de la lista y el informe dice cuál y por qué; no se sustituye aquí.
+>
+> FASE 0 (skill fase-cero, con el agente auditor-encargo sobre este encargo). No se escribe en el repo salvo la apertura y F1.
+> 0.1 La base y lo de mirar de arriba, para las diez sesiones, y sus horas perdidas.
+> 0.2 Antes de usar cada pieza, escribe qué campos da, medido sobre una ejecución (lección de F38t y F38u): lo que recibe el observador (Cierre), lo que junta `motor decisiones`, cómo saca el visor las parejas y las operaciones del trader, y qué hace graficos_sesion.py con las ventanas, el recorte y las fechas. Di qué de los puntos 1 a 4 de «La lámina» no da hoy ninguna pieza.
+> 0.3 El diseño que propones: el nombre del subcomando y sus opciones (cómo se piden las sesiones); dónde vive el código y qué dice import-linter; cómo se engancha sin cambiar lo que el motor devuelve; las ventanas; la tabla de frases entera; la tabla de colores; cómo cumples el punto 9; y cómo se prueba cada punto de «La lámina».
+> 0.4 Los tests. El día sintético de tests/unit/test_cableado.py no tiene toma de M15, escenario, caja ni punto de breaker (la zona va inyectada): para F2 hace falta ampliarlo o hacer otro fixture sintético, sin leer meses reales; propón cuál. Y ten en cuenta la línea de Technical Debt del `toca_colocar_orden_limite` con clausura, que solo coloca en la primera corrida del proceso: el test de determinismo y el golden usan el que no guarda estado.
+> 0.5 Herencias: busca «lámina», «gráficos 2 a 6», «trazos de M15», «R4.5» y «graficos_sesion» en PROJECT_STATE, el final de HISTORIA, docs/validation/, docs/adr/, docs/plan/ y docs/runbooks/. Todo lo que se deje a esta rama entra en ella, o se dice por qué no. Mira en concreto tres líneas de Technical Debt: «motor visor --hasta no recorta las H4 de contexto, las listas ni el resumen del bróker», «El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10)» y «La zona que RN-005 liga al escenario vigente… se queda en el escenario anterior». La lámina no puede heredar los dos primeros defectos. Di si alguna se paga aquí: solo si el código es el mismo. La tercera no se toca: la lámina de 07-03 09:35 enseña lo que el motor hizo.
+> 0.6 El tiempo y la memoria: las corridas de F4 y el PICO DE MEMORIA del último make check.
+> PARADA al terminar la fase 0, siempre: es terreno nuevo, y el diseño y la tabla de frases los apruebo yo antes de escribir código. Mientras esperas la respuesta, haz F1 en su commit.
+>
+> F1 · LA ENMIENDA DE RUMBO (commit propio: «docs(plan): enmienda de RUMBO §0, §4 y §5, decisiones del 2026-11-09»)
+> Un recuadro justo debajo del encabezado de cada sección; el texto de debajo no se toca. Literal:
+> - En §0:
+>   > **Enmienda del 2026-11-10** (trabajo/laminas; decisión del consultor del 2026-11-09). Son cuatro corridas diarias comparables, no tres: faltaba la del 27-oct (RECORRIDA-CONSTRUCCION.md, diaria 20.7 %), y la de RESPALDO-M1.md se corrió el 29-oct (nota final). Léase: «Cuatro corridas diarias comparables: 6.1 % (14-oct), 20.7 % (27-oct), 20.2 % (29-oct) y 20.2 % (8-nov, tras activar la sesión 6 entera, con 40 parejas antes y después).» El resto de §0 no cambia.
+> - En §4:
+>   > **Enmienda del 2026-11-10** (trabajo/laminas; decisión de Aleks del 2026-11-09). Esta sección queda decidida. La arquitectura la fijó ADR-0082 §4: la capa y el bot final son un EA de MQL5, y se descarta que el EA reciba las decisiones de Python, porque exige un puente en vivo que choca con el tope de peticiones. Aleks la confirmó el 2026-11-09 (R6.0 de la hoja de ruta, HECHA), y solo se reabre con un ADR nuevo, por ejemplo tras la revisión de los ingenieros que auditarán el proyecto. Los puntos de pivote pasan a la rama de la preparación de la sesión 7 (R4.3): el esquema de tres salidas sobre julio que aceptó Aleks el 2026-11-09 (dos mínimos, que suban las parejas y que bajen las operaciones de más; si se cumplen los dos, se sigue; si se cumple uno, una sesión más; si ninguno, se pivota), con las cifras que propone el consultor sobre la línea base de RECORRIDA-CONSTRUCCION-2 y aprueba Aleks, en un yaml. La puerta para operar en vivo sigue siendo ADR-0092.
+> - En §5:
+>   > **Enmienda del 2026-11-10** (trabajo/laminas; decisión del consultor del 2026-11-09). La «sombra temprana» no es posible: el motor de Python no corre en una demo de FTMO sin un puente en vivo, que ADR-0082 §4 descarta. La sustituyen la capa de R6a y el grabador F17 en una prueba gratuita nueva de FTMO (A.5 de la hoja de ruta). La tabla del R de las parejas es R5.7. El resto de §5 no cambia.
+> Antes del commit, verifica cada cifra y cada referencia de los tres recuadros contra el repo (validation/ids_citados.py lee todo docs/, RUMBO incluido). Si alguna no casa, PARADA con la evidencia; no la corrijas tú.
+>
+> F2 · LOS TESTS PRIMERO (sobre fixtures sintéticos; ningún test lee meses reales)
+> - Sin mirar al futuro: un fixture con hechos posteriores al corte (una vela, un llenado, una toma de M15, el bróker o el estado cambiados después) no los enseña. Mutación comprobada: un render que ignora el corte, o que guarda la referencia viva del Cierre, hace fallar el test.
+> - Sin fechas: ningún texto, atributo ni nombre casa con una fecha (AAAA-MM-DD, DD/MM, DD-MM o el nombre de un mes como palabra), con el caso «otro rango mayor» que no casa.
+> - Sin ids ni dinero: ninguna salida casa con los patrones del punto 4.
+> - La tabla de frases es cerrada: el test enumera desde la spec los gates VIGENTE que pueden prohibir, y los hechos y motivos que salen del código; uno sin frase da el error que lo nombra (mutación: quitar una frase lo rompe).
+> - Negar por defecto: un día fuera de la construcción o en casos_ocultos, o una sesión con hora perdida, sale con error sin escribir nada; un elemento dibujado que nace fuera de la ventana no se dibuja ni da precio.
+> - La salida dentro del repo se niega.
+> - Determinista: mismos bytes en dos ejecuciones.
+> - El observador no cambia lo que el motor devuelve: golden sobre el fixture, y un observador que muta el estado hace fallar el test (como test_decisiones.py:123-135).
+> - `motor arnes`, `motor visor` y `motor decisiones`, sin cambios de opciones.
+>
+> F3 · EL SUBCOMANDO, con lo aprobado en la fase 0.
+>
+> F4 · LAS CORRIDAS (una a la vez, nunca junto a un make check)
+> 1. `uv run botsito motor arnes --simular --salida data/laminas/base.txt` con el código de la rama: diff contra docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt de 0 bytes. Si da algo, PARADA.
+> 2. `uv run botsito motor decisiones --carpeta data/laminas/bitacora --bitacora 2026-04-13,2026-07-02,2026-07-03,2026-07-14` (la misma forma que F4.2 de TRAZAS-ABLACION.md:646): diff de 0 bytes contra los cuatro bitacora.DIAGNOSTICO.<día>.txt de docs/validation/anexos/TRAZAS-ABLACION/. Si da algo, PARADA.
+> 3. Las láminas de las diez sesiones en C:\Users\USER\Desktop\laminas-sesion-7, tras el ensayo en el clon desechable. En el informe, por sesión: cuántas láminas de tipo a y de tipo b, y las que salieron de la lista con su motivo. Sin la clave.
+> Sigue sin esperarme, con la PARADA condicional: solo paras si F4.1 o F4.2 no dan 0 bytes, si falta una frase en la tabla con la corrida real, si el diseño no puede ser solo registro o si una sesión cae fuera del punto 6 de una forma que el encargo no prevé.
+>
+> INFORME: docs/validation/LAMINAS.md, con la decisión de los gráficos 2 a 6 escrita arriba, el encargo frente a lo hecho, las desviaciones y los comandos tal como se ejecutaron. Y docs/runbooks/LAMINAS.md: cómo se generan, dónde va la salida y que no se enseñan hasta que el ADR del método cambie la regla 2.
+> CI: la rama escribe ficheros fuera del repo y añade un subcomando, así que por RITUAL.md se empuja como fix/laminas (RITUAL.md:102) y pasa la CI de Linux antes de declararla lista; da el número de run. El único fallo aceptado es el de state check por el nombre fix/.
+> REVISOR (agente revisor), con estos alcances: (1) que nada cambie lo que el motor decide (F4.1, F4.2, golden y mutación); (2) que `motor arnes`, `motor visor` y `motor decisiones` no cambien; (3) el corte: nada posterior al instante en ninguna lámina, ni en el dibujo ni en el texto, y ninguna referencia viva del Cierre; (4) sin fechas, ids, lote, R, dinero ni porcentajes, la tabla de frases cerrada y las exenciones de test_no_business_literals; (5) el holdout, el negar por defecto (también de lo que no es vela) y HOLDOUT-EXPOSICIONES; (6) que F1 sea literal y deje intacto el texto de debajo de cada recuadro. Su informe, pegado al final del tuyo.
+> Termina con la PARADA final: dónde están las láminas para que las revise (Aleks las pondrá a mi alcance), lo que no te convenza de ellas, y las propuestas para la orden de cierre, cada una comprobada con las funciones de tests/unit/test_hoja_de_ruta.py sobre una copia: el texto nuevo de F (sale el (1); F sigue viva, así que ningún encabezado de HECHA); R4.5 HECHA, sin NA:F en ningún sitio de su bloque, solo si yo las doy por revisadas, con su «Hecho cuando» reescrito («la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta»), porque los días de la 7a los elige la rama de la preparación, que depende de R4.5; y las líneas de Technical Debt nuevas. Y la frase «Rama lista para revisión, NO cerrada.»
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA de la fase 0», con su fecha, y aplícala punto por punto (skill fase-cero). Buena fase 0: el diseño queda aprobado con los cambios de abajo.
+>
+> 0. F1: (b). Tenías razón: ADR-0082 §4 solo descarta por escrito el EA que recibe las decisiones de Python. Commitea F1 con este texto para §5 (sustituye al del encargo) y con §0 ampliado con el matiz 55 del auditor; §4 queda literal como estaba. Verifica de nuevo las referencias nuevas antes del commit y, si alguna no casa, PARADA.
+>    - §0:
+>      > **Enmienda del 2026-11-10** (trabajo/laminas; decisión del consultor del 2026-11-09, precisada en la respuesta a la PARADA de la fase 0). Son cuatro corridas diarias, no tres: faltaba la del 27-oct (RECORRIDA-CONSTRUCCION.md, diaria 20.7 %), y la de RESPALDO-M1.md se corrió el 29-oct (nota final). Léase: «Cuatro corridas diarias: 6.1 % (14-oct), 20.7 % (27-oct), 20.2 % (29-oct) y 20.2 % (8-nov, tras activar la sesión 6 entera, con 40 parejas antes y después).» La del 14-oct se corrió con los diagnósticos de A-35 y A-44 (CORRIDA-CONSTRUCCION.md:574 y :618), así que no es del todo comparable con las otras tres. El resto de §0 no cambia.
+>    - §5:
+>      > **Enmienda del 2026-11-10** (trabajo/laminas; decisión del consultor del 2026-11-09, precisada en la respuesta a la PARADA de la fase 0). La «sombra temprana» no se hace. Para correr el motor de Python en una demo de FTMO, aunque solo registrara, haría falta un puente en vivo entre Python y el MT5. ADR-0082 §4 descarta por escrito el EA que recibe las decisiones de Python; un puente que solo lea no lo nombra, pero las razones del mismo §4 valen igual para él: una capa en Python habría que tirarla al llegar F29, y un bucle de Python que sondea gasta presupuesto de peticiones. Solo lo abriría un ADR nuevo. En su lugar van la capa de R6a y el grabador F17, en una prueba gratuita nueva de FTMO (A.5 de la hoja de ruta). La tabla del R de las parejas es R5.7. El resto de §5 no cambia.
+> 1. (a). Registro en domain/sesgo.py: ResultadoSesgo gana el inicio de la vela que fija y, por cada saltada, su inicio y su motivo, y sesgo_h4_al_abrir los anota. Nada los lee para decidir. Amplía el contrato a ese fichero en un commit propio, antes del código, con su motivo. Los tests de sesgo que ya existen pasan sin tocarlos, y uno nuevo comprueba que, sobre los mismos casos, el sesgo y los contadores salen idénticos con los campos nuevos.
+> 2. (a). En domain/estructura_m1.py, la función que devuelve los pivotes que cuenta, con zonas_de_control = su longitud. Un test comprueba que el número sale igual que antes en todos los casos de los tests actuales (y en uno con 0, 1 y 2 zonas). Mismo commit de contrato que el punto 1. F4.1 y F4.2 a 0 bytes siguen siendo la prueba de fondo.
+> 3. (a), de cobertura_material. El 30 de abril queda fuera (el libro no lo cubre, config.yaml:72-76), aunque la regla 2 diga «abril». No toques la regla 2: la diferencia la recoge el ADR del método. Dilo en el informe.
+> 4. (a).
+> 5. (a). El nacimiento sigue en la puerta: lo que nace en un minuto no permitido no sale en ningún panel.
+> 6. (a).
+> 7. (a), constantes de dibujo declaradas en el informe.
+> 8. (a), estrictamente antes.
+> 9. (a). En F4.3, por lámina: si la H4 que fija el sesgo cae dentro de la ventana. Si en alguna sesión del rango cae fuera en más de la mitad de sus láminas, lo enseñas en la PARADA final con la cifra; no amplíes la ventana sin respuesta.
+> 10. (a). Los 5-6 minutos más valen la pena.
+> 11. (a). S-7 lo decide la rama de la preparación.
+> 12. (a): `motor laminas --sesiones día:sesión,... --salida <fuera del repo>`, y la tabla de colores como primera versión. La tabla de frases queda aprobada con estos cambios:
+>    - detenido_por_tope lo fijan dos reglas: RN-020 (la pérdida máxima del día del trader) y RN-029 (el freno diario de la cuenta), y RN-020 lee ese mismo hecho en su `cuando` (strategy_spec.yaml:2112). La lámina dice quién lo fijó según la regla que lo fijó (evento.fijados del cierre en que se encendió, guardado en la foto), nunca por el hecho solo ni porque RN-020 salga disparada:
+>      · de RN-020: «Ha llegado a la pérdida máxima del día del trader: no abre más hasta la primera sesión del día siguiente.» (perdida_trader_reinicio = primera_sesion_dia_siguiente, parametros.yaml:1593-1612; ADR-0089);
+>      · de RN-029: «Ha saltado el freno diario de la cuenta: no abre más hasta el cambio de día de la cuenta.»;
+>      · si la foto no permite saber cuál de las dos: error que lo nombra (negar por defecto).
+>      El motivo del gate RN-020 pasa a ser «ha llegado a la pérdida máxima del día del trader», con la misma regla de origen. Ninguna frase hereda «el único freno del día» del título de RN-020, que ya no es cierto por RN-036 y RN-029.
+>    - «Escenario {n} de la sesión.» lleva jerga del repo. Cámbiala por «Sigue la liquidez de M15 número {n} de esta sesión.». Si esa liquidez se tomó antes de la ventana (toma_antes_de_la_ventana = cuenta), la frase de la toma ya dice «viene de antes de la ventana».
+>    - RN-005: «ruido» es palabra del trader (ev-v3-001600-ed45b091, «por debajo de esta liquidez de m15 es ruido»; ev-v3-001725-bca9714b), pero «lado de ruido» no. Motivo: «lo que se forma queda en la zona de ruido de la liquidez de M15, donde no se busca entrada».
+>    - RN-016: la frase vale. El informe dice que una pérdida por equal no gasta intento (strategy_spec.yaml:1874-1876) y que la cuenta empieza de cero con cada liquidez nueva.
+>    - En el informe, cada frase de la tabla lleva su fuente (la regla o el campo, con fichero:línea), y el revisor la comprueba con el alcance (4).
+>    Resto de la tabla, aprobada tal cual.
+>
+> Lo demás de la fase 0 queda aprobado como está (§0.3 y §0.4: el enganche por decisiones.motor_nuevo sin campo nuevo en MotorCableado, las fotos congeladas, los dos fixtures, el test de importaciones y el ensayo en el clon con su settings.local.toml). Sigue con F2, F3 y F4 con la PARADA condicional del encargo, y termina con la PARADA final como dice el encargo.
+
+## Respuesta del consultor a la PARADA final (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA final», con su fecha, y aplícala punto por punto (skill fase-cero). La rama está bien hecha: F1, el registro del dominio (lo he leído entero: solo anota, y F4.1 y F4.2 a 0 bytes lo confirman) y el diseño cumplen lo aprobado. Pero no la cierro todavía, por dos motivos: aún no he visto ninguna lámina dibujada, ni tú tampoco, y tres de tus cuatro reparos se arreglan aquí en poco y no deben pasar a deuda, porque son frases que le dirían al trader algo que no es cierto. Una ronda corta, en esta rama:
+>
+> 1. «Es el primer esquema» sale de la lámina. Tal como está, le diría al trader un esquema que el motor no ha distinguido (zonas.py:414-416). Quita la frase y su clave de la tabla, con su test, y escribe en el informe por qué. La línea de Technical Debt cambia a: «`motor laminas` no dice el esquema: con la orden en el punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416); la frase vuelve cuando el motor distinga los dos esquemas (LAMINAS.md, respuesta a la PARADA final, 1).»
+> 2. RN-020 y «del día». Mide en el registro si, con los valores de hoy, la rama semanal de RN-020 (strategy_spec.yaml:2111, `perdida_maxima_semanal` con `perdida_trader_alcance`) puede disparar.
+>    - Si no puede: la frase sigue diciendo «del día», y un test falla si el registro cambia de forma que la semanal pueda disparar (negar por defecto).
+>    - Si puede: la lámina dice cuál de los dos acumuladores llegó al tope, y si la foto no lo permite saber, la frase es «Ha llegado a la pérdida máxima del trader: no abre más hasta el corte siguiente.».
+>    En los dos casos, la línea de Technical Debt sale.
+> 3. El motivo repetido: cuando el bloqueo de la acción y la prohibición del efecto vienen del mismo gate en el mismo cierre, la lámina da una sola frase, «Iba a colocar la orden y no la coloca: {motivo}.». Con su test, y con el recuento de las láminas afectadas (hoy 13) antes y después.
+> 4. Las H4 saltadas que se quedan de una evaluación anterior. Esto no va a deuda: la lámina las cotejaría y, si las dos anotaciones se quedan viejas a la vez, casarían y dibujaría como saltadas unas H4 que la evaluación vigente no saltó, sin dar error.
+>    - En primitivas.py, `sesgo_h4_saltadas` se borra (pop) cuando la evaluación no salta ninguna, como ya hace `sesgo_h4_vela`.
+>    - Los tres recuentos de main, igual: se borran cuando valen cero. Solo si F4.1 y F4.2 siguen a 0 bytes; si alguno cambia, deshaces el cambio de los recuentos, la lámina deja de cotejar con ellos y, en su lugar, comprueba que toda saltada es anterior a la vela que fija; y lo dices.
+>    - Un test con dos evaluaciones en la misma sesión, la segunda sin saltadas, que falla con el código de hoy.
+>    - En F4.3 dices en cuántas de las láminas cambió el dibujo de las saltadas. Si cambió alguna, el defecto estaba ocurriendo de verdad, y lo dices.
+> 5. Lo de verlas dibujadas: las miro yo, cuando Aleks conecte a mi chat la carpeta nueva (punto 7); las abro con un navegador en mi lado. Si en la laptop ya tienes una forma de hacer capturas de un HTML local sin instalar nada en el proyecto (compruébalo; no añadas dependencias ni toques pyproject.toml), haz una de cada lámina de 07-03 07-11 y de una de cada sesión, con el guion en la carpeta de trabajo y no en el repo, y míralas antes de la PARADA. Si no la tienes, dilo y sigue sin ellas.
+> 6. Punto 13 de tu PARADA: (b), y es barato porque hay que regenerarlas igual. La corrida nueva pide las diez sesiones en un orden barajado que eliges tú y no escribes en el repo, así que el informe de 675ee62 deja de servir de clave para estas carpetas. El comando del informe se escribe con la lista sustituida por «<las diez sesiones, en el orden de clave.txt>», como desviación declarada de «los comandos tal como se ejecutaron». Que 07-03 07-11 se reconozca por su contenido es inevitable y no importa: el trader opera cada día antes de ver su lámina, así que la clave nunca le ocultó el día. En el cierre se dice así.
+> 7. Regenera las 47 (o las que salgan) en una carpeta nueva, C:\Users\USER\Desktop\laminas-sesion-7-v2, tras el ensayo en el clon, como antes. La carpeta vieja no se toca: la borra Aleks cuando yo dé la nueva por revisada. Repite F4.1 y F4.2 a 0 bytes con el código final.
+> 8. Las otras dos líneas de Technical Debt (la CLI solo se prueba entera con velas reales; y la de las saltadas, solo si el punto 4 se queda a medias) quedan como las propones.
+> 9. Las propuestas 1 y 2 de la orden de cierre (F y R4.5) quedan aprobadas tal cual. R4.5 pasa a HECHA solo cuando yo dé por revisadas las láminas de la carpeta v2.
+>
+> Después: make check, push a fix/laminas con su CI (el run del último commit y el de la ronda), el revisor solo sobre lo que cambia en esta ronda, pegado al final, y otra PARADA final corta con: lo que cambió, los recuentos de 3 y 4, lo que viste en las capturas, la ruta de la carpeta v2 y «Rama lista para revisión, NO cerrada.».
+
+## Respuesta del consultor a la PARADA final de la ronda (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de la ronda de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA final de la ronda», con su fecha, y aplícala punto por punto (skill fase-cero). Buena ronda. El borrado de sesgo_h4_doble_ruptura queda aprobado, y la orden de tipo a que no se veía es justo lo que solo encuentra la revisión visual. Una última ronda de dibujo, sin tocar el motor:
+>
+> 1. Los rótulos de la caja: aprobado, con esta regla. Cuando dos rótulos quedan a menos de la altura de su letra, se dejan solo el 0, el 0,8 y el 1. Si aun así se montan (una caja diminuta), solo el 0 y el 1. Las líneas de los niveles se dibujan siempre. Lo que digo es la condición, no un umbral en píxeles a ojo; la altura de la letra es la constante de dibujo que ya usas. Con su test.
+> 2. Las líneas de M15 lejanas en el M1: en el M1 se dibujan las que caen dentro del rango de precios de sus velas, de la caja y de la orden, ampliado por arriba y por abajo una altura de caja (o, sin caja, un 10 % del rango). Las que quedan fuera no se dibujan, pero tampoco desaparecen: van como una marca pequeña en el borde de arriba o de abajo del M1, con su precio y una flecha hacia donde están, del color de su lado. En el M15 se dibujan todas, como hasta ahora. La línea que el motor tomó se dibuja siempre en el M1, aunque estire la escala. Con su test. La de 07-03 (1.14500, con el punto en 1.14496) tiene que verse en el M1: compruébalo en su captura.
+> 3. Las etiquetas del eje que pisan un precio del eje: cuando una etiqueta de la orden, el stop o el objetivo cae sobre un precio de la rejilla del eje, ese precio de la rejilla no se escribe. Con su test.
+> 4. Regenera tras el ensayo en el clon, en una carpeta nueva, C:\Users\USER\Desktop\laminas-sesion-7-v3, con el mismo orden barajado de la v2: es el mismo conjunto, y así la clave no cambia. Haz las mismas capturas que en la ronda y míralas. F4.1 y F4.2 no hace falta repetirlas si el diff de la ronda no toca nada fuera de engine/laminas_svg.py, sus tests y el informe; si toca otra cosa, se repiten a 0 bytes.
+> 5. En el informe: cuántas láminas cambian de rótulos (punto 1), cuántas de líneas de M15 en el M1 (punto 2) y cuántas de etiquetas (punto 3). Sin recuentos por carpeta, como dijo el revisor.
+> 6. Las carpetas v1 y v2 no se tocan; las borra Aleks.
+>
+> Después: make check, push a fix/laminas con su CI (el run de 1d42881 y el de esta ronda), el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta con lo que cambió, los tres recuentos, lo que viste en las capturas, la ruta de la v3 y «Rama lista para revisión, NO cerrada.». Yo reviso la v3 y doy la orden de cierre.
+
+## Respuesta del consultor tras revisar la v3 (2026-11-10)
+
+Dada por Aleks (consultor) el 2026-11-10. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de la última ronda de dibujo de trabajo/laminas (2026-11-10). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor tras revisar la v3», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> He revisado la v3: las 47 dibujadas en un navegador y vistas juntas (ninguna rota), cuatro a fondo (07-03 a las 08:02, una de RN-009 de 07-03 11-15, una del rango de 07-06 y la de 04-13 con tres saltadas), y el texto de todas pasado por las regex del punto 4 y del punto 5 (sin fechas, ids, lote, R, dinero ni porcentajes). Lo que se aprobó está bien. La H4 que fija el sesgo, las saltadas, las líneas de M15 con la tomada, el punto, las etiquetas del eje y la sustentación casan con la bitácora de 07-03. Pero hay dos cosas que impiden usarlas para lo que sirven, que es que el trader corrija la caja del bot y diga qué zonas de control cuenta (las preguntas de la 7a). Una ronda más, solo en engine/laminas.py, engine/laminas_svg.py, sus tests y el informe:
+>
+> 1. Un panel nuevo, «M1 de cerca», debajo del M1 y encima de la sustentación. Con stops de pip y medio, en el M1 de dos horas la caja mide unos pocos píxeles: en 07-03 a las 08:02 la caja, el punto y la toma se amontonan en el borde, y en las láminas de RN-009 las zonas de control naranjas no se distinguen. El panel:
+>    - Va del M1 de la toma (o de 15 velas antes de la primera zona de control que dibuje, si es anterior) hasta el corte, con un máximo de 60 velas. Si es más largo, empieza 60 velas antes del corte; sin toma, son las 30 últimas velas.
+>    - La escala se ajusta a las velas de ese tramo, la caja, la orden y el stop. Todo lo que quede fuera (el objetivo, las líneas de M15 lejanas) va como marca de borde, con su precio y una flecha, como ya hace el M1.
+>    - Lleva lo mismo que el M1, en esa escala: la caja con sus rótulos (con la regla de la ronda anterior, que aquí casi siempre dejará los cinco), el punto de breaker, la vela de la toma, las líneas de M15 que entren, las zonas de control de RN-009 que contó el motor en ese cierre y la orden, el stop y el objetivo con sus etiquetas.
+>    - Mismo recorte y mismas puertas que el M1 (punto 6 del encargo): es un subconjunto de lo que ya se dibuja, y nada nace fuera de la ventana.
+>    - Con sus tests: el tramo, el tope de 60, la escala y ninguna marca a la derecha del corte.
+>    - En las capturas, compruébalo en 07-03 a las 08:02: la línea de 1.14500 y el 0 en 1.14496 tienen que verse separados, con sus precios. Y en una lámina de RN-009 de las que dicen «3, y admite 1», las tres zonas de control, una a una.
+> 2. Las horas de la sustentación, con un solo convenio: toda hora que nombra una vela es la de su apertura, como la rotula FX Replay. Hoy la toma dice «una vela de M1 cerró … a las 07:57», que es el cierre de la vela de las 07:56, mientras que el punto dice «de la vela de las 08:01», que es la apertura. En la bitácora de 07-03 la M1 de la toma «cierra 07:57». La frase de la toma pasa a ser «La vela de M1 de las {HH:MM} cerró con {cuerpo / mecha} por {debajo del bajo / encima del alto} de M15 en {precio}.». Repasa cada frase con hora de la tabla con el mismo criterio, di en el informe cuáles cambian, y añade un test que fije el convenio. La cabecera («Corte: a las 08:02, al cierre de la vela de M1 de las 08:01») ya lo cumple y se queda.
+> 3. Menor: «Antes de esa vela saltó 3 velas H4…» pasa a «Antes de esa vela, el bot se saltó {n} velas H4…» (y en singular, «se saltó una vela H4…»).
+> 4. Regenera tras el ensayo en el clon, en C:\Users\USER\Desktop\laminas-sesion-7-v4, con el mismo orden barajado y la misma clave (compárala con diff, sin abrirla). F4.1 y F4.2 no se repiten si el diff de la ronda no sale de engine/laminas.py, engine/laminas_svg.py, sus tests y el informe; si sale, se repiten a 0 bytes. Haz las capturas de la ronda anterior más las dos del punto 1, y míralas.
+> 5. En el informe: cuántas láminas llevan el panel nuevo (todas, salvo que alguna no tenga tramo; di cuál y por qué), cuántas frases cambian de hora y el recuento de zonas de control que se ven en el panel frente al que dice la frase, en las láminas de RN-009. Sin recuentos por carpeta.
+> 6. Las carpetas v1, v2 y v3 no se tocan; las borra Aleks.
+>
+> Después: make check, push a fix/laminas con su CI, el revisor solo sobre esta ronda, pegado al final, y la PARADA final corta: lo que cambió, los recuentos del punto 5, lo que viste en las capturas, la ruta de la v4 y «Rama lista para revisión, NO cerrada.». Si la v4 está bien, con ella doy la orden de cierre.
+
+## Respuesta del consultor tras revisar la v4 (2026-11-11)
+
+Dada por Aleks (consultor) el 2026-11-11. Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor tras revisar la v4 de trabajo/laminas (2026-11-11). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor tras revisar la v4», con su fecha, y aplícala punto por punto (skill fase-cero).
+>
+> He revisado la v4: las 47 dibujadas en un navegador, a fondo 07-03 a las 08:02, 07-03 a las 09:35 y la de 04-13 con «3, y admite 1», y el texto de todas pasado por las regex de los puntos 4 y 5 (limpio). El panel «M1 de cerca» hace lo que tenía que hacer: la toma en 1.14500 y el 0 en 1.14496 se ven separados, con sus precios, las tres zonas de control se distinguen una a una y las horas ya van por la apertura de la vela. Las láminas quedan revisadas, salvo dos detalles que se arreglan aquí:
+>
+> 1. Un mínimo de 15 velas en el M1 de cerca. Si el tramo que da la regla de la ronda anterior tiene menos de 15, empieza 15 velas antes del corte; el tope de 60 sigue igual. Con su test. Las dos láminas que hoy tienen 1 y 2 velas quedan con 15; di en el informe cuántas cambian.
+> 2. La m1 del revisor de la ronda de dibujo no va a deuda. La marca de borde de una línea de M15 que queda fuera del M1 decide su lado contra el mismo rango con el que se decidió dejarla fuera, no contra el máximo de la escala, que estiran las zonas de control y el punto (laminas_svg.py:207-211 y :224). Aplica lo mismo en el M1 de cerca, si tiene el mismo defecto. Con un test de ▲ y otro de ▼, incluido el caso del revisor. La línea de Technical Debt propuesta sale.
+> 3. Lo demás se queda como está y va al informe, sin deuda nueva: en la lámina que dice 18 zonas de control, el M1 de cerca enseña 14, porque el tope de 60 velas deja 4 fuera y el M1 las enseña todas; y las marcas de borde con una vela detrás se leen.
+> 4. Regenera tras el ensayo en el clon, en C:\Users\USER\Desktop\laminas-sesion-7-v5, con el mismo orden barajado y la misma clave (diff, sin abrirla). F4.1 y F4.2 no se repiten si el diff no sale de engine/laminas.py, engine/laminas_svg.py, sus tests y los documentos.
+> 5. El revisor, sobre todo lo posterior a su última pasada (58de6ce y esta ronda), con su informe pegado al final.
+> 6. Sobre el hallazgo de la guardia de la ronda anterior: reescribir la regex y la cadena del guion para que la guardia no las tomara por ruta es rodearla (CLAUDE.md, «Una guardia no se rodea»), aunque el guion solo leía HTML de láminas y lo declaraste. La próxima vez se para y se dice. Va como hallazgo menor en la fila de ERRORES del cierre, y el falso positivo, a Technical Debt (orden de cierre).
+>
+> Después: make check, push a fix/laminas con su CI y una PARADA corta con el resultado del make check, el run de la CI, lo que diga el revisor, los recuentos de los puntos 1 y 2, la ruta de la v5 y «Rama lista para revisión, NO cerrada.».
+
+## Orden de cierre (2026-11-11)
+
+Dada por Aleks el 2026-11-11, con la nota del consultor que la precede, tal cual (los dos textos llegaron juntos):
+
+> Antes de preparar el cierre (2026-11-11, consultor): la ronda queda aprobada, y la v5 es la buena. Pero la CI de Linux no ha corrido make check sobre el código de esta ronda: los runs 43044973233 y 43054735685 se colgaron en apt-get install ffmpeg, un fallo del runner y no del código. Relanza la CI de fix/laminas sobre d721fa7, la punta de la rama. Si vuelve a colgarse, espera a que la mate el timeout del job (20 min) y relánzala, hasta tres intentos. La orden de cierre de abajo solo se prepara cuando un run sobre d721fa7, o sobre un commit posterior que solo toque documentos, termine make check con el único fallo aceptado de state check. Ese run entra en el registro de HISTORIA. Si a la tercera sigue colgado, PARADA, sin preparar nada. Un cambio en la línea de la guardia del punto 4 de la orden: que recoja también el caso de $'\r' que dejaste en el informe, con el puntero que corregiste tras el revisor.
+>
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> ORDEN DE CIERRE de trabajo/laminas (Aleks, tras la revisión del consultor del 2026-11-11). Cópiala tal cual al final del encargo y del informe, en «Orden de cierre», con su fecha, y prepara el cierre con la skill cerrar-rama, que sigue docs/runbooks/RITUAL.md con todas sus puertas (también CONTRATO sin contrato.yaml en el make check del cierre, state check en la ventana C y la CI del HEAD de main). No ejecutes el cierre hasta que yo escriba /cerrar-rama trabajo/laminas.
+>
+> Tag: stable/F38w-laminas. Antes de crearlo, comprueba que no existe ni en local ni en origin (RITUAL.md:214); el último «- Tag:» de HISTORIA es stable/F38v-trazas-ablacion.
+>
+> Antes del commit del contrato, en un commit propio de la rama: la fila de HOLDOUT-EXPOSICIONES.md del día del cierre (los make check del cierre leen el M1 de marzo y calientan con el de junio), escrita antes del primer make check de ese día, si aún no está.
+>
+> El commit «chore(cierre): sale el contrato y entra el registro en HISTORIA» lleva solo contrato.yaml (sale), HISTORIA.md, ERRORES-RECURRENTES.md, PROJECT_STATE.md y HOJA-DE-RUTA.md (RITUAL.md:155-170):
+> 1. HISTORIA: el registro con el formato de RITUAL.md:125-136 (el de F38v como modelo):
+>    - stable/F38w-laminas^{commit} en lugar del sha;
+>    - la lista de commits de la rama, con su sha corto y de qué trata cada uno, más este;
+>    - los runs de la CI de fix/laminas, cada uno con su commit y su resultado, y que los commits posteriores al último run solo tocan documentos, si es así;
+>    - F4.1 y F4.2 a 0 bytes, y las 47 láminas (19 de tipo a y 28 de tipo b);
+>    - la decisión de los gráficos 2 a 6;
+>    - y lo del punto 6 de la respuesta a la PARADA final: la clave que dejó en el historial el informe de 675ee62 no sirve para las carpetas barajadas, y que 07-03 07-11 se reconozca por su contenido no importa, porque el trader opera cada día antes de ver su lámina.
+>    No lleva encabezado «# Next Action HECHA»: F sigue viva.
+> 2. La Next Action F: entra el texto que propusiste (LAMINAS.md, «Propuestas para la orden de cierre», 1), con dos frases más tras «enmendado.»: «Los gráficos 2 a 6 de ACTIVAR-SESION-06.md (§«Para la sesión 7», punto 10) no se rehacen: los sustituyen las láminas. Las láminas no se enseñan al trader hasta que el ADR del método cambie la regla 2 de SESION-DE-PREGUNTAS.md; la preparación genera con `motor laminas` las de los días que elija.». El resto de F no cambia.
+> 3. HOJA-DE-RUTA, R4.5: Refs ID:ADR-0092, sin NA:F en ningún sitio de su bloque; «Hecho cuando: la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta.»; Estado «HECHA (trabajo/laminas, LAMINAS.md).». Compruébalo, con el texto de F y las líneas nuevas de PROJECT_STATE, con problemas_a a problemas_d de tests/unit/test_hoja_de_ruta.py sobre copias, antes del commit.
+> 4. PROJECT_STATE, Technical Debt, tres líneas nuevas:
+>    - la del esquema, tal como la propusiste;
+>    - la de la CLI, tal como la propusiste, con «(LAMINAS.md, F4.3)» en lugar de «(F4.3)»;
+>    - «La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios): dos falsos positivos en un guion que solo leía las láminas (LAMINAS.md, hallazgo de la guardia); su arreglo va al carril de guardias, con fix/.»
+>    La de la flecha no entra (bloque 1, punto 2). Da el tamaño final de PROJECT_STATE, que tiene que quedar por debajo de 25.000 bytes.
+> 5. ERRORES-RECURRENTES, la fila de la rama, con las cuatro columnas de la tabla (ERRORES-RECURRENTES.md:50) y el modelo del revisor como piden sus líneas 14-16 (revisor.md):
+>    - Errores del consultor que llegaron a la rama y la obligaron a cambiar algo: 3, 1 que importa y 2 menores. Consultor en Opus 5.5. El resto de matices del auditor-encargo no cambiaron nada.
+>      · Importa: el recuadro de RUMBO §5 del encargo atribuía a ADR-0082 §4 el descarte de un puente que solo lee, y el ADR solo descarta el EA que recibe decisiones de Python. Lo paró la fase 0. Lección: un recuadro que cita un ADR copia su verbo y su objeto, no una consecuencia que el consultor saca de él.
+>      · Menor: la regex de fechas de graficos_sesion.py, citada en :265-270, está en :247-252.
+>      · Menor: «la liquidez de M15 de cada lado ya la lee motor decisiones», cuando solo la lee al nacer una zona y no la guarda.
+>    - Lo que el revisor no vio y vio el consultor, revisando las láminas dibujadas: 2, los dos importa.
+>      · La caja de pip y medio no se veía en el M1 de dos horas. Lección para el revisor: una salida dibujada se mira a la escala en que se usa, y se pregunta si se ve lo que tiene que enseñar, no solo si su estructura es correcta.
+>      · La toma se nombraba por el cierre de su vela y el punto por la apertura. Lección: cada hora de un texto para el trader se coteja con la vela que nombra, como la rotula FX Replay.
+>    - Lo que el revisor vio y aceptó como deuda justificada, y el consultor reclasificó: las anotaciones de las H4 saltadas que no se borraban. Lección: un defecto que puede dibujar algo falso sin dar error no es deuda.
+>    - De la sesión, menor: reescribió la regex y una cadena de un guion para que la guardia no las viera, aunque lo declaró. Lección: si la guardia bloquea algo legítimo, se para y se dice; no se reescribe para que no lo vea.
+>    - Todas las pasadas del revisor, por gravedad, con dónde está cada hallazgo y qué se hizo (RITUAL.md:132-136).
+> 6. Nada más entra en ese commit.
+>
+> Después, el ritual de siempre:
+> - merge a main, tag y commit de estado (solo Current Branch, Current Feature, Stable Main State y Last Stable Commit; la Next Action ya cambió en el commit del contrato);
+> - make check sellado, y push atómico de main y el tag (Aleks confirma con «1. Yes»);
+> - CI de main en verde;
+> - y el borrado: trabajo/laminas es solo local (git branch -d), y fix/laminas se borra del remoto con git push origin --delete y se comprueba con ls-remote (RITUAL.md:330-339).
+>
+> Informe final: sha de main, tag, run de la CI de main, el número de commits de la rama (con el chore(cierre)), ramas que quedan (solo main), tamaño de PROJECT_STATE en bytes y que git stash list sale vacío (si queda alguna entrada, PARADA: no la borres sin decírmelo).

@@ -70,6 +70,12 @@ ANOTACION_DOBLE_RUPTURA = "sesgo_h4_doble_ruptura"
 ANOTACION_SALTADAS_COLOR = "sesgo_h4_saltadas_color_contrario"
 ANOTACION_SALTADAS_NEUTRA_SIMPLE = "sesgo_h4_saltadas_neutra_simple"
 ANOTACION_SALTADAS_NEUTRA_DOBLE = "sesgo_h4_saltadas_neutra_doble"
+# SOLO REGISTRO (rama trabajo/laminas; respuesta del consultor a la PARADA de la fase 0, punto 1):
+# el inicio (minuto UTC) de la H4 que fija el sesgo, y las saltadas como `inicio:motivo` separadas
+# por comas, de la mas reciente a la mas antigua; las saltadas, como sus recuentos, solo cuando las
+# hay. Nada las lee para decidir: las leen las laminas (`engine/laminas.py`).
+ANOTACION_SESGO_VELA = "sesgo_h4_vela"
+ANOTACION_SESGO_SALTADAS = "sesgo_h4_saltadas"
 # La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
 # primer cierre de M1 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
 ANOTACION_LIQUIDEZ = "liquidez_m15"
@@ -202,8 +208,13 @@ def primitivas_escritas(
         if momento.sesion is not None:
             anotaciones = estado.anotaciones.setdefault(momento.sesion, {})
             anotaciones[ANOTACION_SESGO] = r.sesgo.value
+            # Cada anotacion dice lo de ESTA evaluacion: la que no toca se borra, para que no se
+            # quede la de una evaluacion anterior de la sesion (respuesta del consultor a la
+            # PARADA final de trabajo/laminas, punto 4)
             if r.doble_ruptura:
                 anotaciones[ANOTACION_DOBLE_RUPTURA] = "si"
+            else:
+                anotaciones.pop(ANOTACION_DOBLE_RUPTURA, None)
             for anotacion, saltadas in (
                 (ANOTACION_SALTADAS_COLOR, r.saltadas_color_contrario),
                 (ANOTACION_SALTADAS_NEUTRA_SIMPLE, r.saltadas_neutras_simples),
@@ -211,6 +222,18 @@ def primitivas_escritas(
             ):
                 if saltadas:
                     anotaciones[anotacion] = str(saltadas)
+                else:
+                    anotaciones.pop(anotacion, None)
+            if r.vela_que_fija is None:
+                anotaciones.pop(ANOTACION_SESGO_VELA, None)
+            else:
+                anotaciones[ANOTACION_SESGO_VELA] = str(int(r.vela_que_fija))
+            if r.h4_saltadas:
+                anotaciones[ANOTACION_SESGO_SALTADAS] = ",".join(
+                    f"{int(inicio)}:{motivo}" for inicio, motivo in r.h4_saltadas
+                )
+            else:
+                anotaciones.pop(ANOTACION_SESGO_SALTADAS, None)
         # Siempre SI: alcista, bajista, ambiguo o insuficiente son los cuatro valores del hecho
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})
@@ -377,6 +400,8 @@ __all__ = [
     "ANOTACION_LIQUIDEZ",
     "ANOTACION_LIQUIDEZ_ALCANZADA",
     "ANOTACION_SESGO",
+    "ANOTACION_SESGO_SALTADAS",
+    "ANOTACION_SESGO_VELA",
     "LADO_DE_LA_LIQUIDEZ",
     "TOKEN_LIQUIDEZ_M15",
     "DatosDelDia",

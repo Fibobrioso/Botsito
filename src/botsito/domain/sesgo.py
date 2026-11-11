@@ -38,6 +38,12 @@ from botsito.domain.velas import MinutoUtc, Vela
 
 # Las opciones de `sesgo_h4_criterio_ruptura` (parametros.yaml): que extremos de la vela cuentan.
 MECHA, CUERPO = "mecha", "cuerpo"
+# Por que no decidio una H4 saltada, en `ResultadoSesgo.h4_saltadas` (SOLO REGISTRO, rama
+# trabajo/laminas): rompio un extremo y cerro del color contrario (ADR-0080, D1); rompio un extremo
+# y cerro sin cuerpo (D3); rompio los dos y cerro sin cuerpo (ADR-0075).
+SALTADA_COLOR_CONTRARIO = "color_contrario"
+SALTADA_NEUTRA_SIMPLE = "neutra_simple"
+SALTADA_NEUTRA_DOBLE = "neutra_doble"
 
 
 class SesgoError(ValueError):
@@ -74,6 +80,11 @@ class ResultadoSesgo:
     saltadas_neutras_simples: int = 0
     # rompio LOS DOS extremos y cerro sin cuerpo (ADR-0075).
     saltadas_neutras_dobles: int = 0
+    # SOLO REGISTRO (rama trabajo/laminas; respuesta del consultor a la PARADA de la fase 0, punto
+    # 1): el inicio de la H4 que fija el sesgo (None si no fija ninguna) y, por cada saltada, de la
+    # mas reciente a la mas antigua, su inicio y su motivo (`SALTADA_*`). Nada los lee para decidir.
+    vela_que_fija: MinutoUtc | None = None
+    h4_saltadas: tuple[tuple[MinutoUtc, str], ...] = ()
 
 
 def _extremos(vela: Vela, criterio: str) -> tuple[int, int]:
@@ -93,9 +104,15 @@ def sesgo_h4(
     cerradas = sorted((v for v in velas_h4 if v.fin <= apertura_sesion), key=lambda v: v.inicio)
     miradas = 0
     saltadas = [0, 0, 0]  # color contrario (D1), neutra simple (D3), neutra doble (ADR-0075)
+    registro: list[tuple[MinutoUtc, str]] = []  # solo registro: cuales y por que
 
-    def fija(sesgo: Sesgo, puntos: int | None, doble: bool) -> ResultadoSesgo:
-        return ResultadoSesgo(sesgo, puntos, miradas, doble, *saltadas)
+    def fija(
+        sesgo: Sesgo, puntos: int | None, doble: bool, inicio: MinutoUtc | None = None
+    ) -> ResultadoSesgo:
+        return ResultadoSesgo(
+            sesgo, puntos, miradas, doble, saltadas[0], saltadas[1], saltadas[2], inicio,
+            tuple(registro),
+        )  # fmt: skip
 
     for i in range(len(cerradas) - 1, 0, -1):
         if miradas == tope:
@@ -110,24 +127,38 @@ def sesgo_h4(
         if arriba > 0 and abajo > 0:
             # Doble ruptura: «importa el color de la vela» (sesion 3, A-34; ADR-0060 §1).
             if verde:
-                return fija(Sesgo.ALCISTA, arriba, True)
+                return fija(Sesgo.ALCISTA, arriba, True, vela.inicio)
             if roja:
-                return fija(Sesgo.BAJISTA, abajo, True)
+                return fija(Sesgo.BAJISTA, abajo, True, vela.inicio)
             # Neutra, sin color: no decide. «si esta es una vela neutra, no tiene ningún color,
             # nosotros seguiríamos operando alcistas» (sesion 4, S-13; ADR-0075). Se sigue hacia
             # atras; ADR-0060 §2 daba AMBIGUO aqui.
             saltadas[2] += 1
+            registro.append((vela.inicio, SALTADA_NEUTRA_DOBLE))
         elif arriba > 0 or abajo > 0:
             # Ruptura de UN extremo: decide solo si cierra del color de esa ruptura (ADR-0080):
             # «la vela roja debe de haber roto con cuerpo o con mecha el bajo de la vela alcista
             # [...] Y terminar al cierre bajista» (WhatsApp del 2026-10-14, 14:55).
             if arriba > 0 and verde:
-                return fija(Sesgo.ALCISTA, arriba, False)
+                return fija(Sesgo.ALCISTA, arriba, False, vela.inicio)
             if abajo > 0 and roja:
-                return fija(Sesgo.BAJISTA, abajo, False)
+                return fija(Sesgo.BAJISTA, abajo, False, vela.inicio)
             # Del color contrario (D1) o sin cuerpo (D3): «sigue el sesgo que habia».
             saltadas[0 if (verde or roja) else 1] += 1
+            registro.append(
+                (vela.inicio, SALTADA_COLOR_CONTRARIO if (verde or roja) else SALTADA_NEUTRA_SIMPLE)
+            )
     return fija(Sesgo.INSUFICIENTE, None, False)
 
 
-__all__ = ["CUERPO", "MECHA", "ResultadoSesgo", "Sesgo", "SesgoError", "sesgo_h4"]
+__all__ = [
+    "CUERPO",
+    "MECHA",
+    "SALTADA_COLOR_CONTRARIO",
+    "SALTADA_NEUTRA_DOBLE",
+    "SALTADA_NEUTRA_SIMPLE",
+    "ResultadoSesgo",
+    "Sesgo",
+    "SesgoError",
+    "sesgo_h4",
+]
