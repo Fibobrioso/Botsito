@@ -225,6 +225,8 @@ citas, de la filtrada por la CLI (`corpus transcript show`):
   detector de contradicciones no la cruza con `ev-v16-000234-9a4fa375` (tema
   `liquidez.m1_mecha_m15_cuerpo`, **sin valor**): la contradicción es la que ya declaró
   TRAZAS-ABLACION (decisión 0) y queda escrita en las notas del ítem, no en `_contradicciones.yaml`
+  *(corregido tras el revisor, b11: por la respuesta a la PARADA, punto 15, no va en las notas del
+  ítem sino en este informe, F3, y en «Para Aleks» de S-5 de la 7a)*
   (el punto ciego de los temas hermanos, Technical Debt).
 - **El trailer `Fuente:`**: `knowledge/evidence/` no está en `DIRECTORIOS_CON_FUENTE`
   (CLAUDE.md, «El trailer Fuente:»: solo `knowledge/spec/` y `knowledge/cases/`); el commit de F3 lo
@@ -396,6 +398,19 @@ de `motor laminas`.
 2. **La respuesta a la PARADA, los anexos de la fase 0 y la fila de exposiciones de F6 van en el
    commit de F1.** `make check` no sella con cambios sin estadiar, y cada uno tarda unos 20
    minutos: el ADR no se mezcla con nada de F2 a F6, solo con lo que lo precede.
+3. **F6 se hizo antes que F2** (encargo: «F2 … commit propio, antes de F3 a F6»; revisor, b6). Las
+   láminas no dependen del pivote ni de F1 (el motor es el de `3de24780`), y se lanzaron mientras se
+   escribía F1, para no tener la máquina parada; F2 se commiteó después (`a2d830e5`). No cambia lo
+   que pre-registra F2: ninguna cifra del pivote sale de las láminas.
+4. **La NOTA de ACTIVAR-A35-A44, un ajuste más** que los dos declarados en «Cómo se aplica la
+   respuesta» (revisor, b9): en la primera versión, la cita de A-44 iba sin la línea
+   (`knowledge/spec/ambiguedades.yaml`); se repuso la línea del texto aprobado (`:1442`).
+5. **Las fechas del día anterior en dos anexos** (revisor, b7): `dias-d3.txt` y `sustitutas.txt`,
+   commiteados en `3e1995df`, escribían como «día de mercado anterior» los de antes del 1 de abril,
+   del 1 de julio y del 3 de agosto, calculados por calendario (sin consultar su partición). Los dos
+   guiones ya no imprimen la fecha cuando el día anterior no es de construcción, y sus salidas se
+   regeneraron; la historia de git conserva la versión vieja (a la PARADA final y a
+   HOLDOUT-EXPOSICIONES).
 
 ## Los make check de la rama
 
@@ -403,6 +418,10 @@ de `motor laminas`.
 |---|---|---|---|---|
 | apertura, primer intento | 0 | 3420 / 0 | **no** (`knowledge-validate.log` sin seguir) | 312 MiB |
 | `3de24780` apertura y fase 0 | 0 | 3420 / 0 | `db5af9d5…` | 313 MiB |
+| `3e1995df` F1 (y la respuesta, los anexos y la fila de F6) | 0 | 3420 / 0 | `cfdd9d39…` | 311 MiB |
+| `a2d830e5` F2 | 0 | 3424 / 0 | `80c3aa75…` | 314 MiB |
+| `958a7b9a` F3 a F5 | 0 | 3430 / 0 | `cb29ec17…` | 312 MiB |
+| el commit de las correcciones del revisor y el cierre del informe | ver su mensaje | | | |
 
 ## Respuesta del consultor a la PARADA de la fase 0 (2026-11-11)
 
@@ -503,18 +522,13 @@ dos reservas; respuesta a la PARADA, punto 4), en un orden barajado que no se es
 3. **La buena frente al ensayo**: los 45 ficheros, por sha256 (guion de la carpeta de trabajo que
    solo hashea), **0 distintos**. `clave.txt` no se abrió. El clon se retiró (`git worktree remove`).
 
-**Por sesión** (la consola de `motor laminas`; qué carpeta es qué sesión lo dice `clave.txt`, que
-guarda Aleks):
-
-| Carpeta | Láminas | Tipo a | Tipo b | La H4 que fija el sesgo, dentro de la ventana |
-|---|---|---|---|---|
-| sesion-01 | 6 | 5 | 1 | 6 de 6 |
-| sesion-02 | 5 | 1 | 4 | 5 de 5 |
-| sesion-03 | 4 | 1 | 3 | 4 de 4 |
-| sesion-04 | 9 | 5 | 4 | 9 de 9 |
-| sesion-05 | 4 | 0 | 4 | 4 de 4 |
-| sesion-06 | 10 | 5 | 5 | 10 de 10 |
-| **Total** | **38** | **17** | **21** | |
+**Por sesión**, de la consola de `motor laminas`, **sin decir qué carpeta es cuál** (corregido tras
+el revisor, b2: con la carpeta al lado, la tabla de §0.4, que da las filas del trader y del bot de
+cada sesión, permitía deducir la clave, porque las seis parejas de tipo a y tipo b son distintas).
+En el orden de las láminas por sesión, de menos a más: 4 (0 de tipo a y 4 de tipo b), 4 (1 y 3),
+5 (1 y 4), 6 (5 y 1), 9 (5 y 4) y 10 (5 y 5); **en total 38 láminas, 17 de tipo a y 21 de tipo b**;
+en las 38, la H4 que fija el sesgo cae dentro de la ventana. La versión de `3e1995df` daba la tabla
+por carpeta: sigue en la historia de git (a la PARADA final).
 
 **Dónde están:** `C:\Users\USER\Desktop\laminas-sesion-7a\`, con `sesion-01` a `sesion-06`, cada una
 con su `indice.html`, y `clave.txt` en la raíz. Ninguna sesión salió con error: no hay PARADA.
@@ -545,12 +559,16 @@ informe.
 
 | F7 | Ítem | Vídeo, ventana | Transcripción | Tema · valor |
 |---|---|---|---|---|
-| #1 | `ev-v11-000038-a322e483` | v11 0:00:38-0:00:53 | activa (`tr-v11-…-d5da10be`) | `sesgo.h4.rango` |
-| #2 | `ev-v11-000550-b140027d` | v11 0:05:50-0:06:00 | activa | `sesgo.h4.rango` · `mecha` |
+| #1 | `ev-v11-000038-fef9789d` (supersede a `ev-v11-000038-a322e483`) | v11 0:00:38-0:00:53 | activa (`tr-v11-…-d5da10be`) | `sesgo.h4.rango` |
+| #2 | `ev-v11-000550-8a2230d4` (supersede a `ev-v11-000550-b140027d`) | v11 0:05:50-0:06:00 | activa | `sesgo.h4.rango` · `mecha` |
 | #3 | `ev-v12-000650-370c4bd8` | v12 0:06:50-0:07:07 | activa (`tr-v12-…-cb502503`) | `sesgo.h4.importancia` |
 | #6 | `ev-v12-000015-7fc04520` | v12 0:00:15-0:00:58 | activa | `entrada.breaker_m1_con_cuerpo` · `cuerpo` |
 | #10 | `ev-v14-004404-ab0281c6` | v14 0:44:04-0:44:11 | **activa** (`tr-v14-…-1d289df6`), punto 0 | `backtest.entradas_sin_tomar` |
 
+- **Corregido tras el revisor (a1):** las afirmaciones de los dos primeros ítems de v11 decían más
+  que su cita («de H4» en #1; «la vela del rango» en #2: la cita dice «esta vela»). Como un ítem es
+  inmutable, cada uno tiene un ítem nuevo que lo supersede con `evidence new --supersede`, el mismo
+  tema y la misma cita, y la afirmación ajustada a la cita; PREGUNTAS-7A.md cita el nuevo de #1.
 - `uv run botsito evidence contradictions`: `0 contradicciones abiertas`. #2 comparte tema y valor
   con el ítem de v9 del rango, así que no abre ninguna; #6 tiene tema propio.
 - **La contradicción de F7 #6** (punto 15): la voz de v12 pide la ruptura del breaker en M1 con
@@ -574,7 +592,7 @@ informe.
   El bloque de días (§1, «Para Aleks»): 2026-07-07 11-15, 2026-07-02 11-15, 2026-07-03 07-11 y
   2026-07-15 11-15, con 2026-04-13 07-11 y 2026-07-06 07-11 de reserva, qué pregunta sirve cada una
   y los pasos de ADR-0093 §2. Sin la clave de las láminas.
-- **7b (sesion-08)**: S-1 de qué sale el stop (A-48), S-2 S-22, S-3 S-19, S-4 el «igual» y la caja
+- **7b (sesion-08)**: S-1 dónde pone el 0 de la caja (A-48; hasta la revisión, «de qué sale tu stop», que preguntaba por el 1, ya decidido: revisor, b1), S-2 S-22, S-3 S-19, S-4 el «igual» y la caja
   de la reentrada (ADR-0083 D1), S-5 A-53 y S-6 A-43; S-7, la tarde que no está en el vídeo, al
   final y fuera de las seis. El bloque de días: 2026-01-13 07-11, 2026-04-15 11-15, 2026-01-07 07-11 y
   2026-01-19 11-15, con 2026-01-21 07-11, 2026-01-22 11-15 y 2026-07-16 07-11 de reserva. El recuadro
@@ -588,7 +606,7 @@ informe.
   citas largas llevan `[...]` (la de `ev-v16-000234-9a4fa375` en S-5 de la 7a y la de
   `ev-v4-001909-54ac2edd` en S-3, que ya lo trae).
 - Lo ya decidido no se repregunta: en S-1 de la 7a, «con mecha o con cuerpo» (decidido; su ítem,
-  `ev-v11-000550-b140027d`, se creó igual como cita y no va a la hoja); en S-3, cuántas zonas
+  `ev-v11-000550-8a2230d4`, se creó igual como cita y no va a la hoja); en S-3, cuántas zonas
   (A-20); en S-4, la vela sin cuerpo de M15 (S-4 de la sesión 6). B-10 dice que A-46 no se reabre.
 - Al escribir «Para Aleks» se midieron dos cosas que §0.3 daba de otra forma: `caja_bloque` = `r6`
   está CONFIRMED, no DEFAULT_AMBIGUOUS (`parametros.yaml:748-749`); y en A-35 cada opción cae en una
@@ -612,10 +630,155 @@ informe.
   todo en verde; ruff, limpio tras `ruff format`.
 - «Tests Currently Passing»: 2002 → 2008 (`state check`).
 
+## Las seis decisiones del encargo (D1 a D6), y dónde quedaron
+
+| | Decisión (encargo, 2026-11-11) | Dónde |
+|---|---|---|
+| D1 | La hoja de la sesión 7 es el PDF del consultor, hecho desde docs/sesion-7/; no sale de `kit hoja`; J se queda en G.2 | cabecera de PREGUNTAS-7A.md y PREGUNTAS-7B.md; `kit hoja`, `hoja_preguntas.py` y `graficos_sesion.py` sin tocar; F y R4.3 sin J en las propuestas de cierre |
+| D2 | 7a es `<AAAA-MM-DD>-sesion-07` y 7b `<AAAA-MM-DD>-sesion-08`; `SESION_EN_CURSO` = "07" aquí y "08" en la activación de la 7a | F5; ADR-0093 §1; recuadro de PREGUNTAS-7B.md. §0.6: nada más da por hecha una sola sesión 7 ni choca con el 08 |
+| D3 | Los días por su condición a) a c); d) a f) | ADR-0093 §3; §0.4; `anexos/PREPARACION-SESION-7/dias-d3.txt` y `sustitutas.txt`; respuesta a la PARADA, puntos 2 a 4 |
+| D4 | Las láminas de la 7b no se generan aquí | recuadro de PREGUNTAS-7B.md; desviación (i) aceptada (punto 13) |
+| D5 | El pivote, pre-registrado | F2 (`docs/plan/PIVOTES-SESION-7.yaml` y su test) y ADR-0093 §6; la cuenta, medida en §0.3 y §0.7 |
+| D6 | F7 #10 entre las seis técnicas de la 7a; los dos esquemas a la 7b; la tarde del 10 de julio al final de la 7b, fuera de las seis | S-6 de la 7a; B-7 en §3 de PREGUNTAS-7B.md (no cabe en las seis: punto 1); S-7 de la 7b |
+
+## El encargo frente a lo hecho
+
+| Del encargo | Hecho | Dónde |
+|---|---|---|
+| Abrir con abrir-rama, riesgo alto, tramo R4, encargo tal cual con un bloque `ids-inexistentes` delante | sí | `3de24780` |
+| Base comprobada; PARADA si no cuadra | cuadra | «Base» |
+| El vídeo de mapeo: PARADA si llega antes de aprobar los días | no llegó (Aleks no lo dijo) | — |
+| FASE 0 con fase-cero y el auditor; PARADA | sí | §0, Apéndice A; respuesta del consultor |
+| 0.7: 14 y 39 | 14 y 39 | §0.3, `pivote-julio.txt` |
+| F1: ADR-0093, commit propio; recuadros; bloque fuera; referencias verificadas | sí (con la respuesta y los anexos delante: desviación 2) | `3e1995df`; F1 |
+| F2: el yaml con D5 literal y su test con sha256, uno que rompe | sí | `a2d830e5`; F2 |
+| F3: los ítems de F7 #1, #2, #3, #6 y #10 | sí; #10 de la transcripción activa (punto 0) | F3 |
+| F4: PREGUNTAS-7A.md y PREGUNTAS-7B.md | sí | F4 |
+| F5: hojas 07 y 08, `SESION_EN_CURSO` = "07", tests y uno que rompe | sí | F5 |
+| F6: fila antes, ensayo en clon, una invocación buena, recuentos sin la clave | sí | F6 |
+| Ninguna fecha reservada ni resultado en nada commiteado | en el último commit, sí: las fechas que van son de construcción; ninguna cifra de resultado. **Dos anexos de `3e1995df` escribían tres fechas de «día anterior» calculadas por calendario** (revisor, b7): corregido y declarado | desviación 5; PARADA final |
+| Una fila de HOLDOUT-EXPOSICIONES por día de trabajo, antes | sí: tres filas del 2026-11-11 (el día, F6 y la de a2 y b7) | HOLDOUT-EXPOSICIONES |
+| CI de Linux por `fix/preparacion-sesion-7` | ver «La CI» | «La CI» |
+| Revisor con los ocho alcances, su informe al final | ver Apéndice B | Apéndice B |
+| PARADA final con las propuestas comprobadas sobre copias | sí | «PARADA final» |
+
+## Lo que no pude medir
+
+- Las filas que mueven A-35, S-22, S-19, A-53, A-43 y A-46 por la toma: no hay recuento por fila
+  commiteado (§0.3); se dan el mecanismo o las órdenes.
+- Las filas del rango de H4 fuera de julio: las 24 P1 de los otros meses no están clasificadas
+  contra el rango, porque no tienen vídeo.
+- Si las láminas de la 7a se entienden en la sesión: lo revisan Aleks y el consultor antes (ADR-0093
+  §2), con la carpeta del Escritorio.
+- La aprobación de Aleks de los mínimos 19 y 33 (2026-11-11) está en el chat; aquí entra por D5 del
+  encargo, que la declara.
+
+## La CI de Linux (`fix/preparacion-sesion-7`)
+
+Empujada `958a7b9a` (F1 a F6 y todo el código de la rama) como `fix/preparacion-sesion-7`: **run
+43118024345**, `completed` / `failure`, con **1 failed, 3381 passed, 48 skipped**; el único fallo,
+el aceptado de `RITUAL.md`: `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (PROJECT_STATE
+declara `trabajo/preparacion-sesion-7` y la rama es `fix/…`). Medido con `gh run view 43118024345
+--log-failed`. Lo que se commitea después (las correcciones del revisor) es documentación, evidencia,
+dos anexos y un texto de la hoja 08; si Aleks quiere la CI sobre el último commit, se empuja otra vez
+a `fix/`.
+
+## Lo hecho con cada hallazgo del revisor
+
+| # | Gravedad | Hecho |
+|---|---|---|
+| a1 | importa | **Corregido**: dos ítems nuevos supersedan a los de v11 con la afirmación ajustada a la cita (`ev-v11-000038-fef9789d` y `ev-v11-000550-8a2230d4`); PREGUNTAS-7A.md cita el nuevo; F3 lo dice |
+| a2 | menor | **Corregido**: fila nueva de HOLDOUT-EXPOSICIONES del 2026-11-11 con F3 por su nombre |
+| b1 | bloquea | **Corregido**: S-1 de la 7b pregunta ahora por el 0 (A-48 sigue ABIERTA por el 0; `orden_stop_punto`, opciones `ultimo_pivote_m1` y `referencia_de_la_toma`), con el 1 decidido en «Lo que nos has dicho» y en «Para confirmar»; su título en la hoja 08, «dónde pones el 0 de tu caja» |
+| b2 | importa | **Corregido en el informe** (F6 sin la carpeta) y **a la PARADA final**: la versión de `3e1995df` sigue en la historia |
+| b3 | importa | **Corregido**: la pregunta 1 de S-4 de la 7a ya no enuncia lo de hoy; su «Para Aleks» lo dice |
+| b4 | importa | **Corregido**: fuera las tres repreguntas; «Para Aleks» de S-5 de la 7b cita entera `ev-v17-005914-55580dc0` y dice por qué no se repregunta |
+| b5 | importa | **Corregido**: el valor de cada opción en S-1, S-3, S-4 y S-6 de la 7b |
+| b6 | importa | **Declarado**: desviación 3 |
+| b7 | importa | **Corregido** en los dos guiones y sus salidas; declarado (desviación 5) y en HOLDOUT-EXPOSICIONES; la versión vieja sigue en la historia (PARADA final) |
+| b8 | menor | **Corregido**: el recuadro de LAMINAS.md copia también el título anterior |
+| b9 | menor | **Corregido** (la línea `:1442` repuesta) y declarado (desviación 4) |
+| b10 | menor | **Corregido**: la frase sale de ADR-0093 §3 (la lección va a ERRORES-RECURRENTES) |
+| b11 | menor | **Corregido** en §0.5, con su marca |
+| «no pudo comprobar»: el tema de F7 #6 | — | a la PARADA final, «lo que no me convence» |
+| «no pudo comprobar»: el vídeo de mapeo | — | Aleks no avisó de que hubiera llegado; no hubo PARADA por él |
+
+## Negativas de la guardia
+
+Ninguna sobre algo legítimo que no tuviera la forma que ella misma propone. Las que hubo, todas por
+encadenar en una llamada lo que pide ir en llamadas separadas (`git add` y `knowledge validate`;
+`sed` y `state check`; `mkdir` y `python`; `python -` y otro `python`; `git status` y
+`contrato_rama.py`): se partieron en llamadas como dice su mensaje. Dos más: un `for` en bash (se
+leyeron los ficheros con Read) y un `awk` (se partió en `grep`). Y la conocida de `$'\r'` en un `grep -c`
+(Technical Debt, carril de guardias): se contó con un guion de la carpeta de trabajo.
+
+## PARADA final
+
+**Las láminas de la 7a**, para que las revises (Aleks las sube en un ZIP a tu chat):
+`C:\Users\USER\Desktop\laminas-sesion-7a\` (seis carpetas, 38 láminas; `clave.txt` en la raíz, que
+guarda Aleks).
+
+**Lo que no me convence:**
+1. **Dos cosas que la historia de git conserva** y que el último commit ya no lleva: la tabla de F6
+   por carpeta (revisor, b2: con §0.4 deja deducir la clave) y tres fechas de «día anterior» en dos
+   anexos (b7). Las dos están en `3e1995df`. Reescribir la historia no se hace (`rebase` está
+   bloqueado y el merge las traería igual). Decide si basta con lo declarado o si la clave de la 7a
+   se cambia, volviendo a generar las láminas con otro orden barajado.
+2. **El tema de `ev-v12-000015-7fc04520`** (F7 #6) es `entrada.breaker_m1_con_cuerpo`, y la cita no
+   dice «M1». El contexto inmediato (0:00:58) habla de la liquidez de M15 (revisor, «lo que no pudo
+   comprobar»). Es la contradicción que S-5 de la 7a le pregunta al trader. Si el «con cuerpo» fuera
+   de M15, no habría contradicción con S-18. La pregunta no da por hecho ninguno de los dos.
+3. **El orden de la 7b.** Las filas de cada sesión del bloque son las de la clasificación vigente.
+   Tras activar la 7a cambian, y la activación tiene que revisar el orden (lo dice su recuadro).
+4. **S-4 de la 7a, pregunta 1.** Se reescribió para no sugerir el «sí» (revisor, b3). Se aparta de
+   la forma que fijó ACTIVAR-SESION-06 (punto 2), y lo dice su «Para Aleks».
+
+**Las propuestas para la orden de cierre**, comprobadas sobre copias en memoria con `problemas_a` a
+`problemas_d` de `tests/unit/test_hoja_de_ruta.py` (`anexos/PREPARACION-SESION-7/simular_cierre.py`;
+no escribe nada): **[] en los cuatro** con todas a la vez; y un mutante (R0.3 HECHA dejando `NA:F` en
+su bloque) da en `problemas_b` «NA:F esta HECHA y la letra sigue viva», que es lo que tiene que
+pasar.
+
+1. **F, entera** (sale «(1) J…» por D1 y «Las láminas no se enseñan…»; lo siguiente es la 7a y su
+   activación):
+   > F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla (TRAZAS-ABLACION.md; `motor decisiones`) y las láminas del bot (LAMINAS.md; `motor laminas`; R4.5) están hechas. La sesión 7 está preparada en dos días, 7a (sesion-07) y 7b (sesion-08) (PREPARACION-SESION-7.md; R4.3): el método en ADR-0093, que cambia la regla 2 de SESION-DE-PREGUNTAS.md (el bloque de días enseña las láminas); el pivote pre-registrado en docs/plan/PIVOTES-SESION-7.yaml; las preguntas en docs/sesion-7/; las láminas de la 7a fuera del repo. Siguiente, en este orden: (1) grabar, ingerir y activar la 7a; su activación genera las láminas de la 7b con su motor, revisa PREGUNTAS-7B.md y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C, R5.7 y R6a en los huecos.
+2. **R4.3**: «Qué es» con el reparto definitivo y «Depende de» sin J:
+   > - **Qué es:** con el método de ADR-0093 (RUMBO §1): como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Preparada en `trabajo/preparacion-sesion-7` (PREPARACION-SESION-7.md), con el reparto que aprobó el consultor el 2026-11-11: 7a (sesion-07), el rango de H4, el break even (A-13), las zonas de control del esquema (RN-009), A-35, cuándo se coloca la orden (ADR-0064) y las entradas válidas que deja sin tomar (F7 #10), más el bloque de días (docs/sesion-7/PREGUNTAS-7A.md); 7b (sesion-08), dónde pone el 0 de la caja (A-48), S-22, S-19, el «igual» y la caja de la reentrada (ADR-0083 D1), A-53 y A-43, más el bloque de días y, al final, la tarde del 10 de julio (docs/sesion-7/PREGUNTAS-7B.md, con los cuatro que no caben). Las láminas de la 7b las genera la activación de la 7a. El pivote, pre-registrado en docs/plan/PIVOTES-SESION-7.yaml (ADR-0093 §6).
+   > - **Depende de:** R4.4 y R4.5; el vídeo de mapeo del trader, si llega antes.
+   Su «Estado» sigue ABIERTA: «Hecho cuando» es la 7a y la 7b activadas y el pivote leído.
+3. **R0.3 HECHA**: «Refs» pasa a `ID:ADR-0092 · ID:ADR-0070 · ID:ADR-0093` (sin `NA:F`), y «Estado» a
+   «HECHA (trabajo/preparacion-sesion-7, ADR-0093).».
+4. **Technical Debt** (respuesta, puntos 7 y 12), medidas con `wc -c`:
+   - línea nueva, **273 bytes** con su salto: «- Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar: scripts/graficos_sesion.py:66-71, con su test (su constante ya no es la regla 2), y engine/decisiones.py:7-8 (el ADR del método ya existe) (PREPARACION-SESION-7.md §0.2, H8 y H19).»
+   - la de la skill `ingerir-sesion`, ampliada al final: «…; segunda vez): rama corta de skills; y no dice que ningún fotograma se abre antes de que la voz o uno ya abierto sitúen el tramo, ADR-0093 §2.» (**+109 bytes**; con la F nueva, 297 bytes menos, el total sale 23.916 + 273 + 109 − 297 = 24.001).
+5. **El tamaño de PROJECT_STATE**: 23.916 bytes en la rama hoy (`wc -c`), **24.001** con las cuatro
+   propuestas aplicadas a la copia; por debajo del tope de 25.000 de `test_project_state.py`, sin
+   recorte. El cierre cambia además Current Branch, Current Feature, Stable Main State y Last Stable
+   Commit; volver a medir entonces.
+6. **Para la fila de ERRORES-RECURRENTES**: en la columna del consultor, los cinco errores menores de
+   la respuesta (punto 17), y la lección de la primera versión del encargo sin contarla. De la sesión:
+   (a) el log de `knowledge validate` en la raíz dejó el primer `make check` en verde y sin sello
+   (punto 16); (b) dos «Para Aleks» de §0.3 decían de un parámetro otra cosa que el registro
+   (`caja_bloque` CONFIRMED, no DEFAULT_AMBIGUOUS; las tres opciones de A-35), y se corrigieron al
+   escribir F4 (lección: el estado y las opciones de un parámetro se leen del registro al escribir,
+   no se copian de un informe); y lo del revisor (Apéndice B): eje (a) 0 bloquea, 1 importa, 1
+   menor; eje (b) 1 bloquea, 6 importa, 4 menor; todo corregido en el último commit o declarado. El
+   bloquea, b1: la pregunta de A-48 preguntaba por el 1, que la sesión 6 ya decidió, en lugar del 0
+   (lección: antes de redactar una pregunta «en parte», leer en `ambiguedades.yaml` qué parte quedó
+   decidida, y no fiarse del resumen de un informe anterior). Y dos de holdout que solo vio el
+   revisor: la clave de las láminas se podía deducir cruzando dos tablas del informe (b2), y un guion
+   de medida escribía fechas de calendario de días que pueden ser reservados (b7). Lección: lo que se
+   commitea se mira también por lo que deja deducir y por lo que el guion imprime de sobra, no solo
+   por lo que dice.
+
 ## Estado
 
-EN CURSO: fase 0 respondida (arriba); F1 y F6 hechos; F2 a F5, el informe, la CI de `fix/` y el
-revisor, por hacer.
+LISTA PARA REVISIÓN (2026-11-11): fase 0 respondida; F1 a F6 hechos, sin ninguna PARADA
+condicional; la CI de Linux por `fix/preparacion-sesion-7`, run 43118024345, con el único fallo
+aceptado (`test_state_check_ok_on_real_repo`); el revisor pasó (Apéndice B) y sus hallazgos están
+corregidos o declarados; la PARADA final, arriba.
+
+Rama lista para revisión, NO cerrada.
 
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-11), tal cual
 
@@ -748,3 +911,111 @@ revisor, por hacer.
 > 2. **La propuesta de cierre «R0.3 HECHA» rompe `test_hoja_de_ruta`.** problemas_b falla mientras NA:F siga en el bloque de R0.3.
 > 3. **El porqué del ADR mezcla datos.** Las 29 filas incluyen filas del 1 de julio que VIDEO-JULIO excluye de la sesión 7. Y el «52 %» de S-22 es solo la lectura (a): con (b) es el 69 %. El ADR tiene que escribirlo con su condición.
 > 4. **D4 se aparta de R4.5 y de F.** El motivo está dado; el informe tiene que declararlo como desviación.
+
+## Apéndice B · El informe del revisor (opus, 2026-11-11, sobre 958a7b9a), tal cual salvo su lista de 33 comandos, resumida al final
+
+> ## Informe del revisor · trabajo/preparacion-sesion-7 · 2026-11-11
+>
+> Base `e6b073f1` (`git merge-base main HEAD`), HEAD `958a7b9a`, árbol limpio. 4 commits y 34 ficheros. Encargo: `docs/encargos/trabajo-preparacion-sesion-7.md`. Contrato: `contrato.yaml`. Informe: `docs/validation/PREPARACION-SESION-7.md`. Lo he juzgado tal como está: todavía no tiene las secciones finales.
+>
+> **Las comprobaciones del contrato:**
+> - `uv run python scripts/contrato_rama.py`, exit 0: `CONTRATO: 34 ficheros dentro del contrato de trabajo/preparacion-sesion-7 (riesgo alto, artefacto docs/validation/PREPARACION-SESION-7.md, tramo 'R4 · La sesión 5 con el trader y su activación', 4 comprobaciones para el revisor)`.
+> - `uv run botsito state check`, exit 0: `OK: rama 'trabajo/preparacion-sesion-7' - funcionalidad actual: EN CURSO: …`.
+> - `uv run botsito knowledge validate`. Lo lancé sin `> knowledge-validate.log`, porque esa redirección escribe en la raíz. Salió con exit 0, todo OK, entre otras: `OK: 1041 documentos: todo id citado existe o esta declarado con motivo` y `OK: 645 items de evidencia, 0 contradicciones abiertas, historial intacto`. Dio 4 avisos, los de siempre: 5 citas con tiempos de segmento, 288 ítems llm sin propuesta y los configs congelados de dos paquetes.
+> - `make check` no lo ejecuté. La evidencia está en `make-check.log`:
+>   - `:85`: `3430 passed in 1189.59s`.
+>   - `:109`: `SELLO: make check en verde sobre el arbol cb29ec17fac927064f89f36ad877c987606e3032`. Coincide con `git rev-parse 958a7b9a^{tree}` = `cb29ec17…`.
+>   - `:111`: `PICO DE MEMORIA … 312 MiB`.
+> - Además, `uv run pytest -p no:cacheprovider -q tests/unit/test_pivotes_sesion_7.py tests/unit/test_transcribir_sesion.py`: 140 tests, exit 0.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 1 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | **Dos afirmaciones de evidencia nueva dicen algo que su cita no trae (punto 10 del eje a).** (1) `ev-v11-000038-a322e483`: la cita dice «A ver, este es nuestro rango … Entonces nosotros nos enfocamos en buscar Traits alcistas», y la afirmación dice «el trader busca compras porque su rango **de H4** no ha sido mitigado…». La cita no nombra la H4: la filtrada dice «H4, vale» en 0:00:31.9, fuera de la ventana 0:00:38-0:00:53. (2) `ev-v11-000550-b140027d`: la cita dice «hubiera roto con mecha o con cuerpo por debajo de **esta vela**», y la afirmación dice «por debajo de **la vela del rango**». El contexto lo apoya («Como todavía no se ha roto nuestro rango», 0:05:44), pero queda fuera de la cita. El ítem es inmutable: se corrige superseding si el consultor lo pide. | `knowledge/evidence/v11/ev-v11-000038-a322e483.yaml:7-11`; `knowledge/evidence/v11/ev-v11-000550-b140027d.yaml:7-10`; `uv run botsito corpus transcript show --video v11 --t0 0:00:30 --t1 0:01:00` y `--t0 0:05:45 --t1 0:06:05` |
+> | a2 | menor | La fila de HOLDOUT-EXPOSICIONES del día solo declara la lectura de la filtrada «(2) La fase 0». F3 (`corpus transcript show` y `evidence new` sobre v11, v12 y v14) no aparece por su nombre. Es la misma herramienta y el mismo día. | `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md`, la primera fila nueva |
+>
+> Comprobado sin hallazgos:
+> - **Contrato:** las tres comprobaciones que no escriben, en verde, y el sello de `make check` es el del árbol de HEAD.
+> - **Trailer `Fuente:`:** ningún commit toca `knowledge/spec/` ni `knowledge/cases/`. `958a7b9a` lleva igualmente `Fuente:` en el cuerpo, con 5 `ev-*` y ADR-0093, y todos existen.
+> - **Holdout:** no se toca `knowledge/cases/` y no se abrió ningún fotograma. Los anexos dan solo recuentos de la compuerta (`dias_d3.py:76-78`, `sustitutas.py:64`) y ningún id de los ocultos.
+> - **Regímenes de cambio:** `knowledge/evidence/` tiene solo `A` (5 ficheros). No se tocan feedback, manifests, transcripciones, fotogramas ni `libros.yaml`. HISTORIA solo crece (0 líneas quitadas). HOLDOUT-EXPOSICIONES solo crece (+2 filas).
+> - **Ambigüedades:** sin cambios.
+> - **ADR-0093:** `## Estado` = `ACTIVE`.
+> - **Informes cerrados:** no se toca ninguno.
+> - **Tres guardias de una `cita`:** no aplica, no se añade ningún sitio con `cita`.
+> - **Cifras:** no cambia código ejecutable, solo dos cadenas de `cli.py`.
+> - **Ensayo de F6:** en worktree, según el informe (F6, punto 1).
+> - **Cuatro citas del informe, contrastadas con su fuente y ciertas:** `VIDEO-JULIO.md:657` (el rango de H4 30), `TRAZAS-ABLACION.md:878-881` (3+1+4 filas con RN-009), `comun/historial.py:33` (`DIRECTORIOS_CON_FUENTE`) y `cli.py:658-663` (la transcripción que no es la activa).
+> - **Notas de la evidencia (punto 15):** solo hablan de su propia cita. #6 no nombra `ev-v16-000234-9a4fa375` y #2 no nombra `ev-v9-000902-25db5bf5`.
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 6 importa, 4 menor. Requisitos: 31 hechos (uno de ellos hecho de otra forma), 6 parciales y 1 no hecho, sobre 38.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Abrir con abrir-rama: el encargo con un bloque ids-inexistentes | Hecho | `git show 3de24780:docs/encargos/…` tiene 1 bloque |
+> | 2 | La base, comprobada | Hecho | Informe:7-14 |
+> | 3 | Fase 0, de 0.1 a 0.9, con auditor y PARADA | Hecho | Informe:16-379 |
+> | 4 | La respuesta copiada tal cual en el encargo y en el informe | Hecho | `diff <(sed -n '120,152p' encargo) <(sed -n '411,443p' informe)`: IDENTICAS |
+> | 5 | ADR-0093 §1-§7 = F1.1-7 + RUMBO §1 a-e + puntos 9 y 11 | Hecho (ver b10) | ADR:19-170; precisión (i) en :86-90, (ii) en :99-100, (iii) en :55-57; punto 9 en :92-97; punto 11 en :165-167 |
+> | 6 | Recuadros de SESION-DE-PREGUNTAS (cabecera, regla 2, pasos 5 y 6) que copian el texto anterior | Hecho | Los cuatro, comparados con `git diff main...HEAD`: copian el texto de `main` palabra por palabra. El paso 5 copia solo la frase que cambia |
+> | 7 | «Lo primero» de LAMINAS.md, con su recuadro | Hecho (ver b8) | `docs/runbooks/LAMINAS.md:5-18` |
+> | 8 | La NOTA de ACTIVAR-A35-A44 con el texto de la decisión 6 | Hecho de otra forma | Dos ajustes declarados (informe:454) y uno sin declarar (ver b9). Las líneas `:84`, `:139-140` y `:59-64` son las correctas |
+> | 9 | Las dos cadenas de `cli.py` | Hecho | `git diff main...HEAD -- src/botsito/cli.py` |
+> | 10 | La fila de ADR-0093 en el índice | Hecho | `docs/adr/README.md`, nueva fila 0093 |
+> | 11 | El bloque ids-inexistentes sale en el commit del ADR (alcance 8) | Hecho | 1 bloque en 3de24780 (encargo e informe), 0 en 3e1995df y HEAD; ningún bloque en los demás documentos de la rama |
+> | 12 | Las referencias del ADR, verificadas | Hecho | `knowledge validate`: «todo id citado existe» |
+> | 13 | El yaml de F2 con D5 literal | Hecho | `docs/plan/PIVOTES-SESION-7.yaml`: cada texto, comparado con D5, es igual. Los matices medidos van aparte en `matices_medidos`, declarado |
+> | 14 | El test fija el sha256 y rompe con un mínimo cambiado | Hecho | sha256 `cef25e63…` = `tests/unit/test_pivotes_sesion_7.py:19`; los dos tests que rompen, en :73-95, en verde |
+> | 15 | F2 en commit propio, antes de F3 a F6 | Parcial | Ver b6 |
+> | 16 | F3: cinco ítems de la filtrada, con `evidence new` | Hecho | Las cinco citas están en `corpus transcript show` (v11 0:00:38 y 0:05:50, v12 0:00:15 y 0:06:50, v14 0:42:02), y `[...]` solo elide |
+> | 17 | Las notas solo de su cita, y la contradicción de #6 en el informe y en S-5 | Hecho | Ítems :18; `PREGUNTAS-7A.md:249-252`; informe:556-561 |
+> | 18 | El trailer `Fuente:` | Hecho | `git log --format=%B 958a7b9a` |
+> | 19 | Los dos documentos, en la forma de la sesión 6 | Hecho | `docs/sesion-7/PREGUNTAS-7A.md` y `PREGUNTAS-7B.md` |
+> | 20 | El reparto aprobado (punto 1) | Hecho | 7A S-1 a S-6 y 7B S-1 a S-6, más S-7, en el orden de la respuesta |
+> | 21 | Como mucho seis técnicas por día | Hecho | 6 y 6 (+1 de material) |
+> | 22 | Sin días ni fechas en lo que va al PDF | Hecho | Fuera de «Para Aleks» y del §1 solo hay horas en el esquema de A-43, que el encargo pide |
+> | 23 | Ninguna pregunta repregunta lo decidido | No hecho | Ver b1 |
+> | 24 | «Para Aleks» con el valor en que cae cada opción | Parcial | Ver b5 |
+> | 25 | El bloque de días con reservas, los pasos, y sin la clave | Hecho | 7A:44-72; 7B:38-63 |
+> | 26 | El recuadro de D4 en la 7B | Hecho | 7B:8-14 |
+> | 27 | B-7 a B-10 al final, con sus filas | Hecho | 7B:234-244 |
+> | 28 | Cada cita de «Lo que nos has dicho», literal | Hecho | 35 citas contrastadas: 13 de 7B y 22 de 7A, con sus 4 `fb-*`. Todas casan con su `cita_literal` o su `respuesta_literal`, y ninguna cae en un tramo no citable de `tramos_no_citables.yaml` |
+> | 29 | F5: hojas 07 y 08, `SESION_EN_CURSO`="07", la 06 sin cambios | Hecho | `scripts/transcribir_sesion.py`: los 13 títulos coinciden letra por letra con los documentos |
+> | 30 | Los tests de F5 y uno que rompe a propósito | Hecho | `test_un_codigo_de_la_hoja_que_no_esta_en_el_documento_rompe`, en verde |
+> | 31 | F6: la fila antes, el ensayo en un worktree y una invocación buena | Hecho (según el informe) | HOLDOUT, segunda fila nueva; informe:487-504 |
+> | 32 | F6: tipo a y tipo b por sesión, sin la clave | Parcial | Ver b2 |
+> | 33 | Los días según D3 a-f y los puntos 2 a 4 | Hecho | `dias-d3.txt`: 7A, 6 de 6 PASA. `sustitutas.txt`: 01-07 07-11, 01-19 11-15, 01-21 07-11 y 07-16 07-11 «cumple». No van 07-14 11-15 ni 07-17 07-11. La compuerta da «dias dev en ocultos: 0; en reservados: 0» |
+> | 34 | Ninguna fecha reservada ni ningún resultado en lo commiteado | Parcial | Ver b7 |
+> | 35 | Las filas de HOLDOUT-EXPOSICIONES | Hecho | 2 filas del 2026-11-11 |
+> | 36 | Lo que no cambia | Hecho | `git diff --name-status main...HEAD` sobre las rutas protegidas: vacío, salvo `knowledge/evidence/` (5 `A`) |
+> | 37 | La CI de `fix/`, con el número de run | Parcial | `origin/fix/preparacion-sesion-7` = `958a7b9a`; el run no consta en el informe |
+> | 38 | Las secciones finales del informe y la PARADA final | Parcial (pendiente) | Informe:615-618 (Estado: «por hacer») |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | **bloquea** | **S-1 de la 7B pregunta por el 1 de la caja, que ya está decidido, con las opciones que son del 0, que es lo abierto.** ADR-0093 §1 dice «Ninguna vuelve a preguntar lo que ya está decidido», y el encargo pide «el 0 de A-48». La pregunta es «¿hasta dónde llega el 1 de tu caja? (a) el 1 en el último pivote de M1; (b) el 1 en el pivote de la vela de la toma». Pero el 1 ya lo contestó y está CONFIRMED: `caja_bloque` = `r6`, según `ev-v17-010541-05a69879` («al punto más alto de todas las velas desde el punto»), que la propia S-1 cita. Lo abierto es el 0, entre `ultimo_pivote_m1` y `referencia_de_la_toma` (`orden_stop_punto`), y la fuente pedía exactamente eso: «¿dónde pones el 0? (a) aquí; (b) aquí». En la hoja, el 0 solo aparece en «Para precisar», y «Para Aleks» no nombra `orden_stop_punto`. | `docs/sesion-7/PREGUNTAS-7B.md:75-94`; `knowledge/spec/ambiguedades.yaml:1557-1565` («El 1: … caja_bloque = r6 pasa a CONFIRMED … El 0 no queda claro: no eligio entre ultimo_pivote_m1 y referencia_de_la_toma … SIGUE ABIERTA por el 0»); `docs/validation/ACTIVAR-SESION-06.md:591-592`; `knowledge/spec/parametros.yaml:702-706` |
+> | b2 | importa | **La clave de las láminas se deduce de lo commiteado (alcance 7).** La tabla de F6 da tipo a y tipo b por carpeta. La tabla de §0.4 (y `filas-por-sesion.txt`) da las filas del trader y del bot de cada sesión. Con la definición de LAMINAS.md «Qué sale» (a = cada orden del bot llenada, b = cada operación del trader sin pareja), las seis parejas (a, b) son distintas y casan una a una con las seis sesiones de la 7A. No escribo aquí cuál es cuál, porque este informe se pega en el repo. Hay precedente parecido en `LAMINAS.md:499-507`. | `docs/validation/PREPARACION-SESION-7.md:509-517` (commit 3e1995df) y `:162-180`; `docs/runbooks/LAMINAS.md:43-46` |
+> | b3 | importa | **Una pregunta que sugiere la respuesta (alcance 2).** S-4 de la 7A, Pregunta 1, enuncia una proposición y pide confirmarla: «Una mecha … no mueve el alto; lo toma la vela de M1 que cierra con cuerpo por encima. ¿Es así? (a) sí; (b) no». La proposición es lo que hace hoy el bot, como dice su propio «Para Aleks»: «(a) → … (lo de hoy)». | `docs/sesion-7/PREGUNTAS-7A.md:205-209`, `:222-223` |
+> | b4 | importa | **«Para precisar» vuelve a preguntar lo que ya dijo** (ADR-0093 §1: «una pregunta "en parte" … pregunta solo lo que falta»). (1) S-2 de la 7A pregunta «¿por encima de qué tiene que cerrar: del nivel o de la zona de entrada?», y la cita que la misma hoja trae, `ev-v17-005454-90ce4feb`, ya dice «no necesariamente por encima de aquí. Pero sí por encima de la zona de entrada». (2) S-5 de la 7B pregunta «¿Y si antes del punto nuevo el precio toma todavía otra liquidez?», y `ev-v17-005914-55580dc0` ya dice «si antes de que aparezca el nuevo punto el precio toma todavía otra liquidez pues se va actualizando»; «Para Aleks» lo cita cortado con «…» justo antes de esa parte. (3) S-1 de la 7A pregunta «¿Cuánto tiempo puede seguir siendo la misma vela tu rango?», y el informe la da por descartada: «"¿Cuántos días puede durar un rango?" … no se pregunta así». | 7A:136, :147; 7B:189, :194; `knowledge/evidence/v17/ev-v17-005914-55580dc0.yaml:7-8`; 7A:108; informe:126-128 |
+> | b5 | importa | **«Para Aleks» no dice en qué valor cae cada opción** (F4 lo pide). Falta en S-1 de la 7B (ninguna opción tiene valor), en S-4 de la 7B (ninguna) y en S-6 de la 7B, Pregunta 2 (sin valor). En S-3 de la 7B, solo «espero» lleva su valor. | 7B:89-94, :168-172, :219-221, :142-146 |
+> | b6 | importa | **F6 se hizo antes que F2, y no está declarado.** El encargo pide «F2 · EL PIVOTE (commit propio, antes de F3 a F6)». Las láminas se generaron con F1 sin commitear: «El árbol de trabajo llevaba entonces sin commitear lo de F1», y el Estado decía «F1 y F6 hechos; F2 a F5 … por hacer». F2 es `a2d830e5`, posterior. «Desviaciones» solo trae dos, y esta no está. | Informe:499-502, :617-618, :390-398; `git log` (3e1995df → a2d830e5) |
+> | b7 | importa | **Fechas de meses reservados en anexos commiteados** (el encargo dice «En lo que se commitea, ninguna fecha reservada»). `dias-d3.txt` y `sustitutas.txt` escriben, como «anterior», el día de mercado anterior al 1 de abril y el anterior al 1 de julio, que son fechas de marzo y de junio. Se calculan por calendario y la salida no dice si están en una partición. No comprobé su pertenencia para no consultar la compuerta sobre un día reservado. Basta con imprimir «fuera de construcción» sin la fecha. | `docs/validation/anexos/PREPARACION-SESION-7/dias-d3.txt:42-43`; `sustitutas.txt:22`, `:45-46` |
+> | b8 | menor | El recuadro de LAMINAS.md copia el párrafo anterior pero no el título que también cambió («## Lo primero: todavía no se enseñan al trader»). | `git diff main...HEAD -- docs/runbooks/LAMINAS.md` |
+> | b9 | menor | La NOTA de ACTIVAR-A35-A44 cambia «(`ambiguedades.yaml:1442`)» de la decisión 6 por «(`knowledge/spec/ambiguedades.yaml`)». Es un tercer ajuste que el informe no declara: dice «Dos ajustes de forma». | Informe:361 frente a `docs/runbooks/ACTIVAR-A35-A44.md:46`; informe:454 |
+> | b10 | menor | ADR-0093 §3 añade «Una exclusión dice a qué conjunto se aplica (respuesta a la PARADA, punto 17)». No está en F1 ni en RUMBO §1, y el punto 17 es una lección para ERRORES-RECURRENTES, no una decisión (alcance 1: «sin añadir»). | `docs/adr/0093-…md:81` |
+> | b11 | menor | §0.5 del informe sigue diciendo que la contradicción de F7 #6 «queda escrita en las notas del ítem». F3 y el punto 15 dicen lo contrario, y el ítem no la lleva. | Informe:224-228 frente a :556-561; `ev-v12-000015-7fc04520.yaml:18` |
+>
+> ### Lo que no pude comprobar
+> - **Las láminas y `clave.txt`:** no los abrí (`C:\Users\USER\Desktop\laminas-sesion-7a`, prohibido por el encargo). Lo de F6 (exit 0, 45 ficheros, 0 distintos por sha256, 38 láminas) sale solo del informe.
+> - **La CI de `fix/preparacion-sesion-7`:** el push está (`origin/fix/…` = `958a7b9a`), pero no consulté el run. `gh run list` lo niega el clasificador y el informe no da el número.
+> - **`make check`:** no lo ejecuté, porque escribe. La evidencia es `make-check.log`: sello `cb29ec17…` = árbol de HEAD, 3430 passed, pico 312 MiB. Tampoco ejecuté `git write-tree`.
+> - **El orden de los pasos:** no puedo saber si F6 coincidió con algún `make check`, ni si `knowledge validate` se pasó antes del `make check` de F3.
+> - **El vídeo de mapeo:** no puedo saber si Aleks avisó de que había llegado antes de aprobar los días (condición de PARADA del encargo). No hay rastro en el repo.
+> - **Las dos fechas de b7:** no comprobé si están en una partición, por no preguntar a la compuerta por un día reservado.
+> - **El tema de `ev-v12-000015-7fc04520`** (`entrada.breaker_m1_con_cuerpo`) da por hecho que el «con cuerpo» es del breaker de M1. La cita no dice M1, y el contexto (0:00:58) habla de la liquidez de M15. No es la afirmación y no cuenta como hallazgo del punto 10, pero toca la contradicción que se le pregunta al trader en S-5 de la 7A.
+>
+> ### Comandos ejecutados
+> (33 entradas; la lista entera la dio el revisor con su informe, y aquí se resume: git de lectura sobre la rama y `main`; las tres comprobaciones del contrato que no escriben; `corpus transcript show` de v11, v12 y v14; `pytest` de los dos ficheros de tests; `sha256sum` y `wc -c` del yaml; Read y Grep de los documentos, los ítems y los parámetros. Dos órdenes que la guardia le negó, un `for f in …; do cat` y un `uv run python -` con `glob`, las rehízo con Read y Grep sin rodearla.)

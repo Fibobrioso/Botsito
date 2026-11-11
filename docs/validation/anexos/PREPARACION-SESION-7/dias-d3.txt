@@ -29,7 +29,7 @@ pasan 1 de 1
 
 ## 7b F3.5
 2026-07-02 11-15: a) si; b) anterior 2026-07-01 si; c) horas perdidas dentro ninguna, posible M 0 -> PASA
-2026-01-02 11-15: a) si; b) anterior 2026-01-01 NO; c) horas perdidas dentro ninguna, posible M 0 -> NO PASA
+2026-01-02 11-15: a) si; b) anterior NO (no es de construccion; sin la fecha); c) horas perdidas dentro ninguna, posible M 0 -> NO PASA
 2026-07-10 07-11: a) si; b) anterior 2026-07-09 si; c) horas perdidas dentro ['2026-07-10T05Z'], posible M 2 -> NO PASA
 2026-01-22 11-15: a) si; b) anterior 2026-01-21 si; c) horas perdidas dentro ninguna, posible M 0 -> PASA
 2026-01-13 07-11: a) si; b) anterior 2026-01-12 si; c) horas perdidas dentro ninguna, posible M 0 -> PASA
@@ -39,6 +39,6 @@ pasan 4 de 6
 ## excluidas por el encargo (control)
 2026-07-14 11-15: a) si; b) anterior 2026-07-13 si; c) horas perdidas dentro ['2026-07-14T12Z'], posible M 0 -> NO PASA
 2026-07-17 07-11: a) si; b) anterior 2026-07-16 si; c) horas perdidas dentro ninguna, posible M 0 -> PASA
-2026-07-01 07-11: a) si; b) anterior 2026-06-30 NO; c) horas perdidas dentro ninguna, posible M 0 -> NO PASA
-2026-04-01 11-15: a) si; b) anterior 2026-03-31 NO; c) horas perdidas dentro ninguna, posible M 0 -> NO PASA
+2026-07-01 07-11: a) si; b) anterior NO (no es de construccion; sin la fecha); c) horas perdidas dentro ninguna, posible M 0 -> NO PASA
+2026-04-01 11-15: a) si; b) anterior NO (no es de construccion; sin la fecha); c) horas perdidas dentro ninguna, posible M 0 -> NO PASA
 pasan 1 de 4

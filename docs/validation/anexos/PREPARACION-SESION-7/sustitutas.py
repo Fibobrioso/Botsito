@@ -93,7 +93,7 @@ def main(caja: Path, para: Path) -> int:
         if not bueno(dia):
             return "NO a)"
         if not bueno(anterior(dia)):
-            return f"NO b) (anterior {anterior(dia)})"
+            return "NO b) (el dia de mercado anterior no es de construccion; sin la fecha)"
         a, b = SESIONES[ses]
         d = date.fromisoformat(dia)
         ini = datetime(d.year, d.month, d.day, a, tzinfo=MADRID).astimezone(UTC)

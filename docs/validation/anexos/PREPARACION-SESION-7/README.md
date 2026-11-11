@@ -14,4 +14,7 @@ leen; ninguno escribe en el repositorio), y sus salidas. Se ejecutan desde la ra
 
 Los guiones no pasan por el lint de `make check` (`Makefile:36-37`: `src`, `tests`, `scripts` y
 `.claude/hooks`) y se dejan como se ejecutaron; `ensayo_evidencia.py` se cambió una vez para no
-imprimir el id calculado, y su salida es la de después del cambio.
+imprimir el id calculado, y `dias_d3.py` y `sustitutas.py` para no imprimir la fecha del día de
+mercado anterior cuando no es de construcción (revisor de la rama, b7); sus salidas son las de
+después del cambio. `simular_cierre.py` comprueba las propuestas de la orden de cierre sobre copias
+en memoria (PARADA final del informe); no escribe nada.

@@ -66,32 +66,36 @@ tramo es no citable el mismo día.
 
 Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuento por fila.
 
-**S-1. De qué sale tu stop** · en parte · A-48
+**S-1. Dónde pones el 0 de tu caja** · en parte · A-48
 - **Lo que nos has dicho:**
-  - «entonces la respuesta sería al punto más alto de todas las velas desde el punto» (v17 1:05:41,
-    `ev-v17-010541-05a69879`);
+  - del 1: «entonces la respuesta sería al punto más alto de todas las velas desde el punto» (v17
+    1:05:41, `ev-v17-010541-05a69879`);
   - «Una compra al revés, exactamente como lo hemos visto en el gráfico, sería el arriba del 0 y el 1
     abajo.» (v17 1:13:28, `ev-v17-011328-a701a547`).
-- **Lo que todavía no sabemos:** de qué sale el stop en tu caja: el 0 de dónde lo pones y el 1 hasta
-  dónde llega, cuando el bot y tú ponéis la misma entrada y un stop distinto.
-- **Esquema inventado, no es un día real** («M15» y «M1» escritos): la toma de M15 en una compra; el
-  retroceso en M1 con su último pivote; la vela de la toma con su propio pivote, más abajo; dos
-  cajas dibujadas desde el mismo 0, una con el 1 en el último pivote de M1 y otra con el 1 en el
-  pivote de la vela de la toma.
-- **Pregunta:** «¿Dónde pones el 0, y hasta dónde llega el 1 de tu caja?
-  - (a) el 1 en el último pivote de M1;
-  - (b) el 1 en el pivote de la vela de la toma;
-  - (c) otro, ¿cuál?»
-- **Para precisar:**
-  - ¿El 0 lo pones en el punto de breaker, o en otro sitio?
-  - ¿Cuentas las mechas para el 1?
-- **Para confirmar al final:** «Mi 0 es ______ y mi 1 es ______; el stop va a 0,8 de la caja».
-- *Para Aleks (no va a la hoja): RECORRIDA-CONSTRUCCION-2.md:1335-1339 y `ACTIVAR-SESION-06.md:591-592`.
-  La caja está DISPERSA en los dos sentidos (cociente entre la distancia entrada-stop del bot y la
-  del trader de 0,21 a 9,25, mediana 0,83; `caja-stop.txt`), así que no se pregunta «¿más lejos o
-  más cerca?». Hoy `caja_bloque` = `r6`, CONFIRMED (`parametros.yaml:726`, opciones `r6`, `r4`, `r1`), con
-  A-48 ABIERTA. Filas: julio 16 con el stop fuera y 7 P2 a 4-10 puntos; en total 44 y 24. Sesiones del
-  bloque: 1, 3 y 4 (y las reservas 2026-01-21 y 2026-07-16).*
+- **Lo que todavía no sabemos:** de dónde sale el 0, el punto de la orden: si del último pivote de
+  M1 o de la vela de la toma.
+- **Esquema inventado, no es un día real** («M15» y «M1» escritos): la toma de M15 en una venta;
+  después el retroceso en M1 con su último pivote; la vela de la toma, con su propio pivote en otro
+  sitio; dos posibles 0 rotulados A (el último pivote de M1) y B (el de la vela de la toma), y el 1
+  dibujado igual para los dos.
+- **Pregunta:** «¿Dónde pones el 0?
+  - (a) en A;
+  - (b) en B;
+  - (c) en otro sitio, ¿cuál?»
+- **Para precisar:** ¿Lo haces igual en una compra, al revés?
+- **Para confirmar al final:** «Mi 0 es ______; el 1 es el punto más alto de todas las velas desde el
+  punto, y el stop va a 0,8 de la caja».
+- *Para Aleks (no va a la hoja): RECORRIDA-CONSTRUCCION-2.md:1335-1339 («¿de qué sale tu stop?») y
+  `ACTIVAR-SESION-06.md:591-592` (el 0 de A-48). **El 1 está decidido y no se pregunta**:
+  `caja_bloque` = `r6`, CONFIRMED (`parametros.yaml:726`; `ambiguedades.yaml:1557-1565`). A-48 sigue
+  ABIERTA por el 0: `orden_stop_punto` = `ultimo_pivote_m1`, DEFAULT_AMBIGUOUS, lectura del consultor
+  (`parametros.yaml:702`, opciones `ultimo_pivote_m1` y `referencia_de_la_toma`). (a) →
+  `ultimo_pivote_m1` (lo de hoy); (b) → `referencia_de_la_toma`. La caja está DISPERSA en los dos
+  sentidos (cociente entre la distancia entrada-stop del bot y la del trader de 0,21 a 9,25, mediana
+  0,83; `caja-stop.txt`), así que no se pregunta «¿más lejos o más cerca?». Filas: julio 16 con el
+  stop fuera y 7 P2 a 4-10 puntos; en total 44 y 24. Sesiones del bloque: 1, 3 y 4 (y las reservas
+  2026-01-21 y 2026-07-16). (Hasta la revisión de la rama, esta pregunta lo era del 1, que ya está
+  decidido: revisor, b1.)*
 
 **S-2. Para que el máximo de la verde sea tu punto, qué tiene que hacer la roja** · en parte · S-22
 - **Lo que nos has dicho:**
@@ -142,7 +146,9 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-06-MOTOR.md:792` (decisión 3: hasta la sesión 7,
   con la lectura del consultor apuntada: si dice «espero», 3.a y 4.a) y `:803`. Hoy la stop del lado
   equivocado se rechaza (`precio_invalido`, `engine/broker.py:543-555`) y el rechazo gasta el punto
-  (ADR-0083 D1). Sin recuento por fila: 32 rechazos al colocar en la línea base (TRAZAS-ABLACION.md
+  (ADR-0083 D1). (a) → colocar o entrar aunque el precio esté pasado el 0 (motor nuevo, con ADR);
+  (b) → 3.a y 4.a de ACTIVAR-SESION-06-MOTOR (esperar a que el 0 quede del lado bueno); (c) → en
+  efecto, lo de hoy (el punto se gasta). Ningún parámetro existente: es la regla de la rama de S-19. Sin recuento por fila: 32 rechazos al colocar en la línea base (TRAZAS-ABLACION.md
   5.4).*
 
 **S-4. Volver a entrar en el mismo punto: el «igual» y la caja** · en parte · ADR-0083 D1
@@ -167,7 +173,9 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
   ______».
 - *Para Aleks (no va a la hoja): ADR-0083:87-88 («Lo que pasa a la sesión 7») y
   `ACTIVAR-SESION-06.md:593-594`; también VIDEO-JULIO.md §7 #7. Hoy D1 deja volver a colocar el
-  punto, con la misma caja o con otra, sin pedir un igual; `cartuchos_max` = 3 no se toca. RN-019 no
+  punto, con la misma caja o con otra, sin pedir un igual. (a) → la reentrada reusa la caja del
+  primer intento; (b) → la caja se vuelve a trazar; (c) → el punto se gasta al cerrar, que cambia
+  D1: las tres, con ADR (ningún parámetro existente); `cartuchos_max` = 3 no se toca. RN-019 no
   dispara nunca en el motor (Technical Debt). Filas: julio 3, en total 4 (P7, «la rama de RN-019»,
   RECORRIDA-CONSTRUCCION-2.md:1319).*
 
@@ -186,12 +194,13 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
   - (a) la quito;
   - (b) la dejo hasta el punto nuevo y la muevo;
   - (c) otra, ¿cuál?»
-- **Para precisar:** ¿Y si antes del punto nuevo el precio toma todavía otra liquidez?
 - **Para confirmar al final:** «Cuando el precio toma otra liquidez de M15 con mi orden sin llenar,
   la orden ______».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-06.md:581-585`. Hoy `orden_pendiente_al_abrir_escenario`
   = `se_mueve`, DEFAULT_AMBIGUOUS (`parametros.yaml:889`), con A-53 ABIERTA. (a) → `se_retira`; (b) →
-  `se_mueve`. También dijo «a es igual en compra y en venta …» (`ev-v17-005914-55580dc0`). Sin
+  `se_mueve`. También dijo «a es igual en compra y en venta o sea con lo explicado aquí sí o sea pero al revés y si
+  antes de que aparezca el nuevo punto el precio toma todavía otra liquidez pues se va actualizando»
+  (`ev-v17-005914-55580dc0`): por eso no se repregunta qué pasa con una tercera toma. Sin
   recuento por fila.*
 
 **S-6. La liquidez tomada antes de las 7** · en parte · A-43
@@ -218,7 +227,9 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
 - **Para confirmar al final:** «Una toma de antes de las 7 ______ para entrar después».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-06.md:586-590`. Hoy `toma_antes_de_la_ventana` =
   `cuenta`, CONFIRMED (`parametros.yaml:821`), con A-43 ABIERTA. Pregunta 1 (a) → lo de hoy; (b) →
-  un CORRECT. Sin recuento por fila.*
+  un CORRECT a `no_cuenta`. Pregunta 2 (a) → una liquidez tomada antes de las 7 se puede volver a
+  tomar después (lo de hoy, con `cuenta`); (b) → una liquidez ya tomada no vuelve a contar: no hay
+  parámetro para eso, pediría una regla nueva. Sin recuento por fila.*
 
 **S-7. Una tarde que no está en el vídeo** · material (no cuenta entre las seis)
 - **Lo que todavía no sabemos:** en tu backtest grabado en vídeo hay una tarde que el vídeo no

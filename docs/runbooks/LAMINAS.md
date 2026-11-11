@@ -11,7 +11,8 @@ objetivo, sin fecha, sin nada posterior al corte y sin ningún resultado. Solo d
 cumplan ADR-0093 §3. Antes de enseñarlas, las revisan Aleks y el consultor.
 
 > **Por qué cambió (decisión del consultor, 2026-11-11, rama `trabajo/preparacion-sesion-7`;
-> ADR-0093 §7).** Hasta ese día decía: «La regla 2 de `docs/runbooks/SESION-DE-PREGUNTAS.md` corta
+> ADR-0093 §7).** Hasta ese día el título de este apartado era «Lo primero: todavía no se enseñan
+> al trader», y decía: «La regla 2 de `docs/runbooks/SESION-DE-PREGUNTAS.md` corta
 > los gráficos ANTES de la colocación y prohíbe enseñar la orden, el stop y el objetivo. La lámina
 > enseña las tres cosas. **Hasta que el ADR del método (la rama de la preparación de la sesión 7,
 > RUMBO §1) cambie esa regla, las láminas no se enseñan al trader.** Las revisan Aleks y el

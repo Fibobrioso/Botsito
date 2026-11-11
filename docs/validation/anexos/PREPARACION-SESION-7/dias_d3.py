@@ -122,7 +122,8 @@ def main() -> int:
             ok = a and b and c
             pasan += ok
             print(
-                f"{s}: a) {'si' if a else 'NO'}; b) anterior {ant} {'si' if b else 'NO'}; "
+                f"{s}: a) {'si' if a else 'NO'}; b) anterior "
+                f"{ant + ' si' if b else 'NO (no es de construccion; sin la fecha)'}; "
                 f"c) horas perdidas dentro {dentro or 'ninguna'}, posible M {pm} -> "
                 f"{'PASA' if ok else 'NO PASA'}"
             )

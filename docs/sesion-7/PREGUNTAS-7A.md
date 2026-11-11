@@ -90,7 +90,7 @@ consultor a la PARADA de la fase 0, punto 1).
     `ev-v17-015741-8f9fd638`);
   - en tu backtest grabado en vídeo: «A ver, este es nuestro rango Por lo general, como no ha sido mitigado
     Ni por debajo por una vela bajista Ni por arriba por una vela alcista Para actualizar el rango
-    Entonces nosotros nos enfocamos en buscar Traits alcistas» (v11 0:00:38, `ev-v11-000038-a322e483`), y «es que es
+    Entonces nosotros nos enfocamos en buscar Traits alcistas» (v11 0:00:38, `ev-v11-000038-fef9789d`), y «es que es
     muy pero muy pero muy importante y es lo principal yo diría que un 70% o sea que uno defina bien
     el rango el el bias» (v12 0:06:50, `ev-v12-000650-370c4bd8`).
 - **Lo que todavía no sabemos:** qué vela es «tu rango» cuando hay varias H4 seguidas, y qué tiene
@@ -105,7 +105,6 @@ consultor a la PARADA de la fase 0, punto 1).
   - (c) otra, ¿cuál?»
 - **Para precisar:**
   - ¿Qué vela pasa a ser tu rango nuevo cuando lo das por actualizado?
-  - ¿Cuánto tiempo puede seguir siendo la misma vela tu rango?
   - Cuando dices que no hay otro rango mayor, ¿qué es un rango mayor?
 - **Para confirmar al final:** «Mi rango es ______; mi lado cambia cuando una vela de 4 horas
   ______».
@@ -143,11 +142,9 @@ consultor a la PARADA de la fase 0, punto 1).
   - (a) sí;
   - (b) no, espero;
   - (c) otra, ¿cuál?»
-- **Para precisar:**
-  - En el caso 2, ¿por encima de qué tiene que cerrar: del nivel o de la zona de entrada?
-  - ¿Lo haces igual en una venta, al revés?
+- **Para precisar:** ¿Lo haces igual en una venta, al revés?
 - **Para confirmar al final:** «Paso el stop a la entrada cuando ______ (la vela toca / la vela
-  cierra con cuerpo por encima de ______), salvo ______».
+  cierra con cuerpo por encima de la zona de entrada), salvo ______».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-06.md:562-573`. Hoy: `break_even_condicion` =
   `tocar` (`parametros.yaml:981`, `fb-2026-09-09-sesion-01-0ccafcba`) y
   `break_even_criterio_ruptura` = `mecha` (`:484`, `fb-2026-09-29-sesion-03-2cff5008`), los dos
@@ -202,10 +199,10 @@ consultor a la PARADA de la fase 0, punto 1).
     `ev-v17-001728-b7b9a32c`).
 - **Lo que todavía no sabemos:** si una mecha de M1 que pasa tu alto de M15 y vuelve mueve ese alto,
   y, cuando la vela roja que forma el alto deja una mecha por encima de las verdes, cuál es el alto.
-- **Pregunta 1:** «Una mecha de una vela de M1 posterior que pasa tu alto de M15 y vuelve no mueve el
-  alto; lo toma la vela de M1 que cierra con cuerpo por encima. ¿Es así?
-  - (a) sí;
-  - (b) no;
+- **Pregunta 1:** «Después de formarse tu alto de M15, una vela de M1 lo pasa con la mecha y vuelve
+  a cerrar por debajo. ¿Qué pasa con tu alto?
+  - (a) se queda donde estaba;
+  - (b) pasa a ser la punta de esa mecha;
   - (c) otra, ¿cuál?» (Y lo mismo en un bajo.)
 - **Esquema inventado, no es un día real** («M15» escrito en el dibujo): tres velas verdes y, detrás,
   la vela roja que forma el alto, con una mecha que sube por encima de las verdes.
@@ -220,7 +217,9 @@ consultor a la PARADA de la fase 0, punto 1).
   (`parametros.yaml:522`, CONFIRMED) y `liquidez_m15_mecha_que_vuelve` = `solo_la_contraria`,
   DEFAULT_AMBIGUOUS, lectura del consultor (`:551`, opciones `no_mueve`, `solo_la_contraria` y
   `cualquier_mecha`; ADR-0084). Pregunta 1 (a) → ninguna mecha posterior mueve el nivel (lo de hoy);
-  (b) → `cualquier_mecha`. Pregunta 2 (a) → `solo_la_contraria` (lo de hoy); (b) → `no_mueve`. La vela sin cuerpo en M15 (S-4 de la sesión 6) está resuelta y no se repregunta. No
+  (b) → `cualquier_mecha`. (Hasta la revisión de la rama, la pregunta 1 enunciaba lo de hoy y
+  pedía confirmarlo, como `ACTIVAR-SESION-06.md:574-577`; se reescribió para no sugerir el «sí»:
+  revisor, b3.) Pregunta 2 (a) → `solo_la_contraria` (lo de hoy); (b) → `no_mueve`. La vela sin cuerpo en M15 (S-4 de la sesión 6) está resuelta y no se repregunta. No
   hay recuento por fila: decide cada toma de M15 (RN-004).*
 
 **S-5. En qué momento pones la orden respecto de la ruptura de tu punto**

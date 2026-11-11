@@ -78,7 +78,7 @@ del 2026-10-27, `RECORRIDA-CONSTRUCCION.md:1628`, y RUMBO §1 b los escribían p
   ni ninguna fila «posible M» de la sesión.
 
 Cada día se comprueba por la compuerta y se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md`
-el mismo día. Una exclusión dice a qué conjunto se aplica (respuesta a la PARADA, punto 17).
+el mismo día.
 
 ### 4. De la respuesta a la regla
 

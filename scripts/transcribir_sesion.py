@@ -257,7 +257,7 @@ CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
         "S-6": "las entradas que dejas sin tomar en el backtest",
     },
     "08": {
-        "S-1": "de qué sale tu stop",
+        "S-1": "dónde pones el 0 de tu caja",
         "S-2": "para que el máximo de la verde sea tu punto, qué tiene que hacer la roja",
         "S-3": "el precio ya está más allá del 0 cuando se forma la caja",
         "S-4": "volver a entrar en el mismo punto: el «igual» y la caja",

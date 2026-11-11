@@ -43,7 +43,7 @@
 > `perdida_trader_reinicio` (`primera_sesion_dia_siguiente`, CONFIRMED,
 > `fb-2026-11-04-sesion-06-6886938e`); `perdida_trader_reinicio_huso` sigue en el registro, UNKNOWN y
 > SIN EFECTO con ese valor, y solo contaría con `medianoche_huso`; A-44 está RESUELTA desde esa rama
-> (`knowledge/spec/ambiguedades.yaml`), así que lo que la NOTA del 2026-11-05 dice de A-44 («siguen
+> (`knowledge/spec/ambiguedades.yaml:1442`), así que lo que la NOTA del 2026-11-05 dice de A-44 («siguen
 > ABIERTAS») ya no vale para ella. Las filas de §0 y §1 que dan el reinicio a
 > `perdida_trader_reinicio_huso` (`:84`, `:139-140`) describen lo de antes de ADR-0089
 > (`ACTIVAR-SESION-06-MOTOR.md`, H9 y hallazgo del consultor). Y la regla 2 de
