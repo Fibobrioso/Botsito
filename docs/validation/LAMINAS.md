@@ -930,21 +930,22 @@ Dada por Aleks (consultor) el 2026-11-10, tal cual (también al final de `docs/e
 
 ## Aplicación de la respuesta tras revisar la v3, punto por punto (2026-11-10 y 2026-11-11)
 
-El código solo cambia en `src/botsito/engine/laminas.py` (frases) y `src/botsito/engine/laminas_svg.py` (dibujo), con sus tests: commits `1a9c922`, `2178a65`, `1d40323` y `1201262`. Por eso F4.1 y F4.2 no se repiten (punto 4). Fuera de eso cambian el informe, la respuesta copiada en el encargo, las filas de HOLDOUT-EXPOSICIONES y el recuento de tests de PROJECT_STATE.
+El código solo cambia en `src/botsito/engine/laminas.py` (frases) y `src/botsito/engine/laminas_svg.py` (dibujo), con sus tests: commits `1a9c922`, `2178a65`, `1d40323`, `1201262` y `58de6ce`. Por eso F4.1 y F4.2 no se repiten (punto 4). Fuera de eso cambian el informe, la respuesta copiada en el encargo, las filas de HOLDOUT-EXPOSICIONES y el recuento de tests de PROJECT_STATE.
 
 1. **El panel «M1 de cerca»**, debajo del M1 y encima de la sustentación (`1a9c922`).
    - **El tramo (`tramo_de_cerca`):** va de la M1 de la toma (o de 15 velas antes de la primera zona de control que se dibuja, si es anterior) al corte, con un máximo de 60 velas. Si es más largo, empieza 60 velas antes del corte; sin toma, son las 30 últimas.
    - **La escala:** las velas del tramo, la caja, la orden y el stop. Lo que queda fuera (el objetivo, las líneas de M15 lejanas) va como marca de borde, con su precio y una flecha (`objetivo-fuera`, `m15-fuera`).
    - **Lleva lo mismo que el M1:** la caja con sus rótulos (con la regla de la ronda anterior), el punto, la vela de la toma, las líneas de M15 que llegan al tramo, las zonas de control y la orden con sus etiquetas. Es un subconjunto de las velas y de los elementos del M1, que ya pasaron la puerta.
    - **Las constantes de dibujo:** `VELAS_CERCA_MAX = 60`, `VELAS_CERCA_SIN_TOMA = 30` y `VELAS_ANTES_DEL_CONTROL = 15`.
-   - **Los tests:** `test_el_tramo_del_m1_de_cerca` (el tramo, el de la zona de control, el tope de 60 y sin toma) y `test_la_escala_del_m1_de_cerca_y_lo_que_queda_fuera` (la escala, el objetivo como marca y nada a la derecha del corte). El test de las marcas de `test_laminas.py` recorre ahora los cuatro paneles.
-   - **Lo que enseñaron las capturas, en tres vueltas.** Cada una se arregló con su test, y con su ensayo de nuevo en un clon. La v4 de cada vuelta se apartó o se cortó antes de escribir la buena.
+   - **Los tests:** `test_el_tramo_del_m1_de_cerca` (el tramo, el de la zona de control, el tope de 60 y sin toma) y `test_la_escala_del_m1_de_cerca_y_lo_que_queda_fuera` (la escala, el objetivo como marca y nada a la derecha del corte). El test de las marcas de `test_laminas.py`, que no cambia, ya recorría todo el SVG, así que cubre también el panel nuevo.
+   - **Lo que enseñaron las capturas y el revisor, en cuatro vueltas.** Cada una se arregló con su test, y con su ensayo de nuevo en un clon. La v4 de cada vuelta se apartó o se cortó antes de escribir la buena.
 
      | Vuelta | Lo que se vio | El arreglo | Su test |
      |---|---|---|---|
      | Capturas de la primera v4 (`1a9c922`), escrita y después apartada a la carpeta de trabajo de la sesión | en el M1 de cerca la línea tomada no llevaba su precio, y la respuesta pide verla con él junto al 0; dos marcas de borde en el mismo sitio se montaban | `2178a65`: la línea tomada lleva su etiqueta en el eje del M1 de cerca; las marcas de borde se apilan | `test_la_linea_tomada_lleva_su_precio_en_el_m1_de_cerca_y_las_marcas_no_se_montan` |
      | Capturas del ensayo de `2178a65` (su v4 se cortó tras cargar los datos, sin escribir nada) | la lámina de RN-009 «3, y admite 1» tenía dos etiquetas una encima de otra, y una era de una línea que acabó antes del tramo. Medido en las 47 láminas con `etiquetas_montadas.py`, de la carpeta de trabajo, que solo lee los HTML: 9 pares de etiquetas montadas en el M1 de cerca, en 6 láminas, todos con la etiqueta que trajo `2178a65`; 10 líneas tomadas de longitud cero en el M1 de cerca; y 7 pares en el M1 (orden, stop y objetivo juntos, ya en la v3) | `1d40323`: las etiquetas del eje de cada panel se colocan juntas sin montarse, cada una con su precio (también las del M1); en el M1 de cerca solo entran las líneas que llegan al tramo. En los ensayos de `1d40323` y `1201262`: 0 pares montados en los dos paneles y 0 líneas de longitud cero | `test_las_etiquetas_del_eje_no_se_montan_y_cada_una_lleva_su_precio`, `test_en_el_m1_de_cerca_no_entra_la_linea_que_acabo_antes_del_tramo` |
      | Capturas del ensayo de `1d40323` (su v4 se cortó igual) | el punto negro de la toma, fuera del panel junto a su título, cuando la línea tomada queda un punto por encima de la escala; las velas anchas del M1 de cerca tapaban los rótulos de la caja y las marcas de borde | `1201262`: el punto no se dibuja fuera de la escala; rótulos y marcas de borde van delante de las velas, con un borde del color del fondo (`HALO`) | `test_el_punto_de_la_toma_no_se_dibuja_fuera_del_panel`, `test_los_rotulos_y_las_marcas_de_borde_van_delante_de_las_velas` |
+     | El revisor de la ronda, sobre la v4 de `1201262` (apartada después a la carpeta de trabajo de la sesión) | b-i1: en una lámina, la marca de borde del objetivo y la de una línea de M15 en el mismo punto del M1 de cerca, porque solo se apilaban las de M15 entre sí. Medido con `marcas_montadas.py`, de la carpeta de trabajo: 1 par, en 1 lámina | `58de6ce`: todas las marcas de borde de un panel se apilan juntas, sean de la clase que sean. En el ensayo y en la v4: 0 pares | `test_la_marca_del_objetivo_se_apila_con_las_de_m15` |
 
 2. **Las horas, con un solo convenio:** toda hora que nombra una vela es la de su apertura, como FX Replay. Cambian dos frases de la tabla:
    - **la de la toma:** «La vela de M1 de las {HH:MM} cerró con {cuerpo / mecha} por {debajo del bajo / encima del alto} de M15 en {precio}.»;
@@ -952,34 +953,132 @@ El código solo cambia en `src/botsito/engine/laminas.py` (frases) y `src/botsit
    - **Ya cumplían el convenio y no cambian:** la del punto («de la vela de las {HH:MM}», su apertura) y la cabecera, que nombra el corte y la vela cada uno por lo suyo. No hay más frases con hora en la tabla.
    - **El test:** `test_toda_hora_que_nombra_una_vela_es_la_de_su_apertura`.
 3. **Las saltadas:** «Antes de esa vela, el bot se saltó {n} velas H4…», y en singular «se saltó una vela H4…».
-4. **La v4:** en `C:\Users\USER\Desktop\laminas-sesion-7-v4`, de `1201262`, tras el ensayo en el clon (`git worktree add --detach`), con el mismo orden barajado.
+4. **La v4:** en `C:\Users\USER\Desktop\laminas-sesion-7-v4`, de `58de6ce`, tras el ensayo en el clon (`git worktree add --detach`), con el mismo orden barajado.
    - La orden, tal cual salvo la lista: `uv run botsito motor laminas --sesiones <las diez sesiones, en el orden de clave.txt> --salida C:\Users\USER\Desktop\laminas-sesion-7-v4`.
    - Su `clave.txt` es idéntica a la de la v3 (`diff`, 0 bytes; no se abrió). `diff -r` de la v4 contra su ensayo: 0 bytes.
    - Base con y sin el recolector, `(31, 192, 24, 1150, 0, 32, 0)`.
-   - Ensayo: 480,2 s y 646,4 MiB. La v4: 484,5 s y 644,0 MiB.
+   - Ensayo: 481,1 s y 645,9 MiB. La v4: 475,6 s y 645,0 MiB.
    - 47 láminas, 19 de tipo a y 28 de tipo b, como en la v3.
-5. **Los recuentos, de la v3 a la v4, sin recuentos por carpeta.** Las 47 láminas se emparejan por su cabecera y sus velas de H4. Lo mide `comparar_v4.py`, de la carpeta de trabajo, que solo lee los HTML. Las cifras son las mismas en los tres ensayos de esta ronda: los arreglos del punto 1 son de dibujo y no cambian ni frases ni zonas.
+5. **Los recuentos, de la v3 a la v4, sin recuentos por carpeta.** Las 47 láminas se emparejan por su cabecera y sus velas de H4. Lo mide `comparar_v4.py`, de la carpeta de trabajo, que solo lee los HTML. Las cifras son las mismas en los cuatro ensayos de esta ronda: los arreglos del punto 1 son de dibujo y no cambian ni frases ni zonas.
    - **Llevan el panel nuevo las 47.** Ninguna se queda sin tramo.
    - **Cambian de hora 32 frases,** todas de la toma; la de la línea de antes de la ventana no sale en ninguna de las 47. Cambian de redacción 4 frases de las saltadas.
    - **Las zonas de control, en las 13 láminas de RN-009:** en 12, el M1 de cerca enseña tantas como dice la frase (3, 3, 3, 4, 5, 6, 6, 7, 8, 9, 11 y 11). En la que dice 18, el M1 de cerca enseña 14: las otras 4 quedan antes de las 60 velas del tope. En el M1 se ven las 18.
 6. **Las carpetas v1, v2 y v3 no se tocan.**
 
-**Lo que vi en las capturas de la v4.** Son 16: las de la ronda anterior más las dos del punto 1. Las tomé con Chrome en modo headless sobre el ensayo de `1201262`, fuera del repo; con 0 bytes de `diff -r`, son los mismos HTML que la v4.
+**Lo que vi en las capturas de la v4.** Son 16: las 15 de la ronda anterior (una de ellas ya es la de las 08:02) más la de RN-009 «3, y admite 1». Las tomé con Chrome en modo headless sobre el ensayo de `1201262`, fuera del repo. `58de6ce` solo cambia dónde va la marca de borde del objetivo. Hay una 17.ª captura, la de la lámina que encontró el revisor, del ensayo de `58de6ce`, idéntico byte a byte a la v4 (`diff -r`, 0 bytes).
 - **07-03 a las 08:02:** en el M1 de cerca, la línea tomada de 1.14500 (etiqueta violeta) y el 0 en 1.14496 (etiqueta azul) se ven separados, cada uno con su precio. El tramo empieza en la vela de la toma, la de las 07:56, como dice la frase.
 - **La de RN-009 «3, y admite 1»:** las tres zonas de control se ven una a una en el M1 de cerca (las de las 08:39, 08:44 y 08:46). La línea tomada lleva una sola etiqueta, la de 1.16862, que es la de la frase.
 - **La de RN-009 que dice 18:** el M1 de cerca enseña 14, por el tope de 60 velas.
-- **Lo que ya no pasa:** etiquetas montadas, el punto de la toma fuera del panel, y rótulos o marcas tapados.
+- **Lo que ya no pasa:**
+  - etiquetas montadas;
+  - el punto de la toma fuera del panel;
+  - rótulos o marcas tapados;
+  - marcas de borde una encima de otra. En la lámina que encontró el revisor, «▼ 1.14239» (el objetivo) y «▼ 1.14234» (la línea de M15) se ven apiladas.
 - **Lo que no queda limpio:**
   - **Las marcas de borde** caen dentro del dibujo, donde llegan las velas que fijan la escala, y en varias de las 16 capturas (al menos 5, sobre todo en el borde izquierdo) tienen una vela o una línea detrás. Con el borde del color del fondo se leen, pero no quedan limpias. Sacarlas al margen de arriba choca con el título del panel; no lo toco sin tu respuesta.
-  - **Una lámina de tipo a tiene un tramo de 2 velas:** la toma es de la vela anterior a la que coloca. El panel cumple la regla, pero enseña dos velas muy anchas. Si quieres un mínimo de velas, es una línea más en `tramo_de_cerca`.
+  - **Dos láminas tienen un tramo de 1 y de 2 velas**, medido con `tramos_cortos.py`, de la carpeta de trabajo: la toma es la vela que coloca o la anterior. El panel cumple la regla, pero enseña una o dos velas muy anchas; las otras 45 tienen 6 velas o más. Si quieres un mínimo de velas, es una línea más en `tramo_de_cerca`.
 
 **La CI de esta ronda**, por `fix/laminas`. En todas, el único fallo es el aceptado (`tests/unit/test_cli.py::test_state_check_ok_on_real_repo`: PROJECT_STATE declara `trabajo/laminas` y la rama es `fix/`):
 - **Run 42961299280**, sobre `1a9c922`: `1 failed, 3363 passed, 48 skipped`.
 - **Run 42966334841**, sobre `2178a65`: `1 failed, 3364 passed, 48 skipped`.
 - **Run 42970555589**, sobre `1d40323`: `1 failed, 3366 passed, 48 skipped`.
 - **Run 42974511672**, sobre `1201262`: `1 failed, 3368 passed, 48 skipped`.
+- **Run 42980390492**, sobre `58de6ce`: `1 failed, 3369 passed, 48 skipped`.
 
-{REVISOR5}
+## El revisor de la ronda tras revisar la v3 (2026-11-11), tal cual
+
+Solo sobre esta ronda, sobre `1201262` y la sección sin commitear: 0 bloquea, 1 importa y 3 menores. Lo hecho con cada uno:
+- **b-i1 (importa):** arreglado en `58de6ce`, con su test. La v4 de `1201262` se apartó y se escribió la buena (arriba, la cuarta vuelta del punto 1).
+- **a-m1:** el paréntesis de la fila del 2026-11-10, quitado.
+- **b-m1:** la frase del test de las marcas, reescrita.
+- **b-m2:** la cuenta de las capturas, reescrita, y el docstring del test, corregido.
+
+Lo que no pudo comprobar (la `clave.txt`, los logs, que los tests fallen con el código anterior) lo comprobé yo: la clave con `diff`, sin abrirla; los logs y los tiempos, en la carpeta de trabajo. Los tests nuevos los repasé uno a uno: fallarían sin su arreglo, y el de `58de6ce` falla con una llamada que el código anterior no admitía. Después de `58de6ce` no volví a pasar el revisor.
+
+> ## Informe del revisor · trabajo/laminas · ronda tras revisar la v3 (`ea08ae2..HEAD` + la sección sin commitear) · 2026-11-11
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 1 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a-m1 | menor | En la fila del 2026-11-10 de HOLDOUT-EXPOSICIONES sobra un paréntesis de cierre. | `docs/validation/HOLDOUT-EXPOSICIONES.md:135`: «…lo que se repite va en la fila del 2026-11-11).» |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `uv run python scripts/contrato_rama.py` da «CONTRATO: 23 ficheros dentro del contrato de trabajo/laminas (riesgo alto, artefacto docs/validation/LAMINAS.md, tramo 'R4 · …', 3 comprobaciones para el revisor)». `uv run botsito state check` da «OK: rama 'trabajo/laminas' …».
+> - **`make check`.** No lo ejecuté (escribe). En `make-check.log` están «SELLO: make check en verde sobre el arbol fd2c32bf…», `3417 passed`, `exit=0` y «PICO DE MEMORIA … 313 MiB». `git rev-parse HEAD^{tree}` da `fd2c32bf…`: el sello es el de `1201262`.
+> - **El diff de la ronda.** Solo toca 7 ficheros: `engine/laminas.py`, `engine/laminas_svg.py`, `tests/unit/test_laminas_svg.py`, el informe, el encargo, HOLDOUT-EXPOSICIONES y PROJECT_STATE. Lo único sin commitear es `LAMINAS.md`. No toca `knowledge/`, `scripts/`, `.claude/`, `spec/` ni `domain/`, así que no hacen falta trailers `Fuente:`, ni regímenes, ni ambigüedades, ni ADR.
+> - **HOLDOUT-EXPOSICIONES.** Contra `main`, 0 líneas quitadas. Las filas del 2026-11-10 y del 2026-11-11 están. El recuento de la del 11 cuadra con los commits: 6 invocaciones, 4 completas, y tres `make check` (`2178a65`, `1d40323` y `1201262`, todos del 11, a las -0500).
+> - **Informes cerrados.** `LAMINAS.md` no existe en `main`, así que no aplica.
+> - **PROJECT_STATE.** De 1987 a 1995: los 8 `def test_` nuevos de la ronda.
+> - **La respuesta copiada.** La copia del encargo y la del informe son idénticas: md5 de las líneas `>`, `490115f6…` en las dos.
+> - **El estado.** El `## Estado` está al final y dice «EN CURSO».
+>
+> ### Eje (b) · Encargo (la respuesta tras revisar la v3)
+> Resumen: 0 bloquea, 1 importa, 2 menores. Requisitos: 14 hechos, 0 parciales, 0 no hechos. El 15, la PARADA final, va después del revisor.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Panel «M1 de cerca» debajo del M1 y encima de la sustentación | Hecho | `laminas_svg.py:450` (y0 = 3·ALTO_PANEL), `pagina` en `:491-494`; captura de la lámina con corte a las 08:02 |
+> | 2 | Tramo: desde la toma, o 15 velas antes del primer control si es anterior; tope de 60; sin toma, 30 | Hecho | `laminas_svg.py:269-283`. En la captura RN-009 «3, y admite 1» el tramo empieza a las 08:24, 15 velas antes del control de las 08:39 |
+> | 3 | Escala: velas, caja, orden y stop; lo de fuera como marca con precio y flecha | Hecho (ver b-i1) | `:447-450`, `:381-384`, `_fuera` `:255-266` |
+> | 4 | Lleva lo mismo que el M1, en su escala | Hecho | `:470-473`: `_m1`, `_lineas_m15`, `_etiquetas` y `_fuera` sobre `cerca` |
+> | 5 | Mismo recorte y mismas puertas: un subconjunto, nada fuera de la ventana | Hecho | `tramo_de_cerca` corta `d.m1` (`:274-283`). Medido en las 47 de la v4: 0 elementos del panel 4 a la derecha del corte (x > 1490) o fuera del panel |
+> | 6 | Tests: el tramo, el tope de 60, la escala y ninguna marca a la derecha del corte | Hecho | `test_el_tramo_del_m1_de_cerca` y `test_la_escala_del_m1_de_cerca_y_lo_que_queda_fuera`. La escala fallaría si entrara el objetivo: la rejilla tiene que ser la de hi/lo sin 110_400 |
+> | 7 | Capturas: a las 08:02, 1.14500 y el 0 en 1.14496 separados y con su precio; RN-009 «3, y admite 1», sus tres zonas | Hecho | Vistas las dos capturas `v4d`: etiqueta violeta 1.14500 y azul 1.14496 separadas; tres cuadros naranjas a las 08:39, 08:44 y 08:46; una sola etiqueta tomada, la de 1.16862 |
+> | 8 | Frase de la toma con la hora de apertura | Hecho | `laminas.py:520`, `:852` y `:858` (`t.instante - 1`). Medido: las 32 frases de la toma de la v4 van exactamente 1 min antes que en la v3 (32 de 32) |
+> | 9 | Repasar cada frase con hora y decir cuáles cambian | Hecho | Informe, punto 2. En la v3 y en la v4 solo hay frases con hora de la toma (23 + 9) y del punto (31, sin cambio). Ninguna frase sin hora cambia, fuera de las saltadas |
+> | 10 | Test que fija el convenio; la cabecera se queda | Hecho | `test_toda_hora_que_nombra_una_vela_es_la_de_su_apertura` (fallaría con la frase vieja); cabecera en `laminas_svg.py:491-492` |
+> | 11 | La frase de las saltadas, en singular y en plural | Hecho | `laminas.py:476-496`; en la v4, «Antes de esa vela, el bot se saltó 3 velas H4…» |
+> | 12 | v4 tras el ensayo, mismo orden, misma clave; F4.1 y F4.2 solo si el diff sale del código | Hecho | `diff -rq -x clave.txt` de la v4 contra `ensayo-v4d`: exit 0. El diff solo sale a documentos, y el informe lo declara (`LAMINAS.md:933`). La clave, sin comprobar (abajo) |
+> | 13 | Capturas de la ronda anterior más las dos del punto 1, y mirarlas | Hecho (ver b-m2) | 15 `v3-*.png` y 16 `v4d-*.png` |
+> | 14 | Recuentos del punto 5 | Hecho | `comparar_v4.py` v3→v4: 47/47 emparejadas; 47 con panel; 32 frases con hora; 4 de las saltadas; 13 de RN-009, 12 iguales y la de 18 con 14 en el M1 de cerca y 18 en el M1 |
+> | 15 | v1, v2 y v3 sin tocar | Hecho | mtime de las carpetas: v1 15:35, v2 18:03 y v3 22:27 del 2026-11-10, todas antes de `ea08ae2` (22:58) |
+> | — | «Después»: `make check`, CI de `fix/laminas`, revisor | Hecho (el revisor es este) | Runs 42961299280, 42966334841, 42970555589 y 42974511672: headSha `1a9c922`, `2178a65`, `1d40323` y `1201262`. Los cuatro con «1 failed, 3363/3364/3366/3368 passed, 48 skipped», y el único FAILED es `test_cli.py::test_state_check_ok_on_real_repo`, como dice el informe |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b-i1 | importa | **Las marcas de borde no se apilan entre clases.** `_fuera` solo apila las líneas de M15 entre sí. La marca del objetivo (`_m1`, `laminas_svg.py:384`, `fila` siempre 0) no se aparta de ellas. En la v4 hay una lámina con `objetivo-fuera` y `m15-fuera` en el mismo punto exacto del M1 de cerca. El informe dice «las marcas de borde se apilan» (`LAMINAS.md:945`) y no lo menciona en «Lo que no queda limpio». Ningún test cubre este caso. | Script de solo lectura sobre los 47 HTML de la v4. Pares de marcas `*-fuera` del mismo panel a menos de 10 en y y de 90 en x: 1 en total, `('objetivo-fuera', 20.0, 1167.0, 'start', '▼ 1.14239')` y `('m15-fuera', 20.0, 1167.0, 'start', '▼ 1.14234')`. |
+> | b-m1 | menor | «El test de las marcas de `test_laminas.py` recorre ahora los cuatro paneles» se puede leer como que se cambió. No se tocó: los recorre porque ya recorría todo el SVG. | `LAMINAS.md:940`; `git diff --stat ea08ae2..HEAD -- tests` solo da `test_laminas_svg.py` |
+> | b-m2 | menor | «Son 16: las de la ronda anterior más las dos del punto 1»: la ronda anterior tenía 15 y una de las dos ya estaba entre ellas, así que la suma no es 15 + 2. También: el docstring de `test_los_rotulos_y_las_marcas_de_borde_van_delante_de_las_velas` dice «Van detras de todas las velas» (lo que quiere decir es que van después en el SVG). | `LAMINAS.md:967`; 15 `v3-*.png` y 16 `v4d-*.png` en `capturas/`; `tests/unit/test_laminas_svg.py:662` |
+>
+> Sobre si los tests fallarían sin el arreglo: lo comprobé leyendo el código, sin ejecutarlo contra el código anterior.
+> - El punto de la toma: sin `p.lo <= nivel <= p.hi` se dibujaría en `hi+1`.
+> - Los rótulos: sin el paso a `delante` quedan antes de la última vela.
+> - La línea que acabó antes: sin `vistas` sube el recuento del panel 3.
+> - Las marcas apiladas: sin `fila` las dos y serían iguales.
+> - La etiqueta tomada: sin `_pedidas(..., tomadas)` el recuento es 0.
+>
+> ### Lo que no pude comprobar
+> - **Que `clave.txt` de la v4 sea idéntica a la de la v3.** Prohibido abrirla. Excluí la clave del `diff -rq`.
+> - **Las cifras de los ensayos `v4`, `v4b` y `v4c`** (que «las cifras son las mismas en los tres ensayos») y los datos de los logs: base `(31, 192, …)`, 480,2 s / 646,4 MiB, «19 de tipo a y 28 de tipo b». Están fuera del material HTML permitido o en logs.
+> - **Si la lámina de b-i1 está entre las 16 capturas.** La guardia bloqueó el script que lo cruzaba (recorre directorios construidos en ejecución). No lo reescribí para rodearla.
+> - **Que los tests nuevos fallen de verdad con el código de `ea08ae2`.** Exige un clon desechable, que escribe.
+> - **«Al menos 5 capturas con una vela detrás de una marca»**: es un juicio visual. Vi solo las dos capturas del punto 1.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current`; `git log --format='%h %s' ea08ae2..HEAD`; `git diff --stat ea08ae2..HEAD`; `git status --short`
+> 2. `git diff ea08ae2..HEAD -- docs/encargos/trabajo-laminas.md docs/validation/HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md docs/validation/LAMINAS.md`
+> 3. `git diff -- docs/validation/LAMINAS.md`
+> 4. `git diff ea08ae2..HEAD -- src/botsito/engine/laminas.py src/botsito/engine/laminas_svg.py`
+> 5. `ls tests/unit | grep -i lamin`; `git diff --stat ea08ae2..HEAD -- tests`; `grep` en `test_laminas.py`; Read de `test_laminas.py:340-399` y de `laminas_svg.py:80-515`
+> 6. `grep` de horas en `laminas.py`; `sed -n 1220,1250p` y `895,915p` de `laminas.py`
+> 7. `git diff ea08ae2..HEAD -- tests/unit/test_laminas_svg.py`
+> 8. `ls` de la carpeta de trabajo y de `capturas/`; `cat comparar_v4.py etiquetas_montadas.py`
+> 9. `python -I comparar_v4.py <v3> <v4>`
+> 10. Scripts `python -I -c` de solo lectura sobre los HTML de la v3 y la v4: frases con hora; nada a la derecha del corte; la hora de la toma, 1 min antes; marcas de borde montadas
+> 11. `python -I etiquetas_montadas.py` sobre la v4 y la v3. La primera forma, encadenada, la negó la guardia; la partí en llamadas
+> 12. `diff -rq -x clave.txt <v4> <ensayo-v4d>`
+> 13. Un script para cruzar la lámina de b-i1 con las capturas: negado por la guardia, no reintentado
+> 14. Read de `capturas/v4d-s04-l01.png` y `capturas/v4d-s02-l02.png`
+> 15. `gh run view <id> --json conclusion,headSha,headBranch` y `gh run view <id> --log-failed | grep` para los runs 42961299280, 42966334841, 42970555589 y 42974511672
+> 16. `git log --format='%h %ad %cd %s' --date=iso ea08ae2^..HEAD`; `git show --stat` de los cuatro commits
+> 17. `cat contrato.yaml`; `ls -la make-check.log`; `tail`/`grep` de `make-check.log`; `git rev-parse HEAD^{tree}`
+> 18. `uv run python scripts/contrato_rama.py`; `uv run botsito state check`
+> 19. md5 de las líneas `>` de la respuesta en el encargo y en el informe (la forma con `> /dev/stdout` la negó `solo_lectura.py`)
+> 20. `git cat-file -e main:docs/validation/LAMINAS.md`; `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md | grep -c '^-[^-]'` (la forma con `data` en la lista de rutas la negó la guardia)
+> 21. `grep -n` de los números de línea de los hallazgos menores
+> 22. `ls -ld --time-style=full-iso` de las carpetas v1 a v4
 
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-10), tal cual
 
@@ -1349,4 +1448,4 @@ Va tal cual salvo en un sitio: en la fila N1 se quitan, marcadas «[quitado al p
 
 ## Estado
 
-EN CURSO (2026-11-11): la ronda tras revisar la v3, hecha (el M1 de cerca, el convenio de las horas, la frase de las saltadas, la v4 de `1201262`, sus capturas y la CI); sigue el revisor de la ronda.
+LISTA PARA REVISIÓN (2026-11-11): la ronda tras revisar la v3, hecha. El M1 de cerca, el convenio de las horas, la frase de las saltadas, la v4 de `58de6ce`, sus capturas, la CI y el revisor de la ronda, con lo que encontró. Rama lista para revisión, NO cerrada.
