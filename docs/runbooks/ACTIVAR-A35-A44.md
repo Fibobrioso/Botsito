@@ -38,6 +38,19 @@
 > lectura del consultor; ADR-0084, recuadro del 2026-11-05). A-35 y A-44 quedan con valor en los
 > parámetros que el motor lee, y siguen ABIERTAS y bloqueantes.
 
+> **NOTA (2026-11-11, rama `trabajo/preparacion-sesion-7`; el cuerpo no se toca).** Desde ADR-0089
+> (rama `trabajo/activar-sesion-06-motor`), cuándo vuelve a contar el trader lo decide
+> `perdida_trader_reinicio` (`primera_sesion_dia_siguiente`, CONFIRMED,
+> `fb-2026-11-04-sesion-06-6886938e`); `perdida_trader_reinicio_huso` sigue en el registro, UNKNOWN y
+> SIN EFECTO con ese valor, y solo contaría con `medianoche_huso`; A-44 está RESUELTA desde esa rama
+> (`knowledge/spec/ambiguedades.yaml`), así que lo que la NOTA del 2026-11-05 dice de A-44 («siguen
+> ABIERTAS») ya no vale para ella. Las filas de §0 y §1 que dan el reinicio a
+> `perdida_trader_reinicio_huso` (`:84`, `:139-140`) describen lo de antes de ADR-0089
+> (`ACTIVAR-SESION-06-MOTOR.md`, H9 y hallazgo del consultor). Y la regla 2 de
+> `SESION-DE-PREGUNTAS.md` cambió el 2026-11-11 (ADR-0093): el bloque de días enseña las láminas del
+> bot, con la orden, el stop y el objetivo; lo de «cortados antes de la orden, sin fecha» de abajo
+> (`:59-64`) es la regla anterior.
+
 Para ejecutarlo minutos después de la reunión con el trader. Desde `trabajo/preparar-a35-a44`
 (2026-09-26) activar cada regla es **escribir UN valor y correr UN comando**: el mecanismo ya
 está construido y probado; lo único que falta es lo que el trader diga. **Nada de lo que hay aquí

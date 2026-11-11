@@ -1,0 +1,8 @@
+activas: v11 tr-v11-large-v3-int8-float16-d5da10be, v12 tr-v12-large-v3-int8-float16-cb502503, v14 tr-v14-large-v3-int8-float16-1d289df6
+#1: v11 0:00:38-0:00:53 (tr-v11-large-v3-int8-float16-d5da10be): ACEPTADA
+#2: v11 0:05:50-0:06:00 (tr-v11-large-v3-int8-float16-d5da10be): ACEPTADA
+#3: v12 0:06:50-0:07:07 (tr-v12-large-v3-int8-float16-cb502503): ACEPTADA
+#6: v12 0:00:15-0:00:58 (tr-v12-large-v3-int8-float16-cb502503): ACEPTADA
+#10: v14 0:42:02-0:42:40 (tr-v14-large-v3-int8-float16-2253ec10): RECHAZADA: transcripcion tr-v14-large-v3-int8-float16-2253ec10 no es la activa de v14 (tr-v14-large-v3-int8-float16-1d289df6); la cita esta en 0:44:05.628-0:44:09.308: ajusta t0/t1
+#10 activa: v14 0:44:04-0:44:11 (tr-v14-large-v3-int8-float16-1d289df6): ACEPTADA
+#10 vieja ventana buena: v14 0:44:04-0:44:11 (tr-v14-large-v3-int8-float16-2253ec10): RECHAZADA: transcripcion tr-v14-large-v3-int8-float16-2253ec10 no es la activa de v14 (tr-v14-large-v3-int8-float16-1d289df6)

@@ -20,9 +20,7 @@ la carpeta de trabajo de la sesión (fuera del repo); los que el encargo manda l
 (el de las sustituciones de D3 d, y con él los de 0.4 y 0.7) entran en
 `docs/validation/anexos/PREPARACION-SESION-7/` con el primer commit tras la respuesta.
 
-```ids-inexistentes
-ADR-0093 — el ADR del método (RUMBO §1) que escribe esta rama en F1; aún no existe
-```
+(El bloque `ids-inexistentes` de ADR-0093 salió en el commit que crea el ADR, F1.)
 
 ### 0.1 La base, y lo que se mira
 
@@ -395,17 +393,136 @@ de `motor laminas`.
    verde y no selló (`knowledge-validate.log` sin seguir); en lugar de repetirlo para la apertura y
    otra vez para la fase 0 (unos 23 minutos cada uno), el segundo sella las dos. El commit trae solo
    lo que abrir-rama y fase-cero escriben.
+2. **La respuesta a la PARADA, los anexos de la fase 0 y la fila de exposiciones de F6 van en el
+   commit de F1.** `make check` no sella con cambios sin estadiar, y cada uno tarda unos 20
+   minutos: el ADR no se mezcla con nada de F2 a F6, solo con lo que lo precede.
 
 ## Los make check de la rama
 
 | Commit | exit | passed / failed | Sello | Pico |
 |---|---|---|---|---|
 | apertura, primer intento | 0 | 3420 / 0 | **no** (`knowledge-validate.log` sin seguir) | 312 MiB |
+| `3de24780` apertura y fase 0 | 0 | 3420 / 0 | `db5af9d5…` | 313 MiB |
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-11)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/preparacion-sesion-7 (2026-11-11). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA de la fase 0», con su fecha, y aplícala punto por punto (skill fase-cero). Buena fase 0: todo medido, y la cuenta del pivote cuadra.
+>
+> 0. (a). F7 #10 se cita de la transcripción activa de v14, con la ventana 0:44:04-0:44:11. VIDEO-JULIO.md no se toca: lo medido queda en tu §0.5.
+> 1. (a) en los dos días. 7a: S-1 el rango de H4, S-2 el break even, S-3 las zonas de control, S-4 A-35, S-5 la colocación y S-6 F7 #10. 7b: las seis que propones, y al final, fuera de las seis, la tarde del 10 de julio. Al final de PREGUNTAS-7B.md, con sus filas, los cuatro que no caben (B-7 a B-10). El incumplimiento del punto 1 de ACTIVAR-SESION-06 queda declarado como lo escribes.
+> 2. (a): 2026-01-19 11-15.
+> 3. (a): 2026-01-21 07-11. D3 f es una condición del bloque entero. La escribí ambigua (errores, abajo).
+> 4. (a), tal cual. En la 7a: 2026-07-07 11-15, 2026-07-02 11-15, 2026-07-03 07-11 y 2026-07-15 11-15; reservas, 2026-04-13 07-11 y 2026-07-06 07-11. En la 7b: 2026-01-13 07-11, 2026-04-15 11-15, 2026-01-07 07-11 y 2026-01-19 11-15; reservas, 2026-01-21 07-11, 2026-01-22 11-15 y, como tercera, 2026-07-16 07-11.
+> 5. (a): S-7 no entra.
+> 6. (a), con tu texto.
+> 7 y 12. (a), en UNA sola línea de Technical Debt, para no engordar PROJECT_STATE: «Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar: scripts/graficos_sesion.py:66-71, con su test (su constante ya no es la regla 2), y engine/decisiones.py:7-8 (el ADR del método ya existe) (PREPARACION-SESION-7.md §0.2, H8 y H19).» Y H16 no hace línea nueva: se añade al final de la que ya existe sobre la skill ingerir-sesion («… y no dice que ningún fotograma se abre antes de que la voz o uno ya abierto sitúen el tramo, ADR-0093 §2»). Las dos van a las propuestas de la orden de cierre, medidas con wc -c.
+> 8. (a).
+> 9. (a), con las tres precisiones y una más en §4. Si el delta de julio de una activación no casa con lo que declaró, la regla no se retoca hasta que la cifra salga: PARADA, el consultor vuelve a la voz del trader y decide si la respuesta se entendió mal. El delta nunca elige entre dos lecturas de un parámetro. Y el ADR dice que el delta de cada activación es diagnóstico (ADR-0092 §6): la única lectura de julio que decide algo es la del pivote (D5).
+> 10. (a).
+> 11. (a): el recuadro del paso 5 de «Antes». La desviación queda aceptada.
+> 13. Las cinco desviaciones, aceptadas tal como las declaras.
+> 14. De acuerdo. Lo compruebas sobre copias en la PARADA final, con el texto nuevo de F entero.
+>
+> Además:
+> 15. Las notas de la evidencia nueva solo llevan lo de su propia cita: es el patrón «Las notas de un registro… traen contenido de otros items» de ERRORES-RECURRENTES.md (:37), aplicado a la evidencia. La contradicción de F7 #6 con ev-v16-000234-9a4fa375 se escribe en el informe y en las líneas «Para Aleks» de S-5 de la 7a, no en las notas del ítem. Y las notas de F7 #2 no nombran ev-v9-000902-25db5bf5.
+> 16. Tu desviación del primer make check, aceptada. La salida de una herramienta va siempre a la carpeta de trabajo, nunca a la raíz del repo.
+> 17. Para la fila de ERRORES-RECURRENTES del cierre, los errores del consultor que llegaron a esta rama: 5, todos menores (consultor en Opus 5.5).
+>    · La regla del 27-oct y la lista de RECORRIDA-CONSTRUCCION-2 F3.5 escribían casos en lugar de la condición, y dejaron pasar 2026-01-02 11-15. Es la lección que ya trae el encargo.
+>    · El encargo daba F7 #10 como citable de la versión vieja de v14 con --transcripcion, y a 0:42:02; lo repetía de VIDEO-JULIO §7. evidence new lo rechaza y la frase está en 0:44:05. Lección: lo que una herramienta acepta como opción no prueba que haga lo que se dice; se ejecuta.
+>    · F1.7 no nombraba el paso 5 de «Antes».
+>    · La NOTA de ACTIVAR-A35-A44 se quedaba corta: faltaban A-44, que está RESUELTA, y la regla 2 vieja de :46-51.
+>    · D3 f se podía leer solo para el rango de H4, y dejaba en el aire 2026-07-17 07-11 para la 7b. Lección: una exclusión dice a qué conjunto se aplica.
+>    El segundo punto de la lista del encargo (la primera versión, parada por el auditor del consultor) no llegó a la rama: entra como lección, sin contarlo.
+>
+> Sigue sin parar con F1 a F6 y la PARADA condicional del encargo. Después: push como fix/preparacion-sesion-7 con su CI (el número de run), el revisor con los ocho alcances del encargo, su informe pegado al final del tuyo, y la PARADA final con lo que pide el encargo y la ruta de C:\Users\USER\Desktop\laminas-sesion-7a.
+>
+> Rama lista para revisión, NO cerrada.
+
+### Cómo se aplica la respuesta, punto por punto
+
+| Punto | Hecho | Dónde |
+|---|---|---|
+| 0 | F7 #10 de la transcripción activa de v14, 0:44:04-0:44:11; VIDEO-JULIO.md no se toca | F3 |
+| 1 | el reparto: 7a S-1 rango, S-2 break even, S-3 zonas de control, S-4 A-35, S-5 colocación, S-6 F7 #10; 7b las seis de B-1 a B-6 y, fuera, la tarde del 10 de julio; B-7 a B-10 al final de PREGUNTAS-7B.md; el incumplimiento del punto 1 de ACTIVAR-SESION-06, declarado (§0.2, H3) | F4 |
+| 2 y 3 | 2026-01-19 11-15 y 2026-01-21 07-11 | F4 |
+| 4 | los días, tal cual | F4 y F6 |
+| 5 | S-7 no entra | — |
+| 6 | la NOTA de ACTIVAR-A35-A44.md, con el texto de la decisión 6. Dos ajustes de forma, declarados: los números de línea que cita son los de después de insertarla (`:84`, `:139-140` y `:59-64`, antes `:71`, `:126-127` y `:46-51`), y el pasaje de la regla 2 vieja va «de abajo», no «de arriba», porque la NOTA queda delante | F1 |
+| 7 y 12 | una línea de Technical Debt y la ampliación de la de `ingerir-sesion`, a las propuestas de cierre, medidas con `wc -c` | PARADA final |
+| 8 | las dos cadenas de `cli.py` (la ayuda, partida en dos líneas por ruff, E501) | F1 |
+| 9 | ADR-0093 con el índice de §0.8, las tres precisiones y la de §4 (PARADA ante un delta que no casa; el delta no elige entre dos lecturas; el delta es diagnóstico y solo decide el pivote) | F1 |
+| 10 | `docs/plan/PIVOTES-SESION-7.yaml` y `tests/unit/test_pivotes_sesion_7.py` | F2 |
+| 11 | el recuadro del paso 5 de «Antes» | F1 |
+| 13 | las cinco desviaciones, aceptadas | «Desviaciones» |
+| 14 | sobre copias, en la PARADA final | PARADA final |
+| 15 | las notas de la evidencia, solo de su cita; la contradicción de F7 #6 con `ev-v16-000234-9a4fa375`, en este informe (§0.5 y F3) y en «Para Aleks» de S-5 de la 7a | F3 y F4 |
+| 16 | la salida de las herramientas, a la carpeta de trabajo | toda la rama |
+| 17 | los cinco errores del consultor, a la fila de ERRORES-RECURRENTES del cierre | PARADA final |
+
+## F1 · ADR-0093 (2026-11-11)
+
+- `docs/adr/0093-el-metodo-de-las-sesiones-y-de-las-activaciones.md` y su fila en
+  `docs/adr/README.md`. §1 a §7 son los puntos 1 a 7 de F1, con RUMBO §1 a) a e) citado en cada uno
+  y las precisiones de la respuesta, puntos 9 y 11.
+- `docs/runbooks/SESION-DE-PREGUNTAS.md`: la cabecera, la regla 2, el paso 5 y el paso 6 de
+  «Antes», cada uno con su recuadro «Por qué cambió», que copia dentro el texto anterior. Los dos
+  recuadros que ya llevaba la regla 2 no se tocan; el del 2026-09-28 queda sustituido en su
+  salvaguarda por el nuevo, que lo dice. Aplicado con un guion de la carpeta de trabajo que busca
+  cada texto viejo tal cual y sale sin escribir si no está una vez.
+- `docs/runbooks/LAMINAS.md`, «Lo primero», con su recuadro.
+- `src/botsito/cli.py`: el docstring de `motor_laminas` y la ayuda de `motor laminas`. Ningún test
+  las mira.
+- `docs/runbooks/ACTIVAR-A35-A44.md`: la NOTA de cabecera.
+- El bloque `ids-inexistentes` de ADR-0093 sale del encargo y de este informe.
+- En el mismo commit, delante: la respuesta a la PARADA copiada en el encargo y aquí, los guiones y
+  las salidas de la fase 0 en `docs/validation/anexos/PREPARACION-SESION-7/` y la fila de
+  HOLDOUT-EXPOSICIONES de F6 (desviación 2).
+
+## F6 · Las láminas de la 7a (2026-11-11)
+
+Fila de HOLDOUT-EXPOSICIONES antes de la primera invocación. Las seis sesiones aprobadas (cuatro y
+dos reservas; respuesta a la PARADA, punto 4), en un orden barajado que no se escribe en el repo.
+
+1. **El ensayo**, en un clon desechable: `git worktree add --detach C:/wt-p7 HEAD` (sobre
+   `3de24780`; ruta corta, por el límite de rutas de Windows), con su `config/settings.local.toml`
+   (`[rutas].data` absoluto al `data/` real) y la salida en la carpeta de trabajo de la sesión:
+   `uv run botsito motor laminas --sesiones <las sesiones de la 7a, en el orden de clave.txt> --salida <carpeta de trabajo>/ensayo-7a`.
+   exit 0; 45 ficheros; 633,8 s; pico del proceso 644,2 MiB. Las dos corridas dan lo mismo,
+   `(31, 192, 24, 1150, 0, 32, 0)`: las 31 parejas, las 192 de más y las 1150 órdenes de la línea
+   base.
+2. **La buena**, desde el repo, con el mismo orden:
+   `uv run botsito motor laminas --sesiones <las sesiones de la 7a, en el orden de clave.txt> --salida C:\Users\USER\Desktop\laminas-sesion-7a`
+   (la lista sustituida por su marcador: desviación declarada, la misma de LAMINAS). exit 0; 45
+   ficheros; 528,7 s; pico 643,0 MiB; las dos corridas, `(31, 192, 24, 1150, 0, 32, 0)`. El árbol de
+   trabajo llevaba entonces sin commitear lo de F1 (las dos cadenas de `cli.py` y documentos); el
+   motor, el mismo de `3de24780`.
+3. **La buena frente al ensayo**: los 45 ficheros, por sha256 (guion de la carpeta de trabajo que
+   solo hashea), **0 distintos**. `clave.txt` no se abrió. El clon se retiró (`git worktree remove`).
+
+**Por sesión** (la consola de `motor laminas`; qué carpeta es qué sesión lo dice `clave.txt`, que
+guarda Aleks):
+
+| Carpeta | Láminas | Tipo a | Tipo b | La H4 que fija el sesgo, dentro de la ventana |
+|---|---|---|---|---|
+| sesion-01 | 6 | 5 | 1 | 6 de 6 |
+| sesion-02 | 5 | 1 | 4 | 5 de 5 |
+| sesion-03 | 4 | 1 | 3 | 4 de 4 |
+| sesion-04 | 9 | 5 | 4 | 9 de 9 |
+| sesion-05 | 4 | 0 | 4 | 4 de 4 |
+| sesion-06 | 10 | 5 | 5 | 10 de 10 |
+| **Total** | **38** | **17** | **21** | |
+
+**Dónde están:** `C:\Users\USER\Desktop\laminas-sesion-7a\`, con `sesion-01` a `sesion-06`, cada una
+con su `indice.html`, y `clave.txt` en la raíz. Ninguna sesión salió con error: no hay PARADA.
 
 ## Estado
 
-EN CURSO: fase 0 hecha; PARADA, a la espera de la respuesta del consultor a «Lo que necesito que
-decidas».
+EN CURSO: fase 0 respondida (arriba); F1 y F6 hechos; F2 a F5, el informe, la CI de `fix/` y el
+revisor, por hacer.
 
 ## Apéndice A · El informe del auditor del encargo (fase 0, 2026-11-11), tal cual
 

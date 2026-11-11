@@ -2,12 +2,20 @@
 
 Rama que las trajo: `trabajo/laminas` (R4.5; informe `docs/validation/LAMINAS.md`).
 
-## Lo primero: todavía no se enseñan al trader
+## Lo primero: se enseñan al trader en el bloque de días (ADR-0093)
 
-La regla 2 de `docs/runbooks/SESION-DE-PREGUNTAS.md` corta los gráficos ANTES de la colocación y
-prohíbe enseñar la orden, el stop y el objetivo. La lámina enseña las tres cosas. **Hasta que el ADR
-del método (la rama de la preparación de la sesión 7, RUMBO §1) cambie esa regla, las láminas no se
-enseñan al trader.** Las revisan Aleks y el consultor.
+Desde ADR-0093 (§2 y §7) la regla 2 de `docs/runbooks/SESION-DE-PREGUNTAS.md` deja enseñar las
+láminas en el bloque de días de la sesión: después de que el trader haya operado esa sesión con voz
+en su replay, Aleks le enseña las láminas del bot de esa sesión, con la caja, la orden, el stop y el
+objetivo, sin fecha, sin nada posterior al corte y sin ningún resultado. Solo de sesiones que
+cumplan ADR-0093 §3. Antes de enseñarlas, las revisan Aleks y el consultor.
+
+> **Por qué cambió (decisión del consultor, 2026-11-11, rama `trabajo/preparacion-sesion-7`;
+> ADR-0093 §7).** Hasta ese día decía: «La regla 2 de `docs/runbooks/SESION-DE-PREGUNTAS.md` corta
+> los gráficos ANTES de la colocación y prohíbe enseñar la orden, el stop y el objetivo. La lámina
+> enseña las tres cosas. **Hasta que el ADR del método (la rama de la preparación de la sesión 7,
+> RUMBO §1) cambie esa regla, las láminas no se enseñan al trader.** Las revisan Aleks y el
+> consultor.» El ADR del método existe y cambió la regla 2.
 
 ## Cómo se generan
 

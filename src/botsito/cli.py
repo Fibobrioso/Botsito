@@ -2707,8 +2707,8 @@ def motor_laminas(repo: Path, args: argparse.Namespace) -> int:
     de las sesiones pedidas, sobre la misma corrida que `motor decisiones` (toda la construccion, la
     cuenta por mes, el perfil y la fase por defecto, sin depuracion). La salida va SOLO a
     `--salida`, fuera del repositorio y vacia, y todo se calcula antes de escribir el primer
-    fichero. Hasta que el ADR del metodo cambie la regla 2 de SESION-DE-PREGUNTAS.md, las laminas
-    no se ensenan al trader (docs/runbooks/LAMINAS.md)."""
+    fichero. Desde ADR-0093 las laminas se ensenan al trader en el bloque de dias de la sesion
+    (regla 2 de SESION-DE-PREGUNTAS.md; docs/runbooks/LAMINAS.md)."""
     import time
 
     from botsito.cases.criterio_fidelidad import CriterioError, cargar_criterio
@@ -3360,7 +3360,8 @@ def build_parser() -> argparse.ArgumentParser:
     mt_lam = motor_sub.add_parser(
         "laminas",
         help="DIAGNOSTICO de construccion: las laminas del bot (H4, M15 y M1 con la sustentacion) "
-        "de las sesiones pedidas, fuera del repositorio; no se ensenan al trader todavia",
+        "de las sesiones pedidas, fuera del repositorio; para el bloque de dias de la sesion "
+        "(ADR-0093)",
     )
     mt_lam.add_argument(
         "--sesiones",

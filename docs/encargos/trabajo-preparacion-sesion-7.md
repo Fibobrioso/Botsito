@@ -1,12 +1,8 @@
 # Encargo · trabajo/preparacion-sesion-7
 
 Dado por Aleks (consultor) el 2026-11-11, en un solo mensaje. Copiado tal cual (el ADR que el
-encargo manda escribir va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale del bloque en el commit que lo crea):
-
-```ids-inexistentes
-ADR-0093 — el ADR del método (RUMBO §1) que escribe esta rama en F1; aún no existe
-```
+encargo manda escribir iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`, y salió del bloque en el commit que lo crea, F1):
 
 > Modelo: Opus 5.5 · Esfuerzo: alto
 >
@@ -116,3 +112,41 @@ ADR-0093 — el ADR del método (RUMBO §1) que escribe esta rama en F1; aún no
 > Para la fila de ERRORES-RECURRENTES del cierre, dos errores del consultor que ya entran:
 > - La regla del 2026-10-27 (y la lista de días de RECORRIDA-CONSTRUCCION-2 F3.5, que la aplicó) escribía el 1 de abril y el 1 de julio en lugar de la condición, y dejó pasar 2026-01-02 11-15. Lección: una exclusión se escribe por su condición, nunca por sus casos.
 > - La primera versión de este encargo, antes del auditor del consultor, daba como renombrado `perdida_trader_reinicio_huso` (los dos parámetros conviven), metía el bloque ids-inexistentes dentro de un texto que se copia citado (dos bloques), y preparaba el rango de H4 sin ADR-0080 ni lo respondido por WhatsApp. Lo paró el auditor. Lección: una línea del buzón del consultor es una pista, no un hecho: se mide antes de escribirla en un encargo.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-11)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/preparacion-sesion-7 (2026-11-11). Cópiala tal cual al final del encargo y del informe, en «Respuesta del consultor a la PARADA de la fase 0», con su fecha, y aplícala punto por punto (skill fase-cero). Buena fase 0: todo medido, y la cuenta del pivote cuadra.
+>
+> 0. (a). F7 #10 se cita de la transcripción activa de v14, con la ventana 0:44:04-0:44:11. VIDEO-JULIO.md no se toca: lo medido queda en tu §0.5.
+> 1. (a) en los dos días. 7a: S-1 el rango de H4, S-2 el break even, S-3 las zonas de control, S-4 A-35, S-5 la colocación y S-6 F7 #10. 7b: las seis que propones, y al final, fuera de las seis, la tarde del 10 de julio. Al final de PREGUNTAS-7B.md, con sus filas, los cuatro que no caben (B-7 a B-10). El incumplimiento del punto 1 de ACTIVAR-SESION-06 queda declarado como lo escribes.
+> 2. (a): 2026-01-19 11-15.
+> 3. (a): 2026-01-21 07-11. D3 f es una condición del bloque entero. La escribí ambigua (errores, abajo).
+> 4. (a), tal cual. En la 7a: 2026-07-07 11-15, 2026-07-02 11-15, 2026-07-03 07-11 y 2026-07-15 11-15; reservas, 2026-04-13 07-11 y 2026-07-06 07-11. En la 7b: 2026-01-13 07-11, 2026-04-15 11-15, 2026-01-07 07-11 y 2026-01-19 11-15; reservas, 2026-01-21 07-11, 2026-01-22 11-15 y, como tercera, 2026-07-16 07-11.
+> 5. (a): S-7 no entra.
+> 6. (a), con tu texto.
+> 7 y 12. (a), en UNA sola línea de Technical Debt, para no engordar PROJECT_STATE: «Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar: scripts/graficos_sesion.py:66-71, con su test (su constante ya no es la regla 2), y engine/decisiones.py:7-8 (el ADR del método ya existe) (PREPARACION-SESION-7.md §0.2, H8 y H19).» Y H16 no hace línea nueva: se añade al final de la que ya existe sobre la skill ingerir-sesion («… y no dice que ningún fotograma se abre antes de que la voz o uno ya abierto sitúen el tramo, ADR-0093 §2»). Las dos van a las propuestas de la orden de cierre, medidas con wc -c.
+> 8. (a).
+> 9. (a), con las tres precisiones y una más en §4. Si el delta de julio de una activación no casa con lo que declaró, la regla no se retoca hasta que la cifra salga: PARADA, el consultor vuelve a la voz del trader y decide si la respuesta se entendió mal. El delta nunca elige entre dos lecturas de un parámetro. Y el ADR dice que el delta de cada activación es diagnóstico (ADR-0092 §6): la única lectura de julio que decide algo es la del pivote (D5).
+> 10. (a).
+> 11. (a): el recuadro del paso 5 de «Antes». La desviación queda aceptada.
+> 13. Las cinco desviaciones, aceptadas tal como las declaras.
+> 14. De acuerdo. Lo compruebas sobre copias en la PARADA final, con el texto nuevo de F entero.
+>
+> Además:
+> 15. Las notas de la evidencia nueva solo llevan lo de su propia cita: es el patrón «Las notas de un registro… traen contenido de otros items» de ERRORES-RECURRENTES.md (:37), aplicado a la evidencia. La contradicción de F7 #6 con ev-v16-000234-9a4fa375 se escribe en el informe y en las líneas «Para Aleks» de S-5 de la 7a, no en las notas del ítem. Y las notas de F7 #2 no nombran ev-v9-000902-25db5bf5.
+> 16. Tu desviación del primer make check, aceptada. La salida de una herramienta va siempre a la carpeta de trabajo, nunca a la raíz del repo.
+> 17. Para la fila de ERRORES-RECURRENTES del cierre, los errores del consultor que llegaron a esta rama: 5, todos menores (consultor en Opus 5.5).
+>    · La regla del 27-oct y la lista de RECORRIDA-CONSTRUCCION-2 F3.5 escribían casos en lugar de la condición, y dejaron pasar 2026-01-02 11-15. Es la lección que ya trae el encargo.
+>    · El encargo daba F7 #10 como citable de la versión vieja de v14 con --transcripcion, y a 0:42:02; lo repetía de VIDEO-JULIO §7. evidence new lo rechaza y la frase está en 0:44:05. Lección: lo que una herramienta acepta como opción no prueba que haga lo que se dice; se ejecuta.
+>    · F1.7 no nombraba el paso 5 de «Antes».
+>    · La NOTA de ACTIVAR-A35-A44 se quedaba corta: faltaban A-44, que está RESUELTA, y la regla 2 vieja de :46-51.
+>    · D3 f se podía leer solo para el rango de H4, y dejaba en el aire 2026-07-17 07-11 para la 7b. Lección: una exclusión dice a qué conjunto se aplica.
+>    El segundo punto de la lista del encargo (la primera versión, parada por el auditor del consultor) no llegó a la rama: entra como lección, sin contarlo.
+>
+> Sigue sin parar con F1 a F6 y la PARADA condicional del encargo. Después: push como fix/preparacion-sesion-7 con su CI (el número de run), el revisor con los ocho alcances del encargo, su informe pegado al final del tuyo, y la PARADA final con lo que pide el encargo y la ruta de C:\Users\USER\Desktop\laminas-sesion-7a.
+>
+> Rama lista para revisión, NO cerrada.
