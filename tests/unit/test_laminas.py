@@ -532,7 +532,12 @@ def test_ninguna_frase_lleva_ids_dinero_ni_fechas() -> None:
     trabajo/laminas-motivos: el filtro «empieza en mayuscula y acaba en punto» dejaba fuera en
     silencio MOTIVO_GATE, LIMITE_NO_ENVIO y LADO_TOMA, y no bajaba a un dict dentro de otro). Una
     tabla nombrada que no aporte ninguna cadena falla: nada queda sin revisar en silencio."""
-    prefijos = ("FRASE_", "MOTIVO_GATE", "MOTIVO_POR_ORIGEN", "LIMITE_NO_ENVIO", "LADO_TOMA")
+    # y los trozos que se insertan en una frase (revisor, a4: CRITERIO_TOMA, LADO_ORDEN y
+    # CIERRE_ANTES quedaban fuera, ya en main)
+    prefijos = (
+        "FRASE_", "MOTIVO_GATE", "MOTIVO_POR_ORIGEN", "LIMITE_NO_ENVIO", "LADO_TOMA",
+        "CRITERIO_TOMA", "LADO_ORDEN", "CIERRE_ANTES",
+    )  # fmt: skip
     textos: list[str] = []
     for nombre, valor in vars(laminas).items():
         if not nombre.startswith(prefijos):
