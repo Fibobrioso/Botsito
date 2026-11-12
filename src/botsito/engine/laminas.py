@@ -564,33 +564,101 @@ FRASE_STOPS_LIQUIDEZ = (
 ESTADOS_RETIRADA = ("cancelada", "expirada")
 ESTADO_RECHAZADA = "rechazada"
 MOTIVO_STOP = "stop"
-# El motivo de cada gate VIGENTE que puede prohibir (los 15 de la spec con `prohibe`)
-MOTIVO_GATE = {
-    "RN-001": "está fuera de la ventana de la sesión",
-    "RN-037": "es el último minuto antes de que cierre la vela H4 de la sesión",
-    "RN-033": "no hay sesgo de H4 claro",
-    "RN-005": "lo que se forma queda en la zona de ruido de la liquidez de M15, donde no se busca "
-    "entrada",
-    "RN-008": "no se da ninguno de los dos esquemas de entrada",
-    "RN-009": "el esquema tiene más zonas de control de las que admite ({n}, y admite {m})",
+# El motivo de cada gate VIGENTE que puede prohibir (los 15 de la spec con `prohibe`), POR RAMA
+# de su forma (rama trabajo/laminas-motivos): los hijos de su `cualquiera_de`, en su orden; un
+# `todos_de` es una sola rama. Una frase que nombra una rama no se dice cuando la que dispara es
+# otra (lo encontro el consultor: RN-001 decia «fuera de la ventana» con los intentos gastados).
+# La rama que es un hecho de detencion lleva None: su frase sale de la regla que lo encendio
+# (`f.origen`, MOTIVO_POR_ORIGEN), nunca del nombre del hecho, porque `detenido_por_tope` lo
+# encienden RN-020 y RN-029. Que las ramas de la tabla son las de la spec lo comprueba
+# `test_las_ramas_de_cada_gate_son_las_de_su_forma`.
+PREFIJO_RAMA_HECHO = "hecho:"
+RAMA_FUERA_DE_VENTANA = "fuera_de_ventana"
+GATE_VENTANA = "RN-001"
+MOTIVO_GATE: dict[str, dict[str, str | None]] = {
+    "RN-001": {
+        RAMA_FUERA_DE_VENTANA: "está fuera de la ventana de la sesión",
+        "hecho:detenido_por_tope": None,
+        "hecho:detenido_por_tope_total": None,
+        "hecho:detenido_por_cartuchos": None,
+    },
+    "RN-037": {
+        "ultimo_tramo_h4": "es el último minuto antes de que cierre la vela H4 de la sesión"
+    },
+    "RN-033": {"ambiguo": "no hay sesgo de H4 claro", "insuficiente": "no hay sesgo de H4 claro"},
+    "RN-005": {
+        "lado_de_ruido": "lo que se forma queda en la zona de ruido de la liquidez de M15, donde "
+        "no se busca entrada"
+    },
+    # un `todos_de` de dos condiciones; la frase nombra la primera, y es cierta cuando dispara.
+    # Con orden_limite_nace = al_aparecer_punto_de_breaker la segunda da NO y no dispara nunca
+    # (respuesta a la PARADA de la fase 0, punto 0)
+    "RN-008": {"sin_esquema": "no se da ninguno de los dos esquemas de entrada"},
+    "RN-009": {
+        "zonas_de_control": "el esquema tiene más zonas de control de las que admite ({n}, y "
+        "admite {m})"
+    },
+    "RN-016": {
+        "stop_y_tope": "ya ha gastado sus intentos en esta liquidez",
+        "perdida_y_tope": "ya ha gastado sus intentos en esta liquidez",
+        "hecho:detenido_por_cartuchos": None,
+    },
+    "RN-018": {"operacion_abierta": "ya tiene una operación abierta, y no opera en paralelo"},
+    "RN-020": {
+        "perdida_dia": "ha llegado a la pérdida máxima del día del trader",
+        # la rama semanal: con los alcances de ALCANCES_SOLO_DIA no dispara, y con otro, error
+        "perdida_semana": "ha llegado a la pérdida máxima del día del trader",
+        "hecho:detenido_por_tope": None,
+    },
+    "RN-036": {
+        "racha": "viene de la racha de pérdidas seguidas del trader",
+        "hecho:detenido_por_racha": None,
+    },
+    "RN-022": {"sin_regla": "la situación no encaja en lo que sabe hacer"},
+    "RN-026": {"stops_level": "el bróker no admite el stop donde toca"},
+    "RN-029": {
+        "perdida_dia_firma": "ha saltado el freno diario de la cuenta",
+        "hecho:detenido_por_tope": None,
+    },
+    "RN-031": {
+        "perdida_total_firma": "ha saltado el freno total de la cuenta",
+        "hecho:detenido_por_tope_total": None,
+    },
+    "RN-032": {
+        "no_cabe_dia": "el riesgo de la operación no cabe antes del límite de la cuenta",
+        "no_cabe_total": "el riesgo de la operación no cabe antes del límite de la cuenta",
+    },
+}
+# Lo que dice la regla que encendio un hecho de detencion cuando ese hecho es la rama que dispara
+# un gate: las cinco que lo fijan en la spec (cada una, el suyo; lo comprueba un test)
+MOTIVO_POR_ORIGEN = {
     "RN-016": "ya ha gastado sus intentos en esta liquidez",
-    "RN-018": "ya tiene una operación abierta, y no opera en paralelo",
     "RN-020": "ha llegado a la pérdida máxima del día del trader",
-    "RN-036": "viene de la racha de pérdidas seguidas del trader",
-    "RN-022": "la situación no encaja en lo que sabe hacer",
-    "RN-026": "el bróker no admite el stop donde toca",
     "RN-029": "ha saltado el freno diario de la cuenta",
     "RN-031": "ha saltado el freno total de la cuenta",
-    "RN-032": "el riesgo de la operación no cabe antes del límite de la cuenta",
+    "RN-036": "viene de la racha de pérdidas seguidas del trader",
+}
+# el hecho que fija cada una al disparar: si dispara sin el en la foto, la foto no cuadra
+HECHO_QUE_FIJA = {
+    "RN-016": "detenido_por_cartuchos",
+    "RN-020": "detenido_por_tope",
+    "RN-029": "detenido_por_tope",
+    "RN-031": "detenido_por_tope_total",
+    "RN-036": "detenido_por_racha",
 }
 GATE_ZONAS_CONTROL = "RN-009"
+GATE_TRADER = "RN-020"  # su frase dice «del dia»: solo con ALCANCES_SOLO_DIA
 EFECTOS = ("abrir_operacion", "buscar_entradas")
 ACCION_COLOCAR = "accion:colocar_orden_limite"
 FRASE_PROHIBE = {
     "dispara": "No abre: {motivo}.",
     "desconocido": "No abre porque no puede descartar que {motivo}.",
 }
-FRASE_BLOQUEO = "Iba a colocar la orden y no la coloca: {motivo}."
+FRASE_BLOQUEO = {
+    "dispara": "Iba a colocar la orden y no la coloca: {motivo}.",
+    # un gate desconocido no es una causa cierta: la misma forma que FRASE_PROHIBE (punto d)
+    "desconocido": "Iba a colocar la orden y no la coloca porque no puede descartar que {motivo}.",
+}
 LIMITE_NO_ENVIO = {
     "volumen": "por el volumen máximo",
     "margen": "por el margen",
@@ -1007,16 +1075,83 @@ def _antes(f: Foto, propias: set[str], escenario: EscenarioFoto | None) -> list[
     return frases
 
 
-def _motivo(gate: str, contadas: int | None, lectura: Lectura) -> str:
-    if gate not in MOTIVO_GATE:
-        raise LaminaError(f"el gate {gate} no tiene frase")
-    if gate == "RN-020" and lectura.alcance_trader not in ALCANCES_SOLO_DIA:
+def _del_trader(regla: str, lectura: Lectura) -> None:
+    """La frase de RN-020 dice «del dia»: con un alcance que incluya la semana, error."""
+    if regla == GATE_TRADER and lectura.alcance_trader not in ALCANCES_SOLO_DIA:
         raise LaminaError(f"perdida_trader_alcance = {lectura.alcance_trader}: RN-020 sin frase")
+
+
+def _texto(gate: str, frase: str, contadas: int | None, lectura: Lectura) -> str:
+    _del_trader(gate, lectura)
     if gate == GATE_ZONAS_CONTROL:
         if contadas is None:
             raise LaminaError(f"{gate} sin las zonas de control anotadas en el corte")
-        return MOTIVO_GATE[gate].format(n=contadas, m=lectura.zonas_max)
-    return MOTIVO_GATE[gate]
+        return frase.format(n=contadas, m=lectura.zonas_max)
+    return frase
+
+
+def fuera_de_ventana(f: Foto) -> bool:
+    """El corte cae fuera de toda sesion del dia: la rama de la ventana de RN-001. Las sesiones de
+    la foto vienen del reloj de las sesiones y su union es la ventana del registro (lo comprueba
+    `test_las_sesiones_del_kit_son_la_ventana_del_registro`); los dos son [desde, hasta)."""
+    return not any(desde <= f.corte < hasta for _, desde, hasta in f.limites)
+
+
+def _motivos(
+    gate: str,
+    tipo: str,
+    f: Foto,
+    ciertos: frozenset[str],
+    contadas: int | None,
+    lectura: Lectura,
+) -> list[str]:
+    """Los motivos de `gate` en el corte (rama trabajo/laminas-motivos, respuesta del consultor a
+    la PARADA de la fase 0). Con `dispara`, el de cada rama ACTIVA, deducida de la foto: el hecho de
+    detencion encendido dice la frase de quien lo encendio, y si ya esta entre los gates que
+    disparan (`ciertos`) no se repite; la ventana de RN-001, por los limites de sesion; sin ningun
+    hecho, la frase comun de sus ramas de predicado. Con `desconocido`, la de sus ramas de
+    predicado, porque un hecho nunca es desconocido. Lo que no se identifica: `LaminaError`."""
+    if gate not in MOTIVO_GATE:
+        raise LaminaError(f"el gate {gate} no tiene frase")
+    ramas = MOTIVO_GATE[gate]
+    de_hecho = [r for r in ramas if r.startswith(PREFIJO_RAMA_HECHO)]
+    predicado = {r: fr for r, fr in ramas.items() if r not in de_hecho}
+    if any(ramas[r] is not None for r in de_hecho) or any(fr is None for fr in predicado.values()):
+        raise LaminaError(f"{gate}: una rama sin frase o un hecho con frase propia")
+    comun = {fr for fr in predicado.values() if fr is not None}
+    if tipo == "desconocido":
+        if len(comun) != 1:
+            raise LaminaError(f"{gate} desconocido: sus ramas de predicado no tienen una frase")
+        return [_texto(gate, comun.pop(), contadas, lectura)]
+    if tipo != "dispara":
+        raise LaminaError(f"{gate} [{tipo}]: sin frase")
+    hechos = dict(f.hechos)
+    fija = HECHO_QUE_FIJA.get(gate)
+    if fija is not None and fija not in hechos:
+        raise LaminaError(f"{gate} dispara y {fija} no esta en la foto")
+    activos = [r for r in de_hecho if r.removeprefix(PREFIJO_RAMA_HECHO) in hechos]
+    salida: list[str] = []
+    if gate == GATE_VENTANA and fuera_de_ventana(f):
+        ventana = predicado.get(RAMA_FUERA_DE_VENTANA)
+        if ventana is None:
+            raise LaminaError(f"{gate}: la rama de la ventana sin frase")
+        salida.append(_texto(gate, ventana, contadas, lectura))
+    elif not activos:
+        if gate == GATE_VENTANA or len(comun) != 1:
+            raise LaminaError(f"{gate} dispara y no se sabe por que rama")
+        return [_texto(gate, comun.pop(), contadas, lectura)]
+    origenes = dict(f.origen)
+    for rama in activos:
+        hecho = rama.removeprefix(PREFIJO_RAMA_HECHO)
+        reglas = origenes.get(hecho, ())
+        if len(reglas) != 1 or reglas[0] not in MOTIVO_POR_ORIGEN:
+            quien = ", ".join(reglas)
+            raise LaminaError(f"{gate}: no se sabe que regla encendio {hecho} ({quien})")
+        if reglas[0] != gate and reglas[0] in ciertos:
+            continue  # la regla que lo encendio ya es una causa de la lista (punto c)
+        _del_trader(reglas[0], lectura)
+        salida.append(MOTIVO_POR_ORIGEN[reglas[0]])
+    return salida
 
 
 def _sin_orden(
@@ -1051,10 +1186,27 @@ def _sin_orden(
                 causas.append(FRASE_USADA)
             if punto is not None and punto in f.rechazados:
                 causas.append(FRASE_PUNTO_GASTADO)
+    # los gates que DISPARAN en este cierre: el hecho que encendio uno de ellos no lo repite otro
+    ciertos = frozenset(
+        {g for _, accion, _, gates in f.bloqueos if accion == ACCION_COLOCAR
+         for g, t in gates if t == "dispara"}
+        | {g for efecto, prohiben in f.prohibido if efecto in EFECTOS for g in prohiben}
+    )  # fmt: skip
+    dichos: set[str] = set()  # nunca dos causas con el mismo motivo (punto c)
+
+    def decir(plantilla: str, gate: str, tipo: str) -> None:
+        for motivo in _motivos(gate, tipo, f, ciertos, contadas, lectura):
+            if motivo not in dichos:
+                dichos.add(motivo)
+                causas.append(plantilla.format(motivo=motivo))
+
     bloquean: set[str] = set()  # los gates que bloquean la colocacion en este cierre
     for _, accion, _, gates in f.bloqueos:
         if accion == ACCION_COLOCAR:
-            causas += [FRASE_BLOQUEO.format(motivo=_motivo(g, contadas, lectura)) for g, _ in gates]
+            for g, t in gates:
+                if t not in FRASE_BLOQUEO:
+                    raise LaminaError(f"{g} [{t}]: sin frase")
+                decir(FRASE_BLOQUEO[t], g, t)
             bloquean |= {g for g, _ in gates}
     for _, _, motivo in f.no_enviadas:
         partes = motivo.removeprefix(PREFIJO_NO_OPERAR).split("+")
@@ -1067,11 +1219,9 @@ def _sin_orden(
         for efecto, prohiben in efectos:
             if efecto in EFECTOS:
                 # el que ya bloqueo la colocacion no se repite (respuesta a la PARADA final, 3)
-                causas += [
-                    FRASE_PROHIBE[tipo].format(motivo=_motivo(g, contadas, lectura))
-                    for g in prohiben
-                    if g not in bloquean
-                ]
+                for g in prohiben:
+                    if g not in bloquean:
+                        decir(FRASE_PROHIBE[tipo], g, tipo)
     if not causas and not hay:
         if zona is None or any(r in f.disparadas for r in REGLAS_QUE_COLOCAN):
             raise LaminaError("sin orden y sin ninguna causa de la lista cerrada")

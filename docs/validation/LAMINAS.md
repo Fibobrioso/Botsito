@@ -101,6 +101,17 @@ Al terminar la corrida, con las parejas de `medir` sobre la corrida entera, elig
 | `operacion_abierta` | «Tiene una operación abierta.» |
 | `orden_limite_pendiente` | la orden viva (abajo) |
 
+> **RECUADRO DE CORRECCIÓN del 2026-11-12 (`trabajo/laminas-motivos`; el cuerpo no se toca).** La
+> frase de RN-001 de la tabla de abajo («está fuera de la ventana de la sesión», y la fila «fuera de
+> la sesión» de la tabla de causas, que dice «la del gate») nombraba una sola de sus ramas: RN-001
+> dispara también con `detenido_por_tope`, `detenido_por_tope_total` o `detenido_por_cartuchos`
+> encendidos, y en dos láminas de la 7a dio esa frase con el corte dentro de la ventana. Lo mismo
+> les pasaba a RN-020 y RN-029 con la rama de `detenido_por_tope`, y un gate `[desconocido]` en un
+> bloqueo salía como causa cierta. Desde `trabajo/laminas-motivos`, la causa de cada gate sale de la
+> rama que disparó, deducida de la foto (si es un hecho, con la frase de la regla que lo encendió),
+> un gate `[desconocido]` se dice como duda, y lo que no se identifica da `LaminaError`:
+> `docs/validation/LAMINAS-MOTIVOS.md`.
+
 *Gates VIGENTE que pueden prohibir (los 15 de la spec con `prohibe`, medidos con `listas_frases.py`). La frase es el motivo; con `[dispara]` sale «No abre: {motivo}.», con `[desconocido]` «No abre porque no puede descartar que {motivo}.», y en un bloqueo, «Iba a colocar la orden y no la coloca: {motivo}.»:*
 
 | Gate | Motivo |

@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/laminas-motivos
 
 ## Current Feature
-Ninguna rama abierta. trabajo/preparacion-sesion-7 cerrada en main el 2026-11-11 (stable/F38x-preparacion-sesion-7): ADR-0093 (el método de las sesiones), el pivote pre-registrado y las preguntas de la 7a y la 7b; R0.3 hecha.
+trabajo/laminas-motivos, EN CURSO: F (1), las frases de causa de las láminas (corrige R4.5 antes de grabar la 7a). Encargo docs/encargos/trabajo-laminas-motivos.md; informe docs/validation/LAMINAS-MOTIVOS.md.
 
 ## Stable Main State
 5260147 · merge de `trabajo/preparacion-sesion-7` (tag `stable/F38x-preparacion-sesion-7`), sobre `stable/F38w-laminas` (b9904c5). Informe docs/validation/PREPARACION-SESION-7.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/preparacion-sesion-7 cerrada en main el 2026-11-11
 5260147 · merge: trabajo/preparacion-sesion-7, ADR-0093 (el metodo de las sesiones), el pivote pre-registrado y las preguntas de la 7a y la 7b · tag stable/F38x-preparacion-sesion-7
 
 ## Tests Currently Passing
-2008 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2017 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -162,8 +162,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 66 (2026-11-11).
+— ninguna desde el Archivo 67 (2026-11-11).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 66 (2026-11-11).
+— ninguna desde el Archivo 67 (2026-11-11).

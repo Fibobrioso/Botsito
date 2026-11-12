@@ -352,9 +352,15 @@ def test_la_lamina_no_dice_el_esquema() -> None:
 
 def test_rn020_dice_del_dia_solo_si_la_rama_semanal_no_puede_disparar() -> None:
     """Punto 2: con el registro de hoy la rama semanal de RN-020 no dispara; si el alcance pasa a
-    incluir la semana, la frase «del dia» falla con su nombre (negar por defecto)."""
+    incluir la semana, la frase «del dia» falla con su nombre (negar por defecto). Desde
+    `trabajo/laminas-motivos` la foto lleva el hecho que RN-020 fija al disparar, como en el motor:
+    sin el, la foto no cuadra (`HECHO_QUE_FIJA`)."""
     assert LECTURA.alcance_trader in laminas.ALCANCES_SOLO_DIA
-    f = foto_base(prohibido=(("abrir_operacion", ("RN-020",)),))
+    f = foto_base(
+        prohibido=(("abrir_operacion", ("RN-020",)),),
+        hechos=(("detenido_por_tope", "hasta_el_corte_siguiente"), ("sesgo", "alcista")),
+        origen=(("detenido_por_tope", ("RN-020",)),),
+    )
     _, comp = _pagina(f)
     assert "No abre: ha llegado a la pérdida máxima del día del trader." in comp.frases
     for alcance in ("semana", "ambos"):
@@ -738,3 +744,141 @@ def test_la_marca_de_borde_del_m1_decide_su_lado_con_el_rango_que_la_deja_fuera(
     abajo = _con_linea_y_control("bajo", lo - 3, lo - 100)
     assert f">▼ {laminas.precio(lo - 3, ESCALA)}<" in abajo
     assert f">▲ {laminas.precio(lo - 3, ESCALA)}<" not in abajo
+
+
+# ------------------------------------------- la causa sale de la rama activa (laminas-motivos)
+
+VENTANA = "está fuera de la ventana de la sesión"
+INTENTOS = "ya ha gastado sus intentos en esta liquidez"
+DEL_TRADER = "ha llegado a la pérdida máxima del día del trader"
+DE_LA_CUENTA = "ha saltado el freno diario de la cuenta"
+
+
+def _bloqueo(*gates: tuple[str, str]) -> tuple[tuple[str, str, str, tuple[tuple[str, str], ...]]]:
+    return (("RN-015", "accion:colocar_orden_limite", "prohibida:abrir_operacion", gates),)
+
+
+def _detenido(hecho: str, valor: str, regla: str) -> dict[str, Any]:
+    return {
+        "hechos": ((hecho, valor), ("liquidez_tomada", "si"), ("sesgo", "alcista")),
+        "origen": ((hecho, (regla,)),),
+    }
+
+
+def _bloquea(texto: str) -> str:
+    """Literal, sin leer la tabla: los tests de F1 se ejecutan tambien con el codigo de main, que
+    no tiene la tabla por tipo, y tienen que romper por la frase, no por un nombre que falta."""
+    return f"Iba a colocar la orden y no la coloca: {texto}."
+
+
+def test_con_los_intentos_gastados_rn001_no_dice_fuera_de_la_ventana() -> None:
+    """F1 (1), rompe en main: la sesion 6 de la 7a, laminas 09 y 10. RN-001 dispara por
+    `detenido_por_cartuchos`, que encendio RN-016, con el corte dentro de la sesion: no dice «fuera
+    de la ventana», y los intentos salen una sola vez, de RN-016, que ya es causa (punto c)."""
+    f = foto_base(
+        bloqueos=_bloqueo(("RN-001", "dispara"), ("RN-016", "dispara")),
+        prohibido=(("abrir_operacion", ("RN-001", "RN-016")), ("buscar_entradas", ("RN-001",))),
+        **_detenido("detenido_por_cartuchos", "hasta_cartuchos_reinicio", "RN-016"),
+    )
+    assert any(desde <= CORTE < hasta for _, desde, hasta in f.limites)  # dentro de la sesion
+    _, comp = _pagina(f)
+    assert not [x for x in comp.frases if VENTANA in x]
+    assert [x for x in comp.frases if x.startswith("Iba a colocar")] == [_bloquea(INTENTOS)]
+    # RN-001 solo: la regla que encendio el hecho no esta en la lista, asi que lo dice el
+    solo = dataclasses.replace(f, bloqueos=_bloqueo(("RN-001", "dispara")), prohibido=())
+    _, comp = _pagina(solo)
+    assert [x for x in comp.frases if x.startswith("Iba a colocar")] == [_bloquea(INTENTOS)]
+
+
+@pytest.mark.parametrize(
+    ("origen", "dice", "no_dice"), [("RN-029", DE_LA_CUENTA, DEL_TRADER), ("RN-020", DEL_TRADER,
+                                                                         DE_LA_CUENTA)]
+)  # fmt: skip
+def test_el_tope_de_una_regla_no_sale_con_la_frase_de_la_otra(
+    origen: str, dice: str, no_dice: str
+) -> None:
+    """F1 (2), rompe en main: con `detenido_por_tope` encendido, RN-020 y RN-029 disparan las dos
+    por la rama del hecho (spec:732-741), como en el motor; la frase es la de quien lo encendio, y
+    la otra no sale ni en el bloqueo ni en la prohibicion."""
+    f = foto_base(
+        bloqueos=_bloqueo(("RN-020", "dispara"), ("RN-029", "dispara")),
+        prohibido=(("abrir_operacion", ("RN-020", "RN-029")), ("buscar_entradas", ("RN-029",))),
+        **_detenido("detenido_por_tope", "hasta_el_corte_siguiente", origen),
+    )
+    _, comp = _pagina(f)
+    assert _bloquea(dice) in comp.frases
+    assert not [x for x in comp.frases if no_dice in x]
+    assert len([x for x in comp.frases if dice in x]) == 1
+
+
+def test_un_gate_desconocido_no_sale_como_causa_cierta() -> None:
+    """F1 (3), rompe en main: el par (g, t) de `f.bloqueos` con t = desconocido se dice como duda,
+    con la forma de FRASE_PROHIBE["desconocido"], nunca como «no la coloca: ...»."""
+    ruido = (
+        "lo que se forma queda en la zona de ruido de la liquidez de M15, donde no se busca entrada"
+    )
+    _, comp = _pagina(foto_base(bloqueos=_bloqueo(("RN-005", "desconocido"))))
+    assert _bloquea(ruido) not in comp.frases
+    assert ("Iba a colocar la orden y no la coloca porque no puede descartar que lo que se forma "
+            "queda en la zona de ruido de la liquidez de M15, donde no se busca entrada.") in (
+        comp.frases
+    )  # fmt: skip
+    # y RN-001 desconocido: su unica rama de predicado es la ventana, dicha como duda
+    _, comp = _pagina(foto_base(quizas=(("abrir_operacion", ("RN-001",)),)))
+    assert f"No abre porque no puede descartar que {VENTANA}." in comp.frases
+
+
+def test_fuera_de_la_ventana_sigue_diciendo_fuera_de_la_ventana() -> None:
+    """Lo que no cambia: con el corte fuera de toda sesion y sin hecho de detencion, RN-001 dice
+    «está fuera de la ventana de la sesión», como en main."""
+    f = foto_base(limites=(("07-11", SESION, CORTE),), bloqueos=_bloqueo(("RN-001", "dispara")))
+    assert not any(desde <= CORTE < hasta for _, desde, hasta in f.limites)  # fuera de toda sesion
+    _, comp = _pagina(f)
+    assert _bloquea(VENTANA) in comp.frases
+
+
+def test_lo_que_no_se_identifica_falla_con_su_nombre() -> None:
+    """Negar por defecto (punto b): RN-001 que dispara dentro de la sesion y sin ningun hecho, un
+    hecho sin regla de origen conocida, y RN-020 que dispara sin el hecho que fija."""
+    casos = [
+        (foto_base(bloqueos=_bloqueo(("RN-001", "dispara"))), "por que rama"),
+        (
+            foto_base(
+                bloqueos=_bloqueo(("RN-001", "dispara")),
+                **_detenido("detenido_por_tope", "hasta_el_corte_siguiente", "RN-099"),
+            ),
+            "no se sabe que regla",
+        ),
+        (foto_base(bloqueos=_bloqueo(("RN-020", "dispara"))), "detenido_por_tope no esta"),
+        (foto_base(bloqueos=_bloqueo(("RN-005", "quizas"))), "sin frase"),
+    ]
+    for f, error in casos:
+        with pytest.raises(laminas.LaminaError, match=error):
+            _pagina(f)
+
+
+@pytest.mark.parametrize(
+    ("gate", "rama", "foto"),
+    [
+        ("RN-001", "fuera_de_ventana", {"limites": (("07-11", SESION, CORTE),)}),
+        ("RN-020", "perdida_dia", {}),
+        ("RN-016", "stop_y_tope", {}),
+        ("RN-032", "no_cabe_total", {}),
+    ],
+)
+def test_la_guardia_falla_si_se_quita_la_frase_de_una_rama(
+    monkeypatch: pytest.MonkeyPatch, gate: str, rama: str, foto: dict[str, Any]
+) -> None:
+    """La guardia nueva (punto b), que falla A PROPOSITO con la tabla mutada: a un gate de varias
+    ramas se le quita la frase de una y la lamina da LaminaError. En main la tabla por ramas no
+    existe, asi que este test no se compara con main."""
+    mutada = dict(laminas.MOTIVO_GATE[gate])
+    mutada[rama] = None
+    monkeypatch.setitem(laminas.MOTIVO_GATE, gate, mutada)
+    hechos = {
+        "RN-020": _detenido("detenido_por_tope", "hasta_el_corte_siguiente", "RN-020"),
+        "RN-016": _detenido("detenido_por_cartuchos", "hasta_cartuchos_reinicio", "RN-016"),
+    }.get(gate, {})
+    f = foto_base(bloqueos=_bloqueo((gate, "dispara")), **foto, **hechos)
+    with pytest.raises(laminas.LaminaError, match="sin frase"):
+        _pagina(f)

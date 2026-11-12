@@ -515,25 +515,119 @@ def test_cada_freno_dice_su_frase(registro: Registro, hecho: str) -> None:
     assert laminas.FRASE_DETENIDO[hecho] in comp.frases
 
 
+def _cadenas(valor: Any) -> list[str]:
+    """Cada cadena de una tabla, a cualquier profundidad (los VALORES; las claves las usa el
+    codigo y no salen)."""
+    if isinstance(valor, str):
+        return [valor]
+    if isinstance(valor, Mapping):
+        return [x for v in valor.values() for x in _cadenas(v)]
+    if isinstance(valor, (tuple, list)):
+        return [x for v in valor for x in _cadenas(v)]
+    return []
+
+
 def test_ninguna_frase_lleva_ids_dinero_ni_fechas() -> None:
+    """Cada cadena de cada tabla de frases, sin filtro y a cualquier profundidad (rama
+    trabajo/laminas-motivos: el filtro «empieza en mayuscula y acaba en punto» dejaba fuera en
+    silencio MOTIVO_GATE, LIMITE_NO_ENVIO y LADO_TOMA, y no bajaba a un dict dentro de otro). Una
+    tabla nombrada que no aporte ninguna cadena falla: nada queda sin revisar en silencio."""
+    # y los trozos que se insertan en una frase (revisor, a4: CRITERIO_TOMA, LADO_ORDEN y
+    # CIERRE_ANTES quedaban fuera, ya en main)
+    prefijos = (
+        "FRASE_", "MOTIVO_GATE", "MOTIVO_POR_ORIGEN", "LIMITE_NO_ENVIO", "LADO_TOMA",
+        "CRITERIO_TOMA", "LADO_ORDEN", "CIERRE_ANTES",
+    )  # fmt: skip
     textos: list[str] = []
     for nombre, valor in vars(laminas).items():
-        if not nombre.startswith(("FRASE_", "MOTIVO_GATE", "LIMITE_NO_ENVIO", "LADO_TOMA")):
+        if not nombre.startswith(prefijos):
             continue
-        if isinstance(valor, str):
-            textos.append(valor)
-        elif isinstance(valor, dict):
-            textos += [v for v in valor.values() if isinstance(v, str)]
-            textos += [
-                x for v in valor.values() if isinstance(v, tuple) for x in v if isinstance(x, str)
-            ]
-        elif isinstance(valor, tuple):
-            textos += [x for x in valor if isinstance(x, str)]
-    frases = [t for t in textos if t[:1].isupper() and t.endswith(".")]
-    assert len(frases) > 30
-    for t in frases:
+        propias = _cadenas(valor)
+        assert propias, f"{nombre}: ninguna cadena revisada"
+        textos += propias
+    # las de la tabla de gates, contadas aparte: todas estan entre las revisadas
+    de_gates = [
+        v for ramas in laminas.MOTIVO_GATE.values() for v in ramas.values() if v is not None
+    ]
+    assert len(de_gates) == len(_cadenas(laminas.MOTIVO_GATE)) and set(de_gates) <= set(textos)
+    assert set(laminas.MOTIVO_POR_ORIGEN.values()) <= set(textos)
+    assert len(textos) >= 80  # 80 en esta rama; en main el filtro dejaba 48 de 70
+    for t in textos:
         assert not laminas.RE_FECHA.search(t) and not laminas.RE_PROHIBIDO.search(t), t
     assert all("el único freno" not in t for t in textos)
+
+
+def _ramas_de_la_forma(cuando: Mapping[str, Any]) -> list[str]:
+    """Las ramas de una forma con el nombre que les da la tabla cuando son un hecho de detencion
+    (`hecho:<nombre>`), y `None` cuando no lo son: los hijos de su `cualquiera_de`; un `todos_de`
+    es una sola rama."""
+    if "cualquiera_de" not in cuando:
+        return ["-"]
+    ramas = []
+    for hijo in cuando["cualquiera_de"]:
+        h = hijo.get("hecho") if isinstance(hijo, Mapping) else None
+        detencion = isinstance(h, str) and h.startswith("detenido_") and "vale" not in hijo
+        ramas.append(f"{laminas.PREFIJO_RAMA_HECHO}{h}" if detencion else "-")
+    return ramas
+
+
+def test_las_ramas_de_cada_gate_son_las_de_su_forma() -> None:
+    """La guardia de la tabla por ramas (punto b de la respuesta a la PARADA de la fase 0): cada
+    gate tiene tantas ramas como su forma, en el mismo orden, y las ramas que son un hecho de
+    detencion son exactamente las de la forma y van sin frase (la dice quien lo encendio). Una rama
+    nueva en la spec, o una que se quita de la tabla, rompe este test."""
+    from botsito.spec.modelo import cargar_reglas
+
+    reglas = {
+        r.id: r for r in cargar_reglas(RAIZ / "knowledge" / "spec" / "strategy_spec.yaml")
+        if r.estado == "VIGENTE"
+    }  # fmt: skip
+    for gate, ramas in laminas.MOTIVO_GATE.items():
+        cuerpo = reglas[gate].forma
+        assert cuerpo is not None, gate
+        forma = _ramas_de_la_forma(cuerpo["cuando"])
+        tabla = [r if r.startswith(laminas.PREFIJO_RAMA_HECHO) else "-" for r in ramas]
+        assert tabla == forma, gate
+        for r, frase in ramas.items():
+            assert (frase is None) == r.startswith(laminas.PREFIJO_RAMA_HECHO), (gate, r)
+    assert laminas.RAMA_FUERA_DE_VENTANA in laminas.MOTIVO_GATE[laminas.GATE_VENTANA]
+
+
+def test_quien_fija_cada_hecho_de_detencion_es_lo_de_la_spec() -> None:
+    """`HECHO_QUE_FIJA` y `MOTIVO_POR_ORIGEN` son las reglas VIGENTE que fijan un `detenido_*`, cada
+    una con el suyo: la frase de un hecho sale de quien lo encendio, y esa lista no se supone."""
+    from botsito.spec.modelo import cargar_reglas
+
+    fijan: dict[str, str] = {}
+    for r in cargar_reglas(RAIZ / "knowledge" / "spec" / "strategy_spec.yaml"):
+        cuerpo = getattr(r, "forma", None)
+        if r.estado != "VIGENTE" or not cuerpo:
+            continue
+        for paso in (cuerpo.get("entonces") or {}).get("hace", []) or []:
+            hecho = (paso.get("fijar") or {}).get("hecho") if isinstance(paso, Mapping) else None
+            if isinstance(hecho, str) and hecho.startswith("detenido_"):
+                fijan[r.id] = hecho
+    assert fijan == laminas.HECHO_QUE_FIJA
+    assert set(laminas.MOTIVO_POR_ORIGEN) == set(fijan)
+
+
+def test_las_sesiones_del_kit_son_la_ventana_del_registro(registro: Registro) -> None:
+    """La rama de la ventana de RN-001 se lee en la foto por los limites de sesion
+    (`fuera_de_ventana`): eso solo vale si las sesiones del kit, seguidas, cubren exactamente
+    [ventana_inicio, ventana_fin), la ventana que mira `en_ventana`."""
+    from botsito.cases.paquete import cargar_config
+
+    sesiones = cargar_config(RAIZ / "knowledge" / "cases" / "kit" / "config.yaml").sesiones
+    tramos = sorted((s.desde, s.hasta) for s in sesiones)
+    assert all(a[1] == b[0] for a, b in zip(tramos, tramos[1:], strict=False))
+    inicio = registro.hora("ventana_inicio").minutos_del_dia
+    fin = registro.hora("ventana_fin").minutos_del_dia
+
+    def minutos(hhmm: str) -> int:
+        h, m = hhmm.split(":")
+        return int(h) * 60 + int(m)
+
+    assert (minutos(tramos[0][0]), minutos(tramos[-1][1])) == (inicio, fin)
 
 
 def test_el_tope_dice_quien_lo_encendio_y_si_no_se_sabe_falla(registro: Registro) -> None:
