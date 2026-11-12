@@ -140,7 +140,8 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
   - (a) entro, aunque el precio ya esté por encima del 0;
   - (b) espero a que el 0 quede del lado bueno y entonces la pongo;
   - (c) la descarto;
-  - (d) otra, ¿cuál?»
+  - (d) muevo el 0 a los nuevos altos y pongo la orden ahí;
+  - (e) otra, ¿cuál?»
 - **Para precisar:** ¿Y si el precio vuelve por debajo del 0 antes de que pongas la orden?
 - **Para confirmar al final:** «Si el precio ya está más allá del 0, ______».
 - *Para Aleks (no va a la hoja): `ACTIVAR-SESION-06-MOTOR.md:792` (decisión 3: hasta la sesión 7,
@@ -148,7 +149,14 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
   equivocado se rechaza (`precio_invalido`, `engine/broker.py:543-555`) y el rechazo gasta el punto
   (ADR-0083 D1). (a) → colocar o entrar aunque el precio esté pasado el 0 (motor nuevo, con ADR);
   (b) → 3.a y 4.a de ACTIVAR-SESION-06-MOTOR (esperar a que el 0 quede del lado bueno); (c) → en
-  efecto, lo de hoy (el punto se gasta). Ningún parámetro existente: es la regla de la rama de S-19. Sin recuento por fila: 32 rechazos al colocar en la línea base (TRAZAS-ABLACION.md
+  efecto, lo de hoy (el punto se gasta); (d) → el 0 se actualiza con los nuevos altos y la stop va al
+  0 nuevo: es la lectura que sostienen sus propias citas, `ev-v17-014235-f3375358` y
+  `ev-v17-014350-ec133d13`, y la del consultor en `ACTIVAR-SESION-06.md:546-548` (el rechazo por
+  precio inválido con el 0 vivo no gasta el punto, y la orden se vuelve a colocar en el siguiente
+  cierre de M1 con el 0 actualizado, RN-006); va en la rama de S-19 (3.a y 4.a de
+  `ACTIVAR-SESION-06-MOTOR.md:293-301`: sin gastar caja ni punto), con un ADR que enmiende ADR-0083
+  D1, y rompería `tests/unit/test_punto_usado.py:343`. (La opción (d) entra por la respuesta del
+  consultor a la PARADA final, punto 2.) Ningún parámetro existente: es la regla de la rama de S-19. Sin recuento por fila: 32 rechazos al colocar en la línea base (TRAZAS-ABLACION.md
   5.4).*
 
 **S-4. Volver a entrar en el mismo punto: el «igual» y la caja** · en parte · ADR-0083 D1

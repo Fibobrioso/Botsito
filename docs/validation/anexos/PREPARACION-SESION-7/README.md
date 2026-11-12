@@ -11,6 +11,7 @@ leen; ninguno escribe en el repositorio), y sus salidas. Se ejecutan desde la ra
 | `sustitutas.py <caja-stop.txt> <para-clasificar.txt>` | `sustitutas.txt` | D3 d): las sustitutas de cada grupo de la caja, por cociente | §0.4 |
 | `filas_por_sesion.py <patrones-cuenta-por-mes.txt> <dia:sesion> ...` | `filas-por-sesion.txt` | las filas de cada sesión candidata, por patrón | §0.4 |
 | `ensayo_evidencia.py` | `ensayo-evidencia.txt` | lo que `evidence new` comprueba antes de escribir, sin escribir, para F7 #1, #2, #3, #6 y #10 (la salida no lleva el id calculado: los rechazados no existen) | §0.5 |
+| `tres_fechas.py` | `tres-fechas.txt` | las tres fechas de «día anterior» que lleva `3e1995df`, contadas por la compuerta (`casos_reservados`, `casos_ocultos` y los días dev), sin imprimir ninguna; comprueba antes que son las de `3e1995df` y que las salidas de ahora no las llevan | «Respuesta del consultor a la PARADA final» |
 
 Los guiones no pasan por el lint de `make check` (`Makefile:36-37`: `src`, `tests`, `scripts` y
 `.claude/hooks`) y se dejan como se ejecutaron; `ensayo_evidencia.py` se cambió una vez para no

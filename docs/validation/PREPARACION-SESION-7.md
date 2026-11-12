@@ -680,8 +680,12 @@ Empujada `958a7b9a` (F1 a F6 y todo el código de la rama) como `fix/preparacion
 el aceptado de `RITUAL.md`: `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` (PROJECT_STATE
 declara `trabajo/preparacion-sesion-7` y la rama es `fix/…`). Medido con `gh run view 43118024345
 --log-failed`. Lo que se commitea después (las correcciones del revisor) es documentación, evidencia,
-dos anexos y un texto de la hoja 08; si Aleks quiere la CI sobre el último commit, se empuja otra vez
-a `fix/`.
+dos anexos y un texto de la hoja 08.
+
+Empujada después `e8a8c43b` (las correcciones del revisor): **run 43123877117**, `completed` /
+`failure`, con **1 failed, 3381 passed, 48 skipped**, y el mismo único fallo aceptado (`gh run view
+43123877117 --log-failed`). El commit de la respuesta a la PARADA final se empuja igual; su run va
+en el mensaje final a Aleks y en el registro del cierre.
 
 ## Lo hecho con cada hallazgo del revisor
 
@@ -774,9 +778,11 @@ pasar.
 ## Estado
 
 LISTA PARA REVISIÓN (2026-11-11): fase 0 respondida; F1 a F6 hechos, sin ninguna PARADA
-condicional; la CI de Linux por `fix/preparacion-sesion-7`, run 43118024345, con el único fallo
-aceptado (`test_state_check_ok_on_real_repo`); el revisor pasó (Apéndice B) y sus hallazgos están
-corregidos o declarados; la PARADA final, arriba.
+condicional; la CI de Linux por `fix/preparacion-sesion-7`, runs 43118024345 y 43123877117, con el
+único fallo aceptado (`test_state_check_ok_on_real_repo`); el revisor pasó (Apéndice B) y sus
+hallazgos están corregidos o declarados; la PARADA final, arriba; la respuesta del consultor a la
+PARADA final, al final del informe, con su primera parte aplicada (el cierre espera a
+`/cerrar-rama`).
 
 Rama lista para revisión, NO cerrada.
 
@@ -1019,3 +1025,66 @@ Rama lista para revisión, NO cerrada.
 >
 > ### Comandos ejecutados
 > (33 entradas; la lista entera la dio el revisor con su informe, y aquí se resume: git de lectura sobre la rama y `main`; las tres comprobaciones del contrato que no escriben; `corpus transcript show` de v11, v12 y v14; `pytest` de los dos ficheros de tests; `sha256sum` y `wc -c` del yaml; Read y Grep de los documentos, los ítems y los parámetros. Dos órdenes que la guardia le negó, un `for f in …; do cat` y un `uv run python -` con `glob`, las rehízo con Read y Grep sin rodearla.)
+
+## Respuesta del consultor a la PARADA final (2026-11-11)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA final de trabajo/preparacion-sesion-7 y orden de cierre (2026-11-11). Cópiala tal cual al final del informe, en «Respuesta del consultor a la PARADA final», con su fecha.
+>
+> PRIMERO, un commit más en la rama («docs(sesion-7): dos arreglos del consultor a las preguntas y la exposición de las tres fechas»), con su make check sellado:
+> 1. PREGUNTAS-7A.md, S-5, «Para precisar»: sale «¿Qué orden usas: una orden stop, una limitada o a mercado?», porque A-47 está RESUELTA (ambiguedades.yaml, «el tipo de orden de entrada, stop o límite»; verifícalo) y no se repregunta. Entra en su lugar: «Ese cierre con cuerpo que dices en el vídeo, ¿lo miras en la vela de un minuto o en la de 15 minutos?». En su «Para Aleks», una frase: el tema de ev-v12-000015-7fc04520 dice «breaker de M1» y su cita no dice M1; si el trader responde M15, no hay contradicción con S-18, y la activación de la 7a lo escribe así. El ítem no se toca: es inmutable, y supersede exige el mismo tema.
+> 2. PREGUNTAS-7B.md, S-3: una opción más, antes de «otra, ¿cuál?», con lo que dijo en sus propias citas: «muevo el 0 a los nuevos altos y pongo la orden ahí». En su «Para Aleks», a qué lleva esa opción (el 0 se actualiza: la lectura que sostienen ev-v17-014235-f3375358 y ev-v17-014350-ec133d13, con su rama y su ADR). Los títulos de S-5 y S-3 no cambian; si alguno cambia, cámbialo también en CODIGOS_DE_SESION_TEXTO.
+> 3. Tu duda 1, resuelta así: basta con declararlo, y nada se regenera. Con ADR-0093 §2 el trader carga él mismo el día en FX Replay, así que la clave ya no protege ninguna fecha que él no vea. La historia de git no se reescribe. Las tres fechas de «día anterior» se cuentan ahora con casos_reservados(repo) y casos_ocultos(repo), solo el número, sin imprimir ninguna. El recuento va a una fila nueva de HOLDOUT-EXPOSICIONES de esta rama, que dice qué commit las lleva (3e1995df) y que la tabla de F6 por carpeta deja deducir la clave.
+> 4. Tu duda 2: declarada en el informe, como en el punto 1. Tu duda 3: de acuerdo; el recuadro de PREGUNTAS-7B.md basta.
+> Después, push a fix/preparacion-sesion-7, y la CI de Linux sobre ese commit. Mira también la de e8a8c43b. Dame los dos números de run: el único fallo aceptado es test_state_check_ok_on_real_repo.
+>
+> DESPUÉS, EL CIERRE (cuando yo escriba /cerrar-rama trabajo/preparacion-sesion-7; antes no):
+> - Tag: stable/F38x-preparacion-sesion-7.
+> - En el commit chore(cierre), en la rama:
+>   · sale contrato.yaml;
+>   · entra el registro en HISTORIA, con stable/F38x-preparacion-sesion-7^{commit}, el número de commits de la rama y su fila de HOLDOUT-EXPOSICIONES;
+>   · entra la fila de ERRORES-RECURRENTES (abajo);
+>   · en PROJECT_STATE, la F nueva, tal como la propusiste (sin la J y sin «las láminas no se enseñan»), y lo que sale de F, literal, en HISTORIA bajo un encabezado `# Next Action HECHA · F · trabajo/preparacion-sesion-7 · 2026-11-11`, como se hizo con F en el cierre de trabajo/laminas (verifícalo);
+>   · la línea nueva de Technical Debt (273 bytes) y la de ingerir-sesion ampliada;
+>   · en HOJA-DE-RUTA, R4.3 con el reparto definitivo y sin J en «Depende de», y R0.3 HECHA con ADR-0093, sin NA:F en su bloque.
+>   Todo con el texto de anexos/PREPARACION-SESION-7/simular_cierre.py, comprobado otra vez con problemas_a a problemas_d sobre el árbol real antes del make check. PROJECT_STATE, medido con wc -c (tu cifra: 24.001).
+> - El resto, como manda RITUAL.md con la skill cerrar-rama: merge, tag, commit de estado (solo Current Branch, Current Feature, Stable Main State y Last Stable Commit), make check sellado, push atómico de main y el tag (lo confirmo con «1. Yes»), CI de main en verde, y después borrar la rama local y fix/preparacion-sesion-7.
+> - Fila de ERRORES-RECURRENTES. El revisor: 1 bloquea y 7 importa, todo arreglado o declarado. Errores del consultor que llegaron a la rama: 6, 1 importa y 5 menores (consultor en Opus 5.5):
+>   · importa: la decisión 0 de TRAZAS-ABLACION (consultor, F38v) clasificó o4, o6 y o8 de 2026-07-03 07-11 como «contradicción con lo fijado» dando por hecho que el cuerpo de v12 era de M1, y la cita no dice M1; de ahí salió el tema de ev-v12-000015-7fc04520. Lección: una clase que enfrenta una cita con lo fijado comprueba antes que las dos hablan del mismo marco.
+>   · los cinco menores de mi respuesta a la PARADA de la fase 0, punto 17, tal cual.
+>   Hallazgos del consultor que el revisor no vio: menor · S-5 de la 7a volvía a preguntar, en «Para precisar», el tipo de orden (A-47 RESUELTA). Lección para el revisor: «ninguna repregunta lo decidido» vale también para «Para precisar», y se contrasta con las RESUELTA de ambiguedades.yaml. Menor · S-3 de la 7b no ofrecía como opción lo que el trader ya había dicho (actualizar el 0). Lección: las opciones de una pregunta «en parte» incluyen la lectura que sostienen sus propias citas. Y tu lección de b1 («antes de redactar una pregunta "en parte", leer en ambiguedades.yaml qué parte quedó decidida»), tal como la propones.
+> - Informe final: sha de main, tag, run de la CI de main, ramas que quedan, tamaño de PROJECT_STATE y número de commits de la rama.
+
+### Cómo se aplicó la primera parte (el cierre espera a `/cerrar-rama`)
+
+1. **S-5 de la 7a.** A-47 está RESUELTA (`knowledge/spec/ambiguedades.yaml:1512-1519`, «el tipo de
+   orden de entrada, stop o límite»: «se entra siempre por stop», `entrada_tipo_orden` =
+   `stop_en_ruptura`, `fb-2026-09-29-sesion-03-92a38105`). Sale la repregunta del tipo de orden y
+   entra la del marco del cierre con cuerpo. El «Para Aleks» lleva la frase del tema de
+   `ev-v12-000015-7fc04520`, y que el ítem no se toca. El título de S-5 no cambia.
+2. **S-3 de la 7b.** Entra la opción (d), «muevo el 0 a los nuevos altos y pongo la orden ahí», y
+   «otra, ¿cuál?» pasa a ser (e). En su «Para Aleks», la opción (d) lleva a lo siguiente:
+   - es la lectura de las citas y la del consultor en `ACTIVAR-SESION-06.md:546-548`: el rechazo con el 0 vivo no gasta el punto, y la orden se recoloca con el 0 actualizado (RN-006);
+   - va en la rama de S-19, con 3.a y 4.a de `ACTIVAR-SESION-06-MOTOR.md:293-301` y un ADR que enmiende ADR-0083 D1;
+   - rompería `tests/unit/test_punto_usado.py:343`.
+
+   El título de S-3 no cambia, así que `CODIGOS_DE_SESION_TEXTO` tampoco.
+3. **Las tres fechas, contadas por la compuerta** (`anexos/PREPARACION-SESION-7/tres_fechas.py` y
+   `tres-fechas.txt`). El guion comprueba antes que son las tres que lleva `3e1995df` (3 de 3) y que
+   las salidas de ahora no llevan ninguna (0). Resultado:
+   - **una de las tres está en `casos_reservados` y en `casos_ocultos`**;
+   - las otras dos no están en ninguno, ni son días dev de construcción.
+
+   Va en una fila nueva de HOLDOUT-EXPOSICIONES, que dice qué commit las lleva y que la tabla de F6
+   por carpeta deja deducir la clave. **Para el consultor:** tu decisión de declararlo y no reescribir
+   la historia se tomó sin saber que una de las tres es de un día reservado. Lo que guarda la historia
+   es esa fecha sola, escrita por calendario: ni una etiqueta, ni una vela, ni una operación. El merge
+   la llevaría a `main` dentro de `3e1995df`. Si eso cambia tu decisión, dilo antes de
+   `/cerrar-rama`.
+4. **Tu duda 2**, declarada: en S-5 de la 7a (punto 1) y en «Lo que no me convence», 2. **Tu duda
+   3**: el recuadro de PREGUNTAS-7B.md, sin cambios.
+
+La CI de los dos commits empujados a `fix/preparacion-sesion-7`, en «La CI de Linux».

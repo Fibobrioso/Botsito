@@ -242,7 +242,8 @@ consultor a la PARADA de la fase 0, punto 1).
   - (c) otra, ¿cuál?»
 - **Para precisar:**
   - En el dibujo, ¿la primera vela (la de la mecha) te habría metido en la operación?
-  - ¿Qué orden usas: una orden stop, una limitada o a mercado?
+  - Ese cierre con cuerpo que dices en el vídeo, ¿lo miras en la vela de un minuto o en la de 15
+    minutos?
 - **Para confirmar al final:** «Pongo la orden ______, y entro cuando ______».
 - *Para Aleks (no va a la hoja): TRAZAS-ABLACION.md:945-950 (5.5 punto 1), sin sus días ni horas;
   decisión a de su PARADA final (`:1391`). **La contradicción** que la pregunta tiene que deshacer:
@@ -252,7 +253,12 @@ consultor a la PARADA de la fase 0, punto 1).
   `al_aparecer_punto_de_breaker`, `parametros.yaml:668`; `orden_stop_punto` = `ultimo_pivote_m1`,
   `:702`; ADR-0064) y se llena en el tick que toca el nivel: en el dibujo, (a). (b) → una opción
   nueva de `orden_limite_nace`, con su ADR. Filas: julio 5 (2026-07-03 07-11: la P2 del trader y
-  cuatro P5); es el mecanismo de toda orden stop del bot (247 llenadas). Sesión del bloque: 3.*
+  cuatro P5); es el mecanismo de toda orden stop del bot (247 llenadas). Sesión del bloque: 3.
+  El tema de `ev-v12-000015-7fc04520` dice «breaker de M1» y su cita no dice M1: si el trader
+  responde M15 (la segunda de «Para precisar»), no hay contradicción con S-18, y la activación de la
+  7a lo escribe así; el ítem no se toca (es inmutable, y supersede exige el mismo tema). El tipo de
+  orden no se pregunta: A-47 está RESUELTA (stop en la ruptura, `ambiguedades.yaml:1512-1519`;
+  respuesta del consultor a la PARADA final, punto 1).*
 
 **S-6. Las entradas que dejas sin tomar en el backtest**
 - **Lo que nos has dicho:** en tu backtest grabado en vídeo: «aquí hay una entrada que no le voy a tomar
