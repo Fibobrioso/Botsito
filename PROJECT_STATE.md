@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/capa-generada
 
 ## Current Feature
-Ninguna rama abierta. trabajo/laminas-motivos cerrada en main el 2026-11-12 (stable/F38y-laminas-motivos): la causa de cada gate de las láminas sale de la rama que dispara, y las láminas de la 7a regeneradas fuera del repo.
+trabajo/capa-generada, EN CURSO (R6a.2, tramo R6a; ADR-0082 D5): lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2. Encargo docs/encargos/trabajo-capa-generada.md; informe docs/validation/CAPA-GENERADA.md.
 
 ## Stable Main State
 7d3002c8 · merge de `trabajo/laminas-motivos` (tag `stable/F38y-laminas-motivos`), sobre `stable/F38x-preparacion-sesion-7` (5260147). Informe docs/validation/LAMINAS-MOTIVOS.md; el registro del cierre, al final de HISTORIA.
@@ -162,8 +162,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 67 (2026-11-11).
+— ninguna desde el Archivo 68 (2026-11-12).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 67 (2026-11-11).
+— ninguna desde el Archivo 68 (2026-11-12).
