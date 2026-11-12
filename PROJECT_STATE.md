@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/laminas-motivos
+main
 
 ## Current Feature
-trabajo/laminas-motivos, EN CURSO: F (1), las frases de causa de las láminas (corrige R4.5 antes de grabar la 7a). Encargo docs/encargos/trabajo-laminas-motivos.md; informe docs/validation/LAMINAS-MOTIVOS.md.
+Ninguna rama abierta. trabajo/laminas-motivos cerrada en main el 2026-11-12 (stable/F38y-laminas-motivos): la causa de cada gate de las láminas sale de la rama que dispara, y las láminas de la 7a regeneradas fuera del repo.
 
 ## Stable Main State
-5260147 · merge de `trabajo/preparacion-sesion-7` (tag `stable/F38x-preparacion-sesion-7`), sobre `stable/F38w-laminas` (b9904c5). Informe docs/validation/PREPARACION-SESION-7.md; el registro del cierre, al final de HISTORIA.
+7d3002c8 · merge de `trabajo/laminas-motivos` (tag `stable/F38y-laminas-motivos`), sobre `stable/F38x-preparacion-sesion-7` (5260147). Informe docs/validation/LAMINAS-MOTIVOS.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-5260147 · merge: trabajo/preparacion-sesion-7, ADR-0093 (el metodo de las sesiones), el pivote pre-registrado y las preguntas de la 7a y la 7b · tag stable/F38x-preparacion-sesion-7
+7d3002c8 · merge: trabajo/laminas-motivos, la causa de cada gate de las laminas sale de la rama que dispara, y las laminas de la 7a v2 · tag stable/F38y-laminas-motivos
 
 ## Tests Currently Passing
 2017 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
