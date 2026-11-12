@@ -1,0 +1,21 @@
+id: ev-v11-000550-8a2230d4
+video_id: v11
+t0: 0:05:50
+t1: 0:06:00
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Si en caso esta vela roja hubiera roto con mecha o con cuerpo por debajo de esta vela, hubiéramos
+  trazado nuestro rango bajista y esta operativa sería bajista
+afirmacion: si la vela roja hubiera roto con mecha o con cuerpo por debajo de esa vela, el trader habria
+  trazado un rango bajista y la operativa seria bajista
+tema: sesgo.h4.rango
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-11 (trabajo/preparacion-sesion-7) · version filtrada leida
+  por la sesion, sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+valor: mecha
+supersede: ev-v11-000550-b140027d
+notas: 'F7 #2 de VIDEO-JULIO.md §7. Supersede al item anterior de esta cita, cuya afirmacion decia «la
+  vela del rango», que la cita no trae (revisor de la rama, a1). docs/validation/PREPARACION-SESION-7.md'
+transcripcion: tr-v11-large-v3-int8-float16-d5da10be

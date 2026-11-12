@@ -11,21 +11,37 @@ sesión 02. Hasta hoy el procedimiento estaba repartido en cinco sitios, y aquí
 
 Si una sesión lleva además días que etiquetar, **no es de este runbook**: va por el kit
 (`knowledge/cases/kit/README.md`), con su paquete, sus particiones commiteadas antes y su
-precondición de ceguera.
+precondición de ceguera. **El bloque de días de ADR-0093 §2 sí es de este runbook**: no
+etiqueta, no hace paquete ni particiones; el trader opera días de construcción y ve las láminas
+del bot (regla 2).
+
+> **Por qué cambió (decisión del consultor, 2026-11-11, rama `trabajo/preparacion-sesion-7`; ADR-0093 §7).** Hasta ese día decía:
+> «Si una sesión lleva además días que etiquetar, **no es de este runbook**: va por el kit
+> (`knowledge/cases/kit/README.md`), con su paquete, sus particiones commiteadas antes y su
+> precondición de ceguera.» Se añade la última frase porque desde la sesión 7 la sesión lleva un
+> bloque de días que no se etiqueta: los días son de construcción y lo que entra es la voz del
+> trader, como en el resto de la sesión.
 
 ## Las reglas de la sesión
 
 1. **Se graba, con permiso del trader, y sin grabación no hay registro.** El permiso se pide al
    empezar y su «sí» queda dentro de la grabación. Lo que no esté grabado no entra como respuesta
    del trader ni cierra ninguna ambigüedad.
-2. **Solo se enseñan gráficos de días de CONSTRUCCIÓN** (abril, julio del 1 al 17, agosto y enero
-   del 2 al 30, desde ADR-0078 y ADR-0079, comprobados con
-   `casos_reservados`), cortados ANTES de la colocación de la orden, sin la operación, sin el
-   resultado y sin la fecha visible. Nunca un día de medición, holdout o retirado. Primero se
-   hace la pregunta en abstracto y después se enseña el gráfico. Solo con días de construcción,
-   después del gráfico limpio se puede enseñar una segunda imagen del mismo corte con una sola
-   marca, la línea horizontal en el punto de la primera orden del bot (el nivel donde la pondría),
-   y nunca la orden, el stop, el objetivo, el llenado ni el resultado.
+2. **Solo se enseñan días de CONSTRUCCIÓN**, comprobados con `casos_reservados`: los de
+   `cobertura_material` de `knowledge/cases/kit/config.yaml` (hoy enero del 2 al 30, abril del 1
+   al 29, julio del 1 al 17 y agosto del 3 al 31) que cumplen ADR-0093 §3 (el día de mercado
+   anterior también es de construcción; ninguna hora perdida ni fila «posible M» en la sesión).
+   Nunca un día de medición, holdout o retirado. Primero se hace la pregunta en abstracto y
+   después se enseña el día. **En el bloque de días** (ADR-0093 §2), el trader abre él mismo el
+   replay del día en FX Replay, antes de compartir pantalla, en una sesión de replay nueva, sin
+   marcas, sin backtests guardados y sin Analytics a la vista, y lo opera con voz; después se le
+   enseñan las láminas del bot de esa sesión (`motor laminas`), recortadas al instante de decidir,
+   con la caja, la orden, el stop y el objetivo, sin nada posterior al corte y sin ningún
+   resultado. **«Sin la fecha visible» vale para las láminas y el PDF, no para el replay que
+   carga el trader.** Fuera del bloque de días, un gráfico va cortado ANTES de la colocación de
+   la orden, sin la operación, sin el resultado y sin la fecha visible, y después del gráfico
+   limpio se puede enseñar una segunda imagen del mismo corte con una sola marca, la línea
+   horizontal en el punto de la primera orden del bot.
 
    > **Por qué cambió (decisión del consultor, 2026-09-28, rama `trabajo/bloque-de-la-caja`).**
    > Hasta ese día decía: «No se enseña ningún gráfico de ningún día. Ni en pantalla compartida
@@ -55,6 +71,24 @@ precondición de ceguera.
    > liquidez por tomada, que es la misma en que coloca esa orden. Como la del 2026-09-28, sale de una
    > decisión del consultor y no de un ADR: enseñar un día de construcción no es abrir ni exponer un
    > día reservado (ADR-0021).
+
+   > **Por qué cambió (decisión del consultor, 2026-11-11, rama `trabajo/preparacion-sesion-7`; ADR-0093 §2, §3 y §7).** Hasta ese
+   > día el cuerpo de esta regla decía: «**Solo se enseñan gráficos de días de CONSTRUCCIÓN**
+   > (abril, julio del 1 al 17, agosto y enero del 2 al 30, desde ADR-0078 y ADR-0079, comprobados
+   > con `casos_reservados`), cortados ANTES de la colocación de la orden, sin la operación, sin el
+   > resultado y sin la fecha visible. Nunca un día de medición, holdout o retirado. Primero se
+   > hace la pregunta en abstracto y después se enseña el gráfico. Solo con días de construcción,
+   > después del gráfico limpio se puede enseñar una segunda imagen del mismo corte con una sola
+   > marca, la línea horizontal en el punto de la primera orden del bot (el nivel donde la
+   > pondría), y nunca la orden, el stop, el objetivo, el llenado ni el resultado.» Cambia por
+   > tres cosas. (1) El bloque de días enseña las láminas del bot, con la orden, el stop y el
+   > objetivo: el trader corrige lo que el bot hizo (RUMBO-2026-11.md §1 b). (2) Los días salen de
+   > `cobertura_material` y de la condición de ADR-0093 §3: «abril» entero incluía el 30, que no
+   > está en el material, y la lista de casos dejaba pasar el 2 de enero. (3) **La salvaguarda del
+   > recuadro del 2026-09-28, «el gráfico lo prepara Aleks, no el trader», queda sustituida** por
+   > la de ADR-0093 §2, paso 1: Aleks comprueba el día y el trader abre su replay limpio antes de
+   > compartir pantalla, porque para operarlo con voz necesita su replay. Como los dos recuadros de
+   > arriba, enseñar un día de construcción no es abrir ni exponer un día reservado (ADR-0021).
 3. **Si el trader empieza a comentar operaciones concretas de septiembre, se reconduce la
    conversación** hacia la pregunta, sin discutir la operación. Septiembre tiene días reservados.
 4. **Las respuestas entran después, y solo por dos vías:** la grabación al corpus y un
@@ -88,16 +122,36 @@ precondición de ceguera.
    hoja rellenada se guarda después en el corpus (paso 2 de «Después»).
 5. **Preparar la grabación:** grabación de pantalla y de audio de la llamada, probada con unos
    segundos antes de empezar. En la pantalla que se graba, ningún gráfico que no sea de los
-   preparados según la regla 2.
-6. **Si se van a enseñar gráficos (regla 2), comprobar cada día antes de prepararlos**, con la
+   preparados según la regla 2; en el bloque de días, la pantalla es el replay que abre el trader
+   (ADR-0093 §2), y nada más: ni otro backtest, ni Analytics, ni material de un mes reservado.
+
+   > **Por qué cambió (decisión del consultor, 2026-11-11, rama `trabajo/preparacion-sesion-7`; ADR-0093 §2 y §7; respuesta a la
+   > PARADA de la fase 0, punto 11).** Hasta ese día decía: «En la pantalla que se graba, ningún
+   > gráfico que no sea de los preparados según la regla 2.» En el bloque de días el trader carga él
+   > su replay, así que se dice qué puede haber en pantalla.
+6. **Si se van a enseñar días (regla 2), comprobar cada día antes de prepararlo**, con la
    misma línea del paso 1 (imprime solo `True` o `False`; `casos_ocultos` son los reservados más
    los retirados). Tiene que salir `False` en todos, y el día tiene que ser de construcción, los
-   que dice la regla 2 (abril, julio del 1 al 17, agosto y enero del 2 al 30).
-   Los gráficos se generan fuera del repositorio, y la clave de cada uno (día, hora, qué es cada
-   opción) la guarda Aleks y no se enseña.
-   Desde la sesión 6 los genera `scripts/graficos_sesion.py`: SVG con H4, M15 y M1 cortados en la
-   primera orden del bot, uno limpio y otro con la línea del punto, y su `clave.txt`, fuera del
-   repositorio (`docs/validation/BARRIDO-SESION-6.md` §2.2).
+   que dice la regla 2.
+   Lo que se enseña se genera fuera del repositorio, y la clave de cada lámina o gráfico (día,
+   hora, qué es cada opción) la guarda Aleks y no se enseña.
+   **Desde la sesión 7 las láminas las genera `uv run botsito motor laminas`**
+   (`docs/runbooks/LAMINAS.md`), con su `clave.txt`, fuera del repositorio.
+   `scripts/graficos_sesion.py` (SVG con H4, M15 y M1 cortados en la primera orden del bot, uno
+   limpio y otro con la línea del punto; `docs/validation/BARRIDO-SESION-6.md` §2.2) queda como el
+   precedente de la sesión 6.
+
+   > **Por qué cambió (decisión del consultor, 2026-11-11, rama `trabajo/preparacion-sesion-7`; ADR-0093 §7).** Hasta ese día decía:
+   > «6. **Si se van a enseñar gráficos (regla 2), comprobar cada día antes de prepararlos**, con
+   > la misma línea del paso 1 (imprime solo `True` o `False`; `casos_ocultos` son los reservados
+   > más los retirados). Tiene que salir `False` en todos, y el día tiene que ser de construcción,
+   > los que dice la regla 2 (abril, julio del 1 al 17, agosto y enero del 2 al 30). Los gráficos
+   > se generan fuera del repositorio, y la clave de cada uno (día, hora, qué es cada opción) la
+   > guarda Aleks y no se enseña. Desde la sesión 6 los genera `scripts/graficos_sesion.py`: SVG
+   > con H4, M15 y M1 cortados en la primera orden del bot, uno limpio y otro con la línea del
+   > punto, y su `clave.txt`, fuera del repositorio (`docs/validation/BARRIDO-SESION-6.md`
+   > §2.2).» Las láminas sustituyen a los gráficos (R4.5; LAMINAS.md), y la lista de días es la de
+   > la regla 2 nueva, que ya no se repite aquí.
 
 ## Durante (Aleks)
 

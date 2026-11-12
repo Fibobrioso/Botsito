@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/preparacion-sesion-7
 
 ## Current Feature
-Ninguna rama abierta. trabajo/laminas cerrada en main el 2026-11-11 (stable/F38w-laminas): motor laminas, las láminas del bot de las sesiones pedidas, y la enmienda de RUMBO §0, §4 y §5; R4.5 hecha.
+EN CURSO: trabajo/preparacion-sesion-7, F (2), R4.3: la preparación de la sesión 7 en 7a (sesion-07) y 7b (sesion-08), con el ADR del método, el pivote pre-registrado, las preguntas, los días y las láminas de la 7a. Encargo docs/encargos/trabajo-preparacion-sesion-7.md; informe docs/validation/PREPARACION-SESION-7.md.
 
 ## Stable Main State
 b9904c5 · merge de `trabajo/laminas` (tag `stable/F38w-laminas`), sobre `stable/F38v-trazas-ablacion` (76bbe09). Informe docs/validation/LAMINAS.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ b9904c5 · merge de `trabajo/laminas` (tag `stable/F38w-laminas`), sobre `stable
 b9904c5 · merge: trabajo/laminas, motor laminas (las laminas del bot de las sesiones pedidas, con el M1 de cerca) y la enmienda de RUMBO §0, §4 y §5 · tag stable/F38w-laminas
 
 ## Tests Currently Passing
-1998 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2008 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ b9904c5 · merge: trabajo/laminas, motor laminas (las laminas del bot de las ses
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla están hechas (TRAZAS-ABLACION.md; `motor decisiones`; clases en su PARADA final). El rumbo: docs/plan/RUMBO-2026-11.md (R0.3) con las correcciones del consultor del 2026-11-09 recogidas en R4.3, R4.5 y R6.0 de la hoja de ruta. Las láminas del bot están hechas (LAMINAS.md; `motor laminas`; R4.5) y RUMBO §0, §4 y §5, enmendado. Los gráficos 2 a 6 de ACTIVAR-SESION-06.md (§«Para la sesión 7», punto 10) no se rehacen: los sustituyen las láminas. Las láminas no se enseñan al trader hasta que el ADR del método cambie la regla 2 de SESION-DE-PREGUNTAS.md; la preparación genera con `motor laminas` las de los días que elija. Siguiente, en este orden: (1) J, si la hoja sale de kit hoja; (2) la preparación de la sesión 7, partida en 7a y 7b (R4.3): el ADR del método (RUMBO §1), el pre-registro de los puntos de pivote (esquema de tres salidas sobre julio que aceptó Aleks el 2026-11-09; los números los propone el consultor con la línea base), los ítems de evidencia de F7 #1, #2, #3, #6 y #10 y lo que el trader ya dijo del rango de H4. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de elegir los días. C, R5.7 y R6a en los huecos.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla (TRAZAS-ABLACION.md; `motor decisiones`) y las láminas del bot (LAMINAS.md; `motor laminas`; R4.5) están hechas. La sesión 7 está preparada en dos días, 7a (sesion-07) y 7b (sesion-08) (PREPARACION-SESION-7.md; R4.3): el método en ADR-0093, que cambia la regla 2 de SESION-DE-PREGUNTAS.md (el bloque de días enseña las láminas); el pivote pre-registrado en docs/plan/PIVOTES-SESION-7.yaml; las preguntas en docs/sesion-7/; las láminas de la 7a fuera del repo. Siguiente, en este orden: (1) grabar, ingerir y activar la 7a; su activación genera las láminas de la 7b con su motor, revisa PREGUNTAS-7B.md y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C, R5.7 y R6a en los huecos.
 
 
 
@@ -137,7 +137,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
 - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
 - Copia de seguridad de las crudas y los WAV … (entera en HISTORIA, Technical Debt ACORTADA)
-- La skill ingerir-sesion no nombra el trailer Fuente: de tramos_no_citables.yaml y abrir-rama no nombra la línea de PLANTILLA del informe (SESION-06-EXTRACCION.md §7, puntos 1 y 3; segunda vez): rama corta de skills.
+- La skill ingerir-sesion no nombra el trailer Fuente: de tramos_no_citables.yaml y abrir-rama no nombra la línea de PLANTILLA del informe (SESION-06-EXTRACCION.md §7, puntos 1 y 3; segunda vez): rama corta de skills; y no dice que ningún fotograma se abre antes de que la voz o uno ya abierto sitúen el tramo, ADR-0093 §2.
 - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos … (entera en HISTORIA, Technical Debt ACORTADA)
 - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
 - El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A) … (entera en HISTORIA, Technical Debt ACORTADA)
@@ -145,6 +145,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - La comparación de `motor decisiones` mira cada operación por (día, sesión, lado, instante, entrada) y no su lote, su stop ni su objetivo: un cambio de lote solo se ve si mueve las no enviadas, los rechazos o las cuentas suspendidas (TRAZAS-ABLACION.md F4.3).
 - El `toca_colocar_orden_limite` sintético de tests/unit/test_cableado.py guarda en una clausura que ya dio SÍ y solo coloca en la primera corrida del proceso; los tests que corren el día dos veces usan uno sin estado (TRAZAS-ABLACION.md F2).
 - `motor laminas` no dice el esquema: con la orden en el punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416); la frase vuelve cuando el motor distinga los dos esquemas (LAMINAS.md, respuesta a la PARADA final, 1).
+- Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar: scripts/graficos_sesion.py:66-71, con su test (su constante ya no es la regla 2), y engine/decisiones.py:7-8 (el ADR del método ya existe) (PREPARACION-SESION-7.md §0.2, H8 y H19).
 - `motor laminas`: la CLI solo se prueba entera con las velas reales (LAMINAS.md, F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.
 - La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios): dos falsos positivos en un guion que solo leía las láminas (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final); y toma por argumento que se construye al ejecutarse la cadena constante `$'\r'` de bash, en un `grep -c` sobre ficheros nombrados literales (LAMINAS.md, respuesta tras revisar la v4, 6); su arreglo va al carril de guardias, con fix/.
 
@@ -161,8 +162,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 65 (2026-11-10).
+— ninguna desde el Archivo 66 (2026-11-11).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 65 (2026-11-10).
+— ninguna desde el Archivo 66 (2026-11-11).

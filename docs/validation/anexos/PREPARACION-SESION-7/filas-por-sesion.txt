@@ -1,0 +1,19 @@
+2026-07-06 07-11: 4 filas (trader 4, bot 0): {'P1/sesgo bajista (trader)': 4}
+2026-07-06 11-15: 1 filas (trader 1, bot 0): {'P1/sesgo bajista (trader)': 1}
+2026-07-07 07-11: 5 filas (trader 4, bot 1): {'P1/sesgo bajista (trader)': 4, 'P5/otro lado (bot)': 1}
+2026-07-07 11-15: 9 filas (trader 4, bot 5): {'P1/sesgo bajista (trader)': 4, 'P5/otro lado (bot)': 5}
+2026-07-15 11-15: 5 filas (trader 4, bot 1): {'P1/sesgo bajista (trader)': 4, 'P5/otro lado (bot)': 1}
+2026-07-17 11-15: 1 filas (trader 1, bot 0): {'P1/sesgo alcista (trader)': 1}
+2026-04-13 07-11: 4 filas (trader 3, bot 1): {'P3/otra entrada (trader)': 3, 'P5/mismo lado (bot)': 1}
+2026-07-02 11-15: 10 filas (trader 6, bot 4): {'P2/Δentrada minima 43 puntos (trader)': 1, 'P3/otra entrada (trader)': 4, 'P5/mismo lado (bot)': 4, 'T0 (trader)': 1}
+2026-07-03 11-15: 2 filas (trader 1, bot 1): {'P3/otra entrada (trader)': 1, 'P5/mismo lado (bot)': 1}
+2026-07-03 07-11: 6 filas (trader 2, bot 4): {'P2/Δentrada minima 11 puntos (trader)': 1, 'P5/mismo lado (bot)': 4, 'T0 (trader)': 1}
+2026-01-22 11-15: 3 filas (trader 3, bot 0): {'P1/sesgo alcista (trader)': 3}
+2026-01-13 07-11: 8 filas (trader 1, bot 7): {'P2/Δentrada minima 6 puntos (trader)': 1, 'P5/mismo lado (bot)': 7}
+2026-04-15 11-15: 5 filas (trader 0, bot 5): {'P6/en dia (bot)': 5}
+2026-01-07 07-11: 4 filas (trader 1, bot 3): {'P5/mismo lado (bot)': 3, 'T0 (trader)': 1}
+2026-01-19 11-15: 3 filas (trader 3, bot 0): {'P2/Δentrada minima 9 puntos (trader)': 1, 'P3/otra entrada (trader)': 1, 'T0 (trader)': 1}
+2026-07-17 07-11: 5 filas (trader 4, bot 1): {'P2/Δentrada minima 15 puntos (trader)': 1, 'P2/Δentrada minima 7 puntos (trader)': 1, 'P3/otra entrada (trader)': 1, 'P5/mismo lado (bot)': 1, 'T0 (trader)': 1}
+2026-01-21 07-11: 3 filas (trader 2, bot 1): {'P2/Δentrada minima 7 puntos (trader)': 1, 'P3/otra entrada (trader)': 1, 'P5/mismo lado (bot)': 1}
+2026-07-16 07-11: 1 filas (trader 1, bot 0): {'T0 (trader)': 1}
+2026-07-14 11-15: 8 filas (trader 6, bot 2): {'P2/Δentrada minima 19 puntos (trader)': 1, 'P2/Δentrada minima 21 puntos (trader)': 1, 'P2/Δentrada minima 6 puntos (trader)': 1, 'P3/otra entrada (trader)': 2, 'P5/mismo lado (bot)': 2, 'T0 (trader)': 1}

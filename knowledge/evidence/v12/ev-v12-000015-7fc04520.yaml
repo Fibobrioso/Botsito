@@ -1,0 +1,19 @@
+id: ev-v12-000015-7fc04520
+video_id: v12
+t0: 0:00:15
+t1: 0:00:58
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: aquí no había entrada porque es con mecha, sabemos que tiene que ser con cuerpo [...] aquí
+  sí que tenemos una entrada vale porque nos genera un breaker con cuerpo
+afirmacion: en ese caso no habia entrada porque la ruptura era con mecha y tiene que ser con cuerpo; si
+  hay entrada cuando se genera un breaker con cuerpo
+tema: entrada.breaker_m1_con_cuerpo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-11 (trabajo/preparacion-sesion-7) · version filtrada leida
+  por la sesion, sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+valor: cuerpo
+notas: 'F7 #6 de VIDEO-JULIO.md §7. docs/validation/PREPARACION-SESION-7.md'
+transcripcion: tr-v12-large-v3-int8-float16-cb502503

@@ -1,0 +1,5 @@
+fechas: 3; las lleva 3e1995df: 3; las salidas de ahora: 0
+en casos_reservados: 1
+en casos_ocultos: 1
+en los dias dev de construccion: 0
+en ninguno de los tres: 2

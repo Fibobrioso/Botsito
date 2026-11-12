@@ -1,0 +1,8 @@
+patrones-cuenta-por-mes.txt, mes 2026-07
+T0 (parejas): 14
+P5: 37 ({'otro lado': 10, 'mismo lado': 27}); P6 en sesion: 2; P6 en dia: 0
+operaciones de mas (P5 + P6 en sesion): 39
+P1 20, P2 14, P3 15, P4 1, P7 3
+T0 + P2 + P3 + P7 = 14 + 14 + 15 + 3 = 46
+tasa de pareja: 14 / 46 = 0.304
+OK: 14 y 39
