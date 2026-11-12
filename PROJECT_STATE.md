@@ -16,7 +16,7 @@ trabajo/laminas-motivos, EN CURSO: F (1), las frases de causa de las láminas (c
 5260147 · merge: trabajo/preparacion-sesion-7, ADR-0093 (el metodo de las sesiones), el pivote pre-registrado y las preguntas de la 7a y la 7b · tag stable/F38x-preparacion-sesion-7
 
 ## Tests Currently Passing
-2008 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2017 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

@@ -6,6 +6,8 @@ rutas_permitidas:
   - src/botsito/engine/laminas.py
   - tests/unit/test_laminas.py
   - tests/unit/test_laminas_registro.py
+  - tests/unit/test_laminas_svg.py  # respuesta a la PARADA de la fase 0, punto 1
+  - docs/adr/0093-*.md  # punto 3: solo el recuadro de §2
   - docs/runbooks/LAMINAS.md
   - docs/sesion-7/PREGUNTAS-7A.md
   - docs/validation/LAMINAS-MOTIVOS.md

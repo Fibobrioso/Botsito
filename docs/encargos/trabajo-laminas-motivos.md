@@ -47,3 +47,23 @@ Dado por Aleks (consultor) el 2026-11-11, en un solo mensaje. Copiado tal cual:
 > Para la fila de ERRORES-RECURRENTES del cierre: importa (hallazgo del consultor en la revisión visual de las láminas de la 7a, ampliado por su auditor): las frases de RN-001, RN-020 y RN-029 nombraban un caso de un gate de varias ramas, y los gates dudosos salían como ciertos; habría dado al trader causas falsas. No lo vieron ni el revisor de trabajo/laminas ni la revisión de la v5. Lección para el revisor: cada frase de una tabla cerrada se contrasta con la forma entera de su regla y con quién enciende cada hecho, no con su título. Y menor (consultor, de la orden de cierre de F38x): dijo que en el cierre de trabajo/laminas la F anterior se pasó a HISTORIA, y no fue así. Lección: un precedente que se cita en una orden se lee antes.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-12)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/laminas-motivos (2026-11-12). Cópiala tal cual al final del encargo y del informe, con su fecha, y aplícala punto por punto (skill fase-cero). Buena fase 0: las cuatro desviaciones de «Lo que cambia» quedan aceptadas (la rama se deduce de la foto, con LaminaError si no se identifica; el test F1 (2) con RN-020 y RN-029 juntas en la foto, que es el caso real; el arreglo del filtro del test de frases dentro de F1; y lo que esperas en v2). La fila de exposiciones del 2026-11-11 escrita pasada la medianoche queda aceptada como desviación declarada: lo que se leyó (clave.txt) son días de construcción.
+>
+> 0. RN-008: de acuerdo. La frase se queda, y el informe y la tabla de 0.1 declaran sus dos condiciones y que con el valor actual de orden_limite_nace no dispara.
+> 1. De acuerdo: el contrato se amplía a tests/unit/test_laminas_svg.py.
+> 2. Publícalos. Con ADR-0093 §2 el trader carga él mismo el día, así que la clave ya no protege ninguna fecha que él no vea. Es lo mismo que se decidió en el cierre de F38x (respuesta a su PARADA final, punto 3), y la fase 0 ya los nombra.
+> 3. Que entre la frase, pero la regla se aclara en el ADR, que es la fuente, y no solo en la hoja: un recuadro fechado en ADR-0093 §2, con la forma de los recuadros de ADR-0084. Su texto: «"Ningún resultado se enseña" quiere decir ningún resultado posterior al corte. Lo que la lámina dice de cómo acabaron las órdenes anteriores de la misma sesión ("Antes, en esta sesión: …") es el estado del bot en el instante del corte (sus intentos, RN-016) y se enseña, porque explica la decisión. Por eso las láminas de una sesión se enseñan en su orden, y el trader corrige cada una antes de ver la siguiente.» El paso 4 de PREGUNTAS-7A.md dice «ningún resultado posterior al corte» y remite al recuadro. El contrato se amplía a docs/adr/0093-*.md, solo con ese recuadro.
+> 4. De acuerdo: 1.648 píxeles, medido.
+> 5. De acuerdo: recuadro de corrección en docs/runbooks/LAMINAS.md, en su tabla, y el contrato se amplía a ese fichero.
+> 6. De acuerdo: en el cierre, una frase en R4.5 que remita a LAMINAS-MOTIVOS.md, comprobada con problemas_a a problemas_d.
+>
+> Sigue sin parar con F1, F2 y F3 y la PARADA condicional: solo paras si v2 cambia algo más que la línea de RN-001 de sesion-06/09 y sesion-06/10, si una foto de las seis sesiones da LaminaError con el arreglo, o si una guardia niega algo legítimo. Después, el revisor con sus cuatro alcances más uno: que el recuadro de ADR-0093 diga lo del punto 3 sin añadir ni quitar. Luego, la PARADA final con la ruta de C:\Users\USER\Desktop\laminas-sesion-7a-v2 y las líneas de cierre.
+>
+> Rama lista para revisión, NO cerrada.

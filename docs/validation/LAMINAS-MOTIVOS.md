@@ -243,7 +243,110 @@ De los días reservados, solo el M1 de marzo y de junio con que calientan la bit
    este informe; (b) nada. Recomiendo (a), y que la escriba el cierre, porque el contrato protege
    la hoja en la rama. Coste de (b): la hoja no dice que R4.5 se corrigió antes de la 7a.
 
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-12)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/laminas-motivos (2026-11-12). Cópiala tal cual al final del encargo y del informe, con su fecha, y aplícala punto por punto (skill fase-cero). Buena fase 0: las cuatro desviaciones de «Lo que cambia» quedan aceptadas (la rama se deduce de la foto, con LaminaError si no se identifica; el test F1 (2) con RN-020 y RN-029 juntas en la foto, que es el caso real; el arreglo del filtro del test de frases dentro de F1; y lo que esperas en v2). La fila de exposiciones del 2026-11-11 escrita pasada la medianoche queda aceptada como desviación declarada: lo que se leyó (clave.txt) son días de construcción.
+>
+> 0. RN-008: de acuerdo. La frase se queda, y el informe y la tabla de 0.1 declaran sus dos condiciones y que con el valor actual de orden_limite_nace no dispara.
+> 1. De acuerdo: el contrato se amplía a tests/unit/test_laminas_svg.py.
+> 2. Publícalos. Con ADR-0093 §2 el trader carga él mismo el día, así que la clave ya no protege ninguna fecha que él no vea. Es lo mismo que se decidió en el cierre de F38x (respuesta a su PARADA final, punto 3), y la fase 0 ya los nombra.
+> 3. Que entre la frase, pero la regla se aclara en el ADR, que es la fuente, y no solo en la hoja: un recuadro fechado en ADR-0093 §2, con la forma de los recuadros de ADR-0084. Su texto: «"Ningún resultado se enseña" quiere decir ningún resultado posterior al corte. Lo que la lámina dice de cómo acabaron las órdenes anteriores de la misma sesión ("Antes, en esta sesión: …") es el estado del bot en el instante del corte (sus intentos, RN-016) y se enseña, porque explica la decisión. Por eso las láminas de una sesión se enseñan en su orden, y el trader corrige cada una antes de ver la siguiente.» El paso 4 de PREGUNTAS-7A.md dice «ningún resultado posterior al corte» y remite al recuadro. El contrato se amplía a docs/adr/0093-*.md, solo con ese recuadro.
+> 4. De acuerdo: 1.648 píxeles, medido.
+> 5. De acuerdo: recuadro de corrección en docs/runbooks/LAMINAS.md, en su tabla, y el contrato se amplía a ese fichero.
+> 6. De acuerdo: en el cierre, una frase en R4.5 que remita a LAMINAS-MOTIVOS.md, comprobada con problemas_a a problemas_d.
+>
+> Sigue sin parar con F1, F2 y F3 y la PARADA condicional: solo paras si v2 cambia algo más que la línea de RN-001 de sesion-06/09 y sesion-06/10, si una foto de las seis sesiones da LaminaError con el arreglo, o si una guardia niega algo legítimo. Después, el revisor con sus cuatro alcances más uno: que el recuadro de ADR-0093 diga lo del punto 3 sin añadir ni quitar. Luego, la PARADA final con la ruta de C:\Users\USER\Desktop\laminas-sesion-7a-v2 y las líneas de cierre.
+>
+> Rama lista para revisión, NO cerrada.
+
+## La respuesta, aplicada punto por punto
+
+- **Las cuatro desviaciones y la fila del 2026-11-11**: aceptadas, sin más que hacer.
+- **0. RN-008**: hecho. La frase se queda. La fila de 0.1 ya declaraba sus dos condiciones y que,
+  con el valor actual de `orden_limite_nace`, RN-008 no dispara. En la tabla del código va como
+  una sola rama (`sin_esquema`), con ese comentario.
+- **1. Contrato**: hecho. `tests/unit/test_laminas_svg.py` entra en `rutas_permitidas`
+  (`contrato.yaml`).
+- **2. Recuentos por carpeta**: se publican en F2.
+- **3. ADR-0093**: hecho. El recuadro va en §2, con la forma de los de ADR-0084 (cita en bloque y
+  una cabecera en negrita con la fecha, la rama y de dónde sale, «el cuerpo no se toca»), con el
+  texto del consultor sin cambiar una palabra. El paso 4 de PREGUNTAS-7A.md dice «Ningún resultado
+  posterior al corte se enseña» y remite al recuadro. `docs/adr/0093-*.md` entra en el contrato.
+  Una nota: en la PARADA cité la frase como «ADR-0093 §3». Está en §2, punto 3 de su lista, que es
+  donde la pone el consultor.
+- **4. Ancho**: hecho, 1.648 píxeles en el paso 4.
+- **5. Recuadro de corrección en `docs/runbooks/LAMINAS.md`, «en su tabla»**: **no aplicado.
+  PARADA 2, punto 0**. Lo medido lo contradice: `docs/runbooks/LAMINAS.md` no tiene ninguna tabla
+  de causas ni nombra RN-001 (`grep -n "RN-001\|fuera de la ventana"` no da nada en él). La tabla
+  que da a RN-001 «está fuera de la ventana de la sesión» es la del informe cerrado
+  `docs/validation/LAMINAS.md` (:108, y :139 en la de la lista de causas). El error es mío: en la
+  PARADA escribí «LAMINAS.md (informe cerrado en main)» sin la ruta. No se ajusta en silencio, así
+  que va a la PARADA final; el contrato sigue protegiendo `docs/validation/LAMINAS.md`.
+- **6. Hoja de ruta**: en las líneas de cierre de la PARADA final.
+
+## F1 · El arreglo en `laminas.py`, con sus tests
+
+**El código** (`src/botsito/engine/laminas.py`):
+- `MOTIVO_GATE` pasa a ser **un dict de cada gate a sus ramas**, en el orden de su forma: los hijos
+  de su `cualquiera_de`, o una sola rama para un `todos_de`. Cada rama lleva su frase. La rama que
+  es un hecho de detención lleva `None`: su frase sale de la regla que lo encendió (`f.origen`), a
+  través de `MOTIVO_POR_ORIGEN` (las cinco reglas que fijan un `detenido_*`). `HECHO_QUE_FIJA` dice
+  qué hecho fija cada una al disparar.
+- `_motivos(gate, tipo, f, ciertos, …)` sustituye a `_motivo`:
+  - Con `dispara`, devuelve la frase de cada rama activa. Una rama de hecho cuya regla de origen ya
+    dispara en el cierre (`ciertos`) no se repite. La ventana de RN-001 se lee con
+    `fuera_de_ventana(f)` (el corte fuera de todos los `f.limites`). Si ningún hecho está
+    encendido, sale la frase común de las ramas de predicado.
+  - Con `desconocido`, devuelve la frase común de las ramas de predicado.
+  - Da `LaminaError` en estos casos: una rama sin frase, un hecho con frase propia, un hecho sin
+    una regla de origen conocida, una regla de `HECHO_QUE_FIJA` que dispara sin su hecho en la
+    foto, RN-001 que dispara dentro de la sesión y sin ningún hecho, o un gate desconocido cuyas
+    ramas de predicado no comparten frase.
+- `FRASE_BLOQUEO` pasa a ser un dict por tipo. Con `desconocido` dice «Iba a colocar la orden y no
+  la coloca porque no puede descartar que {motivo}.», con la forma de
+  `FRASE_PROHIBE["desconocido"]`. Un tipo sin frase da `LaminaError`.
+- `_sin_orden` pasa cada gate de `f.bloqueos` con su `t` (antes tiraba el segundo campo) y cada
+  gate de `f.prohibido` y `f.quizas` por `_motivos`. Nunca salen dos causas con el mismo motivo.
+
+**Los tests** (`test_laminas_svg.py`, al final, y `test_laminas.py`):
+
+| Test | Qué comprueba | En main |
+|---|---|---|
+| `test_con_los_intentos_gastados_rn001_no_dice_fuera_de_la_ventana` | F1 (1): `detenido_por_cartuchos` de RN-016, RN-001 y RN-016 en `f.bloqueos`, con el corte dentro de la sesión. No sale «fuera de la ventana» y los intentos salen una vez. Con RN-001 solo, los intentos los dice RN-001 | **rompe**: `assert not ['Iba a colocar la orden y no la coloca: está fuera de la ventana de la sesión.']` |
+| `test_el_tope_de_una_regla_no_sale_con_la_frase_de_la_otra` (×2) | F1 (2): `detenido_por_tope` de RN-029 (y de RN-020), con RN-020 **y** RN-029 en `f.bloqueos` y en `f.prohibido`, como en el motor | **rompen** los dos: sale la frase de RN-020 con el tope de RN-029, y la de RN-029 con el de RN-020 |
+| `test_un_gate_desconocido_no_sale_como_causa_cierta` | F1 (3): RN-005 `desconocido` en `f.bloqueos` sale como duda; RN-001 en `f.quizas`, también como duda | **rompe**: sale «Iba a colocar la orden y no la coloca: lo que se forma queda en la zona de ruido…» |
+| `test_fuera_de_la_ventana_sigue_diciendo_fuera_de_la_ventana` | Lo que no cambia: con el corte fuera de toda sesión, RN-001 dice «está fuera de la ventana de la sesión» | **pasa** |
+| `test_la_guardia_falla_si_se_quita_la_frase_de_una_rama` (×4: RN-001, RN-020, RN-016, RN-032) | La guardia nueva, que falla a propósito con la tabla mutada (`monkeypatch`, la frase de una rama a `None`): `LaminaError` | no se compara: en main la tabla por ramas no existe (lo dice el encargo) |
+| `test_lo_que_no_se_identifica_falla_con_su_nombre` | Negar por defecto: RN-001 sin rama identificable, un hecho de un origen desconocido, RN-020 sin su hecho, un tipo sin frase | — |
+| `test_las_ramas_de_cada_gate_son_las_de_su_forma` | Las ramas de la tabla, contra las de la forma de la spec: tantas, en el mismo orden, y las de hecho de detención, las mismas y sin frase. Una rama nueva en la spec lo rompe | — |
+| `test_quien_fija_cada_hecho_de_detencion_es_lo_de_la_spec` | `HECHO_QUE_FIJA` y `MOTIVO_POR_ORIGEN`, contra las acciones `fijar` de la spec | — |
+| `test_las_sesiones_del_kit_son_la_ventana_del_registro` | La unión de las sesiones del kit es [`ventana_inicio`, `ventana_fin`), y eso sostiene `fuera_de_ventana` | — |
+| `test_ninguna_frase_lleva_ids_dinero_ni_fechas` (reescrito) | Cada cadena de cada tabla, a cualquier profundidad y sin filtro. Las de `MOTIVO_GATE`, contadas aparte, están todas. Una tabla que no aporte cadenas falla | en main revisaba 48 de las 70 que recogía; aquí revisa 80 |
+
+**Cómo se comprobó «rompe en main»** (skill `comparar-con-main`): un clon desechable
+`git worktree add --detach C:/cmlm/main main`, con `tests/unit/test_laminas_svg.py` de la rama
+copiado dentro, y `uv run pytest tests/unit/test_laminas_svg.py -k …` ejecutado allí. Resultado:
+los cuatro casos de F1 (1)-(3) en FAILED, con las aserciones de la tabla, y el de «fuera de la
+ventana» en PASSED. El recuento de 48 de 70 sale de un guion de la carpeta de trabajo que repite
+el filtro de main en ese clon. Los tests de F1 no leen nada de la tabla nueva: las frases van
+literales, para que en main rompan por la frase y no por un nombre que falta. El clon se quitó con
+`git worktree remove --force` (llevaba el test copiado sin commitear) y `git worktree prune`. En el
+repo real no queda ninguna rama, tag ni ref remota nueva (158 tags antes y después; en origin, solo
+`main`). La carpeta vacía `C:\cmlm` se queda: la comprobación de seguridad de Claude Code negó el
+`rmdir`, y la quita Aleks.
+
+**Un test viejo cambia** (`test_rn020_dice_del_dia_solo_si_la_rama_semanal_no_puede_disparar`): su
+foto ponía RN-020 en `f.prohibido` sin el `detenido_por_tope` que RN-020 fija al disparar. Con la
+guardia nueva eso es una foto que no cuadra, así que la foto lleva ahora el hecho con origen
+RN-020, como en el motor. Lo que comprueba no cambia.
+
+Los tests de láminas (`test_laminas.py`, `test_laminas_svg.py`, `test_laminas_registro.py`) y
+`test_adr.py` pasan en la rama. `Tests Currently Passing` pasa de 2008 a 2017 funciones (+9).
+
 ## Estado
 
-EN CURSO: fase 0 hecha. **PARADA**: espero la respuesta del consultor a «Lo que necesito que
-decidas».
+EN CURSO: F1 y F3 hechos; ahora F2 (el ensayo en un clon desechable y la v2).

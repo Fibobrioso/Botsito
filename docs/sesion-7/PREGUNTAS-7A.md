@@ -46,7 +46,7 @@ pregunta»; sin eso `scripts/transcribir_sesion.py` no la separa. Sus textos ya 
 Va **después** de las seis preguntas técnicas (ADR-0093 §2). Los días cumplen ADR-0093 §3,
 comprobados por la compuerta (`PREPARACION-SESION-7.md` §0.4 y
 `anexos/PREPARACION-SESION-7/dias-d3.txt`). Las láminas de las seis sesiones están en
-`C:\Users\USER\Desktop\laminas-sesion-7a` (fuera del repositorio); **la clave (`clave.txt`) la
+`C:\Users\USER\Desktop\laminas-sesion-7a-v2` (fuera del repositorio); **la clave (`clave.txt`) la
 guarda Aleks y no se enseña**: qué carpeta es qué sesión no está en este documento.
 
 | Orden | Sesión | Sirve a | Filas de la clasificación (trader / bot) |
@@ -65,8 +65,12 @@ guarda Aleks y no se enseña**: qué carpeta es qué sesión no está en este do
    una sesión de replay nueva, sin marcas, sin backtests guardados y sin Analytics a la vista.
 3. El trader **marca y opera la sesión** con pantalla y audio, diciendo qué ve y qué descarta.
 4. **Después**, Aleks le enseña las láminas del bot de esa sesión (su carpeta de
-   `laminas-sesion-7a`, por la clave): recortadas al instante de decidir, con la caja, la orden, el
-   stop y el objetivo, sin fecha y sin nada posterior al corte. **Ningún resultado se enseña.**
+   `laminas-sesion-7a-v2`, por la clave): recortadas al instante de decidir, con la caja, la orden,
+   el stop y el objetivo, sin fecha y sin nada posterior al corte. **Ningún resultado posterior al
+   corte se enseña** (recuadro del 2026-11-12 en ADR-0093 §2). Las láminas de una sesión se enseñan
+   en su orden, y el trader corrige cada una antes de pasar a la siguiente: la siguiente dice cómo
+   acabaron las anteriores («Antes, en esta sesión: …»). Si la pantalla mide menos de 1.648
+   píxeles de ancho, se aleja el zoom del navegador hasta que la lámina entre entera.
 5. El trader **corrige**, y se le pregunta: «¿siempre, solo en este caso, o de qué depende?».
 6. Si en pantalla aparece otro backtest, Analytics o material de un mes reservado, se reconduce y
    el tramo se declara no citable el mismo día (SESION-DE-PREGUNTAS.md, «Después», paso 4).

@@ -56,6 +56,13 @@ Primero el **bloque técnico**, en abstracto. Después, por cada sesión del blo
    sitúen el tramo en el día de construcción** (lección de `trabajo/video-julio`: el arranque de
    v13 enseñó otro backtest; ERRORES-RECURRENTES.md, su fila).
 
+> **RECUADRO del 2026-11-12 (`trabajo/laminas-motivos`, respuesta del consultor a la PARADA de la
+> fase 0, punto 3; el cuerpo no se toca).** "Ningún resultado se enseña" quiere decir ningún
+> resultado posterior al corte. Lo que la lámina dice de cómo acabaron las órdenes anteriores de la
+> misma sesión ("Antes, en esta sesión: …") es el estado del bot en el instante del corte (sus
+> intentos, RN-016) y se enseña, porque explica la decisión. Por eso las láminas de una sesión se
+> enseñan en su orden, y el trader corrige cada una antes de ver la siguiente.
+
 Enseñar un día de construcción no es abrir ni exponer un día reservado (ADR-0021 §1, por
 exclusión: abrir es leer etiquetas o el detalle de un día reservado; y CLAUDE.md, «Que se puede
 mirar», punto 2: las velas no son holdout), como ya decían los dos recuadros de la regla 2.
