@@ -305,10 +305,13 @@ cadena mixta): si en **MQL5 → Files → Botsito** queda un `journal_*.jsonl` d
 primer arranque dice `cadena_anterior: rota`, y si es del mismo día del servidor, el EA escribe las
 líneas v2 detrás de las v1 en el mismo fichero, que ya no valida.
 
-1. Con MetaTrader **cerrado**: **Archivo → Abrir carpeta de datos → MQL5 → Files → Botsito**.
-2. Crea ahí una subcarpeta `v1-hasta-<AAAAMMDD>` (la fecha de hoy) y **mueve** a ella todos los
-   `journal_*.jsonl` sueltos de **Botsito** (no las subcarpetas, ni `pruebas`). En **Botsito** no
-   tiene que quedar ningún `journal_*.jsonl`.
+1. **Antes de cerrar MetaTrader**, abre la carpeta: **Archivo → Abrir carpeta de datos → MQL5 →
+   Files → Botsito**. Deja abierta esa ventana del Explorador y cierra MetaTrader.
+2. **Mueve** (no borres) todos los `journal_*.jsonl` sueltos de **Botsito** **fuera de MQL5 →
+   Files**: a la carpeta **`data/ea_conexion/journal-v1/`** del repositorio (fuera de git, como los
+   journals de R6a.1). Las subcarpetas de **Botsito** (`pruebas` y las de las corridas de R6a.1) se
+   quedan donde están: el EA solo mira los ficheros sueltos. En **Botsito** no tiene que quedar
+   ningún `journal_*.jsonl`.
 3. El EA instalado tiene que ser el compilado del tag vigente: lo compila e instala la sesión con
    `compilar.py compilar --instalar` sobre ese tag (`MQL5 → Experts → Botsito → Botsito.ex5`).
 
