@@ -289,3 +289,40 @@ con `cadena_anterior: sigue` en cada arranque menos el primero.
 **Lo que no puede probar esta corrida:** que se niega en una cuenta real. Eso no se ejecuta nunca en
 una cuenta real: está probado con las pruebas estáticas de la CI y con el script de pruebas en este
 terminal (`docs/validation/EA-CONEXION.md`).
+
+## El EA con la capa generada: journal v2 (R6a.2; la corrida, en R6a.8)
+
+Desde R6a.2 (`trabajo/capa-generada`, `docs/validation/CAPA-GENERADA.md`) el EA es la versión 1.1:
+recibe del repo, generado, `mql5/Include/Botsito/Capa/Generado.mqh` (los parámetros de firma,
+bróker, instrumento y ejecución, el perfil de cuenta y el calendario de cierres), y cada línea de su
+journal es **v2**: lleva el `capa_hash` de ese fichero (`mql5/JOURNAL.md`). R6a.2 lo comprobó con el
+script de pruebas, sin demo (decisión del consultor del 2026-11-12). **La corrida en la demo es de
+R6a.8**, que ya necesita la demo una semana. Este es su procedimiento; la hora y la cuenta las fija
+esa rama.
+
+**Antes del primer arranque v2: apartar el journal v1.** Un EA v2 no sigue una cadena v1 (no hay
+cadena mixta): si en **MQL5 → Files → Botsito** queda un `journal_*.jsonl` de la versión 1.0, el
+primer arranque dice `cadena_anterior: rota`, y si es del mismo día del servidor, el EA escribe las
+líneas v2 detrás de las v1 en el mismo fichero, que ya no valida.
+
+1. Con MetaTrader **cerrado**: **Archivo → Abrir carpeta de datos → MQL5 → Files → Botsito**.
+2. Crea ahí una subcarpeta `v1-hasta-<AAAAMMDD>` (la fecha de hoy) y **mueve** a ella todos los
+   `journal_*.jsonl` sueltos de **Botsito** (no las subcarpetas, ni `pruebas`). En **Botsito** no
+   tiene que quedar ningún `journal_*.jsonl`.
+3. El EA instalado tiene que ser el compilado del tag vigente: lo compila e instala la sesión con
+   `compilar.py compilar --instalar` sobre ese tag (`MQL5 → Experts → Botsito → Botsito.ex5`).
+
+**La corrida.** Los pasos de «El EA de conexión (R6a.1)» de arriba valen igual. Lo único que cambia
+es que el primer `arranque` tiene que decir `cadena_anterior: ninguna`, y cada uno de los siguientes,
+`sigue`.
+
+**Lo que comprueba la sesión** con los journals copiados a `data/` (fuera de git):
+
+    uv run python src/botsito/mql5bridge/journal.py <los journal_*.jsonl, en orden de fecha>
+
+- La primera línea del resumen dice **`formato v2`** y valida como una sola cadena.
+- La línea **`capa_hash:`** es igual a la de `const string CAPA_HASH` del `Generado.mqh` del tag
+  vigente (`git show <tag>:mql5/Include/Botsito/Capa/Generado.mqh`), y
+  `generar_capa.py --repo . --perfil ftmo-2step-swing-100k --comprobar` sale con 0 en ese tag (lo
+  generado es lo de los yaml). Si el hash no coincide, el EA de la demo no es el del tag: se
+  recompila y se repite.

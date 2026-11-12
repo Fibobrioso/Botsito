@@ -284,6 +284,9 @@ def _pruebas(a: argparse.Namespace) -> int:
     carpeta = a.datos / "MQL5" / "Files" / Path(*CARPETA_PRUEBAS)
     resultado = carpeta / "resultado.txt"
     resultado.unlink(missing_ok=True)
+    # Ni el del terminal ni el de la salida de otra corrida: si el script no lo escribe, falta.
+    (carpeta / FICHERO_CAPA).unlink(missing_ok=True)
+    (a.salida / FICHERO_CAPA).unlink(missing_ok=True)
     with tempfile.TemporaryDirectory(prefix="botsito-ini-") as tmp:
         ini = Path(tmp) / "pruebas.ini"
         ini.write_text(ini_de_pruebas(a.simbolo), encoding="ascii", newline="")

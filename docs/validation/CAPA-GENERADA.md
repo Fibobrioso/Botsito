@@ -473,6 +473,220 @@ igual y los 69 tests de los cinco ficheros pasaron.
 - **Una asignación `O=…` mía**, negada por la lista cerrada de nombres de entorno. No es un fallo de
   la guardia: rescribí el comando sin la variable, que es la forma que ella propone.
 
+`make check` del commit de la fase 1 (`61550d50`): exit 0, 3465 passed, ningún `failed`, SELLO
+sobre el árbol `fe3ea3d5`. `PICO DE MEMORIA de make check: 313 MiB en `test` (suma de sus procesos,
+memoria comprometida, Windows; el mayor proceso, 303 MiB)`.
+
+## Fase 2 (2026-11-12): el EA que escribe capa_hash, compilado y probado en MT5
+
+Lo que entra:
+
+- **`Journal.mqh`, v2.** `JOURNAL_VERSION` pasa a 2. `JournalAbrir(carpeta, capa_hash)` guarda el
+  hash en una global que se reinicia ahí, como las demás del journal, y `JournalLinea` lo recibe
+  como argumento y lo escribe en cada línea (B6). `UltimaLinea` no cambia: exige la cabecera de su
+  versión, así que una última línea v1 da `rota`. Las dos deudas de Technical Debt sobre este
+  fichero (el LF redundante y el reinicio de globales) no se tocan.
+- **El EA, 1.1.** Incluye `Generado.mqh` y abre el journal con `CAPA_HASH`. Cambian `VERSION_EA`
+  («1.1»), `#property version` («1.10»), la descripción y la cabecera.
+- **El script de pruebas, 1.10.**
+  - Abre las cadenas del golden con el hash fijo de prueba (`CapaHashPrueba()`, sin cifras: ni
+    `#define` ni constante nueva).
+  - Las líneas que escribe a mano para el caso `rota` llevan `JOURNAL_VERSION`.
+  - Dos casos nuevos, en los dos sentidos: la misma última línea **sigue** si es v2 y es **rota**
+    si es v1.
+  - `Capa()` comprueba que `CAPA_HASH` son 64 hexadecimales y no es el de prueba, y escribe aparte
+    `pruebas\capa\capa_hash.jsonl`: una línea v2 de `JournalLinea` con el `CAPA_HASH` real.
+- **`compilar.py pruebas`** borra antes de lanzar el terminal el `capa_hash.jsonl` de la carpeta
+  del terminal y el de `--salida`. Sin eso, el de una corrida anterior haría pasar la comprobación
+  aunque el script no lo escribiera; la rotura r3 lo demuestra.
+- **Documentación:**
+  - `mql5/README.md`, el párrafo de R6a.1, que decía «v1» (su línea 2 es línea para el cierre);
+  - `mql5/Experts/README.md` y `mql5/Scripts/README.md`;
+  - `docs/runbooks/DEMO-FTMO.md`: el procedimiento para R6a.8, con el journal v1 apartado antes
+    del primer arranque v2 (A3);
+  - `docs/runbooks/RENOVAR-CIERRES.md`: quien renueve el calendario o cambie un parámetro que
+    entra en la capa, regenera en el mismo commit (D3).
+
+**La compilación y las pruebas en MT5 las lanzó Aleks con «!».** La guardia negó `compilar.py
+compilar` («el codigo nombra la carpeta /, que contiene material protegido»): `compilar.py` ha
+cambiado en la rama y la guardia lo lee como código sin revisar. En R6a.1 sí lo dejó, porque
+entonces no había cambiado. Las salidas de todas las órdenes, tal cual, están en
+`anexos/CAPA-GENERADA/corridas.txt`.
+
+- **Compilación:** `compilar.py compilar --repo . --metaeditor "C:/Program Files/MetaTrader
+  5/MetaEditor64.exe" --salida docs/validation/anexos/CAPA-GENERADA/compilacion --instalar <carpeta
+  de datos del terminal> mql5/Experts/Botsito.mq5 mql5/Scripts/BotsitoPruebasCapa.mq5`. Los dos
+  **PASA, 0 errores y 0 avisos**. MQL5 compila los `enum` y los arrays `const` globales con
+  inicializador: no hay PARADA por B5. Los logs, en `anexos/CAPA-GENERADA/compilacion/`, en UTF-8 y
+  LF con el sha256 del original.
+- **Pruebas:** `compilar.py pruebas --terminal "C:/Program Files/MetaTrader 5/terminal64.exe"
+  --datos <carpeta de datos> --simbolo EURUSD --golden tests/golden/journal_v2 --salida
+  docs/validation/anexos/CAPA-GENERADA/pruebas --repo .`. Resultado: **23 OK, 0 FALLO**; los
+  journals del script son **iguales byte a byte al golden v2** y el validador acepta las dos
+  cadenas. La línea de capa dice: «capa/capa_hash.jsonl valida como v2 y lleva el capa_hash del
+  Generado.mqh del repo (`8d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601`)». El
+  lector, sobre ese fichero, dice `formato v2` y `capa_hash: 8d1f61bc…0e7601`. Sha256:
+  `capa/capa_hash.jsonl` `b6940768…458b47`, `continua/journal_20261026.jsonl` `5dee12ef…859734`,
+  `continua/journal_20261027.jsonl` `d8b49974…38a70c`, `rota/journal_20261028.jsonl`
+  `48d11ffb…c41b43`; la lista entera, en `corridas.txt`.
+- **El terminal se conectó.** Las pruebas se lanzan con `terminal64.exe /config`, que arranca con la
+  última cuenta configurada: la lectura real (que no compara nada) dice `conectado=true`, servidor
+  `FTMO-Demo`, `ACCOUNT_TRADE_MODE_DEMO`, desfase 120 min. A1 decía «corre sin conexión». Lo que
+  comprueba el hash no depende de la conexión, porque las líneas llevan fechas inyectadas, pero la
+  frase no es exacta: el script **no necesita** conexión, y esta vez la tuvo. No se creó ninguna
+  prueba nueva de FTMO, no se usó el Strategy Tester (B7) y el script no opera.
+- **El terminal sale con 3** (2 en R6a.1, con `ShutdownTerminal=1`). Como entonces, no es la
+  puerta: la puerta es `RESUMEN` y la comparación con el golden.
+
+**Roturas a propósito de las pruebas dinámicas.** Cada una se hizo con `--sustituir` sobre la copia
+exportada, sin tocar el repo, y su salida está en `anexos/CAPA-GENERADA/roturas/rN/`:
+
+| rotura | lo que la caza |
+|---|---|
+| r1: el journal escribe `null` en `capa_hash` | los tres journals distintos del golden; el validador rechaza las dos cadenas y `capa_hash.jsonl` («capa_hash no son 64 hexadecimales (v2)»). El script da 23 OK: ninguna de sus pruebas lee la clave escrita, y eso lo cazan el golden y el validador |
+| r2: otro `CAPA_HASH` en `Generado.mqh` (`8d1f…` → `9d1f…`) | **solo** la comprobación del hash: «capa_hash 9d1f… no es el del Generado.mqh del repo (8d1f…)». El golden sale igual byte a byte, con los mismos sha que la corrida buena: no depende de lo generado |
+| r3: el script no llama a `Capa()` | «capa/capa_hash.jsonl: el script no lo escribio» (20 OK); el `capa_hash.jsonl` de r2, que seguía en la carpeta del terminal, se borró antes de lanzar las pruebas |
+| r4: `JOURNAL_VERSION` vuelve a 1 | 1 FALLO («una ultima linea v1 no sigue en v2» da `sigue`); los tres journals distintos del golden; el validador rechaza las dos cadenas y `capa_hash.jsonl` («capa_hash esta reservada y vale null en v1») |
+
+Al lanzar r4 predije que fallarían dos casos del script, y falló uno. El caso «una última línea v2
+sigue» escribe su línea con `JOURNAL_VERSION`, así que con la versión rota sigue siendo coherente.
+La predicción era mía y estaba mal; la rotura se caza igual.
+
+Al final se recompiló e instaló la versión buena y se repitieron las pruebas: 23 OK y los mismos sha
+de los journals y de `capa_hash.jsonl`. Solo cambia `resultado.txt`, que lleva la hora de la lectura
+real.
+
+En la r2, la primera orden perdió al pegarse el «.» de `--repo` y `pruebas` no corrió («expected one
+argument»). Se relanzó solo `pruebas`, con el script de r2 ya instalado.
+
+**Tests de Python:** los de la capa pasan con los fuentes nuevos. `test_capa_mt5.py` sigue exigiendo
+que ningún `.mq5` ni `.mqh` llame a una función de trading y que el EA reinicie sus globales: la
+global nueva `g_journal_capa` se reinicia en `JournalAbrir`. `Tests Currently Passing` no cambia en
+esta fase: no hay funciones de test nuevas.
+
+**Fuera de `cubre`:** el calendario generado cubre hasta el 2026-10-08T04:00Z. La rama no opera, así
+que da igual (D3), y la corrida de R6a.8 caerá también fuera mientras no se renueve.
+
+## El encargo frente a lo hecho
+
+| punto | hecho | dónde |
+|---|---|---|
+| D1 qué entra | 31 parámetros (tabla de la fase 0, a; B0 a B2); nada de la estrategia ni del simulador | `ENTRAN` en `generar_capa.py`; `test_nada_de_lo_generado_es_de_la_estrategia` |
+| D2 una fuente por nombre | falla si tipo, valor, opciones o estado difieren; la pareja de stops level, con un solo nombre (B3); la de husos, por instantes (B0); el cruce de `test_perfil_cuenta.py` compara también el estado | fase 1 |
+| D3 el calendario | tal cual, los 228 instantes con `cubre` y su fuente (B4); la línea en RENOVAR-CIERRES.md; la de activar-sesion, preparada para Technical Debt | fase 1, fase 2 |
+| D4 dónde y cómo | `mql5/Include/Botsito/Capa/Generado.mqh` y `src/botsito/mql5bridge/generar_capa.py`, lanzado por su ruta: `uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k` (y `--comprobar`); UTF-8 sin BOM y LF | fase 1 |
+| D5 el hash | uno solo (B8); un test lo recalcula sin el generador | fase 1 |
+| D6 el journal v2 | el lector v1 y v2, sin cadena mixta; los journals v1 congelados siguen validando; golden v2 aparte; `VERSION_EA` 1.1; las dos deudas, sin tocar | fases 1 y 2 |
+| D7 | `LATIDO_SEG` y `TOPE_SESIONES` no se generan; la línea de la hoja, preparada | JOURNAL.md; «Líneas preparadas» |
+| D8 los tests de la capa | constantes `const`, sin `#define`; el detector exime lo generado solo si es idéntico; `LA_CAPA` y los dos tests renombrados; `LECTURA_PERMITIDA` vacía | fase 1 |
+| D9 compilar y probar | `compilar.py compilar` y `pruebas`, con sus roturas | fase 2 |
+| Fase 3 | **fuera del encargo, decidido por el consultor (A1 y A2)**: «el hash está en el journal» se comprueba con el script de pruebas; la demo pasa a R6a.8, con su procedimiento en DEMO-FTMO.md (A3) | fase 2 |
+| Informe, revisor y CI | este informe; el revisor y la CI, abajo | — |
+
+**Desviaciones:**
+- **A1.** La fase 3 sale del encargo por decisión del consultor.
+- **Python en la fase 1.** La fase 1 trae también el Python que ejercen sus tests (ver «Fase 1»).
+- **Lo que lanzó Aleks con «!».** El generador (fase 1) y la compilación y las pruebas en MT5
+  (fase 2), por la guardia.
+- **El terminal se conectó.** A1 decía que el script corre sin conexión; esta vez la tuvo (arriba).
+
+## Lo que heredan R6a.3 a R6a.8
+
+Cada pieza lee en `Generado.mqh` el valor y su `_ESTADO`. Un `DEFAULT_AMBIGUOUS` (hoy, los cuatro
+`P_FRENO_*`, bajo A-54) no es un `CONFIRMED`, y la pieza decide qué hace con él.
+
+- **R6a.3** (órdenes stop): `P_INSTRUMENTO_DIGITOS`, `P_INSTRUMENTO_STOPS_LEVEL`.
+- **R6a.4** (freno y veto de la firma):
+  - `P_FRENO_PETICIONES_AVISO/_CORTE`, `P_FRENO_BUCLE_REPETICIONES/_MINUTOS`,
+    `P_FIRMA_MENSAJES_DIA_MAX`;
+  - `P_FIRMA_PERDIDA_DIARIA_MAX/_TOTAL_MAX`, `P_FIRMA_BASE_PERDIDA_DIARIA`,
+    `P_FIRMA_PERDIDA_TOTAL_ARRASTRA`, `P_FIRMA_MAGNITUD_VIGILADA`, `P_FIRMA_CIERRE_AL_TOPE`,
+    `P_FIRMA_MARGEN_SEGURIDAD`, `P_SALDO_INICIAL_CUENTA`;
+  - `P_RELOJ_DIA_RIESGO` con `P_FIRMA_HUSO_CORTE`: el nombre IANA llega como texto, y cómo lo pasa
+    MQL5 a instantes lo decide esa rama (B0).
+- **R6a.5** (veto antes de los cierres):
+  - `CIERRES_INICIO/FIN/FUENTE`, `CIERRES_N` y `CIERRES_CUBRE_DESDE/HASTA`: fuera de `cubre` se
+    niega, como `cierre_sin_calendario`;
+  - `P_FIRMA_GAP_MARGEN_MINUTOS`, `P_FIRMA_GAP_CIERRE_MINIMO_MINUTOS`.
+  - `cierre_pendientes` no entró (B1): si R6a.5 lo necesita con A-55, se añade y se regenera.
+- **R6a.6** (tope por margen y volumen):
+  - `P_LOTE_SI_NO_CABE`, `P_LOTE_MARGEN_LIBRE_FRACCION`;
+  - `P_FIRMA_APALANCAMIENTO`, `P_FIRMA_VOLUMEN_MAX_LOTES`;
+  - `P_INSTRUMENTO_CONTRATO`, `P_INSTRUMENTO_LOTE_MINIMO/_PASO`.
+- **R6a.7** (pre-vuelo):
+  - `CAPA_HASH` contra el del repo en el tag vigente, con la fórmula de la fase 0 (d) sobre `git
+    show <tag>:mql5/Include/Botsito/Capa/Generado.mqh`;
+  - `P_BROKER_OFFSET_BASE` y `P_BROKER_DST` contra el desfase;
+  - `P_FIRMA`, `P_FIRMA_PROGRAMA`, `P_FIRMA_TIPO_CUENTA` y los `P_INSTRUMENTO_*` contra
+    `AccountInfo`/`SymbolInfo`.
+- **R6a.8** (la rejilla H4 en la demo): el EA 1.1 escribe el journal v2 con `CAPA_HASH`; el
+  procedimiento está en DEMO-FTMO.md («El EA con la capa generada»).
+
+**Cómo se amplía lo generado** sin tocar el hash a mano:
+1. Se añade el nombre a `ENTRAN` en `generar_capa.py`, con la pieza que lo lee (D1).
+2. Se regenera con la orden de D4 y se commitea `Generado.mqh` en el mismo commit; el hash cambia
+   solo.
+3. Un `Generado.mqh` editado a mano lo cazan `test_regenerar_no_da_diff`, el recálculo
+   independiente del hash y el detector de cifras de `test_capa_mt5.py` (fase 1, roturas 1 y 2).
+
+## Líneas preparadas para el commit del contrato de la orden de cierre
+
+Simuladas en un clon desechable (`git worktree add --detach` sobre `61550d50`). El guion
+`simular_cierre.py`, en la carpeta de trabajo de la sesión, aplicó las líneas de abajo a la hoja de
+ruta y a `PROJECT_STATE.md`. Con ellas, `tests/unit/test_hoja_de_ruta.py` y
+`tests/unit/test_project_state.py` pasan (19 tests). Para comprobar que los tests leían el clon, se
+rellenó `PROJECT_STATE.md` hasta 25.101 bytes y `test_project_state_cabe_en_el_tope` falló. Después
+se quitó el clon.
+
+**`PROJECT_STATE.md` quedaría en 24.400 bytes** (hoy, 23.930). El ritual le añade además lo suyo
+(Completed Features, Change Log, la rama y el tag): el margen hasta el tope es de 600 bytes, y si no
+cabe, se recorta antes con los criterios de `docs/state/README.md`.
+
+En `docs/plan/HOJA-DE-RUTA.md`:
+
+- R6a.2, «Qué es» (D7): «La parte de estrategia de F28 espera a F26. `LATIDO_SEG` y
+  `TOPE_SESIONES` no se generan: son cifras del formato del journal, no de la cuenta, y cambiarlas
+  es una versión nueva del formato (`mql5/JOURNAL.md`).»
+- R6a.2, Estado (A2 ii): «HECHA (`trabajo/capa-generada`, `stable/F38z-capa-generada`;
+  CAPA-GENERADA.md): `mql5/Include/Botsito/Capa/Generado.mqh`, que da
+  `src/botsito/mql5bridge/generar_capa.py`, y el journal v2 con su `capa_hash` en cada línea. El
+  hash en el journal se comprobó con el script de pruebas, sin demo (decisión del consultor del
+  2026-11-12); la corrida en la demo queda para R6a.8.» El tag, si el siguiente sigue siendo F38z.
+- R6a.4, al final de «Qué es» (B0): «reloj_dia_riesgo se resuelve con firma_huso_corte, comprobado
+  contra huso_operativa al generar (ADR-0053 §4); cómo pasa MQL5 un nombre IANA a instantes lo
+  decide esta rama.»
+- R6a.8 (A2 i), al final de «Qué es»: «Su journal en la demo es v2: la sesión comprueba que su
+  `capa_hash` es el del repo en el tag vigente (procedimiento en `docs/runbooks/DEMO-FTMO.md`).»; y
+  «Depende de: R6a.1 y R6a.2.»
+
+En `PROJECT_STATE.md`, Technical Debt:
+
+- `:82` (auditor, herencia 4): «El validador del journal v1 vive…» pasa a «El validador del
+  journal (v1 y v2) vive…».
+- Nueva (D3): «La skill `activar-sesion` no dice que una activación que toque un parámetro de la
+  capa de MT5 (`ENTRAN` de `generar_capa.py`) regenera `Generado.mqh` en el mismo commit
+  (CAPA-GENERADA.md, D3; `.claude/` no se tocó allí).»
+- Nueva (la guardia): «La guardia niega guiones nuevos por falsos positivos: un texto que empieza
+  por `//` como ruta y `cmp a b` como si ejecutara `a`; y `compilar.py` cambiado, por nombrar `/`
+  (CAPA-GENERADA.md, «La guardia»: lo lanzó Aleks con «!»).»
+
+Para el cierre, fuera de esos dos ficheros:
+
+- **`mql5/README.md:2` y ADR-0001:12** dicen que lo de MQL5 se genera desde `knowledge/spec/`. Lo
+  de la capa se genera también desde `knowledge/cuentas/` (C). En `mql5/README.md:2`: «…se GENERA
+  desde knowledge/spec/ (F28); lo de la capa de R6a, también desde knowledge/cuentas/
+  (Include/Botsito/Capa/Generado.mqh)». ADR-0001, con un recuadro de corrección.
+- **`lote_si_no_cabe`** está CONFIRMED (A-57 se resolvió en `trabajo/activar-sesion-05`), y
+  ADR-0082:53 lo da por DEFAULT_AMBIGUOUS. El ADR, con un recuadro (C); aquí no se toca.
+- **F28** (B8): «en F28, lo de prop_firm viajará también en `risk_hash`, y esa rama dice si
+  `capa_hash` sigue».
+- **`docs/runbooks/ERRORES-RECURRENTES.md`**, en la fila de esta rama: el error de D2 fue del
+  consultor (B0), que pedía comparar por texto `huso_operativa` y `firma_huso_corte`, dos nombres
+  IANA distintos que dan los mismos instantes. Lo midió la fase 0, y la comparación es por
+  instantes en las medianoches de `cubre` (ADR-0053 §4). Patrón 5: una afirmación sobre un
+  mecanismo sin medir.
+
 ## Estado
 
-EN CURSO: fase 1 hecha (falta su commit sellado); después, la fase 2.
+EN CURSO: fases 1 y 2 hechas (la 2, a falta de su commit sellado); después, el revisor, la CI por
+`fix/capa-generada` y la entrega.

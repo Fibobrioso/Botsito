@@ -53,3 +53,12 @@ mete en otra rama: mezclaría un dato ajeno con su contrato.
 
 `uv run botsito knowledge validate`, los tests de `tests/unit/test_cierres_de_mercado.py` y de
 `tests/unit/test_renovar_cierres.py`, y el arnés que pedía esos días, que ya no se niega.
+
+**Y se regenera la capa de MT5** (desde R6a.2, `trabajo/capa-generada`): el calendario va también,
+generado, en `mql5/Include/Botsito/Capa/Generado.mqh`. En el mismo commit que el YAML:
+
+    uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k
+
+Cambia su `CAPA_HASH`, y `tests/unit/test_capa_generada.py` falla si el fichero no es lo que da el
+generador. Lo mismo vale para quien cambie un parámetro que entra en la capa (`parametros.yaml`, el
+perfil): regenera en el mismo commit.

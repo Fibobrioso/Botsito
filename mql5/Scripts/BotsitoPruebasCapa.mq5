@@ -1,14 +1,19 @@
 //+------------------------------------------------------------------+
 //| BotsitoPruebasCapa.mq5 - las pruebas dinamicas de la capa de MT5 |
-//| (D4 (2) de trabajo/ea-conexion, R6a.1). No opera.                |
+//| (D4 (2) de trabajo/ea-conexion, R6a.1; v2 en R6a.2,              |
+//| trabajo/capa-generada). No opera.                                |
 //|                                                                  |
 //| Con los mismos include que el EA:                                |
 //| - la negativa con DEMO, CONTEST y REAL;                          |
 //| - el escritor del journal: escribe en MQL5\Files\Botsito\pruebas\|
-//|   las cadenas de tests/golden/journal/ (continua: un reinicio que |
-//|   sigue la cadena y un cambio de dia; rota: tras una ultima      |
-//|   linea truncada), que se comparan byte a byte con el golden     |
-//|   fuera de MT5 (src/botsito/mql5bridge/compilar.py);             |
+//|   las cadenas de tests/golden/journal_v2/ (continua: un reinicio |
+//|   que sigue la cadena y un cambio de dia; rota: tras una ultima  |
+//|   linea truncada), con el capa_hash FIJO de prueba, que se       |
+//|   comparan byte a byte con el golden fuera de MT5                |
+//|   (src/botsito/mql5bridge/compilar.py);                          |
+//| - aparte, fuera del golden, pruebas\capa\capa_hash.jsonl: una    |
+//|   linea v2 de JournalLinea con el CAPA_HASH REAL de Generado.mqh,|
+//|   que compilar.py compara con el recalculado desde el repo;      |
 //| - el cambio de dia con fechas inyectadas;                        |
 //| - el SHA-256 y el texto JSON;                                    |
 //| - y, sin comparar, la lectura real de la cuenta, el reloj y las  |
@@ -17,9 +22,10 @@
 //| OK|... o FALLO|... por prueba y un RESUMEN al final.             |
 //+------------------------------------------------------------------+
 #property copyright "Bot v3"
-#property version   "1.00"
-#property description "Pruebas dinamicas de la capa de MT5 (R6a.1). No opera."
+#property version   "1.10"
+#property description "Pruebas dinamicas de la capa de MT5 (R6a.2, journal v2). No opera."
 
+#include <Botsito/Capa/Generado.mqh>
 #include <Botsito/Capa/Journal.mqh>
 #include <Botsito/Capa/Cuenta.mqh>
 #include <Botsito/Capa/Reloj.mqh>
@@ -56,7 +62,18 @@ datetime T(const string texto)
    return StringToTime(texto);
   }
 
-//--- los casos del golden (docs/validation/anexos/EA-CONEXION/fase1/generar_golden.py) -----------
+//--- los casos del golden (docs/validation/anexos/EA-CONEXION/fase1/generar_golden.py, y el v2 de
+//--- docs/validation/anexos/CAPA-GENERADA/fase1/generar_golden_v2.py) ---------------------------
+
+// El capa_hash FIJO del golden v2: no es el de Generado.mqh, para que el golden no cambie al
+// regenerar (respuesta del consultor a la PARADA, punto 6).
+string CapaHashPrueba()
+  {
+   string r = "";
+   for(int i = 0; i < 4; i++)
+      r += "0123456789abcdef";
+   return r;
+  }
 
 string Servidor()
   {
@@ -101,7 +118,7 @@ void Continua()
    string c = "Botsito\\pruebas\\continua";
    Borrar(c, "journal_20261026.jsonl");
    Borrar(c, "journal_20261027.jsonl");
-   string cadena = JournalAbrir(c);
+   string cadena = JournalAbrir(c, CapaHashPrueba());
    Comprobar(cadena == "ninguna", "continua: sin journal anterior, cadena ninguna", cadena);
    E("2026.10.26 23:50:00", "2026.10.26 21:50:00", "arranque", ArranqueGolden(cadena, false));
    E("2026.10.26 23:51:00", "2026.10.26 21:51:00", "latido", DatosLatido(false, T("2026.10.23 23:54:59")));
@@ -112,7 +129,7 @@ void Continua()
    E("2026.10.26 23:54:00", "2026.10.26 21:54:00", "fin", DatosFin(REASON_REMOVE));
    JournalCerrar();
    // el reinicio: la cadena sigue en el mismo fichero
-   cadena = JournalAbrir(c);
+   cadena = JournalAbrir(c, CapaHashPrueba());
    Comprobar(cadena == "sigue", "continua: tras el reinicio, cadena sigue", cadena);
    Comprobar(g_journal_seq == 7, "continua: el seq sigue en 7", JEntero(g_journal_seq));
    E("2026.10.26 23:56:00", "2026.10.26 21:56:00", "arranque", ArranqueGolden(cadena, true));
@@ -132,22 +149,38 @@ void Rota()
    Borrar(c, "journal_20261027.jsonl");
    Borrar(c, "journal_20261028.jsonl");
    // sin journal: ninguna; con una ultima linea sin LF o que no es del formato: rota
-   string cadena = JournalAbrir(c);
+   string cadena = JournalAbrir(c, CapaHashPrueba());
    Comprobar(cadena == "ninguna", "rota: carpeta vacia, cadena ninguna", cadena);
    JournalCerrar();
+   string v = "{\"v\":" + JEntero(JOURNAL_VERSION) + ",\"seq\":5,";
    int h = FileOpen(c + "\\journal_20261027.jsonl", FILE_WRITE | FILE_BIN);
    uchar b[];
-   Utf8("{\"v\":1,\"seq\":5,\"srv\":\"2026-10-27T", b);
+   Utf8(v + "\"srv\":\"2026-10-27T", b);
    FileWriteArray(h, b);
    FileClose(h);
-   cadena = JournalAbrir(c);
+   cadena = JournalAbrir(c, CapaHashPrueba());
    Comprobar(cadena == "rota", "rota: ultima linea sin LF, cadena rota", cadena);
    JournalCerrar();
+   // en los dos sentidos: la misma ultima linea sigue en v2 y es rota en v1 (no hay cadena mixta)
    h = FileOpen(c + "\\journal_20261027.jsonl", FILE_WRITE | FILE_BIN);
-   Utf8("{\"v\":1,\"seq\":5,\"prev\":\"no-es-hex\"}\n", b);
+   Utf8(v + "\"prev\":\"" + Genesis() + "\"}\n", b);
    FileWriteArray(h, b);
    FileClose(h);
-   cadena = JournalAbrir(c);
+   cadena = JournalAbrir(c, CapaHashPrueba());
+   Comprobar(cadena == "sigue" && g_journal_seq == 5, "rota: una ultima linea v2 sigue", cadena);
+   JournalCerrar();
+   h = FileOpen(c + "\\journal_20261027.jsonl", FILE_WRITE | FILE_BIN);
+   Utf8("{\"v\":1,\"seq\":5,\"prev\":\"" + Genesis() + "\"}\n", b);
+   FileWriteArray(h, b);
+   FileClose(h);
+   cadena = JournalAbrir(c, CapaHashPrueba());
+   Comprobar(cadena == "rota", "rota: una ultima linea v1 no sigue en v2, cadena rota", cadena);
+   JournalCerrar();
+   h = FileOpen(c + "\\journal_20261027.jsonl", FILE_WRITE | FILE_BIN);
+   Utf8(v + "\"prev\":\"no-es-hex\"}\n", b);
+   FileWriteArray(h, b);
+   FileClose(h);
+   cadena = JournalAbrir(c, CapaHashPrueba());
    Comprobar(cadena == "rota", "rota: ultima linea fuera del formato, cadena rota", cadena);
    Comprobar(g_journal_seq == 0, "rota: la cadena nueva empieza en 0", JEntero(g_journal_seq));
    string motivo = "la cuenta NO es DEMO: \"el EA\" se quita\ty no hace nada\n" + ShortToString(1);
@@ -156,6 +189,24 @@ void Rota()
    E("2026.10.28 09:00:00", "2026.10.28 07:00:00", "negativa", DatosNegativa("ACCOUNT_TRADE_MODE_REAL", motivo));
    E("2026.10.28 09:00:01", "2026.10.28 07:00:01", "fin", DatosFin(REASON_REMOVE));
    JournalCerrar();
+  }
+
+// Aparte del golden: una linea v2 de JournalLinea con el CAPA_HASH real de Generado.mqh, que
+// compilar.py valida y compara con el recalculado desde el Generado.mqh del repo (punto 6).
+void Capa()
+  {
+   Comprobar(EsHex64(CAPA_HASH), "capa: CAPA_HASH de Generado.mqh son 64 hexadecimales", CAPA_HASH);
+   Comprobar(CAPA_HASH != CapaHashPrueba(), "capa: CAPA_HASH no es el fijo de prueba");
+   string f = "Botsito\\pruebas\\capa\\capa_hash.jsonl";
+   FileDelete(f);
+   uchar b[];
+   Utf8(JournalLinea(1, T("2026.10.28 09:00:00"), T("2026.10.28 07:00:00"), "arranque",
+                     ArranqueGolden("ninguna", true), CAPA_HASH, Genesis()) + "\n", b);
+   int h = FileOpen(f, FILE_WRITE | FILE_BIN);
+   bool ok = h != INVALID_HANDLE && FileWriteArray(h, b) == (uint)ArraySize(b);
+   if(h != INVALID_HANDLE)
+      FileClose(h);
+   Comprobar(ok, "capa: capa_hash.jsonl escrito");
   }
 
 //--- el resto ---------------------------------------------------------------------------------
@@ -217,6 +268,7 @@ void OnStart()
    HashYTexto();
    Continua();
    Rota();
+   Capa();
    LecturaReal();
    Resultado("RESUMEN|ok=" + JEntero(g_ok) + "|fallos=" + JEntero(g_fallos));
    FileClose(g_res);
