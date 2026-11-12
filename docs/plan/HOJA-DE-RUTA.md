@@ -40,14 +40,14 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Estado:** HECHA (`stable/F37l-entorno-code`; docs/validation/ENTORNO-CODE.md).
 
 ### R0.3 · El rumbo desde la re-corrida (2026-11-08)
-- **Refs:** ID:ADR-0092 · ID:ADR-0070 · NA:F
+- **Refs:** ID:ADR-0092 · ID:ADR-0070 · ID:ADR-0093
 - **Qué es:** docs/plan/RUMBO-2026-11.md manda sobre el orden de F y define el método de las
   sesiones y de las activaciones hasta que un ADR lo recoja.
 - **Depende de:** R3.9.
 - **Quién:** el consultor y Aleks.
 - **Hecho cuando:** el ADR de RUMBO §1 existe (el de §4 es ADR-0082, confirmado por Aleks el
   2026-11-09).
-- **Estado:** ABIERTA.
+- **Estado:** HECHA (trabajo/preparacion-sesion-7, ADR-0093).
 
 ## R1 · Activar la sesión 4
 
@@ -383,8 +383,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.3 · Preparar, celebrar y activar la sesión 7 (en dos días, 7a y 7b)
 - **Refs:** NA:F · ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 · ID:A-20 · ID:ADR-0083 · ID:ADR-0064 · ID:RN-009
-- **Qué es:** con el método de RUMBO §1: como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Por la cantidad de lo que apunta aquí (la lista de ACTIVAR-SESION-06.md §«Para la sesión 7», lo heredado de VIDEO-JULIO.md §4 y §10 y lo de TRAZAS-ABLACION.md §5.5) se parte en dos días; el reparto definitivo lo hace la rama de preparación con las filas que mueve cada pregunta. Punto de partida, decidido por el consultor el 2026-11-09: 7a, el rango de H4 (antes, todo lo que el trader ya dijo: ev-v9-000902-25db5bf5, strategy_spec.yaml en la regla del último rango y su reserva «suponiendo que no haya otro rango mayor», S-23 de la sesión 6, F7 #1 y #2), qué zonas cuentan como zonas de control del esquema (RN-009; A-20 ya fija el número), cuándo se coloca la orden respecto de la ruptura del punto (ADR-0064), el break even (A-13), A-35, las entradas válidas que deja sin tomar (F7 #10) y los dos esquemas, más el bloque de días; 7b, S-22 y S-19, el «igual» y la caja de la reentrada (ADR-0083 D1, con F7 #7 y las 4 filas de RN-019 en una sola pregunta), A-53, A-43 con las horas escritas, el 0 de A-48 y, si caben, seguir tras tres pérdidas, la alternancia (RN-009, S-21), A-46 por la toma y la tarde del 10 de julio. La rama de preparación escribe el ADR del método y pre-registra los puntos de pivote: el esquema de tres salidas sobre julio que aceptó Aleks el 2026-11-09 (dos mínimos: parejas que suben y operaciones de más que bajan; los dos, se sigue; uno, una sesión más; ninguno, se pivota), con la línea base de RECORRIDA-CONSTRUCCION-2 y lo ya visto declarado (ADR-0092 §12), y las cifras en un yaml.
-- **Depende de:** R4.4 y R4.5; J, si la hoja sale de `kit hoja`; el vídeo de mapeo del trader, si llega antes.
+- **Qué es:** con el método de ADR-0093 (RUMBO §1): como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Preparada en `trabajo/preparacion-sesion-7` (PREPARACION-SESION-7.md), con el reparto que aprobó el consultor el 2026-11-11: 7a (sesion-07), el rango de H4, el break even (A-13), las zonas de control del esquema (RN-009), A-35, cuándo se coloca la orden (ADR-0064) y las entradas válidas que deja sin tomar (F7 #10), más el bloque de días (docs/sesion-7/PREGUNTAS-7A.md); 7b (sesion-08), dónde pone el 0 de la caja (A-48), S-22, S-19, el «igual» y la caja de la reentrada (ADR-0083 D1), A-53 y A-43, más el bloque de días y, al final, la tarde del 10 de julio (docs/sesion-7/PREGUNTAS-7B.md, con los cuatro que no caben). Las láminas de la 7b las genera la activación de la 7a. El pivote, pre-registrado en docs/plan/PIVOTES-SESION-7.yaml (ADR-0093 §6).
+- **Depende de:** R4.4 y R4.5; el vídeo de mapeo del trader, si llega antes.
 - **Quién:** la sesión prepara con el consultor; Aleks celebra los dos días con el trader; el consultor propone los números del pivote y Aleks los aprueba.
 - **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO y A-16 la paga la activación de 7b (la de S-22 y S-19).
 - **Estado:** ABIERTA.

@@ -1088,3 +1088,19 @@ Copiada tal cual:
    3**: el recuadro de PREGUNTAS-7B.md, sin cambios.
 
 La CI de los dos commits empujados a `fix/preparacion-sesion-7`, en «La CI de Linux».
+
+### Adenda del consultor a la orden de cierre (2026-11-11)
+
+Copiada tal cual:
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Adenda del consultor a la orden de cierre de trabajo/preparacion-sesion-7 (2026-11-11). Cópiala tal cual al final del informe, debajo de «Respuesta del consultor a la PARADA final».
+>
+> 1. La decisión del punto 3 no cambia: se mergea con 3e1995df. Esa fecha se saca por calendario de cobertura_material, que es público, y no lleva ninguna etiqueta, vela, operación ni resultado. La historia no se reescribe: rebase, cherry-pick y push --force están prohibidos, y fix/preparacion-sesion-7 ya es público, así que reescribirla tampoco lo quitaría. La fila de HOLDOUT-EXPOSICIONES de 1de78e8b basta (ADR-0021 §4). El registro de HISTORIA del cierre lo dice en una línea, sin la fecha.
+> 2. Para la fila de ERRORES-RECURRENTES del cierre, además de lo de la orden:
+>    · importa (hallazgo de Claude Code, no del revisor): los guiones de la fase 0 escribieron en anexos commiteados tres fechas de fuera de construcción, calculadas por calendario sin pasar por la compuerta, y una es de un día reservado. Lección: un guion que escribe fechas en un fichero que se commitea solo escribe días que la compuerta da como construcción; las demás se cuentan, no se escriben.
+>    · Lección para el revisor: no lo vio. El alcance «ninguna fecha reservada en nada commiteado» se comprueba sobre cada commit de la rama (git log -p de main..rama), no solo sobre el árbol final.
+> 3. Los runs 43123877117 (e8a8c43b) y 43137995275 (1de78e8b), con el fallo aceptado, van al registro de HISTORIA.
+>
+> Con esto la orden de cierre queda completa. Responde que la has recibido y espera a /cerrar-rama.

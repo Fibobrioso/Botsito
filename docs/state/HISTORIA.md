@@ -17190,3 +17190,77 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 65 (2026-11-10).
+
+# Next Action HECHA · F · trabajo/preparacion-sesion-7 · 2026-11-11
+
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla están hechas (TRAZAS-ABLACION.md; `motor decisiones`; clases en su PARADA final). El rumbo: docs/plan/RUMBO-2026-11.md (R0.3) con las correcciones del consultor del 2026-11-09 recogidas en R4.3, R4.5 y R6.0 de la hoja de ruta. Las láminas del bot están hechas (LAMINAS.md; `motor laminas`; R4.5) y RUMBO §0, §4 y §5, enmendado. Los gráficos 2 a 6 de ACTIVAR-SESION-06.md (§«Para la sesión 7», punto 10) no se rehacen: los sustituyen las láminas. Las láminas no se enseñan al trader hasta que el ADR del método cambie la regla 2 de SESION-DE-PREGUNTAS.md; la preparación genera con `motor laminas` las de los días que elija. Siguiente, en este orden: (1) J, si la hoja sale de kit hoja; (2) la preparación de la sesión 7, partida en 7a y 7b (R4.3): el ADR del método (RUMBO §1), el pre-registro de los puntos de pivote (esquema de tres salidas sobre julio que aceptó Aleks el 2026-11-09; los números los propone el consultor con la línea base), los ítems de evidencia de F7 #1, #2, #3, #6 y #10 y lo que el trader ya dijo del rango de H4. El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, y entra antes de elegir los días. C, R5.7 y R6a en los huecos.
+
+# Registro de cierre · `trabajo/preparacion-sesion-7` (2026-11-11)
+
+- Orden de cierre de Aleks del 2026-11-11, tras la revisión del consultor: la respuesta del consultor
+  a la PARADA final con la orden de cierre, y su adenda. Las dos, copiadas tal cual al final del
+  informe (la respuesta en `1de78e8b`, la adenda en este commit). Después, Aleks lanzó
+  `/cerrar-rama trabajo/preparacion-sesion-7`.
+- **Lo que entra** (tramo R4):
+  - ADR-0093, «El método de las sesiones y de las activaciones», y su fila en el índice.
+  - Recuadros «Por qué cambió» en SESION-DE-PREGUNTAS.md (cabecera, regla 2 y pasos 5 y 6 de
+    «Antes») y en LAMINAS.md; las dos cadenas de `motor laminas` en `cli.py`; la NOTA de
+    ACTIVAR-A35-A44.md.
+  - El pivote pre-registrado, `docs/plan/PIVOTES-SESION-7.yaml`, con su sha fijado en
+    `test_pivotes_sesion_7.py`.
+  - Siete ítems de evidencia: los cinco de F7 (#1, #2, #3, #6 y #10) y dos que supersedan a los de
+    v11.
+  - `docs/sesion-7/PREGUNTAS-7A.md` y `PREGUNTAS-7B.md`.
+  - Las hojas 07 y 08 en `scripts/transcribir_sesion.py`, con `SESION_EN_CURSO` = "07", y sus tests.
+  - Los guiones y salidas de `docs/validation/anexos/PREPARACION-SESION-7/`.
+  - Las filas de HOLDOUT-EXPOSICIONES de la rama, cinco del 2026-11-11: el día, F6, F3 con las fechas
+    (a2 y b7), y lo que guarda `3e1995df`.
+
+  Nada de `knowledge/spec/`, `knowledge/cases/`, `knowledge/feedback/`, `src/botsito/engine/`,
+  `domain/` ni `.claude/`.
+- **Las láminas de la 7a (F6)**: 38 láminas de las seis sesiones aprobadas, 17 de tipo a y 21 de
+  tipo b, en `C:\Users\USER\Desktop\laminas-sesion-7a`, fuera del repo. Son idénticas por sha256 a
+  las del ensayo en el clon desechable.
+- **`3e1995df`, mergeado tal cual** (adenda del consultor, punto 1): lleva una fecha de un día
+  reservado, calculada por calendario y sin ningún dato del día. Basta la fila de HOLDOUT-EXPOSICIONES
+  de `1de78e8b` (ADR-0021 §4), y la historia no se reescribe.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - en la Next Action, F sustituida por el texto de la PARADA final, sin la J y sin «las láminas no
+    se enseñan». La F anterior, literal, va arriba bajo `# Next Action HECHA · F`. En el cierre de
+    `trabajo/laminas` F se sustituyó sin pasar a HISTORIA; el encabezado sigue la forma de
+    `trabajo/video-julio`;
+  - en Technical Debt, la línea nueva de los dos textos que ADR-0093 deja viejos, y la de
+    `ingerir-sesion` ampliada con ADR-0093 §2;
+  - en la hoja de ruta, R4.3 con el reparto definitivo y sin J en «Depende de»; R0.3 HECHA con
+    ADR-0093, sin NA:F en su bloque;
+  - entran la fila de ERRORES-RECURRENTES, este registro y la adenda del consultor al final del
+    informe.
+
+  El texto es el de `anexos/PREPARACION-SESION-7/simular_cierre.py`. Antes del `make check` se
+  comprobó sobre el árbol real con las funciones de `tests/unit/test_hoja_de_ruta.py`: `a`, `b`, `c`
+  y `d` salen vacías.
+- **`PROJECT_STATE.md`**: 24.001 bytes en este commit (`wc -c`).
+- Letra del tag: la última cerrada era `stable/F38w-laminas`; `stable/F38x-preparacion-sesion-7` no
+  existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38x-preparacion-sesion-7`. El merge es
+  `git rev-parse "stable/F38x-preparacion-sesion-7^{commit}"`.
+- Commits de la rama (7):
+  - `3de24780` chore(rama): abre trabajo/preparacion-sesion-7 (encargo, contrato y Archivo 66 de PROJECT_STATE) y su fase 0
+  - `3e1995df` ADR-0093 (F1), con la respuesta a la PARADA de la fase 0, los anexos y la fila de F6
+  - `a2d830e5` el pivote de la sesión 7, pre-registrado (F2)
+  - `958a7b9a` la evidencia de F7, las preguntas de la 7a y la 7b, y las hojas 07 y 08 (F3 a F5)
+  - `e8a8c43b` lo que encontró el revisor, corregido, y el informe con la PARADA final
+  - `1de78e8b` dos arreglos del consultor a las preguntas y la exposición de las tres fechas
+  - y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **CI**: los runs de `fix/preparacion-sesion-7`. En los tres, el único fallo es el esperado de
+  RITUAL.md (`test_state_check_ok_on_real_repo`, por el nombre `fix/`):
+
+  | Run | Commit | Resultado |
+  |---|---|---|
+  | 43118024345 | `958a7b9a` | 1 failed, 3381 passed, 48 skipped |
+  | 43123877117 | `e8a8c43b` | 1 failed, 3381 passed, 48 skipped |
+  | 43137995275 | `1de78e8b` | 1 failed, 3381 passed, 48 skipped |
+
+  Este commit solo toca el informe, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE, la hoja de ruta y
+  `contrato.yaml`. La CI que cuenta es la de `main` tras el push.
