@@ -17436,3 +17436,54 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 66 (2026-11-11).
+
+# Registro de cierre · `trabajo/laminas-motivos` (2026-11-12)
+
+- Orden de cierre de Aleks del 2026-11-12, tras la revisión del consultor: la respuesta del consultor
+  a la PARADA final con la orden de cierre, copiada tal cual al final del encargo y del informe en
+  `0dc14825`. Después, Aleks lanzó `/cerrar-rama trabajo/laminas-motivos`.
+- **Lo que entra** (tramo R4):
+  - `src/botsito/engine/laminas.py`: la causa de cada gate sale de la rama de su forma que disparó
+    (`MOTIVO_GATE` por ramas, `MOTIVO_POR_ORIGEN`, `HECHO_QUE_FIJA`); un gate `[desconocido]` se
+    dice como duda; lo que no se identifica da `LaminaError`. Y sus tests en `test_laminas.py` y
+    `test_laminas_svg.py` (2008 → 2017 funciones de test).
+  - El recuadro del 2026-11-12 en ADR-0093 §2 y el paso 4 de `docs/sesion-7/PREGUNTAS-7A.md`
+    («ningún resultado posterior al corte», 1.648 px, la carpeta v2).
+  - El recuadro de corrección del 2026-11-12 en `docs/validation/LAMINAS.md` y la nota en
+    `docs/runbooks/LAMINAS.md` (PARADA 2, la c).
+  - Las filas de HOLDOUT-EXPOSICIONES de la rama, tres: la del 2026-11-11 (la apertura y la lectura
+    de `clave.txt`, escrita pasada la medianoche: desviación aceptada por el consultor), y las dos
+    del 2026-11-12 (la bitácora de la fase 0 y F2).
+
+  Nada del motor fuera de `laminas.py`, ni de `knowledge/`, `spec/`, `cli.py`, `scripts/` ni
+  `.claude/`.
+- **Las láminas de la 7a, v2**: `C:\Users\USER\Desktop\laminas-sesion-7a-v2`, fuera del repo; de 44
+  ficheros, 42 idénticos por sha256 a la v1 y dos (sesion-06, láminas 09 y 10) que solo pierden la
+  línea de RN-001; `clave.txt` idéntica, y no va en el ZIP.
+- **Desviaciones aceptadas**: b1 (con `detenido_por_tope` encendido por una regla, la otra causa de
+  tope se calla) y el `LaminaError` cuando RN-004 abre escenario en el mismo cierre en que RN-016 o
+  RN-001 disparan por los intentos. Los dos los lleva el consultor al encargo de la activación de la
+  7a; nada en PROJECT_STATE.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - en la hoja de ruta, R4.5 gana la frase que remite a LAMINAS-MOTIVOS.md, comprobada sobre el
+    árbol real con `problemas_a` a `problemas_d` (los cuatro tests de `test_hoja_de_ruta.py` que las
+    llaman, en verde antes del `make check`);
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+
+  La Next Action no cambia.
+- **`PROJECT_STATE.md`**: no cambia en este commit (23.916 bytes, `wc -c`).
+- Letra del tag: la última cerrada era `stable/F38x-preparacion-sesion-7`;
+  `stable/F38y-laminas-motivos` no existe en local ni en origin (comprobado antes de este commit).
+- Tag: `stable/F38y-laminas-motivos`. El merge es
+  `git rev-parse "stable/F38y-laminas-motivos^{commit}"`.
+- Commits de la rama (7):
+  - `6071057a` chore(rama): abre trabajo/laminas-motivos (encargo, contrato y Archivo 67 de PROJECT_STATE)
+  - `63560d14` fase 0 y PARADA (la rama activa de cada gate, medida)
+  - `b735dc2b` la causa de un gate sale de su rama activa (F1) y F3
+  - `93f0b7f6` F2, las láminas de la 7a regeneradas (v2)
+  - `fb44a745` revisor, sus hallazgos y la PARADA final
+  - `0dc14825` respuesta a la PARADA final, la (c) de la PARADA 2
+  - y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **CI**: ninguna antes del merge; la rama no toca la plataforma (aceptado por el consultor). La CI
+  que cuenta es la de `main` tras el push.

@@ -411,7 +411,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R4.4.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta.
-- **Estado:** HECHA (trabajo/laminas, LAMINAS.md).
+- **Estado:** HECHA (trabajo/laminas, LAMINAS.md). Sus frases de causa, corregidas antes de grabar la 7a: la de cada gate sale de la rama que dispara (trabajo/laminas-motivos, LAMINAS-MOTIVOS.md).
 
 ## R5 · Fidelidad
 
