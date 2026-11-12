@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/preparacion-sesion-7
+main
 
 ## Current Feature
-EN CURSO: trabajo/preparacion-sesion-7, F (2), R4.3: la preparación de la sesión 7 en 7a (sesion-07) y 7b (sesion-08), con el ADR del método, el pivote pre-registrado, las preguntas, los días y las láminas de la 7a. Encargo docs/encargos/trabajo-preparacion-sesion-7.md; informe docs/validation/PREPARACION-SESION-7.md.
+Ninguna rama abierta. trabajo/preparacion-sesion-7 cerrada en main el 2026-11-11 (stable/F38x-preparacion-sesion-7): ADR-0093 (el método de las sesiones), el pivote pre-registrado y las preguntas de la 7a y la 7b; R0.3 hecha.
 
 ## Stable Main State
-b9904c5 · merge de `trabajo/laminas` (tag `stable/F38w-laminas`), sobre `stable/F38v-trazas-ablacion` (76bbe09). Informe docs/validation/LAMINAS.md; el registro del cierre, al final de HISTORIA.
+5260147 · merge de `trabajo/preparacion-sesion-7` (tag `stable/F38x-preparacion-sesion-7`), sobre `stable/F38w-laminas` (b9904c5). Informe docs/validation/PREPARACION-SESION-7.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-b9904c5 · merge: trabajo/laminas, motor laminas (las laminas del bot de las sesiones pedidas, con el M1 de cerca) y la enmienda de RUMBO §0, §4 y §5 · tag stable/F38w-laminas
+5260147 · merge: trabajo/preparacion-sesion-7, ADR-0093 (el metodo de las sesiones), el pivote pre-registrado y las preguntas de la 7a y la 7b · tag stable/F38x-preparacion-sesion-7
 
 ## Tests Currently Passing
 2008 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
