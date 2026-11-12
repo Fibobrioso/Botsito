@@ -1,4 +1,11 @@
-"""El journal de la capa de MT5, formato v1: lector y validador (R6a.1, ADR-0082 D7).
+"""El journal de la capa de MT5, formatos v1 y v2: lector y validador (R6a.1, ADR-0082 D7; la v2,
+R6a.2, rama trabajo/capa-generada).
+
+Cada linea se valida con el esquema de la version que declara (`v`): la v1 lleva las seis claves
+reservadas a `null`; la v2, igual salvo `capa_hash`, que en todas sus lineas es el hash de lo que la
+capa recibe generado (64 hexadecimales en minusculas; `mql5bridge/generar_capa.py`). Todo lo demas
+es igual en las dos. Una llamada que mezcle versiones se rechaza: no hay cadena mixta (un EA v2
+sobre un journal v1 empieza su cadena de cero).
 
 El formato se define una sola vez, en `mql5/JOURNAL.md`; lo escribe
 `mql5/Include/Botsito/Capa/Journal.mqh` y lo valida este modulo, que recalcula la cadena de hashes
@@ -12,7 +19,8 @@ sobre los mismos bytes:
   la primera linea de una cadena lleva `GENESIS`. Una cadena nueva en medio solo la abre un
   `arranque` con `cadena_anterior: rota`;
 - `seq` empieza en 1 en cada cadena y sube de uno en uno, entre ficheros y reinicios;
-- `desfase_s` es `srv - gmt` en segundos, y las claves reservadas valen `null` en v1;
+- `desfase_s` es `srv - gmt` en segundos, y las claves reservadas valen `null` (en v2, todas salvo
+  `capa_hash`);
 - los `datos` de cada evento llevan exactamente las claves de `DATOS`: ni login ni dinero (D2f).
 
 Uso, para validar uno o varios ficheros en orden como una sola cadena (por su ruta: la guardia de
@@ -34,7 +42,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-VERSION = 1
+VERSIONES = (1, 2)
 CLAVES = (
     "v",
     "seq",
@@ -52,6 +60,9 @@ CLAVES = (
     "prev",
 )
 RESERVADAS = ("regla", "condicion", "capa_hash", "spec_hash", "risk_hash", "ambiguas")
+# Las reservadas que valen `null` en cada version; en v2, `capa_hash` es un hash en todas las
+# lineas.
+NULAS = {1: RESERVADAS, 2: tuple(c for c in RESERVADAS if c != "capa_hash")}
 GENESIS = "0" * 64
 CADENA_ANTERIOR = ("ninguna", "sigue", "rota")
 DIAS = ("SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY")
@@ -96,7 +107,8 @@ _BOM = b"\xef\xbb\xbf"
 
 
 class JournalError(ValueError):
-    """Un journal que no cumple el formato v1; el mensaje dice el fichero, la linea y el motivo."""
+    """Un journal que no cumple su formato (v1 o v2); el mensaje dice el fichero, la linea y el
+    motivo."""
 
 
 @dataclass(frozen=True)
@@ -164,13 +176,14 @@ def _comprobar_valor(tipo: str, valor: object) -> str | None:
 
 
 def _comprobar_objeto(obj: object) -> str | None:
-    """None si el objeto cumple el esquema v1 (sin mirar la cadena); si no, el motivo."""
+    """None si el objeto cumple el esquema de su version (sin mirar la cadena); si no, el motivo."""
     if not isinstance(obj, dict):
         return "la linea no es un objeto JSON"
     if tuple(obj) != CLAVES:
-        return f"las claves no son las de v1 en su orden: {list(obj)}"
-    if obj["v"] != VERSION or not _es_entero(obj["v"]):
-        return f"version {obj['v']!r}: este lector es de la v{VERSION}"
+        return f"las claves no son las del formato en su orden: {list(obj)}"
+    if not _es_entero(obj["v"]) or obj["v"] not in VERSIONES:
+        return f"version {obj['v']!r}: este lector es de las versiones {list(VERSIONES)}"
+    v = obj["v"]
     if not _es_entero(obj["seq"]) or obj["seq"] < 1:
         return f"seq {obj['seq']!r} no es un entero positivo"
     srv, gmt = _hora(obj["srv"]), _hora(obj["gmt"])
@@ -178,9 +191,11 @@ def _comprobar_objeto(obj: object) -> str | None:
         return "srv y gmt son horas AAAA-MM-DDTHH:MM:SS"
     if not _es_entero(obj["desfase_s"]) or obj["desfase_s"] != int((srv - gmt).total_seconds()):
         return f"desfase_s {obj['desfase_s']!r} no es srv - gmt en segundos"
-    for clave in RESERVADAS:
+    for clave in NULAS[v]:
         if obj[clave] is not None:
-            return f"{clave} esta reservada y vale null en v{VERSION}"
+            return f"{clave} esta reservada y vale null en v{v}"
+    if v == 2 and not (isinstance(obj["capa_hash"], str) and _HEX64.fullmatch(obj["capa_hash"])):
+        return "capa_hash no son 64 hexadecimales en minusculas (v2)"
     if not isinstance(obj["prev"], str) or not _HEX64.fullmatch(obj["prev"]):
         return "prev no son 64 hexadecimales en minusculas"
     esquema = DATOS.get(obj["ev"]) if isinstance(obj["ev"], str) else None
@@ -220,6 +235,10 @@ def leer(ficheros: Sequence[tuple[str, bytes]]) -> list[Linea]:
                 raise JournalError(f"{donde}: {motivo}")
             if canonica(obj) != b:
                 raise JournalError(f"{donde}: no esta en forma canonica")
+            if lineas and obj["v"] != lineas[0].objeto["v"]:
+                raise JournalError(
+                    f"{donde}: v{obj['v']} tras v{lineas[0].objeto['v']}: no hay cadena mixta"
+                )
             if obj["prev"] == GENESIS:
                 nueva_por_rota = (
                     obj["ev"] == "arranque" and obj["datos"]["cadena_anterior"] == "rota"
@@ -249,13 +268,17 @@ def resumen(lineas: Sequence[Linea]) -> str:
         desfases[x.objeto["desfase_s"]] = desfases.get(x.objeto["desfase_s"], 0) + 1
     cadenas = sum(1 for x in lineas if x.objeto["prev"] == GENESIS)
     ficheros = len({x.fichero for x in lineas})
+    hashes = sorted({x.objeto["capa_hash"] for x in lineas if x.objeto["capa_hash"] is not None})
     salida = [
-        f"{len(lineas)} lineas validas en {ficheros} ficheros, {cadenas} cadena(s)",
+        f"{len(lineas)} lineas validas en {ficheros} ficheros, {cadenas} cadena(s), "
+        f"formato v{lineas[0].objeto['v']}",
         f"desde {lineas[0].objeto['srv']} hasta {lineas[-1].objeto['srv']} (hora del servidor)",
         "eventos: " + ", ".join(f"{k} {v}" for k, v in sorted(eventos.items())),
         "desfase_s (srv - gmt): " + ", ".join(f"{k} x{v}" for k, v in sorted(desfases.items())),
         f"hash de la ultima linea: {lineas[-1].hash}",
     ]
+    if hashes:
+        salida.append("capa_hash: " + ", ".join(hashes))
     for x in lineas:
         if x.objeto["ev"] in ("cuenta", "negativa", "cambio_de_dia", "sesiones", "fin"):
             datos = json.dumps(x.objeto["datos"], ensure_ascii=False)
@@ -265,7 +288,7 @@ def resumen(lineas: Sequence[Linea]) -> str:
 
 def main(argv: Sequence[str] | None = None) -> int:
     p = argparse.ArgumentParser(
-        description="Valida el journal v1 de la capa de MT5 (mql5/JOURNAL.md)."
+        description="Valida el journal v1 o v2 de la capa de MT5 (mql5/JOURNAL.md)."
     )
     p.add_argument(
         "ficheros", nargs="+", type=Path, help="en orden; se validan como una sola cadena"

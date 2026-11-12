@@ -8,15 +8,18 @@ los dos sentidos. La compilacion y el script de pruebas, de verdad, en los anexo
 from __future__ import annotations
 
 import hashlib
+import json
 import subprocess
 from pathlib import Path
 
 import pytest
 
 from botsito.mql5bridge.compilar import (
+    FICHERO_CAPA,
     Compilacion,
     CompilarError,
     comparar_con_golden,
+    comprobar_capa_hash,
     exportar,
     ini_de_pruebas,
     leer_log,
@@ -24,6 +27,7 @@ from botsito.mql5bridge.compilar import (
     resumen_de_resultado,
     sustituir,
 )
+from botsito.mql5bridge.journal import CLAVES, GENESIS, canonica
 
 RAIZ = Path(__file__).resolve().parents[2]
 FASE0 = RAIZ / "docs" / "validation" / "anexos" / "EA-CONEXION" / "fase0"
@@ -143,6 +147,56 @@ def test_comparar_con_el_golden_en_los_dos_sentidos(tmp_path: Path) -> None:
     assert comparar_con_golden(tmp_path, GOLDEN) == [
         "rota/journal_20261028.jsonl: el script no lo escribio"
     ]
+
+
+GOLDEN_V2 = RAIZ / "tests" / "golden" / "journal_v2"
+
+
+def _generado_de_ejemplo(cuerpo: bytes) -> tuple[bytes, str]:
+    """Un Generado.mqh minimo con su linea de hash bien calculada, y ese hash."""
+    h = hashlib.sha256(cuerpo).hexdigest()
+    return cuerpo + f'const string CAPA_HASH = "{h}";\n'.encode(), h
+
+
+def _journal_con(h: str, v: int = 2) -> bytes:
+    """Una linea `arranque` del golden v2 con `capa_hash` = h (y la version `v`)."""
+    o = json.loads((GOLDEN_V2 / "rota" / "journal_20261028.jsonl").read_bytes().split(b"\n")[0])
+    o = {**o, "v": v, "seq": 1, "prev": GENESIS, "capa_hash": h if v == 2 else None}
+    return canonica({k: o[k] for k in CLAVES}) + b"\n"
+
+
+def test_el_capa_hash_del_script_en_los_dos_sentidos(tmp_path: Path) -> None:
+    """Respuesta del consultor a la PARADA, punto 6: el journal aparte que escribe el script con el
+    CAPA_HASH real tiene que validar como v2 y llevar el hash recalculado del Generado.mqh."""
+    generado, h = _generado_de_ejemplo(b"// cuerpo\nconst int P_X = 1;\n")
+    f = tmp_path / FICHERO_CAPA
+    f.parent.mkdir(parents=True)
+    f.write_bytes(_journal_con(h))
+    assert comprobar_capa_hash(tmp_path, generado) == []
+    # hash distinto: el del journal es de OTRO Generado.mqh
+    otro, _ = _generado_de_ejemplo(b"// cuerpo\nconst int P_X = 2;\n")
+    malos = comprobar_capa_hash(tmp_path, otro)
+    assert len(malos) == 1 and "no es el del Generado.mqh del repo" in malos[0]
+    # un journal v1 (capa_hash null) no sirve
+    f.write_bytes(_journal_con(h, v=1))
+    assert "no v2" in comprobar_capa_hash(tmp_path, generado)[0]
+    # un journal que no valida
+    f.write_bytes(_journal_con(h)[:-1])
+    assert "no valida" in comprobar_capa_hash(tmp_path, generado)[0]
+    # fichero ausente
+    f.unlink()
+    assert comprobar_capa_hash(tmp_path, generado) == [
+        f"{FICHERO_CAPA.as_posix()}: el script no lo escribio"
+    ]
+    # un Generado.mqh sin su linea de hash
+    f.write_bytes(_journal_con(h))
+    assert "lineas de CAPA_HASH" in comprobar_capa_hash(tmp_path, b"// sin hash\n")[0]
+
+
+def test_el_capa_hash_del_script_no_esta_bajo_el_golden() -> None:
+    """Si estuviera, `comparar_con_golden` exigiria un fichero que cambia con cada regeneracion."""
+    assert not (GOLDEN_V2 / FICHERO_CAPA).exists()
+    assert not list(GOLDEN_V2.rglob(FICHERO_CAPA.name))
 
 
 def test_el_resumen_del_script() -> None:

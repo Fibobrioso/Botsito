@@ -1,12 +1,27 @@
-# El journal de la capa de MT5 · formato v1
+# El journal de la capa de MT5 · formatos v1 y v2
 
 El registro que escribe el EA de la capa que nunca decide una operación (ADR-0082; R6a.1, rama
 `trabajo/ea-conexion`). **Un solo formato, versionado** (ADR-0082 D7), definido aquí una vez. Lo
 escribe `mql5/Include/Botsito/Capa/Journal.mqh` y lo valida
 `src/botsito/mql5bridge/journal.py`, que recalcula la cadena sobre los mismos bytes; el golden de
-`tests/golden/journal/` lo escriben los dos. Decidido en la respuesta del consultor a la PARADA de
-la fase 0 (`docs/validation/EA-CONEXION.md`, puntos 3 y 6). Cambiar cualquier cosa de este
-documento es una **versión nueva** (`v` 2), con su lector.
+`tests/golden/journal/` (v1) y el de `tests/golden/journal_v2/` (v2) los escriben los dos. Decidido
+en la respuesta del consultor a la PARADA de la fase 0 (`docs/validation/EA-CONEXION.md`, puntos 3
+y 6). Cambiar cualquier cosa de este documento es una **versión nueva**, con su lector.
+
+## Las versiones
+
+- **v1** (R6a.1, `trabajo/ea-conexion`): las seis claves reservadas valen `null`. La escribe el EA
+  `1.0`; sus journals de la demo están congelados en `docs/validation/anexos/EA-CONEXION/`.
+- **v2** (R6a.2, `trabajo/capa-generada`; `docs/validation/CAPA-GENERADA.md`): igual que la v1
+  salvo `capa_hash`, que en **todas** las líneas es el hash de lo que la capa recibe generado
+  (`CAPA_HASH` de `mql5/Include/Botsito/Capa/Generado.mqh`; cómo se calcula, en
+  `src/botsito/mql5bridge/generar_capa.py`). La escribe el EA desde `1.1`.
+
+El validador lee cada línea por la versión que declara su `v`. **No hay cadena mixta**: una llamada
+que mezcle v1 y v2 no valida. Un EA v2 que arranca sobre un journal v1 no puede seguir su cadena
+(la última línea no empieza por su cabecera, «Los ficheros») y empieza una nueva con
+`cadena_anterior: rota`; por eso el procedimiento de la demo saca antes el journal v1 de la carpeta
+y la cadena v2 arranca con `ninguna` (`docs/runbooks/DEMO-FTMO.md`).
 
 ## Los bytes
 
@@ -31,24 +46,24 @@ borrar las últimas líneas no se detecta (ninguna cadena sin sello lo detecta).
 
 ## Las claves (siempre todas, en este orden)
 
-| clave | qué es | v1 |
-|---|---|---|
-| `v` | versión del formato | `1` |
-| `seq` | número de secuencia | entero desde 1 |
-| `srv` | hora del servidor, `TimeTradeServer()` | `"AAAA-MM-DDTHH:MM:SS"`, sin huso |
-| `gmt` | hora GMT, `TimeGMT()`: **sale del reloj del ordenador**, que tiene que estar en hora | ídem |
-| `desfase_s` | `srv − gmt`, en segundos (el «offset servidor» de MASTER_PLAN §H.2) | entero |
-| `ev` | el evento | ver abajo |
-| `datos` | los datos del evento, exactamente las claves de su fila | objeto |
-| `regla` | la regla que actuó (§H.2) | `null`: reservada (F23; R6a.4 en adelante) |
-| `condicion` | la condición que falló (§H.2) | `null`: reservada |
-| `capa_hash` | el hash de lo que la capa recibe generado (ADR-0082 D5) | `null`: reservada para R6a.2 |
-| `spec_hash` | el hash de la spec (§H.2, F28) | `null`: reservada (desde F29) |
-| `risk_hash` | el hash del riesgo (§H.2, F28) | `null`: reservada (desde F29) |
-| `ambiguas` | las lecturas ambiguas (§H.2) | `null`: reservada |
-| `prev` | el hash de la línea anterior | 64 hexadecimales |
+| clave | qué es | v1 | v2 |
+|---|---|---|---|
+| `v` | versión del formato | `1` | `2` |
+| `seq` | número de secuencia | entero desde 1 | ídem |
+| `srv` | hora del servidor, `TimeTradeServer()` | `"AAAA-MM-DDTHH:MM:SS"`, sin huso | ídem |
+| `gmt` | hora GMT, `TimeGMT()`: **sale del reloj del ordenador**, que tiene que estar en hora | ídem | ídem |
+| `desfase_s` | `srv − gmt`, en segundos (el «offset servidor» de MASTER_PLAN §H.2) | entero | ídem |
+| `ev` | el evento | ver abajo | ídem |
+| `datos` | los datos del evento, exactamente las claves de su fila | objeto | ídem |
+| `regla` | la regla que actuó (§H.2) | `null`: reservada (F23; R6a.4 en adelante) | ídem |
+| `condicion` | la condición que falló (§H.2) | `null`: reservada | ídem |
+| `capa_hash` | el hash de lo que la capa recibe generado (ADR-0082 D5) | `null`: reservada para R6a.2 | **64 hexadecimales en minúsculas, en todas las líneas**: el `CAPA_HASH` de `Generado.mqh` con que se compiló el EA |
+| `spec_hash` | el hash de la spec (§H.2, F28) | `null`: reservada (desde F29) | ídem |
+| `risk_hash` | el hash del riesgo (§H.2, F28) | `null`: reservada (desde F29) | ídem |
+| `ambiguas` | las lecturas ambiguas (§H.2) | `null`: reservada | ídem |
+| `prev` | el hash de la línea anterior | 64 hexadecimales | ídem |
 
-## Los eventos de v1 y sus datos
+## Los eventos y sus datos (los mismos en v1 y v2)
 
 | `ev` | cuándo | `datos` |
 |---|---|---|
@@ -67,8 +82,9 @@ sirve (respuesta a la PARADA, punto 7).
 
 ## Las dos cifras del formato
 
-Son parte de v1 (respuesta a la PARADA, punto 6): cambiarlas es una versión nueva. No son de la
-firma, del bróker, del instrumento ni de la ejecución (D2g); R6a.2 puede generarlas si se decide.
+Son parte del formato (respuesta a la PARADA de R6a.1, punto 6), las mismas en v1 y v2: cambiarlas
+es una versión nueva. No son de la firma, del bróker, del instrumento ni de la ejecución (D2g), y
+**no se generan**: son cifras del formato del journal, no de la cuenta (encargo de R6a.2, D7).
 
 - `LATIDO_SEG = 60`: el periodo del latido, en segundos (`EventSetTimer`).
 - `TOPE_SESIONES = 32`: cuántos índices de sesión se piden como mucho por día. El bucle sube el
@@ -83,8 +99,9 @@ truncan. `FILE_SHARE_READ` deja leerlos a otros mientras el EA los tiene abierto
 el EA puesto **no está medido**: las copias de la demo se hicieron con el EA quitado.
 
 - **La cadena sigue entre días y entre reinicios.** Al arrancar, el EA busca el journal más
-  reciente de la carpeta y lee su última línea: si valida (acaba en LF, empieza por `{"v":1,"seq":`
-  y acaba en `"prev":"<64 hex>"}`), sigue con su `seq + 1` y su hash (`cadena_anterior: sigue`); si
+  reciente de la carpeta y lee su última línea: si valida (acaba en LF, empieza por
+  `{"v":<su versión>,"seq":` y acaba en `"prev":"<64 hex>"}`), sigue con su `seq + 1` y su hash
+  (`cadena_anterior: sigue`); si
   no hay ninguno, empieza de cero (`ninguna`); si la última línea no valida, empieza una cadena
   nueva desde ceros (`rota`).
 - El cambio de día abre el fichero del día nuevo; su primera línea (`cambio_de_dia`) lleva el `prev`
@@ -96,8 +113,8 @@ el EA puesto **no está medido**: las copias de la demo se hicieron con el EA qu
 
 ## Cómo lo leerán F23 y F34
 
-F23 (el journal del simulador en Python) escribe esta misma v1 —los campos de §H.2 son las claves de
-la tabla— con el mismo validador; hoy el validador vive en `botsito.mql5bridge`, que `engine` no
+F23 (el journal del simulador en Python) escribe este mismo formato —los campos de §H.2 son las
+claves de la tabla—, en la versión vigente cuando llegue, con el mismo validador; hoy el validador vive en `botsito.mql5bridge`, que `engine` no
 puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea,
 en su rama (Technical Debt). F34 compara la demo con el backtest línea a línea por `(día, ev, regla,
 condicion)`, sin mirar `seq` ni `prev`, que solo prueban la integridad de cada lado.

@@ -367,6 +367,112 @@ rama (cada uno lee el M1 de marzo y calienta con el de junio). Nada más.
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta a la PARADA (consultor, 2026-11-12)
+
+Copiada tal cual (también al final del encargo, «Cambio del consultor»):
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/capa-generada (2026-11-12). Cópiala tal cual al informe (CAPA-GENERADA.md, «Respuesta a la PARADA») y al final de docs/encargos/trabajo-capa-generada.md, bajo «Cambio del consultor» (los puntos A a E). Donde choque con el encargo, manda esto. Aplícala punto por punto.
+>
+> A. Cambio de calendario y de alcance (Aleks fija la sesión 7a para el domingo 15 de noviembre; su ingesta no puede abrirse con esta rama abierta).
+> A1. Sin demo ni prueba nueva de FTMO: la fase 3 sale del encargo y no me pides crear ninguna prueba. «El hash está en el journal» se comprueba con el script de pruebas, que corre sin conexión (EA-CONEXION.md, hacia :100). Es una lectura mía del «Hecho cuando» de R6a.2: decláralo como desviación decidida por el consultor.
+> A2. La corrida en la demo pasa a R6a.8, que ya necesita la demo una semana. Para el commit del contrato prepara: (i) la línea de R6a.8 en la hoja, que dice que su journal en la demo es v2 y comprueba que capa_hash coincide con el del repo en el tag vigente; (ii) la línea de Estado de R6a.2, que dice que el hash se comprobó con el script de pruebas y que la demo queda para R6a.8.
+> A3. El procedimiento de docs/runbooks/DEMO-FTMO.md se escribe igual, para R6a.8, incluido mover el journal v1 fuera de MQL5/Files antes del primer arranque v2.
+> A4. Calendario: fases 1 y 2 hoy y mañana viernes; revisor y «Rama lista para revisión, NO cerrada» el sábado 14. Si no cabe, PARADA con lo que recortarías.
+> A5. Si el domingo, con la grabación hecha, la rama no está para cerrar, PARADA y decido yo; no abras nada más.
+>
+> B. Las nueve decisiones.
+> 0. (a). Entra firma_huso_corte; huso_operativa queda fuera. El generador comprueba, como ADR-0053 §4, que los dos dan los mismos instantes en la medianoche de cada día de `cubre`, y falla si no. Por qué: es el reloj que ya usa el simulador, y reloj_dia_riesgo: civil_operativa es la medianoche en huso_operativa (ADR-0027, citado en ADR-0053 §4), así que la capa la resuelve con firma_huso_corte bajo esa misma comprobación. Línea para la hoja, en R6a.4: «reloj_dia_riesgo se resuelve con firma_huso_corte, comprobado contra huso_operativa al generar (ADR-0053 §4); cómo pasa MQL5 un nombre IANA a instantes lo decide esta rama». D2 queda corregida así: un error del consultor, para la fila de ERRORES-RECURRENTES.
+> 1. (a). cierre_pendientes, fuera: qué hace la capa con una pendiente al abrir la ventana lo decide R6a.5 con A-55, y entrar entonces es regenerar.
+> 2. (a). Fuera lo que no lee ninguna pieza, por la regla de D1.
+> 3. (a). Sale instrumento_stops_level, y el generador falla si difiere de firma_stops_level_puntos.
+> 4. (a). Los 228 instantes juntos de calendario(), en segundos UTC, con `cubre` y su fuente.
+> 5. (a). Si el enum o los arrays const globales no compilan en MQL5, PARADA.
+> 6. (a), con un añadido por A1. El golden v2 va con el hash fijo de prueba, como propones. Además, el script de pruebas escribe un fichero aparte, fuera de --golden (comparar_con_golden solo recorre los del golden, compilar.py:192-201), con una línea v2 escrita por JournalLinea con el CAPA_HASH real de Generado.mqh. compilar.py pruebas lo valida como v2 y comprueba que su capa_hash es igual al recalculado desde el Generado.mqh del repo; si no lo es, falla. Ese paso lleva su test en Python, roto a propósito en los dos sentidos (hash distinto y fichero ausente). La salida de la corrida va a los anexos, con su sha256.
+> 7. No aplica: la demo sale de la rama (A1 y A2). No arranques el terminal con la cuenta vencida.
+> 8. (a). Un solo capa_hash. Línea para el cierre: en F28, lo de prop_firm viajará también en risk_hash, y esa rama dice si capa_hash sigue.
+>
+> C. Lo demás de la fase 0.
+> - La fila de HOLDOUT-EXPOSICIONES de la apertura y la ampliación del contrato, bien.
+> - lote_si_no_cabe CONFIRMED frente a ADR-0082:53, que lo da por DEFAULT_AMBIGUOUS: déjalo en el informe como línea para el cierre; aquí no se toca el ADR.
+> - El matiz de «4 de las 5 últimas ramas son de fidelidad», aceptado: la proporción de RUMBO §6 se cumple igual.
+> - PROJECT_STATE:82, mql5/README.md:2 y ADR-0001:12, como líneas para el cierre, como dices.
+>
+> Sigue con la fase 1 (tests primero, cada uno roto a propósito en los dos sentidos, make check sellado) y la fase 2. PARADA solo si algo no cuadra con esto. Rama lista para revisión, NO cerrada.
+
+`make check` del commit de la fase 0 (`4518e631`): exit 0, 3443 passed, ningún `failed`, SELLO
+sobre el árbol `43793082`. `PICO DE MEMORIA de make check: 311 MiB`.
+
+## Fase 1 (2026-11-12): los tests, y lo que hace falta para que pasen
+
+Aplicada la respuesta punto por punto (B0 a B8). **Desviación declarada:** la fase 1 trae, además de
+los tests, lo de Python que esos tests ejercen: el generador, su salida commiteada, el lector v1/v2
+con su golden v2 y la comprobación del `capa_hash` del script en `compilar.py`. R6a.1 hizo lo mismo:
+un test de un fichero generado no pasa sin el fichero. Lo de MQL5 (Journal.mqh, el EA y el script de
+pruebas) es la fase 2. Los tests se escribieron antes que el fichero: con el generador escrito y sin
+`Generado.mqh`, ocho tests de `test_capa_generada.py` y `test_capa_mt5.py` fallaban, y fallaban solo
+por eso.
+
+Lo que entra:
+
+- `src/botsito/mql5bridge/generar_capa.py`. Lee los 31 parámetros de `ENTRAN` por la puerta del
+  registro: los de `parametros.yaml` y los del perfil, con D2 sobre los nombres comunes (tipo, valor,
+  opciones y estado). Comprueba la pareja de stops level (B3) y los dos relojes en las medianoches de
+  cada día de `cubre` (B0). `reloj_dia_riesgo` tiene que ser `civil_operativa`, y un parámetro
+  `UNKNOWN` hace fallar. Escribe constantes `const` y un `enum` de MQL5 por parámetro enum y otro
+  para los estados (B5); el calendario va como los 228 instantes juntos en segundos UTC, con
+  `cubre` y su fuente (B4). Ni `#define` ni variables. `--comprobar` no escribe y sale con 1 si el
+  fichero difiere.
+- `mql5/Include/Botsito/Capa/Generado.mqh`, escrito por Aleks con «!» (abajo):
+  `capa_hash 8d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601`.
+- `journal.py`, v1 y v2: en v2, `capa_hash` es un hash de 64 hexadecimales en todas las líneas; cada
+  fichero se lee por la versión que declara y una llamada que mezcla versiones se rechaza. El golden
+  v1 queda congelado y el v2 está en `tests/golden/journal_v2/`, generado desde el v1 con el hash
+  fijo de prueba por `anexos/CAPA-GENERADA/fase1/generar_golden_v2.py` (B6). Hashes finales:
+  continua `828b6d6f…54aee`, rota `54f31263…4a31f`.
+- `compilar.py pruebas --repo`: valida `capa/capa_hash.jsonl` como v2 y comprueba que su
+  `capa_hash` es el recalculado desde el `Generado.mqh` del índice. Falla si no lo es o si falta el
+  fichero, y da el sha256 de cada fichero de la salida (B6, el añadido).
+- `mql5/JOURNAL.md`, formatos v1 y v2; `tests/golden/README.md`.
+- `test_perfil_cuenta.py`: el cruce entre el perfil y el registro compara también el estado (un
+  `DEFAULT_AMBIGUOUS` no es un `CONFIRMED`).
+- `test_capa_mt5.py`: `Generado.mqh` entra en la lista de la capa y se exime de la prohibición de
+  cifras y nombres solo si es byte a byte lo que da el generador.
+- `Tests Currently Passing`: de 2017 a 2039 funciones de test.
+
+### Cada comprobación, rota a propósito
+
+En los dos sentidos: cada test tiene su caso que pasa y su caso que falla (sobre una copia de los
+yaml en `tmp_path`, nunca sobre el repo). Y además se rompió el código o el fichero real, uno a uno;
+después se restauró cada fichero desde su copia en la carpeta de trabajo de la sesión, `diff -q` dio
+igual y los 69 tests de los cinco ficheros pasaron.
+
+| Rotura | Lo que falló |
+|---|---|
+| 1. Un valor de `Generado.mqh` editado a mano (5.0 → 5.5) | `test_regenerar_no_da_diff`, `test_la_copia_de_los_yaml_da_lo_mismo_y_un_valor_cambiado_no`, `test_la_orden_comprobar_no_escribe_y_dice_si_difiere`, `test_el_hash_se_recalcula_por_su_cuenta`, `test_la_capa_no_lleva_decimales_ni_nombres_fuera_de_lo_generado` |
+| 2. El `CAPA_HASH` de `Generado.mqh` cambiado (un dígito) | los mismos cinco |
+| 3. La comprobación de los relojes, desactivada | `test_los_dos_relojes_tienen_que_dar_la_misma_medianoche` |
+| 4. La de la pareja de stops level, desactivada | `test_la_pareja_de_stops_level_tiene_que_coincidir` |
+| 5. La del `capa_hash` hexadecimal en v2, desactivada | `test_en_v2_capa_hash_es_un_hash_y_las_demas_reservadas_null` |
+| 6. La comparación con el hash del repo en `compilar.py`, desactivada | `test_el_capa_hash_del_script_en_los_dos_sentidos` |
+| 7. El rechazo de la cadena mixta, desactivado | `test_cada_fichero_se_lee_por_su_version_y_no_hay_cadena_mixta` |
+| 8. El fichero ausente en `compilar.py` da `[]` | `test_el_capa_hash_del_script_en_los_dos_sentidos` |
+
+### La guardia
+
+- **PARADA, y Aleks con «!».** La guardia negó `uv run python src/botsito/mql5bridge/generar_capa.py
+  …`, porque la ruta `// CAPA_HASH = SHA-256 de este fichero sin su linea (…)` no se puede canonizar.
+  Un guion nuevo se lee como código sin revisar, y la guardia tomó por ruta de red un texto suyo que
+  empieza por `//`: los comentarios de MQL5 que escribe en la cabecera. Es un falso positivo. No lo
+  rodeé: lo lanzó Aleks con «!» desde la raíz y escribió solo `Generado.mqh`. Va a la deuda de la
+  guardia (letra K): un literal de texto que empieza por `//` no es una ruta.
+- **`cmp`, negado.** «La guardia no sabe con qué se ejecuta» el primer fichero. Lee `cmp a b` como si
+  ejecutara `a`, y es un falso positivo de la misma deuda. Comprobé la restauración con `diff -q`,
+  que la guardia deja, sin tocar el comando negado.
+- **Una asignación `O=…` mía**, negada por la lista cerrada de nombres de entorno. No es un fallo de
+  la guardia: rescribí el comando sin la variable, que es la forma que ella propone.
+
 ## Estado
 
-EN CURSO: fase 0 hecha, en PARADA (espera la respuesta del consultor).
+EN CURSO: fase 1 hecha (falta su commit sellado); después, la fase 2.

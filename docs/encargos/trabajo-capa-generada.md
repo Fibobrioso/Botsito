@@ -71,3 +71,37 @@ Dado por Aleks (consultor) el 2026-11-12, en un solo mensaje. Copiado tal cual:
 > La rama toca mql5/ y src/: push como fix/capa-generada, con la forma de RITUAL.md (git push origin trabajo/capa-generada:refs/heads/fix/capa-generada), y CI de Linux con su run en el informe. El único fallo aceptado es el de state check por el nombre fix/.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Cambio del consultor (2026-11-12, respuesta a la PARADA de la fase 0)
+
+Dado por Aleks (consultor) el 2026-11-12, en un solo mensaje. Copiado tal cual (el mensaje habla de «los puntos A a E»; trae A, B y C):
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/capa-generada (2026-11-12). Cópiala tal cual al informe (CAPA-GENERADA.md, «Respuesta a la PARADA») y al final de docs/encargos/trabajo-capa-generada.md, bajo «Cambio del consultor» (los puntos A a E). Donde choque con el encargo, manda esto. Aplícala punto por punto.
+>
+> A. Cambio de calendario y de alcance (Aleks fija la sesión 7a para el domingo 15 de noviembre; su ingesta no puede abrirse con esta rama abierta).
+> A1. Sin demo ni prueba nueva de FTMO: la fase 3 sale del encargo y no me pides crear ninguna prueba. «El hash está en el journal» se comprueba con el script de pruebas, que corre sin conexión (EA-CONEXION.md, hacia :100). Es una lectura mía del «Hecho cuando» de R6a.2: decláralo como desviación decidida por el consultor.
+> A2. La corrida en la demo pasa a R6a.8, que ya necesita la demo una semana. Para el commit del contrato prepara: (i) la línea de R6a.8 en la hoja, que dice que su journal en la demo es v2 y comprueba que capa_hash coincide con el del repo en el tag vigente; (ii) la línea de Estado de R6a.2, que dice que el hash se comprobó con el script de pruebas y que la demo queda para R6a.8.
+> A3. El procedimiento de docs/runbooks/DEMO-FTMO.md se escribe igual, para R6a.8, incluido mover el journal v1 fuera de MQL5/Files antes del primer arranque v2.
+> A4. Calendario: fases 1 y 2 hoy y mañana viernes; revisor y «Rama lista para revisión, NO cerrada» el sábado 14. Si no cabe, PARADA con lo que recortarías.
+> A5. Si el domingo, con la grabación hecha, la rama no está para cerrar, PARADA y decido yo; no abras nada más.
+>
+> B. Las nueve decisiones.
+> 0. (a). Entra firma_huso_corte; huso_operativa queda fuera. El generador comprueba, como ADR-0053 §4, que los dos dan los mismos instantes en la medianoche de cada día de `cubre`, y falla si no. Por qué: es el reloj que ya usa el simulador, y reloj_dia_riesgo: civil_operativa es la medianoche en huso_operativa (ADR-0027, citado en ADR-0053 §4), así que la capa la resuelve con firma_huso_corte bajo esa misma comprobación. Línea para la hoja, en R6a.4: «reloj_dia_riesgo se resuelve con firma_huso_corte, comprobado contra huso_operativa al generar (ADR-0053 §4); cómo pasa MQL5 un nombre IANA a instantes lo decide esta rama». D2 queda corregida así: un error del consultor, para la fila de ERRORES-RECURRENTES.
+> 1. (a). cierre_pendientes, fuera: qué hace la capa con una pendiente al abrir la ventana lo decide R6a.5 con A-55, y entrar entonces es regenerar.
+> 2. (a). Fuera lo que no lee ninguna pieza, por la regla de D1.
+> 3. (a). Sale instrumento_stops_level, y el generador falla si difiere de firma_stops_level_puntos.
+> 4. (a). Los 228 instantes juntos de calendario(), en segundos UTC, con `cubre` y su fuente.
+> 5. (a). Si el enum o los arrays const globales no compilan en MQL5, PARADA.
+> 6. (a), con un añadido por A1. El golden v2 va con el hash fijo de prueba, como propones. Además, el script de pruebas escribe un fichero aparte, fuera de --golden (comparar_con_golden solo recorre los del golden, compilar.py:192-201), con una línea v2 escrita por JournalLinea con el CAPA_HASH real de Generado.mqh. compilar.py pruebas lo valida como v2 y comprueba que su capa_hash es igual al recalculado desde el Generado.mqh del repo; si no lo es, falla. Ese paso lleva su test en Python, roto a propósito en los dos sentidos (hash distinto y fichero ausente). La salida de la corrida va a los anexos, con su sha256.
+> 7. No aplica: la demo sale de la rama (A1 y A2). No arranques el terminal con la cuenta vencida.
+> 8. (a). Un solo capa_hash. Línea para el cierre: en F28, lo de prop_firm viajará también en risk_hash, y esa rama dice si capa_hash sigue.
+>
+> C. Lo demás de la fase 0.
+> - La fila de HOLDOUT-EXPOSICIONES de la apertura y la ampliación del contrato, bien.
+> - lote_si_no_cabe CONFIRMED frente a ADR-0082:53, que lo da por DEFAULT_AMBIGUOUS: déjalo en el informe como línea para el cierre; aquí no se toca el ADR.
+> - El matiz de «4 de las 5 últimas ramas son de fidelidad», aceptado: la proporción de RUMBO §6 se cumple igual.
+> - PROJECT_STATE:82, mql5/README.md:2 y ADR-0001:12, como líneas para el cierre, como dices.
+>
+> Sigue con la fase 1 (tests primero, cada uno roto a propósito en los dos sentidos, make check sellado) y la fase 2. PARADA solo si algo no cuadra con esto. Rama lista para revisión, NO cerrada.

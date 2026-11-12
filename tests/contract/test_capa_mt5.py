@@ -13,7 +13,9 @@ MetaTrader.
   `INIT_FAILED`; y hay exactamente otra llamada, con el modo leido al conectar, cuyo bloque hace
   `ExpertRemove()`.
 - D2g: en el codigo de la capa no hay cifras con decimales, ni nombres de instrumento ni de firma, y
-  los `#define` son solo los del formato y la version (`DEFINES_PERMITIDOS`, mql5/JOURNAL.md).
+  los `#define` son solo los del formato y la version (`DEFINES_PERMITIDOS`, mql5/JOURNAL.md). Desde
+  R6a.2 (trabajo/capa-generada, D8), `Generado.mqh` puede llevarlos solo si es, byte a byte, lo que
+  da `mql5bridge/generar_capa.py`, que el propio test regenera en memoria. Los enteros no se miran.
 - D2b y D2c tras un cambio de simbolo: cada global del EA y de sus includes se pone a su valor
   inicial en `OnInit` o en una funcion a la que `OnInit` llame (`globales_sin_reiniciar`; el defecto
   medido en la demo del 2026-10-20, EA-CONEXION.md fase 3).
@@ -29,7 +31,10 @@ from pathlib import Path
 
 import pytest
 
+from botsito.mql5bridge.generar_capa import generar
+
 RAIZ = Path(__file__).resolve().parents[2]
+PERFIL = "ftmo-2step-swing-100k"
 # La capa: las grafias exactas, porque la CI es Linux (ERRORES-RECURRENTES.md).
 CARPETAS_DE_LA_CAPA = ("mql5/Experts", "mql5/Include/Botsito", "mql5/Scripts")
 MEDIR = RAIZ / "tools" / "mql5" / "MedirDemoFTMO.mq5"
@@ -264,11 +269,26 @@ def globales_sin_reiniciar(src_ea: str, src_includes: str) -> list[str]:
 
 
 def cifras_y_nombres(src: str) -> list[str]:
-    """D2g: decimales, instrumentos o firmas en el codigo, y `#define` fuera de la lista."""
+    """D2g: decimales, instrumentos o firmas en el codigo, y `#define` fuera de la lista. No mira
+    los enteros (`int n = 32;` pasa): declarado en R6a.1 (a6) y en R6a.2 (D8)."""
     codigo = sin_comentarios(src)
     malos = re.findall(r"(?<![\w.])\d+\.\d*(?:[eE][-+]?\d+)?|(?<![\w.])\.\d+", sin_textos(codigo))
     malos += TEXTOS_PROHIBIDOS.findall(codigo)
     malos += [d for d in re.findall(r"#define\s+(\w+)", codigo) if d not in DEFINES_PERMITIDOS]
+    return malos
+
+
+def cifras_y_nombres_de_la_capa(capa: dict[str, str], generado: bytes) -> list[str]:
+    """`cifras_y_nombres` de cada fichero de la capa, salvo `Generado.mqh` cuando sus bytes son
+    EXACTAMENTE `generado` (lo que da el generador, regenerado por quien llama). Si difiere, se le
+    aplica como a cualquier otro y ademas se dice (D8 de R6a.2; herencia a6 de EA-CONEXION.md)."""
+    malos = []
+    for nombre, texto in capa.items():
+        if nombre == GENERADO:
+            if texto.encode("utf-8") == generado:
+                continue
+            malos.append(f"{nombre}: no es lo que da el generador")
+        malos += [f"{nombre}: {m}" for m in cifras_y_nombres(texto)]
     return malos
 
 
@@ -411,6 +431,27 @@ def test_cifras_y_nombres_en_los_dos_sentidos() -> None:
         assert cifras_y_nombres(bueno) == [], bueno
 
 
+GENERADO_EJEMPLO = b'const double P_X = 0.01;\nconst string P_S = "EURUSD";\n'
+
+
+def test_lo_generado_se_exime_solo_si_es_identico_en_los_dos_sentidos() -> None:
+    bueno = {EA: EA_BUENO, GENERADO: GENERADO_EJEMPLO.decode()}
+    # identico a lo que da el generador: sus decimales y nombres no cuentan
+    assert cifras_y_nombres_de_la_capa(bueno, GENERADO_EJEMPLO) == []
+    # un byte distinto: no se exime, y lo dice
+    otro = GENERADO_EJEMPLO.replace(b"0.01", b"0.02")
+    malos = cifras_y_nombres_de_la_capa(bueno, otro)
+    assert any("no es lo que da el generador" in m for m in malos)
+    assert any("0.01" in m for m in malos) and any("EURUSD" in m for m in malos)
+    # un decimal o un nombre en OTRO fichero no pasa aunque lo generado sea identico
+    for malo in ("double lote = 0.01;", 'string f = "FTMO";'):
+        con = {**bueno, "mql5/Include/Botsito/Capa/Otra.mqh": malo}
+        assert cifras_y_nombres_de_la_capa(con, GENERADO_EJEMPLO) != [], malo
+    # el mismo texto con otro nombre de fichero no se exime
+    renombrado = {EA: EA_BUENO, "mql5/Include/Botsito/Capa/Copia.mqh": GENERADO_EJEMPLO.decode()}
+    assert cifras_y_nombres_de_la_capa(renombrado, GENERADO_EJEMPLO) != []
+
+
 EA_CON_GLOBALES = """
 datetime g_ultimo = 0;
 bool     g_leida = false;
@@ -503,8 +544,10 @@ def test_la_segunda_llamada_puede_ir_antes_en_el_fichero() -> None:
 # --- la capa de verdad ---------------------------------------------------------------------------
 
 EA = "mql5/Experts/Botsito.mq5"
+GENERADO = "mql5/Include/Botsito/Capa/Generado.mqh"  # R6a.2: lo genera mql5bridge/generar_capa.py
 LA_CAPA = {
     EA,
+    GENERADO,
     "mql5/Include/Botsito/Capa/Cuenta.mqh",
     "mql5/Include/Botsito/Capa/Journal.mqh",
     "mql5/Include/Botsito/Capa/Reloj.mqh",
@@ -523,9 +566,10 @@ def _capa() -> dict[str, str]:
     return {p.relative_to(RAIZ).as_posix(): p.read_bytes().decode("utf-8") for p in ficheros}
 
 
-def test_la_capa_son_los_ficheros_de_r6a1() -> None:
+def test_la_capa_son_los_ficheros_de_la_lista() -> None:
     """Si aparece otro fichero, este test lo nombra: las comprobaciones de abajo lo cubren igual,
-    pero la lista se amplia a mano, para que nadie anada capa sin mirarla."""
+    pero la lista se amplia a mano, para que nadie anada capa sin mirarla. (Hasta R6a.2 se llamaba
+    `test_la_capa_son_los_ficheros_de_r6a1`; con `Generado.mqh` ya no lo son.)"""
     assert set(_capa()) == LA_CAPA
 
 
@@ -547,9 +591,12 @@ def test_el_ea_reinicia_sus_globales_en_oninit() -> None:
     assert globales_sin_reiniciar(capa[EA], includes) == []
 
 
-def test_la_capa_no_lleva_cifras_ni_nombres_a_mano() -> None:
-    for nombre, texto in _capa().items():
-        assert cifras_y_nombres(texto) == [], nombre
+def test_la_capa_no_lleva_decimales_ni_nombres_fuera_de_lo_generado() -> None:
+    """D2g de R6a.1 y D8 de R6a.2. Hasta R6a.2 se llamaba
+    `test_la_capa_no_lleva_cifras_ni_nombres_a_mano`, que prometia mas de lo que comprobaba (a6 del
+    revisor de R6a.1): mira decimales, cinco nombres y los `#define`, NO los enteros. Lo generado
+    puede llevar decimales y esos nombres solo si es, byte a byte, lo que da el generador hoy."""
+    assert cifras_y_nombres_de_la_capa(_capa(), generar(RAIZ, PERFIL)) == []
 
 
 def test_la_capa_es_utf8_sin_bom_y_lf() -> None:

@@ -16,7 +16,7 @@ trabajo/capa-generada, EN CURSO (R6a.2, tramo R6a; ADR-0082 D5): lo que la capa 
 7d3002c8 · merge: trabajo/laminas-motivos, la causa de cada gate de las laminas sale de la rama que dispara, y las laminas de la 7a v2 · tag stable/F38y-laminas-motivos
 
 ## Tests Currently Passing
-2017 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2039 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

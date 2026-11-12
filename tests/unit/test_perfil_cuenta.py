@@ -8,6 +8,7 @@ se prueba en `test_cuenta.py`."""
 from __future__ import annotations
 
 import re
+from dataclasses import replace
 from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from pathlib import Path
@@ -15,7 +16,7 @@ from pathlib import Path
 import pytest
 
 from botsito.comun.husos import huso_canonico
-from botsito.config.registro import cargar_registro
+from botsito.config.registro import Estado, Parametro, cargar_registro
 from botsito.engine.perfil_cuenta import (
     FASES,
     HUSO_CORTE,
@@ -106,18 +107,38 @@ def test_con_el_stops_level_unknown_puntos_o_nada_da_none(tmp_path: Path) -> Non
 def test_un_nombre_que_coincide_con_parametros_yaml_lleva_el_mismo_valor(
     ftmo: PerfilCuenta,
 ) -> None:
-    """Precedente ADR-0012 §1: dos listas con lo mismo se cruzan para que no se separen."""
+    """Precedente ADR-0012 §1: dos listas con lo mismo se cruzan para que no se separen. Desde
+    trabajo/capa-generada (D2), tambien el estado: el EA recibe un nombre una sola vez, con su
+    estado, y un DEFAULT_AMBIGUOUS no puede leerse como CONFIRMED."""
     registro = cargar_registro(REGISTRO)
     comunes = sorted(set(ftmo.registro.parametros) & set(registro.parametros))
     assert len(comunes) >= 8, comunes
+    assert distintos_entre(ftmo.registro.parametros, registro.parametros, comunes) == []
+
+
+def distintos_entre(
+    perfil: dict[str, Parametro], registro: dict[str, Parametro], nombres: list[str]
+) -> list[str]:
     distintos = []
-    for n in comunes:
-        a, b = ftmo.registro.parametros[n], registro.parametros[n]
-        if (a.tipo, a.valor, a.opciones) != (b.tipo, b.valor, b.opciones):
+    for n in nombres:
+        a, b = perfil[n], registro[n]
+        if (a.tipo, a.valor, a.opciones, a.estado) != (b.tipo, b.valor, b.opciones, b.estado):
             distintos.append(
-                f"{n}: perfil {a.valor!r}/{a.tipo} frente a registro {b.valor!r}/{b.tipo}"
+                f"{n}: perfil {a.valor!r}/{a.tipo}/{a.estado} frente a registro "
+                f"{b.valor!r}/{b.tipo}/{b.estado}"
             )
-    assert distintos == [], distintos
+    return distintos
+
+
+def test_el_cruce_caza_un_estado_distinto(ftmo: PerfilCuenta) -> None:
+    """El cruce de arriba, roto a proposito: el mismo valor con otro estado no pasa."""
+    registro = cargar_registro(REGISTRO)
+    n = "saldo_inicial_cuenta"
+    otro = {
+        n: replace(registro.parametros[n], estado=Estado.DEFAULT_AMBIGUOUS, ambiguedad_id="A-1")
+    }
+    assert distintos_entre(ftmo.registro.parametros, registro.parametros, [n]) == []
+    assert distintos_entre(ftmo.registro.parametros, otro, [n]) != []
 
 
 def test_el_reloj_de_corte_de_ftmo_coincide_hoy_con_el_del_trader(ftmo: PerfilCuenta) -> None:
