@@ -347,6 +347,44 @@ RN-020, como en el motor. Lo que comprueba no cambia.
 Los tests de láminas (`test_laminas.py`, `test_laminas_svg.py`, `test_laminas_registro.py`) y
 `test_adr.py` pasan en la rama. `Tests Currently Passing` pasa de 2008 a 2017 funciones (+9).
 
+## F2 · Las láminas de la 7a, regeneradas
+
+La fila de exposiciones se escribió antes de lanzar nada. La orden, con las seis sesiones en el
+orden de `clave.txt` de `laminas-sesion-7a` (no se escribe aquí):
+`uv run botsito motor laminas --sesiones <las seis, en su orden> --salida <carpeta>`.
+`motor laminas` solo escribe en `--salida` (`laminas.escribir`, `laminas.py:1425-1432`).
+
+1. **Ensayo** en un clon desechable del commit `b735dc2b`
+   (`git worktree add --detach C:/cmlm/rama HEAD`, con su `config/settings.local.toml` apuntando al
+   `data/` real). La salida fue a la carpeta de trabajo de la sesión, y la corrida salió con 0 en
+   465 s, con un pico de 644 MiB. La base, con el recolector y sin él, dio la misma tupla
+   `(31, 192, 24, 1150, 0, 32, 0)`: el recolector sigue sin cambiar lo que decide el motor. Salieron
+   las mismas 38 láminas por carpeta que la v1 (6, 5, 4, 9, 4 y 10). El clon se quitó con
+   `git worktree remove --force` (llevaba su `settings.local.toml` sin seguir) y
+   `git worktree prune`.
+2. **La v2** desde el repo, a `C:\Users\USER\Desktop\laminas-sesion-7a-v2`, que no existía antes.
+   Salió con 0 en 463 s, con un pico de 643 MiB y los mismos recuentos.
+
+**v1 frente a v2**, fichero a fichero con sha256, con un guion de la carpeta de trabajo que no
+imprime `clave.txt`:
+
+| Qué | Resultado |
+|---|---|
+| `clave.txt` | idéntica (comparada por hash, sin imprimirla) |
+| Ficheros, sin `clave.txt` | 44 en v1 y 44 en v2; ninguno solo en un lado |
+| Idénticos byte a byte | **42**: los seis `indice.html` y 36 de las 38 láminas |
+| Distintos | **2**: `sesion-06/lamina-09.html` y `sesion-06/lamina-10.html` |
+| Qué cambia en cada una | una sola línea **quitada**, `<li>Iba a colocar la orden y no la coloca: está fuera de la ventana de la sesión.</li>` (diff `-1010 +1009,0` y `-1072 +1071,0`); nada más |
+
+Es exactamente lo que se esperaba en 0.4, así que no se para. Recuentos en la v2, con `grep` de
+los HTML:
+- «fuera de la ventana de la sesión»: en **0** láminas (en la v1 eran 2);
+- causas de gate: **16** líneas (en la v1 eran 18);
+- causas dichas como duda: **0**.
+
+El ensayo y la v2 dan la misma comparación. Ninguna foto de las seis sesiones dio `LaminaError`
+con el arreglo.
+
 ## Estado
 
-EN CURSO: F1 y F3 hechos; ahora F2 (el ensayo en un clon desechable y la v2).
+EN CURSO: F1, F2 y F3 hechos; queda el revisor y la PARADA final.
