@@ -57,6 +57,10 @@ dibujar la operación del trader.
 - Un día que no sea dev de construcción, uno de `casos_ocultos`, una sesión con una hora perdida
   dentro, un corte fuera de los tramos de `cobertura_material` (abril, hasta el 29) o una causa sin
   frase en la tabla cerrada: error que lo nombra, y no se escribe nada.
+  > **Nota del 2026-11-12 (`trabajo/laminas-motivos`):** la causa de un gate sale de la rama que
+  > disparó (`docs/validation/LAMINAS-MOTIVOS.md`), y hay dos `LaminaError` nuevos que tampoco
+  > escriben nada: la rama no identificada («dispara y no se sabe por que rama») y el hecho sin
+  > origen conocido («no se sabe que regla encendio ...»).
 - Lo que no es vela se dibuja si nace dentro de la ventana del panel MÁS ANCHO en que se dibuja, y
   en los más estrechos entra desde el borde izquierdo (una línea de M15 nacida antes de la ventana
   de M1 sale en el M1 desde su borde). Lo que nace antes de esa ventana (la H4 que fija el sesgo,

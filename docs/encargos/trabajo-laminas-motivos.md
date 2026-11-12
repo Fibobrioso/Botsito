@@ -67,3 +67,28 @@ Copiada tal cual:
 > Sigue sin parar con F1, F2 y F3 y la PARADA condicional: solo paras si v2 cambia algo más que la línea de RN-001 de sesion-06/09 y sesion-06/10, si una foto de las seis sesiones da LaminaError con el arreglo, o si una guardia niega algo legítimo. Después, el revisor con sus cuatro alcances más uno: que el recuadro de ADR-0093 diga lo del punto 3 sin añadir ni quitar. Luego, la PARADA final con la ruta de C:\Users\USER\Desktop\laminas-sesion-7a-v2 y las líneas de cierre.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA final y orden de cierre (2026-11-12)
+
+> Modelo: Opus 5.5 · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA final de trabajo/laminas-motivos y orden de cierre (2026-11-12). Cópiala tal cual al final del informe, con su fecha.
+>
+> PRIMERO, un commit más en la rama, con su make check sellado:
+> 1. PARADA 2: la (c). Un recuadro de corrección fechado en docs/validation/LAMINAS.md, junto a su tabla (hacia :108 y :139): la frase de RN-001 nombraba una sola rama, y desde trabajo/laminas-motivos la causa sale de la rama que disparó (LAMINAS-MOTIVOS.md). El cuerpo no se toca. Y una nota en docs/runbooks/LAMINAS.md (hacia :58-59) que remita a LAMINAS-MOTIVOS.md y nombre los LaminaError nuevos (rama no identificada; hecho sin origen conocido). El contrato se amplía a esos dos ficheros. El error de la ruta fue del consultor (abajo).
+> 2. b1 se acepta como desviación declarada, sin arreglarlo aquí: calla una causa cierta, pero no dice una falsa. Lo que no te convence (el LaminaError cuando RN-004 abre escenario en el mismo cierre en que RN-016 o RN-001 disparan por los intentos) también. Los dos van al encargo de la rama de activación de la 7a, que es la que genera las láminas de la 7b: medirá si alguna lámina de la 7b los encuentra y, si pasa, los arreglará allí, con ADR si toca el motor. No entra nada en PROJECT_STATE: lo lleva el consultor.
+> 3. Sin CI de Linux: aceptado, la rama no toca la plataforma.
+>
+> DESPUÉS, EL CIERRE (cuando yo escriba /cerrar-rama trabajo/laminas-motivos; antes no):
+> - Tag: stable/F38y-laminas-motivos.
+> - En el commit chore(cierre), en la rama:
+>   · sale contrato.yaml;
+>   · entra el registro en HISTORIA, con stable/F38y-laminas-motivos^{commit}, el número de commits de la rama y sus filas de HOLDOUT-EXPOSICIONES (la del 2026-11-11, escrita pasada la medianoche, como desviación aceptada);
+>   · entra la fila de ERRORES-RECURRENTES;
+>   · en HOJA-DE-RUTA, la frase de R4.5 que remite a LAMINAS-MOTIVOS.md, comprobada otra vez con problemas_a a problemas_d sobre el árbol real.
+>   La Next Action no cambia.
+> - El resto, como manda RITUAL.md con la skill cerrar-rama: merge, tag, commit de estado (solo Current Branch, Current Feature, Stable Main State y Last Stable Commit), make check sellado, push atómico de main y el tag (lo confirmo con «1. Yes»), CI de main en verde y, después, borrar la rama local.
+> - Fila de ERRORES-RECURRENTES. El revisor: 0 bloquea, 5 importa y 3 menores, todos corregidos o declarados. Hallazgo del consultor que no vio el revisor de trabajo/laminas: importa, el de tu informe y del encargo (frases de RN-001, RN-020 y RN-029 de una sola rama; gates dudosos dichos como ciertos), con su lección para el revisor. Errores del consultor que llegaron a esta rama: 2, menores (consultor en Opus 5.5):
+>   · en la orden de cierre de F38x dijo que en el cierre de trabajo/laminas la F anterior se pasó a HISTORIA, y no fue así. Lección: un precedente que se cita en una orden se lee antes;
+>   · en la respuesta a la PARADA de la fase 0, punto 5, escribió «docs/runbooks/LAMINAS.md» por «docs/validation/LAMINAS.md». Lección: un fichero se nombra con la ruta que da quien lo encontró, no de memoria.
+> - Informe final: sha de main, tag, run de la CI de main, ramas que quedan, tamaño de PROJECT_STATE y número de commits de la rama.

@@ -8,7 +8,8 @@ rutas_permitidas:
   - tests/unit/test_laminas_registro.py
   - tests/unit/test_laminas_svg.py  # respuesta a la PARADA de la fase 0, punto 1
   - docs/adr/0093-*.md  # punto 3: solo el recuadro de §2
-  - docs/runbooks/LAMINAS.md
+  - docs/runbooks/LAMINAS.md  # respuesta a la PARADA final, punto 1: la nota de :58-59
+  - docs/validation/LAMINAS.md  # respuesta a la PARADA final, punto 1: solo el recuadro de correccion
   - docs/sesion-7/PREGUNTAS-7A.md
   - docs/validation/LAMINAS-MOTIVOS.md
   - docs/validation/anexos/LAMINAS-MOTIVOS/
@@ -36,7 +37,6 @@ rutas_protegidas:
   - docs/plan/HOJA-DE-RUTA.md
   - docs/sesion-7/PREGUNTAS-7B.md
   - docs/plan/PIVOTES-SESION-7.yaml
-  - docs/validation/LAMINAS.md
   - docs/validation/anexos/LAMINAS/
   - docs/validation/PREPARACION-SESION-7.md
 comprobaciones:
