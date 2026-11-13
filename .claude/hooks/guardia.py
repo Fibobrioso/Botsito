@@ -4948,14 +4948,22 @@ def analizar_codigo(
         if lit.lower().startswith("file:"):  # la ruta de una URL `file:` (C; GUARDIA-ALIAS b7)
             _exigir_ruta_del_codigo(lit, ctx, recorre, "nombra la URL de")
             continue
-        if _comentario_que_no_es_ruta(lit):  # F1 (`trabajo/guardia-falsos-positivos`, D1d)
-            # Solo se exime leer su CABEZA como ruta de red: cada sufijo tras un separador se mira
-            # con las comprobaciones de siempre (respuesta a la PARADA 2, punto 1). No suma a
-            # `directorios`: la regla de abajo no se debilita por un trozo de un comentario.
-            for sufijo in _sufijos_tras_separador(lit):
-                _mirar_literal(sufijo, lit, ctx, recorre)
-            continue
-        directorios += _mirar_literal(lit, lit, ctx, recorre)
+        ruta = _absoluta(lit, ctx.cwd)
+        es_dir = os.path.isdir(ruta)
+        directorios += es_dir
+        motivo = ctx.politica.motivo_fichero(ruta)
+        if motivo:
+            raise BloqueoError(f"el codigo nombra {lit}.\nRegla: {motivo}.")
+        if es_dir:
+            # Un directorio que el codigo recorre se mira entero; uno que solo nombra, si esta
+            # dentro de una zona con material protegido: lo que se abra bajo el no se sabe.
+            motivo = ctx.politica.motivo_ruta(ruta, recursivo=recorre)
+        if motivo:
+            raise BloqueoError(
+                f"el codigo nombra la carpeta {lit}, que contiene material protegido, y no se "
+                f"puede decidir que abrira dentro.\nRegla: {motivo}.\nComo reescribirlo: rutas "
+                "LITERALES de ficheros que se puedan leer, o la CLI del proyecto."
+            )
     if recorre and not directorios and any(s in codigo.lower() for s in SENSIBLES):
         raise BloqueoError(
             "el codigo recorre directorios que construye al ejecutarse y nombra material "
@@ -4971,75 +4979,6 @@ def analizar_codigo(
         return  # lo que no se parsea ya lo han mirado las reglas de texto de arriba
     _compone_ruta_sensible(arbol, ctx, recorre, guion)
     _exigir_lo_que_carga(arbol, ctx, guion, vistos)
-
-
-def _mirar_literal(ruta_texto: str, lit: str, ctx: Contexto, recorre: bool) -> bool:
-    """Un literal de un guion (o un sufijo suyo, F1) mirado como ruta: niega si nombra material
-    protegido, o una carpeta que lo contiene; devuelve si es un directorio. `lit` es el literal
-    entero, el que se nombra en el mensaje."""
-    ruta = _absoluta(ruta_texto, ctx.cwd)
-    es_dir = os.path.isdir(ruta)
-    motivo = ctx.politica.motivo_fichero(ruta)
-    if motivo:
-        raise BloqueoError(f"el codigo nombra {lit}.\nRegla: {motivo}.")
-    if es_dir:
-        # Un directorio que el codigo recorre se mira entero; uno que solo nombra, si esta
-        # dentro de una zona con material protegido: lo que se abra bajo el no se sabe.
-        motivo = ctx.politica.motivo_ruta(ruta, recursivo=recorre)
-    if motivo:
-        raise BloqueoError(
-            f"el codigo nombra la carpeta {lit}, que contiene material protegido, y no se "
-            f"puede decidir que abrira dentro.\nRegla: {motivo}.\nComo reescribirlo: rutas "
-            "LITERALES de ficheros que se puedan leer, o la CLI del proyecto."
-        )
-    return es_dir
-
-
-# ------------------------ F1: un comentario no es una ruta (`trabajo/guardia-falsos-positivos`)
-# Por que: en Windows `_sin_prefijos` toma por recurso de otra maquina todo literal que empieza por
-# dos barras y lleva dos separadores mas, y un guion nuevo que ESCRIBE comentarios de MQL5 se negaba
-# entero: «// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md).»
-# y el trozo constante de una f-cadena, «//   uv run python src/botsito/...» (`generar_capa.py`
-# :364 y :359; CAPA-GENERADA.md, «La guardia»). Respuesta del consultor a la PARADA de la fase 0,
-# punto 0 (D1d): en negativo, solo donde nace -los literales de `analizar_codigo`- y solo en
-# Windows (en Linux ese literal ya no cae bajo la raiz), sin tocar `_sin_prefijos`: Read, Grep y los
-# argumentos de Bash siguen igual. Las TRES condiciones a la vez: (1) dos separadores y un espacio o
-# un tabulador; (2) el tramo hasta el siguiente separador, sin blancos a los DOS lados, lleva un
-# blanco dentro -un nombre de maquina no lo lleva: `\\ localhost\C$\...` y `\\ localhost \C$\...`
-# siguen siendo rutas (B1 del revisor; respuesta a la PARADA 2, punto 0)-; (3) ningun fragmento de
-# `SENSIBLES`. La fase 0 midio ocho casos que la condicion (1) sola dejaba pasar (h1-h8). Y lo
-# unico que se exime es la CABEZA: cada sufijo tras un separador se mira como ruta con las
-# comprobaciones de siempre (`_mirar_literal`), porque un recorte al ejecutarse
-# (`"// a b/<fichero protegido>"[7:]`) lee el sufijo (B2 del revisor; PARADA 2, punto 1). Lo que
-# queda, un recorte a mitad de un nombre, es la clase de h1b (`'x' + ruta[1:]`), que ya pasa con la
-# guardia de stable/F38z: limite conocido (GUARDIAS-CLAUDE.md §1.7).
-_COMENTARIO = re.compile(r"[\\/]{2}[ \t]")
-
-
-def _tramo_lleva_blanco(lit: str) -> bool:
-    """Si el tramo de detras de las dos barras, hasta el siguiente separador y sin blancos a los dos
-    lados, lleva un blanco dentro: entonces no puede ser el nombre de una maquina (condicion 2)."""
-    tramo = re.split(r"[\\/]", lit[2:], maxsplit=1)[0].strip(" \t")
-    return re.search(r"[ \t]", tramo) is not None
-
-
-def _sufijos_tras_separador(lit: str) -> list[str]:
-    """Los sufijos de un literal de F1 que empiezan tras cada separador de detras de las dos barras
-    de cabeza (los vacios, no: un literal vacio no es una ruta)."""
-    return [
-        lit[2 + m.end() :] for m in re.finditer(r"[\\/]", lit[2:]) if lit[2 + m.end() :].strip()
-    ]
-
-
-def _comentario_que_no_es_ruta(lit: str) -> bool:
-    """Un literal de un guion que no se mira como ruta (F1): solo en Windows y con las tres
-    condiciones del bloque de arriba."""
-    return (
-        os.name == "nt"
-        and _COMENTARIO.match(lit) is not None
-        and _tramo_lleva_blanco(lit)
-        and not any(s in lit.lower() for s in SENSIBLES)
-    )
 
 
 def _literales(codigo: str, es_python: bool) -> list[str]:

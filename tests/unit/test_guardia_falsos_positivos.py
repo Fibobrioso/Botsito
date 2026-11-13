@@ -1,21 +1,25 @@
-"""F1 y F2: la guardia deja dos cosas legitimas y sigue negando lo que negaba.
+"""F2 entra y F1 se aplaza: la guardia deja `cmp` y sigue negando lo que negaba.
 
-Rama `trabajo/guardia-falsos-positivos` (2026-11-12, docs/validation/GUARDIA-FALSOS-POSITIVOS.md),
-con la respuesta del consultor a la PARADA de la fase 0:
+Rama `trabajo/guardia-falsos-positivos` (2026-11-12 y 13, GUARDIA-FALSOS-POSITIVOS.md), con las
+respuestas del consultor a la PARADA de la fase 0 y a la PARADA 2:
 
-- F1 (solo Windows; punto 0, D1d): un literal de un guion cuyos dos primeros caracteres son
-  separadores seguidos de un espacio o un tabulador NO es una ruta si ademas el tramo hasta el
-  siguiente separador lleva un blanco y el literal no lleva ningun fragmento de `SENSIBLES`. El
-  caso real: los comentarios de MQL5 que escribe `generar_capa.py` (:359 y :364).
+- F1, APLAZADO (respuesta a la PARADA 2, punto 4): la condicion que dejaba pasar los comentarios de
+  MQL5 que escribe `generar_capa.py` (:359 y :364) se probo en tres versiones (D1d; con el tramo
+  sin blancos a los dos lados; con los sufijos mirados) y la segunda pasada del revisor encontro
+  casos que stable/F38z niega y esa condicion dejaba pasar (R1-R4, abajo, medidos). La guardia
+  vuelve a la de stable/F38z para esos literales; los tests de F1 que aseguran que pasa quedan como
+  `xfail` estricto, documentado.
 - F2 (G.6; D2): `cmp` esta en `NO_EJECUTAN` y sus argumentos se miran como una lectura, como los de
   `diff`.
-- Lo que tiene que seguir negado (D3 y h1-h8 de la fase 0), cada caso con su sistema: lo de F1 y
-  los casos con `\\` son de Windows (en Linux `\\` es parte del nombre y `// x` es `/ x`: ya
-  pasaban); lo que sigue negado en los dos va sin marca.
+- Lo que tiene que seguir negado (D3, h1-h8 de la fase 0, B1-B2 de la primera pasada del revisor
+  y R1-R4 de la segunda), cada caso con su sistema: los casos con `\\` y `//` son de Windows (en
+  Linux `\\` es parte del nombre y `// x` es `/ x`: ya pasaban); lo que sigue negado en los dos va
+  sin marca. Se quedan aunque F1 se aplace: son la bateria contra la que se medira una condicion
+  futura.
 - Lo que la guardia de `GUARDIA_DE_REFERENCIA` (`stable/F38z-capa-generada`, en
-  `test_guardia_g1.py`) decidia en F1 y F2, por su motivo: los tests de F1 y F2 rompen contra ella.
-- ROTO A PROPOSITO: cada pieza quitada deja pasar lo que su test asegura negado, o niega lo que
-  asegura que pasa.
+  `test_guardia_g1.py`) decidia en F1, F2 y esos casos, por su motivo.
+- ROTO A PROPOSITO, de F2: sin `cmp` en `NO_EJECUTAN` se niega; con `cmp` sin leer sus argumentos,
+  el protegido pasa. (Los de las piezas de F1 salieron con F1.)
 
 Todo EN MEMORIA, con `decidir`, sobre un repo INVENTADO con ficheros FALSOS donde el material
 protegido; las rutas protegidas a trozos. La fase 0 (la tabla de cinco variantes de D1) esta en
@@ -117,7 +121,10 @@ def _borrar(carpeta: Path) -> None:
 def repo(base: Path) -> Path:
     """El repo inventado de la fase 0: lo de `main`, y en la rama los ficheros NUEVOS que compara
     `cmp` (dos de `docs/` y el nombre con `=` del origen de G.6, ACTIVAR-SESION-06-MOTOR.md:217)."""
-    r = base / "repo"
+    return _crear_repo(base / "repo")
+
+
+def _crear_repo(r: Path) -> Path:
     _escribir(
         r, f"{KC}/kit/s1/particiones.yaml", "asignacion:\n  caso-eurusd-2026-05-04: holdout-1\n"
     )
@@ -185,6 +192,13 @@ def _copia_de_generar_capa(repo: Path) -> str:
     return f"uv run python {rel} --repo . --perfil p"
 
 
+_F1_APLAZADO = pytest.mark.xfail(
+    strict=True,
+    reason="F1, aplazado: ninguna condicion medida aguanta (respuesta a la PARADA 2, punto 4;"
+    " R1-R4 de la segunda pasada del revisor, GUARDIA-FALSOS-POSITIVOS.md)",
+)
+
+
 # -------------------------------------------------------------- F1 (solo Windows: D1d, punto 0)
 def test_el_guion_real_lleva_los_dos_literales() -> None:
     """Los dos literales de F1 son los de `generar_capa.py`, tal cual (fase 0, §a)."""
@@ -193,12 +207,14 @@ def test_el_guion_real_lleva_los_dos_literales() -> None:
     assert LIT_359 in texto
 
 
+@_F1_APLAZADO
 @SOLO_WINDOWS
 def test_f1_la_copia_cambiada_de_generar_capa_pasa(g: ModuleType, repo: Path) -> None:
     motivo = _decide(g, repo, _copia_de_generar_capa(repo))
     assert motivo is None, motivo
 
 
+@_F1_APLAZADO
 @SOLO_WINDOWS
 def test_f1_el_literal_no_llega_a_absoluta_ni_tarda(
     g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
@@ -226,6 +242,7 @@ def test_f1_el_literal_no_llega_a_absoluta_ni_tarda(
     assert segundos < 5
 
 
+@_F1_APLAZADO
 @SOLO_WINDOWS
 @pytest.mark.parametrize(
     "codigo",
@@ -395,6 +412,73 @@ def test_el_residuo_de_f1_es_la_clase_de_h1b(
     assert decisiones[("rama", "h1b")] is None
 
 
+# La segunda pasada del revisor (R1-R4): la cabeza de un literal de F1 es una carpeta de verdad, o
+# la cola es la raiz por el recurso `C$`, y el directorio de trabajo no es la raiz.
+def _r_casos(base: Path, repo: Path) -> dict[str, tuple[str, str]]:
+    """(directorio de trabajo, comando) de R1-R4. `repo` no lleva blancos en su ruta; `base/r b`
+    es otro repo inventado cuya carpeta si lleva uno (R2)."""
+
+    def py_c(codigo: str) -> str:
+        return f'uv run python -c "{codigo}"'
+
+    rglob = "from pathlib import Path; print(list(Path({}).rglob('*')))"
+    raiz_c = B * 2 + " local host" + B + str(repo)[0] + "$" + str(repo)[2:]
+    corte = repr(f"// a b/x//localhost/{str(repo)[0]}$" + repo.as_posix()[2:]) + "[8:]"
+    zona = "estrategia del trader/sesiones/x.txt"
+    walk = "import os; print([r for r, _, _ in os.walk('// r b/knowledge'[3:])])"
+    return {
+        "r1-cd-corpus": (str(repo / ("corp" + "us")), py_c(f"print(open('// {zona}'[3:]).read())")),
+        "r2-cd-padre": (str(base), py_c(walk)),
+        "r3-blanco-dentro-del-nombre": (
+            str(repo),
+            py_c(rglob.format(repr(raiz_c) + ".replace(' ', '', 2)")),
+        ),
+        "r4-recurso-tras-el-corte": (str(repo), py_c(rglob.format(corte))),
+    }
+
+
+@pytest.fixture
+def repos_r(base: Path, repo: Path) -> dict[str, tuple[str, str]]:
+    _crear_repo(base / "r b")
+    _escribir(repo, f"{'corp' + 'us'}/estrategia del trader/sesiones/x.txt", "hoja falsa\n")
+    return _r_casos(base, repo)
+
+
+def _decide_en(g: ModuleType, repo: Path, cwd: str, comando: str) -> str | None:
+    evento: dict[str, Any] = {"tool_name": "Bash", "tool_input": {"command": comando}, "cwd": cwd}
+    motivo: str | None = g.decidir(evento, g.Politica(repo))
+    return motivo
+
+
+R_CASOS = [
+    "r1-cd-corpus",
+    "r2-cd-padre",
+    "r3-blanco-dentro-del-nombre",
+    "r4-recurso-tras-el-corte",
+]
+
+
+@SOLO_WINDOWS
+@pytest.mark.parametrize("caso", R_CASOS)
+def test_r_la_referencia_niega(
+    ref: ModuleType, repo: Path, repos_r: dict[str, tuple[str, str]], caso: str
+) -> None:
+    cwd, comando = repos_r[caso]
+    motivo = _decide_en(ref, repo, cwd, comando)
+    primera = (motivo or "PASA").splitlines()[0].replace(str(repo.parent), "<tmp>")
+    print(f"\nR | F38z | {caso} | {primera.replace(repo.parent.as_posix(), '<tmp>')[:160]}")
+    assert motivo is not None, caso
+
+
+@SOLO_WINDOWS
+@pytest.mark.parametrize("caso", R_CASOS)
+def test_r_siguen_negados(
+    g: ModuleType, repo: Path, repos_r: dict[str, tuple[str, str]], caso: str
+) -> None:
+    cwd, comando = repos_r[caso]
+    assert _decide_en(g, repo, cwd, comando) is not None, caso
+
+
 def test_h3_el_punto_punto_sigue_negado(g: ModuleType, repo: Path) -> None:
     """h3, en los dos sistemas: `// x/../<raiz>/<protegido>` (en Linux `realpath` lo resuelve a la
     raiz; en Windows es un recurso de otra maquina que no se puede canonizar)."""
@@ -490,63 +574,6 @@ def test_la_referencia_niega_f2_por_ejecutar(ref: ModuleType, repo: Path) -> Non
 
 
 # --------------------------------------------------------------------------- ROTO A PROPOSITO
-@SOLO_WINDOWS
-def test_roto_sin_la_clausula_de_sensibles(
-    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """Sin SENSIBLES en la condicion, un recorte a MITAD de nombre de una ruta con fragmento
-    (`"// a b/x<holdout>"[8:]`) pasa: ningun sufijo tras un separador es la ruta protegida, y solo
-    la clausula de SENSIBLES la ve. (Desde la PARADA 2, h1c lo niegan tambien los sufijos.)"""
-    codigo = _abre(repr("// a b/x" + SECRETO) + "[8:]")
-    assert _guion(g, repo, "t/h.py", codigo) is not None
-    monkeypatch.setattr(g, "SENSIBLES", ())
-    assert _guion(g, repo, "t/h.py", codigo) is None
-
-
-@SOLO_WINDOWS
-def test_roto_sin_la_clausula_del_blanco(
-    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """Sin el blanco interior, la raiz como recurso de la propia maquina pasa (h7 y h8)."""
-    monkeypatch.setattr(g, "_tramo_lleva_blanco", lambda lit: True)
-    for caso in ("h7-raiz-recorre", "h8-raiz-sin-recorrer"):
-        assert _guion(g, repo, "t/h.py", _h_windows(repo)[caso]) is None, caso
-
-
-@SOLO_WINDOWS
-def test_roto_sin_la_condicion_entera(
-    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """Sin `_comentario_que_no_es_ruta`, F1 vuelve a negarse (lo de la referencia)."""
-    monkeypatch.setattr(g, "_comentario_que_no_es_ruta", lambda lit: False)
-    motivo = _decide(g, repo, _copia_de_generar_capa(repo))
-    assert motivo is not None and "no se puede canonizar" in motivo
-
-
-@SOLO_WINDOWS
-def test_roto_sin_los_sufijos(g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
-    """Sin mirar los sufijos de un literal de F1, B2 pasa (PARADA 2, punto 1)."""
-    _con_oculto(repo)
-    monkeypatch.setattr(g, "_sufijos_tras_separador", lambda lit: [])
-    assert _guion(g, repo, "t/rev.py", _revisor(repo)["b2-oculto-sin-fragmento"]) is None
-
-
-@SOLO_WINDOWS
-def test_roto_el_tramo_sin_quitar_los_blancos_de_detras(
-    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
-    """Con los blancos quitados solo por delante (la condicion de antes de la PARADA 2), B1
-    pasa."""
-
-    def solo_delante(lit: str) -> bool:
-        tramo = re.split(r"[\\/]", lit[2:], maxsplit=1)[0].lstrip(" \t")
-        return re.search(r"[ \t]", tramo) is not None
-
-    monkeypatch.setattr(g, "_tramo_lleva_blanco", solo_delante)
-    for caso in ("b1-h7-blanco-detras", "b1-h8-blanco-detras", "b1-h7-tab-detras"):
-        assert _guion(g, repo, "t/rev.py", _revisor(repo)[caso]) is None, caso
-
-
 def test_b3_cmp_como_diff_en_las_composiciones(g: ModuleType) -> None:
     """B3 del revisor: con `cmp` en `NO_EJECUTAN`, una cadena que empieza por `cmp ` es una ORDEN y
     no una composicion de C, igual que `diff`; un programa fuera de la lista (`xxd`) sigue

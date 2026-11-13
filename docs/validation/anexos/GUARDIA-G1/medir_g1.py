@@ -54,11 +54,10 @@ from types import ModuleType
 # porque. Desde `trabajo/guardia-falsos-positivos` la referencia es `stable/F38z-capa-generada` y la
 # lista se vacio (la regla de arriba): lo de `trabajo/guardia-g1` (K1, K2, K4, el punto 8 de
 # solo_lectura, PYTHONIOENCODING, which y rmdir) ya esta en esa referencia. Solo se declara lo que
-# esa referencia niega y la rama deja pasar (respuesta del consultor a su PARADA, punto 1).
+# esa referencia niega y la rama deja pasar (respuesta del consultor a su PARADA, punto 1). F1 se
+# aplazo (respuesta a la PARADA 2, punto 4): su caso, `i1-f1-comentario`, se queda y niega en las
+# dos guardias; solo F2 difiere.
 CAMBIOS_DECLARADOS: dict[str, str] = {
-    "i1-f1-comentario": "F1 (D1d, punto 0): un literal `// ` de un guion nuevo, con blanco en el"
-    " tramo y sin fragmento sensible, no es una ruta (solo difiere en Windows: en Linux la"
-    " referencia ya lo dejaba pasar)",
     "i2-f2-cmp": "F2 (G.6, D2): `cmp` en NO_EJECUTAN; sus argumentos se miran como una lectura",
 }
 

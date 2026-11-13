@@ -394,7 +394,10 @@ con `ignore_errors=True`, que en Windows deja la carpeta entera sin avisar (los 
 de solo lectura): quedaron 130 carpetas `gfp-*` en la carpeta del usuario, borradas a mano; ahora
 `_borrar` quita el «solo lectura» y comprueba que la carpeta ya no existe.
 
-## Cada caso, con su test y sus dos decisiones
+## Cada caso, con su test y sus dos decisiones (hasta la PARADA 2)
+
+*Tabla de antes de la PARADA 2 y del aplazamiento de F1. El estado final, con los casos de las dos
+pasadas del revisor, en «Cada caso, estado final», mas abajo.*
 
 `F38z` es la guardia de `stable/F38z-capa-generada` (la de `main`); `rama`, la de esta rama. «W»
 solo Windows (en Linux el test salta); «W+L» los dos. Los tests, en
@@ -451,22 +454,28 @@ Bash es un comando interno que vuelve a ejecutar el historial (lo niega `BUILTIN
 | Punto | Lo pedido | Hecho |
 |---|---|---|
 | 0 | Base comprobada; abrir con abrir-rama; contrato con tramo, permitidas y protegidas | Hecho (Apertura); contrato en `6a310dc8` |
-| 1 | F1 y F2, sin abrir ningun hueco | Hecho con D1d (punto 0 de la respuesta), no con D1 tal cual: D1 abria h1-h8 (fase 0) |
+| 1 | F1 y F2, sin abrir ningun hueco | **F2 hecho; F1 aplazado**: D1 abria h1-h8 (fase 0); D1d lo rodearon B1 y B2 (primera pasada del revisor); D1d con los dos arreglos de la PARADA 2 lo rodearon R1-R4 (segunda pasada). Respuesta a la PARADA 2, punto 4: la guardia vuelve a la de stable/F38z para esos literales |
 | 2 | `/` de compilar.py, F38w, worktree add, los demas lectores y D: fuera | Fuera; los lectores, nombrados arriba; la atribucion F38y→F38w y `$'\r'` como otro mecanismo, corregidas (punto 5 de la respuesta) |
-| 3, D1 | En negativo, en `analizar_codigo`, `_sin_prefijos` intacto | Hecho, con las dos clausulas de D1d |
+| 3, D1 | En negativo, en `analizar_codigo`, `_sin_prefijos` intacto | Se hizo (D1d) y se aplazo: el diff final de `guardia.py` contra stable/F38z es solo la entrada de `cmp` |
 | D2 | `cmp` en `NO_EJECUTAN`, sus argumentos como lectura | Hecho |
-| D3 | Ningun caso que hoy se niega deja de negarse | Hecho y con test (tabla de casos); h1b ya pasaba (limite conocido) |
+| D3 | Ningun caso que hoy se niega deja de negarse | Hecho y con test: h1-h8, B1-B2 y R1-R4 niegan en la rama (estado final); h1b ya pasaba (limite conocido) |
 | D4 | En memoria, repo sintetico, a trozos, W o L por caso | Hecho; de `cmp`, el nombre de G.6 y dos ficheros nuevos de `docs/` (con dos de `main` ya pasaba hoy) |
-| D5 | Referencia a F38z, lista vaciada, F1 y F2 declarados | Hecho con F1 y F2 como casos nuevos de `medir_g1.py` (punto 1 de la respuesta) |
-| D6 | F1 solo Windows; no tarda | Hecho: tests `SOLO_WINDOWS`; 0,14 s; no llega a `_absoluta` |
-| D7 | Ensayo del cierre en un `git clone` | La guardia niega `git clone`: preparado para Aleks (seccion siguiente) |
-| 4 | Nada fuera de la guardia, sus tests y lo nombrado | `git diff main --stat`: la guardia, dos tests, `medir_g1.py`, `GUARDIAS-CLAUDE.md` (recuadro), `HOLDOUT-EXPOSICIONES.md` (la fila), el informe, sus anexos, el encargo, el contrato, PROJECT_STATE y HISTORIA |
+| D5 | Referencia a F38z, lista vaciada, F1 y F2 declarados | Hecho con F1 y F2 como casos nuevos de `medir_g1.py`; al aplazar F1, solo `i2-f2-cmp` queda declarado (`i1` niega en las dos) |
+| D6 | F1 solo Windows; no tarda | Se midio (0,14 s; no llegaba a `_absoluta`); con F1 aplazado, su test es `xfail` estricto |
+| D7 | Ensayo del cierre en un `git clone` | La guardia niega `git clone`: preparado para Aleks, en el estado final (seccion siguiente) |
+| 4 | Nada fuera de la guardia, sus tests y lo nombrado | `git diff main --stat`: la guardia, dos tests, `medir_g1.py`, `GUARDIAS-CLAUDE.md` (recuadro), `HOLDOUT-EXPOSICIONES.md` (dos filas), el informe, sus anexos, el encargo, el contrato, PROJECT_STATE y HISTORIA |
 | 5 | Fase 0 y PARADA | Hecho (`dce4004e`) |
-| 6 | Tests primero, el cambio, la referencia, make check, CI de `fix/`, revisor, ensayo | Hecho salvo el ensayo (D7) |
+| 6 | Tests primero, el cambio, la referencia, make check, CI de `fix/`, revisor, ensayo | Hecho; el ensayo, para Aleks (D7) |
 | 7 | El informe | Este |
-| 8 | Revisor con los ejes extra | Al final |
+| 8 | Revisor con los ejes extra | Dos pasadas enteras, pegadas al final |
+| R1.0-5 | Respuesta a la PARADA 1 | Aplicada (seccion «Aplicacion de la respuesta») |
+| R2.0-3 | Respuesta a la PARADA 2, puntos 0-3 | Aplicados en `5f757439`, y retirados con F1 al aplicar el punto 4 (salvo los tests de lo que sigue negado y el de B3) |
+| R2.4 | El revisor entero; si rompe F1, F1 sale | Rompio F1 (R1-R4, medidos): F1 aplazado; la rama se queda con F2 y G.6 |
+| R2.5 | Las ordenes de D7 en el estado final | En «El ensayo del cierre» |
+| R2.6 | «Rama lista para revision, NO cerrada», con commits, runs, revisor y F1 | En «Estado» |
 
-Desviaciones: D1 se aplico como D1d (decidido en la PARADA); `medir_windows.py` se commiteo en la
+Desviaciones: F1 no entra (aplazado por la respuesta a la PARADA 2, punto 4); D1 se aplico como
+D1d (decidido en la PARADA) antes de aplazarse; `medir_windows.py` se commiteo en la
 fase 0 y salio del repo en la siguiente (punto 3); la fixture que borraba con `ignore_errors` dejo
 130 carpetas `gfp-*` en la carpeta del usuario antes de arreglarla (borradas). Y las negativas de la
 guardia a comandos mios (todas con la forma que ella propone, ninguna del objeto de la rama): tres
@@ -479,20 +488,28 @@ salvo `medir_windows.py` (fase 0) y `git clone`.
 - **HOJA-DE-RUTA.md, G.6**: «- **Hecho cuando:** su test que la rompe a propósito.» pasa a decir
   que esta HECHA en `trabajo/guardia-falsos-positivos` (`cmp` en `NO_EJECUTAN`;
   `test_roto_sin_cmp_en_no_ejecutan`), con la forma de las demas entradas hechas de la hoja.
-- **PROJECT_STATE.md, Technical Debt**, la linea que entro con F38z (hoy :84), reescrita:
+- **PROJECT_STATE.md, Technical Debt**, la linea que entro con F38z (hoy :84), reescrita. El punto
+  5 de la respuesta a la PARADA 1 decia «F1 y F2 resueltos»; con F1 aplazado (PARADA 2, punto 4),
+  solo F2 sale, y la linea no lo nombra (PROJECT_STATE es el presente):
 
-  > - La guardia niega a un guion nuevo un literal que solo es separadores, como el `/` de
-  >   `compilar.py` (CAPA-GENERADA.md, «La guardia»), por el mismo mecanismo que « / » y `</li>` de
-  >   la linea de F38w de abajo: no sabe si el codigo lo usa como ruta; lo lanza Aleks con «!». El
-  >   `// ` de un comentario y `cmp a b`, resueltos en `trabajo/guardia-falsos-positivos`.
+  > - La guardia niega a un guion nuevo dos falsos positivos, que lanza Aleks con «!»: un texto
+  >   que empieza por `//` y un blanco, como ruta de red (F1, aplazado en
+  >   `trabajo/guardia-falsos-positivos`: ninguna condicion medida aguanta), y un literal que solo
+  >   es separadores, como el `/` de `compilar.py`, por el mismo mecanismo que « / » y `</li>` de la
+  >   linea de F38w de abajo (CAPA-GENERADA.md, «La guardia»).
 
-  La de F38w (hoy :152, con `$'\r'`) queda sin cambios (punto 5 de la respuesta).
-- **PROJECT_STATE.md, tamano**: 24.569 bytes en la rama; con la linea reescrita, 24.698 (simulado
-  en memoria); el cierre devuelve Current Branch y Current Feature a lo de `main` (24.380 hoy en
-  `main`, +129 de la linea): por debajo del tope de 25.000. No hace falta recortar.
-- **ERRORES-RECURRENTES.md**, la fila del consultor (punto 5): D1 tal como estaba escrita dejaba
-  pasar ocho casos, contra su propia D3 (importa); D5 rompia `test_roto_la_comparacion_con_main`
-  (menor); F38y en lugar de F38w (menor); `$'\r'` metido en el mismo mecanismo (menor).
+  La de F38w (hoy :152, con `$'\r'`) queda sin cambios (punto 5 de la respuesta a la PARADA 1).
+- **PROJECT_STATE.md, tamano**: 24.612 bytes en la rama (el ultimo commit); con la linea
+  reescrita, 24.787 (simulado en memoria, +175); el cierre devuelve Current Branch y Current
+  Feature a lo de `main` (24.380 hoy en `main`): queda hacia 24.555, por debajo del tope de 25.000.
+  No hace falta recortar.
+- **ERRORES-RECURRENTES.md**, la fila del consultor (punto 5 de la PARADA 1): D1 tal como estaba
+  escrita dejaba pasar ocho casos, contra su propia D3 (importa); D5 rompia
+  `test_roto_la_comparacion_con_main` (menor); F38y en lugar de F38w (menor); `$'\r'` metido en el
+  mismo mecanismo (menor). Y lo que la rama aprendio despues, para la misma fila si el consultor
+  quiere: D1d (propuesta mia, aceptada) la rodearon B1 y B2 en la primera pasada del revisor, y sus
+  arreglos, R1-R4 en la segunda: una condicion que deja de leer como ruta parte de un literal la
+  rodea un recorte o un `cd` al ejecutarse (importa).
 - **HISTORIA.md**, el registro del cierre, como siempre. Siguiente tag: `stable/F39a-...` (F38 acaba
   en z).
 
@@ -515,7 +532,9 @@ sesion. Antes, comprobado: ni el `Makefile` ni sus guiones llevan `push`.
 | 9 | `cd C:/cm/gfpc && make check > C:/cm/make-check-merge.log 2>&1` | Aleks, «!» |
 | 10 | leer el log (exit 0, ningun `failed`; sin contrato no hay SELLO de rama que exigir) y quitar el clon: `rm -rf C:/cm/gfpc` | sesion lee; Aleks, «!», borra |
 
-Lo que el ensayo tiene que ver en verde, en un `main` que se mueve de verdad: que
+Las ordenes valen para el estado final de la rama (el ultimo commit, con F1 aplazado): el paso 2
+trae la rama tal como este en `C:/Users/USER/Desktop/Bot v3` cuando se lance el paso 1. Lo que el
+ensayo tiene que ver en verde, en un `main` que se mueve de verdad: que
 `test_la_referencia_es_un_tag_y_no_es_esta_guardia` y la comparacion caso a caso siguen midiendo
 tras el merge (la referencia es el tag F38z, no `main`), y que los tests de la rama pasan sobre el
 arbol fusionado.
@@ -539,6 +558,14 @@ Windows (F1 y sus casos, h1-h2 y h4-h8, los de `test_guardia_alias.py`).
 | `6a310dc8` | apertura | exit 0, 3465 passed, SELLO `66f3230f`, 1284 s, pico 315 MiB |
 | `dce4004e` | fase 0 | exit 0, 3466 passed, SELLO `ce1c7169`, 1304 s, pico 313 MiB |
 | `f9888a03` | fase 1 (la guardia, los tests, la referencia) | exit 0, 3498 passed, SELLO `090c2de9`, 1337 s, pico 317 MiB |
+| `32316acf` | el informe: casos, encargo, cierre, ensayo, CI | exit 0, 3498 passed, SELLO `a9a587ba`, 1312 s, pico 317 MiB |
+| `55d41a02` | el revisor (primera pasada) y la PARADA 2 | exit 0, 3504 passed, 4 xfailed, SELLO `867a8f29`, 1359 s, pico 320 MiB |
+| `5f757439` | la respuesta a la PARADA 2 (B1, B2) | exit 0, 3516 passed, SELLO `0c5318da`, 1082 s, pico 316 MiB |
+| (el ultimo) | F1 aplazado, la segunda pasada del revisor | en el mensaje de entrega |
+
+La CI de `5f757439`: run **43379762621**, failure solo por el fallo aceptado (el mismo
+`test_state_check_ok_on_real_repo`), **1 failed, 3428 passed, 87 skipped**. La del ultimo commit,
+en el mensaje de entrega (un informe no puede llevar el run de su propio commit).
 
 ## Lo que se hizo con los hallazgos del revisor
 
@@ -669,9 +696,117 @@ Copiada tal cual:
 `pytest` de los ficheros de la guardia (los cinco del contrato, el nuevo y `test_revisor.py`):
 1001 passed.
 
+## F1, aplazado: ninguna condición medida aguanta (2026-11-13)
+
+La segunda pasada del revisor (opus, sobre `5f757439`, pegada al final) intento romper F1 contra la
+guardia de stable/F38z y propuso cuatro casos que, por el codigo, esa guardia niega y la de la rama
+dejaba pasar. **Medidos** con `decidir`, en el repo inventado (tests `test_r_la_referencia_niega`
+y `test_r_siguen_negados`, con la guardia de `5f757439`):
+
+| caso | guion (en linea, `uv run python -c`) y directorio de trabajo | stable/F38z | rama en `5f757439` |
+|---|---|---|---|
+| R1 | `open('// estrategia del trader/sesiones/x.txt'[3:])`, desde `corpus/` | niega («la ruta `// estrategia del trader/sesiones/x.txt` no se puede canonizar») | **pasa** |
+| R2 | `os.walk('// r b/knowledge'[3:])`, desde la carpeta que contiene el repo `r b` | niega («la ruta `// r b/knowledge` no se puede canonizar») | **pasa** |
+| R3 | `Path('\\ local host\C$\<raiz>'.replace(' ', '', 2)).rglob('*')`, desde la raiz | niega (no canoniza) | **pasa** |
+| R4 | `Path('// a b/x//localhost/C$/<raiz>'[8:]).rglob('*')`, desde la raiz | niega (no canoniza) | **pasa** |
+
+La causa es la del revisor (B-1): los sufijos de un literal de F1 se resuelven contra el directorio
+de trabajo, y eso solo coincide con la ruta que se abre si la cabeza no es una carpeta de verdad y
+la cola no es absoluta; un `cd` o un `C$` lo rompen. R1-R3 no son un recorte a mitad de un nombre;
+R4 corta en la frontera de un nombre. Por el punto 4 de la respuesta a la PARADA 2, **F1 sale de la
+rama**:
+
+- `guardia.py` vuelve a la de stable/F38z para esos literales: `git diff stable/F38z-capa-generada
+  -- .claude/hooks/guardia.py` es solo la entrada de `cmp` en `NO_EJECUTAN` (4 lineas). Salen
+  `_COMENTARIO`, `_tramo_lleva_blanco`, `_sufijos_tras_separador`, `_comentario_que_no_es_ruta` y
+  `_mirar_literal` (el bucle de `analizar_codigo` vuelve a ser el de stable/F38z, byte a byte).
+- Los tests de F1 que aseguran que pasa (la copia de `generar_capa.py`, D6, y los cuatro literales)
+  quedan como `xfail` estricto, con el motivo «F1, aplazado: ninguna condicion medida aguanta»: si
+  una rama futura los hace pasar, la suite lo dice. Los ROTO A PROPOSITO de las piezas de F1 salen
+  con ellas (sin la pieza no hay nada que romper). Se quedan, como bateria para una condicion
+  futura, todos los que aseguran lo que sigue negado: h1-h8, B1-B2, R1-R4, D3 y el residuo.
+- `medir_g1.py`: `i1-f1-comentario` se queda como caso (niega en las dos guardias) y sale de
+  `CAMBIOS_DECLARADOS`, que queda solo con `i2-f2-cmp`.
+- El recuadro de `GUARDIAS-CLAUDE.md` §1.7 dice ahora el limite (h1b) y por que F1 se aplazo.
+- La linea de Technical Debt del cierre deja F1 como deuda que lanza Aleks con «!» (seccion «Lineas
+  para el cierre»).
+
+Lo que un intento futuro de F1 tiene que saber (de las tres versiones medidas): el literal entero no
+llega a nada local (es un recurso de red con un blanco en el servidor), pero el codigo puede
+recortarlo, cambiar de directorio o quitarle blancos antes de abrirlo; toda condicion que deje de
+leer como ruta una parte del literal hay que medirla contra esas tres familias, y ninguna medida
+aqui las cerro todas. El contexto S1 del revisor tambien cuenta: con un solo tramo detras de `//`,
+stable/F38z ya deja pasar `'// knowledge'[3:]`.
+
+## Lo que se hizo con los hallazgos de la segunda pasada del revisor
+
+Eje (a): 0 bloquea, 1 importa, 2 menor. Eje (b): 1 bloquea, 1 importa, 3 menor.
+
+- **B-1 (bloquea, por medir): medido y confirmado** (R1-R4, arriba): F1 aplazado, como manda el
+  punto 4 de la respuesta a la PARADA 2.
+- **B-2 (importa): resuelto con el aplazamiento.** El comentario de `guardia.py` que afirmaba de
+  mas sale con F1; el recuadro de `GUARDIAS-CLAUDE.md` se reescribio (ya no dice que solo queda el
+  recorte a mitad de nombre).
+- **B-3 (menor): hecho**: «Cada caso, estado final», abajo.
+- **B-4 (menor): hecho**: la tabla de `make check` llega hasta `5f757439`; el del ultimo commit, en
+  el mensaje de entrega.
+- **B-5 (menor): cierto, se tiene en cuenta.** Las inserciones de esta rama buscan el ULTIMO
+  «## Estado» y conservan lo que va detras (el guion de la sesion se cambio para eso tras la
+  PARADA 2); el informe del revisor pegado no lleva ningun «## Estado».
+- **A1 (importa): hecho.** Fila del 2026-11-13 en `HOLDOUT-EXPOSICIONES.md`, escrita tarde y dicho
+  asi en la propia fila: los `make check` de `32316acf`, `55d41a02` y `5f757439` corrieron antes.
+- **A2 (menor): hecho.** El recuadro de `GUARDIAS-CLAUDE.md` lleva las dos fechas.
+- **A3 (menor): hecho.** La cabecera de `medida_parada2.py` dice que corrio una vez como test
+  temporal y queda como anexo, y nombra el codigo muerto y la diferencia de `recursivo`.
+
+## Cada caso, estado final
+
+`F38z`, la guardia de stable/F38z-capa-generada; `rama`, la del ultimo commit. «W» solo Windows;
+«W+L» los dos. Tests en `tests/unit/test_guardia_falsos_positivos.py` salvo que se diga.
+
+| caso | test | F38z | rama | sistema |
+|---|---|---|---|---|
+| F2: `cmp` y `cmp -s` de dos ficheros nuevos de `docs/`, y el nombre con `=` de G.6 | `test_f2_cmp_de_dos_ficheros_que_no_son_guiones_pasa` | niega (ejecutar) | **pasa** | W+L |
+| cmp con un protegido (2.º, 1.º, absoluto) y `diff` con uno | `test_f2_cmp_con_un_fichero_protegido_se_niega_por_la_lectura` | niega (`R_EJECUCION`) | niega (`R_HOLDOUT`) | W+L |
+| B3: `cmp` como `diff` en las composiciones de C | `test_b3_cmp_como_diff_en_las_composiciones` | — | igual que `diff` | W+L |
+| ROTO: sin `cmp` en `NO_EJECUTAN`; `cmp` sin leer sus argumentos | `test_roto_sin_cmp_en_no_ejecutan`, `test_roto_cmp_sin_leer_sus_argumentos` | — | cada uno rompe su test | W+L |
+| F1: la copia de `generar_capa.py`, :364, :359, tabulador, `\\ `, D6 | `test_f1_*` (`xfail` estricto: «F1, aplazado») | niega | niega | W |
+| h1, h1c, h2, h4-h8 | `test_h_los_casos_de_windows_siguen_negados` | niega | niega | W |
+| h3 | `test_h3_el_punto_punto_sigue_negado` | niega | niega | W+L |
+| B1 (blanco o tabulador detras del nombre) y B2 (oculto sin fragmento, con `/` y `\`; carpeta con el holdout, recortada y recorrida) | `test_revisor_las_variantes_siguen_negadas` y su gemelo contra la referencia | niega | niega | W |
+| R1-R4 | `test_r_siguen_negados` y `test_r_la_referencia_niega` | niega | niega | W |
+| D3: `//host/share/...`, `\\host\share\...`; un guion nuevo que nombra o recorre lo protegido | `test_d3_*` | niega | niega | W / W+L |
+| D3: los de `test_guardia_alias.py` y `file://` de `test_guardia_g1.py` | esos tests, sin cambiar | niega | niega | W (y los de dos sistemas) |
+| `//\| docs/x \|` y la f-cadena calculable | `test_lo_que_d1d_no_cubre_sigue_negado` | niega | niega | W |
+| h1b `'x' + oculto[1:]` (limite conocido) y el recorte a mitad de nombre | `test_el_residuo_de_f1_es_la_clase_de_h1b` (mide e imprime; asegura que h1b pasa con las dos) | h1b pasa; el otro niega | h1b pasa; el otro niega | W |
+| la referencia: F1 por no canonizar, F2 por ejecutar | `test_la_referencia_niega_f1_por_no_canonizar`, `..._f2_por_ejecutar` | — | — | W / W+L |
+| la comparacion caso a caso (`medir_g1.py`, `i1`-`i3`) | `test_guardia_g1.py::test_la_comparacion_caso_a_caso_con_la_guardia_de_main` | — | `i2` declarado; `i1` e `i3` niegan en las dos | W+L |
+
+Medido en la laptop tras aplazar F1: `test_guardia_falsos_positivos.py`, 48 passed y 6 xfailed; la
+comparacion caso a caso de `test_guardia_g1.py`, en verde con solo `i2` declarado.
+
 ## Estado
 
-EN CURSO (respuesta a la PARADA 2 aplicada; faltan la CI del ultimo commit y la segunda pasada del revisor).
+**F2 y G.6 entran; F1 se aplaza** (respuesta a la PARADA 2, punto 4: la segunda pasada del revisor lo
+rompio con R1-R4, medidos). El diff de `guardia.py` contra stable/F38z es la entrada de `cmp`.
+
+| commit | que |
+|---|---|
+| `6a310dc8` | apertura: encargo, contrato, Archivo 69 |
+| `dce4004e` | fase 0 medida y PARADA |
+| `f9888a03` | F1 (D1d) y F2, la referencia a F38z, los tests rotos contra F38z |
+| `32316acf` | el informe: casos, encargo, cierre, ensayo, CI |
+| `55d41a02` | la primera pasada del revisor (B1, B2) y la PARADA 2 |
+| `5f757439` | la respuesta a la PARADA 2 (B1 con `strip`, B2 con los sufijos) |
+| el ultimo | F1 aplazado; la segunda pasada del revisor; A1-A3 y B-1..B-5 contestados |
+
+CI de `fix/guardia-falsos-positivos`: 43366719378 (`f9888a03`) y 43379762621 (`5f757439`), los dos
+con solo el fallo aceptado; la del ultimo commit, en el mensaje de entrega. Revisor: dos pasadas
+enteras (opus), pegadas abajo; la primera, 2 bloquea (B1, B2: arreglados y despues retirados con
+F1), 3 importa y 2 menor; la segunda, 1 bloquea (B-1: F1 roto, aplazado), 2 importa y 5 menor,
+todos contestados. El ensayo del cierre (D7), preparado para Aleks.
+
+Rama lista para revisión, NO cerrada.
 
 ## Anexo · El informe del revisor (primera pasada), pegado tal cual
 
@@ -797,3 +932,189 @@ Sobre los puntos del alcance que me pasaste:
 23. `uv run python -c` sobre `_comentario_que_no_es_ruta` con cinco literales sintéticos → **NEGADO** en el cuarto (con fragmento); no lo reescribí. La negativa sirve de medida indirecta en B2
 
 Ficheros: C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py, C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_falsos_positivos.py, C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-FALSOS-POSITIVOS.md, C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-FALSOS-POSITIVOS\rotos-contra-F38z-SALIDA.txt, C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-G1\medir_g1.py, C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_g1.py, C:\Users\USER\Desktop\Bot v3\.claude\hooks\ficheros_con_ocultos.txt
+
+## Anexo · El informe del revisor (segunda pasada, entera), pegado tal cual
+
+## Informe del revisor · trabajo/guardia-falsos-positivos · 2026-11-13
+
+HEAD 5f757439, base 4ecd7f17 (main, el commit de estado de stable/F38z-capa-generada, 7bccf310). `git status --short` vacío. `origin/fix/guardia-falsos-positivos` apunta a 5f757439.
+
+**Resumen.** El eje (a) está limpio salvo la fila de exposiciones del 13. El alcance nuevo sí da resultado: encuentro **tres formas que, según el código, la guardia de stable/F38z niega y la de la rama deja pasar**, sin recortar a mitad de un nombre (R1, R2 y R3). Hay una cuarta, R4, que encaja en la plantilla del residuo declarado pero no recorta a mitad de un nombre. **Ninguna está medida de punta a punta** (por qué, en «Lo que no pude comprobar»). Las cuatro van como propuesta de test. Si la sesión las confirma, el punto 4 de la respuesta a la PARADA 2 saca F1 de la rama.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | importa | **No hay fila del 2026-11-13 en `HOLDOUT-EXPOSICIONES.md`, aunque ese día corrieron los `make check` de tres commits.** Cada uno lee el M1 de marzo, según la propia fila de la rama. ADR-0021 §4 dice «Toda exposicion se anota el mismo dia». La única fila de la rama es del 12 y habla de «los `make check` de la rama» en general. El precedente de `trabajo/laminas` es una fila por día, «declarado ANTES del primer `make check` del día». Si el consultor lee la fila del 12 como si cubriera toda la rama, el hallazgo es solo de forma. Si no, falta una fila, que se añade al final (el fichero solo crece). | `git log --date=iso`: 32316acf 2026-11-13 00:14, 55d41a02 01:01, 5f757439 01:35. `make-check.log`, de 2026-11-13 01:35, con SELLO del árbol de HEAD. `grep` de filas por fecha y rama: la última de esta rama es `2026-11-12`. `HOLDOUT-EXPOSICIONES.md:136` (laminas, 11-11). `docs/adr/0021-que-cuenta-como-abrir-un-holdout.md:26` |
+| A2 | menor | El recuadro de `GUARDIAS-CLAUDE.md` §1.7 se amplió el 13 (ya cita la PARADA 2), pero sigue fechado «2026-11-12». | `git diff f9888a03 HEAD -- docs/validation/GUARDIAS-CLAUDE.md`: cinco líneas `+>` que nombran la «PARADA 2, punto 1»; el recuadro empieza por «CORRECCION (2026-11-12 …)» |
+| A3 | menor | `medida_parada2.py` está commiteado, pero su docstring dice «Se borra antes de commitear». Además, la línea 43 es código muerto, porque la 44 la pisa. Y su variante «B1+b» mira las carpetas siempre en recursivo (`recursivo=True`), mientras que lo implementado usa `recursivo=recorre`. La tabla de la PARADA 2 mide entonces una variante algo distinta de la que entró. Lo implementado sí lo miden los tests de la suite. | `anexos/GUARDIA-FALSOS-POSITIVOS/medida_parada2.py:1-2, 43-44, 55`. `guardia.py:4988` |
+
+Comprobado sin hallazgos:
+1. **Contrato.**
+   - `uv run python scripts/contrato_rama.py` da «CONTRATO: 15 ficheros dentro del contrato de trabajo/guardia-falsos-positivos (riesgo medio, …, 4 comprobaciones para el revisor)».
+   - `uv run botsito state check` da OK.
+   - El pytest de las cinco guardias del contrato sale con exit 0, todo en puntos.
+   - `make check` no lo ejecuté (escribe). En `make-check.log`: «3516 passed», «SELLO: make check en verde sobre el arbol 0c5318da…», que es igual a `git rev-parse HEAD^{tree}`, y «PICO DE MEMORIA … 316 MiB».
+2. **Trailers `Fuente:`.** No aplican: ningún commit toca `knowledge/spec` ni `knowledge/cases`.
+3. **Holdout y material.** Nada bajo `knowledge/`, `data/` ni `corpus/`. Se ha medido en repos sintéticos.
+4. **Regímenes de cambio.** El `--name-status` no toca `knowledge/evidence`, `knowledge/feedback`, `data/manifests` ni el corpus. Solo crecen: HISTORIA (174/0), `GUARDIAS-CLAUDE.md` (11/0) y `HOLDOUT-EXPOSICIONES.md` (1/0).
+5. **Ambigüedades.** No se tocan.
+6. **ADR.** Ninguno.
+7. **Informe cerrado (`GUARDIAS-CLAUDE.md`).** Solo recibe un recuadro `>` con fecha y rama; el cuerpo queda intacto.
+8. **Las tres guardias de una `cita`.** No aplica.
+9. **Lo demás de `CLAUDE.md`.**
+   - `PROJECT_STATE.md` pesa 24.569 bytes. Su diff solo toca Current Branch/Feature, la cifra de tests (2064) y el número de Archivo.
+   - Las citas comprobadas cuadran:
+     - `generar_capa.py:359` y `:364`, tal cual;
+     - `guardia.py:2857` (`diff`), `:2880` («La lista solo crece…») y `:1076` (`sha1sum` en `LECTOR_DE_METADATOS`);
+     - `ACTIVAR-SESION-06-MOTOR.md:217-218` (`cmp` negado sobre `diaria.DIAGNOSTICO.cuenta=diaria.txt`);
+     - `HOJA-DE-RUTA.md:792` (G.6).
+10. **Items de evidencia nuevos.** Ninguno.
+
+### Eje (b) · Encargo (y las dos respuestas del consultor)
+Resumen: 1 bloquea (por medir), 1 importa, 3 menor. Requisitos: 27 hechos, 2 hechos de otra forma, 4 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Apertura: base, origin, tag, CI de main, ninguna otra rama | Hecho | informe :9-22 |
+| 2 | abrir-rama: encargo, contrato, Archivo 69 | Hecho | 6a310dc8; HISTORIA +174/-0 |
+| 3 | Contrato: `tramo`, permitidas y protegidas del encargo | Hecho | `contrato.yaml:4-30` |
+| 4 | Informe y anexos en sus rutas | Hecho | `--name-status` |
+| 5 | F1: la copia de `generar_capa.py` pasa (:359 y :364) | Hecho | 51 passed y 0 saltados en Windows (`test_f1_*`) |
+| 6 | F2: `cmp` de dos ficheros pasa; `diff` comprobado; G.6 se cierra | Hecho | `guardia.py:2892-2895`; informe §c |
+| 7 | Lo que queda fuera (`/`, F38w, worktree add, lectores nombrados, `fc`, D) | Hecho | informe :441-447 y :477-489 |
+| 8 | D1 como D1d, en negativo, solo en `analizar_codigo` | Hecho | diff: :4951-4957 y el bloque :4998-5042 |
+| 9 | F1 no toca `_sin_prefijos`, `_canonica` ni `_absoluta` | Hecho | el diff no tiene hunks en :1298-1395. `_mirar_literal` es el cuerpo del bucle anterior sin cambios (comparado línea a línea) |
+| 10 | D2: `cmp` en NO_EJECUTAN, con sus argumentos leídos y el protegido negado | Hecho | test :263-273, en verde |
+| 11 | **D3: ningún caso que hoy se niega deja de negarse** | **Parcial, por medir** | B-1 |
+| 12 | D4: en memoria, repo sintético, W o L por caso | Hecho | test :86-186; tabla :403-432 |
+| 13 | D5: referencia F38z, lista vaciada, solo i1 e i2 | Hecho | `test_guardia_g1.py:916`; `medir_g1.py` (CAMBIOS_DECLARADOS = i1, i2); `test_roto_la_comparacion_con_main` borra `i2-f2-cmp` |
+| 14 | D6: F1 solo en Windows y no tarda | Hecho | `SOLO_WINDOWS`; test :202-226 |
+| 15 | D7: ensayo del cierre en un clon | Hecho de otra forma | la guardia niega `git clone`; las órdenes están en :499-521 (respuesta 1, punto 7) |
+| 16 | Lo que NO cambia | Hecho | 15 ficheros, ninguno de src/, knowledge/, mql5/, settings, skills, agents, solo_lectura, Makefile ni .gitattributes |
+| 17 | PROJECT_STATE: solo el ritual y los tests; tamaño medido | Hecho | diff de PS; `wc -c` da 24569 |
+| 18 | Fase 0 a-f y PARADA | Hecho | informe :37-306 |
+| 19 | Respuesta 1 (puntos 0-5) aplicada | Hecho | informe :326-355 |
+| 20 | Respuesta 1, punto 3: `medir_windows.py` fuera | Hecho | no está en el árbol |
+| 21 | Respuesta 1, punto 4: h1b en el informe y en el recuadro, no en Technical Debt | Hecho | recuadro de `GUARDIAS-CLAUDE.md` |
+| 22 | Respuesta 2, punto 0 (B1: `strip`) | Hecho | `guardia.py:5022` |
+| 23 | Respuesta 2, punto 1 (B2: sufijos; residuo declarado con medida contra F38z) | Hecho, pero ver B-1 | `guardia.py:4955-4956, 5026-5031`. Mi corrida imprime «F38z residuo NIEGA / rama residuo PASA / h1b PASA en las dos» |
+| 24 | Respuesta 2, punto 2 (B3 con test) | Hecho | `test_b3_cmp_como_diff_en_las_composiciones` |
+| 25 | Respuesta 2, punto 3 (los xfail pasan a tests normales; sello; push a fix/) | Hecho, salvo la CI | tests :335-372 sin xfail; origin/fix = 5f757439 |
+| 26 | CI de fix/ del último commit (solo el fallo aceptado) | Parcial | en marcha según el contexto; el informe aún no trae el run |
+| 27 | Respuesta 2, punto 4 (este revisor) | En curso | este informe |
+| 28 | Respuesta 2, punto 5 (órdenes de D7 en el estado final) | Parcial | la tabla :505-516 existe; falta revalidarla en el estado final |
+| 29 | Respuesta 2, punto 6 (Lista para revisión, commits, runs, revisor, F1 sí o no) | Parcial | `## Estado`: «EN CURSO» |
+| 30 | Las respuestas, copiadas tal cual en el encargo y en el informe | Hecho | `diff` de encargo:68-80 contra informe:312-324 y de encargo:86-96 contra informe:618-628 → IGUALES las dos. El encargo solo crece (34/0 desde 6a310dc8) |
+| 31 | «El encargo, punto por punto» | Hecho | informe :449-467 |
+| 32 | make check sellado en cada commit | Hecho de otra forma | el log sella HEAD; la tabla del informe acaba en f9888a03 (ver B-4) |
+| 33 | Comparación caso a caso con F38z (alcance de la primera pasada) | Hecho | el diff contra el tag es el bloque F1, `_mirar_literal` (extraída sin cambios) y la entrada de `cmp`. Los efectos de `cmp` ya están declarados (B3) |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B-1 | **bloquea (por medir)** | **F1 deja pasar casos que stable/F38z niega y que no son un recorte a mitad de un nombre** (R1, R2 y R3, en la sección siguiente). La causa es una sola: **los sufijos de un literal de F1 se resuelven contra `ctx.cwd`**. Eso solo coincide con la ruta real cuando la cabeza no es una carpeta de verdad y la ruta no es absoluta.<br>(1) Si la cabeza es una carpeta real con blancos (`Bot v3`, `estrategia del trader`) y el directorio de trabajo no es la raíz (`cd ..`, `cd corpus`), quitar la marca `// ` (h1 o h2 tal cual) da una ruta que ningún sufijo nombra.<br>(2) Si la cola es una ruta absoluta por el recurso de administración de la propia máquina (`C$`), sus sufijos se miran como relativos, y solo la raíz o un ancestro escapan desde la raíz; desde otra carpeta escapa cualquier fichero. Por el punto 4 de la respuesta 2, si se confirma, F1 sale de la rama. | `guardia.py:4955-4956` (los sufijos a `_mirar_literal` con `ctx.cwd`), `:4980` (`_absoluta(ruta_texto, ctx.cwd)`), `:1699-1708` (`cd` cambia `ctx.cwd`), `:3936-3937` (`cd` se admite delante de una ejecución). Medido con la guardia del árbol: `_comentario_que_no_es_ruta('// Bot v3/knowledge')` da True con sufijos `['knowledge']`; `'// estrategia del trader/sesiones/x.txt'` da True con `['sesiones/x.txt', 'x.txt']` |
+| B-2 | importa | **Dos textos afirman más de lo que el código sostiene, si se confirma B-1.**<br>El recuadro de `GUARDIAS-CLAUDE.md` dice que solo queda «recortado a MITAD de un nombre» y que «los recortes por un separador si se miran».<br>El comentario de `guardia.py` dice que «lo unico que se exime es la CABEZA».<br>R1 y R2 quitan justo la marca. R3 no recorta. R4 corta en la frontera de un nombre. | recuadro de `GUARDIAS-CLAUDE.md` §1.7; `guardia.py:5010-5015` |
+| B-3 | menor | La tabla «Cada caso, con su test y sus dos decisiones» no recoge los casos de la PARADA 2 (b1-*, b2-*, el residuo medido); solo están en «Aplicación». | informe :403-432 frente a :630-666; test :311-395 |
+| B-4 | menor | La tabla de `make check` acaba en f9888a03. Faltan 32316acf, 55d41a02 y 5f757439, aunque el log sella HEAD. | informe :535-541; `make-check.log` |
+| B-5 | menor | Lo que el revisor anterior pegó lleva su propio `## Informe del revisor` de nivel 2 después de `## Estado`. Si alguien inserta texto buscando el último encabezado, caerá dentro del anexo. | informe :672-678 |
+
+### Intentos de romper F1
+
+Criterio, el tuyo: el caso cuenta si stable/F38z lo niega y la rama lo deja pasar. No cuentan ni el recorte a mitad de un nombre ni lo que ya pasa con stable/F38z con un literal normal de la misma ruta.
+
+Las decisiones de F38z salen de `git show stable/F38z-capa-generada:.claude/hooks/guardia.py`: `_sin_prefijos`, `_canonica` y `_absoluta` son las mismas que en la rama. Las de la rama, de `guardia.py:4943-5042`. Todo «por medir» salvo lo que digo medido.
+
+**Los que, por el código, cuentan:**
+
+**R1. h1 con `cd` a una carpeta.** `cd corpus && uv run python -c "print(open('// estrategia del trader/sesiones/x.txt'[3:]).read())"` (vale igual `.lstrip('/ ')`).
+- **F38z: NIEGA.** `_sin_prefijos` casa equipo « estrategia del trader», recurso «sesiones», y cae en `_no_canonizable`. El literal normal `'estrategia del trader/sesiones/x.txt'`, con `ctx.cwd`=corpus, da R_HOJA por `motivo_fichero:581`.
+- **Rama: PASA.** El tramo «estrategia del trader» lleva blanco y no hay fragmento de SENSIBLES. Los sufijos `sesiones/x.txt` y `x.txt` resuelven a `corpus/sesiones/x.txt` y `corpus/x.txt`, que no son la zona.
+- Al ejecutarse lee `corpus/estrategia del trader/sesiones/x.txt`, que es una hoja.
+- Test propuesto: en el repo inventado, `_decide(g, repo, "cd corpus && uv run python -c \"…\"")`. R_HOJA es por ruta, así que no hace falta que el fichero exista.
+
+**R2. h1 con `cd ..` (la cabeza es la carpeta del repo).** `cd .. && uv run python -c "import os; print([r for r,_,_ in os.walk('// Bot v3/knowledge'[3:])])"`.
+- **F38z: NIEGA** (`_no_canonizable`: equipo « Bot v3», recurso «knowledge»). El literal normal `'Bot v3/knowledge'` con `ctx.cwd`=Escritorio recorre `repo/knowledge` y lo niega `motivo_directorio`.
+- **Rama: PASA.** El único sufijo, `knowledge`, va al Escritorio, donde no existe. La regla de `recorre` no salta porque el código no lleva ningún fragmento de SENSIBLES.
+- Al ejecutarse recorre `knowledge/` con el holdout. La variante de fichero es `'// Bot v3/docs/validation/anexos/<oculto>'[3:]`.
+- Test propuesto: el repo inventado en una carpeta con blanco (`base / "r b"`), `cwd` = `base`, y `'// r b/knowledge'[3:]` con `rglob`.
+
+**R3. h7 con un blanco DENTRO del nombre, quitado al ejecutarse.** Desde la raíz, sin `cd`:
+```
+Path('\\\\ local host\\C$\\Users\\USER\\Desktop\\Bot v3'.replace(' ', '', 2)).rglob('*')
+```
+- **F38z: NIEGA** (`_no_canonizable`). El literal normal `\\localhost\C$\<raíz>` lo canoniza a la raíz y lo niega por recorrerla: es h7.
+- **Rama: PASA.** El tramo «local host» lleva blanco y no hay fragmento. Los sufijos `C$\Users\…\Bot v3`, …, `Bot v3` se miran como relativos a la raíz: ninguno existe.
+- `.replace` no lo calcula C (`_calcular:4360-4389`).
+- **R3b**, la misma idea con `cd docs` y un fichero sin fragmento (`…\Bot v3\knowledge\_proposals\<f>`): el sufijo `knowledge\_proposals\<f>` resuelve contra `docs/` y deja de verse.
+- Test propuesto: `_recorre` sobre `_unc(repo, " ", "local host")` + `.replace(' ', '')` (la ruta del repo inventado no lleva blancos).
+
+**Dentro de la plantilla declarada, pero sin recorte a mitad de un nombre:**
+
+**R4.** `Path('// a b/x//localhost/C$/Users/USER/Desktop/Bot v3'[8:]).rglob('*')`, desde la raíz.
+- **F38z: NIEGA** (equipo « a b», recurso «x»).
+- **Rama: PASA.** Los sufijos son `x//localhost/…`, `/localhost/…` (relativa a la unidad: `C:\localhost\…`), `localhost/…`, …, `Bot v3`. Ninguno es `//localhost/…`, porque los sufijos empiezan DETRÁS de cada separador, nunca EN él.
+- Es la plantilla `"// a b/x<ruta>"[8:]`, con `<ruta>` = `//localhost/C$/<raíz>`. El corte cae en la frontera de «x», no a mitad. Su gemelo h1b (`'x//localhost/…'[1:]`) pasa con F38z.
+- Decide el consultor si es residuo.
+
+**Contexto que pesa en la decisión (no son hallazgos de la rama):**
+- **S1. Con UN solo tramo detrás de `//`, F38z ya deja pasar h1.** `_sin_prefijos:1356-1358` devuelve la ruta tal cual si no hay recurso. Así, `os.walk('// knowledge'[3:])` desde la raíz pasa con F38z y con la rama, porque «knowledge» solo no es fragmento. Y `cd .. && … os.walk('// Bot v3'[3:])` pasa con F38z.
+- Es decir: lo que alcanzan R1 y R2, F38z ya lo alcanza con un hermano de un tramo. Y R3 y R4, con un disfraz de literal normal (`'C :/…'.replace(' ', '')`, o h1b).
+- Por la letra de tu criterio, R1-R3 cuentan, porque F38z niega ese guion exacto y el literal normal de la misma ruta. En riesgo, no abren material que F38z no abriera ya por otra forma. Lo decide el consultor.
+- Por el código, un arreglo que miraría R1 y R2 es mirar también la cabeza sin la marca, `lit[2:].lstrip(" \t")`, como un sufijo más. R3, R3b y R4 piden otra cosa: mirar como absolutos los sufijos que siguen a un recurso `C$` de la propia máquina. Ninguno de los dos está medido.
+
+**Los que no rompen (razonados sobre el código):**
+- El literal tal cual (`open('// a b/x')`): al ejecutarse es un recurso de red con blanco en el servidor, y no llega a nada local. Es F1 mismo.
+- Recorte en un separador (`[k:]` tras `/` o `\`), con la raíz como directorio de trabajo: es un sufijo y se mira (B2).
+- Separadores repetidos (`// a b//x`): F38z no niega, porque el recurso queda vacío y `_sin_prefijos:1356` no casa.
+- Mezclas de `/` y `\`: el mismo regex, `[\\/]`.
+- `..` en la cola: el sufijo tras el primer `..` es la misma ruta que se abre. `.` y `/.` cuando se recorre: el sufijo `.` es la raíz y se niega.
+- `+`, `os.path.join`, `Path(a, b)`, `/` o `joinpath` con el literal de F1 al principio: C calcula el conjunto y `_exigir_ruta_del_codigo` lo niega por no canonizar, en las dos guardias.
+- f-cadena con una variable calculable: niega en las dos (el residuo). Con una variable no calculable: el trozo constante sin recurso ya pasaba con F38z.
+- `split()` o cortes dentro de la cabeza, tras un blanco: es la clase de h1b, porque el literal normal `'a knowledge/x'.split()[-1]` pasa con F38z.
+- Lo que lleva SENSIBLES (holdout, corpus, transcripciones, `data/`, material adicional, backtest, xlsx, cruda, `knowledge/cases` o `knowledge/feedback`): la condición 3 lo saca de F1.
+- `ficheros_con_ocultos.txt`: 14 entradas, 10 en `knowledge/_proposals` y 4 en `docs/validation`, ninguna en la raíz y ninguna con blancos (medido con `grep`/`cut`). Desde la raíz las cubre el sufijo; solo escapan con `cd` (R2, R3b).
+- `file:`: se mira antes. Más de 400 caracteres o un salto de línea: se salta en las dos. Linux: la puerta `os.name`.
+
+### Lo que no pude comprobar
+- **R1-R4 y S1 de punta a punta con `decidir`.** Medirlos obliga a montar rutas protegidas a trozos (un `cwd` más una ruta relativa, o la raíz por `C$`) y a escribir un repo sintético en disco. No lo hice, por tu indicación y porque solo leo. Además, mi propio comando con `os.walk` y `'// Bot v3/knowledge'` lo negaría la guardia activa (el sufijo `knowledge` contra la raíz). Medí solo los predicados (salida arriba).
+- **Si `\\localhost\C$` se abre desde un proceso sin elevar.** R3, R3b y R4 dependen de ello, igual que h4-h8, que son casos de D3. No se ha medido nunca, porque `medir_windows.py` no se lanzó.
+- **Si Windows recorta blancos raros en un nombre de servidor.** Ejemplo: `// localhost \u00a0/C$/x` (blanco normal más uno no separable). Es F1 (medido: True), pero el blanco no separable no está en `strip(" \t")`.
+- **Cuánto tarda `realpath` sobre `\\ <nombre>` sin recurso** (S1, con F38z): podría tocar la red, y el tope del hook es de 30 s.
+- **La CI de 5f757439**: en marcha; no la consulté.
+- **`make check`**: escribe. Evidencia: `make-check.log` (arriba).
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git rev-parse main stable/F38z-capa-generada^{commit} && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `git diff main...HEAD -- .claude/hooks/guardia.py`
+3. Read: encargo, `contrato.yaml`, el informe entero, `test_guardia_falsos_positivos.py`, `medida_parada2.py`, `parada2-windows-SALIDA.txt`, y los tramos de `guardia.py` 440-770, 1100-1144, 1200-1410, 1690-1714, 3925-3945, 4080-4189, 4240-4590, 4880-5057. Grep en `guardia.py`, `ADR-0021` y `generar_capa.py`.
+4. `cd … && ls -a && cat .python-version && uv run python --version` → **NEGADO** (una ejecución detrás de `ls`). Lo partí como propone la guardia: `ls -a && cat .python-version`.
+5. `grep -v '^#' .claude/hooks/ficheros_con_ocultos.txt | grep -c .` (14) y `| grep -vc /` (0); `| grep -c ' '` (0); `| cut -d/ -f1-2 | sort | uniq -c`
+6. `uv run python scripts/contrato_rama.py`
+7. `uv run botsito state check`
+8. `uv run pytest` de los cinco ficheros del contrato con `-q -p no:cacheprovider` (exit 0)
+9. `git diff main...HEAD --` sobre GUARDIAS-CLAUDE, HOLDOUT-EXPOSICIONES, PROJECT_STATE, `test_guardia_g1.py` y `medir_g1.py`
+10. `grep -E "SELLO|PICO DE MEMORIA| passed| failed" make-check.log`; `git rev-parse HEAD^{tree}`
+11. `git rev-parse --verify -q refs/remotes/origin/fix/guardia-falsos-positivos`
+12. Grep de `generar_capa.py` (:359 y :364)
+13. `diff` de las dos respuestas del consultor, encargo contra informe → IGUALES las dos
+14. `git diff --numstat 6a310dc8 HEAD -- docs/encargos/…`; `git diff --name-status main...HEAD`; `git log … -- knowledge/spec knowledge/cases` (vacío)
+15. `uv run pytest tests/unit/test_guardia_falsos_positivos.py -q -p no:cacheprovider -rs`, y con `-v` → «51 passed», sin saltados
+16. `uv run pytest … -o console_output_style=classic` → **NEGADO** (`pytest -o`). No lo reescribí con `-o`; usé `-v`.
+17. `ls -d /c/Users/USER/gfp-* | wc -l` → 0
+18. `uv run python -c` con los predicados F1 (`_comentario_que_no_es_ruta`, `_sufijos_tras_separador`) sobre cuatro literales. El primer intento falló por un error mío (el módulo sin `sys.modules`), no por la guardia.
+19. `git diff --numstat main...HEAD --` de HISTORIA, GUARDIAS-CLAUDE y HOLDOUT-EXPOSICIONES; `wc -c PROJECT_STATE.md`
+20. `grep` de las filas de HOLDOUT-EXPOSICIONES por fecha y rama, y de las de laminas
+21. `git log --format='%h %ad'` de la rama y de capa-generada; `ls -l` de `make-check.log`
+22. `git log`/`git diff f9888a03 HEAD -- docs/validation/GUARDIAS-CLAUDE.md`
+23. `sed -n '215,221p' docs/validation/ACTIVAR-SESION-06-MOTOR.md`; `grep -n G.6 docs/plan/HOJA-DE-RUTA.md`
+24. `grep -n "^## "` de CAPA-GENERADA.md y del informe
+
+Ficheros:
+- C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py
+- C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_falsos_positivos.py
+- C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-FALSOS-POSITIVOS.md
+- C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIAS-CLAUDE.md
+- C:\Users\USER\Desktop\Bot v3\docs\validation\HOLDOUT-EXPOSICIONES.md
+- C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-FALSOS-POSITIVOS\medida_parada2.py
+- C:\Users\USER\Desktop\Bot v3\docs\encargos\trabajo-guardia-falsos-positivos.md

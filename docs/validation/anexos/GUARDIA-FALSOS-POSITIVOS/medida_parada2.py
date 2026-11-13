@@ -1,5 +1,11 @@
-"""TEMPORAL (PARADA 2 de trabajo/guardia-falsos-positivos): mide en memoria tres arreglos simulados.
-Se borra antes de commitear; su salida va al anexo."""
+"""PARADA 2 de trabajo/guardia-falsos-positivos: mide en memoria tres arreglos simulados.
+
+Corrio una vez como test TEMPORAL en `tests/unit/` y se saco de alli antes del commit; aqui queda
+como anexo, sin ejecutarse (su salida: `parada2-windows-SALIDA.txt`). Dos notas de la segunda pasada
+del revisor (A3): la primera asignacion de `sufijos` en «B1+b» es codigo muerto (la pisa la
+siguiente); y la simulacion mira las carpetas siempre en recursivo, mientras que lo que entro en la
+guardia usaba `recursivo=recorre` (lo que entro lo midieron los tests de la suite). F1 se aplazo
+despues (respuesta a la PARADA 2, punto 4)."""
 
 from __future__ import annotations
 
