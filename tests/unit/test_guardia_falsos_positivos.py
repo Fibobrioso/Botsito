@@ -307,6 +307,64 @@ def test_h_los_casos_de_windows_siguen_negados(g: ModuleType, repo: Path, caso: 
     assert motivo is not None, caso
 
 
+# Lo que encontro el revisor (B1 y B2): variantes de h4-h8 y de h1c que stable/F38z niega.
+def _revisor(repo: Path) -> dict[str, str]:
+    oculto = "docs/oculto-SALIDA.txt"  # en `ficheros_con_ocultos.txt` del repo inventado
+    return {
+        "b1-h7-blanco-detras": _recorre(_unc(repo, " ", "localhost ")),
+        "b1-h8-blanco-detras": f"import os\nprint(os.stat({_unc(repo, ' ', 'localhost ')!r}))\n",
+        "b1-h7-tab-detras": _recorre(_unc(repo, "\t", "localhost\t")),
+        "b1-h4-blanco-detras": _abre(repr(_unc(repo, " ", "localhost ", SECRETO))),
+        "b2-oculto-sin-fragmento": _abre(repr("// a b/" + oculto) + "[7:]"),
+    }
+
+
+def _con_oculto(repo: Path) -> None:
+    _escribir(repo, "docs/oculto-SALIDA.txt", "linea oculta\n")
+    _escribir(repo, ".claude/hooks/ficheros_con_ocultos.txt", "docs/oculto-SALIDA.txt\n")
+
+
+_PARADA_2 = pytest.mark.xfail(
+    strict=True,
+    reason="PARADA 2 (GUARDIA-FALSOS-POSITIVOS.md): la rama lo deja pasar y stable/F38z lo niega;"
+    " el arreglo lo decide el consultor",
+)
+
+
+@SOLO_WINDOWS
+@pytest.mark.parametrize(
+    "caso",
+    [
+        pytest.param("b1-h7-blanco-detras", marks=_PARADA_2),
+        pytest.param("b1-h8-blanco-detras", marks=_PARADA_2),
+        pytest.param("b1-h7-tab-detras", marks=_PARADA_2),
+        "b1-h4-blanco-detras",
+        pytest.param("b2-oculto-sin-fragmento", marks=_PARADA_2),
+    ],
+)
+def test_revisor_las_variantes_siguen_negadas(g: ModuleType, repo: Path, caso: str) -> None:
+    _con_oculto(repo)
+    motivo = _guion(g, repo, "t/rev.py", _revisor(repo)[caso])
+    assert motivo is not None, caso
+
+
+@SOLO_WINDOWS
+@pytest.mark.parametrize(
+    "caso",
+    [
+        "b1-h7-blanco-detras",
+        "b1-h8-blanco-detras",
+        "b1-h7-tab-detras",
+        "b1-h4-blanco-detras",
+        "b2-oculto-sin-fragmento",
+    ],
+)
+def test_revisor_la_referencia_niega_las_variantes(ref: ModuleType, repo: Path, caso: str) -> None:
+    _con_oculto(repo)
+    motivo = _guion(ref, repo, "t/rev.py", _revisor(repo)[caso])
+    assert motivo is not None, caso
+
+
 def test_h3_el_punto_punto_sigue_negado(g: ModuleType, repo: Path) -> None:
     """h3, en los dos sistemas: `// x/../<raiz>/<protegido>` (en Linux `realpath` lo resuelve a la
     raiz; en Windows es un recurso de otra maquina que no se puede canonizar)."""

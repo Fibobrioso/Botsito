@@ -358,7 +358,10 @@ Punto por punto:
 
 Los tests se escribieron con la guardia del arbol igual byte a byte a la de `stable/F38z`
 (`git diff --stat stable/F38z-capa-generada -- .claude/hooks/` vacio) y se corrieron ANTES de
-tocarla: 15 fallos, cada uno por el motivo que dice
+tocarla: 15 fallos, cada uno por el motivo que dice *(B4 del revisor: el test de D6,
+`test_f1_el_literal_no_llega_a_absoluta_ni_tarda`, se escribio DESPUES de esa corrida y no esta en
+el anexo; con la referencia falla por la misma negativa que `test_la_referencia_niega_f1_por_no_canonizar`,
+que usa la misma entrada y si corre en la suite)*
 (`anexos/GUARDIA-FALSOS-POSITIVOS/rotos-contra-F38z-SALIDA.txt`):
 
 - los cinco de F1 (la copia de `generar_capa.py`, :364, :359, tabulador, barras invertidas):
@@ -443,7 +446,7 @@ guardia.py:1076, pero cae igual porque la condicion de :1794 va antes que :1796)
 lista solo crece cuando un comando la pide (guardia.py:2879-2880). `fc` no es un lector: en Git
 Bash es un comando interno que vuelve a ejecutar el historial (lo niega `BUILTINS_NO_ADMITIDOS`).
 
-## El encargo frente a lo hecho
+## El encargo, punto por punto
 
 | Punto | Lo pedido | Hecho |
 |---|---|---|
@@ -537,6 +540,202 @@ Windows (F1 y sus casos, h1-h2 y h4-h8, los de `test_guardia_alias.py`).
 | `dce4004e` | fase 0 | exit 0, 3466 passed, SELLO `ce1c7169`, 1304 s, pico 313 MiB |
 | `f9888a03` | fase 1 (la guardia, los tests, la referencia) | exit 0, 3498 passed, SELLO `090c2de9`, 1337 s, pico 317 MiB |
 
+## Lo que se hizo con los hallazgos del revisor
+
+El informe del revisor (opus, 2026-11-13, sobre `32316acf`), pegado tal cual al final. Eje (a): sin
+hallazgos. Eje (b): 2 bloquea, 3 importa, 2 menor.
+
+- **B1 (bloquea): confirmado, PARADA 2.** Un blanco DETRAS del nombre de maquina
+  (`\\ localhost \C$\<raiz>`, recorrida o con `os.stat`, y con tabulador) pasa en la rama y
+  `stable/F38z` lo niega. Tests nuevos: `test_revisor_las_variantes_siguen_negadas[b1-*]` (en la
+  rama, `xfail` estricto marcado «PARADA 2») y `test_revisor_la_referencia_niega_las_variantes`
+  (la referencia los niega, en verde). Con un blanco detras y la ruta protegida entera (`b1-h4`) la
+  rama SI niega: el literal lleva un fragmento de `SENSIBLES`.
+- **B2 (bloquea): confirmado, PARADA 2.** `"// a b/<fichero de ficheros_con_ocultos.txt>"[7:]`
+  pasa en la rama y la referencia lo niega (no canoniza). Medido con un `docs/oculto-SALIDA.txt`
+  listado en el `ficheros_con_ocultos.txt` del repo inventado. Mismos dos tests. Y el comentario de
+  `guardia.py` («un `"// <ruta protegida>"[3:]` se sigue mirando») afirma mas de lo que el codigo
+  sostiene: solo vale si la ruta lleva fragmento; se corrige con el arreglo que decida el consultor.
+- **B3 (importa): cierto, se declara.** `cmp` en `NO_EJECUTAN` tiene dos efectos mas que el informe
+  no decia: (1) una f-cadena o una suma que empieza por `cmp ` deja de contar como composicion de C
+  (`_empieza_por_un_programa`), igual que `diff`; (2) `cmp` entra en `PROGRAMAS_DE_DATOS` de la
+  regla de la CI. Ninguno abre nada: `cmp` no ejecuta, y (1) es el trato que ya tiene `diff`. Tras la
+  PARADA 2, un test que lo fije (`cmp` y `diff` igual en `_es_composicion`).
+- **B4 (importa): cierto, corregido el texto** (§«Tests primero»): el test de D6 se escribio despues
+  del anexo de los rotos; su fallo con la referencia lo prueba `test_la_referencia_niega_f1_por_no_canonizar`,
+  con la misma entrada.
+- **B5 (importa): cierto.** La CI de `fix/` es de `f9888a03`; el ultimo push ira con el ultimo
+  commit de la rama, tras la PARADA 2.
+- **B6 (menor): corregido**: la tabla se llama «El encargo, punto por punto».
+- **B7 (menor): se declara.** La fixture `base` escribe en la carpeta del usuario cuando el
+  temporal de pytest lleva un fragmento de `SENSIBLES`; si el proceso muere de golpe deja `gfp-*`
+  (hoy, 0).
+
+## PARADA 2 (2026-11-13): dos variantes que la rama deja pasar y stable/F38z niega
+
+Punto 6 de la respuesta: «Solo paras si un caso de D3 o de h1-h8 pasa». B1 es una variante de
+h7/h8 y B2 de h1c; los dos los niega la referencia. Paro.
+
+Arreglos medidos en memoria, simulados con `monkeypatch` sin tocar `guardia.py`
+(`anexos/GUARDIA-FALSOS-POSITIVOS/medida_parada2.py`, que corrio como test temporal y se saco de
+`tests/`; su salida, `parada2-windows-SALIDA.txt`):
+
+| variante | B1 (3 casos) | B2 | h1-h8 | F1 (la copia de `generar_capa.py` y 3 literales) | `decidir` de la copia |
+|---|---|---|---|---|---|
+| la rama hoy | pasan | pasa | niegan | pasan | 0,16 s |
+| B1: el tramo sin blancos a los DOS lados | niegan | pasa | niegan | pasan | 0,16 s |
+| B1 + b: ademas, cada sufijo tras un separador se mira como ruta (fichero protegido, o carpeta que lo contiene, recursiva) | niegan | niega | niegan | pasan | 0,20 s |
+| B1 + d: el sufijo desde CADA posicion | niegan | niega | niegan | **niega F1**: el «.» final del literal de :364 es la raiz | 0,30 s |
+
+Lo que deja B1 + b: un recorte a mitad de nombre (`"// a b/x<ruta>"[8:]`), que es la clase de h1b
+(`'x' + ruta[1:]`), que ya pasa con la referencia y quedo como limite conocido (punto 4).
+
+### Lo que necesito que decidas (PARADA 2)
+
+0. **B1.** Opciones: (a) el tramo se mira sin blancos a los dos lados (`strip` en vez de `lstrip`);
+   (b) otra forma. Recomiendo (a): solo endurece, cierra los tres casos medidos y F1 sigue pasando.
+   Coste de (b): ninguno medido que la mejore.
+1. **B2.** Opciones: (a) B1 + b: para un literal de F1, cada sufijo tras un separador se mira como
+   una ruta (fichero protegido, o carpeta que lo contiene, recursiva), y si alguno lo es, el literal
+   se trata como hoy; (b) se declara dentro del limite de h1b; (c) F1 sale de la rama y queda solo
+   F2. Recomiendo (a): cierra B2 y todo recorte que caiga en un separador, y deja solo el recorte a
+   mitad de nombre, que es h1b y ya pasa hoy; F1 sigue pasando (0,04 s mas). Coste de (b): B2 pasa
+   y la referencia lo niega, contra D3. Coste de (c): F1 sin resolver para R6a.
+2. **B3-B7**, que no paran: lo de arriba (B3 declarado y con test tras la PARADA; B4 y B6
+   corregidos; B5 con el ultimo commit; B7 declarado). Opciones: (a) asi; (b) otra cosa.
+   Recomiendo (a).
+
+Tras la respuesta: el arreglo con sus tests (los `xfail` pasan a tests normales y rompen contra la
+rama de hoy), `make check`, el push a `fix/` con el ultimo commit y una pasada corta del revisor
+sobre el arreglo.
+
+Espero tu respuesta a la PARADA 2.
+
 ## Estado
 
-EN CURSO (fase 1 en f9888a03, CI de fix/ con el unico fallo aceptado; faltan el revisor y el ensayo del cierre, que lanza Aleks).
+PARADA 2 (el revisor encontro dos variantes que la rama deja pasar y stable/F38z niega; esperando la respuesta del consultor).
+
+## Anexo · El informe del revisor (primera pasada), pegado tal cual
+
+## Informe del revisor · trabajo/guardia-falsos-positivos · 2026-11-13
+
+HEAD 32316acf, base 4ecd7f17 (main = commit de estado de stable/F38z-capa-generada, 7bccf310). `git status --short` vacío.
+
+**Resumen: la rama no está lista.** Hay dos bloqueos, y los dos son variantes de casos de D3 / h1-h8 que la guardia de stable/F38z niega y la de la rama deja pasar. El punto 6 de la respuesta del consultor dice que eso es motivo de parada.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 0 importa, 0 menor.
+
+Sin hallazgos. Lo comprobado:
+1. **Contrato.**
+   - `uv run python scripts/contrato_rama.py` → «CONTRATO: 13 ficheros dentro del contrato de trabajo/guardia-falsos-positivos (riesgo medio, …, 4 comprobaciones para el revisor)», exit 0.
+   - `uv run botsito state check` → OK, exit 0.
+   - El pytest de las 5 guardias del contrato → exit 0, sin F ni E.
+   - `make check` no lo ejecuté (escribe). Evidencia de `make-check.log`: «SELLO: make check en verde sobre el arbol a9a587ba…», que es igual a `git rev-parse HEAD^{tree}`; «3498 passed»; «PICO DE MEMORIA … 317 MiB».
+2. **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases` (`git log main..HEAD -- knowledge/spec knowledge/cases` sale vacío).
+3. **Holdout y material.** Nada bajo `knowledge/`. La fila del 2026-11-12 está en `HOLDOUT-EXPOSICIONES.md` (+1 línea). Los anexos no traen ninguna ruta protegida entera (grep de `cases/hol`, `transcripciones`, `caso-…`, `Users` sin resultados).
+4. **Regímenes de cambio.** `git diff --name-status main...HEAD -- knowledge data/manifests` sale vacío. HISTORIA: 174 líneas añadidas, 0 borradas.
+5. **Ambigüedades.** No se tocan.
+6. **ADR.** Ninguno nuevo ni cambiado.
+7. **Informes cerrados.** `GUARDIAS-CLAUDE.md` solo recibe 7 líneas añadidas, en un recuadro `>` con fecha y rama, junto a §1.7. El cuerpo queda intacto.
+8. **Las tres guardias de una `cita`.** No aplica: ningún sitio nuevo con `cita`.
+9. **Lo demás de `CLAUDE.md`.**
+   - Ninguna cifra en la spec.
+   - El informe existe y acaba en `## Estado`.
+   - No hubo ensayos sobre copias sueltas.
+   - Comprobé cinco citas contra su fuente, y las cinco cuadran:
+     - `generar_capa.py:359` y `:364`, los dos literales tal cual;
+     - `ACTIVAR-SESION-06-MOTOR.md:217-218`, el `cmp` negado con `diaria.DIAGNOSTICO.cuenta=diaria.txt`;
+     - `CAPA-GENERADA.md:474`, «`cmp`, negado», en «La guardia» (:466);
+     - `PROJECT_STATE.md:84` y `:152`, las dos líneas de deuda;
+     - la regla de `NO_EJECUTAN` («La lista solo crece…»), en `guardia.py` de main hacia :2880.
+10. **Items de evidencia nuevos.** Ninguno.
+
+### Eje (b) · Encargo
+Resumen: 2 bloquea, 3 importa, 2 menor. Requisitos: 21 hechos, 2 hechos de otra forma, 4 parciales, 0 no hechos, más el revisor (en curso).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Apertura: base, CI de main, ninguna otra rama | Hecho | informe :9-22 |
+| 2 | Contrato con `tramo`, permitidas y protegidas | Hecho | `contrato.yaml:4-30` |
+| 3 | Informe y anexos en sus rutas | Hecho | diff --name-status |
+| 4 | F1: la copia cambiada de `generar_capa.py` pasa | Hecho | `test_f1_*` en verde (33 passed, ninguno saltado, Windows) |
+| 5 | F2: `cmp` de dos ficheros pasa; `diff` comprobado; G.6 se cierra | Hecho | informe §c; `test_f2_*` |
+| 6 | Lo que queda fuera (compilar.py, F38w, worktree add, lectores, D), con los lectores nombrados | Hecho | informe «Los demás lectores», «Líneas para el cierre» |
+| 7 | D1d en `analizar_codigo`, sin tocar `_sin_prefijos`, `_canonica` ni `_absoluta` | Hecho | `git diff stable/F38z-capa-generada HEAD -- .claude/hooks/guardia.py` da 40 inserciones en tres trozos (:2892-2895, :4951-4952, :4986-5018). `_absoluta` :1298, `_no_canonizable` :1330, `_sin_prefijos` :1339 y `_canonica` :1365 no aparecen en el diff |
+| 8 | D2: `cmp` en `NO_EJECUTAN` con su porqué; con un fichero protegido sigue negado | Hecho, con efectos no declarados (B3) | `guardia.py:2892-2895`; test :262-272 |
+| 9 | D3: ningún caso que hoy se niega deja de negarse | **Parcial** | B1 y B2 |
+| 10 | D4: en memoria, repo sintético, rutas a trozos, W o L por caso | Hecho | test :86-135; tabla de casos del informe |
+| 11 | D5: la referencia sube a F38z; CAMBIOS_DECLARADOS = i1 e i2; casos i1-i3; el test roto pasa a i2 | Hecho | `test_guardia_g1.py:916`; `medir_g1.py:58-63`, :244-249, :365-368; `test_guardia_g1.py:1031` |
+| 12 | D6: tests de F1 solo en Windows; no tarda | Hecho | test :202-225 (0,14 s según el informe) |
+| 13 | D7: ensayo del cierre en un clon | Hecho de otra forma | la guardia niega `git clone`; queda preparado. Lo permite el punto 7 de la respuesta |
+| 14 | Lo que NO cambia | Hecho | solo 13 ficheros, ninguno de src/, knowledge/, mql5/, settings, skills, agents, solo_lectura, Makefile ni .gitattributes |
+| 15 | PROJECT_STATE: solo el ritual y «Tests Currently Passing»; tamaño | Hecho | diff de PS; `wc -c` da 24569; 2039→2058, que son las 19 funciones nuevas |
+| 16 | Fase 0 a-f y PARADA | Hecho | informe :37-306 |
+| 17 | La respuesta, copiada tal cual en el informe y en el encargo | Hecho | `diff` de encargo:68-80 contra informe:312-324 → IGUALES; el encargo solo crece desde 6a310dc8 |
+| 18 | Tests primero, rotos contra F38z por su motivo | **Parcial** | B4 |
+| 19 | h1b en el informe y en el recuadro de `GUARDIAS-CLAUDE.md` | Hecho | `GUARDIAS-CLAUDE.md` §1.7 |
+| 20 | h1-h8, cada uno con test y su columna W/L | Hecho (pero ver B1 y B2) | test :276-315 |
+| 21 | El residuo declarado (respuesta, punto 2) | Hecho | test :339-351 |
+| 22 | `medir_windows.py` no se lanza y sale del repo | Hecho | `D` en f9888a03 |
+| 23 | Líneas para el cierre (G.6, Technical Debt, tamaño, ERRORES) | Hecho (simuladas) | informe :474-494 |
+| 24 | make check sellado en cada commit | Hecho | informe :532-538; el log da el sello de HEAD |
+| 25 | Push a fix/ con su CI | **Parcial** | B5 |
+| 26 | Revisor | En curso | este informe |
+| 27 | Estado final y frase de cierre | **Parcial** | informe :542, «EN CURSO» (lo esperable antes de pegar el revisor) |
+| 28 | Tabla «El encargo, punto por punto» | Hecho de otra forma | B6 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | **bloquea** | **La condición 2 de D1d se salta con un blanco DETRÁS del nombre de máquina.** Los casos h4-h8 con un blanco a cada lado del nombre (p. ej. `\\ localhost \C$\<raíz>`, recorrida como h7 o con `os.stat` como h8) los niega F38z por no canonizar. En la rama, F1 se los salta. `_tramo_lleva_blanco` solo quita los blancos del principio: el tramo `" localhost "` queda en `"localhost "`, lleva blanco y devuelve True. La raíz real no lleva ningún fragmento de SENSIBLES, así que la condición 3 tampoco para el caso. El resultado es el mismo que mide el test roto a propósito sin la condición del blanco: h7 y h8 pasan. Que eso abra el repo de verdad depende de cómo resuelve Windows un servidor `" localhost "`. Es justo lo que habría medido `medir_windows.py`, y el punto 3 de la respuesta lo dio por innecesario en la premisa, ahora falsa, de que D1d niega toda esa familia. | `guardia.py:5002-5006` (`.lstrip(" \t")` y después `re.search(r"[ \t]", tramo)`). Test `_unc` :173-177: el blanco solo va delante del equipo. Test :414-421 (sin la condición del blanco, h7 y h8 pasan). Anexo `rotos-contra-F38z-SALIDA.txt:11` (F38z niega `// a b/…` por «no se puede canonizar», no por el fragmento) |
+| B2 | **bloquea** | **La condición 3 (SENSIBLES) no cubre el material protegido que no lleva fragmento.** Es la variante de h1c: `"// a b/<fichero>"[7:]`, con un fichero de la lista `ficheros_con_ocultos.txt`. F38z la niega (no canoniza). La rama se salta el literal, y el recorte se hace al ejecutarse, así que lee el fichero. Un subíndice no es una composición de C. De las 14 rutas de esa lista, 13 no llevan ningún fragmento. El comentario de `guardia.py` afirma más de lo que el código sostiene: dice «un `"// <ruta protegida>"[3:]` se sigue mirando», y eso solo vale si la ruta lleva fragmento. Es la misma clase que h1b (`'x'+ruta[1:]`, que ya pasa en F38z), pero h1b se aceptó precisamente porque «ya pasa hoy con cualquier variante», y esta variante hoy NO pasa. Que entre o no en el límite de h1b lo decide el consultor. | `guardia.py:4996-4997` (el comentario) y :5014 (`not any(s in lit.lower() for s in SENSIBLES)`). `grep -v '^#' .claude/hooks/ficheros_con_ocultos.txt \| grep -ivc '<los 11 fragmentos>'` → **13**. `_es_composicion` :4392-4419 (Call, BinOp o JoinedStr; no Subscript). Medida indirecta: la propia guardia de la rama, ante mi `python -c` con la lista `['// a b/knowledge/_proposals/x.yaml', '// a b/docs/validation/anexos/X/y-SALIDA.txt', '// a b/docs/caso-…md', '// a b/knowledge/feedback/x.yaml', …]`, solo negó el cuarto, el que lleva fragmento. Los tres primeros van antes en `ast.walk` y sin F1 los habría negado por no canonizar. No lo medí de punta a punta con `decidir` |
+| B3 | importa | **`cmp` en `NO_EJECUTAN` tiene dos efectos más que el informe no declara.** El informe dice «No hace falta más» (§d) y el comentario de `NO_EJECUTAN` solo dice que sus argumentos se miran como una lectura. (1) `_empieza_por_un_programa`: una f-cadena o una suma que empieza por `cmp ` deja de ser una composición de C. Medido en memoria: `f"cmp {a}/b/c"` y `"cmp " + a + "/b/c"` dan **True sin `cmp` y False con `cmp`**, igual que `diff`; `xxd` sigue en True. (2) `cmp` entra en `PROGRAMAS_DE_DATOS`: la regla de la CI deja de mirar sus argumentos. Esto no tiene riesgo, porque `cmp` no ejecuta nada. Sin cambios: `BUILTINS_NO_ADMITIDOS`, porque `cmp` no está en `BUILTINS_SHELL`, y `PS_NO_EJECUTAN`, donde no está. El efecto (1) es el mismo trato que ya tiene `diff`, pero ningún test lo fija y el informe no lo dice. | `guardia.py:4422-4444` (`prog in NO_EJECUTAN`), :5071, :3307-3313. Mi `python -c` sobre `_es_composicion` (salida citada). Quise medir la consecuencia con una ruta protegida a trozos y la guardia lo negó; ver «Lo que no pude comprobar» |
+| B4 | importa | **El anexo de los tests rotos no incluye `test_f1_el_literal_no_llega_a_absoluta_ni_tarda`.** La tabla del informe le pone «niega» con F38z (:407) y el informe habla de «15 fallos». El anexo trae 15 FAILED y este test no está entre ellos. Por lógica tiene que fallar, porque usa la misma entrada que `test_la_referencia_niega_f1_por_no_canonizar`, pero la evidencia citada no lo muestra. | `rotos-contra-F38z-SALIDA.txt:16-30`; informe :361 y :407; test :201-225 |
+| B5 | importa | **La CI de fix/ no es del último commit.** `origin/fix/guardia-falsos-positivos` está en f9888a03 y HEAD en 32316acf. La skill `entregar-rama` dice que el run que cuenta es el del último commit (pasos 7 y 9, y su verificación). | `git rev-parse refs/remotes/origin/fix/guardia-falsos-positivos` → f9888a03…; informe :523 |
+| B6 | menor | La tabla se llama «El encargo frente a lo hecho», no «El encargo, punto por punto». Tampoco parte cada punto de la respuesta con los cuatro estados. El nombre lo usa el propio encargo (punto 7), así que no es grave. | informe :446-464; `entregar-rama/SKILL.md:50,97` |
+| B7 | menor | **La fixture `base`** es correcta y no enmascara nada: hace que h7 y h8 dependan de la condición del blanco y no del fragmento `data\` de `AppData\`, que es lo que necesita `test_roto_sin_la_clausula_del_blanco`. Además se asegura de que la carpeta nueva no lleve ningún fragmento y comprueba el borrado. Dos pegas de forma: escribe fuera del temporal de pytest, en la carpeta del usuario, y si el proceso muere de golpe (el recorte por memoria que nombra `CLAUDE.md`) deja `gfp-*` allí, como ya pasó 130 veces. Hoy no queda ninguna. | test :86-112; `ls -d /c/Users/USER/gfp-*` → 0; informe :386-392 |
+
+Sobre los puntos del alcance que me pasaste:
+- **(1) Comparación caso a caso con F38z.** El diff es exactamente el bloque F1, la línea del bucle y la entrada de `cmp`. Efectos además de esos: B3. Que F1 se salte un literal tiene otro efecto: no suma a `directorios`, con lo que la regla de :4969 se dispara más, nunca menos. En esa dirección no abre nada.
+- **(2) D3 y h1-h8.** Todos sus tests niegan en la rama: 33 passed sin saltados, y `test_guardia_alias.py` y `test_guardia_g1.py` en verde. Pero hay variantes sin test que pasan: B1 y B2.
+- **(3) Los tests contra F38z.** El anexo muestra cada fallo con su motivo, salvo B4. Los dos tests de la suite que cargan la guardia del tag pasan (corrieron: no saltaron).
+- **(4) `_sin_prefijos`, `_canonica` y `_absoluta`** están intactas.
+- **(5) D5:** correcto. En Linux i1 queda declarado aunque no difiere, y es inocuo: `medir_g1.main` solo falla por lo que difiere sin declarar (:438-443).
+- **(6) La fixture:** ver B7.
+
+### Lo que no pude comprobar
+- **B1 y B2 de punta a punta, con `decidir`.** Necesitan un repo sintético en disco, y yo no escribo. Además la guardia me negó las medidas en memoria que montaban una ruta protegida a trozos («el codigo compone knowledge/cases/holdout/1/x.yaml») y las que cargaban la guardia del tag con `exec` («el codigo carga o ejecuta `exec(...)`»). No las reescribí. Para confirmarlos, la sesión puede añadir tests:
+  - B1: `_unc(repo, " ", "localhost ")` con el caso de h7 o de h8, que debería negarse;
+  - B2: un `docs/oculto.txt` listado en `.claude/hooks/ficheros_con_ocultos.txt` del repo sintético, con `print(open("// a b/docs/oculto.txt"[7:]).read())`, que debería negarse.
+  Los dos los niega F38z.
+- **Si Windows resuelve un servidor con blancos (`" localhost "`).** `medir_windows.py` no se lanzó, por el punto 3 de la respuesta.
+- **El efecto de B3 sobre una composición con una ruta protegida.** La guardia lo negó, como en el primer punto.
+- **La suite nueva entera contra la guardia de F38z.** Haría falta cargar el tag con `exec`, que la guardia niega. Me baso en el anexo y en los dos tests de referencia.
+- **`make check` y la CI.** No los ejecuté: `make check` escribe, y la CI la comprobé solo por la referencia de `fix/`. Evidencia: `make-check.log` y el informe (:520-538).
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `git diff main...HEAD -- .claude/hooks/guardia.py && git diff stable/F38z-capa-generada HEAD --stat -- .claude/hooks/guardia.py && git rev-parse stable/F38z-capa-generada^{commit} main`
+3. Grep `NO_EJECUTAN|PROGRAMAS_DE_DATOS|BUILTINS_NO_ADMITIDOS`, `_es_composicion`, `SENSIBLES`, `ficheros_con_ocultos`, y Read de varios tramos de `guardia.py`
+4. `uv run python scripts/contrato_rama.py`
+5. `uv run pytest tests/unit/test_guardia_falsos_positivos.py -q -p no:cacheprovider -rs` (33 passed) y la misma con `-v`
+6. `ls -d /c/Users/USER/gfp-* | wc -l` → 0
+7. `uv run pytest tests/unit/test_guardia_g1.py tests/unit/test_guardia_claude.py tests/unit/test_guardia_alias.py tests/unit/test_guardia_ci.py tests/unit/test_guardia_ffmpeg.py -q -p no:cacheprovider` → exit 0
+8. `git diff main...HEAD -- tests/unit/test_guardia_g1.py docs/validation/anexos/GUARDIA-G1/medir_g1.py docs/validation/GUARDIAS-CLAUDE.md docs/validation/HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md`
+9. `git diff --name-status main...HEAD` (y las variantes sobre `knowledge`, `data/manifests` y `docs/adr`); `git diff main...HEAD --numstat`; `git log --name-status main..HEAD`
+10. `tail` y `grep SELLO|PICO|passed|failed make-check.log`; `git rev-parse HEAD^{tree}`
+11. `grep -n` de los dos literales en `generar_capa.py`; `git show main:.claude/hooks/guardia.py | sed -n '2876,2892p'`; `sed -n '214,222p' docs/validation/ACTIVAR-SESION-06-MOTOR.md`; Grep `cmp` en `CAPA-GENERADA.md`
+12. `uv run python -c` (comparación con el tag por `exec`) → **NEGADO** por la guardia; no lo reescribí
+13. `uv run python -c` sobre `_es_composicion` con la guardia de la rama por ruta literal (sin `cmp` y con `cmp`)
+14. `uv run python -c` con `analizar_codigo` sobre una ruta protegida a trozos → **NEGADO**; no lo reescribí
+15. `uv run botsito state check`
+16. `wc -c PROJECT_STATE.md`; `git show main:PROJECT_STATE.md | wc -c`; `sed -n '84p;152p' PROJECT_STATE.md`; `grep -n G.6 docs/plan/HOJA-DE-RUTA.md`
+17. `grep -c` y `grep -n -i` sobre los anexos
+18. `diff` de la respuesta en el encargo contra la del informe → IGUALES; `git diff 6a310dc8 HEAD -- docs/encargos/…` → 0 líneas borradas
+19. Read de `.claude/skills/entregar-rama/SKILL.md`
+20. `git branch -r`; `git rev-parse --verify -q refs/remotes/origin/fix/guardia-falsos-positivos`
+21. `grep -n requires-python pyproject.toml`; `cat .python-version`
+22. `wc -l` y `cut | sort | uniq -c` de `.claude/hooks/ficheros_con_ocultos.txt`; recuento de las rutas sin fragmento → 13
+23. `uv run python -c` sobre `_comentario_que_no_es_ruta` con cinco literales sintéticos → **NEGADO** en el cuarto (con fragmento); no lo reescribí. La negativa sirve de medida indirecta en B2
+
+Ficheros: C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py, C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_falsos_positivos.py, C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-FALSOS-POSITIVOS.md, C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-FALSOS-POSITIVOS\rotos-contra-F38z-SALIDA.txt, C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-G1\medir_g1.py, C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_g1.py, C:\Users\USER\Desktop\Bot v3\.claude\hooks\ficheros_con_ocultos.txt
