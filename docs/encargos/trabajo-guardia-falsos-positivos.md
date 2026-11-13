@@ -60,3 +60,21 @@ Dado por Aleks (consultor) el 2026-11-12, en un solo mensaje. Copiado tal cual:
 > 9. Plazo: si el sábado 14 a las 18:00 de Lima la rama no está lista para revisión, PARADA y decido yo. La ingesta de la 7a no espera a esta rama.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-12, 23:00)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/guardia-falsos-positivos (2026-11-12, 23:00). Cópiala tal cual al informe y al final del encargo, y aplícala punto por punto. Buena fase 0: tus cuatro correcciones al encargo quedan aceptadas.
+>
+> 0. (a) D1d, solo en Windows: un literal de un guion cuyos dos primeros caracteres son separadores seguidos de un espacio o un tabulador no se trata como ruta, solo si además el tramo hasta el siguiente separador lleva un blanco y el literal no lleva ningún fragmento de SENSIBLES. _sin_prefijos no cambia. Es la única variante medida que deja pasar la copia real de generar_capa.py (los dos literales, :359 y :364) y sigue negando h1-h8. Cada uno de h1-h8 entra como test que tiene que seguir negado, con su columna de Windows o Linux.
+> 1. (a) F1 y F2 entran como casos de medir_g1.py; la clave del test que se rompe a propósito pasa a la de F2; y la referencia sube a stable/F38z-capa-generada en el mismo commit que el cambio de la guardia. Declara en CAMBIOS_DECLARADOS solo lo que esa referencia niega y la rama deja pasar.
+> 2. (a) «//| docs/x |» y la f-cadena «// …{x}/…» con una variable calculable se declaran como residuo en el informe, con su porqué: ningún guion real lo pide hoy.
+> 3. (b) No se lanza medir_windows.py: con D1d no hace falta. Dilo en el informe y no lo commitees si no se usa.
+> 4. (a) h1b ('x' + ruta[1:]) se declara como límite conocido, y queda fuera porque ya pasa hoy con cualquier variante y la barrera es el código. Va al informe y, si GUARDIAS-CLAUDE.md tiene una sección de límites, también ahí. No va a Technical Debt, porque PROJECT_STATE está en 24.380 bytes.
+> 5. Las correcciones al encargo: la deuda de « / » y </li> es de F38w, y $'\r' es otro mecanismo (la comilla ANSI-C de tokenizar). La línea de Technical Debt que entró con F38z se reescribe para el cierre así: F1 y F2 resueltos; «/» y la deuda de F38w siguen con «!», con el porqué del encargo; $'\r', aparte, sin cambios. Para la fila de ERRORES, del consultor: D1 tal como estaba escrita dejaba pasar ocho casos, contra su propia D3 (importa); D5 rompía test_roto_la_comparacion_con_main (menor); F38y en lugar de F38w (menor); $'\r' metido en el mismo mecanismo (menor).
+> 6. Esta noche sigue sin parar: tests primero (rotos contra la guardia de stable/F38z), el cambio en guardia.py, medir_g1.py y la referencia, GUARDIAS-CLAUDE.md si describe lo que cambia, make check sellado en cada commit, push a fix/guardia-falsos-positivos con su CI, y el revisor. Solo paras si un caso de D3 o de h1-h8 pasa, si un test no rompe contra stable/F38z por el motivo que dice, o si la guardia niega algo legítimo (no cambias de vía: lo dejas para mi «!»).
+> 7. El ensayo del cierre en un clon independiente (D7): si la guardia te deja hacer el git clone y su make check, hazlo. Si no, déjalo preparado con las órdenes exactas y lo lanzo yo por la mañana.
+> Rama lista para revisión, NO cerrada.

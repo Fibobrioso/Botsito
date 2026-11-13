@@ -7,7 +7,7 @@
 trabajo/guardia-falsos-positivos
 
 ## Current Feature
-trabajo/guardia-falsos-positivos, PARADA de la fase 0 (carril «guardias y deuda»: G.6 y la deuda de la guardia de F38z): que la guardia deje de negar un literal «// » de un guion nuevo y cmp de dos ficheros que no son guiones, sin abrir ningun hueco. Encargo docs/encargos/trabajo-guardia-falsos-positivos.md; informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md.
+trabajo/guardia-falsos-positivos, EN CURSO (carril «guardias y deuda»: G.6 y la deuda de la guardia de F38z): que la guardia deje de negar un literal «// » de un guion nuevo y cmp de dos ficheros que no son guiones, sin abrir ningun hueco. Encargo docs/encargos/trabajo-guardia-falsos-positivos.md; informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md.
 
 ## Stable Main State
 7bccf310 · merge de `trabajo/capa-generada` (tag `stable/F38z-capa-generada`), sobre `stable/F38y-laminas-motivos` (7d3002c8). Informe docs/validation/CAPA-GENERADA.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ trabajo/guardia-falsos-positivos, PARADA de la fase 0 (carril «guardias y deuda
 7bccf310 · merge: trabajo/capa-generada, lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2 (R6a.2) · tag stable/F38z-capa-generada
 
 ## Tests Currently Passing
-2040 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2058 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

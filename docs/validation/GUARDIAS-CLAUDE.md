@@ -237,6 +237,13 @@ la semantica documentada.
 
 ### 1.7 Lo que no ve
 
+> **CORRECCION (2026-11-12, rama `trabajo/guardia-falsos-positivos`).** Un limite que esta lista no
+> nombra: la guardia mira los literales de un guion TAL COMO ESTAN ESCRITOS y no sigue lo que el
+> codigo hace con ellos al ejecutarse. `'x' + <ruta protegida>` recortado con `[1:]` pasa (caso h1b
+> de `GUARDIA-FALSOS-POSITIVOS.md`, fase 0): pasaba antes de esa rama y pasa con ella, con cualquier
+> variante de su condicion. Queda como limite conocido, fuera de la rama: la barrera es el codigo
+> (respuesta del consultor a su PARADA, punto 4). El cuerpo de este informe queda intacto.
+
 - **Las lineas `!` del usuario**: la documentacion no dice si los hooks las ven. No se ha medido.
 - **Si falta `python`** o el guion no esta, Claude Code trata la salida como error no bloqueante y
   la herramienta SE EJECUTA (falla abierto, segun la documentacion de hooks). Lo vigilan los

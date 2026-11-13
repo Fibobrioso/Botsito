@@ -2889,6 +2889,10 @@ NO_EJECUTAN: dict[str, str] = {
     # comando real (GUARDIA-G1.md §1.f, f15 y f16):
     "which": "busca un programa en el PATH y dice donde esta; no lo ejecuta ni lee su contenido",
     "rmdir": "borra un directorio VACIO; no lee ningun fichero ni ejecuta nada",
+    # `trabajo/guardia-falsos-positivos` (G.6 de la hoja de ruta; D2 del encargo), uno que pidio
+    # un comando real (CAPA-GENERADA.md, «La guardia»; ACTIVAR-SESION-06-MOTOR.md §b.3):
+    "cmp": "compara dos ficheros byte a byte; no ejecuta ninguno (sus argumentos se miran como "
+    "una lectura, como los de `diff`)",
 }
 # Los programas que leen un FICHERO DE PROGRAMA con una opcion: ese fichero es codigo de un
 # lenguaje que la guardia no analiza (respuesta del consultor a §1.12: se niegan).
@@ -4944,6 +4948,8 @@ def analizar_codigo(
         if lit.lower().startswith("file:"):  # la ruta de una URL `file:` (C; GUARDIA-ALIAS b7)
             _exigir_ruta_del_codigo(lit, ctx, recorre, "nombra la URL de")
             continue
+        if _comentario_que_no_es_ruta(lit):  # F1 (`trabajo/guardia-falsos-positivos`, D1d)
+            continue
         ruta = _absoluta(lit, ctx.cwd)
         es_dir = os.path.isdir(ruta)
         directorios += es_dir
@@ -4975,6 +4981,40 @@ def analizar_codigo(
         return  # lo que no se parsea ya lo han mirado las reglas de texto de arriba
     _compone_ruta_sensible(arbol, ctx, recorre, guion)
     _exigir_lo_que_carga(arbol, ctx, guion, vistos)
+
+
+# ------------------------ F1: un comentario no es una ruta (`trabajo/guardia-falsos-positivos`)
+# Por que: en Windows `_sin_prefijos` toma por recurso de otra maquina todo literal que empieza por
+# dos barras y lleva dos separadores mas, y un guion nuevo que ESCRIBE comentarios de MQL5 se negaba
+# entero: «// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md).»
+# y el trozo constante de una f-cadena, «//   uv run python src/botsito/...» (`generar_capa.py`
+# :364 y :359; CAPA-GENERADA.md, «La guardia»). Respuesta del consultor a la PARADA de la fase 0,
+# punto 0 (D1d): en negativo, solo donde nace -los literales de `analizar_codigo`- y solo en
+# Windows (en Linux ese literal ya no cae bajo la raiz), sin tocar `_sin_prefijos`: Read, Grep y los
+# argumentos de Bash siguen igual. Las TRES condiciones a la vez: (1) dos separadores y un espacio o
+# un tabulador; (2) el tramo hasta el siguiente separador, sin los blancos del principio, lleva un
+# blanco -un nombre de maquina no lo lleva: `\\ localhost\C$\...` sigue siendo una ruta-; (3)
+# ningun fragmento de `SENSIBLES` -un `"// <ruta protegida>"[3:]` se sigue mirando-. La fase 0 midio
+# ocho casos que la condicion (1) sola dejaba pasar (GUARDIA-FALSOS-POSITIVOS.md §a, h1-h8).
+_COMENTARIO = re.compile(r"[\\/]{2}[ \t]")
+
+
+def _tramo_lleva_blanco(lit: str) -> bool:
+    """Si el tramo de detras de las dos barras, hasta el siguiente separador y sin los blancos del
+    principio, lleva un blanco: entonces no puede ser el nombre de una maquina (condicion 2)."""
+    tramo = re.split(r"[\\/]", lit[2:], maxsplit=1)[0].lstrip(" \t")
+    return re.search(r"[ \t]", tramo) is not None
+
+
+def _comentario_que_no_es_ruta(lit: str) -> bool:
+    """Un literal de un guion que no se mira como ruta (F1): solo en Windows y con las tres
+    condiciones del bloque de arriba."""
+    return (
+        os.name == "nt"
+        and _COMENTARIO.match(lit) is not None
+        and _tramo_lleva_blanco(lit)
+        and not any(s in lit.lower() for s in SENSIBLES)
+    )
 
 
 def _literales(codigo: str, es_python: bool) -> list[str]:

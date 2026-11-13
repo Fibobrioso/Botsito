@@ -53,7 +53,7 @@ Sin tocar `guardia.py`. Lo que escribe la fase 0, declarado:
   empiezan por dos barras y un blanco (apunta solo a `C:\Windows\win.ini`). **La guardia nego
   ejecutarlo** («la ruta `// x/../C:/Windows/win.ini` no se puede canonizar»): es la conducta que
   esta rama no debe cambiar. No lo reescribi: PARADA, y si hace falta lo lanza Aleks con «!»
-  (decision 3).
+  (decision 3). *(Tras la respuesta, punto 3: no se lanza y sale del repo; estuvo en `dce4004e`.)*
 
 ### a. F1 y F2 reproducidos
 
@@ -305,6 +305,92 @@ Ninguna: todo en un repo sintetico con ficheros falsos. Los `make check` de la r
 
 Espero tu respuesta a la PARADA.
 
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-12, 23:00)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/guardia-falsos-positivos (2026-11-12, 23:00). Cópiala tal cual al informe y al final del encargo, y aplícala punto por punto. Buena fase 0: tus cuatro correcciones al encargo quedan aceptadas.
+>
+> 0. (a) D1d, solo en Windows: un literal de un guion cuyos dos primeros caracteres son separadores seguidos de un espacio o un tabulador no se trata como ruta, solo si además el tramo hasta el siguiente separador lleva un blanco y el literal no lleva ningún fragmento de SENSIBLES. _sin_prefijos no cambia. Es la única variante medida que deja pasar la copia real de generar_capa.py (los dos literales, :359 y :364) y sigue negando h1-h8. Cada uno de h1-h8 entra como test que tiene que seguir negado, con su columna de Windows o Linux.
+> 1. (a) F1 y F2 entran como casos de medir_g1.py; la clave del test que se rompe a propósito pasa a la de F2; y la referencia sube a stable/F38z-capa-generada en el mismo commit que el cambio de la guardia. Declara en CAMBIOS_DECLARADOS solo lo que esa referencia niega y la rama deja pasar.
+> 2. (a) «//| docs/x |» y la f-cadena «// …{x}/…» con una variable calculable se declaran como residuo en el informe, con su porqué: ningún guion real lo pide hoy.
+> 3. (b) No se lanza medir_windows.py: con D1d no hace falta. Dilo en el informe y no lo commitees si no se usa.
+> 4. (a) h1b ('x' + ruta[1:]) se declara como límite conocido, y queda fuera porque ya pasa hoy con cualquier variante y la barrera es el código. Va al informe y, si GUARDIAS-CLAUDE.md tiene una sección de límites, también ahí. No va a Technical Debt, porque PROJECT_STATE está en 24.380 bytes.
+> 5. Las correcciones al encargo: la deuda de « / » y </li> es de F38w, y $'\r' es otro mecanismo (la comilla ANSI-C de tokenizar). La línea de Technical Debt que entró con F38z se reescribe para el cierre así: F1 y F2 resueltos; «/» y la deuda de F38w siguen con «!», con el porqué del encargo; $'\r', aparte, sin cambios. Para la fila de ERRORES, del consultor: D1 tal como estaba escrita dejaba pasar ocho casos, contra su propia D3 (importa); D5 rompía test_roto_la_comparacion_con_main (menor); F38y en lugar de F38w (menor); $'\r' metido en el mismo mecanismo (menor).
+> 6. Esta noche sigue sin parar: tests primero (rotos contra la guardia de stable/F38z), el cambio en guardia.py, medir_g1.py y la referencia, GUARDIAS-CLAUDE.md si describe lo que cambia, make check sellado en cada commit, push a fix/guardia-falsos-positivos con su CI, y el revisor. Solo paras si un caso de D3 o de h1-h8 pasa, si un test no rompe contra stable/F38z por el motivo que dice, o si la guardia niega algo legítimo (no cambias de vía: lo dejas para mi «!»).
+> 7. El ensayo del cierre en un clon independiente (D7): si la guardia te deja hacer el git clone y su make check, hazlo. Si no, déjalo preparado con las órdenes exactas y lo lanzo yo por la mañana.
+> Rama lista para revisión, NO cerrada.
+
+## Aplicación de la respuesta (2026-11-12, noche)
+
+Punto por punto:
+
+- **0. D1d, solo en Windows: hecho.** `guardia.py`, junto a `_literales`: el bloque «F1: un
+  comentario no es una ruta» con su porque, `_COMENTARIO`, `_tramo_lleva_blanco` y
+  `_comentario_que_no_es_ruta` (las tres condiciones y `os.name == "nt"`), y una linea en el bucle
+  de `analizar_codigo`, entre el `file:` y `_absoluta`. `_sin_prefijos`, `_canonica` y `_absoluta`
+  no cambian (`git diff` de la rama: solo esas lineas y la entrada de `cmp`). h1-h8 entran como
+  tests que tienen que seguir negados, cada uno con su sistema (tabla de casos, abajo).
+- **1. medir_g1.py y la referencia: hecho**, en el mismo commit que el cambio de la guardia.
+  `GUARDIA_DE_REFERENCIA = "stable/F38z-capa-generada"`; `CAMBIOS_DECLARADOS` vaciado y con dos
+  entradas, `i1-f1-comentario` y `i2-f2-cmp` (las dos unicas que la referencia niega y la rama
+  deja pasar, medido con la propia comparacion); casos nuevos `i1`, `i2` e `i3-cmp-protegido` (este
+  sigue negado: «leer el contenido de <holdout>/...»); `test_roto_la_comparacion_con_main` borra
+  `i2-f2-cmp`.
+- **2. El residuo: hecho.** `//| docs/x |` y la f-cadena `// ...{x}/...` con una variable calculable
+  siguen negados, con su test (`test_lo_que_d1d_no_cubre_sigue_negado`), y se declaran aqui: ningun
+  guion real lo pide hoy (`generar_capa.py` pasa entero). La f-cadena calculable va por las
+  composiciones (`_compone_ruta_sensible` → `_exigir_ruta_del_codigo`), que D1d no toca.
+- **3. `medir_windows.py`: no se lanza.** Con D1d no hace falta. Ya estaba en el commit de la fase 0
+  (`dce4004e`); sale del repo con `git rm` en el commit de esta fase, y la fase 0 lo nombra solo
+  como lo que se intento y la guardia nego.
+- **4. h1b: declarado** como limite conocido aqui (fase 0, §b) y en `GUARDIAS-CLAUDE.md`, §1.7 «Lo
+  que no ve», con un RECUADRO DE CORRECCION (es un informe cerrado: el cuerpo queda intacto). No va
+  a Technical Debt.
+- **5. Las correcciones y las lineas del cierre**: en «Lineas para el cierre», abajo.
+- **6. Sin parar: en curso** (tests primero, el cambio, `make check` en cada commit, `fix/`, el
+  revisor).
+- **7. El ensayo del cierre**: en su seccion, abajo.
+
+### Tests primero: lo que rompe contra la guardia de stable/F38z
+
+Los tests se escribieron con la guardia del arbol igual byte a byte a la de `stable/F38z`
+(`git diff --stat stable/F38z-capa-generada -- .claude/hooks/` vacio) y se corrieron ANTES de
+tocarla: 15 fallos, cada uno por el motivo que dice
+(`anexos/GUARDIA-FALSOS-POSITIVOS/rotos-contra-F38z-SALIDA.txt`):
+
+- los cinco de F1 (la copia de `generar_capa.py`, :364, :359, tabulador, barras invertidas):
+  «la ruta `// ...` no se puede canonizar»;
+- los tres de F2: «ejecutar `cmp`: la guardia no sabe con que se ejecuta ...»;
+- `cmp` con un fichero protegido: la referencia tambien lo niega, pero por `R_EJECUCION`
+  («ejecutar `cmp`»); el test pide `R_HOLDOUT`, la regla de la lectura (D2);
+- `test_la_referencia_es_stable_f38z`: la referencia era `stable/F38k-margen-pendiente`;
+- los cinco ROTO A PROPOSITO: con la referencia no existen las piezas que rompen
+  (`_tramo_lleva_blanco`, `_comentario_que_no_es_ruta`: `AttributeError`; `cmp` no esta en
+  `NO_EJECUTAN`: `KeyError`) o la referencia ya niega lo que el test quiere ver pasar.
+
+Los que aseguran lo que sigue negado (h1-h8, D3, el residuo) pasan con las dos guardias, que es lo
+que tienen que hacer. Y dos tests dejan fijado DENTRO de la suite lo que la referencia decidia:
+`test_la_referencia_niega_f1_por_no_canonizar` (solo Windows) y
+`test_la_referencia_niega_f2_por_ejecutar` cargan la guardia del tag y exigen su negativa con su
+motivo.
+
+**D6, medido**: `test_f1_el_literal_no_llega_a_absoluta_ni_tarda` — los dos literales de F1 no
+llegan a `_absoluta` (ni a `realpath`), y `decidir()` sobre la copia de `generar_capa.py` tarda
+0,14 s. Los `//+---`, `//| ...` y `// ` de su cabecera SI llegan a `_absoluta`, como con la
+referencia: no son de F1 (no llevan blanco en el tramo), ya pasaban y no tardan (el matiz 34 del
+auditor).
+
+**Una trampa de la medida, resuelta en el test**: el temporal de pytest en Windows lleva `AppData\`,
+que casa con el fragmento `data\` de `SENSIBLES` y haria negar h7 y h8 por el fragmento y no por la
+condicion del blanco. La fixture `base` pone el repo inventado en una carpeta nueva de la del
+usuario cuando el temporal lleva un fragmento, y la borra al acabar. La primera version la borraba
+con `ignore_errors=True`, que en Windows deja la carpeta entera sin avisar (los objetos de git son
+de solo lectura): quedaron 130 carpetas `gfp-*` en la carpeta del usuario, borradas a mano; ahora
+`_borrar` quita el «solo lectura» y comprueba que la carpeta ya no existe.
+
 ## Estado
 
-PARADA (fase 0 hecha; esperando la respuesta del consultor).
+EN CURSO (respuesta a la PARADA aplicada: el cambio de la guardia y sus tests; faltan fix/, el revisor y el ensayo del cierre).

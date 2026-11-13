@@ -50,37 +50,16 @@ from collections.abc import Callable
 from pathlib import Path
 from types import ModuleType
 
-# Los casos que la rama hace pasar A PROPOSITO, cada uno con su porque (respuesta del consultor a
-# la PARADA de la fase 0, 2026-11-04; GUARDIA-G1.md §4).
-_K1 = "punto 2: la forma de la opcion por el arbol de Python; una variable o un grep no la piden"
-_K2 = "punto 3: el test de un clon de este repo, igual al de main o al del arbol del repo"
-_K4 = "punto 4: lo de detras del `=` en blanco no es una ruta (era la raiz, recursiva)"
-_SL = "punto 8: solo_lectura salta las opciones globales de git; worktree list y tag para listar"
+# Los casos que la rama hace pasar A PROPOSITO frente a `GUARDIA_DE_REFERENCIA`, cada uno con su
+# porque. Desde `trabajo/guardia-falsos-positivos` la referencia es `stable/F38z-capa-generada` y la
+# lista se vacio (la regla de arriba): lo de `trabajo/guardia-g1` (K1, K2, K4, el punto 8 de
+# solo_lectura, PYTHONIOENCODING, which y rmdir) ya esta en esa referencia. Solo se declara lo que
+# esa referencia niega y la rama deja pasar (respuesta del consultor a su PARADA, punto 1).
 CAMBIOS_DECLARADOS: dict[str, str] = {
-    "a1-lector-rama": _K1,
-    "a7-grep-patron": _K1,
-    "a8-grep-kwarg": _K1,
-    "b1-clon-cd": _K2,
-    "b2-clon-ruta": _K2,
-    "b3-clon-nuevo": _K2 + " (el test nuevo de la rama, copiado al clon)",
-    "b8-clon-barra": _K2,
-    "b9-clon-opcion": _K2,
-    "c1-clon-regex": _K2
-    + " (K3: la diferencia solo existe en Windows, porque en Linux main ya lo dejaba pasar;"
-    " por eso la CI de Linux no la vio. Pre-cierre, GUARDIA-G1.md §13)",
-    "c1-clon-regex-win": _K2 + " (K3 es K2)",
-    "d2-con-r": _K4,
-    "d3-barrido-1": _K4,
-    "d5-puntos-con-r": _K4,
-    "d6-cuatro-e": _K4,
-    "f18-grep-r-src": _K4 + " (la negativa de H por la regla de Analytics)",
-    "f1-sl-worktree-list": _SL,
-    "f2-sl-git-C": _SL,
-    "f3-sl-git-c": _SL + " (la guardia principal lo sigue negando: f3b)",
-    "f4-sl-tag-l": _SL,
-    "f8-pythonioencoding": "punto 5: PYTHONIOENCODING en NOMBRES_DE_ENTORNO",
-    "f15-which": "punto 7: which en NO_EJECUTAN (busca, no ejecuta)",
-    "f16-rm-rmdir": "punto 7: rmdir en NO_EJECUTAN (la otra negativa de H)",
+    "i1-f1-comentario": "F1 (D1d, punto 0): un literal `// ` de un guion nuevo, con blanco en el"
+    " tramo y sin fragmento sensible, no es una ruta (solo difiere en Windows: en Linux la"
+    " referencia ya lo dejaba pasar)",
+    "i2-f2-cmp": "F2 (G.6, D2): `cmp` en NO_EJECUTAN; sus argumentos se miran como una lectura",
 }
 
 
@@ -262,6 +241,12 @@ def preparar(r: Path, base: Path) -> dict[str, str]:
         f"from urllib.request import urlopen\nprint(urlopen('{url_secreto}').read())\n",
     )
     escribir(r, "h_ci.py", "import subprocess\nsubprocess.run(['g' + 'h', 'run', 'view', '1'])\n")
+    # punto i (`trabajo/guardia-falsos-positivos`): F1, el comentario de MQL5 de `generar_capa.py`
+    # :364 en un guion nuevo; F2, `cmp` de dos ficheros nuevos de `docs/` y con uno protegido
+    lit364 = "// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md)."
+    escribir(r, "i_f1.py", f"L = [{lit364!r}]\nprint(L)\n")
+    escribir(r, "docs/n1.md")
+    escribir(r, "docs/n2.md")
     return {"clon": clon.as_posix(), "secreto": secreto, "url_secreto": url_secreto, "base": base.as_posix()}
 
 
@@ -377,6 +362,10 @@ def casos(rutas: dict[str, str]) -> list[tuple[str, str, str, dict[str, object]]
         ("h7-url-file", "h", b, {"command": "uv run python h_url.py"}),
         ("h7b-url-file-curl", "h", b, {"command": f"curl {rutas['url_secreto']}"}),
         ("h8-ci-a-trozos", "h", b, {"command": "uv run python h_ci.py"}),
+        # i) `trabajo/guardia-falsos-positivos`: F1 y F2, y lo que sigue negado
+        ("i1-f1-comentario", "i", b, {"command": "uv run python i_f1.py"}),
+        ("i2-f2-cmp", "i", b, {"command": "cmp docs/n1.md docs/n2.md"}),
+        ("i3-cmp-protegido", "i", b, {"command": f"cmp docs/n1.md {KC}/{HOL}/1/secreto.yaml"}),
     ]
     del ka
     return c
