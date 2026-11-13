@@ -483,7 +483,9 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 ### R5.7 · El R de las parejas (diagnóstico)
 - **Refs:** ID:ADR-0092
 - **Qué es:** lo de RUMBO §5: si el bot gana cuando sí replica al trader. Dos fases: el R del bot en sus parejas, de la corrida; después el del trader en las mismas operaciones, que pide leer la columna de resultado de los días dev de su libro (la ingesta no lo guarda: cases/ingesta.py), con su declaración el mismo día. Diagnóstico de construcción: no justifica ninguna rama (ADR-0092 §6).
-- **Depende de:** nada; va en los huecos.
+- **Depende de:** la corrida de ADR-0070 §3 tras la 7b (NA:F, paso 3). Medida antes, su R sería
+  el de unas parejas que las activaciones de la 7a y la 7b van a cambiar, y abriría dos veces la
+  columna de resultado del libro (decisión del consultor, 2026-11-12).
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** las dos fases están en un informe.
 - **Estado:** ABIERTA.
@@ -518,11 +520,17 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Refs:** ID:ADR-0082 · F:F28 · ID:ADR-0068
 - **Qué es:** los parámetros de firma, bróker, instrumento y ejecución, el perfil de cuenta y el
   calendario de cierres, generados desde el repo para el EA, con su propio hash en el journal; ni
-  una cifra a mano (ADR-0082 D5). La parte de estrategia de F28 espera a F26. Si se decide, también
-  `LATIDO_SEG` y `TOPE_SESIONES`, las dos cifras del formato del journal (`mql5/JOURNAL.md`).
+  una cifra a mano (ADR-0082 D5). La parte de estrategia de F28 espera a F26.
+  `LATIDO_SEG` y `TOPE_SESIONES` no se generan: son cifras del formato del journal, no de la
+  cuenta, y cambiarlas es una versión nueva del formato (`mql5/JOURNAL.md`).
 - **Depende de:** R6a.1.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** regenerar no da diff y el hash está en el journal.
+- **Estado:** HECHA (`trabajo/capa-generada`, `stable/F38z-capa-generada`; CAPA-GENERADA.md):
+  `mql5/Include/Botsito/Capa/Generado.mqh`, que da `src/botsito/mql5bridge/generar_capa.py`, y
+  el journal v2 con su `capa_hash` en cada línea. El hash en el journal se comprobó con el script
+  de pruebas, sin demo (decisión del consultor del 2026-11-12); la corrida en la demo queda para
+  R6a.8.
 
 ### R6a.3 · Órdenes stop idempotentes y reconstrucción del estado
 - **Refs:** ID:ADR-0082 · F:F31 · ID:ADR-0057
@@ -541,6 +549,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** el freno de ADR-0067 portado al EA y el veto de la firma de RN-029, RN-030 y RN-031;
   RN-032 lee parámetros de la estrategia y espera a F26 (ADR-0082 D3). Arregla el docstring de
   `engine/freno.py` (Technical Debt) y nombra la deuda de las citas de relleno de RN-029 a RN-032.
+  reloj_dia_riesgo se resuelve con firma_huso_corte, comprobado contra huso_operativa al generar
+  (ADR-0053 §4); cómo pasa MQL5 un nombre IANA a instantes lo decide esta rama.
 - **Depende de:** R6a.2 y R6a.3.
 - **Quién:** la sesión, con el encargo del consultor.
 - **Hecho cuando:** el freno y el veto portados pasan los mismos casos que sus tests de Python.
@@ -581,7 +591,9 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Refs:** ID:ADR-0090 · ID:ADR-0027 · F:F33
 - **Qué es:** el EA de R6a.1 escribe en el journal de la demo la hora de apertura de las velas H4
   (`iTime`), para medir `anclaje_h4` contra la rejilla real del servidor (ADR-0027 §4; ADR-0090 §2).
-- **Depende de:** R6a.1.
+  Su journal en la demo es v2: la sesión comprueba que su `capa_hash` es el del repo en el tag
+  vigente (procedimiento en `docs/runbooks/DEMO-FTMO.md`).
+- **Depende de:** R6a.1 y R6a.2.
 - **Quién:** la sesión, con el encargo del consultor; Aleks pone el EA en la demo.
 - **Hecho cuando:** el journal trae las aperturas H4 de una semana con un cambio de día y caen a las
   17:00 de Nueva York, o se abre una ambigüedad.
@@ -601,7 +613,8 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 ### R6.1 · Del modelo a MQL5
 - **Refs:** F:F28 · F:F29 · F:F30 · F:F31 · F:F32
 - **Qué es:** parámetros y fixtures generados, dominio en MQL5, el harness Python-MQL5, el EA con
-  órdenes idempotentes, y la paridad con el Strategy Tester.
+  órdenes idempotentes, y la paridad con el Strategy Tester. En F28, lo de prop_firm viajará
+  también en risk_hash, y esa rama dice si capa_hash sigue (CAPA-GENERADA.md, B8).
 - **Depende de:** F29, F30 y lo de F31-F32 que decide operaciones dependen de la rentabilidad
   pre-registrada de R5.6 (ADR-0092 §7, que movió la puerta de la fidelidad a la rentabilidad;
   ADR-0082, que enmienda MASTER_PLAN §0); lo demás de F31 vive en R6a.

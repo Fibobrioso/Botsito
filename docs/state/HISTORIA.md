@@ -17659,3 +17659,64 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 67 (2026-11-11).
+
+# Registro de cierre · `trabajo/capa-generada` (2026-11-12)
+
+- Orden de cierre del consultor del 2026-11-12, tras su revisión, copiada tal cual al final del
+  informe en `c93d8496`. Después, Aleks lanzó `/cerrar-rama trabajo/capa-generada`.
+- **Lo que entra** (tramo R6a, R6a.2):
+  - `src/botsito/mql5bridge/generar_capa.py` y su salida commiteada,
+    `mql5/Include/Botsito/Capa/Generado.mqh`: los 31 parámetros de firma, bróker, instrumento y
+    ejecución que lee alguna pieza de R6a.3 a R6a.8, con su estado, y los 228 cierres juntos del
+    calendario en segundos UTC con `cubre`; `CAPA_HASH`
+    `8d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601`.
+  - El journal v2 (`mql5/JOURNAL.md`): `journal.py` lee v1 y v2, sin cadena mixta; el golden v2 en
+    `tests/golden/journal_v2/`; `compilar.py pruebas` compara el `capa_hash` del script con el del
+    `Generado.mqh` del índice.
+  - El EA 1.1 y el script de pruebas 1.10 (`Journal.mqh` v2), compilados (0 errores, 0 avisos) y
+    probados en MT5 (23 OK, golden v2 igual byte a byte), con las roturas r1 a r4; lo lanzó Aleks
+    con «!» porque la guardia negó `compilar.py`, cambiado en la rama.
+  - `docs/runbooks/DEMO-FTMO.md`: el procedimiento de la demo v2 para R6a.8;
+    `docs/runbooks/RENOVAR-CIERRES.md`: regenerar la capa al renovar.
+  - Recuadros de corrección del 2026-11-12 en ADR-0001 y ADR-0082, y `mql5/README.md:2`.
+  - Tests: 2017 → 2039 funciones de test.
+  - La fila de HOLDOUT-EXPOSICIONES del 2026-11-12 de la rama (los `make check`, que leen el M1 de
+    marzo), que entró en la apertura.
+
+  Nada del motor, la spec, `parametros.yaml`, `ambiguedades.yaml`, el perfil, el calendario de
+  cierres, `knowledge/cases` ni el holdout.
+- **Desviaciones aceptadas** (orden de cierre, punto 1): la fase 3 (la demo) pasó a R6a.8 por
+  decisión del consultor; B7 no tenía nada que corregir (el script de pruebas había que lanzarlo, y
+  se conectó a FTMO-Demo sin operar); de las tres negativas de la guardia sin PARADA, valen dos (la
+  forma que propone la guardia), y `diff -q` tras negar `cmp` debió ser PARADA.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: no sale ni entra ninguna letra; en F, «(1) grabar (domingo 2026-11-15), ingerir y
+    activar la 7a;» y «C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.»;
+  - Technical Debt: la línea del validador del journal pasa a v1 y v2, y entran la de
+    `activar-sesion` (regenerar la capa) y la de los falsos positivos de la guardia;
+  - hoja de ruta: R6a.2 (la frase de D7 y su Estado HECHA), R6a.4 (B0), R6a.8 (A2 i y su
+    dependencia de R6a.2), R6.1 (F28 y `risk_hash`, B8) y R5.7 (depende de la corrida tras la 7b);
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.456 bytes (`wc -c`) con los cambios de este commit. Por encima de
+  24.000: la rama de la activación de la 7a recorta antes de añadir.
+- Letra del tag: la última cerrada era `stable/F38y-laminas-motivos`;
+  `stable/F38z-capa-generada` no existe en local ni en origin (comprobado antes de este commit). Es
+  la última letra de F38: la siguiente rama será F39a.
+- Tag: `stable/F38z-capa-generada`. El merge es
+  `git rev-parse "stable/F38z-capa-generada^{commit}"`.
+- Commits de la rama (7):
+  - `cee851c8` chore(rama): abre trabajo/capa-generada (encargo, contrato y Archivo 68 de PROJECT_STATE)
+  - `4518e631` fase 0, el encargo frente al repo y la PARADA
+  - `61550d50` fase 1, el generador de la capa, el journal v2 y sus tests
+  - `9076fac8` fase 2, el EA 1.1 escribe capa_hash en el journal v2
+  - `7fda127d` el revisor, sus hallazgos contestados y la entrega
+  - `c93d8496` recuadros en ADR-0001 y ADR-0082, mql5/README y la orden de cierre
+  - y este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **CI de Linux** por `fix/capa-generada`, cada una con solo el fallo aceptado
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`):
+  - run 43318063717 sobre `9076fac8` (1 failed, 3416 passed, 48 skipped);
+  - run 43323661519 sobre `7fda127d` (ídem);
+  - run 43342114085 sobre `c93d8496` (ídem).
+
+  La CI que cuenta es la de `main` tras el push.
