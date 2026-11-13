@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/capa-generada
+main
 
 ## Current Feature
-trabajo/capa-generada, EN CURSO (R6a.2, tramo R6a; ADR-0082 D5): lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2. Encargo docs/encargos/trabajo-capa-generada.md; informe docs/validation/CAPA-GENERADA.md.
+Ninguna rama abierta. trabajo/capa-generada cerrada en main el 2026-11-12 (stable/F38z-capa-generada; R6a.2): lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2.
 
 ## Stable Main State
-7d3002c8 · merge de `trabajo/laminas-motivos` (tag `stable/F38y-laminas-motivos`), sobre `stable/F38x-preparacion-sesion-7` (5260147). Informe docs/validation/LAMINAS-MOTIVOS.md; el registro del cierre, al final de HISTORIA.
+7bccf310 · merge de `trabajo/capa-generada` (tag `stable/F38z-capa-generada`), sobre `stable/F38y-laminas-motivos` (7d3002c8). Informe docs/validation/CAPA-GENERADA.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-7d3002c8 · merge: trabajo/laminas-motivos, la causa de cada gate de las laminas sale de la rama que dispara, y las laminas de la 7a v2 · tag stable/F38y-laminas-motivos
+7bccf310 · merge: trabajo/capa-generada, lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2 (R6a.2) · tag stable/F38z-capa-generada
 
 ## Tests Currently Passing
 2039 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
