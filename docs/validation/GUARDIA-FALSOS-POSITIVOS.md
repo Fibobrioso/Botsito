@@ -530,7 +530,7 @@ sesion. Antes, comprobado: ni el `Makefile` ni sus guiones llevan `push`.
 | 7 | `tag -a stable/F39a-guardia-falsos-positivos` (solo en el clon) | sesion |
 | 8 | `PROJECT_STATE.md` del clon con las cabeceras del cierre (rama `main`, ninguna abierta) y `git add` | sesion |
 | 9 | `cd C:/cm/gfpc && make check > C:/cm/make-check-merge.log 2>&1` | Aleks, «!» |
-| 10 | leer el log (exit 0, ningun `failed`; sin contrato no hay SELLO de rama que exigir) y quitar el clon: `rm -rf C:/cm/gfpc` | sesion lee; Aleks, «!», borra |
+| 10 | leer el log (exit 0, ningun `failed`; *corregido en «El ensayo del cierre (D7), hecho»: `make check` sella igual sin contrato, solo que en el clon nadie exige el sello*) y quitar el clon: `rm -rf C:/cm/gfpc` | sesion lee; Aleks, «!», borra |
 
 Las ordenes valen para el estado final de la rama (el ultimo commit, con F1 aplazado): el paso 2
 trae la rama tal como este en `C:/Users/USER/Desktop/Bot v3` cuando se lance el paso 1. Lo que el
@@ -785,6 +785,66 @@ Eje (a): 0 bloquea, 1 importa, 2 menor. Eje (b): 1 bloquea, 1 importa, 3 menor.
 Medido en la laptop tras aplazar F1: `test_guardia_falsos_positivos.py`, 48 passed y 6 xfailed; la
 comparacion caso a caso de `test_guardia_g1.py`, en verde con solo `i2` declarado.
 
+## El ensayo del cierre (D7), hecho (2026-11-13)
+
+Sobre el ultimo commit de la rama, `82b19680`, en un clon independiente (`git clone`, no
+`git worktree`), con la tabla de «El ensayo del cierre (D7), preparado para Aleks» y el paso 5 en la
+rama (orden de cierre, punto 1b). El dia es el 2026-11-13: la fila de ese dia en
+`HOLDOUT-EXPOSICIONES.md` cubre este `make check` (punto 1a: no hizo falta otra fila).
+
+| # | Orden, como se lanzo | Quien | Salida |
+|---|---|---|---|
+| 1 | `git clone "C:/Users/USER/Desktop/Bot v3" C:/cm/gfpc` | Aleks, «!» | «done», 2543 ficheros |
+| 2 | `git -C C:/cm/gfpc switch trabajo/guardia-falsos-positivos`; `git -C C:/cm/gfpc switch main` | sesion | la rama en `82b19680`; `main` en `4ecd7f17` |
+| 3 | `git -C C:/cm/gfpc remote remove origin` | Aleks, «!» | sin salida (sin remoto) |
+| 4 | `git -C C:/cm/gfpc config user.name ensayo`; `git -C C:/cm/gfpc config user.email ensayo@ejemplo.invalid` | Aleks, «!» | sin salida |
+| 5 | `git -C C:/cm/gfpc switch trabajo/guardia-falsos-positivos`; `git -C C:/cm/gfpc rm -q contrato.yaml`; `git -C C:/cm/gfpc commit -q -m "chore(cierre): ensayo, sale el contrato"` | sesion | `4f7eecb0` |
+| 6 | `git -C C:/cm/gfpc switch main`; `git -C C:/cm/gfpc merge --no-ff -q -m "merge: ensayo trabajo/guardia-falsos-positivos" trabajo/guardia-falsos-positivos` | sesion | merge `3acdacc7` |
+| 7 | `git -C C:/cm/gfpc tag -a stable/F39a-guardia-falsos-positivos -m "ensayo"` | sesion | el tag del clon, sobre `3acdacc7` |
+| 8 | `PROJECT_STATE.md` del clon: Current Branch `main`, Current Feature «Ninguna rama abierta...», Stable Main State y Last Stable Commit en `3acdacc7`; `git -C C:/cm/gfpc add PROJECT_STATE.md` | sesion | `M  PROJECT_STATE.md` y nada mas |
+| 9 | `cd C:/cm/gfpc && make check > C:/cm/make-check-merge.log 2>&1; echo "exit=$?"` | Aleks, «!» | **exit=0** |
+| 10 | leer el log | sesion | abajo; el clon lo borra Aleks con «!» |
+
+Del log (`C:/cm/make-check-merge.log`):
+
+```
+CONTRATO: sin contrato.yaml: nada que comprobar
+All checks passed!
+3501 passed, 12 skipped, 6 xfailed in 1104.19s (0:18:24)
+OK: rama 'main' - funcionalidad actual: Ninguna rama abierta. trabajo/guardia-falsos-positivos cerrada en main (ensayo, ...
+SELLO: make check en verde sobre el arbol 0fcf5a10bebd89955210e01bf13880b1541bda85
+PICO DE MEMORIA de make check: 277 MiB en `types` (suma de sus procesos, memoria comprometida, Windows; el mayor proceso, 267 MiB)
+```
+
+Ningun `failed` (`grep -c ' failed'` = 0). **Los 12 saltados, uno por uno** (lineas 100-108 del
+log, el resumen `-rs`): 4 de `test_cuenta_7_de_agosto.py` y uno de `test_huecos_motor.py`,
+`test_fidelidad_marzo.py`, `test_preparar_a35.py`, `test_selector_orden_stop.py`,
+`test_simulacion.py` y `test_visor.py` (sin las velas o el dataset en el clon), uno de
+`test_motor_prompt.py` (sin `tokenizers`) y uno de `test_contrato_rama.py` (sin `contrato.yaml`).
+**Ninguno es de `test_guardia_g1.py` ni de `test_guardia_falsos_positivos.py`**: sobre el arbol
+fusionado, `test_la_referencia_es_un_tag_y_no_es_esta_guardia` y
+`test_la_comparacion_caso_a_caso_con_la_guardia_de_main` pasaron (no estan entre los saltados ni
+hay ningun fallo). Los **6 xfailed** son los seis de F1 de `test_guardia_falsos_positivos.py` (en
+`main` no habia ningun xfail: su `make check`, «3465 passed», sin xfailed). El ensayo, en verde.
+
+**Correccion de la frase del paso 10** de la tabla preparada: decia «sin contrato no hay SELLO de
+rama que exigir». No es asi: `make check` sella igual sin contrato (lo muestra la linea `SELLO`
+de arriba); lo que no hay en el clon es quien exija el sello, porque un clon nuevo no trae los
+hooks de `.git/hooks`.
+
+### Lo que este ensayo no cubre
+
+Como en GUARDIA-G1.md §13.7:
+
+- **`pre-merge-commit`**: un clon nuevo no trae hooks (`.git/hooks` no se clona), asi que ni el
+  commit del paso 5 ni el merge del paso 6 pasaron por la exigencia del sello. En el cierre real si
+  pasan, y por eso el ritual sella antes de cada uno.
+- **El contenido del commit del contrato**: el paso 5 solo saca `contrato.yaml`. El
+  `chore(cierre)` real lleva ademas el registro en HISTORIA, la linea de Technical Debt, el estado
+  de G.6 en la hoja de ruta y la fila de ERRORES-RECURRENTES (orden de cierre, punto 3); eso lo
+  comprueba el `make check` del cierre real, no este.
+- **El push y la CI de `main`**: el clon no tiene remoto.
+
 ## Estado
 
 **F2 y G.6 entran; F1 se aplaza** (respuesta a la PARADA 2, punto 4: la segunda pasada del revisor lo
@@ -798,13 +858,15 @@ rompio con R1-R4, medidos). El diff de `guardia.py` contra stable/F38z es la ent
 | `32316acf` | el informe: casos, encargo, cierre, ensayo, CI |
 | `55d41a02` | la primera pasada del revisor (B1, B2) y la PARADA 2 |
 | `5f757439` | la respuesta a la PARADA 2 (B1 con `strip`, B2 con los sufijos) |
-| el ultimo | F1 aplazado; la segunda pasada del revisor; A1-A3 y B-1..B-5 contestados |
+| `82b19680` | F1 aplazado; la segunda pasada del revisor; A1-A3 y B-1..B-5 contestados |
+| el ultimo | el ensayo del cierre y la orden de cierre (punto 1c) |
 
-CI de `fix/guardia-falsos-positivos`: 43366719378 (`f9888a03`) y 43379762621 (`5f757439`), los dos
-con solo el fallo aceptado; la del ultimo commit, en el mensaje de entrega. Revisor: dos pasadas
-enteras (opus), pegadas abajo; la primera, 2 bloquea (B1, B2: arreglados y despues retirados con
-F1), 3 importa y 2 menor; la segunda, 1 bloquea (B-1: F1 roto, aplazado), 2 importa y 5 menor,
-todos contestados. El ensayo del cierre (D7), preparado para Aleks.
+CI de `fix/guardia-falsos-positivos`: 43366719378 (`f9888a03`), 43379762621 (`5f757439`) y
+43386236034 (`82b19680`), los tres con solo el fallo aceptado; la del ultimo commit, en el mensaje.
+Revisor: dos pasadas enteras (opus), pegadas abajo; la primera, 2 bloquea (B1, B2: arreglados y
+despues retirados con F1), 3 importa y 2 menor; la segunda, 1 bloquea (B-1: F1 roto, aplazado), 2
+importa y 5 menor, todos contestados. El ensayo del cierre (D7), hecho y en verde sobre `82b19680`
+(merge del clon `3acdacc7`, SELLO `0fcf5a10`). Esperando a que Aleks escriba `/cerrar-rama`.
 
 Rama lista para revisión, NO cerrada.
 
@@ -1118,3 +1180,36 @@ Ficheros:
 - C:\Users\USER\Desktop\Bot v3\docs\validation\HOLDOUT-EXPOSICIONES.md
 - C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-FALSOS-POSITIVOS\medida_parada2.py
 - C:\Users\USER\Desktop\Bot v3\docs\encargos\trabajo-guardia-falsos-positivos.md
+
+## Orden de cierre
+
+Del consultor, 2026-11-13. Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/guardia-falsos-positivos (consultor, 2026-11-13). Revisada: se cierra con F2 y G.6, y F1 aplazado. Aplícala en este orden: el punto 1 ahora; del 2 en adelante, con la skill cerrar-rama cuando Aleks escriba /cerrar-rama trabajo/guardia-falsos-positivos.
+>
+> 1. Antes del cierre, el ensayo de D7 y un commit propio de la rama.
+>  a. Si el ensayo o el cierre caen en un día que no es el 2026-11-13, lo primero de ese día, antes de cualquier make check, es la fila de HOLDOUT-EXPOSICIONES con su fecha (la lección A1 de esta rama). En main, tras el tag, ya no se puede añadir.
+>  b. El ensayo, con la tabla de «El ensayo del cierre (D7), preparado para Aleks» sobre el último commit (82b19680), con el paso 5 en la rama (switch trabajo/guardia-falsos-positivos antes del git rm). Pásame una a una las órdenes que llevan «!» cuando toquen, y espera a que te diga que salieron. Lo que tiene que salir en verde en el clon: el make check del paso 9 con exit 0 y ningún failed; test_la_referencia_es_un_tag_y_no_es_esta_guardia y test_la_comparacion_caso_a_caso_con_la_guardia_de_main pasando sobre el árbol fusionado, con la línea del log que demuestra que no salieron saltados; y test_guardia_falsos_positivos.py con 6 xfailed y ningún failed. Si algo sale rojo en el clon, PARADA. Al terminar, el clon lo borro yo con «!».
+>  c. Un commit propio de la rama («docs(guardia-falsos-positivos): el ensayo del cierre y la orden de cierre») con: esta orden copiada tal cual al final del informe, bajo «Orden de cierre»; las órdenes del ensayo como se lanzaron, el exit, el recuento y la línea PICO DE MEMORIA del log; «Lo que este ensayo no cubre» (pre-merge-commit, porque un clon nuevo no trae hooks, y el contenido del commit del contrato), como en GUARDIA-G1.md §13.7; y la corrección de la frase del paso 10 («sin contrato no hay SELLO»: make check sella igual, solo que nadie lo exige en el clon). make check sellado, push a fix/guardia-falsos-positivos y su CI (solo el fallo aceptado). Responde con el sha, el SELLO y el run, y espera a que Aleks escriba /cerrar-rama.
+>
+> 2. Tag: stable/F39a-guardia-falsos-positivos. Verifica en HISTORIA que el último es stable/F38z-capa-generada y que el tag no existe ni en local ni en origin (git ls-remote --tags origin stable/F39a-guardia-falsos-positivos, vacío). Mensaje del merge, sin comillas dobles dentro: «merge: trabajo/guardia-falsos-positivos, cmp de dos ficheros que no son guiones ya no se niega (G.6); el literal // de un guion nuevo, aplazado».
+>
+> 3. El commit del contrato (chore(cierre): sale el contrato y entra el registro en HISTORIA), en la rama. Con él, git log main..trabajo/guardia-falsos-positivos da 9 commits: 6a310dc8, dce4004e, f9888a03, 32316acf, 55d41a02, 5f757439, 82b19680, el del punto 1c y este. Toca PROJECT_STATE aunque la Next Action no cambie, por la línea de Technical Debt: que la puerta de git status del RITUAL lo espere.
+>  - Sale contrato.yaml.
+>  - Entra en HISTORIA el registro del cierre, con stable/F39a-guardia-falsos-positivos^{commit} en lugar del sha, los nueve commits, las filas de HOLDOUT-EXPOSICIONES de la rama (la del 2026-11-12, la del 2026-11-13, escrita tarde como ella misma dice, y la del punto 1a si hizo falta), los runs de la CI de fix/ (43366719378 sobre f9888a03, 43379762621 sobre 5f757439, 43386236034 sobre 82b19680 y el del punto 1c, todos con solo el fallo aceptado), y el ensayo del cierre con su sha, su SELLO y su run.
+>  - Next Action: no sale ni entra ninguna letra.
+>  - Technical Debt: la línea que entró con F38z (hacia :84) se sustituye por la de «Lineas para el cierre (simuladas)», tal cual. La de F38w (con $'\r', hacia :152) no cambia.
+>  - Hoja de ruta, G.6: «Hecho cuando» se queda, y se añade debajo, con la forma de G.3 y G.5: «- **Estado:** HECHA (`trabajo/guardia-falsos-positivos`, `stable/F39a-guardia-falsos-positivos`; GUARDIA-FALSOS-POSITIVOS.md): cmp está en NO_EJECUTAN y sus argumentos se miran como una lectura, como los de diff (test_roto_sin_cmp_en_no_ejecutan).».
+>  - wc -c PROJECT_STATE.md por debajo de 25.000 bytes (lo previsto: unos 24.787 en la rama y unos 24.555 en main). Si no, PARADA antes del commit.
+>  - ERRORES-RECURRENTES, la fila de la rama, con el formato de la de trabajo/capa-generada:
+>    · Revisor: opus, dos pasadas enteras. La primera, sobre 32316acf («Anexo · El informe del revisor (primera pasada)»): eje (a) 0 bloquea, 0 importa y 0 menores; eje (b) 2 bloquea (B1, B2), 3 importa y 2 menores; contestada en 55d41a02 y 5f757439 («Lo que se hizo con los hallazgos del revisor»); B1 y B2 se arreglaron en 5f757439 y se retiraron después con F1. La segunda, sobre 5f757439 («Anexo · El informe del revisor (segunda pasada, entera)»): eje (a) 0 bloquea, 1 importa (A1) y 2 menores; eje (b) 1 bloquea (B-1, F1 roto por R1-R4), 1 importa y 3 menores; contestada en 82b19680 («Lo que se hizo con los hallazgos de la segunda pasada del revisor»).
+>    · Consultor (orden de cierre del 2026-11-13; consultor en Opus 5.5): 1 importa y 3 menores. Importa: D1 tal como estaba escrita dejaba pasar ocho casos que la guardia de stable/F38z niega (h1-h8), contra su propia D3; y después aceptó D1d y el arreglo de la PARADA 2 sin pedir antes un intento de romperlos, y el revisor los rompió dos veces (B1-B2 y R1-R4). Menores: D5 rompía test_roto_la_comparacion_con_main; la deuda de « / » y </li> se atribuyó a F38y y es de F38w; $'\r' se metió en el mismo mecanismo y es la comilla ANSI-C de tokenizar.
+>    · Lecciones. Para el revisor: en una condición que exime parte de un literal, intentar romperla desde la primera pasada con lo que el código hace al ejecutarse (un recorte, un cd, un replace); aquí eso llegó en la segunda. Para el consultor: antes de aceptar una condición así, pedir una pasada que intente romperla, y si cae dos veces, aplazar (como aquí, punto 4 de la respuesta a la PARADA 2). De la sesión: la fila de HOLDOUT-EXPOSICIONES del día se escribe antes del primer make check del día, no después (A1).
+>
+> 4. El commit de estado en main solo sustituye Current Branch, Current Feature, Stable Main State y Last Stable Commit. La Next Action no cambia.
+>
+> 5. make check sellado, push atómico de main y el tag en un solo comando (Aleks confirma con «1. Yes»), CI de main en verde, y después borrar la rama local trabajo/guardia-falsos-positivos y la remota fix/guardia-falsos-positivos (git ls-remote --heads origin fix/guardia-falsos-positivos, vacío).
+>
+> 6. Informe final: sha de main, tag, run de la CI de main con su conclusion, ramas que quedan, el siguiente tag (F39b) y el tamaño de PROJECT_STATE.md; si pasa de 24.000 bytes, dilo: la rama de la activación de la 7a recorta antes de añadir.
