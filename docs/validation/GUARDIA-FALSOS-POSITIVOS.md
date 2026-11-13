@@ -391,6 +391,152 @@ con `ignore_errors=True`, que en Windows deja la carpeta entera sin avisar (los 
 de solo lectura): quedaron 130 carpetas `gfp-*` en la carpeta del usuario, borradas a mano; ahora
 `_borrar` quita el «solo lectura» y comprueba que la carpeta ya no existe.
 
+## Cada caso, con su test y sus dos decisiones
+
+`F38z` es la guardia de `stable/F38z-capa-generada` (la de `main`); `rama`, la de esta rama. «W»
+solo Windows (en Linux el test salta); «W+L» los dos. Los tests, en
+`tests/unit/test_guardia_falsos_positivos.py` salvo que se diga.
+
+| caso | test | F38z | rama | sistema |
+|---|---|---|---|---|
+| F1: la copia cambiada de `generar_capa.py` (:364 y :359) | `test_f1_la_copia_cambiada_de_generar_capa_pasa` | niega (no canoniza) | pasa | W |
+| F1: :364 solo | `test_f1_un_comentario_de_un_guion_nuevo_pasa[364]` | niega | pasa | W |
+| F1: :359, la f-cadena con un parametro | `...[359-fcadena]` | niega | pasa | W |
+| F1: `//` + tabulador | `...[tabulador]` | niega | pasa | W |
+| F1: `\\ ` | `...[barras-invertidas]` | niega | pasa | W |
+| D6: los literales de F1 no llegan a `_absoluta`; 0,14 s | `test_f1_el_literal_no_llega_a_absoluta_ni_tarda` | niega | pasa | W |
+| F2: `cmp` de dos ficheros nuevos de `docs/` | `test_f2_cmp_de_dos_ficheros_que_no_son_guiones_pasa` | niega (ejecutar) | pasa | W+L |
+| F2: `cmp -s` | idem | niega | pasa | W+L |
+| F2: el nombre con `=` del origen de G.6 | idem | niega | pasa | W+L |
+| cmp con un protegido (2.º, 1.º, absoluto) y `diff` con uno | `test_f2_cmp_con_un_fichero_protegido_se_niega_por_la_lectura` | niega (`R_EJECUCION`; diff `R_HOLDOUT`) | niega (`R_HOLDOUT`) | W+L |
+| h1 `"// <prot>"[3:]` | `test_h_los_casos_de_windows_siguen_negados[h1-recorte]` | niega | niega | W |
+| h1c `"// a b/<prot>"[6:]` | `...[h1c-recorte-blanco-interior]` | niega | niega | W |
+| h2 `.lstrip('/ ')` | `...[h2-lstrip]` | niega | niega | W |
+| h3 `// x/../<raiz>/<prot>` | `test_h3_el_punto_punto_sigue_negado` | niega | niega | W+L |
+| h4 `\\ localhost\C$\...\<prot>` | `...[h4-espacio-localhost]` | niega | niega | W |
+| h5 con tabulador | `...[h5-tab-localhost]` | niega | niega | W |
+| h6 con el nombre del equipo | `...[h6-espacio-equipo]` | niega | niega | W |
+| h7 la raiz por `\\ localhost`, recorrida | `...[h7-raiz-recorre]` | niega | niega | W |
+| h8 la raiz por `\\ localhost`, `os.stat` | `...[h8-raiz-sin-recorrer]` | niega | niega | W |
+| D3: `//host/share/...` y `\\host\share\...` en un guion nuevo | `test_d3_un_recurso_de_red_sin_blanco_sigue_negado` | niega | niega | W |
+| D3: un guion nuevo que nombra o recorre lo protegido | `test_d3_un_guion_nuevo_que_nombra_o_recorre_lo_protegido_sigue_negado` | niega | niega | W+L |
+| D3: los alias y no canonizables de `test_guardia_alias.py` (:183-199 por `_formas`, :439-463, :512-520) y `file://` de `test_guardia_g1.py` (:622-631) | esos mismos tests, sin cambiar | niega | niega | W (salvo los de dos sistemas) |
+| residuo: `//\| ver docs/x \|` | `test_lo_que_d1d_no_cubre_sigue_negado[barra-vertical]` | niega | niega | W |
+| residuo: f-cadena `// ...{p}` con `p` calculable | `...[fcadena-calculable]` | niega | niega | W |
+| h1b `'x' + <prot>[1:]` (limite conocido) | — (declarado, no se asegura un hueco) | pasa | pasa | W+L |
+| la referencia negaba F1 por no canonizar | `test_la_referencia_niega_f1_por_no_canonizar` | — | — | W |
+| la referencia negaba F2 por ejecutar | `test_la_referencia_niega_f2_por_ejecutar` | — | — | W+L |
+| la comparacion caso a caso (`medir_g1.py`, `i1`-`i3`) | `test_guardia_g1.py::test_la_comparacion_caso_a_caso_con_la_guardia_de_main` | — | `i1` y `i2` declarados; `i3` niega en las dos | W (i1) / W+L (i2, i3) |
+
+ROTO A PROPOSITO (la rama, Windows salvo los de `cmp`): sin la clausula de `SENSIBLES`, h1c pasa;
+sin la del blanco, h7 y h8 pasan; sin la condicion entera, F1 se niega; sin `cmp` en
+`NO_EJECUTAN`, F2 se niega (W+L); con `cmp` en `SIN_LECTURA_DE_RUTAS`, el protegido pasa (W+L). La
+condicion `os.name == "nt"` no tiene test roto: quitarla no cambia nada en Windows, y en Linux solo
+haria saltar literales que la referencia ya dejaba pasar (en Linux `// x` es `/ x`, fuera de la
+raiz); se dice aqui en vez de fingir un test.
+
+## Los demas lectores con el mismo fallo (punto 2 del encargo)
+
+Fuera de `NO_EJECUTAN`, y por tanto leidos como si ejecutaran un fichero nuevo que reciben: `comm`,
+`xxd`, `less`, `nl`, `tac`, `base64`, `strings` y `sha1sum` (este esta en `LECTOR_DE_METADATOS`,
+guardia.py:1076, pero cae igual porque la condicion de :1794 va antes que :1796). No entran: la
+lista solo crece cuando un comando la pide (guardia.py:2879-2880). `fc` no es un lector: en Git
+Bash es un comando interno que vuelve a ejecutar el historial (lo niega `BUILTINS_NO_ADMITIDOS`).
+
+## El encargo frente a lo hecho
+
+| Punto | Lo pedido | Hecho |
+|---|---|---|
+| 0 | Base comprobada; abrir con abrir-rama; contrato con tramo, permitidas y protegidas | Hecho (Apertura); contrato en `6a310dc8` |
+| 1 | F1 y F2, sin abrir ningun hueco | Hecho con D1d (punto 0 de la respuesta), no con D1 tal cual: D1 abria h1-h8 (fase 0) |
+| 2 | `/` de compilar.py, F38w, worktree add, los demas lectores y D: fuera | Fuera; los lectores, nombrados arriba; la atribucion F38y→F38w y `$'\r'` como otro mecanismo, corregidas (punto 5 de la respuesta) |
+| 3, D1 | En negativo, en `analizar_codigo`, `_sin_prefijos` intacto | Hecho, con las dos clausulas de D1d |
+| D2 | `cmp` en `NO_EJECUTAN`, sus argumentos como lectura | Hecho |
+| D3 | Ningun caso que hoy se niega deja de negarse | Hecho y con test (tabla de casos); h1b ya pasaba (limite conocido) |
+| D4 | En memoria, repo sintetico, a trozos, W o L por caso | Hecho; de `cmp`, el nombre de G.6 y dos ficheros nuevos de `docs/` (con dos de `main` ya pasaba hoy) |
+| D5 | Referencia a F38z, lista vaciada, F1 y F2 declarados | Hecho con F1 y F2 como casos nuevos de `medir_g1.py` (punto 1 de la respuesta) |
+| D6 | F1 solo Windows; no tarda | Hecho: tests `SOLO_WINDOWS`; 0,14 s; no llega a `_absoluta` |
+| D7 | Ensayo del cierre en un `git clone` | La guardia niega `git clone`: preparado para Aleks (seccion siguiente) |
+| 4 | Nada fuera de la guardia, sus tests y lo nombrado | `git diff main --stat`: la guardia, dos tests, `medir_g1.py`, `GUARDIAS-CLAUDE.md` (recuadro), `HOLDOUT-EXPOSICIONES.md` (la fila), el informe, sus anexos, el encargo, el contrato, PROJECT_STATE y HISTORIA |
+| 5 | Fase 0 y PARADA | Hecho (`dce4004e`) |
+| 6 | Tests primero, el cambio, la referencia, make check, CI de `fix/`, revisor, ensayo | Hecho salvo el ensayo (D7) |
+| 7 | El informe | Este |
+| 8 | Revisor con los ejes extra | Al final |
+
+Desviaciones: D1 se aplico como D1d (decidido en la PARADA); `medir_windows.py` se commiteo en la
+fase 0 y salio del repo en la siguiente (punto 3); la fixture que borraba con `ignore_errors` dejo
+130 carpetas `gfp-*` en la carpeta del usuario antes de arreglarla (borradas). Y las negativas de la
+guardia a comandos mios (todas con la forma que ella propone, ninguna del objeto de la rama): tres
+`uv run` encadenados tras otra orden, un `git ls-files` desde la raiz (ADR-0088), un `pytest -o` que
+no hacia falta, y `git clone` (D7). La guardia de Claude Code NO nego nada legitimo de la rama
+salvo `medir_windows.py` (fase 0) y `git clone`.
+
+## Lineas para el cierre (simuladas)
+
+- **HOJA-DE-RUTA.md, G.6**: «- **Hecho cuando:** su test que la rompe a propósito.» pasa a decir
+  que esta HECHA en `trabajo/guardia-falsos-positivos` (`cmp` en `NO_EJECUTAN`;
+  `test_roto_sin_cmp_en_no_ejecutan`), con la forma de las demas entradas hechas de la hoja.
+- **PROJECT_STATE.md, Technical Debt**, la linea que entro con F38z (hoy :84), reescrita:
+
+  > - La guardia niega a un guion nuevo un literal que solo es separadores, como el `/` de
+  >   `compilar.py` (CAPA-GENERADA.md, «La guardia»), por el mismo mecanismo que « / » y `</li>` de
+  >   la linea de F38w de abajo: no sabe si el codigo lo usa como ruta; lo lanza Aleks con «!». El
+  >   `// ` de un comentario y `cmp a b`, resueltos en `trabajo/guardia-falsos-positivos`.
+
+  La de F38w (hoy :152, con `$'\r'`) queda sin cambios (punto 5 de la respuesta).
+- **PROJECT_STATE.md, tamano**: 24.569 bytes en la rama; con la linea reescrita, 24.698 (simulado
+  en memoria); el cierre devuelve Current Branch y Current Feature a lo de `main` (24.380 hoy en
+  `main`, +129 de la linea): por debajo del tope de 25.000. No hace falta recortar.
+- **ERRORES-RECURRENTES.md**, la fila del consultor (punto 5): D1 tal como estaba escrita dejaba
+  pasar ocho casos, contra su propia D3 (importa); D5 rompia `test_roto_la_comparacion_con_main`
+  (menor); F38y en lugar de F38w (menor); `$'\r'` metido en el mismo mecanismo (menor).
+- **HISTORIA.md**, el registro del cierre, como siempre. Siguiente tag: `stable/F39a-...` (F38 acaba
+  en z).
+
+## El ensayo del cierre (D7), preparado para Aleks
+
+La guardia niega `git clone` («subcomando fuera de la lista cerrada»), como en `trabajo/guardia-g1`
+(GUARDIA-G1.md §13.7). Las ordenes, en el orden de aquel ensayo; «!» las lanza Aleks, el resto la
+sesion. Antes, comprobado: ni el `Makefile` ni sus guiones llevan `push`.
+
+| # | Orden | Quien |
+|---|---|---|
+| 1 | `git clone "C:/Users/USER/Desktop/Bot v3" C:/cm/gfpc` | Aleks, «!» |
+| 2 | `git -C C:/cm/gfpc switch trabajo/guardia-falsos-positivos` y `git -C C:/cm/gfpc switch main` | sesion |
+| 3 | `git -C C:/cm/gfpc remote remove origin` | Aleks, «!» |
+| 4 | `git -C C:/cm/gfpc config user.name ensayo` y `git -C C:/cm/gfpc config user.email ensayo@ejemplo.invalid` | Aleks, «!» |
+| 5 | en la rama: `git rm contrato.yaml` y commit, como el `chore(cierre)` | sesion |
+| 6 | `switch main` y `merge --no-ff trabajo/guardia-falsos-positivos` | sesion |
+| 7 | `tag -a stable/F39a-guardia-falsos-positivos` (solo en el clon) | sesion |
+| 8 | `PROJECT_STATE.md` del clon con las cabeceras del cierre (rama `main`, ninguna abierta) y `git add` | sesion |
+| 9 | `cd C:/cm/gfpc && make check > C:/cm/make-check-merge.log 2>&1` | Aleks, «!» |
+| 10 | leer el log (exit 0, ningun `failed`; sin contrato no hay SELLO de rama que exigir) y quitar el clon: `rm -rf C:/cm/gfpc` | sesion lee; Aleks, «!», borra |
+
+Lo que el ensayo tiene que ver en verde, en un `main` que se mueve de verdad: que
+`test_la_referencia_es_un_tag_y_no_es_esta_guardia` y la comparacion caso a caso siguen midiendo
+tras el merge (la referencia es el tag F38z, no `main`), y que los tests de la rama pasan sobre el
+arbol fusionado.
+
+## La CI de Linux por fix/
+
+`git push origin trabajo/guardia-falsos-positivos:refs/heads/fix/guardia-falsos-positivos` (la
+sesion; el clasificador no lo nego). Run **43366719378**, `headSha` `f9888a03af5b62838f1c248801dea72333a2108d`
+(`gh run view --json`), rama `fix/guardia-falsos-positivos`: **failure solo por el fallo aceptado**
+(`RITUAL.md`, «Antes del merge: la CI de Linux»): `tests/unit/test_cli.py::test_state_check_ok_on_real_repo`,
+«PROJECT_STATE declara la rama 'trabajo/guardia-falsos-positivos'; la rama actual es
+'fix/guardia-falsos-positivos'». **1 failed, 3427 passed, 70 skipped**; lint «All checks passed!».
+La CI trae los tags (`git fetch --tags --force`, el workflow), asi que las comparaciones con la
+referencia corrieron de verdad en Linux. Los saltados son los que necesitan `data/` y los de solo
+Windows (F1 y sus casos, h1-h2 y h4-h8, los de `test_guardia_alias.py`).
+
+`make check` de los commits de la rama, en la laptop:
+
+| commit | que | resultado |
+|---|---|---|
+| `6a310dc8` | apertura | exit 0, 3465 passed, SELLO `66f3230f`, 1284 s, pico 315 MiB |
+| `dce4004e` | fase 0 | exit 0, 3466 passed, SELLO `ce1c7169`, 1304 s, pico 313 MiB |
+| `f9888a03` | fase 1 (la guardia, los tests, la referencia) | exit 0, 3498 passed, SELLO `090c2de9`, 1337 s, pico 317 MiB |
+
 ## Estado
 
-EN CURSO (respuesta a la PARADA aplicada: el cambio de la guardia y sus tests; faltan fix/, el revisor y el ensayo del cierre).
+EN CURSO (fase 1 en f9888a03, CI de fix/ con el unico fallo aceptado; faltan el revisor y el ensayo del cierre, que lanza Aleks).
