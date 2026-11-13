@@ -24,6 +24,7 @@ protegido; las rutas protegidas a trozos. La fase 0 (la tabla de cinco variantes
 
 from __future__ import annotations
 
+import ast
 import importlib.util
 import os
 import re
@@ -316,6 +317,13 @@ def _revisor(repo: Path) -> dict[str, str]:
         "b1-h7-tab-detras": _recorre(_unc(repo, "\t", "localhost\t")),
         "b1-h4-blanco-detras": _abre(repr(_unc(repo, " ", "localhost ", SECRETO))),
         "b2-oculto-sin-fragmento": _abre(repr("// a b/" + oculto) + "[7:]"),
+        "b2-oculto-invertidas": _abre(repr(B * 2 + " a b" + B + oculto.replace("/", B)) + "[7:]"),
+        # una carpeta sin fragmento que CONTIENE el holdout, recortada y recorrida (la politica
+        # no para recorrer una carpeta solo por un fichero oculto dentro: `'docs'` y `rglob`
+        # ya pasan con stable/F38z, y por eso no es este caso)
+        "b2-carpeta-protegida-recorrida": (
+            "from pathlib import Path\nprint(list(Path('// a b/knowledge'[7:]).rglob('*')))\n"
+        ),
     }
 
 
@@ -324,25 +332,21 @@ def _con_oculto(repo: Path) -> None:
     _escribir(repo, ".claude/hooks/ficheros_con_ocultos.txt", "docs/oculto-SALIDA.txt\n")
 
 
-_PARADA_2 = pytest.mark.xfail(
-    strict=True,
-    reason="PARADA 2 (GUARDIA-FALSOS-POSITIVOS.md): la rama lo deja pasar y stable/F38z lo niega;"
-    " el arreglo lo decide el consultor",
-)
-
-
 @SOLO_WINDOWS
 @pytest.mark.parametrize(
     "caso",
     [
-        pytest.param("b1-h7-blanco-detras", marks=_PARADA_2),
-        pytest.param("b1-h8-blanco-detras", marks=_PARADA_2),
-        pytest.param("b1-h7-tab-detras", marks=_PARADA_2),
+        "b1-h7-blanco-detras",
+        "b1-h8-blanco-detras",
+        "b1-h7-tab-detras",
         "b1-h4-blanco-detras",
-        pytest.param("b2-oculto-sin-fragmento", marks=_PARADA_2),
+        "b2-oculto-sin-fragmento",
+        "b2-oculto-invertidas",
+        "b2-carpeta-protegida-recorrida",
     ],
 )
 def test_revisor_las_variantes_siguen_negadas(g: ModuleType, repo: Path, caso: str) -> None:
+    """B1 y B2 del revisor (PARADA 2, puntos 0 y 1): negados en la rama, como en stable/F38z."""
     _con_oculto(repo)
     motivo = _guion(g, repo, "t/rev.py", _revisor(repo)[caso])
     assert motivo is not None, caso
@@ -357,12 +361,38 @@ def test_revisor_las_variantes_siguen_negadas(g: ModuleType, repo: Path, caso: s
         "b1-h7-tab-detras",
         "b1-h4-blanco-detras",
         "b2-oculto-sin-fragmento",
+        "b2-oculto-invertidas",
+        "b2-carpeta-protegida-recorrida",
     ],
 )
 def test_revisor_la_referencia_niega_las_variantes(ref: ModuleType, repo: Path, caso: str) -> None:
     _con_oculto(repo)
     motivo = _guion(ref, repo, "t/rev.py", _revisor(repo)[caso])
     assert motivo is not None, caso
+
+
+@SOLO_WINDOWS
+def test_el_residuo_de_f1_es_la_clase_de_h1b(
+    g: ModuleType, ref: ModuleType, repo: Path, capsys: pytest.CaptureFixture[str]
+) -> None:
+    """PARADA 2, punto 1: lo que queda de F1, un recorte a mitad de un nombre
+    (`"// a b/x<fichero oculto>"[8:]`), es la clase de h1b (`'x' + ruta[1:]`), que la guardia de
+    stable/F38z YA deja pasar: medido aqui con las dos guardias, sobre el mismo fichero oculto.
+    Limite conocido (GUARDIAS-CLAUDE.md §1.7); no se asegura un hueco, se mide."""
+    _con_oculto(repo)
+    oculto = "docs/oculto-SALIDA.txt"
+    h1b = _abre(repr("x" + oculto) + "[1:]")
+    residuo = _abre(repr("// a b/x" + oculto) + "[8:]")
+    decisiones = {
+        (guardia, caso): _guion(m, repo, "t/r.py", codigo)
+        for guardia, m in (("F38z", ref), ("rama", g))
+        for caso, codigo in (("h1b", h1b), ("residuo", residuo))
+    }
+    with capsys.disabled():
+        for (guardia, caso), motivo in decisiones.items():
+            print(f"\nRESIDUO | {guardia} | {caso} | {'PASA' if motivo is None else 'NIEGA'}")
+    assert decisiones[("F38z", "h1b")] is None  # la clase ya pasa con la referencia
+    assert decisiones[("rama", "h1b")] is None
 
 
 def test_h3_el_punto_punto_sigue_negado(g: ModuleType, repo: Path) -> None:
@@ -464,9 +494,13 @@ def test_la_referencia_niega_f2_por_ejecutar(ref: ModuleType, repo: Path) -> Non
 def test_roto_sin_la_clausula_de_sensibles(
     g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Sin SENSIBLES en la condicion, el recorte con blanco interior (h1c) pasa."""
+    """Sin SENSIBLES en la condicion, un recorte a MITAD de nombre de una ruta con fragmento
+    (`"// a b/x<holdout>"[8:]`) pasa: ningun sufijo tras un separador es la ruta protegida, y solo
+    la clausula de SENSIBLES la ve. (Desde la PARADA 2, h1c lo niegan tambien los sufijos.)"""
+    codigo = _abre(repr("// a b/x" + SECRETO) + "[8:]")
+    assert _guion(g, repo, "t/h.py", codigo) is not None
     monkeypatch.setattr(g, "SENSIBLES", ())
-    assert _guion(g, repo, "t/h.py", _h_windows(repo)["h1c-recorte-blanco-interior"]) is None
+    assert _guion(g, repo, "t/h.py", codigo) is None
 
 
 @SOLO_WINDOWS
@@ -487,6 +521,40 @@ def test_roto_sin_la_condicion_entera(
     monkeypatch.setattr(g, "_comentario_que_no_es_ruta", lambda lit: False)
     motivo = _decide(g, repo, _copia_de_generar_capa(repo))
     assert motivo is not None and "no se puede canonizar" in motivo
+
+
+@SOLO_WINDOWS
+def test_roto_sin_los_sufijos(g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    """Sin mirar los sufijos de un literal de F1, B2 pasa (PARADA 2, punto 1)."""
+    _con_oculto(repo)
+    monkeypatch.setattr(g, "_sufijos_tras_separador", lambda lit: [])
+    assert _guion(g, repo, "t/rev.py", _revisor(repo)["b2-oculto-sin-fragmento"]) is None
+
+
+@SOLO_WINDOWS
+def test_roto_el_tramo_sin_quitar_los_blancos_de_detras(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Con los blancos quitados solo por delante (la condicion de antes de la PARADA 2), B1
+    pasa."""
+
+    def solo_delante(lit: str) -> bool:
+        tramo = re.split(r"[\\/]", lit[2:], maxsplit=1)[0].lstrip(" \t")
+        return re.search(r"[ \t]", tramo) is not None
+
+    monkeypatch.setattr(g, "_tramo_lleva_blanco", solo_delante)
+    for caso in ("b1-h7-blanco-detras", "b1-h8-blanco-detras", "b1-h7-tab-detras"):
+        assert _guion(g, repo, "t/rev.py", _revisor(repo)[caso]) is None, caso
+
+
+def test_b3_cmp_como_diff_en_las_composiciones(g: ModuleType) -> None:
+    """B3 del revisor: con `cmp` en `NO_EJECUTAN`, una cadena que empieza por `cmp ` es una ORDEN y
+    no una composicion de C, igual que `diff`; un programa fuera de la lista (`xxd`) sigue
+    contando como composicion."""
+    for programa, composicion in (("cmp", False), ("diff", False), ("xxd", True)):
+        for codigo in (f'f"{programa} {{a}}/b/c"', f'"{programa} " + a + "/b/c"'):
+            nodo = ast.parse(codigo, mode="eval").body
+            assert g._es_composicion(nodo) is composicion, (programa, codigo)
 
 
 def test_roto_sin_cmp_en_no_ejecutan(

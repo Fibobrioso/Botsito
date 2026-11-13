@@ -78,3 +78,19 @@ Copiada tal cual:
 > 6. Esta noche sigue sin parar: tests primero (rotos contra la guardia de stable/F38z), el cambio en guardia.py, medir_g1.py y la referencia, GUARDIAS-CLAUDE.md si describe lo que cambia, make check sellado en cada commit, push a fix/guardia-falsos-positivos con su CI, y el revisor. Solo paras si un caso de D3 o de h1-h8 pasa, si un test no rompe contra stable/F38z por el motivo que dice, o si la guardia niega algo legítimo (no cambias de vía: lo dejas para mi «!»).
 > 7. El ensayo del cierre en un clon independiente (D7): si la guardia te deja hacer el git clone y su make check, hazlo. Si no, déjalo preparado con las órdenes exactas y lo lanzo yo por la mañana.
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA 2 (2026-11-13, 01:15)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/guardia-falsos-positivos (2026-11-13, 01:15). Cópiala tal cual al informe y al final del encargo, y aplícala.
+>
+> 0. B1: (a). En la condición de F1, los blancos del tramo hasta el siguiente separador se quitan por los dos lados antes de mirar si queda un blanco dentro.
+> 1. B2: (a). En un literal de F1, lo único que se exime es leer su cabeza como ruta de red; cada sufijo tras un separador se mira como ruta con las comprobaciones de siempre. Lo que queda (un recorte a mitad de un nombre) es la clase de h1b, que ya pasa con la guardia de stable/F38z: decláralo junto a h1b, con la medida que lo demuestra contra stable/F38z.
+> 2. B3 a B7: (a), como están contestados en el informe.
+> 3. Los dos xfail estrictos pasan a tests normales que tienen que seguir negados. make check sellado, commit, push a fix/guardia-falsos-positivos con el último commit y su CI (solo el fallo aceptado).
+> 4. El revisor otra vez, una pasada entera, no corta, con un alcance más: intentar romper F1 (literales que empiecen por separadores y blanco, con recortes, sufijos, f-cadenas y mezclas de / y \) contra la guardia de stable/F38z. Si encuentra un caso que stable/F38z niega y la rama deja pasar, no paras: F1 sale de la rama (vuelves a la condición de stable/F38z para esos literales, con sus tests como xfail estricto documentado y lo medido al informe, como «F1, aplazado: ninguna condición medida aguanta»), y la rama se queda con F2 y G.6. Después, make check, push y CI.
+> 5. El ensayo del cierre (D7): deja en el informe las órdenes exactas para que las lance yo con «!», en el estado final de la rama.
+> 6. Al terminar: «Rama lista para revisión, NO cerrada», con la tabla de commits, los runs, el resultado del revisor y si F1 entró o se aplazó.

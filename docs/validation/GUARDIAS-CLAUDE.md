@@ -242,7 +242,11 @@ la semantica documentada.
 > codigo hace con ellos al ejecutarse. `'x' + <ruta protegida>` recortado con `[1:]` pasa (caso h1b
 > de `GUARDIA-FALSOS-POSITIVOS.md`, fase 0): pasaba antes de esa rama y pasa con ella, con cualquier
 > variante de su condicion. Queda como limite conocido, fuera de la rama: la barrera es el codigo
-> (respuesta del consultor a su PARADA, punto 4). El cuerpo de este informe queda intacto.
+> (respuesta del consultor a su PARADA, punto 4). De la misma clase, lo que deja la condicion de F1
+> de esa rama: un literal que empieza por dos separadores y un blanco, recortado a MITAD de un
+> nombre (`"// a b/x<fichero>"[8:]`); los recortes por un separador si se miran (respuesta a su
+> PARADA 2, punto 1; medido contra la guardia de `stable/F38z`, que deja pasar h1b sobre el mismo
+> fichero). El cuerpo de este informe queda intacto.
 
 - **Las lineas `!` del usuario**: la documentacion no dice si los hooks las ven. No se ha medido.
 - **Si falta `python`** o el guion no esta, Claude Code trata la salida como error no bloqueante y

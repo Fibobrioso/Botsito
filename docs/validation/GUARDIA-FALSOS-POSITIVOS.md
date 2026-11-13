@@ -611,9 +611,67 @@ sobre el arreglo.
 
 Espero tu respuesta a la PARADA 2.
 
+## Respuesta del consultor a la PARADA 2 (2026-11-13, 01:15)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA 2 de trabajo/guardia-falsos-positivos (2026-11-13, 01:15). Cópiala tal cual al informe y al final del encargo, y aplícala.
+>
+> 0. B1: (a). En la condición de F1, los blancos del tramo hasta el siguiente separador se quitan por los dos lados antes de mirar si queda un blanco dentro.
+> 1. B2: (a). En un literal de F1, lo único que se exime es leer su cabeza como ruta de red; cada sufijo tras un separador se mira como ruta con las comprobaciones de siempre. Lo que queda (un recorte a mitad de un nombre) es la clase de h1b, que ya pasa con la guardia de stable/F38z: decláralo junto a h1b, con la medida que lo demuestra contra stable/F38z.
+> 2. B3 a B7: (a), como están contestados en el informe.
+> 3. Los dos xfail estrictos pasan a tests normales que tienen que seguir negados. make check sellado, commit, push a fix/guardia-falsos-positivos con el último commit y su CI (solo el fallo aceptado).
+> 4. El revisor otra vez, una pasada entera, no corta, con un alcance más: intentar romper F1 (literales que empiecen por separadores y blanco, con recortes, sufijos, f-cadenas y mezclas de / y \) contra la guardia de stable/F38z. Si encuentra un caso que stable/F38z niega y la rama deja pasar, no paras: F1 sale de la rama (vuelves a la condición de stable/F38z para esos literales, con sus tests como xfail estricto documentado y lo medido al informe, como «F1, aplazado: ninguna condición medida aguanta»), y la rama se queda con F2 y G.6. Después, make check, push y CI.
+> 5. El ensayo del cierre (D7): deja en el informe las órdenes exactas para que las lance yo con «!», en el estado final de la rama.
+> 6. Al terminar: «Rama lista para revisión, NO cerrada», con la tabla de commits, los runs, el resultado del revisor y si F1 entró o se aplazó.
+
+## Aplicación de la respuesta a la PARADA 2 (2026-11-13)
+
+- **0. B1: hecho.** `_tramo_lleva_blanco` quita los blancos del tramo por los DOS lados (`strip`)
+  antes de mirar si queda uno dentro.
+- **1. B2: hecho.** En un literal de F1 solo se exime la cabeza: `_sufijos_tras_separador` da cada
+  sufijo tras un separador (con `/` o `\`), y cada uno pasa por `_mirar_literal`, que son las
+  comprobaciones de siempre, sacadas a una funcion del bucle de `analizar_codigo` sin cambiar lo
+  que hacen (fichero protegido; carpeta que lo contiene, recursiva si el codigo recorre). Un
+  sufijo no suma a `directorios`: la regla de «recorre y nombra algo sensible» no se debilita por
+  un trozo de comentario. Medido: la copia de `generar_capa.py` sigue pasando; B2 (con `/` y con
+  `\`) y una carpeta sin fragmento que contiene el holdout, recortada y recorrida, niegan.
+  **El residuo, declarado junto a h1b** (aqui y en el recuadro de `GUARDIAS-CLAUDE.md` §1.7),
+  con la medida contra stable/F38z (`test_el_residuo_de_f1_es_la_clase_de_h1b`, sobre el mismo
+  fichero oculto del repo inventado):
+
+  | | `'x' + oculto` `[1:]` (h1b) | `"// a b/x" + oculto` `[8:]` (el residuo) |
+  |---|---|---|
+  | stable/F38z | PASA | niega |
+  | la rama | PASA | PASA |
+
+  La clase (leer un fichero protegido con un literal que el codigo recorta al ejecutarse) ya pasa
+  con la referencia; el residuo es otra forma de lo mismo. Si la ruta lleva un fragmento de
+  `SENSIBLES`, el residuo tambien niega en la rama (lo fija `test_roto_sin_la_clausula_de_sensibles`).
+- **2. B3-B7: como estan contestados.** El test de B3 entra: `test_b3_cmp_como_diff_en_las_composiciones`.
+- **3. Los `xfail` pasan a tests normales**: `test_revisor_las_variantes_siguen_negadas` (siete
+  casos, con dos nuevos: B2 con `\` y la carpeta recorrida) y su gemelo contra la referencia. Los
+  cuatro que eran `xfail` fallaban con la guardia de `55d41a02` (el `make check` de ese commit:
+  «3504 passed, 4 xfailed», estrictos) y pasan con la de ahora. Dos ROTO A PROPOSITO nuevos: sin
+  los sufijos, B2 pasa (`test_roto_sin_los_sufijos`); con el tramo sin quitar los blancos de
+  detras, B1 pasa (`test_roto_el_tramo_sin_quitar_los_blancos_de_detras`). Y
+  `test_roto_sin_la_clausula_de_sensibles` cambia de caso: h1c ya lo niegan los sufijos, asi que
+  mide el recorte a mitad de nombre de una ruta con fragmento, que solo ve esa clausula.
+- **Una medida que no entra como caso**: `'// a b/docs'[7:]` recorrido pasa en la rama y la
+  referencia lo niega, pero no es material protegido para la politica: un `'docs'` literal con
+  `rglob` ya pasa con stable/F38z (la politica no para recorrer una carpeta por un fichero oculto
+  dentro; `GUARDIAS-CLAUDE.md` §1.7). El caso de carpeta que entra es `knowledge` (contiene el
+  holdout, sin fragmento en el nombre).
+- **4, 5 y 6**: el revisor entero con el alcance nuevo, el ensayo y el cierre del informe, abajo.
+
+`pytest` de los ficheros de la guardia (los cinco del contrato, el nuevo y `test_revisor.py`):
+1001 passed.
+
 ## Estado
 
-PARADA 2 (el revisor encontro dos variantes que la rama deja pasar y stable/F38z niega; esperando la respuesta del consultor).
+EN CURSO (respuesta a la PARADA 2 aplicada; faltan la CI del ultimo commit y la segunda pasada del revisor).
 
 ## Anexo · El informe del revisor (primera pasada), pegado tal cual
 
