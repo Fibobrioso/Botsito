@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/dieta-estado
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-falsos-positivos cerrada en main el 2026-11-13 (stable/F39a-guardia-falsos-positivos; G.6): cmp de dos ficheros que no son guiones ya no se niega; el literal // de un guion nuevo, aplazado.
+trabajo/dieta-estado, EN CURSO (carril «guardias y deuda»): PROJECT_STATE.md adelgazado con los criterios de docs/state/README.md antes de la sesion 7a. Encargo docs/encargos/trabajo-dieta-estado.md; informe docs/validation/DIETA-ESTADO.md.
 
 ## Stable Main State
 e9314598 · merge de `trabajo/guardia-falsos-positivos` (tag `stable/F39a-guardia-falsos-positivos`), sobre `stable/F38z-capa-generada` (7bccf310). Informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md; el registro del cierre, al final de HISTORIA.
@@ -164,8 +164,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 69 (2026-11-12).
+— ninguna desde el Archivo 70 (2026-11-13).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 69 (2026-11-12).
+— ninguna desde el Archivo 70 (2026-11-13).
