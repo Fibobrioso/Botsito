@@ -796,6 +796,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Depende de:** nada.
 - **Quién:** la sesión, en la próxima rama de guardia.
 - **Hecho cuando:** su test que la rompe a propósito.
+- **Estado:** HECHA (`trabajo/guardia-falsos-positivos`, `stable/F39a-guardia-falsos-positivos`; GUARDIA-FALSOS-POSITIVOS.md): cmp está en NO_EJECUTAN y sus argumentos se miran como una lectura, como los de diff (test_roto_sin_cmp_en_no_ejecutan).
 
 ## Carril: material reservado que no se toca
 

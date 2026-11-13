@@ -17894,3 +17894,61 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 68 (2026-11-12).
+
+# Registro de cierre · `trabajo/guardia-falsos-positivos` (2026-11-13)
+
+- Orden de cierre del consultor del 2026-11-13, tras su revisión, copiada tal cual al final del
+  informe en `85a7345b` («Orden de cierre»). Después, Aleks lanzó
+  `/cerrar-rama trabajo/guardia-falsos-positivos`.
+- **Lo que entra** (carril «guardias y deuda»; G.6 de la hoja de ruta):
+  - `.claude/hooks/guardia.py`: `cmp` en `NO_EJECUTAN`, con sus argumentos mirados como una
+    lectura, como los de `diff` (F2). Es todo el diff de la guardia contra stable/F38z.
+  - **F1 (el literal `// ` de un guion nuevo), aplazado**: respuesta del consultor a la PARADA 2,
+    punto 4. D1 abría h1-h8 (fase 0); D1d lo rodearon B1-B2 (primera pasada del revisor); con sus
+    arreglos, R1-R4 (segunda pasada, medidos). Sus tests, `xfail` estricto documentado; los de lo
+    que sigue negado (h1-h8, B1-B2, R1-R4, D3) quedan como batería.
+  - `tests/unit/test_guardia_falsos_positivos.py` (nuevo); `GUARDIA_DE_REFERENCIA` sube a
+    `stable/F38z-capa-generada` (`test_guardia_g1.py`), con `CAMBIOS_DECLARADOS` de `medir_g1.py`
+    vaciado y solo `i2-f2-cmp` declarado (casos nuevos `i1`-`i3`).
+  - Recuadro de corrección en `GUARDIAS-CLAUDE.md` §1.7: h1b (`'x' + ruta[1:]`) como límite
+    conocido, y por qué F1 se aplazó.
+  - Tests: 2039 → 2061 funciones de test.
+  - Las filas de HOLDOUT-EXPOSICIONES de la rama: la del 2026-11-12 (los `make check`, que leen el
+    M1 de marzo), y la del 2026-11-13, escrita tarde, como ella misma dice (A1 de la segunda pasada
+    del revisor). No hizo falta la del punto 1a de la orden: el ensayo y el cierre cayeron el
+    2026-11-13.
+
+  Nada del motor, la spec, `knowledge/`, `src/`, `mql5/`, el holdout, `.claude/settings.json`,
+  las skills, los agentes, `solo_lectura.py`, el `Makefile` ni `.gitattributes`.
+- **Commits de la rama** (9):
+  - `6a310dc8` apertura: encargo, contrato y Archivo 69;
+  - `dce4004e` fase 0 medida y PARADA;
+  - `f9888a03` F1 (D1d) y F2, la referencia a F38z, los tests rotos contra F38z;
+  - `32316acf` el informe: casos, encargo, cierre, ensayo, CI;
+  - `55d41a02` la primera pasada del revisor y la PARADA 2;
+  - `5f757439` la respuesta a la PARADA 2 (B1, B2);
+  - `82b19680` F1 aplazado; la segunda pasada del revisor contestada;
+  - `85a7345b` el ensayo del cierre y la orden de cierre;
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **CI de Linux por `fix/guardia-falsos-positivos`**, todos con solo el fallo aceptado
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`): 43366719378 sobre `f9888a03`,
+  43379762621 sobre `5f757439`, 43386236034 sobre `82b19680` y 43443711261 sobre `85a7345b`.
+- **El ensayo del cierre (D7)**, en un clon independiente (`git clone`, la guardia lo niega: lo
+  lanzó Aleks con «!») sobre `82b19680`: merge del clon `3acdacc7`, `make check` exit 0, 3501
+  passed, 12 skipped (ninguno de los tests de la guardia) y 6 xfailed (los de F1), SELLO
+  `0fcf5a10bebd89955210e01bf13880b1541bda85`, pico 277 MiB. Registrado en `85a7345b`, cuya CI es
+  el run 43443711261. El clon lo borró Aleks.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: no sale ni entra ninguna letra;
+  - Technical Debt: la línea que entró con F38z se sustituye por la de «Lineas para el cierre
+    (simuladas)» del informe (F1 sigue como deuda con «!»); la de F38w, con `$'\r'`, no cambia;
+  - hoja de ruta: G.6, `**Estado:** HECHA`;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.787 bytes (`wc -c`) con los cambios de este commit. Por encima de
+  24.000: la rama de la activación de la 7a recorta antes de añadir.
+- Letra del tag: la última cerrada era `stable/F38z-capa-generada`;
+  `stable/F39a-guardia-falsos-positivos` no existe en local ni en origin (comprobado antes de este
+  commit). La siguiente rama será F39b.
+- Tag: `stable/F39a-guardia-falsos-positivos`. El merge es
+  `git rev-parse "stable/F39a-guardia-falsos-positivos^{commit}"`.
