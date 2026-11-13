@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/guardia-falsos-positivos
+main
 
 ## Current Feature
-trabajo/guardia-falsos-positivos, lista para revision, NO cerrada (carril «guardias y deuda»: G.6 y la deuda de la guardia de F38z): cmp de dos ficheros que no son guiones ya no se niega (F2, G.6); el literal «// » de un guion nuevo (F1), aplazado: ninguna condicion medida aguanta. Encargo docs/encargos/trabajo-guardia-falsos-positivos.md; informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md.
+Ninguna rama abierta. trabajo/guardia-falsos-positivos cerrada en main el 2026-11-13 (stable/F39a-guardia-falsos-positivos; G.6): cmp de dos ficheros que no son guiones ya no se niega; el literal // de un guion nuevo, aplazado.
 
 ## Stable Main State
-7bccf310 · merge de `trabajo/capa-generada` (tag `stable/F38z-capa-generada`), sobre `stable/F38y-laminas-motivos` (7d3002c8). Informe docs/validation/CAPA-GENERADA.md; el registro del cierre, al final de HISTORIA.
+e9314598 · merge de `trabajo/guardia-falsos-positivos` (tag `stable/F39a-guardia-falsos-positivos`), sobre `stable/F38z-capa-generada` (7bccf310). Informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-7bccf310 · merge: trabajo/capa-generada, lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2 (R6a.2) · tag stable/F38z-capa-generada
+e9314598 · merge: trabajo/guardia-falsos-positivos, cmp de dos ficheros que no son guiones ya no se niega (G.6); el literal // de un guion nuevo, aplazado · tag stable/F39a-guardia-falsos-positivos
 
 ## Tests Currently Passing
 2061 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
