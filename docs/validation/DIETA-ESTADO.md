@@ -203,7 +203,8 @@ trailer `Fuente:`).
    ya ese número, pero eso lo decide el consultor, no un hecho del repo.
 2. `:100` «El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2558; el arnés sí, :2438)»:
    la deuda sigue viva (la opción solo existe en un parser, `cli.py:2322`), pero sus números de línea
-   ya no casan. No hay criterio para corregirlos; se queda como está.
+   ya no casan. No hay criterio para corregirlos; se queda como está. Los corrige la próxima rama que
+   toque esa línea o `cli.py` (respuesta del consultor a la PARADA, punto 4).
 3. `:113`, una línea en blanco suelta dentro de Technical Debt (1 byte). No es una línea de deuda; no
    la toco.
 
@@ -225,6 +226,72 @@ del umbral. No sigo a la fase 1. Lo que haría, por orden de preferencia:
 
 Las tres dudosas de 0.5 no cambian la cifra salvo `:96` (152 bytes si saliera por (c): ~23.891).
 
+Pico de memoria del `make check` de la fase 0 (árbol `03de840a…`, commit `89419ca0`; el primer
+intento salió en rojo por el ADR 0087 escrito con guion en este informe, `knowledge validate`, y se
+corrigió antes de commitear): «PICO DE MEMORIA de make check: 320 MiB en `test` (suma de sus
+procesos, memoria comprometida, Windows; el mayor proceso, 310 MiB)»; 3513 passed, 6 xfailed, SELLO.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-13)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/dieta-estado (2026-11-13). Cópiala tal cual en el informe, en su sección, y aplícala.
+>
+> 1. Opción 1: se acortan por (e) las cuatro líneas que lo admiten, tal cual las propones, con sus bloques literales en HISTORIA. El umbral de 24.000 bytes del encargo era un freno por si la rama no merecía la pena, no un objetivo: 609 bytes liberados dejan unos 957 de margen hasta el tope (hoy 348), y eso basta para la ingesta y la activación de la 7a. Decláralo en el informe como respuesta a la PARADA.
+> 2. Opción 2, no: dejar en :152 solo la primera cita reescribe la línea, y (e) manda conservar la cita del informe. La :152 se acorta como en la opción 1.
+> 3. Opción 3, no: la :120 (cherry-pick y rebase) se quedó por decisión del consultor en trabajo/margen-pendiente, y reabrir esa decisión por unos 130 bytes no compensa. Se queda.
+> 4. Las tres dudosas se quedan, sin tocar un byte, como manda la negación por defecto:
+>    - :96 (ADR 0087): que el número quede abandonado es una decisión aparte, ligada a S-15 de la sesión 5, y no se toma aquí.
+>    - :100 (cli.py:2558 y :2438): los números de línea viejos no son ninguna de las condiciones de README. En la lista de dudosas del informe, una línea que diga que los corrige la próxima rama que toque esa línea o cli.py.
+>    - :113 (la línea en blanco): README no la cubre y no es una línea con contenido. Se queda, y va a la lista de dudosas.
+> 5. Lo demás, como dice el encargo: el pico de memoria del make check de la fase 0 entra en el informe en el próximo commit; el tamaño final exacto con wc -c; las pruebas de §5; y el revisor con su alcance. Después, «Rama lista para revisión, NO cerrada».
+
+**Declarado como respuesta a la PARADA** (punto 1): la previsión queda por encima del umbral de
+24.000 bytes del encargo y la rama sigue igual, porque el consultor fija que ese umbral era un freno
+y no un objetivo.
+
+## Fase 1 · Aplicar (2026-11-13)
+
+Punto por punto:
+
+1. **Las cuatro (e), tal cual 0.4.** En PROJECT_STATE, Technical Debt, `:84`, `:150`, `:151` y
+   `:152` pasan a su arranque literal con el sufijo de README; las cuatro, enteras y literales, con lo
+   que queda de cada una, al final de `docs/state/HISTORIA.md`, bajo «# Technical Debt ACORTADA · sale
+   de PROJECT_STATE.md en trabajo/dieta-estado (2026-11-13)», con la forma del bloque de
+   `trabajo/trazas-ablacion`. Lo escribe un guion de la carpeta de trabajo que toma la línea original
+   del propio fichero (no la reescribe), comprueba que el arranque es prefijo literal, que lo que sigue
+   al corte es «. », «; » o «: » o que el corte acaba en «)», que la línea pasa de 200 bytes, que el
+   arranque no pasa de 160 y que ahorra 60 o más, y añade el bloque a HISTORIA sin tocar lo que había.
+2. **`:152` con sus dos citas** (punto 2).
+3. **`:120` se queda** (punto 3).
+4. **Las tres dudosas se quedan sin tocar un byte**; la línea de `:100` entra en 0.5 (punto 4).
+5. Ninguna línea sale por (a)-(d), así que no hay bloque «# Pendiente heredado SALE», «PAGADA»,
+   «RECLASIFICADA» ni «SUSTITUIDA», y `docs/plan/HOJA-DE-RUTA.md` no se toca (ningún `HER:n` sale).
+
+`git diff` de PROJECT_STATE en la fase 1: cuatro líneas quitadas y cuatro puestas, todas en
+Technical Debt; nada más.
+
+### Bytes por sección, antes y después
+
+| Sección | Antes (main) | Después |
+|---|---|---|
+| Next Action entera (de ella, «Pendientes heredados») | 6.514 (895) | 6.514 (895) |
+| Technical Debt | 13.368 | 12.759 |
+| Reglas vivas | 1.615 | 1.615 |
+| **PROJECT_STATE.md** | **24.652** (main) | **24.074** en la rama (`wc -c`) |
+
+En la rama, `wc -c PROJECT_STATE.md` = **24.074**; con las cabeceras de `main` (el Current Feature de
+la rama es 31 bytes más largo), **24.043**. El cierre reescribe Current Feature, Stable Main State y
+Last Stable Commit, así que la cifra de `main` tras el cierre la da la orden de cierre.
+
+### Desviaciones
+
+1. La fila de HOLDOUT-EXPOSICIONES.md entró en el commit de apertura (encargo, punto 0), un fichero
+   más de los que nombra la verificación de `abrir-rama`.
+2. La previsión no bajó de 24.000 y la rama siguió tras la PARADA, por la respuesta del consultor
+   (punto 1).
+3. Ninguna línea se queda distinta de lo que manda el criterio.
+
 ## Estado
 
-PARADA de la fase 0 (encargo, punto 4): la previsión queda en 24.043 bytes, por encima de 24.000. PROJECT_STATE.md no se ha tocado más allá de la apertura. Espera la decisión del consultor.
+EN CURSO: fase 1 aplicada; faltan su `make check`, el revisor y la entrega.

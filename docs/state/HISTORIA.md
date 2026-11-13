@@ -18126,3 +18126,22 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 69 (2026-11-12).
+
+# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/dieta-estado (2026-11-13)
+
+Condicion (e) de `docs/state/README.md` («Que sale de PROJECT_STATE, y con que criterio»; respuesta
+del consultor a la PARADA de la fase 0, punto 1, en `docs/validation/DIETA-ESTADO.md`). Cada linea,
+entera y literal como estaba en «Technical Debt», y lo que queda de ella en PROJECT_STATE (el corte
+valido mas largo de 160 bytes como mucho; medido en DIETA-ESTADO.md, fase 0, 0.4):
+
+- La guardia niega a un guion nuevo dos falsos positivos, que lanza Aleks con «!»: un texto que empieza por `//` y un blanco, como ruta de red (F1, aplazado en `trabajo/guardia-falsos-positivos`: ninguna condicion medida aguanta), y un literal que solo es separadores, como el `/` de `compilar.py`, por el mismo mecanismo que « / » y `</li>` de la linea de F38w de abajo (CAPA-GENERADA.md, «La guardia»).
+  Queda en PROJECT_STATE: - La guardia niega a un guion nuevo dos falsos positivos, que lanza Aleks con «!» … (CAPA-GENERADA.md, «La guardia»; entera en HISTORIA, Technical Debt ACORTADA)
+
+- Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar: scripts/graficos_sesion.py:66-71, con su test (su constante ya no es la regla 2), y engine/decisiones.py:7-8 (el ADR del método ya existe) (PREPARACION-SESION-7.md §0.2, H8 y H19).
+  Queda en PROJECT_STATE: - Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar … (PREPARACION-SESION-7.md §0.2, H8 y H19; entera en HISTORIA, Technical Debt ACORTADA)
+
+- `motor laminas`: la CLI solo se prueba entera con las velas reales (LAMINAS.md, F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.
+  Queda en PROJECT_STATE: - `motor laminas`: la CLI solo se prueba entera con las velas reales (LAMINAS.md, F4.3) … (entera en HISTORIA, Technical Debt ACORTADA)
+
+- La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios): dos falsos positivos en un guion que solo leía las láminas (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final); y toma por argumento que se construye al ejecutarse la cadena constante `$'\r'` de bash, en un `grep -c` sobre ficheros nombrados literales (LAMINAS.md, respuesta tras revisar la v4, 6); su arreglo va al carril de guardias, con fix/.
+  Queda en PROJECT_STATE: - La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios) … (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final; LAMINAS.md, respuesta tras revisar la v4, 6; entera en HISTORIA, Technical Debt ACORTADA)
