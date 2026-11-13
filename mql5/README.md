@@ -1,6 +1,7 @@
 # mql5/
-Ejecucion en MetaTrader 5 (fase 6). Include/Botsito/Params.mqh se GENERA desde knowledge/spec/ (F28)
-y no se edita a mano. Scripts/RunCases.mq5 ejecuta la biblioteca de casos (F30). tester/ guarda los .ini
+Ejecucion en MetaTrader 5 (fase 6). Include/Botsito/Params.mqh se GENERA desde knowledge/spec/ (F28);
+lo de la capa de R6a, también desde knowledge/cuentas/ (Include/Botsito/Capa/Generado.mqh); y no se
+edita a mano. Scripts/RunCases.mq5 ejecuta la biblioteca de casos (F30). tester/ guarda los .ini
 y resultados del Strategy Tester (F32).
 
 Desde R6a.1 (trabajo/ea-conexion, ADR-0082) vive aqui la capa que nunca decide una operacion: el EA,

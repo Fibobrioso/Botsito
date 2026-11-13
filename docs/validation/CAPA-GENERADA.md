@@ -971,3 +971,65 @@ entrega). Pendiente del consultor: la lectura de B7 y las tres negativas de la g
 («Desviaciones, declaradas»).
 
 Rama lista para revisión, NO cerrada.
+
+## Orden de cierre (consultor, 2026-11-12)
+
+Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Orden de cierre de trabajo/capa-generada (consultor, 2026-11-12). Revisada: se cierra. Cópiala tal cual al final del informe (CAPA-GENERADA.md, «Orden de cierre») y aplícala en este orden: el punto 2 ahora; del 3 en adelante, con la skill cerrar-rama cuando Aleks escriba /cerrar-rama trabajo/capa-generada.
+>
+> 1. Lo que quedó para el consultor.
+>  a. B7: no hay nada que corregir. Lo prohibido era el Strategy Tester con la cuenta vencida; el script de pruebas había que lanzarlo (A1 y B6) y solo corre dentro del terminal. Que el terminal se conectara a FTMO-Demo no cambia nada: el script no opera, no se creó ninguna prueba y no se usó el tester. Las frases de A1 («corre sin conexión») y de B7 eran del consultor y no eran exactas: el script no necesita conexión, no es que no la tenga. Va a la fila como error del consultor.
+>  b. Las tres negativas de la guardia sin PARADA. La asignación O=… reescrita sin la variable y las llamadas sueltas en el clon siguen la forma que propone la propia guardia: valen. Comprobar con diff -q después de que negara cmp sí fue otra vía y debió ser PARADA, aunque fuera de solo lectura; no cambia nada de lo medido, porque las roturas se repitieron en un clon. Lección, en la fila: si la guardia niega, no se cambia de herramienta ni para comprobar.
+>
+> 2. Antes del cierre, un commit propio de la rama. El commit del contrato solo admite contrato.yaml, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE y la hoja de ruta (RITUAL.md, puntos 3 y 4, y el bloque de órdenes de ese punto), así que lo de «Para el cierre, fuera de esos dos ficheros» entra aquí:
+>  - mql5/README.md:2, con la frase de «Líneas preparadas».
+>  - Un recuadro de corrección en ADR-0001 (junto a :12: lo de la capa se genera también desde knowledge/cuentas/) y otro en ADR-0082 (junto a :53: lote_si_no_cabe es CONFIRMED desde trabajo/activar-sesion-05), con fecha y rama y el cuerpo intacto, con la forma del recuadro de ADR-0093 §2 (b735dc2). El índice de docs/adr/README.md no se toca.
+>  - El contrato: añade los dos ADR a rutas_permitidas, con su comentario, y quita docs/adr/ de rutas_protegidas, porque lo protegido manda sobre lo permitido (CONTRATO-DE-RAMA.md; precedente 0dc1482 con LAMINAS.md).
+>  make check sellado, commit, push a fix/capa-generada y su CI con solo el fallo aceptado, antes del merge. Si test_adr, el contrato o la guardia lo impiden, PARADA. Responde con el sha, el run y el SELLO, y espera a que Aleks escriba /cerrar-rama.
+>
+> 3. Tag: stable/F38z-capa-generada. Verifica en HISTORIA que el último es stable/F38y-laminas-motivos, y que el tag no existe ni en local ni en origin (git ls-remote --tags origin stable/F38z-capa-generada, vacío). Es la última letra de F38: la siguiente rama será F39a. Mensaje del merge: «merge: trabajo/capa-generada, lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2 (R6a.2)».
+>
+> 4. El commit del contrato (chore(cierre): sale el contrato y entra el registro en HISTORIA), en la rama. Con él, git log main..trabajo/capa-generada da 7 commits: cee851c8, 4518e631, 61550d50, 9076fac8, 7fda127d, el del punto 2 y este.
+>  - Sale contrato.yaml.
+>  - Entra en HISTORIA el registro del cierre, con stable/F38z-capa-generada^{commit} en lugar del sha, los siete commits, la fila de HOLDOUT-EXPOSICIONES del 2026-11-12 que ya entró en la apertura, y los runs de la CI.
+>  - Next Action: no sale ni entra ninguna letra. En F, «(1) grabar, ingerir y activar la 7a;» pasa a «(1) grabar (domingo 2026-11-15), ingerir y activar la 7a;», y «C, R5.7 y R6a en los huecos.» pasa a «C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.».
+>  - Technical Debt: las tres líneas de «Líneas preparadas» (la de :82, v1 y v2; la de activar-sesion; la de la guardia).
+>  - Hoja de ruta, seis cambios:
+>    · R6a.2, «Qué es»: la frase de D7 de «Líneas preparadas».
+>    · R6a.2, línea de Estado nueva: la de «Líneas preparadas», con el tag stable/F38z-capa-generada.
+>    · R6a.4, al final de «Qué es»: la de B0.
+>    · R6a.8, al final de «Qué es»: la de A2 (i); y su «Depende de: R6a.1.» pasa a «Depende de: R6a.1 y R6a.2.».
+>    · La entrada de F28 a F32 (la de «Refs: F:F28 · F:F29 · F:F30 · F:F31 · F:F32», hacia :602), al final de «Qué es»: «En F28, lo de prop_firm viajará también en risk_hash, y esa rama dice si capa_hash sigue (CAPA-GENERADA.md, B8).».
+>    · R5.7: «**Depende de:** nada; va en los huecos.» pasa a «**Depende de:** la corrida de ADR-0070 §3 tras la 7b (NA:F, paso 3). Medida antes, su R sería el de unas parejas que las activaciones de la 7a y la 7b van a cambiar, y abriría dos veces la columna de resultado del libro (decisión del consultor, 2026-11-12).».
+>  - Con todo eso, wc -c PROJECT_STATE.md por debajo de 25.000 bytes (lo previsto: unos 24.460). Si no, PARADA antes del commit.
+>  - ERRORES-RECURRENTES, la fila de la rama, con el formato de la de trabajo/laminas-motivos:
+>    · Revisor: opus sobre 9076fac8, Apéndice A; eje (a) 0 bloquea, 3 importa y 1 menor; eje (b) 1 bloquea, 5 importa y 1 menor; en total 1 bloquea, 8 importa y 2 menores, contestados en 7fda127d. Entre ellos a3 (las roturas de la fase 1, primero en el árbol de trabajo, contra el espíritu de CLAUDE.md, «Ensayos aislados», 1), b2 (el journal v1 dentro de MQL5/Files) y b3 (las negativas de la guardia sin PARADA).
+>    · Consultor: dos errores suyos, menores. (i) D2 pedía comparar por texto huso_operativa y firma_huso_corte, dos nombres IANA que dan los mismos instantes; lo midió la fase 0, y ADR-0053 §4 ya lo decía (patrón 5). (ii) A1 decía que el script de pruebas «corre sin conexión» y B7 prohibía arrancar el terminal, que A1 y B6 necesitaban: dos frases que chocaban (patrón 5). Y un hallazgo que el revisor no vio, importa: «Para el cierre, fuera de esos dos ficheros» proponía cambiar en el cierre ficheros que el commit del contrato no admite.
+>    · Lecciones. Para el revisor: las líneas preparadas para el cierre solo pueden tocar los cinco ficheros del commit del contrato (RITUAL.md, puntos 3 y 4). Para el consultor: antes de pedir que dos parámetros se comparen por valor, leer el ADR que ya fija su relación; y una prohibición en una respuesta nombra la herramienta exacta (el Strategy Tester), no el efecto (arrancar el terminal), y se contrasta con lo que piden los demás puntos de la misma respuesta. De la sesión: si la guardia niega, no se cambia de herramienta ni para comprobar (1b).
+>
+> 5. El commit de estado en main solo sustituye Current Branch, Current Feature, Stable Main State y Last Stable Commit. La Next Action ya cambió en el punto 4.
+>
+> 6. make check sellado, push atómico de main y el tag en un solo comando (Aleks confirma con «1. Yes»), CI de main en verde, y después borrar la rama local trabajo/capa-generada y la remota fix/capa-generada (git ls-remote --heads origin fix/capa-generada, vacío).
+>
+> 7. Informe final: sha de main, tag, run de la CI de main con su conclusion, ramas que quedan y tamaño de PROJECT_STATE.md. Si queda por encima de 24.000 bytes, dilo: la rama de la activación de la 7a recorta antes de añadir.
+
+## El punto 2 de la orden de cierre, aplicado
+
+Un commit propio de la rama, antes del cierre:
+
+- `mql5/README.md:2`: «Include/Botsito/Params.mqh se GENERA desde knowledge/spec/ (F28); lo de
+  la capa de R6a, también desde knowledge/cuentas/ (Include/Botsito/Capa/Generado.mqh); y no se
+  edita a mano.»
+- Un recuadro en ADR-0001, tras el párrafo de la línea 12 (la capa se genera también desde
+  `knowledge/cuentas/`), y otro en ADR-0082, tras la viñeta de `lote_si_no_cabe` de la línea 53
+  (CONFIRMED en `limitar` desde `trabajo/activar-sesion-05`; `parametros.yaml` lo dice así), con
+  la forma del de ADR-0093 §2 (`b735dc2`): fecha, rama, «el cuerpo no se toca». El índice de
+  `docs/adr/README.md`, sin tocar.
+- `contrato.yaml`: los dos ADR en `rutas_permitidas`, con su comentario, y `docs/adr/` fuera de
+  `rutas_protegidas`.
+
+El sha de este commit, su SELLO y el run de su CI van en el registro del cierre (punto 4), porque
+no caben en el árbol que sellan.
