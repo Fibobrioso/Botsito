@@ -54,6 +54,12 @@ Consecuencias, escritas como D3 las pide:
   bajo A-57, ADR-0081): su opción `no_operar` es un veto, porque la capa no elige qué operar, se niega
   a enviar lo que no cabe, leyendo solo cuenta, símbolo y un parámetro de ejecución. La capa cumple
   las dos opciones, con el valor que deje A-57 en la sesión 5 (respuesta a la PARADA, punto 3).
+
+  > **RECUADRO del 2026-11-12 (`trabajo/capa-generada`, orden de cierre del consultor, punto 2;
+  > el cuerpo no se toca).** `lote_si_no_cabe` ya no es DEFAULT_AMBIGUOUS: es CONFIRMED en
+  > `limitar` desde `trabajo/activar-sesion-05` (el trader lo confirmó en la sesión 5; A-57
+  > RESUELTA; `knowledge/spec/parametros.yaml`). Llega así, con su estado, a la capa generada
+  > (`docs/validation/CAPA-GENERADA.md`).
 - **El veto de la firma entra en la capa con RN-029, RN-030 y RN-031**, que solo leen parámetros
   `prop_firm`, los acumuladores de pérdida de la firma y, RN-030, la posición viva
   (`strategy_spec.yaml:2138-2300`). **RN-032 se queda fuera y espera a F26**: lee

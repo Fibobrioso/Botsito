@@ -1,0 +1,117 @@
+Salidas de compilar.py en la fase 2 de trabajo/capa-generada (2026-11-12), copiadas tal cual del
+terminal de Aleks, que las lanzo con «!» (la guardia nego compilar.py, cambiado en la rama).
+Comun a todas: --metaeditor "C:/Program Files/MetaTrader 5/MetaEditor64.exe",
+--terminal "C:/Program Files/MetaTrader 5/terminal64.exe", --datos <carpeta de datos del terminal>,
+--simbolo EURUSD, --golden tests/golden/journal_v2, --repo .
+
+== 1. compilar (--salida anexos/CAPA-GENERADA/compilacion --instalar ...) mql5/Experts/Botsito.mq5 mql5/Scripts/BotsitoPruebasCapa.mq5
+
+mql5/Experts/Botsito.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Experts\Botsito\Botsito.ex5
+mql5/Scripts/BotsitoPruebasCapa.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Scripts\Botsito\BotsitoPruebasCapa.ex5
+
+== 2. pruebas (--salida anexos/CAPA-GENERADA/pruebas)
+
+script: 23 OK, 0 FALLO (salida del terminal 3)
+validador: continua valida
+validador: rota valida
+golden: los journals del script son iguales byte a byte
+capa_hash: capa/capa_hash.jsonl valida como v2 y lleva el capa_hash del Generado.mqh del repo (8d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601)
+sha256 b6940768b64843ac50cf2ee112de4c2d2c62a934522fc016e00eabece8458b47 capa/capa_hash.jsonl
+sha256 5dee12ef78755889d21991d4ef633ede29275c9d61fc6b6f3244209468859734 continua/journal_20261026.jsonl
+sha256 d8b49974a6ff1539fc48728821bac530bcaed22dd21a483b51a86370a538a70c continua/journal_20261027.jsonl
+sha256 09840b6bcfe20a9579e0aaeca7ec7ef58b63d1cdda3dc93c6b197f2aa61333ae resultado.txt
+sha256 088f2abb5b60bb386f3ec5c1f0332c961cf64b735eb0520f9f25d43922075718 rota/journal_20261027.jsonl
+sha256 48d11ffb78480df264a53681699ece80007fbc34b62097e688e1ac7699c41b43 rota/journal_20261028.jsonl
+
+== r1. compilar --etiqueta r1 --sustituir mql5/Include/Botsito/Capa/Journal.mqh 'JPar("capa_hash", JTexto(capa_hash))' 'JPar("capa_hash", "null")' ; pruebas --salida anexos/CAPA-GENERADA/roturas/r1
+
+mql5/Scripts/BotsitoPruebasCapa.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Scripts\Botsito\BotsitoPruebasCapa.ex5
+script: 23 OK, 0 FALLO (salida del terminal 3)
+golden: continua/journal_20261026.jsonl: distinto del golden
+golden: continua/journal_20261027.jsonl: distinto del golden
+golden: rota/journal_20261028.jsonl: distinto del golden
+validador: continua NO valida: journal_20261026.jsonl:1: capa_hash no son 64 hexadecimales en minusculas (v2)
+validador: rota NO valida: journal_20261028.jsonl:1: capa_hash no son 64 hexadecimales en minusculas (v2)
+capa_hash: capa/capa_hash.jsonl: no valida: capa/capa_hash.jsonl:1: capa_hash no son 64 hexadecimales en minusculas (v2)
+sha256 a79b01ff6d7cb1e6f9f8ae54d44ce20ef22a6dc7c621bbe62a968651dbae986d BotsitoPruebasCapa-r1.log
+sha256 b4d3a4837c3d90380a8c439ed088b27a82bdbd4bf0d394919a231945b03ce48b capa/capa_hash.jsonl
+sha256 44820a18e082579f91aa9c5de59f4a8ce182865184bc550d134b423cd9bd411d continua/journal_20261026.jsonl
+sha256 9e351f6a8cacd4c5f11f5513f0d8bf13a4c6f9367a70c6739fd993abaed3bdd1 continua/journal_20261027.jsonl
+sha256 ad4923f8b18c6e8417032091ceeab1d874d25b0292a194db1adb670282a5c4ba resultado.txt
+sha256 088f2abb5b60bb386f3ec5c1f0332c961cf64b735eb0520f9f25d43922075718 rota/journal_20261027.jsonl
+sha256 e2aadb180f7011c733e06e8c8770ac8d9ebf5a6b8aecc869a70b46261b13c124 rota/journal_20261028.jsonl
+
+== r2. compilar --etiqueta r2 --sustituir mql5/Include/Botsito/Capa/Generado.mqh 'const string CAPA_HASH = "8d1f' 'const string CAPA_HASH = "9d1f' ; pruebas --salida anexos/CAPA-GENERADA/roturas/r2
+(la primera vez el «.» de --repo se perdio al pegar: pruebas no corrio, «argument --repo: expected one
+argument»; se relanzo solo pruebas, con el script de r2 ya instalado)
+
+mql5/Scripts/BotsitoPruebasCapa.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Scripts\Botsito\BotsitoPruebasCapa.ex5
+script: 23 OK, 0 FALLO (salida del terminal 3)
+validador: continua valida
+validador: rota valida
+golden: los journals del script son iguales byte a byte
+capa_hash: capa/capa_hash.jsonl:1: capa_hash 9d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601 no es el del Generado.mqh del repo (8d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601)
+sha256 8fd7904b8a7f52bc983b5523b7aa9ba83a545fccee7efaaee22218aa20f5adb2 BotsitoPruebasCapa-r2.log
+sha256 acb5c66606e0c2e2718fc818887f9c2dd83ddc6f92f2848e4685f423a25ef30e capa/capa_hash.jsonl
+sha256 5dee12ef78755889d21991d4ef633ede29275c9d61fc6b6f3244209468859734 continua/journal_20261026.jsonl
+sha256 d8b49974a6ff1539fc48728821bac530bcaed22dd21a483b51a86370a538a70c continua/journal_20261027.jsonl
+sha256 5a03833b890bfc98f96a4e1f01bd5836c0c8d3a5e3399209a491618582832b5c resultado.txt
+sha256 088f2abb5b60bb386f3ec5c1f0332c961cf64b735eb0520f9f25d43922075718 rota/journal_20261027.jsonl
+sha256 48d11ffb78480df264a53681699ece80007fbc34b62097e688e1ac7699c41b43 rota/journal_20261028.jsonl
+
+== r3. compilar --etiqueta r3 --sustituir mql5/Scripts/BotsitoPruebasCapa.mq5 '   Capa();' '' ; pruebas --salida anexos/CAPA-GENERADA/roturas/r3
+
+mql5/Scripts/BotsitoPruebasCapa.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Scripts\Botsito\BotsitoPruebasCapa.ex5
+script: 20 OK, 0 FALLO (salida del terminal 3)
+validador: continua valida
+validador: rota valida
+golden: los journals del script son iguales byte a byte
+capa_hash: capa/capa_hash.jsonl: el script no lo escribio
+sha256 1af91eeec1981ff8dcdf86564c34283c5b64e5e027aaa8e329dbd520955d1879 BotsitoPruebasCapa-r3.log
+sha256 5dee12ef78755889d21991d4ef633ede29275c9d61fc6b6f3244209468859734 continua/journal_20261026.jsonl
+sha256 d8b49974a6ff1539fc48728821bac530bcaed22dd21a483b51a86370a538a70c continua/journal_20261027.jsonl
+sha256 22413e2ee58b4f88ee1a3acfb7eff2bfa2b726239fe38f2a1cfd8835dfcb9bf3 resultado.txt
+sha256 088f2abb5b60bb386f3ec5c1f0332c961cf64b735eb0520f9f25d43922075718 rota/journal_20261027.jsonl
+sha256 48d11ffb78480df264a53681699ece80007fbc34b62097e688e1ac7699c41b43 rota/journal_20261028.jsonl
+
+== r4. compilar --etiqueta r4 --sustituir mql5/Include/Botsito/Capa/Journal.mqh '#define JOURNAL_VERSION 2' '#define JOURNAL_VERSION 1' ; pruebas --salida anexos/CAPA-GENERADA/roturas/r4
+
+mql5/Scripts/BotsitoPruebasCapa.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Scripts\Botsito\BotsitoPruebasCapa.ex5
+script: 22 OK, 1 FALLO (salida del terminal 3)
+golden: continua/journal_20261026.jsonl: distinto del golden
+golden: continua/journal_20261027.jsonl: distinto del golden
+golden: rota/journal_20261028.jsonl: distinto del golden
+validador: continua NO valida: journal_20261026.jsonl:1: capa_hash esta reservada y vale null en v1
+validador: rota NO valida: journal_20261028.jsonl:1: capa_hash esta reservada y vale null en v1
+capa_hash: capa/capa_hash.jsonl: no valida: capa/capa_hash.jsonl:1: capa_hash esta reservada y vale null en v1
+sha256 2f6b20295e07c9912bfb5c9ec25bbdf8c92a4968094860210a15267b8ce2b7be BotsitoPruebasCapa-r4.log
+sha256 bc4f15abf861731faedd9ca1d738b34bc8019c9aceb31a92d3d174f8cca1c584 capa/capa_hash.jsonl
+sha256 cb091704362a7f94eabfae0ab8c9a85a66fe9dedb6fe7e942772565f63eeda97 continua/journal_20261026.jsonl
+sha256 1312d910a6c7d6c345100d4f9e8ca07043a5ff5ed281985374da000bbd908c8a continua/journal_20261027.jsonl
+sha256 49b5421b0000dc4700eefee6089a3048d49ffdcb1617b2902f2873ff575de83b resultado.txt
+sha256 314fa3ad11229e5954d7cfa13ab268392138a585b6b83d6913872124c52ec0aa rota/journal_20261027.jsonl
+sha256 efad9f14ab73f1f8de54eb3f39b1161b981572a3910603accd1835ceefa301e8 rota/journal_20261028.jsonl
+
+== final: 1 y 2 otra vez (la version buena reinstalada; --salida anexos/CAPA-GENERADA/compilacion y .../pruebas)
+
+mql5/Experts/Botsito.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Experts\Botsito\Botsito.ex5
+mql5/Scripts/BotsitoPruebasCapa.mq5: PASA (0 errores, 0 avisos)
+  instalado en C:\Users\USER\AppData\Roaming\MetaQuotes\Terminal\D0E8209F77C8CF37AD8BF550E51FF075\MQL5\Scripts\Botsito\BotsitoPruebasCapa.ex5
+script: 23 OK, 0 FALLO (salida del terminal 3)
+validador: continua valida
+validador: rota valida
+golden: los journals del script son iguales byte a byte
+capa_hash: capa/capa_hash.jsonl valida como v2 y lleva el capa_hash del Generado.mqh del repo (8d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601)
+sha256 b6940768b64843ac50cf2ee112de4c2d2c62a934522fc016e00eabece8458b47 capa/capa_hash.jsonl
+sha256 5dee12ef78755889d21991d4ef633ede29275c9d61fc6b6f3244209468859734 continua/journal_20261026.jsonl
+sha256 d8b49974a6ff1539fc48728821bac530bcaed22dd21a483b51a86370a538a70c continua/journal_20261027.jsonl
+sha256 172a131821d1ec81be5d47701ff30d1d88755b6ee88dd043f81be608ad2a04dc resultado.txt
+sha256 088f2abb5b60bb386f3ec5c1f0332c961cf64b735eb0520f9f25d43922075718 rota/journal_20261027.jsonl
+sha256 48d11ffb78480df264a53681699ece80007fbc34b62097e688e1ac7699c41b43 rota/journal_20261028.jsonl

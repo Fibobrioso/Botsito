@@ -1,0 +1,900 @@
+//+------------------------------------------------------------------+
+//| Generado.mqh - lo que la capa de MT5 recibe del repo (R6a.2,     |
+//| ADR-0082 D5). GENERADO: no se edita a mano.                      |
+//+------------------------------------------------------------------+
+// Se genera, desde la raiz del repositorio, con:
+//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k
+// desde knowledge/spec/parametros.yaml, knowledge/cuentas/ftmo-2step-swing-100k.yaml y
+// knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml.
+// Quien cambie uno de esos valores (una activacion, el perfil, el calendario)
+// regenera, y un test falla si este fichero no es exactamente lo que da el generador.
+// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md).
+
+// Los estados del registro (ADR-0002): un DEFAULT_AMBIGUOUS no es un CONFIRMED.
+enum ENUM_BOTSITO_ESTADO
+  {
+   BOTSITO_ESTADO_CONFIRMED,
+   BOTSITO_ESTADO_DEFAULT_AMBIGUOUS,
+   BOTSITO_ESTADO_UNKNOWN
+  };
+
+enum ENUM_P_BROKER_DST
+  {
+   P_BROKER_DST_US,
+   P_BROKER_DST_EU,
+   P_BROKER_DST_NINGUNO
+  };
+
+enum ENUM_P_FIRMA
+  {
+   P_FIRMA_FTMO,
+   P_FIRMA_FUNDEDNEXT
+  };
+
+enum ENUM_P_FIRMA_TIPO_CUENTA
+  {
+   P_FIRMA_TIPO_CUENTA_STANDARD,
+   P_FIRMA_TIPO_CUENTA_SWING
+  };
+
+enum ENUM_P_RELOJ_DIA_RIESGO
+  {
+   P_RELOJ_DIA_RIESGO_SERVIDOR,
+   P_RELOJ_DIA_RIESGO_CIVIL_OPERATIVA
+  };
+
+enum ENUM_P_FIRMA_BASE_PERDIDA_DIARIA
+  {
+   P_FIRMA_BASE_PERDIDA_DIARIA_SALDO_INICIAL_CUENTA,
+   P_FIRMA_BASE_PERDIDA_DIARIA_SALDO_CORTE_DIARIO
+  };
+
+enum ENUM_P_FIRMA_MAGNITUD_VIGILADA
+  {
+   P_FIRMA_MAGNITUD_VIGILADA_SALDO,
+   P_FIRMA_MAGNITUD_VIGILADA_EQUITY
+  };
+
+enum ENUM_P_FIRMA_CIERRE_AL_TOPE
+  {
+   P_FIRMA_CIERRE_AL_TOPE_SI,
+   P_FIRMA_CIERRE_AL_TOPE_NO
+  };
+
+enum ENUM_P_LOTE_SI_NO_CABE
+  {
+   P_LOTE_SI_NO_CABE_LIMITAR,
+   P_LOTE_SI_NO_CABE_NO_OPERAR
+  };
+
+// instrumento_digitos · entero · instrumento · knowledge/spec/parametros.yaml
+const int P_INSTRUMENTO_DIGITOS = 5;
+const ENUM_BOTSITO_ESTADO P_INSTRUMENTO_DIGITOS_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// instrumento_contrato · decimal · instrumento · knowledge/spec/parametros.yaml
+const double P_INSTRUMENTO_CONTRATO = 100000.0;
+const ENUM_BOTSITO_ESTADO P_INSTRUMENTO_CONTRATO_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// instrumento_lote_minimo · lotes · instrumento · knowledge/spec/parametros.yaml
+const double P_INSTRUMENTO_LOTE_MINIMO = 0.01;
+const ENUM_BOTSITO_ESTADO P_INSTRUMENTO_LOTE_MINIMO_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// instrumento_lote_paso · lotes · instrumento · knowledge/spec/parametros.yaml
+const double P_INSTRUMENTO_LOTE_PASO = 0.01;
+const ENUM_BOTSITO_ESTADO P_INSTRUMENTO_LOTE_PASO_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// instrumento_stops_level · puntos · instrumento · knowledge/spec/parametros.yaml
+const int P_INSTRUMENTO_STOPS_LEVEL = 0;
+const ENUM_BOTSITO_ESTADO P_INSTRUMENTO_STOPS_LEVEL_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// broker_offset_base · minutos · broker · knowledge/spec/parametros.yaml
+const int P_BROKER_OFFSET_BASE = 120;
+const ENUM_BOTSITO_ESTADO P_BROKER_OFFSET_BASE_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// broker_dst · enum · broker · knowledge/spec/parametros.yaml
+const ENUM_P_BROKER_DST P_BROKER_DST = P_BROKER_DST_US;
+const ENUM_BOTSITO_ESTADO P_BROKER_DST_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma · enum · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const ENUM_P_FIRMA P_FIRMA = P_FIRMA_FTMO;
+const ENUM_BOTSITO_ESTADO P_FIRMA_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_programa · texto · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const string P_FIRMA_PROGRAMA = "2-step";
+const ENUM_BOTSITO_ESTADO P_FIRMA_PROGRAMA_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_tipo_cuenta · enum · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const ENUM_P_FIRMA_TIPO_CUENTA P_FIRMA_TIPO_CUENTA = P_FIRMA_TIPO_CUENTA_SWING;
+const ENUM_BOTSITO_ESTADO P_FIRMA_TIPO_CUENTA_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// saldo_inicial_cuenta · decimal · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const double P_SALDO_INICIAL_CUENTA = 100000.0;
+const ENUM_BOTSITO_ESTADO P_SALDO_INICIAL_CUENTA_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// reloj_dia_riesgo · enum · prop_firm · knowledge/spec/parametros.yaml
+const ENUM_P_RELOJ_DIA_RIESGO P_RELOJ_DIA_RIESGO = P_RELOJ_DIA_RIESGO_CIVIL_OPERATIVA;
+const ENUM_BOTSITO_ESTADO P_RELOJ_DIA_RIESGO_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_huso_corte · texto · prop_firm · el perfil
+const string P_FIRMA_HUSO_CORTE = "Europe/Prague";
+const ENUM_BOTSITO_ESTADO P_FIRMA_HUSO_CORTE_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_perdida_diaria_max · porcentaje · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const double P_FIRMA_PERDIDA_DIARIA_MAX = 5.0;
+const ENUM_BOTSITO_ESTADO P_FIRMA_PERDIDA_DIARIA_MAX_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_perdida_total_max · porcentaje · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const double P_FIRMA_PERDIDA_TOTAL_MAX = 10.0;
+const ENUM_BOTSITO_ESTADO P_FIRMA_PERDIDA_TOTAL_MAX_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_base_perdida_diaria · enum · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const ENUM_P_FIRMA_BASE_PERDIDA_DIARIA P_FIRMA_BASE_PERDIDA_DIARIA = P_FIRMA_BASE_PERDIDA_DIARIA_SALDO_CORTE_DIARIO;
+const ENUM_BOTSITO_ESTADO P_FIRMA_BASE_PERDIDA_DIARIA_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_perdida_total_arrastra · booleano · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const bool P_FIRMA_PERDIDA_TOTAL_ARRASTRA = false;
+const ENUM_BOTSITO_ESTADO P_FIRMA_PERDIDA_TOTAL_ARRASTRA_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_magnitud_vigilada · enum · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const ENUM_P_FIRMA_MAGNITUD_VIGILADA P_FIRMA_MAGNITUD_VIGILADA = P_FIRMA_MAGNITUD_VIGILADA_EQUITY;
+const ENUM_BOTSITO_ESTADO P_FIRMA_MAGNITUD_VIGILADA_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_cierre_al_tope · enum · prop_firm · knowledge/spec/parametros.yaml
+const ENUM_P_FIRMA_CIERRE_AL_TOPE P_FIRMA_CIERRE_AL_TOPE = P_FIRMA_CIERRE_AL_TOPE_SI;
+const ENUM_BOTSITO_ESTADO P_FIRMA_CIERRE_AL_TOPE_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_margen_seguridad · porcentaje · prop_firm · knowledge/spec/parametros.yaml
+const double P_FIRMA_MARGEN_SEGURIDAD = 0.5;
+const ENUM_BOTSITO_ESTADO P_FIRMA_MARGEN_SEGURIDAD_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_mensajes_dia_max · entero · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const int P_FIRMA_MENSAJES_DIA_MAX = 2000;
+const ENUM_BOTSITO_ESTADO P_FIRMA_MENSAJES_DIA_MAX_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_gap_margen_minutos · minutos · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const int P_FIRMA_GAP_MARGEN_MINUTOS = 120;
+const ENUM_BOTSITO_ESTADO P_FIRMA_GAP_MARGEN_MINUTOS_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_gap_cierre_minimo_minutos · minutos · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const int P_FIRMA_GAP_CIERRE_MINIMO_MINUTOS = 120;
+const ENUM_BOTSITO_ESTADO P_FIRMA_GAP_CIERRE_MINIMO_MINUTOS_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_apalancamiento · entero · prop_firm · knowledge/spec/parametros.yaml y el perfil
+const int P_FIRMA_APALANCAMIENTO = 30;
+const ENUM_BOTSITO_ESTADO P_FIRMA_APALANCAMIENTO_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// firma_volumen_max_lotes · lotes · prop_firm · el perfil
+const double P_FIRMA_VOLUMEN_MAX_LOTES = 50.0;
+const ENUM_BOTSITO_ESTADO P_FIRMA_VOLUMEN_MAX_LOTES_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// freno_peticiones_aviso · entero · ejecucion · knowledge/spec/parametros.yaml · DEFAULT_AMBIGUOUS bajo A-54
+const int P_FRENO_PETICIONES_AVISO = 1000;
+const ENUM_BOTSITO_ESTADO P_FRENO_PETICIONES_AVISO_ESTADO = BOTSITO_ESTADO_DEFAULT_AMBIGUOUS;
+
+// freno_peticiones_corte · entero · ejecucion · knowledge/spec/parametros.yaml · DEFAULT_AMBIGUOUS bajo A-54
+const int P_FRENO_PETICIONES_CORTE = 1500;
+const ENUM_BOTSITO_ESTADO P_FRENO_PETICIONES_CORTE_ESTADO = BOTSITO_ESTADO_DEFAULT_AMBIGUOUS;
+
+// freno_bucle_repeticiones · entero · ejecucion · knowledge/spec/parametros.yaml · DEFAULT_AMBIGUOUS bajo A-54
+const int P_FRENO_BUCLE_REPETICIONES = 5;
+const ENUM_BOTSITO_ESTADO P_FRENO_BUCLE_REPETICIONES_ESTADO = BOTSITO_ESTADO_DEFAULT_AMBIGUOUS;
+
+// freno_bucle_minutos · minutos · ejecucion · knowledge/spec/parametros.yaml · DEFAULT_AMBIGUOUS bajo A-54
+const int P_FRENO_BUCLE_MINUTOS = 1;
+const ENUM_BOTSITO_ESTADO P_FRENO_BUCLE_MINUTOS_ESTADO = BOTSITO_ESTADO_DEFAULT_AMBIGUOUS;
+
+// lote_si_no_cabe · enum · ejecucion · knowledge/spec/parametros.yaml
+const ENUM_P_LOTE_SI_NO_CABE P_LOTE_SI_NO_CABE = P_LOTE_SI_NO_CABE_LIMITAR;
+const ENUM_BOTSITO_ESTADO P_LOTE_SI_NO_CABE_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// lote_margen_libre_fraccion · decimal · ejecucion · knowledge/spec/parametros.yaml
+const double P_LOTE_MARGEN_LIBRE_FRACCION = 0.95;
+const ENUM_BOTSITO_ESTADO P_LOTE_MARGEN_LIBRE_FRACCION_ESTADO = BOTSITO_ESTADO_CONFIRMED;
+
+// El calendario de cierres de knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml (ADR-0068), como lo recibe el
+// predicado de Python: los cierres ya juntos de DefinicionCalendario.calendario(),
+// en segundos UTC, [inicio, fin). Fuera de [CIERRES_CUBRE_DESDE, CIERRES_CUBRE_HASTA)
+// no se sabe: el predicado niega (cierre_sin_calendario). Se filtra por duracion en
+// el predicado, no aqui.
+const long CIERRES_CUBRE_DESDE = 1764824400; // 2025-12-04T05:00:00Z
+const long CIERRES_CUBRE_HASTA = 1791432000; // 2026-10-08T04:00:00Z
+const int  CIERRES_N = 228;
+
+const long CIERRES_INICIO[228] =
+  {
+   1764280500, // 2025-11-27T21:55:00Z
+   1764366900, // 2025-11-28T21:55:00Z
+   1764626100, // 2025-12-01T21:55:00Z
+   1764712500, // 2025-12-02T21:55:00Z
+   1764798900, // 2025-12-03T21:55:00Z
+   1764885300, // 2025-12-04T21:55:00Z
+   1764971700, // 2025-12-05T21:55:00Z
+   1765230900, // 2025-12-08T21:55:00Z
+   1765317300, // 2025-12-09T21:55:00Z
+   1765403700, // 2025-12-10T21:55:00Z
+   1765490100, // 2025-12-11T21:55:00Z
+   1765576500, // 2025-12-12T21:55:00Z
+   1765835700, // 2025-12-15T21:55:00Z
+   1765922100, // 2025-12-16T21:55:00Z
+   1766008500, // 2025-12-17T21:55:00Z
+   1766094900, // 2025-12-18T21:55:00Z
+   1766181300, // 2025-12-19T21:55:00Z
+   1766440500, // 2025-12-22T21:55:00Z
+   1766526900, // 2025-12-23T21:55:00Z
+   1766613300, // 2025-12-24T21:55:00Z
+   1766786100, // 2025-12-26T21:55:00Z
+   1767045300, // 2025-12-29T21:55:00Z
+   1767131700, // 2025-12-30T21:55:00Z
+   1767218100, // 2025-12-31T21:55:00Z
+   1767390900, // 2026-01-02T21:55:00Z
+   1767650100, // 2026-01-05T21:55:00Z
+   1767736500, // 2026-01-06T21:55:00Z
+   1767822900, // 2026-01-07T21:55:00Z
+   1767909300, // 2026-01-08T21:55:00Z
+   1767995700, // 2026-01-09T21:55:00Z
+   1768254900, // 2026-01-12T21:55:00Z
+   1768341300, // 2026-01-13T21:55:00Z
+   1768427700, // 2026-01-14T21:55:00Z
+   1768514100, // 2026-01-15T21:55:00Z
+   1768600500, // 2026-01-16T21:55:00Z
+   1768859700, // 2026-01-19T21:55:00Z
+   1768946100, // 2026-01-20T21:55:00Z
+   1769032500, // 2026-01-21T21:55:00Z
+   1769118900, // 2026-01-22T21:55:00Z
+   1769205300, // 2026-01-23T21:55:00Z
+   1769464500, // 2026-01-26T21:55:00Z
+   1769550900, // 2026-01-27T21:55:00Z
+   1769637300, // 2026-01-28T21:55:00Z
+   1769723700, // 2026-01-29T21:55:00Z
+   1769810100, // 2026-01-30T21:55:00Z
+   1770069300, // 2026-02-02T21:55:00Z
+   1770155700, // 2026-02-03T21:55:00Z
+   1770242100, // 2026-02-04T21:55:00Z
+   1770328500, // 2026-02-05T21:55:00Z
+   1770414900, // 2026-02-06T21:55:00Z
+   1770674100, // 2026-02-09T21:55:00Z
+   1770760500, // 2026-02-10T21:55:00Z
+   1770846900, // 2026-02-11T21:55:00Z
+   1770933300, // 2026-02-12T21:55:00Z
+   1771019700, // 2026-02-13T21:55:00Z
+   1771278900, // 2026-02-16T21:55:00Z
+   1771365300, // 2026-02-17T21:55:00Z
+   1771451700, // 2026-02-18T21:55:00Z
+   1771538100, // 2026-02-19T21:55:00Z
+   1771624500, // 2026-02-20T21:55:00Z
+   1771883700, // 2026-02-23T21:55:00Z
+   1771970100, // 2026-02-24T21:55:00Z
+   1772056500, // 2026-02-25T21:55:00Z
+   1772142900, // 2026-02-26T21:55:00Z
+   1772229300, // 2026-02-27T21:55:00Z
+   1772488500, // 2026-03-02T21:55:00Z
+   1772574900, // 2026-03-03T21:55:00Z
+   1772661300, // 2026-03-04T21:55:00Z
+   1772747700, // 2026-03-05T21:55:00Z
+   1772834100, // 2026-03-06T21:55:00Z
+   1773089700, // 2026-03-09T20:55:00Z
+   1773176100, // 2026-03-10T20:55:00Z
+   1773262500, // 2026-03-11T20:55:00Z
+   1773348900, // 2026-03-12T20:55:00Z
+   1773435300, // 2026-03-13T20:55:00Z
+   1773694500, // 2026-03-16T20:55:00Z
+   1773780900, // 2026-03-17T20:55:00Z
+   1773867300, // 2026-03-18T20:55:00Z
+   1773953700, // 2026-03-19T20:55:00Z
+   1774040100, // 2026-03-20T20:55:00Z
+   1774299300, // 2026-03-23T20:55:00Z
+   1774385700, // 2026-03-24T20:55:00Z
+   1774472100, // 2026-03-25T20:55:00Z
+   1774558500, // 2026-03-26T20:55:00Z
+   1774644900, // 2026-03-27T20:55:00Z
+   1774904100, // 2026-03-30T20:55:00Z
+   1774990500, // 2026-03-31T20:55:00Z
+   1775076900, // 2026-04-01T20:55:00Z
+   1775163300, // 2026-04-02T20:55:00Z
+   1775249700, // 2026-04-03T20:55:00Z
+   1775508900, // 2026-04-06T20:55:00Z
+   1775595300, // 2026-04-07T20:55:00Z
+   1775681700, // 2026-04-08T20:55:00Z
+   1775768100, // 2026-04-09T20:55:00Z
+   1775854500, // 2026-04-10T20:55:00Z
+   1776113700, // 2026-04-13T20:55:00Z
+   1776200100, // 2026-04-14T20:55:00Z
+   1776286500, // 2026-04-15T20:55:00Z
+   1776372900, // 2026-04-16T20:55:00Z
+   1776459300, // 2026-04-17T20:55:00Z
+   1776718500, // 2026-04-20T20:55:00Z
+   1776804900, // 2026-04-21T20:55:00Z
+   1776891300, // 2026-04-22T20:55:00Z
+   1776977700, // 2026-04-23T20:55:00Z
+   1777064100, // 2026-04-24T20:55:00Z
+   1777323300, // 2026-04-27T20:55:00Z
+   1777409700, // 2026-04-28T20:55:00Z
+   1777496100, // 2026-04-29T20:55:00Z
+   1777582500, // 2026-04-30T20:55:00Z
+   1777668900, // 2026-05-01T20:55:00Z
+   1777928100, // 2026-05-04T20:55:00Z
+   1778014500, // 2026-05-05T20:55:00Z
+   1778100900, // 2026-05-06T20:55:00Z
+   1778187300, // 2026-05-07T20:55:00Z
+   1778273700, // 2026-05-08T20:55:00Z
+   1778532900, // 2026-05-11T20:55:00Z
+   1778619300, // 2026-05-12T20:55:00Z
+   1778705700, // 2026-05-13T20:55:00Z
+   1778792100, // 2026-05-14T20:55:00Z
+   1778878500, // 2026-05-15T20:55:00Z
+   1779137700, // 2026-05-18T20:55:00Z
+   1779224100, // 2026-05-19T20:55:00Z
+   1779310500, // 2026-05-20T20:55:00Z
+   1779396900, // 2026-05-21T20:55:00Z
+   1779483300, // 2026-05-22T20:55:00Z
+   1779742500, // 2026-05-25T20:55:00Z
+   1779828900, // 2026-05-26T20:55:00Z
+   1779915300, // 2026-05-27T20:55:00Z
+   1780001700, // 2026-05-28T20:55:00Z
+   1780088100, // 2026-05-29T20:55:00Z
+   1780347300, // 2026-06-01T20:55:00Z
+   1780433700, // 2026-06-02T20:55:00Z
+   1780520100, // 2026-06-03T20:55:00Z
+   1780606500, // 2026-06-04T20:55:00Z
+   1780692900, // 2026-06-05T20:55:00Z
+   1780952100, // 2026-06-08T20:55:00Z
+   1781038500, // 2026-06-09T20:55:00Z
+   1781124900, // 2026-06-10T20:55:00Z
+   1781211300, // 2026-06-11T20:55:00Z
+   1781297700, // 2026-06-12T20:55:00Z
+   1781556900, // 2026-06-15T20:55:00Z
+   1781643300, // 2026-06-16T20:55:00Z
+   1781729700, // 2026-06-17T20:55:00Z
+   1781816100, // 2026-06-18T20:55:00Z
+   1781902500, // 2026-06-19T20:55:00Z
+   1782161700, // 2026-06-22T20:55:00Z
+   1782248100, // 2026-06-23T20:55:00Z
+   1782334500, // 2026-06-24T20:55:00Z
+   1782420900, // 2026-06-25T20:55:00Z
+   1782507300, // 2026-06-26T20:55:00Z
+   1782766500, // 2026-06-29T20:55:00Z
+   1782852900, // 2026-06-30T20:55:00Z
+   1782939300, // 2026-07-01T20:55:00Z
+   1783025700, // 2026-07-02T20:55:00Z
+   1783112100, // 2026-07-03T20:55:00Z
+   1783371300, // 2026-07-06T20:55:00Z
+   1783457700, // 2026-07-07T20:55:00Z
+   1783544100, // 2026-07-08T20:55:00Z
+   1783630500, // 2026-07-09T20:55:00Z
+   1783716900, // 2026-07-10T20:55:00Z
+   1783976100, // 2026-07-13T20:55:00Z
+   1784062500, // 2026-07-14T20:55:00Z
+   1784148900, // 2026-07-15T20:55:00Z
+   1784235300, // 2026-07-16T20:55:00Z
+   1784321700, // 2026-07-17T20:55:00Z
+   1784580900, // 2026-07-20T20:55:00Z
+   1784667300, // 2026-07-21T20:55:00Z
+   1784753700, // 2026-07-22T20:55:00Z
+   1784840100, // 2026-07-23T20:55:00Z
+   1784926500, // 2026-07-24T20:55:00Z
+   1785185700, // 2026-07-27T20:55:00Z
+   1785272100, // 2026-07-28T20:55:00Z
+   1785358500, // 2026-07-29T20:55:00Z
+   1785444900, // 2026-07-30T20:55:00Z
+   1785531300, // 2026-07-31T20:55:00Z
+   1785790500, // 2026-08-03T20:55:00Z
+   1785876900, // 2026-08-04T20:55:00Z
+   1785963300, // 2026-08-05T20:55:00Z
+   1786049700, // 2026-08-06T20:55:00Z
+   1786136100, // 2026-08-07T20:55:00Z
+   1786395300, // 2026-08-10T20:55:00Z
+   1786481700, // 2026-08-11T20:55:00Z
+   1786568100, // 2026-08-12T20:55:00Z
+   1786654500, // 2026-08-13T20:55:00Z
+   1786740900, // 2026-08-14T20:55:00Z
+   1787000100, // 2026-08-17T20:55:00Z
+   1787086500, // 2026-08-18T20:55:00Z
+   1787172900, // 2026-08-19T20:55:00Z
+   1787259300, // 2026-08-20T20:55:00Z
+   1787345700, // 2026-08-21T20:55:00Z
+   1787604900, // 2026-08-24T20:55:00Z
+   1787691300, // 2026-08-25T20:55:00Z
+   1787777700, // 2026-08-26T20:55:00Z
+   1787864100, // 2026-08-27T20:55:00Z
+   1787950500, // 2026-08-28T20:55:00Z
+   1788209700, // 2026-08-31T20:55:00Z
+   1788296100, // 2026-09-01T20:55:00Z
+   1788382500, // 2026-09-02T20:55:00Z
+   1788468900, // 2026-09-03T20:55:00Z
+   1788555300, // 2026-09-04T20:55:00Z
+   1788814500, // 2026-09-07T20:55:00Z
+   1788900900, // 2026-09-08T20:55:00Z
+   1788987300, // 2026-09-09T20:55:00Z
+   1789073700, // 2026-09-10T20:55:00Z
+   1789160100, // 2026-09-11T20:55:00Z
+   1789419300, // 2026-09-14T20:55:00Z
+   1789505700, // 2026-09-15T20:55:00Z
+   1789592100, // 2026-09-16T20:55:00Z
+   1789678500, // 2026-09-17T20:55:00Z
+   1789764900, // 2026-09-18T20:55:00Z
+   1790024100, // 2026-09-21T20:55:00Z
+   1790110500, // 2026-09-22T20:55:00Z
+   1790196900, // 2026-09-23T20:55:00Z
+   1790283300, // 2026-09-24T20:55:00Z
+   1790369700, // 2026-09-25T20:55:00Z
+   1790628900, // 2026-09-28T20:55:00Z
+   1790715300, // 2026-09-29T20:55:00Z
+   1790801700, // 2026-09-30T20:55:00Z
+   1790888100, // 2026-10-01T20:55:00Z
+   1790974500, // 2026-10-02T20:55:00Z
+   1791233700, // 2026-10-05T20:55:00Z
+   1791320100, // 2026-10-06T20:55:00Z
+   1791406500, // 2026-10-07T20:55:00Z
+   1791492900, // 2026-10-08T20:55:00Z
+   1791579300, // 2026-10-09T20:55:00Z
+   1791838500, // 2026-10-12T20:55:00Z
+   1791924900, // 2026-10-13T20:55:00Z
+   1792011300 // 2026-10-14T20:55:00Z
+  };
+
+const long CIERRES_FIN[228] =
+  {
+   1764281100, // 2025-11-27T22:05:00Z
+   1764540300, // 2025-11-30T22:05:00Z
+   1764626700, // 2025-12-01T22:05:00Z
+   1764713100, // 2025-12-02T22:05:00Z
+   1764799500, // 2025-12-03T22:05:00Z
+   1764885900, // 2025-12-04T22:05:00Z
+   1765145100, // 2025-12-07T22:05:00Z
+   1765231500, // 2025-12-08T22:05:00Z
+   1765317900, // 2025-12-09T22:05:00Z
+   1765404300, // 2025-12-10T22:05:00Z
+   1765490700, // 2025-12-11T22:05:00Z
+   1765749900, // 2025-12-14T22:05:00Z
+   1765836300, // 2025-12-15T22:05:00Z
+   1765922700, // 2025-12-16T22:05:00Z
+   1766009100, // 2025-12-17T22:05:00Z
+   1766095500, // 2025-12-18T22:05:00Z
+   1766354700, // 2025-12-21T22:05:00Z
+   1766441100, // 2025-12-22T22:05:00Z
+   1766527500, // 2025-12-23T22:05:00Z
+   1766700300, // 2025-12-25T22:05:00Z
+   1766959500, // 2025-12-28T22:05:00Z
+   1767045900, // 2025-12-29T22:05:00Z
+   1767132300, // 2025-12-30T22:05:00Z
+   1767305100, // 2026-01-01T22:05:00Z
+   1767564300, // 2026-01-04T22:05:00Z
+   1767650700, // 2026-01-05T22:05:00Z
+   1767737100, // 2026-01-06T22:05:00Z
+   1767823500, // 2026-01-07T22:05:00Z
+   1767909900, // 2026-01-08T22:05:00Z
+   1768169100, // 2026-01-11T22:05:00Z
+   1768255500, // 2026-01-12T22:05:00Z
+   1768341900, // 2026-01-13T22:05:00Z
+   1768428300, // 2026-01-14T22:05:00Z
+   1768514700, // 2026-01-15T22:05:00Z
+   1768773900, // 2026-01-18T22:05:00Z
+   1768860300, // 2026-01-19T22:05:00Z
+   1768946700, // 2026-01-20T22:05:00Z
+   1769033100, // 2026-01-21T22:05:00Z
+   1769119500, // 2026-01-22T22:05:00Z
+   1769378700, // 2026-01-25T22:05:00Z
+   1769465100, // 2026-01-26T22:05:00Z
+   1769551500, // 2026-01-27T22:05:00Z
+   1769637900, // 2026-01-28T22:05:00Z
+   1769724300, // 2026-01-29T22:05:00Z
+   1769983500, // 2026-02-01T22:05:00Z
+   1770069900, // 2026-02-02T22:05:00Z
+   1770156300, // 2026-02-03T22:05:00Z
+   1770242700, // 2026-02-04T22:05:00Z
+   1770329100, // 2026-02-05T22:05:00Z
+   1770588300, // 2026-02-08T22:05:00Z
+   1770674700, // 2026-02-09T22:05:00Z
+   1770761100, // 2026-02-10T22:05:00Z
+   1770847500, // 2026-02-11T22:05:00Z
+   1770933900, // 2026-02-12T22:05:00Z
+   1771193100, // 2026-02-15T22:05:00Z
+   1771279500, // 2026-02-16T22:05:00Z
+   1771365900, // 2026-02-17T22:05:00Z
+   1771452300, // 2026-02-18T22:05:00Z
+   1771538700, // 2026-02-19T22:05:00Z
+   1771797900, // 2026-02-22T22:05:00Z
+   1771884300, // 2026-02-23T22:05:00Z
+   1771970700, // 2026-02-24T22:05:00Z
+   1772057100, // 2026-02-25T22:05:00Z
+   1772143500, // 2026-02-26T22:05:00Z
+   1772402700, // 2026-03-01T22:05:00Z
+   1772489100, // 2026-03-02T22:05:00Z
+   1772575500, // 2026-03-03T22:05:00Z
+   1772661900, // 2026-03-04T22:05:00Z
+   1772748300, // 2026-03-05T22:05:00Z
+   1773003900, // 2026-03-08T21:05:00Z
+   1773090300, // 2026-03-09T21:05:00Z
+   1773176700, // 2026-03-10T21:05:00Z
+   1773263100, // 2026-03-11T21:05:00Z
+   1773349500, // 2026-03-12T21:05:00Z
+   1773608700, // 2026-03-15T21:05:00Z
+   1773695100, // 2026-03-16T21:05:00Z
+   1773781500, // 2026-03-17T21:05:00Z
+   1773867900, // 2026-03-18T21:05:00Z
+   1773954300, // 2026-03-19T21:05:00Z
+   1774213500, // 2026-03-22T21:05:00Z
+   1774299900, // 2026-03-23T21:05:00Z
+   1774386300, // 2026-03-24T21:05:00Z
+   1774472700, // 2026-03-25T21:05:00Z
+   1774559100, // 2026-03-26T21:05:00Z
+   1774818300, // 2026-03-29T21:05:00Z
+   1774904700, // 2026-03-30T21:05:00Z
+   1774991100, // 2026-03-31T21:05:00Z
+   1775077500, // 2026-04-01T21:05:00Z
+   1775163900, // 2026-04-02T21:05:00Z
+   1775423100, // 2026-04-05T21:05:00Z
+   1775509500, // 2026-04-06T21:05:00Z
+   1775595900, // 2026-04-07T21:05:00Z
+   1775682300, // 2026-04-08T21:05:00Z
+   1775768700, // 2026-04-09T21:05:00Z
+   1776027900, // 2026-04-12T21:05:00Z
+   1776114300, // 2026-04-13T21:05:00Z
+   1776200700, // 2026-04-14T21:05:00Z
+   1776287100, // 2026-04-15T21:05:00Z
+   1776373500, // 2026-04-16T21:05:00Z
+   1776632700, // 2026-04-19T21:05:00Z
+   1776719100, // 2026-04-20T21:05:00Z
+   1776805500, // 2026-04-21T21:05:00Z
+   1776891900, // 2026-04-22T21:05:00Z
+   1776978300, // 2026-04-23T21:05:00Z
+   1777237500, // 2026-04-26T21:05:00Z
+   1777323900, // 2026-04-27T21:05:00Z
+   1777410300, // 2026-04-28T21:05:00Z
+   1777496700, // 2026-04-29T21:05:00Z
+   1777583100, // 2026-04-30T21:05:00Z
+   1777842300, // 2026-05-03T21:05:00Z
+   1777928700, // 2026-05-04T21:05:00Z
+   1778015100, // 2026-05-05T21:05:00Z
+   1778101500, // 2026-05-06T21:05:00Z
+   1778187900, // 2026-05-07T21:05:00Z
+   1778447100, // 2026-05-10T21:05:00Z
+   1778533500, // 2026-05-11T21:05:00Z
+   1778619900, // 2026-05-12T21:05:00Z
+   1778706300, // 2026-05-13T21:05:00Z
+   1778792700, // 2026-05-14T21:05:00Z
+   1779051900, // 2026-05-17T21:05:00Z
+   1779138300, // 2026-05-18T21:05:00Z
+   1779224700, // 2026-05-19T21:05:00Z
+   1779311100, // 2026-05-20T21:05:00Z
+   1779397500, // 2026-05-21T21:05:00Z
+   1779656700, // 2026-05-24T21:05:00Z
+   1779743100, // 2026-05-25T21:05:00Z
+   1779829500, // 2026-05-26T21:05:00Z
+   1779915900, // 2026-05-27T21:05:00Z
+   1780002300, // 2026-05-28T21:05:00Z
+   1780261500, // 2026-05-31T21:05:00Z
+   1780347900, // 2026-06-01T21:05:00Z
+   1780434300, // 2026-06-02T21:05:00Z
+   1780520700, // 2026-06-03T21:05:00Z
+   1780607100, // 2026-06-04T21:05:00Z
+   1780866300, // 2026-06-07T21:05:00Z
+   1780952700, // 2026-06-08T21:05:00Z
+   1781039100, // 2026-06-09T21:05:00Z
+   1781125500, // 2026-06-10T21:05:00Z
+   1781211900, // 2026-06-11T21:05:00Z
+   1781471100, // 2026-06-14T21:05:00Z
+   1781557500, // 2026-06-15T21:05:00Z
+   1781643900, // 2026-06-16T21:05:00Z
+   1781730300, // 2026-06-17T21:05:00Z
+   1781816700, // 2026-06-18T21:05:00Z
+   1782075900, // 2026-06-21T21:05:00Z
+   1782162300, // 2026-06-22T21:05:00Z
+   1782248700, // 2026-06-23T21:05:00Z
+   1782335100, // 2026-06-24T21:05:00Z
+   1782421500, // 2026-06-25T21:05:00Z
+   1782680700, // 2026-06-28T21:05:00Z
+   1782767100, // 2026-06-29T21:05:00Z
+   1782853500, // 2026-06-30T21:05:00Z
+   1782939900, // 2026-07-01T21:05:00Z
+   1783026300, // 2026-07-02T21:05:00Z
+   1783285500, // 2026-07-05T21:05:00Z
+   1783371900, // 2026-07-06T21:05:00Z
+   1783458300, // 2026-07-07T21:05:00Z
+   1783544700, // 2026-07-08T21:05:00Z
+   1783631100, // 2026-07-09T21:05:00Z
+   1783890300, // 2026-07-12T21:05:00Z
+   1783976700, // 2026-07-13T21:05:00Z
+   1784063100, // 2026-07-14T21:05:00Z
+   1784149500, // 2026-07-15T21:05:00Z
+   1784235900, // 2026-07-16T21:05:00Z
+   1784495100, // 2026-07-19T21:05:00Z
+   1784581500, // 2026-07-20T21:05:00Z
+   1784667900, // 2026-07-21T21:05:00Z
+   1784754300, // 2026-07-22T21:05:00Z
+   1784840700, // 2026-07-23T21:05:00Z
+   1785099900, // 2026-07-26T21:05:00Z
+   1785186300, // 2026-07-27T21:05:00Z
+   1785272700, // 2026-07-28T21:05:00Z
+   1785359100, // 2026-07-29T21:05:00Z
+   1785445500, // 2026-07-30T21:05:00Z
+   1785704700, // 2026-08-02T21:05:00Z
+   1785791100, // 2026-08-03T21:05:00Z
+   1785877500, // 2026-08-04T21:05:00Z
+   1785963900, // 2026-08-05T21:05:00Z
+   1786050300, // 2026-08-06T21:05:00Z
+   1786309500, // 2026-08-09T21:05:00Z
+   1786395900, // 2026-08-10T21:05:00Z
+   1786482300, // 2026-08-11T21:05:00Z
+   1786568700, // 2026-08-12T21:05:00Z
+   1786655100, // 2026-08-13T21:05:00Z
+   1786914300, // 2026-08-16T21:05:00Z
+   1787000700, // 2026-08-17T21:05:00Z
+   1787087100, // 2026-08-18T21:05:00Z
+   1787173500, // 2026-08-19T21:05:00Z
+   1787259900, // 2026-08-20T21:05:00Z
+   1787519100, // 2026-08-23T21:05:00Z
+   1787605500, // 2026-08-24T21:05:00Z
+   1787691900, // 2026-08-25T21:05:00Z
+   1787778300, // 2026-08-26T21:05:00Z
+   1787864700, // 2026-08-27T21:05:00Z
+   1788123900, // 2026-08-30T21:05:00Z
+   1788210300, // 2026-08-31T21:05:00Z
+   1788296700, // 2026-09-01T21:05:00Z
+   1788383100, // 2026-09-02T21:05:00Z
+   1788469500, // 2026-09-03T21:05:00Z
+   1788728700, // 2026-09-06T21:05:00Z
+   1788815100, // 2026-09-07T21:05:00Z
+   1788901500, // 2026-09-08T21:05:00Z
+   1788987900, // 2026-09-09T21:05:00Z
+   1789074300, // 2026-09-10T21:05:00Z
+   1789333500, // 2026-09-13T21:05:00Z
+   1789419900, // 2026-09-14T21:05:00Z
+   1789506300, // 2026-09-15T21:05:00Z
+   1789592700, // 2026-09-16T21:05:00Z
+   1789679100, // 2026-09-17T21:05:00Z
+   1789938300, // 2026-09-20T21:05:00Z
+   1790024700, // 2026-09-21T21:05:00Z
+   1790111100, // 2026-09-22T21:05:00Z
+   1790197500, // 2026-09-23T21:05:00Z
+   1790283900, // 2026-09-24T21:05:00Z
+   1790543100, // 2026-09-27T21:05:00Z
+   1790629500, // 2026-09-28T21:05:00Z
+   1790715900, // 2026-09-29T21:05:00Z
+   1790802300, // 2026-09-30T21:05:00Z
+   1790888700, // 2026-10-01T21:05:00Z
+   1791147900, // 2026-10-04T21:05:00Z
+   1791234300, // 2026-10-05T21:05:00Z
+   1791320700, // 2026-10-06T21:05:00Z
+   1791407100, // 2026-10-07T21:05:00Z
+   1791493500, // 2026-10-08T21:05:00Z
+   1791752700, // 2026-10-11T21:05:00Z
+   1791839100, // 2026-10-12T21:05:00Z
+   1791925500, // 2026-10-13T21:05:00Z
+   1792011900 // 2026-10-14T21:05:00Z
+  };
+
+const string CIERRES_FUENTE[228] =
+  {
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario + extraordinario 2025-12-24",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario + extraordinario 2025-12-31",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal + extraordinario 2026-03-08",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario",
+   "diario",
+   "diario + semanal",
+   "diario",
+   "diario",
+   "diario"
+  };
+
+const string CAPA_HASH = "8d1f61bcd24837826dd89a76133323abc92998b211f67398374028622c0e7601";
+//+------------------------------------------------------------------+

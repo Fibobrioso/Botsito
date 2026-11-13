@@ -1,6 +1,7 @@
-"""El journal v1 de la capa de MT5 (trabajo/ea-conexion, R6a.1): el validador de
-`botsito.mql5bridge.journal` contra el golden de `tests/golden/journal/`, y cada regla del formato
-rota a proposito en los dos sentidos (lo bueno pasa, lo roto no).
+"""El journal de la capa de MT5: la v1 (trabajo/ea-conexion, R6a.1) contra el golden de
+`tests/golden/journal/`, y la v2 (trabajo/capa-generada, R6a.2: `capa_hash` lleno en todas las
+lineas) contra el de `tests/golden/journal_v2/`; cada regla del formato rota a proposito en los dos
+sentidos (lo bueno pasa, lo roto no). El lector lee cada fichero por la version que declara.
 
 El golden lo escribe en MQL5 el script de pruebas (`mql5/Scripts/BotsitoPruebasCapa.mq5`) con el
 mismo escritor que el EA, byte a byte (la prueba cruzada; la salida del script, en los anexos de la
@@ -191,8 +192,11 @@ def test_las_reservadas_valen_null_en_v1() -> None:
 def test_version_seq_y_desfase() -> None:
     objetos = _objetos(ROTA)
     assert leer([("x", _reencadenar(objetos))])
-    with pytest.raises(JournalError, match="version"):
-        leer([("x", _reencadenar([{**objetos[0], "v": 2}, *objetos[1:]]))])
+    # una version que el lector no conoce (hasta trabajo/capa-generada era la 2; desde alli la 2 es
+    # la v2 del formato, y sus reglas las prueban los tests del final)
+    for v in (3, 0, "1", True):
+        with pytest.raises(JournalError, match="version"):
+            leer([("x", _reencadenar([{**o, "v": v} for o in objetos]))])
     with pytest.raises(JournalError, match="desfase"):
         leer([("x", _reencadenar([{**objetos[0], "desfase_s": 7199}, *objetos[1:]]))])
     with pytest.raises(JournalError, match="hora"):
@@ -261,3 +265,76 @@ def test_la_cli_valida_y_dice_no_valido(tmp_path: Path, capsys: pytest.CaptureFi
     roto.write_bytes((GOLDEN / ROTA).read_bytes()[:-1])
     assert main([str(roto)]) == 1
     assert "NO VALIDO" in capsys.readouterr().out
+
+
+# --- la v2 (trabajo/capa-generada, R6a.2) -----------------------------------------------------
+
+GOLDEN_V2 = Path(__file__).resolve().parents[1] / "golden" / "journal_v2"
+# El hash fijo de prueba del golden v2: no depende de lo generado (respuesta del consultor a la
+# PARADA de la fase 0, punto 6); el script de pruebas de MQL5 escribe este mismo valor.
+CAPA_HASH_PRUEBA = "0123456789abcdef" * 4
+FINAL_CONTINUA_V2 = "828b6d6f96c2f349ac2d112ec1f45dab2ef7fd8d5acc42611db706e678754aee"
+FINAL_ROTA_V2 = "54f31263429ab050359074debef88c6abdd79fa47cf2ccac86839dc65464a31f"
+
+
+def _golden_v2(*nombres: str) -> list[tuple[str, bytes]]:
+    return [(n, (GOLDEN_V2 / n).read_bytes()) for n in nombres]
+
+
+def test_el_golden_v2_valida_con_capa_hash_en_todas_las_lineas() -> None:
+    for cadena, final in ((CONTINUA, FINAL_CONTINUA_V2), ((ROTA,), FINAL_ROTA_V2)):
+        lineas = leer(_golden_v2(*cadena))
+        assert {x.objeto["v"] for x in lineas} == {2}
+        assert {x.objeto["capa_hash"] for x in lineas} == {CAPA_HASH_PRUEBA}
+        assert lineas[-1].hash == final
+
+
+def test_el_golden_v2_son_los_casos_del_v1_linea_a_linea() -> None:
+    """Mismos eventos y datos; cambian solo `v`, `capa_hash` y la cadena (`prev`)."""
+    iguales = [k for k in CLAVES if k not in ("v", "capa_hash", "prev")]
+    for nombre in (*CONTINUA, ROTA):
+        v1 = _objetos(nombre)
+        v2 = [json.loads(x) for x in _lineas((GOLDEN_V2 / nombre).read_bytes())]
+        assert len(v1) == len(v2), nombre
+        for a, b in zip(v1, v2, strict=True):
+            assert {k: a[k] for k in iguales} == {k: b[k] for k in iguales}, nombre
+
+
+def test_en_v2_capa_hash_es_un_hash_y_las_demas_reservadas_null() -> None:
+    objetos = [json.loads(x) for x in _lineas((GOLDEN_V2 / ROTA).read_bytes())]
+    assert leer([("x", _reencadenar(objetos))])
+    for malo in (None, "", CAPA_HASH_PRUEBA.upper(), CAPA_HASH_PRUEBA[:-1], 7):
+        with pytest.raises(JournalError, match="capa_hash"):
+            leer([("x", _reencadenar([{**objetos[0], "capa_hash": malo}, *objetos[1:]]))])
+    # en una linea que no es la primera, tambien
+    with pytest.raises(JournalError, match="capa_hash"):
+        leer([("x", _reencadenar([*objetos[:-1], {**objetos[-1], "capa_hash": None}]))])
+    for clave in ("regla", "condicion", "spec_hash", "risk_hash", "ambiguas"):
+        with pytest.raises(JournalError, match=clave):
+            leer([("x", _reencadenar([{**objetos[0], clave: "algo"}, *objetos[1:]]))])
+
+
+def test_cada_fichero_se_lee_por_su_version_y_no_hay_cadena_mixta() -> None:
+    # los dos golden validan, cada uno con su version
+    assert leer(_golden(*CONTINUA))
+    assert leer(_golden_v2(*CONTINUA))
+    # una v2 detras de una v1 (o al reves) en la misma llamada, no: ni siquiera con un arranque
+    # con la cadena rota, que es lo que escribe un EA v2 sobre un journal v1
+    for a, b in ((_golden(*CONTINUA), _golden_v2(ROTA)), (_golden_v2(*CONTINUA), _golden(ROTA))):
+        with pytest.raises(JournalError, match="mixta"):
+            leer([*a, *b])
+    # y dentro de un mismo fichero
+    objetos = _objetos(ROTA)
+    mezcla = [objetos[0], *({**o, "v": 2, "capa_hash": CAPA_HASH_PRUEBA} for o in objetos[1:])]
+    with pytest.raises(JournalError, match="mixta"):
+        leer([("x", _reencadenar(mezcla))])
+
+
+def test_la_cli_dice_la_version_y_el_capa_hash(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main([str(GOLDEN_V2 / n) for n in CONTINUA]) == 0
+    salida = capsys.readouterr().out
+    assert "formato v2" in salida and f"capa_hash: {CAPA_HASH_PRUEBA}" in salida
+    assert FINAL_CONTINUA_V2 in salida
+    assert main([str(GOLDEN / n) for n in CONTINUA]) == 0
+    salida = capsys.readouterr().out
+    assert "formato v1" in salida and "capa_hash:" not in salida

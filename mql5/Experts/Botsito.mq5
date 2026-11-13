@@ -3,21 +3,23 @@
 //| operacion (ADR-0082). R6a.1, rama trabajo/ea-conexion:           |
 //| se niega fuera de DEMO, lee el reloj del servidor, la cuenta y   |
 //| las sesiones del simbolo del grafico, y lo escribe en el journal |
-//| v1 (mql5/JOURNAL.md).                                            |
+//| (mql5/JOURNAL.md). Desde R6a.2 (trabajo/capa-generada, 1.1), el  |
+//| journal es v2 y cada linea lleva el CAPA_HASH de Generado.mqh.   |
 //|                                                                  |
 //| NUNCA envia, modifica ni cancela una orden ni cierra una         |
 //| posicion: no llama a ninguna funcion de trading                  |
 //| (tests/contract/test_capa_mt5.py). Ni login ni dinero en el      |
 //| journal. Ninguna cifra de firma, broker, instrumento ni          |
-//| ejecucion: llegan generadas en R6a.2 (ADR-0082 D5).              |
+//| ejecucion a mano: llegan generadas en Generado.mqh (ADR-0082 D5).|
 //+------------------------------------------------------------------+
 #property copyright "Bot v3"
-#property version   "1.00"
-#property description "Capa de MT5 (R6a.1): conexion, reloj del servidor, sesiones del simbolo y journal. No opera."
+#property version   "1.10"
+#property description "Capa de MT5 (R6a.2): conexion, reloj del servidor, sesiones del simbolo y journal v2 con el capa_hash. No opera."
 
-#define VERSION_EA "1.0"
+#define VERSION_EA "1.1"
 #define LATIDO_SEG 60
 
+#include <Botsito/Capa/Generado.mqh>
 #include <Botsito/Capa/Journal.mqh>
 #include <Botsito/Capa/Cuenta.mqh>
 #include <Botsito/Capa/Reloj.mqh>
@@ -63,7 +65,7 @@ int OnInit()
    // 2026-10-20: sin esto, el arranque tras un cambio de simbolo no leia cuenta, reloj ni sesiones.
    g_cuenta_leida = false;
    g_ultimo_srv = 0;
-   string cadena = JournalAbrir("Botsito");
+   string cadena = JournalAbrir("Botsito", CAPA_HASH);
    datetime srv = TimeTradeServer();
    JournalEscribir(srv, TimeGMT(), "arranque",
                    DatosArranque(VERSION_EA, TerminalInfoInteger(TERMINAL_BUILD), _Symbol,

@@ -23,7 +23,11 @@ Code no ejecuta `python -m` de un modulo que no sea pytest):
         [--sustituir <ruta> <viejo> <nuevo>]... <fuente>...
     uv run python src/botsito/mql5bridge/compilar.py pruebas --terminal <exe>
         --datos <carpeta de datos del terminal> --simbolo <simbolo del grafico>
-        --golden <tests/golden/journal> --salida <carpeta de anexos>
+        --golden <tests/golden/journal_v2> --salida <carpeta de anexos> --repo <raiz>
+
+`pruebas` compara con el golden, valida cada cadena, y (R6a.2) valida como v2 el journal aparte
+`capa/capa_hash.jsonl`, que tiene que llevar el capa_hash del Generado.mqh del indice; al final
+da el sha256 de cada fichero de la salida.
 
 `--sustituir` cambia un texto, que tiene que aparecer exactamente una vez, en la copia exportada
 antes de compilar: es como se rompen a proposito las pruebas dinamicas sin tocar el repo.
@@ -42,9 +46,14 @@ from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
 
+from botsito.mql5bridge.generar_capa import GENERADO, GenerarError, capa_hash
 from botsito.mql5bridge.journal import JournalError, leer
 
 CARPETA_PRUEBAS = ("Botsito", "pruebas")
+# R6a.2 (respuesta del consultor a la PARADA, punto 6): el script de pruebas escribe aparte, FUERA
+# de --golden, un journal v2 con el CAPA_HASH real de Generado.mqh; `pruebas` lo valida y compara su
+# capa_hash con el recalculado desde el Generado.mqh del indice (lo que se compilo).
+FICHERO_CAPA = Path("capa") / "capa_hash.jsonl"
 SCRIPT_PRUEBAS = "Botsito\\BotsitoPruebasCapa"
 _RESULT = re.compile(r"Result:\s+(\d+)\s+errors?,\s+(\d+)\s+warnings?")
 
@@ -200,6 +209,46 @@ def comparar_con_golden(salida: Path, golden: Path) -> list[str]:
     return diferencias
 
 
+def comprobar_capa_hash(salida: Path, generado: bytes) -> list[str]:
+    """El journal de `FICHERO_CAPA` que dejo el script: valida como v2 y cada linea lleva el
+    capa_hash recalculado desde `generado` (los bytes de Generado.mqh). Los problemas, o []."""
+    f = salida / FICHERO_CAPA
+    if not f.is_file():
+        return [f"{FICHERO_CAPA.as_posix()}: el script no lo escribio"]
+    try:
+        esperado = capa_hash(generado)
+    except GenerarError as e:
+        return [f"Generado.mqh: {e}"]
+    try:
+        lineas = leer([(FICHERO_CAPA.as_posix(), f.read_bytes())])
+    except JournalError as e:
+        return [f"{FICHERO_CAPA.as_posix()}: no valida: {e}"]
+    problemas = []
+    if not lineas:
+        problemas.append(f"{FICHERO_CAPA.as_posix()}: sin lineas")
+    for x in lineas:
+        if x.objeto["v"] != 2:
+            problemas.append(f"{FICHERO_CAPA.as_posix()}:{x.numero}: es v{x.objeto['v']}, no v2")
+        elif x.objeto["capa_hash"] != esperado:
+            problemas.append(
+                f"{FICHERO_CAPA.as_posix()}:{x.numero}: capa_hash {x.objeto['capa_hash']} no es el "
+                f"del Generado.mqh del repo ({esperado})"
+            )
+    return problemas
+
+
+def generado_del_indice(repo: Path) -> bytes:
+    """Los bytes de Generado.mqh tal como estan en el INDICE de git (lo que `compilar` exporta)."""
+    r = subprocess.run(
+        ["git", "-C", str(repo), "show", f":{GENERADO.as_posix()}"],
+        check=False,
+        capture_output=True,
+    )
+    if r.returncode != 0:
+        raise CompilarError(f"{GENERADO.as_posix()} no esta en el indice de git")
+    return r.stdout
+
+
 def resumen_de_resultado(texto: str) -> tuple[int, int]:
     """(ok, fallos) de la linea RESUMEN del resultado del script."""
     m = re.search(r"^RESUMEN\|ok=(\d+)\|fallos=(\d+)$", texto, re.MULTILINE)
@@ -235,6 +284,9 @@ def _pruebas(a: argparse.Namespace) -> int:
     carpeta = a.datos / "MQL5" / "Files" / Path(*CARPETA_PRUEBAS)
     resultado = carpeta / "resultado.txt"
     resultado.unlink(missing_ok=True)
+    # Ni el del terminal ni el de la salida de otra corrida: si el script no lo escribe, falta.
+    (carpeta / FICHERO_CAPA).unlink(missing_ok=True)
+    (a.salida / FICHERO_CAPA).unlink(missing_ok=True)
     with tempfile.TemporaryDirectory(prefix="botsito-ini-") as tmp:
         ini = Path(tmp) / "pruebas.ini"
         ini.write_text(ini_de_pruebas(a.simbolo), encoding="ascii", newline="")
@@ -265,7 +317,20 @@ def _pruebas(a: argparse.Namespace) -> int:
             valido = False
     if not diferencias:
         print("golden: los journals del script son iguales byte a byte")
-    return 0 if fallos == 0 and not diferencias and valido else 1
+    capa = comprobar_capa_hash(a.salida, generado_del_indice(a.repo))
+    for problema in capa:
+        print(f"capa_hash: {problema}")
+    if not capa:
+        print(
+            f"capa_hash: {FICHERO_CAPA.as_posix()} valida como v2 y lleva el capa_hash del "
+            f"Generado.mqh del repo ({capa_hash(generado_del_indice(a.repo))})"
+        )
+    for f in sorted(p for p in a.salida.rglob("*") if p.is_file()):
+        print(
+            f"sha256 {hashlib.sha256(f.read_bytes()).hexdigest()} "
+            f"{f.relative_to(a.salida).as_posix()}"
+        )
+    return 0 if fallos == 0 and not diferencias and valido and not capa else 1
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -285,6 +350,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     t.add_argument("--simbolo", required=True)
     t.add_argument("--golden", type=Path, required=True)
     t.add_argument("--salida", type=Path, required=True)
+    t.add_argument("--repo", type=Path, required=True, help="de donde sale Generado.mqh (indice)")
     a = p.parse_args(argv)
     try:
         return _compilar(a) if a.orden == "compilar" else _pruebas(a)

@@ -16,6 +16,13 @@ es la comodidad local, ver ADR-0003), spec y casos versionados con cita obligato
 historial). `knowledge/cases/holdout/` es ilegible para `spec/` y `domain/`
 (guarda en tests). **Nota (2026-09-17, ADR-0033):** para CUALQUIER llamante durante los tests, no solo esos dos, y con una puerta en `src/` (`botsito.cases.holdout`) para todo lo que abra. `domain/` no importa IO, reloj ni MetaTrader (import-linter + test AST).
 
+> **RECUADRO del 2026-11-12 (`trabajo/capa-generada`, orden de cierre del consultor, punto 2; el
+> cuerpo no se toca).** "con parametros generados desde `knowledge/spec/`" ya no es toda la verdad:
+> lo que recibe la capa de MT5 de R6a (`mql5/Include/Botsito/Capa/Generado.mqh`, ADR-0082 D5) se
+> genera desde `knowledge/spec/parametros.yaml` y también desde `knowledge/cuentas/` (el perfil de
+> cuenta y su calendario de cierres), con `src/botsito/mql5bridge/generar_capa.py`
+> (`docs/validation/CAPA-GENERADA.md`).
+
 ## Problema que resuelve
 La arquitectura aprobada distingue evidencia original, conocimiento confirmado por el experto y
 especificacion derivada, y exige dos implementaciones (Python y MQL5) que lean la misma fuente. Sin una

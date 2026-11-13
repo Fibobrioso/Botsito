@@ -1,0 +1,51 @@
+Las ocho roturas a proposito de la fase 1 de trabajo/capa-generada, repetidas el 2026-11-12 en un
+clon desechable (git worktree add --detach sobre 9076fac8, en la carpeta de trabajo de la sesion),
+por el hallazgo a3 del revisor. Cada rotura, con sed sobre el fichero del clon; despues, en otra
+llamada, `cd <clon> && uv run pytest <tests> -q -p no:cacheprovider`, filtrado con
+`grep -E '^FAILED|passed|failed' | cut -c1-120`; y `git checkout -- .` en el clon antes de la
+siguiente. Un guion que lo hiciera todo lo nego la guardia (pytest sobre una ruta que se construye al
+ejecutarse); se uso la forma que ella propone. Las lineas FAILED, tal cual:
+
+== 1. un valor de Generado.mqh editado a mano (5.0 -> 5.5)
+   tests: tests/unit/test_capa_generada.py tests/contract/test_capa_mt5.py
+FAILED tests/unit/test_capa_generada.py::test_regenerar_no_da_diff - Assertio...
+FAILED tests/unit/test_capa_generada.py::test_la_copia_de_los_yaml_da_lo_mismo_y_un_valor_cambiado_no
+FAILED tests/unit/test_capa_generada.py::test_la_orden_comprobar_no_escribe_y_dice_si_difiere
+FAILED tests/unit/test_capa_generada.py::test_el_hash_se_recalcula_por_su_cuenta
+FAILED tests/contract/test_capa_mt5.py::test_la_capa_no_lleva_decimales_ni_nombres_fuera_de_lo_generado
+
+== 2. el CAPA_HASH de Generado.mqh cambiado ("8d1f" -> "9d1f")
+   tests: los mismos
+FAILED tests/unit/test_capa_generada.py::test_regenerar_no_da_diff - Assertio...
+FAILED tests/unit/test_capa_generada.py::test_la_copia_de_los_yaml_da_lo_mismo_y_un_valor_cambiado_no
+FAILED tests/unit/test_capa_generada.py::test_la_orden_comprobar_no_escribe_y_dice_si_difiere
+FAILED tests/unit/test_capa_generada.py::test_el_hash_se_recalcula_por_su_cuenta
+FAILED tests/contract/test_capa_mt5.py::test_la_capa_no_lleva_decimales_ni_nombres_fuera_de_lo_generado
+
+== 3. la comprobacion de los relojes, desactivada (generar_capa.py: `if a != b:` -> `if False:`)
+   tests: los mismos
+FAILED tests/unit/test_capa_generada.py::test_los_dos_relojes_tienen_que_dar_la_misma_medianoche
+
+== 4. la de la pareja de stops level, desactivada (generar_capa.py: `if distintos:` del bucle de SINONIMOS -> `if False:`)
+   tests: los mismos
+FAILED tests/unit/test_capa_generada.py::test_la_pareja_de_stops_level_tiene_que_coincidir
+
+== 5. la del capa_hash hexadecimal en v2, desactivada (journal.py: `if v == 2 and not ...` -> `if False and not ...`)
+   tests: tests/unit/test_journal_mql5.py tests/unit/test_compilar_mql5.py
+FAILED tests/unit/test_journal_mql5.py::test_en_v2_capa_hash_es_un_hash_y_las_demas_reservadas_null
+
+== 6. la comparacion con el hash del repo, desactivada (compilar.py: `elif x.objeto["capa_hash"] != esperado:` -> `elif False:`)
+   tests: los mismos
+FAILED tests/unit/test_compilar_mql5.py::test_el_capa_hash_del_script_en_los_dos_sentidos
+
+== 7. el rechazo de la cadena mixta, desactivado (journal.py: `if lineas and obj["v"] != ...` -> `if False:`)
+   tests: los mismos
+FAILED tests/unit/test_journal_mql5.py::test_cada_fichero_se_lee_por_su_version_y_no_hay_cadena_mixta
+
+== 8. el fichero ausente en compilar.py da [] (`return [f"...: el script no lo escribio"]` -> `return []`)
+   tests: los mismos
+FAILED tests/unit/test_compilar_mql5.py::test_el_capa_hash_del_script_en_los_dos_sentidos
+
+== sin rotura (el clon restaurado; git status --short vacio)
+   tests: los cuatro ficheros, sin -q
+56 passed in 8.75s

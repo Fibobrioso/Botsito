@@ -1,6 +1,8 @@
 //+------------------------------------------------------------------+
-//| Journal.mqh - el escritor del journal v1 de la capa de MT5       |
-//| (R6a.1, rama trabajo/ea-conexion, ADR-0082 D7).                  |
+//| Journal.mqh - el escritor del journal de la capa de MT5          |
+//| (R6a.1, rama trabajo/ea-conexion, ADR-0082 D7). Desde R6a.2      |
+//| (trabajo/capa-generada) escribe v2: el capa_hash que recibe      |
+//| JournalAbrir, en todas las lineas.                               |
 //|                                                                  |
 //| El formato esta en mql5/JOURNAL.md y lo valida                   |
 //| src/botsito/mql5bridge/journal.py sobre los mismos bytes: JSON   |
@@ -8,9 +10,10 @@
 //| prev en la siguiente. Se escribe en modo binario: en modo texto  |
 //| MT5 pone CRLF (medido, EA-CONEXION.md 0.c).                      |
 //+------------------------------------------------------------------+
-#define JOURNAL_VERSION 1
+#define JOURNAL_VERSION 2
 
 string g_journal_carpeta = "";
+string g_journal_capa    = "";
 int    g_journal_h       = INVALID_HANDLE;
 string g_journal_dia     = "";
 long   g_journal_seq     = 0;
@@ -113,14 +116,16 @@ string Genesis()
 
 //--- la linea --------------------------------------------------------
 
+// capa_hash va como argumento: el EA pasa el CAPA_HASH de Generado.mqh y el script de pruebas, el
+// fijo del golden v2, que asi no depende de lo generado (respuesta del consultor, punto 6).
 string JournalLinea(const long seq, const datetime srv, const datetime gmt, const string ev,
-                    const string datos, const string prev)
+                    const string datos, const string capa_hash, const string prev)
   {
    return "{" + JPar("v", JEntero(JOURNAL_VERSION)) + "," + JPar("seq", JEntero(seq)) + "," +
           JPar("srv", JTexto(Iso(srv))) + "," + JPar("gmt", JTexto(Iso(gmt))) + "," +
           JPar("desfase_s", JEntero((long)(srv - gmt))) + "," + JPar("ev", JTexto(ev)) + "," +
           JPar("datos", datos) + "," + JPar("regla", "null") + "," + JPar("condicion", "null") + "," +
-          JPar("capa_hash", "null") + "," + JPar("spec_hash", "null") + "," +
+          JPar("capa_hash", JTexto(capa_hash)) + "," + JPar("spec_hash", "null") + "," +
           JPar("risk_hash", "null") + "," + JPar("ambiguas", "null") + "," +
           JPar("prev", JTexto(prev)) + "}";
   }
@@ -148,7 +153,9 @@ bool EsHex64(const string s)
   }
 
 // Valida la ultima linea de un journal (JOURNAL.md, «Los ficheros»): acaba en LF, empieza por
-// {"v":1,"seq":<n>, y acaba en "prev":"<64 hex>"}. Devuelve su seq y su hash.
+// {"v":2,"seq":<n>, y acaba en "prev":"<64 hex>"}. Devuelve su seq y su hash. Una ultima linea v1
+// no sigue: no hay cadena mixta, y el arranque dice rota (por eso DEMO-FTMO.md manda apartar el
+// journal v1 antes del primer arranque v2).
 bool UltimaLinea(const uchar &todo[], long &seq, string &hash)
   {
    int n = ArraySize(todo);
@@ -183,10 +190,11 @@ bool UltimaLinea(const uchar &todo[], long &seq, string &hash)
 //--- abrir, escribir, cerrar -------------------------------------------
 
 // Al arrancar: busca el journal mas reciente de la carpeta y sigue su cadena. Devuelve
-// "ninguna", "sigue" o "rota" (cadena_anterior del arranque).
-string JournalAbrir(const string carpeta)
+// "ninguna", "sigue" o "rota" (cadena_anterior del arranque). capa_hash va en cada linea.
+string JournalAbrir(const string carpeta, const string capa_hash)
   {
    g_journal_carpeta = carpeta;
+   g_journal_capa = capa_hash;
    g_journal_h = INVALID_HANDLE;
    g_journal_dia = "";
    g_journal_seq = 0;
@@ -244,7 +252,7 @@ bool JournalEscribir(const datetime srv, const datetime gmt, const string ev, co
       g_journal_dia = dia;
      }
    uchar b[];
-   Utf8(JournalLinea(g_journal_seq + 1, srv, gmt, ev, datos, g_journal_prev), b);
+   Utf8(JournalLinea(g_journal_seq + 1, srv, gmt, ev, datos, g_journal_capa, g_journal_prev), b);
    string h = Sha256Hex(b);
    int n = ArraySize(b);
    ArrayResize(b, n + 1);

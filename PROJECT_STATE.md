@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/capa-generada
 
 ## Current Feature
-Ninguna rama abierta. trabajo/laminas-motivos cerrada en main el 2026-11-12 (stable/F38y-laminas-motivos): la causa de cada gate de las láminas sale de la rama que dispara, y las láminas de la 7a regeneradas fuera del repo.
+trabajo/capa-generada, EN CURSO (R6a.2, tramo R6a; ADR-0082 D5): lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2. Encargo docs/encargos/trabajo-capa-generada.md; informe docs/validation/CAPA-GENERADA.md.
 
 ## Stable Main State
 7d3002c8 · merge de `trabajo/laminas-motivos` (tag `stable/F38y-laminas-motivos`), sobre `stable/F38x-preparacion-sesion-7` (5260147). Informe docs/validation/LAMINAS-MOTIVOS.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/laminas-motivos cerrada en main el 2026-11-12 (sta
 7d3002c8 · merge: trabajo/laminas-motivos, la causa de cada gate de las laminas sale de la rama que dispara, y las laminas de la 7a v2 · tag stable/F38y-laminas-motivos
 
 ## Tests Currently Passing
-2017 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2039 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ Ninguna rama abierta. trabajo/laminas-motivos cerrada en main el 2026-11-12 (sta
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla (TRAZAS-ABLACION.md; `motor decisiones`) y las láminas del bot (LAMINAS.md; `motor laminas`; R4.5) están hechas. La sesión 7 está preparada en dos días, 7a (sesion-07) y 7b (sesion-08) (PREPARACION-SESION-7.md; R4.3): el método en ADR-0093, que cambia la regla 2 de SESION-DE-PREGUNTAS.md (el bloque de días enseña las láminas); el pivote pre-registrado en docs/plan/PIVOTES-SESION-7.yaml; las preguntas en docs/sesion-7/; las láminas de la 7a fuera del repo. Siguiente, en este orden: (1) grabar, ingerir y activar la 7a; su activación genera las láminas de la 7b con su motor, revisa PREGUNTAS-7B.md y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C, R5.7 y R6a en los huecos.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla (TRAZAS-ABLACION.md; `motor decisiones`) y las láminas del bot (LAMINAS.md; `motor laminas`; R4.5) están hechas. La sesión 7 está preparada en dos días, 7a (sesion-07) y 7b (sesion-08) (PREPARACION-SESION-7.md; R4.3): el método en ADR-0093, que cambia la regla 2 de SESION-DE-PREGUNTAS.md (el bloque de días enseña las láminas); el pivote pre-registrado en docs/plan/PIVOTES-SESION-7.yaml; las preguntas en docs/sesion-7/; las láminas de la 7a fuera del repo. Siguiente, en este orden: (1) grabar (domingo 2026-11-15), ingerir y activar la 7a; su activación genera las láminas de la 7b con su motor, revisa PREGUNTAS-7B.md y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
 
 
 
@@ -79,7 +79,9 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 ## Technical Debt
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
 - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción) … (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2; entera en HISTORIA, Technical Debt ACORTADA)
-- El validador del journal v1 vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
+- El validador del journal (v1 y v2) vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
+- La skill `activar-sesion` no dice que una activación que toque un parámetro de la capa de MT5 (`ENTRAN` de `generar_capa.py`) regenera `Generado.mqh` en el mismo commit (CAPA-GENERADA.md, D3; `.claude/` no se tocó allí).
+- La guardia niega guiones nuevos por falsos positivos: un texto que empieza por `//` como ruta y `cmp a b` como si ejecutara `a`; y `compilar.py` cambiado, por nombrar `/` (CAPA-GENERADA.md, «La guardia»: lo lanzó Aleks con «!»).
 - El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4) … (DEMO-EJECUCIONES-2-3.md §0.f; entera en HISTORIA, Technical Debt ACORTADA)
 - Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») … (DEMO-EJECUCIONES-2-3.md §3.1; entera en HISTORIA, Technical Debt ACORTADA)
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
@@ -162,8 +164,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 67 (2026-11-11).
+— ninguna desde el Archivo 68 (2026-11-12).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 67 (2026-11-11).
+— ninguna desde el Archivo 68 (2026-11-12).
