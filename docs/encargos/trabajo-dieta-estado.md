@@ -45,3 +45,18 @@ Dado por Aleks (consultor) el 2026-11-13, en un solo mensaje. Copiado tal cual:
 > La rama no toca hooks, rutas, el sistema de archivos ni código: no hace falta CI de Linux (RITUAL.md, hacia :94-96; precedente: trabajo/adelgazar-estado). Si el revisor o tú veis que algo la exige, PARADA.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-13)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/dieta-estado (2026-11-13). Cópiala tal cual en el informe, en su sección, y aplícala.
+>
+> 1. Opción 1: se acortan por (e) las cuatro líneas que lo admiten, tal cual las propones, con sus bloques literales en HISTORIA. El umbral de 24.000 bytes del encargo era un freno por si la rama no merecía la pena, no un objetivo: 609 bytes liberados dejan unos 957 de margen hasta el tope (hoy 348), y eso basta para la ingesta y la activación de la 7a. Decláralo en el informe como respuesta a la PARADA.
+> 2. Opción 2, no: dejar en :152 solo la primera cita reescribe la línea, y (e) manda conservar la cita del informe. La :152 se acorta como en la opción 1.
+> 3. Opción 3, no: la :120 (cherry-pick y rebase) se quedó por decisión del consultor en trabajo/margen-pendiente, y reabrir esa decisión por unos 130 bytes no compensa. Se queda.
+> 4. Las tres dudosas se quedan, sin tocar un byte, como manda la negación por defecto:
+>    - :96 (ADR 0087): que el número quede abandonado es una decisión aparte, ligada a S-15 de la sesión 5, y no se toma aquí.
+>    - :100 (cli.py:2558 y :2438): los números de línea viejos no son ninguna de las condiciones de README. En la lista de dudosas del informe, una línea que diga que los corrige la próxima rama que toque esa línea o cli.py.
+>    - :113 (la línea en blanco): README no la cubre y no es una línea con contenido. Se queda, y va a la lista de dudosas.
+> 5. Lo demás, como dice el encargo: el pico de memoria del make check de la fase 0 entra en el informe en el próximo commit; el tamaño final exacto con wc -c; las pruebas de §5; y el revisor con su alcance. Después, «Rama lista para revisión, NO cerrada».

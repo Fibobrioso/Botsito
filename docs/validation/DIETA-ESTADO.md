@@ -53,13 +53,13 @@ la carpeta de trabajo, fuera del repo, que solo leen `PROJECT_STATE.md`.
 | Reglas vivas | 1.615 | 1.615 |
 | **PROJECT_STATE.md** (main) | **24.652** | **24.043** |
 
-(En la rama, con su Current Feature, 24.683 → 24.074; el Current Feature de la rama es 31 bytes más
-largo que el de `main`.)
+(En la rama, con sus cabeceras, 24.683 → 24.074; Current Branch y Current Feature de la rama suman 31
+bytes más que los de `main`: 16 y 15; corregido tras el revisor, a2.)
 
 ### 0.2 Lo que pagaron las ramas desde el último recorte (F38u a F39a), comprobado
 
 - **cmp / G.6 (F39a)**: ninguna línea de Technical Debt nombra `cmp` ni G.6; la de `:84` ya la
-  reescribió el cierre de F39a (registro de cierre, HISTORIA hacia :17938-17941) y lo que dice sigue
+  reescribió el cierre de F39a (registro de cierre, HISTORIA :17944-17946; corregido tras el revisor, a5) y lo que dice sigue
   vivo: F1 aplazado y el `/` de `compilar.py` negado. La de `:152` (« / », `</li>`, `$'\r'`) F39a no
   la tocó (GUARDIA-FALSOS-POSITIVOS.md:225).
 - **capa_hash, R6a.2, LATIDO_SEG (F38z)**: ninguna línea las nombra (grep sobre PROJECT_STATE
@@ -98,7 +98,7 @@ cambió el texto de dos líneas de cabecera y dos de Archivo). Bytes con el salt
 | :81 | Hoy un mes no puede salir de knowledge/cases/meses_rese… | 248 | se queda | ACORTADA ya (precision 3: no se vuelve a acortar) |
 | :82 | El validador del journal (v1 y v2) vive en botsito.mql5… | 270 | se queda | (e) ahorraria 58 (< 60), medido igual en MARGEN-PENDIENTE.md §0.h.2 |
 | :83 | La skill activar-sesion no dice que una activación que… | 227 | se queda | no pagada: `.claude/skills/activar-sesion/SKILL.md` no nombra `Generado.mqh` ni `generar_capa` (grep vacio); (e) ahorraria < 60 |
-| :84 | La guardia niega a un guion nuevo dos falsos positivos, … | 411 | **(e)** | 411 -> 168, ahorra 243; F1 sigue aplazado y el `/` de `compilar.py` sigue negado (GUARDIA-FALSOS-POSITIVOS.md:224 y registro de cierre de F39a, HISTORIA hacia :17938-17941): no pagada |
+| :84 | La guardia niega a un guion nuevo dos falsos positivos, … | 411 | **(e)** | 411 -> 168, ahorra 243; F1 sigue aplazado y el `/` de `compilar.py` sigue negado (GUARDIA-FALSOS-POSITIVOS.md:224 y registro de cierre de F39a, HISTORIA :17944-17946; corregido tras el revisor, a5): no pagada |
 | :85 | El bróker simulado reserva margen por cada pendiente sto… | 197 | se queda | ACORTADA ya (precision 3: no se vuelve a acortar) |
 | :86 | Los docstrings de scripts/viabilidad_trader.py:11 («5 … | 225 | se queda | ACORTADA ya (precision 3: no se vuelve a acortar) |
 | :87 | La comprobación del LF final en UltimaLinea (mql5/Inc… | 186 | se queda | sin evidencia de pagada, repetida o sustituida |
@@ -128,7 +128,7 @@ cambió el texto de dos líneas de cabecera y dos de Archivo). Bytes con el salt
 | :111 | test_hoja_de_ruta no distingue un registro «HECHA · T» d… | 160 | se queda | `letras_hechas` sigue devolviendo un conjunto (`tests/unit/test_hoja_de_ruta.py:60`) |
 | :112 | Un fotograma dentro de un tramo no citable se puede abri… | 197 | se queda | sin evidencia de pagada, repetida o sustituida |
 | :113 | … | 1 | — (linea en blanco) | 1 byte; no es una linea de deuda; no se toca (ver dudosas) |
-| :114 | La ingesta asigna la sesión con el reloj del registro y … | 216 | se queda | (e) ahorraria 55 (MARGEN-PENDIENTE.md §0.h.2) |
+| :114 | La ingesta asigna la sesión con el reloj del registro y … | 216 | se queda | el corte valido mas largo (110) ahorraria 37 (< 60; corregido tras el revisor, a3) |
 | :115 | Sin git callan, sin aviso, las comprobaciones que leen g… | 234 | se queda | (e) ahorraria 27 (MARGEN-PENDIENTE.md §0.h.2) |
 | :116 | RN-029 a RN-032 citan de relleno ev-v4-012524-0ef85a89 (… | 220 | se queda | (e) ahorraria 46 (MARGEN-PENDIENTE.md §0.h.2) |
 | :117 | La condición 2 de ADR-0042 §2 (la lectura COMPLETA del l… | 184 | se queda | ACORTADA ya (precision 3: no se vuelve a acortar) |
@@ -161,8 +161,8 @@ cambió el texto de dos líneas de cabecera y dos de Archivo). Bytes con el salt
 | :144 | Las cotizaciones sin tick del bróker no usan la misma ve… | 233 | se queda | ACORTADA ya (precision 3: no se vuelve a acortar) |
 | :145 | El panel de FTMO quedó declarado el 2026-11-07 (medianoc… | 158 | se queda | ACORTADA ya (precision 3: no se vuelve a acortar) |
 | :146 | La zona que RN-005 liga al escenario vigente en el mismo… | 368 | se queda | sin corte estricto en 160 (el primer cierre de inciso pasa de 160) |
-| :147 | La comparación de motor decisiones mira cada operación… | 265 | se queda | el corte valido mas largo (142) ahorraria 48 (< 60) |
-| :148 | El toca_colocar_orden_limite sintético de tests/unit/t… | 246 | se queda | el corte valido mas largo (160) ahorraria 13 |
+| :147 | La comparación de motor decisiones mira cada operación… | 265 | se queda | el corte valido mas largo (142) ahorraria 47 (< 60; corregido tras el revisor, a3) |
+| :148 | El toca_colocar_orden_limite sintético de tests/unit/t… | 246 | se queda | el corte valido mas largo (160) ahorraria 12 (corregido tras el revisor, a3) |
 | :149 | motor laminas no dice el esquema: con la orden en el p… | 247 | se queda | no pagada: `engine/laminas.py:534-536` sigue sin frase del esquema; (e) ahorraria < 60 |
 | :150 | Dos textos que ADR-0093 deja viejos y que trabajo/prepar… | 273 | **(e)** | 273 -> 180, ahorra 93; no pagada: `scripts/graficos_sesion.py:66` y `engine/decisiones.py:7-8` siguen con el texto viejo |
 | :151 | motor laminas: la CLI solo se prueba entera con las ve… | 208 | **(e)** | 208 -> 138, ahorra 70; la cita del informe ya va en el arranque |
@@ -191,7 +191,7 @@ Total: **609 bytes**. Dos lecturas mías, para que las veas:
   orden, porque README dice «la cita», y quitar una sería escoger.
 
 Las demás de más de 200 bytes se quedan enteras: ahorrarían menos de 60 (`:82` 58, `:83`, `:97` 18,
-`:100`, `:107` 29, `:110`, `:114` 55, `:115` 27, `:116` 46, `:147` 48, `:148` 13, `:149`) o no tienen
+`:100`, `:107` 29, `:110`, `:114` 37, `:115` 27, `:116` 46, `:147` 47, `:148` 12, `:149`) o no tienen
 corte estricto en 160 (`:102`, `:130`, `:132`, `:146`; y `:142`, cuyo único corte caería dentro del
 trailer `Fuente:`).
 
@@ -280,8 +280,8 @@ Technical Debt; nada más.
 | Reglas vivas | 1.615 | 1.615 |
 | **PROJECT_STATE.md** | **24.652** (main) | **24.074** en la rama (`wc -c`) |
 
-En la rama, `wc -c PROJECT_STATE.md` = **24.074**; con las cabeceras de `main` (el Current Feature de
-la rama es 31 bytes más largo), **24.043**. El cierre reescribe Current Feature, Stable Main State y
+En la rama, `wc -c PROJECT_STATE.md` = **24.074**; con las cabeceras de `main` (el Current Branch y
+el Current Feature de la rama suman 31 bytes más), **24.043**. El cierre reescribe Current Feature, Stable Main State y
 Last Stable Commit, así que la cifra de `main` tras el cierre la da la orden de cierre.
 
 ### Desviaciones
@@ -291,7 +291,231 @@ Last Stable Commit, así que la cifra de `main` tras el cierre la da la orden de
 2. La previsión no bajó de 24.000 y la rama siguió tras la PARADA, por la respuesta del consultor
    (punto 1).
 3. Ninguna línea se queda distinta de lo que manda el criterio.
+4. La fase 0 no lanzó el agente `auditor-encargo` ni invocó la skill `fase-cero`, y el informe no
+   tiene «El encargo frente al repo» (revisor, b2). El encargo pedía la fase 0 como inventario, sin
+   nombrar el auditor; la sesión comprobó a mano las afirmaciones del encargo que lo necesitaban
+   (base, tramo, tag libre, tamaño de 24.652, la sección de README, los registros de cierre de F38u a
+   F39a). Es una omisión, no una decisión: se declara aquí.
+5. `:142` se quedó entera con una lectura más estricta que README, sin declararla como tal (revisor,
+   a4): su único corte en 160 bytes (byte 53) cae justo antes del «:» del trailer «Fuente:», que en
+   PROJECT_STATE no va entre acentos graves, así que no es ruta, id ni literal. Leído al pie de la
+   letra, se podría acortar (ahorraría unos 169 bytes). Se queda por niega-por-defecto, y el consultor
+   aceptó la lista de 0.4 tal cual (respuesta, punto 1); si la quiere acortada, es una decisión suya
+   para la orden de cierre o para otra rama.
+6. La respuesta del consultor a la PARADA se copió al final del encargo después del revisor (b1), como
+   pide `fase-cero` y hicieron las ramas anteriores.
+
+Pico de memoria del `make check` de la fase 1 (árbol `af74fa5c…`, commit `41983743`): «PICO DE
+MEMORIA de make check: 318 MiB en `test` (suma de sus procesos, memoria comprometida, Windows; el
+mayor proceso, 307 MiB)»; 3513 passed, 6 xfailed, SELLO. Antes, las siete pruebas de §5 del encargo
+sueltas, en verde: `tests/unit/test_project_state.py`, `test_project_state_rutas.py`,
+`test_historia.py`, `test_kit.py`, `test_hoja_de_ruta.py`, `tests/contract/test_ids_citados.py` y
+`tests/contract/test_documentos_vivos.py` (el encargo lo nombraba sin carpeta: vive en `contract/`).
+
+**Tamaño final**: `wc -c PROJECT_STATE.md` = **24074** en el último commit de la rama.
+
+## El encargo, punto por punto
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 0.1 | `git fetch --prune`; base main/origin/tag/CI; ninguna otra rama; F39b libre | Hecho | «Apertura», tabla |
+| 0.2 | Abrir con `abrir-rama`: encargo tal cual con Write, contrato, Archivo | Hecho | `b031559d`; Archivo 70 en HISTORIA |
+| 0.3 | Contrato: tramo entre comillas y literal, riesgo bajo, rutas extra (HOLDOUT, HOJA solo para HER:n) | Hecho | `contrato.yaml`; `HOJA-DE-RUTA.md:700` |
+| 0.4 | Informe con PLANTILLA en sus primeros 600 caracteres | Hecho | línea 3 de este informe |
+| 0.5 | Fila de HOLDOUT-EXPOSICIONES antes del primer `make check`, en la apertura; desviación declarada | Hecho | `HOLDOUT-EXPOSICIONES.md:147`; desviación 1 |
+| 0.6 | Modelo Opus, esfuerzo medio | Hecho | la sesión corre en Opus 5.5, esfuerzo medio (lo fijó Aleks con `/effort` antes del encargo) |
+| 1 | Bajar PROJECT_STATE con los criterios de README sin cambiarlos | Hecho | 24.652 → 24.074 en la rama (24.043 con las cabeceras de main); README sin tocar |
+| 2.1 | Letras de la Next Action, Known Ambiguities, ritual, secciones: sin cambiar | Hecho | `git diff main...HEAD -- PROJECT_STATE.md`: solo Current Branch/Feature, los dos «Archivo 70» y las cuatro de Technical Debt |
+| 2.2 | Ningún fichero fuera de la lista | Hecho | `git diff --stat main...HEAD`: 6 ficheros, todos del contrato; `contrato_rama.py` en verde |
+| 2.3 | Ni material, ni velas, ni ticks, ni holdout; sin arnés | Hecho | solo documentos del repo y dos guiones que leen PROJECT_STATE (los `make check` leen el M1 de marzo, declarado) |
+| 3.1 | (a)-(d) con evidencia y sección | Hecho | 0.2 y 0.3: ninguna sale |
+| 3.2 | (e) solo Technical Debt, con sus reglas | Hecho | 0.4; bloque de HISTORIA |
+| 3.3 | Las tres precisiones, declaradas como decisión del consultor | Hecho | «Fase 0», párrafo inicial |
+| 3.4 | Leer el texto entero de los heredados antes de sacarlos; HER:n | No aplica | ningún heredado sale; HOJA-DE-RUTA sin tocar |
+| 3.5 | Niega por defecto; dudosas a una lista | Hecho | 0.5 |
+| 3.6 | Bloques al final de HISTORIA con su forma | Hecho | «# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/dieta-estado (2026-11-13)» |
+| 4 | Fase 0: tabla, pagos de F38u-F39a, bytes por sección y previsión; PARADA si no baja de 24.000 | Hecho | 0.1-0.5; PARADA en `89419ca0` |
+| R.1-R.4 | Respuesta a la PARADA: opción 1, no la 2 ni la 3, dudosas sin tocar y la línea de `:100` | Hecho | fase 1; 0.5, punto 2 |
+| R.5 / 5 | Commits sellados, pico de cada `make check`, pruebas de §5, `wc -c` | Hecho | los tres picos en el informe; tamaño final arriba |
+| 6 | Informe completo y la fila de ERRORES-RECURRENTES preparada | Hecho | este informe; «Para la orden de cierre» |
+| 7 | Revisor con su alcance; sin CI de Linux | Hecho | «Informe del revisor», abajo; sin CI: la rama no toca hooks, rutas, sistema de archivos ni código (`RITUAL.md`, «Antes del merge: la CI de Linux») |
+
+Exposiciones: los `make check` (M1 de marzo, calienta con junio), en la fila del 2026-11-13. Ninguna
+otra.
+
+## Para la orden de cierre
+
+- **Next Action**: no sale, no entra y no cambia ninguna letra.
+- **Hoja de ruta**: ninguna entrada cambia (la rama no tiene entrada propia en el carril).
+- **Fila de `docs/runbooks/ERRORES-RECURRENTES.md`** (la escribe `cerrar-rama`; la cifra del revisor,
+  de su informe):
+
+  `| trabajo/dieta-estado | Una pasada (DIETA-ESTADO.md, «Informe del revisor»): eje (a) 1 bloquea, 0 importa, 4 menor; eje (b) 0 bloquea, 2 importa, 1 menor. a1 (bloquea: la propia fila para este fichero repetía la trampa que cuenta; arreglada) y b1/b2 (la respuesta del consultor sin copiar al encargo, y la fase 0 sin auditor: arreglada y declarada). La fase 0 escribió en el informe el id del ADR 0087 con su guion, y ese ADR no existe, y knowledge validate tumbó el make check (25 min): la trampa de los ids inexistentes, otra vez, ahora en un INFORME de estado que solo cita la deuda; y el número de línea de los heredados salió corrido una línea por leerlo con sed sobre una línea en blanco, cazado al montar la tabla. | Antes de un make check, uv run botsito knowledge validate sobre el informe; los números de línea de PROJECT_STATE, con grep -n, no con sed -n de un rango. |`
+
+## Informe del revisor (una pasada, 2026-11-13)
+
+Pegado tal cual. Cita el id del ADR 0087 con su guion (hallazgo a1), así que va declarado aquí, como
+exige `knowledge validate`:
+
+```ids-inexistentes
+ADR-0087 — lo cita el informe del revisor, pegado tal cual (hallazgo a1); no existe
+```
+
+> ## Informe del revisor · trabajo/dieta-estado · 2026-11-13
+>
+> La rama no está lista: hay un hallazgo que bloquea. La línea preparada para ERRORES-RECURRENTES, que todavía no está commiteada, escribe «ADR-0087» con guion. Ese ADR no existe, `knowledge validate` sale en rojo y el próximo `make check` no sellará. Es la misma trampa que esa línea describe. El trabajo sobre PROJECT_STATE.md está bien: las cuatro líneas acortadas cumplen (e), las cuatro están literales en HISTORIA y lo demás del fichero no cambia ni un byte.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 1 bloquea, 0 importa, 4 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | **bloquea** | La línea de ERRORES-RECURRENTES que el informe prepara (cambio sin commitear) cita «ADR-0087» con guion. Ese ADR no existe (`docs/adr/` salta de 0086 a 0088), así que `knowledge validate` falla. Con el informe como está, el próximo `make check` sale en rojo y no hay commit sellado posible. | `docs/validation/DIETA-ESTADO.md:340` («La fase 0 escribió «ADR-0087» con guion…»). `uv run botsito knowledge validate` → `ERROR: id citado que no existe: docs/validation/DIETA-ESTADO.md:340: ADR-0087`, exit=1. Se arregla escribiéndolo sin guion («ADR 0087», como en :113 y :200) o declarándolo en un bloque `ids-inexistentes`. |
+> | a2 | menor | El informe atribuye al Current Feature los 31 bytes de diferencia entre la rama y `main`. En realidad son 16 del Current Branch y 15 del Current Feature. El total (24.043 con las cabeceras de main) sí es correcto. | `DIETA-ESTADO.md:56-57` y `:284`. Medido: línea 7, «main» 4 B → «trabajo/dieta-estado» 20 B; línea 10, 227 B → 242 B. |
+> | a3 | menor | Tres ahorros de la tabla 0.3 no salen del corte válido más largo que el propio informe dice usar (`:42-44`). En `:114` el corte más largo está en el byte 110 (antes de «. ») y ahorra 37; el 55 sale del corte en el byte 92. En `:147` sale 47, no 48; en `:148` sale 12, no 13. Ninguna conclusión cambia: todas quedan por debajo de 60. | `DIETA-ESTADO.md:131`, `:164`, `:165`. Medido sobre `git show main:PROJECT_STATE.md` con el sufijo de README y la cita de la línea. |
+> | a4 | menor | El motivo para no acortar `:142` es que el corte «cae dentro del trailer `Fuente:`». Eso no es una de las exclusiones de README (ruta o id), ni la que el informe declara (literal entre acentos graves): en PROJECT_STATE `Fuente:` no va entre acentos graves. Es una lectura más estricta que no se declara como tal. Acortarla ahorraría unos 169 bytes. Se queda por niega-por-defecto y el consultor la vio en la PARADA (opción 1, «tal cual las propones»), así que no cambia nada. | `DIETA-ESTADO.md:42`, `:159`, `:195-196`. `PROJECT_STATE.md:142` («…el trailer Fuente: de tramos_no_citables.yaml…»). Único corte ≤160: byte 53. |
+> | a5 | menor | El informe cita el registro de cierre de F39a «hacia :17938-17941» como el que reescribe `:84`. La instrucción de reescribirla está en `HISTORIA.md:17944-17946`; :17936-17942 trata del ensayo D7. | `sed -n '17936,17946p' docs/state/HISTORIA.md`; `DIETA-ESTADO.md:62`. |
+>
+> Comprobado sin hallazgos:
+> - **Contrato:**
+>   - `uv run python scripts/contrato_rama.py` → `CONTRATO: 6 ficheros dentro del contrato de trabajo/dieta-estado (riesgo bajo, artefacto docs/validation/DIETA-ESTADO.md, tramo 'Carril: guardias y deuda', 4 comprobaciones para el revisor)`, exit 0.
+>   - `uv run botsito state check` → OK, exit 0.
+>   - `wc -c PROJECT_STATE.md` → 24074 (main 24652).
+>   - `make check`: no lo ejecuté. `make-check.log` trae `SELLO: make check en verde sobre el arbol af74fa5c…`, que es `git rev-parse HEAD^{tree}`, con `3513 passed, 6 xfailed` y `PICO DE MEMORIA de make check: 318 MiB … el mayor proceso, 307 MiB`. Coincide con `DIETA-ESTADO.md:295-297`. Ese sello no cubre el informe sin commitear (a1).
+> - **Trailer `Fuente:`:** ningún commit toca `knowledge/spec` ni `knowledge/cases`. El diff solo trae los 6 ficheros del contrato.
+> - **Holdout:** no se toca nada. La fila de HOLDOUT-EXPOSICIONES del 2026-11-13 está en el commit de apertura (`b031559d`), con la forma de la de guardia-falsos-positivos.
+> - **Regímenes de cambio:** ni evidence, ni feedback, ni manifests, ni corpus. HISTORIA solo se amplía: `main:HISTORIA` es prefijo exacto de `HEAD:HISTORIA`, sin CR añadidos. El Archivo 70 es `main:PROJECT_STATE.md` byte a byte, con un salto antes y otro después.
+> - **Ambigüedades y ADR:** sin cambios en ninguno de los dos.
+> - **Informes cerrados:** solo HOLDOUT-EXPOSICIONES, un registro vivo, con una línea añadida.
+> - **Tres guardias de una `cita`:** no aplica.
+> - **Pruebas:** pasan en verde, sobre el árbol de trabajo, `test_project_state`, `test_project_state_rutas`, `test_historia`, `test_kit`, `test_hoja_de_ruta`, `test_ids_citados`, `test_documentos_vivos` y `test_adr`. Ojo: `test_ids_citados` solo prueba repos sintéticos y no ve a1; la guardia real del repo es `knowledge validate`.
+> - **Citas del informe comprobadas contra su fuente** (todas sostienen lo que se dice):
+>   - `GUARDIA-FALSOS-POSITIVOS.md:224/225/228`
+>   - `engine/laminas.py:534-536`
+>   - `test_laminas.py:701`
+>   - `graficos_sesion.py:66`
+>   - `decisiones.py:7-8`
+>   - `strategy_spec.yaml:2024`
+>   - `freno.py:7-8`
+>   - `test_hoja_de_ruta.py:60`
+>   - `cli.py:2322`
+>   - `MARGEN-PENDIENTE.md:510`
+>   - `ACTIVAR-SESION-06-MOTOR.md:41-42`
+>   - `HOJA-DE-RUTA.md:470/700/703/667-673`
+>   - grep vacío de `Generado.mqh|generar_capa` en la skill `activar-sesion`, de `Fuente:|PLANTILLA` en `ingerir-sesion` y `abrir-rama`, y de «diagnostico» en `VISOR-DIAS.md`.
+> - **Items de evidencia nuevos:** ninguno.
+>
+> **Alcance añadido por el encargo (punto 7):**
+> 1. **Nada sale sin evidencia:** no sale ninguna línea. El diff de PROJECT_STATE frente a main cambia las líneas 7, 10, 84, 150, 151, 152, 167 y 171, y nada más.
+> 2. **Literal en HISTORIA:** las cuatro líneas quitadas están byte a byte en el bloque `HISTORIA.md:18130`, y las cuatro que se ponen están literales en su «Queda en PROJECT_STATE:».
+> 3. **Lo que se queda no cambia:** fuera de esas ocho líneas, PROJECT_STATE es idéntico al de main (172 líneas en los dos). Comparado línea a línea con Python.
+> 4. **Las cuatro acortadas cumplen (e):** todas son de Technical Debt (`:81-152`) y ninguna estaba ya ACORTADA.
+>
+>    | PS | antes | arranque | después | ahorra | corte |
+>    |---|---|---|---|---|---|
+>    | :84 | 411 | 83 | 168 | 243 | antes de «: », el único ≤160 |
+>    | :150 | 273 | 88 | 180 | 93 | antes de «: », el único ≤160 |
+>    | :151 | 208 | 87 | 138 | 70 | tras «)» y antes de «; », el más largo |
+>    | :152 | 502 | 130 | 299 | 203 | tras «)» y antes de «: », el más largo |
+>
+>    En las cuatro el arranque es prefijo literal de la línea entera, ninguno corta una ruta o un id, y el sufijo es el de README. `:151` lleva la cita en el arranque y el paréntesis no la repite; hay precedente en `PROJECT_STATE.md:94`. `:152` conserva sus dos citas, como fijó el consultor (punto 2).
+> 5. **Ninguna sale por (b) o (d):** comprobado. Los registros de cierre de F38w a F39a (HISTORIA :16959, :17233, :17696, :17944) solo añaden o sustituyen deuda; ninguno la paga.
+> 6. **HER:n:** `docs/plan/HOJA-DE-RUTA.md` no aparece en el diff, y no sale ningún heredado.
+>
+> **Cifras del informe** (son correctas salvo a2 y a3):
+> - Bytes por sección: Next Action 5.619 + 895 = 6.514, Technical Debt 13.368 → 12.759, Reglas vivas 247 + 642 + 726 = 1.615.
+> - Totales: 24.652, 24.683 y 24.074.
+>
+> ### Eje (b) · Encargo
+> Resumen: 0 bloquea, 2 importa, 1 menor. Requisitos: 19 hechos, 1 parcial, 1 no hecho.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Base comprobada (main, origin, tag, CI, ninguna otra rama, F39b libre) | Hecho (según el informe) | `DIETA-ESTADO.md:13-24`. No relancé `gh` ni `ls-remote`. |
+> | 2 | Encargo tal cual, contrato y Archivo 70 | Hecho | `b031559d`. El Archivo 70 es idéntico a `main:PROJECT_STATE.md`. |
+> | 3 | Contrato: tramo literal, riesgo bajo, rutas extra | Hecho | `contrato.yaml:2-11`; `HOJA-DE-RUTA.md:700` |
+> | 4 | Informe con PLANTILLA en los primeros 600 caracteres | Hecho | `DIETA-ESTADO.md:3` |
+> | 5 | Fila de HOLDOUT en la apertura, desviación declarada | Hecho | `HOLDOUT-EXPOSICIONES.md:147`; `DIETA-ESTADO.md:26-28`, `:289-290` |
+> | 6 | Bajar PROJECT_STATE sin cambiar los criterios | Hecho | 24.652 → 24.074; README fuera del diff |
+> | 7 | Lo que no cambia (letras, Known Ambiguities, secciones, ficheros) | Hecho | diff de 8 líneas (eje a, punto 3); 6 ficheros; contrato en verde |
+> | 8 | Sin material, sin velas, sin arnés | Hecho (según el informe) | `DIETA-ESTADO.md:317`. Los dos guiones de fuera del repo no los puedo ver. |
+> | 9 | (a)-(d) con evidencia y sección | Hecho | tabla 0.3, `:90-173`; no sale ninguna |
+> | 10 | (e) solo Technical Debt, con sus reglas | Hecho | eje a, punto 4 |
+> | 11 | Tres precisiones declaradas como del consultor | Hecho | `DIETA-ESTADO.md:37-40` |
+> | 12 | Leer los heredados enteros y quitar su HER:n | Hecho (no aplica) | no sale ninguno; HOJA-DE-RUTA sin tocar |
+> | 13 | Dudosas a una lista | Hecho | `:198-209`, con la línea de `:100` que pide R.4 |
+> | 14 | Bloques al final de HISTORIA, con la forma de los que ya hay | Hecho | `HISTORIA.md:18130`; misma forma que `:16659` |
+> | 15 | Fase 0: tabla, pagos de F38u-F39a, bytes, previsión y PARADA | Hecho | `:47-232`; PARADA en `89419ca0` |
+> | 16 | Aplicar la respuesta R.1-R.4 | Hecho | fase 1, `:253-269`; diff de PROJECT_STATE |
+> | 17 | Commits sellados y pico de cada `make check` | Parcial | Los tres picos están y `41983743` está sellado (log). El cambio sin commitear no puede sellar (a1). |
+> | 18 | `wc -c` final | Hecho | `:302` = 24074, medido igual |
+> | 19 | Informe completo y fila de ERRORES-RECURRENTES preparada | Hecho, con defecto | `:333-340`; la fila rompe `knowledge validate` (a1) |
+> | 20 | Revisor pegado al final del informe | No hecho todavía | No hay sección «Informe del revisor». Lo pega la sesión: lo devuelvo, no lo pego. |
+> | 21 | Sin CI de Linux | Hecho | La rama no toca código, hooks ni rutas. No veo nada que exija CI de Linux. |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | La respuesta del consultor a la PARADA no está copiada al final del encargo; solo está en el informe. La skill `fase-cero` pide copiarla en los dos sitios, y así lo hicieron las ramas anteriores. | `tail docs/encargos/trabajo-dieta-estado.md` acaba en «Rama lista para revisión, NO cerrada.». `.claude/skills/fase-cero/SKILL.md:90`. Precedentes: `docs/encargos/trabajo-margen-pendiente.md:118`, `trabajo-guardia-falsos-positivos.md:64`. |
+> | b2 | importa | La fase 0 no lanzó el `auditor-encargo` y el informe no tiene «El encargo frente al repo», y no se declara por qué. | `grep -i "auditor\|frente al repo"` sobre el informe → vacío. `fase-cero/SKILL.md:60-63`; `CLAUDE.md` («`auditor-encargo`: al empezar la fase 0»). |
+> | b3 | menor | La tabla «El encargo, punto por punto» da por «Hecho» el punto 7 remitiendo a «Informe del revisor», abajo, una sección que aún no existe. | `DIETA-ESTADO.md:328` (sin commitear) |
+>
+> Lo que la rama hace y el encargo no pide: nada. El repaso extra de 0.2 (ADR 0087, RN-019 y lo demás) es inventario.
+> Lo que el encargo dice que no se toca: no se toca. Ni README, ni src, ni tests, ni `.claude`, ni knowledge, ni HOJA-DE-RUTA aparecen en `git diff --stat main...HEAD`.
+>
+> ### Lo que no pude comprobar
+> - La base contra origin y la CI de main (run 43459199788): necesitan red o `gh`. Me quedo con la tabla del informe.
+> - Que el encargo es el prompt tal cual: no tengo el mensaje original.
+> - Los dos guiones de la carpeta de trabajo, fuera del repo, que midieron los bytes. Repetí las cifras con Python sobre `git show`.
+> - Los `make check` de la apertura y de la fase 0: solo queda el log del último. Sus picos solo los da el informe.
+> - Que la sesión corrió en Opus con esfuerzo medio (requisito 0.6).
+> - `make check` sobre el informe sin commitear: escribe y no lo ejecuto. `knowledge validate` ya muestra que fallaría.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current; git merge-base main HEAD; git log --format='%h %s' main..HEAD; git diff --stat main...HEAD; git status --short`
+> 2. `cat docs/encargos/trabajo-dieta-estado.md; cat contrato.yaml`
+> 3. `uv run python scripts/contrato_rama.py`
+> 4. `uv run botsito state check; wc -c PROJECT_STATE.md; git show main:PROJECT_STATE.md | wc -c`
+> 5. `git diff main...HEAD -- PROJECT_STATE.md`
+> 6. `grep -n "" docs/state/README.md`
+> 7. `grep -n "" docs/validation/DIETA-ESTADO.md` (entero) y `git diff -- docs/validation/DIETA-ESTADO.md`
+> 8. `grep -n "ADR-0087…" DIETA-ESTADO.md PROJECT_STATE.md; ls docs/adr | tail`
+> 9. Grep de `ids-inexistentes` y Read de `src/botsito/validation/ids_citados.py`
+> 10. `uv run pytest -q -p no:cacheprovider tests/contract/test_ids_citados.py`
+> 11. `uv run python -c` (gramática `ids.FUENTE` sobre ADR-0087)
+> 12. `uv run botsito knowledge validate` → exit 1, ERROR en `DIETA-ESTADO.md:340`
+> 13. `grep -n` del bloque ACORTADA en HISTORIA; `sed -n '18120,18147p' docs/state/HISTORIA.md`
+> 14. Python por stdin: comparación byte a byte de PROJECT_STATE (main/HEAD) y del bloque de HISTORIA
+> 15. Python por stdin: cortes válidos ≤160 de cada línea de Technical Debt de más de 200 bytes, y ahorro de cada candidata
+> 16. `git show main:PROJECT_STATE.md | sed -n` (las líneas candidatas y la numeración)
+> 17. `grep -n` del precedente `:94` y de los bloques ACORTADA; `sed -n '16659,16700p'` de HISTORIA
+> 18. Python por stdin: bytes por sección de main, `b031559d` y HEAD (un primer intento con f-string lo bloqueó la guardia; lo repetí con refs literales)
+> 19. Python por stdin: HISTORIA solo se amplía y el Archivo 70 es igual a main
+> 20. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md; git log --name-status main..HEAD`
+> 21. `ls -la make-check.log; grep SELLO/PICO/passed; git rev-parse HEAD^{tree}`
+> 22. `sed -n` de las citas: `GUARDIA-FALSOS-POSITIVOS.md`, `laminas.py`, `test_laminas.py`, `graficos_sesion.py`, `decisiones.py`, HISTORIA :17936-17953, `strategy_spec.yaml`, `freno.py`, `test_hoja_de_ruta.py`, `cli.py`, `MARGEN-PENDIENTE.md:510`, `ACTIVAR-SESION-06-MOTOR.md:41-42`, `HOJA-DE-RUTA.md`; los grep de las skills y de `VISOR-DIAS.md`
+> 23. `grep` de los registros de cierre y awk de los cambios de Technical Debt en HISTORIA de F38w a F39a; `sed` de los de F38y, F38x y F38z
+> 24. `grep`/`sed` de `.claude/skills/fase-cero/SKILL.md`; `grep` de auditor y respuesta en informe y encargos (también los de las ramas anteriores)
+> 25. `uv run pytest -q -p no:cacheprovider` de los 8 ficheros de test → verde
+> 26. `git show --numstat 41983743 / b031559d -- PROJECT_STATE.md` (un `git diff` que nombraba `data` lo bloqueó la guardia; lo sustituye el `--stat` del punto 1)
+
+## Lo que se hizo con los hallazgos del revisor
+
+- **a1 (bloquea)**: arreglado. La fila preparada para ERRORES-RECURRENTES ya no escribe el id con
+  guion («el id del ADR 0087 con su guion»); el informe del revisor, que sí lo cita, va con su bloque
+  `ids-inexistentes` delante. `uv run botsito knowledge validate` en verde antes del `make check`.
+- **a2 (menor)**: corregido en 0.1 y en la fase 1: 16 bytes de Current Branch y 15 de Current Feature.
+- **a3 (menor)**: corregidas `:114` (37), `:147` (47) y `:148` (12) en la tabla 0.3 y en 0.4. Ninguna
+  conclusión cambia. La de `:114` venía copiada de MARGEN-PENDIENTE.md, que la midió con otro corte.
+- **a4 (menor)**: declarado como desviación 5. `:142` se queda; si se acorta, lo decide el consultor.
+- **a5 (menor)**: corregida la cita, ahora `HISTORIA.md:17944-17946`, en 0.2 y en la fila `:84` de 0.3.
+- **b1 (importa)**: arreglado. La respuesta, copiada tal cual al final de
+  `docs/encargos/trabajo-dieta-estado.md`; desviación 6.
+- **b2 (importa)**: declarado como desviación 4. No se lanza ahora: la fase 0 ya pasó y el revisor
+  repitió las comprobaciones que el auditor habría hecho (las citas, contra su fuente, todas buenas).
+- **b3 (menor)**: resuelto al pegar esta sección.
+
+Sin CI de Linux: ni el revisor ni la sesión ven nada que la exija (encargo, punto 7).
 
 ## Estado
 
-EN CURSO: fase 1 aplicada; faltan su `make check`, el revisor y la entrega.
+Rama lista para revisión, NO cerrada.
