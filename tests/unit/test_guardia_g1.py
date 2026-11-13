@@ -911,7 +911,9 @@ MEDIR_G1 = RAIZ / "docs" / "validation" / "anexos" / "GUARDIA-G1" / "medir_g1.py
 # §13.6). LA REGLA: la siguiente rama que toque la guardia puede subirla al ultimo stable y, al
 # hacerlo, vacia `CAMBIOS_DECLARADOS` (`medir_g1.py`) y vuelve a declarar lo que ese stable niega y
 # la guardia nueva deja pasar.
-GUARDIA_DE_REFERENCIA = "stable/F38k-margen-pendiente"
+# Subida a `stable/F38z-capa-generada` por `trabajo/guardia-falsos-positivos` (D5 del encargo y
+# respuesta a su PARADA, punto 1), en el mismo commit que su cambio de la guardia.
+GUARDIA_DE_REFERENCIA = "stable/F38z-capa-generada"
 
 
 def _de_la_referencia(rel: str) -> str | None:
@@ -1022,10 +1024,11 @@ def test_roto_la_comparacion_con_main(
     tmp_path: Path, capsys: pytest.CaptureFixture[str], monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """B2 del revisor: sin una entrada de `CAMBIOS_DECLARADOS`, la comparacion caso a caso FALLA
-    (sale con 1 y dice «SIN DECLARARLO»)."""
+    (sale con 1 y dice «SIN DECLARARLO»). La entrada es la de F2 (`trabajo/guardia-falsos-
+    positivos`, respuesta a su PARADA, punto 1): difiere tambien en Linux, asi que la CI lo mide."""
     medir, argv = _medir_g1_con_referencia(tmp_path)
     monkeypatch.setattr(sys, "argv", argv)
-    monkeypatch.delitem(medir.CAMBIOS_DECLARADOS, "a1-lector-rama")
+    monkeypatch.delitem(medir.CAMBIOS_DECLARADOS, "i2-f2-cmp")
     assert medir.main() == 1
     assert "SIN DECLARARLO" in capsys.readouterr().out
 

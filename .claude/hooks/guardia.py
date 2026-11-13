@@ -2889,6 +2889,10 @@ NO_EJECUTAN: dict[str, str] = {
     # comando real (GUARDIA-G1.md §1.f, f15 y f16):
     "which": "busca un programa en el PATH y dice donde esta; no lo ejecuta ni lee su contenido",
     "rmdir": "borra un directorio VACIO; no lee ningun fichero ni ejecuta nada",
+    # `trabajo/guardia-falsos-positivos` (G.6 de la hoja de ruta; D2 del encargo), uno que pidio
+    # un comando real (CAPA-GENERADA.md, «La guardia»; ACTIVAR-SESION-06-MOTOR.md §b.3):
+    "cmp": "compara dos ficheros byte a byte; no ejecuta ninguno (sus argumentos se miran como "
+    "una lectura, como los de `diff`)",
 }
 # Los programas que leen un FICHERO DE PROGRAMA con una opcion: ese fichero es codigo de un
 # lenguaje que la guardia no analiza (respuesta del consultor a §1.12: se niegan).

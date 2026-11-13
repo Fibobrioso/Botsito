@@ -1,0 +1,232 @@
+FASE0 | plataforma: os.name=nt
+FASE0 | F1 | f1-copia-generar-capa | hoy: NIEGA: la ruta `// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md).` no se puede canonizar (un recurso de otra maquina, u | 0.08s
+FASE0 |   | f1-copia-generar-capa | con D1: PASA | 0.12s
+FASE0 |   | f1-copia-generar-capa | con D1+D2: PASA | 0.12s
+FASE0 |   | f1-copia-generar-capa | con D1a+D2: PASA | 0.12s
+FASE0 |   | f1-copia-generar-capa | con D1b+D2: PASA | 0.12s
+FASE0 |   | f1-copia-generar-capa | con D1c+D2: PASA | 0.12s
+FASE0 |   | f1-copia-generar-capa | con D1d+D2: PASA | 0.11s
+FASE0 | F1 | f1-literal-364 | hoy: NIEGA: la ruta `// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md).` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 |   | f1-literal-364 | con D1: PASA | 0.03s
+FASE0 |   | f1-literal-364 | con D1+D2: PASA | 0.03s
+FASE0 |   | f1-literal-364 | con D1a+D2: PASA | 0.03s
+FASE0 |   | f1-literal-364 | con D1b+D2: PASA | 0.04s
+FASE0 |   | f1-literal-364 | con D1c+D2: PASA | 0.03s
+FASE0 |   | f1-literal-364 | con D1d+D2: PASA | 0.03s
+FASE0 | F1 | f1-literal-359-fcadena | hoy: NIEGA: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil` no se puede canonizar (un recurso de otra maquina, un dispositiv | 0.04s
+FASE0 |   | f1-literal-359-fcadena | con D1: NIEGA: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil x` no se puede canonizar (un recurso de otra maquina, un disposit | 0.05s
+FASE0 |   | f1-literal-359-fcadena | con D1+D2: NIEGA: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil x` no se puede canonizar (un recurso de otra maquina, un disposit | 0.04s
+FASE0 |   | f1-literal-359-fcadena | con D1a+D2: NIEGA: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil x` no se puede canonizar (un recurso de otra maquina, un disposit | 0.04s
+FASE0 |   | f1-literal-359-fcadena | con D1b+D2: NIEGA: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil x` no se puede canonizar (un recurso de otra maquina, un disposit | 0.03s
+FASE0 |   | f1-literal-359-fcadena | con D1c+D2: NIEGA: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil x` no se puede canonizar (un recurso de otra maquina, un disposit | 0.04s
+FASE0 |   | f1-literal-359-fcadena | con D1d+D2: NIEGA: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil x` no se puede canonizar (un recurso de otra maquina, un disposit | 0.04s
+FASE0 | F1 | f1-tabulador | hoy: NIEGA: la ruta `//	x docs/a/b.md` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae ba | 0.04s
+FASE0 |   | f1-tabulador | con D1: PASA | 0.04s
+FASE0 |   | f1-tabulador | con D1+D2: PASA | 0.04s
+FASE0 |   | f1-tabulador | con D1a+D2: PASA | 0.04s
+FASE0 |   | f1-tabulador | con D1b+D2: PASA | 0.04s
+FASE0 |   | f1-tabulador | con D1c+D2: PASA | 0.04s
+FASE0 |   | f1-tabulador | con D1d+D2: PASA | 0.03s
+FASE0 | F1 | f1-barras-invertidas | hoy: NIEGA: la ruta `\\ x docs\a\b.md` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae ba | 0.04s
+FASE0 |   | f1-barras-invertidas | con D1: PASA | 0.03s
+FASE0 |   | f1-barras-invertidas | con D1+D2: PASA | 0.03s
+FASE0 |   | f1-barras-invertidas | con D1a+D2: PASA | 0.03s
+FASE0 |   | f1-barras-invertidas | con D1b+D2: PASA | 0.03s
+FASE0 |   | f1-barras-invertidas | con D1c+D2: PASA | 0.03s
+FASE0 |   | f1-barras-invertidas | con D1d+D2: PASA | 0.03s
+FASE0 | F1 | f1-mql5-pipe | hoy: PASA | 0.04s
+FASE0 |   | f1-mql5-pipe | con D1: PASA | 0.04s
+FASE0 |   | f1-mql5-pipe | con D1+D2: PASA | 0.04s
+FASE0 |   | f1-mql5-pipe | con D1a+D2: PASA | 0.04s
+FASE0 |   | f1-mql5-pipe | con D1b+D2: PASA | 0.04s
+FASE0 |   | f1-mql5-pipe | con D1c+D2: PASA | 0.04s
+FASE0 |   | f1-mql5-pipe | con D1d+D2: PASA | 0.04s
+FASE0 | F1 | f1-mql5-pipe-con-barras | hoy: NIEGA: la ruta `//| ver docs/validation/X.md |` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no  | 0.04s
+FASE0 |   | f1-mql5-pipe-con-barras | con D1: NIEGA: la ruta `//| ver docs/validation/X.md |` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no  | 0.03s
+FASE0 |   | f1-mql5-pipe-con-barras | con D1+D2: NIEGA: la ruta `//| ver docs/validation/X.md |` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no  | 0.04s
+FASE0 |   | f1-mql5-pipe-con-barras | con D1a+D2: NIEGA: la ruta `//| ver docs/validation/X.md |` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no  | 0.04s
+FASE0 |   | f1-mql5-pipe-con-barras | con D1b+D2: NIEGA: la ruta `//| ver docs/validation/X.md |` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no  | 0.04s
+FASE0 |   | f1-mql5-pipe-con-barras | con D1c+D2: NIEGA: la ruta `//| ver docs/validation/X.md |` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no  | 0.04s
+FASE0 |   | f1-mql5-pipe-con-barras | con D1d+D2: NIEGA: la ruta `//| ver docs/validation/X.md |` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no  | 0.04s
+FASE0 | F1 | f1-mql5-mas | hoy: PASA | 0.05s
+FASE0 |   | f1-mql5-mas | con D1: PASA | 0.04s
+FASE0 |   | f1-mql5-mas | con D1+D2: PASA | 0.04s
+FASE0 |   | f1-mql5-mas | con D1a+D2: PASA | 0.04s
+FASE0 |   | f1-mql5-mas | con D1b+D2: PASA | 0.05s
+FASE0 |   | f1-mql5-mas | con D1c+D2: PASA | 0.04s
+FASE0 |   | f1-mql5-mas | con D1d+D2: PASA | 0.04s
+FASE0 | D3 | d3-host-share-barras | hoy: NIEGA: la ruta `//host/share/x/y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si ca | 0.04s
+FASE0 |   | d3-host-share-barras | con D1: NIEGA: la ruta `//host/share/x/y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si ca | 0.04s
+FASE0 |   | d3-host-share-barras | con D1+D2: NIEGA: la ruta `//host/share/x/y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si ca | 0.04s
+FASE0 |   | d3-host-share-barras | con D1a+D2: NIEGA: la ruta `//host/share/x/y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si ca | 0.04s
+FASE0 |   | d3-host-share-barras | con D1b+D2: NIEGA: la ruta `//host/share/x/y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si ca | 0.03s
+FASE0 |   | d3-host-share-barras | con D1c+D2: NIEGA: la ruta `//host/share/x/y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si ca | 0.03s
+FASE0 |   | d3-host-share-barras | con D1d+D2: NIEGA: la ruta `//host/share/x/y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si ca | 0.04s
+FASE0 | D3 | d3-host-share-invertidas | hoy: NIEGA: la ruta `\\host\share\y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae  | 0.04s
+FASE0 |   | d3-host-share-invertidas | con D1: NIEGA: la ruta `\\host\share\y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae  | 0.04s
+FASE0 |   | d3-host-share-invertidas | con D1+D2: NIEGA: la ruta `\\host\share\y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae  | 0.04s
+FASE0 |   | d3-host-share-invertidas | con D1a+D2: NIEGA: la ruta `\\host\share\y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae  | 0.03s
+FASE0 |   | d3-host-share-invertidas | con D1b+D2: NIEGA: la ruta `\\host\share\y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae  | 0.04s
+FASE0 |   | d3-host-share-invertidas | con D1c+D2: NIEGA: la ruta `\\host\share\y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae  | 0.03s
+FASE0 |   | d3-host-share-invertidas | con D1d+D2: NIEGA: la ruta `\\host\share\y.txt` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae  | 0.04s
+FASE0 | D3 | d3-recorre-protegida | hoy: NIEGA: el codigo nombra la carpeta <holdout>, que contiene material protegido, y no se puede decidir que abrira dentro. | 0.04s
+FASE0 |   | d3-recorre-protegida | con D1: NIEGA: el codigo nombra la carpeta <holdout>, que contiene material protegido, y no se puede decidir que abrira dentro. | 0.04s
+FASE0 |   | d3-recorre-protegida | con D1+D2: NIEGA: el codigo nombra la carpeta <holdout>, que contiene material protegido, y no se puede decidir que abrira dentro. | 0.04s
+FASE0 |   | d3-recorre-protegida | con D1a+D2: NIEGA: el codigo nombra la carpeta <holdout>, que contiene material protegido, y no se puede decidir que abrira dentro. | 0.04s
+FASE0 |   | d3-recorre-protegida | con D1b+D2: NIEGA: el codigo nombra la carpeta <holdout>, que contiene material protegido, y no se puede decidir que abrira dentro. | 0.03s
+FASE0 |   | d3-recorre-protegida | con D1c+D2: NIEGA: el codigo nombra la carpeta <holdout>, que contiene material protegido, y no se puede decidir que abrira dentro. | 0.05s
+FASE0 |   | d3-recorre-protegida | con D1d+D2: NIEGA: el codigo nombra la carpeta <holdout>, que contiene material protegido, y no se puede decidir que abrira dentro. | 0.04s
+FASE0 | D3 | d3-nombra-protegido | hoy: NIEGA: el codigo nombra <holdout>/1/secreto.yaml. | 0.04s
+FASE0 |   | d3-nombra-protegido | con D1: NIEGA: el codigo nombra <holdout>/1/secreto.yaml. | 0.04s
+FASE0 |   | d3-nombra-protegido | con D1+D2: NIEGA: el codigo nombra <holdout>/1/secreto.yaml. | 0.04s
+FASE0 |   | d3-nombra-protegido | con D1a+D2: NIEGA: el codigo nombra <holdout>/1/secreto.yaml. | 0.03s
+FASE0 |   | d3-nombra-protegido | con D1b+D2: NIEGA: el codigo nombra <holdout>/1/secreto.yaml. | 0.03s
+FASE0 |   | d3-nombra-protegido | con D1c+D2: NIEGA: el codigo nombra <holdout>/1/secreto.yaml. | 0.04s
+FASE0 |   | d3-nombra-protegido | con D1d+D2: NIEGA: el codigo nombra <holdout>/1/secreto.yaml. | 0.04s
+FASE0 | hueco | h1-recorte | hoy: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.04s
+FASE0 |   | h1-recorte | con D1: PASA | 0.04s
+FASE0 |   | h1-recorte | con D1+D2: PASA | 0.04s
+FASE0 |   | h1-recorte | con D1a+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.03s
+FASE0 |   | h1-recorte | con D1b+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.04s
+FASE0 |   | h1-recorte | con D1c+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.03s
+FASE0 |   | h1-recorte | con D1d+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.04s
+FASE0 | hueco | h1b-recorte-control | hoy: PASA | 0.04s
+FASE0 |   | h1b-recorte-control | con D1: PASA | 0.04s
+FASE0 |   | h1b-recorte-control | con D1+D2: PASA | 0.04s
+FASE0 |   | h1b-recorte-control | con D1a+D2: PASA | 0.04s
+FASE0 |   | h1b-recorte-control | con D1b+D2: PASA | 0.03s
+FASE0 |   | h1b-recorte-control | con D1c+D2: PASA | 0.04s
+FASE0 |   | h1b-recorte-control | con D1d+D2: PASA | 0.04s
+FASE0 | hueco | h1c-recorte-blanco-interior | hoy: NIEGA: la ruta `// a b/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): | 0.04s
+FASE0 |   | h1c-recorte-blanco-interior | con D1: PASA | 0.04s
+FASE0 |   | h1c-recorte-blanco-interior | con D1+D2: PASA | 0.04s
+FASE0 |   | h1c-recorte-blanco-interior | con D1a+D2: NIEGA: la ruta `// a b/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): | 0.04s
+FASE0 |   | h1c-recorte-blanco-interior | con D1b+D2: NIEGA: la ruta `// a b/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): | 0.04s
+FASE0 |   | h1c-recorte-blanco-interior | con D1c+D2: PASA | 0.04s
+FASE0 |   | h1c-recorte-blanco-interior | con D1d+D2: NIEGA: la ruta `// a b/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): | 0.04s
+FASE0 | hueco | h2-lstrip | hoy: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.04s
+FASE0 |   | h2-lstrip | con D1: PASA | 0.03s
+FASE0 |   | h2-lstrip | con D1+D2: PASA | 0.04s
+FASE0 |   | h2-lstrip | con D1a+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.03s
+FASE0 |   | h2-lstrip | con D1b+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.04s
+FASE0 |   | h2-lstrip | con D1c+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.04s
+FASE0 |   | h2-lstrip | con D1d+D2: NIEGA: la ruta `// <holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la  | 0.04s
+FASE0 | hueco | h3-puntopunto | hoy: NIEGA: la ruta `// x/../<tmp>/repo/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dis | 0.04s
+FASE0 |   | h3-puntopunto | con D1: PASA | 0.04s
+FASE0 |   | h3-puntopunto | con D1+D2: PASA | 0.04s
+FASE0 |   | h3-puntopunto | con D1a+D2: NIEGA: la ruta `// x/../<tmp>/repo/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dis | 0.05s
+FASE0 |   | h3-puntopunto | con D1b+D2: NIEGA: la ruta `// x/../<tmp>/repo/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dis | 0.04s
+FASE0 |   | h3-puntopunto | con D1c+D2: NIEGA: la ruta `// x/../<tmp>/repo/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dis | 0.04s
+FASE0 |   | h3-puntopunto | con D1d+D2: NIEGA: la ruta `// x/../<tmp>/repo/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un dis | 0.03s
+FASE0 | hueco | h4-espacio-localhost | hoy: NIEGA: la ruta `\\ localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 |   | h4-espacio-localhost | con D1: PASA | 0.03s
+FASE0 |   | h4-espacio-localhost | con D1+D2: PASA | 0.04s
+FASE0 |   | h4-espacio-localhost | con D1a+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.03s
+FASE0 |   | h4-espacio-localhost | con D1b+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.03s
+FASE0 |   | h4-espacio-localhost | con D1c+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 |   | h4-espacio-localhost | con D1d+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 | hueco | h5-tab-localhost | hoy: NIEGA: la ruta `\\	localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 |   | h5-tab-localhost | con D1: PASA | 0.04s
+FASE0 |   | h5-tab-localhost | con D1+D2: PASA | 0.05s
+FASE0 |   | h5-tab-localhost | con D1a+D2: NIEGA: la ruta `\\	localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 |   | h5-tab-localhost | con D1b+D2: NIEGA: la ruta `\\	localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 |   | h5-tab-localhost | con D1c+D2: NIEGA: la ruta `\\	localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 |   | h5-tab-localhost | con D1d+D2: NIEGA: la ruta `\\	localhost\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maquina, u | 0.04s
+FASE0 | hueco | h6-espacio-equipo | hoy: NIEGA: la ruta `\\ <equipo>\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maqu | 0.04s
+FASE0 |   | h6-espacio-equipo | con D1: PASA | 0.04s
+FASE0 |   | h6-espacio-equipo | con D1+D2: PASA | 0.04s
+FASE0 |   | h6-espacio-equipo | con D1a+D2: NIEGA: la ruta `\\ <equipo>\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maqu | 0.03s
+FASE0 |   | h6-espacio-equipo | con D1b+D2: NIEGA: la ruta `\\ <equipo>\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maqu | 0.04s
+FASE0 |   | h6-espacio-equipo | con D1c+D2: NIEGA: la ruta `\\ <equipo>\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maqu | 0.04s
+FASE0 |   | h6-espacio-equipo | con D1d+D2: NIEGA: la ruta `\\ <equipo>\C$<tmp>\repo\<holdout>\1\secreto.yaml` no se puede canonizar (un recurso de otra maqu | 0.04s
+FASE0 | hueco | h7-espacio-localhost-raiz-recorre | hoy: NIEGA: la ruta `\\ localhost\C$<tmp>\repo` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombr | 0.04s
+FASE0 |   | h7-espacio-localhost-raiz-recorre | con D1: PASA | 0.05s
+FASE0 |   | h7-espacio-localhost-raiz-recorre | con D1+D2: PASA | 0.04s
+FASE0 |   | h7-espacio-localhost-raiz-recorre | con D1a+D2: PASA | 0.04s
+FASE0 |   | h7-espacio-localhost-raiz-recorre | con D1b+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombr | 0.04s
+FASE0 |   | h7-espacio-localhost-raiz-recorre | con D1c+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombr | 0.04s
+FASE0 |   | h7-espacio-localhost-raiz-recorre | con D1d+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombr | 0.03s
+FASE0 | hueco | h8-espacio-localhost-raiz-sin-recorrer | hoy: NIEGA: la ruta `\\ localhost\C$<tmp>\repo` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombr | 0.04s
+FASE0 |   | h8-espacio-localhost-raiz-sin-recorrer | con D1: PASA | 0.03s
+FASE0 |   | h8-espacio-localhost-raiz-sin-recorrer | con D1+D2: PASA | 0.03s
+FASE0 |   | h8-espacio-localhost-raiz-sin-recorrer | con D1a+D2: PASA | 0.04s
+FASE0 |   | h8-espacio-localhost-raiz-sin-recorrer | con D1b+D2: PASA | 0.04s
+FASE0 |   | h8-espacio-localhost-raiz-sin-recorrer | con D1c+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombr | 0.03s
+FASE0 |   | h8-espacio-localhost-raiz-sin-recorrer | con D1d+D2: NIEGA: la ruta `\\ localhost\C$<tmp>\repo` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombr | 0.04s
+FASE0 | F2 | f2-cmp-docs-nuevos | hoy: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`). | 0.04s
+FASE0 |   | f2-cmp-docs-nuevos | con D1: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`). | 0.03s
+FASE0 |   | f2-cmp-docs-nuevos | con D1+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-nuevos | con D1a+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-nuevos | con D1b+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-nuevos | con D1c+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-nuevos | con D1d+D2: PASA | 0.00s
+FASE0 | F2 | f2-cmp-s-docs-nuevos | hoy: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`). | 0.03s
+FASE0 |   | f2-cmp-s-docs-nuevos | con D1: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`). | 0.04s
+FASE0 |   | f2-cmp-s-docs-nuevos | con D1+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-s-docs-nuevos | con D1a+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-s-docs-nuevos | con D1b+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-s-docs-nuevos | con D1c+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-s-docs-nuevos | con D1d+D2: PASA | 0.00s
+FASE0 | F2 | f2-cmp-docs-de-main | hoy: PASA | 0.08s
+FASE0 |   | f2-cmp-docs-de-main | con D1: PASA | 0.07s
+FASE0 |   | f2-cmp-docs-de-main | con D1+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-de-main | con D1a+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-de-main | con D1b+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-de-main | con D1c+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-docs-de-main | con D1d+D2: PASA | 0.00s
+FASE0 | F2 | f2-cmp-origen-g6 | hoy: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta diaria.DIAGNOSTICO.cuenta=diaria.txt (ni extension ni `#!`). | 0.04s
+FASE0 |   | f2-cmp-origen-g6 | con D1: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta diaria.DIAGNOSTICO.cuenta=diaria.txt (ni extension ni `#!`). | 0.04s
+FASE0 |   | f2-cmp-origen-g6 | con D1+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-origen-g6 | con D1a+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-origen-g6 | con D1b+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-origen-g6 | con D1c+D2: PASA | 0.00s
+FASE0 |   | f2-cmp-origen-g6 | con D1d+D2: PASA | 0.00s
+FASE0 | F2 | f2-cmp-protegido-segundo | hoy: NIEGA: ejecutar <holdout>/1/secreto.yaml. | 0.04s
+FASE0 |   | f2-cmp-protegido-segundo | con D1: NIEGA: ejecutar <holdout>/1/secreto.yaml. | 0.04s
+FASE0 |   | f2-cmp-protegido-segundo | con D1+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-segundo | con D1a+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-segundo | con D1b+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-segundo | con D1c+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-segundo | con D1d+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 | F2 | f2-cmp-protegido-primero | hoy: NIEGA: ejecutar <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-primero | con D1: NIEGA: ejecutar <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-primero | con D1+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-primero | con D1a+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-primero | con D1b+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-primero | con D1c+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-primero | con D1d+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 | F2 | f2-cmp-protegido-absoluto | hoy: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`). | 0.04s
+FASE0 |   | f2-cmp-protegido-absoluto | con D1: NIEGA: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`). | 0.04s
+FASE0 |   | f2-cmp-protegido-absoluto | con D1+D2: NIEGA: leer el contenido de <tmp>/repo/<holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-absoluto | con D1a+D2: NIEGA: leer el contenido de <tmp>/repo/<holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-absoluto | con D1b+D2: NIEGA: leer el contenido de <tmp>/repo/<holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-absoluto | con D1c+D2: NIEGA: leer el contenido de <tmp>/repo/<holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | f2-cmp-protegido-absoluto | con D1d+D2: NIEGA: leer el contenido de <tmp>/repo/<holdout>/1/secreto.yaml. | 0.00s
+FASE0 | diff | c-diff-docs-nuevos | hoy: PASA | 0.00s
+FASE0 |   | c-diff-docs-nuevos | con D1: PASA | 0.00s
+FASE0 |   | c-diff-docs-nuevos | con D1+D2: PASA | 0.00s
+FASE0 |   | c-diff-docs-nuevos | con D1a+D2: PASA | 0.00s
+FASE0 |   | c-diff-docs-nuevos | con D1b+D2: PASA | 0.00s
+FASE0 |   | c-diff-docs-nuevos | con D1c+D2: PASA | 0.00s
+FASE0 |   | c-diff-docs-nuevos | con D1d+D2: PASA | 0.00s
+FASE0 | diff | c-diff-q-docs-nuevos | hoy: PASA | 0.00s
+FASE0 |   | c-diff-q-docs-nuevos | con D1: PASA | 0.00s
+FASE0 |   | c-diff-q-docs-nuevos | con D1+D2: PASA | 0.00s
+FASE0 |   | c-diff-q-docs-nuevos | con D1a+D2: PASA | 0.00s
+FASE0 |   | c-diff-q-docs-nuevos | con D1b+D2: PASA | 0.00s
+FASE0 |   | c-diff-q-docs-nuevos | con D1c+D2: PASA | 0.00s
+FASE0 |   | c-diff-q-docs-nuevos | con D1d+D2: PASA | 0.00s
+FASE0 | diff | c-diff-protegido | hoy: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido | con D1: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido | con D1+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido | con D1a+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido | con D1b+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido | con D1c+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido | con D1d+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 | diff | c-diff-protegido-primero | hoy: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido-primero | con D1: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido-primero | con D1+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido-primero | con D1a+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido-primero | con D1b+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido-primero | con D1c+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s
+FASE0 |   | c-diff-protegido-primero | con D1d+D2: NIEGA: leer el contenido de <holdout>/1/secreto.yaml. | 0.00s

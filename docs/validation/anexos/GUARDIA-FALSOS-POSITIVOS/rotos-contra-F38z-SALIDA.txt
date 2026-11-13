@@ -1,0 +1,30 @@
+E   AssertionError: la ruta `// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md).` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae bajo la raiz del repositorio.
+E   AssertionError: la ruta `// CAPA_HASH = SHA-256 de este fichero sin su linea (docs/validation/CAPA-GENERADA.md).` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae bajo la raiz del repositorio.
+E   AssertionError: la ruta `//   uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae bajo la raiz del repositorio.
+E   AssertionError: la ruta `//	x docs/a/b.md` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae bajo la raiz del repositorio.
+E   AssertionError: la ruta `\\ x docs\a\b.md` no se puede canonizar (un recurso de otra maquina, un dispositivo o un volumen por su nombre): la guardia no sabe si cae bajo la raiz del repositorio.
+E   AssertionError: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`).
+E   AssertionError: ejecutar `cmp`: la guardia no sabe con que se ejecuta docs/n1.md (ni extension ni `#!`).
+E   AssertionError: ejecutar `cmp`: la guardia no sabe con que se ejecuta diaria.DIAGNOSTICO.cuenta=diaria.txt (ni extension ni `#!`).
+E   AssertionError: ("cmp docs/n1.md '<tmp>/repo/<holdout>/1/secreto.yaml'", 'ejecutar `cmp`: la guardi...tail`, `grep`, `wc`, `sort`, `uniq` o `cut` sin redirigir su salida; y ningun `$(...)` ni acento grave en el comando.')
+E   AssertionError: assert 'stable/F38k-margen-pendiente' == 'stable/F38z-capa-generada'
+E   assert 'la ruta `// a b/<holdout>/1/secreto.yaml` no se puede canonizar (un recurso de otra maquina, un disposi... un lector se niega.\nComo reescribirlo: la ruta normal desde la raiz (`C:\\...`) o relativa al directorio de trabajo.' is None
+E   AttributeError: <module 'guardia_claude' from 'C:<raiz>\\.claude\\hooks\\guardia.py'> has no attribute '_tramo_lleva_blanco'
+E   AttributeError: <module 'guardia_claude' from 'C:<raiz>\\.claude\\hooks\\guardia.py'> has no attribute '_comentario_que_no_es_ruta'
+E   KeyError: 'cmp'
+E   AssertionError: assert 'ejecutar <holdout>/1/secreto.yaml.\nRegla: CLAUDE.md, ?Que se puede mirar y que no?, punto 3: `<holdout>/**` esta PROHIBIDO sin pasar por la puerta de ADR-0033 (`botsito.cases.holdout`).' is None
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f1_la_copia_cambiada_de_generar_capa_pasa
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f1_un_comentario_de_un_guion_nuevo_pasa[364]
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f1_un_comentario_de_un_guion_nuevo_pasa[359-fcadena]
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f1_un_comentario_de_un_guion_nuevo_pasa[tabulador]
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f1_un_comentario_de_un_guion_nuevo_pasa[barras-invertidas]
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f2_cmp_de_dos_ficheros_que_no_son_guiones_pasa[cmp docs/n1.md docs/n2.md]
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f2_cmp_de_dos_ficheros_que_no_son_guiones_pasa[cmp -s docs/n1.md docs/n2.md]
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f2_cmp_de_dos_ficheros_que_no_son_guiones_pasa[cmp diaria.DIAGNOSTICO.cuenta=diaria.txt otra.txt]
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_f2_cmp_con_un_fichero_protegido_se_niega_por_la_lectura
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_la_referencia_es_stable_f38z
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_roto_sin_la_clausula_de_sensibles
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_roto_sin_la_clausula_del_blanco
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_roto_sin_la_condicion_entera
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_roto_sin_cmp_en_no_ejecutan
+FAILED tests/unit/test_guardia_falsos_positivos.py::test_roto_cmp_sin_leer_sus_argumentos

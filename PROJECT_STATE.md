@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-falsos-positivos
 
 ## Current Feature
-Ninguna rama abierta. trabajo/capa-generada cerrada en main el 2026-11-12 (stable/F38z-capa-generada; R6a.2): lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2.
+trabajo/guardia-falsos-positivos, lista para revision, NO cerrada (carril «guardias y deuda»: G.6 y la deuda de la guardia de F38z): cmp de dos ficheros que no son guiones ya no se niega (F2, G.6); el literal «// » de un guion nuevo (F1), aplazado: ninguna condicion medida aguanta. Encargo docs/encargos/trabajo-guardia-falsos-positivos.md; informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md.
 
 ## Stable Main State
 7bccf310 · merge de `trabajo/capa-generada` (tag `stable/F38z-capa-generada`), sobre `stable/F38y-laminas-motivos` (7d3002c8). Informe docs/validation/CAPA-GENERADA.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/capa-generada cerrada en main el 2026-11-12 (stabl
 7bccf310 · merge: trabajo/capa-generada, lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2 (R6a.2) · tag stable/F38z-capa-generada
 
 ## Tests Currently Passing
-2039 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2061 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -81,7 +81,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción) … (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2; entera en HISTORIA, Technical Debt ACORTADA)
 - El validador del journal (v1 y v2) vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
 - La skill `activar-sesion` no dice que una activación que toque un parámetro de la capa de MT5 (`ENTRAN` de `generar_capa.py`) regenera `Generado.mqh` en el mismo commit (CAPA-GENERADA.md, D3; `.claude/` no se tocó allí).
-- La guardia niega guiones nuevos por falsos positivos: un texto que empieza por `//` como ruta y `cmp a b` como si ejecutara `a`; y `compilar.py` cambiado, por nombrar `/` (CAPA-GENERADA.md, «La guardia»: lo lanzó Aleks con «!»).
+- La guardia niega a un guion nuevo dos falsos positivos, que lanza Aleks con «!»: un texto que empieza por `//` y un blanco, como ruta de red (F1, aplazado en `trabajo/guardia-falsos-positivos`: ninguna condicion medida aguanta), y un literal que solo es separadores, como el `/` de `compilar.py`, por el mismo mecanismo que « / » y `</li>` de la linea de F38w de abajo (CAPA-GENERADA.md, «La guardia»).
 - El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4) … (DEMO-EJECUCIONES-2-3.md §0.f; entera en HISTORIA, Technical Debt ACORTADA)
 - Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») … (DEMO-EJECUCIONES-2-3.md §3.1; entera en HISTORIA, Technical Debt ACORTADA)
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
@@ -164,8 +164,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 68 (2026-11-12).
+— ninguna desde el Archivo 69 (2026-11-12).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 68 (2026-11-12).
+— ninguna desde el Archivo 69 (2026-11-12).
