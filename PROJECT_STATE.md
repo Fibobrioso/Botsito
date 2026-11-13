@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-falsos-positivos
 
 ## Current Feature
-Ninguna rama abierta. trabajo/capa-generada cerrada en main el 2026-11-12 (stable/F38z-capa-generada; R6a.2): lo que la capa de MT5 recibe del repo, generado y con su capa_hash en el journal v2.
+trabajo/guardia-falsos-positivos, EN CURSO (carril «guardias y deuda»: G.6 y la deuda de la guardia de F38z): que la guardia deje de negar un literal «// » de un guion nuevo y cmp de dos ficheros que no son guiones, sin abrir ningun hueco. Encargo docs/encargos/trabajo-guardia-falsos-positivos.md; informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md.
 
 ## Stable Main State
 7bccf310 · merge de `trabajo/capa-generada` (tag `stable/F38z-capa-generada`), sobre `stable/F38y-laminas-motivos` (7d3002c8). Informe docs/validation/CAPA-GENERADA.md; el registro del cierre, al final de HISTORIA.
@@ -164,8 +164,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 68 (2026-11-12).
+— ninguna desde el Archivo 69 (2026-11-12).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 68 (2026-11-12).
+— ninguna desde el Archivo 69 (2026-11-12).
