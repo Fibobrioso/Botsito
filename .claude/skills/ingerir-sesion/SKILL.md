@@ -66,7 +66,7 @@ Un fotograma se abre segun el video, y siempre despues de la regla de los fotogr
 (respuesta del consultor a la PARADA de `trabajo/skills-metodo`, punto 0, en
 `docs/validation/SKILLS-METODO.md`):
 - **video fuera de cuarentena**: primero `uv run botsito corpus frames show --video <vN> --t <h:mm:ss>`,
-  que la guardia niega dentro de un tramo no citable, y despues Read solo de la ruta que imprime;
+  que la guardia niega dentro de un tramo no citable (solo mira el instante de `--t`: sin `--n`), y despues Read solo de la ruta que imprime;
 - **video de sesion en cuarentena**: la guardia niega `frames show` siempre (`_analizar_cli`,
   `.claude/hooks/guardia.py`) y su mensaje manda abrir el PNG por su ruta: Read de
   `data/fotogramas/<v>/png-1fps/<ms>.png`, solo para un instante localizado antes en la filtrada y

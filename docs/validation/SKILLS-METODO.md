@@ -5,7 +5,7 @@ PLANTILLA: este informe no trae tabla final de preguntas al trader; es una rama 
 Rama `trabajo/skills-metodo` (tramo «Carril: guardias y deuda» de `docs/plan/HOJA-DE-RUTA.md`).
 Encargo del consultor del 2026-11-14: `docs/encargos/trabajo-skills-metodo.md`.
 
-Estado: EN CURSO, fase 1 (respuesta del consultor a la PARADA del 2026-11-14).
+Estado: Rama lista para revisión, NO cerrada (al final).
 
 ## Apertura (2026-11-14)
 
@@ -110,8 +110,9 @@ ERRORES-RECURRENTES (`:115-122`):
   dos que paga esta rama.
 - PROJECT_STATE.md:112 (un fotograma dentro de un tramo no citable se puede abrir): se queda; D2 c
   la nombra y no la paga (encargo).
-- PROJECT_STATE.md:150 (dos textos que ADR-0093 deja viejos: `scripts/graficos_sesion.py:66-71` y
-  `engine/decisiones.py:7-8`): código; no entra (D5).
+- PROJECT_STATE.md:150 (dos textos que ADR-0093 deja viejos; la línea está ACORTADA, y los dos,
+  `scripts/graficos_sesion.py:66-71` y `engine/decisiones.py:7-8`, los nombra su texto entero en
+  `docs/state/HISTORIA.md:17417`): código; no entra (D5).
 - HISTORIA:17233-17234 (cierre de `trabajo/preparacion-sesion-7`: la línea de `ingerir-sesion`
   ampliada con ADR-0093 §2): es la de :142, ya contada.
 - Las filas de F38u a F39b no piden nada más de estas tres skills. Lo que piden de otros ficheros,
@@ -178,7 +179,8 @@ vídeo).
   está escrito en ningún sitio (grep de «corre julio» y «delta de julio»: solo ADR-0093, RUMBO,
   `PREPARACION-SESION-7.md:277` y `:443` y los encargos, sin comando): lo tiene que fijar el
   encargo de la activación de la 7a.
-- PROJECT_STATE.md:150 (`scripts/graficos_sesion.py:66-71` y `engine/decisiones.py:7-8`): código.
+- PROJECT_STATE.md:150 (línea ACORTADA; los dos ficheros, en su texto entero de HISTORIA:17417):
+  código.
 - La activación de la 7a genera las láminas de la 7b, revisa PREGUNTAS-7B.md y pasa
   `SESION_EN_CURSO` a "08" (PROJECT_STATE.md:28): es de su encargo, no de la skill.
 - PROJECT_STATE.md:28 dice «C y R6a en los huecos»: esta rama ocupa ese hueco sin entrada `###` en
@@ -225,6 +227,10 @@ Lo demás de D1-D6 cuadra con lo medido (las citas, corregidas como arriba). Si 
 
 `make check` del commit de apertura (`c227edc9`): exit 0, 3513 passed, 6 xfailed, ningún `failed`,
 SELLO sobre el árbol `ab82b181`. `PICO DE MEMORIA de make check: 317 MiB en test`.
+
+`make check` del commit de la fase 0 (`86b28167`): exit 0, 3513 passed, 6 xfailed, ningún
+`failed`, SELLO sobre el árbol `9c0b9adb`. `PICO DE MEMORIA de make check: 318 MiB en test`
+(añadido tras el revisor, B1).
 
 ## Respuesta del consultor a la PARADA (2026-11-14)
 
@@ -452,6 +458,10 @@ index 8ab7127a..894f3326 100644
  - Las cuatro comprobaciones de la base (paso 1), con su salida, en el informe de la rama.
 ```
 
+`make check` del commit 3 (`d3d00f9f`): exit 0, 3513 passed, 6 xfailed, ningún `failed`, SELLO
+sobre el árbol `1b20d3e2`. `PICO DE MEMORIA de make check: 318 MiB en test` (añadido tras el
+revisor, B1).
+
 ### PROJECT_STATE.md
 
 `wc -c PROJECT_STATE.md`: **23435** bytes (23879 en `main`): salen las dos líneas de Technical Debt
@@ -518,4 +528,174 @@ Nada más cambia. `tests/unit/test_skills.py`, `test_historia.py`, `test_project
 
 | Rama | Hallazgos del revisor | Lo que vio el consultor después | Lecciones |
 |---|---|---|---|
-| `trabajo/skills-metodo` | (se rellena con el informe del revisor) | (la deja el consultor) | **De la sesión:** (1) una regla de cómo se abre un fotograma se mide contra la guardia para los dos casos, vídeo en cuarentena y fuera de ella, antes de escribirla: `_analizar_cli` niega `frames show` siempre en un vídeo en cuarentena (D2 c, PARADA de la fase 0); (2) una cita de la hoja de ruta por «paso» se busca en la entrada: los pasos numerados son de la Next Action, que caduca; se cita la entrada y su ADR. |
+| `trabajo/skills-metodo` | Una pasada, opus, sobre `d3d00f9f` («Informe del revisor», abajo): eje (a) 0 bloquea, 1 importa, 2 menor; eje (b) 1 bloquea, 0 importa, 3 menor. **B1 (bloquea):** faltaban en el informe los `make check` de la fase 0 y del commit 3, con su PICO, y el punto 4 decía «Hecho». A1 (importa: el informe sin estado al final), A3 (la atribución de los dos ficheros a una línea ACORTADA), B2 («y no otra» en la línea base, más de lo que dice la fuente), B3 (`frames show --n` mayor que 1 fuera de la mirada de la guardia), corregidos; A2 y B4, declarados («Lo que se hizo con los hallazgos del revisor») | (la deja el consultor) | **De la sesión:** (1) una regla de cómo se abre un fotograma se mide contra la guardia para los dos casos, vídeo en cuarentena y fuera de ella, antes de escribirla: `_analizar_cli` niega `frames show` siempre en un vídeo en cuarentena (D2 c, PARADA de la fase 0); (2) una cita de la hoja de ruta por «paso» se busca en la entrada: los pasos numerados son de la Next Action, que caduca; se cita la entrada y su ADR. |
+
+## Lo que se hizo con los hallazgos del revisor
+
+En un commit propio, sellado (el último de la rama):
+
+- **B1 (bloquea):** añadidos los `make check` de la fase 0 (`86b28167`, árbol `9c0b9adb`, 318 MiB)
+  y del commit 3 (`d3d00f9f`, árbol `1b20d3e2`, 318 MiB), sacados de sus mensajes de commit y del
+  `make-check.log` de cada uno, que se leyó antes de commitear. El punto 4 de la tabla queda bien.
+- **A1 (importa):** el informe acaba en su estado, y la línea 8 lo remite al final.
+- **A3 (menor):** los dos ficheros de PROJECT_STATE.md:150 se atribuyen ahora a su texto entero de
+  HISTORIA:17417; la línea de PROJECT_STATE está ACORTADA.
+- **B2 (menor):** la línea base de `activar-sesion` (`:63-64`) ya no dice «esa lectura, y no
+  otra»: dice que se lee como la de ADR-0093 §6 y que es lectura del encargo, D1 a, como pedía D1
+  a. Mismo número de líneas.
+- **B3 (menor):** en `ingerir-sesion` (`:69`), fuera de cuarentena, «solo mira el instante de
+  `--t`: sin `--n`» (`_tramos_en_la_cli`, `guardia.py:2619-2620`): con `--n` mayor que 1, la CLI
+  imprime rutas que la guardia no miró. Es la condición de la respuesta, punto 0 («nunca dentro de
+  un tramo»), aplicada a lo que hace la guardia; no es una regla nueva. Mismo número de líneas, así
+  que las evidencias fichero:línea del bloque PAGADA de HISTORIA (que solo se amplía) siguen
+  valiendo.
+- **A2 (menor), declarado:** la orden de la verificación de `ingerir-sesion` (`:151`) sigue con
+  `> knowledge-validate.log`; D4 solo deja añadir, y la línea de debajo dice dónde va el log. Si se
+  quiere cambiar la orden, es para una rama que pueda sustituir texto de la skill.
+- **B4 (menor), declarado:** «si la rama corre `make check` el dia de la apertura» es la redacción
+  de D3 b; el paso 7 siempre lo corre, así que en la práctica la fila entra siempre.
+
+## Informe del revisor
+
+Pegado tal cual (agente `revisor`, opus, sobre `d3d00f9f`, 2026-11-14):
+
+## Informe del revisor · trabajo/skills-metodo · 2026-11-14
+
+HEAD d3d00f9f, base main 73b4e7a9 (`git merge-base main HEAD` = 73b4e7a98cef…). `git status --short` sale vacío. Cinco commits, nueve ficheros.
+
+Resumen: la rama no rompe ninguna regla de la casa. Hay un bloquea del eje (b), que se arregla con una línea: falta en el informe el `make check` del tercer commit de la fase 1. Las citas de las skills son literales y la regla de los fotogramas se puede cumplir en los dos casos. Las dos líneas de Technical Debt salen pagadas enteras.
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | importa | El informe no acaba en su estado. El único «Estado:» está en la línea 8 y está desfasado: dice «EN CURSO, fase 1» cuando la fase 1 ya está hecha. El fichero termina con la fila de ERRORES-RECURRENTES. CLAUDE.md, «Como se trabaja»: «Un informe por rama en `docs/validation/`, con su estado al final». Lo normal es que lo ponga `entregar-rama`, pero hoy falta. | `docs/validation/SKILLS-METODO.md:8` («Estado: EN CURSO, fase 1 …»); `:517-521`, la última sección, sin estado |
+| A2 | menor | En `ingerir-sesion`, la orden de la verificación sigue escribiendo el log con una ruta relativa (`> knowledge-validate.log`, que cae en la raíz). Justo debajo, la línea nueva dice «nunca en la raiz». Se lee como una contradicción. Se dejó a propósito (D4: solo se añade) y está declarado, pero quien copie la orden repite la trampa. | `.claude/skills/ingerir-sesion/SKILL.md:151` frente a `:152-155`; `SKILLS-METODO.md:335-336` |
+| A3 | menor | El informe atribuye a `PROJECT_STATE.md:150` los nombres `scripts/graficos_sesion.py:66-71` y `engine/decisiones.py:7-8`. Esa línea está acortada y no los trae: los traen ADR-0093, «Impacto», y el texto entero en HISTORIA. | `SKILLS-METODO.md:113-114`; `git show main:PROJECT_STATE.md \| sed -n 150p` → «Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar … (…; entera en HISTORIA, Technical Debt ACORTADA)»; `docs/adr/0093-…md:223-226` |
+
+Comprobado sin hallazgos:
+1. **Contrato.**
+   - `uv run python scripts/contrato_rama.py` → «CONTRATO: 9 ficheros dentro del contrato de trabajo/skills-metodo (riesgo bajo, artefacto docs/validation/SKILLS-METODO.md, tramo 'Carril: guardias y deuda', 4 comprobaciones para el revisor)», exit 0.
+   - `uv run botsito state check` → «OK: rama 'trabajo/skills-metodo' …», exit 0.
+   - `wc -c PROJECT_STATE.md` → 23435, igual que el informe.
+   - `make check` no lo ejecuté. Su evidencia es `make-check.log`: «3513 passed, 6 xfailed», ningún `failed` (la única coincidencia es «xfailed»), «SELLO: make check en verde sobre el arbol 1b20d3e2…», que es `git rev-parse HEAD^{tree}`, y «PICO DE MEMORIA de make check: 318 MiB en `test`».
+   - Los árboles sellados que cita el informe coinciden con los de sus commits: ab82b181 (c227edc9), 0433f5fa (a8acd219) y 8a8dffb4 (c7920376).
+2. **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases`: `git log … -- knowledge/spec knowledge/cases` sale vacío.
+3. **Holdout y material.** No se toca nada del holdout. La fila de HOLDOUT-EXPOSICIONES del 2026-11-14 entró en el commit de apertura, con la forma de la de dieta-estado. Todos los commits son del 14.
+4. **Regímenes de cambio.** `git diff --name-status main...HEAD` no toca evidence, feedback, manifests, transcripciones, fotogramas ni `libros.yaml`. HISTORIA solo se amplía: la única línea «-» del diff es la cabecera `---`.
+5. **Ambigüedades.** No cambian.
+6. **ADR.** Ninguno nuevo ni cambiado. `test_adr.py` en verde.
+7. **Informes cerrados.** Solo cambia HOLDOUT-EXPOSICIONES, que es un registro vivo, con una línea añadida.
+8. **Tres guardias de `cita`.** No aplica: la rama no toca la spec.
+9. **Lo demás de CLAUDE.md.**
+   - No hay cifras en la forma ejecutable.
+   - Comprobé contra su fuente siete citas del informe, todas exactas:
+     - `:94`, lecciones 6 y 7 de video-julio (ERRORES-RECURRENTES.md:115);
+     - `:97`, «el log de `knowledge validate` en la raíz dejó el primer `make check` en verde y sin sello» (`:118`);
+     - `:98`, la lección 3 de guardia-falsos-positivos (`:121`);
+     - `:83`, ADR-0093 §6 en `:121-123`;
+     - `:88`, PROJECT_STATE.md:28, «(3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6)»;
+     - `:88`, HOJA-DE-RUTA.md:486, «NA:F, paso 3»;
+     - `:91`, la fecha de ADR-0093 en `:232`.
+10. **Items de evidencia nuevos.** Ninguno.
+- **Rutas de `test_skills.py`.** Las 19 rutas nuevas con prefijo existen con esas mayúsculas y minúsculas (`git ls-files --error-unmatch …`), así que Linux no las rompe. Ninguna va pegada a otro carácter. `uv run pytest tests/unit/test_skills.py tests/unit/test_historia.py tests/unit/test_project_state.py tests/unit/test_hoja_de_ruta.py -p no:cacheprovider -rA`: 38 PASSED, ningún FAILED ni ERROR.
+- **CI de Linux.** No hace falta: la rama no toca `scripts/git-hooks/`, `.claude/hooks/`, rutas, el sistema de archivos ni scripts (RITUAL.md:91-95). Lo que tiene de `.claude/` son tres SKILL.md.
+
+### Eje (b) · Encargo
+Resumen: 1 bloquea, 0 importa, 3 menor. Requisitos: 21 hechos, 1 parcial, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Base: main, tag, una sola rama, F39c libre | Hecho | `git rev-parse main` = 73b4e7a9; `stable/F39b-dieta-estado^{commit}` = `main^1` = 6054c4ce; `git branch --list` da solo main y la rama; `git tag -l "stable/F39c*"` vacío. Lo de origin y la CI, solo por el informe (`:12-26`) |
+| 2 | Abrir con abrir-rama: encargo, contrato y Archivo | Hecho | c227edc9; la desviación del guion que antepone `> ` está declarada (`:34-36`) |
+| 3 | Contrato: tramo literal, riesgo bajo, las tres skills y HOLDOUT | Hecho | `contrato.yaml:2-13`; contrato_rama en verde |
+| 4 | Informe con la PLANTILLA en sus primeros 600 caracteres | Hecho | `SKILLS-METODO.md:3` |
+| 5 | Fila de HOLDOUT antes del primer `make check`, en la apertura, declarada como desviación | Hecho | `HOLDOUT-EXPOSICIONES.md:148`; `SKILLS-METODO.md:30-33` |
+| 6 | La decisión del consultor (RUMBO §6), escrita en el informe | Hecho | `:38-45` |
+| 7 | D1 a: el método de ADR-0093 §4 con sus palabras, la línea base de §6 y PIVOTES, el comando de julio del encargo | Hecho. Las cinco citas son literales con ADR-0093:92-102 | `activar-sesion/SKILL.md:55-72` |
+| 8 | D1 b: viñeta «El arnes» sustituida (julio como diagnóstico, otras corridas autorizadas, R4.3 y ADR-0093 §6, opciones de ADR-0070 punto 3) | Hecho, con la cita corregida (respuesta, punto 3). No contradice ADR-0070 (la corrida que cuenta sigue con la lista cerrada de `:54-60`), ni ADR-0092 §6 (diagnóstico, `:168-170`), ni ADR-0093 §4 y §6 | `activar-sesion/SKILL.md:46-53`; R4.3 «Hecho cuando» en `HOJA-DE-RUTA.md:389`, literal |
+| 9 | D1 c: regenerar `Generado.mqh` en el mismo commit | Hecho, sin pasar de RENOVAR-CIERRES | `activar-sesion/SKILL.md:106-111`. La orden y «`parametros.yaml`, el perfil» son las de `RENOVAR-CIERRES.md:56-65`. Fase 2, D3, en `CAPA-GENERADA.md:511-512` (la Fase 2 empieza en `:484`). `ENTRAN` en `generar_capa.py:59` |
+| 10 | D1 d: ACTIVAR-SESION-06-MOTOR, anterior a ADR-0093 | Hecho | `activar-sesion/SKILL.md:15-16` |
+| 11 | D2 a: trailer `Fuente:` de `tramos_no_citables.yaml` | Hecho, citando el punto 3 de §7 | `ingerir-sesion/SKILL.md:50-53`; `SESION-06-EXTRACCION.md` §7, punto 3; `test_tramos_fuente.py:72-85` |
+| 12 | D2 b: ningún fotograma antes de situar el tramo, con las lecciones de video-julio | Hecho. «y nunca en el arranque de una grabación» es literal de la lección 6 | `ingerir-sesion/SKILL.md:30-38`; ERRORES-RECURRENTES.md:115, lecciones 3, 5, 6 y 7; ADR-0093:53-57 |
+| 13 | D2 c (respuesta, punto 0): cómo se abre un fotograma, por casos | Hecho. Se puede cumplir en los dos casos (detalle debajo de la tabla) | `ingerir-sesion/SKILL.md:65-74`. La línea de «Herramientas» `:61-63` no se tocó |
+| 14 | D2 d: el log de `knowledge validate` fuera de la raíz | Hecho, sin tocar `.gitignore` | `ingerir-sesion/SKILL.md:152-155`; lección 11 en ERRORES-RECURRENTES.md:118, «(11) la salida de una herramienta va a la carpeta de trabajo, nunca a la raíz del repo» |
+| 15 | D3 a: PLANTILLA; el test solo en las extracciones y «la convención que piden sus encargos» en los demás | Hecho | `abrir-rama/SKILL.md:74-79`. `test_hoja_de_ruta.py:98-100` (`[:600]`) y `:242-244`. DIETA-ESTADO.md y ACTIVAR-SESION-06.md llevan PLANTILLA en sus primeros 600 bytes |
+| 16 | D3 b: HOLDOUT antes del primer `make check`, y la verificación ajustada | Hecho | `abrir-rama/SKILL.md:97-101` y `:113-115`; lección 3 en ERRORES-RECURRENTES.md:121; DIETA-ESTADO.md:26 lo declaró como desviación |
+| 17 | Herencias (respuesta, punto 2): la lección 8 en ingerir-sesion y la de dieta-estado en el paso 6 de abrir-rama | Hecho. La cita de la lección 8 es literal | `ingerir-sesion/SKILL.md:54-57`; `abrir-rama/SKILL.md:89-92`; ERRORES-RECURRENTES.md:122 |
+| 18 | D4: solo se añade, salvo D1 b y la verificación de D3 b | Hecho | En el diff solo se quitan las 5 líneas de la viñeta «El arnes» y las 2 de la verificación de abrir-rama |
+| 19 | D5: nada fuera del contrato; sin material ni arnés | Hecho | `git diff --name-status`: las tres skills, PS, `contrato.yaml`, el encargo, HISTORIA, HOLDOUT y el informe |
+| 20 | D6: las dos líneas de TD, literales al final de HISTORIA, en el commit que paga cada una | Hecho (detalle debajo de la tabla) | a8acd219 quita la línea de :83; d3d00f9f quita la de :142 |
+| 21 | Punto 4: un commit por skill, sellado, con el PICO DE MEMORIA de cada `make check` y `wc -c` | **Parcial** | Ver B1 |
+| 22 | Punto 5: las secciones del informe y las respuestas del consultor iguales en el informe y el encargo | Hecho | `sed -n 61,68p` del encargo con `grep -c -F -x -f -` sobre el informe → 8 de 8 líneas; «El encargo, punto por punto» en `:462-489` |
+
+Detalle del requisito 13 (D2 c), medido en el código sin ejecutar nada sobre vídeos:
+- **Vídeo en cuarentena.** `_analizar_cli` niega `corpus frames show` cuando `--video` está en `sesiones_en_cuarentena` (`guardia.py:1098-1102`, `:2531-2537`). Su mensaje manda leer `data/fotogramas/<v>/png-1fps/<ms>.png`.
+- **Vídeo fuera de cuarentena.** `_tramos_en_la_cli` niega el instante `--t` que cae dentro de un tramo vigilado (`:2617-2637`).
+- **El Read del PNG.** `motivo_fichero` no niega ningún Read de `data/fotogramas/` (`:563-598`).
+- **Lo que imprime la CLI.** `frames show` imprime la ruta del PNG (`cli.py:560-565`) y admite `--video`, `--t` y `--n` (`:3193-3196`).
+
+Detalle del requisito 20 (D6):
+- Las dos líneas de `main` aparecen byte a byte en el bloque «# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/skills-metodo (2026-11-14)». La de :142 está en `HISTORIA.md:18385`.
+- Las líneas que dan de evidencia son correctas: `activar-sesion:106-111`, `ingerir-sesion:50-53`, `:30-38`, `:65-74` y `abrir-rama:74-79`.
+- La de :142 está pagada entera, en sus tres partes: el trailer, la PLANTILLA y los fotogramas.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | bloquea | Falta en el informe el `make check` del tercer commit de la fase 1 (d3d00f9f), con su línea PICO DE MEMORIA. El encargo lo pide expresamente: «En cada make check, la línea PICO DE MEMORIA al informe» (punto 4). Aun así, la tabla «punto por punto» marca el punto 4 como «Hecho». La evidencia existe y es una línea de arreglo: `make-check.log` trae «SELLO … 1b20d3e2…» (= `HEAD^{tree}`) y «PICO DE MEMORIA de make check: 318 MiB en `test`». Tampoco está el `make check` del commit de la fase 0, 86b28167: el de `:226-227` es el de la apertura (árbol ab82b181 = `c227edc9^{tree}`). | `SKILLS-METODO.md:398-453`: la sección de abrir-rama no tiene línea de `make check`, cuando `:318-319` y `:395-396` sí la tienen para los commits 1 y 2. `:487`: «4 · … PICO DE MEMORIA … · Hecho» |
+| B2 | menor | La línea base: D1 a pedía decir que es «esa lectura», es decir, una lectura del encargo. La skill la da como un hecho y le añade exclusividad: «Es la de ADR-0093 §6 … esa lectura, y no otra». ADR-0093 §6 la define para el pivote, no para el delta de cada activación, y ninguna fuente dice «y no otra». | `activar-sesion/SKILL.md:63-64`; ADR-0093:124-129; el encargo, D1 a |
+| B3 | menor | Fuera de cuarentena, la guardia solo mira el instante de `--t`. Con `--n` mayor que 1, `frames show` imprime los N fotogramas más cercanos, y alguno puede caer dentro de un tramo. «Read solo de la ruta que imprime» no lo excluye. El informe lo sabía en la fase 0 («solo mira el instante de `--t`»), pero la skill no lo dice. | `guardia.py:2619-2620` y `:2629`; `cli.py:556` y `:561-565`; `SKILLS-METODO.md:154`; `ingerir-sesion/SKILL.md:68-69` |
+| B4 | menor | La condición «si la rama corre `make check` el dia de la apertura» se cumple siempre, porque el paso 7 sella la apertura con `make check`. La verificación, en cambio, la trata como optativa («si entro»). Es la redacción del propio encargo (D3 b). | `abrir-rama/SKILL.md:94-100` y `:113-115` |
+
+Lo que la rama hace y el encargo no pide: nada que no esté respaldado. Lo añadido sale de las respuestas del consultor a la PARADA:
+- la lección 3 junto a la 5, la 6 y la 7;
+- la orden de `generar_capa.py` (punto 3);
+- las dos herencias (punto 2).
+
+Lo que no se toca (D5): comprobado con `git diff --name-status`.
+
+### Lo que no pude comprobar
+- **`make check`**: escribe, así que no lo ejecuté. Lo sustituye `make-check.log`: su SELLO es el árbol de HEAD, su PICO es 318 MiB y la suite sale en verde.
+- **Origin, el tag F39c en origin y la CI de `main` (run 43560175823)**: necesitan red. Solo lo afirma el informe (`:17-23`); en local cuadra.
+- **El comportamiento real de la guardia sobre un vídeo**: no ejecuté ni `frames show` ni Read de ningún PNG, por orden del encargo. Lo de D2 c sale de leer el código.
+- No leí material del trader, velas, holdout ni fotogramas.
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `git diff main...HEAD -- .claude/skills PROJECT_STATE.md docs/validation/HOLDOUT-EXPOSICIONES.md`
+3. `uv run python scripts/contrato_rama.py; uv run botsito state check` encadenados: **negado por la guardia** (exige comandos separados). Se partió en los dos siguientes.
+4. `uv run python scripts/contrato_rama.py`
+5. `uv run botsito state check`
+6. `wc -c PROJECT_STATE.md; ls -la make-check.log; grep -E "SELLO|PICO DE MEMORIA|passed|failed" make-check.log | tail -5`
+7. `git diff main...HEAD -- docs/state/HISTORIA.md | grep …` (el bloque PAGADA y las líneas «-»)
+8. `git rev-parse HEAD^{tree} a8acd219^{tree} c7920376^{tree} c227edc9^{tree}`
+9. Read de las tres SKILL.md, del encargo, de `contrato.yaml`, de `SKILLS-METODO.md` y de ADR-0093; Read de ADR-0070:40-74 y ADR-0092:150-184
+10. `grep`/`sed` sobre HOJA-DE-RUTA.md (R4.3, `:486`), PIVOTES-SESION-7.yaml, RENOVAR-CIERRES.md:50-70, CAPA-GENERADA.md y generar_capa.py
+11. `sed -n 830,862p docs/validation/SESION-06-EXTRACCION.md`; Read de `tests/contract/test_tramos_fuente.py`
+12. `sed -n 90,106p` y `238,252p` de `tests/unit/test_hoja_de_ruta.py`
+13. Un `grep` con bucle `for`: **negado por la guardia**. Rehecho con Grep sobre los encargos y con `head -c 600 … | grep` sobre DIETA-ESTADO.md y ACTIVAR-SESION-06.md
+14. Read de ERRORES-RECURRENTES.md:115; `sed -n 118p/121p/122p … | grep -o …`
+15. `grep -n` y Read de `.claude/hooks/guardia.py` (`:420-479`, `:560-629`, `:1095-1102`, `:2520-2637`)
+16. `grep`/`sed` y Read de `src/botsito/cli.py` (`:537-571`, `:3190-3202`, `:3648-3656`); Grep de `png-1fps` en `src/botsito/corpus`
+17. `sed -n 980,1003p docs/validation/VIDEO-JULIO.md`; `grep -n fotograma PROJECT_STATE.md`
+18. `git show main:PROJECT_STATE.md | sed -n 83p | grep -c -F -x -f - docs/state/HISTORIA.md`, y lo mismo con la línea 142 (`grep -n`)
+19. `git log --format='== %h %s' --stat main..HEAD`; `git show <commit> -- PROJECT_STATE.md`
+20. `sed -n 61,68p docs/encargos/trabajo-skills-metodo.md | grep -c -F -x -f - docs/validation/SKILLS-METODO.md`; `git diff main...HEAD --name-status`; `git log --format='%h%n%B' main..HEAD -- knowledge/spec knowledge/cases`
+21. `uv run pytest tests/unit/test_skills.py tests/unit/test_historia.py tests/unit/test_project_state.py tests/unit/test_hoja_de_ruta.py tests/unit/test_adr.py -q -p no:cacheprovider`, y la misma corrida con `-rA` (38 PASSED, ningún FAILED)
+22. `sed -n 88,98p docs/runbooks/RITUAL.md`
+23. `git ls-files --error-unmatch <las 19 rutas nuevas>`
+24. `grep -n "def test_los_tramos_del_repo_real" …`; `grep` sobre ACTIVAR-SESION-06-MOTOR.md y HISTORIA (F38o)
+25. `git log --format='%h %ad' --date=iso main..HEAD`
+26. `grep -c -i failed make-check.log`; `grep -n CONTRATO make-check.log`
+27. `grep` de ERROR en `src/botsito/validation/knowledge.py` y en `cli.py`
+28. `sed -n 148p PROJECT_STATE.md`; `git show main:PROJECT_STATE.md | sed -n 150p`
+29. Grep de PAGADA en `docs/state/README.md`
+30. `git branch --list; git rev-parse main "stable/F39b-dieta-estado^{commit}" main^1; git tag -l "stable/F39c*"`
+
+## Estado
+
+**Rama lista para revisión, NO cerrada.** Las tres skills al día (`a8acd219`, `c7920376`,
+`d3d00f9f`), las dos líneas de Technical Debt fuera, pagadas enteras; los arreglos del revisor en el
+último commit, sellado. Sin CI de Linux (RITUAL.md, hacia :93-96; el revisor lo confirma). La
+orden de cierre es de Aleks; tag de cierre previsto: `stable/F39c-skills-metodo`.

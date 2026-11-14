@@ -60,8 +60,8 @@ Desde ADR-0093 (2026-11-11), con sus palabras:
 - «Cada activación declara ANTES qué filas de la clasificación vigente debería convertir en
   pareja», y corre julio de 2026 en la rama, «con su delta de parejas y de operaciones de más frente
   a la línea base».
-- La linea base: §4 no la define. Es la de ADR-0093 §6 («Línea base»), con sus cifras en
-  `docs/plan/PIVOTES-SESION-7.yaml` (`linea_base`): esa lectura, y no otra.
+- La linea base: §4 no la define. Se lee como la de ADR-0093 §6 («Línea base»), con sus cifras en
+  `docs/plan/PIVOTES-SESION-7.yaml` (`linea_base`): lectura del encargo de `trabajo/skills-metodo`, D1 a.
 - «Si el delta de julio de una activación no casa con lo que declaró, la regla no se retoca hasta
   que la cifra salga: PARADA» (ADR-0093 §4).
 - El delta es diagnostico: «La cifra dice si la respuesta se entendió, nunca ajusta un parámetro»
