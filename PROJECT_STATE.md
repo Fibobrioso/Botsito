@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/skills-metodo
+main
 
 ## Current Feature
-trabajo/skills-metodo, EN CURSO desde el 2026-11-14: las skills activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas. Encargo docs/encargos/trabajo-skills-metodo.md; informe docs/validation/SKILLS-METODO.md.
+Ninguna rama abierta. trabajo/skills-metodo cerrada en main el 2026-11-14 (stable/F39c-skills-metodo): activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas; pagadas dos líneas de Technical Debt.
 
 ## Stable Main State
-6054c4ce · merge de `trabajo/dieta-estado` (tag `stable/F39b-dieta-estado`), sobre `stable/F39a-guardia-falsos-positivos` (e9314598). Informe docs/validation/DIETA-ESTADO.md; el registro del cierre, al final de HISTORIA.
+0f420593 · merge de `trabajo/skills-metodo` (tag `stable/F39c-skills-metodo`), sobre `stable/F39b-dieta-estado` (6054c4ce). Informe docs/validation/SKILLS-METODO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-6054c4ce · merge trabajo/dieta-estado: PROJECT_STATE adelgazado por (e), de 24.652 a unos 24.040 bytes · tag stable/F39b-dieta-estado
+0f420593 · merge trabajo/skills-metodo: activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas · tag stable/F39c-skills-metodo
 
 ## Tests Currently Passing
 2061 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
