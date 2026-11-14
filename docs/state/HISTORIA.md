@@ -18387,3 +18387,64 @@ Su texto literal en «Technical Debt», con su evidencia:
   `.claude/skills/ingerir-sesion/SKILL.md:50-53`; los fotogramas, `ingerir-sesion/SKILL.md:30-38`
   (y cómo se abre uno, `:65-74`), los dos en `c7920376`; la línea de PLANTILLA,
   `.claude/skills/abrir-rama/SKILL.md:74-79`, en el commit de esta línea (SKILLS-METODO.md, fase 1).
+
+# Registro de cierre · `trabajo/skills-metodo` (2026-11-14)
+
+- Orden de cierre del consultor del 2026-11-14, tras su revisión, dada por Aleks en la conversación
+  de la sesión; copiada tal cual al final del encargo y del informe en `037a04b5`. Después, Aleks
+  lanzó `/cerrar-rama trabajo/skills-metodo`.
+- **Dos commits del cierre en la rama, no uno.** Por el punto 1 de la orden, antes de este va un
+  commit propio, sellado (`037a04b5`): la orden de verificación de
+  `.claude/skills/ingerir-sesion/SKILL.md:151`, que escribía `> knowledge-validate.log` en la raíz,
+  se sustituyó en su misma línea por la forma que escribe el log en la carpeta de trabajo, fuera del
+  repo; `:152-155` no se tocaron (`wc -l`: 159 antes y después), así que las evidencias
+  fichero:línea del bloque «# Technical Debt PAGADA» de arriba siguen valiendo. Es una excepción
+  declarada a `docs/runbooks/RITUAL.md` (hacia :116-118: el del contrato es el único commit que el
+  cierre añade a la rama), con el precedente del punto 1a de la orden de cierre de
+  `trabajo/guardia-falsos-positivos`.
+- **Lo que entra** (carril «guardias y deuda»):
+  - `.claude/skills/activar-sesion/SKILL.md`: el método de ADR-0093 §4, con sus palabras; la viñeta
+    «El arnes» sustituida (la corrida de julio, diagnóstico; la que cuenta, la de R4.3 y ADR-0093
+    §6); regenerar `Generado.mqh` en el mismo commit (RENOVAR-CIERRES.md); ACTIVAR-SESION-06-MOTOR
+    en los precedentes.
+  - `.claude/skills/ingerir-sesion/SKILL.md`: la regla de los fotogramas (ADR-0093 §2, punto 5, y las
+    lecciones 3, 5, 6 y 7 de `trabajo/video-julio`); cómo se abre un fotograma, por casos, en un
+    vídeo en cuarentena o fuera (respuesta del consultor a la PARADA, punto 0); el trailer `Fuente:`
+    de `tramos_no_citables.yaml`; la lección 8 de `trabajo/video-julio`; el log de
+    `knowledge validate` fuera de la raíz.
+  - `.claude/skills/abrir-rama/SKILL.md`: la línea de PLANTILLA; `knowledge validate` antes de cada
+    `make check`; la fila de HOLDOUT-EXPOSICIONES del día en el commit de apertura, con la
+    verificación ajustada.
+  - `PROJECT_STATE.md`, Technical Debt: dos líneas PAGADAS (la de `activar-sesion` y `Generado.mqh`,
+    y la de `ingerir-sesion` y `abrir-rama`, entera en sus tres partes), literales en el bloque «#
+    Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/skills-metodo (2026-11-14)» de
+    arriba, con su evidencia.
+  - El informe `docs/validation/SKILLS-METODO.md` (fase 0, PARADA, respuesta, fase 1, revisor, orden
+    de cierre) y el encargo con la respuesta a la PARADA y la orden de cierre al final.
+  - La fila de HOLDOUT-EXPOSICIONES de la rama: la del 2026-11-14 (los `make check`, que leen el M1
+    de marzo y calientan con el de junio), en el commit de apertura. La rama y su cierre caben en
+    ese día.
+
+  Nada del motor, la spec, `knowledge/`, `src/`, `tests/`, los hooks, `.claude/settings.json`, los
+  agentes, las demás skills, CLAUDE.md, los runbooks, los ADR ni la hoja de ruta.
+- **Commits de la rama** (8):
+  - `c227edc9` apertura: encargo, contrato, Archivo 71 y la fila de HOLDOUT-EXPOSICIONES;
+  - `86b28167` fase 0: inventario y PARADA (D2 c no se podía cumplir en un vídeo en cuarentena);
+  - `a8acd219` `activar-sesion`, y sale la línea de Technical Debt de `Generado.mqh`;
+  - `c7920376` `ingerir-sesion`;
+  - `d3d00f9f` `abrir-rama`, y sale la línea de Technical Debt de `ingerir-sesion` y `abrir-rama`;
+  - `10af3962` los hallazgos del revisor y su informe;
+  - `037a04b5` orden de cierre, punto 1: la orden de verificación de `ingerir-sesion`;
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Sin CI de Linux**: la rama no toca hooks, permisos, rutas, el sistema de archivos ni código
+  (RITUAL.md, hacia :93-96; el revisor lo confirma en su informe), así que no se empujó como
+  `fix/skills-metodo` y no hay run de rama.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: no sale, no entra y no cambia nada; hoja de ruta: no cambia;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 23.435 bytes (`wc -c`) en este commit.
+- Letra del tag: la última cerrada era `stable/F39b-dieta-estado`;
+  `stable/F39c-skills-metodo` no existe en local ni en origin (comprobado antes de este commit). La
+  siguiente rama será F39d.
+- Tag: `stable/F39c-skills-metodo`. El merge es `git rev-parse "stable/F39c-skills-metodo^{commit}"`.
