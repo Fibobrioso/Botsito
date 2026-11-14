@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/dieta-estado
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-falsos-positivos cerrada en main el 2026-11-13 (stable/F39a-guardia-falsos-positivos; G.6): cmp de dos ficheros que no son guiones ya no se niega; el literal // de un guion nuevo, aplazado.
+trabajo/dieta-estado, EN CURSO (carril «guardias y deuda»): PROJECT_STATE.md adelgazado con los criterios de docs/state/README.md antes de la sesion 7a. Encargo docs/encargos/trabajo-dieta-estado.md; informe docs/validation/DIETA-ESTADO.md.
 
 ## Stable Main State
 e9314598 · merge de `trabajo/guardia-falsos-positivos` (tag `stable/F39a-guardia-falsos-positivos`), sobre `stable/F38z-capa-generada` (7bccf310). Informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md; el registro del cierre, al final de HISTORIA.
@@ -81,7 +81,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción) … (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2; entera en HISTORIA, Technical Debt ACORTADA)
 - El validador del journal (v1 y v2) vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
 - La skill `activar-sesion` no dice que una activación que toque un parámetro de la capa de MT5 (`ENTRAN` de `generar_capa.py`) regenera `Generado.mqh` en el mismo commit (CAPA-GENERADA.md, D3; `.claude/` no se tocó allí).
-- La guardia niega a un guion nuevo dos falsos positivos, que lanza Aleks con «!»: un texto que empieza por `//` y un blanco, como ruta de red (F1, aplazado en `trabajo/guardia-falsos-positivos`: ninguna condicion medida aguanta), y un literal que solo es separadores, como el `/` de `compilar.py`, por el mismo mecanismo que « / » y `</li>` de la linea de F38w de abajo (CAPA-GENERADA.md, «La guardia»).
+- La guardia niega a un guion nuevo dos falsos positivos, que lanza Aleks con «!» … (CAPA-GENERADA.md, «La guardia»; entera en HISTORIA, Technical Debt ACORTADA)
 - El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4) … (DEMO-EJECUCIONES-2-3.md §0.f; entera en HISTORIA, Technical Debt ACORTADA)
 - Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») … (DEMO-EJECUCIONES-2-3.md §3.1; entera en HISTORIA, Technical Debt ACORTADA)
 - La comprobación del LF final en `UltimaLinea` (`mql5/Include/Botsito/Capa/Journal.mqh`) es redundante con la del formato: ninguna prueba la caza sola (EA-CONEXION.md §6, rotura r3).
@@ -147,9 +147,9 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - La comparación de `motor decisiones` mira cada operación por (día, sesión, lado, instante, entrada) y no su lote, su stop ni su objetivo: un cambio de lote solo se ve si mueve las no enviadas, los rechazos o las cuentas suspendidas (TRAZAS-ABLACION.md F4.3).
 - El `toca_colocar_orden_limite` sintético de tests/unit/test_cableado.py guarda en una clausura que ya dio SÍ y solo coloca en la primera corrida del proceso; los tests que corren el día dos veces usan uno sin estado (TRAZAS-ABLACION.md F2).
 - `motor laminas` no dice el esquema: con la orden en el punto, `zona_del_punto` crea toda zona con `por = primer_esquema` (zonas.py:414-416); la frase vuelve cuando el motor distinga los dos esquemas (LAMINAS.md, respuesta a la PARADA final, 1).
-- Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar: scripts/graficos_sesion.py:66-71, con su test (su constante ya no es la regla 2), y engine/decisiones.py:7-8 (el ADR del método ya existe) (PREPARACION-SESION-7.md §0.2, H8 y H19).
-- `motor laminas`: la CLI solo se prueba entera con las velas reales (LAMINAS.md, F4.3); en los tests, `main()` solo con la negativa de la salida, y la tubería entera por `laminas.generar` sobre el fixture.
-- La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios): dos falsos positivos en un guion que solo leía las láminas (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final); y toma por argumento que se construye al ejecutarse la cadena constante `$'\r'` de bash, en un `grep -c` sobre ficheros nombrados literales (LAMINAS.md, respuesta tras revisar la v4, 6); su arreglo va al carril de guardias, con fix/.
+- Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar … (PREPARACION-SESION-7.md §0.2, H8 y H19; entera en HISTORIA, Technical Debt ACORTADA)
+- `motor laminas`: la CLI solo se prueba entera con las velas reales (LAMINAS.md, F4.3) … (entera en HISTORIA, Technical Debt ACORTADA)
+- La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios) … (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final; LAMINAS.md, respuesta tras revisar la v4, 6; entera en HISTORIA, Technical Debt ACORTADA)
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
@@ -164,8 +164,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 69 (2026-11-12).
+— ninguna desde el Archivo 70 (2026-11-13).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 69 (2026-11-12).
+— ninguna desde el Archivo 70 (2026-11-13).
