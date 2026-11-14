@@ -549,7 +549,7 @@ En un commit propio, sellado (el último de la rama):
   un tramo»), aplicada a lo que hace la guardia; no es una regla nueva. Mismo número de líneas, así
   que las evidencias fichero:línea del bloque PAGADA de HISTORIA (que solo se amplía) siguen
   valiendo.
-- **A2 (menor), declarado:** la orden de la verificación de `ingerir-sesion` (`:151`) sigue con
+- **A2 (menor), declarado y después pagado** (orden de cierre, punto 1; sección «Orden de cierre», abajo): la orden de la verificación de `ingerir-sesion` (`:151`) sigue con
   `> knowledge-validate.log`; D4 solo deja añadir, y la línea de debajo dice dónde va el log. Si se
   quiere cambiar la orden, es para una rama que pueda sustituir texto de la skill.
 - **B4 (menor), declarado:** «si la rama corre `make check` el dia de la apertura» es la redacción
@@ -693,9 +693,38 @@ Lo que no se toca (D5): comprobado con `git diff --name-status`.
 29. Grep de PAGADA en `docs/state/README.md`
 30. `git branch --list; git rev-parse main "stable/F39b-dieta-estado^{commit}" main^1; git tag -l "stable/F39c*"`
 
+## Orden de cierre (2026-11-14)
+
+Copiada tal cual (también al final del encargo):
+
+> Orden de cierre de trabajo/skills-metodo (consultor, 2026-11-14). Revisada la rama contra main: el diff de las tres skills es el que dice el informe; cada lección citada (video-julio 3, 5, 6, 7 y 8; preparacion-sesion-7 11; la de dieta-estado; guardia-falsos-positivos 3) dice en ERRORES-RECURRENTES.md lo que la skill le atribuye; la orden de generar_capa.py es la de RENOVAR-CIERRES.md; las dos líneas de Technical Debt salen enteras y están literales en HISTORIA, que solo crece; y PROJECT_STATE, fuera de esas dos, solo cambia en Current Branch, Current Feature y las dos líneas del Archivo 71. Se cierra con la skill cerrar-rama y docs/runbooks/RITUAL.md, con todas sus puertas.
+>
+> 1. Antes del chore(cierre), un commit propio en la rama, sellado: en .claude/skills/ingerir-sesion/SKILL.md, la orden de verificación que aún escribe «> knowledge-validate.log» en la raíz (:151) se sustituye en su misma línea por la forma que escribe el log en la carpeta de trabajo de la sesión, fuera del repo, y las líneas nuevas de debajo (:152-155) no se tocan, para que ninguna línea se mueva y las evidencias fichero:línea de HISTORIA sigan valiendo (compruébalo con wc -l antes y después; si cambia el número de líneas, PARADA). Es el menor que el revisor dejó declarado porque el encargo solo dejaba añadir: lo autorizo ahora, porque la ingesta de la 7a usa esta skill y una skill no puede mandar una cosa y la contraria. El informe lo recoge en su sección y en el estado. Es una excepción declarada a RITUAL.md (hacia :116-118: el del contrato es el único commit que el cierre añade a la rama), con el precedente del punto 1a de la orden de cierre de trabajo/guardia-falsos-positivos; dilo en el registro.
+> 2. Tag: stable/F39c-skills-metodo (comprueba antes que no existe ni en local ni en origin). Mensaje del merge: «merge trabajo/skills-metodo: activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas». Mensaje del tag anotado: «trabajo/skills-metodo: las tres skills de la ingesta y la activación de la 7a al día; pagadas dos líneas de Technical Debt». Si cerrar-rama propone otros, usa estos.
+> 3. La fila de HOLDOUT-EXPOSICIONES del 2026-11-14 ya está en la rama (commit de apertura). Si el cierre cruzara a otro día en Lima, antes del primer make check de ese día va su fila en un commit propio de la rama; hoy no debería hacer falta.
+> 4. Commit chore(cierre) en la rama (punto 3 de RITUAL), uno solo:
+>    - sale contrato.yaml;
+>    - entra en HISTORIA el «# Registro de cierre · `trabajo/skills-metodo` (<fecha>)», con la forma del de trabajo/dieta-estado: stable/F39c-skills-metodo^{commit} en lugar del sha del merge; los commits de la rama (c227edc9, 86b28167, a8acd219, c7920376, d3d00f9f, 10af3962, el del punto 1 y este); la fila de HOLDOUT-EXPOSICIONES dentro de la rama; que no hubo CI de Linux porque la rama no toca hooks, permisos, rutas, el sistema de archivos ni código (RITUAL.md, hacia :93-96), con la confirmación del revisor; las dos líneas de Technical Debt pagadas; y el tamaño de PROJECT_STATE con wc -c;
+>    - entra la fila de ERRORES-RECURRENTES.md que prepara el informe, con sus cuatro columnas y la rama entre acentos graves como las demás filas; en la 3.ª (hallazgos del consultor después), este texto: «1 importa, 4 menores, todos del consultor y cazados antes de la revisión. Importa: D2 c del encargo (abrir un fotograma solo por frames show y Read de la ruta que imprime) no se podía cumplir para ningún vídeo en cuarentena, porque la guardia niega frames show en ellos; lo cazó la fase 0, y el mismo error estaba en el prompt de la ingesta de la 7a, ya corregido antes de pegarlo. Menores: «paso (3)» atribuido a R4.3, que es de la Next Action F; el trailer Fuente: en §7 punto 1 y no en el 3; «nunca elige entre dos lecturas» atribuido a ADR-0092 §6 y no a ADR-0093 §4; y la restricción «solo añadir» del encargo, que dejó en ingerir-sesion una orden que contradecía la línea nueva (pagado en el punto 1 de la orden de cierre). Nada en la rama que el revisor no viera.»; en la 4.ª, la lección preparada, y detrás: «Una regla sobre cómo se usa una herramienta se escribe después de leer lo que la guardia deja hacer con ella para cada caso (vídeo en cuarentena o no), no desde la documentación de la herramienta.»;
+>    - Next Action: no sale, no entra y no cambia nada. Hoja de ruta: no cambia.
+>    - Comprueba que PROJECT_STATE queda por debajo de 25.000 bytes antes del commit; si no, PARADA.
+> 5. Merge a main, tag, y commit de estado que solo reemplaza Current Branch (main), Current Feature, Stable Main State y Last Stable Commit: la Next Action no se toca y no se añade nada a Completed Features ni al Change Log. make check sellado y push atómico de main y el tag en un solo comando (yo confirmo la regla ask con «1. Yes»). CI de main en verde antes de borrar nada.
+> 6. Borra la rama local trabajo/skills-metodo. No hay fix/skills-metodo en origin: compruébalo con git ls-remote y dilo.
+> 7. Informe final: sha de main, sha del merge, tag, run de la CI de main con su resultado, ramas que quedan en local y en origin, tamaño exacto de PROJECT_STATE.md en main con wc -c, y la hora de cada make check del cierre.
+>
+> Cuando respondas a esto, escribiré /cerrar-rama trabajo/skills-metodo en una línea aparte.
+
+**Punto 1, hecho en un commit propio de la rama, sellado, antes del `chore(cierre)`:** la orden de
+verificación de `ingerir-sesion` (`:151`) escribe ahora el log en
+`<carpeta de trabajo fuera del repo>/knowledge-validate.log`, sustituida en su misma línea; las
+líneas `:152-155` no se tocan. `wc -l .claude/skills/ingerir-sesion/SKILL.md`: 159 antes y 159
+después, así que las evidencias fichero:línea de HISTORIA siguen valiendo. Es una excepción
+declarada a RITUAL.md (hacia :116-118), con el precedente del punto 1a de la orden de cierre de
+`trabajo/guardia-falsos-positivos`.
+
 ## Estado
 
-**Rama lista para revisión, NO cerrada.** Las tres skills al día (`a8acd219`, `c7920376`,
+**Rama lista para revisión, NO cerrada; con la orden de cierre del 2026-11-14, en cierre.** Las tres skills al día (`a8acd219`, `c7920376`,
 `d3d00f9f`), las dos líneas de Technical Debt fuera, pagadas enteras; los arreglos del revisor en el
 último commit, sellado. Sin CI de Linux (RITUAL.md, hacia :93-96; el revisor lo confirma). La
 orden de cierre es de Aleks; tag de cierre previsto: `stable/F39c-skills-metodo`.

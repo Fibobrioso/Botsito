@@ -148,7 +148,7 @@ items de evidencia nuevos.
 ## Verificacion
 
 - `uv run botsito corpus check --hashes`, `corpus transcript check` y `corpus frames check` en verde.
-- `uv run botsito knowledge validate > knowledge-validate.log 2>&1` en verde (ids, tramos, citas).
+- `uv run botsito knowledge validate > <carpeta de trabajo fuera del repo>/knowledge-validate.log 2>&1` en verde (ids, tramos, citas).
   El log, en la carpeta de trabajo de la sesion, fuera del repo, nunca en la raiz: alli es un
   fichero sin seguir y `make check` sale en verde y sin sello (`CLAUDE.md`, «main no se toca»; fila
   de `trabajo/preparacion-sesion-7` en `docs/runbooks/ERRORES-RECURRENTES.md`, «De la sesion» y
