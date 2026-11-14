@@ -314,3 +314,80 @@ index 99b69d67..4e752780 100644
 +     fase 2, D3); `tests/unit/test_capa_generada.py` falla si el fichero no es lo que da el generador;
     - si la regla gana un sitio con `cita`: las tres guardias de `src/botsito/spec/modelo.py`;
 ```
+
+`make check` del commit 1 (`a8acd219`): exit 0, 3513 passed, 6 xfailed, ningún `failed`, SELLO
+sobre el árbol `0433f5fa`. `PICO DE MEMORIA de make check: 318 MiB en test`.
+
+### 2. `ingerir-sesion` (D2 a-d; respuesta a la PARADA, puntos 0, 2 y 3)
+
+- D2 b (`:30-38`): la regla de los fotogramas, por ADR-0093 §2, punto 5, y las lecciones 3, 5, 6 y
+  7 de la fila de `trabajo/video-julio`; la 6 es la que la lleva a toda ingesta (fase 0, «Lo que no
+  cuadra al pie de la letra», 3).
+- D2 a (`:50-53`): el trailer `Fuente:` de `tramos_no_citables.yaml`, con
+  `tests/contract/test_tramos_fuente.py` y SESION-06-EXTRACCION.md §7, punto 3 (punto 3 de la
+  respuesta).
+- Herencia (`:54-57`; respuesta, punto 2): la lección 8 de la fila de `trabajo/video-julio`, con su
+  frase entre comillas.
+- D2 c (`:65-74`), por casos (respuesta, punto 0): fuera de cuarentena, `frames show` y Read de la
+  ruta que imprime; en cuarentena, Read del PNG por su ruta, solo para un instante localizado antes
+  en la filtrada y nunca dentro de un tramo no citable. La línea de «Herramientas» (`:61-63`, antes `:44-46`) no se
+  toca, y la línea de Technical Debt de PROJECT_STATE.md:111 (antes :112) se queda.
+- D2 d (`:152-155`): el log de `knowledge validate`, fuera del repo; la línea de `:151` (antes `:123`) se queda,
+  porque D4 solo deja añadir.
+
+Paga dos de las tres partes de la línea de Technical Debt de PROJECT_STATE.md:141 (antes :142), el
+trailer `Fuente:` y los fotogramas; la tercera, la PLANTILLA, es de `abrir-rama`, así que la línea
+se queda hasta el commit siguiente (D6).
+
+El diff (antes y después):
+
+```diff
+diff --git a/.claude/skills/ingerir-sesion/SKILL.md b/.claude/skills/ingerir-sesion/SKILL.md
+index 3dd354b5..c57ebe19 100644
+--- a/.claude/skills/ingerir-sesion/SKILL.md
++++ b/.claude/skills/ingerir-sesion/SKILL.md
+@@ -29,2 +29,11 @@ reglas viven en `CLAUDE.md`, `docs/runbooks/SESION-DE-PREGUNTAS.md` («Después
+   Analytics ni el tramo sin audio; de 25 en 25 como mucho, anotando cada lote antes del siguiente.
++- **Ningun fotograma se abre antes de que la voz o un fotograma ya abierto situen el tramo en un
++  dia de construccion**, en toda ingesta. ADR-0093 §2, punto 5, lo escribe para la sesion en que
++  aparece en pantalla otro backtest, Analytics o material de un mes reservado; la leccion 6 de la
++  fila de `trabajo/video-julio` en `docs/runbooks/ERRORES-RECURRENTES.md` lo dice de cualquier
++  fotograma de un backtest, «y nunca en el arranque de una grabación»: el primer fotograma de cada
++  video, al empezar, es el de mas riesgo (misma fila, leccion 5). La voz que lee cifras del mes
++  marca el tramo, y desde ahi no se abre ningun fotograma hasta que la voz vuelva a un dia concreto
++  (leccion 7); antes de abrir un fotograma localizado por un segmento, se lee si el segmento o sus
++  vecinos leen cifras (leccion 3).
+ - `kb find`, `kb at`, `corpus transcript show`, `corpus frames show` y `evidence propose` ensenan
+@@ -40,2 +49,10 @@ reglas viven en `CLAUDE.md`, `docs/runbooks/SESION-DE-PREGUNTAS.md` («Después
+   fotogramas tampoco (rompen la huella del sello).
++- **Todo commit que toque `knowledge/corpus/tramos_no_citables.yaml` lleva en el cuerpo su trailer
++  `Fuente:`**, con ids que existan: lo exige `tests/contract/test_tramos_fuente.py`, que mira los
++  commits, asi que el `make check` de ese mismo commit sale verde y lo caza el siguiente
++  (`docs/validation/SESION-06-EXTRACCION.md` §7, punto 3: el commit se tuvo que rehacer).
++- **Un tramo no citable nuevo de un video que no esta en cuarentena** cambia lo que espera
++  `tests/unit/test_guardia_claude.py` (`test_los_tramos_del_repo_real`): «se amplía el contrato a
++  ese test en el mismo commit, o `make check` sale en rojo» (leccion 8 de la fila de
++  `trabajo/video-julio` en `docs/runbooks/ERRORES-RECURRENTES.md`).
+ 
+@@ -47,2 +64,13 @@ Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
+ 
++Un fotograma se abre segun el video, y siempre despues de la regla de los fotogramas de «Limites»
++(respuesta del consultor a la PARADA de `trabajo/skills-metodo`, punto 0, en
++`docs/validation/SKILLS-METODO.md`):
++- **video fuera de cuarentena**: primero `uv run botsito corpus frames show --video <vN> --t <h:mm:ss>`,
++  que la guardia niega dentro de un tramo no citable, y despues Read solo de la ruta que imprime;
++- **video de sesion en cuarentena**: la guardia niega `frames show` siempre (`_analizar_cli`,
++  `.claude/hooks/guardia.py`) y su mensaje manda abrir el PNG por su ruta: Read de
++  `data/fotogramas/<v>/png-1fps/<ms>.png`, solo para un instante localizado antes en la filtrada y
++  nunca dentro de un tramo de `tramos_no_citables.yaml`. La guardia aun no niega ese Read
++  (`docs/validation/VIDEO-JULIO.md` §11.1; su linea de Technical Debt sigue abierta).
++
+ ## El recorrido
+@@ -123,2 +151,6 @@ items de evidencia nuevos.
+ - `uv run botsito knowledge validate > knowledge-validate.log 2>&1` en verde (ids, tramos, citas).
++  El log, en la carpeta de trabajo de la sesion, fuera del repo, nunca en la raiz: alli es un
++  fichero sin seguir y `make check` sale en verde y sin sello (`CLAUDE.md`, «main no se toca»; fila
++  de `trabajo/preparacion-sesion-7` en `docs/runbooks/ERRORES-RECURRENTES.md`, «De la sesion» y
++  leccion 11).
+ - `git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones
+```

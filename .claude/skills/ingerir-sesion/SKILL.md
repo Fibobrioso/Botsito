@@ -27,6 +27,15 @@ reglas viven en `CLAUDE.md`, `docs/runbooks/SESION-DE-PREGUNTAS.md` («Después 
   de v7 en adelante y los tramos no citables de cualquier video: **no se rodea**.
 - Un fotograma se abre solo por instante LOCALIZADO en la filtrada (ADR-0038), nunca la pestana
   Analytics ni el tramo sin audio; de 25 en 25 como mucho, anotando cada lote antes del siguiente.
+- **Ningun fotograma se abre antes de que la voz o un fotograma ya abierto situen el tramo en un
+  dia de construccion**, en toda ingesta. ADR-0093 §2, punto 5, lo escribe para la sesion en que
+  aparece en pantalla otro backtest, Analytics o material de un mes reservado; la leccion 6 de la
+  fila de `trabajo/video-julio` en `docs/runbooks/ERRORES-RECURRENTES.md` lo dice de cualquier
+  fotograma de un backtest, «y nunca en el arranque de una grabación»: el primer fotograma de cada
+  video, al empezar, es el de mas riesgo (misma fila, leccion 5). La voz que lee cifras del mes
+  marca el tramo, y desde ahi no se abre ningun fotograma hasta que la voz vuelva a un dia concreto
+  (leccion 7); antes de abrir un fotograma localizado por un segmento, se lee si el segmento o sus
+  vecinos leen cifras (leccion 3).
 - `kb find`, `kb at`, `corpus transcript show`, `corpus frames show` y `evidence propose` ensenan
   el corpus FILTRADO por defecto (`botsito.corpus.cuarentena`: sesiones en cuarentena, tramos no
   citables y material reservado o sin sortear) y dicen al final cuantos segmentos ocultaron. Su
@@ -38,12 +47,31 @@ reglas viven en `CLAUDE.md`, `docs/runbooks/SESION-DE-PREGUNTAS.md` («Después 
   `docs/runbooks/AMBIGUEDADES.md`.
 - Nada escribe en el repositorio mientras corre `make check`: la transcripcion y la extraccion de
   fotogramas tampoco (rompen la huella del sello).
+- **Todo commit que toque `knowledge/corpus/tramos_no_citables.yaml` lleva en el cuerpo su trailer
+  `Fuente:`**, con ids que existan: lo exige `tests/contract/test_tramos_fuente.py`, que mira los
+  commits, asi que el `make check` de ese mismo commit sale verde y lo caza el siguiente
+  (`docs/validation/SESION-06-EXTRACCION.md` §7, punto 3: el commit se tuvo que rehacer).
+- **Un tramo no citable nuevo de un video que no esta en cuarentena** cambia lo que espera
+  `tests/unit/test_guardia_claude.py` (`test_los_tramos_del_repo_real`): «se amplía el contrato a
+  ese test en el mismo commit, o `make check` sale en rojo» (leccion 8 de la fila de
+  `trabajo/video-julio` en `docs/runbooks/ERRORES-RECURRENTES.md`).
 
 ## Herramientas
 
 Bash (`uv run botsito corpus ...`, `uv run python scripts/transcribir_sesion.py`, `ffmpeg`),
 Read de la filtrada y de fotogramas localizados, Write/Edit para `fuentes.yaml`,
 `tramos_no_citables.yaml` y el informe. Los comandos largos van a segundo plano y se espera su aviso.
+
+Un fotograma se abre segun el video, y siempre despues de la regla de los fotogramas de «Limites»
+(respuesta del consultor a la PARADA de `trabajo/skills-metodo`, punto 0, en
+`docs/validation/SKILLS-METODO.md`):
+- **video fuera de cuarentena**: primero `uv run botsito corpus frames show --video <vN> --t <h:mm:ss>`,
+  que la guardia niega dentro de un tramo no citable, y despues Read solo de la ruta que imprime;
+- **video de sesion en cuarentena**: la guardia niega `frames show` siempre (`_analizar_cli`,
+  `.claude/hooks/guardia.py`) y su mensaje manda abrir el PNG por su ruta: Read de
+  `data/fotogramas/<v>/png-1fps/<ms>.png`, solo para un instante localizado antes en la filtrada y
+  nunca dentro de un tramo de `tramos_no_citables.yaml`. La guardia aun no niega ese Read
+  (`docs/validation/VIDEO-JULIO.md` §11.1; su linea de Technical Debt sigue abierta).
 
 ## El recorrido
 
@@ -121,6 +149,10 @@ items de evidencia nuevos.
 
 - `uv run botsito corpus check --hashes`, `corpus transcript check` y `corpus frames check` en verde.
 - `uv run botsito knowledge validate > knowledge-validate.log 2>&1` en verde (ids, tramos, citas).
+  El log, en la carpeta de trabajo de la sesion, fuera del repo, nunca en la raiz: alli es un
+  fichero sin seguir y `make check` sale en verde y sin sello (`CLAUDE.md`, «main no se toca»; fila
+  de `trabajo/preparacion-sesion-7` en `docs/runbooks/ERRORES-RECURRENTES.md`, «De la sesion» y
+  leccion 11).
 - `git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones
   knowledge/corpus/fotogramas data/manifests`: solo `A`.
 - Ninguna cita del informe ni de la evidencia cae en un tramo de `tramos_no_citables.yaml`.
