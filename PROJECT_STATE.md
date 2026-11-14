@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/skills-metodo
 
 ## Current Feature
-Ninguna rama abierta. trabajo/dieta-estado cerrada en main el 2026-11-13 (stable/F39b-dieta-estado): cuatro líneas de Technical Debt acortadas por (e).
+trabajo/skills-metodo, EN CURSO desde el 2026-11-14: las skills activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas. Encargo docs/encargos/trabajo-skills-metodo.md; informe docs/validation/SKILLS-METODO.md.
 
 ## Stable Main State
 6054c4ce · merge de `trabajo/dieta-estado` (tag `stable/F39b-dieta-estado`), sobre `stable/F39a-guardia-falsos-positivos` (e9314598). Informe docs/validation/DIETA-ESTADO.md; el registro del cierre, al final de HISTORIA.
@@ -164,8 +164,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 70 (2026-11-13).
+— ninguna desde el Archivo 71 (2026-11-14).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 70 (2026-11-13).
+— ninguna desde el Archivo 71 (2026-11-14).

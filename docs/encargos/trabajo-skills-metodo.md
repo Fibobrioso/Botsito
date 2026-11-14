@@ -1,0 +1,55 @@
+# Encargo · trabajo/skills-metodo
+
+Dado por Aleks (consultor) el 2026-11-14, en un solo mensaje. Copiado tal cual:
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Rama nueva: trabajo/skills-metodo (tramo «Carril: guardias y deuda»; paga dos líneas de Technical Debt de PROJECT_STATE: «La skill ingerir-sesion no nombra el trailer Fuente: …», hacia :142, y «La skill activar-sesion no dice que una activación que toque un parámetro de la capa de MT5 … regenera Generado.mqh …», hacia :83). Encargo del consultor, 2026-11-14.
+>
+> 0. Apertura
+> - Base: main en 73b4e7a9, el commit de estado sobre el merge 6054c4ce, al que apunta stable/F39b-dieta-estado (CI de main run 43560175823, según el informe final del cierre). Antes, git fetch --prune. Verifica con git main, origin/main y el tag, y que no hay otra rama abierta ni en local ni en origin; si algo no cuadra, para y dímelo. Ábrela con la skill abrir-rama: este prompt tal cual en docs/encargos/trabajo-skills-metodo.md (con Write), su contrato.yaml y el Archivo de PROJECT_STATE en HISTORIA. Tag de cierre: stable/F39c-skills-metodo (comprueba que no existe ni en local ni en origin).
+> - Contrato: tramo "Carril: guardias y deuda", exactamente como el título de su sección en docs/plan/HOJA-DE-RUTA.md; riesgo bajo (solo documentos, nada que se ejecute); en rutas_permitidas, además de lo que pone abrir-rama, las tres skills (.claude/skills/ingerir-sesion/SKILL.md, .claude/skills/activar-sesion/SKILL.md y .claude/skills/abrir-rama/SKILL.md) y docs/validation/HOLDOUT-EXPOSICIONES.md.
+> - Informe: docs/validation/SKILLS-METODO.md, que nace con su línea de PLANTILLA en sus primeros 600 caracteres (convención, como DIETA-ESTADO.md).
+> - La fila de HOLDOUT-EXPOSICIONES.md de los make check de la rama (leen el M1 de marzo y calientan con el de junio) va ANTES del primero, con la forma de la de trabajo/dieta-estado (HOLDOUT-EXPOSICIONES.md, hacia :147), en el commit de apertura; desviación de la verificación de abrir-rama hasta que D3 la quite, decláralo. Una fila por día.
+> - Revisa /model antes de empezar: Opus en esfuerzo medio.
+>
+> 1. Objetivo, y por qué va ahora
+> Poner al día las tres skills que van a usar las dos ramas siguientes (la ingesta de la 7a y su activación) con lo que ya mandan ADR-0093 y las lecciones registradas, para que no dependa de que cada encargo lo recuerde.
+> Por qué ahora: va en el hueco hasta la grabación de la 7a, sin material, y la activación de la 7a es la primera que tiene que seguir ADR-0093 §4 de punta a punta, que activar-sesion no recoge. RUMBO-2026-11.md §6: esta rama no es de fidelidad; desde RUMBO van 4 de fidelidad (F38v a F38y) y, con esta, 5 que no lo son (F38u, F38z, F39a, F39b y esta). La acepto porque hasta la grabación no hay rama de fidelidad posible y porque sirve directamente a las dos siguientes. Escríbelo en el informe como decisión del consultor.
+> Tiene que estar cerrada antes de la ingesta (solo cabe una rama abierta): hoy sábado 14. Si el domingo, con la grabación hecha, no está para cerrar, PARADA y decido yo; no abras nada más.
+>
+> 2. Decisiones del consultor (2026-11-14; si la fase 0 encuentra un hecho que las contradiga, PARADA)
+> D1. activar-sesion:
+>   a) Una sección corta con el método de ADR-0093 §4, citada por su número y con sus palabras, sin añadir nada que el ADR no diga: cada respuesta primero como test sobre casos de construcción que rompe en main; la activación declara ANTES qué filas de la clasificación vigente debería convertir en pareja; corre julio de 2026 en la rama, con su delta de parejas y de operaciones de más frente a la línea base; si el delta no casa con lo declarado, PARADA; el delta es diagnóstico, nunca ajusta un parámetro ni elige entre dos lecturas (ADR-0093 §4 y ADR-0092 §6). La línea base: §4 no la define; cítala como la de ADR-0093 §6 (hacia :124-129) y PIVOTES-SESION-7.yaml, diciendo que es esa lectura. Cómo se corre julio en una activación (el comando, las opciones y cómo se calcula el delta) no está escrito en ningún sitio: la skill dice que lo fija y lo cita el encargo de cada activación, y en el informe lo apuntas para mí.
+>   b) La viñeta «El arnés» (hacia :44-48) se sustituye: la corrida de julio de ADR-0093 §4 forma parte de toda activación y es diagnóstico; cualquier otra corrida del arnés sigue necesitando que el encargo o la respuesta a la PARADA la autoricen; y la corrida que cuenta ya no es la de R3.1 sino la de R4.3, paso (3), con las opciones de ADR-0070 («Decisión», punto 3) y la lectura del pivote de ADR-0093 §6. Verifica cada referencia en la hoja de ruta y en los ADR antes de escribirla.
+>   c) La deuda de :83: una activación que toque un parámetro de la capa de MT5 (ENTRAN de src/botsito/mql5bridge/generar_capa.py) regenera Generado.mqh en el mismo commit (CAPA-GENERADA.md, D3; verifica la ruta del generador y la sección).
+>   d) Los precedentes de la cabecera se amplían con docs/validation/ACTIVAR-SESION-06-MOTOR.md, la última activación cerrada, diciendo que es anterior a ADR-0093.
+> D2. ingerir-sesion:
+>   a) Todo commit que toque knowledge/corpus/tramos_no_citables.yaml lleva su trailer Fuente: (tests/contract/test_tramos_fuente.py; SESION-06-EXTRACCION.md §7, punto 1).
+>   b) Ningún fotograma se abre antes de que la voz o un fotograma ya abierto sitúen el tramo en un día de construcción, en toda ingesta (ADR-0093 §2, punto 5, generalizado en la línea de Technical Debt de :142); y las lecciones de fotogramas de la fila de trabajo/video-julio en ERRORES-RECURRENTES.md (la voz que lee cifras del mes marca el tramo; el primer fotograma de cada vídeo es el de más riesgo), con su cita.
+>   c) Cómo se abre un fotograma, sin reescribir la línea de «Herramientas» (hacia :45): primero uv run botsito corpus frames show, que la guardia niega dentro de un tramo no citable, y después Read solo de la ruta que imprime; nunca un Read de un PNG cuya ruta no haya impreso frames show para ese instante (la guardia no niega ese Read: VIDEO-JULIO.md §11.1 y la línea de Technical Debt del fotograma dentro de un tramo no citable, que esta rama NO paga).
+>   d) El log de knowledge validate (hacia :123) no se escribe en la raíz del repo: la lección de la fila de trabajo/preparacion-sesion-7 en ERRORES-RECURRENTES.md (el log en la raíz dejó el primer make check en verde y sin sello). Propón en la fase 0 la forma (fuera del repo, o la que use ya otra skill o runbook, citada); no cambies .gitignore.
+> D3. abrir-rama:
+>   a) El informe nace con su línea de PLANTILLA en sus primeros 600 caracteres: test_hoja_de_ruta.py (hacia :101) lo comprueba solo en los SESION-*-EXTRACCION.md (hacia :245); en los demás informes es la convención. Dilo así.
+>   b) La fila de HOLDOUT-EXPOSICIONES.md del día va antes del primer make check, y si la rama corre make check el día de la apertura, entra en el commit de apertura, con rutas_permitidas que la incluyan (lección 3 de la fila de trabajo/guardia-falsos-positivos en ERRORES-RECURRENTES.md; trabajo/dieta-estado y esta rama la declararon como desviación). La verificación de la skill («nada más») se ajusta a eso.
+> D4. Cada línea nueva cita su fuente (ADR con §, informe con §, fila de ERRORES-RECURRENTES por su rama, o test con fichero). tests/unit/test_skills.py solo comprueba las rutas entre comillas invertidas que empiezan por docs/, src/, scripts/, tests/, knowledge/ o .claude/ (y los nombres de skill o agente): ninguna ruta pegada a otro carácter («….md§», «….md»», «….md:hacia»); los ADR y los § no los comprueba nadie más que el revisor. Mismo estilo que el resto de cada skill: solo se añade, salvo la viñeta de D1 b). Ninguna regla nueva que no salga de un ADR o de una lección registrada.
+> D5. Lo que NO cambia: CLAUDE.md, los runbooks, los ADR, las demás skills y los agentes, los hooks, .claude/settings.json, .gitignore, el código, los tests, la spec, knowledge/ y la hoja de ruta. Si algo obliga a tocar otro fichero, PARADA. La rama no lee material del trader, ni velas, ni ticks, ni el holdout, y no ejecuta el arnés.
+> D6. PROJECT_STATE: las dos líneas de Technical Debt de la cabecera salen por (a) PAGADA (docs/state/README.md), literales al final de HISTORIA en un bloque «# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/skills-metodo (<fecha>)», con su evidencia (fichero:línea de la skill), en el commit que paga cada una, y solo si quedan pagadas enteras (la de :142 tiene tres partes: Fuente:, PLANTILLA y fotogramas). Si una no, se queda entera y lo dices. Nada más de PROJECT_STATE cambia, salvo lo que haga abrir-rama.
+>
+> 3. Fase 0 (inventario, sin tocar las skills) y PARADA condicional
+> a. Las tres skills de hoy con fichero:línea donde entraría cada cambio, y el texto que propones.
+> b. Cada fuente de D1-D3, leída y citada con fichero:línea (en especial las filas de ERRORES-RECURRENTES de trabajo/video-julio, trabajo/preparacion-sesion-7 y trabajo/guardia-falsos-positivos, y la forma de D2 d).
+> c. Herencias: busca «skill», «ingerir-sesion», «activar-sesion», «abrir-rama», «fotograma», «Generado.mqh» y «knowledge-validate» en PROJECT_STATE (Technical Debt y Next Action), en el final de HISTORIA (registros de F38u a F39b) y en ERRORES-RECURRENTES.md (filas de F38u a F39b). Lo que pida cambiar una de estas tres skills entra si sale de un ADR o de una lección registrada, o se dice por qué no; lo que pida tocar otra skill u otro fichero no entra (va a la lista para mí).
+> Si lo medido cuadra con D1-D6, sigue a la fase 1 sin esperar y deja escrito «sin PARADA: cuadra»; si algo no cuadra, PARADA y espera mi respuesta.
+>
+> 4. Fase 1 · Aplicar
+> Las tres skills, un commit por skill, sellados (estadiar → make check > make-check.log 2>&1 → leer exit 0, ningún failed y SELLO → commit), cada línea de Technical Debt fuera en el commit que la paga. En cada make check, la línea PICO DE MEMORIA al informe. tests/unit/test_skills.py, test_historia.py, test_project_state.py y test_hoja_de_ruta.py tienen que pasar. Da el tamaño final de PROJECT_STATE.md con wc -c.
+>
+> 5. El informe
+> El encargo punto por punto; la fase 0; el antes y el después de cada skill (el diff); lo que no entró y por qué; las desviaciones; y, para la orden de cierre, la fila de ERRORES-RECURRENTES.md con sus cuatro columnas (la 3.ª, la del consultor, la dejo yo).
+>
+> 6. Revisor y CI
+> El agente revisor, con este alcance además de sus dos ejes: que cada línea nueva diga lo mismo que su fuente y no más, leyendo cada fuente; que ninguna ruta rompa test_skills.py; que lo que ya decían las skills no cambie salvo la viñeta de D1 b) y la verificación de D3 b); que la viñeta nueva no contradiga ADR-0070, ADR-0092 §6 ni ADR-0093; que la regla de D2 c) se pueda cumplir con la CLI tal como es (src/botsito/cli.py, frames show); y que cada línea de Technical Debt solo salga si está pagada entera. Pega su informe al final del tuyo.
+> La rama no toca hooks, permisos, rutas, el sistema de archivos ni código: no hace falta CI de Linux (RITUAL.md, hacia :93-96). Si el revisor o tú veis que algo la exige, PARADA.
+>
+> Rama lista para revisión, NO cerrada.
