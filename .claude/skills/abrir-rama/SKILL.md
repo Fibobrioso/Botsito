@@ -71,6 +71,12 @@ para `PROJECT_STATE.md`.
    estadiado ya en el primer commit**: `make check` lo exige en cuanto hay contrato (medido el
    2026-10-01 al abrir `trabajo/cuarentena-por-defecto`). Nace con su cabecera y EN CURSO; la
    fase 0 la escribe fase-cero en su commit.
+   Nace tambien con su linea de PLANTILLA en sus primeros 600 caracteres:
+   `tests/unit/test_hoja_de_ruta.py` lo comprueba solo en los `docs/validation/SESION-*-EXTRACCION.md`
+   (sin ella, el primer `make check` de la rama sale en rojo, por segunda vez en
+   `docs/validation/SESION-06-EXTRACCION.md` §7, punto 1); en los demas informes es la convencion
+   que piden sus encargos (`docs/validation/DIETA-ESTADO.md`, `docs/validation/ACTIVAR-SESION-06.md`
+   y `docs/validation/SKILLS-METODO.md`).
 5. **Archivo de PROJECT_STATE** (`docs/state/README.md`, «Como se archiva»):
    - `N` = `grep -c '^# Archivo ' docs/state/HISTORIA.md` mas uno;
    - `printf '\n# Archivo N · PROJECT_STATE.md de main en <sha corto> (<AAAA-MM-DD>), al abrir <rama>\n\n' >> docs/state/HISTORIA.md`;
@@ -80,10 +86,19 @@ para `PROJECT_STATE.md`.
      nueva (EN CURSO, con su encargo y su informe), sustituyendo lo que habia.
 6. **Comprobar antes de sellar.** `uv run botsito state check` (rama y recuento de tests fallan al
    FINAL de `make check`: mejor verlo antes) y `uv run python scripts/contrato_rama.py`.
+   Y, antes de cada `make check`, `uv run botsito knowledge validate` sin `ERROR`, con su log en la
+   carpeta de trabajo de la sesion, fuera del repo (fila de `trabajo/preparacion-sesion-7` en
+   `docs/runbooks/ERRORES-RECURRENTES.md`, leccion 11): un id inexistente citado en el informe tumba
+   `make check` (fila de `trabajo/dieta-estado`, misma tabla).
 7. **Sello y commit.** `git add` de los ficheros nombrados (encargo, contrato, `PROJECT_STATE.md`,
    `docs/state/HISTORIA.md` y el artefacto), `make check > make-check.log 2>&1`, esperar el aviso, leer el log
    (exit 0, ningun `failed`, la linea `SELLO`) y commit
    `chore(rama): abre <rama> (encargo, contrato y Archivo N de PROJECT_STATE)`.
+   La fila de `docs/validation/HOLDOUT-EXPOSICIONES.md` del dia va antes del primer `make check`
+   (leccion 3 de la fila de `trabajo/guardia-falsos-positivos` en
+   `docs/runbooks/ERRORES-RECURRENTES.md`): si la rama corre `make check` el dia de la apertura,
+   entra en este commit, estadiada con los demas, y `rutas_permitidas` la incluye
+   (`trabajo/dieta-estado` y `trabajo/skills-metodo` lo declararon como desviacion).
 
 ## Artefacto
 
@@ -95,6 +110,7 @@ nuevo al final de `docs/state/HISTORIA.md` y `PROJECT_STATE.md` apuntando a la r
 - `git branch --show-current` es la rama, y `git log --oneline main..HEAD` tiene un commit.
 - `make-check.log` con `CONTRATO:` en verde y la linea `SELLO`.
 - `tests/unit/test_historia.py` en verde dentro de `make check` (HISTORIA solo se amplio).
-- `git diff main --stat` = encargo, contrato, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
-  artefacto, nada mas.
+- `git diff main --stat` = encargo, contrato, `PROJECT_STATE.md`, `docs/state/HISTORIA.md`, el
+  artefacto y, si entro en el commit de apertura (paso 7), `docs/validation/HOLDOUT-EXPOSICIONES.md`;
+  nada mas.
 - Las cuatro comprobaciones de la base (paso 1), con su salida, en el informe de la rama.
