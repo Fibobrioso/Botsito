@@ -80,7 +80,6 @@ Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/README.md`.
 - Hoy un mes no puede salir de `knowledge/cases/meses_reservados.yaml` (holdout.py lo niega sin excepción) … (CUARENTENA-POR-CONDICION-2.md, respuesta del consultor a la PARADA de la fase 0, punto 2; entera en HISTORIA, Technical Debt ACORTADA)
 - El validador del journal (v1 y v2) vive en `botsito.mql5bridge`, que `engine` no puede importar (import-linter): cuando F23 lo necesite, el esquema baja a una capa que `engine` vea, en su rama y tocando pyproject.toml (EA-CONEXION.md, respuesta a la PARADA, punto 4).
-- La skill `activar-sesion` no dice que una activación que toque un parámetro de la capa de MT5 (`ENTRAN` de `generar_capa.py`) regenera `Generado.mqh` en el mismo commit (CAPA-GENERADA.md, D3; `.claude/` no se tocó allí).
 - La guardia niega a un guion nuevo dos falsos positivos, que lanza Aleks con «!» … (CAPA-GENERADA.md, «La guardia»; entera en HISTORIA, Technical Debt ACORTADA)
 - El bróker simulado reserva margen por cada pendiente stop viva y comprueba el margen al colocarla (ADR-0081 §4) … (DEMO-EJECUCIONES-2-3.md §0.f; entera en HISTORIA, Technical Debt ACORTADA)
 - Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:46` («10 (perfil)») … (DEMO-EJECUCIONES-2-3.md §3.1; entera en HISTORIA, Technical Debt ACORTADA)

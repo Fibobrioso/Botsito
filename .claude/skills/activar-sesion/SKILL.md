@@ -12,6 +12,8 @@ aqui decide por el trader.** Las reglas viven en `docs/runbooks/AMBIGUEDADES.md`
 anadir un sitio con cita propia», «Las cifras van en el registro de parametros») y los
 precedentes: `docs/validation/ACTIVAR-SESION-03.md`, `docs/validation/ACTIVACION-A42.md` y
 `docs/runbooks/ACTIVAR-A35-A44.md`. Si esta skill y ellos discrepan, ganan ellos y se dice.
+La ultima activacion cerrada es `docs/validation/ACTIVAR-SESION-06-MOTOR.md`
+(`stable/F38o-activar-sesion-06-motor`, 2026-11-06), anterior a ADR-0093 (2026-11-11).
 
 ## Entradas
 
@@ -41,11 +43,33 @@ precedentes: `docs/validation/ACTIVAR-SESION-03.md`, `docs/validation/ACTIVACION
 - Toda cifra va al registro de parametros (ADR-0002), nunca dentro de la forma ejecutable.
 - Ningun cambio de motor sin un test que falle antes (skill `comparar-con-main`, «Para probar un
   test con el codigo de main») y pase despues.
-- **El arnes** (`uv run botsito motor arnes`) solo si el encargo o la respuesta a la PARADA lo
-  autorizan expresamente (`ACTIVAR-A35-A44.md` lo pedia tras activar; los encargos recientes lo
-  prohiben salvo autorizacion). La corrida que cuenta es la de la entrada R3.1 de
-  `docs/plan/HOJA-DE-RUTA.md`, con las opciones de ADR-0070 («Decision», punto 3). En la duda,
-  PARADA.
+- **El arnes** (`uv run botsito motor arnes`). La corrida de julio de 2026 de ADR-0093 §4 forma
+  parte de toda activacion y es diagnostico (seccion siguiente). Cualquier otra corrida del arnes,
+  solo si el encargo o la respuesta a la PARADA la autorizan expresamente (`ACTIVAR-A35-A44.md` lo
+  pedia tras activar; los encargos recientes lo prohiben salvo autorizacion). La corrida que cuenta
+  ya no es la de R3.1: es la de R4.3 de `docs/plan/HOJA-DE-RUTA.md` («el pivote leído en la
+  re-corrida siguiente»), «la primera corrida de ADR-0070 §3 [...] después de activar la 7b»
+  (ADR-0093 §6, «Qué se mide»), con las opciones de ADR-0070 («Decision», punto 3) y la lectura del
+  pivote de ADR-0093 §6. En la duda, PARADA.
+
+## El metodo de ADR-0093 §4
+
+Desde ADR-0093 (2026-11-11), con sus palabras:
+
+- «Cada respuesta se escribe primero como test sobre casos de construcción que rompe en `main`».
+- «Cada activación declara ANTES qué filas de la clasificación vigente debería convertir en
+  pareja», y corre julio de 2026 en la rama, «con su delta de parejas y de operaciones de más frente
+  a la línea base».
+- La linea base: §4 no la define. Es la de ADR-0093 §6 («Línea base»), con sus cifras en
+  `docs/plan/PIVOTES-SESION-7.yaml` (`linea_base`): esa lectura, y no otra.
+- «Si el delta de julio de una activación no casa con lo que declaró, la regla no se retoca hasta
+  que la cifra salga: PARADA» (ADR-0093 §4).
+- El delta es diagnostico: «La cifra dice si la respuesta se entendió, nunca ajusta un parámetro»
+  (ADR-0093 §4, que cita ADR-0092 §6) y «El delta nunca elige entre dos lecturas de un parámetro»
+  (ADR-0093 §4).
+- Como se corre julio en una activacion (el comando, sus opciones y como se calcula el delta) no
+  esta escrito en ningun sitio (`docs/validation/SKILLS-METODO.md`, fase 0): lo fija y lo cita el
+  encargo de cada activacion.
 
 ## El recorrido
 
@@ -79,6 +103,12 @@ precedentes: `docs/validation/ACTIVAR-SESION-03.md`, `docs/validation/ACTIVACION
    - `tests/unit/test_kit.py` SIEMPRE: el conjunto de RESUELTAS y el de bloqueantes ABIERTAS;
    - subir `spec_version`, `uv run botsito spec manifest --escribir` y
      `uv run botsito spec docs --escribir`, en el mismo commit;
+   - si toca un parametro que entra en la capa de MT5 (`ENTRAN` de
+     `src/botsito/mql5bridge/generar_capa.py`; `parametros.yaml` o el perfil), se regenera
+     `mql5/Include/Botsito/Capa/Generado.mqh` en el mismo commit:
+     `uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k`
+     (`docs/runbooks/RENOVAR-CIERRES.md`, «Cómo se comprueba»; `docs/validation/CAPA-GENERADA.md`,
+     fase 2, D3); `tests/unit/test_capa_generada.py` falla si el fichero no es lo que da el generador;
    - si la regla gana un sitio con `cita`: las tres guardias de `src/botsito/spec/modelo.py`;
    - el codigo del motor, si falta, con su test;
    - los tests que congelaban el estado «sin fijar» cambian de sentido A PROPOSITO, y el commit y

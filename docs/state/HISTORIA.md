@@ -18372,3 +18372,12 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 70 (2026-11-13).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/skills-metodo (2026-11-14)
+
+Su texto literal en «Technical Debt», con su evidencia:
+
+- La skill `activar-sesion` no dice que una activación que toque un parámetro de la capa de MT5 (`ENTRAN` de `generar_capa.py`) regenera `Generado.mqh` en el mismo commit (CAPA-GENERADA.md, D3; `.claude/` no se tocó allí).
+  PAGADA por `trabajo/skills-metodo`: `.claude/skills/activar-sesion/SKILL.md:106-111`, un punto del
+  paso 3 con la orden de `docs/runbooks/RENOVAR-CIERRES.md` («Cómo se comprueba») y su test,
+  `tests/unit/test_capa_generada.py` (SKILLS-METODO.md, fase 1).

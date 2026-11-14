@@ -5,7 +5,7 @@ PLANTILLA: este informe no trae tabla final de preguntas al trader; es una rama 
 Rama `trabajo/skills-metodo` (tramo «Carril: guardias y deuda» de `docs/plan/HOJA-DE-RUTA.md`).
 Encargo del consultor del 2026-11-14: `docs/encargos/trabajo-skills-metodo.md`.
 
-Estado: PARADA de la fase 0 (ver «Lo que necesito que decidas»).
+Estado: EN CURSO, fase 1 (respuesta del consultor a la PARADA del 2026-11-14).
 
 ## Apertura (2026-11-14)
 
@@ -226,4 +226,91 @@ Lo demás de D1-D6 cuadra con lo medido (las citas, corregidas como arriba). Si 
 `make check` del commit de apertura (`c227edc9`): exit 0, 3513 passed, 6 xfailed, ningún `failed`,
 SELLO sobre el árbol `ab82b181`. `PICO DE MEMORIA de make check: 317 MiB en test`.
 
-Estado: PARADA de la fase 0, esperando la respuesta del consultor.
+## Respuesta del consultor a la PARADA (2026-11-14)
+
+Copiada tal cual (también al final del encargo):
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/skills-metodo (2026-11-14). Cópiala tal cual en el informe, en su sección, y aplícala.
+>
+> 0. D2 c: opción (a), por casos. En un vídeo fuera de cuarentena, primero uv run botsito corpus frames show (la guardia lo niega dentro de un tramo no citable) y después Read solo de la ruta que imprime. En un vídeo de sesión en cuarentena, la guardia niega frames show siempre (.claude/hooks/guardia.py, _analizar_cli, hacia :2526-2537) y su mensaje manda abrir el PNG por su ruta: Read de data/fotogramas/<v>/png-1fps/<ms>.png, solo para un instante localizado antes en la filtrada y nunca dentro de un tramo de tramos_no_citables.yaml (la guardia aún no niega ese Read: VIDEO-JULIO.md §11.1 y su línea de Technical Debt, que esta rama no paga). En los dos casos, después de la regla de D2 b. La versión del encargo era un error del consultor: no se podía cumplir para ningún vídeo en cuarentena.
+> 1. D3 a: opción (a). «Es la convención que piden sus encargos», con DIETA-ESTADO, ACTIVAR-SESION-06 y esta rama como fuente.
+> 2. Las dos herencias: opción (a), entran las dos, cada una con su cita. La lección 8 de la fila de trabajo/video-julio (un tramo nuevo de un vídeo fuera de cuarentena amplía test_los_tramos_del_repo_real en el mismo commit) va en ingerir-sesion. La de trabajo/dieta-estado (knowledge validate antes de cada make check) va en el paso 6 de abrir-rama, escrita con la forma de log que D2 d deje fuera de la raíz.
+> 3. Las correcciones de cita de la fase 0 se aceptan: R4.3 sin «paso (3)», que es de la Next Action F, citando R4.3 y ADR-0093 §6 «Qué se mide»; el trailer Fuente: en SESION-06-EXTRACCION §7, punto 3; «nunca elige entre dos lecturas», de ADR-0093 §4; y la regla de regenerar la capa, citando también RENOVAR-CIERRES.md, con su perfil y su test, sin ampliar la skill más allá de lo que esa fuente dice.
+> 4. Mi lista queda anotada, sin tocar nada de ella en esta rama: el log de knowledge validate en la raíz que escriben CONTRATO-DE-RAMA.md y ENTRADA-MARZO.md, y que el comando de la corrida de julio lo fija el encargo de la activación de la 7a.
+> 5. Sigue con la fase 1 (un commit por skill, sellados), el revisor con su alcance y «Rama lista para revisión, NO cerrada». En la fila de ERRORES-RECURRENTES deja la 3.ª columna para mí.
+
+## Fase 1 (2026-11-14): las tres skills, un commit por skill
+
+### 1. `activar-sesion` (D1 a-d; respuesta a la PARADA, punto 3)
+
+- D1 d: los precedentes ganan una frase con `ACTIVAR-SESION-06-MOTOR.md`, anterior a ADR-0093.
+- D1 b: la viñeta «El arnes» se sustituye (la única sustitución de la skill). La corrida que
+  cuenta, por R4.3 («Hecho cuando») y ADR-0093 §6, «Qué se mide», sin el «paso (3)» de la Next
+  Action F (punto 3 de la respuesta).
+- D1 a: la sección «El metodo de ADR-0093 §4», con las palabras del ADR entre comillas; «nunca
+  elige entre dos lecturas» atribuido a ADR-0093 §4; la línea base, la de §6 y
+  `PIVOTES-SESION-7.yaml`, sin copiar sus cifras; el comando de julio, del encargo de cada
+  activación.
+- D1 c: un punto en el paso 3, con la orden y el alcance de RENOVAR-CIERRES.md («`parametros.yaml`,
+  el perfil») y su test, sin más (punto 3 de la respuesta).
+- Paga la línea de Technical Debt de PROJECT_STATE.md:83 entera: sale, literal, al final de
+  HISTORIA en «# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/skills-metodo
+  (2026-11-14)», con su evidencia (`activar-sesion/SKILL.md:106-111`).
+
+El diff (antes y después):
+
+```diff
+diff --git a/.claude/skills/activar-sesion/SKILL.md b/.claude/skills/activar-sesion/SKILL.md
+index 99b69d67..4e752780 100644
+--- a/.claude/skills/activar-sesion/SKILL.md
++++ b/.claude/skills/activar-sesion/SKILL.md
+@@ -14,2 +14,4 @@ precedentes: `docs/validation/ACTIVAR-SESION-03.md`, `docs/validation/ACTIVACION
+ `docs/runbooks/ACTIVAR-A35-A44.md`. Si esta skill y ellos discrepan, ganan ellos y se dice.
++La ultima activacion cerrada es `docs/validation/ACTIVAR-SESION-06-MOTOR.md`
++(`stable/F38o-activar-sesion-06-motor`, 2026-11-06), anterior a ADR-0093 (2026-11-11).
+ 
+@@ -43,7 +45,29 @@ precedentes: `docs/validation/ACTIVAR-SESION-03.md`, `docs/validation/ACTIVACION
+   test con el codigo de main») y pase despues.
+-- **El arnes** (`uv run botsito motor arnes`) solo si el encargo o la respuesta a la PARADA lo
+-  autorizan expresamente (`ACTIVAR-A35-A44.md` lo pedia tras activar; los encargos recientes lo
+-  prohiben salvo autorizacion). La corrida que cuenta es la de la entrada R3.1 de
+-  `docs/plan/HOJA-DE-RUTA.md`, con las opciones de ADR-0070 («Decision», punto 3). En la duda,
+-  PARADA.
++- **El arnes** (`uv run botsito motor arnes`). La corrida de julio de 2026 de ADR-0093 §4 forma
++  parte de toda activacion y es diagnostico (seccion siguiente). Cualquier otra corrida del arnes,
++  solo si el encargo o la respuesta a la PARADA la autorizan expresamente (`ACTIVAR-A35-A44.md` lo
++  pedia tras activar; los encargos recientes lo prohiben salvo autorizacion). La corrida que cuenta
++  ya no es la de R3.1: es la de R4.3 de `docs/plan/HOJA-DE-RUTA.md` («el pivote leído en la
++  re-corrida siguiente»), «la primera corrida de ADR-0070 §3 [...] después de activar la 7b»
++  (ADR-0093 §6, «Qué se mide»), con las opciones de ADR-0070 («Decision», punto 3) y la lectura del
++  pivote de ADR-0093 §6. En la duda, PARADA.
++
++## El metodo de ADR-0093 §4
++
++Desde ADR-0093 (2026-11-11), con sus palabras:
++
++- «Cada respuesta se escribe primero como test sobre casos de construcción que rompe en `main`».
++- «Cada activación declara ANTES qué filas de la clasificación vigente debería convertir en
++  pareja», y corre julio de 2026 en la rama, «con su delta de parejas y de operaciones de más frente
++  a la línea base».
++- La linea base: §4 no la define. Es la de ADR-0093 §6 («Línea base»), con sus cifras en
++  `docs/plan/PIVOTES-SESION-7.yaml` (`linea_base`): esa lectura, y no otra.
++- «Si el delta de julio de una activación no casa con lo que declaró, la regla no se retoca hasta
++  que la cifra salga: PARADA» (ADR-0093 §4).
++- El delta es diagnostico: «La cifra dice si la respuesta se entendió, nunca ajusta un parámetro»
++  (ADR-0093 §4, que cita ADR-0092 §6) y «El delta nunca elige entre dos lecturas de un parámetro»
++  (ADR-0093 §4).
++- Como se corre julio en una activacion (el comando, sus opciones y como se calcula el delta) no
++  esta escrito en ningun sitio (`docs/validation/SKILLS-METODO.md`, fase 0): lo fija y lo cita el
++  encargo de cada activacion.
+ 
+@@ -81,2 +105,8 @@ precedentes: `docs/validation/ACTIVAR-SESION-03.md`, `docs/validation/ACTIVACION
+      `uv run botsito spec docs --escribir`, en el mismo commit;
++   - si toca un parametro que entra en la capa de MT5 (`ENTRAN` de
++     `src/botsito/mql5bridge/generar_capa.py`; `parametros.yaml` o el perfil), se regenera
++     `mql5/Include/Botsito/Capa/Generado.mqh` en el mismo commit:
++     `uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k`
++     (`docs/runbooks/RENOVAR-CIERRES.md`, «Cómo se comprueba»; `docs/validation/CAPA-GENERADA.md`,
++     fase 2, D3); `tests/unit/test_capa_generada.py` falla si el fichero no es lo que da el generador;
+    - si la regla gana un sitio con `cita`: las tres guardias de `src/botsito/spec/modelo.py`;
+```

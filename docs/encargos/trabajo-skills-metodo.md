@@ -53,3 +53,16 @@ Dado por Aleks (consultor) el 2026-11-14, en un solo mensaje. Copiado tal cual:
 > La rama no toca hooks, permisos, rutas, el sistema de archivos ni código: no hace falta CI de Linux (RITUAL.md, hacia :93-96). Si el revisor o tú veis que algo la exige, PARADA.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA de la fase 0 (2026-11-14)
+
+Copiada tal cual:
+
+> Respuesta del consultor a la PARADA de la fase 0 de trabajo/skills-metodo (2026-11-14). Cópiala tal cual en el informe, en su sección, y aplícala.
+>
+> 0. D2 c: opción (a), por casos. En un vídeo fuera de cuarentena, primero uv run botsito corpus frames show (la guardia lo niega dentro de un tramo no citable) y después Read solo de la ruta que imprime. En un vídeo de sesión en cuarentena, la guardia niega frames show siempre (.claude/hooks/guardia.py, _analizar_cli, hacia :2526-2537) y su mensaje manda abrir el PNG por su ruta: Read de data/fotogramas/<v>/png-1fps/<ms>.png, solo para un instante localizado antes en la filtrada y nunca dentro de un tramo de tramos_no_citables.yaml (la guardia aún no niega ese Read: VIDEO-JULIO.md §11.1 y su línea de Technical Debt, que esta rama no paga). En los dos casos, después de la regla de D2 b. La versión del encargo era un error del consultor: no se podía cumplir para ningún vídeo en cuarentena.
+> 1. D3 a: opción (a). «Es la convención que piden sus encargos», con DIETA-ESTADO, ACTIVAR-SESION-06 y esta rama como fuente.
+> 2. Las dos herencias: opción (a), entran las dos, cada una con su cita. La lección 8 de la fila de trabajo/video-julio (un tramo nuevo de un vídeo fuera de cuarentena amplía test_los_tramos_del_repo_real en el mismo commit) va en ingerir-sesion. La de trabajo/dieta-estado (knowledge validate antes de cada make check) va en el paso 6 de abrir-rama, escrita con la forma de log que D2 d deje fuera de la raíz.
+> 3. Las correcciones de cita de la fase 0 se aceptan: R4.3 sin «paso (3)», que es de la Next Action F, citando R4.3 y ADR-0093 §6 «Qué se mide»; el trailer Fuente: en SESION-06-EXTRACCION §7, punto 3; «nunca elige entre dos lecturas», de ADR-0093 §4; y la regla de regenerar la capa, citando también RENOVAR-CIERRES.md, con su perfil y su test, sin ampliar la skill más allá de lo que esa fuente dice.
+> 4. Mi lista queda anotada, sin tocar nada de ella en esta rama: el log de knowledge validate en la raíz que escriben CONTRATO-DE-RAMA.md y ENTRADA-MARZO.md, y que el comando de la corrida de julio lo fija el encargo de la activación de la 7a.
+> 5. Sigue con la fase 1 (un commit por skill, sellados), el revisor con su alcance y «Rama lista para revisión, NO cerrada». En la fila de ERRORES-RECURRENTES deja la 3.ª columna para mí.
