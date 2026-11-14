@@ -391,3 +391,131 @@ index 3dd354b5..c57ebe19 100644
 +  leccion 11).
  - `git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones
 ```
+
+`make check` del commit 2 (`c7920376`): exit 0, 3513 passed, 6 xfailed, ningún `failed`, SELLO
+sobre el árbol `8a8dffb4`. `PICO DE MEMORIA de make check: 319 MiB en test`.
+
+### 3. `abrir-rama` (D3 a-b; respuesta a la PARADA, puntos 1 y 2)
+
+- D3 a (`:74-79`): la línea de PLANTILLA en los primeros 600 caracteres; `test_hoja_de_ruta.py` lo
+  comprueba solo en los `SESION-*-EXTRACCION.md`; en los demás informes, «la convención que piden
+  sus encargos», con DIETA-ESTADO, ACTIVAR-SESION-06 y esta rama como fuente (respuesta, punto 1).
+- Herencia (`:89-92`; respuesta, punto 2): la lección de la fila de `trabajo/dieta-estado`,
+  `knowledge validate` antes de cada `make check`, con el log fuera del repo, la forma de D2 d.
+- D3 b (`:97-101`): la fila de HOLDOUT-EXPOSICIONES del día antes del primer `make check`; si la
+  rama lo corre el día de la apertura, entra en el commit de apertura y `rutas_permitidas` la
+  incluye. La verificación (`:113-115`) se ajusta: es la única viñeta cambiada de la skill. El paso
+  4 (`rutas_permitidas`), la lista del `git add` del paso 7 y «Artefacto» no se tocan (D4: solo se
+  añade); la frase nueva del paso 7 los completa.
+- Paga la parte de PLANTILLA de la línea de Technical Debt de PROJECT_STATE.md:141, y con ella la
+  línea entera (las otras dos partes, en `c7920376`): sale, literal, al mismo bloque de HISTORIA,
+  con su evidencia.
+
+El diff (antes y después):
+
+```diff
+diff --git a/.claude/skills/abrir-rama/SKILL.md b/.claude/skills/abrir-rama/SKILL.md
+index 8ab7127a..894f3326 100644
+--- a/.claude/skills/abrir-rama/SKILL.md
++++ b/.claude/skills/abrir-rama/SKILL.md
+@@ -73,2 +73,8 @@ para `PROJECT_STATE.md`.
+    fase 0 la escribe fase-cero en su commit.
++   Nace tambien con su linea de PLANTILLA en sus primeros 600 caracteres:
++   `tests/unit/test_hoja_de_ruta.py` lo comprueba solo en los `docs/validation/SESION-*-EXTRACCION.md`
++   (sin ella, el primer `make check` de la rama sale en rojo, por segunda vez en
++   `docs/validation/SESION-06-EXTRACCION.md` §7, punto 1); en los demas informes es la convencion
++   que piden sus encargos (`docs/validation/DIETA-ESTADO.md`, `docs/validation/ACTIVAR-SESION-06.md`
++   y `docs/validation/SKILLS-METODO.md`).
+ 5. **Archivo de PROJECT_STATE** (`docs/state/README.md`, «Como se archiva»):
+@@ -82,2 +88,6 @@ para `PROJECT_STATE.md`.
+    FINAL de `make check`: mejor verlo antes) y `uv run python scripts/contrato_rama.py`.
++   Y, antes de cada `make check`, `uv run botsito knowledge validate` sin `ERROR`, con su log en la
++   carpeta de trabajo de la sesion, fuera del repo (fila de `trabajo/preparacion-sesion-7` en
++   `docs/runbooks/ERRORES-RECURRENTES.md`, leccion 11): un id inexistente citado en el informe tumba
++   `make check` (fila de `trabajo/dieta-estado`, misma tabla).
+ 7. **Sello y commit.** `git add` de los ficheros nombrados (encargo, contrato, `PROJECT_STATE.md`,
+@@ -86,2 +96,7 @@ para `PROJECT_STATE.md`.
+    `chore(rama): abre <rama> (encargo, contrato y Archivo N de PROJECT_STATE)`.
++   La fila de `docs/validation/HOLDOUT-EXPOSICIONES.md` del dia va antes del primer `make check`
++   (leccion 3 de la fila de `trabajo/guardia-falsos-positivos` en
++   `docs/runbooks/ERRORES-RECURRENTES.md`): si la rama corre `make check` el dia de la apertura,
++   entra en este commit, estadiada con los demas, y `rutas_permitidas` la incluye
++   (`trabajo/dieta-estado` y `trabajo/skills-metodo` lo declararon como desviacion).
+ 
+@@ -97,4 +112,5 @@ nuevo al final de `docs/state/HISTORIA.md` y `PROJECT_STATE.md` apuntando a la r
+ - `tests/unit/test_historia.py` en verde dentro de `make check` (HISTORIA solo se amplio).
+-- `git diff main --stat` = encargo, contrato, `PROJECT_STATE.md`, `docs/state/HISTORIA.md` y el
+-  artefacto, nada mas.
++- `git diff main --stat` = encargo, contrato, `PROJECT_STATE.md`, `docs/state/HISTORIA.md`, el
++  artefacto y, si entro en el commit de apertura (paso 7), `docs/validation/HOLDOUT-EXPOSICIONES.md`;
++  nada mas.
+ - Las cuatro comprobaciones de la base (paso 1), con su salida, en el informe de la rama.
+```
+
+### PROJECT_STATE.md
+
+`wc -c PROJECT_STATE.md`: **23435** bytes (23879 en `main`): salen las dos líneas de Technical Debt
+y cambian `Current Branch`, `Current Feature`, `Completed Features` y `Change Log` (abrir-rama).
+Nada más cambia. `tests/unit/test_skills.py`, `test_historia.py`, `test_project_state.py` y
+`test_hoja_de_ruta.py` pasan dentro de cada `make check`.
+
+## El encargo, punto por punto
+
+| Punto | Qué pedía | Estado | Dónde |
+|---|---|---|---|
+| 0 | Base comprobada, `git fetch --prune`, una sola rama, F39c libre | Hecho | «Apertura» |
+| 0 | Abrir con `abrir-rama`: encargo con Write, contrato, Archivo en HISTORIA | Hecho (el encargo, Write más un guion que antepone `> `: desviación 2) | `c227edc9`; Archivo 71 |
+| 0 | Contrato: tramo literal, riesgo bajo, las tres skills y HOLDOUT en `rutas_permitidas` | Hecho | `contrato.yaml` |
+| 0 | Informe con PLANTILLA en sus primeros 600 caracteres | Hecho | línea 3 |
+| 0 | Fila de HOLDOUT antes del primer `make check`, en el commit de apertura, declarada como desviación | Hecho | HOLDOUT-EXPOSICIONES.md:148; desviación 1 |
+| 0 | `/model`: Opus, esfuerzo medio | Hecho | «Apertura» |
+| 1 | La decisión del consultor, en el informe | Hecho | «Decisión del consultor» |
+| 2 D1 a | Sección del método de ADR-0093 §4, con sus palabras; la línea base de §6 y PIVOTES; el comando de julio, del encargo | Hecho | `activar-sesion/SKILL.md:55-73` |
+| 2 D1 b | La viñeta «El arnés», sustituida | Hecho, con la cita corregida (respuesta, punto 3) | `activar-sesion/SKILL.md:46-53` |
+| 2 D1 c | Regenerar `Generado.mqh` en el mismo commit | Hecho, con RENOVAR-CIERRES.md, su perfil y su test | `activar-sesion/SKILL.md:106-111` |
+| 2 D1 d | ACTIVAR-SESION-06-MOTOR.md en los precedentes, anterior a ADR-0093 | Hecho | `activar-sesion/SKILL.md:15-16` |
+| 2 D2 a | El trailer `Fuente:` de los tramos | Hecho, citando §7, punto 3 | `ingerir-sesion/SKILL.md:50-53` |
+| 2 D2 b | Ningún fotograma antes de situar el tramo; las lecciones de video-julio | Hecho (lecciones 3, 5, 6 y 7) | `ingerir-sesion/SKILL.md:30-38` |
+| 2 D2 c | Cómo se abre un fotograma | PARADA y hecho por casos (respuesta, punto 0) | `ingerir-sesion/SKILL.md:65-74` |
+| 2 D2 d | El log de `knowledge validate` fuera de la raíz | Hecho: carpeta de trabajo, fuera del repo | `ingerir-sesion/SKILL.md:152-155` |
+| 2 D3 a | PLANTILLA: test solo en las extracciones; convención en los demás | Hecho (respuesta, punto 1) | `abrir-rama/SKILL.md:74-79` |
+| 2 D3 b | HOLDOUT antes del primer `make check`; la verificación ajustada | Hecho | `abrir-rama/SKILL.md:97-101` y `:113-115` |
+| 2 D4 | Cada línea con su fuente; rutas que no rompan `test_skills.py`; solo se añade salvo D1 b y la verificación | Hecho; `test_skills.py` en verde | diffs de «Fase 1» |
+| 2 D5 | Nada fuera de las tres skills, PS, HISTORIA, el encargo, el informe y HOLDOUT; sin material ni arnés | Hecho | `git diff main --stat` |
+| 2 D6 | Las dos líneas de Technical Debt, por (a) PAGADA, literales en HISTORIA, en el commit que paga cada una | Hecho: :83 en `a8acd219`; :142 (entera) en el commit de `abrir-rama` | final de HISTORIA |
+| 3 | Fase 0 y PARADA condicional | PARADA por D2 c; respondida | «Fase 0», «Respuesta del consultor a la PARADA» |
+| 4 | Un commit por skill, sellado; PICO DE MEMORIA; los cuatro tests; `wc -c` | Hecho | «Fase 1»; «PROJECT_STATE.md» |
+| 5 | El informe | Este | — |
+| 6 | El revisor con su alcance, su informe pegado; sin CI de Linux | Ver «Informe del revisor» | — |
+
+## Lo que no entró, y por qué
+
+- Los runbooks que escriben el log de `knowledge validate` en la raíz
+  (`docs/runbooks/CONTRATO-DE-RAMA.md:100`, `docs/runbooks/ENTRADA-MARZO.md:103`, `:205` y `:290`):
+  D5; en la lista del consultor (respuesta, punto 4).
+- El comando, las opciones y el cálculo del delta de la corrida de julio de una activación: no
+  están escritos en ningún sitio; los fija el encargo de la activación de la 7a (respuesta,
+  punto 4).
+- La línea de Technical Debt del fotograma dentro de un tramo no citable (PROJECT_STATE.md:111):
+  la rama no la paga (encargo, D2 c).
+- PROJECT_STATE.md:148 (en `main`, :150), los dos textos que ADR-0093 deja viejos: código (D5).
+- Lo que la activación de la 7a tiene que hacer además (las láminas de la 7b, PREGUNTAS-7B.md,
+  `SESION_EN_CURSO`): es de su encargo, no de la skill.
+
+## Desviaciones
+
+1. La fila de HOLDOUT-EXPOSICIONES en el commit de apertura, antes de que D3 b ajustara la
+   verificación de `abrir-rama` (punto 0 del encargo).
+2. El encargo, escrito con Write en la carpeta de trabajo y copiado con un guion que antepone `> `.
+3. Las negativas de la guardia, ninguna sobre material: dos comandos compuestos (`uv run python -`
+   o un guion detrás de `git add`/`tail`) y dos listados (`find .` y `git ls-files` sin ruta, que
+   listarían nombres del holdout). Se partieron en llamadas sueltas o se cambió por rutas literales,
+   la forma que propone su mensaje; ninguna era un paso de la skill ni pedía rodear nada.
+4. Las citas del encargo corregidas en la fase 0 (R4.3 «paso (3)», SESION-06 §7 punto 3), aceptadas
+   por la respuesta, punto 3.
+
+## Para la orden de cierre: la fila de ERRORES-RECURRENTES.md
+
+| Rama | Hallazgos del revisor | Lo que vio el consultor después | Lecciones |
+|---|---|---|---|
+| `trabajo/skills-metodo` | (se rellena con el informe del revisor) | (la deja el consultor) | **De la sesión:** (1) una regla de cómo se abre un fotograma se mide contra la guardia para los dos casos, vídeo en cuarentena y fuera de ella, antes de escribirla: `_analizar_cli` niega `frames show` siempre en un vídeo en cuarentena (D2 c, PARADA de la fase 0); (2) una cita de la hoja de ruta por «paso» se busca en la entrada: los pasos numerados son de la Next Action, que caduca; se cita la entrada y su ADR. |

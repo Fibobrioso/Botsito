@@ -18381,3 +18381,9 @@ Su texto literal en «Technical Debt», con su evidencia:
   PAGADA por `trabajo/skills-metodo`: `.claude/skills/activar-sesion/SKILL.md:106-111`, un punto del
   paso 3 con la orden de `docs/runbooks/RENOVAR-CIERRES.md` («Cómo se comprueba») y su test,
   `tests/unit/test_capa_generada.py` (SKILLS-METODO.md, fase 1).
+
+- La skill ingerir-sesion no nombra el trailer Fuente: de tramos_no_citables.yaml y abrir-rama no nombra la línea de PLANTILLA del informe (SESION-06-EXTRACCION.md §7, puntos 1 y 3; segunda vez): rama corta de skills; y no dice que ningún fotograma se abre antes de que la voz o uno ya abierto sitúen el tramo, ADR-0093 §2.
+  PAGADA entera por `trabajo/skills-metodo`, en sus tres partes: el trailer `Fuente:`,
+  `.claude/skills/ingerir-sesion/SKILL.md:50-53`; los fotogramas, `ingerir-sesion/SKILL.md:30-38`
+  (y cómo se abre uno, `:65-74`), los dos en `c7920376`; la línea de PLANTILLA,
+  `.claude/skills/abrir-rama/SKILL.md:74-79`, en el commit de esta línea (SKILLS-METODO.md, fase 1).
