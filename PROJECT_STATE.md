@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/dieta-estado
+main
 
 ## Current Feature
-trabajo/dieta-estado, EN CURSO (carril «guardias y deuda»): PROJECT_STATE.md adelgazado con los criterios de docs/state/README.md antes de la sesion 7a. Encargo docs/encargos/trabajo-dieta-estado.md; informe docs/validation/DIETA-ESTADO.md.
+Ninguna rama abierta. trabajo/dieta-estado cerrada en main el 2026-11-13 (stable/F39b-dieta-estado): cuatro líneas de Technical Debt acortadas por (e).
 
 ## Stable Main State
-e9314598 · merge de `trabajo/guardia-falsos-positivos` (tag `stable/F39a-guardia-falsos-positivos`), sobre `stable/F38z-capa-generada` (7bccf310). Informe docs/validation/GUARDIA-FALSOS-POSITIVOS.md; el registro del cierre, al final de HISTORIA.
+6054c4ce · merge de `trabajo/dieta-estado` (tag `stable/F39b-dieta-estado`), sobre `stable/F39a-guardia-falsos-positivos` (e9314598). Informe docs/validation/DIETA-ESTADO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-e9314598 · merge: trabajo/guardia-falsos-positivos, cmp de dos ficheros que no son guiones ya no se niega (G.6); el literal // de un guion nuevo, aplazado · tag stable/F39a-guardia-falsos-positivos
+6054c4ce · merge trabajo/dieta-estado: PROJECT_STATE adelgazado por (e), de 24.652 a unos 24.040 bytes · tag stable/F39b-dieta-estado
 
 ## Tests Currently Passing
 2061 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
