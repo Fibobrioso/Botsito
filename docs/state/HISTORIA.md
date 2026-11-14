@@ -18145,3 +18145,56 @@ valido mas largo de 160 bytes como mucho; medido en DIETA-ESTADO.md, fase 0, 0.4
 
 - La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios): dos falsos positivos en un guion que solo leía las láminas (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final); y toma por argumento que se construye al ejecutarse la cadena constante `$'\r'` de bash, en un `grep -c` sobre ficheros nombrados literales (LAMINAS.md, respuesta tras revisar la v4, 6); su arreglo va al carril de guardias, con fix/.
   Queda en PROJECT_STATE: - La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios) … (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final; LAMINAS.md, respuesta tras revisar la v4, 6; entera en HISTORIA, Technical Debt ACORTADA)
+
+# Registro de cierre · `trabajo/dieta-estado` (2026-11-13)
+
+- Orden de cierre del consultor del 2026-11-13, tras su revisión, dada por Aleks en la conversación
+  de la sesión. Después, Aleks lanzó `/cerrar-rama trabajo/dieta-estado`.
+- **El cierre se adelantó al viernes 13.** La orden fijaba en su punto 1 que el cierre empezara el
+  sábado 14 (hora de Lima), con un commit propio de la rama para la fila de HOLDOUT-EXPOSICIONES del
+  2026-11-14 (excepción a `docs/runbooks/RITUAL.md`, hacia :116-118). A las 21:34 de Lima del 13 la
+  sesión paró el primer `/cerrar-rama` por ese punto; Aleks preguntó si de verdad afectaba, la sesión
+  contestó que ningún test ni hook comprueba la fecha de la fila (esa guardia es Technical Debt) y que
+  los dos `make check` del cierre acabarían, salvo un fallo, antes de las 00:00 de Lima, ya cubiertos
+  por la fila del 2026-11-13; y Aleks cambió el punto 1, literal: «Cierra ahora. Cambia el punto 1 de
+  la orden de cierre, por decisión del consultor y de Aleks (2026-11-13, 21:56 de Lima): el cierre se
+  adelanta al viernes 13 y no hace falta el commit de la fila del 14, porque la del 13 ya está en la
+  rama. Si algún make check del cierre acaba pasadas las 00:00 de Lima, no pares: termina el cierre
+  entero (commit de estado, push y CI), y en el informe final dime la hora exacta de cada make check.
+  La fila de HOLDOUT-EXPOSICIONES del 2026-11-14 entrará como «Escrita tarde» en el primer commit de
+  la rama siguiente. Escribe en el registro de HISTORIA que el cierre se adelantó y por qué. Todo lo
+  demás de la orden, igual.» Así que este es el único commit que el cierre añade a la rama, como dice
+  RITUAL.md.
+- **Lo que entra** (carril «guardias y deuda»):
+  - `PROJECT_STATE.md`, Technical Debt: cuatro líneas acortadas por (e) (`:84`, `:150`, `:151` y
+    `:152`; 243, 93, 70 y 203 bytes), enteras y literales en el bloque «# Technical Debt ACORTADA ·
+    sale de PROJECT_STATE.md en trabajo/dieta-estado (2026-11-13)» de arriba. Ninguna línea salió por
+    (a)-(d); la `:120` y las tres dudosas (`:96`, `:100`, `:113`) se quedan sin tocar, y la `:142`
+    entera (orden de cierre, punto 3).
+  - El informe `docs/validation/DIETA-ESTADO.md` (fase 0, PARADA, respuesta, fase 1, revisor) y el
+    encargo con la respuesta a la PARADA al final.
+  - La fila de HOLDOUT-EXPOSICIONES de la rama: la del 2026-11-13 (los `make check`, que leen el M1
+    de marzo y calientan con el de junio), en el commit de apertura. La rama y su cierre caben en ese
+    día salvo lo que diga el informe final; la del 2026-11-14, si hace falta, la escribe tarde la rama
+    siguiente (punto 1 cambiado, arriba).
+
+  Nada del motor, la spec, `knowledge/`, `src/`, `tests/`, `.claude/`, el `Makefile`, la hoja de
+  ruta ni `docs/state/README.md`.
+- **Commits de la rama** (5):
+  - `b031559d` apertura: encargo, contrato, Archivo 70 y la fila de HOLDOUT-EXPOSICIONES;
+  - `89419ca0` fase 0: inventario y PARADA (la previsión no bajaba de 24.000);
+  - `41983743` fase 1: las cuatro (e), con su bloque en HISTORIA;
+  - `111d594e` el encargo punto por punto, el revisor y sus hallazgos;
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Sin CI de Linux**: la rama no toca hooks, rutas, el sistema de archivos ni código (RITUAL.md,
+  hacia :94-96), así que no se empujó como `fix/dieta-estado` y no hay run de rama.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: no sale, no entra y no cambia nada; hoja de ruta: no cambia;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.074 bytes (`wc -c`) en este commit; con las cabeceras de `main`, unos
+  24.040.
+- Letra del tag: la última cerrada era `stable/F39a-guardia-falsos-positivos`;
+  `stable/F39b-dieta-estado` no existe en local ni en origin (comprobado antes de este commit). La
+  siguiente rama será F39c.
+- Tag: `stable/F39b-dieta-estado`. El merge es `git rev-parse "stable/F39b-dieta-estado^{commit}"`.
