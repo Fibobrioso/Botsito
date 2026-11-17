@@ -1,0 +1,19 @@
+id: ev-v18-010918-23724712
+video_id: v18
+t0: '1:09:18'
+t1: '1:09:37'
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: ¿qué pasa aquí? aquí no hay ninguna entrada porque no nos generan ni el esquema 1 ni el
+  esquema 2 de entrada, ya que si bien aquí rompe con cuerpo la toma de liquidez lo hace con cuerpo pero
+  aquí hace esto aquí y esto no es una zona de control linealmente limpia
+afirmacion: 'no hay entrada aunque la toma es con cuerpo: no se forma ninguno de los dos esquemas de entrada,
+  la zona de control no es limpia'
+tema: no_trade.sin_esquema
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 2 del bloque de dias (2026-07-02), la sesion de 7 a 11, operada por el trader. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

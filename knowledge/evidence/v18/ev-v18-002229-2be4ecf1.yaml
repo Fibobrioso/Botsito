@@ -1,0 +1,19 @@
+id: ev-v18-002229-2be4ecf1
+video_id: v18
+t0: 0:22:29
+t1: 0:22:52
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: como tal ahora para confirmar al final una zona de control es pues él es el desarrollo es
+  la mitigación en un orden flow alcista del punto más alto a la condicional es que hay una vela roja
+  vale luego una vela verde y cierre con cuerpo por encima
+afirmacion: 'su frase de «Para confirmar al final» de S-3: una zona de control es la mitigacion del punto
+  mas alto en un order flow alcista: una roja y luego una verde que cierra con cuerpo por encima'
+tema: zona_control.definicion_mitigacion
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3, «Para confirmar al final»; no dice la segunda mitad (si hay dos, lo descarto). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

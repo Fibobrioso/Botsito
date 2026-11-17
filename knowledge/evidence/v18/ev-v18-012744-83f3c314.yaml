@@ -1,0 +1,17 @@
+id: ev-v18-012744-83f3c314
+video_id: v18
+t0: '1:27:44'
+t1: '1:27:52'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si lo hace de esta manera que es similar a esta no, no es válido porque nosotros solo trabajamos
+  con estos dos esquemas
+afirmacion: solo trabaja con los dos esquemas de entrada; otra forma parecida no es valida
+tema: entrada.solo_dos_esquemas
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 2 del bloque de dias (2026-07-02), al corregir una lamina; sirve a S-3. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

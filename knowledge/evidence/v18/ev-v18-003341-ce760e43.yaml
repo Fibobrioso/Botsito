@@ -1,0 +1,16 @@
+id: ev-v18-003341-ce760e43
+video_id: v18
+t0: 0:33:41
+t1: 0:33:46
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La primera vela de la mecha, ¿te habría metido la operación? Sí.
+afirmacion: la primera vela, la de la mecha, le habria metido en la operacion
+tema: entrada.orden.mecha_activa_la_entrada
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5, «Para precisar». docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

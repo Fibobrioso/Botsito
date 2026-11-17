@@ -1,0 +1,16 @@
+id: ev-v18-005438-b0a75ae4
+video_id: v18
+t0: 0:54:38
+t1: 0:54:47
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: bueno el escenario de ejecución es en m1 no en m15 entonces aquí hay un problema
+afirmacion: 'el escenario de ejecucion es M1, no M15: corrige un punto del bot'
+tema: entrada.escenario_ejecucion_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 1 del bloque de dias (2026-07-07, 11-15), al corregir una lamina del bot. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

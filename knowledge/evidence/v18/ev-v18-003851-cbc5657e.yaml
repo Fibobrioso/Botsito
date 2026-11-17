@@ -1,0 +1,19 @@
+id: ev-v18-003851-cbc5657e
+video_id: v18
+t0: 0:38:51
+t1: 0:39:08
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: vale que quedan en break even pero como digo en los últimos backtest que se ha realizado
+  se llega o sea como se está grabando el vídeo se llega a ver los trades que quedaron en break even se
+  toman esos trades que quedaron en break-even entonces por lo general abarcamos todo
+afirmacion: 'su frase de «Para confirmar al final» de S-6: deja sin tomar las que quedan en break even,
+  pero en los ultimos backtests grabados en video tambien toma esas'
+tema: backtest.entradas_sin_tomar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6, «Para confirmar al final». docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

@@ -1,0 +1,19 @@
+id: ev-v18-001327-70f1d014
+video_id: v18
+t0: 0:13:27
+t1: 0:13:45
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: control para pues poder poner en break y la entrada tiene que cerrar por encima de su nivel
+  alto de su de su máximo nivel para nosotros pues poder poner en break even porque nosotros esperamos
+  a que cierre la vela y si cierra por debajo no vamos a poder no no no se nos va a
+afirmacion: 'para pasar a break even espera a que cierre la vela: tiene que cerrar por encima del maximo
+  de la zona de control; si cierra por debajo, no'
+tema: break_even.disparador_zona_de_control
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (A-13), caso 1 del esquema. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

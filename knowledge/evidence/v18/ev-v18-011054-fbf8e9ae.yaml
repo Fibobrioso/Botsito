@@ -1,0 +1,20 @@
+id: ev-v18-011054-fbf8e9ae
+video_id: v18
+t0: '1:10:54'
+t1: '1:11:15'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Ahora actualizamos nuestro bias, nos vamos a 4H, o sea, cuando ya finaliza la sesión nos
+  vamos a 4H y pues actualizamos. rompió la vela por encima terminó alcista hizo una ruptura con cuerpo
+  entonces este bias de aquí pues ya, este rango ya ha sido mitigado entonces lo actualizamos a ese nivel
+afirmacion: 'al acabar la sesion mira H4: la vela rompio por encima, cerro alcista, el rango queda mitigado
+  y lo actualiza a ese nivel'
+tema: sesgo.rango_h4_se_actualiza_al_mitigarse
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 2 del bloque de dias (2026-07-02), entre la sesion de 7 a 11 y la de 11 a 15; sirve a S-1.
+  docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

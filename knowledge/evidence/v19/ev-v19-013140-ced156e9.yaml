@@ -1,0 +1,20 @@
+id: ev-v19-013140-ced156e9
+video_id: v19
+t0: '1:31:40'
+t1: '1:32:09'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pero pero bueno hay a ratas y en cuanto hay una interpretación correcta creo yo hasta ahora
+  en cuanto a la mitigación de la liquidez de m15 también en el marco de liquidez de m15 hasta ahora ha
+  ido en cierta parte bien entonces hay cosas que corregir como la en m1 el trazo de las cajas también
+  desde donde a donde se traza
+afirmacion: 'resume la reserva: la mitigacion y el marco de la liquidez de M15 van bien; hay que corregir
+  M1 y desde donde hasta donde se trazan las cajas («creo yo»)'
+tema: herramientas.caja.trazado
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: reserva del bloque de dias (2026-04-13), resumen. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

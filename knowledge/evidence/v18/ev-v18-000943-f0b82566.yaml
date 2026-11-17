@@ -1,0 +1,18 @@
+id: ev-v18-000943-f0b82566
+video_id: v18
+t0: 0:09:43
+t1: 0:09:57
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: mi rango es alcista mi lado cambia cuando la vela de 4 horas genera un rompimiento y también
+  depende del tipo de vela, si es alcista o bajista sea por arriba o por debajo
+afirmacion: 'su frase de «Para confirmar al final» de S-1: el lado cambia cuando una vela de 4 horas rompe,
+  y depende de su color y del lado'
+tema: sesgo.rango_h4_cambio_ruptura_y_color
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1, «Para confirmar al final». No dice que vela es el rango. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

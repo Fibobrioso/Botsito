@@ -1,0 +1,19 @@
+id: ev-v19-012529-685ae24d
+video_id: v19
+t0: '1:25:29'
+t1: '1:25:53'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: liquidez de m15 pero que se llega a mitigar ojo con esto se llega a mitigar con velas de
+  m1 pero de la sesión del 7 en adelante si es una vez la mitigación antes de las 7 que antes del inicio
+  de la sesión o de cada sesión no es válido tiene que mitigarse con la liquidez pues de esa sesión que
+afirmacion: la liquidez de M15 tiene que mitigarse con velas de M1 de la sesion, desde las 7; una mitigacion
+  antes del inicio de la sesion no vale
+tema: liquidez.m15.tomada_antes_de_las_7
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: reserva del bloque de dias (2026-04-13), al corregir una lamina del bot. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

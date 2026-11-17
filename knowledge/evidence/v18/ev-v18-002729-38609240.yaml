@@ -1,0 +1,17 @@
+id: ev-v18-002729-38609240
+video_id: v18
+t0: 0:27:29
+t1: 0:27:36
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pero bueno, mi alto de M15 es la punta de la mecha en el esquema planteado
+afirmacion: 'su frase de «Para confirmar al final» de S-4: el alto de M15 es la punta de la mecha; no
+  completa que vela lo toma'
+tema: liquidez.m15.alto_es_la_punta_de_la_mecha
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4, «Para confirmar al final», a medias. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

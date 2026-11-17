@@ -1,0 +1,17 @@
+id: ev-v18-002115-bf40ec0b
+video_id: v18
+t0: 0:21:15
+t1: 0:21:30
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: como zona de control en ese esquema a y b o sea a y b la respuesta sería esa de allí entonces
+  es de otra cual solo a y b
+afirmacion: 'en el esquema de S-3 cuenta como zonas de control A y B (no C): la opcion «otra»'
+tema: zona_control.cuales_cuentan
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (RN-009). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

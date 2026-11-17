@@ -1,0 +1,17 @@
+id: ev-v18-002704-8b01e191
+video_id: v18
+t0: 0:27:04
+t1: 0:27:17
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Pues si la mecha llega a ser más alto Que este alto De aquel alto O sea, sería así Entonces
+  se trazaría desde aquí se trazaría desde allí
+afirmacion: si la mecha es de una vela verde y queda mas alta que el alto, el alto se traza desde ella
+tema: liquidez.m15.alto_mecha_vela_verde
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-35), «Para precisar» (la mecha de una verde). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

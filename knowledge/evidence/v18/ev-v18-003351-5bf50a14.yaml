@@ -1,0 +1,19 @@
+id: ev-v18-003351-5bf50a14
+video_id: v18
+t0: 0:33:51
+t1: 0:34:05
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: En la vela de un minuto. O sea, porque el cierre con cuerpo para la toma de líquidas de
+  DM15, de la zona lineal de DM15, tiene que ser en la temporalidad de DM1. Un par de velas de DM1 lo
+  tiene que mitigar con cuerpo.
+afirmacion: 'el cierre con cuerpo lo mira en la vela de un minuto: es el de la toma de la liquidez de
+  M15, que se mide en M1'
+tema: liquidez.m15.toma_con_cuerpo_en_m1
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5, «Para precisar» (M1 o M15). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

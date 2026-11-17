@@ -1,0 +1,20 @@
+id: ev-v19-004104-6d9d48cc
+video_id: v19
+t0: 0:41:04
+t1: 0:41:43
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: definir mal tu rango lo que hagas después o bien podría estar bien o bien podría estar mal
+  honestamente si lo vemos desde ese punto de vista vale pero ya no puedes saber simplemente mejor bueno
+  es considerable por eso ver si tienes un rango mayor y tratar de corregir eso antes de meterte a operar
+  confirmar el rango
+afirmacion: con el rango mal definido lo demas ya no se puede juzgar; antes de operar hay que ver si hay
+  un rango mayor y confirmar el rango
+tema: sesgo.rango_h4_mayor_no_mitigado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 4 del bloque de dias (2026-07-15), al corregir una lamina del bot; sirve a S-1. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

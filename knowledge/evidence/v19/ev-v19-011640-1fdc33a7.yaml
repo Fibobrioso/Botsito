@@ -1,0 +1,20 @@
+id: ev-v19-011640-1fdc33a7
+video_id: v19
+t0: '1:16:40'
+t1: '1:17:09'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pero es que el esquema 2 nos dice que antes que ocurra el rompimiento se desarrolla la zona
+  de control antes de que ocurra el rompimiento del posible punto breaker y ya entonces y el posible punto
+  breaker como condicional para poner en break even será después, o sea la zona de control después de
+  haber activado la entrada es la que a nosotros nos habilita pues poner en break even
+afirmacion: la zona de control del esquema 2 es antes de romper el punto; la que habilita el break even
+  es la que se forma despues de activarse la entrada
+tema: break_even.disparador_zona_de_control
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: reserva del bloque de dias (2026-04-13), operada por el trader; sirve a S-2 y a S-3. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

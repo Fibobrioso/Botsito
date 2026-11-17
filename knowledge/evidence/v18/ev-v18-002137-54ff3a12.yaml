@@ -1,0 +1,18 @@
+id: ev-v18-002137-54ff3a12
+video_id: v18
+t0: 0:21:37
+t1: 0:21:49
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pues no es que tenga que tener algún bajo un alto simplemente que se tiene que haber una
+  mitigación
+afirmacion: 'un bajo del retroceso no necesita nada propio para ser zona de control: tiene que haber una
+  mitigacion'
+tema: zona_control.definicion_mitigacion
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (RN-009), «Para precisar». docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca
