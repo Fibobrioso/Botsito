@@ -533,3 +533,45 @@ tramos:
       la exposicion, en docs/validation/HOLDOUT-EXPOSICIONES.md (2026-11-09, el fotograma
       fr-v13-8c1e06fb/10000, que no se vuelve a abrir); ADR-0038 y ADR-0041;
       docs/validation/VIDEO-JULIO.md
+  - video_id: v18
+    t0: "0:40:29"
+    t1: "0:41:11"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 2429,3 s a 2470,3 s. Segun Aleks (2026-11-17), una pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:26:52"
+    t1: "0:27:56"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 1612,3 s a 1675,4 s. Segun Aleks (2026-11-17), una pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:44:56"
+    t1: "0:45:48"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 2696,9 s a 2747,4 s. Segun Aleks (2026-11-17), otra pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:48:39"
+    t1: "0:49:19"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 2919,2 s a 2958,3 s. Segun Aleks (2026-11-17), otra pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "1:32:58"
+    t1: "1:34:17"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 5578,5 s a 5656,3 s. Segun Aleks (2026-11-17), otra pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "1:34:21"
+    t1: "1:34:55"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 5661,6 s a 5694,3 s. Segun Aleks (2026-11-17), la misma pausa que el tramo anterior: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
