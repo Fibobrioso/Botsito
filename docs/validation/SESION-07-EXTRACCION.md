@@ -187,6 +187,53 @@ El audio de cada vídeo, extraído FUERA del repositorio y de cualquier carpeta 
 `transcribir_sesion.py --audio`: `C:\Users\USER\Desktop\sesion-07-audio\sesion-07-v18.wav`
 (210.825 KiB) y `sesion-07-v19.wav` (179.860 KiB), mono a 16 kHz.
 
+### 2.2 v18: transcripción, cuarentena y puerta del ASR
+
+Aleks dejó dado su «listo» para las dos transcripciones antes de ausentarse (mensaje del
+2026-11-17: programas pesados cerrados, una transcripción cada vez, ninguna junto a un `make check`).
+Cada orden, medida con `scripts/pico_memoria.py ejecutar` (el medidor de `make check`).
+
+- **Transcripción del corpus**: `uv run botsito corpus transcribe --video v18` →
+  `tr-v18-large-v3-int8-float16-ba2d4fca`, **1320 segmentos**; PICO DE MEMORIA **5532 MiB** (suma de
+  sus procesos; el mayor, 5481 MiB). `corpus transcript check`: `OK: 25 transcripciones coherentes
+  con el disco y el glosario`.
+- **El guion de `main`** (`git diff --quiet main -- scripts/transcribir_sesion.py`: exit 0,
+  idéntico): `--audio C:/Users/USER/Desktop/sesion-07-audio/sesion-07-v18.wav --sesion 07 --video
+  v18`, después y nunca a la vez; PICO DE MEMORIA **5499 MiB** (el mayor, 5448 MiB). El registro
+  (`sesion-07-v18.registro.txt`, fuera del repositorio) dice:
+  - hoja: la de la sesión 07; tramos no citables del vídeo: 1 (el silencio);
+  - audio comprobado: el sha256 de su WAV (`7e29f2836bcd…`) es el de la transcripción del corpus de v18;
+  - ASR de 1349,1 s (factor 0,20), en cuda; **1320 segmentos**, los mismos que la del corpus;
+  - **segmentos en cuarentena: 15 en 4 bloques**; tapados solo por meses 15, solo por tramos 1, por
+    ambos 0; bloques `[NO CITABLE]`: 1; motivos «fecha numérica» 6 y «vecino» 9;
+  - códigos detectados: S-1 00:10, S-2 09:57, S-5 27:40 y S-6 34:28; sin código detectado, S-3 y
+    S-4 (cómo se localizaron, §3).
+- **La puerta del ASR del silencio.** El guion tapó **1** segmento por el tramo (bloque
+  `[NO CITABLE 40:05–41:17]`): empieza antes del corte (0:40:29–0:41:11) y acaba después, a las
+  41:17, así que **ningún segmento tiene `t1` dentro del corte**. El segmento entero queda tapado en la
+  filtrada, aunque solo su parte central es «SIN AUDIO»; no se cita.
+- **Los cuatro bloques de cuarentena, a `tramos_no_citables.yaml`**, sin contenido y en el commit
+  de este vídeo, con el fin de cada uno más un segundo («Los límites de un tramo»):
+  **0:52:04–0:52:15**, **0:57:52–0:58:14**, **1:09:09–1:09:16** y **1:51:08–1:51:39**. Control
+  positivo: cada bloque cabe entero en su tramo. El segundo de margen toca la primera línea visible
+  tras el bloque en tres de ellos (`[52:14]`, `[58:13]` y `[69:16]`), que por eso tampoco se citan.
+
+### 2.3 v18: el barrido, antes de leer
+
+Con `scripts/barrido_dias.py` de `main`, antes de leer una sola línea de la filtrada de v18:
+- **Del 1 al 31: 155 líneas** con un entero suelto: horas, cantidades, números de lámina y de
+  esquema, niveles, y los días que se dicen en voz. Los que llevan mes son todos de julio, y la
+  pasada por defecto dice que ninguno cae del 18 al 31.
+- **Rango por defecto (18 a 31): 4 líneas**, `[50:02]` («de [N] y tantos», una cantidad),
+  `[86:46]` (una hora con minutos), `[99:12]` y `[111:00]` (recuentos). **Ninguna es un día.**
+
+**Sin PARADA por el barrido**: todos los días con mes que se dicen en voz en v18 son de julio del 1 al
+17, de construcción. Los que sitúan el bloque, visibles en la filtrada: «el 7 de julio» (`[39:28]`,
+la sesión 1) y «el día 2 de julio» (`[63:15]` a `[66:18]`, la sesión 2). Una línea de la
+presentación de la sesión 2 lleva, junto al día, un número que puede identificar una carpeta de
+láminas: **no se copia** a ningún fichero ni se cita (encargo, «REGLAS DE ESTA RAMA»; lecciones de
+`trabajo/preparacion-sesion-7`).
+
 ## Estado
 
 EN CURSO.

@@ -6,6 +6,11 @@ ADR-0093; el reparto, los días y las filas, de `docs/validation/PREPARACION-SES
 este es el primero, **7a (sesion-07)**; el segundo, **7b (sesion-08)**, en
 `docs/sesion-7/PREGUNTAS-7B.md`, se graba después de activar la 7a.
 
+> **Recuadro del 2026-11-17 (`trabajo/sesion-07`).** La 7a se grabó en dos vídeos, v18 el
+> 2026-11-16 y v19 el 2026-11-17. La hoja que se usó de verdad (los vídeos, el orden real, las
+> preguntas hechas y el bloque de días) está en `docs/sesion-7/HOJA-USADA-7A.md`; la extracción, en
+> `docs/validation/SESION-07-EXTRACCION.md`. Este documento no se cambia por debajo del recuadro.
+
 **La hoja es el PDF del consultor**, hecho con este documento, como en las sesiones 4 a 6. No sale
 de `kit hoja` ni de `scripts/hoja_preguntas.py`, que no se tocan. Al PDF van, de cada pregunta: el
 título, «Lo que nos has dicho», «Lo que todavía no sabemos», la pregunta con sus opciones, «Para

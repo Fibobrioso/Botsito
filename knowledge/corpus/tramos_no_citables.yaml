@@ -575,3 +575,31 @@ tramos:
       SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 5661,6 s a 5694,3 s. Segun Aleks (2026-11-17), la misma pausa que el tramo anterior: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
     acordado: >-
       encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "0:52:04"
+    t1: "0:52:15"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 52:04–52:14] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "0:57:52"
+    t1: "0:58:14"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 57:52–58:13] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "1:09:09"
+    t1: "1:09:16"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 69:09–69:15] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "1:51:08"
+    t1: "1:51:39"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 111:08–111:38] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
