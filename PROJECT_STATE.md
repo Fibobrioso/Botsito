@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesion-07
 
 ## Current Feature
-Ninguna rama abierta. trabajo/skills-metodo cerrada en main el 2026-11-14 (stable/F39c-skills-metodo): activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas; pagadas dos líneas de Technical Debt.
+trabajo/sesion-07, EN CURSO: la ingesta de la sesión 7a con el trader (grabada el 2026-11-16 y el 2026-11-17, v18 y v19) y su extracción por pregunta y por sesión del bloque de días, sin resolver nada (NA:F, R4.3). Encargo: docs/encargos/trabajo-sesion-07.md; informe: docs/validation/SESION-07-EXTRACCION.md.
 
 ## Stable Main State
 0f420593 · merge de `trabajo/skills-metodo` (tag `stable/F39c-skills-metodo`), sobre `stable/F39b-dieta-estado` (6054c4ce). Informe docs/validation/SKILLS-METODO.md; el registro del cierre, al final de HISTORIA.
@@ -162,8 +162,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 71 (2026-11-14).
+— ninguna desde el Archivo 72 (2026-11-17).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 71 (2026-11-14).
+— ninguna desde el Archivo 72 (2026-11-17).
