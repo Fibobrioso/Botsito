@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/sesion-07
+main
 
 ## Current Feature
-trabajo/sesion-07, EN CURSO: la ingesta de la sesión 7a con el trader (grabada el 2026-11-16 y el 2026-11-17, v18 y v19) y su extracción por pregunta y por sesión del bloque de días, sin resolver nada (NA:F, R4.3). Encargo: docs/encargos/trabajo-sesion-07.md; informe: docs/validation/SESION-07-EXTRACCION.md.
+Ninguna rama abierta. trabajo/sesion-07 cerrada en main el 2026-11-18 (stable/F39d-sesion-07): la sesión 7a (v18 y v19, grabada el 2026-11-16 y el 2026-11-17) ingerida y extraída, con sus PARADAS respondidas; nada resuelto.
 
 ## Stable Main State
-0f420593 · merge de `trabajo/skills-metodo` (tag `stable/F39c-skills-metodo`), sobre `stable/F39b-dieta-estado` (6054c4ce). Informe docs/validation/SKILLS-METODO.md; el registro del cierre, al final de HISTORIA.
+5c047f31 · merge de `trabajo/sesion-07` (tag `stable/F39d-sesion-07`), sobre `stable/F39c-skills-metodo` (0f420593). Informe docs/validation/SESION-07-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-0f420593 · merge trabajo/skills-metodo: activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas · tag stable/F39c-skills-metodo
+5c047f31 · merge trabajo/sesion-07: la sesión 7a (v18 y v19) ingerida y extraída, con sus PARADAS respondidas · tag stable/F39d-sesion-07
 
 ## Tests Currently Passing
 2061 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
