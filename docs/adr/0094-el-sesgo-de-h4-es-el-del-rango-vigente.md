@@ -15,8 +15,9 @@ phase: post-F14 (rama `trabajo/activar-sesion-07`, R4.3 de la hoja de ruta)
 
 ### 1. Lo que dijo el trader
 
-- **Qué vela es el rango**: ante una H4 verde grande y una roja posterior dentro de ella, «La
-  respuesta es la letra A, claramente. El rango es la vela verde grande y sigo buscando compras.»
+- **Qué vela es el rango**: en el esquema de S-1 (el de `docs/sesion-7/PREGUNTAS-7A.md`: una H4
+  verde grande y una roja posterior dentro de ella), elige la opción a: «La respuesta es la letra
+  A, claramente. El rango es la vela verde grande y sigo buscando compras.»
   (`ev-v18-000249-bb7b1c07`).
 - **Cómo cambia el lado**: «bastaría con mecha o con cuerpo un rompimiento, pero para poder tener el
   enfoque, se tiene que definir el color de la vela» (`ev-v18-000408-c48297b1`): lo de ADR-0080.
@@ -26,8 +27,9 @@ phase: post-F14 (rama `trabajo/activar-sesion-07`, R4.3 de la hoja de ruta)
 - **Qué vela pasa a ser el rango nuevo**, en parte: «para nosotros poder definir nuestro nuevo
   rango tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo»
   (`ev-v18-000822-57145b90`); no dice que el rango nuevo sean el alto y el bajo de esa vela.
-- **Ya lo había dicho**: para él el sesgo es el del último rango, dure lo que dure (ADR-0060,
-  `ev-v9-001529-ac28bb40`), y RN-003 llevaba en sus notas la reserva «suponiendo que no haya otro
+- **Lo que ya había**: ADR-0060 resumía de la sesión 3 que «para él el sesgo es el del último rango,
+  dure lo que dure» (es la glosa de ese ADR: el ítem que cita, `ev-v9-001529-ac28bb40`, dice
+  «Siempre va a haber un sesgo»; revisor, b1), y RN-003 llevaba en sus notas la reserva «suponiendo que no haya otro
   rango mayor» (sesión 4, S-13). En el bloque de días de la 7a corrige al bot con esta regla en dos
   sesiones de construcción (2026-07-07 y 2026-07-15, de 11 a 15: `ev-v18-004639-96f84da4`,
   `ev-v18-004718-01861c91`, `ev-v19-004104-6d9d48cc`); son ejemplos, sin «¿siempre…?», y solo
@@ -47,7 +49,8 @@ no rompe (ADR-0044 §4).
   el rango pase a ser esa vela, su alto y su bajo con el mismo criterio, es LECTURA DEL
   CONSULTOR** (A-58).
 - **c)** Una H4 que supera los dos extremos: decide el color (ADR-0060) y el rango pasa a ser esa
-  vela; sin cuerpo no decide (ADR-0075) y el rango no cambia.
+  vela (como en b), LECTURA DEL CONSULTOR, A-58); sin cuerpo no decide (ADR-0075) y el rango no
+  cambia (como en d)).
 - **d)** Una H4 que supera un extremo y cierra del color contrario, o sin cuerpo, no decide (ADR-0080,
   D1 y D3) **y el rango NO cambia. LECTURA DEL CONSULTOR** (A-58), apoyada en lo que el trader dice
   en su backtest de julio (`VIDEO-JULIO.md` §4.1; v11 0:00:38, `ev-v11-000038-fef9789d`, el ítem

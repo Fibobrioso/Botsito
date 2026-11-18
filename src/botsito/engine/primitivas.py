@@ -65,10 +65,10 @@ TOKEN_SENTIDO = "sentido_de_la_ruptura"
 ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
 # la vela que fijo el sesgo rompio los dos extremos y lo decidio su color (ADR-0060)
 ANOTACION_DOBLE_RUPTURA = "sesgo_h4_doble_ruptura"
-# Cuantas H4 salto la busqueda hacia atras antes de fijar el sesgo (o hasta el tope), y por que;
-# solo se anotan cuando son mas de cero, con el numero como texto (ADR-0080, 4.f del encargo):
-# rompio un extremo y cerro del color contrario (D1), rompio un extremo y cerro sin cuerpo (D3),
-# rompio los dos y cerro sin cuerpo (ADR-0075).
+# Cuantas H4 rompieron el rango sin decidir despues de la que lo fijo (o desde el arranque;
+# ADR-0094), y por que; solo se anotan cuando son mas de cero, con el numero como texto (ADR-0080,
+# 4.f del encargo): rompio un extremo y cerro del color contrario (D1), rompio un extremo y
+# cerro sin cuerpo (D3), rompio los dos y cerro sin cuerpo (ADR-0075).
 ANOTACION_SALTADAS_COLOR = "sesgo_h4_saltadas_color_contrario"
 ANOTACION_SALTADAS_NEUTRA_SIMPLE = "sesgo_h4_saltadas_neutra_simple"
 ANOTACION_SALTADAS_NEUTRA_DOBLE = "sesgo_h4_saltadas_neutra_doble"

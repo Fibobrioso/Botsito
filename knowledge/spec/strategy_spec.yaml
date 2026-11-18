@@ -1103,7 +1103,7 @@ reglas:
       pasa a ser lo que diga sesgo_h4_rango_nuevo. Si supera los dos extremos decide el color con
       que cierra -verde, alcista; roja, bajista-. Si supera un extremo y cierra del color contrario,
       o cierra sin cuerpo -neutra, sin color- con uno o con los dos extremos rotos, no decide y el
-      rango no cambia: sigue el sesgo que habia. Romper es superar el extremo segun
+      rango no cambia, segun sesgo_h4_rango_nuevo: sigue el sesgo que habia. Romper es superar el extremo segun
       sesgo_h4_criterio_ruptura, por poco que sea; un equal no rompe. Se fija AL ABRIR la sesion
       con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro de ella. El rango
       inicial es la H4 situada sesgo_h4_tope_velas velas antes de la ultima cerrada, sin lado (con
@@ -1131,8 +1131,8 @@ reglas:
       citas de antes (ADR-0060, ADR-0075 y ADR-0080, abajo) siguen sosteniendo el color, la neutra
       y la regla del color con un extremo, que la regla del rango conserva; ninguna se supersede.
       Cumple la reserva de la sesion 4 de abajo («suponiendo que no haya otro rango mayor») y lo
-      que ADR-0060 recogia del trader (el sesgo es el del ultimo rango, dure lo que dure,
-      ev-v9-001529-ac28bb40). A-1 no se reabre (ADR-0094, como ADR-0080 §9): su pregunta sigue contestada; lo que cambia es contra que rompe la H4.
+      que ADR-0060 resumia de la sesion 3 («el sesgo es el del ultimo rango, dure lo que dure», glosa
+      de ese ADR: ev-v9-001529-ac28bb40 dice «Siempre va a haber un sesgo»). A-1 no se reabre (ADR-0094, como ADR-0080 §9): su pregunta sigue contestada; lo que cambia es contra que rompe la H4.
       HASTA EL 2026-11-18 LA CITA ERA EL CORRECT POR WHATSAPP DEL 2026-10-14 DESDE EL 2026-10-17 (ADR-0080, rama
       trabajo/sesgo-h4-color; fb-2026-10-04-sesion-04-6e7da456, las dos burbujas de las 14:55,
       hora de Lima, respuesta a la pregunta P1 de R3.1): una H4 cambia el sesgo solo si rompe el

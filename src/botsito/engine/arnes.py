@@ -302,8 +302,9 @@ def informe(
     paradas: Counter[str] = Counter()
     sesgo_sesion: Counter[str] = Counter()
     dobles = 0  # sesiones cuyo sesgo lo decidio el color, con doble ruptura (ADR-0060)
-    # Las H4 que la busqueda salto antes de fijar el sesgo, por motivo (ADR-0080, 4.f del
-    # encargo): sesiones con alguna, y velas en total. Ninguna fecha ni precio.
+    # Las H4 que rompieron el rango sin decidir despues de la que lo fijo (ADR-0094; antes, las que
+    # la busqueda hacia atras saltaba), por motivo (ADR-0080, 4.f de su encargo): sesiones con
+    # alguna, y velas en total. Ninguna fecha ni precio.
     saltadas: dict[str, list[int]] = {
         ANOTACION_SALTADAS_COLOR: [0, 0],
         ANOTACION_SALTADAS_NEUTRA_SIMPLE: [0, 0],

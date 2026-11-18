@@ -1399,6 +1399,7 @@ De la orden de cierre del consultor del 2026-11-09, punto 1:
 > tomas cierran con cuerpo pasada la línea: por qué el bot entra donde el trader no ve entrada sigue
 > sin saberse, y el día (2026-07-03 de 7 a 11) quedó gastado en la 7a. `ev-v12-000015-7fc04520` no
 > se toca. El cuerpo de este informe no se reescribe.
+
 >    a. La «regla desconocida» de cuándo se coloca la orden NO es clase de fila: es la pregunta 1 de 5.5, sobre ADR-0064 y orden_limite_nace, y va a la sesión 7a.
 >    b. Ninguna fila de 07-03 como «error nuestro». La comparación con niveles de M15 anteriores de la sesión (y la distancia de 4 puntos entre 1.14496 y la toma en 1.14500) no se hace en otra rama: la lámina de 07-03 enseña las líneas de M15 de la sesión y el trader lo ve en el bloque de días.
 >    c. Las 13 «a la rama de trazas»: sin clase, con el gate RN-009. La pregunta 2 de 5.5 (qué zonas cuentan como zonas de control de un esquema; A-20 RESUELTA en el número) va a la sesión 7a entre las primeras.

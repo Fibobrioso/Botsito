@@ -25,8 +25,9 @@ phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 > **ENMIENDA (2026-11-18, rama `trabajo/activar-sesion-07`, ADR-0094).** La doble ruptura se
 > mide desde entonces contra el RANGO VIGENTE, no contra la H4 anterior: la H4 que supera los
 > dos extremos del rango decide por su color (§1, que no cambia) y pasa a ser el rango nuevo
-> (lectura del consultor, A-58). Lo que este ADR recogía del trader -el sesgo es el del último
-> rango, dure lo que dure (`ev-v9-001529-ac28bb40`)- es lo que ADR-0094 hace regla. La
+> (lectura del consultor, A-58). Lo que este ADR resumía de la sesión 3 -«el sesgo es el del
+> último rango, dure lo que dure», su glosa; el ítem `ev-v9-001529-ac28bb40` dice «Siempre va a
+> haber un sesgo»- va en la línea de lo que ADR-0094 hace regla. La
 > alternativa que este ADR descartó por depender de cuántas velas hubiera cargadas vuelve a
 > pesar en el arranque de ADR-0094 (§4 de ese ADR, medido). El cuerpo no se reescribe.
 

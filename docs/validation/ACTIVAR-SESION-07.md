@@ -336,8 +336,10 @@ Nada más: ningún fotograma, ninguna transcripción ni filtrada, ningún libro,
    tenía tu rango el 1 de julio a las 11, y por qué vendes a las 12:59?); (b) revertir F1 hasta
    la 7b. Recomiendo (a): la regla es lo que el trader dijo en el bloque técnico, las siete
    sesiones declaradas casan, y la única fila que no casa es una en que su voz y su operación se
-   contradicen. Coste de (b): vuelven las 20 P1 y las 10 P5 del otro lado. **El código de F1
-   queda commiteado y no se retoca hasta tu respuesta.**
+   contradicen. Coste de (b): vuelven las 20 P1 y las 10 P5 del otro lado; y F2 está commiteado
+   encima de F1, así que la corrida f2 y su CASA (F2.4, medidas con la regla de F1) habría que
+   repetirlas (revisor, b3). **El código de F1 queda commiteado y no se retoca hasta tu
+   respuesta.**
 
 **Cómo sigue la rama sin respuesta** (la PARADA es condicional): F1 y F2 cuadran en lo que la fase 0
 puede medir (A-1 y A-4 con nota y sin REOPEN; con `cierre` y `cuerpo` el motor pide que la M1 cierre
@@ -436,7 +438,12 @@ lo que el trader sí dijo, en parte (`ev-v18-000822-57145b90`), y la lectura del
 carga el suyo) 20 sesiones tienen menos de 60 H4 cargadas y 40 menos de 120; en ellas los dos topes
 arrancan en la misma primera vela cargada, así que la comparación no mide su dependencia del
 historial: **es la dependencia de ADR-0060, y para esas 20 no se puede medir sin descargar diciembre
-de 2025**, que el encargo no autoriza. Una sesión de enero queda INSUFICIENTE con los dos topes.
+de 2025**, que el encargo no autoriza. **Las 20, por nombre** (todas de construcción, de las 07-11 y
+las 11-15 de cada día, medido con un guion de la carpeta de trabajo que solo lee las M1 de enero;
+revisor, b2): del 2026-01-02 al 2026-01-15, las dos sesiones de cada día (2, 5, 6, 7, 8, 9, 12, 13,
+14 y 15), con de 2 a 57 H4 cargadas. **La que queda INSUFICIENTE con los dos topes es la primera,
+2026-01-02 de 7 a 11** (2 H4 cargadas: ninguna rompe el rango del arranque). Todas ellas **dependen
+del arranque** en el sentido de ADR-0060: su rango empieza en la primera H4 de enero.
 
 Una por una (todas de construcción): las siete declaradas, con 134 a 207 H4 cargadas, dan **alcista**
 (07-01 07-11, 07-06 07-11, 07-06 11-15, 07-07 07-11, 07-07 11-15, 07-15 11-15) y **bajista** (07-17
@@ -612,7 +619,8 @@ del motor cambia: `pivotes_de_control`, `zonas_control_max_por_esquema`, `orden_
   toma es zona de control (`ev-v18-002223-fa0fc6ab`). No se activa nada. A la 7b reformulada (abajo),
   con la duda de `SESION-07-EXTRACCION.md` §5.1, punto 4.
 - **S-4 (A-35)**: la descripción de `liquidez_m15_mecha_que_vuelve` gana lo que dijo en la pregunta
-  2, opción (a), «en el esquema planteado» (`ev-v18-002511-eec0acec`): no contradice
+  2, opción (a) (`ev-v18-002511-eec0acec`), y al final que su alto es la punta de la mecha «en el
+  esquema planteado» (`ev-v18-002729-38609240`): no contradice
   `solo_la_contraria` y no fija valor (redacción: spec 19.0.3 → 19.0.4). A-35 sigue ABIERTA y
   bloqueante; la pregunta 1, a la 7b reformulada; la mecha de una verde (`ev-v18-002701-62875550`),
   «en parte».
@@ -625,7 +633,7 @@ del motor cambia: `pivotes_de_control`, `zonas_control_max_por_esquema`, `orden_
   `ev-v12-000015-7fc04520` no se toca.
 - **S-6**: opción (a), las toma todas, y lo que deja fuera del muestreo son las que acaban en break
   even (`ev-v18-003634-de26ff65`, `ev-v18-003706-83ce78dd`); en los últimos backtests grabados,
-  también esas. **Antes de elegir dijo «no se toman todas las entradas»** (`SESION-07-EXTRACCION.md`
+  también esas (`ev-v18-003844-7717932e`). **Antes de elegir dijo «no se toman todas las entradas»** (`SESION-07-EXTRACCION.md`
   §3.6, `[36:27]`, fuera de los ítems), y después eligió la (a). No cambia ninguna regla. Va como
   línea para la orden de cierre (abajo), no como recuadro.
 - **La vela de otro color entre su plataforma y Dukascopy** (`ev-v19-012924-64367863`): no se mide
@@ -688,6 +696,8 @@ activada en trabajo/activar-sesion-07, ACTIVAR-SESION-07.md; faltan las láminas
 - «El sesgo de las sesiones de enero con menos de 60 H4 cargadas (20 de 42; entre ellas el 01-07 y el
   01-13 de la 7b) depende del historial cargado y no se puede medir sin diciembre de 2025
   (ACTIVAR-SESION-07.md F1.3).»
+- «El texto del sesgo del visor (el rango vigente) no lo comprueba ningún test: `test_visor.py`
+  construye la página sin sesgos (revisor de `trabajo/activar-sesion-07`, b7).»
 - «Los guiones de los anexos no pasan por lint en `make check` (`delta_julio.py` y `arranque.py`
   tienen una línea de más de 100).»
 
@@ -720,7 +730,10 @@ fila de A-58.
    parámetro de estrategia cita al trader; F1).
 6. **Un guion de diagnóstico de F2.0 leyó las M1 de julio fuera de las filas de HOLDOUT de ese
    momento**; su fila se escribió tarde, el mismo día (`HOLDOUT-EXPOSICIONES.md`, 2026-11-18).
-7. **CI y revisor en el orden de la skill** (CI primero), no en el del encargo.
+7. **El revisor se lanzó antes de la CI**, en paralelo con el `make check` del informe final,
+   para ganar tiempo: ni el orden de la skill (`entregar-rama`: la CI, paso 7, y después el
+   revisor, paso 8) ni el del encargo. La CI corre después, sobre el último commit, que trae
+   los arreglos de sus hallazgos (revisor, a2).
 8. Las decisiones 1 a 4 de la fase 0 se aplicaron con la recomendación, sin respuesta del consultor
    (la PARADA era condicional); la 0, como el encargo.
 
@@ -766,3 +779,150 @@ fila de A-58.
 F0, F1, F2, F3 y el recuadro de D0 hechos y commiteados. **F1 queda en PARADA por la condición (iv)**
 (punto 5 de «Lo que necesito que decidas»): su código está commiteado y no se retoca hasta la
 respuesta. F2 casa. Falta: la CI de Linux por `fix/activar-sesion-07` y el revisor (abajo).
+
+## Lo que se hizo con los hallazgos del revisor
+
+Todos en un commit, después del informe final, con su `make check`, antes del push.
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | **Arreglado.** «en el esquema planteado» cita ahora `ev-v18-002729-38609240` (en la descripción de `liquidez_m15_mecha_que_vuelve` y en F3); y «en los últimos backtests grabados, también esas», `ev-v18-003844-7717932e` (S-6). |
+| a2 | importa | **Arreglado**: la desviación 7 dice cómo fue (el revisor antes de la CI, en paralelo con el `make check` del informe final). |
+| a3 | menor | **Arreglado**: línea en blanco detrás del recuadro de `TRAZAS-ABLACION.md`. |
+| a4 | menor | **Se queda**: la línea de PLANTILLA con que nace el informe es la convención de los informes de activación (`ACTIVAR-SESION-06.md`), y ya dice que la tabla está hecha. |
+| a5 | menor | **Arreglado**: la fila de HOLDOUT dice que el `motor decisiones` quedó fuera de la condición «si F1 cuadra», con la misma exposición; y declara además (escrito tarde) el guion de b2, que leyó las M1 de enero. |
+| b1 | importa | **Arreglado** en ADR-0094 §1, en el recuadro de ADR-0060 y en las notas de RN-003: «el último rango, dure lo que dure» es la glosa de ADR-0060, y el ítem `ev-v9-001529-ac28bb40` dice «Siempre va a haber un sesgo». El cuerpo de ADR-0060 (su línea 61, la glosa) y una nota vieja de RN-033 no se tocan. |
+| b2 | importa | **Arreglado**: F1.3 nombra las 20 sesiones de enero con menos de 60 H4 (las dos de cada día del 2 al 15) y la INSUFICIENTE con los dos topes, **2026-01-02 de 7 a 11** (2 H4 cargadas). |
+| b3 | importa | **Arreglado**: el coste de (b) en el punto 5 de la PARADA dice que habría que repetir la corrida f2 y su CASA. |
+| b4 | menor | **Arreglado**: ADR-0094 §2 c) marca como lectura del consultor el rango nuevo, y el `entonces` de RN-003 remite a `sesgo_h4_rango_nuevo` también en d) (spec 19.0.4 → 19.0.5). |
+| b5 | menor | **Arreglado**: los comentarios de `primitivas.py` y `arnes.py`. |
+| b6 | menor | **Arreglado en ADR-0094 §1** (el esquema sale de `PREGUNTAS-7A.md`). **Las notas de `fb-2026-11-16-sesion-07-33fdaa6c` no se tocan**: `knowledge/feedback/` es solo añadir, y el registro dice también que es la opción a del esquema. |
+| b7 | menor | **Se queda, como Technical Debt** (línea propuesta para el cierre): el texto del sesgo del visor no lo comprueba ningún test; `test_visor.py` construye la página sin sesgos. |
+
+## Informe del revisor
+
+Subagente `revisor`, una pasada (2026-11-18), sobre la rama con el informe terminado salvo la CI
+(lanzado antes de la CI, mientras corría el `make check` del informe final: desviación 7). Su
+informe, tal cual (sin nada de un tramo no citable que retirar):
+
+### Informe del revisor · trabajo/activar-sesion-07 · 2026-11-18
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 2 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **Dos frases llevan el id de un ítem que no las contiene** (regla «nada afirma más de lo que su cita sostiene»; las dos vienen del encargo y se copiaron sin medirlas). (1) «en el esquema planteado» se atribuye a `ev-v18-002511-eec0acec`, pero la cita de ese ítem es solo «La respuesta es la punta de la mecha.». La frase sale de **otro** ítem, `ev-v18-002729-38609240` («pero bueno, mi alto de M15 es la punta de la mecha en el esquema planteado», 0:27:29). La descripción de `liquidez_m15_mecha_que_vuelve` copia esa frase entre comillas sin poner su id. (2) S-6: «en los últimos backtests grabados, también esas» se apoya en `ev-v18-003634` y `ev-v18-003706`, y ninguno de los dos lo dice. Lo dice `ev-v18-003844-7717932e`, que no se cita. | `docs/validation/ACTIVAR-SESION-07.md:46` y `:614-615`; `knowledge/spec/parametros.yaml:626-629`; `knowledge/evidence/v18/ev-v18-002511-eec0acec.yaml` (cita_literal); `knowledge/evidence/v18/ev-v18-002729-38609240.yaml:7`; para (2): `ACTIVAR-SESION-07.md:626-628` y `knowledge/evidence/v18/ev-v18-003844-7717932e.yaml` |
+| a2 | importa | **La desviación 7 dice que se siguió el orden de la skill (primero la CI, después el revisor), pero el revisor ha corrido antes que la CI.** No existe la rama `fix/` en origin. El Estado del informe dice además que la CI todavía falta. Lo que el informe declara no coincide con lo que la rama hizo. | `ACTIVAR-SESION-07.md:723` y `:768`; `git ls-remote --heads origin "fix/activar-sesion-07"` → salida vacía; `.claude/skills/entregar-rama/SKILL.md:66-76` (paso 7 la CI, paso 8 el revisor) |
+| a3 | menor | El recuadro de TRAZAS-ABLACION no deja línea en blanco detrás. Al renderizar, los puntos a., b., c. de la orden de cierre del consultor quedan dentro del recuadro. El texto del cuerpo no cambia, pero se lee como si fuera parte de la corrección. | `docs/validation/TRAZAS-ABLACION.md:1401-1402` |
+| a4 | menor | Queda en el informe la línea con que nació: «PLANTILLA hasta la fase 0». | `ACTIVAR-SESION-07.md:3` |
+| a5 | menor | La quinta fila de HOLDOUT da el `motor decisiones` como «dentro de lo que la fila anterior declaraba». Esa fila lo condicionaba a «Si F1 cuadra y hace falta», y F1 no cuadró por (iv). La exposición es la misma (julio de construcción, se calienta con junio); lo inexacto es la frase. | `docs/validation/HOLDOUT-EXPOSICIONES.md:159` (punto 3) y `:160` |
+
+Comprobado sin hallazgos:
+- **Contrato**: `contrato_rama.py` da «CONTRATO: 50 ficheros dentro del contrato … 6 comprobaciones para el revisor», exit 0.
+- **Comprobaciones del contrato que no escriben**:
+  - `feedback apply --sesion 2026-11-16-sesion-07 --check`: «2 parametros; 0 cambian, 2 ya estaban».
+  - `knowledge validate` a stdout: todo OK. «1111 documentos: todo id citado existe», «203 registros de feedback, historial intacto, commits con Fuente», «710 items de evidencia … historial intacto». Solo AVISOS que ya existían.
+  - `spec docs` sin `--escribir`: «OK: docs/spec coincide con knowledge/spec/».
+  - `generar_capa.py --repo . --perfil ftmo-2step-swing-100k --comprobar`: «Generado.mqh: al dia».
+- **make check**:
+  - El que corre ahora va por el 22 % en `make-check.log`. La línea SELLO es la de «borrado el anterior» y la HUELLA está «tomada sobre 2636 ficheros». No hay todavía resultado ni PICO DE MEMORIA.
+  - Los 8 commits de la rama pasaron el hook pre-commit, que exige el sello.
+- **Trailers `Fuente:`**: los 5 commits que tocan `knowledge/spec` lo llevan en el cuerpo, y todos los ids existen (verificado con `git ls-files knowledge/evidence` y con los fb de la carpeta nueva).
+- **Holdout y regímenes**:
+  - No se toca nada de `knowledge/cases/`.
+  - `knowledge/feedback`: solo hay `A` (4 registros). `knowledge/evidence`, `knowledge/corpus` y `data/manifests` no cambian.
+  - Ninguna cita de la rama cae en un tramo no citable de v18 o v19. Lo más cerca: `ev-v18-002511` acaba a las 0:25:16 y el tramo empieza a las 0:25:18; `ev-v18-003237` empieza a las 0:32:37 y el tramo acaba a las 0:32:17.
+- **Feedback**:
+  - Los CORRECT de parámetros llevan `supersede` (`0ccafcba`, `2cff5008`). El CORRECT de RN-014 supersede `9f506366`. El de RN-003 va sin supersede, como sus tres anteriores.
+  - A-1 y A-4 ganan una nota y no se reabren (ADR-0080 §9, verificado en `0080:158-160`).
+- **Ambigüedades**:
+  - A-58 se abre en d312a709, y en ese mismo commit cambian `docs/spec/ambiguedades.md` y la tabla de `PROJECT_STATE.md`.
+  - Su evidencia habla de la pregunta: `000822`, `011054` y `v11-000038`.
+- **ADR**:
+  - El `## Estado` de ADR-0094 es `ACTIVE`.
+  - Los recuadros de 0044, 0060, 0061, 0065, 0075, 0080 y 0093 solo añaden líneas.
+- **Informe cerrado (TRAZAS-ABLACION)**: solo líneas añadidas, en recuadro.
+- **Tres guardias de `cita`**: no hay ningún sitio nuevo con `cita`; solo cambian las de RN-003, del predicado y de RN-014.
+- **Cifras**: ninguna en la forma ejecutable. `rango_nuevo` es una opción del registro, que leen `primitivas.py:213` y `visor.py:338`.
+- **Citas del informe comprobadas contra su fuente**: `cli.py:2473`, `estructura_m1.py:105-113`, `resumen-cuenta-por-mes.txt:84-87` (18/53 en julio; 100 en total), `RECORRIDA-CONSTRUCCION-2.md:354` y `VIDEO-JULIO.md:604`. Todas cuadran.
+- **Ítems de evidencia nuevos**: ninguno.
+- **PROJECT_STATE.md**: 23.606 bytes (`wc -c`).
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 3 importa, 4 menor. Requisitos: 27 hechos (más 3 «hechos de otra forma», los tres declarados), 1 parcial, 1 no hecho todavía (la CI y la entrega, en curso).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con abrir-rama: base y CI de main comprobadas, run en el informe | Hecho | informe :11-16 (run 44316126260) |
+| 2 | Contrato R4, riesgo alto, artefacto, lista blanca | Hecho | `contrato.yaml`; contrato_rama OK |
+| 3 | Tag previsto, comprobado que no existe | Hecho (no lo verifiqué contra origin) | informe :8-9 |
+| 4 | ADR-0094 y A-58 en `ids-inexistentes` | Hecho de otra forma, declarada | informe :18-24; encargo :5-11 |
+| 5 | Fase 0 escrita y commiteada antes de tocar nada | Hecho | 32f37f84, sin src/ |
+| 6 | D0: tres órdenes, `delta_julio.py` con su README, al repo solo las salidas | Hecho de otra forma (4 argumentos, declarada) | anexos README; desviación 2 |
+| 7 | Control de D0 | Hecho | :79-93; `pivote-julio-base.txt` |
+| 8 | Recuadro de D0 en ADR-0093 §4, en commit propio | Hecho | b16158bf, 1 fichero |
+| 9 | Fase 0, 0.1 a 0.5 | Hecho | :34-260 |
+| 10 | CORRECT sobre RN-003 con `ev-v18-000249`, sin interruptor | Hecho | fb-…-33fdaa6c; `strategy_spec.yaml` (diff) |
+| 11 | `sesgo_h4_rango_nuevo` DEFAULT_AMBIGUOUS, A-58 de clase pregunta y no bloqueante, fila en la tabla | Hecho | `parametros.yaml` (diff); `ambiguedades.yaml` A-58; PS:75 |
+| 12 | Textos viejos al día (`sesgo_h4_regla`, `sesgo_h4_tope_velas`, RN-033) | Hecho | diff de `parametros.yaml` y `strategy_spec.yaml` |
+| 13 | A-1 con nota, sin REOPEN | Hecho | `ambiguedades.yaml` A-1 |
+| 14 | Motor: `ResultadoSesgo` con el rango; lectores coherentes; «Por sesion» sin cambiar | Hecho (ver b5) | `sesgo.py:84-89`; `arnes.py` sin cambios |
+| 15 | Láminas: frases y panel del rango, frase «antes de la ventana», tests de frases, sin generar láminas | Hecho | `laminas.py` (diff), `laminas_svg.py:340-347`; tests de `test_laminas_svg` |
+| 16 | ADR-0094 con a) a e), lo dicho frente a la lectura, recuadros e índice | Hecho, con b1 y b4 | `docs/adr/0094-…md` |
+| 17 | Tests antes del código, que rompen en main | Hecho según el informe (no re-ejecutado) | :400-421; `test_sesgo_rango.py` cubre de a) a e) |
+| 18 | Punto 6: por mes y una a una; «di qué sesiones quedan INSUFICIENTE o dependen del arranque» | **Parcial** | b2 |
+| 19 | Filas declaradas: CASA (i)-(iv), y PARADA si no | Hecho: (iv) no cumple → PARADA, la regla no se retoca | :467-486; `git diff --stat d312a709 HEAD -- src` vacío |
+| 20 | Las parejas perdidas, con su causa | Hecho | :488-500 |
+| 21 | Tres CORRECT con supersede, cada uno en su commit, con notas de su ítem | Hecho | d41bd224, 8653b1e6, 19158a41 |
+| 22 | Imbalance descartado en las descripciones; A-4 con nota | Hecho | `parametros.yaml` (diff); A-4 |
+| 23 | Motor por ADR-0065 §5; recuadro en ADR-0065 | Hecho | `estructura_m1.py:105-113`; recuadro de 0065 |
+| 24 | El margen no se activa; A-13 abierta solo por él | Hecho | `ambiguedades.yaml` A-13 |
+| 25 | Tests F2: sintéticos de compra y venta, camino real, cambios a propósito | Hecho | `test_break_even_cierre.py`; commits d41bd224 y 8653b1e6 |
+| 26 | CASA de F2, fila por fila | Hecho de otra forma (sin `motor decisiones`, declarado) | :591-601; `delta-julio-f1-f2.txt` |
+| 27 | F3: S-3, S-4, S-5 (recuadro), S-6, la vela de otro color, el bloque de días | Hecho (ver a1) | :603-639; recuadro de TRAZAS |
+| 28 | Fechas de los registros | Hecho | los 4 yaml: fecha y recibido_el 2026-11-16, trader_grabado, vídeo, t0/t1 = los del ítem |
+| 29 | QUÉ NO CAMBIA | Hecho | diff --stat sin Makefile, `.claude/`, `docs/sesion-7`, `scripts/` ni `docs/plan`; capa «al dia» |
+| 30 | «Para la rama siguiente» | Hecho | :652-667 |
+| 31 | Lo no activado y lo preparado para el cierre; tamaño de PS | Hecho | :641-710 |
+| 32 | Revisor, push a fix/, número de run y PARADA final | No hecho todavía | sin `fix/` en origin |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | **Alcances (1) y (2).** ADR-0094 §1 pone dentro de «Lo que dijo el trader» que «para él el sesgo es el del último rango, dure lo que dure» (`ev-v9-001529-ac28bb40`). La cita del ítem dice solo «Siempre va a haber un sesgo, bro, como te digo, o sea, no existe un cejo no claro». Lo del «último rango» es la glosa de ADR-0060 §3. Se repite en las notas de RN-003 y en el recuadro de ADR-0060. Viene del encargo y no se midió (CLAUDE.md, «toda afirmación del consultor … se mide»). | `docs/adr/0094-…md:29-30`; `knowledge/spec/strategy_spec.yaml:1134`; `docs/adr/0060-…md:28-29`; `knowledge/evidence/v9/ev-v9-001529-ac28bb40.yaml` (cita_literal) |
+| b2 | importa | **El punto 6 queda parcial.** El encargo pide «Di qué sesiones quedan INSUFICIENTE o dependen del arranque». La sesión de enero que queda INSUFICIENTE con los dos topes no se nombra. De las 20 de enero con menos de 60 H4 cargadas, solo se nombran las dos de la 7b. | `ACTIVAR-SESION-07.md:435-448`; `anexos/ACTIVAR-SESION-07/arranque-60-120.txt:3` (`2026-01 … INSUFICIENTE con 60 = 1`, sin nombre) |
+| b3 | importa | **A la opción (b) de la PARADA de F1 («revertir F1») le falta un coste.** F2 está commiteado encima del código de F1. La explicación de la CASA de F2.4 (RN-032 al cierre del 07-10, y en f1 el 07-14) se midió con la regla de F1. Revertirla obliga a repetir la corrida f2 y su CASA. El único coste que se da es «vuelven las 20 P1 y las 10 P5». | `ACTIVAR-SESION-07.md:331-340` y `:591-598` |
+| b4 | menor | **Alcance (1).** En §2 c) el ADR no marca como lectura del consultor que el rango pase a ser la vela que rompe por los dos lados. `parametros.yaml` («o los dos con color») y `sesgo.py:152` («b) y c) … lectura del consultor») sí lo marcan. Copia fiel del encargo, pero los tres sitios no dicen lo mismo. Y el `entonces` de RN-003 da como regla el «el rango no cambia» de d), sin remitir a `sesgo_h4_rango_nuevo` como sí hace con b). Las notas lo aclaran. | `0094-…md:49-50`; `sesgo.py:152`; `strategy_spec.yaml`, el `entonces` de RN-003 |
+| b5 | menor | **Alcance (4).** Hay comentarios viejos en lo que leen el arnés y las láminas: «Cuantas H4 salto la busqueda hacia atras antes de fijar el sesgo» y «Las H4 que la busqueda salto antes de fijar el sesgo». Las frases que salen al usuario sí cuadran con el motor. | `src/botsito/engine/primitivas.py:68`; `src/botsito/engine/arnes.py:305-306` |
+| b6 | menor | **Alcance (2).** Las notas de `fb-…-33fdaa6c` y ADR-0094 §1 describen el esquema («ante una H4 verde grande y una roja posterior dentro de ella»). Eso sale de `docs/sesion-7/PREGUNTAS-7A.md:107-110`, no del ítem, cuya afirmación dice solo «en el esquema de S-1 elige la opcion a». | `knowledge/feedback/2026-11-16-sesion-07/fb-2026-11-16-sesion-07-33fdaa6c.yaml` (notas); `0094-…md:18` |
+| b7 | menor | **Alcance (4).** El texto nuevo del sesgo en el visor («el rango vigente es la H4 que abre a las …», «H4 comparadas con el rango», «esta H4 es el rango») no lo comprueba ningún test. `test_visor.py` construye la página con `sesgos=()`. `_sesgo_de_sesion` solo se ejecuta, por `Preparador`, en `test_mecha_que_vuelve.py`. | `tests/unit/test_visor.py:146`; `visor.py:779-791` y `:714` |
+
+Lo comprobado de los cinco alcances:
+- **(1)** La regla de a) a e) del ADR y la del encargo coinciden, sin añadidos de regla (las alternativas 2, 3 y 5 son contenido normal de un ADR). `sesgo.py` hace exactamente esa regla:
+  - a) dentro del rango no cambia nada, y un equal no rompe (`>0`).
+  - b) y c) con color fijan el lado, y el rango pasa a ser esa vela con el criterio.
+  - d) y c) sin cuerpo dejan el rango igual y cuentan como saltadas.
+  - e) el arranque es `max(0, len-1-tope)`, sin lado; si nada decide, INSUFICIENTE.
+  - Los sintéticos de `test_sesgo_rango.py` cubren de a) a e).
+  - Pegas: b1 y b4.
+- **(2)** Ninguna cita cae en un tramo no citable. Lo que dice más que su ítem: b1, b6 y a1.
+- **(3)** Del bloque de días no se activó nada:
+  - `toma_antes_de_la_ventana`, los parámetros del breaker, A-43 y A-53 no cambian en el diff de `parametros.yaml` ni en el de `ambiguedades.yaml`.
+  - src/ solo cambia en sesgo y sus lectores.
+  - `ev-v18-011054` solo se usa como evidencia de A-58.
+- **(4)** Lo que leen el visor, las láminas y el panel coincide con el motor: con lado, el rango es la vela que fija (`LaminaError` si no lo es); sin lado, es la del arranque. Pegas: b5 y b7.
+- **(5)** Ningún valor cambia después de una corrida:
+  - `git diff d312a709 HEAD -- src` está vacío.
+  - En `parametros.yaml`, después de F1 solo cambian `mecha→cuerpo` y `tocar→cierre`, que vienen del encargo.
+  - El tope sigue en 60.
+
+#### Lo que no pude comprobar
+- **El resultado del `make check` en curso** (va por el 22 %): no lo esperé.
+- **Que los tests nuevos rompan en main** (F1.2 y F2.0): no ejecuté pytest. Con el `make check` en marcha no escribo nada en el árbol, y la comparación pide un clon. La «copia temporal adaptada» de `test_sesgo_rango_real` contra main, ya borrada, tampoco se puede verificar.
+- **Las salidas del arnés y de `motor decisiones` en `data/activar-sesion-07/`**, que están fuera de git: no las abrí. Las causas de las parejas perdidas (RN-036 y RN-032) y la explicación de F2.4 se aceptan por los anexos y el informe.
+- **El guion de diagnóstico de F2.0** (fuera del repo): no existe en el repositorio. La elección del 2026-07-16 o12 solo la respalda `test_break_even_cierre.py`.
+- **Que el tag `stable/F39e-activar-sesion-07` no exista en origin.**
+- **Mi exposición**: leí solo documentos del repo, ítems de evidencia citables (YAML), `tramos_no_citables.yaml` (metadatos) y los anexos de la rama. Ningún fotograma, ninguna cruda ni filtrada, ningún libro, ningún caso. Un `uv run` sobre src/ puede dejar `__pycache__`, que está ignorado.
+
+#### Comandos ejecutados
+Treinta y cuatro grupos de órdenes de solo lectura (git, `contrato_rama.py`, `feedback apply --check`, `generar_capa.py --comprobar`, `spec docs` sin escribir, `knowledge validate`, lecturas y `grep` de documentos, ítems, ADR, código, anexos y `make-check.log`, y `git ls-remote --heads origin "fix/activar-sesion-07"`); la lista entera la tiene la conversación de la sesión. Dos órdenes las negó la guardia (dos bucles `for`) y una `solo_lectura.py` (`git branch -a`); se rehicieron sin bucle.
