@@ -1,0 +1,22 @@
+id: ev-v18-000822-57145b90
+video_id: v18
+t0: 0:08:22
+t1: 0:08:42
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: y bueno para precisar, ¿qué vela pasa a ser tu rango nuevo cuando lo das por actualizado?
+  pues como se ha comentado para nosotros poder definir nuestro nuevo rango tenemos que ver qué vela o
+  sea si es alcista o bajista y rompe o por encima o por debajo
+afirmacion: a «¿qué vela pasa a ser tu rango nuevo cuando lo das por actualizado?» de S-1 contesta que,
+  para definir el rango nuevo, mira qué vela rompe, por encima o por debajo, y si es alcista o bajista;
+  no dice que el rango nuevo sean el alto y el bajo de esa vela
+tema: sesgo.rango_h4_vela_que_lo_fija
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) y su respuesta a la PARADA 1 a) del
+  2026-11-17 · version filtrada leida por la sesion, sin revision humana; la transcripcion no separa voces
+  y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1, «Para precisar», sobre el grafico real del 2 de julio de 2026 (la voz lo dice en [05:19];
+  dia de construccion). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

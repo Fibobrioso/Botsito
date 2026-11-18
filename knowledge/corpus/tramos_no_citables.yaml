@@ -604,13 +604,6 @@ tramos:
     acordado: >-
       skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
   - video_id: v18
-    t0: "0:05:00"
-    t1: "0:09:37"
-    motivo: >-
-      precaucion: en S-1 (bloque tecnico de la sesion 7a), el trader pasa del esquema a su grafico real, que la voz situa en el 2 de julio de 2026 (dia de construccion y de la sesion 2 del bloque), con sus marcas, y contesta sobre el («rango mayor»). La respuesta a) de Aleks no lo nombraba; el encargo manda declarar no citable un replay con marcas o de otro dia. Sin cifras ni dias aqui
-    acordado: >-
-      encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a); marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md
-  - video_id: v18
     t0: "0:14:20"
     t1: "0:18:48"
     motivo: >-

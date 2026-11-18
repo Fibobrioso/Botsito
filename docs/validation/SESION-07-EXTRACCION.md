@@ -120,6 +120,39 @@ Amplían o cambian el encargo (revisor, b4). Por orden de llegada:
 
 Ninguna transcripción falló; el trabajo no pasó de medianoche.
 
+5. **Respuesta del consultor a las PARADAS** (2026-11-17, tras la entrega; pegada por Aleks):
+   > Modelo: Opus · Esfuerzo: medio
+   >
+   > Respuesta del consultor a las PARADAS de trabajo/sesion-07 (2026-11-17). Revisados el informe (§3, §4, §5, §7, §9 y §12) y PREGUNTAS-7B.md en main. Cópiala tal cual en §0.0b.
+   >
+   > PARADA 1 · El gráfico real del bloque técnico.
+   > a) S-1, v18 [05:00]–[09:37]: se levanta, con una condición. La voz tiene que decir el 2 de julio de forma visible en la filtrada (no tapado), dentro del tramo o justo antes; cita el minuto. Si es así:
+   > - quita ese tramo de precaución de tramos_no_citables.yaml en un commit con «Fuente: ADR-0093»;
+   > - extrae de él solo las dos filas de S-1 que quedaron pendientes, «rango mayor» y «qué vela pasa a ser tu rango nuevo», con su ítem de evidencia, y ponlas en §3.3, en la cobertura y en la tabla final;
+   > - sin desenlaces de operaciones (ni R, ni dinero, ni ganadora o perdedora), como el resto del informe;
+   > - la fila de HOLDOUT de ese tramo no se toca, porque solo se añade; el informe dice que resultó de un día de construcción.
+   > Si el día solo se deduce, o sale tapado, el tramo se queda y las dos filas siguen «pendiente».
+   > b) S-2 [14:20]–[18:48], S-4 [25:18]–[26:56] y S-5 [28:51]–[32:17]: se quedan no citables y declarados como exposición posible, sin nada más, porque su día no se puede saber sin leer lo que no se debe. Esas tres preguntas se quedan con lo citable de fuera de los tramos.
+   >
+   > PARADA 2 · La sesión que abre v19: se queda entera no citable y sin extraer, como está. Mi respuesta b) da el orden previsto, no lo que el trader abrió: en la reserva abrió otro día por error, y la b) no lo decía. El 2026-07-03 de 7 a 11 queda gastado: el informe lo dice, y ese día no se vuelve a usar en otra sesión.
+   >
+   > PARADA 3 · El 15 de abril: se queda no citable. No se le enseñó ninguna lámina de ese día, así que no sirve al método del bloque. Consecuencia para la 7b: PREGUNTAS-7B.md (hacia :48) tiene el 2026-04-15 de 11 a 15 como su sesión 2. Esta rama no toca PREGUNTAS-7B.md; dilo en §5.1 y en §9, para la activación de la 7a, que es la que revisa ese orden.
+   >
+   > PARADA 4 · S-4 / A-35: decisión del consultor para el informe, sin aplicar nada aquí. A-35 sigue ABIERTA y liquidez_m15_mecha_que_vuelve se queda en solo_la_contraria, el valor de hoy, que la respuesta (a) de la pregunta 2 no contradice. La pregunta 1 va a la 7b reformulada, y la mecha de una verde (ev-v18-002701-62875550) cuenta como «en parte» para la activación. El destino final lo fija el encargo de la activación.
+   >
+   > La frase de b1 en 65dad312: se queda; la historia no se reescribe. La clave de la 7a queda gastada: la sesión ya se grabó y las láminas de la 7b salen con su propia clave. Lo dirán el registro de HISTORIA del cierre y su lección en ERRORES-RECURRENTES.
+   >
+   > Las tres cosas para el consultor (el margen del break even, la vela de otro color en Dukascopy y que ninguna corrección llevara «¿siempre, solo aquí o de qué depende?») se quedan en §5.1 como están: van al encargo de la activación.
+   >
+   > Después:
+   > 1. Lo de la PARADA 1 a), si procede, y el informe al día: §3.3, §5.1, §5.2, §6, §7.1 (cada PARADA, «respondida»), §0.0b con esta respuesta, §9 y Estado. Todo en un commit sellado. Si el trabajo pasa a otro día en Lima, antes va su fila de HOLDOUT.
+   > 2. El revisor, solo sobre lo cambiado, con un alcance más: que ninguna línea nueva describa lo que dice una lámina ni deje deducir la clave.
+   > 3. El push a fix/sesion-07 y su CI de Linux, ahora sí, como manda el encargo (§10). Lo confirmo con «1. Yes». Dame el número del run.
+   >
+   > Rama lista para revisión, NO cerrada.
+
+   Aplicada punto por punto en §13.
+
 ### 0.1 Los días, antes de registrar
 
 La línea de `SESION-DE-PREGUNTAS.md` («Antes», paso 1), que imprime solo `True` o `False`:
@@ -324,8 +357,12 @@ final de su pregunta**, no juntas al final como pedía `PREGUNTAS-7A.md` §3: S-
 S-4: abajo).
 
 **Gráfico real.** En S-1, S-2, S-4 y S-5 el trader pasa del esquema inventado a su gráfico real con
-marcas para explicarse. Esos cuatro tramos están **declarados no citables por precaución** (§2.2 y
-§7, PARADA 1): lo que dijo ahí no se cita aquí, y se dice solo, sin literal, que lo hubo. Dos citas
+marcas para explicarse. Esos cuatro tramos se **declararon no citables por precaución** (§7,
+PARADA 1): lo que dijo ahí no se cita aquí, y se dice solo, sin literal, que lo hubo. **El de S-1
+(`[05:00]`–`[09:37]`) se levantó** con la respuesta del consultor (§0.0b, punto 5; §13): la voz
+sitúa ese gráfico, visible en la filtrada, en un día de construcción (`[05:19]` «con fecha a 02 de
+julio del año 2026»), y de él salen solo las dos filas de «Para precisar» de S-1 (§3.3). Los de S-2,
+S-4 y S-5 siguen no citables. Dos citas
 que el guion de evidencia rechazó por pisar esos tramos por menos de un segundo (`[04:51]` y
 `[14:13]`) tampoco se copian.
 
@@ -378,8 +415,8 @@ Tramo `[00:10]`–`[09:57]` (v18).
 |---|---|---|
 | La pregunta (¿cuál es tu rango y qué lado operas tras la roja?) | `[02:49]` «La respuesta es la letra A, claramente. El rango es la vela verde grande y sigo buscando compras.» (`ev-v18-000249-bb7b1c07`) | **resuelve**: opción **a** (el «Para Aleks» la lleva a regla nueva de sesgo por rango, con ADR) |
 | Cómo cambia el lado | `[04:08]` «Entonces, se puede decir que, en resumen, para nosotros ver una continuidad o una reversión, bastaría con mecha o con cuerpo un rompimiento, pero para poder tener el enfoque, se tiene que definir el color de la vela. Si es verde, o sea, el cista rompe por encima, pues continuamos al cista.» (`ev-v18-000408-c48297b1`) | coincide con lo fijado (mecha o cuerpo, y el color: ADR-0080) |
-| Para precisar: ¿qué vela pasa a ser tu rango nuevo? | Lo contesta dentro del tramo de precaución de S-1 (`[08:22]`–`[08:42]`): no se cita. En el bloque de días lo dice citable: al mitigarse el rango, «lo actualizamos a ese nivel» (§4.2, `ev-v18-011054-fbf8e9ae`) | **en parte** |
-| Para precisar: **«rango mayor»** | Lo contesta sobre el gráfico real del 2 de julio (`[08:42]`–`[09:35]`), dentro del tramo de precaución de S-1: ni se cita ni se resume | **pendiente de la PARADA 1**; en el bloque de días habla, citable, de un «sesgo mayor» que arrastra sin mitigar (§4.1 y §4.4) |
+| Para precisar: ¿qué vela pasa a ser tu rango nuevo? | `[08:22]` «y bueno para precisar, ¿qué vela pasa a ser tu rango nuevo cuando lo das por actualizado?» … `[08:31]` «para nosotros poder definir nuestro nuevo rango» `[08:35]` «tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo» (`ev-v18-000822-57145b90`; tramo levantado, §3). En el bloque de días, al mitigarse el rango, «lo actualizamos a ese nivel» (§4.2, `ev-v18-011054-fbf8e9ae`) | **en parte**: la vela que rompe, por arriba o por abajo, y su color; no dice que el rango nuevo sean el alto y el bajo de esa vela |
+| Para precisar: **«rango mayor»** | `[09:17]` «pero el rango mayor sería esto de aquí.» `[09:19]` «O sea, porque este rango todavía la liquidez, tanto por encima como por debajo, no sea mitigada.» … `[09:29]` «primero a tener en cuenta ese rango mayor» `[09:31]` «que no ha sido mitigado» `[09:33]` «y ya una vez mitigado pues se actualiza» (`ev-v18-000917-30c1ca5a`; tramo levantado, §3) | **resuelve**: el rango mayor es el que aún no tiene mitigada la liquidez, ni por encima ni por debajo; manda hasta que se mitiga, y entonces se actualiza. En el bloque de días lo aplica, citable, como un «sesgo mayor» que arrastra sin mitigar (§4.1 y §4.4) |
 | Para confirmar al final | `[09:43]` «mi rango es alcista» … «mi lado cambia cuando la vela de» `[09:47]` «4 horas genera un rompimiento» `[09:50]` «y también depende» `[09:51]` «del tipo de vela, si es alcista o bajista» `[09:53]` «sea por arriba o por debajo» (`ev-v18-000943-f0b82566`) | **en parte**: dice «alcista», no qué vela es el rango |
 
 Regla general: sí, con el esquema y con su gráfico. «Creo»: no. Compra y venta: sí (habla de los dos
@@ -665,6 +702,10 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 1. **S-4 / A-35**: la pregunta 1 no tiene respuesta y la 2 sola no da valor (§3.1). La combinación
    no cae en ninguno de los tres valores; **lo decide el consultor**. Lo que añade la mecha de la verde
    (`ev-v18-002701-62875550`) va más allá de `solo_la_contraria` en la formación del alto.
+   **Decisión del consultor para el informe** (PARADA 4, sin aplicar nada aquí): A-35 sigue ABIERTA y
+   `liquidez_m15_mecha_que_vuelve` se queda en `solo_la_contraria`, que la respuesta (a) de la
+   pregunta 2 no contradice; la pregunta 1 va a la 7b reformulada; la mecha de la verde cuenta como
+   «en parte» para la activación, que fija el destino final.
 2. **S-2 / A-13**: ni (a) al toque ni (b) a secas: el break even cuando se forma y se valida una zona
    de control, al cierre (§3.2). Frente a lo fijado (`break_even_condicion` = `tocar` y
    `break_even_criterio_ruptura` = `mecha`, los dos CONFIRMED, según el «Para Aleks»), **va hacia el
@@ -688,12 +729,23 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 8. **El método del bloque, en tres sesiones, no fue el de §1**: en la 1, el trader no marcó ni operó
    antes de las láminas; en la 2 y la 4, borró trazos que ya tenía; en la reserva abrió primero otro
    día. Si abrió el replay antes de compartir pantalla, no se sabe.
+9. **El 2026-04-15 y la 7b** (consecuencia de la PARADA 3, respuesta del consultor): el trader abrió
+   el 15 de abril por error en la reserva; ese tramo sigue no citable y no sirve al método del bloque.
+   `PREGUNTAS-7B.md` (hacia la línea 48) tiene el **2026-04-15 de 11 a 15 como su sesión
+   2**. Esta rama no toca `PREGUNTAS-7B.md`: **lo revisa la activación de la 7a**, que es la que
+   revisa ese orden (§9).
+10. **El 2026-07-03, de 7 a 11, queda gastado** (PARADA 2, respuesta del consultor): la sesión que
+    abre v19 se queda entera no citable y sin extraer, y ese día no se vuelve a usar en otra sesión.
+
+Las tres cosas para el consultor (el margen del break even del punto 2, la vela de otro color del
+punto 7 y que ninguna corrección del bloque llevara «¿siempre, solo en este caso, o de qué
+depende?», §4) se quedan como están: van al encargo de la activación (respuesta del consultor).
 
 ### 5.2 Cobertura de lo que la 7a tenía que cubrir
 
 | Qué | Ambigüedad o fuente | Cubierto |
 |---|---|---|
-| S-1, el rango de H4 | `VIDEO-JULIO.md` §7 #1 a #3 | **sí** (opción a); «rango mayor», pendiente de la PARADA 1 |
+| S-1, el rango de H4 | `VIDEO-JULIO.md` §7 #1 a #3 | **sí** (opción a); «rango mayor», sí (el no mitigado, del tramo levantado); «qué vela pasa a ser tu rango nuevo», en parte |
 | S-2, el break even | A-13 | **en parte**: hacia el cierre con cuerpo por la zona de control; el imbalance, sí; el margen, solo en la reserva |
 | S-3, las zonas de control | RN-009 | **sí** la pregunta (A y B); el bajo de la toma, no |
 | S-4, la mecha que vuelve | A-35 | **en parte**: la pregunta 2 sí (a), la 1 no; sin valor |
@@ -701,7 +753,7 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 | S-6, las entradas sin tomar | F7 #10 | **sí** (a, salvo las de break even) |
 | Sesión 1 (07-07), sirve a S-1 | — | **sí**: corrige el sesgo por el rango mayor |
 | Sesión 2 (07-02), sirve a S-3 | — | **sí**: «demasiada zona de control», «solo dos esquemas» |
-| Sesión 3 (07-03), sirve a S-5 | — | **no**: PARADA 2, la voz no la sitúa |
+| Sesión 3 (07-03), sirve a S-5 | — | **no**: PARADA 2, la voz no la sitúa; sin extraer, y el día queda gastado (respuesta del consultor) |
 | Sesión 4 (07-15), sirve a S-1 | — | **sí**: corrige el sesgo y deja de corregir |
 | Reserva (04-13), sirve a S-3 | — | **sí**: una zona antes de romper; y el break even con margen |
 | Reserva (07-06), sirve a S-1 | — | no se hizo |
@@ -717,7 +769,8 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 | S-2, el imbalance | A-13 | v18 | 11:44–11:58 | **resuelve**: no lo usa, no hay excepción | sí | no | n/a |
 | S-2, el margen | A-13 | v18 · v19 | v18 10:49; v19 75:29–75:43 | en parte: en S-2 no lo contesta; en la reserva, «un par de puntos o un pip» | sí | no | habla de compras |
 | S-1 | VIDEO-JULIO.md §7 #1 a #3 | v18 | 00:10–09:57 | **resuelve**: (a), el rango es la vela verde grande; lado por ruptura con mecha o cuerpo y color | sí | no | sí |
-| S-1, «rango mayor» | VIDEO-JULIO.md §7 #1 a #3 | v18 | 08:42–09:35 | pendiente de la PARADA 1: en el tramo de precaución, ni se cita ni se resume | — | — | — |
+| S-1, ¿qué vela pasa a ser tu rango nuevo? | VIDEO-JULIO.md §7 #1 a #3 | v18 | 08:22–08:42 | en parte: la vela que rompe, por arriba o por abajo, y su color; no dice que el rango nuevo sean su alto y su bajo | sí | no | sí («por encima o por debajo») |
+| S-1, «rango mayor» | VIDEO-JULIO.md §7 #1 a #3 | v18 | 09:17–09:37 | **resuelve**: el rango cuya liquidez, por encima y por debajo, no se ha mitigado; manda hasta mitigarse y entonces se actualiza | sí | no | sí («tanto por encima como por debajo») |
 | S-3 | RN-009 | v18 | 19:37–22:42 | **resuelve**: «otra», A y B; no dice si el esquema se descarta | sí, como definición | no | sí («al revés») |
 | S-3, el bajo de la propia toma | RN-009 | v18 | 22:18–22:29 | no resuelve: «todo el esquema», sin sí ni no | no | no | n/a |
 | S-5 | ADR-0064; F7 #6 | v18 | 27:40–34:27 | en parte: sin letra; por «Para precisar», hacia (a): la mecha mete | sí | sí, en el tipo de orden | habla de compras |
@@ -729,18 +782,20 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 | Sesión 4 del bloque (2026-07-15) | — | v19 | 28:42–44:02 | corrige el sesgo por el rango mayor y deja de corregir | sí | no | compras |
 | Reserva del bloque (2026-04-13) | — | v19 | 44:03–92:24 | margen del break even; toma con velas de la sesión; diferencia de datos | sí | sí, en el resumen | compras |
 
-Por códigos de la hoja (6): se hicieron los 6, en v18. En filas: **resuelve** 6 (S-4 pregunta 2, S-2
-el imbalance, S-1, S-3, S-5 M1 o M15, y S-6); **en parte** 4 (S-4 la mecha de una verde, S-2, S-2 el
-margen y S-5); **no resuelve** 2 (S-4 pregunta 1 y S-3 el bajo de la toma); **pendiente de la PARADA
-1**, 1 (S-1 «rango mayor»). Del bloque, 4 sesiones extraídas y 1 en PARADA; la reserva del 07-06 no se
-hizo.
+Por códigos de la hoja (6): se hicieron los 6, en v18. En filas: **resuelve** 7 (S-4 pregunta 2, S-2
+el imbalance, S-1, S-1 «rango mayor», S-3, S-5 M1 o M15, y S-6); **en parte** 5 (S-4 la mecha de una
+verde, S-2, S-2 el margen, S-1 qué vela pasa a ser el rango nuevo y S-5); **no resuelve** 2 (S-4
+pregunta 1 y S-3 el bajo de la toma). Las dos filas de S-1 salen del tramo levantado (§3). Del bloque,
+4 sesiones extraídas y 1 en PARADA (sin extraer, por respuesta del consultor); la reserva del 07-06
+no se hizo.
 
 ## 7. PARADAS, desviaciones y negativas de la guardia
 
-### 7.1 Las PARADAS (esperan la respuesta de Aleks)
+### 7.1 Las PARADAS (respondidas por el consultor el 2026-11-17)
 
 Aleks se ausentó con la orden de seguir el encargo hasta «Rama lista para revisión» y dejar apuntado,
-con su porqué, lo que no cuadrara con lo medido (mensaje del 2026-11-17). Lo que no cuadró:
+con su porqué, lo que no cuadrara con lo medido (mensaje del 2026-11-17). Lo que no cuadró, cada
+PARADA con su respuesta al final (texto entero en §0.0b, punto 5; lo hecho, en §13):
 
 - **PARADA 1 · El gráfico real con marcas del bloque técnico (v18).** La respuesta a) decía que en
   pantalla solo salieron los esquemas, el replay de cada sesión del bloque y las láminas. La filtrada
@@ -752,16 +807,30 @@ con su porqué, lo que no cuadrara con lo medido (mensaje del 2026-11-17). Lo qu
   `HOLDOUT-EXPOSICIONES.md` como exposición posible (si alguno fuera de un día reservado, sus palabras
   serían su etiqueta). **Decide Aleks**: mantenerlos (y si los de día desconocido van a algo más), o
   levantar alguno (el de S-1 es de construcción y lleva la respuesta a «rango mayor»).
+  **Respondida**: el de S-1 se levanta si la voz dice el 2 de julio visible; la dice en `[05:19]`, así
+  que se quitó de `tramos_no_citables.yaml` y salieron sus dos filas (§3.3); resultó de un día de
+  construcción, y su fila de HOLDOUT no se toca. Los de S-2, S-4 y S-5 se quedan no citables y
+  declarados como exposición posible, sin nada más.
 - **PARADA 2 · La sesión que abre v19 (la 3 según b).** Su día se dice dentro de
   `[CUARENTENA 00:00–00:06]` y la voz no lo vuelve a decir visible: no la sitúa. Minuto: v19
   `[00:00]`–`[26:12]`. **Hecho**: no se sigue leyendo ni se cita; entra entera por precaución en
   `tramos_no_citables.yaml` (0:00:08–0:26:11); lo leído antes de saberlo, declarado. **Decide Aleks**
   si se da por el 2026-07-03 y se extrae, y cómo.
+  **Respondida**: se queda entera no citable y sin extraer; la respuesta b) daba el orden previsto, no
+  lo que el trader abrió. El 2026-07-03 de 7 a 11 queda gastado y no se vuelve a usar (§5.1, punto 10).
 - **PARADA 3 · El 15 de abril, abierto por error en la reserva (v19 `[44:49]`–`[68:49]`).** Día de
   construcción, pero un replay de otro día que la respuesta a) no nombraba. **Hecho**: por precaución,
   no citable y declarado. **Decide Aleks** si se levanta.
+  **Respondida**: se queda no citable; no sirve al método del bloque. Su consecuencia para la 7b
+  (`PREGUNTAS-7B.md` tiene el 2026-04-15 de 11 a 15 como sesión 2), en §5.1, punto 9, y en §9.
 - **PARADA 4 · S-4 / A-35 sin valor** (§3.1): la combinación no cae en ninguno; lo decide el
   consultor (el encargo ya lo preveía: «lo decido yo»).
+  **Respondida**: decisión para el informe, sin aplicar nada aquí: A-35 ABIERTA y
+  `liquidez_m15_mecha_que_vuelve` en `solo_la_contraria`; la pregunta 1, a la 7b reformulada; la mecha
+  de la verde, «en parte» para la activación (§5.1, punto 1).
+- **La frase de b1 en `65dad312`** (§12). **Respondida**: se queda; la historia no se reescribe. La
+  clave de la 7a queda gastada y las láminas de la 7b salen con su propia clave; lo dirán el registro
+  de HISTORIA del cierre y su lección en ERRORES-RECURRENTES.
 
 ### 7.2 Desviaciones y negativas de la guardia
 
@@ -776,9 +845,14 @@ con su porqué, lo que no cuadrara con lo medido (mensaje del 2026-11-17). Lo qu
   tramos de precaución, los fotogramas, la hoja usada y el informe, porque `make check` sella el árbol
   ESTADIADO entero y no deja nada sin estadiar (y `git add -p` es interactivo). Los bloques de v19 van
   en él, con su `Fuente:`.
-- **Ningún push ni CI**: el encargo pedía, al cerrar, el push a `fix/sesion-07` y la CI de Linux; la
-  orden de Aleks del 2026-11-17 al ausentarse («No cierres la rama, no hagas push ni merge») manda: se
-  deja sin lanzar (§10).
+- **Push y CI, tarde**: el encargo pedía, al cerrar, el push a `fix/sesion-07` y la CI de Linux; la
+  orden de Aleks del 2026-11-17 al ausentarse («No cierres la rama, no hagas push ni merge») los dejó
+  sin lanzar en la primera entrega; se lanzan tras la respuesta del consultor, que los manda (§10, §13).
+- Al aplicar la respuesta del consultor, la guardia negó tres comandos de solo lectura y se siguió la
+  forma que ella propone: `grep -l … | xargs grep` (buscar los temas de S-1 en la evidencia; hecho con
+  la herramienta Grep), `grep -c` seguido de `date` en el mismo comando (separados, uno por llamada) y
+  `TZ=America/Lima date` (nombre de entorno fuera de su lista: se leyó `date -u`, 02:41 UTC del
+  2026-11-18, que son las 21:41 del 2026-11-17 en Lima).
 - Las seis frases de «Para confirmar al final» se leyeron al final de cada pregunta, no juntas.
 
 ## 8. Lo que deja la rama
@@ -789,9 +863,9 @@ con su porqué, lo que no cuadrara con lo medido (mensaje del 2026-11-17). Lo qu
 - `knowledge/corpus/fotogramas/`: `fr-v18-8b58f680` (6747 fotogramas, 0 extra; PICO DE MEMORIA 355 MiB)
   y `fr-v19-c477861e` (5756, 0 extra; 358 MiB). `corpus frames check`: «OK: 19 extracciones coherentes
   con el disco; 3 obligatorios presentes». Ninguno abierto.
-- `knowledge/corpus/tramos_no_citables.yaml`: 6 «SIN AUDIO», 7 de cuarentena (4 de v18 y 3 de v19) y 6
-  de precaución (4 de v18 y 2 de v19).
-- `knowledge/evidence/v18/` (45 ítems: 38 y 7 que supersedan a otros tantos, §12) y
+- `knowledge/corpus/tramos_no_citables.yaml`: 6 «SIN AUDIO», 7 de cuarentena (4 de v18 y 3 de v19) y 5
+  de precaución (3 de v18 y 2 de v19; el de S-1, levantado por la respuesta del consultor, §13).
+- `knowledge/evidence/v18/` (47 ítems: 40 y 7 que supersedan a otros tantos, §12 y §13) y
   `knowledge/evidence/v19/` (15: 14 y 1 que supersede).
 - v18 y v19 en `SESIONES_EN_CUARENTENA` y sus tests.
 - `docs/sesion-7/HOJA-USADA-7A.md` y el recuadro de `PREGUNTAS-7A.md`.
@@ -829,6 +903,10 @@ con su porqué, lo que no cuadrara con lo medido (mensaje del 2026-11-17). Lo qu
   - `data/transcripciones/v18/` (416 MB) y `data/transcripciones/v19/` (354 MB);
   - `data/fotogramas/v18/` (4,0 GB) y `data/fotogramas/v19/`.
 - **La fecha**: la 7a se grabó el 2026-11-16 y el 2026-11-17, no el domingo 2026-11-15 de la F de hoy.
+- **Para la activación de la 7a** (respuesta del consultor, PARADA 3): `PREGUNTAS-7B.md` (hacia la
+  línea 48) tiene el **2026-04-15 de 11 a 15 como su sesión 2**, y el 15 de abril ya salió en la 7a,
+  abierto por error (no citable). Esta rama no toca `PREGUNTAS-7B.md`: lo revisa la activación, que es
+  la que revisa ese orden. Y el **2026-07-03 de 7 a 11 queda gastado** (PARADA 2): no se vuelve a usar.
 
 ## 10. El cierre de la rama: sellos, push y CI
 
@@ -838,8 +916,9 @@ Los sellos de la rama, con su PICO DE MEMORIA:
 - registro (`5bbc694d`): 3513 passed, sello sobre `67c70678`, **319 MiB**;
 - cuarentena de v18 (`f1310b44`): 3513 passed, sello sobre `41bdf8d8`, **318 MiB**;
 - extracción (`65dad312`): 3513 passed, sello sobre `c4b6f2b5`, **319 MiB**;
-- el último, el de los hallazgos del revisor: su línea, en el resumen final a Aleks (un informe no
-  puede llevar el sello del árbol que lo contiene).
+- hallazgos del revisor (`68eeecf7`): 3513 passed, sello sobre `42965505`, **319 MiB**;
+- el último, el de la respuesta del consultor (§13): su línea, en el resumen final a Aleks (un informe
+  no puede llevar el sello del árbol que lo contiene).
 
 Antes del sello de la extracción, con todo estadiado (revisor, b3):
 - `uv run pytest tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_de_ruta.py
@@ -852,9 +931,11 @@ Antes del sello de la extracción, con todo estadiado (revisor, b3):
   `3 passed`; `scripts/contrato_rama.py`: «CONTRATO: 71 ficheros dentro del contrato».
 Y otra vez antes del último sello (§12).
 
-**Push y CI: no lanzados**, por la orden de Aleks del 2026-11-17 (§0.0b, punto 4). La orden del
-encargo, para cuando la dé: `git push origin trabajo/sesion-07:refs/heads/fix/sesion-07` y una
-consulta suelta de `gh run view` (el fallo esperado, el de `state check`).
+**Push y CI**: no lanzados en la primera entrega, por la orden de Aleks del 2026-11-17 (§0.0b, punto
+4); se lanzan tras el sello de la respuesta del consultor, que los manda (§0.0b, punto 5, «Después»,
+3): `git push origin trabajo/sesion-07:refs/heads/fix/sesion-07` y una consulta suelta de
+`gh run view` cada vez (el fallo esperado, el de `state check`). El número del run y su resultado, en
+el resumen final a Aleks (el push lleva este informe ya commiteado).
 
 ## 11. El encargo, punto por punto
 
@@ -896,7 +977,7 @@ consulta suelta de `gh run view` (el fallo esperado, el de `state check`).
 | Exposiciones, con «Escrita tarde» para el 16 | sí |
 | Para la orden de cierre: F, R4.3, copia de seguridad, lista fuera de git | sí (§9) |
 | `make check` sellado | sí (§10) |
-| Push a `fix/sesion-07` y CI | **no**: orden de Aleks (§0.0b) |
+| Push a `fix/sesion-07` y CI | tras la respuesta del consultor (§10); en la primera entrega, no, por orden de Aleks (§0.0b) |
 | El revisor con el informe terminado; su informe pegado; los commits mirados | sí (abajo) |
 | Ningún registro de cierre ni cambio de Next Action | sí |
 
@@ -929,11 +1010,42 @@ consulta suelta de `gh run view` (el fallo esperado, el de `state check`).
 - **b7**: el «creo» de la sesión 2, en la tabla y en §4.2.
 - **b8**: la fuente de S-5 en `HOJA-USADA-7A.md` empieza por `TRAZAS-ABLACION.md:945-950`.
 
+## 13. La respuesta del consultor a las PARADAS, aplicada (2026-11-17)
+
+Copiada tal cual en §0.0b, punto 5, y al final de `docs/encargos/trabajo-sesion-07.md`. Por puntos:
+
+- **PARADA 1 a), S-1: hecha.** La condición se cumple: en la filtrada de v18, línea 62, visible y
+  dentro del tramo, `[05:19]` «sería este de aquí, con fecha a 02 de julio del año 2026, en el cual
+  nosotros tenemos un rango». El día salió con `Grep` de la filtrada (patrón de «julio» y de las marcas
+  de bloque), y lo leído para extraer, con `sed -n '55,118p'` (`[04:01]`–`[09:41]`): la filtrada de v18
+  entera ya estaba declarada en `HOLDOUT-EXPOSICIONES.md` el 2026-11-17, y su fila no se toca. Hecho:
+  - el tramo 0:05:00–0:09:37 sale de `tramos_no_citables.yaml`, en el commit de esta respuesta, con
+    `Fuente: ADR-0093`;
+  - las dos filas de S-1, en §3.3, en la cobertura (§5.2) y en la tabla final (§6), con sus ítems:
+    `ev-v18-000822-57145b90` («qué vela pasa a ser tu rango nuevo», **en parte**) y
+    `ev-v18-000917-30c1ca5a` («rango mayor», **resuelve**); sin desenlaces de operaciones;
+  - resultó de un día de construcción (el 2 de julio de 2026, el de la sesión 2 del bloque).
+- **PARADA 1 b)**: los tramos de S-2, S-4 y S-5 se quedan como estaban; nada más.
+- **PARADA 2**: nada que hacer en el material; §4.3 no cambia; el día gastado, en §5.1 (punto 10) y §9.
+- **PARADA 3**: se queda no citable; la consecuencia para la 7b, en §5.1 (punto 9) y §9.
+- **PARADA 4**: la decisión, en §5.1 (punto 1) y §7.1; nada aplicado.
+- **b1**: se queda en la historia; lo dirán el registro de cierre y ERRORES-RECURRENTES (§7.1).
+- **Las tres cosas para el consultor**: en §5.1, sin cambio, para el encargo de la activación.
+- **Después, 1**: este commit, sellado; el trabajo no pasó a otro día en Lima (21:41 del 2026-11-17
+  al aplicar), así que no hay fila nueva de HOLDOUT.
+- **Después, 2**: el revisor, solo sobre lo cambiado, con el alcance añadido (ninguna línea nueva
+  describe lo que dice una lámina ni deja deducir la clave); su informe, pegado al final.
+- **Después, 3**: push a `fix/sesion-07` y CI de Linux (§10).
+
+Fuera de lo que pedía la respuesta, para que el registro no mienta: la `naturaleza` de v18 en
+`fuentes.yaml` decía que los cuatro gráficos reales eran tramos de precaución; ahora dice que el de
+S-1 se levantó.
+
 ## Estado
 
-**Rama lista para revisión, NO cerrada.** Con cuatro PARADAS que esperan a Aleks (§7.1: el gráfico
-real del bloque técnico, la sesión que abre v19, el 15 de abril y el valor de A-35) y la frase de b1
-en la historia de `65dad312` (§12). Sin push ni CI, por orden de Aleks.
+**Rama lista para revisión, NO cerrada.** Las cuatro PARADAS y la frase de b1 están respondidas por el
+consultor (§7.1) y su respuesta está aplicada (§13). Push a `fix/sesion-07` y CI de Linux tras este
+sello (§10).
 
 ## Informe del revisor
 

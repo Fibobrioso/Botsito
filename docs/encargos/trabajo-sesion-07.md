@@ -60,3 +60,38 @@ Dado por Aleks (consultor) el 2026-11-17, en un solo mensaje. Copiado tal cual:
 > make check sellado; push a fix/sesion-07 (git push origin trabajo/sesion-07:refs/heads/fix/sesion-07; si el clasificador lo niega, me lo dices y lo lanzo yo con «!») y CI de Linux con solo el fallo esperado de state check; dame el número de run. Después el revisor, lanzado con el informe YA TERMINADO, y su informe pegado al final; además de su alcance, mira cada commit de la rama (git log -p main..trabajo/sesion-07) buscando fechas reservadas y lo que lo commiteado deja deducir de la clave de las láminas (lecciones de trabajo/preparacion-sesion-7, ERRORES-RECURRENTES.md). Ningún registro de cierre en HISTORIA ni cambios de Next Action más allá de lo que haga abrir-rama: eso va con la orden de cierre.
 >
 > Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a las PARADAS (2026-11-17)
+
+Pegada por Aleks tras la entrega; copiada tal cual (también en `SESION-07-EXTRACCION.md` §0.0b,
+punto 5).
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Respuesta del consultor a las PARADAS de trabajo/sesion-07 (2026-11-17). Revisados el informe (§3, §4, §5, §7, §9 y §12) y PREGUNTAS-7B.md en main. Cópiala tal cual en §0.0b.
+>
+> PARADA 1 · El gráfico real del bloque técnico.
+> a) S-1, v18 [05:00]–[09:37]: se levanta, con una condición. La voz tiene que decir el 2 de julio de forma visible en la filtrada (no tapado), dentro del tramo o justo antes; cita el minuto. Si es así:
+> - quita ese tramo de precaución de tramos_no_citables.yaml en un commit con «Fuente: ADR-0093»;
+> - extrae de él solo las dos filas de S-1 que quedaron pendientes, «rango mayor» y «qué vela pasa a ser tu rango nuevo», con su ítem de evidencia, y ponlas en §3.3, en la cobertura y en la tabla final;
+> - sin desenlaces de operaciones (ni R, ni dinero, ni ganadora o perdedora), como el resto del informe;
+> - la fila de HOLDOUT de ese tramo no se toca, porque solo se añade; el informe dice que resultó de un día de construcción.
+> Si el día solo se deduce, o sale tapado, el tramo se queda y las dos filas siguen «pendiente».
+> b) S-2 [14:20]–[18:48], S-4 [25:18]–[26:56] y S-5 [28:51]–[32:17]: se quedan no citables y declarados como exposición posible, sin nada más, porque su día no se puede saber sin leer lo que no se debe. Esas tres preguntas se quedan con lo citable de fuera de los tramos.
+>
+> PARADA 2 · La sesión que abre v19: se queda entera no citable y sin extraer, como está. Mi respuesta b) da el orden previsto, no lo que el trader abrió: en la reserva abrió otro día por error, y la b) no lo decía. El 2026-07-03 de 7 a 11 queda gastado: el informe lo dice, y ese día no se vuelve a usar en otra sesión.
+>
+> PARADA 3 · El 15 de abril: se queda no citable. No se le enseñó ninguna lámina de ese día, así que no sirve al método del bloque. Consecuencia para la 7b: PREGUNTAS-7B.md (hacia :48) tiene el 2026-04-15 de 11 a 15 como su sesión 2. Esta rama no toca PREGUNTAS-7B.md; dilo en §5.1 y en §9, para la activación de la 7a, que es la que revisa ese orden.
+>
+> PARADA 4 · S-4 / A-35: decisión del consultor para el informe, sin aplicar nada aquí. A-35 sigue ABIERTA y liquidez_m15_mecha_que_vuelve se queda en solo_la_contraria, el valor de hoy, que la respuesta (a) de la pregunta 2 no contradice. La pregunta 1 va a la 7b reformulada, y la mecha de una verde (ev-v18-002701-62875550) cuenta como «en parte» para la activación. El destino final lo fija el encargo de la activación.
+>
+> La frase de b1 en 65dad312: se queda; la historia no se reescribe. La clave de la 7a queda gastada: la sesión ya se grabó y las láminas de la 7b salen con su propia clave. Lo dirán el registro de HISTORIA del cierre y su lección en ERRORES-RECURRENTES.
+>
+> Las tres cosas para el consultor (el margen del break even, la vela de otro color en Dukascopy y que ninguna corrección llevara «¿siempre, solo aquí o de qué depende?») se quedan en §5.1 como están: van al encargo de la activación.
+>
+> Después:
+> 1. Lo de la PARADA 1 a), si procede, y el informe al día: §3.3, §5.1, §5.2, §6, §7.1 (cada PARADA, «respondida»), §0.0b con esta respuesta, §9 y Estado. Todo en un commit sellado. Si el trabajo pasa a otro día en Lima, antes va su fila de HOLDOUT.
+> 2. El revisor, solo sobre lo cambiado, con un alcance más: que ninguna línea nueva describa lo que dice una lámina ni deje deducir la clave.
+> 3. El push a fix/sesion-07 y su CI de Linux, ahora sí, como manda el encargo (§10). Lo confirmo con «1. Yes». Dame el número del run.
+>
+> Rama lista para revisión, NO cerrada.
