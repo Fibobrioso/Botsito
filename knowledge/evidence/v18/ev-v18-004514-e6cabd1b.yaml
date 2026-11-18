@@ -1,0 +1,21 @@
+id: ev-v18-004514-e6cabd1b
+video_id: v18
+t0: 0:45:14
+t1: 0:45:43
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: no lo ha considerado todavía esto un punto de posible punto breaker por el hecho de que
+  la liquidez de m15 lo tomo con mecha y no con cuerpo porque nosotros la regla es que para nosotros pues
+  pues poder validar un posible punto breaker tiene que haber una ruptura de la liquidez de m15 con cuerpo
+afirmacion: 'la regla: para validar un posible punto de breaker tiene que haber una ruptura con cuerpo
+  de la liquidez de M15; con mecha, no'
+tema: liquidez.m15.toma_con_cuerpo_en_m1
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v18-004514-0d48f2cc
+notas: sesion 1 del bloque de dias (2026-07-07, 11-15), al corregir una lamina del bot; sirve a S-5. Supersede
+  a ev-v18-004514-0d48f2cc, que decia mas que su cita (revisor, a8). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

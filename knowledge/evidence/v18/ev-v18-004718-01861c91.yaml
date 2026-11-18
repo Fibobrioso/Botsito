@@ -1,0 +1,19 @@
+id: ev-v18-004718-01861c91
+video_id: v18
+t0: 0:47:18
+t1: 0:47:38
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: lo fija rompió el bajo anterior y cerró roja vale si estuviéramos tratando con estas velas
+  de aquí perfectamente diría que sí pero como digo nosotros estamos arrastrando un sesgo mayor y que
+  es alcista que no ha sido mitigado todavía ni por arriba ni por debajo
+afirmacion: la ruptura de la H4 anterior valdria con esas velas solas, pero arrastra un sesgo mayor alcista
+  no mitigado ni por arriba ni por debajo
+tema: sesgo.rango_h4_mayor_no_mitigado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 1 del bloque de dias (2026-07-07, 11-15), al corregir una lamina del bot; sirve a S-1. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

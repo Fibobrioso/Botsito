@@ -1,0 +1,20 @@
+id: ev-v19-011437-dbfc20b5
+video_id: v19
+t0: '1:14:37'
+t1: '1:14:55'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: vale, pero que pasa, nosotros tenemos la condicional de que para poner nosotros en break
+  even tendría que haber una vela verde y tendría que cerrar con cuerpo por encima de este nivel, eso
+  es lo que se ha dicho de encima de este alto cerrar con cuerpo para nosotros pues poder poner en break
+  even la entrada
+afirmacion: para el break even tiene que haber una vela verde que cierre con cuerpo por encima del alto
+tema: break_even.disparador_zona_de_control
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: reserva del bloque de dias (2026-04-13), operada por el trader, al corregirse a si mismo; sirve
+  a S-2. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

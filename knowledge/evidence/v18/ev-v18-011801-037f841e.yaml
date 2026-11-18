@@ -1,0 +1,18 @@
+id: ev-v18-011801-037f841e
+video_id: v18
+t0: '1:18:01'
+t1: '1:18:12'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: nosotros pues actualizando también la orden si la orden iba aquí se actualiza aquí se maneja
+  una sola orden, no es que se deja pendiente otra orden aquí, otra orden aquí, no se va actualizando
+  la orden
+afirmacion: 'maneja una sola orden: al actualizarse el punto de breaker la mueve, no deja otra pendiente'
+tema: entrada.orden.una_sola_se_actualiza
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 2 del bloque de dias (2026-07-02), operando la sesion de 11 a 15. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

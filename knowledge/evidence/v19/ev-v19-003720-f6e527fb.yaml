@@ -1,0 +1,19 @@
+id: ev-v19-003720-f6e527fb
+video_id: v19
+t0: 0:37:20
+t1: 0:37:33
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: esta entrada, este posible punto breaker ¿por qué quedaría invalidado? porque nos genera
+  más de una zona de control interna antes de generar rompimiento al posible punto breaker, entonces aquí
+  no habría ninguna entrada, vale
+afirmacion: el punto queda invalidado y no hay entrada porque se forma mas de una zona de control antes
+  de romperlo
+tema: zona_control.demasiadas_antes_de_romper
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 4 del bloque de dias (2026-07-15), operada por el trader; sirve a S-3. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

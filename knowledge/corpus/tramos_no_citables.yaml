@@ -533,3 +533,129 @@ tramos:
       la exposicion, en docs/validation/HOLDOUT-EXPOSICIONES.md (2026-11-09, el fotograma
       fr-v13-8c1e06fb/10000, que no se vuelve a abrir); ADR-0038 y ADR-0041;
       docs/validation/VIDEO-JULIO.md
+  - video_id: v18
+    t0: "0:40:29"
+    t1: "0:41:11"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 2429,3 s a 2470,3 s. Segun Aleks (2026-11-17), una pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:26:52"
+    t1: "0:27:56"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 1612,3 s a 1675,4 s. Segun Aleks (2026-11-17), una pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:44:56"
+    t1: "0:45:48"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 2696,9 s a 2747,4 s. Segun Aleks (2026-11-17), otra pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:48:39"
+    t1: "0:49:19"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 2919,2 s a 2958,3 s. Segun Aleks (2026-11-17), otra pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "1:32:58"
+    t1: "1:34:17"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 5578,5 s a 5656,3 s. Segun Aleks (2026-11-17), otra pausa de la sesion: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "1:34:21"
+    t1: "1:34:55"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-17), de 5661,6 s a 5694,3 s. Segun Aleks (2026-11-17), la misma pausa que el tramo anterior: el trader se ausento o no hablo; el audio no se corto. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «EL RECORRIDO», Audio: cada corte a este fichero con motivo SIN AUDIO; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "0:52:04"
+    t1: "0:52:15"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 52:04–52:14] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "0:57:52"
+    t1: "0:58:14"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 57:52–58:13] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "1:09:09"
+    t1: "1:09:16"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 69:09–69:15] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "1:51:08"
+    t1: "1:51:39"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v18): el bloque [CUARENTENA 111:08–111:38] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "0:14:20"
+    t1: "0:18:48"
+    motivo: >-
+      precaucion: en S-2 (bloque tecnico de la sesion 7a), el trader pasa del esquema a un grafico real que dice tener marcado, de un dia que la voz no dice, y comenta operaciones y hasta donde llegaron. La respuesta a) de Aleks no lo nombraba; el encargo manda declarar no citable un replay con marcas o de otro dia. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a); marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "0:25:18"
+    t1: "0:26:56"
+    motivo: >-
+      precaucion: en S-4 (bloque tecnico de la sesion 7a), el trader pasa del esquema a un grafico real de M15, de un dia que la voz no dice, y nombra el resultado de una operacion. La respuesta a) de Aleks no lo nombraba; el encargo manda declarar no citable un replay con marcas o de otro dia. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a); marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v18
+    t0: "0:28:51"
+    t1: "0:32:17"
+    motivo: >-
+      precaucion: en S-5 (bloque tecnico de la sesion 7a), el trader pasa del esquema a un grafico real con sus marcas, de un dia que la voz no dice, y nombra el resultado de varias operaciones. La respuesta a) de Aleks no lo nombraba; el encargo manda declarar no citable un replay con marcas o de otro dia. Sin cifras ni dias aqui
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a); marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:00:00"
+    t1: "0:00:07"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v19): el bloque [CUARENTENA 00:00–00:06] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:14:18"
+    t1: "0:14:39"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v19): el bloque [CUARENTENA 14:18–14:38] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "1:03:40"
+    t1: "1:03:48"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 07 (v19): el bloque [CUARENTENA 63:40–63:47] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-07 (2026-11-17); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:00:08"
+    t1: "0:26:11"
+    motivo: >-
+      precaucion: la sesion que abre v19, la 3 del bloque de dias segun la respuesta b) de Aleks: el dia que se dice al empezar cae en un bloque de cuarentena (fecha con numero) y la voz no lo vuelve a decir de forma visible, asi que la voz no situa el tramo (encargo, «REGLAS DE ESTA RAMA», fotogramas); PARADA para Aleks. Sin cifras ni desenlaces aqui
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a), y «REGLAS DE ESTA RAMA»; marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v19
+    t0: "0:44:49"
+    t1: "1:08:49"
+    motivo: >-
+      precaucion: en la reserva, el trader abre por error el replay de otro dia, el 15 de abril de 2026 (dia de construccion), lo marca y lo opera, y lo compara con las laminas del 13 hasta que ve que no coinciden; un replay de otro dia, que la respuesta a) de Aleks no nombraba. Sin cifras ni desenlaces aqui
+    acordado: >-
+      encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a), y «REGLAS DE ESTA RAMA»; marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md

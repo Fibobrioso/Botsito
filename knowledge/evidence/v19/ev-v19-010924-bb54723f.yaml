@@ -1,0 +1,21 @@
+id: ev-v19-010924-bb54723f
+video_id: v19
+t0: '1:09:24'
+t1: '1:09:54'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Lo primero, pues, para mis sesiones, de 7 a 11 y de 11 a 3, definimos nuestro rango, ¿vale?
+  Nuestro rango, en este caso, sería, pues, alcista, con cuerda, justamente con lo que está planteado
+  aquí, el H4 fija romper el alto, ¿vale? Perfecto, el rango es alcista, todavía nos mantenemos alcistas,
+  ¿vale? Tiene que romper por debajo y con vela roja, o sea, no importa si la vela roja termina con mecha
+  o con cuerpo,
+afirmacion: el rango es alcista y coincide con el bot; para cambiar tiene que romper por debajo una vela
+  roja, con mecha o con cuerpo
+tema: sesgo.rango_h4_cambio_ruptura_y_color
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: reserva del bloque de dias (2026-04-13), operada por el trader. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

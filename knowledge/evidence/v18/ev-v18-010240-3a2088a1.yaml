@@ -1,0 +1,18 @@
+id: ev-v18-010240-3a2088a1
+video_id: v18
+t0: '1:02:40'
+t1: '1:02:54'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: es eso, o sea, hay cositas a corregir, creo yo más que nada en M1 el escenario de ejecución
+  y también la interpretación de la búsqueda operativa, por eso es muy importante definir bien el bias
+afirmacion: 'resume la sesion 1: corregir sobre todo M1 y la busqueda operativa, y definir bien el bias
+  («creo yo»)'
+tema: sesgo.rango_h4_mayor_no_mitigado
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 1 del bloque de dias (2026-07-07, 11-15), resumen. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

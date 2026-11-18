@@ -1,0 +1,18 @@
+id: ev-v18-003706-83ce78dd
+video_id: v18
+t0: 0:37:06
+t1: 0:37:21
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: muestreo es que nosotros o sea excluimos los trace and break even porque no afectan para
+  el cálculo posterior de nuestra tasa de win rate u otros stats estadísticos
+afirmacion: «no afectar al muestreo» es excluir los trades en break even, que no entran en el win rate
+  ni en las estadisticas
+tema: backtest.entradas_sin_tomar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6, «Para precisar». docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

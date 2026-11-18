@@ -1,0 +1,20 @@
+id: ev-v19-004204-bd43e17d
+video_id: v19
+t0: 0:42:04
+t1: 0:42:33
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: porque al final de cabo con nuestro modelo de ejecución de entrada va inclinado a lo que
+  nosotros estamos buscando en base a h4 al sesgo si es él si se plantea un sesgo de h4 bajista pues por
+  lo general las reglas están planteadas para que es tratar para montarnos en operaciones bajistas como
+  tal y no en contratendencia aunque claro a veces indirectamente se puede desarrollar una contratendencia
+afirmacion: 'el modelo de entrada va con el sesgo de H4: con sesgo bajista las reglas buscan ventas, no
+  contratendencia, aunque a veces se de indirectamente'
+tema: sesgo.reglas_a_favor_del_sesgo_h4
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 4 del bloque de dias (2026-07-15), al corregir una lamina del bot; sirve a S-1. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

@@ -1,0 +1,16 @@
+id: ev-v18-002511-eec0acec
+video_id: v18
+t0: 0:25:11
+t1: 0:25:16
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La respuesta es la punta de la mecha.
+afirmacion: 'en la pregunta 2 de S-4 elige la opcion a: el alto de M15 es la punta de la mecha de la roja'
+tema: liquidez.m15.alto_es_la_punta_de_la_mecha
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-35), pregunta 2, leida en [25:08]. La pregunta 1 no la contesta. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

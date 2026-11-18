@@ -1,0 +1,18 @@
+id: ev-v18-011008-7fde5c4d
+video_id: v18
+t0: '1:10:08'
+t1: '1:10:31'
+modalidad: audio
+tipo: NO_TRADE
+cita_literal: tengo que trazarlo más cerca, entonces vemos por ejemplo, este es un claro ejemplo de que
+  hay sesiones en donde, en este caso de 7 a 11, donde no hay la posibilidad de tomar ningún trade, vale,
+  no hay la posibilidad de tomar ningún trade, entonces pues no pasa nada, simplemente
+afirmacion: hay sesiones sin ninguna operacion posible, como esa de 7 a 11
+tema: no_trade.sin_esquema
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 2 del bloque de dias (2026-07-02), la sesion de 7 a 11. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

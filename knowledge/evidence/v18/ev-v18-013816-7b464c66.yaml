@@ -1,0 +1,19 @@
+id: ev-v18-013816-7b464c66
+video_id: v18
+t0: '1:38:16'
+t1: '1:38:35'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: o sea, tanto podría parecer que es el esquema 2 de entrada, pero no, esto de aquí ya una
+  vez roto, una vez roto con esa vela aquí la zona de control si se desarrolla después es que es eso es
+  considerado el desarrollo de una zona de control para su posterior puesta en break even
+afirmacion: la zona de control que se desarrolla despues de romper el punto es la que habilita el break
+  even
+tema: break_even.disparador_zona_de_control
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 2 del bloque de dias (2026-07-02), al corregir una lamina; sirve a S-2. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

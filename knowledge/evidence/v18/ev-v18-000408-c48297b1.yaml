@@ -1,0 +1,19 @@
+id: ev-v18-000408-c48297b1
+video_id: v18
+t0: 0:04:08
+t1: 0:04:33
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Entonces, se puede decir que, en resumen, para nosotros ver una continuidad o una reversión,
+  bastaría con mecha o con cuerpo un rompimiento, pero para poder tener el enfoque, se tiene que definir
+  el color de la vela. Si es verde, o sea, el cista rompe por encima, pues continuamos al cista.
+afirmacion: para continuidad o reversion basta una ruptura con mecha o con cuerpo, y el lado lo define
+  el color de la vela
+tema: sesgo.rango_h4_cambio_ruptura_y_color
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1, sobre el esquema. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

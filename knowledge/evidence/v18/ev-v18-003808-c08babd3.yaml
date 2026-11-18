@@ -1,0 +1,17 @@
+id: ev-v18-003808-c08babd3
+video_id: v18
+t0: 0:38:08
+t1: 0:38:16
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pues en real simplemente no puedes obviar eso porque te va a marcar tanto los trades en
+  break-even
+afirmacion: operando en real no puede dejar fuera los trades en break even
+tema: backtest.entradas_sin_tomar
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6, «Para precisar» (en real). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

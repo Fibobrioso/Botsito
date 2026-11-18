@@ -1,0 +1,20 @@
+id: ev-v18-002701-62875550
+video_id: v18
+t0: 0:27:01
+t1: 0:27:17
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Y si la mecha es de una vela verde Pues si la mecha llega a ser más alto Que este alto De
+  aquel alto O sea, sería así Entonces se trazaría desde aquí se trazaría desde allí
+afirmacion: 'a «¿y si la mecha es de una vela verde?»: si la mecha llega mas alto que aquel alto, se traza
+  desde ella'
+tema: liquidez.m15.alto_mecha_vela_verde
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v18-002704-8b01e191
+notas: S-4 (A-35), «Para precisar»; la pregunta la lee el trader. Supersede a ev-v18-002704-8b01e191,
+  cuya cita no traia la vela verde (revisor, a5). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

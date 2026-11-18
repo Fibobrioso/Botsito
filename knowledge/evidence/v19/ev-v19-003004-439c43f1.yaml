@@ -1,0 +1,18 @@
+id: ev-v19-003004-439c43f1
+video_id: v19
+t0: 0:30:04
+t1: 0:30:24
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: Similar al caso anterior, tenemos todavía un rango que no ha sido mitigado, ya este nivel,
+  este rango ya ha sido mitigado como podemos ver por eso aquí, y luego pues aquí tenemos el rango más
+  reciente que todavía nos permite a nosotros buscar operaciones alcistas hasta que se actualice, ¿vale?
+afirmacion: el rango mas reciente sin mitigar le permite seguir buscando compras hasta que se actualice
+tema: sesgo.rango_h4_mayor_no_mitigado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 4 del bloque de dias (2026-07-15), operada por el trader; sirve a S-1. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

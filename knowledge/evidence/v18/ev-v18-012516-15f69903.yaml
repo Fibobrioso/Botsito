@@ -1,0 +1,18 @@
+id: ev-v18-012516-15f69903
+video_id: v18
+t0: '1:25:16'
+t1: '1:25:28'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se desarrolla demasiada zona de control antes que rompa la entrada o sea no cumple con el
+  esquema ni uno ni dos de entrada por lo cual no no se nos operaría
+afirmacion: con demasiada zona de control antes de romper el punto no se cumple ninguno de los dos esquemas
+  y no se opera
+tema: zona_control.demasiadas_antes_de_romper
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 2 del bloque de dias (2026-07-02), al corregir una lamina; sirve a S-3. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

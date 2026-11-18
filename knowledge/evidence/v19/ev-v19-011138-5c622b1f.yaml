@@ -1,0 +1,19 @@
+id: ev-v19-011138-5c622b1f
+video_id: v19
+t0: '1:11:38'
+t1: '1:11:47'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: se actualizaría a este nivel aquí porque vemos una 2 la segunda vela del mismo color está
+  con con su mecha por alto, lo actualizamos a este nivel,
+afirmacion: actualiza el nivel cuando la segunda vela del mismo color deja su mecha mas alta
+tema: mapeo.punto_breaker_sin_vela_contraria
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v19-011138-12205799
+notas: reserva del bloque de dias (2026-04-13), operada por el trader. Supersede a ev-v19-011138-12205799,
+  que nombraba el punto de breaker sin que su cita lo dijera (revisor, a7). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

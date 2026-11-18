@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesion-07
 
 ## Current Feature
-Ninguna rama abierta. trabajo/skills-metodo cerrada en main el 2026-11-14 (stable/F39c-skills-metodo): activar-sesion, ingerir-sesion y abrir-rama al día con ADR-0093 y las lecciones registradas; pagadas dos líneas de Technical Debt.
+trabajo/sesion-07, EN CURSO: la ingesta de la sesión 7a con el trader (grabada el 2026-11-16 y el 2026-11-17, v18 y v19) y su extracción por pregunta y por sesión del bloque de días, sin resolver nada (NA:F, R4.3). Encargo: docs/encargos/trabajo-sesion-07.md; informe: docs/validation/SESION-07-EXTRACCION.md.
 
 ## Stable Main State
 0f420593 · merge de `trabajo/skills-metodo` (tag `stable/F39c-skills-metodo`), sobre `stable/F39b-dieta-estado` (6054c4ce). Informe docs/validation/SKILLS-METODO.md; el registro del cierre, al final de HISTORIA.
@@ -25,7 +25,7 @@ Ninguna rama abierta. trabajo/skills-metodo cerrada en main el 2026-11-14 (stabl
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Las trazas del motor y la ablación por regla (TRAZAS-ABLACION.md; `motor decisiones`) y las láminas del bot (LAMINAS.md; `motor laminas`; R4.5) están hechas. La sesión 7 está preparada en dos días, 7a (sesion-07) y 7b (sesion-08) (PREPARACION-SESION-7.md; R4.3): el método en ADR-0093, que cambia la regla 2 de SESION-DE-PREGUNTAS.md (el bloque de días enseña las láminas); el pivote pre-registrado en docs/plan/PIVOTES-SESION-7.yaml; las preguntas en docs/sesion-7/; las láminas de la 7a fuera del repo. Siguiente, en este orden: (1) grabar (domingo 2026-11-15), ingerir y activar la 7a; su activación genera las láminas de la 7b con su motor, revisa PREGUNTAS-7B.md y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Trazas y ablación (TRAZAS-ABLACION.md; `motor decisiones`) y láminas (LAMINAS.md; `motor laminas`; R4.5), hechas. La sesión 7, en dos días con el método de ADR-0093 (PREPARACION-SESION-7.md; R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml): la 7a, grabada el 2026-11-16 y el 2026-11-17 (v18 y v19, id 2026-11-16-sesion-07), está ingerida (SESION-07-EXTRACCION.md, con sus PARADAS respondidas). Siguiente, en este orden: (1) activar la 7a; su activación genera las láminas de la 7b con su motor, revisa PREGUNTAS-7B.md (también el 2026-04-15 de su sesión 2: SESION-07-EXTRACCION.md §9) y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
 
 
 
@@ -137,7 +137,7 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - EL DETECTOR DE CONTRADICCIONES NO VE LOS TEMAS HERMANOS (2026-09-17, rama del breaker de M1, informe §5).
 - LA VIA DE PROPUESTA NO ADMITE `supersede` (2026-09-17, rama del breaker de M1, informe §3).
 - UN CONFIRM SOBRE UN ITEM SUPERSEDIDO QUEDA INVISIBLE Y SIN AVISO (2026-09-17, rama del breaker de M1, informe §2).
-- Copia de seguridad de las crudas y los WAV … (entera en HISTORIA, Technical Debt ACORTADA)
+- Copia de seguridad de las crudas y los WAV … falta v18 y v19 (entera en HISTORIA, Technical Debt ACORTADA)
 - Riesgos residuales del alias de la raíz (GUARDIA-ALIAS.md §5): si `os.path.realpath` lanza OSError la guardia compara la forma sin prefijos … (entera en HISTORIA, Technical Debt ACORTADA)
 - Las cotizaciones sin tick del bróker no usan la misma vela. En el cierre de la M1 k, Mercado.cotizacion (precio_invalido y stops_level, ADR-0057 §4) … (RESPALDO-M1.md §0.a y §0.b; entera en HISTORIA, Technical Debt ACORTADA)
 - El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A) … (entera en HISTORIA, Technical Debt ACORTADA)
@@ -162,8 +162,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 71 (2026-11-14).
+— ninguna desde el Archivo 72 (2026-11-17).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 71 (2026-11-14).
+— ninguna desde el Archivo 72 (2026-11-17).

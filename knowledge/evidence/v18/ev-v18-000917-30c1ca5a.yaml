@@ -1,0 +1,23 @@
+id: ev-v18-000917-30c1ca5a
+video_id: v18
+t0: 0:09:17
+t1: 0:09:37
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: pero el rango mayor sería esto de aquí. O sea, porque este rango todavía la liquidez, tanto
+  por encima como por debajo, no sea mitigada. Entonces, pues nosotros nos enfocamos a buscar, o sea,
+  a validar, primero a tener en cuenta ese rango mayor que no ha sido mitigado y ya una vez mitigado pues
+  se actualiza se llega a actualizar el rango
+afirmacion: 'a «rango mayor» de S-1: el rango mayor es el que todavia no tiene mitigada la liquidez, ni
+  por encima ni por debajo; primero se tiene en cuenta ese rango mayor no mitigado, y una vez mitigado
+  se actualiza el rango'
+tema: sesgo.rango_h4_mayor_no_mitigado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) y su respuesta a la PARADA 1 a) del
+  2026-11-17 · version filtrada leida por la sesion, sin revision humana; la transcripcion no separa voces
+  y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1, «Para precisar», sobre el grafico real del 2 de julio de 2026 (la voz lo dice en [05:19];
+  dia de construccion). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

@@ -1,0 +1,19 @@
+id: ev-v19-012924-64367863
+video_id: v19
+t0: '1:29:24'
+t1: '1:29:35'
+modalidad: audio
+tipo: UNKNOWN
+cita_literal: es una confusión de datos vale, porque aquí marca alcista en 90 y en Ducascopy y pues marca
+  bajista pero no pasa nada
+afirmacion: 'una vela sale de un color en su grafico y del otro en Dukascopy: lo llama una confusion de
+  datos'
+tema: datos.color_vela_fuente_distinta
+confianza: baja
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: reserva del bloque de dias (2026-04-13), al corregir una lamina del bot; «90» es lo que dio el
+  ASR, sin verificar a que se refiere. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

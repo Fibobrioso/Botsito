@@ -1,0 +1,19 @@
+id: ev-v18-003405-b0def171
+video_id: v18
+t0: 0:34:05
+t1: 0:34:25
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: para confirmar al final pongo la orden cuando tengas correctamente pues validado tu posible
+  punto breaker como lo hemos explicado en el gráfico y entras cuando pues se va a activar a través de
+  una orden stop limit creo que era lo que manejábamos
+afirmacion: 'su frase de «Para confirmar al final» de S-5: pone la orden cuando el punto de breaker esta
+  validado y entra cuando la orden se activa («creo»)'
+tema: entrada.orden.nace_al_validar_punto
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5, «Para confirmar al final». docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

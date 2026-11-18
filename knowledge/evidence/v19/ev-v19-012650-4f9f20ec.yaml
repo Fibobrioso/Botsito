@@ -1,0 +1,18 @@
+id: ev-v19-012650-4f9f20ec
+video_id: v19
+t0: '1:26:50'
+t1: '1:27:10'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la toma de liquidez tiene que ser la liquidez está marcada antes de la sesión vale pero
+  tiene la toma tiene que ser con las velas de menos después de 7
+afirmacion: la liquidez se marca antes de la sesion, pero la toma tiene que hacerla una vela de despues
+  de las 7
+tema: liquidez.m15.tomada_antes_de_las_7
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: reserva del bloque de dias (2026-04-13), al corregir una lamina del bot. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v19-large-v3-int8-float16-d6b9cc45

@@ -1,0 +1,18 @@
+id: ev-v18-004436-8c3026c1
+video_id: v18
+t0: 0:44:36
+t1: 0:44:58
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: entonces cuando hay una operativa alcista nosotros en este caso como es tomando en cuenta
+  este orden flow de velas o sea tenemos que buscar por debajo siempre por debajo o sea para una operativa
+  alcista siempre la liquidez por debajo ahí está bien trazado
+afirmacion: en una operativa alcista la liquidez de M15 se busca siempre por debajo
+tema: liquidez.m15.lado_segun_sesgo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: sesion 1 del bloque de dias (2026-07-07, 11-15), al corregir una lamina del bot. docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca
