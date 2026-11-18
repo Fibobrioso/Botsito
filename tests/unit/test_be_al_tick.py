@@ -205,13 +205,13 @@ def test_el_nivel_vigilado_es_el_mismo_punto_que_completa_la_zona() -> None:
 
 
 def _registro_con_break_even(tmp_path: Path, valor: str) -> Registro:
-    texto = (tc.RAIZ / "knowledge" / "spec" / "parametros.yaml").read_text(encoding="utf-8")
-    # desde trabajo/activar-sesion-07 (sesion 7a, S-2) el valor del registro real es `cierre`
-    viejo = "    valor: cierre\n"
-    assert texto.count(viejo) == 1
-    ruta = tmp_path / "parametros.yaml"
-    ruta.write_text(texto.replace(viejo, f'    valor: "{valor}"\n'), encoding="utf-8")
-    return cargar_registro(ruta)
+    """Una copia del registro real con `break_even_condicion` en `valor`. Con `tocar` el criterio
+    va tambien a `mecha`, el par de ADR-0065 (un cuerpo no se ve en un tick): desde
+    trabajo/activar-sesion-07 (sesion 7a, S-2) el registro real dice `cierre` y `cuerpo`."""
+    valores = {"break_even_condicion": valor}
+    if valor == "tocar":
+        valores["break_even_criterio_ruptura"] = "mecha"
+    return tc.registro_con_valores(tmp_path, valores)
 
 
 def _toca_y_vuelve_en_el_motor() -> Any:

@@ -544,6 +544,17 @@ queda descartada por el trader (`ev-v18-001145-901d8aa0`) y que el margen no se 
 mecanismo al tick de ADR-0065, que se corre con `tocar` y `mecha` en una copia del registro:
 `registro_con_valores`).
 
+### F2.2 `break_even_criterio_ruptura` → `cuerpo`
+
+`fb-2026-11-16-sesion-07-a094ab28`, CORRECT con `supersede` de `fb-2026-09-29-sesion-03-2cff5008`,
+con `ev-v18-001327-70f1d014` («la entrada tiene que cerrar por encima de su nivel alto de su de su
+máximo nivel para nosotros pues poder poner en break even»); `feedback apply --check` proponía solo
+ese cambio (el de F2.1, «ya estaba»). La descripción dice el valor nuevo, la excepción del imbalance
+descartada y el margen sin activar, y lo que decía de A-13 («sigue ABIERTA solo por el corte de
+audio») pasa a pasado. spec 19.0.1 → 19.0.2. Entra `tests/unit/test_break_even_cierre.py` (F2.0),
+que ya pasa. **Cambia A PROPÓSITO**: el ayudante de `test_be_al_tick.py` prueba `tocar` con `mecha`
+(el par de ADR-0065: un cuerpo no se ve en un tick), en una copia del registro.
+
 ## Estado
 
 EN CURSO: fase 0 y F1 commiteadas (F1 en PARADA por la condición (iv), punto 5 de las decisiones); siguen F2 y F3.

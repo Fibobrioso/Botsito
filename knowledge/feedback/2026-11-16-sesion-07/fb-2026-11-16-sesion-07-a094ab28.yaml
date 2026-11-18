@@ -1,0 +1,21 @@
+id: fb-2026-11-16-sesion-07-a094ab28
+sesion: 2026-11-16-sesion-07
+fecha: '2026-11-16'
+medio: video
+objetivo:
+  tipo: parametro
+  id: break_even_criterio_ruptura
+accion: CORRECT
+respuesta_literal: la entrada tiene que cerrar por encima de su nivel alto de su de su máximo nivel para
+  nosotros pues poder poner en break even
+registrado_por: Aleks · grabacion de la sesion 7a (v18), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-18 (trabajo/activar-sesion-07, encargo F2)
+grabacion: Grabación de pantalla 2026-11-16 145418.mp4
+t0: 0:13:27
+t1: 0:13:45
+valor_resultante: cuerpo
+supersede: fb-2026-09-29-sesion-03-2cff5008
+notas: 'S-2 (A-13), caso 1 del esquema (ev-v18-001327-70f1d014): tiene que cerrar por encima del maximo
+  de la zona de control para poder poner el break even; si cierra por debajo, no'
+recibido_el: '2026-11-16'
+procedencia: trader_grabado

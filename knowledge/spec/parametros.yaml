@@ -524,16 +524,24 @@ parametros:
     opciones: ["mecha", "cuerpo"]
     descripcion: >-
       criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el
-      break even. Es lo que pregunta A-13. Hasta el 2026-09-29 entraba `mecha` como DEFAULT
+      break even. Es lo que pregunta A-13. DESDE EL 2026-11-18 ES `cuerpo` (sesion 7a, S-2;
+      trabajo/activar-sesion-07, CORRECT fb-2026-11-16-sesion-07-a094ab28, que supersede al de la
+      sesion 3): «la entrada tiene que cerrar por encima de su nivel alto de su de su máximo nivel
+      para nosotros pues poder poner en break even» (ev-v18-001327-70f1d014), en una venta al revés
+      (ev-v18-001900-1581efbe): una M1 tiene que CERRAR mas alla del extremo de la zona. LA
+      EXCEPCION DEL IMBALANCE (bastaria la mecha) QUEDA DESCARTADA POR EL TRADER: «no es una regla
+      el uso del imbalance» (ev-v18-001145-901d8aa0). Sin margen: el que dijo una vez, en un
+      ejemplo («un par de puntos o un pip», ev-v19-011529-8ae8b581), es «en parte» y A-13 sigue
+      ABIERTA solo por el. Hasta el 2026-09-29 entraba `mecha` como DEFAULT
       NUESTRO, porque el trader se desdecia a los doce minutos; en la sesion 3 lo dijo: al tocar
       («apenas toca, pues se pone en B la entrada», v9 0:55:48), y al tocar basta la mecha. A-13
-      sigue ABIERTA solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
+      seguia ABIERTA, hasta la 7a, solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
       nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
     estado: CONFIRMED
-    valor: mecha
+    valor: cuerpo
     fuente:
       tipo: feedback
-      id: fb-2026-09-29-sesion-03-2cff5008
+      id: fb-2026-11-16-sesion-07-a094ab28
   - nombre: breaker_m1_criterio_ruptura
     categoria: estrategia
     tipo: enum

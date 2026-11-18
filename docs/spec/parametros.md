@@ -2,7 +2,7 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 19.0.1` · hash `ba4404128cf6…`
+`spec_version 19.0.2` · hash `a38791d82cf1…`
 
 113 en total: 103 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
@@ -14,7 +14,7 @@
 | `base_calculo_perdida_semanal` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-a85b6bc7` | sobre que saldo se calcula |
 | `base_calculo_riesgo` | `saldo_actual` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-2603c017` | sobre que saldo se calcula |
 | `break_even_condicion` | `cierre` | CONFIRMED | estrategia | `fb-2026-11-16-sesion-07-828031df` | tocar/cierre |
-| `break_even_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-09-29-sesion-03-2cff5008` | que hace falta para dar por rota la zona que dispara el break even |
+| `break_even_criterio_ruptura` | `cuerpo` | CONFIRMED | estrategia | `fb-2026-11-16-sesion-07-a094ab28` | que hace falta para dar por rota la zona que dispara el break even |
 | `breaker_m1_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `ev-v4-005910-d24c0345` | que hace falta para dar por rota la estructura de M1 que forma el esquema de entrada |
 | `broker_dst` | `us` | CONFIRMED | broker | `ADR-0090` | que calendario de cambio de hora sigue el servidor |
 | `broker_offset_base` | `120` | CONFIRMED | broker | `ADR-0090` | minutos que el reloj del servidor va por delante de UTC en horario estandar |
@@ -215,7 +215,7 @@ Opciones: `tocar`, `cierre`.
 
 ### `break_even_criterio_ruptura`
 
-criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el break even. Es lo que pregunta A-13. Hasta el 2026-09-29 entraba `mecha` como DEFAULT NUESTRO, porque el trader se desdecia a los doce minutos; en la sesion 3 lo dijo: al tocar («apenas toca, pues se pone en B la entrada», v9 0:55:48), y al tocar basta la mecha. A-13 sigue ABIERTA solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
+criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el break even. Es lo que pregunta A-13. DESDE EL 2026-11-18 ES `cuerpo` (sesion 7a, S-2; trabajo/activar-sesion-07, CORRECT fb-2026-11-16-sesion-07-a094ab28, que supersede al de la sesion 3): «la entrada tiene que cerrar por encima de su nivel alto de su de su máximo nivel para nosotros pues poder poner en break even» (ev-v18-001327-70f1d014), en una venta al revés (ev-v18-001900-1581efbe): una M1 tiene que CERRAR mas alla del extremo de la zona. LA EXCEPCION DEL IMBALANCE (bastaria la mecha) QUEDA DESCARTADA POR EL TRADER: «no es una regla el uso del imbalance» (ev-v18-001145-901d8aa0). Sin margen: el que dijo una vez, en un ejemplo («un par de puntos o un pip», ev-v19-011529-8ae8b581), es «en parte» y A-13 sigue ABIERTA solo por el. Hasta el 2026-09-29 entraba `mecha` como DEFAULT NUESTRO, porque el trader se desdecia a los doce minutos; en la sesion 3 lo dijo: al tocar («apenas toca, pues se pone en B la entrada», v9 0:55:48), y al tocar basta la mecha. A-13 seguia ABIERTA, hasta la 7a, solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
 
 Opciones: `mecha`, `cuerpo`.
 

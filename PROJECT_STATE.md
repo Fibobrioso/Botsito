@@ -16,7 +16,7 @@ trabajo/activar-sesion-07 EN CURSO (R4.3, punto (1) de la F de la Next Action): 
 5c047f31 · merge trabajo/sesion-07: la sesión 7a (v18 y v19) ingerida y extraída, con sus PARADAS respondidas · tag stable/F39d-sesion-07
 
 ## Tests Currently Passing
-2079 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2082 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
