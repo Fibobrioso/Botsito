@@ -623,8 +623,15 @@ parametros:
       ev-v17-001712-dc155b5d descarta `cualquier_mecha` (con ella esa vela no tomaria); de las dos
       que quedan, la que conserva el ejemplo de la sesion 5 (ADR-0084 §1) es `solo_la_contraria`.
       ev-v15-000553-9d95178a, que contestaba al caso (ii), queda sin CORRECT y en tension hasta la
-      sesion 7. Lo lee quien construye los datos del dia (arnes y visor), no una regla:
-      engine/motor.py aplica el selector sobre domain/pivotes_m15.py
+      sesion 7. EN LA SESION 7a (S-4, 2026-11-16; trabajo/activar-sesion-07), a la pregunta 2 (¿tu
+      alto es la punta de la mecha de la roja o el alto de las verdes?), la opcion a: «La respuesta
+      es la punta de la mecha.» (ev-v18-002511-eec0acec), y al final «mi alto de M15 es la punta de
+      la mecha en el esquema planteado»: no contradice `solo_la_contraria` y no fija valor. La
+      pregunta 1 (si una mecha de M1 posterior que pasa el alto y vuelve lo mueve) no la contesto,
+      y la mecha de una verde (ev-v18-002701-62875550) cuenta como «en parte»: A-35 sigue ABIERTA y
+      el valor no cambia (respuesta del consultor a la PARADA 4 de trabajo/sesion-07); la pregunta 1
+      va a la 7b reformulada. Lo lee quien construye los datos del dia (arnes y visor), no una
+      regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
     consumido_por: [ADR-0084]
     estado: DEFAULT_AMBIGUOUS
     valor: solo_la_contraria

@@ -576,6 +576,96 @@ nombraba los dos parámetros). spec 19.0.2 → 19.0.3.
 - `knowledge validate` acepta las citas en prosa de los tres registros supersedidos (A-13, notas de
   RN-014 y descripciones de los parámetros): lo que G1 niega son las citas en campos de fuente.
 
+### F2.4 La corrida de julio tras F2 (D0, etiqueta `f2`)
+
+Las tres órdenes de D0 sobre el código commiteado de F2.3 (fila de HOLDOUT antes):
+`pivote-julio-f2.txt` y `delta-julio-f1-f2.txt` en los anexos.
+
+| | base | f1 | f2 | delta f1 → f2 |
+|---|---|---|---|---|
+| T0 (parejas) | 14 | 14 | 11 | **−3** |
+| P5 + P6 en sesión | 39 | 24 | 19 | **−5** |
+| P4 | 1 | 17 | 29 | +12 |
+| `stop_movido` en julio (fuente) | 18 (ticks) | 14 (ticks) | 8 (`cierre_m1`) | −6 |
+
+**Filas declaradas: ninguna pareja nueva.** **CASA**: el rn003 no cambia en ninguna sesión de julio
+entre f1 y f2, y **las 12 filas que cambian de patrón y las 5 que desaparecen son todas del 07-13 y
+del 07-14, y las explica un freno de la cuenta, una por una**: con F2 la cuenta del mes llega a
+RN-032 (la lectura prospectiva del límite total) al cierre del 2026-07-10 (saldo 90.792,85; en f1
+llegaba el 07-14 a las 09:24 UTC, F1.4), y desde el 07-13 el bot no abre (en la línea «Por sesion» de esos días
+dispara RN-032 en cada sesión, y ninguna orden). Las 12 pasan a P4 «sin orden» (entre ellas tres
+parejas de f1: 07-13 07-11 de las 05:17:55, y 07-14 07-11 de las 06:30:30 y de las 06:55:30), y las 5
+P5 del bot desaparecen. El freno llega antes porque con el break even al cierre y con cuerpo menos
+operaciones salen a la entrada: es el efecto del break even sobre la cuenta, de rebote, no una regla
+nueva. No hizo falta `motor decisiones`: la línea «Por sesion» y la curva de equity lo dicen.
+Ninguna cifra decide un parámetro (ADR-0093 §4).
+
+## F3 · Lo que se registra sin tocar el motor
+
+Un commit; ninguna de estas pide registro de feedback (ninguna fija nada). Ningún parámetro ni regla
+del motor cambia: `pivotes_de_control`, `zonas_control_max_por_esquema`, `orden_limite_nace`,
+`liquidez_m15_mecha_que_vuelve` (valor) y `toma_antes_de_la_ventana` siguen como están.
+
+- **S-3 (RN-009)**: dijo «otra: A y B» (`ev-v18-002115-bf40ec0b`) y una definición
+  (`ev-v18-002229-2be4ecf1`), y que basta con que haya una mitigación (`ev-v18-002137-54ff3a12`, «en
+  parte»); no dijo qué distingue a C, ni si con A y B descarta el esquema, ni si el bajo de la propia
+  toma es zona de control (`ev-v18-002223-fa0fc6ab`). No se activa nada. A la 7b reformulada (abajo),
+  con la duda de `SESION-07-EXTRACCION.md` §5.1, punto 4.
+- **S-4 (A-35)**: la descripción de `liquidez_m15_mecha_que_vuelve` gana lo que dijo en la pregunta
+  2, opción (a), «en el esquema planteado» (`ev-v18-002511-eec0acec`): no contradice
+  `solo_la_contraria` y no fija valor (redacción: spec 19.0.3 → 19.0.4). A-35 sigue ABIERTA y
+  bloqueante; la pregunta 1, a la 7b reformulada; la mecha de una verde (`ev-v18-002701-62875550`),
+  «en parte».
+- **S-5**: dijo M1, y que ese cierre con cuerpo es el de la toma de la liquidez de M15
+  (`ev-v18-003351-5bf50a14`); la mecha sí le mete la operación (`ev-v18-003237-df38be59`,
+  `ev-v18-003341-ce760e43`). No contradice `ev-v16-000234-9a4fa375` (S-18 de la sesión 5) y no cambia
+  nada. **Recuadro fechado en `TRAZAS-ABLACION.md`, junto a la decisión 0 de su PARADA final** (el
+  cuerpo no se toca): la clase «contradicción con lo fijado» de o4, o6 y o8 de 07-03 07-11 queda
+  deshecha, y esas filas y la P2 del trader de las 09:24 pasan a «sin clase».
+  `ev-v12-000015-7fc04520` no se toca.
+- **S-6**: opción (a), las toma todas, y lo que deja fuera del muestreo son las que acaban en break
+  even (`ev-v18-003634-de26ff65`, `ev-v18-003706-83ce78dd`); en los últimos backtests grabados,
+  también esas. **Antes de elegir dijo «no se toman todas las entradas»** (`SESION-07-EXTRACCION.md`
+  §3.6, `[36:27]`, fuera de los ítems), y después eligió la (a). No cambia ninguna regla. Va como
+  línea para la orden de cierre (abajo), no como recuadro.
+- **La vela de otro color entre su plataforma y Dukascopy** (`ev-v19-012924-64367863`): no se mide
+  aquí; va a A-16, que paga la rama de activación de la 7b (línea para la orden de cierre).
+- **Del bloque de días, como ejemplos y sin activar** (ninguna corrección llevó «¿siempre, solo en
+  este caso, o de qué depende?»): la toma de M15 con velas de la sesión, de las 7 en adelante
+  (`ev-v19-012529-685ae24d`, `ev-v19-012650-4f9f20ec`): va contra `toma_antes_de_la_ventana` =
+  `cuenta`, CONFIRMED, que no se pisa, y entra en «Lo que nos has dicho» de la pregunta de A-43 de la
+  7b; una sola orden que se va moviendo (`ev-v18-011801-8b4f738d`): a la de A-53; y el punto de
+  breaker por la mecha más larga de la segunda vela del mismo color (`ev-v18-013614-cfd2b45d`,
+  `ev-v19-011138-5c622b1f`): a la lista de las que no caben.
+
+## Lo que no se activó, con la pregunta reformulada en el lenguaje del trader
+
+| Qué | Por qué no | La pregunta para la 7b |
+|---|---|---|
+| A-58 (el rango nuevo) | lo que dijo es «en parte»; F1 usa la lectura del consultor | «Cuando una vela de 4 horas rompe tu rango y cierra de su color, ¿tu rango nuevo va del alto al bajo de esa vela, o de otro sitio? Y si rompe tu rango pero cierra del color contrario, ¿tu rango sigue siendo el mismo o cambia?» |
+| A-35, pregunta 1 | no la contestó | «Ya tienes tu alto de M15 en la punta de la mecha. Si después una vela de un minuto pasa ese alto solo con la mecha y vuelve a cerrar por debajo, ¿tu alto pasa a ser la punta de esa mecha nueva, o se queda donde estaba?» |
+| Las zonas de control (RN-009) | «otra: A y B», sin decir qué distingue a C | «En el esquema, A y B te valen como zonas de control y C no. ¿A y B son zonas del retroceso, después de tomar la liquidez, o de antes de romper el punto? Y si hay dos, ¿ese esquema te sirve o lo descartas?» |
+| El margen del break even (A-13) | lo cifró una vez, en un ejemplo | «Cuando la vela cierra por encima del alto de tu zona de control, ¿te basta con que cierre un punto por encima, o tiene que pasarlo por un margen? ¿Cuánto, y siempre el mismo?» |
+| A-43 (la toma antes de las 7) | en el bloque, como ejemplo, contra lo CONFIRMED | «Lo que nos has dicho» de su pregunta gana: «la liquidez de M15 se tiene que mitigar con velas de M1 de la sesión, de las 7 en adelante; si se mitiga antes de las 7, no es válido» (`ev-v19-012529-685ae24d`, `ev-v19-012650-4f9f20ec`); la pregunta, la de `PREGUNTAS-7B.md`, con esas dos citas |
+| F1 en julio, 2026-07-01 de 11 a 15 | PARADA de F1 (iv) | «El 1 de julio, en la sesión de las 11, dices que tu rango sigue alcista y buscas compras, y a las 12:59 vendes. ¿Qué te hizo vender ahí?» (solo si el consultor lo decide, punto 5) |
+
+## Para la rama siguiente (las láminas de la 7b; no se hace aquí)
+
+- **El punto 6 de F1 sobre las siete sesiones de la 7b**: ninguna cambia de lado entre 60 y 120;
+  **2026-01-07 07-11 (20 H4 cargadas) y 2026-01-13 07-11 (44) tienen menos de 60**: su sesgo sale del
+  rango que arranca en la primera H4 de enero y su dependencia del historial no se puede medir sin
+  diciembre de 2025. Las demás (01-19, 01-21, 01-22, 04-15 y 07-16) tienen 69 o más.
+- **Las preguntas reformuladas** de lo que no se activó (la tabla de arriba): A-35 pregunta 1, A-58,
+  las zonas de control, el margen del break even y A-43 con sus citas nuevas.
+- **Días gastados**: el 2026-07-03 de 7 a 11 (la sesión 3 del bloque de la 7a, sin extraer) no se
+  vuelve a usar; y el 2026-04-15 (sesión 2 del bloque de la 7b) ya salió en la 7a, abierto por error
+  en la reserva (`SESION-07-EXTRACCION.md` §5.1, punto 9).
+- **Lo que heredaba la activación de la 7a y pasa a esa rama** (0.5): las láminas de la 7b con el
+  motor de esta rama; la revisión de `PREGUNTAS-7B.md` (recuadro D4: las filas de cada pregunta con
+  la corrida nueva, que la de julio no da para enero y abril; y si entra alguna de §3);
+  `SESION_EN_CURSO = "08"`; b1 y el `LaminaError` de RN-004 (`LAMINAS-MOTIVOS.md:826` y `:848`).
+- **Las láminas cambian** con esta rama: dicen el rango vigente (F1) y el break even al cierre (F2).
+
 ## Estado
 
 EN CURSO: fase 0 y F1 commiteadas (F1 en PARADA por la condición (iv), punto 5 de las decisiones); siguen F2 y F3.

@@ -1388,6 +1388,17 @@ De la orden de cierre del consultor del 2026-11-09, punto 1:
 
 > 1. Decisiones de la PARADA final (cópialas al final del informe, en un commit propio antes del cierre, con la fecha):
 >    0. o4, o6 y o8 de 07-03 07-11 (y la P2 del trader de las 09:24, con o6): «contradicción con lo fijado» (voz de v12 frente a S-18). F7 #6 lo crea la rama de la preparación de la sesión 7, como ya estaba decidido.
+
+> **RECUADRO (2026-11-18, rama `trabajo/activar-sesion-07`, F3; decisión del consultor en su
+> encargo).** La clase «contradicción con lo fijado» de la decisión 0 **queda deshecha**: en la
+> sesión 7a (S-5) el trader dijo que el cierre con cuerpo que mira es el de la toma de la liquidez
+> de M15, medido en M1 (`ev-v18-003351-5bf50a14`), y que la mecha sí le mete la operación
+> (`ev-v18-003237-df38be59`, `ev-v18-003341-ce760e43`), lo que no contradice `ev-v16-000234-9a4fa375`
+> (S-18 de la sesión 5): `orden_limite_nace` no cambia. o4, o6 y o8 de 07-03 07-11, y la P2 del
+> trader de las 09:24 que va con o6, pasan a **«sin clase»**. Este informe ya midió que las tres
+> tomas cierran con cuerpo pasada la línea: por qué el bot entra donde el trader no ve entrada sigue
+> sin saberse, y el día (2026-07-03 de 7 a 11) quedó gastado en la 7a. `ev-v12-000015-7fc04520` no
+> se toca. El cuerpo de este informe no se reescribe.
 >    a. La «regla desconocida» de cuándo se coloca la orden NO es clase de fila: es la pregunta 1 de 5.5, sobre ADR-0064 y orden_limite_nace, y va a la sesión 7a.
 >    b. Ninguna fila de 07-03 como «error nuestro». La comparación con niveles de M15 anteriores de la sesión (y la distancia de 4 puntos entre 1.14496 y la toma en 1.14500) no se hace en otra rama: la lámina de 07-03 enseña las líneas de M15 de la sesión y el trader lo ve en el bloque de días.
 >    c. Las 13 «a la rama de trazas»: sin clase, con el gate RN-009. La pregunta 2 de 5.5 (qué zonas cuentan como zonas de control de un esquema; A-20 RESUELTA en el número) va a la sesión 7a entre las primeras.
