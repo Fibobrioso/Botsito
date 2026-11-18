@@ -362,7 +362,8 @@ PARADA 1): lo que dijo ahí no se cita aquí, y se dice solo, sin literal, que l
 (`[05:00]`–`[09:37]`) se levantó** con la respuesta del consultor (§0.0b, punto 5; §13): la voz
 sitúa ese gráfico, visible en la filtrada, en un día de construcción (`[05:19]` «con fecha a 02 de
 julio del año 2026»), y de él salen solo las dos filas de «Para precisar» de S-1 (§3.3). Los de S-2,
-S-4 y S-5 siguen no citables. Dos citas
+S-4 y S-5 siguen no citables. Dos citas (la de `[04:51]` se rechazó por el tramo de S-1, que ya no
+existe; no se rehízo)
 que el guion de evidencia rechazó por pisar esos tramos por menos de un segundo (`[04:51]` y
 `[14:13]`) tampoco se copian.
 
@@ -416,7 +417,7 @@ Tramo `[00:10]`–`[09:57]` (v18).
 | La pregunta (¿cuál es tu rango y qué lado operas tras la roja?) | `[02:49]` «La respuesta es la letra A, claramente. El rango es la vela verde grande y sigo buscando compras.» (`ev-v18-000249-bb7b1c07`) | **resuelve**: opción **a** (el «Para Aleks» la lleva a regla nueva de sesgo por rango, con ADR) |
 | Cómo cambia el lado | `[04:08]` «Entonces, se puede decir que, en resumen, para nosotros ver una continuidad o una reversión, bastaría con mecha o con cuerpo un rompimiento, pero para poder tener el enfoque, se tiene que definir el color de la vela. Si es verde, o sea, el cista rompe por encima, pues continuamos al cista.» (`ev-v18-000408-c48297b1`) | coincide con lo fijado (mecha o cuerpo, y el color: ADR-0080) |
 | Para precisar: ¿qué vela pasa a ser tu rango nuevo? | `[08:22]` «y bueno para precisar, ¿qué vela pasa a ser tu rango nuevo cuando lo das por actualizado?» … `[08:31]` «para nosotros poder definir nuestro nuevo rango» `[08:35]` «tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo» (`ev-v18-000822-57145b90`; tramo levantado, §3). En el bloque de días, al mitigarse el rango, «lo actualizamos a ese nivel» (§4.2, `ev-v18-011054-fbf8e9ae`) | **en parte**: la vela que rompe, por arriba o por abajo, y su color; no dice que el rango nuevo sean el alto y el bajo de esa vela |
-| Para precisar: **«rango mayor»** | `[09:17]` «pero el rango mayor sería esto de aquí.» `[09:19]` «O sea, porque este rango todavía la liquidez, tanto por encima como por debajo, no sea mitigada.» … `[09:29]` «primero a tener en cuenta ese rango mayor» `[09:31]` «que no ha sido mitigado» `[09:33]` «y ya una vez mitigado pues se actualiza» (`ev-v18-000917-30c1ca5a`; tramo levantado, §3) | **resuelve**: el rango mayor es el que aún no tiene mitigada la liquidez, ni por encima ni por debajo; manda hasta que se mitiga, y entonces se actualiza. En el bloque de días lo aplica, citable, como un «sesgo mayor» que arrastra sin mitigar (§4.1 y §4.4) |
+| Para precisar: **«rango mayor»** | `[09:12]` «se podría trabajar de esa manera, desde aquí hasta aquí, ir actualizando,» `[09:17]` «pero el rango mayor sería esto de aquí.» `[09:19]` «O sea, porque este rango todavía la liquidez, tanto por encima como por debajo, no sea mitigada.» … `[09:29]` «primero a tener en cuenta ese rango mayor» `[09:31]` «que no ha sido mitigado» `[09:33]` «y ya una vez mitigado pues se actualiza» (`ev-v18-000912-52594a58`, que supersede a `ev-v18-000917-30c1ca5a`; tramo levantado, §3) | **resuelve**, sobre su gráfico («esto de aquí»): el rango mayor es el que aún no tiene mitigada la liquidez, ni por encima ni por debajo; se podría ir actualizando dentro, pero primero manda ese, hasta que se mitiga, y entonces se actualiza. En el bloque de días lo aplica, citable, como un «sesgo mayor» que arrastra sin mitigar (§4.1 y §4.4) |
 | Para confirmar al final | `[09:43]` «mi rango es alcista» … «mi lado cambia cuando la vela de» `[09:47]` «4 horas genera un rompimiento» `[09:50]` «y también depende» `[09:51]` «del tipo de vela, si es alcista o bajista» `[09:53]` «sea por arriba o por debajo» (`ev-v18-000943-f0b82566`) | **en parte**: dice «alcista», no qué vela es el rango |
 
 Regla general: sí, con el esquema y con su gráfico. «Creo»: no. Compra y venta: sí (habla de los dos
@@ -770,7 +771,7 @@ depende?», §4) se quedan como están: van al encargo de la activación (respue
 | S-2, el margen | A-13 | v18 · v19 | v18 10:49; v19 75:29–75:43 | en parte: en S-2 no lo contesta; en la reserva, «un par de puntos o un pip» | sí | no | habla de compras |
 | S-1 | VIDEO-JULIO.md §7 #1 a #3 | v18 | 00:10–09:57 | **resuelve**: (a), el rango es la vela verde grande; lado por ruptura con mecha o cuerpo y color | sí | no | sí |
 | S-1, ¿qué vela pasa a ser tu rango nuevo? | VIDEO-JULIO.md §7 #1 a #3 | v18 | 08:22–08:42 | en parte: la vela que rompe, por arriba o por abajo, y su color; no dice que el rango nuevo sean su alto y su bajo | sí | no | sí («por encima o por debajo») |
-| S-1, «rango mayor» | VIDEO-JULIO.md §7 #1 a #3 | v18 | 09:17–09:37 | **resuelve**: el rango cuya liquidez, por encima y por debajo, no se ha mitigado; manda hasta mitigarse y entonces se actualiza | sí | no | sí («tanto por encima como por debajo») |
+| S-1, «rango mayor» | VIDEO-JULIO.md §7 #1 a #3 | v18 | 09:12–09:37 | **resuelve**, sobre su gráfico: el rango cuya liquidez, por encima y por debajo, no se ha mitigado; se podría ir actualizando dentro, pero manda ese hasta mitigarse y entonces se actualiza | sí | no | sí («tanto por encima como por debajo») |
 | S-3 | RN-009 | v18 | 19:37–22:42 | **resuelve**: «otra», A y B; no dice si el esquema se descarta | sí, como definición | no | sí («al revés») |
 | S-3, el bajo de la propia toma | RN-009 | v18 | 22:18–22:29 | no resuelve: «todo el esquema», sin sí ni no | no | no | n/a |
 | S-5 | ADR-0064; F7 #6 | v18 | 27:40–34:27 | en parte: sin letra; por «Para precisar», hacia (a): la mecha mete | sí | sí, en el tipo de orden | habla de compras |
@@ -865,7 +866,7 @@ PARADA con su respuesta al final (texto entero en §0.0b, punto 5; lo hecho, en 
   con el disco; 3 obligatorios presentes». Ninguno abierto.
 - `knowledge/corpus/tramos_no_citables.yaml`: 6 «SIN AUDIO», 7 de cuarentena (4 de v18 y 3 de v19) y 5
   de precaución (3 de v18 y 2 de v19; el de S-1, levantado por la respuesta del consultor, §13).
-- `knowledge/evidence/v18/` (47 ítems: 40 y 7 que supersedan a otros tantos, §12 y §13) y
+- `knowledge/evidence/v18/` (48 ítems: 40 y 8 que supersedan a otros tantos, §12 y §13) y
   `knowledge/evidence/v19/` (15: 14 y 1 que supersede).
 - v18 y v19 en `SESIONES_EN_CUARENTENA` y sus tests.
 - `docs/sesion-7/HOJA-USADA-7A.md` y el recuadro de `PREGUNTAS-7A.md`.
@@ -917,8 +918,9 @@ Los sellos de la rama, con su PICO DE MEMORIA:
 - cuarentena de v18 (`f1310b44`): 3513 passed, sello sobre `41bdf8d8`, **318 MiB**;
 - extracción (`65dad312`): 3513 passed, sello sobre `c4b6f2b5`, **319 MiB**;
 - hallazgos del revisor (`68eeecf7`): 3513 passed, sello sobre `42965505`, **319 MiB**;
-- el último, el de la respuesta del consultor (§13): su línea, en el resumen final a Aleks (un informe
-  no puede llevar el sello del árbol que lo contiene).
+- respuesta del consultor (`87ee81ad`): 3513 passed, sello sobre `0f28b0fd`, **320 MiB**;
+- el último, el de los hallazgos del revisor sobre ella (§13): su línea, en el resumen final a Aleks
+  (un informe no puede llevar el sello del árbol que lo contiene).
 
 Antes del sello de la extracción, con todo estadiado (revisor, b3):
 - `uv run pytest tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_de_ruta.py
@@ -1023,7 +1025,8 @@ Copiada tal cual en §0.0b, punto 5, y al final de `docs/encargos/trabajo-sesion
     `Fuente: ADR-0093`;
   - las dos filas de S-1, en §3.3, en la cobertura (§5.2) y en la tabla final (§6), con sus ítems:
     `ev-v18-000822-57145b90` («qué vela pasa a ser tu rango nuevo», **en parte**) y
-    `ev-v18-000917-30c1ca5a` («rango mayor», **resuelve**); sin desenlaces de operaciones;
+    `ev-v18-000917-30c1ca5a` («rango mayor», **resuelve**), sustituido tras el revisor por
+    `ev-v18-000912-52594a58` (abajo); sin desenlaces de operaciones;
   - resultó de un día de construcción (el 2 de julio de 2026, el de la sesión 2 del bloque).
 - **PARADA 1 b)**: los tramos de S-2, S-4 y S-5 se quedan como estaban; nada más.
 - **PARADA 2**: nada que hacer en el material; §4.3 no cambia; el día gastado, en §5.1 (punto 10) y §9.
@@ -1032,7 +1035,8 @@ Copiada tal cual en §0.0b, punto 5, y al final de `docs/encargos/trabajo-sesion
 - **b1**: se queda en la historia; lo dirán el registro de cierre y ERRORES-RECURRENTES (§7.1).
 - **Las tres cosas para el consultor**: en §5.1, sin cambio, para el encargo de la activación.
 - **Después, 1**: este commit, sellado; el trabajo no pasó a otro día en Lima (21:41 del 2026-11-17
-  al aplicar), así que no hay fila nueva de HOLDOUT.
+  al aplicar), así que no hacía falta fila de HOLDOUT por cambio de día; sí la hay por el hallazgo a1
+  del revisor (abajo).
 - **Después, 2**: el revisor, solo sobre lo cambiado, con el alcance añadido (ninguna línea nueva
   describe lo que dice una lámina ni deja deducir la clave); su informe, pegado al final.
 - **Después, 3**: push a `fix/sesion-07` y CI de Linux (§10).
@@ -1040,6 +1044,18 @@ Copiada tal cual en §0.0b, punto 5, y al final de `docs/encargos/trabajo-sesion
 Fuera de lo que pedía la respuesta, para que el registro no mienta: la `naturaleza` de v18 en
 `fuentes.yaml` decía que los cuatro gráficos reales eran tramos de precaución; ahora dice que el de
 S-1 se levantó.
+
+**Lo hecho con los hallazgos del revisor (tercera pasada, `87ee81ad`; su informe, al final):**
+- **a1 (importa)**: el `Grep` con el que salió el día recorrió la filtrada de v18 entera y **devolvió
+  dos líneas de dentro del tramo de S-2** (la 202, `[16:45]`, y la 206, `[17:02]`), sin día, cifra ni
+  desenlace. No se usan. Se declaran en `HOLDOUT-EXPOSICIONES.md` el mismo día, en una fila nueva del
+  2026-11-17, con lo que leyó el revisor. La búsqueda debió ir acotada a las líneas del tramo
+  levantado.
+- **a2 (menor)**: `ev-v18-000912-52594a58` supersede a `ev-v18-000917-30c1ca5a`, con el mismo tema: la
+  cita empieza en `[09:12]` («se podría trabajar… ir actualizando») y la afirmación dice que habla
+  señalando su gráfico. §3.3 y §6, al día.
+- **a3 (menor)**: el párrafo «Gráfico real» de §3 dice que la cita de `[04:51]` se rechazó por el tramo
+  de S-1, que ya no existe.
 
 ## Estado
 
@@ -1281,3 +1297,91 @@ En esta segunda pasada **no leí nada** de ninguna de las dos filtradas, ni crud
 7. `grep` de los ids viejos y de los nuevos en el informe y en la hoja
 8. `grep -o` de las marcas de tiempo del informe contra los tramos; `sed -n '565,670p' | grep -o`
 9. `sed -n '742,775p'` del informe (PARADAS)
+
+
+## Informe del revisor, tercera pasada
+
+Subagente `revisor`, lanzado tras el commit `87ee81ad` (la respuesta del consultor), solo sobre
+`git diff 68eeecf7 87ee81ad`, con el alcance añadido del consultor. Pegado tal cual; lo hecho con
+cada hallazgo, en §13.
+
+### Informe del revisor · trabajo/sesion-07 · 2026-11-17 (tercera pasada, solo `git diff 68eeecf7 87ee81ad`)
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | El informe dice que el día se buscó con un `Grep` sobre la filtrada de v18 entera («patrón de "julio" y de las marcas de bloque»), lanzado ya con S-2, S-4 y S-5 declarados no citables. No dice qué líneas devolvió ese Grep. Si alguna cae en `[14:20]`–`[18:48]`, `[25:18]`–`[26:56]` o `[28:51]`–`[32:17]`, esa relectura de un tramo no citable queda sin declarar. La fila 152 de HOLDOUT cubre la lectura entera, pero es ANTERIOR al marcado. | `docs/validation/SESION-07-EXTRACCION.md` §13: «El día salió con `Grep` de la filtrada (patrón de «julio» y de las marcas de bloque)». No lo pude repetir: me prohibieron leer la filtrada fuera de 55-118. |
+| a2 | menor | El ítem de «rango mayor» convierte una frase deíctica en una definición general. La cita: «el rango mayor sería esto de aquí. O sea, porque este rango todavía la liquidez [...] no sea mitigada». La afirmación: «el rango mayor es el que todavia no tiene mitigada la liquidez». Es una lectura razonable, pero en esa lectura descansa el **resuelve** de §3.3 y §6. Además, la filtrada `[09:12]` dice justo antes que «se podría trabajar [...] desde aquí hasta aquí, ir actualizando», y ni la afirmación ni la tabla lo recogen. | `knowledge/evidence/v18/ev-v18-000917-30c1ca5a.yaml:8-14`; filtrada, líneas 105-110 |
+| a3 | menor | En §3 sigue la frase sobre las dos citas que el guion rechazó por pisar «esos tramos» (`[04:51]` y `[14:13]`). La de `[04:51]` se rechazó por el tramo de S-1, que ya no existe, y la frase no lo dice. | `SESION-07-EXTRACCION.md`, el párrafo «Gráfico real» de §3 (las líneas de contexto del diff detrás de «Los de S-2, S-4 y S-5 siguen no citables. Dos citas») |
+
+Comprobado sin hallazgos:
+- **Sello**: en `make-check.log`, «SELLO: make check en verde sobre el arbol 0f28b0fd937ded81a6d967c577b2fcccd7307693», «3513 passed, 6 xfailed» y «PICO DE MEMORIA [...] 320 MiB». `git rev-parse 87ee81ad^{tree}` da `0f28b0fd937ded81a6d967c577b2fcccd7307693`, el mismo árbol.
+- **Contrato**: «CONTRATO: 81 ficheros dentro del contrato de trabajo/sesion-07 [...] 9 comprobaciones». `git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones knowledge/corpus/fotogramas data/manifests` da solo `A` (66). Los dos tests del contrato (`test_en_parte_no_se_cierra.py` y `test_hoja_de_ruta.py`) pasan: 22 puntos, ningún fallo.
+- **Trailer**: el commit lleva `Fuente: ADR-0093` en el cuerpo, y `docs/adr/0093-el-metodo-de-las-sesiones-y-de-las-activaciones.md` existe. El commit no toca `knowledge/spec` ni `knowledge/cases`.
+- **El tramo quitado**: sale solo la entrada 0:05:00–0:09:37 de v18 (−7 líneas). Los tramos de v18 que quedan son 0:40:29–0:41:11, 0:52:04–0:52:15, 0:57:52–0:58:14, 1:09:09–1:09:16, 1:51:08–1:51:39, 0:14:20–0:18:48, 0:25:18–0:26:56 y 0:28:51–0:32:17. Las ventanas 0:08:22–0:08:42 y 0:09:17–0:09:37 no caen en ninguno. `test_los_tramos_del_repo_real` solo vigila v6 y v13 (`tests/unit/test_guardia_claude.py:684-697`), así que no le afecta.
+- **Los dos ítems nuevos son literales**: contra la filtrada, `ev-v18-000822` es exactamente la unión de las líneas 97-102 y `ev-v18-000917` la de las líneas 109-115.
+- **La afirmación de `ev-v18-000822` no dice más que su cita**: «mira qué vela rompe, por encima o por debajo, y si es alcista o bajista», y la negación final es prudente.
+- **Inmutables**: las dos evidencias entran como `A`. El total de v18 queda en 47 ítems, 7 de ellos con `supersede`, como dice §8.
+- **Sin desenlaces**: ninguna línea añadida trae R, dinero ni ganadora o perdedora. Un grep de las líneas `+` solo encuentra esos términos dentro de la respuesta del consultor copiada.
+- **Láminas y su clave (alcance añadido)**: ninguna línea añadida describe lo que dice una lámina, ni trae recuentos, numeración o qué carpeta es qué sesión. Que la sesión 2 del bloque fue el 2026-07-02 ya estaba en `fuentes.yaml` antes del commit. Que `PREGUNTAS-7B.md` tiene el 2026-04-15 como su sesión 2 está en `main` (`docs/sesion-7/PREGUNTAS-7B.md:48`) y lo manda decir el consultor.
+- **`fuentes.yaml`**: la naturaleza de v18 dice ahora que el gráfico de S-1, del 2026-07-02, es «citable desde la respuesta del consultor del 2026-11-17». §13 lo declara como cambio fuera de lo pedido.
+- **Hora en Lima**: «02:41 UTC del 2026-11-18, que son las 21:41 del 2026-11-17 en Lima» es correcto (UTC−5), así que no hacía falta una fila nueva de HOLDOUT por cambio de día.
+- **Exposición anterior**: la lectura entera de la filtrada de v18 está declarada en `HOLDOUT-EXPOSICIONES.md:152`.
+
+#### Eje (b) · Encargo (la respuesta del consultor a las PARADAS)
+Resumen: 0 bloquea, 0 importa, 0 menor. Requisitos: 15 hechos, 0 parciales, 0 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Condición de la PARADA 1 a): la voz dice el 2 de julio de forma visible, dentro del tramo o justo antes, y se cita el minuto | Hecho | Filtrada, línea 62: `[05:19] sería este de aquí, con fecha a 02 de julio del año 2026, en el cual nosotros tenemos un rango`, visible y dentro del tramo. Citado en §3 y §13. |
+| 2 | Quitar el tramo en un commit con «Fuente: ADR-0093» | Hecho | Diff de `tramos_no_citables.yaml`; cuerpo del commit 87ee81ad. |
+| 3 | Extraer solo las dos filas pendientes de S-1, cada una con su ítem | Hecho | `ev-v18-000822-57145b90` («qué vela...», en parte) y `ev-v18-000917-30c1ca5a` («rango mayor», resuelve). |
+| 4 | Ponerlas en §3.3, en la cobertura y en la tabla final | Hecho | Diff de §3.3 (tabla de S-1), de §5.2 (fila S-1) y de §6 (dos filas nuevas y recuento 7/5/2). |
+| 5 | Sin desenlaces de operaciones | Hecho | Grep de las líneas añadidas (eje a). |
+| 6 | La fila de HOLDOUT no se toca, y el informe dice que el tramo resultó de un día de construcción | Hecho | `HOLDOUT-EXPOSICIONES.md` fuera del diff; §3 («en un día de construcción») y §13 («resultó de un día de construcción»). |
+| 7 | 1 b): S-2, S-4 y S-5 siguen no citables, sin nada más | Hecho | Sus tres tramos siguen en el yaml; §7.1 «Respondida» y §13. |
+| 8 | PARADA 2: v19 sigue entera no citable y el 2026-07-03 de 7 a 11 se dice gastado | Hecho | §5.1 punto 10, §5.2 (fila Sesión 3), §7.1 y §9. |
+| 9 | PARADA 3: el 2026-04-15 de `PREGUNTAS-7B.md:48` se nombra en §5.1 y en §9, para la activación, sin tocar `PREGUNTAS-7B.md` | Hecho | §5.1 punto 9; §9 «Para la activación de la 7a». `PREGUNTAS-7B.md` no está en el diff, y su línea 48 trae `2026-04-15, 11-15`. |
+| 10 | PARADA 4: la decisión en el informe, sin aplicar nada | Hecho | §5.1 punto 1 y §7.1. `knowledge/spec` no está en el diff. |
+| 11 | La frase de b1 se queda | Hecho | §7.1 último punto y §13; el commit 65dad312 no se reescribe. |
+| 12 | Las tres cosas para el consultor, en §5.1 como están | Hecho | Párrafo nuevo al final de §5.1. |
+| 13 | §7.1: cada PARADA marcada «respondida» | Hecho | Título de §7.1 y un «**Respondida**:» en cada una de las cuatro PARADAS y en b1. |
+| 14 | La respuesta copiada tal cual en §0.0b y al final del encargo | Hecho | Comparé los dos bloques citados del diff: el texto es idéntico línea a línea. |
+| 15 | §9 y Estado al día, todo en un commit sellado | Hecho | Diff de §9 y de «## Estado»; árbol sellado = árbol de 87ee81ad. |
+
+Sin hallazgos en este eje. Lo hecho fuera de lo pedido (el cambio de `fuentes.yaml` y las tres negativas de la guardia en §7.2) está declarado en §13 y en §7.2.
+
+#### Lo que no pude comprobar
+- **Qué devolvió el Grep de la sesión sobre la filtrada entera** (a1): para repetirlo tendría que leer fuera de las líneas 55-118, y me lo prohibieron.
+- **`corpus check --hashes`, `corpus transcript check`, `corpus frames check`, `knowledge validate` y `make check`**: no los ejecuté. Las tres de `corpus` no entran en este diff, y `knowledge validate` escribe un log. Las cubre el sello de `make-check.log` sobre el árbol del commit.
+- **`evidence contradictions`**: la guardia de solo lectura lo negó («ese subcomando u opcion de `botsito` escribe»). Su evidencia sustituta también es el sello.
+- **Que el 2026-07-02 no esté en ninguna partición**: no ejecuté `casos_reservados`. Me fío de que julio es material de desarrollo (`CLAUDE.md`) y de la extracción anterior.
+- **Por qué `ev-v18-000917` acaba en t1 0:09:37**: el segmento `[09:35]` dura hasta `[09:38]`. Es un segundo y no lo tomo como hallazgo; `knowledge validate` pasó dentro del sello.
+
+#### Lo leído de la filtrada
+- `C:\Users\USER\Desktop\sesion-07-audio\sesion-07-v18.filtrada.md`: con Read, offset 55 y limit 64, es decir las **líneas 55 a 118** (`[04:01]` a `[09:41]`), una sola vez. Ninguna otra parte de la filtrada.
+- No abrí ninguna cruda, fotograma, holdout ni caso reservado. No listé ni abrí la carpeta de láminas.
+- Otras lecturas: `docs/sesion-7/PREGUNTAS-7B.md`, líneas 46-50 (en `main`, el plan de la 7b).
+
+#### Comandos ejecutados
+1. `git log --format='%h %s' main..HEAD && git diff --stat 68eeecf7 87ee81ad && git status --short && git log -1 --format='%B' 87ee81ad`
+2. `git diff 68eeecf7 87ee81ad -- knowledge/ docs/encargos/`
+3. Read de la filtrada de v18, offset 55, limit 64
+4. `grep -n -A2 "video_id: v18" knowledge/corpus/tramos_no_citables.yaml | grep -E "t0|t1"; git diff --name-status 68eeecf7 87ee81ad; uv run python scripts/contrato_rama.py ...`: negado por la guardia (mezclaba un grep y un guion en el mismo comando); lo repetí separado en 5 y 6
+5. `grep -n -A2 "video_id: v18" knowledge/corpus/tramos_no_citables.yaml | grep -E "t0|t1"; git diff --name-status 68eeecf7 87ee81ad`
+6. `uv run python scripts/contrato_rama.py 2>&1 | tail -20`
+7. `grep -rn "0:05:00\|0:09:37\|tramos_del_repo_real" tests/ | head; ls make-check.log; grep -n "SELLO\|PICO DE MEMORIA\|failed\|passed" make-check.log | tail -5`
+8. `git rev-parse 87ee81ad^{tree} 68eeecf7^{tree}; sed -n 680,700p tests/unit/test_guardia_claude.py`
+9. `git diff 68eeecf7 87ee81ad -- docs/validation/SESION-07-EXTRACCION.md`
+10. `grep -n "v18" docs/validation/HOLDOUT-EXPOSICIONES.md | grep -n "2026-11-1" | cut -c1-400 | head; grep -n -i "clave de las l" docs/runbooks/ERRORES-RECURRENTES.md | cut -c1-400 | head -5`
+11. `ls docs/adr | grep 0093; sed -n 46,50p docs/sesion-7/PREGUNTAS-7B.md || git ls-files | grep PREGUNTAS-7B`: negado por la guardia (`git ls-files`, ADR-0088)
+12. Glob `docs/**/PREGUNTAS-7B.md`; Glob `docs/adr/ADR-0093*` (sin resultados)
+13. `ls docs/adr | grep -c 0093; ls docs/adr | grep 0093; sed -n 46,50p docs/sesion-7/PREGUNTAS-7B.md`
+14. `grep -n -A12 "comprobaciones" contrato.yaml`
+15. `git diff --name-status main...HEAD -- knowledge/evidence knowledge/corpus/transcripciones knowledge/corpus/fotogramas data/manifests | cut -c1 | sort | uniq -c`
+16. `uv run botsito evidence contradictions 2>&1 | tail -5`: negado por `solo_lectura.py`
+17. `uv run pytest tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_de_ruta.py -q -p no:cacheprovider 2>&1 | tail -3`
+18. `git diff 68eeecf7 87ee81ad | grep "^+" | grep -i -n -E "ganador|perdedor|dinero|beneficio|p[eé]rdida|[0-9] ?R\b|stop salt|tp|take profit|l[aá]mina|carpeta|clave" | cut -c1-300`
+19. `ls knowledge/evidence/v18 | wc -l; grep -l "^supersede" knowledge/evidence/v18/*.yaml | wc -l; grep -c "precaucion" knowledge/corpus/tramos_no_citables.yaml`
