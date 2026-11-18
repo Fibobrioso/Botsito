@@ -1,0 +1,23 @@
+id: fb-2026-11-16-sesion-07-33fdaa6c
+sesion: 2026-11-16-sesion-07
+fecha: '2026-11-16'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-003
+accion: CORRECT
+respuesta_literal: La respuesta es la letra A, claramente. El rango es la vela verde grande y sigo buscando
+  compras.
+registrado_por: Aleks · grabacion de la sesion 7a (v18), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-18 (trabajo/activar-sesion-07, encargo F1)
+grabacion: Grabación de pantalla 2026-11-16 145418.mp4
+t0: 0:02:49
+t1: 0:02:56
+valor_resultante: 'el sesgo de H4 es el del rango vigente: una H4 que no supera ni el alto ni el bajo
+  del rango no cambia nada; la que lo rompe con mecha o con cuerpo y cierra del color de esa ruptura fija
+  el lado'
+notas: 'S-1, opcion a (ev-v18-000249-bb7b1c07): en el esquema, ante una H4 verde grande y una roja posterior
+  dentro de ella, el rango es la vela verde grande y sigue buscando compras. ADR-0094 recoge la regla
+  y separa lo que el trader dijo de la lectura del consultor (A-58)'
+recibido_el: '2026-11-16'
+procedencia: trader_grabado

@@ -61,25 +61,25 @@ predicados:
       la usara quien la necesite con su sujeto
   sesgo_h4_al_abrir:
     descripcion: >-
-      el sesgo H4 al abrir la sesion (ADR-0044): la ultima H4 cerrada -con fin no posterior a la
-      apertura- que supero un extremo de su anterior segun `criterio` Y cerro del color de esa
-      ruptura (ADR-0080, WhatsApp del trader del 2026-10-14: rompe el maximo y cierra verde,
-      alcista; rompe el minimo y cierra roja, bajista), buscada hacia atras como mucho `tope`
-      velas. Ata en `sentido_de_la_ruptura` el lado de esa ruptura -alcista o bajista-. Si la
-      vela rompio LOS DOS extremos, el lado es el del COLOR con que cerro (sesion 3, A-34
-      RESUELTA; ADR-0060). Si rompio UN extremo y cerro del color contrario (ADR-0080 D1), o si
-      cerro sin cuerpo -neutra- con uno o con los dos extremos rotos (ADR-0080 D3; sesion 4,
-      S-13; ADR-0075: hasta entonces la neutra con doble ruptura ataba `ambiguo`), NO decide y la
-      busqueda sigue hacia atras: sigue el sesgo que habia. Si ninguna lo fijo dentro del tope,
-      ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003 fija `sesgo` en cada apertura y
-      ninguna sesion hereda el de la anterior (ADR-0049, H1). Hasta el 2026-10-17 citaba
+      el sesgo H4 al abrir la sesion por el RANGO VIGENTE (ADR-0094; ADR-0044 para el instante):
+      recorre hacia delante las H4 cerradas -con fin no posterior a la apertura- desde la situada
+      `tope` velas antes de la ultima (o la primera que haya), que es el rango inicial, sin lado.
+      Una H4 que supera un extremo del rango segun `criterio` Y cierra del color de esa ruptura
+      (ADR-0080: rompe el maximo y cierra verde, alcista; rompe el minimo y cierra roja, bajista)
+      fija el lado, y el rango pasa a ser lo que diga `rango_nuevo` (sesgo_h4_rango_nuevo, A-58).
+      Si rompe LOS DOS extremos, el lado es el del COLOR con que cierra (sesion 3, A-34 RESUELTA;
+      ADR-0060). Si rompe UN extremo y cierra del color contrario (ADR-0080 D1), o cierra sin
+      cuerpo -neutra- con uno o con los dos extremos rotos (ADR-0080 D3; ADR-0075), NO decide y el
+      rango no cambia; dentro del rango, nada cambia. Ata en `sentido_de_la_ruptura` el lado del
+      rango; si ninguna H4 lo fijo, ata `insuficiente`. SIEMPRE tiene respuesta: por eso RN-003
+      fija `sesgo` en cada apertura y ninguna sesion hereda el de la anterior (ADR-0049, H1).
+      Hasta el 2026-11-18 la H4 que decidia era la previa contra su anterior, buscada hacia atras,
+      y citaba fb-2026-10-04-sesion-04-6e7da456; hasta el 2026-10-17,
       fb-2026-09-09-sesion-01-8eccf5c0 (la ruptura de un extremo, sin el color)
-    argumentos: [que, contra, criterio, tope]
+    argumentos: [que, contra, criterio, tope, rango_nuevo]
     fuente: mercado
-    cita: fb-2026-10-04-sesion-04-6e7da456
-    literal: >-
-      la vela roja debe de haber roto con cuerpo o con mecha el bajo de la vela alcista Y
-      terminar al cierre bajista
+    cita: fb-2026-11-16-sesion-07-33fdaa6c
+    literal: El rango es la vela verde grande y sigo buscando compras.
   se_completa_zona_de_control:
     descripcion: el precio rompe el punto extremo anterior y deja la zona cerrada
     argumentos: [criterio]
@@ -554,9 +554,10 @@ tokens:
       retirarlo es deuda (G.2 de la hoja de ruta)
   insuficiente:
     descripcion: >-
-      valor de `sesgo` cuando ninguna de las ultimas sesgo_h4_tope_velas H4 fijo el sesgo: ninguna
-      rompio un extremo de su anterior (ADR-0044 §2), o las que lo rompieron cerraron del color
-      contrario o sin cuerpo (ADR-0080, desde el 2026-10-17): no hay lado, y RN-033 prohibe operar
+      valor de `sesgo` cuando ninguna H4 fijo el lado del rango desde el rango inicial
+      (sesgo_h4_tope_velas velas antes de la ultima cerrada; ADR-0094 desde el 2026-11-18): ninguna
+      rompio el rango, o las que lo rompieron cerraron del color contrario o sin cuerpo (ADR-0080):
+      no hay lado, y RN-033 prohibe operar
   al_abrir_sesion:
     descripcion: >-
       el hecho caduca al empezar el evento de apertura de cada sesion, antes de la primera pasada:
@@ -592,9 +593,24 @@ tokens:
       reloj o un evento
     clase: reinicio
   extremo_de_la_h4_anterior:
-    descripcion: el maximo o el minimo de la vela H4 previa, segun el sentido
+    descripcion: >-
+      el maximo o el minimo de la vela H4 previa, segun el sentido. Hasta el 2026-11-18 era el
+      `contra` de RN-003; desde ADR-0094 ninguna forma lo nombra (lo sustituye `rango_h4_vigente`)
   vela_h4_previa:
-    descripcion: la vela H4 cerrada inmediatamente anterior al anclaje
+    descripcion: >-
+      la vela H4 cerrada inmediatamente anterior al anclaje. Hasta el 2026-11-18 era el `que` de
+      RN-003; desde ADR-0094 ninguna forma lo nombra (lo sustituye `vela_h4_cerrada`)
+  vela_h4_cerrada:
+    descripcion: >-
+      cada vela H4 cerrada a la apertura de la sesion -fin no posterior a ella-, recorridas hacia
+      delante desde el rango inicial (ADR-0094, ADR-0044)
+  rango_h4_vigente:
+    descripcion: >-
+      el rango de H4 que manda al abrir la sesion: su alto y su bajo y la H4 que lo fijo. Lo
+      cambia solo una H4 que rompe uno de sus extremos y cierra del color de esa ruptura, o los dos
+      con color (ADR-0094; «El rango es la vela verde grande y sigo buscando compras»,
+      ev-v18-000249-bb7b1c07); que alto y que bajo forman el rango nuevo es sesgo_h4_rango_nuevo
+      (A-58)
   liquidez_m15:
     descripcion: >-
       la liquidez marcada en M15 que hay que tomar antes de mirar M1. ES UN NIVEL, no una banda:
@@ -1077,26 +1093,47 @@ reglas:
     estado: VIGENTE
 
   - id: RN-003
-    titulo: el sesgo lo fija la vela H4 previa, y solo cambia si rompe su extremo
+    titulo: el sesgo es el del rango vigente de H4, y solo cambia si una H4 lo rompe y cierra de su color
     cuando: abre una sesion operativa
     entonces: >-
-      el sesgo es el de la vela H4 previa cerrada segun sesgo_h4_regla (la regla vigente es la
-      del ADR del color); cambia solo si esa vela rompio el extremo de la anterior -basta con la
-      mecha- Y cerro del color de esa ruptura: rompe el bajo y cierra roja, bajista; rompe el maximo y
-      cierra verde, alcista; si rompe un extremo y cierra del color contrario no cambia y sigue
-      el sesgo que habia; un equal no lo cambia. Se fija AL ABRIR la sesion con las H4 cuyo fin
-      no es posterior a la apertura, y no cambia dentro de ella; romper es superar el extremo,
-      por poco que sea, e igualarlo no rompe. Si la vela rompe los dos extremos, decide el color
-      con que cierra -verde, alcista; roja, bajista-; si cierra sin cuerpo -neutra, sin color-,
-      con uno o con los dos extremos rotos, no decide y manda la H4 anterior que rompio con su
-      color; si ninguna de las ultimas sesgo_h4_tope_velas lo hizo, es INSUFICIENTE y no se opera
-    parametros: [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas]
-    cita: fb-2026-10-04-sesion-04-6e7da456
-    literal: >-
-      la vela roja debe de haber roto con cuerpo o con mecha el bajo de la vela alcista Y
-      terminar al cierre bajista
+      el sesgo es el del RANGO VIGENTE de H4: se recorren hacia delante las H4 cerradas
+      a la apertura, con un rango -su alto, su bajo y la H4 que lo fijo- y un lado. Una H4 que no
+      supera ni el alto ni el bajo del rango no cambia nada. Una H4 que supera el alto del rango y
+      cierra verde fija el lado alcista; la que supera el bajo y cierra roja, bajista; y el rango
+      pasa a ser lo que diga sesgo_h4_rango_nuevo. Si supera los dos extremos decide el color con
+      que cierra -verde, alcista; roja, bajista-. Si supera un extremo y cierra del color contrario,
+      o cierra sin cuerpo -neutra, sin color- con uno o con los dos extremos rotos, no decide y el
+      rango no cambia: sigue el sesgo que habia. Romper es superar el extremo segun
+      sesgo_h4_criterio_ruptura, por poco que sea; un equal no rompe. Se fija AL ABRIR la sesion
+      con las H4 cuyo fin no es posterior a la apertura, y no cambia dentro de ella. El rango
+      inicial es la H4 situada sesgo_h4_tope_velas velas antes de la ultima cerrada, sin lado (con
+      menos velas, la primera que haya); si al llegar a la apertura ninguna H4 fijo el lado, es
+      INSUFICIENTE y no se opera
+    parametros:
+      [sesgo_h4_regla, anclaje_h4, sesgo_h4_criterio_ruptura, sesgo_h4_tope_velas,
+       sesgo_h4_rango_nuevo]
+    cita: fb-2026-11-16-sesion-07-33fdaa6c
+    literal: El rango es la vela verde grande y sigo buscando compras.
     notas: >-
-      LA CITA ES EL CORRECT POR WHATSAPP DEL 2026-10-14 DESDE EL 2026-10-17 (ADR-0080, rama
+      LA CITA ES EL CORRECT DE LA SESION 7a (S-1) DESDE EL 2026-11-18 (ADR-0094, rama
+      trabajo/activar-sesion-07; fb-2026-11-16-sesion-07-33fdaa6c, ev-v18-000249-bb7b1c07): el
+      sesgo es el del rango vigente, no el de la H4 previa contra su anterior; una H4 que rompe
+      solo a su anterior sin salir del rango no cambia el lado. El lado sigue la regla del color
+      de abajo (ADR-0080; ev-v18-000408-c48297b1: «bastaría con mecha o con cuerpo un rompimiento,
+      pero para poder tener el enfoque, se tiene que definir el color de la vela»); el rango que
+      manda es el que no tiene mitigada la liquidez ni por encima ni por debajo, hasta que se
+      mitiga (ev-v18-000912-52594a58). Que el rango nuevo sea la vela que rompe y cierra de su
+      color, su alto y su bajo, y que la que rompe y cierra del color contrario no lo cambie, es
+      LECTURA DEL CONSULTOR: sesgo_h4_rango_nuevo, DEFAULT_AMBIGUOUS bajo A-58; el trader dijo
+      solo «tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por
+      debajo» (ev-v18-000822-57145b90, en parte). El arranque (el rango inicial
+      sesgo_h4_tope_velas velas atras) es decision del proyecto, como el tope (ADR-0044). Las tres
+      citas de antes (ADR-0060, ADR-0075 y ADR-0080, abajo) siguen sosteniendo el color, la neutra
+      y la regla del color con un extremo, que la regla del rango conserva; ninguna se supersede.
+      Cumple la reserva de la sesion 4 de abajo («suponiendo que no haya otro rango mayor») y lo
+      que ADR-0060 recogia del trader (el sesgo es el del ultimo rango, dure lo que dure,
+      ev-v9-001529-ac28bb40). A-1 no se reabre (ADR-0094, como ADR-0080 §9): su pregunta sigue contestada; lo que cambia es contra que rompe la H4.
+      HASTA EL 2026-11-18 LA CITA ERA EL CORRECT POR WHATSAPP DEL 2026-10-14 DESDE EL 2026-10-17 (ADR-0080, rama
       trabajo/sesgo-h4-color; fb-2026-10-04-sesion-04-6e7da456, las dos burbujas de las 14:55,
       hora de Lima, respuesta a la pregunta P1 de R3.1): una H4 cambia el sesgo solo si rompe el
       extremo de la anterior -con mecha o con cuerpo- Y cierra del color de esa ruptura; el
@@ -1169,10 +1206,11 @@ reglas:
         todos_de:
           - abre_sesion_operativa: {}
           - sesgo_h4_al_abrir:
-              que: vela_h4_previa
-              contra: extremo_de_la_h4_anterior
+              que: vela_h4_cerrada
+              contra: rango_h4_vigente
               criterio: sesgo_h4_criterio_ruptura
               tope: sesgo_h4_tope_velas
+              rango_nuevo: sesgo_h4_rango_nuevo
       entonces:
         hace:
           - fijar: {hecho: sesgo, a: sentido_de_la_ruptura}
@@ -1223,6 +1261,10 @@ reglas:
       DESDE EL 2026-10-17 (ADR-0080) `insuficiente` sale tambien cuando todas las H4 del tope que
       rompieron un extremo cerraron del color contrario o sin cuerpo: ninguna fijo el sesgo.
       Forma, cita y `cuando` no cambian.
+      DESDE EL 2026-11-18 (ADR-0094) `insuficiente` sale cuando, desde el rango inicial
+      (sesgo_h4_tope_velas velas antes de la ultima H4 cerrada), ninguna H4 rompio el rango
+      cerrando del color de su ruptura: dentro del rango, o rompiendolo del color contrario o sin
+      cuerpo. Forma, cita y `cuando` no cambian.
     decision: ADR-0049
     forma:
       cuando:

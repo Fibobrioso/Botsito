@@ -3,7 +3,11 @@ y los cambios de hora de EE. UU. con la H4 de mitad de sesion contando en la sig
 
 Desde ADR-0080 (WhatsApp del trader del 2026-10-14) una H4 cambia el sesgo solo si rompe el
 extremo de la anterior Y cierra del color de esa ruptura; por eso cada vela que rompe lleva aqui
-su color EXPLICITO (el ayudante `h4` cierra verde por defecto)."""
+su color EXPLICITO (el ayudante `h4` cierra verde por defecto).
+
+Desde ADR-0094 (sesion 7a, S-1; trabajo/activar-sesion-07) la H4 rompe el RANGO VIGENTE y no a su
+anterior, y `velas_miradas` cuenta las H4 comparadas con el rango: ocho tests de aqui cambian A
+PROPOSITO (los que lo dicen en su comentario). La regla del rango, en `test_sesgo_rango.py`."""
 
 from __future__ import annotations
 
@@ -49,7 +53,9 @@ FIN = 3 * H4  # la apertura cae justo en el fin de la tercera vela
 def test_caso_1_rompe_el_bajo_y_cierra_roja_es_bajista() -> None:
     velas = [h4(0, 110, 100), h4(1, 112, 101), h4(2, 111, 99, abierta=110, cierre=102)]
     r = sesgo_h4(velas, MinutoUtc(FIN), TOPE, MECHA)
-    assert r.sesgo is Sesgo.BAJISTA and r.ruptura_puntos == 2 and r.velas_miradas == 1
+    # ADR-0094: `velas_miradas` cuenta las H4 comparadas con el rango (aqui la segunda fija
+    # alcista y la tercera rompe el bajo de ese rango cerrando roja)
+    assert r.sesgo is Sesgo.BAJISTA and r.ruptura_puntos == 2 and r.velas_miradas == 2
     assert not r.doble_ruptura and r.saltadas_color_contrario == 0
 
 
@@ -60,7 +66,7 @@ def test_caso_2_rompe_el_maximo_y_cierra_verde_es_alcista() -> None:
         h4(2, 111, 103, abierta=104, cierre=109),
     ]
     r = sesgo_h4(velas, MinutoUtc(FIN), TOPE, MECHA)
-    assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 3 and r.velas_miradas == 1
+    assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 3 and r.velas_miradas == 2
     assert not r.doble_ruptura  # con un solo extremo roto la ruptura no es doble
 
 
@@ -140,7 +146,7 @@ def test_varias_seguidas_de_color_contrario_se_saltan_todas() -> None:
         h4(1, 108, 98, abierta=107, cierre=99),  # fija BAJISTA
         h4(2, 111, 103, abierta=109, cierre=104),  # rompe arriba, roja
         h4(3, 113, 104, abierta=112, cierre=105),  # rompe arriba, roja
-        h4(4, 112, 103, abierta=104, cierre=111),  # rompe abajo, verde
+        h4(4, 107, 97, abierta=98, cierre=106),  # rompe el bajo del rango, verde
     ]
     r = sesgo_h4(velas, MinutoUtc(5 * H4), TOPE, MECHA)
     assert r.sesgo is Sesgo.BAJISTA and r.velas_miradas == 4 and r.saltadas_color_contrario == 3
@@ -177,7 +183,7 @@ def test_con_criterio_de_cuerpo_la_regla_del_color_tambien_vale() -> None:
     assert r.sesgo is Sesgo.ALCISTA and r.velas_miradas == 2 and r.saltadas_color_contrario == 1
     rompe_arriba_verde = h4(2, 114, 104, abierta=105, cierre=112)
     r = sesgo_h4([*previa, rompe_arriba_verde], MinutoUtc(FIN), TOPE, CUERPO)
-    assert r.sesgo is Sesgo.ALCISTA and r.velas_miradas == 1 and r.ruptura_puntos == 3
+    assert r.sesgo is Sesgo.ALCISTA and r.velas_miradas == 2 and r.ruptura_puntos == 3
 
 
 def test_las_saltadas_llevan_valor_por_defecto_cero() -> None:
@@ -195,16 +201,21 @@ def test_las_saltadas_llevan_valor_por_defecto_cero() -> None:
 
 def test_rompe_arriba_y_cierra_verde_es_alcista() -> None:
     """Hasta ADR-0080 esta vela cerraba ROJA y daba ALCISTA («el color no decide»); ahora el
-    color es el de la ruptura. Lo que comprobaba -puntos, velas miradas, no doble- sigue igual."""
+    color es el de la ruptura. Desde ADR-0094 la ruptura se mide contra el RANGO (la primera,
+    110), no contra la anterior (108), que queda dentro: 1 punto, y dos H4 comparadas."""
     velas = [h4(0, 110, 100), h4(1, 108, 102), h4(2, 111, 103, abierta=104, cierre=109)]
     r = sesgo_h4(velas, MinutoUtc(FIN), TOPE, MECHA)
-    assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 3 and r.velas_miradas == 1
+    assert r.sesgo is Sesgo.ALCISTA and r.ruptura_puntos == 1 and r.velas_miradas == 2
     assert not r.doble_ruptura
 
 
 def test_rompe_abajo_y_cierra_roja_es_bajista() -> None:
-    velas = [h4(0, 110, 100), h4(1, 108, 102), h4(2, 107, 101, abierta=106, cierre=102)]
+    velas = [h4(0, 110, 100), h4(1, 108, 102), h4(2, 107, 99, abierta=106, cierre=100)]
     assert s(velas, FIN) is Sesgo.BAJISTA
+    # ADR-0094, a): la que solo rompe el bajo de su anterior (102) sin salir del rango (100) no
+    # decide; hasta ADR-0094 daba BAJISTA
+    dentro = [h4(0, 110, 100), h4(1, 108, 102), h4(2, 107, 101, abierta=106, cierre=102)]
+    assert s(dentro, FIN) is Sesgo.INSUFICIENTE
 
 
 def test_no_rompe_y_el_sesgo_se_arrastra() -> None:
@@ -282,12 +293,12 @@ def test_con_un_cuerpo_de_un_punto_la_doble_ruptura_ya_decide() -> None:
     (S-13, v10 1:41:01-1:41:29; ADR-0075)."""
     velas = [h4(0, 110, 100), h4(1, 108, 98), h4(2, 115, 96, abierta=105, cierre=106)]
     r = sesgo_h4(velas, MinutoUtc(3 * H4), TOPE, MECHA)
-    assert r.sesgo is Sesgo.ALCISTA and r.doble_ruptura and r.velas_miradas == 1
+    assert r.sesgo is Sesgo.ALCISTA and r.doble_ruptura and r.velas_miradas == 2
 
 
 def test_la_doble_ruptura_fija_el_sesgo_y_no_se_sigue_mirando_hacia_atras() -> None:
-    # la primera rompio abajo (bajista); la segunda rompe los dos y cierra verde; la tercera,
-    # dentro: manda la segunda, con su color, y la busqueda para en ella
+    # la primera rompe el bajo del rango y cierra verde (no decide); la segunda rompe los dos y
+    # cierra verde; la tercera, dentro del rango nuevo: manda la segunda, con su color
     velas = [
         h4(0, 110, 100),
         h4(1, 109, 95),
@@ -295,7 +306,8 @@ def test_la_doble_ruptura_fija_el_sesgo_y_no_se_sigue_mirando_hacia_atras() -> N
         h4(3, 111, 91),
     ]
     r = sesgo_h4(velas, MinutoUtc(4 * H4), TOPE, MECHA)
-    assert r.sesgo is Sesgo.ALCISTA and r.velas_miradas == 2 and r.doble_ruptura
+    assert r.sesgo is Sesgo.ALCISTA and r.velas_miradas == 3 and r.doble_ruptura
+    assert r.vela_que_fija == MinutoUtc(2 * H4) and (r.rango_alto, r.rango_bajo) == (112, 90)
 
 
 def test_con_criterio_de_cuerpo_la_doble_ruptura_tambien_la_decide_el_color() -> None:

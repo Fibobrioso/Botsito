@@ -155,8 +155,10 @@ class SesgoSesion:
     sesion: str
     apertura: MinutoUtc
     resultado: ResultadoSesgo
-    decide: Vela | None  # la H4 cuya ruptura fijo el sesgo; None si INSUFICIENTE
-    anterior: Vela | None  # la H4 contra la que rompio
+    decide: Vela | None  # la H4 que fijo el lado del rango (ADR-0094); None si INSUFICIENTE
+    # la H4 del rango vigente (ADR-0094): con lado, la misma que `decide`; sin lado, la del
+    # arranque; None si no hay H4 cerradas
+    rango: Vela | None
 
 
 @dataclass(frozen=True)
@@ -333,8 +335,11 @@ class Preparador:
 
         tope = self.registro.entero("sesgo_h4_tope_velas")
         criterio_ruptura = self.registro.opcion("sesgo_h4_criterio_ruptura")
+        rango_nuevo = self.registro.opcion("sesgo_h4_rango_nuevo")
         sesgos = tuple(
-            _sesgo_de_sesion(h4_todas, s, reloj.instante(dia, s.desde), tope, criterio_ruptura)
+            _sesgo_de_sesion(
+                h4_todas, s, reloj.instante(dia, s.desde), tope, criterio_ruptura, rango_nuevo
+            )
             for s in sesiones
         )
         h4 = _h4_de_contexto(h4_todas, sesgos, hasta)
@@ -392,29 +397,32 @@ def _stop_y_objetivo(p: OrdenVisor | None) -> tuple[Decimal | None, Decimal | No
 
 
 def _sesgo_de_sesion(
-    h4: Sequence[Vela], sesion: Sesion, apertura: MinutoUtc, tope: int, criterio: str
+    h4: Sequence[Vela],
+    sesion: Sesion,
+    apertura: MinutoUtc,
+    tope: int,
+    criterio: str,
+    rango_nuevo: str,
 ) -> SesgoSesion:
     cerradas = sorted((v for v in h4 if v.fin <= apertura), key=lambda v: v.inicio)
-    r = sesgo_h4(cerradas, apertura, tope, criterio)
-    decide = anterior = None
-    if r.ruptura_puntos is not None and r.velas_miradas <= len(cerradas) - 1:
-        i = len(cerradas) - r.velas_miradas
-        decide, anterior = cerradas[i], cerradas[i - 1]
-    return SesgoSesion(sesion.nombre, apertura, r, decide, anterior)
+    r = sesgo_h4(cerradas, apertura, tope, criterio, rango_nuevo)
+    # ADR-0094: la H4 que fija el lado y la del rango las dice el resultado, por su inicio
+    por_inicio = {v.inicio: v for v in cerradas}
+    decide = None if r.vela_que_fija is None else por_inicio.get(r.vela_que_fija)
+    rango = None if r.rango_vela is None else por_inicio.get(r.rango_vela)
+    return SesgoSesion(sesion.nombre, apertura, r, decide, rango)
 
 
 def _h4_de_contexto(
     h4: Sequence[Vela], sesgos: Sequence[SesgoSesion], hasta: MinutoUtc
 ) -> tuple[Vela, ...]:
-    """Las H4 cerradas antes del fin de la ventana: desde la que rompio el sesgo mas antiguo (y su
-    anterior), y al menos las ultimas H4_DE_CONTEXTO_MIN."""
+    """Las H4 cerradas antes del fin de la ventana: desde la del rango vigente mas antiguo
+    (ADR-0094), y al menos las ultimas H4_DE_CONTEXTO_MIN."""
     cerradas = sorted((v for v in h4 if v.fin <= hasta), key=lambda v: v.inicio)
     desde = len(cerradas) - H4_DE_CONTEXTO_MIN
     for s in sesgos:
-        if s.anterior is not None:
-            indice = next(
-                (i for i, v in enumerate(cerradas) if v.inicio == s.anterior.inicio), None
-            )
+        if s.rango is not None:
+            indice = next((i for i, v in enumerate(cerradas) if v.inicio == s.rango.inicio), None)
             if indice is not None:
                 desde = min(desde, indice)
     return tuple(cerradas[max(desde, 0) :])
@@ -703,7 +711,7 @@ def _h4_svg(d: DiaVisor, huso: ZoneInfo) -> str:
             marcas.append(
                 f'<rect class="decide" x="{_px(x0)}" y="{MARGEN_SUP}" width="{_px(x1 - x0)}" '
                 f'height="{ALTO_H4 - MARGEN_SUP - ALTO_EJE}"><title>'
-                f"{html.escape(f'{s.sesion}: {s.resultado.sesgo.value}, rompe esta H4')}"
+                f"{html.escape(f'{s.sesion}: {s.resultado.sesgo.value}, esta H4 es el rango')}"
                 "</title></rect>"
             )
         xa = lienzo.x(min(max(s.apertura, lienzo.desde), lienzo.hasta))
@@ -771,12 +779,15 @@ def _sesion_html(
     if sesgo is not None:
         r = sesgo.resultado
         h4 = (
-            f", rompe la H4 que abre a las {_hora(sesgo.decide.inicio, huso)} contra la anterior"
-            if sesgo.decide is not None
+            f", el rango vigente es la H4 que abre a las {_hora(sesgo.rango.inicio, huso)}"
+            f" (alto {r.rango_alto}, bajo {r.rango_bajo}, en puntos)"
+            f"{'' if sesgo.decide is not None else ', la del arranque, sin lado'}"
+            if sesgo.rango is not None
             else ""
         )
         detalle = (
-            f" (domain/sesgo.py: {html.escape(r.sesgo.value)}, {r.velas_miradas} H4 miradas"
+            f" (domain/sesgo.py: {html.escape(r.sesgo.value)}, {r.velas_miradas} H4"
+            " comparadas con el rango"
             f"{', ruptura de ' + str(r.ruptura_puntos) + ' puntos' if r.ruptura_puntos else ''}"
             f"{', doble ruptura: decide el color' if r.doble_ruptura else ''}"
             f"{h4})"

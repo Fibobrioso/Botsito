@@ -7,11 +7,12 @@ Hoy son pocas, y todo lo demas es NO_IMPLEMENTADA (ADR-0048 §2):
   que mira la rejilla H4 de `anclaje_h4` -la de la agregacion- y no la ventana (RN-002,
   ADR-0060); y `en_el_ultimo_tramo_h4`, lo mismo sin el evento del limite (RN-035 y RN-037,
   sesion 5, S-22);
-- de mercado: `sesgo_h4_al_abrir`, SOLO con `que: vela_h4_previa` y `contra:
-  extremo_de_la_h4_anterior`, que es RN-003 y usa `domain/sesgo.py` tal cual (ADR-0044, ADR-0048
-  §8, ADR-0049 H1). Siempre tiene respuesta -alcista, bajista, ambiguo o insuficiente- y la ata en
-  `sentido_de_la_ruptura`, asi que RN-003 fija `sesgo` en cada apertura. Con cualquier otro sujeto
-  no esta escrito, y lo dice. `rompe` no esta escrito: ninguna regla lo invoca desde ADR-0049;
+- de mercado: `sesgo_h4_al_abrir`, SOLO con `que: vela_h4_cerrada` y `contra:
+  rango_h4_vigente`, que es RN-003 desde ADR-0094 (el sesgo del rango vigente) y usa
+  `domain/sesgo.py` tal cual (ADR-0044, ADR-0048 §8, ADR-0049 H1). Siempre tiene respuesta
+  -alcista, bajista, ambiguo o insuficiente- y la ata en `sentido_de_la_ruptura`, asi que RN-003
+  fija `sesgo` en cada apertura. Con cualquier otro sujeto no esta escrito, y lo dice. `rompe`
+  no esta escrito: ninguna regla lo invoca desde ADR-0049;
 - la accion `fijar`.
 
 Ninguna cifra vive aqui (ADR-0002): los argumentos de valor son NOMBRES del registro (ADR-0019 §1)
@@ -57,8 +58,9 @@ from botsito.engine.tope_trader import (
 )
 from botsito.engine.zonas import acciones_escenario, primitivas_zona
 
-# RN-003: el unico sujeto de `sesgo_h4_al_abrir` que hay escrito (ADR-0044).
-SUJETO_SESGO = ("vela_h4_previa", "extremo_de_la_h4_anterior")
+# RN-003: el unico sujeto de `sesgo_h4_al_abrir` que hay escrito (ADR-0044; desde ADR-0094, el
+# rango vigente: hasta entonces era `vela_h4_previa` contra `extremo_de_la_h4_anterior`).
+SUJETO_SESGO = ("vela_h4_cerrada", "rango_h4_vigente")
 TOKEN_SENTIDO = "sentido_de_la_ruptura"
 ANOTACION_SESGO = "sesgo_h4"  # lo que dijo `sesgo_h4` al abrir la sesion (H1)
 # la vela que fijo el sesgo rompio los dos extremos y lo decidio su color (ADR-0060)
@@ -76,6 +78,10 @@ ANOTACION_SALTADAS_NEUTRA_DOBLE = "sesgo_h4_saltadas_neutra_doble"
 # hay. Nada las lee para decidir: las leen las laminas (`engine/laminas.py`).
 ANOTACION_SESGO_VELA = "sesgo_h4_vela"
 ANOTACION_SESGO_SALTADAS = "sesgo_h4_saltadas"
+# SOLO REGISTRO (ADR-0094): el rango vigente al abrir la sesion como `alto:bajo:inicio` (puntos
+# enteros y el minuto UTC de la H4 que lo fijo); sin H4 cerradas, no se anota. Lo leen las
+# laminas para decir el rango; nada lo lee para decidir.
+ANOTACION_SESGO_RANGO = "sesgo_h4_rango"
 # La huella del selector de A-35 en la traza: el pivote que es la liquidez y desde cuando, y el
 # primer cierre de M1 que llego al nivel. Dos lecturas de «formado» dejan huellas distintas.
 ANOTACION_LIQUIDEZ = "liquidez_m15"
@@ -204,6 +210,8 @@ def primitivas_escritas(
             momento.instante,
             registro.entero(str(args["tope"])),  # el tope lo nombra la forma (ADR-0019 §1)
             registro.opcion(str(args["criterio"])),
+            # que alto y que bajo forman el rango nuevo (A-58, ADR-0094): lo nombra la forma
+            registro.opcion(str(args["rango_nuevo"])),
         )
         if momento.sesion is not None:
             anotaciones = estado.anotaciones.setdefault(momento.sesion, {})
@@ -234,6 +242,12 @@ def primitivas_escritas(
                 )
             else:
                 anotaciones.pop(ANOTACION_SESGO_SALTADAS, None)
+            if r.rango_vela is None:
+                anotaciones.pop(ANOTACION_SESGO_RANGO, None)
+            else:
+                anotaciones[ANOTACION_SESGO_RANGO] = (
+                    f"{r.rango_alto}:{r.rango_bajo}:{int(r.rango_vela)}"
+                )
         # Siempre SI: alcista, bajista, ambiguo o insuficiente son los cuatro valores del hecho
         # `sesgo` (ADR-0049, H1), y la forma los fija todos con el mismo `fijar`.
         return Resultado(Tri.SI, {TOKEN_SENTIDO: r.sesgo.value})

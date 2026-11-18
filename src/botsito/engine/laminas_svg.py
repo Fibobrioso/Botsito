@@ -337,6 +337,14 @@ def rotulos_visibles(p: _Panel, niveles: Sequence[tuple[str, int]]) -> tuple[tup
 
 def _h4(p: _Panel, d: Dibujo) -> list[str]:
     partes = []
+    if d.rango is not None:
+        # el rango vigente (ADR-0094): su alto y su bajo, a lo ancho del panel
+        for nivel in d.rango:
+            y = p.y(nivel)
+            partes.append(
+                f'<line class="rango-h4" x1="{MARGEN_IZQ}" y1="{_f(y)}" x2="{_f(p.derecha)}" '
+                f'y2="{_f(y)}" stroke="{COLOR["h4_fija"]}" stroke-dasharray="6 3"/>'
+            )
     for inicio, clase in [(i, "h4-saltada") for i in d.h4_saltadas] + (
         [(d.h4_fija, "h4-fija")] if d.h4_fija is not None else []
     ):
@@ -482,7 +490,7 @@ def svg(d: Dibujo) -> str:
     niveles_m1 += [n for _, n in d.control] + ([d.punto[1]] if d.punto else [])
     for o in d.ordenes:
         niveles_m1 += [o.precio, o.stop, o.objetivo]
-    h4 = _Panel(d.h4, "H4", 0, ())
+    h4 = _Panel(d.h4, "H4", 0, d.rango or ())
     m15 = _Panel(d.m15, "M15", ALTO_PANEL, niveles_m15)
     m1 = _Panel(d.m1, "M1", ALTO_PANEL * 2, niveles_m1)
     # el M1 de cerca: su escala, las velas del tramo, la caja, la orden y el stop

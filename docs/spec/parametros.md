@@ -2,9 +2,9 @@
 
 # Parametros: la unica puerta de los valores
 
-`spec_version 18.6.4` · hash `0c0ac0b1aada…`
+`spec_version 19.0.0` · hash `84f7b6a6e817…`
 
-112 en total: 102 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
+113 en total: 103 con valor y 10 sin el. Ninguna regla contiene un numero: `spec check` exige que cada argumento de una forma ejecutable sea el NOMBRE de un parametro, de un token declarado o de una ligadura (ADR-0002, ADR-0019).
 
 | Parametro | Valor | Estado | Categoria | De donde sale | Unidad |
 |---|---|---|---|---|---|
@@ -98,6 +98,7 @@
 | `saldo_inicial_cuenta` | `100000` | CONFIRMED | prop_firm | `ADR-0026` | USD |
 | `salida_sin_ruptura` | `proteger_y_dejar` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-9626d3dd` | cerrar_al_cierre/proteger_y_dejar |
 | `sesgo_h4_criterio_ruptura` | `mecha` | CONFIRMED | estrategia | `fb-2026-10-04-sesion-04-d2e84172` | que hace falta para dar por rota la vela H4 previa |
+| `sesgo_h4_rango_nuevo` | `vela_que_rompe_con_su_color` | DEFAULT_AMBIGUOUS · en revision por A-58 | estrategia | `ev-v18-000822-57145b90` | que alto y que bajo forman el rango de H4 cuando una H4 lo rompe, y que pasa con el rango si la que lo rompe cierra del color contrario |
 | `sesgo_h4_regla` | `vela_anterior_cierre_mecha` | CONFIRMED | estrategia | `fb-2026-09-09-sesion-01-8eccf5c0` | opcion cerrada (las sostiene `opciones`, aqui debajo) |
 | `sesgo_h4_tope_velas` | `60` | CONFIRMED | ejecucion | `ADR-0044` | velas H4 hacia atras en las que se busca la ultima ruptura que fija el sesgo |
 | `sesiones_primera_vela_h4` | `3` | CONFIRMED | ejecucion | `ADR-0069` | numero de la vela H4 del dia de rejilla (1 = la que abre en el ancla) con la que empieza la ventana |
@@ -169,6 +170,7 @@ Un valor que ninguna regla nombra declara quien lo consumira; si no, seria un va
 - `racha_perdidas_corte` → ADR-0077
 - `racha_perdidas_reanudacion` → ADR-0077
 - `saldo_inicial_cuenta` → F24, F33
+- `sesgo_h4_rango_nuevo` → ADR-0094
 - `sesgo_h4_regla` → ADR-0019
 - `sesgo_h4_tope_velas` → F18
 - `sesiones_primera_vela_h4` → ADR-0069
@@ -659,15 +661,21 @@ criterio de ruptura del extremo de la H4 anterior, del que depende el sesgo. Viv
 
 Opciones: `mecha`, `cuerpo`.
 
+### `sesgo_h4_rango_nuevo`
+
+lo que el trader NO dijo de la regla del rango vigente (A-58; ADR-0094, lecturas b y d). Dijo que el rango es la vela verde grande (ev-v18-000249-bb7b1c07), que el lado cambia con una ruptura, con mecha o con cuerpo, y el color de la vela (ev-v18-000408-c48297b1), y, en parte, que el rango nuevo lo da la vela que rompe, por arriba o por abajo, y su color («tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo», ev-v18-000822-57145b90); no que el rango nuevo sean el alto y el bajo de esa vela, ni que hace con el rango la que lo rompe y cierra del color contrario. `vela_que_rompe_con_su_color` (LECTURA DEL CONSULTOR, 2026-11-18): la H4 que rompe un extremo del rango y cierra del color de esa ruptura, o los dos con color, pasa a ser el rango, su alto y su bajo con sesgo_h4_criterio_ruptura; la que lo rompe y cierra del color contrario, o sin cuerpo, no lo cambia, apoyada en el backtest de julio (v11 0:00:38, ev-v11-000038-fef9789d: «no ha sido mitigado Ni por debajo por una vela bajista Ni por arriba por una vela alcista Para actualizar el rango»). `otra`: lo que conteste el trader; el motor no la hace y se niega con nombre. No es un interruptor entre la regla de ADR-0080 y la del rango: esa no es un parametro (ADR-0094 §3). Lo lee el predicado `sesgo_h4_al_abrir` (domain/sesgo.py)
+
+Opciones: `vela_que_rompe_con_su_color`, `otra`.
+
 ### `sesgo_h4_regla`
 
-que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el motor es lo otro (ADR-0019). LA REGLA VIGENTE ES LA DE ADR-0080 (WhatsApp del trader del 2026-10-14, fb-2026-10-04-sesion-04-6e7da456): la H4 cambia el sesgo solo si rompe el extremo de la anterior -con mecha o con cuerpo- Y cierra del color de esa ruptura; este valor queda como historia de la respuesta de la sesion 1, que no hablaba del color
+que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el motor es lo otro (ADR-0019). LA REGLA VIGENTE ES LA DE ADR-0094 DESDE EL 2026-11-18 (sesion 7a, S-1, fb-2026-11-16-sesion-07-33fdaa6c): el sesgo es el del RANGO VIGENTE de H4, y solo lo cambia una H4 que rompe el rango -con mecha o con cuerpo- Y cierra del color de esa ruptura (lo de ADR-0080, WhatsApp del trader del 2026-10-14, fb-2026-10-04-sesion-04-6e7da456, que era la vigente hasta ese dia y comparaba la H4 previa con su anterior); este valor queda como historia de la respuesta de la sesion 1, que no hablaba ni del color ni del rango
 
 Opciones: `vela_anterior_color`, `vela_anterior_cierre_mecha`, `otra`.
 
 ### `sesgo_h4_tope_velas`
 
-tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay ninguna, el sesgo es INSUFICIENTE y no se opera. CONFIRMED por ADR-0044: es una decision del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de `estrategia`, cuyos valores solo los dice el trader
+tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044). DESDE EL 2026-11-18 (ADR-0094, el sesgo del rango vigente) es el ARRANQUE: el rango inicial, sin lado, es la H4 situada estas velas antes de la ultima cerrada (con menos velas cargadas, la primera que haya), y desde ella se recorren hacia delante; si ninguna fija el lado, el sesgo es INSUFICIENTE y no se opera. Hasta entonces se buscaba hacia atras, como mucho en estas velas, la ultima H4 que rompio un extremo de su anterior. CONFIRMED por ADR-0044: es una decision del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de `estrategia`, cuyos valores solo los dice el trader
 
 ### `sesiones_primera_vela_h4`
 

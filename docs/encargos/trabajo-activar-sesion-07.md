@@ -1,16 +1,13 @@
 # Encargo · trabajo/activar-sesion-07
 
 Dado por Aleks (consultor) el 2026-11-18, en un solo mensaje. Copiado tal cual. El ADR que el
-encargo manda escribir va declarado aquí en un bloque `ids-inexistentes`, como exige
-`knowledge validate`; sale del bloque en el commit que lo crea. El encargo pide declarar también
-A-58, pero el bloque solo admite ids de fuente (`ev-*`, `fb-*`, `ADR-NNNN`: `comun.ids.FUENTE`, que
-`validation/ids_citados.py` aplica a cada línea del bloque) y una línea con A-58 lo deja «mal
-formado»; los ids de ambigüedad no los comprueba esa guardia en `docs/`, así que A-58 no necesita
-declaración (medido el 2026-11-18 al abrir; el informe lo dice como desviación):
-
-```ids-inexistentes
-ADR-0094 — el encargo lo manda escribir en F1 (el sesgo de H4 por el rango vigente); aún no existe
-```
+encargo manda escribir, ADR-0094, iba declarado aquí en un bloque `ids-inexistentes`, como exige
+`knowledge validate`, y salió del bloque (y el bloque con él) en el commit que lo crea, el de F1. El
+encargo pide declarar también A-58, pero el bloque solo admite ids de fuente (`ev-*`, `fb-*`,
+`ADR-NNNN`: `comun.ids.FUENTE`, que `validation/ids_citados.py` aplica a cada línea del bloque) y
+una línea con A-58 lo deja «mal formado»; los ids de ambigüedad no los comprueba esa guardia en
+`docs/`, así que A-58 no necesitó declaración (medido el 2026-11-18 al abrir; el informe lo dice
+como desviación).
 
 > Modelo: Opus · Esfuerzo: alto
 >

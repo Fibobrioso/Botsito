@@ -2,11 +2,11 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.6.4` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 19.0.0` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (9)
+## ABIERTA (10)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
@@ -70,6 +70,12 @@ Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa
 
 Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Impacto»: «Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00.».
 
+### A-58 · qué alto y qué bajo forman el rango de H4 cuando una H4 lo rompe · pregunta
+
+Cuando una H4 rompe tu rango, ¿qué alto y qué bajo forman el rango nuevo? Y si la vela que lo rompe cierra del color contrario, ¿qué pasa con el rango? Lo que nos has dicho (sesion 7a, S-1): el rango es la vela verde grande y sigues buscando compras (ev-v18-000249-bb7b1c07); el lado cambia con una ruptura, con mecha o con cuerpo, y el color de la vela (ev-v18-000408-c48297b1); manda el rango mayor que no tiene mitigada la liquidez, ni por encima ni por debajo, hasta que se mitiga (ev-v18-000912-52594a58); y, en parte, que para el rango nuevo «tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo» (ev-v18-000822-57145b90). No dijiste si el rango nuevo son el alto y el bajo de esa vela, ni qué hace con el rango una vela que lo rompe y cierra del color contrario. Hasta tu respuesta el bot usa la LECTURA DEL CONSULTOR (sesgo_h4_rango_nuevo = vela_que_rompe_con_su_color, ADR-0094): la vela que rompe y cierra de su color es el rango nuevo, su alto y su bajo; la que rompe y cierra del color contrario no cambia el rango. Lo que se busco en el corpus antes de redactarla (2026-11-18, kb find, sin lo oculto): «nuevo rango» como frase (1 resultado: ev-v18-000822-57145b90); «actualiz» y «rango» por prefijo (8: ev-v11-000038-fef9789d, el segmento de v12 0:06:38 «arriba con una vela verde para poder actualizar rango alcista nuevamente», ev-v18-000822-57145b90, ev-v18-000912-52594a58 y ev-v18-011054-fbf8e9ae, «este rango ya ha sido mitigado entonces lo actualizamos a ese nivel», mas dos superseded); «rango» y «mitig» por prefijo (15, los de arriba y las correcciones del bloque de dias de la 7a, ev-v9-000902-25db5bf5 «el sesgo es alcista mientras que no se mitigue, pues, con mecha o con cuerpo por debajo de esta vela»). Ninguno dice que alto y que bajo forman el rango nuevo; los dos que mas se acercan van de evidencia abajo.
+
+Afecta a: `sesgo_h4_rango_nuevo`.
+
 ## DECIDIDA (8)
 
 ### A-15 · alcance de la ventana operativa · cerrada por `ADR-0024` el 2026-09-12
@@ -126,7 +132,7 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 ### A-1 · sesgo H4
 
-¿que vela H4 fija el sesgo y cuando cambia?
+¿que vela H4 fija el sesgo y cuando cambia? NOTA (2026-11-18, rama trabajo/activar-sesion-07, ADR-0094): NO SE REABRE. Desde la sesion 7a (S-1, fb-2026-11-16-sesion-07-33fdaa6c, CORRECT sobre RN-003) el sesgo es el del RANGO VIGENTE de H4: una H4 lo cambia solo si rompe el rango y cierra del color de esa ruptura, no si rompe solo a su anterior. La pregunta sigue contestada (una H4 lo fija; cambia cuando rompe), y lo que cambia es contra que rompe, que entra por el CORRECT sobre la regla, como en ADR-0060, ADR-0075 y ADR-0080 (§9). Lo que el trader no dijo del rango nuevo es A-58
 
 Afecta a: `sesgo_h4_regla`.
 

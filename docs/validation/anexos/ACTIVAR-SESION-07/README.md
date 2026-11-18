@@ -29,3 +29,11 @@ de más = (P5 + P6 en sesión) − 39. Y fila por fila, con `delta_julio.py` (ab
   clasificar), así que lee además las dos salidas del arnés, solo esa línea.
 - `pivote-julio-<etiqueta>.txt`: la salida de la orden 3 de cada corrida.
 - `delta-julio-<de>-<a>.txt`: la salida de `delta_julio.py` entre dos corridas.
+- `arranque.py` (F1, punto 6): `uv run python docs/validation/anexos/ACTIVAR-SESION-07/arranque.py 60 120 > docs/validation/anexos/ACTIVAR-SESION-07/arranque-60-120.txt`.
+  Con la función nueva de `domain/sesgo.py` ya escrita y commiteada, y antes de la corrida de julio
+  tras F1. Carga las velas como el arnés (el mes y el anterior; enero solo el suyo) por la compuerta
+  de construcción, y para cada sesión de cada día `dev` calcula el sesgo con los dos topes. Imprime
+  solo recuentos por mes (sesiones, cuántas cambian de lado entre los dos topes, cuántas tienen
+  cargadas menos H4 que cada tope, cuántas quedan INSUFICIENTE con cada tope) y una línea por cada
+  sesión que nombra el encargo (las siete declaradas de F1 y las siete del bloque de la 7b). Ningún
+  precio ni operación.
