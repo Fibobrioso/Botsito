@@ -940,3 +940,29 @@ Lo comprobado de los cinco alcances:
 
 #### Comandos ejecutados
 Treinta y cuatro grupos de órdenes de solo lectura (git, `contrato_rama.py`, `feedback apply --check`, `generar_capa.py --comprobar`, `spec docs` sin escribir, `knowledge validate`, lecturas y `grep` de documentos, ítems, ADR, código, anexos y `make-check.log`, y `git ls-remote --heads origin "fix/activar-sesion-07"`); la lista entera la tiene la conversación de la sesión. Dos órdenes las negó la guardia (dos bucles `for`) y una `solo_lectura.py` (`git branch -a`); se rehicieron sin bucle.
+
+## Respuesta del consultor a la PARADA final (2026-11-18), tal cual
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de trabajo/activar-sesion-07 (2026-11-18). Cópiala al final del informe, con la fecha, en un commit propio.
+>
+> 0. Herencias de la 7b: (a), como está.
+> 1. Recuadro de ADR-0061: (a), aceptado como lo aplicaste.
+> 2. La M de la Next Action: (a), aceptado; su línea va en la orden de cierre.
+> 3. El visor: (a), aceptado; el test que falta, a Technical Debt, como propones.
+> 4. Los campos de ResultadoSesgo: (a), aceptado.
+> 5. F1 y la condición (iv): (a). F1 se da por bueno tal como está y no se retoca. Porqué: la regla es lo que el trader dijo como regla en el bloque técnico; (i), (ii), (iii) y el punto 6 se cumplen; y la única fila que no casa, 2026-07-01 de 11 a 15, es una sesión en que su voz dice un lado y su operación el otro, que VIDEO-JULIO.md ya dejó sin clase. Esa fila va a la 7b con la pregunta que propones. El informe dice que (iv) NO se cumplió y que el consultor lo aceptó: no se reescribe como cumplida.
+> 6. Sobre lo que no te convence: (a) que RN-032 y RN-036 muevan parejas de rebote lo decido yo antes de la corrida de (3): va como frase en la F nueva (orden de cierre), no se toca nada aquí; (b) las sesiones de enero con menos de 60 H4 las decide el encargo de la rama de láminas; la línea de Technical Debt que propones, se queda.
+> 7. Corrige en «Para la rama siguiente»: el 2026-04-15 de 11 a 15 NO está gastado; mi decisión es que se queda como sesión 2 de la 7b (el trader no vio ninguna lámina de ese día) y la confirma el encargo de esa rama. El 2026-07-03 de 7 a 11 sí queda gastado.
+>
+> 8. MATERIAL RECIBIDO HOY, que el encargo no traía. El trader mandó hoy, 2026-11-18, un vídeo de mapeo de estructura que, según su mensaje, cubre del 2026-10-23 al 2026-11-17. Está fuera del repo y SIN ABRIR; no se abre ni se ingiere, y mi decisión es mantener los dos meses reservados. La regla de la cabecera de knowledge/cases/meses_reservados.yaml pide que "2026-10" y "2026-11" entren hoy. Pero la cuarentena del texto tapa el mes en cualquier año, y las sesiones 5, 6 y 7a se grabaron en esos meses, así que PRIMERO MIDE, sin escribir nada:
+>    a) con los meses 10 y 11 tapados además de los de hoy, cuántos ítems de knowledge/evidence/ pasan a ocultos y cuántos segmentos de cada transcripción filtrada, por vídeo y solo recuentos (ninguna cita, ninguna fecha);
+>    b) si alguno de esos ítems lo cita la spec, un registro de feedback, un parámetro, una ambigüedad o un informe de esta rama;
+>    c) qué dan knowledge validate y los tests de test_cuarentena_por_condicion.py, test_historial_sin_git.py y test_guardia_claude.py con el fichero cambiado en el árbol de trabajo, sin commitear.
+>    Si (a) da cero ítems citados ocultos y (c) pasa: commit propio HOY con las dos entradas (solo añadir; declarado_el "2026-11-18"; fuente [docs/encargos/trabajo-activar-sesion-07.md]; motivo: vídeo recibido el 2026-11-18, sin abrir y fuera del repo, y el consultor decidió mantener los dos meses reservados), con knowledge/cases/meses_reservados.yaml en rutas_permitidas del contrato en ese mismo commit. Si no: NO lo commitees; deja el fichero como está, escribe los recuentos en el informe y una fila en HOLDOUT-EXPOSICIONES.md de hoy que diga que el material llegó, que está sin abrir y fuera del repo, y que la entrada en meses_reservados espera mi decisión; y PARADA de este punto solo.
+>    En los dos casos, en «Para la orden de cierre», la frase de la F «El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama» pasa a: «El vídeo de mapeo llegó el 2026-11-18 (cubre del 2026-10-23 al 2026-11-17): SIN ABRIR y fuera del repo; no se ingiere, y octubre y noviembre de 2026 quedan reservados.»
+>
+> Después: make check, push a fix/activar-sesion-07, CI de Linux con su run, y un informe corto con los recuentos del punto 8, el sha del último commit y el número de commits de la rama. No cierres.
+>
+> Rama lista para revisión, NO cerrada.
