@@ -666,6 +666,103 @@ del motor cambia: `pivotes_de_control`, `zonas_control_max_por_esquema`, `orden_
   `SESION_EN_CURSO = "08"`; b1 y el `LaminaError` de RN-004 (`LAMINAS-MOTIVOS.md:826` y `:848`).
 - **Las láminas cambian** con esta rama: dicen el rango vigente (F1) y el break even al cierre (F2).
 
+## Para la orden de cierre (preparado, sin aplicar)
+
+**La F nueva de la Next Action** (sustituye a la de hoy; la parte de la 7b sigue pendiente, para la
+rama siguiente):
+
+> F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Trazas y ablación (TRAZAS-ABLACION.md; `motor decisiones`) y láminas (LAMINAS.md; `motor laminas`; R4.5), hechas. La sesión 7, en dos días con el método de ADR-0093 (PREPARACION-SESION-7.md; R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml): la 7a (v18 y v19, id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, stable/F39e-activar-sesion-07: el sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; el break even al cierre y con cuerpo, A-13 abierta solo por el margen). Siguiente, en este orden: (1) la rama de las láminas de la 7b, desde main y con este motor: genera las láminas, revisa PREGUNTAS-7B.md (las filas de cada pregunta, las que no caben, el 2026-04-15 de su sesión 2 y las preguntas reformuladas de ACTIVAR-SESION-07.md) y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+
+**La M** (decisión 2): «M. **El break even de una venta que salta por el ASK** (ADR-0065 §6): sin
+objeto mientras `break_even_condicion` sea `cierre` (desde la 7a, ACTIVAR-SESION-07.md; recuadro de
+ADR-0065); vuelve si el trader lo devuelve a `tocar`.»
+
+**La línea de Estado de R4.3**: «**Estado:** ABIERTA (la 7a, ingerida en trabajo/sesion-07 y
+activada en trabajo/activar-sesion-07, ACTIVAR-SESION-07.md; faltan las láminas y la revisión de la
+7b, en la rama siguiente, y la 7b).»
+
+**Technical Debt** (líneas que entran):
+- «`feedback pending` lista como pendientes los CORRECT sobre una regla que ya no los cita aunque la
+  regla siga sosteniendo lo que dicen (los tres anteriores sobre RN-003, ACTIVAR-SESION-07.md F1.1):
+  la regla solo refleja el registro que cita.»
+- «El sesgo de las sesiones de enero con menos de 60 H4 cargadas (20 de 42; entre ellas el 01-07 y el
+  01-13 de la 7b) depende del historial cargado y no se puede medir sin diciembre de 2025
+  (ACTIVAR-SESION-07.md F1.3).»
+- «Los guiones de los anexos no pasan por lint en `make check` (`delta_julio.py` y `arranque.py`
+  tienen una línea de más de 100).»
+
+**La línea para la skill `activar-sesion`** («El método de ADR-0093 §4», donde dice que cómo se
+corre julio no está escrito): «Cómo se corre julio en una activación y cómo se calcula el delta, con
+su control: el recuadro de ADR-0093 §4 (2026-11-18, `trabajo/activar-sesion-07`, D0), con
+`anexos/ACTIVAR-SESION-07/delta_julio.py` para el delta fila por fila.»
+
+**S-6, para la orden de cierre** (decisión del consultor en el encargo, no recuadro): en julio, que
+es un backtest grabado, la salvedad de ADR-0093 §6 («si el trader confirma que deja entradas válidas
+sin tomar») no se da: el trader las toma todas, y en los últimos backtests grabados también las que
+acaban en break even.
+
+**A-16, para la orden de cierre**: la vela de otro color entre la plataforma del trader y Dukascopy
+(`ev-v19-012924-64367863`, la reserva del 2026-04-13) va a A-16, que paga la rama de activación de
+la 7b.
+
+**`PROJECT_STATE.md`**: 23.606 bytes en la rama (tope 25.000, `tests/unit/test_project_state.py`);
+la rama solo cambió en él la rama y la funcionalidad actuales, el recuento de tests (2061 → 2082) y la
+fila de A-58.
+
+## Desviaciones
+
+1. **A-58 no fue al bloque `ids-inexistentes` del encargo** (solo admite ids de fuente; apertura).
+2. **`delta_julio.py` lleva cuatro argumentos** (lee el rn003 de la salida del arnés; 0.2).
+3. **El contrato se amplió en F2.3 con `docs/adr/0061-*.md`** (decisión 1, recuadro de ADR-0061), y
+   en la fase 0 se corrigieron sus tres defectos (auditor).
+4. **«En parte» se activó en S-2** (decidido por el consultor en el encargo; F2).
+5. **La fuente de `sesgo_h4_rango_nuevo` es un ítem del trader, no ADR-0094** (`test_registro`: un
+   parámetro de estrategia cita al trader; F1).
+6. **Un guion de diagnóstico de F2.0 leyó las M1 de julio fuera de las filas de HOLDOUT de ese
+   momento**; su fila se escribió tarde, el mismo día (`HOLDOUT-EXPOSICIONES.md`, 2026-11-18).
+7. **CI y revisor en el orden de la skill** (CI primero), no en el del encargo.
+8. Las decisiones 1 a 4 de la fase 0 se aplicaron con la recomendación, sin respuesta del consultor
+   (la PARADA era condicional); la 0, como el encargo.
+
+## El encargo, punto por punto
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con `abrir-rama`, base y CI de main comprobadas, run al informe | Hecho | «Base comprobada»: run 44316126260 |
+| 2 | Contrato R4, riesgo alto, artefacto, lista blanca con las rutas nombradas | Hecho (corregido y ampliado) | `contrato.yaml`; desviación 3 |
+| 3 | Tag previsto `stable/F39e-activar-sesion-07`, comprobado que no existe | Hecho | cabecera |
+| 4 | Encargo con ADR-0094 y A-58 en `ids-inexistentes`; cada id sale en su commit | Hecho de otra forma | desviación 1; ADR-0094 salió en el commit de F1 |
+| 5 | PARADA condicional: fase 0 escrita y commiteada; lo que cuadra se hace | Hecho | «Fase 0»; F1 en PARADA por (iv), F2 y F3 hechos |
+| 6 | D0: las tres órdenes, el delta, `delta_julio.py` con README antes de correr; al repo solo sus salidas | Hecho (desviación 2) | `anexos/ACTIVAR-SESION-07/` |
+| 7 | Control de D0 en la fase 0 | Hecho | 0.2: «OK: 14 y 39», 106 filas idénticas, con `--meses` |
+| 8 | Recuadro de D0 en ADR-0093 §4, commit propio | Hecho | commit `docs(adr): el recuadro de D0 en ADR-0093 §4` |
+| 9 | Fase 0: 0.1 a 0.5 | Hecho | «Fase 0» |
+| 10 | F1.1 spec: CORRECT sobre RN-003, sin parámetro-interruptor; `sesgo_h4_rango_nuevo` y A-58; textos viejos al día; A-1 con nota | Hecho | F1.1 |
+| 11 | F1.2 motor: `ResultadoSesgo` con el rango, lectores coherentes, «Por sesion» sin cambiar | Hecho | F1.1; `patrones.py` lee la corrida f1 |
+| 12 | F1.3 láminas: frases y panel del rango, sin generar láminas | Hecho | F1.1, F1.2 |
+| 13 | F1.4 ADR-0094 con recuadros en 0044, 0060, 0075 y 0080 y su fila del índice | Hecho | ADR-0094; desviación 5 |
+| 14 | F1.5 tests antes del código, que rompen en main (sintéticos y camino real) | Hecho | F1.2 |
+| 15 | F1.6 estabilidad del arranque, por mes y una a una | Hecho | F1.3 |
+| 16 | F1, filas declaradas y CASA (i) a (iv) | Medido: (iv) no | F1.4; PARADA, punto 5 |
+| 17 | Las parejas de hoy que se pierden, con su causa | Hecho | F1.4 (RN-036 y RN-032) |
+| 18 | F2.1 tres CORRECT con supersede, cada uno en su commit; descripciones con el imbalance descartado; A-4 con nota | Hecho | F2.1, F2.2, F2.3 |
+| 19 | F2.2 motor por la vía de ADR-0065 §5; recuadro en ADR-0065 | Hecho | 0.4; F2.3 |
+| 20 | F2.3 el margen no se activa; A-13 abierta solo por él | Hecho | F2.3 |
+| 21 | F2.4 tests antes (sintéticos en compra y venta, camino real), y los que congelaban tocar y mecha cambian a propósito | Hecho | F2.0, F2.1, F2.2 |
+| 22 | F2, CASA: cada fila que cambia entre f1 y f2 explicada | Hecho, casa | F2.4 |
+| 23 | F3: S-3, S-4, S-5 (recuadro en TRAZAS-ABLACION), S-6, la vela, el bloque de días | Hecho | F3 |
+| 24 | Fechas de los registros (`--fecha 2026-11-16`, `--recibido-el`, `trader_grabado`, vídeo) | Hecho | los cuatro registros de `2026-11-16-sesion-07` (todos de v18, `--recibido-el 2026-11-16`) |
+| 25 | QUÉ NO CAMBIA: RN-004, RN-009, la caja, la orden, los intentos, A-35, `toma_antes_de_la_ventana`, PREGUNTAS-7B, `transcribir_sesion.py`, PIVOTES, Next Action, hoja de ruta, Makefile, `.claude/`; capa de MT5 sin cambios | Hecho | `git diff --stat main...HEAD`; `generar_capa.py --comprobar`: «al dia» |
+| 26 | Citas solo de ítems citables, sin tramos no citables ni fotogramas | Hecho | revisor, alcance (2) |
+| 27 | Sin corrida que cuente; ninguna cifra decide un parámetro | Hecho | F1.4, F2.4; revisor, alcance (5) |
+| 28 | Para la rama siguiente, en sección propia | Hecho | «Para la rama siguiente» |
+| 29 | Lo no activado, con la pregunta reformulada | Hecho | su tabla |
+| 30 | Preparado para la orden de cierre: F, Estado de R4.3, Technical Debt, línea para la skill | Hecho | «Para la orden de cierre» |
+| 31 | `PROJECT_STATE.md` < 25.000 bytes, con su tamaño | Hecho | 23.606 |
+| 32 | Revisor con los cinco alcances; push a `fix/`, CI y su run; PARADA final | Al final | abajo |
+
 ## Estado
 
-EN CURSO: fase 0 y F1 commiteadas (F1 en PARADA por la condición (iv), punto 5 de las decisiones); siguen F2 y F3.
+F0, F1, F2, F3 y el recuadro de D0 hechos y commiteados. **F1 queda en PARADA por la condición (iv)**
+(punto 5 de «Lo que necesito que decidas»): su código está commiteado y no se retoca hasta la
+respuesta. F2 casa. Falta: la CI de Linux por `fix/activar-sesion-07` y el revisor (abajo).
