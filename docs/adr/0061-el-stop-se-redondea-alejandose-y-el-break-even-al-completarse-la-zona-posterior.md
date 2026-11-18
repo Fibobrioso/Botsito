@@ -6,6 +6,13 @@ phase: post-F14 (rama `trabajo/nocturno-01oct`, sesión nocturna)
 
 # 0061 · El stop se redondea alejándose de la entrada, y el break even se pone al completarse la zona de control posterior
 
+> **RECUADRO (2026-11-18, rama `trabajo/activar-sesion-07`; sesión 7a, S-2).** Lo que §3-§5
+> dicen de cómo se da por rota la zona posterior («al tocar», la mecha) es lo de los valores
+> de entonces: desde hoy `break_even_condicion` es `cierre` y `break_even_criterio_ruptura` es
+> `cuerpo` (CORRECT con supersede, RN-014 cita el de la 7a): una M1 tiene que CERRAR más allá
+> del extremo. La zona, su extremo y cuándo se forma (§4) no cambian. El cuerpo no se
+> reescribe.
+
 ## Decision
 
 ### 1. La forma de RN-011 nombra `stop_fraccion_redondeo`, y el motor lo lee

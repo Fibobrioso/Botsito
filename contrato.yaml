@@ -15,6 +15,7 @@ rutas_permitidas:
   - docs/adr/README.md
   - docs/adr/0044-*.md
   - docs/adr/0060-*.md
+  - docs/adr/0061-*.md  # ampliado en F2.3: decision 1 de la fase 0, recuadro por S-2
   - docs/adr/0065-*.md
   - docs/adr/0075-*.md
   - docs/adr/0080-*.md

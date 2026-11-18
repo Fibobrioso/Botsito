@@ -1,0 +1,22 @@
+id: fb-2026-11-16-sesion-07-223a2951
+sesion: 2026-11-16-sesion-07
+fecha: '2026-11-16'
+medio: video
+objetivo:
+  tipo: regla
+  id: RN-014
+accion: CORRECT
+respuesta_literal: igual en la venta al revés sí para confirmar al final pasas el stop de la entrada cuando
+  se se desarrolla una zona de control completamente validada
+registrado_por: Aleks · grabacion de la sesion 7a (v18), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-18 (trabajo/activar-sesion-07, encargo F2)
+grabacion: Grabación de pantalla 2026-11-16 145418.mp4
+t0: 0:19:00
+t1: 0:19:14
+valor_resultante: el break even se pone cuando se desarrolla una zona de control completamente validada,
+  y en una venta al reves
+supersede: fb-2026-09-29-sesion-03-9f506366
+notas: 'S-2 (A-13), «Para precisar» y «Para confirmar al final» (ev-v18-001900-1581efbe): en la venta,
+  igual al reves; pasa el stop a la entrada cuando se desarrolla una zona de control completamente validada'
+recibido_el: '2026-11-16'
+procedencia: trader_grabado

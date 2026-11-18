@@ -555,6 +555,27 @@ audio») pasa a pasado. spec 19.0.1 → 19.0.2. Entra `tests/unit/test_break_eve
 que ya pasa. **Cambia A PROPÓSITO**: el ayudante de `test_be_al_tick.py` prueba `tocar` con `mecha`
 (el par de ADR-0065: un cuerpo no se ve en un tick), en una copia del registro.
 
+### F2.3 La regla RN-014, A-4, A-13 y los recuadros
+
+`fb-2026-11-16-sesion-07-223a2951`, CORRECT sobre RN-014 con `supersede` de
+`fb-2026-09-29-sesion-03-9f506366`, con `ev-v18-001900-1581efbe` (v18 0:19:00-0:19:14; «pasas el stop
+de la entrada cuando se se desarrolla una zona de control completamente validada», y en una venta al
+revés). RN-014: su `cita`, su `literal` (era «apenas toca, pues se pone en B la entrada») y su
+`entonces` (decía «en el instante del toque»: ahora, «cuando la zona de control posterior queda
+validada», con los dos parámetros), y un párrafo al frente de sus notas; la forma no cambia (ya
+nombraba los dos parámetros). spec 19.0.2 → 19.0.3.
+
+- **A-4** (RESUELTA): una NOTA al frente de su `pregunta`, sin REOPEN (0.4): su RESOLVE_UNKNOWN sigue
+  activo como lo que el trader dijo en la sesión 1; los parámetros los corrigen los CORRECT.
+- **A-13** (ABIERTA): su `pregunta` dice qué se respondió en la 7a y que **sigue ABIERTA solo por el
+  margen**, con la pregunta reformulada para la 7b.
+- **Recuadros fechados** en ADR-0065 (el break even va por §5; **§6, M de la Next Action, queda sin
+  objeto mientras la condición sea `cierre`**: decisión 2, opción a) y en **ADR-0061** (decisión 1,
+  opción a): `contrato.yaml` se amplió en este commit con `docs/adr/0061-*.md`, con su motivo en un
+  comentario; **desviación declarada** del contrato del encargo.
+- `knowledge validate` acepta las citas en prosa de los tres registros supersedidos (A-13, notas de
+  RN-014 y descripciones de los parámetros): lo que G1 niega son las citas en campos de fuente.
+
 ## Estado
 
 EN CURSO: fase 0 y F1 commiteadas (F1 en PARADA por la condición (iv), punto 5 de las decisiones); siguen F2 y F3.
