@@ -18620,3 +18620,68 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 71 (2026-11-14).
+
+# Registro de cierre · `trabajo/sesion-07` (2026-11-18)
+
+- Orden de cierre del consultor del 2026-11-18, tras su revisión, dada por Aleks en la conversación
+  de la sesión. Después, Aleks lanzó `/cerrar-rama trabajo/sesion-07`.
+- **Dos commits del cierre en la rama, no uno.** Por el punto 1 de la orden, antes de este va un
+  commit propio, sellado (`f663aa29`): la fila de HOLDOUT-EXPOSICIONES del 2026-11-18, antes del
+  primer `make check` del día. El punto 1 b) no hizo falta: `scripts/contrato_rama.py` mira
+  `contrato.yaml` en el disco, y este commit lo quita, así que puede tocar `docs/plan/HOJA-DE-RUTA.md`
+  sin sacarla de `rutas_protegidas`. Excepción declarada a `docs/runbooks/RITUAL.md` (el del contrato
+  es el único commit que el cierre añade a la rama), con el precedente de `trabajo/skills-metodo`.
+- **Lo que entra** (tramo R4, R4.3): la sesión 7a con el trader, grabada el 2026-11-16 y el
+  2026-11-17 (v18 y v19, id `2026-11-16-sesion-07`), **no el domingo 2026-11-15** que decía la F,
+  ingerida: registro, audio, transcripción y cuarentena por vídeo, fotogramas (ninguno abierto),
+  tramos no citables, evidencia (`knowledge/evidence/v18/`, 48 ítems; `v19/`, 15), la extracción por
+  pregunta y por sesión del bloque de días (`docs/validation/SESION-07-EXTRACCION.md`),
+  `docs/sesion-7/HOJA-USADA-7A.md` y el recuadro de `PREGUNTAS-7A.md`. Nada resuelto: ni spec, ni
+  feedback, ni casos, ni motor, ni `PREGUNTAS-7B.md`.
+- **El primer `make check` de la apertura salió rojo** por un `.claude/settings.local.json` creado
+  fuera de la sesión (el 2026-11-16); se movió a `C:\Users\USER\Desktop\respaldo-settings\` por orden
+  de Aleks y el relanzado selló.
+- **Las cuatro PARADAS y su respuesta** (SESION-07-EXTRACCION.md §7.1 y §13): (1) el gráfico real
+  con marcas del bloque técnico de v18: el tramo de S-1 se levantó, porque la voz dice el 2 de julio
+  de 2026 dentro del tramo (`[05:19]`, construcción); los de S-2, S-4 y S-5 siguen no citables y como
+  exposición posible; (2) la sesión que abre v19 no se sitúa por la voz: entera no citable y sin
+  extraer, y **el 2026-07-03 de 7 a 11 queda gastado**; (3) el 15 de abril, abierto por error en la
+  reserva: no citable; (4) S-4 / A-35: A-35 ABIERTA, la decisión para la activación, nada aplicado.
+- **La clave de las láminas de la 7a queda gastada**: la frase de b1 del revisor sigue en la historia
+  de `65dad312`, que no se reescribe; las láminas de la 7b salen con su propia clave.
+- **El 2026-04-15 de la sesión 2 de la 7b** (`PREGUNTAS-7B.md`) queda para la activación de la 7a
+  (SESION-07-EXTRACCION.md §9).
+- **Commits de la rama** (9):
+  - `d1829d14` apertura: encargo, contrato y Archivo 72 de PROJECT_STATE;
+  - `5bbc694d` la 7a entra como v18 y v19, en cuarentena, con sus seis silencios SIN AUDIO;
+  - `f1310b44` v18 transcrita y filtrada; sus cuatro bloques en cuarentena, a `tramos_no_citables.yaml`;
+  - `65dad312` v19 transcrita y filtrada, sus bloques en cuarentena; la extracción, la evidencia y la
+    hoja usada;
+  - `68eeecf7` los hallazgos del revisor (dos pasadas); rama lista para revisión;
+  - `87ee81ad` la respuesta del consultor a las PARADAS; el tramo de S-1, levantado;
+  - `534c617e` los hallazgos del revisor sobre la respuesta del consultor (tercera pasada);
+  - `f663aa29` orden de cierre, punto 1: la fila de HOLDOUT del 2026-11-18;
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama** (ocho): del 2026-11-17, (1) la apertura (los días de
+  grabación con `casos_ocultos`, `False` los dos, con la desviación del paso 1 declarada; el primer
+  nivel de la carpeta del corpus; los `make check`, que leen el M1 de marzo y calientan con el de
+  junio); (2) lo que se enseñó y se dijo en las dos grabaciones, con «Escrita tarde» para el
+  2026-11-16, el audio y el traslado de `settings.local.json`; (3) v18 transcrita y filtrada y lo leído
+  hasta su cuarentena; (4) la filtrada de v18 leída entera, con los tres tramos de S-2, S-4 y S-5
+  como exposición posible; (5) v19 transcrita y filtrada, con la sesión que abre v19 como exposición
+  posible y el 15 de abril; (6) lo que leyó el revisor en sus dos primeras pasadas; (7) la respuesta
+  del consultor: las dos líneas del tramo de S-2 que devolvió el `Grep` (a1 de la tercera pasada) y lo
+  que leyó el revisor en la tercera. Del 2026-11-18, (8) el cierre: sus `make check`.
+- **CI de Linux** por `fix/sesion-07`: run 44233279025, sobre `534c617e`: 1 failed (el esperado,
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`), 3428 passed, 90 skipped.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: solo cambia F (la 7a ingerida, con sus PARADAS respondidas; el 2026-04-15 de la
+    sesión 2 de la 7b, para la activación); nada más entra ni sale;
+  - Technical Debt: la copia de seguridad dice que falta v18 y v19;
+  - hoja de ruta: R4.3, su línea de Estado;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 23.450 bytes (`wc -c`) en este commit.
+- Letra del tag: la última cerrada era `stable/F39c-skills-metodo`; `stable/F39d-sesion-07` no existe
+  en local ni en origin (comprobado antes de este commit). La siguiente rama será F39e.
+- Tag: `stable/F39d-sesion-07`. El merge es `git rev-parse "stable/F39d-sesion-07^{commit}"`.

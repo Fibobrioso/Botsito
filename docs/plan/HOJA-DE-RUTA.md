@@ -387,7 +387,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** R4.4 y R4.5; el vídeo de mapeo del trader, si llega antes.
 - **Quién:** la sesión prepara con el consultor; Aleks celebra los dos días con el trader; el consultor propone los números del pivote y Aleks los aprueba.
 - **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO y A-16 la paga la activación de 7b (la de S-22 y S-19).
-- **Estado:** ABIERTA.
+- **Estado:** ABIERTA (la 7a, grabada el 2026-11-16 y el 2026-11-17 e ingerida en trabajo/sesion-07, SESION-07-EXTRACCION.md; falta activarla, y la 7b).
 
 ### R4.4 · Trazas del motor y ablación por regla
 - **Refs:** ID:ADR-0092 · ID:ADR-0064 · ID:ADR-0066
