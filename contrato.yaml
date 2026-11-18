@@ -42,14 +42,15 @@ rutas_protegidas:
   - data/manifests/
   - docs/plan/
   - docs/adr/0000-template.md
-  - docs/validation/PREGUNTAS-7B.md
+  - docs/sesion-7/
   - docs/validation/SESION-07-EXTRACCION.md
   - scripts/transcribir_sesion.py
-  - scripts/generar_capa.py
+  - src/botsito/mql5bridge/
+  - mql5/
 comprobaciones:
   - uv run botsito feedback apply --sesion 2026-11-16-sesion-07 --check
-  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito knowledge validate (con el log fuera del repo, en la carpeta de trabajo de la sesion)
   - uv run botsito spec docs --escribir
-  - uv run python scripts/generar_capa.py --comprobar
+  - uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k --comprobar
   - uv run python scripts/contrato_rama.py
   - make check > make-check.log 2>&1
