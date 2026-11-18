@@ -245,10 +245,12 @@ videos:
     naturaleza: >-
       sesion 7a con el trader, primer video (2026-11-16-sesion-07, hoja de la sesion 07): las seis
       preguntas del consultor, S-1 a S-6, sobre esquemas inventados, con respuestas del trader en
-      voz; y las sesiones 1 y 2 del bloque de dias (2026-07-07 y 2026-07-02, de 11 a 15), en las que
-      el trader abre el replay de ese dia en FX Replay, marca y opera la sesion, y despues corrige
-      las laminas del bot de esa sesion que le ensena Aleks; con UN SILENCIO, de 0:40:29 a 0:41:11,
-      por una pausa del trader
+      voz; en S-1, S-2, S-4 y S-5 el trader pasa tambien a su grafico real con marcas (el de S-1, del
+      2026-07-02; los otros, de dias que la voz no dice; tramos de precaucion); y las sesiones 1 y 2
+      del bloque de dias (2026-07-07 y 2026-07-02, de 11 a 15), en el replay de FX Replay de ese dia
+      abierto por el trader: en la 1 va directo a las laminas del bot que le ensena Aleks, con trazos
+      que ya tenia; en la 2 borra trazos de antes, marca y opera la sesion (tambien la de 7 a 11) y
+      despues corrige las laminas; con UN SILENCIO, de 0:40:29 a 0:41:11, por una pausa del trader
 
   - video_id: v19
     fichero: "Grabación de pantalla 2026-11-17 135357.mp4"
@@ -264,10 +266,12 @@ videos:
     # tramos_no_citables.yaml. Segun Aleks (2026-11-17), en pantalla solo salio lo mismo que en v18.
     naturaleza: >-
       sesion 7a con el trader, segundo video, el dia siguiente (mismo id 2026-11-16-sesion-07, hoja
-      de la sesion 07): ninguna pregunta tecnica; las sesiones 3 y 4 del bloque de dias (2026-07-03,
-      de 7 a 11, y 2026-07-15, de 11 a 15) y la reserva del 2026-04-13 (de 7 a 11), en las que el
-      trader abre el replay de ese dia en FX Replay, marca y opera la sesion, y despues corrige las
-      laminas del bot de esa sesion que le ensena Aleks; con CINCO SILENCIOS, por pausas del trader
+      de la sesion 07): ninguna pregunta tecnica; las sesiones 3 y 4 del bloque de dias (segun Aleks,
+      2026-07-03 de 7 a 11, cuyo dia dicho en voz tapa la cuarentena; y 2026-07-15, de 11 a 15) y la
+      reserva del 2026-04-13 (de 7 a 11), en el replay de FX Replay de ese dia abierto por el trader,
+      que marca y opera la sesion y despues corrige las laminas del bot que le ensena Aleks; en la
+      reserva abre antes, por error, el replay del 2026-04-15 y lo opera hasta ver que no coincide
+      (tramo de precaucion); con CINCO SILENCIOS, por pausas del trader
 
 carpetas:
   - ruta: "_procesado"

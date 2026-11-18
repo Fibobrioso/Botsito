@@ -33,7 +33,7 @@ vídeo). El bloque de días no lleva códigos.
 | S-2 | Cuándo pasas el stop a la entrada | 2 | A-13 | v18 |
 | S-3 | Qué zonas cuentas como zonas de control de un esquema | 3 | RN-009 | v18 |
 | S-4 | La mecha que pasa tu alto de M15, y la vela que lo toma | 4 | A-35 | v18 |
-| S-5 | En qué momento pones la orden respecto de la ruptura de tu punto | 5 | ADR-0064; F7 #6 de `VIDEO-JULIO.md` (su «Para Aleks») | v18 |
+| S-5 | En qué momento pones la orden respecto de la ruptura de tu punto | 5 | `TRAZAS-ABLACION.md:945-950` (5.5, punto 1); ADR-0064; F7 #6 de `VIDEO-JULIO.md` (su «Para Aleks») | v18 |
 | S-6 | Las entradas que dejas sin tomar en el backtest | 6 | F7 #10 de `VIDEO-JULIO.md` (su «Para Aleks») | v18 |
 
 ## 3. El orden de la sesión, y lo que no se hizo

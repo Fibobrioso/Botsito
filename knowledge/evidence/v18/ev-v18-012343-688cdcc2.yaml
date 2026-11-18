@@ -1,0 +1,19 @@
+id: ev-v18-012343-688cdcc2
+video_id: v18
+t0: '1:23:43'
+t1: '1:23:57'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: h4 que lo fija rompió el alto anterior y cerró verde vale nuestro alto anterior ojo que
+  no sería este aquí sino que sería este aquí que ese rango que veníamos arrastrando
+afirmacion: el alto anterior que cuenta no es ese, sino el del rango que viene arrastrando
+tema: sesgo.rango_h4_mayor_no_mitigado
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v18-012343-2468628a
+notas: sesion 2 del bloque de dias (2026-07-02), al corregir una lamina; sirve a S-1. Supersede a ev-v18-012343-2468628a,
+  que decia mas que su cita (revisor, a6). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

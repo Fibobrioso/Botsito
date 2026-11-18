@@ -1,0 +1,20 @@
+id: ev-v18-001145-901d8aa0
+video_id: v18
+t0: 0:11:45
+t1: 0:12:09
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el imbalance nosotros como tal no lo usamos, para análisis ahora no lo usamos no es una
+  regla el uso del imbalance, entonces el caso 3 quedaría descartado ya que no o sea eso no o sea no no
+  no no lo usamos
+afirmacion: 'el imbalance no lo usa: no es una regla, y el caso 3 del esquema de S-2 queda descartado'
+tema: break_even.imbalance_no_se_usa
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-17 (trabajo/sesion-07) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v18-001145-6446f1de
+notas: S-2 (A-13), la excepcion del imbalance. Supersede a ev-v18-001145-6446f1de, cuya cita no llegaba
+  a «descartado» (revisor, a3). docs/validation/SESION-07-EXTRACCION.md
+transcripcion: tr-v18-large-v3-int8-float16-ba2d4fca

@@ -1,6 +1,7 @@
 # Sesión 7a con el trader: la extracción por pregunta y por sesión del bloque de días
 
-> **PLANTILLA mientras la rama está EN CURSO**: la tabla final entra con la extracción.
+> **Nació como PLANTILLA mientras la rama estaba EN CURSO** («la tabla final entra con la
+> extracción»); la tabla final ya está, en §6.
 
 > **Borrador para el consultor. Esta rama NO resuelve nada**: no hay `feedback apply`, ni
 > ambigüedades cerradas, ni cambios en la spec, en el motor, en los casos, en las cifras, en
@@ -96,6 +97,28 @@ las sesiones 1 y 2; v19, las sesiones 3 y 4 y la reserva del 13 de abril; la res
 no se hizo. Las cinco sesiones son las de la tabla de `PREGUNTAS-7A.md` §1 (orden 1 a 4 y la
 primera reserva). Sin hoja de notas (d): nada entra en `corpus/.../Sesiones/`. Nada por WhatsApp
 (c): ninguna captura nueva en «Mensajes del trader».
+
+### 0.0b Las órdenes de Aleks durante la rama, copiadas tal cual (2026-11-17)
+
+Amplían o cambian el encargo (revisor, b4). Por orden de llegada:
+
+1. Tras el primer `make check` rojo:
+   > No toques mi settings.json global. Ya saqué yo .claude/settings.local.json del repo (lo moví a mi Escritorio). Relanza el make check del sello de apertura con lo que ya está estadiado y sigue. En el informe, declara el primer make check fallido, su causa (un settings.local.json creado fuera de la sesión el 2026-11-16) y que lo resolví yo sacándolo del repo.
+2. Al seguir el fichero en el repo:
+   > Te autorizo expresamente a hacerlo tú: comprueba con cmp que la copia de mi Escritorio es idéntica a .claude/settings.local.json (búscala en C:/Users/USER/Desktop, junto al resto de lo que hay ahí, sin abrir ninguna otra carpeta). Si es idéntica, borra la del repo. Si no la encuentras o no es idéntica, no borres nada: mueve la del repo a C:/Users/USER/Desktop/respaldo-settings/settings.local.json (crea la carpeta) y dime qué pasó. Después comprueba que ya no está en el repo, relanza el sello de apertura con lo estadiado y sigue con el encargo. En el informe, declara también este paso.
+3. > En esta rama no se usa ninguna herramienta de NotebookLM ni de Gemini Notebook (nlm, notebooklm-mcp, mcp__gemini-notebook-mcp): nada del repo ni del corpus sale a un servicio externo. Si alguna vez te parece que hace falta, PARADA y me lo dices. esto para cuando termines el sello
+4. Antes de ausentarse:
+   > Me voy unas 6 horas y no voy a estar para decir «listo», así que te lo dejo dado ahora: ya cerré los programas pesados y la laptop se queda enchufada.
+   >
+   > 1. Cuando el commit del registro esté hecho y sellado, lanza la transcripción de v18 sin esperarme. Cuando termine v18 (transcript check en verde y su commit de cuarentena con Fuente:), lanza la de v19, también sin esperarme. Nunca las dos a la vez, y ningún make check mientras corre una transcripción.
+   > 2. Si una transcripción falla por memoria, reinténtala una sola vez. Si vuelve a fallar, PARADA en ese punto y sigue solo con lo que no dependa de ella.
+   > 3. Después sigue con el encargo en su orden hasta «Rama lista para revisión, NO cerrada», con sus reglas de siempre. La PARADA es condicional: lo que cuadra con lo medido sigue, y lo que no queda apuntado como PARADA con su porqué, esperando mi respuesta. Las reglas de fotogramas y de holdout no cambian.
+   > 4. No cierres la rama, no hagas push ni merge. Si sale un permiso o una pregunta que necesita mi respuesta, déjala esperando, y nunca elijas «no volver a preguntar».
+   > 5. Si el trabajo pasa de medianoche en Lima, la fila de HOLDOUT-EXPOSICIONES del nuevo día va en un commit propio antes del primer make check de ese día.
+   >
+   > Cuando vuelva, dame un resumen corto: qué hiciste, el PICO DE MEMORIA de cada transcripción y de cada make check, y las PARADAS que haya.
+
+Ninguna transcripción falló; el trabajo no pasó de medianoche.
 
 ### 0.1 Los días, antes de registrar
 
@@ -268,10 +291,11 @@ Lanzada sin esperar a Aleks tras el commit de v18 (su «listo» dado de antemano
   `[63:47]` caen en el segundo de margen y tampoco se citan. **El primero tapa el arranque del vídeo,
   donde se dice el día de la sesión que abre v19** (§4.3, PARADA 2).
 - **El barrido**, antes de leer: del 1 al 31, **137 líneas**; por defecto (18 a 31), **4 líneas**
-  (`[09:36]` un recuento, `[17:46]` y `[17:47]` niveles, `[42:54]` una hora): ninguna es un día. Los
+  (tres en la sesión que abre v19, en PARADA, y `[42:54]`, una hora): ninguna es un día. Los
   días con mes que se dicen visibles: el 2 y el 15 de julio, el 13 y el 15 de abril y el 6 de julio,
-  todos de construcción. `[50:04]` dice «015 de abril»: el guion no enmascara un número de tres cifras,
-  y se leyó a mano (el 15 de abril, construcción). **Sin PARADA por el barrido.**
+  todos de construcción. En `[50:04]` el día va escrito con un cero delante, en tres cifras, que el
+  guion no enmascara; se leyó a mano: el 15 de abril, construcción (esa línea cae en un tramo de
+  precaución y no se copia). **Sin PARADA por el barrido.**
 
 ### 2.5 Fotogramas: ninguno abierto
 
@@ -315,7 +339,7 @@ empezar por la otra:
 |---|---|---|
 | **Pregunta 1** (¿la mecha de M1 que pasa el alto y vuelve lo mueve?) | `[24:34]` «Esto hace referencia a la mitigación de liquidez, o sea, cómo tiene que mitigar en M1 el desarrollo de una zona lineal de liquidez.»; `[25:00]` «Primero vamos a empezar respondiendo a la pregunta que sería,» `[25:08]` «¿tu alto es la punta de esa mecha o el alto de las verdes?». Lo siguiente es el gráfico real (tramo de precaución) y, después, `[26:57]` «La respuesta sería la», cortado. | **no resuelve**: no elige ninguna opción (ni a, ni b, ni «otra») |
 | **Pregunta 2** (¿el alto es la punta de la mecha de la roja o el de las verdes?) | `[25:11]` «La respuesta es la punta de la mecha.» (`ev-v18-002511-eec0acec`) | **resuelve**: opción **a** |
-| Para precisar: «¿y si la mecha es de una vela verde?» | `[27:04]` «Pues si la mecha llega a ser más alto Que este alto De aquel alto O sea, sería así Entonces se trazaría desde aquí se trazaría desde allí» (`ev-v18-002704-8b01e191`) | en parte: la mecha de una verde también da el alto si queda más alta |
+| Para precisar: «¿y si la mecha es de una vela verde?» | `[27:04]` «Pues si la mecha llega a ser más alto Que este alto De aquel alto O sea, sería así Entonces se trazaría desde aquí se trazaría desde allí» (`ev-v18-002701-62875550`) | en parte: la mecha de una verde también da el alto si queda más alta |
 | Para confirmar al final: «Mi alto de M15 es ___, y lo toma la vela que ___» | `[27:21]` «y la toma la vela que» … `[27:27]` «aquí si me dejó pensativo» `[27:29]` «pero bueno, mi alto de M15 es la punta de la mecha en el esquema planteado» (`ev-v18-002729-38609240`) | **a medias**: la primera mitad; la vela que lo toma, no |
 
 **La combinación, contra el «Para Aleks» de `PREGUNTAS-7A.md`** (valores verificados en
@@ -337,7 +361,7 @@ por encima; rompe fuerte con hueco):
 | Fila | Literal de la filtrada | Resuelve |
 |---|---|---|
 | La pregunta (en cada caso, ¿ya mueves el stop?) | `[13:27]` «control para pues poder poner en break y la entrada tiene que cerrar por encima de su nivel alto de su de su máximo nivel para nosotros pues poder poner en break even porque nosotros esperamos a que cierre la vela y si cierra por debajo no vamos a poder no no no se nos va a» (`ev-v18-001327-70f1d014`); el caso 2 «aquí no hay ninguna zona de control» (`[12:09]`) | **resuelve en parte**: ni (a) al toque ni (b) a secas: **«otra»**, el break even cuando se desarrolla y se valida una zona de control (una vela que mitiga el alto y otra que cierra con cuerpo por encima de su máximo), esperando al cierre |
-| La excepción del imbalance | `[11:45]` «el imbalance nosotros como tal no lo usamos, para análisis ahora no lo usamos no es una regla el uso del imbalance, entonces el caso 3» (`ev-v18-001145-6446f1de`) | **resuelve**: no hay excepción del imbalance; el caso 3 queda descartado |
+| La excepción del imbalance | `[11:45]` «el imbalance nosotros como tal no lo usamos, para análisis ahora no lo usamos no es una regla el uso del imbalance, entonces el caso 3» (`ev-v18-001145-901d8aa0`) | **resuelve**: no hay excepción del imbalance; el caso 3 queda descartado |
 | El margen («cierra con cuerpo, no necesariamente por encima de aquí, pero sí de la zona de entrada») | El trader lo lee en voz (`[10:49]`) y no vuelve a él. | **no resuelve** |
 | Para precisar: ¿igual en una venta? | `[19:00]` «igual en la venta al revés sí» | **resuelve**: sí, al revés |
 | Para confirmar al final | `[19:00]` «para confirmar al final pasas el stop de la entrada cuando se» `[19:07]` «se desarrolla una zona de control completamente validada» (`ev-v18-001900-1581efbe`) | **resuelve**: la zona de control validada; el «salvo ___» no se completa con nada claro (`[19:14]`–`[19:37]`) |
@@ -355,7 +379,7 @@ Tramo `[00:10]`–`[09:57]` (v18).
 | La pregunta (¿cuál es tu rango y qué lado operas tras la roja?) | `[02:49]` «La respuesta es la letra A, claramente. El rango es la vela verde grande y sigo buscando compras.» (`ev-v18-000249-bb7b1c07`) | **resuelve**: opción **a** (el «Para Aleks» la lleva a regla nueva de sesgo por rango, con ADR) |
 | Cómo cambia el lado | `[04:08]` «Entonces, se puede decir que, en resumen, para nosotros ver una continuidad o una reversión, bastaría con mecha o con cuerpo un rompimiento, pero para poder tener el enfoque, se tiene que definir el color de la vela. Si es verde, o sea, el cista rompe por encima, pues continuamos al cista.» (`ev-v18-000408-c48297b1`) | coincide con lo fijado (mecha o cuerpo, y el color: ADR-0080) |
 | Para precisar: ¿qué vela pasa a ser tu rango nuevo? | Lo contesta dentro del tramo de precaución de S-1 (`[08:22]`–`[08:42]`): no se cita. En el bloque de días lo dice citable: al mitigarse el rango, «lo actualizamos a ese nivel» (§4.2, `ev-v18-011054-fbf8e9ae`) | **en parte** |
-| Para precisar: **«rango mayor»** | Lo contesta sobre el gráfico real del 2 de julio (`[08:42]`–`[09:35]`), dentro del tramo de precaución de S-1: no se cita. Sin literal, dice que el rango mayor es el que no se ha mitigado por arriba ni por abajo y que se tiene en cuenta primero | **en parte, sin cita** hasta que el consultor decida sobre el tramo (§7, PARADA 1); el bloque de días lo dice citable (§4.1) |
+| Para precisar: **«rango mayor»** | Lo contesta sobre el gráfico real del 2 de julio (`[08:42]`–`[09:35]`), dentro del tramo de precaución de S-1: ni se cita ni se resume | **pendiente de la PARADA 1**; en el bloque de días habla, citable, de un «sesgo mayor» que arrastra sin mitigar (§4.1 y §4.4) |
 | Para confirmar al final | `[09:43]` «mi rango es alcista» … «mi lado cambia cuando la vela de» `[09:47]` «4 horas genera un rompimiento» `[09:50]` «y también depende» `[09:51]` «del tipo de vela, si es alcista o bajista» `[09:53]` «sea por arriba o por debajo» (`ev-v18-000943-f0b82566`) | **en parte**: dice «alcista», no qué vela es el rango |
 
 Regla general: sí, con el esquema y con su gráfico. «Creo»: no. Compra y venta: sí (habla de los dos
@@ -407,7 +431,7 @@ Tramo `[34:28]`–`[39:13]` (v18).
 | La pregunta (a: no, las tomo todas; b: sí, a veces; c: otra) | `[36:34]` «espera en tus partes dejas entradas válidas sin tomar la respuesta sería la no las tomo todas» `[36:44]` «todas las entradas validadas o sea sea perdedora o ganadora pues se toman y están se encuentra» `[36:52]` «explícitamente en los stats de excel» (`ev-v18-003634-de26ff65`) | **resuelve**: opción **a**, con un matiz (abajo) |
 | Para precisar: ¿qué es «no afectar al muestreo»? | `[37:06]` «muestreo es que nosotros o sea excluimos los trace and break even porque no afectan para» `[37:13]` «el cálculo posterior de nuestra tasa de win rate u otros stats estadísticos» (`ev-v18-003706-83ce78dd`) | **resuelve**: deja fuera las que acaban en break even |
 | Para precisar: ¿también en real? | `[38:08]` «pues en real simplemente no puedes obviar eso» `[38:12]` «porque te va a marcar tanto los trades en break-even» (`ev-v18-003808-c08babd3`) | resuelve: en real, no |
-| Para confirmar al final | `[38:51]` «vale que quedan en break even pero como digo en los últimos backtest que se ha realizado se llega» … «entonces por lo general abarcamos todo» (`ev-v18-003851-cbc5657e`) | **resuelve**: las que quedan en break even; y en los últimos backtests grabados, también esas |
+| Para confirmar al final | `[38:51]` «vale que quedan en break even pero como digo en los últimos backtest que se ha realizado se llega» … «entonces por lo general abarcamos todo» (`ev-v18-003844-7717932e`) | **resuelve**: las que quedan en break even; y en los últimos backtests grabados, también esas |
 
 El matiz: antes de elegir dice «no se toman todas las entradas» (`[36:27]`), y después elige la a; lo
 que deja fuera son las que acaban en break even, que ya conoce el desenlace. Para el «Para Aleks»
@@ -421,8 +445,8 @@ Sin códigos de voz: cada sesión se localizó por la voz (el día dicho y visib
 la respuesta b) de Aleks. Lo que hizo cada sesión, sin desenlaces de operaciones en R ni en dinero
 (la activación no los usa), sin números de lámina y sin el número dicho junto al día de la sesión 2.
 Cada corrección se identifica por la sesión y su minuto en el vídeo. **La pregunta «¿siempre, solo en
-este caso, o de qué depende?» no se hizo en ninguna corrección de v18** (búsqueda en la filtrada:
-ninguna aparición fuera de las preguntas técnicas); donde el trader generaliza por su cuenta («siempre
+este caso, o de qué depende?» no se hizo en ninguna corrección, ni en v18 ni en v19** (búsqueda en
+las dos filtradas: ninguna aparición); donde el trader generaliza por su cuenta («siempre
 por debajo», «la regla es»), se dice. **Ningún fotograma abierto** (§2.5).
 
 **Cómo se hizo, frente a `PREGUNTAS-7A.md` §1.** El orden pedía que el trader abriera el replay antes
@@ -438,15 +462,15 @@ sesión, abajo.
   (`[41:17]`) y la compara con trazos que ya tenía en su replay: `[44:14]` «Me gusta porque he hecho
   los trazos» `[44:17]` «Correspondientes». Aleks había pedido `[39:31]` «haz el tránsito de cómo
   operarías» `[39:33]` «hace ese día y después vamos a ver qué hizo el bolo».
-- **Sesgo de H4 y su rango**: el bot dice bajista (la H4 que lo fija rompió el bajo anterior y cerró
-  roja); el trader lo corrige a **alcista** por un rango mayor sin mitigar de días atrás:
+- **Sesgo de H4 y su rango**: el bot dice bajista; el trader lo corrige a **alcista** por un rango
+  mayor sin mitigar de días atrás:
   `[46:39]` «lo está definiendo bajista y aquí está mal nuestro sesgo no bajista porque tenemos que
   tener en» `[46:46]` «cuenta que todavía no ha sido mitigado un sesgo que llevamos ya desde hace
   algunos días atrás» (`ev-v18-004639-96f84da4`); `[47:18]` «… si estuviéramos tratando con estas
   velas de aquí» `[47:25]` «perfectamente diría que sí pero como digo nosotros estamos arrastrando un
   sesgo mayor y que es alcista» `[47:31]` «que no ha sido mitigado todavía ni por arriba ni por
-  debajo» (`ev-v18-004718-01861c91`). Lo repite en otra lámina, y sitúa ese rango en el 6 de julio
-  (`[51:25]`–`[51:45]`, día de construcción). **Corrección al sesgo, en varias láminas; sirve a S-1.**
+  debajo» (`ev-v18-004718-01861c91`). Lo repite más adelante, y de ese rango dice «la fecha 06»
+  (`[51:38]`), sin mes; con el de la sesión, el 6 de julio, día de construcción. **Corrección al sesgo, en varias láminas; sirve a S-1.**
   Generaliza: «tomando en cuenta las reglas originales en cuanto a rango» (`[51:47]`–`[51:52]`).
 - **Liquidez de M15**: sus trazos coinciden con los del bot (`[44:18]`), y solo por debajo, porque
   opera compras: `[44:36]` «entonces cuando hay una operativa alcista …» … «siempre la liquidez»
@@ -454,7 +478,7 @@ sesión, abajo.
   bot, de más (`[61:23]`–`[62:11]`), consecuencia del sesgo.
 - **Punto de breaker**: da por buena una lámina, porque la toma de M15 fue con mecha: `[45:14]` «no lo
   ha considerado todavía esto un punto de posible punto breaker por el hecho de que la» … «tiene que
-  haber una ruptura de la liquidez de m15 con» `[45:37]` «cuerpo» (`ev-v18-004514-0d48f2cc`). **Sirve
+  haber una ruptura de la liquidez de m15 con» `[45:37]` «cuerpo» (`ev-v18-004514-e6cabd1b`). **Sirve
   a S-5** (el cuerpo es el de la toma de M15).
 - **Correcciones**: `[52:19]`–`[53:21]`, ve una entrada que la lámina no enseña; `[53:21]`–`[55:49]`,
   el punto de breaker del bot está «demasiado alto» y marcado en M15: `[54:38]` «bueno el escenario de
@@ -493,11 +517,11 @@ sesión, abajo.
   formarse la zona de control (`[77:19]`–`[77:39]`), y una sola orden que se mueve: `[78:01]`
   «nosotros pues actualizando también la orden» … «se maneja una sola orden, no es que se deja
   pendiente» `[78:09]` «otra orden aquí, otra orden aquí, no» `[78:10]` «se va actualizando la orden»
-  (`ev-v18-011801-037f841e`). Para ver una ruptura, mira un gráfico de 5 segundos (`[74:01]`–`[74:08]`).
+  (`ev-v18-011801-8b4f738d`). Para ver una ruptura, mira un gráfico de 5 segundos (`[74:01]`–`[74:08]`).
 - **Correcciones a las láminas**:
   - `[83:43]`, el sesgo alcista del bot es correcto, pero el alto anterior es el del rango que arrastra:
     «nuestro alto anterior ojo que no sería este aquí sino que sería este aquí que ese rango que
-    veníamos arrastrando» (`ev-v18-012343-2468628a`). **Sirve a S-1.**
+    veníamos arrastrando» (`ev-v18-012343-688cdcc2`). **Sirve a S-1.**
   - `[84:22]`–`[84:33]`, la liquidez por encima, de más (opera compras).
   - `[85:16]` «se desarrolla demasiada zona de control antes que rompa la entrada o sea no cumple con
     el esquema ni» `[85:22]` «uno ni dos de entrada por lo cual no no se nos operaría»
@@ -506,20 +530,19 @@ sesión, abajo.
     esquemas» (`ev-v18-012744-83f3c314`). **Sirve a S-3.**
   - `[93:53]` «Mira, has sabido diferenciar, o sea, que esta toma de liquidez con hora 12 no es válida,
     sino que la vela de M1 de las 12.1 cerró con cuerpo por debajo de M15 y eso es muy importante.»
-    (`ev-v18-013353-90f56a8a`): da por buena la lámina. **Sirve a S-5.**
+    (`ev-v18-013353-1be5554a`): da por buena la lámina. **Sirve a S-5.**
   - `[96:14]` «… no necesariamente tiene que haber una vela contraria sino que si la este» `[96:19]`
     «pongamos vela 1 vela 2 y la vela 2 tiene la mecha más larga la anterior en este caso bajista por»
     `[96:26]` «encima se podría considerar como un posible punto breaker» (`ev-v18-013614-cfd2b45d`):
     explica una entrada que el bot no tomó. Lo repite en `[104:31]`.
   - `[98:16]`–`[98:33]`, la zona de control que se forma después de romper el punto es la del break even
     (`ev-v18-013816-7b464c66`). **Sirve a S-2.**
-  - `[100:33]`–`[101:31]`, la regla del bot «el esquema tiene más zona de control de las que admite»
-    aplica en un sitio y no en otro, porque solo hay dos esquemas. **Sirve a S-3.**
+  - `[100:33]`–`[101:31]`, sobre el número de zonas de control antes de romper: lo que pone el bot
+    vale en un sitio y no en otro, porque solo hay dos esquemas. **Sirve a S-3.**
   - `[105:43]` «aquí, no se puede trazar en cierta parte» `[105:45]` «en una sola vela como se ha trazado
     allí» `[105:48]` «la caja» (`ev-v18-014543-3b194627`).
-  - `[109:29]`–`[110:20]`, los intentos en una misma liquidez y el recuento de órdenes que da la lámina;
-    no se copian sus cifras.
-  - Lo que da por bueno: los trazos de liquidez de M15 («la está clavando», `[88:30]`), varias tomas con
+  - Otra corrección en `[109:12]`–`[110:44]`.
+  - Lo que da por bueno: los trazos de liquidez de M15 («yo creo que la está clavando», `[88:30]`), varias tomas con
     cuerpo y una caja (`[95:34]`–`[95:50]`).
 - **0 y 0,8**: no los dice con números; corrige el punto de breaker y la caja del bot.
 - **Termina sin cerrar**: en `[111:08]` entra un bloque de cuarentena, y después se despiden; no hay
@@ -531,17 +554,15 @@ sesión, abajo.
 
 **La voz no sitúa esta sesión.** v19 empieza con un bloque de cuarentena, `[CUARENTENA 00:00–00:06]`,
 que cayó por «fecha numérica» y su vecino: es donde se dice el día. Después, la voz no lo vuelve a
-decir de forma visible; solo nombra, en `[00:39]`, el día desde el que viene el rango (el 2 de julio),
-que no es el que se opera. El encargo es explícito: si el día dicho en voz sale tapado, la voz no
+decir de forma visible. El encargo es explícito: si el día dicho en voz sale tapado, la voz no
 sitúa el tramo, y el minuto de la respuesta b) no basta; **PARADA con el minuto** (§7). Por eso:
 - se leyó hasta `[07:34]` (antes de saberlo) y las líneas del barrido, y nada más de esta sesión;
 - **no se cita nada** de ella y entra entera, por precaución, en `tramos_no_citables.yaml`
   (0:00:08–0:26:11);
 - ningún fotograma.
 
-Lo leído, sin citas: el trader dice que ya tenía las zonas de M15 trazadas, para ir más rápido, y
-opera la sesión de 7 a 11 y sigue con la de 11 a 3. Si el
-consultor confirma el día, se lee y se extrae en la rama de activación o en un anexo, como decida.
+Lo leído no se resume aquí (revisor, a2). Si el consultor confirma el día, se lee y se extrae en la
+rama de activación o en un anexo, como decida.
 
 ### 4.4 Sesión 4 · 2026-07-15, de 11 a 15 · sirve a S-1 (v19, `[28:42]`–`[44:02]`)
 
@@ -560,8 +581,8 @@ consultor confirma el día, se lee y se extrae en la rama de activación o en un
   entonces aquí no habría» `[37:29]` «ninguna entrada, vale» (`ev-v19-003720-f6e527fb`). **Sirve a S-3.**
   Después opera un esquema 1 y un esquema 2 (`[38:10]`–`[39:57]`), con el break even al formarse la
   zona de control tras la ruptura.
-- **Correcciones a las láminas** (`[40:03]`–`[43:57]`): el bot dice sesgo de H4 **bajista** (la H4 que
-  lo fija rompió los extremos de la anterior y cerró roja); el trader, **alcista** por el rango mayor:
+- **Correcciones a las láminas** (`[40:03]`–`[43:57]`): el bot dice sesgo de H4 **bajista**; el
+  trader, **alcista** por el rango mayor:
   - `[41:04]` «definir mal tu rango lo que hagas después o bien podría estar bien o bien podría estar
     mal» … `[41:25]` «simplemente mejor bueno es considerable por eso ver si tienes un rango mayor y
     tratar de corregir» `[41:33]` «eso antes de meterte a operar confirmar el rango»
@@ -583,19 +604,16 @@ consultor confirma el día, se lee y se extrae en la rama de activación o en un
 - **Situada por la voz**: `[44:03]` «Entonces, a ver, este es la fecha, vale, estamos ahora, nos vamos
   a 13 de abril, …», y después, ya operado, `[82:55]` «vamos a ver es 13 de abril» y `[92:13]` «… 13 de
   abril pues cerrado».
-- **Abre por error otro día, el 15 de abril** (lo dice en voz en `[44:49]` y en `[50:04]`), lo marca y
-  lo opera, y al comparar con la primera lámina ve que las velas no coinciden; Aleks le pregunta si es
-  la fecha, y él reconoce que se había fijado en el 15 y vuelve al 13 (`[65:28]`–`[68:44]`). El 15 de
-  abril es de construcción, pero es **un replay de otro día** que la respuesta a) no nombraba: el tramo
-  0:44:49–1:08:49 entra por precaución en `tramos_no_citables.yaml` y no se cita (§7, PARADA 3). En ese
-  tramo dice también que el 13 lo tenía en otro backtest suyo, y crea una sesión de replay nueva.
+- **Antes, por error, otro día**: de `[44:49]` a `[68:49]` el trader está en el replay del 15 de abril
+  (construcción), no del 13. Es **un replay de otro día** que la respuesta a) no nombraba: entra por
+  precaución en `tramos_no_citables.yaml` y no se cita ni se resume (§7, PARADA 3).
 - **El 13 de abril, operado** (`[68:50]`–`[82:33]`): las dos sesiones, de 7 a 11 y de 11 a 3.
   - Sesgo: `[69:24]` «Lo primero, pues, para mis sesiones, de 7 a 11 y de 11 a 3, definimos nuestro
     rango, ¿vale? … el rango es alcista, todavía nos mantenemos alcistas, ¿vale? Tiene que romper por
     debajo y con vela roja, o sea, no importa si la vela roja termina con mecha o con cuerpo,»
     (`ev-v19-010924-bb54723f`). Coincide con el bot.
   - Punto de breaker que se actualiza con la mecha de la segunda vela del mismo color (`[71:38]`,
-    `ev-v19-011138-12205799`).
+    `ev-v19-011138-5c622b1f`).
   - **Se corrige a sí mismo sobre el break even**: `[73:59]` «… no no espera no haber corrección
     corrección interpretación mala» `[74:12]` «mía por si necesaria yendo en contra de lo que había
     dicho en los vídeos …». Y lo precisa: `[74:37]` «vale, pero que pasa, nosotros» … «tenemos la
@@ -609,8 +627,8 @@ consultor confirma el día, se lee y se extrae en la rama de activación o en un
     después de haber activado la entrada» `[77:04]` «es la que a nosotros nos habilita pues poner en
     break even» (`ev-v19-011640-1fdc33a7`). **Sirve a S-2 y a S-3.**
 - **Correcciones a las láminas** (`[82:33]`–`[92:13]`):
-  - `[82:55]`–`[83:43]`, la lámina dice que el bot «se saltó 3 velas de h4» y nombra una vela de M1 de
-    antes de las 7; el trader: no tiene que ver con las dos sesiones.
+  - `[82:55]`–`[83:43]`, una lámina que, según el trader, trae algo que no tiene que ver con las dos
+    sesiones (lo que dice la lámina no se describe: revisor, b1).
   - `[85:29]` «liquidez de m15 pero que se llega a mitigar ojo con esto se llega a mitigar con velas de
     m1 pero» `[85:38]` «de la sesión del 7 en adelante si es una vez la mitigación antes de las 7 que
     antes del inicio de» `[85:45]` «la sesión o de cada sesión no es válido tiene que mitigarse con la
@@ -624,8 +642,7 @@ consultor confirma el día, se lee y se extrae en la rama de activación o en un
     en Ducascopy» `[89:30]` «y pues marca bajista pero no pasa nada» (`ev-v19-012924-64367863`); con esos
     datos, la lógica del bot «estaría bien» (`[88:41]`–`[88:43]`). **Para el consultor**: una diferencia
     de datos entre su plataforma y Dukascopy, sin medir aquí.
-  - `[90:59]`–`[91:16]`, la caja se va actualizando; y la regla del bot «el esquema tiene más zonas de
-    la que admite» aplicada aquí, sin corregirla.
+  - `[90:59]`–`[91:16]`, la caja se va actualizando.
   - Su resumen: `[91:40]` «… pero pero bueno hay a ratas y en cuanto hay una interpretación correcta»
     `[91:49]` «creo yo hasta ahora en cuanto a la mitigación de la liquidez de m15 …» … «hay cosas que
     corregir como» `[92:02]` «la en m1 el trazo de las cajas también desde donde a donde se traza»
@@ -647,7 +664,7 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 
 1. **S-4 / A-35**: la pregunta 1 no tiene respuesta y la 2 sola no da valor (§3.1). La combinación
    no cae en ninguno de los tres valores; **lo decide el consultor**. Lo que añade la mecha de la verde
-   (`ev-v18-002704-8b01e191`) va más allá de `solo_la_contraria` en la formación del alto.
+   (`ev-v18-002701-62875550`) va más allá de `solo_la_contraria` en la formación del alto.
 2. **S-2 / A-13**: ni (a) al toque ni (b) a secas: el break even cuando se forma y se valida una zona
    de control, al cierre (§3.2). Frente a lo fijado (`break_even_condicion` = `tocar` y
    `break_even_criterio_ruptura` = `mecha`, los dos CONFIRMED, según el «Para Aleks»), **va hacia el
@@ -676,7 +693,7 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 
 | Qué | Ambigüedad o fuente | Cubierto |
 |---|---|---|
-| S-1, el rango de H4 | `VIDEO-JULIO.md` §7 #1 a #3 | **sí** (opción a); «rango mayor», en parte (en el tramo de precaución; el bloque lo dice citable) |
+| S-1, el rango de H4 | `VIDEO-JULIO.md` §7 #1 a #3 | **sí** (opción a); «rango mayor», pendiente de la PARADA 1 |
 | S-2, el break even | A-13 | **en parte**: hacia el cierre con cuerpo por la zona de control; el imbalance, sí; el margen, solo en la reserva |
 | S-3, las zonas de control | RN-009 | **sí** la pregunta (A y B); el bajo de la toma, no |
 | S-4, la mecha que vuelve | A-35 | **en parte**: la pregunta 2 sí (a), la 1 no; sin valor |
@@ -695,27 +712,28 @@ Respuesta b) de Aleks, y la voz al final de v19: `[94:59]` «6 de julio» `[95:0
 |---|---|---|---|---|---|---|---|
 | **S-4, pregunta 1** | A-35 | v18 | 24:00–25:08 | no resuelve: la lee y no elige; sin valor | no | no | no lo dice |
 | **S-4, pregunta 2** | A-35 | v18 | 25:08–25:17 | **resuelve**: (a), la punta de la mecha; sola no da valor de `liquidez_m15_mecha_que_vuelve` | no, «en el esquema planteado» | no | no lo dice |
-| S-4, la mecha de una verde | ADR-0084 | v18 | 27:01–27:17 | en parte: también fija el alto si queda más alta | no | no | no lo dice |
+| S-4, la mecha de una verde | A-35 | v18 | 27:01–27:17 | en parte: también fija el alto si queda más alta | no | no | no lo dice |
 | **S-2** | A-13 | v18 | 09:57–19:37 | en parte: «otra», el break even al formarse y validarse una zona de control, al cierre; contra lo fijado (`tocar`, `mecha`) | sí | no | sí |
 | S-2, el imbalance | A-13 | v18 | 11:44–11:58 | **resuelve**: no lo usa, no hay excepción | sí | no | n/a |
 | S-2, el margen | A-13 | v18 · v19 | v18 10:49; v19 75:29–75:43 | en parte: en S-2 no lo contesta; en la reserva, «un par de puntos o un pip» | sí | no | habla de compras |
 | S-1 | VIDEO-JULIO.md §7 #1 a #3 | v18 | 00:10–09:57 | **resuelve**: (a), el rango es la vela verde grande; lado por ruptura con mecha o cuerpo y color | sí | no | sí |
-| S-1, «rango mayor» | VIDEO-JULIO.md §7 #1 a #3 | v18 | 08:42–09:35 | en parte: en el tramo de precaución, sin cita; el bloque de días, citable | sí | no | sí |
+| S-1, «rango mayor» | VIDEO-JULIO.md §7 #1 a #3 | v18 | 08:42–09:35 | pendiente de la PARADA 1: en el tramo de precaución, ni se cita ni se resume | — | — | — |
 | S-3 | RN-009 | v18 | 19:37–22:42 | **resuelve**: «otra», A y B; no dice si el esquema se descarta | sí, como definición | no | sí («al revés») |
 | S-3, el bajo de la propia toma | RN-009 | v18 | 22:18–22:29 | no resuelve: «todo el esquema», sin sí ni no | no | no | n/a |
 | S-5 | ADR-0064; F7 #6 | v18 | 27:40–34:27 | en parte: sin letra; por «Para precisar», hacia (a): la mecha mete | sí | sí, en el tipo de orden | habla de compras |
 | S-5, ¿M1 o M15? | ADR-0064; F7 #6 | v18 | 33:46–34:05 | **resuelve**: M1, el cuerpo de la toma de M15; sin decidir frente a S-18 de la sesión 5 | sí | no | n/a |
 | S-6 | F7 #10 | v18 | 34:28–39:13 | **resuelve**: (a), salvo las de break even | sí | no | n/a |
-| Sesión 1 del bloque | 2026-07-07 | v18 | 39:22–63:12 | corrige el sesgo del bot por un rango mayor; M1 como escenario de ejecución | sí, «las reglas originales» | sí, en el resumen | compras |
-| Sesión 2 del bloque | 2026-07-02 | v18 | 63:12–111:08 | demasiada zona de control; solo dos esquemas; toma con cuerpo en M1; break even por zona de control | sí | no | compras |
-| Sesión 3 del bloque | 2026-07-03 (respuesta b) | v19 | 00:00–26:12 | **PARADA 2**: la voz no la sitúa; sin extraer | — | — | — |
-| Sesión 4 del bloque | 2026-07-15 | v19 | 28:42–44:02 | corrige el sesgo por el rango mayor y deja de corregir | sí | no | compras |
-| Reserva del bloque | 2026-04-13 | v19 | 44:03–92:24 | margen del break even; toma con velas de la sesión; diferencia de datos | sí | sí, en el resumen | compras |
+| Sesión 1 del bloque (2026-07-07) | — | v18 | 39:22–63:12 | corrige el sesgo del bot por un rango mayor; M1 como escenario de ejecución | sí, «las reglas originales» | sí, en el resumen | compras |
+| Sesión 2 del bloque (2026-07-02) | — | v18 | 63:12–111:08 | demasiada zona de control; solo dos esquemas; toma con cuerpo en M1; break even por zona de control | sí | sí («yo creo que la está clavando», 88:30) | compras |
+| Sesión 3 del bloque (2026-07-03, respuesta b) | — | v19 | 00:00–26:12 | **PARADA 2**: la voz no la sitúa; sin extraer | — | — | — |
+| Sesión 4 del bloque (2026-07-15) | — | v19 | 28:42–44:02 | corrige el sesgo por el rango mayor y deja de corregir | sí | no | compras |
+| Reserva del bloque (2026-04-13) | — | v19 | 44:03–92:24 | margen del break even; toma con velas de la sesión; diferencia de datos | sí | sí, en el resumen | compras |
 
 Por códigos de la hoja (6): se hicieron los 6, en v18. En filas: **resuelve** 6 (S-4 pregunta 2, S-2
-el imbalance, S-1, S-3, S-5 M1 o M15, y S-6); **en parte** 5 (S-4 la mecha de una verde, S-2, S-2 el
-margen, S-1 «rango mayor» y S-5); **no resuelve** 2 (S-4 pregunta 1 y S-3 el bajo de la toma). Del
-bloque, 4 sesiones extraídas y 1 en PARADA; la reserva del 07-06 no se hizo.
+el imbalance, S-1, S-3, S-5 M1 o M15, y S-6); **en parte** 4 (S-4 la mecha de una verde, S-2, S-2 el
+margen y S-5); **no resuelve** 2 (S-4 pregunta 1 y S-3 el bajo de la toma); **pendiente de la PARADA
+1**, 1 (S-1 «rango mayor»). Del bloque, 4 sesiones extraídas y 1 en PARADA; la reserva del 07-06 no se
+hizo.
 
 ## 7. PARADAS, desviaciones y negativas de la guardia
 
@@ -773,7 +791,8 @@ con su porqué, lo que no cuadrara con lo medido (mensaje del 2026-11-17). Lo qu
   con el disco; 3 obligatorios presentes». Ninguno abierto.
 - `knowledge/corpus/tramos_no_citables.yaml`: 6 «SIN AUDIO», 7 de cuarentena (4 de v18 y 3 de v19) y 6
   de precaución (4 de v18 y 2 de v19).
-- `knowledge/evidence/v18/` (38 ítems) y `knowledge/evidence/v19/` (14).
+- `knowledge/evidence/v18/` (45 ítems: 38 y 7 que supersedan a otros tantos, §12) y
+  `knowledge/evidence/v19/` (15: 14 y 1 que supersede).
 - v18 y v19 en `SESIONES_EN_CUARENTENA` y sus tests.
 - `docs/sesion-7/HOJA-USADA-7A.md` y el recuadro de `PREGUNTAS-7A.md`.
 - Las filas del 2026-11-17 en `HOLDOUT-EXPOSICIONES.md`.
@@ -818,12 +837,335 @@ Los sellos de la rama, con su PICO DE MEMORIA:
   sello sobre `f9e69e81`, **316 MiB**;
 - registro (`5bbc694d`): 3513 passed, sello sobre `67c70678`, **319 MiB**;
 - cuarentena de v18 (`f1310b44`): 3513 passed, sello sobre `41bdf8d8`, **318 MiB**;
-- el de este commit, y el final, abajo.
+- extracción (`65dad312`): 3513 passed, sello sobre `c4b6f2b5`, **319 MiB**;
+- el último, el de los hallazgos del revisor: su línea, en el resumen final a Aleks (un informe no
+  puede llevar el sello del árbol que lo contiene).
 
-**Push y CI: no lanzados**, por la orden de Aleks del 2026-11-17 (§7.2). La orden del encargo, para
-cuando la dé: `git push origin trabajo/sesion-07:refs/heads/fix/sesion-07` y una consulta suelta de
-`gh run view` (el fallo esperado, el de `state check`).
+Antes del sello de la extracción, con todo estadiado (revisor, b3):
+- `uv run pytest tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_de_ruta.py
+  tests/unit/test_transcribir_sesion.py tests/unit/test_hoja_preguntas.py`: `163 passed`;
+- `uv run botsito evidence contradictions`: «OK: knowledge/evidence/_contradicciones.yaml con 0
+  contradicciones abiertas»;
+- `uv run botsito knowledge validate` (log en la carpeta de trabajo, fuera del repo): sin ERROR, «OK:
+  699 items de evidencia, 0 contradicciones abiertas, historial intacto»;
+- `test_guardia_claude.py -k "lista_de_la_guardia or tramos_del_repo_real or misma_cuarentena"`:
+  `3 passed`; `scripts/contrato_rama.py`: «CONTRATO: 71 ficheros dentro del contrato».
+Y otra vez antes del último sello (§12).
+
+**Push y CI: no lanzados**, por la orden de Aleks del 2026-11-17 (§0.0b, punto 4). La orden del
+encargo, para cuando la dé: `git push origin trabajo/sesion-07:refs/heads/fix/sesion-07` y una
+consulta suelta de `gh run view` (el fallo esperado, el de `state check`).
+
+## 11. El encargo, punto por punto
+
+| Punto del encargo | Hecho |
+|---|---|
+| Base comprobada (main, tag, CI, ninguna rama, hoja 07) y abrir-rama | sí (§«Base», `d1829d14`) |
+| Tag de cierre libre | sí (`stable/F39d-sesion-07` no existe) |
+| Encargo copiado tal cual con Write; commits con `-F` | sí |
+| Id de sesión y fecha distinta de la F, dicha | sí (§0.2; `2026-11-16-sesion-07`) |
+| Nada resuelto; `transcribir_sesion.py` de `main`, `--sesion 07` | sí (contrato; `git diff --quiet main`) |
+| Negativas de la guardia: PARADA o la forma que propone, declarada | sí (§«Decisiones de proceso», §7.2) |
+| La cruda no la lee nadie | sí |
+| Fotogramas solo situados, por lotes | ninguno abierto (§2.5) |
+| Primer nivel de la carpeta del corpus; la carpeta de láminas ni se lista | sí |
+| Ni número de láminas ni clave | sí, tras el hallazgo b1 del revisor (§12) |
+| HOLDOUT del día antes del primer `make check`; filas del día | sí (filas del 2026-11-17) |
+| Afirmaciones que no digan más que su cita | sí, tras a3–a8 (§12) |
+| Trailer `Fuente:` en los commits de tramos; PLANTILLA en los 600 primeros | sí |
+| Nada escribe durante `make check`; ninguno entre el registro y el alta en la cuarentena | sí |
+| «Listo» antes de cada transcripción | de otra forma: dado de antemano por Aleks (§0.0b, punto 4) |
+| PROJECT_STATE medido tras abrir-rama | 23.519 bytes |
+| Los dos vídeos sin registrar, fecha del nombre, duración con ffprobe | sí (§0.2, §2.1) |
+| Días de grabación con la línea de «Antes» | `False` los dos; desviación declarada (§0.1) |
+| Preguntas a) a d) antes del registro | sí (§0.0) |
+| La hoja: HOJA-USADA-7A.md y el recuadro | sí |
+| Registro, test_inventario, inventario y hashes | sí (§1) |
+| Tests rotos a propósito y verdes después | sí (§1.1) |
+| Audio con las formas de la skill; cortes «SIN AUDIO» y la puerta | sí (§2.1, §2.2, §2.4) |
+| Transcripción y cuarentena por vídeo; bloques en un commit por vídeo con `Fuente:` | v18 sí (`f1310b44`); v19 en `65dad312`, con más cosas (§7.2) |
+| `frames extract` y `frames check` | sí (§8) |
+| `name-status`: solo `A` | sí (56 `A`, y los 8 que supersedan) |
+| Barrido ancho y por defecto antes de leer cada filtrada | sí (§2.3, §2.4) |
+| Por pregunta, en el orden pedido, con sus filas aparte | sí (§3) |
+| El bloque de días, una sección por sesión | sí, la 3 en PARADA (§4) |
+| Cobertura en `###` sin «Tabla», antes de la tabla final | sí (§5.2) |
+| Tabla final con sus columnas; solo A-13 y A-35 como ambigüedad | sí (§6) |
+| Los dos tests antes del primer sello del informe | sí (§10) |
+| Evidencia fuera de todos los tramos; `contradictions` y `validate` | sí |
+| Exposiciones, con «Escrita tarde» para el 16 | sí |
+| Para la orden de cierre: F, R4.3, copia de seguridad, lista fuera de git | sí (§9) |
+| `make check` sellado | sí (§10) |
+| Push a `fix/sesion-07` y CI | **no**: orden de Aleks (§0.0b) |
+| El revisor con el informe terminado; su informe pegado; los commits mirados | sí (abajo) |
+| Ningún registro de cierre ni cambio de Next Action | sí |
+
+## 12. Lo que se hizo con los hallazgos del revisor
+
+- **b1 (bloquea), la clave de las láminas**: se quita del informe lo que dicen las láminas; queda el
+  minuto y lo que el trader corrige con sus palabras. Del informe del revisor pegado abajo se quita
+  también dónde estaba la frase (segunda pasada del revisor). **La frase sigue en la historia, en el commit `65dad312`**: la historia no se
+  reescribe (rebase y squash no pasan por los hooks), como en `trabajo/guardia-g1`. **Decide Aleks.**
+- **a1 y a2, citas y resúmenes dentro de tramos**: la cita de `[50:04]` y los resúmenes de lo dicho
+  dentro de los tramos de precaución (el «rango mayor» de S-1, el arranque de v19 y el 15 de abril)
+  salen del informe; el «rango mayor» queda «pendiente de la PARADA 1» en la tabla y en la cobertura,
+  sin veredicto.
+- **a3 a a8, afirmaciones que decían más que su cita**: ocho ítems nuevos que supersedan, con el mismo
+  tema: `ev-v18-001145-901d8aa0`, `ev-v18-003844-7717932e`, `ev-v18-002701-62875550`,
+  `ev-v18-012343-688cdcc2`, `ev-v18-011801-8b4f738d`, `ev-v19-011138-5c622b1f`,
+  `ev-v18-004514-e6cabd1b` y `ev-v18-013353-1be5554a` (citas ampliadas donde hacía falta, o
+  afirmaciones recortadas a lo que dice la cita). El informe cita ya los nuevos.
+- **a9**: «la fecha 06» se dice tal cual; el «cerró roja» de §4.4 sale con b1.
+- **a10**: la línea de PLANTILLA dice que la tabla ya está; `## Estado` sin «EN CURSO».
+- **a11**: se deja dicho: el recuadro de `PREGUNTAS-7A.md` entró un commit antes que `HOJA-USADA-7A.md`.
+- **a12**: §4 dice v18 y v19.
+- **b2**: la `naturaleza` de v18 y v19 dice ahora el gráfico real, la sesión 1 sin operar primero, el
+  día tapado de la sesión que abre v19 y el 15 de abril abierto por error.
+- **b3**: las comprobaciones, en §10.
+- **b4**: las órdenes de Aleks, copiadas tal cual en §0.0b.
+- **b5**: §11.
+- **b6**: la fila de la mecha de la verde lleva A-35; las filas del bloque, «—» en «Ambigüedad» y el día
+  en el código.
+- **b7**: el «creo» de la sesión 2, en la tabla y en §4.2.
+- **b8**: la fuente de S-5 en `HOJA-USADA-7A.md` empieza por `TRAZAS-ABLACION.md:945-950`.
 
 ## Estado
 
-EN CURSO.
+**Rama lista para revisión, NO cerrada.** Con cuatro PARADAS que esperan a Aleks (§7.1: el gráfico
+real del bloque técnico, la sesión que abre v19, el 15 de abril y el valor de A-35) y la frase de b1
+en la historia de `65dad312` (§12). Sin push ni CI, por orden de Aleks.
+
+## Informe del revisor
+
+Subagente `revisor`, lanzado con el informe terminado sobre `65dad312`; pegado tal cual, salvo lo
+marcado «[editado al pegar]», que decía dónde estaba la frase de b1 (lo pidió su segunda pasada). Lo
+que se hizo con cada hallazgo, en §12.
+
+### Informe del revisor · trabajo/sesion-07 · 2026-11-17
+
+Revisión sobre `65dad312`, base `ed5f9eef`. Hay un **bloquea** en el eje (b): una frase del informe deja deducir la clave de las láminas. Por eso la rama **no está lista** todavía. Este informe no repite ni esa frase ni ninguna cita que caiga en un tramo no citable: los hallazgos señalan la línea y el minuto, sin copiar el texto.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 7 importa, 5 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **Una cita literal del informe cae dentro de un tramo no citable.** El informe copia entre comillas lo que se dice en v19 `[50:04]`, que está dentro del tramo de precaución v19 0:44:49–1:08:49. Ese mismo tramo dice en `acordado` que «ninguna cita de la rama cae dentro», y eso es falso. La skill lo prohíbe: `ingerir-sesion` («Verificación»: «Ninguna cita del informe ni de la evidencia cae en un tramo»). | `docs/validation/SESION-07-EXTRACCION.md:273`; `knowledge/corpus/tramos_no_citables.yaml:662-668` (el último tramo); `.claude/skills/ingerir-sesion/SKILL.md:158` |
+| a2 | importa | **El informe cuenta, sin comillas, lo que se dijo dentro de tramos no citables.** Choca con su propia regla de :303-304 («se dice solo, sin literal, que lo hubo»). (1) En S-1 resume la respuesta sobre el «rango mayor», que está dentro del tramo v18 0:05:00–0:09:37. Sobre esa base pone «en parte» en la tabla final y en la cobertura, y así se adelanta a lo que decida Aleks en la PARADA 1. (2) En la sesión que abre v19 (tramo 0:00:08–0:26:11) cuenta lo dicho en `[00:39]` y resume lo que el trader hace. (3) En la reserva (tramo 0:44:49–1:08:49) cuenta lo dicho en `[44:49]`, `[50:04]` y `[65:28]`–`[68:44]`, entre otras cosas que menciona otro backtest suyo. | `SESION-07-EXTRACCION.md:358`, `:703`, `:679`, `:534`, `:542-543`, `:586-591` |
+| a3 | importa | **Afirmación que dice más que su cita** (`ev-v18-001145-6446f1de`). La cita acaba en «…no es una regla el uso del imbalance, entonces el caso 3». La afirmación dice «…y el caso 3 del esquema de S-2 queda descartado». Lo de «descartado» está en la línea siguiente, `[11:58]`, fuera de la cita. | `knowledge/evidence/v18/ev-v18-001145-6446f1de.yaml`, `cita_literal` y `afirmacion`; filtrada v18 :152-153 |
+| a4 | importa | **Afirmación que dice más que su cita** (`ev-v18-003851-cbc5657e`). La cita empieza en «vale que quedan en break even pero como digo en los últimos backtest…». La afirmación dice «deja sin tomar las que quedan en break even, pero…». Lo de «dejo sin tomar las entradas que» está en `[38:36]`–`[38:44]`, antes de `t0`. | `ev-v18-003851-cbc5657e.yaml`; filtrada v18 :527-529 |
+| a5 | importa | **Afirmación con una condición que la cita no trae** (`ev-v18-002704-8b01e191`). La cita: «Pues si la mecha llega a ser más alto Que este alto De aquel alto O sea, sería así Entonces se trazaría desde aquí se trazaría desde allí». La afirmación: «si la mecha es de una vela verde y queda más alta que el alto, el alto se traza desde ella». Lo de la vela verde viene de la pregunta (`[27:01]`), no de la cita. | `ev-v18-002704-8b01e191.yaml`; filtrada v18 :345-351 |
+| a6 | importa | **Afirmación que dice más que su cita** (`ev-v18-012343-2468628a`). La cita: «h4 que lo fija rompió el alto anterior y cerró verde vale nuestro alto anterior ojo que no sería este aquí sino que sería este aquí que ese rango que veníamos arrastrando». La afirmación: «da por bueno el sesgo alcista del bot, pero el alto anterior es el del rango que arrastra, no el de la H4 anterior». La cita no trae ni que lo dé por bueno ni «la H4 anterior». | `ev-v18-012343-2468628a.yaml` |
+| a7 | importa | **Dos afirmaciones nombran el «punto de breaker», y sus citas no.** `ev-v18-011801-037f841e`: la afirmación dice «al actualizarse el punto de breaker la mueve»; la cita dice «si la orden iba aquí se actualiza aquí se maneja una sola orden…». `ev-v19-011138-12205799`: la afirmación dice «actualiza el punto de breaker cuando…»; la cita dice «se actualizaría a este nivel aquí porque vemos una 2 la segunda vela del mismo color está con con su mecha por alto…». | los dos ficheros, `cita_literal` y `afirmacion` |
+| a8 | menor | Dos afirmaciones dicen más que su cita: `ev-v18-004514-0d48f2cc` («da por buena la lámina»; la cita solo explica la regla) y `ev-v18-013353-90f56a8a` (convierte en regla general, «la toma vale cuando…», un caso concreto: «esta toma… la vela de M1 de las 12.1»). | los dos ficheros |
+| a9 | menor | El informe afirma más que su fuente en dos sitios. (1) «sitúa ese rango en el 6 de julio»: la voz solo dice «la fecha 06». (2) «la H4 que lo fija… cerró roja»: la filtrada dice «cerró la caja». | `SESION-07-EXTRACCION.md:449` frente a la filtrada v18 :659; `:564` frente a la filtrada v19 :460 |
+| a10 | menor | La línea PLANTILLA del principio sigue diciendo que «la tabla final entra con la extracción», y la tabla ya está. `## Estado` sigue en «EN CURSO», cuando `entregar-rama` lo pide sin «EN CURSO» antes del revisor. | `SESION-07-EXTRACCION.md:3`, `:829`; `.claude/skills/entregar-rama/SKILL.md:56` |
+| a11 | menor | El recuadro de `PREGUNTAS-7A.md` entra en `f1310b44` y apunta a `HOJA-USADA-7A.md`, que no existe hasta `65dad312`. | `git log --diff-filter=A main..HEAD -- docs/sesion-7/HOJA-USADA-7A.md` → `65dad312` |
+| a12 | menor | §4 dice que la pregunta «¿siempre…?» no se hizo «en ninguna corrección de v18», y no dice nada de v19. `HOJA-USADA-7A.md` lo da por no hecho en todo el bloque. La búsqueda en las dos filtradas da 0. | `SESION-07-EXTRACCION.md:424`; `HOJA-USADA-7A.md:44-45` |
+
+Comprobado sin hallazgos:
+- **Contrato**: `contrato_rama.py` da «CONTRATO: 71 ficheros dentro del contrato… 9 comprobaciones», exit 0.
+- **Comprobaciones del contrato**:
+  - `corpus check --hashes`: OK.
+  - `corpus transcript check`: «OK: 26 transcripciones…».
+  - `corpus frames check`: «OK: 19 extracciones coherentes con el disco; 3 obligatorios presentes».
+  - `knowledge validate`: OK, con «699 items de evidencia, 0 contradicciones abiertas».
+  - `pytest` de `test_en_parte_no_se_cierra.py` y `test_hoja_de_ruta.py`: 22 passed.
+  - `wc -c PROJECT_STATE.md`: 23519.
+  - `make-check.log`: «3513 passed, 6 xfailed», `SELLO … sobre el arbol c4b6f2b5…`, que es el árbol de `65dad312`, y PICO DE MEMORIA de 319 MiB.
+- **Regímenes de cambio**: `git diff --name-status` sobre evidence, transcripciones, fotogramas, data/manifests, feedback, spec, cases, libros.yaml, docs/adr y scripts da 56 `A` y nada más. HOLDOUT y PREGUNTAS-7A solo ganan líneas.
+- **Trailers**: ningún commit toca `knowledge/spec` ni `knowledge/cases`. Los tres commits de tramos llevan `Fuente: ADR-0021`, que existe.
+- **Holdout**: nada toca `knowledge/cases/holdout`. Las filas de HOLDOUT del 2026-11-17 están, con «Escrita tarde» para el 16. No se declara ningún lote de fotogramas.
+- **Lo que no aplica**: ningún ADR, ninguna ambigüedad, ningún sitio con `cita` y ningún informe cerrado cambiado.
+- **Citas de los 52 ítems**: todas caen fuera de todos los tramos de v18 y v19 (comprobado por sus `t0`/`t1`, también con el segundo de margen).
+- **Citas del informe contra la filtrada**: comprobadas `[02:49]`, `[04:08]`, `[09:43]`, `[11:45]`, `[13:27]`, `[19:00]`, `[21:15]`, `[25:11]`, `[27:04]`–`[27:36]`, `[32:37]`, `[33:41]`–`[34:21]`, `[36:34]`, `[37:06]`, `[38:08]`, `[44:36]`, `[45:14]`, `[46:39]`, `[47:18]` y `[54:38]` de v18, y `[30:04]`, `[37:20]`, `[41:04]`, `[43:34]`, `[44:03]`, `[69:24]`, `[74:37]`–`[77:04]`, `[85:29]`, `[89:24]` y `[91:40]` de v19. Todas son literales.
+
+#### Eje (b) · Encargo
+Resumen: 1 bloquea, 4 importa, 3 menor. Requisitos: 36 hechos (3 de ellos de otra forma, declarados), 2 parciales, 4 no hechos.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con abrir-rama (encargo con fecha, contrato, Archivo en HISTORIA) | Hecho | `d1829d14`; `docs/encargos/trabajo-sesion-07.md:3`; HISTORIA «# Archivo 72 · PROJECT_STATE.md de main en ed5f9eef» |
+| 2 | Base comprobada (main, tag, CI, ninguna otra rama, hoja 07) | Hecho | informe:18-35; hoy `git rev-parse main` = `ed5f9eef…` y `git branch -a` solo da main y origin/main |
+| 3 | El tag de cierre no existe | Hecho | `git tag -l "stable/F39d*"` vacío |
+| 4 | PROJECT_STATE medido tras abrir-rama, por debajo de 24.900, sin nada más | Hecho | 23519 (main: 23428); el diff de PS solo toca Current Branch/Feature y los dos «— ninguna desde el Archivo 72» |
+| 5 | Fila de HOLDOUT del día en el commit de apertura, antes del primer make check | Hecho | `d1829d14` añade `HOLDOUT-EXPOSICIONES.md:149` |
+| 6 | Días de grabación comprobados (False); la desviación, declarada | Hecho | informe:100-108; HOLDOUT:149 |
+| 7 | Dos vídeos sin registrar, fecha del nombre, duración con ffprobe | Hecho | informe:110-127, :178-181; `manifest.yaml` |
+| 8 | Preguntas a)–d) antes del registro, contrastadas con b) | Hecho de otra forma (declarado) | informe:70-98: copiadas, con el recuento de láminas sustituido |
+| 9 | La fecha distinta de la F, dicha | Hecho | informe:117-119, :812 |
+| 10 | `fuentes.yaml`: drive_id null, fecha y una naturaleza «sesion…» que describa el vídeo entero | **Parcial** | b2 |
+| 11 | `test_inventario` con `range(1, 20)` | Hecho | `tests/unit/test_inventario.py:171` |
+| 12 | `corpus inventory` y `corpus check --hashes` | Hecho | hoy da «OK: el corpus coincide con el manifiesto (hashes)» |
+| 13 | Tests rotos a propósito y verdes tras el alta, con las salidas en el informe | Hecho | informe:136-161; hoy 55 passed |
+| 14 | Conjunto literal de :152 (el sintético de :146 intacto), dict `reales` y sonda v20 | Hecho | diff de los tres tests |
+| 15 | Audio con las formas de la skill, WAV fuera del repo, cortes SIN AUDIO y la puerta | Hecho | informe:174-191, :214-217, :255-265; 6 tramos SIN AUDIO |
+| 16 | Aviso y «listo» antes de cada transcripción | Hecho de otra forma (declarado) | informe:195-196, :242-243 |
+| 17 | `corpus transcribe` y `transcript check`, una por vídeo | Hecho | «OK: 26 transcripciones…» |
+| 18 | Cuarentena con el guion de main y `--sesion 07`; los bloques en un commit propio por vídeo, con Fuente | v18: Hecho (`f1310b44`); v19: Hecho de otra forma (declarado) | informe:757-760 |
+| 19 | `frames extract` y `frames check` (0 huecos, 0 extra) | Hecho | `fr-v19`: `huecos: []`, `extra: []`; frames check OK |
+| 20 | Fotogramas solo de instantes ya situados, por lotes | Hecho: ninguno abierto, según el informe | informe:276-283 |
+| 21 | `name-status`: solo `A` | Hecho | 56 `A` |
+| 22 | Barrido del 1 al 31 y después el de por defecto, antes de leer | Hecho | informe:224-238, :270-274 |
+| 23 | `HOJA-USADA-7A.md` con todos sus apartados, sin citas y sin láminas | Hecho | `HOJA-USADA-7A.md:13-75` |
+| 24 | Recuadro en `PREGUNTAS-7A.md`, sin líneas que empiecen por «**S-» | Hecho | `PREGUNTAS-7A.md:9-12` |
+| 25 | Por cada S-n: tramo, literal, veredicto, opción, regla general, «creo», compra y venta, y «Para confirmar» aparte | Hecho | §3 |
+| 26 | Orden S-4, S-2, S-1, S-3, S-5, S-6, con las filas aparte que se piden | Hecho | §3.1–§3.6 |
+| 27 | S-4: valor de la combinación, verificado; si no cae en ninguno, decirlo | Hecho | informe:321-325; `parametros.yaml:551-555` |
+| 28 | S-5: fila propia para M1 o M15, sin decidir | Hecho | informe:390, :393-398 |
+| 29 | Bloque de días: una sección por sesión en el orden real, sin R ni dinero | Hecho (la sesión 3, en PARADA 2) | §4; el grep de desenlaces en el informe y la evidencia sale vacío |
+| 30 | Cada corrección con su minuto, su «Sirve a» y la respuesta a «¿siempre…?» | **Parcial** (declarado: la pregunta no se hizo) | informe:423-426; a12 |
+| 31 | Cobertura en un `###` sin «Tabla», antes de la tabla final | Hecho | §5.2 (:675) |
+| 32 | Tabla final en la última `##` con «Tabla», con sus columnas y solo A-13 y A-35 como ambigüedad | Hecho, con un matiz | :692-713; b6 |
+| 33 | Los dos tests antes del primer sello del informe; `evidence contradictions` y `knowledge validate` en verde | **No hecho** (no consta en el informe) | b3 |
+| 34 | Evidencia fuera de todos los tramos; cada id citado después de existir | Hecho (la evidencia) | tiempos de los 52 ítems contra los tramos |
+| 35 | Exposiciones: fila del primer día con «Escrita tarde» para el 16, y filas de cada día | Hecho | HOLDOUT:149-153 |
+| 36 | Para la orden de cierre: F, R4.3, la línea de la copia de seguridad y la lista fuera de git | Hecho | §9; medido hoy: la F actual, 1249 bytes; la propuesta, 1082; la copia de seguridad, de 95 a 111 |
+| 37 | Nada resuelto; nada tocado de lo protegido | Hecho | contrato OK; name-status |
+| 38 | `make check` sellado | Hecho | sello sobre `c4b6f2b5`, el árbol de `65dad312` |
+| 39 | Push a `fix/sesion-07` y CI de Linux | **No hecho** (declarado: orden de Aleks) | informe:761-763; b4 |
+| 40 | Ningún registro de cierre ni cambio de Next Action | Hecho | diff de PS |
+| 41 | Nada que deje deducir la clave de las láminas, ni cuántas se enseñaron de cada sesión | **No hecho** | b1 |
+| 42 | «El encargo, punto por punto» en el informe (`entregar-rama`) | **No hecho** | b5 |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | **bloquea** | **Lo commiteado deja deducir la clave de las láminas.** El encargo dice «ni tampoco nada que la deje deducir». Una frase del informe describe lo que dice una lámina en un minuto concreto [editado al pegar: se quita en qué sección y en qué sesión estaba, por la segunda pasada del revisor]. Ese contenido, `main` ya lo ata a una carpeta concreta y a sus cortes. Con el recuento de láminas por carpeta que publica `main` y la respuesta b) copiada («sin saltarme ninguna»), se deduce qué carpeta es esa sesión del bloque y cuántas láminas se le enseñaron. El encargo prohíbe expresamente las dos cosas. No escribo aquí ni la frase ni la conclusión. Basta con dejar solo el minuto y quitar la descripción del contenido de la lámina. | [editado al pegar: la línea del informe y las de `main` con que se cruza, omitidas]; encargo:17 |
+| b2 | importa | **La `naturaleza` de v18 y v19 no describe el vídeo entero**, y contradice lo que el propio informe midió después. v18 dice que las preguntas fueron «sobre esquemas inventados», y en S-1, S-2, S-4 y S-5 el trader pasó a su gráfico real con marcas (PARADA 1). También dice que en las sesiones 1 y 2 el trader «marca y opera la sesion, y despues corrige», y en la 1 no lo hizo (§4.1). v19 no dice que en la reserva abrió por error otro día. El precedente, v17, sí recoge «abre un momento el replay de otro mes». | `knowledge/corpus/fuentes.yaml` (naturaleza de v18 y v19, escrita en `5bbc694d`); `SESION-07-EXTRACCION.md:302-304`, `:436-440`, `:586-591`; `fuentes.yaml:222-225` (v17) |
+| b3 | importa | **El informe no muestra que se ejecutaran** `test_en_parte_no_se_cierra.py` y `test_hoja_de_ruta.py` «antes del primer sello del informe», ni `evidence contradictions` ni `knowledge validate` «en verde», y el encargo lo pide. Hoy pasan: 22 passed, y `knowledge validate` da OK con 0 contradicciones abiertas. | `grep` de esos nombres en el informe: ninguna línea; encargo:54-55 |
+| b4 | importa | **Las órdenes de Aleks que cambian el encargo no están copiadas tal cual**, ni en el informe ni al final del encargo. Son cuatro: el «listo» dado por adelantado para las dos transcripciones, «No cierres la rama, no hagas push ni merge», seguir hasta «lista para revisión» dejando las PARADAS apuntadas, y nada de NotebookLM ni de Gemini. Solo aparecen resumidas o en fragmentos. | encargo:1-62 (no tiene nada añadido); informe:63-66, :195-196, :724-725, :761-763 |
+| b5 | importa | **Falta la sección «El encargo, punto por punto»**, que `entregar-rama` pide en el informe, en el paso 1 y en su «Verificación». | `grep "punto por punto"` en el informe: 0; `.claude/skills/entregar-rama/SKILL.md:46-50`, `:97` |
+| b6 | menor | En la tabla final, la fila «S-4, la mecha de una verde» lleva ADR-0084 en «Ambigüedad», en vez de A-35. Las filas del bloque llevan fechas en esa columna. | `SESION-07-EXTRACCION.md:698`, `:709-713` |
+| b7 | menor | En la sesión 2, la columna «creo» de la tabla dice «no», pero el trader dice «yo creo que la está clavando» (`[88:30]`). El informe lo cita sin el «yo creo». | filtrada v18 :1036; `SESION-07-EXTRACCION.md:522`, `:710` |
+| b8 | menor | En `HOJA-USADA-7A.md`, la fuente de S-5 es «ADR-0064; F7 #6». El «Para Aleks» de S-5 empieza por `TRAZAS-ABLACION.md:945-950` (5.5, punto 1), y ADR-0064 sale después. El encargo pide la fuente que da su «Para Aleks». | `HOJA-USADA-7A.md:36`; `PREGUNTAS-7A.md:257-263` |
+
+**Lo que el encargo pide expresamente al revisor:**
+1. **Fechas reservadas** (`git log -p main..trabajo/sesion-07`, sin HISTORIA, que es la copia del PS de main): las únicas fechas que se añaden son 2026-07-02, 03, 06, 07 y 15 y 2026-04-13 y 15, todas de construcción, más fechas del proyecto (2026-10-25 a 2026-11-17) y «marzo de 2026» en la fórmula de siempre de los `make check`. **Ninguna reservada.** **Clave de las láminas**: b1. No hay números de lámina ni recuentos escritos, y el número dicho junto al día en v18 `[63:22]` no se copia.
+2. **Afirmaciones frente a citas**: a3–a8 y a9 en los ítems; a2 y a9 en el informe.
+3. **Citas dentro de tramos**: ningún ítem de evidencia. En el informe, una cita literal (a1) y varios resúmenes de contenido sin comillas (a2).
+4. **Tabla final**: las columnas son exactas y como ambigüedad solo salen A-13 y A-35. El matiz, en b6. Los dos tests que leen la tabla pasan.
+
+#### Lo que no pude comprobar
+- **`evidence contradictions`**: el hook `solo_lectura.py` lo niega porque «ese subcomando u opcion de `botsito` escribe». No lo rodeé. Lo único que tengo es lo que dice `knowledge validate`, que sí corrió: «0 contradicciones abiertas».
+- **`make check`**: no lo lancé, porque escribe. Lo que lo sustituye es `make-check.log`: SELLO sobre `c4b6f2b5`, que es el árbol de HEAD, 3513 passed y 319 MiB. El informe todavía no trae la línea de ese sello: el llamador ya avisó de que está pendiente.
+- **Los tests rotos a propósito con el estado de antes del alta**: reproducirlos exige un clon, que escribe. Me quedo con la salida del informe (:140-161); los mismos tests hoy pasan (55 passed).
+- **Que no se abriera ningún fotograma**: no hay registro que lo demuestre. Solo está lo que afirma el informe y que no hay filas de lotes.
+- **Las formas exactas de ffprobe y ffmpeg** que se usaron: no hay log en el repo. Tampoco abrí los WAV.
+- **Dos tramos de v18** [editado al pegar: sus minutos, omitidos]: no los leí, para no exponerme a la clave. Así que no sé si el contenido que describe el informe es texto de la lámina o comentario del trader; b1 se sostiene en lo que escribe el propio informe.
+- **El contenido de los tramos de precaución** (PARADAS 1 a 3) y de la sesión que abre v19: no lo leí. No puedo juzgar de qué día son esos gráficos.
+- **Que el encargo sea copia tal cual del prompt** y que el Archivo 72 sea idéntico al PS de main: no tengo el original del prompt. Para lo segundo me fío de `test_historia`, que pasó en el `make check` sellado.
+- **CI**: no hay ningún run de la rama (b4).
+- **Negativas de la guardia** (además de la de `evidence contradictions`), en las dos seguí la forma que propone su mensaje, sin rodearla:
+  - un bucle `for` para imprimir los ítems («el bucle `for` fija `f`, que no esta en la lista»): lo sustituí por `tail -n +1` con globs;
+  - `git status --short; uv run botsito corpus check --hashes` en un solo comando: lo hice en dos llamadas.
+
+#### Lo leído de la filtrada (para declarar en HOLDOUT-EXPOSICIONES.md, 2026-11-17)
+No leí ninguna cruda, ningún fotograma ni nada de `laminas-sesion-7a-v2`.
+
+`C:\Users\USER\Desktop\sesion-07-audio\sesion-07-v18.filtrada.md`:
+- **Con Read**: las líneas 1–59 (la cabecera y `[00:10]`–`[04:51]`; según el informe, el segmento `[04:51]` roza el tramo 0:05:00 por menos de un segundo), 116–169 (`[09:38]`–`[14:06]`), 231–312 (`[18:49]`–`[25:11]`), 343–381 (`[26:57]`–`[28:37]`), 426–547 (`[32:18]`–`[39:48]`) y 549–667 (`[41:17]`–`[52:00]`).
+- **Con Grep, línea a línea**: 602 `[44:46]`, 697 `[54:38]`, 715 `[57:15]`, 738 `[60:14]`, 758 `[62:40]`, 764 `[62:52]`, 771 `[63:15]`, 783–785 (`[66:09]`–`[66:18]`), 862 `[74:03]`, 984 `[85:16]`, 1018 `[87:50]`, 1036 `[88:30]`, 1186 `[100:35]` y 1190 `[100:43]`.
+- **Solo las marcas** `[mm:ss]` y las de bloque (`grep -o`, sin texto), también las de líneas que caen dentro de los tramos.
+- **Una búsqueda** de «solo en este caso / de qué depende / siempre o solo» que solo cuenta coincidencias: 0.
+- **No leído**: dos tramos de v18 [editado al pegar: sus minutos, omitidos] ni ninguna línea dentro de los tramos.
+
+`C:\Users\USER\Desktop\sesion-07-audio\sesion-07-v19.filtrada.md`:
+- **Con Read**: las líneas 740–804 (`[73:43]`–`[77:23]`).
+- **Con Grep, línea a línea**: 376 `[28:42]`, 377 `[29:44]`, 379 `[30:04]`, 396 `[32:15]`, 408 `[35:08]`, 421 `[37:20]`, 460 `[40:03]`, 464 `[41:04]`, 466–467 (`[41:25]`–`[41:33]`), 493 `[43:34]`, 507 `[44:03]`, 679 `[69:24]`, 689 `[71:38]`, 721 `[73:06]`, 748–749, 755, 774, 777, 797 y 800 (`[73:59]`–`[76:57]`), 850 `[82:55]`, 879 `[85:29]`, 890 `[86:50]`, 907 `[88:41]`, 928 y 930 (`[89:24]`, `[89:28]`), 954–955 (`[91:40]`, `[91:49]`), 959 `[92:13]` y 964–967 (`[94:59]`–`[95:09]`).
+- **Solo las marcas** de tiempo y de bloque, sin texto.
+- **La misma búsqueda** que solo cuenta: 0.
+- **No leído**: 0:00:00–0:26:11 (líneas 7–374), 0:44:49–1:08:49 (líneas 508–677) ni los bloques de silencio o de cuarentena.
+
+Nada de lo leído trae una fecha reservada: las que salen son días de construcción (julio del 1 al 17, abril del 1 al 29).
+
+#### Comandos ejecutados
+1. `git branch --show-current`, `git merge-base main HEAD`, `git log --format='%h %s' main..HEAD`, `git diff --stat main...HEAD` y `git status --short`
+2. Read de `docs/encargos/trabajo-sesion-07.md`, `contrato.yaml` y `docs/validation/SESION-07-EXTRACCION.md` (entero)
+3. `uv run python scripts/contrato_rama.py`
+4. `git diff main...HEAD --` sobre PROJECT_STATE, PREGUNTAS-7A, HOLDOUT, src, tests, fuentes.yaml y manifest.yaml
+5. `ls docs/validation | grep`; `grep` de carpeta y clave en LAMINAS-MOTIVOS.md; Read de LAMINAS-MOTIVOS.md (:360-479 y :60-159); Grep y `sed -n '117,119p'` de ERRORES-RECURRENTES.md
+6. `git diff main...HEAD` (sin HISTORIA), filtrado con `grep` por lámina, carpeta y clave [editado al pegar: un término, omitido], y por horas de corte
+7. Grep en `docs` y `git grep main` de frases de causa de las láminas [editado al pegar: las frases, omitidas]
+8. Read de PREGUNTAS-7A.md (:1-95 y :160-309); Grep de «Para Aleks»; `sed` de VIDEO-JULIO.md:939; `grep RN-003`
+9. Bucle `for` sobre la evidencia (negado por la guardia); después `tail -n +1` de `knowledge/evidence/v18/ev-v18-0{0,1,2}*.yaml`, de `ev-v18-0{3,4,5}*`, de `ev-v18-01*` y de `v19/*.yaml` (cuatro llamadas)
+10. `git diff main...HEAD -- knowledge/corpus/tramos_no_citables.yaml`
+11. `ls` y `wc -l` de las dos filtradas; `grep -n -o` de marcas de tiempo en v18 (dos veces) y en v19 (una)
+12. Read y Grep de la filtrada de v18 y de la de v19 (los tramos de arriba); Grep que solo cuenta, en las dos
+13. Read de `docs/sesion-7/HOJA-USADA-7A.md`; `sed -n '1,60p' docs/sesion-6/HOJA-USADA.md`
+14. `uv run pytest tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_de_ruta.py -p no:cacheprovider` (tres veces, por el formato de salida)
+15. `git diff --name-status main...HEAD --` (evidence, transcripciones, fotogramas, manifests, feedback, spec, cases, libros, adr, scripts) `| cut | sort | uniq -c`; `wc -c PROJECT_STATE.md`; `git show main:PROJECT_STATE.md | wc -c`
+16. `uv run botsito corpus transcript check`; `uv run botsito corpus frames check`
+17. `uv run botsito evidence contradictions` (negado por `solo_lectura.py`)
+18. `uv run botsito knowledge validate | tail`
+19. `git status --short` junto con `corpus check --hashes` (negado por la guardia); después `git status --short` y `uv run botsito corpus check --hashes`, cada uno en su llamada
+20. `grep` de SELLO y PICO en `make-check.log`; `git log -1 --format='%H %T'`; `git rev-parse HEAD^{tree}`
+21. `grep` en `tests/contract/test_tramos_fuente.py`; Grep de PLANTILLA en `tests`; Read de `test_hoja_de_ruta.py:80-139`; Grep de `problemas_d`
+22. `git log --format='=== %h %s%n%b' main..HEAD`; `git log --stat` sobre HOLDOUT y tramos
+23. `grep` y Read de `.claude/skills/ingerir-sesion/SKILL.md` (:95-160) y de `entregar-rama/SKILL.md` (:40-99)
+24. `git diff main...HEAD -- docs/state/HISTORIA.md | grep`
+25. `git log -p main..HEAD` (sin HISTORIA) `| grep -o` de fechas `| sort | uniq -c`
+26. `sed` de `tr-v19-…d6b9cc45.yaml` y de `fr-v19-c477861e.yaml`
+27. Grep de los encabezados del informe; `sed -n 28p` y `140p` de PROJECT_STATE con `wc -c`; `sed -n '786,797p'` del informe `| tr | wc -c`
+28. `git log --diff-filter=A`; `git log` sobre PREGUNTAS-7A, cuarentena.py, fuentes y evidencia; `git show --stat f1310b44` y `5bbc694d`
+29. `uv run pytest tests/unit/test_cuarentena.py`, los dos tests de `test_guardia_claude.py` y `test_inventario.py`
+30. `sed -n '545,560p' knowledge/spec/parametros.yaml`; `grep revisado_por` en un ítem de v17
+31. `ls docs/adr | grep 0021`; `git diff` de HOLDOUT y PREGUNTAS-7A buscando líneas borradas; `git tag -l "stable/F39d*"`; `git branch -a`; `git rev-parse main`
+
+## Informe del revisor, segunda pasada
+
+El mismo subagente, sobre el árbol de trabajo con las correcciones de §12, antes del último sello;
+pegado tal cual salvo lo marcado «[editado al pegar]» (que señalaba otra vez la lámina de b1, o
+repetía lo que m2 pide quitar) y los números de línea del informe que citaba, que ya no valen tras las
+correcciones y se omiten. Lo que
+dejaba abierto (el resto de b1, m1 y m2) se corrigió después: la nota de §4.2 queda en el minuto, §12
+ya no enumera lo quitado, del primer informe se omiten la sección y los minutos, la frase de causa de
+§4.5 sale (m1) y las descripciones de líneas de dentro de tramos del barrido de v19 salen (m2).
+
+### Informe del revisor, segunda pasada · trabajo/sesion-07 · 2026-11-17
+
+Revisé solo lo corregido, en el árbol de trabajo sin commitear (`git diff HEAD`, sobre `65dad312`): el informe, `HOJA-USADA-7A.md`, `fuentes.yaml` y los 8 ítems nuevos. Casi todo está resuelto, salvo **b1, que sigue abierto en el árbol de trabajo**: la nota que deja §4.2 en su lugar, leída con lo que enumera §12, vuelve a permitir la misma deducción.
+
+Resumen: 1 sigue sin resolver (b1, bloquea), 0 importa nuevos, 2 menor nuevos.
+
+| Hallazgo | Estado | Evidencia |
+|---|---|---|
+| **b1** (bloquea): la clave de las láminas | **No resuelto** | Se quitó la descripción, pero quedan dos pistas que juntas dan lo mismo. (1) Queda en su lugar una nota sobre esa corrección [editado al pegar: la sección, el minuto y el texto de la nota, omitidos]. La nota señala en qué sesión y en qué minuto está esa lámina. (2) §12 enumera lo que se quitó, y entre ello pone el contenido de esa lámina. `main` ata un solo contenido de lámina a una carpeta concreta. Así que cruzar las dos líneas con `main` sigue diciendo qué carpeta es esa sesión, y, con «sin saltarme ninguna», cuántas láminas se le enseñaron. Basta con dejar solo el minuto, sin la razón, y no enumerar en §12 lo que se quitó. **Ojo**: mi informe de la primera pasada, en su fila b1, dice en qué sesión estaba la frase. Al pegarlo hay que quitar esa referencia, porque con las líneas de `main` que cito lleva a lo mismo. Que la frase siga en la historia de `65dad312` está declarado (§12, «Decide Aleks»). |
+| b1, el resto de §4 y §6 | Resuelto | Sesiones 1, 2 y 4 y la reserva: ya no hay números de lámina, recuentos, horas de corte atadas a carpeta ni el texto con que el bot fija el sesgo. En §6, las filas del bloque llevan solo el día y «—». Queda un menor, m1. |
+| m1 (nuevo, menor) | — | §4.5 sigue citando una frase de causa del bot entre comillas, y §12 dice que se quitaron «el texto de las frases de causa del bot». No veo que deje deducir nada: `main` da esa causa en total, no por carpeta. Pero la frase y lo que dice §12 no casan. |
+| **a1**: la cita literal de `[50:04]` | Resuelto | Ya no copia el literal; dice que la línea cae en un tramo y no se copia. |
+| **a2**: resúmenes de lo dicho dentro de los tramos | Resuelto, con un residuo menor (m2) | El «rango mayor» de S-1 ya «ni se cita ni se resume» y queda «pendiente de la PARADA 1» en la tabla y en la cobertura. El arranque de v19 ya no se resume. El 15 de abril queda en una línea que solo justifica el tramo. Revisé todas las marcas de tiempo del informe contra los tramos de v18 y v19: ninguna cita entre comillas cae dentro. |
+| m2 (nuevo, menor) | — | Quedan descripciones mínimas de líneas de dentro de tramos de v19, sacadas del barrido [editado al pegar: las dos descripciones, omitidas]. No llevan ni cifras ni días fuera de construcción. |
+| **a3**: `ev-v18-001145-901d8aa0` | Resuelto | La cita llega ya a «el caso 3 quedaría descartado» (`t1` 0:12:09). `supersede: ev-v18-001145-6446f1de`; el mismo tema (`break_even.imbalance_no_se_usa`). El informe lo cita en §3.2. |
+| **a4**: `ev-v18-003844-7717932e` | Resuelto | La cita empieza en «tomar las entradas que… dejó sin tomar las entradas que vale que quedan en break even». `supersede: ev-v18-003851-cbc5657e`; el mismo tema. Citado en §3.6. |
+| **a5**: `ev-v18-002701-62875550` | Resuelto | La cita empieza en «Y si la mecha es de una vela verde». `supersede: ev-v18-002704-8b01e191`; el mismo tema. Citado en §3.1 y §5.1. |
+| **a6**: `ev-v18-012343-688cdcc2` | Resuelto | La afirmación queda en «el alto anterior que cuenta no es ese, sino el del rango que viene arrastrando». `supersede` y tema correctos. Citado en §4.2. |
+| **a7**: `ev-v18-011801-8b4f738d` y `ev-v19-011138-5c622b1f` | Resuelto | Las afirmaciones ya no nombran el punto de breaker («la va actualizando»; «actualiza el nivel cuando…»). `supersede` y tema correctos; citados en §4.2 y §4.5. Una observación, sin hallazgo: el tema de v19 sigue siendo `mapeo.punto_breaker_sin_vela_contraria`, porque un supersede exige el mismo tema. |
+| **a8**: `ev-v18-004514-e6cabd1b` y `ev-v18-013353-1be5554a` | Resuelto | La primera dice ya «la regla: … con cuerpo…; con mecha, no», que es lo que dice la cita. La segunda es `EXAMPLE_TRADE`, con la afirmación ceñida al caso («en ese caso…»); lee «12.1» como 12:01, interpretación menor. Los dos con `supersede` y el mismo tema; citados en §4.1 y §4.2. Ningún id viejo queda citado en el informe ni en la hoja (grep: 0). |
+| b2: naturaleza | Resuelto | `fuentes.yaml`: v18 recoge el gráfico real de S-1, S-2, S-4 y S-5 y la sesión 1 sin operar primero; v19 recoge el día tapado de la sesión 3 y el 2026-04-15 abierto por error. |
+| b3: comprobaciones en el informe | Resuelto | §10. |
+| b4: órdenes de Aleks tal cual | Resuelto | §0.0b, en el informe. No miré si están también al final del encargo. |
+| b5: «El encargo, punto por punto» | Resuelto | §11. |
+| b6: tabla final | Resuelto | La fila de la mecha de la verde lleva A-35; las del bloque, «—» y el día en el código. |
+| b7: «creo» de la sesión 2 | Resuelto | En la tabla y en §4.2 («yo creo que la está clavando»). |
+| b8: fuente de S-5 | Resuelto | `HOJA-USADA-7A.md:36` empieza por `TRAZAS-ABLACION.md:945-950`. |
+| a9: inferencias del informe | Resuelto | «la fecha 06», sin mes, tal cual; «cerró roja» quitado. |
+| a10: PLANTILLA y Estado | Resuelto | La cabecera; `## Estado` dice «Rama lista para revisión, NO cerrada.», con las cuatro PARADAS y b1 en la historia. |
+| a12: «¿siempre…?» en v18 y v19 | Resuelto | §4, en el diff. |
+
+#### Lo que no pude comprobar
+- Que `knowledge validate` y `make check` pasen con los 8 ítems nuevos: no los lancé (escriben o no me toca), y los ítems aún no están commiteados.
+- Si las órdenes de §0.0b son copia tal cual de lo que dijo Aleks: no tengo su original.
+
+#### Lo leído de la filtrada (para HOLDOUT, 2026-11-17)
+En esta segunda pasada **no leí nada** de ninguna de las dos filtradas, ni crudas, ni fotogramas, ni la carpeta de láminas. Las citas de los ítems nuevos las contrasté con lo ya leído en la primera pasada, que está declarado allí.
+
+#### Comandos ejecutados
+1. `git status --short`; `git diff HEAD --stat`
+2. `git diff HEAD --` sobre HOJA-USADA-7A.md, fuentes.yaml y SESION-07-EXTRACCION.md (leído desde el fichero de salida)
+3. `grep -n -i` de lámina, admite, corte y bot en el informe
+4. `grep -rn "sesion-0[1-6]"` en LAMINAS-MOTIVOS.md, LAMINAS.md, PREPARACION-SESION-7.md, docs/sesion-7 y los encargos; `grep` de la frase de RN-009 en LAMINAS-MOTIVOS.md y LAMINAS.md; `sed -n '530,545p' PREPARACION-SESION-7.md`
+5. `grep -n` en el informe [editado al pegar: los términos, omitidos]
+6. `tail -n +1` de los 8 ítems nuevos
+7. `grep` de los ids viejos y de los nuevos en el informe y en la hoja
+8. `grep -o` de las marcas de tiempo del informe contra los tramos; `sed -n '565,670p' | grep -o`
+9. `sed -n '742,775p'` del informe (PARADAS)
