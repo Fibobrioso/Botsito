@@ -778,7 +778,21 @@ fila de A-58.
 
 F0, F1, F2, F3 y el recuadro de D0 hechos y commiteados. **F1 queda en PARADA por la condición (iv)**
 (punto 5 de «Lo que necesito que decidas»): su código está commiteado y no se retoca hasta la
-respuesta. F2 casa. Falta: la CI de Linux por `fix/activar-sesion-07` y el revisor (abajo).
+respuesta. F2 casa. El revisor pasó (una pasada: 0 bloquea, 5 importa, 7 menor; diez arreglados y
+dos contestados, abajo). **CI de Linux: run 44392430929 sobre be4684d2** (el commit de los arreglos
+del revisor, empujado a `fix/activar-sesion-07`): `make check` con 1 failed, 3448 passed, 93 skipped;
+el único fallo, el esperado de `RITUAL.md`, `test_cli.py::test_state_check_ok_on_real_repo` (el
+nombre `fix/`). Este commit solo trae este párrafo; su run, en el mensaje de entrega.
+
+**PARADA final** (lo que necesito que decidas, abajo en una línea cada una): el punto 5 (F1 por la
+condición (iv), 2026-07-01 de 11 a 15) y las decisiones 1 a 4 de la fase 0, aplicadas con mi
+recomendación. Los deltas: base → f1, parejas 14 → 14 y operaciones de más 39 → 24; f1 → f2, 14 → 11
+y 24 → 19, todo lo que cambia explicado por RN-036 y RN-032 de rebote. Lo que no me convence: que
+la cuenta por mes frene julio desde el 07-13 (f2) hace que la mitad del mes ya no mida el sesgo ni
+el break even, y el delta de la rama siguiente heredará ese efecto; y que el sesgo de las 20
+sesiones de enero con menos de 60 H4 dependa de un arranque que no se puede medir sin diciembre.
+
+Rama lista para revisión, NO cerrada.
 
 ## Lo que se hizo con los hallazgos del revisor
 
