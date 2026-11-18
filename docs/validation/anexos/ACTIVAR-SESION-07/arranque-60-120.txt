@@ -1,0 +1,22 @@
+arranque de la regla del rango: tope 60 frente a 120; criterio mecha
+mes | sesiones | cambian de lado | menos de 60 H4 cargadas | menos de 120 H4 cargadas | INSUFICIENTE con 60 | INSUFICIENTE con 120
+2026-01 | 42 | 0 | 20 | 40 | 1 | 1
+2026-04 | 42 | 0 | 0 | 0 | 0 | 0
+2026-07 | 26 | 0 | 0 | 0 | 0 | 0
+2026-08 | 42 | 0 | 0 | 0 | 0 | 0
+total | 152 | 0 | 20 | 40 | 1 | 1
+-- sesiones nombradas (orden del encargo)
+2026-07-01 07-11: 134 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-07-06 07-11: 152 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-07-06 11-15: 153 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-07-07 07-11: 158 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-07-07 11-15: 159 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-07-15 11-15: 195 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-07-17 11-15: 207 H4 cerradas cargadas; con 60: bajista; con 120: bajista
+2026-01-13 07-11: 44 H4 cerradas cargadas; con 60: bajista; con 120: bajista
+2026-04-15 11-15: 195 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-01-07 07-11: 20 H4 cerradas cargadas; con 60: bajista; con 120: bajista
+2026-01-19 11-15: 69 H4 cerradas cargadas; con 60: alcista; con 120: alcista
+2026-01-21 07-11: 80 H4 cerradas cargadas; con 60: bajista; con 120: bajista
+2026-01-22 11-15: 87 H4 cerradas cargadas; con 60: bajista; con 120: bajista
+2026-07-16 07-11: 200 H4 cerradas cargadas; con 60: alcista; con 120: alcista

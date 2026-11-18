@@ -346,6 +346,24 @@ def test_una_orden_preparada_y_no_enviada_no_se_arrastra_a_la_zona_siguiente(
     ]
 
 
+def registro_con_valores(tmp_path: Path, valores: Mapping[str, str]) -> Registro:
+    """Una copia del registro real con el `valor` de cada parametro nombrado reescrito (el primer
+    `valor:` despues de su `- nombre:`)."""
+    texto = (RAIZ / "knowledge" / "spec" / "parametros.yaml").read_text(encoding="utf-8")
+    for nombre, valor in valores.items():
+        i = texto.index(f"  - nombre: {nombre}\n")
+        j = texto.index("\n    valor: ", i) + 1
+        k = texto.index("\n", j)
+        texto = texto[:j] + f"    valor: {valor}" + texto[k:]
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(texto, encoding="utf-8")
+    return cargar_registro(ruta)
+
+
+# El break even AL TICK de ADR-0065: `tocar` y `mecha`, los valores CONFIRMED hasta la sesion 7a
+BREAK_EVEN_AL_TICK = {"break_even_condicion": "tocar", "break_even_criterio_ruptura": "mecha"}
+
+
 def _registro_con_redondeo(tmp_path: Path, valor: str) -> Registro:
     """Una copia del registro real con `stop_fraccion_redondeo` en el valor pedido."""
     texto = (RAIZ / "knowledge" / "spec" / "parametros.yaml").read_text(encoding="utf-8")
@@ -400,7 +418,7 @@ RUTA_BREAK_EVEN = {
 
 
 def test_rn014_pone_el_stop_en_la_entrada_al_completarse_la_zona_posterior(
-    registro: Registro, vocabulario: dict[str, dict[str, Any]]
+    vocabulario: dict[str, dict[str, Any]], tmp_path: Path
 ) -> None:
     """Sesion 3 (RN-014, fb-2026-09-29-sesion-03-9f506366): «apenas toca, pues se pone en B la
     entrada», mirado en M1 y con el stop exactamente en la entrada. Aqui el predicado de la
@@ -408,7 +426,10 @@ def test_rn014_pone_el_stop_en_la_entrada_al_completarse_la_zona_posterior(
     deja el punto alto y la M1 siguiente lo pasa con la mecha. DESDE LA RAMA feature/be-al-tick
     (ADR-0065) el stop va a la entrada en el TICK que pasa el punto -el de 40 s de esa M1-, no en
     su cierre; el motor lo vuelve a pedir al cierre y ya no hace nada. Cuando el precio vuelve, la
-    posicion sale por break even."""
+    posicion sale por break even. CAMBIA A PROPOSITO (trabajo/activar-sesion-07, F2): desde la
+    sesion 7a el registro real dice `cierre` y `cuerpo`; este test es el del mecanismo al tick de
+    ADR-0065 y se corre con `tocar` y `mecha` en una copia del registro."""
+    registro = registro_con_valores(tmp_path, BREAK_EVEN_AL_TICK)
     mercado = _mercado(RUTA_BREAK_EVEN)
     motor = _motor(registro, vocabulario, mercado)
     predicados, _ = _sinteticas()

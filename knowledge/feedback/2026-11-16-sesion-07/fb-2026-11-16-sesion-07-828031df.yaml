@@ -1,0 +1,21 @@
+id: fb-2026-11-16-sesion-07-828031df
+sesion: 2026-11-16-sesion-07
+fecha: '2026-11-16'
+medio: video
+objetivo:
+  tipo: parametro
+  id: break_even_condicion
+accion: CORRECT
+respuesta_literal: nosotros esperamos a que cierre la vela y si cierra por debajo no vamos a poder
+registrado_por: Aleks · grabacion de la sesion 7a (v18), version filtrada leida por la sesion; activado
+  por orden del consultor del 2026-11-18 (trabajo/activar-sesion-07, encargo F2)
+grabacion: Grabación de pantalla 2026-11-16 145418.mp4
+t0: 0:13:27
+t1: 0:13:45
+valor_resultante: cierre
+supersede: fb-2026-09-09-sesion-01-0ccafcba
+notas: 'S-2 (A-13), caso 1 del esquema (ev-v18-001327-70f1d014): para pasar a break even espera a que
+  cierre la vela; tiene que cerrar por encima del maximo de la zona de control, y si cierra por debajo,
+  no'
+recibido_el: '2026-11-16'
+procedencia: trader_grabado

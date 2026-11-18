@@ -1,0 +1,8 @@
+patrones-julio-f1.txt, mes 2026-07
+T0 (parejas): 14
+P5: 22 ({'mismo lado': 20, 'otro lado': 2}); P6 en sesion: 2; P6 en dia: 0
+operaciones de mas (P5 + P6 en sesion): 24
+P1 1, P2 11, P3 20, P4 17, P7 4
+T0 + P2 + P3 + P7 = 14 + 11 + 20 + 4 = 49
+tasa de pareja: 14 / 49 = 0.286
+NO CUADRA: no son 14 y 39

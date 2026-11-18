@@ -328,12 +328,222 @@ Nada más: ningún fotograma, ninguna transcripción ni filtrada, ningún libro,
    (b) le da un nombre de búsqueda hacia atrás a un recorrido hacia delante. Coste de (a): el visor
    cambia de lector (decisión 3).
 
+5. **F1 no cumple (iv) en julio** (F1.4): 2026-07-01 de 11 a 15 gana una P1 (la venta del trader
+   de las 12:59 en Madrid) porque el bot pasa a alcista con el rango de la mañana; la voz del
+   trader en esa sesión dice alcista y la pantalla una venta. (i), (ii), (iii) y el punto 6, sí.
+   Opciones: (a) dar F1 por bueno tal como está, con esa fila como la contradicción voz-pantalla
+   que VIDEO-JULIO.md ya dejaba «a preguntar solo si se repite», y llevarla a la 7b (¿qué lado
+   tenía tu rango el 1 de julio a las 11, y por qué vendes a las 12:59?); (b) revertir F1 hasta
+   la 7b. Recomiendo (a): la regla es lo que el trader dijo en el bloque técnico, las siete
+   sesiones declaradas casan, y la única fila que no casa es una en que su voz y su operación se
+   contradicen. Coste de (b): vuelven las 20 P1 y las 10 P5 del otro lado. **El código de F1
+   queda commiteado y no se retoca hasta tu respuesta.**
+
 **Cómo sigue la rama sin respuesta** (la PARADA es condicional): F1 y F2 cuadran en lo que la fase 0
 puede medir (A-1 y A-4 con nota y sin REOPEN; con `cierre` y `cuerpo` el motor pide que la M1 cierre
 más allá del extremo de la zona posterior). F1 se juzga además con las filas declaradas y el punto 6,
 que se miden después de escribir la función. Sigo con F1, F2 y F3 y con las recomendaciones de
 arriba.
 
+## F1 · S-1, el sesgo de H4 por el rango vigente (ADR-0094)
+
+**Commit** `feat(sesgo): el sesgo de H4 es el del rango vigente (S-1 de la 7a, ADR-0094)`, con su
+`make check` sellado (3532 passed, 6 xfailed). El primero salió en rojo con un fallo:
+`test_registro.py::test_fichero_real_cada_valor_de_estrategia_cita_al_trader` (un parámetro de
+`estrategia` no puede tener por fuente una decisión); la fuente de `sesgo_h4_rango_nuevo` pasó a ser
+lo que el trader sí dijo, en parte (`ev-v18-000822-57145b90`), y la lectura del consultor la nombra
+`consumido_por: [ADR-0094]` (como `liquidez_m15_mecha_que_vuelve`, cuya fuente es un ítem).
+
+### F1.1 Lo que se hizo
+
+- **Registro**: `fb-2026-11-16-sesion-07-33fdaa6c`, CORRECT sobre RN-003 con
+  `ev-v18-000249-bb7b1c07` (`--fecha 2026-11-16`, `--recibido-el 2026-11-16`, `trader_grabado`,
+  vídeo, v18 0:02:49-0:02:56), sin `supersede`, como `31fb311f`, `ca0afae6` y `6e7da456`.
+  `feedback new` creó la carpeta `knowledge/feedback/2026-11-16-sesion-07/` (verificado: no
+  existía). `feedback pending` lista ahora como «pendientes» los tres CORRECT anteriores sobre
+  RN-003 («RN-003 no lo cita todavia»): la regla solo refleja el registro que cita
+  (`cli.py:2064-2075`), y en `main` ya pasaba con dos de ellos (RN-003 citaba solo `6e7da456`); no
+  es nuevo ni se arregla aquí.
+- **Spec** (spec 18.6.4 → 19.0.0, mayor: la regla cambia de sentido, como ADR-0080): RN-003 (título,
+  `entonces`, `cita`, `literal`, forma con `que: vela_h4_cerrada`, `contra: rango_h4_vigente` y
+  `rango_nuevo: sesgo_h4_rango_nuevo`, y un párrafo al frente de sus notas, que se conservan); el
+  predicado `sesgo_h4_al_abrir` (descripción, argumentos, `cita`, `literal`); dos tokens nuevos y
+  una línea en los dos viejos (ya ninguna forma los nombra); las notas de RN-033 y el token
+  `insuficiente`; `sesgo_h4_rango_nuevo` (nuevo, DEFAULT_AMBIGUOUS en
+  `vela_que_rompe_con_su_color`, opciones esa y `otra`, que el motor niega con nombre); las
+  descripciones de `sesgo_h4_regla` y `sesgo_h4_tope_velas`. `sesgo_h4_criterio_ruptura` no
+  cambia.
+- **A-58** (nueva, `pregunta`, no bloqueante, `resuelve_en: [F18]`), con la búsqueda en el corpus
+  escrita en su `pregunta` (la deuda de Technical Debt): «nuevo rango» como frase, «actualiz» y
+  «rango», «rango» y «mitig» por prefijo; evidencia `ev-v18-000822-57145b90`,
+  `ev-v18-011054-fbf8e9ae` y `ev-v11-000038-fef9789d`. Su fila en la tabla Known Ambiguities.
+- **A-1**: una NOTA al frente de su `pregunta`, sin REOPEN (0.3).
+- **ADR-0094**, su fila del índice y recuadros fechados en ADR-0044, ADR-0060, ADR-0075 y ADR-0080
+  (el cuerpo no se toca). ADR-0094 salió del bloque `ids-inexistentes` del encargo, y el bloque con
+  él.
+- **Motor** (`domain/sesgo.py`): la regla a) a e); `ResultadoSesgo` gana `rango_alto`, `rango_bajo`
+  y `rango_vela` (solo registro), con el significado de cada campo de 0.3 (decisión 4, opción a).
+  `engine/primitivas.py`: el sujeto nuevo, el argumento `rango_nuevo` y la anotación
+  `sesgo_h4_rango` (`alto:bajo:inicio`, solo registro). El arnés no cambia: la línea «Por sesion»
+  sigue igual (la lee `patrones.py`, medido en la corrida de abajo).
+- **Visor** (decisión 3, opción a): toma la H4 que fija el lado y la del rango del resultado (ya no
+  las deduce por `velas_miradas`), y dice «el rango vigente es la H4 que abre a las HH:MM (alto, bajo,
+  en puntos)», o «la del arranque, sin lado». La deuda de enseñar las saltadas sigue.
+- **Láminas**: las frases del sesgo dicen el rango vigente en el idioma del trader («el rango es la
+  vela H4 que rompió por arriba el rango anterior y cerró verde, y nadie lo ha roto después cerrando
+  de su color»), una frase nueva con la hora, el alto y el bajo del rango, las saltadas como «Después,
+  N velas H4 rompieron el rango y cerraron del color contrario: el rango no cambia», y «La vela H4
+  que es el rango viene de antes de la ventana» cuando nace antes del panel. El panel de H4 dibuja el
+  alto y el bajo del rango. Con lado, el rango anotado tiene que ser la H4 que fija el sesgo, o
+  `LaminaError`. No se generó ninguna lámina.
+
+### F1.2 Los tests, antes que el código (ADR-0093 §4)
+
+- **Sintéticos de a) a e)**, `tests/unit/test_sesgo_rango.py` (15). Contra el código de `main` (el
+  `src/` de la rama era idéntico al de `main` al correrlos: `git diff main --stat -- src tests
+  knowledge` vacío): 11 fallan. Los que deciden el lado fallan por la aserción, no por un atributo:
+  `test_a_la_roja_que_rompe_solo_a_su_anterior_dentro_del_rango_no_cambia_el_lado` (main: BAJISTA),
+  `test_a_al_reves_en_un_rango_bajista` (main: ALCISTA) y
+  `test_b_el_rango_nuevo_manda_para_las_siguientes` (main: ALCISTA); los demás, por los campos
+  nuevos.
+- **Por el camino real**, `tests/unit/test_sesgo_rango_real.py`: las H4 que recibe el motor
+  (`arnes.dias_de_mercado`, por la compuerta) y los parámetros del registro, el 2026-07-07 y el
+  2026-07-15 de 11 a 15 dan ALCISTA. Contra `main`, con una copia temporal adaptada a su firma (sin el
+  quinto argumento, que en `main` no existe; borrada después y nunca commiteada): los dos fallan con
+  `assert <Sesgo.BAJISTA> is <Sesgo.ALCISTA>`. Con la regla nueva, pasan.
+- **Cambian de sentido A PROPÓSITO**: ocho de `test_sesgo_h4.py` (seis por `velas_miradas`, que ahora
+  cuenta las H4 comparadas con el rango; `test_rompe_arriba_y_cierra_verde_es_alcista`, porque la
+  ruptura se mide contra el rango; `test_rompe_abajo_y_cierra_roja_es_bajista`, que gana el caso a);
+  y `test_varias_seguidas…`, cuya última vela rompía el alto del rango y cerraba verde); dos de
+  `test_laminas_registro.py`, que comparaban con una copia literal del `sesgo_h4` de `main` y ahora
+  comprueban que el registro cuadra con la regla del rango (`_cuadra`); y las dos frases de
+  `test_laminas_svg.py`. Nuevos: dos de láminas (el panel dibuja el rango; un rango que no es la H4
+  que fija se niega) y la anotación del rango en el test de las dos evaluaciones.
+
+### F1.3 El arranque (punto 6), con la función ya escrita y antes de la corrida
+
+`anexos/ACTIVAR-SESION-07/arranque.py 60 120` → `arranque-60-120.txt` (fila de HOLDOUT antes):
+
+| mes | sesiones | cambian de lado | < 60 H4 cargadas | < 120 H4 cargadas | INSUFICIENTE con 60 | con 120 |
+|---|---|---|---|---|---|---|
+| 2026-01 | 42 | 0 | 20 | 40 | 1 | 1 |
+| 2026-04 | 42 | 0 | 0 | 0 | 0 | 0 |
+| 2026-07 | 26 | 0 | 0 | 0 | 0 | 0 |
+| 2026-08 | 42 | 0 | 0 | 0 | 0 | 0 |
+| total | 152 | **0** | 20 | 40 | 1 | 1 |
+
+**Ninguna sesión de construcción cambia de lado entre 60 y 120.** La reserva: en enero (que solo
+carga el suyo) 20 sesiones tienen menos de 60 H4 cargadas y 40 menos de 120; en ellas los dos topes
+arrancan en la misma primera vela cargada, así que la comparación no mide su dependencia del
+historial: **es la dependencia de ADR-0060, y para esas 20 no se puede medir sin descargar diciembre
+de 2025**, que el encargo no autoriza. Una sesión de enero queda INSUFICIENTE con los dos topes.
+
+Una por una (todas de construcción): las siete declaradas, con 134 a 207 H4 cargadas, dan **alcista**
+(07-01 07-11, 07-06 07-11, 07-06 11-15, 07-07 07-11, 07-07 11-15, 07-15 11-15) y **bajista** (07-17
+11-15), con 60 y con 120: ninguna depende del arranque. Las siete del bloque de la 7b: 2026-01-13
+07-11 (44 cargadas) bajista; 2026-04-15 11-15 (195) alcista; **2026-01-07 07-11 (20 cargadas)**
+bajista; 2026-01-19 11-15 (69) alcista; 2026-01-21 07-11 (80) bajista; 2026-01-22 11-15 (87)
+bajista; 2026-07-16 07-11 (200) alcista. **El 01-07 y el 01-13 tienen menos de 60**: su sesgo sale
+del rango que arranca en la primera H4 de enero, y depende del historial cargado sin que se pueda
+medir aquí (para la rama siguiente).
+
+### F1.4 La corrida de julio tras F1 (D0, etiqueta `f1`)
+
+Las tres órdenes de D0 sobre el código commiteado de F1 (fila de HOLDOUT antes):
+`pivote-julio-f1.txt` y `delta-julio-base-f1.txt` en los anexos.
+
+| | base | f1 | delta |
+|---|---|---|---|
+| T0 (parejas) | 14 | 14 | **0** |
+| P5 + P6 en sesión (operaciones de más) | 39 | 24 | **−15** |
+| P1 | 20 | 1 | −19 |
+| P5 del otro lado | 10 | 2 | −8 |
+| P4 | 1 | 17 | +16 |
+| T0 + P2 + P3 + P7 | 46 | 49 | +3 |
+
+**El rn003 cambia en 8 sesiones de julio**: las siete declaradas (las seis a alcista, la 07-17 11-15
+a bajista) y **07-01 11-15** (bajista → alcista), que no estaba declarada.
+
+**Las filas declaradas, contra lo que CASA:**
+
+- **(i) CUMPLE**: el rn003 de las siete sesiones es el lado del trader.
+- **(ii) CUMPLE**: ninguna de las 20 filas del trader sigue en P1: pasan a T0 (5: 07-06 06:22 y
+  10:11, 07-07 05:02, 10:01 y 11:57), P2 (4), P3 (5), P7 (1) y P4 (5: las cuatro de 07-15 11-15 y la
+  de 07-17 11-15).
+- **(iii) CUMPLE**: las 10 P5 del otro lado desaparecen (07-01 07-11 ×3, 07-07 07-11 ×1, 07-07 11-15
+  ×5, 07-15 11-15 ×1).
+- **(iv) NO CUMPLE**: **2026-07-01 de 11 a 15 gana una P1 que hoy no tiene**: la venta del trader de
+  las 10:59:05 UTC (12:59 en Madrid), que era P2 (7 puntos de la venta del bot), con el sesgo del bot
+  ahora alcista. Y dos P5 del otro lado nuevas en la misma sesión (compras del bot de las 09:25 y
+  11:53 UTC). Lo que hay que saber para leerla (VIDEO-JULIO.md §4.1, :604): en esa sesión **la voz
+  del trader dice alcista** («Como todavía no se ha roto nuestro rango, entonces nosotros todavía nos
+  planteamos traer alcistas […] nos enfocamos en buscar 3 alcistas», v11 0:05:44-0:06:09) **y en
+  pantalla vende**; VIDEO-JULIO.md la dejó «sin clase: la voz dice compras y la pantalla una venta: a
+  preguntar solo si se repite». El bot de F1 dice lo que dice la voz.
+- **El punto 6**: ninguna de las siete depende del arranque.
+
+**PARADA de F1, por (iv)** (abajo, «Lo que necesito que decidas», punto 5). **La regla no se retoca.**
+El código de F1 queda commiteado; F2 y F3 siguen.
+
+**Las 14 parejas de la línea base** (`motor decisiones --bitacora 2026-07-03,2026-07-14` sobre el
+código de F1, en `data/activar-sesion-07/decisiones-f1/`): **9 siguen** y **5 dejan de serlo**, y
+las cinco por un freno de la cuenta del mes, de rebote, no por el sesgo (el rn003 de esas sesiones no
+cambia):
+
+| Pareja de la base | Ahora | Causa |
+|---|---|---|
+| 2026-07-03 07-11, compra 07:43 UTC | P3 | **RN-036** (la racha de pérdidas seguidas, que la cuenta arrastra entre días; ADR-0077) prohíbe abrir desde las 07:24 UTC; en la base no la prohibía en esa sesión (el bot compró a las 07:24 y a las 07:35): la cuenta del mes cambia desde el 07-01 |
+| 2026-07-14 11-15, compra 10:33 UTC | P3 | **RN-032** (la lectura prospectiva del límite total) prohíbe abrir desde las 09:24 UTC |
+| 2026-07-15 07-11, compra 05:06 UTC | P4 | **RN-032**: desde el 07-15 el bot no abre (su saldo queda en 90.908,38 desde el cierre del 07-14) |
+| 2026-07-16 07-11, compra 06:00 UTC | P4 | RN-032, igual |
+| 2026-07-17 07-11, venta 05:46 UTC | P4 | RN-032, igual |
+
+Las P4 nuevas (16) son las operaciones del trader del 07-15 al 07-17 (y la de 07-03 11-15), sin
+ninguna orden del bot por esos frenos. **Cuántas de las 20 pasan a pareja: 5** (no se declaró
+mínimo; a la tasa de la línea base serían unas 6). Ningún parámetro se elige por estas cifras
+(ADR-0093 §4).
+
+## F2 · S-2, el break even al cierre y con cuerpo (A-13)
+
+**CUADRA (0.4)**: el nivel de RN-014 es el extremo de la zona de control posterior a la entrada
+(ADR-0061 §4) y, con `cierre` y `cuerpo`, el motor pide que una M1 CIERRE más allá de ese nivel y
+mueve el stop en ese cierre (ADR-0065 §5). No falta código. **Desviación declarada** de «en parte no
+se cierra» (encargo): la fila S-2 está «en parte» por «otra» (§6:769) y se activa lo que el trader
+dijo como regla general en el bloque técnico; el margen, otra fila «en parte» (§6:771), no se activa.
+El precedente es `toma_antes_de_la_ventana` (sesión 4).
+
+### F2.0 El caso real y los tests, antes que los registros
+
+**Los `stop_movido` de julio en la línea base**: 18 (los «100 frente a 247» del encargo son de toda
+la construcción; en julio, 18 frente a 53). Para cada uno, con las M1 de julio (un guion de
+diagnóstico en la carpeta de trabajo, fuera del repo, que solo lee las M1 y la salida base), el
+nivel de la zona posterior y si la M1 del toque cierra más allá: **11 cierran más allá y 7 no**
+(2026-07-03 o5, o11 y o15; 2026-07-07 o11 y o22; 2026-07-13 o13; 2026-07-16 o12). Elegido
+**2026-07-16, sesión de 11 a 15, compra o12** (llenada a las 09:35:57 UTC, stop movido a las
+09:39:10 UTC): el nivel es 1.14634 y la M1 de las 09:39 cierra en 1.14629. No es la reserva de la 7b
+(2026-07-16 de 7 a 11) ni un día del rango de H4 que F1 cambia.
+
+`tests/unit/test_break_even_cierre.py`: el registro dice `cierre` y `cuerpo`; sintéticos en compra y
+en venta (la M1 que pasa el nivel con la mecha y cierra sin pasarlo no rompe la zona; la que cierra
+con cuerpo más allá, sí, en esa vela); y el camino real sobre las M1 del 2026-07-16 (con `mecha` la
+zona se rompía en la M1 del toque; con el criterio del registro, no). **Contra los parámetros de
+`main`** (el `src/` de la rama no cambia en F2; corridos antes del primer registro): **los cuatro
+fallan por la aserción** (`'tocar' == 'cierre'`; `3 is None` en compra y en venta; `4 != 4` en el
+real). Entra en el commit del criterio, cuando el registro ya lo cumple.
+
+### F2.1 `break_even_condicion` → `cierre`
+
+`fb-2026-11-16-sesion-07-828031df`, CORRECT con `supersede` de `fb-2026-09-09-sesion-01-0ccafcba`,
+con `ev-v18-001327-70f1d014` (v18 0:13:27-0:13:45; «nosotros esperamos a que cierre la vela y si
+cierra por debajo no vamos a poder»); `feedback apply --check` proponía solo ese parámetro, y
+`feedback apply` lo escribió. La descripción dice el valor nuevo, que la excepción del imbalance
+queda descartada por el trader (`ev-v18-001145-901d8aa0`) y que el margen no se activa. spec
+19.0.0 → 19.0.1. **Cambian de sentido A PROPÓSITO**: `test_be_al_tick.py` (el registro real es
+`cierre`; `tocar` se prueba con una copia reescrita) y
+`test_cableado.py::test_rn014_pone_el_stop_en_la_entrada_al_completarse_la_zona_posterior` (el del
+mecanismo al tick de ADR-0065, que se corre con `tocar` y `mecha` en una copia del registro:
+`registro_con_valores`).
+
 ## Estado
 
-EN CURSO: fase 0 escrita y commiteada; siguen F1, F2 y F3.
+EN CURSO: fase 0 y F1 commiteadas (F1 en PARADA por la condición (iv), punto 5 de las decisiones); siguen F2 y F3.

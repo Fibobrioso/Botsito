@@ -206,7 +206,8 @@ def test_el_nivel_vigilado_es_el_mismo_punto_que_completa_la_zona() -> None:
 
 def _registro_con_break_even(tmp_path: Path, valor: str) -> Registro:
     texto = (tc.RAIZ / "knowledge" / "spec" / "parametros.yaml").read_text(encoding="utf-8")
-    viejo = '    valor: "tocar"\n'
+    # desde trabajo/activar-sesion-07 (sesion 7a, S-2) el valor del registro real es `cierre`
+    viejo = "    valor: cierre\n"
     assert texto.count(viejo) == 1
     ruta = tmp_path / "parametros.yaml"
     ruta.write_text(texto.replace(viejo, f'    valor: "{valor}"\n'), encoding="utf-8")
@@ -245,10 +246,13 @@ def test_por_el_motor_el_break_even_al_tocar_salva_la_m1_que_toca_y_vuelve(
     cierre: int,
     movido: bool,
 ) -> None:
-    """Con `break_even_condicion` = `tocar` (el valor CONFIRMED) el motor vigila el punto alto
-    desde el cierre de la roja y el stop va a la entrada en el tick que lo pasa: la posicion sale
-    a la entrada. Con `cierre`, lo de antes: la M1 llega al stop inicial antes de cerrar."""
-    reg = registro if valor == "tocar" else _registro_con_break_even(tmp_path, valor)
+    """Con `break_even_condicion` = `tocar` (CONFIRMED hasta la sesion 7a) el motor vigila el punto
+    alto desde el cierre de la roja y el stop va a la entrada en el tick que lo pasa: la posicion
+    sale a la entrada. Con `cierre` (el valor desde la sesion 7a, S-2): la M1 llega al stop inicial
+    antes de cerrar, y el stop no se ha movido."""
+    # CAMBIA A PROPOSITO (trabajo/activar-sesion-07, F2): el registro real dice `cierre`, y
+    # `tocar` (lo de antes, ADR-0065) se prueba con una copia reescrita
+    reg = registro if valor == "cierre" else _registro_con_break_even(tmp_path, valor)
     assert reg.opcion("break_even_condicion") == valor
     mercado = _toca_y_vuelve_en_el_motor()
     motor = tc._motor(reg, vocabulario, mercado)
