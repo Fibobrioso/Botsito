@@ -16,6 +16,7 @@ rutas_permitidas:
   - docs/adr/0044-*.md
   - docs/adr/0060-*.md
   - docs/adr/0061-*.md  # ampliado en F2.3: decision 1 de la fase 0, recuadro por S-2
+  - knowledge/cases/meses_reservados.yaml  # respuesta del consultor a la PARADA final, punto 8
   - docs/adr/0065-*.md
   - docs/adr/0075-*.md
   - docs/adr/0080-*.md
@@ -31,7 +32,16 @@ rutas_protegidas:
   - Makefile
   - .claude/
   - knowledge/evidence/
-  - knowledge/cases/
+  # knowledge/cases/ entero salvo meses_reservados.yaml (punto 8 de la respuesta a la PARADA final)
+  - knowledge/cases/README.md
+  - knowledge/cases/criterio_fidelidad.yaml
+  - knowledge/cases/retirados.yaml
+  - knowledge/cases/dev/
+  - knowledge/cases/fidelidad/
+  - knowledge/cases/fixtures/
+  - knowledge/cases/holdout/
+  - knowledge/cases/kit/
+  - knowledge/cases/visto/
   - knowledge/corpus/
   - knowledge/feedback/2026-09-09-sesion-01/
   - knowledge/feedback/2026-09-29-sesion-03/
