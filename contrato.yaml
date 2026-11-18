@@ -1,0 +1,55 @@
+rama: trabajo/activar-sesion-07
+riesgo: alto  # cambia el motor (RN-003 por el rango vigente, RN-014 al cierre y con cuerpo) y la spec con registros del trader; cada valor con su Fuente:
+artefacto: docs/validation/ACTIVAR-SESION-07.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/ACTIVAR-SESION-07.md
+  - docs/validation/anexos/ACTIVAR-SESION-07/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/validation/TRAZAS-ABLACION.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - knowledge/feedback/2026-11-16-sesion-07/
+  - knowledge/spec/
+  - docs/spec/
+  - docs/adr/0094-*.md
+  - docs/adr/README.md
+  - docs/adr/0044-*.md
+  - docs/adr/0060-*.md
+  - docs/adr/0065-*.md
+  - docs/adr/0075-*.md
+  - docs/adr/0080-*.md
+  - docs/adr/0093-*.md
+  - src/botsito/domain/
+  - src/botsito/engine/
+  - src/botsito/viewer/
+  - tests/
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - knowledge/evidence/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - knowledge/feedback/2026-09-09-sesion-01/
+  - knowledge/feedback/2026-09-29-sesion-03/
+  - knowledge/feedback/2026-10-04-sesion-04/
+  - knowledge/feedback/2026-10-23-sesion-05/
+  - knowledge/feedback/2026-11-04-sesion-06/
+  - knowledge/cuentas/
+  - config/
+  - data/manifests/
+  - docs/plan/
+  - docs/adr/0000-template.md
+  - docs/validation/PREGUNTAS-7B.md
+  - docs/validation/SESION-07-EXTRACCION.md
+  - scripts/transcribir_sesion.py
+  - scripts/generar_capa.py
+comprobaciones:
+  - uv run botsito feedback apply --sesion 2026-11-16-sesion-07 --check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito spec docs --escribir
+  - uv run python scripts/generar_capa.py --comprobar
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1

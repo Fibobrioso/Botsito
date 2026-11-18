@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-07
 
 ## Current Feature
-Ninguna rama abierta. trabajo/sesion-07 cerrada en main el 2026-11-18 (stable/F39d-sesion-07): la sesión 7a (v18 y v19, grabada el 2026-11-16 y el 2026-11-17) ingerida y extraída, con sus PARADAS respondidas; nada resuelto.
+trabajo/activar-sesion-07 EN CURSO (R4.3, punto (1) de la F de la Next Action): la activación de la sesión 7a (S-1 el sesgo de H4 por el rango vigente, con ADR nuevo; S-2 el break even al cierre y con cuerpo; lo que se registra sin tocar el motor) y la corrida de julio de ADR-0093 §4. Encargo docs/encargos/trabajo-activar-sesion-07.md; informe docs/validation/ACTIVAR-SESION-07.md.
 
 ## Stable Main State
 5c047f31 · merge de `trabajo/sesion-07` (tag `stable/F39d-sesion-07`), sobre `stable/F39c-skills-metodo` (0f420593). Informe docs/validation/SESION-07-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
@@ -162,8 +162,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 72 (2026-11-17).
+— ninguna desde el Archivo 73 (2026-11-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 72 (2026-11-17).
+— ninguna desde el Archivo 73 (2026-11-18).
