@@ -106,6 +106,29 @@ construcción»; el mes fijo hace comparables los deltas).
 Esto fija lo que la NOTA de ADR-0092 §6 (2026-11-09) dejó al ADR del método («Cómo se convierte una
 respuesta del trader en regla»). ADR-0092 no se toca.
 
+> **RECUADRO (2026-11-18, rama `trabajo/activar-sesion-07`, D0 de su encargo).** Cómo se corre
+> julio en una activación, que este § no escribía (`docs/validation/SKILLS-METODO.md`, fase 0).
+> Tres órdenes, cada una suelta, desde la raíz, sobre código commiteado y nunca a la vez que un
+> `make check` (`motor arnes` no crea la carpeta de `--salida`: se crea antes):
+> 1. `uv run botsito motor arnes --simular --meses 2026-07 --salida data/<rama>/julio-<etiqueta>.txt`;
+> 2. `uv run python docs/validation/anexos/RECORRIDA-CONSTRUCCION-2/patrones.py data/<rama>/julio-<etiqueta>.txt --filas > data/<rama>/patrones-julio-<etiqueta>.txt`
+>    y después `sed -i 's/\r$//'` sobre ese fichero;
+> 3. `uv run python docs/validation/anexos/PREPARACION-SESION-7/pivote_julio.py data/<rama>/patrones-julio-<etiqueta>.txt`
+>    (sale con 1 cuando no da 14 y 39: es el delta, no un fallo).
+>
+> **El delta**, contra la línea base de `docs/plan/PIVOTES-SESION-7.yaml`: parejas = T0 − 14;
+> operaciones de más = (P5 + P6 en sesión) − 39. Y **fila por fila**, con
+> `docs/validation/anexos/ACTIVAR-SESION-07/delta_julio.py <patrones base> <patrones nuevo>
+> <arnés base> <arnés nuevo>`, que solo lee salidas: las filas de 2026-07 que cambian de patrón,
+> aparecen o desaparecen, y el rn003 de cada sesión de julio en una y otra. **El control**,
+> antes de tocar nada (etiqueta `base`, código de `main`): tiene que salir «OK: 14 y 39» y las
+> filas de 2026-07 tienen que ser las de `anexos/RECORRIDA-CONSTRUCCION-2/patrones-cuenta-por-mes.txt`
+> (medido el 2026-11-18: con `--meses 2026-07` reproduce, 106 filas idénticas; la línea base se
+> produjo sin `--meses`, y si un día no reprodujera, se repite sin `--meses` solo como
+> diagnóstico). Al repositorio van solo las salidas de `pivote_julio.py` y de `delta_julio.py`; las
+> del arnés se quedan en `data/`. Lo que cada corrida lee para calentar va en la fila de
+> `HOLDOUT-EXPOSICIONES.md` del día, antes de correr. El cuerpo de este § no cambia.
+
 ### 5. Las clases
 
 Las de la clasificación de las filas: **error nuestro, regla desconocida, efecto de la cuenta,
