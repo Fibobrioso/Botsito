@@ -56,8 +56,8 @@ reloj de Madrid; ninguna pregunta técnica lleva días ni fechas.
 - En la revisión del 2026-11-18 (`trabajo/laminas-sesion-7b`): los ítems de v18 y v19 citados
   abajo, que ya cita ACTIVAR-SESION-07.md, y los anexos commiteados de PREPARACION-SESION-7,
   RECORRIDA-CONSTRUCCION-2 y ACTIVAR-SESION-07. Ninguna transcripción cruda ni filtrada, ningún
-  fotograma, ningún libro, ningún caso. Filas del 2026-11-18 de esa rama en
-  `HOLDOUT-EXPOSICIONES.md`.
+  fotograma, ningún libro, ningún caso. Filas del 2026-11-18 y del 2026-11-19 de esa
+  rama en `HOLDOUT-EXPOSICIONES.md` (la lectura, en la del 19, escrita tarde).
 
 ## 1. El bloque de días (Para Aleks: no va al PDF)
 
@@ -75,7 +75,7 @@ y abren con 60 o más velas de 4 horas cargadas, medido el 2026-11-18 (`LAMINAS-
 | 4 | 2026-01-19, 11-15 | S-3 (cociente 1,78 en la entrada) | 3 (3 / 0) |
 | reserva | 2026-01-21, 07-11 | S-3 (cociente 0,50 en la entrada) | 3 (2 / 1) |
 | reserva | 2026-01-22, 11-15 | el sesgo de H4 por una ruptura de 2 puntos (toca A-16) | 3 (3 / 0) |
-| reserva | 2026-07-16, 07-11 | S-3 (cociente 0,34 con el stop fuera; era una pareja en la línea base y, tras activar la 7a, ya no: RN-032, ACTIVAR-SESION-07.md F1.4) | 1 (1 / 0) |
+| reserva | 2026-07-16, 07-11 | S-3 (cociente 0,34 con el stop fuera) | 1 (1 / 0) |
 
 «Sirve a», de `anexos/PREPARACION-SESION-7/sustitutas.txt`; las filas, de la clasificación de la
 línea base (`anexos/RECORRIDA-CONSTRUCCION-2/patrones-cuenta-por-mes.txt`), contadas con
@@ -179,7 +179,7 @@ fila; S-4, S-5 y S-6 no lo tienen y van detrás.
 - **Pregunta 2:** «En el dibujo 2: cuando la vela cierra por encima del alto de tu zona de control,
   ¿te basta con que cierre un punto por encima, o tiene que pasarlo por un margen? ¿Cuánto, y
   siempre el mismo?
-  - (a) me basta con que cierre por encima;
+  - (a) me basta con que cierre por encima, por poco que sea;
   - (b) tiene que pasarlo por un margen: ¿cuánto?, ¿siempre el mismo?;
   - (c) otra, ¿cuál?»
 - **Para precisar:** el bajo que deja la propia toma, ¿cuenta como zona de control?

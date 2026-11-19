@@ -10,6 +10,10 @@ local ni en origin: `git tag -l 'stable/F39f*'` y `git ls-remote --tags origin '
 vacíos). Riesgo fijado al abrir como **alto**, como manda el encargo (alto si entra el arreglo de F2
 en `src/botsito/engine/`, medio si no); se dirá al final cuál fue.
 
+```ids-inexistentes
+ADR-0095 — el encargo lo reservaba para el arreglo de F2; F2 no encontró nada y no existe
+```
+
 ## Base comprobada (abrir-rama, paso 1)
 
 - `git rev-parse main origin/main`: `b174d714194fd1a61dc9ddc7b85407b979441a6e` dos veces; `git status --short` vacío.
@@ -89,7 +93,7 @@ Lo que cambia algo, y qué se hizo:
 |---|---|---|
 | 24 | **INCORRECTA**: `filas-por-sesion.txt` no tiene filas de 2026-04-24 ni de 2026-04-27, y es de la corrida vieja | Se cuentan con el mismo guion (`filas_por_sesion.py`, idéntico al de `main`) sobre la misma fuente (`filas-por-sesion-7b.txt`). Desviación 1 |
 | 41 | **INCORRECTA**: «Lo que nos has dicho» puede citar lo que cita SESION-07-EXTRACCION.md, pero solo se puede leer lo que cita PREGUNTAS-7B.md o ACTIVAR-SESION-07.md | Todo ítem de «Lo que nos has dicho» de las preguntas nuevas lo cita ACTIVAR-SESION-07.md, y se leyó. `ev-v19-011640-1fdc33a7` (solo en SESION-07-EXTRACCION.md) va citado en «Para Aleks» por esa extracción, sin leerlo |
-| herencia 1 | La reserva 07-16 dice «es una pareja», y tras F1 ya no lo es (RN-032; ACTIVAR:505) | En §1: «era una pareja en la línea base y, tras activar la 7a, ya no» |
+| herencia 1 | La reserva 07-16 dice «es una pareja», y tras F1 ya no lo es (ACTIVAR:505) | En §1 sale la mención de la pareja (primero se escribió lo que había cambiado; el revisor, b4, vio que dejaba deducir algo de sus láminas) |
 | herencia 3 | D4 pedía las filas «con la corrida nueva»; para enero y abril no hay ninguna commiteada | Desviación 1 |
 | 9 | (b) choca con LAMINAS-MOTIVOS.md:537: la foto no dice si la otra causa de tope se cumple | F2.2: se mide lo que se puede (los cortes con `detenido_por_tope` encendido); si sale alguno, la segunda mitad va a la PARADA final |
 | 12 | Un `LaminaError` aborta toda la llamada de `motor laminas`, no una sesión | F2: si pasa, las llamadas por separado que hagan falta para saber cuál (cada una, dos corridas) |
@@ -110,10 +114,14 @@ Lo que cambia algo, y qué se hizo:
 
 ### Exposiciones
 
-Dos filas del 2026-11-18 en `HOLDOUT-EXPOSICIONES.md`: la de la apertura (los `make check`) y la de
-0.2 (las dos medidas, que calientan con el M1 de marzo y de junio, como el arnés). El conteo de
-filas con `filas_por_sesion.py` (solo lee un anexo commiteado de construcción) se corrió antes de la
-segunda fila: **escrita tarde para ese punto**, y lo dice.
+Cuatro filas en `HOLDOUT-EXPOSICIONES.md`. Tres son del 2026-11-18: la apertura (los `make check`),
+0.2 (las dos medidas, que calientan con el M1 de marzo y de junio, como el arnés) y F2 (`motor
+laminas`, que calienta igual). La cuarta, del 2026-11-19, cubre los `make check` del último commit
+y, **escrita tarde** (revisor, a1), lo leído el 18: documentos y anexos commiteados de
+construcción, 20 ítems de evidencia de v18 y v19 citados por ACTIVAR-SESION-07.md y la búsqueda
+con conteo sobre los HTML de las láminas. El conteo de filas con `filas_por_sesion.py` se corrió
+antes de la fila de 0.2: **escrita tarde para ese punto**, y lo dice. El `make check` del commit de
+F2 a F4 empezó el 18 y acabó a las 00:07 del 19, y lo cubre la fila de la apertura.
 
 ## F1 · El bloque de días (CUADRA)
 
@@ -122,7 +130,7 @@ Las siete sesiones pasan hoy la compuerta y tienen 60 o más H4 (0.2). Lo hecho,
 1. Salen 2026-01-13 07-11 y 2026-01-07 07-11 (44 y 20 H4 cargadas).
 2. Entran 2026-04-24 07-11 y 2026-04-27 11-15 (de `sustitutas.txt`: «stop fuera», 0,62, «cumple»);
    «Sirve a» y las filas, de `sustitutas.txt` y de `filas-por-sesion-7b.txt`. Las reservas no
-   cambian (salvo el «es una pareja» de 07-16, arriba).
+   cambian (salvo que en la de 07-16 sale «es una pareja», arriba).
 3. El 2026-04-15 de 11 a 15 se queda como sesión 2; §1 dice que el trader ya lo marcó y lo operó en
    la 7a, por error, y el paso de la sesión de replay nueva y sin marcas va subrayado para ese día.
    La frase del pie («el bloque de días es la primera vez que se le oye operarlas») se corrige.
@@ -147,12 +155,12 @@ cada sesión y de qué tipo se dijo en el terminal, no aquí (F2.4).
 | Medida | Resultado |
 |---|---|
 | (a) `LaminaError` porque RN-004 abre escenario en el mismo cierre en que RN-016 o RN-001 dispararon por los intentos | **0**: la llamada no dio ningún `LaminaError` (tampoco el otro que nadie había medido, `detenido_por_tope` con origen en RN-020 y RN-029 a la vez; auditor, herencia 6) |
-| (b) b1: cortes con `detenido_por_tope` encendido por una regla | **0 de 27** cortes: ninguna lámina lleva la frase de RN-020 ni la de RN-029 (`FRASE_TOPE_POR_REGLA`, `laminas.py:506-511`; búsqueda con conteo sobre los HTML de la salida). Con el hecho encendido no hay lámina de tipo a (RN-001 prohíbe colocar), y en una de tipo b saldría su frase o un `LaminaError`. Con 0 cortes, la segunda mitad (si la otra causa también se cumple), que la foto no guarda, no hace falta medirla |
+| (b) b1: cortes con `detenido_por_tope` encendido por una regla | **0** cortes: ninguna lámina lleva la frase de RN-020 ni la de RN-029 (`FRASE_TOPE_POR_REGLA`, `laminas.py:506-511`; búsqueda con conteo sobre los HTML de la salida). Con el hecho encendido no hay lámina de tipo a (RN-001 prohíbe colocar), y en una de tipo b saldría su frase o un `LaminaError`. Con 0 cortes, la segunda mitad (si la otra causa también se cumple), que la foto no guarda, no hace falta medirla |
 
 **3b**: todas las sesiones del bloque dan al menos una lámina; ninguna sale.
 
-**F2.3: ninguna de las dos pasa.** No se toca el motor: ni `src/botsito/engine/` ni el ADR que el encargo reservaba para el arreglo (sale
-del bloque `ids-inexistentes` del encargo en el último commit), ni la corrida de julio de D0, ni
+**F2.3: ninguna de las dos pasa.** No se toca el motor: ni `src/botsito/engine/` ni ADR-0095, el ADR que el encargo reservaba para el arreglo (se queda en el
+bloque `ids-inexistentes` del encargo: desviación 6), ni la corrida de julio de D0, ni
 v2. La carpeta v1 es la de las láminas de la 7b. Las dos quedan como Technical Debt propuesto para
 el cierre (abajo). Así, el riesgo fue medio en lo hecho, aunque el contrato lo fijó alto al abrir,
 como manda el encargo.
@@ -238,7 +246,34 @@ la funcionalidad actuales.
 4. **El riesgo del contrato se queda en alto** aunque F2 no tocó el motor: lo fijó así el encargo al
    abrir.
 5. **El orden de la entrega es el de la skill entregar-rama** (CI antes del revisor), no el del
-   encargo (revisor, push y CI): el encargo dice que gana la skill.
+   encargo (revisor, push y CI): el encargo dice que gana la skill. El revisor corrió a la vez que
+   la CI, sobre el commit que la CI probaba.
+6. **ADR-0095 se queda en el bloque `ids-inexistentes` del encargo**, aunque el encargo manda
+   sacarlo en el último commit si no existe: el texto del encargo, copiado tal cual, lo nombra dos
+   veces, y sin el bloque `knowledge validate` falla («id citado que no existe»,
+   `docs/encargos/trabajo-laminas-sesion-7b.md:12` y `:45`, medido el 2026-11-19). Gana la medida.
+   Precedente: el ADR de S-15 de `trabajo-activar-sesion-05-motor.md`, que sigue en su bloque.
+7. **En S-2, pregunta 2, la opción (a) dice «por poco que sea»** (revisor, b1): la frase de la
+   pregunta es la reformulada de ACTIVAR-SESION-07.md:656, tal cual, y dice «un punto por encima»;
+   la opción sola («me basta con que cierre por encima») se podía leer como un margen de un punto.
+
+## Por qué cambió cada cosa
+
+| Qué | Por qué |
+|---|---|
+| Salen 2026-01-13 y 2026-01-07 (07-11) | abren con 44 y 20 H4 cargadas: su sesgo sale del rango que arranca en la primera H4 de enero, no del que vería el trader (F1.1; ACTIVAR-SESION-07.md F1.3) |
+| Entran 2026-04-24 07-11 y 2026-04-27 11-15 | las únicas de «stop fuera» con «cumple» que no estaban en el bloque, no se usaron en la 7a y no están entre las sesiones de enero con menos de 60 H4; sirven a la caja (F1.2) |
+| El 2026-04-15 se queda, con lo de la 7a dicho | el único caso de «el trader no opera y el bot sí», y en la 7a no vio ninguna lámina de ese día (F1.3) |
+| Los pasos de cada sesión | lo aprendido en la 7a (F1.5; ERRORES-RECURRENTES.md y SESION-07-EXTRACCION.md §5.1, punto 8) |
+| La reserva 07-16 ya no dice «es una pareja» | la frase ya no era cierta (ACTIVAR-SESION-07.md:505), y la que la sustituyó daba un pasaje más a una deducción sobre sus láminas (revisor, b4; «Lo que necesito que decidas», punto 5) |
+| S-1, A-35 | la pregunta 1 de la 7a no tuvo respuesta; decide cada toma de M15 (toca el dinero) |
+| S-2, zonas de control y margen del break even | «otra: A y B» sin decir qué distingue a C; el margen, cifrado una vez en un ejemplo; A-13 toca el dinero |
+| S-3 = A-48 y S-4 = A-58 | la regla del encargo: de más a menos filas; A-48 es la única con recuento (0.3) |
+| S-5 y S-6 = S-22 y S-19, sin recuento | decisión del consultor: su rama es el punto (2) y sin respuesta no se abre |
+| La reentrada, A-53 y A-43 a §3 | el encargo; A-53 y A-43 sin recuento por fila, y la reentrada pierde ante las dos que tocan el dinero |
+| `SESION_EN_CURSO = "08"` y la hoja 08 | la 7a ya está grabada; la hoja 08 tiene que casar con los títulos de PREGUNTAS-7B.md (el test lo exige) |
+| La línea de la skill | ACTIVAR-SESION-07.md la dejó preparada: lo que la skill decía que no estaba escrito ya lo está |
+| El motor, sin tocar | F2.2: (a) = 0 y (b) = 0 |
 
 ## El encargo, punto por punto
 
@@ -246,7 +281,7 @@ la funcionalidad actuales.
 |---|---|---|---|
 | 1 | Abrir con abrir-rama; base y CI de `main` comprobadas | Hecho | «Base comprobada» |
 | 2 | Contrato: R4, riesgo alto, artefacto, lista blanca, tag F39f libre | Hecho | `contrato.yaml` |
-| 3 | Encargo en `docs/encargos/` con el ADR reservado en `ids-inexistentes` | Hecho; sale del bloque en el último commit (el ADR no existe) | encargo |
+| 3 | Encargo en `docs/encargos/` con el ADR reservado en `ids-inexistentes` | Hecho de otra forma: el ADR no existe, pero se queda en el bloque, porque sin él `knowledge validate` falla | encargo; desviación 6 |
 | 4 | 0.1 herencias | Hecho | 0.1 |
 | 5 | 0.2 H4 cargadas y compuerta, con guion commiteado y fila de HOLDOUT | Hecho | 0.2; `anexos/LAMINAS-7B/` |
 | 6 | 0.3 filas por pregunta | Hecho | 0.3 |
@@ -258,8 +293,8 @@ la funcionalidad actuales.
 | 12 | F2.4 recuentos por sesión en el terminal | Hecho | — (no en el repo) |
 | 13 | F3 recuadro, seis técnicas ordenadas, preguntas nuevas, §3, hoja 08, test sustituido | Hecho | F3 |
 | 14 | F4 la línea de la skill | Hecho | F4 |
-| 15 | Informe con 0.2, porqué de cada cambio, F2, 0.3 y lo de la orden de cierre; tamaño de PS | Hecho | este informe |
-| 16 | Revisor con los cuatro alcances; push a `fix/` y CI | Después | «Informe del revisor», «CI» |
+| 15 | Informe con 0.2, porqué de cada cambio, F2, 0.3 y lo de la orden de cierre; tamaño de PS | Hecho | este informe; «Por qué cambió cada cosa» |
+| 16 | Revisor con los cuatro alcances; push a `fix/` y CI | Hecho | «La CI de Linux», «Informe del revisor» |
 | 17 | PARADA final | Hecho | abajo |
 
 ## PARADA final (no detiene la entrega; la rama no se cierra)
@@ -283,16 +318,213 @@ B-7 (3) y B-8 (2), de antes. No se cambió ninguna.
 2. **B-15 (2026-07-01) lleva día.** Opciones: (a) dejarla en §3; (b) llevarla al bloque de días como
    una pregunta de Aleks tras la sesión 4. Recomiendo (a): no tiene esquema y la 7b ya va llena.
    Coste de (b): un día de julio más que comprobar por la compuerta.
+3. **S-2, pregunta 1, primera parte, no discrimina** (revisor, b2): en el dibujo 1, A, B y C están
+   en el retroceso después de la toma y antes de romper el punto, así que «del retroceso, después
+   de tomar la liquidez» y «de antes de romper el punto» describen los mismos bajos. La duda de
+   SESION-07-EXTRACCION.md §5.1, punto 4, enfrenta «antes de romper el punto» (la zona del esquema)
+   con «después» (la del break even). Opciones: (a) que el dibujo 1 del PDF lleve también una zona
+   formada después de romper el punto, rotulada, y la opción (b) diga «después de romper el
+   punto»; (b) dejar la frase reformulada tal cual. Recomiendo (a): sin ella la respuesta no cambia
+   nada. Coste de (a): retocar el esquema y una opción, que son tuyos (la frase no se tocó aquí).
+4. **S-2 vuelve a preguntar algo RESUELTO** (revisor, b3): «Y si hay dos, ¿ese esquema te sirve o lo
+   descartas?» lo cerró A-20 («solo 1 zona control bro. si hay 2 se descarta»), y ADR-0093 §1 dice
+   que ninguna pregunta vuelve a preguntar lo decidido. Es tu reformulada (ACTIVAR-SESION-07.md:655)
+   y el encargo la manda; «Para Aleks» lo dice. Opciones: (a) quitar esa segunda parte y su hueco
+   en «Para confirmar al final»; (b) dejarla, declarándola como la excepción de ADR-0093 §1 por la
+   contradicción de la 7a. Recomiendo (a): A-20 lo dijo por escrito y sin dudas. Coste de (b):
+   abrir la puerta a reabrir A-20 con un registro `REOPEN`.
+5. **La reserva 07-16 y la clave** (revisor, b4): juntando ACTIVAR-SESION-07.md:504-505 y :600-603
+   (desde el 07-13 el bot no abre en julio, con el motor de F39e), `docs/runbooks/LAMINAS.md:50-53`
+   (qué es una lámina de tipo a y una de tipo b) y la fila de 07-16 de §1 (trader 1, bot 0), se
+   puede deducir cuántas láminas tiene la sesión de 2026-07-16 de 07 a 11 y de qué tipo, aunque no
+   qué carpeta es. Quitar la frase de §1 no lo arregla: los otros pasajes ya están en `main`.
+   Opciones: (a) aceptarlo: es una reserva, y la carpeta no se deduce; (b) cambiar esa reserva por
+   otra sesión que cumpla (habría que volver a pasar la compuerta y regenerar las láminas). Recomiendo
+   (a). Coste de (b): otra llamada de `motor laminas`, una fila de HOLDOUT y v2.
 
 **Lo que no me convence:**
 1. Las filas de §1 son de la línea base, anterior a activar la 7a; las láminas, del motor de
-   después. «Sirve a» puede no casar con lo que enseñan (ejemplo: la reserva 07-16 ya no es pareja).
+   después. «Sirve a» puede no casar con lo que enseñan.
    No hay corrida commiteada de enero ni de abril con el motor nuevo, y este encargo no la autoriza.
 2. El 2026-04-15: el trader ya lo operó una vez. Aunque abra un replay sin marcas, puede acordarse
    de lo que hizo; es la única sesión de «el trader no opera y el bot sí», y eso es lo que la hace
    valer, pero su primera vez ya no es ciega.
-3. S-2 lleva dos preguntas con dos partes la primera; es la más larga de la hoja.
+3. S-2 lleva dos preguntas con dos partes la primera; es la más larga de la hoja (y lleva b2 y b3).
+4. El «0 de 27 cortes» de la primera versión del informe (b5) y la frase «era una pareja… ya no»
+   de §1 (b4) siguen en la historia del commit 7eef7094, que no se reescribe.
+
+## La CI de Linux (`fix/laminas-sesion-7b`)
+
+| Run | Commit | Resultado |
+|---|---|---|
+| 44463029525 | 7eef7094 (F2 a F4) | `failure` por un solo test, el aceptado: `tests/unit/test_cli.py::test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/laminas-sesion-7b'; la rama actual es 'fix/laminas-sesion-7b'»); «1 failed, 3448 passed, 93 skipped» |
+| el del último commit | — | en el mensaje final a Aleks (se lanza después de este commit) |
+
+## Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Fila de HOLDOUT del 2026-11-19 que declara, escrita tarde, lo leído el 18 (documentos, anexos, 20 ítems de evidencia, la búsqueda con conteo sobre las láminas); §0 de PREGUNTAS-7B.md la nombra |
+| a2 | menor | «Exposiciones» al día: cuatro filas |
+| a3 | menor | La línea de PLANTILLA se queda: es la convención con que nacen los informes (abrir-rama, paso 4), y dice que la fase 0 ya está |
+| a4 | menor | `## Estado` al día |
+| b1 | importa | La opción (a) de S-2, pregunta 2: «me basta con que cierre por encima, por poco que sea»; la frase de la pregunta, tal cual (desviación 7) |
+| b2 | importa | A la PARADA, punto 3: el esquema y la frase son del consultor |
+| b3 | importa | A la PARADA, punto 4: es la reformulada que manda el encargo |
+| b4 | importa | Sale de §1 la frase de la pareja de 07-16; lo que queda (pasajes ya en `main`), a la PARADA, punto 5 |
+| b5 | menor | Sale el total de láminas del informe («0 cortes», sin el total) |
+| b6 | menor | «Por qué cambió cada cosa», bloque nuevo |
+| no comprobado | — | El orden de `--sesiones`: lo comprobó la sesión, sin escribirlo. Ninguno de los órdenes en que el repo lista las siete sesiones (§1, los anexos, su README) es el de la llamada |
+
+## Informe del revisor (subagente `revisor`, 2026-11-19, sobre 7eef7094), tal cual
+
+> Dos retiradas, marcadas en su sitio. (1) Una frase de b4, que decía el recuento y el tipo de las
+> láminas de una sesión que se deducen juntando pasajes: el encargo prohíbe que un fichero del repo
+> diga cuántas láminas tiene una sesión («QUÉ NO CAMBIA»). (2) El total de láminas, en tres sitios
+> (b5, su comparación con las filas de §1 y «Lo que no pude comprobar»), que el informe ya no da
+> (b5). Ninguna cita de un tramo no citable. Todo lo demás, tal cual.
+
+### Informe del revisor · trabajo/laminas-sesion-7b · 2026-11-19
+
+Revisión sobre HEAD 7eef7094 (base b174d714). El árbol de trabajo está limpio y son tres commits. Ficheros (`git diff --name-status main...HEAD`): 16, de ellos 7 con `A` y 9 con `M`. `src/` y `knowledge/` no cambian. En `tests/` solo cambia `tests/unit/test_transcribir_sesion.py`.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | `PREGUNTAS-7B.md` dice que la lectura de los ítems de v18 y v19 y de los anexos de PREPARACION-SESION-7, RECORRIDA-CONSTRUCCION-2 y ACTIVAR-SESION-07 está declarada en las «Filas del 2026-11-18 de esa rama». Ninguna de las tres filas que añade la rama lo dice. La de la apertura dice lo contrario: «Lo que lee la apertura: documentos del repo (el encargo, las skills, el contrato y `PROJECT_STATE.md`). **Nada más**». La de 0.2 solo nombra los dos guiones y `filas_por_sesion.py`, y la de F2 solo `motor laminas`. La afirmación no la sostiene lo que cita. | `C:\Users\USER\Desktop\Bot v3\docs\sesion-7\PREGUNTAS-7B.md:56-60`; `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md` (las tres líneas `+` del 2026-11-18) |
+| a2 | menor | «Exposiciones» del informe habla de «Dos filas del 2026-11-18». Ya son tres, porque falta la de F2. Tampoco dice que se leyeron ítems de evidencia. | `C:\Users\USER\Desktop\Bot v3\docs\validation\LAMINAS-7B.md:111-116` |
+| a3 | menor | Queda la línea de plantilla «PLANTILLA hasta la fase 0 (la línea con que nació)…». | `LAMINAS-7B.md:3` |
+| a4 | menor | El Estado está desfasado. Dice «faltan `make check`, CI de Linux y revisor», pero el `make check` ya está sellado sobre HEAD y la CI ya corrió (run 44463029525, abajo). | `LAMINAS-7B.md:298`; `make-check.log` (SELLO) |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` da: «CONTRATO: 16 ficheros dentro del contrato de trabajo/laminas-sesion-7b (riesgo alto, artefacto docs/validation/LAMINAS-7B.md, tramo 'R4', 3 comprobaciones para el revisor)», con exit 0.
+- **`make check`**, no ejecutado; su evidencia es `make-check.log`:
+  - «SELLO: make check en verde sobre el arbol 2e342e5a66bb09b3a8f59c2a4b87f76b43fe19ec», que es `git rev-parse HEAD^{tree}`.
+  - «3536 passed, 6 xfailed». La única coincidencia de `failed` es ese «xfailed».
+  - «PICO DE MEMORIA de make check: 319 MiB en `test`».
+  - `knowledge validate` dentro del log: «OK: 710 items de evidencia, 0 contradicciones abiertas, historial intacto». No lo relancé aparte.
+- **Trailers `Fuente:`.** Ningún commit toca `knowledge/spec` ni `knowledge/cases` (`git log main..HEAD -- knowledge/ data/manifests/` sale vacío).
+- **Holdout.** Nada toca `knowledge/cases/holdout`.
+- **Fechas.** Todas las que añade algún commit de la rama (`git log -p main..HEAD`, sin HISTORIA) caen en los tramos de construcción. Son 01-02…01-30, 04-01…04-29, 07-01…07-17 y 08-03/08-31, más fechas del proyecto. La compuerta da 0 días dev en `casos_reservados` y 0 en `casos_ocultos` (`compuerta-7b.txt:2-3`).
+- **Regímenes de cambio.** No hay nada en `evidence/`, `feedback/`, `manifests/`, transcripciones, fotogramas ni `libros.yaml`.
+  - `HISTORIA.md`: 178 líneas añadidas y 0 quitadas. Es el «# Archivo 74» de `main` en b174d714.
+  - `HOLDOUT-EXPOSICIONES.md`: 3 líneas añadidas y 0 quitadas.
+- **Ambigüedades, ADR y citas.** Ninguna ambigüedad cambia y no hay ADR nuevo ni cambiado. Ningún informe cerrado de `docs/validation/` se edita. No hay ningún sitio con `cita` nuevo.
+- **`PROJECT_STATE.md`**: 24.109 bytes (`wc -c`), como dice el informe.
+- **Citas del informe comprobadas contra su fuente:**
+  - `laminas.py:506-511` es `FRASE_TOPE_POR_REGLA`, y el `LaminaError` está en :888-891.
+  - `LAMINAS-MOTIVOS.md:537` sí dice que la foto no sabe si la otra causa se cumple.
+  - `ACTIVAR-SESION-07.md:706-709` coincide letra a letra con la línea nueva de `SKILL.md`.
+  - `runbooks/LAMINAS.md:34` sí dice «se lanza sola».
+  - `caja-stop.txt`: 44 filas con «| stop fuera |», 16 de julio.
+  - `sustitutas.txt:28`: «P2 4-10: 24 filas».
+  - TRAZAS-ABLACION §5.2: 8 filas de julio con gate RN-009 (3+1+4).
+- **Tests de la hoja.** `uv run pytest -q -p no:cacheprovider tests/unit/test_transcribir_sesion.py tests/unit/test_hoja_preguntas.py` sale todo en verde. `test_la_sesion_en_curso_es_la_08` PASSED y `test_la_hoja_08_es_la_de_preguntas_7b` PASSED.
+- **CI.** `origin/fix/laminas-sesion-7b` = 7eef7094. El run 44463029525 sale `failure` por un solo test, `test_state_check_ok_on_real_repo`, con «PROJECT_STATE declara la rama 'trabajo/laminas-sesion-7b'; la rama actual es 'fix/laminas-sesion-7b'», que es el fallo aceptado. El resto: 3448 passed.
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 4 importa, 2 menor. Requisitos: 30 hechos (uno «de otra forma», declarado), 4 parciales, 0 no hechos, 3 pendientes o no verificables.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con abrir-rama: base y CI de `main` | Hecho | `LAMINAS-7B.md:13-18` |
+| 2 | Contrato: R4, riesgo alto, artefacto, lista blanca | Hecho | `contrato.yaml:1-23`; `contrato_rama.py` OK |
+| 3 | Tag F39f libre | Hecho | `git tag -l "stable/F39f*"` vacío |
+| 4 | Encargo con ADR-0095 en `ids-inexistentes`, que sale en el último commit si no existe | Parcial (pendiente del último commit) | `docs/encargos/trabajo-laminas-sesion-7b.md:8-10` lo sigue llevando; `ls docs/adr` no tiene 0095 |
+| 5 | 0.1 herencias | Hecho | `LAMINAS-7B.md:25-35` |
+| 6 | 0.2 H4 y compuerta, con guion commiteado y fila de HOLDOUT | Hecho | `anexos/LAMINAS-7B/h4-cargadas.txt:2-8` (todas ≥ 60); `compuerta-7b.txt:12-22` (7 PASA); `compuerta_7b.py` solo cambia `CANDIDATAS` y el docstring frente a `dias_d3.py` (`git diff --no-index`) |
+| 7 | 0.3 filas por pregunta | Hecho | `LAMINAS-7B.md:57-72` (TRAZAS-ABLACION, declarado como fuente fuera de los tres anexos) |
+| 8 | F1.1 salen 01-13 y 01-07 | Hecho | `PREGUNTAS-7B.md:11-13`; tabla :70-78 |
+| 9 | F1.2 entran 04-24 (sesión 1) y 04-27 (sesión 3); «Sirve a» y filas | Hecho de otra forma (filas de `filas-por-sesion-7b.txt`), declarado | Desviación 1, `LAMINAS-7B.md:229-232`; `sustitutas.txt:25-26` |
+| 10 | Reservas sin cambio | Hecho | `PREGUNTAS-7B.md:76-78` |
+| 11 | F1.3: 04-15 se queda como sesión 2, paso subrayado, pie corregido | Hecho | `PREGUNTAS-7B.md:87-98` |
+| 12 | F1.3b | Hecho | `LAMINAS-7B.md:152` |
+| 13 | F1.4: 07-03 no se usa | Hecho | no está en §1 |
+| 14 | F1.5: los pasos | Hecho | `PREGUNTAS-7B.md:92-108` |
+| 15 | F2.1 láminas en v1, orden barajado fuera del repo, fila de HOLDOUT | Hecho (la salida no es verificable desde el repo) | fila F2 de HOLDOUT; `LAMINAS-7B.md:138-143` |
+| 16 | F2.2 (a) y (b) en recuentos | Hecho | `LAMINAS-7B.md:147-150` |
+| 17 | F2.3: no pasa ninguno, motor sin tocar, dos líneas de Technical Debt | Hecho | `git diff main...HEAD --stat -- src/` vacío; `LAMINAS-7B.md:216-222` |
+| 18 | F2.4 en el terminal | No verificable | fuera del repo |
+| 19 | F3 recuadro fechado | Hecho | `PREGUNTAS-7B.md:8-25` |
+| 20 | Orden: dinero primero, después filas (S-3 = A-48, S-4 = A-58 por la regla del encargo) | Hecho, dicho | `PREGUNTAS-7B.md:112-114`; `LAMINAS-7B.md:74-77` |
+| 21 | S-1 con la reformulada | Hecho (igual que `ACTIVAR-SESION-07.md:654`) | `PREGUNTAS-7B.md:130-132` |
+| 22 | S-2 con dos preguntas | Hecho (ver b1-b3) | `PREGUNTAS-7B.md:152-206` |
+| 23 | A-58 y la línea nueva de «Para precisar» | Hecho | `PREGUNTAS-7B.md:263` |
+| 24 | A-48, S-22, S-19 y S-7 «como está» | Hecho: solo cambian los títulos (hunks `-69 +208`, `-126 +303`) | `git diff -U0 main...HEAD -- docs/sesion-7/PREGUNTAS-7B.md` |
+| 25 | Las partes y «Para Aleks» con destino | Hecho | S-1, S-2, S-4 |
+| 26 | §3: reentrada, A-53, A-43, breaker por mecha, 07-01; sin `**S-n.**` | Hecho | `PREGUNTAS-7B.md:364-368` |
+| 27 | PARADA si una de §3 tiene más filas que S-5 o S-6 | Hecho | `LAMINAS-7B.md:270-272` |
+| 28 | Hoja 08, `SESION_EN_CURSO`, test sustituido | Hecho | `scripts/transcribir_sesion.py` diff; pytest arriba |
+| 29 | F4: la línea de la skill | Hecho (una línea, tal cual) | `.claude/skills/activar-sesion/SKILL.md` diff |
+| 30 | Informe: 0.2, «bloque final con el porqué de cada cambio», F2, 0.3, F nueva, R4.3, tamaño de PS | Parcial: no hay un bloque final de porqués; están repartidos por F1, F3 y Desviaciones | `LAMINAS-7B.md:118-241` |
+| 31 | Revisor con los cuatro alcances, pegado | Pendiente (es este informe) | — |
+| 32 | Push a `fix/` y número del run | Parcial: hecho, falta escribirlo | run 44463029525; no aparece en el informe |
+| 33 | PARADA final | Hecho | `LAMINAS-7B.md:265-294` |
+| 34 | QUÉ NO CAMBIA: ni spec ni motor | Hecho | diff sin `knowledge/` ni `src/` |
+| 35 | Ninguna fecha reservada | Hecho | eje (a) |
+| 36 | Ningún fichero describe una lámina ni deja deducir la clave | Parcial (b4) | abajo |
+| 37 | «Rama lista para revisión, NO cerrada» | Pendiente | Estado «EN CURSO» |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | **Alcance 3, sugiere o confunde.** S-2, pregunta 2, pregunta «¿te basta con que cierre **un punto** por encima, o tiene que pasarlo por un margen?», pero la opción (a) es «me basta con que cierre por encima». «Un punto por encima» se puede leer como un margen de 1 punto. Además «Lo que nos has dicho» trae «mínimo al menos por un par de puntos o un pip». Un «(a)» podría significar «margen 1» y «Para Aleks» lo lleva a «A-13 se cierra sin margen». La frase viene tal cual de ACTIVAR:656, pero en la hoja choca con sus propias opciones. | `PREGUNTAS-7B.md:179-184`, `:163`, `:201-202`; `ACTIVAR-SESION-07.md:656` |
+| b2 | importa | **Alcance 3, la pregunta no discrimina.** S-2, pregunta 1, primera parte. El dibujo 1 pone A, B y C en el retroceso de M1 después de la toma, con el punto de breaker arriba, es decir, antes de romperlo. Por eso (a) «del retroceso, después de tomar la liquidez» y (b) «de antes de romper el punto» describen los mismos bajos. Y «Para Aleks» lleva (a) a «lo de hoy» («los pivotes de M1 … entre la toma y el breaker», que también son de antes de romper el punto) y (b) a «cambia la definición». La duda de §5.1, punto 4, que el encargo manda llevar, enfrenta «antes de romper el punto» (esquema) con «después» (la zona del break even), y la pregunta no ofrece «después». | `PREGUNTAS-7B.md:168-178`, `:192-197`; `SESION-07-EXTRACCION.md:719-722`; encargo:55 |
+| b3 | importa | **Vuelve a preguntar algo RESUELTO sin declararlo.** «Y si hay dos, ¿ese esquema te sirve o lo descartas?» y «si hay dos, el esquema ______» preguntan lo que cerró A-20, RESUELTA: «solo 1 zona control bro. si hay 2 se descarta». ADR-0093 §1 dice: «Ninguna vuelve a preguntar lo que ya está decidido». «Para Aleks» lo sabe («va contra A-20, RESUELTA»), pero el informe no lo declara ni lo lleva a «Lo que necesito que decidas». No lo marco como bloquea porque es el texto reformulado que ordena el encargo (F3, S-2, «la 1»); lo tiene que decidir el consultor. Es la lección (4) de la fila de `trabajo/preparacion-sesion-7`. | `PREGUNTAS-7B.md:174-178`, `:186-187`, `:197-199`; `knowledge/spec/ambiguedades.yaml:436-450`; `ADR-0093:30-31` |
+| b4 | importa | **Alcance 1, deducción juntando pasajes.** La frase nueva de §1 sobre la reserva 07-16 («era una pareja en la línea base y, tras activar la 7a, ya no: RN-032») se puede juntar con cuatro pasajes. ACTIVAR:504-505 dice que desde el 07-15 el bot no abre. ACTIVAR:600-603, con F2, adelanta el freno al 07-13. LAMINAS.md:50-53 dice que una lámina de tipo a es una orden del bot llenada y una de tipo b una operación del trader sin pareja. Y `filas-por-sesion-7b.txt:7` da «trader 1, bot 0». [frase retirada: el recuento y el tipo de las láminas de esa sesión que se deducen] Eso es «cuántas tiene una sesión y de qué tipo» (encargo:26). Es una inferencia: solo vale si `motor laminas` repite la cuenta del mes de F2.4, y no lo pude comprobar sin abrir las láminas. No nombra ninguna carpeta. | `PREGUNTAS-7B.md:78`; `ACTIVAR-SESION-07.md:504-505`, `:600-603`; `docs/runbooks/LAMINAS.md:50-53`; `anexos/LAMINAS-7B/filas-por-sesion-7b.txt:7` |
+| b5 | menor | El informe escribe el total de láminas (un total de cortes). No es por sesión y, solo, no deja casar carpetas: las filas de §1 suman 23, no ese total. Pero F2.4 manda los recuentos al terminal. | `LAMINAS-7B.md:150` |
+| b6 | menor | El «bloque final con el porqué de cada cambio» que pide el encargo no existe como bloque; los porqués están repartidos. | encargo:70; `LAMINAS-7B.md:118-241` |
+
+**Los cuatro alcances**
+- **(1) Láminas y clave.** No hay ninguna tabla por carpeta, ningún nombre `sesion-NN` asociado a un día, ninguna descripción de una lámina concreta ni recuentos por sesión. Lo busqué en `git log -p main..HEAD`, todos los commits, con «sesion-0», «carpeta», «clave», «tipo a/b» y «cortes». El README de anexos (:3-5) lo dice expresamente. Quedan b4 (deducción condicional para 07-16) y b5 (el total).
+  - La columna «trader / bot» de §1 y «el trader no opera y el bot sí» del 04-15 dejan ver la composición por tipo de cada sesión, pero las ordena el encargo (F1.2, F1.3) y lo acepta ADR-0093 §2.3. Para casar carpetas hacen falta las carpetas, que solo tienen quienes guardan la clave.
+- **(2) Días del bloque.** Las siete pasan a), b) y c) de ADR-0093 §3: `compuerta-7b.txt:12-22`, sobre 76 días dev, 0 ocultos y 0 reservados. Todas tienen ≥ 60 H4: `h4-cargadas.txt:2-8` da 236, 195, 243, 69, 80, 87 y 200.
+  - Las cinco que ya medía `arranque.py` dan lo mismo que en `ACTIVAR-SESION-07.md:451-453` (195, 69, 80, 87, 200). Eso respalda que restringir `dias` a los del bloque en `h4_cargadas.py` no cambia el recuento.
+  - No volví a correr nada.
+- **(3) Preguntas nuevas.** Los 17 ítems leídos existen en `knowledge/evidence/v18|v19/`. Los 17 los cita `ACTIVAR-SESION-07.md` (Grep: :46-54, :616-647).
+  - Ninguno tiene t0 ni t1 dentro de un tramo de `tramos_no_citables.yaml:536-661`. Los más cercanos: v18 0:25:11-0:25:16, antes del tramo 0:25:18; v18 0:27:01, después de 0:26:56; v18 0:13:27-0:13:45, antes de 0:14:20; v18 0:19:00, después de 0:18:48; v19 1:11:38, después de 1:08:49.
+  - Las 17 citas entre comillas de `PREGUNTAS-7B.md` son subcadenas literales de su `cita_literal`.
+  - `ev-v19-011640-1fdc33a7` (solo en «Para Aleks», citado por SESION-07-EXTRACCION) existe y está fuera de tramos (1:16:40). No lo leí.
+  - S-1 y S-4 no sugieren la respuesta. S-2 tiene b1, b2 y b3.
+- **(4) Arreglo de motor.** No hubo. `git diff main...HEAD --stat -- src/ knowledge/` sale vacío y ADR-0095 no existe. Julio no cambia porque no se tocó código del motor.
+
+#### Lo que no pude comprobar
+- **El orden barajado de `--sesiones`.** El repo trae las siete sesiones en un orden distinto del de §1: 04-24, 04-27, 04-15, 01-19, 01-21, 01-22, 07-16 (`anexos/LAMINAS-7B/README.md:18` y `filas-por-sesion-7b.txt:1-7`). Si la llamada de `motor laminas` usó ese mismo orden, la carpeta `sesion-NN` de cada día se deduciría del repo. Lo tiene que confirmar Aleks contra `clave.txt`, sin escribirlo. No abrí ni las láminas ni la clave.
+- La salida de F2 (v1), los recuentos de F2.4 en el terminal y el total de cortes de la búsqueda sobre los HTML: están fuera del repo, y por encargo no los abro.
+- Qué ítems de evidencia leyó la sesión de verdad (el encargo limita la lectura); solo puedo ver lo que se cita.
+- Si la fila de HOLDOUT de la apertura se escribió antes del primer `make check`, como dice.
+- `knowledge validate` aparte: lo sustituye su línea OK en `make-check.log`. No ejecuté `make check`, ni `git write-tree`, ni ninguna corrida del motor.
+
+#### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+2. `uv run python scripts/contrato_rama.py`
+3. `git diff --name-status main...HEAD && ls make-check.log && tail -5 make-check.log`
+4. `git rev-parse HEAD^{tree} HEAD~1^{tree}`; `grep -n "failed" make-check.log`
+5. `git diff main...HEAD -- docs/sesion-7/PREGUNTAS-7B.md`
+6. Read de encargo, `contrato.yaml`, `LAMINAS-7B.md`, `PREGUNTAS-7B.md`, ERRORES-RECURRENTES (líneas 118 y 124), `runbooks/LAMINAS.md`, `ACTIVAR-SESION-07.md:440-719`, `SESION-07-EXTRACCION.md:699-738`, `parametros.yaml:475-624`, `LAMINAS-MOTIVOS.md:466-481, 530-539`, `laminas.py:500-514, 870-904`, ADR-0093:17-131, los cuatro ficheros de `anexos/LAMINAS-7B/` y `sustitutas.txt`
+7. `git log -p main..HEAD | grep -n -i -E "^\+.*(sesion-0…|carpeta|clave|…)"`
+8. `git diff main...HEAD -- HOLDOUT-EXPOSICIONES.md PROJECT_STATE.md SKILL.md transcribir_sesion.py test_transcribir_sesion.py`
+9. Grep de los ids en `ACTIVAR-SESION-07.md`; `ls knowledge/evidence/v18 | grep …`; `ls knowledge/evidence/v19 | grep …`; Read de los 17 ítems
+10. `grep -n -A6 "video(_id)?: ?v1[89]" knowledge/corpus/tramos_no_citables.yaml`; Read de :613-662
+11. `git diff --no-index` de `dias_d3.py` contra `compuerta_7b.py` y de `arranque.py` contra `h4_cargadas.py`
+12. `git log -p main..HEAD -- . ':(exclude)docs/state/HISTORIA.md' | grep "^+" | grep -o -E "20(25|26)-..-.." | sort | uniq -c`
+13. `git diff main...HEAD --numstat -- HISTORIA.md HOLDOUT…`; `wc -c PROJECT_STATE.md`; `git log main..HEAD -- knowledge/ data/manifests/`
+14. `grep` de `FRASE_TOPE_POR_REGLA` en `src/botsito`; `grep -c "| stop fuera |" caja-stop.txt`; `grep -n "P2 4-10" sustitutas.txt`; `grep` de los encabezados de TRAZAS-ABLACION y su §5.2
+15. `grep -n -A14 "id: A-20$" knowledge/spec/ambiguedades.yaml`
+16. `git diff main...HEAD -U0 -- PREGUNTAS-7B.md | grep "^@@"`; `git show main:docs/sesion-7/PREGUNTAS-7B.md | grep -n "^\*\*S-"`
+17. `uv run pytest -q -p no:cacheprovider tests/unit/test_transcribir_sesion.py tests/unit/test_hoja_preguntas.py`, y la misma con `-k "sesion_en_curso or hoja_08" -rA`
+18. `git for-each-ref refs/remotes/origin/fix refs/heads/fix`; `git rev-parse refs/remotes/origin/fix/laminas-sesion-7b HEAD`; `git log --format='%h %ad' main..HEAD`
+19. `gh run list --branch fix/laminas-sesion-7b --limit 3 --json …`; `gh run view 44463029525 --log-failed | grep …`
+20. `git tag -l "stable/F39f*"`; `git diff main...HEAD --stat -- src/ knowledge/ tests/`
+
+La guardia me negó dos comandos, que reescribí sin rodearla: `sed … | fold`, que pasó a Read con offset, y un bucle `for` con `$id`, que pasó a `ls | grep` literal. `git branch -a` lo negó `solo_lectura.py`, y lo sustituí por `git for-each-ref`.
 
 ## Estado
 
-EN CURSO: F1 a F4 hechas; faltan `make check`, CI de Linux y revisor.
+Fase 0 y F1 a F4 hechas. F1 CUADRA. F2: (a) = 0 y (b) = 0, el motor no se toca y no hay
+ADR-0095 (dos líneas de Technical Debt propuestas para el cierre). F3 y F4 hechas. Revisor: eje (a)
+0 / 1 / 3 y eje (b) 0 / 4 / 2; hechos o llevados a la PARADA. Cinco decisiones para el consultor en
+«Lo que necesito que decidas».
+
+Rama lista para revisión, NO cerrada.

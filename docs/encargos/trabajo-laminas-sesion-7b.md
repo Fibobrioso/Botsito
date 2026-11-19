@@ -1,12 +1,15 @@
 # Encargo · trabajo/laminas-sesion-7b
 
 Dado por Aleks (consultor) el 2026-11-18, en un solo mensaje. Copiado tal cual. El ADR que el
-encargo nombra para el arreglo de F2, ADR-0095, va declarado en el bloque `ids-inexistentes`, como
-exige `knowledge validate`; sale del bloque en el commit que lo crea o, si al final no existe, en el
-último commit de la rama.
+encargo reservaba para el arreglo de F2 va declarado en el bloque `ids-inexistentes`, como exige
+`knowledge validate`. F2 no encontró nada que arreglar y el ADR no existe. El encargo manda que en
+ese caso salga del bloque en el último commit, pero el propio texto citado abajo lo nombra dos
+veces, y sin el bloque `knowledge validate` falla («id citado que no existe», medido el 2026-11-19):
+se queda, como el ADR de S-15 que declara `trabajo-activar-sesion-05-motor.md` y que nunca existió
+(LAMINAS-7B.md, desviaciones).
 
 ```ids-inexistentes
-ADR-0095 — el encargo lo nombra para el arreglo de F2 si (a) pasa; aún no existe
+ADR-0095 — el encargo lo nombra para el arreglo de F2 si (a) pasaba; no pasó y no existe
 ```
 
 > Modelo: Opus · Esfuerzo: alto
