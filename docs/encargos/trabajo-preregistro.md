@@ -2,10 +2,6 @@
 
 Dado por Aleks (consultor) el 2026-11-19, en un solo mensaje. Copiado tal cual.
 
-```ids-inexistentes
-ADR-0096 — la respuesta a la PARADA lo nombra para el ADR del pre-registro; sale de este bloque en el commit que lo cree
-```
-
 > Modelo: Opus · Esfuerzo: alto
 >
 > Encargo del consultor (2026-11-19) · trabajo/preregistro · tramo R5 (R5.1; la G de la Next Action) · PRIMER TIEMPO: solo la fase 0

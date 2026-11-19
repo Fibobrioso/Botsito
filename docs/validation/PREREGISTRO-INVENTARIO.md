@@ -12,7 +12,6 @@ como manda el encargo (toca la puerta del holdout).
 ```ids-inexistentes
 ADR-0087 — el de S-15, que nunca se creó; se cita como precedente de un número saltado
 ADR-0095 — declarado inexistente por trabajo/laminas-sesion-7b; se cita para decir por qué no se usa
-ADR-0096 — el número que le tocaría al ADR del pre-registro; no se crea en esta fase
 ```
 
 ## La base, comprobada al abrir (skill `abrir-rama`, paso 1)
