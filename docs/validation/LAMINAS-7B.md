@@ -528,3 +528,19 @@ ADR-0095 (dos líneas de Technical Debt propuestas para el cierre). F3 y F4 hech
 «Lo que necesito que decidas».
 
 Rama lista para revisión, NO cerrada.
+
+## Respuesta del consultor a la PARADA final (2026-11-19), tal cual
+
+> Modelo: Opus · Esfuerzo: medio
+>
+> Respuesta del consultor a la PARADA final de trabajo/laminas-sesion-7b (2026-11-19). Cópiala al final del informe, con la fecha, en un commit propio.
+>
+> 0. (a) S-22 y S-19 se quedan entre las seis. Porqué: sin su respuesta no se abre la rama del punto (2), y eso pesa más que las 4 filas de la reentrada.
+> 1. (a) S-3 = A-48 y S-4 = A-58, como sale de la regla de filas.
+> 2. (a) B-15 (2026-07-01) se queda en §3.
+> 3. (a) En S-2, pregunta 1, la primera parte pasa a ser: «En el dibujo 1, A y B te valen como zonas de control y C no. ¿Se forman antes de romper el punto, o pueden formarse también después de romperlo?», con las opciones «(a) antes de romper el punto; (b) también después de romperlo; (c) otra, ¿cuál?». En «Esquema inventado» del dibujo 1 añade: «y, a la derecha del punto ya roto, un cuarto bajo rotulado D, formado después de la ruptura». La línea «Para Aleks» se ajusta: (a) → lo de hoy; (b) → cambia la definición de zonas_desarrolladas_superan, con ADR.
+> 4. (a) Quita de S-2 «Y si hay dos, ¿ese esquema te sirve o lo descartas?», su línea de opciones «y con dos: …», su hueco en «Para confirmar al final» («si hay dos, el esquema ______») y lo de «si con dos zonas de control el esquema te sirve» de «Lo que todavía no sabemos». En «Para Aleks», una frase: A-20 está RESUELTA (una sola zona; con dos se descarta) y no se vuelve a preguntar (ADR-0093 §1); si el trader lo contradice por su cuenta, va a la extracción como contradicción con lo fijado.
+> 5. (a) Se acepta: es una reserva y la carpeta no se deduce. Ningún texto nuevo añade pasajes a esa deducción.
+> Sobre lo que no te convence: el punto 1 (filas de antes de activar la 7a) queda dicho en el informe y no se corre nada; el punto 2 (el 2026-04-15 ya no es ciego) se acepta, porque es la única sesión de su tipo; el 3 se arregla con 3 y 4; el 4, como está.
+>
+> Después: knowledge validate, make check, push a fix/laminas-sesion-7b y CI de Linux con su run. Las láminas no se regeneran (estos cambios no las tocan). Un informe corto con el sha del último commit, el número de commits y el run. No cierres.
