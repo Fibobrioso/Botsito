@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/laminas-sesion-7b
+main
 
 ## Current Feature
-trabajo/laminas-sesion-7b EN CURSO (R4.3; el punto (1) de la F): el bloque de días de la 7b, PREGUNTAS-7B.md revisado, sus láminas y SESION_EN_CURSO en "08". Encargo docs/encargos/trabajo-laminas-sesion-7b.md; informe docs/validation/LAMINAS-7B.md.
+Ninguna rama abierta. trabajo/laminas-sesion-7b cerrada en main el 2026-11-19 (stable/F39f-laminas-sesion-7b): la 7b lista para grabar (el bloque de días revisado, PREGUNTAS-7B.md, sus láminas fuera del repo y SESION_EN_CURSO en "08").
 
 ## Stable Main State
-cf33a916 · merge de `trabajo/activar-sesion-07` (tag `stable/F39e-activar-sesion-07`), sobre `stable/F39d-sesion-07` (5c047f31). Informe docs/validation/ACTIVAR-SESION-07.md; el registro del cierre, al final de HISTORIA.
+50f6a6fc · merge de `trabajo/laminas-sesion-7b` (tag `stable/F39f-laminas-sesion-7b`), sobre `stable/F39e-activar-sesion-07` (cf33a916). Informe docs/validation/LAMINAS-7B.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-cf33a916 · merge trabajo/activar-sesion-07: la sesión 7a activada (sesgo de H4 por el rango vigente, ADR-0094; break even al cierre y con cuerpo) · tag stable/F39e-activar-sesion-07
+50f6a6fc · merge trabajo/laminas-sesion-7b: la 7b lista para grabar (bloque de días, láminas fuera del repo, PREGUNTAS-7B.md y hoja 08) · tag stable/F39f-laminas-sesion-7b
 
 ## Tests Currently Passing
 2082 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
