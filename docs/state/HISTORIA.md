@@ -19119,3 +19119,72 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 73 (2026-11-18).
+
+# Registro de cierre · `trabajo/laminas-sesion-7b` (2026-11-19)
+
+- Orden de cierre del consultor del 2026-11-19, tras su revisión de la rama sobre `6edf3334` (6
+  commits sobre `main` `b174d714`), con un añadido del mismo día, dados por Aleks en la conversación
+  de la sesión. Después, Aleks lanzó `/cerrar-rama trabajo/laminas-sesion-7b`. La orden, la skill y
+  `RITUAL.md` no chocan.
+- **Lo hecho** (tramo R4, R4.3; punto (1) de la F; el motor, la spec y `knowledge/` sin tocar):
+  - **El bloque de días de la 7b**, revisado con la compuerta de ADR-0093 §3 y 60 o más H4 cargadas:
+    salen 2026-01-13 y 2026-01-07 de 07 a 11 (menos de 60 H4); entran 2026-04-24 de 07 a 11 y
+    2026-04-27 de 11 a 15; el 2026-04-15 de 11 a 15 se queda, sabiendo que ya no es ciego (en la 7a
+    se habló de él; el consultor lo aceptó porque es la única sesión de su tipo).
+  - **Las láminas**, generadas con `motor laminas` fuera del repo; la clave, en `clave.txt`, en manos
+    de Aleks. Ningún fichero del repo describe una lámina ni dice qué carpeta es qué sesión.
+  - **`LaminaError` y b1, medidos: 0 y 0** (ninguna sesión dio `LaminaError` y ningún corte tiene
+    `detenido_por_tope` encendido); el motor no se tocó y el ADR que el encargo reservaba para el arreglo no existe. Los dos casos quedan en
+    Technical Debt.
+  - **Las preguntas, en su orden final** (`docs/sesion-7/PREGUNTAS-7B.md`): S-1, la mecha de M1 que
+    pasa el alto de M15 y vuelve (A-35); S-2, las zonas de control y el margen del break even (RN-009
+    y A-13); S-3, el 0 de la caja (A-48); S-4, el rango de 4 horas después de una ruptura (A-58); S-5
+    y S-6, S-22 y S-19; S-7, la de material. A §3: la reentrada, A-53, A-43, el breaker por la mecha
+    y el 2026-07-01 de 11 a 15 (B-11 a B-15). La hoja 08 en `scripts/transcribir_sesion.py` y
+    `SESION_EN_CURSO = "08"`.
+  - **La línea de la skill activar-sesion** que cita D0 (recuadro de ADR-0093 §4 y `delta_julio.py`).
+- **La respuesta del consultor a la PARADA final** (2026-11-19), copiada tal cual en `0471b743` y
+  aplicada en `6edf3334`: todo (a). S-22 y S-19 se quedan entre las seis; S-3 = A-48 y S-4 = A-58;
+  B-15 se queda en §3; S-2 deja de preguntar lo que resolvió A-20 (una sola zona; con dos se
+  descarta; ADR-0093 §1), su pregunta 1 pregunta si las zonas se forman antes de romper el punto o
+  también después, y su dibujo gana el bajo D; se acepta que con pasajes ya en `main` se deduzca
+  cuántas láminas tiene la reserva del 07-16, no qué carpeta es. Sin PARADA nueva.
+- **Desviaciones** (LAMINAS-7B.md, «Desviaciones»): (1) las filas de las dos sesiones que entran
+  salen del mismo guion sobre la misma fuente, y todas son de la línea base, anterior a activar la
+  7a; (2) S-3 = A-48 y S-4 = A-58, al revés de como lo escribió el encargo, por su propia regla de
+  filas; (3) la fila de HOLDOUT del conteo de filas, escrita tarde; (4) el riesgo del contrato se
+  queda en alto; (5) la CI antes del revisor, como manda entregar-rama; (6) el ADR que el encargo reservaba para el arreglo se queda en el
+  bloque `ids-inexistentes` del encargo, porque el texto copiado lo nombra; (7) la opción (a) de S-2,
+  pregunta 2, dice «por poco que sea».
+- **Commits de la rama** (7):
+  - `d6efff44` apertura: encargo, contrato y Archivo 74 de PROJECT_STATE;
+  - `93a70ed4` fase 0 y F1, el bloque de días;
+  - `7eef7094` F2 a F4: las láminas (fuera del repo), PREGUNTAS-7B.md revisado y la hoja 08;
+  - `f6c5f103` el revisor, sus hallazgos y la PARADA final;
+  - `0471b743` la respuesta del consultor a la PARADA final, tal cual;
+  - `6edf3334` la respuesta a la PARADA final, aplicada (S-2);
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama**: cuatro, tres del 2026-11-18 y una del 2026-11-19 (que
+  cubre los `make check` del 19, los del cierre incluidos).
+- **CI de Linux** por `fix/laminas-sesion-7b`, las tres con 1 failed (el esperado,
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`), 3448 passed y 93 skipped: run
+  44463029525 sobre `7eef7094`; run 44468897075 sobre `f6c5f103`; run 44521676665 sobre `6edf3334`,
+  en su segundo intento (el primero se colgó 20 minutos instalando ffmpeg y lo canceló el límite de
+  tiempo; se relanzó con `gh run rerun`, como dice `RITUAL.md`). El run 44521676665 no está en la
+  tabla del informe (orden del consultor: va aquí, sin otro commit).
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: la F se SUSTITUYE por la de «Para la orden de cierre» de LAMINAS-7B.md, tal cual
+    (el punto (1) hecho; lo siguiente, (2) grabar, ingerir y activar la 7b); ninguna letra sale, así
+    que no hay bloque «Next Action HECHA» (el texto anterior de la F está en el Archivo 74);
+  - Technical Debt: tres líneas nuevas (b1; el `LaminaError` de RN-004 con RN-016 o RN-001; la CI
+    que se cuelga instalando ffmpeg, que cabe por debajo de 25.000 bytes);
+  - hoja de ruta: R4.3, su línea de Estado, su «Qué es» al día, `ID:A-58` en sus Refs y sin «el
+    vídeo de mapeo del trader, si llega antes» en «Depende de»;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.516 bytes (`wc -c`) en este commit.
+- Letra del tag: la última cerrada era `stable/F39e-activar-sesion-07`;
+  `stable/F39f-laminas-sesion-7b` no existe en local ni en origin (comprobado antes de este commit).
+  La siguiente rama será F39g.
+- Tag: `stable/F39f-laminas-sesion-7b`. El merge es
+  `git rev-parse "stable/F39f-laminas-sesion-7b^{commit}"`.
