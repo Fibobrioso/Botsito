@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/laminas-sesion-7b
 
 ## Current Feature
-Ninguna rama abierta. trabajo/activar-sesion-07 cerrada en main el 2026-11-18 (stable/F39e-activar-sesion-07): la sesión 7a activada (el sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; el break even al cierre y con cuerpo, A-13 abierta solo por el margen).
+trabajo/laminas-sesion-7b EN CURSO (R4.3; el punto (1) de la F): el bloque de días de la 7b, PREGUNTAS-7B.md revisado, sus láminas y SESION_EN_CURSO en "08". Encargo docs/encargos/trabajo-laminas-sesion-7b.md; informe docs/validation/LAMINAS-7B.md.
 
 ## Stable Main State
 cf33a916 · merge de `trabajo/activar-sesion-07` (tag `stable/F39e-activar-sesion-07`), sobre `stable/F39d-sesion-07` (5c047f31). Informe docs/validation/ACTIVAR-SESION-07.md; el registro del cierre, al final de HISTORIA.
@@ -168,8 +168,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 73 (2026-11-18).
+— ninguna desde el Archivo 74 (2026-11-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 73 (2026-11-18).
+— ninguna desde el Archivo 74 (2026-11-18).

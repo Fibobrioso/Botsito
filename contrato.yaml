@@ -1,0 +1,38 @@
+rama: trabajo/laminas-sesion-7b
+riesgo: alto  # fijado al abrir como alto, como manda el encargo: alto si entra el arreglo de F2 en src/botsito/engine/ (solo como registro), medio si no
+artefacto: docs/validation/LAMINAS-7B.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/LAMINAS-7B.md
+  - docs/validation/anexos/LAMINAS-7B/
+  - docs/sesion-7/PREGUNTAS-7B.md
+  - scripts/transcribir_sesion.py
+  - tests/unit/test_transcribir_sesion.py
+  - .claude/skills/activar-sesion/SKILL.md  # una linea (F4)
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/validation/LAMINAS.md  # solo recuadros o notas, si F2 cambia una frase
+  - docs/validation/LAMINAS-MOTIVOS.md  # idem
+  - docs/runbooks/LAMINAS.md  # idem
+  - src/botsito/engine/  # solo si hace falta el arreglo de F2
+  - tests/  # solo si hace falta el arreglo de F2
+  - docs/adr/0095-*.md
+  - docs/adr/README.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - knowledge/
+  - config/
+  - data/manifests/
+  - docs/plan/
+  - docs/adr/0000-template.md
+  - src/botsito/domain/
+  - src/botsito/viewer/
+  - src/botsito/mql5bridge/
+  - mql5/
+comprobaciones:
+  - uv run botsito knowledge validate (con el log fuera del repo, en la carpeta de trabajo de la sesion)
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1
