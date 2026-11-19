@@ -1,0 +1,7 @@
+2026-04-24 07-11: 5 filas (trader 1, bot 4): {'P5/mismo lado (bot)': 4, 'T0 (trader)': 1}
+2026-04-27 11-15: 3 filas (trader 2, bot 1): {'P2/Δentrada minima 8 puntos (trader)': 1, 'P3/otra entrada (trader)': 1, 'P5/mismo lado (bot)': 1}
+2026-04-15 11-15: 5 filas (trader 0, bot 5): {'P6/en dia (bot)': 5}
+2026-01-19 11-15: 3 filas (trader 3, bot 0): {'P2/Δentrada minima 9 puntos (trader)': 1, 'P3/otra entrada (trader)': 1, 'T0 (trader)': 1}
+2026-01-21 07-11: 3 filas (trader 2, bot 1): {'P2/Δentrada minima 7 puntos (trader)': 1, 'P3/otra entrada (trader)': 1, 'P5/mismo lado (bot)': 1}
+2026-01-22 11-15: 3 filas (trader 3, bot 0): {'P1/sesgo alcista (trader)': 3}
+2026-07-16 07-11: 1 filas (trader 1, bot 0): {'T0 (trader)': 1}

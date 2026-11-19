@@ -34,33 +34,59 @@ reloj de Madrid; ninguna pregunta técnica lleva días ni fechas.
   commiteados de RECORRIDA-CONSTRUCCION-2. Ninguna transcripción cruda, ningún fotograma, ningún
   libro, ningún caso. Declarado en `docs/validation/HOLDOUT-EXPOSICIONES.md`, filas del 2026-11-11
   de esta rama.
+- En la revisión del 2026-11-18 (`trabajo/laminas-sesion-7b`): los ítems de v18 y v19 citados
+  abajo, que ya cita ACTIVAR-SESION-07.md, y los anexos commiteados de PREPARACION-SESION-7,
+  RECORRIDA-CONSTRUCCION-2 y ACTIVAR-SESION-07. Ninguna transcripción cruda ni filtrada, ningún
+  fotograma, ningún libro, ningún caso. Filas del 2026-11-18 de esa rama en
+  `HOLDOUT-EXPOSICIONES.md`.
 
 ## 1. El bloque de días (Para Aleks: no va al PDF)
 
 Va **después** de las seis preguntas técnicas, y la pregunta de material (S-7) al final de todo
-(ADR-0093 §2). Los días cumplen ADR-0093 §3, comprobados por la compuerta
-(`PREPARACION-SESION-7.md` §0.4; `anexos/PREPARACION-SESION-7/dias-d3.txt` y `sustitutas.txt`).
-**Sus láminas no existen todavía** (recuadro de arriba).
+(ADR-0093 §2). Las siete sesiones (las cuatro y las tres reservas) pasan la compuerta de ADR-0093 §3
+y abren con 60 o más velas de 4 horas cargadas, medido el 2026-11-18 (`LAMINAS-7B.md`, 0.2;
+`anexos/LAMINAS-7B/compuerta-7b.txt` y `h4-cargadas.txt`). **Sus láminas todavía no
+existen**: las genera `trabajo/laminas-sesion-7b`, con este bloque ya commiteado (su F2).
 
 | Orden | Sesión | Sirve a | Filas de la clasificación (trader / bot) |
 |---|---|---|---|
-| 1 | 2026-01-13, 07-11 | S-1 (la caja: cociente 2,33 con el stop fuera y 2,07 en la entrada) | 8 (1 / 7) |
+| 1 | 2026-04-24, 07-11 | S-1 (la caja: cociente 0,62 con el stop fuera) | 5 (1 / 4) |
 | 2 | 2026-04-15, 11-15 | el trader no opera y el bot sí (S-6 de la 7a); S-1 | 5 (0 / 5) |
-| 3 | 2026-01-07, 07-11 | S-1 (cociente 3,14 con el stop fuera) | 4 (1 / 3) |
+| 3 | 2026-04-27, 11-15 | S-1 (cociente 0,62 con el stop fuera) | 3 (2 / 1) |
 | 4 | 2026-01-19, 11-15 | S-1 (cociente 1,78 en la entrada) | 3 (3 / 0) |
 | reserva | 2026-01-21, 07-11 | S-1 (cociente 0,50 en la entrada) | 3 (2 / 1) |
 | reserva | 2026-01-22, 11-15 | el sesgo de H4 por una ruptura de 2 puntos (toca A-16) | 3 (3 / 0) |
-| reserva | 2026-07-16, 07-11 | S-1 (cociente 0,34 con el stop fuera; es una pareja) | 1 (1 / 0) |
+| reserva | 2026-07-16, 07-11 | S-1 (cociente 0,34 con el stop fuera; era una pareja en la línea base y, tras activar la 7a, ya no: RN-032, ACTIVAR-SESION-07.md F1.4) | 1 (1 / 0) |
 
-Las tres primeras de enero y la de abril no tienen vídeo del trader: el bloque de días es la
-primera vez que se le oye operarlas.
+«Sirve a», de `anexos/PREPARACION-SESION-7/sustitutas.txt`; las filas, de la clasificación de la
+línea base (`anexos/RECORRIDA-CONSTRUCCION-2/patrones-cuenta-por-mes.txt`), contadas con
+`filas_por_sesion.py` (`filas-por-sesion.txt` para las de antes y
+`anexos/LAMINAS-7B/filas-por-sesion-7b.txt` para las siete). Las filas son de antes de activar la
+7a, y el motor de las láminas es el de después: el recuadro D4 pedía las filas «con la corrida
+nueva», y para enero y abril no hay ninguna commiteada (`LAMINAS-7B.md`, desviaciones).
 
-**Por cada sesión**, los pasos de `PREGUNTAS-7A.md` §1 (ADR-0093 §2): Aleks comprueba el día y se lo
-dice; el trader abre él mismo el replay, antes de compartir pantalla, en una sesión de replay nueva,
-sin marcas, backtests ni Analytics; la opera con voz; después ve las láminas del bot de esa sesión,
-sin fecha, sin nada posterior al corte y sin ningún resultado; corrige, y «¿siempre, solo en este
-caso, o de qué depende?»; si aparece otro backtest, Analytics o un mes reservado, se reconduce y el
-tramo es no citable el mismo día.
+Ninguna de las cuatro tiene vídeo del trader. **El 2026-04-15 de 11 a 15 ya lo abrió en la 7a**: por
+error, en la reserva, lo marcó y lo operó (`SESION-07-EXTRACCION.md` §5.1, punto 9; ese tramo sigue
+no citable). No vio ninguna lámina de ese día, y por eso se queda. En las otras tres, el bloque de
+días es la primera vez que se le oye operarlas; en la del 04-15, la primera con el método del bloque.
+
+**Por cada sesión**, los pasos de `PREGUNTAS-7A.md` §1 (ADR-0093 §2), con lo aprendido en la 7a
+(`docs/runbooks/ERRORES-RECURRENTES.md`, filas de `trabajo/sesion-07` y `trabajo/activar-sesion-07`):
+1. Aleks comprueba el día ANTES de grabar, y se lo dice.
+2. El trader abre él mismo el replay, antes de compartir pantalla, en una sesión de replay nueva,
+   sin marcas, backtests ni Analytics, y borra cualquier marca anterior. **En el 2026-04-15 de 11 a
+   15, sobre todo: ese día ya lo marcó y lo operó en la 7a, así que tiene que ser una sesión de
+   replay nueva y sin ninguna marca.**
+3. Dice la fecha en voz alta al abrir cada gráfico, y otra vez después de abrir cada replay.
+4. Opera la sesión entera, con voz, ANTES de ver ninguna lámina.
+5. Después ve las láminas del bot de esa sesión, sin fecha, sin nada posterior al corte y sin ningún
+   resultado.
+6. Corrige, y en CADA corrección Aleks pregunta «¿siempre, solo en este caso, o de qué depende?».
+7. Si aparece otro backtest, Analytics o un mes reservado, se reconduce y el tramo es no citable el
+   mismo día.
+
+En el bloque técnico (S-1 a S-6) solo se usan los esquemas. Si el trader quiere poner un ejemplo en
+su gráfico, tiene que ser un día de construcción, y dice la fecha en voz alta al abrirlo.
 
 ## 2. Las preguntas (6 técnicas y una de material)
 

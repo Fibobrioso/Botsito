@@ -1,0 +1,8 @@
+H4 cerradas cargadas al abrir cada sesion del bloque (minimo 60)
+2026-04-24 07-11: 236 H4 cerradas cargadas -> CUMPLE
+2026-04-15 11-15: 195 H4 cerradas cargadas -> CUMPLE
+2026-04-27 11-15: 243 H4 cerradas cargadas -> CUMPLE
+2026-01-19 11-15: 69 H4 cerradas cargadas -> CUMPLE
+2026-01-21 07-11: 80 H4 cerradas cargadas -> CUMPLE
+2026-01-22 11-15: 87 H4 cerradas cargadas -> CUMPLE
+2026-07-16 07-11: 200 H4 cerradas cargadas -> CUMPLE
