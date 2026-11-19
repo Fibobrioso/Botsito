@@ -2,15 +2,15 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 18.6.4` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 19.0.5` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
-## ABIERTA (9)
+## ABIERTA (10)
 
 ### A-13 · break even al toque o con cuerpo · pregunta
 
-Para poner el break even esperas a que se rompa la zona de control. ¿Qué tiene que pasar para que la des por rota? LO FIRME, ACTIVADO el 2026-09-29 (sesion 3, v9 0:55:48-0:56:39): al tocar («apenas toca, pues se pone en B la entrada»), mirado en M1, con el stop exactamente en la entrada, y despues el stop no se mueve (break_even_criterio_ruptura = mecha, fb-2026-09-29-sesion-03-2cff5008; RN-014, fb-2026-09-29-sesion-03-9f506366). SIGUE ABIERTA por orden del consultor: el corte de audio de v9 de 0:57:00 a 0:58:06 cae al final de su respuesta, y lo que pudo tapar se cierra con el audio de respaldo (docs/validation/SESION-03-EXTRACCION.md §2). RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-13), y en contra de lo fijado: al cierre y con cuerpo, corrigiendose en la misma respuesta («no es apenas toque es que la vela la siguiente vela cierre por encima es la condición cierre», ev-v17-005111-8933dab2; ev-v17-005200-4f93afa0; ev-v17-005554-172ecbb2), con la excepcion de un imbalance en que bastaria la mecha (ev-v17-005352-cda6245d) y «un poco de margen» (ev-v17-005454-90ce4feb), con dudas sobre sus ejemplos. En la sesion 1 dijo «apenas toca», en la 4 «apenas cierra» y en la 5 las dos. break_even_condicion = tocar y break_even_criterio_ruptura = mecha siguen CONFIRMED, sin registro: es la primera pregunta de la sesion 7. SIGUE ABIERTA.
+Para poner el break even esperas a que se rompa la zona de control. ¿Qué tiene que pasar para que la des por rota? LO FIRME, ACTIVADO el 2026-09-29 (sesion 3, v9 0:55:48-0:56:39): al tocar («apenas toca, pues se pone en B la entrada»), mirado en M1, con el stop exactamente en la entrada, y despues el stop no se mueve (break_even_criterio_ruptura = mecha, fb-2026-09-29-sesion-03-2cff5008; RN-014, fb-2026-09-29-sesion-03-9f506366). SIGUE ABIERTA por orden del consultor: el corte de audio de v9 de 0:57:00 a 0:58:06 cae al final de su respuesta, y lo que pudo tapar se cierra con el audio de respaldo (docs/validation/SESION-03-EXTRACCION.md §2). RESPONDIDA EN PARTE en la sesion 6 (2026-11-04, v17, S-13), y en contra de lo fijado: al cierre y con cuerpo, corrigiendose en la misma respuesta («no es apenas toque es que la vela la siguiente vela cierre por encima es la condición cierre», ev-v17-005111-8933dab2; ev-v17-005200-4f93afa0; ev-v17-005554-172ecbb2), con la excepcion de un imbalance en que bastaria la mecha (ev-v17-005352-cda6245d) y «un poco de margen» (ev-v17-005454-90ce4feb), con dudas sobre sus ejemplos. En la sesion 1 dijo «apenas toca», en la 4 «apenas cierra» y en la 5 las dos. break_even_condicion = tocar y break_even_criterio_ruptura = mecha siguen CONFIRMED, sin registro: es la primera pregunta de la sesion 7. RESPONDIDA EN PARTE EN LA SESION 7a (2026-11-16, v18, S-2; rama trabajo/activar-sesion-07): ni al toque ni a secas, cuando se desarrolla y se valida una zona de control, esperando al cierre de la vela (ev-v18-001327-70f1d014, ev-v18-001900-1581efbe); el imbalance no lo usa (ev-v18-001145-901d8aa0). Se activa: break_even_condicion = cierre y break_even_criterio_ruptura = cuerpo, con CORRECT y supersede (fb-2026-11-16-sesion-07-828031df, fb-2026-11-16-sesion-07-a094ab28), y RN-014 (fb-2026-11-16-sesion-07-223a2951). SIGUE ABIERTA SOLO POR EL MARGEN: en la sesion 6 dijo «un poco de margen» (ev-v17-005454-90ce4feb) y en la 7a lo cifra una vez, en un ejemplo, «sea mínimo al menos por un par de puntos o un pip» (ev-v19-011529-8ae8b581): «en parte», sin activar (el bot no pone margen). Para la 7b: cuando la vela cierra por encima del alto de tu zona de control, ¿te basta con que cierre un punto por encima, o tiene que pasarlo por un margen? ¿cuánto, y siempre el mismo?
 
 Afecta a: `break_even_criterio_ruptura`.
 
@@ -70,6 +70,12 @@ Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa
 
 Fuente documental: `docs/adr/0040-la-combinacion-confirmed-del-objetivo-es-falsa.md`, «Impacto»: «Un bot construido hoy con ellos apuntaría a un RR realizado de 3,75, y el material dice 3,00.».
 
+### A-58 · qué alto y qué bajo forman el rango de H4 cuando una H4 lo rompe · pregunta
+
+Cuando una H4 rompe tu rango, ¿qué alto y qué bajo forman el rango nuevo? Y si la vela que lo rompe cierra del color contrario, ¿qué pasa con el rango? Lo que nos has dicho (sesion 7a, S-1): el rango es la vela verde grande y sigues buscando compras (ev-v18-000249-bb7b1c07); el lado cambia con una ruptura, con mecha o con cuerpo, y el color de la vela (ev-v18-000408-c48297b1); manda el rango mayor que no tiene mitigada la liquidez, ni por encima ni por debajo, hasta que se mitiga (ev-v18-000912-52594a58); y, en parte, que para el rango nuevo «tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo» (ev-v18-000822-57145b90). No dijiste si el rango nuevo son el alto y el bajo de esa vela, ni qué hace con el rango una vela que lo rompe y cierra del color contrario. Hasta tu respuesta el bot usa la LECTURA DEL CONSULTOR (sesgo_h4_rango_nuevo = vela_que_rompe_con_su_color, ADR-0094): la vela que rompe y cierra de su color es el rango nuevo, su alto y su bajo; la que rompe y cierra del color contrario no cambia el rango. Lo que se busco en el corpus antes de redactarla (2026-11-18, kb find, sin lo oculto): «nuevo rango» como frase (1 resultado: ev-v18-000822-57145b90); «actualiz» y «rango» por prefijo (8: ev-v11-000038-fef9789d, el segmento de v12 0:06:38 «arriba con una vela verde para poder actualizar rango alcista nuevamente», ev-v18-000822-57145b90, ev-v18-000912-52594a58 y ev-v18-011054-fbf8e9ae, «este rango ya ha sido mitigado entonces lo actualizamos a ese nivel», mas dos superseded); «rango» y «mitig» por prefijo (15, los de arriba y las correcciones del bloque de dias de la 7a, ev-v9-000902-25db5bf5 «el sesgo es alcista mientras que no se mitigue, pues, con mecha o con cuerpo por debajo de esta vela»). Ninguno dice que alto y que bajo forman el rango nuevo; los dos que mas se acercan van de evidencia abajo.
+
+Afecta a: `sesgo_h4_rango_nuevo`.
+
 ## DECIDIDA (8)
 
 ### A-15 · alcance de la ventana operativa · cerrada por `ADR-0024` el 2026-09-12
@@ -126,7 +132,7 @@ Fuente documental: `docs/validation/FTMO-REGLAS.md`, «2. Las reglas, con su fue
 
 ### A-1 · sesgo H4
 
-¿que vela H4 fija el sesgo y cuando cambia?
+¿que vela H4 fija el sesgo y cuando cambia? NOTA (2026-11-18, rama trabajo/activar-sesion-07, ADR-0094): NO SE REABRE. Desde la sesion 7a (S-1, fb-2026-11-16-sesion-07-33fdaa6c, CORRECT sobre RN-003) el sesgo es el del RANGO VIGENTE de H4: una H4 lo cambia solo si rompe el rango y cierra del color de esa ruptura, no si rompe solo a su anterior. La pregunta sigue contestada (una H4 lo fija; cambia cuando rompe), y lo que cambia es contra que rompe, que entra por el CORRECT sobre la regla, como en ADR-0060, ADR-0075 y ADR-0080 (§9). Lo que el trader no dijo del rango nuevo es A-58
 
 Afecta a: `sesgo_h4_regla`.
 
@@ -144,7 +150,7 @@ Afecta a: `salida_sin_ruptura`.
 
 ### A-4 · BE al tocar o al cierre · **BLOQUEANTE**
 
-¿break-even al tocar el nivel o al cierre de vela? (V4 0:44:56)
+¿break-even al tocar el nivel o al cierre de vela? (V4 0:44:56) NOTA (2026-11-18, rama trabajo/activar-sesion-07): NO SE REABRE. Su RESOLVE_UNKNOWN (fb-2026-09-09-sesion-01-7fcb971c, «tocar») sigue activo como lo que el trader dijo en la sesion 1; desde la sesion 7a (S-2) los dos parametros los corrigen dos CORRECT con supersede: break_even_condicion = cierre (fb-2026-11-16-sesion-07-828031df) y break_even_criterio_ruptura = cuerpo (fb-2026-11-16-sesion-07-a094ab28), y la regla RN-014 otro (fb-2026-11-16-sesion-07-223a2951). Lo que queda abierto del break even (el margen) es A-13
 
 Afecta a: `break_even_condicion`, `break_even_criterio_ruptura`.
 

@@ -10,6 +10,16 @@ phase: post-F14 (rama `feature/be-al-tick`, Next Action G: RN-014, break even al
 > anterior cubrían. Se escriben con la lectura más conservadora y se revisan con la demo de
 > MetaTrader (ADR-0053 §2.1), que es la que dirá cómo tarda una petición `modificar` de verdad.
 
+> **RECUADRO (2026-11-18, rama `trabajo/activar-sesion-07`; sesión 7a, S-2).** Desde hoy
+> `break_even_condicion` es `cierre` y `break_even_criterio_ruptura` es `cuerpo`
+> (`fb-2026-11-16-sesion-07-828031df` y `fb-2026-11-16-sesion-07-a094ab28`, CORRECT con
+> supersede): el break even va por la vía de §5, al cierre de la M1 que CIERRA más allá del
+> nivel, sin vigilancia al tick (§1 y §2 solo se arman con `tocar` y `mecha`, que siguen
+> escritos y probados con una copia del registro). En consecuencia, **§6 (el break even de una
+> venta por el ASK, M de la Next Action) queda sin objeto mientras la condición sea `cierre`**:
+> no hay toque al tick que disparar. No hace falta ADR nuevo: las dos opciones existen y §5 las
+> describe. El cuerpo no se reescribe.
+
 ## Decision
 
 ### 1. El instante: el primer tick cuyo BID pasa el nivel

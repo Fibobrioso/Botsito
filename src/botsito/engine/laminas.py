@@ -459,42 +459,43 @@ def _toma(t: Mapping[str, Any]) -> TomaFoto:
 # ni porcentajes: lo comprueba `comprobar_texto` en cada byte de cada lamina.
 SESGO_ALCISTA = "alcista"
 SESGO_BAJISTA = "bajista"
+# ADR-0094 (sesion 7a, S-1): el sesgo es el del RANGO VIGENTE de H4, en el idioma del trader
+# («El rango es la vela verde grande y sigo buscando compras»)
 FRASE_SESGO = {
-    (SESGO_ALCISTA, False): "Sesgo de H4 alcista: la vela H4 que lo fija rompió el alto de la "
-    "anterior y cerró verde.",
-    (SESGO_ALCISTA, True): "Sesgo de H4 alcista: la vela H4 que lo fija rompió los dos extremos "
-    "de la anterior y cerró verde.",
-    (SESGO_BAJISTA, False): "Sesgo de H4 bajista: la vela H4 que lo fija rompió el bajo de la "
-    "anterior y cerró roja.",
-    (SESGO_BAJISTA, True): "Sesgo de H4 bajista: la vela H4 que lo fija rompió los dos extremos "
-    "de la anterior y cerró roja.",
-    ("insuficiente", False): "Sin sesgo de H4: ninguna de las velas H4 que mira hacia atrás rompe "
-    "un extremo de la anterior cerrando de ese color.",
+    (SESGO_ALCISTA, False): "Sesgo de H4 alcista: el rango es la vela H4 que rompió por arriba el "
+    "rango anterior y cerró verde, y nadie lo ha roto después cerrando de su color.",
+    (SESGO_ALCISTA, True): "Sesgo de H4 alcista: el rango es la vela H4 que rompió por arriba y "
+    "por abajo el rango anterior y cerró verde, y nadie lo ha roto después cerrando de su color.",
+    (SESGO_BAJISTA, False): "Sesgo de H4 bajista: el rango es la vela H4 que rompió por abajo el "
+    "rango anterior y cerró roja, y nadie lo ha roto después cerrando de su color.",
+    (SESGO_BAJISTA, True): "Sesgo de H4 bajista: el rango es la vela H4 que rompió por arriba y "
+    "por abajo el rango anterior y cerró roja, y nadie lo ha roto después cerrando de su color.",
+    ("insuficiente", False): "Sin sesgo de H4: desde la vela H4 con que arranca el bot, ninguna "
+    "rompió el rango cerrando del color de su ruptura.",
     ("ambiguo", False): "Sesgo de H4 ambiguo.",
 }
+# el rango vigente (ADR-0094): la vela, su alto y su bajo
+FRASE_RANGO = "El rango es la vela H4 que abre a las {hora}: alto {alto}, bajo {bajo}."
 # por motivo de la saltada (`domain.sesgo`): (una, varias)
 FRASE_SALTADAS = {
     "color_contrario": (
-        "Antes de esa vela, el bot se saltó una vela H4 que rompió un extremo y cerró del color "
-        "contrario.",
-        "Antes de esa vela, el bot se saltó {n} velas H4 que rompieron un extremo y cerraron del "
-        "color "
-        "contrario.",
+        "Después, una vela H4 rompió el rango y cerró del color contrario: el rango no cambia.",
+        "Después, {n} velas H4 rompieron el rango y cerraron del color contrario: el rango no "
+        "cambia.",
     ),
     "neutra_simple": (
-        "Antes de esa vela, el bot se saltó una vela H4 que rompió un extremo y cerró sin cuerpo.",
-        "Antes de esa vela, el bot se saltó {n} velas H4 que rompieron un extremo y cerraron sin "
-        "cuerpo.",
+        "Después, una vela H4 rompió el rango por un lado y cerró sin cuerpo: el rango no cambia.",
+        "Después, {n} velas H4 rompieron el rango por un lado y cerraron sin cuerpo: el rango no "
+        "cambia.",
     ),
     "neutra_doble": (
-        "Antes de esa vela, el bot se saltó una vela H4 que rompió los dos extremos y cerró sin "
-        "cuerpo.",
-        "Antes de esa vela, el bot se saltó {n} velas H4 que rompieron los dos extremos y cerraron "
-        "sin "
-        "cuerpo.",
+        "Después, una vela H4 rompió el rango por arriba y por abajo y cerró sin cuerpo: el rango "
+        "no cambia.",
+        "Después, {n} velas H4 rompieron el rango por arriba y por abajo y cerraron sin cuerpo: el "
+        "rango no cambia.",
     ),
 }
-FRASE_FIJA_FUERA = "La vela H4 que fija el sesgo viene de antes de la ventana."
+FRASE_FIJA_FUERA = "La vela H4 que es el rango viene de antes de la ventana."
 FRASE_DETENIDO = {
     "detenido_por_cartuchos": "Ya ha gastado sus intentos en esta liquidez: espera otra liquidez "
     "de M15.",
@@ -749,6 +750,8 @@ class Dibujo:
     punto: tuple[int, int] | None  # (inicio de su vela, nivel)
     control: tuple[tuple[int, int], ...]  # (inicio de la vela contraria, nivel) de RN-009
     ordenes: tuple[OrdenFoto, ...]
+    # el rango vigente de H4 (ADR-0094), (alto, bajo), si el sesgo tiene lado
+    rango: tuple[int, int] | None = None
 
 
 @dataclass(frozen=True)
@@ -775,6 +778,14 @@ def _paneles(foto: Foto, lectura: Lectura) -> tuple[tuple[Vela, ...], ...]:
     return tuple(salida)
 
 
+def _rango(texto: str | None) -> tuple[int, int, int] | None:
+    """`alto:bajo:inicio` de la anotacion del rango vigente (ADR-0094); None sin anotar."""
+    if not texto:
+        return None
+    alto, bajo, inicio = (int(x) for x in texto.split(":"))
+    return alto, bajo, inicio
+
+
 def _lista(texto: str | None) -> list[tuple[int, str]]:
     """`inicio:motivo,...` (o `nivel@inicio,...`) de una anotacion de registro."""
     if not texto:
@@ -795,6 +806,7 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
         ANOTACION_SALTADAS_NEUTRA_DOBLE,
         ANOTACION_SALTADAS_NEUTRA_SIMPLE,
         ANOTACION_SESGO,
+        ANOTACION_SESGO_RANGO,
         ANOTACION_SESGO_SALTADAS,
         ANOTACION_SESGO_VELA,
     )
@@ -834,9 +846,22 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
     fija = None if vela is None else int(vela)
     inicios_h4 = {int(v.inicio) for v in h4}
     fija_dentro: bool | None = None
+    rango_dibujo: tuple[int, int] | None = None
     if sesgo in (SESGO_ALCISTA, SESGO_BAJISTA):
         if fija is None:
             raise LaminaError("sesgo con lado sin la H4 que lo fija anotada")
+        # ADR-0094: con lado, el rango vigente es la H4 que lo fija
+        rango = _rango(f.anotacion(ANOTACION_SESGO_RANGO))
+        if rango is None or rango[2] != fija:
+            raise LaminaError("el rango anotado no es la H4 que fija el sesgo")
+        rango_dibujo = (rango[0], rango[1])
+        frases.append(
+            FRASE_RANGO.format(
+                hora=hora(fija, f.huso),
+                alto=precio(rango[0], f.escala),
+                bajo=precio(rango[1], f.escala),
+            )
+        )
         fija_dentro = fija in inicios_h4
         if not fija_dentro:
             frases.append(FRASE_FIJA_FUERA)
@@ -1013,7 +1038,7 @@ def componer(lam: Lamina, lectura: Lectura) -> Composicion:
     dibujo = Dibujo(
         f.corte, f.huso, f.escala, h4, m15, m1,
         fija if fija_dentro else None, h4_saltadas, tuple(lineas), toma, caja, niveles, punto,
-        control, tuple(ordenes),
+        control, tuple(ordenes), rango_dibujo,
     )  # fmt: skip
     return Composicion(dibujo, salida, fija_dentro)
 

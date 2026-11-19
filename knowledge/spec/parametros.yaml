@@ -426,10 +426,12 @@ parametros:
       que vela H4 fija el sesgo y cuando cambia (A-1). Desde F12 ninguna forma lo lee: mezclaba sujeto
       y criterio, y la forma los separa en el predicado `rompe` (que: vela_h4_previa) y en
       sesgo_h4_criterio_ruptura. Se conserva porque es lo que el trader respondio; lo que ejecuta el
-      motor es lo otro (ADR-0019). LA REGLA VIGENTE ES LA DE ADR-0080 (WhatsApp del trader del
-      2026-10-14, fb-2026-10-04-sesion-04-6e7da456): la H4 cambia el sesgo solo si rompe el extremo
-      de la anterior -con mecha o con cuerpo- Y cierra del color de esa ruptura; este valor queda
-      como historia de la respuesta de la sesion 1, que no hablaba del color
+      motor es lo otro (ADR-0019). LA REGLA VIGENTE ES LA DE ADR-0094 DESDE EL 2026-11-18 (sesion
+      7a, S-1, fb-2026-11-16-sesion-07-33fdaa6c): el sesgo es el del RANGO VIGENTE de H4, y solo lo
+      cambia una H4 que rompe el rango -con mecha o con cuerpo- Y cierra del color de esa ruptura
+      (lo de ADR-0080, WhatsApp del trader del 2026-10-14, fb-2026-10-04-sesion-04-6e7da456, que
+      era la vigente hasta ese dia y comparaba la H4 previa con su anterior); este valor queda como
+      historia de la respuesta de la sesion 1, que no hablaba ni del color ni del rango
     estado: CONFIRMED
     valor: "vela_anterior_cierre_mecha"
     consumido_por: [ADR-0019]
@@ -456,10 +458,13 @@ parametros:
     tipo: entero
     unidad: velas H4 hacia atras en las que se busca la ultima ruptura que fija el sesgo
     descripcion: >-
-      tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044): se busca la
-      ultima H4 que rompio un extremo de su anterior, como mucho en estas velas; si no hay
-      ninguna, el sesgo es INSUFICIENTE y no se opera. CONFIRMED por ADR-0044: es una decision
-      del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de
+      tope de la busqueda hacia atras del estado inicial del sesgo H4 (ADR-0044). DESDE EL
+      2026-11-18 (ADR-0094, el sesgo del rango vigente) es el ARRANQUE: el rango inicial, sin
+      lado, es la H4 situada estas velas antes de la ultima cerrada (con menos velas cargadas, la
+      primera que haya), y desde ella se recorren hacia delante; si ninguna fija el lado, el sesgo
+      es INSUFICIENTE y no se opera. Hasta entonces se buscaba hacia atras, como mucho en estas
+      velas, la ultima H4 que rompio un extremo de su anterior. CONFIRMED por ADR-0044: es una
+      decision del proyecto, no del trader, y no sale del corpus; por eso es de `ejecucion` y no de
       `estrategia`, cuyos valores solo los dice el trader
     estado: CONFIRMED
     valor: 60
@@ -467,6 +472,37 @@ parametros:
     fuente:
       tipo: decision
       id: ADR-0044
+  - nombre: sesgo_h4_rango_nuevo
+    categoria: estrategia
+    tipo: enum
+    unidad: que alto y que bajo forman el rango de H4 cuando una H4 lo rompe, y que pasa con el rango si la que lo rompe cierra del color contrario
+    opciones: ["vela_que_rompe_con_su_color", "otra"]
+    descripcion: >-
+      lo que el trader NO dijo de la regla del rango vigente (A-58; ADR-0094, lecturas b y d).
+      Dijo que el rango es la vela verde grande (ev-v18-000249-bb7b1c07), que el lado cambia con
+      una ruptura, con mecha o con cuerpo, y el color de la vela (ev-v18-000408-c48297b1), y, en
+      parte, que el rango nuevo lo da la vela que rompe, por arriba o por abajo, y su color
+      («tenemos que ver qué vela o sea si es alcista o bajista y rompe o por encima o por debajo»,
+      ev-v18-000822-57145b90); no que el rango nuevo sean el alto y el bajo de esa vela, ni que
+      hace con el rango la que lo rompe y cierra del color contrario. `vela_que_rompe_con_su_color`
+      (LECTURA DEL CONSULTOR, 2026-11-18): la H4 que rompe un extremo del rango y cierra del color
+      de esa ruptura, o los dos con color, pasa a ser el rango, su alto y su bajo con
+      sesgo_h4_criterio_ruptura; la que lo rompe y cierra del color contrario, o sin cuerpo, no lo
+      cambia, apoyada en el backtest de julio (v11 0:00:38, ev-v11-000038-fef9789d: «no ha sido
+      mitigado Ni por debajo por una vela bajista Ni por arriba por una vela alcista Para
+      actualizar el rango»). `otra`: lo que conteste el trader; el motor no la hace y se niega con
+      nombre. No es un interruptor entre la regla de ADR-0080 y la del rango: esa no es un
+      parametro (ADR-0094 §3). Lo lee el predicado `sesgo_h4_al_abrir` (domain/sesgo.py)
+    consumido_por: [ADR-0094]
+    estado: DEFAULT_AMBIGUOUS
+    valor: "vela_que_rompe_con_su_color"
+    ambiguedad_id: A-58
+    # la fuente es lo que el trader SI dijo, en parte (la vela que rompe y su color); la lectura
+    # del consultor la nombra `consumido_por` (ADR-0094). Un parametro de estrategia cita al
+    # trader (tests/unit/test_registro.py)
+    fuente:
+      tipo: evidence
+      id: ev-v18-000822-57145b90
   - nombre: zona_control_criterio_completada
     categoria: estrategia
     tipo: enum
@@ -488,16 +524,24 @@ parametros:
     opciones: ["mecha", "cuerpo"]
     descripcion: >-
       criterio de ruptura de la zona de control POSTERIOR a la entrada, que es la que dispara el
-      break even. Es lo que pregunta A-13. Hasta el 2026-09-29 entraba `mecha` como DEFAULT
+      break even. Es lo que pregunta A-13. DESDE EL 2026-11-18 ES `cuerpo` (sesion 7a, S-2;
+      trabajo/activar-sesion-07, CORRECT fb-2026-11-16-sesion-07-a094ab28, que supersede al de la
+      sesion 3): «la entrada tiene que cerrar por encima de su nivel alto de su de su máximo nivel
+      para nosotros pues poder poner en break even» (ev-v18-001327-70f1d014), en una venta al revés
+      (ev-v18-001900-1581efbe): una M1 tiene que CERRAR mas alla del extremo de la zona. LA
+      EXCEPCION DEL IMBALANCE (bastaria la mecha) QUEDA DESCARTADA POR EL TRADER: «no es una regla
+      el uso del imbalance» (ev-v18-001145-901d8aa0). Sin margen: el que dijo una vez, en un
+      ejemplo («un par de puntos o un pip», ev-v19-011529-8ae8b581), es «en parte» y A-13 sigue
+      ABIERTA solo por el. Hasta el 2026-09-29 entraba `mecha` como DEFAULT
       NUESTRO, porque el trader se desdecia a los doce minutos; en la sesion 3 lo dijo: al tocar
       («apenas toca, pues se pone en B la entrada», v9 0:55:48), y al tocar basta la mecha. A-13
-      sigue ABIERTA solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
+      seguia ABIERTA, hasta la 7a, solo por el corte de audio de v9 de 0:57:00 a 0:58:06. No confundir con break_even_condicion, que dice si el stop se mueve al TOCAR el
       nivel o al cierre de la vela: son dos preguntas distintas que la prosa mantenia juntas
     estado: CONFIRMED
-    valor: mecha
+    valor: cuerpo
     fuente:
       tipo: feedback
-      id: fb-2026-09-29-sesion-03-2cff5008
+      id: fb-2026-11-16-sesion-07-a094ab28
   - nombre: breaker_m1_criterio_ruptura
     categoria: estrategia
     tipo: enum
@@ -579,8 +623,15 @@ parametros:
       ev-v17-001712-dc155b5d descarta `cualquier_mecha` (con ella esa vela no tomaria); de las dos
       que quedan, la que conserva el ejemplo de la sesion 5 (ADR-0084 §1) es `solo_la_contraria`.
       ev-v15-000553-9d95178a, que contestaba al caso (ii), queda sin CORRECT y en tension hasta la
-      sesion 7. Lo lee quien construye los datos del dia (arnes y visor), no una regla:
-      engine/motor.py aplica el selector sobre domain/pivotes_m15.py
+      sesion 7. EN LA SESION 7a (S-4, 2026-11-16; trabajo/activar-sesion-07), a la pregunta 2 (¿tu
+      alto es la punta de la mecha de la roja o el alto de las verdes?), la opcion a: «La respuesta
+      es la punta de la mecha.» (ev-v18-002511-eec0acec), y al final «mi alto de M15 es la punta de
+      la mecha en el esquema planteado» (ev-v18-002729-38609240): no contradice `solo_la_contraria` y no fija valor. La
+      pregunta 1 (si una mecha de M1 posterior que pasa el alto y vuelve lo mueve) no la contesto,
+      y la mecha de una verde (ev-v18-002701-62875550) cuenta como «en parte»: A-35 sigue ABIERTA y
+      el valor no cambia (respuesta del consultor a la PARADA 4 de trabajo/sesion-07); la pregunta 1
+      va a la 7b reformulada. Lo lee quien construye los datos del dia (arnes y visor), no una
+      regla: engine/motor.py aplica el selector sobre domain/pivotes_m15.py
     consumido_por: [ADR-0084]
     estado: DEFAULT_AMBIGUOUS
     valor: solo_la_contraria
@@ -984,8 +1035,17 @@ parametros:
     unidad: tocar/cierre
     opciones: ["tocar", "cierre"]
     descripcion: >-
-      si el break even se pone al tocar el nivel o al cierre de la vela (A-4). CONFIRMED en `tocar`
-      por la sesion 1 («apenas toca»). EN TENSION DESDE LA SESION 6, sin registro ni cambio de
+      si el break even se pone al tocar el nivel o al cierre de la vela (A-4). DESDE EL 2026-11-18
+      ES `cierre` (sesion 7a, S-2; trabajo/activar-sesion-07, CORRECT
+      fb-2026-11-16-sesion-07-828031df, que supersede al de la sesion 1): «nosotros esperamos a que
+      cierre la vela y si cierra por debajo no vamos a poder» (ev-v18-001327-70f1d014); el break even
+      se pone cuando se desarrolla y se valida una zona de control (ev-v18-001900-1581efbe), en una
+      venta al reves. LA EXCEPCION DEL IMBALANCE QUEDA DESCARTADA POR EL TRADER: «el imbalance
+      nosotros como tal no lo usamos […] no es una regla el uso del imbalance»
+      (ev-v18-001145-901d8aa0). El margen («un par de puntos o un pip», ev-v19-011529-8ae8b581) no se
+      activa: es «en parte», y A-13 sigue ABIERTA solo por el. Con `cierre` no hay vigilancia al tick
+      (ADR-0065 §5): el stop se mueve en el cierre de la M1 que pasa el nivel. Hasta entonces fue
+      CONFIRMED en `tocar` por la sesion 1 («apenas toca»). EN TENSION DESDE LA SESION 6, sin registro ni cambio de
       valor (trabajo/activar-sesion-06): en S-13 (A-13) empezo por el toque y se corrigio en la
       misma respuesta, «Apenas toque Se pone en break up No, no no es apenas toque es que la vela la
       siguiente vela cierre por encima es la condición cierre» (ev-v17-005111-8933dab2), y «la vela
@@ -998,10 +1058,10 @@ parametros:
       cambiaria este parametro y break_even_criterio_ruptura (dos CORRECT con supersede): es la
       primera pregunta de la sesion 7
     estado: CONFIRMED
-    valor: "tocar"
+    valor: cierre
     fuente:
       tipo: feedback
-      id: fb-2026-09-09-sesion-01-0ccafcba
+      id: fb-2026-11-16-sesion-07-828031df
   - nombre: objetivo_rr
     categoria: estrategia
     tipo: decimal

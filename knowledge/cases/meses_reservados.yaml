@@ -46,3 +46,19 @@ meses:
       decida no se puede leer, y la cuarentena del texto lo tapa
     fuente: [ADR-0072, docs/validation/SESION-05-EXTRACCION.md]
     declarado_el: "2026-10-28"
+  "2026-10":
+    motivo: >-
+      recibido el 2026-11-18 un video de mapeo de estructura del trader que, segun su mensaje, cubre
+      del 2026-10-23 al 2026-11-17: SIN ABRIR y fuera del repo, no se ingiere; el consultor decidio
+      mantener los dos meses reservados (respuesta a la PARADA final de trabajo/activar-sesion-07,
+      punto 8)
+    fuente: [docs/encargos/trabajo-activar-sesion-07.md]
+    declarado_el: "2026-11-18"
+  "2026-11":
+    motivo: >-
+      recibido el 2026-11-18 un video de mapeo de estructura del trader que, segun su mensaje, cubre
+      del 2026-10-23 al 2026-11-17: SIN ABRIR y fuera del repo, no se ingiere; el consultor decidio
+      mantener los dos meses reservados (respuesta a la PARADA final de trabajo/activar-sesion-07,
+      punto 8)
+    fuente: [docs/encargos/trabajo-activar-sesion-07.md]
+    declarado_el: "2026-11-18"

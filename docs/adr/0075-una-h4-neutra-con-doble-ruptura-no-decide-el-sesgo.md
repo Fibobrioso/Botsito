@@ -17,6 +17,11 @@ phase: post-F14 (rama `trabajo/activar-sesion-04-motor`, R1.1 de la hoja de ruta
 > decide y la búsqueda sigue, igual que la neutra de este ADR. §1 y §2 no cambian; la neutra de
 > doble ruptura sigue sin decidir, y desde ADR-0080 el motor la cuenta (`saltadas_neutras_dobles`).
 
+> **ENMIENDA (2026-11-18, rama `trabajo/activar-sesion-07`, ADR-0094).** La neutra que supera
+> los dos extremos sigue sin decidir, pero los extremos son los del RANGO VIGENTE, no los de la
+> H4 anterior, y «la búsqueda sigue hacia atrás» pasa a ser «el rango no cambia»: el recorrido
+> es hacia delante desde el rango inicial. El cuerpo no se reescribe.
+
 ## Decision
 
 ### 1. La vela neutra no decide

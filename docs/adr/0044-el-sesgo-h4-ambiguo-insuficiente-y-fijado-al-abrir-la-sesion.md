@@ -18,6 +18,15 @@ phase: post-F14 (rama `trabajo/motor-sesgo-h4`)
 > decide y la búsqueda sigue), sin recuadro aquí hasta hoy. Lo demás de este ADR -§3, §4, el tope y
 > `insuficiente`- no cambia.
 
+> **ENMIENDA (2026-11-18, rama `trabajo/activar-sesion-07`, ADR-0094).** En §2, el estado
+> inicial ya no es «la última H4 que rompió un extremo de su anterior» (con el color, desde
+> ADR-0080), buscada hacia atrás como mucho `sesgo_h4_tope_velas` velas: el sesgo es el del
+> RANGO VIGENTE, recorrido hacia delante desde el rango inicial, que es la H4 situada
+> `sesgo_h4_tope_velas` velas antes de la última cerrada (o la primera cargada). El tope sigue
+> siendo una decisión del proyecto, ahora como arranque, e INSUFICIENTE sigue siendo «ninguna
+> fijó el lado». §1 (no se opera sin lado), §3 (las H4 cerradas por su hora de fin) y §4
+> (romper es superar; un equal no rompe) no cambian. El cuerpo no se reescribe.
+
 ## Decision
 
 RN-003 dice que el sesgo es el de la vela H4 previa cerrada, que cambia solo si esa vela rompió

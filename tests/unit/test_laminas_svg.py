@@ -56,6 +56,8 @@ def _m1(desde: int, hasta: int) -> tuple[Vela, ...]:
 M1 = _m1(DESDE, CORTE)
 H4 = agregar(list(M1), 240, REGISTRO.hora("anclaje_h4"))
 FIJA, SALTADA_1, SALTADA_2 = (int(v.inicio) for v in H4[-5:-2])
+# el rango vigente (ADR-0094): con lado, la H4 que fija el sesgo, con su alto y su bajo
+RANGO_ALTO, RANGO_BAJO = int(H4[-5].maxima), int(H4[-5].minima)
 TOMA = CORTE - 30
 FORMADO = CORTE - 185
 # los niveles de las dos lineas: el extremo de una M1 de la ventana de M15 anterior a que se
@@ -97,6 +99,7 @@ def foto_base(**cambios: Any) -> laminas.Foto:
             ("sesgo_h4_saltadas", f"{SALTADA_2}:color_contrario,{SALTADA_1}:color_contrario"),
             ("sesgo_h4_saltadas_color_contrario", "2"),
             ("sesgo_h4_vela", str(FIJA)),
+            ("sesgo_h4_rango", f"{RANGO_ALTO}:{RANGO_BAJO}:{FIJA}"),
         ),
         escenarios=(
             laminas.EscenarioFoto(
@@ -158,9 +161,15 @@ def test_la_foto_con_todo_dibuja_cada_marca_con_su_clase() -> None:
 def test_la_sustentacion_de_la_foto_con_todo() -> None:
     _, comp = _pagina(foto_base())
     assert comp.frases == (
-        "Sesgo de H4 alcista: la vela H4 que lo fija rompió el alto de la anterior y cerró verde.",
-        "Antes de esa vela, el bot se saltó 2 velas H4 que rompieron un extremo y cerraron del "
-        "color contrario.",
+        # ADR-0094: el rango vigente, en el idioma del trader (cambia A PROPOSITO en
+        # trabajo/activar-sesion-07; hasta entonces, «la vela H4 que lo fija rompió el alto de la
+        # anterior» y «Antes de esa vela, el bot se saltó…»)
+        "Sesgo de H4 alcista: el rango es la vela H4 que rompió por arriba el rango anterior y "
+        "cerró verde, y nadie lo ha roto después cerrando de su color.",
+        f"El rango es la vela H4 que abre a las {laminas.hora(FIJA, HUSO)}: alto "
+        f"{laminas.precio(RANGO_ALTO, ESCALA)}, bajo {laminas.precio(RANGO_BAJO, ESCALA)}.",
+        "Después, 2 velas H4 rompieron el rango y cerraron del color contrario: el rango no "
+        "cambia.",
         f"La vela de M1 de las 09:29 cerró con cuerpo por debajo del bajo de M15 en {PRECIO_BAJO}.",
         "Sigue la liquidez de M15 número 1 de esta sesión.",
         "La caja va de 1.10010 (el 0) a 1.09980 (el 1).",
@@ -210,7 +219,7 @@ def test_lo_nacido_antes_de_la_ventana_no_se_dibuja_ni_da_precio() -> None:
     f = foto_base(desde_m15=CORTE - 150, desde_h4=SALTADA_2)
     texto, comp = _pagina(f)
     assert "linea-m15" not in texto and 'class="h4-fija"' not in texto and PRECIO_BAJO not in texto
-    assert "La vela H4 que fija el sesgo viene de antes de la ventana." in comp.frases
+    assert "La vela H4 que es el rango viene de antes de la ventana." in comp.frases
     assert "2 líneas de M15 de esta sesión vienen de antes de la ventana." in comp.frases
     assert any(
         x.startswith(
@@ -882,3 +891,25 @@ def test_la_guardia_falla_si_se_quita_la_frase_de_una_rama(
     f = foto_base(bloqueos=_bloqueo((gate, "dispara")), **foto, **hechos)
     with pytest.raises(laminas.LaminaError, match="sin frase"):
         _pagina(f)
+
+
+# ---- el rango vigente de H4 (ADR-0094, trabajo/activar-sesion-07)
+
+
+def test_el_panel_de_h4_dibuja_el_alto_y_el_bajo_del_rango() -> None:
+    texto, comp = _pagina(foto_base())
+    assert comp.dibujo.rango == (RANGO_ALTO, RANGO_BAJO)
+    assert en_panel(texto, "rango-h4", 0) == 2
+    assert all(en_panel(texto, "rango-h4", k) == 0 for k in (1, 2, 3))
+
+
+def test_un_rango_anotado_que_no_es_la_h4_que_fija_el_sesgo_se_niega() -> None:
+    anot = tuple(
+        (k, f"{RANGO_ALTO}:{RANGO_BAJO}:{SALTADA_1}" if k == "sesgo_h4_rango" else v)
+        for k, v in foto_base().anotaciones
+    )
+    with pytest.raises(laminas.LaminaError, match="el rango anotado"):
+        _pagina(foto_base(anotaciones=anot))
+    sin_rango = tuple((k, v) for k, v in foto_base().anotaciones if k != "sesgo_h4_rango")
+    with pytest.raises(laminas.LaminaError, match="el rango anotado"):
+        _pagina(foto_base(anotaciones=sin_rango))

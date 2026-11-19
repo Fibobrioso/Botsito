@@ -28,8 +28,8 @@ from botsito.domain.sesgo import (
     SALTADA_COLOR_CONTRARIO,
     SALTADA_NEUTRA_DOBLE,
     SALTADA_NEUTRA_SIMPLE,
+    ResultadoSesgo,
     Sesgo,
-    _extremos,
     sesgo_h4,
 )
 from botsito.domain.valores import Puntos
@@ -38,44 +38,6 @@ from tests.unit.test_estructura_m1 import PREVIO, TOMA, _serie
 from tests.unit.test_sesgo_h4 import FIN, H4, TOPE, h4
 
 # ------------------------------------------------------------------ las copias literales de main
-
-
-def _sesgo_de_main(
-    velas_h4: Sequence[Vela], apertura_sesion: MinutoUtc, tope: int, criterio: str
-) -> tuple[Sesgo, int | None, int, bool, int, int, int]:
-    """`domain.sesgo.sesgo_h4` de main (e5394c5), copiado tal cual salvo que devuelve la tupla de
-    los campos que ya habia."""
-    cerradas = sorted((v for v in velas_h4 if v.fin <= apertura_sesion), key=lambda v: v.inicio)
-    miradas = 0
-    saltadas = [0, 0, 0]
-
-    def fija(
-        sesgo: Sesgo, puntos: int | None, doble: bool
-    ) -> tuple[Sesgo, int | None, int, bool, int, int, int]:
-        return (sesgo, puntos, miradas, doble, *saltadas)  # type: ignore[return-value]
-
-    for i in range(len(cerradas) - 1, 0, -1):
-        if miradas == tope:
-            break
-        miradas += 1
-        vela = cerradas[i]
-        alto, bajo = _extremos(vela, criterio)
-        alto_ant, bajo_ant = _extremos(cerradas[i - 1], criterio)
-        arriba, abajo = alto - alto_ant, bajo_ant - bajo
-        verde, roja = vela.cierre > vela.abierta, vela.cierre < vela.abierta
-        if arriba > 0 and abajo > 0:
-            if verde:
-                return fija(Sesgo.ALCISTA, arriba, True)
-            if roja:
-                return fija(Sesgo.BAJISTA, abajo, True)
-            saltadas[2] += 1
-        elif arriba > 0 or abajo > 0:
-            if arriba > 0 and verde:
-                return fija(Sesgo.ALCISTA, arriba, False)
-            if abajo > 0 and roja:
-                return fija(Sesgo.BAJISTA, abajo, False)
-            saltadas[0 if (verde or roja) else 1] += 1
-    return fija(Sesgo.INSUFICIENTE, None, False)
 
 
 def _zonas_de_main(m1: Sequence[Vela], desde: int, hasta: int, lado: str) -> int:
@@ -94,21 +56,6 @@ def _zonas_de_main(m1: Sequence[Vela], desde: int, hasta: int, lado: str) -> int
         if p.lado == sentido and int(p.contraria_inicio) > int(m1[primer_impulso].inicio):
             n += 1
     return n
-
-
-def _como_main(r: object) -> tuple[object, ...]:
-    return tuple(
-        getattr(r, c)
-        for c in (
-            "sesgo",
-            "ruptura_puntos",
-            "velas_miradas",
-            "doble_ruptura",
-            "saltadas_color_contrario",
-            "saltadas_neutras_simples",
-            "saltadas_neutras_dobles",
-        )
-    )
 
 
 # --------------------------------------------------------------------------------- el sesgo
@@ -171,10 +118,32 @@ CASOS_SESGO: list[tuple[list[Vela], int, int, str]] = [
 ]
 
 
-def test_sobre_los_casos_que_ya_habia_el_sesgo_y_los_contadores_salen_identicos() -> None:
+def _cuadra(r: ResultadoSesgo) -> None:
+    """Lo que el registro tiene que cumplir con la regla del rango vigente (ADR-0094)."""
+    motivos = [m for _, m in r.h4_saltadas]
+    assert motivos.count(SALTADA_COLOR_CONTRARIO) == r.saltadas_color_contrario
+    assert motivos.count(SALTADA_NEUTRA_SIMPLE) == r.saltadas_neutras_simples
+    assert motivos.count(SALTADA_NEUTRA_DOBLE) == r.saltadas_neutras_dobles
+    con_lado = r.sesgo in (Sesgo.ALCISTA, Sesgo.BAJISTA)
+    assert (r.vela_que_fija is not None) == con_lado
+    assert (r.ruptura_puntos is not None) == con_lado
+    assert len(r.h4_saltadas) <= r.velas_miradas
+    fija, puntos = r.vela_que_fija, r.ruptura_puntos
+    if fija is not None and puntos is not None:
+        # con lado, el rango vigente es la H4 que lo fijo, y las saltadas son posteriores
+        assert r.rango_vela == fija
+        assert puntos > 0
+        assert all(int(i) > int(fija) for i, _ in r.h4_saltadas)
+    if r.rango_alto is not None and r.rango_bajo is not None:
+        assert r.rango_vela is not None and r.rango_alto >= r.rango_bajo
+
+
+def test_sobre_los_casos_que_ya_habia_el_registro_cuadra_con_la_regla_del_rango() -> None:
+    """Hasta ADR-0094 este test comparaba el sesgo y sus contadores con una copia literal del
+    `sesgo_h4` de main (e5394c5); desde la regla del rango vigente el resultado cambia A
+    PROPOSITO (trabajo/activar-sesion-07), y lo que se comprueba es que el registro cuadra."""
     for velas, apertura, tope, criterio in CASOS_SESGO:
-        r = sesgo_h4(velas, MinutoUtc(apertura), tope, criterio)
-        assert _como_main(r) == _sesgo_de_main(velas, MinutoUtc(apertura), tope, criterio)
+        _cuadra(sesgo_h4(velas, MinutoUtc(apertura), tope, criterio))
 
 
 def test_el_registro_dice_la_vela_que_fija_y_cada_saltada_con_su_motivo() -> None:
@@ -227,20 +196,11 @@ def _velas_h4(draw: st.DrawFn) -> list[Vela]:
     tope=st.integers(min_value=1, max_value=8),
     criterio=st.sampled_from([MECHA, CUERPO]),
 )
-def test_al_azar_el_sesgo_y_los_contadores_salen_como_en_main_y_el_registro_cuadra(
+def test_al_azar_el_registro_del_sesgo_cuadra_con_la_regla_del_rango(
     velas: list[Vela], apertura: int, tope: int, criterio: str
 ) -> None:
-    r = sesgo_h4(velas, MinutoUtc(apertura), tope, criterio)
-    assert _como_main(r) == _sesgo_de_main(velas, MinutoUtc(apertura), tope, criterio)
-    motivos = [m for _, m in r.h4_saltadas]
-    assert motivos.count(SALTADA_COLOR_CONTRARIO) == r.saltadas_color_contrario
-    assert motivos.count(SALTADA_NEUTRA_SIMPLE) == r.saltadas_neutras_simples
-    assert motivos.count(SALTADA_NEUTRA_DOBLE) == r.saltadas_neutras_dobles
-    con_lado = r.sesgo in (Sesgo.ALCISTA, Sesgo.BAJISTA)
-    assert (r.vela_que_fija is not None) == con_lado
-    if con_lado:
-        assert len(r.h4_saltadas) <= r.velas_miradas - 1
-        assert all(int(i) > int(r.vela_que_fija) for i, _ in r.h4_saltadas)  # type: ignore[arg-type]
+    """Hasta ADR-0094 comparaba ademas con la copia literal de main (arriba); ya no."""
+    _cuadra(sesgo_h4(velas, MinutoUtc(apertura), tope, criterio))
 
 
 # ------------------------------------------------------------------- las zonas de control
@@ -340,6 +300,7 @@ def test_una_segunda_evaluacion_sin_saltadas_borra_las_de_la_primera() -> None:
     from botsito.engine.primitivas import (
         ANOTACION_DOBLE_RUPTURA,
         ANOTACION_SALTADAS_COLOR,
+        ANOTACION_SESGO_RANGO,
         ANOTACION_SESGO_SALTADAS,
         ANOTACION_SESGO_VELA,
         primitivas_escritas,
@@ -349,8 +310,9 @@ def test_una_segunda_evaluacion_sin_saltadas_borra_las_de_la_primera() -> None:
         Path(__file__).resolve().parents[2] / "knowledge" / "spec" / "parametros.yaml"
     )
     sesgo = primitivas_escritas(registro).predicados["sesgo_h4_al_abrir"]
-    args = {"que": "vela_h4_previa", "contra": "extremo_de_la_h4_anterior",
-            "criterio": "sesgo_h4_criterio_ruptura", "tope": "sesgo_h4_tope_velas"}  # fmt: skip
+    args = {"que": "vela_h4_cerrada", "contra": "rango_h4_vigente",
+            "criterio": "sesgo_h4_criterio_ruptura", "tope": "sesgo_h4_tope_velas",
+            "rango_nuevo": "sesgo_h4_rango_nuevo"}  # fmt: skip
     estado = EstadoDia()
     # la primera: la ultima rompe arriba y cierra roja (saltada por el color); la anterior rompe
     # los dos extremos y cierra verde (doble ruptura)
@@ -370,3 +332,5 @@ def test_una_segunda_evaluacion_sin_saltadas_borra_las_de_la_primera() -> None:
     assert ANOTACION_SALTADAS_COLOR not in anot and ANOTACION_SESGO_SALTADAS not in anot
     assert ANOTACION_DOBLE_RUPTURA not in anot
     assert anot[ANOTACION_SESGO_VELA] == str(H4)
+    # ADR-0094: el rango vigente, `alto:bajo:inicio`, es la H4 que fija el sesgo
+    assert anot[ANOTACION_SESGO_RANGO] == f"112:101:{H4}"

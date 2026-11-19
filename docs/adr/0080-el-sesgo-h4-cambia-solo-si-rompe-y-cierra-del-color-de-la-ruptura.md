@@ -14,6 +14,16 @@ phase: post-F14 (rama `trabajo/sesgo-h4-color`, R1.2 de la hoja de ruta)
 > ADR-0044 §2 y su alternativa descartada, ADR-0060 §1 y ADR-0075 §3** (recuadro en cada uno y
 > fila del índice).
 
+> **ENMIENDA (2026-11-18, rama `trabajo/activar-sesion-07`, ADR-0094; sesión 7a, S-1).** La
+> regla del color (§1, D1, D3 y D4) sigue decidiendo el LADO, pero la H4 no rompe ya el
+> extremo de su anterior sino el del RANGO VIGENTE («El rango es la vela verde grande y sigo
+> buscando compras», `ev-v18-000249-bb7b1c07`; `fb-2026-11-16-sesion-07-33fdaa6c`, CORRECT
+> sobre RN-003, que pasa a ser su cita): una H4 que rompe solo a su anterior sin salir del
+> rango no cambia el lado. D1 y D3 («la búsqueda sigue») pasan a «el rango no cambia»
+> (lectura del consultor, A-58). D5 se aplica a la regla del rango por analogía: tampoco es
+> un parámetro ni un interruptor (ADR-0094 §3). El CORRECT de este ADR no se supersede: sigue
+> sosteniendo la regla del color. El cuerpo no se reescribe.
+
 ## Decision
 
 ### 1. La regla

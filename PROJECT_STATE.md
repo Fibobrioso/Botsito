@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-07
 
 ## Current Feature
-Ninguna rama abierta. trabajo/sesion-07 cerrada en main el 2026-11-18 (stable/F39d-sesion-07): la sesión 7a (v18 y v19, grabada el 2026-11-16 y el 2026-11-17) ingerida y extraída, con sus PARADAS respondidas; nada resuelto.
+trabajo/activar-sesion-07 EN CURSO (R4.3, punto (1) de la F de la Next Action): la activación de la sesión 7a (S-1 el sesgo de H4 por el rango vigente, con ADR nuevo; S-2 el break even al cierre y con cuerpo; lo que se registra sin tocar el motor) y la corrida de julio de ADR-0093 §4. Encargo docs/encargos/trabajo-activar-sesion-07.md; informe docs/validation/ACTIVAR-SESION-07.md.
 
 ## Stable Main State
 5c047f31 · merge de `trabajo/sesion-07` (tag `stable/F39d-sesion-07`), sobre `stable/F39c-skills-metodo` (0f420593). Informe docs/validation/SESION-07-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ Ninguna rama abierta. trabajo/sesion-07 cerrada en main el 2026-11-18 (stable/F3
 5c047f31 · merge trabajo/sesion-07: la sesión 7a (v18 y v19) ingerida y extraída, con sus PARADAS respondidas · tag stable/F39d-sesion-07
 
 ## Tests Currently Passing
-2061 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2082 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -25,7 +25,7 @@ Ninguna rama abierta. trabajo/sesion-07 cerrada en main el 2026-11-18 (stable/F3
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Trazas y ablación (TRAZAS-ABLACION.md; `motor decisiones`) y láminas (LAMINAS.md; `motor laminas`; R4.5), hechas. La sesión 7, en dos días con el método de ADR-0093 (PREPARACION-SESION-7.md; R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml): la 7a, grabada el 2026-11-16 y el 2026-11-17 (v18 y v19, id 2026-11-16-sesion-07), está ingerida (SESION-07-EXTRACCION.md, con sus PARADAS respondidas). Siguiente, en este orden: (1) activar la 7a; su activación genera las láminas de la 7b con su motor, revisa PREGUNTAS-7B.md (también el 2026-04-15 de su sesión 2: SESION-07-EXTRACCION.md §9) y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). Siguiente, en este orden: (1) la rama de las láminas de la 7b, desde main: genera las láminas, revisa PREGUNTAS-7B.md (filas, las que no caben, el 2026-04-15 de su sesión 2, las preguntas reformuladas de ACTIVAR-SESION-07.md), pasa SESION_EN_CURSO a "08", decide las sesiones de enero que dependen del arranque (F1.3) y escribe en la skill activar-sesion la línea que cita D0; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); antes de (3), el consultor decide cómo cuentan los frenos de la cuenta del mes (RN-032 y RN-036; F1.4 y F2.4). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
 
 
 
@@ -43,7 +43,7 @@ Q. El trader da por bueno el backtest de agosto grabado en vídeo (S-16, sesión
 
 L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D). caja_bloque ya no cuelga de ese ítem (sesión 6).
 
-M. **Pendiente de la demo de FTMO: el break even de una venta que salta por el ASK** (ADR-0065 §6).
+M. **El break even de una venta que salta por el ASK** (ADR-0065 §6): sin objeto mientras break_even_condicion sea cierre (ACTIVAR-SESION-07.md).
 
 N. El calendario de cierres (knowledge/cuentas/cierres/) cubre hasta el 7-10-2026 y se renueva por condición, no cada semana (decisión del consultor del 2026-10-03, stable/F36s-renovar-cierres; docs/runbooks/RENOVAR-CIERRES.md). La condición 2 la cumple la lectura de SymbolInfoSessionTrade de R6a.1 (EA-CONEXION.md §11, el journal de la demo del 2026-10-21 en anexos/EA-CONEXION/demo-20261021-cierre/), y R6a.5 la usa (ADR-0082 D6).
 
@@ -72,6 +72,7 @@ Las ABIERTAS, exactamente (`tests/unit/test_kit.py`); de donde salen: `docs/stat
 | A-54 | qué cuenta FTMO como petición al servidor y con qué margen frena el bot | medicion | no | F33 |
 | A-55 | qué hace FTMO con las órdenes pendientes antes de un cierre largo, y qué mercado cuenta | medicion | no | F33 |
 | A-56 | la regla del objetivo dicha por el trader frente a lo que mide su material | medicion | no | F26 |
+| A-58 | qué alto y qué bajo forman el rango de H4 cuando una H4 lo rompe | pregunta | no | F18 |
 
 Candidatas a ambiguedad sin abrir (de «Open Questions», tal cual):
 - Candidatas a ambiguedad de docs/validation/DISENO-ENTRADA-RUPTURA.md §2.8 (2026-09-28, ADR-0056), SIN ABRIR: C1 que hace con la orden pendiente cuando aparece una caja nueva (v7 n.o 2 redibujo la caja con la orden puesta); C2 y C3 abiertas como A-48 y A-49 (A-49 RESUELTA por la sesión 6); C4 el stop en dos tiempos y la orden sin stop de v8 n.o 1 (toca A-18 y A-11); C5 la caja frente a la toma de M15 (hay una caja anterior a la toma del productor; toca RN-004, RN-008 y A-29); C6 la orden 2 puntos mas alla del 0 en v7 n.o 3 (toca A-36); C7 cuanto vive una orden stop sin llenar.
@@ -148,6 +149,11 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Dos textos que ADR-0093 deja viejos y que trabajo/preparacion-sesion-7 no podía tocar … (PREPARACION-SESION-7.md §0.2, H8 y H19; entera en HISTORIA, Technical Debt ACORTADA)
 - `motor laminas`: la CLI solo se prueba entera con las velas reales (LAMINAS.md, F4.3) … (entera en HISTORIA, Technical Debt ACORTADA)
 - La guardia toma por ruta una barra dentro de una cadena que no es una ruta (una etiqueta de cierre HTML, « / » entre espacios) … (LAMINAS.md, «Aplicación de la respuesta a la PARADA final», al final; LAMINAS.md, respuesta tras revisar la v4, 6; entera en HISTORIA, Technical Debt ACORTADA)
+- `feedback pending` lista como pendientes los CORRECT antiguos de una regla que ya cita otro (RN-003; ACTIVAR-SESION-07.md F1.1).
+- El sesgo de 20 sesiones de enero con menos de 60 H4 cargadas depende del arranque (ACTIVAR-SESION-07.md F1.3).
+- El texto del sesgo del visor no tiene test (revisor de trabajo/activar-sesion-07, b7).
+- Los guiones de los anexos no pasan por lint en make check.
+- test_guardia_falsos_positivos falla a veces por el nombre aleatorio de una carpeta temporal.
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
@@ -162,8 +168,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 72 (2026-11-17).
+— ninguna desde el Archivo 73 (2026-11-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 72 (2026-11-17).
+— ninguna desde el Archivo 73 (2026-11-18).
