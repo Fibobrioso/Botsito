@@ -168,7 +168,7 @@ Tests que romperían: `test_una_pregunta_abre_todas_las_particiones_con_etiqueta
 (`test_puerta_holdout.py:373`), que hoy exige el fallo nombrando `AUTORIZACION-holdout-1.md` y
 pasaría a tener que exigir que se abre solo `holdout-2` y que la etiqueta de `holdout-1` sigue sin
 leerse; y `test_kappa_desde_registros_y_cli` (`tests/unit/test_kit.py`, con `_autorizar` en
-`:703-735` firmando las tres particiones con P1 y esperando `unidades: 10` en `:815-817`). Con el
+`:705-735` firmando las tres particiones con P1 y esperando `unidades: 10` en `:815-817`). Con el
 punto 2, además, `RELLENO`/`BUENA` de `test_puerta_holdout.py:145-152` y `RELLENO` de
 `test_retirados.py:51`. Las cadenas de comando de `test_revisor.py:187` y `:224` no rompen (solo
 clasifican la orden).
@@ -643,7 +643,7 @@ con lo leído de más ese mismo día (abajo). Ninguna quema:
    (R5.1) y, si en 2 eliges retirar el quemado, `knowledge/cases/retirados.yaml` (con `Fuente:`).
    Opciones: (a) entran; (b) R5.1 se toca en el cierre. Recomiendo (a).
 
-## Estado
+## Estado de la fase 0
 
 `PROJECT_STATE.md`: 24.505 bytes (`wc -c`), por debajo de 25.000. Sin revisor en este primer tiempo,
 como manda el encargo (lo lleva el segundo, sobre la rama entera); el auditor sí se lanzó.
@@ -714,3 +714,156 @@ Copiada tal cual:
 > knowledge validate y make check en cada commit. Revisor sobre la rama entera, con estos alcances además de los suyos: (1) que ninguna cifra ya pre-registrada haya cambiado al copiarla (compara PREREGISTRO.md con criterio_fidelidad.yaml y ADR-0092 campo a campo) y que no haya ninguna cifra nueva; (2) que la puerta siga cerrada para las seis particiones con el fichero nuevo; (3) que ningún fichero nuevo lleve una fecha reservada, un resultado, el contenido de una fila de exposiciones ni una línea que la puerta pueda leer como pregunta; (4) que el test sustituto no pueda pasar con la marca puesta. Push a fix/preregistro y CI de Linux (el único fallo aceptado es el de state check por el nombre fix/); dame el número del run, el sha del último commit y el número de commits. Si algo de T3 a T7 no cuadra con lo medido, lo dejas en una PARADA final con la alternativa que ves y sigues con lo demás.
 >
 > Rama lista para revisión, NO cerrada.
+
+## El segundo tiempo (la respuesta del consultor del 2026-11-19, aplicada)
+
+Las líneas de `tests/unit/test_puerta_holdout.py` que cita 0.2 son las de `main` (e490fe33): T5
+añade cinco líneas al docstring del fichero, una al import y diez al test sustituto.
+
+### El encargo, punto por punto
+
+| # | Requisito (respuesta del consultor) | Estado | Evidencia |
+|---|---|---|---|
+| T1 | La respuesta, copiada tal cual al encargo y al informe, con el bloque `ids-inexistentes` del encargo, en su commit | Hecho | e584ae51 |
+| T2 | El contrato de la decisión 9, en su commit | Hecho de otra forma | 6eee2aa9. Las seis rutas entran en `rutas_permitidas`; como los patrones no admiten excepciones y lo protegido manda, `tests/`, `docs/adr/` y `docs/plan/` enteros salen de `rutas_protegidas` y se nombran los ficheros que la rama no toca (`HOJA-DE-RUTA.md`, ADR-0021/0043/0070, `test_kit.py`, `test_retirados.py`, la guarda, `tests/contract/`); el resto lo protege la lista blanca |
+| T3 | El recuento de la decisión 2, con su fila de HOLDOUT antes | Hecho | 49890443; fila «segundo tiempo (T3)» del 2026-11-19 escrita antes de lanzar; `anexos/PREREGISTRO-INVENTARIO/recuento_por_tramo.py` y `recuento-por-tramo.txt`; la guardia no lo negó |
+| T4 | ADR-0096 con 0-8, alternativas, lo visto; recuadros de ADR-0092 §5 y §13; índice; ADR-0096 fuera de los dos bloques | Hecho | 49890443 (junto a T3: un commit para los dos, para no gastar un `make check` de 25 minutos más; desviación declarada) |
+| T5 | PREREGISTRO.md relleno y el test sustituto en UN commit, con el docstring al día; comparar-con-main | Hecho | f2ef22cc; «La regresión contra main», abajo |
+| T6 | NOTA de cabecera en MASTER_PLAN, sin tocar filas | Hecho | `docs/plan/MASTER_PLAN.md`, NOTA del 2026-11-19 (en el commit de T6 y T7, como T3 y T4) |
+| T7 | «El segundo tiempo» y lo preparado para el cierre, con el tamaño de PROJECT_STATE | Hecho | esta sección |
+| 0 | F26 diagnóstico con la referencia de ADR-0043 y la regla de las 36 unidades; unidades e intervalo, del ADR del comando | Hecho | ADR-0096 §0; `PREREGISTRO.md` §2 |
+| 1 | F26 sobre febrero de 2026 con vídeo y voz; `holdout-1` cerrada; cuándo; `fidelidad-1` sin uso | Hecho | ADR-0096 §1; `PREREGISTRO.md` §2 |
+| 2 | 36 unidades; el conjunto por tramo; los dos días; el recuento autorizado; el quemado por escrito y en Technical Debt | Hecho | ADR-0096 §2; `PREREGISTRO.md` §2 y §3; la línea de Technical Debt, abajo |
+| 3 | Pedir febrero con vídeo y voz | Hecho (escrito) | `PREREGISTRO.md` §2; la G nueva, abajo |
+| 4 | Una sola partición: el comando de medida y la rama corta de kappa; R5.1 no queda hecha | Hecho | ADR-0096 §4; R5.1 abajo |
+| 5 | Qué lleva PREREGISTRO.md; sin marca; sin preguntas; el procedimiento del hash con las rutas verificadas | Hecho | `PREREGISTRO.md`; `grep -c` de la marca da 0; `preguntas_del_preregistro` da `{}` (lo afirma el test sustituto); las seis rutas existen (`ls -d`) |
+| 6 | Si no llega, se informa y no se repite | Hecho | ADR-0096 §6; `PREREGISTRO.md` §2 |
+| 7 | Kappa, paridad y DSR en su rama | Hecho | ADR-0096 §7; `PREREGISTRO.md` §5; NOTA de MASTER_PLAN |
+| 8 | ADR-0096 | Hecho | `docs/adr/0096-…md` |
+| 9 | Las rutas; HOJA-DE-RUTA solo en el cierre | Hecho | T2; R5.1 preparada abajo, sin aplicar |
+| N1 | Ningún fichero de `src/` ni de `knowledge/`; ninguna cifra cambiada ni nueva; ningún hash; ADR-0021 intacto | Hecho | `git diff --stat main...HEAD` (abajo); el revisor, alcance 1 |
+| N2 | Ninguna corrida del arnés; nada de `data/`; el pivote no se toca | Hecho | ningún comando de motor en la sesión |
+| N3 | Nada reservado se abre salvo los recuentos de la decisión 2; ninguna fecha reservada ni resultado | Hecho | anexos con solo recuentos; el revisor, alcance 3 |
+| N4 | Ningún `AUTORIZACION-*.md` | Hecho | lo afirma el test sustituto |
+
+### El recuento por tramo (T3)
+
+`uv run python docs/validation/anexos/PREREGISTRO-INVENTARIO/recuento_por_tramo.py .`, exit 0:
+
+| Partición | Días | Retirados | Medibles | En un tramo | En un mes con cero tramos | En un mes sin declarar | Fuera de los tramos |
+|---|---|---|---|---|---|---|---|
+| holdout-1 | 8 | 0 | 8 | 6 | 2 | 0 | 0 |
+| holdout-2 | 8 | 0 | 8 | 4 | 4 | 0 | 0 |
+| holdout-3 | 8 | 1 | 7 | 3 | 4 | 0 | 0 |
+| fidelidad-1 | 10 | 4 | 6 | 6 | 0 | 0 | 0 |
+| fidelidad-2 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| fidelidad-3 | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| **total** | **34** | **5** | **29** | **19** | **10** | **0** | **0** |
+
+Cuadra con lo escrito: 6, 4 y 3 de mayo (`PREREGISTRO.md` de `main`, línea 28), y en `holdout-2`
+los 4 incluyen el quemado, que `PREREGISTRO.md` excluye por escrito (3 medibles, como dice la
+obligación 4). Lo que «Lo que no pude medir» dejaba abierto: el retirado de `holdout-3` era de un
+mes con cero tramos, porque quedan los 3 de mayo.
+
+### La regresión contra main del test sustituto (T5, skill `comparar-con-main`)
+
+- Antes: `git status --short` vacío; `git branch --list`: `main`, `trabajo/preregistro`; 166 tags.
+- `git worktree add --detach C:/cm/main main` (e490fe33) y `git worktree add --detach C:/cm/rama
+  HEAD` (f2ef22cc). En el clon de `main`, `tests/unit/test_puerta_holdout.py` de la rama copiado
+  encima (es lo único que difiere en ese clon).
+- `uv run pytest tests/unit/test_puerta_holdout.py -q -k preregistro_relleno` en `C:/cm/main`: **6
+  fallos**, los seis en `tests\unit\test_puerta_holdout.py:55`, `assert MARCA_SIN_RELLENAR not in
+  texto` → `AssertionError: assert 'SIN RELLENAR' not in '# PREREGIST...replantea.\n'`. Rompe por la
+  marca, que es lo que se pedía.
+- `uv run pytest tests/unit/test_puerta_holdout.py -q` en `C:/cm/rama`: **36 pasados**.
+- Y en el repo real, antes de editar el test, una corrida del fichero viejo con el `PREREGISTRO.md`
+  nuevo falló en las seis particiones de
+  `test_con_el_preregistro_de_hoy_la_puerta_se_niega_y_nombra_adr_0021`: el test viejo no podía
+  convivir con el fichero relleno.
+- Después: `git worktree remove --force C:/cm/main` (con `--force` porque llevaba el test copiado
+  sin seguir) y `git worktree remove C:/cm/rama`; `git worktree prune`; `git worktree list` solo
+  da el repo real; `git status --short` vacío; ramas y tags, los mismos.
+- No hay salidas de comandos que comparar por hash: la comparación es el resultado del test.
+
+### Desviaciones, declaradas
+
+1. **T3 y T4 en un commit, y T6 y T7 en otro.** La respuesta da el orden y pide commit propio para
+   T1, T2 y T5; agrupar los otros ahorra dos `make check` de unos 25 minutos. El orden se respeta
+   dentro de cada commit.
+2. **El contrato de T2** saca `tests/`, `docs/adr/` y `docs/plan/` enteros de `rutas_protegidas`
+   (motivo, arriba). Lo que la respuesta quería protegido lo sigue estando, por la lista blanca.
+3. **La guardia negó mi guion de edición del test** (`t5_test.py`, en la carpeta de trabajo: «el
+   código recorre directorios que construye al ejecutarse y nombra material sensible»). No la
+   rodeé con otro guion: el cambio se hizo con la herramienta Edit, que es la forma normal de
+   editar un fichero. El texto es el mismo que llevaba el guion.
+4. **Las cifras de julio de «lo visto»** (14 y 39; 14 y 24; 11 y 19) las comprobé antes de
+   escribirlas: `ACTIVAR-SESION-07.md:87` («OK: 14 y 39») y `:790-791` (los deltas). Son parejas y
+   operaciones del bot de más del pivote de julio (ADR-0093 §6), y ADR-0096 lo dice así.
+
+### Preparado para la orden de cierre (NO aplicado en la rama)
+
+**La G nueva de la Next Action** (683 bytes; la de hoy, 1.201):
+
+> G. PREREGISTRO.md relleno (ADR-0096, F39g): la rentabilidad de ADR-0092 fijada; F26, diagnóstico
+> con la referencia de ADR-0043 y la regla de las 36 unidades efectivas, sobre febrero de 2026
+> grabado con vídeo y voz (holdout-1 cerrada mientras tanto); ninguna pregunta ni autorización.
+> Falta, con dueño: Aleks pide febrero al trader (mensaje del consultor); la rama del comando de
+> medida de F26, que abre una sola partición y añade la primera pregunta; la rama corta del arreglo
+> de kappa_entre_sesiones, antes de cualquier autorización de kappa; el hash de la spec, en la
+> rama de la medida de rentabilidad (ADR-0096 §5). fidelidad-1: 4 retirados y 6 medibles;
+> holdout-3: 1 y 7.
+
+La última frase es la **corrección** de «fidelidad-1 tiene 3 días medidos menos» de la G de hoy:
+son 4 retirados (uno del 2026-09-23 y tres del 2026-10-17) y 6 medibles.
+
+**R5.1 para `docs/plan/HOJA-DE-RUTA.md`** (va en el commit del cierre):
+
+> ### R5.1 · Las condiciones previas de F26
+> - **Refs:** NA:G · F:F26 · ID:A-16 · ID:A-56 · ID:ADR-0021 · ID:ADR-0033 · ID:ADR-0096
+> - **Qué es:** PREREGISTRO.md relleno (HECHO en `trabajo/preregistro`, ADR-0096: la rentabilidad
+>   fijada, el procedimiento del hash, F26 diagnóstico sobre el mes limpio con la regla de las 36
+>   unidades; el conjunto medido por tramo; los dos días de la sesión 1 fuera; A-56 no puntúa; A-16
+>   ABIERTA con la regla de ADR-0092 §9). Queda: que la puerta abra una sola partición por pregunta
+>   (el comando de medida de F26 nace así; el arreglo de `kappa_entre_sesiones`, rama corta antes de
+>   cualquier autorización de kappa); y pedir febrero de 2026 con vídeo y voz.
+> - **Depende de:** nada para lo que queda; F26 depende además de febrero y de R5.2.
+> - **Quién:** el consultor decide; Aleks pide febrero y autoriza la apertura (ADR-0021 §3); la
+>   sesión ejecuta.
+> - **Hecho cuando:** la puerta abre una sola partición por pregunta.
+
+**Technical Debt** (líneas nuevas):
+
+> - No existe el comando que mida F26 sobre una partición: la puerta protege solo `kit kappa
+>   --incluir-holdout`, y el arnés y la ingesta excluyen lo oculto. Dueño: la rama del comando de
+>   medida, que nace abriendo una sola partición (ADR-0096 §4).
+> - El libro de septiembre no está en libros.yaml: no se lee, ni por la puerta, sin su declaración
+>   (ADR-0039). Dueño: la rama que vaya a leer septiembre.
+> - El día quemado de holdout-2 no está en retirados.yaml (lo excluyen HOLDOUT-EXPOSICIONES, «Lo
+>   que esto obliga», 4, y PREREGISTRO.md) y casos_medidos lo cuenta. Dueño: la rama que dé uso a
+>   holdout-2 lo retira antes (ADR-0096 §2).
+> - tests/unit/test_kit.py:706-707 (docstring de _autorizar) dice que el PREREGISTRO del proyecto
+>   «sigue vacio a proposito»: viejo desde ADR-0096. Lo corrige la rama que toque test_kit.py.
+
+Y dos líneas que ganan su dueño: «UNA PREGUNTA ABRE N PARTICIONES…» (`PROJECT_STATE.md:133`) +
+«Dueños (ADR-0096 §4): el comando de medida de F26 nace abriendo una; kappa, rama corta.»; y «EL
+FALLBACK DE `leer_fichero`…» (`:134`) + «Dueño: la rama del comando de medida de F26.»
+
+**El tamaño de `PROJECT_STATE.md`**: hoy 24.508 bytes en la rama. Con la G nueva, las cuatro líneas
+nuevas, los dos dueños y `Current Branch`/`Current Feature` de vuelta a `main` con una frase como la
+del cierre anterior, saldría **24.884 bytes** (simulado en memoria sobre una copia, sin escribir:
+`simular_ps.py` en la carpeta de trabajo de la sesión). Cabe, con 116 bytes de margen. Si el resto
+del cierre (`Stable Main State`, `Last Stable Commit`) lo pasara, recortaría dos líneas de Technical
+Debt que ADR-0096 deja sin objeto, llevándolas enteras a HISTORIA: «F26 lee la diferencia 3,00/3,75
+… la mide en A-56» (`:128`; A-56 ya no puntúa en F26, ADR-0096 §0) y «DOS DIAS DEL UNIVERSO DE LA
+SESION 1 NO ESTAN EN NINGUNA PARTICION, y F26 tiene que saberlo» (`:132`; `PREREGISTRO.md` los deja
+fuera por escrito). Unos 380 bytes entre las dos.
+
+**La fila de ERRORES-RECURRENTES** (la escribe `cerrar-rama`): el hallazgo del consultor que él
+mismo pide anotar (el encargo dio 0,70 y 0,60 por pre-registrados para F26, y ADR-0043:55-56 dice
+que son el umbral de desarrollo, «NO el PREREGISTRO del holdout»; lección: antes de escribir que
+una cifra está pre-registrada para algo, se lee en el ADR para qué la pre-registra); los
+del auditor; y los del revisor de esta rama.
+
+## Estado
+
+Pendiente del revisor (abajo, cuando pase).
