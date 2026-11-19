@@ -133,13 +133,166 @@ Las siete sesiones pasan hoy la compuerta y tienen 60 o más H4 (0.2). Lo hecho,
 
 3b (una sesión sin láminas sale) se mide en F2.
 
+## F2 · Las láminas, b1 y el `LaminaError` de F38y
+
+**F2.1.** Con el bloque commiteado (93a70ed4) y su fila de HOLDOUT del día, una llamada, sola, sin
+ningún `make check` a la vez: `uv run botsito motor laminas --sesiones <las siete, en un orden
+barajado que no se escribe aquí> --salida C:\Users\USER\Desktop\laminas-sesion-7b-v1`. Salió con 0:
+las dos corridas de dentro (con y sin el recolector) dan lo mismo; 620 s y un pico de 644 MiB.
+`clave.txt` está en esa carpeta, fuera del repositorio, y la guarda Aleks. Cuántas láminas tiene
+cada sesión y de qué tipo se dijo en el terminal, no aquí (F2.4).
+
+**F2.2, solo recuentos:**
+
+| Medida | Resultado |
+|---|---|
+| (a) `LaminaError` porque RN-004 abre escenario en el mismo cierre en que RN-016 o RN-001 dispararon por los intentos | **0**: la llamada no dio ningún `LaminaError` (tampoco el otro que nadie había medido, `detenido_por_tope` con origen en RN-020 y RN-029 a la vez; auditor, herencia 6) |
+| (b) b1: cortes con `detenido_por_tope` encendido por una regla | **0 de 27** cortes: ninguna lámina lleva la frase de RN-020 ni la de RN-029 (`FRASE_TOPE_POR_REGLA`, `laminas.py:506-511`; búsqueda con conteo sobre los HTML de la salida). Con el hecho encendido no hay lámina de tipo a (RN-001 prohíbe colocar), y en una de tipo b saldría su frase o un `LaminaError`. Con 0 cortes, la segunda mitad (si la otra causa también se cumple), que la foto no guarda, no hace falta medirla |
+
+**3b**: todas las sesiones del bloque dan al menos una lámina; ninguna sale.
+
+**F2.3: ninguna de las dos pasa.** No se toca el motor: ni `src/botsito/engine/` ni el ADR que el encargo reservaba para el arreglo (sale
+del bloque `ids-inexistentes` del encargo en el último commit), ni la corrida de julio de D0, ni
+v2. La carpeta v1 es la de las láminas de la 7b. Las dos quedan como Technical Debt propuesto para
+el cierre (abajo). Así, el riesgo fue medio en lo hecho, aunque el contrato lo fijó alto al abrir,
+como manda el encargo.
+
+**F2.4**: en el terminal, por sesión, cuántas láminas y de qué tipo (a, las órdenes del bot
+llenadas; b, las operaciones del trader sin pareja), para que Aleks y el consultor las revisen.
+
+## F3 · `PREGUNTAS-7B.md` revisado, y la hoja 08
+
+- **Recuadro fechado arriba** (como el de PREGUNTAS-7A.md): qué cambió y por qué.
+- **Las seis técnicas**, en el orden de 0.3: S-1, la mecha de un minuto que vuelve (A-35, NUEVA);
+  S-2, las zonas de control y el break even (RN-009 y A-13, NUEVA, con dos preguntas); **S-3, la
+  caja (A-48, la S-1 de antes, como está)**; **S-4, el rango de 4 horas (A-58, NUEVA)**; S-5, S-22
+  (la S-2 de antes, como está); S-6, S-19 (la S-3 de antes, como está); S-7, la de material, al
+  final, como está. El encargo daba A-58 como S-3 y A-48 como S-4; su propia regla las cambia,
+  porque A-48 es la única de las cuatro con recuento por fila (0.3). Desviación del consultor,
+  declarada en el encargo: S-22 y S-19 siguen entre las seis sin recuento por fila.
+- **Cada pregunta nueva** con sus partes, la pregunta cerrada con «otra, ¿cuál?», su línea «Para
+  Aleks» con el destino de cada respuesta (parámetro, opción y régimen) y el esquema descrito. La
+  pregunta es la reformulada de ACTIVAR-SESION-07.md, tal cual; en S-1 las opciones van en el
+  orden del dibujo (A, el alto de antes; B, la mecha nueva), no en el de la frase. «Lo que nos has dicho», solo con ítems que cita ACTIVAR-SESION-07.md, leídos y
+  copiados de su `cita_literal`. En S-4, el «Para precisar» que pide el encargo.
+- **A §3**, en su tabla y sin título `**S-n.**`: B-11, la reentrada; B-12, A-53, con
+  `ev-v18-011801-8b4f738d`; B-13, A-43, con las dos de v19 (copiada la literal del ítem, no la
+  glosa de ACTIVAR-SESION-07.md:657, que va entre comillas pero no es literal); B-14, el punto de
+  breaker por la mecha más larga de la segunda vela del mismo color; B-15, la del 2026-07-01 de
+  11 a 15, que lleva día y por eso, si entra, va al bloque de días.
+- **La hoja 08**: `CODIGOS_DE_SESION_TEXTO["08"]` con los siete títulos, `SESION_EN_CURSO = "08"`
+  y su comentario al día. `test_la_sesion_en_curso_es_la_07` se sustituye A PROPÓSITO por
+  `test_la_sesion_en_curso_es_la_08`, como aquel a la de la 06; `test_la_hoja_08_es_la_de_preguntas_7b`
+  pasa (`uv run pytest -q tests/unit/test_transcribir_sesion.py tests/unit/test_hoja_preguntas.py`:
+  todos en verde). El recuento de tests no cambia (uno sale y otro entra).
+
+## F4 · La línea de la skill
+
+En `.claude/skills/activar-sesion/SKILL.md`, sección «El metodo de ADR-0093 §4», la viñeta que
+decía que cómo se corre julio no está escrito se sustituye por la línea preparada en
+ACTIVAR-SESION-07.md:706-709, tal cual. La guardia no negó la edición.
+
+## Para la orden de cierre (preparado, sin aplicar)
+
+**La F nueva de la Next Action** (sustituye a la de hoy):
+
+> F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). La 7b está lista para grabar (LAMINAS-7B.md, F39f): el bloque de días revisado (sin las sesiones de enero con menos de 60 H4), PREGUNTAS-7B.md con A-35, las zonas de control y el margen del break even, A-48, A-58, S-22 y S-19, sus láminas generadas fuera del repo (la clave, con Aleks) y SESION_EN_CURSO en "08". Siguiente, en este orden: (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); antes de (3), el consultor decide cómo cuentan los frenos de la cuenta del mes (RN-032 y RN-036; F1.4 y F2.4 de ACTIVAR-SESION-07.md). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+
+**La línea de Estado de R4.3**: «**Estado:** ABIERTA (la 7a, ingerida en trabajo/sesion-07 y
+activada en trabajo/activar-sesion-07, ACTIVAR-SESION-07.md; la 7b, preparada en
+trabajo/laminas-sesion-7b, LAMINAS-7B.md: láminas, preguntas revisadas y hoja 08; falta grabarla,
+ingerirla y activarla).»
+
+**El «Qué es» de R4.3, puesto al día** (sustituye a la frase del reparto de la 7b y a «Las láminas
+de la 7b las genera la activación de la 7a»): «… 7b (sesion-08), revisada el 2026-11-18 con lo que
+dejó la 7a (LAMINAS-7B.md): la mecha que vuelve en M15 (A-35), las zonas de control y el margen del
+break even (RN-009 y A-13), dónde pone el 0 de la caja (A-48), el rango de 4 horas después de una
+ruptura (A-58), S-22 y S-19, más el bloque de días y, al final, la tarde del 10 de julio
+(docs/sesion-7/PREGUNTAS-7B.md; la reentrada, A-53 y A-43, entre las que no caben). Las láminas de
+la 7b las generó trabajo/laminas-sesion-7b, con el motor de la activación de la 7a.» Y en sus
+Refs, `ID:A-58` (auditor, herencia 5); en «Depende de», «el vídeo de mapeo del trader, si llega
+antes» ya no aplica: llegó el 2026-11-18 y no se ingiere.
+
+**Technical Debt** (líneas que se proponen):
+- «b1: con `detenido_por_tope` encendido por una regla, la lámina calla la otra causa de tope si
+  también se cumple (la foto no la guarda); en las láminas de la 7b, 0 cortes con el hecho
+  encendido (LAMINAS-7B.md F2).»
+- «`motor laminas` da `LaminaError` y no escribe nada si RN-004 apaga `detenido_por_cartuchos` en
+  el mismo cierre en que RN-016 o RN-001 dispararon por él (la foto no guarda los hechos del
+  principio del evento); en las láminas de la 7a y de la 7b no pasó (LAMINAS-MOTIVOS.md, LAMINAS-7B.md F2).»
+
+**`PROJECT_STATE.md`**: 24.109 bytes en la rama (tope 25.000); la rama solo cambió en él la rama y
+la funcionalidad actuales.
+
 ## Desviaciones
 
 1. **Las filas de las dos sesiones que entran no salen de `filas-por-sesion.txt`**, que no las
    tiene: salen del mismo guion sobre la misma fuente (`anexos/LAMINAS-7B/filas-por-sesion-7b.txt`).
    Y son, como todas las de §1, de la línea base, anterior a activar la 7a; el recuadro D4 pedía «la
    corrida nueva», que para enero y abril no existe commiteada (auditor, fila 24 y herencia 3).
+2. **El orden de S-3 y S-4 no es el que el encargo escribió** (A-58 en S-3, A-48 en S-4): lo
+   cambia la regla del propio encargo («de más a menos filas, las que no tienen recuento detrás»),
+   y se dice.
+3. **La fila de HOLDOUT de 0.2, escrita tarde para el conteo de `filas_por_sesion.py`** (que solo
+   lee un anexo commiteado de construcción).
+4. **El riesgo del contrato se queda en alto** aunque F2 no tocó el motor: lo fijó así el encargo al
+   abrir.
+5. **El orden de la entrega es el de la skill entregar-rama** (CI antes del revisor), no el del
+   encargo (revisor, push y CI): el encargo dice que gana la skill.
+
+## El encargo, punto por punto
+
+| # | Punto | Estado | Dónde |
+|---|---|---|---|
+| 1 | Abrir con abrir-rama; base y CI de `main` comprobadas | Hecho | «Base comprobada» |
+| 2 | Contrato: R4, riesgo alto, artefacto, lista blanca, tag F39f libre | Hecho | `contrato.yaml` |
+| 3 | Encargo en `docs/encargos/` con el ADR reservado en `ids-inexistentes` | Hecho; sale del bloque en el último commit (el ADR no existe) | encargo |
+| 4 | 0.1 herencias | Hecho | 0.1 |
+| 5 | 0.2 H4 cargadas y compuerta, con guion commiteado y fila de HOLDOUT | Hecho | 0.2; `anexos/LAMINAS-7B/` |
+| 6 | 0.3 filas por pregunta | Hecho | 0.3 |
+| 7 | F1.1-F1.5 | Hecho; CUADRA | F1 |
+| 8 | F1.3b, una sesión sin láminas | Medido: ninguna | F2 |
+| 9 | F2.1 láminas en v1, sola, orden barajado fuera del repo | Hecho | F2.1 |
+| 10 | F2.2 (a) y (b), solo recuentos | Hecho: 0 y 0 | F2.2 |
+| 11 | F2.3 arreglo si pasa; si no, Technical Debt propuesto | No pasa ninguno: dos líneas propuestas | F2.3; «Para la orden de cierre» |
+| 12 | F2.4 recuentos por sesión en el terminal | Hecho | — (no en el repo) |
+| 13 | F3 recuadro, seis técnicas ordenadas, preguntas nuevas, §3, hoja 08, test sustituido | Hecho | F3 |
+| 14 | F4 la línea de la skill | Hecho | F4 |
+| 15 | Informe con 0.2, porqué de cada cambio, F2, 0.3 y lo de la orden de cierre; tamaño de PS | Hecho | este informe |
+| 16 | Revisor con los cuatro alcances; push a `fix/` y CI | Después | «Informe del revisor», «CI» |
+| 17 | PARADA final | Hecho | abajo |
+
+## PARADA final (no detiene la entrega; la rama no se cierra)
+
+**Lo que no cuadró:** nada de F1 ni de F2. Lo que cambia respecto del encargo está en
+«Desviaciones» (el orden S-3/S-4 y las filas de las dos que entran).
+
+**La tabla de filas de F3**: 0.3. **§3 con más filas que S-5 o S-6**: la reentrada (B-11, 4 en
+julio) y la del 2026-07-01 (B-15, 3) tienen más que S-22 y S-19, que no tienen recuento; también
+B-7 (3) y B-8 (2), de antes. No se cambió ninguna.
+
+## Lo que necesito que decidas
+
+0. **§3 frente a S-5 y S-6.** Opciones: (a) dejar S-22 y S-19 entre las seis, como declaró el
+   consultor (su rama es el punto (2) y sin su respuesta no se puede abrir); (b) meter la reentrada
+   (B-11) en lugar de S-19. Recomiendo (a): la reentrada mueve 4 filas, pero S-22 y S-19 bloquean
+   una rama entera. Coste de (b): esa rama espera a otra sesión.
+1. **El orden S-3 = A-48, S-4 = A-58.** Opciones: (a) dejarlo como sale de la regla de filas; (b)
+   volver al del encargo. Recomiendo (a): es la regla del encargo, y A-58 no tiene recuento por
+   fila. Coste de (b): ninguno, salvo que la hoja 08 y los títulos cambian.
+2. **B-15 (2026-07-01) lleva día.** Opciones: (a) dejarla en §3; (b) llevarla al bloque de días como
+   una pregunta de Aleks tras la sesión 4. Recomiendo (a): no tiene esquema y la 7b ya va llena.
+   Coste de (b): un día de julio más que comprobar por la compuerta.
+
+**Lo que no me convence:**
+1. Las filas de §1 son de la línea base, anterior a activar la 7a; las láminas, del motor de
+   después. «Sirve a» puede no casar con lo que enseñan (ejemplo: la reserva 07-16 ya no es pareja).
+   No hay corrida commiteada de enero ni de abril con el motor nuevo, y este encargo no la autoriza.
+2. El 2026-04-15: el trader ya lo operó una vez. Aunque abra un replay sin marcas, puede acordarse
+   de lo que hizo; es la única sesión de «el trader no opera y el bot sí», y eso es lo que la hace
+   valer, pero su primera vez ya no es ciega.
+3. S-2 lleva dos preguntas con dos partes la primera; es la más larga de la hoja.
 
 ## Estado
 
-EN CURSO: fase 0 y F1 hechas; F2 (las láminas) a continuación.
+EN CURSO: F1 a F4 hechas; faltan `make check`, CI de Linux y revisor.

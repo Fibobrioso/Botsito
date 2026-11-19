@@ -5,6 +5,25 @@ ADR-0093; el reparto, los días y las filas, de `docs/validation/PREPARACION-SES
 §0.4, con la respuesta del consultor a la PARADA de la fase 0). Es el segundo día de la sesión 7,
 **7b (sesion-08)**; el primero, **7a (sesion-07)**, está en `docs/sesion-7/PREGUNTAS-7A.md`.
 
+> **Recuadro del 2026-11-18 (`trabajo/laminas-sesion-7b`; `docs/validation/LAMINAS-7B.md`).** Este
+> documento está revisado con lo que dejó la 7a (ACTIVAR-SESION-07.md), por encargo del consultor
+> del 2026-11-18; lo de antes está en git (`main` en b174d714). Qué cambió y por qué:
+> - **El bloque de días (§1).** Salen 2026-01-13 de 07 a 11 y 2026-01-07 de 07 a 11: abren con
+>   menos de 60 velas de 4 horas cargadas, y su sesgo sale del rango que arranca en la primera de
+>   enero, no del que vería el trader (ACTIVAR-SESION-07.md F1.3); le haríamos corregir un efecto
+>   de nuestros datos. Entran 2026-04-24 de 07 a 11 y 2026-04-27 de 11 a 15, de
+>   `anexos/PREPARACION-SESION-7/sustitutas.txt`, elegidas sin mirar lo que hacen el bot ni el
+>   trader en ellas. El 2026-04-15 de 11 a 15 se queda, con lo que pasó en la 7a dicho. Los pasos de
+>   cada sesión ganan lo aprendido en la 7a.
+> - **Las preguntas (§2).** Entran las tres que la 7a dejó sin contestar, reformuladas en
+>   ACTIVAR-SESION-07.md: la mecha que vuelve en M15 (A-35), las zonas de control con el margen del
+>   break even (RN-009 y A-13) y el rango de 4 horas después de una ruptura (A-58). Salen a §3 la
+>   reentrada, A-53 y A-43. El orden es el de ADR-0093 §1: primero las que tocan el dinero, después
+>   por las filas que mueven (LAMINAS-7B.md, 0.3).
+> - **Las láminas** de la 7b ya existen: las generó esta rama, fuera del repositorio, y no se
+>   describen aquí. Lo que el recuadro D4 de abajo encargaba a la activación de la 7a lo hizo esta
+>   rama (ACTIVAR-SESION-07.md 0.5, fila 1).
+
 > **RECUADRO (2026-11-11, encargo de `trabajo/preparacion-sesion-7`, D4).** Las láminas de la 7b
 > **no se generan en la rama de la preparación**: el bot cambia al activar la 7a, y la lámina tiene
 > que enseñar lo que hace el bot que el trader va a corregir. Las genera con `motor laminas` la rama
@@ -45,18 +64,18 @@ reloj de Madrid; ninguna pregunta técnica lleva días ni fechas.
 Va **después** de las seis preguntas técnicas, y la pregunta de material (S-7) al final de todo
 (ADR-0093 §2). Las siete sesiones (las cuatro y las tres reservas) pasan la compuerta de ADR-0093 §3
 y abren con 60 o más velas de 4 horas cargadas, medido el 2026-11-18 (`LAMINAS-7B.md`, 0.2;
-`anexos/LAMINAS-7B/compuerta-7b.txt` y `h4-cargadas.txt`). **Sus láminas todavía no
-existen**: las genera `trabajo/laminas-sesion-7b`, con este bloque ya commiteado (su F2).
+`anexos/LAMINAS-7B/compuerta-7b.txt` y `h4-cargadas.txt`). Sus láminas las generó
+`trabajo/laminas-sesion-7b`, fuera del repositorio; la clave la guarda Aleks.
 
 | Orden | Sesión | Sirve a | Filas de la clasificación (trader / bot) |
 |---|---|---|---|
-| 1 | 2026-04-24, 07-11 | S-1 (la caja: cociente 0,62 con el stop fuera) | 5 (1 / 4) |
-| 2 | 2026-04-15, 11-15 | el trader no opera y el bot sí (S-6 de la 7a); S-1 | 5 (0 / 5) |
-| 3 | 2026-04-27, 11-15 | S-1 (cociente 0,62 con el stop fuera) | 3 (2 / 1) |
-| 4 | 2026-01-19, 11-15 | S-1 (cociente 1,78 en la entrada) | 3 (3 / 0) |
-| reserva | 2026-01-21, 07-11 | S-1 (cociente 0,50 en la entrada) | 3 (2 / 1) |
+| 1 | 2026-04-24, 07-11 | S-3 (la caja: cociente 0,62 con el stop fuera) | 5 (1 / 4) |
+| 2 | 2026-04-15, 11-15 | el trader no opera y el bot sí (S-6 de la 7a); S-3 | 5 (0 / 5) |
+| 3 | 2026-04-27, 11-15 | S-3 (cociente 0,62 con el stop fuera) | 3 (2 / 1) |
+| 4 | 2026-01-19, 11-15 | S-3 (cociente 1,78 en la entrada) | 3 (3 / 0) |
+| reserva | 2026-01-21, 07-11 | S-3 (cociente 0,50 en la entrada) | 3 (2 / 1) |
 | reserva | 2026-01-22, 11-15 | el sesgo de H4 por una ruptura de 2 puntos (toca A-16) | 3 (3 / 0) |
-| reserva | 2026-07-16, 07-11 | S-1 (cociente 0,34 con el stop fuera; era una pareja en la línea base y, tras activar la 7a, ya no: RN-032, ACTIVAR-SESION-07.md F1.4) | 1 (1 / 0) |
+| reserva | 2026-07-16, 07-11 | S-3 (cociente 0,34 con el stop fuera; era una pareja en la línea base y, tras activar la 7a, ya no: RN-032, ACTIVAR-SESION-07.md F1.4) | 1 (1 / 0) |
 
 «Sirve a», de `anexos/PREPARACION-SESION-7/sustitutas.txt`; las filas, de la clasificación de la
 línea base (`anexos/RECORRIDA-CONSTRUCCION-2/patrones-cuenta-por-mes.txt`), contadas con
@@ -90,9 +109,103 @@ su gráfico, tiene que ser un día de construcción, y dice la fecha en voz alta
 
 ## 2. Las preguntas (6 técnicas y una de material)
 
-Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuento por fila.
+Ordenadas como manda ADR-0093 §1: primero las que tocan el dinero (S-1 y S-2), y después por las
+filas que mueven (`LAMINAS-7B.md`, 0.3). S-3, la caja, es la única de las cuatro con recuento por
+fila; S-4, S-5 y S-6 no lo tienen y van detrás.
 
-**S-1. Dónde pones el 0 de tu caja** · en parte · A-48
+**S-1. La mecha de un minuto que pasa tu alto de M15 y vuelve** · en parte · A-35
+- **Lo que nos has dicho:**
+  - del alto que forma la vela roja con su mecha: «La respuesta es la punta de la mecha.» (v18
+    0:25:11, `ev-v18-002511-eec0acec`), y «pero bueno, mi alto de M15 es la punta de la mecha en el
+    esquema planteado» (v18 0:27:29, `ev-v18-002729-38609240`);
+  - de la mecha de una vela verde: «Pues si la mecha llega a ser más alto Que este alto De aquel
+    alto O sea, sería así Entonces se trazaría desde aquí se trazaría desde allí» (v18 0:27:01,
+    `ev-v18-002701-62875550`).
+- **Lo que todavía no sabemos:** si, con tu alto ya formado, una vela de un minuto que lo pasa solo
+  con la mecha y vuelve a cerrar por debajo lo mueve.
+- **Esquema inventado, no es un día real** («M15» y «M1» escritos): en M15, tres velas verdes y,
+  detrás, la vela roja que forma el alto, con su mecha por encima de las verdes; el alto, rotulado A,
+  en la punta de esa mecha. Después, en M1, una vela que pasa A solo con la mecha y cierra por
+  debajo; la punta de esa mecha nueva, rotulada B.
+- **Pregunta:** «Ya tienes tu alto de M15 en la punta de la mecha. Si después una vela de un minuto
+  pasa ese alto solo con la mecha y vuelve a cerrar por debajo, ¿tu alto pasa a ser la punta de esa
+  mecha nueva, o se queda donde estaba?
+  - (a) se queda donde estaba, en A;
+  - (b) pasa a ser la punta de la mecha nueva, B;
+  - (c) otra, ¿cuál?»
+- **Para precisar:**
+  - ¿Y si son varias velas de un minuto, una detrás de otra, las que lo pasan con la mecha?
+  - ¿Lo haces igual en un bajo, al revés?
+- **Para confirmar al final:** «Cuando una vela de un minuto pasa mi alto de M15 solo con la mecha y
+  vuelve, mi alto ______».
+- *Para Aleks (no va a la hoja): ACTIVAR-SESION-07.md, «Lo que no se activó» (A-35, pregunta 1) y
+  F3 (S-4); `SESION-07-EXTRACCION.md` §3.1 y §5.1, punto 1. A-35 ABIERTA y bloqueante. Hoy
+  `liquidez_m15_mecha_que_vuelve` = `solo_la_contraria`, DEFAULT_AMBIGUOUS, lectura del consultor
+  (`parametros.yaml:595`, opciones `no_mueve`, `solo_la_contraria` y `cualquier_mecha`; ADR-0084).
+  Con la pregunta 2 de la 7a ya contestada (la punta de la mecha de la roja): (a) →
+  `solo_la_contraria` (lo de hoy), un CORRECT que lo fija y, con «siempre», cierra A-35 por sus
+  sitios (`docs/runbooks/AMBIGUEDADES.md`); (b) → `cualquier_mecha`, un CORRECT con el valor nuevo;
+  «otra» → A-35 sigue abierta con lo que diga. Toca el dinero: decide qué alto o bajo de M15 se toma
+  (RN-004), en cada toma de la construcción. Sin recuento por fila (`PREPARACION-SESION-7.md` §0.3,
+  A-6).*
+
+**S-2. Tus zonas de control y el momento del break even** · en parte · RN-009 y A-13
+- **Lo que nos has dicho:**
+  - de las zonas de control del esquema de la 7a: «como zona de control en ese esquema a y b o sea a
+    y b la respuesta sería esa de allí entonces es de otra cual solo a y b» (v18 0:21:15,
+    `ev-v18-002115-bf40ec0b`), y «una zona de control es pues él es el desarrollo es la mitigación en
+    un orden flow alcista del punto más alto a la condicional es que hay una vela roja vale luego una
+    vela verde y cierre con cuerpo por encima» (v18 0:22:29, `ev-v18-002229-2be4ecf1`);
+  - del break even: «la entrada tiene que cerrar por encima de su nivel alto de su de su máximo nivel
+    para nosotros pues poder poner en break even porque nosotros esperamos a que cierre la vela»
+    (v18 0:13:27, `ev-v18-001327-70f1d014`), «pasas el stop de la entrada cuando se se desarrolla una
+    zona de control completamente validada» (v18 0:19:00, `ev-v18-001900-1581efbe`) y, en un gráfico,
+    «cerrar con cuerpo sea mínimo al menos por un par de puntos o un pip» (v19 1:15:29,
+    `ev-v19-011529-8ae8b581`).
+- **Lo que todavía no sabemos:** (1) dónde están A y B respecto de la toma y del punto, y si con dos
+  zonas de control el esquema te sirve; (2) si, para el break even, el cierre por encima del alto de
+  tu zona de control pide un margen, cuánto, y si es siempre el mismo.
+- **Esquema inventado, no es un día real** («M15» y «M1» escritos), en dos dibujos: (1) el de la
+  7a: la toma de la liquidez de M15 en una compra; después, el retroceso en M1 con tres bajos
+  rotulados A, B y C, y el punto de breaker arriba; (2) una compra ya puesta, la zona de control que
+  se forma después de la entrada, con su alto rotulado, y una vela de un minuto que cierra con
+  cuerpo por encima de ese alto.
+- **Pregunta 1:** «En el dibujo 1, A y B te valen como zonas de control y C no. ¿A y B son zonas del
+  retroceso, después de tomar la liquidez, o de antes de romper el punto? Y si hay dos, ¿ese esquema
+  te sirve o lo descartas?
+  - primero: (a) del retroceso, después de tomar la liquidez; (b) de antes de romper el punto; (c)
+    otra, ¿cuál?;
+  - y con dos: (a) me sirve; (b) lo descarto; (c) otra, ¿cuál?»
+- **Pregunta 2:** «En el dibujo 2: cuando la vela cierra por encima del alto de tu zona de control,
+  ¿te basta con que cierre un punto por encima, o tiene que pasarlo por un margen? ¿Cuánto, y
+  siempre el mismo?
+  - (a) me basta con que cierre por encima;
+  - (b) tiene que pasarlo por un margen: ¿cuánto?, ¿siempre el mismo?;
+  - (c) otra, ¿cuál?»
+- **Para precisar:** el bajo que deja la propia toma, ¿cuenta como zona de control?
+- **Para confirmar al final:** «Mis zonas de control son las ______; si hay dos, el esquema ______.
+  Para pasar a break even, la vela tiene que cerrar por encima del alto de la zona de control
+  ______».
+- *Para Aleks (no va a la hoja): ACTIVAR-SESION-07.md, «Lo que no se activó» (las zonas de control y
+  el margen del break even), F2.3 y F3 (S-3); `SESION-07-EXTRACCION.md` §5.1, puntos 2 y 4 (la duda:
+  la zona de control del esquema 2 es antes de romper el punto, y la del break even, después,
+  `ev-v19-011640-1fdc33a7`). **Pregunta 1**: hoy el bot cuenta como zonas de control los pivotes de
+  M1 del sentido de la entrada entre la toma y el breaker (`domain/estructura_m1.py`, que lee
+  `engine/zonas.py`), y `zonas_control_max_por_esquema` = 1, CONFIRMED (A-20 RESUELTA,
+  `parametros.yaml:1131`): con A y B, RN-009 descarta el esquema. Primero (a) → lo de hoy; (b) →
+  solo cuentan las de antes de romper el punto: cambia la definición de
+  `zonas_desarrolladas_superan`, con ADR (ningún parámetro existente). Con dos, «lo descarto» → lo
+  de hoy; «me sirve» → va contra A-20, RESUELTA: no se activa; se REABRE con un registro `REOPEN`
+  si el consultor lo decide (`docs/runbooks/AMBIGUEDADES.md`). **Pregunta 2**: hoy
+  `break_even_condicion` = `cierre` y `break_even_criterio_ruptura` = `cuerpo`, CONFIRMED, sin
+  margen; A-13 ABIERTA solo por él (`parametros.yaml:520`). (a) → A-13 se cierra sin margen, con su
+  registro de feedback y sus cinco sitios; (b) con una cifra fija → un parámetro nuevo del registro
+  (entero, en puntos; ADR-0002), con su registro de feedback, y la regla RN-014 que lo lea, con ADR;
+  (b) con «depende» → A-13 sigue abierta con lo que diga. Toca el dinero por A-13 (el break even).
+  Filas: las zonas de control, julio 8 con el gate RN-009 en la línea base (TRAZAS-ABLACION.md 5.2;
+  no está en los anexos); el margen, sin recuento por fila.*
+
+**S-3. Dónde pones el 0 de tu caja** · en parte · A-48
 - **Lo que nos has dicho:**
   - del 1: «entonces la respuesta sería al punto más alto de todas las velas desde el punto» (v17
     1:05:41, `ev-v17-010541-05a69879`);
@@ -123,7 +236,45 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
   2026-01-21 y 2026-07-16). (Hasta la revisión de la rama, esta pregunta lo era del 1, que ya está
   decidido: revisor, b1.)*
 
-**S-2. Para que el máximo de la verde sea tu punto, qué tiene que hacer la roja** · en parte · S-22
+**S-4. Tu rango de 4 horas después de una ruptura** · en parte · A-58
+- **Lo que nos has dicho:**
+  - «La respuesta es la letra A, claramente. El rango es la vela verde grande y sigo buscando
+    compras.» (v18 0:02:49, `ev-v18-000249-bb7b1c07`);
+  - «para nosotros ver una continuidad o una reversión, bastaría con mecha o con cuerpo un
+    rompimiento, pero para poder tener el enfoque, se tiene que definir el color de la vela» (v18
+    0:04:08, `ev-v18-000408-c48297b1`);
+  - «para nosotros poder definir nuestro nuevo rango tenemos que ver qué vela o sea si es alcista o
+    bajista y rompe o por encima o por debajo» (v18 0:08:22, `ev-v18-000822-57145b90`);
+  - «el rango mayor sería esto de aquí. O sea, porque este rango todavía la liquidez, tanto por
+    encima como por debajo, no sea mitigada» … «y ya una vez mitigado pues se actualiza» (v18
+    0:09:12, `ev-v18-000912-52594a58`).
+- **Lo que todavía no sabemos:** cuando una vela de 4 horas rompe tu rango y cierra de su color, qué
+  alto y qué bajo forman tu rango nuevo; y, si la que lo rompe cierra del color contrario, qué pasa
+  con tu rango.
+- **Esquema inventado, no es un día real** («4 horas» escrito), en dos dibujos: la vela de rango
+  rotulada; (1) después, una vela que pasa su alto y cierra verde; (2) en otro dibujo, una vela que
+  pasa su alto y cierra roja.
+- **Pregunta:** «Cuando una vela de 4 horas rompe tu rango y cierra de su color, ¿tu rango nuevo va
+  del alto al bajo de esa vela, o de otro sitio? Y si rompe tu rango pero cierra del color
+  contrario, ¿tu rango sigue siendo el mismo o cambia?
+  - en el dibujo 1: (a) del alto al bajo de esa vela; (b) de otro sitio: ¿cuál?; (c) otra, ¿cuál?;
+  - en el dibujo 2: (a) sigue siendo el mismo; (b) cambia: ¿a cuál?; (c) otra, ¿cuál?»
+- **Para precisar:**
+  - ¿Marcas tu rango siempre en el gráfico de 4 horas, o a veces en otro?
+  - ¿Lo haces igual cuando la ruptura es por abajo, al revés?
+- **Para confirmar al final:** «Cuando una vela de 4 horas rompe mi rango y cierra de su color, mi
+  rango nuevo es ______; si cierra del color contrario, mi rango ______».
+- *Para Aleks (no va a la hoja): ACTIVAR-SESION-07.md, «Lo que no se activó» (A-58) y F1; ADR-0094
+  (lecturas b y d). Hoy `sesgo_h4_rango_nuevo` = `vela_que_rompe_con_su_color`, DEFAULT_AMBIGUOUS,
+  lectura del consultor (`parametros.yaml:475`, opciones `vela_que_rompe_con_su_color` y `otra`).
+  (a) en los dos dibujos → `vela_que_rompe_con_su_color` (lo de hoy), un CORRECT que lo fija y, con
+  «siempre», cierra A-58 por sus sitios (`docs/runbooks/AMBIGUEDADES.md`); cualquier otra respuesta
+  → `otra`, que el motor niega con nombre: regla nueva con un ADR que enmiende ADR-0094. «A veces en
+  otro gráfico» → A-58 sigue abierta con lo que diga. Sin recuento por fila de A-58: la clase que
+  movía el rango, P1 de julio, es 1 tras activar la 7a (`anexos/ACTIVAR-SESION-07/pivote-julio-f2.txt`;
+  es la de 2026-07-01 de 11 a 15, B-15 de §3).*
+
+**S-5. Para que el máximo de la verde sea tu punto, qué tiene que hacer la roja** · en parte · S-22
 - **Lo que nos has dicho:**
   - «porque tendría que el precio haber roto aquí con cuerpo o con mecha cualquiera de los dos para
     yo poder validar este punto breaker» (v17 1:53:07, `ev-v17-015307-0870a8ca`);
@@ -149,7 +300,7 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
   69 % con (b) (`ACTIVAR-SESION-06-MOTOR.md:148-154`); va en rama propia con ADR. Sin recuento por
   fila.*
 
-**S-3. El precio ya está más allá del 0 cuando se forma la caja** · en parte · S-19
+**S-6. El precio ya está más allá del 0 cuando se forma la caja** · en parte · S-19
 - **Lo que nos has dicho:**
   - «si, o sea, se pone la orden igual, aquí ya se activaría la orden, es más, o sea, al ocurrir este
     rompimiento de aquí, ya a mí me habilita» (v17 1:41:03, `ev-v17-014103-8cf3e7fb`);
@@ -185,86 +336,6 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
   consultor a la PARADA final, punto 2.) Ningún parámetro existente: es la regla de la rama de S-19. Sin recuento por fila: 32 rechazos al colocar en la línea base (TRAZAS-ABLACION.md
   5.4).*
 
-**S-4. Volver a entrar en el mismo punto: el «igual» y la caja** · en parte · ADR-0083 D1
-- **Lo que nos has dicho:**
-  - «tiene que haber un igual para poder repetir entre comillas esa misma entrada pero por lo general
-    o sea si hay un error flow normal y demás o bien se gane se pierde y no se vuelve a repetir el
-    mismo punto porque el precio va a ir desarrollando» (v17 1:30:09, `ev-v17-013009-5e47afdb`);
-  - «si al volver a entrar que haces en el 0 y con el 1 de la caja como digo o sea nuevamente lo
-    repito vamos a estar en constante actualización» (v17 1:38:15, `ev-v17-013815-9cf6f076`).
-- **Lo que todavía no sabemos:** qué es para ti «un igual», y, al volver a entrar, si la caja es la
-  del primer intento o una nueva.
-- **Esquema inventado, no es un día real** («M1» escrito): una compra que salta el stop; después el
-  precio vuelve al mismo bajo y hace otro igual; dos cajas dibujadas, la del primer intento y una
-  nueva desde el último pivote.
-- **Pregunta:** «¿Vuelves a entrar en ese punto, y con qué caja?
-  - (a) sí, con la caja del primer intento;
-  - (b) sí, con una caja nueva;
-  - (c) no vuelvo a entrar;
-  - (d) otra, ¿cuál?»
-- **Para precisar:** ¿Qué tiene que hacer el precio para que sea «un igual»?
-- **Para confirmar al final:** «Vuelvo a entrar en el mismo punto cuando ______, con la caja
-  ______».
-- *Para Aleks (no va a la hoja): ADR-0083:87-88 («Lo que pasa a la sesión 7») y
-  `ACTIVAR-SESION-06.md:593-594`; también VIDEO-JULIO.md §7 #7. Hoy D1 deja volver a colocar el
-  punto, con la misma caja o con otra, sin pedir un igual. (a) → la reentrada reusa la caja del
-  primer intento; (b) → la caja se vuelve a trazar; (c) → el punto se gasta al cerrar, que cambia
-  D1: las tres, con ADR (ningún parámetro existente); `cartuchos_max` = 3 no se toca. RN-019 no
-  dispara nunca en el motor (Technical Debt). Filas: julio 3, en total 4 (P7, «la rama de RN-019»,
-  RECORRIDA-CONSTRUCCION-2.md:1319).*
-
-**S-5. La orden sin llenar cuando el precio toma otra liquidez de M15** · en parte · A-53
-- **Lo que nos has dicho:**
-  - «Tomar la liquidez más reciente O sea, la quito en ese momento Y espero el punto de la liquidez
-    nueva O sea, la respuesta es la A la A la verdad no, como lo planteé aquí» (v17 0:57:30,
-    `ev-v17-005730-76948af1`);
-  - «este es el punto nuevo más tarde y este sería el que todavía seguiría activo porque para
-    nosotros poder actualizar nuestro punto break posible mundo breaker tendríamos que esperar a que
-    el precio llegue rompa allí» (v17 0:58:46, `ev-v17-005846-0891a9c9`).
-- **Lo que todavía no sabemos:** qué pasa con la orden vieja en el minuto de la toma nueva.
-- **Esquema inventado, no es un día real** («M15» y «M1» escritos): la orden vieja puesta; el precio
-  toma otra liquidez de M15 sin llenarla; más tarde, el punto nuevo.
-- **Pregunta:** «En el minuto de la toma nueva, ¿qué pasa con la orden vieja?
-  - (a) la quito;
-  - (b) la dejo hasta el punto nuevo y la muevo;
-  - (c) otra, ¿cuál?»
-- **Para confirmar al final:** «Cuando el precio toma otra liquidez de M15 con mi orden sin llenar,
-  la orden ______».
-- *Para Aleks (no va a la hoja): `ACTIVAR-SESION-06.md:581-585`. Hoy `orden_pendiente_al_abrir_escenario`
-  = `se_mueve`, DEFAULT_AMBIGUOUS (`parametros.yaml:889`), con A-53 ABIERTA. (a) → `se_retira`; (b) →
-  `se_mueve`. También dijo «a es igual en compra y en venta o sea con lo explicado aquí sí o sea pero al revés y si
-  antes de que aparezca el nuevo punto el precio toma todavía otra liquidez pues se va actualizando»
-  (`ev-v17-005914-55580dc0`): por eso no se repregunta qué pasa con una tercera toma. Sin
-  recuento por fila.*
-
-**S-6. La liquidez tomada antes de las 7** · en parte · A-43
-- **Lo que nos has dicho:**
-  - «a ver operas operas enfocándote o sea después de las 7 de las 7 en adelante pero en m1 o sea O
-    sea, antes de las 7 solo se usa para trazo de liquidez.» (v17 1:04:24, `ev-v17-010424-6d7f2d3f`);
-  - «Entonces, como hemos visto en el gráfico, solo nos enfocamos, o sea, si vamos a usar el trazo de
-    liquidez en M15, solo nos enfocamos, o sea, para el bias y demás, y saber qué hacer luego, a
-    partir de las 7 a después, pues solo el trazo de liquidez de M15, como hemos visto aquí.» (v17
-    1:03:21, `ev-v17-010321-352430e3`).
-- **Lo que todavía no sabemos:** si una toma de liquidez de M15 hecha antes de las 7 vale para entrar
-  después de las 7, y si la misma liquidez, tomada antes de las 7 y otra vez después, vale la
-  segunda vez.
-- **Esquema inventado, no es un día real** («M15» y «M1» escritos, con las horas): (1) la toma a las
-  6:30 y el punto a las 7:20; (2) la misma liquidez tomada a las 6:30 y otra vez a las 8:10.
-- **Pregunta 1:** «En el dibujo 1, ¿entras?
-  - (a) sí;
-  - (b) no;
-  - (c) otra, ¿cuál?»
-- **Pregunta 2:** «En el dibujo 2, ¿vale la toma de las 8:10?
-  - (a) sí;
-  - (b) no, ya estaba gastada;
-  - (c) otra, ¿cuál?»
-- **Para confirmar al final:** «Una toma de antes de las 7 ______ para entrar después».
-- *Para Aleks (no va a la hoja): `ACTIVAR-SESION-06.md:586-590`. Hoy `toma_antes_de_la_ventana` =
-  `cuenta`, CONFIRMED (`parametros.yaml:821`), con A-43 ABIERTA. Pregunta 1 (a) → lo de hoy; (b) →
-  un CORRECT a `no_cuenta`. Pregunta 2 (a) → una liquidez tomada antes de las 7 se puede volver a
-  tomar después (lo de hoy, con `cuenta`); (b) → una liquidez ya tomada no vuelve a contar: no hay
-  parámetro para eso, pediría una regla nueva. Sin recuento por fila.*
-
 **S-7. Una tarde que no está en el vídeo** · material (no cuenta entre las seis)
 - **Lo que todavía no sabemos:** en tu backtest grabado en vídeo hay una tarde que el vídeo no
   enseña y el libro sí (Aleks te dice cuál).
@@ -279,7 +350,10 @@ Ordenadas por las filas que mueven (ADR-0093 §1); A-53 y A-43 no tienen recuent
 ## 3. Las que no caben en las seis (Para Aleks: no van al PDF)
 
 Escritas para que la rama de activación de la 7a, al revisar este documento (recuadro de arriba),
-cambie una por otra si la cifra nueva lo pide. Filas: `PREPARACION-SESION-7.md` §0.3.
+cambie una por otra si la cifra nueva lo pide. Filas: `PREPARACION-SESION-7.md` §0.3. Revisadas
+el 2026-11-18 por `trabajo/laminas-sesion-7b` (recuadro de arriba): entran B-11 a B-15, con sus
+filas contadas en `LAMINAS-7B.md`, 0.3. Ninguna entra en las seis por esta revisión: lo decide el
+consultor.
 
 | Cód. | Pregunta | De dónde sale | Filas (julio / total) |
 |---|---|---|---|
@@ -287,3 +361,8 @@ cambie una por otra si la cifra nueva lo pide. Filas: `PREPARACION-SESION-7.md` 
 | B-8 | Seguir entrando tras tres pérdidas en el mismo barrido | VIDEO-JULIO.md:628-630 | 2 / — |
 | B-9 | La alternancia (RN-009, S-21): tres retrocesos en M1 y dónde pondría el punto | ACTIVAR-SESION-06.md:595-601 | se solapa con S-3 de la 7a |
 | B-10 | A-46 por la toma: si la toma de la mañana vale por la tarde con el mismo sesgo (A-46 está RESUELTA: no se reabre; se pregunta solo por la toma, que no contestó) | ACTIVAR-SESION-06.md:602-605 | — |
+| B-11 | Volver a entrar en el mismo punto: qué es «un igual» y, al volver, si la caja es la del primer intento o una nueva (la S-4 de antes de esta revisión; «un igual», `ev-v17-013009-5e47afdb`; la caja del segundo intento, `ev-v17-013815-9cf6f076`) | ADR-0083:87-88; ACTIVAR-SESION-06.md:593-594; VIDEO-JULIO.md §7 #7 | 4 (P7, tras activar la 7a: `anexos/ACTIVAR-SESION-07/pivote-julio-f2.txt`; 3 en la línea base) / 4 en la línea base (RECORRIDA-CONSTRUCCION-2.md:1319) |
+| B-12 | A-53: en el minuto en que el precio toma otra liquidez de M15 con la orden sin llenar, si la orden vieja se quita o se mueve (la S-5 de antes de esta revisión; `ev-v17-005730-76948af1`, `ev-v17-005846-0891a9c9`, `ev-v17-005914-55580dc0`; y, del bloque de días de la 7a, como ejemplo, «se maneja una sola orden, no es que se deja pendiente otra orden aquí, otra orden aquí, no se va actualizando la orden», `ev-v18-011801-8b4f738d`) | ACTIVAR-SESION-06.md:581-585; ACTIVAR-SESION-07.md F3 | sin recuento por fila |
+| B-13 | A-43: si una toma de liquidez de M15 hecha antes de las 7 vale para entrar después, y si la misma liquidez tomada antes y otra vez después vale la segunda vez (la S-6 de antes de esta revisión; `ev-v17-010424-6d7f2d3f`, `ev-v17-010321-352430e3`; y, del bloque de días de la 7a, como ejemplo, «se llega a mitigar con velas de m1 pero de la sesión del 7 en adelante si es una vez la mitigación antes de las 7 que antes del inicio de la sesión o de cada sesión no es válido», `ev-v19-012529-685ae24d`, `ev-v19-012650-4f9f20ec`, que va contra `toma_antes_de_la_ventana` = `cuenta`, CONFIRMED) | ACTIVAR-SESION-06.md:586-590; ACTIVAR-SESION-07.md, «Lo que no se activó» | sin recuento por fila |
+| B-14 | El punto de breaker sin vela contraria: si la segunda vela del mismo color, con la mecha más larga que la anterior, da un punto de breaker (`ev-v18-013614-cfd2b45d`, `ev-v19-011138-5c622b1f`, del bloque de días de la 7a, como ejemplos) | ACTIVAR-SESION-07.md F3 | sin recuento por fila |
+| B-15 | En la sesión de las 11 del 2026-07-01: «El 1 de julio, en la sesión de las 11, dices que tu rango sigue alcista y buscas compras, y a las 12:59 vendes. ¿Qué te hizo vender ahí?» (lleva día: va al bloque de días, no a las técnicas, si el consultor la mete) | ACTIVAR-SESION-07.md F1.4 (iv) y «Lo que no se activó»; VIDEO-JULIO.md §4.1 | 3 (1 P1 del trader y 2 P5 del bot, tras activar la 7a: `anexos/ACTIVAR-SESION-07/delta-julio-base-f1.txt`) / — |

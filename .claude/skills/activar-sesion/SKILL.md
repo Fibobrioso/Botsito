@@ -67,9 +67,7 @@ Desde ADR-0093 (2026-11-11), con sus palabras:
 - El delta es diagnostico: «La cifra dice si la respuesta se entendió, nunca ajusta un parámetro»
   (ADR-0093 §4, que cita ADR-0092 §6) y «El delta nunca elige entre dos lecturas de un parámetro»
   (ADR-0093 §4).
-- Como se corre julio en una activacion (el comando, sus opciones y como se calcula el delta) no
-  esta escrito en ningun sitio (`docs/validation/SKILLS-METODO.md`, fase 0): lo fija y lo cita el
-  encargo de cada activacion.
+- Cómo se corre julio en una activación y cómo se calcula el delta, con su control: el recuadro de ADR-0093 §4 (2026-11-18, `trabajo/activar-sesion-07`, D0), con `anexos/ACTIVAR-SESION-07/delta_julio.py` para el delta fila por fila.
 
 ## El recorrido
 

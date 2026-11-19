@@ -256,13 +256,14 @@ CODIGOS_DE_SESION_TEXTO: dict[str, dict[str, str]] = {
         "S-5": "en qué momento pones la orden respecto de la ruptura de tu punto",
         "S-6": "las entradas que dejas sin tomar en el backtest",
     },
+    # la 08, revisada el 2026-11-18 con lo que dejo la 7a (trabajo/laminas-sesion-7b, F3)
     "08": {
-        "S-1": "dónde pones el 0 de tu caja",
-        "S-2": "para que el máximo de la verde sea tu punto, qué tiene que hacer la roja",
-        "S-3": "el precio ya está más allá del 0 cuando se forma la caja",
-        "S-4": "volver a entrar en el mismo punto: el «igual» y la caja",
-        "S-5": "la orden sin llenar cuando el precio toma otra liquidez de M15",
-        "S-6": "la liquidez tomada antes de las 7",
+        "S-1": "la mecha de un minuto que pasa tu alto de M15 y vuelve",
+        "S-2": "tus zonas de control y el momento del break even",
+        "S-3": "dónde pones el 0 de tu caja",
+        "S-4": "tu rango de 4 horas después de una ruptura",
+        "S-5": "para que el máximo de la verde sea tu punto, qué tiene que hacer la roja",
+        "S-6": "el precio ya está más allá del 0 cuando se forma la caja",
         "S-7": "una tarde que no está en el vídeo",
     },
 }
@@ -276,9 +277,10 @@ HOJAS: dict[str, tuple[str, ...]] = {
     "07": ORDEN_SESION_07,
     "08": ORDEN_SESION_08,
 }
-# La 07 hasta grabar la 7a; a "08" la pasa la rama de activacion de la 7a, antes de grabar la 7b
-# (encargo de `trabajo/preparacion-sesion-7`, D2).
-SESION_EN_CURSO = "07"
+# La 08 desde el 2026-11-18, antes de grabar la 7b: la paso `trabajo/laminas-sesion-7b` (F3), que
+# heredo el paso de la activacion de la 7a (ACTIVAR-SESION-07.md 0.5; encargo de
+# `trabajo/preparacion-sesion-7`, D2). La 07, la 7a, ya esta grabada e ingerida.
+SESION_EN_CURSO = "08"
 
 
 # ------------------------------------------------------------------------------ cuarentena
