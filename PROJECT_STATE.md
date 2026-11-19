@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/activar-sesion-07
+main
 
 ## Current Feature
-trabajo/activar-sesion-07 EN CURSO (R4.3, punto (1) de la F de la Next Action): la activación de la sesión 7a (S-1 el sesgo de H4 por el rango vigente, con ADR nuevo; S-2 el break even al cierre y con cuerpo; lo que se registra sin tocar el motor) y la corrida de julio de ADR-0093 §4. Encargo docs/encargos/trabajo-activar-sesion-07.md; informe docs/validation/ACTIVAR-SESION-07.md.
+Ninguna rama abierta. trabajo/activar-sesion-07 cerrada en main el 2026-11-18 (stable/F39e-activar-sesion-07): la sesión 7a activada (el sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; el break even al cierre y con cuerpo, A-13 abierta solo por el margen).
 
 ## Stable Main State
-5c047f31 · merge de `trabajo/sesion-07` (tag `stable/F39d-sesion-07`), sobre `stable/F39c-skills-metodo` (0f420593). Informe docs/validation/SESION-07-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
+cf33a916 · merge de `trabajo/activar-sesion-07` (tag `stable/F39e-activar-sesion-07`), sobre `stable/F39d-sesion-07` (5c047f31). Informe docs/validation/ACTIVAR-SESION-07.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-5c047f31 · merge trabajo/sesion-07: la sesión 7a (v18 y v19) ingerida y extraída, con sus PARADAS respondidas · tag stable/F39d-sesion-07
+cf33a916 · merge trabajo/activar-sesion-07: la sesión 7a activada (sesgo de H4 por el rango vigente, ADR-0094; break even al cierre y con cuerpo) · tag stable/F39e-activar-sesion-07
 
 ## Tests Currently Passing
 2082 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
