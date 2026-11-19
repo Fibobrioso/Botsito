@@ -666,8 +666,10 @@ del motor cambia: `pivotes_de_control`, `zonas_control_max_por_esquema`, `orden_
 - **Las preguntas reformuladas** de lo que no se activó (la tabla de arriba): A-35 pregunta 1, A-58,
   las zonas de control, el margen del break even y A-43 con sus citas nuevas.
 - **Días gastados**: el 2026-07-03 de 7 a 11 (la sesión 3 del bloque de la 7a, sin extraer) no se
-  vuelve a usar; y el 2026-04-15 (sesión 2 del bloque de la 7b) ya salió en la 7a, abierto por error
-  en la reserva (`SESION-07-EXTRACCION.md` §5.1, punto 9).
+  vuelve a usar. **El 2026-04-15 de 11 a 15 NO está gastado** (respuesta del consultor a la PARADA
+  final, punto 7): se queda como sesión 2 de la 7b, porque el trader no vio ninguna lámina de ese
+  día (lo abrió por error en la reserva, `SESION-07-EXTRACCION.md` §5.1, punto 9), y la confirma el
+  encargo de esa rama.
 - **Lo que heredaba la activación de la 7a y pasa a esa rama** (0.5): las láminas de la 7b con el
   motor de esta rama; la revisión de `PREGUNTAS-7B.md` (recuadro D4: las filas de cada pregunta con
   la corrida nueva, que la de julio no da para enero y abril; y si entra alguna de §3);
@@ -679,7 +681,7 @@ del motor cambia: `pivotes_de_control`, `zonas_control_max_por_esquema`, `orden_
 **La F nueva de la Next Action** (sustituye a la de hoy; la parte de la 7b sigue pendiente, para la
 rama siguiente):
 
-> F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Trazas y ablación (TRAZAS-ABLACION.md; `motor decisiones`) y láminas (LAMINAS.md; `motor laminas`; R4.5), hechas. La sesión 7, en dos días con el método de ADR-0093 (PREPARACION-SESION-7.md; R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml): la 7a (v18 y v19, id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, stable/F39e-activar-sesion-07: el sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; el break even al cierre y con cuerpo, A-13 abierta solo por el margen). Siguiente, en este orden: (1) la rama de las láminas de la 7b, desde main y con este motor: genera las láminas, revisa PREGUNTAS-7B.md (las filas de cada pregunta, las que no caben, el 2026-04-15 de su sesión 2 y las preguntas reformuladas de ACTIVAR-SESION-07.md) y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6). El vídeo de mapeo, si llega, SIN ABRIR y fuera del repo, por su propia rama. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+> F. Sesión 6 ACTIVADA en spec (F38n) y motor (F38o); S-22 y S-19 a la sesión 7. La re-corrida que cuenta está hecha (RECORRIDA-CONSTRUCCION-2.md: «no», cobertura 15.7 % y precisión 13.9 %; línea base anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt). Trazas y ablación (TRAZAS-ABLACION.md; `motor decisiones`) y láminas (LAMINAS.md; `motor laminas`; R4.5), hechas. La sesión 7, en dos días con el método de ADR-0093 (PREPARACION-SESION-7.md; R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml): la 7a (v18 y v19, id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, stable/F39e-activar-sesion-07: el sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; el break even al cierre y con cuerpo, A-13 abierta solo por el margen). Siguiente, en este orden: (1) la rama de las láminas de la 7b, desde main y con este motor: genera las láminas, revisa PREGUNTAS-7B.md (las filas de cada pregunta, las que no caben, el 2026-04-15 de su sesión 2 y las preguntas reformuladas de ACTIVAR-SESION-07.md) y pasa SESION_EN_CURSO a "08"; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); antes de (3), el consultor decide qué hacer con los frenos de la cuenta del mes (RN-032 y RN-036) que mueven parejas de rebote en julio (ACTIVAR-SESION-07.md, F1.4 y F2.4). El vídeo de mapeo llegó el 2026-11-18 (cubre del 2026-10-23 al 2026-11-17): SIN ABRIR y fuera del repo; no se ingiere, y octubre y noviembre de 2026 quedan reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
 
 **La M** (decisión 2): «M. **El break even de una venta que salta por el ASK** (ADR-0065 §6): sin
 objeto mientras `break_even_condicion` sea `cierre` (desde la 7a, ACTIVAR-SESION-07.md; recuadro de
@@ -966,3 +968,47 @@ Treinta y cuatro grupos de órdenes de solo lectura (git, `contrato_rama.py`, `f
 > Después: make check, push a fix/activar-sesion-07, CI de Linux con su run, y un informe corto con los recuentos del punto 8, el sha del último commit y el número de commits de la rama. No cierres.
 >
 > Rama lista para revisión, NO cerrada.
+
+## La respuesta a la PARADA final, aplicada (2026-11-18)
+
+- **0 a 4**: aceptadas como se aplicaron; la línea de la M y la de Technical Debt del visor, en «Para
+  la orden de cierre» (sin cambios).
+- **5, F1 y la condición (iv)**: F1 se da por bueno tal como está y no se retoca. **(iv) NO se
+  cumplió** (F1.4: el 2026-07-01 de 11 a 15 gana una P1) **y el consultor lo aceptó**: la regla es lo
+  que el trader dijo como regla en el bloque técnico, (i), (ii), (iii) y el punto 6 se cumplen, y la
+  fila que no casa es una sesión en que su voz dice un lado y su operación el otro (VIDEO-JULIO.md la
+  dejó sin clase). Esa fila va a la 7b con la pregunta de «Lo que no se activó».
+- **6**: (a) la frase sobre los frenos de la cuenta que mueven parejas de rebote entra en la F nueva
+  (arriba, «Para la orden de cierre»); nada se toca aquí. (b) Las sesiones de enero con menos de 60
+  H4 las decide el encargo de la rama de las láminas; su línea de Technical Debt se queda.
+- **7**: corregido en «Para la rama siguiente»: el 2026-04-15 de 11 a 15 no está gastado y se queda
+  como sesión 2 de la 7b; el 2026-07-03 de 7 a 11, sí.
+- **8, el vídeo de mapeo recibido hoy** (SIN ABRIR y fuera del repo; no se ingiere). **Medido antes
+  de escribir nada** (un guion de la carpeta de trabajo que construye el índice FILTRADO de `kb` dos
+  veces, con los meses libres de hoy y con 10 y 11 quitados; solo recuentos):
+  - **(a)** meses libres hoy: 1, 4, 7, 8, 10 y 11; con la entrada, 1, 4, 7 y 8. **Segmentos ocultos
+    de las transcripciones filtradas: 10.512 → 10.512, sin cambio en ningún vídeo** (por vídeo, hoy
+    y con la entrada iguales: v2 3, v3 3, v4 29, v6 197, v7 602, v8 229, v9 1.664, v10 1.914, v13 1,
+    v15 1.344, v16 526, v17 1.701, v18 1.320, v19 979; los de las sesiones 5, 6 y 7a ya los tapa
+    entera la cuarentena de sesión, motivo a). **Ítems de evidencia ocultos: 3 → 3, ninguno nuevo**
+    (la evidencia no la oculta la regla del mes, `cuarentena.evidencia_a_ocultar`).
+  - **(b)** ninguno nuevo, así que **ninguno citado** por la spec, el feedback, un parámetro, una
+    ambigüedad, ADR-009x ni el informe de esta rama.
+  - **(c)** con las dos entradas en el árbol de trabajo, sin commitear: `knowledge validate` exit 0
+    («OK: 5 meses reservados enteros, con formato y fuente, solo-anadir intacto», ningún ERROR); y
+    `test_cuarentena_por_condicion.py`, `test_historial_sin_git.py` y `test_guardia_claude.py`,
+    todos en verde.
+  - **Se cumplen las dos condiciones**: commit propio HOY (2944e6ea) con las dos entradas
+    (`knowledge/cases/meses_reservados.yaml`, solo añadir, `declarado_el: "2026-11-18"`, fuente el
+    encargo de la rama), con el fichero en `rutas_permitidas` del contrato en ese mismo commit; y
+    `rutas_protegidas` afinada (`knowledge/cases/` pasa a sus ficheros y carpetas salvo ese).
+  - La frase del vídeo de mapeo de la F, cambiada en «Para la orden de cierre».
+  - **Una corrección de proceso, declarada**: el primer commit de las dos entradas (36b41d7, sin
+    empujar) salió sin trailer `Fuente:`, que `knowledge/cases/` exige (`comun/historial.py`,
+    `DIRECTORIOS_CON_FUENTE`), y el `make check` siguiente lo negó (cinco tests de `knowledge
+    validate`). La guardia niega `git reset` a la sesión: Aleks lo deshizo con `git reset --soft
+    HEAD~1` (comprobado antes que 36b41d7 era HEAD y que `origin/fix/activar-sesion-07` estaba en
+    1b44291d) y el commit se rehízo, sellado sobre el mismo árbol, con `Fuente: ADR-0072` (el trailer
+    del commit anterior de ese fichero). En ese `make check` rojo hubo además un error intermitente de
+    `test_guardia_falsos_positivos.py` (la carpeta temporal aleatoria cayó en un fragmento de
+    `SENSIBLES`), que no se repitió.
