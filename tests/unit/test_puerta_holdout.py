@@ -1,7 +1,11 @@
 """La puerta del holdout se niega, y se ve negar (ADR-0021 §3, ADR-0033).
 
 Todo lo que abre de verdad se prueba en repositorios temporales. El `PREREGISTRO.md` del proyecto
-sigue vacio a proposito, y este fichero comprueba que, tal como esta, la puerta no deja pasar nada.
+esta RELLENO desde ADR-0096 (2026-11-19), sin ninguna pregunta declarada, y en el repositorio no
+hay ninguna autorizacion: este fichero comprueba que, tal como esta, la puerta no deja pasar nada,
+y lo comprueba sin depender de la marca de vacio ni de si el fichero esta commiteado o solo
+estadiado (lo que tumbaba en `make check` cualquier edicion del fichero: PARADA 2 de
+`METODO-FIDELIDAD-RENTABILIDAD.md`).
 """
 
 from __future__ import annotations
@@ -24,6 +28,7 @@ from botsito.cases.holdout import (
     gastar_pregunta,
     leer_fichero,
     motivos_de_cierre,
+    preguntas_del_preregistro,
     repartos_commiteables,
 )
 from botsito.comun.yaml_estricto import leer_yaml
@@ -32,12 +37,23 @@ REPO = Path(__file__).resolve().parents[2]
 
 
 @pytest.mark.parametrize("particion", RESERVADAS)
-def test_con_el_preregistro_de_hoy_la_puerta_se_niega_y_nombra_adr_0021(particion: str) -> None:
-    assert MARCA_SIN_RELLENAR in (REPO / FICHERO_PREREGISTRO).read_text(encoding="utf-8")
+def test_con_el_preregistro_relleno_la_puerta_sigue_cerrada(particion: str) -> None:
+    """Sustituye, desde ADR-0096, al test que exigia la marca de vacio (`MARCA_SIN_RELLENAR`).
+
+    Cuatro afirmaciones, y ninguna depende de si `PREREGISTRO.md` esta commiteado o solo estadiado:
+    la puerta se niega nombrando ADR-0021 §3 y la autorizacion de la particion; no existe ninguna
+    autorizacion en el repositorio real; el fichero real ya no lleva la marca (con el de antes de
+    ADR-0096, este test ROMPE); y el fichero real no declara hoy ninguna pregunta. La rama que
+    anada la primera -la del comando de medida de F26, ABIERTA y con su particion- cambia esta
+    ultima afirmacion a la vista.
+    """
     with pytest.raises(HoldoutCerradoError, match="ADR-0021 §3") as exc:
         abrir(REPO, particion, "P1")
-    assert "sigue vacio" in str(exc.value)
     assert f"AUTORIZACION-{particion}.md" in str(exc.value)
+    assert not list((REPO / "docs" / "validation").glob("AUTORIZACION-*.md"))
+    texto = (REPO / FICHERO_PREREGISTRO).read_text(encoding="utf-8")
+    assert MARCA_SIN_RELLENAR not in texto
+    assert preguntas_del_preregistro(texto) == {}
 
 
 def test_leer_material_del_holdout_real_pasa_por_la_puerta_y_se_niega() -> None:
