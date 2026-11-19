@@ -524,8 +524,9 @@ La guardia me negó dos comandos, que reescribí sin rodearla: `sed … | fold`,
 
 Fase 0 y F1 a F4 hechas. F1 CUADRA. F2: (a) = 0 y (b) = 0, el motor no se toca y no hay
 ADR-0095 (dos líneas de Technical Debt propuestas para el cierre). F3 y F4 hechas. Revisor: eje (a)
-0 / 1 / 3 y eje (b) 0 / 4 / 2; hechos o llevados a la PARADA. Cinco decisiones para el consultor en
-«Lo que necesito que decidas».
+0 / 1 / 3 y eje (b) 0 / 4 / 2; hechos o llevados a la PARADA. El consultor respondió a la PARADA
+final el 2026-11-19 (todo (a)); aplicada al final de este informe: S-2 de `PREGUNTAS-7B.md`
+cambiada en sus puntos 3 y 4, sin PARADA nueva.
 
 Rama lista para revisión, NO cerrada.
 
@@ -544,3 +545,24 @@ Rama lista para revisión, NO cerrada.
 > Sobre lo que no te convence: el punto 1 (filas de antes de activar la 7a) queda dicho en el informe y no se corre nada; el punto 2 (el 2026-04-15 ya no es ciego) se acepta, porque es la única sesión de su tipo; el 3 se arregla con 3 y 4; el 4, como está.
 >
 > Después: knowledge validate, make check, push a fix/laminas-sesion-7b y CI de Linux con su run. Las láminas no se regeneran (estos cambios no las tocan). Un informe corto con el sha del último commit, el número de commits y el run. No cierres.
+
+## La respuesta a la PARADA final, aplicada (2026-11-19)
+
+Punto por punto (skill fase-cero, «Cuando llega la respuesta del consultor»). Ningún punto choca con
+algo medido: no hay PARADA nueva.
+
+| Punto | Qué se hizo |
+|---|---|
+| 0 | S-5 y S-6 (S-22 y S-19) se quedan entre las seis. Nada cambia. |
+| 1 | S-3 = A-48 y S-4 = A-58 se quedan. Nada cambia. |
+| 2 | B-15 (2026-07-01) se queda en §3. Nada cambia. |
+| 3 | En S-2 de `PREGUNTAS-7B.md`: la pregunta 1 es la del texto de la respuesta, con sus tres opciones; el dibujo 1 lleva el cuarto bajo D, a la derecha del punto ya roto; en «Para Aleks», (a) → lo de hoy y (b) → cambia la definición de `zonas_desarrolladas_superan`, con ADR. |
+| 4 | Fuera de S-2 la parte «si hay dos», su línea de opciones, su hueco en «Para confirmar al final» y su parte de «Lo que todavía no sabemos». En «Para Aleks», la frase de A-20 RESUELTA (ADR-0093 §1). |
+| 5 | Aceptado. Ningún texto de este commit nombra el 2026-07-16 ni cuenta láminas. |
+| Lo que no me convence | Puntos 1, 2 y 4, como están; el 3, con los puntos 3 y 4. No se corre nada. |
+
+Lo que no tocó la respuesta y se comprobó:
+- El título de S-2 no cambia, así que la hoja 08 de `scripts/transcribir_sesion.py` tampoco.
+- La parte (1) de «Lo que todavía no sabemos» («dónde están A y B respecto de la toma y del punto»)
+  queda como estaba: la respuesta solo quita lo de «con dos».
+- Las láminas no se regeneran: estos cambios no las tocan.

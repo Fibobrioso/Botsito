@@ -162,20 +162,20 @@ fila; S-4, S-5 y S-6 no lo tienen y van detrás.
     zona de control completamente validada» (v18 0:19:00, `ev-v18-001900-1581efbe`) y, en un gráfico,
     «cerrar con cuerpo sea mínimo al menos por un par de puntos o un pip» (v19 1:15:29,
     `ev-v19-011529-8ae8b581`).
-- **Lo que todavía no sabemos:** (1) dónde están A y B respecto de la toma y del punto, y si con dos
-  zonas de control el esquema te sirve; (2) si, para el break even, el cierre por encima del alto de
-  tu zona de control pide un margen, cuánto, y si es siempre el mismo.
+- **Lo que todavía no sabemos:** (1) dónde están A y B respecto de la toma y del punto; (2) si, para el
+  break even, el cierre por encima del alto de tu zona de control pide un margen, cuánto, y si es
+  siempre el mismo.
 - **Esquema inventado, no es un día real** («M15» y «M1» escritos), en dos dibujos: (1) el de la
   7a: la toma de la liquidez de M15 en una compra; después, el retroceso en M1 con tres bajos
-  rotulados A, B y C, y el punto de breaker arriba; (2) una compra ya puesta, la zona de control que
+  rotulados A, B y C, y el punto de breaker arriba y, a la derecha del punto ya roto, un cuarto bajo
+  rotulado D, formado después de la ruptura; (2) una compra ya puesta, la zona de control que
   se forma después de la entrada, con su alto rotulado, y una vela de un minuto que cierra con
   cuerpo por encima de ese alto.
-- **Pregunta 1:** «En el dibujo 1, A y B te valen como zonas de control y C no. ¿A y B son zonas del
-  retroceso, después de tomar la liquidez, o de antes de romper el punto? Y si hay dos, ¿ese esquema
-  te sirve o lo descartas?
-  - primero: (a) del retroceso, después de tomar la liquidez; (b) de antes de romper el punto; (c)
-    otra, ¿cuál?;
-  - y con dos: (a) me sirve; (b) lo descarto; (c) otra, ¿cuál?»
+- **Pregunta 1:** «En el dibujo 1, A y B te valen como zonas de control y C no. ¿Se forman antes de
+  romper el punto, o pueden formarse también después de romperlo?
+  - (a) antes de romper el punto;
+  - (b) también después de romperlo;
+  - (c) otra, ¿cuál?»
 - **Pregunta 2:** «En el dibujo 2: cuando la vela cierra por encima del alto de tu zona de control,
   ¿te basta con que cierre un punto por encima, o tiene que pasarlo por un margen? ¿Cuánto, y
   siempre el mismo?
@@ -183,21 +183,19 @@ fila; S-4, S-5 y S-6 no lo tienen y van detrás.
   - (b) tiene que pasarlo por un margen: ¿cuánto?, ¿siempre el mismo?;
   - (c) otra, ¿cuál?»
 - **Para precisar:** el bajo que deja la propia toma, ¿cuenta como zona de control?
-- **Para confirmar al final:** «Mis zonas de control son las ______; si hay dos, el esquema ______.
-  Para pasar a break even, la vela tiene que cerrar por encima del alto de la zona de control
-  ______».
+- **Para confirmar al final:** «Mis zonas de control son las ______. Para pasar a break even, la
+  vela tiene que cerrar por encima del alto de la zona de control ______».
 - *Para Aleks (no va a la hoja): ACTIVAR-SESION-07.md, «Lo que no se activó» (las zonas de control y
   el margen del break even), F2.3 y F3 (S-3); `SESION-07-EXTRACCION.md` §5.1, puntos 2 y 4 (la duda:
   la zona de control del esquema 2 es antes de romper el punto, y la del break even, después,
   `ev-v19-011640-1fdc33a7`). **Pregunta 1**: hoy el bot cuenta como zonas de control los pivotes de
   M1 del sentido de la entrada entre la toma y el breaker (`domain/estructura_m1.py`, que lee
   `engine/zonas.py`), y `zonas_control_max_por_esquema` = 1, CONFIRMED (A-20 RESUELTA,
-  `parametros.yaml:1131`): con A y B, RN-009 descarta el esquema. Primero (a) → lo de hoy; (b) →
-  solo cuentan las de antes de romper el punto: cambia la definición de
-  `zonas_desarrolladas_superan`, con ADR (ningún parámetro existente). Con dos, «lo descarto» → lo
-  de hoy; «me sirve» → va contra A-20, RESUELTA: no se activa; se REABRE con un registro `REOPEN`
-  si el consultor lo decide (`docs/runbooks/AMBIGUEDADES.md`). **Pregunta 2**: hoy
-  `break_even_condicion` = `cierre` y `break_even_criterio_ruptura` = `cuerpo`, CONFIRMED, sin
+  `parametros.yaml:1131`): con A y B, RN-009 descarta el esquema. (a) → lo de hoy; (b) → cambia la
+  definición de `zonas_desarrolladas_superan`, con ADR (ningún parámetro existente). A-20 está
+  RESUELTA (una sola zona; con dos se descarta) y no se vuelve a preguntar (ADR-0093 §1); si el
+  trader lo contradice por su cuenta, va a la extracción como contradicción con lo fijado.
+  **Pregunta 2**: hoy `break_even_condicion` = `cierre` y `break_even_criterio_ruptura` = `cuerpo`, CONFIRMED, sin
   margen; A-13 ABIERTA solo por él (`parametros.yaml:520`). (a) → A-13 se cierra sin margen, con su
   registro de feedback y sus cinco sitios; (b) con una cifra fija → un parámetro nuevo del registro
   (entero, en puntos; ADR-0002), con su registro de feedback, y la regla RN-014 que lo lea, con ADR;
