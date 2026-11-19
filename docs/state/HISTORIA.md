@@ -18857,3 +18857,87 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 72 (2026-11-17).
+
+# Registro de cierre · `trabajo/activar-sesion-07` (2026-11-18)
+
+- Orden de cierre del consultor del 2026-11-18, tras su revisión de la rama sobre `2b8c74de` (14
+  commits sobre `main` `f66743e3`), dada por Aleks en la conversación de la sesión. Después, Aleks
+  lanzó `/cerrar-rama trabajo/activar-sesion-07`. La orden y el ritual no chocan.
+- **Lo activado** (tramo R4, R4.3; spec 19.0.5):
+  - **S-1, RN-003 por el rango vigente** (ADR-0094): CORRECT sobre la regla
+    (`fb-2026-11-16-sesion-07-33fdaa6c`); **A-58 abierta** (pregunta, no bloqueante), con
+    `sesgo_h4_rango_nuevo` en DEFAULT_AMBIGUOUS (`vela_que_rompe_con_su_color`); A-1 con nota, sin
+    REOPEN. Motor (`ResultadoSesgo` con el rango), visor, láminas y sus tests, que rompen en `main`.
+  - **S-2, el break even al cierre y con cuerpo**: tres CORRECT con supersede, cada uno en su commit
+    (`break_even_condicion` → `cierre`, `break_even_criterio_ruptura` → `cuerpo`, RN-014); A-4 con
+    nota; **A-13 abierta solo por el margen**, que no se activó; recuadro en ADR-0065. Desviación
+    declarada: «en parte» se activó (decidido por el consultor en el encargo).
+- **La condición (iv) de F1 NO se cumplió** (una P1 nueva, el 2026-07-01 de 11 a 15). El consultor
+  dio F1 por bueno en su respuesta a la PARADA final, con la fila a la 7b.
+- **D0 fijada** (recuadro de ADR-0093 §4: cómo se corre julio en una activación y cómo se calcula el
+  delta, con su control) y los deltas de julio (parejas y operaciones de más): base 14 y 39; f1 14 y
+  24; f2 11 y 19. Lo que cambia, todo explicado por RN-036 y RN-032 de rebote (F1.4 y F2.4). Punto 6:
+  0 de 152 sesiones cambian de lado entre topes de 60 y 120 H4; 20 sesiones de enero con menos de 60
+  H4 cargadas, una INSUFICIENTE (2026-01-02 de 7 a 11).
+- **Octubre y noviembre de 2026 entran en `knowledge/cases/meses_reservados.yaml`** (`2944e6ea`,
+  `Fuente: ADR-0072`): el vídeo de mapeo del trader, recibido el 2026-11-18 (cubre del 2026-10-23 al
+  2026-11-17), está SIN ABRIR y fuera del repo, y no se ingiere. Medido antes de escribir: 10.512
+  segmentos ocultos antes y después, sin cambio en ningún vídeo; 3 ítems de evidencia ocultos antes y
+  después; nada nuevo tapado. **El primer commit de los meses (`36b41d7`) salió sin trailer
+  `Fuente:`**; el `make check` siguiente falló por eso, Aleks lo deshizo con `reset --soft` (la guardia
+  niega `git reset` a la sesión), sin push, y se rehízo sellado sobre el mismo árbol.
+- **S-6, decisión del consultor para la lectura del pivote**: en julio, que es un backtest grabado, la
+  salvedad de ADR-0093 §6 («si el trader confirma que deja entradas válidas sin tomar») no se da: el
+  trader las toma todas, y en los últimos backtests grabados también las que acaban en break even.
+- **La vela de otro color entre su plataforma y Dukascopy** (`ev-v19-012924-64367863`) va a A-16, que
+  paga la rama de activación de la 7b.
+- Registrado sin tocar el motor (F3): S-3, S-4 (A-35 sigue ABIERTA; la descripción de
+  `liquidez_m15_mecha_que_vuelve`), S-5 (recuadro en TRAZAS-ABLACION.md), S-6, la vela y el bloque de
+  días. El 2026-04-15 de 11 a 15 NO está gastado (sesión 2 de la 7b); el 2026-07-03 de 7 a 11, sí.
+- **Technical Debt, las líneas enteras** (en PROJECT_STATE entran acortadas):
+  - `feedback pending` lista como pendientes los CORRECT sobre una regla que ya no los cita aunque la
+    regla siga sosteniendo lo que dicen (los tres anteriores sobre RN-003, ACTIVAR-SESION-07.md F1.1):
+    la regla solo refleja el registro que cita.
+  - El sesgo de las sesiones de enero con menos de 60 H4 cargadas (20 de 42; entre ellas el 01-07 y el
+    01-13 de la 7b) depende del historial cargado y no se puede medir sin diciembre de 2025
+    (ACTIVAR-SESION-07.md F1.3).
+  - El texto del sesgo del visor (el rango vigente) no lo comprueba ningún test: `test_visor.py`
+    construye la página sin sesgos (revisor de `trabajo/activar-sesion-07`, b7).
+  - Los guiones de los anexos no pasan por lint en `make check` (`delta_julio.py` y `arranque.py`
+    tienen una línea de más de 100).
+  - `test_guardia_falsos_positivos` falla a veces por el nombre aleatorio de una carpeta temporal (una
+    vez en esta rama, en local; no se repitió).
+- **Commits de la rama** (15):
+  - `76f163c7` apertura: encargo, contrato y Archivo 73 de PROJECT_STATE;
+  - `32f37f84` la fase 0, con el control de D0 y el contrato corregido;
+  - `d312a709` el sesgo de H4 es el del rango vigente (S-1, ADR-0094);
+  - `d41bd224` `break_even_condicion` pasa a cierre, y las medidas de F1;
+  - `8653b1e6` `break_even_criterio_ruptura` pasa a cuerpo;
+  - `19158a41` RN-014 cita la 7a: el break even al validarse la zona de control;
+  - `bf3140d0` F3, lo que se registra sin tocar el motor, y la corrida de julio tras F2;
+  - `b16158bf` el recuadro de D0 en ADR-0093 §4;
+  - `f9d4d814` el informe completo;
+  - `be4684d2` los hallazgos del revisor;
+  - `1b44291d` el Estado, con la CI y la PARADA final;
+  - `2944e6ea` octubre y noviembre de 2026 en `meses_reservados.yaml`;
+  - `0ab1d3f6` la respuesta del consultor a la PARADA final, tal cual;
+  - `2b8c74de` la respuesta del consultor a la PARADA final, aplicada;
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama**: cuatro, del 2026-11-18 (la fila del 2026-11-19 no
+  hizo falta: el cierre acaba el 18).
+- **CI de Linux** por `fix/activar-sesion-07`, las tres con 1 failed (el esperado,
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`), 3448 passed y 93 skipped: run
+  44392430929 sobre `be4684d2`; run 44399275588 sobre `1b44291d`; run 44425871414 sobre `2b8c74de`.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: la F y la M se SUSTITUYEN (la F, con la 7a activada y la rama de las láminas de la
+    7b como siguiente; la M, sin objeto mientras `break_even_condicion` sea `cierre`); ninguna letra
+    sale, así que no hay bloque «Next Action HECHA» (el texto anterior de la F está en el Archivo 73);
+  - Technical Debt: cinco líneas nuevas;
+  - hoja de ruta: R4.3, su línea de Estado; las entradas que citan NA:M no se tocan;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.193 bytes (`wc -c`) en este commit.
+- Letra del tag: la última cerrada era `stable/F39d-sesion-07`; `stable/F39e-activar-sesion-07` no
+  existe en local ni en origin (comprobado antes de este commit). La siguiente rama será F39f.
+- Tag: `stable/F39e-activar-sesion-07`. El merge es
+  `git rev-parse "stable/F39e-activar-sesion-07^{commit}"`.
