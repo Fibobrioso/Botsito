@@ -7,7 +7,7 @@
 trabajo/preregistro
 
 ## Current Feature
-trabajo/preregistro EN CURSO (R5.1; la G): segundo tiempo, con la respuesta del consultor a la PARADA (ADR del pre-registro, PREREGISTRO.md relleno y su test). Encargo docs/encargos/trabajo-preregistro.md; informe docs/validation/PREREGISTRO-INVENTARIO.md.
+trabajo/preregistro LISTA PARA REVISIÓN, NO cerrada (R5.1; la G): PREREGISTRO.md relleno con ADR-0096 y el test que sustituye al de la marca. Encargo docs/encargos/trabajo-preregistro.md; informe docs/validation/PREREGISTRO-INVENTARIO.md.
 
 ## Stable Main State
 50f6a6fc · merge de `trabajo/laminas-sesion-7b` (tag `stable/F39f-laminas-sesion-7b`), sobre `stable/F39e-activar-sesion-07` (cf33a916). Informe docs/validation/LAMINAS-7B.md; el registro del cierre, al final de HISTORIA.

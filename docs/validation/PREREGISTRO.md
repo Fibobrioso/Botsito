@@ -70,8 +70,22 @@ invierno; y no gasta febrero de 2026 ni ninguna partición reservada.
 90`): la medida se corre una vez con el deslizamiento del simulador en 0; cuando F17 lo mida, se
 recalcula sin volver a correr el bot (a cada llenado de orden stop y a cada cierre por stop o a
 mercado se le resta la MEDIANA medida; los cierres por objetivo no se tocan) y se vuelven a evaluar
-b), c), d) y e); además, la esperanza recalculada con el percentil 90 de F17 tiene que ser > 0.
-**La puerta no puede dar «pasa» antes de F17.**
+b), c), d) y e), d) y e) sobre la curva recompuesta operación a operación, sumando el ajuste al día
+de cada cierre. Los lotes y los bloqueos de RN-032 no se recalculan, y el informe lo dice. Además,
+la esperanza recalculada con el percentil 90 de F17 tiene que ser > 0. **La puerta no puede dar
+«pasa» antes de F17.** El informe de la medida da también el deslizamiento por llenado, en puntos,
+que llevaría la esperanza a +0,10 R (el punto de equilibrio), sin decidir nada con él.
+
+**Antes de correr la medida** (ADR-0092 §5), además de la spec sellada de abajo, que fija su propia
+rama con su ADR (el comando no existe, ADR-0070 punto 6):
+- el calendario de cierres renovado hacia atrás hasta enero de 2025 (`RENOVAR-CIERRES.md`,
+  condición 1);
+- las velas M1 y los ticks de Dukascopy de esos meses con su manifiesto, bajados y declarados según
+  los heredados 7 y 9 (junio de 2025 es un junio; un manifiesto nuevo con el prefijo del kit entra
+  en `universo()`);
+- la deuda del spread supuesto para minutos sin ticks, que se busca por la hora de pared de Madrid,
+  nombrada como riesgo de noviembre y de la extensión de invierno;
+- la construcción en el umbral de ADR-0070 (la línea «habilita medir»).
 
 **Una sola ejecución, y si no pasa** (ADR-0092 §5 y §6): si se repite por un fallo técnico, se
 declara con su causa y la spec no cambia entre las dos. Si no pasa, esos meses se escriben en
@@ -128,7 +142,9 @@ con su ADR y su partición. **Hay que pedírselo**: el mensaje lo redacta el con
 **Cuántos días**: los que den 36 unidades efectivas; en la práctica, un mes entero con vídeo. No se
 promete un número de días. La fuente es la densidad de construcción (operaciones del trader por
 día `dev`, `PREREGISTRO-INVENTARIO.md` §0.4): media 2,61 y mediana 2 sobre 76 días, de 1,67 a 5,15
-de media según el mes, y julio, el único con vídeo según el trader, el más alto.
+de media según el mes; la más alta, julio, que cuenta como grabado en vídeo solo de forma
+provisional, hasta que T lo compruebe (`criterio_fidelidad.yaml`, `material_sin_video`; de abril
+solo el día 29 está grabado).
 
 **El conjunto medido**, cuando exista: los días de la partición que caen dentro de un TRAMO de
 `cobertura_material` de su camino. Los demás quedan fuera por escrito, no como días sin operación.

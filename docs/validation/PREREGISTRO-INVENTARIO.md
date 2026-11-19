@@ -1,4 +1,4 @@
-# PREREGISTRO-INVENTARIO · Lo que hace falta para rellenar PREREGISTRO.md (R5.1, entrada G) · primer tiempo: fase 0
+# PREREGISTRO-INVENTARIO · Lo que hace falta para rellenar PREREGISTRO.md (R5.1, entrada G) · fase 0 y segundo tiempo
 
 > PLANTILLA hasta la fase 0 (la línea con que nació): la fase 0 ya está, abajo.
 
@@ -44,7 +44,7 @@ literales. El subagente del barrido de 0.1 dice que un primer Grep suyo devolvi�
 `docs/validation/anexos/` (de `A-16-proveedor-de-datos…md` y de `METODO-FIDELIDAD-RENTABILIDAD/README.md`)
 y que no las usó ni abrió esos ficheros; ninguno está en `.claude/hooks/ficheros_con_ocultos.txt`.
 
-Nada de `src/`, `tests/`, `knowledge/` ni `docs/adr/` cambia; `PREREGISTRO.md` sigue con su marca.
+En el primer tiempo, nada de `src/`, `tests/`, `knowledge/` ni `docs/adr/` cambió y `PREREGISTRO.md` siguió con su marca; lo que tocó el segundo, en «El segundo tiempo».
 Ninguna corrida del arnés, de `motor laminas` ni de `motor decisiones`; nada de `data/`. Ningún
 fichero de `knowledge/cases/holdout/**`. Ninguna fecha de un día reservado en lo commiteado.
 
@@ -270,7 +270,7 @@ De `anexos/RECORRIDA-CONSTRUCCION-2/cuenta-por-mes.txt` (la línea base vigente,
 | 2026-08 | 21 | 42 | 19 | 2,00 | 2 | 0 | 6 |
 | **total** | **76** | **198** | **69** | **2,61** | **2** | **0** | **11** |
 
-Ningún día reservado entra. Julio, el único con vídeo según el trader, tiene el doble de
+Ningún día reservado entra. Julio, que cuenta como grabado en vídeo solo de forma provisional (`criterio_fidelidad.yaml`, `material_sin_video`; de abril, solo el día 29), tiene el doble de
 operaciones por día que los otros tres (S-14: los libros sin vídeo omiten sesiones; 0.6 c). El
 mínimo de potencia escrito para F26 son «36 unidades efectivas independientes»
 (`AUDITORIA-2026-09-13-ultracode.md` §6.1, citado en `cases/fidelidad.py:18-24` y ADR-0036 §8), que
@@ -557,7 +557,7 @@ papeles de ADR-0072) están recogidos en sus puntos.
    decenas de operaciones como mucho. `cases/fidelidad.py:18-24` ya lo dice: una cifra descriptiva
    con su intervalo, no una medida con potencia.
 3. **Que el sesgo del material sin vídeo afecte por igual a construcción y a medida.** Todo lo
-   reservado es sin vídeo; julio, el único con vídeo, tiene el doble de operaciones por día. Una
+   reservado es sin vídeo; julio, con vídeo de forma provisional, tiene el doble de operaciones por día. Una
    cobertura medida sobre un libro que omite sesiones no es la del trader.
 4. **El conteo de exposiciones** (15, 16, 19 y 4 filas) no dice que ninguna queme; lo dice cada
    fila, y el pre-registro las tiene que copiar (`PREREGISTRO.md:22-23`). Copiarlas sin abrir su
@@ -583,7 +583,7 @@ con lo leído de más ese mismo día (abajo). Ninguna quema:
 - **escrito tarde, el mismo día**: al mirar la forma de la tabla de HOLDOUT-EXPOSICIONES y la
   obligación 4, el terminal enseñó la fila del 2026-09-11 (el calendario de PnL de mayo, ya
   declarado ese día), la fecha del día quemado de `holdout-2` (que escriben
-  `HOLDOUT-EXPOSICIONES.md:176` y `tests/unit/test_puerta_holdout.py:98`), y al leer ADR-0021 las
+  `HOLDOUT-EXPOSICIONES.md:177` desde la fila de T3, y `tests/unit/test_puerta_holdout.py:98` en `main`), y al leer ADR-0021 las
   cuatro cifras de PnL de su línea 48 (ya declaradas); y el subagente auditor leyó la cabecera de
   `retirados.yaml` y su recuento.
 
@@ -722,8 +722,19 @@ añade cinco líneas al docstring del fichero, una al import y diez al test sust
 
 ### El encargo, punto por punto
 
-| # | Requisito (respuesta del consultor) | Estado | Evidencia |
+| # | Requisito (encargo y respuesta del consultor) | Estado | Evidencia |
 |---|---|---|---|
+| P1 | Abrir con `abrir-rama`: base con git, CI de `main` con `gh run view` y su número | Hecho | 783b2196; run 44576448998 («La base, comprobada al abrir») |
+| P2 | Contrato (R5, riesgo alto, artefacto, lista blanca del primer tiempo); tag comprobado | Hecho | 783b2196; `git tag -l` y `git ls-remote --tags` vacíos para `stable/F39g*` |
+| P3 | Número del ADR del pre-registro, leyendo `ids_citados.py` | Hecho | «El número del ADR del pre-registro» |
+| P4 | Fila de HOLDOUT del día antes del primer `make check` y de 0.2 | Hecho | 783b2196 (`HOLDOUT-EXPOSICIONES.md:165`) |
+| P5 | 0.1 a 0.8, cada dato con fichero y línea | Hecho | §0.1 a §0.8 |
+| P6 | «Lo que el encargo no preguntó», «Lo que no me convence», la PARADA con decisiones y sin cifras de umbral | Hecho | sus secciones |
+| P7 | Guiones commiteados en `anexos/PREREGISTRO-INVENTARIO/` | Hecho | tres en 9da183a0 y el de T3 en 49890443, cada uno con su salida |
+| P8 | `knowledge validate` y `make check` antes de entregar | Hecho | en cada commit, exit 0 y SELLO |
+| P9 | Push a `fix/preregistro` y CI de la fase 0, con su número | Hecho | run **44594439039** sobre 9da183a0: un solo fallo, `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/preregistro'; la rama actual es 'fix/preregistro'»), el aceptado; 3448 pasados |
+| P10 | PROJECT_STATE bajo 25.000 bytes, con su tamaño | Hecho | 24.505 en la fase 0; 24.508 hoy |
+| P11 | Auditor sí, revisor no, en el primer tiempo | Hecho | «El encargo frente al repo (auditor)» |
 | T1 | La respuesta, copiada tal cual al encargo y al informe, con el bloque `ids-inexistentes` del encargo, en su commit | Hecho | e584ae51 |
 | T2 | El contrato de la decisión 9, en su commit | Hecho de otra forma | 6eee2aa9. Las seis rutas entran en `rutas_permitidas`; como los patrones no admiten excepciones y lo protegido manda, `tests/`, `docs/adr/` y `docs/plan/` enteros salen de `rutas_protegidas` y se nombran los ficheros que la rama no toca (`HOJA-DE-RUTA.md`, ADR-0021/0043/0070, `test_kit.py`, `test_retirados.py`, la guarda, `tests/contract/`); el resto lo protege la lista blanca |
 | T3 | El recuento de la decisión 2, con su fila de HOLDOUT antes | Hecho | 49890443; fila «segundo tiempo (T3)» del 2026-11-19 escrita antes de lanzar; `anexos/PREREGISTRO-INVENTARIO/recuento_por_tramo.py` y `recuento-por-tramo.txt`; la guardia no lo negó |
@@ -848,7 +859,7 @@ Y dos líneas que ganan su dueño: «UNA PREGUNTA ABRE N PARTICIONES…» (`PROJ
 «Dueños (ADR-0096 §4): el comando de medida de F26 nace abriendo una; kappa, rama corta.»; y «EL
 FALLBACK DE `leer_fichero`…» (`:134`) + «Dueño: la rama del comando de medida de F26.»
 
-**El tamaño de `PROJECT_STATE.md`**: hoy 24.508 bytes en la rama. Con la G nueva, las cuatro líneas
+**El tamaño de `PROJECT_STATE.md`**: hoy 24.491 bytes en la rama (24.508 al escribir esto, antes del último cambio de `Current Feature`, que el cierre sustituye entero). Con la G nueva, las cuatro líneas
 nuevas, los dos dueños y `Current Branch`/`Current Feature` de vuelta a `main` con una frase como la
 del cierre anterior, saldría **24.884 bytes** (simulado en memoria sobre una copia, sin escribir:
 `simular_ps.py` en la carpeta de trabajo de la sesión). Cabe, con 116 bytes de margen. Si el resto
@@ -864,6 +875,164 @@ que son el umbral de desarrollo, «NO el PREREGISTRO del holdout»; lección: an
 una cifra está pre-registrada para algo, se lee en el ADR para qué la pre-registra); los
 del auditor; y los del revisor de esta rama.
 
+## El revisor
+
+Su informe, tal cual (con una retirada, abajo):
+
+> ## Informe del revisor · trabajo/preregistro · 2026-11-19
+>
+> Revisada la rama entera: 7 commits de 783b2196 a f527f8c3, base e490fe33, árbol limpio. Encargo: `C:\Users\USER\Desktop\Bot v3\docs\encargos\trabajo-preregistro.md`. Informe: `C:\Users\USER\Desktop\Bot v3\docs\validation\PREREGISTRO-INVENTARIO.md`.
+>
+> **Resultado: la rama NO está lista.** Hay un bloquea en el eje (b): el segundo tiempo no se ha empujado a `fix/preregistro` y no tiene CI. Los cuatro alcances del consultor salen sin hallazgos que bloqueen.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 2 importa, 4 menor.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | a1 | importa | El pre-registro dice más que su fuente sobre julio. `PREREGISTRO.md:130-131` dice «julio, el único con vídeo según el trader». La fuente dice que julio solo es provisional y que el 29 de abril también tiene vídeo. El propio informe lo dice bien en otro sitio y repite la frase corta en otros dos. | `criterio_fidelidad.yaml:58-59` («julio cuenta como CON video mientras sea provisional, hasta que T lo compruebe») y `:63-64` (`dias_con_video: ["2026-04-29"]`, `provisionales_con_video: ["2026-07"]`). `PREREGISTRO-INVENTARIO.md:344` («julio provisional con vídeo»); la frase corta en `:273` y `:560` |
+> | a2 | importa | La rentabilidad no está «entera» (decisión 5) y el informe no declara qué falta. No cambia ninguna cifra. De §4 faltan tres cosas: que d) y e) se recalculan sobre la curva recompuesta, que los lotes y los bloqueos de RN-032 no se recalculan, y el punto de equilibrio. De §5 falta la lista «Antes de correr la medida»: calendario de cierres hasta enero de 2025, velas y ticks de 2025 según los heredados 7 y 9, y la deuda del spread. | ADR-0092:107-110, :114-115 y :145-154, frente a `PREREGISTRO.md:69-74` y :81-91. ADR-0092:332-335 (§13) pide llevar «el tratamiento del deslizamiento (§4)» |
+> | a3 | menor | El informe cita la obligación 4 en la línea 176; con la fila de T3 añadida ya es la 177. `PREREGISTRO.md:141` sí cita bien la 177. | `PREREGISTRO-INVENTARIO.md:586`. `grep -n` sobre `HOLDOUT-EXPOSICIONES.md` (solo número de línea) da 177 |
+> | a4 | menor | Partes del informe ya no son verdad tras el segundo tiempo: el título dice «primer tiempo: fase 0» y la línea 47 dice que tests/ y docs/adr/ no cambian y que el fichero «sigue con su marca». | `PREREGISTRO-INVENTARIO.md:1`, `:3`, `:47` |
+> | a5 | menor | ADR-0096 dice que el test sustituto «no depende» de la marca, pero el test sí comprueba que la marca no esté (que es justo lo que pidió T5). Conviene precisar la frase. | `0096-…md:182-184`; `test_puerta_holdout.py:55` |
+> | a6 | menor | La fila de ADR-0092 en el índice sigue diciendo «PREREGISTRO sigue sin rellenar y sin tocar». | `docs/adr/README.md:97` |
+>
+> Comprobado sin hallazgos:
+> - **Contrato.** `contrato_rama.py` da «CONTRATO: 20 ficheros dentro del contrato … tramo 'R5', 3 comprobaciones», exit 0.
+> - **make check.** `make-check.log` tiene `SELLO: … ad8e361b…`, que es el árbol de f527f8c3 (`git log --format='%h %T'`); «3536 passed, 6 xfailed»; `PICO DE MEMORIA … 318 MiB`.
+> - **knowledge validate.** Exit 0: «58 ambiguedades», «203 registros de feedback», «710 items de evidencia».
+>   - Avisa de que el config congelado del kit difiere del global en `cobertura_material`. Lo medí: el congelado no lleva esa clave, así que `recuento_por_tramo.py`, que usa el global, usa el único que hay.
+> - **Tests de la puerta.** `uv run pytest tests/unit/test_puerta_holdout.py -q`: 36 pasan.
+> - **Fuente:** y regímenes de cambio. Ningún commit toca `knowledge/` ni `src/` (`git log main..HEAD -- knowledge/ src/`: 0), así que no hace falta trailer `Fuente:` y no cambia nada inmutable. HISTORIA solo gana líneas (181 añadidas, 0 quitadas) y HOLDOUT-EXPOSICIONES gana 2 filas.
+> - **Ambigüedades y citas.** No cambia ninguna ambigüedad ni ningún sitio con `cita`.
+> - **ADRs.** ADR-0096 termina en `## Estado` con ACTIVE. Los cambios a ADR-0092 son solo dos recuadros `>` (15 líneas añadidas, 0 quitadas). La NOTA de MASTER_PLAN y la fila del índice no tocan otras filas.
+> - **Exposiciones.** La fila de la fase 0 está en el commit de apertura 783b2196, antes del primer make check. La de T3 entra en 49890443, con el guion.
+> - **Citas comprobadas contra su fuente:** ADR-0043:55-56, `fidelidad.py:18-24` (las 36 unidades), `RECORRIDA-CONSTRUCCION-2.md:420` (15.7 % y 13.9 %), `ACTIVAR-SESION-07.md:87` y `:790-791`, `PUERTA-POR-PREGUNTA.md:216` (§10), `PROJECT_STATE.md:128/132-134`, `test_kit.py:706-707`. Los ids de S-14 (`ev-v15-011912-0ae32588`, `ev-v16-003421-b824b770`) existen.
+> - **Rutas del procedimiento del hash.** Existen las seis (`ls -d`).
+>
+> Los cuatro alcances del consultor:
+>
+> **(1) Ninguna cifra cambiada al copiar.** Comparé `PREREGISTRO.md` con `criterio_fidelidad.yaml` y con ADR-0092 campo a campo; todo coincide:
+> - `n_minimo` 100; `esperanza_minima_r` "0.10";
+> - `percentil_remuestreo` 5; `replicas_remuestreo` 10000; `semilla_remuestreo` 20261107;
+> - `perdida_diaria_max` "0.03"; `perdida_total_max` "0.06";
+> - `fase` fondeada; `deslizamiento` pendiente_F17; percentil 90;
+> - `meses` 2025-06 a 2025-11; `extension` 05, 04, 03, 02, 01; `vistos_rentabilidad` vacío;
+> - comisión 2,50; la forma del remuestreo, igual a ADR-0092:80-86;
+> - `umbral_cobertura` "0.70", `umbral_precision` "0.60", tolerancias 3 y 15.
+>
+> No hay ninguna cifra de umbral nueva. Las que aparecen nuevas son descriptivas y tienen fuente: densidad 2,61 / 2 / 76 / 1,67 a 5,15 (cuadran con `densidad-construccion.txt`), recuentos 8/8/8/10 y 6/4/3/6 (cuadran con `recuento-por-tramo.txt`), filas 15/16/19/4 y 15 sin partición (cuadran con `exposiciones-por-particion.txt`), y en ADR-0096 «lo visto» que pidió T4. La salvedad es el hallazgo a2, que son omisiones, no cifras cambiadas.
+>
+> **(2) La puerta sigue cerrada para las seis particiones.** Lo comprobé llamando a la puerta directamente:
+> - `abrir` se niega en las seis, cada una con un solo motivo: «no hay autorizacion del usuario commiteada en docs/validation/AUTORIZACION-<p>.md».
+> - `Glob docs/validation/AUTORIZACION-*` no encuentra nada.
+> - El fichero no lleva la marca y `preguntas_del_preregistro` da `{}`.
+> - Ojo: con la marca fuera, la puerta queda cerrada solo por la falta de autorización y, detrás de ella, por la falta de pregunta ABIERTA. ADR-0096 ya lo dice así.
+>
+> **(3) Nada reservado en lo añadido.** Revisé las 1944 líneas añadidas por la rama:
+> - 191 fechas en total. 15 coinciden con días reservados u ocultos (2 fechas distintas), y lo comprobé sin imprimir ninguna. Ninguna se refiere a un día reservado:
+>   - una es la fecha de declaración de la primera fila de exposiciones, en las listas de fechas de declaración, en las líneas de «escrito tarde» y en `PREREGISTRO.md:178`;
+>   - la otra es parte del nombre del directorio del kit (`kit/…-sesion-01`), en `recuento-particiones.txt:12` y en la tabla de 0.3.
+> - Ninguna fecha de mayo ni de junio de 2026.
+> - Ningún PnL ni precio copiado: las menciones de PnL solo dicen que existe, sin cifras.
+> - Ninguna fila de exposiciones copiada: `PREREGISTRO.md` §4 da solo recuentos y fechas.
+> - 0 líneas que la puerta lea como pregunta (`_PREGUNTA`), ni en lo añadido ni en el fichero entero.
+>
+> **(4) El test sustituto no puede pasar con la marca puesta.** `test_puerta_holdout.py:55` hace `assert MARCA_SIN_RELLENAR not in texto` sobre el fichero real del árbol, sin skip ni xfail (solo `parametrize`). La regresión del informe (`:774-777`) da 6 fallos en esa misma línea con el fichero de main. No pude ejecutar yo la mutación en memoria (ver «Lo que no pude comprobar»).
+>
+> ### Eje (b) · Encargo
+> Resumen: 1 bloquea, 0 importa, 1 menor. Requisitos: 23 hechos, 1 parcial, 1 no hecho.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Apertura: encargo, contrato (R5, riesgo alto, artefacto) y Archivo 75 | Hecho | 783b2196; `contrato.yaml:1-4` |
+> | 2 | Base y CI de main con su run | Hecho | informe:19-26 (run 44576448998) |
+> | 3 | Fila de HOLDOUT antes del primer make check y de 0.2 | Hecho | 783b2196 añade `HOLDOUT-EXPOSICIONES.md:165` |
+> | 4 | Secciones 0.1 a 0.8, con fichero y línea | Hecho | encabezados del informe en :53, :95, :197, :259, :282, :323, :372, :412 |
+> | 5 | «Lo que el encargo no preguntó», «Lo que no me convence», «Lo que necesito que decidas», sin cifras de umbral | Hecho | informe:517, :544, :590 |
+> | 6 | Guiones commiteados en los anexos | Hecho | los 4 `.py` con su salida `.txt` |
+> | 7 | Push de la fase 0 a fix/ y CI | Parcial | run 44594439039 sobre 9da183a0; su único fallo es `test_state_check_ok_on_real_repo` por el nombre fix/ (aceptado). El número del run no aparece en el informe |
+> | 8 | PS por debajo de 25.000 bytes, con su tamaño | Hecho | informe:648 (24.505); hoy `wc -c` da 24508 |
+> | 9 | T1: respuesta copiada tal cual en los dos sitios, en su commit | Hecho | e584ae51; `diff` de encargo:56-115 contra informe:657-716 da IGUALES |
+> | 10 | T1/T4: el bloque ids-inexistentes entra y ADR-0096 sale de los dos | Hecho | 49890443 (encargo −4, informe −1); el bloque que queda en informe:12-15 tiene solo 0087 y 0095 |
+> | 11 | T2: contrato en commit propio | Hecho de otra forma (declarado) | 6eee2aa9; informe:728 y :793-794 |
+> | 12 | T3: recuento por tramo con su fila antes | Hecho | 49890443; `recuento-por-tramo.txt` |
+> | 13 | T4: ADR-0096 (0-8, alternativas, lo visto), recuadros de 0092 §5 y §13, índice | Hecho | `0096-…md`; ADR-0092:160-167 y :337-341; README:100 |
+> | 14 | T5: en un commit, PREREGISTRO relleno, el test sustituto con sus 4 afirmaciones y el docstring | Hecho | f2ef22cc; `test_puerta_holdout.py:40-56`, docstring :1-9 |
+> | 15 | T5: comparar-con-main | Hecho | informe:768-786 |
+> | 16 | T6: NOTA de MASTER_PLAN sin tocar filas | Hecho | diff: 10 líneas añadidas en la cabecera |
+> | 17 | T7: segundo tiempo, G más corta, R5.1, Technical Debt, corrección de fidelidad-1, tamaño de PS | Hecho | informe:718-865 |
+> | 18 | Decisión 2: el quemado se cita por fichero y línea, sin su fecha | Hecho | `PREREGISTRO.md:139-141` |
+> | 19 | Decisión 5: sin la marca, sin preguntas, procedimiento del hash con las rutas exactas | Hecho | ver alcance (2); rutas verificadas |
+> | 20 | Decisión 5: la rentabilidad entera | Hecho, con omisiones | hallazgo a2 |
+> | 21 | No cambia src/ ni knowledge/; ADR-0021, 0043 y 0070 intactos; ningún AUTORIZACION | Hecho | `git diff --stat main...HEAD` |
+> | 22 | HOJA-DE-RUTA no se toca | Hecho | no está en el diff |
+> | 23 | Sin PARADA final (T3 a T7 cuadran con lo medido) | Hecho | |
+> | 24 | ENTREGA: push del segundo tiempo a fix/preregistro, CI de Linux, número del run, sha y número de commits | **No hecho** | ver b1 |
+> | 25 | Informe con «El encargo, punto por punto» (E5) | Hecho | informe:723 |
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | bloquea | El segundo tiempo no se ha empujado y no tiene CI. La ENTREGA lo pide (encargo:113) y `entregar-rama` lo pone en el paso 7, antes del revisor (SKILL.md:66-76). | `git ls-remote --heads origin fix/preregistro` da `9da183a0… refs/heads/fix/preregistro` y HEAD es f527f8c3. `gh run list --branch fix/preregistro` solo da 44594439039 (fase 0) |
+> | b2 | menor | «El encargo, punto por punto» solo cubre el segundo tiempo: faltan el primer tiempo (0.1 a 0.8, PARADA, push de la fase 0) y el número de su run. | informe:723-747 |
+>
+> ### Lo que no pude comprobar
+> - **La mutación en memoria del alcance (4)** (importar el módulo de test, añadir la marca a `read_text` en memoria y ver que las 6 rompen). La guardia la negó porque el módulo de test nombra `knowledge/cases/holdout/2/caso-secreto.yaml`, de un repo temporal. No la rodeé. La sustituye la lectura de `test_puerta_holdout.py:52-56` y la regresión del informe:774-777.
+> - **El tiempo de la fila de T3** («escrita antes de lanzarlo»): git solo muestra que va en el mismo commit que el guion.
+> - **Exposición mía, a declarar si la sesión lo ve necesario:** un `sed -n '170,180p'` de `HOLDOUT-EXPOSICIONES.md` enseñó en mi terminal la fecha del día quemado de `holdout-2`. Es texto ya commiteado en main (:177) y ya declarado en la fila del 2026-11-19 (5). Además leí el diff de las dos filas nuevas y comparé por mes, sin fechas, la `cobertura_material` del config global del kit con la del congelado del paquete: solo meses y booleanos.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git diff --stat main...HEAD && git status --short`
+> 2. `uv run python scripts/contrato_rama.py`
+> 3. `uv run pytest tests/unit/test_puerta_holdout.py -q`
+> 4. `tail -5 make-check.log; grep -n "SELLO\|PICO DE MEMORIA\|failed" make-check.log`
+> 5. Un bucle con `git rev-parse` (negado por la guardia, bucle `for`) → `git log --format='%h %T' main..HEAD`
+> 6. `uv run botsito knowledge validate > <scratchpad>` (negado por solo_lectura) → `uv run botsito knowledge validate 2>&1 | tail -5` (en segundo plano)
+> 7. Read: encargo, contrato, PREREGISTRO.md, criterio_fidelidad.yaml, holdout.py, ADR-0092 (:1-345), ADR-0096, informe (:1-52, :255-279, :640-869), recuento_por_tramo.py, paquete.py (:1060-1109)
+> 8. `sed` de ADR-0043:52-58, fidelidad.py:15-26, RECORRIDA-CONSTRUCCION-2.md:418-421, ACTIVAR-SESION-07.md:85-88 y :788-792
+> 9. `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md; sed -n '170,180p' …`
+> 10. `cat` de los cuatro `.txt` de `anexos/PREREGISTRO-INVENTARIO/`
+> 11. `grep -n` de frases clave y encabezados del informe
+> 12. Tres `uv run python -c` sobre `git diff -U0 main...HEAD` contra `casos_ocultos`/`casos_reservados`: recuentos, ficheros y líneas, y contexto con la fecha enmascarada. Ninguna clave impresa
+> 13. `sed` del informe :445-449, :562-566 y :576-589
+> 14. `git diff main...HEAD -- tests/unit/test_puerta_holdout.py`
+> 15. `uv run python -c` de mutación (negado por la guardia)
+> 16. Grep en paquete.py; dos `uv run python -c` comparando la cobertura global con la congelada (solo meses y booleanos)
+> 17. `diff` de la respuesta copiada en encargo e informe; `grep ids-inexistentes`; `git log main..HEAD -- knowledge/ src/ | wc -l`; `git branch -r | grep`
+> 18. `git rev-parse origin/fix/preregistro HEAD`; `git show 49890443 --stat`
+> 19. Grep en `.claude/skills/entregar-rama`
+> 20. `git ls-remote --heads origin fix/preregistro`
+> 21. `gh run list --branch fix/preregistro --limit 5`; `gh run view … --jq` (negado por la guardia); `gh run view 44594439039`; `gh run view 44594439039 --log-failed | grep …`
+> 22. `git diff main...HEAD -- PROJECT_STATE.md docs/plan/MASTER_PLAN.md docs/adr/README.md`; `git diff --numstat …`; `wc -c PROJECT_STATE.md`
+> 23. `git log -S…` sobre HOLDOUT-EXPOSICIONES; `git show 783b2196 --stat`; `git diff --stat 783b2196 9da183a0 -- …`; `grep -n -i "solo a.adir|…"`
+> 24. `grep -n "<FECHA>" … | cut -d: -f1` en tres ficheros (solo números de línea)
+> 25. `git show main:docs/validation/PREREGISTRO.md | head -40`
+> 26. `sed` de PROJECT_STATE.md:128 y :132-134, y de test_kit.py:704-708
+> 27. Grep en PUERTA-POR-PREGUNTA.md; Glob de los dos ids de S-14
+> 28. `git diff -U0 main...HEAD | grep "^+" | grep -i "pnl|USD|…"`
+> 29. `git show --stat` de los commits 9da183a0, e584ae51, 6eee2aa9, f2ef22cc y f527f8c3
+> 30. `ls -d` de las seis rutas del hash y `ls knowledge/cuentas`
+> 31. `uv run python -c` con `motivos_de_cierre`/`abrir` sobre las seis particiones, más la marca y las preguntas del fichero real
+
+### Lo que se hizo con los hallazgos del revisor
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| a1 | importa | Arreglado. `PREREGISTRO.md` §2 dice ahora que julio cuenta como grabado en vídeo solo de forma provisional, hasta que T lo compruebe, y que de abril solo el 29 está grabado (`criterio_fidelidad.yaml`, `material_sin_video`); las dos frases cortas del informe (§0.4 y «Lo que no me convence», 3), igual. |
+| a2 | importa | Arreglado, sin ninguna cifra nueva. `PREREGISTRO.md` §1 gana de ADR-0092 §4 que d) y e) se recalculan sobre la curva recompuesta, que los lotes y los bloqueos de RN-032 no se recalculan y el punto de equilibrio; y de §5 la lista «Antes de correr la medida» (calendario de cierres hasta enero de 2025, velas y ticks según los heredados 7 y 9, la deuda del spread, la construcción en el umbral). Copiado de ADR-0092:107-115 y :145-154. |
+| a3 | menor | Arreglado: la cita es `HOLDOUT-EXPOSICIONES.md:177` desde la fila de T3. |
+| a4 | menor | Arreglado: el título dice «fase 0 y segundo tiempo», y la línea de «Cómo se hizo» dice que lo de `src/`, `tests/` y la marca valía para el primer tiempo. La línea 3 (la de PLANTILLA) se queda: dice con qué nació el informe. |
+| a5 | menor | Arreglado: ADR-0096, «Impacto», dice que el test sustituto exige que la marca NO esté, sin depender del estado de git. |
+| a6 | menor | Arreglado: la fila de ADR-0092 en `docs/adr/README.md` añade «(relleno desde ADR-0096)» detrás de «PREREGISTRO sigue sin rellenar y sin tocar», sin borrar lo que decía. |
+| b1 | bloquea | Lo resuelve la entrega: tras el último commit, push de la rama a `fix/preregistro` y su CI de Linux; el número del run va en el mensaje final a Aleks (el run que cuenta es el del último commit, y escribirlo aquí exigiría otro commit). El orden de `entregar-rama` pone la CI antes del revisor; aquí el revisor se lanzó primero para que su informe y sus arreglos entraran en el último commit con una sola CI, y lo declaro como desviación. |
+| b2 | menor | Arreglado: «El encargo, punto por punto» gana P1 a P11, el primer tiempo, con el run de la fase 0 (44594439039) y su único fallo, el aceptado. |
+| — | exposición | La que el revisor declara (la fecha del día quemado de `holdout-2`, vista en su terminal al comprobar la fila): añadida a la fila del 2026-11-19 de esta rama en HOLDOUT-EXPOSICIONES, el mismo día. |
+| — | no comprobado | La mutación en memoria del alcance 4, negada por la guardia: la cubre la regresión contra main de T5 (seis fallos en `test_puerta_holdout.py:55` con el `PREREGISTRO.md` de `main`). |
+
+Al pegarlo, una retirada: la fecha de un día reservado que el informe del revisor escribía en su
+comando 24 (el día quemado de `holdout-2`), sustituida por `<FECHA>`; nada más se tocó.
+
 ## Estado
 
-Pendiente del revisor (abajo, cuando pase).
+Rama lista para revisión, NO cerrada. `PROJECT_STATE.md`: 24.491 bytes. La CI del último commit,
+en el mensaje final de la entrega.

@@ -180,8 +180,8 @@ Ninguna salida del motor sobre la medida ni sobre lo reservado: mayo no se ha vi
 ## Impacto
 
 - `docs/validation/PREREGISTRO.md`, relleno; `tests/unit/test_puerta_holdout.py`: el test que
-  exigía la marca se sustituye por uno que no depende de ella ni del estado de git (en el mismo
-  commit).
+  exigía la marca se sustituye por uno que exige que la marca NO esté, que no haya autorizaciones
+  ni preguntas y que la puerta se niegue, sin depender del estado de git (en el mismo commit).
 - Recuadros en ADR-0092 §5 y §13: el hash lo escribe la rama de la medida, con el procedimiento de
   la decisión 5.
 - `docs/plan/MASTER_PLAN.md`: una NOTA de cabecera (pre-registro, F26 diagnóstico sobre el mes
