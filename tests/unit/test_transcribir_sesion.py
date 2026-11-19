@@ -712,11 +712,11 @@ def _problemas_de_hoja(orden: tuple[str, ...], textos: dict[str, str], ruta: Pat
     return salida
 
 
-def test_la_sesion_en_curso_es_la_07(m: ModuleType) -> None:
-    """La hoja por defecto de `--sesion`: la de la 7a (sesion-07), desde el 2026-11-11, antes de
-    grabar. Sustituye A PROPOSITO a test_la_sesion_en_curso_es_la_06 (encargo de
-    `trabajo/preparacion-sesion-7`, D2: a "08" la pasa la rama de activacion de la 7a)."""
-    assert m.SESION_EN_CURSO == "07"
+def test_la_sesion_en_curso_es_la_08(m: ModuleType) -> None:
+    """La hoja por defecto de `--sesion`: la de la 7b (sesion-08), desde el 2026-11-18, antes de
+    grabar. Sustituye A PROPOSITO a test_la_sesion_en_curso_es_la_07, como aquel a la de la 06
+    (encargo de `trabajo/laminas-sesion-7b`, F3; la 7a ya esta grabada e ingerida)."""
+    assert m.SESION_EN_CURSO == "08"
     assert m.HOJAS["07"] is m.ORDEN_SESION_07
     assert m.HOJAS["08"] is m.ORDEN_SESION_08
 

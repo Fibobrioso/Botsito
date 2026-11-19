@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/laminas-sesion-7b
 
 ## Current Feature
-Ninguna rama abierta. trabajo/activar-sesion-07 cerrada en main el 2026-11-18 (stable/F39e-activar-sesion-07): la sesión 7a activada (el sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; el break even al cierre y con cuerpo, A-13 abierta solo por el margen).
+trabajo/laminas-sesion-7b EN CURSO (R4.3; el punto (1) de la F): el bloque de días de la 7b, PREGUNTAS-7B.md revisado, sus láminas y SESION_EN_CURSO en "08". Encargo docs/encargos/trabajo-laminas-sesion-7b.md; informe docs/validation/LAMINAS-7B.md.
 
 ## Stable Main State
 cf33a916 · merge de `trabajo/activar-sesion-07` (tag `stable/F39e-activar-sesion-07`), sobre `stable/F39d-sesion-07` (5c047f31). Informe docs/validation/ACTIVAR-SESION-07.md; el registro del cierre, al final de HISTORIA.
@@ -25,7 +25,7 @@ cf33a916 · merge trabajo/activar-sesion-07: la sesión 7a activada (sesgo de H4
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). Siguiente, en este orden: (1) la rama de las láminas de la 7b, desde main: genera las láminas, revisa PREGUNTAS-7B.md (filas, las que no caben, el 2026-04-15 de su sesión 2, las preguntas reformuladas de ACTIVAR-SESION-07.md), pasa SESION_EN_CURSO a "08", decide las sesiones de enero que dependen del arranque (F1.3) y escribe en la skill activar-sesion la línea que cita D0; (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); antes de (3), el consultor decide cómo cuentan los frenos de la cuenta del mes (RN-032 y RN-036; F1.4 y F2.4). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). La 7b está lista para grabar (LAMINAS-7B.md, F39f): el bloque de días revisado (sin las sesiones de enero con menos de 60 H4), PREGUNTAS-7B.md con A-35, las zonas de control y el margen del break even, A-48, A-58, S-22 y S-19, sus láminas generadas fuera del repo (la clave, con Aleks) y SESION_EN_CURSO en "08". Siguiente, en este orden: (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); antes de (3), el consultor decide cómo cuentan los frenos de la cuenta del mes (RN-032 y RN-036; F1.4 y F2.4 de ACTIVAR-SESION-07.md). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
 
 
 
@@ -154,6 +154,9 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El texto del sesgo del visor no tiene test (revisor de trabajo/activar-sesion-07, b7).
 - Los guiones de los anexos no pasan por lint en make check.
 - test_guardia_falsos_positivos falla a veces por el nombre aleatorio de una carpeta temporal.
+- b1: la lámina calla la segunda causa de tope si también se cumple (0 casos en la 7b; LAMINAS-7B.md F2).
+- motor laminas da LaminaError si RN-004 abre escenario en el cierre en que RN-016 o RN-001 dispararon por los intentos (0 casos en la 7a y la 7b; LAMINAS-7B.md F2).
+- La CI de Linux se cuelga a veces instalando ffmpeg (dos veces: trabajo/laminas y trabajo/laminas-sesion-7b): cachearlo o ponerle límite al paso.
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
@@ -168,8 +171,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 73 (2026-11-18).
+— ninguna desde el Archivo 74 (2026-11-18).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 73 (2026-11-18).
+— ninguna desde el Archivo 74 (2026-11-18).
