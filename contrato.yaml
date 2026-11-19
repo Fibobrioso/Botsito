@@ -1,5 +1,5 @@
 rama: trabajo/preregistro
-riesgo: alto  # como manda el encargo: la rama toca la puerta del holdout (en el segundo tiempo, PREREGISTRO.md y test_puerta_holdout)
+riesgo: alto  # como manda el encargo: la rama toca la puerta del holdout (PREREGISTRO.md y test_puerta_holdout)
 artefacto: docs/validation/PREREGISTRO-INVENTARIO.md
 tramo: R5
 rutas_permitidas:
@@ -10,17 +10,33 @@ rutas_permitidas:
   - docs/encargos/
   - docs/state/HISTORIA.md
   - PROJECT_STATE.md
+  # segundo tiempo (respuesta del consultor a la PARADA, decision 9)
+  - docs/validation/PREREGISTRO.md
+  - tests/unit/test_puerta_holdout.py
+  - docs/plan/MASTER_PLAN.md
+  - docs/adr/0096-*.md
+  - docs/adr/README.md
+  - docs/adr/0092-*.md  # solo recuadros
+# Lo demas de tests/, knowledge/, docs/adr/ y docs/plan/ sigue protegido por la lista blanca. Los
+# patrones no admiten excepciones y lo protegido manda, asi que tests/, docs/adr/ y docs/plan/
+# enteros salen de aqui y se nombran los ficheros que la rama no puede tocar.
 rutas_protegidas:
   - Makefile
   - src/
-  - tests/
   - knowledge/
   - config/
   - data/manifests/
-  - docs/adr/
-  - docs/plan/
-  - docs/validation/PREREGISTRO.md
   - mql5/
+  - tests/contract/
+  - tests/conftest.py
+  - tests/guarda_holdout.py
+  - tests/unit/test_kit.py
+  - tests/unit/test_retirados.py
+  - docs/plan/HOJA-DE-RUTA.md
+  - docs/adr/0000-template.md
+  - docs/adr/0021-*.md
+  - docs/adr/0043-*.md
+  - docs/adr/0070-*.md
 comprobaciones:
   - uv run botsito knowledge validate (con el log fuera del repo, en la carpeta de trabajo de la sesion)
   - uv run python scripts/contrato_rama.py
