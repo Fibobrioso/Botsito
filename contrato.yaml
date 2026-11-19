@@ -1,0 +1,27 @@
+rama: trabajo/preregistro
+riesgo: alto  # como manda el encargo: la rama toca la puerta del holdout (en el segundo tiempo, PREREGISTRO.md y test_puerta_holdout)
+artefacto: docs/validation/PREREGISTRO-INVENTARIO.md
+tramo: R5
+rutas_permitidas:
+  - docs/validation/PREREGISTRO-INVENTARIO.md
+  - docs/validation/anexos/PREREGISTRO-INVENTARIO/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - src/
+  - tests/
+  - knowledge/
+  - config/
+  - data/manifests/
+  - docs/adr/
+  - docs/plan/
+  - docs/validation/PREREGISTRO.md
+  - mql5/
+comprobaciones:
+  - uv run botsito knowledge validate (con el log fuera del repo, en la carpeta de trabajo de la sesion)
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1

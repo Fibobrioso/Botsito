@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/preregistro
 
 ## Current Feature
-Ninguna rama abierta. trabajo/laminas-sesion-7b cerrada en main el 2026-11-19 (stable/F39f-laminas-sesion-7b): la 7b lista para grabar (el bloque de días revisado, PREGUNTAS-7B.md, sus láminas fuera del repo y SESION_EN_CURSO en "08").
+trabajo/preregistro EN CURSO (R5.1; la G): primer tiempo, solo la fase 0 (inventario para rellenar PREREGISTRO.md) hasta la PARADA. Encargo docs/encargos/trabajo-preregistro.md; informe docs/validation/PREREGISTRO-INVENTARIO.md.
 
 ## Stable Main State
 50f6a6fc · merge de `trabajo/laminas-sesion-7b` (tag `stable/F39f-laminas-sesion-7b`), sobre `stable/F39e-activar-sesion-07` (cf33a916). Informe docs/validation/LAMINAS-7B.md; el registro del cierre, al final de HISTORIA.
@@ -171,8 +171,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 74 (2026-11-18).
+— ninguna desde el Archivo 75 (2026-11-19).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 74 (2026-11-18).
+— ninguna desde el Archivo 75 (2026-11-19).
