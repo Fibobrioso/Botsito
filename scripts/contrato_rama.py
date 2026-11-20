@@ -13,6 +13,11 @@ lo que se va a sellar- y falla nombrando:
   (`trabajo/hoja-de-ruta`, 2026-10-10): rige desde la rama siguiente a la que la trajo, sin tocar
   ningun contrato anterior.
 
+Y, aparte del contrato, G2 (`trabajo/guardias-holdout`, 2026-11-19; GUARDIAS-HOLDOUT.md): en una
+rama `trabajo/*`, `docs/validation/HOLDOUT-EXPOSICIONES.md` TAL COMO ESTA ESTADIADO tiene que
+tener una fila de su tabla con la fecha de hoy (reloj local) en la primera columna y que nombre la
+rama; si no, no se sella. En `main`, en `fix/` (la CI) y en `feature/` no actua.
+
 `contrato.yaml` se permite siempre a si mismo. Sin contrato no hay nada que comprobar. En `main`
 no se exige: el contrato sale de la rama ANTES del merge (RITUAL.md), y si una rama hereda el de
 otra, su campo `rama` no casa con la rama actual y falla.
@@ -30,6 +35,7 @@ Uso (lo llama `make check`):
 
 from __future__ import annotations
 
+import datetime as dt
 import re
 import subprocess
 import sys
@@ -263,15 +269,85 @@ def comprobar(raiz: Path) -> tuple[list[str], str]:
     return problemas, resumen
 
 
+# ----------------------------------------------------------------------------------------- G2
+# La fila de HOLDOUT-EXPOSICIONES del dia (rama `trabajo/guardias-holdout`, 2026-11-19;
+# docs/validation/GUARDIAS-HOLDOUT.md, G2; Technical Debt de PROJECT_STATE desde
+# trabajo/cuenta-por-mes). Cada `make check` lee el M1 de marzo y calienta con el de junio
+# (RESPALDO-M1.md), y ADR-0021 §4 pide declarar toda exposicion el mismo dia; la fila se escribio
+# tarde a mano varias veces (ERRORES-RECURRENTES.md). Actua SOLO en una rama local `trabajo/*`, por
+# un `startswith` explicito y no por `_sin_prefijo`: en `main`, en `fix/` y `feature/` (las de la
+# CI) y con HEAD separado, no. Lee UN fichero, del indice de git (lo que se sella), y no recorre
+# directorios. Va aparte de `comprobar` (la llama `main`): los tests del contrato corren en una
+# rama `trabajo/prueba` sin fila.
+EXPOSICIONES = "docs/validation/HOLDOUT-EXPOSICIONES.md"
+PREFIJO_G2 = "trabajo/"
+
+
+def _hoy() -> dt.date:
+    """El dia del reloj LOCAL de la maquina (en la laptop de Aleks, Lima): limite declarado."""
+    return dt.date.today()
+
+
+def filas_de_exposiciones(texto: str) -> list[str]:
+    """Las filas de la tabla de exposiciones: la primera tabla cuya cabecera empieza por
+    `| Fecha |`, hasta su primera linea que no es de tabla. No tiene que estar al final."""
+    filas: list[str] = []
+    dentro = False
+    for linea in texto.splitlines():
+        if not dentro:
+            dentro = re.match(r"\|\s*Fecha\s*\|", linea) is not None
+        elif not linea.startswith("|"):
+            break
+        elif not set(linea.strip()) <= set("|-: "):
+            filas.append(linea)
+    return filas
+
+
+def problemas_fila_del_dia(rama: str, hoy: dt.date, texto: str | None) -> list[str]:
+    """G2. `texto` es HOLDOUT-EXPOSICIONES.md como esta estadiado (None si no lo esta). Pasa si
+    alguna fila de la tabla tiene `hoy` (AAAA-MM-DD) como primera columna y nombra la rama entera
+    (no otra que empiece igual). Fuera de `trabajo/*`, no actua."""
+    if not rama.startswith(PREFIJO_G2):
+        return []
+    dia = hoy.isoformat()
+    nombra = re.compile(rf"(?<![\w/.-]){re.escape(rama)}(?![\w/-])")
+    for fila in filas_de_exposiciones(texto or ""):
+        if fila.split("|")[1].strip() == dia and nombra.search(fila):
+            return []
+    return [
+        f"G2: falta la fila de HOLDOUT-EXPOSICIONES del {dia} para {rama}; escríbela y estadíala "
+        "antes de este make check (ADR-0021 §4)"
+    ]
+
+
+def texto_estadiado(raiz: Path, ruta: str) -> str | None:
+    """El fichero tal como esta en el indice (`git show :ruta`), o None si no esta."""
+    r = _git(raiz, "show", f":{ruta}")
+    return r.stdout if r.returncode == 0 else None
+
+
+def fila_del_dia(raiz: Path, hoy: dt.date) -> list[str]:
+    rama = rama_actual(raiz)
+    if not rama.startswith(PREFIJO_G2):
+        return []
+    return problemas_fila_del_dia(rama, hoy, texto_estadiado(raiz, EXPOSICIONES))
+
+
 def main() -> int:
     problemas, resumen = comprobar(RAIZ)
     if problemas:
         print(f"CONTRATO: la rama no cumple {FICHERO}:", file=sys.stderr)
         for p in problemas:
             print(f"  - {p}", file=sys.stderr)
-        return 1
-    print(f"CONTRATO: {resumen}")
-    return 0
+    else:
+        print(f"CONTRATO: {resumen}")
+    hoy, rama = _hoy(), rama_actual(RAIZ)
+    g2 = fila_del_dia(RAIZ, hoy)
+    for p in g2:
+        print(p, file=sys.stderr)
+    if not g2 and rama.startswith(PREFIJO_G2):
+        print(f"G2: fila de HOLDOUT-EXPOSICIONES del {hoy.isoformat()} para {rama}, estadiada")
+    return 1 if problemas or g2 else 0
 
 
 if __name__ == "__main__":

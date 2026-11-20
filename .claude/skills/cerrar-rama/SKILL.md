@@ -31,7 +31,7 @@ Si esta skill y el runbook discrepan, gana el runbook y se dice en el informe.
 | Rama (`trabajo/<x>` o `feature/<x>`) | el argumento, o `git branch --show-current` | se pregunta |
 | Tag `stable/<...>` | el argumento o la orden | se propone siguiendo el ultimo `git tag -l "stable/*" --sort=-creatordate` y se CONFIRMA antes del merge |
 | Mensaje del merge, una linea | el argumento o el informe de la rama | se propone y se confirma |
-| Numero de commits esperado | `git log --oneline main..<rama>` ANTES de empezar, mas el del contrato | — |
+| Numero de commits esperado | `git log --oneline main..<rama>` ANTES de empezar, mas el del contrato, mas el de la fila de HOLDOUT del dia si hizo falta (paso 3) | — |
 | Si la rama se empujo como `fix/<x>` | el informe de la rama, o `git ls-remote --heads origin fix/<x>` | — |
 | Commits de la rama y runs de su CI, para el registro de HISTORIA | `git log --oneline main..<rama>`; `gh run list --branch fix/<x>` y el §de la CI del informe | — |
 | Hallazgos del revisor, para ERRORES-RECURRENTES | el informe de la rama (el revisor pegado) | — |
@@ -63,7 +63,11 @@ para el log de `make check`, Edit para `PROJECT_STATE.md` y, en la rama, para
 2. `RITUAL.md`, «Antes del merge: la CI de Linux, si la rama toca la plataforma». Si toca hooks,
    rutas, el sistema de archivos o scripts que dependan de la plataforma y la CI de `fix/<rama>`
    no esta ya en verde, se empuja y se espera ANTES de seguir.
-3. `RITUAL.md`, «Antes del merge: el contrato sale de la rama», con su sello. **En ese mismo
+3. `RITUAL.md`, «Antes del merge: la fila de HOLDOUT del dia»: si la rama no tiene ya la fila de
+   `docs/validation/HOLDOUT-EXPOSICIONES.md` del dia del cierre, va antes, en su propio commit
+   sellado (`docs(<rama>): la fila de HOLDOUT del <dia>, antes de los make check del cierre`),
+   porque G2 actua tambien en el `make check` del commit del contrato y ese commit no la admite.
+   Despues, `RITUAL.md`, «Antes del merge: el contrato sale de la rama», con su sello. **En ese mismo
    commit, SIEMPRE, aunque la orden de cierre no lo repita** (el mismo apartado del runbook; en
    `main` ya no se puede):
    - el registro del cierre al final de `docs/state/HISTORIA.md`, con

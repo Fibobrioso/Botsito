@@ -820,6 +820,20 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Hecho cuando:** su test que la rompe a propósito.
 - **Estado:** HECHA (`trabajo/guardia-falsos-positivos`, `stable/F39a-guardia-falsos-positivos`; GUARDIA-FALSOS-POSITIVOS.md): cmp está en NO_EJECUTAN y sus argumentos se miran como una lectura, como los de diff (test_roto_sin_cmp_en_no_ejecutan).
 
+### G.7 · Ids de casos ocultos fuera de su sitio y la guardia de fechas
+- **Refs:** —
+- **Qué es:** en main hay 32 ids exactos de casos ocultos fuera de knowledge/cases (tests/unit, tests/contract y docs/validation), y uno lo añadió una rama de F39a a F39g (GUARDIAS-HOLDOUT.md §4 y §15). Primero, una rama que los sustituya en los tests sin abrirlos: ids sintéticos o calculados desde la puerta al ejecutarse; los informes cerrados no se reescriben (recuadro o declarados); si alguno quema, lo propone su fase 0 con ADR-0021 §5 y ADR-0041 y lo decide el consultor; con la pregunta del AVISO de knowledge validate (§6). Después, la variante estrecha V2 en su propia rama (§4.3).
+- **Depende de:** la ingesta y la activación de la sesión 7b; no adelanta el camino crítico.
+- **Quién:** la sesión, con el encargo del consultor.
+- **Hecho cuando:** ningún id exacto de un caso oculto fuera de los repartos en tests (medido con la puerta, sin imprimir), y V2 con su test que la rompe a propósito.
+
+### G.8 · La guardia con un corpus enlazado fuera del repo
+- **Refs:** —
+- **Qué es:** con corpus/ como enlace de unión a otro disco, la guardia resuelve por realpath y deja de aplicar las reglas del material adicional que dependen de la ruta relativa (las imágenes y lo de dentro de las carpetas Backtest de meses sin sortear); y un Read de la carpeta Backtest <mes> en sí no se niega, con o sin enlace (GUARDIAS-HOLDOUT.md §17). Hasta corregirlo, el corpus no sale de Bot v3\corpus. La copia D:\BotsitoCorpus\corpus (550 ficheros del manifiesto, hashes iguales el 2026-11-20) es solo respaldo y nadie la lee.
+- **Depende de:** nada. Va antes de volver a mover el corpus al disco D, porque Aleks necesita espacio en C.
+- **Quién:** la sesión, en la próxima rama de guardia.
+- **Hecho cuando:** un test que la rompe a propósito con las dos rutas (la del repo a través del enlace y la resuelta) y la carpeta en sí; y Aleks repite el traslado con la guardia simulada denegando las cuatro.
+
 ## Carril: material reservado que no se toca
 
 - Febrero de 2026 (heredado 6): no se toca ni se descarga.
