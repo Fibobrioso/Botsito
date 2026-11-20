@@ -19627,3 +19627,76 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 75 (2026-11-19).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/guardias-holdout (2026-11-20)
+
+Su texto literal en «Technical Debt», con su evidencia (orden de cierre del consultor del
+2026-11-20; GUARDIAS-HOLDOUT.md §10):
+
+- make check, en una rama trabajo/*, no sella si HOLDOUT-EXPOSICIONES.md no tiene una fila con la fecha del día (cada make check lee el M1 de marzo, RESPALDO-M1.md): guardia pendiente, propuesta en trabajo/cuenta-por-mes (CUENTA-POR-MES.md).
+  PAGADA por G2: `problemas_fila_del_dia` y `fila_del_dia` en `scripts/contrato_rama.py`, llamadas
+  desde `main()` (commit `aff916c8`); `tests/unit/test_fila_del_dia.py` (GUARDIAS-HOLDOUT.md §2).
+  Cada `make check` de la rama trae `G2: fila de HOLDOUT-EXPOSICIONES del <día> para
+  trabajo/guardias-holdout, estadiada`, y la CI por `fix/` no trae ninguna línea `G2:`.
+
+- test_hoja_de_ruta no distingue un registro «HECHA · T» de una letra reutilizada del de la T vigente: letras_hechas es un conjunto (VIDEO-JULIO.md §10.1).
+  PAGADA por H (b): `letras_registradas_tras_su_ultima_vida` en `tests/unit/test_hoja_de_ruta.py`
+  y `test_b_se_rompe_si_falta_el_registro_de_una_letra_reutilizada` (commit `aff916c8`;
+  GUARDIAS-HOLDOUT.md §3).
+
+# Registro de cierre · `trabajo/guardias-holdout` (2026-11-20)
+
+- Orden de cierre del consultor del 2026-11-20, tras revisar `8654e544` (CI 44689236793), pegada
+  por Aleks en la conversación de la sesión; después, Aleks lanzó `/cerrar-rama
+  trabajo/guardias-holdout stable/F39h-guardias-holdout`. La orden y `RITUAL.md` (en la versión de
+  esta rama) no chocan. El cierre se hace el 2026-11-20 y la fila de HOLDOUT de ese día ya estaba
+  en la rama (`f8ba556c`), así que no hace falta el commit de la fila.
+- **Lo hecho** (Carril: guardias y deuda; `src/`, `knowledge/`, los ADR y el Makefile sin tocar):
+  - **G2**: en una rama `trabajo/*`, `make check` no sella sin la fila de
+    `HOLDOUT-EXPOSICIONES.md` del día (reloj local), estadiada y que nombre la rama
+    (`scripts/contrato_rama.py`; en `main`, `fix/` y `feature/` no actúa). Línea «Guardia:» en
+    `CLAUDE.md`.
+  - **H**: `test_hoja_de_ruta` ve «Depende de» y «después,» como dependencia (c) y exige el registro
+    nuevo de una letra reutilizada (b).
+  - **G1, solo el estudio**: `docs/validation/anexos/GUARDIAS-HOLDOUT/medir_g1.py` y su salida,
+    por clase y por carpeta (GUARDIAS-HOLDOUT.md §4); la guardia no se escribió.
+  - **La respuesta del consultor a la PARADA final**: abrir-rama, entregar-rama, cerrar-rama,
+    CONTRATO-DE-RAMA y RITUAL saben de G2, y el RITUAL lleva «Antes del merge: la fila de HOLDOUT
+    del día» (GUARDIAS-HOLDOUT.md §15).
+- **Desviaciones** (aceptadas por el consultor en su respuesta a la PARADA final): el guion de G1 en
+  la forma literal que propone la guardia (punto 5); los mutantes de G2 con Edit sobre el fichero
+  real, restaurado por hash, sin ninguno en ningún commit (punto 7); las fechas de dos filas de
+  septiembre en la historia de dos commits, aceptadas y declaradas (punto 6).
+- **Commits de la rama** (7):
+  - `e115f208` apertura: encargo, contrato y Archivo 76 de PROJECT_STATE;
+  - `aff916c8` G2, H en test_hoja_de_ruta y el estudio de G1;
+  - `29babd0e` fuera de los textos las fechas de dos filas de septiembre;
+  - `72ebedfa` el revisor, sus hallazgos y la rama lista para revisión;
+  - `f8ba556c` la respuesta del consultor a la PARADA final, aplicada;
+  - `8654e544` el revisor de la segunda vuelta y sus hallazgos;
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama**: tres; dos del 2026-11-19 (la apertura y el estudio
+  de G1, ampliada con su segunda y su tercera corrida) y una del 2026-11-20 (la respuesta del
+  consultor y la comprobación del corpus), que cubre los `make check` del cierre.
+- **CI de Linux** por `fix/guardias-holdout`, las cinco `failure` con un único fallo, el esperado
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`), y ninguna línea `G2:`: run
+  44667806518 sobre `aff916c8`; 44671243811 sobre `29babd0e`; 44676585616 sobre `72ebedfa`;
+  44684471110 sobre `f8ba556c`; 44689236793 sobre `8654e544`. CI de `main` sobre `fa592071`, al
+  abrir: run 44653987599, success.
+- **Revisor** (opus): dos vueltas, pegadas en GUARDIAS-HOLDOUT.md §13 y §16.1, y lo hecho con cada
+  hallazgo en §14 y §16.2.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Technical Debt: salen las dos líneas que paga la rama (arriba, «Technical Debt PAGADA») y
+    entran dos, tal cual las da la orden: la del consultor (ids de casos ocultos y la variante V2) y
+    la del enlace de unión de `corpus/` (GUARDIAS-HOLDOUT.md §17);
+  - Next Action: sin cambios (ninguna letra sale ni entra);
+  - hoja de ruta: G.7 (ids de casos ocultos fuera de su sitio y la guardia de fechas) y G.8 (la
+    guardia con un corpus enlazado fuera del repo), nuevas, al final del «Carril: guardias y deuda»;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.810 bytes (`wc -c`) en este commit; con la cabecera del cierre en
+  `main`, unos 24.776 (tope de la orden: 24.950).
+- Letra del tag: la última cerrada era `stable/F39g-preregistro`; `stable/F39h-guardias-holdout`
+  no existe en local ni en origin (comprobado antes de este commit). La siguiente rama será F39i.
+- Tag: `stable/F39h-guardias-holdout`. El merge es
+  `git rev-parse "stable/F39h-guardias-holdout^{commit}"`.

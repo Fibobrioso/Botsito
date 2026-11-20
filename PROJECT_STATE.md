@@ -99,7 +99,8 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - Una zona del productor reutilizada en un escenario nuevo (misma caja del mismo punto tras una toma nueva) … (PUNTO-USADO.md §1.c y §4.f; entera en HISTORIA, Technical Debt ACORTADA)
 - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2558; el arnés sí, :2438): con `--todos --simular` corre una cuenta por mes como el arnés (ADR-0092 §8), nunca la diaria (VISOR-CONSTRUCCION.md §4.3).
 - `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).
-- make check, en una rama trabajo/*, no sella si HOLDOUT-EXPOSICIONES.md no tiene una fila con la fecha del día (cada make check lee el M1 de marzo, RESPALDO-M1.md): guardia pendiente, propuesta en trabajo/cuenta-por-mes (CUENTA-POR-MES.md).
+- Sin guardia contra fechas de días ocultos en lo que añade una rama. En main hay 32 ids exactos de casos ocultos fuera de knowledge/cases, uno de ellos de F39a-F39g en tests/unit. Primero, una rama que los sustituya en tests sin abrirlos (los informes cerrados, por recuadro o declarados); después, la variante estrecha V2 (GUARDIAS-HOLDOUT.md §4.3 y §9).
+- Con corpus/ como enlace de unión fuera del repo (mklink /J), la guardia resuelve por realpath y deja de aplicar las reglas del material adicional; y un Read de la carpeta Backtest <mes> no se niega (GUARDIAS-HOLDOUT.md §17; hoja de ruta G.8).
 - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
 - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
 - `test_visor.py` y `test_preparar_a35.py` hacen leer el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18 y 2026-10-26; VISOR-CONSTRUCCION.md §4.3).
@@ -108,7 +109,6 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El docstring de `engine/freno.py:7-8` dice que el adaptador real de MetaTrader usará la misma clase; ADR-0082 lo enmienda (el EA la porta). Lo paga R6a.4 (PLATAFORMA-ADELANTADA.md).
 - La guardia no niega leer con Read las crudas de data/transcripciones/ de un vídeo sin cuarentena ni tramos (VIDEO-JULIO.md §10.8).
 - La forma de medida de ffmpeg de la guardia no admite -ss/-t sobre un tramo de un vídeo del corpus: falso positivo de la lista cerrada de GUARDIA-FFMPEG (VIDEO-JULIO.md, respuesta a las PARADAS 2 y 3).
-- test_hoja_de_ruta no distingue un registro «HECHA · T» de una letra reutilizada del de la T vigente: letras_hechas es un conjunto (VIDEO-JULIO.md §10.1).
 - Un fotograma dentro de un tramo no citable se puede abrir: la guardia niega corpus frames show en el tramo, pero no el Read del PNG por su ruta, y la CLI imprime la ruta (VIDEO-JULIO.md §11.1).
 
 - La ingesta asigna la sesión con el reloj del registro y no con el congelado del artefacto; hoy son el mismo. Antes de cambiar reloj_sesiones en el registro, la ingesta pasa a leer el congelado (CASES-REJILLA.md).
