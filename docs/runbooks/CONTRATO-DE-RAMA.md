@@ -28,7 +28,7 @@ y lo ESTADIADO, que es el arbol que se va a sellar- y sale en ROJO, sin sello, n
 `contrato.yaml` se permite siempre a si mismo. **Sin contrato no se comprueba nada del
 contrato**, asi que una rama vieja sin contrato sigue funcionando igual.
 
-**Y, con contrato o sin el, la fila del dia (G2, desde `trabajo/guardias-holdout`, 2026-11-20;
+**Y, con contrato o sin el, la fila del dia (G2, desde `trabajo/guardias-holdout`, 2026-11-19;
 docs/validation/GUARDIAS-HOLDOUT.md §2).** En una rama local cuyo nombre empieza por `trabajo/`,
 el mismo guion, despues del contrato, lee `docs/validation/HOLDOUT-EXPOSICIONES.md` TAL COMO ESTA
 ESTADIADO (`git show :ruta`, no el arbol de trabajo) y exige una fila de su tabla con la fecha de
@@ -69,6 +69,7 @@ artefacto: docs/validation/<NOMBRE>.md
 tramo: R1  # el `## ` de docs/plan/HOJA-DE-RUTA.md al que pertenece la rama
 rutas_permitidas:
   - docs/validation/<NOMBRE>.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md  # la fila del dia (G2)
   - docs/encargos/
   - PROJECT_STATE.md
 rutas_protegidas:
@@ -85,7 +86,10 @@ holdout, un mes nuevo). El riesgo no cambia lo que comprueba `make check`: le di
 consultor cuanto mirar.
 
 `PROJECT_STATE.md` va casi siempre en `rutas_permitidas`: abrir la rama cambia su `Current Branch`,
-y anadir tests cambia el recuento de `Tests Currently Passing`.
+y anadir tests cambia el recuento de `Tests Currently Passing`. `docs/validation/HOLDOUT-EXPOSICIONES.md`
+va SIEMPRE en una rama `trabajo/*`: desde `trabajo/guardias-holdout` (G2), su `make check` no sella
+sin la fila del dia estadiada, y la fila tiene que caber en el contrato (tambien la del commit de la
+fila del cierre, RITUAL.md, «Antes del merge: la fila de HOLDOUT del dia»).
 
 ## Tres ejemplos
 
@@ -103,6 +107,7 @@ rutas_permitidas:
   - knowledge/evidence/
   - docs/spec/
   - docs/validation/REFLEJAR-FEEDBACK-S4.md
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
   - docs/encargos/
   - PROJECT_STATE.md
   - tests/unit/test_kit.py
@@ -139,6 +144,7 @@ rutas_permitidas:
   - docs/adr/0066-*.md
   - docs/validation/RN-004.md
   - docs/validation/RN-004-SALIDA.txt
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
   - docs/encargos/
   - PROJECT_STATE.md
 rutas_protegidas:
@@ -182,7 +188,8 @@ comprobaciones:
 ```
 
 La primera comprobacion es la del pre-registro: el criterio tiene que estar commiteado ANTES que la
-salida. `HOLDOUT-EXPOSICIONES.md` esta permitido porque toda lectura se declara el mismo dia.
+salida. `HOLDOUT-EXPOSICIONES.md` esta permitido porque toda lectura se declara el mismo dia, como
+en toda rama `trabajo/*` (la fila del dia, G2).
 
 ## El contrato de la primera rama que lo uso
 

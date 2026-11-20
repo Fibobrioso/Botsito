@@ -50,9 +50,10 @@ de GitHub con el sha escrito tal cual), Read, Edit para el informe, y el subagen
    («El encargo, punto por punto»).
 2. **Lo que NO cambia**: `git diff --stat main...HEAD` contra la lista del encargo; un fichero que
    no debia tocarse es un bloqueo. `uv run python scripts/contrato_rama.py` en verde, que desde
-   `trabajo/guardias-holdout` (G2) exige tambien la fila de `docs/validation/HOLDOUT-EXPOSICIONES.md`
-   del dia que nombre la rama, ESTADIADA: su salida trae `CONTRATO:` y
-   `G2: fila de HOLDOUT-EXPOSICIONES del <hoy> para <rama>, estadiada`. Si es un dia nuevo, la fila
+   `trabajo/guardias-holdout` (G2) exige tambien, en una rama `trabajo/*`, la fila de
+   `docs/validation/HOLDOUT-EXPOSICIONES.md` del dia que nombre la rama, ESTADIADA: su salida trae
+   `CONTRATO:` y `G2: fila de HOLDOUT-EXPOSICIONES del <hoy> para <rama>, estadiada` (en `feature/`
+   G2 no actua y esa linea no sale). Si es un dia nuevo, la fila
    se escribe y se estadia antes (`docs/runbooks/CONTRATO-DE-RAMA.md`, «Que comprueba
    `make check`, y que no»). Si la rama cambio el propio guion, la guardia lo niega suelto: vale la
    linea de `make-check.log` (respuesta del consultor a la PARADA final de
@@ -69,7 +70,9 @@ de GitHub con el sha escrito tal cual), Read, Edit para el informe, y el subagen
    encargo, si fija alguno.
 6. **Sello y commit**: `git add` de los ficheros nombrados, `uv run botsito knowledge validate` si
    se toco `knowledge/`, `make check > make-check.log 2>&1`, esperar, leer el log (exit 0, ningun
-   `failed`, la linea `SELLO`), commit.
+   `failed`, la linea `SELLO`), commit. Si este `make check` empieza en un dia sin la fila de
+   `docs/validation/HOLDOUT-EXPOSICIONES.md` de la rama (al volver aqui desde los pasos 7 u 8, o
+   pasada la medianoche), la fila se escribe y se estadia ANTES: en `trabajo/*`, G2 no sella sin ella.
 7. **CI de Linux, si toca la plataforma** (`RITUAL.md`): `git push origin trabajo/<x>:refs/heads/fix/<x>`,
    esperar el run (como dice el mensaje de la guardia, `trabajo/guardia-ci`: una consulta suelta
    con `gh run view <run>`; si hay que esperar, una espera sin consulta (`sleep` en segundo plano)

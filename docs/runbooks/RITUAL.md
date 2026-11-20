@@ -133,7 +133,10 @@ git commit -m "docs(<rama>): la fila de HOLDOUT del <día>, antes de los make ch
 ```
 → **Puerta:** la rama es la de trabajo; antes del `make check`, `git status --short` da solo
 `M  docs/validation/HOLDOUT-EXPOSICIONES.md`; el log trae la línea `G2: fila … estadiada` con la
-fecha de hoy y el `SELLO`. Este commit se cuenta en la puerta de
+fecha de hoy y el `SELLO`. El contrato sigue en la rama en este commit, así que la fila tiene que
+caber en él: si `rutas_permitidas` no nombra `docs/validation/HOLDOUT-EXPOSICIONES.md`, el
+`make check` sale en rojo por `CONTRATO:` y la ruta se añade al contrato en este mismo commit
+(`docs/runbooks/CONTRATO-DE-RAMA.md`, «La plantilla»). Este commit se cuenta en la puerta de
 `git log --oneline main..trabajo/<rama>`, como el del contrato.
 
 ### Antes del merge: el contrato sale de la rama (desde el 2026-10-01)
@@ -232,8 +235,11 @@ rm make-check.log
 git checkout main
 git merge --no-ff trabajo/<rama> -m "merge: <qué entra, en una línea>"
 ```
-Si `main` se hubiera movido desde que salió la rama, el árbol fusionado no es el de la rama, y esto
-no basta: se para y se decide con el consultor.
+Ese `make check` corre en `trabajo/<rama>`, así que G2 pide la fila de HOLDOUT del día: si es un
+día distinto del de la fila de la rama, haría falta un commit más en la rama después del
+`chore(cierre)`, y se para y se decide con el consultor (apartado «Antes del merge: la fila de HOLDOUT del día»). Si `main` se hubiera
+movido desde que salió la rama, el árbol fusionado no es el de la rama, y esto no basta: se para y
+se decide con el consultor.
 → Estamos en la **ventana A**: aquí `state check` fallaría por diseño. No se corre.
 
 **Antes del tag** (2026-10-05, `trabajo/respuestas-ftmo`; fuente: decisión del consultor; la

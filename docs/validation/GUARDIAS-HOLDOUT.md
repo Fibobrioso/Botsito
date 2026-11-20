@@ -91,7 +91,7 @@ Medido con la guardia por stdin (`python .claude/hooks/guardia.py < <json>`), co
   Comprobado de todos modos: G2 lee un solo fichero del índice (`git show :ruta`) y no casa con
   `CODIGO_QUE_RECORRE` (`guardia.py:1096`).
 - Qué cambia: nada del diseño. En `main`, tras el merge, el guion vuelve a ser idéntico al de
-  `main` (código revisado) y el paso 6 de abrir-rama lo lanza. En esta rama lo ejecuta `make check`,
+  `main` (código revisado) y el paso de comprobación de abrir-rama (el 6 entonces; el 7 desde la respuesta del consultor, §15) lo lanza. En esta rama lo ejecuta `make check`,
   y las comprobaciones del contrato lo dicen así (§7, desviación 4). Queda el orden del paso 6
   frente a la fila: §9, punto 2.
 
@@ -457,7 +457,7 @@ PROJECT_STATE.md: 24.604 bytes en la rama (tope 25.000). En el cierre:
 - Y, por decisión de Aleks del 2026-11-20 (lo mete él en la orden de cierre), la deuda de la guardia
   que salió de la comprobación del enlace del corpus: resuelve por realpath, y con un enlace en
   `corpus/` deja de aplicar las reglas del material adicional; un Read de la carpeta
-  `Backtest <mes>` en sí no se niega. El texto lo trae la orden.
+  `Backtest <mes>` en sí no se niega. El texto lo trae la orden; lo medido y sus palabras, §17.
 
 Las dos salidas suman 403 bytes (243 + 160; revisor, a3); la entrada del consultor, 361 con su
 «- » (`printf … | wc -c`), sin ajustar, porque no pasa de 400. Queda 24.604 − 403 + 362 ≈ 24.563,
@@ -763,7 +763,160 @@ Dada por Aleks (consultor) el 2026-11-20, en un solo mensaje; copiada también a
 
 ## 16. CI y revisor de la segunda vuelta
 
-Pendiente en este commit: el push a `fix/guardias-holdout`, su run y el revisor sobre lo nuevo.
+- **CI de Linux** de `f8ba556c`: run **44684471110**, `failure` con un único fallo,
+  `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/guardias-holdout'; la
+  rama actual es 'fix/guardias-holdout'»): el aceptado. `1 failed, 3473 passed, 93 skipped`, y 0
+  líneas `G2:` en su log: G2 no actúa en `fix/`. El run del último commit de la rama, el de lo que se
+  hizo con estos hallazgos, va en el mensaje final a Aleks (este informe va dentro de ese commit).
+- **`make check` de `f8ba556c`**: `CONTRATO: 17 ficheros dentro del contrato …`,
+  `G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-20 para trabajo/guardias-holdout, estadiada`,
+  `3561 passed, 6 xfailed`, `SELLO … 10449adb…` (= `f8ba556c^{tree}`).
+
+### 16.1 Informe del revisor (segunda vuelta)
+
+Subagente `revisor`, una pasada sobre `f8ba556c`, con el alcance que pidió el consultor. Pegado tal
+cual; sin retiradas.
+
+> ## Informe del revisor · trabajo/guardias-holdout (segunda vuelta, f8ba556c) · 2026-11-20
+>
+> Base: `fa592071`. Hay 5 commits en `main..HEAD` (e115f208, aff916c8, 29babd0e, 72ebedfa, f8ba556c) y `git status --short` sale limpio. Esta vuelta revisa f8ba556c. Los dos ejes van sobre lo nuevo. Los hallazgos que comparan las skills y los runbooks entre sí (lo que pide el alcance) van en el eje (b), porque salen del punto 2 de la respuesta del consultor.
+>
+> ### Eje (a) · Reglas de la casa
+> Resumen: 0 bloquea, 0 importa, 0 menor. **Sin hallazgos.**
+>
+> Comprobado sin hallazgos:
+> 1. **Contrato.** `uv run python scripts/contrato_rama.py` suelto lo niega la guardia, como dice el comentario de `contrato.yaml:40-42`. Motivo literal: «`git -c core.quotepath=...`: clave fuera de la lista cerrada». Lo sustituye `make-check.log`:
+>    - línea 6: `CONTRATO: 17 ficheros dentro del contrato de trabajo/guardias-holdout (riesgo alto, …)`. Son 17, como los de `git diff --stat main...HEAD`.
+>    - línea 7: `G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-20 para trabajo/guardias-holdout, estadiada`.
+>    - `3561 passed, 6 xfailed` y ninguna línea con `failed`.
+>    - `SELLO: make check en verde sobre el arbol 10449adb…`, que es igual a `git rev-parse 'f8ba556c^{tree}'`. El sello es el del commit.
+>    - `PICO DE MEMORIA … 318 MiB`.
+>    - `knowledge validate` dentro del log, todo OK o AVISO, ningún ERROR.
+>    - `uv run pytest -p no:cacheprovider tests/unit/test_contrato_rama.py tests/unit/test_fila_del_dia.py tests/unit/test_hoja_de_ruta.py tests/unit/test_skills.py tests/unit/test_push_atomico.py -q`: exit 0, ninguna `F`.
+> 2. **Trailers `Fuente:`.** No aplican: ningún commit de la rama toca `knowledge/spec` ni `knowledge/cases`.
+> 3. **Holdout.** Nada de `knowledge/cases/holdout/` en el diff. La fila del 2026-11-20 existe (`HOLDOUT-EXPOSICIONES.md:169`) y nombra `trabajo/guardias-holdout`. Recuento con `casos_ocultos` en memoria (34 casos, 34 fechas):
+>    - líneas añadidas por la rama contra `main`: 2090, con 0 días ocultos y 0 ids ocultos;
+>    - líneas añadidas por f8ba556c: 239, con 0 y 0;
+>    - mensajes de commit de `main..HEAD`: 0 y 0.
+> 4. **Regímenes.** Nada en evidence, feedback, manifests, transcripciones, fotogramas ni `libros.yaml`. `HOLDOUT-EXPOSICIONES.md` solo gana líneas: 3 añadidas y 0 quitadas.
+> 5. **Ambigüedades, ADR y `cita`.** No se tocan.
+> 6. **Informes cerrados.** Ninguno se cambia.
+> 7. **`PROJECT_STATE.md`.** 24.604 bytes, por debajo de 25.000. f8ba556c no lo toca.
+> 8. **Tres citas del informe contra su fuente:**
+>    - `f663aa29` es «docs(sesion-07): la fila de HOLDOUT del 2026-11-18, antes de los make check del cierre» y toca 1 fichero (`git show --name-only --format= f663aa29 | wc -l` da 1).
+>    - La línea de Technical Debt del consultor mide 361 bytes con «- ».
+>    - La respuesta copiada en el informe (líneas 705-746) es idéntica, línea a línea, a la del encargo (líneas 57-98): comparadas, `True`.
+> 9. **Evidencia nueva.** No hay ítems nuevos.
+>
+> ### Eje (b) · Encargo (la respuesta del consultor a la PARADA final)
+> Resumen: 0 bloquea, 3 importa, 4 menor. Requisitos: 15 hechos (uno de otra forma, declarado), 1 parcial, 0 no hechos.
+>
+> | # | Requisito | Estado | Evidencia |
+> |---|---|---|---|
+> | 1 | Antes de nada: fila del 2026-11-20 que nombre la rama, antes del primer make check | Hecho | `HOLDOUT-EXPOSICIONES.md:169`; `make-check.log:7`. G2 corta en el paso `contrato`, antes de los tests, así que ningún make check de ese día pudo leer el M1 sin la fila estadiada |
+> | 2 | P0: nada en esta rama | Hecho | f8ba556c no toca `src/`, `tests/` ni `knowledge/` (`git show --stat f8ba556c`) |
+> | 3 | P1: el commit de la fila del cierre, antes del chore(cierre), con su mensaje | Hecho | `RITUAL.md:113-137` |
+> | 4 | P2: `contrato.yaml` con las 4 rutas, más cerrar-rama solo si hace falta | Hecho | `contrato.yaml:18-23`. `rutas_protegidas` no nombra `.claude/` ni `docs/runbooks/`. cerrar-rama, justificada en §15 |
+> | 5 | P2: abrir-rama, la fila y el artefacto estadiados antes de comprobar; se reordena el paso 7 | Hecho de otra forma, declarado | Paso 6 nuevo y renumeración a 7 y 8 (`abrir-rama/SKILL.md:87-107`); §15. Ningún otro fichero cita los pasos de abrir-rama por número (grep en `.claude/`, `docs/runbooks/`, `CLAUDE.md`, `tests/` y `docs/state/README.md`) |
+> | 6 | P2: entregar-rama, paso 2 | Hecho | `entregar-rama/SKILL.md:51-59` |
+> | 7 | P2: CONTRATO-DE-RAMA, G2 con su mensaje y dónde no actúa | Hecho | `CONTRATO-DE-RAMA.md:31-46`. El mensaje casa con `contrato_rama.py` (`problemas_fila_del_dia`); la línea de éxito, con `:348-349`; que lee lo estadiado, con `texto_estadiado` (`git show :ruta`); `rama_actual` usa `symbolic-ref -q`, que da vacío con HEAD separado |
+> | 8 | P2: RITUAL, antes del chore(cierre) y con su puerta | Hecho | `RITUAL.md:126-137`; la puerta del chore(cierre) en `:197-199` |
+> | 9 | P2: solo documentación | Hecho | f8ba556c: skills, runbooks, contrato, encargo, informe y fila |
+> | 10 | P2: make check con test_hoja_de_ruta y test_skills en verde | Hecho | `make-check.log`, sello del árbol de f8ba556c |
+> | 11 | P3: la línea de Technical Debt tal cual (≤400 bytes) | Hecho | §10:452-456; 361 bytes medidos |
+> | 12 | P4, P5 y P6: nada que hacer | Hecho | §15; ninguna reescritura (aff916c8 sigue en la historia) |
+> | 13 | P7: ningún commit con un mutante | Hecho; se sostiene | Ver abajo |
+> | 14 | Copia literal en una sección «Respuesta del consultor a la PARADA final» | Hecho | `GUARDIAS-HOLDOUT.md:701-746`; idéntica a la del encargo |
+> | 15 | Un commit con la fila, el punto 2 y la respuesta; PROJECT_STATE sin tocar más | Hecho | f8ba556c |
+> | 16 | Push a fix/, CI con su número de run y revisor pegado | Parcial (en curso) | `git ls-remote` da `fix/guardias-holdout` = f8ba556c. Run 44684471110, `in_progress`. §16 dice «Pendiente» |
+>
+> **Verificación del punto 7, que se sostiene:**
+> - `git log --format=%h main..HEAD -- scripts/contrato_rama.py` da solo `aff916c8`.
+> - `git rev-parse` del fichero en aff916c8, 72ebedfa y f8ba556c, y `git ls-files -s`, dan las cuatro veces `fde14594…`. Un único commit toca el fichero y su blob es el final, así que ningún commit lleva un mutante.
+> - En `git log -p main..HEAD -- scripts/contrato_rama.py`, `grep -c -i mutante` da 1. Ese 1 es la línea 10 de la salida: el cuerpo del mensaje de aff916c8 («…mutantes medidos.»), no código.
+> - Las formas `p = raiz / ruta`, `rama in fila`, `g2: list`, `not rama or rama ==` dan 0 líneas añadidas.
+> - `test_hoja_de_ruta.py` cambia en aff916c8 y en 72ebedfa (b7, declarado). Un mutante en aff916c8 habría hecho fallar los tests sintéticos de H y ese commit no tendría sello.
+>
+> | # | Gravedad | Hallazgo | Evidencia |
+> |---|---|---|---|
+> | b1 | importa | **La plantilla de CONTRATO-DE-RAMA y abrir-rama se contradicen desde G2.** abrir-rama manda escribir el contrato «con la plantilla de `docs/runbooks/CONTRATO-DE-RAMA.md`» y dice que `rutas_permitidas` lleva «siempre» `HOLDOUT-EXPOSICIONES.md`. La plantilla y dos de sus tres ejemplos no la llevan, y el runbook la presenta como cosa de las ramas de medición. Desde G2, toda rama `trabajo/*` tiene que estadiar la fila. Una rama que siga la plantilla al pie de la letra sale en rojo por el contrato (fichero fuera de `rutas_permitidas`), o en rojo por G2 si quita la fila. El commit de la fila del cierre de RITUAL fallaría igual por `CONTRATO:` en una rama cuyo contrato no la permita, y RITUAL no lo dice | `abrir-rama/SKILL.md:66` y `:69-70`; `CONTRATO-DE-RAMA.md:70-73` (plantilla), `:100-107` y `:134-143` (ejemplos sin la fila), `:185` («esta permitido porque toda lectura se declara el mismo dia», solo en el ejemplo de medición); `RITUAL.md:126-137` |
+> | b2 | importa | **abrir-rama y entregar-rama esperan la línea `G2:` también en `feature/`.** abrir-rama admite `feature/F##-<x>` como entrada. Sus pasos 7 y 8 y su Verificación exigen la línea `G2:` sin condición, pero `contrato_rama.py` solo la imprime en `trabajo/*`. CONTRATO-DE-RAMA lo dice: «No actua en `main`, en `fix/` ni `feature/`». entregar-rama, paso 2, tampoco acota a `trabajo/*` | `abrir-rama/SKILL.md:17`, `:97-99`, `:106` y `:117`; `entregar-rama/SKILL.md:52-55`; `contrato_rama.py:283` y `:348`; `CONTRATO-DE-RAMA.md:41` |
+> | b3 | importa | **Algo fuera del encargo apoyado en una decisión que no está en el repo.** §10 añade una deuda de la guardia «por decisión de Aleks del 2026-11-20 (lo mete él en la orden de cierre)». Afirma un comportamiento de la guardia (resuelve por realpath; con un enlace en `corpus/` deja de aplicar las reglas del material adicional; un Read de la carpeta `Backtest <mes>` no se niega) sin comando ni salida en el informe, y la decisión no está copiada tal cual en ningún sitio. Es el patrón «Una decision del consultor que se queda en la conversacion» | `GUARDIAS-HOLDOUT.md:457-460`; `HOLDOUT-EXPOSICIONES.md:169` («Read SIMULADOS por stdin»); `ERRORES-RECURRENTES.md:35` |
+> | b4 | menor | La sección «Artefacto» de abrir-rama no nombra la fila, y su propia Verificación sí | `abrir-rama/SKILL.md:111-112` frente a `:119-120` |
+> | b5 | menor | entregar-rama, paso 6 (el `make check` al que se vuelve desde los pasos 7 y 8, quizá ya en otro día), y el bloque `merge --abort` de RITUAL (que vuelve a sellar en `trabajo/<rama>`) no mencionan G2 ni la fila. Solo los cubre la guardia mecánica | `entregar-rama/SKILL.md:70-72`, `:81` y `:87`; `RITUAL.md:226-233` |
+> | b6 | menor | La fecha de G2 no coincide: CONTRATO-DE-RAMA dice «desde `trabajo/guardias-holdout`, 2026-11-20» y el guion dice 2026-11-19 (G2 entró en aff916c8, el 19) | `CONTRATO-DE-RAMA.md:31`; `scripts/contrato_rama.py:16` |
+> | b7 | menor | §1.3 dice todavía «el paso 6 de abrir-rama lo lanza». Tras la renumeración es el paso 7 | `GUARDIAS-HOLDOUT.md:94` |
+>
+> Lo que el encargo dice que no se toca (`src/`, `tests/contract`, PROJECT_STATE más allá de lo que ya llevaba): f8ba556c no lo toca.
+>
+> ### Lo que no pude comprobar
+> - **«Las 00:25» de §15** (hora del primer make check del día): no se puede comprobar. El log que queda es el del sello: termina hacia las 00:57 (fecha del fichero y del commit) y duró 1455 s, así que empezó hacia las 00:33. La garantía de que la fila fue antes es mecánica (G2 corta antes de los tests), no la hora.
+> - **CI de f8ba556c:** el run 44684471110 estaba `in_progress`. El de 72ebedfa (44676585616) tuvo un único fallo, `test_cli.py::test_state_check_ok_on_real_repo`, el aceptado, y 0 líneas `G2: ` en su log: G2 no actúa en `fix/`.
+> - **`uv run python scripts/contrato_rama.py` suelto:** lo niega la guardia. Lo sustituye `make-check.log`.
+> - **`knowledge validate` suelto:** necesita redirigir un log, y eso escribe. Lo sustituye su salida dentro de `make-check.log`.
+> - **Que el guion idéntico al de `main` pase la guardia** (lo que el paso 7 de abrir-rama da por hecho tras el merge): no lo medí.
+> - **`test_hooks_utf8.py`:** no lo ejecuté aparte; está dentro del make check sellado.
+>
+> ### Comandos ejecutados
+> 1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git status --short && git diff --stat main...HEAD -- . ":(exclude)knowledge/cases/holdout/"`
+> 2. Read del encargo, de `contrato.yaml`, de `GUARDIAS-HOLDOUT.md` (§1.3, §10-§16) y de las tres skills; `grep -n '^#'` del informe
+> 3. `git show --stat --format='%h %s%n%b' f8ba556c -- . ":(exclude)knowledge/cases/holdout/"`
+> 4. `git diff main...HEAD -- .claude/skills docs/runbooks`; `git diff main...HEAD -- scripts/contrato_rama.py`; `git diff main...HEAD -- CLAUDE.md PROJECT_STATE.md | grep '^[+-]'`
+> 5. greps de los números de paso de abrir-rama, de las frases de recuento de commits y de `chore(cierre)` en `.claude/`, `docs/runbooks/`, `CLAUDE.md`, `tests/` y `docs/state/README.md`
+> 6. Read de `RITUAL.md:80-265` y de `CONTRATO-DE-RAMA.md:60-185`; Grep en `contrato_rama.py` (`rama_actual`, `FICHERO`, `PREFIJO_G2`, `main`)
+> 7. `git check-ignore -v make-check.log`; `grep` de CONTRATO, G2, SELLO, PICO y passed en `make-check.log`; `sed -n '1,8p;100,129p' make-check.log`
+> 8. `git log --format='%h %ad %cd' --date=iso-local main..HEAD`; `git rev-parse 'f8ba556c^{tree}'`; `git diff main...HEAD -- docs/validation/HOLDOUT-EXPOSICIONES.md | grep '^[+-]' | cut -c1-400`
+> 9. Grep y Read de la línea 169 de `HOLDOUT-EXPOSICIONES.md` (un `grep|fold` lo negó la guardia)
+> 10. `git log --format=%h main..HEAD -- scripts/contrato_rama.py`; `git rev-parse <3 commits>:scripts/contrato_rama.py`; `git ls-files -s scripts/contrato_rama.py` (un `git hash-object` lo negó solo_lectura)
+> 11. `git log -p main..HEAD -- scripts/contrato_rama.py | grep -c -i mutante` y las cuatro formas de mutante; `grep -n -i mutante`
+> 12. `uv run python scripts/contrato_rama.py` (negado por la guardia)
+> 13. `uv run pytest -p no:cacheprovider <5 ficheros> -q` (dos veces; exit 0)
+> 14. `uv run python -c` con `casos_ocultos`, que cuenta en memoria días e ids ocultos en `git diff main...HEAD`, en `git diff 72ebedfa f8ba556c` (los dos con el holdout excluido) y en `git log --format=%B main..HEAD`. El primer intento, con argumento dinámico, lo negó la guardia; el segundo, con argumentos literales
+> 15. `gh run list --branch fix/guardias-holdout --limit 4`; `wc -c PROJECT_STATE.md`; `git ls-remote --heads origin fix/guardias-holdout`
+> 16. `git show --stat --format='%h %s' f663aa29 -- . ":(exclude)knowledge/cases/holdout/"`; `git show --name-only --format= f663aa29 | wc -l`
+> 17. `uv run python -c` que mide los bytes de la línea de Technical Debt; `uv run python -c` que compara las dos copias de la respuesta
+> 18. `git log --format=%h main..HEAD -- tests/unit/test_hoja_de_ruta.py tests/unit/test_fila_del_dia.py`; `git rev-parse` de `test_hoja_de_ruta.py` en aff916c8, 29babd0e y HEAD
+> 19. `git diff 72ebedfa f8ba556c -- docs/validation/GUARDIAS-HOLDOUT.md | grep` (sin las líneas citadas)
+> 20. `grep -n "se queda en la conversacion" docs/runbooks/ERRORES-RECURRENTES.md`; `gh run view 44676585616 --json conclusion,headSha`; `gh run view 44676585616 --log-failed | grep -o "FAILED …" | sort | uniq -c`; `gh run view 44676585616 --log | grep -c "G2: "` y `grep -c "CONTRATO: 1"`
+
+### 16.2 Lo que se hizo con los hallazgos del revisor (segunda vuelta)
+
+| # | Gravedad | Qué se hizo |
+|---|---|---|
+| b1 | importa | Arreglado: `CONTRATO-DE-RAMA.md`, la plantilla y los dos ejemplos que no la llevaban (knowledge y motor) nombran `docs/validation/HOLDOUT-EXPOSICIONES.md`, y el párrafo de debajo de la plantilla dice que en una rama `trabajo/*` va SIEMPRE, por G2, también para el commit de la fila del cierre; la frase del ejemplo de medición lo dice igual. `RITUAL.md`, en la puerta del commit de la fila del día: si el contrato no la permite, `make check` sale en rojo por `CONTRATO:` y la ruta se añade al contrato en ese mismo commit |
+| b2 | importa | Arreglado: `abrir-rama` (pasos 7 y 8 y verificación) y `entregar-rama` (paso 2) esperan la línea `G2:` solo en `trabajo/*`, y dicen que en `feature/` no sale; `abrir-rama` añade que la fila del día se escribe igual en `feature/`, porque la pide ADR-0021 §4 |
+| b3 | importa | Arreglado: §17 copia tal cual las palabras de Aleks del 2026-11-20 y trae los comandos y las salidas de lo medido (`fsutil`, `corpus check --hashes` y las decisiones de la guardia caso a caso) |
+| b4 | menor | Arreglado: la sección «Artefacto» de `abrir-rama` nombra el artefacto y la fila del día |
+| b5 | menor | Arreglado: `entregar-rama`, paso 6 (si el `make check` empieza en un día sin fila, se escribe y se estadía antes); `RITUAL.md`, tras el bloque de `merge --abort` (ese `make check` corre en `trabajo/<rama>`; si es otro día, haría falta un commit más tras el `chore(cierre)`: se para y se decide con el consultor) |
+| b6 | menor | Arreglado: `CONTRATO-DE-RAMA.md` fecha G2 el 2026-11-19, como el guion; el apartado de `RITUAL.md` sigue «desde el 2026-11-20», que es la fecha de la regla de la fila del cierre (respuesta del consultor) |
+| b7 | menor | Arreglado: §1.3 dice «el paso de comprobación de abrir-rama (el 6 entonces; el 7 desde la respuesta del consultor, §15)» |
+
+Después de los arreglos: `uv run pytest tests/unit/test_skills.py tests/unit/test_push_atomico.py tests/unit/test_hooks_utf8.py tests/unit/test_contrato_rama.py tests/unit/test_hoja_de_ruta.py tests/unit/test_fila_del_dia.py -q` en verde, y el `make check` del commit.
+
+## 17. La comprobación del enlace del corpus y la decisión de Aleks (2026-11-20, fuera del encargo)
+
+Fuera de esta rama, sin commit ni escritura en el repo, Aleks pidió el 2026-11-20 comprobar el
+corpus movido a `D:\BotsitoCorpus\corpus` con un enlace de unión en `Bot v3\corpus`. Lo medido:
+
+| Qué | Comando | Salida |
+|---|---|---|
+| El enlace | `fsutil reparsepoint query "C:\Users\USER\Desktop\Bot v3\corpus"` | etiqueta `0xa0000003` (punto de montaje), `Nombre de impresión: D:\BotsitoCorpus\corpus` |
+| La copia en D: | `uv run botsito corpus check --hashes` (salida a la carpeta de la sesión) | `OK: el corpus coincide con el manifiesto (hashes)`, exit 0; el manifiesto tiene 550 ficheros |
+| La guardia, con el enlace | `python .claude/hooks/guardia.py < <json>` con un Read SIMULADO por caso (nada se lee) | la carpeta `Backtest marzo 2026` misma, por la ruta del repo y por la de D:: exit 0, **permitida**; el libro de mayo (`backtesting-analytics MAYO 2026.xlsx`, ruta de `libros.yaml`), por las dos rutas: exit 2, denegado por la regla del libro con días reservados; una imagen inventada dentro de `Backtest marzo 2026`, por la ruta del repo: exit 0, **permitida**. El mensaje de la guardia nombraba la ruta ya resuelta, `D:\BotsitoCorpus\corpus\…` |
+| Sin el enlace (Aleks lo quitó) | `fsutil` sobre `Bot v3\corpus`; `git status --short`; la guardia con la imagen y el libro, ruta del repo | «Error 4390: El archivo o directorio no es un punto de análisis repetido»; vacío; los dos, exit 2, denegados (la imagen, por la regla de las capturas e imágenes del material adicional) |
+
+Lo que explica la medida (leído en `.claude/hooks/guardia.py`): `motivo_fichero` mira la regla del
+libro antes de calcular la ruta relativa (`:569-571`), y las reglas del material adicional después,
+con la ruta relativa a la raíz (`:572-580`, `_motivo_material`). La ruta resuelta a `D:\…` queda
+fuera de la raíz, la relativa es `None` y esas reglas no se miran. La carpeta `Backtest <mes>`
+misma no la niega `_motivo_material`, que solo mira los ficheros de DENTRO de ella (`:605-608`), con
+enlace o sin él.
+
+La decisión de Aleks, tal cual (su mensaje del 2026-11-20, tras quitar el enlace):
+
+> He quitado el enlace y devuelto la carpeta a Bot v3\corpus. Comprueba que corpus ya no es una unión y que git status sale vacío, y repite la guardia simulada solo con la ruta del repo: la imagen de «Backtest marzo 2026» y el libro de mayo tienen que salir denegados. Actualiza la memoria del proyecto que guardaste: el enlace ya no existe. La copia de D:\BotsitoCorpus\corpus se queda como respaldo local y nadie la lee. Lo que encontraste (la guardia resuelve por realpath y, con un enlace, deja de aplicar las reglas del material adicional; un Read de la carpeta Backtest <mes> no se niega) va a deuda de la guardia: lo meto yo en la orden de cierre de esta rama. No escribas nada en el repo.
+
+Esta rama no toca la guardia: la deuda entra con la orden de cierre (§10).
 
 ## Exposiciones
 
@@ -785,4 +938,4 @@ Declaradas en `HOLDOUT-EXPOSICIONES.md`:
 Rama lista para revisión, NO cerrada. La fase 0, G2, H y el estudio de G1, hechos; la respuesta del
 consultor a la PARADA final, aplicada punto por punto (§15): las skills `abrir-rama`,
 `entregar-rama` y `cerrar-rama`, `CONTRATO-DE-RAMA.md` y `RITUAL.md` saben de G2 y de la fila del
-día del cierre. La CI de Linux y el revisor de esta segunda vuelta, en §16.
+día del cierre. La CI de Linux de esta segunda vuelta (run 44684471110: solo el fallo aceptado, sin G2 en `fix/`) y el revisor, con sus hallazgos arreglados, en §16; la comprobación del enlace del corpus y la decisión de Aleks sobre su deuda, en §17.

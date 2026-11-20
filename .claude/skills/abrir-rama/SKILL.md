@@ -96,25 +96,28 @@ para `PROJECT_STATE.md`.
    `docs/runbooks/ERRORES-RECURRENTES.md`: la fila va antes del primer `make check`.
 7. **Comprobar antes de sellar.** `uv run botsito state check` (rama y recuento de tests fallan al
    FINAL de `make check`: mejor verlo antes) y `uv run python scripts/contrato_rama.py`, que tiene
-   que dar `CONTRATO:` en verde y `G2: fila de HOLDOUT-EXPOSICIONES del <hoy> para <rama>,
-   estadiada`. Y, antes de cada `make check`, `uv run botsito knowledge validate` sin `ERROR`, con
+   que dar `CONTRATO:` en verde y, en una rama `trabajo/*`, `G2: fila de HOLDOUT-EXPOSICIONES del
+   <hoy> para <rama>, estadiada` (en `feature/` G2 no actua y esa linea no sale; la fila del dia se
+   escribe igual, porque lo pide ADR-0021 §4). Y, antes de cada `make check`, `uv run botsito knowledge validate` sin `ERROR`, con
    su log en la carpeta de trabajo de la sesion, fuera del repo (fila de
    `trabajo/preparacion-sesion-7` en `docs/runbooks/ERRORES-RECURRENTES.md`, leccion 11): un id
    inexistente citado en el informe tumba `make check` (fila de `trabajo/dieta-estado`, misma
    tabla).
 8. **Sello y commit.** Con lo del paso 6 estadiado y nada mas, `make check > make-check.log 2>&1`,
-   esperar el aviso, leer el log (exit 0, ningun `failed`, las lineas `CONTRATO:` y `G2:`, la linea
-   `SELLO`) y commit `chore(rama): abre <rama> (encargo, contrato y Archivo N de PROJECT_STATE)`.
+   esperar el aviso, leer el log (exit 0, ningun `failed`, la linea `CONTRATO:`, la `G2:` si la rama
+   es `trabajo/*`, la linea `SELLO`) y commit `chore(rama): abre <rama> (encargo, contrato y Archivo N de PROJECT_STATE)`.
 
 ## Artefacto
 
 La rama con un commit sellado que trae `docs/encargos/<rama>.md`, `contrato.yaml`, el Archivo N
-nuevo al final de `docs/state/HISTORIA.md` y `PROJECT_STATE.md` apuntando a la rama.
+nuevo al final de `docs/state/HISTORIA.md`, `PROJECT_STATE.md` apuntando a la rama, el artefacto y
+la fila del dia en `docs/validation/HOLDOUT-EXPOSICIONES.md` (paso 6).
 
 ## Verificacion
 
 - `git branch --show-current` es la rama, y `git log --oneline main..HEAD` tiene un commit.
-- `make-check.log` con `CONTRATO:` en verde, la linea `G2:` de la fila del dia y la linea `SELLO`.
+- `make-check.log` con `CONTRATO:` en verde, la linea `G2:` de la fila del dia (en `trabajo/*`) y
+  la linea `SELLO`.
 - `tests/unit/test_historia.py` en verde dentro de `make check` (HISTORIA solo se amplio).
 - `git diff main --stat` = encargo, contrato, `PROJECT_STATE.md`, `docs/state/HISTORIA.md`, el
   artefacto y `docs/validation/HOLDOUT-EXPOSICIONES.md` (la fila del dia, paso 6); nada mas.
