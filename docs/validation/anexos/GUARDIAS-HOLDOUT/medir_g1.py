@@ -382,19 +382,25 @@ def main() -> int:
         print(f"| {c} | {n_si + n_no} | {n_si} |")
     print(f"| TOTAL | {sum(total.values())} | {sum(v for (_, a), v in total.items() if a)} |")
     print("")
-    print("| Rama | Commits sin merge | Merges | Lineas con un dia oculto |")
-    print("|---|---|---|---|")
-    for nombre, n_c, n_m, n in filas:
-        print(f"| {nombre} | {n_c} | {n_m} | {n} |")
+    # Sin el recuento de lineas por rama ni la rama en el detalle (revisor de la rama, b4): la rama
+    # y la carpeta juntas, o el total por rama cruzado con las clases, acotaban el fichero que
+    # lleva un id oculto. Por rama, solo cuantos commits se miraron.
+    print("| Rama | Commits sin merge | Merges |")
+    print("|---|---|---|")
+    for nombre, n_c, n_m, _ in filas:
+        print(f"| {nombre} | {n_c} | {n_m} |")
     print("")
     print(
-        "| Rama | Clase | Carpeta (1.er o 2.o nivel) | Anterior al proyecto | Marca de trabajo "
+        "| Clase | Carpeta (1.er o 2.o nivel) | Anterior al proyecto | Marca de trabajo "
         "delante de cada una | Marca de mercado cerca de alguna | Lineas |"
     )
-    print("|---|---|---|---|---|---|---|")
-    for (nombre, c, carp, anterior, trabajo, mercado), n in sorted(detalle.items()):
-        si = {True: "si", False: "no"}
-        print(f"| {nombre} | {c} | {carp} | {si[anterior]} | {si[trabajo]} | {si[mercado]} | {n} |")
+    print("|---|---|---|---|---|---|")
+    sin_rama: Counter[tuple[str, str, bool, bool, bool]] = Counter()
+    for (_, c, carp, anterior, trabajo, mercado), n in detalle.items():
+        sin_rama[(c, carp, anterior, trabajo, mercado)] += n
+    si = {True: "si", False: "no"}
+    for (c, carp, anterior, trabajo, mercado), n in sorted(sin_rama.items()):
+        print(f"| {c} | {carp} | {si[anterior]} | {si[trabajo]} | {si[mercado]} | {n} |")
     print("")
     print(f"lineas con una fecha AAAA-MM-DD de un MES reservado entero: {lineas_mes}")
     print("")

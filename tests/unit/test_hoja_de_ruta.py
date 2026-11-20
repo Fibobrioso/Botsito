@@ -482,7 +482,7 @@ def test_c_se_rompe_con_depende_de_y_con_despues_coma(frase: str, trozo: str) ->
 
 
 ARCHIVO_CON_W = """
-# Archivo {n} · PROJECT_STATE.md de main en abc (2026-10-{d:02d}), al abrir trabajo/x
+# Archivo {n} · PROJECT_STATE.md de main en abc (2026-08-{d:02d}), al abrir trabajo/x
 
 # PROJECT STATE
 
@@ -492,7 +492,7 @@ W. La W de esta vida.
 
 ## Known Ambiguities
 """
-REGISTRO_W = "# Next Action HECHA · W · sale de PROJECT_STATE.md en trabajo/x (2026-10-{d:02d})\n"
+REGISTRO_W = "# Next Action HECHA · W · sale de PROJECT_STATE.md en trabajo/x (2026-08-{d:02d})\n"
 
 
 def test_b_se_rompe_si_falta_el_registro_de_una_letra_reutilizada() -> None:

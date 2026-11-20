@@ -18,8 +18,8 @@ import pytest
 
 RAIZ = Path(__file__).resolve().parents[2]
 SCRIPT = RAIZ / "scripts" / "contrato_rama.py"
-HOY = dt.date(2026, 11, 19)
-AYER = dt.date(2026, 11, 18)
+HOY = dt.date(2026, 8, 19)
+AYER = dt.date(2026, 8, 18)
 RAMA = "trabajo/prueba"
 
 CABECERA = """\
@@ -29,7 +29,7 @@ Texto de antes de la tabla.
 
 | Fecha | Que se vio | Particiones | Quien | ¿Quema? |
 |---|---|---|---|---|
-| 2026-10-01 | **Rama `trabajo/vieja`**: algo | ninguna | la sesion | No |
+| 2026-08-01 | **Rama `trabajo/vieja`**: algo | ninguna | la sesion | No |
 """
 COLA = """
 ## Lo que esto obliga
@@ -71,20 +71,20 @@ def _mensaje(dia: str, rama: str) -> str:
 
 
 def test_pasa_con_la_fila_de_hoy_que_nombra_la_rama(c: ModuleType) -> None:
-    assert c.problemas_fila_del_dia(RAMA, HOY, texto(fila("2026-11-19", RAMA))) == []
+    assert c.problemas_fila_del_dia(RAMA, HOY, texto(fila("2026-08-19", RAMA))) == []
 
 
 def test_falla_sin_ninguna_fila_del_dia(c: ModuleType) -> None:
-    assert c.problemas_fila_del_dia(RAMA, HOY, texto()) == [_mensaje("2026-11-19", RAMA)]
+    assert c.problemas_fila_del_dia(RAMA, HOY, texto()) == [_mensaje("2026-08-19", RAMA)]
 
 
 def test_falla_sin_el_fichero(c: ModuleType) -> None:
-    assert c.problemas_fila_del_dia(RAMA, HOY, None) == [_mensaje("2026-11-19", RAMA)]
+    assert c.problemas_fila_del_dia(RAMA, HOY, None) == [_mensaje("2026-08-19", RAMA)]
 
 
 def test_falla_con_la_fila_de_ayer(c: ModuleType) -> None:
-    t = texto(fila("2026-11-18", RAMA))
-    assert c.problemas_fila_del_dia(RAMA, HOY, t) == [_mensaje("2026-11-19", RAMA)]
+    t = texto(fila("2026-08-18", RAMA))
+    assert c.problemas_fila_del_dia(RAMA, HOY, t) == [_mensaje("2026-08-19", RAMA)]
     assert c.problemas_fila_del_dia(RAMA, AYER, t) == []
 
 
@@ -99,26 +99,26 @@ def test_falla_con_la_fila_de_ayer(c: ModuleType) -> None:
     ],
 )
 def test_falla_con_la_fila_de_hoy_de_otra_rama(c: ModuleType, otra: str) -> None:
-    t = texto(fila("2026-11-19", otra))
-    assert c.problemas_fila_del_dia(RAMA, HOY, t) == [_mensaje("2026-11-19", RAMA)]
+    t = texto(fila("2026-08-19", otra))
+    assert c.problemas_fila_del_dia(RAMA, HOY, t) == [_mensaje("2026-08-19", RAMA)]
 
 
 def test_solo_cuenta_la_tabla_de_exposiciones_y_su_primera_columna(c: ModuleType) -> None:
     # una linea de otra tabla, o una que nombra el dia fuera de la primera columna, no es la fila
-    otra_tabla = COLA + fila("2026-11-19", RAMA)
+    otra_tabla = COLA + fila("2026-08-19", RAMA)
     assert c.problemas_fila_del_dia(RAMA, HOY, texto(cola=otra_tabla)) != []
     fuera = (
-        f"| 2026-11-18 | **Rama `{RAMA}`**: escrita el 2026-11-19 | ninguna | la sesion | No |\n"
+        f"| 2026-08-18 | **Rama `{RAMA}`**: escrita el 2026-08-19 | ninguna | la sesion | No |\n"
     )
     assert c.problemas_fila_del_dia(RAMA, HOY, texto(fuera)) != []
-    prosa = f"El 2026-11-19, la rama `{RAMA}` leyo algo.\n"
+    prosa = f"El 2026-08-19, la rama `{RAMA}` leyo algo.\n"
     assert c.problemas_fila_del_dia(RAMA, HOY, texto(cola="\n" + prosa)) != []
 
 
 def test_la_tabla_no_tiene_que_estar_al_final(c: ModuleType) -> None:
     """La tabla de HOLDOUT-EXPOSICIONES.md va seguida de «## Lo que esto obliga» (0.4)."""
-    t = texto(fila("2026-11-17", "trabajo/otra"), fila("2026-11-19", RAMA))
-    assert "## Lo que esto obliga" in t.split(fila("2026-11-19", RAMA), 1)[1]
+    t = texto(fila("2026-08-17", "trabajo/otra"), fila("2026-08-19", RAMA))
+    assert "## Lo que esto obliga" in t.split(fila("2026-08-19", RAMA), 1)[1]
     assert c.problemas_fila_del_dia(RAMA, HOY, t) == []
 
 
@@ -166,9 +166,9 @@ def repo(tmp_path: Path) -> Path:
 
 
 def test_cuenta_la_fila_estadiada_y_no_la_del_arbol(c: ModuleType, repo: Path) -> None:
-    escribir(repo, EXPOSICIONES, texto(fila("2026-11-19", RAMA)))
+    escribir(repo, EXPOSICIONES, texto(fila("2026-08-19", RAMA)))
     # solo en el arbol de trabajo: no se sella, no cuenta
-    assert c.fila_del_dia(repo, HOY) == [_mensaje("2026-11-19", RAMA)]
+    assert c.fila_del_dia(repo, HOY) == [_mensaje("2026-08-19", RAMA)]
     git(repo, "add", EXPOSICIONES)
     assert c.fila_del_dia(repo, HOY) == []
     # estadiada y luego borrada del arbol: cuenta lo estadiado
@@ -194,11 +194,11 @@ def test_main_del_guion_niega_sin_la_fila_en_trabajo(
     monkeypatch.setattr(c, "RAIZ", repo)
     monkeypatch.setattr(c, "_hoy", lambda: HOY)
     assert c.main() == 1
-    assert _mensaje("2026-11-19", RAMA) in capsys.readouterr().err
-    escribir(repo, EXPOSICIONES, texto(fila("2026-11-19", RAMA)))
+    assert _mensaje("2026-08-19", RAMA) in capsys.readouterr().err
+    escribir(repo, EXPOSICIONES, texto(fila("2026-08-19", RAMA)))
     git(repo, "add", EXPOSICIONES)
     assert c.main() == 0
-    assert "G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-19" in capsys.readouterr().out
+    assert "G2: fila de HOLDOUT-EXPOSICIONES del 2026-08-19" in capsys.readouterr().out
 
 
 def test_hoy_es_el_dia_del_reloj_local(c: ModuleType) -> None:
