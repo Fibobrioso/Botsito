@@ -19369,3 +19369,78 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 74 (2026-11-18).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/preregistro (2026-11-19)
+
+Su texto literal en «Technical Debt», con su condición y su evidencia (orden de cierre del consultor
+del 2026-11-19):
+
+- F26 lee la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073, ADR-0040).
+  Condición (a), PAGADA por ADR-0096: F26 no puntúa el objetivo, el resultado ni la gestión, así que
+  A-56 no puntúa (ADR-0096:29-30, decisión 0; `docs/validation/PREREGISTRO.md:128-129`, §2). A-56
+  sigue ABIERTA en `knowledge/spec/ambiguedades.yaml`; lo que sale es la deuda de F26 con ella.
+
+- DOS DIAS DEL UNIVERSO DE LA SESION 1 NO ESTAN EN NINGUNA PARTICION, y F26 tiene que saberlo (2026-09-20, medido en la rama del universo congelado; ADR-0035 §Impacto y docs/validation/UNIVERSO-CONGELADO.md §2b).
+  Condición (a), PAGADA por ADR-0096: los dos días no entran en ningún conjunto medido y toda cifra
+  dice sobre qué conjunto se da (ADR-0096:51-52, decisión 2; `docs/validation/PREREGISTRO.md:152-153`,
+  §2). Su texto entero sigue en el Archivo 1 de este fichero.
+
+# Registro de cierre · `trabajo/preregistro` (2026-11-19)
+
+- Orden de cierre de Aleks del 2026-11-19, tras la revisión del consultor de la rama sobre
+  `a2635c6a` (8 commits sobre `main` `e490fe33`), pegada en la conversación de la sesión; después,
+  Aleks lanzó `/cerrar-rama trabajo/preregistro`. La orden y `RITUAL.md` no chocan; dos ajustes de
+  la orden, dichos en el informe final: R5.1 no pasa a HECHA (lo manda la orden, aunque el ritual lo
+  sugiera para lo que la rama deja hecho) y ninguna letra sale, así que no hay bloque «Next Action
+  HECHA».
+- **Lo hecho** (tramo R5, R5.1; la G; `src/` y `knowledge/` sin tocar):
+  - **Primer tiempo, fase 0** (PREREGISTRO-INVENTARIO.md §0.1 a §0.8): la puerta tal como es, las
+    particiones por recuento, la densidad de construcción, la métrica de F26, las condiciones
+    previas y lo de ADR-0092 §13; la PARADA con diez decisiones.
+  - **Segundo tiempo**, con la respuesta del consultor a la PARADA: ADR-0096 (el pre-registro: la
+    rentabilidad fijada; F26 diagnóstico con la referencia de ADR-0043 y la regla de las 36
+    unidades, sobre febrero de 2026 con vídeo y voz; `holdout-1` cerrada; el procedimiento del hash
+    de la spec); `PREREGISTRO.md` relleno, sin la marca y sin ninguna pregunta;
+    `test_con_el_preregistro_relleno_la_puerta_sigue_cerrada` sustituye al test de la marca (rompe
+    con el fichero de `main`, pasa con el de la rama); recuadros en ADR-0092 §5 y §13; NOTA en
+    MASTER_PLAN; el recuento por tramo de `cobertura_material` (6, 4 con el quemado, 3 y 6 medibles
+    en un tramo).
+- **Desviaciones** (aceptadas por el consultor): T3 con T4 y T6 con T7 en un commit; el contrato con
+  los protegidos nombrados uno a uno; el test cambiado con Edit al negar la guardia el guion; el
+  revisor antes de la CI; la fecha de un día reservado retirada del informe del revisor.
+- **Commits de la rama** (9):
+  - `783b2196` apertura: encargo, contrato y Archivo 75 de PROJECT_STATE;
+  - `9da183a0` la fase 0 del primer tiempo, y la PARADA;
+  - `e584ae51` la respuesta del consultor a la PARADA, tal cual (T1);
+  - `6eee2aa9` el contrato del segundo tiempo (T2);
+  - `49890443` ADR-0096 y el recuento por tramo (T3 y T4);
+  - `f2ef22cc` PREREGISTRO.md relleno y el test sustituto (T5);
+  - `f527f8c3` la NOTA de MASTER_PLAN y el segundo tiempo en el informe (T6 y T7);
+  - `a2635c6a` el revisor y sus hallazgos arreglados;
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Filas de HOLDOUT-EXPOSICIONES de la rama**: dos, las dos del 2026-11-19 (la de la fase 0,
+  ampliada el mismo día con lo leído de más y con lo que vio el revisor, y la del recuento de T3);
+  la primera cubre los `make check` del día, los del cierre incluidos.
+- **CI de Linux** por `fix/preregistro`, las dos con 1 failed (el esperado,
+  `test_state_check_ok_on_real_repo`, por el nombre `fix/`) y 3448 passed: run 44594439039 sobre
+  `9da183a0`; run 44636648001 sobre `a2635c6a`. CI de `main` sobre `e490fe33`, al abrir: run
+  44576448998, success.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Next Action: la G se SUSTITUYE por la de «Preparado para la orden de cierre» de
+    PREREGISTRO-INVENTARIO.md, tal cual (con la corrección de fidelidad-1: 4 retirados y 6
+    medibles); en la F, la cláusula de los frenos de la cuenta del mes se sustituye por «(3) se lee
+    con la contingencia de ADR-0093 §6 sin retocarla (decisión de Aleks del 2026-11-19; R4.3)»;
+    ninguna letra sale (el texto anterior de las dos está en el Archivo 75);
+  - Technical Debt: cuatro líneas nuevas (el comando de medida de F26, el libro de septiembre, el
+    día quemado de `holdout-2`, el docstring de `test_kit.py`), dos dueños añadidos («UNA PREGUNTA
+    ABRE N PARTICIONES» y «EL FALLBACK DE `leer_fichero`») y dos líneas que salen (arriba,
+    «Technical Debt PAGADA»);
+  - hoja de ruta: R5.1 con el texto preparado (sigue ABIERTA: le queda la puerta por pregunta);
+    R4.3 con el pivote; R4.6 (el ciclo de afinado por días) y R7.3 (sombra en diferido) nuevas;
+    A.2 con las preguntas enviadas a FTMO el 2026-11-19; la fila de F:F26 al día;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.576 bytes (`wc -c`) en este commit.
+- Letra del tag: la última cerrada era `stable/F39f-laminas-sesion-7b`; `stable/F39g-preregistro`
+  no existe en local ni en origin (comprobado antes de este commit). La siguiente rama será F39h.
+- Tag: `stable/F39g-preregistro`. El merge es `git rev-parse "stable/F39g-preregistro^{commit}"`.
