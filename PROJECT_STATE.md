@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/guardias-holdout
+main
 
 ## Current Feature
-trabajo/guardias-holdout EN CURSO (Carril: guardias y deuda): G2 (make check no sella en trabajo/* sin la fila de HOLDOUT-EXPOSICIONES del día), dos huecos de test_hoja_de_ruta y el estudio de G1. Encargo docs/encargos/trabajo-guardias-holdout.md; informe docs/validation/GUARDIAS-HOLDOUT.md.
+Ninguna rama abierta. trabajo/guardias-holdout cerrada en main el 2026-11-20 (stable/F39h-guardias-holdout): G2 (make check no sella en trabajo/* sin la fila de HOLDOUT-EXPOSICIONES del día), dos huecos de test_hoja_de_ruta y el estudio de G1.
 
 ## Stable Main State
-2fc884ac · merge de `trabajo/preregistro` (tag `stable/F39g-preregistro`), sobre `stable/F39f-laminas-sesion-7b` (50f6a6fc). Informe docs/validation/PREREGISTRO-INVENTARIO.md; el registro del cierre, al final de HISTORIA.
+fb1f02e9 · merge de `trabajo/guardias-holdout` (tag `stable/F39h-guardias-holdout`), sobre `stable/F39g-preregistro` (2fc884ac). Informe docs/validation/GUARDIAS-HOLDOUT.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-2fc884ac · merge trabajo/preregistro: PREREGISTRO.md relleno con ADR-0096 y el test que sustituye al de la marca · tag stable/F39g-preregistro
+fb1f02e9 · merge trabajo/guardias-holdout: G2 (sin fila de HOLDOUT del día no se sella en trabajo/*), H en test_hoja_de_ruta y el estudio de G1 · tag stable/F39h-guardias-holdout
 
 ## Tests Currently Passing
 2097 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
