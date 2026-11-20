@@ -31,6 +31,9 @@ rutas_protegidas:
   - tests/guarda_holdout.py
 comprobaciones:
   - uv run botsito knowledge validate (con el log fuera del repo, en la carpeta de trabajo de la sesion)
-  - uv run python scripts/contrato_rama.py
+  # `uv run python scripts/contrato_rama.py` suelto lo niega la guardia mientras el guion difiera
+  # del de main (su `git -c core.quotepath=false`; PROJECT_STATE.md, Technical Debt de los guiones de
+  # la plataforma): en esta rama lo corre `make check` (linea CONTRATO: y G2: del log), o Aleks con «!»
+  - make-check.log, lineas CONTRATO y G2
   - uv run pytest tests/unit/test_contrato_rama.py tests/unit/test_fila_del_dia.py tests/unit/test_hoja_de_ruta.py -q
   - make check > make-check.log 2>&1

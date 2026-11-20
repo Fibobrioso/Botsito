@@ -1,0 +1,59 @@
+dias ocultos (casos_ocultos): 34; desde el inicio del proyecto: 8; meses reservados enteros: 5
+commits en el rango: 76 (con diff fuera del holdout: 69)
+lineas miradas (añadidas y de mensajes): 16885
+
+| Clase | Lineas con un dia oculto | De ellas, con uno anterior al proyecto |
+|---|---|---|
+| trailer Fuente: (mensaje) | 0 | 0 |
+| mensaje de commit, fuera del trailer | 1 | 0 |
+| uv.lock | 0 | 0 |
+| fichero de asignacion (particiones.yaml) | 0 | 0 |
+| id de trabajo (ev-/fb-/...-sesion-) | 19 | 0 |
+| id de caso (caso-...) | 0 | 0 |
+| id de caso (caso-...), id exacto | 1 | 1 |
+| docs/state/ | 0 | 0 |
+| docs/validation/HOLDOUT-EXPOSICIONES.md | 2 | 0 |
+| prosa de docs/ | 9 | 0 |
+| codigo o tests | 0 | 0 |
+| otra | 0 | 0 |
+| TOTAL | 32 | 1 |
+
+| Rama | Commits sin merge | Merges | Lineas con un dia oculto |
+|---|---|---|---|
+| stable/F39a-guardia-falsos-positivos | 9 | 1 | 1 |
+| stable/F39b-dieta-estado | 5 | 1 | 0 |
+| stable/F39c-skills-metodo | 8 | 1 | 0 |
+| stable/F39d-sesion-07 | 9 | 1 | 0 |
+| stable/F39e-activar-sesion-07 | 15 | 1 | 16 |
+| stable/F39f-laminas-sesion-7b | 7 | 1 | 0 |
+| stable/F39g-preregistro | 9 | 1 | 15 |
+| commits de main sin merge (docs(state)) | 7 | 0 | 0 |
+
+| Rama | Clase | Carpeta (1.er o 2.o nivel) | Anterior al proyecto | Marca de trabajo delante de cada una | Marca de mercado cerca de alguna | Lineas |
+|---|---|---|---|---|---|---|
+| stable/F39a-guardia-falsos-positivos | id de caso (caso-...), id exacto | tests/unit | si | no | si | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | (raiz) | no | no | no | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/spec | no | no | no | 2 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/spec | no | no | si | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/spec | no | si | no | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/spec | no | si | si | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/validation | no | no | no | 4 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/validation | no | no | si | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/validation | no | si | no | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | docs/validation | no | si | si | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | knowledge/feedback | no | no | no | 1 |
+| stable/F39e-activar-sesion-07 | id de trabajo (ev-/fb-/...-sesion-) | knowledge/spec | no | no | no | 1 |
+| stable/F39e-activar-sesion-07 | mensaje de commit, fuera del trailer | (mensaje de commit) | no | no | no | 1 |
+| stable/F39g-preregistro | docs/validation/HOLDOUT-EXPOSICIONES.md | docs/validation | no | no | no | 2 |
+| stable/F39g-preregistro | id de trabajo (ev-/fb-/...-sesion-) | docs/validation | no | no | no | 4 |
+| stable/F39g-preregistro | prosa de docs/ | docs/validation | no | no | no | 6 |
+| stable/F39g-preregistro | prosa de docs/ | docs/validation | no | si | no | 3 |
+
+lineas con una fecha AAAA-MM-DD de un MES reservado entero: 794
+
+ids de caso en el arbol de main (fuera del holdout): 753; con un dia oculto: 122
+  de ellos, el id EXACTO de un caso oculto: 100
+  docs/validation: 11 (id exacto: 9)
+  knowledge/cases: 68 (id exacto: 68)
+  tests/contract: 18 (id exacto: 10)
+  tests/unit: 25 (id exacto: 13)

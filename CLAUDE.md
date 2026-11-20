@@ -185,6 +185,9 @@ Code bloquea su carpeta `Backtest marzo 2026`.
 
 **Toda exposicion se declara en `docs/validation/HOLDOUT-EXPOSICIONES.md` el mismo dia, siempre**
 (ADR-0021 §4).
+- Guardia: en una rama `trabajo/*`, `make check` no sella si el fichero ESTADIADO no tiene una fila
+  de su tabla con la fecha de hoy (reloj local) que nombre la rama (G2, `scripts/contrato_rama.py`,
+  desde `trabajo/guardias-holdout`); en `main`, `fix/` y `feature/` no actua.
 
 **Una prohibicion escrita aqui que no salga de un ADR se revisa contra el ADR antes de aplicarla**:
 tres veces este fichero fue mas estricto que ADR-0021 sin que ningun ADR lo dijera y bloqueo un paso

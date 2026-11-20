@@ -22,12 +22,17 @@ import re
 from collections.abc import Mapping
 from pathlib import Path
 
+import pytest
+
 RAIZ = Path(__file__).resolve().parents[2]
 HOJA = RAIZ / "docs" / "plan" / "HOJA-DE-RUTA.md"
 # Los tramos de activacion o de sesion: donde tiene que estar toda ambiguedad ya respondida.
 TRAMOS_DE_SESION = ("R1", "R4")
+# «Depende de» y «después,» sin «de» tambien dicen una dependencia (buzon del consultor del
+# 2026-11-08; trabajo/guardias-holdout, GUARDIAS-HOLDOUT.md, H).
 DEPENDENCIA = re.compile(
-    r"(despu[eé]s de|antes de|espera a|junto a|\btras\b)([^.;:]{0,90})", re.IGNORECASE
+    r"(depende de|despu[eé]s de|despu[eé]s,|antes de|espera a|junto a|\btras\b)([^.;:]{0,90})",
+    re.IGNORECASE,
 )
 LETRA_SUELTA = re.compile(r"(?<![\w-])([A-Z])(?![\w-])")
 REF = re.compile(r"\b(NA|HER|ID|F):((?:A|ADR|RN)-\d+|F\d{2}|\d+|[A-Z])(?![\w-])")
@@ -59,6 +64,32 @@ def heredados_vivos(ps: str) -> set[int]:
 
 def letras_hechas(historia: str) -> set[str]:
     return set(re.findall(r"^# Next Action HECHA · ([A-Z]) ·", historia, re.M))
+
+
+def letras_registradas_tras_su_ultima_vida(historia: str) -> set[str]:
+    """Las letras cuyo ULTIMO registro «# Next Action HECHA» va despues del ultimo `# Archivo` de
+    HISTORIA en que la letra estaba viva en la Next Action (o que no estuvo viva en ninguno).
+
+    `letras_hechas` es un conjunto: una letra reutilizada (DECISIONES-DE-PROCESO.md, entrada del
+    2026-10-27) ya tiene el registro de su vida anterior, y no se veia que faltara el de la nueva
+    (VIDEO-JULIO.md §10.1; trabajo/guardias-holdout, H). HISTORIA solo se amplia: el Archivo de
+    una rama va antes que el registro que esa rama escribe al cerrar la letra."""
+    ultima_vida: dict[str, int] = {}
+    ultimo_registro: dict[str, int] = {}
+    en_archivo = en_next_action = False
+    for n, linea in enumerate(historia.splitlines()):
+        if linea.startswith("# Archivo "):
+            en_archivo, en_next_action = True, False
+        elif linea.startswith("# ") and not linea.startswith("# PROJECT STATE"):
+            en_archivo = en_next_action = False
+            m = re.match(r"# Next Action HECHA · ([A-Z]) ·", linea)
+            if m:
+                ultimo_registro[m.group(1)] = n
+        elif en_archivo and linea.startswith("## "):
+            en_next_action = linea.startswith("## Next Action")
+        elif en_next_action and (m := re.match(r"([A-Z])\. ", linea)):
+            ultima_vida[m.group(1)] = n
+    return {x for x, n in ultimo_registro.items() if n > ultima_vida.get(x, -1)}
 
 
 def entradas_de_la_hoja(hoja: str) -> list[tuple[str, str, str]]:
@@ -135,6 +166,7 @@ def problemas_b(
 ) -> list[str]:
     vivas, heredados = set(entradas_vivas(ps)), heredados_vivos(ps)
     hechas = letras_hechas(historia)
+    al_dia = letras_registradas_tras_su_ultima_vida(historia)
     problemas: list[str] = []
     for tramo, titulo, bloque in entradas_de_la_hoja(hoja):
         es_hecha = bool(HECHA.search(bloque))
@@ -145,6 +177,11 @@ def problemas_b(
                     problemas.append(f"{donde} esta HECHA y la letra sigue viva")
                 elif es_hecha and valor not in hechas:
                     problemas.append(f"{donde} esta HECHA y HISTORIA no la registra")
+                elif es_hecha and valor not in al_dia:
+                    problemas.append(
+                        f"{donde} esta HECHA y HISTORIA no la registra despues de su ultima vida "
+                        "en la Next Action (una letra reutilizada lleva su registro nuevo)"
+                    )
                 elif not es_hecha and valor not in vivas:
                     problemas.append(f"{donde} no es una letra viva de la Next Action")
             elif tipo == "HER":
@@ -423,3 +460,60 @@ def test_b_se_rompe_si_un_heredado_hecho_sigue_vivo() -> None:
     hoja = HOJA_BIEN.replace("- **Refs:** NA:W", "- **Refs:** NA:W · HER:15")
     problemas = problemas_b(PS, hoja, HISTORIA, IDS, FUNCIONES)
     assert problemas == ["Carril: hecho «H.1 · W»: HER:15 esta HECHA y el heredado sigue vivo"]
+
+
+# ------------------------------------------------- los dos huecos de trabajo/guardias-holdout (H)
+
+
+@pytest.mark.parametrize(
+    ("frase", "trozo"),
+    [
+        ("Depende de W y de la F.", "Depende de W y de la F"),
+        ("Siguiente, la F; después, W.", "después, W"),
+        ("Siguiente, la F; despues, W.", "despues, W"),
+    ],
+)
+def test_c_se_rompe_con_depende_de_y_con_despues_coma(frase: str, trozo: str) -> None:
+    """(c) no reconocia «Depende de» ni «después,» sin «de» (buzon del consultor, 2026-11-08)."""
+    ps = PS.replace("F. Orden de trabajo: la hoja de ruta manda.", f"F. Orden de trabajo. {frase}")
+    assert problemas_c(ps) == [f"F depende («{trozo}») de W, que no esta viva"]
+    # y con una letra viva no hay problema
+    assert problemas_c(ps.replace(" W", " E")) == []
+
+
+ARCHIVO_CON_W = """
+# Archivo {n} · PROJECT_STATE.md de main en abc (2026-10-{d:02d}), al abrir trabajo/x
+
+# PROJECT STATE
+
+## Next Action
+
+W. La W de esta vida.
+
+## Known Ambiguities
+"""
+REGISTRO_W = "# Next Action HECHA · W · sale de PROJECT_STATE.md en trabajo/x (2026-10-{d:02d})\n"
+
+
+def test_b_se_rompe_si_falta_el_registro_de_una_letra_reutilizada() -> None:
+    """(b): `letras_hechas` es un conjunto, y el registro de la vida anterior de W tapaba que
+    faltara el de la nueva (VIDEO-JULIO.md §10.1)."""
+    primera_vida = ARCHIVO_CON_W.format(n=1, d=1) + REGISTRO_W.format(d=2)
+    segunda_vida = primera_vida + ARCHIVO_CON_W.format(n=2, d=10)
+    assert letras_hechas(segunda_vida) == {"W"}  # el hueco: el conjunto ya la tiene
+    assert problemas_b(PS, HOJA_BIEN, primera_vida, IDS, FUNCIONES) == []
+    assert problemas_b(PS, HOJA_BIEN, segunda_vida, IDS, FUNCIONES) == [
+        "Carril: hecho «H.1 · W»: NA:W esta HECHA y HISTORIA no la registra despues de su "
+        "ultima vida en la Next Action (una letra reutilizada lleva su registro nuevo)"
+    ]
+    con_registro_nuevo = segunda_vida + REGISTRO_W.format(d=11)
+    assert problemas_b(PS, HOJA_BIEN, con_registro_nuevo, IDS, FUNCIONES) == []
+
+
+def test_b_la_vida_de_una_letra_solo_cuenta_en_la_next_action_de_un_archivo() -> None:
+    """Una W en otra seccion del Archivo, o fuera de un Archivo, no es una vida de la letra."""
+    otra_seccion = ARCHIVO_CON_W.replace("## Next Action", "## Otra cosa").format(n=2, d=10)
+    historia = ARCHIVO_CON_W.format(n=1, d=1) + REGISTRO_W.format(d=2) + otra_seccion
+    assert problemas_b(PS, HOJA_BIEN, historia, IDS, FUNCIONES) == []
+    suelta = HISTORIA + "\n# Registro de cierre de trabajo/y\n\n## Next Action\n\nW. citada\n"
+    assert problemas_b(PS, HOJA_BIEN, suelta, IDS, FUNCIONES) == []

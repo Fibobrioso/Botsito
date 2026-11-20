@@ -16,7 +16,7 @@ trabajo/guardias-holdout EN CURSO (Carril: guardias y deuda): G2 (make check no 
 2fc884ac · merge trabajo/preregistro: PREREGISTRO.md relleno con ADR-0096 y el test que sustituye al de la marca · tag stable/F39g-preregistro
 
 ## Tests Currently Passing
-2082 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2097 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
