@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/preregistro
+main
 
 ## Current Feature
-trabajo/preregistro LISTA PARA REVISIÓN, NO cerrada (R5.1; la G): PREREGISTRO.md relleno con ADR-0096 y el test que sustituye al de la marca. Encargo docs/encargos/trabajo-preregistro.md; informe docs/validation/PREREGISTRO-INVENTARIO.md.
+Ninguna rama abierta. trabajo/preregistro cerrada en main el 2026-11-19 (stable/F39g-preregistro): PREREGISTRO.md relleno con ADR-0096 (la rentabilidad fijada; F26 diagnóstico sobre el mes limpio) y el test que sustituye al de la marca.
 
 ## Stable Main State
-50f6a6fc · merge de `trabajo/laminas-sesion-7b` (tag `stable/F39f-laminas-sesion-7b`), sobre `stable/F39e-activar-sesion-07` (cf33a916). Informe docs/validation/LAMINAS-7B.md; el registro del cierre, al final de HISTORIA.
+2fc884ac · merge de `trabajo/preregistro` (tag `stable/F39g-preregistro`), sobre `stable/F39f-laminas-sesion-7b` (50f6a6fc). Informe docs/validation/PREREGISTRO-INVENTARIO.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-50f6a6fc · merge trabajo/laminas-sesion-7b: la 7b lista para grabar (bloque de días, láminas fuera del repo, PREGUNTAS-7B.md y hoja 08) · tag stable/F39f-laminas-sesion-7b
+2fc884ac · merge trabajo/preregistro: PREREGISTRO.md relleno con ADR-0096 y el test que sustituye al de la marca · tag stable/F39g-preregistro
 
 ## Tests Currently Passing
 2082 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
