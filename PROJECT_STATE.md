@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardias-holdout
 
 ## Current Feature
-Ninguna rama abierta. trabajo/preregistro cerrada en main el 2026-11-19 (stable/F39g-preregistro): PREREGISTRO.md relleno con ADR-0096 (la rentabilidad fijada; F26 diagnóstico sobre el mes limpio) y el test que sustituye al de la marca.
+trabajo/guardias-holdout EN CURSO (Carril: guardias y deuda): G2 (make check no sella en trabajo/* sin la fila de HOLDOUT-EXPOSICIONES del día), dos huecos de test_hoja_de_ruta y el estudio de G1. Encargo docs/encargos/trabajo-guardias-holdout.md; informe docs/validation/GUARDIAS-HOLDOUT.md.
 
 ## Stable Main State
 2fc884ac · merge de `trabajo/preregistro` (tag `stable/F39g-preregistro`), sobre `stable/F39f-laminas-sesion-7b` (50f6a6fc). Informe docs/validation/PREREGISTRO-INVENTARIO.md; el registro del cierre, al final de HISTORIA.
@@ -173,8 +173,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 75 (2026-11-19).
+— ninguna desde el Archivo 76 (2026-11-19).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 75 (2026-11-19).
+— ninguna desde el Archivo 76 (2026-11-19).
