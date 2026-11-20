@@ -383,7 +383,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.3 · Preparar, celebrar y activar la sesión 7 (en dos días, 7a y 7b)
 - **Refs:** NA:F · ID:A-13 · ID:A-35 · ID:A-43 · ID:A-44 · ID:A-46 · ID:A-48 · ID:A-53 · ID:A-20 · ID:ADR-0083 · ID:ADR-0064 · ID:RN-009 · ID:A-58
-- **Qué es:** con el método de ADR-0093 (RUMBO §1): como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Preparada en `trabajo/preparacion-sesion-7` (PREPARACION-SESION-7.md), con el reparto que aprobó el consultor el 2026-11-11: 7a (sesion-07), el rango de H4, el break even (A-13), las zonas de control del esquema (RN-009), A-35, cuándo se coloca la orden (ADR-0064) y las entradas válidas que deja sin tomar (F7 #10), más el bloque de días (docs/sesion-7/PREGUNTAS-7A.md); 7b (sesion-08), revisada el 2026-11-18 con lo que dejó la 7a (LAMINAS-7B.md): la mecha que vuelve en M15 (A-35), las zonas de control y el margen del break even (RN-009 y A-13), dónde pone el 0 de la caja (A-48), el rango de 4 horas después de una ruptura (A-58), S-22 y S-19, más el bloque de días y, al final, la tarde del 10 de julio (docs/sesion-7/PREGUNTAS-7B.md; la reentrada, A-53 y A-43, entre las que no caben). Las láminas de la 7b las generó trabajo/laminas-sesion-7b, con el motor de la activación de la 7a. El pivote, pre-registrado en docs/plan/PIVOTES-SESION-7.yaml (ADR-0093 §6).
+- **Qué es:** con el método de ADR-0093 (RUMBO §1): como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Preparada en `trabajo/preparacion-sesion-7` (PREPARACION-SESION-7.md), con el reparto que aprobó el consultor el 2026-11-11: 7a (sesion-07), el rango de H4, el break even (A-13), las zonas de control del esquema (RN-009), A-35, cuándo se coloca la orden (ADR-0064) y las entradas válidas que deja sin tomar (F7 #10), más el bloque de días (docs/sesion-7/PREGUNTAS-7A.md); 7b (sesion-08), revisada el 2026-11-18 con lo que dejó la 7a (LAMINAS-7B.md): la mecha que vuelve en M15 (A-35), las zonas de control y el margen del break even (RN-009 y A-13), dónde pone el 0 de la caja (A-48), el rango de 4 horas después de una ruptura (A-58), S-22 y S-19, más el bloque de días y, al final, la tarde del 10 de julio (docs/sesion-7/PREGUNTAS-7B.md; la reentrada, A-53 y A-43, entre las que no caben). Las láminas de la 7b las generó trabajo/laminas-sesion-7b, con el motor de la activación de la 7a. El pivote, pre-registrado en docs/plan/PIVOTES-SESION-7.yaml (ADR-0093 §6). El pivote (decisión de Aleks del 2026-11-19): si en la corrida de (3) la cuenta por mes de julio acaba SUSPENDIDA o deja de llenar por un freno de la cuenta antes del 17, se aplica la contingencia de ADR-0093 §6 sin retocarla: se lee la corrida diaria de contexto, contra los mismos mínimos, y no se mezclan parejas de las dos corridas. El informe da las dos corridas y, como dato sin umbral, en qué sesión se frena la cuenta por mes y con qué saldo. La sesión siguiente a la 7b sigue R4.6.
 - **Depende de:** R4.4 y R4.5.
 - **Quién:** la sesión prepara con el consultor; Aleks celebra los dos días con el trader; el consultor propone los números del pivote y Aleks los aprueba.
 - **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO y A-16 la paga la activación de 7b (la de S-22 y S-19).
@@ -413,21 +413,28 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Hecho cuando:** la herramienta y las láminas de las sesiones candidatas de la 7a, revisadas por el consultor; las de los días que elija la preparación se generan allí con la herramienta.
 - **Estado:** HECHA (trabajo/laminas, LAMINAS.md). Sus frases de causa, corregidas antes de grabar la 7a: la de cada gate sale de la rama que dispara (trabajo/laminas-motivos, LAMINAS-MOTIVOS.md).
 
+### R4.6 · El ciclo de afinado por días
+- **Refs:** NA:F · ID:ADR-0093
+- **Qué es:** acuerdo de Aleks y el consultor (2026-11-19) para las sesiones siguientes a la 7b. Cada vuelta: (1) correr julio y clasificar las diferencias; (2) elegir de seis a ocho sesiones para el bloque de días por la compuerta de ADR-0093 §3 y por la pregunta a la que sirven, nunca por cómo le fue al bot, con dos o tres preguntas técnicas como mucho; (3) el trader opera la sesión entera, ve las láminas y corrige, y a cada corrección se le pregunta «¿siempre, solo aquí o de qué depende?»; (4) la extracción clasifica cada corrección en regla general, ejemplo o contradicción con lo fijado; (5) solo se activan las reglas generales, cada una con su test que rompe y su efecto medido en julio; (6) una fila en el Marcador. El material de construcción no es el límite: casi todos sus días dev pasan la compuerta (PREPARACION-SESION-7.md, la compuerta contada).
+- **Depende de:** R4.3 (la 7b activada y el pivote leído).
+- **Quién:** el consultor prepara cada sesión; Aleks la dirige; la sesión ingiere y activa.
+- **Hecho cuando:** julio cumple los dos mínimos del pivote (ADR-0093 §6), o la lectura del pivote cambia el objetivo.
+- **Estado:** método acordado, sin rama; empieza con la sesión siguiente a la 7b.
+
 ## R5 · Fidelidad
 
 ### R5.1 · Las condiciones previas de F26
-- **Refs:** NA:G · F:F26 · ID:A-16 · ID:A-56 · ID:ADR-0021 · ID:ADR-0033
-- **Qué es:** rellenar PREREGISTRO.md (métrica, umbral, partición, autorización); arreglar que una
-  pregunta abre N particiones (rama de código en la puerta); decidir qué conjunto es el universo
-  (los dos días de la sesión 1 sin partición); A-56 medida, o declarada conocida, para puntuar el
-  objetivo; A-16 (Oanda frente a Dukascopy), medida en R3.7 (METODO-FIDELIDAD-RENTABILIDAD.md
-  §1.3) y ABIERTA; y, al elegir los
-  libros que miden, que en los
-  backtests sin vídeo faltan las sesiones que el trader se saltó por ir a break even (S-14,
-  sesión 5; ACTIVAR-SESION-05.md §0.b.7).
-- **Depende de:** la decisión del consultor sobre cuántos días reservados necesita F26.
-- **Quién:** el consultor decide; Aleks autoriza la apertura (ADR-0021 §3); la sesión ejecuta.
-- **Hecho cuando:** PREREGISTRO está relleno y commiteado, y la puerta abre una sola partición.
+- **Refs:** NA:G · F:F26 · ID:A-16 · ID:A-56 · ID:ADR-0021 · ID:ADR-0033 · ID:ADR-0096
+- **Qué es:** PREREGISTRO.md relleno (HECHO en `trabajo/preregistro`, ADR-0096: la rentabilidad
+  fijada, el procedimiento del hash, F26 diagnóstico sobre el mes limpio con la regla de las 36
+  unidades; el conjunto medido por tramo; los dos días de la sesión 1 fuera; A-56 no puntúa; A-16
+  ABIERTA con la regla de ADR-0092 §9). Queda: que la puerta abra una sola partición por pregunta
+  (el comando de medida de F26 nace así; el arreglo de `kappa_entre_sesiones`, rama corta antes de
+  cualquier autorización de kappa); y pedir febrero de 2026 con vídeo y voz.
+- **Depende de:** nada para lo que queda; F26 depende además de febrero y de R5.2.
+- **Quién:** el consultor decide; Aleks pide febrero y autoriza la apertura (ADR-0021 §3); la
+  sesión ejecuta.
+- **Hecho cuando:** la puerta abre una sola partición por pregunta.
 
 ### R5.2 · Mayo
 - **Refs:** ID:ADR-0070 · ID:ADR-0043
@@ -645,6 +652,14 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Hecho cuando:** el primer activo nuevo pasa su propia puerta de rentabilidad.
 - **Estado:** idea, sin rama.
 
+### R7.3 · Sombra en diferido (idea, con condición de entrada)
+- **Refs:** F:F34 · ID:ADR-0093
+- **Qué es:** idea de Aleks (2026-11-19): auditar al bot sobre días recientes. El consultor la deja así: cada pocos días se corre el motor de Python sobre días ya cerrados que nadie ha tocado y se sacan sus láminas y trazas; el trader marca antes el día por su cuenta y después corrige. No es la demo ni sustituye a F34. Hoy no se puede sin una rama propia de riesgo alto y con su ADR: `motor laminas` niega todo día que no sea dev de construcción, `meses_reservados.yaml` reserva los meses por su número, los ticks solo se descargan de construcción y un manifiesto nuevo con el prefijo del kit cambia el universo (heredado 9). Cada día enseñado así queda gastado como material ciego y se declara.
+- **Depende de:** que julio cumpla los dos mínimos del pivote (ADR-0093 §6); antes, R4.6 sobre construcción.
+- **Quién:** el consultor la planifica cuando se cumpla la condición; Claude Code, por su rama.
+- **Hecho cuando:** existe la vía, con su ADR, y se ha hecho la primera vuelta con el trader.
+- **Estado:** idea, sin rama.
+
 ## Carril: lo de Aleks
 
 ### A.1 · Las ejecuciones 2 y 3 de la demo de FTMO
@@ -671,7 +686,14 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   heredado 27: la «maximum capital allocation rule» y el asterisco de «USD/LOT*»; y lo que FTMO
   no contestó del ticket: la pregunta 6 (A-55, sin respuesta) y las respondidas solo en parte
   (A-54 y A-55; FTMO-REGLAS.md, recuadro del 2026-10-05). La comisión por lado ya está confirmada
-  (ADR-0071 §3).
+  (ADR-0071 §3). Enviado el 2026-11-19 (correo nuevo de Aleks a soporte, que cita el ticket): si
+  para las 2.000 peticiones diarias cuentan también las lecturas de datos (cotizaciones, ticks,
+  historial, consultas de cuenta, órdenes y posiciones) o solo las peticiones de trading; el caso
+  de un programa propio que lee el terminal con la integración oficial de Python una vez por vela
+  de M1 cerrada; si se permite que las decisiones las calcule un programa externo en Python que
+  envía las órdenes por el terminal; y si los topes de 200 órdenes simultáneas y 2.000 posiciones
+  al día valen para Swing en MT5. Respuesta pendiente; si reabre ADR-0082 §4, será con un ADR
+  nuevo.
 - **Depende de:** la respuesta de FTMO.
 - **Quién:** Aleks pregunta; la sesión registra la respuesta parafraseada (RESPUESTAS-FTMO).
 - **Hecho cuando:** las respuestas están registradas.
@@ -825,7 +847,7 @@ sus ambigüedades, sin revisar cada informe a fondo.
 | F:F24 | PARCIAL: broker, llenado y cuenta, sin contador de N | `CABLEADO-SIMULADOR.md` |
 | F:F25 | PARCIAL: el visor de días, no el de tres marcos | `docs/runbooks/VISOR-DIAS.md` |
 | F:F33 | PARCIAL: entorno de la demo, cierres y freno | `DEMO-EJECUCION-1.md`, `RENOVAR-CIERRES.md` |
-| F:F26 | SIN EMPEZAR (preparada) | `PREREGISTRO.md`, sin rellenar |
+| F:F26 | SIN EMPEZAR (preparada) | `PREREGISTRO.md` relleno con ADR-0096; faltan el comando de medida y febrero |
 | F:F27, F:F28, F:F29, F:F30, F:F31, F:F32, F:F34, F:F35 | SIN EMPEZAR | sin código ni informe |
 
 ## Marcador

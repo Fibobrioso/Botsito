@@ -1,0 +1,8 @@
+particion | dias | retirados | medibles | medibles en un tramo | en un mes con cero tramos | en un mes sin declarar | fuera de los tramos de su mes
+holdout-1 | 8 | 0 | 8 | 6 | 2 | 0 | 0
+holdout-2 | 8 | 0 | 8 | 4 | 4 | 0 | 0
+holdout-3 | 8 | 1 | 7 | 3 | 4 | 0 | 0
+fidelidad-1 | 10 | 4 | 6 | 6 | 0 | 0 | 0
+fidelidad-2 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+fidelidad-3 | 0 | 0 | 0 | 0 | 0 | 0 | 0
+TOTAL | 34 | 5 | 29 | 19 | 10 | 0 | 0

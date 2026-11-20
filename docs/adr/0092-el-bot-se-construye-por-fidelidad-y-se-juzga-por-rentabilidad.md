@@ -157,6 +157,15 @@ ADR-0090 §7, ADR-0051 §4) y ADR-0002 prohíbe la cifra inventada (la respuesta
   y no vuelven a medir nunca (no son construcción: no tienen casos del trader); la siguiente medida
   usa otros meses, que fijará su ADR.
 
+> **NOTA de ADR-0096 (2026-11-19, `trabajo/preregistro`; recuadro que no reescribe el cuerpo).** La spec
+> sellada no la escribe G: G fija el PROCEDIMIENTO (ADR-0096 §5) y lo escribe en `PREREGISTRO.md` la
+> rama de la medida de rentabilidad, antes de correr y antes de que exista ninguna autorización de
+> holdout: el sha del commit desde el que se corre y, en ese commit (`git rev-parse <commit>:<ruta>`),
+> el id de blob de `knowledge/spec/strategy_spec.yaml`, `knowledge/spec/parametros.yaml`,
+> `knowledge/cuentas/ftmo-2step-swing-100k.yaml` (el perfil) y `knowledge/simulador/llenado.yaml`, más el
+> id del árbol de `knowledge/cuentas` (con el calendario de cierres, que la corrida lee) y el del árbol
+> de `src`. Son bytes commiteados, no el hash canónico de `botsito spec manifest`.
+
 ### 6. Contra optimizar sobre resultados
 
 Es el mecanismo de la Regla viva «Parametros no se optimizan contra resultados» (que hasta hoy no
@@ -324,6 +333,12 @@ Por ADR-0070 punto 4 («cambiarlo exige un ADR nuevo que declare lo visto»):
   `MASTER_PLAN.md` §H es de G): la métrica y su cálculo (§3); los umbrales; los meses, la extensión y
   por qué esos (§5); la fase; el hash de la spec sellada y el sha de `src/` (§5); el tratamiento del
   deslizamiento (§4); y qué se hace si no pasa (§5, `vistos_rentabilidad`).
+
+> **NOTA de ADR-0096 (2026-11-19, `trabajo/preregistro`; recuadro que no reescribe el cuerpo).**
+> `PREREGISTRO.md` lleva desde ADR-0096 todo lo de arriba para la rentabilidad, copiado sin cambiar
+> una cifra, salvo el hash de la spec sellada y el sha de `src/`, que escribe la rama de la medida con
+> el procedimiento del recuadro de §5. La ampliación de `MASTER_PLAN.md` §H es una NOTA de cabecera;
+> ninguna fila cambia.
 
 ## Problema que resuelve
 

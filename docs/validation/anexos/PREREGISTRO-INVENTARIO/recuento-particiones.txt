@@ -1,0 +1,17 @@
+particion | dias | retirados | retirados antes de 2026-10-17 | medibles
+holdout-1 | 8 | 0 | 0 | 8
+holdout-2 | 8 | 0 | 0 | 8
+holdout-3 | 8 | 1 | 1 | 7
+fidelidad-1 | 10 | 4 | 1 | 6
+fidelidad-2 | 0 | 0 | 0 | 0
+fidelidad-3 | 0 | 0 | 0 | 0
+TOTAL | 34 | 5 | 2 | 29
+fechas de retirada (retirado_el, no son dias de mercado): [('2026-09-23', 1), ('2026-10-14', 1), ('2026-10-17', 3)]
+
+por reparto (valores de su asignacion):
+knowledge/cases/kit/2026-09-09-sesion-01/particiones.yaml | {'dev': 16, 'holdout-1': 8, 'holdout-2': 8, 'holdout-3': 8}
+knowledge/cases/fidelidad/eurusd-2026-09/particiones.yaml | {'fidelidad-1': 10, 'fidelidad-dev': 4}
+knowledge/cases/visto/2026-01/particiones.yaml | {'dev': 21}
+knowledge/cases/visto/2026-04/particiones.yaml | {'dev': 21}
+knowledge/cases/visto/2026-07/particiones.yaml | {'dev': 13}
+knowledge/cases/visto/2026-08/particiones.yaml | {'dev': 21}

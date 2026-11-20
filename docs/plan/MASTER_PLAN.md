@@ -24,6 +24,16 @@
 > informa en el memorando. F27 (sensibilidad y ventaja, DSR, N declarado) sigue, y F35 sigue
 > dependiendo de ella y siendo el memorando y la decisión humana. La fila de F30 (que depende de
 > F26) y la del pre-registro en §H las actualiza G. El cuerpo no se toca.
+>
+> **NOTA (2026-11-19, rama `trabajo/preregistro`, ADR-0096).** El pre-registro vive en
+> `docs/validation/PREREGISTRO.md`, relleno con ADR-0096: la rentabilidad de ADR-0092, copiada sin
+> cambiar una cifra (el hash de la spec lo escribe la rama de la medida, con el procedimiento de
+> ADR-0096 §5); y F26 como DIAGNÓSTICO, con la referencia de ADR-0043 y la regla de las 36 unidades
+> efectivas, que se mide sobre el mes limpio (febrero de 2026, grabado con vídeo y voz) y no sobre
+> `holdout-1`, que sigue cerrada mientras ese mes esté pendiente. Kappa, paridad y DSR de §H se
+> pre-registran cada uno en la rama de su funcionalidad (kappa, la sesión que etiquete; paridad, F30
+> y F32; DSR, F27), antes de su primera medida. Esta NOTA es la actualización que la de ADR-0092
+> encargaba a G para la fila de F30 y la del pre-registro en §H: ninguna fila cambia.
 
 Version Markdown del plan (la version completa con detalle de cada funcionalidad esta en
 `MASTER_PLAN.html`, instantanea congelada del 2026-09-03; este Markdown manda cuando difieren). Deriva del informe de investigacion

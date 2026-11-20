@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/preregistro
 
 ## Current Feature
-Ninguna rama abierta. trabajo/laminas-sesion-7b cerrada en main el 2026-11-19 (stable/F39f-laminas-sesion-7b): la 7b lista para grabar (el bloque de días revisado, PREGUNTAS-7B.md, sus láminas fuera del repo y SESION_EN_CURSO en "08").
+trabajo/preregistro LISTA PARA REVISIÓN, NO cerrada (R5.1; la G): PREREGISTRO.md relleno con ADR-0096 y el test que sustituye al de la marca. Encargo docs/encargos/trabajo-preregistro.md; informe docs/validation/PREREGISTRO-INVENTARIO.md.
 
 ## Stable Main State
 50f6a6fc · merge de `trabajo/laminas-sesion-7b` (tag `stable/F39f-laminas-sesion-7b`), sobre `stable/F39e-activar-sesion-07` (cf33a916). Informe docs/validation/LAMINAS-7B.md; el registro del cierre, al final de HISTORIA.
@@ -25,13 +25,13 @@ Ninguna rama abierta. trabajo/laminas-sesion-7b cerrada en main el 2026-11-19 (s
 D. Endurecer la guardia por formas raras de bash, git, awk, sed y PowerShell que ninguna sesión usa (lista en GUION-MISMO-COMANDO.md §1.26). Rama propia, sin prisa: la barrera real sigue siendo el código.
 
 
-F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). La 7b está lista para grabar (LAMINAS-7B.md, F39f): el bloque de días revisado (sin las sesiones de enero con menos de 60 H4), PREGUNTAS-7B.md con A-35, las zonas de control y el margen del break even, A-48, A-58, S-22 y S-19, sus láminas generadas fuera del repo (la clave, con Aleks) y SESION_EN_CURSO en "08". Siguiente, en este orden: (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); antes de (3), el consultor decide cómo cuentan los frenos de la cuenta del mes (RN-032 y RN-036; F1.4 y F2.4 de ACTIVAR-SESION-07.md). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md, F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con cuerpo, A-13 abierta solo por el margen). La 7b está lista para grabar (LAMINAS-7B.md, F39f): el bloque de días revisado (sin las sesiones de enero con menos de 60 H4), PREGUNTAS-7B.md con A-35, las zonas de control y el margen del break even, A-48, A-58, S-22 y S-19, sus láminas generadas fuera del repo (la clave, con Aleks) y SESION_EN_CURSO en "08". Siguiente, en este orden: (2) grabar, ingerir y activar la 7b, con la rama de S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6); (3) se lee con la contingencia de ADR-0093 §6 sin retocarla (decisión de Aleks del 2026-11-19; R4.3). El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa corrida.
 
 
 
 C. La voz que el ASR se salta (v12 a v14), prioridad baja, en los huecos: exponer en corpus transcribe la configuración del VAD (o su desactivación), con tests; retranscribir v12, v13 y v14 con --reemplaza-a; volver a medir en los huecos lo de F2, F3, F4 y F6 de VIDEO-JULIO.md y, con eso, volver a decidir F5 (material_sin_video de julio). No va antes de las trazas, de las láminas ni de la preparación de la sesión 7.
 
-G. PREREGISTRO.md está SIN RELLENAR: no se abre ningún holdout y F26 no empieza. Antes, el consultor fija cuántos días reservados necesita F26 (y si hay que pedir otro mes al trader), con las condiciones previas que hoy viven en Technical Debt (una pregunta abre N particiones, los dos días sin partición, F26 y A-56, la regla del objetivo frente al material, ADR-0073) y A-16 (medida en R3.7, sigue ABIERTA). G rellena PREREGISTRO.md con lo de ADR-0092 §13 (borrador de la NOTA en METODO-FIDELIDAD-RENTABILIDAD.md, PARADA 2), y en el mismo commit cambia test_puerta_holdout, que ata ese fichero a HEAD (_commiteado_y_sin_cambios); y MASTER_PLAN §H (y la fila de F30) con la rentabilidad. Holdout-3 tiene un día medido menos desde el 2026-10-14 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta. fidelidad-1 tiene 3 días medidos menos desde el 2026-10-17 (ADR-0041, retirados.yaml), y F26 lo tiene en cuenta al fijar cuántos días hacen falta. Y, para elegir los libros que miden (S-14, sesión 5): en sus backtests sin vídeo el trader se saltaba las sesiones que iban a acabar en break even; qué libro viene de vídeo, ACTIVAR-SESION-05.md §0.b.7.
+G. PREREGISTRO.md relleno (ADR-0096, F39g): la rentabilidad de ADR-0092 fijada; F26, diagnóstico con la referencia de ADR-0043 y la regla de las 36 unidades efectivas, sobre febrero de 2026 grabado con vídeo y voz (holdout-1 cerrada mientras tanto); ninguna pregunta ni autorización. Falta, con dueño: Aleks pide febrero al trader (mensaje del consultor); la rama del comando de medida de F26, que abre una sola partición y añade la primera pregunta; la rama corta del arreglo de kappa_entre_sesiones, antes de cualquier autorización de kappa; el hash de la spec, en la rama de la medida de rentabilidad (ADR-0096 §5). fidelidad-1: 4 retirados y 6 medibles; holdout-3: 1 y 7.
 
 I. Backtest de DICIEMBRE de 2025, recibido el 2026-10-09 (xlsx y capturas de estadística, SIN vídeo), SIN ABRIR y fuera del repo; las capturas son de Analytics y no se abren nunca. Entra por su propia rama después de renovar hacia atrás el calendario de cierres (RENOVAR-CIERRES.md, condición 1); julio ya entró (ADR-0078). Antes, el consultor decide si es construcción o reservado, teniendo en cuenta que no trae vídeo. En v10 el trader ya comentó operaciones de diciembre (HOLDOUT-EXPOSICIONES, 2026-10-04). En la sesión 6 el trader dijo que aún no lo ha grabado con su voz (declaración de Aleks, SESION-06-EXTRACCION.md §3.5).
 
@@ -125,13 +125,11 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - LA GUARDIA DE `cobertura_material` EN `universo()` ES MAS ESTRICTA DE LO QUE ADR-0025 SOSTIENE (2026-09-21, y el defecto es de la rama del dia anterior).
 - EL `no_trade` POR AUSENCIA NO ESTA DECIDIDO, Y NO ENTRA EN LA RAMA DE MAYO (2026-09-21); y (S-14, sesión 5) … (ACTIVAR-SESION-05.md §0.b.7; entera en HISTORIA, Technical Debt ACORTADA)
 - `fecha_grabacion` TIENE QUE SER UN EJE DE PRIMERA CLASE, Y EL DETECTOR DE CONTRADICCIONES TIENE QUE ORDENAR POR ELLA (2026-09-21, deuda con nombre puesta por el consultor).
-- F26 lee la diferencia 3,00/3,75 entre la regla y el material como conocida y la mide en A-56 (ADR-0073, ADR-0040).
 - BUSCAR EN EL CORPUS ANTES DE REDACTAR CUALQUIER AMBIGUEDAD, Y ESCRIBIR QUE SE BUSCO (2026-09-21, rama F14a).
 - EL DIA QUE UN CAMINO GUARDE MATERIAL EN `knowledge/cases/<camino>/`, NECESITA LECTOR GUARDADO ANTES DE QUE ESE FICHERO SE COMMITEE (2026-09-21, rama de la puerta por pregunta; enmienda de ADR-0033, informe §5).
 - `lectura_de_velas` SIGUE LEYENDO EL `config.yaml` DE HOY para el prefijo del kit (2026-09-21, rama de los cupos congelados, informe §7).
-- DOS DIAS DEL UNIVERSO DE LA SESION 1 NO ESTAN EN NINGUNA PARTICION, y F26 tiene que saberlo (2026-09-20, medido en la rama del universo congelado; ADR-0035 §Impacto y docs/validation/UNIVERSO-CONGELADO.md §2b).
-- UNA PREGUNTA ABRE N PARTICIONES Y N LO DECIDE EL DATO, NO EL HUMANO … (entera en HISTORIA, Technical Debt ACORTADA)
-- EL FALLBACK DE `leer_fichero` JUZGA UNA CARPETA DESCONOCIDA BAJO LA AUTORIZACION DE `holdout-1` (2026-09-21, rama de la puerta por pregunta).
+- UNA PREGUNTA ABRE N PARTICIONES Y N LO DECIDE EL DATO, NO EL HUMANO … (entera en HISTORIA, Technical Debt ACORTADA) Dueños (ADR-0096 §4): el comando de medida de F26 nace abriendo una; kappa, rama corta.
+- EL FALLBACK DE `leer_fichero` JUZGA UNA CARPETA DESCONOCIDA BAJO LA AUTORIZACION DE `holdout-1` (2026-09-21, rama de la puerta por pregunta). Dueño: la rama del comando de medida de F26.
 - UN TOKEN NO PUEDE DECLARAR QUIEN LO PRODUCE, Y LOS PREDICADOS DE `fuente: mercado` NO PASAN POR COMPROBACION DE ALCANZABILIDAD (2026-09-20, rama de la liquidez de M15, informe §4).
 - UNA `pregunta` DE AMBIGUEDAD PUEDE NOMBRAR UN INSTANTE DEL CORPUS SIN ENLAZAR SU ITEM, Y NINGUNA GUARDIA SE QUEJA (2026-09-20, rama de la liquidez de M15, informe §8).
 - EL PUNTO CIEGO DEL DETECTOR DE CONTRADICCIONES, TERCERA APARICION (2026-09-20).
@@ -157,6 +155,10 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - b1: la lámina calla la segunda causa de tope si también se cumple (0 casos en la 7b; LAMINAS-7B.md F2).
 - motor laminas da LaminaError si RN-004 abre escenario en el cierre en que RN-016 o RN-001 dispararon por los intentos (0 casos en la 7a y la 7b; LAMINAS-7B.md F2).
 - La CI de Linux se cuelga a veces instalando ffmpeg (dos veces: trabajo/laminas y trabajo/laminas-sesion-7b): cachearlo o ponerle límite al paso.
+- No existe el comando que mida F26 sobre una partición: la puerta protege solo `kit kappa --incluir-holdout`, y el arnés y la ingesta excluyen lo oculto. Dueño: la rama del comando de medida, que nace abriendo una sola partición (ADR-0096 §4).
+- El libro de septiembre no está en libros.yaml: no se lee, ni por la puerta, sin su declaración (ADR-0039). Dueño: la rama que vaya a leer septiembre.
+- El día quemado de holdout-2 no está en retirados.yaml (lo excluyen HOLDOUT-EXPOSICIONES, «Lo que esto obliga», 4, y PREREGISTRO.md) y casos_medidos lo cuenta. Dueño: la rama que dé uso a holdout-2 lo retira antes (ADR-0096 §2).
+- tests/unit/test_kit.py:706-707 (docstring de _autorizar) dice que el PREREGISTRO del proyecto «sigue vacio a proposito»: viejo desde ADR-0096. Lo corrige la rama que toque test_kit.py.
 
 ## Reglas vivas
 Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de los manifiestos, el LF y UTF-8, Decisions and Rationale y Known Issues: `docs/runbooks/DECISIONES-DE-PROCESO.md`, en sus secciones del mismo nombre.
@@ -171,8 +173,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 74 (2026-11-18).
+— ninguna desde el Archivo 75 (2026-11-19).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 74 (2026-11-18).
+— ninguna desde el Archivo 75 (2026-11-19).
