@@ -25,8 +25,25 @@ y lo ESTADIADO, que es el arbol que se va a sellar- y sale en ROJO, sin sello, n
   la hoja de ruta existe en el merge-base con `main`**: rige desde la rama siguiente a la que la
   trajo, sin tocar ningun contrato anterior. Si el titulo lleva `: `, va entre comillas.
 
-`contrato.yaml` se permite siempre a si mismo. **Sin contrato no se comprueba nada**, asi que una
-rama vieja sin contrato sigue funcionando igual.
+`contrato.yaml` se permite siempre a si mismo. **Sin contrato no se comprueba nada del
+contrato**, asi que una rama vieja sin contrato sigue funcionando igual.
+
+**Y, con contrato o sin el, la fila del dia (G2, desde `trabajo/guardias-holdout`, 2026-11-20;
+docs/validation/GUARDIAS-HOLDOUT.md §2).** En una rama local cuyo nombre empieza por `trabajo/`,
+el mismo guion, despues del contrato, lee `docs/validation/HOLDOUT-EXPOSICIONES.md` TAL COMO ESTA
+ESTADIADO (`git show :ruta`, no el arbol de trabajo) y exige una fila de su tabla con la fecha de
+HOY (reloj local de la maquina) en la primera columna y que nombre la rama ENTERA (`trabajo/x` no
+vale por `trabajo/x-2`). Si no la hay, sale en ROJO, sin sello, con:
+
+    G2: falta la fila de HOLDOUT-EXPOSICIONES del <AAAA-MM-DD> para trabajo/<rama>; escríbela y estadíala antes de este make check (ADR-0021 §4)
+
+Si la hay, imprime `G2: fila de HOLDOUT-EXPOSICIONES del <AAAA-MM-DD> para trabajo/<rama>, estadiada`.
+**No actua** en `main`, en `fix/` ni `feature/` (las ramas de la CI, que nunca corre en
+`trabajo/**`) ni con HEAD separado: lo decide un `startswith("trabajo/")` sobre la rama local, no
+el prefijo que iguala `trabajo/x` con `fix/x`. Actua tambien en el `make check` del commit
+`chore(cierre)`, que corre en `trabajo/<rama>` sin contrato (RITUAL.md, «Antes del merge: la fila
+de HOLDOUT del dia»). No comprueba que la fila se escribiera ANTES de leer nada: solo que esta al
+sellar.
 
 **`make check` NO ejecuta las `comprobaciones`.** Podrian escribir en el repositorio mientras corre
 (CLAUDE.md, «nada escribe mientras corre `make check`») y lo alargarian. Las ejecuta el revisor

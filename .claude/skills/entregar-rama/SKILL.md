@@ -49,7 +49,14 @@ de GitHub con el sha escrito tal cual), Read, Edit para el informe, y el subagen
    hecho se terminan o se declaran con su motivo ANTES de seguir. Esa tabla va al informe
    («El encargo, punto por punto»).
 2. **Lo que NO cambia**: `git diff --stat main...HEAD` contra la lista del encargo; un fichero que
-   no debia tocarse es un bloqueo. `uv run python scripts/contrato_rama.py` en verde.
+   no debia tocarse es un bloqueo. `uv run python scripts/contrato_rama.py` en verde, que desde
+   `trabajo/guardias-holdout` (G2) exige tambien la fila de `docs/validation/HOLDOUT-EXPOSICIONES.md`
+   del dia que nombre la rama, ESTADIADA: su salida trae `CONTRATO:` y
+   `G2: fila de HOLDOUT-EXPOSICIONES del <hoy> para <rama>, estadiada`. Si es un dia nuevo, la fila
+   se escribe y se estadia antes (`docs/runbooks/CONTRATO-DE-RAMA.md`, «Que comprueba
+   `make check`, y que no»). Si la rama cambio el propio guion, la guardia lo niega suelto: vale la
+   linea de `make-check.log` (respuesta del consultor a la PARADA final de
+   `trabajo/guardias-holdout`, punto 4).
 3. **Tests que rompen a proposito**: cada uno que pida el encargo, demostrado fallando con el codigo
    de `main` (skill `comparar-con-main`) y pasando con el de la rama; comando y salida al informe.
 4. **Informe completo**: fase 0, PARADAS y respuestas tal cual, lo hecho por fase, desviaciones,

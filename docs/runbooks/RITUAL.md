@@ -110,11 +110,38 @@ cancela por tiempo antes de `make check` (el intento 1 se colgó 20 minutos inst
 es un resultado: se relanza con `gh run rerun <run>`. La rama remota `fix/<rama>` se borra al final
 del ritual, con las demás.
 
+### Antes del merge: la fila de HOLDOUT del día (desde el 2026-11-20)
+
+El `make check` del commit del contrato (abajo) corre en `trabajo/<rama>`, y desde
+`trabajo/guardias-holdout` no sella sin la fila de `docs/validation/HOLDOUT-EXPOSICIONES.md` del
+día (reloj local) que nombre la rama, estadiada (G2: `docs/runbooks/CONTRATO-DE-RAMA.md`, «Que
+comprueba `make check`, y que no»). Ese commit solo admite el contrato, HISTORIA,
+ERRORES-RECURRENTES, `PROJECT_STATE.md` y la hoja de ruta (su puerta), así que **si la fila del día
+del cierre no está ya en la rama, va ANTES, en un commit propio de la rama, sellado**, con el
+mensaje `docs(<rama>): la fila de HOLDOUT del <día>, antes de los make check del cierre`
+(respuesta del consultor a la PARADA final de `trabajo/guardias-holdout`, punto 1; así lo hizo
+`trabajo/sesion-07` en `f663aa2`). La fila dice qué leerán los `make check` del cierre: el M1 de
+marzo y de junio para calentar, como todos. Si la fila del día ya está, este commit no hace falta.
+
+```
+git branch --show-current
+git add docs/validation/HOLDOUT-EXPOSICIONES.md
+make check > make-check.log 2>&1
+grep "G2: fila de HOLDOUT-EXPOSICIONES del" make-check.log
+grep "SELLO: make check en verde" make-check.log
+git commit -m "docs(<rama>): la fila de HOLDOUT del <día>, antes de los make check del cierre"
+```
+→ **Puerta:** la rama es la de trabajo; antes del `make check`, `git status --short` da solo
+`M  docs/validation/HOLDOUT-EXPOSICIONES.md`; el log trae la línea `G2: fila … estadiada` con la
+fecha de hoy y el `SELLO`. Este commit se cuenta en la puerta de
+`git log --oneline main..trabajo/<rama>`, como el del contrato.
+
 ### Antes del merge: el contrato sale de la rama (desde el 2026-10-01)
 
 Si la rama tiene `contrato.yaml` (`docs/runbooks/CONTRATO-DE-RAMA.md`), sale de ella ANTES del
 merge, en la propia rama y con su sello, porque en `main` no se exige y la rama siguiente lo
-heredaría. Es el único commit que el cierre añade a la rama, y se cuenta en la puerta de
+heredaría. Es el único commit que el cierre añade a la rama, salvo el de la fila del día del
+apartado anterior cuando hace falta, y los dos se cuentan en la puerta de
 `git log --oneline main..trabajo/<rama>`.
 
 **TODO cierre lleva, en ESTE MISMO commit, dos cosas más. Son OBLIGATORIAS aunque la orden de cierre
@@ -167,8 +194,9 @@ git commit -m "chore(cierre): sale el contrato y entra el registro en HISTORIA"
 `M  docs/state/HISTORIA.md` y `M  docs/runbooks/ERRORES-RECURRENTES.md` (las tres en la primera
 columna), más `M  PROJECT_STATE.md` si el punto 3 cambió la Next Action y
 `M  docs/plan/HOJA-DE-RUTA.md` si el punto 4 cambió la hoja de ruta; y `make check` dice
-`CONTRATO: sin contrato.yaml`. Sin contrato, `make check` no comprueba
-nada del contrato, así que este sello es el de siempre.
+`CONTRATO: sin contrato.yaml` y, en la línea siguiente, `G2: fila de HOLDOUT-EXPOSICIONES del <hoy>
+para trabajo/<rama>, estadiada`. Sin contrato, `make check` no comprueba nada del contrato, pero
+G2 sí actúa: sin la fila del día (apartado anterior), sale en rojo.
 
 ```
 git checkout main

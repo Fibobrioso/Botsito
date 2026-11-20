@@ -449,14 +449,19 @@ PROJECT_STATE.md: 24.604 bytes en la rama (tope 25.000). En el cierre:
   si HOLDOUT-EXPOSICIONES.md no tiene una fila con la fecha del día …».
 - **Sale** la línea `:111` (letras reutilizadas), que H paga: «test_hoja_de_ruta no distingue un
   registro «HECHA · T» de una letra reutilizada …».
-- **Entra**, si el consultor la quiere así: «Las fechas de días ocultos en lo que añade una rama no
-  tienen guardia: de F39a a F39g, 32 líneas añadidas con un día oculto, y una es el id exacto de un
-  caso oculto (en tests/unit); en main hay 32 ids exactos fuera de knowledge/cases. Propuesta: la
-  variante estrecha (id exacto o día anterior al proyecto), en su rama, tras sustituir los
-  heredados (GUARDIAS-HOLDOUT.md §4 y §9).»
+- **Entra** la línea que fijó el consultor (respuesta a la PARADA final, punto 3), tal cual: «Sin
+  guardia contra fechas de días ocultos en lo que añade una rama. En main hay 32 ids exactos de
+  casos ocultos fuera de knowledge/cases, uno de ellos de F39a-F39g en tests/unit. Primero, una rama
+  que los sustituya en tests sin abrirlos (los informes cerrados, por recuadro o declarados);
+  después, la variante estrecha V2 (GUARDIAS-HOLDOUT.md §4.3 y §9).»
+- Y, por decisión de Aleks del 2026-11-20 (lo mete él en la orden de cierre), la deuda de la guardia
+  que salió de la comprobación del enlace del corpus: resuelve por realpath, y con un enlace en
+  `corpus/` deja de aplicar las reglas del material adicional; un Read de la carpeta
+  `Backtest <mes>` en sí no se niega. El texto lo trae la orden.
 
-Medido por el revisor (a3): las dos salidas suman 403 bytes (243 + 160); la entrada, unos 385 sin
-el prefijo de lista. El fichero queda por debajo de los 24.604.
+Las dos salidas suman 403 bytes (243 + 160; revisor, a3); la entrada del consultor, 361 con su
+«- » (`printf … | wc -c`), sin ajustar, porque no pasa de 400. Queda 24.604 − 403 + 362 ≈ 24.563,
+antes de la línea del corpus que traiga la orden.
 
 ## 11. El encargo, punto por punto
 
@@ -693,14 +698,91 @@ pide quitar; se retira por el mismo motivo por el que se retira lo que cita un t
 
 Después de los arreglos: `uv run pytest tests/unit/test_fila_del_dia.py tests/unit/test_hoja_de_ruta.py tests/unit/test_contrato_rama.py -q` en verde. El recuento de lo que añade la rama contra `main` (con `casos_ocultos` en memoria), sobre el árbol final, da 0 líneas con un día oculto y 0 ids ocultos.
 
+## Respuesta del consultor a la PARADA final
+
+Dada por Aleks (consultor) el 2026-11-20, en un solo mensaje; copiada también al final de `docs/encargos/trabajo-guardias-holdout.md`. Tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de trabajo/guardias-holdout (§9 de GUARDIAS-HOLDOUT.md), 2026-11-20. Cópiala tal cual al informe, en una sección «Respuesta del consultor a la PARADA final».
+>
+> Antes de nada: hoy es 2026-11-20 en el reloj de la laptop. La fila de HOLDOUT-EXPOSICIONES de hoy, que nombre trabajo/guardias-holdout, se escribe y se estadía antes del primer make check. G2 ya la exige en esta rama.
+>
+> 0. La fuga del rango y los 32 ids heredados: (a), pero NO en esta rama. Va a una rama propia del carril «guardias y deuda», después de la ingesta y la activación de la 7b; no adelanta el camino crítico. Sus condiciones, para el cierre y para su encargo:
+>    - Se localizan con la puerta y en memoria, sin imprimir ids, fechas ni líneas.
+>    - En tests/unit y tests/contract se sustituyen por ids sintéticos, o por ids calculados desde la puerta al ejecutarse, sin escribirlos.
+>    - Los informes CERRADOS de docs/validation no se reescriben, porque el régimen es el recuadro con el cuerpo intacto. Su fase 0 dice cuántos de los 9 están en informes cerrados, y el consultor decide si un recuadro sin el id sirve o se declaran sin más.
+>    - Si alguno «quema», su fase 0 lo propone con ADR-0021 §5 y ADR-0041, y lo decide el consultor en su PARADA.
+>    - El AVISO de knowledge validate de §6 entra en esa rama como pregunta, porque toca src/.
+>    - Por qué no aquí: ya está en main, no hay exposición nueva y esta rama no puede tocar tests/contract ni src/.
+>
+> 1. G2 en el cierre: (a). G2 actúa en todo make check de trabajo/*, también en el del chore(cierre).
+>    - Como el commit chore(cierre) solo admite contrato, HISTORIA, ERRORES-RECURRENTES, PROJECT_STATE y HOJA-DE-RUTA (la puerta de RITUAL.md enumera esos ficheros), la fila del día del cierre va ANTES, en un commit propio de la rama, sellado: «docs(<rama>): la fila de HOLDOUT del <día>, antes de los make check del cierre». Es lo que hizo trabajo/sesion-07 en f663aa2. Si la fila del día ya está, ese commit no hace falta.
+>    - Por qué: el make check del cierre lee lo mismo que los demás, y ADR-0021 §4 no distingue.
+>
+> 2. abrir-rama, entregar-rama y los runbooks: (a), en esta rama.
+>    - Se amplía contrato.yaml con rutas_permitidas: .claude/skills/abrir-rama/SKILL.md, .claude/skills/entregar-rama/SKILL.md, docs/runbooks/CONTRATO-DE-RAMA.md y docs/runbooks/RITUAL.md. También .claude/skills/cerrar-rama/SKILL.md, SOLO si su recorrido necesita nombrar el commit de la fila del punto 1; si con RITUAL.md basta, no se toca y se dice. Verifica que ninguna esté en rutas_protegidas; si alguna está, sale de ahí.
+>    - Qué se escribe:
+>      - abrir-rama: la fila del día, que nombre la rama, y el artefacto, estadiados ANTES del paso 6, porque desde G2 el guion del paso 6 falla sin ella. Se reordena el texto del paso 7, que hoy la pone después.
+>      - entregar-rama, paso 2: el guion en verde exige también la fila del día.
+>      - CONTRATO-DE-RAMA.md, «Que comprueba make check, y que no»: G2, con su mensaje y dónde no actúa.
+>      - RITUAL.md: lo del punto 1, en su sitio, antes del bloque del chore(cierre), con su puerta.
+>    - Solo documentación: nada de código ni de tests nuevos. Pero comprueba con un make check que test_hoja_de_ruta y los tests de skills (si hay alguno que lea esas skills) siguen en verde.
+>
+> 3. La guardia de fechas: (a). V2 en su propia rama, después de la del punto 0 y con sus tres condiciones de §4.3. Para el cierre, la línea de Technical Debt que entra es esta (ajústala solo si pasa de 400 bytes o el tope de PROJECT_STATE lo pide):
+>    «Sin guardia contra fechas de días ocultos en lo que añade una rama. En main hay 32 ids exactos de casos ocultos fuera de knowledge/cases, uno de ellos de F39a-F39g en tests/unit. Primero, una rama que los sustituya en tests sin abrirlos (los informes cerrados, por recuadro o declarados); después, la variante estrecha V2 (GUARDIAS-HOLDOUT.md §4.3 y §9).»
+>    Salen las dos líneas de §10.
+>
+> 4. La comprobación del contrato: (a). Vale el make check: es el mismo guion y el mismo comando.
+>
+> 5. El guion de G1: (a), ratificado. Seguiste la forma literal que propone el propio mensaje de la guardia, y la permite DECISIONES-DE-PROCESO (2026-10-21, punto 1): lo que la guardia leyó es lo que se ejecutó, y eso no es rodearla. La cláusula «apártalo a la PARADA» del encargo era más estricta que esa regla, y es un error del consultor, que irá a la fila del cierre.
+>
+> 6. Las fechas en la historia de la rama: (a). Se aceptan en la historia de main con el merge de siempre, declaradas aquí y en HOLDOUT-EXPOSICIONES. No se reescribe nada.
+>
+> 7. Los mutantes a mano: (a). Editar el fichero real, pasar la suite normal y restaurar por hash no rodea la guardia: la guardia negaba cargar código sin revisar por otra vía, y el mutante pasa por la vía normal. Una condición: comprueba y escribe en el informe que ningún commit de la rama contiene un mutante, es decir, que contrato_rama.py solo tiene la versión final en aff916c8 y 72ebedfa (git log -p sobre ese fichero, sin imprimir nada fuera de él).
+>
+> Lo que sigue: commit con la fila de hoy, los cambios del punto 2 y esta respuesta en el informe (make check sellado antes, como siempre); push a fix/guardias-holdout y CI de Linux con su número de run; revisor con alcance en lo nuevo (las skills y los runbooks frente a G2 y al RITUAL, caso a caso); su informe pegado al final. PROJECT_STATE no se toca más allá de lo que ya lleva la rama; las líneas de §10 entran en el cierre.
+>
+> Rama lista para revisión, NO cerrada.
+
+## 15. Aplicación de la respuesta del consultor (2026-11-20)
+
+| Punto | Qué se hizo | Evidencia |
+|---|---|---|
+| Antes de nada | La fila de HOLDOUT-EXPOSICIONES del 2026-11-20, que nombra `trabajo/guardias-holdout`, escrita y estadiada antes del primer `make check` del día (las 00:25 en la laptop) | `HOLDOUT-EXPOSICIONES.md`, fila del 2026-11-20; la línea `G2:` de `make-check.log` |
+| 0 | Nada en esta rama, como manda. Sus condiciones quedan en la respuesta, copiada arriba y al final del encargo, para la rama propia | — |
+| 1 | Escrito en `RITUAL.md` (punto 2): el commit de la fila del día del cierre, antes del `chore(cierre)`. Medido lo que el consultor afirma: `f663aa29` de `trabajo/sesion-07` es «docs(sesion-07): la fila de HOLDOUT del 2026-11-18, antes de los make check del cierre» y solo toca `HOLDOUT-EXPOSICIONES.md` (`git show --stat`, con el holdout excluido) | `RITUAL.md`, «Antes del merge: la fila de HOLDOUT del día» |
+| 2 | `contrato.yaml` ampliado con las cinco rutas, `cerrar-rama` incluida (abajo); ninguna estaba en `rutas_protegidas`, que no nombra `.claude/` ni `docs/runbooks/`. Escrito: **abrir-rama**, paso 6 nuevo (la fila del día y el artefacto, estadiados ANTES de comprobar), paso 7 (las comprobaciones, con la línea `G2:` esperada) y paso 8 (sello y commit), más la fila en `rutas_permitidas` del paso 4 y en la verificación; **entregar-rama**, paso 2 (el guion en verde exige la fila, y si la rama cambió el guion vale la línea del log); **CONTRATO-DE-RAMA.md**, en «Que comprueba `make check`, y que no», G2 con su mensaje literal, la línea de éxito y dónde no actúa; **RITUAL.md**, el apartado nuevo «Antes del merge: la fila de HOLDOUT del día» antes del del contrato, con su bloque y su puerta, el recuento de commits de la puerta de `git log main..` y la puerta del `chore(cierre)`, que ahora espera también la línea `G2:` | `git diff main...HEAD -- .claude/skills docs/runbooks` |
+| 2 (cerrar-rama) | **Sí se toca**, en dos líneas: su recorrido cuenta los commits esperados («mas el del contrato») y con la fila del día sería uno más, y su paso 3 empieza por el apartado del contrato del RITUAL. Con solo RITUAL.md, la puerta del recuento de commits de la skill quedaba mal | `.claude/skills/cerrar-rama/SKILL.md`, «Entradas» y paso 3 |
+| 2 (tests) | Solo documentación. `uv run pytest tests/unit/test_skills.py tests/unit/test_push_atomico.py tests/unit/test_hooks_utf8.py tests/unit/test_contrato_rama.py tests/unit/test_hoja_de_ruta.py tests/unit/test_fila_del_dia.py -q` en verde (`test_skills` lee las skills: sus rutas citadas existen; `test_push_atomico`, que los bloques del RITUAL no añaden pushes). Y el `make check` del commit | `make-check.log` del commit |
+| 3 | La línea del consultor, en §10, tal cual: 361 bytes con «- », sin ajustar | §10 |
+| 4 | Nada que hacer: vale la línea `CONTRATO:` / `G2:` de `make check` | — |
+| 5 | Ratificado; nada que hacer en la rama. «Error del consultor» para la fila del cierre | — |
+| 6 | Aceptado; nada se reescribe | — |
+| 7 | **Ningún commit de la rama tiene un mutante.** `git log --format=%h main..HEAD -- scripts/contrato_rama.py` → solo `aff916c8`; `git rev-parse aff916c8:scripts/contrato_rama.py 72ebedfa:scripts/contrato_rama.py` y `git hash-object scripts/contrato_rama.py` dan los tres `fde14594…` (la versión final; `b9bfa80e…` era el blob durante los mutantes, antes de acortar una línea del docstring que pidió `ruff`); `git log -p main..HEAD -- scripts/contrato_rama.py \| grep -c MUTANTE` → 0, y las cinco formas de mutante (`p = raiz / ruta`, `rama in fila`, `g2: list[str] = []`, `not rama or rama == "main"`, la comparación solo por el día) → 0 líneas añadidas. Lo mismo para `tests/unit/test_hoja_de_ruta.py`: `MUTANTE` → 0 | los comandos, en la sesión, sin imprimir nada fuera del fichero |
+
+## 16. CI y revisor de la segunda vuelta
+
+Pendiente en este commit: el push a `fix/guardias-holdout`, su run y el revisor sobre lo nuevo.
+
 ## Exposiciones
 
-Declaradas en `HOLDOUT-EXPOSICIONES.md`, el 2026-11-19: la apertura y la fase 0 (los `make check`
-del día, que leen el M1 de marzo y de junio para calentar; los documentos y el código de la fase
-0; el incidente de terminal de §7.1), y el estudio de G1 (la asignación por `casos_ocultos`, solo
-en memoria; los textos de los commits del rango; el `git grep` de ids del árbol de `main`; solo
-recuentos; su tercera corrida, sin el reparto por rama). Y lo que no se pudo evitar, con su sitio: el incidente de terminal (§7.1) y las fechas de trabajo que coinciden con un día oculto, quitadas el mismo día (§7.6).
+Declaradas en `HOLDOUT-EXPOSICIONES.md`:
+
+- **El 2026-11-19**: la apertura y la fase 0 (los `make check` del día, que leen el M1 de marzo y
+  de junio para calentar; los documentos y el código de la fase 0; el incidente de terminal de
+  §7.1), y el estudio de G1 (la asignación por `casos_ocultos`, solo en memoria; los textos de los
+  commits del rango; el `git grep` de ids del árbol de `main`; solo recuentos; su tercera corrida,
+  sin el reparto por rama). Y lo que no se pudo evitar, con su sitio: el incidente de terminal
+  (§7.1) y las fechas de trabajo que coinciden con un día oculto, quitadas el mismo día (§7.6).
+- **El 2026-11-20**: la respuesta del consultor (los `make check` del día; las skills y los
+  runbooks; el `git log -p` de `contrato_rama.py` del punto 7, contado; el revisor), y, antes, sin
+  rama ni commit, la comprobación del enlace del corpus que pidió Aleks (`corpus check --hashes` y
+  Read simulados a la guardia, que no leen nada).
 
 ## Estado
 
-Rama lista para revisión, NO cerrada. La fase 0, G2, H y el estudio de G1 están hechos y sellados; la CI de Linux, con el único fallo aceptado (`state check` por el nombre `fix/`) y sin G2 en `fix/`; el revisor, pasado, y sus hallazgos arreglados o llevados a la PARADA final (§9, ocho puntos para el consultor).
+Rama lista para revisión, NO cerrada. La fase 0, G2, H y el estudio de G1, hechos; la respuesta del
+consultor a la PARADA final, aplicada punto por punto (§15): las skills `abrir-rama`,
+`entregar-rama` y `cerrar-rama`, `CONTRATO-DE-RAMA.md` y `RITUAL.md` saben de G2 y de la fila del
+día del cierre. La CI de Linux y el revisor de esta segunda vuelta, en §16.

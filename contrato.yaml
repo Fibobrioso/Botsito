@@ -15,6 +15,12 @@ rutas_permitidas:
   - tests/unit/test_contrato_rama.py
   - tests/unit/test_fila_del_dia.py
   - tests/unit/test_hoja_de_ruta.py
+  # respuesta del consultor a la PARADA final (2026-11-20), punto 2: solo documentacion
+  - .claude/skills/abrir-rama/SKILL.md
+  - .claude/skills/entregar-rama/SKILL.md
+  - .claude/skills/cerrar-rama/SKILL.md  # su recuento de commits nombra el de la fila del dia
+  - docs/runbooks/CONTRATO-DE-RAMA.md
+  - docs/runbooks/RITUAL.md
 # Lista blanca: lo demas de scripts/, tests/, docs/ y .claude/ queda fuera por no estar en la lista.
 # Lo que el encargo dice que no cambia, ademas, protegido (manda sobre lo permitido).
 rutas_protegidas:
