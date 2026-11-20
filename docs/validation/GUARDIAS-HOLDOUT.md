@@ -321,7 +321,7 @@ incorrecta, más 5 herencias no recogidas. Lo que cambia algo:
 
 1. **Incidente de terminal, declarado el mismo día.** Un `grep -n "^|"` sobre
    HOLDOUT-EXPOSICIONES, para ver su forma, sacó por la salida de la sesión las dos primeras filas
-   de su tabla (las del 2026-09-11 y 2026-09-12). Nombran un día reservado de mayo que ya está
+   de su tabla (las dos de septiembre). Nombran un día reservado de mayo que ya está
    escrito en ellas en `main`. No es información nueva, pero el encargo pide que ninguna salida de
    terminal lleve una fecha reservada. Desde ahí, las salidas sobre esa tabla se recortaron a la
    fecha y la rama, y toda salida de G1 se comprobó sin fechas antes de imprimirla.
@@ -333,6 +333,15 @@ incorrecta, más 5 herencias no recogidas. Lo que cambia algo:
    lo niega suelto en esta rama, §1.3) y entra «make-check.log, líneas CONTRATO y G2». Si se quiere
    suelto, lo lanza Aleks con «!».
 5. **El rango de G1 incluye F39a.** Sin ella, 31 líneas y ninguna fuga medible.
+6. **Una fecha de trabajo que coincide con un día oculto, en esta misma rama.** Antes del push,
+   un recuento de lo que añade la rama (diff contra `main` y mensajes, con `casos_ocultos` en
+   memoria) dio 2 líneas con un día oculto, 0 ids exactos y 0 mensajes. Eran las dos frases del
+   incidente de 7.1, que citaban las fechas de las dos filas de septiembre de HOLDOUT-EXPOSICIONES.
+   Son fechas de TRABAJO: la primera columna de esas filas, escritas en `main` desde septiembre. Una
+   de las dos coincide con un día oculto (no sé cuál: el recuento es por línea). Salieron de los dos
+   textos el mismo día, y la fila del incidente lo declara. Siguen en la historia de `e115f208` y
+   `aff916c8`, porque una rama no se reescribe (`rebase` no se usa). Es el caso de §4.3 con nombre:
+   V0 y V1 lo habrían marcado, y V2 no, porque no es un id ni una fecha anterior al proyecto.
 
 ## 8. Límites declarados
 
