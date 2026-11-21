@@ -19883,3 +19883,76 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 76 (2026-11-19).
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/guardia-enlaces (2026-11-20)
+
+Su texto literal en «Technical Debt», con su evidencia (orden de cierre del consultor del
+2026-11-20, punto 1; GUARDIA-ENLACES.md):
+
+- Con corpus/ como enlace de unión fuera del repo (mklink /J), la guardia resuelve por realpath y deja de aplicar las reglas del material adicional; y un Read de la carpeta Backtest <mes> no se niega (GUARDIAS-HOLDOUT.md §17; hoja de ruta G.8).
+  PAGADA en el código por `trabajo/guardia-enlaces`: `Politica.relativas` decide cada ruta por la
+  forma canónica, la textual (`RutaCanonica`, sin resolver enlaces; `_nombres_largos` para el 8.3)
+  y, fuera de la raíz, por su estructura (`por_estructura`); D2 niega Read y Grep sobre la carpeta
+  `Backtest <mes>` de un mes no legible (`_motivo_backtest`). Tests en
+  `tests/unit/test_guardia_enlaces.py` (la imagen de `Backtest marzo 2026` por una unión simulada y
+  real y en una copia fuera; la carpeta misma por Read y Grep); con el código de `main`, en un clon,
+  fallan 10 de los 14 de la primera vuelta (GUARDIA-ENLACES.md §4.1). La entrada G.8 de la hoja de
+  ruta pasa a HECHA cuando Aleks repita el traslado a D: con la guardia simulada.
+
+# Registro de cierre · `trabajo/guardia-enlaces` (2026-11-20)
+
+- Orden de cierre del consultor del 2026-11-20, tras revisar `49642cd0` (CI 44863210143), pegada
+  por Aleks en la conversación de la sesión; a las 23:11 la sesión paró antes del merge (la orden
+  pedía parar si a las 23:00 no se había llegado) y avisó; Aleks lanzó después `/cerrar-rama
+  trabajo/guardia-enlaces` y, preguntado, eligió cerrar esa misma noche. El cierre se hace el
+  2026-11-20 y la fila de HOLDOUT de ese día ya estaba en la rama (`0333a957`, ampliada después),
+  así que no hace falta el commit de la fila.
+- **Lo hecho** (Carril: guardias y deuda, G.8; `src/`, `knowledge/`, `scripts/`, los ADR y el
+  Makefile sin tocar; solo `.claude/hooks/guardia.py`, tests de la guardia, `CLAUDE.md` y
+  documentos):
+  - **D1**: la guardia decide el material protegido por todas las formas de la ruta -la textual
+    (sin resolver enlaces, con el 8.3 expandido), la canónica y, fuera de la raíz, su estructura:
+    los anclajes del material, Sesiones, `holdout/{1,2,3}`, la cruda en cuarentena o con tramos,
+    `knowledge/cases/`, `data/visor/`, `knowledge/feedback/` y la lista con ocultos-. Una copia o
+    un clon fuera del repo, o un enlace de dentro hacia fuera, se niega como dentro.
+  - **D2**: Read y Grep sobre la carpeta `Backtest <mes>` de un mes no legible, como su contenido;
+    Glob, `ls` y `Get-ChildItem` la listan (ADR-0021 §1).
+  - Una carpeta de fuera se recorre con tope (20.000 entradas; pasado el tope se niega,
+    `R_RECORRIDO`), por el plazo de 30 s del hook.
+  - Medido caso a caso (868 decisiones simuladas): contra `main`, ninguna pasa de negada a
+    permitida (GUARDIA-ENLACES.md §10.1).
+- **Desviaciones** (declaradas en GUARDIA-ENLACES.md §6; la 2 aceptada por el consultor en su
+  respuesta, punto 3): los mutantes a mano en un clon desechable y no en el hook vivo; los ocho
+  `test_roto_a_proposito` de `test_guardia_alias.py` apagan las capas nuevas, con el test de la
+  combinación que pidió el consultor; la estructura mirada también en la forma textual; el tope de
+  los recorridos de fuera.
+- **Commits de la rama** (6):
+  - `0333a957` apertura: encargo, contrato y Archivo 77 de PROJECT_STATE;
+  - `1c9c3e4e` D1 y D2 en la guardia, los tests y la medida de la fase 0;
+  - `99b512b8` los hallazgos del revisor (8.3, tope de los recorridos) y el informe completo;
+  - `b44dee1a` la respuesta del consultor a la PARADA final, aplicada (puntos 1 a 4);
+  - `49642cd0` el revisor de la segunda pasada (una carpeta de fuera se recorre entera y con tope);
+  - este, `chore(cierre): sale el contrato y entra el registro en HISTORIA`.
+- **Fila de HOLDOUT-EXPOSICIONES de la rama**: una, del 2026-11-20, ampliada el mismo día cuatro
+  veces (la medida en memoria, los clones, el revisor y la medida rehecha); cubre los `make check`
+  del cierre.
+- **CI de Linux** por `fix/guardia-enlaces`, las cuatro `failure` con un único fallo, el esperado
+  (`test_state_check_ok_on_real_repo`, por el nombre `fix/`): run 44847455495 sobre `1c9c3e4e`;
+  44853414634 sobre `99b512b8`; 44858646443 sobre `b44dee1a`; 44863210143 sobre `49642cd0`. CI de
+  `main` sobre `0562a77b`, al abrir: run 44821324976, success.
+- **Revisor** (opus): dos pasadas, pegadas en GUARDIA-ENLACES.md §9 y §11, y lo hecho con cada
+  hallazgo en las tablas que las siguen.
+- **En este commit**, por la orden y por el runbook:
+  - sale `contrato.yaml`;
+  - Technical Debt: sale la línea del enlace de unión de `corpus/` (arriba, «Technical Debt
+    PAGADA»); no entra ninguna;
+  - Next Action: sin cambios (ninguna letra sale ni entra);
+  - hoja de ruta: G.1 gana los residuos aceptados de los puntos 5 y 6 de la respuesta del
+    consultor; G.8, sin línea de estado, dice que el código está hecho y que falta el traslado de
+    Aleks;
+  - entran la fila de ERRORES-RECURRENTES y este registro.
+- **`PROJECT_STATE.md`**: 24.541 bytes (`wc -c`) en este commit.
+- Letra del tag: la última cerrada era `stable/F39h-guardias-holdout`; `stable/F39i-guardia-enlaces`
+  no existe en local ni en origin (comprobado antes de este commit). La siguiente rama será F39j.
+- Tag: `stable/F39i-guardia-enlaces`. El merge es
+  `git rev-parse "stable/F39i-guardia-enlaces^{commit}"`.
