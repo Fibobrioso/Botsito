@@ -659,3 +659,108 @@ tramos:
       precaucion: en la reserva, el trader abre por error el replay de otro dia, el 15 de abril de 2026 (dia de construccion), lo marca y lo opera, y lo compara con las laminas del 13 hasta que ve que no coinciden; un replay de otro dia, que la respuesta a) de Aleks no nombraba. Sin cifras ni desenlaces aqui
     acordado: >-
       encargo de trabajo/sesion-07 (2026-11-17), «ENTRADAS», a), y «REGLAS DE ESTA RAMA»; marcado por precaucion al leer la filtrada, a la espera de la decision de Aleks (PARADA del informe); ninguna cita de la rama cae dentro; docs/validation/SESION-07-EXTRACCION.md
+  - video_id: v20
+    t0: "0:16:18"
+    t1: "0:25:01"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 978,1 s a 1500,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:25:01"
+    t1: "0:25:34"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 1501,1 s a 1534,0 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:40:19"
+    t1: "0:41:44"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 2419,0 s a 2503,6 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "0:49:36"
+    t1: "0:52:05"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 2977,0 s a 3124,6 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "1:04:55"
+    t1: "1:06:48"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 3895,6 s a 4007,6 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v20
+    t0: "1:12:28"
+    t1: "1:13:05"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 4348,8 s a 4384,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:48:45"
+    t1: "0:49:39"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 2925,8 s a 2979,0 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:20:21"
+    t1: "1:21:00"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 4821,6 s a 4859,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:27:44"
+    t1: "1:28:27"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5264,8 s a 5306,5 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:29:43"
+    t1: "1:30:30"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5383,2 s a 5429,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:31:24"
+    t1: "1:32:11"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5484,9 s a 5530,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:33:37"
+    t1: "1:34:57"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 5617,8 s a 5696,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:52:59"
+    t1: "1:54:13"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 6779,1 s a 6852,9 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "2:03:41"
+    t1: "2:04:47"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 7421,7 s a 7487,0 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "2:04:47"
+    t1: "2:05:30"
+    motivo: >-
+      SIN AUDIO: silencio de ffmpeg silencedetect a -50 dB y 30 s (2026-11-21), de 7487,7 s a 7529,3 s. La causa no la sabe la sesion: segun Aleks (2026-11-21), no estuvo en toda la reunion. Puerta del ASR: ningun segmento con t1 dentro del corte
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «EL RECORRIDO», Audio: cada corte a este fichero con motivo «SIN AUDIO»; docs/validation/SESION-08-EXTRACCION.md
