@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/guardia-enlaces
+main
 
 ## Current Feature
-trabajo/guardia-enlaces EN CURSO (2026-11-20, G.8): la guardia niega el material protegido también por enlace y por estructura fuera del repo. Encargo docs/encargos/trabajo-guardia-enlaces.md; informe docs/validation/GUARDIA-ENLACES.md.
+Ninguna rama abierta. trabajo/guardia-enlaces cerrada en main el 2026-11-20 (stable/F39i-guardia-enlaces): la guardia decide el material protegido por todas las formas de la ruta (enlaces, copias y clones fuera del repo) y niega Read y Grep sobre la carpeta Backtest de un mes no legible.
 
 ## Stable Main State
-fb1f02e9 · merge de `trabajo/guardias-holdout` (tag `stable/F39h-guardias-holdout`), sobre `stable/F39g-preregistro` (2fc884ac). Informe docs/validation/GUARDIAS-HOLDOUT.md; el registro del cierre, al final de HISTORIA.
+c6d5a9c2 · merge de `trabajo/guardia-enlaces` (tag `stable/F39i-guardia-enlaces`), sobre `stable/F39h-guardias-holdout` (fb1f02e9). Informe docs/validation/GUARDIA-ENLACES.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-fb1f02e9 · merge trabajo/guardias-holdout: G2 (sin fila de HOLDOUT del día no se sella en trabajo/*), H en test_hoja_de_ruta y el estudio de G1 · tag stable/F39h-guardias-holdout
+c6d5a9c2 · merge trabajo/guardia-enlaces: la guardia por todas las formas de la ruta (enlaces, copias y clones fuera del repo) y D2 en Read y Grep · tag stable/F39i-guardia-enlaces
 
 ## Tests Currently Passing
 2122 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
