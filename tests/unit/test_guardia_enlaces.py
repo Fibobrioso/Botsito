@@ -396,6 +396,66 @@ def test_un_enlace_de_fuera_hacia_el_holdout_se_niega(
     assert not fallos, "\n".join(fallos)
 
 
+def _corta(ruta: str) -> str:
+    """El nombre corto 8.3 de `ruta` (metadatos), o `ruta` si el volumen no los tiene."""
+    if sys.platform != "win32":  # para mypy en Linux, que no conoce `windll`
+        return ruta
+    import ctypes
+
+    buffer = ctypes.create_unicode_buffer(1024)
+    ctypes.windll.kernel32.GetShortPathNameW(ruta, buffer, 1024)
+    return buffer.value or ruta
+
+
+def test_un_enlace_escrito_con_un_tramo_83_se_niega(g: ModuleType, tmp_path: Path) -> None:
+    """Revisor, B1: `holdout/1` como union a una carpeta sin anclaje, y la ruta escrita con el
+    nombre corto de `knowledge` (`KNOWLE~1`): la forma textual expande el 8.3 sin seguir la
+    union, y casa con la raiz."""
+    if not EN_WINDOWS:
+        pytest.skip("los nombres cortos 8.3 son de Windows")
+    r = _hacer_repo(tmp_path / "Bot v3 corto", material=False)
+    _escribir(tmp_path, f"zz/{CASO}.yaml")
+    _union(r / HOL / "1", tmp_path / "zz")
+    corta = _corta(str(r / "knowledge"))
+    if corta.lower() == str(r / "knowledge").lower():
+        pytest.skip("este volumen no genera nombres cortos 8.3")
+    ruta = corta + "\\cases\\holdout\\1\\" + f"{CASO}.yaml"
+    fallos = _fallos(g, r, [(ruta, "R_HOLDOUT")])
+    assert not fallos, "\n".join(fallos)
+
+
+def test_el_recorrido_de_una_carpeta_de_fuera_tiene_tope(
+    g: ModuleType, repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Revisor, B3: pasado el tope de entradas, el lector recursivo y el listado recursivo de una
+    carpeta de fuera se niegan (negar de mas no abre nada) en vez de arriesgar el plazo del
+    hook."""
+    monkeypatch.setattr(g, "LIMITE_DEL_RECORRIDO", 5)
+    grande = tmp_path / "grande"
+    for n in range(10):
+        _escribir(grande, f"nota-{n}.txt")
+    grep = _decide(g, repo, "Grep", {"pattern": "x", "path": str(grande)})
+    assert grep is not None and "R_RECORRIDO" in _regla(g, grep)
+    glob = _decide(g, repo, "Glob", {"pattern": "**/*", "path": str(grande)})
+    assert glob is not None and "R_LISTADO" in _regla(g, glob)
+
+
+def test_un_ancestro_de_la_raiz_se_decide_sin_recorrerlo_fuera(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Revisor, B3: un Glob o un Grep desde una carpeta que CONTIENE la raiz se decide por la raiz,
+    como en `main`, sin recorrer el resto del ancestro."""
+
+    def no(*_args: object) -> None:
+        raise AssertionError("recorrio el ancestro")
+
+    monkeypatch.setattr(g.Politica, "holdout_debajo", no)
+    monkeypatch.setattr(g.Politica, "lo_que_alcanza_fuera", no)
+    glob = _decide(g, repo, "Glob", {"pattern": "**/*.yaml", "path": str(repo.parent)})
+    assert glob is not None and "R_LISTADO" in _regla(g, glob)
+    assert _decide(g, repo, "Grep", {"pattern": "x", "path": str(repo.parent)}) is not None
+
+
 # ------------------------------------------------------------ (d) D2: la carpeta Backtest misma
 def _carpetas_backtest(repo: Path, copia: Path) -> list[str]:
     """La carpeta de un mes no legible VACIA (en `main` el Grep solo la negaba si tenia algun

@@ -315,6 +315,16 @@ R_BORRAR_REMOTO = (
     "nunca `main` ni un tag (encargo de `trabajo/dieta-y-skills`)"
 )
 
+# `trabajo/guardia-enlaces` (revisor, B3): una carpeta de FUERA de la raiz se recorre para saber
+# que alcanza un lector recursivo o si lleva debajo una copia del holdout; el hook tiene 30 s
+# (`.claude/settings.json`). Pasado el tope de entradas, se niega: negar de mas no abre nada.
+LIMITE_DEL_RECORRIDO = 20000
+R_RECORRIDO = (
+    "`trabajo/guardia-enlaces` (D1, por estructura): la carpeta de fuera del repositorio tiene mas "
+    f"de {LIMITE_DEL_RECORRIDO} entradas y la guardia no puede saber a tiempo si lleva una copia "
+    "del material protegido; dale una ruta mas estrecha"
+)
+
 COMO_REESCRIBIR = (
     "Como reescribirlo: rutas LITERALES, sin `$VAR`, `$(...)`, `eval` ni `xargs` delante de un "
     "lector; un fichero, con la herramienta Read; y para el material protegido solo medir o "
@@ -723,8 +733,22 @@ class Politica:
     def lo_que_alcanza_fuera(self, ruta: str) -> str | None:
         """Una carpeta FUERA de la raiz y sin anclaje en su ruta, para un lector recursivo: lo que
         alcanzaria, fichero a fichero y por estructura (la carpeta que contiene una copia o un
-        clon; `trabajo/guardia-enlaces`, GUARDIA-ENLACES.md)."""
-        return self._primer_protegido(Path(ruta))
+        clon; `trabajo/guardia-enlaces`, GUARDIA-ENLACES.md). Con tope: si pasa de
+        `LIMITE_DEL_RECORRIDO` entradas, se niega (`R_RECORRIDO`) en vez de arriesgar el plazo
+        del hook (revisor, B3)."""
+        base = Path(ruta)
+        if not base.is_dir():
+            return self.motivo_fichero(ruta) if base.is_file() else None
+        vistas = 0
+        for actual, carpetas, ficheros in os.walk(base):
+            vistas += len(carpetas) + len(ficheros)
+            if vistas > LIMITE_DEL_RECORRIDO:
+                return R_RECORRIDO
+            for f in ficheros:
+                motivo = self.motivo_fichero(os.path.join(actual, f))
+                if motivo:
+                    return motivo
+        return None
 
     def _motivo_directorio_en(self, ruta: str, rel: str, respeta_ignore: bool) -> str | None:
         """`motivo_directorio` sobre UNA forma relativa `rel` de la carpeta `ruta` (en disco)."""
@@ -812,15 +836,23 @@ class Politica:
                     return not os.path.isfile(ruta)
                 if recursivo and (rel == "" or zona.startswith(rel + "/")):
                     return True
-        return recursivo and not formas and bool(self.holdout_debajo(ruta))
+        if not recursivo or formas:
+            return False
+        debajo = self.holdout_debajo(ruta)
+        return debajo is None or bool(debajo)
 
-    def holdout_debajo(self, ruta: str) -> list[str]:
+    def holdout_debajo(self, ruta: str) -> list[str] | None:
         """Las carpetas `knowledge/cases/holdout/{1,2,3}` que hay DEBAJO de una carpeta de fuera de
-        la raiz (una copia o un clon desechable), reconocidas por estructura (`por_estructura`)."""
+        la raiz (una copia o un clon desechable), reconocidas por estructura (`por_estructura`).
+        None si pasa de `LIMITE_DEL_RECORRIDO` entradas: no se sabe, y quien la llama niega."""
         salida: list[str] = []
         if not os.path.isdir(ruta):
             return salida
-        for actual, _dirs, _ficheros in os.walk(ruta):
+        vistas = 0
+        for actual, carpetas, ficheros in os.walk(ruta):
+            vistas += len(carpetas) + len(ficheros)
+            if vistas > LIMITE_DEL_RECORRIDO:
+                return None
             for rel in self.por_estructura(actual):
                 if rel in (f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3"):
                     salida.append(actual)
@@ -1438,11 +1470,36 @@ def _textual(ruta: str) -> str:
 
 def _sin_resolver(ruta: str) -> str:
     """Lo que hace `_canonica` antes de `realpath`: sin prefijos, sin puntos ni espacios finales y
-    normalizada. Se llama despues de `_canonica`, que ya habria negado lo no canonizable."""
+    normalizada, y en Windows con los nombres cortos 8.3 expandidos (`_nombres_largos`), pero sin
+    resolver enlaces ni uniones. Se llama despues de `_canonica`, que ya habria negado lo no
+    canonizable."""
     r = ruta
     if os.name == "nt":
-        r = _FINALES.sub("", os.path.normpath(_sin_prefijos(r)))
+        r = _nombres_largos(_FINALES.sub("", os.path.normpath(_sin_prefijos(r))))
     return os.path.normpath(r)
+
+
+def _nombres_largos(ruta: str) -> str:
+    """En Windows, `ruta` con sus tramos 8.3 (`KNOWLE~1`) expandidos por `GetLongPathNameW`, que
+    cambia el NOMBRE de cada tramo y no sigue uniones ni enlaces (revisor de
+    `trabajo/guardia-enlaces`, B1: sin esto, un enlace de dentro hacia un nombre sin anclaje,
+    escrito con un tramo 8.3 por encima, no lo veia ninguna forma). Expande el prefijo mas largo
+    que existe y deja la cola como esta; sin `~`, o si no se puede, la ruta tal cual."""
+    if sys.platform != "win32":  # asi, y no con `os.name`, mypy en Linux no mira `windll`
+        return ruta
+    if "~" not in ruta or not os.path.isabs(ruta):
+        return ruta
+    import ctypes
+
+    cabeza, cola = ruta, ""
+    while True:
+        buffer = ctypes.create_unicode_buffer(32768)
+        if ctypes.windll.kernel32.GetLongPathNameW(cabeza, buffer, 32768):
+            return os.path.join(buffer.value, cola) if cola else buffer.value
+        padre, tramo = os.path.split(cabeza)
+        if not tramo or padre == cabeza:
+            return ruta
+        cabeza, cola = padre, os.path.join(tramo, cola) if cola else tramo
 
 
 def _absoluta(ruta: str, cwd: str) -> str:
@@ -2110,21 +2167,27 @@ def _patron_a_regex(patron: str) -> re.Pattern[str]:
     return re.compile("".join(partes), re.IGNORECASE | re.S)
 
 
-def _candidatos_del_holdout(politica: Politica, base: str | None = None) -> list[str]:
+def _candidatos_del_holdout(politica: Politica, base: str | None = None) -> list[str] | None:
     """Las rutas (normalizadas) que un comodin podria nombrar dentro de `holdout/{1,2,3}`: sus
     ficheros salvo el README de cada una, y la sonda de un caso. Y, si `base` cae fuera de la raiz
-    (D1 de `trabajo/guardia-enlaces`), lo mismo en la copia de esas carpetas que lleve: la que la
-    contiene, por estructura, o las que tenga debajo."""
+    y no la contiene (D1 de `trabajo/guardia-enlaces`), lo mismo en la copia de esas carpetas que
+    lleve: la que la contiene, por estructura, o las que tenga debajo. None si lo de debajo no se
+    puede saber (`holdout_debajo`): quien la llama niega. Un ANCESTRO de la raiz se decide por las
+    zonas de la raiz, como en `main`, sin recorrerlo (revisor, B3)."""
     del_holdout = {f"{HOLDOUT}/{n}" for n in ("1", "2", "3")}
     zonas = [politica.raiz / HOLDOUT / n for n in ("1", "2", "3")]
-    if base is not None and politica.relativa(base) is None:
+    fuera = base is not None and politica.relativa(base) is None
+    if base is not None and fuera and not politica.contiene_la_raiz(base):
         for forma in dict.fromkeys((base, _textual(base))):
             tramos = Path(forma).parts
             for i in range(len(tramos), 0, -1):  # la copia de la zona que CONTIENE `base`
                 ancestro = Path(*tramos[:i])
                 if del_holdout & set(politica.por_estructura(str(ancestro))):
                     zonas.append(ancestro)
-        zonas += [Path(z) for z in politica.holdout_debajo(base)]
+        debajo = politica.holdout_debajo(base)
+        if debajo is None:
+            return None
+        zonas += [Path(z) for z in debajo]
     salida: list[str] = []
     for zona in zonas:
         salida.append(_normcase(str(zona / _SONDA_DEL_HOLDOUT)))
@@ -2169,7 +2232,8 @@ def _patron_lista_el_holdout(patron: str, cwd: str, politica: Politica) -> bool:
             if not politica.lista_dentro_del_holdout(base, recursivo):
                 continue
             regex = _patron_a_regex(normal)
-            if any(regex.fullmatch(c) for c in _candidatos_del_holdout(politica, base)):
+            candidatos = _candidatos_del_holdout(politica, base)
+            if candidatos is None or any(regex.fullmatch(c) for c in candidatos):
                 return True
     return False
 

@@ -1,0 +1,8 @@
+FFFF.F......F.                                                           [100%]
+=========================== short test summary info ===========================
+FAILED tests/unit/test_guardia_enlaces.py::test_la_imagen_de_backtest_marzo_en_una_copia_fuera_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_cada_clase_en_una_copia_fuera_se_niega_con_su_regla
+FAILED tests/unit/test_guardia_enlaces.py::test_el_libro_y_el_holdout_de_una_copia_se_niegan_tambien_en_mayusculas_y_con_barras
+FAILED tests/unit/test_guardia_enlaces.py::test_el_anclaje_minimo_del_material_y_de_sesiones_no_exige_corpus
+FAILED tests/unit/test_guardia_enlaces.py::test_listar_el_holdout_de_una_copia_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_la_carpeta_backtest_como_objetivo_de_read_grep_y_glob_se_niega
