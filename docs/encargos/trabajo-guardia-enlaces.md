@@ -53,3 +53,27 @@ Dado por Aleks (consultor) el 2026-11-20, por la tarde, en un solo mensaje. Copi
 > Contrato: rutas_permitidas = .claude/hooks/guardia.py, tests/unit/ (solo los ficheros de la guardia y el nuevo), CLAUDE.md, docs/validation/GUARDIA-ENLACES.md, docs/validation/anexos/GUARDIA-ENLACES/, docs/validation/HOLDOUT-EXPOSICIONES.md, docs/encargos/, docs/state/HISTORIA.md y PROJECT_STATE.md; lo de «Qué no cambia», en rutas_protegidas. Recuerda que en esta rama la guardia cambiada es código sin revisar: si niega un comando legítimo, no lo reescribas para esquivarla; si es un falso positivo, a la PARADA, y Aleks lo lanza con «!» tras revisarlo el consultor.
 >
 > Al terminar: «Rama lista para revisión, NO cerrada.»
+
+## Respuesta del consultor a la PARADA final (2026-11-20)
+
+Dada por Aleks (consultor) el 2026-11-20, por la noche, en un solo mensaje. Copiada tal cual:
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de trabajo/guardia-enlaces (§8 de GUARDIA-ENLACES.md), 2026-11-20. Cópiala tal cual al informe, en una sección «Respuesta del consultor a la PARADA final». Si pasas de medianoche, la fila de HOLDOUT del 2026-11-21 va antes del primer make check de ese día. A las 09:00 de Lima del 21 no puede haber nada pesado corriendo (Aleks graba).
+>
+> 1. Las clases sin anclar: (a), se añaden en ESTA rama. Los tramos no citables (data/transcripciones/<vídeo con tramos>/), los ficheros con id de caso reservado en knowledge/cases/ y data/visor/, el feedback que etiqueta un caso reservado (knowledge/feedback/) y la lista de ficheros con ocultos, como anclajes con la misma regla de D1: se decide como si el anclaje estuviera en la raíz. Un test por clase, en una copia fuera del repo (negada), que rompa con el código de antes de este cambio. Por qué: es la misma condición que D1 («nombra la condición»), y dejarla a medias deja copias o clones fuera del repo sin proteger.
+>
+> 2. Glob sobre la carpeta Backtest: vuelve a pasar, como ls y Get-ChildItem. D2 queda solo para Read y Grep con la carpeta como objetivo. Por qué: listar nombres no es leer contenido, y ADR-0021 §1 lo permite; una prohibición que no sale de un ADR no se escribe (CLAUDE.md). Error del consultor, que irá a la fila del cierre. Ajusta el test y la línea de CLAUDE.md.
+>
+> 3. Apagar las capas nuevas en test_roto_a_proposito: sí, con una condición. Añade un test que, con TODAS las capas encendidas, compruebe que esas mismas rutas salen negadas, para que la combinación también quede cubierta. El cambio en tests existentes que D4 no previó es error del consultor y va a la fila del cierre.
+>
+> 4. El tope de 20.000 entradas, negando al pasarlo: se queda. Es negar por defecto, y lo impone el límite de 30 s del hook. Escríbelo en el informe, en la línea de CLAUDE.md y con su test (pasado el tope, se niega).
+>
+> 5 y 6. Los residuos que ya pasaban en main (enlaces encontrados al recorrer, enlaces duros, C:\ con un clon fuera del repo): residuo aceptado, sin rama propia por ahora. Van a la entrada G.1 de la hoja de ruta en el cierre, no a Technical Debt, porque PROJECT_STATE está en 24.776. Por qué: piden que alguien cree a propósito un enlace duro o un clon en la raíz de un disco, y la barrera sigue siendo el código.
+>
+> 7. G.8: de acuerdo. El código queda hecho con esta rama; la entrada pasa a HECHA solo cuando Aleks repita el traslado a D: y la guardia simulada niegue las cuatro rutas. Eso lo registra la orden de cierre de la rama siguiente.
+>
+> Lo que sigue: un commit con 1-4 y esta respuesta en el informe (make check sellado antes); push a fix/guardia-enlaces y CI de Linux con su número de run; revisor con alcance en lo nuevo (los anclajes añadidos, caso a caso contra el commit anterior, y el cambio de Glob); su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.

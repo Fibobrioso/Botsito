@@ -16,7 +16,7 @@ fb1f02e9 · merge de `trabajo/guardias-holdout` (tag `stable/F39h-guardias-holdo
 fb1f02e9 · merge trabajo/guardias-holdout: G2 (sin fila de HOLDOUT del día no se sella en trabajo/*), H en test_hoja_de_ruta y el estudio de G1 · tag stable/F39h-guardias-holdout
 
 ## Tests Currently Passing
-2114 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2121 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 

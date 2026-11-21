@@ -45,6 +45,7 @@ BTM = MAT + "/Back" + "test marzo 2026"
 HOL = "knowledge/cases/hol" + "dout"
 TRA = "data/transcrip" + "ciones"
 CASO = "caso-eurusd-2026-05-04"  # el reservado del repo INVENTADO
+OCULTO = "knowledge/_proposals/pr-v7-x.yaml"  # en la lista de ficheros con ocultos del inventado
 
 IMAGEN = f"{BTM}/x.png"
 LIBRO = f"{MAT}/backtesting-analytics MARZO 2026.xlsx"
@@ -99,12 +100,23 @@ def _hacer_repo(r: Path, material: bool = True) -> Path:
     """Un repo inventado, con la estructura del real (como el de `test_guardia_alias.py`)."""
     _escribir(r, "Makefile", "x\n")
     _escribir(r, ".gitignore", "/corp" + "us/\n/data/*\n")
-    _escribir(r, "knowledge/corpus/fuentes.yaml", "videos:\n  - video_id: v7\n    drive_id: null\n")
+    # v6: grabacion de sesion SIN cuarentena (SESIONES_SIN_CUARENTENA) y con tramos no citables.
+    _escribir(
+        r,
+        "knowledge/corpus/fuentes.yaml",
+        "videos:\n  - video_id: v6\n    drive_id: null\n  - video_id: v7\n    drive_id: null\n",
+    )
+    _escribir(
+        r,
+        "knowledge/corpus/tramos_no_citables.yaml",
+        "tramos:\n  - video_id: v6\n    t0: '0:41:00'\n    t1: '0:50:11'\n",
+    )
     _escribir(
         r,
         "knowledge/cases/kit/s1/particiones.yaml",
         f"asignacion:\n  {CASO}: holdout-1\ncupos:\n  dev: 0\n",
     )
+    _escribir(r, ".claude/hooks/ficheros_con_ocultos.txt", f"{OCULTO}\n")
     _escribir(r, "src/botsito/cli.py", "x = 1\n")
     env = {k: v for k, v in os.environ.items() if not k.startswith("GIT_")}
     for args in (
@@ -463,16 +475,15 @@ def _carpetas_backtest(repo: Path, copia: Path) -> list[str]:
     return [str(repo / VACIA), str(copia / VACIA), str(repo / BTM), str(copia / BTM)]
 
 
-def test_la_carpeta_backtest_como_objetivo_de_read_grep_y_glob_se_niega(
+def test_la_carpeta_backtest_como_objetivo_de_read_y_grep_se_niega(
     g: ModuleType, repo: Path, copia: Path
 ) -> None:
+    """D2, tras la respuesta del consultor a la PARADA final (punto 2): Read y Grep."""
     fallos = []
     for carpeta in _carpetas_backtest(repo, copia):
         for herramienta, entrada in (
             ("Read", {"file_path": carpeta}),
             ("Grep", {"pattern": "x", "path": carpeta}),
-            ("Glob", {"pattern": "*", "path": carpeta}),
-            ("Glob", {"pattern": carpeta.replace("\\", "/") + "/*.xlsx"}),
         ):
             obtenida = _regla(g, _decide(g, repo, herramienta, entrada))
             print(f"D2 | {herramienta} | {obtenida} | {carpeta[-45:]}")
@@ -481,18 +492,92 @@ def test_la_carpeta_backtest_como_objetivo_de_read_grep_y_glob_se_niega(
     assert not fallos, "\n".join(fallos)
 
 
-def test_listar_la_carpeta_backtest_con_ls_o_get_childitem_sigue_como_estaba(
-    g: ModuleType, repo: Path
+def test_listar_la_carpeta_backtest_con_ls_get_childitem_o_glob_pasa(
+    g: ModuleType, repo: Path, copia: Path
 ) -> None:
-    """D2: `ls`, `dir` y `Get-ChildItem` listan nombres y se quedan como estaban (pasan)."""
-    carpeta = str(repo / BTM)
-    for herramienta, entrada in (
-        ("Bash", {"command": f'ls "{carpeta.replace(chr(92), "/")}"'}),
-        ("Bash", {"command": f'dir "{carpeta.replace(chr(92), "/")}"'}),
-        ("PowerShell", {"command": f"Get-ChildItem '{carpeta}'"}),
-        # Un libro SUELTO `backtesting-analytics ...` no es una carpeta `Backtest <mes>`: su Glob
-        # lista un nombre que ya esta en el patron (leerlo lo niega su propia regla).
-        ("Glob", {"pattern": str(repo / LIBRO).replace("\\", "/")}),
-    ):
-        assert _decide(g, repo, herramienta, entrada) is None, (herramienta, entrada)
+    """D2: `ls`, `dir`, `Get-ChildItem` y, desde la respuesta del consultor a la PARADA final
+    (punto 2), Glob listan nombres y pasan: listar nombres no es leer contenido (ADR-0021 §1)."""
+    fallos = []
+    for carpeta in _carpetas_backtest(repo, copia):
+        posix = carpeta.replace("\\", "/")
+        for herramienta, entrada in (
+            ("Bash", {"command": f'ls "{posix}"'}),
+            ("Bash", {"command": f'dir "{posix}"'}),
+            ("PowerShell", {"command": f"Get-ChildItem '{carpeta}'"}),
+            ("Glob", {"pattern": "*", "path": carpeta}),
+            ("Glob", {"pattern": posix + "/*.xlsx"}),
+        ):
+            if _decide(g, repo, herramienta, entrada) is not None:
+                fallos.append(f"{herramienta} · {carpeta[-45:]}")
+    # Un libro SUELTO `backtesting-analytics ...` no es una carpeta `Backtest <mes>`: su Glob lista
+    # un nombre que ya esta en el patron; leerlo lo niega su propia regla.
+    if _decide(g, repo, "Glob", {"pattern": str(repo / LIBRO).replace("\\", "/")}) is not None:
+        fallos.append("Glob · el libro suelto")
     assert _decide(g, repo, "Read", {"file_path": str(repo / LIBRO)}) is not None
+    assert not fallos, "\n".join(fallos)
+
+
+# ------------------- respuesta del consultor a la PARADA final, punto 1: las clases por fichero
+def _niega_en_la_copia(
+    g: ModuleType, repo: Path, copia: Path, rel: str, regla: str, texto: str = "dato falso\n"
+) -> None:
+    _escribir(copia, rel, texto)
+    fallos = _fallos(g, repo, [(str(copia / rel), regla)])
+    assert not fallos, "\n".join(fallos)
+
+
+def test_un_tramo_no_citable_en_una_copia_fuera_se_niega(
+    g: ModuleType, repo: Path, copia: Path
+) -> None:
+    """La cruda de un video con tramos no citables (v6, sin cuarentena), con lineas en el tramo."""
+    cruda = "[0:10:00] uno\n[0:20:00] dos\n[0:45:00] tres\n[1:00:00] cuatro\n"
+    _niega_en_la_copia(g, repo, copia, f"{TRA}/v6/large-v3/cruda.txt", "R_TRAMO", cruda)
+
+
+def test_un_caso_reservado_en_cases_de_una_copia_fuera_se_niega(
+    g: ModuleType, repo: Path, copia: Path
+) -> None:
+    _niega_en_la_copia(g, repo, copia, f"knowledge/cases/kit/s1/{CASO}.yaml", "R_CASO")
+
+
+def test_un_caso_reservado_en_el_visor_de_una_copia_fuera_se_niega(
+    g: ModuleType, repo: Path, copia: Path
+) -> None:
+    _niega_en_la_copia(g, repo, copia, f"data/visor/{CASO}.html", "R_CASO")
+
+
+def test_el_feedback_de_un_reservado_en_una_copia_fuera_se_niega(
+    g: ModuleType, repo: Path, copia: Path
+) -> None:
+    texto = f"accion: LABEL_CASE\ncaso: {CASO}\n"
+    _niega_en_la_copia(g, repo, copia, "knowledge/feedback/s1/fb-1.yaml", "R_CASO", texto)
+
+
+def test_un_fichero_de_la_lista_con_ocultos_en_una_copia_fuera_se_niega(
+    g: ModuleType, repo: Path, copia: Path
+) -> None:
+    _niega_en_la_copia(g, repo, copia, OCULTO, "R_FICHERO_OCULTO")
+
+
+def test_lo_que_no_es_reservado_en_esas_clases_de_la_copia_pasa(
+    g: ModuleType, repo: Path, copia: Path
+) -> None:
+    """Que los anclajes nuevos no se pasen de frenada: un caso que no es reservado, un feedback
+    que no etiqueta ninguno, una cruda de un video sin cuarentena ni tramos, una propuesta que no
+    esta en la lista y la cruda de v6 que no toca el tramo, leida por un trozo fuera de el."""
+    for rel, texto in (
+        ("knowledge/cases/dev/caso-eurusd-2026-04-01.yaml", "x\n"),
+        ("knowledge/feedback/s1/fb-2.yaml", "accion: LABEL_CASE\ncaso: caso-eurusd-2026-04-01\n"),
+        ("data/visor/caso-eurusd-2026-04-01.html", "x\n"),
+        (f"{TRA}/v1/large-v3/cruda.txt", "[0:10:00] uno\n"),
+        ("knowledge/_proposals/pr-v1-y.yaml", "x\n"),
+    ):
+        _escribir(copia, rel, texto)
+        ruta = str(copia / rel)
+        for etiqueta, herramienta, entrada in _lecturas(ruta):
+            assert _decide(g, repo, herramienta, entrada) is None, (etiqueta, rel)
+    # Las lineas 2 y 3 caen en el tramo; la guardia deja una de margen a cada lado (`decidir`).
+    cruda = "[0:10:00] uno\n[0:20:00] dos\n[0:45:00] tres\n[1:00:00] cuatro\n[1:10:00] cinco\n"
+    _escribir(copia, f"{TRA}/v6/large-v3/cruda.txt", cruda)
+    ruta = str(copia / TRA / "v6" / "large-v3" / "cruda.txt")
+    assert _decide(g, repo, "Read", {"file_path": ruta, "offset": 5, "limit": 1}) is None

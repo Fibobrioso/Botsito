@@ -1,6 +1,6 @@
 # GUARDIA-ENLACES · La guardia protege el material por lo que es, no solo por donde esta (G.8)
 
-> PLANTILLA hasta la fase 0 (la línea con que nació): ya no lo es; la rama está lista para revisión.
+> PLANTILLA hasta la fase 0 (la línea con que nació): ya no lo es.
 
 Rama `trabajo/guardia-enlaces`, abierta el 2026-11-20 (18:27, reloj de la laptop en Lima, UTC-5)
 desde `main` en 0562a77b (commit de estado sobre el merge fb1f02e9 del tag
@@ -217,8 +217,9 @@ nuevo es que esa canónica RECUERDA su forma textual.
   patrón cuelga también de la base textual.
 - **D2**: `_motivo_backtest` -la carpeta `Backtest <mes>` de un mes no legible, ella misma y todo
   lo de dentro- lo usan `_motivo_material` (Read y todos los lectores), `motivo_directorio` (Grep y
-  los lectores recursivos) y Glob (`motivo_carpeta_backtest` sobre la base y la parte literal del
-  patrón, `_parte_literal`). Lo de dentro, como siempre (cualquier carpeta `backtest*`); la carpeta
+  los lectores recursivos) y, en la primera vuelta, Glob (`motivo_carpeta_backtest` sobre la base y
+  la parte literal del patrón, `_parte_literal`); **Glob salió** con la respuesta del consultor a la
+  PARADA final, punto 2 (§10). Lo de dentro, como siempre (cualquier carpeta `backtest*`); la carpeta
   misma, solo con `backtest` como palabra: la medida «después» encontró que con `startswith` un
   libro SUELTO `backtesting-analytics …` caía también, y su Glob no debe negarse (leerlo lo niega su
   propia regla). `ls`, `dir` y `Get-ChildItem` no pasan por estas funciones: siguen como estaban.
@@ -235,6 +236,9 @@ nuevo es que esa canónica RECUERDA su forma textual.
   instante.
 
 ## 3. Tests (fases 2 y 3)
+
+(Tras la respuesta del consultor, §10: 23 tests; la carpeta Backtest, solo Read y Grep; y uno por
+cada clase anclada en el punto 1. La tabla de abajo es la de la primera vuelta.)
 
 `tests/unit/test_guardia_enlaces.py`, nuevo, 17 tests EN MEMORIA sobre repos y copias inventados
 (rutas a trozos, como `test_guardia_alias.py`): los 14 de la primera vuelta y, tras el revisor,
@@ -352,7 +356,7 @@ el enlace), los saltados no bajarían. No es una prueba directa: es un recuento.
 | 6 | 0.2 Tabla por clase y forma (a, b simulada y real, c, d), por stdin y sin leer contenido; D: solo por stdin | Hecho | §1.2; anexos `medir_enlaces.py`, `medida-*-SALIDA.txt`, `tabla-*.md` |
 | 7 | 0.3 Auditor | Hecho | §1.3 |
 | 8 | D1: las tres formas; anclajes por condición, sin enumerar rutas | Hecho | §2 (`relativas`, `por_estructura`, `ANCLAJES`) |
-| 9 | D2: la carpeta Backtest como objetivo de Read, Grep y Glob; `ls`/`dir`/`Get-ChildItem` como hoy (medido: pasan) | Hecho | §1.2 y §2; el Glob, a la PARADA, punto 2 |
+| 9 | D2: la carpeta Backtest como objetivo de Read, Grep y Glob; `ls`/`dir`/`Get-ChildItem` como hoy (medido: pasan) | Hecho; Glob, retirado por la respuesta a la PARADA (punto 2) | §1.2, §2 y §10 |
 | 10 | D3: lo no canonizable sigue negado | Hecho | sin cambios; `test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena` en verde |
 | 11 | D4: falsos positivos medidos; los tests con árboles falsos no cambian | Hecho de otra forma | §1.4: 12 cambiaron; 4 arreglados en la guardia, 8 (`test_roto_a_proposito`) con las capas nuevas apagadas en el test; PARADA, punto 3 |
 | 12 | Fase 1 en `guardia.py`, sin tocar las demás familias | Hecho | §2 |
@@ -382,9 +386,9 @@ tamaño).
   `stable/F39i-guardia-enlaces`; queda la segunda, de Aleks: repetir el traslado del corpus a D:
   con la guardia simulada denegando las cuatro rutas. «Hasta corregirlo, el corpus no sale de Bot
   v3\corpus» pasa a «hasta que Aleks repita el traslado con la guardia simulada».
-- Technical Debt, si el consultor no las cierra en la PARADA: las clases sin anclaje en una copia
-  fuera (punto 1), los enlaces que aparecen al recorrer y los enlaces duros (punto 5) y el ancestro
-  de la raíz con un clon fuera (punto 6).
+- Tras la respuesta del consultor (§10): nada a Technical Debt; los residuos de los puntos 5 y 6, a
+  la entrada G.1 de la hoja de ruta; y dos errores del consultor a la fila del cierre de
+  `ERRORES-RECURRENTES.md` (§10.1).
 
 ## 6. Desviaciones
 
@@ -419,7 +423,8 @@ NOMBRES de sus ficheros en memoria, como en cada evento; la salida solo da la de
 
 ## 8. PARADA final
 
-Lo que pide decidir al consultor (lo hecho, hecho está: la rama solo añade negativas):
+Respondida el 2026-11-20: la respuesta, tal cual, y su aplicación, en §10. Lo que se pidió decidir
+(lo hecho, hecho está: la rama solo añade negativas):
 
 1. **D1 no ancla todas las clases de la familia 1.** En una COPIA o un CLON fuera del repo siguen
    pasando: los tramos no citables de v6, los ficheros con el id de un caso reservado en
@@ -602,8 +607,58 @@ Ficheros: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C:\Users\USE
 Tras los arreglos: los tests de la guardia y los 17 nuevos, en verde (§3); `make check` sellado y la
 CI de Linux del último commit (§5).
 
+## 10. Respuesta del consultor a la PARADA final
+
+Del 2026-11-20, por la noche; copiada tal cual (también al final del encargo):
+
+> Modelo: Opus · Esfuerzo: alto
+>
+> Respuesta del consultor a la PARADA final de trabajo/guardia-enlaces (§8 de GUARDIA-ENLACES.md), 2026-11-20. Cópiala tal cual al informe, en una sección «Respuesta del consultor a la PARADA final». Si pasas de medianoche, la fila de HOLDOUT del 2026-11-21 va antes del primer make check de ese día. A las 09:00 de Lima del 21 no puede haber nada pesado corriendo (Aleks graba).
+>
+> 1. Las clases sin anclar: (a), se añaden en ESTA rama. Los tramos no citables (data/transcripciones/<vídeo con tramos>/), los ficheros con id de caso reservado en knowledge/cases/ y data/visor/, el feedback que etiqueta un caso reservado (knowledge/feedback/) y la lista de ficheros con ocultos, como anclajes con la misma regla de D1: se decide como si el anclaje estuviera en la raíz. Un test por clase, en una copia fuera del repo (negada), que rompa con el código de antes de este cambio. Por qué: es la misma condición que D1 («nombra la condición»), y dejarla a medias deja copias o clones fuera del repo sin proteger.
+>
+> 2. Glob sobre la carpeta Backtest: vuelve a pasar, como ls y Get-ChildItem. D2 queda solo para Read y Grep con la carpeta como objetivo. Por qué: listar nombres no es leer contenido, y ADR-0021 §1 lo permite; una prohibición que no sale de un ADR no se escribe (CLAUDE.md). Error del consultor, que irá a la fila del cierre. Ajusta el test y la línea de CLAUDE.md.
+>
+> 3. Apagar las capas nuevas en test_roto_a_proposito: sí, con una condición. Añade un test que, con TODAS las capas encendidas, compruebe que esas mismas rutas salen negadas, para que la combinación también quede cubierta. El cambio en tests existentes que D4 no previó es error del consultor y va a la fila del cierre.
+>
+> 4. El tope de 20.000 entradas, negando al pasarlo: se queda. Es negar por defecto, y lo impone el límite de 30 s del hook. Escríbelo en el informe, en la línea de CLAUDE.md y con su test (pasado el tope, se niega).
+>
+> 5 y 6. Los residuos que ya pasaban en main (enlaces encontrados al recorrer, enlaces duros, C:\ con un clon fuera del repo): residuo aceptado, sin rama propia por ahora. Van a la entrada G.1 de la hoja de ruta en el cierre, no a Technical Debt, porque PROJECT_STATE está en 24.776. Por qué: piden que alguien cree a propósito un enlace duro o un clon en la raíz de un disco, y la barrera sigue siendo el código.
+>
+> 7. G.8: de acuerdo. El código queda hecho con esta rama; la entrada pasa a HECHA solo cuando Aleks repita el traslado a D: y la guardia simulada niegue las cuatro rutas. Eso lo registra la orden de cierre de la rama siguiente.
+>
+> Lo que sigue: un commit con 1-4 y esta respuesta en el informe (make check sellado antes); push a fix/guardia-enlaces y CI de Linux con su número de run; revisor con alcance en lo nuevo (los anclajes añadidos, caso a caso contra el commit anterior, y el cambio de Glob); su informe pegado al final.
+>
+> Rama lista para revisión, NO cerrada.
+
+### 10.1 La respuesta, aplicada punto por punto
+
+| Punto | Hecho | Evidencia |
+|---|---|---|
+| 1 · Las clases sin anclar, como anclajes con la regla de D1 | Hecho | `Politica.por_estructura`: `data/transcripciones/<vídeo>` también con un vídeo con tramos no citables (`tramos_vigilados`); `ANCLAJES_POR_FICHERO` = `knowledge/cases/`, `data/visor/`, `knowledge/feedback/`; y una ruta cuya cola es exactamente una de la lista con ocultos (`ficheros_ocultos`). La ruta se lee como si el anclaje estuviera en la raíz y deciden las reglas de siempre (`_motivo_en_el_sitio`: `R_TRAMO` con su lectura por líneas, `R_CASO` por el nombre o el contenido, `R_FICHERO_OCULTO`). Un test por clase en una copia fuera, negada: `test_un_tramo_no_citable_…`, `test_un_caso_reservado_en_cases_…`, `test_un_caso_reservado_en_el_visor_…`, `test_el_feedback_de_un_reservado_…`, `test_un_fichero_de_la_lista_con_ocultos_…`; y uno de que no se pasan de frenada (`test_lo_que_no_es_reservado_en_esas_clases_de_la_copia_pasa`: un caso no reservado, un feedback que no etiqueta ninguno, una cruda sin cuarentena ni tramos, una propuesta fuera de la lista y la cruda de v6 leída por un trozo fuera del tramo). **Rompen con el código de antes de este cambio**: en un clon `git worktree add --detach C:/cm/ge-antes 99b512b8` con el test nuevo copiado dentro, los cinco FALLAN (exit 1; `anexos/GUARDIA-ENLACES/clon-antes-de-la-respuesta-SALIDA.txt`); el clon se quitó sin `--force`. Las propuestas con un tramo pisado (`_motivo_propuesta`, `knowledge/_proposals/`) no eran una de las clases de la respuesta y siguen sin anclaje: lo que de ellas está en la lista con ocultos, sí se niega |
+| 2 · Glob sobre la carpeta Backtest vuelve a pasar | Hecho | El bloque de D2 de Glob en `decidir`, fuera, y con él `_parte_literal`; D2 queda en `_motivo_material` (Read) y en `motivo_directorio` (Grep). El test pasa a `test_la_carpeta_backtest_como_objetivo_de_read_y_grep_se_niega`, y Glob (`*` con la carpeta de base y `…/*.xlsx`) entra en `test_listar_la_carpeta_backtest_con_ls_get_childitem_o_glob_pasa`, que falla con el código anterior (lo negaba). La línea de `CLAUDE.md` dice «Read o Grep» y que Glob, `ls` y `Get-ChildItem` la listan (ADR-0021 §1). El Glob de una copia de `holdout/{1,2,3}` sigue negado: es ADR-0088 |
+| 3 · El test con todas las capas encendidas | Hecho | `test_roto_con_las_capas_encendidas_sigue_negando` en `tests/unit/test_guardia_alias.py`, parametrizado con las ocho combinaciones de §1.4 (`CUBIERTAS_POR_LAS_CAPAS`): rompe la pieza del alias SIN apagar las capas y exige que el test de la pieza PASE (las rutas, negadas). Es la combinación que pide el punto: la pieza rota y las capas puestas. Con la pieza entera, las mismas rutas ya las cubren los tests de la pieza, que corren con todo encendido |
+| 4 · El tope de 20.000 entradas | Hecho | Estaba (§2, «Tras el revisor»; `test_el_recorrido_de_una_carpeta_de_fuera_tiene_tope`); ahora también en la línea de `CLAUDE.md` |
+| 5 y 6 · Residuos aceptados, a G.1 en el cierre | Para el cierre | Preparado abajo, en «Para el commit del contrato del cierre» |
+| 7 · G.8 | Para el cierre | Igual |
+
+**Lo que cambia en «Para el commit del contrato del cierre»** (§5b) con esta respuesta: no va nada a
+Technical Debt. A la entrada **G.1** de la hoja de ruta, como residuos aceptados sin rama propia: un
+enlace que aparece al recorrer una carpeta del repo fuera de las zonas, un enlace duro, y un ancestro
+de la raíz (`C:\`) con un clon fuera del repo. **G.8**: el código, hecho con esta rama; pasa a HECHA
+cuando Aleks repita el traslado a D: y la guardia simulada niegue las cuatro rutas (lo registra la
+orden de cierre de la rama siguiente). A la fila del cierre en `ERRORES-RECURRENTES.md`, dos errores
+del consultor que él mismo nombra: D2 negaba Glob sin un ADR (punto 2) y D4 no previó que cambiaran
+tests existentes (punto 3).
+
+**Tests y medidas tras la respuesta**: los 23 de `test_guardia_enlaces.py`, el nuevo de
+`test_guardia_alias.py` (ocho casos) y los de la guardia, en
+verde (§3); `PROJECT_STATE.md`, 2121 funciones de test. La medida de la fase 0.2
+(`anexos/GUARDIA-ENLACES/medida-*`) es de antes de esta respuesta y no se rehízo: los anclajes nuevos
+solo añaden negativas en las cinco filas de copia y clon que tenían «P» (§1.2), y el Glob de la
+carpeta Backtest vuelve a lo de `main`.
+
 ## Estado
 
-Rama lista para revisión, NO cerrada. La fase 0, D1 y D2 en la guardia, los 17 tests, la regresión
-contra main y los mutantes en clones, la CI de Linux y el revisor, con sus hallazgos arreglados o
-declarados; lo que pide decidir al consultor, en la PARADA final (§8).
+EN CURSO: la respuesta del consultor a la PARADA final, aplicada (§10); faltan la CI de Linux de
+este commit y el revisor sobre lo nuevo.

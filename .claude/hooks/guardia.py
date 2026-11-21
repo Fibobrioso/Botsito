@@ -369,6 +369,10 @@ SESIONES = "corpus/estrategia del trader/sesiones"
 TRANSCRIPCIONES = "data/transcripciones"
 HOLDOUT = "knowledge/cases/holdout"
 RAICES_IGNORADAS = ("corpus", "data")  # fuera de git: ripgrep no entra desde fuera
+# Anclajes de estructura de las clases que protegen fichero a fichero (`trabajo/guardia-enlaces`,
+# respuesta del consultor a la PARADA final, punto 1): una ruta de fuera que los lleva se decide
+# como si estuvieran en la raiz, y las reglas de `_motivo_en_el_sitio` miran cada fichero.
+ANCLAJES_POR_FICHERO = ("knowledge/cases/", "data/visor/", "knowledge/feedback/")
 
 EXT_LIBRO = (".xlsx", ".xls", ".xlsm", ".xlsb", ".csv", ".ods", ".tsv")
 EXT_IMAGEN = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".tif", ".tiff", ".heic")
@@ -562,8 +566,10 @@ class Politica:
 
     # Los anclajes de las clases protegidas, para decidir por su ESTRUCTURA una ruta que cae fuera
     # de la raiz (D1 de `trabajo/guardia-enlaces`): las colas de MATERIAL y SESIONES sin `corpus/`
-    # delante, HOLDOUT con 1, 2 o 3 detras (aqui) y TRANSCRIPCIONES con un video en cuarentena
-    # detras (en `por_estructura`, que solo lee `fuentes.yaml` si la ruta lo lleva).
+    # delante, HOLDOUT con 1, 2 o 3 detras (aqui); y en `por_estructura`, TRANSCRIPCIONES con un
+    # video en cuarentena o con tramos no citables detras (solo lee `fuentes.yaml` si la ruta lo
+    # lleva), `ANCLAJES_POR_FICHERO` y la lista de ficheros con ocultos (respuesta del consultor a
+    # la PARADA final, punto 1).
     ANCLAJES = (
         (MATERIAL.split("/", 1)[1], MATERIAL),
         (SESIONES.split("/", 1)[1], SESIONES),
@@ -584,9 +590,16 @@ class Politica:
                     salida.append(en_la_raiz + resto[len(anclaje) :])
             if resto.startswith(TRANSCRIPCIONES + "/"):
                 video = resto[len(TRANSCRIPCIONES) + 1 :].split("/", 1)[0]
-                if video in self.sesiones_en_cuarentena:
+                # Respuesta del consultor a la PARADA final, punto 1: tambien un video con tramos
+                # no citables (su cruda se lee por trozos que no los toquen: `lineas_de_tramo`).
+                if video in self.sesiones_en_cuarentena or video in self.tramos_vigilados:
                     salida.append(resto)
-        return salida
+            # Punto 1 de la misma respuesta: las clases que protegen por el nombre o el contenido de
+            # cada fichero -el id de un caso reservado en `knowledge/cases/` y `data/visor/`, el
+            # feedback que etiqueta un caso reservado- y la lista calculada de ficheros con ocultos.
+            if resto.startswith(ANCLAJES_POR_FICHERO) or resto in self.ficheros_ocultos:
+                salida.append(resto)
+        return list(dict.fromkeys(salida))
 
     def relativas(self, ruta: str) -> list[str]:
         """TODAS las formas de `ruta` relativas a la raiz (D1 de `trabajo/guardia-enlaces`): la
@@ -679,7 +692,7 @@ class Politica:
         carpeta = resto.split("/", 1)[0]
         # Lo de dentro, como siempre: cualquier carpeta `backtest*`. La carpeta misma, solo con
         # `backtest` como palabra (`Backtest marzo 2026`): un libro suelto `backtesting-analytics
-        # ...` lo decide su propia regla, y listarlo con Glob no es abrirlo.
+        # ...` lo decide su propia regla.
         es_carpeta = "/" in resto or re.match(r"backtest(?![a-z])", carpeta)
         no_legible = self.mes_de(carpeta) not in self.meses_legibles
         if es_carpeta and carpeta.startswith("backtest") and no_legible:
@@ -688,7 +701,9 @@ class Politica:
 
     def motivo_carpeta_backtest(self, ruta: str) -> str | None:
         """D2: la carpeta `Backtest <mes>` de un mes no legible, o algo de dentro, por cualquiera
-        de sus formas, como objetivo directo de Read, Grep o Glob."""
+        de sus formas, como objetivo directo de Grep (Read pasa por `_motivo_material`); Glob la
+        lista, como `ls` (respuesta del consultor a la PARADA final de `trabajo/guardia-enlaces`,
+        punto 2)."""
         for rel in self.relativas(ruta):
             motivo = self._motivo_backtest(rel)
             if motivo:
@@ -2199,18 +2214,6 @@ def _candidatos_del_holdout(politica: Politica, base: str | None = None) -> list
                         salida.append(_normcase(ruta))
         except OSError:
             continue
-    return salida
-
-
-def _parte_literal(patron: str) -> str:
-    """Los tramos de un comodin antes del primero que lleva `*`, `?`, `[` o `{`: la carpeta que el
-    patron nombra directamente (D2 de `trabajo/guardia-enlaces`)."""
-    tramos = re.split(r"([\\/])", patron)
-    salida = ""
-    for tramo in tramos:
-        if re.search(r"[*?\[{]", tramo):
-            break
-        salida += tramo
     return salida
 
 
@@ -5946,12 +5949,9 @@ def decidir(evento: dict[str, object], politica: Politica) -> str | None:
                     f"Glob de `{patron}` lista los nombres de dentro de `{HOLDOUT}/{{1,2,3}}`."
                     f"\nRegla: {R_LISTADO}.\n{COMO_LISTAR}"
                 )
-            # D2 de `trabajo/guardia-enlaces`: la carpeta `Backtest <mes>` de un mes no legible
-            # como objetivo directo (la base, o la parte literal del patron), como su contenido.
-            for objetivo in (base, _absoluta(_parte_literal(patron) or ".", base)):
-                motivo = politica.motivo_carpeta_backtest(objetivo)
-                if motivo:
-                    return f"Glob de `{patron}` sobre {objetivo}.\nRegla: {motivo}."
+            # La carpeta `Backtest <mes>` se puede listar con Glob, como con `ls` y `Get-ChildItem`:
+            # listar nombres no es leer contenido (ADR-0021 §1). D2 queda para Read y Grep
+            # (`trabajo/guardia-enlaces`, respuesta del consultor a la PARADA final, punto 2).
             return None
         if herramienta in HERRAMIENTAS_DE_COMANDO:
             if herramienta == "Monitor" and (

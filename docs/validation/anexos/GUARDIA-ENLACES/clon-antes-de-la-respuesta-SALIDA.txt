@@ -1,0 +1,13 @@
+Using CPython 3.12.10 interpreter at: C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe
+Creating virtual environment at: .venv
+   Building botsito @ file:///C:/cm/ge-antes
+      Built botsito @ file:///C:/cm/ge-antes
+Installed 25 packages in 1.42s
+................FFFFFF.                                                  [100%]
+=========================== short test summary info ===========================
+FAILED tests/unit/test_guardia_enlaces.py::test_listar_la_carpeta_backtest_con_ls_get_childitem_o_glob_pasa
+FAILED tests/unit/test_guardia_enlaces.py::test_un_tramo_no_citable_en_una_copia_fuera_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_un_caso_reservado_en_cases_de_una_copia_fuera_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_un_caso_reservado_en_el_visor_de_una_copia_fuera_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_el_feedback_de_un_reservado_en_una_copia_fuera_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_un_fichero_de_la_lista_con_ocultos_en_una_copia_fuera_se_niega

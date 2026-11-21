@@ -266,9 +266,12 @@ que su cabecera enumera (`--no-verify`,
 - Guardia: las clases protegidas se deciden por TODAS las formas de la ruta -la textual (sin
   resolver enlaces) y la canonica, relativas a la raiz- y, fuera del repo, tambien por su
   ESTRUCTURA: una copia o un clon con `estrategia del trader/material adicional de su operativa/`,
-  `estrategia del trader/sesiones/`, `knowledge/cases/holdout/{1,2,3}/` o la transcripcion de un
-  video en cuarentena se niega como dentro; y la carpeta `Backtest <mes>` de un mes no legible,
-  como objetivo de Read, Grep o Glob, como su contenido (`trabajo/guardia-enlaces`,
+  `estrategia del trader/sesiones/`, `knowledge/cases/holdout/{1,2,3}/`, la transcripcion de un
+  video en cuarentena o con tramos no citables, `knowledge/cases/`, `data/visor/`,
+  `knowledge/feedback/` o una ruta de la lista con ocultos se decide como dentro; la carpeta
+  `Backtest <mes>` de un mes no legible, como objetivo de Read o Grep, como su contenido (Glob,
+  `ls` y `Get-ChildItem` la listan: ADR-0021 §1); y una carpeta de fuera de mas de 20.000 entradas
+  no se recorre: se niega, por el plazo de 30 s del hook (`trabajo/guardia-enlaces`,
   `tests/unit/test_guardia_enlaces.py`).
 
 Lo que cuenta para la sesion:

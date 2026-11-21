@@ -822,8 +822,9 @@ def test_roto_a_proposito(
     # estructura fuera de la raiz (`por_estructura`) y el recorrido de una carpeta de fuera
     # (`lo_que_alcanza_fuera`), cuatro parches para tres capas- niegan tambien estas rutas, que
     # llevan el anclaje de su clase: se apagan para que cada pieza del alias se mida SOLA, como en
-    # `main`
-    # (GUARDIA-ENLACES.md, D4). Que las capas nuevas sostienen lo suyo, test_guardia_enlaces.py.
+    # `main` (GUARDIA-ENLACES.md, D4). Que las capas nuevas sostienen lo suyo, en
+    # test_guardia_enlaces.py; y que con TODAS encendidas esas rutas salen negadas aunque la pieza
+    # del alias este rota, en `test_roto_con_las_capas_encendidas_sigue_negando`, abajo.
     monkeypatch.setattr(g, "_textual", lambda ruta: ruta)
     monkeypatch.setattr(g, "_sin_resolver", lambda ruta: os.path.normpath(ruta))
     monkeypatch.setattr(g.Politica, "por_estructura", lambda self, ruta: [])
@@ -837,3 +838,33 @@ def test_roto_a_proposito(
         test(**{n: argumentos[n] for n in nombres})
     primera = str(fallo.value).splitlines()[0] if str(fallo.value) else "AssertionError"
     print(f"ROTO | {rotura} | {nombre} | falla: {primera[:160]}")
+
+
+# Las ocho combinaciones que, con las capas de `trabajo/guardia-enlaces` encendidas, dejaron de
+# fallar al romper la pieza (GUARDIA-ENLACES.md §1.4, medido el 2026-11-20): sus rutas llevan el
+# anclaje de su clase, y la forma textual o la estructura las niegan igual.
+CUBIERTAS_POR_LAS_CAPAS = [
+    _w("identidad", "test_cada_forma_de_la_raiz_se_niega_con_la_regla_del_sitio"),
+    _w("identidad", "test_una_variable_de_bash_con_un_alias_se_niega"),
+    _w("identidad", "test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena"),
+    ("sin_contenedor", "test_un_lector_recursivo_sobre_una_carpeta_que_contiene_la_raiz_se_niega"),
+    _w("una_lectura", "test_las_barras_dobladas_de_la_herramienta_se_niegan"),
+    _w("sin_proc_cygdrive", "test_proc_cygdrive_es_la_unidad"),
+    _w("sin_unidad_sin_barra", "test_otra_unidad_se_canoniza_y_se_niega_si_cae_bajo_la_raiz"),
+    _w("sin_disfraz_posix", "test_proc_cygdrive_es_la_unidad"),
+]
+
+
+@pytest.mark.parametrize(("rotura", "nombre"), CUBIERTAS_POR_LAS_CAPAS)
+def test_roto_con_las_capas_encendidas_sigue_negando(
+    g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch, rotura: str, nombre: str
+) -> None:
+    """Respuesta del consultor a la PARADA final de `trabajo/guardia-enlaces`, punto 3: con TODAS
+    las capas encendidas, las mismas rutas salen negadas aunque la pieza del alias este rota; la
+    combinacion queda cubierta. (El test de la pieza, `test_roto_a_proposito`, las apaga.)"""
+    _romper(rotura, g, repo, monkeypatch)
+    test = globals()[nombre]
+    argumentos: dict[str, Any] = {"g": g, "repo": repo, "monkeypatch": monkeypatch}
+    argumentos |= {"sitio": "marzo", "ruta": "\\\\otra-maquina\\C$\\x\\y.txt"}
+    nombres = test.__code__.co_varnames[: test.__code__.co_argcount]
+    test(**{n: argumentos[n] for n in nombres})  # sin AssertionError: siguen negadas
