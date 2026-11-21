@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-enlaces
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardias-holdout cerrada en main el 2026-11-20 (stable/F39h-guardias-holdout): G2 (make check no sella en trabajo/* sin la fila de HOLDOUT-EXPOSICIONES del día), dos huecos de test_hoja_de_ruta y el estudio de G1.
+trabajo/guardia-enlaces EN CURSO (2026-11-20, G.8): la guardia niega el material protegido también por enlace y por estructura fuera del repo. Encargo docs/encargos/trabajo-guardia-enlaces.md; informe docs/validation/GUARDIA-ENLACES.md.
 
 ## Stable Main State
 fb1f02e9 · merge de `trabajo/guardias-holdout` (tag `stable/F39h-guardias-holdout`), sobre `stable/F39g-preregistro` (2fc884ac). Informe docs/validation/GUARDIAS-HOLDOUT.md; el registro del cierre, al final de HISTORIA.
@@ -173,8 +173,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 76 (2026-11-19).
+— ninguna desde el Archivo 77 (2026-11-20).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 76 (2026-11-19).
+— ninguna desde el Archivo 77 (2026-11-20).
