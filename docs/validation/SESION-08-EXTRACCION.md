@@ -195,6 +195,273 @@ Con `scripts/barrido_dias.py` de `main`, antes de leer una sola línea de la fil
 **Sin PARADA por el barrido.** En sus 49 líneas no sale ningún otro mes; lo que se diga de un
 mes sin número lo ve la lectura (§3).
 
+Sellado y commiteado en `66ea16bd` (PICO DE MEMORIA del sello: 321 MiB en `test`).
+
+### 2.3 v20: fotogramas
+
+`uv run botsito corpus frames extract --video v20` → `fr-v20-c29e6481`, «4385 fotogramas, 0
+extra», fuera de git en `data/fotogramas/v20/png-1fps/`. `uv run botsito corpus frames check`:
+«OK: 20 extracciones coherentes con el disco; 3 obligatorios presentes». **Ningún fotograma de
+v20 se ha abierto**: los únicos tramos con gráfico real en que la voz dice el día son los de S-7
+(10 de julio), y lo que se cita de ellos no pide imagen.
+
+## 3. El bloque técnico (v20), por pregunta
+
+La filtrada de v20 leída entera, fuera de sus bloques tapados (fila de `HOLDOUT-EXPOSICIONES.md` del
+2026-11-21, declarada antes). Cada literal es de la FILTRADA, con su `mm:ss`; ninguno cae en un tramo
+de `tramos_no_citables.yaml` (§3.0). Cada «resuelve» es una propuesta: lo decide el consultor.
+
+### 3.0 Lo que la filtrada dice de la sesión, contra lo que contestó Aleks
+
+- **El trader dirigió las preguntas, y Aleks no estuvo todo el rato** (respuesta 3): el trader lee
+  cada pregunta del PDF en voz, con «Lo que nos has dicho» y «Lo que todavía no sabemos» (S-1 en
+  `[00:07]`, S-2 en `[14:57]`, S-3 en `[38:12]`), y lee también «Alex te dice cuál» (`[64:32]`) de S-7.
+  Pregunta «¿Estás allí?» en `[16:02]` y en `[64:36]`. Antes de S-4 dice «me voy a dar un brillo un
+  minuto» (`[49:28]`). En S-7 hay dos voces (`[67:03]`–`[67:14]`).
+- **El silencio de casi nueve minutos (0:16:18–0:25:01)**: justo antes, «Bro ahora vengo ¿vale?»
+  (`[16:00]`), y después «Vale, volví.» (`[25:35]`). Fue una pausa en mitad de S-2.
+- **Los códigos de voz** (respuesta 3, «en la mayoría»): no son exactamente los de la hoja. S-1 se abre
+  con «S1, la mecha de un minuto…» (`[00:07]`) y se cierra con «continúo verdad bro» (`[14:49]`). S-2
+  se abre con «S2, tus zonas de control» (`[14:57]`) y se cierra con «ese 2 terminado, pregunta ese 3»
+  (`[38:05]`). S-3 se cierra con «pregunta S3 finalizada» (`[49:23]`). S-4 se abre con «pregunta S4»
+  (`[49:25]`) y se cierra con «ese 4 finalizado» (`[58:37]`). S-5 se abre con «ese 5» (`[58:40]`) y se
+  cierra con «ese 5 finalizado» (`[61:35]`). S-6 se abre en esa misma línea y se cierra con «S6
+  finalizado» (`[64:07]`–`[64:12]`). S-7 se abre con «S7» (`[64:13]`) y se cierra con «ese 7, pues,
+  cerrado» (`[72:21]`). Por eso el guion solo detectó S-3 y S-4: localizadas a mano, todas en el orden
+  de la hoja (respuesta b), S-1 a S-6 y S-7 al final.
+- **«Para confirmar al final»** (respuesta 2, «de la mayoría»): **se leyeron las seis**, cada una al
+  final de su pregunta: S-1 `[13:25]`, S-2 `[37:39]`, S-3 `[48:33]`, S-4 `[57:52]`, S-5 `[61:23]` (a
+  medias: «cuando la roja» y «lo descarto», `[61:35]`) y S-6 `[63:44]`. S-7 no lleva.
+- **El gráfico real** (respuesta 4): el trader pasa a un gráfico real en S-1 («lo vamos a ir al el
+  mercado real», `[03:27]`), en S-2 (`[28:00]` y `[32:09]`) y en S-3 («evaluar en nuestro gráfico»,
+  `[39:21]`, y «lo voy a mostrar en el gráfico», `[48:40]`). **En ninguno dice el día en voz.**
+  Según Aleks eran días de julio del 1 al 17, pero la voz no lo confirma. Por la regla de la PARADA
+  condicional, cada uno es un tramo no citable, y la pregunta se queda con lo citable de fuera. Son
+  cinco tramos: **0:03:27–0:14:49, 0:28:00–0:30:14, 0:32:09–0:37:39, 0:39:21–0:44:06 y
+  0:48:40–0:49:18**. Sus límites salen de la voz y van por precaución hacia afuera (sin abrir
+  fotogramas: ninguno antes de que la voz sitúe el tramo en un día). En S-1 nombra además el desenlace
+  de una operación de ese gráfico; no se copia aquí.
+- **El vídeo de mapeo**: el trader lo nombra en S-1 y dos veces en S-2, siempre dentro de esos tramos.
+  Hay una mención más del «mapeo de estructura», en `[15:46]`, mientras lee «Lo que nos has dicho» de
+  S-2; va también a `tramos_no_citables.yaml` (**0:15:46–0:15:51**), porque no se puede saber si
+  habla del vídeo.
+- **S-7**: el trader abre el replay del **10 de julio**. El día se dice en voz en `[66:50]` («El día
+  dice 10 de julio.») y es de construcción (`casos_ocultos`: `False`). Por la misma regla, ese tramo
+  (`[66:48]`–`[69:55]`) es citable. Sus operaciones y cómo acabaron no se escriben aquí (encargo, S-7).
+- **Los esquemas**: S-4, S-5 y S-6 se contestan sobre los esquemas del PDF («Dibujo 1»,
+  «Dibujo 2», `[52:59]`, `[54:51]`; «me gusta como lo [has] trazado», `[63:37]`). En S-5, «voy a usar
+  este» (`[60:15]`) no dice qué; no hay palabra de gráfico ni de mercado.
+
+### 3.1 S-1 (A-35, la única bloqueante): la mecha de un minuto que pasa tu alto de M15 y vuelve
+
+Vídeo v20, `[00:07]`–`[14:43]`. Lo citable está en `[00:07]`–`[03:27]`; de `[03:27]` a `[14:49]` el
+trader trabaja en su gráfico real, y ese tramo no es citable.
+
+- **Lo que dice, sobre el esquema:** «Tiene que cerrar, al menos cuando hay la toma de liquidez de
+  M15, la regla es que rompa con cuerpo y cierre con cuerpo por arriba.» (`[01:38]`), «Si no, esto no
+  se llegaría a considerar, o sea, se llegaría a considerar liquidez de M1.» (`[01:45]`); «Nosotros no
+  lo tomaríamos en cuenta porque tiene que romper con un cuerpo cuando es la toma de liquidez de M15
+  para poderlo validar, recién validar esto de aquí.» (`[02:37]`); «Entonces, si lo hace con Mecha,
+  simplemente yo esperaría y trazaría esto como una zona lineal de liquidez de M1 y esperaría que el
+  precio rompa, ¿vale?» (`[02:51]`).
+- **La opción (a, b u «otra»)**: la dice en `[10:44]`, dentro del tramo del gráfico real: **no
+  citable**. Lo citable no elige entre A y B. Dice que la mecha de una M1 que pasa el alto de M15 no
+  es una toma de liquidez de M15: la trata como liquidez de M1 y espera la ruptura con cuerpo.
+  **No dice dónde queda su alto de M15.**
+- **Varias velas seguidas**: contestada en `[10:49]`, dentro del tramo: no citable.
+- **El bajo, al revés**: contestada en `[13:13]`, dentro del tramo: no citable.
+- **«Para confirmar al final»**: se leyó (`[13:25]`), dentro del tramo: no citable.
+- **En qué valor de `liquidez_m15_mecha_que_vuelve` cae** (`parametros.yaml:595`, opciones
+  `no_mueve`, `solo_la_contraria` y `cualquier_mecha`; hoy `solo_la_contraria`, DEFAULT_AMBIGUOUS).
+  Según el «Para Aleks» de `PREGUNTAS-7B.md`, (a) → `solo_la_contraria`, (b) → `cualquier_mecha` y
+  «otra» → A-35 sigue abierta. **Lo citable no cae en ninguno de forma literal: lo decide Aleks.** Lo
+  que sí dice toca otra cosa, qué cuenta como toma de M15: ruptura y cierre con cuerpo
+  (`liquidez_m15_criterio_toma`, ADR-0062). Que la mecha nueva no sea una toma de M15 no dice si
+  mueve el nivel.
+- **Propuesta: no resuelve** A-35 con lo citable. Regla general: sí, para la toma («la regla es»).
+  «creo»: no, en lo citable. Alto y bajo: lo citable habla del alto; lo del bajo cae en el tramo.
+
+### 3.2 S-2 (RN-009 y A-13): tus zonas de control y el momento del break even
+
+Vídeo v20, `[14:57]`–`[38:04]`, con la pausa 0:16:18–0:25:34 en medio. Lo citable está en
+`[14:57]`–`[16:02]` (la lectura, menos `[15:46]`–`[15:51]`), `[25:35]`–`[27:54]`,
+`[30:14]`–`[32:07]` y `[37:39]`–`[38:04]`. Los dos gráficos reales (0:28:00–0:30:14 y
+0:32:09–0:37:39) no son citables.
+
+**Pregunta 1, las zonas de control (RN-009):**
+- Sobre el dibujo 1: «vale, la A» (`[26:14]`), «si sería una zona» (`[26:18]`), «de control válida,
+  la B también, la C también» (`[26:20]`), «y la D» (`[26:22]`), «punto breaker» (`[26:24]`).
+- Al leer la pregunta: «La C también valdría como una zona de control.» (`[30:23]`), «Se forman antes
+  de romper el punto y pueden formarse también después de romperlo.» (`[30:28]`). Después: «y antes
+  que genere rompimiento el posible punto breaker, pues no solo nos deja una zona de control y rompe,
+  no nos genera otras más» (`[30:49]`), «si hay más de uno, simplemente se invalida este posible punto
+  breaker y no se opera, vale, esperaríamos a que el precio rompiera por debajo» (`[30:58]`).
+- La opción: «pues la respuesta sería» (`[31:29]`), «la letra T» (`[31:30]`). Es una transcripción
+  dudosa, y no se abre ningún fotograma para ver la letra (§3.0). Con `[30:28]`, lo dicho es la (b),
+  «también después de romperlo».
+- **Contradicción, dicha sin decidir (R4.6):** en `[26:20]` y `[30:23]` A, B y C le valen como zonas
+  de control. En `[30:58]`, «si hay más de uno», se invalida el punto, que es lo fijado en A-20
+  (RESUELTA: una sola zona; con dos se descarta, `zonas_control_max_por_esquema` = 1). En la 7a dijo
+  «solo a y b» (`ev-v18-002115-bf40ec0b`). A-20 no se vuelve a preguntar (ADR-0093 §1): va como
+  contradicción con lo fijado. Lo que dice de D (formado tras la ruptura) es solo «y la D», «punto
+  breaker»: no dice si es zona de control.
+- **«El bajo que deja la propia toma, ¿cuenta como zona de control?»** (fila propia): lo lee en
+  `[37:06]` y lo contesta en `[37:19]`–`[37:37]`, dentro del tramo 0:32:09–0:37:39, porque señala
+  algo en pantalla que puede ser el gráfico real. **No citable: no resuelve.**
+- **Propuesta: en parte** (b) para «antes o después», con la contradicción de cuántas zonas.
+
+**Pregunta 2, el margen del break even (A-13):**
+- Sobre el dibujo 2: «si está demasiado extendido el precio, vale, no llega, o sea, a estar en medio
+  de» (`[26:30]`), «de nuestra zona de entrada, bastaría con cuerpo, o sea, que rompa con poco cuerpo y
+  cierre,» (`[27:00]`), «para poder nosotros, pues, poner en break-even la entrada, o inclusive con
+  mecha.» (`[27:07]`); «aquí entonces está en medio cuando está en medio y tendría que romper con
+  cuerpo y cerrar con cuerpo» (`[27:37]`), «rompimiento aquí ya te genera la zona de control basaría
+  sólo con una mecha porque hay una» (`[27:49]`).
+- La opción: «y la respuesta sería C, otra cual» (`[31:51]`), «porque ya dije, o sea, la diferencia»
+  (`[31:55]`), «de las zonas de control» (`[31:57]`), «para puesta en break-even, enfocado»
+  (`[32:00]`).
+- **Basta cerrar por encima o pide margen**: «otra». **Depende de la distancia** entre la zona de
+  control y el nivel de entrada. Si la zona queda «en medio» del nivel de entrada, rompe y cierra con
+  cuerpo. Si el precio está «demasiado extendido», basta con poco cuerpo, «o inclusive con mecha».
+  **Cifra: ninguna. Unidad: ninguna. Siempre el mismo: no** (depende del escenario).
+- «Para confirmar al final» (`[37:39]`): «Bueno, mi zona de control, pues, es la condicional para
+  poder pasar a break even.» (`[37:49]`), «La vela tiene que estar por encima del alto de la zona de
+  control.» (`[37:53]`), «Eso, pues, específicamente es solo en casos, pues, para poder poner en break
+  even.» (`[37:57]`).
+- **Ejemplo, en el replay del 10 de julio (S-7, citable)**: «para poder poner un break even se va a
+  dar después de la entrada entonces aquí» (`[68:49]`), «ocurre el retroceso después de haber activado
+  la entrada» (`[68:52]`). Es lo que la 7a dejó en duda (la zona del break even se forma después de la
+  entrada: `ev-v19-011640-1fdc33a7`).
+- **Propuesta: en parte**: no hay margen fijo. Con «depende», A-13 sigue abierta (el «Para Aleks» de
+  `PREGUNTAS-7B.md`). Regla general: sí, con su condición. «creo»: no. Compra y venta: lo dice para
+  la compra del dibujo 2 y no habla de la venta.
+
+### 3.3 S-3 (A-48): dónde pones el 0 de tu caja
+
+Vídeo v20, `[38:05]`–`[49:24]`. Lo citable está en `[38:05]`–`[39:21]`, `[44:06]`–`[48:40]` y
+`[49:18]`–`[49:24]`. Los gráficos reales (0:39:21–0:44:06 y 0:48:40–0:49:18) no son citables.
+
+- Sobre el esquema («vale estamos estamos aquí explicando el lo que sería este gráfico este esquema
+  inventado vale», `[44:46]`): «pero ojo el punto 1 está bien planteado pero aquí hay una rata que
+  sería» (`[46:10]`), «el 0 aquí en el a no iría vale tampoco iría pues aquí tampoco iría en la vela
+  pues de la toma y no» (`[46:17]`), «quería a este nivel de aquí pero cambio iría a este nivel aquí es
+  la vela pues queda retrocedido» (`[46:28]`), … «esta zona de control» (`[46:45]`), «su punto más
+  bajo sería este de aquí» (`[46:48]`), «entonces allí iría el 0» (`[46:51]`).
+- La opción: «La respuesta sería C, en otro sitio, ¿cuál? Con lo explicado, pues, anteriormente,
+  ¿vale?» (`[47:50]`).
+- **Dónde va el 0: «otra»**: ni en A (el último pivote de M1) ni en B (la vela de la toma). Va en el
+  punto más bajo de la zona de control que se forma tras el retroceso y valida la ruptura (en la
+  venta del esquema), que es su punto de entrada: «El cero, por lo general, va en una compra, el punto
+  de entrada, ¿vale?» (`[48:13]`), «En el posible punto breaker y al revés, pues sería también al nivel
+  de entrada, ¿vale?» (`[48:20]`).
+- **La compra, por separado**: «Ahora, para precisar, ¿lo haces igual en una compra? Exacto, lo hago
+  igual en una compra.» (`[48:03]`).
+- «Para confirmar al final»: «Ahora, para confirmar al final, mi cero es, tu cero es tu punto de
+  entrada.» (`[48:33]`).
+- **Propuesta: en parte.** Elige «otra», el punto más bajo de la zona de control que valida, que
+  llama su punto de entrada. Si eso es `ultimo_pivote_m1` o `referencia_de_la_toma`
+  (`parametros.yaml:702`) lo decide el consultor: el trader descarta A y B tal como están dibujados.
+  Regla general: sí («por lo general»). «creo»: no en la respuesta. Compra y venta: sí.
+
+### 3.4 S-4 (A-58): tu rango de 4 horas después de una ruptura
+
+Vídeo v20, `[49:25]`–`[58:37]`, con la pausa 0:49:36–0:52:05. Todo sobre los dos dibujos del PDF
+(«Dibujo 1, ¿qué me sirve con explicarlo en este dibujo?», `[52:59]`).
+
+- **Dibujo 1** (cierra de su color): «pero la actualización de rango» (`[54:29]`), «como sería,
+  nuestro rango pasa» (`[54:31]`), «de aquí» (`[54:33]`), «a aquí, ese sería» (`[54:35]`), «nuestro
+  rango a trabajar» (`[54:38]`), «para nosotros vale o sea esto pasaría a este bajo y esto esté alto
+  aquí vale ahora» (`[54:40]`). Antes: «y como digo, no sé» (`[54:23]`), «si es indiferente de saber
+  este rango con mecha por encima» (`[54:25]`), «o con cuerpo, vale» (`[54:27]`). Las palabras no
+  dicen de qué vela son «este bajo» y «este alto», y no se abre ningún fotograma para verlo.
+- **Dibujo 2** (cierra del color contrario): «es roto por encima pero los tierra una vela de color
+  contrario entonces nosotros lo que» (`[55:20]`), «que haríamos sería seguir buscando pues operativas
+  alcistas vale nuestro rango pues estaría definido» (`[55:28]`), «en el mismo en el mismo nivel vale
+  no lo actualizamos sino que lo no que lo definimos» (`[55:35]`), «el mismo nivel lo dejamos hasta
+  que puede romper con una vela pues de acorde a esto» (`[55:41]`). Después: «no voy a actualizar a
+  esa vela verde» (`[56:05]`), «en mi rango, sino que respeto» (`[56:07]`), «respeto el rango»
+  (`[56:19]`).
+- La opción, de los dos: «vale en el dibujo 1 del alto bajo el alto al bajo de esa vela a esas
+  preguntas la respuesta sería la» (`[56:53]`), «c otra cual con lo explicado pues anteriormente y
+  para el número 2 también sería hacer otra cual con» (`[57:12]`). Formalmente, «otra» en los dos. Lo
+  explicado en el dibujo 2 es lo que la (a) dice: «sigue siendo el mismo».
+- **La ruptura por abajo**: «la hace es igual cuando la ruptura» (`[57:42]`), «es por abajo o al
+  revés» (`[57:44]`), «yo» (`[57:47]`), «considero que» (`[57:48]`), «o sea, la hace su color»
+  (`[57:49]`), «es igual» (`[57:50]`).
+- **«¿Marcas tu rango siempre en el gráfico de 4 horas, o a veces en otro?»** (fila propia): «siempre
+  marco mi rango» (`[57:23]`), «que es mi temporalidad mayor» (`[57:33]`), «está definida como mi
+  temporalidad mayor» (`[57:35]`), «H4» (`[57:39]`). Siempre en H4.
+- «Para confirmar al final»: «mi nuevo rango es pues la continuación y cierra el color contrario mi
+  rango es pues» (`[58:07]`), «dependiendo o sea basándonos en estos ejemplos ambos serían de
+  continuación vale porque para» (`[58:15]`), «yo poder cambiar mi rango a bajista tendría que haber
+  un rompimiento pues en este caso por aquí» (`[58:21]`).
+- **Propuesta: en parte.** El dibujo 2 queda contestado (el rango sigue el mismo) y siempre en H4. En
+  el dibujo 1 el rango pasa «a este bajo y esto este alto», sin decir de qué vela: no se puede decir
+  si es la (a). Con «otra» en los dos, el «Para Aleks» manda `otra` (regla nueva con ADR), salvo que
+  el consultor lea el dibujo 2 como (a). Regla general: sí («siempre», «considero que … es igual»).
+  «creo»: no, pero «no sé» en `[54:23]` (si la ruptura es con mecha o con cuerpo). Alto y bajo: sí
+  («es igual»).
+
+### 3.5 S-5 (S-22): para que el máximo de la verde sea tu punto, qué tiene que hacer la roja
+
+Vídeo v20, `[58:40]`–`[61:35]`, sobre el esquema.
+
+- **La pregunta**: «El máximo de la última verde es tu punto.» (`[59:38]`), «Si vas a compasar el
+  mínimo de la última con verde.» (`[59:42]`), «No, tiene que pasar el mínimo de toda la racha.»
+  (`[59:46]`), «Vale.» (`[59:50]`), «Creo que...» (`[59:52]`), «A ver, no tiene que pasar el mínimo
+  de la racha.» (`[59:54]`). Después: «A ver, es que me he inventado...» (`[59:58]`), «Vale, pero el
+  problema es que no me está diciendo...» (`[60:00]`), «mayor planteamiento en el esquema inventado»
+  (`[60:07]`). Y al final: «O sea, de mínimo de la última vela verde, que no tiene nada que ver,
+  siempre se va a trazar, o sea, si lo vemos de esa manera, una vela roja, una vela verde, o al revés,
+  allí se traza un punto, vale, …» (`[60:49]`).
+- **Para precisar 1, «si la roja no pasa ningún mínimo, ¿vale el punto de antes o no hay punto?»**
+  (fila propia): «si no pasa, pues no hay ningún punto, vale,» (`[60:49]`, en la misma línea).
+- **Para precisar 2, «¿basta con que lo pase con la mecha?»** (fila propia): «basta con lo que pase
+  con la mecha, que lo pase con mecha, si, basta con lo que pase con la mecha,» (`[60:49]`).
+- «Para confirmar al final»: «el máximo de la verde es mi punto cuando la lar la roja cuando la roja»
+  (`[61:23]`), y «vale lo descarto» (`[61:35]`): a medias.
+- **Propuesta: no resuelve** la pregunta. Lee la (a) y la (b), dice «Creo que...» y «no tiene que
+  pasar el mínimo de la racha», pide más planteamiento en el esquema y acaba en «una vela roja, una
+  vela verde, o al revés, allí se traza un punto». Es lo que el bot hace hoy (ADR-0085 §3, que no se
+  toca aquí). Las dos de «Para precisar» sí tienen respuesta: sin pasar ningún mínimo no hay punto, y
+  basta la mecha. Regla general: no clara. «creo»: sí (`[59:52]`). Compra y venta: «o al revés»
+  (`[60:49]`).
+
+### 3.6 S-6 (S-19): el precio ya está más allá del 0 cuando se forma la caja
+
+Vídeo v20, `[61:35]`–`[64:12]`, sobre el esquema («Aquí se forma la caja vale perfecto me gusta
+esto», `[62:16]`).
+
+- **Cuál de las cinco**: «inclinaría más que nada que espero que el cero quede al lado bueno y
+  entonces la pongo bueno» (`[62:43]`), «no así está bien este es el punto de entrada es el punto de
+  entrada es igual a nivel 0 de la caja» (`[62:56]`), «y si o sea para hacerlo de manera más detallada
+  y no liarnos vale la respuesta va a ser la hay» (`[63:03]`), «otra cual con lo explicado pues
+  anteriormente y aquí también vale ahora han explicado aquí pero» (`[63:10]`). Se inclina por la (b)
+  («espero que el cero quede al lado bueno») y contesta «otra», con que el punto de entrada es el
+  nivel 0 de la caja.
+- **«¿Y si el precio vuelve por debajo del 0 antes de que pongas la orden?»**: «orden pues la orden no
+  se tiene que ir nosotros tenemos tiempo de sobra para anticipar por ejemplo» (`[63:23]`); «ya o sea
+  para adelante si el precio ya está más allá del cero o sea siempre como tiene que estar» (`[63:44]`),
+  «a nivel, o sea, la orden tiene que estar a nivel» (`[63:54]`), «entonces, si sube o retrocede»
+  (`[63:55]`), «solo toca esperar, o sea, la activaría» (`[63:58]`), «la orden, retrocedería y
+  continuaría su» (`[63:59]`).
+- «Para confirmar al final»: es la de `[63:44]` («si el precio ya está más allá del cero o sea siempre
+  como tiene que estar»), sin completar.
+- **Propuesta: en parte.** Se inclina por la (b), esperar a que el 0 quede del lado bueno, y contesta
+  «otra». Si el precio vuelve, la orden sigue en el nivel y «solo toca esperar». Regla general: no
+  clara. «creo»: «me inclinaría» (`[62:36]`–`[62:43]`). Compra y venta: no lo dice.
+
+### 3.7 S-7 (material): una tarde que no está en el vídeo
+
+Vídeo v20, `[64:13]`–`[72:21]`. El trader lee la pregunta («Alex te dice cuál.», `[64:32]`), y
+después del silencio se dice el día: «El día dice 10 de julio.» (`[66:50]`). El trader abre el
+replay de ese día y lo deja correr (`[67:28]`–`[69:55]`). Sus operaciones y cómo acabaron no se
+escriben aquí.
+- **Si esa tarde se grabó en otra parte y dónde**: «Que si es que no se llega a mostrar, simplemente,
+  o sea, la B no se grabó, no se grabó y eso.» (`[72:13]`). La (b): no se grabó; no dice ninguna otra
+  parte.
+- **Propuesta: resuelve** la pregunta de material: esa tarde no se grabó.
+
 ## Estado
 
 EN CURSO.
