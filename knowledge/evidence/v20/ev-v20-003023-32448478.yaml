@@ -1,0 +1,18 @@
+id: ev-v20-003023-32448478
+video_id: v20
+t0: 0:30:23
+t1: 0:30:28
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La C también valdría como una zona de control.
+afirmacion: 'en S-2, pregunta 1: la C tambien valdria como una zona de control'
+tema: zona_control.cuales_cuentan_en_el_esquema
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+supersede: ev-v20-003023-18b67392
+notas: S-2 (RN-009); va contra 0:30:58 y lo fijado en A-20; contradiccion sin decidir (R4.6). Supersede
+  a ev-v20-003023-18b67392, cuya afirmacion decia sobre el dibujo 1 (revisor, a2). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d
