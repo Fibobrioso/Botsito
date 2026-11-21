@@ -9,8 +9,9 @@ se negaba. Las dos decisiones del consultor:
 - D1: una ruta se decide por TODAS sus formas y se niega si cualquiera niega: la TEXTUAL relativa a
   la raiz (sin resolver enlaces), la CANONICA relativa a la raiz y, si cae fuera, su ESTRUCTURA (un
   anclaje de una clase protegida en cualquier tramo se lee como si estuviera en la raiz).
-- D2: la carpeta `Backtest <mes>` de un mes no legible, como objetivo directo de Read, Grep o Glob,
-  se niega como su contenido; `ls` y `Get-ChildItem` se quedan como estaban.
+- D2: la carpeta `Backtest <mes>` de un mes no legible, como objetivo directo de Read o Grep, se
+  niega como su contenido; Glob, `ls` y `Get-ChildItem` la listan (respuesta del consultor a la
+  PARADA final, punto 2: listar nombres no es leer contenido, ADR-0021 §1).
 
 Todo EN MEMORIA, con `decidir`, sobre un repo INVENTADO en `tmp_path` y copias INVENTADAS fuera de
 el, con ficheros falsos: nada del repo real se abre. Las rutas protegidas van a trozos, como en
@@ -450,6 +451,31 @@ def test_el_recorrido_de_una_carpeta_de_fuera_tiene_tope(
     assert grep is not None and "R_RECORRIDO" in _regla(g, grep)
     glob = _decide(g, repo, "Glob", {"pattern": "**/*", "path": str(grande)})
     assert glob is not None and "R_LISTADO" in _regla(g, glob)
+
+
+def test_una_carpeta_de_fuera_con_un_anclaje_por_fichero_se_recorre_entera_y_con_tope(
+    g: ModuleType, repo: Path, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Revisor de la segunda pasada, A1: una carpeta de fuera cuya ruta lleva un anclaje por
+    fichero (`knowledge/cases/`) y que tiene DEBAJO un clon con `holdout/1`: su listado recursivo
+    se niega (ADR-0088), como sin el anclaje; y una carpeta de fuera con anclaje y mas entradas que
+    el tope, a un lector recursivo, se niega con el tope."""
+    base = tmp_path / "t" / "knowledge" / "cases" / "kit"
+    _escribir(base, f"clon/{HOL}/1/caso.yaml")
+    posix = base.as_posix()
+    for herramienta, entrada in (
+        ("Glob", {"pattern": "**/*", "path": str(base)}),
+        ("Bash", {"command": f'ls -R "{posix}"'}),
+        ("Bash", {"command": f'find "{posix}" -name "*.yaml"'}),
+    ):
+        motivo = _decide(g, repo, herramienta, entrada)
+        assert motivo is not None and "R_LISTADO" in _regla(g, motivo), (herramienta, entrada)
+    monkeypatch.setattr(g, "LIMITE_DEL_RECORRIDO", 5)
+    grande = tmp_path / "t2" / "knowledge" / "feedback"
+    for n in range(10):
+        _escribir(grande, f"nota-{n}.txt")
+    grep = _decide(g, repo, "Grep", {"pattern": "x", "path": str(grande)})
+    assert grep is not None and "R_RECORRIDO" in _regla(g, grep)
 
 
 def test_un_ancestro_de_la_raiz_se_decide_sin_recorrerlo_fuera(

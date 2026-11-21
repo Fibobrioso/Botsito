@@ -358,7 +358,7 @@ el enlace), los saltados no bajarían. No es una prueba directa: es un recuento.
 | 8 | D1: las tres formas; anclajes por condición, sin enumerar rutas | Hecho | §2 (`relativas`, `por_estructura`, `ANCLAJES`) |
 | 9 | D2: la carpeta Backtest como objetivo de Read, Grep y Glob; `ls`/`dir`/`Get-ChildItem` como hoy (medido: pasan) | Hecho; Glob, retirado por la respuesta a la PARADA (punto 2) | §1.2, §2 y §10 |
 | 10 | D3: lo no canonizable sigue negado | Hecho | sin cambios; `test_lo_que_no_se_puede_canonizar_se_niega_con_la_forma_buena` en verde |
-| 11 | D4: falsos positivos medidos; los tests con árboles falsos no cambian | Hecho de otra forma | §1.4: 12 cambiaron; 4 arreglados en la guardia, 8 (`test_roto_a_proposito`) con las capas nuevas apagadas en el test; PARADA, punto 3 |
+| 11 | D4: falsos positivos medidos; los tests con árboles falsos no cambian | Hecho de otra forma | §1.4: 12 cambiaron; 4 arreglados en la guardia, 8 (`test_roto_a_proposito`) con las capas nuevas apagadas en el test; PARADA, punto 3, aceptado por el consultor con la condición del test con todas las capas encendidas (§10.1, punto 3) |
 | 12 | Fase 1 en `guardia.py`, sin tocar las demás familias | Hecho | §2 |
 | 13 | Fase 2: los seis tests pedidos, que rompen con main y pasan con la rama (comparar-con-main) | Hecho | §3 y §4.1 (10 de 14 fallan con main) |
 | 14 | Mutantes: quitar cada forma de D1 rompe al menos un test; ningún commit con un mutante | Hecho de otra forma | §4.2: en el clon, no en el hook vivo (desviación 1) |
@@ -651,14 +651,125 @@ orden de cierre de la rama siguiente). A la fila del cierre en `ERRORES-RECURREN
 del consultor que él mismo nombra: D2 negaba Glob sin un ADR (punto 2) y D4 no previó que cambiaran
 tests existentes (punto 3).
 
-**Tests y medidas tras la respuesta**: los 23 de `test_guardia_enlaces.py`, el nuevo de
-`test_guardia_alias.py` (ocho casos) y los de la guardia, en
-verde (§3); `PROJECT_STATE.md`, 2121 funciones de test. La medida de la fase 0.2
-(`anexos/GUARDIA-ENLACES/medida-*`) es de antes de esta respuesta y no se rehízo: los anclajes nuevos
-solo añaden negativas en las cinco filas de copia y clon que tenían «P» (§1.2), y el Glob de la
-carpeta Backtest vuelve a lo de `main`.
+**Tests y medidas tras la respuesta**: los 23 de `test_guardia_enlaces.py` (24 tras el revisor,
+§11), el nuevo de `test_guardia_alias.py` (ocho casos) y los de la guardia, en verde (§3).
+
+> **Corrección del 2026-11-20, tras el revisor de la segunda pasada (§11, A1 y B1).** Este
+> párrafo decía, en b44dee1a, que la medida de la fase 0.2 «no se rehízo» porque «los anclajes
+> nuevos solo añaden negativas». No era cierto: con un anclaje por fichero en su ruta, una carpeta
+> de fuera dejaba de buscar debajo una copia de `holdout/{1,2,3}` en un listado recursivo, y un
+> lector recursivo la recorría sin tope. Arreglado (§11), y la medida, rehecha con la guardia
+> final (`anexos/GUARDIA-ENLACES/medida-respuesta-SALIDA.txt`): frente a 99b512b8
+> (`comparacion-99b512b8-contra-respuesta.txt`), 30 decisiones pasan de negada a permitida, y las
+> 30 son Glob sobre la carpeta `Backtest marzo 2026` o un fichero suyo en las ocho formas (el punto
+> 2 de la respuesta, de vuelta a lo de `main`); 40 pasan de permitida a negada (las clases por
+> fichero en la copia y el clon) y 798 quedan iguales. Frente a `main`
+> (`comparacion-main-contra-respuesta.txt`): **0 de negada a permitida**, 325 de permitida a
+> negada, 541 iguales y 2 con otra regla.
+
+## 11. El revisor de la segunda pasada (sobre b44dee1a) y la CI de b44dee1a
+
+CI de Linux de b44dee1a: run 44858646443, `failure` con UN fallo, el aceptado
+(`test_cli.py::test_state_check_ok_on_real_repo`, «PROJECT_STATE declara la rama
+'trabajo/guardia-enlaces'; la rama actual es 'fix/guardia-enlaces'»); `1 failed, 3496 passed, 101
+skipped`. Por recuento: 3598 = 3584 (run 44853414634) + los 6 tests nuevos de `test_guardia_enlaces.py`
+y los 8 casos de `test_roto_con_las_capas_encendidas_sigue_negando`; los 7 saltados de más son los
+casos de ese test marcados solo para Windows.
+
+Subagente `revisor`, con el alcance que pide el consultor (los anclajes añadidos, caso a caso contra
+99b512b8, y el cambio de Glob). Su informe, tal cual (sin retiradas):
+
+## Informe del revisor · trabajo/guardia-enlaces · 2026-11-20 (segunda pasada, alcance: b44dee1a sobre 99b512b8)
+
+### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| A1 | importa | **Los anclajes nuevos no «solo añaden negativas».** Hay un caso concreto que 99b512b8 negaba y b44dee1a deja pasar. Es el listado recursivo (Glob `**/*`, `ls -R`) de una carpeta de FUERA cuya ruta lleva uno de los anclajes nuevos (`knowledge/cases/`, `data/visor/`, `knowledge/feedback/`, `data/transcripciones/v6/`) y que tiene DEBAJO una copia de `holdout/{1,2,3}`. Ejemplo: `C:\t\knowledge\cases\kit\clon\knowledge\cases\holdout\1\…`. Antes, `relativas()` de esa carpeta daba `[]`, y se llegaba a `holdout_debajo`, que la encontraba y negaba (ADR-0088). Ahora `por_estructura` devuelve `knowledge/cases/kit/clon`, `formas` ya no está vacía y la función sale con `False` sin recorrer. El Grep sobre esa misma carpeta sigue negado, porque `_primer_protegido` llama a `motivo_fichero` en cada fichero. Lo mismo vale para el tope. En 99b512b8, una carpeta de fuera de más de 20.000 entradas con uno de esos anclajes iba a `lo_que_alcanza_fuera` y se negaba con `R_RECORRIDO`. Ahora va a `_motivo_directorio_en` → `_primer_protegido`, que recorre sin tope: pasa si no encuentra nada, o arriesga el plazo de 30 s del hook. La vía era la misma en 99b512b8 para los anclajes de D1 (material, sesiones, cruda en cuarentena), así que es un residuo que se ensancha a más anclajes, no una clase nueva. Es un montaje rebuscado. Lo que importa es que el informe afirma lo contrario y que ningún test cubre el caso. | `.claude/hooks/guardia.py:847-857` (`formas = self.relativas(ruta)` … `if not recursivo or formas: return False` … `holdout_debajo`), sin cambios desde `git show 99b512b8:.claude/hooks/guardia.py` líneas 832-842; `guardia.py:600` (el anclaje nuevo que llena `formas`); `guardia.py:741-746` (`return None if formas else self.lo_que_alcanza_fuera(ruta)`) frente a `:758-761` (el tope solo está en `lo_que_alcanza_fuera`) y `:826` (`_primer_protegido`, sin tope). La afirmación: `docs/validation/GUARDIA-ENLACES.md` §10.1, «los anclajes nuevos solo añaden negativas en las cinco filas de copia y clon que tenían «P»». No lo pude medir en memoria (ver «Lo que no pude comprobar»): la prueba es la lectura del código. |
+| A2 | menor | La línea de CLAUDE.md sobre el tope dice «una carpeta de fuera de mas de 20.000 entradas no se recorre: se niega». El tope solo se aplica a carpetas de fuera SIN anclaje (docstring de `lo_que_alcanza_fuera`): una con anclaje se recorre entera (A1). | `CLAUDE.md:273-274`; `guardia.py:748-753` («Una carpeta FUERA de la raiz y sin anclaje en su ruta») |
+| A3 | menor | El docstring del módulo de tests sigue diciendo que D2 niega Glob. | `tests/unit/test_guardia_enlaces.py:12-13` («como objetivo directo de Read, Grep o Glob, se niega como su contenido») |
+| A4 | menor | La ampliación de la fila de HOLDOUT del día enumera los ficheros sintéticos del tercer clon («un caso, un visor, un feedback y una cruda de v6») pero se deja el quinto: la propuesta de la lista con ocultos (`OCULTO = knowledge/_proposals/pr-v7-x.yaml`, que también se escribe en la copia). | `docs/validation/HOLDOUT-EXPOSICIONES.md`, fila 2026-11-20 de `trabajo/guardia-enlaces`; `tests/unit/test_guardia_enlaces.py:48,556-559` |
+
+Comprobado sin hallazgos:
+- **Contrato.** `uv run python scripts/contrato_rama.py` da «CONTRATO: 24 ficheros dentro del contrato de trabajo/guardia-enlaces (riesgo alto, …, 4 comprobaciones para el revisor)» y «G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-20 para trabajo/guardia-enlaces, estadiada». Los ficheros de b44dee1a están todos en `rutas_permitidas`, y no se toca nada de `rutas_protegidas` (`git diff --name-status main...HEAD`).
+- **Sello.** `make-check.log`: «3592 passed, 6 xfailed», «SELLO: make check en verde sobre el arbol ee5a1f5780b6b2b0102880e3df2e4c025d3bbe1b» (= `git rev-parse b44dee1a^{tree}`), «PICO DE MEMORIA … 319 MiB».
+- **Comprobación del contrato, pytest de los 7 ficheros de la guardia.** Exit 0; solo los 4 XFAIL de F1, que son conocidos. No pasé `make check` ni `knowledge validate` (escriben); su evidencia es el log de arriba.
+- **Otras reglas.** Ningún commit toca `knowledge/`, así que el trailer `Fuente:` no aplica. No hay cambios en evidence, feedback, manifests ni corpus. No hay ADR nuevo. No se cambia ningún informe cerrado: `GUARDIA-ENLACES.md` es nuevo en la rama, y la fila de HOLDOUT que se amplía la añadió esta misma rama (no está en `main`). No hay cita nueva en la spec.
+- **Fila del día.** Existe, con fecha 2026-11-20. El commit es de las 21:57 de Lima, así que no pasó de medianoche.
+- **PROJECT_STATE.** 2114 → 2121 funciones de test (+5 por clase, +1 «no se pasa de frenada», +1 parametrizado en alias). Cuadra.
+
+### Eje (b) · Encargo (la respuesta del consultor a la PARADA final)
+Resumen: 0 bloquea, 1 importa, 1 menor. Requisitos: 9 hechos, 0 parciales, 0 no hechos; 3 quedan para el cierre por orden de la propia respuesta.
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | P1: anclaje de los tramos no citables (`data/transcripciones/<vídeo con tramos>/`) | Hecho | `guardia.py:595` (`or video in self.tramos_vigilados`). La lectura por trozos fuera del tramo funciona igual: `lineas_de_tramo` usa `relativas` (`:494`). |
+| 2 | P1: id de caso reservado en `knowledge/cases/` y `data/visor/`; feedback que etiqueta un reservado; lista con ocultos | Hecho | `guardia.py:375` (`ANCLAJES_POR_FICHERO`) y `:600`. Son las 5 clases de la respuesta: tramos, cases, visor, feedback y ocultos. |
+| 3 | P1: «con la misma regla de D1: se decide como si el anclaje estuviera en la raíz» | Hecho | `por_estructura` devuelve la cola desde el anclaje, y la deciden las reglas de siempre (`_motivo_en_el_sitio`, `:644-672`): `R_TRAMO`, `R_CASO` por el nombre o el contenido, `R_FICHERO_OCULTO`. |
+| 4 | P1: un test por clase, en una copia fuera, negada | Hecho | `test_guardia_enlaces.py:529-559`, cinco tests que piden la regla en Read, Grep, `cat` y `Get-Content` (`_fallos`). |
+| 5 | P1: que rompan con el código anterior | Hecho | `anexos/GUARDIA-ENLACES/clon-antes-de-la-respuesta-SALIDA.txt`: `................FFFFFF.`, con los cinco por clase y el de Glob en `FAILED`. |
+| 6 | P2: Glob sobre la carpeta Backtest vuelve a pasar; D2 solo para Read y Grep; no se pierde ADR-0088 | Hecho | Se quitan el bloque de D2 de Glob y `_parte_literal` (`git diff 99b512b8 b44dee1a`). El Glob queda como en `main` más la base textual (`guardia.py:5938-5955` frente a `git show main:…:5692-5703`). El listado del holdout sigue (`_patron_lista_el_holdout`, `:5947`; `test_listar_el_holdout_de_una_copia_se_niega` en verde). Read sigue negado por `_motivo_material` → `_motivo_backtest` (`:653-700`) y Grep por `motivo_directorio` (`:734`): `test_la_carpeta_backtest_como_objetivo_de_read_y_grep_se_niega`, en verde. |
+| 7 | P2: ajustar el test y la línea de CLAUDE.md | Hecho | `test_listar_la_carpeta_backtest_con_ls_get_childitem_o_glob_pasa` cubre 4 carpetas (dentro y copia, vacía y con contenido) y falla con 99b512b8 (anexo). Línea nueva: `CLAUDE.md:271-273`. |
+| 8 | P3: test con TODAS las capas encendidas, mismas rutas negadas | Hecho | `test_guardia_alias.py:843-870`. Usa los mismos `argumentos` que `test_roto_a_proposito` (`:834-835`), no apaga nada y exige que el test de la pieza pase. Corrido: en verde. |
+| 9 | P4: el tope en el informe, en CLAUDE.md y con su test | Hecho | §10.1, punto 4; `CLAUDE.md:273-274`; `test_el_recorrido_de_una_carpeta_de_fuera_tiene_tope` (`test_guardia_enlaces.py:439-452`). Su alcance real, en A2. |
+| 10 | Copiar la respuesta tal cual al informe, en una sección «Respuesta del consultor a la PARADA final», y al final del encargo | Hecho | §10 del informe. Los bloques `>` del encargo y de §10 tienen el mismo md5 (`c19fac43…`). |
+| 11 | P5-6 y P7: a G.1 y G.8 en el cierre | Para el cierre (lo dice la propia respuesta) | §10.1, «Lo que cambia en «Para el commit del contrato del cierre»» |
+| 12 | Push a `fix/` y CI de Linux con su número de run; informe del revisor pegado | Pendiente (fuera de mi alcance) | El Estado del informe: «faltan la CI de Linux de este commit y el revisor» |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| B1 | importa | La justificación de P1 («dejarla a medias deja copias o clones fuera del repo sin proteger») queda cubierta en las LECTURAS, pero la implementación abre el hueco de A1 en el LISTADO del holdout desde una carpeta con anclaje nuevo. El §10.1 lo da por imposible («solo añaden negativas») y no hay test de que no pase nada de negado a permitido entre 99b512b8 y b44dee1a. La primera vuelta sí tenía ese test frente a `main` (`comparacion-caso-a-caso.txt`, «0 pasan de negada a permitida»); no se rehízo (§10.1, «no se rehízo»). | Ver A1; §10.1, último párrafo |
+| B2 | menor | §5b, fila 11 (D4), sigue terminando en «PARADA, punto 3» y no dice que la respuesta lo aceptó con condición (§10.1, punto 3). Lo superado en §2, §3, §5b fila 9 y §8 sí lo dice. | `docs/validation/GUARDIA-ENLACES.md:361` |
+
+Falsos positivos nuevos en lecturas legítimas: no encontré ninguno. `test_lo_que_no_es_reservado_en_esas_clases_de_la_copia_pasa` cubre: un caso `dev`, un feedback sin reservado, el visor sin reservado, una cruda de v1, una propuesta fuera de la lista y la cruda de v6 por un trozo fuera del tramo. La carpeta de trabajo de la sesión no lleva anclajes. `knowledge/cases` o `knowledge/feedback` sin barra final no casan con `ANCLAJES_POR_FICHERO` (`_normcase` hace `normpath`), y lo que contienen se decide fichero a fichero. Las propuestas con un tramo pisado que no están en la lista siguen sin anclaje: está declarado en §10.1 y no es una de las clases de la respuesta.
+
+### Lo que no pude comprobar
+- **A1, medido en memoria.** Intenté cargar las dos versiones de `guardia.py` (`git show`) y decidir un Glob `**/*` sobre un árbol simulado con `os.walk` parcheado. La guardia negó el comando («el codigo nombra la carpeta \, que contiene material protegido»). No lo reescribí para esquivarla, así que la evidencia es solo la lectura del código.
+- **Que las 8 de `CUBIERTAS_POR_LAS_CAPAS` sean exactamente las 8 que fallaron en la primera corrida.** §1.4 no da sus nombres, y comprobarlo exige editar el test. Lo que sí medí: con todas las capas encendidas, las 8 pasan.
+- **Los dos anexos de esta respuesta.** No traen el comando ni el código de salida; el `exit 1` es de la consola de la sesión, como ya señaló A3 en la primera pasada.
+- **La CI de Linux de b44dee1a.** Está corriendo en `fix/guardia-enlaces`, y me pidieron no esperarla.
+- **`make check` y `knowledge validate`.** Escriben, así que no los lancé; la evidencia es el `make-check.log` sellado.
+
+### Comandos ejecutados
+1. `git branch --show-current && git merge-base main HEAD && git log --format='%h %s' main..HEAD && git status --short && git diff --stat 99b512b8 b44dee1a`
+2. `git diff 99b512b8 b44dee1a -- .claude/hooks/guardia.py`
+3. `git diff 99b512b8 b44dee1a -- docs/encargos/trabajo-guardia-enlaces.md CLAUDE.md PROJECT_STATE.md docs/validation/HOLDOUT-EXPOSICIONES.md docs/validation/anexos/`
+4. `git diff 99b512b8 b44dee1a -- tests/`
+5. Grep y Read de `.claude/hooks/guardia.py` (líneas 440-910, 2180-2240, 5905-5960) y de `tests/unit/test_guardia_alias.py` (740-840)
+6. `grep -n` de `class Politica` y de los helpers de `test_guardia_enlaces.py`
+7. `uv run --offline pytest -p no:cacheprovider -q tests/unit/test_guardia_enlaces.py` → 23 en verde
+8. `uv run --offline pytest -p no:cacheprovider -q tests/unit/test_guardia_alias.py -k "capas_encendidas or roto_a_proposito"` → en verde
+9. `git diff 99b512b8 b44dee1a -- docs/validation/GUARDIA-ENLACES.md` y Read de §1.2, §1.4 y §3
+10. `grep -rn …` desde la raíz: NEGADO por la guardia (recursivo sobre el corpus); lo sustituí por `git grep -n -e read_grep_y_glob -e sigue_como_estaba -e _parte_literal -e "Read, Grep o Glob" -e "Read, Grep y Glob" -- '*.md' '*.py'`
+11. `git show main:.claude/hooks/guardia.py | grep -n 'if herramienta == "Glob":' -A 18`
+12. `uv run --offline python - <<'EOF' …` (comparación en memoria de las dos versiones): NEGADO por la guardia
+13. `grep -n timeout .claude/settings.json` (30 s en PreToolUse); `sed -n 258,280p CLAUDE.md`
+14. `git log -3 --format='%h %ad' --date=iso`; `git diff --name-status main...HEAD`; `grep … make-check.log`; `git rev-parse b44dee1a^{tree}`
+15. `uv run --offline python scripts/contrato_rama.py`; `cat contrato.yaml`
+16. `uv run --offline pytest -p no:cacheprovider tests/unit/test_guardia_{enlaces,claude,alias,ci,falsos_positivos,ffmpeg,g1}.py -q` → exit 0, 4 XFAIL de F1
+17. md5 de los bloques `>` de la respuesta en el encargo y en §10 (iguales)
+18. `git show 99b512b8:.claude/hooks/guardia.py | grep -n "def lista_dentro_del_holdout" -A 21` y `grep -n "return None if formas else …"`
+
+Ficheros relevantes: `C:\Users\USER\Desktop\Bot v3\.claude\hooks\guardia.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_enlaces.py`, `C:\Users\USER\Desktop\Bot v3\tests\unit\test_guardia_alias.py`, `C:\Users\USER\Desktop\Bot v3\docs\validation\GUARDIA-ENLACES.md`, `C:\Users\USER\Desktop\Bot v3\CLAUDE.md`, `C:\Users\USER\Desktop\Bot v3\docs\validation\HOLDOUT-EXPOSICIONES.md`, `C:\Users\USER\Desktop\Bot v3\docs\validation\anexos\GUARDIA-ENLACES\clon-antes-de-la-respuesta-SALIDA.txt`.
+
+### Lo que se hizo con los hallazgos del revisor de la segunda pasada
+
+| # | Gravedad | Respuesta |
+|---|---|---|
+| A1 | importa | Arreglado en la guardia: `alguna_forma_en_la_raiz` -si ni la canónica ni la textual caen en la raíz, la carpeta se decide por `lo_que_alcanza_fuera` (con tope) para un lector recursivo y para uno no recursivo dentro de una zona, y su listado recursivo busca debajo con `holdout_debajo`, lleve o no un anclaje en su ruta-. Test `test_una_carpeta_de_fuera_con_un_anclaje_por_fichero_se_recorre_entera_y_con_tope` (Glob `**/*`, `ls -R` y `find` de `…/knowledge/cases/kit` con un clon de `holdout/1` debajo: `R_LISTADO`; y un Grep de `…/knowledge/feedback` con más entradas que el tope: `R_RECORRIDO`); con el código de b44dee1a, en un clon, FALLA (`anexos/GUARDIA-ENLACES/clon-b44dee1a-SALIDA.txt`). La afirmación del §10.1, corregida con un recuadro |
+| A2 | menor | Con el arreglo de A1, la línea de `CLAUDE.md` ya es cierta: toda carpeta de fuera por todas sus formas pasa por `lo_que_alcanza_fuera` (y su docstring lo dice) |
+| A3 | menor | Arreglado: el docstring del módulo de tests dice Read o Grep, y que Glob, `ls` y `Get-ChildItem` la listan |
+| A4 | menor | Arreglado: la fila del día nombra la propuesta de la lista con ocultos, el cuarto clon y la medida rehecha |
+| B1 | importa | Arreglado con A1; y la comparación caso a caso, rehecha con la guardia final contra 99b512b8 y contra `main` (§10.1, recuadro): contra `main`, 0 de negada a permitida |
+| B2 | menor | Arreglado: la fila 11 del §5b dice que el consultor aceptó el cambio con la condición del punto 3 |
+
+Tras los arreglos: los tests de la guardia y los 24 de `test_guardia_enlaces.py`, en verde;
+`PROJECT_STATE.md`, 2122 funciones de test; `make check` sellado y la CI de Linux del último commit
+(su número, en el mensaje final a Aleks y en el registro del cierre).
 
 ## Estado
 
-EN CURSO: la respuesta del consultor a la PARADA final, aplicada (§10); faltan la CI de Linux de
-este commit y el revisor sobre lo nuevo.
+Rama lista para revisión, NO cerrada. La fase 0, D1 y D2 en la guardia, los tests, la regresión contra main y los
+mutantes en clones, la CI de Linux y dos pasadas del revisor, con sus hallazgos arreglados o declarados; la
+respuesta del consultor a la PARADA final, aplicada (§10), y lo que queda para el cierre, preparado (§10.1).

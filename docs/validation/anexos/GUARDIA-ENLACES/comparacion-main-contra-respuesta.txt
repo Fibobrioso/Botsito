@@ -1,0 +1,3 @@
+REGLA: stdin | a/d dentro | carpeta Backtest marzo | Bash grep -r | negada R_CAPTURA -> negada R_SIN_ABRIR
+REGLA: stdin | a/d dentro | carpeta Backtest marzo | Grep | negada R_CAPTURA -> negada R_SIN_ABRIR
+{'igual': 541, 'PERMITIDA -> negada': 325, 'negada, otra regla': 2} casos: 868

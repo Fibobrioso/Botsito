@@ -738,18 +738,26 @@ class Politica:
             # Un ANCESTRO de la raiz se recorre como la raiz, con el mismo `respeta_ignore`
             # (respuesta del consultor a la PARADA 1 de `trabajo/guardia-alias`, punto 4).
             return self._motivo_directorio_en(str(self.raiz), "", respeta_ignore)
-        formas = self.relativas(ruta)
-        for rel in formas:
+        if not self.alguna_forma_en_la_raiz(ruta):
+            # Fuera de la raiz por todas sus formas, lleve o no un anclaje en su ruta: lo que
+            # alcanzaria, fichero a fichero, con tope (revisor de la segunda pasada, A1: con un
+            # anclaje en la ruta, recorrer solo sus zonas se saltaba el tope).
+            return self.lo_que_alcanza_fuera(ruta)
+        for rel in self.relativas(ruta):
             motivo = self._motivo_directorio_en(ruta, rel, respeta_ignore)
             if motivo:
                 return motivo
-        return None if formas else self.lo_que_alcanza_fuera(ruta)
+        return None
+
+    def alguna_forma_en_la_raiz(self, ruta: str) -> bool:
+        """Si la canonica o la textual de `ruta` cae en la raiz (D1, `trabajo/guardia-enlaces`)."""
+        return any(self.relativa(f) is not None for f in (ruta, _textual(ruta)))
 
     def lo_que_alcanza_fuera(self, ruta: str) -> str | None:
-        """Una carpeta FUERA de la raiz y sin anclaje en su ruta, para un lector recursivo: lo que
+        """Una carpeta FUERA de la raiz por todas sus formas, para un lector recursivo: lo que
         alcanzaria, fichero a fichero y por estructura (la carpeta que contiene una copia o un
-        clon; `trabajo/guardia-enlaces`, GUARDIA-ENLACES.md). Con tope: si pasa de
-        `LIMITE_DEL_RECORRIDO` entradas, se niega (`R_RECORRIDO`) en vez de arriesgar el plazo
+        clon, o la copia misma; `trabajo/guardia-enlaces`, GUARDIA-ENLACES.md). Con tope: si pasa
+        de `LIMITE_DEL_RECORRIDO` entradas, se niega (`R_RECORRIDO`) en vez de arriesgar el plazo
         del hook (revisor, B3)."""
         base = Path(ruta)
         if not base.is_dir():
@@ -840,18 +848,18 @@ class Politica:
         fichero dentro de ellas (un fichero NOMBRADO se puede medir y hashear: su nombre ya esta en
         el comando); y, si el listado es recursivo, cualquier carpeta que las CONTENGA, tambien
         un ancestro de la raiz. Niega por defecto: no mira si hoy hay algo dentro. Por todas las
-        formas de `ruta` (D1 de `trabajo/guardia-enlaces`); y la carpeta de fuera sin anclaje, en
-        recursivo, si tiene debajo una copia de esas carpetas (`holdout_debajo`)."""
+        formas de `ruta` (D1 de `trabajo/guardia-enlaces`); y una carpeta de fuera de la raiz por
+        todas sus formas, lleve o no un anclaje en su ruta, en recursivo, si tiene debajo una copia
+        de esas carpetas (`holdout_debajo`; revisor de la segunda pasada, A1)."""
         if self.relativa(ruta) is None and recursivo and self.contiene_la_raiz(ruta):
             return True
-        formas = self.relativas(ruta)
-        for rel in formas:
+        for rel in self.relativas(ruta):
             for zona in (f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3"):
                 if rel == zona or rel.startswith(zona + "/"):
                     return not os.path.isfile(ruta)
                 if recursivo and (rel == "" or zona.startswith(rel + "/")):
                     return True
-        if not recursivo or formas:
+        if not recursivo or self.alguna_forma_en_la_raiz(ruta):
             return False
         debajo = self.holdout_debajo(ruta)
         return debajo is None or bool(debajo)
@@ -888,6 +896,8 @@ class Politica:
         Por todas las formas de `ruta` (D1 de `trabajo/guardia-enlaces`)."""
         for rel in self.relativas(ruta):
             if any(rel == z or rel.startswith(z + "/") for z in self._zonas()):
+                if not self.alguna_forma_en_la_raiz(ruta):  # fuera: con tope (revisor, A1)
+                    return self.lo_que_alcanza_fuera(ruta)
                 motivo = self._primer_protegido(Path(ruta), rel)
                 if motivo:
                     return motivo
