@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/sesion-08
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardia-enlaces cerrada en main el 2026-11-20 (stable/F39i-guardia-enlaces): la guardia decide el material protegido por todas las formas de la ruta (enlaces, copias y clones fuera del repo) y niega Read y Grep sobre la carpeta Backtest de un mes no legible.
+trabajo/sesion-08, EN CURSO: la ingesta de la sesión 7b con el trader (grabada el 2026-11-20 y el 2026-11-21, v20 y v21) y su extracción por pregunta y por sesión del bloque de días, sin resolver nada (NA:F, R4.3). Encargo: docs/encargos/trabajo-sesion-08.md; informe: docs/validation/SESION-08-EXTRACCION.md.
 
 ## Stable Main State
 c6d5a9c2 · merge de `trabajo/guardia-enlaces` (tag `stable/F39i-guardia-enlaces`), sobre `stable/F39h-guardias-holdout` (fb1f02e9). Informe docs/validation/GUARDIA-ENLACES.md; el registro del cierre, al final de HISTORIA.
@@ -172,8 +172,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 77 (2026-11-20).
+— ninguna desde el Archivo 78 (2026-11-21).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 77 (2026-11-20).
+— ninguna desde el Archivo 78 (2026-11-21).
