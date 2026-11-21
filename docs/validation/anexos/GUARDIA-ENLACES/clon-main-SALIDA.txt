@@ -1,0 +1,293 @@
+Using CPython 3.12.10 interpreter at: C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe
+Creating virtual environment at: .venv
+   Building botsito @ file:///C:/cm/ge-main
+      Built botsito @ file:///C:/cm/ge-main
+Installed 25 packages in 2.42s
+FFFF.FF.FFF.F.                                                           [100%]
+================================== FAILURES ===================================
+E   AssertionError: assert not ['Read · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', 'Grep · Materi...PowerShell Get-Content · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)']
+     +  where ['Read · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', 'Grep · Materi...PowerShell Get-Content · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)'] = _fallos(<module 'guardia_claude' from 'C:\\cm\\ge-main\\.claude\\hooks\\guardia.py'>, WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4741/test_la_imagen_de_backtest_mar0/Bot v3 prueba'), [('C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-4741\\test_la_imagen_de_backtest_mar0\\Copia de respaldo\\corpus\\Estrategia del trader\\Material adicional de su operativa\\Backtest marzo 2026\\x.png', 'R_CAPTURA')])
+---------------------------- Captured stdout call -----------------------------
+R_CAPTURA | Read | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Grep | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Bash cat | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | PowerShell Get-Content | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:205: AssertionError: assert not ['Read · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', 'Grep · Materi...PowerShell Get-Content · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)']
+E   AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Grep · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Bash cat · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      PowerShell Get-Content · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Read · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Grep · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Bash cat · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      PowerShell Get-Content · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Read ·  trader\Material adicional de su operativa\Capturas\foto.png: pasa (se esperaba R_CAPTURA)
+      Grep ·  trader\Material adicional de su operativa\Capturas\foto.png: pasa (se esperaba R_CAPTURA)
+      Bash cat ·  trader\Material adicional de su operativa\Capturas\foto.png: pasa (se esperaba R_CAPTURA)
+      PowerShell Get-Content ·  trader\Material adicional de su operativa\Capturas\foto.png: pasa (se esperaba R_CAPTURA)
+      Read · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Bash cat · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Read · spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Bash cat · spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Read ·  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Grep ·  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Bash cat ·  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      PowerShell Get-Content ·  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Read · pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl: pasa (se esperaba R_CUARENTENA)
+      Grep · pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl: pasa (se esperaba R_CUARENTENA)
+      Bash cat · pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl: pasa (se esperaba R_CUARENTENA)
+      PowerShell Get-Content · pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl: pasa (se esperaba R_CUARENTENA)
+    assert not ['Read · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', 'Grep · Materi...ba R_LIBRO)', 'Grep · er\\Material adicional de su operativa\\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)', ...]
+---------------------------- Captured stdout call -----------------------------
+R_CAPTURA | Read | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Grep | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Bash cat | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | PowerShell Get-Content | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_SIN_ABRIR | Read | R_SIN_ABRIR | cional de su operativa\backtesting-analytics MARZO 2026.xlsx
+R_SIN_ABRIR | Grep | R_SIN_ABRIR | cional de su operativa\backtesting-analytics MARZO 2026.xlsx
+R_SIN_ABRIR | Bash cat | R_SIN_ABRIR | cional de su operativa\backtesting-analytics MARZO 2026.xlsx
+R_SIN_ABRIR | PowerShell Get-Content | R_SIN_ABRIR | cional de su operativa\backtesting-analytics MARZO 2026.xlsx
+R_LIBRO | Read | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Grep | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Bash cat | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | PowerShell Get-Content | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_CAPTURA | Read | pasa |  trader\Material adicional de su operativa\Capturas\foto.png
+R_CAPTURA | Grep | pasa |  trader\Material adicional de su operativa\Capturas\foto.png
+R_CAPTURA | Bash cat | pasa |  trader\Material adicional de su operativa\Capturas\foto.png
+R_CAPTURA | PowerShell Get-Content | pasa |  trader\Material adicional de su operativa\Capturas\foto.png
+R_HOLDOUT | Read | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Grep | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Bash cat | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | PowerShell Get-Content | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Read | pasa | spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Grep | pasa | spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Bash cat | pasa | spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | PowerShell Get-Content | pasa | spaldo\knowledge\cases\holdout\3\caso-eurusd-2026-05-04.yaml
+R_HOJA | Read | pasa |  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Grep | pasa |  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Bash cat | pasa |  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | PowerShell Get-Content | pasa |  respaldo\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_CUARENTENA | Read | pasa | pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl
+R_CUARENTENA | Grep | pasa | pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl
+R_CUARENTENA | Bash cat | pasa | pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl
+R_CUARENTENA | PowerShell Get-Content | pasa | pia de respaldo\data\transcripciones\v7\large-v3\cruda.jsonl
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:213: AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+E   AssertionError: Read · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Grep · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Bash cat · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      PowerShell Get-Content · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Read · ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX: pasa (se esperaba R_LIBRO)
+      Grep · ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX: pasa (se esperaba R_LIBRO)
+      Bash cat · ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX: pasa (se esperaba R_LIBRO)
+      PowerShell Get-Content · ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX: pasa (se esperaba R_LIBRO)
+      Read · er/Material adicional de su operativa/resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Grep · er/Material adicional de su operativa/resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Bash cat · er/Material adicional de su operativa/resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      PowerShell Get-Content · er/Material adicional de su operativa/resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Read · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Grep · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Bash cat · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      PowerShell Get-Content · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Read · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Bash cat · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Read · SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML: pasa (se esperaba R_HOLDOUT)
+      Grep · SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML: pasa (se esperaba R_HOLDOUT)
+      Bash cat · SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML: pasa (se esperaba R_HOLDOUT)
+      Read · spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Bash cat · spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Read · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Bash cat · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+    assert not ['Read · er\\Material adicional de su operativa\\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)', 'Grep · er\\Mate...ba R_LIBRO)', 'Grep · ER\\MATERIAL ADICIONAL DE SU OPERATIVA\\RESUMEN MAYO 2026.XLSX: pasa (se esperaba R_LIBRO)', ...]
+---------------------------- Captured stdout call -----------------------------
+R_LIBRO | Read | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Grep | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Bash cat | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | PowerShell Get-Content | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Read | pasa | ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX
+R_LIBRO | Grep | pasa | ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX
+R_LIBRO | Bash cat | pasa | ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX
+R_LIBRO | PowerShell Get-Content | pasa | ER\MATERIAL ADICIONAL DE SU OPERATIVA\RESUMEN MAYO 2026.XLSX
+R_LIBRO | Read | pasa | er/Material adicional de su operativa/resumen mayo 2026.xlsx
+R_LIBRO | Grep | pasa | er/Material adicional de su operativa/resumen mayo 2026.xlsx
+R_LIBRO | Bash cat | pasa | er/Material adicional de su operativa/resumen mayo 2026.xlsx
+R_LIBRO | PowerShell Get-Content | pasa | er/Material adicional de su operativa/resumen mayo 2026.xlsx
+R_LIBRO | Read | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Grep | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Bash cat | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | PowerShell Get-Content | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_HOLDOUT | Read | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Grep | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Bash cat | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | PowerShell Get-Content | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Read | pasa | SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML
+R_HOLDOUT | Grep | pasa | SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML
+R_HOLDOUT | Bash cat | pasa | SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML
+R_HOLDOUT | PowerShell Get-Content | pasa | SPALDO\KNOWLEDGE\CASES\HOLDOUT\1\CASO-EURUSD-2026-05-04.YAML
+R_HOLDOUT | Read | pasa | spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Grep | pasa | spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Bash cat | pasa | spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | PowerShell Get-Content | pasa | spaldo/knowledge/cases/holdout/1/caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Read | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Grep | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Bash cat | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | PowerShell Get-Content | pasa | spaldo\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:226: AssertionError: Read · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+E   AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Grep · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Bash cat · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      PowerShell Get-Content · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Read · 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Grep · 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Bash cat · 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      PowerShell Get-Content · 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+    assert not ['Read · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', 'Grep · Materi...ba R_HOJA)', 'Grep · 0\\solo el trader\\Estrategia del trader\\Sesiones\\hoja-05.xlsx: pasa (se esperaba R_HOJA)', ...]
+---------------------------- Captured stdout call -----------------------------
+R_CAPTURA | Read | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Grep | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Bash cat | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | PowerShell Get-Content | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_HOJA | Read | pasa | 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Grep | pasa | 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Bash cat | pasa | 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | PowerShell Get-Content | pasa | 0\solo el trader\Estrategia del trader\Sesiones\hoja-05.xlsx
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:246: AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+E   AssertionError: ('Glob', {'pattern': '*', 'path': 'C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4741/test_listar_el_holdout_de_una_0/Copia de respaldo/knowledge/cases/holdout/1'})
+    assert (None is not None)
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:269: AssertionError: ('Glob', {'pattern': '*', 'path': 'C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4741/test_listar_el_holdout_de_una_0/Copia de respaldo/knowledge/cases/holdout/1'})
+E   AssertionError: ('Grep', {'pattern': 'x', 'path': 'C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-4741\\test_un_lector_recursivo_sobre0\\Copia de respaldo'})
+    assert None is not None
+     +  where None = _decide(<module 'guardia_claude' from 'C:\\cm\\ge-main\\.claude\\hooks\\guardia.py'>, WindowsPath('C:/Users/USER/AppData/Local/Temp/pytest-of-USER/pytest-4741/test_un_lector_recursivo_sobre0/Bot v3 prueba'), 'Grep', {'pattern': 'x', 'path': 'C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-4741\\test_un_lector_recursivo_sobre0\\Copia de respaldo'})
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:280: AssertionError: ('Grep', {'pattern': 'x', 'path': 'C:\\Users\\USER\\AppData\\Local\\Temp\\pytest-of-USER\\pytest-4741\\test_un_lector_recursivo_sobre0\\Copia de respaldo'})
+E   AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Grep · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Bash cat · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      PowerShell Get-Content · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Read · in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Grep · in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Bash cat · in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      PowerShell Get-Content · in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+    assert not ['Read · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', 'Grep · Materi...ba R_HOJA)', 'Grep · in corpus\\corpus\\Estrategia del trader\\Sesiones\\hoja-05.xlsx: pasa (se esperaba R_HOJA)', ...]
+---------------------------- Captured stdout call -----------------------------
+R_CAPTURA | Read | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Grep | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Bash cat | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | PowerShell Get-Content | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_HOJA | Read | pasa | in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Grep | pasa | in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Bash cat | pasa | in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | PowerShell Get-Content | pasa | in corpus\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:321: AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+E   AssertionError: Read · lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Bash cat · lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Grep · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Bash cat · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      PowerShell Get-Content · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+    assert not ['Read · lazado\\knowledge\\cases\\holdout\\1\\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)', 'Grep · laz..._CAPTURA)', 'Grep · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', ...]
+---------------------------- Captured stdout call -----------------------------
+R_HOLDOUT | Read | pasa | lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Grep | pasa | lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Bash cat | pasa | lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | PowerShell Get-Content | pasa | lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_CAPTURA | Read | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Grep | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Bash cat | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | PowerShell Get-Content | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:352: AssertionError: Read · lazado\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+E   AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Grep · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Bash cat · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      PowerShell Get-Content · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+      Read · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Grep · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Bash cat · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      PowerShell Get-Content · er\Material adicional de su operativa\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)
+      Read · on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Grep · on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Bash cat · on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      PowerShell Get-Content · on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx: pasa (se esperaba R_HOJA)
+      Read · enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Bash cat · enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      PowerShell Get-Content · enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml: pasa (se esperaba R_HOLDOUT)
+      Grep · la carpeta enlazada: pasa
+      Bash · la carpeta enlazada: pasa
+      Glob · la carpeta enlazada: pasa
+    assert not ['Read · Material adicional de su operativa\\Backtest marzo 2026\\x.png: pasa (se esperaba R_CAPTURA)', 'Grep · Materi...ba R_LIBRO)', 'Grep · er\\Material adicional de su operativa\\resumen mayo 2026.xlsx: pasa (se esperaba R_LIBRO)', ...]
+---------------------------- Captured stdout call -----------------------------
+R_CAPTURA | Read | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Grep | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | Bash cat | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_CAPTURA | PowerShell Get-Content | pasa | Material adicional de su operativa\Backtest marzo 2026\x.png
+R_LIBRO | Read | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Grep | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | Bash cat | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_LIBRO | PowerShell Get-Content | pasa | er\Material adicional de su operativa\resumen mayo 2026.xlsx
+R_HOJA | Read | pasa | on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Grep | pasa | on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | Bash cat | pasa | on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOJA | PowerShell Get-Content | pasa | on enlace\corpus\Estrategia del trader\Sesiones\hoja-05.xlsx
+R_HOLDOUT | Read | pasa | enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Grep | pasa | enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | Bash cat | pasa | enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+R_HOLDOUT | PowerShell Get-Content | pasa | enlace\knowledge\cases\holdout\1\caso-eurusd-2026-05-04.yaml
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:386: AssertionError: Read · Material adicional de su operativa\Backtest marzo 2026\x.png: pasa (se esperaba R_CAPTURA)
+E   AssertionError: Read · adicional de su operativa\Backtest junio 2026: pasa
+      Grep · adicional de su operativa\Backtest junio 2026: pasa
+      Glob · adicional de su operativa\Backtest junio 2026: pasa
+      Glob · adicional de su operativa\Backtest junio 2026: pasa
+      Read · adicional de su operativa\Backtest junio 2026: pasa
+      Grep · adicional de su operativa\Backtest junio 2026: pasa
+      Glob · adicional de su operativa\Backtest junio 2026: pasa
+      Glob · adicional de su operativa\Backtest junio 2026: pasa
+      Read · adicional de su operativa\Backtest marzo 2026: pasa
+      Grep · adicional de su operativa\Backtest marzo 2026: R_CAPTURA
+      Glob · adicional de su operativa\Backtest marzo 2026: pasa
+      Glob · adicional de su operativa\Backtest marzo 2026: pasa
+      Read · adicional de su operativa\Backtest marzo 2026: pasa
+      Grep · adicional de su operativa\Backtest marzo 2026: pasa
+      Glob · adicional de su operativa\Backtest marzo 2026: pasa
+      Glob · adicional de su operativa\Backtest marzo 2026: pasa
+    assert not ['Read · adicional de su operativa\\Backtest junio 2026: pasa', 'Grep · adicional de su operativa\\Backtest junio 2026...cional de su operativa\\Backtest junio 2026: pasa', 'Grep · adicional de su operativa\\Backtest junio 2026: pasa', ...]
+---------------------------- Captured stdout call -----------------------------
+D2 | Read | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Grep | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Read | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Grep | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest junio 2026
+D2 | Read | pasa | adicional de su operativa\Backtest marzo 2026
+D2 | Grep | R_CAPTURA | adicional de su operativa\Backtest marzo 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest marzo 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest marzo 2026
+D2 | Read | pasa | adicional de su operativa\Backtest marzo 2026
+D2 | Grep | pasa | adicional de su operativa\Backtest marzo 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest marzo 2026
+D2 | Glob | pasa | adicional de su operativa\Backtest marzo 2026
+C:\cm\ge-main\tests\unit\test_guardia_enlaces.py:421: AssertionError: Read · adicional de su operativa\Backtest junio 2026: pasa
+=========================== short test summary info ===========================
+FAILED tests/unit/test_guardia_enlaces.py::test_la_imagen_de_backtest_marzo_en_una_copia_fuera_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_cada_clase_en_una_copia_fuera_se_niega_con_su_regla
+FAILED tests/unit/test_guardia_enlaces.py::test_el_libro_y_el_holdout_de_una_copia_se_niegan_tambien_en_mayusculas_y_con_barras
+FAILED tests/unit/test_guardia_enlaces.py::test_el_anclaje_minimo_del_material_y_de_sesiones_no_exige_corpus
+FAILED tests/unit/test_guardia_enlaces.py::test_listar_el_holdout_de_una_copia_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_un_lector_recursivo_sobre_la_carpeta_de_la_copia_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_la_imagen_de_backtest_marzo_por_un_enlace_simulado_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_un_enlace_de_dentro_a_un_nombre_sin_estructura_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_un_enlace_real_de_dentro_hacia_fuera_se_niega
+FAILED tests/unit/test_guardia_enlaces.py::test_la_carpeta_backtest_como_objetivo_de_read_grep_y_glob_se_niega

@@ -737,7 +737,11 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   `cerrar-rama` diga que, si la rama cambia el `Makefile`, los `make check` en la rama los lanza Aleks
   con «!»; los candidatos en blanco tras `:` y `@` en `candidatos_de_ruta` (§4.5); y que cerrar-rama
   ensaye make check sobre el merge en un clon independiente desechable (git clone, no git worktree:
-  este comparte main) antes del merge real.
+  este comparte main) antes del merge real. Y los residuos de la guardia con enlaces, que ya pasaban
+  en main: un enlace que aparece al recorrer una carpeta del repo fuera de las zonas
+  (`grep -R x docs` con `docs/u` como enlace a una copia o a `holdout/1`), un enlace duro
+  (`mklink /H`: una copia sin anclaje en su nombre) y un ancestro de la raíz (`C:\`) con un clon
+  fuera del repo; residuo aceptado por ahora (GUARDIA-ENLACES.md §8 y §10).
 - **Depende de:** nada.
 - **Quién:** la sesión, en ramas propias.
 - **Hecho cuando:** cada una con su test que la rompe a propósito.
@@ -829,7 +833,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 
 ### G.8 · La guardia con un corpus enlazado fuera del repo
 - **Refs:** —
-- **Qué es:** con corpus/ como enlace de unión a otro disco, la guardia resuelve por realpath y deja de aplicar las reglas del material adicional que dependen de la ruta relativa (las imágenes y lo de dentro de las carpetas Backtest de meses sin sortear); y un Read de la carpeta Backtest <mes> en sí no se niega, con o sin enlace (GUARDIAS-HOLDOUT.md §17). Hasta corregirlo, el corpus no sale de Bot v3\corpus. La copia D:\BotsitoCorpus\corpus (550 ficheros del manifiesto, hashes iguales el 2026-11-20) es solo respaldo y nadie la lee.
+- **Qué es:** con corpus/ como enlace de unión a otro disco, la guardia resuelve por realpath y deja de aplicar las reglas del material adicional que dependen de la ruta relativa (las imágenes y lo de dentro de las carpetas Backtest de meses sin sortear); y un Read de la carpeta Backtest <mes> en sí no se niega, con o sin enlace (GUARDIAS-HOLDOUT.md §17). Hasta corregirlo, el corpus no sale de Bot v3\corpus. La copia D:\BotsitoCorpus\corpus (550 ficheros del manifiesto, hashes iguales el 2026-11-20) es solo respaldo y nadie la lee. El código está hecho (stable/F39i-guardia-enlaces; GUARDIA-ENLACES.md): la guardia niega el material protegido por la forma textual, la canónica y la estructura, también en copias y clones fuera del repo. Falta que Aleks repita el traslado a D: con la guardia simulada negando las cuatro rutas; entonces la entrada pasa a HECHA en la orden de cierre siguiente.
 - **Depende de:** nada. Va antes de volver a mover el corpus al disco D, porque Aleks necesita espacio en C.
 - **Quién:** la sesión, en la próxima rama de guardia.
 - **Hecho cuando:** un test que la rompe a propósito con las dos rutas (la del repo a través del enlace y la resuelta) y la carpeta en sí; y Aleks repite el traslado con la guardia simulada denegando las cuatro.

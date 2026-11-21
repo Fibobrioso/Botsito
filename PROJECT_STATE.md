@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/guardia-enlaces
 
 ## Current Feature
-Ninguna rama abierta. trabajo/guardias-holdout cerrada en main el 2026-11-20 (stable/F39h-guardias-holdout): G2 (make check no sella en trabajo/* sin la fila de HOLDOUT-EXPOSICIONES del día), dos huecos de test_hoja_de_ruta y el estudio de G1.
+trabajo/guardia-enlaces EN CURSO (2026-11-20, G.8): la guardia niega el material protegido también por enlace y por estructura fuera del repo. Encargo docs/encargos/trabajo-guardia-enlaces.md; informe docs/validation/GUARDIA-ENLACES.md.
 
 ## Stable Main State
 fb1f02e9 · merge de `trabajo/guardias-holdout` (tag `stable/F39h-guardias-holdout`), sobre `stable/F39g-preregistro` (2fc884ac). Informe docs/validation/GUARDIAS-HOLDOUT.md; el registro del cierre, al final de HISTORIA.
@@ -16,7 +16,7 @@ fb1f02e9 · merge de `trabajo/guardias-holdout` (tag `stable/F39h-guardias-holdo
 fb1f02e9 · merge trabajo/guardias-holdout: G2 (sin fila de HOLDOUT del día no se sella en trabajo/*), H en test_hoja_de_ruta y el estudio de G1 · tag stable/F39h-guardias-holdout
 
 ## Tests Currently Passing
-2097 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2122 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
@@ -100,7 +100,6 @@ Una linea por deuda ABIERTA; texto entero y criterio de salida: `docs/state/READ
 - El visor no conecta `--diagnostico-cuenta-diaria` (cli.py:2558; el arnés sí, :2438): con `--todos --simular` corre una cuenta por mes como el arnés (ADR-0092 §8), nunca la diaria (VISOR-CONSTRUCCION.md §4.3).
 - `curva_con_deslizamiento` y `veredicto_con_f17` (criterio_fidelidad.py) toman una sola curva y arrastran `previo` entre cuentas: cuando F17 los use, por cuenta (CUENTA-POR-MES.md, fase 0 e) 8).
 - Sin guardia contra fechas de días ocultos en lo que añade una rama. En main hay 32 ids exactos de casos ocultos fuera de knowledge/cases, uno de ellos de F39a-F39g en tests/unit. Primero, una rama que los sustituya en tests sin abrirlos (los informes cerrados, por recuadro o declarados); después, la variante estrecha V2 (GUARDIAS-HOLDOUT.md §4.3 y §9).
-- Con corpus/ como enlace de unión fuera del repo (mklink /J), la guardia resuelve por realpath y deja de aplicar las reglas del material adicional; y un Read de la carpeta Backtest <mes> no se niega (GUARDIAS-HOLDOUT.md §17; hoja de ruta G.8).
 - VISOR-DIAS.md no recoge las opciones de diagnóstico del visor ni que calienta con el M1 del mes anterior (VISOR-CONSTRUCCION.md §4.3).
 - El visor no enseña las H4 que el sesgo salta por el color (ADR-0080 §10; VISOR-CONSTRUCCION.md §4.3).
 - `test_visor.py` y `test_preparar_a35.py` hacen leer el M1 de marzo (calienta abril) en cada make check (HOLDOUT-EXPOSICIONES, 2026-10-18 y 2026-10-26; VISOR-CONSTRUCCION.md §4.3).
@@ -173,8 +172,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 76 (2026-11-19).
+— ninguna desde el Archivo 77 (2026-11-20).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 76 (2026-11-19).
+— ninguna desde el Archivo 77 (2026-11-20).

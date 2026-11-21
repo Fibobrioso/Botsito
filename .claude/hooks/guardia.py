@@ -315,6 +315,16 @@ R_BORRAR_REMOTO = (
     "nunca `main` ni un tag (encargo de `trabajo/dieta-y-skills`)"
 )
 
+# `trabajo/guardia-enlaces` (revisor, B3): una carpeta de FUERA de la raiz se recorre para saber
+# que alcanza un lector recursivo o si lleva debajo una copia del holdout; el hook tiene 30 s
+# (`.claude/settings.json`). Pasado el tope de entradas, se niega: negar de mas no abre nada.
+LIMITE_DEL_RECORRIDO = 20000
+R_RECORRIDO = (
+    "`trabajo/guardia-enlaces` (D1, por estructura): la carpeta de fuera del repositorio tiene mas "
+    f"de {LIMITE_DEL_RECORRIDO} entradas y la guardia no puede saber a tiempo si lleva una copia "
+    "del material protegido; dale una ruta mas estrecha"
+)
+
 COMO_REESCRIBIR = (
     "Como reescribirlo: rutas LITERALES, sin `$VAR`, `$(...)`, `eval` ni `xargs` delante de un "
     "lector; un fichero, con la herramienta Read; y para el material protegido solo medir o "
@@ -359,6 +369,10 @@ SESIONES = "corpus/estrategia del trader/sesiones"
 TRANSCRIPCIONES = "data/transcripciones"
 HOLDOUT = "knowledge/cases/holdout"
 RAICES_IGNORADAS = ("corpus", "data")  # fuera de git: ripgrep no entra desde fuera
+# Anclajes de estructura de las clases que protegen fichero a fichero (`trabajo/guardia-enlaces`,
+# respuesta del consultor a la PARADA final, punto 1): una ruta de fuera que los lleva se decide
+# como si estuvieran en la raiz, y las reglas de `_motivo_en_el_sitio` miran cada fichero.
+ANCLAJES_POR_FICHERO = ("knowledge/cases/", "data/visor/", "knowledge/feedback/")
 
 EXT_LIBRO = (".xlsx", ".xls", ".xlsm", ".xlsb", ".csv", ".ods", ".tsv")
 EXT_IMAGEN = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".tif", ".tiff", ".heic")
@@ -477,7 +491,7 @@ class Politica:
     def lineas_de_tramo(self, ruta: str) -> list[int] | None:
         """Las lineas (desde 1) de un fichero POR_LINEAS que caen en un tramo; None si no se
         pueden saber."""
-        rel = self.relativa(ruta) or ""
+        rel = next((r for r in self.relativas(ruta) if r.startswith(TRANSCRIPCIONES + "/")), "")
         partes = rel.split("/")
         nombre = os.path.basename(ruta).lower()
         if len(partes) < 4 or nombre not in POR_LINEAS:
@@ -550,6 +564,56 @@ class Politica:
             return n[len(self.raiz_norm) + 1 :]
         return None
 
+    # Los anclajes de las clases protegidas, para decidir por su ESTRUCTURA una ruta que cae fuera
+    # de la raiz (D1 de `trabajo/guardia-enlaces`): las colas de MATERIAL y SESIONES sin `corpus/`
+    # delante, HOLDOUT con 1, 2 o 3 detras (aqui); y en `por_estructura`, TRANSCRIPCIONES con un
+    # video en cuarentena o con tramos no citables detras (solo lee `fuentes.yaml` si la ruta lo
+    # lleva), `ANCLAJES_POR_FICHERO` y la lista de ficheros con ocultos (respuesta del consultor a
+    # la PARADA final, punto 1).
+    ANCLAJES = (
+        (MATERIAL.split("/", 1)[1], MATERIAL),
+        (SESIONES.split("/", 1)[1], SESIONES),
+        *((f"{HOLDOUT}/{n}", f"{HOLDOUT}/{n}") for n in ("1", "2", "3")),
+    )
+
+    def por_estructura(self, ruta: str) -> list[str]:
+        """La ruta FUERA de la raiz leida como si el anclaje que contiene, en cualquier tramo y
+        comparado como siempre (minusculas, `/`), estuviera en la raiz: una copia del material
+        (`D:\\BotsitoCorpus\\corpus`), un clon desechable o el destino de un enlace. Una por cada
+        anclaje que contenga; ninguna si no contiene ninguno."""
+        tramos = _normcase(ruta).split("/")
+        salida: list[str] = []
+        for i in range(1, len(tramos)):
+            resto = "/".join(tramos[i:])
+            for anclaje, en_la_raiz in self.ANCLAJES:
+                if resto == anclaje or resto.startswith(anclaje + "/"):
+                    salida.append(en_la_raiz + resto[len(anclaje) :])
+            if resto.startswith(TRANSCRIPCIONES + "/"):
+                video = resto[len(TRANSCRIPCIONES) + 1 :].split("/", 1)[0]
+                # Respuesta del consultor a la PARADA final, punto 1: tambien un video con tramos
+                # no citables (su cruda se lee por trozos que no los toquen: `lineas_de_tramo`).
+                if video in self.sesiones_en_cuarentena or video in self.tramos_vigilados:
+                    salida.append(resto)
+            # Punto 1 de la misma respuesta: las clases que protegen por el nombre o el contenido de
+            # cada fichero -el id de un caso reservado en `knowledge/cases/` y `data/visor/`, el
+            # feedback que etiqueta un caso reservado- y la lista calculada de ficheros con ocultos.
+            if resto.startswith(ANCLAJES_POR_FICHERO) or resto in self.ficheros_ocultos:
+                salida.append(resto)
+        return list(dict.fromkeys(salida))
+
+    def relativas(self, ruta: str) -> list[str]:
+        """TODAS las formas de `ruta` relativas a la raiz (D1 de `trabajo/guardia-enlaces`): la
+        canonica, la TEXTUAL (sin resolver enlaces: la de una `RutaCanonica`) y, de cada una que
+        caiga fuera de la raiz, su lectura por estructura (`por_estructura`). Se niega si
+        CUALQUIERA niega. Vacia si ninguna forma cae en la raiz ni contiene un anclaje."""
+        salida: list[str] = []
+        for forma in dict.fromkeys((ruta, _textual(ruta))):
+            rel = self.relativa(forma)
+            for r in [rel] if rel is not None else self.por_estructura(forma):
+                if r not in salida:
+                    salida.append(r)
+        return salida
+
     def contiene_la_raiz(self, ruta: str) -> bool:
         """Si `ruta` (canonica) es un directorio que CONTIENE la raiz: el Escritorio, `C:\\`."""
         return self.raiz_norm.startswith(_normcase(ruta).rstrip("/") + "/")
@@ -561,16 +625,26 @@ class Politica:
         return f"{m.group(2)}-{MESES[m.group(1)]:02d}"
 
     def motivo_fichero(self, ruta: str) -> str | None:
-        """Por que no se puede leer el contenido de ESTE fichero, o None si se puede."""
-        nombre = os.path.basename(ruta).lower()
-        if "cruda-no-leer" in _normcase(ruta):
+        """Por que no se puede leer el contenido de ESTE fichero, o None si se puede. Por TODAS
+        sus formas (D1 de `trabajo/guardia-enlaces`): el nombre y `cruda-no-leer`, en la canonica y
+        en la textual; las reglas de cada sitio, en cada forma de `relativas`."""
+        formas = tuple(dict.fromkeys((ruta, _textual(ruta))))
+        if any("cruda-no-leer" in _normcase(f) for f in formas):
             return R_CUARENTENA
-        rel = self.relativa(ruta)
-        es_libro = nombre.endswith(EXT_LIBRO) and "backtesting-analytics" in nombre
-        if es_libro and self.mes_de(nombre) not in self.meses_legibles:
-            return self.regla_del_mes(self.mes_de(nombre))
-        if rel is None:
-            return None
+        for nombre in dict.fromkeys(os.path.basename(f).lower() for f in formas):
+            es_libro = nombre.endswith(EXT_LIBRO) and "backtesting-analytics" in nombre
+            if es_libro and self.mes_de(nombre) not in self.meses_legibles:
+                return self.regla_del_mes(self.mes_de(nombre))
+        for rel in self.relativas(ruta):
+            motivo = self._motivo_en_el_sitio(ruta, rel)
+            if motivo:
+                return motivo
+        return None
+
+    def _motivo_en_el_sitio(self, ruta: str, rel: str) -> str | None:
+        """Las reglas de cada sitio sobre UNA forma relativa de `ruta` (`ruta` es el fichero en
+        disco, por si hay que leer su contenido)."""
+        nombre = rel.rsplit("/", 1)[-1]
         if rel in self.ficheros_ocultos:
             return R_FICHERO_OCULTO
         partes = rel.split("/")
@@ -602,12 +676,38 @@ class Politica:
         nombre = resto.rsplit("/", 1)[-1]
         if nombre.endswith(EXT_IMAGEN):
             return R_CAPTURA
-        if "/" in resto:
-            carpeta = resto.split("/", 1)[0]
-            if carpeta.startswith("backtest") and self.mes_de(carpeta) not in self.meses_legibles:
-                return self.regla_del_mes(self.mes_de(carpeta))
+        motivo = self._motivo_backtest(rel)
+        if motivo:
+            return motivo
         if nombre.endswith(EXT_LIBRO) and self.mes_de(nombre) not in self.meses_legibles:
             return self.regla_del_mes(self.mes_de(nombre))
+        return None
+
+    def _motivo_backtest(self, rel: str) -> str | None:
+        """Una carpeta `Backtest <mes>` de un mes no legible del material adicional, ELLA MISMA y
+        todo lo de dentro (D2 de `trabajo/guardia-enlaces`: hasta entonces solo lo de dentro)."""
+        if not rel.startswith(MATERIAL + "/"):
+            return None
+        resto = rel[len(MATERIAL) + 1 :]
+        carpeta = resto.split("/", 1)[0]
+        # Lo de dentro, como siempre: cualquier carpeta `backtest*`. La carpeta misma, solo con
+        # `backtest` como palabra (`Backtest marzo 2026`): un libro suelto `backtesting-analytics
+        # ...` lo decide su propia regla.
+        es_carpeta = "/" in resto or re.match(r"backtest(?![a-z])", carpeta)
+        no_legible = self.mes_de(carpeta) not in self.meses_legibles
+        if es_carpeta and carpeta.startswith("backtest") and no_legible:
+            return self.regla_del_mes(self.mes_de(carpeta))
+        return None
+
+    def motivo_carpeta_backtest(self, ruta: str) -> str | None:
+        """D2: la carpeta `Backtest <mes>` de un mes no legible, o algo de dentro, por cualquiera
+        de sus formas, como objetivo directo de Grep (Read pasa por `_motivo_material`); Glob la
+        lista, como `ls` (respuesta del consultor a la PARADA final de `trabajo/guardia-enlaces`,
+        punto 2)."""
+        for rel in self.relativas(ruta):
+            motivo = self._motivo_backtest(rel)
+            if motivo:
+                return motivo
         return None
 
     def regla_del_mes(self, mes: str | None) -> str:
@@ -631,38 +731,78 @@ class Politica:
         """Por que no se puede leer RECURSIVAMENTE este directorio: el primer fichero protegido
         que alcanzaria. `respeta_ignore`: la herramienta no entra en lo que ignora git (ripgrep,
         `git grep`) salvo que se le de una ruta de dentro."""
-        rel = self.relativa(ruta)
-        if rel is None:
-            if not self.contiene_la_raiz(ruta):
-                return None
+        motivo = self.motivo_carpeta_backtest(ruta)  # D2: la carpeta misma, aunque este vacia
+        if motivo:
+            return motivo
+        if self.relativa(ruta) is None and self.contiene_la_raiz(ruta):
             # Un ANCESTRO de la raiz se recorre como la raiz, con el mismo `respeta_ignore`
             # (respuesta del consultor a la PARADA 1 de `trabajo/guardia-alias`, punto 4).
-            rel, ruta = "", str(self.raiz)
+            return self._motivo_directorio_en(str(self.raiz), "", respeta_ignore)
+        if not self.alguna_forma_en_la_raiz(ruta):
+            # Fuera de la raiz por todas sus formas, lleve o no un anclaje en su ruta: lo que
+            # alcanzaria, fichero a fichero, con tope (revisor de la segunda pasada, A1: con un
+            # anclaje en la ruta, recorrer solo sus zonas se saltaba el tope).
+            return self.lo_que_alcanza_fuera(ruta)
+        for rel in self.relativas(ruta):
+            motivo = self._motivo_directorio_en(ruta, rel, respeta_ignore)
+            if motivo:
+                return motivo
+        return None
+
+    def alguna_forma_en_la_raiz(self, ruta: str) -> bool:
+        """Si la canonica o la textual de `ruta` cae en la raiz (D1, `trabajo/guardia-enlaces`)."""
+        return any(self.relativa(f) is not None for f in (ruta, _textual(ruta)))
+
+    def lo_que_alcanza_fuera(self, ruta: str) -> str | None:
+        """Una carpeta FUERA de la raiz por todas sus formas, para un lector recursivo: lo que
+        alcanzaria, fichero a fichero y por estructura (la carpeta que contiene una copia o un
+        clon, o la copia misma; `trabajo/guardia-enlaces`, GUARDIA-ENLACES.md). Con tope: si pasa
+        de `LIMITE_DEL_RECORRIDO` entradas, se niega (`R_RECORRIDO`) en vez de arriesgar el plazo
+        del hook (revisor, B3)."""
+        base = Path(ruta)
+        if not base.is_dir():
+            return self.motivo_fichero(ruta) if base.is_file() else None
+        vistas = 0
+        for actual, carpetas, ficheros in os.walk(base):
+            vistas += len(carpetas) + len(ficheros)
+            if vistas > LIMITE_DEL_RECORRIDO:
+                return R_RECORRIDO
+            for f in ficheros:
+                motivo = self.motivo_fichero(os.path.join(actual, f))
+                if motivo:
+                    return motivo
+        return None
+
+    def _motivo_directorio_en(self, ruta: str, rel: str, respeta_ignore: bool) -> str | None:
+        """`motivo_directorio` sobre UNA forma relativa `rel` de la carpeta `ruta` (en disco)."""
         dentro_ignorado = rel.split("/")[0] in RAICES_IGNORADAS
         if rel == "knowledge/_proposals" or rel.startswith("knowledge/_proposals/"):
             # Solo con una ruta de dentro: desde mas arriba bloquearia toda busqueda del repo
             # (limite declarado en docs/validation/GUARDIAS-CLAUDE.md §1.7).
-            return self._primer_protegido(Path(ruta))
+            return self._primer_protegido(Path(ruta), rel)
         for zona in self._zonas():
             if rel.startswith(zona + "/"):  # el directorio esta DENTRO de una zona
-                return self._primer_protegido(Path(ruta))
+                return self._primer_protegido(Path(ruta), rel)
             contiene = rel == "" or zona == rel or zona.startswith(rel + "/")
             if not contiene:
                 continue
             ignorada = zona.split("/")[0] in RAICES_IGNORADAS
             if respeta_ignore and ignorada and not dentro_ignorado:
                 continue  # ripgrep no entra en lo ignorado si no se le da una ruta de dentro
-            en_disco = self._ruta_real(zona)
-            motivo = self._primer_protegido(en_disco) if en_disco else None
+            # La zona en disco, bajando desde la carpeta misma (D1: la forma `rel` puede no ser la
+            # canonica; para la canonica es lo de siempre, porque `ruta` es `<raiz>/<rel>`).
+            en_disco = self._ruta_real(zona[len(rel) :], Path(ruta))
+            motivo = self._primer_protegido(en_disco, zona) if en_disco else None
             if motivo:
                 return motivo
         return None
 
-    def _ruta_real(self, rel: str) -> Path | None:
-        """La ruta de disco de `rel` (en minusculas), con la grafia de cada carpeta tal como esta.
+    def _ruta_real(self, rel: str, desde: Path | None = None) -> Path | None:
+        """La ruta de disco de `rel` (en minusculas) bajo `desde` (la raiz, si no se da), con la
+        grafia de cada carpeta tal como esta.
         En Windows da igual; en Linux, `corpus/estrategia del trader` no existe y la segunda CI de
         la guardia (run 36891855700) lo midio: sin esto, la zona se daba por vacia."""
-        actual = self.raiz
+        actual = self.raiz if desde is None else desde
         for parte in rel.split("/"):
             if not parte:
                 continue
@@ -679,14 +819,25 @@ class Politica:
         zonas += ["knowledge/feedback", "knowledge/cases"]
         return zonas
 
-    def _primer_protegido(self, base: Path) -> str | None:
+    def _primer_protegido(self, base: Path, rel: str | None = None) -> str | None:
+        """El motivo del primer fichero protegido de `base`. `rel`: la forma relativa de `base`
+        con que se decide (D1 de `trabajo/guardia-enlaces`); si no es la canonica -la carpeta es
+        un enlace de dentro del repo hacia fuera-, cada fichero se decide TAMBIEN por esa forma,
+        que su ruta en disco ya no lleva."""
+        extra = rel is not None and self.relativa(str(base)) != rel
         if base.is_file():
-            return self.motivo_fichero(str(base))
+            return self.motivo_fichero(str(base)) or (
+                self._motivo_en_el_sitio(str(base), rel) if extra and rel is not None else None
+            )
         if not base.is_dir():
             return None
         for actual, _dirs, ficheros in os.walk(base):
             for f in ficheros:
-                motivo = self.motivo_fichero(os.path.join(actual, f))
+                ruta = os.path.join(actual, f)
+                motivo = self.motivo_fichero(ruta)
+                if not motivo and extra and rel is not None:
+                    dentro = _normcase(os.path.relpath(ruta, base))
+                    motivo = self._motivo_en_el_sitio(ruta, f"{rel}/{dentro}" if rel else dentro)
                 if motivo:
                     return motivo
         return None
@@ -696,16 +847,39 @@ class Politica:
         `knowledge/cases/holdout/{1,2,3}` (ADR-0088): una de esas carpetas o lo que no sea un
         fichero dentro de ellas (un fichero NOMBRADO se puede medir y hashear: su nombre ya esta en
         el comando); y, si el listado es recursivo, cualquier carpeta que las CONTENGA, tambien
-        un ancestro de la raiz. Niega por defecto: no mira si hoy hay algo dentro."""
-        rel = self.relativa(ruta)
-        if rel is None:
-            return recursivo and self.contiene_la_raiz(ruta)
-        for zona in (f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3"):
-            if rel == zona or rel.startswith(zona + "/"):
-                return not os.path.isfile(ruta)
-            if recursivo and (rel == "" or zona.startswith(rel + "/")):
-                return True
-        return False
+        un ancestro de la raiz. Niega por defecto: no mira si hoy hay algo dentro. Por todas las
+        formas de `ruta` (D1 de `trabajo/guardia-enlaces`); y una carpeta de fuera de la raiz por
+        todas sus formas, lleve o no un anclaje en su ruta, en recursivo, si tiene debajo una copia
+        de esas carpetas (`holdout_debajo`; revisor de la segunda pasada, A1)."""
+        if self.relativa(ruta) is None and recursivo and self.contiene_la_raiz(ruta):
+            return True
+        for rel in self.relativas(ruta):
+            for zona in (f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3"):
+                if rel == zona or rel.startswith(zona + "/"):
+                    return not os.path.isfile(ruta)
+                if recursivo and (rel == "" or zona.startswith(rel + "/")):
+                    return True
+        if not recursivo or self.alguna_forma_en_la_raiz(ruta):
+            return False
+        debajo = self.holdout_debajo(ruta)
+        return debajo is None or bool(debajo)
+
+    def holdout_debajo(self, ruta: str) -> list[str] | None:
+        """Las carpetas `knowledge/cases/holdout/{1,2,3}` que hay DEBAJO de una carpeta de fuera de
+        la raiz (una copia o un clon desechable), reconocidas por estructura (`por_estructura`).
+        None si pasa de `LIMITE_DEL_RECORRIDO` entradas: no se sabe, y quien la llama niega."""
+        salida: list[str] = []
+        if not os.path.isdir(ruta):
+            return salida
+        vistas = 0
+        for actual, carpetas, ficheros in os.walk(ruta):
+            vistas += len(carpetas) + len(ficheros)
+            if vistas > LIMITE_DEL_RECORRIDO:
+                return None
+            for rel in self.por_estructura(actual):
+                if rel in (f"{HOLDOUT}/1", f"{HOLDOUT}/2", f"{HOLDOUT}/3"):
+                    salida.append(actual)
+        return salida
 
     def motivo_ruta(
         self, ruta: str, recursivo: bool = False, respeta_ignore: bool = False
@@ -718,12 +892,15 @@ class Politica:
 
     def motivo_dentro_de_zona(self, ruta: str) -> str | None:
         """Un directorio pasado a un lector no recursivo: protegido si ESTA dentro de una zona
-        con algo protegido (un `cat` de una carpeta falla, pero un `python x.py <carpeta>` no)."""
-        rel = self.relativa(ruta)
-        if rel is None:
-            return None
-        if any(rel == z or rel.startswith(z + "/") for z in self._zonas()):
-            return self._primer_protegido(Path(ruta))
+        con algo protegido (un `cat` de una carpeta falla, pero un `python x.py <carpeta>` no).
+        Por todas las formas de `ruta` (D1 de `trabajo/guardia-enlaces`)."""
+        for rel in self.relativas(ruta):
+            if any(rel == z or rel.startswith(z + "/") for z in self._zonas()):
+                if not self.alguna_forma_en_la_raiz(ruta):  # fuera: con tope (revisor, A1)
+                    return self.lo_que_alcanza_fuera(ruta)
+                motivo = self._primer_protegido(Path(ruta), rel)
+                if motivo:
+                    return motivo
         return None
 
 
@@ -1295,6 +1472,61 @@ def _lecturas_de_la_herramienta(texto: str) -> list[str]:
     return [texto] if menos == texto else [texto, menos]
 
 
+class RutaCanonica(str):
+    """La forma canonica de una ruta (la que se compara, como siempre) que recuerda ademas su forma
+    TEXTUAL: absoluta y sin prefijos, pero SIN resolver enlaces ni uniones. Decision D1 de
+    `trabajo/guardia-enlaces` (docs/validation/GUARDIA-ENLACES.md): una ruta se decide por todas
+    sus formas, porque un enlace de dentro del repo que apunta fuera saca la canonica de la raiz
+    (GUARDIAS-HOLDOUT.md §17). Es un `str`: lo que se calcula de ella con `os.path` es un `str` sin
+    la forma textual, y entonces deciden la canonica y la estructura (`Politica.relativas`)."""
+
+    textual: str
+
+    def __new__(cls, canonica: str, textual: str) -> RutaCanonica:
+        nueva = super().__new__(cls, canonica)
+        nueva.textual = textual
+        return nueva
+
+
+def _textual(ruta: str) -> str:
+    """La forma textual de una ruta que puede ser una `RutaCanonica` (D1), o la ruta misma."""
+    return getattr(ruta, "textual", ruta)
+
+
+def _sin_resolver(ruta: str) -> str:
+    """Lo que hace `_canonica` antes de `realpath`: sin prefijos, sin puntos ni espacios finales y
+    normalizada, y en Windows con los nombres cortos 8.3 expandidos (`_nombres_largos`), pero sin
+    resolver enlaces ni uniones. Se llama despues de `_canonica`, que ya habria negado lo no
+    canonizable."""
+    r = ruta
+    if os.name == "nt":
+        r = _nombres_largos(_FINALES.sub("", os.path.normpath(_sin_prefijos(r))))
+    return os.path.normpath(r)
+
+
+def _nombres_largos(ruta: str) -> str:
+    """En Windows, `ruta` con sus tramos 8.3 (`KNOWLE~1`) expandidos por `GetLongPathNameW`, que
+    cambia el NOMBRE de cada tramo y no sigue uniones ni enlaces (revisor de
+    `trabajo/guardia-enlaces`, B1: sin esto, un enlace de dentro hacia un nombre sin anclaje,
+    escrito con un tramo 8.3 por encima, no lo veia ninguna forma). Expande el prefijo mas largo
+    que existe y deja la cola como esta; sin `~`, o si no se puede, la ruta tal cual."""
+    if sys.platform != "win32":  # asi, y no con `os.name`, mypy en Linux no mira `windll`
+        return ruta
+    if "~" not in ruta or not os.path.isabs(ruta):
+        return ruta
+    import ctypes
+
+    cabeza, cola = ruta, ""
+    while True:
+        buffer = ctypes.create_unicode_buffer(32768)
+        if ctypes.windll.kernel32.GetLongPathNameW(cabeza, buffer, 32768):
+            return os.path.join(buffer.value, cola) if cola else buffer.value
+        padre, tramo = os.path.split(cabeza)
+        if not tramo or padre == cabeza:
+            return ruta
+        cabeza, cola = padre, os.path.join(tramo, cola) if cola else tramo
+
+
 def _absoluta(ruta: str, cwd: str) -> str:
     r = _sin_disfraz_posix(ruta.strip(), cwd)
     m = _UNIDAD_MSYS.match(r)
@@ -1303,10 +1535,13 @@ def _absoluta(ruta: str, cwd: str) -> str:
     elif r.startswith("~"):
         r = _tilde_de_bash(r, cwd)
     r = _relativa_a_unidad(r, cwd)
+    textual = r
     relativa = not os.path.isabs(r) or re.match(r"^[\\/](?![\\/])", r)
     if relativa and not re.match(r"^[a-zA-Z]:", r):
+        textual = os.path.join(_textual(cwd), r)  # D1: colgada del directorio de trabajo TEXTUAL
         r = os.path.join(cwd, r)
-    return _canonica(r)
+    canonica = _canonica(r)
+    return RutaCanonica(canonica, _sin_resolver(textual))
 
 
 # ------------------------------------------------------------------ la ruta canonica
@@ -1957,12 +2192,29 @@ def _patron_a_regex(patron: str) -> re.Pattern[str]:
     return re.compile("".join(partes), re.IGNORECASE | re.S)
 
 
-def _candidatos_del_holdout(politica: Politica) -> list[str]:
+def _candidatos_del_holdout(politica: Politica, base: str | None = None) -> list[str] | None:
     """Las rutas (normalizadas) que un comodin podria nombrar dentro de `holdout/{1,2,3}`: sus
-    ficheros salvo el README de cada una, y la sonda de un caso."""
+    ficheros salvo el README de cada una, y la sonda de un caso. Y, si `base` cae fuera de la raiz
+    y no la contiene (D1 de `trabajo/guardia-enlaces`), lo mismo en la copia de esas carpetas que
+    lleve: la que la contiene, por estructura, o las que tenga debajo. None si lo de debajo no se
+    puede saber (`holdout_debajo`): quien la llama niega. Un ANCESTRO de la raiz se decide por las
+    zonas de la raiz, como en `main`, sin recorrerlo (revisor, B3)."""
+    del_holdout = {f"{HOLDOUT}/{n}" for n in ("1", "2", "3")}
+    zonas = [politica.raiz / HOLDOUT / n for n in ("1", "2", "3")]
+    fuera = base is not None and politica.relativa(base) is None
+    if base is not None and fuera and not politica.contiene_la_raiz(base):
+        for forma in dict.fromkeys((base, _textual(base))):
+            tramos = Path(forma).parts
+            for i in range(len(tramos), 0, -1):  # la copia de la zona que CONTIENE `base`
+                ancestro = Path(*tramos[:i])
+                if del_holdout & set(politica.por_estructura(str(ancestro))):
+                    zonas.append(ancestro)
+        debajo = politica.holdout_debajo(base)
+        if debajo is None:
+            return None
+        zonas += [Path(z) for z in debajo]
     salida: list[str] = []
-    for n in ("1", "2", "3"):
-        zona = politica.raiz / HOLDOUT / n
+    for zona in zonas:
         salida.append(_normcase(str(zona / _SONDA_DEL_HOLDOUT)))
         try:
             for actual, _dirs, ficheros in os.walk(zona):
@@ -1980,18 +2232,22 @@ def _patron_lista_el_holdout(patron: str, cwd: str, politica: Politica) -> bool:
     `holdout/{1,2,3}`: su parte literal es una carpeta cuyo listado los alcanza
     (`lista_dentro_del_holdout`) y el patron casa con un fichero de dentro, o con la sonda."""
     for uno in _llaves(patron):
-        normal = _normcase(_absoluta(uno, cwd))
-        tramos = normal.split("/")
-        k = next((i for i, t in enumerate(tramos) if _COMODIN.search(t)), None)
-        if k is None:
-            continue  # sin comodin es una ruta: la decide quien la use
-        base = "/".join(tramos[:k]) or "/"
-        recursivo = k < len(tramos) - 1 or "**" in tramos[k]
-        if not politica.lista_dentro_del_holdout(base, recursivo):
-            continue
-        regex = _patron_a_regex(normal)
-        if any(regex.fullmatch(c) for c in _candidatos_del_holdout(politica)):
-            return True
+        absoluta = _absoluta(uno, cwd)
+        for forma in dict.fromkeys((absoluta, _textual(absoluta))):  # D1: la canonica y la textual
+            normal = _normcase(forma)
+            tramos = normal.split("/")
+            k = next((i for i, t in enumerate(tramos) if _COMODIN.search(t)), None)
+            if k is None:
+                continue  # sin comodin es una ruta: la decide quien la use
+            # La base con su grafia (en Linux, una carpeta de fuera en minusculas no existe).
+            base = "/".join(os.path.normpath(forma).replace("\\", "/").split("/")[:k]) or "/"
+            recursivo = k < len(tramos) - 1 or "**" in tramos[k]
+            if not politica.lista_dentro_del_holdout(base, recursivo):
+                continue
+            regex = _patron_a_regex(normal)
+            candidatos = _candidatos_del_holdout(politica, base)
+            if candidatos is None or any(regex.fullmatch(c) for c in candidatos):
+                return True
     return False
 
 
@@ -5695,11 +5951,17 @@ def decidir(evento: dict[str, object], politica: Politica) -> str | None:
             patron = str(entrada.get("pattern", ""))
             base = _absoluta(str(entrada.get("path") or cwd), cwd)
             completo = patron if os.path.isabs(patron) else os.path.join(base, patron)
-            if _patron_lista_el_holdout(completo, base, politica):
+            # D1: el patron colgado tambien de la base TEXTUAL (un enlace de dentro hacia fuera).
+            textual = patron if os.path.isabs(patron) else os.path.join(_textual(base), patron)
+            patrones = dict.fromkeys((completo, textual))
+            if any(_patron_lista_el_holdout(p, base, politica) for p in patrones):
                 return (
                     f"Glob de `{patron}` lista los nombres de dentro de `{HOLDOUT}/{{1,2,3}}`."
                     f"\nRegla: {R_LISTADO}.\n{COMO_LISTAR}"
                 )
+            # La carpeta `Backtest <mes>` se puede listar con Glob, como con `ls` y `Get-ChildItem`:
+            # listar nombres no es leer contenido (ADR-0021 §1). D2 queda para Read y Grep
+            # (`trabajo/guardia-enlaces`, respuesta del consultor a la PARADA final, punto 2).
             return None
         if herramienta in HERRAMIENTAS_DE_COMANDO:
             if herramienta == "Monitor" and (

@@ -1,0 +1,6 @@
+Using CPython 3.12.10 interpreter at: C:\Users\USER\AppData\Local\Programs\Python\Python312\python.exe
+Creating virtual environment at: .venv
+   Building botsito @ file:///C:/cm/ge-rama
+      Built botsito @ file:///C:/cm/ge-rama
+Installed 25 packages in 1.28s
+..............                                                           [100%]

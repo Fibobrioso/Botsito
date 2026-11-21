@@ -1,0 +1,31 @@
+ABRE: memoria | a/d dentro | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | a/d dentro | imagen de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | a/d dentro | otro fichero de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-real union corpus | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-real union corpus | imagen de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-real union corpus | otro fichero de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-real union sin estructura | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-real union sin estructura | imagen de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-real union sin estructura | otro fichero de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-sim enlace con estructura | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-sim enlace con estructura | imagen de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-sim enlace con estructura | otro fichero de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-sim enlace sin estructura | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-sim enlace sin estructura | imagen de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | b-sim enlace sin estructura | otro fichero de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | c clon fuera | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | c clon fuera | imagen de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | c clon fuera | otro fichero de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | c copia fuera | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | c copia fuera | imagen de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: memoria | c copia fuera | otro fichero de Backtest marzo | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | D:\BotsitoCorpus (solo la decision) | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | D:\BotsitoCorpus (solo la decision) | imagen de Backtest marzo (inventada) | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | D:\BotsitoCorpus (solo la decision) | otro fichero de Backtest marzo (inventado) | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | a/d dentro | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | a/d dentro | imagen de Backtest marzo (inventada) | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | a/d dentro | otro fichero de Backtest marzo (inventado) | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | c copia fuera | carpeta Backtest marzo | Glob path=carpeta | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | c copia fuera | imagen de Backtest marzo (inventada) | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+ABRE: stdin | c copia fuera | otro fichero de Backtest marzo (inventado) | Glob patron absoluto | negada R_SIN_ABRIR -> PERMITIDA
+{'igual': 798, 'negada -> PERMITIDA': 30, 'PERMITIDA -> negada': 40} casos: 868
