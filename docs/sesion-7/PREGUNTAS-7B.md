@@ -5,6 +5,11 @@ ADR-0093; el reparto, los días y las filas, de `docs/validation/PREPARACION-SES
 §0.4, con la respuesta del consultor a la PARADA de la fase 0). Es el segundo día de la sesión 7,
 **7b (sesion-08)**; el primero, **7a (sesion-07)**, está en `docs/sesion-7/PREGUNTAS-7A.md`.
 
+> **Recuadro del 2026-11-21 (`trabajo/sesion-08`).** La 7b se grabó en dos vídeos, v20 el
+> 2026-11-20 y v21 el 2026-11-21. La hoja que se usó de verdad (los vídeos, el orden real, las
+> preguntas hechas y el bloque de días) está en `docs/sesion-7/HOJA-USADA-7B.md`; la extracción, en
+> `docs/validation/SESION-08-EXTRACCION.md`. Este documento no se cambia por debajo del recuadro.
+
 > **Recuadro del 2026-11-18 (`trabajo/laminas-sesion-7b`; `docs/validation/LAMINAS-7B.md`).** Este
 > documento está revisado con lo que dejó la 7a (ACTIVAR-SESION-07.md), por encargo del consultor
 > del 2026-11-18; lo de antes está en git (`main` en b174d714). Qué cambió y por qué:

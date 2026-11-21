@@ -1,0 +1,18 @@
+id: ev-v20-002737-ffbdf9b1
+video_id: v20
+t0: 0:27:37
+t1: 0:27:44
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: aquí entonces está en medio cuando está en medio y tendría que romper con cuerpo y cerrar
+  con cuerpo
+afirmacion: 'en S-2, pregunta 2: cuando la zona de control queda en medio del nivel de entrada, para el
+  break even tiene que romper con cuerpo y cerrar con cuerpo'
+tema: break_even.margen_segun_distancia
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (A-13). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

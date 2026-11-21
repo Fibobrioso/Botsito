@@ -1,0 +1,17 @@
+id: ev-v20-003753-ec404edc
+video_id: v20
+t0: 0:37:53
+t1: 0:37:57
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: La vela tiene que estar por encima del alto de la zona de control.
+afirmacion: 'en S-2, frase de Para confirmar al final: para pasar a break even la vela tiene que estar
+  por encima del alto de la zona de control'
+tema: break_even.disparador_zona_de_control
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (A-13). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

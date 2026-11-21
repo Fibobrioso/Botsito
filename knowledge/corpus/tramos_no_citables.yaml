@@ -768,7 +768,7 @@ tramos:
     t0: "0:03:27"
     t1: "0:14:49"
     motivo: >-
-      precaucion: en S-1 (bloque tecnico de la sesion 7b), el trader pasa del esquema a un grafico real («lo vamos a ir al el mercado real»), de un dia que la voz no dice de forma visible; nombra el desenlace de una operacion y el video del mapeo. Regla de la PARADA condicional del encargo: un grafico real del bloque tecnico sin el dia dicho en voz es no citable, y la pregunta se queda con lo citable de fuera. Sin cifras ni dias aqui
+      precaucion: en S-1 (bloque tecnico de la sesion 7b), el trader pasa del esquema a un grafico real, y lo anuncia en voz, de un dia que la voz no dice de forma visible; nombra el desenlace de una operacion y el video del mapeo. Regla de la PARADA condicional del encargo: un grafico real del bloque tecnico sin el dia dicho en voz es no citable, y la pregunta se queda con lo citable de fuera. Sin cifras ni dias aqui
     acordado: >-
       encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17) y «EXTRACCION» (el video de mapeo); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
   - video_id: v20
@@ -803,7 +803,7 @@ tramos:
     t0: "0:48:40"
     t1: "0:49:18"
     motivo: >-
-      precaucion: en S-3 (bloque tecnico de la sesion 7b), el trader vuelve a su grafico real («lo voy a mostrar en el grafico»), de un dia que la voz no dice de forma visible. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
+      precaucion: en S-3 (bloque tecnico de la sesion 7b), el trader vuelve a su grafico real, y lo anuncia en voz, de un dia que la voz no dice de forma visible. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
     acordado: >-
       encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
   - video_id: v21
@@ -827,3 +827,10 @@ tramos:
       tramo de cuarentena mecanica de la sesion 08 (v21): el bloque [CUARENTENA 72:12–73:31] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
     acordado: >-
       skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-08 (2026-11-21); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:00:00"
+    t1: "0:47:39"
+    motivo: >-
+      precaucion: la sesion que abre v21, la 1 del bloque de dias segun la respuesta b) de Aleks: la voz dice el dia solo con su numero, sin mes, y la unica fecha con numero del arranque cae en un bloque de cuarentena; la voz no situa la sesion en un dia de construccion de forma visible. Regla de la PARADA condicional del encargo: entera no citable y sin extraer, y el dia previsto queda gastado. Sin cifras ni desenlaces aqui
+    acordado: >-
+      encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17); marcado al leer la filtrada; PARADA final del informe por si Aleks lo levanta; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md

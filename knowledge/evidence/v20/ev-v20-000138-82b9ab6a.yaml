@@ -1,0 +1,17 @@
+id: ev-v20-000138-82b9ab6a
+video_id: v20
+t0: 0:01:38
+t1: 0:01:51
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: la regla es que rompa con cuerpo y cierre con cuerpo por arriba. Si no, esto no se llegaría
+  a considerar, o sea, se llegaría a considerar liquidez de M1.
+afirmacion: 'en S-1: la regla es que rompa y cierre con cuerpo; si no, se consideraria liquidez de M1'
+tema: liquidez.m1_mecha_m15_cuerpo
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-1 (A-35); no dice donde queda su alto de M15. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

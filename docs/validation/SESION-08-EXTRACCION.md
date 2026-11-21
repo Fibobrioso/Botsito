@@ -1,6 +1,7 @@
 # Sesión 7b con el trader: la extracción por pregunta y por sesión del bloque de días
 
-> **PLANTILLA mientras la rama está EN CURSO**: la tabla final entra con la extracción.
+> **Nació como PLANTILLA mientras la rama estaba EN CURSO** («la tabla final entra con la
+> extracción»); la tabla final ya está, en §6.
 
 > **Borrador para el consultor. Esta rama NO resuelve nada**: no hay `feedback apply`, ni
 > ambigüedades cerradas, ni cambios en la spec, en el motor, en los casos, en las cifras, en
@@ -276,9 +277,9 @@ de `tramos_no_citables.yaml` (§3.0). Cada «resuelve» es una propuesta: lo dec
 - **«Para confirmar al final»** (respuesta 2, «de la mayoría»): **se leyeron las seis**, cada una al
   final de su pregunta: S-1 `[13:25]`, S-2 `[37:39]`, S-3 `[48:33]`, S-4 `[57:52]`, S-5 `[61:23]` (a
   medias: «cuando la roja» y «lo descarto», `[61:35]`) y S-6 `[63:44]`. S-7 no lleva.
-- **El gráfico real** (respuesta 4): el trader pasa a un gráfico real en S-1 («lo vamos a ir al el
-  mercado real», `[03:27]`), en S-2 (`[28:00]` y `[32:09]`) y en S-3 («evaluar en nuestro gráfico»,
-  `[39:21]`, y «lo voy a mostrar en el gráfico», `[48:40]`). **En ninguno dice el día en voz.**
+- **El gráfico real** (respuesta 4): el trader anuncia en voz que pasa a su gráfico o al mercado real
+  en S-1 (desde `[03:27]`), en S-2 (desde `[28:00]` y desde `[32:09]`) y en S-3 (desde `[39:21]` y
+  desde `[48:40]`). Esas líneas abren los tramos y no se citan. **En ninguno dice el día en voz.**
   Según Aleks eran días de julio del 1 al 17, pero la voz no lo confirma. Por la regla de la PARADA
   condicional, cada uno es un tramo no citable, y la pregunta se queda con lo citable de fuera. Son
   cinco tramos: **0:03:27–0:14:49, 0:28:00–0:30:14, 0:32:09–0:37:39, 0:39:21–0:44:06 y
@@ -506,6 +507,415 @@ escriben aquí.
   parte.
 - **Propuesta: resuelve** la pregunta de material: esa tarde no se grabó.
 
+## 4. El bloque de días (v21)
+
+La filtrada de v21 leída entera, fuera de sus bloques tapados (fila de `HOLDOUT-EXPOSICIONES.md` del
+2026-11-21, declarada antes). Las sesiones, en el orden de la respuesta b), que la filtrada confirma:
+la 1, la 2, la 3, la 4 y la primera reserva. **Ningún fotograma de v21 se ha abierto**
+(`fr-v21-de54adc8`, 7586 fotogramas, 0 extra). Sin resultados de operaciones en R ni en dinero. Las
+láminas no se describen ni se cuentan: cada corrección va por su minuto, con las palabras del trader.
+
+### 4.0 Lo que la filtrada dice del bloque, contra lo que contestó Aleks
+
+- **Aleks, a ratos**: fuera del tramo no citable de la sesión 1, el trader le habla al final («Bro, ya
+  finalicé hasta el 21 de enero, ¿vale?», `[125:32]`); lo de dentro de ese tramo no se cita.
+- **Las láminas las abrió el trader** (lo pregunté a Aleks, y el encargo dice «Las láminas las enseñé
+  yo»): «voy a abrir las» (`[55:33]`) «las láminas» (`[55:40]`); «Vale, entonces vamos a ver qué es lo
+  que hizo, pues, qué se hizo en las láminas.» (`[100:10]`). **Contradice el encargo; a la PARADA
+  final.** Lo que leyó en voz de cada lámina no se copia aquí.
+- **Nadie hizo la pregunta de cada corrección.** «¿siempre, solo en este caso, o de qué depende?» no
+  sale en la filtrada (`grep` de «siempre», «depende», «solo en este caso» y «solo aquí»: solo dos
+  líneas del trader en la sesión 1, en el tramo no citable). **Toda corrección cuenta como ejemplo,
+  salvo que generalice por su cuenta** (encargo, EXTRACCIÓN), y se dice en cada una.
+- **El replay antes de compartir pantalla** (respuesta 5, «no»): la filtrada no lo contradice; el
+  trader lo abre en directo («Vale, a ver, voy a abrirlo.», `[49:56]`).
+- **La sesión 2, «todo limpio»** (respuesta 6): la voz no lo dice, y no se abre ningún fotograma para
+  verlo.
+- **La fecha en voz, al abrir y otra vez con el replay abierto** (respuesta 7): se cumple en las sesiones
+  2, 3 y 4 y en la reserva (abajo). **En la 1, no** (§4.1).
+- **Operó la sesión entera antes de ver ninguna lámina** (respuesta 8): sí en la 3, en la 4 y en la
+  reserva. **En la 2, no**: operó primero la sesión de 7 a 11 y, al abrir las láminas, vio que eran de
+  la de 11 a 15, que operó después (§4.2).
+
+### 4.1 Sesión 1 · 2026-04-24, de 07 a 11 · sirve a S-3 (cociente 0,62 con el stop fuera) (v21, `[00:00]`–`[47:39]`) · no citable
+
+La voz dice el día al empezar solo con su número, sin mes. La única fecha con número del arranque cae en
+el bloque de cuarentena 0:03:54–0:04:02, y la voz no vuelve a decir el día ni el mes de forma visible
+hasta `[47:39]`, donde empieza la sesión 2. Sin el mes, la voz no sitúa la sesión en un día de
+construcción: el mismo número en julio no lo es. **Por la regla de la PARADA condicional, la sesión
+entera es no citable y sin extraer** (tramo **0:00:00–0:47:39** en `tramos_no_citables.yaml`), y **el
+2026-04-24 de 07 a 11, el día previsto por la respuesta b), queda gastado**. En ese tramo el trader
+opera también la sesión de 11 a 15 del mismo día, que queda igual. A la PARADA final, por si Aleks la
+levanta con la respuesta b).
+
+### 4.2 Sesión 2 · 2026-04-15, de 11 a 15 · sirve a «el trader no opera y el bot sí (S-6 de la 7a); S-3» (v21, `[47:39]`–`[71:35]`)
+
+- **El día, visible**: «Ahora, voy a 15 de abril, vale, vamos a plantear lo de 15 de abril.» (`[47:39]`,
+  antes de abrir) y, tras «Vale, a ver, voy a abrirlo.» (`[49:56]`), «15 de abril, 15 de abril, 15
+  desde el 14, vale, bueno, está bien, creo que 14, luego sigo al 15, confirmo que es 15, sí, 15 de
+  abril, vale, lo que me gustó,» (`[50:00]`). Entre los dos, el silencio 0:48:45–0:49:39.
+- **Primero opera la sesión de 7 a 11** (`[50:56]`–`[55:33]`), que no es la de la tabla:
+  - sesgo y rango de H4: «el rango pues en este caso sería» (`[51:39]`) «bajista, vale» (`[51:42]`); «la
+    actualización de nuestro» … «rango sería este nivel aquí» (`[51:58]`–`[52:03]`);
+  - la toma de M15: «primero comenzamos con mecha, no es válido todavía ningún trick ese de allí, luego
+    lo hace con cuerpo,» (`[52:46]`); «entonces aquí no habría ningún trade porque fue con mecha, tiene
+    que ser con cuerpo por encima, aquí también fue con mecha,» (`[55:04]`, `ev-v21-005504-e34f514d`);
+  - la entrada: «desarrollo de esquema 2, vale, solo el desarrollo de una zona de control, entonces aquí
+    habría una entrada,» (`[53:00]`); el punto de dos velas del mismo color: «habíamos dicho que estos
+    equals, pues, para nosotros eran validados, o sea, que la vela 1 y la vela 2, pues, tenía de igual o
+    más abajo su mecha, nosotros lo validábamos, ¿vale?» (`[53:51]`);
+  - el descarte: «porque apenas me genera la segunda zona de control yo descarto porque sé que no
+    cumple» (`[55:28]`, `ev-v21-005523-e4941a17`).
+- **Al abrir las láminas** (`[55:33]`) ve que son de la sesión de 11 a 15: «la sesión está claro está
+  analizando la sesión de 11 a vale perfecto sí sí muy bien lo voy a» (`[56:49]`), «hacer ahora la
+  sesión de 11 a 3» (`[56:58]`), «pensé que iba a ser» (`[57:02]`) «la sesión de 7 a 9» (`[57:03]`).
+  **Desviación del paso 4**: la de 11 a 15 la opera después de haber abierto sus láminas.
+- **La sesión de 11 a 15** (`[57:07]`–`[58:43]`): «rompimiento» (`[57:07]`) «de rango del salsista en
+  ese caso» (`[57:09]`) «entonces buscamos operaciones salsistas» (`[57:11]`), que por el contexto
+  es «alcista»; «ruptura de zona de línea de liquidez» (`[57:36]`) «de M15 con cuerpo» (`[57:38]`);
+  «perfecto, no hay ninguna entrada, no llega a mitigar» (`[57:40]`); «aquí tendríamos una entrada que
+  nos terminaría» (`[57:43]`). La caja, el 0 y el 0,8 no los dice en voz. **Para su «Sirve a»**: aquí
+  el trader sí ve entradas en la sesión de 11 a 15.
+- **Las correcciones** (ninguna preguntada; todas, ejemplo):
+  - `[59:41]`–`[59:54]`: no corrige el trazo de la liquidez: «Es válido, me gusta el trazo» (`[59:46]`),
+    «O sea, según hay aquellos datos» (`[59:52]`). Sirve a la liquidez, no a S-3.
+  - `[62:57]`: «aquí es algo erróneo, vale, no se tiene por qué marcar algo allí». Ejemplo.
+  - `[63:42]`–`[64:56]`, **sirve a S-3**: «Este planteamiento está erróneo.» (`[63:42]`), «No, sería
+    desde aquí.» (`[64:17]`), «… esta es la zona desde la zona de control interna de toda» (`[64:35]`),
+    «esta zona de aquí me genera el rompimiento aquí sería el nivel allí el trazo desde allí no desde»
+    (`[64:48]`). Ejemplo.
+  - `[66:23]`–`[67:31]`: primero «por ejemplo este de aquí está mal» (`[66:23]`), «esto de aquí, aquí no
+    hay entrada» (`[66:25]`), «no, estamos buscando operaciones» (`[66:29]`) «operaciones alcistas»
+    (`[66:32]`); después se corrige él: «Aquí hay una corrección.» (`[67:19]`), «El planteamiento de esta
+    liquidez de aquí.» (`[67:20]`), «Es correcta.» (`[67:24]`), «Porque, claro, todo esto sería parte de
+    M15, ¿vale?» (`[67:31]`). Ejemplo, con la liquidez del bot dada por buena.
+  - `[70:10]`–`[71:04]`: «nuestro posible punto raker allí ubicado» (`[70:52]`) «pero vemos que»
+    (`[70:54]`) «me genera zona de control» (`[70:56]`) «que invalidaría en este posible punto»
+    (`[70:58]`), «ninguna entrada allí para tomar» (`[71:02]`). Ejemplo.
+  - Y, de toda la sesión: «aquí el error que ha habido es más o menos» (`[71:11]`) «en la interpretación
+    y algunos trazos de Gant» (`[71:14]`).
+- **Contra su respuesta técnica**: en `[55:28]` descarta el punto con la segunda zona de control, y
+  en S-2 (v20 `[30:23]`) dijo que la C también le valdría (§5.1, punto 1).
+
+### 4.3 Sesión 3 · 2026-04-27, de 11 a 15 · sirve a S-3 (cociente 0,62 con el stop fuera) (v21, `[71:35]`–`[87:23]`)
+
+- **El día, visible**: «15 de abril finalizado, continúo con 27 de abril» (`[71:35]`, antes) y, tras el
+  bloque de cuarentena 1:12:12–1:13:32, «Entonces, me dirijo aquí, voy a 4 horas, 27 de abril, tenemos
+  definido un rango alcista en H4, nos dirigimos a M15,» (`[73:33]`). Las horas de la sesión no las dice
+  en voz.
+- **Lo que marca y opera, antes de las láminas** (`[73:33]`–`[79:03]`): sesgo de H4 alcista
+  (`[73:33]`); «marcamos la liquidez, dejamos marcada toda la liquidez necesaria» (`[74:47]`); en M1,
+  «rompimiento» (`[77:06]`) «de la zona lineal del liquidez de M15» (`[77:06]`), «posible punto breaker
+  más reciente» (`[77:10]`) «estaría ubicado aquí» (`[77:12]`), «llegara, pues me lo hizo con varias
+  zonas de control» (`[77:18]`) «lo cual invalidaría este posible punto breaker» (`[77:20]`); y «llega,
+  nos desarrolla una zona de control» (`[78:13]`) «y rompe, que es válido, entramos en el trade»
+  (`[78:15]`). La caja, el 0 y el 0,8 no los dice en voz.
+- **Las correcciones** (ninguna preguntada):
+  - `[81:54]`: «aquí habría otro nivel, perfecto, sí, que me olvidé de trazar inclusive yo». Da la razón
+    al bot. Ejemplo.
+  - `[83:30]`–`[83:59]`, **sirve a S-3**: «punto aquí toma toma en cuenta la mecha verde pero no tiene
+    que tomarlo desde desde las desde» (`[83:30]`), «porque eso forma parte de misión de control así lo
+    mapeo sería así así entonces ahí hay un error» (`[83:48]`), «a ver continuando aquí esto aquí tendría
+    que estar marcado el nivel 0 allí en ese alto de allí vale» (`[83:59]`; `ev-v21-012348-0582ea84`).
+    Ejemplo.
+  - `[84:43]`–`[85:11]`, la reentrada (B-11 de `PREGUNTAS-7B.md` §3, no S-3): «y luego si me»
+    (`[84:55]`) «saca, pues tendría que esperar aquí» (`[84:57]`) «rompimiento de este nivel aquí en M1»
+    (`[84:59]`) «y validarlo» (`[85:02]`) … «y plantear mi posible punto de breque para reentrar»
+    (`[85:06]`), «pero esto está de más, eso es un error» (`[85:09]`; `ev-v21-012455-6eb57ef2`). Ejemplo.
+  - `[86:06]`–`[87:20]`, las zonas de control (RN-009): «Cuando todas las velas son verdes, no existe
+    zona de control.» (`[86:23]`), «Tiene que haber una vela roja contraria al impulso que se está dando
+    para yo poder validarlo.» (`[86:28]`), «Entonces, todas son verdes es considerado un impulso.»
+    (`[86:38]`; `ev-v21-012623-bbdaf48a`). **Regla general, por su cuenta** (lo dice en general, sin que
+    se le pregunte). Y pide una sesión para esto: «y es necesario pues poder» (`[86:52]`) «explayarme
+    más en esto» (`[86:54]`) «que me haga preguntas» (`[86:56]`).
+
+### 4.4 Sesión 4 · 2026-01-19, de 11 a 15 · sirve a S-3 (cociente 1,78 en la entrada) (v21, `[87:23]`–`[112:11]`)
+
+- **El día, visible**: antes de abrir, «27 de abril finalizado continuó con 19 19 de» (`[87:23]`; lo que
+  sigue cae en el silencio) y «Bueno, ¿me puedo ir más atrás? ¿O sí? ¿Será que me puedo ir hasta
+  enero?» (`[89:15]`); con el replay abierto, «de consenso de 19 o sea de enero 19 o sea desde»
+  (`[104:41]`), y al cerrar, «Entonces, fecha 19 de enero cerrada.» (`[112:11]`).
+- **Lo que marca y opera, antes de las láminas** (`[95:29]`–`[100:10]`): «separo la sesión de 11 a 3»
+  (`[95:29]`); «11 a 3 la sesión, pues nos encontraríamos» (`[96:06]`) «en un rango alcista» (`[96:09]`)
+  «según lo planteaba en H4» (`[96:11]`); «trazamos, vamos a M15» (`[96:14]`); en M1, «tendremos que
+  esperar la ruptura de esto» (`[97:05]`) «con cuerpo, rompe con cuerpo» (`[97:07]`) «y recién nosotros
+  habilitaríamos este punto» (`[97:09]`); el break even: «Entonces aquí ya al caer, estoy cerrado con
+  cuerpo por debajo» (`[97:35]`) «Ya estaría yo, ya pondría un break even la entrada» (`[97:38]`;
+  `ev-v21-013735-a127e031`); el objetivo, «a 1.3» (`[98:39]`).
+- **Las correcciones** (ninguna preguntada):
+  - `[101:50]`–`[101:56]`: «hizo bien su trabajo porque hay algo que» (`[101:50]`) «no me estaba dando
+    cuenta, vale» (`[101:52]`) «era marcar este nivel aquí de M15» (`[101:54]`). Da la razón al bot.
+  - `[103:25]`–`[105:12]`, el sesgo: corrige al bot por el rango y después se retira: «me corrijo yo
+    mismo estoy buscando operaciones bajistas cuando el sesgo es alcista tú lo planteas a el bol lo
+    plantea bien» (`[104:54]`–`[105:02]`; `ev-v21-014454-7eb03316`). **Contradicción, dicha**: su propia
+    operación de la sesión iba contra el sesgo que dio en `[96:09]`, y el bot tenía razón.
+  - `[108:14]`–`[108:55]`, **sirve a S-3**: «Porque vemos que si esta vela» (`[108:35]`) «Pues la otra
+    vela» (`[108:37]`) «Tiene la mecha anterior y mucho más grande» (`[108:38]`) «Que esta de aquí»
+    (`[108:41]`) «Entonces por lo cual» (`[108:43]`) «Trazaríamos nuestra caja hasta allí» (`[108:44]`;
+    `ev-v21-014835-7e7bcd41`), y «Este es un error» (`[108:23]`). Ejemplo.
+  - `[109:47]`: «vale esto está mal, o sea aquí hay un trazo luego de la toma, o sea aquí no habría
+    entrada». Ejemplo.
+  - `[111:04]`–`[111:23]`: «que ya no puede haber más o sea en m15 que tenemos las zonas lineales de m15
+    están trazados» (`[111:04]`) «correctamente vale pero en m1 todavía hay errores en errores algunos
+    errores» (`[111:23]`). Y vuelve a pedir una sesión sobre las zonas de control: «bueno si es necesario
+    armar una sesión pues en cuanto a la explicación mucho más profunda de la» (`[110:27]`).
+  - `[111:38]`–`[112:03]`, el lado de la liquidez: «Estamos buscando operaciones alcistas.» (`[111:48]`),
+    «No nos importa la liquidez por arriba.» (`[111:49]`), «Nos importa la liquidez en M15 que está
+    formado por debajo.» (`[111:51]`; `ev-v21-015148-54dd1a0c`). Ejemplo.
+
+### 4.5 La reserva · 2026-01-21, de 07 a 11 · sirve a S-3 (cociente 0,50 en la entrada) (v21, `[112:19]`–`[123:16]`)
+
+- **El día, visible**: «21 de enero» (`[112:19]`, antes de abrir: «voy a descargar primero»,
+  `[112:22]`), y al acabar, con el replay abierto, «de la fecha» (`[123:13]`) «21 de enero»
+  (`[123:16]`); después, «Bro, ya finalicé hasta el 21 de enero, ¿vale?» (`[125:32]`). La sesión: «7 a
+  11» (`[115:13]`).
+- **Lo que marca y opera, antes de las láminas** (`[114:14]`–`[117:14]`): el rango de H4, «nosotros
+  teníamos un rango pues alcista» (`[114:18]`) «pero esta vela lo mitiga» (`[114:20]`) «entonces
+  actualizaríamos un rango abajista» (`[114:22]`), y «entonces actualizaríamos y tendríamos un rango»
+  (`[114:59]`) «bajista, entonces para la 7» (`[115:02]`); en M1, «rompe con mecha, necesitaremos romper»
+  (`[115:52]`) «un cuerpo, aquí ya lo hace» (`[115:54]`) «habilitaríamos eso como el posible punto»
+  (`[115:57]`); «la entrada sería desde este nivel» (`[116:15]`) «de aquí, hasta ese nivel de allí»
+  (`[116:18]`) «por 1.3» (`[116:22]`). Las láminas, desde 1:57:19.
+- **Las correcciones** (ninguna preguntada):
+  - `[119:11]`–`[119:42]`, **sirve a S-3**: «está mal trazada la caja aquí en ese nivel en tal caso pues
+    se» (`[119:21]`), «trazaría desde aquí hasta aquí vale desde ese nivel hasta ese nivel después si
+    quiero» (`[119:27]`), «actualizar pues tendría que haber una zona en el desarrollo de una zona control
+    variada» (`[119:33]`) «para ello poder actualizar el posible punto breaker que es el más reciente
+    sería ese allí» (`[119:37]`; `ev-v21-015933-c05aad41`). Ejemplo.
+  - `[120:14]`–`[120:24]`: «aquí esto no, porque» (`[120:14]`) «como dije, no habría entrada antes de
+    eso» (`[120:21]`). Ejemplo.
+  - `[121:25]`–`[121:52]`, **sirve a S-3**: «este nivel porque eso es estructura interna o sea de la zona
+    de control que aquí no nos sirve» (`[121:34]`) «o sea nos sirve trazarlo desde este nivel desde aquí
+    que es el punto breaker más reciente sería» (`[121:39]`) «mi nivel 0 a este aquí porque esto todo eso
+    es el desarrollo de la zona de control completa y» (`[121:45]`; `ev-v21-020134-6ddd7cd6`). Ejemplo.
+  - `[122:20]`–`[122:54]`: «Pero está mal» (`[122:20]`), «Porque yo tengo mi zona de control más
+    reciente» (`[122:29]`), «O sea, valido mi ruptura con cuerpo» (`[122:32]`), «Entonces me fijo cuál
+    es mi zona de control más reciente» (`[122:37]`). Ejemplo.
+  - Al final, de todas: «cosas que destaco ya está corrigiendo pero todavía en m1 el trazo de cuadro»
+    (`[126:10]`) «llegan y de entradas ahí está como que un poco pero si ha mejorado ha mejorado y dale»
+    (`[126:14]`).
+- **Con su respuesta técnica**: lo de `[121:34]`–`[121:45]` (el 0 en el punto breaker más reciente, sin
+  la estructura interna de la zona de control) va con su respuesta a S-3 (§3.3).
+
+### 4.6 Las reservas del 2026-01-22 (de 11 a 15) y del 2026-07-16 (de 07 a 11): no se hicieron
+
+v21 acaba en 2:06:25 tras la del 21 de enero. El trader propone seguir más tarde («si tienes tiempo
+pues podemos podemos avanzar una más», `[125:57]`), fuera del vídeo. La del 22 de enero era la que
+tocaba A-16, el sesgo de H4 por una ruptura de 2 puntos (`PREGUNTAS-7B.md` §1): A-16 queda como
+estaba, sin nada nuevo de esta sesión.
+
+## 5. Contradicciones, cobertura y lo que el consultor tiene que mirar
+
+### 5.1 Contradicciones y cosas que mirar (sin decidir, R4.6)
+
+1. **Cuántas zonas de control.** En S-2, A, B y C le valen (v20 `[26:20]`, `[30:23]`;
+   `ev-v20-003023-18b67392`), y «si hay más de uno» el punto se invalida (v20 `[30:58]`;
+   `ev-v20-003058-8518a5ff`). En el bloque descarta con la segunda (v21 `[55:28]`) y con «varias»
+   (`[77:18]`). Lo fijado es una sola (`zonas_control_max_por_esquema` = 1, ambigüedad resuelta). En
+   la 7a dijo «solo a y b». Es una contradicción con lo fijado y consigo mismo; no se decide aquí.
+2. **Qué es una zona de control**: «Cuando todas las velas son verdes, no existe zona de control»
+   (v21 `[86:23]`). Regla general por su cuenta, que corrige una lámina del bot. Y pide dos veces
+   una sesión para explicarlo (`[86:52]`, `[110:27]`).
+3. **El margen del break even**: en la 7a, «un par de puntos o un pip» (`ev-v19-011529-8ae8b581`); en
+   la 7b, «depende» de la distancia entre la zona y la entrada, sin cifra (§3.2).
+4. **El sesgo de la sesión 4**: opera contra el sesgo que dice y se corrige él mismo (§4.4).
+5. **Los datos**: atribuye una diferencia con el bot a los datos («por los datos no coinciden», v21
+   `[69:26]`).
+6. **S-1 y S-3, sin contradicción** con el bloque: la toma de M15 con cuerpo (v21 `[52:46]`, `[55:04]`,
+   `[115:52]`), y el 0 en el punto breaker más reciente, sin la estructura interna de la zona de control
+   (v21 `[83:48]`, `[121:34]`).
+7. **El gráfico real del bloque técnico, sin día en voz**: S-1 se queda sin su opción citable (§3.1), y
+   la pregunta del bajo de la toma de S-2 tampoco tiene respuesta citable (§3.2).
+
+### 5.2 Cobertura de lo que la 7b tenía que cubrir
+
+| Qué | Ambigüedad o fuente | Cubierto |
+|---|---|---|
+| S-1, la mecha de un minuto que vuelve | A-35 | **no**: la opción, varias velas, el bajo y la frase caen en el tramo del gráfico real; lo citable no dice dónde queda el alto |
+| S-2, las zonas de control | RN-009 | **en parte**: (b), también después; contradicción en cuántas; el bajo de la toma, no citable |
+| S-2, el margen del break even | A-13 | **en parte**: «otra», depende de la distancia; sin cifra |
+| S-3, el 0 de la caja | A-48 | **en parte**: «otra», el punto más bajo de la zona de control que valida, su punto de entrada; la compra, sí |
+| S-4, el rango de 4 horas tras una ruptura | A-58 | **en parte**: el dibujo 2, la ruptura por abajo y «siempre en H4», sí; el dibujo 1, sin decir de qué vela |
+| S-5, el punto y la roja | S-22 | **no** la pregunta; las dos de «Para precisar», sí |
+| S-6, el precio más allá del 0 | S-19 | **en parte**: «otra», inclinado a esperar; si vuelve, la orden a nivel |
+| S-7, la tarde que no está en el vídeo | `VIDEO-JULIO.md` | **sí**: no se grabó |
+| Sesión 1 (04-24), sirve a S-3 | — | **no**: la voz no la sitúa; sin extraer; el día queda gastado |
+| Sesión 2 (04-15), sirve a «el trader no opera y el bot sí»; S-3 | — | **en parte**: ve entradas en la de 11 a 15; una corrección sobre la caja; desviación del paso 4 |
+| Sesión 3 (04-27), sirve a S-3 | — | **sí**: el 0 en ese alto; y qué es una zona de control |
+| Sesión 4 (01-19), sirve a S-3 | — | **sí**: la caja por la mecha mayor; el sesgo, retirado |
+| Reserva (01-21), sirve a S-3 | — | **sí**: la caja desde el punto breaker más reciente |
+| Reservas (01-22 y 07-16) | — | no se hicieron |
+
+## 6. Tabla final
+
+| Código | Ambigüedad | Vídeo | Tramo | Propuesta | Regla general | «creo» | Compra y venta |
+|---|---|---|---|---|---|---|---|
+| **S-1** | A-35 | v20 | 00:07–14:43 | no resuelve: la opción cae en el tramo del gráfico real; lo citable dice que la mecha de una M1 no es toma de M15 sino liquidez de M1, sin decir dónde queda su alto; no cae en ningún valor | sí, para la toma | no | lo citable, el alto |
+| S-1, varias velas seguidas | A-35 | v20 | 10:49 | no resuelve: dentro del tramo no citable | n/a | n/a | n/a |
+| S-1, el bajo al revés | A-35 | v20 | 13:13 | no resuelve: dentro del tramo no citable | n/a | n/a | n/a |
+| **S-2, pregunta 1** | RN-009 | v20 | 25:35–31:34 | en parte: (b), también después de romper; contradicción: A, B y C le valen y «si hay más de uno» se invalida | sí | no | no lo dice |
+| S-2, el bajo de la propia toma | RN-009 | v20 | 37:06–37:37 | no resuelve: la respuesta cae en el tramo no citable 0:32:09–0:37:39 | n/a | n/a | n/a |
+| **S-2, pregunta 2** | A-13 | v20 | 26:30–27:54; 31:51–32:07 | en parte: «otra»; depende de la distancia entre la zona de control y la entrada: con cuerpo si está en medio, con poco cuerpo o con mecha si está extendido; sin cifra ni unidad | sí, con su condición | no | habla de la compra |
+| **S-3** | A-48 | v20 | 44:06–48:40 | en parte: «otra», el 0 en el punto más bajo de la zona de control que valida, que llama su punto de entrada; ni A ni B | sí | no | sí |
+| S-3, la compra | A-48 | v20 | 48:03–48:09 | resuelve: igual en una compra | sí | no | sí |
+| **S-4, dibujo 1** | A-58 | v20 | 52:59–54:51; 56:53–57:12 | en parte: «otra»; el rango pasa «a este bajo y esto este alto», sin decir de qué vela | no claro | «no sé» (54:23) | n/a |
+| **S-4, dibujo 2** | A-58 | v20 | 54:51–56:22; 57:12 | en parte: formalmente «otra»; lo explicado, que el rango sigue en el mismo nivel hasta que rompa una vela de su color | sí | no | n/a |
+| S-4, la ruptura por abajo | A-58 | v20 | 57:42–57:50 | resuelve: igual, por el color | sí («considero que») | no | sí |
+| S-4, ¿siempre en 4 horas? | A-58 | v20 | 57:17–57:39 | resuelve: siempre en H4, su temporalidad mayor | sí | no | n/a |
+| **S-5** | S-22 | v20 | 58:40–61:35 | no resuelve: lee (a) y (b), dice «Creo que...» y pide más planteamiento; acaba en «una vela roja, una vela verde, o al revés, allí se traza un punto» | no | sí | «o al revés» |
+| S-5, sin pasar ningún mínimo | S-22 | v20 | 60:49 | resuelve: no hay punto | sí | no | n/a |
+| S-5, con la mecha | S-22 | v20 | 60:49 | resuelve: basta con la mecha | sí | no | n/a |
+| **S-6** | S-19 | v20 | 61:35–64:12 | en parte: «otra»; se inclina por la (b), esperar a que el 0 quede del lado bueno | no claro | «me inclinaría» | no lo dice |
+| S-6, si el precio vuelve antes | S-19 | v20 | 63:18–64:02 | en parte: la orden tiene que estar a nivel y solo toca esperar | no claro | no | no lo dice |
+| **S-7** | VIDEO-JULIO.md | v20 | 64:13–72:21 | resuelve: (b), esa tarde no se grabó | n/a | no | n/a |
+| Sesión 1 del bloque (2026-04-24, de 07 a 11) | — | v21 | 00:00–47:39 | **no citable**: la voz no la sitúa; sin extraer; el día queda gastado | — | — | — |
+| Sesión 2 del bloque (2026-04-15, de 11 a 15) | — | v21 | 47:39–71:35 | ve entradas en la de 11 a 15; corrige la caja desde la zona de control (63:42–64:56); opera tras abrir las láminas | ejemplo | no | compras |
+| Sesión 3 del bloque (2026-04-27) | — | v21 | 71:35–87:23 | el 0 «en ese alto» (83:59); la reentrada; sin velas rojas no hay zona de control (86:23) | la de 86:23 | no | compras |
+| Sesión 4 del bloque (2026-01-19, de 11 a 15) | — | v21 | 87:23–112:11 | la caja por la mecha mayor (108:35); el lado de la liquidez; su sesgo, retirado | ejemplo | no | compras |
+| Reserva del bloque (2026-01-21, de 07 a 11) | — | v21 | 112:19–123:16 | la caja desde el punto breaker más reciente, sin la estructura interna (121:34) | ejemplo | no | ventas |
+
+Por códigos de la hoja (7): se hicieron los 7, en v20 y en el orden de la hoja. En filas: **resuelve**
+7 (S-3 la compra, S-4 la ruptura por abajo, S-4 siempre en H4, las dos de S-5 de «Para precisar»,
+y S-7); **en parte** 7 (S-2 pregunta 1, S-2 pregunta 2, S-3, S-4 dibujo 1, S-4 dibujo 2, S-6 y S-6 si
+el precio vuelve); **no resuelve** 5 (S-1, S-1 varias velas, S-1 el bajo, S-2 el bajo de la toma y
+S-5). Del bloque, 4 sesiones extraídas y 1 no citable (sin extraer); dos reservas no se hicieron.
+
+## 7. PARADAS, desviaciones y negativas de la guardia
+
+### 7.1 PARADA final (lo que no cuadra con las reglas del encargo o no lo prevén)
+
+1. **Las láminas las abrió el trader**, no Aleks (§4.0): el encargo dice «Las láminas las enseñé yo».
+   ¿Tuvo el trader la carpeta `laminas-sesion-7b-v1`, o una copia? Si es así, conviene decidir si la
+   clave (qué carpeta es qué sesión) sigue sin salir de Aleks, y si eso cambia algo para la 7c.
+2. **La sesión 1 (2026-04-24, de 07 a 11), no citable** (§4.1): la voz dice el día solo con su número,
+   y el mes no sale de forma visible. ¿Basta el número con la respuesta b) para levantarla, como se
+   levantó el tramo de S-1 de la 7a? Mientras tanto, entera no citable y el día gastado.
+3. **El bloque técnico lo dirigió el trader**, con Aleks fuera a ratos (§3.0): ADR-0093 §2 y
+   `PREGUNTAS-7B.md` §1 dan a Aleks hacer las preguntas y la de cada corrección. **Nadie preguntó
+   «¿siempre, solo en este caso, o de qué depende?»**, así que el bloque no da ninguna regla general
+   salvo la de `[86:23]`, que generaliza él solo. R4.6 pide esa pregunta en cada corrección.
+4. **S-1 (A-35, la única bloqueante) sin respuesta citable**: la dio sobre su gráfico real, sin decir el
+   día. Si Aleks sabe de qué día era (según él, de julio del 1 al 17), puede decidir levantar ese
+   tramo; aquí no se levanta.
+5. **La sesión 2, operada después de abrir sus láminas** (desviación del paso 4): la de 11 a 15 la operó
+   tras ver que las láminas eran de esa sesión. Sus correcciones se dan, pero no como sesión operada
+   a ciegas.
+
+### 7.2 Desviaciones y negativas de la guardia
+
+- **Desviaciones de la sesión** (según Aleks y contrastadas con la filtrada): los días de grabación,
+  sin comprobar antes de grabar (§0.1; declarado); el trader dirigió las preguntas; el replay, abierto
+  en directo; la sesión 2, operada tras abrir sus láminas; las láminas, abiertas por el trader; ninguna
+  pregunta de «¿siempre…?».
+- **Negativas de la guardia, todas de solo lectura, con la forma que propone su mensaje**: el bucle con
+  `basename` y el guion que nombraba la raíz del repo («Decisiones de proceso»); dos `python -c` en un
+  comando, y un `git add` seguido de `knowledge validate` en el mismo comando (una llamada por
+  ejecutable); un `cat "knowledge/evidence/v18/$(ls …)"` para ver la forma de un ítem («rutas
+  LITERALES»; seguí con `ls` y Read del fichero nombrado).
+- **El barrido con `--desde 1 --hasta 1`** deja ver los demás números de sus líneas (§2.4); lo que dejó
+  ver son días de construcción.
+- **Ítems de evidencia rehechos antes de commitear**: uno cuyas notas corregí a mano después de crearlo
+  (el id depende del contenido y `evidence new` rechazó el siguiente: «id … no coincide con el
+  contenido»), y doce cuya afirmación decía más que su cita (una fecha, una sesión o un paréntesis de
+  contexto). Los borré sin commitear y los rehice con `evidence new`, cuando hacía falta con la cita
+  ampliada a los segmentos seguidos. Ninguno llegó a un commit.
+- **La transcripción del corpus de v20**, sin su pico de memoria medido (la de v21 y los dos guiones, sí).
+
+## 8. Lo que deja la rama
+
+- `knowledge/corpus/fuentes.yaml` y `manifest.yaml`: v20 y v21.
+- `knowledge/corpus/transcripciones/`: `tr-v20-large-v3-int8-float16-2d93201d` (685 segmentos) y
+  `tr-v21-large-v3-int8-float16-9a52aac1` (1140).
+- `knowledge/corpus/fotogramas/`: `fr-v20-c29e6481` (4385 fotogramas, 0 extra) y `fr-v21-de54adc8`
+  (7586, 0 extra). `corpus frames check`: «OK: 21 extracciones coherentes con el disco; 3 obligatorios
+  presentes». Ninguno abierto.
+- `knowledge/corpus/tramos_no_citables.yaml`: 15 «SIN AUDIO» (6 de v20 y 9 de v21), 3 de cuarentena (de
+  v21) y 7 de precaución (6 de v20 y 1 de v21).
+- `knowledge/evidence/v20/` (24 ítems) y `knowledge/evidence/v21/` (11). `evidence contradictions`:
+  «OK: knowledge/evidence/_contradicciones.yaml con 0 contradicciones abiertas».
+- v20 y v21 en `SESIONES_EN_CUARENTENA` y sus tests.
+- `docs/sesion-7/HOJA-USADA-7B.md` y el recuadro de `PREGUNTAS-7B.md`.
+- Las filas del 2026-11-21 en `HOLDOUT-EXPOSICIONES.md`.
+
+## 9. Para la orden de cierre (preparado, sin aplicar)
+
+- **La F nueva** de la Next Action (hoy, la línea 28 de `PROJECT_STATE.md`, **1169 bytes** con su fin
+  de línea, `sed -n 28p | wc -c`); la propuesta, **1005 bytes** (`wc -c` del texto con su fin de línea):
+
+  > F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote en
+  > docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a (id
+  > 2026-11-16-sesion-07) está ingerida (SESION-07-EXTRACCION.md) y ACTIVADA (ACTIVAR-SESION-07.md,
+  > F39e: sesgo de H4 por el rango vigente, ADR-0094, con A-58 abierta; break even al cierre y con
+  > cuerpo, A-13 abierta solo por el margen). La 7b (id 2026-11-20-sesion-08, v20 y v21, grabada el
+  > 2026-11-20 y el 2026-11-21) está ingerida (SESION-08-EXTRACCION.md, F39j); la dirigió el trader y
+  > la sesión 1 del bloque quedó no citable. Siguiente, en este orden: (2) activar la 7b, con la rama de
+  > S-22 y S-19; (3) la corrida de ADR-0070 §3 y la lectura del pivote (ADR-0093 §6), con su
+  > contingencia sin retocarla (decisión de Aleks del 2026-11-19; R4.3). El vídeo de mapeo (recibido el
+  > 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere; octubre y noviembre de 2026, reservados. C y
+  > R6a en los huecos; R5.7 después de (3), sobre esa corrida.
+
+  (en una sola línea, como la de hoy).
+- **R4.3**, la línea de Estado (hoy **266 bytes**; la nueva, **290**): `- **Estado:** ABIERTA (la 7a,
+  ingerida en trabajo/sesion-07 y activada en trabajo/activar-sesion-07, ACTIVAR-SESION-07.md; la 7b,
+  grabada el 2026-11-20 y el 2026-11-21 e ingerida en trabajo/sesion-08, SESION-08-EXTRACCION.md; falta
+  activarla, con la rama de S-22 y S-19, y leer el pivote).`
+- **La copia de seguridad** en Technical Debt de `PROJECT_STATE.md` (línea 138; hoy **111 bytes**):
+  `- Copia de seguridad de las crudas y los WAV … falta v18, v19, v20 y v21 (entera en HISTORIA,
+  Technical Debt ACORTADA)` (**121 bytes**).
+- **Lo nuevo fuera de git, para la copia de seguridad**:
+  - los vídeos: `corpus/Estrategia del trader/Grabación de pantalla 2026-11-20 182155.mp4` y
+    `Grabación de pantalla 2026-11-21 104411.mp4`;
+  - `C:\Users\USER\Desktop\sesion-08-audio\`: `sesion-08-v20.wav` y `sesion-08-v21.wav`, las crudas
+    (`sesion-08-v20.cruda-NO-LEER.jsonl` y `.txt`, y las de v21), las filtradas (`.filtrada.md`), los
+    registros (`.registro.txt`) y las carpetas `sesion-08-v20-trabajo` y `sesion-08-v21-trabajo`;
+  - `data/transcripciones/v20/` (270 MB) y `data/transcripciones/v21/` (466 MB);
+  - `data/fotogramas/v20/` (1,9 GB) y `data/fotogramas/v21/` (3,9 GB).
+- **Para la activación de la 7b**: el **2026-04-24 de 07 a 11 queda gastado** (§4.1) mientras la
+  PARADA 2 no lo levante; y las reservas del 2026-01-22 y del 2026-07-16 siguen sin usar.
+
+## 10. El cierre de la rama: sellos, push y CI
+
+Los sellos de la rama, con su PICO DE MEMORIA (todos 3593 passed, 6 xfailed, exit 0):
+- apertura (`5fc0f9fd`): sello sobre `e387514a`, **318 MiB**;
+- registro de v20 y v21 (`7fcc7990`): sello sobre `341106dd`, **322 MiB**;
+- v20 transcrita (`66ea16bd`): sello sobre `f3c45a0b`, **321 MiB**;
+- extracción de v20 (`ca547e77`): sello sobre `ed57f829`, **320 MiB**;
+- v21 transcrita, con su cuarentena (`565ea236`): sello sobre `331dc5be`, **318 MiB**;
+- el de este commit (la extracción de v21, la evidencia y la hoja usada) y los siguientes: su línea, en
+  el resumen final a Aleks (un informe no puede llevar el sello del árbol que lo contiene).
+
+Push a `fix/sesion-08` y CI de Linux (un `gh run view` suelto cada vez; el fallo esperado, el de
+`state check`): su número y su resultado, en el resumen final a Aleks y en la sección del revisor.
+
+## 11. El encargo, punto por punto
+
+| Punto del encargo | Hecho |
+|---|---|
+| Base (main, origin, tag, CI, ramas, hoja 08) y tag de cierre libre | sí («Base comprobada al abrir») |
+| abrir-rama con la fila del día estadiada antes de comprobar | sí (`5fc0f9fd`; `G2:` en cada sello) |
+| El corpus no es una unión | sí: carpeta normal (`fsutil`, «Base») |
+| Los dos días de grabación, `False` | sí (§0.1); sin comprobar antes de grabar: desviación declarada |
+| Los dos únicos vídeos sin registrar; v20 y v21 con su fecha y `drive_id` null | sí (§0.2, §1) |
+| Las preguntas a Aleks antes del registro | sí (§0.3), contrastadas con la filtrada (§3.0, §4.0) |
+| Registro, `test_inventario` a v1..v21, inventory y `check --hashes` | sí (§1) |
+| Tests rotos a propósito, y verdes tras el alta | sí (§1.2) |
+| Audio con las formas exactas; cortes SIN AUDIO; puerta del ASR | sí (§1.1, §2.1, §2.4) |
+| Transcripción con «listo» antes de cada una; cuarentena con el guion de `main` | sí, cuatro «listo» (§2.1, §2.4) |
+| Un commit propio por vídeo con la cuarentena, «Fuente: ADR-0093» | sí: `66ea16bd` (v20, sin bloques) y `565ea236` (v21, 3 bloques) |
+| Fotogramas: extract y check | sí (§2.3, §8); ninguno abierto |
+| Barrido de 1 a 31 y por defecto antes de leer | sí (§2.2, §2.4), sin PARADA |
+| S-1 a S-7 con sus filas separadas | sí (§3.1 a §3.7) |
+| El bloque de días, por sesión y por corrección | sí (§4.1 a §4.6) |
+| Cobertura en `###` antes de la tabla; tabla final en el último `##` con «Tabla» | sí (§5.2, §6) |
+| Los dos tests de la tabla antes del primer sello del informe | sí (§10 del resumen final) |
+| Evidencia con `evidence new`, fuera de los tramos; contradictions y validate | sí (§8; 35 ítems) |
+| `HOJA-USADA-7B.md` y el recuadro de `PREGUNTAS-7B.md` | sí |
+| Exposiciones del día, con «Escrita tarde» para el 20 | sí (filas del 2026-11-21) |
+| Cierre preparado (F, R4.3, copia de seguridad, ficheros fuera de git) | sí (§9) |
+| PROJECT_STATE por debajo de 24.900 tras abrir | sí: 24.614 |
+| Verificación final: solo `A` en los cuatro directorios | en el resumen final |
+| Push a `fix/sesion-08`, CI y revisor con su alcance | en el resumen final y al pie |
+
 ## Estado
 
-EN CURSO.
+Rama lista para revisión, NO cerrada. La PARADA final (§7.1), para el consultor.

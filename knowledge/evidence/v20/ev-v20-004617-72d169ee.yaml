@@ -1,0 +1,18 @@
+id: ev-v20-004617-72d169ee
+video_id: v20
+t0: 0:46:17
+t1: 0:46:28
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: el 0 aquí en el a no iría vale tampoco iría pues aquí tampoco iría en la vela pues de la
+  toma y no
+afirmacion: 'en S-3, sobre el esquema: el 0 no iria en la a, ni en la vela de la toma'
+tema: caja.cero_donde_va
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-3 (A-48); sigue en 0:46:45-0:46:51 (el punto mas bajo de la zona de control, alli iria el 0).
+  docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

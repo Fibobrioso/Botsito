@@ -1,0 +1,16 @@
+id: ev-v20-005723-f1eff54a
+video_id: v20
+t0: 0:57:23
+t1: 0:57:39
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: siempre marco mi rango que es mi temporalidad mayor está definida como mi temporalidad mayor
+afirmacion: 'en S-4, para precisar: siempre marca su rango en su temporalidad mayor'
+tema: sesgo.rango_h4_temporalidad
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-4 (A-58); sigue en 0:57:39 (H4). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

@@ -1,0 +1,19 @@
+id: ev-v21-012455-6eb57ef2
+video_id: v21
+t0: '1:24:55'
+t1: '1:25:09'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: y luego si me saca, pues tendría que esperar aquí rompimiento de este nivel aquí en M1 y
+  validarlo o sea, con las reglas necesarias el desarrollo de una zona de control y demás y plantear mi
+  posible punto de breque para reentrar
+afirmacion: 'corrigiendo al bot: si le saca, tendria que esperar la ruptura de ese nivel en M1 y validarlo
+  con las reglas, el desarrollo de una zona de control, para plantear su punto y reentrar'
+tema: reentrada.tras_stop
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: Bloque de dias, 2026-04-27; ejemplo (nadie pregunto siempre o depende). docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v21-large-v3-int8-float16-9a52aac1

@@ -1,0 +1,16 @@
+id: ev-v20-010243-21636d5f
+video_id: v20
+t0: '1:02:43'
+t1: '1:02:48'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: inclinaría más que nada que espero que el cero quede al lado bueno y entonces la pongo bueno
+afirmacion: 'en S-6: se inclina por esperar a que el 0 quede del lado bueno y entonces poner la orden'
+tema: entrada.orden.precio_mas_alla_del_cero
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-6 (S-19); 1:03:03-1:03:10, la respuesta va a ser otra. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

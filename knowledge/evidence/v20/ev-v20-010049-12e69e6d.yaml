@@ -1,0 +1,17 @@
+id: ev-v20-010049-12e69e6d
+video_id: v20
+t0: '1:00:49'
+t1: '1:01:23'
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: basta con lo que pase con la mecha, que lo pase con mecha, si, basta con lo que pase con
+  la mecha
+afirmacion: 'en S-5, para precisar: basta con que la roja pase el minimo con la mecha'
+tema: mapeo.punto_breaker_la_contraria_tiene_que_romper
+confianza: media
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-5 (S-22), segunda de Para precisar. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d

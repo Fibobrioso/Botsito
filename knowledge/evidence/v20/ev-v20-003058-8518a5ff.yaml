@@ -1,0 +1,18 @@
+id: ev-v20-003058-8518a5ff
+video_id: v20
+t0: 0:30:58
+t1: 0:31:07
+modalidad: audio
+tipo: RULE_STATEMENT
+cita_literal: si hay más de uno, simplemente se invalida este posible punto breaker y no se opera, vale,
+  esperaríamos a que el precio rompiera por debajo
+afirmacion: 'en S-2: si hay mas de una zona de control antes de romper, el posible punto breaker se invalida
+  y no se opera'
+tema: zona_control.demasiadas_antes_de_romper
+confianza: alta
+extractor: llm
+revisado_por: consultor, encargo del 2026-11-21 (trabajo/sesion-08) · version filtrada leida por la sesion,
+  sin revision humana; la transcripcion no separa voces y el hablante se atribuye por contexto
+provenance: botsito
+notas: S-2 (RN-009); va con lo fijado en A-20 y contra 0:30:23. docs/validation/SESION-08-EXTRACCION.md
+transcripcion: tr-v20-large-v3-int8-float16-2d93201d
