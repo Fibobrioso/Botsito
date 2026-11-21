@@ -143,6 +143,58 @@ conjunto literal de `test_contra_el_repo_real_ve_lo_mismo_que_el_codigo` (el sin
 (`59a972a4…`) y cambia el total de `video_original` (de 19 a 21 ficheros). `uv run botsito corpus check
 --hashes`: «OK: el corpus coincide con el manifiesto (hashes)».
 
+Sellado y commiteado en `7fcc7990` (PICO DE MEMORIA del sello: 322 MiB en `test`; el de la apertura,
+`5fc0f9fd`, 318 MiB).
+
+## 2. Transcripción y cuarentena
+
+### 2.1 v20: transcripción, cuarentena y puerta del ASR
+
+Con el «listo» de Aleks antes de cada una (programas cerrados), una cada vez y ninguna junto a un
+`make check`.
+
+- **Transcripción del corpus**: `uv run botsito corpus transcribe --video v20` →
+  `tr-v20-large-v3-int8-float16-2d93201d`, **685 segmentos** (sin medir su pico de memoria).
+  `corpus transcript check`: `OK: 27 transcripciones coherentes con el disco y el glosario`.
+- **El guion de `main`** (`git diff --quiet main -- scripts/transcribir_sesion.py`: exit 0,
+  idéntico), con un segundo «listo»: `--audio C:/Users/USER/Desktop/sesion-08-audio/sesion-08-v20.wav
+  --sesion 08 --video v20`, medido con `scripts/pico_memoria.py ejecutar`: PICO DE MEMORIA **5531
+  MiB** (el mayor, 5480 MiB). El registro (`sesion-08-v20.registro.txt`, fuera del repositorio) dice:
+  - hoja: la de la sesión 08; tramos no citables del vídeo: 6 (los silencios);
+  - audio comprobado: el sha256 de su WAV (`2c7f326258cb…`) es el de la transcripción del corpus de v20;
+  - ASR de 667,7 s (factor 0,15), en cuda; **685 segmentos**, los mismos que la del corpus;
+  - **segmentos en cuarentena: 0 en 0 bloques**; tapados solo por meses 0, solo por tramos 4, por
+    ambos 0; bloques `[NO CITABLE]`: 3;
+  - códigos detectados: S-3 38:05 y S-4 49:25; sin código detectado, S-1, S-2, S-5, S-6 y S-7 (cómo
+    se localizan, §3).
+- **Ningún bloque de cuarentena**, así que ningún tramo de cuarentena que añadir a
+  `tramos_no_citables.yaml` para v20: el commit propio de v20 lleva su manifiesto de transcripción,
+  este apartado y su fila de `HOLDOUT-EXPOSICIONES.md`.
+- **La puerta del ASR de los seis silencios**, por los bloques `[NO CITABLE]` (marca = principio del
+  primer segmento y fin del último, al segundo; un segmento que solapa un tramo sale tapado, así que
+  uno con `t1` dentro de un corte saldría en un bloque):
+  - `[41:43–42:33]`: empieza en el último segundo del silencio 0:40:19–0:41:43,6 (2503,63 s) y acaba
+    en 42:33, fuera. Pasa.
+  - `[52:04–52:34]`: empieza en el último segundo del silencio 0:49:36–0:52:04,6 (3124,60 s) y acaba
+    en 52:34, fuera. Pasa.
+  - `[66:47–66:48]`: un segmento de un segundo que empieza al final del silencio 1:04:55–1:06:47,6
+    (4007,60 s); su `t1` cae en el segundo 66:48, después del final del silencio. Pasa.
+  - Los silencios 0:16:18–0:25:01 y 0:25:01–0:25:34 y el del final, 1:12:28–1:13:05: ningún segmento
+    los toca (ningún bloque; la línea siguiente al primero es `[25:35]`). Pasa.
+  Los cuatro segmentos tapados no se citan.
+
+### 2.2 v20: el barrido, antes de leer
+
+Con `scripts/barrido_dias.py` de `main`, antes de leer una sola línea de la filtrada de v20:
+- **Del 1 al 31: 49 líneas** con un entero suelto: números de pregunta, de dibujo y de esquema, el
+  1 de la caja, horas y temporalidades («[N] horas», «m [N]»), cantidades y recuentos. Una sola
+  lleva mes: `[66:50]`, «el dia dice [N] de julio», en S-7.
+- **Rango por defecto (18 a 31): 0 líneas.** Así que el día de `[66:50]` cae del 1 al 17 de julio,
+  de construcción.
+
+**Sin PARADA por el barrido.** En sus 49 líneas no sale ningún otro mes; lo que se diga de un
+mes sin número lo ve la lectura (§3).
+
 ## Estado
 
 EN CURSO.
