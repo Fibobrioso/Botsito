@@ -818,6 +818,14 @@ ROTURAS = [
 def test_roto_a_proposito(
     g: ModuleType, repo: Path, monkeypatch: pytest.MonkeyPatch, rotura: str, nombre: str
 ) -> None:
+    # Las tres capas de `trabajo/guardia-enlaces` (D1: la forma textual, la estructura fuera de la
+    # raiz y el recorrido de una carpeta de fuera) niegan tambien estas rutas, que llevan el
+    # anclaje de su clase: se apagan para que cada pieza del alias se mida SOLA, como en `main`
+    # (GUARDIA-ENLACES.md, D4). Que las capas nuevas sostienen lo suyo, test_guardia_enlaces.py.
+    monkeypatch.setattr(g, "_textual", lambda ruta: ruta)
+    monkeypatch.setattr(g, "_sin_resolver", lambda ruta: os.path.normpath(ruta))
+    monkeypatch.setattr(g.Politica, "por_estructura", lambda self, ruta: [])
+    monkeypatch.setattr(g.Politica, "lo_que_alcanza_fuera", lambda self, ruta: None)
     _romper(rotura, g, repo, monkeypatch)
     test = globals()[nombre]
     argumentos: dict[str, Any] = {"g": g, "repo": repo, "monkeypatch": monkeypatch}

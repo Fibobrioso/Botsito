@@ -262,8 +262,16 @@ de las sesiones en cuarentena (v7 en adelante) y lo que nombre un caso reservado
 medirlo y hashearlo por la CLI; los nombres de dentro de `knowledge/cases/holdout/{1,2,3}` se
 cuentan, no se listan (ADR-0088, desde `trabajo/guardia-g1`); y bloquea las operaciones prohibidas
 que su cabecera enumera (`--no-verify`,
-`push --force`, borrar tags o una rama remota que no sea `trabajo/`, `feature/` o `fix/`, ...). Lo
-que cuenta para la sesion:
+`push --force`, borrar tags o una rama remota que no sea `trabajo/`, `feature/` o `fix/`, ...).
+- Guardia: las clases protegidas se deciden por TODAS las formas de la ruta -la textual (sin
+  resolver enlaces) y la canonica, relativas a la raiz- y, fuera del repo, tambien por su
+  ESTRUCTURA: una copia o un clon con `estrategia del trader/material adicional de su operativa/`,
+  `estrategia del trader/sesiones/`, `knowledge/cases/holdout/{1,2,3}/` o la transcripcion de un
+  video en cuarentena se niega como dentro; y la carpeta `Backtest <mes>` de un mes no legible,
+  como objetivo de Read, Grep o Glob, como su contenido (`trabajo/guardia-enlaces`,
+  `tests/unit/test_guardia_enlaces.py`).
+
+Lo que cuenta para la sesion:
 - **La CLI ensena el corpus filtrado.** `kb find`, `kb at`, `corpus transcript show`,
   `corpus frames show` y `evidence propose` ocultan por defecto las sesiones en cuarentena, los
   tramos no citables y el material reservado o sin sortear, y dicen cuantos segmentos ocultaron

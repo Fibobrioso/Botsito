@@ -1,0 +1,869 @@
+memoria | a/d dentro | holdout-1 | Read | negada R_HOLDOUT
+memoria | a/d dentro | holdout-1 | Grep | negada R_HOLDOUT
+memoria | a/d dentro | holdout-1 | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | holdout-1 | Bash cat | negada R_HOLDOUT
+memoria | a/d dentro | holdout-1 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | a/d dentro | holdout-2 | Read | negada R_HOLDOUT
+memoria | a/d dentro | holdout-2 | Grep | negada R_HOLDOUT
+memoria | a/d dentro | holdout-2 | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | holdout-2 | Bash cat | negada R_HOLDOUT
+memoria | a/d dentro | holdout-2 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | a/d dentro | holdout-3 | Read | negada R_HOLDOUT
+memoria | a/d dentro | holdout-3 | Grep | negada R_HOLDOUT
+memoria | a/d dentro | holdout-3 | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | holdout-3 | Bash cat | negada R_HOLDOUT
+memoria | a/d dentro | holdout-3 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+memoria | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+memoria | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+memoria | a/d dentro | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | a/d dentro | libro de un mes reservado (mayo) en el material | Read | negada R_LIBRO
+memoria | a/d dentro | libro de un mes reservado (mayo) en el material | Grep | negada R_LIBRO
+memoria | a/d dentro | libro de un mes reservado (mayo) en el material | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | libro de un mes reservado (mayo) en el material | Bash cat | negada R_LIBRO
+memoria | a/d dentro | libro de un mes reservado (mayo) en el material | PowerShell Get-Content | negada R_LIBRO
+memoria | a/d dentro | imagen del material adicional | Read | negada R_CAPTURA
+memoria | a/d dentro | imagen del material adicional | Grep | negada R_CAPTURA
+memoria | a/d dentro | imagen del material adicional | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | imagen del material adicional | Bash cat | negada R_CAPTURA
+memoria | a/d dentro | imagen del material adicional | PowerShell Get-Content | negada R_CAPTURA
+memoria | a/d dentro | imagen de Backtest marzo | Read | negada R_CAPTURA
+memoria | a/d dentro | imagen de Backtest marzo | Grep | negada R_CAPTURA
+memoria | a/d dentro | imagen de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | imagen de Backtest marzo | Bash cat | negada R_CAPTURA
+memoria | a/d dentro | imagen de Backtest marzo | PowerShell Get-Content | negada R_CAPTURA
+memoria | a/d dentro | otro fichero de Backtest marzo | Read | negada R_SIN_ABRIR
+memoria | a/d dentro | otro fichero de Backtest marzo | Grep | negada R_SIN_ABRIR
+memoria | a/d dentro | otro fichero de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | otro fichero de Backtest marzo | Bash cat | negada R_SIN_ABRIR
+memoria | a/d dentro | otro fichero de Backtest marzo | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | a/d dentro | hoja de Sesiones | Read | negada R_HOJA
+memoria | a/d dentro | hoja de Sesiones | Grep | negada R_HOJA
+memoria | a/d dentro | hoja de Sesiones | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | hoja de Sesiones | Bash cat | negada R_HOJA
+memoria | a/d dentro | hoja de Sesiones | PowerShell Get-Content | negada R_HOJA
+memoria | a/d dentro | cruda en cuarentena (v7) | Read | negada R_CUARENTENA
+memoria | a/d dentro | cruda en cuarentena (v7) | Grep | negada R_CUARENTENA
+memoria | a/d dentro | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | cruda en cuarentena (v7) | Bash cat | negada R_CUARENTENA
+memoria | a/d dentro | cruda en cuarentena (v7) | PowerShell Get-Content | negada R_CUARENTENA
+memoria | a/d dentro | *cruda-NO-LEER* | Read | negada R_CUARENTENA
+memoria | a/d dentro | *cruda-NO-LEER* | Grep | negada R_CUARENTENA
+memoria | a/d dentro | *cruda-NO-LEER* | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | *cruda-NO-LEER* | Bash cat | negada R_CUARENTENA
+memoria | a/d dentro | *cruda-NO-LEER* | PowerShell Get-Content | negada R_CUARENTENA
+memoria | a/d dentro | tramo no citable (v6) | Read | negada R_TRAMO
+memoria | a/d dentro | tramo no citable (v6) | Grep | negada R_TRAMO
+memoria | a/d dentro | tramo no citable (v6) | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | tramo no citable (v6) | Bash cat | negada R_TRAMO
+memoria | a/d dentro | tramo no citable (v6) | PowerShell Get-Content | negada R_TRAMO
+memoria | a/d dentro | id de caso reservado en knowledge/cases | Read | negada R_CASO
+memoria | a/d dentro | id de caso reservado en knowledge/cases | Grep | negada R_CASO
+memoria | a/d dentro | id de caso reservado en knowledge/cases | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | id de caso reservado en knowledge/cases | Bash cat | negada R_CASO
+memoria | a/d dentro | id de caso reservado en knowledge/cases | PowerShell Get-Content | negada R_CASO
+memoria | a/d dentro | id de caso reservado en data/visor | Read | negada R_CASO
+memoria | a/d dentro | id de caso reservado en data/visor | Grep | negada R_CASO
+memoria | a/d dentro | id de caso reservado en data/visor | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | id de caso reservado en data/visor | Bash cat | negada R_CASO
+memoria | a/d dentro | id de caso reservado en data/visor | PowerShell Get-Content | negada R_CASO
+memoria | a/d dentro | feedback que etiqueta un reservado | Read | negada R_CASO
+memoria | a/d dentro | feedback que etiqueta un reservado | Grep | negada R_CASO
+memoria | a/d dentro | feedback que etiqueta un reservado | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | feedback que etiqueta un reservado | Bash cat | negada R_CASO
+memoria | a/d dentro | feedback que etiqueta un reservado | PowerShell Get-Content | negada R_CASO
+memoria | a/d dentro | fichero con ocultos (lista calculada) | Read | negada R_FICHERO_OCULTO
+memoria | a/d dentro | fichero con ocultos (lista calculada) | Grep | negada R_FICHERO_OCULTO
+memoria | a/d dentro | fichero con ocultos (lista calculada) | Glob patron absoluto | PERMITIDA
+memoria | a/d dentro | fichero con ocultos (lista calculada) | Bash cat | negada R_FICHERO_OCULTO
+memoria | a/d dentro | fichero con ocultos (lista calculada) | PowerShell Get-Content | negada R_FICHERO_OCULTO
+memoria | a/d dentro | carpeta holdout/1 | Read | PERMITIDA
+memoria | a/d dentro | carpeta holdout/1 | Grep | negada R_HOLDOUT
+memoria | a/d dentro | carpeta holdout/1 | Glob path=carpeta | negada R_LISTADO
+memoria | a/d dentro | carpeta holdout/1 | Bash ls | negada R_LISTADO
+memoria | a/d dentro | carpeta holdout/1 | PowerShell Get-ChildItem | negada R_LISTADO
+memoria | a/d dentro | carpeta holdout/1 | Bash grep -r | negada R_HOLDOUT
+memoria | a/d dentro | carpeta Backtest marzo | Read | PERMITIDA
+memoria | a/d dentro | carpeta Backtest marzo | Grep | negada R_SIN_ABRIR
+memoria | a/d dentro | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+memoria | a/d dentro | carpeta Backtest marzo | Bash ls | PERMITIDA
+memoria | a/d dentro | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+memoria | a/d dentro | carpeta Backtest marzo | Bash grep -r | negada R_SIN_ABRIR
+memoria | a/d dentro | carpeta Sesiones | Read | PERMITIDA
+memoria | a/d dentro | carpeta Sesiones | Grep | negada R_HOJA
+memoria | a/d dentro | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+memoria | a/d dentro | carpeta Sesiones | Bash ls | PERMITIDA
+memoria | a/d dentro | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+memoria | a/d dentro | carpeta Sesiones | Bash grep -r | negada R_HOJA
+memoria | a/d dentro | carpeta de la cruda v7 | Read | PERMITIDA
+memoria | a/d dentro | carpeta de la cruda v7 | Grep | negada R_CUARENTENA
+memoria | a/d dentro | carpeta de la cruda v7 | Glob path=carpeta | PERMITIDA
+memoria | a/d dentro | carpeta de la cruda v7 | Bash ls | PERMITIDA
+memoria | a/d dentro | carpeta de la cruda v7 | PowerShell Get-ChildItem | PERMITIDA
+memoria | a/d dentro | carpeta de la cruda v7 | Bash grep -r | negada R_CUARENTENA
+memoria | c copia fuera | holdout-1 | Read | PERMITIDA
+memoria | c copia fuera | holdout-1 | Grep | PERMITIDA
+memoria | c copia fuera | holdout-1 | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | holdout-1 | Bash cat | PERMITIDA
+memoria | c copia fuera | holdout-1 | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | holdout-2 | Read | PERMITIDA
+memoria | c copia fuera | holdout-2 | Grep | PERMITIDA
+memoria | c copia fuera | holdout-2 | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | holdout-2 | Bash cat | PERMITIDA
+memoria | c copia fuera | holdout-2 | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | holdout-3 | Read | PERMITIDA
+memoria | c copia fuera | holdout-3 | Grep | PERMITIDA
+memoria | c copia fuera | holdout-3 | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | holdout-3 | Bash cat | PERMITIDA
+memoria | c copia fuera | holdout-3 | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+memoria | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+memoria | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+memoria | c copia fuera | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | c copia fuera | libro de un mes reservado (mayo) en el material | Read | PERMITIDA
+memoria | c copia fuera | libro de un mes reservado (mayo) en el material | Grep | PERMITIDA
+memoria | c copia fuera | libro de un mes reservado (mayo) en el material | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | libro de un mes reservado (mayo) en el material | Bash cat | PERMITIDA
+memoria | c copia fuera | libro de un mes reservado (mayo) en el material | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | imagen del material adicional | Read | PERMITIDA
+memoria | c copia fuera | imagen del material adicional | Grep | PERMITIDA
+memoria | c copia fuera | imagen del material adicional | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | imagen del material adicional | Bash cat | PERMITIDA
+memoria | c copia fuera | imagen del material adicional | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | imagen de Backtest marzo | Read | PERMITIDA
+memoria | c copia fuera | imagen de Backtest marzo | Grep | PERMITIDA
+memoria | c copia fuera | imagen de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | imagen de Backtest marzo | Bash cat | PERMITIDA
+memoria | c copia fuera | imagen de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | otro fichero de Backtest marzo | Read | PERMITIDA
+memoria | c copia fuera | otro fichero de Backtest marzo | Grep | PERMITIDA
+memoria | c copia fuera | otro fichero de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | otro fichero de Backtest marzo | Bash cat | PERMITIDA
+memoria | c copia fuera | otro fichero de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | hoja de Sesiones | Read | PERMITIDA
+memoria | c copia fuera | hoja de Sesiones | Grep | PERMITIDA
+memoria | c copia fuera | hoja de Sesiones | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | hoja de Sesiones | Bash cat | PERMITIDA
+memoria | c copia fuera | hoja de Sesiones | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | cruda en cuarentena (v7) | Read | PERMITIDA
+memoria | c copia fuera | cruda en cuarentena (v7) | Grep | PERMITIDA
+memoria | c copia fuera | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | cruda en cuarentena (v7) | Bash cat | PERMITIDA
+memoria | c copia fuera | cruda en cuarentena (v7) | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | *cruda-NO-LEER* | Read | negada R_CUARENTENA
+memoria | c copia fuera | *cruda-NO-LEER* | Grep | negada R_CUARENTENA
+memoria | c copia fuera | *cruda-NO-LEER* | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | *cruda-NO-LEER* | Bash cat | negada R_CUARENTENA
+memoria | c copia fuera | *cruda-NO-LEER* | PowerShell Get-Content | negada R_CUARENTENA
+memoria | c copia fuera | tramo no citable (v6) | Read | PERMITIDA
+memoria | c copia fuera | tramo no citable (v6) | Grep | PERMITIDA
+memoria | c copia fuera | tramo no citable (v6) | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | tramo no citable (v6) | Bash cat | PERMITIDA
+memoria | c copia fuera | tramo no citable (v6) | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | id de caso reservado en knowledge/cases | Read | PERMITIDA
+memoria | c copia fuera | id de caso reservado en knowledge/cases | Grep | PERMITIDA
+memoria | c copia fuera | id de caso reservado en knowledge/cases | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | id de caso reservado en knowledge/cases | Bash cat | PERMITIDA
+memoria | c copia fuera | id de caso reservado en knowledge/cases | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | id de caso reservado en data/visor | Read | PERMITIDA
+memoria | c copia fuera | id de caso reservado en data/visor | Grep | PERMITIDA
+memoria | c copia fuera | id de caso reservado en data/visor | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | id de caso reservado en data/visor | Bash cat | PERMITIDA
+memoria | c copia fuera | id de caso reservado en data/visor | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | feedback que etiqueta un reservado | Read | PERMITIDA
+memoria | c copia fuera | feedback que etiqueta un reservado | Grep | PERMITIDA
+memoria | c copia fuera | feedback que etiqueta un reservado | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | feedback que etiqueta un reservado | Bash cat | PERMITIDA
+memoria | c copia fuera | feedback que etiqueta un reservado | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | fichero con ocultos (lista calculada) | Read | PERMITIDA
+memoria | c copia fuera | fichero con ocultos (lista calculada) | Grep | PERMITIDA
+memoria | c copia fuera | fichero con ocultos (lista calculada) | Glob patron absoluto | PERMITIDA
+memoria | c copia fuera | fichero con ocultos (lista calculada) | Bash cat | PERMITIDA
+memoria | c copia fuera | fichero con ocultos (lista calculada) | PowerShell Get-Content | PERMITIDA
+memoria | c copia fuera | carpeta holdout/1 | Read | PERMITIDA
+memoria | c copia fuera | carpeta holdout/1 | Grep | PERMITIDA
+memoria | c copia fuera | carpeta holdout/1 | Glob path=carpeta | PERMITIDA
+memoria | c copia fuera | carpeta holdout/1 | Bash ls | PERMITIDA
+memoria | c copia fuera | carpeta holdout/1 | PowerShell Get-ChildItem | PERMITIDA
+memoria | c copia fuera | carpeta holdout/1 | Bash grep -r | PERMITIDA
+memoria | c copia fuera | carpeta Backtest marzo | Read | PERMITIDA
+memoria | c copia fuera | carpeta Backtest marzo | Grep | PERMITIDA
+memoria | c copia fuera | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+memoria | c copia fuera | carpeta Backtest marzo | Bash ls | PERMITIDA
+memoria | c copia fuera | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+memoria | c copia fuera | carpeta Backtest marzo | Bash grep -r | PERMITIDA
+memoria | c copia fuera | carpeta Sesiones | Read | PERMITIDA
+memoria | c copia fuera | carpeta Sesiones | Grep | PERMITIDA
+memoria | c copia fuera | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+memoria | c copia fuera | carpeta Sesiones | Bash ls | PERMITIDA
+memoria | c copia fuera | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+memoria | c copia fuera | carpeta Sesiones | Bash grep -r | PERMITIDA
+memoria | c copia fuera | carpeta de la cruda v7 | Read | PERMITIDA
+memoria | c copia fuera | carpeta de la cruda v7 | Grep | PERMITIDA
+memoria | c copia fuera | carpeta de la cruda v7 | Glob path=carpeta | PERMITIDA
+memoria | c copia fuera | carpeta de la cruda v7 | Bash ls | PERMITIDA
+memoria | c copia fuera | carpeta de la cruda v7 | PowerShell Get-ChildItem | PERMITIDA
+memoria | c copia fuera | carpeta de la cruda v7 | Bash grep -r | PERMITIDA
+memoria | c clon fuera | holdout-1 | Read | PERMITIDA
+memoria | c clon fuera | holdout-1 | Grep | PERMITIDA
+memoria | c clon fuera | holdout-1 | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | holdout-1 | Bash cat | PERMITIDA
+memoria | c clon fuera | holdout-1 | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | holdout-2 | Read | PERMITIDA
+memoria | c clon fuera | holdout-2 | Grep | PERMITIDA
+memoria | c clon fuera | holdout-2 | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | holdout-2 | Bash cat | PERMITIDA
+memoria | c clon fuera | holdout-2 | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | holdout-3 | Read | PERMITIDA
+memoria | c clon fuera | holdout-3 | Grep | PERMITIDA
+memoria | c clon fuera | holdout-3 | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | holdout-3 | Bash cat | PERMITIDA
+memoria | c clon fuera | holdout-3 | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+memoria | c clon fuera | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+memoria | c clon fuera | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+memoria | c clon fuera | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | c clon fuera | libro de un mes reservado (mayo) en el material | Read | PERMITIDA
+memoria | c clon fuera | libro de un mes reservado (mayo) en el material | Grep | PERMITIDA
+memoria | c clon fuera | libro de un mes reservado (mayo) en el material | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | libro de un mes reservado (mayo) en el material | Bash cat | PERMITIDA
+memoria | c clon fuera | libro de un mes reservado (mayo) en el material | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | imagen del material adicional | Read | PERMITIDA
+memoria | c clon fuera | imagen del material adicional | Grep | PERMITIDA
+memoria | c clon fuera | imagen del material adicional | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | imagen del material adicional | Bash cat | PERMITIDA
+memoria | c clon fuera | imagen del material adicional | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | imagen de Backtest marzo | Read | PERMITIDA
+memoria | c clon fuera | imagen de Backtest marzo | Grep | PERMITIDA
+memoria | c clon fuera | imagen de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | imagen de Backtest marzo | Bash cat | PERMITIDA
+memoria | c clon fuera | imagen de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | otro fichero de Backtest marzo | Read | PERMITIDA
+memoria | c clon fuera | otro fichero de Backtest marzo | Grep | PERMITIDA
+memoria | c clon fuera | otro fichero de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | otro fichero de Backtest marzo | Bash cat | PERMITIDA
+memoria | c clon fuera | otro fichero de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | hoja de Sesiones | Read | PERMITIDA
+memoria | c clon fuera | hoja de Sesiones | Grep | PERMITIDA
+memoria | c clon fuera | hoja de Sesiones | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | hoja de Sesiones | Bash cat | PERMITIDA
+memoria | c clon fuera | hoja de Sesiones | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | cruda en cuarentena (v7) | Read | PERMITIDA
+memoria | c clon fuera | cruda en cuarentena (v7) | Grep | PERMITIDA
+memoria | c clon fuera | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | cruda en cuarentena (v7) | Bash cat | PERMITIDA
+memoria | c clon fuera | cruda en cuarentena (v7) | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | *cruda-NO-LEER* | Read | negada R_CUARENTENA
+memoria | c clon fuera | *cruda-NO-LEER* | Grep | negada R_CUARENTENA
+memoria | c clon fuera | *cruda-NO-LEER* | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | *cruda-NO-LEER* | Bash cat | negada R_CUARENTENA
+memoria | c clon fuera | *cruda-NO-LEER* | PowerShell Get-Content | negada R_CUARENTENA
+memoria | c clon fuera | tramo no citable (v6) | Read | PERMITIDA
+memoria | c clon fuera | tramo no citable (v6) | Grep | PERMITIDA
+memoria | c clon fuera | tramo no citable (v6) | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | tramo no citable (v6) | Bash cat | PERMITIDA
+memoria | c clon fuera | tramo no citable (v6) | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | id de caso reservado en knowledge/cases | Read | PERMITIDA
+memoria | c clon fuera | id de caso reservado en knowledge/cases | Grep | PERMITIDA
+memoria | c clon fuera | id de caso reservado en knowledge/cases | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | id de caso reservado en knowledge/cases | Bash cat | PERMITIDA
+memoria | c clon fuera | id de caso reservado en knowledge/cases | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | id de caso reservado en data/visor | Read | PERMITIDA
+memoria | c clon fuera | id de caso reservado en data/visor | Grep | PERMITIDA
+memoria | c clon fuera | id de caso reservado en data/visor | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | id de caso reservado en data/visor | Bash cat | PERMITIDA
+memoria | c clon fuera | id de caso reservado en data/visor | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | feedback que etiqueta un reservado | Read | PERMITIDA
+memoria | c clon fuera | feedback que etiqueta un reservado | Grep | PERMITIDA
+memoria | c clon fuera | feedback que etiqueta un reservado | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | feedback que etiqueta un reservado | Bash cat | PERMITIDA
+memoria | c clon fuera | feedback que etiqueta un reservado | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | fichero con ocultos (lista calculada) | Read | PERMITIDA
+memoria | c clon fuera | fichero con ocultos (lista calculada) | Grep | PERMITIDA
+memoria | c clon fuera | fichero con ocultos (lista calculada) | Glob patron absoluto | PERMITIDA
+memoria | c clon fuera | fichero con ocultos (lista calculada) | Bash cat | PERMITIDA
+memoria | c clon fuera | fichero con ocultos (lista calculada) | PowerShell Get-Content | PERMITIDA
+memoria | c clon fuera | carpeta holdout/1 | Read | PERMITIDA
+memoria | c clon fuera | carpeta holdout/1 | Grep | PERMITIDA
+memoria | c clon fuera | carpeta holdout/1 | Glob path=carpeta | PERMITIDA
+memoria | c clon fuera | carpeta holdout/1 | Bash ls | PERMITIDA
+memoria | c clon fuera | carpeta holdout/1 | PowerShell Get-ChildItem | PERMITIDA
+memoria | c clon fuera | carpeta holdout/1 | Bash grep -r | PERMITIDA
+memoria | c clon fuera | carpeta Backtest marzo | Read | PERMITIDA
+memoria | c clon fuera | carpeta Backtest marzo | Grep | PERMITIDA
+memoria | c clon fuera | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+memoria | c clon fuera | carpeta Backtest marzo | Bash ls | PERMITIDA
+memoria | c clon fuera | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+memoria | c clon fuera | carpeta Backtest marzo | Bash grep -r | PERMITIDA
+memoria | c clon fuera | carpeta Sesiones | Read | PERMITIDA
+memoria | c clon fuera | carpeta Sesiones | Grep | PERMITIDA
+memoria | c clon fuera | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+memoria | c clon fuera | carpeta Sesiones | Bash ls | PERMITIDA
+memoria | c clon fuera | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+memoria | c clon fuera | carpeta Sesiones | Bash grep -r | PERMITIDA
+memoria | c clon fuera | carpeta de la cruda v7 | Read | PERMITIDA
+memoria | c clon fuera | carpeta de la cruda v7 | Grep | PERMITIDA
+memoria | c clon fuera | carpeta de la cruda v7 | Glob path=carpeta | PERMITIDA
+memoria | c clon fuera | carpeta de la cruda v7 | Bash ls | PERMITIDA
+memoria | c clon fuera | carpeta de la cruda v7 | PowerShell Get-ChildItem | PERMITIDA
+memoria | c clon fuera | carpeta de la cruda v7 | Bash grep -r | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-1 | Read | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-1 | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-1 | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-1 | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-1 | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-2 | Read | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-2 | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-2 | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-2 | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-2 | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-3 | Read | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-3 | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-3 | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-3 | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | holdout-3 | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+memoria | b-sim enlace con estructura | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+memoria | b-sim enlace con estructura | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+memoria | b-sim enlace con estructura | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | b-sim enlace con estructura | libro de un mes reservado (mayo) en el material | Read | PERMITIDA
+memoria | b-sim enlace con estructura | libro de un mes reservado (mayo) en el material | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | libro de un mes reservado (mayo) en el material | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | libro de un mes reservado (mayo) en el material | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | libro de un mes reservado (mayo) en el material | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | imagen del material adicional | Read | PERMITIDA
+memoria | b-sim enlace con estructura | imagen del material adicional | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | imagen del material adicional | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | imagen del material adicional | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | imagen del material adicional | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | imagen de Backtest marzo | Read | PERMITIDA
+memoria | b-sim enlace con estructura | imagen de Backtest marzo | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | imagen de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | imagen de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | imagen de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | otro fichero de Backtest marzo | Read | PERMITIDA
+memoria | b-sim enlace con estructura | otro fichero de Backtest marzo | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | otro fichero de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | otro fichero de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | otro fichero de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | hoja de Sesiones | Read | PERMITIDA
+memoria | b-sim enlace con estructura | hoja de Sesiones | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | hoja de Sesiones | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | hoja de Sesiones | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | hoja de Sesiones | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | cruda en cuarentena (v7) | Read | PERMITIDA
+memoria | b-sim enlace con estructura | cruda en cuarentena (v7) | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | cruda en cuarentena (v7) | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | cruda en cuarentena (v7) | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | *cruda-NO-LEER* | Read | negada R_CUARENTENA
+memoria | b-sim enlace con estructura | *cruda-NO-LEER* | Grep | negada R_CUARENTENA
+memoria | b-sim enlace con estructura | *cruda-NO-LEER* | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | *cruda-NO-LEER* | Bash cat | negada R_CUARENTENA
+memoria | b-sim enlace con estructura | *cruda-NO-LEER* | PowerShell Get-Content | negada R_CUARENTENA
+memoria | b-sim enlace con estructura | tramo no citable (v6) | Read | PERMITIDA
+memoria | b-sim enlace con estructura | tramo no citable (v6) | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | tramo no citable (v6) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | tramo no citable (v6) | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | tramo no citable (v6) | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en knowledge/cases | Read | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en knowledge/cases | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en knowledge/cases | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en knowledge/cases | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en knowledge/cases | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en data/visor | Read | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en data/visor | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en data/visor | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en data/visor | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | id de caso reservado en data/visor | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | feedback que etiqueta un reservado | Read | PERMITIDA
+memoria | b-sim enlace con estructura | feedback que etiqueta un reservado | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | feedback que etiqueta un reservado | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | feedback que etiqueta un reservado | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | feedback que etiqueta un reservado | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | fichero con ocultos (lista calculada) | Read | PERMITIDA
+memoria | b-sim enlace con estructura | fichero con ocultos (lista calculada) | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | fichero con ocultos (lista calculada) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace con estructura | fichero con ocultos (lista calculada) | Bash cat | PERMITIDA
+memoria | b-sim enlace con estructura | fichero con ocultos (lista calculada) | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta holdout/1 | Read | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta holdout/1 | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta holdout/1 | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta holdout/1 | Bash ls | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta holdout/1 | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta holdout/1 | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-sim enlace con estructura | carpeta Backtest marzo | Read | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Backtest marzo | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Backtest marzo | Bash ls | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Backtest marzo | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-sim enlace con estructura | carpeta Sesiones | Read | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Sesiones | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Sesiones | Bash ls | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta Sesiones | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-sim enlace con estructura | carpeta de la cruda v7 | Read | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta de la cruda v7 | Grep | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta de la cruda v7 | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta de la cruda v7 | Bash ls | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta de la cruda v7 | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace con estructura | carpeta de la cruda v7 | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | holdout-1 | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | holdout-1 | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | holdout-1 | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | holdout-1 | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | holdout-1 | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | holdout-2 | Read | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | holdout-2 | Grep | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | holdout-2 | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | holdout-2 | Bash cat | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | holdout-2 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | holdout-3 | Read | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | holdout-3 | Grep | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | holdout-3 | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | holdout-3 | Bash cat | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | holdout-3 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | b-sim enlace sin estructura | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | libro de un mes reservado (mayo) en el material | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | libro de un mes reservado (mayo) en el material | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | libro de un mes reservado (mayo) en el material | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | libro de un mes reservado (mayo) en el material | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | libro de un mes reservado (mayo) en el material | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen del material adicional | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen del material adicional | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen del material adicional | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen del material adicional | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen del material adicional | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen de Backtest marzo | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen de Backtest marzo | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | imagen de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | otro fichero de Backtest marzo | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | otro fichero de Backtest marzo | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | otro fichero de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | otro fichero de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | otro fichero de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | hoja de Sesiones | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | hoja de Sesiones | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | hoja de Sesiones | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | hoja de Sesiones | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | hoja de Sesiones | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | cruda en cuarentena (v7) | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | cruda en cuarentena (v7) | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | cruda en cuarentena (v7) | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | cruda en cuarentena (v7) | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | *cruda-NO-LEER* | Read | negada R_CUARENTENA
+memoria | b-sim enlace sin estructura | *cruda-NO-LEER* | Grep | negada R_CUARENTENA
+memoria | b-sim enlace sin estructura | *cruda-NO-LEER* | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | *cruda-NO-LEER* | Bash cat | negada R_CUARENTENA
+memoria | b-sim enlace sin estructura | *cruda-NO-LEER* | PowerShell Get-Content | negada R_CUARENTENA
+memoria | b-sim enlace sin estructura | tramo no citable (v6) | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | tramo no citable (v6) | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | tramo no citable (v6) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | tramo no citable (v6) | Bash cat | PERMITIDA
+memoria | b-sim enlace sin estructura | tramo no citable (v6) | PowerShell Get-Content | PERMITIDA
+memoria | b-sim enlace sin estructura | id de caso reservado en knowledge/cases | Read | negada R_CASO
+memoria | b-sim enlace sin estructura | id de caso reservado en knowledge/cases | Grep | negada R_CASO
+memoria | b-sim enlace sin estructura | id de caso reservado en knowledge/cases | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | id de caso reservado en knowledge/cases | Bash cat | negada R_CASO
+memoria | b-sim enlace sin estructura | id de caso reservado en knowledge/cases | PowerShell Get-Content | negada R_CASO
+memoria | b-sim enlace sin estructura | id de caso reservado en data/visor | Read | negada R_CASO
+memoria | b-sim enlace sin estructura | id de caso reservado en data/visor | Grep | negada R_CASO
+memoria | b-sim enlace sin estructura | id de caso reservado en data/visor | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | id de caso reservado en data/visor | Bash cat | negada R_CASO
+memoria | b-sim enlace sin estructura | id de caso reservado en data/visor | PowerShell Get-Content | negada R_CASO
+memoria | b-sim enlace sin estructura | feedback que etiqueta un reservado | Read | negada R_CASO
+memoria | b-sim enlace sin estructura | feedback que etiqueta un reservado | Grep | negada R_CASO
+memoria | b-sim enlace sin estructura | feedback que etiqueta un reservado | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | feedback que etiqueta un reservado | Bash cat | negada R_CASO
+memoria | b-sim enlace sin estructura | feedback que etiqueta un reservado | PowerShell Get-Content | negada R_CASO
+memoria | b-sim enlace sin estructura | fichero con ocultos (lista calculada) | Read | negada R_FICHERO_OCULTO
+memoria | b-sim enlace sin estructura | fichero con ocultos (lista calculada) | Grep | negada R_FICHERO_OCULTO
+memoria | b-sim enlace sin estructura | fichero con ocultos (lista calculada) | Glob patron absoluto | PERMITIDA
+memoria | b-sim enlace sin estructura | fichero con ocultos (lista calculada) | Bash cat | negada R_FICHERO_OCULTO
+memoria | b-sim enlace sin estructura | fichero con ocultos (lista calculada) | PowerShell Get-Content | negada R_FICHERO_OCULTO
+memoria | b-sim enlace sin estructura | carpeta holdout/1 | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta holdout/1 | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta holdout/1 | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta holdout/1 | Bash ls | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta holdout/1 | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta holdout/1 | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | carpeta Backtest marzo | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Backtest marzo | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Backtest marzo | Bash ls | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Backtest marzo | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | carpeta Sesiones | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Sesiones | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Sesiones | Bash ls | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta Sesiones | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-sim enlace sin estructura | carpeta de la cruda v7 | Read | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta de la cruda v7 | Grep | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta de la cruda v7 | Glob path=carpeta | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta de la cruda v7 | Bash ls | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta de la cruda v7 | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-sim enlace sin estructura | carpeta de la cruda v7 | Bash grep -r | negada R_SIN_ABRIR
+memoria | b-real union corpus | holdout-1 | Read | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-1 | Grep | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-1 | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | holdout-1 | Bash cat | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-1 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-2 | Read | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-2 | Grep | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-2 | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | holdout-2 | Bash cat | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-2 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-3 | Read | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-3 | Grep | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-3 | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | holdout-3 | Bash cat | negada R_HOLDOUT
+memoria | b-real union corpus | holdout-3 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | b-real union corpus | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+memoria | b-real union corpus | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+memoria | b-real union corpus | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+memoria | b-real union corpus | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | b-real union corpus | libro de un mes reservado (mayo) en el material | Read | PERMITIDA
+memoria | b-real union corpus | libro de un mes reservado (mayo) en el material | Grep | PERMITIDA
+memoria | b-real union corpus | libro de un mes reservado (mayo) en el material | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | libro de un mes reservado (mayo) en el material | Bash cat | PERMITIDA
+memoria | b-real union corpus | libro de un mes reservado (mayo) en el material | PowerShell Get-Content | PERMITIDA
+memoria | b-real union corpus | imagen del material adicional | Read | PERMITIDA
+memoria | b-real union corpus | imagen del material adicional | Grep | PERMITIDA
+memoria | b-real union corpus | imagen del material adicional | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | imagen del material adicional | Bash cat | PERMITIDA
+memoria | b-real union corpus | imagen del material adicional | PowerShell Get-Content | PERMITIDA
+memoria | b-real union corpus | imagen de Backtest marzo | Read | PERMITIDA
+memoria | b-real union corpus | imagen de Backtest marzo | Grep | PERMITIDA
+memoria | b-real union corpus | imagen de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | imagen de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-real union corpus | imagen de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-real union corpus | otro fichero de Backtest marzo | Read | PERMITIDA
+memoria | b-real union corpus | otro fichero de Backtest marzo | Grep | PERMITIDA
+memoria | b-real union corpus | otro fichero de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | otro fichero de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-real union corpus | otro fichero de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-real union corpus | hoja de Sesiones | Read | PERMITIDA
+memoria | b-real union corpus | hoja de Sesiones | Grep | PERMITIDA
+memoria | b-real union corpus | hoja de Sesiones | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | hoja de Sesiones | Bash cat | PERMITIDA
+memoria | b-real union corpus | hoja de Sesiones | PowerShell Get-Content | PERMITIDA
+memoria | b-real union corpus | cruda en cuarentena (v7) | Read | negada R_CUARENTENA
+memoria | b-real union corpus | cruda en cuarentena (v7) | Grep | negada R_CUARENTENA
+memoria | b-real union corpus | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | cruda en cuarentena (v7) | Bash cat | negada R_CUARENTENA
+memoria | b-real union corpus | cruda en cuarentena (v7) | PowerShell Get-Content | negada R_CUARENTENA
+memoria | b-real union corpus | *cruda-NO-LEER* | Read | negada R_CUARENTENA
+memoria | b-real union corpus | *cruda-NO-LEER* | Grep | negada R_CUARENTENA
+memoria | b-real union corpus | *cruda-NO-LEER* | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | *cruda-NO-LEER* | Bash cat | negada R_CUARENTENA
+memoria | b-real union corpus | *cruda-NO-LEER* | PowerShell Get-Content | negada R_CUARENTENA
+memoria | b-real union corpus | tramo no citable (v6) | Read | negada R_TRAMO
+memoria | b-real union corpus | tramo no citable (v6) | Grep | negada R_TRAMO
+memoria | b-real union corpus | tramo no citable (v6) | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | tramo no citable (v6) | Bash cat | negada R_TRAMO
+memoria | b-real union corpus | tramo no citable (v6) | PowerShell Get-Content | negada R_TRAMO
+memoria | b-real union corpus | id de caso reservado en knowledge/cases | Read | negada R_CASO
+memoria | b-real union corpus | id de caso reservado en knowledge/cases | Grep | negada R_CASO
+memoria | b-real union corpus | id de caso reservado en knowledge/cases | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | id de caso reservado en knowledge/cases | Bash cat | negada R_CASO
+memoria | b-real union corpus | id de caso reservado en knowledge/cases | PowerShell Get-Content | negada R_CASO
+memoria | b-real union corpus | id de caso reservado en data/visor | Read | negada R_CASO
+memoria | b-real union corpus | id de caso reservado en data/visor | Grep | negada R_CASO
+memoria | b-real union corpus | id de caso reservado en data/visor | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | id de caso reservado en data/visor | Bash cat | negada R_CASO
+memoria | b-real union corpus | id de caso reservado en data/visor | PowerShell Get-Content | negada R_CASO
+memoria | b-real union corpus | feedback que etiqueta un reservado | Read | negada R_CASO
+memoria | b-real union corpus | feedback que etiqueta un reservado | Grep | negada R_CASO
+memoria | b-real union corpus | feedback que etiqueta un reservado | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | feedback que etiqueta un reservado | Bash cat | negada R_CASO
+memoria | b-real union corpus | feedback que etiqueta un reservado | PowerShell Get-Content | negada R_CASO
+memoria | b-real union corpus | fichero con ocultos (lista calculada) | Read | negada R_FICHERO_OCULTO
+memoria | b-real union corpus | fichero con ocultos (lista calculada) | Grep | negada R_FICHERO_OCULTO
+memoria | b-real union corpus | fichero con ocultos (lista calculada) | Glob patron absoluto | PERMITIDA
+memoria | b-real union corpus | fichero con ocultos (lista calculada) | Bash cat | negada R_FICHERO_OCULTO
+memoria | b-real union corpus | fichero con ocultos (lista calculada) | PowerShell Get-Content | negada R_FICHERO_OCULTO
+memoria | b-real union corpus | carpeta holdout/1 | Read | PERMITIDA
+memoria | b-real union corpus | carpeta holdout/1 | Grep | negada R_HOLDOUT
+memoria | b-real union corpus | carpeta holdout/1 | Glob path=carpeta | negada R_LISTADO
+memoria | b-real union corpus | carpeta holdout/1 | Bash ls | negada R_LISTADO
+memoria | b-real union corpus | carpeta holdout/1 | PowerShell Get-ChildItem | negada R_LISTADO
+memoria | b-real union corpus | carpeta holdout/1 | Bash grep -r | negada R_HOLDOUT
+memoria | b-real union corpus | carpeta Backtest marzo | Read | PERMITIDA
+memoria | b-real union corpus | carpeta Backtest marzo | Grep | PERMITIDA
+memoria | b-real union corpus | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+memoria | b-real union corpus | carpeta Backtest marzo | Bash ls | PERMITIDA
+memoria | b-real union corpus | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-real union corpus | carpeta Backtest marzo | Bash grep -r | PERMITIDA
+memoria | b-real union corpus | carpeta Sesiones | Read | PERMITIDA
+memoria | b-real union corpus | carpeta Sesiones | Grep | PERMITIDA
+memoria | b-real union corpus | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+memoria | b-real union corpus | carpeta Sesiones | Bash ls | PERMITIDA
+memoria | b-real union corpus | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-real union corpus | carpeta Sesiones | Bash grep -r | PERMITIDA
+memoria | b-real union corpus | carpeta de la cruda v7 | Read | PERMITIDA
+memoria | b-real union corpus | carpeta de la cruda v7 | Grep | negada R_CUARENTENA
+memoria | b-real union corpus | carpeta de la cruda v7 | Glob path=carpeta | PERMITIDA
+memoria | b-real union corpus | carpeta de la cruda v7 | Bash ls | PERMITIDA
+memoria | b-real union corpus | carpeta de la cruda v7 | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-real union corpus | carpeta de la cruda v7 | Bash grep -r | negada R_CUARENTENA
+memoria | b-real union sin estructura | holdout-1 | Read | PERMITIDA
+memoria | b-real union sin estructura | holdout-1 | Grep | PERMITIDA
+memoria | b-real union sin estructura | holdout-1 | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | holdout-1 | Bash cat | PERMITIDA
+memoria | b-real union sin estructura | holdout-1 | PowerShell Get-Content | PERMITIDA
+memoria | b-real union sin estructura | holdout-2 | Read | negada R_HOLDOUT
+memoria | b-real union sin estructura | holdout-2 | Grep | negada R_HOLDOUT
+memoria | b-real union sin estructura | holdout-2 | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | holdout-2 | Bash cat | negada R_HOLDOUT
+memoria | b-real union sin estructura | holdout-2 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | b-real union sin estructura | holdout-3 | Read | negada R_HOLDOUT
+memoria | b-real union sin estructura | holdout-3 | Grep | negada R_HOLDOUT
+memoria | b-real union sin estructura | holdout-3 | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | holdout-3 | Bash cat | negada R_HOLDOUT
+memoria | b-real union sin estructura | holdout-3 | PowerShell Get-Content | negada R_HOLDOUT
+memoria | b-real union sin estructura | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+memoria | b-real union sin estructura | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+memoria | b-real union sin estructura | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+memoria | b-real union sin estructura | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+memoria | b-real union sin estructura | libro de un mes reservado (mayo) en el material | Read | negada R_LIBRO
+memoria | b-real union sin estructura | libro de un mes reservado (mayo) en el material | Grep | negada R_LIBRO
+memoria | b-real union sin estructura | libro de un mes reservado (mayo) en el material | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | libro de un mes reservado (mayo) en el material | Bash cat | negada R_LIBRO
+memoria | b-real union sin estructura | libro de un mes reservado (mayo) en el material | PowerShell Get-Content | negada R_LIBRO
+memoria | b-real union sin estructura | imagen del material adicional | Read | negada R_CAPTURA
+memoria | b-real union sin estructura | imagen del material adicional | Grep | negada R_CAPTURA
+memoria | b-real union sin estructura | imagen del material adicional | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | imagen del material adicional | Bash cat | negada R_CAPTURA
+memoria | b-real union sin estructura | imagen del material adicional | PowerShell Get-Content | negada R_CAPTURA
+memoria | b-real union sin estructura | imagen de Backtest marzo | Read | PERMITIDA
+memoria | b-real union sin estructura | imagen de Backtest marzo | Grep | PERMITIDA
+memoria | b-real union sin estructura | imagen de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | imagen de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-real union sin estructura | imagen de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-real union sin estructura | otro fichero de Backtest marzo | Read | PERMITIDA
+memoria | b-real union sin estructura | otro fichero de Backtest marzo | Grep | PERMITIDA
+memoria | b-real union sin estructura | otro fichero de Backtest marzo | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | otro fichero de Backtest marzo | Bash cat | PERMITIDA
+memoria | b-real union sin estructura | otro fichero de Backtest marzo | PowerShell Get-Content | PERMITIDA
+memoria | b-real union sin estructura | hoja de Sesiones | Read | negada R_HOJA
+memoria | b-real union sin estructura | hoja de Sesiones | Grep | negada R_HOJA
+memoria | b-real union sin estructura | hoja de Sesiones | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | hoja de Sesiones | Bash cat | negada R_HOJA
+memoria | b-real union sin estructura | hoja de Sesiones | PowerShell Get-Content | negada R_HOJA
+memoria | b-real union sin estructura | cruda en cuarentena (v7) | Read | negada R_CUARENTENA
+memoria | b-real union sin estructura | cruda en cuarentena (v7) | Grep | negada R_CUARENTENA
+memoria | b-real union sin estructura | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | cruda en cuarentena (v7) | Bash cat | negada R_CUARENTENA
+memoria | b-real union sin estructura | cruda en cuarentena (v7) | PowerShell Get-Content | negada R_CUARENTENA
+memoria | b-real union sin estructura | *cruda-NO-LEER* | Read | negada R_CUARENTENA
+memoria | b-real union sin estructura | *cruda-NO-LEER* | Grep | negada R_CUARENTENA
+memoria | b-real union sin estructura | *cruda-NO-LEER* | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | *cruda-NO-LEER* | Bash cat | negada R_CUARENTENA
+memoria | b-real union sin estructura | *cruda-NO-LEER* | PowerShell Get-Content | negada R_CUARENTENA
+memoria | b-real union sin estructura | tramo no citable (v6) | Read | negada R_TRAMO
+memoria | b-real union sin estructura | tramo no citable (v6) | Grep | negada R_TRAMO
+memoria | b-real union sin estructura | tramo no citable (v6) | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | tramo no citable (v6) | Bash cat | negada R_TRAMO
+memoria | b-real union sin estructura | tramo no citable (v6) | PowerShell Get-Content | negada R_TRAMO
+memoria | b-real union sin estructura | id de caso reservado en knowledge/cases | Read | negada R_CASO
+memoria | b-real union sin estructura | id de caso reservado en knowledge/cases | Grep | negada R_CASO
+memoria | b-real union sin estructura | id de caso reservado en knowledge/cases | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | id de caso reservado en knowledge/cases | Bash cat | negada R_CASO
+memoria | b-real union sin estructura | id de caso reservado en knowledge/cases | PowerShell Get-Content | negada R_CASO
+memoria | b-real union sin estructura | id de caso reservado en data/visor | Read | negada R_CASO
+memoria | b-real union sin estructura | id de caso reservado en data/visor | Grep | negada R_CASO
+memoria | b-real union sin estructura | id de caso reservado en data/visor | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | id de caso reservado en data/visor | Bash cat | negada R_CASO
+memoria | b-real union sin estructura | id de caso reservado en data/visor | PowerShell Get-Content | negada R_CASO
+memoria | b-real union sin estructura | feedback que etiqueta un reservado | Read | negada R_CASO
+memoria | b-real union sin estructura | feedback que etiqueta un reservado | Grep | negada R_CASO
+memoria | b-real union sin estructura | feedback que etiqueta un reservado | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | feedback que etiqueta un reservado | Bash cat | negada R_CASO
+memoria | b-real union sin estructura | feedback que etiqueta un reservado | PowerShell Get-Content | negada R_CASO
+memoria | b-real union sin estructura | fichero con ocultos (lista calculada) | Read | negada R_FICHERO_OCULTO
+memoria | b-real union sin estructura | fichero con ocultos (lista calculada) | Grep | negada R_FICHERO_OCULTO
+memoria | b-real union sin estructura | fichero con ocultos (lista calculada) | Glob patron absoluto | PERMITIDA
+memoria | b-real union sin estructura | fichero con ocultos (lista calculada) | Bash cat | negada R_FICHERO_OCULTO
+memoria | b-real union sin estructura | fichero con ocultos (lista calculada) | PowerShell Get-Content | negada R_FICHERO_OCULTO
+memoria | b-real union sin estructura | carpeta holdout/1 | Read | PERMITIDA
+memoria | b-real union sin estructura | carpeta holdout/1 | Grep | PERMITIDA
+memoria | b-real union sin estructura | carpeta holdout/1 | Glob path=carpeta | PERMITIDA
+memoria | b-real union sin estructura | carpeta holdout/1 | Bash ls | PERMITIDA
+memoria | b-real union sin estructura | carpeta holdout/1 | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-real union sin estructura | carpeta holdout/1 | Bash grep -r | PERMITIDA
+memoria | b-real union sin estructura | carpeta Backtest marzo | Read | PERMITIDA
+memoria | b-real union sin estructura | carpeta Backtest marzo | Grep | PERMITIDA
+memoria | b-real union sin estructura | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+memoria | b-real union sin estructura | carpeta Backtest marzo | Bash ls | PERMITIDA
+memoria | b-real union sin estructura | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-real union sin estructura | carpeta Backtest marzo | Bash grep -r | PERMITIDA
+memoria | b-real union sin estructura | carpeta Sesiones | Read | PERMITIDA
+memoria | b-real union sin estructura | carpeta Sesiones | Grep | negada R_HOJA
+memoria | b-real union sin estructura | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+memoria | b-real union sin estructura | carpeta Sesiones | Bash ls | PERMITIDA
+memoria | b-real union sin estructura | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-real union sin estructura | carpeta Sesiones | Bash grep -r | negada R_HOJA
+memoria | b-real union sin estructura | carpeta de la cruda v7 | Read | PERMITIDA
+memoria | b-real union sin estructura | carpeta de la cruda v7 | Grep | negada R_CUARENTENA
+memoria | b-real union sin estructura | carpeta de la cruda v7 | Glob path=carpeta | PERMITIDA
+memoria | b-real union sin estructura | carpeta de la cruda v7 | Bash ls | PERMITIDA
+memoria | b-real union sin estructura | carpeta de la cruda v7 | PowerShell Get-ChildItem | PERMITIDA
+memoria | b-real union sin estructura | carpeta de la cruda v7 | Bash grep -r | negada R_CUARENTENA
+memoria | fuera sin anclaje | fichero suelto | Read | PERMITIDA
+memoria | fuera sin anclaje | fichero suelto | Grep | PERMITIDA
+memoria | fuera sin anclaje | fichero suelto | Glob patron absoluto | PERMITIDA
+memoria | fuera sin anclaje | fichero suelto | Bash cat | PERMITIDA
+memoria | fuera sin anclaje | fichero suelto | PowerShell Get-Content | PERMITIDA
+memoria | fuera sin anclaje | carpeta suelta | Read | PERMITIDA
+memoria | fuera sin anclaje | carpeta suelta | Grep | PERMITIDA
+memoria | fuera sin anclaje | carpeta suelta | Glob path=carpeta | PERMITIDA
+memoria | fuera sin anclaje | carpeta suelta | Bash ls | PERMITIDA
+memoria | fuera sin anclaje | carpeta suelta | PowerShell Get-ChildItem | PERMITIDA
+memoria | fuera sin anclaje | carpeta suelta | Bash grep -r | PERMITIDA
+memoria | c ancestro de la copia | carpeta de la copia | Read | PERMITIDA
+memoria | c ancestro de la copia | carpeta de la copia | Grep | PERMITIDA
+memoria | c ancestro de la copia | carpeta de la copia | Glob path=carpeta | PERMITIDA
+memoria | c ancestro de la copia | carpeta de la copia | Bash ls | PERMITIDA
+memoria | c ancestro de la copia | carpeta de la copia | PowerShell Get-ChildItem | PERMITIDA
+memoria | c ancestro de la copia | carpeta de la copia | Bash grep -r | PERMITIDA
+.stdin | a/d dentro | holdout-1 (la sonda) | Read | negada R_HOLDOUT
+stdin | a/d dentro | holdout-1 (la sonda) | Grep | negada R_HOLDOUT
+stdin | a/d dentro | holdout-1 (la sonda) | Glob patron absoluto | PERMITIDA
+stdin | a/d dentro | holdout-1 (la sonda) | Bash cat | negada R_HOLDOUT
+stdin | a/d dentro | holdout-1 (la sonda) | PowerShell Get-Content | negada R_HOLDOUT
+stdin | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+stdin | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+stdin | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+stdin | a/d dentro | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+stdin | a/d dentro | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+stdin | a/d dentro | imagen de Backtest marzo (inventada) | Read | negada R_CAPTURA
+stdin | a/d dentro | imagen de Backtest marzo (inventada) | Grep | negada R_CAPTURA
+stdin | a/d dentro | imagen de Backtest marzo (inventada) | Glob patron absoluto | PERMITIDA
+stdin | a/d dentro | imagen de Backtest marzo (inventada) | Bash cat | negada R_CAPTURA
+stdin | a/d dentro | imagen de Backtest marzo (inventada) | PowerShell Get-Content | negada R_CAPTURA
+stdin | a/d dentro | otro fichero de Backtest marzo (inventado) | Read | negada R_SIN_ABRIR
+stdin | a/d dentro | otro fichero de Backtest marzo (inventado) | Grep | negada R_SIN_ABRIR
+stdin | a/d dentro | otro fichero de Backtest marzo (inventado) | Glob patron absoluto | PERMITIDA
+stdin | a/d dentro | otro fichero de Backtest marzo (inventado) | Bash cat | negada R_SIN_ABRIR
+stdin | a/d dentro | otro fichero de Backtest marzo (inventado) | PowerShell Get-Content | negada R_SIN_ABRIR
+stdin | a/d dentro | hoja de Sesiones (inventada) | Read | negada R_HOJA
+stdin | a/d dentro | hoja de Sesiones (inventada) | Grep | negada R_HOJA
+stdin | a/d dentro | hoja de Sesiones (inventada) | Glob patron absoluto | PERMITIDA
+stdin | a/d dentro | hoja de Sesiones (inventada) | Bash cat | negada R_HOJA
+stdin | a/d dentro | hoja de Sesiones (inventada) | PowerShell Get-Content | negada R_HOJA
+stdin | a/d dentro | cruda en cuarentena (v7) | Read | negada R_CUARENTENA
+stdin | a/d dentro | cruda en cuarentena (v7) | Grep | negada R_CUARENTENA
+stdin | a/d dentro | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+stdin | a/d dentro | cruda en cuarentena (v7) | Bash cat | negada R_CUARENTENA
+stdin | a/d dentro | cruda en cuarentena (v7) | PowerShell Get-Content | negada R_CUARENTENA
+stdin | a/d dentro | carpeta holdout/1 | Read | PERMITIDA
+stdin | a/d dentro | carpeta holdout/1 | Grep | PERMITIDA
+stdin | a/d dentro | carpeta holdout/1 | Glob path=carpeta | negada R_LISTADO
+stdin | a/d dentro | carpeta holdout/1 | Bash ls | negada R_LISTADO
+stdin | a/d dentro | carpeta holdout/1 | PowerShell Get-ChildItem | negada R_LISTADO
+stdin | a/d dentro | carpeta holdout/1 | Bash grep -r | PERMITIDA
+stdin | a/d dentro | carpeta Backtest marzo | Read | PERMITIDA
+stdin | a/d dentro | carpeta Backtest marzo | Grep | negada R_CAPTURA
+stdin | a/d dentro | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+stdin | a/d dentro | carpeta Backtest marzo | Bash ls | PERMITIDA
+stdin | a/d dentro | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+stdin | a/d dentro | carpeta Backtest marzo | Bash grep -r | negada R_CAPTURA
+stdin | a/d dentro | carpeta Sesiones | Read | PERMITIDA
+stdin | a/d dentro | carpeta Sesiones | Grep | negada R_HOJA
+stdin | a/d dentro | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+stdin | a/d dentro | carpeta Sesiones | Bash ls | PERMITIDA
+stdin | a/d dentro | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+stdin | a/d dentro | carpeta Sesiones | Bash grep -r | negada R_HOJA
+stdin | c copia fuera | holdout-1 (la sonda) | Read | PERMITIDA
+stdin | c copia fuera | holdout-1 (la sonda) | Grep | PERMITIDA
+stdin | c copia fuera | holdout-1 (la sonda) | Glob patron absoluto | PERMITIDA
+stdin | c copia fuera | holdout-1 (la sonda) | Bash cat | PERMITIDA
+stdin | c copia fuera | holdout-1 (la sonda) | PowerShell Get-Content | PERMITIDA
+stdin | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+stdin | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+stdin | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+stdin | c copia fuera | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+stdin | c copia fuera | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+stdin | c copia fuera | imagen de Backtest marzo (inventada) | Read | PERMITIDA
+stdin | c copia fuera | imagen de Backtest marzo (inventada) | Grep | PERMITIDA
+stdin | c copia fuera | imagen de Backtest marzo (inventada) | Glob patron absoluto | PERMITIDA
+stdin | c copia fuera | imagen de Backtest marzo (inventada) | Bash cat | PERMITIDA
+stdin | c copia fuera | imagen de Backtest marzo (inventada) | PowerShell Get-Content | PERMITIDA
+stdin | c copia fuera | otro fichero de Backtest marzo (inventado) | Read | PERMITIDA
+stdin | c copia fuera | otro fichero de Backtest marzo (inventado) | Grep | PERMITIDA
+stdin | c copia fuera | otro fichero de Backtest marzo (inventado) | Glob patron absoluto | PERMITIDA
+stdin | c copia fuera | otro fichero de Backtest marzo (inventado) | Bash cat | PERMITIDA
+stdin | c copia fuera | otro fichero de Backtest marzo (inventado) | PowerShell Get-Content | PERMITIDA
+stdin | c copia fuera | hoja de Sesiones (inventada) | Read | PERMITIDA
+stdin | c copia fuera | hoja de Sesiones (inventada) | Grep | PERMITIDA
+stdin | c copia fuera | hoja de Sesiones (inventada) | Glob patron absoluto | PERMITIDA
+stdin | c copia fuera | hoja de Sesiones (inventada) | Bash cat | PERMITIDA
+stdin | c copia fuera | hoja de Sesiones (inventada) | PowerShell Get-Content | PERMITIDA
+stdin | c copia fuera | cruda en cuarentena (v7) | Read | PERMITIDA
+stdin | c copia fuera | cruda en cuarentena (v7) | Grep | PERMITIDA
+stdin | c copia fuera | cruda en cuarentena (v7) | Glob patron absoluto | PERMITIDA
+stdin | c copia fuera | cruda en cuarentena (v7) | Bash cat | PERMITIDA
+stdin | c copia fuera | cruda en cuarentena (v7) | PowerShell Get-Content | PERMITIDA
+stdin | c copia fuera | carpeta holdout/1 | Read | PERMITIDA
+stdin | c copia fuera | carpeta holdout/1 | Grep | PERMITIDA
+stdin | c copia fuera | carpeta holdout/1 | Glob path=carpeta | PERMITIDA
+stdin | c copia fuera | carpeta holdout/1 | Bash ls | PERMITIDA
+stdin | c copia fuera | carpeta holdout/1 | PowerShell Get-ChildItem | PERMITIDA
+stdin | c copia fuera | carpeta holdout/1 | Bash grep -r | PERMITIDA
+stdin | c copia fuera | carpeta Backtest marzo | Read | PERMITIDA
+stdin | c copia fuera | carpeta Backtest marzo | Grep | PERMITIDA
+stdin | c copia fuera | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+stdin | c copia fuera | carpeta Backtest marzo | Bash ls | PERMITIDA
+stdin | c copia fuera | carpeta Backtest marzo | PowerShell Get-ChildItem | PERMITIDA
+stdin | c copia fuera | carpeta Backtest marzo | Bash grep -r | PERMITIDA
+stdin | c copia fuera | carpeta Sesiones | Read | PERMITIDA
+stdin | c copia fuera | carpeta Sesiones | Grep | PERMITIDA
+stdin | c copia fuera | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+stdin | c copia fuera | carpeta Sesiones | Bash ls | PERMITIDA
+stdin | c copia fuera | carpeta Sesiones | PowerShell Get-ChildItem | PERMITIDA
+stdin | c copia fuera | carpeta Sesiones | Bash grep -r | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | libro por nombre (backtesting-analytics de marzo) | Read | negada R_SIN_ABRIR
+stdin | D:\BotsitoCorpus (solo la decision) | libro por nombre (backtesting-analytics de marzo) | Grep | negada R_SIN_ABRIR
+stdin | D:\BotsitoCorpus (solo la decision) | libro por nombre (backtesting-analytics de marzo) | Glob patron absoluto | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | libro por nombre (backtesting-analytics de marzo) | Bash cat | negada R_SIN_ABRIR
+stdin | D:\BotsitoCorpus (solo la decision) | libro por nombre (backtesting-analytics de marzo) | PowerShell Get-Content | negada R_SIN_ABRIR
+stdin | D:\BotsitoCorpus (solo la decision) | imagen de Backtest marzo (inventada) | Read | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | imagen de Backtest marzo (inventada) | Grep | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | imagen de Backtest marzo (inventada) | Glob patron absoluto | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | imagen de Backtest marzo (inventada) | Bash cat | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | imagen de Backtest marzo (inventada) | PowerShell Get-Content | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | otro fichero de Backtest marzo (inventado) | Read | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | otro fichero de Backtest marzo (inventado) | Grep | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | otro fichero de Backtest marzo (inventado) | Glob patron absoluto | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | otro fichero de Backtest marzo (inventado) | Bash cat | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | otro fichero de Backtest marzo (inventado) | PowerShell Get-Content | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | hoja de Sesiones (inventada) | Read | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | hoja de Sesiones (inventada) | Grep | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | hoja de Sesiones (inventada) | Glob patron absoluto | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | hoja de Sesiones (inventada) | Bash cat | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | hoja de Sesiones (inventada) | PowerShell Get-Content | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | carpeta Backtest marzo | Read | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | carpeta Backtest marzo | Grep | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | carpeta Backtest marzo | Glob path=carpeta | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | carpeta Sesiones | Read | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | carpeta Sesiones | Grep | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | carpeta Sesiones | Glob path=carpeta | PERMITIDA
+stdin | D:\BotsitoCorpus (solo la decision) | la copia entera | Grep | PERMITIDA
+.
