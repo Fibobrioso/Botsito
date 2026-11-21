@@ -806,3 +806,24 @@ tramos:
       precaucion: en S-3 (bloque tecnico de la sesion 7b), el trader vuelve a su grafico real («lo voy a mostrar en el grafico»), de un dia que la voz no dice de forma visible. Regla de la PARADA condicional del encargo. Sin cifras ni dias aqui
     acordado: >-
       encargo de trabajo/sesion-08 (2026-11-21), «PARADA CONDICIONAL» (decisiones del consultor del 2026-11-17); marcado al leer la filtrada; ninguna cita de la rama cae dentro; docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:03:54"
+    t1: "0:04:02"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 08 (v21): el bloque [CUARENTENA 03:54–04:01] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-08 (2026-11-21); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "0:36:43"
+    t1: "0:36:52"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 08 (v21): el bloque [CUARENTENA 36:43–36:51] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-08 (2026-11-21); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-08-EXTRACCION.md
+  - video_id: v21
+    t0: "1:12:12"
+    t1: "1:13:32"
+    motivo: >-
+      tramo de cuarentena mecanica de la sesion 08 (v21): el bloque [CUARENTENA 72:12–73:31] de la version filtrada, que cayo por la cuarentena por condicion (una fecha con numero y su vecino). No se lee, no se cita y no se reconstruye
+    acordado: >-
+      skill ingerir-sesion, paso 4 (los bloques en cuarentena entran aqui sin contenido, en un commit propio), encargo de trabajo/sesion-08 (2026-11-21); limites con el criterio de docs/runbooks/SESION-DE-PREGUNTAS.md, «Los limites de un tramo» (t1 = fin del bloque mas un segundo); docs/validation/SESION-08-EXTRACCION.md

@@ -205,6 +205,50 @@ extra», fuera de git en `data/fotogramas/v20/png-1fps/`. `uv run botsito corpus
 v20 se ha abierto**: los únicos tramos con gráfico real en que la voz dice el día son los de S-7
 (10 de julio), y lo que se cita de ellos no pide imagen.
 
+Sellado y commiteado, con los tramos de precaución de v20 y el §3, en `ca547e77` (PICO DE MEMORIA
+del sello: 320 MiB en `test`).
+
+### 2.4 v21: transcripción, cuarentena, puerta del ASR y barrido
+
+Con un «listo» de Aleks antes de cada una, solas y sin ningún `make check` a la vez.
+
+- **Transcripción del corpus**: `uv run botsito corpus transcribe --video v21` (medida con
+  `scripts/pico_memoria.py ejecutar`) → `tr-v21-large-v3-int8-float16-9a52aac1`, **1140 segmentos**;
+  PICO DE MEMORIA **5531 MiB** (el mayor, 5479 MiB). `corpus transcript check`: `OK: 28
+  transcripciones coherentes con el disco y el glosario`.
+- **El guion de `main`** (idéntico) con `--audio C:/Users/USER/Desktop/sesion-08-audio/sesion-08-v21.wav
+  --sesion 08 --video v21`; PICO DE MEMORIA **5531 MiB** (el mayor, 5480 MiB). El registro dice: hoja
+  de la sesión 08; tramos no citables del vídeo: 9 (los silencios); el sha256 del WAV (`59d09925237d…`)
+  es el de la transcripción del corpus; ASR de 1140,9 s (factor 0,15); **1140 segmentos**; **9 en
+  cuarentena en 3 bloques** (solo por meses 9, solo por tramos 5, ambos 0; bloques `[NO CITABLE]`: 5;
+  motivos «fecha numérica» 3 y «vecino» 6); **ningún código detectado**, como se esperaba (v21 no
+  lleva preguntas técnicas).
+- **La puerta del ASR de los nueve silencios**, por los bloques `[NO CITABLE]`:
+  - `[80:07–81:53]` cubre el silencio 1:20:21–1:21:00 y acaba fuera. Pasa.
+  - `[87:34–89:15]` cubre el silencio 1:27:44–1:28:27 y acaba fuera (antes del siguiente). Pasa.
+  - `[90:29–91:11]`: empieza en el último segundo del silencio 1:29:43–1:30:29,9 (5429,94 s) y acaba en
+    91:11, fuera. Pasa.
+  - `[93:12–95:28]` cubre el silencio 1:33:37–1:34:57 y acaba fuera. Pasa.
+  - `[112:47–114:14]` cubre el silencio 1:52:59–1:54:12,9 (6852,88 s) y acaba en 114:14, fuera. Pasa.
+  - Los silencios 0:48:45–0:49:39, 1:31:24–1:32:11, 2:03:41–2:04:47 y 2:04:47–2:05:30: ningún segmento
+    (ningún bloque). Pasa.
+- **Los tres bloques de cuarentena, a `tramos_no_citables.yaml`**, sin contenido y en el commit propio
+  de v21, con el fin de cada uno más un segundo: **0:03:54–0:04:02**, **0:36:43–0:36:52** y
+  **1:12:12–1:13:32**. El segundo de margen toca la primera línea visible tras los dos primeros
+  (`[04:01]` y `[36:51]`), que por eso tampoco se citan; tras el tercero, la siguiente es `[73:33]`.
+- **El barrido**, antes de leer:
+  - del 1 al 31, **160 líneas**;
+  - **con el rango por defecto (18 a 31), 22 líneas**. Nueve llevan mes: «de abril» en `[71:35]`,
+    `[73:33]` y `[87:23]`, y «de enero» en `[87:23]`, `[104:41]`, `[112:11]`, `[112:19]`, `[123:16]`,
+    `[125:32]` y `[125:57]`. Hay además «fecha [N]» sin mes en `[00:24]`. Los días del bloque son el
+    24 y el 27 de abril y el 19 y el 21 de enero, todos en ese rango y todos de construcción (enero del
+    2 al 30 y abril del 1 al 29).
+  - Para ver si alguna es un día fuera de construcción, **con `--desde 30 --hasta 31`, 1 línea**,
+    `[63:46]` «2 y [N].», sin mes, que no es un día. **Con `--desde 1 --hasta 1`**, ninguna línea con
+    el 1 nombra un mes. Esa pasada deja ver los demás números de sus líneas, y lo que dejó ver son
+    días de construcción («27 de abril finalizado continuo con 19 19 de», `[87:23]`).
+  - **Sin PARADA por el barrido**: ningún día fuera de construcción del mes que nombra.
+
 ## 3. El bloque técnico (v20), por pregunta
 
 La filtrada de v20 leída entera, fuera de sus bloques tapados (fila de `HOLDOUT-EXPOSICIONES.md` del
