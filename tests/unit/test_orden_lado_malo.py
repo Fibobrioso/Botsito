@@ -226,22 +226,29 @@ def test_con_se_gasta_el_punto_el_broker_la_rechaza_y_el_punto_queda_gastado(
     motor = _correr(tc._registro_se_gasta(tmp_path), "compra", COMPRA_VUELVE, monkeypatch)
     broker = motor.brokers[DIA]
     assert [(o.id, o.estado) for o in broker.ordenes.values()] == [("o1", RECHAZADA)]
-    assert broker.traza().rechazos[0].motivo == MOTIVO_PRECIO_INVALIDO
+    (rechazo,) = broker.traza().rechazos
+    assert rechazo.motivo == MOTIVO_PRECIO_INVALIDO
+    assert rechazo.instante_ms == tp._cierre(Z)  # el mismo cierre en que la espera no envia
     assert zonas.punto_rechazado(motor.estados[DIA], SESION, "zona:1")
     assert not motor.trazas_broker[DIA].esperas
 
 
 def test_el_broker_y_la_espera_miran_la_misma_cotizacion(
-    registro: Registro, monkeypatch: pytest.MonkeyPatch
+    registro: Registro, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     """La comprobacion previa es la del broker (`lado_equivocado_al_colocar`, que usa
-    `_precio_infringido`), no una copia: con la espera apagada, el broker rechaza justo en el cierre
-    en que, con la espera encendida, la orden no se envia."""
+    `_precio_infringido`), no una copia: con la espera apagada (`se_gasta_el_punto`), el broker
+    rechaza justo en el cierre en que, con la espera encendida, la orden no se envia; y la espera se
+    envia en el primer cierre en que el metodo ya no ve el lado malo."""
     motor = _correr(registro, "compra", COMPRA_VUELVE, monkeypatch)
     broker = motor.brokers[DIA]
-    assert broker.lado_equivocado_al_colocar("stop", "compra", E, tp._cierre(Z))
+    (espera,) = motor.trazas_broker[DIA].esperas
+    assert broker.lado_equivocado_al_colocar("stop", "compra", E, espera[0])
     o = next(iter(broker.ordenes.values()))
     assert not broker.lado_equivocado_al_colocar("stop", "compra", E, o.colocada_ms)
+    apagada = _correr(tc._registro_se_gasta(tmp_path), "compra", COMPRA_VUELVE, monkeypatch)
+    (rechazo,) = apagada.brokers[DIA].traza().rechazos
+    assert rechazo.instante_ms == espera[0]
 
 
 # ------------------------------------------------------------------- por el camino real (julio)

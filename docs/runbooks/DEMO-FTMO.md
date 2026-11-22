@@ -160,7 +160,7 @@ el martes 3, como se preveía), y la ejecución 3 se hizo el jueves 5 (corregido
 pérdida diaria en el panel de la cuenta de FTMO. Era la «verificación explícita» de A-28; ninguna de
 las tres ejecuciones la hizo, y desde ADR-0090 fue una línea propia de la Next Action. En Account
 MetriX de la prueba gratuita (inicio 28/10/26, fin 11/11/26), el aviso de «Pérdida permitida del día»
-se restablecía hacia las 23:00 UTC de ese sábado, las 00:00 de España (CET), y no a la medianoche
+se restablecía hacia las 23:00 UTC del sábado 2026-11-07, las 00:00 de España (CET), y no a la medianoche
 del servidor (22:00 UTC): `reloj_dia_riesgo` sigue CONFIRMED en `civil_operativa` y A-19 no se reabre
 (`docs/state/HISTORIA.md`, «Next Action HECHA · A · el panel del límite diario»; corregido en
 `trabajo/activar-sesion-08`).

@@ -29,6 +29,15 @@ punto. Este es un no envío distinto: la traza (`ContextoDia.esperas`), el infor
 sección «### Esperas») y `motor decisiones` («orden NO enviada … el 0 queda del lado malo; espera»
 y, al enviarse, «enviada tras esperar desde …») lo nombran aparte de los no envíos de ADR-0081.
 
+**El orden con los otros motivos (decisión de implementación de esta rama, declarada; la regla del
+consultor no lo dice):** la comprobación del lado malo va DESPUÉS del lote de ADR-0081 (si el lote no
+cabe, no se envía y el punto se gasta, aunque el 0 esté del lado malo) y ANTES de enviar. Así que, si
+a la vez el 0 queda del lado malo y la orden caería en otro motivo de rechazo al colocar, los que el
+bróker mira antes que el precio (el cierre de mercado de ADR-0068, el corte o el bucle del freno de
+ADR-0067, el volumen y las órdenes simultáneas) o después (stops level, margen), **manda el lado
+malo**: no se envía, espera y no gasta el punto. Esos otros motivos gastan el punto cuando el 0 está
+del lado bueno.
+
 Solo vale para la orden STOP en la ruptura (A-47); la límite de las líneas base antiguas no cambia.
 Con `orden_stop_lado_malo` = `se_gasta_el_punto` todo es como antes de este ADR.
 
@@ -129,7 +138,9 @@ Es la que se inclina a decir el trader en la 7b y la que el consultor dejó escr
 
 - (1) Contradice lo único en que las dos sesiones coinciden: el punto no se pierde. Queda como
   opción del parámetro.
-- (2) Una petición rechazada por minuto mientras dure, contada al día (FTMO, 2026-10-05).
+- (2) Una petición rechazada por minuto mientras dure. FTMO dijo el 2026-10-05 que todo tipo de
+  orden cuenta para el límite, sin distinguir las rechazadas, y no ha dicho si una rechazada cuenta
+  (A-54 sigue sin esa respuesta); el freno de ADR-0067 sí las cuenta.
 - (4) El trader contestó «otra» inclinándose por esperar, no por mover el 0; y mover el 0 es otra
   regla de dónde va el 0, que es A-48 (F1 de la misma rama, en la PARADA).
 

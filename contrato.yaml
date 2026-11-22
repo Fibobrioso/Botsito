@@ -54,7 +54,6 @@ rutas_protegidas:
   - mql5/
   - scripts/
 comprobaciones:
-  - uv run botsito feedback apply --sesion 2026-11-20-sesion-08 --check
   - uv run botsito knowledge validate > knowledge-validate.log 2>&1
   - uv run botsito spec docs --escribir
   - uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k --comprobar

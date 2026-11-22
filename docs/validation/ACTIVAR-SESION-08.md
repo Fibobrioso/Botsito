@@ -1,7 +1,5 @@
 # ACTIVAR-SESION-08 · La sesión 7b entra en la spec y en el motor, la respuesta de FTMO del 2026-11-20 y la auditoría del 2026-11-21 (R4.3, entrada F)
 
-> PLANTILLA hasta la fase 0: la tabla de activación la escribe la fase 0 (skill fase-cero) en su commit.
-
 Rama `trabajo/activar-sesion-08`, abierta el 2026-11-21 desde `main` en 00e6dc8b (commit de estado
 sobre el merge f4b5a9a2 del tag `stable/F39j-sesion-08`). Encargo:
 `docs/encargos/trabajo-activar-sesion-08.md`. Tramo: R4 (R4.3 de `docs/plan/HOJA-DE-RUTA.md`; el
@@ -446,9 +444,11 @@ Cuadró en la fase 0 (0.5). Lo hecho, en un commit:
   cotización —el último tick de la M1 de Z+3— deja el 0 del lado bueno); no vuelve, y no hay orden
   ni petición; con `se_gasta_el_punto`, el rechazo y el punto gastado de antes; la comprobación y el
   rechazo miran la misma cotización; y por el camino real, el 2026-07-08 (la o15 de 11 a 15 salía
-  rechazada). **Con el código de `main` fallaron los 8**: los seis que esperan, por el rechazo por
-  `precio_invalido` (en compra, en venta y la o15 del 8 de julio), y los dos que nombran el
-  parámetro o el método nuevo, porque no existían.
+  rechazada). **Con el código de `main` fallaron los 8**: los cinco que esperan (los dos en que el
+  precio vuelve, los dos en que no vuelve y el del camino real), por el rechazo por `precio_invalido`
+  (en compra, en venta y la o15 del 8 de julio); y los tres que nombran el parámetro o el método
+  nuevo (el del registro, el de `se_gasta_el_punto` y el de la misma cotización), porque no
+  existían (revisor, b9).
 - **Los que congelaban el rechazo que gasta el punto, cambiados de sentido A PROPÓSITO:**
   `test_punto_usado.py` (`test_el_rechazo_al_colocar_sigue_gastando_el_punto` →
   `test_el_0_del_lado_malo_ya_no_gasta_el_punto_y_la_orden_espera`, y el de antes, con
@@ -475,9 +475,14 @@ Cuadró en la fase 0 (0.5). Lo hecho, en un commit:
   si es stop, `orden_stop_lado_malo` = `espera` y el 0 queda del lado malo, no envía, no marca la
   caja usada ni el punto gastado, y apunta la espera una vez por punto y sesión
   (`ContextoDia.esperas`); al enviarse la orden de ese punto, la espera lleva su id.
-  `zonas.punto_de_la_zona`. **El orden con el lote, declarado:** si a la vez el lote no cabe
-  (ADR-0081) y el 0 queda del lado malo, manda el lote: no se envía y gasta el punto, como dice
-  ADR-0083 D1 («todo lo demás que gasta un punto sigue»).
+  `zonas.punto_de_la_zona`. **El orden con los otros motivos, declarado (revisor, b4; escrito
+  también en ADR-0097 §1):** si a la vez el lote no cabe (ADR-0081) y el 0 queda del lado malo, manda
+  el lote: no se envía y gasta el punto, como dice ADR-0083 D1. Pero si a la vez el 0 queda del lado
+  malo y la orden caería en otro motivo de rechazo al colocar (el cierre de mercado, el freno, el
+  volumen, las órdenes simultáneas, el stops level o el margen), **manda el lado malo**: no se envía
+  y espera, sin gastar el punto, porque la comprobación va antes de enviar y el bróker no llega a
+  mirar esos motivos. Es una decisión de implementación que la regla del encargo no dice; va a «Lo
+  que no me convence», en la PARADA final.
 - **Traza y salidas:** la sección «### Esperas …» del informe del arnés (`cableado.CABECERA_ESPERAS`,
   con «esperas: N (enviadas despues: M)»); en `motor decisiones`, «orden NO enviada en zona:X a las
   HH:MM: el 0 queda del lado malo; espera sin gastar la caja ni el punto (ADR-0097)» y, al enviarse,
@@ -527,9 +532,10 @@ la base de esta rama:
     las órdenes que salieron de ellas (o1 y o6, `motor decisiones`).
   - **2026-07-10 11-15, tres filas del trader pasan a P4 «sin orden»** (una T0 pareja y dos P7):
     **no es una sesión declarada; la explica un freno de la cuenta.** `motor decisiones --bitacora
-    2026-07-10` (`data/activar-sesion-08/decisiones-f2/`): en la de 07 a 11, las órdenes enviadas tras
-    esperar se llenan y saltan su stop (pos-o6, pos-o7, y después pos-o8), y desde las 09:52 (07:52Z)
-    **RN-032** («no se abre una operación cuyo riesgo no cabe antes del límite de la firma») prohíbe
+    2026-07-10` (`data/activar-sesion-08/decisiones-f2/`): en la de 07 a 11 salen dos órdenes que
+    esperaron (o1 y o6; «enviada tras esperar» solo en esas dos); o6 se llena y salta su stop, y
+    después o7, colocada sin esperar, también; o8, colocada sin esperar, se llena a las 07:50Z; con
+    esa secuencia, distinta de la de la base, desde las 09:52 (07:52Z) **RN-032** («no se abre una operación cuyo riesgo no cabe antes del límite de la firma») prohíbe
     abrir; sigue prohibiendo toda la sesión de 11 a 15 (desde su primer cierre, 11:00), así que la
     orden que en la base emparejaba con el trader (o15) ya no se coloca. En la base, RN-032 también
     disparaba ese día, pero después de o15. `motor decisiones` compara por día, sesión, lado, instante
@@ -597,8 +603,9 @@ la constancia, en este informe y en la lista de la sesión siguiente.
   - S-3, la compra: «Ahora, para precisar, ¿lo haces igual en una compra? Exacto, lo hago igual en
     una compra.» (`ev-v20-004803-377e65aa`).
   - S-4, el dibujo 2: con una vela de color contrario que rompe por encima, sigue buscando
-    alcistas y el rango queda en el mismo nivel hasta que lo rompa una vela de su color
-    (`ev-v20-005520-80eba002`).
+    alcistas y el rango queda en el mismo nivel, sin actualizarlo (`ev-v20-005520-80eba002`, la
+    afirmación del ítem). Que lo deja así «hasta que puede romper con una vela» de su color lo dice
+    la extracción en [55:41], donde acaba el ítem, sin ítem propio (revisor, b2).
   - S-4, siempre en H4: «siempre marca su rango en su temporalidad mayor»
     (`ev-v20-005723-f1eff54a`, la afirmación del ítem).
   - S-4, la ruptura por abajo, igual: **sin ítem de evidencia** (v20 [57:42]–[57:50], extracción
@@ -624,7 +631,7 @@ cambios que no tocan el motor.
 ### La respuesta de FTMO del 2026-11-20
 
 FTMO contestó el 2026-11-20 (ticket MVT-CQNXT-065) al correo de Aleks del 2026-11-19 (las cuatro
-preguntas están en la hoja de ruta, A.2). **El correo no se copia** (su pie prohíbe compartirlo y el
+preguntas están en la hoja de ruta, A.2). **El correo no se copia** (como el del 2026-10-05; el
 repositorio es público): ningún texto de esta rama lleva frases en inglés del correo ni el nombre de
 quien lo firma. **La fuente es la paráfrasis del consultor**, del encargo de esta rama (F6), tal cual:
 
@@ -765,17 +772,25 @@ contaba (S-2, pregunta 1, no resolvió).
   D1 (R4.6).»
 - «Dos textos que ADR-0093 deja viejos…» pasa a uno: el de `engine/decisiones.py:7-8` lo corrigió esta
   rama (F2); queda el otro (H19 de PREPARACION-SESION-7.md §0.2).
-- Las correcciones de texto de la auditoría (§2.5), contra lo de hoy: la 86 cita `:46` y es `:45`; la
-  100 (hoy la del visor) cita `cli.py:2558`, corregida arriba; la 92 es parcial (`getattr` ya no se
-  decide; node y perl siguen); la 124, a medir; la 119 y la 123 no son deuda: a reclasificar (las
-  números son los de la auditoría sobre 5ae7c482; hay que localizarlas en el PS de la rama, que no
-  numera igual).
+- Las correcciones de texto de la auditoría (§2.5), localizadas en el PS de la rama (la auditoría
+  numeraba sobre 5ae7c482):
+  - la 86 (hoy PS:87, los docstrings de viabilidad): `viabilidad_comision.py:46` → `:45` (medido: el
+    comentario «10 (perfil)» está en la 45);
+  - la 100 (la del visor): corregida en la línea de C1, arriba;
+  - la 92 (hoy PS:93, «Riesgo residual de B»): «, y un `getattr(os, ...)` no se ve» → «; un
+    `getattr(os/sys, ...)` ya no se decide (auditoría del 2026-11-21, sin medir aquí)»;
+  - la 119 (hoy PS:120, «`cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT») y la 123 (hoy
+    PS:124, «EL FRACTAL 5/120 …»): no son deuda (un límite de git aceptado y un hallazgo); salen a
+    HISTORIA;
+  - la 124 (hoy PS:125, la guardia de `cobertura_material` en `universo()`): dudosa según la
+    auditoría; queda como está hasta medirla (heredado 7), sin texto nuevo.
 - Si el consultor acepta la decisión 5: la línea de A-35 pierde «y bloqueante».
 
 **Saldo de PROJECT_STATE.md** (simulado en memoria con un guion de la carpeta de trabajo sobre el PS
 de la rama, 24.809 bytes): AHORA +0, F −59, C −82, J −5, L −147, N +12, I +96, panel −158, visor
-+131, RN-019 +51, decisiones +59: **−102; queda en 24.707 bytes, por debajo de 25.000** (sin las
-correcciones de §2.5, que no se han medido una a una, y sin la de A-35).
++131, RN-019 +51, decisiones +59, y §2.5: la 86 +0, la 92 +54, la 119 −131, la 123 −92:
+**−271; queda en 24.538 bytes, por debajo de 25.000** (sin la de A-35, que depende de la decisión 5
+y quita unos bytes).
 
 **Hoja de ruta:**
 - **R4.3**, Estado: «ABIERTA (la 7a, ingerida y activada, ACTIVAR-SESION-07.md; la 7b, ingerida en
@@ -835,10 +850,10 @@ correcciones de §2.5, que no se han medido una a una, y sin la de A-35).
 | 26 | F7.3: A-16 no se cierra; recuadro en ADR-0092 §10; su texto gana §1.3 y la vela de otro color | Hecho | commit de F7 |
 | 27 | F7.4: propuesta de `bloqueante` para A-35 | Hecho (propuesta) | decisión 5 |
 | 28 | F7.5 y F7.6: A-53, la reentrada, A-43 y B-10, sin activar; la nota que cierra el E4 | Hecho | F7 |
-| 29 | F7.7: lo de la orden de cierre, con bytes | Hecho | «Para la orden de cierre» (24.707 bytes) |
+| 29 | F7.7: lo de la orden de cierre, con bytes | Hecho | «Para la orden de cierre» (24.538 bytes) |
 | 30 | Para la rama y la sesión siguientes | Hecho | su sección |
 | 31 | Informe con todo lo pedido; PROJECT_STATE < 25.000 | Hecho | 24.809 bytes en la rama |
-| 32 | Revisor con los seis alcances, push a `fix/` y CI, PARADA final | Ver abajo | «Informe del revisor», «El cierre de la rama: CI» |
+| 32 | Revisor con los seis alcances, push a `fix/` y CI, PARADA final | Hecho | «Informe del revisor» (0 bloquea, 7 importa, 6 menor; todos arreglados o contestados); run 45005647166 (solo el fallo aceptado); «PARADA final» |
 
 **Lo que NO cambia, medido** (`git diff --stat main...HEAD` tras `46028e24`, 42 ficheros): ni el
 `Makefile`, ni `.claude/`, ni `scripts/`, ni `src/botsito/mql5bridge/` ni `mql5/`, ni
@@ -858,6 +873,213 @@ reservado que se lee son velas para calentar el sesgo (marzo y junio de 2026), p
 **Ningún fotograma de v20 ni de v21 se ha abierto**, por ninguna vía; ninguna transcripción ni
 filtrada; ningún libro, caso ni agregado.
 
+## Informe del revisor
+
+El subagente `revisor`, lanzado sobre `1a5cf2d2` con los seis alcances del encargo (fila de
+`HOLDOUT-EXPOSICIONES.md` del 2026-11-22, declarada antes). Pegado tal cual; no cita nada de un tramo
+no citable (0 retiradas).
+
+### Informe del revisor · trabajo/activar-sesion-08 · 2026-11-22
+
+Base `00e6dc8b` (merge-base con main). HEAD `1a5cf2d2`, 7 commits. Estadiado y sin commitear: una fila de `docs/validation/HOLDOUT-EXPOSICIONES.md`, la del revisor (`git diff --cached --stat`: 1 fichero, 1 línea añadida).
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 1 importa, 3 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | Una comprobación del contrato falla y ni el contrato ni el informe lo dicen. `contrato.yaml:57` pide `feedback apply --sesion 2026-11-20-sesion-08 --check`, que sale con 1 porque la rama no tiene registros de feedback (lo hace a propósito: fila 8 del «punto por punto», «No aplica»). Hay que quitar esa línea del contrato o dejar escrito en el informe que falla y por qué. | `uv run botsito feedback apply --sesion 2026-11-20-sesion-08 --check` → `ERROR: no hay ningun registro de la sesion 2026-11-20-sesion-08 (las que hay: … 2026-11-16-sesion-07)`, exit 1. `grep 'feedback apply' ACTIVAR-SESION-08.md`: sin resultados |
+| a2 | menor | El informe aún empieza por el aviso de plantilla, que ya no es cierto. | `docs/validation/ACTIVAR-SESION-08.md:3` «> PLANTILLA hasta la fase 0: …» |
+| a3 | menor | En la primera fila de HOLDOUT del 2026-11-22, el texto dice que los `make check` y el test del 8 de julio calientan con junio («mes con días reservados»), pero la columna del recuento solo nombra marzo. La fila del 2026-11-21 sí nombra los dos meses. | `HOLDOUT-EXPOSICIONES.md`, fila «lo que lee la rama este día»: «calienta con el M1 de junio de 2026 (mes con días reservados)» frente a «por el recuento: marzo de 2026 entero» |
+| a4 | menor | El recuadro del §4 de FTMO-REGLAS dice «De lo de arriba … contesta qué cuenta como petición para R13». El §4 no pregunta eso: de R13 solo pregunta si los límites entran en el registro como `firma_*`. | `docs/validation/FTMO-REGLAS.md` §4, «PARA EL CONSULTOR», viñeta de R11/R13, y el recuadro del 2026-11-22 que la sigue |
+
+Comprobado sin hallazgos:
+- **Contrato:** `contrato_rama.py` da `CONTRATO: 42 ficheros dentro del contrato … 6 comprobaciones para el revisor` y `G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-22 … estadiada`, exit 0.
+- `generar_capa.py --comprobar` da `Generado.mqh: al dia (capa_hash 8d1f61bc…)`.
+- `spec docs` (sin `--escribir`) da `OK: docs/spec coincide con knowledge/spec/`.
+- `make-check.log`: `3607 passed, 6 xfailed`, `SELLO … sobre el arbol 79db7817…` (que es `HEAD^{tree}`), `PICO DE MEMORIA … 318 MiB`, y `knowledge validate` OK (753 ítems, historial intacto). La fila estadiada no está sellada: el commit siguiente necesita otro `make check`.
+- **Trailers `Fuente:`:** los cuatro commits que tocan `knowledge/spec` los llevan en el cuerpo, y todos los ids existen (ADR-0067, 0082, 0090, 0092, 0096 y 0097; los ev-v17, ev-v19 y ev-v20 citados).
+- **Holdout y material:** `knowledge/cases/` no se toca y no hay agregados. Toda lectura reservada está en filas del día.
+- **Regímenes de cambio:** `knowledge/evidence`, `knowledge/feedback`, `data/manifests` y `knowledge/corpus` no se tocan.
+- **Ambigüedades:** A-59 se abre en `7592c73e` junto con `docs/spec/ambiguedades.md` y su fila de PROJECT_STATE. A-54 y A-16 cambian cada una con su `.md` en el mismo commit. Ninguna se cierra.
+- **ADR:** ADR-0097 tiene `## Estado` que empieza por «ACTIVE».
+- **Informes cerrados:** FTMO-REGLAS, RESPUESTAS-FTMO, VIDEO-JULIO y los seis ADR con recuadro solo ganan líneas (`git diff --numstat`: 0 borradas en todos), y lo nuevo va en recuadros `>`. HISTORIA solo crece (+183/−0).
+- **Lo demás:** no hay sitio nuevo con `cita` (las tres guardias no aplican). Ninguna cifra entra en una forma ejecutable (test_no_business_literals pasó en el make check). No hay ítems de evidencia nuevos (punto 10 sin objeto).
+- **Tres citas del informe comprobadas contra su fuente:** ADR-0064:84-86, ADR-0083:24-30 y ACTIVAR-SESION-06-MOTOR.md:154 (52 % / 69 %) casan. Lo mismo `test_kit.py:379` (`assert abiertas == {"A-35"}`) y ADR-0057:107-108.
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 6 importa, 3 menor. Requisitos: 27 hechos, 4 parciales, 1 no hecho (en PARADA, como el propio encargo prevé).
+
+| # | Requisito | Estado | Evidencia |
+|---|---|---|---|
+| 1 | Abrir con abrir-rama, base y CI de main | Hecho | informe §«Base comprobada»; `e69bfd05` |
+| 2 | Contrato (R4, alto, artefacto, lista blanca, feedback anterior protegido una a una) | Hecho | `contrato.yaml:1-55` (ver a1 sobre una comprobación) |
+| 3 | ADR-0097 en el bloque `ids-inexistentes` y fuera de él en su commit; A-59 fuera; ningún otro ADR | Hecho | `git show 7592c73e -- docs/encargos/…` (el bloque sale). ADR-0087 en el bloque del informe, declarado |
+| 4 | D0: tres órdenes sueltas, README antes, al repo solo pivote y delta | Hecho | `anexos/ACTIVAR-SESION-08/` (5 ficheros) |
+| 5 | Control de D0, fila por fila | Hecho | `delta-julio-f39e-base.txt`: 0 cambian, aparecen ni desaparecen |
+| 6 | 0.1 a 0.9 | Hecho | informe:44-365 |
+| 7 | F1 solo medido y en la PARADA, sin tocar `orden_stop_punto`, `sesgo_h4_rango_nuevo`, A-48 ni A-58 | Hecho | diff de `parametros.yaml` y `ambiguedades.yaml`: no aparecen |
+| 8 | F1/F5: las notas que no fijan valor | Hecho de otra forma, declarado | decisión 3; informe:595-605 (ver b2) |
+| 9 | F2.1: A-59, pregunta, no bloqueante, con lo buscado en el corpus; parámetro DEFAULT_AMBIGUOUS en `espera`; fila de PS | Hecho | `ambiguedades.yaml` (A-59); `parametros.yaml` (`orden_stop_lado_malo`); PS:76 |
+| 10 | F2.2: comprobación con lo mismo que el bróker, sin duplicarla; qué vela mira; traza y bitácora lo nombran | Hecho | `broker.py:558-571`, `:584`; `primitivas_broker.py:664-682`; `decisiones.py` (dos líneas nuevas); `cableado.CABECERA_ESPERAS` |
+| 11 | F2.3: ADR-0097, recuadros en 0083 y 0064, filas del índice | Hecho | ver b1 y b4 |
+| 12 | F2.4: tests antes que el código, compra y venta, no vuelve, camino real; cambios de sentido declarados | Hecho | `test_orden_lado_malo.py` (8); docstrings «CAMBIA DE SENTIDO A PROPOSITO» (ver b5) |
+| 13 | F2: filas declaradas antes y si casan | Hecho | declaradas en `f5ee88f7` (00:30), antes de `7592c73e` (01:56); (i), (ii) y (iii) comprobados en `julio-base.txt`/`julio-f2.txt` (ver b3) |
+| 14 | F3: no se activa; recuadro en ADR-0085 §3; las dos filas de «Para precisar» | Hecho | ADR-0085, recuadro del 2026-11-22; informe:548-566 |
+| 15 | F3: la frase del pivote en «Para la orden de cierre» | Hecho | informe:730-733 |
+| 16 | F4: cuadra; test que congela; motor y RN-009 sin tocar | Hecho | `test_zona_control_vela_contraria.py`; `src/botsito/domain` fuera del diff |
+| 17 | F5: S-1 en la descripción, sin valor | Hecho | `parametros.yaml` (`liquidez_m15_mecha_que_vuelve`) |
+| 18 | F5: S-7, recuadro en VIDEO-JULIO | Hecho | VIDEO-JULIO.md:808-812 |
+| 19 | F5: S-2, B-15, días gastados | Hecho | informe:589-613 |
+| 20 | F6: paráfrasis entera en el informe | Hecho | informe:624-634 |
+| 21 | F6.1: recuadros en FTMO-REGLAS (R13 y §4) y RESPUESTAS-FTMO | Hecho | ver a4 |
+| 22 | F6.2: A-54 y los cuatro `freno_*` sin cambiar valor, estado ni ambigüedad | Hecho | diff de `parametros.yaml` (solo descripción); `--comprobar` al día |
+| 23 | F6.3: recuadro en ADR-0082 §4 | Hecho | ADR-0082, recuadro del 2026-11-22 |
+| 24 | F7.1: la auditoría, en commit propio | No hecho, en PARADA (decisión 0) | el encargo manda decirlo en la fase 0 si `knowledge validate` se queja; la línea 248 del fichero de Aleks trae «ADR-0087» (`grep -n ADR-0087`) |
+| 25 | F7.2: los cuatro textos del panel | Hecho | DEMO-FTMO.md:159-166, `reloj_dia_riesgo`, ADR-0090 y FTMO-REGLAS (R2), recuadros |
+| 26 | F7.3: A-16 no se cierra; recuadro en ADR-0092 §10 | Hecho | cifras comprobadas contra METODO-FIDELIDAD-RENTABILIDAD.md:886-889 |
+| 27 | F7.4: propuesta de `bloqueante` | Hecho (propuesta) | decisión 5 |
+| 28 | F7.5 y F7.6 | Hecho | informe:679-684 |
+| 29 | F7.7: lo de la orden de cierre, con bytes | Parcial | ver b6 |
+| 30 | Para la rama y la sesión siguientes | Hecho | informe:690-726 |
+| 31 | Informe y tamaño de PROJECT_STATE | Parcial | 24.809 bytes (`wc -c`); a la tabla le faltan aún la CI y la PARADA final |
+| 32 | Push a `fix/` y CI; dar el número del run | Parcial | run 45005647166 sobre `1a5cf2d2` (= `origin/fix/activar-sesion-08`): solo falla `test_state_check_ok_on_real_repo` («PROJECT_STATE declara la rama 'trabajo/activar-sesion-08'; la rama actual es 'fix/activar-sesion-08'»); `1 failed, 3510 passed, 102 skipped`. El número aún no está en el informe |
+| 33 | PARADA final | Pendiente (va tras el revisor) | `## Estado` (informe:863) aún dice «faltan la CI de Linux y el revisor» |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | importa | (Alcance 3) ADR-0097 descarta la alternativa (2) diciendo que la petición rechazada va «contada al día (FTMO, 2026-10-05)». Esa fuente no lo dice, y la propia rama escribe en A-54 que sigue sin respuesta. El §3 del mismo ADR sí lo cuenta bien («sin distinguir las rechazadas»). | ADR-0097, «Por que descartamos las demas», (2). FTMO-REGLAS.md, recuadro del 2026-10-05, pregunta 1: «No distingue rechazadas…». `ambiguedades.yaml`, A-54: «Sigue sin respuesta: si una petición RECHAZADA cuenta» |
+| b2 | importa | (Alcance 1) La nota de F5 sobre S-4, dibujo 2, atribuye a `ev-v20-005520-80eba002` «hasta que lo rompa una vela de su color». Ni la cita ni la afirmación del ítem lo traen: la extracción lo pone en [55:41], que es justo donde acaba el ítem. | informe:599-601. Afirmación del ítem: «roto por encima con una vela de color contrario, sigue buscando alcistas y el rango queda en el mismo nivel, sin actualizarlo» (t1 0:55:41). SESION-08-EXTRACCION.md §3.4: «el mismo nivel lo dejamos hasta que puede romper con una vela…» (`[55:41]`) |
+| b3 | importa | (F2, criterio ii) La explicación de 2026-07-10, de 11 a 15, dice «las órdenes enviadas tras esperar se llenan y saltan su stop (pos-o6, pos-o7, y después pos-o8)». En la bitácora solo o1 y o6 salen tras una espera; o7 y o8 se colocan sin esperar. La cadena con RN-032 puede seguir en pie, pero tal como está escrita afirma más de lo que muestra su fuente. | informe:530-533. `data/activar-sesion-08/decisiones-f2/bitacora.DIAGNOSTICO.2026-07-10.txt`: «enviada tras esperar» solo en las líneas 15 (o1) y 243 (o6); o7 (línea 249) y o8 (línea 330) sin ella; RN-032 desde la línea 336 (07:52Z); pos-o8 cerrada en la línea 345 (07:55:49Z) |
+| b4 | importa | (Alcance 3 y código de F2) Hay un orden de prioridad no declarado. La comprobación del lado malo corre ANTES de enviar, y el bróker mira cierre, freno y límite de volumen ANTES que el precio. Así, una stop del lado malo que además cae en un cierre de mercado, en el corte del freno o en el límite de volumen ya no se rechaza ni gasta el punto: espera. ADR-0097 §1 dice que esos motivos «sí gastan el punto», y el informe solo declara la prioridad del lote (ADR-0081). Además, ni siquiera la del lote está escrita en el ADR. | `primitivas_broker.py:664-668` (antes de enviar) frente a `broker.py:526` (cierre), `:530` (freno), `:533` (límite) y `:535` (precio). ADR-0097 §1, segundo párrafo. Informe:478-480 (solo el lote) |
+| b5 | importa | (F2.4) Un test no prueba lo que dice. El docstring de `test_el_broker_y_la_espera_miran_la_misma_cotizacion` afirma que «con la espera apagada, el broker rechaza justo en el cierre en que, con la espera encendida, la orden no se envia». El test solo corre con la espera encendida y consulta el método en dos instantes. Ningún test fija que el rechazo de `se_gasta_el_punto` caiga en `_cierre(Z)`. | `tests/unit/test_orden_lado_malo.py:234-244`; `:222-231` (no comprueba el instante del rechazo) |
+| b6 | importa | (F7.7) Las correcciones de texto del §2.5 de la auditoría quedan sin preparar («la 124, a medir; la 119 y la 123 … a reclasificar … hay que localizarlas en el PS de la rama»), y el saldo de bytes las deja fuera. El encargo pedía dejarlas preparadas, con su cuenta de bytes. | informe:768-772 y :775-778 («sin las correcciones de §2.5, que no se han medido una a una») |
+| b7 | menor | (Alcance 1) La descripción de `orden_stop_lado_malo` pone entre comillas «se pone igual»; la cita del ítem dice «se pone la orden igual». | `parametros.yaml` (`orden_stop_lado_malo`): «que la orden «se pone igual»»; `ev-v17-014103-8cf3e7fb`, `cita_literal` |
+| b8 | menor | (Alcance 4) El informe dice del correo del 2026-11-20 que «su pie prohíbe compartirlo». La paráfrasis no lo dice y el informe no da fuente. Parece arrastrado del correo del 2026-10-05, que sí lo tenía documentado. | informe:627. FTMO-REGLAS.md, recuadro del 2026-10-05: «su pie prohíbe compartirlo» (de aquel correo) |
+| b9 | menor | El reparto de los 8 tests que fallaban en main no cuadra: «los seis que esperan» son cinco (2 que vuelven, 2 que no vuelven y el del camino real); el sexto, el de `se_gasta_el_punto`, falla por otra razón. Y en DEMO-FTMO, «ese sábado» no tiene a qué referirse. | informe:449-451; `test_orden_lado_malo.py:176-231, :287`; `docs/runbooks/DEMO-FTMO.md:163` |
+
+**Los alcances del encargo, uno por uno:**
+- **(1) Tramos no citables y citas.** Contrasté contra `tramos_no_citables.yaml` las marcas que citan los recuadros, ADR-0097, A-59, A-16 y las descripciones: v20 1:00:49, 1:02:43, 1:03:54, 1:12:13 y 0:01:38-0:03:03; v21 1:23:48, 1:26:23, 1:59:33 y 2:01:34; los ítems de v17 y v19. Ninguna cae en un tramo, y las citas literales casan con su ítem, salvo b2 y b7.
+- **(2) Bloque de días.** No se activó ninguna corrección como regla. Lo único es el test de F4, que congela sin tocar el motor ni RN-009 (`src/botsito/domain` fuera del diff; `strategy_spec.yaml` solo cambia una descripción).
+- **(3) ADR-0097.** La regla de §1 es la del encargo, palabra por palabra en lo esencial. Separa «Dicho» de «Lectura del consultor» (§2), y la lectura copia el encargo tal cual. Reservas: b1 y b4. Lo que añade y no estaba en el encargo: la enumeración de motivos de rechazo de §1 y «Solo vale para la orden STOP en la ruptura (A-47)». Las dos son coherentes con el encargo.
+- **(4) El correo de FTMO.** `grep` de frases inglesas típicas de correo y de nombres en las líneas añadidas: nada. Lo único que se cita en inglés («maximum capital allocation rule», «USD/LOT*») viene de las páginas de FTMO que ya estaban en FTMO-REGLAS. Matiz: b8.
+- **(5) Cifras de corrida.** `orden_stop_lado_malo` se fijó por decisión del encargo y antes de correr. El informe:543 lo dice, y ningún valor cambió por el delta.
+- **(6) Fotogramas.** El diff no nombra ningún `fr-v20` ni `fr-v21` ni `frames show` (la única mención está en una línea archivada en HISTORIA). Las lecturas de calentamiento tienen fila: la base y los `motor decisiones` (2026-11-21, marzo y junio), la corrida F2 y el test del 8 de julio (2026-11-22, junio), y los `make check`.
+
+**Código de F2:**
+- `lado_equivocado_al_colocar` reutiliza `Mercado.cotizacion` y `lado_equivocado`, y `_precio_infringido` la llama. Ya no hay segunda copia de la lógica, aunque la cotización se calcula dos veces con el mismo resultado (`broker.py:577-584`).
+- La espera se lleva por (sesión, punto), sin gastar la caja ni el punto. La sección de esperas solo sale si hay alguna: sin esperas, el informe sale igual byte a byte. La bitácora nombra los dos estados.
+- Los tests que cambian de sentido lo dicen en su docstring y conservan la opción anterior con `_registro_se_gasta`.
+- Las cifras del informe salen igual en las salidas: base 5 rechazos `precio_invalido` al colocar y F2 «ninguno»; 6 esperas, 3 enviadas; 2026-07-02 con 45 peticiones en las dos.
+
+#### Lo que no pude comprobar
+- **Que no se abrió ningún fotograma de v20 ni de v21.** Las fechas de acceso no sirven (`find … -newerat '2026-11-21'` da 11.977 de 11.977, todos tocados al extraerse). Solo tengo la ausencia en el diff y las declaraciones de HOLDOUT.
+- **Que los 8 tests de F2 fallaban con el `src/` de main y que el de F4 pasa en main.** Medirlo exige un clon desechable (comparar-con-main), que escribe. Lo que lo sustituye: `src/botsito/domain` no cambia, así que el de F4 es equivalente en main.
+- **La comprobación del contrato `knowledge validate > knowledge-validate.log`** escribe un fichero, así que no la corrí. La sustituye su línea OK en `make-check.log` sobre el árbol de HEAD.
+- **`spec docs --escribir`** escribe. Corrí `spec docs` sin la opción: OK.
+- **`make check`** no lo corrí (escribe). Uso `make-check.log` y el run de CI.
+- **La paráfrasis de FTMO contra el correo:** el correo no está en el repo, y la fuente es la paráfrasis.
+- **Que el README de anexos se escribió «antes de correr»:** se commiteó con los resultados, en `f5ee88f7`.
+
+#### Comandos ejecutados
+(23 grupos de comandos de solo lectura: git log, diff y show de la rama; `contrato_rama.py`; `feedback apply --check` (exit 1); `generar_capa.py --comprobar`; `spec docs` sin escribir; Read y `cat` del ADR-0097, de los ítems citados y de `tramos_no_citables.yaml`; los diffs de spec, ADR, informes cerrados, código y tests; `pytest` de los tests de F2 y F4 y de una selección de `test_cableado.py`, en verde; `grep` de frases inglesas y de fotogramas; `wc -c PROJECT_STATE.md`; `gh run view 45005647166`. La lista entera, en su mensaje; aquí resumida, sin cambiar nada de lo de arriba.)
+
+## Lo que se hizo con los hallazgos del revisor
+
+- **a1 (importa), arreglado:** la comprobación `feedback apply --check` sale del contrato: la rama no
+  tiene registros de feedback (nada se cierra), y la comprobación no tiene objeto.
+- **a2 (menor), arreglado:** fuera el aviso de PLANTILLA del principio del informe.
+- **a3 (menor), arreglado:** la columna del recuento de la fila del 2026-11-22 («lo que lee la rama
+  este día») nombra también junio.
+- **a4 (menor), arreglado:** el recuadro del §4 de FTMO-REGLAS dice ahora que la respuesta no contesta
+  nada de lo que ese § deja abierto (de R13, solo si sus límites van al registro), y que lo de qué
+  cuenta como petición lo preguntaba A-54.
+- **b1 (importa), arreglado:** ADR-0097, descarte de la alternativa (2): «FTMO dijo el 2026-10-05
+  que todo tipo de orden cuenta para el límite, sin distinguir las rechazadas, y no ha dicho si una
+  rechazada cuenta (A-54 sigue sin esa respuesta); el freno de ADR-0067 sí las cuenta».
+- **b2 (importa), arreglado:** la nota de S-4, dibujo 2, se queda con la afirmación del ítem; lo de
+  «hasta que puede romper con una vela» va atribuido a la extracción ([55:41]), sin ítem.
+- **b3 (importa), arreglado:** la explicación de 2026-07-10 de 11 a 15 dice ahora que solo o1 y o6
+  salen tras una espera; o6 y o7 saltan su stop y o8 se llena; con esa secuencia, distinta de la base,
+  RN-032 prohíbe desde las 07:52Z (comprobado en la bitácora: o8 llenada a las 07:50:14Z, su stop a
+  las 07:55:49Z, ya con RN-032 prohibiendo).
+- **b4 (importa), arreglado en el texto, y a la PARADA final:** el orden con los otros motivos queda
+  escrito en ADR-0097 §1 y en el informe (F2): el lote de ADR-0081 manda (gasta el punto); con
+  cualquier otro motivo de rechazo al colocar a la vez que el lado malo, manda el lado malo (espera).
+  Es una decisión de implementación que la regla no dice; el código no cambia; va a «Lo que no me
+  convence».
+- **b5 (importa), arreglado:** `test_con_se_gasta_el_punto_…` fija que el rechazo cae en
+  `_cierre(Z)`, y `test_el_broker_y_la_espera_miran_la_misma_cotizacion` corre las dos opciones y
+  compara: el rechazo de `se_gasta_el_punto` cae en el mismo instante en que empieza la espera.
+- **b6 (importa), arreglado:** las correcciones de §2.5 van preparadas con su texto y sus bytes en
+  «Para la orden de cierre»; el saldo pasa a −271 (24.538 bytes).
+- **b7 (menor), arreglado:** «se pone la orden igual», como el ítem (spec 19.1.4, con `spec docs`).
+- **b8 (menor), arreglado:** fuera «su pie prohíbe compartirlo» para el correo del 2026-11-20; queda
+  «como el del 2026-10-05; el repositorio es público».
+- **b9 (menor), arreglado:** el reparto de los 8 (cinco que esperan y tres que nombran lo nuevo), y
+  «el sábado 2026-11-07» en DEMO-FTMO.
+- **Lo que el revisor no pudo comprobar**, contestado donde se puede: los 8 tests de F2 fallaron con
+  el `src/` de `main` porque se corrieron ANTES de tocar `src/` (la rama solo había cambiado
+  documentos: `git diff main -- src` vacío en ese momento), no en un clon (desviación de la skill
+  `comparar-con-main`, declarada); el README de anexos se escribió en el scratchpad y se copió al
+  repo antes de la primera corrida, aunque se commiteó con los resultados.
+
+## El cierre de la rama: CI
+
+- `git push origin trabajo/activar-sesion-08:refs/heads/fix/activar-sesion-08` sobre `1a5cf2d2`:
+  **run 45005647166**, `1 failed, 3510 passed, 102 skipped`; el único fallo,
+  `test_state_check_ok_on_real_repo` por el nombre `fix/` (el aceptado).
+- El run del último commit (el de los hallazgos), en el mensaje final.
+
+## PARADA final
+
+**F1 (va siempre aquí).** A-48 (S-3): 0.3 enseña que, en el esquema inventado, `ultimo_pivote_m1` cae
+en la base de la zona de control con un retroceso limpio (y coincide con «el punto más bajo de la zona
+de control que valida», salvo la mecha de la vela que la abre), y se separa con estructura interna (el
+0 sube al pivote interno y RN-009 cuenta dos zonas); `referencia_de_la_toma` no coincide en ninguna.
+0.4, en las cuatro sesiones del bloque: el bot mueve el 0 a cada pivote nuevo (de 41 a 58 puntos
+distintos por sesión), y las tres correcciones del 0 dicen que no va en la estructura interna. A-58
+(S-4): el dibujo 2 es la lectura d) de hoy; el dibujo 1, la b), sin palabras que la confirmen. **El
+trader no ha contestado** (ni S-3, ni A-35, ni A-43) mientras la rama estuvo abierta. Las vías, en las
+decisiones 1 y 2. Nada de `orden_stop_punto`, `sesgo_h4_rango_nuevo`, A-48 ni A-58 se ha tocado.
+
+**A-59, tal como quedó** (`knowledge/spec/ambiguedades.yaml`): título «qué haces con la orden cuando
+se forma la caja y el precio ya está más allá del 0»; pregunta «Cuando se forma la caja y el precio
+ya está más allá del 0, ¿qué haces con la orden: entras igual, esperas a que el 0 quede del lado
+bueno, mueves el 0 o la descartas?», con lo de la sesión 6 y de la 7b citado de sus cinco ítems, la
+lectura del consultor (`orden_stop_lado_malo` = `espera`, ADR-0097) y lo que se buscó en el corpus;
+pregunta, no bloqueante, ABIERTA, `resuelve_en` F20 y F22.
+
+**Los deltas.** Control (la base de esta rama) igual a la F2 de la 7a: 11 parejas y 19 de más, 86
+filas idénticas. Tras F2: **10 parejas y 20 de más** (−1 y +1 contra el control; −4 y −19 contra la
+línea base de 14 y 39). Las filas declaradas **casan**: 0 rechazos por precio al colocar (antes 5); las
+filas que cambian son de las sesiones declaradas, salvo tres de 2026-07-10 de 11 a 15, que quita
+RN-032 (freno de la cuenta); el 2026-07-02 sigue en 45 peticiones.
+
+**Lo que quedó en PARADA** («Lo que necesito que decidas»): 0, la auditoría y ADR-0087 (F7.1); 1 y
+2, F1 (A-48 y A-58); 3, dónde van las notas de S-3 y S-4; 4, la parte de E21 sin cifra; 5,
+`bloqueante` de A-35 (F7.4); 6, los frenos de la cuenta antes de (3); 7, qué leyó el trader como zona
+(F4).
+
+**Lo que no me convence:**
+- **El orden de F2 frente a los otros motivos de rechazo** (revisor, b4): con el 0 del lado malo, un
+  cierre de mercado, el freno, el volumen, el stops level o el margen ya no gastan el punto, porque la
+  orden no llega al bróker. Lo elegí por cómo está el código (la comprobación va antes de enviar) y lo
+  declaré en ADR-0097; la regla no lo dice. Si prefieres que esos motivos manden, la comprobación
+  tendría que ir después de los del bróker, y eso es otra API del bróker.
+- **La pareja que se pierde la quita RN-032**, no la regla: la espera cambia la secuencia de la mañana
+  del 10 de julio y el freno de la cuenta prohíbe antes. Es la tensión de los frenos de la cuenta que
+  ACTIVAR-SESION-07.md dejó para antes de (3) (decisión 6).
+- **Las láminas no enseñan la espera** (leen solo los no envíos de ADR-0081): si la sesión siguiente
+  usa láminas de días con esperas, el trader no las verá dibujadas.
+- **La reentrada sin ticks salía rechazada en `main`** (`test_sello_respaldo`): un test que pasaba
+  sin mirar el estado. Puede haber más casos parecidos, sin medir, en los días sin ticks de la
+  construcción; la corrida de (3) los dirá.
+- **Las notas de S-3 y S-4** se quedan solo en el informe (decisión 3), y «la ruptura por abajo» no
+  tiene ítem.
+- **El encargo daba «PICO DE MEMORIA en la última línea» como señal de que la memoria cortó un `make
+  check`**; es la última línea de todos (auditor). No hizo falta repetir ninguno.
+
 ## Estado
 
-Trabajo de la rama hecho (F1, F7.1 y F7.4 en la PARADA); faltan la CI de Linux y el revisor.
+Rama lista para revisión, NO cerrada.

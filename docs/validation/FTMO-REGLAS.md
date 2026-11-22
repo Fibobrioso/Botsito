@@ -327,11 +327,12 @@ Swing), R14 (bots permitidos) y R19 (sin reglas de consistencia adicionales, sin
 - **R14**: qué es la «maximum capital allocation rule», que no aparece en ninguna página leída;
 - **R12**: el asterisco de «USD/LOT*».
 
-> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F6; el cuerpo no se toca).** De lo de
-> arriba, la respuesta de FTMO del 2026-11-20 (ticket MVT-CQNXT-065; paráfrasis del consultor en
-> `docs/validation/ACTIVAR-SESION-08.md`; recuadro junto a R13, en el §2) contesta qué cuenta como
-> petición para R13 (las acciones de trading; las lecturas no) y añade dos cosas que este §4 no
-> preguntaba: que se permite que las decisiones las calcule un programa propio en Python que manda
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F6; el cuerpo no se toca).** La
+> respuesta de FTMO del 2026-11-20 (ticket MVT-CQNXT-065; paráfrasis del consultor en
+> `docs/validation/ACTIVAR-SESION-08.md`; recuadro junto a R13, en el §2) no contesta nada de lo que
+> este §4 deja abierto: de R13, este § solo pregunta si sus límites entran en el registro como
+> parámetros `firma_*`, y eso sigue. Contesta qué cuenta como petición para R13 (las acciones de
+> trading; las lecturas no), que preguntaba A-54, y añade dos cosas que nadie preguntaba aquí: que se permite que las decisiones las calcule un programa propio en Python que manda
 > las órdenes por el terminal de MT5, si la estrategia cumple sus condiciones y no es alta
 > frecuencia ni arbitraje de latencia, sin pedir el código; y que los límites de infraestructura
 > valen igual para la cuenta Swing en MT5. Lo demás de este § sigue abierto.

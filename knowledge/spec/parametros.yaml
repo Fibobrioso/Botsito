@@ -821,8 +821,8 @@ parametros:
       `espera`: no se envia (ninguna peticion), la caja no queda usada y el punto no se gasta; se
       envia en el primer cierre de M1 en que el 0 vigente quede del lado bueno, y RN-006 la mueve si
       el punto cambio; la comprobacion es la del broker (la misma cotizacion, que sin ticks es la
-      M1 anterior al cierre). Lo que dijo el trader: en la sesion 6 (2026-11-04), que la orden «se
-      pone igual» y el nivel de la caja se va actualizando (ev-v17-014103-8cf3e7fb,
+      M1 anterior al cierre). Lo que dijo el trader: en la sesion 6 (2026-11-04), «se pone la orden
+      igual», y que el nivel de la caja se va actualizando (ev-v17-014103-8cf3e7fb,
       ev-v17-014235-f3375358, ev-v17-014350-ec133d13); en la 7b (2026-11-20, S-6), la opcion
       «otra» de la hoja, inclinandose por esperar: «inclinaría más que nada que espero que el cero
       quede al lado bueno y entonces la pongo» (ev-v20-010243-21636d5f), y que la orden tiene que
