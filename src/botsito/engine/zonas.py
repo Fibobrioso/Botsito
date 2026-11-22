@@ -41,15 +41,17 @@ R5), o `referencia_de_la_toma`, el de `referencia_del_breaker` en la toma- con l
 que RN-006 usa para reubicarla. Que gasta un punto lo fija ADR-0083 (enmienda la decision 1 de
 ADR-0064): el rechazo del broker -al colocar o al llenar- y el no envio del bot gastan el punto,
 y ninguna caja de ese punto se vuelve a colocar en la sesion (`marcar_rechazada`,
-`punto_rechazado`); el llenado NO lo gasta: la zona queda usada desde que su orden se coloca
-(`marcar_usada`, `zonas_usadas`) y, cerrada su operacion sin ganar -perdida, break even o equal-,
-el cableado la libera (`liberar_usada`) y el punto se vuelve a colocar, con la misma caja o con
-otra; una zona cuya orden se CANCELO (RN-035, RN-036, un escenario nuevo, la ventana de ADR-0068,
-el fin del dia) sigue usada: esa caja no vuelve, otra caja del mismo punto si; tras una ganadora
-RN-034 termina el escenario y no se coloca nada. Con `caja_se_fija` =
-`en_cada_cierre_m1`
-(sensibilidad de ADR-0064, decision 5) el 1 de la caja se recalcula en cada cierre de M1 hasta el
-llenado: un 1 nuevo es una zona nueva del mismo punto, y RN-006 la reubica."""
+`punto_rechazado`); salvo la stop cuyo 0 queda del lado malo con `orden_stop_lado_malo` = `espera`
+(ADR-0097, A-59): esa no se envia, no gasta ni la caja ni el punto, y espera al primer cierre en
+que el 0 quede del lado bueno (`primitivas_broker.colocar_orden_limite`); el llenado NO lo gasta:
+la zona queda usada desde que su orden se coloca (`marcar_usada`, `zonas_usadas`) y, cerrada su
+operacion sin ganar -perdida, break even o equal-, el cableado la libera (`liberar_usada`) y el
+punto se vuelve a colocar, con la misma caja o con otra; una zona cuya orden se CANCELO (RN-035,
+RN-036, un escenario nuevo, la ventana de ADR-0068, el fin del dia) sigue usada: esa caja no
+vuelve, otra caja del mismo punto si; tras una ganadora RN-034 termina el escenario y no se coloca
+nada. Con `caja_se_fija` = `en_cada_cierre_m1` (sensibilidad de ADR-0064, decision 5) el 1 de la
+caja se recalcula en cada cierre de M1 hasta el llenado: un 1 nuevo es una zona nueva del mismo
+punto, y RN-006 la reubica."""
 
 from __future__ import annotations
 
@@ -427,6 +429,14 @@ def marcar_rechazada(estado: EstadoDia, sesion: str | None, zona_id: str) -> Non
         mem.setdefault("rechazados", set()).add(punto)
 
 
+def punto_de_la_zona(estado: EstadoDia, sesion: str | None, zona_id: str) -> str | None:
+    """La clave `nivel@inicio` del punto de esta zona en la sesion, o None si la zona no viene del
+    productor (una zona sintetica). La usa la espera de ADR-0097 para seguir un punto aunque cambie
+    su caja."""
+    punto = _de_la_sesion(estado, sesion).get("punto_de_zona", {}).get(zona_id)
+    return None if punto is None else str(punto)
+
+
 def punto_rechazado(estado: EstadoDia, sesion: str | None, zona_id: str) -> bool:
     mem = _de_la_sesion(estado, sesion)
     return mem.get("punto_de_zona", {}).get(zona_id) in mem.get("rechazados", set())
@@ -622,6 +632,7 @@ __all__ = [
     "marcar_usada",
     "memoria_de_sesion",
     "orden_nace_en_el_punto",
+    "punto_de_la_zona",
     "punto_rechazado",
     "primitivas_zona",
     "zona_del_punto",

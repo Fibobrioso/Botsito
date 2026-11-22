@@ -75,6 +75,13 @@ medianoche del servidor, se reabre A-19 y `reloj_dia_riesgo` vuelve a DEFAULT_AM
 A-28; hasta entonces `reloj_dia_riesgo` sigue CONFIRMED en `civil_operativa` por el reglamento
 (ADR-0027).
 
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F7; el cuerpo no se toca).** La
+> verificación del panel la declaró HECHA Aleks el 2026-11-07, comprobada por el consultor en su
+> captura: en Account MetriX de la prueba gratuita (inicio 28/10/26, fin 11/11/26) el límite diario
+> se restablecía hacia las 23:00 UTC, las 00:00 de España (CET), y no a la medianoche del servidor
+> (22:00 UTC). `reloj_dia_riesgo` sigue CONFIRMED en `civil_operativa` y A-19 no se reabre
+> (`docs/state/HISTORIA.md`, «Next Action HECHA · A · el panel del límite diario»).
+
 **El calendario de cierres** (`knowledge/cuentas/cierres/ftmo-2step-swing-100k.yaml`, ADR-0068)
 declara sus horas en `America/New_York` porque una Trading Update decía que el servidor cambia de
 hora con EE. UU.: A-28 lo confirma con la medida, ningún cierre cambia y la cabecera deja de ser

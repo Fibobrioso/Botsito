@@ -1,5 +1,13 @@
 # Respuestas de FTMO al ticket VDW-DPMWR-965 (2026-10-05) y los tags tras F36z
 
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F6; informe cerrado: el cuerpo no se
+> toca). Hay una respuesta posterior.** FTMO contestó el 2026-11-20 (ticket MVT-CQNXT-065) al correo
+> de Aleks del 2026-11-19: qué cuenta para el límite de 2.000 peticiones (las acciones de trading;
+> las lecturas no), un programa propio en Python que decide y manda las órdenes por MT5, y la cuenta
+> Swing. Sin copiar el correo: la paráfrasis del consultor está en
+> `docs/validation/ACTIVAR-SESION-08.md` («La respuesta de FTMO del 2026-11-20»), y lo que toca a R13,
+> en el recuadro del 2026-11-22 de `docs/validation/FTMO-REGLAS.md`. A-54 sigue ABIERTA.
+
 - **Rama:** `trabajo/respuestas-ftmo`, punto T del Next Action.
 - **Encargo:** `docs/encargos/trabajo-respuestas-ftmo.md`, dado por el consultor el 2026-10-05.
 - **Base:** `main` en `54c69fe`, el commit de estado de `stable/F36z-ventana-no-citable`, que apunta

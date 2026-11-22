@@ -155,6 +155,10 @@ class TrazaBroker:
     # las ordenes que el bot no envio (ADR-0081 §2 y §3): (instante ms, zona, motivo, lote del
     # riesgo); el mismo objeto que `ContextoDia.no_enviadas`
     no_enviadas: list[tuple[int, str, str, Decimal]] = field(default_factory=list)
+    # las stop que esperan porque su 0 queda del lado malo (ADR-0097): (instante ms del primer
+    # cierre sin enviar, zona, orden que se envio despues o None); el mismo objeto que
+    # `ContextoDia.esperas`
+    esperas: list[tuple[int, str, str | None]] = field(default_factory=list)
     # SOLO SALIDA (rama trabajo/punto-usado): orden_id -> id de su zona, el mismo diccionario que
     # `ContextoDia.zona_de_orden`. Con el `EstadoDia` del dia (`MotorCableado.estados`), «###
     # Ordenes» saca de el el punto de la orden (`punto_de_zona`) y el 1 de su caja
@@ -383,6 +387,7 @@ class MotorCableado:
             limites=tuple(limites),
             margen_al_colocar=ctx.margen_al_colocar,
             no_enviadas=ctx.no_enviadas,
+            esperas=ctx.esperas,
             zona_de_orden=ctx.zona_de_orden,
         )
         vistos = 0
@@ -986,6 +991,12 @@ CABECERA_NO_ENVIADAS = (
     "### Ordenes no enviadas por el bot (dia | sesion | instante UTC | zona | motivo | lote del "
     "riesgo)"
 )
+# la stop cuyo 0 queda del lado malo y espera sin enviarse (ADR-0097, A-59): no es un no envio de
+# los de ADR-0081 (no gasta la caja ni el punto), y por eso va en su propia seccion
+CABECERA_ESPERAS = (
+    "### Esperas: la orden stop cuyo 0 queda del lado malo no se envia (ADR-0097) (dia | sesion | "
+    "primer cierre sin enviar UTC | zona | orden que se envio despues)"
+)
 # las siete ultimas columnas (rama trabajo/margen-lote) son SOLO salida: el lote colocado, la
 # distancia de la orden a su stop, el margen y el riesgo medidos al colocar con la unica funcion de
 # margen (`broker.margen_requerido`), el lote del riesgo (RN-011) y el limite que mordio; `-` en lo
@@ -1145,6 +1156,23 @@ def _informe_ordenes(motor: MotorCableado) -> list[str]:
     if not n_no_enviadas:
         lineas.append("ninguna")
     lineas.append(f"no enviadas: {n_no_enviadas}")
+    # las stop que esperaron porque su 0 quedaba del lado malo (ADR-0097), y la que se envio luego.
+    # SOLO si hubo alguna: sin esperas (o con `se_gasta_el_punto`) el informe es byte a byte el de
+    # antes de ADR-0097, que es lo que comparan los tests de «lo que ya salia»
+    esperas = [
+        (dia, ms, zona, orden_id, motor.trazas_broker[dia].limites)
+        for dia in sorted(motor.trazas_broker)
+        for ms, zona, orden_id in sorted(motor.trazas_broker[dia].esperas, key=lambda e: e[0])
+    ]
+    if esperas:
+        lineas += ["", CABECERA_ESPERAS]
+        for dia, ms, zona, orden_id, limites in esperas:
+            lineas.append(
+                f"{dia} | {_sesion_de(ms, limites)} | {_instante(ms).isoformat()} | {zona} | "
+                f"{orden_id or 'ninguna'}"
+            )
+        enviadas = sum(1 for e in esperas if e[3] is not None)
+        lineas.append(f"esperas: {len(esperas)} (enviadas despues: {enviadas})")
     # los rechazos del broker por motivo y por mes: los de colocar (la orden nace rechazada) y los
     # de modificar (la orden sigue como estaba), por separado
     por_motivo: Counter[tuple[str, str, str]] = Counter()
@@ -1589,6 +1617,7 @@ def _informe_metodo(motor: MotorCableado) -> list[str]:
 
 
 __all__ = [
+    "CABECERA_ESPERAS",
     "DEPURACION",
     "NOMBRE_MOTOR",
     "CableadoError",

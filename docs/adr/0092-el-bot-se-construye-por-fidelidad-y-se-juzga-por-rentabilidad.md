@@ -260,6 +260,15 @@ panel de FTMO. Las medidas previas de la serie del trader se nombran con ella:
 `BLOQUE-DE-LA-CAJA.md` §2.3 (leyendas OHLC, mediana +2 puntos, OANDA por encima),
 `ABRIL-Y-LA-CAJA.md`, `LA-CAJA-DEL-29-DE-ABRIL.md` y `VIABILIDAD-TRADER.md` §4.
 
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F7.3; el cuerpo no se toca). A-16 NO se
+> cierra en la rama que paga la deuda del panel.** Lo posterior y pre-registrado manda: ADR-0096
+> (2026-11-19) y `docs/validation/PREREGISTRO.md` dicen que A-16 sigue ABIERTA con la regla de §9 de
+> este ADR, y la propia medida (`METODO-FIDELIDAD-RENTABILIDAD.md` §1.3) dice que no contesta la
+> pregunta de A-16 (no compara velas con velas ni la ruptura de un nivel por una milésima). La rama
+> que paga el panel (`trabajo/activar-sesion-08`) añade al texto de A-16 esa medida y la vela de otro
+> color entre su plataforma y Dukascopy (`ev-v19-012924-64367863`), sin medirla; `resuelve_en` sigue
+> en F26. Decisión del consultor del 2026-11-21 (encargo de esa rama, F7.3).
+
 ### 11. El sesgo del material sin vídeo, como diagnóstico
 
 (La respuesta, punto 11.) La re-corrida que cuenta da la cifra entera y, además, la misma sin las

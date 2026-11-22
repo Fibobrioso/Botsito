@@ -804,6 +804,12 @@ como V. (La primera versión, solo con T fuera, en 8a08da4.)
    - **Bloque técnico, dos preguntas**: «la tarde del 10 de julio no está en el vídeo y el libro
      tiene tres ventas; ¿se grabó en otra parte?» (punto 1) y «¿en el backtest dejas entradas
      válidas sin tomar? ¿cuándo y por qué?» (punto 2).
+
+     > **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F5; el cuerpo no se toca).** La
+     > primera la contestó el trader en la sesión 7b (S-7, v20, 2026-11-20): la tarde del 10 de
+     > julio **no se grabó**: «Que si es que no se llega a mostrar, simplemente, o sea, la B no se
+     > grabó, no se grabó y eso.» (`ev-v20-011213-947092b6`; `SESION-08-EXTRACCION.md` §3.7). No
+     > dice ninguna otra parte. Las tres ventas del 10 de julio en 11-15 siguen como NO APARECE.
    - **La clasificación de T de las 81 filas** (§4.1 y §4.2), aceptada por el consultor: 35 regla
      desconocida (30 del rango de H4), 5 error nuestro (sospecha), 4 material incompleto, 37 sin
      clase. **Nota para P5**: hasta que el trader explique F7 #10 (v14 0:42:02, «no le voy a tomar

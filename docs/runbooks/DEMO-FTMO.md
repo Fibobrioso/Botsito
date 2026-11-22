@@ -156,10 +156,14 @@ en UTC+1 y Lima en UTC−5, medido con `zoneinfo`). La sesión 6 con el trader f
 el martes 3, como se preveía), y la ejecución 3 se hizo el jueves 5 (corregido en el cierre de
 `trabajo/activar-sesion-06`).
 
-**Pendiente, sin ejecución:** mirar en el panel de la cuenta de FTMO **a qué hora se recalcula el
-límite de pérdida diaria**: a medianoche de España o a medianoche del servidor. Era la «verificación
-explícita» de A-28; ninguna de las tres la hizo, y desde ADR-0090 es una línea propia para ti en la
-Next Action. Apúntalo con la fecha y la hora, mientras la prueba del 2026-10-29 siga viva.
+**Hecho, sin ejecución (declarado por Aleks el 2026-11-07):** a qué hora se recalcula el límite de
+pérdida diaria en el panel de la cuenta de FTMO. Era la «verificación explícita» de A-28; ninguna de
+las tres ejecuciones la hizo, y desde ADR-0090 fue una línea propia de la Next Action. En Account
+MetriX de la prueba gratuita (inicio 28/10/26, fin 11/11/26), el aviso de «Pérdida permitida del día»
+se restablecía hacia las 23:00 UTC del sábado 2026-11-07, las 00:00 de España (CET), y no a la medianoche
+del servidor (22:00 UTC): `reloj_dia_riesgo` sigue CONFIRMED en `civil_operativa` y A-19 no se reabre
+(`docs/state/HISTORIA.md`, «Next Action HECHA · A · el panel del límite diario»; corregido en
+`trabajo/activar-sesion-08`).
 
 ## Lo que mide cada paso
 

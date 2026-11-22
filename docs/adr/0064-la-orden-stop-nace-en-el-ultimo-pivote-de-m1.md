@@ -90,6 +90,13 @@ conservadora):
    > cartuchos delante (RN-016). La razón de esta decisión (no reintentar un rechazo en cada M1) no
    > alcanzaba a un llenado, y el código la aplicaba por zona, no por punto. PROVISIONAL hasta la
    > pregunta 3 de la sesión 5.
+
+   > **Enmendada otra vez por ADR-0097 (2026-11-22, `trabajo/activar-sesion-08`), en un caso.** Con
+   > `orden_stop_lado_malo` = `espera` (DEFAULT_AMBIGUOUS bajo A-59, lectura del consultor), si el
+   > precio ya pasó el punto al ir a colocarla, la orden no se envía (no hay rechazo ni petición),
+   > no gasta el punto y se envía en el primer cierre de M1 en que el 0 quede del lado bueno.
+   > Tampoco se reintenta en cada M1: se comprueba antes de enviar, con la misma cotización que el
+   > bróker. Con `se_gasta_el_punto`, como dice esta decisión.
 2. **Una sola vida de orden por sesión que llega a llenarse.** Tras un llenado, la sesión no coloca
    otra orden, como la zona de un solo uso que había antes. Los cartuchos siguen sin geometría.
 3. **La orden pendiente de una sesión no se reubica con los puntos de la siguiente** (A-46: cada

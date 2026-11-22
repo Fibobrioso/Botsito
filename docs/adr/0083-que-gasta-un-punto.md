@@ -87,6 +87,15 @@ usada y su punto sin gastar, como hasta hoy: esa caja no vuelve, otra sí. EXPIR
 > de feedback. **Lo que pasa a la sesión 7:** qué es «un igual», y si la caja de la reentrada es la
 > del primer intento o una nueva.
 
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, ADR-0097; no reescribe el cuerpo ni los
+> recuadros anteriores). D1 SIGUE PROVISIONAL.** Con `orden_stop_lado_malo` = `espera`
+> (DEFAULT_AMBIGUOUS bajo A-59, LECTURA DEL CONSULTOR), la orden stop cuyo 0 queda del lado malo ya
+> no se envía: no hay rechazo por precio inválido al colocar, la caja no queda usada y el punto no
+> se gasta, y se envía en el primer cierre de M1 en que el 0 quede del lado bueno. El primer guion
+> de «Gasta el punto» deja de valer para el precio inválido; los demás motivos de rechazo al
+> colocar, el rechazo al llenar y los no envíos de este D1 siguen gastando el punto. Con
+> `se_gasta_el_punto`, todo como aquí.
+
 ### 2. D2 · Cómo lo hace el código
 
 Hoy hay dos marcas en la memoria de la sesión (`engine/zonas.py`): `usadas`, por ZONA (una caja), que

@@ -66,6 +66,18 @@ del riesgo.
 | R19 | Consistencia | «Provided you maintain sustainable risk management practices, there are no additional consistency requirements for your trading.» La **Best Day Rule** aparece solo en la sección 1-Step; la sección 2-Step no la trae | [Consistency rules](https://ftmo.com/en/faq/do-you-have-any-consistency-rules/); [Trading Objectives](https://ftmo.com/en/trading-objectives/) |
 | R20 | Tope semanal de la firma | No aparece en los objetivos del 2-Step: **NO ENCONTRADA** | [Trading Objectives](https://ftmo.com/en/trading-objectives/) |
 
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F6; informe cerrado: el cuerpo no se
+> toca). R13 y la respuesta de FTMO del 2026-11-20 (ticket MVT-CQNXT-065).** FTMO contestó el
+> 2026-11-20 al correo de Aleks del 2026-11-19 (las cuatro preguntas, en la hoja de ruta, A.2).
+> **El correo no se copia**: la fuente es la paráfrasis del consultor del 2026-11-21, entera en
+> `docs/validation/ACTIVAR-SESION-08.md` («La respuesta de FTMO del 2026-11-20»). Lo que toca a R13:
+> para el límite de 2.000 peticiones diarias solo cuentan las acciones de trading (abrir, cerrar y
+> modificar órdenes, incluido mover el stop o el objetivo); las lecturas (precios, ticks, historial
+> de velas, datos de la cuenta, órdenes y posiciones) no cuentan para ese límite ni se consideran
+> hiperactividad, también leyendo una vez por vela de M1; y los límites de infraestructura valen
+> igual para la cuenta Swing en MT5. No dice si una petición rechazada cuenta, ni si una cancelación
+> cuenta por separado, ni qué hace el servidor al pasarse: eso sigue en A-54.
+
 > **Recuadro (2026-09-28, rama `trabajo/viabilidad-comision`): la comisión de forex, más fuentes.
 > TODAS NO CONFIRMADAS EN DEMO.** El parámetro del perfil (`firma_comision_usd_por_lote`,
 > `firma_comision_por_lado`) solo se fija con el CSV de la demo (`docs/runbooks/DEMO-FTMO.md`).
@@ -252,6 +264,12 @@ del riesgo.
   vigilando la EQUITY, y el primer día con el capital inicial. Coincide con ADR-0026 §2-3 y
   ADR-0027 §1. **La página oficial contesta por escrito la «VERIFICACION EXPLICITA» de A-28**: el
   recálculo es a las 00:00 CE(S)T. Lo que A-28 pedía era verlo además en el panel.
+
+  > **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F7; el cuerpo no se toca).** Visto en
+  > el panel: Aleks lo declaró el 2026-11-07, comprobado por el consultor en su captura de Account
+  > MetriX de la prueba gratuita; el límite diario se restablecía a las 00:00 de España (CET), no a
+  > la medianoche del servidor. Coincide con R2; `reloj_dia_riesgo` sigue CONFIRMED y A-19 no se
+  > reabre (`docs/state/HISTORIA.md`, «Next Action HECHA · A · el panel del límite diario»).
 - **R3**, la pérdida total: 10 % estática.
 - **R6** y **R7**, Swing sin restricción de noticias. **R8**, no se cambia de Standard a Swing.
 - **R9**, apalancamiento 1:30.
@@ -308,6 +326,16 @@ Swing), R14 (bots permitidos) y R19 (sin reglas de consistencia adicionales, sin
   «substantially larger position sizes»;
 - **R14**: qué es la «maximum capital allocation rule», que no aparece en ninguna página leída;
 - **R12**: el asterisco de «USD/LOT*».
+
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F6; el cuerpo no se toca).** La
+> respuesta de FTMO del 2026-11-20 (ticket MVT-CQNXT-065; paráfrasis del consultor en
+> `docs/validation/ACTIVAR-SESION-08.md`; recuadro junto a R13, en el §2) no contesta nada de lo que
+> este §4 deja abierto: de R13, este § solo pregunta si sus límites entran en el registro como
+> parámetros `firma_*`, y eso sigue. Contesta qué cuenta como petición para R13 (las acciones de
+> trading; las lecturas no), que preguntaba A-54, y añade dos cosas que nadie preguntaba aquí: que se permite que las decisiones las calcule un programa propio en Python que manda
+> las órdenes por el terminal de MT5, si la estrategia cumple sus condiciones y no es alta
+> frecuencia ni arbitraje de latencia, sin pedir el código; y que los límites de infraestructura
+> valen igual para la cuenta Swing en MT5. Lo demás de este § sigue abierto.
 
 ## Estado
 

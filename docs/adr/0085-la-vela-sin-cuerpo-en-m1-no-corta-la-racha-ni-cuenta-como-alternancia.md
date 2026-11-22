@@ -114,6 +114,20 @@ para la sesión 6. Un test por marco dice que el otro no se mueve.
 > La tercera, la condición de `ev-v15-004037-a2ab3980`, va a la rama de motor con lo que dijo en
 > S-22 (`docs/validation/ACTIVAR-SESION-06.md`, «Para la rama de motor»).
 
+> **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F3; no reescribe el cuerpo ni el
+> recuadro anterior). La condición NO entra.** La «rama de motor» del recuadro anterior,
+> `trabajo/activar-sesion-06-motor`, la dejó en PARADA, y el consultor la mandó a la sesión 7 y
+> «después en rama propia» (`ACTIVAR-SESION-06-MOTOR.md`, respuesta a la PARADA, decisión 2); esa
+> rama propia es la de la activación de la 7b. En la 7b (S-5) el trader no sostuvo la condición:
+> leyó las dos opciones, dudó, pidió más planteamiento en el esquema (`SESION-08-EXTRACCION.md`
+> §3.5) y acabó en «una vela roja, una vela verde, o al revés, allí se traza un punto»
+> (`ev-v20-010049-b400e914`), que es lo que
+> este § ya hace. Las dos respuestas de «Para precisar» (sin pasar ningún mínimo no hay punto,
+> `ev-v20-010049-4cb7f481`; basta la mecha, `ev-v20-010049-12e69e6d`) responden dentro de una
+> condición que él no afirmó, y no se activan sueltas (decisión del consultor del 2026-11-21,
+> encargo de esa rama, F3). El motor no cambia; S-22 va a la sesión siguiente, sobre un día de
+> construcción y no sobre un esquema.
+
 ### 4. Lo que enmienda, y lo medido en la fase 0 sobre S-10
 
 - **ADR-0076 §2**, la fila «alternancia con cuerpo cero en medio (R, doji, V, R) y breaker V»:

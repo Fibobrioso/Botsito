@@ -651,12 +651,42 @@ def test_con_el_selector_en_limite_sale_lo_mismo_que_sin_selector(
     assert informe(LIMITE_EN_RETROCESO).encode("utf-8") == informe(None).encode("utf-8")
 
 
-def test_con_el_selector_en_stop_y_el_precio_ya_roto_la_orden_se_rechaza(
+def _registro_se_gasta(tmp_path: Path) -> Registro:
+    """El registro real con `orden_stop_lado_malo` = `se_gasta_el_punto`, la otra opcion de A-59
+    (ADR-0097): la stop del lado malo se envia y el broker la rechaza, como antes del 2026-11-22."""
+    texto = (RAIZ / "knowledge" / "spec" / "parametros.yaml").read_text(encoding="utf-8")
+    viejo = "    valor: espera\n"
+    assert texto.count(viejo) == 1, "orden_stop_lado_malo no esta en el registro, u otro `espera`"
+    ruta = tmp_path / "parametros.yaml"
+    ruta.write_text(texto.replace(viejo, "    valor: se_gasta_el_punto\n"), encoding="utf-8")
+    return cargar_registro(ruta)
+
+
+def test_con_el_selector_en_stop_y_el_precio_ya_roto_la_orden_no_se_envia(
     registro: Registro, vocabulario: dict[str, dict[str, Any]]
+) -> None:
+    """CAMBIA DE SENTIDO A PROPOSITO el 2026-11-22 (trabajo/activar-sesion-08, ADR-0097): en
+    RUTA_STOP el precio esta POR ENCIMA de la entrada en el cierre del breaker, asi que una compra
+    stop alli queda del lado malo; con `orden_stop_lado_malo` = `espera` (el valor por defecto) no
+    se envia: ni peticion ni rechazo, y la espera queda anotada (la zona sintetica de este fichero
+    no vuelve a aparecer, asi que no se coloca despues). Antes, el broker la rechazaba."""
+    motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
+    motor.tipo_orden = STOP_EN_RUPTURA
+    motor.correr_dia(_dia())
+    tb = motor.trazas_broker[DIA.isoformat()]
+    broker = motor.brokers[DIA.isoformat()]
+    assert not broker.ordenes and not broker.traza().rechazos and not tb.peticiones
+    assert [(z, o) for _, z, o in tb.esperas] == [("zona:1", None)]
+
+
+def test_con_se_gasta_el_punto_y_el_precio_ya_roto_la_orden_se_rechaza(
+    vocabulario: dict[str, dict[str, Any]], tmp_path: Path
 ) -> None:
     """El caso que ADR-0056 §1.3 anticipa y ADR-0058 mide: en RUTA_STOP el precio esta POR ENCIMA
     de la entrada en el cierre del breaker, asi que una compra stop alli queda del lado
-    equivocado, y el broker la rechaza (ADR-0057); la limite, en cambio, espera y se llena."""
+    equivocado, y el broker la rechaza (ADR-0057); la limite, en cambio, espera y se llena. Desde
+    ADR-0097, con la opcion `se_gasta_el_punto` de `orden_stop_lado_malo`."""
+    registro = _registro_se_gasta(tmp_path)
     motor = _motor(registro, vocabulario, _mercado(RUTA_STOP))
     motor.tipo_orden = STOP_EN_RUPTURA  # stops level: el del perfil, 0 (antes, diagnostico 0)
     motor.correr_dia(_dia())
