@@ -4,16 +4,16 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-trabajo/sesion-08
+main
 
 ## Current Feature
-trabajo/sesion-08, EN CURSO: la ingesta de la sesión 7b con el trader (grabada el 2026-11-20 y el 2026-11-21, v20 y v21) y su extracción por pregunta y por sesión del bloque de días, sin resolver nada (NA:F, R4.3). Encargo: docs/encargos/trabajo-sesion-08.md; informe: docs/validation/SESION-08-EXTRACCION.md.
+Ninguna rama abierta. trabajo/sesion-08 cerrada en main el 2026-11-21 (stable/F39j-sesion-08): la sesión 7b (v20 y v21) ingerida y extraída, sin resolver nada; A-35 sigue ABIERTA y bloqueante; siguiente, la activación de la 7b.
 
 ## Stable Main State
-c6d5a9c2 · merge de `trabajo/guardia-enlaces` (tag `stable/F39i-guardia-enlaces`), sobre `stable/F39h-guardias-holdout` (fb1f02e9). Informe docs/validation/GUARDIA-ENLACES.md; el registro del cierre, al final de HISTORIA.
+f4b5a9a2 · merge de `trabajo/sesion-08` (tag `stable/F39j-sesion-08`), sobre `stable/F39i-guardia-enlaces` (c6d5a9c2). Informe docs/validation/SESION-08-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
 
 ## Last Stable Commit
-c6d5a9c2 · merge trabajo/guardia-enlaces: la guardia por todas las formas de la ruta (enlaces, copias y clones fuera del repo) y D2 en Read y Grep · tag stable/F39i-guardia-enlaces
+f4b5a9a2 · merge trabajo/sesion-08: la sesión 7b (v20 y v21) ingerida y extraída (SESION-08-EXTRACCION.md) · tag stable/F39j-sesion-08
 
 ## Tests Currently Passing
 2122 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
