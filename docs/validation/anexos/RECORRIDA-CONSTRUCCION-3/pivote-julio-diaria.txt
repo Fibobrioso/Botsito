@@ -1,0 +1,8 @@
+patrones-diaria.txt, mes 2026-07
+T0 (parejas): 19
+P5: 38 ({'mismo lado': 36, 'otro lado': 2}); P6 en sesion: 2; P6 en dia: 0
+operaciones de mas (P5 + P6 en sesion): 40
+P1 1, P2 18, P3 24, P4 1, P7 4
+T0 + P2 + P3 + P7 = 19 + 18 + 24 + 4 = 65
+tasa de pareja: 19 / 65 = 0.292
+NO CUADRA: no son 14 y 39

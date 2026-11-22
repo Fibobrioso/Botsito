@@ -1,0 +1,41 @@
+# techo_parejas.py parejas, sobre cuenta-por-mes.txt (ADR-0098; RECORRIDA-CONSTRUCCION-3)
+
+## El control (ADR-0098 §1)
+posiciones del bot en la salida: 235; entran en el control: 235; fuera (manual de una regla solo del bot): 0
+reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 235
+control: PASA
+
+## M1 · El techo (ADR-0098 §1)
+operaciones del trader en los dias dev: 198; sin stop: 0; no colocables: 7; no llenadas: 0; fuera por el lote minimo: 0; fuera de la ventana: 0
+rechazadas por el broker, por motivo: ninguna
+llenadas y cerradas: 191; cierres de M1 con mas de una posicion viva: 0; cierres por RN-002: 7; al fin del dia: 0; break even movido: 79
+a) N (llenadas y cerradas): 191
+b) esperanza (media del R neto): -0.239
+c) percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, todos los dias dev corridos): -0.450 y -0.026; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 4.88 % del capital inicial; la peor, la cuenta de 2026-07
+e) equity minima, por cuenta: 92.05 % del capital inicial; la peor, la cuenta de 2026-07
+f) alguna cuenta entro en SUSPENDIDA: no
+deslizamiento por llenado afectado que lleva la esperanza a 0.10 R (ADR-0092 §4, sin decidir nada): -2.52 puntos
+LECTURA DEL TECHO: no_gana
+
+### Julio de 2026, como diagnostico (sin umbral; el unico mes con video, provisional)
+a) N (llenadas y cerradas): 64
+b) esperanza (media del R neto): -0.245
+c) percentil 5 y percentil 95 de la media del R neto, por remuestreo por dias (10000 replicas, semilla 20261107, los dias dev de julio): -0.546 y 0.085; replicas descartadas: 0
+d) perdida diaria maxima, por cuenta: 4.88 % del capital inicial; la peor, la cuenta de 2026-07
+e) equity minima, por cuenta: 92.05 % del capital inicial; la peor, la cuenta de 2026-07
+f) alguna cuenta entro en SUSPENDIDA: no
+
+## M2 · Las parejas (ADR-0098 §1)
+filas T0 de la corrida 1, por mes: 2026-01 5, 2026-04 10, 2026-07 10, 2026-08 5
+parejas con las dos patas: 29; sin pata del trader: 1; sin pata del trader (no colocable, no llenada, rechazada o lote minimo): 1; sin la posicion del bot: 0
+media del R neto del bot en sus parejas: -0.140; del trader en las mismas operaciones: -0.338; diferencia emparejada media (bot - trader): 0.198
+percentiles 5 y 95 por remuestreo por dias (10000 replicas, semilla 20261107, 76 dias): del bot -0.745 y 0.540; de la diferencia -0.132 y 0.592
+minimo de parejas (PIVOTES-SESION-7.yaml, minimos.minimo_1_parejas_de_julio_al_menos): 19
+LECTURA DE LAS PAREJAS: ni_una_cosa_ni_otra
+
+## La salida (ADR-0098 §3)
+techo: no_gana; parejas: ni_una_cosa_ni_otra
+SALIDA: C (el techo no gana)
+pivote de ADR-0093 §6 (de pivote-julio-diaria.txt): parejas de julio 19, operaciones de mas 40, minimos 19 y 33: se_cumple_uno (una sesión más con el trader con el mismo método, y tras su activación se vuelve a leer con estos mismos números)
+PRECEDENCIA CON EL PIVOTE (C): manda sobre cualquier salida del pivote

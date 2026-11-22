@@ -1,0 +1,14 @@
+letras vivas en la copia: A C D F G I J M N Q; F viva? True
+R3.10: HECHA? True; NA:F en el bloque? False
+R4.3: HECHA? True; NA:F en el bloque? False
+R5.7: HECHA? True; NA:F en el bloque? False
+R4.6 cita ADR-0098? True
+R5.2 cita R3.10? True
+«R5.7 después de (3)» en la F? False
+a: []
+b: []
+c: []
+PROJECT_STATE del cierre, con la linea de D7: 24505 bytes (cabe en 25000); la rama hoy: 24598 bytes con la F nueva
+PROJECT_STATE del cierre, sin la linea de D7: 24337 bytes (cabe en 25000); la rama hoy: 24598 bytes con la F nueva
+bytes de la F: antes 1030, despues 827
+bytes de la linea de D7: 168

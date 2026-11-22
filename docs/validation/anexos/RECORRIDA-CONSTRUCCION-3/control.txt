@@ -1,0 +1,6 @@
+# techo_parejas.py control, sobre cuenta-por-mes.txt (ADR-0098; RECORRIDA-CONSTRUCCION-3)
+
+## El control (ADR-0098 §1)
+posiciones del bot en la salida: 235; entran en el control: 235; fuera (manual de una regla solo del bot): 0
+reproducidas al centimo (lote, motivo, instante del cierre, PnL neto): 235 de 235
+control: PASA
