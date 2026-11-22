@@ -296,8 +296,9 @@ de `tramos_no_citables.yaml` (§3.0). Cada «resuelve» es una propuesta: lo dec
   desde `[48:40]`). Esas líneas abren los tramos y no se citan. **En ninguno dice el día en voz.**
   Según Aleks eran días de julio del 1 al 17, pero la voz no lo confirma. Por la regla de la PARADA
   condicional, cada uno es un tramo no citable, y la pregunta se queda con lo citable de fuera. Son
-  cinco tramos: **0:03:27–0:14:49, 0:28:00–0:30:14 (desde la respuesta del consultor a la PARADA final,
-  0:27:19–0:30:14, §14), 0:32:09–0:37:39, 0:39:21–0:44:06 y 0:48:40–0:49:18**. Sus límites salen de la voz y van por precaución hacia afuera (sin abrir
+  cinco tramos: **0:03:27–0:14:49, 0:27:19–0:30:14, 0:32:09–0:37:39, 0:39:21–0:44:06 y
+  0:48:40–0:49:18** (el segundo empezaba en 0:28:00 hasta la respuesta del consultor a la PARADA final,
+  §14). Sus límites salen de la voz y van por precaución hacia afuera (sin abrir
   fotogramas: ninguno antes de que la voz sitúe el tramo en un día). En S-1 nombra además el desenlace
   de una operación de ese gráfico; no se copia aquí.
 - **El vídeo de mapeo**: el trader lo nombra en S-1 y dos veces en S-2, siempre dentro de esos tramos.
@@ -391,8 +392,7 @@ y la línea `[32:07]` solapa el segundo y sale tapada en la filtrada regenerada 
 - **Basta cerrar por encima o pide margen**: «otra», por «la diferencia de las zonas de control para
   puesta en break-even» y porque «existe el contexto». Lo único citable que dice de qué depende es lo de
   `[26:30]`–`[27:13]`: si el precio está «demasiado extendido» y no llega a estar en medio de la zona de
-  entrada, basta con poco cuerpo, «o inclusive con mecha». El otro caso (la zona en medio) cae en el
-  tramo. **Cifra: ninguna. Unidad: ninguna. Siempre el mismo: no** (depende del contexto).
+  entrada, basta con poco cuerpo, «o inclusive con mecha». **Cifra: ninguna. Unidad: ninguna. Siempre el mismo: no** (depende del contexto).
 - «Para confirmar al final» (`[37:39]`): «Bueno, mi zona de control, pues, es la condicional para
   poder pasar a break even.» (`[37:49]`), «La vela tiene que estar por encima del alto de la zona de
   control.» (`[37:53]`), «Eso, pues, específicamente es solo en casos, pues, para poder poner en break
@@ -1103,26 +1103,52 @@ Dada por Aleks (consultor) el 2026-11-21, en un solo mensaje. Copiada tal cual:
   fila de §6 y la de §5.2 se rehacen con lo que queda citable: `[26:30]`–`[27:13]` y
   `[31:51]`–`[32:06]`.
 - **8**: ningún fotograma abierto.
-- **El texto de dentro del tramo nuevo**: con el tramo desde 0:27:19, tres sitios del informe quedaban con
-  texto de dentro: el resumen de `[27:19]`–`[27:54]` en §3.2, la frase de `[27:19]` en §7.1 (punto 7) y la
-  misma frase en el informe del revisor. Se quitaron, y en el del revisor queda la marca de lo quitado.
-  La respuesta del consultor (§13) la cita también y se deja: se copia tal cual.
-- **La CI**: el run de `097f04c9` es el **44962532780** (`completed`, `failure`; un solo fallo, el esperado,
-  `test_state_check_ok_on_real_repo`; «1 failed, 3497 passed, 101 skipped»). El del commit de esta
-  respuesta, y el revisor de lo nuevo, al pie.
+- **El texto de dentro del tramo nuevo**: con el tramo desde 0:27:19, cuatro sitios del informe quedaban
+  con texto de dentro: el resumen de `[27:19]`–`[27:54]` en §3.2 (y, tras el revisor de lo nuevo, una
+  frase que quedaba en §3.2 sobre «el otro caso»), la frase de `[27:19]` en §7.1 (punto 7), la misma
+  frase en el informe del primer revisor y, en ese mismo informe, la cita de `[27:37]` con su afirmación
+  (su a2 (1); lo vio el revisor de lo nuevo, a1). Se quitaron, y en el informe del revisor queda la marca
+  de lo quitado. La respuesta del consultor (§13) la cita también y se deja, porque se copia tal cual (el
+  revisor de lo nuevo, a6, deja que lo decida el consultor).
+- **Un solapamiento que no se dijo** (revisor de lo nuevo, a4): la cita de `ev-v20-002630-6271f57e`
+  (`[26:30]`–`[27:13]`) contiene entera la de `ev-v20-002700-955a2dc8` (`[27:00]`–`[27:13]`), con el
+  mismo tema, y los dos siguen activos. El pasaje queda contado dos veces. Además, `ev-v20-002630`
+  supersede a un ítem que decía otra cosa (`ev-v20-002744-e0555bb6`, cuya cita cae ahora dentro del
+  tramo): ese supersede retira la cita, pero no corrige el mismo contenido. Se declara. Si el
+  consultor quiere un ítem por pasaje, la activación puede supersedar `ev-v20-002700` con el mismo tema.
+- **La CI**: el run de `097f04c9` es el **44962532780** y el de `34711ce2` (esta respuesta), el
+  **44966071283**; los dos `completed`, `failure`, con un solo fallo, el esperado
+  (`test_state_check_ok_on_real_repo`; «1 failed, 3497 passed, 101 skipped»). El revisor de lo nuevo, al
+  pie; lo hecho con sus hallazgos, en §15.
+
+## 15. Lo que se hizo con los hallazgos del revisor de lo nuevo
+
+- **a1** (importa): la cita de `[27:37]` y su afirmación, quitadas del informe del primer revisor (con su
+  marca); §14 dice ahora cuatro sitios.
+- **a2** (importa): fuera de §3.2 la frase que resumía lo de dentro del tramo.
+- **a3** (importa): la fila de `HOLDOUT-EXPOSICIONES.md` de la respuesta del consultor, ampliada el mismo
+  día con lo que el revisor de lo nuevo dice haber leído (las citas de los dos ítems supersedidos, el
+  diff con las líneas quitadas, los barridos, las líneas 366-370 y 396-404 de la filtrada de v20, los
+  hashes y los registros, la CI y `PREGUNTAS-7B.md`), y lo mismo de la sesión, que creó esos ítems y
+  esas líneas.
+- **a4** (importa): declarado en §14.
+- **a5** (menor): §3.0 da ya 0:27:19–0:30:14.
+- **a6** (menor): se deja la frase en §13, que se copia tal cual. Lo decide el consultor.
+- **b1** (menor): el run de `34711ce2`, 44966071283, en §14.
 
 ## Estado
 
 Rama lista para revisión, NO cerrada. La PARADA final (§7.1), respondida por el consultor (§13) y
-aplicada (§14).
+aplicada (§14); los hallazgos del revisor de lo nuevo, en §15.
 
 ## Informe del revisor
 
 Subagente `revisor`, lanzado el 2026-11-21 con el informe ya terminado (`69ccd8a2`) y el alcance que pide
-el encargo («CIERRE DE LA RAMA», (1) a (3)). Pegado tal cual, con dos excepciones: en a6 copiaba un
-fragmento de la línea `[00:24]` de v21, que cae en el tramo no citable 0:00:00–0:47:39; y en «Lo que no
-pude comprobar», la frase de `[27:19]` de v20, que cae desde §14 en el tramo 0:27:19–0:30:14. Se
-quitaron, y queda la marca «[fragmento de un tramo no citable, quitado al pegar]». Lo que se hizo con
+el encargo («CIERRE DE LA RAMA», (1) a (3)). Pegado tal cual, con tres excepciones: en a6 copiaba un
+fragmento de la línea `[00:24]` de v21, que cae en el tramo no citable 0:00:00–0:47:39; y, desde que el
+tramo de S-2 empieza en 0:27:19 (§14), la frase de `[27:19]` de v20 en «Lo que no pude comprobar» y la
+cita de `[27:37]` con su afirmación en a2 (1) (revisor de lo nuevo, a1). Se quitaron, y queda la marca
+«[fragmento de un tramo no citable, quitado al pegar]». Lo que se hizo con
 cada hallazgo, en §12.
 
 ### Informe del revisor · trabajo/sesion-08 · 2026-11-21
@@ -1133,7 +1159,7 @@ Resumen: 0 bloquea, 3 importa, 3 menor.
 | # | Gravedad | Hallazgo | Evidencia |
 |---|---|---|---|
 | a1 | importa | **La «(b)» de S-2, pregunta 1, sale de una línea que casi seguro es el trader leyendo la pregunta, y no su respuesta.** `ev-v20-003028-0f59ea11` (RULE_STATEMENT: «las zonas de control se forman antes de romper el punto y pueden formarse tambien despues») cita `[30:28]`. Esa línea va justo después de la lectura de la pregunta y repite su enunciado; el trader lo vuelve a leer como pregunta en `[31:24]` y contesta «la letra T … como lo he explicado anteriormente en el gráfico», es decir, en el tramo no citable 0:28:00–0:30:14. El informe se apoya en esa línea («Con `[30:28]`, lo dicho es la (b)», §3.2) y la arrastra a §5.2 y a la fila «S-2, pregunta 1» de §6. Lo citable de la respuesta es solo «la letra T» (dudosa) más una remisión al gráfico. | Filtrada v20, l. 566: `[30:14] Abujo A1. A y B te valen como zona de control y C no.`; l. 568: `[30:28] Se forman antes de romper el punto y pueden formarse también después de romperlo.`; l. 577-581: `[31:24] ¿se forman antes de romper el punto` / `[31:26] o pueden formarse también después de romperlo?` / `[31:29] pues la respuesta sería` / `[31:30] la letra T` / `[31:31] como lo he explicado anteriormente en el gráfico`. Enunciado: `docs/sesion-7/PREGUNTAS-7B.md:179-180`. Informe: `SESION-08-EXTRACCION.md:344-346`, `:735`, `:756` |
-| a2 | importa | **Hay afirmaciones que dicen más que su cita: meten el contexto de la pregunta o quitan una condición.** (1) `ev-v20-002737-ffbdf9b1`. Cita: «aquí entonces está en medio cuando está en medio y tendría que romper con cuerpo y cerrar con cuerpo». Afirmación: «cuando la zona de control queda en medio del nivel de entrada, para el break even tiene que romper…». «Zona de control», «nivel de entrada» y «break even» no están en la cita. (2) `ev-v20-004813-fa0027de`. Cita: «El cero, por lo general, va en una compra, el punto de entrada». Afirmación: «el 0, por lo general, va en el punto de entrada». Quita «en una compra». (3) `ev-v20-004750-2733677c`. Afirmación: «el explicado sobre el esquema». La cita dice solo «Con lo explicado, pues, anteriormente», y la línea siguiente dice «tanto en el gráfico como en el propio esquema» (`[47:57]`), y el gráfico es el tramo no citable. (4) `ev-v20-003023-18b67392`. Afirmación: «sobre el dibujo 1». La cita no lo dice, y el propio informe pone esa línea en «Al leer la pregunta», no en «Sobre el dibujo 1» (§3.2, :339). (5) `ev-v20-000138-fe33bb73`. Cita: «al menos cuando hay la toma». Afirmación: «para que haya toma». Cambia el sentido de la condición. Ninguno está commiteado como corregido: un ítem commiteado no se edita, se supersede (`evidence new --supersede`). | Los cinco ficheros en `knowledge/evidence/v20/`, leídos con `cat`. Filtrada v20, l. 57-58 y 538 |
+| a2 | importa | **Hay afirmaciones que dicen más que su cita: meten el contexto de la pregunta o quitan una condición.** (1) `ev-v20-002737-ffbdf9b1`. Cita: [fragmento de un tramo no citable, quitado al pegar]. Afirmación: [fragmento de un tramo no citable, quitado al pegar]. «Zona de control», «nivel de entrada» y «break even» no están en la cita. (2) `ev-v20-004813-fa0027de`. Cita: «El cero, por lo general, va en una compra, el punto de entrada». Afirmación: «el 0, por lo general, va en el punto de entrada». Quita «en una compra». (3) `ev-v20-004750-2733677c`. Afirmación: «el explicado sobre el esquema». La cita dice solo «Con lo explicado, pues, anteriormente», y la línea siguiente dice «tanto en el gráfico como en el propio esquema» (`[47:57]`), y el gráfico es el tramo no citable. (4) `ev-v20-003023-18b67392`. Afirmación: «sobre el dibujo 1». La cita no lo dice, y el propio informe pone esa línea en «Al leer la pregunta», no en «Sobre el dibujo 1» (§3.2, :339). (5) `ev-v20-000138-fe33bb73`. Cita: «al menos cuando hay la toma». Afirmación: «para que haya toma». Cambia el sentido de la condición. Ninguno está commiteado como corregido: un ítem commiteado no se edita, se supersede (`evidence new --supersede`). | Los cinco ficheros en `knowledge/evidence/v20/`, leídos con `cat`. Filtrada v20, l. 57-58 y 538 |
 | a3 | importa | **La fila del revisor en `HOLDOUT-EXPOSICIONES.md` (estadiada) se queda corta. Viene de esta revisión y hay que ampliarla el mismo día antes del siguiente `make check`.** No declara: (i) `casos_ocultos` y `cargar_meses_reservados` en memoria, solo recuentos: 34 fechas, 5 meses, 0 líneas; (ii) los barridos `scripts/barrido_dias.py` sobre las dos filtradas. Su salida enmascarada imprime líneas dentro de tramos no citables: 14 de las 49 de v20 (1-31) caen en los tramos de precaución, y 7 de las 22 de v21 (18-31) en 0:00:00–0:47:39; el 1-31 de v21 lo vi filtrado a las líneas con mes; (iii) **una lectura mía, por error, dentro de un tramo**: las líneas 10-22 de la filtrada de v20 (`[39:21]`–`[43:57]`, tramo 0:39:21–0:44:06). La filtrada empieza por la sección S-3 y no por el minuto 0, y yo esperaba orden cronológico. No traen día ni precio, y aquí no se copia nada; (iv) un `grep` de `cobertura_material` en `knowledge/cases/kit/config.yaml`, `gh run view 44957773501`, `knowledge validate`, `corpus transcript check`, `corpus frames check` y dos `pytest`. | `git diff --cached -- docs/validation/HOLDOUT-EXPOSICIONES.md` (la fila del revisor solo nombra commits, documentos, filtradas, registros y CI) |
 | a4 | menor | **Un «literal» que no es literal.** §3.0 cita «me gusta como lo [has] trazado» (`[63:37]`). La filtrada dice «es me gusta como el atrasado el punto cero…». El informe avisa de que «cada literal es de la FILTRADA». | Filtrada v20, l. 238; `SESION-08-EXTRACCION.md:297` |
 | a5 | menor | **Línea de parámetro desfasada**: `parametros.yaml:702` para `ultimo_pivote_m1`/`referencia_de_la_toma`. `orden_stop_punto` está en la 753, en `main` y en la rama. La cifra viene copiada de `PREGUNTAS-7B.md:234`. | `grep -n "nombre: orden_stop_punto"` → `753:` (también en `git show main:`); `SESION-08-EXTRACCION.md:408` |
@@ -1233,3 +1259,145 @@ Lo que la rama hace sin que el encargo lo pida: la columna «Empieza (situada po
 18. `gh run view 44957773501 --json …`; `gh run view 44957773501 --log-failed | grep …`
 19. Grep de `cobertura_material` en `knowledge/cases/kit/config.yaml`; grep de A-13, A-16, A-35, A-48, A-58 y A-20 en la tabla de `PROJECT_STATE.md`; grep de `orden_stop_punto` en `parametros.yaml` (rama y `main`); grep de A-16 en `PREGUNTAS-7B.md`
 20. Negados por la guardia, no reescritos para esquivarla: un bucle `for c in $(git log …)` (sustituido por un único `git log --stat | grep`), un `awk` (sustituido por la tabla de `PROJECT_STATE.md`), un `xargs grep` y dos `pytest` en un mismo comando (una llamada por ejecutable, que es la forma que propone la guardia).
+
+## Informe del revisor, de lo nuevo (34711ce2)
+
+Subagente `revisor`, lanzado el 2026-11-21 sobre el commit `34711ce2` (la respuesta del consultor a la
+PARADA final), con el alcance que pide esa respuesta. Pegado tal cual, salvo los fragmentos de dentro
+del tramo 0:27:19–0:30:14 de v20, o que lo resumían, quitados al pegar con la misma marca: en a1, la cita
+y la afirmación; en a2, la frase del informe que resumía lo de dentro (ya quitada, §15); en a4, lo que
+decía el ítem supersedido; y en a6, la frase de `[27:19]`. Lo que se hizo con cada hallazgo, en §15.
+
+### Informe del revisor · trabajo/sesion-08 (lo nuevo: 34711ce2) · 2026-11-21
+
+Alcance: solo el commit `34711ce2` (`git show 34711ce2`, `git diff 097f04c9 34711ce2`), que aplica la respuesta del consultor a la PARADA final (§13 y §14 de `docs/validation/SESION-08-EXTRACCION.md`). No repito la revisión anterior, que está pegada al pie.
+
+#### Eje (a) · Reglas de la casa
+Resumen: 0 bloquea, 4 importa, 2 menor.
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| a1 | importa | **Queda en el informe una cita literal de dentro del tramo nuevo 0:27:19–0:30:14, y §14 dice que ya se quitó todo.** El informe del revisor que está pegado al pie, en su a2(1), sigue copiando la `cita_literal` de `ev-v20-002737-ffbdf9b1` (`[27:37]`) y resume su afirmación ([fragmento de un tramo no citable, quitado al pegar]). Esa línea cae ahora en el tramo. §14 dice que el texto de dentro estaba en «tres sitios» y que «se quitaron»: no son tres sino cuatro. Con el mismo criterio que se aplicó a a6 y a «Lo que no pude comprobar», hay que sustituirla por la marca «[fragmento de un tramo no citable, quitado al pegar]». | `SESION-08-EXTRACCION.md:1136` (a2, punto (1): [fragmento de un tramo no citable, quitado al pegar]); `:1106-1108` (§14: «tres sitios… Se quitaron»); `:1122-1125` (las «dos excepciones» al pegar); tramo en `tramos_no_citables.yaml:782-783` |
+| a2 | importa | **§3.2 resume lo que hay dentro del tramo, y dos líneas antes dice que no lo resume.** En `:394`, [fragmento de un tramo no citable, quitado al pegar] dice de qué habla el trader dentro de 0:27:19–0:30:14. En `:384-385` se lee «no se cita ni se resume». La cita citable `[26:30]` solo dice «no llega… a estar en medio»: no dice que haya otro caso. | `SESION-08-EXTRACCION.md:384-385` y `:393-395` |
+| a3 | importa | **La fila nueva de `HOLDOUT-EXPOSICIONES.md` no declara que el revisor leería texto de dentro del tramo 0:27:19–0:30:14.** El punto (4) anuncia que leo «la evidencia supersedida» y «los commits», y las dos cosas traen ese texto: la `cita_literal` de `ev-v20-002737-353f9542` y la de `ev-v20-002744-e0555bb6` (`[27:37]`–`[27:54]`), y las líneas que quita el diff de 34711ce2 (las citas de `[27:37]` y `[27:49]` de la antigua §3.2 y la frase de `[27:19]` de la antigua §7.1). También está en §13 y en `:1136`. Lo leí todo, y no trae ni día ni precio. Hay que ampliar la fila hoy (lo que hice va en «Lo que no pude comprobar», al final, para declararlo). | `HOLDOUT-EXPOSICIONES.md:178`, punto (4); `knowledge/evidence/v20/ev-v20-002737-353f9542.yaml` y `ev-v20-002744-e0555bb6.yaml` (`cita_literal`); las líneas `-` de `git diff 097f04c9 34711ce2 -- docs/validation/SESION-08-EXTRACCION.md` |
+| a4 | importa | **`ev-v20-002630-6271f57e` duplica un ítem activo, y el informe no lo dice.** Su cita (`[26:30]`–`[27:13]`) contiene entera la de `ev-v20-002700-955a2dc8` (`[27:00]`–`[27:13]`, de 69ccd8a2): mismo tema, misma afirmación salvo la condición, y los dos siguen activos. Usarlo para supersedar a `ev-v20-002744` (que decía otra cosa: [fragmento de un tramo no citable, quitado al pegar]) sirve para retirar la cita. Pero el «supersede» une dos contenidos distintos, y el pasaje queda contado dos veces. §14 no lo declara. | `ev-v20-002700-955a2dc8.yaml:7-8`, frente a `ev-v20-002630-6271f57e.yaml:7-9`; `SESION-08-EXTRACCION.md:383` (cita los dos para el mismo pasaje) y `:1099-1101` |
+| a5 | menor | §3.0 sigue poniendo en negrita «0:28:00–0:30:14» entre los «cinco tramos», con la corrección entre paréntesis. El valor de ahora es 0:27:19. | `SESION-08-EXTRACCION.md:299-300` |
+| a6 | menor | §13 conserva [fragmento de un tramo no citable, quitado al pegar] (`[27:19]`, dentro del tramo). Está declarado y justificado en §14 (`:1109`: copiado tal cual). Que el consultor decida si va con la marca, como en el informe del revisor. | `SESION-08-EXTRACCION.md:1049` y `:1109` |
+
+Comprobado sin hallazgos:
+- **Contrato**: `uv run python scripts/contrato_rama.py` → «CONTRATO: 62 ficheros dentro del contrato de trabajo/sesion-08 (riesgo medio, artefacto docs/validation/SESION-08-EXTRACCION.md, tramo 'R4', 9 comprobaciones para el revisor)» / «G2: fila de HOLDOUT-EXPOSICIONES del 2026-11-21 para trabajo/sesion-08, estadiada», exit=0.
+- **Comprobaciones del contrato que ejecuté**:
+  - `corpus transcript check` → «OK: 28 transcripciones coherentes con el disco y el glosario».
+  - `knowledge validate`, por pantalla (no puedo redirigir a un fichero), 0 líneas ERROR/FALLO → «OK: 753 items de evidencia, 0 contradicciones abiertas, historial intacto; 25 propuestas (0 items pendientes)» y «OK: 203 registros de feedback, historial intacto, commits con Fuente». Ningún aviso de «ventanas… no comprobadas» ni de v20/v21: las crudas están en `data/`, así que `ventanas_no_citables` (`validation/knowledge.py:102-129`) comprobó los segmentos.
+  - `git diff --name-status main...HEAD -- knowledge/evidence knowledge/feedback data/manifests knowledge/corpus/transcripciones knowledge/corpus/fotogramas` → «47 A»; en 34711ce2, solo las dos `A` nuevas.
+  - `pytest tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_de_ruta.py -p no:cacheprovider` → «27 passed in 0.66s».
+  - `wc -c PROJECT_STATE.md` → 24614.
+- **`make check`**: no lo lancé. `make-check.log` trae «3593 passed, 6 xfailed», «SELLO: make check en verde sobre el arbol 6d24a1ee04cf…», que es `git rev-parse HEAD^{tree}`, y «PICO DE MEMORIA de make check: 321 MiB». `evidence contradictions` no la ejecuté: SOLO LECTURA la niega porque escribe. §14 dice «0 abiertas», y `knowledge validate` lo confirma.
+- **Trailer `Fuente:`**: 34711ce2 toca `tramos_no_citables.yaml` y lleva «Fuente: ADR-0093» en el cuerpo, y `docs/adr/0093-…` existe. Ningún commit de la rama toca `knowledge/spec` ni `knowledge/cases` (`git log main..HEAD -- knowledge/spec knowledge/cases`: 0).
+- **Regímenes**: `HOLDOUT-EXPOSICIONES.md`, solo una línea añadida (0 líneas `-`). Ningún ADR, ambigüedad, informe cerrado ni sitio con `cita` tocado.
+- **Las filtradas regeneradas** (las dos con el guion de `main`: `git diff --quiet main -- scripts/transcribir_sesion.py scripts/barrido_dias.py`, exit 0):
+  - **sha256**: `952dd3620bdf…` (v20) y `9886c64a558d…` (v21), los de §14.
+  - **Registros**: «modo: solo filtrar (la cruda ya existia; ASR no ejecutado)». v20: 12 tramos, 685 segmentos, «solo por tramos 293», 8 bloques. v21: 13 tramos, 1140 segmentos, «solo por tramos 431, por ambos 9», 7 bloques. Cuadra con la tabla de §14.
+  - **Marcas** (`grep -n -o`):
+    - v20: `[NO CITABLE 39:21–44:05]`, `48:40–49:18`, `52:04–52:34`, `66:47–66:48`, `03:24–14:45`, `15:46–15:50`, `27:19–30:08` y `32:07–37:38`.
+    - v21: `00:00–47:33`, `72:12–73:31`, `80:07–81:53`, `87:34–89:15`, `90:29–91:11`, `93:12–95:28` y `112:47–114:14`.
+  - **Cada uno de los 25 tramos**:
+    - O lo tapa un bloque: los seis de precaución de v20, incluido 0:27:19 (línea anterior `[27:13]`, siguiente `[30:14]`); el de la sesión 1 de v21 (siguiente `[47:39]`); y los de cuarentena.
+    - O ninguna línea empieza dentro: los silencios de v20 0:16:18–0:25:34 (`[16:02]` → `[25:35]`) y 1:12:28–1:13:05 (última línea `[72:21]`); y los de v21 0:48:45–0:49:39 (`[47:39]` → `[49:56]`), 1:31:24–1:32:11 (`91:11` → `[92:12]`) y 2:03:41–2:05:30 (`[123:25]` → `[125:32]`).
+    - Los bloques que empiezan antes que su tramo, `[03:24]` (tramo 0:03:27) y `[32:07]` (tramo 0:32:09), salen tapados. También `[52:04]` y `[66:47]`, de los silencios, que ya estaban.
+  - **Barridos, antes de leer ninguna línea**:
+    - v20: del 1 al 31, 35 líneas; por defecto, 0; con `--desde 30 --hasta 31`, 0. La única con mes, `[66:50]`, «de julio», da un día menor que 18.
+    - v21: del 1 al 31, 104; por defecto, 15; con `--desde 30 --hasta 31`, 1 (`[63:46]`, sin mes). Los días con mes son «15 de abril», o «[N]» de abril o de enero, entre 18 y 29, en `[47:39]` y después.
+    - Ningún día fuera de construcción: sin PARADA.
+    - La caída 49→35 y 22→15 son las 14 y 7 líneas de tramo que señalé antes.
+- **Evidencia nueva**:
+  - Mismo tema que los supersedidos (`break_even.margen_segun_distancia`).
+  - Cada cita, literal contra la filtrada: v20 l. 366-368 (`[26:30]` parcial, `[27:00]` y `[27:07]`) y l. 396-401 (`[31:51]`–`[32:02]`).
+  - Ventanas: 0:26:30–0:27:13 y 0:31:51–0:32:04, fuera de los tramos y de los segmentos tapados (los siguientes, `[27:13]` y `[32:04]`/`[32:06]`, no están tapados).
+  - Afirmaciones: ninguna dice más que su cita. La de 003151 deja fuera «con lo que he explicado anteriormente», que remite al tramo.
+  - Ningún ítem activo de v20 cita dentro de 0:27:19–0:30:14: solo `002737-*` y `002744`, los tres supersedidos.
+- **Tabla final y cobertura**:
+  - S-2, pregunta 2: «26:30–27:13; 31:51–32:06», A-13. La cobertura (`:762`) dice lo mismo.
+  - A-13, A-35, A-48 y A-58 están ABIERTA en `ambiguedades.yaml` (líneas 266, 1088, 1617 y 2020).
+  - A-16 no está en ninguna celda (0). Una sola `## … Tabla` (`:775`).
+  - «Habla de la compra»: el dibujo 2 es «una compra ya puesta» (`PREGUNTAS-7B.md:176`).
+- **Marcas `[mm:ss]` del informe que caen en tramos**: son referencias, no citas: `[04:01]` y `[36:51]` (v21), `[10:44]`, `[10:49]`, `[13:13]`, `[13:25]`, `[37:06]`–`[37:37]`, `[27:19]`–`[27:54]`, `[43:57]`, `[00:24]` y el rango `[26:14]`–`[27:49]` de `:1151`. Las únicas citas literales de dentro son las de a1 y a6.
+- **§9, A-35**: la línea mide 207 bytes (`printf … | wc -c`). En `main`, `PROJECT_STATE.md` = 24576, la línea 28 = 1169 y la 138 = 111. 24576 − 164 + 10 + 207 = 24629, y quedan 371 hasta 25.000: cuadra con «unos 24.629» y «unos 370».
+- **`HOJA-USADA-7B.md`**: lo añadido es una frase sin cita. Los «» del fichero son textos de la hoja, no del trader. No dice qué carpeta es qué sesión ni cuántas láminas hubo (`:10-11`).
+
+#### Eje (b) · Encargo
+Resumen: 0 bloquea, 0 importa, 1 menor. Requisitos: 15 hechos, 1 parcial, 0 no hechos (1 hecho de otra forma, declarado).
+
+| # | Requisito (respuesta del consultor, §13) | Estado | Evidencia |
+|---|---|---|---|
+| 1 | P1: las láminas, como desviación; la lección | Hecho | `HOJA-USADA-7B.md:69-70`; `SESION-08-EXTRACCION.md:931` |
+| 2 | P2: la sesión 1 no se levanta; día gastado | Hecho | `:921-922`, fila `:797`; v21 tapada `[00:00–47:33]` |
+| 3 | P3: sin regla general; la lección | Hecho | `:932-933` |
+| 4 | P4: el tramo de S-1 no se levanta; A-35 ABIERTA | Hecho | tramo `0:03:27–0:14:49` en el yaml; `ambiguedades.yaml:1088` |
+| 5 | P5: la sesión 2, no a ciegas | Hecho | `HOJA-USADA-7B.md:70-71`; `:829-831` |
+| 6 | P6a: ninguna filtrada en un manifiesto | Hecho | `grep -rln -i filtrada data/manifests knowledge/corpus/transcripciones` → sin líneas (exit 1) |
+| 7 | P6b: `--solo-filtrar` lee el yaml del árbol y no transcribe | Hecho | registros: «modo: solo filtrar…», «tramos no citables del video: 12/13» |
+| 8 | P6: regenerar las dos; hash antes y después; segmentos tapados | Hecho | §14 `:1077-1080`; sha256 y registros, arriba (el «antes» no lo puedo rehacer) |
+| 9 | P6: ningún ítem cita una línea tapada | Hecho | `knowledge validate` sin ERROR; `ventanas_no_citables` |
+| 10 | P6: lo que leyó el revisor, como exposición posible | Hecho | `HOLDOUT-EXPOSICIONES.md:178` (1), última columna «Posible (1)» |
+| 11 | P6: la lección | Hecho | `:934-935` |
+| 12 | P7: el tramo de S-2 desde 0:27:19 | Hecho | `tramos_no_citables.yaml:782` |
+| 13 | P7: los dos ítems, por el régimen de la evidencia | Hecho | dos `A` con `supersede:`; validate OK (ver a4) |
+| 14 | P7: la fila de S-2, pregunta 2, y la cobertura, con lo citable | Hecho de otra forma | `:784`, `:762`: 32:06 y no 32:07, porque `[32:07]` sale tapada. Declarado en §14 `:1086-1088` |
+| 15 | P8: ningún fotograma | Hecho (según el informe) | §14 `:1105`; no lo puedo medir |
+| 16 | «Además»: la línea de A-35 en §9 si cabe; la copia de seguridad con las filtradas | Hecho | `:923-929`, `:913-918` |
+| 17 | «Lo que sigue»: commit sellado, push, CI de 097f04c9 y del nuevo, revisor al pie | Parcial | sello = `HEAD^{tree}`; `origin/fix/sesion-08` = 34711ce2; run de 097f04c9, en `:1110`; **el de 34711ce2 aún no está en el informe** |
+
+| # | Gravedad | Hallazgo | Evidencia |
+|---|---|---|---|
+| b1 | menor | Falta en el informe el run de la CI de 34711ce2 (§14 lo deja «al pie»). Es el **44966071283**: `completed`, `failure`, con el mismo único fallo esperado. | `gh run list --branch fix/sesion-08 --limit 3`; `gh run view 44966071283 --log-failed` → «FAILED tests/unit/test_cli.py::test_state_check_ok_on_real_repo» y «1 failed, 3497 passed, 101 skipped in 359.99s» |
+
+Lo que el encargo dice que no se toca: el diff de 34711ce2 son 6 ficheros (informe, HOLDOUT, `HOJA-USADA-7B.md`, el yaml de tramos y dos ítems nuevos). Ni spec, ni ambigüedades, ni ADR, ni guiones.
+
+#### Lo que no pude comprobar
+- **El sha256 de las crudas** («b5db174809c7…», «b2577d1181d4…», sin cambios) y los hashes de «antes» de las filtradas: no abro las crudas, y las filtradas antiguas ya no existen.
+- **Que la tarde no tuvo fotogramas abiertos**: no hay forma de medirlo.
+- **El final de los segmentos sin tapar que preceden a un tramo** (p. ej. `[16:02]`, `[47:39]` de v21, `[89:15]`): la filtrada solo da el inicio. Que no solapen lo decide el filtro con la cruda (guion de `main`), y `knowledge validate` lo comprueba para los ítems activos.
+- **Ningún log de `knowledge validate`**: el Bash del revisor no escribe, así que lo leí por pantalla.
+- **Exposiciones mías que la fila (4) no recoge de forma explícita** (para declararlas hoy):
+  - (i) Leí con `cat` `ev-v20-002744-e0555bb6.yaml` y `ev-v20-002737-353f9542.yaml`, cuyas citas están dentro del tramo 0:27:19–0:30:14.
+  - (ii) `git show` y `git diff 097f04c9 34711ce2`, cuyas líneas quitadas citan `[27:19]`, `[27:37]` y `[27:49]` del mismo tramo; y §13 y `:1136`, que repiten texto de ahí. Nada trae día ni precio, y no copio nada aquí.
+  - (iii) Los barridos, con los recuentos de arriba, y su salida filtrada a las líneas con mes.
+  - (iv) Read de la filtrada de v20, l. 366-370 y 396-404, fuera de los bloques.
+  - (v) `sha256sum` de las dos filtradas y los dos registros, y `cat` de los registros.
+  - (vi) `gh run list` y `gh run view 44966071283 --log-failed`.
+  - (vii) `PREGUNTAS-7B.md:170-191`.
+
+#### Comandos ejecutados
+1. `git branch --show-current`; `git log --format='%h %s' main..HEAD`; `git status --short`; `git show --stat 34711ce2`
+2. `git show 34711ce2 -- knowledge/corpus/tramos_no_citables.yaml knowledge/evidence docs/sesion-7/HOJA-USADA-7B.md docs/validation/HOLDOUT-EXPOSICIONES.md`
+3. `cat knowledge/evidence/v20/ev-v20-002744-e0555bb6.yaml knowledge/evidence/v20/ev-v20-002737-353f9542.yaml`; `ls docs/adr | grep 0093`; `grep -rl "supersede: …" knowledge/evidence`
+4. Read de `SESION-08-EXTRACCION.md` (`:248-337`, `:360-404`, `:733-937`, `:1000-1163`); Grep de sus secciones y de los ids
+5. `sed -n 1,60p scripts/ficheros_con_ocultos.py`; `grep … .claude/hooks/ficheros_con_ocultos.txt`
+6. `ls -la C:/Users/USER/Desktop/sesion-08-audio/`; `git diff --quiet main -- scripts/barrido_dias.py scripts/transcribir_sesion.py`
+7. `sha256sum` de las dos filtradas y los dos registros; `cat` de los dos `*.registro.txt`
+8. Grep de `b5db174809c7|b2577d1181d4` en `knowledge/corpus` (sin resultados)
+9. (Negados: la redirección a un fichero, por SOLO LECTURA; `$(...)` y `for`, por la guardia.) `sed -n 1,40p scripts/barrido_dias.py`
+10. `barrido_dias.py` sobre v20 y v21: `--desde 1 --hasta 31 | grep -c`, por defecto `| grep -c`, `--desde 30 --hasta 31 | grep -c`, y los filtros de mes (`grep -iE`, `grep -o`, `cut -c1-9`)
+11. `grep -n -o '\[NO CITABLE…\]\|\[CUARENTENA…\]'` sobre las dos filtradas
+12. `grep -n -A2 'video_id: v2[01]$' knowledge/corpus/tramos_no_citables.yaml`
+13. `grep -n -o '^\[mm:ss\]'` de las dos filtradas, filtrado por minutos; `wc -l`
+14. `uv run botsito knowledge validate 2>&1 | tail -15`; otra vez con `grep -c -E 'ERROR|FALLO'`, y con `grep -iE 'no comprobadas|v20|v21|tramo'`; `sed -n 95,135p src/botsito/validation/knowledge.py`
+15. `grep -H -E '^(t0|t1|supersede):' knowledge/evidence/v20/*.yaml | grep …`; `cat ev-v20-002700-955a2dc8.yaml`; `git log -- …002700…`
+16. `git show main:PROJECT_STATE.md | wc -c`, `| sed -n 28p | wc -c`, `| sed -n 138p | wc -c`, `| grep -n 'A-35'`; `printf '%s\n' '<línea A-35>' | wc -c`
+17. Grep de las reglas de la tabla en `docs/encargos/trabajo-sesion-08.md`; `sed -n 72p`
+18. Grep y Read de `PREGUNTAS-7B.md:170-191`
+19. `uv run pytest tests/unit/test_en_parte_no_se_cierra.py tests/unit/test_hoja_de_ruta.py -q -p no:cacheprovider` (dos veces)
+20. `sed -n 775,801p … | grep -c A-16`; `grep … ambiguedades.yaml` (estados); `grep -n '^## .*Tabla'`
+21. Grep de «guion» y de marcas `[mm:ss]` del informe en rangos de tramo; Grep de frases del tramo en los docs de la rama
+22. `git diff 097f04c9 34711ce2 -- docs/validation/SESION-08-EXTRACCION.md | grep -E '^[-+]'`
+23. `uv run python scripts/contrato_rama.py`
+24. `git log main..HEAD -- knowledge/spec knowledge/cases | wc -l`; `git diff --name-status …` (regímenes); `git diff 097f04c9 34711ce2 -- HOLDOUT-EXPOSICIONES.md | grep -c '^-[^-]'`
+25. `git rev-parse HEAD^{tree}`; `grep -E 'SELLO|PICO DE MEMORIA|passed|failed' make-check.log`; `grep -n -A12 comprobaciones contrato.yaml`
+26. (Negado por SOLO LECTURA: `botsito evidence contradictions --help`.) `uv run botsito corpus transcript check`
+27. `wc -c PROJECT_STATE.md`; `git diff --quiet main -- PROJECT_STATE.md`
+28. `grep -n '«'` y `grep -i 'carpeta|laminas-sesion|zip|clave'` en `HOJA-USADA-7B.md`; Read de `:8-12` y `:55-72`
+29. Read de la filtrada de v20, l. 366-370 y 396-404
+30. `grep -n -E '0:28:00|\[28:00\]|27:54|32:07'` en el informe
+31. (Negado por SOLO LECTURA: `git branch -r`.) `grep -o` de números de run; `grep -rln -i filtrada data/manifests knowledge/corpus/transcripciones`; `git log -1 --format=%h origin/fix/sesion-08`
+32. `gh run list --branch fix/sesion-08 --limit 3`; `gh run view 44966071283 --log-failed | grep …`
