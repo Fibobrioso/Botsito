@@ -658,6 +658,152 @@ quien lo firma. **La fuente es la paráfrasis del consultor**, del encargo de es
   «maximum capital allocation rule» y el asterisco de «USD/LOT*») y la pregunta 6 de A-55 siguen sin
   respuesta; y no dice nada del modo de margen que espera R6a.7.
 
+## F7 · Lo que la auditoría dejó sin dueño
+
+1. **El documento: EN LA PARADA** (decisión 0). La auditoría cita `ADR-0087` en su línea 248, fuera
+   de un bloque `ids-inexistentes`, y copiada tal cual no sella. No se ha copiado. Sigue en
+   `C:\Users\USER\Desktop\AUDITORIA-2026-11-21.md` (377 líneas).
+2. **El panel de FTMO, hecho** (los cuatro textos de la línea de Technical Debt, cada uno por su
+   régimen): `docs/runbooks/DEMO-FTMO.md` (runbook, editado: «Hecho, sin ejecución (declarado por
+   Aleks el 2026-11-07)»); la descripción de `reloj_dia_riesgo` (spec, con `spec docs`); ADR-0090 §1
+   (recuadro); `FTMO-REGLAS.md` §3, R2 (recuadro). La fuente de los cuatro es el registro de HISTORIA
+   «Next Action HECHA · A · el panel del límite diario». La línea sale de Technical Debt en la orden
+   de cierre (abajo).
+3. **A-16 NO se cierra:** recuadro fechado en ADR-0092 §10 que remite a ADR-0096 y a PREREGISTRO.md;
+   el texto de A-16 gana la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3 (183 de 198 dentro de la
+   M1 del minuto, y que no contesta la pregunta) y la vela de otro color (`ev-v19-012924-64367863`,
+   que entra en su `evidencia`), sin medir; `resuelve_en` sigue en F26. Las frases de R4.3 («la paga
+   la activación de 7b») y de Technical Debt se corrigen en la orden de cierre (abajo).
+4. **A-35 y `bloqueante` (E20): propuesta en la PARADA** (decisión 5), con lo que dio 0.8. No se ha
+   cambiado.
+5. **A-53 (E2), la reentrada de ADR-0083 D1 (E3) y A-43 (E6): no se activan.** Van como preguntas
+   técnicas a la sesión siguiente (R4.6; abajo). A-43, además, la pregunta Aleks por WhatsApp antes
+   de la corrida de (3); no ha llegado respuesta a la rama.
+6. **S-23 frente a A-46 (E4): ya estaba decidido y no hay REOPEN** (ACTIVAR-SESION-06.md; el texto de
+   A-46; B-10 de PREGUNTAS-7B.md). Sigue como pregunta B-10 para la sesión siguiente. **Esta nota
+   cierra el E4 de la auditoría**; nada en la spec.
+7. Lo de la orden de cierre, preparado abajo, en «Para la orden de cierre».
+
+Este commit lleva F7.2 y F7.3 juntos (los dos son textos, sin motor), con spec 19.1.3 y trailer
+`Fuente: ADR-0090, ADR-0092, ADR-0096, ev-v19-012924-64367863`.
+
+## Para la rama y la sesión siguientes
+
+**Para la corrida de (3)** (ADR-0070 §3 y el pivote de ADR-0093 §6):
+- Lo que esta rama deja distinto en el motor: **solo F2** (`orden_stop_lado_malo` = `espera`,
+  ADR-0097): la stop del lado malo espera sin gastar el punto. En julio, 0 rechazos por precio al
+  colocar (antes 5), 10 parejas y 20 de más (antes 11 y 19). S-22 y F4 no cambian el motor.
+- Las tensiones con que correría: `toma_antes_de_la_ventana` = `cuenta`, CONFIRMED, frente al «no es
+  válido» de la 7a (A-43, `ev-v19-012529-685ae24d`); `orden_pendiente_al_abrir_escenario` =
+  `se_mueve`, DEFAULT_AMBIGUOUS (A-53); A-35 sin respuesta (`liquidez_m15_mecha_que_vuelve` en
+  `solo_la_contraria`); RN-019, que no dispara nunca; `orden_stop_punto` y `sesgo_h4_rango_nuevo`,
+  según decida el consultor la PARADA de F1; y los frenos de la cuenta del mes (RN-032, RN-036), que
+  mueven parejas de rebote en julio (en esta rama, la pareja que se pierde la quita RN-032), que
+  ACTIVAR-SESION-07.md:684 dejó al consultor «antes de (3)» (decisión 6).
+
+**Para la sesión siguiente (R4.6)**, las preguntas que quedan, en el lenguaje del trader y sin
+sugerir respuesta:
+- **A-35** (si no contesta por WhatsApp): «Cuando la mecha de una vela de 1 minuto pasa tu alto de 15
+  minutos y vuelve, ¿dónde queda tu alto de 15 minutos?».
+- **Las zonas de control** (la sesión que él pidió dos veces): «¿Cuántas zonas de control puede haber
+  antes de que rompa el punto?», y «En esta lámina, ¿qué es lo que ves como zona de control?» (F4).
+- **El margen del break even** (A-13): «Cuando pones el break even, ¿cuánto tiene que pasar la vela el
+  alto de tu zona de control?».
+- **S-22, sobre un día real**: «Aquí, ¿cuál es tu punto?».
+- **A-53**: «Si tienes una orden puesta y el precio toma otra liquidez de 15 minutos, ¿qué haces con
+  la orden?».
+- **La reentrada** (ADR-0083 D1, con RN-019): «Después de un stop, ¿vuelves a entrar en el mismo
+  punto? ¿Cuántas veces, y con qué caja?».
+- **A-43**: «Si la liquidez de 15 minutos se toma antes de las 7, ¿vale para entrar después de las
+  7?».
+- **B-10**: la de PREGUNTAS-7B.md, tal como está.
+- **A-59** (nueva): «Cuando se forma la caja y el precio ya está más allá del 0, ¿qué haces con la
+  orden?», sobre un día real, en compra y en venta.
+- **Lo que salga de la PARADA de F1**: A-48 («En este día, ¿dónde pones tu 0?», señalando en la
+  lámina) y A-58 (el dibujo 1: «Cuando la vela rompe tu rango y cierra de su color, ¿tu rango nuevo
+  va del alto al bajo de esa vela?», sobre una H4 real).
+- **B-15** (el 2026-07-01 de 11 a 15) y el día gastado del 2026-04-24, para la preparación; las
+  reservas del 2026-01-22 y del 2026-07-16, sin usar.
+
+## Para la orden de cierre (preparado, SIN aplicar)
+
+**Con estas palabras (encargo, F3):** PIVOTES-SESION-7.yaml mide «después de activar la 7b, incluida
+la rama de S-22 y S-19». Esta es esa rama. Que S-22 no cambie el motor es su resultado, no un hueco,
+y el yaml no se toca. Tampoco se activan las filas del gate de RN-009 que el «por_que» del yaml
+contaba (S-2, pregunta 1, no resolvió).
+
+**Next Action:**
+- AHORA: «(2026-10-08)» → «(2026-11-22)» (E13).
+- **F, sustituida entera por:** «F. La sesión 7, en dos días con el método de ADR-0093 (R4.3; pivote
+  en docs/plan/PIVOTES-SESION-7.yaml; línea base, RECORRIDA-CONSTRUCCION-2.md). La 7a
+  (2026-11-16-sesion-07) ingerida y ACTIVADA (F39e: ADR-0094, A-58 abierta; break even al cierre, A-13
+  abierta por el margen). La 7b (2026-11-20-sesion-08, v20 y v21) ingerida (F39j) y ACTIVADA
+  (ACTIVAR-SESION-08.md, F39k): la stop cuyo 0 queda del lado malo espera (ADR-0097, A-59 abierta);
+  S-22 no cambia el motor; A-48 y A-58 en la PARADA de esa rama. Siguiente: (3) la corrida de
+  ADR-0070 §3 y la lectura del pivote (ADR-0093 §6), con su contingencia sin retocarla (decisión de
+  Aleks del 2026-11-19; R4.3); antes, lo que el consultor decida de esa PARADA y la respuesta de A-43
+  por WhatsApp. El vídeo de mapeo (recibido el 2026-11-18): SIN ABRIR y fuera del repo, no se ingiere;
+  octubre y noviembre de 2026, reservados. C y R6a en los huecos; R5.7 después de (3), sobre esa
+  corrida.» (E14: la F de hoy ya no repite «(3)»; el cierre de F39j la reescribió.)
+- C: quitar «No va antes de las trazas, de las láminas ni de la preparación de la sesión 7.» (E15:
+  las tres están hechas).
+- J: «Rama propia antes de la próxima sesión que etiquete días (G.2).» en vez de «… que use la hoja»
+  (E9, el texto de G.2).
+- L: sale (E10: su motivo cayó; «caja_bloque ya no cuelga de ese ítem»), a HISTORIA como HECHA sin
+  objeto; y G.2 pierde NA:L de sus Refs.
+- N: «cubre hasta el 7-10-2026, ya pasado, y se renueva por condición» (E18).
+- I: añadir «Pesa más desde la 7a: el sesgo de las sesiones de enero depende de diciembre (Technical
+  Debt).» (E18). D: sin cambios (coherente con «sin prisa»).
+
+**Technical Debt:**
+- Sale la línea «El panel de FTMO quedó declarado el 2026-11-07…» (F7.2, pagada).
+- La del visor (C1), ampliada: «- El visor no conecta `--diagnostico-cuenta-diaria` (cli.py: la
+  valida `_diagnostico_de`, :2250-2261; el arnés la aplica, :2438; `motor_visor`, :2479, no): la pone
+  en el nombre y en el HTML y corre una cuenta por mes (ADR-0092 §8; VISOR-CONSTRUCCION.md §4.3;
+  auditoría del 2026-11-21, C1). Dueño: rama corta del visor (conectarla o negarla).»
+- RN-019 (la línea «RN-019 no dispara nunca…»), con dueño: «… Dueño: va con la reentrada de ADR-0083
+  D1 (R4.6).»
+- «Dos textos que ADR-0093 deja viejos…» pasa a uno: el de `engine/decisiones.py:7-8` lo corrigió esta
+  rama (F2); queda el otro (H19 de PREPARACION-SESION-7.md §0.2).
+- Las correcciones de texto de la auditoría (§2.5), contra lo de hoy: la 86 cita `:46` y es `:45`; la
+  100 (hoy la del visor) cita `cli.py:2558`, corregida arriba; la 92 es parcial (`getattr` ya no se
+  decide; node y perl siguen); la 124, a medir; la 119 y la 123 no son deuda: a reclasificar (las
+  números son los de la auditoría sobre 5ae7c482; hay que localizarlas en el PS de la rama, que no
+  numera igual).
+- Si el consultor acepta la decisión 5: la línea de A-35 pierde «y bloqueante».
+
+**Saldo de PROJECT_STATE.md** (simulado en memoria con un guion de la carpeta de trabajo sobre el PS
+de la rama, 24.809 bytes): AHORA +0, F −59, C −82, J −5, L −147, N +12, I +96, panel −158, visor
++131, RN-019 +51, decisiones +59: **−102; queda en 24.707 bytes, por debajo de 25.000** (sin las
+correcciones de §2.5, que no se han medido una a una, y sin la de A-35).
+
+**Hoja de ruta:**
+- **R4.3**, Estado: «ABIERTA (la 7a, ingerida y activada, ACTIVAR-SESION-07.md; la 7b, ingerida en
+  trabajo/sesion-08 y activada en trabajo/activar-sesion-08, ACTIVAR-SESION-08.md: la stop del lado
+  malo espera, ADR-0097, y S-22 no cambia el motor; falta leer el pivote en (3)).» Y su «Hecho
+  cuando»: «La deuda del panel de FTMO la paga la activación de 7b; A-16 sigue ABIERTA con la regla de
+  ADR-0092 §9 (ADR-0096)».
+- **R4.6**, «Qué es», al final: «Las preguntas técnicas que dejó la 7b: A-53, A-43, la reentrada de
+  ADR-0083 D1 (con RN-019), B-10 y A-59 (ACTIVAR-SESION-08.md, "Para la sesión siguiente").» (E5.)
+- **A.2**, Estado nuevo: «Registrada la respuesta del 2026-11-20 (ticket MVT-CQNXT-065),
+  parafraseada (ACTIVAR-SESION-08.md, FTMO-REGLAS.md): las lecturas no cuentan para las 2.000
+  peticiones; se permite un programa propio en Python que decide; los límites valen para Swing. Sin
+  respuesta: P-D1, lo del heredado 27 y la pregunta 6 de A-55; de A-54, las rechazadas, las
+  cancelaciones por separado y qué hace el servidor al pasarse. No paga lo que R6a.7 espera sobre el
+  modo de margen. Reabrir ADR-0082 §4 es un ADR nuevo de Aleks.»
+- **A.4**, «Hecho cuando»: «v6 a v21 están en Drive con su SHA256SUMS» (era «v6 a v10»).
+- **A.5**, «Hecho cuando»: «el panel declarado (HECHO el 2026-11-07) y el grabador hecho; M, sin objeto
+  mientras break_even_condicion sea cierre (NA:M)» (E11).
+- **R2.3**, «Depende de»: «la exportación del trader; Aleks se la vuelve a pedir (NA:Q)» (E8: A.3
+  está HECHA y no la trataba).
+- **Fechas fijas**: sale la primera (la prueba que terminó el 11 de noviembre; E12).
+- **G.8**, «Quién»: «el código, hecho (F39i); falta el traslado de Aleks» (E16).
+- **R4.2**: sus dos líneas «Estado» en una (E17); **G.4**: Refs `NA:F` → `—` (no tiene que ver con la
+  F).
+- Lo que la auditoría da y el encargo no lleva a F7.7 (auditor, H4): E19 (R5.3 sin letra), E22
+  (textos «PROVISIONAL» en parámetros CONFIRMED), C2, C6 y su §2.3; quedan para el consultor.
+
 ## Estado
 
-EN CURSO: fase 0 escrita; F2 hecha y su corrida de julio casa; F3, F4, F5 y F6 hechas; sigue F7.
+EN CURSO: fase 0 escrita; F2 hecha y su corrida de julio casa; F3 a F6 hechas; F7.2, F7.3, F7.5 y
+F7.6 hechas, y F7.7 preparada; F7.1 y F7.4, en la PARADA. Faltan el revisor y la entrega.

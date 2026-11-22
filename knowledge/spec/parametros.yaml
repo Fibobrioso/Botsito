@@ -1742,11 +1742,13 @@ parametros:
       saldo_inicial_dia) y la de la firma (firma_base_perdida_diaria = saldo_corte_diario) coinciden
       en FORMA y en el corte; NO coinciden ni el porcentaje ni la base del porcentaje (ADR-0026).
       FTMO no tiene tope semanal: la semana es un freno del trader y corta con este mismo reloj.
-      Se queda CONFIRMED por el reglamento, y ADEMAS se comprueba en el panel de la prueba gratuita
+      Se queda CONFIRMED por el reglamento, y ADEMAS se comprobo en el panel de la prueba gratuita
       de FTMO: la medianoche del servidor y la CE(S)T se separan una hora y equivocarse cuesta la
       cuenta. Esa comprobacion iba dentro de A-28; desde ADR-0090 (A-28 DECIDIDA por su desfase y su
-      calendario) es una linea propia para Aleks en la Next Action, con el mismo texto: si el panel
-      dijera medianoche del servidor, se reabre A-19 y este parametro vuelve a DEFAULT_AMBIGUOUS
+      calendario) fue una linea propia para Aleks en la Next Action, y la declaro HECHA el
+      2026-11-07: en Account MetriX de la prueba gratuita el limite diario se restablecia a las
+      00:00 de Espana (CET), no a la medianoche del servidor (HISTORIA, «Next Action HECHA · A · el
+      panel del limite diario»). Este parametro sigue CONFIRMED y A-19 no se reabre
     estado: CONFIRMED
     valor: "civil_operativa"
     fuente:

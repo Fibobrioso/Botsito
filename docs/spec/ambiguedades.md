@@ -2,7 +2,7 @@
 
 # Ambiguedades: lo que todavia no se sabe
 
-`spec_version 19.1.2` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
+`spec_version 19.1.3` · **sin sello**: el hash cubre knowledge/spec/parametros.yaml, knowledge/spec/strategy_spec.yaml, knowledge/spec/glossary.yaml y este documento no sale de ninguno de ellos
 
 Como se cierra cada una: **RESUELTA** solo con un registro de feedback del trader (`RESOLVE_UNKNOWN`, activo); **DECIDIDA** por el consultor, con su ADR (ADR-0022); **ABIERTA** es la unica que se sigue abierta: si es una `pregunta` entra en el cuestionario de la sesion siguiente, y si es una `medicion` la cierra un dato y no se le pregunta al trader. Una RESUELTA se reabre con un registro `REOPEN`; una DECIDIDA, solo con otro ADR. Una `medicion` puede citar una fuente documental en vez de evidencia.
 
@@ -16,7 +16,7 @@ Afecta a: `break_even_criterio_ruptura`.
 
 ### A-16 · cuanto se separan las velas de Oanda de las de Dukascopy · medicion
 
-¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23
+¿como se comparan decisiones tomadas sobre velas de Oanda (FX Replay) con un bot medido sobre Dukascopy, si la regla depende de romper por una milesima? Partida el 2026-09-12 (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no la cubre". La decision de metodo que estaba mezclada aqui es A-23. MEDIDO el 2026-11-07 (METODO-FIDELIDAD-RENTABILIDAD.md §1.3, ADR-0092 §10): la entrada del trader existio en 183 de 198 operaciones de construccion dentro de la M1 BID de Dukascopy del minuto de su llenado, y a 1-4 puntos en las otras 15; con ticks, mediana 0 y p90 1 punto al tick mas cercano del lado del llenado; la regla de ADR-0092 §9 no se dispara. Esa medida NO contesta esta pregunta: no compara velas con velas ni la ruptura de un nivel por una milesima. Y en la sesion 7a (2026-11-17, bloque de dias) el trader dijo que una vela sale de un color en su grafico y del otro en Dukascopy y lo llamo una confusion de datos (ev-v19-012924-64367863); no se ha medido. Sigue ABIERTA con la regla de ADR-0092 §9 (ADR-0096, PREREGISTRO.md)
 
 ### A-35 · cuándo un pivote de M15 está formado · **BLOQUEANTE** · pregunta
 

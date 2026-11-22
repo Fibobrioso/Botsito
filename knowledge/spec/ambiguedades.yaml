@@ -318,10 +318,19 @@ ambiguedades:
       (ADR-0024): aqui queda solo la MEDICION, que no la puede cerrar ninguna decision. El anexo
       del 2026-09-09 midio OTRA pareja -MT5/FundedNext contra Dukascopy, 2 puntos de mediana- y
       el lo dice: "queda una tercera fuente en juego, que es la del trader [...] esta medicion no
-      la cubre". La decision de metodo que estaba mezclada aqui es A-23
+      la cubre". La decision de metodo que estaba mezclada aqui es A-23. MEDIDO el 2026-11-07
+      (METODO-FIDELIDAD-RENTABILIDAD.md §1.3, ADR-0092 §10): la entrada del trader existio en 183
+      de 198 operaciones de construccion dentro de la M1 BID de Dukascopy del minuto de su llenado, y
+      a 1-4 puntos en las otras 15; con ticks, mediana 0 y p90 1 punto al tick mas cercano del lado
+      del llenado; la regla de ADR-0092 §9 no se dispara. Esa medida NO contesta esta pregunta: no
+      compara velas con velas ni la ruptura de un nivel por una milesima. Y en la sesion 7a
+      (2026-11-17, bloque de dias) el trader dijo que una vela sale de un color en su grafico y del
+      otro en Dukascopy y lo llamo una confusion de datos (ev-v19-012924-64367863); no se ha medido.
+      Sigue ABIERTA con la regla de ADR-0092 §9 (ADR-0096, PREREGISTRO.md)
     resuelve_en: [F26]
     evidencia:
       - ev-v6-002414-d59b1c82
+      - ev-v19-012924-64367863
     parametros: []
     contradiccion: null
     estado: ABIERTA

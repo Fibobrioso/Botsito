@@ -264,6 +264,12 @@ del riesgo.
   vigilando la EQUITY, y el primer día con el capital inicial. Coincide con ADR-0026 §2-3 y
   ADR-0027 §1. **La página oficial contesta por escrito la «VERIFICACION EXPLICITA» de A-28**: el
   recálculo es a las 00:00 CE(S)T. Lo que A-28 pedía era verlo además en el panel.
+
+  > **RECUADRO del 2026-11-22 (`trabajo/activar-sesion-08`, F7; el cuerpo no se toca).** Visto en
+  > el panel: Aleks lo declaró el 2026-11-07, comprobado por el consultor en su captura de Account
+  > MetriX de la prueba gratuita; el límite diario se restablecía a las 00:00 de España (CET), no a
+  > la medianoche del servidor. Coincide con R2; `reloj_dia_riesgo` sigue CONFIRMED y A-19 no se
+  > reabre (`docs/state/HISTORIA.md`, «Next Action HECHA · A · el panel del límite diario»).
 - **R3**, la pérdida total: 10 % estática.
 - **R6** y **R7**, Swing sin restricción de noticias. **R8**, no se cambia de Standard a Swing.
 - **R9**, apalancamiento 1:30.
