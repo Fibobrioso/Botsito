@@ -1,0 +1,62 @@
+rama: trabajo/activar-sesion-08
+riesgo: alto  # cambia el motor (F2: la orden cuyo 0 queda del lado malo espera, ADR-0097) y la spec (A-59 y su parametro, descripciones); cada valor con su Fuente:
+artefacto: docs/validation/ACTIVAR-SESION-08.md
+tramo: R4
+rutas_permitidas:
+  - docs/validation/ACTIVAR-SESION-08.md
+  - docs/validation/anexos/ACTIVAR-SESION-08/
+  - docs/validation/HOLDOUT-EXPOSICIONES.md
+  - docs/validation/AUDITORIA-2026-11-21.md
+  - docs/validation/FTMO-REGLAS.md
+  - docs/validation/RESPUESTAS-FTMO.md
+  - docs/validation/VIDEO-JULIO.md
+  - docs/runbooks/DEMO-FTMO.md
+  - docs/runbooks/ERRORES-RECURRENTES.md
+  - knowledge/feedback/2026-11-20-sesion-08/
+  - knowledge/spec/
+  - docs/spec/
+  - docs/adr/0097-*.md
+  - docs/adr/README.md
+  - docs/adr/0064-*.md
+  - docs/adr/0082-*.md
+  - docs/adr/0083-*.md
+  - docs/adr/0085-*.md
+  - docs/adr/0090-*.md
+  - docs/adr/0092-*.md
+  - src/botsito/domain/
+  - src/botsito/engine/
+  - tests/
+  - docs/encargos/
+  - docs/state/HISTORIA.md
+  - PROJECT_STATE.md
+rutas_protegidas:
+  - Makefile
+  - .claude/
+  - knowledge/evidence/
+  - knowledge/cases/
+  - knowledge/corpus/
+  - knowledge/feedback/README.md
+  - knowledge/feedback/2026-09-09-sesion-01/
+  - knowledge/feedback/2026-09-29-sesion-03/
+  - knowledge/feedback/2026-10-04-sesion-04/
+  - knowledge/feedback/2026-10-23-sesion-05/
+  - knowledge/feedback/2026-11-04-sesion-06/
+  - knowledge/feedback/2026-11-16-sesion-07/
+  - knowledge/cuentas/
+  - config/
+  - data/manifests/
+  - docs/plan/
+  - docs/adr/0000-template.md
+  - docs/validation/PREGUNTAS-7B.md
+  - docs/validation/SESION-08-EXTRACCION.md
+  - docs/validation/PREREGISTRO.md
+  - src/botsito/mql5bridge/
+  - mql5/
+  - scripts/
+comprobaciones:
+  - uv run botsito feedback apply --sesion 2026-11-20-sesion-08 --check
+  - uv run botsito knowledge validate > knowledge-validate.log 2>&1
+  - uv run botsito spec docs --escribir
+  - uv run python src/botsito/mql5bridge/generar_capa.py --repo . --perfil ftmo-2step-swing-100k --comprobar
+  - uv run python scripts/contrato_rama.py
+  - make check > make-check.log 2>&1

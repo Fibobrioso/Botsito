@@ -4,10 +4,10 @@
 > `docs/state/README.md`.
 
 ## Current Branch
-main
+trabajo/activar-sesion-08
 
 ## Current Feature
-Ninguna rama abierta. trabajo/sesion-08 cerrada en main el 2026-11-21 (stable/F39j-sesion-08): la sesión 7b (v20 y v21) ingerida y extraída, sin resolver nada; A-35 sigue ABIERTA y bloqueante; siguiente, la activación de la 7b.
+trabajo/activar-sesion-08 EN CURSO (R4.3, paso (2) de la F de la Next Action): la activación de la sesión 7b (F2 la orden cuyo 0 queda del lado malo espera, con ADR nuevo; F1 a la PARADA; S-22 no se activa), la respuesta de FTMO del 2026-11-20 y la auditoría del 2026-11-21. Encargo docs/encargos/trabajo-activar-sesion-08.md; informe docs/validation/ACTIVAR-SESION-08.md.
 
 ## Stable Main State
 f4b5a9a2 · merge de `trabajo/sesion-08` (tag `stable/F39j-sesion-08`), sobre `stable/F39i-guardia-enlaces` (c6d5a9c2). Informe docs/validation/SESION-08-EXTRACCION.md; el registro del cierre, al final de HISTORIA.
@@ -173,8 +173,8 @@ Las que solo vivian aqui y se quedan (`docs/state/README.md`). Change Regimes de
 
 ## Completed Features
 Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/README.md`).
-— ninguna desde el Archivo 78 (2026-11-21).
+— ninguna desde el Archivo 79 (2026-11-21).
 
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
-— ninguna desde el Archivo 78 (2026-11-21).
+— ninguna desde el Archivo 79 (2026-11-21).
