@@ -1046,7 +1046,9 @@ Dada por Aleks (consultor) el 2026-11-21, en un solo mensaje. Copiada tal cual:
 >    Después: el hash de cada filtrada antes y después, en el informe; cuántos segmentos tapa ahora cada una; y que ningún ítem de evidencia de la rama cita una línea que quede tapada (la puerta de la skill, otra vez).
 >    Lo que leyó el revisor dentro de un tramo de precaución (a3) se declara en HOLDOUT-EXPOSICIONES.md como exposición posible, con el tramo y sin contenido, si no está ya declarado así. Para la orden de cierre, la lección: «Un tramo de precaución que se añade después de generar la filtrada obliga a regenerarla antes de que nadie más la lea».
 >
-> 7. [27:19]–[27:54] de v20: por precaución, el tramo no citable de S-2 empieza en 0:27:19. «Linealmente, si lo planteamos usando un gráfico alcista» no deja saber si es el esquema o su gráfico, y lo que no se sabe se niega. Los dos ítems ev-v20-002737-353f9542 y ev-v20-002744-e0555bb6 citan dentro: aplica el régimen de la evidencia que corresponda (supersede si el régimen lo admite para retirar una cita que cae en un tramo no citable, o lo que diga la puerta de la skill). Si ningún régimen lo permite sin romper la inmutabilidad, PARADA con las opciones. Rehaz la fila de S-2, pregunta 2, de la tabla final y la cobertura con lo que quede citable (31:51–32:07 y lo de fuera).
+> 7. [27:19]–[27:54] de v20: por precaución, el tramo no citable de S-2 empieza en 0:27:19. «[fragmento de un tramo no citable, quitado al pegar]» no deja saber si es el esquema o su gráfico, y lo que no se sabe se niega. Los dos ítems ev-v20-002737-353f9542 y ev-v20-002744-e0555bb6 citan dentro: aplica el régimen de la evidencia que corresponda (supersede si el régimen lo admite para retirar una cita que cae en un tramo no citable, o lo que diga la puerta de la skill). Si ningún régimen lo permite sin romper la inmutabilidad, PARADA con las opciones. Rehaz la fila de S-2, pregunta 2, de la tabla final y la cobertura con lo que quede citable (31:51–32:07 y lo de fuera).
+>
+> *(fragmento quitado por el consultor (2026-11-21): ese segundo cae en el tramo no citable desde 0:27:19)*
 >
 > 8. Los fotogramas de los repasos de láminas: no se abren, como hasta ahora. No hace falta nada más: están fuera de git y el informe no da ni el número de láminas ni la carpeta.
 >
@@ -1108,8 +1110,14 @@ Dada por Aleks (consultor) el 2026-11-21, en un solo mensaje. Copiada tal cual:
   frase que quedaba en §3.2 sobre «el otro caso»), la frase de `[27:19]` en §7.1 (punto 7), la misma
   frase en el informe del primer revisor y, en ese mismo informe, la cita de `[27:37]` con su afirmación
   (su a2 (1); lo vio el revisor de lo nuevo, a1). Se quitaron, y en el informe del revisor queda la marca
-  de lo quitado. La respuesta del consultor (§13) la cita también y se deja, porque se copia tal cual (el
-  revisor de lo nuevo, a6, deja que lo decida el consultor).
+  de lo quitado. La respuesta del consultor (§13) la citaba también; por la orden de cierre (2026-11-21,
+  punto 1) se sustituyó por la marca, con la nota del consultor. La búsqueda en todo el informe y en lo
+  commiteado de la rama (las marcas `[mm:ss]` del informe contra `tramos_no_citables.yaml`, y las frases
+  de los tramos) no deja otro texto de dentro en el informe, `HOJA-USADA-7B.md`, `fuentes.yaml`,
+  `tramos_no_citables.yaml` ni `HOLDOUT-EXPOSICIONES.md`. Lo que sigue citando dentro son los tres
+  ítems supersedidos (`ev-v20-002737-ffbdf9b1`, `ev-v20-002737-353f9542` y `ev-v20-002744-e0555bb6`),
+  inmutables por régimen y que ya no cuentan; y la historia de los commits anteriores, que no se
+  reescribe.
 - **Un solapamiento que no se dijo** (revisor de lo nuevo, a4): la cita de `ev-v20-002630-6271f57e`
   (`[26:30]`–`[27:13]`) contiene entera la de `ev-v20-002700-955a2dc8` (`[27:00]`–`[27:13]`), con el
   mismo tema, y los dos siguen activos. El pasaje queda contado dos veces. Además, `ev-v20-002630`
