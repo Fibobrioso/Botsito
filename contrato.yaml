@@ -47,7 +47,7 @@ rutas_protegidas:
   - data/manifests/
   - docs/plan/
   - docs/adr/0000-template.md
-  - docs/validation/PREGUNTAS-7B.md
+  - docs/sesion-7/PREGUNTAS-7B.md
   - docs/validation/SESION-08-EXTRACCION.md
   - docs/validation/PREREGISTRO.md
   - src/botsito/mql5bridge/
