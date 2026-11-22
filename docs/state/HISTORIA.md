@@ -20366,3 +20366,151 @@ Las cerradas desde el ultimo archivo; el cierre no anade nada (`docs/state/READM
 ## Change Log
 Las entradas desde el ultimo archivo; el cierre no anade ninguna (`docs/state/README.md`).
 — ninguna desde el Archivo 78 (2026-11-21).
+
+# Next Action HECHA · L · sale de PROJECT_STATE.md en trabajo/activar-sesion-08 (2026-11-22)
+
+Su texto literal en la Next Action (orden de cierre del consultor del 2026-11-22; ACTIVAR-SESION-08.md,
+«Para la orden de cierre»; E10 de la auditoría del 2026-11-21):
+
+L. **Pendiente del consultor: la revision de `ev-v7-001550-82e5cffc`** (el item nuevo de la D). caja_bloque ya no cuelga de ese ítem (sesión 6).
+
+Sale HECHA sin objeto: su motivo cayó, porque `caja_bloque` ya no cuelga de ese ítem desde la sesión 6
+(lo dice la propia entrada). En el mismo commit, G.2 de la hoja de ruta pierde `NA:L` de sus Refs.
+
+# Technical Debt PAGADA · sale de PROJECT_STATE.md en trabajo/activar-sesion-08 (2026-11-22)
+
+Su texto literal en «Technical Debt», con su evidencia (orden de cierre del consultor del
+2026-11-22; ACTIVAR-SESION-08.md, F7.2):
+
+- El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next Action HECHA · A) … (entera en HISTORIA, Technical Debt ACORTADA)
+  Entera: «El panel de FTMO quedó declarado el 2026-11-07 (medianoche de España; HISTORIA, Next
+  Action HECHA · A), pero siguen diciendo que está pendiente DEMO-FTMO.md:159-162, la descripción de
+  reloj_dia_riesgo (parametros.yaml:1646-1651), ADR-0090 §1 (:71-75) y FTMO-REGLAS.md:253-254
+  (informe cerrado: con recuadro). Se corrigen en la primera rama de activación tras la sesión 7
+  (S-22 y S-19), con su régimen de cambio; trabajo/cuenta-por-mes tocó knowledge/spec solo para la
+  racha (ADR-0092 §8) y no la paga, decisión del consultor del 2026-11-08. Esa rama cierra también
+  A-16 con la medida de METODO-FIDELIDAD-RENTABILIDAD.md §1.3, por los sitios de
+  docs/runbooks/AMBIGUEDADES.md (ADR-0092 §10).»
+  PAGADA por F7.2 (commit `46028e24`): DEMO-FTMO.md («Hecho, sin ejecución (declarado por Aleks el
+  2026-11-07)»), la descripción de `reloj_dia_riesgo` (spec 19.1.3, con `spec docs --escribir`), el
+  recuadro de ADR-0090 §1 y el de FTMO-REGLAS.md §3, R2. La parte de A-16 no se paga así: A-16 sigue
+  ABIERTA con la regla de ADR-0092 §9 (ADR-0096; recuadro en ADR-0092 §10, mismo commit), y el «Hecho
+  cuando» de R4.3 lo dice desde este cierre.
+
+# Technical Debt RECLASIFICADA · sale de PROJECT_STATE.md en trabajo/activar-sesion-08 (2026-11-22)
+
+Su texto literal en «Technical Debt», con su condición y su evidencia (orden de cierre del consultor
+del 2026-11-22; auditoría del 2026-11-21, §2.5, sus filas 119 y 123; ACTIVAR-SESION-08.md, «Para la
+orden de cierre»):
+
+- `cherry-pick` Y `rebase` NO PASAN POR LA PUERTA DEL COMMIT (2026-09-25, medido con git 2.55 en docs/validation/BLINDAJE.md §2):
+  (d) NO ES DE SU SECCIÓN: no es una deuda sino un límite de git aceptado, y la regla vive literal en
+  CLAUDE.md:62-63 («`cherry-pick` y `rebase` no pasan por `pre-commit`: no se usan para meter trabajo
+  (la guardia los bloquea)»).
+
+- EL FRACTAL 5/120 NO CAPTURA LO QUE EL TRADER LLAMA ESTRUCTURA (2026-09-21, informe §R2).
+  (d) NO ES DE SU SECCIÓN: es un hallazgo, no una deuda, y vive literal en
+  docs/validation/ABRIL-Y-LA-CAJA.md:450 («El fractal 5/120 no captura lo que el trader llama
+  estructura (§R2)»).
+
+# Technical Debt ACORTADA · sale de PROJECT_STATE.md en trabajo/activar-sesion-08 (2026-11-22)
+
+Su texto entero, que en PROJECT_STATE queda con su arranque (regla (e) de docs/state/README.md), con
+las correcciones de la orden de cierre del consultor del 2026-11-22 (auditoría del 2026-11-21, §2.5,
+filas 86 y 92; ACTIVAR-SESION-08.md, «Para la orden de cierre»; y lo que esta rama corrigió de la
+línea de los dos textos de ADR-0093):
+
+- Los docstrings de `scripts/viabilidad_trader.py:11` («5 USD por lote en cada lado») y `scripts/viabilidad_comision.py:45` («10 (perfil)») dicen la comisión del perfil de antes de ADR-0090 (2,50 por lado): se corrigen en la rama que vuelva a correr esos guiones (DEMO-EJECUCIONES-2-3.md §3.1).
+- Riesgo residual de B (§5): solo Python; `node`, `perl` y demás siguen sin resolver lo que cargan; un `getattr(os/sys, ...)` ya no se decide (auditoría del 2026-11-21, sin medir aquí). Y en un clon sin .venv (git worktree), un guion de trabajo que importa un paquete de terceros se niega; los tests del clon no, por _test_de_un_clon.
+- Un texto que ADR-0093 deja viejo y que trabajo/preparacion-sesion-7 no podía tocar: scripts/graficos_sesion.py:66-71, con su test (su constante ya no es la regla 2) (PREPARACION-SESION-7.md §0.2, H8). El otro de los dos, engine/decisiones.py:7-8 (H19), lo corrigió trabajo/activar-sesion-08 (F2).
+
+La 86 cambia `:46` por `:45` (medido en la rama: el comentario «10 (perfil)» está en la 45) y su
+arranque sigue igual de largo. En la 92, con la corrección dentro, el arranque llegaba a 180 bytes,
+más de los 160 de la regla (e): en PROJECT_STATE se corta antes, al final del inciso «… lo que
+cargan», y la corrección queda solo aquí.
+
+# Registro de cierre · `trabajo/activar-sesion-08` (2026-11-22)
+
+- Orden de cierre del consultor del 2026-11-22, tras revisar `5fac7e5e` (CI de Linux 45039943774,
+  con solo el fallo aceptado), pegada por Aleks en la conversación de la sesión; después, Aleks lanzó
+  `/cerrar-rama trabajo/activar-sesion-08`. El cierre se hace el 2026-11-22 y la fila de HOLDOUT de
+  ese día ya estaba en la rama (la de `581b9d1b`, entre otras del mismo día), así que no hace falta el
+  commit de la fila.
+- Tag: `stable/F39k-activar-sesion-08`. El merge es
+  `git rev-parse "stable/F39k-activar-sesion-08^{commit}"` (su sha queda en `Last Stable Commit`).
+- **Lo hecho** (tramo R4, R4.3, NA:F paso (2); ACTIVAR-SESION-08.md):
+  - **F2** (S-19, que la 7b llamó S-6): la orden stop cuyo 0 queda del lado malo al colocarla no se
+    envía y espera, sin gastar la caja ni el punto, y se envía en el primer cierre de M1 con el 0 del
+    lado bueno (ADR-0097, con recuadros en ADR-0083 §1 y ADR-0064); A-59 abierta (pregunta, no
+    bloqueante); `orden_stop_lado_malo` = `espera`, DEFAULT_AMBIGUOUS. Tests antes del código
+    (`test_orden_lado_malo.py`), y cuatro tests que congelaban el rechazo cambian a propósito. El orden
+    de la espera frente a los otros motivos de rechazo, aceptado por el consultor (ADR-0097 §1).
+  - **F3**: S-22 no se activa ni cambia el motor (recuadro en ADR-0085 §3).
+  - **F4**: la zona de control pide una vela contraria; el motor ya lo cumplía (0 de 57.643 pivotes
+    de M1 sin ella) y `test_zona_control_vela_contraria.py` lo congela.
+  - **F5**: lo que se registra sin tocar el motor (S-1 en la descripción de
+    `liquidez_m15_mecha_que_vuelve`, S-7 en VIDEO-JULIO.md, S-2, B-15 y los días gastados); las notas de
+    S-3 y S-4, solo en el informe.
+  - **F6**: la respuesta de FTMO del 2026-11-20 (ticket MVT-CQNXT-065), parafraseada y nunca literal:
+    recuadros en FTMO-REGLAS.md (R13 y §4), RESPUESTAS-FTMO.md y ADR-0082 §4; A-54 y los cuatro
+    `freno_*` sin cambiar valor ni estado.
+  - **F7**: la auditoría del consultor del 2026-11-21, copiada tal cual con su cabecera y su bloque
+    `ids-inexistentes` (docs/validation/AUDITORIA-2026-11-21.md); los cuatro textos del panel de FTMO;
+    A-16 sin cerrar (recuadro en ADR-0092 §10); A-35 sigue bloqueante y la descripción de
+    `liquidez_m15_pivote_formado` ya no dice «BLOQUEANTE de RN-004».
+  - **F1** (A-48 y A-58), a la PARADA: siguen ABIERTAS y DEFAULT_AMBIGUOUS, con su pregunta a la
+    sesión siguiente. La spec, de 19.0.5 a 19.1.5.
+- **Respuesta del consultor a la PARADA final** (2026-11-22; copiada en el encargo y en el informe, y
+  aplicada punto por punto en «Lo hecho con la respuesta del consultor»): la auditoría con cabecera
+  (0); A-48 y A-58 abiertas (1 y 2); las notas de S-3 y S-4 y E21, donde estaban (3 y 4); `bloqueante`
+  de A-35 en `true`, solo el texto (5); los frenos de la cuenta, sin retocar, y su efecto como dato en
+  (3), con lo que queda cerrado el 6.a de la respuesta del 2026-11-18 (6); la pregunta de la lámina
+  del 2026-04-27 (7); y lo de «lo que no te convence» (8).
+- **Corridas de julio** (método de ADR-0093 §4; docs/validation/anexos/ACTIVAR-SESION-08/): el control
+  sobre el código de `main`, igual a la F2 de la 7a, 11 parejas y 19 operaciones de más, 86 filas
+  idénticas; tras F2, 10 parejas y 20 de más, y las filas declaradas casan (0 rechazos por precio al
+  colocar, antes 5; tres filas de 2026-07-10 de 11 a 15 las quita RN-032). Ninguna es de toda la
+  construcción: sin fila en el Marcador.
+- **Commits de la rama** (13):
+  - `e69bfd05` la apertura (encargo, contrato y Archivo 79 de PROJECT_STATE);
+  - `f5ee88f7` la fase 0, con la PARADA condicional;
+  - `7592c73e` F2: la stop cuyo 0 queda del lado malo espera (ADR-0097, A-59);
+  - `cb02d3a9` la corrida de julio tras F2, que casa; F3, F4 y F5 sin tocar el motor;
+  - `89ce3ad0` F6: la respuesta de FTMO del 2026-11-20, parafraseada;
+  - `46028e24` F7: el panel de FTMO y A-16; lo de la orden de cierre, preparado;
+  - `1a5cf2d2` el encargo, punto por punto, y las exposiciones;
+  - `a34d7ecc` los hallazgos del revisor; la rama, lista para revisión;
+  - `581b9d1b` la respuesta del consultor a la PARADA final, copiada tal cual;
+  - `13fd2d6e` la auditoría del 2026-11-21, copiada tal cual (F7.1);
+  - `62a4152f` `liquidez_m15_pivote_formado` sin «BLOQUEANTE de RN-004»; ADR-0097 §1, el orden aceptado;
+  - `5fac7e5e` la respuesta del consultor, aplicada punto por punto;
+  - y este, `chore(cierre)`: sale el contrato; entran este registro, los bloques de arriba, la fila de
+    ERRORES-RECURRENTES, la Next Action y Technical Debt de la orden, y la hoja de ruta.
+- **CI de Linux por `fix/activar-sesion-08`**, todas con un solo fallo, el esperado
+  (`test_state_check_ok_on_real_repo`, por el nombre de la rama): 45005647166 (`1a5cf2d2`),
+  45009822628 (`a34d7ecc`) y 45039943774 (`5fac7e5e`; su resultado, en el informe final del cierre).
+  CI de `main` sobre `00e6dc8b`, al abrir: run 44978301993, success.
+- **Revisor** (opus): una pasada sobre `1a5cf2d2` con los seis alcances del encargo, pegada en
+  ACTIVAR-SESION-08.md, «Informe del revisor»; lo hecho con cada hallazgo, en «Lo que se hizo con los
+  hallazgos del revisor».
+- **Desviaciones** (declaradas en el informe): la auditoría tiene 377 líneas, no 378; la orden
+  `--comprobar` del contrato y la ruta de PREGUNTAS-7B.md, corregidas; la auditoría entró tras la
+  respuesta del consultor y no como primer commit; las notas de S-3 y S-4, solo en el informe; F3, F4 y
+  F5 en un commit con la corrida de F2; los 8 tests de F2 se vieron fallar con el `src/` de `main`
+  antes de tocarlo, no en un clon desechable; las dos líneas nuevas de Technical Debt, acortadas para
+  caber bajo el tope.
+- **En este cierre**, una corrección de lo preparado, medida: para la línea de los dos textos de
+  ADR-0093, lo preparado decía que queda la H19; la que queda es la H8 (`scripts/graficos_sesion.py`,
+  PREPARACION-SESION-7.md:58), y la H19 (`engine/decisiones.py:7-8`, :69) es la que corrigió la rama.
+  Se aplica con H8 (bloque ACORTADA de arriba).
+- **En este commit**, por la orden y por el runbook: sale `contrato.yaml`; Next Action: AHORA
+  (2026-11-22), la F de la orden (no la preparada), C, J, N e I; sale la L (arriba); Technical Debt:
+  salen el panel (PAGADA) y la 119 y la 123 de la auditoría (RECLASIFICADA), se corrigen con la regla
+  (e) la 86, la 92 y la de los dos textos (ACORTADA), cambian la del visor y la de RN-019, y entran
+  las dos de 8c y 8d; hoja de ruta: R4.3 (Estado y «Hecho cuando»), R4.6, A.2 (Estado), A.4, A.5,
+  R2.3, Fechas fijas, G.8, R4.2, G.4 y G.2; lo que el informe deja para el consultor (E19, E22, C2,
+  C6 y su §2.3) no entra; Marcador sin fila.
+- **`PROJECT_STATE.md`**: 24.842 bytes (`wc -c`) en este commit; el consultor contaba unos 24.932, y
+  la diferencia es la 92, cortada antes por la regla (e).
+- Letra del tag: la última cerrada era `stable/F39j-sesion-08`; `stable/F39k-activar-sesion-08` no
+  existe en local ni en origin (comprobado antes del tag). La siguiente rama será F39l.

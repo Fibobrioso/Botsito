@@ -119,7 +119,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** en S-16 el trader da por bueno el backtest de agosto grabado en vídeo y no el xlsx
   del que salen hoy los casos dev de agosto. Aleks le pide su exportación; al llegar, entra por su
   propia rama (libros.yaml solo se amplía) y se revisan ADR-0040 y A-56.
-- **Depende de:** la exportación del trader (carril de Aleks, A.3).
+- **Depende de:** la exportación del trader; Aleks se la vuelve a pedir (NA:Q).
 - **Quién:** Aleks la pide; la rama, la sesión con encargo del consultor.
 - **Hecho cuando:** la exportación está declarada en libros.yaml y los casos dev de agosto dicen de
   qué libro salen.
@@ -375,9 +375,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Depende de:** nada (la re-corrida está hecha, R4.1).
 - **Quién:** la sesión prepara la hoja con el consultor; Aleks celebra la sesión con el trader.
 - **Hecho cuando:** la sesión 6 está ingerida y activada.
-- **Estado:** la sesión 6 se celebró el 2026-11-04 (v17) y está ingerida (SESION-06-EXTRACCION.md, stable/F38m-sesion-06). Falta la
-  activación, que decide el consultor. De los gráficos 1 a 6 solo se contestó el 1; el 2 quedó a medias y del 3 al 6 no se hicieron.
-- **Estado:** activada en spec (`stable/F38n-activar-sesion-06`) y en el motor en lo que cuadró
+- **Estado:** la sesión 6 se celebró el 2026-11-04 (v17) y está ingerida (SESION-06-EXTRACCION.md, stable/F38m-sesion-06);
+  de los gráficos 1 a 6 solo se contestó el 1; el 2 quedó a medias y del 3 al 6 no se hicieron. Activada en spec (`stable/F38n-activar-sesion-06`) y en el motor en lo que cuadró
   (`stable/F38o-activar-sesion-06-motor`, ACTIVAR-SESION-06-MOTOR.md): S-2 y S-4 en el motor y
   A-44 RESUELTA; S-22 y S-19 van a la sesión 7 (R4.3).
 
@@ -386,8 +385,8 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 - **Qué es:** con el método de ADR-0093 (RUMBO §1): como mucho seis preguntas técnicas por día y un bloque de días con las láminas de R4.5. Preparada en `trabajo/preparacion-sesion-7` (PREPARACION-SESION-7.md), con el reparto que aprobó el consultor el 2026-11-11: 7a (sesion-07), el rango de H4, el break even (A-13), las zonas de control del esquema (RN-009), A-35, cuándo se coloca la orden (ADR-0064) y las entradas válidas que deja sin tomar (F7 #10), más el bloque de días (docs/sesion-7/PREGUNTAS-7A.md); 7b (sesion-08), revisada el 2026-11-18 con lo que dejó la 7a (LAMINAS-7B.md): la mecha que vuelve en M15 (A-35), las zonas de control y el margen del break even (RN-009 y A-13), dónde pone el 0 de la caja (A-48), el rango de 4 horas después de una ruptura (A-58), S-22 y S-19, más el bloque de días y, al final, la tarde del 10 de julio (docs/sesion-7/PREGUNTAS-7B.md; la reentrada, A-53 y A-43, entre las que no caben). Las láminas de la 7b las generó trabajo/laminas-sesion-7b, con el motor de la activación de la 7a. El pivote, pre-registrado en docs/plan/PIVOTES-SESION-7.yaml (ADR-0093 §6). El pivote (decisión de Aleks del 2026-11-19): si en la corrida de (3) la cuenta por mes de julio acaba SUSPENDIDA o deja de llenar por un freno de la cuenta antes del 17, se aplica la contingencia de ADR-0093 §6 sin retocarla: se lee la corrida diaria de contexto, contra los mismos mínimos, y no se mezclan parejas de las dos corridas. El informe da las dos corridas y, como dato sin umbral, en qué sesión se frena la cuenta por mes y con qué saldo. La sesión siguiente a la 7b sigue R4.6.
 - **Depende de:** R4.4 y R4.5.
 - **Quién:** la sesión prepara con el consultor; Aleks celebra los dos días con el trader; el consultor propone los números del pivote y Aleks los aprueba.
-- **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO y A-16 la paga la activación de 7b (la de S-22 y S-19).
-- **Estado:** ABIERTA (la 7a, ingerida en trabajo/sesion-07 y activada en trabajo/activar-sesion-07, ACTIVAR-SESION-07.md; la 7b, grabada el 2026-11-20 y el 2026-11-21 e ingerida en trabajo/sesion-08, SESION-08-EXTRACCION.md; falta activarla, con la rama de S-22 y S-19, y leer el pivote).
+- **Hecho cuando:** 7a y 7b ingeridas y activadas, y el pivote leído en la re-corrida siguiente. La deuda del panel de FTMO la paga la activación de 7b; A-16 sigue ABIERTA con la regla de ADR-0092 §9 (ADR-0096).
+- **Estado:** ABIERTA (la 7a, ingerida y activada, ACTIVAR-SESION-07.md; la 7b, ingerida en trabajo/sesion-08 y activada en trabajo/activar-sesion-08, ACTIVAR-SESION-08.md: la stop del lado malo espera, ADR-0097, y S-22 no cambia el motor; falta leer el pivote en (3)).
 
 ### R4.4 · Trazas del motor y ablación por regla
 - **Refs:** ID:ADR-0092 · ID:ADR-0064 · ID:ADR-0066
@@ -415,7 +414,7 @@ contrato, se actualiza junto a la Next Action (`docs/runbooks/RITUAL.md`). Cada 
 
 ### R4.6 · El ciclo de afinado por días
 - **Refs:** NA:F · ID:ADR-0093
-- **Qué es:** acuerdo de Aleks y el consultor (2026-11-19) para las sesiones siguientes a la 7b. Cada vuelta: (1) correr julio y clasificar las diferencias; (2) elegir de seis a ocho sesiones para el bloque de días por la compuerta de ADR-0093 §3 y por la pregunta a la que sirven, nunca por cómo le fue al bot, con dos o tres preguntas técnicas como mucho; (3) el trader opera la sesión entera, ve las láminas y corrige, y a cada corrección se le pregunta «¿siempre, solo aquí o de qué depende?»; (4) la extracción clasifica cada corrección en regla general, ejemplo o contradicción con lo fijado; (5) solo se activan las reglas generales, cada una con su test que rompe y su efecto medido en julio; (6) una fila en el Marcador. El material de construcción no es el límite: casi todos sus días dev pasan la compuerta (PREPARACION-SESION-7.md, la compuerta contada). Una sesión del bloque de días solo cuenta como vuelta si Aleks está presente de principio a fin y hace la pregunta de cada corrección; si no puede estar, se cambia el día. Las láminas las enseña Aleks desde su pantalla; nunca se le pasa al trader la carpeta ni el ZIP (SESION-08-EXTRACCION.md §13).
+- **Qué es:** acuerdo de Aleks y el consultor (2026-11-19) para las sesiones siguientes a la 7b. Cada vuelta: (1) correr julio y clasificar las diferencias; (2) elegir de seis a ocho sesiones para el bloque de días por la compuerta de ADR-0093 §3 y por la pregunta a la que sirven, nunca por cómo le fue al bot, con dos o tres preguntas técnicas como mucho; (3) el trader opera la sesión entera, ve las láminas y corrige, y a cada corrección se le pregunta «¿siempre, solo aquí o de qué depende?»; (4) la extracción clasifica cada corrección en regla general, ejemplo o contradicción con lo fijado; (5) solo se activan las reglas generales, cada una con su test que rompe y su efecto medido en julio; (6) una fila en el Marcador. El material de construcción no es el límite: casi todos sus días dev pasan la compuerta (PREPARACION-SESION-7.md, la compuerta contada). Una sesión del bloque de días solo cuenta como vuelta si Aleks está presente de principio a fin y hace la pregunta de cada corrección; si no puede estar, se cambia el día. Las láminas las enseña Aleks desde su pantalla; nunca se le pasa al trader la carpeta ni el ZIP (SESION-08-EXTRACCION.md §13). Las preguntas técnicas que dejó la 7b: A-53, A-43, la reentrada de ADR-0083 D1 (con RN-019), B-10 y A-59 (ACTIVAR-SESION-08.md, "Para la sesión siguiente").
 - **Depende de:** R4.3 (la 7b activada y el pivote leído).
 - **Quién:** el consultor prepara cada sesión; Aleks la dirige; la sesión ingiere y activa.
 - **Hecho cuando:** julio cumple los dos mínimos del pivote (ADR-0093 §6), o la lectura del pivote cambia el objetivo.
@@ -699,6 +698,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Depende de:** la respuesta de FTMO.
 - **Quién:** Aleks pregunta; la sesión registra la respuesta parafraseada (RESPUESTAS-FTMO).
 - **Hecho cuando:** las respuestas están registradas.
+- **Estado:** Registrada la respuesta del 2026-11-20 (ticket MVT-CQNXT-065), parafraseada (ACTIVAR-SESION-08.md, FTMO-REGLAS.md): las lecturas no cuentan para las 2.000 peticiones; se permite un programa propio en Python que decide; los límites valen para Swing. Sin respuesta: P-D1, lo del heredado 27 y la pregunta 6 de A-55; de A-54, las rechazadas, las cancelaciones por separado y qué hace el servidor al pasarse. No paga lo que R6a.7 espera sobre el modo de margen. Reabrir ADR-0082 §4 es un ADR nuevo de Aleks.
 
 ### A.3 · La agenda con el trader
 - **Refs:** (la confirmación escrita del paso 0 de `docs/runbooks/ENTRADA-MARZO.md`; lo que queda del paso 0 vive en R5.3)
@@ -718,7 +718,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Qué es:** las crudas y los WAV fuera de la máquina: cada sesión nueva se añade tras su ingesta.
 - **Depende de:** nada. **Fecha límite: antes de grabar la próxima sesión con el trader.**
 - **Quién:** Aleks (el consultor no tiene acceso a su máquina ni a su Drive).
-- **Hecho cuando:** v6 a v10 están en Drive con su SHA256SUMS.
+- **Hecho cuando:** v6 a v21 están en Drive con su SHA256SUMS.
 - **Estado:** ABIERTA: falta la copia de v18 a v21 (vídeos, audios, crudas, filtradas regeneradas, transcripciones y fotogramas; lista en SESION-08-EXTRACCION.md §9). La fecha límite de antes de la 7b venció sin la de v18 y v19 (auditoría del consultor del 2026-11-21).
 
 ## Carril: guardias y deuda
@@ -731,7 +731,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   deslizamiento (ADR-0090 §7).
 - **Depende de:** una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
 - **Quién:** Aleks mira el panel; la sesión, con el encargo del consultor, lo demás.
-- **Hecho cuando:** el panel declarado (HECHO el 2026-11-07), M medida y el grabador hecho.
+- **Hecho cuando:** el panel declarado (HECHO el 2026-11-07) y el grabador hecho; M, sin objeto mientras break_even_condicion sea cierre (NA:M).
 
 ### G.1 · La guardia de Claude Code
 - **Refs:** NA:D
@@ -749,7 +749,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Hecho cuando:** cada una con su test que la rompe a propósito.
 
 ### G.2 · Pendientes del consultor y del kit
-- **Refs:** NA:L · NA:J · NA:N · HER:6 · HER:7 · HER:8 · HER:9
+- **Refs:** NA:J · NA:N · HER:6 · HER:7 · HER:8 · HER:9
 - **Qué es:** la revisión de `ev-v7-001550-82e5cffc` (L); `kit hoja` roto para un paquete nuevo
   (J, antes de la próxima sesión que etiquete días); el calendario de cierres por condición (N); y, del Next Action viejo: febrero no
   se toca (6), junio y la guardia (7), el brief de los `dev` de septiembre (8) y re-descargar un mes
@@ -794,7 +794,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
   `firma_tamano_posicion_ratio_aviso` dice lo que respondió FTMO (respuesta 10).
 
 ### G.4 · Las tareas repetidas que ninguna skill cubre
-- **Refs:** NA:F
+- **Refs:** —
 - **Qué es:** los huecos de ENTORNO-CODE.md §0.c: escribir un ADR nuevo; sacar líneas de
   PROJECT_STATE a HISTORIA con saldo ≤ 0; material escrito del trader al corpus; registrar
   respuestas de FTMO o de Aleks; congelar un CSV de la demo; demostrar un test por mutación;
@@ -837,7 +837,7 @@ porta código de Python se prueba contra los mismos casos que sus tests.
 - **Refs:** —
 - **Qué es:** con corpus/ como enlace de unión a otro disco, la guardia resuelve por realpath y deja de aplicar las reglas del material adicional que dependen de la ruta relativa (las imágenes y lo de dentro de las carpetas Backtest de meses sin sortear); y un Read de la carpeta Backtest <mes> en sí no se niega, con o sin enlace (GUARDIAS-HOLDOUT.md §17). Hasta corregirlo, el corpus no sale de Bot v3\corpus. La copia D:\BotsitoCorpus\corpus (550 ficheros del manifiesto, hashes iguales el 2026-11-20) es solo respaldo y nadie la lee. El código está hecho (stable/F39i-guardia-enlaces; GUARDIA-ENLACES.md): la guardia niega el material protegido por la forma textual, la canónica y la estructura, también en copias y clones fuera del repo. Falta que Aleks repita el traslado a D: con la guardia simulada negando las cuatro rutas; entonces la entrada pasa a HECHA en la orden de cierre siguiente.
 - **Depende de:** nada. Va antes de volver a mover el corpus al disco D, porque Aleks necesita espacio en C.
-- **Quién:** la sesión, en la próxima rama de guardia.
+- **Quién:** el código, hecho (F39i); falta el traslado de Aleks.
 - **Hecho cuando:** un test que la rompe a propósito con las dos rutas (la del repo a través del enlace y la resuelta) y la carpeta en sí; y Aleks repite el traslado con la guardia simulada denegando las cuatro.
 
 ## Carril: material reservado que no se toca
@@ -888,6 +888,4 @@ Diagnóstico de construcción (ADR-0092 §6): ninguna cifra de aquí justifica u
 
 ## Fechas fijas
 
-- La prueba gratuita de FTMO en curso termina el 11 de noviembre de 2026 (Account MetriX: inicio
-  28/10/26, fin 11/11/26); lo que queda de A.5 (NA:M y F17) pide una prueba viva.
 - Una prueba gratuita de FTMO viva. Se puede repetir cuantas veces haga falta, con una sola activa a la vez (ftmo.com/es/ftmo-free-trial, leído por el consultor el 2026-11-09).
