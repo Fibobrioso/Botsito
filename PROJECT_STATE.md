@@ -16,7 +16,7 @@ f04868cc · merge de `trabajo/activar-sesion-08` (tag `stable/F39k-activar-sesio
 f04868cc · merge trabajo/activar-sesion-08: la sesión 7b activada (la stop del lado malo espera, ADR-0097, A-59), FTMO del 2026-11-20 parafraseada y la auditoría del 2026-11-21 · tag stable/F39k-activar-sesion-08
 
 ## Tests Currently Passing
-2132 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
+2137 funciones de test. Lo que cubre cada una lo dice el informe de la rama que la trajo; la lista acumulada hasta el 2026-10-01, en docs/state/HISTORIA.md (Archivo 1, «Tests Currently Passing»).
 
 ## Next Action
 
